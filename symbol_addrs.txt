@@ -358,3 +358,27 @@ D_80107764_413BC4_Results = 0x80107764; // type:s16 size:0x10 rom:0x413BC4 segme
 
 D_800CD438_CE038 = 0x800CD438; //type:s32 size:0x90 rom:0xCE034
 D_80101510_102110 = 0x80101510; // size:0x120 rom:0x102110
+
+// Debug print font (MP1 src/62140.c; matched by n64xref)
+pfInit = 0x8007C5D0; // rom:0x7D1D0
+pfClsScr = 0x8007C668; // rom:0x7D268
+pfClrStrLine = 0x8007C6CC; // rom:0x7D2CC
+pfWinCreate = 0x8007C7F4; // rom:0x7D3F4
+pfWinKill = 0x8007C898; // rom:0x7D498
+pfWinClose = 0x8007C8E0; // rom:0x7D4E0
+saftyFrameSet = 0x8007C91C; // rom:0x7D51C
+saftyFrameFlashSet = 0x8007C94C; // rom:0x7D54C
+saftyFrameFlashReset = 0x8007C990; // rom:0x7D590
+saftyFrameReset = 0x8007C9A8; // rom:0x7D5A8
+pfDrawFonts = 0x8007CA0C; // rom:0x7D60C
+pfFontTex = 0x800C7880; // rom:0xC8480
+pfFontTlut = 0x800C8480; // size:0x200 rom:0xC9080
+pfFontCurPal = 0x800CD584; // type:u16 size:0x2 rom:0xCE184
+pfStrLines = 0x800E2890; // size:0x9000
+fontcolor = 0x800F8420; // type:s32 size:0x4
+pfWinData = 0x800F8FE8; // size:0x60
+strlinecnt = 0x800F9210; // type:u16 size:0x2
+saftyFrameF = 0x800FA18A; // type:u16 size:0x2
+saftyFrameColor = 0x800FA62C; // size:0xD
+empstrline = 0x800FC884; // type:u16 size:0x2
+emppfwin = 0x801026F4; // type:u16 size:0x2

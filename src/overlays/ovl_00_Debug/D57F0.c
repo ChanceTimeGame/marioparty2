@@ -114,7 +114,7 @@ void func_80103E50_D6E40_Debug(void);
 void func_80104ADC_D7ACC_Debug(void);
 
 extern GW_PLAYER debug_gPlayers[4];
-extern s32 D_800F8420_F9020;
+extern s32 fontcolor;
 extern f32 D_800FA610_FB210;
 extern Vec D_800FD474_FE074;
 extern Vec D_8010274C_10334C;
@@ -496,9 +496,9 @@ void func_80104ADC_D7ACC_Debug(void) {
         if (temp_s2 < (temp_s2 - D_801069E8_D99D8_Debug) + var_s4) {
             var_s4 = (temp_s2 - D_801069E8_D99D8_Debug) + var_s4 - temp_s2;
         }
-        D_800F8420_F9020 = 9;
+        fontcolor = 9;
         DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s5), D_80101080_101C80);
-        D_800F8420_F9020 = 0xD;
+        fontcolor = 0xD;
         DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s4), D_80101080_101C80);
     }
 
@@ -512,9 +512,9 @@ void func_80104ADC_D7ACC_Debug(void) {
     temp_s3 = func_800A5610_A6210(D_80101080_101C80) * 8 - 0xA0;
     temp_s3 = 0xA0 - temp_s3;
     temp_s3 >>= 1;
-    D_800F8420_F9020 = 7;
+    fontcolor = 7;
     DrawDebugText((temp_s3 + 1), ((temp_s2 + 1) - D_801069E8_D99D8_Debug), D_80101080_101C80);
-    D_800F8420_F9020 = 0xF;
+    fontcolor = 0xF;
     DrawDebugText(temp_s3, (temp_s2 - D_801069E8_D99D8_Debug), D_80101080_101C80);
 }
 
@@ -747,9 +747,9 @@ void func_80105A2C_D8A1C_Debug(s32 arg0) {
 }
 
 void func_80105B5C_D8B4C_Debug(u16 arg0, u16 arg1, char* arg2, u16 arg3, u16 arg4) {
-    D_800F8420_F9020 = arg4;
+    fontcolor = arg4;
     DrawDebugText((arg0 + 1), (arg1 + 1), arg2);
-    D_800F8420_F9020 = arg3;
+    fontcolor = arg3;
     DrawDebugText(arg0, arg1, arg2);
 }
 
