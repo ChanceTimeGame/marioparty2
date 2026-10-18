@@ -409,3 +409,6 @@ GetTurnsElapsed = 0x80056994; // rom:0x57594
 SetPlayerOntoChain = 0x800572E0; // rom:0x57EE0
 SetNextChainAndSpace = 0x8005734C; // rom:0x57F4C
 D_800CC5C0_CD1C0 = 0x800CC5C0; // size:0x20 rom:0xCD1C0
+
+// 5EF10 (MP1 src/53C80.c): board scissor rectangle
+D_800CC980_CD580 = 0x800CC980; // size:0x10 rom:0xCD580
