@@ -144,7 +144,38 @@ void SwapPlayerLocationData(s16 arg0, s16 arg1) {
     player2->next_space_index = temp;
 }
 
+/* Matches (opcode and register compare of the object) except where its jump table lives: the
+   table (jtbl_800D2DB8_D39B8) is in the main data blob, and C would emit its own in .rodata. */
+#ifdef NON_MATCHING
+void func_80056884_57484(s16 playerNo, s16 spaceType) {
+    GW_PLAYER* player = BoardPlayerGet(playerNo);
+    u8 newColor;
+
+    switch (spaceType) {
+    case 1:
+        newColor = 1;
+        break;
+    case 2:
+    case 12:
+        newColor = 2;
+        break;
+    case 0:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 9:
+        newColor = 4;
+        break;
+    default:
+        newColor = 0;
+        break;
+    }
+    player->player_space_color = newColor;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/57150", func_80056884_57484);
+#endif
 
 s16 GetSumOfPlayerStars(void) {
     s32 starTotal = 0;

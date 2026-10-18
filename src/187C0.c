@@ -423,4 +423,42 @@ void HuDecodeRLE(DecodeStruct *decode) {
     }
 }
 
+/* Matches (tools: opcode and register compare of the object) except where its jump table lives:
+   the table (jtbl_800D1EB0_D2AB0) is in the main data blob, and C would emit its own in .rodata. */
+#ifdef NON_MATCHING
+void DecodeData(void* src, void* dest, s32 len, EDecodeType decodeType) {
+    DecodeStruct decodeStruct;
+    DecodeStruct* decodePtr = &decodeStruct;
+    decodeStruct.src = src;
+    decodeStruct.dest = (u8*)dest;
+    decodeStruct.len = len;
+    decodeStruct.chunkLen = 1024;
+
+    switch (decodeType) {
+        case DECODE_NONE:
+            HuDecodeNone(decodePtr);
+            break;
+
+        case DECODE_LZ:
+            HuDecodeLZ(decodePtr);
+            break;
+
+        case DECODE_SLIDE:
+            HuDecodeSlide(decodePtr);
+            break;
+
+        case DECODE_FSLIDE:
+            HuDecodeFslide(decodePtr);
+            break;
+
+        case DECODE_FSLIDE_2: // MP2's fifth decoder is RLE (MP3 has FSLIDE twice, then RLE)
+            HuDecodeRLE(decodePtr);
+            break;
+
+        default:
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/187C0", DecodeData);
+#endif
