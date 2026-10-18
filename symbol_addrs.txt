@@ -398,3 +398,14 @@ HuDecodeFslide = 0x80018378; // rom:0x18F78
 HuDecodeRLE = 0x800187F4; // rom:0x193F4
 readBuffer = 0x800D81F0; // size:0x400
 textBuffer = 0x800D85F0; // size:0x400
+
+// 57150 (MP1 src/4D770.c, MP3 ovl_80_shared_board 1006F0.c): board player position helpers
+MBMasuPosGet = 0x80056550; // rom:0x57150
+MBPlayerForwardSet = 0x80056728; // rom:0x57328
+SwapPlayerLocationData = 0x80056800; // rom:0x57400
+GetSumOfPlayerStars = 0x800568FC; // rom:0x574FC
+RNGPercentChance = 0x8005694C; // rom:0x5754C
+GetTurnsElapsed = 0x80056994; // rom:0x57594
+SetPlayerOntoChain = 0x800572E0; // rom:0x57EE0
+SetNextChainAndSpace = 0x8005734C; // rom:0x57F4C
+D_800CC5C0_CD1C0 = 0x800CC5C0; // size:0x20 rom:0xCD1C0
