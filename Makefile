@@ -102,6 +102,11 @@ $(G2_SDK_LIB_UNITS): CPPFLAGS = -I include -I include/PR -I $(BUILD_DIR)/include
 build/src/B1170.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32
 build/src/B1910.c.o: export VR4300MUL = ON
 
+# b1-G2: MP3 flags: libhmath -O2 -ffast-math; 8ACD0.c -O2.
+G2_HMATH_UNITS := build/src/B2470.c.o build/src/B3D90.c.o build/src/B3DC0.c.o build/src/B3E00.c.o build/src/B3E40.c.o build/src/B3EC0.c.o build/src/B3F80.c.o build/src/B3FB0.c.o
+$(G2_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+build/src/B4420.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32
+
 #build/src/libultra/os/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/libultra/libc/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/lib/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
