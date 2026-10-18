@@ -1,5 +1,41 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/B1170", ldiv);
+// libultra libc ldiv.c: ldiv, lldiv. From MP1 src/9B9F0.c.
 
-INCLUDE_ASM("asm/nonmatchings/B1170", lldiv);
+typedef struct {
+    long quot;
+    long rem;
+} ldiv_t;
+
+typedef struct {
+    long long quot;
+    long long rem;
+} lldiv_t;
+
+ldiv_t ldiv(long num, long denom) {
+    ldiv_t ret;
+
+    ret.quot = num / denom;
+    ret.rem = num - denom * ret.quot;
+
+    if (ret.quot < 0 && ret.rem > 0) {
+        ret.quot += 1;
+        ret.rem -= denom;
+    }
+
+    return ret;
+}
+
+lldiv_t lldiv(long long num, long long denom) {
+    lldiv_t ret;
+
+    ret.quot = num / denom;
+    ret.rem = num - denom * ret.quot;
+
+    if (ret.quot < 0 && ret.rem > 0) {
+        ret.quot += 1;
+        ret.rem -= denom;
+    }
+
+    return ret;
+}

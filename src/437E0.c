@@ -2,7 +2,7 @@
 
 /* Vector angle and rotation helpers (MP1 src/3DEB0.c). */
 
-f32 func_800B33B0_B3FB0(Vec*);
+f32 HuVecGetLength3F(Vec*);
 f32 func_800B75A8_B81A8(f32, f32);
 f32 func_800B7890_B8490(f32);
 f32 func_800B83C0_B8FC0(f32);
@@ -95,7 +95,7 @@ f32 func_800431FC_43DFC(Vec* a, Vec* b) {
     f32 len;
 
     dot = func_800B3500_B4100(a, b);
-    len = func_800B33B0_B3FB0(a) * func_800B33B0_B3FB0(b);
+    len = HuVecGetLength3F(a) * HuVecGetLength3F(b);
     if (len != 0.0f) {
         return func_800B0828_B1428(dot / len) / 0.017453292519943295;
     }

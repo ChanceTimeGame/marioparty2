@@ -89,6 +89,26 @@ DEPENDS := $(OBJECTS:=.d)
 
 build/src/overlays/ovl_00_Debug/D57F0.c : NOP_FIX = -Wa,--vr4300mul-off
 
+# b1-G2: libultra units copied from MP1's SDK lib units (MP1 Makefile SDK_LIB_UNITS / src/lib):
+# -O3 -funsigned-char with the lib headers, as MP1 builds them.
+G2_SDK_LIB_UNITS := build/src/A70F0.c.o build/src/AEA90.c.o build/src/AEAE0.c.o build/src/B1150.c.o build/src/AEB30.c.o build/src/AECD0.c.o build/src/A8EE0.c.o build/src/A9140.c.o build/src/AF0D0.c.o build/src/AF2E0.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB3D0.c.o build/src/AB810.c.o
+$(G2_SDK_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+# KMC as: the libultra objects keep the vr4300 mul fix on (MP1 builds them without --vr4300mul-off)
+$(G2_SDK_LIB_UNITS): export VR4300MUL = ON
+$(G2_SDK_LIB_UNITS): CPPFLAGS = -I include -I include/PR -I $(BUILD_DIR)/include -I src -DNDEBUG -D_LANGUAGE_C -D_MIPS_SZLONG=32 -DF3DEX_GBI_2
+
+# b1-G2: MP1 per-file flags for non-lib units: 9B9F0.c (ldiv) -O3 -funsigned-char; 9C190.c (libm)
+# keeps KMC's vr4300 mul fix on.
+build/src/B1170.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32
+build/src/B1910.c.o: export VR4300MUL = ON
+
+# b1-G2: MP3 flags: libhmath -O2 -ffast-math; 8ACD0.c -O2.
+G2_HMATH_UNITS := build/src/B2470.c.o build/src/B3D90.c.o build/src/B3DC0.c.o build/src/B3E00.c.o build/src/B3E40.c.o build/src/B3EC0.c.o build/src/B3F80.c.o build/src/B3FB0.c.o
+$(G2_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+build/src/B4420.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32
+# A5E10 (libc/string.c part): MP3 src/2.0L/libc/string.c builds -O2, signed char
+build/src/A5E10.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32
+
 #build/src/libultra/os/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/libultra/libc/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/lib/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)

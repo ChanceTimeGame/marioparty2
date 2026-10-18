@@ -7,7 +7,6 @@ extern u8 readBuffer[1024]; // src copy
 extern u8 textBuffer[1024]; // window
 
 s32 dmaRead(u8* src, u8* dest, s32 size);
-void func_800A5530_A6130(void*, s32); // bzero
 
 void HuDecodeNone(DecodeStruct *decode) {
     s32 copyLen;
@@ -35,7 +34,7 @@ void HuDecodeLZ(DecodeStruct *decode) {
     s32 len;
     s32 copyVal;
 
-    func_800A5530_A6130(&textBuffer, 1024);
+    bzero(&textBuffer, 1024);
 
     while (decode->len) {
         flag = flag >> 1;

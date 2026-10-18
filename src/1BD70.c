@@ -4,9 +4,9 @@
 
 void func_800B3160_B3D60(Vec*, f32, f32, f32);
 void func_800B3170_B3D70(Vec*, Vec*);
-void func_800B31C0_B3DC0(Vec*, Vec*, Vec*);
-void func_800B3200_B3E00(Vec*, Vec*, Vec*);
-void func_800B3240_B3E40(Vec*, f32, Vec*);
+void HuVecAdd(Vec*, Vec*, Vec*);
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void HuVecMulScalar(Vec*, f32, Vec*);
 f32 func_800B34B0_B40B0(Vec*, Vec*);
 void func_800B3530_B4130(Vec*, Vec*, Vec*);
 s32 func_8001B548_1C148(Vec*, Vec*, Vec*, Vec*, Vec*, Vec*);
@@ -60,12 +60,12 @@ s32 func_8001B434_1C034(Vec* arg0, Vec* arg1, f32 arg2, Vec* arg3) {
     s32 var_v0;
 
     func_800B3170_B3D70(&sp18, arg0);
-    func_800B3200_B3E00(&sp28, &arg0[1], arg0);
-    func_800B3200_B3E00(&sp38, &arg0[2], arg0);
+    HuVecSubtract(&sp28, &arg0[1], arg0);
+    HuVecSubtract(&sp38, &arg0[2], arg0);
     func_800B3530_B4130(&sp48, &sp28, &sp38);
-    func_800B3200_B3E00(&sp58, arg1, arg0);
+    HuVecSubtract(&sp58, arg1, arg0);
     func_8001B548_1C148(&sp18, &sp28, &sp38, &sp48, &sp58, &sp68);
-    func_800B31C0_B3DC0(arg3, &sp68, &sp18);
+    HuVecAdd(arg3, &sp68, &sp18);
 
     if (!(arg2 < func_800B34B0_B40B0(arg3, arg1))) {
         var_v0 = 1;
@@ -95,16 +95,16 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
     t = (((p1 - p0) * arg1->z) + ((p3 - p2) * arg1->y) + ((p5 - p4) * arg1->x)) * inv;
 
     if (((s > 0.0f) & (t > 0.0f)) && (s + t > 1.0f)) {
-        func_800B3200_B3E00(&sp10, arg2, arg1);
-        func_800B3200_B3E00(&sp20, arg4, arg1);
+        HuVecSubtract(&sp10, arg2, arg1);
+        HuVecSubtract(&sp20, arg4, arg1);
         d = func_800B3500_B4100(&sp10, &sp20) / func_800B3500_B4100(&sp10, &sp10);
         if (d <= 0.0f) {
             goto copy1;
         } else if (d >= 1.0f) {
             goto copy2;
         } else {
-            func_800B3240_B3E40(&sp20, d, &sp10);
-            func_800B31C0_B3DC0(arg5, arg1, &sp20);
+            HuVecMulScalar(&sp20, d, &sp10);
+            HuVecAdd(arg5, arg1, &sp20);
             return 1;
         }
     } else if (t < 0.0f) {
@@ -117,7 +117,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
             func_800B3170_B3D70(arg5, arg1);
             return 1;
         } else {
-            func_800B3240_B3E40(arg5, d, arg1);
+            HuVecMulScalar(arg5, d, arg1);
             return 1;
         }
     } else if (s < 0.0f) {
@@ -130,7 +130,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
             func_800B3170_B3D70(arg5, arg2);
             return 1;
         } else {
-            func_800B3240_B3E40(arg5, d, arg2);
+            HuVecMulScalar(arg5, d, arg2);
             return 1;
         }
     } else {
@@ -157,15 +157,15 @@ s32 func_8001B9AC_1C5AC(Vec* arg0, Vec* arg1, f32 arg2, Vec* arg3) {
     s32 var_v0;
 
     func_800B3170_B3D70(&sp18, arg0);
-    func_800B3200_B3E00(&sp28, &arg0[1], arg0);
-    func_800B3200_B3E00(&sp38, &arg0[2], arg0);
-    func_800B3200_B3E00(&sp48, &arg0[3], arg0);
+    HuVecSubtract(&sp28, &arg0[1], arg0);
+    HuVecSubtract(&sp38, &arg0[2], arg0);
+    HuVecSubtract(&sp48, &arg0[3], arg0);
     func_800B3530_B4130(&sp58, &sp28, &sp38);
-    func_800B3200_B3E00(&sp68, arg1, arg0);
+    HuVecSubtract(&sp68, arg1, arg0);
     func_8001B548_1C148(&sp18, &sp28, &sp38, &sp58, &sp68, &sp78);
-    func_800B31C0_B3DC0(&sp88, &sp78, &sp18);
+    HuVecAdd(&sp88, &sp78, &sp18);
     func_8001B548_1C148(&sp18, &sp38, &sp48, &sp58, &sp68, &sp78);
-    func_800B31C0_B3DC0(&sp98, &sp78, &sp18);
+    HuVecAdd(&sp98, &sp78, &sp18);
     var_f20 = func_800B34B0_B40B0(&sp88, arg1);
     temp_f0 = func_800B34B0_B40B0(&sp98, arg1);
     if (var_f20 < temp_f0) {
@@ -185,5 +185,5 @@ void func_8001BB54_1C754(Vec* arg0, Vec* arg1, Vec* arg2) {
     f32 temp_f20;
 
     temp_f20 = func_800B3500_B4100(arg0, arg1);
-    func_800B3240_B3E40(arg2, temp_f20 / func_800B3500_B4100(arg0, arg0), arg0);
+    HuVecMulScalar(arg2, temp_f20 / func_800B3500_B4100(arg0, arg0), arg0);
 }

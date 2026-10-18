@@ -256,6 +256,7 @@ segments:
       - [0xA9B00, c]
       - [0xAA610, c]
       - [0xAA720, c]
+      - [0xAB3D0, c]
       - [0xAB3F0, c]
       - [0xAB810, c]
       - [0xAC3B0, c]

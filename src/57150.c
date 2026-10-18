@@ -56,10 +56,10 @@ void func_80042E44_43A44(Vec*, f32);
 f32 func_800431FC_43DFC(Vec*, Vec*);
 void func_800B3160_B3D60(Vec*, f32, f32, f32);
 void func_800B3170_B3D70(Vec*, Vec*);
-void func_800B31C0_B3DC0(Vec*, Vec*, Vec*);
-void func_800B3200_B3E00(Vec*, Vec*, Vec*);
-void func_800B3240_B3E40(Vec*, f32, Vec*);
-f32 func_800B33B0_B3FB0(Vec*);
+void HuVecAdd(Vec*, Vec*, Vec*);
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void HuVecMulScalar(Vec*, f32, Vec*);
+f32 HuVecGetLength3F(Vec*);
 f32 func_800B34B0_B40B0(Vec*, Vec*);
 void func_80056658_57258(Vec* arg0, Vec* arg1, Vec* arg2);
 void MBMasuPosGet(s16 playerNo, s16 spaceIdx, Vec* out);
@@ -86,7 +86,7 @@ void func_8005660C_5720C(s16 arg0, s16 arg1) {
 }
 
 void func_80056658_57258(Vec* arg0, Vec* arg1, Vec* arg2) {
-    func_800B3200_B3E00(arg2, arg1, arg0);
+    HuVecSubtract(arg2, arg1, arg0);
     func_80042D38_43938(arg2);
 }
 
@@ -115,7 +115,7 @@ void func_80056754_57354(Object* unk) {
     Vec sp10;
     Vec sp20;
 
-    func_800B3200_B3E00(&sp10, &D_800C9B80_CA780->pos, &unk->coords);
+    HuVecSubtract(&sp10, &D_800C9B80_CA780->pos, &unk->coords);
     func_800B3160_B3D60(&sp20, sp10.x, 0.0f, sp10.z);
     unk->unk_3C->unk_24 = -func_800431FC_43DFC(&sp10, &sp20);
     func_80056658_57258(&unk->coords, &D_800C9B80_CA780->pos, &sp10);
@@ -204,7 +204,7 @@ s32 func_800569B8_575B8(s16 arg0, f32 arg1) {
     sp10.y = 0.0f;
     sp10.z = ContStkY[arg0];
 
-    if ((arg1 <= func_800B33B0_B3FB0(&sp10))) {
+    if ((arg1 <= HuVecGetLength3F(&sp10))) {
         return 1;
     } else {
         return 0;
@@ -264,7 +264,7 @@ void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex) {
     GW_PLAYER* player = BoardPlayerGet(playerNo);
     Vec sp10;
 
-    func_800B3200_B3E00(&sp10, &GetSpaceData(masuAbsIndex)->coords, &PLAYER_OBJ(player)->coords);
+    HuVecSubtract(&sp10, &GetSpaceData(masuAbsIndex)->coords, &PLAYER_OBJ(player)->coords);
     func_80042D38_43938(&sp10);
     func_80056B78_57778(&PLAYER_OBJ(player)->unk_18, &sp10, &PLAYER_OBJ(player)->unk_18, arg1);
 }
@@ -274,9 +274,9 @@ void func_80056CB4_578B4(void) {
     s32 temp_s1 = temp_s0->unk_1C.signed32Unk1C;
 
     while (temp_s0->unk_1C.signed32Unk1C != 0) {
-        func_800B3200_B3E00(temp_s0->unk_18, &temp_s0->unk_0C, &temp_s0->unk_00);
-        func_800B3240_B3E40(temp_s0->unk_18, 1.0f - (1.0f / temp_s1) * (temp_s0->unk_1C.signed32Unk1C - 1), temp_s0->unk_18);
-        func_800B31C0_B3DC0(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
+        HuVecSubtract(temp_s0->unk_18, &temp_s0->unk_0C, &temp_s0->unk_00);
+        HuVecMulScalar(temp_s0->unk_18, 1.0f - (1.0f / temp_s1) * (temp_s0->unk_1C.signed32Unk1C - 1), temp_s0->unk_18);
+        HuVecAdd(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
         temp_s0->unk_1C.signed32Unk1C = temp_s0->unk_1C.signed32Unk1C - 1;
         HuPrcVSleep();
     }
@@ -321,10 +321,10 @@ void func_80056F0C_57B0C(void) {
     temp_s1 = &temp_s0->unk_0C;
 
     while (!(func_800B34B0_B40B0(&temp_s0->unk_00, temp_s1) < temp_f20)) {
-        func_800B3200_B3E00(temp_s0->unk_18, temp_s1, &temp_s0->unk_00);
+        HuVecSubtract(temp_s0->unk_18, temp_s1, &temp_s0->unk_00);
         func_80042D38_43938(temp_s0->unk_18);
-        func_800B3240_B3E40(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
-        func_800B31C0_B3DC0(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
+        HuVecMulScalar(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
+        HuVecAdd(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
         func_800B3170_B3D70(&temp_s0->unk_00, temp_s0->unk_18);
         HuPrcVSleep();
     }
@@ -355,10 +355,10 @@ void func_80057088_57C88(void) {
         if (func_800B34B0_B40B0(&temp_s0->unk_00, &temp_s0->unk_0C) < temp_f20) {
             var_s1 = 1;
         }
-        func_800B3200_B3E00(temp_s0->unk_18, &temp_s0->unk_0C, &temp_s0->unk_00);
+        HuVecSubtract(temp_s0->unk_18, &temp_s0->unk_0C, &temp_s0->unk_00);
         func_80042D38_43938(temp_s0->unk_18);
-        func_800B3240_B3E40(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
-        func_800B31C0_B3DC0(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
+        HuVecMulScalar(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
+        HuVecAdd(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
         func_800B3170_B3D70(&temp_s0->unk_00, temp_s0->unk_18);
 
         if (var_s1 != 0) {
