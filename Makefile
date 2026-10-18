@@ -106,6 +106,8 @@ build/src/B1910.c.o: export VR4300MUL = ON
 G2_HMATH_UNITS := build/src/B2470.c.o build/src/B3D90.c.o build/src/B3DC0.c.o build/src/B3E00.c.o build/src/B3E40.c.o build/src/B3EC0.c.o build/src/B3F80.c.o build/src/B3FB0.c.o
 $(G2_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
 build/src/B4420.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32
+# A5E10 (libc/string.c part): MP3 src/2.0L/libc/string.c builds -O2, signed char
+build/src/A5E10.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32
 
 #build/src/libultra/os/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/libultra/libc/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
