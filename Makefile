@@ -121,6 +121,8 @@ export VR4300MUL := OFF
 # b1-G1: units built with the KMC assembler's VR4300 mul fix on (as MP1 builds their sources)
 # 1BD70.c (MP1 1A2A0.c): nop between back-to-back mul.s in func_8001B170_1BD70
 build/src/1BD70.c.o: export VR4300MUL := ON
+# 437E0.c (MP1 3DEB0.c): nop between back-to-back mul.s in func_80042F7C_43B7C
+build/src/437E0.c.o: export VR4300MUL := ON
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
