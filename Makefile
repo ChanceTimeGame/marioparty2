@@ -97,6 +97,11 @@ $(G2_SDK_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MI
 $(G2_SDK_LIB_UNITS): export VR4300MUL = ON
 $(G2_SDK_LIB_UNITS): CPPFLAGS = -I include -I include/PR -I $(BUILD_DIR)/include -I src -DNDEBUG -D_LANGUAGE_C -D_MIPS_SZLONG=32 -DF3DEX_GBI_2
 
+# b1-G2: MP1 per-file flags for non-lib units: 9B9F0.c (ldiv) -O3 -funsigned-char; 9C190.c (libm)
+# keeps KMC's vr4300 mul fix on.
+build/src/B1170.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32
+build/src/B1910.c.o: export VR4300MUL = ON
+
 #build/src/libultra/os/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/libultra/libc/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
 #build/src/lib/%.o: CFLAGS := -O2 $(CFLAGSCOMMON)
