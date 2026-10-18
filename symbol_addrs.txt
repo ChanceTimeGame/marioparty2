@@ -379,7 +379,7 @@ fontcolor = 0x800F8420; // type:s32 size:0x4
 pfWinData = 0x800F8FE8; // size:0x60
 strlinecnt = 0x800F9210; // type:u16 size:0x2
 saftyFrameF = 0x800FA18A; // type:u16 size:0x2
-saftyFrameColor = 0x800FA62C; // size:0xD
+saftyFrameColor = 0x800FA62C; // size:0xC
 empstrline = 0x800FC884; // type:u16 size:0x2
 emppfwin = 0x801026F4; // type:u16 size:0x2
 
