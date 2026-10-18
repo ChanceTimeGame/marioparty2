@@ -1,5 +1,34 @@
-#include "common.h"
+/* A5AC0: from Mario Party 1 src/lib/2.0I/gu/scale.c */
+#include "include_asm.h"
+/**************************************************************************
+ *									  *
+ *		 Copyright (C) 1994, Silicon Graphics, Inc.		  *
+ *									  *
+ *  These coded instructions, statements, and computer programs  contain  *
+ *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *
+ *  are protected by Federal copyright law.  They  may  not be disclosed  *
+ *  to  third  parties  or copied or duplicated in any form, in whole or  *
+ *  in part, without the prior written consent of Silicon Graphics, Inc.  *
+ *									  *
+ **************************************************************************/
 
-INCLUDE_ASM("asm/nonmatchings/A5AC0", func_800A4EC0_A5AC0);
+#include "guint.h"
 
-INCLUDE_ASM("asm/nonmatchings/A5AC0", func_800A4F20_A5B20);
+void guScaleF(float mf[4][4], float x, float y, float z)
+{
+	guMtxIdentF(mf);
+
+	mf[0][0] = x;
+	mf[1][1] = y;
+	mf[2][2] = z;
+	mf[3][3] = 1;
+}
+
+void guScale(Mtx *m, float x, float y, float z)
+{
+	Matrix	mf;
+
+	guScaleF(mf, x, y, z);
+
+	guMtxF2L(mf, m);
+}

@@ -1,3 +1,26 @@
-#include "common.h"
+/* 9E800: from Mario Party 1 src/lib/2.0I/io/epidma.c */
+#include "include_asm.h"
+#include "piint.h"
 
-INCLUDE_ASM("asm/nonmatchings/9E800", osEPiStartDma);
+s32 osEPiStartDma(OSPiHandle* pihandle, OSIoMesg* mb, s32 direction) {
+    s32 ret;
+
+    if (!__osPiDevMgr.active) {
+        return -1;
+    }
+    mb->piHandle = pihandle;
+
+    if (direction == OS_READ) {
+        mb->hdr.type = OS_MESG_TYPE_EDMAREAD;
+    } else {
+        mb->hdr.type = OS_MESG_TYPE_EDMAWRITE;
+    }
+
+    if (mb->hdr.pri == OS_MESG_PRI_HIGH) {
+        ret = osJamMesg(osPiGetCmdQueue(), (OSMesg)mb, OS_MESG_NOBLOCK);
+    } else {
+        ret = osSendMesg(osPiGetCmdQueue(), (OSMesg)mb, OS_MESG_NOBLOCK);
+    }
+
+    return ret;
+}

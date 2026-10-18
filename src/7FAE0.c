@@ -1,21 +1,6 @@
 /* The libultra audio functions this unit calls are still auto-named in MP2 (their units belong to
    the libultra batch); map libultra's names onto them until those units name them. */
-#define alHeapDBAlloc func_8009EBB0_9F7B0
-#define alEvtqNew func_8009E770_9F370
-#define alEvtqNextEvent func_8009E7EC_9F3EC
-#define alEvtqPostEvent func_8009E884_9F484
-#define alLink func_8009EB1C_9F71C
-#define alUnlink func_8009EB3C_9F73C
-#define alSynAddPlayer func_800A15C0_A21C0
-#define alGlobals D_800CDE50_CEA50
-#define alSynAllocVoice func_800A1750_A2350
-#define alSynStartVoice func_800A19B0_A25B0
 #define alSynSetPan func_80092C90_93890
-#define alSynSetVol func_800A1AE0_A26E0
-#define alSynSetPitch func_800A1A50_A2650
-#define alSynSetFXMix func_800A1BA0_A27A0
-#define alSynStopVoice func_800A1930_A2530
-#define alSynFreeVoice func_800A16B0_A22B0
 
 #include "common.h"
 #include "lib/2.0I/audio/sndp.h"

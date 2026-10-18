@@ -2,7 +2,7 @@
 
 /* bcopy and bzero are hand-written asm in libultra. The rest is libultra libc/string.c, from MP3
    src/2.0L/libc/string.c (-O2, signed char; MP1 src/lib/2.0I/libc/string.c has the same code):
-   func_800A55D0_A61D0 strchr, func_800A5610_A6210 strlen, func_800A5634_A6234 memcpy. */
+   func_800A55D0_A61D0 strchr, func_800A5610_A6210 strlen, memcpy memcpy. */
 
 INCLUDE_ASM("asm/nonmatchings/A5E10", bcopy);
 
@@ -27,7 +27,7 @@ unsigned int func_800A5610_A6210(const char* s) {
     return sc - s;
 }
 
-void* func_800A5634_A6234(void* s1, const void* s2, unsigned int n) {
+void* memcpy(void* s1, const void* s2, unsigned int n) {
     char* su1 = (char*)s1;
     const char* su2 = (const char*)s2;
     while (n > 0) {

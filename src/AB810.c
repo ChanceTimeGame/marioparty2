@@ -1,7 +1,6 @@
 /* libultra audio/reverb.c (2.0I), from MP1 src/972D0.c. alFxParamHdl, _loadOutputBuffer and
    _doModFunc stay in asm: their jump table / f64 constants are in the unsplit data+rodata asm. */
 #define alFxPull func_800AAC10_AB810
-#define alFxParam func_800AAF84_ABB84
 #define alFxParamHdl func_800AAF98_ABB98
 #define _loadOutputBuffer func_800AB188_ABD88
 #define _loadBuffer func_800AB3A0_ABFA0

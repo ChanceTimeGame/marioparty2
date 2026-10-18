@@ -1,3 +1,13 @@
-#include "common.h"
+/* A7670: from Mario Party 1 src/lib/2.0I/io/vigetnextframebuf.c */
+#include "include_asm.h"
+#include <PR/os_internal.h>
 
-INCLUDE_ASM("asm/nonmatchings/A7670", func_800A6A70_A7670);
+#include "viint.h"
+
+void *osViGetNextFramebuffer(void) {
+    register u32 saveMask = __osDisableInt();
+    void *framep = __osViNext->framep;
+    
+    __osRestoreInt(saveMask);
+    return framep;
+}

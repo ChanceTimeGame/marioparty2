@@ -1,9 +1,21 @@
-#include "common.h"
-
+/* 9E2C0: from Mario Party 1 src/lib/2.0I/os/sethwinterrupt.c */
+#include "include_asm.h"
 INCLUDE_ASM("asm/nonmatchings/9E2C0", osSetIntMask);
 
-INCLUDE_ASM("asm/nonmatchings/9E2C0", __osSetHWIntrRoutine);
+#include "PR/os_internal.h"
 
-INCLUDE_ASM("asm/nonmatchings/9E2C0", osCreatePiManager);
+#include "osint.h"
 
-INCLUDE_ASM("asm/nonmatchings/9E2C0", osEPiRawStartDma);
+struct __osHwInt {
+    s32 (*handler)(void);
+    void* stackEnd;
+};
+
+extern struct __osHwInt __osHwIntTable[];
+
+void __osSetHWIntrRoutine(OSHWIntr interrupt, s32 (*handler)(void), void* stackEnd) {
+    register u32 saveMask = __osDisableInt();
+    __osHwIntTable[interrupt].handler = handler;
+    __osHwIntTable[interrupt].stackEnd = stackEnd;
+    __osRestoreInt(saveMask);
+}

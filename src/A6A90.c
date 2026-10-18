@@ -1,3 +1,29 @@
-#include "common.h"
+/* A6A90: from Mario Party 1 src/lib/2.0I/io/sirawdma.c */
+#include "include_asm.h"
+#include "PR/os_internal.h"
 
-INCLUDE_ASM("asm/nonmatchings/A6A90", __osSiRawStartDma);
+#include "siint.h"
+
+s32 __osSiRawStartDma(s32 direction, void *dramAddr) {
+    if (IO_READ(SI_STATUS_REG) & (SI_STATUS_DMA_BUSY | SI_STATUS_RD_BUSY)) {
+        return -1;
+    }
+
+    if (direction == OS_WRITE) {
+        osWritebackDCache(dramAddr, 64);
+    }
+
+    IO_WRITE(SI_DRAM_ADDR_REG, osVirtualToPhysical(dramAddr));
+
+    if (direction == OS_READ) {
+        IO_WRITE(SI_PIF_ADDR_RD64B_REG, PIF_RAM_START);
+    } else {
+        IO_WRITE(SI_PIF_ADDR_WR64B_REG, PIF_RAM_START);
+    }
+
+    if (direction == OS_READ) {
+        osInvalDCache(dramAddr, 64);
+    }
+
+    return 0;
+}
