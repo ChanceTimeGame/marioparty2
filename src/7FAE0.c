@@ -215,4 +215,21 @@ void func_8007F52C_8012C(ALEventQueue* evtq, ALSoundState* state) {
     }
     osSetIntMask(mask);
 }
+/* MP1's func_80064AC4 without its divide-by-zero report. Compiles to the retail instructions except
+   that its double constant is in the main data blob. */
+#ifdef NON_MATCHING
+s32 func_8007F5D4_801D4(s32 i, f32 f) {
+    f64 rd;
+    s32 ri;
+
+    rd = i / f;
+    if (rd > 2147483647) {
+        ri = 2147483647;
+    } else {
+        ri = rd;
+    }
+    return ri;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/7FAE0", func_8007F5D4_801D4);
+#endif
