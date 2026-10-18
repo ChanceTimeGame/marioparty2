@@ -382,3 +382,8 @@ saftyFrameF = 0x800FA18A; // type:u16 size:0x2
 saftyFrameColor = 0x800FA62C; // size:0xD
 empstrline = 0x800FC884; // type:u16 size:0x2
 emppfwin = 0x801026F4; // type:u16 size:0x2
+
+// b1-G2: A70F0 (MP1 src/9AC50.c osYieldThread)
+__osRunQueue = 0x800CDEC8;
+__osRunningThread = 0x800CDED0;
+__osEnqueueAndYield = 0x8009D33C;
