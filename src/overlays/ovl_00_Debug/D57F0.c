@@ -54,7 +54,7 @@ typedef struct UnkDebug6 {
 
 extern char* D_801069B4_D99A4_Debug[];
 extern s16 gNumOfControllers;
-extern s16 D_800F9D24_FA924[];
+extern s16 ContBtn[];
 extern s16 D_800FD7FE;
 void func_80029714_2A314(s16, f32, f32, f32);              /* extern */
 void func_8002979C_2A39C(s16, f32, f32, f32);              /* extern */
@@ -597,7 +597,7 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
             D_80107400_DA3F0_Debug = 1;
             D_800FD7FE = 0;
             for (i = 0; i < 4; i++) {
-                if ((HuGetPadInserted(i) != 0) && (D_800F9D24_FA924[i] & 0x20)) {
+                if ((HuGetPadInserted(i) != 0) && (ContBtn[i] & 0x20)) {
                     D_800FD7FE = 1;
                     break;
                 }

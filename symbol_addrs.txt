@@ -382,3 +382,10 @@ saftyFrameF = 0x800FA18A; // type:u16 size:0x2
 saftyFrameColor = 0x800FA62C; // size:0xD
 empstrline = 0x800FC884; // type:u16 size:0x2
 emppfwin = 0x801026F4; // type:u16 size:0x2
+
+// 17EF0 (MP1 src/engine/data.c): controller state
+ContDStkTrg = 0x800F6098; // size:0x8
+ContStkX = 0x800F870C; // size:0x4
+ContBtn = 0x800F9D24; // size:0x8
+ContStkY = 0x800FDC94; // size:0x4
+ContDStk = 0x80101504; // size:0x8

@@ -47,7 +47,7 @@ extern s16 D_800CC7B4_CD3B4[8];
 extern s16 D_800CC7BC_CD3BC[8];
 extern u16 D_800CC7C4_CD3C4[22][1];
 extern s16 *D_800E1CF0_E28F0;
-extern u16 D_800F6098_F6C98[]; // unknown size
+extern u16 ContDStkTrg[]; // unknown size
 extern u16 D_8010163C_10223C[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
@@ -420,16 +420,16 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
         }
         HuPrcVSleep();
         var_a0_2 = -1;
-        if (D_800F6098_F6C98[arg0] & 0x800) {
+        if (ContDStkTrg[arg0] & 0x800) {
             var_a0_2 = 0;
         }
-        if (D_800F6098_F6C98[arg0] & 0x400) {
+        if (ContDStkTrg[arg0] & 0x400) {
             var_a0_2 = 1;
         }
-        if (D_800F6098_F6C98[arg0] & 0x200) {
+        if (ContDStkTrg[arg0] & 0x200) {
             var_a0_2 = 2;
         }
-        if (D_800F6098_F6C98[arg0] & 0x100) {
+        if (ContDStkTrg[arg0] & 0x100) {
             var_a0_2 = 3;
         }
         if (var_a0_2 != -1) {
@@ -462,7 +462,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                     sp3C = 0x51C;
                     func_8005B518_5C118(D_800E1CF0_E28F0[4], sp3C);
                 }
-                if (D_800F6098_F6C98[arg0] & 0x200) {
+                if (ContDStkTrg[arg0] & 0x200) {
                     if (i != 4 || var_s1 == 0) {
                         i = func_8005C78C_5D38C(tempBoardPlayer, -1);
                         if (i == 4) {
@@ -473,7 +473,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                     }
                     func_8005DEB0_5EAB0(sp1E, var_s1);
                     func_8007959C_7A19C(1);
-                } else if (D_800F6098_F6C98[arg0] & 0x100) {
+                } else if (ContDStkTrg[arg0] & 0x100) {
                     if (i != 4 || var_s1 == 2) {
                         i = func_8005C78C_5D38C(tempBoardPlayer, 1);
                         if (i == 4) {
@@ -500,13 +500,13 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                         SprAttrSet(boardPlayer3->unk_0A, sp1E + 4, 0x8000U);
                     }
                 }
-                var_v0 = D_800F6098_F6C98[arg0];
+                var_v0 = ContDStkTrg[arg0];
                 var_v0 &= 0x8000;
                 if (var_v0) {
                     goto dummy;
                 }
 
-                var_v0 = D_800F6098_F6C98[arg0];
+                var_v0 = ContDStkTrg[arg0];
                 var_v0 &= 0x4000;
                 if (var_v0) {
                     func_8007959C_7A19C(4);
