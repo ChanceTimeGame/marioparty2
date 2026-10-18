@@ -94,8 +94,8 @@ __osSpGetStatus = 0x800ADDB0; //rom:0xAE9B0
 __osSpSetStatus = 0x800ADDC0; //rom:0xAE9C0
 __osSpSetPc = 0x800ADDD0; //rom:0xAE9D0
 __osSpRawStartDma = 0x800ADE00; //rom:0xAEA00
-__osSpRawReadIo = 0x800ADE90; //rom:0xAEA90
-__osSpRawWriteIo = 0x800ADEE0; //rom:0xAEAE0
+__osSiRawReadIo = 0x800ADE90; //rom:0xAEA90
+__osSiRawWriteIo = 0x800ADEE0; //rom:0xAEAE0
 __osContAddressCrc = 0x800ADF30; //rom:0xAEB30
 __osContDataCrc = 0x800ADF9C; //rom:0xAEB9C
 __osGetCause = 0x800ADD40; //rom:0xAE940
@@ -387,3 +387,11 @@ emppfwin = 0x801026F4; // type:u16 size:0x2
 __osRunQueue = 0x800CDEC8;
 __osRunningThread = 0x800CDED0;
 __osEnqueueAndYield = 0x8009D33C;
+
+// b1-G2: AEA90/AEAE0/B1150/AEB30/AECD0 (MP1 src/9AB60.c 9ABB0.c 9AD00.c 99AA0.c 95CE0.c)
+__osSiDeviceBusy = 0x800B0550;
+bzero = 0x800A5530;
+osTvType = 0x80000300;
+__osViCurr = 0x800CF420;
+__osViNext = 0x800CF424;
+D_800CF3C0_CFFC0 = 0x800CF3C0; // size:0x60
