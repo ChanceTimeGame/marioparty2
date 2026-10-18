@@ -123,6 +123,8 @@ export VR4300MUL := OFF
 build/src/1BD70.c.o: export VR4300MUL := ON
 # 437E0.c (MP1 3DEB0.c): nop between back-to-back mul.s in func_80042F7C_43B7C
 build/src/437E0.c.o: export VR4300MUL := ON
+# 7FAE0.c is libultra's audio/sndplayer.c (MP1 64FD0.c): the lib audio headers, as MP1 builds it
+build/src/7FAE0.c.o: CPPFLAGS += -I include/PR -DNDEBUG -D_MIPS_SZLONG=32
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
