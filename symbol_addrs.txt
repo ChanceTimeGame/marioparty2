@@ -130,9 +130,9 @@ osMotorInit = 0x800A7564; //rom:0xA8164
 osEepromRead = 0x800A8030; //rom:0xA8C30
 __osSetGlobalIntMask = 0x800A8250; //rom:0xA8E50
 __osResetGlobalIntMask = 0x800A8290; //rom:0xA8E90
-osPiRawStartDma = 0x800A82E0; //rom:0xA8EE0
+__osPiRawStartDma = 0x800A82E0; //rom:0xA8EE0
 osPiGetCmdQueue = 0x800A83B0; //rom:0xA8FB0
-osEPiRawReadIo = 0x800A83D0; //rom:0xA8FD0
+__osEPiRawReadIo = 0x800A83D0; //rom:0xA8FD0
 
 GetEepType = 0x8001ACD0; // rom:0x1B8D0
 GetSaveFileChecksum = 0x8001B114; //rom:0x1BD14
@@ -395,3 +395,13 @@ osTvType = 0x80000300;
 __osViCurr = 0x800CF420;
 __osViNext = 0x800CF424;
 D_800CF3C0_CFFC0 = 0x800CF3C0; // size:0x60
+
+// b1-G2: A8EE0/A9140 (MP1 src/lib/2.0I/io/pirawdma.c 95F40.c 99F50.c 9A0C0.c)
+__osEPiRawWriteIo = 0x800A8540;
+__osPiDevMgr = 0x800CDDF0; // size:0x1C
+__osCurrentHandle = 0x800CDE10; // size:0x8
+osRomBase = 0x80000308;
+
+// b1-G2: AF0D0 (MP1 src/9A230.c __osPfsGetStatus)
+__osContLastCmd = 0x800FD830; // type:u8 size:0x1
+__osPfsPifRam = 0x80101680; // size:0x40

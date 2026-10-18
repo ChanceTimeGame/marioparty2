@@ -1,3 +1,13 @@
-#include "common.h"
+#include "PR/os_internal.h"
+#include "PR/piint.h"
 
-INCLUDE_ASM("asm/nonmatchings/A9140", func_800A8540_A9140);
+/* __osEPiRawWriteIo: libultra io/epirawwrite.c, from MP1 src/9A0C0.c. */
+
+s32 __osEPiRawWriteIo(OSPiHandle* pihandle, u32 devAddr, u32 data) {
+    register u32 stat;
+    register u32 domain;
+
+    EPI_SYNC(pihandle, stat, domain);
+    IO_WRITE(pihandle->baseAddress | devAddr, data);
+    return 0;
+}
