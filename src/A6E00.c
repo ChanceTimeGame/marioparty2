@@ -1,3 +1,26 @@
-#include "common.h"
+/* A6E00: from Mario Party 1 src/lib/2.0I/os/setthreadpri.c */
+#include "include_asm.h"
+#include "PR/os_internal.h"
 
-INCLUDE_ASM("asm/nonmatchings/A6E00", osSetThreadPri);
+#include "osint.h"
+
+void osSetThreadPri(OSThread* t, OSPri pri) {
+    register u32 saveMask;
+
+    saveMask = __osDisableInt();
+    if (t == NULL) {
+        t = __osRunningThread;
+    }
+    if (t->priority != pri) {
+        t->priority = pri;
+        if (t != __osRunningThread && t->state != OS_STATE_STOPPED) {
+            __osDequeueThread(t->queue, t);
+            __osEnqueueThread(t->queue, t);
+        }
+        if (__osRunningThread->priority < __osRunQueue->priority) {
+            __osRunningThread->state = OS_STATE_RUNNABLE;
+            __osEnqueueAndYield(&__osRunQueue);
+        }
+    }
+    __osRestoreInt(saveMask);
+}

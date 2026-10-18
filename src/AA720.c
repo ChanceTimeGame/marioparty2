@@ -2,7 +2,7 @@
 
 INCLUDE_ASM("asm/nonmatchings/AA720", func_800A9B20_AA720);
 
-INCLUDE_ASM("asm/nonmatchings/AA720", func_800AA020_AAC20);
+INCLUDE_ASM("asm/nonmatchings/AA720", alEnvmixerParam);
 
 INCLUDE_ASM("asm/nonmatchings/AA720", func_800AA0F4_AACF4);
 

@@ -1,11 +1,33 @@
-#include "common.h"
+/* A0470: from Mario Party 1 src/lib/2.0I/audio/seqpsetbank.c */
+#include "include_asm.h"
+/*====================================================================
+ * seqpsetbank.c
+ *
+ * Copyright 1995, Silicon Graphics, Inc.
+ * All Rights Reserved.
+ *
+ * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Silicon Graphics,
+ * Inc.; the contents of this file may not be disclosed to third
+ * parties, copied or duplicated in any form, in whole or in part,
+ * without the prior written permission of Silicon Graphics, Inc.
+ *
+ * RESTRICTED RIGHTS LEGEND:
+ * Use, duplication or disclosure by the Government is subject to
+ * restrictions as set forth in subdivision (c)(1)(ii) of the Rights
+ * in Technical Data and Computer Software clause at DFARS
+ * 252.227-7013, and/or in similar or successor clauses in the FAR,
+ * DOD or NASA FAR Supplement. Unpublished - rights reserved under the
+ * Copyright Laws of the United States.
+ *====================================================================*/
 
-INCLUDE_ASM("asm/nonmatchings/A0470", func_8009F870_A0470);
+#include <libaudio.h>
 
-INCLUDE_ASM("asm/nonmatchings/A0470", func_8009F8A0_A04A0);
+void alSeqpSetBank(ALSeqPlayer *seqp, ALBank *b)
+{
+    ALEvent evt;
 
-INCLUDE_ASM("asm/nonmatchings/A0470", func_8009F8D0_A04D0);
+    evt.type = AL_SEQP_BANK_EVT;
+    evt.msg.spbank.bank = b;
 
-INCLUDE_ASM("asm/nonmatchings/A0470", func_8009F920_A0520);
-
-INCLUDE_ASM("asm/nonmatchings/A0470", func_8009F950_A0550);
+    alEvtqPostEvent(&seqp->evtq, &evt, 0);
+}

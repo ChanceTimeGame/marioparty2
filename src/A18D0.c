@@ -1,3 +1,38 @@
-#include "common.h"
+/* A18D0: from Mario Party 1 src/lib/2.0I/audio/sndpdeallocate.c */
+#include "include_asm.h"
+/*====================================================================
+ * sndpdeallocate.c
+ *
+ * Copyright 1995, Silicon Graphics, Inc.
+ * All Rights Reserved.
+ *
+ * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Silicon Graphics,
+ * Inc.; the contents of this file may not be disclosed to third
+ * parties, copied or duplicated in any form, in whole or in part,
+ * without the prior written permission of Silicon Graphics, Inc.
+ *
+ * RESTRICTED RIGHTS LEGEND:
+ * Use, duplication or disclosure by the Government is subject to
+ * restrictions as set forth in subdivision (c)(1)(ii) of the Rights
+ * in Technical Data and Computer Software clause at DFARS
+ * 252.227-7013, and/or in similar or successor clauses in the FAR,
+ * DOD or NASA FAR Supplement. Unpublished - rights reserved under the
+ * Copyright Laws of the United States.
+ *====================================================================*/
 
-INCLUDE_ASM("asm/nonmatchings/A18D0", func_800A0CD0_A18D0);
+#include "sndp.h"
+
+#include <os_internal.h>
+
+#include <ultraerror.h>
+
+void alSndpDeallocate(ALSndPlayer *sndp, ALSndId id)
+{
+    ALSoundState  *sState = sndp->sndState;
+
+    ALFailIf((sState + id)->state != AL_STOPPED, ERR_ALSNDPDEALLOCATE);
+
+    sState[id].sound = 0;
+    if (sndp->target == id) /* if we are deleting the target sound */
+        sndp->target = -1;      
+}

@@ -2,7 +2,7 @@
 
 INCLUDE_ASM("asm/nonmatchings/AB810", func_800AAC10_AB810);
 
-INCLUDE_ASM("asm/nonmatchings/AB810", func_800AAF84_ABB84);
+INCLUDE_ASM("asm/nonmatchings/AB810", alFxParam);
 
 INCLUDE_ASM("asm/nonmatchings/AB810", func_800AAF98_ABB98);
 

@@ -1,9 +1,100 @@
-#include "common.h"
+/* A8C30: from Mario Party 1 src/lib/2.0I/io/conteepread.c */
+#include "include_asm.h"
+#include "macros.h"
 
-INCLUDE_ASM("asm/nonmatchings/A8C30", osEepromRead);
+#include <rcp.h>
 
-INCLUDE_ASM("asm/nonmatchings/A8C30", func_800A81C8_A8DC8);
+#include "controller.h"
 
-INCLUDE_ASM("asm/nonmatchings/A8C30", __osSetGlobalIntMask);
+#include "siint.h"
 
-INCLUDE_ASM("asm/nonmatchings/A8C30", __osResetGlobalIntMask);
+static void func_800A81C8_A8DC8(u8 address);
+
+extern OSPifRam __osEepPifRam ALIGNED(16);
+
+s32 osEepromRead(OSMesgQueue *mq, u8 address, u8 *buffer) {
+	s32 ret;
+	int i;
+	u16 type;
+	u8 *ptr;
+	OSContStatus sdata;
+	__OSContEepromFormat eepromformat;
+
+	ret = 0;
+	i = 0;
+	ptr = (u8 *)&__osEepPifRam.ramarray;
+	__osSiGetAccess();
+	ret = __osEepStatus(mq, &sdata);
+	type = sdata.type & (CONT_EEPROM | CONT_EEP16K);
+
+	if (ret != 0) {
+		__osSiRelAccess();
+		return ret;
+	}
+
+	switch (type) {
+		case CONT_EEPROM:
+			if (address >= EEPROM_MAXBLOCKS) {
+				ret = -1;
+			}
+			break;
+		case CONT_EEPROM | CONT_EEP16K:
+         //    __osEepromRead16K = 1;
+			// if (address >= EEP16K_MAXBLOCKS) {
+			// 	//not technically possible
+			// 	ret = CONT_RANGE_ERROR;
+			// }
+			break;
+		default:
+			ret = CONT_NO_RESPONSE_ERROR;
+			break;
+	}
+
+    if (ret != 0) {
+        __osSiRelAccess();
+        return ret;
+    }
+	while (sdata.status & CONT_EEPROM_BUSY) {
+		__osEepStatus(mq, &sdata);
+	}
+	func_800A81C8_A8DC8(address);
+	ret = __osSiRawStartDma(OS_WRITE, &__osEepPifRam); //send command to pif
+	osRecvMesg(mq, NULL, OS_MESG_BLOCK);
+	ret = __osSiRawStartDma(OS_READ, &__osEepPifRam); //recv response
+	__osContLastCmd = CONT_CMD_READ_EEPROM;
+	osRecvMesg(mq, NULL, OS_MESG_BLOCK);
+	for (i = 0; i < 4; i++) { //skip the first 4 bytes
+		ptr++;
+	}
+	eepromformat = *(__OSContEepromFormat *)ptr;
+
+	ret = CHNL_ERR(eepromformat);
+
+	if (ret == 0)
+		for (i = 0; i < ARRLEN(eepromformat.data); i++)
+			*buffer++ = eepromformat.data[i];
+
+	__osSiRelAccess();
+	return ret;
+}
+
+static void func_800A81C8_A8DC8(u8 address) {
+	u8 *ptr = (u8 *)&__osEepPifRam.ramarray;
+	__OSContEepromFormat eepromformat;
+	int i;
+
+	__osEepPifRam.pifstatus = CONT_CMD_EXE;
+
+	eepromformat.txsize = CONT_CMD_READ_EEPROM_TX;
+	eepromformat.rxsize = CONT_CMD_READ_EEPROM_RX;
+	eepromformat.cmd = CONT_CMD_READ_EEPROM;
+	eepromformat.address = address;
+
+	for (i = 0; i < MAXCONTROLLERS; i++) {
+		*ptr++ = 0;
+	}
+	
+	*(__OSContEepromFormat *)(ptr) = eepromformat;
+	ptr += sizeof(__OSContEepromFormat);
+	ptr[0] = CONT_CMD_END;
+}

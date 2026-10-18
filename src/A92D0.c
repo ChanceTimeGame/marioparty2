@@ -2,16 +2,16 @@
 
 INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A86D0_A92D0);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8774_A9374);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alFxNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8C0C_A980C);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alEnvmixerNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8CC4_A98C4);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alLoadNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8D74_A9974);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alResampleNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8E00_A9A00);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alAuxBusNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8E5C_A9A5C);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alMainBusNew);
 
-INCLUDE_ASM("asm/nonmatchings/A92D0", func_800A8EB8_A9AB8);
+INCLUDE_ASM("asm/nonmatchings/A92D0", alSaveNew);

@@ -1,3 +1,34 @@
-#include "common.h"
+/* 9D6D0: from Mario Party 1 src/lib/2.0I/io/conteepprobe.c */
+#include "include_asm.h"
+#include "controller.h"
 
-INCLUDE_ASM("asm/nonmatchings/9D6D0", osEepromProbe);
+#include "siint.h"
+
+s32 osEepromProbe(OSMesgQueue *mq) {
+    s32 ret = 0;
+    u16 type;
+    OSContStatus sdata;
+
+    __osSiGetAccess();
+    ret = __osEepStatus(mq, &sdata);
+    type = sdata.type & (CONT_EEPROM | CONT_EEP16K);
+
+    if (ret != 0) {
+        ret = 0;
+    } else {
+        switch (type) {
+            case CONT_EEPROM:
+                ret = EEPROM_TYPE_4K;
+                break;
+            case CONT_EEPROM | CONT_EEP16K:
+                ret = EEPROM_TYPE_16K;
+                break;
+            default:
+                ret = 0;
+                break;
+        }
+    }
+
+    __osSiRelAccess();
+    return ret;
+}

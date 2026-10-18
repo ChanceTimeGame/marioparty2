@@ -1,3 +1,9 @@
-#include "common.h"
+/* A8880: from Mario Party 1 src/lib/2.0I/os/afterprenmi.c */
+#include "include_asm.h"
+#include "PR/os_internal.h"
 
-INCLUDE_ASM("asm/nonmatchings/A8880", func_800A7C80_A8880);
+#include "osint.h"
+
+s32 osAfterPreNMI(void) {
+    return __osSpSetPc(0);
+}

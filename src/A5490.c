@@ -1,3 +1,37 @@
-#include "common.h"
+/* A5490: from Mario Party 1 src/lib/2.0I/gu/random.c */
+#include "include_asm.h"
+/**************************************************************************
+ *									  *
+ *		 Copyright (C) 1995, Silicon Graphics, Inc.		  *
+ *									  *
+ *  These coded instructions, statements, and computer programs  contain  *
+ *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *
+ *  are protected by Federal copyright law.  They  may  not be disclosed  *
+ *  to  third  parties  or copied or duplicated in any form, in whole or  *
+ *  in part, without the prior written consent of Silicon Graphics, Inc.  *
+ *									  *
+ **************************************************************************/
 
-INCLUDE_ASM("asm/nonmatchings/A5490", func_800A4890_A5490);
+#include "guint.h"
+
+/*
+ *  Return a pseudorandom 32 bit number
+ *  try the RAND macro too
+ *   
+ */
+extern unsigned int xseed;
+
+int guRandom(void)
+{
+    // static unsigned int xseed = 174823885; TODO: Add this to data section?
+    unsigned int x;
+
+    x = (xseed<<2) + 2;
+
+    x *= (x+1);
+    x = x >> 2;
+
+    xseed = x;
+
+    return( x );
+}
