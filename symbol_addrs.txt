@@ -389,3 +389,12 @@ ContStkX = 0x800F870C; // size:0x4
 ContBtn = 0x800F9D24; // size:0x8
 ContStkY = 0x800FDC94; // size:0x4
 ContDStk = 0x80101504; // size:0x8
+
+// 187C0 (MP3 src/decode.c, MP1 src/engine/decode.c): decoders
+HuDecodeNone = 0x80017BC0; // rom:0x187C0
+HuDecodeLZ = 0x80017C5C; // rom:0x1885C
+HuDecodeSlide = 0x80017ECC; // rom:0x18ACC
+HuDecodeFslide = 0x80018378; // rom:0x18F78
+HuDecodeRLE = 0x800187F4; // rom:0x193F4
+readBuffer = 0x800D81F0; // size:0x400
+textBuffer = 0x800D85F0; // size:0x400

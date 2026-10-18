@@ -1,13 +1,426 @@
 #include "common.h"
+#include "decode.h"
 
-INCLUDE_ASM("asm/nonmatchings/187C0", func_80017BC0_187C0);
+/* Archive decompression (MP3 src/decode.c, MP1 src/engine/decode.c); names follow MP3. */
 
-INCLUDE_ASM("asm/nonmatchings/187C0", func_80017C5C_1885C);
+extern u8 readBuffer[1024]; // src copy
+extern u8 textBuffer[1024]; // window
 
-INCLUDE_ASM("asm/nonmatchings/187C0", func_80017ECC_18ACC);
+s32 dmaRead(u8* src, u8* dest, s32 size);
+void func_800A5530_A6130(void*, s32); // bzero
 
-INCLUDE_ASM("asm/nonmatchings/187C0", func_80018378_18F78);
+void HuDecodeNone(DecodeStruct *decode) {
+    s32 copyLen;
 
-INCLUDE_ASM("asm/nonmatchings/187C0", func_800187F4_193F4);
+    while (decode->len) {
+        if (decode->len < 1024) {
+            copyLen = (decode->len + 1) & ~1;
+            decode->len = 0;
+        } else {
+            copyLen = 1024;
+            decode->len -= 1024;
+        }
+        dmaRead(decode->src, decode->dest, copyLen);
+        decode->src += copyLen;
+        decode->dest += copyLen;
+    }
+}
+
+void HuDecodeLZ(DecodeStruct *decode) {
+    u16 flag = 0;
+    u16 windowPos = 958;
+    s32 winTemp;
+    s32 i;
+    s32 byte1;
+    s32 len;
+    s32 copyVal;
+
+    func_800A5530_A6130(&textBuffer, 1024);
+
+    while (decode->len) {
+        flag = flag >> 1;
+        if ((flag & 0x100) == 0) {
+            if (decode->chunkLen >= 1024) {
+                dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                decode->src += 1024;
+                decode->chunkLen = 0;
+            }
+            byte1 = readBuffer[decode->chunkLen++];
+
+            flag = 0xFF00 | (byte1 & 0xFF);
+        }
+        if ((flag & 0x1)) {
+            u32 read_val;
+            if (decode->chunkLen >= 1024) {
+                dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                decode->src += 1024;
+                decode->chunkLen = 0;
+            }
+            read_val = readBuffer[decode->chunkLen++];
+            textBuffer[windowPos++] = *(decode->dest++) = read_val;
+            windowPos &= 0x3FF;
+            decode->len--;
+        } else {
+            if (decode->chunkLen >= 1024) {
+                dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                decode->src += 1024;
+                decode->chunkLen = 0;
+            }
+            byte1 = readBuffer[decode->chunkLen++];
+
+            if (decode->chunkLen >= 1024) {
+                dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                decode->src += 1024;
+                decode->chunkLen = 0;
+            }
+            len = readBuffer[decode->chunkLen++];
+
+            byte1 = byte1 | ((len & 0xC0) << 2);
+            len = 3 + (len & 0x3F);
+
+            for (i = 0; i < len; i++) {
+                {
+                    winTemp = windowPos++;
+                    *(decode->dest++) = (copyVal = textBuffer[(byte1 + i) & 0x3FF]);
+                    textBuffer[winTemp] = copyVal;
+                    windowPos &= 0x3FF;
+                }
+            }
+            decode->len -= i;
+        }
+    }
+}
+
+void HuDecodeSlide(DecodeStruct *decode) {
+    s32 codeWordBitsRemaining;
+    s32 curCodeWord;
+    u8 *destOrig;
+
+    // Advance past the first 4 bytes.
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+
+    codeWordBitsRemaining = 0;
+    curCodeWord = 0;
+    destOrig = decode->dest;
+
+    while (decode->len != 0) {
+        // Read a new code word.
+        if (codeWordBitsRemaining == 0) {
+            {
+                u32 chunkByte1, chunkByte2, chunkByte3, chunkByte4;
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte1 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte2 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte3 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte4 = readBuffer[decode->chunkLen++];
+
+                curCodeWord = (chunkByte1 << 24) + (chunkByte2 << 16) + (chunkByte3 << 8) + chunkByte4;
+                codeWordBitsRemaining = 32;
+            }
+        }
+
+        if (curCodeWord < 0) {
+            {
+                u32 nextByte;
+
+                // Copy the next byte from the source to the destination.
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                nextByte = readBuffer[decode->chunkLen++];
+
+                *(decode->dest++) = nextByte;
+                decode->len--;
+            }
+        } else {
+            {
+                u32 back, back2, count;
+                u16 back3;
+                u8 *ptr;
+
+                // Interpret the next two bytes as a distance to travel backwards and a
+                // a length to read.
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                back = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                back2 = readBuffer[decode->chunkLen++];
+
+                back3 = (back << 8) + back2;
+                count = (back << 8) >> 12;
+                back3 &= 0xFFF;
+                ptr = decode->dest - back3;
+                if (count == 0) {
+                    if (decode->chunkLen >= 1024) {
+                        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                        decode->src += 1024;
+                        decode->chunkLen = 0;
+                    }
+
+                    count = 0x12;
+                    count += readBuffer[decode->chunkLen++];
+                } else {
+                    count += 2;
+                }
+                decode->len -= count;
+
+                while (count != 0) {
+                    if (ptr - 1 < destOrig) {
+                        *(decode->dest++) = 0;
+                    } else {
+                        *(decode->dest++) = *(ptr - 1);
+                    }
+                    count--;
+                    ptr++;
+                }
+            }
+        }
+
+        curCodeWord <<= 1;
+        codeWordBitsRemaining--;
+    }
+}
+
+void HuDecodeFslide(DecodeStruct *decode) {
+    s32 codeWordBitsRemaining;
+    s32 curCodeWord;
+
+    // Advance past the first 4 bytes.
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+    if (decode->chunkLen >= 1024) {
+        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+        decode->src += 1024;
+        decode->chunkLen = 0;
+    }
+    decode->chunkLen++;
+
+    codeWordBitsRemaining = 0;
+    curCodeWord = 0;
+
+    while (decode->len != 0) {
+        // Read a new code word.
+        if (codeWordBitsRemaining == 0) {
+            {
+                u32 chunkByte1, chunkByte2, chunkByte3, chunkByte4;
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte1 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte2 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte3 = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                chunkByte4 = readBuffer[decode->chunkLen++];
+
+                curCodeWord = (chunkByte1 << 24) + (chunkByte2 << 16) + (chunkByte3 << 8) + chunkByte4;
+                codeWordBitsRemaining = 32;
+            }
+        }
+
+        if (curCodeWord < 0) {
+            {
+                u32 nextByte;
+
+                // Copy the next byte from the source to the destination.
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                nextByte = readBuffer[decode->chunkLen++];
+
+                *(decode->dest++) = nextByte;
+                decode->len--;
+            }
+        } else {
+            {
+                u32 back, back2, count;
+                u16 back3;
+                u8 *ptr;
+
+                // Interpret the next two bytes as a distance to travel backwards and a
+                // a length to read.
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                back = readBuffer[decode->chunkLen++];
+
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+                back2 = readBuffer[decode->chunkLen++];
+
+                back3 = (back << 8) + back2;
+                count = (back << 8) >> 12;
+                back3 &= 0xFFF;
+                ptr = decode->dest - back3;
+                if (count == 0) {
+                    if (decode->chunkLen >= 1024) {
+                        dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                        decode->src += 1024;
+                        decode->chunkLen = 0;
+                    }
+
+                    count = 0x12;
+                    count += readBuffer[decode->chunkLen++];
+                } else {
+                    count += 2;
+                }
+                decode->len -= count;
+
+                while (count != 0) {
+                    *(decode->dest++) = *(ptr - 1);
+                    count--;
+                    ptr++;
+                }
+            }
+        }
+
+        curCodeWord <<= 1;
+        codeWordBitsRemaining--;
+    }
+}
+
+void HuDecodeRLE(DecodeStruct *decode) {
+    s32 curCodeByte;
+    s32 i;
+    s32 byteValue;
+
+    while (decode->len != 0) {
+        if (decode->chunkLen >= 1024) {
+            dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+            decode->src += 1024;
+            decode->chunkLen = 0;
+        }
+
+        curCodeByte = readBuffer[decode->chunkLen++];
+        if (curCodeByte < 0x80) {
+            // No sign bit means we repeat the next byte n times.
+            if (decode->chunkLen >= 1024) {
+                dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                decode->src += 1024;
+                decode->chunkLen = 0;
+            }
+
+            byteValue = readBuffer[decode->chunkLen++];
+
+            for (i = 0; i < curCodeByte; i++) {
+                *(decode->dest++) = byteValue;
+            }
+        } else {
+            // Having the sign bit means we read the next n bytes from the input.
+            curCodeByte = curCodeByte - 0x80;
+
+            for (i = 0; i < curCodeByte; i++) {
+                if (decode->chunkLen >= 1024) {
+                    dmaRead(decode->src, readBuffer, sizeof(readBuffer));
+                    decode->src += 1024;
+                    decode->chunkLen = 0;
+                }
+
+                byteValue = readBuffer[decode->chunkLen++];
+                *(decode->dest++) = byteValue;
+            }
+        }
+
+        decode->len -= curCodeByte;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/187C0", DecodeData);
