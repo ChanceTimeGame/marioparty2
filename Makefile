@@ -91,7 +91,7 @@ build/src/overlays/ovl_00_Debug/D57F0.c : NOP_FIX = -Wa,--vr4300mul-off
 
 # b1-G2: libultra units copied from MP1's SDK lib units (MP1 Makefile SDK_LIB_UNITS / src/lib):
 # -O3 -funsigned-char with the lib headers, as MP1 builds them.
-G2_SDK_LIB_UNITS := build/src/A70F0.c.o build/src/AEA90.c.o build/src/AEAE0.c.o build/src/B1150.c.o build/src/AEB30.c.o build/src/AECD0.c.o build/src/A8EE0.c.o build/src/A9140.c.o build/src/AF0D0.c.o build/src/AF2E0.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB3D0.c.o
+G2_SDK_LIB_UNITS := build/src/A70F0.c.o build/src/AEA90.c.o build/src/AEAE0.c.o build/src/B1150.c.o build/src/AEB30.c.o build/src/AECD0.c.o build/src/A8EE0.c.o build/src/A9140.c.o build/src/AF0D0.c.o build/src/AF2E0.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB3D0.c.o build/src/AB810.c.o
 $(G2_SDK_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 # KMC as: the libultra objects keep the vr4300 mul fix on (MP1 builds them without --vr4300mul-off)
 $(G2_SDK_LIB_UNITS): export VR4300MUL = ON
