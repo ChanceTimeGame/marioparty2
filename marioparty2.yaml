@@ -411,6 +411,8 @@ segments:
       - [0xD52D0, .data, AB560]
       - [0xD5300, .data, AB810]
       - [0xD5350, data]
+      - [0xD53C0, .data, ADEF0]
+      - [0xD5538, pad]
       - [0xD5540, .data, AFD70]
       - [0xD5570, data]
       - {0xD57F0, type: bss, vram: 0x800D4BF0, name: globalBSS }
