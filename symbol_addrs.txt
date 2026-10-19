@@ -638,3 +638,7 @@ tmp_task = 0x800F4CE0; // size:0x40
 
 // b2-A 169B0: MP1 src/138F0.c audio manager
 D_800D7908_D8508 = 0x800D7908; // size:0x288
+
+// b2-A 1D0B0: MP3 src/graphics.c swap chain
+D_800DEDC0_DF9C0 = 0x800DEDC0; // size:0x48
+D_800F8F30_F9B30 = 0x800F8F30; // size:0x10
