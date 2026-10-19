@@ -28,7 +28,7 @@ void CameraScissorSet(s16, void*);
 s16 SprCreate(u16, u16);
 void SprKill(s16);
 void SprAnimKill(s16);
-void func_8005E6E4_5F2E4(UnkList53* p);
+void HuMemDirectFree(UnkList53* p);
 
 void func_8005E310_5EF10(void) {
     D_800CC980_CD580.x = 16.0f;
@@ -89,7 +89,7 @@ void func_8005E570_5F170(void) {
 
 void func_8005E584_5F184(void) {
     while (D_800E1D10_E2910 != NULL) {
-        func_8005E6E4_5F2E4(D_800E1D10_E2910);
+        HuMemDirectFree(D_800E1D10_E2910);
     }
 }
 
@@ -125,7 +125,7 @@ void* func_8005E688_5F288(u16 a, u16 b) {
     return p;
 }
 
-void func_8005E6E4_5F2E4(UnkList53* p) {
+void HuMemDirectFree(UnkList53* p) {
     s32 i;
 
     if (p->next != NULL) {

@@ -46,7 +46,7 @@ INCLUDE_ASM("asm/nonmatchings/43E90", MBMotionSet);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", MBMotionShiftSet);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_800445B8_451B8);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBMotionCheck);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80044620_45220);
 

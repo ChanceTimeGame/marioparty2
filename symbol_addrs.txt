@@ -708,3 +708,18 @@ MBDlgWinExec = 0x8005600C; // rom:0x56C0C
 MBDlgWinCreate = 0x800560A4; // rom:0x56CA4
 MBDlgWinClose = 0x80056144; // rom:0x56D44
 MBDlgWinInsertCreateY = 0x80056188; // rom:0x56D88
+
+// b2-C: 58080 (MP1 src/4E530.c/51200.c/53680.c, MP3 ovl_80 101840.c/105D50.c)
+pfStrBuf = 0x80101080;
+LoadFormFile = 0x80018A98; // rom:0x19698
+MBMotionCheck = 0x800445B8; // rom:0x451B8
+ShowTextWindow = 0x80057534; // rom:0x58134
+MBPauseMesNumGet = 0x8005ADB0; // rom:0x5B9B0
+MBPauseDlgMesSet = 0x8005B518; // rom:0x5C118
+MBPauseQuitMesCreate = 0x8005B814; // rom:0x5C414
+PlayerIsCurrent = 0x8005DC84; // rom:0x5E884
+PlayerIsCPU = 0x8005DCA0; // rom:0x5E8A0
+AdjustPlayerCoins = 0x8005DCC8; // rom:0x5E8C8
+MBPlayerMotionSet = 0x8005DD68; // rom:0x5E968
+MBPlayerModelCreate = 0x8005DFE8; // rom:0x5EBE8
+HuMemDirectFree = 0x8005E6E4; // rom:0x5F2E4
