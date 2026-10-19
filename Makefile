@@ -206,3 +206,13 @@ $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # pad them to 16 and shift everything after
 NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+
+# b2-E: libultra units from MP1's SDK lib / src/lib units, built as MP1 builds them (-O3, unsigned char, lib headers)
+B2E_LIB_UNITS := build/src/9EA20.c.o
+$(B2E_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+$(B2E_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
+$(B2E_LIB_UNITS): export VR4300MUL := ON
+# b2-E: units whose .rodata is carved out of the data blob
+B2E_CARVED := build/src/9EA20.c.o
+CARVED_RODATA_UNITS += $(B2E_CARVED)
+$(B2E_CARVED): RODATA_AS_DATA = 1
