@@ -647,3 +647,9 @@ MBCoinChangeInit = 0x8004C248; // rom:0x4CE48
 MBCoinChangeKill = 0x8004C2C0; // rom:0x4CEC0
 MBRand = 0x8005A358; // rom:0x5AF58
 PlaySound = 0x8007959C; // rom:0x7A19C
+
+// b2-C: 4D660 (MP1 src/467E0.c/46AE0.c/3CED0.c, MP3 ovl_80 F5E80.c)
+MBItemSubFunctions = 0x800DF718; // size:0x38
+MBItemRobBoxExec = 0x8004D758; // rom:0x4E358
+MBItemDesc = 0x8004E1A8; // rom:0x4EDA8
+MBItemDescExec = 0x8004E484; // rom:0x4F084
