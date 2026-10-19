@@ -208,10 +208,12 @@ NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 
 # b2-E: libultra units from MP1's SDK lib / src/lib units, built as MP1 builds them (-O3, unsigned char, lib headers)
-B2E_LIB_UNITS := build/src/9EA20.c.o
+B2E_LIB_UNITS := build/src/9EA20.c.o build/src/AC3B0.c.o
 $(B2E_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 $(B2E_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
 $(B2E_LIB_UNITS): export VR4300MUL := ON
+# AC3B0 (seqplayer): retail tests __alSeqNextDelta's char result as signed (sll 24), so no -funsigned-char
+build/src/AC3B0.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 # b2-E: units whose .rodata is carved out of the data blob
 B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o
 CARVED_RODATA_UNITS += $(B2E_CARVED)
