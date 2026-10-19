@@ -635,3 +635,6 @@ __osContinitialized = 0x800CDE60;
 __osPiAccessQueueEnabled = 0x800CDE30;
 alGlobals = 0x800CDE50;
 tmp_task = 0x800F4CE0; // size:0x40
+
+// b2-D 733F0 (MP1 src/72D90.c)
+GamePauseStart = 0x80072834; // rom:0x73434
