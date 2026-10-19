@@ -57,7 +57,7 @@ void func_8004CC14_4D814(omObjData* obj) {
 
 INCLUDE_ASM("asm/nonmatchings/4D660", func_8004CC7C_4D87C);
 
-void func_8004CD70_4D970(s32 arg0) {
+void MBHelpWinKill(s32 arg0) {
     LabelWin* w = (LabelWin*)arg0;
 
     if (w != NULL) {

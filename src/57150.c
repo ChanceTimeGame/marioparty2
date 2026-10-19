@@ -425,7 +425,7 @@ s32 func_800573AC_57FAC(void) {
     D_800F8D12_F9912 = 0;
     if (func_80062CCC_638CC() == 1) {
         if (_CheckFlag(0x43) != 0) {
-            func_80062A70_63670(-2, 4, 0x192);
+            MBOvlCall(-2, 4, 0x192);
             ret = 1;
         }
     } else if (_CheckFlag(0x43) != 0) {

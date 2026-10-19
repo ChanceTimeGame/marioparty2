@@ -1,5 +1,24 @@
 #include "common.h"
 
+/* Board flow: overlay history, scenes, camera and rumble. C from MP1 src/57330.c, src/5CDB0.c,
+   src/59510.c and MP3 ovl_80_shared_board 10C230.c / 113520.c, ovl_81 E3CD0.c / E78B0.c; the rest
+   have no reference or differ (near) and stay asm, and func_80063BBC and MBPlayerVibrate stay asm
+   because their rodata (D3BE8-D3D48) is shared with asm functions. */
+
+#define CUR_PLAYER -1
+
+typedef struct Object {
+    /* 0x00 */ char pad0[0xC];
+    /* 0x0C */ Vec coords;
+} Object; /* MP1's, first 0x18 bytes */
+
+typedef struct UnkE78B0 {
+    /* 0x00 */ s16 unk_00; /* player */
+    /* 0x02 */ s16 unk_02; /* type */
+    /* 0x04 */ s16 unk_04; /* delay */
+    /* 0x08 */ Process* proc;
+} UnkE78B0; // size 0xC
+
 s16 func_80055900_56500(u8);
 void func_8004CA14_4D614(s32, s32);
 void func_8006135C_61F5C(s32, s32, s32);
@@ -10,12 +29,42 @@ extern u16 D_800FC878_FD478;
 extern s16 starBlockSpaceIndex;
 extern s16 prevStarBlockSpaceIndexes[10];
 extern s32 D_800CCC1C_CD81C[];
-extern s16 D_800E1F52_E2B52;
-extern omOvlHisData D_800E1F58_E2B58[];
+extern s16 mbovlhisidx;
+extern omOvlHisData mbovlhis[5];
+extern s16 D_800E1F50_E2B50;
+extern s16 D_800E1F80_E2B80;
+extern s16 D_800E1F82_E2B82;
+extern s32 mbGameMode;
+extern s16 D_800E1F94_E2B94;
+extern s16 D_800E1F96_E2B96;
+extern s16 D_800E1F98_E2B98;
+extern s32 D_800E1F9C_E2B9C;
+extern Vec D_800E1FA4_E2BA4;
+extern Object* mbBattleKuriboMdl;
+extern Object* mbBattleKuriboUpperMdl;
+extern s32 D_800CCDD0_CD9D0;
+extern s32 D_800CCDD4_CD9D4;
+extern s32 D_800CCDD8_CD9D8;
+extern s32 D_800CCDDC_CD9DC;
+extern s8 D_800CCDE0_CD9E0[];
 
-void func_80062A70_63670(s32 arg0, s16 arg1, s16 arg2) {
+GW_PLAYER* BoardPlayerGet(s32);
+f32 HuMathSin(f32);
+f32 MBCameraSpeedGet(void);
+void MBCameraSpeedSet(f32);
+u16 MBDCameraPos3DSet(Vec*);
+void MBPlayerVibrate(s16, s16);
+void func_800514F0_520F0(void);
+void func_80051788_52388(void);
+void func_800517C0_523C0(void);
+void func_80053608_54208(f32);
+f32 func_80053614_54214(void);
+void* HuMemMemoryAllocTemp(u32 size);
+void HuMemMemoryFreeTemp(void* ptr);
+
+void MBOvlCall(s32 arg0, s16 arg1, s16 arg2) {
     omOvlHisData* temp_v1;
-    temp_v1 = &D_800E1F58_E2B58[D_800E1F52_E2B52++];
+    temp_v1 = &mbovlhis[mbovlhisidx++];
     
     switch (arg0) {
     case -1:
@@ -32,20 +81,53 @@ void func_80062A70_63670(s32 arg0, s16 arg1, s16 arg2) {
     
     temp_v1->event = arg1;
     temp_v1->stat = arg2;
-    if (D_800E1F52_E2B52 >= 5) {
-        D_800E1F52_E2B52 = 4;
+    if (mbovlhisidx >= 5) {
+        mbovlhisidx = 4;
     }
 }
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062B14_63714);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062BE0_637E0);
+void func_80062BE0_637E0(void) {
+    omOvlHisData* history;
+
+    D_800E1F80_E2B80 = 1;
+    if (mbovlhisidx != 0) {
+        history = &mbovlhis[--mbovlhisidx];
+        ((s32 (*)(s32, s16, u16))omOvlCallEx)(history->overlayID, history->event, history->stat);
+        return;
+    }
+    if (D_800E1F50_E2B50 != 0) {
+        D_800E1F80_E2B80 = 0;
+        omOvlCallEx(D_800CCC1C_CD81C[GwSystem.current_board_index], 2, 0x192);
+        return;
+    }
+    
+    _ClearFlag(13);
+    
+    if (D_800E1F82_E2B82 != 0) {
+        _SetFlag(18);
+    } else {
+        _ClearFlag(18);
+    }
+    omOvlReturnEx(1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062CC0_638C0);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062CCC_638CC);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062CD8_638D8);
+void func_80062CD8_638D8(s16 arg0) {
+    s16 temp_v0 = mbovlhisidx;
+
+    mbovlhis[mbovlhisidx].event = arg0;
+    mbovlhisidx = temp_v0 + 1;
+    if (mbovlhisidx >= ARRAY_COUNT(mbovlhis)) {
+        mbovlhisidx = ARRAY_COUNT(mbovlhis) - 1;
+    }
+    MBOvlCall(-2, 3, 0x192);
+    omOvlReturnEx(1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062D44_63944);
 
@@ -67,7 +149,9 @@ INCLUDE_ASM("asm/nonmatchings/63670", func_800636F8_642F8);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063704_64304);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063710_64310);
+void func_80063710_64310(Vec* pos) {
+    D_800E1FA4_E2BA4 = *pos;
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063734_64334);
 
@@ -129,15 +213,15 @@ void func_80063950_64550(void) {
         if (D_800E1F94_E2B94 & 0x20) {
             D_800E1F82_E2B82 = 1;
             if ((GwSystem.current_board_index == 5) && (_CheckFlag(0xB) == 0)) {
-                func_80062A70_63670(0x61, 0, 0x192);
+                MBOvlCall(0x61, 0, 0x192);
             }
-            func_80062A70_63670(0x52, 0, 0x192);
+            MBOvlCall(0x52, 0, 0x192);
             func_80062CC0_638C0();
         }
         
         if (D_800E1F94_E2B94 & 1) {
             if (func_800638C8_644C8() != 0) {
-                func_80062A70_63670(0x40, 0, 0x192);
+                MBOvlCall(0x40, 0, 0x192);
             }
             func_80063844_64444();
         }
@@ -146,13 +230,13 @@ void func_80063950_64550(void) {
         
         if (D_800E1F94_E2B94 & 2) {
             minigameOverlayID = func_8003F6F0_402F0(GwSystem.chosenMinigameIndex);
-            func_80062A70_63670(minigameOverlayID, 0, 0x94);
+            MBOvlCall(minigameOverlayID, 0, 0x94);
         }
         
         D_800CCC10 = 0x68;
         
         if (D_800E1F94_E2B94 & 8) {
-            func_80062A70_63670(D_800E1F9C_E2B9C, D_800E1FA0_E2BA0, 0x192);
+            MBOvlCall(D_800E1F9C_E2B9C, D_800E1FA0_E2BA0, 0x192);
         }
         
         D_800CCC10 = 0x69;
@@ -171,7 +255,11 @@ INCLUDE_ASM("asm/nonmatchings/63670", func_80063F88_64B88);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80064134_64D34);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80064184_64D84);
+void MBBattleKuriboObjMain(omObjData *arg0) {
+    mbBattleKuriboMdl->coords.y = HuMathSin(arg0->rot.x) * 3.0f;
+    mbBattleKuriboUpperMdl->coords.y = HuMathSin(arg0->rot.x) * 3.0f;
+    arg0->rot.x += 10.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80064200_64E00);
 
@@ -237,9 +325,30 @@ void func_80064DA8_659A8(void) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80064F1C_65B1C);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80064FF8_65BF8);
+void func_80064FF8_65BF8(void) {
+    if (D_800CCDD0_CD9D0 != NULL) {
+        MBHelpWinKill(D_800CCDD0_CD9D0);
+        D_800CCDD0_CD9D0 = NULL;
+    }
+    if (D_800CCDD4_CD9D4 != NULL) {
+        MBHelpWinKill(D_800CCDD4_CD9D4);
+        D_800CCDD4_CD9D4 = NULL;
+    }
+    if (D_800CCDD8_CD9D8 != NULL) {
+        MBHelpWinKill(D_800CCDD8_CD9D8);
+        D_800CCDD8_CD9D8 = NULL;
+    }
+    if (D_800CCDDC_CD9DC != NULL) {
+        MBHelpWinKill(D_800CCDDC_CD9DC);
+        D_800CCDDC_CD9DC = NULL;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006508C_65C8C);
+void func_8006508C_65C8C(void) {
+    mbGameMode = 10;
+    D_800E1F96_E2B96 = 11;
+    func_80064FF8_65BF8();
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800650BC_65CBC);
 
@@ -251,28 +360,105 @@ INCLUDE_ASM("asm/nonmatchings/63670", func_80066994_67594);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80066C34_67834);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80066F6C_67B6C);
+void ExecBoardScene(board_overlay_entrypoint* arg0, s16 arg1) {
+    if (arg0->index < 0) {
+        return;
+    }
+    for (; arg0->index >= 0; arg0++) {
+        if (arg0->index == arg1) {
+            arg0->fn();
+        }
+    }       
+}
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80066FD8_67BD8);
+void func_80066FD8_67BD8(s16 arg0) {
+    D_800E1F50_E2B50 = 1;
+    D_800E1F94_E2B94 = 0x40;
+    D_800E1F96_E2B96 = arg0;
+    D_800E1F98_E2B98 = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80067004_67C04);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80067010_67C10);
+void func_80067010_67C10(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    D_800E1F9C_E2B9C = arg0;
+    D_800E1FA0_E2BA0 = arg1;
+    D_800E1F94_E2B94 = 8;
+    D_800E1F96_E2B96 = arg2;
+    D_800E1F98_E2B98 = arg3;
+}
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80067040_67C40);
+void func_80067040_67C40(s32 arg0, s16 arg1, s16 arg2) {
+    func_80067010_67C10(arg0, arg1,  arg2, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_8006706C_67C6C);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006707C_67C7C);
+void func_8006707C_67C7C(s16 arg0, s16 arg1) {
+    D_800E1F94_E2B94 = 0x10;
+    D_800E1F96_E2B96 = arg0;
+    D_800E1F98_E2B98 = arg1;
+    func_80062CC0_638C0();
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800670B0_67CB0);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800670BC_67CBC);
+void func_800670BC_67CBC(Vec *arg0) {
+    f32 temp_f20;
+    f32 temp_f22;
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80067170_67D70);
+    func_800517C0_523C0();
+    func_80051788_52388();
+    temp_f22 = MBCameraSpeedGet();
+    MBCameraSpeedSet(-1.0f);
+    temp_f20 = func_80053614_54214();
+    func_80053608_54208(1.0f);
+    func_800514F0_520F0();
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006727C_67E7C);
+    if (arg0 == NULL) {
+        arg0 = &((Object*)BoardPlayerGet(CUR_PLAYER)->unk_24)->coords;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800672BC_67EBC);
+    MBDCameraPos3DSet(arg0);
+    HuPrcVSleep();
+    func_80053608_54208(temp_f20);
+    MBCameraSpeedSet(temp_f22);
+}
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006735C_67F5C);
+INCLUDE_ASM("asm/nonmatchings/63670", MBPlayerVibrate);
+
+void func_8006727C_67E7C(void) {
+    UnkE78B0* r = HuPrcCurrentGet()->user_data;
+
+    while (1) {
+        MBPlayerVibrate(r->unk_00, r->unk_02);
+        HuPrcSleep(r->unk_04);
+    }
+}
+
+void *func_800672BC_67EBC(s16 arg0, s16 arg1, s32 arg2) {
+    Process *process;
+    s16 temp_s1;
+    UnkE78B0 *unk;
+
+    temp_s1 = D_800CCDE0_CD9E0[arg1] + arg2;
+    unk = HuMemMemoryAllocTemp(sizeof(UnkE78B0));
+
+    if (unk != NULL) {
+        unk->unk_00 = arg0;
+        unk->unk_02 = arg1;
+        unk->unk_04 = temp_s1 - 1;
+        process = omAddPrcObj(func_8006727C_67E7C, 0x1005, 0, 0);
+        unk->proc = process;
+        process->user_data = unk;
+    }
+
+    return unk;
+}
+
+void func_8006735C_67F5C(UnkE78B0* r) {
+    if (r != NULL) {
+        omDelPrcObj(r->proc);
+        HuMemMemoryFreeTemp(r);
+    }
+}

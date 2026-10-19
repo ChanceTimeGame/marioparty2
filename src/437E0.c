@@ -5,7 +5,7 @@
 f32 HuVecGetLength3F(Vec*);
 f32 func_800B75A8_B81A8(f32, f32);
 f32 func_800B7890_B8490(f32);
-f32 func_800B83C0_B8FC0(f32);
+f32 HuMathSin(f32);
 
 void func_800B33E0_B3FE0(Vec*);
 f32 func_800B3500_B4100(Vec*, Vec*);
@@ -52,24 +52,24 @@ void func_80042DA8_439A8(Vec* v, f32 angle) {
 
     orig.y = v->y;
     orig.z = v->z;
-    v->y = func_800B7890_B8490(angle) * orig.y - func_800B83C0_B8FC0(angle) * orig.z;
-    v->z = func_800B7890_B8490(angle) * orig.z + func_800B83C0_B8FC0(angle) * orig.y;
+    v->y = func_800B7890_B8490(angle) * orig.y - HuMathSin(angle) * orig.z;
+    v->z = func_800B7890_B8490(angle) * orig.z + HuMathSin(angle) * orig.y;
 }
 void func_80042E44_43A44(Vec* v, f32 angle) {
     Vec orig;
 
     orig.x = v->x;
     orig.z = v->z;
-    v->x = func_800B7890_B8490(angle) * orig.x + func_800B83C0_B8FC0(angle) * orig.z;
-    v->z = func_800B7890_B8490(angle) * orig.z - func_800B83C0_B8FC0(angle) * orig.x;
+    v->x = func_800B7890_B8490(angle) * orig.x + HuMathSin(angle) * orig.z;
+    v->z = func_800B7890_B8490(angle) * orig.z - HuMathSin(angle) * orig.x;
 }
 void func_80042EE0_43AE0(Vec* v, f32 angle) {
     Vec orig;
 
     orig.x = v->x;
     orig.y = v->y;
-    v->x = func_800B7890_B8490(angle) * orig.x - func_800B83C0_B8FC0(angle) * orig.y;
-    v->y = func_800B7890_B8490(angle) * orig.y + func_800B83C0_B8FC0(angle) * orig.x;
+    v->x = func_800B7890_B8490(angle) * orig.x - HuMathSin(angle) * orig.y;
+    v->y = func_800B7890_B8490(angle) * orig.y + HuMathSin(angle) * orig.x;
 }
 void func_80042F7C_43B7C(Vec* v, Vec* axis, f32 angle) {
     Vec orig;
@@ -79,13 +79,13 @@ void func_80042F7C_43B7C(Vec* v, Vec* axis, f32 angle) {
     orig.z = v->z;
     MBVecNormalize(axis);
     v->x = (axis->x * axis->x + (1.0f - axis->x * axis->x) * func_800B7890_B8490(angle)) * orig.x +
-           (axis->x * axis->y * (1.0f - func_800B7890_B8490(angle)) - func_800B83C0_B8FC0(angle) * axis->z) * orig.y +
-           (axis->x * axis->z * (1.0f - func_800B7890_B8490(angle)) + func_800B83C0_B8FC0(angle) * axis->y) * orig.z;
-    v->y = (axis->x * axis->y * (1.0f - func_800B7890_B8490(angle)) + func_800B83C0_B8FC0(angle) * axis->z) * orig.x +
+           (axis->x * axis->y * (1.0f - func_800B7890_B8490(angle)) - HuMathSin(angle) * axis->z) * orig.y +
+           (axis->x * axis->z * (1.0f - func_800B7890_B8490(angle)) + HuMathSin(angle) * axis->y) * orig.z;
+    v->y = (axis->x * axis->y * (1.0f - func_800B7890_B8490(angle)) + HuMathSin(angle) * axis->z) * orig.x +
            (axis->y * axis->y + (1.0f - axis->y * axis->y) * func_800B7890_B8490(angle)) * orig.y +
-           (axis->y * axis->z * (1.0f - func_800B7890_B8490(angle)) - func_800B83C0_B8FC0(angle) * axis->x) * orig.z;
-    v->z = (axis->x * axis->z * (1.0f - func_800B7890_B8490(angle)) - func_800B83C0_B8FC0(angle) * axis->y) * orig.x +
-           (axis->y * axis->z * (1.0f - func_800B7890_B8490(angle)) + func_800B83C0_B8FC0(angle) * axis->x) * orig.y +
+           (axis->y * axis->z * (1.0f - func_800B7890_B8490(angle)) - HuMathSin(angle) * axis->x) * orig.z;
+    v->z = (axis->x * axis->z * (1.0f - func_800B7890_B8490(angle)) - HuMathSin(angle) * axis->y) * orig.x +
+           (axis->y * axis->z * (1.0f - func_800B7890_B8490(angle)) + HuMathSin(angle) * axis->x) * orig.y +
            (axis->z * axis->z + (1.0f - axis->z * axis->z) * func_800B7890_B8490(angle)) * orig.z;
 }
 // register allocation: the length product lands in $f20, retail $f12 (masked 0)

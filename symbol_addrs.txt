@@ -733,3 +733,19 @@ MBVsSprKill = 0x80060D94; // rom:0x61994
 MBStatusItemDispSet = 0x80062660; // rom:0x63260
 MBStatusItemDispSetAll = 0x80062824; // rom:0x63424
 MBStatusSprPosGet = 0x80062888; // rom:0x63488
+
+// b2-C: 63670 (MP1 src/57330.c/59510.c, MP3 ovl_80 10C230.c/113520.c, ovl_81)
+mbovlhisidx = 0x800E1F52;
+mbovlhis = 0x800E1F58; // size:0x28
+mbGameMode = 0x800E1F8C;
+mbBattleKuriboMdl = 0x800E2018;
+mbBattleKuriboUpperMdl = 0x800E201C;
+MBHelpWinKill = 0x8004CD70; // rom:0x4D970
+MBCameraSpeedSet = 0x80053980; // rom:0x54580
+MBCameraSpeedGet = 0x8005398C; // rom:0x5458C
+MBOvlCall = 0x80062A70; // rom:0x63670
+MBBattleKuriboObjMain = 0x80064184; // rom:0x64D84
+ExecBoardScene = 0x80066F6C; // rom:0x67B6C
+MBPlayerVibrate = 0x80067170; // rom:0x67D70
+omVibrate = 0x80079D10; // rom:0x7A910
+HuMathSin = 0x800B83C0; // rom:0xB8FC0

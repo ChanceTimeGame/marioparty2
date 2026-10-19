@@ -59,7 +59,7 @@ INCLUDE_ASM("asm/nonmatchings/79F90", func_80079B88_7A788);
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_80079C60_7A860);
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D10_7A910);
+INCLUDE_ASM("asm/nonmatchings/79F90", omVibrate);
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D7C_7A97C);
 

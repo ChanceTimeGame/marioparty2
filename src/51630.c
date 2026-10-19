@@ -717,9 +717,9 @@ void MBDBackFlipSet(s16 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053980_54580);
+INCLUDE_ASM("asm/nonmatchings/51630", MBCameraSpeedSet);
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_8005398C_5458C);
+INCLUDE_ASM("asm/nonmatchings/51630", MBCameraSpeedGet);
 
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053998_54598);
 
