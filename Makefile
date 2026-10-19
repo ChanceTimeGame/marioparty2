@@ -209,3 +209,4 @@ $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 # b2-A: units retail built with the KMC assembler VR4300 mul fix on (a nop between mul.s pairs), as MP1/MP3 build their sources
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
+build/src/C8E0.c.o: export VR4300MUL := ON
