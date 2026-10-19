@@ -46,7 +46,7 @@ extern s16 D_800F8D12_F9912;
 
 SpaceData* GetSpaceData(s16);
 GW_PLAYER* BoardPlayerGet(s32);
-s16 func_80054BB0_557B0(u16, u16);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
 void func_800576F8_582F8(s32);
 s16 func_80062CCC_638CC(void);
 void func_80067040_67C40(s32, s32, s32);
@@ -298,8 +298,8 @@ void func_80056E34_57A34(s16 arg0, s32 arg1) {
     Process* process;
 
     temp_v0 = BoardPlayerGet(arg0);
-    MBMasuPosGet(arg0, func_80054BB0_557B0(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
-    MBMasuPosGet(arg0, func_80054BB0_557B0(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
+    MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
+    MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
     func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->unk_18);
     process = func_80056D80_57980(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->coords, arg1);
     HuPrcChildLink(HuPrcCurrentGet(), process);
@@ -385,8 +385,8 @@ void func_80057204_57E04(s16 arg0, f32 arg1) {
     Process* process;
 
     temp_v0 = BoardPlayerGet(arg0);
-    MBMasuPosGet(arg0, func_80054BB0_557B0(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
-    MBMasuPosGet(arg0, func_80054BB0_557B0(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
+    MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
+    MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
     func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->unk_18);
     process = func_80056FD4_57BD4(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->coords, arg1);
     HuPrcChildLink(HuPrcCurrentGet(), process);

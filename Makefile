@@ -206,3 +206,7 @@ $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # pad them to 16 and shift everything after
 NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+
+# b2-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
+B2C_MULFIX_UNITS := build/src/54CB0.c.o
+$(B2C_MULFIX_UNITS): export VR4300MUL := ON

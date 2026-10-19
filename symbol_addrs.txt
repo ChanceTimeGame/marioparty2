@@ -679,3 +679,19 @@ MBDCamera3Dto2D = 0x800537F8; // rom:0x543F8
 MBDBackFlipSet = 0x8005394C; // rom:0x5454C
 HuVecCopyXYZ = 0x800B3160; // rom:0xB3D60
 HuVecDistance = 0x800B34B0; // rom:0xB40B0
+
+// b2-C: 54CB0 (MP1 src/engine/spaces.c, MP3 ovl_80 FA250.c)
+gTotalSpaces = 0x800E18D0;
+LoadSpaceTextures = 0x800540B0; // rom:0x54CB0
+FreeSpaceTextures = 0x800541C0; // rom:0x54DC0
+MBMasuArrowAngleAdd = 0x80054268; // rom:0x54E68
+ChangeSpaceTextures = 0x800542B8; // rom:0x54EB8
+MBMasuDraw = 0x800542FC; // rom:0x54EFC
+MBMasuCreate = 0x8005485C; // rom:0x5545C
+GetAbsSpaceIndexFromChainSpaceIndex = 0x80054BB0; // rom:0x557B0
+BoardGetChainLength = 0x80054BDC; // rom:0x557DC
+GetChainSpaceIndexFromAbsSpaceIndex = 0x80054BF8; // rom:0x557F8
+BoardGetRandomSpaceTypeInChain = 0x80054F1C; // rom:0x55B1C
+BoardSpaceTypeSet = 0x8005521C; // rom:0x55E1C
+BoardSetSpaceTypeInChain = 0x8005524C; // rom:0x55E4C
+EventTableHydrate = 0x8005568C; // rom:0x5628C
