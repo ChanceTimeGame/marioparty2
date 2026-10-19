@@ -695,3 +695,16 @@ BoardGetRandomSpaceTypeInChain = 0x80054F1C; // rom:0x55B1C
 BoardSpaceTypeSet = 0x8005521C; // rom:0x55E1C
 BoardSetSpaceTypeInChain = 0x8005524C; // rom:0x55E4C
 EventTableHydrate = 0x8005568C; // rom:0x5628C
+
+// b2-C: 565E0 (MP3 ovl_80 FFB10.c)
+mbDlgWinId = 0x800F9052;
+mbWinId = 0x800FD80A;
+MBWinCreate = 0x80055A88; // rom:0x56688
+MBWinOpen = 0x80055BD4; // rom:0x567D4
+MBWinInsertOpen = 0x80055C88; // rom:0x56888
+MBDlgResultWinExec = 0x80055E90; // rom:0x56A90
+MBDlgWinExecY = 0x80055F60; // rom:0x56B60
+MBDlgWinExec = 0x8005600C; // rom:0x56C0C
+MBDlgWinCreate = 0x800560A4; // rom:0x56CA4
+MBDlgWinClose = 0x80056144; // rom:0x56D44
+MBDlgWinInsertCreateY = 0x80056188; // rom:0x56D88
