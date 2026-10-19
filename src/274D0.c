@@ -1,5 +1,31 @@
 #include "common.h"
 
+typedef struct unkMallocBlockStruct {
+/* 0x00 */ void* unk_00;
+/* 0x04 */ s8 unk_04;
+/* 0x05 */ char unk_05;
+/* 0x06 */ s16 unk_06;
+/* 0x08 */ s32 unk_08;
+/* 0x0C */ s32 unk_0C;
+/* 0x10 */ struct unkMallocBlockStruct* unk_10;
+/* 0x14 */ struct unkMallocBlockStruct* unk_14;
+} unkMallocBlockStruct; //sizeof 0x18
+
+extern s16 D_800C9E50_CAA50;
+extern s16 D_800F64C0_F70C0;
+extern unkMallocBlockStruct* D_800FC830_FD430;
+extern void (*D_800FD440_FE040)(void*);
+extern u8 D_800FDBCA_FE7CA;
+extern s32 D_800FDC98_FE898;
+extern void* (*D_8010164C_10224C)(s32);
+extern unkMallocBlockStruct* D_801027FC_1033FC;
+extern unkMallocBlockStruct* D_800FD3E0_FDFE0;
+
+void* func_80027154_27D54(s32, s16);
+void func_80027230_27E30(unkMallocBlockStruct*);
+void func_80027274_27E74(s16 arg0);
+void func_8002742C_2802C(void);
+
 /* Model lights (MP3 src/hmflight.c), heap blocks (MP1 src/engine/mallocblock.c, MP3
    src/mallocblock.c) and model manager helpers (MP3 src/hmfman.c, MP1 src/24740.c). */
 
@@ -162,33 +188,202 @@ void func_80026F00_27B00(HmfData_UnkD0 *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800270C0_27CC0);
+void func_800270C0_27CC0(void* (*arg0)(s32), void (*arg1)(void*)) {
+    unkMallocBlockStruct* temp_v0;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027138_27D38);
+    D_8010164C_10224C = arg0;
+    D_800FD440_FE040 = arg1;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027154_27D54);
+    if (D_800C9E50_CAA50 != 0) {
+        func_8002742C_2802C();
+    }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800271D8_27DD8);
+    temp_v0 = (unkMallocBlockStruct*) D_8010164C_10224C(sizeof(unkMallocBlockStruct));
+    D_800FC830_FD430 = temp_v0;
+    D_801027FC_1033FC = temp_v0;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027230_27E30);
+    temp_v0->unk_00 = NULL;
+    temp_v0->unk_06 = -1;
+    temp_v0->unk_10 = temp_v0;
+    temp_v0->unk_14 = temp_v0;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027274_27E74);
+    D_800F64C0_F70C0 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027340_27F40);
+void* func_80027138_27D38(s32 size) {
+    return func_80027154_27D54(size, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800273A8_27FA8);
+void* func_80027154_27D54(s32 size, s16 arg1) {
+    void* temp_v0;
+    unkMallocBlockStruct* temp_v1;
+
+    size = (size + 7) & ~7;
+
+    temp_v0 = D_8010164C_10224C(size + sizeof(unkMallocBlockStruct));
+    temp_v1 = (unkMallocBlockStruct*) (temp_v0 + size);
+
+    temp_v1->unk_10 = D_801027FC_1033FC;
+    temp_v1->unk_14 = D_801027FC_1033FC->unk_14;
+
+    D_801027FC_1033FC->unk_14->unk_10 = temp_v1;
+    D_801027FC_1033FC->unk_14 = temp_v1;
+
+    temp_v1->unk_06 = arg1;
+    temp_v1->unk_08 = size;
+    temp_v1->unk_00 = temp_v0;
+    temp_v1->unk_0C = D_800FDC98_FE898;
+
+    return temp_v1->unk_00;
+}
+
+void func_800271D8_27DD8(void* arg0) {
+    unkMallocBlockStruct* var_a0 = D_801027FC_1033FC->unk_14;
+
+    while (arg0 != var_a0->unk_00) {
+        var_a0 = var_a0->unk_14;
+
+        if (var_a0 == D_800FC830_FD430) {
+            return;
+        }
+    }
+
+    func_80027230_27E30(var_a0);
+}
+
+void func_80027230_27E30(unkMallocBlockStruct* arg0) {
+    D_800FD3E0_FDFE0 = arg0;
+    arg0->unk_14->unk_10 = arg0->unk_10;
+    arg0->unk_10->unk_14 = arg0->unk_14;
+
+    D_800FD440_FE040(arg0->unk_00);
+}
+
+void func_80027274_27E74(s16 arg0) {
+    unkMallocBlockStruct* var_a0 = D_801027FC_1033FC->unk_14;
+    unkMallocBlockStruct* temp_s0;
+
+    while (var_a0 != D_800FC830_FD430) {
+        if (var_a0->unk_06 == arg0) {
+            if (var_a0->unk_06 != -1) {
+                temp_s0 = var_a0->unk_10;
+                func_80027230_27E30(var_a0);
+                var_a0 = temp_s0;
+            } else {
+                var_a0->unk_04--;
+
+                if (!(var_a0->unk_04 & 0xFF)) {
+                    temp_s0 = var_a0->unk_10;
+                    func_80027230_27E30(var_a0);
+                    var_a0 = temp_s0;
+
+                    D_800F64C0_F70C0--;
+                    if (D_800F64C0_F70C0 <= 0) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        var_a0 = var_a0->unk_14;
+    }
+}
+
+void func_80027340_27F40(void* arg0) {
+    unkMallocBlockStruct* var_v1 = D_801027FC_1033FC->unk_14;
+
+    while (arg0 != var_v1->unk_00) {
+        var_v1 = var_v1->unk_14;
+
+        if (var_v1 == D_800FC830_FD430) {
+            return;
+        }
+    }
+
+    var_v1->unk_06 = -1;
+    var_v1->unk_04 = D_800FDBCA_FE7CA + 1;
+    D_800F64C0_F70C0++;
+}
+
+void func_800273A8_27FA8(s16 arg0) {
+    unkMallocBlockStruct* var_v1 = D_801027FC_1033FC->unk_14;
+
+    while (var_v1 != D_800FC830_FD430) {
+        if (var_v1->unk_06 == arg0) {
+            var_v1->unk_06 = -1;
+            var_v1->unk_04 = D_800FDBCA_FE7CA + 1;
+            D_800F64C0_F70C0++;
+        }
+
+        var_v1 = var_v1->unk_14;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_8002741C_2801C);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002742C_2802C);
+void func_8002742C_2802C(void) {
+    unkMallocBlockStruct* var_a0 = D_801027FC_1033FC->unk_14;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800274A4_280A4);
+    while (var_a0 != D_800FC830_FD430) {
+        unkMallocBlockStruct* temp_s0 = var_a0->unk_10;
+        func_80027230_27E30(var_a0);
+        var_a0 = temp_s0->unk_14;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800274F0_280F0);
+    D_800FD440_FE040(D_800FC830_FD430);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027544_28144);
+    D_800F64C0_F70C0 = 0;
+    D_800C9E50_CAA50 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027580_28180);
+void func_800274A4_280A4(void) {
+    if (D_800C9E50_CAA50 != 0) {
+        func_8002742C_2802C();
+    } else if (D_800F64C0_F70C0 != 0) {
+        func_80027274_27E74(-1);
+    }
+}
+
+s32 func_800274F0_280F0(s16 arg0) {
+    unkMallocBlockStruct* var_v1 = D_801027FC_1033FC->unk_14;
+    s32 var_a1 = 0;
+
+    while (var_v1 != D_800FC830_FD430) {
+        if (var_v1->unk_06 == arg0) {
+            var_a1 += var_v1->unk_08;
+        }
+
+        var_v1 = var_v1->unk_14;
+    }
+
+    return var_a1;
+}
+
+s32 func_80027544_28144(void) {
+    unkMallocBlockStruct* var_v1 = D_801027FC_1033FC->unk_14;
+    s32 var_a0 = 0;
+
+    while (var_v1 != D_800FC830_FD430) {
+        var_a0 += var_v1->unk_08;
+        var_v1 = var_v1->unk_14;
+    }
+
+    return var_a0;
+}
+
+void func_80027580_28180(void* arg0, s16 arg1) {
+    unkMallocBlockStruct* var_v1 = D_801027FC_1033FC->unk_14;
+
+    while (arg0 != var_v1->unk_00) {
+        var_v1 = var_v1->unk_14;
+
+        if (var_v1 == D_800FC830_FD430) {
+            return;
+        }
+    }
+
+    var_v1->unk_06 = arg1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800275C4_281C4);
 
