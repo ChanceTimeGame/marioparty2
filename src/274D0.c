@@ -1,23 +1,166 @@
 #include "common.h"
 
+/* Model lights (MP3 src/hmflight.c), heap blocks (MP1 src/engine/mallocblock.c, MP3
+   src/mallocblock.c) and model manager helpers (MP3 src/hmfman.c, MP1 src/24740.c). */
+
+typedef struct {
+    Mtx perspMtx;
+    Mtx lookAtMtx;
+} HuCamMtxs;
+
+typedef struct {
+    /* 0x00 */ s8 unk00;
+    /* 0x01 */ s8 unk01;
+    /* 0x02 */ s8 unk02;
+    /* 0x03 */ s8 unk03;
+    /* 0x04 */ s8 unk04;
+    /* 0x05 */ s8 unk05;
+    /* 0x06 */ s8 unk06;
+    /* 0x07 */ char unk07[1];
+    /* 0x08 */ Light unk08[1]; // length unknown
+} HmfData_UnkD0;
+
+typedef struct {
+    /* 0x00 */ s8 r;
+    /* 0x01 */ s8 g;
+    /* 0x02 */ s8 b;
+    /* 0x03 */ u8 stat;
+    /* 0x04 */ s8 unk04;
+    /* 0x05 */ s8 unk05;
+    /* 0x06 */ s8 unk06;
+} UnkLightData_unk02; // Size 7
+
+typedef struct {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ UnkLightData_unk02 unk02[8];
+    /* 0x3A */ char unk3A[6];
+    /* 0x40 */ Light unk40[3][8][8];
+} UnkLightData; // Size 0xC40
+
+extern HuCamMtxs *D_800FC88C_FD48C;
+extern Light *D_800F8424_F9024;
+extern UnkLightData *D_800FA620_FB220;
+extern u8 D_800FDBE0_FE7E0;
+
+f32 func_800B1830_B2430(f32);
+
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800268D0_274D0);
 
 void func_80026994_27594(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002699C_2759C);
+void func_8002699C_2759C(s16 arg0) {
+    s16 var_s1;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026C40_27840);
+    D_800F8424_F9024 = D_800FA620_FB220->unk40[D_800FDBE0_FE7E0][arg0];
+    for (var_s1 = 0; var_s1 < D_800FA620_FB220->unk00 + 1; var_s1++) {
+        Light *temp_s0 = &D_800F8424_F9024[var_s1];
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026D28_27928);
+        temp_s0->l.col[0] = temp_s0->l.colc[0] = D_800FA620_FB220->unk02[var_s1].r;
+        temp_s0->l.col[1] = temp_s0->l.colc[1] = D_800FA620_FB220->unk02[var_s1].g;
+        temp_s0->l.col[2] = temp_s0->l.colc[2] = D_800FA620_FB220->unk02[var_s1].b;
+        if (D_800FA620_FB220->unk02[var_s1].stat & 1) {
+            f32 sp10[4][4];
+            f32 temp_f24 = D_800FA620_FB220->unk02[var_s1].unk04;
+            f32 temp_f26 = D_800FA620_FB220->unk02[var_s1].unk05;
+            f32 temp_f28 = D_800FA620_FB220->unk02[var_s1].unk06;
+            f32 temp_f22;
+            f32 temp_f20;
+            f32 temp_f24_2;
+            f32 temp_f0;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026D50_27950);
+            guMtxL2F(sp10, &D_800FC88C_FD48C->lookAtMtx);
+            temp_f22 = temp_f24 * sp10[0][0] + temp_f26 * sp10[1][0] + temp_f28 * sp10[2][0];
+            temp_f20 = temp_f24 * sp10[0][1] + temp_f26 * sp10[1][1] + temp_f28 * sp10[2][1];
+            temp_f24_2 = temp_f24 * sp10[0][2] + temp_f26 * sp10[1][2] + temp_f28 * sp10[2][2];
+            temp_f0 = temp_f22 * temp_f22 + temp_f20 * temp_f20 + temp_f24_2 * temp_f24_2;
+            temp_f0 = func_800B1830_B2430(temp_f0);
+            temp_s0->l.dir[0] = (temp_f22 / temp_f0) * 120.0f;
+            temp_s0->l.dir[1] = (temp_f20 / temp_f0) * 120.0f;
+            temp_s0->l.dir[2] = (temp_f24_2 / temp_f0) * 120.0f;
+        } else {
+            temp_s0->l.dir[0] = D_800FA620_FB220->unk02[var_s1].unk04;
+            temp_s0->l.dir[1] = D_800FA620_FB220->unk02[var_s1].unk05;
+            temp_s0->l.dir[2] = D_800FA620_FB220->unk02[var_s1].unk06;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026DAC_279AC);
+void func_80026C40_27840(void) {
+    s16 var_a3;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026E00_27A00);
+    D_800F8424_F9024 = D_800FA620_FB220->unk40[D_800FDBE0_FE7E0][0];
+    for (var_a3 = 0; var_a3 < D_800FA620_FB220->unk00 + 1; var_a3++) {
+        D_800F8424_F9024[var_a3].l.col[0] = D_800F8424_F9024[var_a3].l.colc[0] = D_800FA620_FB220->unk02[var_a3].r;
+        D_800F8424_F9024[var_a3].l.col[1] = D_800F8424_F9024[var_a3].l.colc[1] = D_800FA620_FB220->unk02[var_a3].g;
+        D_800F8424_F9024[var_a3].l.col[2] = D_800F8424_F9024[var_a3].l.colc[2] = D_800FA620_FB220->unk02[var_a3].b;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80026F00_27B00);
+void func_80026D28_27928(s16 arg0) {
+    if (arg0 >= 8) {
+        arg0 = 7;
+    }
+    D_800FA620_FB220->unk00 = arg0;
+}
+
+void func_80026D50_27950(s16 arg0, u8 arg1, u8 arg2) {
+    if (D_800FA620_FB220->unk00 >= arg0) {
+        D_800FA620_FB220->unk02[arg0].stat &= ~arg1;
+        D_800FA620_FB220->unk02[arg0].stat |= arg2;
+    }
+}
+
+void func_80026DAC_279AC(s16 arg0, u8 arg1, u8 arg2, u8 arg3) {
+    if (D_800FA620_FB220->unk00 >= arg0) {
+        D_800FA620_FB220->unk02[arg0].r = arg1;
+        D_800FA620_FB220->unk02[arg0].g = arg2;
+        D_800FA620_FB220->unk02[arg0].b = arg3;
+    }
+}
+
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
+    if (D_800FA620_FB220->unk00 >= arg0) {
+        f32 temp_f0 = arg1 * arg1 + arg2 * arg2 + arg3 * arg3;
+
+        temp_f0 = func_800B1830_B2430(temp_f0);
+        D_800FA620_FB220->unk02[arg0].unk04 = (arg1 / temp_f0) * 120.0f;
+        D_800FA620_FB220->unk02[arg0].unk05 = (arg2 / temp_f0) * 120.0f;
+        D_800FA620_FB220->unk02[arg0].unk06 = (arg3 / temp_f0) * 120.0f;
+    }
+}
+
+void func_80026F00_27B00(HmfData_UnkD0 *arg0) {
+    Light *temp_s0 = &arg0->unk08[D_800FDBE0_FE7E0];
+
+    temp_s0->l.col[0] = temp_s0->l.colc[0] = arg0->unk00;
+    temp_s0->l.col[1] = temp_s0->l.colc[1] = arg0->unk01;
+    temp_s0->l.col[2] = temp_s0->l.colc[2] = arg0->unk02;
+    if (arg0->unk03 & 1) {
+        f32 sp10[4][4];
+        f32 temp_f22 = arg0->unk04;
+        f32 temp_f26 = arg0->unk05;
+        f32 temp_f28 = arg0->unk06;
+        f32 temp_f24;
+        f32 temp_f20;
+        f32 temp_f22_2;
+        f32 temp_f0;
+
+        guMtxL2F(sp10, &D_800FC88C_FD48C->lookAtMtx);
+        temp_f24 = temp_f22 * sp10[0][0] + temp_f26 * sp10[1][0] + temp_f28 * sp10[2][0];
+        temp_f20 = temp_f22 * sp10[0][1] + temp_f26 * sp10[1][1] + temp_f28 * sp10[2][1];
+        temp_f22_2 = temp_f22 * sp10[0][2] + temp_f26 * sp10[1][2] + temp_f28 * sp10[2][2];
+        temp_f0 = temp_f24 * temp_f24 + temp_f20 * temp_f20 + temp_f22_2 * temp_f22_2;
+        temp_f0 = func_800B1830_B2430(temp_f0);
+        temp_s0->l.dir[0] = (temp_f24 / temp_f0) * 120.0f;
+        temp_s0->l.dir[1] = (temp_f20 / temp_f0) * 120.0f;
+        temp_s0->l.dir[2] = (temp_f22_2 / temp_f0) * 120.0f;
+    } else {
+        temp_s0->l.dir[0] = arg0->unk04;
+        temp_s0->l.dir[1] = arg0->unk05;
+        temp_s0->l.dir[2] = arg0->unk06;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800270C0_27CC0);
 
