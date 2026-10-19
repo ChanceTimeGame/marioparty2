@@ -407,7 +407,7 @@ segments:
       - [0xD5130, .data, A5BA0]
       - [0xD5190, .data, A7CB0]
       - [0xD51A0, .data, A92D0]
-      - [0xD51E0, data]
+      - [0xD51E0, .data, AA720]
       - [0xD52D0, .data, AB560]
       - [0xD5300, data]
       - [0xD5540, .data, AFD70]
