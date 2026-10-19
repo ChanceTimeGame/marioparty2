@@ -1,5 +1,31 @@
 #include "common.h"
 
+/* Audio driver. Functions with C come from MP1 src/B980.c (oscillator free list, vibrato depth),
+   MP3 src/1140.c (audio command queue) and MP1 ovl_22 (a one-argument wrapper); the rest is asm. */
+
+typedef struct ECE0Osc {
+    /* 0x00 */ struct ECE0Osc* next;
+} ECE0Osc;
+
+typedef struct {
+    /* 0x00 */ s8 cmdType;
+    /* 0x01 */ s8 voiceSlot;
+    /* 0x04 */ s32 cmdArg;
+} AudioCmd; // size 0x8
+
+typedef struct {
+    /* 0x00 */ char unk00[0x34];
+    /* 0x34 */ s32 unk34;           // write index (wraps at 0x80)
+    /* 0x38 */ AudioCmd cmds[0x80];
+} UnkAudio;
+
+extern ECE0Osc* D_800D58DC_D64DC;
+extern UnkAudio* D_800D58E4_D64E4;
+
+void func_8000EC8C_F88C(s32, s32);
+void func_80010E74_11A74(void*, u8);
+void func_80014B30_15730(void*, u8);
+
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8000E0E0_ECE0);
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8000E1F0_EDF0);
@@ -70,11 +96,28 @@ INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010114_10D14);
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010570_11170);
 
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010DFC_119FC);
+void func_80010DFC_119FC(ECE0Osc* osc) {
+    osc->next = D_800D58DC_D64DC;
+    D_800D58DC_D64DC = osc;
+}
 
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010E14_11A14);
+f32 func_80010E14_11A14(u8 depth) {
+    f32 x = 1.03099303;
+    f32 cents = 1.0f;
 
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010E58_11A58);
+    while (depth) {
+        if (depth & 1) {
+            cents *= x;
+        }
+        x *= x;
+        depth >>= 1;
+    }
+    return cents;
+}
+
+void func_80010E58_11A58(void* obj) {
+    func_80010E74_11A74(obj, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80010E74_11A74);
 
@@ -148,7 +191,21 @@ INCLUDE_ASM("asm/nonmatchings/ECE0", func_8001434C_14F4C);
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014520_15120);
 
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014768_15368);
+void func_80014768_15368(s32 voiceSlot, s32 cmdType, s32 cmdArg) {
+    u32 temp_s3;
+    AudioCmd *cmd;
+
+    temp_s3 = osSetIntMask(1);
+    cmd = &D_800D58E4_D64E4->cmds[D_800D58E4_D64E4->unk34];
+    cmd->cmdType = cmdType;
+    cmd->voiceSlot = voiceSlot;
+    cmd->cmdArg = cmdArg;
+    if (++D_800D58E4_D64E4->unk34 >= 128) {
+        func_8000EC8C_F88C(0, 0x200);
+        D_800D58E4_D64E4->unk34 = 0;
+    }
+    osSetIntMask(temp_s3);
+}
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014814_15414);
 
@@ -160,7 +217,9 @@ INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014AFC_156FC);
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014B08_15708);
 
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014B14_15714);
+void func_80014B14_15714(void* obj) {
+    func_80014B30_15730(obj, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80014B30_15730);
 

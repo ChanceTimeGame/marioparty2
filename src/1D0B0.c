@@ -1,73 +1,1410 @@
 #include "common.h"
 
+/* Game loop processes (MP1 src/engine/gameman.c, MP3 src/gameman.c), the graphics swap chain
+   (MP3 src/graphics.c, MP1 src/engine/graphics.c) and the HMF model loader (MP3 src/hmfload.c,
+   MP1 src/1B800.c). */
+
+typedef struct {
+    s32 unk00;
+    u16 unk04;
+    s32 unk08;
+    OSMesgQueue *unk0C;
+    s32 unk10; // OSMesg to send to unk0C
+} graphicsMessage;
+
+typedef struct combinedStruct {
+    /* 0x00 */ OSTask task;
+    /* 0x40 */ OSMesgQueue* mtqueue;
+    /* 0x44 */ void* fullqueue;
+} swapChainTaskQueue; // size 0x48
+
+typedef struct {
+    s32 unk00;
+    OSMesgQueue *unk04;
+    s32 unk08;
+} unkSchedStruct;
+
+typedef struct {
+    u8 unk00[0x20];
+} unkGraphicsMessage2;
+
+extern void *osViGetCurrentFramebuffer(void);
+extern void *osViGetNextFramebuffer(void);
+extern void osViSwapBuffer(void *);
+extern void osViBlack(u8);
+extern void osViSetYScale(f32);
+
+void func_8001D114_1DD14(void**, u16, u16);
+void func_8001D13C_1DD3C(u64**);
+void func_8001D178_1DD78(s32*);
+void func_8001D184_1DD84(u32);
+void func_8001CCDC_1D8DC(void*);
+void* func_8001CC50_1D850(void);
+graphicsMessage* func_8001D000_1DC00(void);
+void func_8007E4D4_7F0D4(unkSchedStruct*, OSMesgQueue*, s32);
+void func_8007C218_7CE18();
+void func_8007C244_7CE44();
+
+extern swapChainTaskQueue D_800DEDC0_DF9C0;
+extern OSThread D_800F9058_F9C58;
+extern u8 D_800DB5C0_DC1C0[];
+extern graphicsMessage D_800F8720_F9320[0x40];
+extern s16 D_800F842A_F902A;
+extern void **D_800DEF58_DFB58;
+extern u16 D_800DEF5C_DFB5C;
+extern u16 D_800DEF5E_DFB5E;
+extern u64 *D_800F8430_F9030;
+extern u64 *D_800FA638_FB238;
+extern u64 *D_800FC98C_FD58C;
+extern u64 *D_800FC730_FD330;
+extern Gfx D_800F8F30_F9B30[];
+extern s32 D_800F8C44_F9844;
+extern void *D_800FDC68_FE868;
+extern void *D_800F8418_F9018;
+extern s32 *D_800FCE7C_FDA7C;
+extern u32 D_800DEF60_DFB60;
+extern OSMesgQueue D_800DEE08_DFA08;
+extern void *D_800DEE20_DFA20;
+extern s16 D_800F8F60_F9B60;
+extern OSMesgQueue D_800DEF20_DFB20;
+extern void *D_800DEF38_DFB38;
+extern u32 D_800FDC6C_FE86C;
+extern OSMesgQueue D_800F8F68_F9B68;
+extern u64 D_800B8590_B9190[];
+extern u64 D_800B8660_B9260[];
+extern s32 D_800F9298_F9E98;
+
+void func_8002FB6C_3076C(void);
+void func_80020E70_21A70(void);
+void func_800295D4_2A1D4(void*, void*);
+void pfClsScr(void);
+void omMain(void);
+void espMain(void);
+void func_80021490_22090(s32);
+void func_800286FC_292FC(void*, s32);
+
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C4B0_1D0B0);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C81C_1D41C);
+void func_8001C81C_1D41C(void) {
+    while (1) {
+        HuPrcVSleep();
+        func_8002FB6C_3076C();
+        func_80020E70_21A70();
+        func_800295D4_2A1D4((void*)0x02000000, (void*)0x3D0800);
+        pfClsScr();        
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C868_1D468);
+void func_8001C868_1D468(void) {
+    while (1) {
+        HuPrcVSleep();
+        omMain();       
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C894_1D494);
+void func_8001C894_1D494(void) {
+    while (TRUE) {
+        HuPrcVSleep();
+        rand8();
+        espMain(); // esprite
+        func_80021490_22090(2);
+        func_800286FC_292FC(&D_800F9298_F9E98, 2); // hmfman
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C8E0_1D4E0);
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001CA48_1D648);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001CB00_1D700);
+void func_8001CB00_1D700(void **arg1, s32 arg2, s32 arg3, u64 **arg4, s32 *arg5) {
+    func_8001D114_1DD14(arg1, arg2, arg3);
+    func_8001D13C_1DD3C(arg4);
+    func_8001D178_1DD78(arg5);
+    func_8001D184_1DD84(0);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001CC50_1D850);
+    D_800DEDC0_DF9C0.mtqueue = &D_800DEF20_DFB20;
+    D_800DEDC0_DF9C0.task.t.type = 1;
+    D_800DEDC0_DF9C0.task.t.flags = 2;
+    D_800DEDC0_DF9C0.task.t.ucode_boot = (u64 *)D_800B8590_B9190;
+    D_800DEDC0_DF9C0.task.t.ucode_boot_size = (u32)D_800B8660_B9260 - (u32)D_800B8590_B9190;
+    D_800DEDC0_DF9C0.task.t.ucode_size = 0x1000;
+    D_800DEDC0_DF9C0.task.t.ucode_data_size = 0x800;
+    D_800DEDC0_DF9C0.task.t.dram_stack_size = 0x400;
+    D_800DEDC0_DF9C0.task.t.data_ptr = (u64 *)&D_800F8F30_F9B30;
+    D_800DEDC0_DF9C0.task.t.data_size = 2;
+    D_800DEDC0_DF9C0.task.t.yield_data_size = 0xC00;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001CCDC_1D8DC);
+    D_800F8F60_F9B60 = 0;
+    D_800F842A_F902A = 0;
+    D_800F8C44_F9844 = 0;
+    D_800FDC68_FE868 = 0;
+    D_800F8418_F9018 = 0;
+    osCreateMesgQueue(&D_800DEE08_DFA08, &D_800DEE20_DFA20, 0x40);
+    osCreateMesgQueue(&D_800DEF20_DFB20, &D_800DEF38_DFB38, 8);
+    osCreateThread(&D_800F9058_F9C58, 0x10, &func_8001CCDC_1D8DC, NULL, &D_800DB5C0_DC1C0, 0x64);
+    osStartThread(&D_800F9058_F9C58);
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D000_1DC00);
+void *func_8001CC50_1D850(void) {
+    void *current;
+    void *next;
+    void *fBuffer;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D054_1DC54);
+    current = osViGetCurrentFramebuffer();
+    next = osViGetNextFramebuffer();
+    
+    for (i = 0; i < D_800DEF5C_DFB5C; i++) {
+        fBuffer = D_800DEF58_DFB58[i];
+        if (fBuffer != current) {
+            if (fBuffer != next) {
+                return fBuffer;
+            }
+        }
+    }
+    return NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D114_1DD14);
+void func_8001CCDC_1D8DC(void *arg0) {
+    unkSchedStruct sp10;
+    OSMesgQueue mesgQueue;
+    unkGraphicsMessage2 sp38;
+    unkSchedStruct sp58;
+    OSMesgQueue mesgQueue2;
+    unkGraphicsMessage2 sp68;
+    graphicsMessage *recvdMesg;
+    void *pAvailableFrameBuffer;
+    s32 var_s4;
+    u32 i;
+
+    swapChainTaskQueue *pSwapChain;
+    OSTask *pTask;
+
+    recvdMesg = NULL;
+    pSwapChain = &D_800DEDC0_DF9C0;
+    pTask = &D_800DEDC0_DF9C0.task;
+    var_s4 = 0;
+
+    osCreateMesgQueue(&mesgQueue, (OSMesg *)&sp38, 8);
+    func_8007E4D4_7F0D4(&sp10, &mesgQueue, 1);
+    osCreateMesgQueue(&mesgQueue2, (OSMesg *)&sp68, 8);
+    func_8007E4D4_7F0D4(&sp58, &mesgQueue2, 2);
+
+    while (TRUE) {
+        do {
+        recvmesg:
+            osRecvMesg(&mesgQueue, NULL, 1);
+            if (osRecvMesg(&mesgQueue2, NULL, 0) == 0) {
+                while (TRUE)
+                    ;
+            } // Infinite loop?
+            if ((D_800FDC6C_FE86C - var_s4) < D_800DEF60_DFB60) {
+                goto recvmesg;
+            }
+
+            var_s4 = D_800FDC6C_FE86C;
+            func_8007C218_7CE18();
+            pAvailableFrameBuffer = (void *)func_8001CC50_1D850();
+        } while (pAvailableFrameBuffer == NULL);
+
+        D_800F8418_F9018 = D_800FDC68_FE868;
+        D_800FDC68_FE868 = pAvailableFrameBuffer;
+
+        /* Need redundant do for regalloc? */
+        do {
+            do {
+
+                osRecvMesg(&D_800DEE08_DFA08, (OSMesg)&recvdMesg, 1);
+                if (osRecvMesg(&mesgQueue2, NULL, 0) == 0) {
+                    while (TRUE)
+                        ;
+                } else {
+                    u32 intMask;
+                    Gfx *dl = D_800F8F30_F9B30;
+                    gSPSegment(dl++, D_800DEF5E_DFB5E, pAvailableFrameBuffer);
+                    gSPBranchList(dl++, recvdMesg->unk00);
+                    pSwapChain->fullqueue = (void *)recvdMesg->unk08;
+                    pTask->t.dram_stack = D_800FC730_FD330;
+                    pTask->t.output_buff = D_800FC98C_FD58C;
+                    pTask->t.output_buff_size = D_800F8430_F9030;
+                    pTask->t.yield_data_ptr = D_800FA638_FB238;
+                    pTask->t.ucode = (u64 *)*((recvdMesg->unk04 * 2) + D_800FCE7C_FDA7C);            // offset     (data pairs?)
+                    pTask->t.ucode_data = (u64 *)*(((recvdMesg->unk04 * 2) | 1) + D_800FCE7C_FDA7C); // offset + 1
+
+                    osSendMesg(&D_800F8F68_F9B68, (OSMesg)pSwapChain, 1);
+                    osRecvMesg(&D_800DEF20_DFB20, NULL, 1);
+
+                    intMask = osSetIntMask(1);
+                    D_800F8F60_F9B60 -= 1;
+                    osSetIntMask(intMask);
+
+                    if (recvdMesg->unk0C != NULL) {
+                        osSendMesg(recvdMesg->unk0C, (OSMesg)recvdMesg->unk10, 1);
+                    }
+                }
+
+            } while (!((s32)recvdMesg->unk08 & 1));
+        } while (FALSE);
+
+        for (i = 1; i < D_800DEF60_DFB60; i++) {
+            osRecvMesg(&mesgQueue, NULL, 1);
+        }
+
+        osViSwapBuffer(pAvailableFrameBuffer);
+        if (D_800F8C44_F9844 == 0) {
+            if (osRecvMesg(&mesgQueue2, NULL, 0) == 0) {
+                while (TRUE)
+                    ;
+            }
+            osViSetYScale(1.0f);
+            osViBlack(0);
+        }
+        D_800F8C44_F9844++;
+        func_8007C244_7CE44(); // empty function
+    }
+}
+
+graphicsMessage *func_8001D000_1DC00(void) {
+    if (D_800F842A_F902A >= 0x40) {
+        D_800F842A_F902A = 0;
+    }
+    return &D_800F8720_F9320[D_800F842A_F902A++];
+}
+
+u8 func_8001D054_1DC54(s32 arg0, u16 arg1, s32 arg2, OSMesgQueue *arg3, s32 arg4) {
+    graphicsMessage *mesg;
+    u32 intMask;
+
+    if (D_800F8F60_F9B60 >= 0x40) {
+        return FALSE;
+    }
+
+    intMask = osSetIntMask(1);
+    D_800F8F60_F9B60++;
+    osSetIntMask(intMask);
+    mesg = func_8001D000_1DC00();
+
+    /* Initialize message. */
+    mesg->unk00 = arg0;
+    mesg->unk04 = arg1;
+    mesg->unk08 = arg2;
+    mesg->unk0C = arg3;
+    mesg->unk10 = arg4;
+
+    osSendMesg(&D_800DEE08_DFA08, mesg, 1);
+    return TRUE;
+}
+
+void func_8001D114_1DD14(void **pool, u16 size, u16 segment) {
+    D_800DEF58_DFB58 = pool;
+    D_800DEF5C_DFB5C = size;
+    D_800DEF5E_DFB5E = segment;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D130_1DD30);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D13C_1DD3C);
+void func_8001D13C_1DD3C(u64 **threadStacks) {
+    D_800FC730_FD330 = *threadStacks++;
+    D_800FC98C_FD58C = *threadStacks++;
+    D_800F8430_F9030 = *threadStacks++;
+    D_800FA638_FB238 = *threadStacks;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D178_1DD78);
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D184_1DD84);
 
+
+/* ---- HMF loader (MP3 src/hmfload.c) ---- */
+
+typedef struct {
+    Gfx* unk00[4];
+    void* unk10;
+    void* unk14;
+} HmfModelData_Unk64_Unk3C_Struct;
+
+typedef struct {
+    u8 unk00;
+    char unk01[0x33];
+} HmfModelData_Unk64_Unk60_Unk54_Struct;
+
+typedef struct {
+    char unk00[0x22];
+    s16 unk22;
+    char unk24[4];
+    s16 unk28;
+    s16 unk2A;
+    char unk2C[0x24];
+    s32 unk50;
+    HmfModelData_Unk64_Unk60_Unk54_Struct* unk54;
+    char unk58[0x10];
+} HmfModelData_Unk64_Unk60_Struct;
+
+typedef struct {
+    char unk00[0x18];
+} HmfModelData_Unk64_Unk8C_Struct;
+
+typedef struct {
+    char unk00[2];
+    s16 unk02;
+    char unk04[4];
+    s32 unk08;
+} HmfModelData_Unk64_Unk98_Struct;
+
+typedef struct {
+    char unk_00[0x30];
+    s32 unk_30;
+} HmfData_Unk84_Entry2;
+
+// New struct for the array at unk84 (0x10 bytes per entry)
+typedef struct {
+    u8 unk0[3];
+    u8 unk3;
+    u8 unk4;
+    u8 unk5[4];
+    u8 unk9;
+    u8 unkA[2];
+    HmfData_Unk84_Entry2* unkC;  // Pointer to something with unk30 field
+} HmfData_Unk84_Entry;
+
+typedef struct {
+    /* 0x00 */ s8 unk00; // UnkLightData_unk02?
+    /* 0x01 */ s8 unk01;
+    /* 0x02 */ s8 unk02;
+    /* 0x03 */ s8 unk03;
+    /* 0x04 */ s8 unk04;
+    /* 0x05 */ s8 unk05;
+    /* 0x06 */ s8 unk06;
+    /* 0x07 */ char unk07[1];
+    /* 0x08 */ Light unk08[1]; // length unknown
+} HmfData_UnkD0; // Size unknown
+
+
+typedef struct {
+    u8 unk00;
+    char unk01[0x32];
+    u8 unk33;
+} HmfObjectLinkData;
+
+typedef struct {
+    u8 unk00;
+    s8 unk01[3];
+    s16 unk04[4];
+    s32 unk0C[4];
+    s32 unk1C[4];
+    u8 unk2C[4];
+    s16 unk30;
+    s16 unk32;
+} HmfFaceData;
+
+typedef struct {
+    u8 unk00;
+    s8 unk01;
+    u8 unk02;
+    u8 unk03;
+    u8 unk04;
+    u8 unk05;
+    u8 unk06;
+    s8 unk07;
+    u8 unk08;
+    u8 unk09;
+    u8 unk0A;
+    char unk0B[1];
+    s16 unk0C;
+    s16 unk0E;
+    s16 unk10;
+    char unk12[0xA];
+    u8 unk1C;
+    char unk1D[3];
+    s16 unk20;
+    s16 unk22;
+    s16 unk24;
+    s16 unk26;
+    s16 unk28;
+    s16 unk2A;
+    char unk2C[0x16];
+    s16 unk42[3];
+    s16 unk48[3];
+    char unk4E[2];
+    s32 unk50;
+    HmfObjectLinkData *unk54;
+    void *unk58;
+    char unk5C[0xC];
+} HmfObjectData;
+
+typedef struct {
+    s16 unk00;
+    char unk02[2];
+    s32 unk04;
+    s32 unk08;
+    s32 unk0C;
+    s32 unk10;
+    s32 unk14;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s32 unk30;
+    s32 unk34;
+    s32 unk38;
+    s32 unk3C;
+    s32 unk40;
+    s32 unk44;
+    s32 unk48;
+    u8 unk4C;
+    u8 unk4D;
+    u8 unk4E;
+    char unk4F[1];
+    void *unk50;
+    void *unk54;
+    char unk58[0x40];
+} HmfMotionData;
+
+typedef struct {
+    char unk00[0x1C];
+    s16 unk1C;
+    char unk1E[2];
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+} HmfMapData;
+
+typedef struct {
+    char unk00[0x1C];
+    s16 unk1C;
+    s16 unk1E;
+    s16 unk20;
+    char unk22[2];
+    f32 unk24;
+    s16 *unk28;
+    s16 *unk2C;
+    u8 *unk30;
+} HmfDispData;
+
+typedef struct {
+    s16 unk00;
+    s16 unk02;
+    s16 *unk04;
+} HmfMtnData;
+
+typedef struct {
+    s16 unk00;
+    s16 unk02;
+    s16 unk04;
+    char unk06[2];
+    f32 unk08;
+    f32 unk0C;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    f32 unk2C;
+} HmfData_UnkBC;
+
+typedef struct {
+    u8 unk00;
+    u8 unk01;
+    u8 unk02;
+    u8 unk03;
+    u8 unk04;
+    u8 unk05;
+    u8 unk06;
+    u8 unk07;
+    u8 unk08;
+    u8 unk09;
+    u8 unk0A;
+} HmfData_Unk88_Entry;
+
+typedef struct {
+    s16 unk00;
+    s16 unk02;
+    s16 unk04;
+    char unk06[2];
+    s32 unk08;
+    s32 unk0C;
+    s32 unk10;
+    s32 unk14;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s32 unk30;
+    s32 unk34;
+    s32 unk38;
+    s32 unk3C;
+    s32 unk40;
+    u8 unk44;
+    u8 unk45;
+    char unk46[2];
+    void *unk48;
+    char unk4C[0x40];
+} HmfSkeletonData;
+
+typedef struct {
+    u8 unk00;
+    s8 unk01;
+    char unk02[8];
+    u8 unk0A;
+    s8 unk0B;
+    s8 unk0C;
+    char unk0D[1];
+    s16 unk0E;
+    s16 unk10;
+    s16 unk12;
+    s16 unk14;
+    s16 unk16;
+    char unk18[4];
+    u16 unk1C;
+    s16 unk1E;
+    s16 unk20; /* MP3 0x22 */
+    s16 unk22; /* MP3 0x24 */
+    s16 unk24;
+    s16 unk26;
+    char unk28[4];
+    u8 *unk2C;
+    u8 *unk30;
+    u8 *unk34;
+    u8 *unk38;
+    HmfModelData_Unk64_Unk3C_Struct *unk3C;
+    void *unk40;
+    Vtx *unk44[4]; /* inferred: MP3 fields 0x50-0xB8 sit 4 bytes later in MP2 */
+    void *unk54;
+    u8 *unk58;
+    void *unk5C;
+    void *unk60;
+    HmfObjectData *unk64;
+    s16 unk68;
+    char unk6A[2];
+    HmfSkeletonData *unk6C;
+    char unk70[0x14];
+    HmfMotionData *unk84;
+    HmfData_Unk84_Entry *unk88;
+    HmfData_Unk88_Entry *unk8C;
+    HmfModelData_Unk64_Unk8C_Struct *unk90;
+    HmfModelData_Unk64_Unk8C_Struct *unk94;
+    HmfModelData_Unk64_Unk8C_Struct *unk98;
+    HmfModelData_Unk64_Unk98_Struct *unk9C;
+    void *unkA0;
+    s32 unkA4;
+    f32 unkA8;
+    f32 unkAC;
+    f32 unkB0;
+    void *unkB4;
+    HmfDispData *unkB8;
+    HmfMtnData *unkBC;
+    void *unkC0; /* inferred: one field where MP3 has two (0xBC, 0xC0) */
+    HmfMapData *unkC4;
+    s32 unkC8;
+    void *unkCC;
+    HmfData_UnkD0 *unkD0;
+    void (*unkD4)(f32 *, f32, f32, f32);
+    void (*unkD8)(f32 *, f32, f32, f32);
+} HmfLoadData;
+
+typedef struct {
+    char unk00[6];
+    s16 loopIndex;
+    char unk08[6];
+    s16 recordCount;
+    char unk10[6];
+    s16 mapCount;
+    char unk18[6];
+    s16 recordSize;
+    char unk20[6];
+    s16 unk3BCount;
+    char unk28[4];
+    s32 flagsMask;
+} HmfLoadWork;
+
+typedef union {
+    s32 word;
+    f32 single;
+} HmfFloatBits;
+
+extern u8 *D_800DEF70_DFB70;
+extern u8 *D_800DEF74_DFB74;
+extern u8 *D_800DEF78_DFB78;
+extern u8 *D_800DEF7C_DFB7C;
+extern u8 *D_800DEF80_DFB80;
+extern u8 *D_800DEF84_DFB84;
+extern u8 *D_800DEF88_DFB88;
+extern u8 *D_800DEF8C_DFB8C;
+extern u8 *D_800DEF90_DFB90;
+extern u8 D_800F842C_F902C;
+extern u8 D_800F92DD_F9EDD;
+extern s16 D_800C9B74_CA774;
+extern s16 D_800FA1AA_FADAA;
+extern s16 D_8010106C_101C6C;
+
+void func_80025884_26484(f32 *, f32, f32, f32);
+void func_800261CC_26DCC(f32 *, f32, f32, f32);
+void func_800264D8_270D8(f32 *, f32, f32, f32);
+void func_800B2060_B2C60(f32 *, f32, f32, f32);
+s16 func_8001DA90_1E690(HmfLoadData *, void *);
+s16 func_8001DE08_1EA08(void *, s16);
+void func_8001DF00_1EB00(HmfLoadData *);
+s16 func_8001E108_1ED08(HmfLoadData *);
+s16 func_8001E57C_1F17C(HmfLoadData *);
+s16 func_8001E78C_1F38C(HmfLoadData *, u16, void *);
+u8 *func_8001EA88_1F688(s32, void *, void *);
+void *func_8001EB18_1F718(void *);
+void func_8001EB48_1F748(HmfLoadData *, s16, s16, s16);
+void func_8001EF00_1FB00(HmfFaceData *, u8 *, HmfLoadData *, u16 *);
+void func_8001F1B8_1FDB8(s8 *, u16 *, u16 *, u16 *);
+HmfData_Unk84_Entry2 *func_8003CF48_3DB48(HmfLoadData *, s16);
+s16 func_8001F380_1FF80(HmfLoadData *, void *, s16);
+s32 func_8001F50C_2010C(HmfLoadData *);
+s32 func_8001F8C0_204C0(HmfLoadData *);
+void func_8001FBE0_207E0(HmfLoadData *, void *, s16);
+s32 func_8001FC8C_2088C(HmfLoadData *, void *);
+void func_8001FFCC_20BCC(HmfLoadData *);
+void func_8001203C_12C3C(HmfLoadData *, u8 *, s32);
+void func_8002CAE4_2D6E4(HmfLoadData *);
+void func_80031630_32230(HmfLoadData *);
+void func_800339D0_345D0(HmfLoadData *);
+
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D190_1DD90);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D9D4_1E5D4);
+void func_8001D9D4_1E5D4(HmfLoadData *hmf) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001DA90_1E690);
+    if (hmf->unk84 != (HmfMotionData *)-1) {
+        if (hmf->unk16 > 0) {
+            i = 0;
+            do {
+                func_800271D8_27DD8(hmf->unk84[i].unk50);
+                i++;
+            } while (i < hmf->unk16);
+        }
+        func_800271D8_27DD8(hmf->unk84);
+
+    } else if (hmf->unk68 != 0) {
+        func_800271D8_27DD8(hmf->unk6C);
+    }
+    func_800271D8_27DD8(hmf->unk64);
+}
+
+s16 func_8001DA90_1E690(HmfLoadData *hmf, void *arg1) {
+    u8 *data;
+    u8 *argData;
+    HmfSkeletonData *entry;
+    s16 target;
+    s16 count;
+    s16 i;
+    s32 value;
+    s32 value2;
+    s32 value3;
+
+    argData = arg1;
+    target = (argData[0] << 8) + argData[1];
+    data = hmf->unk34;
+    while (data < hmf->unk30) {
+        data = func_8001EA88_1F688(0x534B4C31, data, hmf->unk30);
+        if (data == NULL) {
+            return 0;
+        }
+        if (((data[8] << 8) + data[9]) == target) {
+            break;
+        }
+        data = func_8001EB18_1F718(data + 4);
+    }
+
+    count = data[0xA];
+    hmf->unk68 = count;
+    hmf->unk6C = func_80027154_27D54(count * sizeof(HmfSkeletonData), D_800FA1AA_FADAA);
+    data += 0xB;
+    for (i = 0; i < count; i++) {
+        entry = &hmf->unk6C[i];
+        entry->unk00 = func_8001DE08_1EA08(hmf, (data[1] << 8) + data[2]);
+        entry->unk48 = hmf;
+        data += (data[0] << 1) + 1;
+        value = data[0];
+        value <<= 0x18;
+        value += data[1] << 0x10;
+        value += data[2] << 8;
+        entry->unk08 = value + data[3];
+        value = data[4];
+        value <<= 0x18;
+        value += data[5] << 0x10;
+        value += data[6] << 8;
+        entry->unk0C = value + data[7];
+        value = data[8];
+        value <<= 0x18;
+        value += data[9] << 0x10;
+        value += data[0xA] << 8;
+        entry->unk10 = value + data[0xB];
+        data += 0xC;
+        value = data[0];
+        value <<= 0x18;
+        value += data[1] << 0x10;
+        value += data[2] << 8;
+        entry->unk14 = value + data[3];
+        value = data[4];
+        value <<= 0x18;
+        value += data[5] << 0x10;
+        value += data[6] << 8;
+        entry->unk18 = value + data[7];
+        value = data[8];
+        value <<= 0x18;
+        value += data[9] << 0x10;
+        value += data[0xA] << 8;
+        entry->unk1C = value + data[0xB];
+        data += 0xC;
+        value = data[0];
+        value <<= 0x18;
+        value += data[1] << 0x10;
+        value += data[2] << 8;
+        entry->unk20 = value + data[3];
+        value = data[4];
+        value <<= 0x18;
+        value += data[5] << 0x10;
+        value += data[6] << 8;
+        entry->unk24 = value + data[7];
+        value = data[8];
+        value <<= 0x18;
+        value += data[9] << 0x10;
+        value += data[0xA] << 8;
+        entry->unk28 = value + data[0xB];
+        data += 0x18;
+        entry->unk02 = (data[0] << 8) + data[1];
+        entry->unk04 = (data[2] << 8) + data[3];
+        value2 = entry->unk08;
+        value = entry->unk0C;
+        value3 = entry->unk10;
+        entry->unk2C = value2;
+        entry->unk30 = value;
+        entry->unk34 = value3;
+        value2 = entry->unk14;
+        value = entry->unk18;
+        value3 = entry->unk1C;
+        entry->unk38 = value2;
+        entry->unk3C = value;
+        entry->unk40 = value3;
+        entry->unk45 = 0;
+        entry->unk44 = 0;
+        data += 5;
+    }
+    return count;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001DE08_1EA08);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001DF00_1EB00);
+void func_8001DF00_1EB00(HmfLoadData *hmf) {
+    u8 *data;
+    s16 count;
+    s16 count2;
+    s16 *coords;
+    u8 *colors;
+    s32 coordBytes;
+    HmfFloatBits scale;
+    s32 value;
+    s16 i;
+
+    data = D_800DEF74_DFB74;
+    count = (data[8] << 8) + data[9];
+    hmf->unk14 = count;
+    count2 = count;
+    if (count2 != 0) {
+        coordBytes = count2 << 1;
+        coordBytes += count2;
+        hmf->unk54 = func_80027154_27D54(coordBytes * 2, D_8010106C_101C6C);
+        coords = hmf->unk54;
+        hmf->unk58 = func_80027154_27D54(coordBytes, D_8010106C_101C6C);
+        colors = hmf->unk58;
+        value = data[0xC] << 0x18;
+        value += data[0xD] << 0x10;
+        value += data[0xE] << 8;
+        scale.word = value + data[0xF];
+        data += 0x10;
+        i = 0;
+        if (count2 > 0) {
+            do {
+                *coords++ = (s16)((f32)(s16)((data[0] << 8) + data[1]) * scale.single);
+                data += 2;
+                *coords++ = (s16)((f32)(s16)((data[0] << 8) + data[1]) * scale.single);
+                data += 2;
+                *coords++ = (s16)((f32)(s16)((data[0] << 8) + data[1]) * scale.single);
+                data += 2;
+                *colors++ = *data++;
+                *colors++ = *data++;
+                *colors++ = *data++;
+                i++;
+            } while (i < count);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001E108_1ED08);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001E57C_1F17C);
+s16 func_8001E57C_1F17C(HmfLoadData *hmf) {
+    u8 *data;
+    u8 *colorData;
+    HmfData_Unk84_Entry *entry;
+    void *temp;
+    s16 count;
+    s16 i;
+    s8 type;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001E78C_1F38C);
+    count = (D_800DEF88_DFB88[8] << 8) + D_800DEF88_DFB88[9];
+    hmf->unk88 = func_80027154_27D54(count * sizeof(HmfData_Unk84_Entry), D_800FA1AA_FADAA);
+    temp = func_80027138_27D38(count * sizeof(s16));
+    data = D_800DEF88_DFB88 + 0xA;
+    hmf->unk12 = count;
+    for (i = 0; i < count; i++) {
+        s8 fill;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001EA88_1F688);
+        entry = &hmf->unk88[i];
+        type = data[2];
+        entry->unk0[0] = type;
+        colorData = D_800DEF84_DFB84 + (((data[3] << 8) + data[4]) * 4 + 0xA);
+        if (type == 0x2B) {
+            entry->unk5[0] = colorData[0];
+            entry->unk5[1] = colorData[1];
+            entry->unk5[2] = colorData[2];
+            entry->unk5[3] = colorData[3];
+        } else {
+            entry->unk5[3] = 0;
+            entry->unk5[2] = 0;
+            entry->unk5[1] = 0;
+            entry->unk5[0] = 0;
+        }
+        switch (data[5]) {
+            case 0x2D:
+                entry->unk0[1] = 0;
+                break;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001EB18_1F718);
+            case 0x2E:
+                entry->unk0[1] = 2;
+                break;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001EB48_1F748);
+            default:
+                entry->unk0[1] = 1;
+                break;
+        }
+        switch (data[6]) {
+            case 0x2D:
+                entry->unk0[2] = 0;
+                break;
+
+            case 0x2E:
+                entry->unk0[2] = 2;
+                break;
+
+            default:
+                entry->unk0[2] = 1;
+                break;
+        }
+        entry->unkC = func_8003CF48_3DB48(hmf, (data[0xA] << 8) + data[0xB]);
+        fill = -1;
+        entry->unk3 = fill;
+        entry->unk4 = fill;
+        entry->unk9 = 0xFF;
+        data += ((data[0] << 8) + data[1]) + 2;
+    }
+    func_800271D8_27DD8(temp);
+    return count;
+}
+
+s16 func_8001E78C_1F38C(HmfLoadData *hmf, u16 motionIndex, void *arg2) {
+    u8 *data;
+    HmfMotionData *entry;
+    s16 count;
+    s16 count2;
+    s32 value;
+    s32 value2;
+    s32 value3;
+    s16 i;
+
+    data = arg2;
+    entry = &hmf->unk84[motionIndex];
+    entry->unk00 = count2 = (data[0] << 8) + data[1];
+    count = count2;
+    entry->unk50 = func_80027154_27D54(count2 * sizeof(s16), D_800FA1AA_FADAA);
+    data += 2;
+    for (i = 0; i < count; i++) {
+        ((s16 *)entry->unk50)[i] = func_8001DE08_1EA08(hmf, (data[0] << 8) + data[1]);
+        data += 2;
+    }
+    entry->unk54 = hmf;
+    value = data[0];
+    value <<= 0x18;
+    value += data[1] << 0x10;
+    value += data[2] << 8;
+    entry->unk04 = value + data[3];
+    value = data[4];
+    value <<= 0x18;
+    value += data[5] << 0x10;
+    value += data[6] << 8;
+    entry->unk08 = value + data[7];
+    value = data[8];
+    value <<= 0x18;
+    value += data[9] << 0x10;
+    value += data[0xA] << 8;
+    entry->unk0C = value + data[0xB];
+    data += 0xC;
+    value = data[0];
+    value <<= 0x18;
+    value += data[1] << 0x10;
+    value += data[2] << 8;
+    entry->unk10 = value + data[3];
+    value = data[4];
+    value <<= 0x18;
+    value += data[5] << 0x10;
+    value += data[6] << 8;
+    entry->unk14 = value + data[7];
+    value = data[8];
+    value <<= 0x18;
+    value += data[9] << 0x10;
+    value += data[0xA] << 8;
+    entry->unk18 = value + data[0xB];
+    data += 0xC;
+    value = data[0];
+    value <<= 0x18;
+    value += data[1] << 0x10;
+    value += data[2] << 8;
+    entry->unk1C = value + data[3];
+    value = data[4];
+    value <<= 0x18;
+    value += data[5] << 0x10;
+    value += data[6] << 8;
+    entry->unk20 = value + data[7];
+    value = data[8];
+    value <<= 0x18;
+    value += data[9] << 0x10;
+    value += data[0xA] << 8;
+    entry->unk24 = value + data[0xB];
+    value2 = entry->unk04;
+    value = entry->unk08;
+    value3 = entry->unk0C;
+    entry->unk28 = value2;
+    entry->unk2C = value;
+    entry->unk30 = value3;
+    value2 = entry->unk10;
+    value = entry->unk14;
+    value3 = entry->unk18;
+    entry->unk34 = value2;
+    entry->unk38 = value;
+    entry->unk3C = value3;
+    value2 = entry->unk1C;
+    value = entry->unk20;
+    value3 = entry->unk24;
+    entry->unk40 = value2;
+    entry->unk44 = value;
+    entry->unk48 = value3;
+    entry->unk4E = 0;
+    entry->unk4D = 0;
+    entry->unk4C = 0;
+    return count;
+}
+
+u8* func_8001EA88_1F688(s32 arg0, void* arg1_, void* arg2_) {
+    u8* arg1 = arg1_;
+    u8* arg2 = arg2_;
+    while (arg1 < arg2) {
+        if (arg0 == (arg1[0] << 24) + (arg1[1] << 16) + (arg1[2] << 8) + arg1[3]) {
+            return arg1;
+        }
+        arg1 += 4;
+        arg1 += (arg1[0] << 24) + (arg1[1] << 16) + (arg1[2] << 8) + arg1[3] + 4;
+        arg1 += (u32) arg1 & 1;
+    }
+
+    return NULL;
+}
+
+void* func_8001EB18_1F718(void* arg0_) {
+    u8* arg0 = arg0_;
+    arg0 += (arg0[1] << 16) + (arg0[2] << 8) + arg0[3] + 4;
+    arg0 += (u32) arg0 & 1;
+
+    return arg0;
+}
+
+void func_8001EB48_1F748(HmfLoadData *hmf, s16 objectIndex, s16 linkIndex, s16 faceCount) {
+    u8 *record;
+    u8 *next;
+    HmfFaceData *faces;
+    s16 *p;
+    s16 *bounds;
+    s16 pointCount;
+    u16 flags;
+    s16 v;
+    s16 count;
+    s16 minX;
+    s16 minY;
+    s16 minZ;
+    s16 maxX;
+    s16 maxY;
+    s16 maxZ;
+    s16 i;
+    s16 j;
+
+    count = linkIndex;
+    if (hmf->unk14 == 0) {
+        return;
+    }
+
+    hmf->unk64[objectIndex].unk54 = (HmfObjectLinkData *)func_80027154_27D54(faceCount * sizeof(HmfFaceData), D_8010106C_101C6C);
+    faces = (HmfFaceData *)hmf->unk64[objectIndex].unk54;
+    record = D_800DEF78_DFB78 + 0x10;
+    for (i = 0; i < linkIndex; i++) {
+        if (record[0] == 0x16) {
+            next = record + 0x2A;
+        } else if (record[0] != 0x35) {
+            next = record + 0xC;
+        } else {
+            next = record + 0x36;
+        }
+        record = next;
+    }
+
+    minX = minY = minZ = 0x7FFF;
+    maxX = maxY = maxZ = -0x8000;
+    flags = 0;
+
+    for (i = 0; i < faceCount; i++) {
+        func_8001EF00_1FB00(&faces[i], record, hmf, &flags);
+        if (record[0] == 0x16) {
+            pointCount = 3;
+        } else if (record[0] == 0x35) {
+            pointCount = 4;
+        } else {
+            pointCount = 2;
+        }
+
+        for (j = 0; j < pointCount; j++) {
+            p = &((s16 *)hmf->unk54)[faces[i].unk04[j] * 3];
+            v = p[0];
+            if (minX > v) {
+                minX = v;
+            }
+            if (maxX < v) {
+                maxX = v;
+            }
+            v = p[1];
+            if (minY > v) {
+                minY = v;
+            }
+            if (maxY < v) {
+                maxY = v;
+            }
+            v = p[2];
+            if (minZ > v) {
+                minZ = v;
+            }
+            if (maxZ < v) {
+                maxZ = v;
+            }
+        }
+        switch (record[0]) {
+            case 0x35:
+                next = record + 0x36;
+                break;
+            case 0x16:
+                next = record + 0x2A;
+                break;
+            default:
+                next = record + 0xC;
+                break;
+        }
+        record = next;
+    }
+
+    hmf->unk64[objectIndex].unk50 =
+        (flags & 1) ? (hmf->unk64[objectIndex].unk50 | 0x10000) : hmf->unk64[objectIndex].unk50;
+    bounds = hmf->unk64[objectIndex].unk42;
+    bounds[0] = minX;
+    bounds[1] = minY;
+    bounds[2] = minZ;
+    bounds = hmf->unk64[objectIndex].unk48;
+    bounds[0] = maxX;
+    bounds[1] = maxY;
+    bounds[2] = maxZ;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001EF00_1FB00);
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F1B8_1FDB8);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F380_1FF80);
+s16 func_8001F380_1FF80(HmfLoadData *hmf, void *arg1, s16 index) {
+    u8 *data;
+    u8 *src;
+    u8 *dst;
+    s16 sum;
+    s16 i;
+    s16 j;
+    s16 len;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F4AC_200AC);
+    data = D_800DEF90_DFB90;
+    sum = data[8];
+    sum = (sum << 8) + data[9];
+    if (sum == 0) {
+        ((u8 *)arg1)[0] = 0;
+        return 0;
+    }
+    data += 0xA;
+    src = data + sum;
+    for (i = 0; i < index; i++) {
+        src += data[0];
+        data++;
+    }
+    len = data[0];
+    dst = arg1;
+    i = 0;
+    sum = 0;
+    j = 0;
+    for (; i < len; i++) {
+        if (j >= 0x1B) {
+            *dst = 0;
+            return sum;
+        }
+        if (src[0] == 0x2F) {
+            dst = arg1;
+            sum = 0;
+            j = 0;
+            src++;
+        } else {
+            *dst = src[0];
+            src++;
+            sum += (j + 1) * *dst;
+            dst++;
+            j++;
+        }
+    }
+    *dst = 0;
+    return sum;
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F50C_2010C);
+s16 func_8001F4AC_200AC(u8 *arg0) {
+    s32 sum = 0;
+    s16 i = 1;
+    u8 c = arg0[0];
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F8C0_204C0);
+    while (c != 0 && i < 28) {
+        sum += i * c;
+        arg0++;
+        i++;
+        c = arg0[0];
+    }
+    return sum;
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001FBE0_207E0);
+s32 func_8001F50C_2010C(HmfLoadData *hmf) {
+    u8 *data;
+    u8 *src;
+    HmfDispData *entry;
+    s16 *indices;
+    s16 *coords;
+    u8 *colors;
+    HmfFloatBits scale;
+    s32 size;
+    s16 dispCount;
+    s16 dispIndex;
+    s16 vtxCount;
+    s16 count;
+    s16 j;
+
+    data = hmf->unk34;
+    dispCount = 0;
+
+    while (1) {
+        data = func_8001EA88_1F688(0x44495350, data, hmf->unk30);
+        if (data == NULL) {
+            break;
+        }
+        data = func_8001EB18_1F718(data + 4);
+        dispCount++;
+    }
+
+    if (dispCount == 0) {
+        hmf->unk20 = 0;
+        hmf->unkB8 = NULL;
+        return 0;
+    }
+
+    hmf->unkB8 = func_80027154_27D54(dispCount * sizeof(HmfDispData), D_800FA1AA_FADAA);
+    hmf->unk20 = dispCount;
+    data = hmf->unk34;
+    dispIndex = 0;
+
+    while (1) {
+        data = func_8001EA88_1F688(0x44495350, data, hmf->unk30);
+
+        if (data == NULL) {
+            break;
+        }
+
+        if (data[0xC] == 0x43) {
+            entry = &hmf->unkB8[dispIndex];
+            entry->unk1E = func_8001F380_1FF80(hmf, entry, (data[8] << 8) + data[9]);
+            vtxCount = (data[0xA] << 8) + data[0xB];
+            count = vtxCount;
+            entry->unk1C = count;
+            size = vtxCount * 2;
+            indices = func_80027154_27D54(size, D_800FA1AA_FADAA);
+            entry->unk28 = indices;
+            size += vtxCount;
+            coords = func_80027154_27D54(size * 2, D_800FA1AA_FADAA);
+            entry->unk2C = coords;
+            colors = func_80027154_27D54(size, D_800FA1AA_FADAA);
+            entry->unk30 = colors;
+            entry->unk20 = (data[0xD] << 8) + data[0xE];
+            scale.word = (data[0xF] << 0x18) + (data[0x10] << 0x10) + (data[0x11] << 8) + data[0x12];
+            scale.single *= 5.0f;
+            entry->unk24 = scale.single;
+            src = data + 0x13;
+            for (j = 0; j < count; j++) {
+                indices[0] = (src[0] << 8) + src[1];
+                coords[0] = (s16)((src[2] << 8) + src[3]) * scale.single;
+                coords[1] = (s16)((src[4] << 8) + src[5]) * scale.single;
+                coords[2] = (s16)((src[6] << 8) + src[7]) * scale.single;
+                if (((s8 *)hmf->unk58)[indices[0] * 3 + 0] == 0 && ((s8 *)hmf->unk58)[indices[0] * 3 + 1] == 0 && ((s8 *)hmf->unk58)[indices[0] * 3 + 2] == 0) {
+                    colors[0] = colors[1] = colors[2] = 0;
+                } else {
+                    colors[0] = src[8];
+                    colors[1] = src[9];
+                    colors[2] = src[0xA];
+                }
+                indices++;
+                coords += 3;
+                colors += 3;
+                src += 0xB;
+            }
+        }
+        data = func_8001EB18_1F718(data + 4);
+        dispIndex++;
+    }
+    func_8001F8C0_204C0(hmf);
+    return 1;
+}
+
+s32 func_8001F8C0_204C0(HmfLoadData *hmf) {
+    char buf[0x20];
+    u8 *data;
+    u8 *sub2;
+    u8 *cur;
+    HmfMtnData *entry;
+    s16 id;
+    s16 cnt;
+    s16 count2;
+    s16 mtnCount;
+    s16 subCount;
+    s32 subCount1;
+    s16 i;
+    s16 k;
+    s16 m;
+
+    data = hmf->unk34;
+    mtnCount = 0;
+    while (1) {
+        data = func_8001EA88_1F688(0x4D544E31, data, hmf->unk30);
+        if (data == NULL) {
+            break;
+        }
+        cur = data + 0xD;
+        subCount1 = data[0xA];
+        for (i = 0; i < subCount1; i++) {
+            if (cur[2] == 0xA) {
+                mtnCount++;
+            }
+            cur += ((cur[0] << 8) + cur[1]) + 2;
+        }
+        data = func_8001EB18_1F718(data + 4);
+    }
+    if (mtnCount == 0) {
+        hmf->unkBC = NULL;
+        return 0;
+    }
+    hmf->unkBC = func_80027154_27D54(mtnCount * sizeof(HmfMtnData), D_800FA1AA_FADAA);
+    hmf->unk22 = mtnCount;
+    data = hmf->unk34;
+    mtnCount = 0;
+    while (1) {
+        data = func_8001EA88_1F688(0x4D544E31, data, hmf->unk30);
+        if (data == NULL) {
+            break;
+        }
+        subCount = data[0xA];
+        sub2 = data + 0xD;
+        entry = &hmf->unkBC[mtnCount];
+        for (i = 0; i < subCount; i++) {
+            cur = sub2;
+            sub2 += ((cur[0] << 8) + cur[1]) + 2;
+            if (cur[2] == 0xA) {
+                cur += 3;
+                entry->unk00 = (cur[0] << 8) + cur[1];
+                cnt = (cur[2] << 8) + cur[3];
+                count2 = cnt;
+                entry->unk02 = count2;
+                entry->unk04 = func_80027154_27D54(cnt * 2, D_800FA1AA_FADAA);
+                cur += 4;
+                for (k = 0; k < count2; k++) {
+                    id = func_8001F380_1FF80(hmf, buf, (cur[0] << 8) + cur[1]);
+                    for (m = 0; m < hmf->unk20; m++) {
+                        if (id == hmf->unkB8[m].unk1E && func_800B0FD0_B1BD0(hmf->unkB8[m].unk00, buf) == 0) {
+                            break;
+                        }
+                    }
+                    if (m == hmf->unk20) {
+                        entry->unk04[k] = 0;
+                    } else {
+                        entry->unk04[k] = m;
+                    }
+                    cur += 2;
+                }
+                mtnCount++;
+            }
+        }
+        data = func_8001EB18_1F718(data + 4);
+    }
+    return 1;
+}
+
+void func_8001FBE0_207E0(HmfLoadData *hmf, void *arg1, s16 index) {
+    u8 *data;
+    HmfMapData *entry;
+    s32 value;
+
+    data = arg1;
+    entry = &hmf->unkC4[index];
+    value = ((data[0] << 0x18) + (data[1] << 0x10)) + (data[2] << 8);
+    entry->unk20 = value + data[3];
+    value = 0x10;
+    value = ((data[4] << 0x18) + (data[5] << value)) + (data[6] << 8);
+    entry->unk24 = value + data[7];
+    value = ((data[8] << 0x18) + (data[9] << 0x10)) + (data[10] << 8);
+    entry->unk28 = value + data[11];
+}
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001FC8C_2088C);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001FFCC_20BCC);
+void func_8001FFCC_20BCC(HmfLoadData *hmf) {
+    u8 *data;
+    s32 value;
+
+    data = D_800DEF70_DFB70;
+    value = data[0xC];
+    value <<= 0x18;
+    value += data[0xD] << 0x10;
+    value += data[0xE] << 8;
+    value += data[0xF];
+    if (value & 2) {
+        D_800C9B74_CA774 = 1;
+    } else {
+        D_800C9B74_CA774 = 0;
+    }
+    if (D_800DEF70_DFB70[0x1C] == 0x45) {
+        hmf->unkD4 = func_80025884_26484;
+        hmf->unkD8 = func_800B2060_B2C60;
+    } else {
+        hmf->unkD4 = func_800261CC_26DCC;
+        hmf->unkD8 = func_800264D8_270D8;
+    }
+}
