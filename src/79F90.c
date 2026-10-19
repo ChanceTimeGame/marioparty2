@@ -16,7 +16,7 @@ extern s16 D_800FA188_FAD88;
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern u16 ContBtn[4];
-extern u16 D_8010163C_10223C[4]; /* MP1 ContBtnTrg */
+extern u16 ContBtnTrg[4]; /* MP1 ContBtnTrg */
 extern s8 D_801026F8_1032F8[4];
 extern s8 D_800FD3E4_FDFE4[4];
 extern u16 D_800F92D4_F9ED4[4];
@@ -123,7 +123,7 @@ void func_80079C60_7A860(void) {
         D_801026F8_1032F8[i] = ContStkX[i];
         D_800FD3E4_FDFE4[i] = ContStkY[i];
         D_800F92D4_F9ED4[i] = ContBtn[i];
-        D_800FA19C_FAD9C[i] = D_8010163C_10223C[i];
+        D_800FA19C_FAD9C[i] = ContBtnTrg[i];
         D_800F851C_F911C[i] = D_800FD410_FE010[i];
     }
 }

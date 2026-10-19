@@ -104,7 +104,7 @@ extern OSMesg D_800D81B8_D8DB8;
 extern u16 D_800F8700_F9300[4];
 extern s8 ContStkX[4];
 extern u16 ContBtn[4];
-extern u16 D_8010163C_10223C[4];
+extern u16 ContBtnTrg[4];
 extern u16 D_800FC9BE_FD5BE[4];
 extern u16 D_800FD410_FE010[4];
 extern s16 D_800FD468_FE068[4];
@@ -230,7 +230,7 @@ s32 func_80016840_17440(u16* arg0) {
                 }
             }
         }
-        ContBtn[index] = D_8010163C_10223C[index] = D_800F8700_F9300[index] = D_800FD410_FE010[index] = 0;
+        ContBtn[index] = ContBtnTrg[index] = D_800F8700_F9300[index] = D_800FD410_FE010[index] = 0;
         D_800FC9BE_FD5BE[index] = D_800FD468_FE068[index] = 0;
         ContStkY[index] = 0;
         ContStkX[index] = 0;
@@ -313,7 +313,7 @@ s16 func_80016BD0_177D0(void)
       D_800FC9BE_FD5BE[i] = ContStkX[i];
       ContStkY[i] = slot[i].stick_y;
       D_800FD468_FE068[i] = ContStkY[i];
-      D_8010163C_10223C[i] = btn & (btn ^ D_800F8700_F9300[i]);
+      ContBtnTrg[i] = btn & (btn ^ D_800F8700_F9300[i]);
       if (D_800F8700_F9300[i] == btn)
       {
         if ((--D_800D8186_D8D86[i]) == 0)
@@ -328,7 +328,7 @@ s16 func_80016BD0_177D0(void)
       }
       else
       {
-        D_800FD410_FE010[i] = D_8010163C_10223C[i];
+        D_800FD410_FE010[i] = ContBtnTrg[i];
         D_800D8186_D8D86[i] = 30;
       }
       if (((u8) (ContStkX[i] + 9)) < 19)
@@ -375,7 +375,7 @@ s16 func_80016F54_17B54(void) {
 
     if (func_80016BD0_177D0() > 0) {
         for (i = 0; i < PAD_COUNT; i++) {
-            trg[i] = D_8010163C_10223C[i];
+            trg[i] = ContBtnTrg[i];
             rep[i] = D_800FD410_FE010[i];
             D_800FC9BE_FD5BE[i] = ContStkX[i];
             D_800FD468_FE068[i] = ContStkY[i];
@@ -385,7 +385,7 @@ s16 func_80016F54_17B54(void) {
         n++;
         while (func_80016BD0_177D0() != 0) {
             for (i = 0; i < PAD_COUNT; i++) {
-                trg[i] |= D_8010163C_10223C[i];
+                trg[i] |= ContBtnTrg[i];
                 rep[i] |= D_800FD410_FE010[i];
                 D_800FC9BE_FD5BE[i] += ContStkX[i];
                 D_800FD468_FE068[i] += ContStkY[i];
@@ -395,7 +395,7 @@ s16 func_80016F54_17B54(void) {
             n++;
         }
         for (i = 0; i < PAD_COUNT; i++) {
-            D_8010163C_10223C[i] = trg[i];
+            ContBtnTrg[i] = trg[i];
             D_800FD410_FE010[i] = rep[i];
         }
     }
