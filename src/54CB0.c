@@ -7,7 +7,7 @@ extern s16 D_800E1B88_E2788; //total blue spaces hidden blocks cannot spawn on
 extern s16 D_800E1B68_E2768[];
 extern s16 D_800E1968_E2568[];
 SpaceData* GetSpaceData(s16);
-s32 func_8005A358_5AF58(f32 arg0);
+s32 MBRand(f32 arg0);
 
 INCLUDE_ASM("asm/nonmatchings/54CB0", func_800540B0_54CB0);
 
@@ -65,7 +65,7 @@ s16 func_80055008_55C08(u16 arg0, u8 arg1) {
         var_s1 -= D_800E1B66_E2766;
     }
 
-    var_s1 = func_8005A358_5AF58(var_s1);
+    var_s1 = MBRand(var_s1);
 
     for (i = 0;; i = (++i < D_800E18D0_E24D0) ? i : 0) {
         space = GetSpaceData(i);

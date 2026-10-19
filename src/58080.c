@@ -33,7 +33,7 @@ s32 func_8005DCA0_5E8A0(s16);
 s32 func_8005DEB0_5EAB0(s16, u8);
 BoardPlayer *func_8005E688_5F288(s32, s32);
 s32 func_8005E6E4_5F2E4(BoardPlayer*);
-s32 func_8007959C_7A19C(s32);
+s32 PlaySound(s32);
 s32 func_80082450_83050(s16, s16, s32, s32, s32);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
 void MBModelKill(void*);
@@ -192,7 +192,7 @@ INCLUDE_ASM("asm/nonmatchings/58080", func_8005A1D8_5ADD8);
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005A29C_5AE9C);
 
-s32 func_8005A358_5AF58(f32 arg0) {
+s32 MBRand(f32 arg0) {
     // rand8 returns an unsigned byte
     u8 randomByte1 = rand8();
     u8 randomByte2 = rand8();
@@ -435,19 +435,19 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
         if (var_a0_2 != -1) {
             sp1E += D_800CC7C4_CD3C4[(s16)sp1E << 2][var_a0_2];
             func_8005C8AC_5D4AC(boardPlayer4, sp1E);
-            func_8007959C_7A19C(1);
+            PlaySound(1);
             continue;
         }
 
         // wtf? if 0-ed to keep code in "correct" place
         if (0) {
             dummy:
-            func_8007959C_7A19C(2);
+            PlaySound(2);
             func_8005DEB0_5EAB0(sp1E, var_s1);
             goto bail;
         }
         if (D_8010163C_10223C[arg0] & 0x8000) {
-            func_8007959C_7A19C(2);
+            PlaySound(2);
             tempBoardPlayer = BoardPlayerGet((s16)sp1E);
             func_8005C8A0_5D4A0(1);
             var_s1 = tempBoardPlayer->cpu_difficulty2;
@@ -472,7 +472,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                         var_s1 -= 1;
                     }
                     func_8005DEB0_5EAB0(sp1E, var_s1);
-                    func_8007959C_7A19C(1);
+                    PlaySound(1);
                 } else if (ContDStkTrg[arg0] & 0x100) {
                     if (i != 4 || var_s1 == 2) {
                         i = func_8005C78C_5D38C(tempBoardPlayer, 1);
@@ -485,7 +485,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                         var_s1 += 1;
                     }
                     func_8005DEB0_5EAB0(sp1E, var_s1);
-                    func_8007959C_7A19C(1);
+                    PlaySound(1);
                 }
                 if (i >= 0) {
                     func_8005C6DC_5D2DC(tempBoardPlayer, i);
@@ -509,7 +509,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                 var_v0 = ContDStkTrg[arg0];
                 var_v0 &= 0x4000;
                 if (var_v0) {
-                    func_8007959C_7A19C(4);
+                    PlaySound(4);
                     break;
                 }
             }
@@ -519,7 +519,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
             HuPrcVSleep();
         }
     } while (!(D_8010163C_10223C[arg0] & 0x4000));
-    func_8007959C_7A19C(4);
+    PlaySound(4);
     omDelPrcObj(process);
     func_8005E6E4_5F2E4(boardPlayer4);
     func_8005E6E4_5F2E4(boardPlayer3);

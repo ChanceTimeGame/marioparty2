@@ -99,7 +99,7 @@ void func_80102DEC_D5DDC_Debug(void);
 s32 HuGetPadInserted(s16);
 void func_80105A2C_D8A1C_Debug(s32);
 void func_80105BDC_D8BCC_Debug(void);
-s16 func_8007959C_7A19C(s16);
+s16 PlaySound(s16);
 void func_800795D8_7A1D8(s16, s8);
 s32 func_8001A8DC_1B4DC(u16);
 void func_8001A96C_1B56C(u16, u8, u8, u8);
@@ -691,7 +691,7 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
 }
 
 void func_80105964_D8954_Debug(u16 arg0) {
-    func_800795D8_7A1D8(func_8007959C_7A19C(D_80106920_D9910_Debug[arg0].unk_00), D_80106920_D9910_Debug[arg0].unk_02);
+    func_800795D8_7A1D8(PlaySound(D_80106920_D9910_Debug[arg0].unk_00), D_80106920_D9910_Debug[arg0].unk_02);
 }
 
 void func_801059B0_D89A0_Debug(s16 arg0) {

@@ -640,3 +640,10 @@ tmp_task = 0x800F4CE0; // size:0x40
 MBModelParamCreate = 0x80043F7C; // rom:0x44B7C
 MBModelDispOn = 0x80044258; // rom:0x44E58
 MBModelKill = 0x8004430C; // rom:0x44F0C
+
+// b2-C: 4ABB0 (MP1 src/43760.c, MP3 ovl_80 F2910.c/F5070.c)
+MBArrayShuffle = 0x8004B224; // rom:0x4BE24
+MBCoinChangeInit = 0x8004C248; // rom:0x4CE48
+MBCoinChangeKill = 0x8004C2C0; // rom:0x4CEC0
+MBRand = 0x8005A358; // rom:0x5AF58
+PlaySound = 0x8007959C; // rom:0x7A19C
