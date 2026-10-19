@@ -57,9 +57,6 @@ ALMicroTime func_8007F020_7FC20(void* node) {
     sndp->curTime += sndp->nextDelta;
     return sndp->nextDelta;
 }
-/* Matches (opcode and register compare of the object) except where its jump table and double
-   constant live: both are in the main data blob, and C would emit its own in .rodata. */
-#ifdef NON_MATCHING
 void func_8007F0B4_7FCB4(ALSndPlayer* sndp, ALSndpEvent* event) {
     ALVoiceConfig vc;
     ALSndpEvent evt;
@@ -169,9 +166,6 @@ void func_8007F0B4_7FCB4(ALSndPlayer* sndp, ALSndpEvent* event) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/7FAE0", func_8007F0B4_7FCB4);
-#endif
 
 
 void func_8007F52C_8012C(ALEventQueue* evtq, ALSoundState* state) {
@@ -200,9 +194,7 @@ void func_8007F52C_8012C(ALEventQueue* evtq, ALSoundState* state) {
     }
     osSetIntMask(mask);
 }
-/* MP1's func_80064AC4 without its divide-by-zero report. Compiles to the retail instructions except
-   that its double constant is in the main data blob. */
-#ifdef NON_MATCHING
+/* MP1's func_80064AC4 without its divide-by-zero report. */
 s32 func_8007F5D4_801D4(s32 i, f32 f) {
     f64 rd;
     s32 ri;
@@ -215,6 +207,3 @@ s32 func_8007F5D4_801D4(s32 i, f32 f) {
     }
     return ri;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/7FAE0", func_8007F5D4_801D4);
-#endif
