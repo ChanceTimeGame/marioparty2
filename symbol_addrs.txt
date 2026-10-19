@@ -653,3 +653,9 @@ MBItemSubFunctions = 0x800DF718; // size:0x38
 MBItemRobBoxExec = 0x8004D758; // rom:0x4E358
 MBItemDesc = 0x8004E1A8; // rom:0x4EDA8
 MBItemDescExec = 0x8004E484; // rom:0x4F084
+
+// b2-C: 512A0 (MP3 ovl_80 F9DE0.c, MP1 src/43E90 names)
+MBMotionSet = 0x80044494; // rom:0x45094
+MBMotionShiftSet = 0x80044530; // rom:0x45130
+MBKSuitMotionSet = 0x800508E4; // rom:0x514E4
+MBKSuitMotionShiftSet = 0x80050910; // rom:0x51510

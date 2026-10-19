@@ -42,9 +42,9 @@ INCLUDE_ASM("asm/nonmatchings/43E90", MBModelKill);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_8004445C_4505C);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80044494_45094);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBMotionSet);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80044530_45130);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBMotionShiftSet);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_800445B8_451B8);
 
