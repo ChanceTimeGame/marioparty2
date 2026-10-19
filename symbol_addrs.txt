@@ -723,3 +723,13 @@ AdjustPlayerCoins = 0x8005DCC8; // rom:0x5E8C8
 MBPlayerMotionSet = 0x8005DD68; // rom:0x5E968
 MBPlayerModelCreate = 0x8005DFE8; // rom:0x5EBE8
 HuMemDirectFree = 0x8005E6E4; // rom:0x5F2E4
+
+// b2-C: 5F3B0 (MP1 src/54120.c/48D90.c, MP3 ovl_80 106A50.c)
+HuSprGrpData = 0x800FA1B0;
+MBStatusAnimKill = 0x8005FC50; // rom:0x60850
+HidePlayerHUDVisibility = 0x800601A0; // rom:0x60DA0
+MBVsSprCreateY = 0x80060C4C; // rom:0x6184C
+MBVsSprKill = 0x80060D94; // rom:0x61994
+MBStatusItemDispSet = 0x80062660; // rom:0x63260
+MBStatusItemDispSetAll = 0x80062824; // rom:0x63424
+MBStatusSprPosGet = 0x80062888; // rom:0x63488
