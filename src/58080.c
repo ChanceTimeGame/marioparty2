@@ -36,7 +36,7 @@ s32 func_8005E6E4_5F2E4(BoardPlayer*);
 s32 func_8007959C_7A19C(s32);
 s32 func_80082450_83050(s16, s16, s32, s32, s32);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
-void func_8004430C_44F0C(void*);
+void MBModelKill(void*);
 
 extern s32 D_800CC754_CD354[6];
 extern s32 D_800CC76C_CD36C[6];
@@ -48,7 +48,7 @@ extern s16 D_800CC7BC_CD3BC[8];
 extern u16 D_800CC7C4_CD3C4[22][1];
 extern s16 *D_800E1CF0_E28F0;
 extern u16 ContDStkTrg[]; // unknown size
-extern u16 D_8010163C_10223C[]; // unknown size
+extern u16 ContBtnTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_80057480_58080);
@@ -446,7 +446,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
             func_8005DEB0_5EAB0(sp1E, var_s1);
             goto bail;
         }
-        if (D_8010163C_10223C[arg0] & 0x8000) {
+        if (ContBtnTrg[arg0] & 0x8000) {
             func_8007959C_7A19C(2);
             tempBoardPlayer = BoardPlayerGet((s16)sp1E);
             func_8005C8A0_5D4A0(1);
@@ -518,7 +518,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
             func_8005C8A0_5D4A0(0);
             HuPrcVSleep();
         }
-    } while (!(D_8010163C_10223C[arg0] & 0x4000));
+    } while (!(ContBtnTrg[arg0] & 0x4000));
     func_8007959C_7A19C(4);
     omDelPrcObj(process);
     func_8005E6E4_5F2E4(boardPlayer4);
@@ -578,7 +578,7 @@ void func_8005E260_5EE60(s16 playerIndex) {
         if (temp_v0->unk_20 != 0) {
             omDelPrcObj(temp_v0->unk_20);
         }
-        func_8004430C_44F0C(temp_v0->unk_24);
+        MBModelKill(temp_v0->unk_24);
         temp_v0->unk_24 = 0;
     }
 }

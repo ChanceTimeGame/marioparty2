@@ -156,7 +156,7 @@ extern s32 D_801069E8_D99D8_Debug;
 extern s32 D_801069EC_D99DC_Debug;
 extern s32 D_801069F0_D99E0_Debug;
 extern u8 D_800CD40E;
-extern s16 D_8010163C_10223C[];
+extern s16 ContBtnTrg[];
 extern UnkDebug4 D_80106934_D9924_Debug[];
 extern s32 D_801069CC_D99BC_Debug[];
 extern u8 D_801069D8_D99C8_Debug;
@@ -392,7 +392,7 @@ void func_80103838_D6828_Debug(omObjData* arg0) {
                             D_801072B6_DA2A6_Debug = 0;
                             arg0->func_ptr = &func_80103E50_D6E40_Debug;
                         }
-                        else if (D_8010163C_10223C[i] & 0x10) {
+                        else if (ContBtnTrg[i] & 0x10) {
                             if (++D_800CD40E >= 3U) {
                                 D_800CD40E = 0;
                             }
@@ -604,7 +604,7 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
             }            
         } else {
             for (i = 0; i < 4; i++) {
-                if ((HuGetPadInserted(i) != 0) && ((u16) D_8010163C_10223C[i] & 0x1000)) {
+                if ((HuGetPadInserted(i) != 0) && ((u16) ContBtnTrg[i] & 0x1000)) {
                     for (j = 0; j < 4; j++) {
                         if (HuGetPadInserted(j) != 0) {
                             D_80107470_DA460_Debug[j] = D_80107470_DA460_Debug[j] | 0x10;

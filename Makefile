@@ -210,3 +210,8 @@ $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
 build/src/C8E0.c.o: export VR4300MUL := ON
+
+# b2-B: per-file flags as MP1 builds the reference files
+# 2E0D0 (MP1 29C90.c), 3D6A0 (nop before a mult, as MP1 3AC60.c): KMC as keeps the vr4300 mul fix on
+B2B_MULFIX_UNITS := build/src/2E0D0.c.o build/src/3D6A0.c.o
+$(B2B_MULFIX_UNITS): export VR4300MUL = ON

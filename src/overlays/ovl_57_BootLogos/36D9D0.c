@@ -21,7 +21,7 @@ extern s8 D_80102708_103308;
 extern s32 D_80102D50_36DEF0_BootLogos;
 extern u16 D_801011FC_101DFC;
 extern s32 D_80102D54_36DEF4_BootLogos;
-extern u16 D_8010163C_10223C;
+extern u16 ContBtnTrg;
 
 //TODO: this gets put into .scommon instead of .bss
 //bss
@@ -81,7 +81,7 @@ void func_80102A6C_36DC0C_BootLogos(void) {
 
     if (func_8008F618_90218() == 0) {
         temp_v0 = func_80068448_69048();
-        if ((temp_v0 == 1) && (HuGetPadInserted(0) != 0) && (D_8010163C_10223C & 0x1000)) {
+        if ((temp_v0 == 1) && (HuGetPadInserted(0) != 0) && (ContBtnTrg & 0x1000)) {
             D_80102D54_36DEF4_BootLogos = temp_v0;
         }
     }

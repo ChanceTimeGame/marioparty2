@@ -56,7 +56,7 @@ void func_80050A30_51630(u8*);
 void func_80050E00_51A00(s32);
 void func_8008D59C_8E19C(s16, s16);
 void func_8005E570_5F170(void);
-void func_800433D8_43FD8(void);
+void MBModelInit(void);
 void func_800581A0_58DA0(void);
 void func_800593C0_59FC0(void);
 void func_8005965C_5A25C(void);
