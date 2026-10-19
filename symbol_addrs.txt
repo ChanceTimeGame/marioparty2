@@ -635,3 +635,6 @@ __osContinitialized = 0x800CDE60;
 __osPiAccessQueueEnabled = 0x800CDE30;
 alGlobals = 0x800CDE50;
 tmp_task = 0x800F4CE0; // size:0x40
+
+// b2-A 169B0: MP1 src/138F0.c audio manager
+D_800D7908_D8508 = 0x800D7908; // size:0x288
