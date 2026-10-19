@@ -208,7 +208,7 @@ NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 
 # b2-E: libultra units from MP1's SDK lib / src/lib units, built as MP1 builds them (-O3, unsigned char, lib headers)
-B2E_LIB_UNITS := build/src/9EA20.c.o build/src/AC3B0.c.o build/src/A0580.c.o
+B2E_LIB_UNITS := build/src/9EA20.c.o build/src/AC3B0.c.o build/src/A0580.c.o build/src/A6C30.c.o build/src/A88A0.c.o
 $(B2E_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 $(B2E_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
 $(B2E_LIB_UNITS): export VR4300MUL := ON

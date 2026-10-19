@@ -635,3 +635,10 @@ __osContinitialized = 0x800CDE60;
 __osPiAccessQueueEnabled = 0x800CDE30;
 alGlobals = 0x800CDE50;
 tmp_task = 0x800F4CE0; // size:0x40
+
+// b2-E: A6C30 (MP1 src/lib/2.0I/os/createthread.c, destroythread.c)
+__osCleanupThread = 0x8009D618; // rom:0x9E218
+__osActiveQueue = 0x800CDECC;
+// b2-E: A88A0 (MP1 src/lib/2.0I/os/initialize.c)
+__Dom2SpeedParam = 0x800F9218; // size:0x74
+__Dom1SpeedParam = 0x800FCE08; // size:0x74
