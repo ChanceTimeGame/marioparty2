@@ -206,3 +206,8 @@ $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # pad them to 16 and shift everything after
 NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+
+# b2-B: per-file flags as MP1 builds the reference files
+# 2E0D0 (MP1 29C90.c): KMC as keeps the vr4300 mul fix on
+B2B_MULFIX_UNITS := build/src/2E0D0.c.o
+$(B2B_MULFIX_UNITS): export VR4300MUL = ON
