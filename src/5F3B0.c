@@ -63,6 +63,64 @@ void func_8008221C_82E1C(s16, s16, f32);
 void func_8008225C_82E5C(s16, s16, s32);
 void func_800822A8_82EA8(s16, s16, u16, s32);
 
+/* Board status HUD and versus sprites. C from MP1 src/54120.c / 48D90.c and MP3 ovl_80_shared_board
+   106A50.c (MBStatus and MBVs functions); the rest have no reference or differ (near) and stay asm. */
+
+#define MB_MAX_PLAYERS 4
+
+typedef struct HuSprite {
+    /* 0x00 */ char pad0[0x48];
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ f32 unk_4C;
+} HuSprite; /* MP3's, first 0x50 bytes */
+
+typedef struct HuSprGrp {
+    /* 0x00 */ char pad0[0xC];
+    /* 0x0C */ HuSprite* members[1]; /* unknown size */
+} HuSprGrp;
+
+extern s16 D_800CC998_CD598;
+extern s16 D_800CC99A_CD59A;
+extern Process* D_800E1D20_E2920;
+extern s16 D_800E1D40_E2940;
+extern s16 D_800E1DD8_E29D8;
+extern s16 D_800E1DDA_E29DA;
+extern s16 D_800E1DDC_E29DC;
+extern s16 D_800E1DDE_E29DE;
+extern u8 D_800E1DE0_E29E0[]; /* MP1 unkCommonStruct0[] */
+extern Process* D_800E1E54_E2A54;
+extern s16 D_800E1E58_E2A58;
+extern s16 D_800E1E5A_E2A5A;
+extern u8 D_800E1E60_E2A60[];
+extern s16 D_800E1E80_E2A80;
+extern u8 D_800E1ED4_E2AD4[];
+extern s16 D_800E1EF4_E2AF4;
+extern Process* D_800E1F48_E2B48;
+extern HuSprGrp* HuSprGrpData[];
+extern s16 D_800FD2A2_FDEA2;
+extern s16 D_800FD840_FE440;
+
+void* DataRead(s32 dirAndFile);
+void DataClose(void* data);
+s16 SprCreate(s32, s32);
+void SprKill(s16);
+void SprAnimKill(s16);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16, s16, s16, u16);
+void SprPrioSet(s16, s16, u16);
+void MBStatusAnimKill(void);
+void MBStatusItemDispSet(s32, s32);
+void MBVsSprKill(void);
+void func_8005FEDC_60ADC(s32);
+void func_80060210_60E10(s32);
+void func_8006135C_61F5C(s32 arg0, s32 arg1, s32);
+void func_80061BD8_627D8(void);
+void func_80061DC4_629C4(void);
+void func_80062008_62C08(void);
+void func_800622E4_62EE4(void);
+void func_80062340_62F40(void);
+void func_8006AE14_6BA14(void*);
+
 typedef struct UnkCoinThing {
     u8 unk_00[3];
     char unk_03[5];
@@ -276,11 +334,20 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F86C_6046C);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F954_60554);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FA50_60650);
+void func_8005FA50_60650(void) {
+    if (D_800CC99A_CD59A != -1) {
+        SprAnimKill(D_800CC99A_CD59A);
+        D_800CC99A_CD59A = -1;
+    }
+    if (D_800CC998_CD598 != -1) {
+        SprKill(D_800CC998_CD598);
+        D_800CC998_CD598 = -1;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FAB4_606B4);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FC50_60850);
+INCLUDE_ASM("asm/nonmatchings/5F3B0", MBStatusAnimKill);
 
 void func_8005FCE8_608E8(s32 arg0) {
     BoardStatus* sprite;
@@ -324,9 +391,13 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600DC_60CDC);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600F8_60CF8);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800601A0_60DA0);
+void HidePlayerHUDVisibility(s32 arg0, s32 arg1) {
+    func_800600F8_60CF8(arg0, D_800CC99C_CD59C[arg1 * 4 + arg0].unk_00, D_800CC99C_CD59C[arg1 * 4 + arg0].unk_02);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800601DC_60DDC);
+void func_800601DC_60DDC(s32 arg0, s32 arg1) {
+    func_800600F8_60CF8(arg0, D_800CC99C_CD59C[arg1].unk_00, D_800CC99C_CD59C[arg1].unk_02);
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060210_60E10);
 
@@ -336,9 +407,37 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060A1C_6161C);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060B04_61704);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060C4C_6184C);
+void MBVsSprCreateY(f32 arg0, f32 arg1) {
+    void *temp_s0;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060D94_61994);
+    if (D_800E1D3E_E293E == -1) {
+        D_800E1D3E_E293E = SprCreate(1, 5);
+        temp_s0 = DataRead(0xA0160);
+        D_800FC9EC_FD5EC[0].unk_04 = arg1;
+        D_800E1D40_E2940 = SprAnimRead(temp_s0);
+        DataClose(temp_s0);
+        SprAnimSet(D_800E1D3E_E293E, 0, D_800E1D40_E2940, 0);
+        SprPrioSet(D_800E1D3E_E293E, 0, 0x4780);
+        SprAttrSet(D_800E1D3E_E293E, 0, 0x1000);
+        SprPosSet(D_800E1D3E_E293E, 0, 0xA0, D_800FC9EC_FD5EC[0].unk_04);
+        SprScaleSet(D_800E1D3E_E293E, 0, 0.0f, 0.0f);
+        D_800E1D44_E2944 = 0.0f;
+        D_800FC9EC_FD5EC[0].unk_00 = arg0;
+        D_800FD854_FE454[0].unk_00 = D_800FD854_FE454[0].unk_04 = 0.0f;
+        D_800FA604_FB204 = 0;
+    }
+}
+
+void MBVsSprKill(void) {
+    if (D_800E1D3E_E293E != -1) {
+        SprKill(D_800E1D3E_E293E);
+        D_800E1D3E_E293E = -1;
+    }
+    if (D_800E1D40_E2940 != -1) {
+        SprAnimKill(D_800E1D40_E2940);
+        D_800E1D40_E2940 = -1;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060DF8_619F8);
 
@@ -350,9 +449,17 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006110C_61D0C);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006135C_61F5C);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800614B4_620B4);
+void func_800614B4_620B4(s32 arg0, s32 arg1) {
+    func_8006135C_61F5C(arg0, arg1, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800614D0_620D0);
+s32 func_800614D0_620D0(s32 arg0) {
+    if (D_800E1D48_E2948[arg0] != 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800614E8_620E8);
 
@@ -366,15 +473,54 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800615F0_621F0);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800615FC_621FC);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800616C4_622C4);
+void func_800616C4_622C4(void) {
+    func_8005FEDC_60ADC(D_800CC990_CD590);
+    func_8005FEDC_60ADC(D_800CC994_CD594);
+    MBStatusAnimKill();
+    HuPrcKill(D_800E1D20_E2920);
+    MBVsSprKill();
+    D_800CC990_CD590 = -1;
+    D_800CC994_CD594 = -1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061720_62320);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061734_62334);
+void func_80061734_62334(void) {
+    func_80060210_60E10(0x16);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061750_62350);
+void func_80061750_62350(void) {
+    func_80060210_60E10(0x17);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006176C_6236C);
+void func_8006176C_6236C(void) {
+    s32 i;
+
+    while (1) {
+        if ((D_800FD2A2_FDEA2 == -1) || (D_800FD840_FE440 == -1)) {
+            SprAttrSet(D_800E1E58_E2A58, 0, 0x8000);
+            SprAttrSet(D_800E1E58_E2A58, 1, 0x8000);
+            
+            for (i = 0; i < 5; i++) {
+                SprAttrSet(D_800E1E80_E2A80, i + 1, 0x8000);
+            }
+            
+            SprAttrSet(D_800E1EF4_E2AF4, 1, 0x8000);
+        } else {
+            SprAttrReset(D_800E1E58_E2A58, 0, 0x8000);
+            SprAttrReset(D_800E1E58_E2A58, 1, 0x8000);
+            for (i = 0; i < 5; i++) {
+                SprAttrReset(D_800E1E80_E2A80, i + 1, 0x8000);
+            }
+            SprAttrReset(D_800E1EF4_E2AF4, 1, 0x8000);
+            func_8008225C_82E5C(D_800E1E58_E2A58, 0, 1);
+            func_800822A8_82EA8(D_800E1E58_E2A58, 0, (u16) D_800FD2A2_FDEA2, 0);
+            func_8008225C_82E5C(D_800E1E58_E2A58, 1, 1);
+            func_800822A8_82EA8(D_800E1E58_E2A58, 1, (u16) D_800FD840_FE440, 0);
+        }
+        HuPrcVSleep();        
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800618F8_624F8);
 
@@ -386,27 +532,59 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061DC4_629C4);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062008_62C08);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062268_62E68);
+void func_80062268_62E68(void) {
+    func_80061DC4_629C4();
+    func_80062008_62C08();
+    func_80061BD8_627D8();
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062294_62E94);
+void func_80062294_62E94(void) {
+    func_8006AE14_6BA14(D_800E1E60_E2A60);
+    func_8006AE14_6BA14(D_800E1ED4_E2AD4);
+    SprAnimKill(D_800E1E5A_E2A5A);
+    SprKill(D_800E1E58_E2A58);
+    omDelPrcObj(D_800E1F48_E2B48);
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800622E4_62EE4);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062340_62F40);
+void func_80062340_62F40(void) {
+    func_8006AE14_6BA14(D_800E1DE0_E29E0);
+    SprAnimKill(D_800E1DDA_E29DA);
+    SprKill(D_800E1DD8_E29D8);
+    SprAnimKill(D_800E1DDE_E29DE);
+    SprKill(D_800E1DDC_E29DC);
+    omDelPrcObj(D_800E1E54_E2A54);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006239C_62F9C);
+void func_8006239C_62F9C(void) {
+    func_800622E4_62EE4();
+    func_80062340_62F40();
+    func_80062294_62E94();
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800623C8_62FC8);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062588_63188);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062660_63260);
+INCLUDE_ASM("asm/nonmatchings/5F3B0", MBStatusItemDispSet);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062824_63424);
+void MBStatusItemDispSetAll(s32 arg0) {
+    s32 i;
+
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        MBStatusItemDispSet(i, arg0);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006286C_6346C);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062888_63488);
+void MBStatusSprPosGet(s16 arg0, s16 arg1, f32 *arg2, f32 *arg3) {
+    HuSprite *sprite = HuSprGrpData[arg0]->members[arg1];
+
+    *arg2 = sprite->unk_48;
+    *arg3 = sprite->unk_4C;
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800628C0_634C0);
 

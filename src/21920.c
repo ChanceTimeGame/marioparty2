@@ -79,7 +79,7 @@ extern u8 D_800FDBCA_FE7CA;
 extern u8 D_800FDBE0_FE7E0;
 
 void* func_80027154_27D54(s32, s32);
-void func_800271D8_27DD8(void*);
+void HuMemFree(void*);
 void func_800273A8_27FA8(s16);
 void HmfModelObjAttrSet(s16, s32, s32);
 void func_800298A4_2A4A4(s16, s32, s32);
@@ -276,9 +276,9 @@ void func_80024234_24E34(unk1EA70Struct1C* arg0) {
     for (i = 0; i < arg0->unk_18; i++) {
         func_8002308C_23C8C(arg0->unk_00[i].unk_1C);
     }
-    func_800271D8_27DD8(arg0->unk_04);
-    func_800271D8_27DD8(arg0->unk_00);
-    func_800271D8_27DD8(arg0);
+    HuMemFree(arg0->unk_04);
+    HuMemFree(arg0->unk_00);
+    HuMemFree(arg0);
 }
 
 INCLUDE_ASM("asm/nonmatchings/21920", func_800242BC_24EBC);

@@ -1,6 +1,6 @@
 #include "common.h"
 
-void func_80066F6C_67B6C(void*, s16);
+void ExecBoardScene(void*, s16);
 extern s16 D_800CD414_CE014;
 
 void func_80102830_2978C0_name_3D(void);
@@ -15,6 +15,6 @@ static board_overlay_entrypoint D_80102A20_297AB0_name_3D[] = {
 };
 
 void func_80102800_297890_name_3D(void) {
-    func_80066F6C_67B6C(D_80102A20_297AB0_name_3D, D_800CD414_CE014);
+    ExecBoardScene(D_80102A20_297AB0_name_3D, D_800CD414_CE014);
 }
 

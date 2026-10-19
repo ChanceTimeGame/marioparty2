@@ -28,8 +28,8 @@ extern u16 D_800F8434_F9034;
 extern EspriteSlot *D_800F93FC_F9FFC;
 extern s16 D_80101332_101F32;
 
-void* func_80027138_27D38(s32 size);
-void func_800271D8_27DD8(void* data);
+void* HuMemAlloc(s32 size);
+void HuMemFree(void* data);
 void func_8007F630_80230(void);
 void SprKill(s16);
 s16 SprCreate(u16 arg0, u16 arg1);
@@ -53,7 +53,7 @@ void espInit(void) {
     u16 var_a0;
 
     func_8007F630_80230();
-    D_800F93FC_F9FFC = func_80027138_27D38(0x100 * sizeof(EspriteSlot));
+    D_800F93FC_F9FFC = HuMemAlloc(0x100 * sizeof(EspriteSlot));
     D_800F608C_F6C8C = 0x100;
     D_800F8434_F9034 = 0;
     for (var_a0 = 0; var_a0 < 0x100; var_a0++) {
@@ -82,7 +82,7 @@ INCLUDE_ASM("asm/nonmatchings/1AE60", func_8001A340_1AF40);
 
 void func_8001A4C0_1B0C0() {
     func_80083B9C_8479C();
-    func_800271D8_27DD8(D_800F93FC_F9FFC);
+    HuMemFree(D_800F93FC_F9FFC);
     D_800F93FC_F9FFC = NULL;
 }
 

@@ -51,12 +51,12 @@ void SprScaleSet(s16, s16, f32, f32);
 void SprRotSet(s16, s16, f32);
 void func_800824B4_830B4(s16, s16, u8, u8, u8, u8);
 unk_Struct02* func_8005E688_5F288(s32, s32);
-void func_8005E6E4_5F2E4(unk_Struct02*);
+void HuMemDirectFree(unk_Struct02*);
 void func_80078EC8_79AC8(void);
 void func_80078FF8_79BF8(void);
 f32 func_80042BE0_437E0(Vec*);
 f32 func_800B1830_B2430(f32);
-f32 func_800B83C0_B8FC0(f32);
+f32 HuMathSin(f32);
 void func_800B3170_B3D70(Vec*, Vec*);
 void func_8004232C_42F2C(void);
 
@@ -132,7 +132,7 @@ void func_80041C3C_4283C(void) {
     t1 = 0.0f;
     t2 = 0.0f;
     while (TRUE) {
-        v = func_800B83C0_B8FC0(t2);
+        v = HuMathSin(t2);
         v = (v < 0.0f) ? -v : v;
         c = v * 255.0f;
         t2 += 6.0f;
@@ -140,7 +140,7 @@ void func_80041C3C_4283C(void) {
             t2 -= 360.0f;
         }
         func_800824B4_830B4(d->sprite, d->idx, 0xFF, c, 0, 0xC0);
-        v = func_800B83C0_B8FC0(t1);
+        v = HuMathSin(t1);
         v = (v < 0.0f) ? 0.0f : 0.2f;
         t1 += 15.0f;
         if (t1 > 360.0f) {
@@ -210,7 +210,7 @@ void func_800420D0_42CD0(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        func_8005E6E4_5F2E4(D_800DF388_DFF88[i]);
+        HuMemDirectFree(D_800DF388_DFF88[i]);
     }
 }
 
@@ -249,7 +249,7 @@ void func_80042120_42D20(void) {
             }
         }
         s = D_800DF388_DFF88[cur];
-        c = func_800B83C0_B8FC0(t) * 255.0f;
+        c = HuMathSin(t) * 255.0f;
         c = (c < 0) ? -c : c;
         t += 6.0f;
         if (t > 360.0f) {

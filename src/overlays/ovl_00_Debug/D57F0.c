@@ -82,7 +82,7 @@ void func_80026D28_27928(s32);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s32, f32, f32, f32);
 void func_80076BD0_777D0(s32, s32);
-s16 func_80018A98_19698(s32, s32);
+s16 LoadFormFile(s32, s32);
 void func_80018CCC_198CC(omObjData*, s32, s32);
 void omDelObj(omObjData*);
 s16 func_8001A2F8_1AEF8(s32);
@@ -99,7 +99,7 @@ void func_80102DEC_D5DDC_Debug(void);
 s32 HuGetPadInserted(s16);
 void func_80105A2C_D8A1C_Debug(s32);
 void func_80105BDC_D8BCC_Debug(void);
-s16 func_8007959C_7A19C(s16);
+s16 PlaySound(s16);
 void func_800795D8_7A1D8(s16, s8);
 s32 func_8001A8DC_1B4DC(u16);
 void func_8001A96C_1B56C(u16, u8, u8, u8);
@@ -118,7 +118,7 @@ extern s32 fontcolor;
 extern f32 D_800FA610_FB210;
 extern Vec D_800FD474_FE074;
 extern Vec D_8010274C_10334C;
-extern char D_80101080_101C80[];
+extern char pfStrBuf[];
 extern char D_8010720C_DA1FC_Debug[];
 extern char D_80107220_DA210_Debug[];
 extern char D_80107228_DA218_Debug[];
@@ -203,7 +203,7 @@ void func_80102800_D57F0_Debug(void) {
     temp_s3 = omAddObj(0xA, 1U, 0x50U, -1, NULL);
     
     for (i = 0; i < 6; i++) {
-        s16 temp = func_80018A98_19698(D_800CD438_CE038[i].unk4 | D_800CD438_CE038[i].unk8, 0x69D);
+        s16 temp = LoadFormFile(D_800CD438_CE038[i].unk4 | D_800CD438_CE038[i].unk8, 0x69D);
         D_801073C6_DA3B6_Debug[i] = temp;
         D_800FC834_FD434[temp].unk3 = (D_800FC834_FD434[temp].unk3 | 2);
 
@@ -335,8 +335,8 @@ void func_80103838_D6828_Debug(omObjData* arg0) {
     rand8();
     var_s1 = &debug_ovl_table[D_801072A0_DA290_Debug * ROWS];
     for (i = 0; i < ROWS; i++, var_s1++) {
-        sprintf(D_80101080_101C80, var_s1->name);
-        func_800A5610_A6210(D_80101080_101C80);
+        sprintf(pfStrBuf, var_s1->name);
+        func_800A5610_A6210(pfStrBuf);
         
         if (debug_ovl_table[(D_801072A0_DA290_Debug * ROWS) + i].unk0 == 0) {
             var_v1 = &D_80106934_D9924_Debug[0];
@@ -345,16 +345,16 @@ void func_80103838_D6828_Debug(omObjData* arg0) {
         }
         
         if (D_801072A2_DA292_Debug == i) {
-            func_80105B5C_D8B4C_Debug(0x40, (i + 0xA) * 9, D_80101080_101C80, var_v1->unk_02, var_v1->unk_00);
+            func_80105B5C_D8B4C_Debug(0x40, (i + 0xA) * 9, pfStrBuf, var_v1->unk_02, var_v1->unk_00);
         } else {
-            func_80105B5C_D8B4C_Debug(0x40, (i + 0xA) * 9, D_80101080_101C80, var_v1->unk_00, 0);
+            func_80105B5C_D8B4C_Debug(0x40, (i + 0xA) * 9, pfStrBuf, var_v1->unk_00, 0);
         }
     }
 
-    sprintf(D_80101080_101C80, D_801071F8_DA1E8_Debug, D_801072A0_DA290_Debug + 1, 7);
-    func_80105B5C_D8B4C_Debug(0x80U, 0x40U, D_80101080_101C80, 0xFU, 7U);
-    sprintf(D_80101080_101C80, D_80107204_DA1F4_Debug, D_801069CC_D99BC_Debug[D_800CD40E]);
-    func_80105B5C_D8B4C_Debug(0x80U, 0x48U, D_80101080_101C80, 0xEU, 6U);
+    sprintf(pfStrBuf, D_801071F8_DA1E8_Debug, D_801072A0_DA290_Debug + 1, 7);
+    func_80105B5C_D8B4C_Debug(0x80U, 0x40U, pfStrBuf, 0xFU, 7U);
+    sprintf(pfStrBuf, D_80107204_DA1F4_Debug, D_801069CC_D99BC_Debug[D_800CD40E]);
+    func_80105B5C_D8B4C_Debug(0x80U, 0x48U, pfStrBuf, 0xEU, 6U);
     espPosSet(D_80107406_DA3F6_Debug, 0x3C, (s16) (((D_801072A2_DA292_Debug + 0xB) * 9) - 1));
     for (i = 0; i < 4; i++) {
         if (HuGetPadInserted(i) != 0) {
@@ -416,12 +416,12 @@ void func_80103C4C_D6C3C_Debug(omObjData* arg0) {
     s32 i;
 
     rand8();
-    sprintf(D_80101080_101C80, D_8010720C_DA1FC_Debug);
-    func_80105B5C_D8B4C_Debug(0x60, 0x58, D_80101080_101C80, 0xE, 6);
-    sprintf(D_80101080_101C80, D_80107220_DA210_Debug);
-    func_80105B5C_D8B4C_Debug(0x70, 0x68, D_80101080_101C80, 0xD, 5);
-    sprintf(D_80101080_101C80, D_80107228_DA218_Debug);
-    func_80105B5C_D8B4C_Debug(0x70, 0x70, D_80101080_101C80, 0xD, 5);
+    sprintf(pfStrBuf, D_8010720C_DA1FC_Debug);
+    func_80105B5C_D8B4C_Debug(0x60, 0x58, pfStrBuf, 0xE, 6);
+    sprintf(pfStrBuf, D_80107220_DA210_Debug);
+    func_80105B5C_D8B4C_Debug(0x70, 0x68, pfStrBuf, 0xD, 5);
+    sprintf(pfStrBuf, D_80107228_DA218_Debug);
+    func_80105B5C_D8B4C_Debug(0x70, 0x70, pfStrBuf, 0xD, 5);
     for (i = 0; i < MAX_PLAYERS; i++) {
         if (HuGetPadInserted(i) == 0) {
             continue;
@@ -461,9 +461,9 @@ void func_80104ADC_D7ACC_Debug(void) {
     var_s5 = 0xC;
     var_s4 = 6;
     rand8();
-    sprintf(D_80101080_101C80, debug_ovl_table[D_801072A0_DA290_Debug * ROWS + D_801072A2_DA292_Debug].name);
+    sprintf(pfStrBuf, debug_ovl_table[D_801072A0_DA290_Debug * ROWS + D_801072A2_DA292_Debug].name);
     
-    temp_s3 = (u32) (0x140 - (func_800A5610_A6210(D_80101080_101C80) * 8)) >> 1;
+    temp_s3 = (u32) (0x140 - (func_800A5610_A6210(pfStrBuf) * 8)) >> 1;
     temp_s2 = (D_801072A2_DA292_Debug + 0xA) * 9;
     //required to match. this prevents the compiler from making a small optimization
     do { } while (0);
@@ -497,9 +497,9 @@ void func_80104ADC_D7ACC_Debug(void) {
             var_s4 = (temp_s2 - D_801069E8_D99D8_Debug) + var_s4 - temp_s2;
         }
         fontcolor = 9;
-        DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s5), D_80101080_101C80);
+        DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s5), pfStrBuf);
         fontcolor = 0xD;
-        DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s4), D_80101080_101C80);
+        DrawDebugText(temp_s3, ((temp_s2 - D_801069E8_D99D8_Debug) + var_s4), pfStrBuf);
     }
 
     for (i = 0; i < D_801069EC_D99DC_Debug; i++) {
@@ -509,13 +509,13 @@ void func_80104ADC_D7ACC_Debug(void) {
             D_80107410_DA400_Debug[i] = -1;
         }        
     }
-    temp_s3 = func_800A5610_A6210(D_80101080_101C80) * 8 - 0xA0;
+    temp_s3 = func_800A5610_A6210(pfStrBuf) * 8 - 0xA0;
     temp_s3 = 0xA0 - temp_s3;
     temp_s3 >>= 1;
     fontcolor = 7;
-    DrawDebugText((temp_s3 + 1), ((temp_s2 + 1) - D_801069E8_D99D8_Debug), D_80101080_101C80);
+    DrawDebugText((temp_s3 + 1), ((temp_s2 + 1) - D_801069E8_D99D8_Debug), pfStrBuf);
     fontcolor = 0xF;
-    DrawDebugText(temp_s3, (temp_s2 - D_801069E8_D99D8_Debug), D_80101080_101C80);
+    DrawDebugText(temp_s3, (temp_s2 - D_801069E8_D99D8_Debug), pfStrBuf);
 }
 
 void func_80104FA4_D7F94_Debug(omObjData* obj) {
@@ -615,8 +615,8 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
 
             for (i = 0; i < 4; i++) {
                 if (HuGetPadInserted(i) == 0) {
-                    sprintf(D_80101080_101C80, "------");
-                    func_80105B5C_D8B4C_Debug(((i * 0x38) + 0x38) & 0xFFFF, 0x90U, D_80101080_101C80, 0xFU, 7U);
+                    sprintf(pfStrBuf, "------");
+                    func_80105B5C_D8B4C_Debug(((i * 0x38) + 0x38) & 0xFFFF, 0x90U, pfStrBuf, 0xFU, 7U);
                 } else {
                     func_800298A4_2A4A4(D_801073C6_DA3B6_Debug[gPlayers[i].character], 4, 0);
                     func_80029714_2A314(D_801073C6_DA3B6_Debug[gPlayers[i].character], (f32)(i * 0x1A4) - 650.0f, -120.0f, 0.0f);
@@ -630,8 +630,8 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
                         D_80107460_DA450_Debug[i] -= 360.0f;
                     }
                     temp_s0_3 = (D_801073BC_DA3AC_Debug[i] != 0) ? 0xF : 0xC;
-                    sprintf(D_80101080_101C80, D_801069B4_D99A4_Debug[gPlayers[i].character]);
-                    func_80105B5C_D8B4C_Debug((i * 0x38 + 0x38), 0x90U, D_80101080_101C80, temp_s0_3, temp_s0_3 - 8);
+                    sprintf(pfStrBuf, D_801069B4_D99A4_Debug[gPlayers[i].character]);
+                    func_80105B5C_D8B4C_Debug((i * 0x38 + 0x38), 0x90U, pfStrBuf, temp_s0_3, temp_s0_3 - 8);
                     if ((D_80107470_DA460_Debug[i] & 0x10) && (D_801073BC_DA3AC_Debug[i] == 0)) {
                         D_801073BC_DA3AC_Debug[i] = 1;
                         func_80029B80_2A780(D_801073C6_DA3B6_Debug[gPlayers[i].character], D_801073E4_DA3D4_Debug[gPlayers[i].character]);
@@ -691,7 +691,7 @@ void func_80104FB4_D7FA4_Debug(omObjData * obj) {
 }
 
 void func_80105964_D8954_Debug(u16 arg0) {
-    func_800795D8_7A1D8(func_8007959C_7A19C(D_80106920_D9910_Debug[arg0].unk_00), D_80106920_D9910_Debug[arg0].unk_02);
+    func_800795D8_7A1D8(PlaySound(D_80106920_D9910_Debug[arg0].unk_00), D_80106920_D9910_Debug[arg0].unk_02);
 }
 
 void func_801059B0_D89A0_Debug(s16 arg0) {

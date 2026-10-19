@@ -1,9 +1,9 @@
 #include "common.h"
 
 /* HuVecDot3F, HuVecCross and HuVecIsEqual, from MP3 src/libhmath/vecdot3f.c, veccross.c and veceq.c
-   (-O2 -ffast-math). HuVecDistance (func_800B34B0_B40B0) stays in asm (MP3 asm only). */
+   (-O2 -ffast-math). HuVecDistance (HuVecDistance) stays in asm (MP3 asm only). */
 
-INCLUDE_ASM("asm/nonmatchings/B40B0", func_800B34B0_B40B0);
+INCLUDE_ASM("asm/nonmatchings/B40B0", HuVecDistance);
 
 f32 func_800B3500_B4100(Vec *a, Vec *b) {
     return (a->x * b->x) + (a->y * b->y) + (a->z * b->z);

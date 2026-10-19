@@ -1,18 +1,59 @@
 #include "common.h"
 
+/* Board HUD icon helpers. C from MP1 src/59710.c and ovl_33_PaddleBattle 2341E0.c; the rest have no
+   reference or differ (near) and stay asm. */
+
+typedef struct unk_Struct02 {
+    /* 0x00 */ void* unk_00;
+    /* 0x04 */ void* unk_04;
+    /* 0x08 */ s16 unk_08;
+    /* 0x0A */ s16 unk_0A;
+    /* 0x0C */ s16* unk_0C;
+} unk_Struct02;
+
+void HuMemDirectFree(void*);
+void SprAttrSet(s16, s16, s32);
+void SprAttrReset(s16, s16, s32);
+void func_80067558_68158(void);
+void func_80067720_68320(void);
+void func_8005390C_5450C(s32);
+void func_80061584_62184(void);
+
+
 INCLUDE_ASM("asm/nonmatchings/67FA0", func_800673A0_67FA0);
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_800674BC_680BC);
+void func_800674BC_680BC(void) {
+    ((void (*)(void))HuMemDirectFree)();
+}
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_800674D8_680D8);
+void func_800674D8_680D8(unk_Struct02* icons, u16 mask) {
+    s32 i;
+
+    i = 0;
+    do {
+        if ((mask >> i) & 1) {
+            SprAttrSet(icons->unk_0A, i, 0x8000);
+            i++;
+        } else {
+            SprAttrReset(icons->unk_0A, i, 0x8000);
+            i++;
+        }
+    } while (i < 4);
+}
 
 INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067558_68158);
 
 INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067720_68320);
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067804_68404);
+void func_80067804_68404(void) {
+    func_80067558_68158();
+}
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067820_68420);
+void func_80067820_68420(void) {
+    func_80067720_68320();
+    func_8005390C_5450C(0xFF);
+    func_80061584_62184();
+}
 
 INCLUDE_ASM("asm/nonmatchings/67FA0", func_8006784C_6844C);
 

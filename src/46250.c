@@ -90,10 +90,10 @@ void func_800298A4_2A4A4(s16, s32, s32);
 void func_8003E964_3F564(s16);
 MBModel* func_80043510_44110(s32, void*);
 void MBModelKill(void*);
-s32 func_8005A358_5AF58(f32);
+s32 MBRand(f32);
 void func_800794F0_7A0F0(s8);
 void func_80079848_7A448(s16);
-void func_800B3160_B3D60(Vec*, f32, f32, f32);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
 void func_800B39F0_B45F0(f32*, f32);
 void func_80046D2C_4792C(s32);
 void func_80047EC0_48AC0(void);
@@ -358,10 +358,10 @@ void func_80049090_49C90(void) {
     
     temp_s0 = HuPrcCurrentGet()->user_data;
     temp_v0 = func_80043510_44110(0x18, NULL);
-    func_800B3160_B3D60(&temp_v0->pos, temp_s0->pos.x, 0.0f, temp_s0->pos.z);
-    func_800B3160_B3D60(&temp_v0->scale, 2.0f, 2.0f, 2.0f);
+    HuVecCopyXYZ(&temp_v0->pos, temp_s0->pos.x, 0.0f, temp_s0->pos.z);
+    HuVecCopyXYZ(&temp_v0->scale, 2.0f, 2.0f, 2.0f);
     temp_v0->jumpY = 35.0f;
-    var_f20 = (f32) func_8005A358_5AF58(360.0f);
+    var_f20 = (f32) MBRand(360.0f);
 
     for (i = 0; i < 5; i++) {
         HuPrcVSleep();

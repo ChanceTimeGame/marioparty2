@@ -18,7 +18,7 @@ void func_800453C4_45FC4(s32, s32);
 void func_80045488_46088(s32, s32);
 void func_800455CC_461CC(s32, s32);
 s32 func_8004CC7C_4D87C(s32, s32, s32);
-void func_8004CD70_4D970(s32);
+void MBHelpWinKill(s32);
 void func_80079128_79D28(void);
 void func_801028CC_29795C(void);
 void func_80088640_89240(void);
@@ -35,7 +35,7 @@ void func_80062BE0_637E0(void);
 void HuPrcSleep(s32);
 void func_800114E8_120E8(s16, s32);
 // s16 func_8003F6F0_402F0(s16);
-void func_80062A70_63670(s32, s16, s16);
+void MBOvlCall(s32, s16, s16);
 void func_80062CC0_638C0(void);
 void func_80063178_63D78(void);
 void func_80063844_64444(void);
@@ -68,7 +68,7 @@ void func_80067EF8_68AF8(s32);
 void func_800727F0_733F0(void);
 void PlayMusic(s16);
 s32 func_80018E78_19A78(void); //get current cam index
-void func_800202DC_20EDC(s32, f32, f32, f32);
+void Hu3DCamSetPerspective(s32, f32, f32, f32);
 void func_80079E60_7AA60(void);
 void omSetStatBit(omObjData *obj, u16 stat);
 

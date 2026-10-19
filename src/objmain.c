@@ -46,7 +46,7 @@ extern s8 D_80102720_103320;
 
 void HuMemMemoryFreeTemp(void* ptr);
 void* HuMemMemoryAllocTemp(u32 size);
-void func_800271D8_27DD8(void* ptr); /* HuMemFree */
+void HuMemFree(void* ptr); /* HuMemFree */
 void func_800884AC_890AC(s16);
 void func_80078A08_79608(omObjData*); /* omSystemKeyCheck */
 void omInsertObj(omObjData* obj);
@@ -135,7 +135,7 @@ void omDelObj(omObjData* obj) {
             obj->model = NULL;
         }
         if (obj->unk_50 != NULL) {
-            func_800271D8_27DD8(obj->unk_50);
+            HuMemFree(obj->unk_50);
             obj->unk_50 = NULL;
         }
         obj->stat = 1;

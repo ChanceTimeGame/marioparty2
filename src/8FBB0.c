@@ -56,7 +56,7 @@ extern void guPerspective(Mtx*, u16*, f32, f32, f32, f32, f32);
 u32 osVirtualToPhysical(void*);
 void func_80068DAC_699AC(void); /* MP1 GMesInit */
 void func_8003F710_40310(Gfx**, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
-void* func_80027138_27D38(s32 size);
+void* HuMemAlloc(s32 size);
 void* func_80027154_27D54(s32 size, s32 tag);
 void func_80027340_27F40(void* data);
 s16 func_8002838C_28F8C(s32, void*, s32);
@@ -637,8 +637,8 @@ INCLUDE_ASM("asm/nonmatchings/8FBB0", func_8009270C_9330C);
 void func_80092814_93414(void) {
     Gfx* sp10;
 
-    D_800ED8F0_EE4F0 = func_80027138_27D38(153664);
-    sp10 = D_800ED8FC_EE4FC = func_80027138_27D38(6400);
+    D_800ED8F0_EE4F0 = HuMemAlloc(153664);
+    sp10 = D_800ED8FC_EE4FC = HuMemAlloc(6400);
 
     D_800ED8F4_EE4F4 = ((u32)D_800ED8F0_EE4F0 + 63) & ~63;
     D_800ED900_EE500 = func_8002838C_28F8C(0, &func_80092A24_93624, 6);
@@ -664,7 +664,7 @@ s32 func_800928D0_934D0(void) {
 void func_80092914_93514(void) {
     Gfx* sp10;
 
-    sp10 = D_800ED8FC_EE4FC = func_80027138_27D38(6400);
+    sp10 = D_800ED8FC_EE4FC = HuMemAlloc(6400);
     D_800ED902_EE502 = func_8002838C_28F8C(0, &func_80092A5C_9365C, 0);
 
     gSPDisplayList(sp10++, D_800CDC58_CE858);

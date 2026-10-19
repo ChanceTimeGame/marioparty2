@@ -202,7 +202,7 @@ void func_8002024C_20E4C();
 void func_800260A4_26CA4(s32, s32);
 void func_80026994_27594(s32);
 void* func_80027154_27D54(s32, s16);
-void func_800271D8_27DD8(void*);
+void HuMemFree(void*);
 void func_80027340_27F40(void*);
 void func_800274A4_280A4(void);
 void func_8002FD38_30938(HmfData*);
@@ -306,7 +306,7 @@ s32 func_800308D8_314D8(HmfData *arg0) {
                 if (arg0->unk_0A != 0) {
                     func_80027340_27F40(arg0->unk_44[i]);
                 } else {
-                    func_800271D8_27DD8(arg0->unk_44[i]);
+                    HuMemFree(arg0->unk_44[i]);
                 }
                 arg0->unk_44[i] = arg0->unk_40;
                 var_s2 = 1;
@@ -316,7 +316,7 @@ s32 func_800308D8_314D8(HmfData *arg0) {
         if (arg0->unk_0A != 0) {
             func_80027340_27F40(arg0->unk_40);
         } else {
-            func_800271D8_27DD8(arg0->unk_40);
+            HuMemFree(arg0->unk_40);
         }
     }
     if (arg0->unk_3C != NULL) {
@@ -324,14 +324,14 @@ s32 func_800308D8_314D8(HmfData *arg0) {
             if (arg0->unk_0A != 0) {
                 func_80027340_27F40(arg0->unk_3C->unk_00[i]);
             } else {
-                func_800271D8_27DD8(arg0->unk_3C->unk_00[i]);
+                HuMemFree(arg0->unk_3C->unk_00[i]);
             }
         }
 
         if (arg0->unk_0A != 0) {
             func_80027340_27F40(arg0->unk_3C);
         } else {
-            func_800271D8_27DD8(arg0->unk_3C);
+            HuMemFree(arg0->unk_3C);
         }
     }
     D_8010106C_101C6C = arg0->unk_0E;

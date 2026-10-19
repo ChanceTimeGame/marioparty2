@@ -32,7 +32,7 @@ extern u16 D_80101330_101F30;
 
 s16 func_8002C8B8_2D4B8(void*, s16);
 void func_80039018_39C18(s16);
-void func_800B3160_B3D60(Vec*, f32, f32, f32);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
 void func_80029AFC_2A6FC(s16);
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_8002C9C0_2D5C0(s16, s16);
@@ -116,9 +116,9 @@ MBModel* func_8004344C_4404C(void) {
         }
         D_800DF3A0_DFFA0 = m;
         m->attr = 8;
-        func_800B3160_B3D60(&m->pos, 0.0f, 0.0f, 0.0f);
-        func_800B3160_B3D60(&m->rot, 0.0f, 0.0f, 1.0f);
-        func_800B3160_B3D60(&m->scale, 1.0f, 1.0f, 1.0f);
+        HuVecCopyXYZ(&m->pos, 0.0f, 0.0f, 0.0f);
+        HuVecCopyXYZ(&m->rot, 0.0f, 0.0f, 1.0f);
+        HuVecCopyXYZ(&m->scale, 1.0f, 1.0f, 1.0f);
         m->jumpY = 0.0f;
         m->jumpVel = 0.0f;
         m->jumpAccel = 0.0f;
@@ -148,7 +148,7 @@ void func_80043DAC_449AC(void* ptr) {
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DF4_449F4);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043F7C_44B7C);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBModelParamCreate);
 
 /* exact c: marioparty MBModelAttrSetDispOn (src/3E560.c) */
 void MBModelAttrSetDispOn(MBModel* arg0) {

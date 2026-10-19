@@ -2,7 +2,7 @@
 
 void func_8005E584_5F184(void);
 void func_80050AE0_516E0(void);
-void func_80050E1C_51A1C(void);
+void MBDBackKill(void);
 void MBModelKill(void*);
 void func_800581D0_58DD0(void);
 void func_80059400_5A000(void);
@@ -92,6 +92,6 @@ void func_80103D34_40B864_MinigameCoaster(void) {
 }
 
 void func_80103DD4_40B904_MinigameCoaster(void) {
-    func_80050E1C_51A1C();
+    MBDBackKill();
     func_80050AE0_516E0();
 }

@@ -129,7 +129,7 @@ void* func_8003CF84_3DB84(HmfData*);
 void func_80029A8C_2A68C(s16);
 void func_800298A4_2A4A4(s16 arg0, s32 arg1, s32 arg2);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
-void* func_80027138_27D38(s32 size);
+void* HuMemAlloc(s32 size);
 void func_80027274_27E74(s16 arg0);
 void func_800273A8_27FA8(s16 arg0);
 
@@ -343,7 +343,7 @@ void func_800270C0_27CC0(void* (*arg0)(s32), void (*arg1)(void*)) {
     D_800F64C0_F70C0 = 0;
 }
 
-void* func_80027138_27D38(s32 size) {
+void* HuMemAlloc(s32 size) {
     return func_80027154_27D54(size, 0);
 }
 
@@ -370,7 +370,7 @@ void* func_80027154_27D54(s32 size, s16 arg1) {
     return temp_v1->unk_00;
 }
 
-void func_800271D8_27DD8(void* arg0) {
+void HuMemFree(void* arg0) {
     unkMallocBlockStruct* var_a0 = D_801027FC_1033FC->unk_14;
 
     while (arg0 != var_a0->unk_00) {
@@ -525,7 +525,7 @@ void func_800277B0_283B0(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 
 
     func_8002F960_30560(arg0, arg1, arg2, arg3, arg4, arg5);
     func_80038DD0_399D0();
-    D_800FC834_FD434 = func_80027138_27D38(HU3D_MODEL_MAX * sizeof(*D_800FC834_FD434));
+    D_800FC834_FD434 = HuMemAlloc(HU3D_MODEL_MAX * sizeof(*D_800FC834_FD434));
     for (i = 0; i < HU3D_MODEL_MAX; i++) {
         D_800FC834_FD434[i].hmf = NULL;
     }
@@ -816,7 +816,7 @@ INCLUDE_ASM("asm/nonmatchings/274D0", func_8002ACF0_2B8F0);
 
 extern f32 D_800D2210_D2E10[];
 extern f32 D_800CA02C_CAC2C;
-f32 func_800B83C0_B8FC0(f32);
+f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32);
 void func_8002CD78_2D978(s16, u8, u8, u8, u8);
 void func_8002CDB4_2D9B4(s16, u8, u8, u8, u8);
@@ -898,7 +898,7 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
     unk24740Floats8 sp10 = *(unk24740Floats8*)D_800D2210_D2E10;
     HmfVtxGroup* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
-    f32 s = func_800B83C0_B8FC0(D_800CA02C_CAC2C);
+    f32 s = HuMathSin(D_800CA02C_CAC2C);
     f32 c = func_800B7890_B8490(D_800CA02C_CAC2C);
     HmfVertex* src;
     HmfVertex* dst;

@@ -37,7 +37,7 @@ void func_80067E6C_68A6C(s16);
 s32 func_80075390_75F90(s32);
 void func_800753D4_75FD4(s32);
 GW_PLAYER* BoardPlayerGet(s32);
-void func_8005DD68_5E968(s32 index, s16 animation, s32 unk);
+void MBPlayerMotionSet(s32 index, s16 animation, s32 unk);
 void func_8005670C_5730C(Vec*);
 Process* func_80056B78_57778(Vec*, Vec*, Vec*, s32);
 
@@ -119,7 +119,7 @@ void func_80073790_74390(void) {
     Vec pos;
     GW_PLAYER* player = BoardPlayerGet(-1);
 
-    func_8005DD68_5E968(-1, -1, 2);
+    MBPlayerMotionSet(-1, -1, 2);
     func_8005670C_5730C(&pos);
     func_80056B78_57778(&((BoardObjUnk*)player->unk_24)->unk_18, &pos, &((BoardObjUnk*)player->unk_24)->unk_18, 8);
 }

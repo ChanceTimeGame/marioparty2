@@ -61,7 +61,7 @@ INCLUDE_ASM("asm/nonmatchings/79F90", func_8007954C_7A14C);
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_80079574_7A174);
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_8007959C_7A19C);
+INCLUDE_ASM("asm/nonmatchings/79F90", PlaySound);
 
 void func_800795D8_7A1D8(s16 index, s8 val) {
     D_800FA660_FB260[index] = val;
@@ -128,7 +128,7 @@ void func_80079C60_7A860(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D10_7A910);
+INCLUDE_ASM("asm/nonmatchings/79F90", omVibrate);
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D7C_7A97C);
 

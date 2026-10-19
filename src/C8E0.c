@@ -79,7 +79,7 @@ extern f32 D_800BF7D4_C03D4;
 extern f32 D_800BF7D8_C03D8;
 extern f32 D_800BF7DC_C03DC;
 
-s16 func_80018A98_19698(s32, s32);
+s16 LoadFormFile(s32, s32);
 void func_8002CB0C_2D70C(s16 arg0, s16 arg1, f32 arg2);
 f32 func_8002D958_2E558(f32);
 void func_800298A4_2A4A4(s16, s32, s32);
@@ -100,7 +100,7 @@ f32 func_800B75A8_B81A8(f32, f32);
 void func_8002C570_2D170(s16);
 f32 func_800B3500_B4100(Vec*, Vec*);
 void func_80019B9C_1A79C(omObjData*, s32);
-f32 func_800B83C0_B8FC0(f32);
+f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32);
 void func_8000CE80_DA80(s16* x, s16* y);
 s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y);
@@ -111,7 +111,7 @@ int abs(int);
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BCE0_C8E0);
 
 void func_8000BDC4_C9C4(omObjData* obj, u16 idx, s32 dir, s32 file, f32 arg4) {
-    s16 mdl = func_80018A98_19698(dir, file);
+    s16 mdl = LoadFormFile(dir, file);
 
     obj->model[idx] = mdl;
     func_8002CB0C_2D70C(obj->model[0], mdl, arg4);
@@ -493,7 +493,7 @@ void func_8000DCD4_E8D4(omObjData* obj, f32 dx, f32 dz) {
         stick[1] = avg;
         work->unk_3C = func_800B75A8_B81A8(stick[0], -stick[1]) + work->unk_60;
         work->unk_40 = D_800BF7C0_C03C0;
-    } else if (func_8000DA2C_E62C(func_800B83C0_B8FC0(work->unk_3C), func_800B7890_B8490(work->unk_3C), dx, dz) < 0.0f) {
+    } else if (func_8000DA2C_E62C(HuMathSin(work->unk_3C), func_800B7890_B8490(work->unk_3C), dx, dz) < 0.0f) {
         work->unk_40 = D_800BF7C0_C03C0;
     } else {
         work->unk_40 = -D_800BF7C0_C03C0;

@@ -42,7 +42,7 @@ void func_801028CC_29795C_name_3D(void) {
         func_80045488_46088(0xD, 0xE);
     } while (!(ContBtnTrg & 0x1000));
     
-    func_8004CD70_4D970(temp_s0);
+    MBHelpWinKill(temp_s0);
     InitFadeOut(0xFF, 8);
 
     while (func_8008F618_90218() != 0) {

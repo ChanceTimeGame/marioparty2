@@ -16,10 +16,10 @@ extern omObjData* D_800FA5D4_FB1D4;
 extern s32 D_80102748_103348;
 extern u16 D_801011FC_101DFC;
 
-f32 func_800B83C0_B8FC0(f32); /* HuMathSin */
+f32 HuMathSin(f32); /* HuMathSin */
 f32 func_800B7890_B8490(f32); /* HuMathCos */
-void func_80020260_20E60(s16 camIndex, Vec* pos, Vec* at, Vec* up);
-void func_800203DC_20FDC(s16 camIndex);
+void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
+void Hu3DCamUpdateMtx(s16 camIndex);
 void func_8007BA14_7C614(omObjData* obj);
 
 /* func_80079E60_7AA60 is MP3 omOutView, whose omObjData argument is unused; functions.h declares it
@@ -30,23 +30,23 @@ void func_80079E60_7AA60(void) {
     f32 rot_x = D_800FD474_FE074.x;
     f32 rot_y = D_800FD474_FE074.y;
 
-    pos.x = D_8010274C_10334C.x + func_800B83C0_B8FC0(rot_y) * func_800B7890_B8490(rot_x) * D_800FA610_FB210;
-    pos.y = D_8010274C_10334C.y + -func_800B83C0_B8FC0(rot_x) * D_800FA610_FB210;
+    pos.x = D_8010274C_10334C.x + HuMathSin(rot_y) * func_800B7890_B8490(rot_x) * D_800FA610_FB210;
+    pos.y = D_8010274C_10334C.y + -HuMathSin(rot_x) * D_800FA610_FB210;
     pos.z = D_8010274C_10334C.z + func_800B7890_B8490(rot_y) * func_800B7890_B8490(rot_x) * D_800FA610_FB210;
     at.x = D_8010274C_10334C.x;
     at.y = D_8010274C_10334C.y;
     at.z = D_8010274C_10334C.z;
-    up.x = func_800B83C0_B8FC0(rot_y) * func_800B83C0_B8FC0(rot_x);
+    up.x = HuMathSin(rot_y) * HuMathSin(rot_x);
     up.y = func_800B7890_B8490(rot_x);
-    up.z = func_800B7890_B8490(rot_y) * func_800B83C0_B8FC0(rot_x);
+    up.z = func_800B7890_B8490(rot_y) * HuMathSin(rot_x);
     D_800FA5BC_FB1BC[0] = pos.x;
     D_800FA5BC_FB1BC[1] = pos.z;
     D_800FA5BC_FB1BC[-1] = D_800FD474_FE074.y;
     D_800FA5BC_FB1BC[2] = D_800C9B80_CA780->fov[0];
     D_800FA5BC_FB1BC[3] = D_80101078_101C78;
     D_800FA5BC_FB1BC[4] = D_800F8410_F9010;
-    func_80020260_20E60(0, &pos, &at, &up);
-    func_800203DC_20FDC(0);
+    Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+    Hu3DCamUpdateMtx(0);
 }
 
 INCLUDE_ASM("asm/nonmatchings/7AA60", func_80079FF4_7ABF4);

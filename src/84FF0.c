@@ -135,7 +135,7 @@ void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029C74_2A874(s16, f32);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
-s16 func_8007959C_7A19C(s16);
+s16 PlaySound(s16);
 s32 __osMotorAccess(OSPfs* pfs, s32 flag);
 s32 osMotorInit(OSMesgQueue*, OSPfs*, int);
 void func_8007EB8C_7F78C(functionListEntry* entry, s16 type, void* func);
@@ -306,7 +306,7 @@ void func_80087D4C_8894C(omObjData* obj) {
             case 1:
                 func_80029E80_2AA80(mdl, 1, 0);
                 w->unk20 = 2;
-                func_8007959C_7A19C(0xBD);
+                PlaySound(0xBD);
                 break;
             case 2:
                 cur = func_80029CE4_2A8E4(mdl);

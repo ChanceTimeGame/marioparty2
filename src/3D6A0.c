@@ -137,7 +137,7 @@ extern unk388E0Struct40* D_800FD7F8_FE3F8;
 extern unk388E0StructC0* D_800FFDFC_1009FC;
 
 void bcopy(const void*, void*, int);
-void* func_80027138_27D38(s32);
+void* HuMemAlloc(s32);
 void* func_80027154_27D54(s32, s16);
 void func_80027340_27F40(void*);
 void func_800273A8_27FA8(s16);
@@ -356,7 +356,7 @@ void func_8003D7D0_3E3D0(HmfTex* arg0) {
 void func_8003D880_3E480(void) {
     s16 i;
 
-    D_800FD7F8_FE3F8 = func_80027138_27D38(128 * sizeof(unk388E0Struct40));
+    D_800FD7F8_FE3F8 = HuMemAlloc(128 * sizeof(unk388E0Struct40));
 
     for (i = 0; i < 128; i++) {
         D_800FD7F8_FE3F8[i].unk_00 = -1;
@@ -373,7 +373,7 @@ INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003DBE8_3E7E8);
 void func_8003DEA4_3EAA4(void) {
     s16 i;
 
-    D_800FFDFC_1009FC = func_80027138_27D38(32 * sizeof(unk388E0StructC0));
+    D_800FFDFC_1009FC = HuMemAlloc(32 * sizeof(unk388E0StructC0));
 
     for (i = 0; i < 32; i++) {
         D_800FFDFC_1009FC[i].unk_0C = 0;

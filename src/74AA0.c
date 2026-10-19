@@ -32,7 +32,7 @@ void func_8005E2FC_5EEFC(void);
 void func_8004340C_4400C(void);
 void func_80054AE8_556E8(void);
 void func_8005429C_54E9C(void);
-void func_80050E1C_51A1C(void);
+void MBDBackKill(void);
 void func_80050AE0_516E0(void);
 void func_800740AC_74CAC(void);
 
@@ -74,7 +74,7 @@ void func_800744C0_750C0(void) {
     func_8004340C_4400C();
     func_80054AE8_556E8();
     func_8005429C_54E9C();
-    func_80050E1C_51A1C();
+    MBDBackKill();
     func_80050AE0_516E0();
 }
 

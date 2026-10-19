@@ -2,12 +2,12 @@
 
 /* Vector and matrix helpers (MP1 src/1A2A0.c); MP1's names are anonymous, so MP2's are kept. */
 
-void func_800B3160_B3D60(Vec*, f32, f32, f32);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
 void func_800B3170_B3D70(Vec*, Vec*);
 void HuVecAdd(Vec*, Vec*, Vec*);
 void HuVecSubtract(Vec*, Vec*, Vec*);
 void HuVecMulScalar(Vec*, f32, Vec*);
-f32 func_800B34B0_B40B0(Vec*, Vec*);
+f32 HuVecDistance(Vec*, Vec*);
 void func_800B3530_B4130(Vec*, Vec*, Vec*);
 s32 func_8001B548_1C148(Vec*, Vec*, Vec*, Vec*, Vec*, Vec*);
 
@@ -67,7 +67,7 @@ s32 func_8001B434_1C034(Vec* arg0, Vec* arg1, f32 arg2, Vec* arg3) {
     func_8001B548_1C148(&sp18, &sp28, &sp38, &sp48, &sp58, &sp68);
     HuVecAdd(arg3, &sp68, &sp18);
 
-    if (!(arg2 < func_800B34B0_B40B0(arg3, arg1))) {
+    if (!(arg2 < HuVecDistance(arg3, arg1))) {
         var_v0 = 1;
     } else {
         var_v0 = 0;
@@ -87,7 +87,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
     f32 d;
     f32 p0, p1, p2, p3, p4, p5;
 
-    func_800B3160_B3D60(&sp10, -arg4->x, -arg4->y, -arg4->z);
+    HuVecCopyXYZ(&sp10, -arg4->x, -arg4->y, -arg4->z);
     inv = 1.0f / (-(arg1->z * arg2->y * arg3->x) + (arg1->y * arg2->z * arg3->x) + (arg1->z * arg2->x * arg3->y) - (arg1->x * arg2->z * arg3->y) - (arg1->y * arg2->x * arg3->z) + (arg1->x * arg2->y * arg3->z));
     s = ((((p0 = arg3->y * sp10.x) - (p1 = arg3->x * sp10.y)) * arg2->z) +
          (((p2 = arg3->x * sp10.z) - (p3 = arg3->z * sp10.x)) * arg2->y) +
@@ -110,7 +110,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
     } else if (t < 0.0f) {
         d = func_800B3500_B4100(arg1, arg4) / func_800B3500_B4100(arg1, arg1);
         if (d <= 0.0f) {
-            func_800B3160_B3D60(arg5, 0.0f, 0.0f, 0.0f);
+            HuVecCopyXYZ(arg5, 0.0f, 0.0f, 0.0f);
             return 1;
         } else if (d >= 1.0f) {
         copy1:
@@ -123,7 +123,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
     } else if (s < 0.0f) {
         d = func_800B3500_B4100(arg2, arg4) / func_800B3500_B4100(arg2, arg2);
         if (d <= 0.0f) {
-            func_800B3160_B3D60(arg5, 0.0f, 0.0f, 0.0f);
+            HuVecCopyXYZ(arg5, 0.0f, 0.0f, 0.0f);
             return 1;
         } else if (d >= 1.0f) {
         copy2:
@@ -134,7 +134,7 @@ s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, V
             return 1;
         }
     } else {
-        func_800B3160_B3D60(arg5, s * arg1->x + t * arg2->x, s * arg1->y + t * arg2->y, s * arg1->z + t * arg2->z);
+        HuVecCopyXYZ(arg5, s * arg1->x + t * arg2->x, s * arg1->y + t * arg2->y, s * arg1->z + t * arg2->z);
         return 1;
     }
 }
@@ -166,8 +166,8 @@ s32 func_8001B9AC_1C5AC(Vec* arg0, Vec* arg1, f32 arg2, Vec* arg3) {
     HuVecAdd(&sp88, &sp78, &sp18);
     func_8001B548_1C148(&sp18, &sp38, &sp48, &sp58, &sp68, &sp78);
     HuVecAdd(&sp98, &sp78, &sp18);
-    var_f20 = func_800B34B0_B40B0(&sp88, arg1);
-    temp_f0 = func_800B34B0_B40B0(&sp98, arg1);
+    var_f20 = HuVecDistance(&sp88, arg1);
+    temp_f0 = HuVecDistance(&sp98, arg1);
     if (var_f20 < temp_f0) {
         func_800B3170_B3D70(arg3, &sp88);
     } else {

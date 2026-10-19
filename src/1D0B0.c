@@ -679,16 +679,16 @@ void func_8001D9D4_1E5D4(HmfLoadData *hmf) {
         if (hmf->unk16 > 0) {
             i = 0;
             do {
-                func_800271D8_27DD8(hmf->unk84[i].unk50);
+                HuMemFree(hmf->unk84[i].unk50);
                 i++;
             } while (i < hmf->unk16);
         }
-        func_800271D8_27DD8(hmf->unk84);
+        HuMemFree(hmf->unk84);
 
     } else if (hmf->unk68 != 0) {
-        func_800271D8_27DD8(hmf->unk6C);
+        HuMemFree(hmf->unk6C);
     }
-    func_800271D8_27DD8(hmf->unk64);
+    HuMemFree(hmf->unk64);
 }
 
 s16 func_8001DA90_1E690(HmfLoadData *hmf, void *arg1) {
@@ -854,7 +854,7 @@ s16 func_8001E57C_1F17C(HmfLoadData *hmf) {
 
     count = (D_800DEF88_DFB88[8] << 8) + D_800DEF88_DFB88[9];
     hmf->unk88 = func_80027154_27D54(count * sizeof(HmfData_Unk84_Entry), D_800FA1AA_FADAA);
-    temp = func_80027138_27D38(count * sizeof(s16));
+    temp = HuMemAlloc(count * sizeof(s16));
     data = D_800DEF88_DFB88 + 0xA;
     hmf->unk12 = count;
     for (i = 0; i < count; i++) {
@@ -908,7 +908,7 @@ s16 func_8001E57C_1F17C(HmfLoadData *hmf) {
         entry->unk9 = 0xFF;
         data += ((data[0] << 8) + data[1]) + 2;
     }
-    func_800271D8_27DD8(temp);
+    HuMemFree(temp);
     return count;
 }
 

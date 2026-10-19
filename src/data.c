@@ -3,8 +3,8 @@
 #include "game/malloc.h"
 
 s32 dmaRead(u8* src, u8* dest, s32 size);
-extern u32 DataDirMax; //D_800D81C4_D8DC4
-extern u32 DataFileMax; //D_800D81D0_D8DD0  Directory count (copy)
+extern u32 DataDirMax; //DataDirMax
+extern u32 DataFileMax; //DataFileMax  Directory count (copy)
 
 void DataInit(u8* fsRomPtr)
 {

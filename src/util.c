@@ -44,7 +44,7 @@ u16 func_80018A64_19664(s32 arg0, s32 arg1) {
     return Hu3DModelCreate(DataRead(arg0), arg1);
 }
 
-u16 func_80018A98_19698(s32 arg0, s32 arg1) {
+u16 LoadFormFile(s32 arg0, s32 arg1) {
     return Hu3DModelCreate(DataRead(arg0), arg1);
 }
 

@@ -5,7 +5,7 @@
 
 INCLUDE_ASM("asm/nonmatchings/B3CD0", func_800B30D0_B3CD0);
 
-void func_800B3160_B3D60(Vec *out, f32 x, f32 y, f32 z) {
+void HuVecCopyXYZ(Vec *out, f32 x, f32 y, f32 z) {
     out->x = x;
     out->y = y;
     out->z = z;

@@ -104,7 +104,7 @@ extern void* D_800FD83C_FE43C;
 extern s16 D_800F928C_F9E8C;
 
 void* func_80027154_27D54(s32, s16);
-void func_800271D8_27DD8(void*);
+void HuMemFree(void*);
 void func_80027274_27E74(s16);
 void func_80025770_26370(Matrix4f, f32, f32, f32); /* MP1 MtxTranslate */
 void func_80025830_26430(Matrix4f, f32, f32, f32); /* MP1 MtxScale */
@@ -321,11 +321,11 @@ void func_8002F1D0_2FDD0(s16 idx) {
 
     if (D_800DEFA2_DFBA2 != 0) {
         g = &D_800FD2B8_FDEB8[idx];
-        func_800271D8_27DD8(g->cells);
-        func_800271D8_27DD8(g->map0);
-        func_800271D8_27DD8(g->map1);
-        func_800271D8_27DD8(g->map2);
-        func_800271D8_27DD8(g->polys);
+        HuMemFree(g->cells);
+        HuMemFree(g->map0);
+        HuMemFree(g->map1);
+        HuMemFree(g->map2);
+        HuMemFree(g->polys);
         D_800DEFA2_DFBA2--;
         D_800DEFA8_DFBA8[idx] = D_800DEFA4_DFBA4;
         D_800DEFA4_DFBA4 = idx;
@@ -479,5 +479,5 @@ void func_8002F87C_3047C(HitList* l, s32 off, u16 mode) {
 
 /* exact c: marioparty func_8002B498 (src/29C90.c) */
 void func_8002F938_30538(HitList* l) {
-    func_800271D8_27DD8(l->list);
+    HuMemFree(l->list);
 }
