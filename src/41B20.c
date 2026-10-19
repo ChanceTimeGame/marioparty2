@@ -52,7 +52,7 @@ MBModel* func_80043510_44110(s32, void*);
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029A8C_2A68C(s16);
 void func_80029F2C_2AB2C(s16, s32);
-void func_8004430C_44F0C(void*);
+void MBModelKill(void*);
 s16 func_800569B8_575B8(s16, f32);
 f32 func_800431FC_43DFC(Vec*, Vec*);
 void func_80056658_57258(Vec*, Vec*, Vec*);
@@ -95,7 +95,7 @@ void* func_80040FA4_41BA4() {
 
 /* exact c: marioparty func_8003B8A4 (src/3C420.c) */
 void func_80041028_41C28(unk_ProcessUserData08* arg0) {
-    func_8004430C_44F0C(arg0->unk04);
+    MBModelKill(arg0->unk04);
     HuMemMemoryFreeTemp(arg0);
 }
 
@@ -290,7 +290,7 @@ s32 func_800417EC_423EC(unk_8003B8D4Struct* arg0, s16 arg1, s16 arg2) {
 }
 
 /* exact c: marioparty DirectionPrompt (src/3C420.c) */
-s32 func_800418D8_424D8(unk_8003B8D4Struct* arg0) {
+s32 DirectionPrompt(unk_8003B8D4Struct* arg0) {
     if (arg0->unk08 != NULL) {
         HuPrcChildLink(HuPrcCurrentGet(), arg0->unk08);
         HuPrcChildWatch();

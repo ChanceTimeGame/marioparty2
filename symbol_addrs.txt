@@ -635,3 +635,19 @@ __osContinitialized = 0x800CDE60;
 __osPiAccessQueueEnabled = 0x800CDE30;
 alGlobals = 0x800CDE50;
 tmp_task = 0x800F4CE0; // size:0x40
+
+// b2-B: 43E90 (MP1 src/3E560.c names)
+MBModelInit = 0x800433D8; // rom:0x43FD8
+MBModelAttrSetDispOn = 0x80044204; // rom:0x44E04
+MBModelDispOn = 0x80044258; // rom:0x44E58
+MBModelAttrSetDispOff = 0x80044288; // rom:0x44E88
+MBModelDispOff = 0x800442DC; // rom:0x44EDC
+MBModelKill = 0x8004430C; // rom:0x44F0C
+MBModelCheck = 0x8004445C; // rom:0x4505C
+MBMotionSet = 0x80044494; // rom:0x45094
+MBMotionShiftSet = 0x80044530; // rom:0x45130
+MBMotionCheck = 0x800445B8; // rom:0x451B8
+// b2-B: 41B20 (MP1 src/3C420.c names)
+DirectionPrompt = 0x800418D8; // rom:0x424D8
+// b2-B: 459D0 (MP1 src/3F5B0.c names)
+ContBtnTrg = 0x8010163C; // size:0x8

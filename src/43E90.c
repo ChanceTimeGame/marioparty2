@@ -43,9 +43,9 @@ f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
 void omDelObj(omObjData*);
 void func_80043334_43F34(s16);
-void func_80044204_44E04(MBModel*);
-void func_80044288_44E88(MBModel*);
-void func_8004430C_44F0C(void*);
+void MBModelAttrSetDispOn(MBModel*);
+void MBModelAttrSetDispOff(MBModel*);
+void MBModelKill(void*);
 
 /* exact c: marioparty func_8003D960 (src/3E560.c) */
 void func_80043290_43E90(void) {
@@ -89,7 +89,7 @@ s16 func_80043388_43F88(s16 arg0) {
 }
 
 /* exact c: marioparty MBModelInit (src/3E560.c) */
-void func_800433D8_43FD8(void) {
+void MBModelInit(void) {
     D_800DF3A0_DFFA0 = NULL;
     D_800DF3A4_DFFA4 = 0;
     D_80101330_101F30 = 1;
@@ -99,7 +99,7 @@ void func_800433D8_43FD8(void) {
 /* exact c: marioparty func_800532F4 (src/53C80.c) */
 void func_8004340C_4400C(void) {
     while (D_800DF3A0_DFFA0 != NULL) {
-        func_8004430C_44F0C(D_800DF3A0_DFFA0);
+        MBModelKill(D_800DF3A0_DFFA0);
     }
 }
 
@@ -151,7 +151,7 @@ INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DF4_449F4);
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043F7C_44B7C);
 
 /* exact c: marioparty MBModelAttrSetDispOn (src/3E560.c) */
-void func_80044204_44E04(MBModel* arg0) {
+void MBModelAttrSetDispOn(MBModel* arg0) {
     func_800298A4_2A4A4(*arg0->obj->model, 4, 0);
     if (arg0->shadow != NULL) {
         func_800298A4_2A4A4(*arg0->shadow->model, 4, 0);
@@ -159,13 +159,13 @@ void func_80044204_44E04(MBModel* arg0) {
 }
 
 /* exact c: marioparty MBModelDispOn (src/3E560.c) */
-void func_80044258_44E58(MBModel* arg0) {
-    func_80044204_44E04(arg0);
+void MBModelDispOn(MBModel* arg0) {
+    MBModelAttrSetDispOn(arg0);
     arg0->attr |= 8;
 }
 
 /* exact c: marioparty MBModelAttrSetDispOff (src/3E560.c) */
-void func_80044288_44E88(MBModel* arg0) {
+void MBModelAttrSetDispOff(MBModel* arg0) {
     func_800298A4_2A4A4(*arg0->obj->model, 4, 4);
     if (arg0->shadow != NULL) {
         func_800298A4_2A4A4(*arg0->shadow->model, 4, 4);
@@ -173,13 +173,13 @@ void func_80044288_44E88(MBModel* arg0) {
 }
 
 /* exact c: marioparty MBModelDispOff (src/3E560.c) */
-void func_800442DC_44EDC(MBModel* arg0) {
-    func_80044288_44E88(arg0);
+void MBModelDispOff(MBModel* arg0) {
+    MBModelAttrSetDispOff(arg0);
     arg0->attr &= ~8;
 }
 
 /* exact c: marioparty MBModelKill (src/3E560.c) */
-void func_8004430C_44F0C(void* arg0) {
+void MBModelKill(void* arg0) {
     MBModel* m = arg0;
     s32 i;
 
@@ -215,7 +215,7 @@ void func_8004430C_44F0C(void* arg0) {
 }
 
 /* exact c: marioparty MBModelCheck (src/3E560.c) */
-s32 func_8004445C_4505C(void* arg0) {
+s32 MBModelCheck(void* arg0) {
     MBModel* m;
 
     for (m = D_800DF3A0_DFFA0; m != NULL; m = m->next) {
@@ -227,7 +227,7 @@ s32 func_8004445C_4505C(void* arg0) {
 }
 
 /* exact c: marioparty MBMotionSet (src/3E560.c) */
-void func_80044494_45094(void* arg0, s16 arg1, u16 arg2) {
+void MBMotionSet(void* arg0, s16 arg1, u16 arg2) {
     u16 mot;
 
     if (arg1 == -1) {
@@ -242,7 +242,7 @@ void func_80044494_45094(void* arg0, s16 arg1, u16 arg2) {
 }
 
 /* exact c: marioparty MBMotionShiftSet (src/3E560.c) */
-void func_80044530_45130(void* ptr, s16 a, s16 b, s16 c, u16 d) {
+void MBMotionShiftSet(void* ptr, s16 a, s16 b, s16 c, u16 d) {
     MBModel* m = (MBModel*)ptr;
     u16 mot;
 
@@ -257,7 +257,7 @@ void func_80044530_45130(void* ptr, s16 a, s16 b, s16 c, u16 d) {
 }
 
 /* exact c: marioparty MBMotionCheck (src/3E560.c) */
-u16 func_800445B8_451B8(void* arg0) {
+u16 MBMotionCheck(void* arg0) {
     MBModel* m = (MBModel*)arg0;
     s32 ret = 0;
     s16 model = *m->obj->model;

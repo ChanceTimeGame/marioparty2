@@ -89,7 +89,7 @@ void func_800283DC_28FDC(s16);
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_8003E964_3F564(s16);
 MBModel* func_80043510_44110(s32, void*);
-void func_8004430C_44F0C(void*);
+void MBModelKill(void*);
 s32 func_8005A358_5AF58(f32);
 void func_800794F0_7A0F0(s8);
 void func_80079848_7A448(s16);
@@ -370,7 +370,7 @@ void func_80049090_49C90(void) {
         func_800B39F0_B45F0(D_800FC834_FD434[temp_v0->obj->model[0]].mtx, var_f20);
     }
 
-    func_8004430C_44F0C(temp_v0);
+    MBModelKill(temp_v0);
     omDelPrcObj(NULL);
 }
 

@@ -12,7 +12,7 @@ typedef struct ButtonSeqWork {
 } ButtonSeqWork;
 
 extern s32 fontcolor;
-extern u16 D_8010163C_10223C[]; /* MP1 ContBtnTrg */
+extern u16 ContBtnTrg[];
 
 s16 DrawDebugText(u16, u16, char*); /* MP1 print8 */
 
@@ -27,8 +27,8 @@ void func_80044E50_45A50(void) {
     ButtonSeqWork* work = HuPrcCurrentGet()->user_data;
 
     while (TRUE) {
-        if (D_8010163C_10223C[0] != 0) {
-            if (D_8010163C_10223C[0] == work->sequence[work->index]) {
+        if (ContBtnTrg[0] != 0) {
+            if (ContBtnTrg[0] == work->sequence[work->index]) {
                 work->index++;
                 if (work->sequence[work->index] == 0) {
                     work->index = -1;

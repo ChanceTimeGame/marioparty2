@@ -3,7 +3,7 @@
 void func_8005E584_5F184(void);
 void func_80050AE0_516E0(void);
 void func_80050E1C_51A1C(void);
-void func_8004430C_44F0C(void*);
+void MBModelKill(void*);
 void func_800581D0_58DD0(void);
 void func_80059400_5A000(void);
 void func_80059704_5A304(void);
@@ -56,7 +56,7 @@ void func_80103BCC_40B6FC_MinigameCoaster(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6E_MinigameCoaster/40A330", func_80103C18_40B748_MinigameCoaster);
 
 void func_80103C5C_40B78C_MinigameCoaster(void) {
-    func_800433D8_43FD8();
+    MBModelInit();
     func_8005E2B8_5EEB8();
     func_800593C0_59FC0();
     func_8005965C_5A25C();
@@ -74,7 +74,7 @@ void func_80103C98_40B7C8_MinigameCoaster(void) {
         if (D_80103E00_40B930_MinigameCoaster[i] == 0) {
             continue;
         }
-        func_8004430C_44F0C(D_80103E00_40B930_MinigameCoaster[i]);
+        MBModelKill(D_80103E00_40B930_MinigameCoaster[i]);
         D_80103E00_40B930_MinigameCoaster[i] = 0;
     }
 
