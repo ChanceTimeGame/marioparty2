@@ -657,3 +657,5 @@ MBMotionCheck = 0x800445B8; // rom:0x451B8
 DirectionPrompt = 0x800418D8; // rom:0x424D8
 // b2-B: 459D0 (MP1 src/3F5B0.c names)
 ContBtnTrg = 0x8010163C; // size:0x8
+// b2-D 733F0 (MP1 src/72D90.c)
+GamePauseStart = 0x80072834; // rom:0x73434
