@@ -222,3 +222,8 @@ build/src/B0360.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
 B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o build/src/B0360.c.o build/src/B1350.c.o build/src/B14D0.c.o build/src/B1910.c.o
 CARVED_RODATA_UNITS += $(B2E_CARVED)
 $(B2E_CARVED): RODATA_AS_DATA = 1
+# b2-E: MP3 libhmath units (-O2 -ffast-math, as MP3 and b1-G2's G2_HMATH_UNITS)
+B2E_HMATH_UNITS := build/src/B24A0.c.o build/src/B3CD0.c.o build/src/B40B0.c.o
+$(B2E_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+# B40B0 (HuVecCross): nop between back-to-back mul.s, KMC as mul fix on
+build/src/B40B0.c.o: export VR4300MUL = ON
