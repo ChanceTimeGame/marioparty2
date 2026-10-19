@@ -206,3 +206,5 @@ $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # pad them to 16 and shift everything after
 NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+# b2-A: units MP1 builds with the KMC assembler VR4300 mul fix on (nops after mul.s / c.cond.s)
+build/src/26370.c.o: export VR4300MUL := ON
