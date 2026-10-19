@@ -635,3 +635,8 @@ __osContinitialized = 0x800CDE60;
 __osPiAccessQueueEnabled = 0x800CDE30;
 alGlobals = 0x800CDE50;
 tmp_task = 0x800F4CE0; // size:0x40
+
+// b2-C: 4A500 (MP1 src/42E40.c)
+MBModelParamCreate = 0x80043F7C; // rom:0x44B7C
+MBModelDispOn = 0x80044258; // rom:0x44E58
+MBModelKill = 0x8004430C; // rom:0x44F0C

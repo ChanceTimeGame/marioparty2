@@ -36,7 +36,7 @@ s32 func_8005E6E4_5F2E4(BoardPlayer*);
 s32 func_8007959C_7A19C(s32);
 s32 func_80082450_83050(s16, s16, s32, s32, s32);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
-void func_8004430C_44F0C(void*);
+void MBModelKill(void*);
 
 extern s32 D_800CC754_CD354[6];
 extern s32 D_800CC76C_CD36C[6];
@@ -578,7 +578,7 @@ void func_8005E260_5EE60(s16 playerIndex) {
         if (temp_v0->unk_20 != 0) {
             omDelPrcObj(temp_v0->unk_20);
         }
-        func_8004430C_44F0C(temp_v0->unk_24);
+        MBModelKill(temp_v0->unk_24);
         temp_v0->unk_24 = 0;
     }
 }

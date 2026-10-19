@@ -28,17 +28,17 @@ INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DAC_449AC);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DF4_449F4);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043F7C_44B7C);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBModelParamCreate);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80044204_44E04);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80044258_44E58);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBModelDispOn);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80044288_44E88);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_800442DC_44EDC);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_8004430C_44F0C);
+INCLUDE_ASM("asm/nonmatchings/43E90", MBModelKill);
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_8004445C_4505C);
 
