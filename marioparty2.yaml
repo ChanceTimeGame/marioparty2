@@ -417,7 +417,8 @@ segments:
       - [0xD5570, .data, B0360]
       - [0xD55E0, .data, B1350]
       - [0xD5620, .data, B14D0]
-      - [0xD5680, data]
+      - [0xD5680, .data, B1910]
+      - [0xD5690, data]
       - {0xD57F0, type: bss, vram: 0x800D4BF0, name: globalBSS }
   - type: code
     start: 0x0D57F0
