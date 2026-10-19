@@ -4,15 +4,15 @@ INCLUDE_ASM("asm/nonmatchings/20C70", func_80020070_20C70);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", func_8002024C_20E4C);
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_80020260_20E60);
+INCLUDE_ASM("asm/nonmatchings/20C70", Hu3DCamSetPositionOrientation);
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_800202DC_20EDC);
+INCLUDE_ASM("asm/nonmatchings/20C70", Hu3DCamSetPerspective);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", CameraScissorSet);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", CameraViewportSet);
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_800203DC_20FDC);
+INCLUDE_ASM("asm/nonmatchings/20C70", Hu3DCamUpdateMtx);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", func_800204C0_210C0);
 
@@ -24,7 +24,7 @@ INCLUDE_ASM("asm/nonmatchings/20C70", func_80020754_21354);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", func_8002078C_2138C);
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_800207C4_213C4);
+INCLUDE_ASM("asm/nonmatchings/20C70", Hu3DCam3DToScreen);
 
 INCLUDE_ASM("asm/nonmatchings/20C70", func_800209C4_215C4);
 

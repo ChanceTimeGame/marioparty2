@@ -51,16 +51,16 @@ void func_800576F8_582F8(s32);
 s16 func_80062CCC_638CC(void);
 void func_80067040_67C40(s32, s32, s32);
 f32 func_80042BE0_437E0(Vec*);
-void func_80042D38_43938(Vec*);
+void MBVecNormalize(Vec*);
 void func_80042E44_43A44(Vec*, f32);
 f32 func_800431FC_43DFC(Vec*, Vec*);
-void func_800B3160_B3D60(Vec*, f32, f32, f32);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
 void func_800B3170_B3D70(Vec*, Vec*);
 void HuVecAdd(Vec*, Vec*, Vec*);
 void HuVecSubtract(Vec*, Vec*, Vec*);
 void HuVecMulScalar(Vec*, f32, Vec*);
 f32 HuVecGetLength3F(Vec*);
-f32 func_800B34B0_B40B0(Vec*, Vec*);
+f32 HuVecDistance(Vec*, Vec*);
 void func_80056658_57258(Vec* arg0, Vec* arg1, Vec* arg2);
 void MBMasuPosGet(s16 playerNo, s16 spaceIdx, Vec* out);
 
@@ -87,7 +87,7 @@ void func_8005660C_5720C(s16 arg0, s16 arg1) {
 
 void func_80056658_57258(Vec* arg0, Vec* arg1, Vec* arg2) {
     HuVecSubtract(arg2, arg1, arg0);
-    func_80042D38_43938(arg2);
+    MBVecNormalize(arg2);
 }
 
 void func_80056690_57290(s16 playerIdx, Vec* arg1) {
@@ -116,7 +116,7 @@ void func_80056754_57354(Object* unk) {
     Vec sp20;
 
     HuVecSubtract(&sp10, &D_800C9B80_CA780->pos, &unk->coords);
-    func_800B3160_B3D60(&sp20, sp10.x, 0.0f, sp10.z);
+    HuVecCopyXYZ(&sp20, sp10.x, 0.0f, sp10.z);
     unk->unk_3C->unk_24 = -func_800431FC_43DFC(&sp10, &sp20);
     func_80056658_57258(&unk->coords, &D_800C9B80_CA780->pos, &sp10);
     unk->unk_3C->unk_28 = func_80042BE0_437E0(&sp10);
@@ -247,8 +247,8 @@ Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3) {
     temp_s1 = omAddPrcObj(func_80056A68_57668, 0x4001, 0, 0x50);
     temp_s0 = HuMemMemoryAlloc(temp_s1->heap, sizeof(unkProcessUserDataStruct));
     temp_s1->user_data = temp_s0;
-    func_800B3160_B3D60(&temp_s0->unk_00, arg0->x, 0.0f, arg0->z);
-    func_800B3160_B3D60(&temp_s0->unk_0C, arg1->x, 0.0f, arg1->z);
+    HuVecCopyXYZ(&temp_s0->unk_00, arg0->x, 0.0f, arg0->z);
+    HuVecCopyXYZ(&temp_s0->unk_0C, arg1->x, 0.0f, arg1->z);
     temp_s0->unk_18 = arg2;
     temp_s0->unk_1C.signed32Unk1C = arg3;
     return temp_s1;
@@ -259,7 +259,7 @@ void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex) {
     Vec sp10;
 
     HuVecSubtract(&sp10, &GetSpaceData(masuAbsIndex)->coords, &PLAYER_OBJ(player)->coords);
-    func_80042D38_43938(&sp10);
+    MBVecNormalize(&sp10);
     func_80056B78_57778(&PLAYER_OBJ(player)->unk_18, &sp10, &PLAYER_OBJ(player)->unk_18, arg1);
 }
 
@@ -314,9 +314,9 @@ void func_80056F0C_57B0C(void) {
     temp_f20 = temp_s0->unk_1C.floatUnk1C;
     temp_s1 = &temp_s0->unk_0C;
 
-    while (!(func_800B34B0_B40B0(&temp_s0->unk_00, temp_s1) < temp_f20)) {
+    while (!(HuVecDistance(&temp_s0->unk_00, temp_s1) < temp_f20)) {
         HuVecSubtract(temp_s0->unk_18, temp_s1, &temp_s0->unk_00);
-        func_80042D38_43938(temp_s0->unk_18);
+        MBVecNormalize(temp_s0->unk_18);
         HuVecMulScalar(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
         HuVecAdd(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
         func_800B3170_B3D70(&temp_s0->unk_00, temp_s0->unk_18);
@@ -346,11 +346,11 @@ void func_80057088_57C88(void) {
     s32 var_s1 = 0;
 
     while (1) {
-        if (func_800B34B0_B40B0(&temp_s0->unk_00, &temp_s0->unk_0C) < temp_f20) {
+        if (HuVecDistance(&temp_s0->unk_00, &temp_s0->unk_0C) < temp_f20) {
             var_s1 = 1;
         }
         HuVecSubtract(temp_s0->unk_18, &temp_s0->unk_0C, &temp_s0->unk_00);
-        func_80042D38_43938(temp_s0->unk_18);
+        MBVecNormalize(temp_s0->unk_18);
         HuVecMulScalar(temp_s0->unk_18, temp_f20, temp_s0->unk_18);
         HuVecAdd(temp_s0->unk_18, temp_s0->unk_18, &temp_s0->unk_00);
         func_800B3170_B3D70(&temp_s0->unk_00, temp_s0->unk_18);

@@ -659,3 +659,23 @@ MBMotionSet = 0x80044494; // rom:0x45094
 MBMotionShiftSet = 0x80044530; // rom:0x45130
 MBKSuitMotionSet = 0x800508E4; // rom:0x514E4
 MBKSuitMotionShiftSet = 0x80050910; // rom:0x51510
+
+// b2-C: 51630 (MP1 src/48D90.c, MP3 ovl_80 FA250.c, ovl_81 CCD20.c)
+Hu3DCamSetPositionOrientation = 0x80020260; // rom:0x20E60
+Hu3DCamSetPerspective = 0x800202DC; // rom:0x20EDC
+Hu3DCamUpdateMtx = 0x800203DC; // rom:0x20FDC
+Hu3DCam3DToScreen = 0x800207C4; // rom:0x213C4
+HuMemAlloc = 0x80027138; // rom:0x27D38
+HuMemFree = 0x800271D8; // rom:0x27DD8
+MBVecNormalize = 0x80042D38; // rom:0x43938
+MBDBackCreate = 0x80050B20; // rom:0x51720
+MBDBackKill = 0x80050E1C; // rom:0x51A1C
+MBBackOffsetSet = 0x80050E84; // rom:0x51A84
+MBDBackPosClamp = 0x80050E98; // rom:0x51A98
+MBDBackMdlScaleGet = 0x80051810; // rom:0x52410
+MBDCameraZoomMotStart = 0x80052F70; // rom:0x53B70
+MBDCameraPos3DSet = 0x80053620; // rom:0x54220
+MBDCamera3Dto2D = 0x800537F8; // rom:0x543F8
+MBDBackFlipSet = 0x8005394C; // rom:0x5454C
+HuVecCopyXYZ = 0x800B3160; // rom:0xB3D60
+HuVecDistance = 0x800B34B0; // rom:0xB40B0

@@ -61,7 +61,7 @@ void MBModelKill(void*);
 Object* MBModelParamCreate(Object*);
 void func_80029EDC_2AADC(s16, s32);
 s16 func_80029F04_2AB04(s16);
-void func_800B3160_B3D60(Vec3f*, f32, f32, f32);
+void HuVecCopyXYZ(Vec3f*, f32, f32, f32);
 void func_800B3170_B3D70(Vec3f* ptr, Vec3f* ptr2);
 f32 func_800B7890_B8490(f32);
 
@@ -76,7 +76,7 @@ void func_80049900_4A500(void) {
     t = 0.0f;
     while (D_800DF650_E0250 != 0) {
         s = func_800B7890_B8490(t);
-        func_800B3160_B3D60(&model->xScale, s * work->scale.x, s * work->scale.y, s * work->scale.z);
+        HuVecCopyXYZ(&model->xScale, s * work->scale.x, s * work->scale.y, s * work->scale.z);
         t += 90.0f / work->duration;
         if (t >= 90.0f) {
             break;

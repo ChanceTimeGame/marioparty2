@@ -41,7 +41,7 @@ f32 func_80042BE0_437E0(Vec* v) {
     }
     return -1.0f;
 }
-void func_80042D38_43938(Vec* v) {
+void MBVecNormalize(Vec* v) {
     if (v->x == 0.0f && v->y == 0.0f && v->z == 0.0f) {
         v->z = 1.0f;
     }
@@ -77,7 +77,7 @@ void func_80042F7C_43B7C(Vec* v, Vec* axis, f32 angle) {
     orig.x = v->x;
     orig.y = v->y;
     orig.z = v->z;
-    func_80042D38_43938(axis);
+    MBVecNormalize(axis);
     v->x = (axis->x * axis->x + (1.0f - axis->x * axis->x) * func_800B7890_B8490(angle)) * orig.x +
            (axis->x * axis->y * (1.0f - func_800B7890_B8490(angle)) - func_800B83C0_B8FC0(angle) * axis->z) * orig.y +
            (axis->x * axis->z * (1.0f - func_800B7890_B8490(angle)) + func_800B83C0_B8FC0(angle) * axis->y) * orig.z;

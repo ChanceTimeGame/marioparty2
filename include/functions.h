@@ -68,7 +68,7 @@ void func_80067EF8_68AF8(s32);
 void func_800727F0_733F0(void);
 void PlayMusic(s16);
 s32 func_80018E78_19A78(void); //get current cam index
-void func_800202DC_20EDC(s32, f32, f32, f32);
+void Hu3DCamSetPerspective(s32, f32, f32, f32);
 void func_80079E60_7AA60(void);
 void omSetStatBit(omObjData *obj, u16 stat);
 

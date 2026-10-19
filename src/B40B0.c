@@ -1,6 +1,6 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/B40B0", func_800B34B0_B40B0);
+INCLUDE_ASM("asm/nonmatchings/B40B0", HuVecDistance);
 
 INCLUDE_ASM("asm/nonmatchings/B40B0", func_800B3500_B4100);
 

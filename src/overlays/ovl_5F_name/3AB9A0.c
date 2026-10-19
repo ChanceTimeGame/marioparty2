@@ -40,7 +40,7 @@ void func_80102830_3AB9D0_name_5F(void) {
     temp_s0 = func_80018E78_19A78();
     ScissorSet(temp_s0, 0.0f, 0.0f, 320.0f, 240.0f);
     ViewportSet(temp_s0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
-    func_800202DC_20EDC(0, 10.0f, 500.0f, 5000.0f);
+    Hu3DCamSetPerspective(0, 10.0f, 500.0f, 5000.0f);
     D_800FA610_FB210 = 2500.0f;
     D_800FD474_FE074.x = 0.0f;
     D_800FD474_FE074.y = 0.0f;

@@ -21,11 +21,11 @@ INCLUDE_ASM("asm/nonmatchings/274D0", func_80026F00_27B00);
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800270C0_27CC0);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027138_27D38);
+INCLUDE_ASM("asm/nonmatchings/274D0", HuMemAlloc);
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80027154_27D54);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800271D8_27DD8);
+INCLUDE_ASM("asm/nonmatchings/274D0", HuMemFree);
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80027230_27E30);
 
