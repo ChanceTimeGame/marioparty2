@@ -1,7 +1,7 @@
 #include "common.h"
 
 void func_80020070_20C70(s32);
-void func_80068410_69010(void);
+void GWContErrorSet(void);
 void func_80102950_36DAF0_BootLogos(omObjData* arg0);
 void func_80102A6C_36DC0C_BootLogos(void);
 void func_80102AD8_36DC78_BootLogos(void);
@@ -32,7 +32,7 @@ void func_80102830_36D9D0_BootLogos(void) {
     omInitObjMan(16, 4);
     D_80102708_103308 = 1;
     if (D_80102D50_36DEF0_BootLogos == 0) {
-        func_80068410_69010();
+        GWContErrorSet();
         D_80102D60_36DF00_BootLogos = omAddPrcObj(func_80102AD8_36DC78_BootLogos, 0xA, 0, 0);
         omAddObj(1000, 0, 0, -1, func_80102950_36DAF0_BootLogos);
     } else {

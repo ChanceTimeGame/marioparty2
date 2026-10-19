@@ -749,3 +749,9 @@ ExecBoardScene = 0x80066F6C; // rom:0x67B6C
 MBPlayerVibrate = 0x80067170; // rom:0x67D70
 omVibrate = 0x80079D10; // rom:0x7A910
 HuMathSin = 0x800B83C0; // rom:0xB8FC0
+
+// b2-C: 68990 (MP1 src/59E80.c, MP3 src/save.c)
+GWMgBitGet = 0x80067E78; // rom:0x68A78
+GWMgUnlockReset = 0x80067FE8; // rom:0x68BE8
+GWMgRecordSet = 0x80068088; // rom:0x68C88
+GWContErrorSet = 0x80068410; // rom:0x69010
