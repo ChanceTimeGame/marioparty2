@@ -62,7 +62,7 @@ void func_800593C0_59FC0(void);
 void func_8005965C_5A25C(void);
 void func_8005E2B8_5EEB8(void);
 void func_80029E80_2AA80(s16, s32, s32);
-void omDelPrcObj(void*);
+s32 omDelPrcObj(void*);
 s32 func_8003F6F0_402F0(s16);
 void func_80067EF8_68AF8(s32);
 void func_800727F0_733F0(void);

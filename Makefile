@@ -215,3 +215,24 @@ build/src/C8E0.c.o: export VR4300MUL := ON
 # 2E0D0 (MP1 29C90.c), 3D6A0 (nop before a mult, as MP1 3AC60.c): KMC as keeps the vr4300 mul fix on
 B2B_MULFIX_UNITS := build/src/2E0D0.c.o build/src/3D6A0.c.o
 $(B2B_MULFIX_UNITS): export VR4300MUL = ON
+
+# b2-E: libultra units from MP1's SDK lib / src/lib units, built as MP1 builds them (-O3, unsigned char, lib headers)
+B2E_LIB_UNITS := build/src/9EA20.c.o build/src/AC3B0.c.o build/src/A0580.c.o build/src/A6C30.c.o build/src/A88A0.c.o build/src/AE970.c.o build/src/AE9B0.c.o
+$(B2E_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+$(B2E_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
+$(B2E_LIB_UNITS): export VR4300MUL := ON
+# AC3B0 (seqplayer), A0580 (csplayer): retail tests __al(C)SeqNextDelta's char result as signed (sll 24), so no -funsigned-char
+build/src/AC3B0.c.o build/src/A0580.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+# b2-E: ADEF0 (xprintf) builds like MP3's src/2.0L/libc/xprintf.c: -O2, signed char
+build/src/ADEF0.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# b2-E: B0360 (xldtob): MP1 src/9AF70.c is -O3 -funsigned-char; MP2 tests the char code signed, so -O3 only
+build/src/B0360.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
+# b2-E: units whose .rodata is carved out of the data blob
+B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o build/src/B0360.c.o build/src/B1350.c.o build/src/B14D0.c.o build/src/B1910.c.o
+CARVED_RODATA_UNITS += $(B2E_CARVED)
+$(B2E_CARVED): RODATA_AS_DATA = 1
+# b2-E: MP3 libhmath units (-O2 -ffast-math, as MP3 and b1-G2's G2_HMATH_UNITS)
+B2E_HMATH_UNITS := build/src/B24A0.c.o build/src/B3CD0.c.o build/src/B40B0.c.o
+$(B2E_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+# B40B0 (HuVecCross): nop between back-to-back mul.s, KMC as mul fix on
+build/src/B40B0.c.o: export VR4300MUL = ON

@@ -1,7 +1,7 @@
 #include "common.h"
 
-// KMC libm: __fint (truncate toward zero), fmod, ceil and floor, from MP1 src/9C190.c. ceil and
-// floor stay in asm: their 1.0 is in the unsplit data+rodata asm.
+// KMC libm: __fint (truncate toward zero), fmod, ceil and floor, from MP1 src/9C190.c. The unit's
+// rodata (D5680-D5690) is carved out of the data blob.
 
 typedef union {
     f64 d;
@@ -35,6 +35,22 @@ f64 func_800B0D98_B1998(f64 x, f64 y) {
     return r;
 }
 
-INCLUDE_ASM("asm/nonmatchings/B1910", func_800B0DF4_B19F4);
+// ceil
+f64 func_800B0DF4_B19F4(f64 x) {
+    f64 t = func_800B0D10_B1910(x);
 
-INCLUDE_ASM("asm/nonmatchings/B1910", func_800B0E70_B1A70);
+    if ((x >= 0.0) & (t != x)) {
+        return t + 1.0;
+    }
+    return t;
+}
+
+// floor
+f64 func_800B0E70_B1A70(f64 x) {
+    f64 t = func_800B0D10_B1910(x);
+
+    if ((x < 0.0) & (t != x)) {
+        return t - 1.0;
+    }
+    return t;
+}

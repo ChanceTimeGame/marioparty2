@@ -1,5 +1,60 @@
-#include "common.h"
+/* A6C30: libultra os/createthread.c and os/destroythread.c, from MP1 src/lib/2.0I/os/ */
+#include "PR/os_internal.h"
+#include "osint.h"
+#include "PR/R4300.h"
 
-INCLUDE_ASM("asm/nonmatchings/A6C30", osCreateThread);
+void osCreateThread(OSThread* t, OSId id, void (*entry)(void*), void* arg, void* sp, OSPri p) {
+    register u32 saveMask;
+    OSIntMask mask;
 
-INCLUDE_ASM("asm/nonmatchings/A6C30", osDestroyThread);
+    t->id = id;
+    t->priority = p;
+    t->next = NULL;
+    t->queue = NULL;
+    t->context.pc = (u32)entry;
+    t->context.a0 = (s64)(s32)arg;
+    t->context.sp = (s64)(s32)sp - 16;
+    t->context.ra = (s64)(s32)__osCleanupThread;
+    mask = OS_IM_ALL;
+    t->context.sr = (mask & (SR_IMASK | SR_IE)) | SR_EXL;
+    t->context.rcp = (mask & RCP_IMASK) >> RCP_IMASKSHIFT;
+    t->context.fpcsr = FPCSR_FS | FPCSR_EV | FPCSR_RM_RN;
+    t->fp = 0;
+    t->state = OS_STATE_STOPPED;
+    t->flags = 0;
+    saveMask = __osDisableInt();
+    t->tlnext = __osActiveQueue;
+    __osActiveQueue = t;
+    __osRestoreInt(saveMask);
+}
+
+void osDestroyThread(OSThread* t) {
+    register u32 saveMask;
+    register OSThread* pred;
+    register OSThread* succ;
+
+    saveMask = __osDisableInt();
+    if (t == NULL) {
+        t = __osRunningThread;
+    } else if (t->state != OS_STATE_STOPPED) {
+        __osDequeueThread(t->queue, t);
+    }
+    if (__osActiveQueue == t) {
+        __osActiveQueue = __osActiveQueue->tlnext;
+    } else {
+        /* MP2's libultra walks to the queue's sentinel (priority -1), not to NULL */
+        pred = __osActiveQueue;
+        while (pred->priority != -1) {
+            succ = pred->tlnext;
+            if (succ == t) {
+                pred->tlnext = t->tlnext;
+                break;
+            }
+            pred = succ;
+        }
+    }
+    if (t == __osRunningThread) {
+        __osDispatchThread();
+    }
+    __osRestoreInt(saveMask);
+}
