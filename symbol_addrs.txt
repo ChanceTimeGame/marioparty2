@@ -642,3 +642,6 @@ __osActiveQueue = 0x800CDECC;
 // b2-E: A88A0 (MP1 src/lib/2.0I/os/initialize.c)
 __Dom2SpeedParam = 0x800F9218; // size:0x74
 __Dom1SpeedParam = 0x800FCE08; // size:0x74
+// b2-E: B14D0 (MP1 src/9BD50.c): libgcc conversions GCC calls implicitly
+__fixdfdi = 0x800B15F0; // rom:0xB21F0
+__floatdidf = 0x800B1710; // rom:0xB2310

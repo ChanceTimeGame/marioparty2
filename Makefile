@@ -219,6 +219,6 @@ build/src/ADEF0.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
 # b2-E: B0360 (xldtob): MP1 src/9AF70.c is -O3 -funsigned-char; MP2 tests the char code signed, so -O3 only
 build/src/B0360.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
 # b2-E: units whose .rodata is carved out of the data blob
-B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o build/src/B0360.c.o build/src/B1350.c.o
+B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o build/src/B0360.c.o build/src/B1350.c.o build/src/B14D0.c.o
 CARVED_RODATA_UNITS += $(B2E_CARVED)
 $(B2E_CARVED): RODATA_AS_DATA = 1
