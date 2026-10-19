@@ -1,5 +1,6 @@
-/* libultra audio/reverb.c (2.0I), from MP1 src/972D0.c. alFxParamHdl, _loadOutputBuffer and
-   _doModFunc stay in asm: their jump table / f64 constants are in the unsplit data+rodata asm. */
+/* libultra audio/reverb.c (2.0I), from MP1 src/972D0.c. Its rodata
+   (D5300-D5350: jump table and f64 constants) is carved out of the data blob. */
+#define _init_lpfilter func_800A86D0_A92D0
 #define alFxPull func_800AAC10_AB810
 #define alFxParamHdl func_800AAF98_ABB98
 #define _loadOutputBuffer func_800AB188_ABD88
@@ -13,6 +14,8 @@
 #include <os.h>
 #include "include_asm.h"
 
+#define RANGE 2.0
+
 #define SWAP(in, out)	\
 {			\
      s16 t = out;	\
@@ -25,6 +28,7 @@ Acmd *_loadBuffer(ALFx *r, s16 *curr_ptr, s32 buff, s32 count, Acmd *p);
 Acmd *_saveBuffer(ALFx *r, s16 *curr_ptr, s32 buff, s32 count, Acmd *p);
 Acmd *_filterBuffer(ALLowPass *lp, s32 buff, s32 count, Acmd *p);
 f32  _doModFunc(ALDelay *d, s32 count);
+void _init_lpfilter(ALLowPass *lp);
 
 
 Acmd *alFxPull(void *filter, s16 *outp, s32 outCount, s32 sampleOffset,
@@ -107,9 +111,103 @@ s32 alFxParam(void *filter, s32 paramID, void *param)
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/AB810", func_800AAF98_ABB98);
+s32 alFxParamHdl(void *filter, s32 paramID, void *param)
+{
+    ALFx   *f = (ALFx *) filter;    
+    s32    p = (paramID - 2) % 8; 
+    s32    s = (paramID - 2) / 8;
+    s32    val = *(s32*)param;
 
-INCLUDE_ASM("asm/nonmatchings/AB810", func_800AB188_ABD88);
+#define INPUT_PARAM         0
+#define OUTPUT_PARAM        1
+#define FBCOEF_PARAM        2
+#define FFCOEF_PARAM        3
+#define GAIN_PARAM          4
+#define CHORUSRATE_PARAM    5
+#define CHORUSDEPTH_PARAM   6
+#define LPFILT_PARAM        7
+
+    switch(p)
+    {
+        case INPUT_PARAM:
+            f->delay[s].input = (u32)val & 0xFFFFFFF8;
+            break;
+        case OUTPUT_PARAM:
+            f->delay[s].output = (u32)val & 0xFFFFFFF8;
+            break;
+        case FFCOEF_PARAM:
+            f->delay[s].ffcoef = (s16)val;
+            break;
+        case FBCOEF_PARAM:
+            f->delay[s].fbcoef = (s16)val;
+            break;
+        case GAIN_PARAM:
+            f->delay[s].gain = (s16)val;
+            break;
+        case CHORUSRATE_PARAM:
+
+            f->delay[s].rsinc = ((((f32)val)/1000) * RANGE)/alGlobals->drvr.outputRate; 
+            break;
+
+#define CONVERT 173123.404906676
+#define LENGTH  (f->delay[s].output - f->delay[s].input)
+
+        case CHORUSDEPTH_PARAM:
+
+            f->delay[s].rsgain = (((f32)val) / CONVERT) * LENGTH;
+            break;
+        case LPFILT_PARAM:
+            if(f->delay[s].lp)
+            {
+                f->delay[s].lp->fc = (s16)val;
+                _init_lpfilter(f->delay[s].lp);
+            }
+            break;
+    }
+    return 0;
+}
+
+Acmd *_loadOutputBuffer(ALFx *r, ALDelay *d, s32 buff, s32 incount, Acmd *p)
+{
+    Acmd        *ptr = p;
+    s32         ratio, count, rbuff = AL_TEMP_2;
+    s16         *out_ptr;
+    f32         fincount, fratio, delta;
+    s32         ramalign = 0, length;
+    /* retail's unused statics val=0.0, lastval=-10.0, blob=0 stay in the data blob (CFF5C) */
+
+    if (d->rs) {
+        length = d->output - d->input;
+        delta = _doModFunc(d, incount); 
+
+        delta /= length;  
+        delta = (s32)(delta * UNITY_PITCH); 
+        delta = delta / UNITY_PITCH;
+        fratio = 1.0 - delta;  
+
+        fincount = d->rs->delta + (fratio * (f32)incount);
+        count = (s32) fincount; 
+        d->rs->delta = fincount - (f32)count; 
+
+        out_ptr = &r->input[-(d->output - d->rsdelta)];
+        ramalign = ((s32)out_ptr & 0x7) >> 1; 
+
+        ptr = _loadBuffer(r, out_ptr - ramalign, rbuff, count + ramalign, ptr);
+
+        ratio = (s32)(fratio * UNITY_PITCH);
+
+        aSetBuffer(ptr++, 0, rbuff + (ramalign<<1), buff, incount<<1);
+        aResample(ptr++, d->rs->first, ratio, osVirtualToPhysical(d->rs->state));
+
+        d->rs->first = 0; 
+        d->rsdelta += count - incount; 
+    } else {
+        out_ptr = &r->input[-d->output];
+        ptr = _loadBuffer(r, out_ptr, buff, incount, ptr);
+    }
+
+    return ptr;
+}
 
 Acmd *_loadBuffer(ALFx *r, s16 *curr_ptr, s32 buff, s32 count, Acmd *p)
 {
@@ -188,4 +286,17 @@ Acmd *_filterBuffer(ALLowPass *lp, s32 buff, s32 count, Acmd *p)
     return ptr;
 }
 
-INCLUDE_ASM("asm/nonmatchings/AB810", func_800AB71C_AC31C);
+f32 _doModFunc(ALDelay *d, s32 count)
+{
+  f32 val;
+
+  d->rsval += d->rsinc * count;
+  d->rsval = (d->rsval > RANGE) ? d->rsval-(RANGE*2) : d->rsval;
+
+  val = d->rsval;
+  val = (val < 0) ? -val : val;
+
+  val -= RANGE/2;
+
+  return(d->rsgain * val);
+}

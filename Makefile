@@ -213,6 +213,6 @@ $(B2E_LIB_UNITS): CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_
 $(B2E_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
 $(B2E_LIB_UNITS): export VR4300MUL := ON
 # b2-E: units whose .rodata is carved out of the data blob
-B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o
+B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o
 CARVED_RODATA_UNITS += $(B2E_CARVED)
 $(B2E_CARVED): RODATA_AS_DATA = 1
