@@ -216,7 +216,9 @@ $(B2E_LIB_UNITS): export VR4300MUL := ON
 build/src/AC3B0.c.o build/src/A0580.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 # b2-E: ADEF0 (xprintf) builds like MP3's src/2.0L/libc/xprintf.c: -O2, signed char
 build/src/ADEF0.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+# b2-E: B0360 (xldtob): MP1 src/9AF70.c is -O3 -funsigned-char; MP2 tests the char code signed, so -O3 only
+build/src/B0360.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
 # b2-E: units whose .rodata is carved out of the data blob
-B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o
+B2E_CARVED := build/src/9EA20.c.o build/src/A92D0.c.o build/src/AA720.c.o build/src/AB810.c.o build/src/ADEF0.c.o build/src/B0360.c.o
 CARVED_RODATA_UNITS += $(B2E_CARVED)
 $(B2E_CARVED): RODATA_AS_DATA = 1
