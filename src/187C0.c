@@ -422,9 +422,6 @@ void HuDecodeRLE(DecodeStruct *decode) {
     }
 }
 
-/* Matches (tools: opcode and register compare of the object) except where its jump table lives:
-   the table (jtbl_800D1EB0_D2AB0) is in the main data blob, and C would emit its own in .rodata. */
-#ifdef NON_MATCHING
 void DecodeData(void* src, void* dest, s32 len, EDecodeType decodeType) {
     DecodeStruct decodeStruct;
     DecodeStruct* decodePtr = &decodeStruct;
@@ -458,6 +455,3 @@ void DecodeData(void* src, void* dest, s32 len, EDecodeType decodeType) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/187C0", DecodeData);
-#endif

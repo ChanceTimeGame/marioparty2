@@ -199,3 +199,6 @@ $(B1L_UNITS): export VR4300MUL := ON
 # b1-L: the splat main segment is one asm data blob, so C .rodata is carved in as .data (yaml '.data' subsegments)
 B1L_RODATA_UNITS := build/src/9EED0.c.o build/src/9F840.c.o build/src/A1B70.c.o build/src/A30D0.c.o build/src/A3220.c.o build/src/A3930.c.o build/src/A4390.c.o build/src/A5110.c.o build/src/A5BA0.c.o build/src/A7CB0.c.o build/src/AB560.c.o build/src/AFD70.c.o
 $(B1L_RODATA_UNITS): RODATA_AS_DATA = 1
+# Main units whose .rodata is carved out of the data blob's rodata half (ROM D2400-D57F0)
+CARVED_RODATA_UNITS := build/src/187C0.c.o
+$(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
