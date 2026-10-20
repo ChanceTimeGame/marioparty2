@@ -286,3 +286,20 @@ B3E_O0_LIB_UNITS := build/src/936F0.c.o build/src/93890.c.o
 $(B3E_O0_LIB_UNITS): CFLAGS = -O0 -g -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 $(B3E_O0_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
 $(B3E_O0_LIB_UNITS): export VR4300MUL := ON
+# carve-58080: the head of 58080's rodata (D3A38-D3AA0) carved out of the data blob. KMC as gives
+# .rodata 16-byte alignment and padding once it pools an li.d literal, so the object emits 0x70
+# bytes for retail's 0x68: tools/trim_section.py drops the zero tail (SUBALIGN(8) places it)
+C58080_CARVED := build/src/58080.c.o
+CARVED_RODATA_UNITS += $(C58080_CARVED)
+$(C58080_CARVED): RODATA_AS_DATA = 1
+C58080_NOPAD := build/asm/data/D39F0.data.s.o
+NOPAD_DATA_PIECES += $(C58080_NOPAD)
+$(C58080_NOPAD): ASFLAGS += --no-pad-sections
+$(C58080_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -c -o $@ $<
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x68
+	$(V)$(OBJCOPY) --rename-section .rodata=.data $@

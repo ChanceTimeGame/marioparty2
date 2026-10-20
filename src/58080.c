@@ -50,12 +50,15 @@ extern GW_PLAYER gPlayers[];
 
 /* Board players, sprites, effects and pause menu helpers. C from MP1 src/4E530.c, src/51200.c,
    src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c; the rest have no C reference and
-   stay asm. The functions that emit this unit's rodata (D3A38-D3AE0) stay asm too, because
-   func_8005A950, func_8005B338 and func_8005B9A0 (no reference) use part of it: func_80057768,
-   func_80057AB0, func_80057DDC, func_800585E8, func_80058D18, func_80059198, func_80059E7C,
-   func_8005A4EC, func_8005ADCC and func_8005D7D4. */
+   stay asm. The head of this unit's rodata (D3A38-D3AA0) is carved out of the data blob: its eight
+   users are C. The rest (D3AA0-D3AE0) stays in the blob for func_8005A950, func_8005B338 and
+   func_8005B9A0 (no reference), so func_8005ADCC and func_8005D7D4, which emit part of it, stay
+   asm. */
 
 #define CUR_PLAYER -1
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 typedef struct unk1EA70Struct1C unk1EA70Struct1C;
 
@@ -145,7 +148,7 @@ void func_8003E964_3F564(s16);
 void func_80057724_58324(s32);
 void func_80057768_58368(s32, s32, s32);
 void func_80057AB0_586B0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_80057DDC_589DC(omObjData*, s32);
+void func_80057DDC_589DC(s32, s32);
 void func_80058294_58E94(omObjData* arg0);
 void func_800585E8_591E8(omObjData* arg0);
 void func_80058D18_59918(omObjData* arg0);
@@ -205,6 +208,26 @@ extern s32 D_800CC74C_CD34C[];
 extern s16 D_800E1D00_E2900;
 f32 HuMathSin(f32);
 extern s8 D_800CCC15_CD815;
+
+/* the pause/text window array (MP3 D_800CC69C; full type TextWindow in 84FF0.c) */
+typedef struct MbTextWindow {
+    /* 0x000 */ u8 unk_00[0x20];
+    /* 0x020 */ u8 unk_20;
+    /* 0x021 */ u8 unk_21[0x27C - 0x21];
+} MbTextWindow; /* size 0x27C */
+
+extern MbTextWindow* D_800F920C_F9E0C;
+extern s32 D_800CC5F0_CD1F0;
+f32 __sinf(f32);
+f32 __cosf(f32);
+/* func_80058D18 calls these by their weak names (A5BA0.c, A30D0.c): GCC 2.7.2 then computes the
+   store address before the call, as retail does; through __sinf/__cosf it computes it after */
+f32 sinf(f32);
+f32 cosf(f32);
+void func_8002A4E0_2B0E0(s16, s16, f32, char*, char*, s32);
+void omVibrate(s16, s16, s16, s16);
+void func_8008CFD0_8DBD0(s16, s16, s16, s16, u8);
+s32 func_800892D8_89ED8(s16);
 
 /* MP3 UnkMBGuideData: the pause-menu guide (model and sprite group) */
 typedef struct MBGuideData {
@@ -283,7 +306,53 @@ void func_8005774C_5834C(s32 arg0, s32 arg1) {
     func_80057768_58368(arg0, arg1, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057768_58368);
+void func_80057768_58368(s32 arg0, s32 arg1, s32 arg2) {
+    s16 sp18[4];
+    s32 hasCom = 0;
+    u8 sp20[4] = {1, 2, 4, 8};
+    s32 i;
+
+    hasCom = 0;
+    for (i = 0; i < 4; i++) {
+        if (i == arg1) {
+            if (gPlayers[i].flags & 1) {
+                hasCom = 1;
+                sp18[gPlayers[i].port] = -0x8000;
+            } else {
+                func_8008D59C_8E19C(arg0, sp20[gPlayers[i].port]);
+                sp18[gPlayers[i].port] = -1;
+            }
+        } else {
+            sp18[gPlayers[i].port] = 0;
+        }
+    }
+
+    if (hasCom != 0) {
+        func_80089284_89E84(arg0, 2, 2);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        D_800CC5F0_CD1F0 = D_800CC5F4_CD1F4;
+    } else {
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+    }
+
+    if (arg2 == 0) {
+        while (func_8008BA30_8C630(arg0) != 0) {
+            HuPrcVSleep();
+        }
+    } else {
+        while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
+            HuPrcVSleep();
+        }
+        D_800F920C_F9E0C[arg0].unk_20 = 7;
+    }
+    func_8008D23C_8DE3C();
+}
 
 void func_80057A78_58678(s32 arg0, s32 arg1, s32 arg2) {
     func_80057AB0_586B0(arg0, arg1, arg2, 0);
@@ -293,17 +362,119 @@ void func_80057A94_58694(s32 arg0, s32 arg1, s32 arg2) {
     func_80057AB0_586B0(arg0, arg1, arg2, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057AB0_586B0);
+void func_80057AB0_586B0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s16 sp18[4];
+    u8 sp20[4] = {1, 2, 4, 8};
+    u8 mask;
+    s32 i;
 
-void func_80057DA4_589A4(omObjData* obj) {
-    func_80057DDC_589DC(obj, 0);
+    mask = 0;
+    for (i = 0; i < 4; i++) {
+        if ((i == arg1) || (i == arg2)) {
+            if (gPlayers[i].flags & 1) {
+                sp18[gPlayers[i].port] = -0x8000;
+            } else {
+                mask |= sp20[gPlayers[i].port];
+                sp18[gPlayers[i].port] = -1;
+            }
+        } else {
+            sp18[gPlayers[i].port] = 0;
+        }
+    }
+
+    if (mask) {
+        func_8008D59C_8E19C(arg0, mask);
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+    } else {
+        func_80089284_89E84(arg0, 2, 2);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], D_800CC5F0_CD1F0);
+        D_800CC5F0_CD1F0 = D_800CC5F4_CD1F4;
+    }
+
+    if (arg3 == 0) {
+        while (func_8008BA30_8C630(arg0) != 0) {
+            HuPrcVSleep();
+        }
+    } else {
+        while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
+            HuPrcVSleep();
+        }
+        D_800F920C_F9E0C[arg0].unk_20 = 7;
+    }
+    func_8008D23C_8DE3C();
 }
 
-void func_80057DC0_589C0(omObjData* obj) {
-    func_80057DDC_589DC(obj, 1);
+void func_80057DA4_589A4(s32 arg0) {
+    func_80057DDC_589DC(arg0, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057DDC_589DC);
+void func_80057DC0_589C0(s32 arg0) {
+    func_80057DDC_589DC(arg0, 1);
+}
+
+void func_80057DDC_589DC(s32 arg0, s32 arg1) {
+    s16 sp18[4];
+    u8 sp20[4] = {1, 2, 4, 8};
+    u8 mask;
+    s32 i;
+
+    mask = 0;
+    for (i = 0; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1)) {
+            break;
+        }
+    }
+
+    if (i == 4) {
+        func_80089284_89E84(arg0, 2, 2);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, D_800CC5F0_CD1F0);
+        D_800CC5F0_CD1F0 = D_800CC5F4_CD1F4;
+        if (arg1 == 0) {
+            while (func_8008BA30_8C630(arg0) != 0) {
+                HuPrcVSleep();
+            }
+        } else {
+            while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
+                HuPrcVSleep();
+            }
+            D_800F920C_F9E0C[arg0].unk_20 = 7;
+        }
+    } else {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].flags & 1) {
+                sp18[gPlayers[i].port] = 0;
+            } else {
+                mask |= sp20[gPlayers[i].port];
+                sp18[gPlayers[i].port] = -1;
+            }
+        }
+        func_8008D59C_8E19C(arg0, mask);
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+        if (arg1 == 0) {
+            while (func_8008BA30_8C630(arg0) != 0) {
+                HuPrcVSleep();
+            }
+        } else {
+            while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
+                HuPrcVSleep();
+            }
+            D_800F920C_F9E0C[arg0].unk_20 = 7;
+        }
+    }
+    func_8008D23C_8DE3C();
+}
 
 void func_8005812C_58D2C(s32 arg0) {
     func_8008D59C_8E19C(arg0, 0xF);
@@ -409,7 +580,65 @@ omObjData* func_8005845C_5905C(s32 arg0, Vec* arg1, s32 arg2, Object* arg3) {
     return obj;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_800585E8_591E8);
+void func_800585E8_591E8(omObjData* arg0) {
+    f32 temp_f20;
+    f32 temp_f20_2;
+    f32 temp_f20_3;
+    f32 temp_f20_4;
+    f32 temp_f20_5;
+    Object* var_s0;
+    Object* temp_v0;
+    Object *new_var;
+
+    var_s0 = (Object*)arg0->unk_50;
+    arg0->work[1]--;
+    
+    if (var_s0 == NULL) {
+        if (arg0->work[1] == 0) {
+            PLAYER_OBJ(arg0->work[0])->coords.x = arg0->trans.x;
+            PLAYER_OBJ(arg0->work[0])->coords.y = arg0->trans.y;
+            PLAYER_OBJ(arg0->work[0])->coords.z = arg0->trans.z;
+            omDelObj(arg0);
+            return;
+        }
+        
+        PLAYER_OBJ(arg0->work[0])->coords.x = PLAYER_OBJ(arg0->work[0])->coords.x + arg0->scale.x;
+        PLAYER_OBJ(arg0->work[0])->coords.y = PLAYER_OBJ(arg0->work[0])->coords.y + arg0->scale.y;
+        PLAYER_OBJ(arg0->work[0])->coords.z = PLAYER_OBJ(arg0->work[0])->coords.z + arg0->scale.z;   
+        new_var = PLAYER_OBJ(arg0->work[0]);
+        temp_v0 = new_var;
+        temp_f20 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180)) * arg0->rot.x;
+        temp_v0->coords.x += temp_f20 - (__sinf((arg0->work[1] + 1) * 180.0f / arg0->work[2] * (M_PI/180)) * arg0->rot.x);
+        temp_v0 = PLAYER_OBJ(arg0->work[0]);
+        temp_f20_2 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180)) * arg0->rot.y;
+        temp_v0->coords.y += temp_f20_2 - (__sinf((arg0->work[1] + 1) * 180.0f / arg0->work[2] * (M_PI/180)) * arg0->rot.y);
+        var_s0 = PLAYER_OBJ(arg0->work[0]);
+        temp_f20_5 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180))* arg0->rot.z;
+        temp_f20_5 = temp_f20_5 - (__sinf(( (((arg0->work[1] + 1) * 180.0f) / arg0->work[2]) * (M_PI/180))) * arg0->rot.z);
+        temp_f20_5 += var_s0->coords.z;
+        var_s0->coords.z = temp_f20_5;
+    } else if (arg0->work[1] == 0) {
+        var_s0->coords.x = arg0->trans.x;
+        var_s0->coords.y = arg0->trans.y;
+        var_s0->coords.z = arg0->trans.z;
+        arg0->unk_50 = NULL;
+        omDelObj(arg0);
+        return;
+    } else {
+        var_s0->coords.x += arg0->scale.x;
+        var_s0->coords.y += arg0->scale.y;
+        var_s0->coords.z += arg0->scale.z;
+
+        temp_f20_3 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180))* arg0->rot.x;
+        var_s0->coords.x += temp_f20_3 - (__sinf(( (((arg0->work[1] + 1) * 180.0f) / arg0->work[2]) * (M_PI/180))) * arg0->rot.x);
+        temp_f20_4 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180))* arg0->rot.y;
+        var_s0->coords.y += temp_f20_4 - (__sinf(( (((arg0->work[1] + 1) * 180.0f) / arg0->work[2]) * (M_PI/180))) * arg0->rot.y);
+        temp_f20_5 = __sinf(arg0->work[1] * 180.0f / arg0->work[2] * (M_PI/180))* arg0->rot.z;
+        temp_f20_5 = temp_f20_5 - (__sinf(( (((arg0->work[1] + 1) * 180.0f) / arg0->work[2]) * (M_PI/180))) * arg0->rot.z);
+        temp_f20_5 += var_s0->coords.z;
+        var_s0->coords.z = temp_f20_5;
+    }
+}
 
 omObjData* func_80058B58_59758(Object* arg0, Vec* arg1, s32 arg2, Vec* arg3) {
     s32 player = -1;
@@ -451,7 +680,37 @@ omObjData* func_80058B58_59758(Object* arg0, Vec* arg1, s32 arg2, Vec* arg3) {
     return obj;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80058D18_59918);
+void func_80058D18_59918(omObjData* arg0) {
+    Object* obj = arg0->unk_50;
+
+    arg0->work[1]--;
+    if (obj == NULL) {
+        if (arg0->work[1] == 0) {
+            PLAYER_OBJ(arg0->work[0])->rot.x = arg0->rot.x;
+            PLAYER_OBJ(arg0->work[0])->rot.y = arg0->rot.y;
+            PLAYER_OBJ(arg0->work[0])->rot.z = arg0->rot.z;
+            omDelObj(arg0);
+            return;
+        }
+        arg0->scale.y += arg0->scale.x;
+        PLAYER_OBJ(arg0->work[0])->rot.x = sinf(arg0->scale.y * (M_PI / 180));
+        PLAYER_OBJ(arg0->work[0])->rot.y = 0.0f;
+        PLAYER_OBJ(arg0->work[0])->rot.z = cosf(arg0->scale.y * (M_PI / 180));
+        return;
+    }
+    if (arg0->work[1] == 0) {
+        obj->rot.x = arg0->rot.x;
+        obj->rot.y = arg0->rot.y;
+        obj->rot.z = arg0->rot.z;
+        arg0->unk_50 = NULL;
+        omDelObj(arg0);
+        return;
+    }
+    arg0->scale.y += arg0->scale.x;
+    obj->rot.x = sinf(arg0->scale.y * (M_PI / 180));
+    obj->rot.y = 0.0f;
+    obj->rot.z = cosf(arg0->scale.y * (M_PI / 180));
+}
 
 omObjData* func_80058F18_59B18(s32 arg0, Vec* arg1, s32 arg2, Object* arg3) {
     Vec dir;
@@ -524,7 +783,13 @@ void func_80059158_59D58(Object* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80059198_59D98);
+void func_80059198_59D98(omObjData* arg0) {
+    func_8002A4E0_2B0E0(arg0->mdlcnt, arg0->mtncnt, (__sinf((f32) (arg0->trans.x * (M_PI / 180))) / 2.0f) + 0.5f, "030-hata1", "hata2", 0);
+    arg0->trans.x += 20.0f;
+    if (arg0->trans.x >= 360.0f) {
+        arg0->trans.x -= 360.0f;
+    }
+}
 
 void func_80059254_59E54(s32 arg0) {
     omObjData* temp_v0;
@@ -858,7 +1123,35 @@ void func_80059DC4_5A9C4(omObjData* arg0) {
     arg0->mdlcnt--;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80059E7C_5AA7C);
+s32 func_80059E7C_5AA7C(Vec* arg0, Vec* arg1, f32 arg2) {
+    Vec dist;
+    Vec vel;
+    f32 angle;
+    f32 count;
+    omObjData* obj;
+    s32 n;
+
+    dist.x = arg1->x - arg0->x;
+    dist.y = arg1->y - arg0->y;
+    dist.z = arg1->z - arg0->z;
+    angle = func_80042BE0_437E0(&dist) * (M_PI / 180);
+    vel.x = __sinf(angle) * arg2;
+    vel.y = 0.0f;
+    vel.z = __cosf(angle) * arg2;
+    count = dist.x / vel.x;
+    obj = omAddObj(0x5000, 0, 0, -1, func_80059DC4_5A9C4);
+    obj->trans.x = arg0->x;
+    obj->trans.y = arg0->y;
+    obj->trans.z = arg0->z;
+    obj->scale.x = vel.x;
+    obj->scale.y = vel.y;
+    obj->scale.z = vel.z;
+    obj->rot.x = arg1->x;
+    obj->rot.y = arg1->y;
+    obj->rot.z = arg1->z;
+    obj->mdlcnt = n = count;
+    return n;
+}
 
 s32 func_80059FB4_5ABB4(Vec* arg0, Vec* arg1) {
     return func_80059E7C_5AA7C(arg0, arg1, 30.0f);
@@ -946,7 +1239,30 @@ void func_8005A4C8_5B0C8(void) {
     func_80059944_5A544(D_800CC630_CD230, 0x8000);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A4EC_5B0EC);
+void func_8005A4EC_5B0EC(s32 arg0, s32 arg1) {
+    if (!(gPlayers[arg0].flags & 1)) {
+        switch (arg1) {
+        case 1:
+            omVibrate(arg0, 5, 0, 5);
+            break;
+        case 2:
+            omVibrate(arg0, 2, 3, 10);
+            break;
+        case 3:
+            omVibrate(arg0, 10, 0, 10);
+            break;
+        case 4:
+            omVibrate(arg0, 2, 2, 20);
+            break;
+        case 5:
+            omVibrate(arg0, 20, 0, 20);
+            break;
+        case 6:
+            omVibrate(arg0, 30, 0, 30);
+            break;
+        }
+    }
+}
 
 void func_8005A5E0_5B1E0(void) {
 }
