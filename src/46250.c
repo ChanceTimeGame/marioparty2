@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/malloc.h"
 #include "game/data.h"
+#include "game/hmfman.h"
 
 /* Board dice blocks and coin/dice processes (MP3 ovl_80_shared_board/EE660.c, MP1 src/3F5B0.c)
    and music fades (MP1 src/42CA0.c). func_80047868, func_80047908 (MP1 func_80041048,
@@ -66,12 +67,6 @@ typedef struct MBModel {
     /* 0x46 */ s16 curMot;
 } MBModel; // sizeof 0x48
 
-typedef struct HmfModel {
-    /* 0x00 */ char unk_00[0x74];
-    /* 0x74 */ f32 mtx[16];
-    /* 0xB4 */ char unk_B4[0xC];
-} HmfModel; /* size = 0xC0 */
-
 extern UnkDiceRelated D_800DF4C0_E00C0[5];
 extern s8 D_800DF63D_E023D;
 extern s8 D_800DF63F_E023F;
@@ -79,7 +74,6 @@ extern f32 D_800DF640_E0240;
 extern u8 D_800DF644_E0244;
 extern s8 D_800DF646_E0246;
 extern s16 D_800FC734_FD334;
-extern HmfModel* D_800FC834_FD434;
 
 void omDelObj(omObjData*);
 void SprAttrSet(s16, s16, s32);

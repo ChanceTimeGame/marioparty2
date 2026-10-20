@@ -1,104 +1,14 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* ---- Model manager (MP3 src/hmfman.c, MP1 src/24740.c); MP3's HmfModel layout ---- */
-
-typedef struct {
-    /* 0x00 */ char unk00[0x50];
-    /* 0x50 */ s32 unk50;
-    /* 0x54 */ char unk54[0x14];
-} HmfObject; // size 0x68
-
-typedef struct {
-    /* 0x00 */ char unk00[0xC];
-    /* 0x0C */ u8 unk0C;
-    /* 0x0D */ u8 unk0D;
-} HmfMaterial; // size 0xE
-
-typedef struct {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s16 unk_04;
-    /* 0x06 */ char unk_06[0xA];
-} HmfVertex; // size 0x10 (MP1 unk2C0C0StructE0)
-
-typedef struct {
-    /* 0x00 */ u8 unk_00;
-    /* 0x01 */ char unk_01;
-    /* 0x02 */ s16 unk_02[1]; // unknown array size
-    /* 0x04 */ char unk_04[8];
-    /* 0x0C */ f32 unk_0C;
-    /* 0x10 */ f32 unk_10;
-    /* 0x14 */ f32 unk_14;
-} HmfVtxGroup; // size 0x18 (MP1 unk2C0C0StructB0)
 
 typedef struct {
     /* 0x00 */ f32 v[8];
 } unk24740Floats8;
 
-typedef struct {
-    /* 0x00 */ u8 unk00;
-    /* 0x01 */ char unk01[9];
-    /* 0x0A */ u8 unk0A;
-    /* 0x0B */ char unk0B[3];
-    /* 0x0E */ s16 unk0E;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ char unk12[0xC];
-    /* 0x1E */ s16 unk1E;
-    /* 0x20 */ char unk20[0x1C];
-    /* 0x3C */ Gfx* unk3C;
-    /* 0x40 */ HmfVertex* unk40;
-    /* 0x44 */ HmfVertex* unk44[4]; /* per frame buffer */
-    /* 0x54 */ char unk54[0x10];
-    /* 0x64 */ HmfObject* unk64;
-    /* 0x68 */ char unk68[0x24];
-    /* 0x8C */ HmfMaterial* unk8C;
-    /* 0x90 */ char unk90[0x10];
-    /* 0xA0 */ void* unkA0;
-    /* 0xA4 */ char unkA4[0x10];
-    /* 0xB4 */ HmfVtxGroup* unkB4;
-} HmfData;
-
-typedef struct HmfModel {
-    /* 0x00 */ s8 unk00;
-    /* 0x01 */ u8 unk01;
-    /* 0x02 */ u8 unk02;
-    /* 0x03 */ u8 unk03;
-    /* 0x04 */ u8 unk04;
-    /* 0x05 */ u8 unk05;
-    /* 0x06 */ u8 unk06;
-    /* 0x07 */ s8 unk07;
-    /* 0x08 */ u8 unk08;
-    /* 0x09 */ u8 unk09;
-    /* 0x0A */ u8 unk0A;
-    /* 0x0C */ s16 unk0C;
-    /* 0x0E */ s16 unk0E;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ char unk12[6];
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ Vec pos;
-    /* 0x28 */ Vec rot;
-    /* 0x34 */ Vec scale;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ f32 unk54;
-    /* 0x58 */ f32 unk58;
-    /* 0x5C */ f32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ HmfData* hmf;
-    /* 0x68 */ char unk68[8];
-    /* 0x70 */ void (*unk70)(Gfx**, s32, s32);
-    /* 0x74 */ f32 mtx[16];
-    /* 0xB4 */ struct HmfModel* unkB4;
-    /* 0xB8 */ char unkB8[4];
-    /* 0xBC */ void* unkBC;
-} HmfModel; // Size 0xC0
-
 #define HU3D_MODEL_MAX 128
 
-extern HmfModel* D_800FC834_FD434; /* HmfModelData */
 extern s32 D_800FDC98_FE898;
 extern s32 D_800FD848_FE448;
 extern s16 D_800FDCD0_FE8D0;
@@ -166,18 +76,6 @@ typedef struct {
     Mtx perspMtx;
     Mtx lookAtMtx;
 } HuCamMtxs;
-
-typedef struct {
-    /* 0x00 */ s8 unk00;
-    /* 0x01 */ s8 unk01;
-    /* 0x02 */ s8 unk02;
-    /* 0x03 */ s8 unk03;
-    /* 0x04 */ s8 unk04;
-    /* 0x05 */ s8 unk05;
-    /* 0x06 */ s8 unk06;
-    /* 0x07 */ char unk07[1];
-    /* 0x08 */ Light unk08[1]; // length unknown
-} HmfData_UnkD0;
 
 typedef struct {
     /* 0x00 */ s8 r;
@@ -822,10 +720,10 @@ void func_8002CD78_2D978(s16, u8, u8, u8, u8);
 void func_8002CDB4_2D9B4(s16, u8, u8, u8, u8);
 
 void func_8002AF2C_2BB2C(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) {
-    HmfVtxGroup* b = &arg0->unkB4[arg3];
+    HmfFace* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
-    HmfVertex* src;
-    HmfVertex* dst;
+    HmfVtx* src;
+    HmfVtx* dst;
     s16* idx;
     s16 cx, cy, cz;
     s16 sx, sy, sz;
@@ -834,20 +732,20 @@ void func_8002AF2C_2BB2C(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
     s16 i;
 
     for (i = 0; i < arg4; i++) {
-        cx = b->unk_0C;
-        cy = b->unk_10;
-        cz = b->unk_14;
+        cx = b->unk0C;
+        cy = b->unk10;
+        cz = b->unk14;
         sx = cx * arg2;
         sy = cy * arg2;
         sz = cz * arg2;
-        n = (u8)(b->unk_00 & 0x7F);
-        idx = b->unk_02;
+        n = (u8)(b->unk00 & 0x7F);
+        idx = b->unk02;
         for (j = 0; j < n; j++) {
             src = &arg0->unk40[*idx];
             dst = &arg0->unk44[D_800FDBE0_FE7E0][*idx];
-            dst->unk_00 = (src->unk_00 - cx) * inv + sx;
-            dst->unk_02 = (src->unk_02 - cy) * inv + sy;
-            dst->unk_04 = (src->unk_04 - cz) * inv + sz;
+            dst->unk00 = (src->unk00 - cx) * inv + sx;
+            dst->unk02 = (src->unk02 - cy) * inv + sy;
+            dst->unk04 = (src->unk04 - cz) * inv + sz;
             idx++;
         }
         b++;
@@ -856,10 +754,10 @@ void func_8002AF2C_2BB2C(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
 
 void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) {
     unk24740Floats8 sp0 = *(unk24740Floats8*)D_800D2210_D2E10;
-    HmfVtxGroup* b = &arg0->unkB4[arg3];
+    HmfFace* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
-    HmfVertex* src;
-    HmfVertex* dst;
+    HmfVtx* src;
+    HmfVtx* dst;
     s16* idx;
     s16 cx, cy, cz;
     s16 sx, sy, sz;
@@ -868,9 +766,9 @@ void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
     s16 i;
 
     for (i = 0; i < arg4; i++) {
-        cx = b->unk_0C;
-        cy = b->unk_10;
-        cz = b->unk_14;
+        cx = b->unk0C;
+        cy = b->unk10;
+        cz = b->unk14;
         if (arg2 == 1.0f) {
             sx = cx * arg2;
             sy = cy * arg2;
@@ -880,14 +778,14 @@ void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
             sy = cy * arg2 * sp0.v[i & 7];
             sz = cz * arg2 * sp0.v[i & 7];
         }
-        n = (u8)(b->unk_00 & 0x7F);
-        idx = b->unk_02;
+        n = (u8)(b->unk00 & 0x7F);
+        idx = b->unk02;
         for (j = 0; j < n; j++) {
             src = &arg0->unk40[*idx];
             dst = &arg0->unk44[D_800FDBE0_FE7E0][*idx];
-            dst->unk_00 = (src->unk_00 - cx) * inv + sx;
-            dst->unk_02 = (src->unk_02 - cy) * inv + sy;
-            dst->unk_04 = (src->unk_04 - cz) * inv + sz;
+            dst->unk00 = (src->unk00 - cx) * inv + sx;
+            dst->unk02 = (src->unk02 - cy) * inv + sy;
+            dst->unk04 = (src->unk04 - cz) * inv + sz;
             idx++;
         }
         b++;
@@ -896,12 +794,12 @@ void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
 
 void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) {
     unk24740Floats8 sp10 = *(unk24740Floats8*)D_800D2210_D2E10;
-    HmfVtxGroup* b = &arg0->unkB4[arg3];
+    HmfFace* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
     f32 s = HuMathSin(D_800CA02C_CAC2C);
     f32 c = func_800B7890_B8490(D_800CA02C_CAC2C);
-    HmfVertex* src;
-    HmfVertex* dst;
+    HmfVtx* src;
+    HmfVtx* dst;
     s16* idx;
     s16 cx, cy, cz;
     s16 sx, sy, sz;
@@ -911,9 +809,9 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
     s16 i;
 
     for (i = 0; i < arg4; i++) {
-        cx = b->unk_0C;
-        cy = b->unk_10;
-        cz = b->unk_14;
+        cx = b->unk0C;
+        cy = b->unk10;
+        cz = b->unk14;
         if (arg2 == 1.0f) {
             sx = cx * arg2;
             sy = cy * arg2;
@@ -923,20 +821,20 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
             sy = cy * arg2 * sp10.v[i & 7];
             sz = cz * arg2 * sp10.v[i & 7];
         }
-        n = (u8)(b->unk_00 & 0x7F);
-        idx = b->unk_02;
+        n = (u8)(b->unk00 & 0x7F);
+        idx = b->unk02;
         switch (i & 3) {
             case 0:
             case 2:
                 for (j = 0; j < n; j++) {
                     src = &arg0->unk40[*idx];
                     dst = &arg0->unk44[D_800FDBE0_FE7E0][*idx];
-                    dx = src->unk_00 - cx;
-                    dy = src->unk_02 - cy;
-                    dz = src->unk_04 - cz;
-                    dst->unk_00 = dx * inv + sx;
-                    dst->unk_02 = (dy * c + dz * s) * inv + sy;
-                    dst->unk_04 = (-dy * s + dz * c) * inv + sz;
+                    dx = src->unk00 - cx;
+                    dy = src->unk02 - cy;
+                    dz = src->unk04 - cz;
+                    dst->unk00 = dx * inv + sx;
+                    dst->unk02 = (dy * c + dz * s) * inv + sy;
+                    dst->unk04 = (-dy * s + dz * c) * inv + sz;
                     idx++;
                 }
                 break;
@@ -944,12 +842,12 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
                 for (j = 0; j < n; j++) {
                     src = &arg0->unk40[*idx];
                     dst = &arg0->unk44[D_800FDBE0_FE7E0][*idx];
-                    dx = src->unk_00 - cx;
-                    dy = src->unk_02 - cy;
-                    dz = src->unk_04 - cz;
-                    dst->unk_00 = (dx * c - dz * s) * inv + sx;
-                    dst->unk_02 = dy * inv + sy;
-                    dst->unk_04 = (dx * s + dz * c) * inv + sz;
+                    dx = src->unk00 - cx;
+                    dy = src->unk02 - cy;
+                    dz = src->unk04 - cz;
+                    dst->unk00 = (dx * c - dz * s) * inv + sx;
+                    dst->unk02 = dy * inv + sy;
+                    dst->unk04 = (dx * s + dz * c) * inv + sz;
                     idx++;
                 }
                 break;
@@ -957,12 +855,12 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
                 for (j = 0; j < n; j++) {
                     src = &arg0->unk40[*idx];
                     dst = &arg0->unk44[D_800FDBE0_FE7E0][*idx];
-                    dx = src->unk_00 - cx;
-                    dy = src->unk_02 - cy;
-                    dz = src->unk_04 - cz;
-                    dst->unk_00 = (dx * c + dy * s) * inv + sx;
-                    dst->unk_02 = (-dx * s + dy * c) * inv + sy;
-                    dst->unk_04 = dz * inv + sz;
+                    dx = src->unk00 - cx;
+                    dy = src->unk02 - cy;
+                    dz = src->unk04 - cz;
+                    dst->unk00 = (dx * c + dy * s) * inv + sx;
+                    dst->unk02 = (-dx * s + dy * c) * inv + sy;
+                    dst->unk04 = dz * inv + sz;
                     idx++;
                 }
                 break;
@@ -1065,7 +963,7 @@ INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D0A0_2DCA0);
 
 void func_8002D124_2DD24(s16 index) {
     s16 i;
-    HmfMaterial* temp_v1;
+    HmfMat* temp_v1;
     HmfData* temp_s0;
 
     temp_s0 = D_800FC834_FD434[index].hmf;

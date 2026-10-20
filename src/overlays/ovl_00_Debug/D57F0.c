@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 #define PAGES_MAX 7
 #define ROWS 10
@@ -12,12 +13,6 @@ typedef struct UnkDebug0 {
     f32 unk10;
     char pad[4];
 } UnkDebug0; //this should have been 0x14 in size, but it needs 0x18?
-
-typedef struct UnkDebug1 {
-    char pad[3];
-    u8 unk3;
-    char unk4[0xBC];
-} UnkDebug1;
 
 typedef struct UnkDebug2 {
     u8 groups[4];
@@ -126,7 +121,6 @@ extern u8 D_80107470_DA460_Debug[];
 extern u16 D_80107406_DA3F6_Debug;
 extern u32 D_800CD408_CE008;
 extern UnkDebug0 D_800CD438_CE038[];
-extern UnkDebug1* D_800FC834_FD434;
 extern s16 D_801073C6_DA3B6_Debug[];
 extern s16 D_801073D8_DA3C8_Debug[];
 extern s16 D_801073E4_DA3D4_Debug[];
@@ -205,7 +199,7 @@ void func_80102800_D57F0_Debug(void) {
     for (i = 0; i < 6; i++) {
         s16 temp = LoadFormFile(D_800CD438_CE038[i].unk4 | D_800CD438_CE038[i].unk8, 0x69D);
         D_801073C6_DA3B6_Debug[i] = temp;
-        D_800FC834_FD434[temp].unk3 = (D_800FC834_FD434[temp].unk3 | 2);
+        D_800FC834_FD434[temp].unk03 = (D_800FC834_FD434[temp].unk03 | 2);
 
         func_80018CCC_198CC(temp_s3, 0, D_800CD438_CE038[i].unk4);
         D_801073D8_DA3C8_Debug[i] = temp_s3->motion[0];

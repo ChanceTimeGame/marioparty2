@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/data.h"
+#include "game/hmfman.h"
 
 // MP3s UnkBoard8
 typedef struct {
@@ -115,12 +116,6 @@ typedef struct Unk800F8C60 {
     /* 0x76 */ s8 unk_76;
 } Unk800F8C60;
 
-typedef struct Unk800FC834 {
-    /* 0x00 */ char pad0[0x64];
-    /* 0x64 */ void* unk_64;
-    /* 0x68 */ char pad68[0x58];
-} Unk800FC834; // size 0xC0 (MP1 unk_ovl_2D_struct)
-
 extern s32 D_800CC5F4_CD1F4;
 extern omObjData* D_800CC628_CD228;
 extern s32 D_800CC62C_CD22C;
@@ -141,7 +136,6 @@ extern f32 D_800E1CE8_E28E8;
 extern s16 D_800E1CF6_E28F6;
 extern void* D_800E1CFC_E28FC;
 extern Unk800F8C60 D_800F8C60;
-extern Unk800FC834* D_800FC834_FD434;
 extern s8 D_800FDC9C_FE89C;
 extern Unk4E530Motion D_800FDCD8_FE8D8[16];
 extern omObjData* D_80101178_101D78[32];
@@ -643,7 +637,7 @@ s32 func_80059D00_5A900(s32 arg0, s32 arg1, char* arg2) {
     }
     data = DataRead(arg0);
     p->unk0 = data;
-    p->unk4 = func_8003D8F0_3E4F0(D_800FC834_FD434[arg1].unk_64, data, 0, arg2);
+    p->unk4 = func_8003D8F0_3E4F0(D_800FC834_FD434[arg1].hmf, data, 0, arg2);
     func_80029A8C_2A68C(arg1);
     return i;
 }

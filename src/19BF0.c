@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/data.h"
+#include "game/hmfman.h"
 
 /* Actor motion helpers. Functions with C come from MP1 src/18650.c and MP3
    src/overlays/minigame/B7600.c; MP2's actor work is laid out differently (offsets below). */
@@ -26,23 +27,6 @@ typedef struct ActorWork {
     /* 0xE8 */ MotionEntry* table;
 } ActorWork;
 
-typedef struct ModelUnk9C {
-    /* 0x00 */ char unk_00[8];
-    /* 0x08 */ s32 unk_08;
-} ModelUnk9C;
-
-typedef struct ModelUnk64 {
-    /* 0x00 */ char unk_00[0x9C];
-    /* 0x9C */ ModelUnk9C* unk_9C;
-} ModelUnk64;
-
-typedef struct ModelData {
-    /* 0x00 */ char unk_00[0x64];
-    /* 0x64 */ ModelUnk64* unk_64;
-    /* 0x68 */ char unk_68[0x58];
-} ModelData; // size 0xC0
-
-extern ModelData* D_800FC834_FD434;
 
 void func_80029714_2A314(s16, f32, f32, f32);
 void func_8002979C_2A39C(s16, f32, f32, f32);
@@ -93,8 +77,8 @@ void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32
         if (mdl != 0) {
             cur = func_80029CE4_2A8E4(mdl);
             if (func_80029D0C_2A90C(mdl) <= cur) {
-                if (D_800FC834_FD434[mdl].unk_64->unk_9C != NULL) {
-                    D_800FC834_FD434[mdl].unk_64->unk_9C->unk_08 = 0;
+                if (D_800FC834_FD434[mdl].hmf->unk9C != NULL) {
+                    D_800FC834_FD434[mdl].hmf->unk9C->unk08 = 0;
                 }
                 func_80029C74_2A874(mdl, 0.0f);
             }

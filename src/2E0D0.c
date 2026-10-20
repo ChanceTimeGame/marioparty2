@@ -1,16 +1,11 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* Model collision grids and matrix helpers. Same code as Mario Party 1's src/29C90.c (MP1 names in
    the comments); func_8002D5B4, func_8002E1F8, func_8002E544 and func_8002EDA8 have no MP1 C
    equivalent and stay asm. MP2's model struct has MP3's layout (HmfModel, size 0xC0). */
 
 typedef f32 Matrix4f[4][4];
-
-typedef struct ColVtx {
-    /* 0x0 */ s16 x;
-    /* 0x2 */ s16 y;
-    /* 0x4 */ s16 z;
-} ColVtx;
 
 typedef struct ColTri {
     /* 0x0 */ s16 flags;
@@ -51,52 +46,16 @@ typedef struct HitProbe {
 } HitProbe;
 
 /* MP1 unk2C0C0Struct40 (start). */
-typedef struct HitXform {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s16 unk_04;
-    /* 0x06 */ char unk_06[2];
-    /* 0x08 */ Vec unk_08;
-    /* 0x14 */ Vec unk_14;
-    /* 0x20 */ Vec unk_20;
-} HitXform;
 
 /* MP3 HmfData / MP1 unk2C0C0StructC0 (only the fields used here). */
-typedef struct HmfData {
-    /* 0x00 */ char unk_00[0x54];
-    /* 0x54 */ ColVtx* unk_54; /* MP1 unk_78 */
-    /* 0x58 */ char unk_58[0x14];
-    /* 0x6C */ HitXform* unk_6C; /* MP1 unk_88 */
-} HmfData;
 
 /* MP3 HmfModel / MP1 unk_ovl_2D_struct. */
-typedef struct HmfModel {
-    /* 0x00 */ char unk_00[0x10];
-    /* 0x10 */ s16 unk_10; /* hit grid; MP1 unk_04 */
-    /* 0x12 */ char unk_12[6];
-    /* 0x18 */ s32 unk_18;
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ f32 unk_20;
-    /* 0x24 */ f32 unk_24;
-    /* 0x28 */ f32 unk_28;
-    /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ f32 unk_30;
-    /* 0x34 */ f32 unk_34;
-    /* 0x38 */ f32 unk_38;
-    /* 0x3C */ f32 unk_3C;
-    /* 0x40 */ char unk_40[0x24];
-    /* 0x64 */ HmfData* unk_64;
-    /* 0x68 */ char unk_68[0xC];
-    /* 0x74 */ Matrix4f unk_74;
-    /* 0xB4 */ char unk_B4[0xC];
-} HmfModel; /* size = 0xC0 */
 
 extern s16 D_800DEFA0_DFBA0;
 extern s16 D_800DEFA2_DFBA2;
 extern s16 D_800DEFA4_DFBA4;
 extern s16* D_800DEFA8_DFBA8;
 extern HitGrid* D_800FD2B8_FDEB8;
-extern HmfModel* D_800FC834_FD434;
 extern s32 D_800F64C4_F70C4;
 extern void* D_800FD2A8_FDEA8;
 extern s16 D_800FFFD6_100BD6;
@@ -243,28 +202,28 @@ void func_8002DF2C_2EB2C(HmfModel* m, Matrix4f mtx) {
     Matrix4f tmp;
     HitXform* xf;
 
-    D_800F64C4_F70C4 = m->unk_18;
+    D_800F64C4_F70C4 = m->unk18;
     guMtxL2F(mtx, (Mtx*)((u8*)D_800FD2A8_FDEA8 + D_800FFFD6_100BD6 * 0x80 + 0xF8));
-    if (m->unk_1C != 0.0f || m->unk_20 != 0.0f || m->unk_24 != 0.0f) {
-        func_80025770_26370(mtx, m->unk_1C, m->unk_20, m->unk_24);
+    if (m->pos.x != 0.0f || m->pos.y != 0.0f || m->pos.z != 0.0f) {
+        func_80025770_26370(mtx, m->pos.x, m->pos.y, m->pos.z);
     }
-    if (m->unk_28 != 0.0f || m->unk_2C != 0.0f || m->unk_30 != 0.0f) {
-        func_80025884_26484(mtx, m->unk_28, m->unk_2C, m->unk_30);
+    if (m->rot.x != 0.0f || m->rot.y != 0.0f || m->rot.z != 0.0f) {
+        func_80025884_26484(mtx, m->rot.x, m->rot.y, m->rot.z);
     }
-    if (m->unk_34 != 1.0f || m->unk_38 != 1.0f || m->unk_3C != 1.0f) {
-        func_80025830_26430(mtx, m->unk_34, m->unk_38, m->unk_3C);
+    if (m->scale.x != 1.0f || m->scale.y != 1.0f || m->scale.z != 1.0f) {
+        func_80025830_26430(mtx, m->scale.x, m->scale.y, m->scale.z);
     }
-    func_80025BA4_267A4(m->unk_74, mtx, mtx);
-    xf = m->unk_64->unk_6C;
+    func_80025BA4_267A4((f32(*)[4])m->mtx, mtx, mtx);
+    xf = m->hmf->unk6C;
     guMtxIdentF(tmp);
-    if (xf->unk_08.x == 0.0f || xf->unk_08.y == 0.0f || xf->unk_08.z == 0.0f) {
-        func_80025770_26370(tmp, xf->unk_08.x, xf->unk_08.y, xf->unk_08.z);
+    if (xf->unk08.x == 0.0f || xf->unk08.y == 0.0f || xf->unk08.z == 0.0f) {
+        func_80025770_26370(tmp, xf->unk08.x, xf->unk08.y, xf->unk08.z);
     }
-    if (xf->unk_14.x == 0.0f || xf->unk_14.y == 0.0f || xf->unk_14.z == 0.0f) {
-        func_80025884_26484(tmp, xf->unk_14.x, xf->unk_14.y, xf->unk_14.z);
+    if (xf->unk14.x == 0.0f || xf->unk14.y == 0.0f || xf->unk14.z == 0.0f) {
+        func_80025884_26484(tmp, xf->unk14.x, xf->unk14.y, xf->unk14.z);
     }
-    if (xf->unk_20.x != 1.0f || xf->unk_20.y != 1.0f || xf->unk_20.z != 1.0f) {
-        func_80025830_26430(tmp, xf->unk_20.x, xf->unk_20.y, xf->unk_20.z);
+    if (xf->unk20.x != 1.0f || xf->unk20.y != 1.0f || xf->unk20.z != 1.0f) {
+        func_80025830_26430(tmp, xf->unk20.x, xf->unk20.y, xf->unk20.z);
     }
     guMtxCatF(tmp, mtx, mtx);
     guMtxF2L(mtx, (Mtx*)((u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40));
@@ -357,9 +316,9 @@ void func_8002F2C4_2FEC4(s16 mi, HitList* l, s32 (*cb)(s32, u16*, ColVtx*, HitPr
 
     l->pos = 0;
     l->count = 0;
-    mdl = (D_800FC834_FD434 + mi)->unk_64;
+    mdl = (D_800FC834_FD434 + mi)->hmf;
     m = D_800FC834_FD434 + mi;
-    g = &D_800FD2B8_FDEB8[m->unk_10];
+    g = &D_800FD2B8_FDEB8[m->unk10];
     x = ((g->w * g->cw) / 2.0f + probe->x) / g->cw;
     z = ((g->h * g->ch) / 2.0f + probe->z) / g->ch;
     x0 = x - 1;
@@ -385,7 +344,7 @@ void func_8002F2C4_2FEC4(s16 mi, HitList* l, s32 (*cb)(s32, u16*, ColVtx*, HitPr
             if (cell->count != 0) {
                 p = &g->polys[cell->offset];
                 for (i = 0; i < cell->count; i++) {
-                    if (cb((*p >> 14) + 2, p + 1, mdl->unk_54, probe) != 0) {
+                    if (cb((*p >> 14) + 2, p + 1, mdl->unk54, probe) != 0) {
                         *out++ = p;
                         l->count++;
                     }

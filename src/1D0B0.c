@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* Game loop processes (MP1 src/engine/gameman.c, MP3 src/gameman.c), the graphics swap chain
    (MP3 src/graphics.c, MP1 src/engine/graphics.c) and the HMF model loader (MP3 src/hmfload.c,
@@ -366,18 +367,6 @@ typedef struct {
     u8 unkA[2];
     HmfData_Unk84_Entry2* unkC;  // Pointer to something with unk30 field
 } HmfData_Unk84_Entry;
-
-typedef struct {
-    /* 0x00 */ s8 unk00; // UnkLightData_unk02?
-    /* 0x01 */ s8 unk01;
-    /* 0x02 */ s8 unk02;
-    /* 0x03 */ s8 unk03;
-    /* 0x04 */ s8 unk04;
-    /* 0x05 */ s8 unk05;
-    /* 0x06 */ s8 unk06;
-    /* 0x07 */ char unk07[1];
-    /* 0x08 */ Light unk08[1]; // length unknown
-} HmfData_UnkD0; // Size unknown
 
 
 typedef struct {

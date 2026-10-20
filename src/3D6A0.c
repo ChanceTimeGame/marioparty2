@@ -1,65 +1,11 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* Model textures and texture animation (MP1 src/388E0.c) and texture-load display lists
    (MP1 src/3AC60.c). Functions without MP1 C stay asm, and so does func_8004075C (MP1
    func_8003B0AC): its doubles are in this unit's piece of the data blob, which functions still in
    asm also use. MP2's model structs have MP3's layout; fields are named by their MP2 offset
    (MP1 offset in the comment). */
-
-typedef struct HmfPal {
-    /* 0x00 */ char unk_00[0x1C];
-    /* 0x1C */ u8 unk_1C;
-    /* 0x1D */ char unk_1D;
-    /* 0x1E */ s16 unk_1E; /* colour count; MP1 0x1A */
-    /* 0x20 */ s16 unk_20;
-    /* 0x22 */ char unk_22[2];
-    /* 0x24 */ void* unk_24;
-    /* 0x28 */ u16* unk_28;
-} HmfPal; /* MP1 unk2C0C0Struct60 / unk388E0Struct80 */
-
-typedef struct HmfTex {
-    /* 0x00 */ char unk_00[0x1C];
-    /* 0x1C */ u8 unk_1C; /* format; MP1 0x18 */
-    /* 0x1D */ u8 unk_1D; /* size */
-    /* 0x1E */ u8 unk_1E; /* width */
-    /* 0x1F */ u8 unk_1F; /* height */
-    /* 0x20 */ char unk_20[2];
-    /* 0x22 */ s16 unk_22;
-    /* 0x24 */ u16 unk_24; /* users */
-    /* 0x26 */ char unk_26[2];
-    /* 0x28 */ u8* unk_28; /* image */
-    /* 0x2C */ void* unk_2C; /* MP1 0x28 */
-    /* 0x30 */ HmfPal* unk_30; /* MP1 0x2C */
-} HmfTex; /* MP1 unk2C0C0Struct70 */
-
-typedef struct HmfTexRef {
-    /* 0x00 */ s8 unk_00;
-    /* 0x01 */ s8 unk_01;
-    /* 0x02 */ s8 unk_02;
-    /* 0x03 */ s8 unk_03;
-    /* 0x04 */ s8 unk_04;
-    /* 0x05 */ u8 unk_05;
-    /* 0x06 */ u8 unk_06;
-    /* 0x07 */ u8 unk_07;
-    /* 0x08 */ char unk_08;
-    /* 0x09 */ u8 unk_09;
-    /* 0x0A */ char unk_0A[2];
-    /* 0x0C */ HmfTex* unk_0C;
-} HmfTexRef; /* size = 0x10; MP1 unk2C0C0Struct80 */
-
-typedef struct HmfData {
-    /* 0x00 */ char unk_00[0x12];
-    /* 0x12 */ s16 unk_12; /* texture count; MP1 0x6C */
-    /* 0x14 */ char unk_14[0x74];
-    /* 0x88 */ HmfTexRef* unk_88; /* MP1 0xA4 */
-} HmfData; /* MP1 unk2C0C0StructC0 */
-
-typedef struct HmfModel {
-    /* 0x00 */ s8 unk_00;
-    /* 0x01 */ char unk_01[0x63];
-    /* 0x64 */ HmfData* unk_64; /* MP1 0x6C */
-    /* 0x68 */ char unk_68[0x58];
-} HmfModel; /* size = 0xC0 */
 
 typedef struct unk388E0Struct40 {
     /* 0x00 */ s16 unk_00;
@@ -132,7 +78,6 @@ extern u32 D_800CB000_CBC00[];
 extern s32 D_800CB010_CBC10[];
 extern u32 D_800CB020_CBC20[];
 extern u32 D_800CB030_CBC30[];
-extern HmfModel* D_800FC834_FD434;
 extern unk388E0Struct40* D_800FD7F8_FE3F8;
 extern unk388E0StructC0* D_800FFDFC_1009FC;
 
@@ -159,39 +104,39 @@ void func_8003CDAC_3D9AC(HmfData* arg0) {
     s16 j;
     s16 k;
 
-    if (arg0->unk_88 != NULL) {
-        for (i = 0; i < arg0->unk_12; i++) {
-            tex = arg0->unk_88[i].unk_0C;
-            if (tex->unk_24 == 0) {
+    if (arg0->unk88 != NULL) {
+        for (i = 0; i < arg0->unk12; i++) {
+            tex = arg0->unk88[i].unk0C;
+            if (tex->unk24 == 0) {
                 continue;
             }
             for (j = 0; j < 128; j++) {
-                m = D_800FC834_FD434[j].unk_64;
+                m = D_800FC834_FD434[j].hmf;
                 if (m == NULL) {
                     continue;
                 }
-                if (((u8) D_800FC834_FD434[j].unk_00 != 0) | (arg0 == m)) {
+                if (((u8) D_800FC834_FD434[j].unk00 != 0) | (arg0 == m)) {
                     continue;
                 }
-                if (m->unk_88 == NULL) {
+                if (m->unk88 == NULL) {
                     continue;
                 }
-                for (k = 0; k < m->unk_12; k++) {
-                    if (m->unk_88[k].unk_0C == tex) {
+                for (k = 0; k < m->unk12; k++) {
+                    if (m->unk88[k].unk0C == tex) {
                         break;
                     }
                 }
-                if (k != m->unk_12) {
+                if (k != m->unk12) {
                     break;
                 }
             }
             if (j == 128) {
-                tex->unk_24 = 0;
-                tex->unk_2C = NULL;
-                if (tex->unk_1C == 2) {
-                    func_8003D6B8_3E2B8((HmfPal*) tex->unk_30);
+                tex->unk24 = 0;
+                tex->unk2C = NULL;
+                if (tex->unk1C == 2) {
+                    func_8003D6B8_3E2B8((HmfPal*) tex->unk30);
                 }
-                func_80027340_27F40(tex->unk_28);
+                func_80027340_27F40(tex->unk28);
             }
         }
     }
@@ -215,16 +160,16 @@ void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
   u16 c;
   u8 *dst;
   arg0 += 0xB;
-  arg2->unk_1E = arg0[3];
-  arg2->unk_1F = arg0[5];
+  arg2->unk1E = arg0[3];
+  arg2->unk1F = arg0[5];
   if (arg0[0] == 0x28)
   {
-    arg2->unk_1C = 2;
-    arg2->unk_30 = (HmfPal *) func_8003D55C_3E15C(arg1, (arg0[6] << 8) + arg0[7]);
-    arg2->unk_22 = (arg0[8] << 8) + arg0[9];
-    arg2->unk_1D = 1;
+    arg2->unk1C = 2;
+    arg2->unk30 = (HmfPal *) func_8003D55C_3E15C(arg1, (arg0[6] << 8) + arg0[7]);
+    arg2->unk22 = (arg0[8] << 8) + arg0[9];
+    arg2->unk1D = 1;
     bpp = 2;
-    if (arg2->unk_30->unk_1E < 0x11)
+    if (arg2->unk30->unk1E < 0x11)
     {
       bpp = 1;
     }
@@ -235,27 +180,27 @@ void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
     switch (arg0[1])
     {
       case 8:
-        arg2->unk_1D = (short) 1;
+        arg2->unk1D = (short) 1;
         bpp = 2;
         break;
 
       case 16:
-        arg2->unk_1D = 2;
+        arg2->unk1D = 2;
         bpp = 4;
         break;
 
       case 4:
-        arg2->unk_1D = 0;
+        arg2->unk1D = 0;
         bpp = 1;
         break;
 
       case 32:
-        arg2->unk_1D = 3;
+        arg2->unk1D = 3;
         bpp = 8;
         break;
 
       default:
-        arg2->unk_1D = 2;
+        arg2->unk1D = 2;
         bpp = 6;
         break;
 
@@ -264,19 +209,19 @@ void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
     switch (arg0[0])
     {
       case 0x26:
-        arg2->unk_1C = 0;
+        arg2->unk1C = 0;
         break;
 
       case 0x27:
-        arg2->unk_1C = 0;
+        arg2->unk1C = 0;
         break;
 
       case 0x25:
-        arg2->unk_1C = 3;
+        arg2->unk1C = 3;
         break;
 
       default:
-        arg2->unk_1C = 4;
+        arg2->unk1C = 4;
         break;
 
     }
@@ -285,23 +230,23 @@ void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
   size = (arg0[8] << 8) + arg0[9];
   if (bpp != 6)
   {
-    if (((arg2->unk_1C == 2) && (size > 0x800)) || (size > 0x1000))
+    if (((arg2->unk1C == 2) && (size > 0x800)) || (size > 0x1000))
     {
-      arg2->unk_1F = 0x10;
-      arg2->unk_1E = 0x10;
+      arg2->unk1F = 0x10;
+      arg2->unk1E = 0x10;
     }
-    arg2->unk_28 = func_80027154_27D54(size, 15000);
-    bcopy(arg0 + 0xA, arg2->unk_28, size);
+    arg2->unk28 = func_80027154_27D54(size, 15000);
+    bcopy(arg0 + 0xA, arg2->unk28, size);
   }
   else
   {
     size = (size / 3) * 2;
     if (size > 0x1000)
     {
-      arg2->unk_1F = 0x10;
-      arg2->unk_1E = 0x10;
+      arg2->unk1F = 0x10;
+      arg2->unk1E = 0x10;
     }
-    dst = (arg2->unk_28 = func_80027154_27D54(size, 15000));
+    dst = (arg2->unk28 = func_80027154_27D54(size, 15000));
     arg0 += 0xA;
     for (i = 0; i < size; i += 2)
     {
@@ -341,11 +286,11 @@ void func_8003D7D0_3E3D0(HmfTex* arg0) {
     HmfData* m;
 
     for (i = 0; i < 128; i++) {
-        if (D_800FC834_FD434[i].unk_64 != NULL) {
-            m = D_800FC834_FD434[i].unk_64;
-            for (j = 0; j < m->unk_12; j++) {
-                if (m->unk_88[j].unk_0C == arg0) {
-                    m->unk_88[j].unk_0C = &D_800CAD50_CB950;
+        if (D_800FC834_FD434[i].hmf != NULL) {
+            m = D_800FC834_FD434[i].hmf;
+            for (j = 0; j < m->unk12; j++) {
+                if (m->unk88[j].unk0C == arg0) {
+                    m->unk88[j].unk0C = &D_800CAD50_CB950;
                 }
             }
         }
@@ -482,9 +427,9 @@ INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003EBC8_3F7C8);
 void func_8003EE44_3FA44(HmfData* arg0) {
     s16 i;
 
-    for (i = 0; i < arg0->unk_12; i++) {
-        if (arg0->unk_88[i].unk_03 != -1) {
-            arg0->unk_88[i].unk_09 |= 0x80;
+    for (i = 0; i < arg0->unk12; i++) {
+        if (arg0->unk88[i].unk03 != -1) {
+            arg0->unk88[i].unk09 |= 0x80;
         }
     }
 }
@@ -493,9 +438,9 @@ void func_8003EE44_3FA44(HmfData* arg0) {
 void func_8003EEA4_3FAA4(HmfData* arg0) {
     s16 i;
 
-    for (i = 0; i < arg0->unk_12; i++) {
-        if (arg0->unk_88[i].unk_03 != -1) {
-            arg0->unk_88[i].unk_09 &= 0x7F;
+    for (i = 0; i < arg0->unk12; i++) {
+        if (arg0->unk88[i].unk03 != -1) {
+            arg0->unk88[i].unk09 &= 0x7F;
         }
     }
 }

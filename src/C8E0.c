@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* Minigame player helpers. Functions with C come from MP1 src/99E0.c and MP3
    src/overlays/minigame/B3CE0.c; MP2's work block is laid out differently (offsets below). */
@@ -35,14 +36,7 @@ typedef struct {
     /* 0x02 */ char unk_02[0x22];
 } unk_800ECDE0; // size 0x24
 
-typedef struct {
-    /* 0x00 */ char unk_00[0x64];
-    /* 0x64 */ void* hmf;
-    /* 0x68 */ char unk_68[0x58];
-} HmfModel; // size 0xC0
-
 extern unk_800ECDE0* D_800F86D8_F92D8;
-extern HmfModel* D_800FC834_FD434;
 extern u16 D_800F8FE0_F9BE0;
 extern omObjData* D_800FC7B0_FD3B0[];
 extern u8 D_800BF794_C0394;

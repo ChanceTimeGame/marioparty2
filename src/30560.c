@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/hmfman.h"
 
 /* Model (HMF) setup, texture and display-list state, matrix copies and animation helpers. The
    functions in C are MP1 src/2C0C0.c and src/34D80.c code (two from MP3 src/22EB0.c); the rest
@@ -11,62 +12,14 @@ typedef f32 Matrix4f[4][4];
 #define INTEGER_LOG2(x) ((x) <= 2 ? 1 : (x) <= 4 ? 2 : (x) <= 8 ? 3 : (x) <= 16 ? 4 : (x) <= 32 ? 5 : (x) <= 64 ? 6 : (x) <= 128 ? 7 : 8)
 
 /* MP1 unk2C0C0StructE0 */
-typedef struct HmfVtx {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s16 unk_04;
-    /* 0x06 */ char unk_06[2];
-    /* 0x08 */ s16 unk_08;
-    /* 0x0A */ s16 unk_0A;
-    /* 0x0C */ u8 unk_0C[3];
-    /* 0x0F */ u8 unk_0F;
-} HmfVtx; /* size = 0x10 */
 
 /* MP1 unk2C0C0StructB0 */
-typedef struct HmfFace {
-    /* 0x00 */ u8 unk_00;
-    /* 0x01 */ char unk_01;
-    /* 0x02 */ s16 unk_02[1];
-    /* 0x04 */ char unk_04[8];
-    /* 0x0C */ f32 unk_0C;
-    /* 0x10 */ f32 unk_10;
-    /* 0x14 */ f32 unk_14;
-} HmfFace; /* size = 0x18 */
 
 /* MP1 unk2C0C0Struct60 (4 bytes longer at the start in MP2) */
-typedef struct HmfPal {
-    /* 0x00 */ char unk_00[0x1C];
-    /* 0x1C */ u8 unk_1C;
-    /* 0x1D */ char unk_1D;
-    /* 0x1E */ s16 unk_1E;
-    /* 0x20 */ s16 unk_20;
-    /* 0x22 */ char unk_22[2];
-    /* 0x24 */ void* unk_24;
-    /* 0x28 */ void* unk_28; /* the palette */
-} HmfPal;
 
 /* MP1 unk2C0C0Struct70 (4 bytes longer at the start in MP2) */
-typedef struct HmfTex {
-    /* 0x00 */ char unk_00[0x1C];
-    /* 0x1C */ u8 unk_1C; /* format */
-    /* 0x1D */ u8 unk_1D; /* size */
-    /* 0x1E */ u8 unk_1E; /* width */
-    /* 0x1F */ u8 unk_1F; /* height */
-    /* 0x20 */ char unk_20[2];
-    /* 0x22 */ s16 unk_22;
-    /* 0x24 */ u16 unk_24;
-    /* 0x26 */ char unk_26[2];
-    /* 0x28 */ u8* unk_28; /* image */
-    /* 0x2C */ void* unk_2C;
-    /* 0x30 */ HmfPal* unk_30;
-} HmfTex;
 
 /* MP1 unk2C0C0Struct90 */
-typedef struct HmfMat {
-    /* 0x00 */ char unk_00[0xC];
-    /* 0x0C */ s8 unk_0C;
-    /* 0x0D */ u8 unk_0D;
-} HmfMat; /* size = 0xE */
 
 /* MP1 unk34D80Struct80 */
 typedef struct HmfMotion {
@@ -81,65 +34,14 @@ typedef struct HmfMotion {
 } HmfMotion; /* size = 0x18 */
 
 /* MP1 unk2C0C0StructB4 */
-typedef struct HmfAnimTrack {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s16 unk_04;
-    /* 0x06 */ s16 unk_06;
-    /* 0x08 */ u16* unk_08;
-    /* 0x0C */ s32* unk_0C;
-} HmfAnimTrack; /* size = 0x10 */
 
 /* MP1 unk2C0C0StructB8 */
-typedef struct HmfAnim {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s16 unk_04;
-    /* 0x06 */ char unk_06[2];
-    /* 0x08 */ f32 unk_08;
-    /* 0x0C */ HmfAnimTrack unk_0C[16];
-} HmfAnim;
 
 /* MP3 HmfModelData_Unk64_Unk3C_Struct */
-typedef struct HmfDisp {
-    /* 0x00 */ void* unk_00[4];
-} HmfDisp;
 
 /* MP3 HmfModelData_Unk64_Unk60_Struct */
-typedef struct HmfPart {
-    /* 0x00 */ char unk_00[0x50];
-    /* 0x50 */ s32 unk_50;
-    /* 0x54 */ char unk_54[0x14];
-} HmfPart; /* size = 0x68 */
 
 /* MP3 HmfData / MP1 unk2C0C0StructC0 (fields used here; MP1 offsets in the comments) */
-typedef struct HmfData {
-    /* 0x00 */ char unk_00[0xA];
-    /* 0x0A */ u8 unk_0A;
-    /* 0x0B */ char unk_0B[3];
-    /* 0x0E */ u16 unk_0E; /* MP1 0x68 */
-    /* 0x10 */ s16 unk_10;
-    /* 0x12 */ char unk_12[8];
-    /* 0x1A */ s16 unk_1A; /* MP1 0x74 */
-    /* 0x1C */ char unk_1C[0x20];
-    /* 0x3C */ HmfDisp* unk_3C;
-    /* 0x40 */ HmfVtx* unk_40; /* MP1 0x04 */
-    /* 0x44 */ HmfVtx* unk_44[4];
-    /* 0x54 */ char unk_54[0x10];
-    /* 0x64 */ HmfPart* unk_64;
-    /* 0x68 */ s16 unk_68; /* MP1 0x84 */
-    /* 0x6A */ char unk_6A[0x1A];
-    /* 0x84 */ void* unk_84; /* MP1 0xA0 */
-    /* 0x88 */ char unk_88[4];
-    /* 0x8C */ HmfMat* unk_8C; /* MP1 0xA8 */
-    /* 0x90 */ void* unk_90; /* MP1 0xAC, an HmfMotion */
-    /* 0x94 */ char unk_94[8];
-    /* 0x9C */ HmfAnim* unk_9C; /* MP1 0xB8 */
-    /* 0xA0 */ char unk_A0[4];
-    /* 0xA4 */ f32 unk_A4; /* MP1 0xC0 */
-    /* 0xA8 */ char unk_A8[0xC];
-    /* 0xB4 */ HmfFace* unk_B4; /* MP1 0xD0 */
-} HmfData;
 
 /* MP1 unk2C0C0Struct10 */
 typedef struct HmfLight {
@@ -270,25 +172,25 @@ void func_80030668_31268(HmfData* arg0) {
     s16 i;
     s16 j;
 
-    if (arg0->unk_B4 == NULL) {
+    if (arg0->unkB4 == NULL) {
         return;
     }
 
-    var_a3 = arg0->unk_B4;
-    for (i = 0; i < arg0->unk_1A; i++, var_a3++) {
-        var_a1 = var_a3->unk_02;
-        temp_t2 = var_a3->unk_00;
+    var_a3 = arg0->unkB4;
+    for (i = 0; i < arg0->unk1A; i++, var_a3++) {
+        var_a1 = var_a3->unk02;
+        temp_t2 = var_a3->unk00;
 
         var_f6 = var_f8 = var_f4 = 0.0f;
         for (j = 0; j < temp_t2; j++, var_a1++) {
-            var_f6 += arg0->unk_40[*var_a1].unk_00;
-            var_f8 += arg0->unk_40[*var_a1].unk_02;
-            var_f4 += arg0->unk_40[*var_a1].unk_04;
+            var_f6 += arg0->unk40[*var_a1].unk00;
+            var_f8 += arg0->unk40[*var_a1].unk02;
+            var_f4 += arg0->unk40[*var_a1].unk04;
         }
 
-        var_a3->unk_0C = var_f6 / temp_t2;
-        var_a3->unk_10 = var_f8 / temp_t2;
-        var_a3->unk_14 = var_f4 / temp_t2;
+        var_a3->unk0C = var_f6 / temp_t2;
+        var_a3->unk10 = var_f8 / temp_t2;
+        var_a3->unk14 = var_f4 / temp_t2;
     }
 }
 
@@ -300,42 +202,42 @@ s32 func_800308D8_314D8(HmfData *arg0) {
     s16 i;
 
     var_s2 = 0;
-    if (arg0->unk_40 != NULL) {
-        for (i = 0; i < ARRAY_COUNT(arg0->unk_44); i++) {
-            if (arg0->unk_40 != arg0->unk_44[i]) {
-                if (arg0->unk_0A != 0) {
-                    func_80027340_27F40(arg0->unk_44[i]);
+    if (arg0->unk40 != NULL) {
+        for (i = 0; i < ARRAY_COUNT(arg0->unk44); i++) {
+            if (arg0->unk40 != arg0->unk44[i]) {
+                if (arg0->unk0A != 0) {
+                    func_80027340_27F40(arg0->unk44[i]);
                 } else {
-                    HuMemFree(arg0->unk_44[i]);
+                    HuMemFree(arg0->unk44[i]);
                 }
-                arg0->unk_44[i] = arg0->unk_40;
+                arg0->unk44[i] = arg0->unk40;
                 var_s2 = 1;
             }
         }
 
-        if (arg0->unk_0A != 0) {
-            func_80027340_27F40(arg0->unk_40);
+        if (arg0->unk0A != 0) {
+            func_80027340_27F40(arg0->unk40);
         } else {
-            HuMemFree(arg0->unk_40);
+            HuMemFree(arg0->unk40);
         }
     }
-    if (arg0->unk_3C != NULL) {
-        for (i = 0; i < arg0->unk_10; i++) {
-            if (arg0->unk_0A != 0) {
-                func_80027340_27F40(arg0->unk_3C->unk_00[i]);
+    if (arg0->unk3C != NULL) {
+        for (i = 0; i < arg0->unk10; i++) {
+            if (arg0->unk0A != 0) {
+                func_80027340_27F40(arg0->unk3C->unk00[i]);
             } else {
-                HuMemFree(arg0->unk_3C->unk_00[i]);
+                HuMemFree(arg0->unk3C->unk00[i]);
             }
         }
 
-        if (arg0->unk_0A != 0) {
-            func_80027340_27F40(arg0->unk_3C);
+        if (arg0->unk0A != 0) {
+            func_80027340_27F40(arg0->unk3C);
         } else {
-            HuMemFree(arg0->unk_3C);
+            HuMemFree(arg0->unk3C);
         }
     }
-    D_8010106C_101C6C = arg0->unk_0E;
-    D_800FA1AA_FADAA = arg0->unk_0E + 1;
+    D_8010106C_101C6C = arg0->unk0E;
+    D_800FA1AA_FADAA = arg0->unk0E + 1;
     func_8002FD38_30938(arg0);
     return var_s2;
 }
@@ -470,10 +372,10 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_80036D5C_3795C);
 
 /* same c: marioparty func_80031F14 (src/2C0C0.c) */
 void func_80036EF8_37AF8(HmfTex* arg0, s32 arg1, s32 arg2) {
-    if (arg0->unk_1C != 2) {
+    if (arg0->unk1C != 2) {
         gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_NONE);
 
-        switch (arg0->unk_1D) {
+        switch (arg0->unk1D) {
             case G_IM_SIZ_16b:
                 D_800F92E0_F9EE0 = G_IM_SIZ_16b_LOAD_BLOCK;
                 D_800F956C_FA16C = G_IM_SIZ_16b_INCR;
@@ -504,28 +406,28 @@ void func_80036EF8_37AF8(HmfTex* arg0, s32 arg1, s32 arg2) {
                 break;
         }
 
-        gDPSetTextureImage(D_800FDBCC_FE7CC++, arg0->unk_1C, D_800F92E0_F9EE0, 1, arg0->unk_28);
-        gDPSetTile(D_800FDBCC_FE7CC++, arg0->unk_1C, D_800F92E0_F9EE0, 0, 0x0000, G_TX_LOADTILE, 0,
-            arg2, INTEGER_LOG2(arg0->unk_1F), G_TX_NOLOD, arg1, INTEGER_LOG2(arg0->unk_1E), G_TX_NOLOD);
+        gDPSetTextureImage(D_800FDBCC_FE7CC++, arg0->unk1C, D_800F92E0_F9EE0, 1, arg0->unk28);
+        gDPSetTile(D_800FDBCC_FE7CC++, arg0->unk1C, D_800F92E0_F9EE0, 0, 0x0000, G_TX_LOADTILE, 0,
+            arg2, INTEGER_LOG2(arg0->unk1F), G_TX_NOLOD, arg1, INTEGER_LOG2(arg0->unk1E), G_TX_NOLOD);
         gDPLoadSync(D_800FDBCC_FE7CC++);
         gDPLoadBlock(D_800FDBCC_FE7CC++, G_TX_LOADTILE, 0, 0,
-            ((arg0->unk_1E * arg0->unk_1F + D_800F956C_FA16C) >> D_800FDBD4_FE7D4) - 1,
-            CALC_DXT(arg0->unk_1E, D_801026D0_1032D0));
+            ((arg0->unk1E * arg0->unk1F + D_800F956C_FA16C) >> D_800FDBD4_FE7D4) - 1,
+            CALC_DXT(arg0->unk1E, D_801026D0_1032D0));
         gDPPipeSync(D_800FDBCC_FE7CC++);
-        gDPSetTile(D_800FDBCC_FE7CC++, arg0->unk_1C, arg0->unk_1D, (arg0->unk_1E * D_800F60A4_F6CA4 + 7) >> 3, 0x0000, G_TX_RENDERTILE, 0,
-            arg2, INTEGER_LOG2(arg0->unk_1F), G_TX_NOLOD, arg1, INTEGER_LOG2(arg0->unk_1E), G_TX_NOLOD);
-        gDPSetTileSize(D_800FDBCC_FE7CC++, G_TX_RENDERTILE, 0, 0, (arg0->unk_1E - 1) * 4, (arg0->unk_1F - 1) * 4);
+        gDPSetTile(D_800FDBCC_FE7CC++, arg0->unk1C, arg0->unk1D, (arg0->unk1E * D_800F60A4_F6CA4 + 7) >> 3, 0x0000, G_TX_RENDERTILE, 0,
+            arg2, INTEGER_LOG2(arg0->unk1F), G_TX_NOLOD, arg1, INTEGER_LOG2(arg0->unk1E), G_TX_NOLOD);
+        gDPSetTileSize(D_800FDBCC_FE7CC++, G_TX_RENDERTILE, 0, 0, (arg0->unk1E - 1) * 4, (arg0->unk1F - 1) * 4);
     } else {
         gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
 
-        if (arg0->unk_30->unk_1E < 17) {
-            gDPLoadTLUT_pal16(D_800FDBCC_FE7CC++, 0, arg0->unk_30->unk_28);
-            gDPLoadTextureBlock_4b(D_800FDBCC_FE7CC++, arg0->unk_28, arg0->unk_1C, arg0->unk_1E, arg0->unk_1F, 0,
-                arg1, arg2, INTEGER_LOG2(arg0->unk_1E), INTEGER_LOG2(arg0->unk_1F), 0, 0);
+        if (arg0->unk30->unk1E < 17) {
+            gDPLoadTLUT_pal16(D_800FDBCC_FE7CC++, 0, arg0->unk30->unk28);
+            gDPLoadTextureBlock_4b(D_800FDBCC_FE7CC++, arg0->unk28, arg0->unk1C, arg0->unk1E, arg0->unk1F, 0,
+                arg1, arg2, INTEGER_LOG2(arg0->unk1E), INTEGER_LOG2(arg0->unk1F), 0, 0);
         } else {
-            gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, arg0->unk_30->unk_28);
-            gDPLoadTextureBlockYuv(D_800FDBCC_FE7CC++, arg0->unk_28, arg0->unk_1C, G_IM_SIZ_8b, arg0->unk_1E, arg0->unk_1F, 0,
-                arg1, arg2, INTEGER_LOG2(arg0->unk_1E), INTEGER_LOG2(arg0->unk_1F), 0, 0);
+            gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, arg0->unk30->unk28);
+            gDPLoadTextureBlockYuv(D_800FDBCC_FE7CC++, arg0->unk28, arg0->unk1C, G_IM_SIZ_8b, arg0->unk1E, arg0->unk1F, 0,
+                arg1, arg2, INTEGER_LOG2(arg0->unk1E), INTEGER_LOG2(arg0->unk1F), 0, 0);
         }
     }
 }
@@ -534,7 +436,7 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_80037C7C_3887C);
 
 /* same c: marioparty3 func_8002C4C0_2D0C0 (src/22EB0.c) */
 s32 func_80038024_38C24(HmfData *arg0, s16 arg1, s32 arg2, s32 arg3) {
-    if (!(arg0->unk_64[arg1].unk_50 & 0x70000000)) {
+    if (!(arg0->unk64[arg1].unk50 & 0x70000000)) {
         return 0;
     }
     func_800260A4_26CA4(arg2, arg3);
@@ -545,7 +447,7 @@ s32 func_80038024_38C24(HmfData *arg0, s16 arg1, s32 arg2, s32 arg3) {
 void func_80038084_38C84(HmfData* arg0, s16 arg1, Matrix4f arg2) {
     D_800FD470_FE070 = 0;
     guMtxIdentF(D_801016D0_1022D0[0]);
-    if (arg0->unk_84 == (void*)-1 && arg0->unk_68 != 0) {
+    if (arg0->unk84 == (void*)-1 && arg0->unk68 != 0) {
         func_8003811C_38D1C(arg0, 0, arg1);
         func_80030CD4_318D4(arg2, D_801016D0_1022D0[D_800FD470_FE070]);
     }
@@ -601,33 +503,33 @@ s32 func_800398AC_3A4AC(HmfData* arg0, s16 arg1, u8* arg2) {
     s16 var_a3;
     s16 i;
 
-    temp_s3 = &arg0->unk_9C->unk_0C[arg1];
+    temp_s3 = &arg0->unk9C->unk0C[arg1];
 
-    temp_s3->unk_04 = (arg2[0] << 8) + arg2[1];
-    temp_s3->unk_00 = (arg2[2] << 8) + arg2[3];
+    temp_s3->unk04 = (arg2[0] << 8) + arg2[1];
+    temp_s3->unk00 = (arg2[2] << 8) + arg2[3];
 
-    arg0->unk_8C[temp_s3->unk_00].unk_0C |= 5;
+    arg0->unk8C[temp_s3->unk00].unk0C |= 5;
 
-    temp_s0 = temp_s3->unk_02 = (arg2[6] << 8) + arg2[7];
-    temp_s3->unk_08 = func_80027154_27D54(temp_s0 * sizeof(u16), arg0->unk_0E + 1);
-    temp_s3->unk_0C = func_80027154_27D54(temp_s0 * sizeof(s32), arg0->unk_0E + 1);
+    temp_s0 = temp_s3->unk02 = (arg2[6] << 8) + arg2[7];
+    temp_s3->unk08 = func_80027154_27D54(temp_s0 * sizeof(u16), arg0->unk0E + 1);
+    temp_s3->unk0C = func_80027154_27D54(temp_s0 * sizeof(s32), arg0->unk0E + 1);
 
     arg2 += 8;
 
     for (var_a3 = i = 0; i < temp_s0; i++) {
-        ((u8*) &temp_s3->unk_0C[i])[0] = arg2[0];
-        ((u8*) &temp_s3->unk_0C[i])[1] = arg2[1];
-        ((u8*) &temp_s3->unk_0C[i])[2] = arg2[2];
-        ((u8*) &temp_s3->unk_0C[i])[3] = arg2[3];
+        ((u8*) &temp_s3->unk0C[i])[0] = arg2[0];
+        ((u8*) &temp_s3->unk0C[i])[1] = arg2[1];
+        ((u8*) &temp_s3->unk0C[i])[2] = arg2[2];
+        ((u8*) &temp_s3->unk0C[i])[3] = arg2[3];
 
-        temp_s3->unk_08[i] = (arg2[4] << 8) + arg2[5];
-        var_a3 += temp_s3->unk_08[i];
+        temp_s3->unk08[i] = (arg2[4] << 8) + arg2[5];
+        var_a3 += temp_s3->unk08[i];
 
         arg2 += 6;
     }
 
-    temp_s3->unk_08[i - 1]++;
-    temp_s3->unk_06 = var_a3 + 1;
+    temp_s3->unk08[i - 1]++;
+    temp_s3->unk06 = var_a3 + 1;
 
     return 1;
 }
@@ -646,13 +548,13 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_8003AFF4_3BBF4);
 
 /* same c: marioparty func_800368AC (src/34D80.c) */
 void func_8003B4D8_3C0D8(HmfData* arg0, f32 arg1) {
-    if (!(arg0->unk_9C->unk_02 & 1)) {
-        arg0->unk_9C->unk_08 += arg1;
-        if (arg0->unk_9C->unk_04 <= arg0->unk_9C->unk_08) {
-            if (arg0->unk_9C->unk_02 & 2) {
-                arg0->unk_9C->unk_08 = 0.0f;
+    if (!(arg0->unk9C->unk02 & 1)) {
+        arg0->unk9C->unk08 += arg1;
+        if (arg0->unk9C->unk04 <= arg0->unk9C->unk08) {
+            if (arg0->unk9C->unk02 & 2) {
+                arg0->unk9C->unk08 = 0.0f;
             } else {
-                arg0->unk_9C->unk_08 = arg0->unk_9C->unk_04;
+                arg0->unk9C->unk08 = arg0->unk9C->unk04;
             }
         }
     }
@@ -660,24 +562,24 @@ void func_8003B4D8_3C0D8(HmfData* arg0, f32 arg1) {
 
 /* same c: marioparty func_80036930 (src/34D80.c) */
 void func_8003B55C_3C15C(HmfData* arg0, f32 arg1) {
-    arg0->unk_A4 += arg1;
-    if (((HmfMotion*)arg0->unk_90)->unk_02 <= arg0->unk_A4) {
+    arg0->unkA4 += arg1;
+    if (((HmfMotion*)arg0->unk90)->unk_02 <= arg0->unkA4) {
         if (D_800CAD20_CB920 != 0) {
-            arg0->unk_A4 = 0.0f;
+            arg0->unkA4 = 0.0f;
         } else {
-            arg0->unk_A4 = ((HmfMotion*)arg0->unk_90)->unk_02;
+            arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02;
         }
     }
 }
 
 /* same c: marioparty func_800369A0 (src/34D80.c) */
 void func_8003B5CC_3C1CC(HmfData* arg0, f32 arg1) {
-    arg0->unk_A4 -= arg1;
-    if (arg0->unk_A4 < 0.0f) {
+    arg0->unkA4 -= arg1;
+    if (arg0->unkA4 < 0.0f) {
         if (D_800CAD20_CB920 != 0) {
-            arg0->unk_A4 = ((HmfMotion*)arg0->unk_90)->unk_02;
+            arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02;
         } else {
-            arg0->unk_A4 = 0.0f;
+            arg0->unkA4 = 0.0f;
         }
     }
 }
@@ -711,12 +613,12 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_8003B6E8_3C2E8);
 
 /* same c: marioparty func_80036AC4 (src/34D80.c) */
 void func_8003B6F0_3C2F0(HmfData* arg0) {
-    arg0->unk_A4 = ((HmfMotion*)arg0->unk_90)->unk_02 - 1;
+    arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02 - 1;
 }
 
 /* same c: marioparty func_80036AE4 (src/34D80.c) */
 s16 func_8003B710_3C310(HmfData* arg0) {
-    return arg0->unk_A4;
+    return arg0->unkA4;
 }
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003B72C_3C32C);
