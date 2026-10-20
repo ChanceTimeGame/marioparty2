@@ -5,6 +5,7 @@
 #include "engine/siman.h"
 #include "game/pad.h"
 #include "game/si.h"
+#include "game/sprite.h"
 
 /* Window system, rumble and the queued-input ring (MP1 src/6C470.c, src/6D4E0.c, src/388E0.c, MP3
    src/window.c). MP2's TextWindow has MP3's layout (0x27C bytes). MP2's names are kept. */
@@ -160,9 +161,121 @@ extern u8 D_800ED8E9_EE4E9;
 extern u16 D_800ED8EA_EE4EA;
 extern u8 D_8010106E_101C6E[5];
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", SprDispCheck);
+typedef struct SprPoint {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+} SprPoint; // size 0x8
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", DispCheck);
+/* HuSprite's unk_04, unk_08 (screen position) and unk_20 (rotation) hold floats, though the header
+   types them s32 (as in 80230.c). */
+#define SPR_F(s, f) (*(f32*)&(s)->f)
+
+extern SprPoint D_800ED660_EE260[4]; /* corners of the sprite being checked */
+f32 func_800B7890_B8490(f32); /* HuMathCos */
+s32 DispCheck(SprPoint* p);
+
+s32 SprDispCheck(HuSprite* obj) {
+    HuSprite_Unk84_Unk00_Struct* cel;
+    f32 s;
+    f32 c;
+    f32 x0;
+    f32 y0;
+    f32 x1;
+    f32 y1;
+
+    cel = &obj->unk_84->unk00[obj->unk_90];
+    s = HuMathSin(SPR_F(obj, unk_20));
+    c = func_800B7890_B8490(SPR_F(obj, unk_20));
+    if (!(obj->unk_24 & 0x10000)) {
+        x0 = -(u16)cel->unk08 * obj->unk_18;
+        y0 = -(u16)cel->unk0A * obj->unk_1C;
+        x1 = (cel->unk04 - (u16)cel->unk08) * obj->unk_18;
+        y1 = (cel->unk06 - (u16)cel->unk0A) * obj->unk_1C;
+    } else {
+        x0 = obj->unk_3C;
+        y0 = obj->unk_3E;
+        x1 = (s16)obj->unk_40;
+        y1 = (s16)obj->unk_42;
+    }
+    D_800ED660_EE260[0].x = c * x0 + s * y0 + SPR_F(obj, unk_04);
+    D_800ED660_EE260[0].y = -s * x0 + c * y0 + SPR_F(obj, unk_08);
+    D_800ED660_EE260[1].x = c * x1 + s * y0 + SPR_F(obj, unk_04);
+    D_800ED660_EE260[1].y = -s * x1 + c * y0 + SPR_F(obj, unk_08);
+    D_800ED660_EE260[2].x = c * x1 + s * y1 + SPR_F(obj, unk_04);
+    D_800ED660_EE260[2].y = -s * x1 + c * y1 + SPR_F(obj, unk_08);
+    D_800ED660_EE260[3].x = c * x0 + s * y1 + SPR_F(obj, unk_04);
+    D_800ED660_EE260[3].y = -s * x0 + c * y1 + SPR_F(obj, unk_08);
+    return DispCheck(D_800ED660_EE260);
+}
+
+/* 1 if any part of the quad p[0..3] is on the 320x240 screen */
+s32 DispCheck(SprPoint* p) {
+    s32 i;
+    s32 j;
+    f32 dx;
+    f32 dy;
+    f32 t;
+    f32 v;
+    f32 cx;
+    f32 cy;
+
+    for (i = 0; i < 4; i++) {
+        if (p[i].x >= 0.0f && p[i].x < 320.0f && p[i].y >= 0.0f && p[i].y < 240.0f) {
+            return 1;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        j = i + 1;
+        if (j >= 4) {
+            j = 0;
+        }
+        dx = p[j].x - p[i].x;
+        dy = p[j].y - p[i].y;
+        if (dy != 0.0f) {
+            t = (0.0f - p[i].y) / dy;
+            if ((0.0f <= t) & (t < 1.0f)) {
+                v = p[i].x + t * dx;
+                if ((0.0f <= v) & (v < 320.0f)) {
+                    return 1;
+                }
+            }
+            t = (240.0f - p[i].y) / dy;
+            if ((0.0f <= t) & (t < 1.0f)) {
+                v = p[i].x + t * dx;
+                if ((0.0f <= v) & (v < 320.0f)) {
+                    return 1;
+                }
+            }
+        }
+        if (dx != 0.0f) {
+            t = (0.0f - p[i].x) / dx;
+            if ((0.0f <= t) & (t < 1.0f)) {
+                v = p[i].y + t * dy;
+                if ((0.0f <= v) & (v < 240.0f)) {
+                    return 1;
+                }
+            }
+            t = (320.0f - p[i].x) / dx;
+            if ((0.0f <= t) & (t < 1.0f)) {
+                v = p[i].y + t * dy;
+                if ((0.0f <= v) & (v < 240.0f)) {
+                    return 1;
+                }
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        j = (i + 1 < 4) ? i + 1 : 0;
+        dx = p[j].x - p[i].x;
+        dy = p[j].y - p[i].y;
+        cx = 160.0f - p[j].x;
+        cy = 120.0f - p[j].y;
+        if (dx * cy - dy * cx < 0.0f) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", SprDisp);
 

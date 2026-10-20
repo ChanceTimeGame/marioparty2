@@ -350,3 +350,15 @@ $(W1E_CARVED): RODATA_AS_DATA = 1
 
 # w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
 build/src/ECE0.c.o: export VR4300MUL = ON
+
+# w2-B: 84FF0 (sprite put, window system) is built as 1D0B0 is: GCC's assembly with blank lines removed,
+# assembled with the KMC VR4300 mul fix on (SprDispCheck: a nop between dependent mul.s)
+W2B_BLANKSTRIP_UNITS := build/src/84FF0.c.o
+$(W2B_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(W2B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
