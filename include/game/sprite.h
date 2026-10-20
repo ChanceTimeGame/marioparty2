@@ -129,7 +129,8 @@ typedef struct HuSprite {
     /* 0x128 */ void* unk_128[3];
     /* 0x134 */ void* unk_134[3];
     /* 0x140 */ Mtx unk_140[3];
-    /* 0x200 */ char unk_200[8];
+    /* 0x200 */ s32 unk_200; /* unk_24 as of the last func_80083748_84348 */
+    /* 0x204 */ char unk_204[4];
 } HuSprite; // size 0x208
 
 typedef struct HuSprGrp {

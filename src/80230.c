@@ -4,8 +4,60 @@
 #include "game/sprite.h"
 #include "game/hmfman.h"
 
+#include "game/camera.h"
+
+f32 __sinf(f32);
+f32 __cosf(f32);
+/* HuSprite's unk_04, unk_08 (screen position) and unk_20 (rotation) hold floats, though the header
+   types them s32. */
+#define SPR_F(s, f) (*(f32*)&(s)->f)
+
+#define READ32(p) (((p)[0] << 24) + ((p)[1] << 16) + ((p)[2] << 8) + (p)[3])
+#define READ16(p) (((p)[0] << 8) + (p)[1])
+
+f64 fabs(f64);
+/* unk_120 holds an index (0-2) into unk_128/unk_134, though the header types it void*. */
+#define SPR_BUF(s) ((s32)(s)->unk_120)
+
+/* Palette animation state, HuSprite 0x98-0x113 */
+typedef struct SprPalAnim {
+    /* 0x00 */ HuSprAnmDesc* desc;
+    /* 0x04 */ u16 frame[0x10];
+    /* 0x24 */ f32 timer[0x10];
+    /* 0x64 */ f32 speed;
+    /* 0x68 */ u16 bufIdx;
+    /* 0x6C */ u16* cur;
+    /* 0x70 */ u16* bufs[3];
+} SprPalAnim;
+
+typedef struct SprPalEntry {
+    /* 0x00 */ u16 idx;
+    /* 0x02 */ u16 color;
+} SprPalEntry;
+
+typedef struct SprPalFrame {
+    /* 0x00 */ s16 dur;
+    /* 0x04 */ SprPalEntry* entries;
+} SprPalFrame;
+
+typedef struct SprPalGroup {
+    /* 0x00 */ u16 count; /* palette entries per frame; 0 = not animated */
+    /* 0x02 */ u16 nframes;
+    /* 0x04 */ SprPalFrame** frames;
+} SprPalGroup;
+
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+extern f32 D_800ED654_EE254;  /* view distance of the last SprPos3DSet point */
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* HuMathCos */
+f32 fabsf(f32);
+
+void func_800B30D0_B3CD0(f32 mf[4][4], Mtx* m); /* guMtxL2F */
+f64 func_800B0D98_B1998(f64, f64);
+
 /* Sprite manager (MP1 src/65770.c, MP3 src/sprman.c). MP2's sprite object has MP3's layout (0x208
-   bytes) and its group MP1's (members at 0xC); MP1's code is written against those layouts here. */
+   bytes) and its group MP1's (members at 0xC); MP1's code is written against those layouts here.
+   Rodata D4240-D42A0 carved. SprAnimRead and func_800841B8 are NON_MATCHING (register allocation). */
 
 typedef struct SprBucket {
     /* 0x00 */ HuSprite* head;
@@ -43,7 +95,8 @@ void SprClose(void);
 void AnimateSprite(HuSprAnm* arg0);
 s16 func_800832FC_83EFC(HuSprAnm* arg0);
 void func_80082FE4_83BE4(HuSprAnm* arg0, s16 arg1, u16 arg2, u16 arg3);
-void func_800841B8_84DB8(HuSprAnmDesc** arg0);
+struct SprPalAnim;
+void func_800841B8_84DB8(struct SprPalAnim* pa);
 void func_80083F70_84B70(s16 arg0);
 void func_80084148_84D48(void);
 
@@ -64,7 +117,7 @@ HuSprite* GetFirstSprite(void);
 void func_80081378_81F78(void);
 void SprDisp(Gfx** gfx, HuSprite* obj, SprCamera* cam);
 void SprExec(Gfx** gfx, Mtx* mtx, SprCamera* cam);
-void SprLayerHook(void);
+void SprLayerHook(Gfx** gfx, Mtx* mtx, SprCamera* cam);
 void SprAnimInit(void);
 void func_80083CC0_848C0(void);
 s16 func_8002838C_28F8C(s32, void*, s32);
@@ -530,8 +583,215 @@ void CalcGroupCenter(f32 a[3][2], f32 b[3][2], f32 out[3][2]) {
     out[2][1] += b[2][1];
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprBegin);
+void SprBegin(void) {
+    f32 mtx[256][3][2];
+    f32 mA[3][2];
+    f32 mB[3][2];
+    s16 stack[256];
+    HuSprGrp* grp;
+    HuSprite* obj;
+    HuSprite* parent;
+    f32 angle;
+    f32 s;
+    u16 sp = 0;
+    s16 cur;
+    s16 i;
+    s16 idx;
 
+    for (grp = D_800F64B4_F70B4; grp != NULL; grp = grp->next) {
+        switch (grp->unk_08) {
+            case 0:
+                for (cur = 0; cur < grp->count; cur++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
+                    SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                    SPR_F(obj, unk_20) = obj->unk_58;
+                    func_80083748_84348(obj);
+                }
+                break;
+            case 1:
+                cur = func_80080698_81298(grp);
+                for (i = 0; i < grp->count; i++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    if (obj->unk_2E < 0) {
+                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                        SPR_F(obj, unk_20) = obj->unk_58;
+                    } else {
+                        parent = grp->members[obj->unk_2E];
+                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                    }
+                    func_80083748_84348(obj);
+                    if (obj->unk_116 >= 0) {
+                        stack[sp++] = cur;
+                        cur = obj->unk_116;
+                        sp %= 256;
+                    } else {
+                        while (obj->unk_114 < 0 && sp != 0) {
+                            idx = stack[--sp];
+                            sp %= 256;
+                            obj = grp->members[idx];
+                        }
+                        cur = obj->unk_114;
+                    }
+                }
+                break;
+            case 2:
+                cur = func_80080698_81298(grp);
+                for (i = 0; i < grp->count; i++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    if (obj->unk_2E < 0) {
+                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                    } else {
+                        parent = grp->members[obj->unk_2E];
+                        SPR_F(obj, unk_04) = (obj->unk_93 + obj->unk_48) * obj->unk_18 + SPR_F(parent, unk_04);
+                        SPR_F(obj, unk_08) = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + SPR_F(parent, unk_08);
+                    }
+                    SPR_F(obj, unk_20) = obj->unk_58;
+                    func_80083748_84348(obj);
+                    if (obj->unk_116 >= 0) {
+                        stack[sp++] = cur;
+                        cur = obj->unk_116;
+                        sp %= 256;
+                    } else {
+                        while (obj->unk_114 < 0 && sp != 0) {
+                            idx = stack[--sp];
+                            sp %= 256;
+                            obj = grp->members[idx];
+                        }
+                        cur = obj->unk_114;
+                    }
+                }
+                break;
+            case 3:
+                cur = func_80080698_81298(grp);
+                for (i = 0; i < grp->count; i++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    if (obj->unk_2E < 0) {
+                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                        SPR_F(obj, unk_20) = obj->unk_58;
+                    } else {
+                        parent = grp->members[obj->unk_2E];
+                        SPR_F(obj, unk_04) = (obj->unk_93 + obj->unk_48) * obj->unk_18 + SPR_F(parent, unk_04);
+                        SPR_F(obj, unk_08) = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + SPR_F(parent, unk_08);
+                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                    }
+                    func_80083748_84348(obj);
+                    if (obj->unk_116 >= 0) {
+                        stack[sp++] = cur;
+                        cur = obj->unk_116;
+                        sp %= 256;
+                    } else {
+                        while (obj->unk_114 < 0 && sp != 0) {
+                            idx = stack[--sp];
+                            sp %= 256;
+                            obj = grp->members[idx];
+                        }
+                        cur = obj->unk_114;
+                    }
+                }
+                break;
+            case 4:
+                cur = func_80080698_81298(grp);
+                for (i = 0; i < grp->count; i++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    if (obj->unk_2E < 0) {
+                        mA[0][0] = mA[1][1] = 1.0f;
+                        mA[0][1] = mA[1][0] = 0.0f;
+                        mA[2][0] = obj->unk_93 + obj->unk_48;
+                        mA[2][1] = obj->unk_94 + obj->unk_4C;
+                        SPR_F(obj, unk_04) = obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_4C;
+                    } else {
+                        mB[0][0] = mB[1][1] = 1.0f;
+                        mB[0][1] = mB[1][0] = 0.0f;
+                        mB[2][0] = (obj->unk_93 + obj->unk_48) * obj->unk_18;
+                        mB[2][1] = (obj->unk_94 + obj->unk_4C) * obj->unk_1C;
+                        CalcGroupCenter(mB, mtx[obj->unk_2E], mA);
+                        SPR_F(obj, unk_04) = (s16)mA[2][0];
+                        SPR_F(obj, unk_08) = (s16)mA[2][1];
+                    }
+                    SPR_F(obj, unk_20) = obj->unk_58;
+                    angle = -obj->unk_58 * 0.0174532925222222225;
+                    mB[0][0] = mB[1][1] = __cosf(angle);
+                    s = __sinf(angle);
+                    mB[0][1] = s;
+                    mB[1][0] = -s;
+                    mB[2][0] = mB[2][1] = 0.0f;
+                    CalcGroupCenter(mB, mA, mtx[obj->unk_00]);
+                    func_80083748_84348(obj);
+                    if (obj->unk_116 >= 0) {
+                        stack[sp++] = cur;
+                        cur = obj->unk_116;
+                        sp %= 256;
+                    } else {
+                        while (obj->unk_114 < 0 && sp != 0) {
+                            idx = stack[--sp];
+                            sp %= 256;
+                            obj = grp->members[idx];
+                        }
+                        cur = obj->unk_114;
+                    }
+                }
+                break;
+            case 5:
+                cur = func_80080698_81298(grp);
+                for (i = 0; i < grp->count; i++) {
+                    obj = grp->members[cur];
+                    SprFinish(obj);
+                    if (obj->unk_2E < 0) {
+                        mA[0][0] = mA[1][1] = 1.0f;
+                        mA[0][1] = mA[1][0] = 0.0f;
+                        mA[2][0] = obj->unk_93 + obj->unk_48;
+                        mA[2][1] = obj->unk_94 + obj->unk_4C;
+                        SPR_F(obj, unk_04) = obj->unk_48;
+                        SPR_F(obj, unk_08) = obj->unk_4C;
+                        SPR_F(obj, unk_20) = obj->unk_58;
+                    } else {
+                        parent = grp->members[obj->unk_2E];
+                        mB[0][0] = mB[1][1] = 1.0f;
+                        mB[0][1] = mB[1][0] = 0.0f;
+                        mB[2][0] = (obj->unk_93 + obj->unk_48) * obj->unk_18;
+                        mB[2][1] = (obj->unk_94 + obj->unk_4C) * obj->unk_1C;
+                        CalcGroupCenter(mB, mtx[obj->unk_2E], mA);
+                        SPR_F(obj, unk_04) = (s16)mA[2][0];
+                        SPR_F(obj, unk_08) = (s16)mA[2][1];
+                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                    }
+                    angle = -obj->unk_58 * 0.0174532925222222225;
+                    mB[0][0] = mB[1][1] = __cosf(angle);
+                    s = __sinf(angle);
+                    mB[0][1] = s;
+                    mB[1][0] = -s;
+                    mB[2][0] = mB[2][1] = 0.0f;
+                    CalcGroupCenter(mB, mA, mtx[obj->unk_00]);
+                    func_80083748_84348(obj);
+                    if (obj->unk_116 >= 0) {
+                        stack[sp++] = cur;
+                        cur = obj->unk_116;
+                        sp %= 256;
+                    } else {
+                        while (obj->unk_114 < 0 && sp != 0) {
+                            idx = stack[--sp];
+                            sp %= 256;
+                            obj = grp->members[idx];
+                        }
+                        cur = obj->unk_114;
+                    }
+                }
+                break;
+        }
+    }
+}
 void func_80081378_81F78(void) {
     if (D_800FA5F8_FB1F8[D_800FDBE0_FE7E0] != NULL) {
         HuMemFree(D_800FA5F8_FB1F8[D_800FDBE0_FE7E0]);
@@ -611,22 +871,101 @@ void SprExec(Gfx** gfx, Mtx* mtx, SprCamera* cam) {
     gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, cam->scissor[0], cam->scissor[1], cam->scissor[2], cam->scissor[3]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprLayerHook);
+void SprLayerHook(Gfx** gfx, Mtx* mtx, SprCamera* cam) {
+    if (D_800ED650_EE250 != NULL) {
+        gSPViewport((*gfx)++, &D_800CD5A0_CE1A0);
+        gSPPerspNormalize((*gfx)++, 0x8000);
+        gSPMatrix((*gfx)++, osVirtualToPhysical(&D_800ED610_EE210), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+        gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+        gDPPipeSync((*gfx)++);
+        gDPSetTexturePersp((*gfx)++, G_TP_NONE);
+        gSPTexture((*gfx)++, 0xFFFF, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+        gSPClearGeometryMode((*gfx)++, G_CULL_BOTH);
+        gSPSetGeometryMode((*gfx)++, G_ZBUFFER | G_TEXTURE_GEN_LINEAR); /* 0x80001 */
+        gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
+        gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
+        gSPDisplayList((*gfx)++, D_800ED650_EE250);
+        gDPSetTextureLUT((*gfx)++, G_TT_NONE);
+        gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+        gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, cam->scissor[0], cam->scissor[1], cam->scissor[2], cam->scissor[3]);
+    }
+}
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y) {
+    HuSprite* sprite = HuSprGrpData[grpIdx]->members[idx];
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprPosSet);
-
+    sprite->unk_48 = x;
+    sprite->unk_4C = y;
+}
 void func_80081B28_82728(s16 group, s16 member, s16 arg2) {
     HuSprite* sprite = HuSprGrpData[group]->members[member];
 
     sprite->unk_44 = arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", TransformPoint);
+void TransformPoint(Mtx* m, f32 x, f32 y, f32 z, f32 w, f32* ox, f32* oy, f32* oz, f32* ow) {
+    f32 mf[4][4];
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprPos3DSet);
+    func_800B30D0_B3CD0(mf, m);
+    *ox = x * mf[0][0] + y * mf[1][0] + z * mf[2][0] + mf[3][0];
+    *oy = x * mf[0][1] + y * mf[1][1] + z * mf[2][1] + mf[3][1];
+    *oz = x * mf[0][2] + y * mf[1][2] + z * mf[2][2] + mf[3][2];
+    *ow = x * mf[0][3] + y * mf[1][3] + z * mf[2][3] + mf[3][3];
+}
+/* Screen position (and depth in unk_44) of world point (x, y, z) seen from camera camIdx. */
+void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z) {
+    Mtx persp;
+    Mtx lookAt;
+    u16 perspNorm;
+    f32 vx;
+    f32 vy;
+    f32 vz;
+    f32 vw;
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 pw;
+    HuSprite* sprite = HuSprGrpData[grpIdx]->members[idx];
+    HuCamera* cam = &D_800C9B80_CA780[camIdx];
+    s32 depth;
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprPosPerspectiveSet);
+    guPerspective(&persp, &perspNorm, cam->fov[0], 1.3333334f, cam->fov[1], cam->fov[2], 1.0f);
+    guLookAt(&lookAt, cam->pos.x, cam->pos.y, cam->pos.z, cam->at.x, cam->at.y, cam->at.z, cam->up.x, cam->up.y,
+             cam->up.z);
+    TransformPoint(&lookAt, x, y, z, 1.0f, &vx, &vy, &vz, &vw);
+    TransformPoint(&persp, vx, vy, vz, vw, &px, &py, &pz, &pw);
+    if (pw != 0.0f) {
+        depth = (cam->viewports[D_800FFFD6_100BD6].vp.vscale[2] << 5) * pz / pw + (cam->viewports[D_800FFFD6_100BD6].vp.vtrans[2] << 5);
+    } else {
+        depth = cam->viewports[D_800FFFD6_100BD6].vp.vtrans[2] << 5;
+    }
+    if (depth < 0) {
+        depth = 0;
+    } else if (depth > 0x7FC0) {
+        depth = 0x7FC0;
+    }
+    dist = fabsf(HuMathSin(D_800C9B80_CA780[camIdx].fov[0] * 0.5) * vz /
+                 func_800B7890_B8490(D_800C9B80_CA780[camIdx].fov[0] * 0.5));
+    D_800ED654_EE254 = dist;
+    if (dist != 0.0) {
+        sprite->unk_48 = cam->viewports[D_800FFFD6_100BD6].vp.vscale[0] / 4.0 * vx / dist / 1.3333334f + cam->viewports[D_800FFFD6_100BD6].vp.vtrans[0] / 4.0;
+        sprite->unk_4C = cam->viewports[D_800FFFD6_100BD6].vp.vscale[1] / 4.0 * -vy / dist + cam->viewports[D_800FFFD6_100BD6].vp.vtrans[1] / 4.0;
+    }
+    sprite->unk_44 = depth;
+}
+void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z) {
+    HuSprite* sprite = HuSprGrpData[grpIdx]->members[idx];
+    HuCamera* cam = &D_800C9B80_CA780[camIdx];
+    HuCamera* vp;
 
+    SprPos3DSet(grpIdx, idx, camIdx, x, y, z);
+    if (D_800ED654_EE254 != 0.0) {
+        vp = (HuCamera*)((u8*)cam + D_800FFFD6_100BD6 * 16);
+        sprite->unk_60 = vp->viewports[0].vp.vscale[0] / 4.0 / D_800ED654_EE254 / 1.3333334f;
+        sprite->unk_64 = vp->viewports[0].vp.vscale[1] / 4.0 / D_800ED654_EE254;
+    }
+}
 void SprBankSet(s16 grpIdx, s16 idx, u16 bank) {
     HuSprGrpData[grpIdx]->members[idx]->unk_90 = bank;
 }
@@ -680,8 +1019,13 @@ u8 func_80082314_82F14(s16 grpIdx, s16 idx) {
     return HuSprGrpData[grpIdx]->members[idx]->unk_88;
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprScaleSet);
+void SprScaleSet(s16 grpIdx, s16 idx, f32 sx, f32 sy) {
+    HuSprite* sprite = HuSprGrpData[grpIdx]->members[idx];
 
+    sprite->unk_50 = sx;
+    sprite->unk_54 = sy;
+    sprite->unk_60 = sprite->unk_64 = 1.0f;
+}
 void SprPrioSet(s16 grpIdx, s16 idx, u16 pri) {
     HuSprGrpData[grpIdx]->members[idx]->prio = pri;
 }
@@ -808,8 +1152,148 @@ void SprAnimKillAll(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprAnimRead);
+/* Loads a sprite animation (MP1 func_800678A4): frames, palette and key banks. */
+// register allocation (pal/idx swap s7/s8, the keys base hoisted) and a reload differ (masked 135)
+#ifdef NON_MATCHING
+s16 SprAnimRead(void* arg0) {
+    u8* data = arg0;
+    HuSprCelFrame* keys[256];
+    u8* bankTbl;
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    HuSprCelAnm** tbl;
+    HuSprCelAnm* banks;
+    HuSprCelFrame* key;
+    u8* src;
+    u8* pix;
+    u8* pal;
+    u8* p;
+    u8* palDst;
+    s32 size;
+    u32 j;
+    s16 i;
+    s16 k;
+    s16 idx;
 
+    for (i = 0; i < 256; i++) {
+        if (D_800F60B0_F6CB0[i] == NULL) {
+            break;
+        }
+    }
+    if (i == 256) {
+        return -1;
+    }
+    idx = i;
+    anim = HuMemAlloc(sizeof(*anim));
+    if (anim == NULL) {
+        return -1;
+    }
+    src = data + READ32(data);
+    bankTbl = data + READ32(data + 4);
+    pix = data + READ32(data + 8);
+    pal = data + READ32(data + 0xC);
+    anim->unk10 = READ16(data + 0x10);
+    anim->unk12 = READ16(data + 0x12);
+    anim->unk14 = READ16(data + 0x14);
+    anim->unk16 = READ16(data + 0x16);
+    anim->unk18 = READ16(data + 0x18);
+    anim->unk1A = data[0x1A];
+    /* an 8-bit image with no palette size gets 256 entries (retail tests both halves as one word) */
+    if (*(s32*)&anim->unk18 == 0x80000) {
+        anim->unk1A = 0x100;
+    }
+    anim->unk00 = NULL;
+    anim->unk04 = NULL;
+    anim->unk08 = NULL;
+    anim->unk0C = NULL;
+    D_800F60B0_F6CB0[idx] = anim;
+    D_800F8F88_F9B88++;
+    frame = HuMemAlloc(anim->unk10 * sizeof(*frame));
+    if (frame == NULL) {
+        SprAnimKill(idx);
+        return -1;
+    }
+    anim->unk00 = frame;
+    for (i = 0; i < anim->unk10; i++) {
+        frame->unk04 = READ16(src + 4);
+        frame->unk06 = READ16(src + 6);
+        frame->unk08 = READ16(src + 8);
+        frame->unk0A = READ16(src + 0xA);
+        size = frame->unk04 * frame->unk06 * (anim->unk18 & 0x7FFF) / 8;
+        if ((frame->unk00 = HuMemAlloc(size)) == NULL) {
+            goto fail_frame;
+        }
+        for (j = 0; j < size; j++) {
+            ((u8*)frame->unk00)[j] = *pix++;
+        }
+        src += 0xC;
+        if (i == 0) {
+            anim->unk08 = frame->unk00;
+        }
+        frame++;
+    }
+    if (anim->unk1A != 0) {
+        palDst = HuMemAlloc(anim->unk1A * 2);
+        if (palDst == NULL) {
+            goto fail;
+        }
+        anim->unk0C = palDst;
+        for (i = 0; i < anim->unk1A; i++) {
+            *palDst++ = pal[i * 2];
+            *palDst++ = pal[i * 2 + 1];
+        }
+    }
+    if (anim->unk12 != 0) {
+        tbl = HuMemAlloc(anim->unk12 * sizeof(*tbl));
+        if (tbl == NULL) {
+            goto fail;
+        }
+        anim->unk04 = tbl;
+        banks = HuMemAlloc(anim->unk12 * sizeof(*banks));
+        if (banks != NULL) {
+            goto ok;
+        }
+        goto fail;
+    fail_frame:
+        anim->unk10 = i;
+        goto fail;
+    fail_bank:
+        anim->unk12 = k;
+    fail:
+        SprAnimKill(idx);
+        return -1;
+    ok:
+        /* retail bug: the stride is 64 bytes, not one bank; only tbl[0] is ever read */
+        for (i = 0; i < anim->unk12; i++) {
+            tbl[i] = &banks[i * 8];
+        }
+        for (k = 0; k < anim->unk12; k++) {
+            p = data + READ32(bankTbl + k * 4);
+            banks->unk00 = READ16(p);
+            p += 2;
+            keys[k] = HuMemAlloc(banks->unk00 * 8);
+            if (keys[k] == NULL) {
+                goto fail_bank;
+            }
+            banks->unk04 = keys[k];
+            key = keys[k];
+            for (i = 0; i < banks->unk00; i++) {
+                key->unk00 = READ16(p);
+                key->unk02 = READ16(p + 2);
+                key->unk04 = p[4];
+                key->unk05 = p[5];
+                key->unk06 = p[6];
+                p += 7;
+                key++;
+            }
+            banks++;
+        }
+    }
+    return idx;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/80230", SprAnimRead);
+#endif
 s32 SprAnimMake(u16 arg0, u16 arg1, u16 arg2, u16 arg3, u16 arg4) {
     HuSprite_Unk84_Struct* desc;
     HuSprite_Unk84_Unk00_Struct* cel;
@@ -935,8 +1419,9 @@ void* func_80083220_83E20(HuSprAnm* arg0) {
     return entry->unk00;
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprAnimBmpPalDirectGet);
-
+void* SprAnimBmpPalDirectGet(HuSprite_Unk84_Struct** arg0) {
+    return (*arg0)->unk0C;
+}
 void* SprAnimBmpPalGet(s16 arg0) {
     return D_800F60B0_F6CB0[arg0]->unk0C;
 }
@@ -978,8 +1463,80 @@ s16 func_800832FC_83EFC(HuSprAnm* arg0) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", AnimateSprite);
+void AnimateSprite(HuSprAnm* anm) {
+    HuSprite_Unk84_Struct* anim;
+    HuSprCelAnm* bank;
+    HuSprCelFrame* key;
+    s16 old;
 
+    anim = anm->unk00;
+    if (anim == NULL) {
+        return;
+    }
+    anm->unk04 &= 0x80;
+    switch (anm->unk06) {
+        case 0:
+            break;
+        case 1:
+            if (anim->unk04 == NULL) {
+                break;
+            }
+            bank = &(*anim->unk04)[anm->unk08];
+            key = &bank->unk04[anm->unk0A];
+            anm->unk0C += anm->unk10;
+            if ((s16)anm->unk0C > (s16)key->unk02) {
+                anm->unk0C = 0.0f;
+                anm->unk0A++;
+                anm->unk04 |= 4;
+                if (anm->unk0A >= bank->unk00) {
+                    anm->unk06 = 0;
+                    anm->unk04 |= 2;
+                } else if ((s16)bank->unk04[anm->unk0A].unk02 < 0) {
+                    anm->unk0A = 0;
+                    anm->unk04 |= 8;
+                }
+            }
+            anm->unk14 = key->unk00;
+            anm->unk17 = key->unk04;
+            anm->unk18 = key->unk05;
+            anm->unk16 = key->unk06;
+            anm->unk04 |= 1;
+            break;
+        case 2:
+            old = anm->unk0A;
+            anm->unk0C += anm->unk10;
+            anm->unk0A = (s32)anm->unk0C + anm->unk0A;
+            if (anm->unk0A != old) {
+                anm->unk0C -= anm->unk0A - old;
+                anm->unk04 |= 4;
+            }
+            if (anm->unk0A >= anm->unk00->unk10) {
+                anm->unk0A = 0;
+                anm->unk0C = 0.0f;
+                anm->unk04 |= 8;
+            }
+            anm->unk14 = anm->unk0A;
+            anm->unk04 |= 1;
+            break;
+        case 3:
+            old = anm->unk0A;
+            anm->unk0C += anm->unk10;
+            anm->unk0A = (s32)anm->unk0C + anm->unk0A;
+            if (anm->unk0A != old) {
+                anm->unk0C -= anm->unk0A - old;
+                anm->unk04 |= 8;
+            }
+            if (anm->unk0A < 0 || anm->unk0A >= anm->unk00->unk10) {
+                anm->unk0A = (anm->unk10 < 0.0f) ? 1 : anm->unk00->unk10 - 2;
+                anm->unk0C = 0.0f;
+                anm->unk10 = -anm->unk10;
+                anm->unk04 |= 8;
+            }
+            anm->unk14 = anm->unk0A;
+            anm->unk04 |= 1;
+            break;
+    }
+}
 void SprFinish(HuSprite* sprite) {
     HuSprAnm* anm = &sprite->unk_68;
 
@@ -1005,12 +1562,120 @@ void SprFinish(HuSprite* sprite) {
     sprite->unk_18 = sprite->unk_50 * sprite->unk_60;
     sprite->unk_1C = sprite->unk_54 * sprite->unk_64;
     if (sprite->unk_98 != NULL) {
-        func_800841B8_84DB8(&sprite->unk_98);
+        func_800841B8_84DB8((struct SprPalAnim*)&sprite->unk_98);
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", func_80083748_84348);
+/* Before drawing (MP1 func_80068124): a sprite that is rotated, scaled or flagged for the
+   textured-quad path counts the display-list space it needs (D_800FD8BC), or (flag 0x8000000)
+   gets its own buffer. */
+void func_80083748_84348(HuSprite* sprite) {
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    s32 fmt = 0;
+    s32 siz = 0;
+    s32 w;
+    u32 lines;
+    s32 n;
+    s32 diff;
 
+    sprite->unk_24 = (u8)sprite->unk_92 ^ sprite->unk_5C;
+    if (sprite->unk_84 != NULL && !(sprite->unk_24 & 0x8000)) {
+        if (fabs(func_800B0D98_B1998(*(f32*)&sprite->unk_20, 360.0)) > 0.1f || (sprite->unk_24 & 0x3C0C00) ||
+            (sprite->unk_24 & 0x30000) == 0x30000 || (sprite->unk_24 & 0x20000000)) {
+            anim = sprite->unk_84;
+            frame = &anim->unk00[sprite->unk_90];
+            switch (anim->unk18 & 0x7FFF) {
+                case 4:
+                    fmt = 2;
+                    siz = 0;
+                    break;
+                case 8:
+                    fmt = 2;
+                    siz = 1;
+                    break;
+                case 16:
+                    fmt = 0;
+                    siz = 2;
+                    break;
+                case 24:
+                    fmt = 0;
+                    siz = 3;
+                    break;
+            }
+            w = (((frame->unk04 << siz) >> 4) << 4) >> siz;
+            if (w < frame->unk04) {
+                w += 16 >> siz;
+            }
+            switch (fmt) {
+            case 2:
+                if ((0x1000 >> siz) >= frame->unk06 * w) {
+                    lines = frame->unk06;
+                } else {
+                    lines = (0x1000 >> siz) / w;
+                }
+                break;
+            case 4:
+                lines = frame->unk06;
+                if (frame->unk06 * w > 0x1000) {
+                    lines = 0x1000 / w;
+                }
+                break;
+            default:
+                if ((0x2000 >> siz) >= frame->unk06 * w) {
+                    lines = frame->unk06;
+                } else {
+                    lines = (0x2000 >> siz) / w;
+                }
+                break;
+            }
+            n = frame->unk06 / lines;
+            sprite->unk_24 |= 0x40000000;
+            if (!(sprite->unk_24 & 0x8000000)) {
+                if (!(sprite->unk_24 & 0x2000)) {
+                    D_800FD8BC_FE4BC += (n + 2) << 5;
+                } else {
+                    D_800FD8BC_FE4BC += (n + 2) << 6;
+                }
+            } else {
+                diff = sprite->unk_24 ^ sprite->unk_200;
+                if (sprite->unk_124 == NULL || (diff & 0x40000000)) {
+                    sprite->unk_24 |= 0x10000000;
+                }
+                if (sprite->unk_24 & 0x10000000) {
+                    if (sprite->unk_128[SPR_BUF(sprite)] != NULL) {
+                        HuMemFree(sprite->unk_128[SPR_BUF(sprite)]);
+                        HuMemFree(sprite->unk_134[SPR_BUF(sprite)]);
+                        sprite->unk_128[SPR_BUF(sprite)] = NULL;
+                        sprite->unk_134[SPR_BUF(sprite)] = NULL;
+                    }
+                    if (!(sprite->unk_24 & 0x2000)) {
+                        sprite->unk_134[SPR_BUF(sprite)] = HuMemAlloc((n + 2) << 5);
+                    } else {
+                        sprite->unk_134[SPR_BUF(sprite)] = HuMemAlloc((n + 2) << 6);
+                    }
+                }
+            }
+        } else {
+            sprite->unk_24 &= ~0x40000000;
+            if (sprite->unk_24 & 0x8000000) {
+                diff = sprite->unk_24 ^ sprite->unk_200;
+                if (sprite->unk_124 == NULL || (diff & 0x40000000)) {
+                    sprite->unk_24 |= 0x10000000;
+                }
+                if (sprite->unk_24 & 0x10000000) {
+                    if (sprite->unk_128[SPR_BUF(sprite)] != NULL) {
+                        HuMemFree(sprite->unk_128[SPR_BUF(sprite)]);
+                        HuMemFree(sprite->unk_134[SPR_BUF(sprite)]);
+                        sprite->unk_128[SPR_BUF(sprite)] = NULL;
+                        sprite->unk_134[SPR_BUF(sprite)] = NULL;
+                    }
+                }
+            }
+        }
+        sprite->unk_200 = sprite->unk_24;
+    }
+}
 void func_80083B9C_8479C(void) {
     s16 i;
 
@@ -1024,8 +1689,15 @@ void func_80083B9C_8479C(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", func_80083C18_84818);
+void func_80083C18_84818(void) {
+    f32 mf[4][4];
+    Mtx m1;
+    Mtx m2;
 
+    func_800B0D98_B1998(0.0, 0.0);
+    guTranslateF(mf, 0.0f, 0.0f, 0.0f);
+    guMtxCatL(&m1, &m2, &m1);
+}
 u16 func_80083C64_84864(u8** arg0) {
     u8* p = *arg0;
     u16 val = (p[0] << 8) + p[1];
@@ -1051,8 +1723,60 @@ void func_80083CC0_848C0(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", func_80083D08_84908);
+s16 func_80083D08_84908(u8* data) {
+    u8* p;
+    HuSprAnmDesc* desc;
+    SprPalGroup* grp;
+    SprPalFrame* frame;
+    SprPalEntry* e;
+    s32 i;
+    s32 j;
+    s32 k;
+    s32 slot;
+    u8* base = data;
 
+    for (i = 0; i < 256; i++) {
+        if (D_800FCEA0_FDAA0[i] == NULL) {
+            break;
+        }
+    }
+    if (i == 256) {
+        return -1;
+    }
+    slot = i;
+    desc = HuMemAlloc(sizeof(HuSprAnmDesc));
+    desc->unk00 = func_80083C64_84864(&data);
+    desc->unk02 = func_80083C64_84864(&data);
+    desc->unk04 = HuMemAlloc(desc->unk02 * 4);
+    for (j = 0; j < desc->unk02; j++) {
+        desc->unk04[j] = (HuSprAnmEntry*)(grp = HuMemAlloc(sizeof(SprPalGroup)));
+        p = base + func_80083C88_84888(&data);
+        grp->count = func_80083C64_84864(&p);
+        if (grp->count != 0) {
+            grp->nframes = func_80083C64_84864(&p);
+            grp->frames = HuMemAlloc(grp->nframes * 4);
+            for (k = 0; k < grp->nframes; k++) {
+                frame = HuMemAlloc(sizeof(SprPalFrame));
+                grp->frames[k] = frame;
+                frame->dur = func_80083C64_84864(&p);
+                e = HuMemAlloc(grp->count * 4);
+                frame->entries = e;
+                for (i = 0; i < grp->count; i++, e++) {
+                    e->idx = func_80083C64_84864(&p);
+                    e->color = func_80083C64_84864(&p);
+                }
+            }
+        }
+    }
+    desc->unk08 = func_80083C64_84864(&data);
+    desc->unk0C = HuMemAlloc(desc->unk08 * 2);
+    for (i = 0; i < desc->unk08; i++) {
+        ((u16*)desc->unk0C)[i] = func_80083C64_84864(&data);
+    }
+    D_800FCEA0_FDAA0[slot] = desc;
+    D_80101630_102230++;
+    return slot;
+}
 void func_80083F70_84B70(s16 arg0) {
     HuSprAnmDesc* desc = D_800FCEA0_FDAA0[arg0];
     s32 i;
@@ -1107,4 +1831,59 @@ void func_80084148_84D48(void) {
     }
 }
 
+/* Steps a sprite's palette animation; when a frame changes, rebuilds the palette in the next of
+   three buffers. */
+// register allocation and the frame-reset branch layout differ (masked 110, 8 bytes short)
+#ifdef NON_MATCHING
+void func_800841B8_84DB8(SprPalAnim* pa) {
+    HuSprAnmDesc* desc;
+    SprPalGroup* grp;
+    SprPalEntry* e;
+    s32 changed;
+    s32 i;
+    s32 j;
+    s32 dur;
+
+    changed = 0;
+    desc = pa->desc;
+    for (i = 0; i < desc->unk02; i++) {
+        grp = (SprPalGroup*)desc->unk04[i];
+        if (grp->count != 0) {
+            pa->timer[i] -= pa->speed;
+            do {
+                if (pa->timer[i] <= 0.0f) {
+                    pa->frame[i]++;
+                    if (pa->frame[i] >= grp->nframes || (dur = grp->frames[pa->frame[i]]->dur) <= 0) {
+                        pa->frame[i] = 0;
+                        dur = (*grp->frames)->dur;
+                    }
+                    pa->timer[i] = dur + pa->timer[i];
+                    changed = 1;
+                }
+            } while (pa->timer[i] < 0.0f);
+        }
+    }
+    if (changed) {
+        if (pa->bufs[pa->bufIdx] == NULL) {
+            pa->bufs[pa->bufIdx] = HuMemAlloc(desc->unk08 * 2);
+        }
+        pa->cur = pa->bufs[pa->bufIdx];
+        bcopy(desc->unk0C, pa->cur, desc->unk08 * 2);
+        pa->bufIdx++;
+        if (pa->bufIdx >= 3) {
+            pa->bufIdx = 0;
+        }
+        for (i = 0; i < desc->unk02; i++) {
+            grp = (SprPalGroup*)desc->unk04[i];
+            if (grp->count != 0) {
+                e = grp->frames[pa->frame[i]]->entries;
+                for (j = 0; j < grp->count; j++, e++) {
+                    pa->cur[e->idx] = e->color;
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/80230", func_800841B8_84DB8);
+#endif
