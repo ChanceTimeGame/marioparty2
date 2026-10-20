@@ -42,7 +42,7 @@ void func_80063844_64444(void);
 s32 func_800638C8_644C8(void);
 s32 omOvlReturnEx(s16);
 void omOvlKill(void);
-s32 omOvlCallEx(s32 overlayID, s16 event, s16 stat);
+s32 omOvlCallEx(s32 overlayID, s16 event, u16 stat);
 omObjData* omAddObj(s16, u16, u16, s16, void*);
 void func_80079464_7A064(void);
 void func_800794A8_7A0A8(s32);

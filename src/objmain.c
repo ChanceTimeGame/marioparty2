@@ -330,7 +330,7 @@ void omPrcSetDestructor(s32 arg0, void (*arg1)()) {
     temp->unk8 = arg1;
 }
 
-s32 omOvlCallEx(s32 overlayID, s16 event, s16 stat) {
+s32 omOvlCallEx(s32 overlayID, s16 event, u16 stat) {
     omOvlHisData* history;
     s32 result;
 
