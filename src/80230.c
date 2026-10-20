@@ -47,7 +47,50 @@ void func_800841B8_84DB8(HuSprAnmDesc** arg0);
 void func_80083F70_84B70(s16 arg0);
 void func_80084148_84D48(void);
 
-INCLUDE_ASM("asm/nonmatchings/80230", func_8007F630_80230);
+/* The camera a layer hook draws for (only its scissor box is named) */
+typedef struct SprCamera {
+    /* 0x00 */ char unk00[0x98];
+    /* 0x98 */ f32 scissor[4];
+} SprCamera;
+
+extern Mtx D_800ED610_EE210;  /* sprite orthographic projection */
+extern Vp D_800CD5A0_CE1A0;
+extern Gfx* D_800ED650_EE250;  /* first sprite display list command */
+extern void* D_800F9294_F9E94;
+extern s16 D_800FC89C_FD49C;
+extern s16 D_800FD2A6_FDEA6;
+void SprBegin(void);
+HuSprite* GetFirstSprite(void);
+void func_80081378_81F78(void);
+void SprDisp(Gfx** gfx, HuSprite* obj, SprCamera* cam);
+void SprExec(Gfx** gfx, Mtx* mtx, SprCamera* cam);
+void SprLayerHook(void);
+void SprAnimInit(void);
+void func_80083CC0_848C0(void);
+s16 func_8002838C_28F8C(s32, void*, s32);
+void func_80029EDC_2AADC(s16, s32);
+void func_800B3820_B4420(Mtx* m); /* MP3 func_8008A0D0 */
+
+/* MP1 func_80064B70: sprite manager init */
+void func_8007F630_80230(void) {
+    s16 i;
+
+    D_80101074_101C74 = 0;
+    for (i = 0; i < 256; i++) {
+        HuSprGrpData[i] = NULL;
+    }
+    D_800F8C40_F9840 = NULL;
+    D_800F64B4_F70B4 = NULL;
+    D_800F841C_F901C = 0;
+    D_800FA5F8_FB1F8[0] = D_800FA5F8_FB1F8[1] = D_800FA5F8_FB1F8[2] = D_801016C0_1022C0 = NULL;
+    D_800FD8BC_FE4BC = 0;
+    guOrtho(&D_800ED610_EE210, -160.0f, 160.0f, -120.0f, 120.0f, 0.0f, 8000.0f, 2.0f);
+    D_800FC89C_FD49C = func_8002838C_28F8C(0, SprExec, 0);
+    func_80029EDC_2AADC(D_800FC89C_FD49C, 1);
+    D_800FD2A6_FDEA6 = func_8002838C_28F8C(0, SprLayerHook, 6);
+    SprAnimInit();
+    func_80083CC0_848C0();
+}
 
 HuSprGrp* SprAlloc(s16 num, u16 attr) {
     HuSprGrp* grp = HuMemAlloc(num * sizeof(HuSprite*) + sizeof(HuSprGrp) - sizeof(HuSprite*));
@@ -288,7 +331,70 @@ void RestoreAnimState(HuSprite* arg0) {
     arg0->unk_68.unk17 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", InitData);
+/* MP3 func_80052E68_53A68 */
+void InitData(HuSprGrp* group, u16 count) {
+    HuSprite* sprite;
+    s16 i;
+    s16 j;
+
+    for (i = 0; i < count; i++) {
+        sprite = group->members[i];
+        sprite->unk_04 = 0;
+        sprite->unk_08 = 0;
+        sprite->unk_18 = sprite->unk_1C = 1.0f;
+        sprite->prio = 0x8000;
+        sprite->unk_20 = 0;
+        sprite->unk_24 = 0;
+        sprite->unk_28[0] = sprite->unk_28[1] = sprite->unk_28[2] = 0;
+        sprite->unk_2C = 0x100;
+        if (i != 0) {
+            sprite->unk_2E = 0;
+        } else {
+            sprite->unk_2E = -1;
+        }
+        sprite->unk_30 = sprite->unk_34 = 1.0f;
+        sprite->unk_38 = sprite->unk_3A = 0;
+        sprite->unk_3C = sprite->unk_3E = sprite->unk_40 = sprite->unk_42 = 0;
+        sprite->unk_44 = 0;
+        sprite->unk_116 = sprite->unk_114 = -1;
+        sprite->unk_48 = 0.0f;
+        sprite->unk_4C = 0.0f;
+        sprite->unk_50 = sprite->unk_54 = 1.0f;
+        sprite->unk_58 = 0.0f;
+        sprite->unk_5C = 0;
+        sprite->unk_60 = sprite->unk_64 = 1.0f;
+        InitAnimState(&sprite->unk_68);
+        sprite->unk_84 = sprite->unk_68.unk00;
+        sprite->unk_88 = sprite->unk_68.unk04;
+        sprite->unk_0E = (u16)sprite->unk_68.unk06;
+        sprite->unk_0C = (u16)sprite->unk_68.unk08;
+        sprite->unk_8C = sprite->unk_68.unk0C;
+        sprite->unk_10 = sprite->unk_68.unk10;
+        sprite->unk_90 = (u16)sprite->unk_68.unk14;
+        sprite->unk_92 = sprite->unk_68.unk16;
+        sprite->unk_93 = sprite->unk_68.unk17;
+        sprite->unk_94 = sprite->unk_68.unk18;
+        sprite->unk_98 = NULL;
+        sprite->unk_FC = 1.0f;
+        for (j = 0; j < 0x10; j++) {
+            sprite->unk_9C[j] = 0xFFFF;
+            sprite->unk_BC[j] = 0;
+        }
+        sprite->unk_100 = 0;
+        sprite->unk_104 = 0;
+        sprite->unk_108[0] = sprite->unk_108[1] = sprite->unk_108[2] = NULL;
+        sprite->unk_00 = i;
+        sprite->unk_02 = count;
+        sprite->unk_118 = sprite->unk_11C = NULL;
+        sprite->unk_128[0] = sprite->unk_128[1] = sprite->unk_128[2] = NULL;
+        sprite->unk_134[0] = sprite->unk_134[1] = sprite->unk_134[2] = NULL;
+        func_800B3820_B4420(&sprite->unk_140[0]);
+        func_800B3820_B4420(&sprite->unk_140[1]);
+        func_800B3820_B4420(&sprite->unk_140[2]);
+        sprite->unk_120 = NULL;
+        sprite->unk_124 = NULL;
+    }
+}
 
 void LinkSprite(HuSprite* obj, HuSprite* a, HuSprite* b) {
     if (a != NULL) {
@@ -438,7 +544,72 @@ void func_80081378_81F78(void) {
     D_801016C0_1022C0 = D_800FA5F8_FB1F8[D_800FDBE0_FE7E0];
 }
 
-INCLUDE_ASM("asm/nonmatchings/80230", SprExec);
+/* MP1 func_8006677C: the sprite layer's draw hook */
+void SprExec(Gfx** gfx, Mtx* mtx, SprCamera* cam) {
+    HuSprite* obj;
+    HuSprite* next;
+    s16 flag = 0;
+    Gfx* branch = NULL;
+    Gfx* end = NULL;
+
+    D_800FD8BC_FE4BC = 0;
+    SprBegin();
+    obj = GetFirstSprite();
+    func_80081378_81F78();
+    D_800F9294_F9E94 = HuMemAlloc(0x4000);
+    gSPViewport((*gfx)++, &D_800CD5A0_CE1A0);
+    gSPPerspNormalize((*gfx)++, 0x8000);
+    gSPMatrix((*gfx)++, osVirtualToPhysical(&D_800ED610_EE210), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    gDPPipeSync((*gfx)++);
+    gDPSetTexturePersp((*gfx)++, G_TP_NONE);
+    gSPTexture((*gfx)++, 0xFFFF, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+    gSPClearGeometryMode((*gfx)++, G_CULL_BOTH);
+    gSPSetGeometryMode((*gfx)++, G_ZBUFFER | G_TEXTURE_GEN_LINEAR); /* 0x80001 */
+    gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
+    gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
+    D_800ED650_EE250 = NULL;
+    while (obj != NULL) {
+        if (obj->unk_24 & 0x4000) {
+            if (flag) {
+                if (branch != NULL) {
+                    gSPBranchList(branch, *gfx + 1);
+                }
+                end = (*gfx)++;
+            }
+            flag = 0;
+        } else {
+            if (!flag) {
+                if (end != NULL) {
+                    gSPBranchList(end, *gfx + 1);
+                }
+                branch = (*gfx)++;
+                if (D_800ED650_EE250 == NULL) {
+                    D_800ED650_EE250 = *gfx;
+                }
+            }
+            flag = 1;
+        }
+        SprDisp(gfx, obj, cam);
+        next = obj->unk_118;
+        obj->unk_11C = NULL;
+        obj->unk_118 = NULL;
+        obj = next;
+    }
+    if (flag) {
+        gSPEndDisplayList((*gfx)++);
+        if (branch != NULL) {
+            gSPBranchList(branch, *gfx);
+        }
+    } else if (D_800ED650_EE250 != NULL) {
+        gSPEndDisplayList(end);
+    }
+    gDPSetTextureLUT((*gfx)++, G_TT_NONE);
+    HuMemFree(D_800F9294_F9E94);
+    gSPMatrix((*gfx)++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gSPMatrix((*gfx)++, mtx + 1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, cam->scissor[0], cam->scissor[1], cam->scissor[2], cam->scissor[3]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/80230", SprLayerHook);
 
