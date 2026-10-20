@@ -321,3 +321,10 @@ $(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
+# w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
+build/src/ECE0.c.o: export VR4300MUL = ON
+# w1-C: ECE0's rodata head (the four jump tables of its first half, 0xD2420-0xD2900) is carved
+W1C_CARVED_RODATA_UNITS := build/src/ECE0.c.o
+CARVED_RODATA_UNITS += $(W1C_CARVED_RODATA_UNITS)
+$(W1C_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
