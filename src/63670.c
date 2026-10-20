@@ -1,6 +1,29 @@
 #include "common.h"
 #include "game/object.h"
 
+extern s32 D_800CCC10;
+void func_80047B78_48778(void);
+void func_8005FF9C_60B9C(void);
+void func_8004EA90_4F690(void);
+void func_8004C394_4CF94(void);
+void func_8004A9EC_4B5EC(void);
+void func_8005E584_5F184(void);
+void func_8008CE5C_8DA5C(void);
+void func_800508C8_514C8(void);
+void func_8005E2FC_5EEFC(void);
+void func_8004340C_4400C(void);
+void func_80041AE4_426E4(void);
+void func_80054AE8_556E8(void);
+void func_8005429C_54E9C(void);
+void MBDBackKill(void);
+void func_80050AE0_516E0(void);
+void func_80050AD4_516D4(void);
+void func_80053DEC_549EC(void);
+void func_80053DD0_549D0(void);
+
+/* Board scene teardown (MP1 func_80056AF4, MP3 MBExit); D_800CCC10 traces progress */
+
+
 extern u8 D_01164160[];
 void func_80053A8C_5468C(void);
 void func_80050A30_51630(u8*);
@@ -32,7 +55,7 @@ void func_80062D50_63950(void);
 
 
 extern s32 D_800CCC40_CD840[];
-extern s32 D_800CCC68_CD868;
+extern void (*D_800CCC68_CD868)(void);
 extern s16 D_800E1F88_E2B88;
 void func_80056A3C_5763C(s8);
 void func_80063308_63F08(void);
@@ -332,9 +355,51 @@ void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3) {
         omPrcSetStatBit(proc, 0xA0);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063178_63D78);
-
-void func_800632E4_63EE4(s32 arg0) {
+void func_80063178_63D78(void) {
+    D_800CCC10 = 1;
+    func_80047B78_48778();
+    D_800CCC10 = 2;
+    func_8005FF9C_60B9C();
+    D_800CCC10 = 3;
+    func_8004EA90_4F690();
+    D_800CCC10 = 4;
+    func_8004C394_4CF94();
+    D_800CCC10 = 5;
+    func_8004A9EC_4B5EC();
+    D_800CCC10 = 6;
+    func_8005E584_5F184();
+    D_800CCC10 = 7;
+    func_8008CE5C_8DA5C();
+    D_800CCC10 = 8;
+    func_800508C8_514C8();
+    D_800CCC10 = 9;
+    func_8005E2FC_5EEFC();
+    D_800CCC10 = 10;
+    func_8004340C_4400C();
+    D_800CCC10 = 11;
+    func_80041AE4_426E4();
+    D_800CCC10 = 12;
+    func_80054AE8_556E8();
+    D_800CCC10 = 13;
+    func_8005429C_54E9C();
+    D_800CCC10 = 14;
+    MBDBackKill();
+    D_800CCC10 = 15;
+    func_80050AE0_516E0();
+    D_800CCC10 = 16;
+    func_80050AD4_516D4();
+    D_800CCC10 = 17;
+    func_80053DEC_549EC();
+    D_800CCC10 = 18;
+    func_80053DD0_549D0();
+    D_800CCC10 = 19;
+    if (D_800CCC68_CD868 != NULL) {
+        D_800CCC68_CD868();
+    }
+    func_80064FF8_65BF8();
+    D_800CCC10 = 20;
+}
+void func_800632E4_63EE4(void (*arg0)(void)) {
     D_800CCC68_CD868 = arg0;
 }
 void func_800632F0_63EF0(s16 arg0) {
