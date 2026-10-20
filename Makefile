@@ -214,7 +214,7 @@ $(B3D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 B3D_NOPAD_DATA_PIECES := build/asm/data/D3BE8.data.s.o
 NOPAD_DATA_PIECES += $(B3D_NOPAD_DATA_PIECES)
 $(B3D_NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
-# w1-D: carved rodata (ECE0 tail D2A70-D2AA0: func_800132EC_13EEC's jump tables)
+# w1-C/w1-D: ECE0's whole rodata carved (D2420-D2AA0; func_80012800_13400's table is defined in C beside its INCLUDE_ASM)
 W1D_CARVED_RODATA_UNITS := build/src/ECE0.c.o
 CARVED_RODATA_UNITS += $(W1D_CARVED_RODATA_UNITS)
 $(W1D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
@@ -347,3 +347,6 @@ build/src/93A80.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
 W1E_CARVED := build/src/93A80.c.o
 CARVED_RODATA_UNITS += $(W1E_CARVED)
 $(W1E_CARVED): RODATA_AS_DATA = 1
+
+# w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
+build/src/ECE0.c.o: export VR4300MUL = ON
