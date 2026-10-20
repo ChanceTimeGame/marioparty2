@@ -2,9 +2,8 @@
 #include "game/malloc.h"
 #include "game/pad.h"
 
-/* Debug text with a drop shadow and the button-sequence watcher, from MP1 src/3F5B0.c
-   (func_80044F5C and func_80044F78 are MP1 func_8003EE3C and func_8003EE58). The debug readouts
-   (sprintf with strings in this unit's rodata, shared with functions still in asm) stay asm. */
+/* Debug text with a drop shadow, the button-sequence watcher and the debug readouts, from MP1
+   src/3F5B0.c (func_80044F5C and func_80044F78 are MP1 func_8003EE3C and func_8003EE58). */
 
 typedef struct ButtonSeqWork {
     /* 0x00 */ Process* process;
@@ -15,6 +14,19 @@ typedef struct ButtonSeqWork {
 extern s32 fontcolor;
 
 s16 DrawDebugText(u16, u16, char*); /* MP1 print8 */
+GW_PLAYER* BoardPlayerGet(s32);
+s16 GetSumOfPlayerStars(void);
+
+extern char pfStrBuf[];
+extern s16 starBlockSpaceIndex;
+extern s16 coinBlockSpaceIndex;
+extern s16 D_800FD898_FE498;
+extern s16 D_800FA60A_FB20A;
+extern s16 D_801026D6_1032D6;
+extern s16 D_800F9560_FA160;
+extern s16 D_800FD2B4_FDEB4;
+extern s16 D_800FDBD8_FE7D8; /* MP1 kakusiMasuStar */
+extern s16 D_800FFDF8_1009F8; /* MP1 kakusiMasuCoin */
 
 void func_80044DD0_459D0(u16 arg0, u16 arg1, s32 arg2, u8 arg3, u8 arg4) {
     fontcolor = arg4;
@@ -64,16 +76,71 @@ s32 func_80044F78_45B78(s32 work) {
     return ((ButtonSeqWork*)work)->index == -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_80044F88_45B88);
+void func_80044F88_45B88(s16 x, s16 y) {
+    s32 i;
+    GW_PLAYER* player;
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_800450C0_45CC0);
+    sprintf(pfStrBuf, "   GAM COI  ?  R BL  !  K BTL I BN");
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+    for (i = 0; i < 4; ) {
+        player = BoardPlayerGet(i);
+        i++;
+        sprintf(pfStrBuf, "%d: %3d %3d %2d %2d %2d %2d %2d %2d %2d %2d", i, player->coins_total, player->coins_max,
+                (s8)player->happening_spaces_landed_on, (s8)player->red_spaces_landed_on,
+                (s8)player->blue_spaces_landed_on, (s8)player->chance_spaces_landed_on,
+                (s8)player->bowser_spaces_landed_on, (s8)player->battle_spaces_landed_on,
+                (s8)player->item_spaces_landed_on, (s8)player->bank_spaces_landed_on);
+        func_80044DD0_459D0(x * 8, (y + i) * 8, (s32)pfStrBuf, 15, 9);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_80045184_45D84);
+void func_800450C0_45CC0(s16 x, s16 y) {
+    sprintf(pfStrBuf, "KMS: %d", starBlockSpaceIndex);
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "KMC: %d", coinBlockSpaceIndex);
+    func_80044DD0_459D0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
+}
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_800451F8_45DF8);
+void func_80045184_45D84(s16 x, s16 y) {
+    sprintf(pfStrBuf, "STAR:%2d", GetSumOfPlayerStars());
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+}
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_800453C4_45FC4);
+/* Board event counters (MP1 func_8003F07C); retail prints the "4" line twice at row y + 3. */
+void func_800451F8_45DF8(s16 x, s16 y) {
+    sprintf(pfStrBuf, "1VS3:%2d", D_800FD898_FE498);
+    func_80044DD0_459D0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "2VS2:%2d", D_800FA60A_FB20A);
+    func_80044DD0_459D0(x * 8, (y + 2) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "4   :%2d", D_801026D6_1032D6);
+    func_80044DD0_459D0(x * 8, (y + 3) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "4   :%2d", D_801026D6_1032D6);
+    func_80044DD0_459D0(x * 8, (y + 3) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "BTL :%2d", D_800F9560_FA160);
+    func_80044DD0_459D0(x * 8, (y + 4) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "ITEM:%2d", D_800FD2B4_FDEB4);
+    func_80044DD0_459D0(x * 8, (y + 5) * 8, (s32)pfStrBuf, 15, 9);
+}
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_80045488_46088);
+void func_800453C4_45FC4(s16 x, s16 y) {
+    sprintf(pfStrBuf, "YOBIDASI COIN:%2d", D_800FDBD8_FE7D8);
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "YOBIDASI STAR:%2d", D_800FFDF8_1009F8);
+    func_80044DD0_459D0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
+}
 
-INCLUDE_ASM("asm/nonmatchings/459D0", func_800455CC_461CC);
+void func_80045488_46088(s16 x, s16 y) {
+    sprintf(pfStrBuf, "1P STAR:%2d", gPlayers[0].stars);
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "2P STAR:%2d", gPlayers[1].stars);
+    func_80044DD0_459D0(x * 8, (y + 1) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "3P STAR:%2d", gPlayers[2].stars);
+    func_80044DD0_459D0(x * 8, (y + 2) * 8, (s32)pfStrBuf, 15, 9);
+    sprintf(pfStrBuf, "4P STAR:%2d", gPlayers[3].stars);
+    func_80044DD0_459D0(x * 8, (y + 3) * 8, (s32)pfStrBuf, 15, 9);
+}
+
+void func_800455CC_461CC(s16 x, s16 y) {
+    sprintf(pfStrBuf, "MAP: %d    TURN: %d", GwSystem.current_board_index + 1, GwSystem.current_turn - 1);
+    func_80044DD0_459D0(x * 8, y * 8, (s32)pfStrBuf, 15, 9);
+}
