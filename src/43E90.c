@@ -31,6 +31,33 @@ void MBModelAttrSetDispOn(MBModel*);
 void MBModelAttrSetDispOff(MBModel*);
 void MBModelKill(void*);
 
+typedef struct MBModelWork {
+    /* 0x00 */ MBModel* model;
+    /* 0x04 */ f32 scale;
+} MBModelWork; /* size = 0x8 */
+
+typedef struct MBModelParam {
+    /* 0x00 */ f32 scale;
+    /* 0x04 */ f32 shadowScale;
+    /* 0x08 */ char unk08[8];
+} MBModelParam; /* size = 0x10 */
+
+extern MBModelParam D_800CB168_CBD68[];
+
+void omSetRot(omObjData*, f32, f32, f32);
+s16 LoadFormFile(s32, s32);
+s32 func_80027D3C_2893C(s16);
+void func_80029EDC_2AADC(s16, s32);
+s16 func_80029E14_2AA14(s16);
+f32 MBDBackMdlScaleGet(void);
+void func_80043A60_44660(omObjData*);
+void func_80043C64_44864(omObjData*);
+MBModel* func_8004344C_4404C(void);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32);
+f32 func_80042BE0_437E0(Vec*);
+void func_80056658_57258(Vec*, Vec*, Vec*);
+
 /* exact c: marioparty func_8003D960 (src/3E560.c) */
 void func_80043290_43E90(void) {
     s32 i;
@@ -114,11 +141,93 @@ MBModel* func_8004344C_4404C(void) {
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043510_44110);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", MBModelFileCreate);
+/* near MP3 MBModelFileCreate (ECA50.c): MP2 reads the base motion from the model and sets no
+   model scale. */
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4) {
+    MBModel* m;
+    omObjData* obj;
+    MBModelWork* work;
+    u32* dataPtr;
+    s16 mdl;
+    s16 motionCnt;
+    s16 i;
+
+    dataPtr = arg4;
+    motionCnt = 0;
+    m = func_8004344C_4404C();
+    if (m != NULL) {
+        m->id = 0xFF;
+        if (dataPtr != NULL) {
+            motionCnt = dataPtr[0];
+            dataPtr++;
+        }
+        obj = m->obj = omAddObj(0x4000, 1, motionCnt, -1, func_80043A60_44660);
+        mdl = LoadFormFile(arg0, 0x6A9);
+        omSetStatBit(obj, 0x80);
+        obj->model[0] = mdl;
+        omSetRot(obj, 0.0f, 0.0f, 0.0f);
+        func_80029E80_2AA80(mdl, 2, 2);
+        func_80029EDC_2AADC(mdl, 1);
+        if (func_80029E14_2AA14(mdl) != 0xFF) {
+            m->baseMot = func_800432C0_43EC0(func_80029E14_2AA14(mdl));
+        }
+        work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+        obj->unk_50 = work;
+        work->model = m;
+        work->scale = arg2;
+        for (i = 0; i < motionCnt; i++) {
+            obj->motion[i] = func_800432E8_43EE8(*dataPtr++);
+        }
+        if ((arg1 >= 0) && (arg3 > 0.0f)) {
+            obj = m->shadow = omAddObj(0x4000, 1, 0, -1, func_80043C64_44864);
+            mdl = LoadFormFile(arg1, 0x229);
+            omSetStatBit(obj, 0x80);
+            obj->model[0] = mdl;
+            omSetRot(obj, 0.0f, 0.0f, 0.0f);
+            func_80029EDC_2AADC(mdl, 1);
+            work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+            obj->unk_50 = work;
+            work->model = m;
+            work->scale = arg3;
+        } else {
+            m->shadow = NULL;
+        }
+    }
+    return m;
+}
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043A60_44660);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043C64_44864);
+/* near MP3 func_800D95D0_ED1F0_shared_board (ECA50.c): the shadow follows its model. */
+void func_80043C64_44864(omObjData* arg0) {
+    f32 f;
+    MBModel* m;
+    MBModelWork* work;
+
+    work = arg0->unk_50;
+    m = work->model;
+    f = 1.0f;
+    arg0->rot.y = func_80042BE0_437E0(&m->rot);
+    if (m->attr & 1) {
+        f = 0.0f;
+    } else {
+        if (m->jumpY != 0.0f) {
+            f = 1.0f - (m->jumpY / 700.0f);
+            if (f <= 0.0f) {
+                f = 0.0f;
+            }
+            if (f >= 1.0f) {
+                f = 1.0f;
+            }
+        }
+    }
+    arg0->scale.x = f * m->scale.x * work->scale * MBDBackMdlScaleGet();
+    arg0->scale.y = MBDBackMdlScaleGet();
+    arg0->scale.z = f * m->scale.z * work->scale * MBDBackMdlScaleGet();
+    arg0->trans.x = m->pos.x;
+    arg0->trans.y = m->pos.y;
+    arg0->trans.z = m->pos.z;
+}
 
 /* exact c: marioparty func_8003E174 (src/3E560.c) */
 void func_80043DAC_449AC(void* ptr) {
@@ -132,7 +241,51 @@ void func_80043DAC_449AC(void* ptr) {
 
 INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DF4_449F4);
 
-INCLUDE_ASM("asm/nonmatchings/43E90", MBModelParamCreate);
+/* near MP1 MBModelParamCreate (src/3E560.c, NON_MATCHING there): copy a board model. */
+MBModel* MBModelParamCreate(MBModel* arg0) {
+    MBModel* m;
+    omObjData* obj;
+    MBModelWork* work;
+    s16 model;
+    s16 i;
+
+    m = func_8004344C_4404C();
+    if (m != NULL) {
+        m->id = arg0->id;
+        obj = m->obj = omAddObj(0x4000, 1, arg0->obj->mtncnt, -1, func_80043A60_44660);
+        model = func_80027D3C_2893C(*arg0->obj->model);
+        omSetStatBit(obj, 0x80);
+        *obj->model = model;
+        omSetRot(obj, 0.0f, 0.0f, 0.0f);
+        func_80029E80_2AA80(model, 2, 2);
+        func_80029EDC_2AADC(model, 1);
+        if (func_80029E14_2AA14(model) != 0xFF) {
+            m->baseMot = func_80043388_43F88(func_80029E14_2AA14(model));
+        }
+        work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+        obj->unk_50 = work;
+        work->model = m;
+        work->scale = D_800CB168_CBD68[m->id].scale;
+        for (i = 0; i < arg0->obj->mtncnt; i++) {
+            obj->motion[i] = func_80043388_43F88(arg0->obj->motion[i]);
+        }
+        if (D_800CB168_CBD68[m->id].shadowScale > 0.0f) {
+            obj = m->shadow = omAddObj(0x4000, 1, 0, -1, func_80043C64_44864);
+            model = func_80027D3C_2893C(*arg0->shadow->model);
+            omSetStatBit(obj, 0x80);
+            *obj->model = model;
+            omSetRot(obj, 0.0f, 0.0f, 0.0f);
+            func_80029EDC_2AADC(model, 1);
+            work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+            obj->unk_50 = work;
+            work->model = m;
+            work->scale = D_800CB168_CBD68[m->id].shadowScale;
+        } else {
+            m->shadow = NULL;
+        }
+    }
+    return m;
+}
 
 /* exact c: marioparty MBModelAttrSetDispOn (src/3E560.c) */
 void MBModelAttrSetDispOn(MBModel* arg0) {
@@ -253,7 +406,51 @@ u16 MBMotionCheck(void* arg0) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80044620_45220);
+/* near MP3 func_800D9ED0_EDAF0_shared_board (ECA50.c): turn a board model over work[1] frames. */
+void func_80044620_45220(omObjData* arg0) {
+    MBModel* m;
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_800446B4_452B4);
+    m = arg0->unk_50;
+    arg0->work[1]--;
+    if (arg0->work[1] == 0) {
+        m->rot.x = arg0->rot.x;
+        m->rot.y = arg0->rot.y;
+        m->rot.z = arg0->rot.z;
+        arg0->unk_50 = NULL;
+        omDelObj(arg0);
+        return;
+    }
+    arg0->scale.y += arg0->scale.x;
+    m->rot.x = HuMathSin(arg0->scale.y);
+    m->rot.y = 0.0f;
+    m->rot.z = func_800B7890_B8490(arg0->scale.y);
+}
+
+/* near MP3 func_800D9F5C_EDB7C_shared_board (ECA50.c): start that turn towards arg1. */
+omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2) {
+    Vec dir;
+    f32 from;
+    f32 to;
+    omObjData* obj;
+
+    func_80056658_57258(&arg0->pos, arg1, &dir);
+    obj = omAddObj(0x1000, 0, 0, -1, func_80044620_45220);
+    obj->work[1] = arg2;
+    obj->rot.x = dir.x;
+    obj->rot.y = dir.y;
+    obj->rot.z = dir.z;
+    from = func_80042BE0_437E0(&arg0->rot);
+    to = func_80042BE0_437E0(&dir);
+    if (to < from) {
+        if ((from - to) >= 180.0f) {
+            to += 360.0f;
+        }
+    } else if ((to - from) >= 180.0f) {
+        from += 360.0f;
+    }
+    obj->scale.y = from;
+    obj->scale.x = (to - from) / (f32)arg2;
+    obj->unk_50 = arg0;
+    return obj;
+}
 
