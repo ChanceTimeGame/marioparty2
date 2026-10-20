@@ -71,11 +71,6 @@ void func_8002742C_2802C(void);
    src/mallocblock.c) and model manager helpers (MP3 src/hmfman.c, MP1 src/24740.c). */
 
 typedef struct {
-    Mtx perspMtx;
-    Mtx lookAtMtx;
-} HuCamMtxs;
-
-typedef struct {
     /* 0x00 */ s8 r;
     /* 0x01 */ s8 g;
     /* 0x02 */ s8 b;
