@@ -398,6 +398,8 @@ segments:
       - [0xD2FF0, .data, 459D0]
       - [0xD3108, pad]
       - [0xD3110, data]
+      - [0xD3220, .data, 4ABB0]
+      - [0xD3430, data]
       - [0xD39B8, .data, 57150]
       - [0xD39F0, data]
       - [0xD3A38, .data, 58080]

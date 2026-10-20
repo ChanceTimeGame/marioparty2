@@ -304,9 +304,9 @@ $(C58080_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x68
 	$(V)$(OBJCOPY) --rename-section .rodata=.data $@
 # pilot: units made fully C by the fresh-decompilation pilot, their rodata carved
-PILOT_CARVED := build/src/459D0.c.o
+PILOT_CARVED := build/src/459D0.c.o build/src/4ABB0.c.o
 CARVED_RODATA_UNITS += $(PILOT_CARVED)
 $(PILOT_CARVED): RODATA_AS_DATA = 1
-PILOT_NOPAD := build/asm/data/D3110.data.s.o
+PILOT_NOPAD := build/asm/data/D3110.data.s.o build/asm/data/D3430.data.s.o
 NOPAD_DATA_PIECES += $(PILOT_NOPAD)
 $(PILOT_NOPAD): ASFLAGS += --no-pad-sections
