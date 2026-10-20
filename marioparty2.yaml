@@ -389,6 +389,7 @@ segments:
       - [0xCEA80, .data, A54C0]
       - [0xCEA90, .data, A57A0]
       - [0xCEAA0, data]
+      - [0xD2A70, .data, ECE0]
       - [0xD2AA0, .data, 169B0]
       - [0xD2AB0, .data, 187C0]
       - [0xD2AC8, pad]
