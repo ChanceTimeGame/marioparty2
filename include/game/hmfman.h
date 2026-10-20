@@ -104,7 +104,8 @@ typedef struct HmfDisp {
 } HmfDisp; /* MP3 HmfModelData_Unk64_Unk3C_Struct */
 
 typedef struct HmfPart {
-    /* 0x00 */ char unk00[4];
+    /* 0x00 */ s16 unk00; /* material colour track target */
+    /* 0x02 */ s16 unk02; /* alpha */
     /* 0x04 */ s16 unk04; /* face count */
     /* 0x06 */ char unk06[0x28];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
@@ -148,7 +149,7 @@ typedef struct HmfData {
     /* 0x10 */ s16 unk10;
     /* 0x12 */ s16 unk12; /* texture count; MP1 0x6C */
     /* 0x14 */ s16 unk14; /* MP3 HmfData.unk14 */
-    /* 0x16 */ char unk16[2];
+    /* 0x16 */ s16 unk16; /* motion object count (unk84) */
     /* 0x18 */ s16 unk18; /* vertex count; MP1 0x72 */
     /* 0x1A */ s16 unk1A; /* MP1 0x74 */
     /* 0x1C */ char unk1C[2];
