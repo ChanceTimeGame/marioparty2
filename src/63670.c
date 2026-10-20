@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/object.h"
 
 /* Board flow: overlay history, scenes, camera and rumble. C from MP1 src/57330.c, src/5CDB0.c,
    src/59510.c and MP3 ovl_80_shared_board 10C230.c / 113520.c, ovl_81 E3CD0.c / E78B0.c; the rest
@@ -6,11 +7,6 @@
    because their rodata (D3BE8-D3D48) is shared with asm functions. */
 
 #define CUR_PLAYER -1
-
-typedef struct Object {
-    /* 0x00 */ char pad0[0xC];
-    /* 0x0C */ Vec coords;
-} Object; /* MP1's, first 0x18 bytes */
 
 typedef struct UnkE78B0 {
     /* 0x00 */ s16 unk_00; /* player */

@@ -1,24 +1,10 @@
 #include "common.h"
 #include "process.h"
 #include "game/malloc.h"
+#include "game/object.h"
 
 /* Board player position, facing and movement helpers (MP1 src/4D770.c; MP3
    src/overlays/ovl_80_shared_board/1006F0.c). Names follow MP1 where it names them, MP3 otherwise. */
-
-typedef struct BoardObjUnk3C {
-    /* 0x00 */ char unk_00[0x24];
-    /* 0x24 */ f32 unk_24;
-    /* 0x28 */ f32 unk_28;
-    /* 0x2C */ f32 unk_2C;
-} BoardObjUnk3C;
-
-typedef struct Object {
-    /* 0x00 */ char unk_00[0xC];
-    /* 0x0C */ Vec coords;
-    /* 0x18 */ Vec unk_18;
-    /* 0x24 */ char unk_24[0x18];
-    /* 0x3C */ BoardObjUnk3C* unk_3C;
-} Object;
 
 typedef struct BoardCamera {
     /* 0x00 */ char unk_00[0xC];
@@ -94,11 +80,11 @@ void func_80056690_57290(s16 playerIdx, Vec* arg1) {
     Object* playerObj;
 
     playerObj = PLAYER_OBJ(BoardPlayerGet(playerIdx));
-    func_80056658_57258(&playerObj->coords, arg1, &playerObj->unk_18);
+    func_80056658_57258(&playerObj->coords, arg1, &playerObj->rot);
 }
 
 void func_800566D0_572D0(Object* arg0, s16 arg1) {
-    func_80056658_57258(&arg0->coords, &GetSpaceData(arg1)->coords, &arg0->unk_18);
+    func_80056658_57258(&arg0->coords, &GetSpaceData(arg1)->coords, &arg0->rot);
 }
 
 void func_8005670C_5730C(Vec* arg0) {
@@ -108,7 +94,7 @@ void func_8005670C_5730C(Vec* arg0) {
 }
 
 void MBPlayerForwardSet(s16 playerNo) {
-    func_8005670C_5730C(&PLAYER_OBJ(BoardPlayerGet(playerNo))->unk_18);
+    func_8005670C_5730C(&PLAYER_OBJ(BoardPlayerGet(playerNo))->rot);
 }
 
 void func_80056754_57354(Object* unk) {
@@ -117,10 +103,10 @@ void func_80056754_57354(Object* unk) {
 
     HuVecSubtract(&sp10, &D_800C9B80_CA780->pos, &unk->coords);
     HuVecCopyXYZ(&sp20, sp10.x, 0.0f, sp10.z);
-    unk->unk_3C->unk_24 = -func_800431FC_43DFC(&sp10, &sp20);
+    unk->omObj1->rot.x = -func_800431FC_43DFC(&sp10, &sp20);
     func_80056658_57258(&unk->coords, &D_800C9B80_CA780->pos, &sp10);
-    unk->unk_3C->unk_28 = func_80042BE0_437E0(&sp10);
-    unk->unk_3C->unk_2C = 0.0f;
+    unk->omObj1->rot.y = func_80042BE0_437E0(&sp10);
+    unk->omObj1->rot.z = 0.0f;
 }
 
 void SwapPlayerLocationData(s16 arg0, s16 arg1) {
@@ -260,7 +246,7 @@ void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex) {
 
     HuVecSubtract(&sp10, &GetSpaceData(masuAbsIndex)->coords, &PLAYER_OBJ(player)->coords);
     MBVecNormalize(&sp10);
-    func_80056B78_57778(&PLAYER_OBJ(player)->unk_18, &sp10, &PLAYER_OBJ(player)->unk_18, arg1);
+    func_80056B78_57778(&PLAYER_OBJ(player)->rot, &sp10, &PLAYER_OBJ(player)->rot, arg1);
 }
 
 void func_80056CB4_578B4(void) {
@@ -300,7 +286,7 @@ void func_80056E34_57A34(s16 arg0, s32 arg1) {
     temp_v0 = BoardPlayerGet(arg0);
     MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
     MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
-    func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->unk_18);
+    func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->rot);
     process = func_80056D80_57980(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->coords, arg1);
     HuPrcChildLink(HuPrcCurrentGet(), process);
     HuPrcChildWatch();
@@ -387,7 +373,7 @@ void func_80057204_57E04(s16 arg0, f32 arg1) {
     temp_v0 = BoardPlayerGet(arg0);
     MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->cur_chain_index, temp_v0->cur_space_index), &sp10);
     MBMasuPosGet(arg0, GetAbsSpaceIndexFromChainSpaceIndex(temp_v0->next_chain_index, temp_v0->next_space_index), &sp20);
-    func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->unk_18);
+    func_80056658_57258(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->rot);
     process = func_80056FD4_57BD4(&sp10, &sp20, &PLAYER_OBJ(temp_v0)->coords, arg1);
     HuPrcChildLink(HuPrcCurrentGet(), process);
     HuPrcChildWatch();

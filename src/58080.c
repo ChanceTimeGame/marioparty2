@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/data.h"
 #include "game/hmfman.h"
+#include "game/object.h"
 
 // MP3s UnkBoard8
 typedef struct {
@@ -52,35 +53,6 @@ extern GW_PLAYER gPlayers[];
    rodata (D3A38-D3AE0) is shared with asm functions. */
 
 #define CUR_PLAYER -1
-
-typedef struct unk_Struct04 {
-    /* 0x00 */ char pad0[0x14];
-    /* 0x14 */ void* func_ptr;
-    /* 0x18 */ Vec pos;
-    /* 0x24 */ f32 unk_24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ Vec scale;
-    /* 0x3C */ u16 mdlcnt;
-    /* 0x40 */ s16* unk_40;
-} unk_Struct04; /* size = 0x44 */
-
-typedef struct Object {
-    /* 0x00 */ struct Object* prev;
-    /* 0x04 */ struct Object* next;
-    /* 0x08 */ s16 unk_08;
-    /* 0x0A */ u16 unk_0A;
-    /* 0x0C */ Vec coords;
-    /* 0x18 */ Vec unk_18;
-    /* 0x24 */ f32 xScale;
-    /* 0x28 */ f32 yScale;
-    /* 0x2C */ f32 zScale;
-    /* 0x30 */ f32 unk_30;
-    /* 0x34 */ f32 unk_34;
-    /* 0x38 */ f32 unk_38;
-    /* 0x3C */ unk_Struct04* unk_3C;
-    /* 0x40 */ unk_Struct04* unk_40;
-} Object; /* MP1's, first 0x44 bytes */
 
 typedef struct unk1EA70Struct1C unk1EA70Struct1C;
 
@@ -317,7 +289,7 @@ INCLUDE_ASM("asm/nonmatchings/58080", func_80058F18_59B18);
 INCLUDE_ASM("asm/nonmatchings/58080", func_80059120_59D20);
 
 s32 func_8005912C_59D2C(Object* arg0) {
-    if (!(arg0->unk_38 != 0.0f)) {
+    if (!(arg0->velocity.z != 0.0f)) {
         return 0;
     } else {
         return 1;
@@ -395,7 +367,7 @@ void func_80059400_5A000(void) {
 void func_8005946C_5A06C(omObjData* arg0) {
     Unk4E530Motion* p = &D_800FDCD8_FE8D8[arg0->work[0]];
 
-    if (func_80029CE4_2A8E4(*p->unk4->unk_3C->unk_40) == func_80029D0C_2A90C(*p->unk4->unk_3C->unk_40)) {
+    if (func_80029CE4_2A8E4(*p->unk4->omObj1->model) == func_80029D0C_2A90C(*p->unk4->omObj1->model)) {
         MBMotionShiftSet(p->unk4, p->unk0, 0, 0xA, p->unk2);
         p->unk4 = NULL;
         p->unk8 = NULL;
