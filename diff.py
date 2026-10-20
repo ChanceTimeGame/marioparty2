@@ -261,15 +261,22 @@ import time
 
 MISSING_PREREQUISITES = (
     "Missing prerequisite python module {}. "
-    "Run `python3 -m pip install --user colorama ansiwrap watchdog python-Levenshtein cxxfilt` to install prerequisites (cxxfilt only needed with --source)."
+    "Run `python3 -m pip install --user colorama watchdog python-Levenshtein cxxfilt` to install prerequisites (cxxfilt only needed with --source)."
 )
 
 try:
     from colorama import Fore, Style, Back  # type: ignore
-    import ansiwrap  # type: ignore
     import watchdog  # type: ignore
 except ModuleNotFoundError as e:
     fail(MISSING_PREREQUISITES.format(e.name))
+
+# ansiwrap (which imports the removed imp module on Python 3.12) was only used for its ansilen.
+_ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+def ansilen(s: str) -> int:
+    return len(_ANSI_ESCAPE.sub("", s))
+
 
 # ==== CONFIG ====
 
@@ -582,7 +589,7 @@ def dump_binary() -> Tuple[str, ObjdumpCommand, ObjdumpCommand]:
 
 def ansi_ljust(s: str, width: int) -> str:
     """Like s.ljust(width), but accounting for ANSI colors."""
-    needed: int = width - ansiwrap.ansilen(s)
+    needed: int = width - ansilen(s)
     if needed > 0:
         return s + " " * needed
     else:

@@ -7,7 +7,6 @@ spimdisasm==1.40.0
 GitPython
 colour
 colorama
-ansiwrap
 watchdog
 python-Levenshtein
 cxxfilt
