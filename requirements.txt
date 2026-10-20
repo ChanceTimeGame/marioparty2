@@ -9,4 +9,4 @@ colour
 colorama
 watchdog
 python-Levenshtein
-cxxfilt
+cxxfiltm2c @ git+https://github.com/matt-kempster/m2c.git@708d2d2cb2698f091a92492b328f73b24209f72d
