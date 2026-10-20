@@ -1,16 +1,9 @@
 #include "common.h"
+#include "game/gamework.h"
 
 /* Minigame records and unlock bits, board play counts. C from MP1 src/59E80.c and MP3 src/save.c
    (GW* functions); the rest have no reference or differ (near) and stay asm. */
 
-typedef struct GWCOMMON {
-    /* 0x00 */ char pad0[2];
-    /* 0x02 */ u16 mgRecord[13];
-    /* 0x1C */ u8 mgBits1[9]; /* MP1 mgBuy */
-    /* 0x25 */ u8 mgBits2[9]; /* MP1 mgBuy, MP3 mgUnlock */
-} GWCOMMON; /* MP2's D_800F8C60, first 0x2E bytes */
-
-extern GWCOMMON D_800F8C60;
 extern s32 D_800E2040_E2C40;
 
 void GWMgBitGet(s16, s16*, s16*);

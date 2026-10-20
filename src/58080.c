@@ -3,6 +3,7 @@
 #include "game/hmfman.h"
 #include "game/object.h"
 #include "game/pad.h"
+#include "game/gamework.h"
 
 // MP3s UnkBoard8
 typedef struct {
@@ -83,11 +84,6 @@ typedef struct unkMallocStruct {
     /* 0x04 */ s16 unk4;
 } unkMallocStruct;
 
-typedef struct Unk800F8C60 {
-    /* 0x00 */ char pad0[0x76];
-    /* 0x76 */ s8 unk_76;
-} Unk800F8C60;
-
 extern s32 D_800CC5F4_CD1F4;
 extern omObjData* D_800CC628_CD228;
 extern s32 D_800CC62C_CD22C;
@@ -107,7 +103,6 @@ extern f32 D_800E1CE4_E28E4;
 extern f32 D_800E1CE8_E28E8;
 extern s16 D_800E1CF6_E28F6;
 extern void* D_800E1CFC_E28FC;
-extern Unk800F8C60 D_800F8C60;
 extern Unk4E530Motion D_800FDCD8_FE8D8[16];
 extern omObjData* D_80101178_101D78[32];
 extern GW_SYSTEM GwSystem;
@@ -679,7 +674,7 @@ s32 MBRand(f32 arg0) {
 }
 
 s16 func_8005A3C4_5AFC4(void) {
-    s32 id = D_800F8C60.unk_76;
+    s32 id = D_800F8C60.unk76;
 
     if (id == -1) {
         id = 6;

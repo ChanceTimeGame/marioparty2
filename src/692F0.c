@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/malloc.h"
 #include "game/pad.h"
+#include "game/gamework.h"
 
 /* Save-file EEPROM wrappers and the message-string directory (MP1 src/59E80.c, MP3 src/36F80.c,
    MP1 src/engine/data.c). MP1's names are anonymous, so MP2's are kept. */
@@ -12,7 +13,6 @@ typedef struct StrData {
 
 extern u16 ContDStkTrg[];
 extern u8 D_800E2050_E2C50;
-extern u8 D_800F8C60[0xC4]; /* MP1 GwCommon */
 extern u32 D_800E2060_E2C60;
 extern u32 D_800E2064_E2C64;
 extern u32* D_800E2068_E2C68;
@@ -58,7 +58,7 @@ INCLUDE_ASM("asm/nonmatchings/692F0", func_800687FC_693FC);
 
 void func_80068964_69564(void) {
     if (D_800E2050_E2C50 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
     }
     func_8006877C_6937C();
 }
@@ -67,10 +67,10 @@ void func_800689A0_695A0(void) {
     if (_CheckFlag(0) != 0) {
         _ClearFlag(0x40);
         if (D_800E2050_E2C50 != 0) {
-            func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, sizeof(D_800F8C60));
+            func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, sizeof(D_800F8C60));
         }
     } else if (D_800E2050_E2C50 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
     }
     _ClearFlag(0);
     func_8006877C_6937C();
@@ -78,7 +78,7 @@ void func_800689A0_695A0(void) {
 
 void func_80068A20_69620(void) {
     if (D_800E2050_E2C50 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, sizeof(D_800F8C60));
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, sizeof(D_800F8C60));
         func_8001AFD8_1BBD8(0xC4, (UnkEep*)gPlayers, 0x104);
         func_8001AFD8_1BBD8(0x1C8, (UnkEep*)&GwSystem, sizeof(GwSystem));
     }
@@ -87,7 +87,7 @@ void func_80068A20_69620(void) {
 
 void func_80068A84_69684(void) {
     if (D_800E2050_E2C50 != 0) {
-        func_8001B078_1BC78(0x80, (UnkEep*)(D_800F8C60 + 0x80), sizeof(D_800F8C60) - 0x80);
+        func_8001B078_1BC78(0x80, (UnkEep*)((u8*)&D_800F8C60 + 0x80), sizeof(D_800F8C60) - 0x80);
         func_8001B078_1BC78(0xC4, (UnkEep*)gPlayers, 0x104);
         func_8001B078_1BC78(0x1C8, (UnkEep*)&GwSystem, sizeof(GwSystem));
     }

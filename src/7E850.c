@@ -2,6 +2,7 @@
 
 #include "PR/sptask.h"
 #include "engine/siman.h"
+#include "game/gamework.h"
 
 /* Save-file EEPROM wrappers (MP1 src/59E80.c), Hudson's nn scheduler (MP1 src/engine/nnsched.c)
    and the SI manager (MP1 src/engine/siman.c). MP1's names are anonymous, so MP2's are kept. */
@@ -42,7 +43,6 @@ typedef struct {
 } unkMesgWrapper;
 
 extern u8 D_800EB900_EC500;
-extern u8 D_800F8C60[0xC4]; /* MP1 GwCommon */
 extern u8 D_800FD8A8_FE4A8[0x12];
 extern u8 D_800FD420_FE020[0x12];
 
@@ -108,7 +108,7 @@ INCLUDE_ASM("asm/nonmatchings/7E850", func_8007DD68_7E968);
 
 void func_8007DF5C_7EB5C(void) {
     if (D_800EB900_EC500 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
     }
     func_8007DCAC_7E8AC();
 }
@@ -117,10 +117,10 @@ void func_8007DF98_7EB98(void) {
     if (_CheckFlag(0) != 0) {
         _ClearFlag(0x40);
         if (D_800EB900_EC500 != 0) {
-            func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, sizeof(D_800F8C60));
+            func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, sizeof(D_800F8C60));
         }
     } else if (D_800EB900_EC500 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
     }
     _ClearFlag(0);
     func_8007DCAC_7E8AC();
@@ -129,7 +129,7 @@ void func_8007DF98_7EB98(void) {
 void func_8007E018_7EC18(void) {
     func_80075060_75C60();
     if (D_800EB900_EC500 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
         func_8001AFD8_1BBD8(0x1BC, (UnkEep*)D_800FD8A8_FE4A8, sizeof(D_800FD8A8_FE4A8));
     }
     func_8007DCAC_7E8AC();
@@ -138,7 +138,7 @@ void func_8007E018_7EC18(void) {
 void func_8007E070_7EC70(void) {
     func_800751E0_75DE0();
     if (D_800EB900_EC500 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, 0x80);
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
         func_8001AFD8_1BBD8(0x1CE, (UnkEep*)D_800FD420_FE020, sizeof(D_800FD420_FE020));
     }
     func_8007DCAC_7E8AC();
@@ -167,7 +167,7 @@ INCLUDE_ASM("asm/nonmatchings/7E850", func_8007E180_7ED80);
 
 void func_8007E224_7EE24(void) {
     if (D_800EB900_EC500 != 0) {
-        func_8001AFD8_1BBD8(0, (UnkEep*)D_800F8C60, sizeof(D_800F8C60));
+        func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, sizeof(D_800F8C60));
     }
     func_8007DCAC_7E8AC();
 }
