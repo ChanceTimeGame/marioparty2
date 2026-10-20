@@ -240,3 +240,11 @@ build/src/B40B0.c.o: export VR4300MUL = ON
 # b2-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
 B2C_MULFIX_UNITS := build/src/54CB0.c.o
 $(B2C_MULFIX_UNITS): export VR4300MUL := ON
+
+# b3-E: per-file flags as MP1/MP3 build the reference files
+# B2430 (MP3 libhmath/vecmag.c): -O2 -ffast-math, KMC as mul fix on
+build/src/B2430.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+build/src/B2430.c.o: export VR4300MUL = ON
+# ADE40 (libultra gu/normalize.c): libultra flags as MP1's src/lib (-O3, unsigned char, mul fix on)
+build/src/ADE40.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+build/src/ADE40.c.o: export VR4300MUL = ON
