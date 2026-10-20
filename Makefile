@@ -321,3 +321,22 @@ $(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# w1-A: 69950 is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled with the KMC
+# VR4300 mul fix on (func_8006CF9C_6DB9C: a nop between dependent mul.s; func_8006D580_6E180: none after a call).
+# The head of its rodata (D3D60-D3F68, func_80068D50_69950 to func_8006DA84_6E684) is carved out of the
+# data blob; KMC as pads the 0x208 bytes to 0x210 (16-byte alignment from the li.d pool), so
+# tools/trim_section.py drops the zero tail as for 58080.
+W1A_CARVED := build/src/69950.c.o
+CARVED_RODATA_UNITS += $(W1A_CARVED)
+W1A_NOPAD := build/asm/data/D3F68.data.s.o
+NOPAD_DATA_PIECES += $(W1A_NOPAD)
+$(W1A_NOPAD): ASFLAGS += --no-pad-sections
+$(W1A_CARVED): export VR4300MUL := ON
+$(W1A_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x208
+	$(V)$(OBJCOPY) --rename-section .rodata=.data $@

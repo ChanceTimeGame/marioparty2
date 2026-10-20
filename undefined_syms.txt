@@ -1,1 +1,2 @@
 
+D_800D330C_D3F0C = 0x800D330C; /* w1-A: func_8006BEE8_6CAE8's "WON\xC4 " literal, for B's asm users until they are C */
