@@ -214,6 +214,10 @@ $(B3D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 B3D_NOPAD_DATA_PIECES := build/asm/data/D3BE8.data.s.o
 NOPAD_DATA_PIECES += $(B3D_NOPAD_DATA_PIECES)
 $(B3D_NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+# w1-C/w1-D: ECE0's whole rodata carved (D2420-D2AA0; func_80012800_13400's table is defined in C beside its INCLUDE_ASM)
+W1D_CARVED_RODATA_UNITS := build/src/ECE0.c.o
+CARVED_RODATA_UNITS += $(W1D_CARVED_RODATA_UNITS)
+$(W1D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # b2-A: units retail built with the KMC assembler VR4300 mul fix on (a nop between mul.s pairs), as MP1/MP3 build their sources
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
@@ -321,10 +325,28 @@ $(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# w1-A/w1-B: 69950 is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled with the KMC
+# VR4300 mul fix on (func_8006CF9C_6DB9C: a nop between dependent mul.s; func_8006D580_6E180: none after a call).
+# Its whole rodata (D3D60-D40C0) is carved out of the data blob; trim_section.py drops any zero tail
+# the li.d pool's 16-byte alignment adds (58080 rule).
+W1_CARVED := build/src/69950.c.o
+CARVED_RODATA_UNITS += $(W1_CARVED)
+$(W1_CARVED): export VR4300MUL := ON
+$(W1_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x360
+	$(V)$(OBJCOPY) --rename-section .rodata=.data $@
+# w1-E: 93A80 (HVQ decoder) builds -O3 like MP1 src/7CD60.c
+build/src/93A80.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
+# w1-E: 93A80's rodata 0xD45E0-0xD4614 (the two HVQ-MPS strings) carved out of the data blob; the
+# yaml pad starts at 0xD4618, after the 8-byte alignment of the next C object's empty .data
+W1E_CARVED := build/src/93A80.c.o
+CARVED_RODATA_UNITS += $(W1E_CARVED)
+$(W1E_CARVED): RODATA_AS_DATA = 1
 
 # w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
 build/src/ECE0.c.o: export VR4300MUL = ON
-# w1-C: ECE0's rodata head (the four jump tables of its first half, 0xD2420-0xD2900) is carved
-W1C_CARVED_RODATA_UNITS := build/src/ECE0.c.o
-CARVED_RODATA_UNITS += $(W1C_CARVED_RODATA_UNITS)
-$(W1C_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
