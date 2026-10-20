@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/hmfman.h"
+#include "game/pad.h"
 
 #define PAGES_MAX 7
 #define ROWS 10
@@ -49,7 +50,6 @@ typedef struct UnkDebug6 {
 
 extern char* D_801069B4_D99A4_Debug[];
 extern s16 gNumOfControllers;
-extern s16 ContBtn[];
 extern s16 D_800FD7FE;
 void func_80029714_2A314(s16, f32, f32, f32);              /* extern */
 void func_8002979C_2A39C(s16, f32, f32, f32);              /* extern */
@@ -150,7 +150,6 @@ extern s32 D_801069E8_D99D8_Debug;
 extern s32 D_801069EC_D99DC_Debug;
 extern s32 D_801069F0_D99E0_Debug;
 extern u8 D_800CD40E;
-extern s16 ContBtnTrg[];
 extern UnkDebug4 D_80106934_D9924_Debug[];
 extern s32 D_801069CC_D99BC_Debug[];
 extern u8 D_801069D8_D99C8_Debug;

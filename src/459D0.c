@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/malloc.h"
+#include "game/pad.h"
 
 /* Debug text with a drop shadow and the button-sequence watcher, from MP1 src/3F5B0.c
    (func_80044F5C and func_80044F78 are MP1 func_8003EE3C and func_8003EE58). The debug readouts
@@ -12,7 +13,6 @@ typedef struct ButtonSeqWork {
 } ButtonSeqWork;
 
 extern s32 fontcolor;
-extern u16 ContBtnTrg[];
 
 s16 DrawDebugText(u16, u16, char*); /* MP1 print8 */
 

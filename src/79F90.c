@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/pad.h"
 
 /* Audio and controller-copy wrappers (MP3 src/audio.c, MP1 src/objmain.c, src/388E0.c). The
    references' names are anonymous, so MP2's are kept. */
@@ -15,8 +16,6 @@ extern u16 D_800CD526_CE126;
 extern s16 D_800FA188_FAD88;
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
-extern u16 ContBtn[4];
-extern u16 ContBtnTrg[4]; /* MP1 ContBtnTrg */
 extern s8 D_801026F8_1032F8[4];
 extern s8 D_800FD3E4_FDFE4[4];
 extern u16 D_800F92D4_F9ED4[4];

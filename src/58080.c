@@ -2,6 +2,7 @@
 #include "game/data.h"
 #include "game/hmfman.h"
 #include "game/object.h"
+#include "game/pad.h"
 
 // MP3s UnkBoard8
 typedef struct {
@@ -44,7 +45,6 @@ extern s16 D_800CC7BC_CD3BC[8];
 extern u16 D_800CC7C4_CD3C4[22][1];
 extern s16 *D_800E1CF0_E28F0;
 extern u16 ContDStkTrg[]; // unknown size
-extern u16 ContBtnTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
 /* Board players, sprites, effects and pause menu helpers. C from MP1 src/4E530.c, src/51200.c,

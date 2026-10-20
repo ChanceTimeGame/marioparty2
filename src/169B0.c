@@ -5,6 +5,7 @@
 
 #include "PR/libaudio.h"
 #include "PR/sptask.h"
+#include "game/pad.h"
 
 #define PAD_COUNT (4)
 
@@ -103,8 +104,6 @@ extern OSMesgQueue D_800FA5E0_FB1E0;
 extern OSMesg D_800D81B8_D8DB8;
 extern u16 D_800F8700_F9300[4];
 extern s8 ContStkX[4];
-extern u16 ContBtn[4];
-extern u16 ContBtnTrg[4];
 extern u16 D_800FC9BE_FD5BE[4];
 extern u16 D_800FD410_FE010[4];
 extern s16 D_800FD468_FE068[4];

@@ -1,8 +1,8 @@
 #include "common.h"
 
 #include "common.h"
+#include "game/pad.h"
 
-extern u16 ContBtnTrg;
 
 void func_80102830_2978C0_name_3D(void) {
     if (_CheckFlag(0) != 0) {
@@ -40,7 +40,7 @@ void func_801028CC_29795C_name_3D(void) {
         func_800451F8_45DF8(3, 0xD);
         func_800453C4_45FC4(0xD, 0xB);
         func_80045488_46088(0xD, 0xE);
-    } while (!(ContBtnTrg & 0x1000));
+    } while (!(ContBtnTrg[0] & 0x1000));
     
     MBHelpWinKill(temp_s0);
     InitFadeOut(0xFF, 8);

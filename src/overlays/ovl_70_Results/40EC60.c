@@ -1,6 +1,6 @@
 #include "common.h"
+#include "game/pad.h"
 
-extern u16 ContBtn[];
 extern s8 D_801076A1_413B01_Results;
 extern s8 D_801076A2_413B02_Results;
 
