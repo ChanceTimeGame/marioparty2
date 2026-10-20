@@ -27,7 +27,6 @@ extern s16 D_800FA652_FB252;
 void func_8004A908_4B508(void);
 void func_8005DF18_5EB18(s32);
 
-/* Board game-state reset (MP1 func_80056B78, MP3 MBSaveInit) */
 
 
 extern s32 D_800CCC10;
@@ -50,7 +49,6 @@ void func_80050AD4_516D4(void);
 void func_80053DEC_549EC(void);
 void func_80053DD0_549D0(void);
 
-/* Board scene teardown (MP1 func_80056AF4, MP3 MBExit); D_800CCC10 traces progress */
 
 
 extern u8 D_01164160[];
@@ -80,7 +78,6 @@ void func_80088640_89240(void);
 void func_80056530_57130(void);
 void func_80062D50_63950(void);
 
-/* Board scene setup (MP1 func_80056A08, MP3 MBObjectSetup) */
 
 
 extern s32 D_800CCC40_CD840[];
@@ -309,6 +306,7 @@ void func_80062D50_63950(void) {
     }
 }
 
+/* Board scene setup (MP1 func_80056A08, MP3 MBObjectSetup) */
 void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3) {
     Process* proc;
     s32* work;
@@ -384,6 +382,7 @@ void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3) {
         omPrcSetStatBit(proc, 0xA0);
     }
 }
+/* Board scene teardown (MP1 func_80056AF4, MP3 MBExit); D_800CCC10 traces progress */
 void func_80063178_63D78(void) {
     D_800CCC10 = 1;
     func_80047B78_48778();
@@ -437,6 +436,7 @@ void func_800632F0_63EF0(s16 arg0) {
 s16 func_800632FC_63EFC(void) {
     return D_800E1F88_E2B88;
 }
+/* Board game-state reset (MP1 func_80056B78, MP3 MBSaveInit) */
 void func_80063308_63F08(void) {
     GW_PLAYER* player;
     GW_SYSTEM* sys = &GwSystem;
@@ -619,7 +619,29 @@ void func_80063844_64444(void) {
     }
 }
 
+/* 1 when five turns are left once the last player of the round has moved (MP1 func_80056FA8) */
+// GCC folds the final compare into xor/sltiu; retail branches to separate return 0/1 (masked 7)
+#ifdef NON_MATCHING
+s32 func_800638C8_644C8(void) {
+    GW_SYSTEM* sys = &GwSystem;
+
+    if (_CheckFlag(0xD) != 0) {
+        return 0;
+    }
+    if ((sys->current_player_index == 3 && func_8004E94C_4F54C() == 0) || (u16)sys->current_player_index >= 4) {
+        if (sys->total_turns >= 0) {
+            if (sys->current_turn != sys->total_turns - 5) {
+                return 0;
+            }
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/63670", func_800638C8_644C8);
+#endif
 
 extern s32 D_800CCC10;
 extern s16 D_800E1F82_E2B82;
