@@ -214,6 +214,10 @@ $(B3D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 B3D_NOPAD_DATA_PIECES := build/asm/data/D3BE8.data.s.o
 NOPAD_DATA_PIECES += $(B3D_NOPAD_DATA_PIECES)
 $(B3D_NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+# w1-D: carved rodata (ECE0 tail D2A70-D2AA0: func_800132EC_13EEC's jump tables)
+W1D_CARVED_RODATA_UNITS := build/src/ECE0.c.o
+CARVED_RODATA_UNITS += $(W1D_CARVED_RODATA_UNITS)
+$(W1D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # b2-A: units retail built with the KMC assembler VR4300 mul fix on (a nop between mul.s pairs), as MP1/MP3 build their sources
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
