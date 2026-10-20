@@ -240,3 +240,8 @@ build/src/B40B0.c.o: export VR4300MUL = ON
 # b2-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
 B2C_MULFIX_UNITS := build/src/54CB0.c.o
 $(B2C_MULFIX_UNITS): export VR4300MUL := ON
+
+# b3-A: main units whose .rodata is carved out of the data blob
+B3A_CARVED := build/src/169B0.c.o
+CARVED_RODATA_UNITS += $(B3A_CARVED)
+$(B3A_CARVED): RODATA_AS_DATA = 1
