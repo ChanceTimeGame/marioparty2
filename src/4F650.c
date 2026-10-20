@@ -2,7 +2,9 @@
 #include "game/malloc.h"
 
 /* Board turn banners. C from MP1 src/47320.c (func_80046720 .. func_80048134); the rest have no
-   reference or differ (near) and stay asm. */
+   reference and stay asm. func_8004F7F0_503F0 (MP1 func_800479B8) stays asm: its u16 table is this
+   unit's rodata (D3928), which cannot be carved while func_8004F5E8_501E8 (no reference) uses the
+   "%d" at D3924. */
 
 typedef struct unkUserData {
     s32 unk0;
@@ -28,6 +30,19 @@ void omDelObj(omObjData*);
 void func_8004F5E8_501E8(void);
 void func_8004F7F0_503F0(s32);
 void func_8006AE14_6BA14(void*);
+f32 HuMathSin(f32);
+void SprScaleSet(s16, s16, f32, f32);
+void SprPosSet(s16, s16, s16, s16);
+void func_80082488_83088(s16, s16, s32);
+extern u8 D_800DF7E0_E03E0[]; /* MP1 D_800D6518 (unkCommonStruct0[]) */
+extern u8 D_800DF854_E0454[]; /* MP1 D_800D6580 */
+extern u8 D_800DF8C8_E04C8[]; /* MP1 D_800D65E8 */
+extern s16 D_800DF800_E0400[];
+extern s16 D_800DF874_E0474[];
+extern s16 D_800DF8E8_E04E8[];
+extern Vec2s D_800DF93C_E053C;
+extern s16 D_800DF940_E0540;
+extern u16 ContBtnTrg[4];
 
 
 void func_8004EA50_4F650(void) {
@@ -63,9 +78,110 @@ void func_8004EA90_4F690(void) {
     D_800DF7C6_E03C6 &= 0xCF;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4F650", func_8004EB58_4F758);
+void func_8004EB58_4F758(omObjData* arg0) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/4F650", func_8004EE40_4FA40);
+    switch (arg0->work[0]) {
+    case 0:
+        arg0->rot.x = arg0->rot.x + 30.0f;
+        arg0->scale.x = HuMathSin(arg0->rot.x) * 0.5f + 1.0f;
+
+        for (i = 1; (((D_800DF944_E0544 + 1) / 10) + 1) >= i; i++) {
+            SprScaleSet(D_800DF8E8_E04E8[D_800DF940_E0540], i, arg0->scale.x, arg0->scale.x);
+        }
+
+        if (arg0->rot.x >= 360.0f) {
+            arg0->rot.x -= 360.0f;
+        }
+
+        return;
+    case 1:
+        for (i = 1; (((D_800DF944_E0544 + 1) / 10) + 1) >= i; i++) {
+            func_80082488_83088(D_800DF8E8_E04E8[D_800DF940_E0540], i, arg0->work[1]);
+        }
+
+        for (i = 1; i < 5; i++) {
+            func_80082488_83088(D_800DF800_E0400[D_800DF93C_E053C.x], i, arg0->work[1]);
+            func_80082488_83088(D_800DF874_E0474[D_800DF93C_E053C.y], i, arg0->work[1]);
+        }
+
+        arg0->work[1] -= 0xA;
+
+        if (arg0->work[1] == 0) {
+            arg0->work[0] = 2;
+            return;
+        }
+        break;
+    case 2:
+        func_8006AE14_6BA14(D_800DF7E0_E03E0);
+        func_8006AE14_6BA14(D_800DF854_E0454);
+        func_8006AE14_6BA14(D_800DF8C8_E04C8);
+        D_800DF7D4_E03D4 = 0;
+        omDelObj(arg0);
+        break;
+    }
+}
+
+void func_8004EE40_4FA40(omObjData* obj) {
+    s32 i;
+
+    switch (obj->work[0]) {
+        case 0:
+            obj->scale.x += 0.2f;
+            SprScaleSet(D_800DF7C8_E03C8, 0, obj->scale.x, obj->scale.x);
+            if (obj->scale.x >= 1.0f) {
+                obj->work[0] = 1;
+                obj->work[1] = 12;
+            }
+            break;
+        case 1:
+            if (obj->work[3] == 6) {
+                obj->work[1]--;
+                for (i = 0; i < 4; i++) {
+                    if (!(gPlayers[i].flags & 1)) {
+                        break;
+                    }
+                }
+                if (i != 4) {
+                    for (i = 0; i < 4; i++) {
+                        if (!(gPlayers[i].flags & 1) && (ContBtnTrg[gPlayers[i].port] & 0xC000)) {
+                            obj->work[0] = 2;
+                        }
+                    }
+                } else if (obj->work[1] == 0) {
+                    obj->work[0] = 2;
+                }
+                if (obj->work[2] == 0) {
+                    SprPosSet(D_800DF7C8_E03C8, 0, 160, (s32)(HuMathSin(obj->rot.x) * 5.0f + 0.5f) + 120);
+                    obj->rot.x += 10.0f;
+                    if (obj->rot.x >= 360.0f) {
+                        obj->rot.x -= 360.0f;
+                    }
+                } else {
+                    obj->work[2]--;
+                }
+            } else if (obj->work[1] != 0) {
+                obj->work[1]--;
+            } else if ((gPlayers[obj->work[3]].flags & 1) || (ContBtnTrg[gPlayers[obj->work[3]].port] & 0xC000)) {
+                obj->work[0] = 2;
+            }
+            break;
+        case 2:
+            SprKill(D_800DF7C8_E03C8);
+            SprAnimKill(D_800DF7CA_E03CA.x);
+            D_800DF7CA_E03CA.x = D_800DF7C8_E03C8 = -1;
+            if (D_800DF7D4_E03D4 != NULL) {
+                func_8006AE14_6BA14(D_800DF7E0_E03E0);
+                func_8006AE14_6BA14(D_800DF854_E0454);
+                func_8006AE14_6BA14(D_800DF8C8_E04C8);
+                omDelObj(D_800DF7D4_E03D4);
+                D_800DF7D4_E03D4 = NULL;
+            }
+            D_800DF7D0_E03D0 = NULL;
+            omDelObj(obj);
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/4F650", func_8004F1A4_4FDA4);
 

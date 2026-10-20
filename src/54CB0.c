@@ -4,8 +4,8 @@
 #include "game/malloc.h"
 
 /* Board spaces and chains. C from MP1 src/engine/spaces.c (BoardSpace there is MP2's SpaceData,
-   ChainData MP3's LinkData) and MP3 ovl_80_shared_board FA250.c (MBMasu*); the rest have no
-   reference or differ (near) and stay asm. */
+   ChainData MP3's LinkData) and MP3 ovl_80_shared_board FA250.c (MBMasu*; func_800556F4_562F4 is
+   MBMasuEventCall); the rest have no reference and stay asm. */
 
 #define SPACE_TYPE_TOTAL 18
 #define SPACE_INDEX_INVALID -1
@@ -51,8 +51,57 @@ void func_800552E8_55EE8(void);
 void func_800553EC_55FEC(void);
 void func_800554EC_560EC(void);
 void func_800555EC_561EC(s16 arg0, void* arg1);
+void func_800558E8_564E8(s16 arg0);
+s16 func_800558F4_564F4(void);
+s16 GetChainSpaceIndexFromAbsSpaceIndex(s16 absIndex, s32 chainIndex);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16 chainIndex, u16 spaceIndex);
+s16 BoardGetChainLength(u16 chainIndex);
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", LoadSpaceTextures);
+typedef struct MbEventListEntry {
+    /* 0x00 */ s16 activation_type;
+    /* 0x02 */ s16 execution_type;
+    /* 0x04 */ void (*event_fn)();
+} MbEventListEntry; // size 0x8
+
+extern s16 D_800E1928_E2528;
+extern u32 D_800CC284_CCE84[];
+extern u32 D_800CC2CC_CCECC[];
+extern u32 D_800CC314_CCF14[];
+extern u32 D_800CC350_CCF50[];
+extern u32 D_800CC398_CCF98[];
+extern s32 D_800E193C_E253C;
+
+void LoadSpaceTextures(s16 type) {
+    s32 i;
+    u32* ptr;
+
+    D_800E1928_E2528 = type;
+    switch (type) {
+        case 0:
+            ptr = D_800CC284_CCE84;
+            break;
+        case 1:
+            ptr = D_800CC2CC_CCECC;
+            break;
+        default:
+            ptr = D_800CC314_CCF14;
+            break;
+        case 3:
+            ptr = D_800CC350_CCF50;
+            break;
+        case 4:
+            ptr = D_800CC398_CCF98;
+            break;
+    }
+
+    for (i = 0; i < SPACE_TYPE_TOTAL; i++) {
+        if (ptr[i] != 0) {
+            D_800E18E0_E24E0[i] = DataRead(ptr[i]);
+        } else {
+            D_800E18E0_E24E0[i] = NULL;
+        }
+    }
+}
 
 void FreeSpaceTextures(void) {
    s32 i;
@@ -148,7 +197,24 @@ s32 MBMasuCreate(s32 arg0, s32 arg1) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_80054AE8_556E8);
+void func_80054AE8_556E8(void) {
+    LinkData* var_s1;
+    s32 i;
+
+    if (D_800CC280_CCE80 != NULL) {
+        D_800CC280_CCE80 = NULL;
+        D_800FCE90_FDA90 = 0;
+        HuMemMemoryFreeTemp(D_800E18D4_E24D4);
+
+        var_s1 = D_800E18D8_E24D8;
+        for (i = 0; i < D_800E18D2_E24D2; i++, var_s1++) {
+            HuMemMemoryFreeTemp(var_s1->spaces);
+        }
+
+        HuMemMemoryFreeTemp(D_800E18D8_E24D8);
+        func_8002D018_2DC18(1, NULL);
+    }
+}
 
 SpaceData *GetSpaceData(s16 arg0) {
     return &D_800E18D4_E24D4[arg0];
@@ -172,9 +238,39 @@ s16 GetChainSpaceIndexFromAbsSpaceIndex(s16 absIndex, s32 chainIndex) {
    return SPACE_INDEX_INVALID;
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_80054C78_55878);
+void func_80054C78_55878(s16 arg0, s16* chainOut, s16* linkOut) {
+    s32 chain;
+    s32 link;
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_80054D3C_5593C);
+    for (chain = 0; chain < D_800E18D2_E24D2; chain++) {
+        for (link = 0; link < BoardGetChainLength(chain); link++) {
+            if (GetAbsSpaceIndexFromChainSpaceIndex(chain, link) == arg0) {
+                *chainOut = chain;
+                *linkOut = link;
+                return;
+            }
+        }
+    }
+}
+
+s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2) {
+    s16 link;
+    s32 i;
+
+    for (i = 0; i < D_800E18D2_E24D2; i++) {
+        if (*arg1 == i) {
+            continue;
+        }
+
+        link = GetChainSpaceIndexFromAbsSpaceIndex(arg0, (s16)i);
+        if (link != -1) {
+            *arg1 = i;
+            *arg2 = link;
+            return 0;
+        }
+    }
+    return -1;
+}
 
 void func_80054DEC_559EC(void) {
     LinkData *chain;
@@ -440,7 +536,51 @@ void EventTableHydrate(EventTableEntry *table) {
    }
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_800556F4_562F4);
+s32 func_800556F4_562F4(s16 arg0, s16 arg1) {
+    MbEventListEntry* entry;
+    Process* proc;
+    s16 prevSpace;
+    s32 ret;
+
+    if ((GwSystem.current_player_index == 4) && (arg1 != 1)) {
+        return 0;
+    }
+
+    switch (arg0) {
+        case -2: entry = D_800E192C_E252C; break;
+        case -3: entry = D_800E1930_E2530; break;
+        case -4: entry = D_800E1934_E2534; break;
+        case -5: entry = D_800E1938_E2538; break;
+        default: entry = GetSpaceData(arg0)->event_list; break;
+    }
+
+    ret = 0;
+    prevSpace = func_800558F4_564F4();
+    func_800558E8_564E8(arg0);
+
+    if (entry != NULL) {
+        while (entry->activation_type != 0) {
+            if (entry->activation_type == arg1) {
+                D_800E193C_E253C = 0;
+                switch (entry->execution_type) {
+                    case 1:
+                        entry->event_fn();
+                        break;
+                    case 2:
+                        proc = HuPrcCurrentGet();
+                        HuPrcChildLink(proc, omAddPrcObj(entry->event_fn, 0x4800, 0, 0));
+                        HuPrcChildWatch();
+                        break;
+                }
+                ret |= D_800E193C_E253C;
+            }
+            entry++;
+        }
+    }
+
+    func_800558E8_564E8(prevSpace);
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/54CB0", func_800558DC_564DC);
 

@@ -3,7 +3,8 @@
 
 /* Board background (HVQ tiles streamed by two threads) and the board camera. C from MP1 src/48D90.c
    and MP3 ovl_80_shared_board FA250.c / ovl_81_name CCD20.c (their copies of the same code); the
-   rest have no reference or differ (near) and stay asm. MP1's unk20 is MP3's OverlayBgEntry. */
+   rest have no reference and stay asm (func_80053230_53E30 is in the permuter list). MP1's unk20 is
+   MP3's OverlayBgEntry. The unit builds with the KMC mul fix on (Makefile b3-C). */
 
 #define SlideReadUint(buffer, src)    \
     do {                              \
@@ -106,7 +107,7 @@ f32 HuVecDistance(Vec* a, Vec* b);
 f32 HuVecGetLength3F(Vec* vec);
 void HuVecMulScalar(Vec*, f32, Vec*);
 void MBVecNormalize(Vec*);
-void MBDBackCreate(omObjData*, s32);
+void MBDBackCreate(s32, s32);
 void MBBackOffsetSet(s16, s16);
 s32 dmaRead(u32 src, u8* dest, s32 size);
 void func_8002D018_2DC18(s32, void* func);
@@ -114,6 +115,7 @@ void func_800512F8_51EF8(void*);
 void func_800514F0_520F0(void);
 OverlayBgEntry* func_800518B8_524B8(u16);
 void func_80051BCC_527CC(Gfx**, void*, s16, s16);
+void func_8003FB9C_4079C(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 void func_80053DEC_549EC(void);
 s16 func_8007C058_7CC58(u8, u8, u8);
 void func_8007C094_7CC94(s16);
@@ -125,6 +127,20 @@ void func_800513FC_51FFC(void);
 void func_8005159C_5219C(void);
 void func_80051720_52320(void);
 u16 func_80051834_52434(s32, s32);
+void func_80051500_52100(void);
+void func_80053230_53E30(void);
+extern Vec D_800E18C0_E24C0;
+extern s32 D_800CC224_CCE24;
+extern s32 D_800CC270_CCE70;
+extern s32 D_801027B8_1033B8;
+s32 func_80051864_52464(u16 arg0);
+void func_80052B4C_5374C(Gfx** gfx, s32 arg1, u8 arg2);
+void func_80051788_52388(void);
+void func_80052FE8_53BE8(void);
+void func_80053608_54208(f32);
+void func_8005390C_5450C(s32);
+void MBCameraSpeedSet(f32);
+void func_80052E68_53A68(f32);
 
 
 void func_80050A30_51630(u8* arg0) {
@@ -155,10 +171,61 @@ void func_80050AE0_516E0(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", MBDBackCreate);
+void MBDBackCreate(s32 arg0, s32 arg1) {
+    s32* temp_v0;
+    u32 temp_s0;
+    u32* temp_v0_2;
+    UnkModelStruct* temp_v0_3;
+
+    D_801027B8_1033B8 = arg0;
+    D_800DF9B8_E05B8 = D_800DF9B0_E05B0 + D_800CC200_CCE00[arg0];
+    temp_v0 = HuMemMemoryAllocTemp(sizeof(HVQHeader));
+    dmaRead(D_800DF9B8_E05B8, (u8*)temp_v0, sizeof(HVQHeader));
+    arg0 = *temp_v0;
+    HuMemMemoryFreeTemp(temp_v0);
+    arg0++;
+    temp_s0 = arg0 * 4;
+    temp_v0_2 = HuMemMemoryAllocTemp(temp_s0);
+    D_800CC204_CCE04 = temp_v0_2;
+    dmaRead(D_800DF9B8_E05B8 + 4, (u8*)temp_v0_2, temp_s0);
+    temp_v0_3 = HuMemMemoryAllocTemp(sizeof(UnkModelStruct));
+    D_800CC208_CCE08 = temp_v0_3;
+    dmaRead(D_800DF9B8_E05B8 + D_800CC204_CCE04[0], (u8*)&temp_v0_3->unk0, sizeof(UnkModelStruct));
+    D_800CC208_CCE08->unk18 *= 5.0f;
+    D_800CC208_CCE08->unk1C *= 5.0f;
+    D_800CC208_CCE08->unk20 *= 5.0f;
+    D_800CC208_CCE08->unk24 *= 5.0f;
+    D_800CC208_CCE08->unk28 *= 5.0f;
+    D_800CC208_CCE08->unk2C *= 5.0f;
+    if (D_800CC208_CCE08->unk1C >= 5000.0f) {
+        D_800CC208_CCE08->unk18 /= 1.2f;
+        D_800CC208_CCE08->unk1C /= 1.2f;
+        D_800CC208_CCE08->unk20 /= 1.2f;
+        D_800CC208_CCE08->unk14 /= 1.2f;
+    }
+    D_800DFE50_E0A50 = HuMemMemoryAllocTemp(func_80051864_52464(0));
+    dmaRead(D_800DF9B8_E05B8 + D_800CC204_CCE04[1], D_800DFE50_E0A50, func_80051864_52464(0));
+    D_800DF9C4_E05C4 = 0;
+    D_800DF9C2_E05C2 = 0;
+    D_800DF9C6_E05C6 = D_800CC208_CCE08->unk0 * D_800CC208_CCE08->unk8 / 2;
+    D_800DF9C8_E05C8 = D_800CC208_CCE08->unk4 * D_800CC208_CCE08->unkC / 2;
+    D_800DF9C0_E05C0 = 1;
+    func_8002D018_2DC18(0, func_80052B4C_5374C);
+    func_80051788_52388();
+    func_800514F0_520F0();
+    if (arg1 != 0) {
+        func_80052FE8_53BE8();
+    }
+    func_80053608_54208(1.0f);
+    func_8005390C_5450C(0xFF);
+    MBCameraSpeedSet(-1.0f);
+    D_800CC214_CCE14 = 0.0f;
+    D_800CC218_CCE18 = 0.0f;
+    func_80052E68_53A68(1.0f);
+}
 
 void func_80050E00_51A00(s32 obj) {
-    MBDBackCreate((omObjData*)obj, 1);
+    MBDBackCreate(obj, 1);
 }
 
 void MBDBackKill(void) {
@@ -445,7 +512,79 @@ void func_80051A74_52674(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80051BCC_527CC);
+#define gSPScisTextureRectangle_MP(pkt,xl,yl,xh,yh,tile,s,t,dsdx,dtdy) { \
+    Gfx *_g = (Gfx *)(pkt); \
+    _g->words.w0 = (_SHIFTL(G_TEXRECT, 24, 8) | \
+    _SHIFTL(MAX((s16)(xh),0), 12, 12) | \
+    _SHIFTL(MAX((s16)(yh),0), 0, 12)); \
+    _g->words.w1 = (_SHIFTL((tile), 24, 3) | \
+    _SHIFTL(MAX((s16)(xl),0), 12, 12) | \
+    _SHIFTL(MAX((s16)(yl),0), 0, 12)); \
+    gImmp1(pkt, G_RDPHALF_1, \
+    (_SHIFTL(((s) - (((s16)(xl) < 0) ? (((s16)(dsdx) < 0) ? (MAX((((s16)(xl)*(s16)(dsdx))>>7),0)) : (MIN((((s16)(xl)*(s16)(dsdx))>>7),0))) : 0)), 16, 16) |\
+    _SHIFTL(((t) - (((s32)(yl) < 0) ? (((s16)(dtdy) < 0) ? (MAX((((s16)(yl)*(s16)(dtdy))>>7),0)) : (MIN((((s16)(yl)*(s16)(dtdy))>>7),0))) : 0)), 0, 16))); \
+    gImmp1(pkt, G_RDPHALF_2, (_SHIFTL((s16)(dsdx), 16, 16) | _SHIFTL((s16)(dtdy), 0, 16))); \
+}
+
+void func_80051BCC_527CC(Gfx** arg0, void* arg1, s16 arg2, s16 arg3) {
+    f32 temp_f20;
+    f32 temp_f22;
+
+    temp_f20 = ((f32) arg2 + (D_800E18A8_E24A8[0] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[0] / 4.0f);
+    temp_f22 = ((f32) arg3 + (D_800E18A8_E24A8[1] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[1] / 4.0f);
+    func_8003FB9C_4079C(arg0, (s32)arg1, 0, 2, 0x40, 0x20, 0, 0, 0x40, 0x20, 0, 1, 1, 6, 5, 0, 0);
+    if (!(D_800DF9C0_E05C0 & 0x10)) {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),
+            /*yl*/(temp_f22 * D_800CC210_CCE10 * 4.0f),
+            /*xh*/(temp_f20 + 64.0f) * D_800CC210_CCE10 * 4.0f,
+            /*yh*/(temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f,
+            /*tile*/0,
+            /*s*/0,
+            /*t*/0,
+            /*dsdx*/(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    } else {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/((256.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 * D_800CC210_CCE10 * 4.0f)),
+            /*xh*/((320.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0x7e0,
+            /*t*/0,
+            /*dsdx*/-(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    }
+    func_8003FB9C_4079C(arg0, (s32)arg1 + 0x1000, 0, 2, 0x40, 0x10, 0, 0, 0x40, 0x10, 0, 1, 1, 6, 4, 0, 0);
+    if (!(D_800DF9C0_E05C0 & 0x10)) {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*xh*/((temp_f20 + 64.0f) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 48.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0,
+            /*t*/0,
+            /*dsdx*/(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    } else {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/((256.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*xh*/((320.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 48.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0x7e0,
+            /*t*/0,
+            /*dsdx*/-(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    }
+}
 
 void func_80052B4C_5374C(Gfx** gfx, s32 arg1, u8 arg2) {
     s16 prev;
@@ -544,7 +683,38 @@ Process* MBDCameraZoomMotStart(f32 arg0) {
     return D_800E18B4_E24B4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80052FE8_53BE8);
+void func_80052FE8_53BE8(void) {
+    f32 temp_f2;
+    Process* temp_v0;
+    f32* pFloat = (f32*)D_800CC208_CCE08;
+
+    temp_f2 = (D_800CC208_CCE08->unk4 * D_800CC208_CCE08->unkC) / 240.0f;
+    D_800E18BC_E24BC = temp_f2;
+    D_800FDC88_FE888.x = pFloat[6];
+    D_800FDC88_FE888.y = pFloat[7];
+    D_800FDC88_FE888.z = pFloat[8];
+    D_800FDC74_FE874.x = pFloat[9];
+    D_800FDC74_FE874.y = pFloat[10];
+    D_800FDC74_FE874.z = pFloat[11];
+    D_80101060_101C60.x = pFloat[12];
+    D_80101060_101C60.y = pFloat[13];
+    D_80101060_101C60.z = pFloat[14];
+    D_800E18C0_E24C0.x = (temp_f2 * 640.0f);
+    D_800E18C0_E24C0.y = (temp_f2 * 480.0f);
+    D_800E18C0_E24C0.z = 511.0f;
+    D_800E18A8_E24A8[0] = 640.0f;
+    D_800E18A8_E24A8[1] = 480.0f;
+    D_800E18A0_E24A0.x = 159.5f;
+    D_800E18A0_E24A0.y = 119.5f;
+    D_800E18B8_E24B8 = 1.0f;
+    temp_v0 = omAddPrcObj(func_80053230_53E30, 0x1001, 0, 0);
+    D_800E18B0_E24B0 = temp_v0;
+    omPrcSetStatBit(temp_v0, 0x80);
+    D_800E18B4_E24B4 = NULL;
+    Hu3DCamSetPerspective(0, ((f32*)D_800CC208_CCE08)[4], 10.0f, 200.0f);
+    Hu3DCamSetPositionOrientation(0, &D_800FDC88_FE888, &D_800FDC74_FE874, &D_80101060_101C60);
+    Hu3DCamUpdateMtx(0);
+}
 
 void func_800531AC_53DAC(void) {
     if (D_800E18B0_E24B0 != NULL) {
@@ -741,9 +911,16 @@ INCLUDE_ASM("asm/nonmatchings/51630", func_80053EEC_54AEC);
 
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053F30_54B30);
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053F54_54B54);
+void func_80053F54_54B54(void) {
+    D_800CC224_CCE24 = D_800CC270_CCE70;
+    func_800514F0_520F0();
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053F7C_54B7C);
+void func_80053F7C_54B7C(void) {
+    D_800CC270_CCE70 = D_800CC224_CCE24;
+    D_800CC224_CCE24 = 0;
+    func_80051500_52100();
+}
 
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053FAC_54BAC);
 
@@ -754,7 +931,7 @@ void func_80053FC8_54BC8(void) {
 }
 
 void func_80053FE8_54BE8(s32 arg0) {
-    MBDBackCreate((omObjData*)arg0, 1);
+    MBDBackCreate(arg0, 1);
     omDelPrcObj(D_800E18B0_E24B0);
     D_800E18B0_E24B0 = NULL;
 }
