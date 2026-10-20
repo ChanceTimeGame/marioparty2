@@ -71,11 +71,6 @@ void func_8002742C_2802C(void);
    src/mallocblock.c) and model manager helpers (MP3 src/hmfman.c, MP1 src/24740.c). */
 
 typedef struct {
-    Mtx perspMtx;
-    Mtx lookAtMtx;
-} HuCamMtxs;
-
-typedef struct {
     /* 0x00 */ s8 r;
     /* 0x01 */ s8 g;
     /* 0x02 */ s8 b;
@@ -89,8 +84,8 @@ typedef struct {
     /* 0x00 */ s16 unk00;
     /* 0x02 */ UnkLightData_unk02 unk02[8];
     /* 0x3A */ char unk3A[6];
-    /* 0x40 */ Light unk40[3][8][8];
-} UnkLightData; // Size 0xC40
+    /* 0x40 */ Light unk40[4][8][8];
+} UnkLightData; // Size 0x1040
 
 extern HuCamMtxs *D_800FC88C_FD48C;
 extern Light *D_800F8424_F9024;
@@ -99,7 +94,24 @@ extern u8 D_800FDBE0_FE7E0;
 
 f32 func_800B1830_B2430(f32);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800268D0_274D0);
+/* MP3 HmfLightInit (src/hmflight.c) */
+void func_800268D0_274D0(void) {
+    s16 var_a1;
+
+    if (D_800FA620_FB220 == NULL) {
+        D_800FA620_FB220 = HuMemAlloc(sizeof(UnkLightData));
+    }
+    for (var_a1 = 0; var_a1 < 8; var_a1++) {
+        D_800FA620_FB220->unk02[var_a1].stat = 0;
+        D_800FA620_FB220->unk02[var_a1].r =
+            D_800FA620_FB220->unk02[var_a1].g =
+                D_800FA620_FB220->unk02[var_a1].b = 0x40;
+        D_800FA620_FB220->unk02[var_a1].unk04 =
+            D_800FA620_FB220->unk02[var_a1].unk05 = 0;
+        D_800FA620_FB220->unk02[var_a1].unk06 = 100;
+    }
+    D_800FA620_FB220->unk00 = 1;
+}
 
 void func_80026994_27594(void) {
 }
@@ -414,7 +426,51 @@ void func_80027580_28180(void* arg0, s16 arg1) {
     var_v1->unk_06 = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_800275C4_281C4);
+extern void* D_800F64D0_F70D0[];
+extern void* D_800FDEB0_FEAB0[];
+extern s16 D_800C9E52_CAA52;
+void osSyncPrintf(const char* fmt, ...);
+/* "%x\n" and "Model Entry Over!\n": 274D0's rodata (D2DF8) is not carved while
+   func_80027FA4_28BA4 is asm, so C names the strings, as MP3's hmfman.c/mallocblock.c do */
+extern char D_800D21F8_D2DF8[];
+extern char D_800D21FC_D2DFC[];
+
+/* MP3 HuMemDebugCheck (src/mallocblock.c) */
+s32 func_800275C4_281C4(void) {
+    unkMallocBlockStruct* block;
+    s16 i;
+    s16 count;
+    s16 var_v1;
+    s32 size;
+
+    block = D_801027FC_1033FC->unk_14;
+    size = 0;
+    count = 0;
+    while (block != D_800FC830_FD430) {
+        D_800F64D0_F70D0[count] = block->unk_00;
+        size += block->unk_08;
+        block = block->unk_14;
+        count++;
+    }
+
+    if ((D_800C9E52_CAA52 != 0) && (D_800C9E52_CAA52 != count)) {
+        for (i = 0; i < count; i++) {
+            for (var_v1 = 0; var_v1 < D_800C9E52_CAA52; var_v1++) {
+                if (D_800FDEB0_FEAB0[var_v1] == D_800F64D0_F70D0[i])
+                    break;
+            }
+            if (var_v1 == D_800C9E52_CAA52) {
+                osSyncPrintf(D_800D21F8_D2DF8, D_800F64D0_F70D0[i]);
+            }
+        }
+    }
+
+    D_800C9E52_CAA52 = count;
+    for (i = 0; i < count; i++) {
+        D_800FDEB0_FEAB0[i] = D_800F64D0_F70D0[i];
+    }
+    return size;
+}
 
 void func_800277B0_283B0(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 arg3, u16 arg4, u8 arg5) {
     s16 i;
@@ -434,9 +490,179 @@ void func_800277B0_283B0(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 
     D_800F8F80_F9B80[0] = D_800F8F80_F9B80[1] = NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", Hu3DModelCreate);
+s16 func_80038F0C_39B0C(u8*);
+s16 func_80038E38_39A38(u8*, HmfData*);
+void* func_8001EB18_1F718(void*);
+u8 func_8003BA2C_3C62C(u8*, void*);
+void func_8001D190_1DD90(HmfData*, void*, s32); /* Hmfload */
+void func_8001D9D4_1E5D4(HmfData*);
+s16 func_8002D5B4_2E1B4(s16);
+void func_8002FD38_30938(HmfData*);
+extern s16 D_8010106C_101C6C;
+extern s16 D_800FA1AA_FADAA;
+extern s32 D_800F64C4_F70C4;
+void func_800B37C0_B43C0(f32*); /* guMtxIdentF */
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80027D3C_2893C);
+/* MP3 Hu3DModelCreate (src/hmfman.c) */
+s16 Hu3DModelCreate(u8 *data, u32 arg1) {
+    HmfModel *modelP;
+    HmfData *hmf;
+    void *var_a1;
+    s16 modelId;
+    s16 var_a0;
+
+    for (modelId = 0; modelId < HU3D_MODEL_MAX; modelId++) {
+        if (D_800FC834_FD434[modelId].hmf == NULL) {
+            break;
+        }
+    }
+    if (modelId == HU3D_MODEL_MAX) {
+        osSyncPrintf(D_800D21FC_D2DFC);
+        return -1;
+    }
+    D_8010106C_101C6C = 10000 + modelId * 2;
+    D_800FA1AA_FADAA = 10001 + modelId * 2;
+    modelP = &D_800FC834_FD434[modelId];
+    modelP->unk08 = 0xFF;
+    hmf = modelP->hmf = HuMemAlloc(sizeof(HmfData));
+    hmf->unk0E = D_8010106C_101C6C;
+    if (data[0] == 'M' && data[1] == 'T') {
+        hmf->unk14 = 0;
+        hmf->unk88 = 0;
+        hmf->unk38 = 0;
+        hmf->unkC8 = 0;
+        if (data[2] == 'N' && data[3] == 'X') {
+            modelP->unk02 = func_80038F0C_39B0C(data);
+            arg1 &= ~(0x10 | 0x1);
+        } else {
+            var_a1 = data + 8;
+            if (data[8] == 'M') {
+                if (data[9] == 'T' && data[10] == 'N' && data[11] == 'X') {
+                    modelP->unk02 = func_80038F0C_39B0C(var_a1);
+                    arg1 &= ~0x11;
+                    var_a1 = func_8001EB18_1F718(data + 12);
+                } else {
+                    modelP->unk02 = 0xFF;
+                }
+            } else {
+                modelP->unk02 = 0xFF;
+            }
+            modelP->unk08 = func_8003BA2C_3C62C(data, var_a1);
+        }
+    } else {
+        func_8001D190_1DD90(hmf, data, arg1);
+        if (hmf->unk38 != 0) {
+            func_80027580_28180(hmf->unk54, D_800FA1AA_FADAA);
+            modelP->unk10 = func_8002D5B4_2E1B4(modelId);
+        } else {
+            modelP->unk10 = -1;
+        }
+        hmf->unk00 = (arg1 >> 10) & 7;
+        modelP->unk18 = arg1;
+        modelP->unk02 = func_80038E38_39A38(data, hmf);
+        if (modelP->unk02 != 0xFF) {
+            if (hmf->unk14 == 0) {
+                func_8001D9D4_1E5D4(hmf);
+            } else {
+                goto skip;
+            }
+        }
+    }
+    if (hmf->unk14 == 0) {
+        arg1 |= 4;
+    }
+skip:
+    modelP->unk18 = arg1;
+    if (arg1 & 8) {
+        D_800FD440_FE040(data);
+    }
+    if (arg1 & 1) {
+        D_800F64C4_F70C4 = modelP->unk18;
+        func_8002FD38_30938(hmf);
+    }
+    hmf->unk0B = 1;
+    if (arg1 & 0x10) {
+        for (var_a0 = 0; var_a0 < hmf->unk10; var_a0++) {
+            if (hmf->unk64[var_a0].unk50 & 0x06000000) {
+                break;
+            }
+        }
+        if (var_a0 == hmf->unk10) {
+            func_80027274_27E74(D_8010106C_101C6C);
+        }
+    }
+    modelP->unk40 =
+        modelP->unk03 =
+            modelP->unk48 =
+                modelP->unk4C =
+                    modelP->unk05 =
+                        modelP->unk54 =
+                            modelP->unk58 =
+                                modelP->unk07 =
+                                    modelP->unk60 = 0;
+    modelP->unk5C = 1.0f;
+    modelP->unk50 = 1.0f;
+    modelP->unk44 = 1.0f;
+    modelP->unk06 = -1;
+    modelP->unk04 = -1;
+    modelP->unk09 = -1;
+    modelP->pos.x = modelP->pos.y = modelP->pos.z = 0.0f;
+    modelP->rot.x = modelP->rot.y = modelP->rot.z = 0.0f;
+    modelP->scale.x = modelP->scale.y = modelP->scale.z = 1.0f;
+    modelP->unk01 = -1;
+    modelP->unk00 = 0;
+    modelP->unkB4 = 0;
+    modelP->unkB8 = 0;
+    func_800B37C0_B43C0(modelP->mtx);
+    return modelId;
+}
+
+/* MP3 Hu3DModelLink (src/hmfman.c) */
+s16 func_80027D3C_2893C(s16 linkMdlId) {
+    HmfModel *modelP;
+    s16 modelId;
+
+    for (modelId = 0; modelId < HU3D_MODEL_MAX; modelId++) {
+        if (D_800FC834_FD434[modelId].hmf == NULL) {
+            break;
+        }
+    }
+    if (modelId == HU3D_MODEL_MAX) {
+        osSyncPrintf(D_800D21FC_D2DFC);
+        return -1;
+    }
+    modelP = &D_800FC834_FD434[modelId];
+    modelP->hmf = D_800FC834_FD434[linkMdlId].hmf;
+    modelP->unk18 = D_800FC834_FD434[linkMdlId].unk18;
+    modelP->unk00 = D_800FC834_FD434[linkMdlId].unk00;
+    modelP->unk10 = D_800FC834_FD434[linkMdlId].unk10;
+    modelP->unk02 = D_800FC834_FD434[linkMdlId].unk02;
+    modelP->hmf->unk0B++;
+    modelP->unk40 =
+        modelP->unk03 =
+            modelP->unk48 =
+                modelP->unk4C =
+                    modelP->unk05 =
+                        modelP->unk54 =
+                            modelP->unk58 =
+                                modelP->unk07 =
+                                    modelP->unk60 = 0;
+    modelP->unk5C = 1.0f;
+    modelP->unk50 = 1.0f;
+    modelP->unk44 = 1.0f;
+    modelP->unk06 = -1;
+    modelP->unk04 = -1;
+    modelP->unk09 = -1;
+    modelP->unk08 = -1;
+    modelP->unkB4 = 0;
+    modelP->unkB8 = 0;
+    modelP->pos.x = modelP->pos.y = modelP->pos.z = 0.0f;
+    modelP->rot.x = modelP->rot.y = modelP->rot.z = 0.0f;
+    modelP->scale.x = modelP->scale.y = modelP->scale.z = 1.0f;
+    modelP->unk01 = -1;
+    func_800B37C0_B43C0(modelP->mtx);
+    return modelId;
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80027FA4_28BA4);
 
@@ -462,7 +688,31 @@ s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx **, s32, s32), u8 arg2) {
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800283DC_28FDC);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002864C_2924C);
+void func_800283DC_28FDC(s16);
+void func_8003EA44_3F644(void);
+void func_8003E984_3F584(void);
+void func_8003BAF0_3C6F0(void);
+void func_8002F1A4_2FDA4(void);
+void func_80039074_39C74(void);
+void func_8002C5D8_2D1D8(void);
+
+/* MP1 func_80024754 (src/24740.c) */
+void func_8002864C_2924C(void) {
+    s16 i;
+
+    for (i = 0; i < HU3D_MODEL_MAX; i++) {
+        if (D_800FC834_FD434[i].hmf != NULL) {
+            func_800283DC_28FDC(i);
+        }
+    }
+    func_8003EA44_3F644();
+    func_8003E984_3F584();
+    func_8003BAF0_3C6F0();
+    func_8002F1A4_2FDA4();
+    func_80039074_39C74();
+    func_8002C5D8_2D1D8();
+    D_800F8F80_F9B80[0] = D_800F8F80_F9B80[1] = NULL;
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800286FC_292FC);
 
@@ -617,7 +867,17 @@ void func_80029A34_2A634(s16 arg0, char* arg1, s16 arg2) {
     func_8003847C_3907C(D_800FC834_FD434[arg0].hmf, arg1, D_800FC834_FD434[arg2].hmf);
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80029A8C_2A68C);
+s32 func_800308D8_314D8(HmfData*);
+void func_8002A00C_2AC0C(s16);
+
+/* MP1 func_80025AD4 (src/24740.c) */
+void func_80029A8C_2A68C(s16 arg0) {
+    func_800298A4_2A4A4(arg0, 1, 1);
+    D_800F64C4_F70C4 = D_800FC834_FD434[arg0].unk18;
+    if (func_800308D8_314D8(D_800FC834_FD434[arg0].hmf)) {
+        func_8002A00C_2AC0C(arg0);
+    }
+}
 
 void func_80029AFC_2A6FC(s16 arg0) {
     HmfData* model = D_800FC834_FD434[arg0].hmf;
@@ -655,13 +915,18 @@ f32 func_80029CE4_2A8E4(s16 arg0) {
     return D_800FC834_FD434[arg0].unk40;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80029D0C_2A90C);
+/* MP1 func_80025D40 (src/24740.c) */
+f32 func_80029D0C_2A90C(s16 arg0) {
+    return D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02].unk02;
+}
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80029D5C_2A95C);
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80029DA4_2A9A4);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80029E14_2AA14);
+u8 func_80029E14_2AA14(s16 arg0) {
+    return D_800FC834_FD434[arg0].unk02;
+}
 
 f32 func_80029E3C_2AA3C(s16 idx) {
     if (D_800FC834_FD434[idx].unk04 == 0xFF) {
@@ -672,9 +937,13 @@ f32 func_80029E3C_2AA3C(s16 idx) {
 
 INCLUDE_ASM("asm/nonmatchings/274D0", func_80029E80_2AA80);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80029EDC_2AADC);
+void func_80029EDC_2AADC(s16 arg0, u8 arg1) {
+    D_800FC834_FD434[arg0].unk01 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_80029F04_2AB04);
+u8 func_80029F04_2AB04(s16 arg0) {
+    return D_800FC834_FD434[arg0].unk01;
+}
 
 void func_80029F2C_2AB2C(s16 arg0, s32 arg1) {
     func_800298A4_2A4A4(arg0, 0x1C00, arg1);

@@ -2,7 +2,7 @@
 #include "game/camera.h"
 
 /* Camera count setup and the camera draw processes. Same code as Mario Party 1's
-   src/engine/ovlman.c (func_800178A0 etc.). */
+   src/engine/ovlman.c (func_800178A0, func_80017940 etc.). */
 
 extern u8 D_800C99C0_CA5C0;
 extern u8 D_800C99C1_CA5C1;
@@ -29,7 +29,16 @@ s32 func_80018E78_19A78(void) {
     return temp_s0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/19A30", func_80018ED0_19AD0);
+void func_80018ED0_19AD0(u8 arg0) {
+    s32 i;
+
+    D_800C99C0_CA5C0 = arg0;
+    func_80020070_20C70(D_800C99C0_CA5C0);
+    for (i = 0; i < D_800C99C0_CA5C0; i++) {
+        D_800C9B80_CA780[i].fov[0] = 45.0f;
+    }
+    D_800C99C1_CA5C1 = 0;
+}
 
 u8 func_80018F58_19B58(s32 arg0) {
     s32 var_a0;

@@ -71,7 +71,12 @@ typedef struct HmfTexRef {
 } HmfTexRef; /* size = 0x10; MP1 unk2C0C0Struct80 */
 
 typedef struct HmfMat {
-    /* 0x00 */ char unk00[0xC];
+    /* 0x00 */ u8 unk00; /* index */
+    /* 0x01 */ u8 unk01[3]; /* colour */
+    /* 0x04 */ u8 unk04;
+    /* 0x05 */ u8 unk05[3]; /* second colour (vertex colour of unlit faces) */
+    /* 0x08 */ u8 unk08;
+    /* 0x09 */ u8 unk09[3];
     /* 0x0C */ u8 unk0C; /* flags; s8 or u8 both match */
     /* 0x0D */ u8 unk0D;
 } HmfMat; /* size = 0xE */
@@ -99,9 +104,16 @@ typedef struct HmfDisp {
 } HmfDisp; /* MP3 HmfModelData_Unk64_Unk3C_Struct */
 
 typedef struct HmfPart {
-    /* 0x00 */ char unk00[0x50];
+    /* 0x00 */ s16 unk00; /* material colour track target */
+    /* 0x02 */ s16 unk02; /* alpha */
+    /* 0x04 */ s16 unk04; /* face count */
+    /* 0x06 */ char unk06[0x28];
+    /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
+    /* 0x2F */ char unk2F[0x21];
     /* 0x50 */ s32 unk50;
-    /* 0x54 */ char unk54[0x14];
+    /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
+    /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */
+    /* 0x5C */ char unk5C[0xC];
 } HmfPart; /* size = 0x68; MP3 HmfModelData_Unk64_Unk60_Struct */
 
 typedef struct ColVtx {
@@ -111,34 +123,46 @@ typedef struct ColVtx {
 } ColVtx;
 
 typedef struct HitXform {
-    /* 0x00 */ s16 unk00;
-    /* 0x02 */ s16 unk02;
-    /* 0x04 */ s16 unk04;
+    /* 0x00 */ s16 unk00; /* part index, < 0 for none */
+    /* 0x02 */ s16 unk02; /* offset to the next sibling */
+    /* 0x04 */ s16 unk04; /* offset to the first child */
     /* 0x06 */ char unk06[2];
     /* 0x08 */ Vec unk08;
     /* 0x14 */ Vec unk14;
-    /* 0x20 */ Vec unk20;
-} HitXform;
+    /* 0x20 */ Vec unk20; /* scale */
+    /* 0x2C */ Vec unk2C; /* translation */
+    /* 0x38 */ Vec unk38; /* rotation */
+    /* 0x44 */ u8 unk44;
+    /* 0x45 */ u8 unk45;
+    /* 0x46 */ char unk46[2];
+    /* 0x48 */ struct HmfData* unk48;
+    /* 0x4C */ f32 unk4C[4][4];
+} HitXform; /* size 0x8C; MP1 unk2C0C0Struct40 */
 
 typedef struct HmfData {
     /* 0x00 */ u8 unk00;
     /* 0x01 */ char unk01[9];
     /* 0x0A */ u8 unk0A;
-    /* 0x0B */ char unk0B[3];
+    /* 0x0B */ u8 unk0B; /* link count */
+    /* 0x0C */ char unk0C[2];
     /* 0x0E */ s16 unk0E; /* MP1 0x68; MP3's s16 (s16/u16 both match) */
     /* 0x10 */ s16 unk10;
     /* 0x12 */ s16 unk12; /* texture count; MP1 0x6C */
-    /* 0x14 */ char unk14[4];
+    /* 0x14 */ s16 unk14; /* MP3 HmfData.unk14 */
+    /* 0x16 */ s16 unk16; /* motion object count (unk84) */
     /* 0x18 */ s16 unk18; /* vertex count; MP1 0x72 */
     /* 0x1A */ s16 unk1A; /* MP1 0x74 */
     /* 0x1C */ char unk1C[2];
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ char unk20[0x1C];
+    /* 0x20 */ char unk20[0x18];
+    /* 0x38 */ void* unk38; /* the MAP1 chunk */
     /* 0x3C */ HmfDisp* unk3C; /* or a single Gfx* list, by flag */
     /* 0x40 */ HmfVtx* unk40; /* MP1 0x04 */
     /* 0x44 */ HmfVtx* unk44[4]; /* per frame buffer; MP1 0x08 */
     /* 0x54 */ ColVtx* unk54; /* MP1 0x78 */
-    /* 0x58 */ char unk58[0xC];
+    /* 0x58 */ u8* unk58; /* vertex colours, 3 bytes each; MP1 0x7C */
+    /* 0x5C */ char unk5C[4];
+    /* 0x60 */ s16* unk60; /* per vertex: its slot in the frame's vertex buffer */
     /* 0x64 */ HmfPart* unk64;
     /* 0x68 */ s16 unk68; /* MP1 0x84 */
     /* 0x6A */ char unk6A[2];
@@ -154,7 +178,12 @@ typedef struct HmfData {
     /* 0xA4 */ f32 unkA4; /* MP1 0xC0 */
     /* 0xA8 */ char unkA8[0xC];
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
-} HmfData; /* size unknown (>= 0xB8); MP1 unk2C0C0StructC0 */
+    /* 0xB8 */ char unkB8[0x10];
+    /* 0xC8 */ s32 unkC8;
+    /* 0xCC */ char unkCC[8];
+    /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
+    /* 0xD8 */ char unkD8[8];
+} HmfData; /* size 0xE0 (Hu3DModelCreate allocates it); MP1 unk2C0C0StructC0 */
 
 typedef struct HmfData_UnkD0 {
     /* 0x00 */ s8 unk00;
@@ -202,11 +231,21 @@ typedef struct HmfModel {
     /* 0x70 */ void (*unk70)(Gfx**, s32, s32);
     /* 0x74 */ f32 mtx[16];
     /* 0xB4 */ struct HmfModel* unkB4;
-    /* 0xB8 */ char unkB8[4];
+    /* 0xB8 */ s32 unkB8;
     /* 0xBC */ void* unkBC;
 } HmfModel; /* size = 0xC0 */
 
+/* Motion slots (128, allocated by func_80038DD0_399D0); MP1 unk34D80Struct40 */
+typedef struct HmfMotionSlot {
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ char unk01;
+    /* 0x02 */ s16 unk02; /* length; -1 when the slot is free */
+    /* 0x04 */ char unk04[0x14];
+    /* 0x18 */ s32 unk18;
+} HmfMotionSlot; /* size 0x1C */
+
 extern HmfModel* D_800FC834_FD434; /* HmfModelData */
+extern HmfMotionSlot* D_800F92B4_F9EB4;
 extern s8 D_800FDC9C_FE89C;  /* MP3 HmfPauseF; s8 as 5F3B0/58080/80230 load it */
 extern u16 D_800FDCD0_FE8D0; /* set while models are live (274D0, 30560) */
 extern void* D_800FD2A8_FDEA8; /* model matrix buffer (274D0 passes it to HmfModel.unk70) */

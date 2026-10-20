@@ -12,10 +12,24 @@
 #define PAD_COUNT (4)
 
 typedef struct AMConfig {
-    /* 0x00 */ char unk_00[0x5C];
+    /* 0x00 */ char unk_00[0x1C];
+    /* 0x1C */ s32 outputRate;
+    /* 0x20 */ s32 maxVoices;
+    /* 0x24 */ s32 maxUpdates;
+    /* 0x28 */ char unk_28[0x4];
+    /* 0x2C */ s32* params; /* NULL: no effect; else a custom effect (MP1 has fxType here) */
+    /* 0x30 */ s32 maxACMDSize;
+    /* 0x34 */ s32 numDMABuffers;
+    /* 0x38 */ s32 dmaBufferLength;
+    /* 0x3C */ s32 frameLag;
+    /* 0x40 */ s32 framesPerField;
+    /* 0x44 */ s32 fieldRate;
+    /* 0x48 */ s32 extraSamples; /* added to the frame size for the buffers and each frame */
+    /* 0x4C */ char unk_4C[0x10];
     /* 0x5C */ OSPri pri;
     /* 0x60 */ OSId id;
     /* 0x64 */ s32 unk_64;
+    /* 0x68 */ s32 unk_68;
 } AMConfig;
 
 typedef struct AMTask {
@@ -49,9 +63,16 @@ typedef struct AMAudioMgr {
     /* 0x238 */ ALGlobals g;
 } AMAudioMgr; /* size = 0x288 */
 
+typedef struct DMABuffer {
+    /* 0x00 */ ALLink node;
+    /* 0x08 */ u32 startAddr;
+    /* 0x0C */ u32 lastFrame;
+    /* 0x10 */ char* ptr;
+} DMABuffer; /* size = 0x14 */
+
 typedef struct DMAState {
-    /* 0x00 */ void* firstUsed;
-    /* 0x04 */ void* firstFree;
+    /* 0x00 */ DMABuffer* firstUsed;
+    /* 0x04 */ DMABuffer* firstFree;
 } DMAState;
 
 typedef struct {
@@ -64,13 +85,25 @@ extern OSMesgQueue* D_800D7900_D8500;
 extern AMAudioMgr D_800D7908_D8508;
 extern DMAState D_800D7B90_D8790;
 extern u32 D_800D7B98_D8798;
-extern s32 D_800D7BA8_D87A8;
+extern s32 D_800D7B9C_D879C; /* nextDMA */
+extern s32 D_800D7BA0_D87A0; /* DMA buffer length */
+extern u32 D_800D7BA4_D87A4; /* frame lag */
+extern s32 D_800D7BA8_D87A8; /* curAcmdList */
+extern u32 D_800D7BAC_D87AC; /* minFrameSize */
+extern u32 D_800D7BB0_D87B0; /* maxFrameSize */
+extern u32 D_800D7BB4_D87B4; /* frameSize */
+extern s32 D_800D7BB8_D87B8; /* AMConfig.extraSamples */
+extern s32 D_800D8038_D8C38;
 extern OSMesgQueue D_800D7F80_D8B80;
 extern OSMesg D_800D7F98_D8B98[];
 extern OSMesgQueue D_800F8F40_F9B40;
 extern u64 D_800D1480_D2080[]; /* aspMainDataStart */
 
+void* func_8000EC10_F810(s32 size);
 void func_8000FEFC_10AFC(void);
+void func_80016620_17220(void);
+ALDMAproc func_80016608_17208(void* state);
+void func_8001679C_1739C(AMTask* t, AMAudioMsg* msg, Acmd* cmdp);
 void func_80010070_10C70(void);
 void func_800148C4_154C4(void);
 void func_80014A60_15660(void);
@@ -117,7 +150,79 @@ void func_80017294_17E94(void);
 void func_8007EB8C_7F78C(functionListEntry* entry, s16 type, void* func);
 void func_8007EC68_7F868(void* entry);
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80015DB0_169B0);
+s32 func_80015DB0_169B0(AMConfig* amc, ALHeap* heap) {
+    ALSynConfig c;
+    f32 fsize;
+    s32 i;
+    DMABuffer* dmaBuffs;
+
+    c.outputRate = osAiSetFrequency(amc->outputRate);
+    D_800D7BB8_D87B8 = amc->extraSamples;
+    fsize = (f32) amc->framesPerField * c.outputRate / (f32) amc->fieldRate;
+    D_800D7BB4_D87B4 = (s32) fsize;
+    if (D_800D7BB4_D87B4 < fsize) {
+        D_800D7BB4_D87B4++;
+    }
+    if (D_800D7BB4_D87B4 & 0xF) {
+        D_800D7BB4_D87B4 = (D_800D7BB4_D87B4 & ~0xF) + 0x10;
+    }
+    D_800D7BAC_D87AC = D_800D7BB4_D87B4 - 0x10;
+    D_800D7BB0_D87B0 = D_800D7BB4_D87B4 + D_800D7BB8_D87B8 + 0x10;
+    if (amc->params != NULL) {
+        c.fxType = AL_FX_CUSTOM;
+        c.params = amc->params;
+    } else {
+        c.fxType = AL_FX_NONE;
+        c.params = NULL;
+    }
+    c.maxVVoices = c.maxPVoices = amc->maxVoices;
+    c.maxUpdates = amc->maxUpdates;
+    c.dmaproc = (ALDMANew) func_80016608_17208;
+    c.heap = heap;
+    c.maxFXbusses = 0;
+    alInit(&D_800D7908_D8508.g, &c);
+    D_800D7BA8_D87A8 = 0;
+    D_800D7B9C_D879C = 0;
+    D_800D7B98_D8798 = 0;
+    D_800D7BA0_D87A0 = amc->dmaBufferLength;
+    D_800D7BA4_D87A4 = amc->frameLag;
+    dmaBuffs = func_8000EC10_F810(amc->numDMABuffers * sizeof(DMABuffer));
+    if (dmaBuffs == NULL) {
+        return 1;
+    }
+    dmaBuffs[amc->numDMABuffers - 1].node.next = NULL;
+    dmaBuffs[0].node.next = NULL;
+    dmaBuffs[0].node.prev = NULL;
+    for (i = 0; i < amc->numDMABuffers - 1; i++) {
+        alLink(&dmaBuffs[i + 1].node, &dmaBuffs[i].node);
+        if ((dmaBuffs[i].ptr = func_8000EC10_F810(D_800D7BA0_D87A0)) == NULL) {
+            return 1;
+        }
+    }
+    if ((dmaBuffs[i].ptr = func_8000EC10_F810(D_800D7BA0_D87A0)) == NULL) {
+        return 1;
+    }
+    D_800D7B90_D8790.firstUsed = NULL;
+    D_800D7B90_D8790.firstFree = dmaBuffs;
+    D_800D8038_D8C38 = amc->unk_68;
+    for (i = 0; i < 2; i++) {
+        if ((D_800D7908_D8508.ACMDList[i] = func_8000EC10_F810(amc->maxACMDSize * sizeof(Acmd))) == NULL) {
+            return 2;
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        if ((D_800D7908_D8508.audioInfo[i] = func_8000EC10_F810(sizeof(AudioInfo))) == NULL) {
+            return 3;
+        }
+        D_800D7908_D8508.audioInfo[i]->msg.type = 0;
+        D_800D7908_D8508.audioInfo[i]->msg.done = D_800D7908_D8508.audioInfo[i];
+        D_800D7908_D8508.audioInfo[i]->data = func_8000EC10_F810(D_800D7BB0_D87B0 * 4);
+        if (D_800D7908_D8508.audioInfo[i]->data == NULL) {
+            return 4;
+        }
+    }
+    return 0;
+}
 
 void func_800160FC_16CFC(AMConfig* amc) {
     osCreateMesgQueue(&D_800D7908_D8508.audioReplyMsgQ, D_800D7908_D8508.audioReplyMsgBuf, 8);
@@ -160,7 +265,31 @@ void func_800161D4_16DD4(void* arg) {
     alClose(&D_800D7908_D8508.g);
 }
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80016320_16F20);
+u32 func_80016320_16F20(AudioInfo* info, AudioInfo* lastInfo) {
+    s32 cmdLen;
+    s16* audioPtr;
+    Acmd* cmdp;
+    AMTask* t;
+
+    func_80016620_17220();
+    audioPtr = (s16*) osVirtualToPhysical(info->data);
+    if (lastInfo != NULL) {
+        osAiSetNextBuffer(lastInfo->data, lastInfo->frameSamples << 2);
+    }
+    info->frameSamples = ((D_800D7BB4_D87B4 - (osAiGetLength() >> 2) + D_800D7BB8_D87B8) & ~0xF) + 0x10;
+    if ((u32) info->frameSamples < D_800D7BAC_D87AC) {
+        info->frameSamples = D_800D7BAC_D87AC;
+    }
+    cmdp = alAudioFrame(D_800D7908_D8508.ACMDList[D_800D7BA8_D87A8], &cmdLen, audioPtr, info->frameSamples);
+    t = &info->task;
+    if (cmdLen == 0) {
+        return 0;
+    }
+    func_8001679C_1739C(t, &info->msg, cmdp);
+    osSendMesg(D_800D7900_D8500, t, OS_MESG_BLOCK);
+    D_800D7BA8_D87A8 ^= 1;
+    return 1;
+}
 
 void func_8001644C_1704C(AudioInfo* info) {
 }
