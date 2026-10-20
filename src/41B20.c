@@ -1,26 +1,10 @@
 #include "common.h"
 #include "game/malloc.h"
+#include "game/board.h"
 
 /* Direction choice arrows and prompt (MP1 src/3C420.c; the stick-selection process from MP3
    ovl_80_shared_board/EAB00.c). func_800412CC (MP1 NON_MATCHING, near) and func_800419A4 stay
    asm. Board models are MBModel (MP1's Object view of them). */
-
-typedef struct MBModel {
-    /* 0x00 */ struct MBModel* next;
-    /* 0x04 */ struct MBModel* prev;
-    /* 0x08 */ u8 id;
-    /* 0x0A */ u16 attr;
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ Vec rot;
-    /* 0x24 */ Vec scale;
-    /* 0x30 */ f32 jumpY;
-    /* 0x34 */ f32 jumpVel;
-    /* 0x38 */ f32 jumpAccel;
-    /* 0x3C */ omObjData* obj;
-    /* 0x40 */ omObjData* shadow;
-    /* 0x44 */ s16 baseMot;
-    /* 0x46 */ s16 curMot;
-} MBModel; // sizeof 0x48
 
 typedef struct unk_ProcessUserData08 {
     /* 0x00 */ s16 unk00;

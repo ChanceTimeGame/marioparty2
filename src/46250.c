@@ -2,6 +2,7 @@
 #include "game/malloc.h"
 #include "game/data.h"
 #include "game/hmfman.h"
+#include "game/board.h"
 
 /* Board dice blocks and coin/dice processes (MP3 ovl_80_shared_board/EE660.c, MP1 src/3F5B0.c)
    and music fades (MP1 src/42CA0.c). func_80047868, func_80047908 (MP1 func_80041048,
@@ -49,23 +50,6 @@ typedef struct DiceProcWork {
     /* 0x00 */ s32 player;
     /* 0x04 */ s32 state;
 } DiceProcWork;
-
-typedef struct MBModel {
-    /* 0x00 */ struct MBModel* next;
-    /* 0x04 */ struct MBModel* prev;
-    /* 0x08 */ u8 id;
-    /* 0x0A */ u16 attr;
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ Vec rot;
-    /* 0x24 */ Vec scale;
-    /* 0x30 */ f32 jumpY;
-    /* 0x34 */ f32 jumpVel;
-    /* 0x38 */ f32 jumpAccel;
-    /* 0x3C */ omObjData* obj;
-    /* 0x40 */ omObjData* shadow;
-    /* 0x44 */ s16 baseMot;
-    /* 0x46 */ s16 curMot;
-} MBModel; // sizeof 0x48
 
 extern UnkDiceRelated D_800DF4C0_E00C0[5];
 extern s8 D_800DF63D_E023D;

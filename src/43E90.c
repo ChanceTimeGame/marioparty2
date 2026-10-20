@@ -1,27 +1,11 @@
 #include "common.h"
 #include "game/malloc.h"
 #include "game/data.h"
+#include "game/board.h"
 
 /* Board models (MBModel): motion reference counts and the model list, from MP1 src/3E560.c (and
    one helper shaped like MP1 src/53C80.c's func_800532F4: kill every board model). Functions
    without MP1 C, or only near it, stay asm. */
-
-typedef struct MBModel {
-    /* 0x00 */ struct MBModel* next;
-    /* 0x04 */ struct MBModel* prev;
-    /* 0x08 */ u8 id;
-    /* 0x0A */ u16 attr;
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ Vec rot;
-    /* 0x24 */ Vec scale;
-    /* 0x30 */ f32 jumpY;
-    /* 0x34 */ f32 jumpVel;
-    /* 0x38 */ f32 jumpAccel;
-    /* 0x3C */ omObjData* obj;
-    /* 0x40 */ omObjData* shadow;
-    /* 0x44 */ s16 baseMot;
-    /* 0x46 */ s16 curMot;
-} MBModel; // sizeof 0x48
 
 #define MB(o) ((MBModel*)(o))
 
