@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/sprite.h"
 
 typedef struct Unk {
     s16 unk_00;
@@ -68,17 +69,6 @@ void func_800822A8_82EA8(s16, s16, u16, s32);
 
 #define MB_MAX_PLAYERS 4
 
-typedef struct HuSprite {
-    /* 0x00 */ char pad0[0x48];
-    /* 0x48 */ f32 unk_48;
-    /* 0x4C */ f32 unk_4C;
-} HuSprite; /* MP3's, first 0x50 bytes */
-
-typedef struct HuSprGrp {
-    /* 0x00 */ char pad0[0xC];
-    /* 0x0C */ HuSprite* members[1]; /* unknown size */
-} HuSprGrp;
-
 extern s16 D_800CC998_CD598;
 extern s16 D_800CC99A_CD59A;
 extern Process* D_800E1D20_E2920;
@@ -96,7 +86,6 @@ extern s16 D_800E1E80_E2A80;
 extern u8 D_800E1ED4_E2AD4[];
 extern s16 D_800E1EF4_E2AF4;
 extern Process* D_800E1F48_E2B48;
-extern HuSprGrp* HuSprGrpData[];
 extern s16 D_800FD2A2_FDEA2;
 extern s16 D_800FD840_FE440;
 
