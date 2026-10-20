@@ -2,14 +2,10 @@
 #include "process.h"
 #include "game/malloc.h"
 #include "game/object.h"
+#include "game/camera.h"
 
 /* Board player position, facing and movement helpers (MP1 src/4D770.c; MP3
    src/overlays/ovl_80_shared_board/1006F0.c). Names follow MP1 where it names them, MP3 otherwise. */
-
-typedef struct BoardCamera {
-    /* 0x00 */ char unk_00[0xC];
-    /* 0x0C */ Vec pos;
-} BoardCamera;
 
 typedef struct unkProcessUserDataStruct {
     Vec unk_00;
@@ -25,7 +21,6 @@ typedef struct unkProcessUserDataStruct {
 
 extern Vec2f D_800CC5C0_CD1C0[4];
 extern s32 D_800CC5E0_CD1E0[3];
-extern BoardCamera* D_800C9B80_CA780;
 extern s8 ContStkX[];
 extern s8 ContStkY[];
 extern s16 D_800F8D12_F9912;

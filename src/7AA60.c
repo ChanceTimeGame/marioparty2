@@ -1,15 +1,10 @@
 #include "common.h"
+#include "game/camera.h"
 
 /* Object-manager camera view and a frame timer object (MP3 src/4BF40.c omOutView, MP1
    src/objmain.c). MP2's names are kept. */
 
-typedef struct HuCameraUnk {
-    /* 0x00 */ char unk_00[0x4C];
-    /* 0x4C */ f32 fov[3];
-} HuCameraUnk;
-
 extern f32 D_800FA5BC_FB1BC[];
-extern HuCameraUnk* D_800C9B80_CA780; /* MP3 gCameraList */
 extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
 extern omObjData* D_800FA5D4_FB1D4;

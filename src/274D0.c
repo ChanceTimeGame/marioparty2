@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/hmfman.h"
+#include "game/camera.h"
 
 /* ---- Model manager (MP3 src/hmfman.c, MP1 src/24740.c); MP3's HmfModel layout ---- */
 
@@ -15,7 +16,6 @@ extern s16 D_800FDCD0_FE8D0;
 extern u8 D_800FDC9C_FE89C;
 extern u8 D_800F94A4_FA0A4;
 extern void* D_800F8F80_F9B80[2];
-extern void* D_800C9B80_CA780; /* gCameraList */
 extern s16 D_800F64B2_F70B2;
 extern u8 D_800C9B70_CA770;
 extern u8 D_800C9B71_CA771;
