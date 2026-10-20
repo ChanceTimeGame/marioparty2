@@ -11,7 +11,8 @@ typedef struct HuCamera {
     /* 0x0C */ Vec pos;
     /* 0x18 */ char unk18[0x34];
     /* 0x4C */ f32 fov[3];
-} HuCamera; /* size unknown */
+    /* 0x58 */ char unk58[0x260];
+} HuCamera; /* size = 0x2B8 (7AA60 indexes the camera list) */
 
 extern HuCamera* D_800C9B80_CA780; /* gCameraList */
 

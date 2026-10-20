@@ -17,6 +17,13 @@ void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
 void Hu3DCamUpdateMtx(s16 camIndex);
 void func_8007BA14_7C614(omObjData* obj);
 
+extern Vec D_80102770_103370[]; /* CRotM */
+extern Vec D_801013B0_101FB0[]; /* CenterM */
+extern f32 D_800F94A8_FA0A8[];  /* CZoomM */
+extern f32 D_800FC8F8_FD4F8[][6];
+extern f32 D_800F92E8_F9EE8[];
+extern f32 D_80100018_100C18[];
+
 /* func_80079E60_7AA60 is MP3 omOutView, whose omObjData argument is unused; functions.h declares it
    void, so it is kept that way here. */
 
@@ -44,7 +51,34 @@ void func_80079E60_7AA60(void) {
     Hu3DCamUpdateMtx(0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/7AA60", func_80079FF4_7ABF4);
+/* MP3 omOutViewMulti */
+void func_80079FF4_7ABF4(omObjData* object) {
+    u8 i;
+
+    for (i = 0; i < object->work[0]; i++) {
+        Vec pos, at, up;
+        f32 rot_x = D_80102770_103370[i].x;
+        f32 rot_y = D_80102770_103370[i].y;
+
+        pos.x = D_801013B0_101FB0[i].x + HuMathSin(rot_y) * func_800B7890_B8490(rot_x) * D_800F94A8_FA0A8[i];
+        pos.y = D_801013B0_101FB0[i].y + -HuMathSin(rot_x) * D_800F94A8_FA0A8[i];
+        pos.z = D_801013B0_101FB0[i].z + func_800B7890_B8490(rot_y) * func_800B7890_B8490(rot_x) * D_800F94A8_FA0A8[i];
+        at.x = D_801013B0_101FB0[i].x;
+        at.y = D_801013B0_101FB0[i].y;
+        at.z = D_801013B0_101FB0[i].z;
+        up.x = HuMathSin(rot_y) * HuMathSin(rot_x);
+        up.y = func_800B7890_B8490(rot_x);
+        up.z = func_800B7890_B8490(rot_y) * HuMathSin(rot_x);
+        D_800FC8F8_FD4F8[i][1] = pos.x;
+        D_800FC8F8_FD4F8[i][2] = pos.z;
+        D_800FC8F8_FD4F8[i][0] = D_80102770_103370[i].y;
+        D_800FC8F8_FD4F8[i][3] = D_800C9B80_CA780[i].fov[0];
+        D_800FC8F8_FD4F8[i][4] = D_800F92E8_F9EE8[i];
+        D_800FC8F8_FD4F8[i][5] = D_80100018_100C18[i];
+        Hu3DCamSetPositionOrientation(i, &pos, &at, &up);
+        Hu3DCamUpdateMtx(i);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/7AA60", func_8007A27C_7AE7C);
 
