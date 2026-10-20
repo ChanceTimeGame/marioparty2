@@ -321,3 +321,20 @@ $(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# w1-B: the tail of 69950's rodata (D3F68-D40C0, func_8006DAA8_6E6A8 to the end) carved out of the
+# data blob. The li.d literal pool pads the object's .rodata to 0x160; tools/trim_section.py trims it
+# to retail's 0x158 (58080 rule). D3BE8's piece now ends 8- but not 16-aligned.
+W1B_CARVED := build/src/69950.c.o
+CARVED_RODATA_UNITS += $(W1B_CARVED)
+$(W1B_CARVED): RODATA_AS_DATA = 1
+W1B_NOPAD := build/asm/data/D3BE8.data.s.o
+NOPAD_DATA_PIECES += $(W1B_NOPAD)
+$(W1B_NOPAD): ASFLAGS += --no-pad-sections
+$(W1B_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -c -o $@ $<
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x158
+	$(V)$(OBJCOPY) --rename-section .rodata=.data $@
