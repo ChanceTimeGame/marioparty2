@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/malloc.h"
 #include "game/data.h"
+#include "game/board.h"
 
 /* Board map markers: MP3 ovl_80_shared_board/EB2F0.c (the marker table) and MP1 src/3CED0.c (the
    map's player-position lines and their blink). func_8004232C (the map view, near MP1
@@ -38,7 +39,6 @@ extern s16 D_800DF378_DFF78[4];
 extern s16 D_800DF380_DFF80[4];
 extern unk_Struct02* D_800DF388_DFF88[4];
 extern s16 D_800DF398_DFF98;
-extern s8 D_800F851A_F911A;
 
 void omPrcSetStatBit(Process*, s32);
 s16 SprAnimRead(void*);

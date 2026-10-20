@@ -2,6 +2,7 @@
 
 #include "game/malloc.h"
 #include "game/sprite.h"
+#include "game/hmfman.h"
 
 /* Sprite manager (MP1 src/65770.c, MP3 src/sprman.c). MP2's sprite object has MP3's layout (0x208
    bytes) and its group MP1's (members at 0xC); MP1's code is written against those layouts here. */
@@ -23,7 +24,6 @@ extern void* D_800FA5F8_FB1F8[3];
 extern u8 D_800FDBE0_FE7E0;
 extern s32 D_800FD8BC_FE4BC;
 extern void* D_801016C0_1022C0;
-extern s8 D_800FDC9C_FE89C;                    /* MP3 HmfPauseF */
 
 void* HuMemAlloc(s32 size);           /* MP3 HuMemAlloc */
 void HuMemFree(void* data);          /* MP3 HuMemFree */

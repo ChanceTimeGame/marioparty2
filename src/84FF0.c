@@ -3,6 +3,7 @@
 #include "game/malloc.h"
 #include "game/data.h"
 #include "engine/siman.h"
+#include "game/pad.h"
 
 /* Window system, rumble and the queued-input ring (MP1 src/6C470.c, src/6D4E0.c, src/388E0.c, MP3
    src/window.c). MP2's TextWindow has MP3's layout (0x27C bytes). MP2's names are kept. */
@@ -116,7 +117,6 @@ extern TWInput D_800FA04E_FAC4E[];
 extern TWInput D_800FA050_FAC50[];
 extern u8 D_800FD808_FE408;
 extern u8 D_801026D4_1032D4;
-extern s16 D_800FC9E0_FD5E0[4];
 extern u8 D_800CDA98_CE698[];
 extern u8* D_800CDAB0_CE6B0[];
 extern s8 D_800ED8E6_EE4E6;

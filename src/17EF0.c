@@ -4,7 +4,6 @@
 /* Directional pad repeat from the stick (MP1 src/engine/data.c: func_80014220, func_8001429C). */
 
 extern u16 ContDStkTrg[4];
-extern u16 D_800FC9E0_FD5E0[4];
 extern s16 D_800FD2AC_FDEAC[4];
 extern u16 D_800FD434_FE034[4];
 extern s8 ContStkX[4];

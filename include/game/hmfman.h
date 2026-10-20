@@ -207,5 +207,7 @@ typedef struct HmfModel {
 } HmfModel; /* size = 0xC0 */
 
 extern HmfModel* D_800FC834_FD434; /* HmfModelData */
+extern s8 D_800FDC9C_FE89C;  /* MP3 HmfPauseF; s8 as 5F3B0/58080/80230 load it */
+extern u16 D_800FDCD0_FE8D0; /* set while models are live (274D0, 30560) */
 
 #endif

@@ -12,8 +12,6 @@ typedef struct {
 
 extern s32 D_800FDC98_FE898;
 extern s32 D_800FD848_FE448;
-extern s16 D_800FDCD0_FE8D0;
-extern u8 D_800FDC9C_FE89C;
 extern u8 D_800F94A4_FA0A4;
 extern void* D_800F8F80_F9B80[2];
 extern s16 D_800F64B2_F70B2;

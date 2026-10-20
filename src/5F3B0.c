@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/sprite.h"
+#include "game/hmfman.h"
 
 typedef struct Unk {
     s16 unk_00;
@@ -54,7 +55,6 @@ extern s16 D_800FA604_FB204;
 extern Vec2f D_800FC990_FD590[];
 extern UnkItemSprite2 D_800FC9EC_FD5EC[];
 extern Vec2f D_800FD854_FE454[];
-extern s8 D_800FDC9C_FE89C;
 extern BoardStatus D_80101510_102110[];
 extern Unk D_800CC99C_CD59C[];
 extern s32 D_800E1D48_E2948[];

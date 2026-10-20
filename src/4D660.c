@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/malloc.h"
+#include "game/board.h"
 
 /* Board label windows, player swap and item helpers. C from MP1 src/467E0.c (func_80045CE4 ..
    func_80045E6C), src/46AE0.c (func_80045EE0 .. func_800466C0), src/3CED0.c (func_8003D20C) and MP3
@@ -18,8 +19,6 @@ typedef struct {
 extern s16 D_800DF710_E0310;
 extern s16 D_800DF712_E0312;
 extern void (*MBItemSubFunctions[])(void);
-extern u8 D_800F851A_F911A;
-extern u8 D_80102720_103320;
 
 s16 GetCurrentPlayerIndex(void);
 GW_PLAYER* BoardPlayerGet(s32 playerIndex);

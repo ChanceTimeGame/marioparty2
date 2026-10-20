@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/malloc.h"
+#include "game/pad.h"
 
 /* Save-file EEPROM wrappers and the message-string directory (MP1 src/59E80.c, MP3 src/36F80.c,
    MP1 src/engine/data.c). MP1's names are anonymous, so MP2's are kept. */
@@ -10,7 +11,6 @@ typedef struct StrData {
 } StrData;
 
 extern u16 ContDStkTrg[];
-extern u16 D_800FC9E0_FD5E0[];
 extern u8 D_800E2050_E2C50;
 extern u8 D_800F8C60[0xC4]; /* MP1 GwCommon */
 extern u32 D_800E2060_E2C60;

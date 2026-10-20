@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/board.h"
 
 /* Board message windows. C from MP3 ovl_80_shared_board FFB10.c (MBWin and MBDlg functions) and MP1
    ovl_3E_FirstMap 257020.c; the rest have no reference or differ (near) and stay asm. */
@@ -13,7 +14,6 @@ void func_8008E978_8F578(s16);
 extern s16 D_800CC590_CD190;
 extern s16 mbDlgWinId;
 extern s16 mbWinId;
-extern u8 D_800F851A_F911A;
 extern s16 D_800CC592_CD192;
 
 void func_800559E0_565E0(s16);

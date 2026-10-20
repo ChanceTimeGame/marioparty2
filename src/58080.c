@@ -108,7 +108,6 @@ extern f32 D_800E1CE8_E28E8;
 extern s16 D_800E1CF6_E28F6;
 extern void* D_800E1CFC_E28FC;
 extern Unk800F8C60 D_800F8C60;
-extern s8 D_800FDC9C_FE89C;
 extern Unk4E530Motion D_800FDCD8_FE8D8[16];
 extern omObjData* D_80101178_101D78[32];
 extern GW_SYSTEM GwSystem;

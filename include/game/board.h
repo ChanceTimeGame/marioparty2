@@ -22,4 +22,7 @@ typedef struct MBModel {
     /* 0x46 */ s16 curMot;
 } MBModel; /* size = 0x48 */
 
+extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
+extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
+
 #endif

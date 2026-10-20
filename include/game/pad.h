@@ -6,5 +6,6 @@
 /* Controller state, one entry per port (MP1/MP3 ContBtn, ContBtnTrg). */
 extern u16 ContBtn[4];
 extern u16 ContBtnTrg[4];
+extern u16 D_800FC9E0_FD5E0[4]; /* stick-repeat buttons per port (17EF0) */
 
 #endif

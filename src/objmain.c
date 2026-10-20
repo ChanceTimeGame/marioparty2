@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/board.h"
 
 /* Object manager. omObj/omPrc helpers, groups and the debug-key setup from MP1 src/objmain.c
    (func_80076BD0_777D0 from MP3 src/objmain.c); the near/unreferenced functions stay in asm. */
@@ -42,7 +43,6 @@ extern omObjData* D_800FDD98_FE998;          /* omDBGSysKeyObj */
 extern u8 D_800FD7F5_FE3F5;
 extern s16 D_80101644_102244;                /* omobjfirst */
 extern s16 D_801027DA_1033DA;                /* omnextidx */
-extern s8 D_80102720_103320;
 
 void HuMemMemoryFreeTemp(void* ptr);
 void* HuMemMemoryAllocTemp(u32 size);
