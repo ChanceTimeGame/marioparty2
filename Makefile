@@ -323,3 +323,8 @@ $(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # w1-E: 93A80 (HVQ decoder) builds -O3 like MP1 src/7CD60.c
 build/src/93A80.c.o: CFLAGS = -O3 -G0 -mips3 -mgp32 -mfp32
+# w1-E: 93A80's rodata 0xD45E0-0xD4614 (the two HVQ-MPS strings) carved out of the data blob; the
+# yaml pad starts at 0xD4618, after the 8-byte alignment of the next C object's empty .data
+W1E_CARVED := build/src/93A80.c.o
+CARVED_RODATA_UNITS += $(W1E_CARVED)
+$(W1E_CARVED): RODATA_AS_DATA = 1

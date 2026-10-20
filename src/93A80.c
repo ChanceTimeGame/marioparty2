@@ -792,20 +792,20 @@ static inline void ReadHufStream(BitStream* buf, Tree* tree, u32* src) {
     }
 }
 
-static inline void ReadNest(u8* nest) {
+/* The nest: 0xA64 bytes coded as Huffman deltas, read on from the header stream. */
+static inline void ReadNest(BitStream* buf) {
     s32 n;
     s32 acc = 0;
+    u8* nest = D_800EFFE0_F0BE0;
 
     for (n = 0xA64; n > 0; n--) {
-        acc += decodeSym(&D_800EFF58_F0B58, &D_800EF750_F0350);
+        acc += decodeSym(buf, &D_800EF750_F0350);
         *nest++ = acc;
     }
 }
 
 /* Reads an image set's header: sizes, the colour converter for its chroma sampling, the four
    Huffman trees and their leaf tables, and the Huffman-coded nest (the basis-vector source). */
-// scheduling: the nest stream pointer set before the accumulator (masked 4)
-#ifdef NON_MATCHING
 void func_80096708_97308(HVQMPSHeader* header) {
     u8* code = (u8*)header;
     s32 i;
@@ -873,11 +873,8 @@ void func_80096708_97308(HVQMPSHeader* header) {
     D_800F13D8_F1FD8 = 12 - prec;
     D_800F13DC_F1FDC = 1 << (D_800F13D8_F1FD8 - 1);
     D_800F0A44_F1644 = D_800EFFE0_F0BE0;
-    ReadNest(D_800EFFE0_F0BE0);
+    ReadNest(&D_800EFF58_F0B58);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/93A80", func_80096708_97308);
-#endif
 
 /* Builds the 0x1000 / max reciprocal table and the two clamp tables that turn a colour channel
    (biased by 0x100) into its RGBA5551 field: without and with the alpha bit (alpha's top bit). */
