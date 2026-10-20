@@ -31,6 +31,10 @@ void func_80015710_16310(s16, s16);
 void func_80015868_16468(s16);
 
 void func_800155B8_161B8(s16, s8);
+s32 func_80011018_11C18(s16);
+void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+extern u16 D_800CD522_CE122;
+extern s16 D_800E2140_E2D40[6];
 
 INCLUDE_ASM("asm/nonmatchings/79F90", PlayMusic);
 
@@ -85,7 +89,12 @@ s32 func_8007975C_7A35C(s16 arg0, s16 arg1) {
     return func_80014B30_15730(arg0, &sp10);
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079798_7A398);
+s16 func_80079798_7A398(s16 arg0, s16 arg1) {
+    if (D_800CD522_CE122 == 0) {
+        return 0;
+    }
+    return func_8007975C_7A35C(arg0, arg1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_800797DC_7A3DC);
 
@@ -107,7 +116,22 @@ void func_800798F8_7A4F8(s16 arg0, s16 arg1) {
     func_80015710_16310(arg0, arg1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079920_7A520);
+void func_80079920_7A520(void) {
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        D_800E2140_E2D40[i] = -1;
+    }
+    switch (func_80011018_11C18(D_800FA188_FAD88)) {
+    case 0:
+        D_800CD526_CE126 = (D_800CD526_CE126 | 1) & ~0xA;
+        break;
+    case 1:
+        break;
+    case 2:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_800799A4_7A5A4);
 
@@ -127,7 +151,11 @@ void func_80079C60_7A860(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", omVibrate);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3) {
+    if (!(gPlayers[player].flags & 1)) {
+        func_80088604_89204(gPlayers[player].port, arg1, arg2, arg3);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D7C_7A97C);
 
