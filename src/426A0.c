@@ -4,8 +4,8 @@
 #include "game/board.h"
 
 /* Board map markers: MP3 ovl_80_shared_board/EB2F0.c (the marker table) and MP1 src/3CED0.c (the
-   map's player-position lines and their blink). func_8004232C (the map view, near MP1
-   func_8003CAB4) stays asm. */
+   map's player-position lines and their blink). func_8004232C is the map view (near MP1
+   func_8003CAB4). */
 
 typedef struct UnkBoard6 {
     /* 0x00 */ s8 unk_00;
@@ -36,7 +36,7 @@ s16 SprAnimRead(void*);
 void SprAnimSet(s16, s16, s16, s16);
 void SprAttrSet(s16, s16, s32);
 void SprAttrReset(s16, s16, s32);
-void SprPrioSet(s16, s16, s16);
+void SprPrioSet(s16, s16, u16);
 void SprPosSet(s16, s16, s16, s16);
 void SprScaleSet(s16, s16, f32, f32);
 void SprRotSet(s16, s16, f32);
@@ -50,6 +50,41 @@ f32 func_800B1830_B2430(f32);
 f32 HuMathSin(f32);
 void func_800B3170_B3D70(Vec*, Vec*);
 void func_8004232C_42F2C(void);
+
+extern s32 D_801027B8_1033B8;
+extern s8 D_800FDC9C_FE89C;
+extern u16 D_80101330_101F30;
+extern s16 D_800F8D12_F9912;
+extern s32 D_800CB0B0_CBCB0[];
+extern s16 D_800CB0EC_CBCEC[][4];
+extern s32 D_800CB11C_CBD1C[];
+extern s32 D_800CB134_CBD34[];
+extern u16 ContDStkTrg[4];
+extern u16 ContBtnTrg[4];
+
+s32 PlayerIsCPU(s16);
+GW_PLAYER* BoardPlayerGet(s32);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+SpaceData* GetSpaceData(s16);
+void MBDCamera3Dto2D(Vec*, Vec2f*);
+void ChangeSpaceTextures(s16);
+void MBDBackKill(void);
+void func_80050E00_51A00(s32);
+f32 func_80052E5C_53A5C(void);
+void func_80052E68_53A68(f32);
+void func_800537A0_543A0(Vec2f*);
+void func_800536E4_542E4(Vec2f*);
+void InitFadeOut(s32, s32);
+void InitFadeIn(s32, s32);
+void func_80061518_62118(void);
+void func_80061584_62184(void);
+void func_80046E94_47A94(s32);
+void func_80046EFC_47AFC(s32);
+void func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void func_800794F0_7A0F0(s32);
+s32 func_8004CC7C_4D87C(s32, s32, s32);
+void MBHelpWinKill(s32);
 
 /* exact c: marioparty3 func_800D76D0_EB2F0_shared_board (src/overlays/ovl_80_shared_board/EB2F0.c) */
 void func_80041AA0_426A0(s32 arg0) {
@@ -251,7 +286,178 @@ void func_80042120_42D20(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/426A0", func_8004232C_42F2C);
+/* near MP1 func_8003CAB4 (src/3CED0.c): the map view. MP2 keeps the camera zoom, uses 32 markers
+   (type 11 swaps art when D_800F8D12 is set), a second label pair on board 6 and restores the
+   space textures on exit. */
+void func_8004232C_42F2C(void) {
+    Vec2f cam;
+    Vec2f pos;
+    s32 port;
+    s32 bg;
+    s16 sel;
+    f32 zoom;
+    Process* proc;
+    s32 i;
+    s32 j;
+    GW_PLAYER* player;
+    UnkBoard6* m;
+    void* data;
+    unk_Struct02* markers;
+    unk_Struct02* icons;
+    s16 x;
+    s16 y;
+    s32 label1;
+    s32 label2;
+    s16 dir;
+    u16 pad;
+
+    port = (s32)HuPrcCurrentGet()->user_data;
+    bg = D_801027B8_1033B8;
+    sel = 0;
+    for (i = 0; i < 4; i++) {
+        if (PlayerIsCPU(i) != 0) {
+            continue;
+        }
+        if (gPlayers[i].port == port) {
+            sel = i;
+            break;
+        }
+    }
+    D_800DF398_DFF98 = sel;
+    zoom = func_80052E5C_53A5C();
+    func_800537A0_543A0(&cam);
+    InitFadeOut(6, 8);
+    HuPrcSleep(8);
+    func_80061518_62118();
+    func_80046E94_47A94(port);
+    HuPrcVSleep();
+    D_800FDC9C_FE89C = 1;
+    D_80101330_101F30 &= ~1;
+    func_80046D2C_4792C(GwSystem.current_player_index);
+    func_80046E94_47A94(GwSystem.current_player_index);
+    if (D_800F8D12_F9912 != 0) {
+        ChangeSpaceTextures(4);
+    } else {
+        ChangeSpaceTextures(1);
+    }
+    MBDBackKill();
+    func_80050E00_51A00(D_800DEFF0_DFBF0);
+    markers = func_8005E688_5F288(32, 0);
+    for (i = 0; i < 4; i++) {
+        player = BoardPlayerGet(i);
+        MBDCamera3Dto2D(&GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index))->coords, &pos);
+        D_800DF378_DFF78[i] = pos.unk_00;
+        D_800DF380_DFF80[i] = pos.unk_04;
+    }
+    for (i = 0, j = 0; j < 32; i++, j++) {
+        m = &D_800DEFF8_DFBF8[j];
+        if (m->unk_00 < 0) {
+            continue;
+        }
+        if (D_800F8D12_F9912 != 0 && m->unk_00 == 11) {
+            data = DataRead(D_800CB0B0_CBCB0[6]);
+        } else {
+            data = DataRead(D_800CB0B0_CBCB0[m->unk_00]);
+        }
+        markers->unk0C[i] = SprAnimRead(data);
+        SprAnimSet(markers->unk0A, i, markers->unk0C[i], 0);
+        SprAttrSet(markers->unk0A, i, 0x01001000);
+        MBDCamera3Dto2D((m->unk4 != NULL) ? &((MBModel*)m->unk4)->pos : &m->unk10, &pos);
+        x = (s32)pos.unk_00 + m->unkC;
+        y = (s32)pos.unk_04 + m->unkE;
+        SprPosSet(markers->unk0A, i, x, y);
+        SprPrioSet(markers->unk0A, i, ~y);
+        DataClose(data);
+        if (m->unk_00 == 6 || (m->unk_00 == 11 && D_800F8D12_F9912 != 0)) {
+            i++;
+            data = DataRead(0xA00CD);
+            markers->unk0C[i] = SprAnimRead(data);
+            SprAnimSet(markers->unk0A, i, markers->unk0C[i], 0);
+            SprAttrSet(markers->unk0A, i, 0x01001808);
+            SprPosSet(markers->unk0A, i, x, y - 1);
+            SprPrioSet(markers->unk0A, i, 0xFFFF);
+            DataClose(data);
+            m->process = func_80041DA0_429A0(markers->unk0A, i);
+        }
+    }
+    func_80041F3C_42B3C();
+    proc = omAddPrcObj(func_80042120_42D20, 0x1005, 0, 0);
+    icons = func_8005E688_5F288(8, 0);
+    for (i = 0; i < 4; i++) {
+        player = BoardPlayerGet(i);
+        data = DataRead(D_800CB11C_CBD1C[player->character]);
+        icons->unk0C[i] = SprAnimRead(data);
+        SprAnimSet(icons->unk0A, i, icons->unk0C[i], 0);
+        SprPrioSet(icons->unk0A, i, 1);
+        SprAttrSet(icons->unk0A, i, 0x01001000);
+        SprPosSet(icons->unk0A, i, D_800CB10C_CBD0C[i] - 30, D_800CB114_CBD14[i]);
+        DataClose(data);
+        data = DataRead(D_800CB134_CBD34[player->character]);
+        icons->unk0C[i + 4] = SprAnimRead(data);
+        SprAnimSet(icons->unk0A, i + 4, icons->unk0C[i + 4], 0);
+        SprPrioSet(icons->unk0A, i + 4, 1);
+        SprAttrSet(icons->unk0A, i + 4, 0x01001000);
+        SprPosSet(icons->unk0A, i + 4, D_800CB10C_CBD0C[i] + 8, D_800CB114_CBD14[i]);
+        DataClose(data);
+    }
+    func_800794F0_7A0F0(0x60);
+    InitFadeIn(6, 8);
+    HuPrcSleep(7);
+    if (GwSystem.current_board_index == 6) {
+        label1 = func_8004CC7C_4D87C(0, 0xBC, 0);
+        label2 = func_8004CC7C_4D87C(4, 0xCA, 0);
+    } else {
+        label1 = func_8004CC7C_4D87C(0, 0x14, 0);
+        label2 = func_8004CC7C_4D87C(4, 0x22, 0);
+    }
+    do {
+        HuPrcVSleep();
+        pad = ContDStkTrg[port];
+        dir = -((pad & 0x800) == 0);
+        if (pad & 0x400) {
+            dir = 1;
+        }
+        if (ContDStkTrg[port] & 0x200) {
+            dir = 2;
+        }
+        if (ContDStkTrg[port] & 0x100) {
+            dir = 3;
+        }
+        if (dir != -1) {
+            sel += D_800CB0EC_CBCEC[sel][dir];
+        }
+        D_800DF398_DFF98 = sel;
+    } while (!(ContBtnTrg[port] & 0xE010));
+    InitFadeOut(6, 8);
+    HuPrcSleep(8);
+    D_800FDC9C_FE89C = 0;
+    MBDBackKill();
+    func_80050E00_51A00(bg);
+    func_80052E68_53A68(zoom);
+    func_800536E4_542E4(&cam);
+    HuPrcVSleep();
+    D_80101330_101F30 |= 1;
+    func_8004655C_4715C(GwSystem.current_player_index);
+    func_80046EFC_47AFC(GwSystem.current_player_index);
+    MBHelpWinKill(label1);
+    MBHelpWinKill(label2);
+    omDelPrcObj(proc);
+    HuMemDirectFree(icons);
+    HuMemDirectFree(markers);
+    func_800420D0_42CD0();
+    func_80041BC0_427C0();
+    func_80046EFC_47AFC(port);
+    func_80061584_62184();
+    if (D_800F8D12_F9912 != 0) {
+        ChangeSpaceTextures(3);
+    } else {
+        ChangeSpaceTextures(0);
+    }
+    func_800794F0_7A0F0(0x7F);
+    InitFadeIn(6, 8);
+    HuPrcSleep(8);
+    omDelPrcObj(NULL);
+}
 
 /* exact c: marioparty func_8003D20C (src/3CED0.c) */
 void func_80042B38_43738(void* arg0) {
