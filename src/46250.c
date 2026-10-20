@@ -64,6 +64,24 @@ extern s16 D_800FC734_FD334;
 
 void omDelObj(omObjData*);
 s16 PlaySound(s32);
+void func_80046F98_47B98(s32);
+void func_80047BB8_487B8(s32);
+void func_80046CD8_478D8(s32);
+void MBPlayerMotionSet(s32, s16, u16);
+void func_80059120_59D20(void*, f32, f32);
+void func_8005DDEC_5E9EC(s32, s16, s16, s16, u16);
+void MBPlayerVibrate(s16, s16);
+void SprScaleSet(s16, s16, f32, f32);
+void MBDlgWinExec(s32, s32);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void func_80079718_7A318(s32, s32);
+void func_80079428_7A028(s32);
+f32 HuMathSin(f32);
+extern s16 D_800FA198_FAD98;
+extern s16 D_800FA1A4_FADA4;
+extern s16 D_800CBCC0_CC8C0[][2];
+extern u16 ContBtnTrg[4];
 s16 Hu3DModelCreate(void*, s32);
 void func_80029EDC_2AADC(s16, s32);
 void func_800297E8_2A3E8(s16, f32, f32, f32);
@@ -494,15 +512,220 @@ s32 func_80047DE8_489E8(s32 arg0) {
     return D_800DF4C0_E00C0[arg0].rollValue[D_800DF4C0_E00C0[arg0].rollValueIdx];
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047E20_48A20);
+/* near MP3 func_800DE988_F25A8_shared_board (EE660.c): a state byte, offset */
+s32 func_80047E20_48A20(s32 arg0) {
+    return D_800DF4C0_E00C0[arg0].unk_00 - 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047E48_48A48);
+/* near MP3 func_800DE988_F25A8_shared_board (EE660.c): a state byte, offset */
+s32 func_80047E48_48A48(s32 arg0) {
+    return D_800DF4C0_E00C0[arg0].unk_00 - 8;
+}
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047E70_48A70);
+/* near MP3 func_800DE988_F25A8_shared_board (EE660.c): a state byte, offset */
+s32 func_80047E70_48A70(s32 arg0) {
+    return D_800DF4C0_E00C0[arg0].unk_01 - 3;
+}
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047E98_48A98);
+/* near MP3 func_800DE988_F25A8_shared_board (EE660.c): a state byte, offset */
+s32 func_80047E98_48A98(s32 arg0) {
+    return D_800DF4C0_E00C0[arg0].unk_01 - 5;
+}
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047EC0_48AC0);
+/* near MP3 func_800DCDD4_F09F4_shared_board (EE660.c): the dice block process. MP2 pays out
+   through its own coin and message calls and checks flag 4 rather than board flag 0x11. */
+void func_80047EC0_48AC0(void) {
+    f32 temp_f20;
+    f32 temp_f20_2;
+    f32 temp_f20_3;
+    f32 temp_f20_4;
+    f32 temp_f20_5;
+    f32 temp_f20_6;
+    f32 temp_f20_7;
+    f32 temp_f20_8;
+    f32 temp_f20_9;
+    f32 temp_f20_10;
+    f32 temp_f22;
+    f32 temp_f24;
+    s32 temp_s0;
+    s32 var_s1;
+    s32 var_s5;
+    s32 i, j;
+    DiceProcWork* temp_s3;
+    UnkDiceRelated* temp_s4;
+
+    var_s1 = 0;
+    temp_s3 = HuPrcCurrentGet()->user_data;
+    temp_s4 = &D_800DF4C0_E00C0[temp_s3->player];
+    var_s5 = 0;
+    while (1) {
+        switch (temp_s3->state) {
+            case 0:
+                D_800DF63E_E023E = 0;
+                func_80046F98_47B98(temp_s3->player);
+                D_800DF63E_E023E = 1;
+                temp_s3->state++;
+                HuPrcSleep(0x14);
+                break;
+            case 1:
+                if (((gPlayers[temp_s3->player].flags & 1) || (ContBtnTrg[gPlayers[temp_s3->player].port] & 0x8000)) &&
+                    !(D_800FC834_FD434[D_800DF4C0_E00C0[temp_s3->player].unk_16].unk18 & 4) && (_CheckFlag(4) == 0)) {
+                    temp_s3->state++;
+                    MBPlayerMotionSet(temp_s3->player, 2, 0);
+                    func_80059120_59D20(gPlayers[temp_s3->player].unk_24, 2.0f, -0.3f);
+                    D_800FA198_FAD98 = 0;
+                    D_800FA1A4_FADA4 = 0;
+                }
+                break;
+            case 2:
+                if (++var_s1 >= 5) {
+                    func_80047BB8_487B8(temp_s3->player);
+                    func_8005DDEC_5E9EC(temp_s3->player, -1, 0, 0xA, 2);
+                    temp_s3->state++;
+                }
+                break;
+            case 3:
+                HuPrcSleep(20);
+                var_s5++;
+                if (var_s5 != D_800DF645_E0245) {
+                    HuPrcSleep(10);
+                    var_s1 = 0;
+                    func_80046CD8_478D8(temp_s3->player);
+                    {
+                        s16* temp0 = &D_800CBCC0_CC8C0[var_s5 - 1][0];
+                        s16* temp1 = &D_800CBCC0_CC8C0[var_s5 - 1][1];
+                        func_800495E4_4A1E4(temp_s3->player, temp_s4->rollValueIdx, *temp0, *temp1);
+                    }
+                    temp_s4->rollValueIdx++;
+                    temp_s3->state = 0;
+                } else {
+                    if (D_800DF645_E0245 != 1) {
+                        HuPrcSleep(10);
+                        func_80046CD8_478D8(temp_s3->player);
+                        {
+                            s16* temp0 = &D_800CBCC0_CC8C0[var_s5 - 1][0];
+                            s16* temp1 = &D_800CBCC0_CC8C0[var_s5 - 1][1];
+                            func_800495E4_4A1E4(temp_s3->player, temp_s4->rollValueIdx, *temp0, *temp1);
+                        }
+                        HuPrcSleep(20);
+                        if (D_800DF645_E0245 == 2) {
+                            if (temp_s4->rollValue[0] != temp_s4->rollValue[1]) {
+                            } else {
+                                PlaySound(0x378);
+                                if (temp_s4->rollValue[0] == 7) {
+                                    MBPlayerVibrate(-1, 3);
+                                } else {
+                                    MBPlayerVibrate(-1, 2);
+                                }
+                                for (j = 0; j < 37; j++) {
+                                    temp_f22 = (f32)(((j * 4) + j) * 4);
+                                    temp_f20 = (HuMathSin(temp_f22) * 0.5f) + 1.0f;
+                                    SprScaleSet(temp_s4->sprites[0], 0, temp_f20, (HuMathSin(temp_f22) * 0.5f) + 1.0f);
+                                    temp_f20_2 = (HuMathSin(temp_f22) * 0.5f) + 1.0f;
+                                    SprScaleSet(temp_s4->sprites[1], 0, temp_f20_2, (HuMathSin(temp_f22) * 0.5f) + 1.0f);
+                                    if (temp_s4->rollValue[0] == 0xA) {
+                                        temp_f20_3 = (HuMathSin(temp_f22) * 0.5f) + 1.0f;
+                                        SprScaleSet(temp_s4->sprites[0], 1, temp_f20_3, (HuMathSin(temp_f22) * 0.5f) + 1.0f);
+                                        temp_f20_4 = (HuMathSin(temp_f22) * 0.5f) + 1.0f;
+                                        SprScaleSet(temp_s4->sprites[1], 1, temp_f20_4, (HuMathSin(temp_f22) * 0.5f) + 1.0f);
+                                    }
+                                    HuPrcVSleep();
+                                }
+                                PlaySound(0x11F);
+                                if (temp_s4->rollValue[0] == 7) {
+                                    MBDlgWinExec(3, 0x232);
+                                    func_8004CA34_4D634(temp_s3->player, 20);
+                                    func_800614B4_620B4(temp_s3->player, 20);
+                                } else {
+                                    MBDlgWinExec(3, 0x234);
+                                    func_8004CA34_4D634(temp_s3->player, 10);
+                                    func_800614B4_620B4(temp_s3->player, 10);
+                                }
+                                func_80079718_7A318(0x103, gPlayers[temp_s3->player].character);
+                                MBPlayerMotionSet(temp_s3->player, 5, 0);
+                                HuPrcSleep(0x1E);
+                                MBPlayerMotionSet(temp_s3->player, -1, 2);
+                            }
+                        } else {
+                            if (D_800DF645_E0245 == 3) {
+                                if ((temp_s3->player != 4) && (temp_s4->rollValue[0] == temp_s4->rollValue[1]) &&
+                                    (temp_s4->rollValue[0] == temp_s4->rollValue[2])) {
+                                    if (temp_s4->rollValue[0] == 7) {
+                                        D_800FC734_FD334 = 0;
+                                        func_80079428_7A028(0x60);
+                                        MBPlayerVibrate(-1, 4);
+                                    } else {
+                                        PlaySound(0x378);
+                                        MBPlayerVibrate(-1, 3);
+                                    }
+                                    for (i = 0; i < 73; i++, HuPrcVSleep()) {
+                                        var_s1 = i;
+                                        temp_s0 = (i * 4) + var_s1;
+                                        temp_f24 = (f32)(temp_s0 * 4);
+                                        temp_f20_5 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                        SprScaleSet(temp_s4->sprites[0], 0, temp_f20_5, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                        temp_f20_6 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                        SprScaleSet(temp_s4->sprites[1], 0, temp_f20_6, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                        temp_f20_7 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                        SprScaleSet(temp_s4->sprites[2], 0, temp_f20_7, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                        if (temp_s4->rollValue[0] == 0xA) {
+                                            temp_f20_8 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                            SprScaleSet(temp_s4->sprites[0], 1, temp_f20_8, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                            temp_f20_9 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                            SprScaleSet(temp_s4->sprites[1], 1, temp_f20_9, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                            temp_f20_10 = (HuMathSin(temp_f24) * 0.5f) + 1.0f;
+                                            SprScaleSet(temp_s4->sprites[2], 1, temp_f20_10, (HuMathSin(temp_s0) * 0.5f) + 1.0f);
+                                        }
+                                    }
+                                    PlaySound(0x11F);
+                                    if (temp_s4->rollValue[0] == 7) {
+                                        MBDlgWinExec(3, 0x233);
+                                        func_8004CA34_4D634(temp_s3->player, 50);
+                                        func_800614B4_620B4(temp_s3->player, 50);
+                                        D_800DF646_E0246 = 1;
+                                    } else {
+                                        MBDlgWinExec(3, 0x232);
+                                        func_8004CA34_4D634(temp_s3->player, 20);
+                                        func_800614B4_620B4(temp_s3->player, 20);
+                                    }
+                                    func_80079718_7A318(0x103, gPlayers[temp_s3->player].character);
+                                    MBPlayerMotionSet(temp_s3->player, 5, 0);
+                                    HuPrcSleep(0x1E);
+                                    if (temp_s4->rollValue[0] == 7) {
+                                        D_800FC734_FD334 = 1;
+                                    }
+                                    MBPlayerMotionSet(temp_s3->player, -1, 2);
+                                }
+                            }
+                        }
+                        for (var_s1 = 0; var_s1 < 50; HuPrcVSleep(), var_s1 += 2) {
+                            func_800495E4_4A1E4(temp_s3->player, 0, D_800CBCC0_CC8C0[0][0] + var_s1, D_800CBCC0_CC8C0[0][1] + (var_s1 / 2));
+                            func_800495E4_4A1E4(temp_s3->player, 1, D_800CBCC0_CC8C0[1][0] - var_s1, D_800CBCC0_CC8C0[1][1] + (var_s1 / 2));
+                            if (D_800DF645_E0245 == 3) {
+                                func_800495E4_4A1E4(temp_s3->player, 2, D_800CBCC0_CC8C0[2][0], D_800CBCC0_CC8C0[2][1] + (var_s1 / 2));
+                            }
+                        }
+                        if (D_800DF645_E0245 == 2) {
+                            PlaySound(0x368);
+                        } else if (D_800DF645_E0245 == 3) {
+                            PlaySound(0x346);
+                        }
+                        D_800DF645_E0245 = 1;
+                        temp_s4->rollValueIdx = 0;
+                        temp_s4->rollValue[0] += temp_s4->rollValue[1] + temp_s4->rollValue[2];
+                        temp_s4->rollValue[2] = 0;
+                        temp_s4->rollValue[1] = 0;
+                        func_80046D2C_4792C(temp_s3->player);
+                        func_8004655C_4715C(temp_s3->player);
+                        HuPrcSleep(20);
+                    }
+                    omDelPrcObj(0);
+                }
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 /* exact c: marioparty func_800419D8 (src/3F5B0.c) */
 Process* func_80048800_49400(s32 player) {
