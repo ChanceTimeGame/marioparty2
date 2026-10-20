@@ -171,8 +171,29 @@ void func_8008D07C_8DC7C(s16, s16, s16, s16);
 void func_8008D23C_8DE3C(void);
 void func_8008D808_8E408(s16, s32);
 void func_8008DACC_8E6CC(s32, s16*, s32);
+s16 GetCurrentPlayerIndex(void);
+void func_80089B2C_8A72C(s16, s16);
+void func_8008D88C_8E48C(s16);
+void func_80089284_89E84(s16, s32, s32);
+void func_80089A48_8A648(s16, s32);
+void func_8008CCA8_8D8A8(s16);
 
+/* NON_MATCHING: retail keeps the window id in two callee-saved registers (s0 and a copy in s1, the
+   0x28 frame); this C keeps one. Logic is MP1 CreateTextWindow. */
+#ifdef NON_MATCHING
+s16 func_80057480_58080(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s16 temp_s1;
+
+    temp_s1 = func_800888A8_894A8(arg0, arg1, ((arg2 * 0xB) + 8), ((arg3 * 0xE) + 6), 0, 0);
+    func_80089B2C_8A72C(temp_s1, 0xC8);
+    func_8008D88C_8E48C(temp_s1);
+    func_80089284_89E84(temp_s1, 0x40, 0x40);
+    func_80089A48_8A648(temp_s1, 0);
+    return temp_s1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/58080", func_80057480_58080);
+#endif
 
 void ShowTextWindow(s32 arg0) {
     s32 i;
@@ -192,7 +213,20 @@ void ShowTextWindow(s32 arg0) {
     func_8008D808_8E408(arg0, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005762C_5822C);
+void func_8005762C_5822C(s32 arg0) {
+    s32 i;
+
+    PlaySound(0x31D);
+
+    for (i = 0xB4; i >= 0; i -= 0x14) {
+        HuPrcVSleep();
+        func_800899F4_8A5F4(arg0, (0xB4 - i) * 2);
+        func_80089764_8A364(arg0, i / 180.0f, i / 180.0f);
+    }
+
+    func_8008CCA8_8D8A8(arg0);
+    HuPrcSleep(1);
+}
 
 void func_800576F8_582F8(s32 arg0) {
     D_800CC5F4_CD1F4 = arg0;
@@ -1194,7 +1228,12 @@ s16 GetCurrentPlayerIndex(void) {
     return GwSystem.current_player_index;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", BoardPlayerGet);
+GW_PLAYER* BoardPlayerGet(s32 index) {
+    if (index < 0) {
+        index = GetCurrentPlayerIndex();
+    }
+    return &gPlayers[index];
+}
 
 s16 PlayerIsCurrent(s16 index) {
     return index == GwSystem.current_player_index;
