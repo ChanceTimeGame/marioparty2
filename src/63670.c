@@ -1,6 +1,12 @@
 #include "common.h"
 #include "game/object.h"
 
+void PlaySound(s32);
+void func_800116B4_122B4(s16, s32);
+s16 GetCurrentPlayerIndex(void);
+void omVibrate(s16, s16, s16, s16);
+
+
 extern s8 D_800CCC14_CD814;
 extern s8 D_800CCC15_CD815;
 extern s16 D_800E1FE4_E2BE4;
@@ -729,8 +735,35 @@ void func_80063950_64550(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063BBC_647BC);
-
+void func_80063BBC_647BC(s16 arg0) {
+    switch (--arg0) {
+        case 3:
+            PlaySound(0x334);
+            break;
+        case 0:
+            PlaySound(0x316);
+            break;
+        case 1:
+            PlaySound(0x317);
+            break;
+        case 11:
+            PlaySound(0x344);
+            break;
+        case 4:
+        case 5:
+            PlaySound(0x371);
+            break;
+        case 8:
+            PlaySound(0x372);
+            break;
+        case 6:
+            PlaySound(0x373);
+            break;
+        case 13:
+            PlaySound(0x341);
+            break;
+    }
+}
 /* MP3 MBPlayerPosFixSet */
 void func_80063C40_64840(s32 playerNo, s32 arg1) {
     GW_PLAYER* player;
@@ -834,8 +867,14 @@ s32 func_80063F88_64B88(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80064134_64D34);
-
+void func_80064134_64D34(void) {
+    HuPrcSleep(30);
+    if (D_800F64B0_F70B0 == -1) {
+        func_800116B4_122B4(D_800FA188_FAD88, 60);
+        D_800FA652_FB252 = 0;
+    }
+    omDelPrcObj(NULL);
+}
 void MBBattleKuriboObjMain(omObjData *arg0) {
     mbBattleKuriboMdl->coords.y = HuMathSin(arg0->rot.x) * 3.0f;
     mbBattleKuriboUpperMdl->coords.y = HuMathSin(arg0->rot.x) * 3.0f;
@@ -845,6 +884,8 @@ void MBBattleKuriboObjMain(omObjData *arg0) {
 INCLUDE_ASM("asm/nonmatchings/63670", func_80064200_64E00);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800645C8_651C8);
+
+const char D_800D3020_D3C20[] __attribute__((aligned(8), section(".rodata"))) = "%d";
 
 void func_80064C98_65898(void) {
     s32 var_a0;
@@ -938,6 +979,43 @@ void func_800650BC_65CBC(void) {
 }
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800650F0_65CF0);
+
+const u32 jtbl_800D3028_D3C28[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x80065970, 0x800659C4, 0x80065B84, 0x80065BD8,
+    0x80065590, 0x800665AC, 0x800665F4, 0x800662A8,
+    0x80065620, 0x80065480, 0x800665AC, 0x80066484,
+    0x80066574,
+};
+
+const u32 jtbl_800D3060_D3C60[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x80065868, 0x80065868, 0x80065890, 0x80065868,
+    0x80065868, 0x80065868, 0x80065868, 0x80065890,
+    0x80065868, 0x80065890, 0x80065890, 0x80065868,
+};
+
+const u32 jtbl_800D3090_D3C90[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x80065900, 0x80065900, 0x80065918, 0x80065900,
+    0x80065900, 0x80065900, 0x80065900, 0x80065918,
+    0x80065900, 0x80065918, 0x80065918, 0x80065900,
+    0x80065918, 0x800658C8, 0x800658E0,
+};
+
+const u32 jtbl_800D30D0_D3CD0[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x80065A98, 0x80065A7C, 0x80065B48, 0x80065A60,
+    0x80065AA8, 0x80065B20, 0x80065B3C, 0x80065B48,
+    0x80065AE0, 0x80065B48, 0x80065B48, 0x80065AC4,
+};
+
+const u32 jtbl_800D3100_D3D00[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x800662E8, 0x80066334, 0x800665B8, 0x800665B8,
+    0x80066368, 0x800663B8, 0x800665B8, 0x800665B8,
+    0x800664F4, 0x800665B8, 0x800665B8, 0x80066584,
+};
+
+const u32 jtbl_800D3130_D3D30[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x8006670C, 0x80066724, 0x8006673C, 0x80066724,
+    0x8006670C,
+};
 
 void func_8006692C_6752C(void) {
     HuPrcVSleep();
@@ -1093,8 +1171,33 @@ void func_800670BC_67CBC(Vec *arg0) {
     MBCameraSpeedSet(temp_f22);
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", MBPlayerVibrate);
-
+void MBPlayerVibrate(s16 playerIndex, s16 vibrationStrength) {
+    if (playerIndex == CUR_PLAYER) {
+        playerIndex = GetCurrentPlayerIndex();
+    }
+    if (playerIndex != 4) {
+        switch (vibrationStrength) {
+            case 0:
+                omVibrate(playerIndex, 5, 0, 5);
+                break;
+            case 1:
+                omVibrate(playerIndex, 2, 3, 10);
+                break;
+            case 2:
+                omVibrate(playerIndex, 10, 0, 10);
+                break;
+            case 3:
+                omVibrate(playerIndex, 2, 2, 20);
+                break;
+            case 4:
+                omVibrate(playerIndex, 20, 0, 20);
+                break;
+            case 5:
+                omVibrate(playerIndex, 30, 0, 30);
+                break;
+        }
+    }
+}
 void func_8006727C_67E7C(void) {
     UnkE78B0* r = HuPrcCurrentGet()->user_data;
 

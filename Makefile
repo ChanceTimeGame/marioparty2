@@ -350,3 +350,7 @@ $(W1E_CARVED): RODATA_AS_DATA = 1
 
 # w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
 build/src/ECE0.c.o: export VR4300MUL = ON
+# w2-D: 63670's whole rodata carved (D3BE8-D3D60; func_800645C8_651C8's string and func_800650F0_65CF0's tables are defined in C beside their INCLUDE_ASM)
+W2D_CARVED_RODATA_UNITS := build/src/63670.c.o
+CARVED_RODATA_UNITS += $(W2D_CARVED_RODATA_UNITS)
+$(W2D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
