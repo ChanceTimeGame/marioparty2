@@ -14,7 +14,8 @@ typedef struct MgWork {
     /* 0x44 */ char unk_44[8];
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50; /* flags */
-    /* 0x52 */ char unk_52[3];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53[2];
     /* 0x55 */ u8 unk_55;
     /* 0x56 */ char unk_56;
     /* 0x57 */ s8 unk_57; /* controller port (MP1 0x56) */
@@ -25,10 +26,35 @@ typedef struct MgWork {
     /* 0x60 */ f32 unk_60;
     /* 0x64 */ char unk_64[0x10];
     /* 0x74 */ s32 unk_74[6]; /* packed (x << 16) | (y & 0xFFFF) stick samples (MP1 0x6C) */
-    /* 0x8C */ char unk_8C[0x38];
+    /* 0x8C */ f32 unk_8C;
+    /* 0x90 */ char unk_90[0xC];
+    /* 0x9C */ f32 unk_9C;
+    /* 0xA0 */ f32 unk_A0;
+    /* 0xA4 */ f32 unk_A4;
+    /* 0xA8 */ char unk_A8[4];
+    /* 0xAC */ f32 unk_AC;
+    /* 0xB0 */ f32 unk_B0;
+    /* 0xB4 */ f32 unk_B4;
+    /* 0xB8 */ char unk_B8[0xB];
+    /* 0xC3 */ s8 unk_C3;
     /* 0xC4 */ s8 unk_C4; /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5; /* MP1 0xB3 */
-} MgWork;
+    /* 0xC6 */ char unk_C6[6];
+    /* 0xCC */ f32 unk_CC;
+    /* 0xD0 */ u16 unk_D0;
+    /* 0xD2 */ char unk_D2[0x16];
+    /* 0xE8 */ struct MgMotion* unk_E8;
+    /* 0xEC */ char unk_EC[0x18];
+    /* 0x104 */ s32 unk_104[21];
+    /* 0x158 */ char unk_158[4];
+} MgWork; // size 0x15C
+
+typedef struct MgMotion {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x08 */ s32 unk_08;
+} MgMotion; // size 0xC
 
 #define MG_WORK(obj) ((MgWork*)(obj)->unk_50)
 
@@ -96,6 +122,18 @@ s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y);
 f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
 void func_8000DF74_EB74(MgWork*, f32, f32);
 int abs(int);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
+void func_8000BCE0_C8E0(omObjData* obj, s32 idx, u16 player, s32 file, s32 arg4, f32 arg5);
+void func_8000BE74_CA74(omObjData* obj, f32 arg1);
+void func_8000BEB0_CAB0(omObjData* obj, f32 arg1);
+void func_8000BEBC_CABC(omObjData* obj, f32 arg1);
+void func_8000BEC8_CAC8(omObjData* obj, f32 arg1);
+void func_8000BED4_CAD4(omObjData* obj, f32 arg1);
+void func_8000BEE0_CAE0(omObjData* obj, f32 arg1);
+void func_8000BEEC_CAEC(omObjData* obj, f32 arg1);
+void func_8003C8E0_3D4E0(s16);
+void func_80007790_8390(omObjData* obj);
+extern u8 D_800BF799_C0399;
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BCE0_C8E0);
 
@@ -288,7 +326,88 @@ void func_8000C690_D290(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C6FC_D2FC);
+/* MP3 func_800E1BA8_B4728_minigame (src/overlays/minigame/B3CE0.c) with MP2's motion table. */
+void func_8000C6FC_D2FC(omObjData* obj, u32 arg1, s32 arg2, u16 arg3, s32 arg4, s32 arg5) {
+    MgWork* work;
+    s32 i;
+
+    for (i = 0; i < obj->mdlcnt; i++) {
+        obj->model[i] = 0;
+    }
+    obj->unk_50 = func_80027154_27D54(sizeof(MgWork), 31000);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(MgWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(MgMotion), 31000);
+    if (D_800BF79A_C039A == 1) {
+        func_8000BCE0_C8E0(obj, 0, arg3, arg1 | arg2, arg4, 750.0f);
+    } else {
+        obj->model[0] = LoadFormFile(arg1 | arg2, arg4);
+    }
+    obj->model[1] = func_80018A64_19664((D_800BF799_C0399 != 0) ? 13 : 1, arg5);
+    func_8003C8E0_3D4E0(obj->model[1]);
+    for (i = 0; i < obj->mtncnt; i++) {
+        obj->motion[i] = -1;
+    }
+    for (i = 0; i < 21; i++) {
+        work->unk_104[i] = 0;
+    }
+    for (i = 0; i < obj->mtncnt; i++) {
+        work->unk_E8[i].unk_00 = 0;
+        work->unk_E8[i].unk_02 = 0;
+        work->unk_E8[i].unk_04 = -1;
+        work->unk_E8[i].unk_08 = -1;
+    }
+    work->unk_57 = gPlayers[arg3].port;
+    obj->func_ptr = func_80007790_8390;
+    work->unk_52 = 0;
+    work->unk_B4 = 1.0f;
+    work->unk_8C = 65536.0f;
+    work->unk_D0 = 0xFFFF;
+    work->unk_4C = 0.5f;
+    work->unk_CC = 1.0f;
+    work->unk_60 = 0;
+    func_8000BEB0_CAB0(obj, 60.0f);
+    func_8000BEBC_CABC(obj, 150.0f);
+    func_8000BEC8_CAC8(obj, 20.0f);
+    func_8000BED4_CAD4(obj, 30.0f);
+    func_8000BEE0_CAE0(obj, 50.0f);
+    func_8000BEEC_CAEC(obj, 40.0f);
+    func_8000BE74_CA74(obj, 1000.0f);
+    work->unk_9C = work->unk_A0 = work->unk_A4 = 0.0f;
+    work->unk_59 = (s8) arg3;
+    work->unk_C3 = -1;
+    work->unk_C4 = -1;
+    work->unk_B0 = 1.0f;
+    switch (arg1 >> 16) {
+        case 6:
+            work->unk_AC = 0.7f;
+            break;
+        case 4:
+            work->unk_AC = 0.9f;
+            break;
+        case 5:
+            work->unk_AC = 0.8f;
+            break;
+        default:
+            work->unk_AC = 1.0f;
+            break;
+    }
+    i = gPlayers[arg3].character + 1;
+    D_800BF7E4_C03E4[work->unk_59][0] = i + 0x33;
+    D_800BF7E4_C03E4[work->unk_59][1] = i + 0x3A;
+    D_800BF7E4_C03E4[work->unk_59][2] = i + 0x48;
+    D_800BF7E4_C03E4[work->unk_59][3] = i + 0x41;
+    D_800BF7E4_C03E4[work->unk_59][4] = i + 0x4F;
+    D_800BF7E4_C03E4[work->unk_59][5] = i + 0x56;
+    D_800BF7E4_C03E4[work->unk_59][6] = i + 0x5D;
+    D_800BF7E4_C03E4[work->unk_59][7] = 0xA4;
+    D_800BF7E4_C03E4[work->unk_59][8] = 0xA5;
+    D_800BF7E4_C03E4[work->unk_59][9] = 0xA6;
+    D_800BF7E4_C03E4[work->unk_59][10] = i + 0x64;
+    D_800BF7E4_C03E4[work->unk_59][11] = i + 0x6B;
+    D_800BF7E4_C03E4[work->unk_59][12] = 0xAA;
+    D_800BF7E4_C03E4[work->unk_59][13] = 0xAC;
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000CC74_D874);
 
