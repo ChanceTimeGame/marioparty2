@@ -240,3 +240,7 @@ build/src/B40B0.c.o: export VR4300MUL = ON
 # b2-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
 B2C_MULFIX_UNITS := build/src/54CB0.c.o
 $(B2C_MULFIX_UNITS): export VR4300MUL := ON
+
+# b3-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
+B3C_MULFIX_UNITS := build/src/51630.c.o
+$(B3C_MULFIX_UNITS): export VR4300MUL := ON

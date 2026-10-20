@@ -3,7 +3,8 @@
 
 /* Board background (HVQ tiles streamed by two threads) and the board camera. C from MP1 src/48D90.c
    and MP3 ovl_80_shared_board FA250.c / ovl_81_name CCD20.c (their copies of the same code); the
-   rest have no reference or differ (near) and stay asm. MP1's unk20 is MP3's OverlayBgEntry. */
+   rest have no reference and stay asm (func_80053230_53E30 is in the permuter list). MP1's unk20 is
+   MP3's OverlayBgEntry. The unit builds with the KMC mul fix on (Makefile b3-C). */
 
 #define SlideReadUint(buffer, src)    \
     do {                              \
@@ -114,6 +115,7 @@ void func_800512F8_51EF8(void*);
 void func_800514F0_520F0(void);
 OverlayBgEntry* func_800518B8_524B8(u16);
 void func_80051BCC_527CC(Gfx**, void*, s16, s16);
+void func_8003FB9C_4079C(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 void func_80053DEC_549EC(void);
 s16 func_8007C058_7CC58(u8, u8, u8);
 void func_8007C094_7CC94(s16);
@@ -510,7 +512,79 @@ void func_80051A74_52674(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80051BCC_527CC);
+#define gSPScisTextureRectangle_MP(pkt,xl,yl,xh,yh,tile,s,t,dsdx,dtdy) { \
+    Gfx *_g = (Gfx *)(pkt); \
+    _g->words.w0 = (_SHIFTL(G_TEXRECT, 24, 8) | \
+    _SHIFTL(MAX((s16)(xh),0), 12, 12) | \
+    _SHIFTL(MAX((s16)(yh),0), 0, 12)); \
+    _g->words.w1 = (_SHIFTL((tile), 24, 3) | \
+    _SHIFTL(MAX((s16)(xl),0), 12, 12) | \
+    _SHIFTL(MAX((s16)(yl),0), 0, 12)); \
+    gImmp1(pkt, G_RDPHALF_1, \
+    (_SHIFTL(((s) - (((s16)(xl) < 0) ? (((s16)(dsdx) < 0) ? (MAX((((s16)(xl)*(s16)(dsdx))>>7),0)) : (MIN((((s16)(xl)*(s16)(dsdx))>>7),0))) : 0)), 16, 16) |\
+    _SHIFTL(((t) - (((s32)(yl) < 0) ? (((s16)(dtdy) < 0) ? (MAX((((s16)(yl)*(s16)(dtdy))>>7),0)) : (MIN((((s16)(yl)*(s16)(dtdy))>>7),0))) : 0)), 0, 16))); \
+    gImmp1(pkt, G_RDPHALF_2, (_SHIFTL((s16)(dsdx), 16, 16) | _SHIFTL((s16)(dtdy), 0, 16))); \
+}
+
+void func_80051BCC_527CC(Gfx** arg0, void* arg1, s16 arg2, s16 arg3) {
+    f32 temp_f20;
+    f32 temp_f22;
+
+    temp_f20 = ((f32) arg2 + (D_800E18A8_E24A8[0] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[0] / 4.0f);
+    temp_f22 = ((f32) arg3 + (D_800E18A8_E24A8[1] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[1] / 4.0f);
+    func_8003FB9C_4079C(arg0, (s32)arg1, 0, 2, 0x40, 0x20, 0, 0, 0x40, 0x20, 0, 1, 1, 6, 5, 0, 0);
+    if (!(D_800DF9C0_E05C0 & 0x10)) {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),
+            /*yl*/(temp_f22 * D_800CC210_CCE10 * 4.0f),
+            /*xh*/(temp_f20 + 64.0f) * D_800CC210_CCE10 * 4.0f,
+            /*yh*/(temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f,
+            /*tile*/0,
+            /*s*/0,
+            /*t*/0,
+            /*dsdx*/(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    } else {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/((256.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 * D_800CC210_CCE10 * 4.0f)),
+            /*xh*/((320.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0x7e0,
+            /*t*/0,
+            /*dsdx*/-(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    }
+    func_8003FB9C_4079C(arg0, (s32)arg1 + 0x1000, 0, 2, 0x40, 0x10, 0, 0, 0x40, 0x10, 0, 1, 1, 6, 4, 0, 0);
+    if (!(D_800DF9C0_E05C0 & 0x10)) {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*xh*/((temp_f20 + 64.0f) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 48.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0,
+            /*t*/0,
+            /*dsdx*/(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    } else {
+        gSPScisTextureRectangle_MP((*arg0)++,
+            /*xl*/((256.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yl*/((temp_f22 + 32.0f) * D_800CC210_CCE10 * 4.0f),
+            /*xh*/((320.0f - temp_f20) * D_800CC210_CCE10 * 4.0f),
+            /*yh*/((temp_f22 + 48.0f) * D_800CC210_CCE10 * 4.0f),
+            /*tile*/0,
+            /*s*/0x7e0,
+            /*t*/0,
+            /*dsdx*/-(s16)(1024.0f / D_800CC210_CCE10),
+            /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
+        );
+    }
+}
 
 void func_80052B4C_5374C(Gfx** gfx, s32 arg1, u8 arg2) {
     s16 prev;
