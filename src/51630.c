@@ -125,6 +125,11 @@ void func_800513FC_51FFC(void);
 void func_8005159C_5219C(void);
 void func_80051720_52320(void);
 u16 func_80051834_52434(s32, s32);
+void func_80051500_52100(void);
+void func_80053230_53E30(void);
+extern Vec D_800E18C0_E24C0;
+extern s32 D_800CC224_CCE24;
+extern s32 D_800CC270_CCE70;
 
 
 void func_80050A30_51630(u8* arg0) {
@@ -544,7 +549,38 @@ Process* MBDCameraZoomMotStart(f32 arg0) {
     return D_800E18B4_E24B4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80052FE8_53BE8);
+void func_80052FE8_53BE8(void) {
+    f32 temp_f2;
+    Process* temp_v0;
+    f32* pFloat = (f32*)D_800CC208_CCE08;
+
+    temp_f2 = (D_800CC208_CCE08->unk4 * D_800CC208_CCE08->unkC) / 240.0f;
+    D_800E18BC_E24BC = temp_f2;
+    D_800FDC88_FE888.x = pFloat[6];
+    D_800FDC88_FE888.y = pFloat[7];
+    D_800FDC88_FE888.z = pFloat[8];
+    D_800FDC74_FE874.x = pFloat[9];
+    D_800FDC74_FE874.y = pFloat[10];
+    D_800FDC74_FE874.z = pFloat[11];
+    D_80101060_101C60.x = pFloat[12];
+    D_80101060_101C60.y = pFloat[13];
+    D_80101060_101C60.z = pFloat[14];
+    D_800E18C0_E24C0.x = (temp_f2 * 640.0f);
+    D_800E18C0_E24C0.y = (temp_f2 * 480.0f);
+    D_800E18C0_E24C0.z = 511.0f;
+    D_800E18A8_E24A8[0] = 640.0f;
+    D_800E18A8_E24A8[1] = 480.0f;
+    D_800E18A0_E24A0.x = 159.5f;
+    D_800E18A0_E24A0.y = 119.5f;
+    D_800E18B8_E24B8 = 1.0f;
+    temp_v0 = omAddPrcObj(func_80053230_53E30, 0x1001, 0, 0);
+    D_800E18B0_E24B0 = temp_v0;
+    omPrcSetStatBit(temp_v0, 0x80);
+    D_800E18B4_E24B4 = NULL;
+    Hu3DCamSetPerspective(0, ((f32*)D_800CC208_CCE08)[4], 10.0f, 200.0f);
+    Hu3DCamSetPositionOrientation(0, &D_800FDC88_FE888, &D_800FDC74_FE874, &D_80101060_101C60);
+    Hu3DCamUpdateMtx(0);
+}
 
 void func_800531AC_53DAC(void) {
     if (D_800E18B0_E24B0 != NULL) {
@@ -741,9 +777,16 @@ INCLUDE_ASM("asm/nonmatchings/51630", func_80053EEC_54AEC);
 
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053F30_54B30);
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053F54_54B54);
+void func_80053F54_54B54(void) {
+    D_800CC224_CCE24 = D_800CC270_CCE70;
+    func_800514F0_520F0();
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053F7C_54B7C);
+void func_80053F7C_54B7C(void) {
+    D_800CC270_CCE70 = D_800CC224_CCE24;
+    D_800CC224_CCE24 = 0;
+    func_80051500_52100();
+}
 
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053FAC_54BAC);
 
