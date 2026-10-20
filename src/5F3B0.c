@@ -11,7 +11,8 @@ typedef struct BoardStatus {
     /* 0x00 */ s8 unk_00;
     /* 0x01 */ s8 unk1;
     /* 0x02 */ u8 unk2[2];
-    /* 0x04 */ s8 unk4[2];
+    /* 0x04 */ u8 spaceType; /* MP3 spaceType */
+    /* 0x05 */ s8 unk5;
     /* 0x06 */ u8 unk_06;
     /* 0x07 */ char pad7[1];
     /* 0x08 */ s16 unk_08;
@@ -45,7 +46,7 @@ void func_8005F604_60204(s32);
 void func_8005F6C0_602C0(s32);
 void func_8005F784_60384(s32);
 void func_8005F86C_6046C(s32);
-void func_80060034_60C34(s32, s32);
+void func_80060034_60C34(u32, s32);
 void func_800600F8_60CF8(s32, s16, s16);
 extern s32 D_800CC990_CD590;
 extern s32 D_800CC994_CD594;
@@ -88,6 +89,21 @@ extern s16 D_800E1EF4_E2AF4;
 extern Process* D_800E1F48_E2B48;
 extern s16 D_800FD2A2_FDEA2;
 extern s16 D_800FD840_FE440;
+extern s16 D_800E1D28_E2928[]; /* MP3 D_80105588: status sprite animations */
+extern s16 D_800E1D38_E2938;   /* D_800E1D28_E2928[8] */
+extern s16 D_800CCAFC_CD6FC[2];
+extern s16 D_800F8CE4_F98E4;
+extern s32 D_800CCB9C_CD79C[];
+extern u8 D_800CCA7C_CD67C[][3]; /* status colours per space type (MP3 RGB D_8010188C) */
+
+extern s32 D_800F8708_F9308;
+
+void func_8005FAB4_606B4(void);
+void func_8005FCE8_608E8(s32 arg0);
+void func_8005FA50_60650(void);
+s16 func_80062CCC_638CC(void);
+void omPrcSetStatBit(Process* process, s32 value);
+void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
 
 void* DataRead(s32 dirAndFile);
 void DataClose(void* data);
@@ -313,15 +329,53 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F2D8_5FED8);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F454_60054);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F604_60204);
+/* MP3 MBStatusBackSprCreate */
+void func_8005F604_60204(s32 playerNo) {
+    BoardStatus* temp_s0 = &D_80101510_102110[playerNo];
+    s16 temp_v0 = SprCreate(0xC, 5);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F6C0_602C0);
+    temp_s0->unk_08 = temp_v0;
+    SprAnimSet(temp_v0, 0, D_800E1D28_E2928[0], 0);
+    SprPrioSet(temp_v0, 0, ((playerNo * 5) + 0x4790));
+    SprAttrSet(temp_v0, 0, 0x1000);
+    SprPosSet(temp_v0, 0, 0, 0);
+}
+
+/* MP3 MBStatusRankSprCreate */
+void func_8005F6C0_602C0(s32 playerNo) {
+    BoardStatus* temp_v0 = &D_80101510_102110[playerNo];
+    s16 temp_s0;
+
+    temp_s0 = temp_v0->unk_08;
+    SprAnimSet(temp_s0, 0xA, D_800E1D38_E2938, 0);
+    func_8008225C_82E5C(temp_s0, 0xA, 1);
+    func_800822A8_82EA8(temp_s0, 0xA, 0, 0);
+    SprPrioSet(temp_s0, 0xA, ((playerNo * 5) + 0x478F));
+    SprAttrSet(temp_s0, 0xA, 0x1000);
+    SprPosSet(temp_s0, 0xA, D_800CCAFC_CD6FC[0], D_800CCAFC_CD6FC[1]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F784_60384);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F86C_6046C);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F954_60554);
+void func_8005F954_60554(void) {
+    void* data;
+
+    if (D_800CC998_CD598 == -1) {
+        D_800CC998_CD598 = SprCreate(1, 5);
+    }
+    data = DataRead(D_800CCB9C_CD79C[D_800F8CE4_F98E4]);
+    if (D_800CC99A_CD59A == -1) {
+        D_800CC99A_CD59A = SprAnimRead(data);
+    }
+    DataClose(data);
+    SprAnimSet(D_800CC998_CD598, 0, D_800CC99A_CD59A, 0);
+    func_8008225C_82E5C(D_800CC998_CD598, 0, 1);
+    SprPrioSet(D_800CC998_CD598, 0, 0x4790);
+    SprAttrSet(D_800CC998_CD598, 0, 0x1000);
+    SprPosSet(D_800CC998_CD598, 0, 0xA0, 0x24);
+}
 
 void func_8005FA50_60650(void) {
     if (D_800CC99A_CD59A != -1) {
@@ -336,7 +390,23 @@ void func_8005FA50_60650(void) {
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FAB4_606B4);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", MBStatusAnimKill);
+void MBStatusAnimKill(void) {
+    s32 i;
+    s16* spriteIDs = D_800E1D28_E2928;
+
+    SprAnimKill(spriteIDs[0]);
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        SprAnimKill(spriteIDs[i + 1]);
+    }
+
+    for (i = 0; i < 2; i++) {
+        SprAnimKill(spriteIDs[i + 5]);
+    }
+
+    SprAnimKill(spriteIDs[8]);
+    SprAnimKill(spriteIDs[9]);
+    SprAnimKill(spriteIDs[10]);
+}
 
 void func_8005FCE8_608E8(s32 arg0) {
     BoardStatus* sprite;
@@ -366,19 +436,68 @@ void func_8005FCE8_608E8(s32 arg0) {
     sprite->unk30 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FE10_60A10);
+void func_8005FE10_60A10(void) {
+    s32 i;
+
+    func_8005FAB4_606B4();
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        func_8005FCE8_608E8(i);
+    }
+    D_800E1D20_E2920 = omAddPrcObj(func_8005ED40_5F940, 0, 0x2000, 0);
+    omPrcSetStatBit(D_800E1D20_E2920, 0x80);
+    D_800E1D40_E2940 = -1;
+    D_800E1D3E_E293E = -1;
+    D_800CC990_CD590 = -1;
+    D_800CC994_CD594 = -1;
+    if (GwSystem.current_board_index == 2 && func_80062CCC_638CC() == 0 && _CheckFlag(0x17) != 0) {
+        func_8005F954_60554();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FEDC_60ADC);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FF9C_60B9C);
+void func_8005FF9C_60B9C(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060034_60C34);
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        func_8005FEDC_60ADC(i);
+    }
+
+    MBStatusAnimKill();
+    HuPrcKill(D_800E1D20_E2920);
+    MBVsSprKill();
+    D_800CC990_CD590 = -1;
+    D_800CC994_CD594 = -1;
+    if (GwSystem.current_board_index == 2 && func_80062CCC_638CC() == 0) {
+        func_8005FA50_60650();
+    }
+}
+
+/* MP3 MBStatusColorSet */
+void func_80060034_60C34(u32 playerNo, s32 turnStatus) {
+    if (playerNo < MB_MAX_PLAYERS) {
+        func_80082450_83050(D_80101510_102110[playerNo].unk_08, 0, D_800CCA7C_CD67C[turnStatus][0], D_800CCA7C_CD67C[turnStatus][1], D_800CCA7C_CD67C[turnStatus][2]);
+        D_80101510_102110[playerNo].spaceType = turnStatus;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600C0_60CC0);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600DC_60CDC);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600F8_60CF8);
+/* MP3 MBStatusPosSet */
+void func_800600F8_60CF8(s32 playerIndex, s16 arg1, s16 arg2) {
+    BoardStatus* boardStatus;
+
+    boardStatus = &D_80101510_102110[playerIndex];
+    boardStatus->unk_18 = arg1;
+    boardStatus->xPos = arg1;
+    boardStatus->unk_1C = arg2;
+    boardStatus->yPos = arg2;
+    boardStatus->unk_20 = boardStatus->unk_24 = 0;
+    boardStatus->unk_0C = -2;
+    SprPosSet(boardStatus->unk_08, 0, arg1 + 0x38, arg2 + 0x13);
+}
 
 void HidePlayerHUDVisibility(s32 arg0, s32 arg1) {
     func_800600F8_60CF8(arg0, D_800CC99C_CD59C[arg1 * 4 + arg0].unk_00, D_800CC99C_CD59C[arg1 * 4 + arg0].unk_02);
@@ -390,11 +509,81 @@ void func_800601DC_60DDC(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060210_60E10);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800609D8_615D8);
+s32 func_800609D8_615D8(void) {
+    s32 var_a0 = FALSE;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060A1C_6161C);
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        if (D_80101510_102110[i].unk_0C != -2) {
+            var_a0 = TRUE;
+        }
+    }
+    return var_a0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060B04_61704);
+s32 func_80060A1C_6161C(void) {
+    u8 type1Indices[4];
+    u8 type2Indices[4];
+    u8 otherCount = 0;
+    u8 redCount = 0;
+    u8 blueCount = 0;
+    s32 i;
+
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        switch (D_80101510_102110[i].spaceType) {
+            case 1:
+                type1Indices[blueCount++] = i;
+                break;
+            case 2:
+                type2Indices[redCount++] = i;
+                break;
+            default:
+                otherCount++;
+        }
+    }
+
+    if (otherCount > 0) {
+        return -1;
+    }
+
+    if (blueCount == 0 || blueCount == 4) {
+        return 0;
+    }
+
+    if (blueCount == 1) {
+        D_800F8708_F9308 = type1Indices[0];
+        return 1;
+    }
+
+    if (blueCount == 3) {
+        D_800F8708_F9308 = type2Indices[0];
+        return 1;
+    }
+
+    return 2;
+}
+
+/* MP3 MBVsSprCreate */
+void func_80060B04_61704(void) {
+    void* temp_s0;
+
+    if (D_800E1D3E_E293E == -1) {
+        D_800E1D3E_E293E = SprCreate(1, 5);
+        temp_s0 = DataRead(0xA0160);
+        D_800FC9EC_FD5EC[0].unk_04 = 158.0f;
+        D_800E1D40_E2940 = SprAnimRead(temp_s0);
+        DataClose(temp_s0);
+        SprAnimSet(D_800E1D3E_E293E, 0, D_800E1D40_E2940, 0);
+        SprPrioSet(D_800E1D3E_E293E, 0, 0x4780);
+        SprAttrSet(D_800E1D3E_E293E, 0, 0x1000);
+        SprPosSet(D_800E1D3E_E293E, 0, 0xA0, D_800FC9EC_FD5EC[0].unk_04);
+        SprScaleSet(D_800E1D3E_E293E, 0, 0.0f, 0.0f);
+        D_800E1D44_E2944 = 0.0f;
+        D_800FC9EC_FD5EC[0].unk_00 = 160.0f;
+        D_800FD854_FE454[0].unk_00 = D_800FD854_FE454[0].unk_04 = 0.0f;
+        D_800FA604_FB204 = 0;
+    }
+}
 
 void MBVsSprCreateY(f32 arg0, f32 arg1) {
     void *temp_s0;
