@@ -19,10 +19,23 @@ typedef struct ModelEffectWork {
     /* 0x28 */ f32 duration;
 } ModelEffectWork; /* size = 0x2C */
 
+typedef struct ModelEmitterWork {
+    /* 0x00 */ Process* process;
+    /* 0x04 */ Object* model;
+    /* 0x08 */ Object* parent;
+    /* 0x0C */ Vec3f offset;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ s16 type;
+    /* 0x1E */ s16 flags;
+} ModelEmitterWork; /* size = 0x20 */
+
 extern s16 D_800DF650_E0250;
 
 void MBModelDispOn(Object*);
 void MBModelKill(void*);
+void MBModelDispOff(Object*);
+Object* func_80043510_44110(s32, void*);
+void func_80049B2C_4A72C(void);
 Object* MBModelParamCreate(Object*);
 void func_80029EDC_2AADC(s16, s32);
 s16 func_80029F04_2AB04(s16);
@@ -71,7 +84,27 @@ Process* func_80049A38_4A638(Object* model, Vec3f* pos, Vec3f* vel, Vec3f* scale
 
 INCLUDE_ASM("asm/nonmatchings/4A500", func_80049B2C_4A72C);
 
-INCLUDE_ASM("asm/nonmatchings/4A500", func_80049ED4_4AAD4);
+/* near MP1 func_80042728 (src/42E40.c): MP2 adds a scale (unk18) to the work. */
+void* func_80049ED4_4AAD4(Object* ptr, s16 num) {
+    ModelEmitterWork* work;
+    Process* process;
+    Object* model;
+
+    D_800DF650_E0250 = 1;
+    work = HuMemMemoryAllocTemp(sizeof(ModelEmitterWork));
+    if (work != NULL) {
+        work->process = process = omAddPrcObj(func_80049B2C_4A72C, 0x4700, 0, 0);
+        process->user_data = work;
+        work->model = model = func_80043510_44110(0x1C, NULL);
+        MBModelDispOff(model);
+        work->parent = ptr;
+        work->type = num;
+        HuVecCopyXYZ(&work->offset, 0.0f, -30.0f, 0.0f);
+        work->flags = 0;
+        work->unk18 = 1.0f;
+    }
+    return work;
+}
 
 INCLUDE_ASM("asm/nonmatchings/4A500", func_80049F90_4AB90);
 
