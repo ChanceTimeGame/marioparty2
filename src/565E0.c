@@ -2,7 +2,7 @@
 #include "game/board.h"
 
 /* Board message windows. C from MP3 ovl_80_shared_board FFB10.c (MBWin and MBDlg functions) and MP1
-   ovl_3E_FirstMap 257020.c; the rest have no reference or differ (near) and stay asm. */
+   ovl_3E_FirstMap 257020.c; the two without a reference stay asm. */
 
 void func_80055A38_56638(s16, s32);
 void func_800890CC_89CCC(s16, s32, s32, s32);
@@ -23,9 +23,34 @@ s32 func_8008E73C_8F33C(s16 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u16 ar
 void func_8008EED8_8FAD8(s16, s16);
 void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s16 arg7);
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_800559E0_565E0);
+typedef struct MbTextWindow {
+    /* 0x000 */ u8 unk_00[0x20];
+    /* 0x020 */ u8 unk_20;
+    /* 0x021 */ u8 unk_21[0x27C - 0x21];
+} MbTextWindow; /* size 0x27C; the full type is TextWindow in 84FF0.c */
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_80055A38_56638);
+extern MbTextWindow* D_800F920C_F9E0C;
+void func_80057730_58330(s16, s32);
+void func_8005774C_5834C(s16, s32);
+void func_80057DA4_589A4(s16);
+void func_80057DC0_589C0(s16);
+void HuPrcVSleep(void);
+
+void func_800559E0_565E0(s16 arg0) {
+    if ((GwSystem.current_player_index == 4) || (D_800CC592_CD192 != 0)) {
+        func_80057DA4_589A4(arg0);
+        return;
+    }
+    func_80057730_58330(arg0, GwSystem.current_player_index);
+}
+
+void func_80055A38_56638(s16 arg0, s32 arg1) {
+    if ((GwSystem.current_player_index == 4) || (D_800CC592_CD192 != 0)) {
+        func_80057DC0_589C0(arg0);
+        return;
+    }
+    func_8005774C_5834C(arg0, arg1);
+}
 
 s16 MBWinCreate(s16 arg0, s16 *arg1, s16 arg2) {
     s32 result;
@@ -262,9 +287,19 @@ void func_800563FC_56FFC(s16 arg0, s32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 a
     D_800CC592_CD192 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_80056458_57058);
+void func_80056458_57058(void) {
+    D_800F920C_F9E0C[mbDlgWinId].unk_20 = 1;
+    HuPrcVSleep();
+    func_80055A38_56638(mbDlgWinId, GwSystem.current_player_index);
+}
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_800564B4_570B4);
+void func_800564B4_570B4(void) {
+    D_800CC592_CD192 = 1;
+    D_800F920C_F9E0C[mbDlgWinId].unk_20 = 1;
+    HuPrcVSleep();
+    func_80055A38_56638(mbDlgWinId, GwSystem.current_player_index);
+    D_800CC592_CD192 = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/565E0", func_80056524_57124);
 
