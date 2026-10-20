@@ -102,6 +102,13 @@ extern f32 D_800CCB50_CD750[12];
 void AdjustPlayerCoins(s32 index, s32 count);
 s32 PlaySound(s32);
 
+extern s16 D_800E1D58_E2958;
+extern s16 D_800E1D5A_E295A;
+extern s16 D_800E1D5C_E295C;
+extern s16 D_800E1D5E_E295E;
+extern u8 D_800E1D60_E2960[]; /* MP1 unkCommonStruct0 */
+extern Process* D_800E1DD4_E29D4;
+
 #define ABS_F(x) (((x) > 0.0f) ? (x) : 0.0f - (x))
 void omDelObj(omObjData*);
 void func_80060DF8_619F8(omObjData*);
@@ -744,7 +751,21 @@ INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061584_62184);
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800615F0_621F0);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800615FC_621FC);
+void func_800615FC_621FC(void) {
+    s32 i;
+
+    func_8005FAB4_606B4();
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        func_8005FCE8_608E8(i);
+        func_800600F8_60CF8(i, D_800CC99C_CD59C[i + 4].unk_00, D_800CC99C_CD59C[i + 4].unk_02);
+        func_80060034_60C34(i, (u8)gPlayers[i].player_space_color);
+    }
+
+    D_800E1D20_E2920 = omAddPrcObj(func_8005ED40_5F940, 0, 0x2000, 0);
+    omPrcSetStatBit(D_800E1D20_E2920, 0x80);
+    D_800E1D40_E2940 = -1;
+    D_800E1D3E_E293E = -1;
+}
 
 void func_800616C4_622C4(void) {
     func_8005FEDC_60ADC(D_800CC990_CD590);
@@ -819,7 +840,14 @@ void func_80062294_62E94(void) {
     omDelPrcObj(D_800E1F48_E2B48);
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800622E4_62EE4);
+void func_800622E4_62EE4(void) {
+    SprAnimKill(D_800E1D5A_E295A);
+    SprKill(D_800E1D58_E2958);
+    func_8006AE14_6BA14(D_800E1D60_E2960);
+    SprAnimKill(D_800E1D5E_E295E);
+    SprKill(D_800E1D5C_E295C);
+    omDelPrcObj(D_800E1DD4_E29D4);
+}
 
 void func_80062340_62F40(void) {
     func_8006AE14_6BA14(D_800E1DE0_E29E0);
