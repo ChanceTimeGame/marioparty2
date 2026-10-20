@@ -42,6 +42,7 @@ extern Gfx* D_800FDBCC_FE7CC;
 extern u8 D_800FD842_FE442;
 extern s16 D_800FDEA2_FEAA2[];
 extern s16 D_800FD85C_FE45C[];
+extern u8 D_800FC988_FD588;
 
 void func_80068E64_69A64(Gfx**);
 void func_80069770_6A370(void);
@@ -55,7 +56,24 @@ s16 SprAnimRead(void*);
 
 INCLUDE_ASM("asm/nonmatchings/69950", func_80068D50_69950);
 
-INCLUDE_ASM("asm/nonmatchings/69950", func_80068DAC_699AC);
+/* MP1 GMesInit */
+void func_80068DAC_699AC(void) {
+    s16 i;
+
+    D_800FC988_FD588 = 0;
+
+    for (i = 0; i < GMES_MAX; i++) {
+        D_800F9570_FA170[i].mesNo = 0;
+    }
+
+    for (i = 0; i < 5; i++) {
+        D_800FDEA2_FEAA2[i] = D_800FD85C_FE45C[i] = -1;
+    }
+
+    D_800FD432_FE032 = 0;
+    D_8010002D_100C2D = -1;
+    D_800FD842_FE442 = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/69950", func_80068E64_69A64);
 
