@@ -248,3 +248,7 @@ build/src/B2430.c.o: export VR4300MUL = ON
 # ADE40 (libultra gu/normalize.c): libultra flags as MP1's src/lib (-O3, unsigned char, mul fix on)
 build/src/ADE40.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 build/src/ADE40.c.o: export VR4300MUL = ON
+# b3-E: units whose .rodata is carved out of the data blob
+B3E_CARVED := build/src/A0580.c.o
+CARVED_RODATA_UNITS += $(B3E_CARVED)
+$(B3E_CARVED): RODATA_AS_DATA = 1
