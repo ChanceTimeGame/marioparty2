@@ -406,6 +406,8 @@ segments:
       - [0xD3AA0, data]
       - [0xD3B00, .data, 5F3B0]
       - [0xD3BE8, data]
+      - [0xD3F68, .data, 69950]
+      - [0xD40C0, data]
       - [0xD4200, .data, 7FAE0]
       - [0xD4240, .data, 80230]
       - [0xD42A0, data]
