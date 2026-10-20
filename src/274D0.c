@@ -1294,11 +1294,117 @@ void func_8002A9E8_2B5E8(s16 arg0) {
     D_800CA028_CAC28 = arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002A9F4_2B5F4);
+/* HmfData.unk84 entries (MP1 unk2C0C0Struct50, 0xA4 there) */
+typedef struct HmfMotionGroup {
+    /* 0x00 */ s16 unk00; /* count of unk50 */
+    /* 0x02 */ char unk02[0x4E];
+    /* 0x50 */ s16* unk50; /* part indices */
+    /* 0x54 */ char unk54[0x44];
+} HmfMotionGroup; /* size = 0x98 */
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002AC10_2B810);
+/* MP1 func_80026A0C (src/24740.c; its decomp-permuter shape): the motion group holding a part;
+   MP2 falls back to the hit transforms (unk6C) when the model has no groups */
+void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    s16 new_var;
+    s16 idx = func_80038398_38F98(model, arg1);
+    s16 n;
+    s16 j;
+    s16 i;
 
+    if (model->unk84 != (void*)-1) {
+        for (i = 0; i < model->unk16; i++) {
+            n = ((HmfMotionGroup*)model->unk84)[i].unk00;
+            for (j = 0; j < n; j++) {
+                if (((HmfMotionGroup*)model->unk84)[i].unk50[j] == idx) {
+                    break;
+                }
+            }
+            new_var = j;
+            if (new_var != n) {
+                break;
+            }
+        }
+        if (i == model->unk16) {
+            return (void*)-1;
+        }
+        return &((HmfMotionGroup*)model->unk84)[i];
+    }
+    for (i = 0; i < model->unk68; i++) {
+        if (model->unk6C[i].unk00 == idx) {
+            break;
+        }
+    }
+    if (i == model->unk68) {
+        return (void*)-1;
+    }
+    return &model->unk6C[i];
+}
+
+void func_8002AF2C_2BB2C(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4);
+void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4);
+void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4);
+
+/* MP1 func_80026B8C (src/24740.c) */
+void func_8002AC10_2B810(s16 arg0, f32 arg1, f32 arg2, s32 arg3) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+
+    if (model != NULL) {
+        switch (arg3 & 0xF) {
+            case 0:
+                func_8002AF2C_2BB2C(model, arg1, arg2, 0, model->unk1A);
+                break;
+            case 1:
+                func_8002B184_2BD84(model, arg1, arg2, 0, model->unk1A);
+                break;
+            case 2:
+                func_8002B4C4_2C0C4(model, arg1, arg2, 0, model->unk1A);
+                break;
+        }
+    }
+}
+
+/* MP1 func_80026C6C (src/24740.c) */
+// retail keeps a second copy of arg4 (s2) for the switch, as MP1's does (masked 16)
+#ifdef NON_MATCHING
+void func_8002ACF0_2B8F0(s16 arg0, f32 arg1, f32 arg2, char* arg3, s32 arg4) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    HmfVtx* src;
+    HmfVtx* dst;
+    s16 idx;
+    s16 n;
+    s16 i;
+
+    if (model == NULL) {
+        return;
+    }
+    idx = func_80038398_38F98(model, arg3);
+    if (idx == -1) {
+        return;
+    }
+    if (arg4 & 0x80) {
+        src = model->unk40;
+        dst = model->unk44[D_800FDBE0_FE7E0];
+        n = model->unk18;
+        for (i = 0; i < n; i++) {
+            *dst++ = *src++;
+        }
+    }
+    switch (arg4 & 0xF) {
+        case 0:
+            func_8002AF2C_2BB2C(model, arg1, arg2, model->unk64[idx].unk0E, model->unk64[idx].unk10);
+            break;
+        case 1:
+            func_8002B184_2BD84(model, arg1, arg2, model->unk64[idx].unk0E, model->unk64[idx].unk10);
+            break;
+        case 2:
+            func_8002B4C4_2C0C4(model, arg1, arg2, model->unk64[idx].unk0E, model->unk64[idx].unk10);
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/274D0", func_8002ACF0_2B8F0);
+#endif
 
 extern f32 D_800D2210_D2E10[];
 extern f32 D_800CA02C_CAC2C;
@@ -1457,17 +1563,214 @@ void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002BB4C_2C74C);
+extern HmfTex* D_800FD89C_FE49C; /* the texture table, 128 entries */
+u16 func_8001F4AC_200AC(char*); /* name hash */
+s32 func_800B0FD0_B1BD0(char*, char*); /* strcmp */
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002BCA8_2C8A8);
+/* MP1 func_80027AC8 (src/24740.c): point a model's texture arg1 at the loaded texture arg2 */
+void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2) {
+    HmfTex* found = NULL;
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    u16 hash = func_8001F4AC_200AC(arg2);
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002BED4_2CAD4);
+    for (i = 0; i < 128; i++) {
+        if (D_800FD89C_FE49C[i].unk24 != 0 && D_800FD89C_FE49C[i].unk24 == hash
+            && func_800B0FD0_B1BD0((char*)&D_800FD89C_FE49C[i], arg2) == 0) {
+            found = &D_800FD89C_FE49C[i];
+            break;
+        }
+    }
+    hash = func_8001F4AC_200AC(arg1);
+    for (i = 0; i < model->unk12; i++) {
+        if (model->unk88[i].unk0C->unk24 == hash) {
+            model->unk88[i].unk0C = found;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C20C_2CE0C);
+/* MP1 func_80027C1C (src/24740.c): scroll the texture coordinates */
+void func_8002BCA8_2C8A8(s16 arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4) {
+    u16 w;
+    u16 h;
+    s16 i;
+    u16 var_a0;
+    u16 var_a0_2;
+    s16 temp_t2;
+    HmfData* temp_s0;
+    HmfVtx* var_t0;
+    HmfVtx* var_t1;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C3A0_2CFA0);
+    temp_s0 = D_800FC834_FD434[arg0].hmf;
+    if (temp_s0 != NULL) {
+        var_t0 = temp_s0->unk40;
+        var_t1 = temp_s0->unk44[D_800FDBE0_FE7E0];
+        temp_t2 = temp_s0->unk18;
+        w = arg3 << 5;
+        h = arg4 << 5;
+        var_a0 = arg1 * 32.0f;
+        var_a0_2 = arg2 * 32.0f;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C524_2D124);
+        if (arg1 < 0.0f) {
+            arg1 = -arg1;
+        }
+        if (arg2 < 0.0f) {
+            arg2 = -arg2;
+        }
+
+        if ((arg1 * 32.0f) > w) {
+            var_a0 = var_a0 % w;
+        }
+
+        if ((arg2 * 32.0f) > h) {
+            var_a0_2 = var_a0_2 % h;
+        }
+
+        for (i = 0; i < temp_t2; i++) {
+            var_t1->unk08 = var_a0 + var_t0->unk08;
+            var_t1->unk0A = var_a0_2 + var_t0->unk0A;
+            var_t0++;
+            var_t1++;
+        }
+    }
+}
+
+/* MP1 func_80027E48 (src/24740.c): scroll one part's texture coordinates */
+void func_8002BED4_2CAD4(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6) {
+    s16 i;
+    u16 var_a0;
+    u16 var_a0_2;
+    s16 temp_t2;
+    HmfData* temp_s0;
+    HmfVtx* var_t0;
+    HmfVtx* var_t1;
+    s32 temp2;
+
+    temp_s0 = D_800FC834_FD434[arg0].hmf;
+    if (temp_s0 != NULL) {
+        if (arg6 != 0) {
+            var_t0 = temp_s0->unk40;
+            var_t1 = temp_s0->unk44[D_800FDBE0_FE7E0];
+            temp_t2 = temp_s0->unk18;
+            for (i = 0; i < temp_t2; i++) {
+                *var_t1++ = *var_t0++;
+            }
+        }
+        temp2 = func_80038398_38F98(temp_s0, arg5);
+        temp_t2 = temp_s0->unk64[temp2].unk0C;
+        var_t0 = &temp_s0->unk40[temp_s0->unk64[temp2].unk0A];
+        var_t1 = &temp_s0->unk44[D_800FDBE0_FE7E0][temp_s0->unk64[temp2].unk0A];
+        arg3 = (arg3 << 5);
+        arg4 = (arg4 << 5);
+        var_a0 = arg1 * 32.0f;
+        var_a0_2 = arg2 * 32.0f;
+
+        if (arg1 < 0.0f) {
+            arg1 = -arg1;
+        }
+        if (arg2 < 0.0f) {
+            arg2 = -arg2;
+        }
+
+        if ((arg1 * 32.0f) > arg3) {
+            var_a0 = var_a0 % arg3;
+        }
+
+        if ((arg2 * 32.0f) > arg4) {
+            var_a0_2 = var_a0_2 % arg4;
+        }
+
+        for (i = 0; i < temp_t2; i++) {
+            var_t1->unk08 = var_a0 + var_t0->unk08;
+            var_t1->unk0A = var_a0_2 + var_t0->unk0A;
+            var_t0++;
+            var_t1++;
+        }
+    }
+}
+
+/* MP1 func_80028180 (src/24740.c): set one part's vertex colours */
+void func_8002C20C_2CE0C(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    HmfVtx* src;
+    HmfVtx* dst;
+    s16 idx;
+    s16 n;
+    s16 i;
+
+    if (model != NULL) {
+        if (arg5 != 0) {
+            src = model->unk40;
+            dst = model->unk44[D_800FDBE0_FE7E0];
+            n = model->unk18;
+            for (i = 0; i < n; i++) {
+                *dst++ = *src++;
+            }
+        }
+        idx = func_80038398_38F98(model, arg1);
+        n = model->unk64[idx].unk0C;
+        src = &model->unk44[D_800FDBE0_FE7E0][model->unk64[idx].unk0A];
+        for (i = 0; i < n; i++) {
+            src->unk0C[0] = arg2;
+            src->unk0C[1] = arg3;
+            src->unk0C[2] = arg4;
+            src++;
+        }
+    }
+}
+
+/* A part's face (MP1 unk2C0C0Struct20; 30560 has the same view) */
+typedef struct HmfFaceRec {
+    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
+    /* 0x01 */ s8 unk01[3]; /* normal */
+    /* 0x04 */ s16 unk04[4]; /* vertices */
+    /* 0x0C */ f32 unk0C[4]; /* s */
+    /* 0x1C */ f32 unk1C[4]; /* t */
+    /* 0x2C */ u8 unk2C[4];
+    /* 0x30 */ s16 unk30;
+    /* 0x32 */ s16 unk32;
+} HmfFaceRec; /* size 0x34 */
+
+/* MP1 func_80028314 (src/24740.c): reverse every face's winding */
+void func_8002C3A0_2CFA0(s16 arg0) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    HmfPart* obj;
+    HmfFaceRec* key;
+    s16 tmp;
+    f32 ftmp;
+    s16 n;
+    s16 k;
+    s16 j;
+    s16 i;
+
+    for (i = 0; i < model->unk10; i++) {
+        obj = &model->unk64[i];
+        for (j = 0; j < obj->unk04; j++) {
+            key = &obj->unk54[j];
+            n = (u8)(key->unk00 & 0x7F);
+            for (k = 0; k < n / 2; k++) {
+                tmp = key->unk04[k];
+                key->unk04[k] = key->unk04[n - k - 1];
+                key->unk04[n - k - 1] = tmp;
+                ftmp = key->unk0C[k];
+                key->unk0C[k] = key->unk0C[n - k - 1];
+                key->unk0C[n - k - 1] = ftmp;
+                ftmp = key->unk1C[k];
+                key->unk1C[k] = key->unk1C[n - k - 1];
+                key->unk1C[n - k - 1] = ftmp;
+            }
+        }
+    }
+}
+
+void func_8002C524_2D124(s16 arg0, u8 arg1, s8 arg2) {
+    HmfModel* modelP = &D_800FC834_FD434[arg0];
+
+    modelP->unk06 = arg1;
+    modelP->unk60 = modelP->unk58 = 0.0f;
+    modelP->unk07 = arg2;
+    modelP->unk5C = 1.0f;
+}
 
 void func_8002C570_2D170(s16 arg0) {
     D_800FC834_FD434[arg0].unk06 = 0xFF;

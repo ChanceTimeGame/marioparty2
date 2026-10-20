@@ -110,7 +110,9 @@ typedef struct HmfPart {
     /* 0x06 */ char unk06[4];
     /* 0x0A */ s16 unk0A; /* first vertex */
     /* 0x0C */ s16 unk0C; /* vertex count */
-    /* 0x0E */ char unk0E[0x20];
+    /* 0x0E */ u16 unk0E; /* first face */
+    /* 0x10 */ u16 unk10; /* face count */
+    /* 0x12 */ char unk12[0x1C];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
     /* 0x2F */ char unk2F[0x13];
     /* 0x42 */ s16 unk42; /* 0x42-0x4C: -0x8000 in a display-list model (274D0) */
