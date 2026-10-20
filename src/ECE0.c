@@ -1,7 +1,11 @@
 #include "common.h"
 
-/* Audio driver. Functions with C come from MP1 src/B980.c (oscillator free list, vibrato depth),
-   MP3 src/1140.c (audio command queue) and MP1 ovl_22 (a one-argument wrapper); the rest is asm. */
+/* Audio driver (MP3 src/1140.c is the same code, asm there). First half (w1-C): sound system
+   init and bank-header loading, the music sequence players and their command queue, the
+   oscillators (MP1 src/B980.c), the sound-bank loaders and the sound-effect command processor.
+   Host concerns (N64 code kept as is): the bank loaders relocate 32-bit file offsets into pointers
+   in place (ALSound/ALWaveTable fields, SndGroup and the s32 offset tables), and SndConfig.fxd
+   holds a ROM address before it holds the loaded table. */
 
 /* Sequence-player oscillator (MP1 B980Osc). */
 typedef struct ECE0Osc {
@@ -232,7 +236,6 @@ typedef struct SndGroup {
     } entries[1];
 } SndGroup;
 
-
 extern OSMesg D_800D5770_D6370[];
 extern OSMesgQueue D_800D5838_D6438;
 extern ALHeap D_800D5850_D6450;
@@ -268,7 +271,6 @@ SndState* func_8000E9DC_F5DC(void);
 void func_8001240C_1300C(SndVoice*);
 s32 func_80010E74_11A74(s32 id, SeqPlayArgs* args);
 void func_8000FE48_10A48(s32 player, s32 type, s32 arg);
-
 
 s32 func_8000EC8C_F88C(s32, s32);
 
@@ -311,6 +313,7 @@ void func_8000E0E0_ECE0(SndBankHdr* hdr, u32 rom) {
         }
     }
 }
+
 // register allocation and two reloads (masked 11)
 #ifdef NON_MATCHING
 s32 func_8000E1F0_EDF0(void) {
@@ -364,7 +367,9 @@ load:
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8000E1F0_EDF0);
+
 #endif
+
 void func_8000E38C_EF8C(SndConfig* cfg) {
     osCreateMesgQueue(&D_800D5838_D6438, D_800D5770_D6370, 50);
     bzero(&D_800D5860_D6460, sizeof(SndConfig));
@@ -373,6 +378,7 @@ void func_8000E38C_EF8C(SndConfig* cfg) {
     D_800F8428_F9028 = 0;
     func_8000E3FC_EFFC(cfg);
 }
+
 s32 func_8000E3FC_EFFC(SndConfig* cfg) {
     SndConfig* st;
     SndBankHdr* hdr;
@@ -527,6 +533,7 @@ s32 func_8000E3FC_EFFC(SndConfig* cfg) {
     func_800160FC_16CFC(st);
     return 0;
 }
+
 s32 func_8000E930_F530(void) {
     SeqMgr* seq = func_800100FC_10CFC();
     UnkAudio* snd;
@@ -553,9 +560,11 @@ s32 func_8000E930_F530(void) {
     }
     return 0;
 }
+
 SndState* func_8000E9DC_F5DC(void) {
     return &D_800D5860_D6460;
 }
+
 void func_8000E9E8_F5E8(SndConfig* out) {
     u8* src = (u8*)func_8000E9DC_F5DC();
     u32 i;
@@ -564,18 +573,23 @@ void func_8000E9E8_F5E8(SndConfig* out) {
         ((u8*)out)[i] = src[i];
     }
 }
+
 s16 func_8000EA34_F634(void) {
     return func_8000E9DC_F5DC()->fxdCount;
 }
+
 s32 func_8000EA54_F654(void) {
     return 0x610103;
 }
+
 s32 func_8000EA60_F660(void) {
     return 0;
 }
+
 s16 func_8000EA68_F668(void) {
     return func_8000E9DC_F5DC()->unk72;
 }
+
 void func_8000EA88_F688(s32 mono) {
     UnkAudio* snd;
     s32 i;
@@ -592,9 +606,11 @@ void func_8000EA88_F688(s32 mono) {
         }
     }
 }
+
 s16 func_8000EB1C_F71C(void) {
     return func_8000E9DC_F5DC()->fxdId;
 }
+
 void func_8000EB3C_F73C(void* dst, u32 rom, s32 size, s32 chunk) {
     OSIoMesg mesg;
     u32 r = rom;
@@ -624,6 +640,7 @@ void func_8000EB3C_F73C(void* dst, u32 rom, s32 size, s32 chunk) {
         p += n;
     }
 }
+
 void* func_8000EC10_F810(s32 size) {
     void* p = alHeapDBAlloc(NULL, 0, &D_800D5850_D6450, 1, size);
 
@@ -632,15 +649,19 @@ void* func_8000EC10_F810(s32 size) {
     }
     return p;
 }
+
 void func_8000EC64_F864(s16 arg0) {
     func_8000E9DC_F5DC()->unk72 = arg0;
 }
+
 s32 func_8000EC8C_F88C(s32 arg0, s32 arg1) {
     return 0;
 }
+
 s16 func_8000EC94_F894(s32 vol) {
     return (vol > 0) ? ((vol << 8) | 0xFF) : 0;
 }
+
 void func_8000ECB8_F8B8(SeqPlayer* p, s8 bankFile, s32 chunk) {
     SeqBankFile* bf;
     SeqPlayer* other;
@@ -662,6 +683,7 @@ void func_8000ECB8_F8B8(SeqPlayer* p, s8 bankFile, s32 chunk) {
     alBnkfNew(p->bankFile, (u8*)bf->tblRom);
     p->curBankFile = bankFile;
 }
+
 void func_8000EDA4_F9A4(SeqPlayer* p) {
     SeqEntry* e;
 
@@ -673,9 +695,11 @@ void func_8000EDA4_F9A4(SeqPlayer* p) {
     alCSeqNew(p->cseq, p->seqData);
     alSeqpSetSeq(p->seqp, (ALSeq*)p->cseq);
 }
+
 s32 func_8000EE1C_FA1C(SeqPlayer* p) {
     return D_800D58D8_D64D8->unk13 * p->vol * p->seqVol * p->fadeVol / 2048383 * D_800D58D8_D64D8->masterVol / 127;
 }
+
 void func_8000EEA0_FAA0(SeqPlayer* p, s32 frames) {
     s32 flags = p->flags;
 
@@ -692,6 +716,7 @@ void func_8000EEA0_FAA0(SeqPlayer* p, s32 frames) {
         }
     }
 }
+
 void func_8000EF60_FB60(void) {
     AudioCmd* cmd;
     SeqPlayer* p;
@@ -841,6 +866,7 @@ void func_8000EF60_FB60(void) {
     }
     D_800D58D8_D64D8->cmdIdx = 0;
 }
+
 void func_8000F634_10234(SeqPlayer* p) {
     s32 state;
 
@@ -859,6 +885,7 @@ void func_8000F634_10234(SeqPlayer* p) {
             break;
     }
 }
+
 void func_8000F69C_1029C(SeqPlayer* p) {
     switch (p->state) {
         case 1:
@@ -882,6 +909,7 @@ void func_8000F69C_1029C(SeqPlayer* p) {
             break;
     }
 }
+
 void func_8000F744_10344(SeqPlayer* p) {
     SeqEntry* e;
     s32 vol;
@@ -918,6 +946,7 @@ void func_8000F744_10344(SeqPlayer* p) {
         }
     }
 }
+
 void func_8000F878_10478(SeqPlayer* p) {
     s32 v;
 
@@ -945,6 +974,7 @@ void func_8000F878_10478(SeqPlayer* p) {
         }
     }
 }
+
 // register allocation: heap spilled instead of kept in fp, frame 8 bytes larger (masked 38)
 #ifdef NON_MATCHING
 s32 func_8000F968_10568(SndConfig* cfg, ALHeap* heap, s32 numSeqs, s32 arg3) {
@@ -1081,7 +1111,9 @@ s32 func_8000F968_10568(SndConfig* cfg, ALHeap* heap, s32 numSeqs, s32 arg3) {
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8000F968_10568);
+
 #endif
+
 void func_8000FE48_10A48(s32 player, s32 type, s32 arg) {
     u32 mask;
     AudioCmd* cmd;
@@ -1097,6 +1129,7 @@ void func_8000FE48_10A48(s32 player, s32 type, s32 arg) {
     }
     osSetIntMask(mask);
 }
+
 void func_8000FEFC_10AFC(void) {
     SeqPlayer* p;
     s32 i;
@@ -1124,6 +1157,7 @@ void func_8000FEFC_10AFC(void) {
         D_800D58D8_D64D8->busy = 0;
     }
 }
+
 void func_80010070_10C70(void) {
     SeqPlayer* p;
     s32 i;
@@ -1136,12 +1170,15 @@ void func_80010070_10C70(void) {
         }
     }
 }
+
 SeqMgr* func_800100FC_10CFC(void) {
     return D_800D58D8_D64D8;
 }
+
 void func_80010108_10D08(void) {
     D_800D58D8_D64D8 = NULL;
 }
+
 s32 func_80010114_10D14(ECE0Osc** oscState, f32* initVal, u8 oscType, u8 oscRate, u8 oscDepth, u8 oscDelay) {
     ECE0Osc* osc;
     s32 deltaTime = 0;
@@ -1296,6 +1333,7 @@ s32 func_80010114_10D14(ECE0Osc** oscState, f32* initVal, u8 oscType, u8 oscRate
     }
     return deltaTime;
 }
+
 s32 func_80010570_11170(void* oscState, f32* updateVal) {
     ECE0Osc* osc = oscState;
     f32 tmpFlt;
@@ -1501,6 +1539,7 @@ s32 func_80010570_11170(void* oscState, f32* updateVal) {
     }
     return deltaTime;
 }
+
 void func_80010DFC_119FC(ECE0Osc* osc) {
     osc->next = D_800D58DC_D64DC;
     D_800D58DC_D64DC = osc;
@@ -1570,6 +1609,7 @@ s32 func_80010E74_11A74(s32 id, SeqPlayArgs* args) {
     mgr->busy = 0;
     return player;
 }
+
 s32 func_80011018_11C18(s32 player) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1578,6 +1618,7 @@ s32 func_80011018_11C18(s32 player) {
     }
     return mgr->players[player].status;
 }
+
 s16 func_80011064_11C64(void) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1586,6 +1627,7 @@ s16 func_80011064_11C64(void) {
     }
     return mgr->numSeqs;
 }
+
 s16 func_8001108C_11C8C(s32 player) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1594,6 +1636,7 @@ s16 func_8001108C_11C8C(s32 player) {
     }
     return mgr->players[player].curSeq;
 }
+
 s8 func_800110D8_11CD8(void) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1602,6 +1645,7 @@ s8 func_800110D8_11CD8(void) {
     }
     return mgr->numPlayers;
 }
+
 s8 func_80011100_11D00(void) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1610,6 +1654,7 @@ s8 func_80011100_11D00(void) {
     }
     return mgr->numActive;
 }
+
 // register allocation: mgr and player swap s2/s3 (masked 0)
 #ifdef NON_MATCHING
 void func_80011128_11D28(s32 player) {
@@ -1641,7 +1686,9 @@ void func_80011128_11D28(s32 player) {
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_80011128_11D28);
+
 #endif
+
 void func_8001122C_11E2C(s32 player, s32 vol) {
     SeqMgr* mgr = func_800100FC_10CFC();
     SeqPlayer* p;
@@ -1663,6 +1710,7 @@ void func_8001122C_11E2C(s32 player, s32 vol) {
         func_8000FE48_10A48(player, 2, vol);
     }
 }
+
 s8 func_80011308_11F08(s32 player) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1671,11 +1719,13 @@ s8 func_80011308_11F08(s32 player) {
     }
     return mgr->players[player].vol;
 }
+
 void func_80011354_11F54(s32 vol) {
     if (func_800100FC_10CFC() != NULL) {
         func_8000FE48_10A48(0, 4, vol);
     }
 }
+
 void func_8001138C_11F8C(s32 player, s32 bpm) {
     SeqMgr* mgr = func_800100FC_10CFC();
     f32 t;
@@ -1688,6 +1738,7 @@ void func_8001138C_11F8C(s32 player, s32 bpm) {
         alSeqpSetTempo(mgr->players[player].seqp, t);
     }
 }
+
 s32 func_80011430_12030(s32 player) {
     SeqMgr* mgr = func_800100FC_10CFC();
     SeqPlayer* p;
@@ -1706,6 +1757,7 @@ s32 func_80011430_12030(s32 player) {
     }
     return tempo;
 }
+
 void func_800114E8_120E8(s32 player, s32 frames) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1717,6 +1769,7 @@ void func_800114E8_120E8(s32 player, s32 frames) {
         }
     }
 }
+
 s32 func_80011568_12168(s32 player) {
     SeqMgr* mgr = func_800100FC_10CFC();
 
@@ -1725,6 +1778,7 @@ s32 func_80011568_12168(s32 player) {
     }
     return mgr->players[player].fadeTimer;
 }
+
 // register allocation: mgr and player swap s2/s3 (masked 0)
 #ifdef NON_MATCHING
 void func_800115B4_121B4(s32 player) {
@@ -1756,7 +1810,9 @@ void func_800115B4_121B4(s32 player) {
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_800115B4_121B4);
+
 #endif
+
 void func_800116B4_122B4(s32 player, s32 frames) {
     SeqMgr* mgr = func_800100FC_10CFC();
     SeqPlayer* p;
@@ -1773,6 +1829,7 @@ void func_800116B4_122B4(s32 player, s32 frames) {
         }
     }
 }
+
 void func_80011738_12338(s32 player, s32 chan, SeqChlInfo* info) {
     SeqMgr* mgr = func_800100FC_10CFC();
     SeqPlayer* p;
@@ -1788,6 +1845,7 @@ void func_80011738_12338(s32 player, s32 chan, SeqChlInfo* info) {
         info->fxmix = alSeqpGetChlFXMix(p->seqp, chan);
     }
 }
+
 s32 func_800117FC_123FC(u32 rom, SndBankInfo* info) {
     ALSound* snd;
     ALWaveTable* w;
@@ -1819,6 +1877,7 @@ s32 func_800117FC_123FC(u32 rom, SndBankInfo* info) {
     }
     return 0;
 }
+
 s32 func_80011938_12538(u32 rom, SndBankInfo* info) {
     u32 src;
     SndGroup* g;
@@ -1841,6 +1900,7 @@ s32 func_80011938_12538(u32 rom, SndBankInfo* info) {
     }
     return 0;
 }
+
 s32 func_80011A28_12628(u32 rom, SndBankInfo* info) {
     s32* ofs;
     s32 i;
@@ -1861,6 +1921,7 @@ s32 func_80011A28_12628(u32 rom, SndBankInfo* info) {
     }
     return 0;
 }
+
 void func_80011AF8_126F8(void) {
     AudioCmd* cmd;
     SndVoice* v;
@@ -2080,6 +2141,7 @@ void func_80011AF8_126F8(void) {
     }
     D_800D58E4_D64E4->unk34 = 0;
 }
+
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8001240C_1300C);
 
 INCLUDE_ASM("asm/nonmatchings/ECE0", func_8001248C_1308C);
