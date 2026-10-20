@@ -107,7 +107,10 @@ typedef struct HmfPart {
     /* 0x00 */ s16 unk00; /* material colour track target */
     /* 0x02 */ s16 unk02; /* alpha */
     /* 0x04 */ s16 unk04; /* face count */
-    /* 0x06 */ char unk06[0x28];
+    /* 0x06 */ char unk06[4];
+    /* 0x0A */ s16 unk0A; /* first vertex */
+    /* 0x0C */ s16 unk0C; /* vertex count */
+    /* 0x0E */ char unk0E[0x20];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
     /* 0x2F */ char unk2F[0x13];
     /* 0x42 */ s16 unk42; /* 0x42-0x4C: -0x8000 in a display-list model (274D0) */
@@ -163,7 +166,9 @@ typedef struct HmfData {
     /* 0x1A */ s16 unk1A; /* MP1 0x74 */
     /* 0x1C */ char unk1C[2];
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ char unk20[0x18];
+    /* 0x20 */ char unk20[8];
+    /* 0x28 */ s16 unk28; /* count of unkC8's entries */
+    /* 0x2A */ char unk2A[0xE];
     /* 0x38 */ void* unk38; /* the MAP1 chunk */
     /* 0x3C */ HmfDisp* unk3C; /* or a single Gfx* list, by flag */
     /* 0x40 */ HmfVtx* unk40; /* MP1 0x04 */
@@ -189,7 +194,7 @@ typedef struct HmfData {
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
     /* 0xB8 */ void* unkB8; /* 1D0B0's HmfDispData */
     /* 0xBC */ char unkBC[0xC];
-    /* 0xC8 */ s32 unkC8;
+    /* 0xC8 */ s32 unkC8; /* a u8* list (274D0 reads unk28 bytes): a pointer in an s32 slot */
     /* 0xCC */ char unkCC[8];
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
     /* 0xD8 */ void (*unkD8)(f32 (*)[4], f32, f32, f32);
@@ -223,7 +228,8 @@ typedef struct HmfModel {
     /* 0x0C */ s16 unk0C;
     /* 0x0E */ s16 unk0E;
     /* 0x10 */ s16 unk10; /* hit grid; MP1 unk_04 */
-    /* 0x12 */ char unk12[6];
+    /* 0x12 */ char unk12[2];
+    /* 0x14 */ f32 unk14;
     /* 0x18 */ s32 unk18;
     /* 0x1C */ Vec pos;
     /* 0x28 */ Vec rot;
@@ -238,7 +244,8 @@ typedef struct HmfModel {
     /* 0x5C */ f32 unk5C;
     /* 0x60 */ f32 unk60;
     /* 0x64 */ HmfData* hmf;
-    /* 0x68 */ char unk68[8];
+    /* 0x68 */ char unk68[4];
+    /* 0x6C */ HmfData* unk6C; /* released instead of hmf while unk09 is set and unk14 != 0 */
     /* 0x70 */ void (*unk70)(Gfx**, s32, s32);
     /* 0x74 */ f32 mtx[16];
     /* 0xB4 */ struct HmfModel* unkB4;
