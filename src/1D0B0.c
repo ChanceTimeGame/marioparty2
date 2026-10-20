@@ -1,6 +1,9 @@
 #include "common.h"
 #include "game/hmfman.h"
 #include "game/rsp.h"
+#include "game/gamework.h"
+#include "game/malloc.h"
+#include "process.h"
 
 /* Game loop processes (MP1 src/engine/gameman.c, MP3 src/gameman.c), the graphics swap chain
    (MP3 src/graphics.c, MP1 src/engine/graphics.c) and the HMF model loader (MP3 src/hmfload.c,
@@ -78,7 +81,153 @@ void espMain(void);
 void func_80021490_22090(s32);
 void func_800286FC_292FC(void*, s32);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C4B0_1D0B0);
+/* Audio and sound setup handed to func_8000E38C_EF8C (MP3 D_800D5298_D5E98). */
+typedef struct UnkSndConfig {
+    /* 0x00 */ s32 unk00;
+    /* 0x04 */ char unk04[4];
+    /* 0x08 */ void* unk08;
+    /* 0x0C */ void* unk0C;
+    /* 0x10 */ void* unk10;
+    /* 0x14 */ void* unk14;
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ char unk1C[0xC];
+    /* 0x28 */ s32 unk28;
+    /* 0x2C */ s32 unk2C;
+    /* 0x30 */ char unk30[0x2C];
+    /* 0x5C */ s32 unk5C;
+    /* 0x60 */ s32 unk60;
+    /* 0x64 */ s32 unk64;
+    /* 0x68 */ s32 unk68;
+} UnkSndConfig;
+
+extern Vec D_800FD474_FE074;  /* CRot */
+extern f32 D_800FA610_FB210;  /* CZoom */
+extern Vec D_8010274C_10334C; /* Center */
+extern Vec D_80102770_103370[4]; /* CRotM */
+extern f32 D_800F94A8_FA0A8[4];  /* CZoomM */
+extern Vec D_801013B0_101FB0[4]; /* CenterM */
+extern u8 D_800FD7F5_FE3F5;
+extern u16 D_800FFDF2_1009F2;
+extern u16 D_800F9562_FA162;
+extern u16 D_80102702_103302;
+extern s16 D_800FD80C_FE40C;
+extern Process* D_800FC894_FD494;
+extern Process* D_800FD7F0_FE3F0;
+extern UnkSndConfig D_80101100_101D00;
+/* D_80101100_101D00.unk08 and unk0C: retail addresses them through their own symbol */
+extern void* D_80101108_101D08[2];
+extern s16 D_800CD52E_CE12E;
+extern s16 D_800CD52C_CE12C;
+extern s32 D_800FA190_FAD90;
+extern u8 D_01142DD0[]; /* strings */
+extern u8 D_01750450[];
+extern u8 D_01CBF410[];
+extern u8 D_01E2A560[];
+
+void func_8008EFB0_8FBB0(void);
+void func_800277B0_283B0(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 arg3, u16 arg4, u8 arg5);
+void func_80020070_20C70(s16);
+void pfInit(void);
+void func_80068B80_69780(u32);
+s32 HuGetPadInserted(s16);
+s32 func_8007DD68_7E968(void);
+void func_8001C8E0_1D4E0(void);
+void func_8000E9E8_F5E8(UnkSndConfig*);
+void func_8000E38C_EF8C(UnkSndConfig*);
+void func_8000EA88_F688(s32);
+void GWMgRecordSet(s16, s16);
+void func_8001C81C_1D41C(void);
+void func_8001C868_1D468(void);
+void func_8001C894_1D494(void);
+
+void func_8001C4B0_1D0B0(void) {
+    s32 i;
+
+    HuPrcVSleep();
+
+    D_800FD474_FE074.x = 325.0f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+
+    D_800FA610_FB210 = 2250.0f;
+
+    D_8010274C_10334C.x = D_8010274C_10334C.y = D_8010274C_10334C.z = D_800FD474_FE074.y;
+
+    for (i = 0; i < 4; i++) {
+        D_80102770_103370[i].x = 325.0f;
+        D_80102770_103370[i].y = D_80102770_103370[i].z = 0.0f;
+        D_800F94A8_FA0A8[i] = 2250.0f;
+        D_801013B0_101FB0[i].x = D_801013B0_101FB0[i].y = D_801013B0_101FB0[i].z = 0.0f;
+    }
+
+    D_800FD7F5_FE3F5 = 3;
+    D_800FFDF2_1009F2 = 0x1000;
+    D_800F9562_FA162 = 0x2004;
+    D_80102702_103302 = 0x180;
+    func_8008EFB0_8FBB0();
+    func_800277B0_283B0((void* (*)(s32)) HuMemMemoryAllocPerm, HuMemMemoryFreePerm, D_800FFDF2_1009F2,
+                        D_800F9562_FA162, D_80102702_103302, D_800FD7F5_FE3F5);
+    func_80020070_20C70(1);
+    pfInit();
+    func_80068B80_69780((u32) D_01142DD0);
+    D_800FD80C_FE40C = 0;
+
+    do {
+        if (HuGetPadInserted(D_800FD80C_FE40C) != 0) {
+            break;
+        }
+    } while (++D_800FD80C_FE40C < 4);
+
+    if (D_800FD80C_FE40C == 4) {
+        D_800FD80C_FE40C = -1;
+    }
+
+    HuMemHeapAllocPermSizeGet();
+    D_800FC894_FD494 = HuPrcCreate(func_8001C81C_1D41C, 0xF000, 0x3000, 0);
+    HuPrcCreate(func_8001C868_1D468, 0x4000, 0x3000, 0);
+    D_800FD7F0_FE3F0 = HuPrcCreate(func_8001C894_1D494, 0x1000, 0x3000, 0);
+
+    {
+        s32 temp_s0 = func_8007DD68_7E968();
+
+        func_8001C8E0_1D4E0();
+        func_8000E9E8_F5E8(&D_80101100_101D00);
+        if (temp_s0 == 1) {
+            omOvlCallEx(0x5A, 0, 0x81);
+        } else {
+            omOvlCallEx(0x57, 0, 0x84);
+        }
+    }
+
+    D_80101108_101D08[0] = D_01750450;
+    D_80101108_101D08[1] = D_01CBF410;
+    D_800CD52E_CE12E = 1;
+    D_800CD52C_CE12C = 1;
+    D_80101100_101D00.unk00 = 0x70018F;
+    D_80101100_101D00.unk10 = D_01E2A560;
+    D_80101100_101D00.unk28 = 1;
+    D_80101100_101D00.unk2C = 0;
+    D_80101100_101D00.unk14 = (void*) 0x802E0000;
+    D_80101100_101D00.unk18 = 0x80000;
+    D_80101100_101D00.unk5C = 0x6E;
+    D_80101100_101D00.unk60 = 0;
+    D_80101100_101D00.unk64 = 0;
+    D_80101100_101D00.unk68 = D_800FA190_FAD90;
+    func_8000E38C_EF8C(&D_80101100_101D00);
+
+    if (_CheckFlag(2) != 0) {
+        func_8000EA88_F688(0);
+    } else {
+        func_8000EA88_F688(1);
+    }
+    D_800F8C60.unk01 = 2;
+
+    HuPrcKill(HuPrcCurrentGet());
+
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
 
 void func_8001C81C_1D41C(void) {
     while (1) {
@@ -109,7 +258,22 @@ void func_8001C894_1D494(void) {
 
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C8E0_1D4E0);
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001CA48_1D648);
+void func_8001CA48_1D648(void) {
+    func_8001C8E0_1D4E0();
+    GWMgRecordSet(0, 18000);
+    GWMgRecordSet(1, 5400);
+    GWMgRecordSet(2, 3600);
+    GWMgRecordSet(3, 5400);
+    GWMgRecordSet(4, 0);
+    GWMgRecordSet(5, 1200);
+    GWMgRecordSet(6, 1500);
+    GWMgRecordSet(7, 1800);
+    GWMgRecordSet(8, 0);
+    GWMgRecordSet(9, 0);
+    GWMgRecordSet(10, 0);
+    GWMgRecordSet(11, 0);
+    GWMgRecordSet(12, 0);
+}
 
 void func_8001CB00_1D700(void **arg1, s32 arg2, s32 arg3, u64 **arg4, s32 *arg5) {
     func_8001D114_1DD14(arg1, arg2, arg3);
