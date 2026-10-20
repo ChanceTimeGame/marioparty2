@@ -177,6 +177,11 @@ void func_8008D88C_8E48C(s16);
 void func_80089284_89E84(s16, s32, s32);
 void func_80089A48_8A648(s16, s32);
 void func_8008CCA8_8D8A8(s16);
+void func_80056658_57258(Vec*, Vec*, Vec*);
+f32 func_80042BE0_437E0(Vec*);
+
+/* a player's board model (GW_PLAYER 0x24) */
+#define PLAYER_OBJ(i) ((Object*)gPlayers[i].unk_24)
 
 /* NON_MATCHING: retail keeps the window id in two callee-saved registers (s0 and a copy in s1, the
    0x28 frame); this C keeps one. Logic is MP1 CreateTextWindow. */
@@ -302,17 +307,178 @@ void func_800581D0_58DD0(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80058294_58E94);
+void func_80058294_58E94(omObjData* arg0) {
+    Object* temp_v0;
+    Object* temp_v1;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005845C_5905C);
+    temp_v1 = arg0->unk_50;
+    arg0->work[1]--;
+
+    if (temp_v1 == NULL) {
+        if (arg0->work[1] == 0) {
+            PLAYER_OBJ(arg0->work[0])->coords.x = arg0->trans.x;
+            PLAYER_OBJ(arg0->work[0])->coords.y = arg0->trans.y;
+            PLAYER_OBJ(arg0->work[0])->coords.z = arg0->trans.z;
+            omDelObj(arg0);
+            return;
+        }
+        temp_v0 = PLAYER_OBJ(arg0->work[0]);
+        temp_v0->coords.x = temp_v0->coords.x + arg0->scale.x;
+        temp_v0 = PLAYER_OBJ(arg0->work[0]);
+        temp_v0->coords.y = temp_v0->coords.y + arg0->scale.y;
+        temp_v0 = PLAYER_OBJ(arg0->work[0]);
+        temp_v0->coords.z = temp_v0->coords.z + arg0->scale.z;
+        return;
+    }
+
+    if (arg0->work[1] == 0) {
+        temp_v1->coords.x = arg0->trans.x;
+        temp_v1->coords.y = arg0->trans.y;
+        temp_v1->coords.z = arg0->trans.z;
+        arg0->unk_50 = NULL;
+        omDelObj(arg0);
+        return;
+    }
+
+    temp_v1->coords.x += arg0->scale.x;
+    temp_v1->coords.y += arg0->scale.y;
+    temp_v1->coords.z += arg0->scale.z;
+}
+
+omObjData* func_8005845C_5905C(s32 arg0, Vec* arg1, s32 arg2, Object* arg3) {
+    omObjData* obj;
+    s32 i;
+
+    obj = omAddObj(0x1000, 0, 0, -1, func_80058294_58E94);
+    obj->work[0] = arg0;
+    obj->work[1] = arg2;
+    obj->trans.x = arg1->x;
+    obj->trans.y = arg1->y;
+    obj->trans.z = arg1->z;
+    if (arg3 == NULL) {
+        obj->scale.x = (arg1->x - PLAYER_OBJ(arg0)->coords.x) / arg2;
+        obj->scale.y = (arg1->y - PLAYER_OBJ(arg0)->coords.y) / arg2;
+        obj->scale.z = (arg1->z - PLAYER_OBJ(arg0)->coords.z) / arg2;
+    } else {
+        obj->scale.x = (arg1->x - arg3->coords.x) / arg2;
+        obj->scale.y = (arg1->y - arg3->coords.y) / arg2;
+        obj->scale.z = (arg1->z - arg3->coords.z) / arg2;
+    }
+
+    obj->unk_50 = arg3;
+
+    for (i = 0; i < ARRAY_COUNT(D_80101178_101D78); i++) {
+        if (D_80101178_101D78[i] == NULL) {
+            D_80101178_101D78[i] = obj;
+            return obj;
+        }
+    }
+    return obj;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_800585E8_591E8);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80058B58_59758);
+omObjData* func_80058B58_59758(Object* arg0, Vec* arg1, s32 arg2, Vec* arg3) {
+    s32 player = -1;
+    omObjData* obj;
+    f32 n;
+    s32 i;
+
+    obj = omAddObj(0x1000, 0, 0, -1, func_800585E8_591E8);
+    /* arg0 is a player index or an Object* (N64: a KSEG0 pointer is negative as s32) */
+#ifdef TARGET_PC
+    if ((uintptr_t)arg0 < 0x100000) {
+        player = (s32)(intptr_t)arg0;
+#else
+    if ((s32)arg0 >= 0) {
+        player = (s32)arg0;
+#endif
+        arg0 = NULL;
+        obj->work[0] = player;
+    }
+    obj->work[1] = arg2;
+    obj->work[2] = arg2;
+    obj->trans.x = arg1->x;
+    obj->trans.y = arg1->y;
+    obj->trans.z = arg1->z;
+    if (arg0 == NULL) {
+        obj->scale.x = (arg1->x - PLAYER_OBJ(player)->coords.x) / (n = arg2);
+        obj->scale.y = (arg1->y - PLAYER_OBJ(player)->coords.y) / n;
+        obj->scale.z = (arg1->z - PLAYER_OBJ(player)->coords.z) / n;
+    } else {
+        obj->scale.x = (arg1->x - arg0->coords.x) / (n = arg2);
+        obj->scale.y = (arg1->y - arg0->coords.y) / n;
+        obj->scale.z = (arg1->z - arg0->coords.z) / n;
+    }
+    obj->rot.x = arg3->x;
+    obj->rot.y = arg3->y;
+    obj->rot.z = arg3->z;
+    obj->unk_50 = arg0;
+    for (i = 0; i < 32; i++) {
+        if (D_80101178_101D78[i] == NULL) {
+            D_80101178_101D78[i] = obj;
+            break;
+        }
+    }
+    return obj;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_80058D18_59918);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80058F18_59B18);
+omObjData* func_80058F18_59B18(s32 arg0, Vec* arg1, s32 arg2, Object* arg3) {
+    Vec dir;
+    f32 cur;
+    f32 tgt;
+    omObjData* obj;
+    s32 i;
+
+    if (arg3 == NULL) {
+        func_80056658_57258(&PLAYER_OBJ(arg0)->coords, arg1, &dir);
+    } else {
+        func_80056658_57258(&arg3->coords, arg1, &dir);
+    }
+    obj = omAddObj(0x1000, 0, 0, -1, func_80058D18_59918);
+    obj->work[0] = arg0;
+    obj->work[1] = arg2;
+    obj->rot.x = dir.x;
+    obj->rot.y = dir.y;
+    obj->rot.z = dir.z;
+    if (arg3 == NULL) {
+        cur = func_80042BE0_437E0(&PLAYER_OBJ(arg0)->rot);
+        tgt = func_80042BE0_437E0(&dir);
+        if (tgt < cur) {
+            if (cur - tgt >= 180.0f) {
+                tgt += 360.0f;
+            }
+        } else {
+            if (tgt - cur >= 180.0f) {
+                cur += 360.0f;
+            }
+        }
+    } else {
+        cur = func_80042BE0_437E0(&arg3->rot);
+        tgt = func_80042BE0_437E0(&dir);
+        if (tgt < cur) {
+            if (cur - tgt >= 180.0f) {
+                tgt += 360.0f;
+            }
+        } else {
+            if (tgt - cur >= 180.0f) {
+                cur += 360.0f;
+            }
+        }
+    }
+    obj->scale.y = cur;
+    obj->scale.x = (tgt - cur) / arg2;
+    obj->unk_50 = arg3;
+    for (i = 0; i < 32; i++) {
+        if (D_80101178_101D78[i] == NULL) {
+            D_80101178_101D78[i] = obj;
+            break;
+        }
+    }
+    return obj;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_80059120_59D20);
 
