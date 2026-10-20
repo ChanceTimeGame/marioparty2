@@ -57,7 +57,6 @@ extern s16 D_800DEFA4_DFBA4;
 extern s16* D_800DEFA8_DFBA8;
 extern HitGrid* D_800FD2B8_FDEB8;
 extern s32 D_800F64C4_F70C4;
-extern void* D_800FD2A8_FDEA8;
 extern s16 D_800FFFD6_100BD6;
 extern void* D_800FD83C_FE43C;
 extern s16 D_800F928C_F9E8C;

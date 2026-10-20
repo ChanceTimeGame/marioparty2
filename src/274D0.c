@@ -471,7 +471,6 @@ extern u16 D_800FCA00_FD600[][HU3D_MODEL_MAX];
 extern s16 D_800F9564_FA164;
 extern u8 D_800FA5D8_FB1D8;
 extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
-extern s32 D_800FD2A8_FDEA8;
 u8 func_8001D054_1DC54(void *arg0, u16 arg1, s32 arg2, void *arg3, s32 arg4);
 
 Gfx *func_80029368_29F68(Gfx *arg0, s16 arg1, u16 arg2) {
@@ -492,7 +491,7 @@ Gfx *func_80029368_29F68(Gfx *arg0, s16 arg1, u16 arg2) {
             arg0 = D_800FDBCC_FE7CC;
         }
         if (temp_s0->unk70 != NULL) {
-            temp_s0->unk70(&D_800FDBCC_FE7CC, (s32)D_800FC88C_FD48C, D_800FD2A8_FDEA8);
+            temp_s0->unk70(&D_800FDBCC_FE7CC, (s32)D_800FC88C_FD48C, (s32)D_800FD2A8_FDEA8);
         } else if (temp_s0->hmf->unk3C != NULL) {
             gSPDisplayList(D_800FDBCC_FE7CC++, temp_s0->hmf->unk3C);
         }

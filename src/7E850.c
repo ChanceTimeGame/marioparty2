@@ -43,7 +43,6 @@ typedef struct {
 } unkMesgWrapper;
 
 extern u8 D_800EB900_EC500;
-extern u8 D_800FD8A8_FE4A8[0x12];
 extern u8 D_800FD420_FE020[0x12];
 
 extern NNScClient* D_800EB910_EC510; // client list
@@ -130,7 +129,7 @@ void func_8007E018_7EC18(void) {
     func_80075060_75C60();
     if (D_800EB900_EC500 != 0) {
         func_8001AFD8_1BBD8(0, (UnkEep*)&D_800F8C60, 0x80);
-        func_8001AFD8_1BBD8(0x1BC, (UnkEep*)D_800FD8A8_FE4A8, sizeof(D_800FD8A8_FE4A8));
+        func_8001AFD8_1BBD8(0x1BC, (UnkEep*)&D_800FD8A8_FE4A8, sizeof(D_800FD8A8_FE4A8));
     }
     func_8007DCAC_7E8AC();
 }
@@ -157,7 +156,7 @@ void func_8007E0F8_7ECF8(u8* buf) {
 }
 
 void func_8007E128_7ED28(void) {
-    func_8007E0C8_7ECC8(D_800FD8A8_FE4A8);
+    func_8007E0C8_7ECC8((u8*)&D_800FD8A8_FE4A8);
     func_80075144_75D44();
 }
 

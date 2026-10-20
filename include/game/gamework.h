@@ -17,4 +17,15 @@ typedef struct GW_COMMON {
 
 extern GW_COMMON D_800F8C60; /* GwCommon */
 
+/* Saved to EEPROM at 0x1BC (7E850); read by the final-minigame overlay (ovl_6D). */
+typedef struct Unk_800FD8A8 {
+    /* 0x00 */ u8 unk00; /* player 1 character */
+    /* 0x01 */ u8 unk01; /* player 2 character */
+    /* 0x02 */ char unk02[2];
+    /* 0x04 */ s8 unk04;
+    /* 0x05 */ char unk05[0xD];
+} Unk_800FD8A8; /* size = 0x12 */
+
+extern Unk_800FD8A8 D_800FD8A8_FE4A8;
+
 #endif

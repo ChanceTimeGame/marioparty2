@@ -1,13 +1,6 @@
 #include "common.h"
+#include "game/gamework.h"
 
-typedef struct Unk_800FD8A8 {
-    u8 unk0;
-    u8 unk1;
-    char unk2[2];
-    s8 unk4;
-} Unk_800FD8A8;
-
-extern Unk_800FD8A8 D_800FD8A8_FE4A8;
 extern s16 D_800CD414_CE014;
 extern s32 D_800CD2C4_CDEC4;
 void func_8005E584_5F184(void);
@@ -37,9 +30,9 @@ void func_80102800_406640_FinalMinigameCoaster(void) {
     func_8005E570_5F170();
     omAddPrcObj(&func_80105CE8_409B28_FinalMinigameCoaster, 0x300U, 0x2000, 0);
     omAddObj(0x1000, 0, 0, -1, &func_80105FBC_409DFC_FinalMinigameCoaster);
-    gPlayers[0].character = D_800FD8A8_FE4A8.unk0;
-    gPlayers[1].character = D_800FD8A8_FE4A8.unk1;
-    if (D_800FD8A8_FE4A8.unk4 == 2) {
+    gPlayers[0].character = D_800FD8A8_FE4A8.unk00;
+    gPlayers[1].character = D_800FD8A8_FE4A8.unk01;
+    if (D_800FD8A8_FE4A8.unk04 == 2) {
         if (D_800CD414_CE014 == 0) {
             if (func_80075390_75F90(8) != 0) {
                 PlayMusic(0x3D);
