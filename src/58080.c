@@ -419,13 +419,8 @@ omObjData* func_80058B58_59758(Object* arg0, Vec* arg1, s32 arg2, Vec* arg3) {
 
     obj = omAddObj(0x1000, 0, 0, -1, func_800585E8_591E8);
     /* arg0 is a player index or an Object* (N64: a KSEG0 pointer is negative as s32) */
-#ifdef TARGET_PC
-    if ((uintptr_t)arg0 < 0x100000) {
-        player = (s32)(intptr_t)arg0;
-#else
     if ((s32)arg0 >= 0) {
         player = (s32)arg0;
-#endif
         arg0 = NULL;
         obj->work[0] = player;
     }
@@ -1147,12 +1142,8 @@ s32 func_8005C0D8_5CCD8(s32 arg0) {
     GW_SYSTEM* system = &GwSystem;
 
     func_8005BF2C_5CB2C();
-#ifdef TARGET_PC
-    win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x51E), 0x46);
-#else
     /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
     win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x51E), 0x46);
-#endif
     func_80089A7C_8A67C(win, 5);
     func_80089B2C_8A72C(win, 0);
     func_800890CC_89CCC(win, MBPauseMesNumGet(0x51E), -1, -1);
@@ -1189,12 +1180,8 @@ s32 func_8005C24C_5CE4C(s32 arg0) {
     GW_SYSTEM* system = &GwSystem;
 
     func_8005BF2C_5CB2C();
-#ifdef TARGET_PC
-    win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x523), 0x46);
-#else
     /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
     win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x523), 0x46);
-#endif
     func_80089A7C_8A67C(win, 5);
     func_80089B2C_8A72C(win, 0);
     func_800890CC_89CCC(win, MBPauseMesNumGet(0x523), -1, -1);
@@ -1225,12 +1212,8 @@ s32 func_8005C3B0_5CFB0(s32 arg0) {
     GW_SYSTEM* system = &GwSystem;
 
     func_8005BF2C_5CB2C();
-#ifdef TARGET_PC
-    win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x521), 0x46);
-#else
     /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
     win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x521), 0x46);
-#endif
     func_80089A7C_8A67C(win, 5);
     func_80089B2C_8A72C(win, 0);
     func_800890CC_89CCC(win, MBPauseMesNumGet(0x521), -1, -1);
@@ -1258,12 +1241,8 @@ s32 func_8005C508_5D108(s32 arg0) {
     s32 win;
 
     func_8005BF2C_5CB2C();
-#ifdef TARGET_PC
-    win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x527), 0x46);
-#else
     /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
     win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x527), 0x46);
-#endif
     func_80089A7C_8A67C(win, 5);
     func_80089B2C_8A72C(win, 0);
     func_800890CC_89CCC(win, MBPauseMesNumGet(0x527), -1, -1);
