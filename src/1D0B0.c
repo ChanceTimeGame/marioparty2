@@ -653,7 +653,10 @@ typedef struct {
     u8 unk08;
     u8 unk09;
     u8 unk0A;
-} HmfData_Unk88_Entry;
+    u8 unk0B;
+    u8 unk0C; /* flags (MP3 0x09) */
+    u8 unk0D; /* MP3 0x0A */
+} HmfData_Unk88_Entry; /* size 0xE: MP3's 0xB plus a third colour at 0x09 */
 
 typedef struct {
     s16 unk00;
@@ -808,6 +811,7 @@ void func_8003CB70_3D770(HmfLoadData *);
 void func_80038654_39254(HmfLoadData *);
 void func_8003EF04_3FB04(HmfLoadData *);
 void osSyncPrintf(const char *fmt, ...);
+f32 func_800B1830_B2430(f32); /* sqrtf */
 
 /* MP3 Hmfload (src/hmfload.c) without the 0x3B records, MP2's object entries (0x68 bytes).
    Register allocation differs (recordCount stays in s0 where retail spills it, so flags and the
@@ -1144,7 +1148,40 @@ s16 func_8001DA90_1E690(HmfLoadData *hmf, void *arg1) {
     return count;
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001DE08_1EA08);
+/* MP1 func_8001B608 (src/1B800.c); MP2 reads the OBJ1 chunk from its global. */
+s16 func_8001DE08_1EA08(void *arg0, s16 arg1) {
+    s16 temp_v1;
+    s16 var_t0;
+    s16 var_a3;
+    u8 *temp_v0;
+    u8 *var_a2;
+    s16 i;
+
+    temp_v0 = D_800DEF7C_DFB7C;
+    temp_v1 = (temp_v0[8] << 8) + temp_v0[9];
+    var_a2 = temp_v0 + 12;
+
+    for (var_a3 = var_t0 = i = 0; i < temp_v1; i++) {
+        switch (var_a2[2]) {
+            case 58:
+                if (arg1 == (var_a2[3] << 8) + var_a2[4]) {
+                    return var_t0;
+                }
+                var_t0++;
+                break;
+            case 61:
+                if (arg1 == (var_a2[3] << 8) + var_a2[4]) {
+                    return var_a3 | 0x8000;
+                }
+                var_a3++;
+                break;
+        }
+
+        var_a2 += (var_a2[0] << 8) + var_a2[1] + 2;
+    }
+
+    return -1;
+}
 
 void func_8001DF00_1EB00(HmfLoadData *hmf) {
     u8 *data;
@@ -1191,7 +1228,50 @@ void func_8001DF00_1EB00(HmfLoadData *hmf) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001E108_1ED08);
+/* MP3 func_800100EC_10CEC (src/hmfload.c) with a third colour per material. */
+s16 func_8001E108_1ED08(HmfLoadData *hmf) {
+    u8 *records;
+    u8 *src;
+    HmfData_Unk88_Entry *entry;
+    s16 count;
+    s16 i;
+
+    count = (D_800DEF80_DFB80[8] << 8) + D_800DEF80_DFB80[9];
+    if (count == 0) {
+        D_800DEF80_DFB80 = 0;
+        return 0;
+    }
+    hmf->unk1E = count;
+    hmf->unk8C = func_80027154_27D54(count * sizeof(HmfData_Unk88_Entry), D_800FA1AA_FADAA);
+    records = D_800DEF80_DFB80 + 0xA;
+    for (i = 0; i < count; ++i) {
+        entry = &hmf->unk8C[i];
+        entry->unk00 = i;
+        entry->unk0C = 0;
+        src = D_800DEF84_DFB84 + (((records[0] << 8) + records[1]) * 4 + 0xA);
+        entry->unk01 = ((f32)src[0] > 255.0f) ? 255 : (u32)(f32)src[0];
+        entry->unk02 = ((f32)src[1] > 255.0f) ? 255 : (u32)(f32)src[1];
+        entry->unk03 = ((f32)src[2] > 255.0f) ? 255 : (u32)(f32)src[2];
+        entry->unk04 = src[3];
+        src = D_800DEF84_DFB84 + (((records[2] << 8) + records[3]) * 4 + 0xA);
+        entry->unk05 = ((f32)src[0] > 255.0f) ? 255 : (u32)(f32)src[0];
+        entry->unk06 = ((f32)src[1] > 255.0f) ? 255 : (u32)(f32)src[1];
+        entry->unk07 = ((f32)src[2] > 255.0f) ? 255 : (u32)(f32)src[2];
+        entry->unk08 = src[3];
+        if (entry->unk08 != 255) {
+            entry->unk0C |= 1;
+            entry->unk0D = entry->unk08;
+        } else {
+            entry->unk0D = 255;
+        }
+        src = D_800DEF84_DFB84 + (((records[4] << 8) + records[5]) * 4 + 0xA);
+        entry->unk09 = src[0];
+        entry->unk0A = src[1];
+        entry->unk0B = src[2];
+        records += 0xC;
+    }
+    return count;
+}
 
 s16 func_8001E57C_1F17C(HmfLoadData *hmf) {
     u8 *data;
@@ -1479,9 +1559,128 @@ void func_8001EB48_1F748(HmfLoadData *hmf, s16 objectIndex, s16 linkIndex, s16 f
     bounds[2] = maxZ;
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001EF00_1FB00);
+/* MP3 func_80010EB0_11AB0 (src/hmfload.c); MP2's HmfLoadData fields sit 4 bytes later. */
+void func_8001EF00_1FB00(HmfFaceData *arg0, u8 *arg1, HmfLoadData *arg2, u16 *arg3) {
+    s32 *values1;
+    s32 *values2;
+    u8 *colors;
+    u8 *attr;
+    u16 *coords1;
+    u16 *coords2;
+    u16 *coords3;
+    s16 count;
+    s16 i;
+    s16 hasColor;
+    s16 step;
+    s32 temp;
+    s32 value;
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001F1B8_1FDB8);
+    switch (arg1[0]) {
+        case 0x35:
+            count = 4;
+            step = 0xC;
+            break;
+        case 0x16:
+            count = 3;
+            step = 0xC;
+            break;
+        default:
+            count = 2;
+            step = 4;
+            break;
+    }
+    arg0->unk00 = count;
+    arg1++;
+    values1 = &arg0->unk0C[0];
+    values2 = &arg0->unk1C[0];
+    i = 0;
+    hasColor = 0;
+    while (i < count) {
+        arg0->unk04[i] = (arg1[0] << 8) + arg1[1];
+        arg0->unk2C[i] = arg1[3];
+        value = arg1[4];
+        value <<= 0x18;
+        value += arg1[5] << 0x10;
+        value += arg1[6] << 8;
+        *values1++ = value + arg1[7];
+        value = arg1[8];
+        value <<= 0x18;
+        value += arg1[9] << 0x10;
+        value += arg1[0xA] << 8;
+        *values2++ = value + arg1[0xB];
+        arg0->unk04[i] = (arg1[0] << 8) + arg1[1];
+        if (arg1[3] != 0xFF) {
+            temp = arg0->unk04[i];
+            colors = arg2->unk58;
+            colors[temp * 3 + 0] = colors[temp * 3 + 1] = colors[temp * 3 + 2] = 0;
+            hasColor = -1;
+        }
+        arg1 += step;
+        i++;
+    }
+    arg0->unk30 = (arg1[0] << 8) + arg1[1];
+    if (hasColor != 0) {
+        arg0->unk00 |= 0x80;
+    }
+    coords1 = &((u16 *)arg2->unk54)[arg0->unk04[0] * 3];
+    coords2 = &((u16 *)arg2->unk54)[arg0->unk04[1] * 3];
+    coords3 = &((u16 *)arg2->unk54)[arg0->unk04[2] * 3];
+    func_8001F1B8_1FDB8(arg0->unk01, coords1, coords2, coords3);
+    if (D_800DEF80_DFB80 != NULL) {
+        *arg3 |= arg2->unk8C[arg0->unk30].unk0C;
+        if (count == 2) {
+            arg0->unk32 = -1;
+        } else {
+            arg0->unk32 = (arg1[2] << 8) + arg1[3];
+            if (arg0->unk32 != -1) {
+                attr = (u8 *)arg2->unk88[arg0->unk32].unkC;
+                if (((attr[0x1C] - 3) < 2U) || attr[0x1D] == 3) {
+                    *arg3 |= 1;
+                }
+            }
+        }
+    }
+}
+
+/* MP1 func_8001C9F4 (src/1B800.c): face normal from three vertices. */
+void func_8001F1B8_1FDB8(s8 *arg0, u16 *arg1, u16 *arg2, u16 *arg3) {
+    s16 ax;
+    s16 bx;
+    s16 ay;
+    s16 by;
+    s16 az;
+    s16 bz;
+    f32 nx;
+    f32 ny;
+    f32 nz;
+    f32 scale;
+
+    ax = arg1[0] - arg2[0];
+    bx = arg3[0] - arg1[0];
+    ay = arg1[1] - arg2[1];
+    by = arg3[1] - arg1[1];
+    az = arg1[2] - arg2[2];
+    bz = arg3[2] - arg1[2];
+    nx = ax * by - ay * bx;
+    ny = ay * bz - az * by;
+    nz = az * bx - ax * bz;
+    scale = 127.0f / func_800B1830_B2430(nx * nx + ny * ny + nz * nz);
+    if (nx != 0.0f) {
+        arg0[0] = nx * scale;
+    } else {
+        arg0[0] = 0;
+    }
+    if (ny != 0.0f) {
+        arg0[1] = ny * scale;
+    } else {
+        arg0[1] = 0;
+    }
+    if (nz != 0.0f) {
+        arg0[2] = nz * scale;
+    } else {
+        arg0[2] = 0;
+    }
+}
 
 s16 func_8001F380_1FF80(HmfLoadData *hmf, void *arg1, s16 index) {
     u8 *data;

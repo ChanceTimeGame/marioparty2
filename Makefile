@@ -245,3 +245,14 @@ $(B2C_MULFIX_UNITS): export VR4300MUL := ON
 B3A_CARVED := build/src/169B0.c.o
 CARVED_RODATA_UNITS += $(B3A_CARVED)
 $(B3A_CARVED): RODATA_AS_DATA = 1
+# b3-A: 1D0B0 (MP1 1B800.c) is built as MP1 builds 1B800.c: GCC's assembly with blank lines removed,
+# assembled with the KMC VR4300 mul fix on (func_8001F1B8_1FDB8: a nop between the sqrt argument's
+# mul.s pair, none after a branch-likely's store)
+B3A_BLANKSTRIP_UNITS := build/src/1D0B0.c.o
+$(B3A_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(B3A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
