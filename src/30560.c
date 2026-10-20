@@ -100,7 +100,7 @@ extern HmfVtx* D_80102728_103328[];
 extern s16 D_801027FA_1033FA;
 
 void func_8002024C_20E4C();
-void func_800260A4_26CA4(s32, s32);
+void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
 void* func_80027154_27D54(s32, s16);
 void HuMemFree(void*);
@@ -193,7 +193,45 @@ void func_80030668_31268(HmfData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003076C_3136C);
+void osSyncPrintf(const char* fmt, ...);
+/* "Texture Anime Over\n": 30560's rodata (D2E30) is not carved while functions using it are asm,
+   so C names the string, as MP3's hmfman.c does */
+extern char D_800D2240_D2E40[];
+
+/* MP1 func_8002BEC4 (src/2C0C0.c) */
+void func_8003076C_3136C(HmfData* arg0) {
+    s16 var_t1 = 4;
+    s16 i;
+    s16 j;
+
+    for (i = 0; i < arg0->unk12; i++) {
+        if (arg0->unk88[i].unk09 == 255) {
+            continue;
+        }
+
+        for (j = 0; j < i; j++) {
+            if (arg0->unk88[i].unk0C == arg0->unk88[j].unk0C) {
+                break;
+            }
+        }
+
+        if (j != i) {
+            arg0->unk88[i].unk03 = arg0->unk88[j].unk03;
+            arg0->unk88[i].unk04 = arg0->unk88[j].unk04;
+            continue;
+        }
+
+        arg0->unk88[i].unk03 = var_t1++;
+        if (arg0->unk88[i].unk0C->unk30 != NULL) {
+            arg0->unk88[i].unk04 = var_t1++;
+        }
+
+        if (var_t1 > 16) {
+            osSyncPrintf(D_800D2240_D2E40);
+            return;
+        }
+    }
+}
 
 /* same c: marioparty3 func_80023264_23E64 (src/22EB0.c) */
 s32 func_800308D8_314D8(HmfData *arg0) {
@@ -263,7 +301,93 @@ void func_80030CD4_318D4(Matrix4f arg0, Matrix4f arg1) {
     arg0[3][3] = arg1[3][3];
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80030D58_31958);
+extern Matrix4f D_80100010_100C10[];
+extern s16 D_8010107C_101C7C;
+void func_800B37C0_B43C0(Matrix4f);                  /* identity */
+void func_80025770_26370(Matrix4f, f32, f32, f32);   /* translate */
+void func_80025830_26430(Matrix4f, f32, f32, f32);   /* scale */
+void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* multiply */
+void func_800B3040_B3C40(Matrix4f, void*);           /* guMtxF2L */
+s32 func_80038024_38C24(HmfData*, s16, Matrix4f, Matrix4f);
+void func_80030D58_31958(HmfData* arg0, s16 arg1);
+
+/* MP1 func_8002C400 (src/2C0C0.c): draw a model's transform tree. The matrix stacks are
+   D_801016D0_1022D0 (MP1 D_800F54C0, whose element -1 is MP1's D_800F5480) and
+   D_80100010_100C10 (MP1 D_800F3FE0). */
+void func_80030D58_31958(HmfData* arg0, s16 arg1) {
+    HitXform* temp_s1;
+    s16 var_s3;
+    s16 var_s5;
+    s16 temp_s4;
+    Matrix4f sp10;
+    Matrix4f sp50;
+
+    temp_s1 = &arg0->unk6C[arg1];
+    temp_s4 = temp_s1->unk00;
+    var_s5 = 0;
+    var_s3 = 0;
+
+    if (arg0->unk90 == 0) {
+        func_80025BA4_267A4(temp_s1->unk4C, D_801016D0_1022D0[0], sp10);
+    } else {
+        func_800B37C0_B43C0(sp10);
+        if (temp_s1->unk2C.x != 0.0f || temp_s1->unk2C.y != 0.0f || temp_s1->unk2C.z != 0.0f) {
+            func_80025770_26370(sp10, temp_s1->unk2C.x, temp_s1->unk2C.y, temp_s1->unk2C.z);
+            var_s3 = 1;
+        }
+        if (temp_s1->unk38.x != 0.0f || temp_s1->unk38.y != 0.0f || temp_s1->unk38.z != 0.0f) {
+            arg0->unkD4(sp10, temp_s1->unk38.x, temp_s1->unk38.y, temp_s1->unk38.z);
+            var_s3 = 1;
+        }
+        if (temp_s1->unk20.x != 1.0f || temp_s1->unk20.y != 1.0f || temp_s1->unk20.z != 1.0f) {
+            func_80025830_26430(sp10, temp_s1->unk20.x, temp_s1->unk20.y, temp_s1->unk20.z);
+            func_800B37C0_B43C0(sp50);
+            func_80025830_26430(sp50, temp_s1->unk20.x, temp_s1->unk20.y, temp_s1->unk20.z);
+            D_8010107C_101C7C++;
+            func_80025BA4_267A4(sp50, D_80100010_100C10[D_8010107C_101C7C], D_80100010_100C10[D_8010107C_101C7C + 1]);
+            var_s5 = 1;
+            var_s3 = 1;
+        }
+        if (var_s3 != 0) {
+            D_800FD470_FE070++;
+            func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+        }
+        func_80025BA4_267A4(D_801016D0_1022D0[D_800FD470_FE070], D_801016D0_1022D0[0], sp10);
+    }
+
+    if (temp_s4 >= 0) {
+        if (temp_s1->unk48->unk64[temp_s4].unk50 & 0x70000000) {
+            func_80038024_38C24(temp_s1->unk48, temp_s4, sp10, sp50);
+            func_80025BA4_267A4(D_80100010_100C10[D_8010107C_101C7C + 1], sp50, sp10);
+        }
+
+        func_800B3040_B3C40(sp10, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
+        func_80031FD8_32BD8(temp_s1->unk48, temp_s4, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C, sp10);
+        D_800F928C_F9E8C++;
+    }
+
+    if (temp_s1->unk04 != 0) {
+        func_80030D58_31958(arg0, arg1 + temp_s1->unk04);
+    }
+
+    if (var_s3 != 0) {
+        D_800FD470_FE070--;
+    }
+
+    if (var_s5 != 0) {
+        D_8010107C_101C7C--;
+    }
+
+    if (temp_s4 >= 0 && temp_s1->unk48 == arg0) {
+        if (arg0->unk64[temp_s4].unk58 != 0) {
+            func_80030D58_31958(arg0->unk64[temp_s4].unk58, 0);
+        }
+    }
+
+    if (temp_s1->unk02 != 0) {
+        func_80030D58_31958(arg0, arg1 + temp_s1->unk02);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_80031170_31D70);
 
@@ -283,7 +407,226 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_80031FD8_32BD8);
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_800322BC_32EBC);
 
+/* A part's face (MP1 unk2C0C0Struct20; 1D0B0's HmfFaceData) */
+typedef struct HmfFaceRec {
+    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
+    /* 0x01 */ s8 unk01[3]; /* normal */
+    /* 0x04 */ s16 unk04[4]; /* vertices */
+    /* 0x0C */ f32 unk0C[4]; /* s */
+    /* 0x1C */ f32 unk1C[4]; /* t */
+    /* 0x2C */ u8 unk2C[4]; /* per vertex material (unlit faces) */
+    /* 0x30 */ s16 unk30; /* material */
+    /* 0x32 */ s16 unk32; /* texture, < 0 for none */
+} HmfFaceRec; /* size 0x34 */
+
+/* A batch of faces drawn with one material and texture (MP1 unk2C0C0StructD0) */
+typedef struct HmfDrawFace {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02[4];
+    /* 0x0A */ u8 unk0A;
+    /* 0x0B */ char unk0B;
+    /* 0x0C */ HmfMat* unk0C;
+    /* 0x10 */ HmfTexRef* unk10;
+} HmfDrawFace; /* size 0x14 */
+
+
+extern HmfPart* D_800DEFB0_DFBB0;
+extern s32 D_800DEFB4_DFBB4;
+extern s16 D_800FCE92_FDA92;
+extern s16 D_800FA1A6_FADA6;
+extern u8 D_800CA088_CAC88[];
+extern HmfDrawFace D_800F9918_FA518[];
+extern s16 D_80101646_102246;
+extern u32 D_800F64C4_F70C4;
+void func_80033288_33E88(HmfData*, s32*);
+void func_80035C18_36818(HmfData*);
+
+/* MP1 func_8002DC84 (src/2C0C0.c): batch a part's faces and their vertices. MP2 limits a batch's
+   vertices by a per-mode table, keeps a vertex slot table (unk60) and records the faces (unkB4)
+   only for parts with flag 0x20000 and no 0x06000000. Register allocation and stack slots
+   differ (the record flag and sp1E are allocated differently); otherwise the same code. */
+#ifdef NON_MATCHING
+void func_800329E8_335E8(HmfData* arg0, s16 arg1) {
+    s16 temp_v0_2;
+    s16 var_s4;
+    s16 var_s6;
+    s16 var_t1;
+    s16 temp_f2;
+    s16 temp_f2_2;
+    s16 var_a1;
+    s16 var_a2;
+    s16 var_a1_2;
+    s32 temp_v0;
+    s32 record;
+    s16 sp16;
+    u16 sp1E;
+    HmfMat* sp24;
+    HmfTexRef* sp2C;
+    u8* var_a3;
+    HmfFaceRec* temp_s1;
+    HmfTexRef* var_s0;
+    HmfMat* temp_s2;
+    HmfDrawFace* temp_t2;
+    HmfVtx* var_a0;
+    ColVtx* temp_t0;
+    s16 i;
+
+    D_800DEFB0_DFBB0 = &arg0->unk64[arg1];
+    sp16 = D_800DEFB0_DFBB0->unk04;
+    D_800FCE92_FDA92 = 0;
+    D_800DEFB4_DFBB4 = -1;
+    D_800FA1A6_FADA6 = D_800FA61C_FB21C;
+    temp_s1 = D_800DEFB0_DFBB0->unk54;
+    sp24 = &arg0->unk8C[temp_s1->unk30];
+    temp_v0 = D_800DEFB0_DFBB0->unk50 &= ~0x00040000;
+    record = (temp_v0 & 0x06020000) == 0x20000;
+
+    if ((D_800F64C4_F70C4 & 0x2001) == 0x2001) {
+        func_80035C18_36818(arg0);
+    }
+
+    var_s6 = var_s4 = temp_s1->unk00 & 0x80;
+    if (var_s4 != 0) {
+        gSPClearGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+    } else {
+        gSPSetGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+    }
+
+    if (temp_s1->unk32 >= 0) {
+        sp2C = &arg0->unk88[temp_s1->unk32];
+    } else {
+        sp2C = (HmfTexRef*) -1;
+    }
+    sp1E = D_800CA088_CAC88[(D_800F64C4_F70C4 & 0x1C00) >> 10];
+
+    for (i = 0; i < sp16; i++) {
+        temp_s1 = &arg0->unk64[arg1].unk54[i];
+        if (temp_s1->unk00 >= 3) {
+            temp_s2 = &arg0->unk8C[temp_s1->unk30];
+
+            if (temp_s1->unk32 >= 0) {
+                var_s0 = &arg0->unk88[temp_s1->unk32];
+            } else {
+                var_s0 = (HmfTexRef*) -1;
+            }
+
+            var_s4 = temp_s1->unk00 & 0x80;
+
+            if (sp1E < D_800FA61C_FB21C - D_800FA1A6_FADA6 || sp24 != temp_s2 || sp2C != var_s0 || D_800FCE92_FDA92 >= 48 || var_s4 != var_s6) {
+                sp24 = temp_s2;
+                sp2C = var_s0;
+                func_80033288_33E88(arg0, &D_800DEFB0_DFBB0->unk50);
+                if (var_s4 != var_s6) {
+                    if (var_s4 != 0) {
+                        gSPClearGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+                    } else {
+                        gSPSetGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+                    }
+                    var_s6 = var_s4;
+                }
+                D_800FCE92_FDA92 = 0;
+            }
+
+            temp_t2 = &D_800F9918_FA518[D_800FCE92_FDA92];
+            temp_v0_2 = temp_t2->unk00 = temp_s1->unk00 & 0x7F;
+
+            if (temp_v0_2 == 2) {
+                continue;
+            }
+
+            temp_t2->unk0C = temp_s2;
+            temp_t2->unk10 = var_s0;
+
+            if (var_s0 != (HmfTexRef*) -1) {
+                var_a1 = var_s0->unk0C->unk1E << 5;
+                var_a2 = var_s0->unk0C->unk1F << 5;
+            } else {
+                var_a1 = var_a2 = 0;
+            }
+
+            if (record) {
+                arg0->unkB4[D_80101646_102246].unk00 = temp_v0_2;
+            }
+
+            for (var_t1 = 0; var_t1 < temp_v0_2; var_t1++) {
+                temp_t0 = &arg0->unk54[temp_s1->unk04[var_t1]];
+
+                if (var_s4 != 0) {
+                    var_a3 = arg0->unk8C[temp_s1->unk2C[var_t1]].unk05;
+                } else {
+                    var_a3 = &arg0->unk58[temp_s1->unk04[var_t1] * 3];
+                }
+
+                temp_f2 = temp_s1->unk0C[var_t1] * var_a1;
+                temp_f2_2 = temp_s1->unk1C[var_t1] * var_a2;
+
+                var_a0 = &D_80101170_101D70[D_800FA61C_FB21C - 1];
+                if (temp_v0 & 0x20000) {
+                    if (record) {
+                        arg0->unkB4[D_80101646_102246].unk02[var_t1] = D_800FA61C_FB21C;
+                    }
+                    var_a1_2 = D_800FA1A6_FADA6;
+                } else {
+                    for (var_a1_2 = D_800FA61C_FB21C - 1; var_a1_2 >= D_800FA1A6_FADA6; var_a1_2--, var_a0--) {
+                        if (var_a0->unk00 == temp_t0->x && var_a0->unk02 == temp_t0->y && var_a0->unk04 == temp_t0->z
+                            && (s8) var_a0->unk0C[0] == (s8) var_a3[0] && (s8) var_a0->unk0C[1] == (s8) var_a3[1] && (s8) var_a0->unk0C[2] == (s8) var_a3[2]
+                            && var_a0->unk08 == temp_f2 && var_a0->unk0A == temp_f2_2) {
+                            break;
+                        }
+                    }
+                }
+
+                if (var_a1_2 <= D_800FA1A6_FADA6) {
+                    var_a0 = &D_80101170_101D70[D_800FA61C_FB21C];
+                    var_a0->unk00 = temp_t0->x;
+                    var_a0->unk02 = temp_t0->y;
+                    var_a0->unk04 = temp_t0->z;
+                    var_a0->unk0C[0] = var_a3[0];
+                    var_a0->unk0C[1] = var_a3[1];
+                    var_a0->unk0C[2] = var_a3[2];
+                    var_a0->unk08 = temp_f2;
+                    var_a0->unk0A = temp_f2_2;
+                    var_a0->unk0F = 255;
+                    temp_t2->unk02[var_t1] = D_800FA61C_FB21C - D_800FA1A6_FADA6;
+                    temp_t2->unk0A = var_s4;
+                    if (arg0->unk60 != NULL) {
+                        arg0->unk60[temp_s1->unk04[var_t1]] = D_800FA61C_FB21C;
+                    }
+                    D_800FA61C_FB21C++;
+                    D_800FFDFA_1009FA++;
+                } else {
+                    D_800F9050_F9C50++;
+                    temp_t2->unk02[var_t1] = var_a1_2 - D_800FA1A6_FADA6;
+                    if (arg0->unk60 != NULL) {
+                        arg0->unk60[temp_s1->unk04[var_t1]] = var_a1_2;
+                    }
+                }
+            }
+
+            if (record) {
+                D_80101646_102246++;
+            }
+
+            D_800FCE92_FDA92++;
+        }
+    }
+
+    if (D_800FA61C_FB21C != D_800FA1A6_FADA6) {
+        if (var_s4 != var_s6) {
+            if (var_s4 != 0) {
+                gSPClearGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+            } else {
+                gSPSetGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+            }
+        }
+
+        func_80033288_33E88(arg0, &D_800DEFB0_DFBB0->unk50);
+        gSPSetGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/30560", func_800329E8_335E8);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_80033288_33E88);
 
@@ -434,7 +777,7 @@ void func_80036EF8_37AF8(HmfTex* arg0, s32 arg1, s32 arg2) {
 INCLUDE_ASM("asm/nonmatchings/30560", func_80037C7C_3887C);
 
 /* same c: marioparty3 func_8002C4C0_2D0C0 (src/22EB0.c) */
-s32 func_80038024_38C24(HmfData *arg0, s16 arg1, s32 arg2, s32 arg3) {
+s32 func_80038024_38C24(HmfData *arg0, s16 arg1, Matrix4f arg2, Matrix4f arg3) {
     if (!(arg0->unk64[arg1].unk50 & 0x70000000)) {
         return 0;
     }
