@@ -200,11 +200,12 @@ $(B1L_UNITS): export VR4300MUL := ON
 B1L_RODATA_UNITS := build/src/9EED0.c.o build/src/9F840.c.o build/src/A1B70.c.o build/src/A30D0.c.o build/src/A3220.c.o build/src/A3930.c.o build/src/A4390.c.o build/src/A5110.c.o build/src/A5BA0.c.o build/src/A7CB0.c.o build/src/AB560.c.o build/src/AFD70.c.o
 $(B1L_RODATA_UNITS): RODATA_AS_DATA = 1
 # Main units whose .rodata is carved out of the data blob's rodata half (ROM D2400-D57F0)
-CARVED_RODATA_UNITS := build/src/187C0.c.o build/src/57150.c.o build/src/7FAE0.c.o
+CARVED_RODATA_UNITS := build/src/187C0.c.o build/src/57150.c.o build/src/7FAE0.c.o build/src/3D6A0.c.o
 $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # Data-blob pieces that end where a carved unit starts on an 8-byte (not 16-byte) boundary: gas would
 # pad them to 16 and shift everything after
-NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
+# (a piece is named by its start address: splitting the blob before it renames it, so update this)
+NOPAD_DATA_PIECES := build/asm/data/D2F60.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 # b3-D: carved rodata (5F3B0 D3B00-D3BE8)
 B3D_CARVED_RODATA_UNITS := build/src/5F3B0.c.o

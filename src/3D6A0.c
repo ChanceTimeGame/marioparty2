@@ -2,9 +2,9 @@
 #include "game/hmfman.h"
 
 /* Model textures and texture animation (MP1 src/388E0.c) and texture-load display lists
-   (MP1 src/3AC60.c). Functions without MP1 C stay asm, and so does func_8004075C (MP1
-   func_8003B0AC): its doubles are in this unit's piece of the data blob, which functions still in
-   asm also use. MP2's model structs have MP3's layout; fields are named by their MP2 offset
+   (MP1 src/3AC60.c). Functions without MP1 C stay asm. The rest of the unit's rodata
+   (D2EE0-D2F40, strings) belongs to asm functions; only func_8004075C's doubles at its tail are
+   carved. MP2's model structs have MP3's layout; fields are named by their MP2 offset
    (MP1 offset in the comment). */
 
 typedef struct unk388E0Struct40 {
@@ -560,7 +560,21 @@ void func_800404B0_410B0(Gfx** arg0, s32 arg1, s32 fmt, u32 width, s32 height, s
     *arg0 = gfx;
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8004075C_4135C);
+f32 __cosf(f32);
+f32 __sinf(f32);
+
+/* exact c: marioparty func_8003B0AC (src/3AC60.c); its three doubles are the tail of the unit's
+   rodata (D2F40-D2F58), carved on their own */
+void func_8004075C_4135C(unk3AC60Struct1* arg0, f64 arg1, f64 arg2, f64 arg3) {
+    f32 temp_f20 = (arg3 - ((s32) (arg3 / 360.0) * 360)) * 3.14158999999999988 / 180.0;
+
+    arg0->unk_00 = __cosf(temp_f20);
+    arg0->unk_04 = __sinf(temp_f20);
+    arg0->unk_10 = -__sinf(temp_f20);
+    arg0->unk_14 = __cosf(temp_f20);
+    arg0->unk_30 = arg1;
+    arg0->unk_34 = arg2;
+}
 
 /* exact c: marioparty func_8003B190 (src/3AC60.c) */
 void func_80040840_41440(unk3AC60Struct0* arg0, unk3AC60Struct1* arg1, unk3AC60Struct2* arg2) {
