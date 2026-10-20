@@ -70,6 +70,32 @@ void* func_80091024_91C24(s32 arg0);
 void func_8009110C_91D0C(Gfx** arg0, f32 arg1, f32 arg2);
 void func_80092A24_93624(Gfx** arg0);
 void func_80092A5C_9365C(Gfx** arg0);
+void func_80068E64_69A64(Gfx** arg0); /* MP1 GMesCall */
+void func_8008F624_90224(u8 arg0, u8 arg1, u8 arg2);
+void func_800273A8_27FA8(s32);
+void func_8008FD1C_9091C(Gfx** arg0);
+s32 func_8008F640_90240(Gfx** arg0);
+s32 func_8008F71C_9031C(Gfx** arg0);
+s32 func_8008F8C8_904C8(Gfx** arg0);
+s32 func_8008FF08_90B08(Gfx** arg0);
+s32 func_8008FFE4_90BE4(Gfx** arg0);
+s32 func_80090460_91060(Gfx** arg0);
+s32 func_80090E84_91A84(Gfx** arg0);
+s32 func_80090F40_91B40(Gfx** arg0);
+s32 func_80091B20_92720(Gfx** arg0);
+s32 func_80091BE0_927E0(Gfx** arg0);
+s32 func_80091CB4_928B4(Gfx** arg0);
+s32 func_80091DBC_929BC(Gfx** arg0);
+s32 func_80091EC0_92AC0(Gfx** arg0);
+s32 func_80091FC8_92BC8(Gfx** arg0);
+s32 func_800920CC_92CCC(Gfx** arg0);
+s32 func_800921D4_92DD4(Gfx** arg0);
+s32 func_800922D8_92ED8(Gfx** arg0);
+s32 func_80092398_92F98(Gfx** arg0);
+s32 func_8009246C_9306C(Gfx** arg0);
+s32 func_8009252C_9312C(Gfx** arg0);
+s32 func_80092600_93200(Gfx** arg0, s32 arg1);
+s32 func_8009270C_9330C(Gfx** arg0, s32 arg1);
 
 void func_8008EFB0_8FBB0(void) {
     D_800F92DC_F9EDC = 0;
@@ -82,7 +108,163 @@ void func_8008EFB0_8FBB0(void) {
     func_80068DAC_699AC();
 }
 
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_8008EFF8_8FBF8);
+/* MP1 func_800721D8 (fade/wipe dispatch); MP2 adds wipe types 9-14 */
+void func_8008EFF8_8FBF8(Gfx** arg0) {
+    if (D_800F8C56_F9856 == 3) {
+        if (D_800CDC50_CE850 == 254) {
+            func_8008FD1C_9091C(arg0);
+        } else {
+            func_8008F7F4_903F4(arg0, 255, D_800CDCA8_CE8A8);
+        }
+        return;
+    }
+
+    func_80068E64_69A64(arg0);
+
+    if (D_800F8C56_F9856 == 0) {
+        return;
+    }
+
+    switch (D_800F8C56_F9856) {
+        case 1:
+            switch (D_800CDC50_CE850) {
+                case 0:
+                    D_800F92DC_F9EDC = func_8008F640_90240(arg0);
+                    break;
+                case 254:
+                    D_800F92DC_F9EDC = func_8008F8C8_904C8(arg0);
+                    break;
+                case 253:
+                    D_800F92DC_F9EDC = func_8008FF08_90B08(arg0);
+                    break;
+                case 252:
+                    D_800F92DC_F9EDC = 0;
+                    break;
+                case 1:
+                    D_800F92DC_F9EDC = func_80090E84_91A84(arg0);
+                    break;
+                case 2:
+                    D_800F92DC_F9EDC = func_80091B20_92720(arg0);
+                    break;
+                case 3:
+                    D_800F92DC_F9EDC = func_80091CB4_928B4(arg0);
+                    break;
+                case 4:
+                    D_800F92DC_F9EDC = func_80091EC0_92AC0(arg0);
+                    break;
+                case 5:
+                    D_800F92DC_F9EDC = func_800920CC_92CCC(arg0);
+                    break;
+                case 6:
+                    D_800F92DC_F9EDC = func_800922D8_92ED8(arg0);
+                    break;
+                case 7:
+                    D_800F92DC_F9EDC = func_8009246C_9306C(arg0);
+                    break;
+                case 8:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 28);
+                    break;
+                case 9:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 32);
+                    break;
+                case 10:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 33);
+                    break;
+                case 11:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 34);
+                    break;
+                case 12:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 29);
+                    break;
+                case 13:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 30);
+                    break;
+                case 14:
+                    D_800F92DC_F9EDC = func_80092600_93200(arg0, 31);
+                    break;
+            }
+            D_80101054_101C54 += 1.0f;
+            if (D_800F92DC_F9EDC == 0) {
+                func_8008F624_90224(0, 0, 0);
+                if (D_800CDC54_CE854 != NULL) {
+                    if (D_8010116C_101D6C == 0) {
+                        HuMemMemoryFreePerm(D_800CDC54_CE854);
+                    }
+                    D_800CDC54_CE854 = NULL;
+                }
+                func_800273A8_27FA8(28000);
+            }
+            break;
+        case 2:
+            switch (D_800CDC50_CE850) {
+                case 0:
+                    D_800F92DC_F9EDC = func_8008F71C_9031C(arg0);
+                    break;
+                case 254:
+                    D_800F92DC_F9EDC = func_8008FA5C_9065C(arg0);
+                    break;
+                case 253:
+                    D_800F92DC_F9EDC = func_8008FFE4_90BE4(arg0);
+                    break;
+                case 252:
+                    D_800F92DC_F9EDC = func_80090460_91060(arg0);
+                    break;
+                case 1:
+                    D_800F92DC_F9EDC = func_80090F40_91B40(arg0);
+                    break;
+                case 2:
+                    D_800F92DC_F9EDC = func_80091BE0_927E0(arg0);
+                    break;
+                case 3:
+                    D_800F92DC_F9EDC = func_80091DBC_929BC(arg0);
+                    break;
+                case 4:
+                    D_800F92DC_F9EDC = func_80091FC8_92BC8(arg0);
+                    break;
+                case 5:
+                    D_800F92DC_F9EDC = func_800921D4_92DD4(arg0);
+                    break;
+                case 6:
+                    D_800F92DC_F9EDC = func_80092398_92F98(arg0);
+                    break;
+                case 7:
+                    D_800F92DC_F9EDC = func_8009252C_9312C(arg0);
+                    break;
+                case 8:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 28);
+                    break;
+                case 9:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 32);
+                    break;
+                case 10:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 33);
+                    break;
+                case 11:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 34);
+                    break;
+                case 12:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 29);
+                    break;
+                case 13:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 30);
+                    break;
+                case 14:
+                    D_800F92DC_F9EDC = func_8009270C_9330C(arg0, 31);
+                    break;
+            }
+            D_80101054_101C54 += 1.0f;
+            break;
+    }
+
+    if (D_800F92DC_F9EDC == 0) {
+        if (D_800F8C56_F9856 == 2) {
+            D_800F8C56_F9856 = 3;
+        } else {
+            D_800F8C56_F9856 = 0;
+        }
+        D_80101054_101C54 = 0.0f;
+    }
+}
 
 void InitFadeIn(s32 arg0, s32 arg1) {
     s16 a = arg0;
@@ -630,9 +812,67 @@ s32 func_8009252C_9312C(Gfx** arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_80092600_93200);
+/* MP1 func_80074FC0; MP2 passes the wipe type in */
+s32 func_80092600_93200(Gfx** arg0, s32 arg1) {
+    f32 var_a2;
+    f32 temp_f2;
+    f32 var_f2;
 
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_8009270C_9330C);
+    if (D_800FCE88_FDA88 == 0.0f) {
+        return 0;
+    }
+
+    if (D_80101054_101C54 == 0.0f) {
+        func_80091024_91C24(arg1);
+    }
+
+    var_a2 = D_80101054_101C54 / D_800FCE88_FDA88 * 2.0f;
+    temp_f2 = D_800FCE88_FDA88 * 0.5f;
+    if (temp_f2 < D_80101054_101C54) {
+        var_f2 = 1.0f - (D_80101054_101C54 - temp_f2) / temp_f2;
+    } else {
+        var_f2 = 1.0f;
+    }
+
+    func_8009110C_91D0C(arg0, var_a2, var_f2);
+
+    if (D_80101054_101C54 >= D_800FCE88_FDA88) {
+        return 0;
+    }
+
+    return 1;
+}
+
+/* MP1 func_80074EBC; MP2 passes the wipe type in */
+s32 func_8009270C_9330C(Gfx** arg0, s32 arg1) {
+    f32 var_a2;
+    f32 temp_f2;
+    f32 var_f2;
+
+    if (D_800FCE88_FDA88 == 0.0f) {
+        return 0;
+    }
+
+    if (D_80101054_101C54 == 0.0f) {
+        func_80091024_91C24(arg1);
+    }
+
+    var_a2 = (1.0f - D_80101054_101C54 / D_800FCE88_FDA88) * 2.0f;
+    temp_f2 = D_800FCE88_FDA88 * 0.5f;
+    if (temp_f2 > D_80101054_101C54) {
+        var_f2 = D_80101054_101C54 / temp_f2;
+    } else {
+        var_f2 = 1.0f;
+    }
+
+    func_8009110C_91D0C(arg0, var_a2, var_f2);
+
+    if (D_80101054_101C54 >= D_800FCE88_FDA88) {
+        return 0;
+    }
+
+    return 1;
+}
 
 void func_80092814_93414(void) {
     Gfx* sp10;
@@ -703,7 +943,3 @@ void func_80092AB0_936B0(void) {
     func_800283DC_28FDC(D_800ED902_EE502);
     D_8010116C_101D6C = 0;
 }
-
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_80092AF0_936F0);
-
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_80092C90_93890);

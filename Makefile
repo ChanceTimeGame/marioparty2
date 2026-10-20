@@ -252,3 +252,8 @@ build/src/ADE40.c.o: export VR4300MUL = ON
 B3E_CARVED := build/src/A0580.c.o build/src/AC3B0.c.o
 CARVED_RODATA_UNITS += $(B3E_CARVED)
 $(B3E_CARVED): RODATA_AS_DATA = 1
+# b3-E: 936F0 (synstartvoiceparam.c), 93890 (synsetpan.c): MP1 builds these lib files -O0 (mono sound patch)
+B3E_O0_LIB_UNITS := build/src/936F0.c.o build/src/93890.c.o
+$(B3E_O0_LIB_UNITS): CFLAGS = -O0 -g -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+$(B3E_O0_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
+$(B3E_O0_LIB_UNITS): export VR4300MUL := ON
