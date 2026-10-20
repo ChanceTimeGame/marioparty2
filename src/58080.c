@@ -29,7 +29,7 @@ void SprAttrSet(s16, s16, u32);
 s32 _CheckFlag(s32);
 s32 func_8005C8A0_5D4A0(s32);
 s32 func_8005C8AC_5D4AC(void*, s16);
-void* func_8005C980_5D580(void);
+void func_8005C980_5D580(void);
 BoardPlayer *func_8005E688_5F288(s32, s32);
 s32 PlaySound(s32);
 s32 func_80082450_83050(s16, s16, s32, s32, s32);
@@ -49,9 +49,11 @@ extern u16 ContDStkTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
 /* Board players, sprites, effects and pause menu helpers. C from MP1 src/4E530.c, src/51200.c,
-   src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c; the rest have no reference or differ
-   (near) and stay asm, and func_80059198, func_80059E7C and func_8005ADCC stay asm because their
-   rodata (D3A38-D3AE0) is shared with asm functions. */
+   src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c; the rest have no C reference and
+   stay asm. The functions that emit this unit's rodata (D3A38-D3AE0) stay asm too, because
+   func_8005A950, func_8005B338 and func_8005B9A0 (no reference) use part of it: func_80057768,
+   func_80057AB0, func_80057DDC, func_800585E8, func_80058D18, func_80059198, func_80059E7C,
+   func_8005A4EC, func_8005ADCC and func_8005D7D4. */
 
 #define CUR_PLAYER -1
 
@@ -198,6 +200,10 @@ extern s32 D_800CC720_CD320[];
 extern s32 D_800CC72C_CD32C[];
 extern s32 D_800CC738_CD338[];
 extern s8 D_800CCC14_CD814;
+extern s32 D_800CC744_CD344[];
+extern s32 D_800CC74C_CD34C[];
+extern s16 D_800E1D00_E2900;
+f32 HuMathSin(f32);
 extern s8 D_800CCC15_CD815;
 
 /* MP3 UnkMBGuideData: the pause-menu guide (model and sprite group) */
@@ -1246,7 +1252,40 @@ s32 func_8005C3B0_5CFB0(s32 arg0) {
     return 4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005C508_5D108);
+s32 func_8005C508_5D108(s32 arg0) {
+    Process* proc;
+    s16 v;
+    s32 win;
+
+    func_8005BF2C_5CB2C();
+#ifdef TARGET_PC
+    win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x527), 0x46);
+#else
+    /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
+    win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x527), 0x46);
+#endif
+    func_80089A7C_8A67C(win, 5);
+    func_80089B2C_8A72C(win, 0);
+    func_800890CC_89CCC(win, MBPauseMesNumGet(0x527), -1, -1);
+    func_80089A48_8A648(win, 0);
+    while (func_8008BA30_8C630(win) != 0) {
+        HuPrcVSleep();
+    }
+    if (_CheckFlag(0xD) == 0) {
+        proc = func_8005B7A8_5C3A8(win, D_800CC744_CD344);
+    } else {
+        proc = func_8005B7A8_5C3A8(win, D_800CC74C_CD34C);
+    }
+    func_8008D59C_8E19C(win, (s16)(1 << arg0));
+    v = func_8008BB48_8C748(win, 0, 0);
+    if (v == 1) {
+        D_800E1CF6_E28F6 = 1;
+    }
+    omDelPrcObj(proc);
+    func_8008CCA8_8D8A8(win);
+    func_8005C0B8_5CCB8();
+    return 4;
+}
 
 s32 func_8005C670_5D270(s16 arg0) {
     GW_PLAYER* player;
@@ -1324,7 +1363,35 @@ INCLUDE_ASM("asm/nonmatchings/58080", func_8005C8A0_5D4A0);
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005C8AC_5D4AC);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005C980_5D580);
+void func_8005C980_5D580(void) {
+    f32 var_f20;
+    s32 var_v0;
+    BoardPlayer* temp_s1;
+
+    temp_s1 = HuPrcCurrentGet()->user_data;
+    var_f20 = 0.0f;
+    while (1) {
+        HuPrcVSleep();
+        if (D_800E1D00_E2900 != 0) {
+            var_v0 = (s16)(HuMathSin(var_f20) * 255.0f);
+            if (var_v0 < 0) {
+                var_v0 = -var_v0;
+            }
+            var_f20 += 6.0f;
+            if (var_f20 > 360.0f) {
+                var_f20 -= 360.0f;
+            }
+            func_800824B4_830B4(temp_s1->unk_0A, 1, 0xFF, (u8)var_v0, 0, 0x255);
+            func_800824B4_830B4(temp_s1->unk_0A, 2, 0xFF, (u8)var_v0, 0, 0x255);
+            SprAttrReset(temp_s1->unk_0A, 1, 0x8000);
+            SprAttrReset(temp_s1->unk_0A, 2, 0x8000);
+        } else {
+            var_f20 = 0.0f;
+            SprAttrSet(temp_s1->unk_0A, 1, 0x8000);
+            SprAttrSet(temp_s1->unk_0A, 2, 0x8000);
+        }
+    }
+}
 
 s32 func_8005CAD0_5D6D0(s32 arg0) {
     u16 sp1E;
