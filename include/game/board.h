@@ -22,6 +22,15 @@ typedef struct MBModel {
     /* 0x46 */ s16 curMot;
 } MBModel; /* size = 0x48 */
 
+/* Board HUD icon set (MP1 unk_Struct02; 426A0, 67FA0). */
+typedef struct unk_Struct02 {
+    /* 0x00 */ void* unk00;
+    /* 0x04 */ void* unk04;
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 unk0A;
+    /* 0x0C */ s16* unk0C;
+} unk_Struct02; /* size = 0x10 */
+
 extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
 extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
 

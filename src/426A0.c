@@ -21,15 +21,6 @@ typedef struct MapMarkerBlink {
     /* 0x02 */ s16 idx;
 } MapMarkerBlink;
 
-/* MP1 unk_Struct02 */
-typedef struct unk_Struct02 {
-    /* 0x00 */ void* unk_00;
-    /* 0x04 */ void* unk_04;
-    /* 0x08 */ s16 unk_08;
-    /* 0x0A */ s16 unk_0A;
-    /* 0x0C */ s16* unk_0C;
-} unk_Struct02;
-
 extern s16 D_800CB10C_CBD0C[4];
 extern s16 D_800CB114_CBD14[4];
 extern s32 D_800DEFF0_DFBF0;
@@ -167,14 +158,14 @@ void func_80041E0C_42A0C(unk_Struct02* arg0, s16 i) {
     Vec v;
     f32 angle;
 
-    SprPosSet(arg0->unk_0A, 0, D_800CB10C_CBD0C[i], D_800CB114_CBD14[i]);
-    SprPosSet(arg0->unk_0A, 1, D_800CB10C_CBD0C[i], D_800CB114_CBD14[i]);
+    SprPosSet(arg0->unk0A, 0, D_800CB10C_CBD0C[i], D_800CB114_CBD14[i]);
+    SprPosSet(arg0->unk0A, 1, D_800CB10C_CBD0C[i], D_800CB114_CBD14[i]);
     v.x = D_800DF378_DFF78[i] - D_800CB10C_CBD0C[i];
     v.y = 0.0f;
     v.z = D_800DF380_DFF80[i] - D_800CB114_CBD14[i];
     angle = func_80042BE0_437E0(&v);
-    SprScaleSet(arg0->unk_0A, 0, 0.25f, func_800B1830_B2430(v.x * v.x + v.z * v.z) / 32.0f);
-    SprRotSet(arg0->unk_0A, 0, angle);
+    SprScaleSet(arg0->unk0A, 0, 0.25f, func_800B1830_B2430(v.x * v.x + v.z * v.z) / 32.0f);
+    SprRotSet(arg0->unk0A, 0, angle);
 }
 
 /* same c: marioparty func_8003C6C4 (src/3CED0.c) */
@@ -187,18 +178,18 @@ void func_80041F3C_42B3C(void) {
     for (i = 0; i < 4; i++) {
         s = func_8005E688_5F288(2, 0);
         data = DataRead(0xA00B4);
-        s->unk_0C[0] = SprAnimRead(data);
-        SprAnimSet(s->unk_0A, 0, s->unk_0C[0], 0);
-        SprAttrSet(s->unk_0A, 0, 0x01001808);
-        SprPrioSet(s->unk_0A, 0, 2);
-        func_800824B4_830B4(s->unk_0A, 0, 0, 0, 0xFF, 0x80);
+        s->unk0C[0] = SprAnimRead(data);
+        SprAnimSet(s->unk0A, 0, s->unk0C[0], 0);
+        SprAttrSet(s->unk0A, 0, 0x01001808);
+        SprPrioSet(s->unk0A, 0, 2);
+        func_800824B4_830B4(s->unk0A, 0, 0, 0, 0xFF, 0x80);
         DataClose(data);
         data2 = DataRead(0xA0018);
-        s->unk_0C[1] = SprAnimRead(data2);
-        SprAnimSet(s->unk_0A, 1, s->unk_0C[1], 0);
-        SprAttrSet(s->unk_0A, 1, 0x01001808);
-        SprPrioSet(s->unk_0A, 1, 2);
-        func_800824B4_830B4(s->unk_0A, 1, 0, 0, 0xFF, 0x80);
+        s->unk0C[1] = SprAnimRead(data2);
+        SprAnimSet(s->unk0A, 1, s->unk0C[1], 0);
+        SprAttrSet(s->unk0A, 1, 0x01001808);
+        SprPrioSet(s->unk0A, 1, 2);
+        func_800824B4_830B4(s->unk0A, 1, 0, 0, 0xFF, 0x80);
         DataClose(data2);
         func_80041E0C_42A0C(s, i);
         D_800DF388_DFF88[i] = s;
@@ -236,16 +227,16 @@ void func_80042120_42D20(void) {
             for (i = 0; i < 4; i++) {
                 s = D_800DF388_DFF88[i];
                 if (i == cur) {
-                    SprPrioSet(s->unk_0A, 0, 2);
-                    SprPrioSet(s->unk_0A, 1, 2);
+                    SprPrioSet(s->unk0A, 0, 2);
+                    SprPrioSet(s->unk0A, 1, 2);
                 } else {
-                    func_800824B4_830B4(s->unk_0A, 0, 0, 0, 0xFF, 0xA0);
-                    func_800824B4_830B4(s->unk_0A, 1, 0, 0, 0xFF, 0xFF);
-                    SprPrioSet(s->unk_0A, 0, 3);
-                    SprPrioSet(s->unk_0A, 1, 3);
+                    func_800824B4_830B4(s->unk0A, 0, 0, 0, 0xFF, 0xA0);
+                    func_800824B4_830B4(s->unk0A, 1, 0, 0, 0xFF, 0xFF);
+                    SprPrioSet(s->unk0A, 0, 3);
+                    SprPrioSet(s->unk0A, 1, 3);
                 }
-                SprAttrReset(s->unk_0A, 0, 0x8000);
-                SprAttrReset(s->unk_0A, 1, 0x8000);
+                SprAttrReset(s->unk0A, 0, 0x8000);
+                SprAttrReset(s->unk0A, 1, 0x8000);
             }
         }
         s = D_800DF388_DFF88[cur];
@@ -255,8 +246,8 @@ void func_80042120_42D20(void) {
         if (t > 360.0f) {
             t -= 360.0f;
         }
-        func_800824B4_830B4(s->unk_0A, 0, 0xFF, c, 0, 0xA0);
-        func_800824B4_830B4(s->unk_0A, 1, 0xFF, c, 0, 0xFF);
+        func_800824B4_830B4(s->unk0A, 0, 0xFF, c, 0, 0xA0);
+        func_800824B4_830B4(s->unk0A, 1, 0xFF, c, 0, 0xFF);
     }
 }
 

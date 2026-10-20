@@ -9,6 +9,11 @@ typedef struct Vec{
     f32 z;
 } Vec;
 
+typedef struct Vec2s {
+    s16 x;
+    s16 y;
+} Vec2s;
+
 typedef struct unkfunc_8001AFD8 {
     s16 unk0;
     struct unkfunc_8001AFD8* unk4; //is this correct?

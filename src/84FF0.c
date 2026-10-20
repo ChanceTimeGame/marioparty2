@@ -4,6 +4,7 @@
 #include "game/data.h"
 #include "engine/siman.h"
 #include "game/pad.h"
+#include "game/si.h"
 
 /* Window system, rumble and the queued-input ring (MP1 src/6C470.c, src/6D4E0.c, src/388E0.c, MP3
    src/window.c). MP2's TextWindow has MP3's layout (0x27C bytes). MP2's names are kept. */
@@ -50,21 +51,6 @@ typedef struct RumbleState {
     /* 0x0A */ s16 unkA;
 } RumbleState; // size 0xC
 
-typedef s32 (*HuSiFunc)(void*);
-typedef s32 (*HuSiFuncVoid)(void);
-
-typedef struct functionListEntryt {
-    struct functionListEntryt* child;
-    HuSiFuncVoid func;
-    s16 type;
-} functionListEntry;
-
-typedef struct {
-    HuSiFunc func;
-    void* arg;
-    s32 ret;
-    OSMesgQueue* recvQueue;
-} unkMesg;
 
 typedef struct TWInput {
     /* 0x00 */ s16 v[4];

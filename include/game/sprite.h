@@ -140,6 +140,35 @@ typedef struct HuSprGrp {
     /* 0x0C */ HuSprite* members[1]; /* unknown size; MP3 has them at 0x10 */
 } HuSprGrp;
 
+/* Sprite-model slot (21920; MP1 src/1EA70.c). */
+typedef struct unk_800ECDE0 {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ u16 unk04;
+    /* 0x06 */ s16 unk06;
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 unk0A;
+    /* 0x0C */ s16 unk0C;
+    /* 0x0E */ s16 unk0E;
+    /* 0x10 */ s16 unk10;
+    /* 0x12 */ u8 unk12;
+    /* 0x13 */ u8 unk13;
+    /* 0x14 */ u8 unk14;
+    /* 0x15 */ u8 unk15;
+    /* 0x16 */ s8 unk16;
+    /* 0x17 */ s8 unk17;
+    /* 0x18 */ s8 unk18;
+    /* 0x19 */ u8 unk19;
+    /* 0x1A */ u8 unk1A;
+    /* 0x1B */ u8 unk1B;
+    /* 0x1C */ u8 unk1C;
+    /* 0x1D */ u8 unk1D;
+    /* 0x1E */ s16 unk1E;
+    /* 0x20 */ u32 unk20; /* key-frame list */
+} unk_800ECDE0; /* size = 0x24 */
+
+extern unk_800ECDE0* D_800F86D8_F92D8;
+
 extern HuSprGrp* HuSprGrpData[256]; /* MP1 D_800EE330 */
 
 #endif

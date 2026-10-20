@@ -3,6 +3,7 @@
 #include "PR/sptask.h"
 #include "engine/siman.h"
 #include "game/gamework.h"
+#include "game/si.h"
 
 /* Save-file EEPROM wrappers (MP1 src/59E80.c), Hudson's nn scheduler (MP1 src/engine/nnsched.c)
    and the SI manager (MP1 src/engine/siman.c). MP1's names are anonymous, so MP2's are kept. */
@@ -21,21 +22,6 @@ typedef struct {
 
 #define HOS_PRIORITY_SIMGR 0x5A
 
-typedef s32 (*HuSiFuncVoid)(void);
-typedef s32 (*HuSiFunc)(void*);
-
-typedef struct functionListEntryt {
-    struct functionListEntryt* child;
-    HuSiFuncVoid func;
-    s16 type;
-} functionListEntry;
-
-typedef struct {
-    HuSiFunc func;
-    void* arg;
-    s32 ret;
-    OSMesgQueue* recvQueue;
-} unkMesg;
 
 typedef struct {
     u32 unk0[4];

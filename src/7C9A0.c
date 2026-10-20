@@ -4,11 +4,6 @@
 
 /* Performance meter task and timers (MP1 src/61B70.c, non-host path). MP1's names are anonymous. */
 
-typedef struct Vec2s {
-    s16 x;
-    s16 y;
-} Vec2s;
-
 extern OSMesg D_800E23F8_E2FF8[];
 extern s32 D_800E240C_E300C;
 extern void* D_800E2410_E3010;

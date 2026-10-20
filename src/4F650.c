@@ -4,10 +4,6 @@
 /* Board turn banners. C from MP1 src/47320.c (func_80046720 .. func_80048134); the rest have no
    reference or differ (near) and stay asm. */
 
-typedef struct {
-    s16 x, y;
-} Vec2s;
-
 typedef struct unkUserData {
     s32 unk0;
     s32 unk4;

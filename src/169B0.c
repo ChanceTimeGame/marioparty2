@@ -7,6 +7,7 @@
 #include "PR/sptask.h"
 #include "game/pad.h"
 #include "game/rsp.h"
+#include "game/si.h"
 
 #define PAD_COUNT (4)
 
@@ -56,12 +57,6 @@ typedef struct DMAState {
 typedef struct {
     /* 0x00 */ OSContPad pad[PAD_COUNT];
 } pad_unk; /* sizeof = 0x18 */
-
-typedef struct functionListEntryt {
-    struct functionListEntryt *child;
-    void* func;
-    s16 type;
-} functionListEntry;
 
 /* Scheduler client (0x10 bytes), followed directly by the 0x2000-byte audio thread stack. */
 extern u8 D_800D58F0_D64F0[];

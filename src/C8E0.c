@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/hmfman.h"
+#include "game/sprite.h"
 
 /* Minigame player helpers. Functions with C come from MP1 src/99E0.c and MP3
    src/overlays/minigame/B3CE0.c; MP2's work block is laid out differently (offsets below). */
@@ -31,12 +32,6 @@ typedef struct MgWork {
 
 #define MG_WORK(obj) ((MgWork*)(obj)->unk_50)
 
-typedef struct {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ char unk_02[0x22];
-} unk_800ECDE0; // size 0x24
-
-extern unk_800ECDE0* D_800F86D8_F92D8;
 extern u16 D_800F8FE0_F9BE0;
 extern omObjData* D_800FC7B0_FD3B0[];
 extern u8 D_800BF794_C0394;
@@ -177,7 +172,7 @@ void func_8000C11C_CD1C(omObjData* obj, s32 dir, s32 file, s32 arg3) {
     MgWork* work = MG_WORK(obj);
 
     work->unk_55 = func_80018D64_19964(dir, file, arg3);
-    obj->model[0] = D_800F86D8_F92D8[work->unk_55].unk_00;
+    obj->model[0] = D_800F86D8_F92D8[work->unk_55].unk00;
     HmfModelObjAttrSet(obj->model[0], 0x70000000, 0x70000000);
 }
 
@@ -200,10 +195,10 @@ void func_8000C2A0_CEA0(omObjData* obj, s32 idx, s32 dir, s32 file, s32 arg4) {
     u8* work = obj->unk_50;
     u16 img = func_80018D64_19964(dir, file, arg4);
 
-    obj->model[(u8)idx] = D_800F86D8_F92D8[(u8)img].unk_00;
+    obj->model[(u8)idx] = D_800F86D8_F92D8[(u8)img].unk00;
     work += (u8)idx;
     work[0x21] = img;
-    HmfModelObjAttrSet(D_800F86D8_F92D8[(u8)img].unk_00, 0x70000000, 0x70000000);
+    HmfModelObjAttrSet(D_800F86D8_F92D8[(u8)img].unk00, 0x70000000, 0x70000000);
     func_80021160_21D60((u8)img, 4, 4);
 }
 
