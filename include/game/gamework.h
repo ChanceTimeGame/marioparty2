@@ -10,7 +10,7 @@ typedef struct GW_COMMON {
     /* 0x02 */ u16 mgRecord[13];
     /* 0x1C */ u8 mgBits1[9]; /* MP1 mgBuy */
     /* 0x25 */ u8 mgBits2[9]; /* MP1 mgBuy, MP3 mgUnlock */
-    /* 0x2E */ char unk2E[0x48];
+    /* 0x2E */ u16 boardRecord[9][4]; /* MP1 boardRecord */
     /* 0x76 */ s8 unk76;
     /* 0x77 */ char unk77[0x4D];
 } GW_COMMON; /* size = 0xC4 */
