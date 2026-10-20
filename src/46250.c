@@ -5,9 +5,10 @@
 #include "game/board.h"
 
 /* Board dice blocks and coin/dice processes (MP3 ovl_80_shared_board/EE660.c, MP1 src/3F5B0.c)
-   and music fades (MP1 src/42CA0.c). func_80047868, func_80047908 (MP1 func_80041048,
-   func_800410E8), func_80047978 and func_800479E4 stay asm: their name strings share this unit's
-   rodata piece with asm functions, so it is not carved; functions without C reference stay asm. */
+   and music fades (MP1 src/42CA0.c). Every function that reads this unit's rodata piece
+   (D3110-D31FC) stays asm, because two of them (func_80046308, func_80046918) have no C reference
+   and the piece cannot be carved: func_800456BC, func_80045B40, func_80045F54, func_80046F98 (near
+   MP3) and func_80047868, func_80047908, func_80047978, func_800479E4 (same as MP1/MP3). */
 
 #define DICE_TOTAL 3
 
@@ -55,7 +56,7 @@ typedef struct DiceProcWork {
 extern UnkDiceRelated D_800DF4C0_E00C0[5];
 extern u8 D_800DF63D_E023D;
 extern s8 D_800DF63E_E023E;
-extern s8 D_800DF63F_E023F;
+extern u8 D_800DF63F_E023F;
 extern f32 D_800DF640_E0240;
 extern u8 D_800DF644_E0244;
 extern u8 D_800DF645_E0245;
@@ -65,6 +66,10 @@ extern s16 D_800FC734_FD334;
 void omDelObj(omObjData*);
 s16 PlaySound(s32);
 void func_80046F98_47B98(s32);
+void func_80047978_48578(s32);
+void func_800479E4_485E4(s32);
+void func_8004947C_4A07C(void);
+void func_80059158_59D58(void*);
 void func_80047BB8_487B8(s32);
 void func_80046CD8_478D8(s32);
 void MBPlayerMotionSet(s32, s16, u16);
@@ -738,7 +743,45 @@ Process* func_80048800_49400(s32 player) {
     return process;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80048860_49460);
+/* near MP1 func_80041A38 (src/3F5B0.c): the second dice block process. */
+void func_80048860_49460(void) {
+    DiceProcWork* work = HuPrcCurrentGet()->user_data;
+    s32 timer = 0;
+
+    while (TRUE) {
+        switch (work->state) {
+        case 0:
+            D_800DF63E_E023E = 0;
+            func_80047978_48578(work->player);
+            D_800DF63E_E023E = 1;
+            work->state++;
+            HuPrcSleep(20);
+            break;
+        case 1:
+            if ((gPlayers[work->player].flags & 1) || (ContBtnTrg[gPlayers[work->player].port] & 0x8000)) {
+                work->state++;
+                MBPlayerMotionSet(work->player, 2, 0);
+                func_80059120_59D20(gPlayers[work->player].unk_24, 2.0f, -0.3f);
+                D_800FA198_FAD98 = 0;
+                D_800FA1A4_FADA4 = 0;
+            }
+            break;
+        case 2:
+            if (++timer >= 5) {
+                func_80047BB8_487B8(work->player);
+                func_8005DDEC_5E9EC(work->player, -1, 0, 10, 2);
+                work->state++;
+            }
+            break;
+        case 3:
+            HuPrcSleep(5);
+            HuPrcSleep(15);
+            omDelPrcObj(NULL);
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 /* exact c: marioparty func_800419D8 (src/3F5B0.c) */
 Process* func_80048A48_49648(s32 player) {
@@ -765,7 +808,51 @@ void func_80048E0C_49A0C(void* arg0) {
     D_800FC734_FD334 = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80048E80_49A80);
+/* near MP3 func_800DDC3C_F185C_shared_board (EE660.c) */
+void func_80048E80_49A80(void) {
+    UnkCoinProc* work;
+    s32 timer;
+
+    work = HuPrcCurrentGet()->user_data;
+    timer = 0;
+
+    while (TRUE) {
+        switch (work->state) {
+            case 0:
+                D_800DF63E_E023E = 0;
+                func_800479E4_485E4(work->playerNo);
+                D_800DF63E_E023E = 1;
+                work->state++;
+                HuPrcSleep(20);
+                break;
+
+            case 1:
+                if (D_800DF63F_E023F == 0) {
+                    work->state++;
+                    MBPlayerMotionSet(work->playerNo, 2, 0);
+                    func_80059120_59D20(gPlayers[work->playerNo].unk_24, 2.0f, -0.3f);
+                    D_800FA198_FAD98 = 0;
+                    D_800FA1A4_FADA4 = 0;
+                }
+                break;
+
+            case 2:
+                timer++;
+                if (timer >= 5) {
+                    func_80047BB8_487B8(work->playerNo);
+                    func_8005DDEC_5E9EC(work->playerNo, -1, 0, 10, 2);
+                    work->state++;
+                }
+                break;
+
+            case 3:
+                func_80048E0C_49A0C(gPlayers[work->playerNo].unk_24);
+                omDelPrcObj(NULL);
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 /* exact c: marioparty3 func_800DDDD4_F19F4_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 Process* func_80049028_49C28(s32 arg0) {
@@ -815,7 +902,56 @@ Process* func_800491B4_49DB4(void* arg0) {
     return proc;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800491F0_49DF0);
+/* near MP3 func_800DE5EC_F220C_shared_board (EE660.c) */
+void func_800491F0_49DF0(void) {
+    UnkCoinProc* work;
+    s32 i;
+
+    work = HuPrcCurrentGet()->user_data;
+
+    while (TRUE) {
+        switch (work->state) {
+            case 0:
+                D_800DF63E_E023E = 0;
+                func_800479E4_485E4(work->playerNo);
+                D_800DF63E_E023E = 1;
+                work->state++;
+                HuPrcSleep(20);
+                break;
+
+            case 1:
+                if (D_800DF63F_E023F == 0) {
+                    work->state++;
+                    D_800FA198_FAD98 = 0;
+                    D_800FA1A4_FADA4 = 0;
+                }
+                break;
+
+            case 2:
+                func_8004947C_4A07C();
+                for (i = 0; i < 20; i++) {
+                    MBPlayerMotionSet(work->playerNo, 2, 0);
+                    func_80059120_59D20(gPlayers[work->playerNo].unk_24, 8.0f, -2.4f);
+                    HuPrcSleep(2);
+                    func_800491B4_49DB4(gPlayers[work->playerNo].unk_24);
+                    func_800614B4_620B4(work->playerNo, 1);
+                    if (i == 19) {
+                        func_80047BB8_487B8(work->playerNo);
+                    }
+                    func_80059158_59D58(gPlayers[work->playerNo].unk_24);
+                }
+                func_80079718_7A318(0x103, gPlayers[work->playerNo].character);
+                MBPlayerMotionSet(work->playerNo, 5, 0);
+                work->state++;
+                break;
+
+            case 3:
+                omDelPrcObj(NULL);
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 /* exact c: marioparty3 func_800DDDD4_F19F4_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 Process* func_80049408_4A008(s32 arg0) {
