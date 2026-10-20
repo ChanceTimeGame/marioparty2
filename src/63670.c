@@ -57,6 +57,15 @@ void func_80053608_54208(f32);
 f32 func_80053614_54214(void);
 void* HuMemMemoryAllocTemp(u32 size);
 void HuMemMemoryFreeTemp(void* ptr);
+s32 PlayerIsCPU(s16);
+void func_800797DC_7A3DC(s32, s16);
+s32 func_8004E94C_4F54C(void);
+void func_800537A0_543A0(Vec2f* arg0);
+u16 func_800536E4_542E4(Vec2f* arg0);
+extern u16 ContDStkTrg[4];
+extern s32 D_800CCC18_CD818;
+extern s16 D_800E1FA2_E2BA2;
+extern Vec* D_800E1FB0_E2BB0;
 
 void MBOvlCall(s32 arg0, s16 arg1, s16 arg2) {
     omOvlHisData* temp_v1;
@@ -127,7 +136,18 @@ void func_80062CD8_638D8(s16 arg0) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062D44_63944);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062D50_63950);
+void func_80062D50_63950(void) {
+    s32* temp_s0 = HuPrcCurrentGet()->user_data;
+
+    while (1) {
+        if ((PlayerIsCPU(temp_s0[0]) == 0) &&
+            ((GwSystem.current_player_index != temp_s0[0]) || (D_800CCC18_CD818 == 0)) &&
+            (ContDStkTrg[gPlayers[temp_s0[0]].port] & 0x20)) {
+            func_800797DC_7A3DC(0x4B6, temp_s0[0]);
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062E10_63A10);
 
@@ -151,9 +171,39 @@ void func_80063710_64310(Vec* pos) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063734_64334);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063740_64340);
+void func_80063740_64340(void) {
+    Vec2f sp10;
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063844_64444);
+    while (1) {
+        switch (D_800E1FA2_E2BA2) {
+            case 1:
+                MBDCameraPos3DSet(&((Object*)gPlayers[GwSystem.current_player_index].unk_24)->coords);
+                break;
+            case 2:
+                MBDCameraPos3DSet(&D_800E1FA4_E2BA4);
+                break;
+            case 4:
+                MBDCameraPos3DSet(D_800E1FB0_E2BB0);
+                break;
+            case 3:
+                func_800537A0_543A0(&sp10);
+                func_800536E4_542E4(&sp10);
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
+
+void func_80063844_64444(void) {
+    GW_SYSTEM* sys = &GwSystem;
+
+    if (++sys->current_player_index >= 4 && func_8004E94C_4F54C() == 0) {
+        sys->current_player_index = 0;
+        if (++sys->current_turn >= 99) {
+            sys->current_turn = 99;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800638C8_644C8);
 
