@@ -179,6 +179,21 @@ void func_80089A48_8A648(s16, s32);
 void func_8008CCA8_8D8A8(s16);
 void func_80056658_57258(Vec*, Vec*, Vec*);
 f32 func_80042BE0_437E0(Vec*);
+s8 func_80011308_11F08(s16);
+extern s16 D_800FA188_FAD88;
+u8 func_80025384_25F84(s16, s16, s16, s32);
+s32 func_8004CC7C_4D87C(s32, s32, s32);
+void MBHelpWinKill(s32);
+void func_800505C4_511C4(void*, s16, s32);
+void func_8005B338_5BF38(void*);
+void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
+
+/* MP3 UnkMBGuideData: the pause-menu guide (model and sprite group) */
+typedef struct MBGuideData {
+    /* 0x00 */ Object* obj;
+    /* 0x04 */ char unk_04[6];
+    /* 0x0A */ s16 spriteGroup;
+} MBGuideData;
 
 /* a player's board model (GW_PLAYER 0x24) */
 #define PLAYER_OBJ(i) ((Object*)gPlayers[i].unk_24)
@@ -842,7 +857,23 @@ INCLUDE_ASM("asm/nonmatchings/58080", func_8005A084_5AC84);
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005A0CC_5ACCC);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A1D8_5ADD8);
+void func_8005A1D8_5ADD8(void) {
+    f32 t;
+
+    D_800E1CE0_E28E0 = func_80011308_11F08(D_800FA188_FAD88);
+    D_800E1CE4_E28E4 = D_800E1CE0_E28E0;
+    D_800E1CE8_E28E8 = D_800E1CE4_E28E4 / 15.0f;
+    while (1) {
+        t = D_800E1CE4_E28E4 - D_800E1CE8_E28E8;
+        D_800E1CE4_E28E4 = t;
+        if (t <= 0.0f) {
+            break;
+        }
+        func_800794F0_7A0F0(t);
+        HuPrcVSleep();
+    }
+    func_800794F0_7A0F0(0);
+}
 
 void func_8005A29C_5AE9C(void) {
     f32 t;
@@ -927,7 +958,11 @@ INCLUDE_ASM("asm/nonmatchings/58080", func_8005AA98_5B698);
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005AAC0_5B6C0);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AB50_5B750);
+void func_8005AB50_5B750(Object* arg0, s16 arg1, s16 arg2, s32 arg3) {
+    arg0->omObj1->work[0] = func_80025384_25F84(arg0->omObj1->model[0], arg1, arg2, arg3);
+    arg0->omObj1->work[1] = arg1;
+    arg0->omObj1->work[2] = arg2;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005ABC0_5B7C0);
 
@@ -993,11 +1028,57 @@ void func_8005B248_5BE48(void) {
     ((void (*)(void))HuMemDirectFree)();
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B264_5BE64);
+s16 func_8005B264_5BE64(s32 arg0) {
+    s32 temp_s2;
+    s32 temp_s3;
+    s16 var_s0;
+    BoardPlayer* temp_s1;
+
+    temp_s3 = func_8004CC7C_4D87C(9, 0xAE, 0);
+    temp_s2 = func_8004CC7C_4D87C(5, 0xBC, 0);
+    temp_s1 = func_8005AF48_5BB48(0);
+    HuPrcVSleep();
+
+    while (1) {
+        HuPrcVSleep();
+        if (ContBtnTrg[arg0] & 0x8000) {
+            var_s0 = 4;
+            break;
+        } else if (ContBtnTrg[arg0] & 0x1000) {
+            var_s0 = 0;
+            break;
+        }
+    }
+
+    /* func_8005B248_5BE48 frees its (unnamed) argument */
+    ((void (*)(BoardPlayer*))func_8005B248_5BE48)(temp_s1);
+    MBHelpWinKill(temp_s3);
+    MBHelpWinKill(temp_s2);
+    return var_s0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005B338_5BF38);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B424_5C024);
+void func_8005B424_5C024(MBGuideData* arg0, s16 arg1) {
+    s32 i;
+    Object* obj;
+    s16 temp_s2;
+    s16 temp = arg0->spriteGroup;
+
+    obj = arg0->obj;
+    obj->velocity.y = 4.0f;
+    obj->velocity.z = -0.5f;
+    temp_s2 = (arg1 - temp) / 14;
+
+    for (i = 0; i < 14; i++) {
+        temp = arg0->spriteGroup;
+        func_800505C4_511C4(arg0, (temp + temp_s2), 8);
+        HuPrcVSleep();
+    }
+    func_800505C4_511C4(arg0, arg1, 8);
+    MBMotionSet(arg0->obj, 0, 2);
+    func_8005B338_5BF38(arg0);
+}
 
 s32 MBPauseDlgMesSet(s16 arg0, s32 arg1) {
     func_8008AD44_8B944(arg0);
@@ -1464,7 +1545,17 @@ void func_8005DEB0_5EAB0(s32 index, u8 b) {
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005DF18_5EB18);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005DF78_5EB78);
+void func_8005DF78_5EB78(void) {
+    GW_PLAYER* player = HuPrcCurrentGet()->user_data;
+
+    while (1) {
+        HuPrcVSleep();
+        if (player->flags & 4) {
+            continue;
+        }
+        HuVecCopyXYZ(&((Object*)player->unk_24)->scale, 1.0f, 1.0f, 1.0f);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", MBPlayerModelCreate);
 
@@ -1501,7 +1592,13 @@ void func_8005E260_5EE60(s16 playerIndex) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005E2B8_5EEB8);
+void func_8005E2B8_5EEB8(void) {
+    s32 i;
+
+    for (i = 0; i < 5; i++) {
+        BoardPlayerGet(i)->unk_24 = NULL;
+    }
+}
 
 void func_8005E2F4_5EEF4(void) {
 }
