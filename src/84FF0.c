@@ -73,7 +73,12 @@ typedef struct TextWindow {
     /* 0x038 */ u32 unk_38;
     /* 0x03C */ u16 unk3C;
     /* 0x03E */ u16 unk3E;
-    /* 0x040 */ char pad40[0x2C];
+    /* 0x040 */ char pad40[0x1E];
+    /* 0x05E */ s16 unk5E;
+    /* 0x060 */ char pad60[2];
+    /* 0x062 */ s16 unk62;
+    /* 0x064 */ s16 unk64;
+    /* 0x066 */ char pad66[6];
     /* 0x06C */ s16 unk_6C;
     /* 0x06E */ s16 unk_6E[0xC];
     /* 0x086 */ char pad86[0x27];
@@ -137,6 +142,9 @@ void SprAnimKill(s16);
 s16 func_800896A0_8A2A0(s16, s16);
 void SprRotSet(s16 grpIdx, s16 idx, f32 rot);
 void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+f32 HuMathSin(f32);
+void func_80089764_8A364(s16, f32, f32);
+void func_8008D5D8_8E1D8(s16);
 void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a);
 void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
@@ -527,7 +535,89 @@ void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     func_8007EE0C_7FA0C((unkfunc_8007EE0C*)&sp10, (void*)func_800885AC_891AC, (char*)sp20, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80088640_89240);
+extern u8 D_800CD850_CE450;      /* window system initialised */
+extern u8 D_800CD851_CE451;      /* MP3 gLanguageIndex */
+extern s16 D_800ED8B0_EE4B0;
+extern u8 D_01142DD0[];
+extern void* D_800FD8C4_FE4C4;
+extern Process* D_800FC87C_FD47C;
+extern u8 D_800F9512_FA112;
+extern u8 D_800F851A_F911A;
+extern void* D_800FFDF4_1009F4;
+extern void* D_800FA6F4_FB2F4;
+extern s16 D_800ED8B8_EE4B8[0x16];
+extern s16 D_800ED8E4_EE4E4;
+void func_80068C14_69814(void*);
+void func_8008B6F4_8C2F4(void);
+void omPrcSetStatBit(Process* process, s32 bit);
+
+/* MP3 func_8005A6B0_5B2B0 (window system init); MP2 fixes the language at 2 */
+void func_80088640_89240(void) {
+    Process* prc;
+    void* data;
+    s16 i;
+
+    if (D_800CD850_CE450 == 0) {
+        D_800F920C_F9E0C = HuMemMemoryAllocTemp(sizeof(TextWindow) * 14);
+
+        for (i = 0; i < 14; i++) {
+            D_800F920C_F9E0C[i].unk5E = -1;
+        }
+
+        D_800F920C_F9E0C[0].unk62 = -1;
+        D_800F920C_F9E0C[0].unk64 = 1;
+        D_800F920C_F9E0C[0].unk5E = 0;
+        D_800F920C_F9E0C[1].unk62 = 0;
+        D_800F920C_F9E0C[1].unk64 = -1;
+        D_800F920C_F9E0C[1].unk5E = -0x218;
+        D_801026D4_1032D4 = 0;
+        D_800FD808_FE408 = 0;
+        D_800ED8B0_EE4B0 = 0x2710;
+        /* stored through the neighbouring flag: retail reloads the language for the switch */
+        (&D_800CD850_CE450)[1] = 2;
+
+        switch (D_800CD851_CE451) {
+            case 1:
+                func_80068C14_69814(D_01142DD0);
+                D_800FD8C4_FE4C4 = DataReadTemp(0x35);
+                break;
+            case 2:
+                func_80068C14_69814(D_01142DD0);
+                D_800FD8C4_FE4C4 = DataReadTemp(0x34);
+                break;
+            case 3:
+                D_800FD8C4_FE4C4 = DataReadTemp(0x36);
+                break;
+            case 4:
+                D_800FD8C4_FE4C4 = DataReadTemp(0x36);
+                break;
+        }
+
+        prc = omAddPrcObj(func_8008B6F4_8C2F4, 0x1001, 0x800, 0);
+        D_800FC87C_FD47C = prc;
+        omPrcSetStatBit(prc, 0xA0);
+
+        D_800CD850_CE450 = 1;
+        D_800F9512_FA112 = 0;
+        D_800F851A_F911A = 0;
+        D_800FFDF4_1009F4 = DataReadTemp(0x31);
+        D_800FA6F4_FB2F4 = DataReadTemp(0x32);
+
+        for (i = 0; i < 0x16; i++) {
+            D_800ED8B8_EE4B8[i] = -1;
+        }
+
+        data = DataRead(0x5A);
+        D_800ED8E4_EE4E4 = SprAnimRead(data);
+        DataClose(data);
+
+        for (i = 0; i < 5; i++) {
+            D_8010106E_101C6E[i] = 0;
+        }
+
+        D_801013FA_101FFA = 0xC;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_800888A8_894A8);
 
@@ -872,17 +962,44 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DFC4_8EBC4);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E2DC_8EEDC);
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E434_8F034);
+void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
+void func_80089284_89E84(s16 winId, s32 x, s32 y);
+
+/* MP1 func_80071DE0; MP2 scales one sprite and the window */
+void func_8008E434_8F034(s32 arg0) {
+    TextWindow* tw = &D_800F920C_F9E0C[arg0];
+
+    func_8008D808_8E408(arg0, 1);
+    SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, 1.0f);
+    func_80089764_8A364(arg0, 1.0f, 1.0f);
+    func_8008D808_8E408(arg0, 0);
+    func_80089284_89E84(arg0, 0x4000, 0x4000);
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E4D0_8F0D0);
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E644_8F244);
+/* MP1 func_80071FF4; MP2 has one sprite */
+void func_8008E644_8F244(s32 arg0, u8 arg1) {
+    TextWindow* tw = &D_800F920C_F9E0C[arg0];
+
+    SprAttrSet(tw->unk_6C, tw->unk274, 0x1000);
+    func_80082488_83088(tw->unk_6C, tw->unk274, arg1);
+}
 
 void func_8008E6AC_8F2AC(s16 arg0) {
     func_8008CCA8_8D8A8(arg0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E6CC_8F2CC);
+void func_80089A7C_8A67C(s16 winId, s16 prio);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 prio);
+
+/* MP1 func_80072108; MP2 has one sprite */
+void func_8008E6CC_8F2CC(s16 arg0, s16 arg1) {
+    TextWindow* tw = &D_800F920C_F9E0C[arg0];
+
+    func_80089A7C_8A67C(arg0, arg1);
+    SprPrioSet(tw->unk_6C, tw->unk274, arg1 + 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E73C_8F33C);
 
@@ -890,4 +1007,18 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E978_8F578);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008EBE4_8F7E4);
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008EED8_8FAD8);
+
+/* MP3 func_80061A5C_6265C; MP2 has no extra sleep and always ends with the close */
+void func_8008EED8_8FAD8(s16 arg0, s16 arg1) {
+    s16 i;
+
+    if (arg1 == 0) {
+        func_8008AD44_8B944(arg0);
+
+        for (i = 0; i < 5; i++) {
+            func_80089764_8A364(arg0, 1.0f, 1.0f - HuMathSin(i * 18.0f));
+            HuPrcVSleep();
+        }
+    }
+    func_8008D5D8_8E1D8(arg0);
+}
