@@ -1,6 +1,36 @@
 #include "common.h"
 #include "game/object.h"
 
+extern u8 D_01164160[];
+void func_80053A8C_5468C(void);
+void func_80050A30_51630(u8*);
+void func_80050E00_51A00(s32);
+void func_80054228_54E28(void);
+void MBMasuCreate(s32, s16);
+void func_80041AA0_426A0(s32);
+void MBModelInit(void);
+void func_8005E2B8_5EEB8(void);
+void func_800508B4_514B4(void);
+void func_8005E1A0_5EDA0(s32);
+void func_8005E154_5ED54(s32);
+void func_8005070C_5130C(void);
+void func_80043DAC_449AC(Object*);
+void MBModelDispOff(Object*);
+void func_8002D4A0_2E0A0(s16);
+void func_8005E570_5F170(void);
+void func_8004A98C_4B58C(void);
+void MBCoinChangeInit(void);
+void func_8004EA50_4F650(void);
+void func_8005FE10_60A10(void);
+void func_8005ECB8_5F8B8(void);
+void func_80046238_46E38(void);
+void func_80088640_89240(void);
+void func_80056530_57130(void);
+void func_80062D50_63950(void);
+
+/* Board scene setup (MP1 func_80056A08, MP3 MBObjectSetup) */
+
+
 extern s32 D_800CCC40_CD840[];
 extern s32 D_800CCC68_CD868;
 extern s16 D_800E1F88_E2B88;
@@ -227,8 +257,81 @@ void func_80062D50_63950(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062E10_63A10);
+void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3) {
+    Process* proc;
+    s32* work;
+    u16 cur;
+    s32 i;
+    GW_SYSTEM* sys;
 
+    func_80053A8C_5468C();
+    func_80050A30_51630(D_01164160);
+    if (arg0 >= 0) {
+        func_80050E00_51A00(arg0);
+    }
+    func_80054228_54E28();
+    if (arg1 >= 0) {
+        MBMasuCreate(0xA, arg1);
+    }
+    func_80041AA0_426A0(arg2);
+    MBModelInit();
+    func_8005E2B8_5EEB8();
+    func_800508B4_514B4();
+    if (GwSystem.current_player_index == 4) {
+        func_8005E1A0_5EDA0(0);
+        func_8005E1A0_5EDA0(1);
+        func_8005E1A0_5EDA0(2);
+        func_8005E1A0_5EDA0(3);
+        func_8005070C_5130C();
+    } else {
+        func_8005E154_5ED54(0);
+        func_8005E154_5ED54(1);
+        func_8005E154_5ED54(2);
+        func_8005E154_5ED54(3);
+    }
+    func_80043DAC_449AC(PLAYER_MODEL(BoardPlayerGet(0)));
+    func_80043DAC_449AC(PLAYER_MODEL(BoardPlayerGet(1)));
+    func_80043DAC_449AC(PLAYER_MODEL(BoardPlayerGet(2)));
+    func_80043DAC_449AC(PLAYER_MODEL(BoardPlayerGet(3)));
+    PLAYER_MODEL(BoardPlayerGet(0))->flags |= 2;
+    PLAYER_MODEL(BoardPlayerGet(1))->flags |= 2;
+    PLAYER_MODEL(BoardPlayerGet(2))->flags |= 2;
+    PLAYER_MODEL(BoardPlayerGet(3))->flags |= 2;
+    sys = &GwSystem;
+    cur = sys->current_player_index;
+    if (cur < 4 && gPlayers[sys->current_player_index].turn_status != 0) {
+        func_8005070C_5130C();
+        MBModelDispOff(PLAYER_MODEL(&gPlayers[sys->current_player_index]));
+    }
+    func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(0))->omObj1->model[0]);
+    func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(1))->omObj1->model[0]);
+    func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(2))->omObj1->model[0]);
+    func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(3))->omObj1->model[0]);
+    func_8005E570_5F170();
+    func_8004A98C_4B58C();
+    MBCoinChangeInit();
+    func_8004EA50_4F650();
+    func_8005FE10_60A10();
+    if (GwSystem.current_board_index == 5) {
+        func_80061518_62118();
+        func_8005ECB8_5F8B8();
+    }
+    func_80046238_46E38();
+    func_80088640_89240();
+    func_80056530_57130();
+    D_800E1F94_E2B94 = -1;
+    D_800E1F96_E2B96 = 0;
+    D_800E1F98_E2B98 = 0;
+    func_8005E310_5EF10();
+    D_800CCC68_CD868 = 0;
+    for (i = 0; i < 4; i++) {
+        proc = omAddPrcObj(func_80062D50_63950, 0, 0, 0x40);
+        work = HuMemMemoryAlloc(proc->heap, 0x10);
+        proc->user_data = work;
+        work[0] = i;
+        omPrcSetStatBit(proc, 0xA0);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063178_63D78);
 
 void func_800632E4_63EE4(s32 arg0) {
