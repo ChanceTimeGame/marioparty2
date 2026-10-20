@@ -47,7 +47,7 @@ void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029C74_2A874(s16, f32);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
-s16 func_80029E14_2AA14(s16);
+u8 func_80029E14_2AA14(s16);
 void func_8002C524_2D124(s16, s16, s16);
 s32 func_8002C8B8_2D4B8(void*, s32);
 s32 func_80019CA4_1A8A4(omObjData* obj, u16 motion);
