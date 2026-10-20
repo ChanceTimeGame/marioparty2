@@ -269,3 +269,19 @@ $(B3B_MULFIX_UNITS): export VR4300MUL := ON
 # b3-C: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
 B3C_MULFIX_UNITS := build/src/51630.c.o
 $(B3C_MULFIX_UNITS): export VR4300MUL := ON
+# b3-E: per-file flags as MP1/MP3 build the reference files
+# B2430 (MP3 libhmath/vecmag.c): -O2 -ffast-math, KMC as mul fix on
+build/src/B2430.c.o: CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+build/src/B2430.c.o: export VR4300MUL = ON
+# ADE40 (libultra gu/normalize.c): libultra flags as MP1's src/lib (-O3, unsigned char, mul fix on)
+build/src/ADE40.c.o: CFLAGS = -O3 -funsigned-char -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+build/src/ADE40.c.o: export VR4300MUL = ON
+# b3-E: units whose .rodata is carved out of the data blob
+B3E_CARVED := build/src/A0580.c.o build/src/AC3B0.c.o
+CARVED_RODATA_UNITS += $(B3E_CARVED)
+$(B3E_CARVED): RODATA_AS_DATA = 1
+# b3-E: 936F0 (synstartvoiceparam.c), 93890 (synsetpan.c): MP1 builds these lib files -O0 (mono sound patch)
+B3E_O0_LIB_UNITS := build/src/936F0.c.o build/src/93890.c.o
+$(B3E_O0_LIB_UNITS): CFLAGS = -O0 -g -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+$(B3E_O0_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
+$(B3E_O0_LIB_UNITS): export VR4300MUL := ON

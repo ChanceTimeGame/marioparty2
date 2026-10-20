@@ -1,6 +1,5 @@
-/* A0580: libultra audio/csplayer.c, from MP1 src/lib/2.0I/audio/csplayer.c. __CSPVoiceHandler and
-   __CSPHandleNextSeqEvent stay in asm (near, not exact matches of MP1); they own the jump tables at
-   D4F60/D4FC0, left in the data blob. */
+/* A0580: libultra audio/csplayer.c, from MP1 src/lib/2.0I/audio/csplayer.c (MP1's static
+   functions are global here). Its .rodata (the two jump tables, D4F60-D5010) is carved from the blob. */
 #define alCSPNew func_8009F980_A0580
 #define __CSPVoiceHandler func_8009FAF0_A06F0
 #define __CSPPostNextSeqEvent func_8009FFB8_A0BB8
@@ -108,7 +107,207 @@ void alCSPNew(ALCSPlayer *seqp, ALSeqpConfig *c)
     alSynAddPlayer(&alGlobals->drvr, &seqp->node);  
 }
 
-INCLUDE_ASM("asm/nonmatchings/A0580", func_8009FAF0_A06F0);
+ALMicroTime __CSPVoiceHandler(void *node)
+{
+    ALCSPlayer      *seqp = (ALCSPlayer *) node;
+    ALEvent         evt;
+    ALVoice         *voice;
+    ALMicroTime     delta;
+    ALVoiceState	*vs;
+    void            *oscState;
+    f32             oscValue;
+    u8              chan;
+
+    do {
+        switch (seqp->nextEvent.type)
+        {
+	case (AL_SEQ_REF_EVT):
+	    __CSPHandleNextSeqEvent(seqp);
+	    break;
+
+	case (AL_SEQP_API_EVT):
+	    evt.type = AL_SEQP_API_EVT;
+	    alEvtqPostEvent(&seqp->evtq, (ALEvent *)&evt, seqp->frameTime);
+	    break;
+
+	case (AL_NOTE_END_EVT):
+	    voice = seqp->nextEvent.msg.note.voice;
+
+	    alSynStopVoice(seqp->drvr, voice);
+	    alSynFreeVoice(seqp->drvr, voice);
+	    vs = (ALVoiceState *)voice->clientPrivate;
+	    if(vs->flags)
+		__seqpStopOsc((ALSeqPlayer*)seqp,vs);
+	    __unmapVoice((ALSeqPlayer*)seqp, voice); 
+	    break;
+
+	case (AL_SEQP_ENV_EVT):
+	    voice = seqp->nextEvent.msg.vol.voice;
+	    vs = (ALVoiceState *)voice->clientPrivate;
+
+	    if(vs->envPhase == AL_PHASE_ATTACK)
+		vs->envPhase = AL_PHASE_DECAY;
+
+	    delta = seqp->nextEvent.msg.vol.delta;
+	    vs->envEndTime = seqp->curTime + delta;
+	    vs->envGain = seqp->nextEvent.msg.vol.vol;
+	    alSynSetVol(seqp->drvr, voice, __vsVol(vs, (ALSeqPlayer*)seqp), delta);
+	    break;
+                
+	case (AL_TREM_OSC_EVT):
+	    vs = seqp->nextEvent.msg.osc.vs;
+	    oscState = seqp->nextEvent.msg.osc.oscState;
+	    delta = (*seqp->updateOsc)(oscState,&oscValue);
+	    vs->tremelo = (u8)oscValue;
+	    alSynSetVol(seqp->drvr, &vs->voice, __vsVol(vs,(ALSeqPlayer*)seqp),
+			__vsDelta(vs,seqp->curTime));
+	    evt.type = AL_TREM_OSC_EVT;
+	    evt.msg.osc.vs = vs;
+	    evt.msg.osc.oscState = oscState;
+	    alEvtqPostEvent(&seqp->evtq, &evt, delta);
+	    break;
+                
+	case (AL_VIB_OSC_EVT):
+	    vs = seqp->nextEvent.msg.osc.vs;
+	    oscState = seqp->nextEvent.msg.osc.oscState;
+	    chan = seqp->nextEvent.msg.osc.chan;
+	    delta = (*seqp->updateOsc)(oscState,&oscValue);
+	    vs->vibrato = oscValue;
+	    alSynSetPitch(seqp->drvr, &vs->voice, vs->pitch * vs->vibrato
+			  * seqp->chanState[chan].pitchBend);
+	    evt.type = AL_VIB_OSC_EVT;
+	    evt.msg.osc.vs = vs;
+	    evt.msg.osc.oscState = oscState;
+	    evt.msg.osc.chan = chan;
+	    alEvtqPostEvent(&seqp->evtq, &evt, delta);
+	    break;
+
+	case (AL_SEQP_MIDI_EVT):
+	case (AL_CSP_NOTEOFF_EVT):			/* nextEvent is a note off midi message */
+	    __CSPHandleMIDIMsg(seqp, &seqp->nextEvent);
+	    break;
+
+	case (AL_SEQP_META_EVT):
+	    __CSPHandleMetaMsg(seqp, &seqp->nextEvent);
+	    break;
+
+	case (AL_SEQP_VOL_EVT):
+	    seqp->vol =  seqp->nextEvent.msg.spvol.vol;
+	    for (vs = seqp->vAllocHead; vs != 0; vs = vs->next)
+	    {
+		alSynSetVol(seqp->drvr, &vs->voice,
+                            __vsVol(vs, (ALSeqPlayer*)seqp),
+                            __vsDelta(vs, seqp->curTime));
+	    }
+	    break;
+
+	case (AL_SEQP_PLAY_EVT):
+	    if (seqp->state != AL_PLAYING)
+	    {
+		seqp->state = AL_PLAYING;
+		__CSPPostNextSeqEvent(seqp);	/* seqp must be AL_PLAYING before we call this routine. */
+	    }
+	    break;
+
+	case (AL_SEQP_STOP_EVT):
+	    if ( seqp->state == AL_STOPPING )
+	    {
+		for (vs = seqp->vAllocHead; vs != 0; vs = seqp->vAllocHead)
+		{
+#ifdef _DEBUG
+                    __osError(ERR_ALCSPVNOTFREE, 2, vs->channel, vs->key);
+#endif                    
+		    alSynStopVoice(seqp->drvr, &vs->voice);
+		    alSynFreeVoice(seqp->drvr, &vs->voice);
+		    if(vs->flags)
+			__seqpStopOsc((ALSeqPlayer*)seqp,vs);
+		    __unmapVoice((ALSeqPlayer*)seqp, &vs->voice); 
+		}
+		seqp->state = AL_STOPPED;
+
+		/* alEvtqFlush(&seqp->evtq); - Don't flush event queue
+                   anymore. */
+		/* sct 1/3/96 - Don't overwrite nextEvent with
+		   AL_SEQP_API_EVT or set nextDelta to
+		   AL_USEC_PER_FRAME since we're not stopping event
+		   processing. */
+		/* sct 1/3/96 - Don't return here since we keep
+                   processing events as usual. */
+	    }
+	    break;
+
+	case (AL_SEQP_STOPPING_EVT):
+	    if (seqp->state == AL_PLAYING)
+	    {
+		/* sct 12/29/95 - Remove events associated with the
+                 * stopping sequence.  For compact sequence player,
+                 * also remove all queued note off events since they
+                 * are not contained in a compact sequence but are
+                 * generated in response to note ons.  Note that
+                 * flushing AL_SEQP_MIDI_EVTs may flush events that
+                 * were posted after the call to alSeqpStop, so the
+                 * application must queue these events either when
+                 * the player is fully stopped, or when it is
+                 * playing. */
+		alEvtqFlushType(&seqp->evtq, AL_SEQ_REF_EVT);
+		alEvtqFlushType(&seqp->evtq, AL_CSP_NOTEOFF_EVT);
+		alEvtqFlushType(&seqp->evtq, AL_SEQP_MIDI_EVT);
+
+		/* sct 1/3/96 - Check to see which voices need to be
+                   killed and release them. */
+		/* Unkilled voices should have note end events
+                   occurring prior to KILL_TIME. */
+		for (vs = seqp->vAllocHead; vs != 0; vs = vs->next)
+		{
+		    if (__voiceNeedsNoteKill ((ALSeqPlayer*)seqp, &vs->voice, KILL_TIME))
+			__seqpReleaseVoice((ALSeqPlayer*)seqp, &vs->voice, KILL_TIME);
+		}
+
+		seqp->state = AL_STOPPING;
+		evt.type = AL_SEQP_STOP_EVT;
+		alEvtqPostEvent(&seqp->evtq, &evt, AL_EVTQ_END);
+	    }
+	    break;
+
+	case (AL_SEQP_PRIORITY_EVT):
+	    chan = seqp->nextEvent.msg.sppriority.chan;
+	    seqp->chanState[chan].priority = seqp->nextEvent.msg.sppriority.priority;
+	    break;
+
+	case (AL_SEQP_SEQ_EVT):
+	    assert(seqp->state != AL_PLAYING);	/* Must be done playing to change sequences. */
+    
+	    seqp->target = seqp->nextEvent.msg.spseq.seq;
+	    __setUsptFromTempo (seqp, 500000.0);
+	    if (seqp->bank)
+		__initFromBank((ALSeqPlayer *)seqp, seqp->bank);
+	    break;
+
+	case (AL_SEQP_BANK_EVT):
+	    assert(seqp->state == AL_STOPPED);	/* Must be fully stopped to change banks. */
+    
+	    seqp->bank = seqp->nextEvent.msg.spbank.bank;
+	    __initFromBank((ALSeqPlayer *)seqp, seqp->bank);
+	    break;
+
+	    /* sct 11/6/95 - these events should now be handled by __CSPHandleNextSeqEvent */
+	case (AL_SEQ_END_EVT):
+	case (AL_TEMPO_EVT):
+	case (AL_SEQ_MIDI_EVT):
+	    assert(FALSE);		
+	    break;
+        }
+        seqp->nextDelta = alEvtqNextEvent(&seqp->evtq, &seqp->nextEvent); 
+        
+    } while (seqp->nextDelta == 0);
+
+    /*
+     * assume that next callback won't be more than half an
+     * hour away
+     */
+    seqp->curTime += seqp->nextDelta;		/* sct 11/7/95 */
+    return seqp->nextDelta;
+}
 
 void __CSPPostNextSeqEvent(ALCSPlayer *seqp) 
 {
@@ -127,7 +326,45 @@ void __CSPPostNextSeqEvent(ALCSPlayer *seqp)
     alEvtqPostEvent(&seqp->evtq, &evt, deltaTicks * seqp->uspt);                
 }
 
-INCLUDE_ASM("asm/nonmatchings/A0580", func_800A002C_A0C2C);
+void
+__CSPHandleNextSeqEvent(ALCSPlayer *seqp)
+{
+    ALEvent	evt;
+
+    /* sct 1/5/96 - Do nothing if we don't have a target sequence. */
+    if (seqp->target == NULL)
+	return;
+
+    alCSeqNextEvent(seqp->target, &evt);
+
+    switch (evt.type)
+    {
+      case AL_SEQ_MIDI_EVT:
+          __CSPHandleMIDIMsg(seqp, &evt);
+	  __CSPPostNextSeqEvent(seqp);
+	  break;
+
+      case AL_TEMPO_EVT:
+          __CSPHandleMetaMsg(seqp, &evt);
+	  __CSPPostNextSeqEvent(seqp);
+	  break;
+
+      case AL_SEQ_END_EVT:
+	  seqp->state = AL_STOPPING;      
+	  evt.type    = AL_SEQP_STOP_EVT;
+	  alEvtqPostEvent(&seqp->evtq, &evt, AL_EVTQ_END);
+	  break;
+
+      case AL_TRACK_END:
+      case AL_CSP_LOOPSTART:
+      case AL_CSP_LOOPEND:
+	  __CSPPostNextSeqEvent(seqp);
+	  break;
+	  
+      default:
+	  assert(FALSE);	/* Sequence event type not supported. */
+    }
+}
 
 void __CSPHandleMIDIMsg(ALCSPlayer *seqp, ALEvent *event)
 {

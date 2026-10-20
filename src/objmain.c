@@ -54,12 +54,192 @@ void func_80076D10_77910(omObjData* obj);
 void omDestroyPrcObj(void);
 void omResetStatBit(omObjData* obj, s32 bit);
 void omPrcResetStatBit(Process* process, s32 bit);
+void func_80076CA0_778A0(u16 grp, omObjData* obj); /* omAddMember */
+void func_80027274_27E74(s32);
+extern s16 D_801011FC_101DFC;
+extern f32 D_80101078_101C78;
+extern f32 D_800F8410_F9010;
+extern f32 D_800F92E8_F9EE8[4];
+extern f32 D_80100018_100C18[4];
+extern void* D_801026F0_1032F0;
 
-INCLUDE_ASM("asm/nonmatchings/objmain", omInitObjMan);
+/* MP3 omInitObjMan */
+void omInitObjMan(s32 numOfObjs, s32 numOfPrcs) {
+    s16 prcCount;
+    s32 i;
+    omObjData* obj;
+    unkProcessStruct* prcInfo;
 
-INCLUDE_ASM("asm/nonmatchings/objmain", omDestroyObjMan);
+    D_800F92B0_F9EB0 = numOfObjs + 1;
+    D_800F92E4_F9EE4 = 0;
+    D_801027DA_1033DA = 0;
+    D_800F8FD4_F9BD4 = -1;
+    D_80101644_102244 = -1;
+    D_800FDD98_FE998 = NULL;
+    D_801011FC_101DFC = 0;
+    D_80102720_103320 = 0;
 
-INCLUDE_ASM("asm/nonmatchings/objmain", omAddObj);
+    if (D_800CD420_CE020 != NULL) {
+        HuMemMemoryFreeTemp(D_800CD420_CE020);
+    }
+
+    D_800CD420_CE020 = HuMemMemoryAllocTemp(D_800F92B0_F9EB0 * sizeof(omObjData));
+
+    for (i = 0; i < D_800F92B0_F9EB0; ++i) {
+        obj = &D_800CD420_CE020[i];
+        obj->stat = 1;
+        obj->next = -1;
+        obj->prev = -1;
+        obj->prio = -1;
+        obj->unk_10 = 0;
+        obj->rot.x = obj->rot.y = obj->rot.z = 0.0f;
+        obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+        obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+        obj->motion = NULL;
+        obj->model = NULL;
+        obj->unk_50 = NULL;
+        obj->func_ptr = NULL;
+        obj->next_idx = i + 1;
+        obj->mtncnt = 0;
+        obj->motion = NULL;
+    }
+
+    for (i = 0; i < 10; ++i) {
+        D_800F9400_FA000[i].max = 0;
+        D_800F9400_FA000[i].num = 0;
+        D_800F9400_FA000[i].next = 0;
+        D_800F9400_FA000[i].obj = NULL;
+        D_800F9400_FA000[i].nextIdx = NULL;
+    }
+
+    prcCount = numOfPrcs + 2;
+    D_800CD424_CE024 = prcCount;
+    D_800CD426_CE026 = 0;
+    D_800CD428_CE028 = 0;
+    D_800CD42C_CE02C = HuMemMemoryAllocTemp(prcCount * sizeof(unkProcessStruct));
+
+    for (i = 0; i < D_800CD424_CE024; ++i) {
+        prcInfo = &D_800CD42C_CE02C[i];
+        prcInfo->unk0 = 1;
+        prcInfo->unk2 = i + 1;
+        prcInfo->processInstance = NULL;
+        prcInfo->unk8 = NULL;
+    }
+
+    D_80101078_101C78 = 20000.0f;
+    D_800F8410_F9010 = 10000.0f;
+
+    for (i = 0; i < 4; ++i) {
+        D_800F92E8_F9EE8[i] = 20000.0f;
+        D_80100018_100C18[i] = 10000.0f;
+    }
+
+    D_801026F0_1032F0 = NULL;
+    D_800F93A0_F9FA0 = 90;
+}
+
+/* MP1 omDestroyObjMan; MP2 also clears the object count */
+void omDestroyObjMan(void) {
+    omObjData* obj;
+    unkProcessStruct* prc;
+    s32 i;
+
+    D_800F8FD4_F9BD4 = -1;
+    for (i = 0; i < D_800F92B0_F9EB0; i++) {
+        obj = &D_800CD420_CE020[i];
+        if (obj->stat != 1) {
+            if (obj->model != NULL) {
+                HuMemMemoryFreeTemp(obj->model);
+            }
+            if (obj->motion != NULL) {
+                HuMemMemoryFreeTemp(obj->motion);
+            }
+            if (obj->unk_50 != NULL) {
+                HuMemFree(obj->unk_50);
+            }
+        }
+    }
+    HuMemMemoryFreeTemp(D_800CD420_CE020);
+    D_800CD420_CE020 = NULL;
+    D_800F92B0_F9EB0 = 0;
+    for (i = 0; i < 10; i++) {
+        if (D_800F9400_FA000[i].max != 0) {
+            if (D_800F9400_FA000[i].obj != NULL) {
+                HuMemMemoryFreeTemp(D_800F9400_FA000[i].obj);
+                D_800F9400_FA000[i].obj = NULL;
+            }
+            if (D_800F9400_FA000[i].nextIdx != NULL) {
+                HuMemMemoryFreeTemp(D_800F9400_FA000[i].nextIdx);
+                D_800F9400_FA000[i].nextIdx = NULL;
+            }
+            D_800F9400_FA000[i].max = 0;
+        }
+    }
+    for (i = 0; i < D_800CD424_CE024; i++) {
+        prc = &D_800CD42C_CE02C[i];
+        if (prc->unk0 != 1) {
+            HuPrcDestructorSet2(prc->processInstance, prc->unk8);
+            HuPrcKill(prc->processInstance);
+        }
+    }
+    D_800CD424_CE024 = 0;
+    D_800CD426_CE026 = 0;
+    HuMemMemoryFreeTemp(D_800CD42C_CE02C);
+    D_800CD42C_CE02C = NULL;
+    func_80027274_27E74(0x7918);
+    D_801026F0_1032F0 = NULL;
+}
+
+/* MP3 omAddObj */
+omObjData* omAddObj(s16 prio, u16 mdlcnt, u16 mtncnt, s16 group, void* func) {
+    omObjData* object;
+    s32 i;
+
+    if (D_800F92E4_F9EE4 == D_800F92B0_F9EB0) {
+        return NULL;
+    }
+
+    object = &D_800CD420_CE020[D_801027DA_1033DA];
+    object->next_idx_alloc = D_801027DA_1033DA;
+    object->prio = prio;
+
+    omInsertObj(object);
+
+    if (mdlcnt != 0) {
+        object->model = HuMemMemoryAllocTemp(mdlcnt * sizeof(s16));
+        object->mdlcnt = mdlcnt;
+        for (i = 0; i < mdlcnt; ++i) {
+            object->model[i] = -1;
+        }
+    } else {
+        object->model = NULL;
+        object->mdlcnt = 0;
+    }
+
+    if (mtncnt != 0) {
+        object->motion = HuMemMemoryAllocTemp(mtncnt * sizeof(s16));
+        object->mtncnt = mtncnt;
+    } else {
+        object->motion = NULL;
+        object->mtncnt = 0;
+    }
+
+    if (group >= 0) {
+        func_80076CA0_778A0(group, object);
+    } else {
+        object->group = group;
+        object->group_idx = 0;
+    }
+
+    object->stat = 4;
+    object->unk_10 = 0;
+    object->func_ptr = func;
+    object->work[0] = object->work[1] = object->work[2] = object->work[3] = 0;
+    D_801027DA_1033DA = object->next_idx;
+    ++D_800F92E4_F9EE4;
+
+    return object;
+}
 
 void omSetObjPrio(omObjData* obj, s16 prio) {
     obj->prio = prio;
@@ -521,7 +701,55 @@ void func_80078FF8_79BF8(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/objmain", func_80079128_79D28);
+void func_8007B9B8_7C5B8(void);
+void func_8007BA44_7C644(void);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
+void func_8001A788_1B388(u16 spriteId, s32 arg1);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+void func_80079294_79E94(omObjData* obj);
+extern u8 D_80102708_103308;
+extern s16 D_800E2132_E2D32;
+extern u16 D_800E2134_E2D34;
+extern s16 D_800E2136_E2D36;
+extern s16 D_80101650_102250;
+
+/* MP3 func_8004A208_4AE08 */
+void func_80079128_79D28(void) {
+    func_800727F0_733F0();
+    if (D_800CD416_CE016 & 0x10) {
+        func_80077EF0_78AF0();
+        if (D_800CD416_CE016 & 4) {
+            D_80102708_103308 = 1;
+        }
+    }
+    if (D_800CD416_CE016 & 0x20) {
+        func_8007B9B8_7C5B8();
+    }
+    func_8007BA44_7C644();
+    if (_CheckFlag(0x15) != 0) {
+        D_800E2132_E2D32 = func_8001A2F8_1AEF8(0x900FB);
+        D_800E2134_E2D34 = func_8001AAAC_1B6AC(D_800E2132_E2D32, 0, 1);
+        func_8001A6BC_1B2BC(D_800E2134_E2D34, 0x100);
+        func_8001A788_1B388(D_800E2134_E2D34, 1);
+        switch ((u32)D_800FA63C_FB23C) {
+            case 0x1A:
+                D_80101650_102250 = 0xC4;
+                break;
+            case 0x11:
+            case 0x18:
+                D_80101650_102250 = 0x18;
+                break;
+            default:
+                D_80101650_102250 = 0xD8;
+                break;
+        }
+        espPosSet(D_800E2134_E2D34, 0xA0, D_80101650_102250);
+        D_800E2136_E2D36 = 0;
+        omSetStatBit(omAddObj(10, 0, 0, -1, func_80079294_79E94), 0xA0);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/objmain", func_80079294_79E94);
 
