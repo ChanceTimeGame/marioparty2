@@ -6,11 +6,15 @@
 /* MP2's common game work (MP1 GwCommon, MP3 GW_COMMON in include/game/gamework_data.h);
    saved to EEPROM whole (692F0, 7E850). */
 typedef struct GW_COMMON {
-    /* 0x00 */ char unk00[2];
+    /* 0x00 */ u8 unk0; /* MP1 unk0: save version, 5 */
+    /* 0x01 */ char unk01[1];
     /* 0x02 */ u16 mgRecord[13];
     /* 0x1C */ u8 mgBits1[9]; /* MP1 mgBuy */
     /* 0x25 */ u8 mgBits2[9]; /* MP1 mgBuy, MP3 mgUnlock */
-    /* 0x2E */ u16 boardRecord[9][4]; /* MP1 boardRecord */
+    /* 0x2E */ u16 boardRecord[8][4]; /* MP1 boardRecord */
+    /* 0x6E */ char unk6E[2];
+    /* 0x70 */ s32 coinNum; /* MP1 coinNum */
+    /* 0x74 */ char unk74[2];
     /* 0x76 */ s8 unk76;
     /* 0x77 */ char unk77[0x4D];
 } GW_COMMON; /* size = 0xC4 */
