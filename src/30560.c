@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/hmfman.h"
+#include "game/camera.h"
 
 /* Model (HMF) setup, texture and display-list state, matrix copies and animation helpers. The
    functions in C are MP1 src/2C0C0.c and src/34D80.c code (two from MP3 src/22EB0.c); the rest
@@ -710,7 +711,32 @@ void func_80036C44_37844(HmfData* arg0, s32 arg1, s16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80036D5C_3795C);
+void func_80036EF8_37AF8(HmfTex*, s32, s32);
+
+/* MP1 func_80031D78 (src/2C0C0.c): reflection mapping for a part */
+void func_80036D5C_3795C(HmfData* arg0, s16 arg1) {
+    Mtx sp30;
+    HmfTex* var_a0;
+
+    if (arg0->unk64[arg1].unk2E != 255) {
+        gDPPipeSync(D_800FDBCC_FE7CC++);
+
+        guLookAtReflect(&sp30, &D_800FA658_FB258->unk_40, 0, 40.0f, 200.0f, 0, 0, 0, 0, -1.0f, 0);
+
+        gSPLookAt(D_800FDBCC_FE7CC++, &D_800FA658_FB258->unk_40);
+        gSPTexture(D_800FDBCC_FE7CC++, 1984, 1984, 0, G_TX_RENDERTILE, G_ON);
+
+        if (arg0->unkA0 == 0) {
+            var_a0 = arg0->unk88[arg0->unk64[arg1].unk2E].unk0C;
+        } else {
+            var_a0 = arg0->unkA0;
+        }
+
+        func_80036EF8_37AF8(var_a0, 0, 0);
+
+        gSPSetGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING | G_TEXTURE_GEN);
+    }
+}
 
 /* same c: marioparty func_80031F14 (src/2C0C0.c) */
 void func_80036EF8_37AF8(HmfTex* arg0, s32 arg1, s32 arg2) {
@@ -774,7 +800,47 @@ void func_80036EF8_37AF8(HmfTex* arg0, s32 arg1, s32 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80037C7C_3887C);
+extern Gfx D_800CACC8_CB8C8[];
+extern void* D_800CAD04_CB904[4]; /* highlight textures */
+extern void* D_800FC888_FD488;
+extern u64 D_800FA720_FB320;
+extern u64 D_800FD8A0_FE4A0;
+
+#define CAMERA(field) (((HuCamera*) D_800FD2A8_FDEA8)->field)
+
+/* MP1 func_80032C98 (src/2C0C0.c): specular highlight for a part */
+void func_80037C7C_3887C(HmfData* arg0, s16 arg1) {
+    HmfMat* temp_a0;
+    void* timg;
+    Mtx sp50;
+
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_800CACC8_CB8C8);
+    guLookAtHilite(&sp50, &D_800FA658_FB258->unk_40, &D_800FA658_FB258->unk_00,
+        CAMERA(pos.x), CAMERA(pos.y), CAMERA(pos.z),
+        CAMERA(at.x), CAMERA(at.y), CAMERA(at.z),
+        CAMERA(up.x), CAMERA(up.y), CAMERA(up.z), 0, 0, 115.0f, 0, 0, 115.0f, 32, 32);
+    gSPLookAt(D_800FDBCC_FE7CC++, &D_800FA658_FB258->unk_40);
+
+    temp_a0 = &arg0->unk8C[arg0->unk64[arg1].unk54->unk30];
+    gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, temp_a0->unk09[0], temp_a0->unk09[1], temp_a0->unk09[2], 255);
+    gDPSetEnvColor(D_800FDBCC_FE7CC++, 64, 64, 64, 128);
+
+    timg = D_800CAD04_CB904[((u32) arg0->unk64[arg1].unk50 >> 25) % 4];
+    gDPLoadTextureBlock(D_800FDBCC_FE7CC++, timg, G_IM_FMT_IA, G_IM_SIZ_8b, 32, 32, 0,
+        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetTileSize(D_800FDBCC_FE7CC++, G_TX_RENDERTILE, D_800FA658_FB258->unk_00.h.x1, D_800FA658_FB258->unk_00.h.y1,
+        D_800FA658_FB258->unk_00.h.x1 + 124, D_800FA658_FB258->unk_00.h.y1 + 124);
+
+    if (arg0->unk64[arg1].unk50 & 0x10000) {
+        gDPSetRenderMode(D_800FDBCC_FE7CC++, G_RM_ZB_CLD_SURF, G_RM_ZB_CLD_SURF2);
+    } else {
+        gDPSetRenderMode(D_800FDBCC_FE7CC++, G_RM_ZB_OVL_SURF, G_RM_ZB_OVL_SURF2);
+    }
+
+    D_800FC888_FD488 = NULL;
+    D_800FA720_FB320 = 0xFFFFFFFF;
+    D_800FD8A0_FE4A0 = 0xFFFFFFFF;
+}
 
 /* same c: marioparty3 func_8002C4C0_2D0C0 (src/22EB0.c) */
 s32 func_80038024_38C24(HmfData *arg0, s16 arg1, Matrix4f arg2, Matrix4f arg3) {
@@ -819,20 +885,90 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_80038964_39564);
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_80038C04_39804);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038DD0_399D0);
+extern s16 D_800FA6E4_FB2E4;
+s32 func_80039110_39D10(HmfMotionSlot*, HmfData*);
+void func_80039A88_3A688(HmfMotionSlot*, void*);
+void func_80027274_27E74(s16);
+s16 func_80038F30_39B30(HmfData* arg0, u8* arg1, s16 arg2);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038E38_39A38);
+/* MP1 func_80038A2C (src/388E0.c) */
+void func_80038DD0_399D0(void) {
+    s16 i;
+
+    D_800F92B4_F9EB4 = HuMemAlloc(128 * sizeof(HmfMotionSlot));
+
+    for (i = 0; i < 128; i++) {
+        D_800F92B4_F9EB4[i].unk02 = -1;
+    }
+}
+
+/* MP1 func_800341E8 (src/34D80.c) */
+s16 func_80038E38_39A38(u8* arg0, HmfData* arg1) {
+    s16 i;
+
+    for (i = 0; i < 128; i++) {
+        if (D_800F92B4_F9EB4[i].unk02 == -1) {
+            break;
+        }
+    }
+
+    if (i == 128) {
+        return -1;
+    }
+
+    if (func_80038F30_39B30(arg1, arg0, i) != 0) {
+        if (arg1 == NULL) {
+            return i;
+        }
+        arg1->unkA4 = 0;
+        return i;
+    }
+
+    return -1;
+}
 
 /* exact c: marioparty func_800342BC (src/34D80.c) */
 s16 func_80038F0C_39B0C(u8* arg0) {
     return func_80038E38_39A38(arg0, NULL);
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038F30_39B30);
+/* MP1 func_800342E0 (src/34D80.c) */
+s16 func_80038F30_39B30(HmfData* arg0, u8* arg1, s16 arg2) {
+    void* temp_v0;
+    s32 temp_s0;
+    s32* var_a1;
+
+    var_a1 = (s32*) arg1;
+
+    D_800FA6E4_FB2E4 = arg2 + 10356;
+    D_800F92B4_F9EB4[arg2].unk00 = 0;
+
+    if (arg0 != NULL) {
+        return func_80039110_39D10(&D_800F92B4_F9EB4[arg2], arg0) != 0;
+    }
+
+    temp_s0 = var_a1[1] + 8;
+    temp_v0 = func_80027154_27D54(temp_s0, D_800FA6E4_FB2E4);
+
+    bcopy(arg1, temp_v0, temp_s0);
+    func_80039A88_3A688(&D_800F92B4_F9EB4[arg2], temp_v0);
+
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_80039018_39C18);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80039074_39C74);
+/* MP1 func_80034420 (src/34D80.c) */
+void func_80039074_39C74(void) {
+    s16 i;
+
+    for (i = 0; i < 128; i++) {
+        if (D_800F92B4_F9EB4[i].unk02 != -1) {
+            func_80027274_27E74(i + 10356);
+            D_800F92B4_F9EB4[i].unk02 = -1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_80039110_39D10);
 

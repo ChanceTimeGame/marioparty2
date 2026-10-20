@@ -915,15 +915,6 @@ f32 func_80029CE4_2A8E4(s16 arg0) {
     return D_800FC834_FD434[arg0].unk40;
 }
 
-/* Motion table entries (0x1C bytes); 21920's func_8002529C_25E9C sets their 0x18 */
-typedef struct unk2A90CStruct {
-    /* 0x00 */ char unk00[2];
-    /* 0x02 */ s16 unk02; /* length */
-    /* 0x04 */ char unk04[0x18];
-} unk2A90CStruct; // size 0x1C
-
-extern unk2A90CStruct* D_800F92B4_F9EB4;
-
 /* MP1 func_80025D40 (src/24740.c) */
 f32 func_80029D0C_2A90C(s16 arg0) {
     return D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02].unk02;

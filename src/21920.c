@@ -2,6 +2,7 @@
 #include "game/data.h"
 #include "game/malloc.h"
 #include "game/sprite.h"
+#include "game/hmfman.h"
 
 /* Sprite-model slots and the coin-sparkle effect. Functions with C come from MP1 src/1EA70.c
    (and two one-liners from MP1 ovl_15/ovl_28); the rest is asm. */
@@ -365,17 +366,9 @@ void func_80024D78_25978(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
 
 INCLUDE_ASM("asm/nonmatchings/21920", func_8002523C_25E3C);
 
-/* Array of 0x1C-byte entries; MP1's neighbour in src/1EA70.c (func_8001E2D0) reads a field of its
-   sprite table by index the same way. */
-typedef struct unk25E9CStruct {
-    /* 0x00 */ char unk_00[0x18];
-    /* 0x18 */ s32 unk_18;
-} unk25E9CStruct; // size 0x1C
-
-extern unk25E9CStruct* D_800F92B4_F9EB4;
-
+/* MP1's neighbour in src/1EA70.c (func_8001E2D0) reads a field of a table by index the same way. */
 void func_8002529C_25E9C(s16 index, s32 arg1) {
-    D_800F92B4_F9EB4[index].unk_18 = arg1;
+    D_800F92B4_F9EB4[index].unk18 = arg1;
 }
 
 INCLUDE_ASM("asm/nonmatchings/21920", func_800252C4_25EC4);

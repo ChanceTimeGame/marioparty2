@@ -106,7 +106,9 @@ typedef struct HmfDisp {
 typedef struct HmfPart {
     /* 0x00 */ char unk00[4];
     /* 0x04 */ s16 unk04; /* face count */
-    /* 0x06 */ char unk06[0x4A];
+    /* 0x06 */ char unk06[0x28];
+    /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
+    /* 0x2F */ char unk2F[0x21];
     /* 0x50 */ s32 unk50;
     /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
     /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */
@@ -232,7 +234,17 @@ typedef struct HmfModel {
     /* 0xBC */ void* unkBC;
 } HmfModel; /* size = 0xC0 */
 
+/* Motion slots (128, allocated by func_80038DD0_399D0); MP1 unk34D80Struct40 */
+typedef struct HmfMotionSlot {
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ char unk01;
+    /* 0x02 */ s16 unk02; /* length; -1 when the slot is free */
+    /* 0x04 */ char unk04[0x14];
+    /* 0x18 */ s32 unk18;
+} HmfMotionSlot; /* size 0x1C */
+
 extern HmfModel* D_800FC834_FD434; /* HmfModelData */
+extern HmfMotionSlot* D_800F92B4_F9EB4;
 extern s8 D_800FDC9C_FE89C;  /* MP3 HmfPauseF; s8 as 5F3B0/58080/80230 load it */
 extern u16 D_800FDCD0_FE8D0; /* set while models are live (274D0, 30560) */
 extern void* D_800FD2A8_FDEA8; /* model matrix buffer (274D0 passes it to HmfModel.unk70) */
