@@ -304,9 +304,20 @@ $(C58080_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x68
 	$(V)$(OBJCOPY) --rename-section .rodata=.data $@
 # pilot: units made fully C by the fresh-decompilation pilot, their rodata carved
-PILOT_CARVED := build/src/459D0.c.o build/src/4ABB0.c.o
+PILOT_CARVED := build/src/459D0.c.o build/src/46250.c.o build/src/4ABB0.c.o
 CARVED_RODATA_UNITS += $(PILOT_CARVED)
 $(PILOT_CARVED): RODATA_AS_DATA = 1
-PILOT_NOPAD := build/asm/data/D3110.data.s.o build/asm/data/D3430.data.s.o
+PILOT_NOPAD := build/asm/data/D3430.data.s.o
 NOPAD_DATA_PIECES += $(PILOT_NOPAD)
 $(PILOT_NOPAD): ASFLAGS += --no-pad-sections
+# 46250 is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled with the KMC
+# VR4300 mul fix on (func_800456BC: a nop between dependent mul.s; func_80047EC0: none after a call)
+PILOT_BLANKSTRIP_UNITS := build/src/46250.c.o
+$(PILOT_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(PILOT_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)

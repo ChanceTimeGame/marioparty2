@@ -5,12 +5,6 @@
 /* Model effects. func_80049900_4A500 and func_80049A38_4A638 are MP1 src/42E40.c's func_80042240 and
    func_80042378 (exact). */
 
-typedef struct Vec3f {
-    f32 x;
-    f32 y;
-    f32 z;
-} Vec3f;
-
 typedef struct ModelEffectWork {
     /* 0x00 */ Object* model;
     /* 0x04 */ Vec3f pos;
@@ -18,16 +12,6 @@ typedef struct ModelEffectWork {
     /* 0x1C */ Vec3f scale;
     /* 0x28 */ f32 duration;
 } ModelEffectWork; /* size = 0x2C */
-
-typedef struct ModelEmitterWork {
-    /* 0x00 */ Process* process;
-    /* 0x04 */ Object* model;
-    /* 0x08 */ Object* parent;
-    /* 0x0C */ Vec3f offset;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ s16 type;
-    /* 0x1E */ s16 flags;
-} ModelEmitterWork; /* size = 0x20 */
 
 extern s16 D_800DF650_E0250;
 

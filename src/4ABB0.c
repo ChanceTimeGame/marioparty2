@@ -7,19 +7,9 @@ void func_8008225C_82E5C(s16, s16, s32);
 void func_800822A8_82EA8(s16, s16, u16, s32);
 void SprScaleSet(s16, s16, f32, f32);
 
-/* Coin-change popup above a player (MP3 func_800E1934 in F5070.c): a coin icon, a +/- sign and up
-   to three digits, positioned from the player's model (D_800DF708 set) or a fixed table. */
-
-
-/* Battle-minigame announcement process (MP3 MBMgCallBattleExec). */
-
-
 void func_80060B04_61704(void);
 s32 func_8004FDD0_509D0(void);
 void MBVsSprKill(void);
-
-/* Minigame-roulette process (MP1 func_800441D4). */
-
 
 typedef struct Rect4ABB0 {
     /* 0x00 */ s16 x;
@@ -45,12 +35,6 @@ s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
 void func_8008D88C_8E48C(s16);
 void func_800898F0_8A4F0(s16, s32, s32);
 
-/* Minigame roulette setup (MP1 func_8004388C): picks the minigame type (arg0: 0 = 4P, 1 = 1v3,
-   2 = 2v2, -1 = from func_80060A1C), fills one window per slot with a minigame not already
-   offered or recently played (some are kept out of the early turns, two need func_80068040),
-   then starts func_80049FFC. */
-
-
 extern u8 D_800CBD10_CC910[];
 extern u8 D_800CBD18_CC918[];
 extern s8 D_800CBD70_CC970[][2];
@@ -69,10 +53,6 @@ void func_80067E6C_68A6C(s16);
 void func_8004FDE0_509E0(void);
 void func_8004AC60_4B860(void);
 void func_8004A9EC_4B5EC(void);
-
-/* Minigame roulette object (MP1 func_80042BAC): scrolls the list in, spins and slows the cursor,
-   then records the pick in the history table. */
-
 
 /* Board HUD and minigame-pick helpers: the minigame roulette (MP1 src/43760.c func_80042B60 ..
    func_800448A0), MBArrayShuffle and MBMgCallBattleExec (MP3 ovl_80_shared_board F2910.c), the
@@ -155,6 +135,8 @@ void func_80049FB0_4ABB0(void) {
 }
 
 //same as func_800DED3C_F295C_shared_board in mp3
+/* Minigame roulette object (MP1 func_80042BAC): scrolls the list in, spins and slows the cursor,
+   then records the pick in the history table. */
 void func_80049FFC_4ABFC(omObjData* obj) {
     s32 i;
     unk43760* p;
@@ -375,6 +357,10 @@ void func_8004AC60_4B860(void) {
     }
 }
 
+/* Minigame roulette setup (MP1 func_8004388C): picks the minigame type (arg0: 0 = 4P, 1 = 1v3,
+   2 = 2v2, -1 = from func_80060A1C), fills one window per slot with a minigame not already
+   offered or recently played (some are kept out of the early turns, two need func_80068040),
+   then starts func_80049FFC. */
 void func_8004AD34_4B934(s32 arg0) {
     Rect4ABB0* rects[6] = { D_800CBD38_CC938, D_800CBD20_CC920, D_800CBD20_CC920,
                             D_800CBD38_CC938, D_800CBD20_CC920, D_800CBD20_CC920 };
@@ -633,6 +619,7 @@ void func_8004B304_4BF04(u8* out) {
     }
 }
 
+/* Minigame-roulette process (MP1 func_800441D4). */
 void func_8004B65C_4C25C(void) {
     u8 isFour[4];
     u8 saved[4];
@@ -814,6 +801,7 @@ Process* func_8004BB94_4C794(s32 arg0) {
     return process;
 }
 
+/* Battle-minigame announcement process (MP3 MBMgCallBattleExec). */
 void func_8004BBFC_4C7FC(void) {
     unkUserData_00* data;
     s32 i;
@@ -1022,6 +1010,8 @@ void func_8004C394_4CF94(void) {
     }
 }
 
+/* Coin-change popup above a player (MP3 func_800E1934 in F5070.c): a coin icon, a +/- sign and up
+   to three digits, positioned from the player's model (D_800DF708 set) or a fixed table. */
 void func_8004C3CC_4CFCC(s32 player, s32 coins) {
     Vec pos;
     Vec2f pos2d;

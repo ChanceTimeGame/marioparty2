@@ -3,12 +3,37 @@
 #include "game/data.h"
 #include "game/hmfman.h"
 #include "game/board.h"
+#include "game/object.h"
+#include "game/camera.h"
+
+GW_PLAYER* BoardPlayerGet(s32);
+void func_80056754_57354(MBModel*);
+ModelEmitterWork* func_80049ED4_4AAD4(Object*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+Process* func_80056D80_57980(Vec*, Vec*, Vec*, s32);
+void func_8005670C_5730C(Vec*);
+
+
+s32 func_80047E70_48A70(s32);
+
+
+extern s8 D_800DF63C_E023C;
+
+extern s32 D_800CBC90_CC890[]; /* dice-block model per unk_0A */
+extern s32 D_800CBCA8_CC8A8[]; /* dice-block animation per unk_0A */
+void func_8003E52C_3F12C(s16, u8);
+void func_8003E560_3F160(s16, u8); /* defined (s16, s32) in 3D6A0.c; retail passes a u8 here */
+
+void func_8008221C_82E1C(s16, s16, f32);
+void SprAnimSet(s16, s16, s16, u16);
+s16 SprCreate(s32, s32);
+
+extern f32 D_800CA02C_CAC2C;
+void func_8002AC10_2B810(s16, f32, f32, s32);
+void func_80047A50_48650(s32);
 
 /* Board dice blocks and coin/dice processes (MP3 ovl_80_shared_board/EE660.c, MP1 src/3F5B0.c)
-   and music fades (MP1 src/42CA0.c). Every function that reads this unit's rodata piece
-   (D3110-D31FC) stays asm, because two of them (func_80046308, func_80046918) have no C reference
-   and the piece cannot be carved: func_800456BC, func_80045B40, func_80045F54, func_80046F98 (near
-   MP3) and func_80047868, func_80047908, func_80047978, func_800479E4 (same as MP1/MP3). */
+   and music fades (MP1 src/42CA0.c). Rodata D3110-D3220 carved. */
 
 #define DICE_TOTAL 3
 
@@ -60,12 +85,12 @@ extern u8 D_800DF63F_E023F;
 extern f32 D_800DF640_E0240;
 extern u8 D_800DF644_E0244;
 extern u8 D_800DF645_E0245;
-extern s8 D_800DF646_E0246;
+extern u8 D_800DF646_E0246;
 extern s16 D_800FC734_FD334;
 
 void omDelObj(omObjData*);
 s16 PlaySound(s32);
-void func_80046F98_47B98(s32);
+s16 func_80046F98_47B98(s32);
 void func_80047978_48578(s32);
 void func_800479E4_485E4(s32);
 void func_8004947C_4A07C(void);
@@ -96,7 +121,7 @@ void func_8002A00C_2AC0C(s16);
 s16 func_8003D8F0_3E4F0(HmfData*, void*, s32, void*);
 s16 func_8003DBE8_3E7E8(HmfData*, u16, s32, void*);
 void func_800456BC_462BC(omObjData*);
-extern s8 D_800DF647_E0247;
+extern u8 D_800DF647_E0247;
 void SprPrioSet(s16, s16, u16);
 void func_8008225C_82E5C(s16, s16, s32);
 void func_800822A8_82EA8(s16, s16, u16, s32);
@@ -142,12 +167,161 @@ void func_80045650_46250(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800456BC_462BC);
+/* Dice-block object (MP3 func_800DAAAC_EE6CC_shared_board): spin-in, hover, then the hit burst. */
+void func_800456BC_462BC(omObjData* arg0) {
+    UnkDiceRelated* entry;
+    f32 base;
+    f32 scale;
+    f32 decay;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80045B40_46740);
+    entry = &D_800DF4C0_E00C0[arg0->work[3]];
+    if (D_800DF63D_E023D == 1) {
+        base = 1.0f;
+    } else {
+        base = 0.1f;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80045F54_46B54);
+    switch (arg0->work[0]) {
+        case 0:
+            if (D_800FDC9C_FE89C != 0) {
+                return;
+            }
+            arg0->trans.y = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.y + D_800DF640_E0240;
+            scale = (HuMathSin(arg0->work[1] * 2) * entry->unk48 * base) + base;
+            arg0->scale.x = arg0->scale.y = arg0->scale.z = scale;
+            if (D_800DF647_E0247 == 0) {
+                arg0->rot.y += 22.5f;
+            } else {
+                arg0->rot.y -= 22.5f;
+            }
+            arg0->work[1] += 25;
+            arg0->work[1] %= 180;
+            decay = entry->unk48 - 0.05;
+            entry->unk48 = decay;
+            if (decay <= 0.0f) {
+                entry->unk48 = 0.0f;
+                arg0->scale.x = arg0->scale.y = arg0->scale.z = base;
+                arg0->work[1] = 0;
+                arg0->work[0] = 1;
+                if (D_800DF63D_E023D == 1) {
+                    for (i = 0; i < 4; i++) {
+                        if (D_800DF4C0_E00C0[i].unk28 != -1) {
+                            break;
+                        }
+                    }
+                    if (i == 4) {
+                        if (GwSystem.current_board_index == 8) {
+                            entry->unk28 = PlaySound(0x33E);
+                        } else {
+                            entry->unk28 = PlaySound(0x314);
+                        }
+                        return;
+                    }
+                    entry->unk28 = D_800DF4C0_E00C0[i].unk28;
+                    return;
+                }
+                if (entry->unk2A == 0 && D_800DF63D_E023D != 3 && entry->unk_0A != 5 && D_800DF63D_E023D != 4 &&
+                    D_800DF644_E0244 != 0) {
+                    entry->unk28 = PlaySound(0x314);
+                    return;
+                }
+            }
+            break;
+        case 1:
+            if (D_800FDC9C_FE89C == 0) {
+                arg0->trans.y = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.y + D_800DF640_E0240 +
+                                (HuMathSin(arg0->work[1] * 2) * 10.0f * base);
+                arg0->work[1] += 5;
+                arg0->work[1] %= 180;
+                return;
+            }
+            break;
+        case 2:
+            D_800CA02C_CAC2C = entry->unk48;
+            HmfModelObjAttrSet(*arg0->model, 0x22000, 0x20000);
+            func_8002AC10_2B810(*arg0->model, entry->unk40, entry->unk44, 2);
+            if (D_800FDC9C_FE89C == 0) {
+                entry->unk48 += 39.0f;
+                entry->unk40 += 0.05f;
+                entry->unk44 = ((10.0f - entry->unk44) / 30.0f) + entry->unk44;
+                if (entry->unk40 > 1.0f) {
+                    func_80047A50_48650(arg0->work[3]);
+                }
+            }
+            break;
+    }
+}
+/* Two-digit roll counter over a player (MP3 func_800DAF1C_EEB3C_shared_board). */
+void func_80045B40_46740(omObjData* arg0) {
+    UnkDiceRelated* entry;
+    Vec pos;
+    Vec2f pos2d;
+    u32 roll;
 
+    entry = &D_800DF4C0_E00C0[arg0->work[3]];
+    if ((arg0->work[0] == 0) && (D_800FDC9C_FE89C == 0)) {
+        arg0->scale.x = (HuMathSin(arg0->rot.x) * arg0->scale.z) + 1.0f;
+        arg0->rot.x += 20.0f;
+        if (arg0->rot.x >= 360.0f) {
+            arg0->rot.x -= 360.0f;
+        }
+        arg0->scale.z -= 0.15;
+        if (arg0->scale.z <= 0.0f) {
+            arg0->scale.x = 1.0f;
+            arg0->work[0] = 1;
+        }
+    }
+    SprScaleSet(entry->sprites[arg0->work[1]], 0, arg0->scale.x / 2.0f, arg0->scale.x / 2.0f);
+    SprScaleSet(entry->sprites[arg0->work[1]], 1, arg0->scale.x / 2.0f, arg0->scale.x / 2.0f);
+    if (entry->unk_00 == 0) {
+        roll = arg0->work[1];
+        func_800822A8_82EA8(entry->sprites[roll], 0, entry->rollValue[roll] % 10, 0);
+        func_8008225C_82E5C(entry->sprites[arg0->work[1]], 0, 1);
+        roll = arg0->work[1];
+        func_800822A8_82EA8(entry->sprites[roll], 1, entry->rollValue[roll] / 10, 0);
+        func_8008225C_82E5C(entry->sprites[arg0->work[1]], 1, 1);
+    }
+    pos.x = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.x;
+    pos.y = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.y + D_800DF640_E0240 + arg0->trans.y;
+    pos.z = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.z;
+    MBDCamera3Dto2D(&pos, &pos2d);
+    SprPosSet(entry->sprites[arg0->work[1]], 0, pos2d.unk_00, pos2d.unk_04 - 8.0f);
+    if ((pos2d.unk_00 >= 0.0f) && (pos2d.unk_00 <= 320.0f) && (pos2d.unk_04 >= 0.0f) && (pos2d.unk_04 <= 240.0f)) {
+        func_800495E4_4A1E4(arg0->work[3], arg0->work[1], 160, 120 - (s32)(func_80052E5C_53A5C() * 24.0f));
+    }
+}
+void func_80045F54_46B54(omObjData* arg0) {
+    UnkDiceRelated* entry;
+    Vec pos;
+    Vec2f pos2d;
+    s8 roll;
+
+    entry = &D_800DF4C0_E00C0[arg0->work[3]];
+    if ((arg0->work[0] == 0) && (D_800FDC9C_FE89C == 0)) {
+        arg0->scale.x = (HuMathSin(arg0->rot.x) * arg0->scale.z) + 1.0f;
+        arg0->rot.x += 20.0f;
+        if (arg0->rot.x >= 360.0f) {
+            arg0->rot.x -= 360.0f;
+        }
+        arg0->scale.z -= 0.05;
+        if (arg0->scale.z <= 0.0f) {
+            arg0->scale.x = 1.0f;
+            arg0->work[0] = 1;
+        }
+    }
+    SprScaleSet(entry->sprites[entry->rollValueIdx], 0, arg0->scale.x, arg0->scale.x);
+    if (entry->unk_00 == 0) {
+        roll = entry->rollValueIdx;
+        func_800822A8_82EA8(entry->sprites[roll], 0, entry->rollValue[roll], 0);
+        func_8008225C_82E5C(entry->sprites[entry->rollValueIdx], 0, 1);
+    }
+    pos.x = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.x;
+    pos.y = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.y + D_800DF640_E0240 + arg0->trans.y;
+    pos.z = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.z;
+    MBDCamera3Dto2D(&pos, &pos2d);
+    SprPosSet(entry->sprites[entry->rollValueIdx], 0, pos2d.unk_00, pos2d.unk_04);
+}
 /* exact c: marioparty3 func_800DB56C_EF18C_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_800461C8_46DC8(void) {
     s32 i;
@@ -200,8 +374,43 @@ void func_80046238_46E38(void) {
     D_800DF645_E0245 = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80046308_46F08);
+/* Creates the dice-roll counter sprite (MP3 func_800DB6A8_EF2C8_shared_board); unk_00 != 0 picks a
+   special digit set from the table. */
+void func_80046308_46F08(s32 arg0) {
+    s32 ids[9] = { 0xA00DB, 0xA00DC, 0xA0199, 0xA0198, 0xA000B, 0xA000C, 0xA000D, 0xA00DD, 0xA00DC };
+    UnkDiceRelated* entry;
+    void* data;
+    s32 i;
 
+    entry = &D_800DF4C0_E00C0[arg0];
+    if (entry->unk_00 != 0) {
+        data = DataRead(ids[entry->unk_00 - 1]);
+        entry->unk_14 = SprAnimRead(data);
+        entry->unk_0C = 1;
+        DataClose(data);
+    } else if ((arg0 != 0) && (D_800DF4C0_E00C0[0].unk_14 != -1)) {
+        entry->unk_14 = D_800DF4C0_E00C0[0].unk_14;
+        D_800DF4C0_E00C0[0].unk_0C++;
+    } else if ((entry->rollValueIdx == 0) || (D_800DF645_E0245 == 1)) {
+        data = DataRead(0xA0008);
+        entry->unk_14 = SprAnimRead(data);
+        entry->unk_0C = 1;
+        DataClose(data);
+    }
+    entry->sprites[entry->rollValueIdx] = SprCreate(2, 5);
+    for (i = 0; i < 2; i++) {
+        SprAnimSet(entry->sprites[entry->rollValueIdx], i, entry->unk_14, 0);
+        SprPrioSet(entry->sprites[entry->rollValueIdx], i, 0x4000);
+        SprAttrSet(entry->sprites[entry->rollValueIdx], i, 0x9000);
+        func_8008221C_82E1C(entry->sprites[entry->rollValueIdx], i, 0.0f);
+        SprScaleSet(entry->sprites[entry->rollValueIdx], i, 0.0f, 0.0f);
+        if (entry->unk_00 == 0) {
+            func_800822A8_82EA8(entry->sprites[entry->rollValueIdx], i, 0, 0);
+        }
+        func_8008225C_82E5C(entry->sprites[entry->rollValueIdx], i, 1);
+    }
+    entry->unk_0B = 1;
+}
 /* near MP3 func_800DB884_EF4A4_shared_board (EE660.c): MP2 also shows the block while unk_00 is
    set and follows the player's board model. */
 void func_8004655C_4715C(s32 arg0) {
@@ -265,8 +474,81 @@ void func_8004655C_4715C(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80046918_47518);
+/* Rolls the dice block (MP3 func_800DBC2C_EF84C_shared_board). D_800DF63D picks the block: 1 rolls
+   1-10 distinct from the other players' rolls, 2-5 are special blocks that set unk_00 (and
+   unk_01); otherwise unk_0A decides (5: no roll). */
+void func_80046918_47518(s32 arg0) {
+    UnkDiceRelated* entry = &D_800DF4C0_E00C0[arg0];
+    s32 i;
 
+    if (entry->unk_0B == 0) {
+        if (entry->rollValueIdx == 0) {
+            func_80046D2C_4792C(arg0);
+        }
+    }
+    entry->unk_0B = 0;
+    if (D_800DF63D_E023D == 2) {
+        entry->unk_00 = (rand8() % 3) + 1;
+        if (entry->unk_00 != 1) {
+            entry->unk_00 = 2;
+        }
+    } else if (D_800DF63D_E023D == 5) {
+        entry->unk_00 = (rand8() % 3) + 8;
+        if (entry->unk_00 != 9) {
+            entry->unk_00 = 8;
+        }
+    } else if (D_800DF63D_E023D == 3) {
+        if (entry->predecidedRollValue[entry->rollValueIdx] != 0) {
+            entry->unk_01 = entry->unk_00 = entry->predecidedRollValue[entry->rollValueIdx];
+            entry->predecidedRollValue[entry->rollValueIdx] = 0;
+        } else {
+            entry->unk_01 = entry->unk_00 = (rand8() % 6) + 3;
+            if (entry->unk_00 != 3) {
+                entry->unk_01 = entry->unk_00 = 4;
+            }
+        }
+    } else if (D_800DF63D_E023D == 4) {
+        entry->unk_01 = entry->unk_00 = (rand8() % 3) + 5;
+    } else if (D_800DF63D_E023D == 1) {
+        do {
+            if (entry->predecidedRollValue[entry->rollValueIdx] != 0) {
+                entry->rollValue[entry->rollValueIdx] = entry->predecidedRollValue[entry->rollValueIdx];
+                entry->predecidedRollValue[entry->rollValueIdx] = 0;
+            } else {
+                entry->rollValue[entry->rollValueIdx] = (rand8() % 10) + 1;
+            }
+            for (i = 0; i < 5; i++) {
+                if (i == arg0) {
+                    continue;
+                }
+                if (D_800DF4C0_E00C0[i].rollValue[D_800DF4C0_E00C0[i].rollValueIdx] == entry->rollValue[entry->rollValueIdx]) {
+                    break;
+                }
+            }
+        } while (i != 5);
+    } else {
+        switch (entry->unk_0A) {
+            case 0:
+            case 1:
+            case 2:
+            case 4:
+                if (entry->predecidedRollValue[entry->rollValueIdx] != 0) {
+                    entry->rollValue[entry->rollValueIdx] = entry->predecidedRollValue[entry->rollValueIdx];
+                    entry->predecidedRollValue[entry->rollValueIdx] = 0;
+                } else {
+                    entry->rollValue[entry->rollValueIdx] = (rand8() % 10) + 1;
+                }
+                break;
+            case 3:
+                entry->rollValue[entry->rollValueIdx] = (rand8() % 3) + 1;
+                break;
+            case 5:
+                entry->rollValue[entry->rollValueIdx] = 0;
+                break;
+        }
+    }
+    func_8004655C_4715C(arg0);
+}
 /* exact c: marioparty3 func_800DBE6C_EFA8C_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_80046CD8_478D8(s32 arg0) {
     UnkDiceRelated* dice = &D_800DF4C0_E00C0[arg0];
@@ -355,8 +637,141 @@ void func_80046F74_47B74(s32 arg0, s32 arg1) {
     D_800DF4C0_E00C0[arg0].unk_09 = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80046F98_47B98);
+/* Creates the dice block over a player (MP3 func_800DC128_EFD48_shared_board); returns the sound
+   started for a normal block, else -1. */
+s16 func_80046F98_47B98(s32 arg0) {
+    UnkDiceRelated* entry;
+    omObjData* dice;
+    f32 chance;
+    s8 val;
+    s32 rot;
+    s32 tile;
+    s32 i;
+    s16 ret;
 
+    D_800DF647_E0247 = 0;
+    entry = &D_800DF4C0_E00C0[arg0];
+    if (entry->unk_16 != -1) {
+        return -1;
+    }
+    if (entry->rollValueIdx == 0) {
+        func_80046D2C_4792C(arg0);
+    }
+    if (entry->unk_09 != -1) {
+        entry->unk_0A = entry->unk_09;
+        entry->unk_09 = -1;
+    } else {
+        entry->unk_0A = 0;
+        if (_CheckFlag(3) != 0) {
+            entry->unk_0A = 3;
+            _ClearFlag(3);
+        }
+        if (D_800DF645_E0245 == 2) {
+            entry->unk_0A = 2;
+        } else if (D_800DF645_E0245 == 3) {
+            entry->unk_0A = 4;
+            if (entry->rollValueIdx == 0) {
+                if (arg0 != 4) {
+                    if (D_800DF646_E0246 != 0) {
+                        chance = 6.0f;
+                    } else {
+                        chance = 30.0f;
+                    }
+                    if (MBRand(chance) == 0) {
+                        val = (rand8() % 10) + 1;
+                        entry->predecidedRollValue[1] = val;
+                        entry->predecidedRollValue[0] = val;
+                        D_800DF647_E0247 = 1;
+                    }
+                }
+            }
+        }
+        if (_CheckFlag(4) != 0) {
+            entry->unk_0A = 5;
+        }
+    }
+    entry->unk_16 = Hu3DModelCreate(DataRead(D_800CBC90_CC890[entry->unk_0A]), 0x6A9);
+    func_80029EDC_2AADC(entry->unk_16, 1);
+    func_800297E8_2A3E8(entry->unk_16, 0.0f, 0.0f, 0.0f);
+    HmfModelObjAttrSet(entry->unk_16, 0x20000, 0x20000);
+    if (entry->unk_0A != 5) {
+        entry->unk_2C = DataRead(D_800CBCA8_CC8A8[entry->unk_0A]);
+        entry->unk_1A[0] = func_8003D8F0_3E4F0(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_2C, 0, "tile01_DEF");
+        entry->unk_1A[1] = func_8003DBE8_3E7E8(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_1A[0], 0, "tile02_DEF");
+        entry->unk_1A[2] = func_8003DBE8_3E7E8(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_1A[0], 0, "tile03_DEF");
+        entry->unk_1A[3] = func_8003DBE8_3E7E8(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_1A[0], 0, "tile04_DEF");
+        entry->unk_1A[4] = func_8003DBE8_3E7E8(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_1A[0], 0, "tile06_DEF");
+        entry->unk_1A[5] = func_8003DBE8_3E7E8(D_800FC834_FD434[entry->unk_16].hmf, entry->unk_1A[0], 0, "tile10_DEF");
+        tile = rand8() % 10;
+        rot = rand8() & 3;
+        for (i = 0; i < 6; i++) {
+            if (entry->unk_0A < 3) {
+                if (entry->unk_0A >= 0) {
+                    func_8003E52C_3F12C(entry->unk_1A[i], rot);
+                }
+            }
+            func_8003E560_3F160(entry->unk_1A[i], tile);
+        }
+    } else {
+        entry->unk_2C = NULL;
+        for (i = 0; i < 6; i++) {
+            entry->unk_1A[i] = -1;
+        }
+        func_80029E80_2AA80(entry->unk_16, 0, 2);
+    }
+    func_80029A8C_2A68C(entry->unk_16);
+    func_8002A00C_2AC0C(entry->unk_16);
+    dice = omAddObj(-0x8000, 1, 1, -1, func_800456BC_462BC);
+    entry->dice = dice;
+    *dice->model = entry->unk_16;
+    omSetStatBit(dice, 0xA0);
+    dice->trans.x = ((MBModel*)gPlayers[arg0].unk_24)->pos.x;
+    dice->trans.y = ((MBModel*)gPlayers[arg0].unk_24)->pos.y + D_800DF640_E0240;
+    dice->trans.z = ((MBModel*)gPlayers[arg0].unk_24)->pos.z;
+    if (D_800DF647_E0247 == 0) {
+        dice->rot.y = -90.0f;
+    } else {
+        dice->rot.y = 90.0f;
+    }
+    dice->scale.z = dice->scale.y = dice->scale.x = dice->rot.x = dice->rot.z = 0.0f;
+    dice->work[0] = 0;
+    dice->work[1] = 0x87;
+    dice->work[2] = 0;
+    dice->work[3] = arg0;
+    entry->unk48 = 1.0f;
+    entry->unk40 = 0.0f;
+    entry->unk44 = 1.0f;
+    D_800DF63D_E023D = 0;
+    ret = -1;
+    switch (entry->unk_0A) {
+        case 0:
+            if (D_800DF63D_E023D != 4) {
+                ret = PlaySound(0x31A);
+            } else {
+                PlaySound(0x34B);
+            }
+            break;
+        case 1:
+            PlaySound(0x31A);
+            break;
+        case 2:
+            PlaySound(0x357);
+            break;
+        case 3:
+            PlaySound(0x31A);
+            break;
+        case 4:
+            PlaySound(0x358);
+            break;
+        case 5:
+            PlaySound(0x356);
+            break;
+        default:
+            PlaySound(0x34B);
+            break;
+    }
+    return ret;
+}
 /* near MP3 func_800DC718_F0338_shared_board (EE660.c) */
 void func_80047580_48180(s32 arg0, s32 arg1, s32 arg2, void* arg3[]) {
     UnkDiceRelated* entry = &D_800DF4C0_E00C0[arg0];
@@ -426,14 +841,33 @@ void func_80047580_48180(s32 arg0, s32 arg1, s32 arg2, void* arg3[]) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047868_48468);
+/* MP1 func_80041048 (src/3F5B0.c) */
+void func_80047868_48468(s32 idx, s32 kind) {
+    void* names[6] = { "donkeyxi_DEF", "starxi_DEF", NULL, NULL, NULL, NULL };
+    s32 files[2] = { 0xA00D8, 0xA00D9 };
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047908_48508);
+    func_80047580_48180(idx, 0xA00D7, files[kind], names);
+    D_800DF63D_E023D = 2;
+    D_800DF63C_E023C = kind;
+}
+void func_80047908_48508(s32 idx) {
+    void* names[6] = { "donkeyxi_DEF", "starxi_DEF", NULL, NULL, NULL, NULL };
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047978_48578);
+    func_80047580_48180(idx, 0xA00D7, 0xA00DA, names);
+    D_800DF63D_E023D = 5;
+}
+void func_80047978_48578(s32 arg0) {
+    void* anims[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800479E4_485E4);
+    func_80047580_48180(arg0, 0xA0193, -1, anims);
+    D_800DF63D_E023D = 3;
+}
+void func_800479E4_485E4(s32 arg0) {
+    void* anims[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
+    func_80047580_48180(arg0, 0xA0003, -1, anims);
+    D_800DF63D_E023D = 4;
+}
 /* exact c: marioparty3 func_800DCA64_F0684_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_80047A50_48650(s32 arg0) {
     UnkDiceRelated *entry = &D_800DF4C0_E00C0[arg0];
@@ -485,8 +919,56 @@ void func_80047B78_48778(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80047BB8_487B8);
+void func_80047BB8_487B8(s32 arg0) {
+    UnkDiceRelated* entry;
+    s32 count;
+    s32 i;
 
+    entry = &D_800DF4C0_E00C0[arg0];
+    if (entry->unk_16 != -1) {
+        ((omObjData*)entry->dice)->work[0] = 2;
+        if (D_800DF63D_E023D != 4) {
+            func_80046918_47518(arg0);
+        }
+        if (D_800DF63D_E023D == 1) {
+            count = 0;
+            for (i = 0; i < 4; i++) {
+                if (D_800DF4C0_E00C0[i].unk28 != -1) {
+                    count++;
+                }
+            }
+        } else {
+            count = 1;
+        }
+        if (count == 1) {
+            func_80079848_7A448(entry->unk28);
+        }
+        entry->unk28 = -1;
+        entry->unk2A = 0;
+        switch (D_800DF63D_E023D) {
+            case 3:
+                if (func_80047E70_48A70(arg0) == 0) {
+                    PlaySound(0xD);
+                } else {
+                    PlaySound(0xC);
+                }
+                break;
+            case 2:
+                break;
+            case 4:
+            case 5:
+                PlaySound(0x342);
+                break;
+            default:
+                if (entry->unk_0A == 5) {
+                    PlaySound(0x342);
+                } else {
+                    PlaySound(0x31B);
+                }
+                break;
+        }
+    }
+}
 /* exact c: marioparty3 func_800DCCE0_F0900_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_80047D2C_4892C(void) {
     D_800DF63D_E023D = 1;
@@ -794,8 +1276,72 @@ Process* func_80048A48_49648(s32 player) {
     return process;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80048AA8_496A8);
+void func_80048AA8_496A8(void) {
+    Vec target;
+    MBModel* parent;
+    GW_PLAYER* player;
+    MBModel* star;
+    ModelEmitterWork* emitter;
+    f32 scale;
+    f32 rot;
+    s32 i;
 
+    parent = HuPrcCurrentGet()->user_data;
+    player = BoardPlayerGet(-1);
+    PlaySound(0x34C);
+    star = func_80043510_44110(0x19, NULL);
+    star->attr |= 4;
+    func_80056754_57354(star);
+    HuVecCopyXYZ(&star->pos, parent->pos.x, parent->pos.y + 10.0f, parent->pos.z - 10.0f);
+    HuVecCopyXYZ(&target, D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z);
+    star->jumpY = 15.0f;
+    emitter = func_80049ED4_4AAD4((Object*)star, 0);
+    emitter->unk18 = 0.1f;
+    for (scale = 0.0f, i = 0; i < 6; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale += 0.5f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 3; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale -= 0.4f;
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    func_8004947C_4A07C();
+    while (1) {
+        if (D_800DF63F_E023F != 0) {
+            HuPrcVSleep();
+        } else {
+            break;
+        }
+    }
+    PlaySound(0x32C);
+    rot = 0.0f;
+    HuVecCopyXYZ(&target, ((MBModel*)player->unk_24)->pos.x, ((MBModel*)player->unk_24)->pos.y - 10.0f,
+                 ((MBModel*)player->unk_24)->pos.z);
+    func_80056D80_57980(&star->pos, &target, &star->pos, 40);
+    for (i = 0; i < 40; i++) {
+        func_800B39F0_B45F0(D_800FC834_FD434[star->obj->model[0]].mtx, rot);
+        rot += 20.0f;
+        scale -= 0.05f;
+        if (scale < 0.0f) {
+            scale = 0.0f;
+        }
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        HuPrcVSleep();
+    }
+    MBModelKill(star);
+    func_80049F90_4AB90(emitter);
+    MBPlayerVibrate(-1, 5);
+    func_80079428_7A028(0x5C);
+    gPlayers[GwSystem.current_player_index].stars++;
+    func_8005670C_5730C(&((MBModel*)player->unk_24)->rot);
+    MBPlayerMotionSet(-1, 6, 0);
+    func_80079718_7A318(0xF5, gPlayers[GwSystem.current_player_index].character);
+    HuPrcSleep(60);
+    omDelPrcObj(NULL);
+}
 /* exact c: marioparty3 func_800DDBC8_F17E8_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_80048E0C_49A0C(void* arg0) {
     Process* temp_v0;
@@ -967,12 +1513,15 @@ Process* func_80049408_4A008(s32 arg0) {
     return temp_v0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_80049470_4A070);
-
-INCLUDE_ASM("asm/nonmatchings/46250", func_8004947C_4A07C);
-
-INCLUDE_ASM("asm/nonmatchings/46250", func_8004948C_4A08C);
-
+u8 func_80049470_4A070(void) {
+    return D_800DF63F_E023F;
+}
+void func_8004947C_4A07C(void) {
+    D_800DF63F_E023F = 1;
+}
+void func_8004948C_4A08C(void) {
+    D_800DF63F_E023F = 0;
+}
 /* exact c: marioparty3 func_800DE874_F2494_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_80049498_4A098(s32 arg0) {
     UnkDiceRelated* temp_s0 = &D_800DF4C0_E00C0[arg0];
@@ -984,17 +1533,29 @@ void func_80049498_4A098(s32 arg0) {
     temp_s0->unk2A = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800494FC_4A0FC);
+void func_800494FC_4A0FC(s32 arg0) {
+    UnkDiceRelated* temp_s0;
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800495A8_4A1A8);
-
+    temp_s0 = &D_800DF4C0_E00C0[arg0];
+    if ((temp_s0->unk2A == 1) && (temp_s0->unk_16 != -1)) {
+        if ((temp_s0->dice != NULL) && (((omObjData*)temp_s0->dice)->work[0] != 2) && (D_800DF63D_E023D != 3) &&
+            (temp_s0->unk_0A != 5) && (D_800DF63D_E023D != 4)) {
+            temp_s0->unk28 = PlaySound(0x314);
+        }
+    }
+    temp_s0->unk2A = 0;
+}
+void func_800495A8_4A1A8(s8 arg0) {
+    D_800DF63D_E023D = arg0;
+}
 /* exact c: marioparty3 func_800DE988_F25A8_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_800495B4_4A1B4(s32 arg0, s32 arg1) {
     D_800DF4C0_E00C0[arg0].rollValueIdx = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800495D8_4A1D8);
-
+void func_800495D8_4A1D8(s32 arg0, s32 arg1) {
+    D_800DF645_E0245 = arg1;
+}
 /* exact c: marioparty3 func_800DE9B8_F25D8_shared_board (src/overlays/ovl_80_shared_board/EE660.c) */
 void func_800495E4_4A1E4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkDiceRelated *entry;
@@ -1011,8 +1572,15 @@ void func_800495E4_4A1E4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/46250", func_800496CC_4A2CC);
+void func_800496CC_4A2CC(s32 arg0) {
+    UnkDiceRelated* temp_a1 = &D_800DF4C0_E00C0[arg0];
 
+    if (temp_a1->dice != NULL) {
+        ((omObjData*)temp_a1->dice)->trans.x = ((MBModel*)gPlayers[arg0].unk_24)->pos.x;
+        ((omObjData*)temp_a1->dice)->trans.y = ((MBModel*)gPlayers[arg0].unk_24)->pos.y + D_800DF640_E0240;
+        ((omObjData*)temp_a1->dice)->trans.z = ((MBModel*)gPlayers[arg0].unk_24)->pos.z;
+    }
+}
 /* exact c: marioparty func_800420A0 (src/42CA0.c) */
 void func_80049760_4A360(void) {
     f32 volume = 96.0f;

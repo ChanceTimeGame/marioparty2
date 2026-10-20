@@ -26,4 +26,21 @@ typedef struct Object {
     /* 0x8C */ struct Object* unk8C;
 } Object; /* size = 0x90 */
 
+typedef struct Vec3f {
+    f32 x;
+    f32 y;
+    f32 z;
+} Vec3f;
+
+/* Model emitter process work (func_80049ED4_4AAD4 in 4A500, used by 46250). */
+typedef struct ModelEmitterWork {
+    /* 0x00 */ struct Process* process;
+    /* 0x04 */ Object* model;
+    /* 0x08 */ Object* parent;
+    /* 0x0C */ Vec3f offset;
+    /* 0x18 */ f32 unk18; /* scale */
+    /* 0x1C */ s16 type;
+    /* 0x1E */ s16 flags;
+} ModelEmitterWork; /* size = 0x20 */
+
 #endif
