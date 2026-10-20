@@ -545,38 +545,26 @@ typedef struct {
 } HmfFaceData;
 
 typedef struct {
-    u8 unk00;
-    s8 unk01;
-    u8 unk02;
-    u8 unk03;
-    u8 unk04;
-    u8 unk05;
-    u8 unk06;
-    s8 unk07;
-    u8 unk08;
-    u8 unk09;
-    u8 unk0A;
-    char unk0B[1];
-    s16 unk0C;
-    s16 unk0E;
-    s16 unk10;
-    char unk12[0xA];
-    u8 unk1C;
-    char unk1D[3];
-    s16 unk20;
-    s16 unk22;
-    s16 unk24;
-    s16 unk26;
-    s16 unk28;
-    s16 unk2A;
-    char unk2C[0x16];
-    s16 unk42[3];
-    s16 unk48[3];
-    char unk4E[2];
-    s32 unk50;
-    HmfObjectLinkData *unk54;
-    void *unk58;
-    char unk5C[0xC];
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ char unk01;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ s16 unk04; /* vertex count (MP3 0x22) */
+    /* 0x06 */ s16 unk06; /* MP3 0x24 */
+    /* 0x08 */ s16 unk08; /* MP3 0x26 */
+    /* 0x0A */ char unk0A[2];
+    /* 0x0C */ s16 unk0C;
+    /* 0x0E */ s16 unk0E;
+    /* 0x10 */ s16 unk10;
+    /* 0x12 */ char unk12[0x1C]; /* handed to func_8001F380_1FF80 (MP3 passes the entry itself) */
+    /* 0x2E */ u8 unk2E; /* MP3 0x1C */
+    /* 0x2F */ char unk2F[0x13];
+    /* 0x42 */ s16 unk42[3];
+    /* 0x48 */ s16 unk48[3];
+    /* 0x4E */ char unk4E[2];
+    /* 0x50 */ s32 unk50;
+    /* 0x54 */ HmfObjectLinkData *unk54;
+    /* 0x58 */ void *unk58;
+    /* 0x5C */ char unk5C[0xC];
 } HmfObjectData;
 
 typedef struct {
@@ -816,8 +804,223 @@ void func_8001203C_12C3C(HmfLoadData *, u8 *, s32);
 void func_8002CAE4_2D6E4(HmfLoadData *);
 void func_80031630_32230(HmfLoadData *);
 void func_800339D0_345D0(HmfLoadData *);
+void func_8003CB70_3D770(HmfLoadData *);
+void func_80038654_39254(HmfLoadData *);
+void func_8003EF04_3FB04(HmfLoadData *);
+void osSyncPrintf(const char *fmt, ...);
 
+/* MP3 Hmfload (src/hmfload.c) without the 0x3B records, MP2's object entries (0x68 bytes).
+   Register allocation differs (recordCount stays in s0 where retail spills it, so flags and the
+   counters land in other registers); otherwise the same code. Its string is the unit's only
+   rodata, D2CCC, which starts on a 4-byte boundary a carved object cannot, so it stays asm. */
+#ifdef NON_MATCHING
+void func_8001D190_1DD90(HmfLoadData *hmf, void *fileData, s32 flags) {
+    s16 i;
+    s16 motionCount;
+    s16 mapCount;
+    s16 recordSize;
+    s32 flagsMask;
+    s16 modelCount;
+    u8 *file;
+    char *fileHeader;
+    u8 *record;
+    u8 *recordStart;
+    s16 extraCount;
+    s16 objectIndex;
+    HmfObjectData *data;
+    s16 recordCount;
+
+    file = fileData;
+    fileHeader = (char *)file;
+    if (fileHeader[0] != 'F' || fileHeader[1] != 'O') {
+        osSyncPrintf("Unknown Hmf Format!\n");
+    }
+    hmf->unk2C = file;
+    hmf->unk34 = file + 0xC;
+    hmf->unk30 = hmf->unk2C + (hmf->unk2C[5] << 0x10) + (hmf->unk2C[6] << 8) + hmf->unk2C[7] + 8;
+
+    D_800DEF74_DFB74 = func_8001EA88_1F688(0x56545831, hmf->unk34, hmf->unk30);
+    D_800DEF78_DFB78 = func_8001EA88_1F688(0x46414331, hmf->unk34, hmf->unk30);
+    D_800DEF7C_DFB7C = func_8001EA88_1F688(0x4F424A31, hmf->unk34, hmf->unk30);
+    D_800DEF80_DFB80 = func_8001EA88_1F688(0x4D415431, hmf->unk34, hmf->unk30);
+    D_800DEF84_DFB84 = func_8001EA88_1F688(0x434F4C31, hmf->unk34, hmf->unk30);
+    D_800DEF88_DFB88 = func_8001EA88_1F688(0x41545231, hmf->unk34, hmf->unk30);
+    D_800DEF8C_DFB8C = func_8001EA88_1F688(0x4D544E31, hmf->unk34, hmf->unk30);
+    D_800DEF90_DFB90 = func_8001EA88_1F688(0x53545247, hmf->unk34, hmf->unk30);
+    hmf->unk38 = func_8001EA88_1F688(0x4D415031, hmf->unk34, hmf->unk30);
+
+    hmf->unk16 = 0;
+    hmf->unk14 = 0;
+    hmf->unk12 = 0;
+    hmf->unk10 = 0;
+    hmf->unk40 = NULL;
+    hmf->unk3C = NULL;
+    hmf->unkB4 = NULL;
+    hmf->unkA0 = NULL;
+    hmf->unk0A = 0;
+    hmf->unkC0 = NULL;
+    hmf->unk60 = NULL;
+    hmf->unk5C = NULL;
+    hmf->unkCC = NULL;
+    hmf->unkD0 = NULL;
+
+    D_800DEF70_DFB70 = func_8001EA88_1F688(0x4D4F4445, hmf->unk34, hmf->unk30);
+    func_8001FFCC_20BCC(hmf);
+    if (D_800DEF74_DFB74 != NULL) {
+        func_8001DF00_1EB00(hmf);
+    }
+    if (D_800DEF80_DFB80 != NULL) {
+        func_8001E108_1ED08(hmf);
+    }
+    D_800F92DD_F9EDD = flags;
+    func_8003CB70_3D770(hmf);
+    if (D_800DEF88_DFB88 != NULL) {
+        func_8001E57C_1F17C(hmf);
+    }
+    hmf->unk94 = NULL;
+    hmf->unk90 = NULL;
+    hmf->unk9C = NULL;
+
+    record = D_800DEF7C_DFB7C + 8;
+    recordCount = record[0];
+    recordCount = (recordCount << 8) + record[1];
+    hmf->unk68 = 0;
+    hmf->unk84 = (HmfMotionData *)-1;
+    if ((recordCount << 0x10) == 0) {
+        hmf->unk16 = 0;
+        hmf->unk10 = 0;
+        return;
+    }
+
+    record += 4;
+    recordStart = record;
+    i = 0;
+    mapCount = 0;
+    modelCount = 0;
+    motionCount = 0;
+    extraCount = 0;
+    for (; i < recordCount; i++) {
+        switch (record[2]) {
+            case 0x3A:
+                modelCount++;
+                break;
+
+            case 0x3D:
+                motionCount++;
+                break;
+
+            case 0x61:
+                mapCount++;
+                break;
+
+            case 0x5D:
+                extraCount++;
+                break;
+        }
+        record += ((record[0] << 8) + record[1]) + 2;
+    }
+
+    if (motionCount != 0) {
+        hmf->unk84 = func_80027154_27D54(recordCount * sizeof(HmfMotionData), D_800FA1AA_FADAA);
+    }
+
+    if (flags & 0x200000) {
+        if (mapCount != 0) {
+            hmf->unkC4 = func_80027154_27D54(mapCount * sizeof(HmfMapData), D_800FA1AA_FADAA);
+            hmf->unk24 = mapCount;
+        }
+        if (extraCount != 0) {
+            hmf->unkC0 = func_80027154_27D54(sizeof(HmfData_UnkBC), D_800FA1AA_FADAA);
+        } else {
+            hmf->unkC0 = NULL;
+        }
+    } else {
+        hmf->unkC4 = NULL;
+        hmf->unkC0 = NULL;
+    }
+
+    hmf->unk64 = func_80027154_27D54(modelCount * sizeof(HmfObjectData), D_800FA1AA_FADAA);
+    record = recordStart;
+    hmf->unk1C = 0;
+    i = 0;
+    objectIndex = 0;
+    mapCount = 0;
+    motionCount = 0;
+    flagsMask = flags & 0x200000;
+    for (; i < recordCount; i++) {
+        switch (record[2]) {
+            case 0x3A: {
+                s16 linkIndex;
+                s16 vertexCount;
+                s32 attrMask;
+
+                recordStart = record + 5;
+                recordSize = (record[0] << 8) + record[1];
+                linkIndex = (record[6] << 8) + record[7];
+                hmf->unk64[objectIndex].unk08 = func_8001F380_1FF80(hmf, hmf->unk64[objectIndex].unk12, (record[3] << 8) + record[4]);
+                data = &hmf->unk64[objectIndex];
+                vertexCount = (record[8] << 8) + record[9];
+                data->unk04 = vertexCount;
+                hmf->unk1C += vertexCount;
+                hmf->unk64[objectIndex].unk50 = 0x2B00;
+                hmf->unk64[objectIndex].unk58 = NULL;
+                hmf->unk64[objectIndex].unk02 = -1;
+                if (hmf->unk14 != 0) {
+                    func_8001EB48_1F748(hmf, objectIndex, linkIndex, vertexCount);
+                    if (vertexCount != 0) {
+                        hmf->unk64[objectIndex].unk2E = hmf->unk64[objectIndex].unk54->unk33;
+                    } else {
+                        hmf->unk64[objectIndex].unk2E = 0xFF;
+                    }
+                }
+                attrMask = hmf->unk64[objectIndex].unk50 & 0x10000;
+                if (((D_800F842C_F902C != 0) & (recordSize >= 0x3A)) && recordStart[0x35] != 0 && recordStart[0x36] == 0) {
+                    if (recordSize == 0x3E) {
+                        hmf->unk64[objectIndex].unk50 = (recordStart[0x37] << 0x18) | (recordStart[0x39] << 8) | recordStart[0x3A] | attrMask;
+                    } else {
+                        hmf->unk64[objectIndex].unk50 = (recordStart[0x37] << 0x18) | attrMask;
+                    }
+                    hmf->unk64[objectIndex].unk06 = recordStart[0x38];
+                }
+                objectIndex++;
+                break;
+            }
+
+            case 0x10:
+                func_8001DA90_1E690(hmf, record + 5);
+                break;
+
+            case 0x3D:
+                func_8001E78C_1F38C(hmf, motionCount, record + 5);
+                motionCount++;
+                break;
+
+            case 0x61:
+                if (flagsMask) {
+                    hmf->unkC4[mapCount].unk1C = func_8001F380_1FF80(hmf, &hmf->unkC4[mapCount], (record[3] << 8) + record[4]);
+                    func_8001FBE0_207E0(hmf, record + 5, mapCount);
+                    mapCount++;
+                }
+                break;
+
+            case 0x5D:
+                if (flagsMask) {
+                    func_8001FC8C_2088C(hmf, record + 5);
+                }
+                break;
+        }
+        record += ((record[0] << 8) + record[1]) + 2;
+    }
+
+    hmf->unk10 = objectIndex;
+    hmf->unk16 = motionCount;
+    func_80038654_39254(hmf);
+    func_8003EF04_3FB04(hmf);
+    func_8001F50C_2010C(hmf);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D190_1DD90);
+#endif
 
 void func_8001D9D4_1E5D4(HmfLoadData *hmf) {
     s16 i;
