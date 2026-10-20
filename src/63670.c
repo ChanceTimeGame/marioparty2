@@ -57,6 +57,62 @@ void func_80053608_54208(f32);
 f32 func_80053614_54214(void);
 void* HuMemMemoryAllocTemp(u32 size);
 void HuMemMemoryFreeTemp(void* ptr);
+s32 PlayerIsCPU(s16);
+void func_800797DC_7A3DC(s32, s16);
+s32 func_8004E94C_4F54C(void);
+void func_800537A0_543A0(Vec2f* arg0);
+u16 func_800536E4_542E4(Vec2f* arg0);
+extern u16 ContDStkTrg[4];
+extern s32 D_800CCC18_CD818;
+extern s16 D_800E1FA2_E2BA2;
+extern Vec* D_800E1FB0_E2BB0;
+extern Vec D_800E1FE8_E2BE8[4];
+extern f32 D_800CCC6C_CD86C[][2];
+extern f32 D_800CCC8C_CD88C[][2];
+extern f32 D_800CCCA4_CD8A4[][2];
+extern f32 D_800CCCB4_CD8B4[][2];
+extern f32 D_800CCCD4_CD8D4[][2];
+extern f32 D_800CCCEC_CD8EC[][2];
+SpaceData* GetSpaceData(s16);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16 chainIndex, u16 spaceIndex);
+void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
+void func_800B3170_B3D70(Vec* dst, Vec* src); /* HuVecCopy3F */
+extern f32 D_800CCD04_CD904[][2];
+extern f32 D_800CCD2C_CD92C[][2];
+void HuVecSubtract(Vec* out, Vec* a, Vec* b);
+f32 func_80042BE0_437E0(Vec*); /* MBVecAngleGet */
+void func_80064FF8_65BF8(void);
+void func_80067040_67C40(s32 arg0, s16 arg1, s16 arg2);
+void func_80067C6C_6886C(s32 arg0);
+void func_80063178_63D78(void);
+void func_8005660C_5720C(s16 arg0, s16 arg1); /* MBPlayerPosMasuSet */
+void func_80029708_2A308(s32);
+void func_8005E374_5EF74(void);
+void func_8005E310_5EF10(void);
+void func_8008F624_90224(s32, s32, s32);
+void func_80052E68_53A68(f32); /* MBCameraZoomSet */
+void func_800650F0_65CF0(void);
+void func_80063950_64550(void);
+void func_80066994_67594(void);
+void func_800636F8_642F8(s32);
+s32 func_80011308_11F08(s16);
+void func_800498CC_4A4CC(void);
+void func_80060034_60C34(s32, s32); /* MBStatusColorSet */
+void func_80061518_62118(void);
+void omPrcSetStatBit(Process* process, s32 value);
+extern s16 D_800CCC64_CD864;
+extern f32 D_800E1F84_E2B84;
+extern s16 D_800FA188_FAD88;
+extern s16 D_800FA198_FAD98;
+extern s16 D_800FC734_FD334;
+extern s16 D_800FA1A4_FADA4;
+extern s16 D_80101058_101C58;
+Process* func_80056D80_57980(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* MBPlayerPosMoveCreate */
+
+/* MP2 compares a player's chain and space index (0x10, 0x12) as one word */
+#define PLAYER_CHAIN_SPACE(p) (*(s32*)&(p)->cur_chain_index)
+#define PLAYER_NEXT_CHAIN_SPACE(p) (*(s32*)&(p)->next_chain_index)
+#define PLAYER_MODEL(p) ((Object*)(p)->unk_24)
 
 void MBOvlCall(s32 arg0, s16 arg1, s16 arg2) {
     omOvlHisData* temp_v1;
@@ -127,7 +183,18 @@ void func_80062CD8_638D8(s16 arg0) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062D44_63944);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062D50_63950);
+void func_80062D50_63950(void) {
+    s32* temp_s0 = HuPrcCurrentGet()->user_data;
+
+    while (1) {
+        if ((PlayerIsCPU(temp_s0[0]) == 0) &&
+            ((GwSystem.current_player_index != temp_s0[0]) || (D_800CCC18_CD818 == 0)) &&
+            (ContDStkTrg[gPlayers[temp_s0[0]].port] & 0x20)) {
+            func_800797DC_7A3DC(0x4B6, temp_s0[0]);
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80062E10_63A10);
 
@@ -151,9 +218,39 @@ void func_80063710_64310(Vec* pos) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063734_64334);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063740_64340);
+void func_80063740_64340(void) {
+    Vec2f sp10;
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063844_64444);
+    while (1) {
+        switch (D_800E1FA2_E2BA2) {
+            case 1:
+                MBDCameraPos3DSet(&((Object*)gPlayers[GwSystem.current_player_index].unk_24)->coords);
+                break;
+            case 2:
+                MBDCameraPos3DSet(&D_800E1FA4_E2BA4);
+                break;
+            case 4:
+                MBDCameraPos3DSet(D_800E1FB0_E2BB0);
+                break;
+            case 3:
+                func_800537A0_543A0(&sp10);
+                func_800536E4_542E4(&sp10);
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
+
+void func_80063844_64444(void) {
+    GW_SYSTEM* sys = &GwSystem;
+
+    if (++sys->current_player_index >= 4 && func_8004E94C_4F54C() == 0) {
+        sys->current_player_index = 0;
+        if (++sys->current_turn >= 99) {
+            sys->current_turn = 99;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800638C8_644C8);
 
@@ -245,9 +342,108 @@ void func_80063950_64550(void) {
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063BBC_647BC);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063C40_64840);
+/* MP3 MBPlayerPosFixSet */
+void func_80063C40_64840(s32 playerNo, s32 arg1) {
+    GW_PLAYER* player;
+    GW_PLAYER* playerCur;
+    SpaceData* space;
+    s32 var_s1;
+    s32 var_s4;
+    s32 playersShareSpace;
+    s32 i;
+    GW_SYSTEM* system = &GwSystem;
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063F88_64B88);
+    player = BoardPlayerGet(playerNo);
+    space = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+    if (system->current_player_index == playerNo) {
+        func_800B3170_B3D70(&PLAYER_MODEL(player)->coords, &space->coords);
+        return;
+    }
+
+    playerCur = BoardPlayerGet(system->current_player_index);
+    var_s4 = 0;
+    playersShareSpace = PLAYER_CHAIN_SPACE(player) == PLAYER_CHAIN_SPACE(playerCur);
+
+    var_s1 = 0;
+    for (i = 0; i < 4; i++) {
+        if ((playerNo != i) && (i != system->current_player_index)) {
+            if (PLAYER_CHAIN_SPACE(player) == PLAYER_CHAIN_SPACE(BoardPlayerGet(i))) {
+                var_s1 += 1;
+                var_s4 += i < playerNo;
+            }
+        }
+    }
+
+    if (playersShareSpace == 1) {
+        if (var_s1 == 2) {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCCD4_CD8D4[var_s4][0], space->coords.y, space->coords.z + D_800CCCD4_CD8D4[var_s4][1]);
+        } else if (var_s1 == 3) {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCCB4_CD8B4[var_s4][0], space->coords.y, space->coords.z + D_800CCCB4_CD8B4[var_s4][1]);
+        } else {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCCEC_CD8EC[var_s4][0], space->coords.y, space->coords.z + D_800CCCEC_CD8EC[var_s4][1]);
+        }
+    } else {
+        if (var_s1 == 0) {
+            func_800B3170_B3D70(&D_800E1FE8_E2BE8[playerNo], &space->coords);
+        } else if (var_s1 == 2) {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCC8C_CD88C[var_s4][0], space->coords.y, space->coords.z + D_800CCC8C_CD88C[var_s4][1]);
+        } else if (var_s1 == 3) {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCC6C_CD86C[var_s4][0], space->coords.y, space->coords.z + D_800CCC6C_CD86C[var_s4][1]);
+        } else {
+            HuVecCopyXYZ(&D_800E1FE8_E2BE8[playerNo], space->coords.x + D_800CCCA4_CD8A4[var_s4][0], space->coords.y, space->coords.z + D_800CCCA4_CD8A4[var_s4][1]);
+        }
+    }
+
+    if (arg1 < 2) {
+        func_800B3170_B3D70(&PLAYER_MODEL(player)->coords, &D_800E1FE8_E2BE8[playerNo]);
+        return;
+    }
+    func_80056D80_57980(&PLAYER_MODEL(player)->coords, &D_800E1FE8_E2BE8[playerNo], &PLAYER_MODEL(player)->coords, arg1);
+}
+
+s32 func_80063F88_64B88(s32 arg0) {
+    Vec sp10;
+    GW_PLAYER* curPlayer;
+    GW_PLAYER* player;
+    f32 var_f4;
+    SpaceData* space;
+    s32 var_s2;
+    s32 var_s4;
+    s32 i;
+
+    curPlayer = BoardPlayerGet(arg0);
+    var_s2 = 0;
+    var_s4 = 0;
+
+    for (i = 0; i < 4; i++) {
+        if (i == arg0) {
+            continue;
+        }
+        player = BoardPlayerGet(i);
+        var_s4 += PLAYER_CHAIN_SPACE(curPlayer) == PLAYER_CHAIN_SPACE(player);
+        var_s2 += PLAYER_NEXT_CHAIN_SPACE(curPlayer) == PLAYER_CHAIN_SPACE(player);
+    }
+
+    space = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(curPlayer->cur_chain_index, curPlayer->cur_space_index));
+    HuVecSubtract(&sp10, &GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(curPlayer->next_chain_index, curPlayer->next_space_index))->coords, &space->coords);
+    var_f4 = func_80042BE0_437E0(&sp10);
+    if ((var_s4 == 0) || (!(D_800CCD04_CD904[var_s4][0] < var_f4)) || (!(var_f4 <= D_800CCD04_CD904[var_s4][1]))) {
+        if (var_s2 != 0) {
+            if (D_800CCD2C_CD92C[var_s2][0] < 0.0f) {
+                var_f4 -= 360.0f;
+            }
+            if (!(D_800CCD2C_CD92C[var_s2][0] < var_f4) || (!(var_f4 <= D_800CCD2C_CD92C[var_s2][1]))) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            return 0;
+        }
+    } else {
+        return 1;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80064134_64D34);
 
@@ -346,15 +542,99 @@ void func_8006508C_65C8C(void) {
     func_80064FF8_65BF8();
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800650BC_65CBC);
+void func_800650BC_65CBC(void) {
+    mbGameMode = 0xB;
+    func_80064FF8_65BF8();
+    func_80067040_67C40(0x54, 0, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_800650F0_65CF0);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006692C_6752C);
+void func_8006692C_6752C(void) {
+    HuPrcVSleep();
+    func_80067C6C_6886C(gPlayers[GwSystem.current_player_index].port);
+    func_80063178_63D78();
+    omOvlReturnEx(1);
+    omOvlKill();
+    HuPrcVSleep();
+}
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80066994_67594);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80066C34_67834);
+/* MP3 MBStart */
+void func_80066C34_67834(u32 arg0) {
+    GW_PLAYER* player;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        s16 masuID;
+        player = BoardPlayerGet(i);
+        masuID = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+        func_8005660C_5720C(i, masuID);
+    }
+
+    func_800514F0_520F0();
+    func_80053608_54208(1.0f);
+    MBCameraSpeedSet(-1.0f);
+    func_80029708_2A308(1);
+    switch (arg0) {
+        case 0:
+            switch (mbGameMode) {
+                case 0:
+                case 1:
+                    InitFadeIn(0, 0);
+                    func_8005E374_5EF74();
+                    break;
+                default:
+                    if (D_800CCC64_CD864 != -1) {
+                        if (D_800CCC64_CD864 == 13) {
+                            func_8008F624_90224(255, 255, 255);
+                        } else {
+                            func_8008F624_90224(0, 0, 0);
+                        }
+                        InitFadeIn(D_800CCC64_CD864, 0x10);
+                        D_800CCC64_CD864 = -1;
+                        MBPlayerVibrate(0, 0);
+                        MBPlayerVibrate(1, 0);
+                        MBPlayerVibrate(2, 0);
+                        MBPlayerVibrate(3, 0);
+                    } else {
+                        InitFadeIn(0xFF, 0x10);
+                    }
+                    func_80052E68_53A68(D_800E1F84_E2B84);
+                    func_8005E310_5EF10();
+                    break;
+            }
+            MBDCameraPos3DSet(&PLAYER_MODEL(&gPlayers[GwSystem.current_player_index])->coords);
+            omAddPrcObj(func_800650F0_65CF0, 0xEFFF, 0x2000, 0);
+            omAddPrcObj(func_80063950_64550, 0x1005, 0, 0);
+            omPrcSetStatBit(omAddPrcObj(func_80066994_67594, 0x1005, 0, 0), 0x80);
+            D_800FA198_FAD98 = 0;
+            D_800FC734_FD334 = 0;
+            D_800FA1A4_FADA4 = 0;
+            D_80101058_101C58 = 0;
+            omAddPrcObj(func_80063740_64340, 0x1005, 0, 0);
+            func_800636F8_642F8(1);
+            if (func_80011308_11F08(D_800FA188_FAD88) < 0x7F) {
+                func_800498CC_4A4CC();
+                return;
+            }
+            return;
+        case 1:
+            MBDCameraPos3DSet(&PLAYER_MODEL(&gPlayers[GwSystem.current_player_index])->coords);
+            for (i = 0; i < 4; i++) {
+                func_80060034_60C34(i, (u8)BoardPlayerGet(i)->player_space_color);
+            }
+            omAddPrcObj(func_80063950_64550, 0x1005, 0, 0);
+            omPrcSetStatBit(omAddPrcObj(func_8006692C_6752C, 0x1005, 0, 0), 0x80);
+            D_800FA198_FAD98 = 1;
+            return;
+        case 2:
+            func_80061518_62118();
+            func_800636F8_642F8(0);
+            break;
+    }
+}
 
 void ExecBoardScene(board_overlay_entrypoint* arg0, s16 arg1) {
     if (arg0->index < 0) {

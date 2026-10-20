@@ -19,11 +19,19 @@ extern u32* D_800E2068_E2C68;
 extern s32 D_800E206C_E2C6C;
 
 s32 dmaRead(u8* src, u8* dest, s32 size);
-void func_8001B078_1BC78(s32 arg0, UnkEep* arg1, s16 arg2);
+/* eeprom.c defines it void, but it leaves func_8007EE0C_7FA0C's result in v0 and callers use it */
+s32 func_8001B078_1BC78(s32 arg0, UnkEep* arg1, s16 arg2);
 s32 HuGetPadInserted(s16 port);
 u16 func_80068720_69320(void);
 void func_8006877C_6937C(void);
 void func_80068C48_69848(s32 index, StrData* out);
+void func_80067D90_68990(void);
+void func_8001CA48_1D648(void);
+void func_800689A0_695A0(void);
+void func_80068A20_69620(void);
+s32 func_80068744_69344(void);
+void func_8000EA88_F688(s32);
+extern u8 D_800CCFBF_CDBBF;
 
 s32 func_800686F0_692F0(void) {
     return ContDStkTrg[gPlayers[0].port] | (D_800FC9E0_FD5E0[gPlayers[0].port] & 0xF00);
@@ -52,9 +60,62 @@ void func_8006877C_6937C(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/692F0", func_800687B8_693B8);
+void func_800687B8_693B8(void) {
+    func_80067D90_68990();
+    func_8001CA48_1D648();
+    D_800F8C60.coinNum = 300;
+    func_800689A0_695A0();
+    func_80068A20_69620();
+    func_8006877C_6937C();
+}
 
-INCLUDE_ASM("asm/nonmatchings/692F0", func_800687FC_693FC);
+s32 func_800687FC_693FC(void) {
+    char sp10[4];
+    s32 i;
+    u16 temp_s0;
+    s32 var_s1;
+
+    for (i = 0; i < 4; i++) {
+        if (HuGetPadInserted(i) == 1) {
+            break;
+        }
+    }
+    if (i == 4) {
+        D_800CCFBF_CDBBF = 1;
+    }
+
+    var_s1 = func_8001AEDC_1BADC((unkfunc_8001AFD8*)sp10);
+
+    if (var_s1 != 0) {
+        D_800E2050_E2C50 = 0;
+    } else {
+        D_800E2050_E2C50 = 1;
+    }
+    if (D_800E2050_E2C50 != 0) {
+        var_s1 = func_8001B078_1BC78(0, (UnkEep*)&D_800F8C60, sizeof(D_800F8C60));
+        var_s1 = var_s1 | func_8001B078_1BC78(0xC4, (UnkEep*)gPlayers, 0x104);
+        var_s1 = var_s1 | func_8001B078_1BC78(0x1C8, (UnkEep*)&GwSystem, sizeof(GwSystem));
+    }
+
+    GwSystem.chosenMinigameIndex = 0;
+
+    if (var_s1 == 0) {
+        temp_s0 = func_80068744_69344();
+        if (temp_s0 != func_80068720_69320()) {
+            var_s1 = 1;
+        }
+    }
+    if (((D_800F8C60.unk0 != 5) | (var_s1 != 0)) != 0) {
+        func_800687B8_693B8();
+    }
+
+    if (_CheckFlag(2) != 0) {
+        func_8000EA88_F688(0);
+    } else {
+        func_8000EA88_F688(1);
+    }
+    return (D_800F8C60.unk0 == 5) & (var_s1 != 0);
+}
 
 void func_80068964_69564(void) {
     if (D_800E2050_E2C50 != 0) {

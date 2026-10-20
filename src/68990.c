@@ -71,7 +71,12 @@ u16 func_800680D4_68CD4(s16 index) {
 
 INCLUDE_ASM("asm/nonmatchings/68990", func_800680EC_68CEC);
 
-INCLUDE_ASM("asm/nonmatchings/68990", func_800680F8_68CF8);
+u16* func_800680F8_68CF8(s16 index) {
+    if (index < 0) {
+        index = GwSystem.current_board_index;
+    }
+    return &D_800F8C60.boardRecord[index][0];
+}
 
 u16 func_80068128_68D28(s16 index) {
     u16 *ptr;
