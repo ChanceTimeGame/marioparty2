@@ -58,13 +58,13 @@ typedef struct HVQMPSFrame {
 s32 func_800B0FD0_B1BD0(char* a, char* b); // strcmp
 void func_80095D70_96970(u16* outbuf);
 void func_800932E4_93EE4(s16* block, HVQCursor* c, s32 plane);
-void func_80094058_94C58(u16* outbuf, s16 y[4][16], s16* u, s16* v);
-void func_800945F0_951F0(u16* outbuf, s16 y[4][16], s16* u, s16* v);
+void func_80094058_94C58(u16* outbuf, u16* pixY, u16* pixU, u16* pixV);
+void func_800945F0_951F0(u16* outbuf, u16* pixY, u16* pixU, u16* pixV);
 
 extern u8 D_800ED910_EE510[0x300]; // channel + 0x100 -> 5-bit field << 1
 extern u8 D_800EDC10_EE810[0x300]; // the same with the alpha bit
 extern s32 D_800EDF10_EEB10; // chroma subsampled vertically too (two luma block rows per chroma row)
-extern void (*D_800EDF14_EEB14)(u16* outbuf, s16 y[4][16], s16* u, s16* v); // colour converter for the sampling
+extern void (*D_800EDF14_EEB14)(u16* outbuf, u16* y, u16* u, u16* v); // colour converter for the sampling
 extern s32 D_800EDF18_EEB18; // next free node while a tree is read
 extern Tree D_800EDF20_EEB20; // DC delta tree (leaves: delta << quantize shift)
 extern s16 D_800EFF52_F0B52; // largest DC delta (an escape: another delta follows)
@@ -165,11 +165,370 @@ s32 func_80093134_93D34(BitStream* buf) {
     return delta;
 }
 
+/* Reads one basis vector from the nest: a 16-bit code gives its position, sample step (1 or 2)
+   and row step (one or two nest rows), the sign and the low scale bits. The vector's mean is
+   removed; the scale (a running sum of deltas) is advanced. Returns the vector's factor: scale
+   over its largest magnitude, in 1/0x1000 units. */
+static inline s32 ReadBasis(s16* basis, s32* scale, s32 plane) {
+    u16 code;
+    s32 step;
+    s32 pitch;
+    u8* p;
+    u8* q;
+    s32 sum;
+    s32 mean;
+    s16 max;
+    s16 v;
+    s16* b;
+    s32 f;
+    s32 k;
+    s32 flag;
+    s32 w;
+
+    code = *D_800EFFCC_F0BCC[plane]++ << 8;
+    code |= *D_800EFFCC_F0BCC[plane]++;
+    if (D_800F0A54_F1654 == 0) {
+        w = D_800F0A48_F1648;
+        step = ((code >> 11) & 1) + 1;
+        p = D_800F0A44_F1644 + ((code & 0x3F) + ((code >> 6) & 0x1F) * w);
+        flag = (code >> 12) & 1;
+    } else {
+        w = D_800F0A48_F1648;
+        step = ((code >> 12) & 1) + 1;
+        p = D_800F0A44_F1644 + (((code >> 6) & 0x1F) + (code & 0x3F) * w);
+        flag = (code >> 11) & 1;
+    }
+    pitch = flag ? D_800F0A50_F1650 : w;
+    q = p;
+    sum = basis[0] = *q; q += step;
+    sum += basis[1] = *q; q += step;
+    sum += basis[2] = *q; q += step;
+    sum += basis[3] = *q;
+    p += pitch;
+    q = p;
+    sum += basis[4] = *q; q += step;
+    sum += basis[5] = *q; q += step;
+    sum += basis[6] = *q; q += step;
+    sum += basis[7] = *q;
+    p += pitch;
+    q = p;
+    sum += basis[8] = *q; q += step;
+    sum += basis[9] = *q; q += step;
+    sum += basis[10] = *q; q += step;
+    sum += basis[11] = *q;
+    p += pitch;
+    q = p;
+    sum += basis[12] = *q; q += step;
+    sum += basis[13] = *q; q += step;
+    sum += basis[14] = *q; q += step;
+    sum += basis[15] = *q;
+    mean = sum >> 4;
+
+#define SUB_MEAN()                  \
+    v = *b -= mean;                 \
+    b++;                            \
+    v = (v < 0) ? -v : v;           \
+    if (max < v) {                  \
+        max = v;                    \
+    }
+
+    b = basis;
+    max = *b -= mean;
+    b++;
+    max = (max < 0) ? -max : max;
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+    SUB_MEAN();
+#undef SUB_MEAN
+    k = (*scale += decodeSym(&D_800EFF80_F0B80[plane], &D_800EEF40_EFB40)) + ((code >> 13) & 3);
+    if (code & 0x8000) {
+        f = -D_800F0AE0_F16E0[max];
+    } else {
+        f = D_800F0AE0_F16E0[max];
+    }
+    return f * k;
+}
+
+/* Decodes one 4x4 block of a plane: a flat block (no basis vectors) is interpolated from its
+   neighbours' DC values, 8 means 16 raw samples, otherwise DC plus up to 7 scaled basis vectors. */
+// flat-block stores scheduled differently and register allocation in the basis loop (masked 114)
+#ifdef NON_MATCHING
+void func_800932E4_93EE4(s16* block, HVQCursor* c, s32 plane) {
+    u8 bn;
+    u8 dc;
+    u8 right;
+    u8 up;
+    u8 down;
+    s32 c2;
+    u32 base;
+    s16 dr;
+    s16 ur;
+    s16 ul;
+    s16 dl;
+    s32 ud;
+    s32 lr;
+    s32 s0;
+    s32 s1;
+    u32 t0;
+    u32 t1;
+    u32 t2;
+    u32 t3;
+    s32 ulx;
+    s32 urx;
+    s32 dlx;
+    s32 drx;
+
+    bn = c->curbn;
+    dc = c->curdc;
+    if (bn == 0) {
+        right = dc;
+        if (c->nextbn == 0) {
+            right = c->nextdc;
+        }
+        up = dc;
+        if (*c->bnprev == 0) {
+            up = *c->dcprev;
+        }
+        down = dc;
+        if (*c->bnnext == 0) {
+            down = *c->dcnext;
+        }
+        c2 = dc * 2;
+        base = (dc * 8) + 4;
+        dr = (down + right) - c2;
+        ur = (up + right) - c2;
+        ul = (up + c->left) - c2;
+        dl = (c->left + down) - c2;
+        ud = up - down;
+        lr = c->left - right;
+        s0 = ud + lr;
+        s1 = ud - lr;
+        t0 = base + s0;
+        t1 = base + s1;
+        t2 = base - s1;
+        t3 = base - s0;
+        ulx = up - c->left;
+        urx = up - right;
+        dlx = down - c->left;
+        drx = down - right;
+        block[0] = (t0 + ul) >> 3;
+        block[1] = (t0 + ulx) >> 3;
+        block[2] = (t1 + urx) >> 3;
+        block[3] = (t1 + ur) >> 3;
+        block[4] = (t0 - ulx) >> 3;
+        block[5] = (base - dr) >> 3;
+        block[6] = (base - dl) >> 3;
+        block[7] = (t1 - urx) >> 3;
+        block[8] = (t2 - dlx) >> 3;
+        block[9] = (base - ur) >> 3;
+        block[10] = (base - ul) >> 3;
+        block[11] = (t3 - drx) >> 3;
+        block[12] = (t2 + dl) >> 3;
+        block[13] = (t2 + dlx) >> 3;
+        block[14] = (t3 + drx) >> 3;
+        block[15] = (t3 + dr) >> 3;
+        c->left = dc;
+    } else {
+        if (bn == 8) {
+#define RAW() *block++ = *D_800EFFCC_F0BCC[plane]++
+            RAW(); RAW(); RAW(); RAW();
+            RAW(); RAW(); RAW(); RAW();
+            RAW(); RAW(); RAW(); RAW();
+            RAW(); RAW(); RAW(); RAW();
+#undef RAW
+        } else {
+            s16 basis[16];
+            s32 acc[16];
+            s32 scale;
+            s32 i;
+            s32 f;
+
+            scale = 0;
+            acc[0] = acc[1] = acc[2] = acc[3] = acc[4] = acc[5] = acc[6] = acc[7] = acc[8] = acc[9] =
+                acc[10] = acc[11] = acc[12] = acc[13] = acc[14] = acc[15] =
+                    (dc << D_800F13D8_F1FD8) + D_800F13DC_F1FDC;
+            for (i = bn; i > 0; i--) {
+                f = ReadBasis(basis, &scale, plane);
+                acc[0] += f * basis[0];
+                acc[1] += f * basis[1];
+                acc[2] += f * basis[2];
+                acc[3] += f * basis[3];
+                acc[4] += f * basis[4];
+                acc[5] += f * basis[5];
+                acc[6] += f * basis[6];
+                acc[7] += f * basis[7];
+                acc[8] += f * basis[8];
+                acc[9] += f * basis[9];
+                acc[10] += f * basis[10];
+                acc[11] += f * basis[11];
+                acc[12] += f * basis[12];
+                acc[13] += f * basis[13];
+                acc[14] += f * basis[14];
+                acc[15] += f * basis[15];
+            }
+            block[0] = acc[0] >> D_800F13D8_F1FD8;
+            block[1] = acc[1] >> D_800F13D8_F1FD8;
+            block[2] = acc[2] >> D_800F13D8_F1FD8;
+            block[3] = acc[3] >> D_800F13D8_F1FD8;
+            block[4] = acc[4] >> D_800F13D8_F1FD8;
+            block[5] = acc[5] >> D_800F13D8_F1FD8;
+            block[6] = acc[6] >> D_800F13D8_F1FD8;
+            block[7] = acc[7] >> D_800F13D8_F1FD8;
+            block[8] = acc[8] >> D_800F13D8_F1FD8;
+            block[9] = acc[9] >> D_800F13D8_F1FD8;
+            block[10] = acc[10] >> D_800F13D8_F1FD8;
+            block[11] = acc[11] >> D_800F13D8_F1FD8;
+            block[12] = acc[12] >> D_800F13D8_F1FD8;
+            block[13] = acc[13] >> D_800F13D8_F1FD8;
+            block[14] = acc[14] >> D_800F13D8_F1FD8;
+            block[15] = acc[15] >> D_800F13D8_F1FD8;
+        }
+        c->left = c->nextdc;
+    }
+    c->bnprev++;
+    c->dcprev++;
+    c->bnnext++;
+    c->dcnext++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/93A80", func_800932E4_93EE4);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/93A80", func_80094058_94C58);
+#define UV_BASE ((s32)(16384 * (513.0 / 512.0))) // 0x4020: 0x100 bias and rounding, << 6
+#define CONVERT(UPTR, VPTR, R, G, B) \
+    v = *(VPTR) - 128;               \
+    R = 90 * v + UV_BASE;            \
+    u = *(UPTR) - 128;               \
+    G = -22 * u + -46 * v + UV_BASE; \
+    B = 113 * u + UV_BASE;
 
-INCLUDE_ASM("asm/nonmatchings/93A80", func_800945F0_951F0);
+static inline u16 getRGB(s16 y, s16 r, s16 g, s16 b) {
+    return (D_800ED910_EE510[(y + r) >> 6] << 10) | (D_800ED910_EE510[(y + g) >> 6] << 5) |
+           D_800EDC10_EE810[(y + b) >> 6];
+}
+
+/* YUV to RGBA5551 for chroma sampled 2:1 across only: a chroma block covers two luma blocks
+   side by side (8 x 4 pixels). */
+void func_80094058_94C58(u16* outbuf, u16* pixY, u16* pixU, u16* pixV) {
+    s32 i;
+    u16* pixY1;
+    u16* pixY2;
+    u16* curoutbuf;
+    s16 u;
+    s16 v;
+    s16 ruv1, guv1, buv1;
+    s16 ruv2, guv2, buv2;
+    s16 ruv3, guv3, buv3;
+    s16 ruv4, guv4, buv4;
+
+    pixY1 = pixY;
+    pixY2 = pixY + 16;
+    for (i = 4; i > 0; i--) {
+        curoutbuf = outbuf;
+        CONVERT(pixU++, pixV++, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        CONVERT(pixU++, pixV++, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        CONVERT(pixU++, pixV++, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        CONVERT(pixU++, pixV++, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        outbuf += D_800F12FC_F1EFC;
+    }
+}
+
+/* YUV to RGBA5551 for chroma sampled 2:1 both ways: a chroma block covers four luma blocks
+   (8 x 8 pixels), each chroma sample a 2 x 2 square. */
+void func_800945F0_951F0(u16* outbuf, u16* pixY, u16* pixU, u16* pixV) {
+    s32 i;
+    u16* pixY1;
+    u16* pixY2;
+    u16* curoutbuf;
+    s16 u;
+    s16 v;
+    s16 ruv1, guv1, buv1;
+    s16 ruv2, guv2, buv2;
+    s16 ruv3, guv3, buv3;
+    s16 ruv4, guv4, buv4;
+
+    pixY1 = pixY;
+    pixY2 = pixY = pixY + 16;
+    i = 4;
+    while (i > 0) {
+        curoutbuf = outbuf;
+        CONVERT(pixU++, pixV++, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        CONVERT(pixU++, pixV++, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        CONVERT(pixU++, pixV++, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        CONVERT(pixU++, pixV++, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        outbuf += D_800F12FC_F1EFC;
+        curoutbuf = outbuf;
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        i -= 2;
+        outbuf += D_800F12FC_F1EFC;
+    }
+    pixY = pixY + 16;
+    pixY1 = pixY;
+    pixY2 = pixY + 16;
+    i = 4;
+    while (i > 0) {
+        curoutbuf = outbuf;
+        CONVERT(pixU++, pixV++, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        CONVERT(pixU++, pixV++, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        CONVERT(pixU++, pixV++, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        CONVERT(pixU++, pixV++, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        outbuf += D_800F12FC_F1EFC;
+        curoutbuf = outbuf;
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv1, guv1, buv1);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY1++ << 6, ruv2, guv2, buv2);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv3, guv3, buv3);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        *curoutbuf++ = getRGB(*pixY2++ << 6, ruv4, guv4, buv4);
+        i -= 2;
+        outbuf += D_800F12FC_F1EFC;
+    }
+}
 
 /* Shift a plane's cursor one block right: the current block takes the read-ahead one, which is
    refilled from the work buffers. */
@@ -215,7 +574,7 @@ void func_8009576C_9636C(u16* outbuf) {
         func_800932E4_93EE4(D_800F1398_F1F98, &D_800F0A98_F1698, 1);
         ADVANCE(D_800F0AB8_F16B8);
         func_800932E4_93EE4(D_800F13B8_F1FB8, &D_800F0AB8_F16B8, 2);
-        D_800EDF14_EEB14(outbuf, D_800F1318_F1F18, D_800F1398_F1F98, D_800F13B8_F1FB8);
+        D_800EDF14_EEB14(outbuf, (u16*)D_800F1318_F1F18, (u16*)D_800F1398_F1F98, (u16*)D_800F13B8_F1FB8);
         outbuf += D_800F1310_F1F10;
     }
     ADVANCE(D_800F0A58_F1658);
@@ -232,7 +591,7 @@ void func_8009576C_9636C(u16* outbuf) {
     func_800932E4_93EE4(D_800F1398_F1F98, &D_800F0A98_F1698, 1);
     ADVANCE_LAST(D_800F0AB8_F16B8);
     func_800932E4_93EE4(D_800F13B8_F1FB8, &D_800F0AB8_F16B8, 2);
-    D_800EDF14_EEB14(outbuf, D_800F1318_F1F18, D_800F1398_F1F98, D_800F13B8_F1FB8);
+    D_800EDF14_EEB14(outbuf, (u16*)D_800F1318_F1F18, (u16*)D_800F1398_F1F98, (u16*)D_800F13B8_F1FB8);
 }
 
 #define STEP_ROW(c)                       \
