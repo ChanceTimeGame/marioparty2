@@ -350,3 +350,7 @@ $(W1E_CARVED): RODATA_AS_DATA = 1
 
 # w1-C: ECE0 (audio driver) was built with the KMC VR4300 mul fix on (nop between mul.s in func_8001138C_11F8C)
 build/src/ECE0.c.o: export VR4300MUL = ON
+
+# w2-A: 30560 (MP1 2C0C0.c, model setup and drawing) was built with the KMC VR4300 mul fix on
+# (nop between dependent mul.s in func_8003A4B8_3B0B8), as MP1 builds 2C0C0.c
+build/src/30560.c.o: export VR4300MUL = ON

@@ -128,6 +128,78 @@ extern s16 D_80102722_103322;
 extern HmfVtx* D_80102728_103328[];
 extern s16 D_801027FA_1033FA;
 
+extern s16 D_800FDBC8_FE7C8;
+extern u16 D_800F60A0_F6CA0;
+extern s16 D_8010116E_101D6E;
+/* D_800FDC48_FE848's entries (MP1 unk2C0C0StructF0 is larger) */
+typedef struct HmfLayerEnt {
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ u8 unk01;
+    /* 0x02 */ char unk02[2];
+    /* 0x04 */ f32 unk04;
+} HmfLayerEnt; /* size = 0x8 */
+
+extern HmfLayerEnt* D_800FDC48_FE848[8]; /* 8 buffers of D_800CA080_CAC80[i] entries */
+extern s16 D_80102758_103358[8];
+extern s16 D_80101648_102248;
+extern u8 D_800CA080_CAC80[8];
+extern void* D_800F8C58_F9858;
+extern u8 D_800F842C_F902C;
+extern u8 D_800FD2A4_FDEA4;
+extern f32 D_80101300_101F00;
+extern f32 D_8010105C_101C5C;
+
+void* HuMemAlloc(s32);
+void func_800270C0_27CC0(void* (*)(s32), void (*)(void*));
+void func_800268D0_274D0(void);
+void func_8003CAA0_3D6A0(void);
+void func_8003B9D0_3C5D0(void);
+extern Gfx* D_8010271C_10331C; /* second display list buffer */
+extern s8 D_80101502_102102;
+extern s16 D_800F9D38_FA938;
+extern s16 D_800FA5B0_FB1B0;
+extern s16 D_800FA19A_FAD9A;
+extern s16 D_800FD850_FE450;
+extern s16 D_800FD8C0_FE4C0;
+extern s16 D_800F9D22_FA922;
+extern s32 D_800F8C4C_F984C;
+extern s16 D_80101646_102246;
+extern u32 D_800F64C4_F70C4;
+extern void* D_800FC888_FD488;
+extern u64 D_800FA720_FB320;
+extern u64 D_800FD8A0_FE4A0;
+extern Light* D_800F8424_F9024;
+/* 274D0's UnkLightData (0x1040 bytes); only its light count is read here */
+typedef struct HmfLightSet {
+    /* 0x00 */ s16 unk00;
+} HmfLightSet;
+extern HmfLightSet* D_800FA620_FB220;
+/* "Vertex Over!\n" (30560's rodata, D2E30) */
+extern char D_800D2230_D2E30[];
+
+void osSyncPrintf(const char* fmt, ...);
+void func_80026C40_27840(void);
+void func_8003057C_3117C(HmfData*);
+void func_8003076C_3136C(HmfData*);
+void func_80030668_31268(HmfData*);
+void func_800329E8_335E8(HmfData*, s16);
+void func_80038C04_39804(Gfx**, s16, s32);
+void func_8003BB58_3C758(HmfData*);
+extern f32 D_80101710_102310[4][4];
+extern f32 D_80100050_100C50[4][4];
+extern s16 D_8010107C_101C7C;
+extern u8 D_800F9914_FA514;
+/* "Mtx Over\n" (D2E54) */
+extern char D_800D2254_D2E54[];
+
+void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* multiply */
+void func_800B3040_B3C40(Matrix4f, void*);           /* guMtxF2L */
+s32 func_80038024_38C24(HmfData*, s16, Matrix4f, Matrix4f);
+void func_80030D58_31958(HmfData*, s16);
+void func_80031170_31D70(HmfData*, s16);
+void func_800316F0_322F0(HmfData*, s16);
+void func_80039B54_3A754(HmfData*, f32, HmfMotion*, s32);
+void func_8003A4B8_3B0B8(HmfData*, s32, s32);
 void func_8002024C_20E4C();
 void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
@@ -146,8 +218,40 @@ void func_800384C8_390C8(HmfData*, s16, HmfData*);
 s16 func_80038E38_39A38(u8*, HmfData*);
 void func_800B30D0_B3CD0(Matrix4f, void*);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8002F960_30560);
+void func_8002F960_30560(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 arg3, u16 arg4, u8 arg5) {
+    s16 i;
 
+    D_800FDBCA_FE7CA = arg5;
+    D_800FDBE0_FE7E0 = 0;
+    func_800270C0_27CC0(arg0, arg1);
+    D_800FDBC8_FE7C8 = arg2;
+    D_800F60A0_F6CA0 = arg4;
+    D_8010116E_101D6E = arg3;
+    for (i = 0; i < arg5; i++) {
+        D_80102728_103328[i] = HuMemAlloc(arg2 * sizeof(HmfVtx));
+        D_800F93D8_F9FD8[i] = HuMemAlloc(arg4 * 64);
+        D_800FD810_FE410[i] = HuMemAlloc(arg3 * sizeof(Gfx));
+    }
+    for (i = 0; i < 8; i++) {
+        D_800FDC48_FE848[i] = HuMemAlloc(D_800CA080_CAC80[i] * 8);
+    }
+    D_800F8C58_F9858 = HuMemAlloc(0x8400);
+    D_800FA620_FB220 = 0;
+    func_800268D0_274D0();
+    func_8003CAA0_3D6A0();
+    func_8003B9D0_3C5D0();
+    D_800F842C_F902C = 1;
+    D_800FD2A4_FDEA4 = 2;
+    D_80101300_101F00 = 1.0f;
+    D_8010105C_101C5C = 1.0f;
+    D_800FA60C_FB20C = 0;
+    D_800F9D2C_FA92C = 0xFF;
+    D_8010002C_100C2C = 0xFF;
+    D_800FC9E9_FD5E9 = 0xFF;
+    D_801027FA_1033FA = 950;
+    D_800F8C54_F9854 = 1000;
+    D_800F8C48_F9848 = 1;
+}
 /* exact c: marioparty func_8002B6C8 (src/2C0C0.c) */
 void func_8002FB6C_3076C(void) {
     func_800274A4_280A4();
@@ -183,12 +287,229 @@ void func_8002FB6C_3076C(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8002FCAC_308AC);
+void func_8002FCAC_308AC(void) {
+    HmfLayerEnt** p;
+    s16 i;
 
+    for (i = 0; i < 8; i++) {
+        D_80102758_103358[i] = 2;
+        p = &D_800FDC48_FE848[i];
+        (*p)->unk00 = 1;
+        (*p + 1)->unk01 = 0;
+        (*p + 1)->unk00 = 0;
+        (*p + 1)->unk04 = 200000.0f;
+    }
+    D_80101648_102248 = 0;
+}
+/* the per-part display lists (unk3C as a Gfx* array) */
+#define HMF_DL(a) ((Gfx**) (a)->unk3C)
+
+// register allocation only (masked 0): the vertex-buffer size lives in s0, and the end-list pointer in a0
+#ifdef NON_MATCHING
+void func_8002FD38_30938(HmfData* arg0) {
+    s16 savedCount;
+    s16 maxLen;
+    Gfx* savedDl;
+    HmfVtx* savedVtx;
+    Gfx* buf2;
+    Gfx* var_s4;
+    HmfPart* part;
+    HmfVtx* vtx;
+    s16* map;
+    s32 flags;
+    s32 size;
+    u16 vtxStart;
+    s16 i;
+    s16 j;
+
+    maxLen = 0;
+    if (arg0->unk10 == 0 || arg0->unk14 == 0) {
+        return;
+    }
+
+    savedDl = D_800FDBCC_FE7CC;
+    savedVtx = D_80101170_101D70;
+    savedCount = D_800FA61C_FB21C;
+
+    arg0->unk3C = func_80027154_27D54(arg0->unk10 * sizeof(Gfx*), D_800FA1AA_FADAA);
+    buf2 = HuMemAlloc(25 * sizeof(Gfx));
+    D_80101170_101D70 = HuMemAlloc((arg0->unk1C * 4 + arg0->unk10 * 8) * sizeof(HmfVtx));
+    if (arg0->unkB8 != NULL || (D_800F64C4_F70C4 & 0x400000)) {
+        if (arg0->unk60 != NULL) {
+            HuMemFree(arg0->unk60);
+        }
+        arg0->unk60 = HuMemAlloc(arg0->unk14 * sizeof(s16));
+        arg0->unk26 = 0;
+    }
+    if (D_80101170_101D70 == NULL) {
+        D_80101170_101D70 = arg0->unk40 = (HmfVtx*) 0 + D_800FA61C_FB21C;
+    }
+
+    var_s4 = HuMemAlloc(arg0->unk1C * 4 * sizeof(Gfx) + 500 * sizeof(Gfx));
+    if (var_s4 == NULL) {
+        var_s4 = D_800FDBCC_FE7CC;
+    }
+
+    if (arg0->unkCC != NULL) {
+        for (i = 0; i < arg0->unk10; i++) {
+            if ((*arg0->unkCC)[i] != NULL) {
+                func_80027340_27F40((*arg0->unkCC)[i]);
+            }
+        }
+        HuMemFree(*arg0->unkCC);
+        HuMemFree(arg0->unkCC);
+        arg0->unkCC = NULL;
+    }
+
+    func_8003057C_3117C(arg0);
+    D_800FA61C_FB21C = 0;
+    D_80101646_102246 = 0;
+    func_80026C40_27840();
+    func_8003076C_3136C(arg0);
+
+    part = arg0->unk64;
+    for (i = 0; i < arg0->unk10; i++, part++) {
+        D_800FDBCC_FE7CC = var_s4;
+        D_8010271C_10331C = buf2;
+        D_80101502_102102 = 0;
+        vtxStart = D_800FA61C_FB21C;
+        D_800F9D38_FA938 = 0;
+        D_800FA5B0_FB1B0 = 0;
+        D_800FA19A_FAD9A = 0;
+        D_800FA720_FB320 = 0xFFFFFFFF;
+        D_800FD8A0_FE4A0 = 0xFFFFFFFF;
+        D_800FC888_FD488 = NULL;
+
+        func_80038C04_39804(&D_800FDBCC_FE7CC, 1, 0);
+
+        if (D_800F64C4_F70C4 & 0x200) {
+            gSPLight(D_800FDBCC_FE7CC++, D_800F8424_F9024, D_800FA620_FB220->unk00 + 1);
+            D_800FD850_FE450 = D_800F8424_F9024->l.col[0];
+            D_800FD8C0_FE4C0 = D_800F8424_F9024->l.col[1];
+            D_800F9D22_FA922 = D_800F8424_F9024->l.col[2];
+        }
+
+        flags = part->unk50;
+        part->unk0A = D_800FA61C_FB21C;
+        part->unk0E = D_80101646_102246;
+        part->unk50 &= ~0x06000000;
+
+        func_800329E8_335E8(arg0, i);
+
+        flags &= 0x06000000;
+        if (flags != 0) {
+            part->unk50 |= flags;
+        }
+
+        part->unk0C = D_800FA61C_FB21C - part->unk0A;
+        part->unk10 = D_80101646_102246 - part->unk0E;
+
+        gSPEndDisplayList(D_800FDBCC_FE7CC++);
+        part->unk60 = D_800FC888_FD488;
+
+        if (D_8010271C_10331C == buf2) {
+            HMF_DL(arg0)[i] = func_80027154_27D54(size = (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx), D_800FA1AA_FADAA);
+            bcopy(var_s4, HMF_DL(arg0)[i], size);
+            part->unk5C = 0;
+            part->unk64 = NULL;
+        } else {
+            gSPEndDisplayList(D_8010271C_10331C++);
+            part->unk5C = D_800F8C4C_F984C;
+            HMF_DL(arg0)[i] = func_80027154_27D54(
+                (D_800FDBCC_FE7CC - var_s4 + D_8010271C_10331C - buf2) * sizeof(Gfx), D_800FA1AA_FADAA);
+            bcopy(var_s4, HMF_DL(arg0)[i], (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx));
+            part->unk64 = (D_800FDBCC_FE7CC - var_s4) + HMF_DL(arg0)[i];
+            bcopy(buf2, part->unk64, (D_8010271C_10331C - buf2) * sizeof(Gfx));
+        }
+
+        if (maxLen < D_800FDBCC_FE7CC - var_s4) {
+            maxLen = D_800FDBCC_FE7CC - var_s4;
+        }
+
+        if (part->unk50 & 0x06000000) {
+            if (arg0->unkCC == NULL) {
+                arg0->unkCC = func_80027154_27D54(sizeof(Gfx**), D_800FA1AA_FADAA);
+                *arg0->unkCC = func_80027154_27D54(arg0->unk10 * sizeof(Gfx*), D_800FA1AA_FADAA);
+                for (j = 0; j < arg0->unk10; j++) {
+                    (*arg0->unkCC)[j] = NULL;
+                }
+            }
+            D_800FDBCC_FE7CC = var_s4;
+            D_800FA61C_FB21C = vtxStart;
+            D_800F9D38_FA938 = 0;
+            D_800FA5B0_FB1B0 = 0;
+            D_800FA19A_FAD9A = 0;
+            D_800F9D22_FA922 = 0;
+            D_800FD8C0_FE4C0 = 0;
+            D_800FD850_FE450 = 0;
+            D_800FA720_FB320 = 0xFFFFFFFF;
+            D_800FD8A0_FE4A0 = 0xFFFFFFFF;
+            D_800FC888_FD488 = NULL;
+
+            func_800329E8_335E8(arg0, i);
+
+            gSPEndDisplayList(D_800FDBCC_FE7CC++);
+            (*arg0->unkCC)[i] = func_80027154_27D54((D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx), D_800FA1AA_FADAA);
+            bcopy(var_s4, (*arg0->unkCC)[i], (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx));
+        }
+    }
+
+    arg0->unk18 = D_800FA61C_FB21C;
+    arg0->unk1A = D_80101646_102246;
+
+    vtx = func_80027154_27D54(D_800FA61C_FB21C * sizeof(HmfVtx), D_800FA1AA_FADAA);
+    bcopy(D_80101170_101D70, vtx, D_800FA61C_FB21C * sizeof(HmfVtx));
+    arg0->unk40 = vtx;
+
+    func_80030668_31268(arg0);
+
+    for (i = 0; i < 4; i++) {
+        arg0->unk44[i] = vtx;
+    }
+
+    if (arg0->unk60 != NULL) {
+        map = func_80027154_27D54(arg0->unk14 * sizeof(s16), D_800FA1AA_FADAA);
+        bcopy(arg0->unk60, map, arg0->unk14 * sizeof(s16));
+        HuMemFree(arg0->unk60);
+        arg0->unk60 = map;
+    }
+
+    if (arg0->unkB8 != NULL || (D_800F64C4_F70C4 & 0x400000)) {
+        func_8003BB58_3C758(arg0);
+    }
+
+    if (arg0->unk1C * 4 + arg0->unk10 * 8 < D_800FA61C_FB21C) {
+        osSyncPrintf(D_800D2230_D2E30);
+    }
+
+    HuMemFree(D_80101170_101D70);
+    HuMemFree(var_s4);
+    HuMemFree(buf2);
+
+    D_800FA61C_FB21C = savedCount;
+    D_80101170_101D70 = savedVtx;
+    D_800FDBCC_FE7CC = savedDl;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/30560", func_8002FD38_30938);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003057C_3117C);
+void func_8003057C_3117C(HmfData* arg0) {
+    u16 var_a2;
+    s16 var_a3 = 0;
+    s16 i;
 
+    for (i = 0, var_a2 = 0; i < arg0->unk10; i++) {
+        if (arg0->unk64[i].unk50 & 0x20000) {
+            var_a3 = 1;
+        }
+        var_a2 += arg0->unk64[i].unk04;
+    }
+
+    if (var_a3 && arg0->unkB4 == NULL) {
+        arg0->unkB4 = func_80027154_27D54(var_a2 * sizeof(HmfFace), D_800FA1AA_FADAA);
+    }
+}
 /* same c: marioparty func_8002BDC0 (src/2C0C0.c) */
 void func_80030668_31268(HmfData* arg0) {
     HmfFace* var_a3;
@@ -308,8 +629,63 @@ s32 func_800308D8_314D8(HmfData *arg0) {
     return var_s2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80030A78_31678);
+void func_80030A78_31678(HmfData* arg0, Matrix4f arg1, Matrix4f arg2) {
+    Matrix4f sp10;
 
+    if (arg0->unk14 != 0) {
+        func_80030CD4_318D4(D_801016D0_1022D0[0], arg1);
+        D_800FD470_FE070 = 1;
+        guMtxIdentF(D_80101710_102310);
+        D_8010107C_101C7C = 0;
+        func_80030CD4_318D4(D_80100050_100C50, arg2);
+
+        if (arg0->unk01 & 4) {
+            if (arg0->unk64->unk50 & 0x70000000) {
+                func_80038024_38C24(arg0, 0, arg1, sp10);
+                func_80025BA4_267A4(arg2, sp10, arg1);
+            }
+            func_800B3040_B3C40(arg1, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
+            func_80031FD8_32BD8(arg0, 0, (u8*) D_800FD83C_FE43C + 0x40 * (D_800F928C_F9E8C++), arg1);
+            return;
+        }
+
+        if (arg0->unk84 == (void*) -1) {
+            if (arg0->unk90 != NULL) {
+                func_80039B54_3A754(arg0, arg0->unkA4, arg0->unk90, 1);
+                if (arg0->unk94 != NULL) {
+                    func_8003A4B8_3B0B8(arg0, arg0->unkA8, arg0->unkAC);
+                }
+                if (arg0->unk98 != NULL) {
+                    func_80039B54_3A754(arg0, arg0->unkB0, arg0->unk98, 0);
+                }
+            }
+            if (arg0->unk68 != 0) {
+                func_80030D58_31958(arg0, 0);
+                if (D_800F60A0_F6CA0 <= D_800F928C_F9E8C) {
+                    osSyncPrintf(D_800D2254_D2E54);
+                }
+            }
+        } else if (arg0->unk16 != 0) {
+            if (D_800F9914_FA514 != 0 && arg0->unk0B == 1 && arg0->unk0C != 0) {
+                func_800316F0_322F0(arg0, 0);
+            } else {
+                if (arg0->unk90 != NULL) {
+                    func_80039B54_3A754(arg0, arg0->unkA4, arg0->unk90, 1);
+                    if (arg0->unk94 != NULL) {
+                        func_8003A4B8_3B0B8(arg0, arg0->unkA8, arg0->unkAC);
+                    }
+                    if (arg0->unk98 != NULL) {
+                        func_80039B54_3A754(arg0, arg0->unkB0, arg0->unk98, 0);
+                    }
+                }
+                func_80031170_31D70(arg0, 0);
+            }
+            if (D_800F60A0_F6CA0 <= D_800F928C_F9E8C) {
+                osSyncPrintf(D_800D2254_D2E54);
+            }
+        }
+    }
+}
 /* exact c: marioparty func_8002C37C (src/2C0C0.c) */
 void func_80030CD4_318D4(Matrix4f arg0, Matrix4f arg1) {
     arg0[0][0] = arg1[0][0];
