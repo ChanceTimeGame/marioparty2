@@ -106,7 +106,7 @@ f32 HuVecDistance(Vec* a, Vec* b);
 f32 HuVecGetLength3F(Vec* vec);
 void HuVecMulScalar(Vec*, f32, Vec*);
 void MBVecNormalize(Vec*);
-void MBDBackCreate(omObjData*, s32);
+void MBDBackCreate(s32, s32);
 void MBBackOffsetSet(s16, s16);
 s32 dmaRead(u32 src, u8* dest, s32 size);
 void func_8002D018_2DC18(s32, void* func);
@@ -130,6 +130,15 @@ void func_80053230_53E30(void);
 extern Vec D_800E18C0_E24C0;
 extern s32 D_800CC224_CCE24;
 extern s32 D_800CC270_CCE70;
+extern s32 D_801027B8_1033B8;
+s32 func_80051864_52464(u16 arg0);
+void func_80052B4C_5374C(Gfx** gfx, s32 arg1, u8 arg2);
+void func_80051788_52388(void);
+void func_80052FE8_53BE8(void);
+void func_80053608_54208(f32);
+void func_8005390C_5450C(s32);
+void MBCameraSpeedSet(f32);
+void func_80052E68_53A68(f32);
 
 
 void func_80050A30_51630(u8* arg0) {
@@ -160,10 +169,61 @@ void func_80050AE0_516E0(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", MBDBackCreate);
+void MBDBackCreate(s32 arg0, s32 arg1) {
+    s32* temp_v0;
+    u32 temp_s0;
+    u32* temp_v0_2;
+    UnkModelStruct* temp_v0_3;
+
+    D_801027B8_1033B8 = arg0;
+    D_800DF9B8_E05B8 = D_800DF9B0_E05B0 + D_800CC200_CCE00[arg0];
+    temp_v0 = HuMemMemoryAllocTemp(sizeof(HVQHeader));
+    dmaRead(D_800DF9B8_E05B8, (u8*)temp_v0, sizeof(HVQHeader));
+    arg0 = *temp_v0;
+    HuMemMemoryFreeTemp(temp_v0);
+    arg0++;
+    temp_s0 = arg0 * 4;
+    temp_v0_2 = HuMemMemoryAllocTemp(temp_s0);
+    D_800CC204_CCE04 = temp_v0_2;
+    dmaRead(D_800DF9B8_E05B8 + 4, (u8*)temp_v0_2, temp_s0);
+    temp_v0_3 = HuMemMemoryAllocTemp(sizeof(UnkModelStruct));
+    D_800CC208_CCE08 = temp_v0_3;
+    dmaRead(D_800DF9B8_E05B8 + D_800CC204_CCE04[0], (u8*)&temp_v0_3->unk0, sizeof(UnkModelStruct));
+    D_800CC208_CCE08->unk18 *= 5.0f;
+    D_800CC208_CCE08->unk1C *= 5.0f;
+    D_800CC208_CCE08->unk20 *= 5.0f;
+    D_800CC208_CCE08->unk24 *= 5.0f;
+    D_800CC208_CCE08->unk28 *= 5.0f;
+    D_800CC208_CCE08->unk2C *= 5.0f;
+    if (D_800CC208_CCE08->unk1C >= 5000.0f) {
+        D_800CC208_CCE08->unk18 /= 1.2f;
+        D_800CC208_CCE08->unk1C /= 1.2f;
+        D_800CC208_CCE08->unk20 /= 1.2f;
+        D_800CC208_CCE08->unk14 /= 1.2f;
+    }
+    D_800DFE50_E0A50 = HuMemMemoryAllocTemp(func_80051864_52464(0));
+    dmaRead(D_800DF9B8_E05B8 + D_800CC204_CCE04[1], D_800DFE50_E0A50, func_80051864_52464(0));
+    D_800DF9C4_E05C4 = 0;
+    D_800DF9C2_E05C2 = 0;
+    D_800DF9C6_E05C6 = D_800CC208_CCE08->unk0 * D_800CC208_CCE08->unk8 / 2;
+    D_800DF9C8_E05C8 = D_800CC208_CCE08->unk4 * D_800CC208_CCE08->unkC / 2;
+    D_800DF9C0_E05C0 = 1;
+    func_8002D018_2DC18(0, func_80052B4C_5374C);
+    func_80051788_52388();
+    func_800514F0_520F0();
+    if (arg1 != 0) {
+        func_80052FE8_53BE8();
+    }
+    func_80053608_54208(1.0f);
+    func_8005390C_5450C(0xFF);
+    MBCameraSpeedSet(-1.0f);
+    D_800CC214_CCE14 = 0.0f;
+    D_800CC218_CCE18 = 0.0f;
+    func_80052E68_53A68(1.0f);
+}
 
 void func_80050E00_51A00(s32 obj) {
-    MBDBackCreate((omObjData*)obj, 1);
+    MBDBackCreate(obj, 1);
 }
 
 void MBDBackKill(void) {
@@ -797,7 +857,7 @@ void func_80053FC8_54BC8(void) {
 }
 
 void func_80053FE8_54BE8(s32 arg0) {
-    MBDBackCreate((omObjData*)arg0, 1);
+    MBDBackCreate(arg0, 1);
     omDelPrcObj(D_800E18B0_E24B0);
     D_800E18B0_E24B0 = NULL;
 }
