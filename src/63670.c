@@ -1,6 +1,35 @@
 #include "common.h"
 #include "game/object.h"
 
+extern s8 D_800CCC14_CD814;
+extern s8 D_800CCC15_CD815;
+extern s16 D_800E1FE4_E2BE4;
+extern s16 D_800E1FE6_E2BE6;
+extern s16 D_800F8518_F9118;
+extern s16 D_800F8CE4_F98E4[];
+extern s16 D_800F8F58_F9B58;
+extern s16 D_800F9560_FA160;
+extern s16 D_800FA60A_FB20A;
+extern s16 D_800FCE80_FDA80;
+extern s16 D_800FD2A0_FDEA0;
+extern s16 D_800FD2B4_FDEB4;
+extern s16 D_800FD898_FE498;
+extern s16 D_800FDBD8_FE7D8;
+extern s16 D_800FDEAC_FEAAC;
+extern s16 D_800FFDF0_1009F0;
+extern s16 D_800FFDF8_1009F8;
+extern s32 D_80100028_100C28;
+extern s16 D_801026D6_1032D6;
+extern s16 D_801027D8_1033D8;
+extern s16 D_801027F8_1033F8;
+extern s16 D_800F64B0_F70B0;
+extern s16 D_800FA652_FB252;
+void func_8004A908_4B508(void);
+void func_8005DF18_5EB18(s32);
+
+/* Board game-state reset (MP1 func_80056B78, MP3 MBSaveInit) */
+
+
 extern s32 D_800CCC10;
 void func_80047B78_48778(void);
 void func_8005FF9C_60B9C(void);
@@ -408,8 +437,141 @@ void func_800632F0_63EF0(s16 arg0) {
 s16 func_800632FC_63EFC(void) {
     return D_800E1F88_E2B88;
 }
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063308_63F08);
+void func_80063308_63F08(void) {
+    GW_PLAYER* player;
+    GW_SYSTEM* sys = &GwSystem;
+    s32 i;
 
+    D_801027D8_1033D8 = 0;
+    D_800FD898_FE498 = 0;
+    D_800FA60A_FB20A = 0;
+    D_801026D6_1032D6 = 0;
+    D_800FD2A0_FDEA0 = 0;
+    D_800FCE80_FDA80 = 0;
+    D_800F8518_F9118 = 0;
+    D_800F8F58_F9B58 = 0;
+    D_801027F8_1033F8 = 0;
+    D_800FDBD8_FE7D8 = 0;
+    D_800FFDF8_1009F8 = 0;
+    D_800FD2B4_FDEB4 = 0;
+    D_800F9560_FA160 = 0;
+    mbGameMode = 0;
+    D_80100028_100C28 = 0;
+    D_800FA654_FB254 = 0;
+    D_800FC878_FD478 = 0;
+    starBlockSpaceIndex = -1;
+    coinBlockSpaceIndex = -1;
+    D_800FFDF0_1009F0 = 0;
+    D_800FDEAC_FEAAC = 0;
+    for (i = 0; i < 10; i++) {
+        prevCoinBlockSpaceIndexes[i] = prevStarBlockSpaceIndexes[i] = -1;
+    }
+    D_800E1FE6_E2BE6 = 0;
+    D_800E1FE4_E2BE4 = 0;
+    D_800E1F84_E2B84 = 1.0f;
+    func_8004A908_4B508();
+    D_800CCC64_CD864 = -1;
+    D_800F64B0_F70B0 = -1;
+    D_800FA652_FB252 = 0;
+    D_800CCC18_CD818 = 1;
+    func_8005DF18_5EB18(0);
+    func_8005DF18_5EB18(1);
+    func_8005DF18_5EB18(2);
+    func_8005DF18_5EB18(3);
+    if (_CheckFlag(0x41) != 0) {
+        D_800CCC14_CD814 = sys->unk_25;
+        D_800CCC15_CD815 = sys->unk_26[0];
+        return;
+    }
+    sys->unk_0A = 0;
+    sys->current_turn = 1;
+    sys->current_player_index = 0;
+    sys->chosenMinigameIndex = 0;
+    sys->unk_1C = -1;
+    if (_CheckFlag(0xD) == 0) {
+        switch (sys->current_game_length) {
+            case 0:
+                sys->total_turns = 20;
+                break;
+            case 1:
+                sys->total_turns = 35;
+                break;
+            case 2:
+                sys->total_turns = 50;
+                break;
+        }
+    } else {
+        switch (sys->current_game_length) {
+            case 0:
+                sys->total_turns = 10;
+                break;
+            case 1:
+                sys->total_turns = 20;
+                break;
+            case 2:
+                sys->total_turns = 30;
+                break;
+        }
+    }
+    sys->unk_24[0] = 2;
+    if (D_800CCC14_CD814 == -1) {
+        sys->unk_25 = 0;
+    } else {
+        sys->unk_25 = D_800CCC14_CD814;
+    }
+    if (D_800CCC15_CD815 == -1) {
+        sys->unk_26[0] = 1;
+    } else {
+        sys->unk_26[0] = D_800CCC15_CD815;
+    }
+    for (i = 0; i < 5; i++) {
+        player = BoardPlayerGet(i);
+        player->stars = 0;
+        player->unk_18 = 0;
+        player->coins_total = 0;
+        player->coins_max = 0;
+        player->happening_spaces_landed_on = 0;
+        player->red_spaces_landed_on = 0;
+        player->blue_spaces_landed_on = 0;
+        player->chance_spaces_landed_on = 0;
+        player->bowser_spaces_landed_on = 0;
+        player->battle_spaces_landed_on = 0;
+        player->item_spaces_landed_on = 0;
+        player->bank_spaces_landed_on = 0;
+        player->item = -1;
+        player->turn_status = 0;
+    }
+    for (i = 0; i < 32; i++) {
+        D_800F8CE4_F98E4[i] = 0;
+    }
+    _ClearFlag(0x46);
+    _ClearFlag(0x47);
+    _ClearFlag(0x48);
+    _ClearFlag(0x49);
+    _ClearFlag(0x4A);
+    _ClearFlag(0x4B);
+    _ClearFlag(0x4C);
+    _ClearFlag(0x50);
+    _ClearFlag(0x51);
+    _ClearFlag(0x52);
+    _ClearFlag(0x53);
+    _ClearFlag(0x54);
+    _ClearFlag(0x55);
+    _ClearFlag(0x56);
+    _ClearFlag(0x57);
+    _ClearFlag(0x58);
+    _ClearFlag(0x59);
+    _ClearFlag(0x5A);
+    _ClearFlag(0x5B);
+    _ClearFlag(0x5C);
+    _ClearFlag(0x5D);
+    _ClearFlag(0x5E);
+    _ClearFlag(0x42);
+    _ClearFlag(0x43);
+    _ClearFlag(0x44);
+    _ClearFlag(0x4D);
+    _ClearFlag(0x41);
+}
 void func_800636F8_642F8(s32 arg0) {
     D_800E1FA2_E2BA2 = arg0;
 }
