@@ -206,6 +206,13 @@ $(CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 # pad them to 16 and shift everything after
 NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
 $(NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
+# b3-D: carved rodata (5F3B0 D3B00-D3BE8)
+B3D_CARVED_RODATA_UNITS := build/src/5F3B0.c.o
+CARVED_RODATA_UNITS += $(B3D_CARVED_RODATA_UNITS)
+$(B3D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
+B3D_NOPAD_DATA_PIECES := build/asm/data/D3BE8.data.s.o
+NOPAD_DATA_PIECES += $(B3D_NOPAD_DATA_PIECES)
+$(B3D_NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 # b2-A: units retail built with the KMC assembler VR4300 mul fix on (a nop between mul.s pairs), as MP1/MP3 build their sources
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
