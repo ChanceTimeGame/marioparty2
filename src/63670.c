@@ -1,6 +1,13 @@
 #include "common.h"
 #include "game/object.h"
 
+extern s32 D_800CCC40_CD840[];
+extern s32 D_800CCC68_CD868;
+extern s16 D_800E1F88_E2B88;
+void func_80056A3C_5763C(s8);
+void func_80063308_63F08(void);
+
+
 /* Board flow: overlay history, scenes, camera and rumble. C from MP1 src/57330.c, src/5CDB0.c,
    src/59510.c and MP3 ovl_80_shared_board 10C230.c / 113520.c, ovl_81 E3CD0.c / E78B0.c; the rest
    have no reference or differ (near) and stay asm, and func_80063BBC and MBPlayerVibrate stay asm
@@ -138,8 +145,29 @@ void MBOvlCall(s32 arg0, s16 arg1, s16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062B14_63714);
-
+void func_80062B14_63714(void) {
+    D_800E1F50_E2B50 = 1;
+    mbovlhisidx = 0;
+    if (_CheckFlag(0x41) == 0) {
+        switch (GwSystem.current_board_index) {
+        case 6:
+        case 8:
+            break;
+        default:
+            MBOvlCall(-2, 4, 0x192);
+            break;
+        }
+        if (D_800CCC40_CD840[GwSystem.current_board_index] != 0) {
+            MBOvlCall(D_800CCC40_CD840[GwSystem.current_board_index], 0, 0x192);
+        }
+        MBOvlCall(-2, 1, 0x192);
+    }
+    GwSystem.unk_00 = 2;
+    func_80063308_63F08();
+    func_80056A3C_5763C(GwSystem.unk_26[0]);
+    _ClearFlag(0x12);
+    D_800E1F82_E2B82 = 0;
+}
 void func_80062BE0_637E0(void) {
     omOvlHisData* history;
 
@@ -165,10 +193,12 @@ void func_80062BE0_637E0(void) {
     omOvlReturnEx(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062CC0_638C0);
-
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062CCC_638CC);
-
+void func_80062CC0_638C0(void) {
+    D_800E1F50_E2B50 = 0;
+}
+s16 func_80062CCC_638CC(void) {
+    return D_800E1F80_E2B80;
+}
 void func_80062CD8_638D8(s16 arg0) {
     s16 temp_v0 = mbovlhisidx;
 
@@ -181,8 +211,9 @@ void func_80062CD8_638D8(s16 arg0) {
     omOvlReturnEx(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80062D44_63944);
-
+s32 func_80062D44_63944(void) {
+    return mbGameMode;
+}
 void func_80062D50_63950(void) {
     s32* temp_s0 = HuPrcCurrentGet()->user_data;
 
@@ -200,24 +231,30 @@ INCLUDE_ASM("asm/nonmatchings/63670", func_80062E10_63A10);
 
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063178_63D78);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800632E4_63EE4);
-
-INCLUDE_ASM("asm/nonmatchings/63670", func_800632F0_63EF0);
-
-INCLUDE_ASM("asm/nonmatchings/63670", func_800632FC_63EFC);
-
+void func_800632E4_63EE4(s32 arg0) {
+    D_800CCC68_CD868 = arg0;
+}
+void func_800632F0_63EF0(s16 arg0) {
+    D_800E1F88_E2B88 = arg0;
+}
+s16 func_800632FC_63EFC(void) {
+    return D_800E1F88_E2B88;
+}
 INCLUDE_ASM("asm/nonmatchings/63670", func_80063308_63F08);
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800636F8_642F8);
-
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063704_64304);
-
+void func_800636F8_642F8(s32 arg0) {
+    D_800E1FA2_E2BA2 = arg0;
+}
+s16 func_80063704_64304(void) {
+    return D_800E1FA2_E2BA2;
+}
 void func_80063710_64310(Vec* pos) {
     D_800E1FA4_E2BA4 = *pos;
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80063734_64334);
-
+void func_80063734_64334(Vec* arg0) {
+    D_800E1FB0_E2BB0 = arg0;
+}
 void func_80063740_64340(void) {
     Vec2f sp10;
 
@@ -654,8 +691,9 @@ void func_80066FD8_67BD8(s16 arg0) {
     D_800E1F98_E2B98 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80067004_67C04);
-
+void func_80067004_67C04(s16 arg0) {
+    D_800CCC64_CD864 = arg0;
+}
 void func_80067010_67C10(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     D_800E1F9C_E2B9C = arg0;
     D_800E1FA0_E2BA0 = arg1;
@@ -668,8 +706,9 @@ void func_80067040_67C40(s32 arg0, s16 arg1, s16 arg2) {
     func_80067010_67C10(arg0, arg1,  arg2, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_8006706C_67C6C);
-
+void func_8006706C_67C6C(void) {
+    D_801011FC_101DFC = 1;
+}
 void func_8006707C_67C7C(s16 arg0, s16 arg1) {
     D_800E1F94_E2B94 = 0x10;
     D_800E1F96_E2B96 = arg0;
@@ -677,8 +716,9 @@ void func_8006707C_67C7C(s16 arg0, s16 arg1) {
     func_80062CC0_638C0();
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_800670B0_67CB0);
-
+s16 func_800670B0_67CB0(void) {
+    return D_800E1F94_E2B94;
+}
 void func_800670BC_67CBC(Vec *arg0) {
     f32 temp_f20;
     f32 temp_f22;
