@@ -1,6 +1,21 @@
 #include "common.h"
 #include "game/object.h"
 
+extern s32 D_800CCD5C_CD95C[];
+extern u8 D_800CCD54_CD954[];
+extern s16 D_800F8D1A_F991A;
+void func_800115B4_121B4(s16);
+s16 func_80079428_7A028(s32);
+Object* func_80043510_44110(s32, void*);
+void func_800297E8_2A3E8(s16, f32, f32, f32);
+void MBModelKill(Object*);
+void omDelObj(omObjData*);
+void MBDlgWinExecY(s32, s32, s32);
+void MBBattleKuriboObjMain(omObjData* arg0);
+
+/* Battle space: the Goomba drops in; returns 1 when a Battle minigame is called */
+
+
 void PlaySound(s32);
 void func_800116B4_122B4(s16, s32);
 s16 GetCurrentPlayerIndex(void);
@@ -881,8 +896,65 @@ void MBBattleKuriboObjMain(omObjData *arg0) {
     arg0->rot.x += 10.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80064200_64E00);
+s32 func_80064200_64E00(GW_PLAYER* player) {
+    omObjData* obj;
+    s32 n;
+    s32 i;
 
+    func_800115B4_121B4(D_800FA188_FAD88);
+    D_800F64B0_F70B0 = func_80079428_7A028(0x3D);
+    mbBattleKuriboMdl = func_80043510_44110(0xA, NULL);
+    func_800297E8_2A3E8(mbBattleKuriboMdl->omObj1->model[0], 0, 0, 0);
+    func_8002D4A0_2E0A0(mbBattleKuriboMdl->omObj1->model[0]);
+    mbBattleKuriboMdl->flags |= 1;
+    mbBattleKuriboUpperMdl = func_80043510_44110(0x6D, NULL);
+    func_800297E8_2A3E8(mbBattleKuriboUpperMdl->omObj1->model[0], 0, 0, 0);
+    func_800B3170_B3D70(&mbBattleKuriboMdl->coords, &PLAYER_MODEL(player)->coords);
+    func_800B3170_B3D70(&mbBattleKuriboUpperMdl->coords, &PLAYER_MODEL(player)->coords);
+    mbBattleKuriboMdl->velocity.x = 120.0f;
+    mbBattleKuriboUpperMdl->velocity.x = 122.0f;
+    while (mbBattleKuriboMdl->velocity.x > 30.0f) {
+        HuPrcVSleep();
+        mbBattleKuriboMdl->velocity.x -= 1.0f;
+        mbBattleKuriboUpperMdl->velocity.x -= 1.0f;
+    }
+    obj = omAddObj(0x1F4, 0, 0, -1, MBBattleKuriboObjMain);
+    obj->rot.x = 180.0f;
+    PlaySound(0xE8);
+    if (gPlayers[(u8)player->unk_1C[0]].coins != 0) {
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            if ((D_800F8D1A_F991A >> i) & 1) {
+                n += gPlayers[i].coins != 0;
+            }
+        }
+        if (n == 0) {
+            MBDlgWinExecY(6, 0x211, 0x88);
+        } else {
+            MBDlgWinExecY(6, 0x20F, 0x88);
+            goto battle;
+        }
+    } else {
+        MBDlgWinExecY(6, 0x210, 0x88);
+    }
+    omDelObj(obj);
+    while (mbBattleKuriboMdl->velocity.x <= 120.0f) {
+        HuPrcVSleep();
+        mbBattleKuriboMdl->velocity.x += 3.0f;
+        mbBattleKuriboUpperMdl->velocity.x += 3.0f;
+    }
+    MBModelKill(mbBattleKuriboMdl);
+    MBModelKill(mbBattleKuriboUpperMdl);
+    func_800114E8_120E8(D_800F64B0_F70B0, 0x3C);
+    D_800F64B0_F70B0 = -1;
+    D_800FA652_FB252 = 1;
+    omPrcSetStatBit(omAddPrcObj(func_80064134_64D34, 0, 0, 0), 0xA0);
+    return 0;
+battle:
+    func_80067010_67C10(D_800CCD5C_CD95C[GwSystem.current_board_index], 0, 0, 1);
+    func_80067EF8_68AF8(D_800CCD54_CD954[GwSystem.current_board_index]);
+    return 1;
+}
 INCLUDE_ASM("asm/nonmatchings/63670", func_800645C8_651C8);
 
 const char D_800D3020_D3C20[] __attribute__((aligned(8), section(".rodata"))) = "%d";
