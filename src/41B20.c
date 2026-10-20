@@ -3,8 +3,7 @@
 #include "game/board.h"
 
 /* Direction choice arrows and prompt (MP1 src/3C420.c; the stick-selection process from MP3
-   ovl_80_shared_board/EAB00.c). func_800412CC (MP1 NON_MATCHING, near) and func_800419A4 stay
-   asm. Board models are MBModel (MP1's Object view of them). */
+   ovl_80_shared_board/EAB00.c). Board models are MBModel (MP1's Object view of them). */
 
 typedef struct unk_ProcessUserData08 {
     /* 0x00 */ s16 unk00;
@@ -41,14 +40,23 @@ s16 func_800569B8_575B8(s16, f32);
 f32 func_800431FC_43DFC(Vec*, Vec*);
 void func_80056658_57258(Vec*, Vec*, Vec*);
 void func_800B3170_B3D70(Vec*, Vec*);
-void func_800419A4_425A4(s16, u32*, s32);
+unk_8003B8D4Struct* func_800419A4_425A4(s16, s16*, s32);
+SpaceData* GetSpaceData(s16);
+void PlaySound(s32);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
+f32 func_800B7890_B8490(f32);
+unk_8003B8D4Struct* func_80041058_41C58(void);
+void func_80041118_41D18(unk_8003B8D4Struct*, unk_ProcessUserData08*, s16);
+void func_80041924_42524(unk_ProcessUserData08*, Vec*, Vec*, f32);
+extern s16 D_800FA198_FAD98;
+extern s16 D_80101058_101C58;
 void func_800412CC_41ECC(void);
 s32 func_80041610_42210(unk_8003B8D4Struct*, s32);
 unk_ProcessUserData08* func_800412B4_41EB4(unk_8003B8D4Struct*, s16);
 void func_80041640_42240(void);
 
 /* same c: marioparty func_8003B820 (src/3C420.c) */
-void* func_80040F20_41B20() {
+unk_ProcessUserData08* func_80040F20_41B20() {
     MBModel* temp_v0_2;
     unk_ProcessUserData08* temp_v0;
 
@@ -63,7 +71,7 @@ void* func_80040F20_41B20() {
 }
 
 /* same c: marioparty func_8003B820 (src/3C420.c) */
-void* func_80040FA4_41BA4() {
+unk_ProcessUserData08* func_80040FA4_41BA4() {
     MBModel* temp_v0_2;
     unk_ProcessUserData08* temp_v0;
 
@@ -193,7 +201,115 @@ unk_ProcessUserData08* func_800412B4_41EB4(unk_8003B8D4Struct* arg0, s16 arg1) {
     return arg0->unk04[arg1];
 }
 
+/* near MP1 func_8003BB48 (src/3C420.c, NON_MATCHING there): MP2 plays sounds 3/4/1 and clears
+   two flags on a confirm. NON_MATCHING: the loop hoists 360.0f into $f24 (retail reloads it each
+   pass) and fills the delay slot of the fade > 0 test; logic as retail. Its jump table stays in the
+   data blob while this is asm. */
+#ifdef NON_MATCHING
+void func_800412CC_41ECC(void) {
+    OSMesg msg;
+    unk_8003B8D4Struct* w;
+    f32 angle;
+    f32 scale;
+    s16 fade;
+    s16 repeat;
+    s16 prev;
+    s32 ret;
+    s32 i;
+
+    fade = -1;
+    w = HuPrcCurrentGet()->user_data;
+    prev = w->unk0C;
+    angle = 0.0f;
+    repeat = 0;
+    do {
+        HuPrcVSleep();
+        if (fade < 0) {
+            if (repeat == 0) {
+                if ((ret = osRecvMesg(&w->unk10, &msg, OS_MESG_NOBLOCK)) == -1) {
+                    msg = (OSMesg)ret;
+                }
+                if (w->unk00 & 1) {
+                    repeat = 8;
+                }
+            } else {
+                msg = (OSMesg)-1;
+                repeat--;
+            }
+            switch ((s32)msg) {
+                case -2:
+                    w->unk0C++;
+                    if (w->unk0C >= w->unk02) {
+                        w->unk0C = 0;
+                    }
+                    break;
+                case -3:
+                    w->unk0C--;
+                    if (w->unk0C < 0) {
+                        w->unk0C = w->unk02 - 1;
+                    }
+                    break;
+                case -4:
+                    if (w->unk0C >= 0) {
+                        PlaySound(3);
+                        D_800FA198_FAD98 = 0;
+                        D_80101058_101C58 = 0;
+                        fade = 30;
+                    }
+                    break;
+                case -5:
+                    PlaySound(4);
+                    w->unk0C = -1;
+                    fade = 0;
+                    break;
+                case -6:
+                    w->unk0C = -1;
+                    break;
+                case -1:
+                    break;
+                default:
+                    if ((s32)msg < w->unk02) {
+                        w->unk0C = (s32)msg;
+                    }
+                    break;
+            }
+            if (prev != w->unk0C) {
+                PlaySound(1);
+                if (prev >= 0) {
+                    HuVecCopyXYZ(&func_800412B4_41EB4(w, prev)->unk04->scale, 1.0f, 1.0f, 1.0f);
+                    angle = 0.0f;
+                }
+                prev = w->unk0C;
+            }
+        }
+        if (prev >= 0) {
+            if (fade >= 0) {
+                angle += 50.0f;
+            } else {
+                angle += 15.0f;
+            }
+            if (angle > 360.0f) {
+                angle -= 360.0f;
+            }
+            scale = func_800B7890_B8490(angle) * 0.3f + 1.2f;
+            HuVecCopyXYZ(&func_800412B4_41EB4(w, prev)->unk04->scale, scale, 1.0f, scale);
+        }
+        if (fade > 0) {
+            fade--;
+            scale = fade * (1.0f / 30.0f);
+            for (i = 0; i < w->unk02; i++) {
+                if (i != prev) {
+                    Vec* sc = &func_800412B4_41EB4(w, i)->unk04->scale;
+                    HuVecMulScalar(sc, scale, sc);
+                }
+            }
+        }
+    } while (fade != 0);
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/41B20", func_800412CC_41ECC);
+#endif
 
 /* exact c: marioparty func_8003BE84 (src/3C420.c) */
 s32 func_80041610_42210(unk_8003B8D4Struct* arg0, s32 arg1) {
@@ -292,10 +408,29 @@ void func_80041924_42524(unk_ProcessUserData08* arg0, Vec* arg1, Vec* arg2, f32 
     HuVecAdd(&arg0->unk04->pos, &dir, arg1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/41B20", func_800419A4_425A4);
+/* near MP3 func_800D75E8_EB208_shared_board (EAB00.c): MP2 picks the arrow model by arg2. */
+unk_8003B8D4Struct* func_800419A4_425A4(s16 arg0, s16* arg1, s32 arg2) {
+    GW_PLAYER* player;
+    unk_ProcessUserData08* arrow;
+    unk_8003B8D4Struct* w;
+
+    player = BoardPlayerGet(arg0);
+    w = func_80041058_41C58();
+    w->unk68 = player;
+    for (; *arg1 >= 0; arg1++) {
+        if (arg2 == 0) {
+            arrow = func_80040F20_41B20();
+        } else {
+            arrow = func_80040FA4_41BA4();
+        }
+        func_80041924_42524(arrow, &((MBModel*)player->unk_24)->pos, &GetSpaceData(*arg1)->coords, 18.0f);
+        func_80041118_41D18(w, arrow, 0);
+    }
+    return w;
+}
 
 /* exact c: marioparty3 func_800F25B4_1061D4_shared_board (src/overlays/ovl_80_shared_board/105D50.c) */
-void func_80041A74_42674(s16 arg0, u32 *arg1) {
+void func_80041A74_42674(s16 arg0, s16 *arg1) {
     func_800419A4_425A4(arg0, arg1, 0);
 }
 

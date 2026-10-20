@@ -256,3 +256,6 @@ $(B3A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+# b3-B: units whose retail code has the KMC VR4300 mul fix (a nop between dependent mul.s)
+B3B_MULFIX_UNITS := build/src/43E90.c.o
+$(B3B_MULFIX_UNITS): export VR4300MUL := ON
