@@ -1,5 +1,6 @@
 #include "common.h"
 #include "PR/os.h"
+#include "game/rsp.h"
 
 /* Performance meter task and timers (MP1 src/61B70.c, non-host path). MP1's names are anonymous. */
 
@@ -8,8 +9,6 @@ typedef struct Vec2s {
     s16 y;
 } Vec2s;
 
-extern u8 D_800B8590_B9190[];
-extern u8 D_800B8660_B9260[];
 extern OSMesg D_800E23F8_E2FF8[];
 extern s32 D_800E240C_E300C;
 extern void* D_800E2410_E3010;
@@ -24,7 +23,6 @@ extern s32 D_800E243C_E303C;
 extern s32 D_800E2444_E3044;
 extern OSMesgQueue* D_800E2448_E3048;
 extern s32 D_800E244C_E304C;
-extern s32* D_800FCE7C_FDA7C;
 
 
 typedef struct unk_Struct_func_800611A4 {
@@ -43,11 +41,7 @@ extern s32 D_800E2430_E3030;
 extern s32 D_800E2434_E3034;
 extern s32 D_800E2440_E3040;
 extern Gfx D_800E2450_E3050;
-extern s32 D_800F8430_F9030;
 extern OSMesgQueue D_800F8F68_F9B68;
-extern s32 D_800FA638_FB238;
-extern s32 D_800FC98C_FD58C;
-extern s32 D_800FC730_FD330;
 extern s32 osJamMesg(OSMesgQueue *, OSMesg, s32);
 extern s32 D_800E2304_E2F04;
 extern s16 D_800E2308_E2F08;
@@ -68,7 +62,7 @@ void func_8007BDA0_7C9A0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u16 arg4) {
     D_800E2408_E3008 = (OSMesg)1;
     D_800E240C_E300C = 2;
     D_800E2410_E3010 = D_800B8590_B9190;
-    D_800E2414_E3014 = D_800B8660_B9260 - D_800B8590_B9190;
+    D_800E2414_E3014 = (u32)D_800B8660_B9260 - (u32)D_800B8590_B9190;
     D_800E241C_E301C = 0x1000;
     D_800E2424_E3024 = 0x800;
     D_800E242C_E302C = 0x400;
@@ -164,10 +158,10 @@ Gfx* func_8007C24C_7CE4C(void * arg0, Gfx* arg1, s32 arg2) {
 
 void func_8007C254_7CE54(void) {
     Gfx* gfx = &D_800E2450_E3050;
-    D_800E2428_E3028 = D_800FC730_FD330;
-    D_800E2440_E3040 = D_800FA638_FB238;
-    D_800E2430_E3030 = D_800FC98C_FD58C;
-    D_800E2434_E3034 = D_800F8430_F9030;
+    D_800E2428_E3028 = (s32)D_800FC730_FD330;
+    D_800E2440_E3040 = (s32)D_800FA638_FB238;
+    D_800E2430_E3030 = (s32)D_800FC98C_FD58C;
+    D_800E2434_E3034 = (s32)D_800F8430_F9030;
     gDPPipeSync(gfx++);
     gDPSetCycleType(gfx++, G_CYC_FILL);
     gDPSetRenderMode(gfx++, G_RM_NOOP, G_RM_NOOP2);

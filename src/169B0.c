@@ -6,6 +6,7 @@
 #include "PR/libaudio.h"
 #include "PR/sptask.h"
 #include "game/pad.h"
+#include "game/rsp.h"
 
 #define PAD_COUNT (4)
 
@@ -72,8 +73,6 @@ extern s32 D_800D7BA8_D87A8;
 extern OSMesgQueue D_800D7F80_D8B80;
 extern OSMesg D_800D7F98_D8B98[];
 extern OSMesgQueue D_800F8F40_F9B40;
-extern u64 D_800B8590_B9190[]; /* rspbootTextStart */
-extern u64 D_800B8660_B9260[]; /* rspbootTextEnd */
 extern u64 D_800D1480_D2080[]; /* aspMainDataStart */
 
 void func_8000FEFC_10AFC(void);

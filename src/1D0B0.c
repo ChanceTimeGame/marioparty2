@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/hmfman.h"
+#include "game/rsp.h"
 
 /* Game loop processes (MP1 src/engine/gameman.c, MP3 src/gameman.c), the graphics swap chain
    (MP3 src/graphics.c, MP1 src/engine/graphics.c) and the HMF model loader (MP3 src/hmfload.c,
@@ -54,15 +55,10 @@ extern s16 D_800F842A_F902A;
 extern void **D_800DEF58_DFB58;
 extern u16 D_800DEF5C_DFB5C;
 extern u16 D_800DEF5E_DFB5E;
-extern u64 *D_800F8430_F9030;
-extern u64 *D_800FA638_FB238;
-extern u64 *D_800FC98C_FD58C;
-extern u64 *D_800FC730_FD330;
 extern Gfx D_800F8F30_F9B30[];
 extern s32 D_800F8C44_F9844;
 extern void *D_800FDC68_FE868;
 extern void *D_800F8418_F9018;
-extern s32 *D_800FCE7C_FDA7C;
 extern u32 D_800DEF60_DFB60;
 extern OSMesgQueue D_800DEE08_DFA08;
 extern void *D_800DEE20_DFA20;
@@ -71,8 +67,6 @@ extern OSMesgQueue D_800DEF20_DFB20;
 extern void *D_800DEF38_DFB38;
 extern u32 D_800FDC6C_FE86C;
 extern OSMesgQueue D_800F8F68_F9B68;
-extern u64 D_800B8590_B9190[];
-extern u64 D_800B8660_B9260[];
 extern s32 D_800F9298_F9E98;
 
 void func_8002FB6C_3076C(void);
