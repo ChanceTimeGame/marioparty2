@@ -27,7 +27,7 @@ typedef struct BoardStatus {
     /* 0x24 */ f32 unk_24;
     /* 0x28 */ f32 unk_28;
     /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ s32 unk30;                           /* inferred */
+    /* 0x30 */ omObjData* unk30;
     /* 0x34 */ char pad34[2];
     /* 0x36 */ s16 unk_36;
     /* 0x38 */ u8 unk_38[12];
@@ -36,8 +36,8 @@ typedef struct BoardStatus {
 
 void SprAttrReset(s16, s16, s32);                        /* extern */
 void SprAttrSet(s16, s16, u32);                          /* extern */
-void SprPosSet(s16, s32, s16, s16);                      /* extern */
-void SprScaleSet(s16, s32, f32, f32);                    /* extern */
+void SprPosSet(s16, s16, s16, s16);
+void SprScaleSet(s16, s16, f32, f32);
 void func_8005E7B0_5F3B0(s32);                         /* extern */
 void func_8005F210_5FE10(s32);
 void func_8005F2D8_5FED8(s32);
@@ -58,7 +58,7 @@ extern UnkItemSprite2 D_800FC9EC_FD5EC[];
 extern Vec2f D_800FD854_FE454[];
 extern BoardStatus D_80101510_102110[];
 extern Unk D_800CC99C_CD59C[];
-extern s32 D_800E1D48_E2948[];
+extern omObjData* D_800E1D48_E2948[]; /* coin-change objects per player */
 
 s32 func_80059FD0_5ABD0(s32);
 void func_8008221C_82E1C(s16, s16, f32);
@@ -97,6 +97,14 @@ extern s32 D_800CCB9C_CD79C[];
 extern u8 D_800CCA7C_CD67C[][3]; /* status colours per space type (MP3 RGB D_8010188C) */
 
 extern s32 D_800F8708_F9308;
+
+extern f32 D_800CCB50_CD750[12];
+void AdjustPlayerCoins(s32 index, s32 count);
+s32 PlaySound(s32);
+
+#define ABS_F(x) (((x) > 0.0f) ? (x) : 0.0f - (x))
+void omDelObj(omObjData*);
+void func_80060DF8_619F8(omObjData*);
 
 void func_8005FAB4_606B4(void);
 void func_8005FCE8_608E8(s32 arg0);
@@ -433,7 +441,7 @@ void func_8005FCE8_608E8(s32 arg0) {
     func_8005F86C_6046C(arg0);
     func_8005E7B0_5F3B0(arg0);
     D_800E1D48_E2948[arg0] = 0;
-    sprite->unk30 = 0;
+    sprite->unk30 = NULL;
 }
 
 void func_8005FE10_60A10(void) {
@@ -619,13 +627,100 @@ void MBVsSprKill(void) {
 
 INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060DF8_619F8);
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060F90_61B90);
+void func_80060F90_61B90(s32 arg0) {
+    omObjData* temp_v0;
+    BoardStatus* temp_s0;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061078_61C78);
+    temp_s0 = &D_80101510_102110[arg0];
+    if (temp_s0->unk30 == NULL) {
+        temp_v0 = omAddObj(-0x8000, 0, 0, -1, &func_80060DF8_619F8);
+        temp_s0->unk30 = temp_v0;
+        temp_v0->rot.x = 0.0f;
+        temp_v0->work[0] = arg0;
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 12; j++) {
+                SprScaleSet(D_80101510_102110[i].unk_08, j, D_800CCB50_CD750[j], D_800CCB50_CD750[j]);
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006110C_61D0C);
+void func_80061078_61C78(s32 arg0) {
+    BoardStatus* temp_s1;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006135C_61F5C);
+    temp_s1 = &D_80101510_102110[arg0];
+
+    if (temp_s1->unk30 != NULL) {
+        omDelObj(temp_s1->unk30);
+        temp_s1->unk30 = NULL;
+        for (i = 0; i < 12; i++) {
+            SprScaleSet(temp_s1->unk_08, i, D_800CCB50_CD750[i], D_800CCB50_CD750[i]);
+        }
+    }
+}
+
+void func_8006110C_61D0C(omObjData* arg0) {
+    u32 var_s1 = 0;
+
+    while (arg0->scale.y <= 0.0f) {
+        if (arg0->trans.x > 0.0f) {
+            AdjustPlayerCoins(arg0->work[0], 1);
+            if (((arg0->work[3] != 0) & (var_s1 == 0)) && (arg0->scale.z >= 3.0f)) {
+                PlaySound(0x32B);
+                var_s1 = 1;
+                arg0->scale.z -= 3.0f;
+            }
+
+            arg0->trans.x -= 1.0f;
+
+        } else {
+            AdjustPlayerCoins(arg0->work[0], -1);
+            arg0->trans.x += 1.0f;
+
+            if (arg0->work[3] != 0) {
+                if ((var_s1 == 0) && (arg0->scale.z >= 3.0f)) {
+                    PlaySound(0x33C);
+                    var_s1 = 1;
+                    arg0->scale.z -= 3.0f;
+                }
+                if (arg0->trans.x == 0.0f || gPlayers[arg0->work[0]].coins == 0) {
+                    PlaySound(0x33D);
+                }
+            }
+        }
+
+        if (arg0->trans.x == 0.0f || gPlayers[arg0->work[0]].coins == 0) {
+            D_800E1D48_E2948[arg0->work[0]] = NULL;
+            omDelObj(arg0);
+            return;
+        }
+
+        arg0->scale.y += arg0->scale.x;
+    }
+    arg0->scale.y = arg0->scale.y - 1.0f;
+    arg0->scale.z = arg0->scale.z + 2.0f;
+}
+
+void func_8006135C_61F5C(s32 arg0, s32 arg1, s32 arg2) {
+    if (arg1 != 0) {
+        if (D_800E1D48_E2948[arg0] != NULL) {
+            AdjustPlayerCoins(arg0, arg1);
+            return;
+        }
+        if (((gPlayers[arg0].coins == 0) & (arg1 < 0)) == 0) {
+            D_800E1D48_E2948[arg0] = omAddObj(-0x8000, 0, 0, -1, func_8006110C_61D0C);
+            D_800E1D48_E2948[arg0]->work[0] = arg0;
+            D_800E1D48_E2948[arg0]->trans.x = arg1;
+            D_800E1D48_E2948[arg0]->scale.x = 30.0f / ABS_F((f32)arg1);
+            D_800E1D48_E2948[arg0]->scale.y = 0.0f;
+            D_800E1D48_E2948[arg0]->scale.z = 3.0f;
+            D_800E1D48_E2948[arg0]->work[3] = arg2;
+        }
+    }
+}
 
 void func_800614B4_620B4(s32 arg0, s32 arg1) {
     func_8006135C_61F5C(arg0, arg1, 1);
