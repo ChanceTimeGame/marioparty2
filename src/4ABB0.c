@@ -1,10 +1,13 @@
 #include "common.h"
 #include "game/data.h"
 #include "game/malloc.h"
+#include "game/board.h"
 
 /* Board HUD and minigame-pick helpers. The C functions are MP1 src/43760.c (func_80042B60 ..
    func_800448A0) and MP3 ovl_80_shared_board F2910.c (MBArrayShuffle), F5070.c (MBCoinChange*) and
-   EE660.c; the rest have no reference or differ (near) and stay asm. */
+   EE660.c, and near MP1 43760.c/46100.c. func_80049FFC, func_8004B65C and func_8004BBFC (near
+   MP1/MP3) stay asm: their jump tables share this unit's rodata piece (D3220-D3410) with
+   func_8004AD34, which has no C reference, so the piece is not carved. */
 
 #define UNK_SIZE 4
 #define UNK_SIZE2 2
@@ -58,10 +61,18 @@ s16 SprAnimRead(void*);
 void omDelObj(omObjData*);
 void func_8004B65C_4C25C(void);
 void func_8004BE4C_4CA4C(void);
-void func_8004C3CC_4CFCC(s32);
+void func_8004C3CC_4CFCC(s32, s32);
 void func_80060034_60C34(s32, s32);
 s32 func_800600C0_60CC0(s32);
 s32 func_800609D8_615D8(void);
+void func_80060210_60E10(s32);
+void func_8004FA40_50640(s32);
+void func_8004B214_4BE14(void);
+void func_8004BBFC_4C7FC(void);
+void MBCoinChangeKill(s32);
+void MBDCamera3Dto2D(Vec*, Vec2f*);
+extern Vec2f D_800CBDD0_CC9D0[];
+extern u16 ContBtnTrg[4];
 void func_80082450_83050(s16, s32, s32, s32, u8);
 void func_8008CCA8_8D8A8(s16);
 
@@ -339,15 +350,89 @@ Process* func_8004B974_4C574(void) {
     return process;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004B9C4_4C5C4);
+/* near MP1 func_8004452C (src/43760.c): MP2 also passes unk_08 on. */
+void func_8004B9C4_4C5C4(void) {
+    unkUserData_00* temp_s0 = HuPrcCurrentGet()->user_data;
+    u16* temp = ContBtnTrg;
 
-INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004BB2C_4C72C);
+loop_1:
+    switch (temp_s0->unk_00) {
+    case 0:
+        func_80060210_60E10(temp_s0->unk_04 + 6);
+        func_8004FA40_50640(temp_s0->unk_08);
+        temp_s0->unk_00++;
+        break;
+    case 1:
+        if (func_800609D8_615D8() == 0) {
+            if (temp[gPlayers[temp_s0->unk_04].port] & 0x8000) {
+                if (!(gPlayers[temp_s0->unk_04].flags & 1)) {
+                    func_8004B214_4BE14();
+                    func_80060210_60E10(5);
+                    temp_s0->unk_00++;
+                    break;
+                }
+            }
 
-INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004BB94_4C794);
+            if (gPlayers[temp_s0->unk_04].flags & 1) {
+                func_8004B214_4BE14();
+                func_80060210_60E10(5);
+                temp_s0->unk_00++;
+            }
+        }
+        break;
+    case 2:
+        if (D_800DF6C6_E02C6 == -1) {
+            omDelPrcObj(NULL);
+        }
+        break;
+    }
+    HuPrcVSleep();
+    goto loop_1;
+}
+
+/* near MP1 func_80044680 (src/43760.c): MP2 also stores a mode (1). */
+Process* func_8004BB2C_4C72C(s32 arg0) {
+    Process* process;
+    unkUserData_00* userData;
+
+    process = omAddPrcObj(func_8004B9C4_4C5C4, 0, 0x2000, 0x40);
+    userData = HuMemMemoryAlloc(process->heap, sizeof(unkUserData_00));
+    process->user_data = userData;
+    userData->unk_00 = 0;
+    userData->unk_04 = arg0;
+    userData->unk_08 = 1;
+    return process;
+}
+
+/* near MP1 func_80044680 (src/43760.c): MP2 also stores a mode (3). */
+Process* func_8004BB94_4C794(s32 arg0) {
+    Process* process;
+    unkUserData_00* userData;
+
+    process = omAddPrcObj(func_8004B9C4_4C5C4, 0, 0x2000, 0x40);
+    userData = HuMemMemoryAlloc(process->heap, sizeof(unkUserData_00));
+    process->user_data = userData;
+    userData->unk_00 = 0;
+    userData->unk_04 = arg0;
+    userData->unk_08 = 3;
+    return process;
+}
 
 INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004BBFC_4C7FC);
 
-INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004BDE4_4C9E4);
+/* near MP1 func_80044680 (src/43760.c): MP2 also stores a mode (2). */
+Process* func_8004BDE4_4C9E4(s32 arg0) {
+    Process* process;
+    unkUserData_00* userData;
+
+    process = omAddPrcObj(func_8004BBFC_4C7FC, 0, 0x2000, 0x40);
+    userData = HuMemMemoryAlloc(process->heap, sizeof(unkUserData_00));
+    process->user_data = userData;
+    userData->unk_00 = 0;
+    userData->unk_04 = arg0;
+    userData->unk_08 = 2;
+    return process;
+}
 
 void func_8004BE4C_4CA4C(void) {
     u8 isFour[4];
@@ -417,7 +502,34 @@ Process* func_8004C00C_4CC0C(s32 arg0) {
     return process;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004C060_4CC60);
+/* near MP1 func_80045500 (src/46100.c): the coin counter rises over the player, or sits at a
+   fixed HUD position when D_800DF708 is clear. */
+void func_8004C060_4CC60(omObjData* arg0) {
+    Vec sp10;
+    Vec2f sp20;
+
+    if (D_800DF708_E0308 != 0) {
+        sp10.x = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.x;
+        sp10.y = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.y + 30.0f;
+        sp10.z = ((MBModel*)gPlayers[arg0->work[3]].unk_24)->pos.z;
+        MBDCamera3Dto2D(&sp10, &sp20);
+    } else {
+        sp20.unk_00 = D_800CBDD0_CC9D0[arg0->work[3]].unk_00;
+        sp20.unk_04 = D_800CBDD0_CC9D0[arg0->work[3]].unk_04;
+    }
+    if (arg0->work[0] < 30) {
+        if (arg0->rot.x > 0.0f) {
+            arg0->trans.y -= 0.5f;
+        } else {
+            arg0->trans.y += 0.5f;
+        }
+        SprPosSet(D_800DF6E0_E02E0[arg0->work[3]], 0, (sp20.unk_00 - 16.0f), (sp20.unk_04 + arg0->trans.y));
+    } else {
+        MBCoinChangeKill(arg0->work[3]);
+        return;
+    }
+    arg0->work[0]++;
+}
 
 void MBCoinChangeInit(void) {
     s32 i, j;
@@ -461,12 +573,14 @@ void func_8004C394_4CF94(void) {
 
 INCLUDE_ASM("asm/nonmatchings/4ABB0", func_8004C3CC_4CFCC);
 
-void func_8004CA14_4D614(s32 arg0) {
+/* arg1 is the coin count, passed through to func_8004C3CC (MP3 MBCoinChangeCreate) */
+void func_8004CA14_4D614(s32 arg0, s32 arg1) {
     D_800DF708_E0308 = 0;
-    func_8004C3CC_4CFCC(arg0);
+    func_8004C3CC_4CFCC(arg0, arg1);
 }
 
-void func_8004CA34_4D634(s32 arg0) {
+/* arg1 is the coin count, passed through to func_8004C3CC (MP3 MBCoinChangeCreate) */
+void func_8004CA34_4D634(s32 arg0, s32 arg1) {
     D_800DF708_E0308 = 1;
-    func_8004C3CC_4CFCC(arg0);
+    func_8004C3CC_4CFCC(arg0, arg1);
 }
