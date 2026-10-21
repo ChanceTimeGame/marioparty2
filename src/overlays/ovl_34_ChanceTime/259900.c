@@ -1498,13 +1498,130 @@ void func_801077D8_25E8D8_ChanceTime(omObjData* obj) {
 }
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80107B00_25EC00_ChanceTime);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109718_260818_ChanceTime);
+/* End of an exchange: both players face front and stop, play motion 0, and the outcome window
+   opens (what: D_80110067, swap: the names' order). MP1 does this inline in func_800FB00C. */
+void func_80109718_260818_ChanceTime(s8 what, s8 swap) {
+    CTPlayerWork* work0;
+    CTPlayerWork* work1;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801097F8_2608F8_ChanceTime);
+    work0 = CT_PWORK(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]);
+    work1 = CT_PWORK(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]);
+    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->rot.y = 0.0f;
+    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->rot.y = 0.0f;
+    work0->unk_3C = 0.0f;
+    work1->unk_3C = 0.0f;
+    D_80110065_267165_ChanceTime = 0;
+    D_80110067_267167_ChanceTime = what;
+    D_80110850_267950_ChanceTime = swap;
+    func_80019B9C_1A79C(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]], 0);
+    func_80019B9C_1A79C(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]], 0);
+    omAddPrcObj(func_801060E0_25D1E0_ChanceTime, 0x3F00, 0x800, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010985C_26095C_ChanceTime);
+/* Star exchange: player `to` takes a star from `from`; starts func_8010985C once and returns 1
+   when it is over (MP1 func_800FFF4C). */
+s8 func_801097F8_2608F8_ChanceTime(s8 to, s8 from) {
+    if (D_8011014C_26724C_ChanceTime == 0) {
+        D_80110851_267951_ChanceTime = to;
+        D_80110852_267952_ChanceTime = from;
+        D_80110070_267170_ChanceTime.unk_00 = 0;
+        omAddPrcObj(func_8010985C_26095C_ChanceTime, 0x300, 0x800, 0);
+        D_8011014C_26724C_ChanceTime = 1;
+    }
+    return D_80110069_267169_ChanceTime;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109CC4_260DC4_ChanceTime);
+/* Process: a star flies in an arc from D_80110852 to D_80110851 (MP1 func_800FFAA0). */
+void func_8010985C_26095C_ChanceTime(void) {
+    s8 idx[2];
+    Vec mid;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (D_80110851_267951_ChanceTime == D_80110D6A_267E6A_ChanceTime[i]) {
+            break;
+        }
+    }
+    idx[0] = i;
+    for (i = 0; i < 4; i++) {
+        if (D_80110852_267952_ChanceTime == D_80110D6A_267E6A_ChanceTime[i]) {
+            break;
+        }
+    }
+    idx[1] = i;
+    D_80110854_267954_ChanceTime.x = D_800FFFD8_100BD8[idx[1]]->trans.x;
+    D_80110854_267954_ChanceTime.y = D_800FFFD8_100BD8[idx[1]]->trans.y;
+    D_80110854_267954_ChanceTime.z = D_800FFFD8_100BD8[idx[1]]->trans.z;
+    D_80110860_267960_ChanceTime.x = D_800FFFD8_100BD8[idx[0]]->trans.x;
+    D_80110860_267960_ChanceTime.y = D_800FFFD8_100BD8[idx[0]]->trans.y;
+    D_80110860_267960_ChanceTime.z = D_800FFFD8_100BD8[idx[0]]->trans.z;
+    D_8011087C_26797C_ChanceTime[0].x = D_80110854_267954_ChanceTime.x;
+    D_8011087C_26797C_ChanceTime[0].y = D_80110854_267954_ChanceTime.y;
+    D_8011087C_26797C_ChanceTime[0].z = D_80110854_267954_ChanceTime.z;
+    D_801108C4_2679C4_ChanceTime[0].x = D_80110860_267960_ChanceTime.x;
+    D_801108C4_2679C4_ChanceTime[0].y = D_80110860_267960_ChanceTime.y;
+    D_801108C4_2679C4_ChanceTime[0].z = D_80110860_267960_ChanceTime.z;
+    mid.x = (((HuCamera*)D_800FD2A8_FDEA8)->pos.x + D_80110860_267960_ChanceTime.x) / 2.0f;
+    mid.y = (((HuCamera*)D_800FD2A8_FDEA8)->pos.y + D_80110860_267960_ChanceTime.y) / 2.0f;
+    mid.z = (((HuCamera*)D_800FD2A8_FDEA8)->pos.z + D_80110860_267960_ChanceTime.z) / 2.0f;
+    func_80056658_57258(&D_8011087C_26797C_ChanceTime[0], &mid, &D_8011087C_26797C_ChanceTime[1]);
+    func_80056658_57258(&D_801108C4_2679C4_ChanceTime[0], &D_8011087C_26797C_ChanceTime[0], &D_801108C4_2679C4_ChanceTime[1]);
+    omVibrate(D_80110852_267952_ChanceTime, 20, 0, 20);
+    func_8005A1D8_5ADD8();
+    PlaySound(0x34C);
+    MBModelInit();
+    D_80110900_267A00_ChanceTime = func_80043510_44110(0x19, NULL);
+    HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos, D_80110854_267954_ChanceTime.x, D_80110854_267954_ChanceTime.y + 200.0f,
+                 D_80110854_267954_ChanceTime.z);
+    HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->scale, 0.5f, 0.5f, 0.5f);
+    D_8011006C_26716C_ChanceTime = func_80049ED4_4AAD4(D_80110900_267A00_ChanceTime, 0);
+    for (i = 0; i < 181; i += 5) {
+        HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos,
+                     D_80110854_267954_ChanceTime.x + (D_80110860_267960_ChanceTime.x - D_80110854_267954_ChanceTime.x) * i / 180.0f,
+                     D_80110854_267954_ChanceTime.y + 200.0f + HuMathSin(i) * 100.0f,
+                     D_80110854_267954_ChanceTime.z + (D_80110860_267960_ChanceTime.z - D_80110854_267954_ChanceTime.z) * i / 180.0);
+        D_80110900_267A00_ChanceTime->rot.x = HuMathSin(i * 10);
+        D_80110900_267A00_ChanceTime->rot.z = func_800B7890_B8490(i * 10);
+        HuPrcVSleep();
+    }
+    omVibrate(D_80110851_267951_ChanceTime, 20, 0, 20);
+    func_800614E8_620E8(D_80110851_267951_ChanceTime, 1);
+    MBModelKill(D_80110900_267A00_ChanceTime);
+    D_80110900_267A00_ChanceTime = NULL;
+    func_80049F90_4AB90(D_8011006C_26716C_ChanceTime);
+    D_8011006C_26716C_ChanceTime = NULL;
+    func_80056658_57258(&D_801108C4_2679C4_ChanceTime[0], &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_801108C4_2679C4_ChanceTime[1]);
+    D_80110069_267169_ChanceTime = 1;
+    gPlayers[D_80110851_267951_ChanceTime].stars++;
+    gPlayers[D_80110852_267952_ChanceTime].stars--;
+    D_80110070_267170_ChanceTime.unk_00 = 1;
+    HuPrcSleep(36);
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+
+/* Star swap (outcome 9, and 10 after its coins): starts func_80109D84 with the two star
+   counts (at most 5 shown) and returns 1 when it is over (MP1 func_80101180). */
+s8 func_80109CC4_260DC4_ChanceTime(s16 a, s16 b) {
+    if (D_80110182_267282_ChanceTime == 10 && D_8011091A_267A1A_ChanceTime == 0) {
+        return 0;
+    }
+    if (D_8011014D_26724D_ChanceTime == 0) {
+        D_80110904_267A04_ChanceTime[0] = a;
+        if ((s8)a >= 6) {
+            D_80110904_267A04_ChanceTime[0] = 5;
+        }
+        D_80110904_267A04_ChanceTime[1] = b;
+        if ((s8)b >= 6) {
+            D_80110904_267A04_ChanceTime[1] = 5;
+        }
+        D_80110070_267170_ChanceTime.unk_00 = 0;
+        omAddPrcObj(func_80109D84_260E84_ChanceTime, 0x300, 0x800, 0);
+        D_8011014D_26724D_ChanceTime = 1;
+    }
+    return D_80110069_267169_ChanceTime;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109D84_260E84_ChanceTime);
 

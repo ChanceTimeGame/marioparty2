@@ -245,6 +245,28 @@ extern s16 D_801100C0_2671C0_ChanceTime; /* coins thrown in outcomes 1/3/5 (MP1 
 extern s16 D_801100C2_2671C2_ChanceTime; /* coins thrown in outcomes 0/2/4/11/12 (MP1 D_80101326) */
 extern s8 D_8011091A_267A1A_ChanceTime;  /* outcome 10: the coin half of the swap is done */
 u16 func_80059348_59F48(void); /* loads model 0xA0158 */
+extern s8 D_80110069_267169_ChanceTime;  /* the star exchange is over (MP1 D_80101370) */
+extern ModelEmitterWork* D_8011006C_26716C_ChanceTime; /* the flying star's emitter (MP1 D_80101374) */
+extern s8 D_8011014C_26724C_ChanceTime;  /* func_801097F8 started (MP1 D_80101378) */
+extern s8 D_8011014D_26724D_ChanceTime;  /* func_80109CC4 started (MP1 D_80101379) */
+extern s8 D_80110851_267951_ChanceTime;  /* the star goes to this player (MP1 D_8010183C) */
+extern s8 D_80110852_267952_ChanceTime;  /* from this one */
+extern Vec D_80110854_267954_ChanceTime; /* the giver's position (MP1 D_80101824) */
+extern Vec D_80110860_267960_ChanceTime; /* the taker's position */
+extern Vec D_8011087C_26797C_ChanceTime[6]; /* func_80056658 paths (MP1 D_8010179C) */
+extern Vec D_801108C4_2679C4_ChanceTime[5];
+extern MBModel* D_80110900_267A00_ChanceTime; /* the flying star */
+extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
+extern s8 D_80110904_267A04_ChanceTime[2]; /* func_80109CC4's two star counts, at most 5 (MP1 D_8010183E); splat labels [1] D_80110905 */
+void func_80019B9C_1A79C(omObjData* obj, s32 arg1); /* C8E0.c: player motion */
+void func_8005A1D8_5ADD8(void);
+void func_800614E8_620E8(s32 player, s32 arg1);
+void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
+MBModel* func_80043510_44110(s32, void*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
+void MBModelKill(void*);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
 void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
