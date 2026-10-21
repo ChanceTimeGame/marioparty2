@@ -241,6 +241,25 @@ extern s16 D_801109C2_267AC2_ChanceTime;
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup (MP1 func_8000979C) */
+void func_8000CC74_D874(omObjData* obj, s16 model, s32 arg2);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion (MP1 func_8001874C) */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
+extern f32 D_800BF7A4_C03A4; /* jump speed (MP1 D_800B8964) */
+extern f32 D_800BF7A8_C03A8; /* MP1 D_800B8968 */
+/* Per character (0x18 bytes; ovl_00 D57F0.c's UnkDebug0): motion and model file bases. */
+typedef struct CTCharFiles {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* motion file base (MP1 D_800C59AC unk_00) */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C; /* MP1 D_800C59AC unk_04 */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} CTCharFiles;
+extern CTCharFiles D_800CD438_CE038[];
 
 extern s8 D_80110061_267161_ChanceTime; /* the holder landed */
 /* The CPU holder's block run (MP1 D_80101266, D_80101268, D_8010126C, D_8010126A) */
@@ -313,9 +332,9 @@ void func_8010E668_265768_ChanceTime(omObjData* obj);
 void func_8010E71C_26581C_ChanceTime(omObjData* obj);
 void func_8010E7C0_2658C0_ChanceTime(omObjData* obj);
 void func_8010EED0_265FD0_ChanceTime(omObjData* obj);
-void func_8010EF84_266084_ChanceTime(omObjData* obj, u32 arg1, s32 arg2, s32 arg3, f32 x, f32 y, f32 z);
+void func_8010EF84_266084_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
 void func_8010F304_266404_ChanceTime(omObjData* obj);
-void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, f32 x, f32 y, f32 z);
+void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
 void func_8010F760_266860_ChanceTime(omObjData* obj);
 void func_8010F82C_26692C_ChanceTime(omObjData* obj);
 void func_8010F8F8_2669F8_ChanceTime(omObjData* obj);
