@@ -813,7 +813,42 @@ void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u
     *gfx = g;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80086C08_87808);
+void func_8003F93C_4053C(Gfx** gfx, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+                         s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts,
+                         s32 shiftt, s32 rtile, s32 tmem);
+void func_80040148_40D48(Gfx** gfx, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+                         s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts,
+                         s32 shiftt, s32 rtile, s32 tmem);
+void func_800404B0_410B0(Gfx** gfx, s32 timg, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs,
+                         s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt,
+                         s32 rtile, s32 tmem);
+
+/* SprTexLoad's second texture (two-cycle sprites): the same strip into tile 1 at TMEM D_800CD5B0 */
+void func_80086C08_87808(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 cms,
+                         u16 cmt, u16 masks, u16 maskt) {
+    HuSprite_Unk84_Unk00_Struct* cel = &obj->unk_84->unk00[obj->unk_90];
+    Gfx* g = *gfx;
+
+    switch (D_800ED688_EE288) {
+        case 0:
+            gDPLoadMultiTile_4b(g++, 0x02000000, D_800CD5B0_CE1B0, 1, D_800ED680_EE280, cel->unk04, rows, uls, ult,
+                                lrs, lrt, 0, cms, cmt, masks, maskt, 0, 0);
+            break;
+        case 1:
+            func_800404B0_410B0(&g, 0x02000000, D_800ED680_EE280, cel->unk04, rows, uls, ult, lrs, lrt, 0, cms, cmt,
+                                masks, maskt, 0, 0, 1, D_800CD5B0_CE1B0);
+            break;
+        case 2:
+            func_8003F93C_4053C(&g, 0x02000000, D_800ED680_EE280, D_800ED684_EE284, cel->unk04, cel->unk06, uls,
+                                ult, lrs, lrt, 0, cms, cmt, masks, maskt, 0, 0, 1, D_800CD5B0_CE1B0);
+            break;
+        case 3:
+            func_80040148_40D48(&g, 0x02000000, D_800ED680_EE280, D_800ED684_EE284, cel->unk04, rows, uls, ult,
+                                lrs, lrt, 0, cms, cmt, masks, maskt, 0, 0, 1, D_800CD5B0_CE1B0);
+            break;
+    }
+    *gfx = g;
+}
 
 void func_80087010_87C10(void) {
     s32 i;
