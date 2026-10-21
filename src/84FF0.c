@@ -2890,9 +2890,69 @@ const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008C828_8D428);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008CCA8_8D8A8);
+void SprKill(s16 grpIdx);
 
+/* MP1 func_80070D90: closes a window */
+void func_8008CCA8_8D8A8(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+
+    if (tw->unkD0 != NULL && tw->unkD4 != 0) {
+        func_80068D24_69924(tw->unkD0);
+    }
+    for (i = 0; i < 5; i++) {
+        if (tw->unk_B8[i] != NULL && tw->usingStringIDBool[i] != 0) {
+            func_80068D24_69924(tw->unk_B8[i]);
+        }
+    }
+    SprKill(tw->unk_6C);
+    SprAnimKill(tw->unk66);
+    SprAnimKill(tw->unk68);
+    for (i = 4; i < 12; i++) {
+        if (tw->unk_6E[i] != -1) {
+            SprAnimKill(func_800896A0_8A2A0(winId, i));
+        }
+    }
+    if (tw->unk6A != -1) {
+        SprAnimKill(tw->unk6A);
+    }
+    tw->unk5E = -1;
+    D_800F920C_F9E0C[tw->unk64].unk62 = tw->unk62;
+    D_800F920C_F9E0C[tw->unk62].unk64 = tw->unk64;
+    D_800F9512_FA112 = 0;
+}
+
+
+// register allocation (masked 0): the window id's load and shift swap s0/v1
+#ifdef NON_MATCHING
+/* MP1 func_80070ED4: closes every window and frees the window system */
+void func_8008CE5C_8DA5C(void) {
+    s16 id;
+    s16 i;
+
+    if (D_800CD850_CE450 != 0) {
+        id = D_800F920C_F9E0C[0].unk64;
+        while (D_800F920C_F9E0C[id].unk64 != -1) {
+            func_8008CCA8_8D8A8(id);
+            id = D_800F920C_F9E0C[id].unk64;
+        }
+        DataCloseTemp(D_800FD8C4_FE4C4);
+        DataCloseTemp(D_800FFDF4_1009F4);
+        DataCloseTemp(D_800FA6F4_FB2F4);
+        HuMemMemoryFreeTemp(D_800F920C_F9E0C);
+        omDelPrcObj(D_800FC87C_FD47C);
+        D_800CD850_CE450 = 0;
+        for (i = 0; i < 0x16; i++) {
+            if (D_800ED8B8_EE4B8[i] != -1) {
+                SprAnimKill(D_800ED8B8_EE4B8[i]);
+            }
+        }
+        SprAnimKill(D_800ED8E4_EE4E4);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008CE5C_8DA5C);
+#endif
 
 void func_8008CFD0_8DBD0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4) {
     func_8008D0BC_8DCBC(-(~arg0 == 0), -(~arg1 == 0), -(~arg2 == 0), -(~arg3 == 0), arg4);
