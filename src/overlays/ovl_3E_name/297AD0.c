@@ -2443,9 +2443,97 @@ void func_80110794_2A5A64_name_3E(void) {
     func_8004655C_4715C(gw->current_player_index);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80110F78_2A6248_name_3E);
+/* Process: from the D_80113784 view, run func_80106FE0 for nobody (current player -1); the
+   players in its result mask are brought back to the start space. Deletes itself. */
+void func_80110F78_2A6248_name_3E(void) {
+    Vec pos[4];
+    GW_PLAYER* player;
+    SpaceData* space;
+    s32 mask;
+    s32 i;
+    s16 cur;
+    GW_SYSTEM* gw = &GwSystem;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801112E4_2A65B4_name_3E);
+    InitFadeOut(4, 16);
+    while (func_8008F618_90218()) {
+        HuPrcVSleep();
+    }
+    func_800636F8_642F8(4);
+    func_80063734_64334(&D_80113784_2A8A54_name_3E->pos);
+    HuPrcSleep(5);
+    func_80061518_62118();
+    InitFadeIn(4, 16);
+    while (func_8008F618_90218()) {
+        HuPrcVSleep();
+    }
+    cur = gw->current_player_index;
+    gw->current_player_index = -1;
+    mask = func_80106FE0_29C2B0_name_3E();
+    gw->current_player_index = cur;
+    InitFadeOut(4, 16);
+    while (func_8008F618_90218()) {
+        HuPrcVSleep();
+    }
+    if (mask != 0) {
+        func_800636F8_642F8(2);
+        space = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(0, 0));
+        func_80063710_64310(&space->coords);
+        HuPrcSleep(5);
+        func_80061584_62184();
+        InitFadeIn(4, 16);
+        while (func_8008F618_90218()) {
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 4; i++) {
+            if (mask & (1 << i)) {
+                MBPlayerForwardSet(i);
+                player = BoardPlayerGet(i);
+                MBModelDispOn(player->unk_24);
+                ((MBModel*)player->unk_24)->attr &= ~1;
+                HuVecCopyXYZ(&((MBModel*)player->unk_24)->pos, space->coords.x + D_80112760_2A7A30_name_3E[i].x,
+                             120.0f, space->coords.z + D_80112760_2A7A30_name_3E[i].y);
+                HuVecCopyXYZ(&pos[i], ((MBModel*)player->unk_24)->pos.x, 0.0f, ((MBModel*)player->unk_24)->pos.z);
+                func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &pos[i], &((MBModel*)player->unk_24)->pos, 10);
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (mask & (1 << i)) {
+                func_800797DC_7A3DC(0xFC, i);
+            }
+        }
+        HuPrcSleep(60);
+        if (!(mask & (1 << gw->current_player_index))) {
+            InitFadeOut(4, 16);
+            while (func_8008F618_90218()) {
+                HuPrcVSleep();
+            }
+            func_800636F8_642F8(1);
+            HuPrcSleep(5);
+            InitFadeIn(4, 16);
+            while (func_8008F618_90218()) {
+                HuPrcVSleep();
+            }
+        }
+    } else {
+        func_800636F8_642F8(1);
+        HuPrcSleep(5);
+        func_80061584_62184();
+        InitFadeIn(4, 16);
+        while (func_8008F618_90218()) {
+            HuPrcVSleep();
+        }
+    }
+    omDelPrcObj(NULL);
+}
+
+/* Scene setup; MP3 func_8011A848_3AFBC8_w06. */
+void func_801112E4_2A65B4_name_3E(void) {
+    func_80020070_20C70(2);
+    CameraScissorSet(1, D_80112914_2A7BE4_name_3E);
+    func_80105974_29AC44_name_3E();
+    func_80066C34_67834(2);
+    omAddPrcObj(func_80102FFC_2982CC_name_3E, 0x1005, 0x1000, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80111338_2A6608_name_3E);
 

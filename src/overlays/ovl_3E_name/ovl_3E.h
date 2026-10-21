@@ -261,6 +261,9 @@ void func_800495A8_4A1A8(s8 arg0);
 void func_80063710_64310(Vec* pos);
 void func_800558E8_564E8(s16);
 s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
+void func_80063734_64334(Vec* arg0);
+void CameraScissorSet(s16, void*);
+extern f32 D_80112914_2A7BE4_name_3E[4]; /* scissor box {0, 0, 320, 240} */
 s16 func_800558F4_564F4(void);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 void func_8004CA34_4D634(s32, s32);
