@@ -231,6 +231,34 @@ void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void func_8006296C_6356C(s16 player, f32* x, f32* y); /* status window position */
 void func_800629AC_635AC(s16 player, s16 x, s16 y); /* status window move */
 #include "game/malloc.h"
+#include "game/data.h"
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void* arg0);
+/* Retail calls these two as int-returning (no sign extension of the result at the call). The ids
+   are only passed on to s16 parameters, so the host's truncation keeps them right. */
+#define SprCreate_s32(num, attr) (((s32(*)(s32, s32))SprCreate)(num, attr))
+#define SprAnimRead_s32(data) (((s32(*)(void*))SprAnimRead)(data))
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprKill(s16 idx);
+void SprAnimKill(s16 animIdx);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
+void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
+void func_800629F0_635F0(s16 player, s16 arg1); /* status window alpha? */
+void func_800628C0_634C0(s16 player, s16 arg1, f32 arg2);
+void func_80062A28_63628(s16 player, f32 arg1); /* status window shake */
+
+typedef struct Unk3EVec2f {
+    f32 x;
+    f32 y;
+} Unk3EVec2f;
+extern s32 D_8011237C_2A764C_name_3E[6]; /* per character: sprite file */
+extern Unk3EVec2f D_80112504_2A77D4_name_3E[4]; /* per player: window slide positions */
+extern Unk3EVec2f D_80112524_2A77F4_name_3E[4];
+extern Unk3EVec2f D_80112544_2A7814_name_3E[4];
+extern Unk3EVec2f D_80112564_2A7834_name_3E[4];
 void func_80047A50_48650(s32);
 s16 func_80046F98_47B98(s32);
 void func_80064FF8_65BF8(void);
@@ -367,7 +395,7 @@ void func_8010CAE8_2A1DB8_name_3E(void);
 void func_8010CCD4_2A1FA4_name_3E(void);
 Process* func_8010CF20_2A21F0_name_3E(s16 sprite, s16 x0, s16 y0, s16 x1, s16 y1, s16 frames);
 void func_8010CFCC_2A229C_name_3E(void);
-s32 func_8010D37C_2A264C_name_3E(void);
+void func_8010D37C_2A264C_name_3E(void);
 void func_8010D6C8_2A2998_name_3E(void);
 void func_8010D9F4_2A2CC4_name_3E(void);
 void func_8010DE58_2A3128_name_3E(void);

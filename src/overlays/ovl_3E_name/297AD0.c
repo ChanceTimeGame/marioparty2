@@ -1748,13 +1748,227 @@ Process* func_8010CF20_2A21F0_name_3E(s16 sprite, s16 x0, s16 y0, s16 x1, s16 y1
     return process;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CFCC_2A229C_name_3E);
+/* The player's portrait fades in and slides off; the status window fades while the player
+   celebrates. */
+void func_8010CFCC_2A229C_name_3E(void) {
+    s32 sprite;
+    void* data;
+    s32 anim;
+    s32 i;
+    GW_SYSTEM* gw = &GwSystem;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010D37C_2A264C_name_3E);
+    sprite = SprCreate_s32(1, 5);
+    data = DataRead(D_8011237C_2A764C_name_3E[gPlayers[gw->current_player_index].character]);
+    anim = SprAnimRead_s32(data);
+    DataClose(data);
+    SprAnimSet(sprite, 0, anim, 0);
+    SprPrioSet(sprite, 0, 10);
+    func_8008225C_82E5C(sprite, 0, 1);
+    if (gw->current_player_index & 1) {
+        SprAttrSet(sprite, 0, 0x1001);
+    } else {
+        SprAttrSet(sprite, 0, 0x1000);
+    }
+    SprPosSet(sprite, 0, D_80112504_2A77D4_name_3E[gw->current_player_index].x, D_80112504_2A77D4_name_3E[gw->current_player_index].y);
+    func_80082488_83088(sprite, 0, 0);
+    for (i = 0; i < 17; i++) {
+        func_80082488_83088(sprite, 0, i * 16);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 255);
+    func_800822A8_82EA8(sprite, 0, 1, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    HuPrcSleep(20);
+    PlaySound(0x375);
+    HuPrcChildLink(HuPrcCurrentGet(),
+                   func_8010CF20_2A21F0_name_3E(sprite, D_80112504_2A77D4_name_3E[gw->current_player_index].x,
+                                                D_80112504_2A77D4_name_3E[gw->current_player_index].y,
+                                                D_80112524_2A77F4_name_3E[gw->current_player_index].x,
+                                                D_80112524_2A77F4_name_3E[gw->current_player_index].y, 30));
+    HuPrcChildWatch();
+    HuPrcSleep(10);
+    func_800822A8_82EA8(sprite, 0, 0, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    for (i = 1; i < 10; i++) {
+        func_800629F0_635F0(gw->current_player_index, 255 - i * 25);
+        func_800628C0_634C0(gw->current_player_index, 0, 2.0f);
+        HuPrcVSleep();
+    }
+    func_800629F0_635F0(gw->current_player_index, 0);
+    MBPlayerMotionSet(-1, 5, 0);
+    func_80079718_7A318(0x103, gPlayers[gw->current_player_index].character);
+    HuPrcSleep(50);
+    MBPlayerMotionSet(-1, -1, 2);
+    SprKill(sprite);
+    SprAnimKill(anim);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010D6C8_2A2998_name_3E);
+/* The player's portrait fades in, slides to the status window and fades out with it. */
+/* The player's portrait fades in, slides to the status window and fades out with it. */
+void func_8010D37C_2A264C_name_3E(void) {
+    s32 sprite;
+    void* data;
+    s32 anim;
+    s32 i;
+    s32 alpha;
+    GW_SYSTEM* gw = &GwSystem;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010D9F4_2A2CC4_name_3E);
+    sprite = SprCreate_s32(1, 5);
+    data = DataRead(D_8011237C_2A764C_name_3E[gPlayers[gw->current_player_index].character]);
+    anim = SprAnimRead_s32(data);
+    DataClose(data);
+    SprAnimSet(sprite, 0, anim, 0);
+    SprPrioSet(sprite, 0, 10);
+    func_8008225C_82E5C(sprite, 0, 1);
+    if (gw->current_player_index & 1) {
+        SprAttrSet(sprite, 0, 0x1001);
+    } else {
+        SprAttrSet(sprite, 0, 0x1000);
+    }
+    SprPosSet(sprite, 0, D_80112504_2A77D4_name_3E[gw->current_player_index].x,
+              D_80112504_2A77D4_name_3E[gw->current_player_index].y);
+    func_80082488_83088(sprite, 0, 0);
+    for (i = 0; i < 17; i++) {
+        func_80082488_83088(sprite, 0, i * 16);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 255);
+    func_800822A8_82EA8(sprite, 0, 1, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    HuPrcSleep(20);
+    PlaySound(0x375);
+    func_8010CF20_2A21F0_name_3E(sprite, D_80112504_2A77D4_name_3E[gw->current_player_index].x,
+                                 D_80112504_2A77D4_name_3E[gw->current_player_index].y,
+                                 D_80112544_2A7814_name_3E[gw->current_player_index].x,
+                                 D_80112544_2A7814_name_3E[gw->current_player_index].y, 30);
+    HuPrcSleep(20);
+    for (i = 1; i < 10; i++) {
+        alpha = 255 - i * 25;
+        func_800629F0_635F0(gw->current_player_index, alpha);
+        func_80082488_83088(sprite, 0, alpha);
+        HuPrcVSleep();
+    }
+    func_800629F0_635F0(gw->current_player_index, 0);
+    func_80082488_83088(sprite, 0, 0);
+    HuPrcSleep(2);
+    SprKill(sprite);
+    SprAnimKill(anim);
+}
+
+/* The player's portrait fades in, slides back and fades out. */
+void func_8010D6C8_2A2998_name_3E(void) {
+    s32 sprite;
+    void* data;
+    s32 anim;
+    s32 i;
+    GW_SYSTEM* gw = &GwSystem;
+
+    sprite = SprCreate_s32(1, 5);
+    data = DataRead(D_8011237C_2A764C_name_3E[gPlayers[gw->current_player_index].character]);
+    anim = SprAnimRead_s32(data);
+    DataClose(data);
+    SprAnimSet(sprite, 0, anim, 0);
+    SprPrioSet(sprite, 0, 10);
+    func_8008225C_82E5C(sprite, 0, 1);
+    if (gw->current_player_index & 1) {
+        SprAttrSet(sprite, 0, 0x1001);
+    } else {
+        SprAttrSet(sprite, 0, 0x1000);
+    }
+    SprPosSet(sprite, 0, D_80112564_2A7834_name_3E[gw->current_player_index].x, D_80112564_2A7834_name_3E[gw->current_player_index].y);
+    func_80082488_83088(sprite, 0, 0);
+    for (i = 0; i < 17; i++) {
+        func_80082488_83088(sprite, 0, i * 16);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 255);
+    func_800822A8_82EA8(sprite, 0, 1, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    HuPrcSleep(20);
+    PlaySound(0x375);
+    HuPrcChildLink(HuPrcCurrentGet(),
+                   func_8010CF20_2A21F0_name_3E(sprite, D_80112564_2A7834_name_3E[gw->current_player_index].x,
+                                                D_80112564_2A7834_name_3E[gw->current_player_index].y,
+                                                D_80112504_2A77D4_name_3E[gw->current_player_index].x,
+                                                D_80112504_2A77D4_name_3E[gw->current_player_index].y, 30));
+    HuPrcChildWatch();
+    for (i = 1; i < 10; i++) {
+        func_80082488_83088(sprite, 0, 255 - i * 25);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 0);
+    SprKill(sprite);
+    SprAnimKill(anim);
+}
+
+/* As func_8010CFCC, then the status window shakes while it fades. */
+/* As func_8010CFCC, then the status window shakes while it fades. */
+/* As func_8010CFCC, then the status window shakes while it fades. */
+/* As func_8010CFCC, then the status window shakes while it fades. */
+void func_8010D9F4_2A2CC4_name_3E(void) {
+    s32 sprite;
+    void* data;
+    s32 anim;
+    s32 i;
+    s32 j;
+    GW_SYSTEM* gw = &GwSystem;
+
+    sprite = SprCreate_s32(1, 5);
+    data = DataRead(D_8011237C_2A764C_name_3E[gPlayers[gw->current_player_index].character]);
+    anim = SprAnimRead_s32(data);
+    DataClose(data);
+    SprAnimSet(sprite, 0, anim, 0);
+    SprPrioSet(sprite, 0, 10);
+    func_8008225C_82E5C(sprite, 0, 1);
+    if (gw->current_player_index & 1) {
+        SprAttrSet(sprite, 0, 0x1001);
+    } else {
+        SprAttrSet(sprite, 0, 0x1000);
+    }
+    SprPosSet(sprite, 0, D_80112504_2A77D4_name_3E[gw->current_player_index].x, D_80112504_2A77D4_name_3E[gw->current_player_index].y);
+    func_80082488_83088(sprite, 0, 0);
+    for (i = 0; i < 17; i++) {
+        func_80082488_83088(sprite, 0, i * 16);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 255);
+    func_800822A8_82EA8(sprite, 0, 1, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    HuPrcSleep(20);
+    PlaySound(0x375);
+    HuPrcChildLink(HuPrcCurrentGet(),
+                   func_8010CF20_2A21F0_name_3E(sprite, D_80112504_2A77D4_name_3E[gw->current_player_index].x,
+                                                D_80112504_2A77D4_name_3E[gw->current_player_index].y,
+                                                D_80112524_2A77F4_name_3E[gw->current_player_index].x,
+                                                D_80112524_2A77F4_name_3E[gw->current_player_index].y, 30));
+    HuPrcChildWatch();
+    HuPrcSleep(10);
+    func_800822A8_82EA8(sprite, 0, 0, 0);
+    func_8008225C_82E5C(sprite, 0, 1);
+    for (i = 1; i < 10; i++) {
+        func_80082488_83088(sprite, 0, 255 - i * 25);
+        HuPrcVSleep();
+    }
+    func_80082488_83088(sprite, 0, 0);
+    if (gPlayers[gw->current_player_index].item == 7) {
+        PlaySound(0x369);
+    }
+    i = 0;
+    do {
+        func_80062A28_63628(gw->current_player_index, HuMathSin(i) * 30.0f);
+        i += 30;
+        HuPrcVSleep();
+    } while (i < 1081);
+    for (j = 1; j < 10; j++) {
+        func_800629F0_635F0(gw->current_player_index, 255 - j * 25);
+        func_80062A28_63628(gw->current_player_index, HuMathSin(i) * 30.0f);
+        i += 30;
+        HuPrcVSleep();
+    }
+    func_800629F0_635F0(gw->current_player_index, 0);
+    SprKill(sprite);
+    SprAnimKill(anim);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010DE58_2A3128_name_3E);
 
