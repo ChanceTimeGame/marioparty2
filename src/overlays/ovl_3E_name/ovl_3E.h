@@ -252,8 +252,8 @@ void func_80106944_29BC14_name_3E(void);
 void func_801069C8_29BC98_name_3E(void);
 void func_80106B08_29BDD8_name_3E(void);
 void func_80106C44_29BF14_name_3E(void);
-void func_80106D78_29C048_name_3E(s32 arg0);
-void func_80106DCC_29C09C_name_3E(s16 arg0, s32 arg1);
+void func_80106D78_29C048_name_3E(omObjData* obj);
+void func_80106DCC_29C09C_name_3E(s32 player, s32 arg1);
 s32 func_80106FE0_29C2B0_name_3E(void);
 s32 func_801075F8_29C8C8_name_3E(void);
 void func_80107C54_29CF24_name_3E(void);
@@ -284,8 +284,8 @@ void func_8010964C_29E91C_name_3E(void);
 s32 func_80109A78_29ED48_name_3E(s32 arg0);
 s32 func_80109AE4_29EDB4_name_3E(void);
 void func_80109B30_29EE00_name_3E(void);
-s32 func_8010A13C_29F40C_name_3E(s32 arg0);
-void func_8010A1DC_29F4AC_name_3E(s32 arg0);
+void func_8010A13C_29F40C_name_3E(MBModel* model);
+void func_8010A1DC_29F4AC_name_3E(MBModel* model);
 void func_8010A27C_29F54C_name_3E(s32 arg0);
 void func_8010AB58_29FE28_name_3E(void);
 s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
@@ -322,5 +322,72 @@ void func_801112E4_2A65B4_name_3E(void);
 void func_80111338_2A6608_name_3E(void);
 s32 func_8011155C_2A682C_name_3E(void);
 s32 func_801118D8_2A6BA8_name_3E(void);
+
+/* fork B */
+struct unk_8003B8D4Struct; /* 41B20.c's direction prompt */
+
+/* RunDecisionTree's node (MP1 common_structs.h) */
+typedef struct DecisionTreeNonLeafNode {
+    u32 type;
+    union {
+        void (*func)();
+        s32 data;
+    } node_data1;
+    union {
+        s32 data;
+        s32* node_data;
+    } node_data2;
+} DecisionTreeNonLeafNode;
+
+typedef struct Unk3Halves {
+    s16 v[3];
+} Unk3Halves;
+
+void SetNextChainAndSpace(s16 arg0, s16 arg1, s16 arg2);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+void HuVecMulScalar(Vec*, f32, Vec*);
+s16 func_80079798_7A398(s16, s16);
+void func_800797DC_7A3DC(s32, s16);
+void omDelObj(omObjData*);
+void func_8002D0A0_2DCA0(s16, u8);
+/* 41B20.c defines this void: it returns func_800419A4_425A4's prompt only through v0 */
+struct unk_8003B8D4Struct* func_80041A74_42674(s16, s16*);
+s32 func_800417EC_423EC(struct unk_8003B8D4Struct*, s16, s16);
+s32 func_80041610_42210(struct unk_8003B8D4Struct*, s32);
+s32 DirectionPrompt(struct unk_8003B8D4Struct*);
+void func_8004108C_41C8C(struct unk_8003B8D4Struct*);
+s32 PlayerIsCPU(s16);
+s16 func_80044800_45400(DecisionTreeNonLeafNode*); /* RunDecisionTree */
+
+extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
+extern s16 D_80111B90_2A6E60_name_3E[]; /* minecart chain, by D_800F8CE4[0] */
+extern s16* D_80111BF4_2A6EC4_name_3E[]; /* spaces the minecart passes, by D_800F8CE4[0] */
+extern DecisionTreeNonLeafNode D_80111C3C_2A6F0C_name_3E[];
+extern DecisionTreeNonLeafNode D_80111C6C_2A6F3C_name_3E[];
+extern DecisionTreeNonLeafNode D_80111CA8_2A6F78_name_3E[];
+extern DecisionTreeNonLeafNode D_80111D50_2A7020_name_3E[];
+extern DecisionTreeNonLeafNode D_80111DEC_2A70BC_name_3E[];
+extern DecisionTreeNonLeafNode D_80111E34_2A7104_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F0C_2A71DC_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F60_2A7230_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F84_2A7254_name_3E[];
+extern DecisionTreeNonLeafNode D_80111FB4_2A7284_name_3E[];
+extern DecisionTreeNonLeafNode D_80111FFC_2A72CC_name_3E[];
+extern DecisionTreeNonLeafNode D_80112044_2A7314_name_3E[];
+extern DecisionTreeNonLeafNode D_801120A4_2A7374_name_3E[];
+extern s16 D_801120E0_2A73B0_name_3E[]; /* direction prompt choices */
+extern s16 D_801120F8_2A73C8_name_3E[];
+extern s16 D_80112110_2A73E0_name_3E[];
+extern s16 D_80112128_2A73F8_name_3E[];
+extern s16 D_80112140_2A7410_name_3E[];
+extern s16 D_80112158_2A7428_name_3E[];
+extern DecisionTreeNonLeafNode D_80112178_2A7448_name_3E[];
+extern s16 D_801121AC_2A747C_name_3E[];
+extern s8 D_801122E0_2A75B0_name_3E[][5];
+extern Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
+extern Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
+extern char D_801135C8_2A8898_name_3E[]; /* "%d": rodata */
+extern s32 D_801138B4_2A8B84_name_3E;
+extern u8* D_801138B8_2A8B88_name_3E;
 
 #endif
