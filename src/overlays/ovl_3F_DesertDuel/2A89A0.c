@@ -1716,6 +1716,66 @@ void func_80107EE4_2AE084_DesertDuel(s32 cur, s32 target, s32 mode) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80108580_2AE720_DesertDuel);
+/* The CPU input script: a pad trigger in D_80108C98 every so often (from frame 10 of each step).
+   Mode 0: Start at frame 30; 1: A at frame 30; 2: down/up until the cursor is on the target row,
+   then A; 3: left/right (10) or up/down (1) until the stake is the target, then A.
+   Retail quirk: in mode 3 a stake 1-9 above the target is raised (up) to 10 above, then lowered
+   by 10. */
+void func_80108580_2AE720_DesertDuel(omObjData* obj) {
+    Unk3FCpuInput* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80108720_2AE8C0_DesertDuel);
+    D_80108C98_2AEE38_DesertDuel = 0;
+    if (++work->timer >= 10) {
+        switch (work->mode) {
+            case 0:
+                if (work->timer >= 30) {
+                    D_80108C98_2AEE38_DesertDuel = 0x1000;
+                    omDelObj(obj);
+                }
+                break;
+            case 1:
+                if (work->timer >= 30) {
+                    D_80108C98_2AEE38_DesertDuel = 0x8000;
+                    omDelObj(obj);
+                }
+                break;
+            case 2:
+                if (work->cur == work->target) {
+                    D_80108C98_2AEE38_DesertDuel = 0x8000;
+                    omDelObj(obj);
+                } else if (work->cur < work->target) {
+                    D_80108C98_2AEE38_DesertDuel = 0x400;
+                    work->cur++;
+                    work->timer = 0;
+                } else if (work->cur > work->target) {
+                    D_80108C98_2AEE38_DesertDuel = 0x800;
+                    work->cur--;
+                    work->timer = 0;
+                }
+                break;
+            case 3:
+                work->cur = D_80108C34_2AEDD4_DesertDuel;
+                if (work->cur == work->target) {
+                    D_80108C98_2AEE38_DesertDuel = 0x8000;
+                    omDelObj(obj);
+                } else if (work->cur - work->target >= 10) {
+                    D_80108C98_2AEE38_DesertDuel = 0x200;
+                    work->timer = 0;
+                } else if (work->cur - work->target < -9) {
+                    D_80108C98_2AEE38_DesertDuel = 0x100;
+                    work->timer = 0;
+                } else if (work->cur - work->target < 10) {
+                    D_80108C98_2AEE38_DesertDuel = 0x800;
+                    work->timer = 0;
+                } else if (work->cur - work->target >= -9) {
+                    D_80108C98_2AEE38_DesertDuel = 0x400;
+                    work->timer = 0;
+                }
+                break;
+        }
+    }
+}
+
+s32 func_80108720_2AE8C0_DesertDuel(void) {
+    return D_80108C98_2AEE38_DesertDuel;
+}

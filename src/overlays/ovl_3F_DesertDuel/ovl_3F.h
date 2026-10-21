@@ -288,6 +288,6 @@ void func_80107A00_2ADBA0_DesertDuel(void);
 s32 func_80107BF8_2ADD98_DesertDuel(void);
 void func_80107EE4_2AE084_DesertDuel(s32 arg0, s32 arg1, s32 arg2); /* CPU input script */
 void func_80108580_2AE720_DesertDuel(omObjData* obj);
-u16 func_80108720_2AE8C0_DesertDuel(void); /* CPU pad triggers (D_80108C98) */
+s32 func_80108720_2AE8C0_DesertDuel(void); /* CPU pad triggers (D_80108C98) */
 
 #endif
