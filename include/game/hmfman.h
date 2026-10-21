@@ -230,7 +230,7 @@ typedef struct HmfData {
     /* 0xD0 */ struct HmfData_UnkD0* unkD0; /* the drawing model's lights */
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
     /* 0xD8 */ void (*unkD8)(f32 (*)[4], f32, f32, f32);
-    /* 0xDC */ char unkDC[4];
+    /* 0xDC */ s32 unkDC; /* colour word (21920 func_8002523C_25E3C) */
 } HmfData; /* size 0xE0 (Hu3DModelCreate allocates it); MP1 unk2C0C0StructC0 */
 
 typedef struct HmfData_UnkD0 {

@@ -215,6 +215,14 @@ $(B3D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 W1D_CARVED_RODATA_UNITS := build/src/ECE0.c.o
 CARVED_RODATA_UNITS += $(W1D_CARVED_RODATA_UNITS)
 $(W1D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
+# w3-A: 21920's whole rodata carved (D2CE8-D2DF8; the asm switch's table and the strings the asm
+# .data tables name are defined in C); the piece before it ends on an 8-byte boundary
+W3A_CARVED_RODATA_UNITS := build/src/21920.c.o
+CARVED_RODATA_UNITS += $(W3A_CARVED_RODATA_UNITS)
+$(W3A_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
+W3A_NOPAD_DATA_PIECES := build/asm/data/D2AD0.data.s.o
+NOPAD_DATA_PIECES += $(W3A_NOPAD_DATA_PIECES)
+$(W3A_NOPAD_DATA_PIECES): ASFLAGS += --no-pad-sections
 # b2-A: units retail built with the KMC assembler VR4300 mul fix on (a nop between mul.s pairs), as MP1/MP3 build their sources
 build/src/26370.c.o: export VR4300MUL := ON
 build/src/274D0.c.o: export VR4300MUL := ON
