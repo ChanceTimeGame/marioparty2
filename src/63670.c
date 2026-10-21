@@ -1,6 +1,17 @@
 #include "common.h"
 #include "game/object.h"
 
+extern u8 D_800F8C56_F9856;
+extern s16 D_800F9048_F9C48;
+void func_80049498_4A098(s32);
+void func_80042B38_43738(s32);
+void func_8004DE7C_4EA7C(s32);
+void func_800494FC_4A0FC(s32);
+void func_8004E10C_4ED0C(s32);
+s32 func_80044DA4_459A4(void);
+void func_8005DA20_5E620(s32);
+
+
 s32 func_8004CC7C_4D87C(s32, s32, s32);
 
 
@@ -1260,8 +1271,85 @@ void func_8006692C_6752C(void) {
     HuPrcVSleep();
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80066994_67594);
+/* Board pad watcher: stick to scroll the map, Start for the menu, buttons for map view and items
+   (MP1 func_8005835C) */
+// GCC re-tests i == cur before the 0x2000 test, where retail only reloads the flag and the pad
+// (MP1 func_8005835C has the same residue; branch layout, masked ~6)
+#ifdef NON_MATCHING
+void func_80066994_67594(void) {
+    Vec2f sp10;
+    s32 cur;
+    s32 i;
+    s32 port;
 
+    while (1) {
+        HuPrcVSleep();
+        if (func_8008F618_90218() != 0 || D_800FC734_FD334 == 0 || D_800F8C56_F9856 == 3) {
+            continue;
+        }
+        cur = GetCurrentPlayerIndex();
+        for (i = 0; i < 4; i++) {
+            if ((ContDStkTrg[i] & 0x1000) && gPlayers[GwSystem.current_player_index].turn_status == 0) {
+                goto stick;
+            }
+            if (PlayerIsCPU(i) == 0) {
+                port = gPlayers[i].port;
+                if (i == cur) {
+                    if (D_800FA1A4_FADA4 != 0 && (ContDStkTrg[port] & 0x4000)) {
+                        goto start;
+                    }
+                    if (D_80101058_101C58 != 0 && (ContDStkTrg[port] & 0x4000)) {
+                        goto start2;
+                    }
+                    if (D_800FA198_FAD98 != 0 && (ContDStkTrg[port] & 0x10)) {
+                        goto view;
+                    }
+                }
+                if (i == cur && D_800FA198_FAD98 != 0 && (ContDStkTrg[port] & 0x2000)) {
+                    func_80049498_4A098(cur);
+                    func_80042B38_43738(port);
+                    goto done;
+                }
+            } else if (D_800FA1A4_FADA4 != 0) {
+                if (D_800F9048_F9C48 != 0) {
+                    if (i == cur) {
+                        if (func_80044DA4_459A4() == 0) {
+                            D_800F9048_F9C48 = 0;
+                        } else {
+                            func_80049498_4A098(cur);
+                            func_8004DE7C_4EA7C(cur);
+                            func_800494FC_4A0FC(cur);
+                        }
+                    }
+                }
+            }
+        }
+        continue;
+    view:
+        func_80049498_4A098(cur);
+        func_80067C6C_6886C(port);
+        goto done;
+    start2:
+        func_80049498_4A098(cur);
+        func_8004E10C_4ED0C(cur);
+        goto done;
+    start:
+        func_80049498_4A098(i);
+        func_8004DE7C_4EA7C(i);
+        func_800494FC_4A0FC(i);
+        continue;
+    stick:
+        func_80049498_4A098(cur);
+        func_800537A0_543A0(&sp10);
+        func_800536E4_542E4(&sp10);
+        func_8005DA20_5E620(i);
+    done:
+        func_800494FC_4A0FC(cur);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/63670", func_80066994_67594);
+#endif
 /* MP3 MBStart */
 void func_80066C34_67834(u32 arg0) {
     GW_PLAYER* player;
