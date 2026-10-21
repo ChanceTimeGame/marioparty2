@@ -1,6 +1,105 @@
 #include "common.h"
+#include "ovl_34.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80102800_259900_ChanceTime);
+void func_80102800_259900_ChanceTime(void) {
+    Vec pos;
+    Vec rot;
+    Vec up;
+    s16 i;
+    s16 n;
+    s32 j;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+    case 1:
+        D_80110D6A_267E6A_ChanceTime[0] = 1;
+        break;
+    case 2:
+        D_80110D6A_267E6A_ChanceTime[0] = 2;
+        break;
+    case 3:
+        D_80110D6A_267E6A_ChanceTime[0] = 3;
+        break;
+    case 0:
+    default:
+        D_80110D6A_267E6A_ChanceTime[0] = 0;
+        break;
+    }
+    for (i = 1, n = 0; i < 4; i++, n++) {
+        if (D_80110D6A_267E6A_ChanceTime[0] == n) {
+            n++;
+        }
+        D_80110D6A_267E6A_ChanceTime[i] = n;
+    }
+    func_8002D4D0_2E0D0(10);
+    func_8002F290_2FE90(D_800F9D30_FA930, 0x40);
+    func_80020D20_21920(60);
+    omInitObjMan(40, 60);
+    func_80088640_89240();
+    func_80079128_79D28();
+    func_800615FC_621FC_unproto(-1, -1);
+    func_80018E30_19A30(1);
+    D_80102708_103308 = 1;
+    D_80110060_267160_ChanceTime = _CheckFlag(0x45);
+    func_80026DAC_279AC(1, 0x40, 0x40, 0x40);
+    func_80026E00_27A00(1, 13.0f, -100.0f, 64.0f);
+    ScissorSet(0, 0.0f, 0.0f, 319.0f, 239.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 20.0f, 80.0f, 8000.0f);
+    pos.x = 0.0f;
+    pos.y = 250.0f;
+    pos.z = 2800.0f;
+    rot.x = 0.0f;
+    rot.y = 0.0f;
+    rot.z = 0.0f;
+    up.x = 0.0f;
+    up.y = 1.0f;
+    up.z = 0.0f;
+    for (j = 0; j < D_800FDBCA_FE7CA; j++) {
+        func_800B3820_B4420(&D_800C9B80_CA780->mtxs[j].perspMtx);
+        func_800B3820_B4420(&D_800C9B80_CA780->mtxs[j].lookAtMtx);
+    }
+    Hu3DCamSetPositionOrientation(0, &pos, &rot, &up);
+    func_8000C38C_CF8C();
+    func_8000C3C8_CFC8();
+    D_80110914_267A14_ChanceTime = func_80018A64_19664(0x440009, 0xABD);
+    D_80110916_267A16_ChanceTime = func_80018A64_19664(0x44000A, 0xABD);
+    D_80110918_267A18_ChanceTime = func_80018A64_19664(0x44000B, 0xABD);
+    func_8000C460_D060();
+    func_8000C578_D178(1);
+    func_8007273C_7333C(D_80110060_267160_ChanceTime != 0 ? D_80110230_267330_ChanceTime : D_80110248_267348_ChanceTime, 1);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    if (D_80110060_267160_ChanceTime != 0) {
+        omAddObj(1, 10, 10, -1, func_8010B02C_26212C_ChanceTime);
+    } else {
+        D_8011090C_267A0C_ChanceTime = omAddObj(1, 16, 4, -1, func_80103714_25A814_ChanceTime);
+        D_80110910_267A10_ChanceTime = omAddObj(1, 16, 4, -1, func_80103398_25A498_ChanceTime);
+    }
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(2, 3, 0, -1, func_8010E440_265540_ChanceTime);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(12, 0, 0, -1, func_8010E71C_26581C_ChanceTime);
+    func_8010BF50_263050_ChanceTime();
+    D_80110D80_267E80_ChanceTime[0] = omAddObj(12, 3, 0, -1, func_8010BF7C_26307C_ChanceTime);
+    D_80110D80_267E80_ChanceTime[1] = omAddObj(12, 3, 0, -1, func_8010BFD0_2630D0_ChanceTime);
+    if (D_80110060_267160_ChanceTime != 0) {
+        /* retail: D_80110D88 through the D_80110D80 base (s0 + 8), as in MP1 */
+        D_80110D80_267E80_ChanceTime[2] = omAddObj(12, 3, 0, -1, func_8010C080_263180_ChanceTime);
+    } else {
+        D_80110D88_267E88_ChanceTime = omAddObj(12, 3, 0, -1, func_8010C008_263108_ChanceTime);
+    }
+    omAddObj(5, 3, 0, -1, func_8010E0D4_2651D4_ChanceTime);
+    omAddObj(1, 0, 0, -1, func_80102E4C_259F4C_ChanceTime);
+    D_80110908_267A08_ChanceTime = omAddObj(5, 33, 0, -1, func_801077D8_25E8D8_ChanceTime);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(10, 2, 60, -1, func_8010EED0_265FD0_ChanceTime);
+    omAddObj(1, 0, 0, -1, func_8010BF28_263028_ChanceTime);
+    InitFadeIn(D_80110060_267160_ChanceTime != 0 ? 3 : 5, 16);
+}
 
 /* Two SJIS strings (local char-array initialisers?) as raw words until their user is C */
 const u32 D_80110260_267360_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x826481F3, 0x00000000 };
