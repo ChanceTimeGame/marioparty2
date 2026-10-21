@@ -258,6 +258,16 @@ extern s32 D_8011237C_2A764C_name_3E[6]; /* per character: sprite file */
 extern Unk3EVec2f D_8011233C_2A760C_name_3E[4]; /* per player: lost star start */
 extern Unk3EVec2f D_8011235C_2A762C_name_3E[4]; /* per player: lost star velocity */
 f32 __sinf(f32);
+typedef struct Unk3ERange {
+    u8 min;
+    u8 max;
+    u8 value;
+} Unk3ERange; /* size 3 */
+extern Unk3ERange D_80112394_2A7664_name_3E[6]; /* turn range -> star price */
+extern Unk3ERange D_801123A8_2A7678_name_3E[14]; /* press count range -> discount */
+extern u16 ContDStkTrg[4];
+void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void func_80055E3C_56A3C(s32 arg0);
 extern Unk3EVec2f D_80112504_2A77D4_name_3E[4]; /* per player: window slide positions */
 extern Unk3EVec2f D_80112524_2A77F4_name_3E[4];
 extern Unk3EVec2f D_80112544_2A7814_name_3E[4];
@@ -384,7 +394,7 @@ s32 func_8010A13C_29F40C_name_3E(s32 arg0);
 void func_8010A1DC_29F4AC_name_3E(s32 arg0);
 s32 func_8010A27C_29F54C_name_3E(s32 player);
 void func_8010AB58_29FE28_name_3E(void);
-s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
+s32 func_8010AB7C_29FE4C_name_3E(s32 player);
 void func_8010B8B8_2A0B88_name_3E(void);
 void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
 void func_8010BA48_2A0D18_name_3E(void);
