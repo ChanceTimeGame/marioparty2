@@ -113,7 +113,8 @@ typedef struct CTPlayerWork {
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[2];
+    /* 0x58 */ char unk_58[1];
+    /* 0x59 */ s8 unk_59; /* player index */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -240,7 +241,7 @@ void func_8010B328_262428_ChanceTime(void); /* process */
 struct CTExchange;
 void func_8010B3C4_2624C4_ChanceTime(s32 amount, struct CTExchange* ex);
 void func_8010B7F8_2628F8_ChanceTime(void); /* process */
-void func_8010BB0C_262C0C_ChanceTime(s16 arg0, s16* arg1, s16* arg2);
+void func_8010BB0C_262C0C_ChanceTime(s32 amount, s16* max, s16* n);
 void func_8010BB74_262C74_ChanceTime(void); /* process */
 void func_8010BF28_263028_ChanceTime(omObjData* obj);
 void func_8010BF50_263050_ChanceTime(void);
@@ -295,5 +296,15 @@ extern char* D_801100E0_2671E0_ChanceTime[3]; /* [kind] (MP1 D_80101348) */
 extern char D_80110808_267908_ChanceTime[16]; /* the outcome window's words */
 extern char D_80110818_267918_ChanceTime[16];
 extern char D_80110828_267928_ChanceTime[16];
+extern char D_80110838_267938_ChanceTime[16]; /* the bank window's words */
+extern char D_80110848_267948_ChanceTime[16];
+extern s16 D_8011014E_26724E_ChanceTime; /* the voice's length / 2 */
+extern s32 D_800CD438_CE038[6][6]; /* [character]; [1] = voice sound base */
+void func_800614B4_620B4(s32 player, s32 coins); /* give coins */
+void func_80019B9C_1A79C(omObjData* obj, s32 motion);
+s16 func_80073014_73C14(u32 arg0, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*); the sound's length */
+s16 func_800797DC_7A3DC(s32, s16);
+void func_800798F8_7A4F8(s16, s16);
+void func_8008AD44_8B944(s16 win);
 
 #endif

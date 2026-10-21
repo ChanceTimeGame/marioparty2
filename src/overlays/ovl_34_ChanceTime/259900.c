@@ -1,6 +1,10 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* Player 0 pays the bank: n = min(amount, coins) (n stays 0 when the player has none).
+   (MP1 func_800FF3F0's switch) */
+
+
 /* The outcome's exchange: how much moves (amount, capped at the giver's coins), the window
    message, which word goes in slot 2 and whether the names swap; the coin and star deltas go to
    D_801100C0 / D_801100C4 [player 0, player 1]. (MP1 func_800FED28's switch) */
@@ -1411,10 +1415,97 @@ void func_8010B7F8_2628F8_ChanceTime(void) {
         HuPrcVSleep();
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB0C_262C0C_ChanceTime);
+void func_8010BB0C_262C0C_ChanceTime(s32 amount, s16* max, s16* n) {
+    s32 pad[2]; /* retail's leaf frame has 8 unreferenced bytes */
+    s16 coins;
+    s32 c;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB74_262C74_ChanceTime);
+    coins = c = gPlayers[D_80110180_267280_ChanceTime].coins;
+    if (c != 0) {
+        if (c < amount) {
+            *n = coins;
+        } else {
+            *n = amount;
+        }
+    }
+    *max = amount;
+    D_801100C0_2671C0_ChanceTime[0] -= *n;
+}
+void func_8010BB74_262C74_ChanceTime(void) {
+    s16 max;
+    s16 n;
+    s16 win;
+    CTPlayerWork* work;
 
+    max = n = 0;
+    D_801100BC_2671BC_ChanceTime = 0;
+    win = func_80057480_58080(30, 60, 19, 3);
+    ShowTextWindow(win);
+    switch (D_80110182_267282_ChanceTime) {
+    case 0:
+        func_8010BB0C_262C0C_ChanceTime(3, &max, &n);
+        break;
+    case 11:
+        func_8010BB0C_262C0C_ChanceTime(10, &max, &n);
+        break;
+    case 2:
+        func_8010BB0C_262C0C_ChanceTime(20, &max, &n);
+        break;
+    case 4:
+        func_8010BB0C_262C0C_ChanceTime(30, &max, &n);
+        break;
+    case 12:
+        func_8010BB0C_262C0C_ChanceTime(40, &max, &n);
+        break;
+    }
+    sprintf(D_80110838_267938_ChanceTime, D_801100C8_2671C8_ChanceTime[gPlayers[D_80110180_267280_ChanceTime].character]);
+    func_80089308_89F08(win, D_80110838_267938_ChanceTime, 0);
+    sprintf(D_80110848_267948_ChanceTime, D_80110414_267514_ChanceTime, n);
+    func_80089308_89F08(win, D_80110848_267948_ChanceTime, 1);
+    func_80089A48_8A648(win, 0);
+    if (n >= max) {
+        func_800890CC_89CCC(win, 1, -1, -1);
+    } else if (n == 0) {
+        func_800890CC_89CCC(win, 3, -1, -1);
+    } else {
+        func_800890CC_89CCC(win, 2, -1, -1);
+    }
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    if (n == 0) {
+        func_800614B4_620B4(D_80110180_267280_ChanceTime, 10);
+    } else {
+        func_800614B4_620B4(D_80110180_267280_ChanceTime, -n);
+    }
+    if (n != 0) {
+        if (D_80110180_267280_ChanceTime == D_80110D6A_267E6A_ChanceTime[0]) {
+            func_80019B9C_1A79C(D_800FFFD8_100BD8[0], 0x2A);
+            work = D_800FFFD8_100BD8[0]->unk_50;
+            HuPrcSleep(D_8011014E_26724E_ChanceTime =
+                           func_80073014_73C14(D_800CD438_CE038[gPlayers[work->unk_59].character][1] | 0x55, 0) / 2);
+            func_800798F8_7A4F8(func_800797DC_7A3DC(0xFC, work->unk_59), 0x2C);
+        }
+    } else {
+        if (D_80110180_267280_ChanceTime == D_80110D6A_267E6A_ChanceTime[0]) {
+            func_80019B9C_1A79C(D_800FFFD8_100BD8[0], 0x26);
+            work = D_800FFFD8_100BD8[0]->unk_50;
+            HuPrcSleep(D_8011014E_26724E_ChanceTime =
+                           func_80073014_73C14(D_800CD438_CE038[gPlayers[work->unk_59].character][1] | 0x52, 0) / 2);
+            func_800798F8_7A4F8(func_800797DC_7A3DC(0x103, work->unk_59), 0x2C);
+        }
+    }
+    func_8008AD44_8B944(win);
+    if (n == 0) {
+        func_800890CC_89CCC(win, 5, -1, -1);
+    } else {
+        func_800890CC_89CCC(win, 4, -1, -1);
+    }
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    D_801100BC_2671BC_ChanceTime = 1;
+    func_8005762C_5822C(win);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 /* Matches, but retail pads it with three nops to 0x8010BF50, where its second file (MP1's
    DAF90.c, from func_800FC390) begins: C here would shift everything after it until the unit is
    split at 0x263050. */
@@ -1508,7 +1599,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FF1C_
  * .text: switch back by hand (harmless once a C function precedes this). */
 __asm__(".section .rodata");
 /* Read only by .data (a texture-name table): rodata order is source order. */
-const char D_80110680_267780_ChanceTime[] = "tex3_DEF";
+/* fork C: aligned because retail's second file (from func_8010BF50) starts its .rodata here, 16
+   bytes after func_8010BB74's jump table, which C emits without the pad word. */
+const char D_80110680_267780_ChanceTime[] __attribute__((aligned(16))) = "tex3_DEF";
 const char D_8011068C_26778C_ChanceTime[] = "tex2_DEF";
 const char D_80110698_267798_ChanceTime[] = "tex1_DEF";
 const char D_801106A4_2677A4_ChanceTime[] = "tex0_DEF";
