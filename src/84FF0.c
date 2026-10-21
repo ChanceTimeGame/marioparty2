@@ -886,9 +886,17 @@ omObjData* func_80087044_87C44(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u16 arg4)
     return obj;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80087150_87D50);
+void func_80087150_87D50(omObjData* obj, f32 x, f32 y, f32 z) {
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80087160_87D60);
+void func_80087160_87D60(omObjData* obj, f32 x, f32 y, f32 z) {
+    obj->rot.x = x;
+    obj->rot.y = y;
+    obj->rot.z = z;
+}
 
 void func_80087170_87D70(omObjData* obj, f32 x, f32 y, f32 z) {
     Unk6C470Work* w = obj->unk_50;
@@ -907,13 +915,25 @@ void func_80087170_87D70(omObjData* obj, f32 x, f32 y, f32 z) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80087270_87E70);
+void func_80087270_87E70(omObjData* obj, f32 y) {
+    ((Unk6C470Work*)obj->unk_50)->unk1C = y;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008727C_87E7C);
+void func_8008727C_87E7C(omObjData* obj, f32 x, f32 y, f32 z) {
+    Unk6C470Work* w = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80087290_87E90);
+    w->unk10 = x;
+    w->unk14 = y;
+    w->unk18 = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008729C_87E9C);
+void func_80087290_87E90(omObjData* obj, s32 state) {
+    ((Unk6C470Work*)obj->unk_50)->unk20 = state;
+}
+
+s32 func_8008729C_87E9C(omObjData* obj) {
+    return ((Unk6C470Work*)obj->unk_50)->unk20;
+}
 
 void func_800872A8_87EA8(omObjData* obj, u16 mode) {
     s16 mdl = obj->model[0];
