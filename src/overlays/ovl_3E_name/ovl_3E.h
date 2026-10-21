@@ -13,6 +13,7 @@
 #include "game/object.h"
 #include "game/hmfman.h"
 #include "game/camera.h"
+#include "game/data.h" /* fork D */
 
 /* ---- main-segment API used by 3E ---- */
 
@@ -100,7 +101,7 @@ void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
 void func_80055928_56528(s16* arg0);
 void func_80055980_56580(s16* arg0);
 void func_8004D60C_4E20C(s32, void (*)(void)); /* board event slot */
-void func_80044D98_45998(void (*)(void));
+void func_80044D98_45998(s32 (*)(void)); /* fork D: the CPU item check callback returns s32 */
 void func_800542E8_54EE8(s32, s16);
 void func_800632F0_63EF0(s16 arg0);
 void func_80020070_20C70(s32);
@@ -196,6 +197,113 @@ extern s32 D_8011378C_2A8A5C_name_3E;
 extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
 extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
 extern s32 D_801138B0_2A8B80_name_3E; /* path step */
+
+/* fork D */
+typedef struct Vec2f3E {
+    f32 x;
+    f32 y;
+} Vec2f3E;
+extern Vec2f3E D_80112504_2A77D4_name_3E[4];
+extern Vec2f3E D_80112524_2A77F4_name_3E[4]; /* per player: window positions (item events) */
+extern Vec2f3E D_80112544_2A7814_name_3E[4];
+extern Vec2f3E D_80112564_2A7834_name_3E[4];
+extern s32 D_80112584_2A7854_name_3E[6]; /* per board: message */
+s32 func_80060210_60E10(s32);
+s32 func_800609D8_615D8(void); /* status windows still moving */
+void MBStatusItemDispSetAll(s32);
+extern s16 D_8011259C_2A786C_name_3E[6]; /* per board: message window */
+Process* MBDCameraZoomMotStart(f32);
+void func_800628C0_634C0(s32 player, f32, f32);
+s32 func_8006286C_6346C(s32 player);
+void func_800636F8_642F8(s32);
+void func_800509FC_515FC(void);
+void func_80054C78_55878(s16 space, s16* chainOut, s16* linkOut);
+void MBDlgWinExec(s32, s32);
+void func_800495D8_4A1D8(s32, s32);
+s16 func_800632FC_63EFC(void); /* the board's music */
+extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] */
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+s32 func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void func_80056458_57058(void); /* wait for the message window */
+void func_8004CA14_4D614(s32 player, s32 coins); /* add coins */
+void func_8006135C_61F5C(s32 player, s32 coins, s32);
+void func_800797DC_7A3DC(s32, s16);
+extern u16 D_800CAFD8[]; /* item ids; the low byte is the item */
+extern s32 D_800CCBDC_CD7DC[]; /* per item: picture file */
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16, s16, s32);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
+void SprAnimKill(s16 animIdx);
+void SprKill(s16 idx);
+s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
+extern s32 D_801126BC_2A798C_name_3E[]; /* decision tree */
+extern Vec2f3E D_8011271C_2A79EC_name_3E[4]; /* x/z offsets around a space */
+extern s16 D_8011273C_2A7A0C_name_3E; /* space */
+extern s32 D_80112780_2A7A50_name_3E[]; /* decision trees */
+extern s32 D_801127A4_2A7A74_name_3E[];
+extern s32 D_801127C8_2A7A98_name_3E[];
+extern s16 D_80112750_2A7A20_name_3E[4]; /* per D_800F8CE4_F98E4[0]: chain */
+extern s16 D_80112758_2A7A28_name_3E[4]; /* per D_800F8CE4_F98E4[0]: space in the chain */
+extern Vec2f3E D_80112760_2A7A30_name_3E[4]; /* per player: x/z offsets */
+void MBPlayerForwardSet(s16 playerNo);
+void func_80061518_62118(void);
+void func_80061584_62184(void);
+s32 func_8004CC7C_4D87C(s32, s32, s32); /* help window */
+void MBHelpWinKill(s32);
+Process* func_80048A48_49648(s32 player);
+s32 func_80047E70_48A70(s32);
+void func_800495A8_4A1A8(s8 arg0);
+void func_80063710_64310(Vec* pos);
+void func_800558E8_564E8(s16);
+s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
+void func_80063734_64334(Vec* arg0);
+void CameraScissorSet(s16, void*);
+extern f32 D_80112914_2A7BE4_name_3E[4]; /* scissor box {0, 0, 320, 240} */
+extern s32 D_80112F24_2A81F4_name_3E[]; /* decision trees (CPU item use) */
+extern s32 D_80112F84_2A8254_name_3E[];
+extern s32 D_80113248_2A8518_name_3E[];
+extern s32 D_801133BC_2A868C_name_3E[];
+s16 GetCurrentPlayerIndex(void);
+s16 RNGPercentChance(s8 arg0);
+extern u8 D_800CC000[]; /* item prices */
+extern s32 D_8011341C_2A86EC_name_3E[]; /* decision trees (CPU shop) */
+extern s32 D_80113434_2A8704_name_3E[];
+extern s32 D_801134A0_2A8770_name_3E[]; /* decision tree (CPU yes/no) */
+extern s32 D_801134C4_2A8794_name_3E; /* set: the CPU's next answer is option 2 */
+extern u8* D_80113510_2A87E0_name_3E[]; /* per character: items the CPU tries to buy */
+extern s8* D_80113570_2A8840_name_3E[]; /* per character: their percent chances */
+extern u8 D_80113588_2A8858_name_3E[]; /* per character: list length */
+s16 func_800558F4_564F4(void);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void InitFadeOut(s32, s32);
+void InitFadeIn(s32, s32);
+s32 func_8008F618_90218(void); /* fade still running */
+void func_80063C40_64840(s32, s32);
+void* func_800672BC_67EBC(s16 arg0, s16 arg1, s32 arg2);
+void func_8006735C_67F5C(void*);
+void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
+void MBDlgResultWinExec(s32);
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+s32 MBRand(f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_800629F0_635F0(s32 player, s16); /* status window */
+void func_80062588_63188(s16);
+extern MBModel* D_800CC1F0_CCDF0; /* the Bowser suit model */
+void func_8005070C_5130C(void); /* MBKSuitCreate */
+void MBKSuitMotionSet(s16 arg0, s32 arg1);
+void func_800B3B80_B4780(f32* mtx, f32 angle); /* rotate a model matrix */
+void func_80050860_51460(void); /* MBKSuitKill */
+Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* turn arg0 toward arg1 */
 
 /* ---- 297AD0.c ---- */
 
@@ -300,7 +408,7 @@ void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
 void func_8010CAE8_2A1DB8_name_3E(void);
 void func_8010CCD4_2A1FA4_name_3E(void);
-s32 func_8010CF20_2A21F0_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+Process* func_8010CF20_2A21F0_name_3E(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5); /* fork D: from its entry and callers */
 void func_8010CFCC_2A229C_name_3E(void);
 s32 func_8010D37C_2A264C_name_3E(void);
 void func_8010D6C8_2A2998_name_3E(void);
@@ -319,7 +427,7 @@ s32 func_801104E0_2A57B0_name_3E(void);
 void func_80110794_2A5A64_name_3E(void);
 void func_80110F78_2A6248_name_3E(void);
 void func_801112E4_2A65B4_name_3E(void);
-void func_80111338_2A6608_name_3E(void);
+s32 func_80111338_2A6608_name_3E(void); /* fork D: returns the use-item answer */
 s32 func_8011155C_2A682C_name_3E(void);
 s32 func_801118D8_2A6BA8_name_3E(void);
 
