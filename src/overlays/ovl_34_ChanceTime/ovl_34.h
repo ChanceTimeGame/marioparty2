@@ -114,7 +114,8 @@ typedef struct CTPlayerWork {
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[2];
+    /* 0x58 */ char unk_58;
+    /* 0x59 */ s8 unk_59; /* player index (fork D) */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -236,6 +237,25 @@ extern s8 D_801101BC_2672BC_ChanceTime[3]; /* it finished */
 extern s8 D_801101C0_2672C0_ChanceTime;
 extern u16 D_801109C0_267AC0_ChanceTime; /* sprite */
 extern s16 D_801109C2_267AC2_ChanceTime;
+
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+
+extern s8 D_80110061_267161_ChanceTime; /* the holder landed */
+/* The CPU holder's block run (MP1 D_80101266, D_80101268, D_8010126C, D_8010126A) */
+extern u16 D_801101D0_2672D0_ChanceTime; /* the block order is chosen */
+extern u16 D_801101D2_2672D2_ChanceTime; /* buttons last frame */
+extern u16 D_801101D4_2672D4_ChanceTime; /* 1: under a block, waiting */
+extern u8 D_801101D6_2672D6_ChanceTime; /* blocks hit so far */
+extern u8 D_801109D0_267AD0_ChanceTime[3]; /* block order (MP1 D_801016F8); [2] MP1 D_801016FA */
+extern s32 D_801109D4_267AD4_ChanceTime; /* wait counter (MP1 D_801016F4) */
+extern s16 D_801109D8_267AD8_ChanceTime; /* wait length (MP1 D_801016FC) */
+/* saved real controller state per port, restored after the update (MP1 D_80101AA6 ...) */
+extern u16 D_80110D5A_267E5A_ChanceTime[4];
+extern s8 D_80110B10_267C10_ChanceTime[4];
+extern s8 D_80110D66_267E66_ChanceTime[4];
+extern u16 D_801109F0_267AF0_ChanceTime[4];
 
 /* ---- overlay functions (all 62; signatures past fork A's range are inferred) ---- */
 /* fork A */
