@@ -1449,7 +1449,127 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A13C_29F40C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A1DC_29F4AC_name_3E);
 
+#ifdef NON_MATCHING /* rodata-pending */
+/* A star flies out of the player's status window (player -1: of every other player that has
+   one) and the player loses it. */
+s32 func_8010A27C_29F54C_name_3E(s32 player) {
+    s16 sprites[4];
+    s32 sprite;
+    void* data;
+    s32 anim;
+    s32 anim2;
+    s32 k;
+    s32 i;
+    s32 j;
+    s32 count;
+    f32 y;
+
+    if (player == -1) {
+        data = DataRead(0xA000B);
+        anim = SprAnimRead_s32(data);
+        DataClose(data);
+        for (i = 0; i < 4; i++) {
+            if (i == GwSystem.current_player_index || gPlayers[i].stars == 0) {
+                sprites[i] = -1;
+            } else {
+                SprAnimSet(sprites[i] = SprCreate_s32(1, 5), 0, anim, 0);
+                SprPrioSet(sprites[i], 0, 10);
+                func_8008225C_82E5C(sprites[i], 0, 0);
+                SprAttrSet(sprites[i], 0, 0x1000);
+                SprPosSet(sprites[i], 0, D_8011233C_2A760C_name_3E[i].x, D_8011233C_2A760C_name_3E[i].y);
+                func_80082488_83088(sprites[i], 0, 0);
+            }
+        }
+        PlaySound(0x377);
+        for (j = 0; j < 17; j++) {
+            for (i = 0; i < 4; i++) {
+                if (sprites[i] != -1) {
+                    SprPosSet(sprites[i], 0, j * D_8011235C_2A762C_name_3E[i].x + D_8011233C_2A760C_name_3E[i].x,
+                              j * D_8011235C_2A762C_name_3E[i].y + D_8011233C_2A760C_name_3E[i].y);
+                    func_80082488_83088(sprites[i], 0, j * 16);
+                }
+            }
+            HuPrcVSleep();
+        }
+        count = 0;
+        for (i = 0; i < 4; i++) {
+            if (sprites[i] != -1) {
+                func_80082488_83088(sprites[i], 0, 255);
+                gPlayers[i].stars--;
+                count++;
+                MBPlayerVibrate(i, 5);
+            }
+        }
+        PlaySound(0xE4);
+        for (j = 0; j < 30; j++) {
+            for (i = 0; i < 4; i++) {
+                if (sprites[i] != -1) {
+                    y = D_8011235C_2A762C_name_3E[i].y * 16.0f + D_8011233C_2A760C_name_3E[i].y;
+                    SprPosSet(sprites[i], 0, D_8011235C_2A762C_name_3E[i].x * 16.0f + D_8011233C_2A760C_name_3E[i].x,
+                              y + 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
+                }
+            }
+            HuPrcVSleep();
+        }
+        for (j = 16; j >= 0; j--) {
+            for (i = 0; i < 4; i++) {
+                if (sprites[i] != -1) {
+                    SprPosSet(sprites[i], 0, j * D_8011235C_2A762C_name_3E[i].x + D_8011233C_2A760C_name_3E[i].x,
+                              j * D_8011235C_2A762C_name_3E[i].y + D_8011233C_2A760C_name_3E[i].y);
+                    func_80082488_83088(sprites[i], 0, j * 16);
+                }
+            }
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 4; i++) {
+            if (sprites[i] != -1) {
+                SprKill(sprites[i]);
+            }
+        }
+        SprAnimKill(anim);
+        return count;
+    } else {
+        sprite = SprCreate_s32(1, 5);
+        data = DataRead(0xA000B);
+        anim2 = SprAnimRead_s32(data);
+        DataClose(data);
+        SprAnimSet(sprite, 0, anim2, 0);
+        SprPrioSet(sprite, 0, 10);
+        func_8008225C_82E5C(sprite, 0, 0);
+        SprAttrSet(sprite, 0, 0x1000);
+        SprPosSet(sprite, 0, D_8011233C_2A760C_name_3E[player].x, D_8011233C_2A760C_name_3E[player].y);
+        func_80082488_83088(sprite, 0, 0);
+        PlaySound(0x377);
+        for (k = 0; k < 17; k++) {
+            SprPosSet(sprite, 0, k * D_8011235C_2A762C_name_3E[player].x + D_8011233C_2A760C_name_3E[player].x,
+                      k * D_8011235C_2A762C_name_3E[player].y + D_8011233C_2A760C_name_3E[player].y);
+            func_80082488_83088(sprite, 0, k * 16);
+            HuPrcVSleep();
+        }
+        func_80082488_83088(sprite, 0, 255);
+        gPlayers[player].stars--;
+        MBPlayerVibrate(player, 5);
+        PlaySound(0xE4);
+        for (k = 0; k < 30; k++) {
+            y = D_8011235C_2A762C_name_3E[player].y * 16.0f + D_8011233C_2A760C_name_3E[player].y;
+            SprPosSet(sprite, 0, D_8011235C_2A762C_name_3E[player].x * 16.0f + D_8011233C_2A760C_name_3E[player].x,
+                      y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+            HuPrcVSleep();
+        }
+        for (k = 16; k >= 0; k--) {
+            SprPosSet(sprite, 0, k * D_8011235C_2A762C_name_3E[player].x + D_8011233C_2A760C_name_3E[player].x,
+                      k * D_8011235C_2A762C_name_3E[player].y + D_8011233C_2A760C_name_3E[player].y);
+            func_80082488_83088(sprite, 0, k * 16);
+            HuPrcVSleep();
+        }
+        SprKill(sprite);
+        SprAnimKill(anim2);
+        return 1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A27C_29F54C_name_3E);
+#endif
 
 void func_8010AB58_29FE28_name_3E(void) {
     func_80055E60_56A60();

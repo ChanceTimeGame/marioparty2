@@ -255,6 +255,9 @@ typedef struct Unk3EVec2f {
     f32 y;
 } Unk3EVec2f;
 extern s32 D_8011237C_2A764C_name_3E[6]; /* per character: sprite file */
+extern Unk3EVec2f D_8011233C_2A760C_name_3E[4]; /* per player: lost star start */
+extern Unk3EVec2f D_8011235C_2A762C_name_3E[4]; /* per player: lost star velocity */
+f32 __sinf(f32);
 extern Unk3EVec2f D_80112504_2A77D4_name_3E[4]; /* per player: window slide positions */
 extern Unk3EVec2f D_80112524_2A77F4_name_3E[4];
 extern Unk3EVec2f D_80112544_2A7814_name_3E[4];
@@ -379,7 +382,7 @@ s32 func_80109AE4_29EDB4_name_3E(void);
 void func_80109B30_29EE00_name_3E(void);
 s32 func_8010A13C_29F40C_name_3E(s32 arg0);
 void func_8010A1DC_29F4AC_name_3E(s32 arg0);
-void func_8010A27C_29F54C_name_3E(s32 arg0);
+s32 func_8010A27C_29F54C_name_3E(s32 player);
 void func_8010AB58_29FE28_name_3E(void);
 s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
 void func_8010B8B8_2A0B88_name_3E(void);
