@@ -254,7 +254,7 @@ void func_8010C008_263108_ChanceTime(omObjData* obj);
 void func_8010C024_263124_ChanceTime(omObjData* obj);
 void func_8010C080_263180_ChanceTime(omObjData* obj);
 void func_8010C09C_26319C_ChanceTime(void);
-void* func_8010C268_263368_ChanceTime(void);
+s8* func_8010C268_263368_ChanceTime(void);
 void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 arg1);
 /* fork D */
 void func_8010CCF4_263DF4_ChanceTime(omObjData* obj, s8 arg1);
@@ -300,6 +300,15 @@ extern char D_80110838_267938_ChanceTime[16]; /* the bank window's words */
 extern char D_80110848_267948_ChanceTime[16];
 extern s16 D_8011014E_26724E_ChanceTime; /* the voice's length / 2 */
 extern s32 D_800CD438_CE038[6][6]; /* [character]; [1] = voice sound base */
+/* The outcome tables (bss, filled by func_8010C09C); D_80110920 points at the one in use. */
+extern s8* D_80110920_267A20_ChanceTime;
+extern s8 D_80110930_267A30_ChanceTime[24];
+extern s8 D_80110948_267A48_ChanceTime[24];
+extern s8 D_80110960_267A60_ChanceTime[24];
+extern s8 D_80110978_267A78_ChanceTime[24];
+extern s8 D_80110990_267A90_ChanceTime[24];
+extern s8 D_801109A8_267AA8_ChanceTime[24];
+s32 func_80059FD0_5ABD0(s32 player); /* the player's rank */
 void func_800614B4_620B4(s32 player, s32 coins); /* give coins */
 void func_80019B9C_1A79C(omObjData* obj, s32 motion);
 s16 func_80073014_73C14(u32 arg0, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*); the sound's length */

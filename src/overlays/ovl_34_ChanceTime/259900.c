@@ -1,6 +1,10 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* Fills the six outcome tables the block reel draws from (first variant: 20 entries, early /
+   middle / late game; second variant: 10). */
+
+
 /* Player 0 pays the bank: n = min(amount, coins) (n stays 0 when the player has none).
    (MP1 func_800FF3F0's switch) */
 
@@ -1549,10 +1553,168 @@ void func_8010C024_263124_ChanceTime(omObjData* obj) {
 void func_8010C080_263180_ChanceTime(omObjData* obj) {
     func_8010C44C_26354C_ChanceTime(obj, 3);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C09C_26319C_ChanceTime);
+void func_8010C09C_26319C_ChanceTime(void) {
+    D_80110930_267A30_ChanceTime[0] = 0;
+    D_80110930_267A30_ChanceTime[1] = 1;
+    D_80110930_267A30_ChanceTime[2] = 2;
+    D_80110930_267A30_ChanceTime[3] = 2;
+    D_80110930_267A30_ChanceTime[4] = 3;
+    D_80110930_267A30_ChanceTime[5] = 3;
+    D_80110930_267A30_ChanceTime[6] = 4;
+    D_80110930_267A30_ChanceTime[7] = 5;
+    D_80110930_267A30_ChanceTime[8] = 6;
+    D_80110930_267A30_ChanceTime[9] = 7;
+    D_80110930_267A30_ChanceTime[10] = 8;
+    D_80110930_267A30_ChanceTime[11] = 9;
+    D_80110930_267A30_ChanceTime[12] = 2;
+    D_80110930_267A30_ChanceTime[13] = 3;
+    D_80110930_267A30_ChanceTime[14] = 4;
+    D_80110930_267A30_ChanceTime[15] = 5;
+    D_80110930_267A30_ChanceTime[16] = 6;
+    D_80110930_267A30_ChanceTime[17] = 7;
+    D_80110930_267A30_ChanceTime[18] = 9;
+    D_80110930_267A30_ChanceTime[19] = 9;
+    D_80110948_267A48_ChanceTime[0] = 2;
+    D_80110948_267A48_ChanceTime[1] = 2;
+    D_80110948_267A48_ChanceTime[2] = 3;
+    D_80110948_267A48_ChanceTime[3] = 3;
+    D_80110948_267A48_ChanceTime[4] = 4;
+    D_80110948_267A48_ChanceTime[5] = 4;
+    D_80110948_267A48_ChanceTime[6] = 5;
+    D_80110948_267A48_ChanceTime[7] = 5;
+    D_80110948_267A48_ChanceTime[8] = 6;
+    D_80110948_267A48_ChanceTime[9] = 7;
+    D_80110948_267A48_ChanceTime[10] = 8;
+    D_80110948_267A48_ChanceTime[11] = 9;
+    D_80110948_267A48_ChanceTime[12] = 10;
+    D_80110948_267A48_ChanceTime[13] = 4;
+    D_80110948_267A48_ChanceTime[14] = 5;
+    D_80110948_267A48_ChanceTime[15] = 6;
+    D_80110948_267A48_ChanceTime[16] = 7;
+    D_80110948_267A48_ChanceTime[17] = 8;
+    D_80110948_267A48_ChanceTime[18] = 9;
+    D_80110948_267A48_ChanceTime[19] = 9;
+    D_80110960_267A60_ChanceTime[0] = 2;
+    D_80110960_267A60_ChanceTime[1] = 3;
+    D_80110960_267A60_ChanceTime[2] = 4;
+    D_80110960_267A60_ChanceTime[3] = 4;
+    D_80110960_267A60_ChanceTime[4] = 5;
+    D_80110960_267A60_ChanceTime[5] = 5;
+    D_80110960_267A60_ChanceTime[6] = 6;
+    D_80110960_267A60_ChanceTime[7] = 7;
+    D_80110960_267A60_ChanceTime[8] = 8;
+    D_80110960_267A60_ChanceTime[9] = 8;
+    D_80110960_267A60_ChanceTime[10] = 9;
+    D_80110960_267A60_ChanceTime[11] = 9;
+    D_80110960_267A60_ChanceTime[12] = 10;
+    D_80110960_267A60_ChanceTime[13] = 4;
+    D_80110960_267A60_ChanceTime[14] = 5;
+    D_80110960_267A60_ChanceTime[15] = 6;
+    D_80110960_267A60_ChanceTime[16] = 7;
+    D_80110960_267A60_ChanceTime[17] = 8;
+    D_80110960_267A60_ChanceTime[18] = 9;
+    D_80110960_267A60_ChanceTime[19] = 10;
+    D_80110978_267A78_ChanceTime[0] = 0;
+    D_80110978_267A78_ChanceTime[1] = 11;
+    D_80110978_267A78_ChanceTime[2] = 2;
+    D_80110978_267A78_ChanceTime[3] = 4;
+    D_80110978_267A78_ChanceTime[4] = 0;
+    D_80110978_267A78_ChanceTime[5] = 11;
+    D_80110978_267A78_ChanceTime[6] = 2;
+    D_80110978_267A78_ChanceTime[7] = 4;
+    D_80110978_267A78_ChanceTime[8] = 11;
+    D_80110978_267A78_ChanceTime[9] = 2;
+    D_80110990_267A90_ChanceTime[0] = 0;
+    D_80110990_267A90_ChanceTime[1] = 11;
+    D_80110990_267A90_ChanceTime[2] = 2;
+    D_80110990_267A90_ChanceTime[3] = 4;
+    D_80110990_267A90_ChanceTime[4] = 12;
+    D_80110990_267A90_ChanceTime[5] = 11;
+    D_80110990_267A90_ChanceTime[6] = 2;
+    D_80110990_267A90_ChanceTime[7] = 4;
+    D_80110990_267A90_ChanceTime[8] = 2;
+    D_80110990_267A90_ChanceTime[9] = 4;
+    D_801109A8_267AA8_ChanceTime[0] = 11;
+    D_801109A8_267AA8_ChanceTime[1] = 2;
+    D_801109A8_267AA8_ChanceTime[2] = 4;
+    D_801109A8_267AA8_ChanceTime[3] = 12;
+    D_801109A8_267AA8_ChanceTime[4] = 2;
+    D_801109A8_267AA8_ChanceTime[5] = 4;
+    D_801109A8_267AA8_ChanceTime[6] = 12;
+    D_801109A8_267AA8_ChanceTime[7] = 2;
+    D_801109A8_267AA8_ChanceTime[8] = 4;
+    D_801109A8_267AA8_ChanceTime[9] = 12;
+}
+s8* func_8010C268_263368_ChanceTime(void) {
+    s16 stage;
+    s32 rank;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C268_263368_ChanceTime);
-
+    stage = 0;
+    switch (GwSystem.current_game_length) {
+    case 0:
+        if (GwSystem.current_turn < 6) {
+            stage = 0;
+        } else if (GwSystem.current_turn < 16) {
+            stage = 1;
+        } else {
+            stage = 2;
+        }
+        break;
+    case 1:
+        if (GwSystem.current_turn < 11) {
+            stage = 0;
+        } else if (GwSystem.current_turn < 21) {
+            stage = 1;
+        } else {
+            stage = 2;
+        }
+        break;
+    case 2:
+        if (GwSystem.current_turn < 16) {
+            stage = 0;
+        } else if (GwSystem.current_turn < 36) {
+            stage = 1;
+        } else {
+            stage = 2;
+        }
+        break;
+    }
+    rank = func_80059FD0_5ABD0(CT_PWORK(D_800FFFD8_100BD8[0])->unk_59);
+    switch (stage) {
+    case 0:
+        if (D_80110060_267160_ChanceTime != 0) {
+            return D_80110978_267A78_ChanceTime;
+        }
+        return D_80110930_267A30_ChanceTime;
+    case 1:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (rank == 1) {
+                return D_801109A8_267AA8_ChanceTime;
+            }
+            if (rank == 4) {
+                return D_80110978_267A78_ChanceTime;
+            }
+            return D_80110990_267A90_ChanceTime;
+        }
+        if (rank == 1) {
+            return D_80110930_267A30_ChanceTime;
+        }
+        return D_80110948_267A48_ChanceTime;
+    case 2:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (rank < 3) {
+                return D_801109A8_267AA8_ChanceTime;
+            }
+            return D_80110990_267A90_ChanceTime;
+        }
+        return D_80110960_267A60_ChanceTime;
+    default:
+        if (D_80110060_267160_ChanceTime != 0) {
+            return D_80110990_267A90_ChanceTime;
+        }
+        return D_80110948_267A48_ChanceTime;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C44C_26354C_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010CCF4_263DF4_ChanceTime);
