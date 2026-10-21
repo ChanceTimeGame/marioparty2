@@ -80,6 +80,15 @@ void func_80079718_7A318(s32, s32);
 void omPrcSetStatBit(Process*, s32);
 void omPrcResetStatBit(Process* process, s32 bit);
 void func_80067C6C_6886C(s32 arg0); /* map view */
+extern s16 mbDlgWinId;
+void func_8008D59C_8E19C(s16, s16);
+void func_80089284_89E84(s16, s32, s32);
+u8 func_80057718_58318(void);
+void func_8008CFD0_8DBD0(s16, s16, s16, s16, u8);
+void func_8008D07C_8DC7C(s16, s16, s16, s16);
+void func_8008D854_8E454(s32 arg0, s16 arg1);
+s32 func_8008BB48_8C748(s16, s16, s32);
+s32 func_80059FD0_5ABD0(s32); /* the player's rank */
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -94,6 +103,13 @@ extern s32 D_801119A8_2A6C78_name_3E;
 extern f32 D_801119AC_2A6C7C_name_3E[9]; /* per board */
 
 extern s32 D_801119D0_2A6CA0_name_3E;
+/* 3E's rodata (0x2A8860-0x2A89A0, carved by the coordinator) */
+typedef struct Unk4Bytes {
+    u8 b[4];
+} Unk4Bytes;
+extern u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
+
+extern u8 D_801119D4_2A6CA4_name_3E[3][4]; /* steal-a-star chance by turn band, coin band */
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
@@ -104,6 +120,8 @@ extern s32 D_801136DC_2A89AC_name_3E;
 extern s32 D_801136E0_2A89B0_name_3E;
 extern s32 D_801136E4_2A89B4_name_3E;
 extern s32 D_801136E8_2A89B8_name_3E;
+extern s32 D_80113710_2A89E0_name_3E; /* what can be stolen: 0 coins, 1 a star, 2 nothing */
+extern s32 D_80113700_2A89D0_name_3E[4]; /* players other than the current one, by coins */
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -124,9 +142,9 @@ void func_80103AF4_298DC4_name_3E(void);
 s32 func_80103B70_298E40_name_3E(void);
 void func_80103BC4_298E94_name_3E(void);
 void func_80103C94_298F64_name_3E(void);
-s32 func_80103CF4_298FC4_name_3E(s32 arg0);
-s32 func_80103FB0_299280_name_3E(void);
-s32 func_801041D4_2994A4_name_3E(void);
+s32 func_80103CF4_298FC4_name_3E(u8* items);
+s32 func_80103FB0_299280_name_3E(void); /* the chosen option */
+s32 func_801041D4_2994A4_name_3E(void); /* the chosen option */
 void func_80104380_299650_name_3E(void);
 s32 func_801045C0_299890_name_3E(void);
 void func_80104778_299A48_name_3E(void);
