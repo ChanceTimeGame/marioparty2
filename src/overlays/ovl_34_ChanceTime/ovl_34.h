@@ -208,6 +208,39 @@ extern s16 D_80110D72_267E72_ChanceTime[4]; /* buttons held */
 extern omObjData* D_80110D80_267E80_ChanceTime[2];
 extern omObjData* D_80110D88_267E88_ChanceTime;
 
+/* fork B */
+/* A flying coin of the exchanges (MP1 CTCoin, D_80101868). */
+typedef struct CTCoin {
+    /* 0x00 */ s16 unk_00; /* model (obj->model[1 + i] of the coin object) */
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ f32 unk_04; /* x */
+    /* 0x08 */ f32 unk_08; /* y */
+    /* 0x0C */ f32 unk_0C; /* z */
+    /* 0x10 */ f32 unk_10; /* bounce height */
+    /* 0x14 */ f32 unk_14; /* bounce angle */
+    /* 0x18 */ s8 unk_18;  /* 1 flying */
+    /* 0x19 */ s8 unk_19;  /* 1 free */
+    /* 0x1A */ char unk_1A[2];
+} CTCoin; /* size = 0x1C */
+extern s8 D_8011012A_26722A_ChanceTime;  /* func_80106604 started (MP1 D_8010128C) */
+extern f32 D_8011012C_26722C_ChanceTime; /* coin spin angle */
+extern s8 D_80110130_267230_ChanceTime;  /* func_80106B5C started (MP1 D_80101294) */
+extern s8 D_80110134_267234_ChanceTime[2]; /* func_80106B5C: each side's coins paid */
+extern f32 D_80110138_267238_ChanceTime; /* coin spin angle */
+extern s8 D_801107E8_2678E8_ChanceTime;  /* func_80106604: direction (MP1 D_80101740) */
+extern s8 D_801107E9_2678E9_ChanceTime;  /* all coins thrown */
+extern s16 D_801107EA_2678EA_ChanceTime; /* coin count */
+extern s16 D_801107EC_2678EC_ChanceTime; /* coins thrown */
+extern s16 D_801107EE_2678EE_ChanceTime; /* coins arrived */
+extern f32 D_801107F0_2678F0_ChanceTime; /* throw rate accumulator */
+extern s16 D_801107F4_2678F4_ChanceTime[2]; /* func_80106B5C: coins shown per side (MP1 D_8010174C) */
+extern f32 D_801107F8_2678F8_ChanceTime[2]; /* throw rate accumulators */
+extern s16 D_80110800_267900_ChanceTime[2]; /* the two players' coins */
+extern CTCoin D_80110B20_267C20_ChanceTime[20];
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
+void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
+
 /* ---- overlay functions (all 62; signatures past fork A's range are inferred) ---- */
 /* fork A */
 void func_80102800_259900_ChanceTime(void); /* scene setup */
