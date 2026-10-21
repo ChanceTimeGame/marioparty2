@@ -74,14 +74,14 @@ typedef struct TextWindow {
     /* 0x000 */ u16 unk_00[0x10]; /* palette (RGBA5551), copied from D_800CD874_CE474 */
     /* 0x020 */ u8 unk20;
     /* 0x021 */ s8 unk21;
-    /* 0x022 */ s8 unk22;
+    /* 0x022 */ u8 unk22; /* text colour */
     /* 0x023 */ s8 unk23;
     /* 0x024 */ s8 unk24;
-    /* 0x025 */ s8 unk25;
-    /* 0x026 */ s8 unk26;
+    /* 0x025 */ u8 unk25;
+    /* 0x026 */ u8 unk26;
     /* 0x027 */ u8 unk27;
     /* 0x028 */ u8 unk28;
-    /* 0x029 */ s8 unk29;
+    /* 0x029 */ u8 unk29;
     /* 0x02A */ s8 unk2A;
     /* 0x02B */ char pad2B[2];
     /* 0x02D */ u8 unk_2D;
@@ -91,8 +91,8 @@ typedef struct TextWindow {
     /* 0x031 */ s8 unk_31;
     /* 0x032 */ s8 unk32;
     /* 0x033 */ s8 unk33;
-    /* 0x034 */ char pad34[1];
-    /* 0x035 */ s8 unk35;
+    /* 0x034 */ s8 unk34; /* character spacing */
+    /* 0x035 */ u8 unk35; /* tab width */
     /* 0x036 */ char pad36[2];
     /* 0x038 */ u32 unk_38;
     /* 0x03C */ u16 unk3C; /* x */
@@ -133,7 +133,8 @@ typedef struct TextWindow {
     /* 0x0CC */ u8* unkCC; /* text being shown */
     /* 0x0D0 */ void* unkD0; /* text read from the message file, or NULL */
     /* 0x0D4 */ u8 unkD4; /* unkD0 must be freed */
-    /* 0x0D5 */ char padD5[7];
+    /* 0x0D5 */ char padD5[3];
+    /* 0x0D8 */ u8* unkD8; /* where the text resumes after an inserted string */
     /* 0x0DC */ u8* unkDC; /* window image (4-bit) */
     /* 0x0E0 */ s32 unkE0;
     /* 0x0E4 */ char padE4[8];
@@ -1884,16 +1885,207 @@ void func_80089DA0_8A9A0(s16 winId, u8 r, u8 g, u8 b) {
     func_80089CAC_8A8AC(winId, 0, r, g, b);
 }
 
-/* func_80089DDC_8A9DC's rodata, defined here while it is asm */
-const char D_800D36B0_D42B0[] __attribute__((section(".rodata"))) = "Select Max Over!\n";
-const u32 jtbl_800D36C8_D42C8[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8008A054, 0x8008A0C0, 0x8008A10C, 0x8008A148, 0x8008A1C8, 0x8008A2B0,
-    0x80089FF8, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0,
-    0x8008A240, 0x8008A090, 0x8008A254, 0x8008A2A8, 0x80089FF8, 0x8008A2B0,
-    0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x80089FF8,
-};
+s32 func_8008A6DC_8B2DC(TextWindow* tw);
+s32 func_8008A700_8B300(TextWindow* tw, s16 w);
+s32 func_8008A7A0_8B3A0(TextWindow* tw);
+s32 func_8008A7E8_8B3E8(TextWindow* tw);
+void func_8008A8C0_8B4C0(TextWindow* tw);
+void func_8008A960_8B560(s16 winId);
+s16 func_8008AA90_8B690(s16 winId, s16 idx);
+void func_8008AD94_8B994(s16 winId, u8 c, u8 color, s16 x, s16 y);
+void osSyncPrintf(const char* fmt, ...);
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089DDC_8A9DC);
+/* MP1 func_8006E318: prints the window's text up to the next stop; 0 when the text has ended */
+s32 func_80089DDC_8A9DC(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    TWEntry* e;
+    u8* p;
+    s16 n;
+    s32 c;
+
+    while (tw->unk5C >= tw->unk26) {
+        while (*tw->unkCC < 0x21) {
+            if (*tw->unkCC == 0) {
+                if (tw->unkAC >= 0) {
+                    if (tw->unk_B2[tw->unkAC] != -1) {
+                        tw->unk22 = tw->unk_B2[5];
+                    }
+                    tw->unkAC = -1;
+                    tw->unkCC = tw->unkD8;
+                    continue;
+                }
+                if (tw->unkD4 != 0) {
+                    func_80068D24_69924(tw->unkD0);
+                }
+                tw->unkD0 = NULL;
+                tw->unk20 = 0;
+                return 0;
+            }
+            if (*tw->unkCC < 9) {
+                tw->unk22 = *tw->unkCC - 1;
+            }
+            c = *tw->unkCC - 0x11;
+            if ((u8)c < 5) {
+                tw->unkAC = c;
+                if (tw->unk_B8[tw->unkAC] != NULL) {
+                    tw->unkD8 = ++tw->unkCC;
+                    tw->unkCC = tw->unk_B8[tw->unkAC];
+                    if (tw->unk_B2[tw->unkAC] != -1) {
+                        tw->unk_B2[5] = tw->unk22;
+                        tw->unk22 = tw->unk_B2[tw->unkAC];
+                    }
+                    continue;
+                }
+                tw->unkAC = -1;
+            }
+            if ((tw->unk_38 & 4) && (*tw->unkCC == 0x10 || *tw->unkCC == 0x20 || *tw->unkCC == 0x1A)) {
+                if (*tw->unkCC == 0x1A) {
+                    *tw->unkCC = 0x60;
+                } else {
+                    *tw->unkCC = 0x40;
+                }
+                break;
+            }
+            switch (*tw->unkCC) {
+                case 0x10:
+                case 0x1A:
+                case 0x20:
+                    if (D_800CD851_CE451 == 1) {
+                        tw->unk34 = 10;
+                    } else if (*tw->unkCC == 0x1A) {
+                        tw->unk34 = 10;
+                    } else {
+                        tw->unk34 = 4;
+                    }
+                    tw->unkCC++;
+                    if (func_8008A6DC_8B2DC(tw) == 0) {
+                        tw->unk20 = 6;
+                        func_8008A960_8B560(winId);
+                        return 1;
+                    }
+                    continue;
+                case 10:
+                    if (D_800F9512_FA112 == 0 && func_8008A7A0_8B3A0(tw) == 0) {
+                        tw->unk20 = 6;
+                        func_8008A960_8B560(winId);
+                        tw->unkCC++;
+                        return 1;
+                    }
+                    break;
+                case 0x17:
+                    if (D_800F9512_FA112 == 0 && func_8008A7E8_8B3E8(tw) == 0) {
+                        tw->unkCC++;
+                        return 1;
+                    }
+                    break;
+                case 11:
+                    if (tw->unk_38 & 4) {
+                        func_8008A8C0_8B4C0(tw);
+                    } else if (tw->unkAC < 0 && !(tw->unk_38 & 0x1800)) {
+                        func_8008A834_8B434(tw);
+                    }
+                    break;
+                case 12:
+                    e = &tw->unk_F4[tw->unk_30];
+                    e->unk2 = tw->unk54 - tw->unk48;
+                    e->unk4 = tw->unk56 - tw->unk4A;
+                    tw->unk26 = 0;
+                    tw->unk5C = 0;
+                    break;
+                case 13:
+                    e = &tw->unk_F4[tw->unk_30];
+                    e->unk6 = tw->unk54 - e->unk2;
+                    e->unk8 = (tw->unk56 - e->unk4) + tw->unk28;
+                    e->unk0 = 0;
+                    tw->unk26 = tw->unk25;
+                    if (++tw->unk_30 >= 24) {
+                        osSyncPrintf("Select Max Over!\n");
+                        tw->unk_30--;
+                    }
+                    break;
+                case 14:
+                    n = ((s16)(tw->unk54 - tw->unk4C) + tw->unk35) / tw->unk35 * tw->unk35;
+                    if (n < tw->unk50) {
+                        tw->unk54 = n + tw->unk4C;
+                    }
+                    break;
+                case 0x16:
+                    tw->unk_38 &= ~0x80;
+                    break;
+                case 0x18:
+                    p = tw->unkCC++;
+                    if (func_8008A700_8B300(tw, tw->unk29 + func_8008AA90_8B690(winId, p[1] & 0xF)) == 0) {
+                        tw->unk20 = 6;
+                        func_8008A960_8B560(winId);
+                        return 1;
+                    }
+                    break;
+                case 0x19:
+                    tw->unk22 = tw->unk23;
+                    break;
+            }
+            tw->unkCC++;
+        }
+        if ((u32)(*tw->unkCC - 0x21) < 0xF) {
+            n = tw->unk29 + func_8008AA90_8B690(winId, *tw->unkCC + 0xFFE9); /* retail adds 0xFFE9: -0x17 in 16 bits */
+            tw->unkCC++;
+            if (func_8008A700_8B300(tw, n) == 0) {
+                tw->unk20 = 6;
+                func_8008A960_8B560(winId);
+                return 1;
+            }
+            continue;
+        }
+        if (*tw->unkCC == 0xFF) {
+            tw->unk20 = 2;
+            func_8008A960_8B560(winId);
+            tw->unkCC++;
+            return 1;
+        }
+        tw->unk5C -= tw->unk26;
+        if (tw->unk56 + tw->unk28 > tw->unk4E + tw->unk52) {
+            tw->unk20 = 6;
+            func_8008A960_8B560(winId);
+            return 1;
+        }
+        if (*tw->unkCC >= 0x30) {
+            if ((tw->unk_38 & 0x10000) && *tw->unkCC >= '0' && *tw->unkCC <= '9') {
+                *tw->unkCC += 0x70;
+            }
+            if (tw->unk_38 & 0x80) {
+                if (tw->unk22 != 0) {
+                    func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54 + 2, tw->unk56 + 1);
+                }
+                func_8008AD94_8B994(winId, *tw->unkCC, tw->unk22, tw->unk54, tw->unk56);
+                func_8008AD94_8B994(winId, *tw->unkCC, tw->unk22, tw->unk54 + 1, tw->unk56);
+            } else if (tw->unk_38 & 0x20000) {
+                func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54, tw->unk56 - 1);
+                func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54, tw->unk56 + 1);
+                func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54 + 1, tw->unk56);
+                func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54 - 1, tw->unk56);
+                func_8008AD94_8B994(winId, *tw->unkCC, tw->unk22, tw->unk54, tw->unk56);
+            } else {
+                if (tw->unk22 != 0) {
+                    func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk54 + 1, tw->unk56 + 1);
+                }
+                func_8008AD94_8B994(winId, *tw->unkCC, tw->unk22, tw->unk54, tw->unk56);
+            }
+        }
+        tw->unkCC++;
+        if ((u8)(*tw->unkCC + 0x80) < 2) {
+            if (tw->unk22 != 0) {
+                func_8008AD94_8B994(winId, *tw->unkCC, 0, tw->unk27 + tw->unk54 - 2, tw->unk56);
+            }
+            func_8008AD94_8B994(winId, *tw->unkCC, tw->unk22, tw->unk27 + tw->unk54 - 3, tw->unk56 - 1);
+            tw->unkCC++;
+        }
+        if (func_8008A6DC_8B2DC(tw) == 0) {
+            return 1;
+        }
+    }
+    tw->unk5C++;
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A6DC_8B2DC);
 
