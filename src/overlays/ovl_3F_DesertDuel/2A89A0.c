@@ -1260,8 +1260,57 @@ void func_80106988_2ACB28_DesertDuel(s32 shooter, s32 target) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
+/* The shot in flight: on reaching the target (within 30) it knocks them back (motion 5, rumble,
+   sound), then bounces back and rolls to a stop, a sound on each bounce; then D_80108C50. */
+#define ABS3F(x) ((x) < 0.0f ? -(x) : (x))
+/* NON_MATCHING: float registers (masked 0): retail computes the shadow's x in f2 with -10.0f in f2
+   and 215.0f in f0; inline in the call it matches but loads obj->model one step early. */
+#ifdef NON_MATCHING
+void func_80106C94_2ACE34_DesertDuel(omObjData* obj) {
+    s16 sfx[5] = { 0x3A1, 0x3A2, 0x3A2, 0x3A3, 0x3A4 };
+    Unk3FShot* work = obj->unk_50;
+    f32 targetX = PLAYER_MODEL(work->target)->pos.x;
+    f32 x;
+    f32 dx;
 
+    if (work->hit == 0) {
+        dx = (obj->trans.x += work->vx) - targetX;
+        if (func_800B1830_B2430(dx * dx) < 30.0f) {
+            PlaySound(0x3A5);
+            work->hit = 1;
+            work->vx *= 0.2f;
+            MBMotionShiftSet(PLAYER_MODEL(work->target), 5, 0, 5, 0);
+            func_8005ACD0_5B8D0(&gPlayers[work->target], 9);
+            omVibrate((s16)work->target, 20, 0, 20);
+            func_800794A8_7A0A8(45);
+            D_80108CA2_2AEE42_DesertDuel = PlaySound(0x4B5);
+        }
+    }
+    if (work->hit == 1) {
+        obj->trans.x -= work->vx;
+        obj->trans.y += work->vy;
+        work->vy = work->vy - 2.0;
+    }
+    x = obj->trans.x;
+    x = x * -10.0f / 215.0f + x;
+    func_80029714_2A314(obj->model[1], x, 0.0f, obj->trans.z + 50.0f);
+    if (obj->trans.y <= 0.0f) {
+        obj->trans.y = 0.0f;
+        work->vy = -work->vy * 0.5f;
+        work->vx *= 0.6f;
+        if (ABS3F(work->vx) >= 0.4f) {
+            D_80108CA0_2AEE40_DesertDuel = PlaySound(sfx[work->bounces]);
+            work->bounces++;
+        }
+        if (ABS3F(work->vx) <= 0.2f) {
+            omDelObj(obj);
+            D_80108C50_2AEDF0_DesertDuel = 1;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107018_2AD1B8_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107128_2AD2C8_DesertDuel);

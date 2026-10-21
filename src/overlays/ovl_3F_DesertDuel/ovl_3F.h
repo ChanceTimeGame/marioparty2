@@ -51,6 +51,8 @@ void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
+f32 func_800B1830_B2430(f32); /* sqrtf */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 f32 __sinf(f32);
 f32 __cosf(f32);
 void HuVecCopyXYZ(Vec*, f32, f32, f32);
