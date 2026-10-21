@@ -127,7 +127,17 @@ s16 func_8003DF08_3EB08(void*);
 u16 func_80020EBC_21ABC(void*, s32, u8);
 s16 func_80027FA4_28BA4(u32, void*, u8);
 void func_800247EC_253EC(unk1EA70Struct1C*, f32, f32, f32);
-s16 func_800244F4_250F4(unk1EA70Struct1C*, s16, f32, f32, f32, s16);
+s32 func_80024AB4_256B4(s16, s16, s16);
+s16 func_8003D8F0_3E4F0(HmfData*, void*, s16, char*);
+void func_80029A8C_2A68C(s16);
+
+extern s16 D_800C9C5C_CA85C[6]; /* per character: data directory */
+extern char* D_800C9C68_CA868[3 * 6]; /* per set (x6) and character: texture-animation name */
+extern s16 D_800C9CB0_CA8B0[13 * 3]; /* data file by animation (x3) and set */
+extern u8 D_800FDCA0_FE8A0[13][3];
+extern s16 D_800FFE00_100A00[6][3][13]; /* loaded texture animations, -1 none */
+extern u8 D_801026FC_1032FC[6]; /* set while a character has one loaded */
+s16 func_800244F4_250F4(unk1EA70Struct1C*, s16, f32, f32, f32, u16);
 void func_80029F2C_2AB2C(s16, s32);
 void func_80020E70_21A70(void);
 void func_8002308C_23C8C(s32 index);
@@ -156,6 +166,11 @@ extern s16 D_800FD470_FE070; /* matrix stack depth */
 extern Matrix4f D_801016D0_1022D0[]; /* matrix stack */
 extern const char D_800D20E8_D2CE8[];
 extern const char D_800D20F8_D2CF8[];
+void func_80029714_2A314(s16, f32, f32, f32); /* model position (MP1 func_80025798) */
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale (MP1 func_80025830) */
+void func_80029EDC_2AADC(s16, s16); /* model layer mask (MP1 func_80025F10) */
 s16 func_8001F4AC_200AC(char*); /* name hash */
 s32 func_800B0FD0_B1BD0(char*, char**); /* strcmp; retail passes the address of the name */
 
@@ -808,9 +823,84 @@ void func_80024234_24E34(unk1EA70Struct1C* arg0) {
     HuMemFree(arg0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800242BC_24EBC);
+/* Steps every live particle of arg0: delay, fade (alpha falls by 0xF a tick) and fall
+   (MP1 func_800214FC, without its sprite-kind test). */
+void func_800242BC_24EBC(unk1EA70Struct1C* arg0) {
+    unk1EA70Struct20* e;
+    s16 i;
+    s16 obj;
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800244F4_250F4);
+    for (i = 0; i < arg0->unk_18; i++) {
+        if (arg0->unk_04[i] == 0) {
+            continue;
+        }
+        e = &arg0->unk_00[i];
+        obj = D_800F86D8_F92D8[e->unk_1C].unk00;
+        if (e->unk_06 != 0) {
+            if (--e->unk_06 != 0) {
+                continue;
+            }
+            func_800298A4_2A4A4(obj, 4, 0);
+            D_800F86D8_F92D8[arg0->unk_00[i].unk_1C].unk04 = 0;
+        }
+        switch (arg0->unk_04[i]) {
+            case 1:
+                func_800211E8_21DE8(e->unk_1C, ~e->unk_04);
+                break;
+            case 2:
+                e->unk_0C += e->unk_18;
+                e->unk_18 -= 0.3f;
+                func_80029714_2A314(obj, e->unk_08, e->unk_0C, e->unk_10);
+                func_800211E8_21DE8(e->unk_1C, ~e->unk_04);
+                break;
+            case 3:
+                e->unk_0C += e->unk_18;
+                e->unk_18 -= 0.3f;
+                func_80029714_2A314(obj, e->unk_08, e->unk_0C, e->unk_10);
+                break;
+        }
+        e->unk_04 += 0xF;
+        if (D_800FC834_FD434[obj].unk18 & 4) {
+            arg0->unk_04[i] = 0;
+        }
+    }
+}
+
+/* Starts a free particle of arg0 at (arg2, arg3, arg4) in mode arg5, on model layer arg1;
+   returns its index or -1 (MP1 func_80021794, always opaque here). */
+s16 func_800244F4_250F4(unk1EA70Struct1C* arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4, u16 arg5) {
+    s16 i;
+    s16 obj;
+    unk_800ECDE0* spr;
+
+    for (i = 0; i < arg0->unk_18; i++) {
+        if (arg0->unk_04[i] == 0) {
+            break;
+        }
+    }
+    if (i == arg0->unk_18) {
+        return -1;
+    }
+    obj = D_800F86D8_F92D8[arg0->unk_00[i].unk_1C].unk00;
+    arg0->unk_00[i].unk_08 = arg2;
+    arg0->unk_00[i].unk_0C = arg3;
+    arg0->unk_00[i].unk_10 = arg4;
+    arg0->unk_00[i].unk_18 = 0.0f;
+    arg0->unk_00[i].unk_04 = 0;
+    arg0->unk_04[i] = arg5;
+    arg0->unk_00[i].unk_02 = arg1;
+    arg0->unk_00[i].unk_06 = 0;
+    func_800211E8_21DE8(arg0->unk_00[i].unk_1C, 0xFF);
+    func_800298A4_2A4A4(obj, 4, 0);
+    spr = &D_800F86D8_F92D8[arg0->unk_00[i].unk_1C];
+    spr->unk0A = 0;
+    spr->unk04 = 0;
+    func_80021250_21E50(arg0->unk_00[i].unk_1C, arg0->unk_08, arg0->unk_09, arg0->unk_0A);
+    func_80029714_2A314(obj, arg2, arg3, arg4);
+    func_800297E8_2A3E8(obj, arg0->unk_0C, arg0->unk_10, arg0->unk_14);
+    func_80029EDC_2AADC(obj, (s16) (1 << arg1));
+    return i;
+}
 
 void func_800246F8_252F8(unk1EA70Struct1C* arg0, s16 arg1, s16 arg2) {
     s16 obj;
@@ -829,15 +919,83 @@ void func_800246F8_252F8(unk1EA70Struct1C* arg0, s16 arg1, s16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800247EC_253EC);
+void func_800247EC_253EC(unk1EA70Struct1C* arg0, f32 arg1, f32 arg2, f32 arg3) {
+    arg0->unk_0C = arg1;
+    arg0->unk_10 = arg2;
+    arg0->unk_14 = arg3;
+}
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800247FC_253FC);
+void func_800247FC_253FC(unk1EA70Struct1C* arg0, u8 arg1, u8 arg2, u8 arg3) {
+    arg0->unk_08 = arg1;
+    arg0->unk_09 = arg2;
+    arg0->unk_0A = arg3;
+}
 
+/* Clears the per-character texture-animation slots (6 characters, 3 sets, 13 each) and the 13
+   colours (cf. MP1 func_80021B14's slot reset). */
+// register allocation only (masked 0): retail keeps i in t0, j in a2
+#ifdef NON_MATCHING
+void func_8002480C_2540C(void) {
+    s16 k;
+    s16 j;
+    s16 i;
+
+    for (i = 0; i < 6; i++) {
+        D_801026FC_1032FC[i] = 0;
+        for (j = 0; j < 3; j++) {
+            for (k = 0; k < 13; k++) {
+                D_800FFE00_100A00[i][j][k] = -1;
+            }
+        }
+    }
+    for (i = 0; i < 13; i++) {
+        D_800FDCA0_FE8A0[i][0] = D_800FDCA0_FE8A0[i][1] = D_800FDCA0_FE8A0[i][2] = 0xFF;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/21920", func_8002480C_2540C);
+#endif
 
+/* Loads texture animation arg2 & 0xF of set (arg2 & 0xC0) for character arg1 onto model arg0
+   (MP1 func_80021B14/func_80021CDC). */
+// retail copies arg2 to v1 and masks idx from it after the switch (masked 3, same logic)
+#ifdef NON_MATCHING
+void func_80024938_25538(s16 arg0, s16 arg1, s32 arg2) {
+    void* file;
+    u8 flag;
+    s16 idx;
+    s32 dataNum;
+
+    D_801026FC_1032FC[arg1] = 1;
+    flag = 0;
+    idx = arg2 & 0xF;
+    switch (arg2 & 0xC0) {
+        case 0x40:
+            flag = 1;
+            break;
+        case 0x80:
+            flag = 0;
+            break;
+        case 0:
+            flag = 2;
+            break;
+    }
+    dataNum = func_80024AB4_256B4(arg1, flag, idx);
+    if (dataNum != -1) {
+        file = DataRead(dataNum);
+        D_800FFE00_100A00[arg1][flag][idx] = func_8003D8F0_3E4F0(D_800FC834_FD434[arg0].hmf, file, 0, D_800C9C68_CA868[flag * 6 + arg1]);
+        DataClose(file);
+        func_80029A8C_2A68C(arg0);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/21920", func_80024938_25538);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80024AB4_256B4);
+/* Data number of character arg0's texture animation arg2 in set arg1 (MP1 func_80021C50). */
+s32 func_80024AB4_256B4(s16 arg0, s16 arg1, s16 arg2) {
+    return (D_800C9C5C_CA85C[arg0] << 16) | D_800C9CB0_CA8B0[arg2 * 3 + arg1];
+}
 
 INCLUDE_ASM("asm/nonmatchings/21920", func_80024B00_25700);
 
