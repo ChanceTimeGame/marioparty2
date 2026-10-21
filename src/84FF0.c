@@ -73,7 +73,7 @@ typedef struct TWEntry {
 typedef struct TextWindow {
     /* 0x000 */ u16 unk_00[0x10]; /* palette (RGBA5551), copied from D_800CD874_CE474 */
     /* 0x020 */ u8 unk20;
-    /* 0x021 */ s8 unk21;
+    /* 0x021 */ u8 unk21; /* controller ports that drive the window */
     /* 0x022 */ u8 unk22; /* text colour */
     /* 0x023 */ s8 unk23;
     /* 0x024 */ u8 unk24; /* current unkE0 buffer */
@@ -2419,7 +2419,7 @@ void func_8008B66C_8C26C(TextWindow* tw) {
 
 u16 func_80078EA8_79AA8(void);
 extern u8 D_80102720_103320;
-u16 func_8008D250_8DE50(TextWindow* tw);
+s16 func_8008D250_8DE50(TextWindow* tw);
 s32 func_8008BCB8_8C8B8(s16 winId);
 void func_8008C828_8D428(TextWindow* tw, TWEntry* e);
 void func_8008AD44_8B944(s16 win_id);
@@ -2991,9 +2991,51 @@ void func_8008D12C_8DD2C(s16* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D23C_8DE3C);
+void func_8008D23C_8DE3C(void) {
+    D_800FD808_FE408 = 0;
+    D_801026D4_1032D4 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D250_8DE50);
+extern u16 ContDStkTrg[4];
+
+/* MP1 func_80071278: the buttons pressed on the window's ports (or queued in D_800FA048) */
+s16 func_8008D250_8DE50(TextWindow* tw) {
+    u16 sp10[4];
+    s16 btn = 0;
+
+    if (tw->unk_38 & 2) {
+        func_8008D12C_8DD2C((s16*)sp10);
+    }
+    if (tw->unk21 & 1) {
+        if (tw->unk_38 & 2) {
+            btn |= sp10[0];
+        } else {
+            btn |= (D_800FC9E0_FD5E0[0] & 0x3FFF) | (ContDStkTrg[0] & 0xC000);
+        }
+    }
+    if (tw->unk21 & 2) {
+        if (tw->unk_38 & 2) {
+            btn |= sp10[1];
+        } else {
+            btn |= (D_800FC9E0_FD5E0[1] & 0x3FFF) | (ContDStkTrg[1] & 0xC000);
+        }
+    }
+    if (tw->unk21 & 4) {
+        if (tw->unk_38 & 2) {
+            btn |= sp10[2];
+        } else {
+            btn |= (D_800FC9E0_FD5E0[2] & 0x3FFF) | (ContDStkTrg[2] & 0xC000);
+        }
+    }
+    if (tw->unk21 & 8) {
+        if (tw->unk_38 & 2) {
+            btn |= sp10[3];
+        } else {
+            btn |= (D_800FC9E0_FD5E0[3] & 0x3FFF) | (ContDStkTrg[3] & 0xC000);
+        }
+    }
+    return btn;
+}
 
 /* Shift-JIS character rows, 16 characters each, pointed to by D_800CDAB0_CE6B0 (in .data) */
 const u8 D_800D3740_D4340[] __attribute__((aligned(4), section(".rodata"))) = {
