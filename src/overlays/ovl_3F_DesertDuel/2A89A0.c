@@ -1015,12 +1015,149 @@ void func_80105AAC_2ABC4C_DesertDuel(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105AAC_2ABC4C_DesertDuel);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105DB8_2ABF58_DesertDuel);
+/* Both duelists walk to their next marks (D_80108984[D_80108C10], one each), stopping early if
+   the duel's outcome D_80108C58 is set; then idle motion. */
+void func_80105DB8_2ABF58_DesertDuel(void) {
+    ModelPathWork* work[2];
+    s32 done;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106040_2AC1E0_DesertDuel);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 0, 0, 5, 2);
+    work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 5.0f, 1, &D_80108984_2AEB24_DesertDuel[D_80108C10_2AEDB0_DesertDuel]);
+    D_80108C10_2AEDB0_DesertDuel++;
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 0, 0, 5, 2);
+    work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 5.0f, 1, &D_80108984_2AEB24_DesertDuel[D_80108C10_2AEDB0_DesertDuel]);
+    D_80108C10_2AEDB0_DesertDuel++;
+    while (TRUE) {
+        done = 0;
+        for (i = 0; i < 2; i++) {
+            done += func_8005A778_5B378(work[i]) != 0;
+        }
+        if (done == 2 || D_80108C58_2AEDF8_DesertDuel != 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 2; i++) {
+        HuMemMemoryFreePerm(work[i]);
+    }
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 2, 0, 5, 2);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 2, 0, 5, 2);
+    omDelPrcObj(NULL);
+}
+/* Starts the quick draw: its object, and each CPU duelist's reaction time by difficulty (frames
+   after "GO!": 16-30, 11-15, 3-10, 2-7). */
+void func_80106040_2AC1E0_DesertDuel(void) {
+    omObjData* obj;
+    Unk3FDraw* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106328_2AC4C8_DesertDuel);
+    obj = omAddObj(0x10, 0, 0, -1, func_80106328_2AC4C8_DesertDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Unk3FDraw), 0x7918);
+    work->timer = 0;
+    D_80108C50_2AEDF0_DesertDuel = 0;
+    D_80108C64_2AEE04_DesertDuel = 0;
+    if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+        switch (gPlayers[D_80108C18_2AEDB8_DesertDuel].cpu_difficulty) {
+            case 0:
+                work->cpuWait1 = (u8)(rand8() % 15) + 16;
+                break;
+            case 1:
+                work->cpuWait1 = (u8)(rand8() % 5) + 11;
+                break;
+            case 2:
+                work->cpuWait1 = (rand8() & 7) + 3;
+                break;
+            case 3:
+                work->cpuWait1 = (u8)(rand8() % 6) + 2;
+                break;
+        }
+    }
+    if (gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1) {
+        switch (gPlayers[D_80108C1C_2AEDBC_DesertDuel].cpu_difficulty) {
+            case 0:
+                work->cpuWait2 = (u8)(rand8() % 15) + 16;
+                break;
+            case 1:
+                work->cpuWait2 = (u8)(rand8() % 5) + 11;
+                break;
+            case 2:
+                work->cpuWait2 = (rand8() & 7) + 3;
+                break;
+            case 3:
+                work->cpuWait2 = (u8)(rand8() % 6) + 2;
+                break;
+        }
+    }
+}
+/* The quick draw. Before "GO!" (D_80108C64 clear) pressing A is a false start (outcome 2 for the
+   challenger, 4 for the opponent); after it the first to press wins (3, 5); CPUs press when their
+   wait runs out. Both at once: a coin toss. 900 frames with no press: outcome 1. */
+void func_80106328_2AC4C8_DesertDuel(omObjData* obj) {
+    Unk3FDraw* work = obj->unk_50;
+    s32 pressed;
 
+    pressed = 0;
+    if (!(gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) && (ContBtn[gPlayers[D_80108C18_2AEDB8_DesertDuel].port] & 0x8000)) {
+        pressed = 1;
+        if (D_80108C64_2AEE04_DesertDuel == 0) {
+            D_80108C58_2AEDF8_DesertDuel = 2;
+        } else {
+            D_80108C58_2AEDF8_DesertDuel = 3;
+        }
+    }
+    if (!(gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1) && (ContBtn[gPlayers[D_80108C1C_2AEDBC_DesertDuel].port] & 0x8000)) {
+        pressed++;
+        if (D_80108C64_2AEE04_DesertDuel == 0) {
+            D_80108C58_2AEDF8_DesertDuel = 4;
+        } else {
+            D_80108C58_2AEDF8_DesertDuel = 5;
+        }
+    }
+    if (D_80108C64_2AEE04_DesertDuel != 0) {
+        if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+            if (--work->cpuWait1 == 0) {
+                pressed++;
+                D_80108C58_2AEDF8_DesertDuel = 3;
+            }
+        }
+        if (gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1) {
+            if (--work->cpuWait2 == 0) {
+                pressed++;
+                D_80108C58_2AEDF8_DesertDuel = 5;
+            }
+        }
+    }
+    if (pressed == 2) {
+        if (!(rand8() & 1)) {
+            if (D_80108C64_2AEE04_DesertDuel == 0) {
+                D_80108C58_2AEDF8_DesertDuel = 2;
+            } else {
+                D_80108C58_2AEDF8_DesertDuel = 3;
+            }
+        } else {
+            if (D_80108C64_2AEE04_DesertDuel == 0) {
+                D_80108C58_2AEDF8_DesertDuel = 4;
+            } else {
+                D_80108C58_2AEDF8_DesertDuel = 5;
+            }
+        }
+    }
+    if (pressed > 0) {
+        if (D_80108C64_2AEE04_DesertDuel == 0) {
+            omAddPrcObj(func_801073FC_2AD59C_DesertDuel, 0x12, 0, 0);
+        }
+        omAddPrcObj(func_80107018_2AD1B8_DesertDuel, 0x12, 0, 0);
+        func_80107128_2AD2C8_DesertDuel();
+        omDelObj(obj);
+    }
+    if (D_80108C64_2AEE04_DesertDuel != 0) {
+        if (++work->timer >= 900) {
+            D_80108C58_2AEDF8_DesertDuel = 1;
+            D_80108C50_2AEDF0_DesertDuel = 1;
+            omDelObj(obj);
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106600_2AC7A0_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);

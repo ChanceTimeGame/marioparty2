@@ -141,6 +141,14 @@ typedef struct Unk3FTumbleweed {
     /* 0x14 */ s32 count;
 } Unk3FTumbleweed; /* size 0x18 */
 
+/* fork B */
+/* The quick draw (func_80106328): frames since "GO!", and each CPU duelist's reaction time. */
+typedef struct Unk3FDraw {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 cpuWait1; /* the challenger's */
+    /* 0x08 */ s32 cpuWait2; /* the opponent's */
+} Unk3FDraw; /* size 0x0C */
+
 /* Status-window layouts (D_80108730): four corner positions as from/to pairs, and the frames
    the move takes. */
 typedef struct Unk3FStatusLayout {
