@@ -392,6 +392,7 @@ void func_80059158_59D58(void*);
 void func_8006706C_67C6C();
 extern s8 D_800CCC16;
 extern s16 D_800F64B0_F70B0;
+s32 func_80047DE8_489E8(s32);
 #define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
