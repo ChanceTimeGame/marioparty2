@@ -1989,9 +1989,19 @@ void func_8002D018_2DC18(s16 arg0, void* arg1) {
     D_800F8F80_F9B80[arg0] = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D030_2DC30);
+void func_8002D030_2DC30(s16 arg0, s16 arg1) {
+    func_80029B80_2A780(arg0, arg1);
+    D_800FC834_FD434[arg0].unk08 = D_800FC834_FD434[arg1].unk08;
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D0A0_2DCA0);
+void func_8002D0A0_2DCA0(s16 arg0, u8 arg1) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    s16 i;
+
+    for (i = 0; i < model->unk10; i++) {
+        model->unk64[i].unk02 = arg1;
+    }
+}
 
 void func_8002D124_2DD24(s16 index) {
     s16 i;
@@ -2008,7 +2018,20 @@ void func_8002D124_2DD24(s16 index) {
     func_80029A8C_2A68C(index);
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D1EC_2DDEC);
+/* HmfModel.unkB4 holds the model's lights (HmfData_UnkD0, 0x48 bytes), not an HmfModel */
+#define MODEL_LIGHTS(p) (*(HmfData_UnkD0**)&(p)->unkB4)
+
+void func_8002D1EC_2DDEC(s16 arg0, u8 arg1) {
+    HmfModel* p = &D_800FC834_FD434[arg0];
+    HmfData_UnkD0* l;
+
+    if (MODEL_LIGHTS(p) == NULL) {
+        l = MODEL_LIGHTS(p) = func_80027154_27D54(0x48, D_800FA1AA_FADAA);
+        l->unk03 = arg1;
+        l->unk00 = l->unk01 = l->unk02 = 0x40;
+        l->unk04 = l->unk05 = l->unk06 = 0x64;
+    }
+}
 
 void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3) {
     HmfModel *other;
@@ -2021,9 +2044,44 @@ void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D2B4_2DEB4);
+/* the lights' direction: (x, y, z) normalised, scaled to 120 */
+// register allocation: retail loads unkB4 into v0 and copies it to s0 after the NULL test (masked 1)
+#ifdef NON_MATCHING
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
+    HmfData_UnkD0* l = MODEL_LIGHTS(&D_800FC834_FD434[arg0]);
+    f32 len;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D3C0_2DFC0);
+    if (l != NULL) {
+        len = func_800B1830_B2430(arg1 * arg1 + arg2 * arg2 + arg3 * arg3);
+        if (len != 0.0f) {
+            l->unk04 = (arg1 / len) * 120.0f;
+            l->unk05 = (arg2 / len) * 120.0f;
+            l->unk06 = (arg3 / len) * 120.0f;
+        } else {
+            l->unk04 = 0;
+            l->unk05 = 120;
+            l->unk06 = 0;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/274D0", func_8002D2B4_2DEB4);
+#endif
+
+/* mark every face unlit */
+void func_8002D3C0_2DFC0(s16 arg0) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+    HmfPart* obj;
+    s16 j;
+    s16 i;
+
+    for (i = 0; i < model->unk10; i++) {
+        obj = &model->unk64[i];
+        for (j = 0; j < obj->unk04; j++) {
+            obj->unk54[j].unk00 |= 0x80;
+        }
+    }
+}
 
 void func_8002D4A0_2E0A0(s16 arg0) {
     D_800FC834_FD434[arg0].unk02 = 0xFF;
