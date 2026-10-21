@@ -66,6 +66,20 @@ void func_80029FE4_2ABE4(s16, f32);
 u16 MBDCameraPos3DSet(Vec*);
 void MBCameraSpeedSet(f32);
 
+#include "game/camera.h"
+extern s16 D_800FC734_FD334;
+extern s16 D_800FA198_FAD98; /* camera button enabled */
+extern s16 D_80101058_101C58;
+GW_PLAYER* BoardPlayerGet(s32);
+Process* func_80056D80_57980(Vec*, Vec*, Vec*, s32);
+void func_8005670C_5730C(Vec*);
+void MBPlayerVibrate(s16, s16);
+void func_80079428_7A028(s32);
+void MBPlayerMotionSet(s32 index, s16 animation, s32 unk);
+void func_80079718_7A318(s32, s32);
+void omPrcSetStatBit(Process*, s32);
+void omPrcResetStatBit(Process* process, s32 bit);
+void func_80067C6C_6886C(s32 arg0); /* map view */
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -79,10 +93,17 @@ extern s32 D_801119A4_2A6C74_name_3E; /* guide motions */
 extern s32 D_801119A8_2A6C78_name_3E;
 extern f32 D_801119AC_2A6C7C_name_3E[9]; /* per board */
 
+extern s32 D_801119D0_2A6CA0_name_3E;
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
 
+extern s32 D_801136D4_2A89A4_name_3E; /* star process: 1 = take a star away */
+extern s32 D_801136D8_2A89A8_name_3E; /* help windows */
+extern s32 D_801136DC_2A89AC_name_3E;
+extern s32 D_801136E0_2A89B0_name_3E;
+extern s32 D_801136E4_2A89B4_name_3E;
+extern s32 D_801136E8_2A89B8_name_3E;
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -96,9 +117,9 @@ void func_80102D28_297FF8_name_3E(void);
 void func_80102F4C_29821C_name_3E(UnkMBGuideData* guide);
 void func_80102FFC_2982CC_name_3E(void);
 void func_80103548_298818_name_3E(void);
-void func_80103968_298C38_name_3E(s32 arg0);
-void func_801039E4_298CB4_name_3E(s32 arg0);
-s32 func_80103A64_298D34_name_3E(void);
+void func_80103968_298C38_name_3E(MBModel* parent);
+void func_801039E4_298CB4_name_3E(MBModel* parent);
+void func_80103A64_298D34_name_3E(void);
 void func_80103AF4_298DC4_name_3E(void);
 s32 func_80103B70_298E40_name_3E(void);
 void func_80103BC4_298E94_name_3E(void);
