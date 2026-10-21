@@ -558,8 +558,8 @@ void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
 }
 
 extern s32 D_800ED69C_EE29C; /* texture-load strips drawn */
-void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 shiftS,
-                u16 shiftT, u16 maskS, u16 maskT);
+void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 cms, u16 cmt,
+                u16 masks, u16 maskt);
 
 // register allocation (masked 87): tstep and sx swap f30/s8, the zero for the initialisers is
 // f30 instead of f20; the code is otherwise retail's
@@ -772,7 +772,46 @@ const f64 D_800D36A8_D42A8 __attribute__((section(".rodata"))) = 63.999;
 INCLUDE_ASM("asm/nonmatchings/84FF0", PutSprite);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", SprTexLoad);
+void func_8003F710_40310(Gfx** gfx, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+                         s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts,
+                         s32 shiftt);
+void func_8003FB9C_4079C(Gfx** gfx, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+                         s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts,
+                         s32 shiftt);
+void func_8003FED8_40AD8(Gfx** gfx, s32 timg, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs,
+                         s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
+void func_80086C08_87808(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 cms,
+                         u16 cmt, u16 masks, u16 maskt);
+
+/* Loads one strip of the sprite's texture (segment 2) as SprDisp chose */
+void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 cms, u16 cmt,
+                u16 masks, u16 maskt) {
+    HuSprite_Unk84_Unk00_Struct* cel = &obj->unk_84->unk00[obj->unk_90];
+    Gfx* g = *gfx;
+
+    switch (D_800ED688_EE288) {
+        case 0:
+            gDPLoadTextureTile_4b(g++, 0x02000000, D_800ED680_EE280, cel->unk04, rows, uls, ult, lrs, lrt, 0, cms,
+                                  cmt, masks, maskt, 0, 0);
+            break;
+        case 1:
+            func_8003FED8_40AD8(&g, 0x02000000, D_800ED680_EE280, cel->unk04, rows, uls, ult, lrs, lrt, 0, cms, cmt,
+                                masks, maskt, 0, 0);
+            break;
+        case 2:
+            func_8003F710_40310(&g, 0x02000000, D_800ED680_EE280, D_800ED684_EE284, cel->unk04, cel->unk06, uls,
+                                ult, lrs, lrt, 0, cms, cmt, masks, maskt, 0, 0);
+            break;
+        case 3:
+            func_8003FB9C_4079C(&g, 0x02000000, D_800ED680_EE280, D_800ED684_EE284, cel->unk04, rows, uls, ult,
+                                lrs, lrt, 0, cms, cmt, masks, maskt, 0, 0);
+            break;
+    }
+    if (obj->unk_24 & 0x2000) {
+        func_80086C08_87808(&g, obj, rows, uls, ult, lrs, lrt, cms, cmt, masks, maskt);
+    }
+    *gfx = g;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80086C08_87808);
 
