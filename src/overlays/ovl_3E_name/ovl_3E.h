@@ -116,6 +116,9 @@ void MBModelDispOn(MBModel*);
 void HuVecAdd(Vec*, Vec*, Vec*);
 void func_80029E80_2AA80(s16, s32, s32);
 void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
+omObjData* omAddObj(s16, u16, u16, s16, void*);
+void func_80041B60_42760(s8 arg0, Vec* arg1, s16 arg2, s16 arg3);
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -155,8 +158,14 @@ extern Vec D_80111A70_2A6D40_name_3E[5]; /* bank coin offsets */
 extern Vec D_80111AAC_2A6D7C_name_3E[5]; /* bank coin rotations (x, z used) */
 extern s16 D_80111AE8_2A6DB8_name_3E[2]; /* signpost spaces */
 extern u8 D_80111AED_2A6DBD_name_3E[]; /* signpost model per board, at [board * 2] */
-extern s16 D_80111B1C_2A6DEC_name_3E[9][2]; /* per board: sound in [1] */
+extern s32 D_80111B1C_2A6DEC_name_3E[9]; /* per board: sound, -1 none (played as s16) */
 extern s32 D_80111B40_2A6E10_name_3E[9]; /* per board: delay */
+extern s16 D_80111A28_2A6CF8_name_3E[2][2];
+extern s16 D_80111A30_2A6D00_name_3E[2];
+extern s32 D_80111AF8_2A6DC8_name_3E[9]; /* per board: sound, -1 none (played as s16) */
+extern s32 D_80111B64_2A6E34_name_3E[9]; /* per board: sound, -1 none (played as s16) */
+extern s16 D_80111B88_2A6E58_name_3E[2];
+extern s16 D_80111B8C_2A6E5C_name_3E;
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
@@ -180,6 +189,12 @@ extern MBModel* D_80113748_2A8A18_name_3E;
 extern MBModel* D_80113750_2A8A20_name_3E[10]; /* bank coins */
 extern MBModel* D_80113778_2A8A48_name_3E;
 extern MBModel* D_8011377C_2A8A4C_name_3E[2]; /* signposts */
+extern MBModel* D_80113784_2A8A54_name_3E;
+extern MBModel* D_80113788_2A8A58_name_3E;
+extern s32 D_8011378C_2A8A5C_name_3E;
+extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
+extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
+extern s32 D_801138B0_2A8B80_name_3E; /* path step */
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -226,7 +241,7 @@ void func_801062F4_29B5C4_name_3E(void);
 void func_8010635C_29B62C_name_3E(s16 arg0);
 void func_801064B8_29B788_name_3E(void);
 void func_80106518_29B7E8_name_3E(void);
-s32 func_80106574_29B844_name_3E(s32 arg0);
+void func_80106574_29B844_name_3E(s32 arg0);
 void func_80106618_29B8E8_name_3E(s32 arg0);
 void func_80106684_29B954_name_3E(void);
 void func_801066FC_29B9CC_name_3E(void);
