@@ -1579,13 +1579,6 @@ void func_8002A9E8_2B5E8(s16 arg0) {
     D_800CA028_CAC28 = arg0;
 }
 
-/* HmfData.unk84 entries (MP1 unk2C0C0Struct50, 0xA4 there) */
-typedef struct HmfMotionGroup {
-    /* 0x00 */ s16 unk00; /* count of unk50 */
-    /* 0x02 */ char unk02[0x4E];
-    /* 0x50 */ s16* unk50; /* part indices */
-    /* 0x54 */ char unk54[0x44];
-} HmfMotionGroup; /* size = 0x98 */
 
 /* MP1 func_80026A0C (src/24740.c; its decomp-permuter shape): the motion group holding a part;
    MP2 falls back to the hit transforms (unk6C) when the model has no groups */
@@ -1599,9 +1592,9 @@ void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
 
     if (model->unk84 != (void*)-1) {
         for (i = 0; i < model->unk16; i++) {
-            n = ((HmfMotionGroup*)model->unk84)[i].unk00;
+            n = model->unk84[i].unk00;
             for (j = 0; j < n; j++) {
-                if (((HmfMotionGroup*)model->unk84)[i].unk50[j] == idx) {
+                if (model->unk84[i].unk50[j] == idx) {
                     break;
                 }
             }
@@ -1613,7 +1606,7 @@ void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
         if (i == model->unk16) {
             return (void*)-1;
         }
-        return &((HmfMotionGroup*)model->unk84)[i];
+        return &model->unk84[i];
     }
     for (i = 0; i < model->unk68; i++) {
         if (model->unk6C[i].unk00 == idx) {
@@ -2004,17 +1997,6 @@ void func_8002C20C_2CE0C(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg
     }
 }
 
-/* A part's face (MP1 unk2C0C0Struct20; 30560 has the same view) */
-typedef struct HmfFaceRec {
-    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
-    /* 0x01 */ s8 unk01[3]; /* normal */
-    /* 0x04 */ s16 unk04[4]; /* vertices */
-    /* 0x0C */ f32 unk0C[4]; /* s */
-    /* 0x1C */ f32 unk1C[4]; /* t */
-    /* 0x2C */ u8 unk2C[4];
-    /* 0x30 */ s16 unk30;
-    /* 0x32 */ s16 unk32;
-} HmfFaceRec; /* size 0x34 */
 
 /* MP1 func_80028314 (src/24740.c): reverse every face's winding */
 void func_8002C3A0_2CFA0(s16 arg0) {

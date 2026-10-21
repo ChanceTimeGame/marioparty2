@@ -209,7 +209,7 @@ typedef struct HmfData {
     /* 0x6A */ char unk6A[2];
     /* 0x6C */ HitXform* unk6C; /* MP1 0x88 */
     /* 0x70 */ char unk70[0x14];
-    /* 0x84 */ void* unk84; /* MP1 0xA0 */
+    /* 0x84 */ struct HmfMotionObj* unk84; /* motion objects (unk16), -1 for none; MP1 0xA0 */
     /* 0x88 */ HmfTexRef* unk88; /* MP1 0xA4 */
     /* 0x8C */ HmfMat* unk8C; /* MP1 0xA8 */
     /* 0x90 */ void* unk90; /* MP1 0xAC, an HmfMotion */
@@ -284,6 +284,37 @@ typedef struct HmfModel {
     /* 0xB8 */ s32 unkB8;
     /* 0xBC */ void* unkBC;
 } HmfModel; /* size = 0xC0 */
+
+/* A part's face (HmfPart.unk54; MP1 unk2C0C0Struct20; 1D0B0's loader writes 0x0C-0x2B as raw words) */
+typedef struct HmfFaceRec {
+    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
+    /* 0x01 */ s8 unk01[3]; /* normal */
+    /* 0x04 */ s16 unk04[4]; /* vertices */
+    /* 0x0C */ f32 unk0C[4]; /* s */
+    /* 0x1C */ f32 unk1C[4]; /* t */
+    /* 0x2C */ u8 unk2C[4]; /* per vertex material (unlit faces) */
+    /* 0x30 */ s16 unk30; /* material */
+    /* 0x32 */ s16 unk32; /* texture, < 0 for none */
+} HmfFaceRec; /* size 0x34 */
+
+/* HmfData.unk84 entries (MP1 unk2C0C0Struct50, 0xA4 there) */
+typedef struct HmfMotionObj {
+    /* 0x00 */ s16 unk00; /* child count */
+    /* 0x02 */ char unk02[2];
+    /* 0x04 */ Vec unk04;
+    /* 0x10 */ Vec unk10;
+    /* 0x1C */ Vec unk1C;
+    /* 0x28 */ Vec unk28;
+    /* 0x34 */ Vec unk34;
+    /* 0x40 */ Vec unk40;
+    /* 0x4C */ u8 unk4C;
+    /* 0x4D */ u8 unk4D;
+    /* 0x4E */ u8 unk4E;
+    /* 0x4F */ char unk4F;
+    /* 0x50 */ s16* unk50; /* children: part index, or 0x8000 | motion object index */
+    /* 0x54 */ struct HmfData* unk54; /* the model owning the parts */
+    /* 0x58 */ f32 unk58[4][4];
+} HmfMotionObj; /* size = 0x98 */
 
 /* Motion slots (128, allocated by func_80038DD0_399D0); MP1 unk34D80Struct40 */
 typedef struct HmfMotionSlot {

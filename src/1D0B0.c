@@ -527,22 +527,7 @@ typedef struct {
 } HmfData_Unk84_Entry;
 
 
-typedef struct {
-    u8 unk00;
-    char unk01[0x32];
-    u8 unk33;
-} HmfObjectLinkData;
 
-typedef struct {
-    u8 unk00;
-    s8 unk01[3];
-    s16 unk04[4];
-    s32 unk0C[4];
-    s32 unk1C[4];
-    u8 unk2C[4];
-    s16 unk30;
-    s16 unk32;
-} HmfFaceData;
 
 typedef struct {
     /* 0x00 */ u8 unk00;
@@ -562,7 +547,7 @@ typedef struct {
     /* 0x48 */ s16 unk48[3];
     /* 0x4E */ char unk4E[2];
     /* 0x50 */ s32 unk50;
-    /* 0x54 */ HmfObjectLinkData *unk54;
+    /* 0x54 */ HmfFaceRec *unk54;
     /* 0x58 */ void *unk58;
     /* 0x5C */ char unk5C[0xC];
 } HmfObjectData;
@@ -794,7 +779,7 @@ s16 func_8001E78C_1F38C(HmfLoadData *, u16, void *);
 u8 *func_8001EA88_1F688(s32, void *, void *);
 void *func_8001EB18_1F718(void *);
 void func_8001EB48_1F748(HmfLoadData *, s16, s16, s16);
-void func_8001EF00_1FB00(HmfFaceData *, u8 *, HmfLoadData *, u16 *);
+void func_8001EF00_1FB00(HmfFaceRec *, u8 *, HmfLoadData *, u16 *);
 void func_8001F1B8_1FDB8(s8 *, u16 *, u16 *, u16 *);
 HmfData_Unk84_Entry2 *func_8003CF48_3DB48(HmfLoadData *, s16);
 s16 func_8001F380_1FF80(HmfLoadData *, void *, s16);
@@ -972,7 +957,8 @@ void func_8001D190_1DD90(HmfLoadData *hmf, void *fileData, s32 flags) {
                 if (hmf->unk14 != 0) {
                     func_8001EB48_1F748(hmf, objectIndex, linkIndex, vertexCount);
                     if (vertexCount != 0) {
-                        hmf->unk64[objectIndex].unk2E = hmf->unk64[objectIndex].unk54->unk33;
+                        /* the first face's texture, low byte (a byte read of the s16) */
+                        hmf->unk64[objectIndex].unk2E = ((u8*)&hmf->unk64[objectIndex].unk54->unk32)[1];
                     } else {
                         hmf->unk64[objectIndex].unk2E = 0xFF;
                     }
@@ -1460,7 +1446,7 @@ void* func_8001EB18_1F718(void* arg0_) {
 void func_8001EB48_1F748(HmfLoadData *hmf, s16 objectIndex, s16 linkIndex, s16 faceCount) {
     u8 *record;
     u8 *next;
-    HmfFaceData *faces;
+    HmfFaceRec *faces;
     s16 *p;
     s16 *bounds;
     s16 pointCount;
@@ -1481,8 +1467,8 @@ void func_8001EB48_1F748(HmfLoadData *hmf, s16 objectIndex, s16 linkIndex, s16 f
         return;
     }
 
-    hmf->unk64[objectIndex].unk54 = (HmfObjectLinkData *)func_80027154_27D54(faceCount * sizeof(HmfFaceData), D_8010106C_101C6C);
-    faces = (HmfFaceData *)hmf->unk64[objectIndex].unk54;
+    hmf->unk64[objectIndex].unk54 = func_80027154_27D54(faceCount * sizeof(HmfFaceRec), D_8010106C_101C6C);
+    faces = hmf->unk64[objectIndex].unk54;
     record = D_800DEF78_DFB78 + 0x10;
     for (i = 0; i < linkIndex; i++) {
         if (record[0] == 0x16) {
@@ -1560,7 +1546,7 @@ void func_8001EB48_1F748(HmfLoadData *hmf, s16 objectIndex, s16 linkIndex, s16 f
 }
 
 /* MP3 func_80010EB0_11AB0 (src/hmfload.c); MP2's HmfLoadData fields sit 4 bytes later. */
-void func_8001EF00_1FB00(HmfFaceData *arg0, u8 *arg1, HmfLoadData *arg2, u16 *arg3) {
+void func_8001EF00_1FB00(HmfFaceRec *arg0, u8 *arg1, HmfLoadData *arg2, u16 *arg3) {
     s32 *values1;
     s32 *values2;
     u8 *colors;
@@ -1591,8 +1577,9 @@ void func_8001EF00_1FB00(HmfFaceData *arg0, u8 *arg1, HmfLoadData *arg2, u16 *ar
     }
     arg0->unk00 = count;
     arg1++;
-    values1 = &arg0->unk0C[0];
-    values2 = &arg0->unk1C[0];
+    /* the file's s and t are float bits, copied as words */
+    values1 = (s32*)&arg0->unk0C[0];
+    values2 = (s32*)&arg0->unk1C[0];
     i = 0;
     hasColor = 0;
     while (i < count) {
