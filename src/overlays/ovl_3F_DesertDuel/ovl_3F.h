@@ -6,7 +6,8 @@
    an opponent when several are eligible, both stake coins, rounds are played (fork B's 80106600)
    until one is decided, and the winner takes both stakes; the result is left for the board in
    D_800FC880 (winner) and D_800F8C5C (loser), -1 both for a draw.
-   Prototypes after 80105054 (fork B) come from the asm's register use; fork B owns them. */
+   The unit's .rodata is carved ([0x2AEB90, .rodata, 2A89A0]); the tables of the asm functions
+   80102D48, 80106C94 and 80107EE4 are defined in C beside their INCLUDE_ASM. */
 
 #include "common.h"
 #include "game/board.h"

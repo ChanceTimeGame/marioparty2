@@ -1,7 +1,6 @@
 #include "common.h"
 #include "ovl_3F.h"
 
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80102800_2A89A0_DesertDuel(void) {
     omInitObjMan(30, 10);
     func_80079128_79D28();
@@ -32,9 +31,6 @@ void func_80102800_2A89A0_DesertDuel(void) {
     func_8007273C_7333C("\x82\x60\x82\x61\x82\x62\x81\x49", 1); /* SJIS "ABC!" */
     func_8007273C_7333C("\x82\x4F\x82\x50\x82\x51\x82\x52\x82\x53\x82\x54\x82\x55\x82\x56\x82\x57\x82\x58", 1); /* SJIS "0123456789" */
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80102800_2A89A0_DesertDuel);
-#endif
 
 /* Who is in the scene: the challenger (D_800F8D1A.attacker's bit), the players it may challenge
    (.targets), and the opponent when there is only one. Flag 0x19 (debug) lets A/B override. */
@@ -486,6 +482,8 @@ void func_80102D48_2A8EE8_DesertDuel(void) {
     }
 }
 #else
+/* Its rodata in retail order; the asm keeps the rest (splat does not move these tables). */
+const s32 D_80108A14_2AEBB4_DesertDuel[4] = { 3, 0x800A7, 0x800AC, 0x800AA };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80102D48_2A8EE8_DesertDuel);
 #endif
 
@@ -622,7 +620,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104844_
 
 /* The challenger picks an opponent from D_80108C20 (cursor rows at ys[]); a CPU challenger's
    input comes from func_80107EE4's script. Sets D_80108C1C and D_80108C50, then ends. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_801049AC_2AAB4C_DesertDuel(void) {
     s32 ys4[3] = { 32, 90, 148 };
     s32 ys3[2] = { 59, 121 };
@@ -689,9 +686,6 @@ void func_801049AC_2AAB4C_DesertDuel(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801049AC_2AAB4C_DesertDuel);
-#endif
 
 /* A tumbleweed every 210 frames. */
 void func_80104C9C_2AAE3C_DesertDuel(void) {
@@ -783,7 +777,6 @@ void func_80104EF8_2AB098_DesertDuel(omObjData* obj) {
     sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
     func_800890CC_89CCC(win, (s32)buf, x, y)
 
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80105054_2AB1F4_DesertDuel(void) {
     char buf[0x200];
     char mess[0x20];
@@ -899,9 +892,6 @@ void func_80105054_2AB1F4_DesertDuel(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105054_2AB1F4_DesertDuel);
-#endif
 
 /* The duel's opening message (0x219, both duelists named); waits for Start from either duelist (or
    from the CPU script when both are CPUs). */
@@ -938,7 +928,6 @@ void func_801058C8_2ABA68_DesertDuel(void) {
 /* A duel message window: message D_80108C68 at (D_80108C6C, D_80108C70); mode D_80108C74 says
    what it shows (5: the stake, 7: the stake and the winner's name) and how it ends (0: when
    D_80108C50 is set, 1: Start, 2/3: A, 4/5/7: at once, 6: at once, leaving the process running). */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80105AAC_2ABC4C_DesertDuel(void) {
     s16 size[2];
     char num[0x100];
@@ -1011,9 +1000,6 @@ void func_80105AAC_2ABC4C_DesertDuel(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105AAC_2ABC4C_DesertDuel);
-#endif
 
 /* Both duelists walk to their next marks (D_80108984[D_80108C10], one each), stopping early if
    the duel's outcome D_80108C58 is set; then idle motion. */
@@ -1161,7 +1147,6 @@ void func_80106328_2AC4C8_DesertDuel(omObjData* obj) {
 /* The countdown: "3", "2", "1" (the duelists walk apart on 2 and 1), a random 30-74 frames, then
    "GO!" and the draw is open (D_80108C64). Ends as soon as the outcome is decided; a false start in
    the first 10 frames also removes that duelist's object from func_800446B4. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80106600_2AC7A0_DesertDuel(void) {
     Vec pos[2];
     MBModel* model;
@@ -1174,8 +1159,7 @@ void func_80106600_2AC7A0_DesertDuel(void) {
     D_80108C10_2AEDB0_DesertDuel = 4;
     model = PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel);
     HuVecCopyXYZ(&pos[0], -1000.0f, model->pos.y, model->pos.z);
-    model = PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel);
-    HuVecCopyXYZ(&pos[1], 1000.0f, model->pos.y, model->pos.z);
+    HuVecCopyXYZ(&pos[1], 1000.0f, PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel)->pos.y, PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel)->pos.z);
     obj1 = func_800446B4_452B4(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), &pos[0], 10);
     obj2 = func_800446B4_452B4(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), &pos[1], 10);
     for (i = 0; i < 30; i++) {
@@ -1214,12 +1198,8 @@ void func_80106600_2AC7A0_DesertDuel(void) {
     D_80108C64_2AEE04_DesertDuel = 1;
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106600_2AC7A0_DesertDuel);
-#endif
 /* Fires a shot from player `shooter` at player `target`: it starts at the shooter's hand (per
    character offsets) and flies sideways at 30 per frame. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80106988_2ACB28_DesertDuel(s32 shooter, s32 target) {
     f32 side[6] = { -47.5f, -10.0f, -15.0f, -19.0f, -35.0f, -0.5f };
     f32 height[6] = { 77.5f, 85.0f, 102.0f, 65.0f, 90.0f, 124.0f };
@@ -1257,9 +1237,6 @@ void func_80106988_2ACB28_DesertDuel(s32 shooter, s32 target) {
     func_800297E8_2A3E8(obj->model[1], 0.3f, 0.3f, 0.3f);
     PlaySound(0x3A0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);
-#endif
 /* The shot in flight: on reaching the target (within 30) it knocks them back (motion 5, rumble,
    sound), then bounces back and rolls to a stop, a sound on each bounce; then D_80108C50. */
 #define ABS3F(x) ((x) < 0 ? -(x) : (x))
@@ -1309,6 +1286,7 @@ void func_80106C94_2ACE34_DesertDuel(omObjData* obj) {
     }
 }
 #else
+const s16 D_80108B38_2AECD8_DesertDuel[5] = { 0x3A1, 0x3A2, 0x3A2, 0x3A3, 0x3A4 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
 #endif
 /* The duelist who drew (outcome 2/3: the challenger, 4/5: the opponent) draws (motion 3) and turns
@@ -1402,7 +1380,6 @@ void func_801073A8_2AD548_DesertDuel(void) {
    is a warning (message 0x217, a "MISS" mark over the offender's side); the second loses the duel
    to the other duelist (0x218). Then the referee goes back to his spot.
    Retail quirk: the distance test takes sqrt(x*x - rx*rx + z*z - rz*rz), not the distance. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_801073FC_2AD59C_DesertDuel(void) {
     Vec pos;
     ModelPathWork* work;
@@ -1505,9 +1482,6 @@ void func_801073FC_2AD59C_DesertDuel(void) {
     }
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073FC_2AD59C_DesertDuel);
-#endif
 u16 func_80107940_2ADAE0_DesertDuel(void) {
     u16 btn;
 
@@ -1714,6 +1688,11 @@ void func_80107EE4_2AE084_DesertDuel(s32 cur, s32 target, s32 mode) {
     }
 }
 #else
+const s32 D_80108B68_2AED08_DesertDuel[32] = {
+    -1, 1, 3, 2, 3, 3, 3, 3, 0, 1, -1, 1, 1, 2, 1, 2, 0, 1, 0, 1, -1, 1, 1, 2, 0, 0, 0, 1, 0, 1, -1, -1,
+};
+const s32 D_80108BE8_2AED88_DesertDuel[4] = { 10, 20, 20, 9 };
+const s32 D_80108BF8_2AED98_DesertDuel[4] = { 90, 60, 20, 1 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
 #endif
 /* The CPU input script: a pad trigger in D_80108C98 every so often (from frame 10 of each step).
