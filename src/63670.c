@@ -32,7 +32,12 @@ s32 MBRand(f32);
 
 extern s32 D_800CCD5C_CD95C[];
 extern u8 D_800CCD54_CD954[];
-extern s16 D_800F8D1A_F991A;
+/* Battle space targets: players sharing the space (bit mask) and the attacker's bit */
+typedef struct BattleTargets {
+    /* 0x00 */ s16 targets;
+    /* 0x02 */ s16 attacker;
+} BattleTargets;
+extern BattleTargets D_800F8D1A_F991A;
 void func_800115B4_121B4(s16);
 s16 func_80079428_7A028(s32);
 Object* func_80043510_44110(s32, void*);
@@ -110,7 +115,7 @@ void func_80041AA0_426A0(s32);
 void MBModelInit(void);
 void func_8005E2B8_5EEB8(void);
 void func_800508B4_514B4(void);
-void func_8005E1A0_5EDA0(s32);
+void func_8005E1A0_5EDA0(s16);
 void func_8005E154_5ED54(s32);
 void func_8005070C_5130C(void);
 void func_80043DAC_449AC(Object*);
@@ -953,7 +958,7 @@ s32 func_80064200_64E00(GW_PLAYER* player) {
     if (gPlayers[(u8)player->unk_1C[0]].coins != 0) {
         n = 0;
         for (i = 0; i < 4; i++) {
-            if ((D_800F8D1A_F991A >> i) & 1) {
+            if ((D_800F8D1A_F991A.targets >> i) & 1) {
                 n += gPlayers[i].coins != 0;
             }
         }
@@ -1223,6 +1228,723 @@ void func_800650BC_65CBC(void) {
     func_80067040_67C40(0x54, 0, 0);
 }
 
+/* MP1's BoardPlayerObj view of a player model: unk_46 is a motion flag where Object has f32 unk44 */
+typedef struct BoardPlayerObj {
+    /* 0x00 */ struct Object* prev;
+    /* 0x04 */ struct Object* next;
+    /* 0x08 */ s16 unk_08;
+    /* 0x0A */ u16 flags;
+    /* 0x0C */ Vec coords;
+    /* 0x18 */ Vec rot;
+    /* 0x24 */ Vec scale;
+    /* 0x30 */ Vec velocity;
+    /* 0x3C */ omObjData* omObj1;
+    /* 0x40 */ omObjData* omObj2;
+    /* 0x44 */ s16 unk_44;
+    /* 0x46 */ s16 unk_46;
+} BoardPlayerObj;
+
+extern s32 D_800E1F90_E2B90;
+extern s16 D_800F8D12_F9912;
+extern u8 D_800CCCFC_CD8FC[];
+void func_8008DACC_8E6CC(s32, s16*, s32);
+s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
+void func_80089B2C_8A72C(s16, s32);
+void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_80089A48_8A648(s16, s32);
+s16 func_8008BA30_8C630(s16);
+void func_8007E180_7ED80(void);
+void func_8008CCA8_8D8A8(s16);
+void func_80057DA4_589A4(s16);
+s32 func_800556F4_562F4(s16, s16);
+s16 func_800558F4_564F4(void);
+void func_800558E8_564E8(s16);
+void func_800553A8_55FA8(s16);
+void func_80061584_62184(void);
+void MBPlayerMotionSet(s32, s16, u16);
+void func_80050950_51550(void);
+Process* func_8005E544_5F144(void);
+Process* func_800500CC_50CCC(s16);
+void func_8004E9A8_4F5A8(void);
+void func_8004E904_4F504(void);
+void func_8005670C_5730C(Vec*);
+Process* func_80056B78_57778(Vec*, Vec*, Vec*, s32);
+Process* MBDCameraZoomMotStart(f32);
+Process* func_80048800_49400(s16);
+s32 func_80047DE8_489E8(s16);
+void func_80056E34_57A34(s16, s32);
+void func_80046E2C_47A2C(s16);
+void func_8004E4FC_4F0FC(void);
+void func_8004E9F0_4F5F0(void);
+void func_8004655C_4715C(s32);
+void func_8004E9CC_4F5CC(void);
+void func_80053F7C_54B7C(void);
+void func_80053F54_54B54(void);
+Process* func_80049028_49C28(s16);
+Process* func_80049408_4A008(s16);
+void func_8004947C_4A07C(void);
+void func_8004948C_4A08C(void);
+u8 func_80049470_4A070(void);
+void func_8008E978_8F578(s16);
+void func_8008D808_8E408(s16, s32);
+void func_8008EED8_8FAD8(s16, s32);
+void func_80057730_58330(s16, s32);
+s32 func_8008E73C_8F33C(s16 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u16 arg5);
+void func_80056884_57484(s32, s32);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void MBDlgResultWinExec(s32);
+void func_8004E928_4F528(void);
+Process* func_8004BDE4_4C9E4(s16);
+Process* func_8004B974_4C574(void);
+s32 func_800600C0_60CC0(s32);
+Process* func_8005E478_5F078(void);
+void func_80050860_51460(void);
+void func_8005E260_5EE60(s16);
+void MBPlayerForwardSet(s16);
+void MBMotionSet(void* arg0, s16 arg1, u16 arg2);
+void PlayMusic(s16);
+void func_800670BC_67CBC(Vec* arg0);
+s32 func_80063F88_64B88(s32 arg0);
+void func_80063C40_64840(s32 playerNo, s32 arg1);
+s32 func_800645C8_651C8(GW_PLAYER* player);
+s32 func_80064200_64E00(GW_PLAYER* player);
+void func_80064C98_65898(void);
+void func_80064DA8_659A8(void);
+void func_80063844_64444(void);
+s32 func_800638C8_644C8(void);
+
+/* The board turn loop (MP1 func_8005727C): a resumable state machine, mbGameMode saying where
+   to continue after an event or minigame overlay returns */
+// register allocation only (masked 0): GCC gives gs/spaceIdx/space s5/s6/s7 where retail has s7/s5/s6
+#ifdef NON_MATCHING
+void func_800650F0_65CF0(void) {
+    Vec sp18;
+    s16 size[2];
+    s16 size2[2];
+    Process* proc;
+    GW_PLAYER* player;
+    s16 spaceIdx;
+    SpaceData* space;
+    GW_SYSTEM* gs = &GwSystem;
+    Process* child;
+    s16 remain;
+    s16 win;
+    s16 mask;
+    u16 chain;
+    u16 spc;
+    s32 coins;
+    s32 n;
+    s32 j;
+    s32 i;
+
+    proc = HuPrcCurrentGet();
+    while (1) {
+        if ((u32)mbGameMode < 2 && gs->current_player_index == 0) {
+            for (i = 0; i < 4; i++) {
+                BoardPlayerGet(i)->player_space_color = 0;
+            }
+            if (gs->total_turns >= 0) {
+                remain = gs->total_turns - gs->current_turn + 1;
+                if (remain < 6) {
+                    if (remain > 0 && _CheckFlag(0xD) == 0) {
+                        _SetFlag(0x42);
+                    }
+                }
+            }
+            if (_CheckFlag(0x41) == 0) {
+                switch (gs->unk_24[0]) {
+                    case 1:
+                        gs->unk_24[0] = 2;
+                    case 0:
+                        _SetFlag(0);
+                        _SetFlag(0x40);
+                        func_8008DACC_8E6CC(1, size, 0x66D);
+                        win = func_800888A8_894A8(0, 0, size[0], size[1], 0, 2);
+                        func_80089B2C_8A72C(win, 0);
+                        func_800890CC_89CCC(win, 0x66D, -1, -1);
+                        func_80089A48_8A648(win, 0);
+                        while (func_8008BA30_8C630(win) != 0) {
+                            HuPrcVSleep();
+                        }
+                        func_8007E180_7ED80();
+                        func_8008CCA8_8D8A8(win);
+                        func_8008DACC_8E6CC(1, size, 0x66E);
+                        win = func_800888A8_894A8(0, 0, size[0], size[1], 0, 2);
+                        func_80089B2C_8A72C(win, 0);
+                        func_800890CC_89CCC(win, 0x66E, -1, -1);
+                        func_80089A48_8A648(win, 0);
+                        func_80057DA4_589A4(win);
+                        func_8008CCA8_8D8A8(win);
+                        break;
+                }
+            }
+            _ClearFlag(0x41);
+            D_800CCC18_CD818 = 0;
+            D_800E1F90_E2B90 = func_800556F4_562F4(-2, 7);
+        }
+        D_800CCC18_CD818 = 1;
+        for (i = 0; i < 4; i++) {
+            player = BoardPlayerGet(i);
+            func_80060034_60C34(i, (u8)player->player_space_color);
+            if (player->unk_18 != 0) {
+                MBPlayerMotionSet(i, 4, 2);
+            }
+            func_80063C40_64840(i, 1);
+            if (gs->current_board_index == 5) {
+                func_80061584_62184();
+            }
+        }
+        func_80064DA8_659A8();
+        player = BoardPlayerGet(gs->current_player_index);
+        if (gs->current_player_index == 4) {
+            player->flags |= 1;
+        }
+        spaceIdx = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+        space = GetSpaceData(spaceIdx);
+        if ((u32)mbGameMode >= 2) {
+            while (func_8008F618_90218() != 0) {
+                HuPrcVSleep();
+            }
+            if (gPlayers[gs->current_player_index].turn_status == 0) {
+                D_800FC734_FD334 = 1;
+            }
+            switch (mbGameMode) {
+                case 11:
+                    mbGameMode = 10;
+                    func_8004E904_4F504();
+                    func_8005670C_5730C(&sp18);
+                    func_80056B78_57778(&PLAYER_MODEL(player)->rot, &sp18, &PLAYER_MODEL(player)->rot, 8);
+                    HuPrcSleep(8);
+                    goto state10;
+                case 2:
+                    goto state2;
+                case 3:
+                    goto state3;
+                case 4:
+                    goto state4;
+                case 5:
+                    goto state5;
+                case 6:
+                    goto state6;
+                case 7:
+                    goto state7;
+                case 8:
+                    goto state8;
+                case 9:
+                    goto state9;
+                case 10:
+                    goto state10;
+                case 12:
+                    goto state12;
+                case 13:
+                    goto state13;
+                case 14:
+                    goto state14;
+            }
+        } else {
+            func_800556F4_562F4(-4, 7);
+            func_80052E68_53A68(D_800E1F84_E2B84);
+            func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(0))->omObj1->model[0]);
+            func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(1))->omObj1->model[0]);
+            func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(2))->omObj1->model[0]);
+            func_8002D4A0_2E0A0(PLAYER_MODEL(BoardPlayerGet(3))->omObj1->model[0]);
+            MBPlayerMotionSet(-1, -1, 2);
+            func_800636F8_642F8(1);
+            if (gs->current_player_index == 4) {
+                func_80050950_51550();
+            }
+            HuPrcChildLink(proc, func_8005E544_5F144());
+            HuPrcChildWatch();
+        }
+    state6:
+        HuPrcSleep(4);
+        if (gs->current_player_index == 4) {
+            MBPlayerVibrate(0, 3);
+            MBPlayerVibrate(1, 3);
+            MBPlayerVibrate(2, 3);
+            MBPlayerVibrate(3, 3);
+        } else {
+            MBPlayerVibrate(-1, 3);
+        }
+        HuPrcChildLink(proc, func_800500CC_50CCC(gs->current_player_index));
+        HuPrcChildWatch();
+        if (gs->current_player_index == 4) {
+            D_800FC734_FD334 = 0;
+            func_8004E9A8_4F5A8();
+        }
+        func_800556F4_562F4(-5, 7);
+    state10:
+        func_80064F1C_65B1C();
+        D_800E1F84_E2B84 = 1.3f;
+        HuPrcChildLink(proc, MBDCameraZoomMotStart(1.3f));
+        child = func_80048800_49400(gs->current_player_index);
+        HuPrcChildWatch();
+        HuPrcSleep(1);
+        if (gs->current_player_index != 4) {
+            D_800FA198_FAD98 = 1;
+            D_800FC734_FD334 = 1;
+            if (_CheckFlag(0xD) == 0) {
+                D_800FA1A4_FADA4 = 1;
+                D_800F9048_F9C48 = 1;
+            }
+        }
+        HuPrcChildLink(proc, child);
+        HuPrcChildWatch();
+        func_80064FF8_65BF8();
+        D_800FA198_FAD98 = 0;
+        D_800FA1A4_FADA4 = 0;
+        D_80100028_100C28 = func_80047DE8_489E8(gs->current_player_index);
+        MBPlayerMotionSet(-1, 0, 2);
+        while (D_80100028_100C28 != 0) {
+            chain = player->cur_chain_index;
+            spc = player->cur_space_index;
+            player->cur_chain_index = player->next_chain_index;
+            player->cur_space_index = player->next_space_index;
+            for (i = 0; i < 4; i++) {
+                func_80063C40_64840(i, 10);
+            }
+            player->cur_chain_index = chain;
+            player->cur_space_index = spc;
+            if (((u16)GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))->unk_02 & 0x8000)
+                || func_80063F88_64B88(gs->current_player_index) != 0) {
+                func_800797DC_7A3DC(0x42, gs->current_player_index);
+                MBPlayerMotionSet(-1, 2, 0);
+                PLAYER_MODEL(player)->velocity.y = 4.0f;
+                PLAYER_MODEL(player)->velocity.z = -0.5f;
+                func_80056E34_57A34(gs->current_player_index, 15);
+            } else {
+                if (((BoardPlayerObj*)player->unk_24)->unk_46 != 0) {
+                    MBPlayerMotionSet(-1, 0, 2);
+                }
+                func_80056E34_57A34(gs->current_player_index, 10);
+            }
+            player->cur_chain_index = player->next_chain_index;
+            player->cur_space_index = player->next_space_index;
+            player->next_space_index++;
+            spaceIdx = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+            space = GetSpaceData(spaceIdx);
+            func_800558E8_564E8(spaceIdx);
+            switch (space->space_type) {
+                case 1:
+                case 2:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 9:
+                case 12:
+                    func_80046E2C_47A2C(gs->current_player_index);
+                    D_80100028_100C28--;
+                    func_800553A8_55FA8(spaceIdx);
+                    break;
+            }
+            if (D_80100028_100C28 != 0) {
+                switch (space->space_type) {
+                    case 14:
+                        if (gs->current_player_index != 4) {
+                            PlaySound(0x341);
+                        } else {
+                            PlaySound(0x315);
+                        }
+                        break;
+                    case 15:
+                        if (D_800F8D12_F9912 != 0) {
+                            PlaySound(0x341);
+                        } else {
+                            PlaySound(0x315);
+                        }
+                        break;
+                    case 1:
+                    case 2:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 9:
+                    case 12:
+                        PlaySound(0x315);
+                        break;
+                }
+            } else {
+                func_80063BBC_647BC(space->space_type);
+            }
+            func_8004E4FC_4F0FC();
+            if (gs->current_player_index == 4) {
+                func_8004E9F0_4F5F0();
+            }
+            D_800E1F90_E2B90 = func_800556F4_562F4(spaceIdx, 1);
+            if (D_800E1F94_E2B94 < 0) {
+                continue;
+            }
+            mbGameMode = 2;
+            HuPrcSleep(-1);
+        state2:
+            if (D_800E1F90_E2B90 & 1) {
+                D_800E1F90_E2B90 = func_800556F4_562F4(func_800558F4_564F4(), 2);
+                if (D_800E1F94_E2B94 >= 0) {
+                    mbGameMode = 3;
+                    HuPrcSleep(-1);
+                }
+            }
+        state3:
+            if (D_800E1F90_E2B90 & 2) {
+                D_80100028_100C28 = 0;
+            } else {
+                func_8004655C_4715C(gs->current_player_index);
+                HuPrcSleep(10);
+            }
+        }
+        D_800E1F84_E2B84 = 1.0f;
+        MBPlayerMotionSet(-1, -1, 2);
+        spaceIdx = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+        switch (GetSpaceData(spaceIdx)->space_type) {
+            case 4:
+                MBPlayerVibrate(-1, 2);
+                player->happening_spaces_landed_on++;
+                break;
+            case 2:
+                MBPlayerVibrate(-1, 1);
+                player->red_spaces_landed_on++;
+                break;
+            case 1:
+                player->blue_spaces_landed_on++;
+                break;
+            case 5:
+                MBPlayerVibrate(-1, 4);
+                player->chance_spaces_landed_on++;
+                break;
+            case 12:
+                MBPlayerVibrate(-1, 2);
+                player->bowser_spaces_landed_on++;
+                break;
+            case 9:
+                MBPlayerVibrate(0, 2);
+                MBPlayerVibrate(1, 2);
+                MBPlayerVibrate(2, 2);
+                MBPlayerVibrate(3, 2);
+                player->battle_spaces_landed_on++;
+                break;
+            case 6:
+                MBPlayerVibrate(-1, 2);
+                player->item_spaces_landed_on++;
+                break;
+            case 7:
+                player->bank_spaces_landed_on++;
+                break;
+        }
+        mbGameMode = 4;
+        D_800E1F90_E2B90 = func_800556F4_562F4(spaceIdx, 3);
+        if (D_800E1F94_E2B94 >= 0) {
+            HuPrcSleep(-1);
+        state4:
+            if (D_800E1F90_E2B90 & 1) {
+                D_800E1F90_E2B90 = func_800556F4_562F4(func_800558F4_564F4(), 4);
+                if (D_800E1F94_E2B94 >= 0) {
+                    mbGameMode = 5;
+                    HuPrcSleep(-1);
+                }
+            }
+        state5:
+            HuPrcSleep(30);
+        }
+        func_8005670C_5730C(&sp18);
+        func_80056B78_57778(&PLAYER_MODEL(player)->rot, &sp18, &PLAYER_MODEL(player)->rot, 8);
+        spaceIdx = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+        space = GetSpaceData(spaceIdx);
+        if (gs->current_player_index == 4) {
+            HuPrcSleep(8);
+            func_8004E9CC_4F5CC();
+            goto turn_end;
+        }
+        if (starBlockSpaceIndex == (s16)spaceIdx || D_800FFDF0_1009F0 != 0) {
+            D_800FFDF8_1009F8++;
+            func_80053F7C_54B7C();
+            MBPlayerVibrate(-1, 4);
+            HuPrcChildLink(proc, MBDCameraZoomMotStart(1.6f));
+            child = func_80049028_49C28(gs->current_player_index);
+            func_8004947C_4A07C();
+            func_8008DACC_8E6CC(1, size, 0x20C);
+            win = func_8008E73C_8F33C(-1, 160 - size[0] / 2, 150, size[0], size[1], 0);
+            func_800890CC_89CCC(win, 0x20C, -1, -1);
+            func_8008E978_8F578(win);
+            func_8008D808_8E408(win, 1);
+            HuPrcChildWatch();
+            func_8008D808_8E408(win, 0);
+            func_80057730_58330(win, (u8)player->unk_1C[0]);
+            func_8008EED8_8FAD8(win, 0);
+            func_8008CCA8_8D8A8(win);
+            func_8004948C_4A08C();
+            while (func_80049470_4A070() == 0) {
+                HuPrcVSleep();
+            }
+            func_8008DACC_8E6CC(1, size, 0x20D);
+            win = func_8008E73C_8F33C(-1, 160 - size[0] / 2, 150, size[0], size[1], 0);
+            func_800890CC_89CCC(win, 0x20D, -1, -1);
+            func_8008E978_8F578(win);
+            func_80057730_58330(win, (u8)player->unk_1C[0]);
+            func_8008EED8_8FAD8(win, 0);
+            func_8008CCA8_8D8A8(win);
+            func_8004948C_4A08C();
+            HuPrcChildLink(proc, child);
+            HuPrcChildWatch();
+            HuPrcChildLink(proc, MBDCameraZoomMotStart(1.3f));
+            HuPrcChildWatch();
+            HuPrcSleep(1);
+            prevStarBlockSpaceIndexes[D_800E1FE6_E2BE6++] = starBlockSpaceIndex;
+            D_800E1FE6_E2BE6 %= 10;
+            starBlockSpaceIndex = -1;
+            func_80064DA8_659A8();
+            func_80053F54_54B54();
+        }
+        if (coinBlockSpaceIndex == (s16)spaceIdx || D_800FDEAC_FEAAC != 0) {
+            D_800FDBD8_FE7D8++;
+            func_80053F7C_54B7C();
+            MBPlayerVibrate(-1, 4);
+            HuPrcChildLink(proc, MBDCameraZoomMotStart(1.6f));
+            child = func_80049408_4A008(gs->current_player_index);
+            func_8004947C_4A07C();
+            func_8008DACC_8E6CC(1, size2, 0x20C);
+            win = func_8008E73C_8F33C(-1, 160 - size2[0] / 2, 150, size2[0], size2[1], 0);
+            func_800890CC_89CCC(win, 0x20C, -1, -1);
+            func_8008E978_8F578(win);
+            func_8008D808_8E408(win, 1);
+            HuPrcChildWatch();
+            func_8008D808_8E408(win, 0);
+            func_80057730_58330(win, (u8)player->unk_1C[0]);
+            func_8008EED8_8FAD8(win, 0);
+            func_8008CCA8_8D8A8(win);
+            func_8004948C_4A08C();
+            while (func_80049470_4A070() == 0) {
+                HuPrcVSleep();
+            }
+            HuPrcChildLink(proc, child);
+            HuPrcChildWatch();
+            func_8008DACC_8E6CC(1, size2, 0x20E);
+            win = func_8008E73C_8F33C(-1, 160 - size2[0] / 2, 150, size2[0], size2[1], 0);
+            func_800890CC_89CCC(win, 0x20E, -1, -1);
+            func_8008E978_8F578(win);
+            func_80057730_58330(win, (u8)player->unk_1C[0]);
+            func_8008EED8_8FAD8(win, 0);
+            func_8008CCA8_8D8A8(win);
+            HuPrcChildLink(proc, MBDCameraZoomMotStart(1.3f));
+            HuPrcChildWatch();
+            HuPrcSleep(1);
+            prevCoinBlockSpaceIndexes[D_800E1FE4_E2BE4++] = coinBlockSpaceIndex;
+            D_800E1FE4_E2BE4 %= 10;
+            coinBlockSpaceIndex = -1;
+            func_80064DA8_659A8();
+            func_80053F54_54B54();
+        }
+        if (gs->total_turns - gs->current_turn < 5) {
+            if (_CheckFlag(0xD) == 0) {
+                mask = 0;
+                for (i = 0; i < 4; i++) {
+                    if (i == (u8)player->unk_1C[0]) {
+                        continue;
+                    }
+                    if ((s16)spaceIdx == GetAbsSpaceIndexFromChainSpaceIndex(BoardPlayerGet(i)->cur_chain_index, BoardPlayerGet(i)->cur_space_index)) {
+                        mask |= 1 << i;
+                        MBPlayerVibrate(i, 3);
+                    }
+                }
+                if (mask != 0) {
+                    D_800F8D1A_F991A.targets = mask;
+                    D_800F8D1A_F991A.attacker = 1 << (u8)player->unk_1C[0];
+                    MBPlayerVibrate((u8)player->unk_1C[0], 3);
+                    func_80053F7C_54B7C();
+                    if (func_80064200_64E00(player) == 0) {
+                        func_80053F54_54B54();
+                    } else {
+                        mbGameMode = 9;
+                        D_800E1F96_E2B96 = 11;
+                        HuPrcSleep(-1);
+                    }
+                }
+            }
+        }
+    state9:
+        func_80056884_57484(-1, space->space_type);
+        func_80060034_60C34(gs->current_player_index, (u8)player->player_space_color);
+        switch (space->space_type) {
+            case 1:
+                if (_CheckFlag(0xD) != 0) {
+                    HuPrcSleep(20);
+                } else {
+                    if (_CheckFlag(0x42) != 0) {
+                        coins = 2;
+                    } else {
+                        coins = 1;
+                    }
+                    coins *= 3;
+                    func_8004CA34_4D634(gs->current_player_index, coins);
+                    func_800614B4_620B4(gs->current_player_index, coins);
+                    HuPrcSleep(30);
+                }
+                break;
+            case 2:
+                if (_CheckFlag(0xD) != 0) {
+                    HuPrcSleep(20);
+                } else {
+                    if (_CheckFlag(0x42) != 0) {
+                        coins = 2;
+                    } else {
+                        coins = 1;
+                    }
+                    coins = -(coins * 3);
+                    func_8004CA34_4D634(gs->current_player_index, coins);
+                    func_800614B4_620B4(gs->current_player_index, coins);
+                    HuPrcSleep(30);
+                }
+                break;
+            case 5:
+                mbGameMode = 12;
+                for (i = 0; i < 4; i++) {
+                    BoardPlayerGet(i)->group = i != GetCurrentPlayerIndex();
+                }
+                func_80067010_67C10(0x34, 0, 5, 1);
+                HuPrcSleep(-1);
+            state12:
+                HuPrcSleep(30);
+                break;
+            case 6:
+                D_800FC734_FD334 = 0;
+                HuPrcSleep(8);
+                if (gs->current_turn == gs->total_turns) {
+                    MBDlgResultWinExec(0x1ED);
+                } else if (gPlayers[gs->current_player_index].item != -1) {
+                    MBDlgResultWinExec(0x1EC);
+                } else {
+                    gs->chosenMinigameIndex = D_800CCCFC_CD8FC[gs->current_board_index];
+                    mbGameMode = 13;
+                    D_800E1F94_E2B94 = 2;
+                    D_800E1F98_E2B98 = 1;
+                    D_800E1F96_E2B96 = 10;
+                    D_800FD2B4_FDEB4++;
+                    HuPrcSleep(-1);
+                state13:
+                    gPlayers[gs->current_player_index].item = gPlayers[gs->current_player_index].coins_mg_bonus;
+                    if (gPlayers[gs->current_player_index].item == 3) {
+                        func_8004E928_4F528();
+                    }
+                }
+                break;
+            case 9:
+                if (func_800645C8_651C8(player) != 0) {
+                    D_800FC734_FD334 = 0;
+                    HuPrcChildLink(proc, func_8004BDE4_4C9E4(gs->current_player_index));
+                    HuPrcChildWatch();
+                    mbGameMode = 14;
+                    D_800E1F94_E2B94 = 2;
+                    D_800E1F98_E2B98 = 1;
+                    D_800E1F96_E2B96 = 11;
+                    D_800F9560_FA160++;
+                    HuPrcSleep(-1);
+                state14:
+                    func_80064C98_65898();
+                }
+                break;
+            case 12:
+                mbGameMode = 7;
+                func_80067010_67C10(0x53, 0, 3, 1);
+                HuPrcSleep(-1);
+            state7:
+                HuPrcSleep(30);
+                break;
+        }
+        mbGameMode = 8;
+        D_800E1F90_E2B90 = func_800556F4_562F4(spaceIdx, 5);
+        if (D_800E1F94_E2B94 >= 0) {
+            HuPrcSleep(-1);
+        state8:
+            HuPrcSleep(30);
+        }
+    turn_end:
+        D_800FC734_FD334 = 0;
+        if (gs->current_player_index >= 3 && func_8004E94C_4F54C() == 0) {
+            if (gs->current_board_index == 2) {
+                chain = gs->current_player_index;
+                gs->current_player_index = 3;
+                func_800556F4_562F4(-3, 7);
+                gs->current_player_index = chain;
+            }
+            func_80053F7C_54B7C();
+            D_800CCC18_CD818 = 0;
+            HuPrcChildLink(proc, func_8004B974_4C574());
+            HuPrcChildWatch();
+            if (gs->chosenMinigameIndex >= 0) {
+                mbGameMode = 0;
+                if (gs->total_turns >= 0 && gs->current_turn >= gs->total_turns) {
+                    D_800E1F94_E2B94 = 0x23;
+                } else {
+                    D_800E1F94_E2B94 = 3;
+                }
+                D_800E1F98_E2B98 = 1;
+                D_800E1F96_E2B96 = 9;
+                n = 0;
+                for (j = 0; j < 4; j++) {
+                    n += func_800600C0_60CC0(j) == 1;
+                }
+                switch (n) {
+                    case 0:
+                    case 4:
+                        D_801026D6_1032D6++;
+                        break;
+                    case 1:
+                    case 3:
+                        D_800FD898_FE498++;
+                        break;
+                    case 2:
+                        D_800FA60A_FB20A++;
+                        break;
+                }
+                HuPrcSleep(-1);
+            }
+        }
+        if (func_800638C8_644C8() != 0) {
+            mbGameMode = 0;
+            D_800E1F94_E2B94 = 1;
+            HuPrcSleep(-1);
+        }
+        HuPrcSleep(4);
+        HuPrcChildLink(proc, func_8005E478_5F078());
+        HuPrcChildWatch();
+        if (gs->current_player_index == 4) {
+            func_80050860_51460();
+        }
+        func_80063844_64444();
+        if (GwSystem.current_player_index == 4) {
+            for (i = 0; i < 4; i++) {
+                func_8005E260_5EE60(i);
+            }
+            func_800636F8_642F8(3);
+            HuPrcSleep(5);
+            for (i = 0; i < 4; i++) {
+                func_8005E1A0_5EDA0(i);
+                player = BoardPlayerGet(i);
+                func_80043DAC_449AC(PLAYER_MODEL(player));
+                PLAYER_MODEL(player)->flags |= 2;
+                func_8005660C_5720C(i, GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+                MBPlayerForwardSet(i);
+            }
+            HuPrcVSleep();
+            func_8005070C_5130C();
+            func_80050950_51550();
+            func_800636F8_642F8(1);
+            HuPrcVSleep();
+            PlayMusic(0x3C);
+        } else {
+            for (i = 0; i < 4; i++) {
+                MBPlayerForwardSet(i);
+                MBMotionSet(BoardPlayerGet(i)->unk_24, -1, 2);
+            }
+            HuPrcVSleep();
+        }
+        func_800670BC_67CBC(NULL);
+        mbGameMode = 1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/63670", func_800650F0_65CF0);
 
 const u32 jtbl_800D3028_D3C28[] __attribute__((aligned(8), section(".rodata"))) = {
@@ -1261,6 +1983,13 @@ const u32 jtbl_800D3130_D3D30[] __attribute__((aligned(8), section(".rodata"))) 
     0x8006670C, 0x80066724, 0x8006673C, 0x80066724,
     0x8006670C,
 };
+#endif
+
+
+
+
+
+
 
 void func_8006692C_6752C(void) {
     HuPrcVSleep();
@@ -1271,7 +2000,7 @@ void func_8006692C_6752C(void) {
     HuPrcVSleep();
 }
 
-/* Board pad watcher: stick to scroll the map, Start for the menu, buttons for map view and items
+/* Board pad watcher: per-player button handling while the board runs
    (MP1 func_8005835C) */
 // GCC re-tests i == cur before the 0x2000 test, where retail only reloads the flag and the pad
 // (MP1 func_8005835C has the same residue; branch layout, masked ~6)
