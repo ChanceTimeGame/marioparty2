@@ -101,11 +101,120 @@ void func_80102800_259900_ChanceTime(void) {
     InitFadeIn(D_80110060_267160_ChanceTime != 0 ? 3 : 5, 16);
 }
 
-/* Two SJIS strings (local char-array initialisers?) as raw words until their user is C */
+/* NON_MATCHING: one delay slot (the else arm of the title message call fills it with `li v0,1`,
+ * GCC here with the shared `sw zero,16(sp)`); every later branch target shifts by 4. */
+#ifdef NON_MATCHING
+void func_80102E4C_259F4C_ChanceTime(omObjData* obj) {
+    CTPlayerWork* work;
+
+    func_8000C3C8_CFC8();
+    work = CT_PWORK(D_800FFFD8_100BD8[0]);
+    switch (D_800F8FD0_F9BD0) {
+    case 0:
+        if (D_801100F0_2671F0_ChanceTime == 0) {
+            PlayMusic(0x23);
+            if (D_80110060_267160_ChanceTime == 0) {
+                PlaySound(0x4A3);
+            }
+            D_80110062_267162_ChanceTime = 1;
+            D_80110063_267163_ChanceTime = 1;
+            D_801100F0_2671F0_ChanceTime++;
+        }
+        if (D_80110064_267164_ChanceTime != 1) {
+            break;
+        }
+        if (D_801100F0_2671F0_ChanceTime == 10) {
+            /* "ＣＨＡＮＣＥ　ＴＩＭＥ♪" / "ＣＨＡＮＣＥ　ＴＩＭＥ" */
+            if (D_80110060_267160_ChanceTime != 0) {
+                D_801106B0_2677B0_ChanceTime = func_800691FC_69DFC(9, "\x82\x62\x82\x67\x82\x60\x82\x6D\x82\x62\x82\x64\x81\x40\x82\x73\x82\x68\x82\x6C\x82\x64\x81\xF3",
+                                                                   0xA0, 0x64, 0, 0, 0, 0, 1);
+            } else {
+                D_801106B0_2677B0_ChanceTime = func_800691FC_69DFC(9, "\x82\x62\x82\x67\x82\x60\x82\x6D\x82\x62\x82\x64\x81\x40\x82\x73\x82\x68\x82\x6C\x82\x64",
+                                                                   0xA0, 0x64, 0, 0, 0, 0, 1);
+            }
+            D_80110108_267208_ChanceTime = &D_800F9570_FA170[D_801106B0_2677B0_ChanceTime];
+            D_80110100_267200_ChanceTime = 0.0f;
+        }
+        if (D_801100F0_2671F0_ChanceTime >= 11 && func_80069538_6A138() != 0 && !(func_80069538_6A138() & 2)) {
+            if (D_801100FB_2671FB_ChanceTime == 0) {
+                if (D_80110060_267160_ChanceTime != 0) {
+                    PlaySound(0xF3);
+                } else {
+                    PlaySound(0xF2);
+                }
+                D_801100FB_2671FB_ChanceTime = 1;
+            }
+            if (D_80110108_267208_ChanceTime->unk04 + 40 < D_80110108_267208_ChanceTime->unk06) {
+                if (D_801100FC_2671FC_ChanceTime == 0) {
+                    D_80110108_267208_ChanceTime->unk68 += 0.3f;
+                    D_80110108_267208_ChanceTime->unk6C += 0.3f;
+                    if (D_80110108_267208_ChanceTime->unk68 > 1.2) {
+                        D_80110108_267208_ChanceTime->unk68 += 1.0f;
+                        D_80110108_267208_ChanceTime->unk6C += 1.0f;
+                        D_801100FC_2671FC_ChanceTime = 1;
+                    }
+                } else {
+                    D_80110108_267208_ChanceTime->unk68 = func_800B7890_B8490(D_80110100_267200_ChanceTime) * 0.3f + 1.0f;
+                    D_80110108_267208_ChanceTime->unk6C = func_800B7890_B8490(D_80110100_267200_ChanceTime) * 0.3f + 1.0f;
+                    D_80110100_267200_ChanceTime += 60.0f;
+                }
+            } else if (D_80110108_267208_ChanceTime->unk04 + 20 > D_80110108_267208_ChanceTime->unk06) {
+                D_80110108_267208_ChanceTime->unk68 = 1.0f;
+                D_80110108_267208_ChanceTime->unk6C = 1.0f;
+                D_80110108_267208_ChanceTime->unk03 = (u8)D_80110104_267204_ChanceTime;
+                D_80110104_267204_ChanceTime -= 12;
+                if (D_80110104_267204_ChanceTime < 0) {
+                    D_80110104_267204_ChanceTime = 0;
+                }
+            } else {
+                D_80110108_267208_ChanceTime->unk68 = 1.0f;
+                D_80110108_267208_ChanceTime->unk6C = 1.0f;
+            }
+        }
+        D_801100F0_2671F0_ChanceTime++;
+        break;
+    case 1:
+        if (D_80110150_267250_ChanceTime[0] != 0 && D_80110150_267250_ChanceTime[1] != 0 &&
+            D_80110150_267250_ChanceTime[2] != 0 && D_801100F8_2671F8_ChanceTime == 0) {
+            if (work->unk_38 == 1000.0f && (work->unk_5C & 6) && D_801100F4_2671F4_ChanceTime == 0) {
+                D_80110068_267168_ChanceTime = 1;
+                func_8000C690_D290();
+                work->unk_3C = work->unk_40 = 0.0f;
+                D_801100F4_2671F4_ChanceTime = 1;
+            }
+            if (D_801100F4_2671F4_ChanceTime != 0) {
+                D_80110062_267162_ChanceTime = 2;
+                D_80110063_267163_ChanceTime = 2;
+                D_801100F8_2671F8_ChanceTime = 1;
+            }
+        }
+        break;
+    case 2:
+        func_8000C3A8_CFA8();
+        break;
+    case 3:
+        func_8000C690_D290();
+        if (D_801100FA_2671FA_ChanceTime == 0) {
+            D_801100FA_2671FA_ChanceTime = 1;
+        } else if (D_801100F9_2671F9_ChanceTime == 0) {
+            InitFadeOut(D_80110060_267160_ChanceTime != 0 ? 3 : 5, 16);
+            func_800794A8_7A0A8(40);
+            D_801100F9_2671F9_ChanceTime = 1;
+        } else if (func_8008F618_90218() == 0) {
+            func_80069770_6A370();
+            func_8008CE5C_8DA5C();
+            func_800616C4_622C4();
+            omOvlReturnEx(1);
+        }
+        break;
+    }
+}
+#else
+/* The title strings (rodata) the asm reads: "ＣＨＡＮＣＥ　ＴＩＭＥ♪" and "ＣＨＡＮＣＥ　ＴＩＭＥ" */
 const u32 D_80110260_267360_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x826481F3, 0x00000000 };
 const u32 D_8011027C_26737C_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x82640000, 0x00000000 };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80102E4C_259F4C_ChanceTime);
+#endif
 
 /* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
  * .text: switch back by hand (harmless once a C function precedes this). */

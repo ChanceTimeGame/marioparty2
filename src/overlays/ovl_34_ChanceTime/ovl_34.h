@@ -77,6 +77,7 @@ extern s8 D_80110064_267164_ChanceTime;
 extern s8 D_80110068_267168_ChanceTime;
 extern u32 D_801100F0_2671F0_ChanceTime; /* func_80102E4C frame counter */
 extern s32 D_801100F4_2671F4_ChanceTime;
+extern u16 D_80110150_267250_ChanceTime[3]; /* the three blocks stopped (MP1 D_801012B0) */
 extern s8 D_801100F8_2671F8_ChanceTime;
 extern s8 D_801100F9_2671F9_ChanceTime;
 extern s8 D_801100FA_2671FA_ChanceTime;
