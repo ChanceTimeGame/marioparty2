@@ -2606,6 +2606,85 @@ s32 func_80111338_2A6608_name_3E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80111338_2A6608_name_3E);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8011155C_2A682C_name_3E);
+/* CPU shop choice: the menu row (slot + 1) of an item to buy. Per character, D_80113510 lists
+   items to try with D_80113570 percent chances (needing price + 20 coins); then items 9 and 7,
+   decision trees D_8011341C (item 1) and D_80113434 (a second pass at plain price), else on
+   board 4 func_80109AE4's row, else item 0's row or 1. */
+s32 func_8011155C_2A682C_name_3E(void) {
+    GW_PLAYER* player;
+    s32 slot;
+    s32 i;
+    s32 r;
+    u8 item;
+    GW_SYSTEM* gw = &GwSystem;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801118D8_2A6BA8_name_3E);
+    player = BoardPlayerGet(-1);
+    slot = -1;
+    for (i = 0; i < D_80113588_2A8858_name_3E[player->character]; i++) {
+        item = D_80113510_2A87E0_name_3E[player->character][i];
+        slot = func_80109A78_29ED48_name_3E(item);
+        if (slot == -1) {
+            continue;
+        }
+        if (D_800CC000[item] + 20 > gPlayers[gw->current_player_index].coins) {
+            continue;
+        }
+        if (RNGPercentChance(D_80113570_2A8840_name_3E[player->character][i])) {
+            break;
+        }
+    }
+    if (i == D_80113588_2A8858_name_3E[player->character]) {
+        slot = -1;
+    }
+    if (slot != -1) {
+        if (func_80109A78_29ED48_name_3E(9) == slot) {
+            return slot + 1;
+        }
+        if (func_80109A78_29ED48_name_3E(7) == slot && D_800CC000[7] + 50 <= gPlayers[gw->current_player_index].coins) {
+            return slot + 1;
+        }
+    }
+    if (func_80044800_45400(D_8011341C_2A86EC_name_3E) == 0 && gPlayers[gw->current_player_index].coins >= D_800CC000[1]) {
+        r = func_80109A78_29ED48_name_3E(1);
+        if (r != -1) {
+            return r + 1;
+        }
+    }
+    if (slot != -1) {
+        return slot + 1;
+    }
+    i = func_80044800_45400(D_80113434_2A8704_name_3E);
+    if (i == 0) {
+        for (; i < D_80113588_2A8858_name_3E[player->character]; i++) {
+            item = D_80113510_2A87E0_name_3E[player->character][i];
+            slot = func_80109A78_29ED48_name_3E(item);
+            if (slot == -1) {
+                continue;
+            }
+            if (D_800CC000[item] > gPlayers[gw->current_player_index].coins) {
+                continue;
+            }
+            if (RNGPercentChance(D_80113570_2A8840_name_3E[player->character][i])) {
+                return slot + 1;
+            }
+        }
+    }
+    if (gw->current_board_index == 4) {
+        D_801134C4_2A8794_name_3E = 1;
+        return func_80109AE4_29EDB4_name_3E() + 2;
+    }
+    slot = func_80109A78_29ED48_name_3E(0);
+    if (slot != -1) {
+        return slot + 1;
+    }
+    return 1;
+}
+
+/* The CPU's yes/no answer (1 or 2); MP3 func_8011D1F8_332D68_ChillyWaters. */
+s32 func_801118D8_2A6BA8_name_3E(void) {
+    if (D_801134C4_2A8794_name_3E != 0) {
+        D_801134C4_2A8794_name_3E = 0;
+        return 2;
+    }
+    return func_80044800_45400(D_801134A0_2A8770_name_3E) + 1;
+}
