@@ -228,6 +228,18 @@ void func_80056458_57058(void); /* wait for the message window */
 void func_8004CA14_4D614(s32 player, s32 coins); /* add coins */
 void func_8006135C_61F5C(s32 player, s32 coins, s32);
 void func_800797DC_7A3DC(s32, s32);
+extern u16 D_800CAFD8[]; /* item ids; the low byte is the item */
+extern s32 D_800CCBDC_CD7DC[]; /* per item: picture file */
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16, s16, s32);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
+void SprAnimKill(s16 animIdx);
+void SprKill(s16 idx);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);

@@ -1970,7 +1970,46 @@ void func_8010F430_2A4700_name_3E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F430_2A4700_name_3E);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F940_2A4C10_name_3E);
+/* Board event 13: a random item (5 in 6), its picture faded in over the board. */
+void func_8010F940_2A4C10_name_3E(void) {
+    s16 grp;
+    s16 anim;
+    void* data;
+    s32 i;
+    s32 pick;
+
+    pick = MBRand(6.0f);
+    if (pick >= 5) {
+        pick = -1;
+    }
+    if (pick != -1) {
+        grp = SprCreate(1, 5);
+        data = DataRead(D_800CCBDC_CD7DC[D_800CAFD8[pick]]);
+        anim = SprAnimRead(data);
+        DataClose(data);
+        SprAnimSet(grp, 0, anim, 0);
+        SprPrioSet(grp, 0, 10);
+        func_8008225C_82E5C(grp, 0, 0);
+        SprAttrSet(grp, 0, 0x1000);
+        SprPosSet(grp, 0, 160, 90);
+        func_80082488_83088(grp, 0, 0);
+        for (i = 0; i < 10; i++) {
+            func_80082488_83088(grp, 0, i * 25);
+            HuPrcVSleep();
+        }
+        func_80082488_83088(grp, 0, 0x100);
+        MBPlayerMotionSet(-1, 5, 0);
+        HuPrcSleep(50);
+        MBPlayerMotionSet(-1, -1, 2);
+        HuPrcSleep(10);
+        SprAnimKill(anim);
+        SprKill(grp);
+        gPlayers[GwSystem.current_player_index].item = D_800CAFD8[pick];
+    } else {
+        MBPlayerMotionSet(-1, 3, 0);
+        HuPrcSleep(50);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010FB50_2A4E20_name_3E);
 
