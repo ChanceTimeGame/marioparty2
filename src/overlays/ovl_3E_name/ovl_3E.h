@@ -122,6 +122,9 @@ extern s32 D_801136E4_2A89B4_name_3E;
 extern s32 D_801136E8_2A89B8_name_3E;
 extern s32 D_80113710_2A89E0_name_3E; /* what can be stolen: 0 coins, 1 a star, 2 nothing */
 extern s32 D_80113700_2A89D0_name_3E[4]; /* players other than the current one, by coins */
+extern s32 D_801136F0_2A89C0_name_3E[4]; /* the other players, by rank */
+extern s32 D_80113718_2A89E8_name_3E; /* Boo's choice: a player slot, or 0/1/2 */
+extern s32 D_80113714_2A89E4_name_3E; /* the player Boo steals from */
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);

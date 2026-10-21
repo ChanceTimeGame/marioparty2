@@ -661,9 +661,268 @@ s32 func_801045C0_299890_name_3E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801045C0_299890_name_3E);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80104778_299A48_name_3E);
+/* MP1 func_800F6B3C (ovl_65) logic, checked case by case against this asm; retail keeps the
+   duplicate cases apart and reloads stars between tests (masked 541) */
+#ifdef NON_MATCHING
+void func_80104778_299A48_name_3E(void) {
+    s32 cand[4];
+    s32 count;
+    s32 i;
+    s32 r;
 
+    r = func_80103B70_298E40_name_3E();
+    switch (D_80113710_2A89E0_name_3E) {
+    case 1:
+        if (GwSystem.total_turns < GwSystem.current_turn + 5) {
+            switch (func_80059FD0_5ABD0(GwSystem.current_player_index)) {
+            case 0:
+                if (r >= 95 && gPlayers[D_801136F0_2A89C0_name_3E[2]].stars < 2) {
+                    if (gPlayers[D_801136F0_2A89C0_name_3E[2]].stars != 0) {
+                        D_80113718_2A89E8_name_3E = 2;
+                        break;
+                    }
+                }
+                D_80113718_2A89E8_name_3E = 1;
+                break;
+            case 1:
+                if (r >= 95 && gPlayers[D_801136F0_2A89C0_name_3E[2]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 2;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            case 2:
+                if (r >= 95 && gPlayers[D_801136F0_2A89C0_name_3E[1]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 1;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            case 3:
+                if (r > 94 && gPlayers[D_801136F0_2A89C0_name_3E[1]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 1;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            }
+        } else {
+            switch (func_80059FD0_5ABD0(GwSystem.current_player_index)) {
+            case 0:
+                if (r >= 80 && gPlayers[D_801136F0_2A89C0_name_3E[2]].stars < 2) {
+                    if (gPlayers[D_801136F0_2A89C0_name_3E[2]].stars != 0) {
+                        D_80113718_2A89E8_name_3E = 2;
+                        break;
+                    }
+                }
+                D_80113718_2A89E8_name_3E = 1;
+                break;
+            case 1:
+                if (r >= 90 && gPlayers[D_801136F0_2A89C0_name_3E[2]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 2;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            case 2:
+                if (r >= 90 && gPlayers[D_801136F0_2A89C0_name_3E[1]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 1;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            case 3:
+                if (r >= 95 && gPlayers[D_801136F0_2A89C0_name_3E[1]].stars != 0) {
+                    D_80113718_2A89E8_name_3E = 1;
+                } else {
+                    D_80113718_2A89E8_name_3E = 0;
+                }
+                break;
+            }
+        }
+        break;
+    case 0:
+        count = 0;
+        for (i = 0; i < 4; i++) {
+            cand[i] = 0;
+        }
+        if (count == 0 || GwSystem.total_turns == GwSystem.current_turn
+            || (GwSystem.total_turns < GwSystem.current_turn + 5 && func_80103B70_298E40_name_3E() < 80)
+            || func_80103B70_298E40_name_3E() < 40) {
+            if (GwSystem.total_turns < GwSystem.current_turn + 5) {
+                if (func_80059FD0_5ABD0(GwSystem.current_player_index) == 0) {
+                    if (gPlayers[D_801136F0_2A89C0_name_3E[1]].coins == 0) {
+                        goto steal;
+                    }
+                    if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars == gPlayers[D_801136F0_2A89C0_name_3E[1]].stars) {
+                        goto one;
+                    }
+                    if (r < 85) {
+                        D_80113718_2A89E8_name_3E = 1;
+                        return;
+                    }
+                    goto steal;
+                }
+                if (gPlayers[D_801136F0_2A89C0_name_3E[0]].coins == 0) {
+                    goto steal;
+                }
+                if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars - 1 <= gPlayers[D_801136F0_2A89C0_name_3E[1]].stars) {
+                    if (r < 80) {
+                        goto zero;
+                    }
+                    goto steal;
+                }
+                if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars - 2 == gPlayers[D_801136F0_2A89C0_name_3E[1]].stars) {
+                    if (r < 85) {
+                        goto zero;
+                    }
+                    goto steal;
+                }
+                if (r < 95) {
+                    goto zero;
+                }
+                goto steal;
+            }
+            if (func_80059FD0_5ABD0(GwSystem.current_player_index) == 0) {
+                if (gPlayers[D_801136F0_2A89C0_name_3E[1]].coins == 0) {
+                    goto steal;
+                }
+                if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars != gPlayers[D_801136F0_2A89C0_name_3E[1]].stars
+                    && r >= 35) {
+                    goto steal;
+                }
+            one:
+                D_80113718_2A89E8_name_3E = 1;
+                return;
+            }
+            if (gPlayers[D_801136F0_2A89C0_name_3E[0]].coins == 0) {
+                goto steal;
+            }
+            if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars - 1 <= gPlayers[D_801136F0_2A89C0_name_3E[1]].stars) {
+                if (r < 60) {
+                    goto zero;
+                }
+                goto steal;
+            }
+            if (gPlayers[D_801136F0_2A89C0_name_3E[0]].stars - 2 == gPlayers[D_801136F0_2A89C0_name_3E[1]].stars) {
+                if (r < 75) {
+                    goto zero;
+                }
+                goto steal;
+            }
+            if (r >= 80) {
+                goto steal;
+            }
+        zero:
+            D_80113718_2A89E8_name_3E = 0;
+            return;
+        steal:
+            D_80113718_2A89E8_name_3E = func_801045C0_299890_name_3E();
+            return;
+        }
+        for (i = 0; i < 4; i++) {
+            if (cand[D_801136F0_2A89C0_name_3E[i]] != 0) {
+                if (--count == 0) {
+                    D_80113718_2A89E8_name_3E = i;
+                    return;
+                }
+            }
+        }
+        break;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80104778_299A48_name_3E);
+#endif
+
+/* register allocation: i/coin-rank/j registers rotated (masked 0), as in MP1 func_800F7278 */
+#ifdef NON_MATCHING
+void func_80104F7C_29A24C_name_3E(void) {
+    s32 starRankCount[4];
+    s32 coinRankCount[4];
+    s32 i;
+    s32 j;
+    s32 rank;
+    s32 coinRank;
+
+    for (i = 0; i < 4; i++) {
+        starRankCount[i] = 0;
+        coinRankCount[i] = 0;
+    }
+    for (i = 0; i < 4; i++) {
+        starRankCount[func_80059FD0_5ABD0(i)]++;
+        coinRank = 0;
+        for (j = 0; j < 4; j++) {
+            if (i != j) {
+                coinRank += gPlayers[i].coins < gPlayers[j].coins;
+            }
+        }
+        coinRankCount[coinRank]++;
+    }
+    for (i = 0; i < 4; i++) {
+        D_801136F0_2A89C0_name_3E[i] = -1;
+        D_80113700_2A89D0_name_3E[i] = -1;
+    }
+    for (i = 0; i < 4; i++) {
+        rank = func_80059FD0_5ABD0(i);
+    starSlot:
+        if (D_801136F0_2A89C0_name_3E[rank] != -1) {
+            rank++;
+            goto starSlot;
+        }
+        D_801136F0_2A89C0_name_3E[rank] = i;
+        coinRank = 0;
+        for (j = 0; j < 4; j++) {
+            if (i != j) {
+                coinRank += gPlayers[i].coins < gPlayers[j].coins;
+            }
+        }
+    coinSlot:
+        if (D_80113700_2A89D0_name_3E[coinRank] != -1) {
+            coinRank++;
+            goto coinSlot;
+        }
+        D_80113700_2A89D0_name_3E[coinRank] = i;
+    }
+    D_80113710_2A89E0_name_3E = D_80113714_2A89E4_name_3E = D_80113718_2A89E8_name_3E = -1;
+    func_80104380_299650_name_3E();
+    if (D_80113718_2A89E8_name_3E == -1) {
+        func_80104778_299A48_name_3E();
+    }
+    while (starRankCount[D_80113718_2A89E8_name_3E] == 0) {
+        D_80113718_2A89E8_name_3E--;
+    }
+    rank = func_80059FD0_5ABD0(GwSystem.current_player_index);
+    if (rank == D_80113718_2A89E8_name_3E) {
+        starRankCount[rank]--;
+    }
+    j = rand8() % starRankCount[D_80113718_2A89E8_name_3E];
+    for (i = 0; i < 4; i++) {
+        if (i == GwSystem.current_player_index) {
+            continue;
+        }
+        if (D_80113718_2A89E8_name_3E != func_80059FD0_5ABD0(i)) {
+            continue;
+        }
+        if (j != 0) {
+            j--;
+            continue;
+        }
+        D_80113714_2A89E4_name_3E = i;
+        break;
+    }
+    if (D_80113710_2A89E0_name_3E == 0 && gPlayers[D_80113714_2A89E4_name_3E].coins == 0) {
+        for (i = 0; i < 4; i++) {
+            if (i != GwSystem.current_player_index && gPlayers[i].coins != 0) {
+                D_80113714_2A89E4_name_3E = i;
+                break;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80104F7C_29A24C_name_3E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010537C_29A64C_name_3E);
 
