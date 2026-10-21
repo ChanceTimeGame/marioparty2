@@ -361,3 +361,9 @@ $(W2C_NOPAD): ASFLAGS += --no-pad-sections
 W2D_CARVED_RODATA_UNITS := build/src/63670.c.o
 CARVED_RODATA_UNITS += $(W2D_CARVED_RODATA_UNITS)
 $(W2D_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
+
+# w2-A: 30560 (MP1 2C0C0.c, model setup and drawing) was built with the KMC VR4300 mul fix on
+# (nop between dependent mul.s in func_8003A4B8_3B0B8), as MP1 builds 2C0C0.c
+build/src/30560.c.o: export VR4300MUL = ON
+# w2-A: 30560's whole rodata (0xD2E30-0xD2EE0) carved out of the data blob
+build/src/30560.c.o: RODATA_AS_DATA = 1
