@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/camera.h"
+#include "game/sprite.h"
 
 /* One camera-anchored 2D object on camera 0, its plane the floor (normal +y). */
 
@@ -78,6 +79,7 @@ void func_8007B284_7BE84(omObjData* obj);
 void func_8007B658_7C258(Vec* out, Vec* normal);
 void func_8007B818_7C418(Vec* eye, Vec* at, f32* zoom, Vec* rot, Vec* center);
 void func_8007BB74_7C774(void);
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 
 extern Vec D_80102770_103370[]; /* CRotM */
 extern Vec D_801013B0_101FB0[]; /* CenterM */
@@ -232,7 +234,61 @@ void func_8007A718_7B318(void) {
     gDPSetTexturePersp(D_800FDBCC_FE7CC++, G_TP_NONE);
 }
 
-INCLUDE_ASM("asm/nonmatchings/7AA60", func_8007A7FC_7B3FC);
+/* The objects' default sprite draw: an 8-bit CI sprite with a 256-colour palette, centred in the
+   camera's viewport (scaled and offset by the object), loaded and drawn in horizontal strips of
+   as many rows as fit in 2 KB of TMEM. */
+void func_8007A7FC_7B3FC(CamSprWork* work) {
+    HuSprite* spr;
+    HuCamera* cam;
+    u16 w, h, rows;
+    s16 left, top, right, bottom;
+    f32 halfW, halfH;
+    f32 x0, y0, x1, y1;
+    f32 step, next;
+    s32 s;
+
+    spr = func_80082550_83150(work->sprId, 0);
+    w = spr->unk_84->unk14;
+    h = spr->unk_84->unk16;
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
+    cam = work->cam;
+    left = cam->screenLeft;
+    top = cam->screenTop;
+    right = cam->screenRight;
+    bottom = cam->screenBottom;
+    gDPSetScissor(D_800FDBCC_FE7CC++, G_SC_NON_INTERLACE, left, top, right, bottom);
+    halfW = (w / 2.0f) * work->scaleX;
+    halfH = (h / 2.0f) * work->scaleY;
+    x0 = (right - left) / 2.0f - halfW - work->offsetX + left;
+    y0 = (bottom - top) / 2.0f - halfH - work->offsetY + top;
+    x1 = (right - left) / 2.0f + halfW - work->offsetX + left;
+    y1 = (bottom - top) / 2.0f + halfH - work->offsetY + top;
+    rows = 0x800 / w - 1;
+    x1 -= 1.0f;
+    y1 -= 1.0f;
+    step = (f32)fabs((f64)y1 - (f64)y0) / (u16)(h / rows);
+    for (s = 0; s < h - 1; s += rows) {
+        next = y0 + step;
+        if (s + rows >= h - 1) {
+            rows = h - s - 1;
+        }
+        if (top <= next) {
+            if (y1 < next) {
+                step = y1 - y0;
+            }
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, spr->unk_84->unk08, G_IM_FMT_CI, G_IM_SIZ_8b, w, h, 0, s, w,
+                               s + rows, 0, 0, 0, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)(x0 * 4.0f), (s32)(y0 * 4.0f), (s32)(x1 * 4.0f),
+                                    (s32)((y0 + step) * 4.0f), G_TX_RENDERTILE, 0, s << 5,
+                                    (s32)(1024.0f / work->scaleX), (s32)(1024.0f / work->scaleY));
+        }
+        y0 += step;
+        if (bottom <= y0) {
+            break;
+        }
+    }
+}
 
 /* Object function of func_8007A2CC_7AECC: camera 0 from CRot/CZoom/Center (as omOutView), then
    the sprite's scale and screen offset, and its draw callback. */
