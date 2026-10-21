@@ -417,6 +417,8 @@ segments:
       - [0xD45E0, .data, 93A80]
       - [0xD4618, pad]
       - [0xD4620, data]
+      - [0xD4900, .data, 9A210]
+      - [0xD4DD0, data]
       - [0xD4ED0, .data, 9EA20]
       - [0xD4EF0, .data, 9EED0]
       - [0xD4F00, .data, 9F840]

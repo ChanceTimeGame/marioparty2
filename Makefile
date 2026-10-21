@@ -382,3 +382,8 @@ $(W2B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
+# w3-C: 9A210's whole rodata (D4900-D4DD0; libleo tables and the asm functions' jump tables, defined in C) carved out of the data blob
+W3C_CARVED_RODATA_UNITS := build/src/9A210.c.o
+CARVED_RODATA_UNITS += $(W3C_CARVED_RODATA_UNITS)
+$(W3C_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
