@@ -1451,27 +1451,210 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A1DC_29F4AC
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A27C_29F54C_name_3E);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010AB58_29FE28_name_3E);
+void func_8010AB58_29FE28_name_3E(void) {
+    func_80055E60_56A60();
+    omDelPrcObj(NULL);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010AB7C_29FE4C_name_3E);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010B8B8_2A0B88_name_3E);
+#ifdef NON_MATCHING /* rodata-pending */
+void func_8010B8B8_2A0B88_name_3E(void) {
+    MBModel* model;
+    f32 angle;
+    MBModel* parent;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010BA0C_2A0CDC_name_3E);
+    parent = HuPrcCurrentGet()->user_data;
+    model = MBModelParamCreate(D_801138BC_2A8B8C_name_3E);
+    func_800B3170_B3D70(&model->pos, &parent->pos);
+    HuVecCopyXYZ(&model->scale, 2.0f, 2.0f, 2.0f);
+    model->jumpY = parent->jumpY + 10.0f;
+    MBModelDispOn(model);
+    angle = MBRand(360.0f);
+    while (1) {
+        HuPrcVSleep();
+        model->jumpY += 1.5;
+        if ((parent->jumpY + 35.0f) <= model->jumpY) {
+            break;
+        }
+        angle += 40.0f;
+        func_800B39F0_B45F0(D_800FC834_FD434[model->obj->model[0]].mtx, angle);
+    }
+    MBModelKill(model);
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010B8B8_2A0B88_name_3E);
+#endif
+
+void func_8010BA0C_2A0CDC_name_3E(s32 arg0) {
+    Process* process = omAddPrcObj(func_8010B8B8_2A0B88_name_3E, 0x1000, 0, 0);
+
+    process->user_data = (void*)arg0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010BA48_2A0D18_name_3E);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C44C_2A171C_name_3E);
+void func_8010C44C_2A171C_name_3E(void) {
+    func_80106618_29B8E8_name_3E(0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C468_2A1738_name_3E);
+void func_8010C468_2A1738_name_3E(void) {
+    func_80106618_29B8E8_name_3E(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C484_2A1754_name_3E);
+omObjData* func_8010C484_2A1754_name_3E(Vec* pos, f32 scaleSpeed, f32 fadeSpeed, s16 kill, Vec* vel) {
+    MBModel* model;
+    Unk3EParticle* work;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C5C4_2A1894_name_3E);
+    obj = omAddObj(0x1F4, 0, 0, -1, func_8010C5C4_2A1894_name_3E);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Unk3EParticle), 0x7918);
+    work->alpha = 255.0f;
+    work->scaleSpeed = scaleSpeed;
+    work->fadeSpeed = fadeSpeed;
+    func_800B3170_B3D70(&work->vel, vel);
+    model = MBModelFileCreate(0xA015C, 0, 1.0f, 0.0f, NULL);
+    func_800297E8_2A3E8(model->obj->model[0], 0.0f, 0.0f, 0.0f);
+    model->pos.x = pos->x;
+    model->pos.y = pos->y;
+    model->pos.z = pos->z;
+    func_8002D124_2DD24(model->obj->model[0]);
+    func_8002D0A0_2DCA0(model->obj->model[0], 0xFF);
+    work->model = model;
+    work->kill = kill;
+    return obj;
+}
 
+void func_8010C5C4_2A1894_name_3E(omObjData* obj) {
+    MBModel* model;
+    Unk3EParticle* work;
+    f32 scale;
+
+    work = obj->unk_50;
+    model = work->model;
+    HuVecAdd(&model->pos, &model->pos, &work->vel);
+    scale = model->scale.z + work->scaleSpeed;
+    model->scale.z = scale;
+    model->scale.y = scale;
+    model->scale.x = scale;
+    work->alpha = work->alpha - work->fadeSpeed;
+    if (work->alpha < 0.0f) {
+        work->alpha = 0.0f;
+        if (work->kill != 0) {
+            MBModelKill(work->model);
+            omDelObj(obj);
+            return;
+        }
+        omSetStatBit(obj, 8);
+    }
+    func_8002D0A0_2DCA0(model->obj->model[0], work->alpha);
+}
+
+#ifdef NON_MATCHING /* rodata-pending */
+/* The lamp brings the player to the star (MP3 w06 func_8011068C). */
+void func_8010C6DC_2A19AC_name_3E(void) {
+    Vec pos;
+    s16 chain;
+    s16 index;
+    GW_PLAYER* player;
+    MBModel* lamp;
+    void* vib;
+    s32 angle;
+    s32 i;
+    GW_SYSTEM* system = &GwSystem;
+
+    player = BoardPlayerGet(-1);
+    func_8010D37C_2A264C_name_3E();
+    lamp = func_80043510_44110(0x71, NULL);
+    func_800297E8_2A3E8(lamp->obj->model[0], 0.0f, 0.0f, 0.0f);
+    func_800B3170_B3D70(&lamp->pos, &((MBModel*)player->unk_24)->pos);
+    for (lamp->pos.y = 100.0f; lamp->pos.y > 30.0f;) {
+        lamp->pos.y -= 1.0f;
+        HuPrcVSleep();
+    }
+
+    PlaySound(0x366);
+    func_800114E8_120E8(D_800FA188_FAD88, 0xB4);
+    vib = func_800672BC_67EBC(-1, 3, 5);
+
+    angle = 0xB4;
+    i = 0;
+    while (angle < 0x438) {
+        Vec particleDir[8] = {
+            { 1.0f, 1.0f, 1.0f },
+            { 1.0f, 2.0f, 1.0f },
+            { 0.0f, 2.0f, 1.0f },
+            { -1.0f, 1.0f, 1.0f },
+            { -1.0f, -1.0f, 1.0f },
+            { 0.0f, -1.0f, 1.0f },
+            { -1.0f, 2.0f, 1.0f },
+            { 1.0f, -1.0f, 1.0f },
+        };
+
+        lamp->pos.y = (2.0f * HuMathSin(angle)) + 30.0f;
+        if (i & 1) {
+            HuVecCopyXYZ(&pos, lamp->pos.x, lamp->pos.y, lamp->pos.z);
+            pos.x -= 15.0f;
+            pos.y += 15.0f;
+            func_8010C484_2A1754_name_3E(&pos, 0.1f, 2.0f, 1, &particleDir[(i / 2) & 7]);
+        }
+        angle += 0x14;
+        HuPrcVSleep();
+        i++;
+    }
+
+    func_8006735C_67F5C(vib);
+    func_8008F624_90224(0xFF, 0xFF, 0xFF);
+    func_80054C78_55878(D_80111984_2A6C54_name_3E[system->star_spawn_indices[system->unk_0A]], &chain, &index);
+    player->cur_chain_index = chain;
+    player->cur_space_index = index;
+    player->next_chain_index = chain;
+    player->next_space_index = index + 1;
+    func_800650BC_65CBC();
+    func_80078FF8_79BF8();
+
+    while (1) {
+        Vec particleDir2[8] = {
+            { 1.0f, 1.0f, 1.0f },
+            { 1.0f, 2.0f, 1.0f },
+            { 0.0f, 2.0f, 1.0f },
+            { -1.0f, 1.0f, 1.0f },
+            { -1.0f, -1.0f, 1.0f },
+            { 0.0f, -1.0f, 1.0f },
+            { -1.0f, 2.0f, 1.0f },
+            { 1.0f, -1.0f, 1.0f },
+        };
+
+        lamp->pos.y = (2.0f * HuMathSin(angle)) + 30.0f;
+        if (i & 1) {
+            HuVecCopyXYZ(&pos, lamp->pos.x, lamp->pos.y, lamp->pos.z);
+            pos.x -= 15.0f;
+            pos.y += 15.0f;
+            func_8010C484_2A1754_name_3E(&pos, 0.1f, 2.0f, 1, &particleDir2[(i / 2) & 7]);
+        }
+        i++;
+        HuPrcVSleep();
+        angle += 0x14;
+        if (angle == 0x500) {
+            func_800115B4_121B4(0);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C6DC_2A19AC_name_3E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CA78_2A1D48_name_3E);
+void func_8010CA78_2A1D48_name_3E(void) {
+    GW_SYSTEM* gw = &GwSystem;
+
+    D_800CCC16 = 1;
+    func_800556F4_562F4(D_80111984_2A6C54_name_3E[gw->star_spawn_indices[gw->unk_0A]], 1);
+    D_800CCC16 = 0;
+    if (func_800670B0_67CB0() >= 0) {
+        HuPrcSleep(-1);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CAE8_2A1DB8_name_3E);
 

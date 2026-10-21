@@ -197,6 +197,37 @@ extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
 extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
 extern s32 D_801138B0_2A8B80_name_3E; /* path step */
 
+/* fork C */
+typedef struct Unk3EParticle {
+    /* 0x00 */ Vec vel;
+    /* 0x0C */ f32 alpha;
+    /* 0x10 */ f32 scaleSpeed;
+    /* 0x14 */ f32 fadeSpeed;
+    /* 0x18 */ MBModel* model;
+    /* 0x1C */ u16 kill; /* delete when faded out, else only pause */
+    /* 0x1E */ char unk_1E[2];
+} Unk3EParticle; /* size 0x20 (MP3 UnkChillyWaters) */
+
+extern s8 D_800CCC16; /* set while the lamp's star event runs */
+extern s16 D_800FA188_FAD88;
+extern MBModel* D_801138BC_2A8B8C_name_3E;
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+s32 MBRand(f32);
+void omDelObj(omObjData*);
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+s32 func_800556F4_562F4(s16, s16); /* space event call */
+s16 func_800670B0_67CB0(void);
+void* func_800672BC_67EBC(s16, s16, s32); /* player vibrate start */
+void func_8006735C_67F5C(void*); /* player vibrate stop */
+void func_8008F624_90224(s32, s32, s32); /* wipe colour */
+void func_80054C78_55878(s16 space, s16* chainOut, s16* indexOut);
+void func_800650BC_65CBC(void);
+void func_80078FF8_79BF8(void);
+void func_800115B4_121B4(s32);
+void func_80055E60_56A60(void);
+
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -294,8 +325,8 @@ void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
-void func_8010C484_2A1754_name_3E(s32 arg0, f32 arg1, f32 arg2, s32 arg3);
-void func_8010C5C4_2A1894_name_3E(s32 arg0);
+omObjData* func_8010C484_2A1754_name_3E(Vec* pos, f32 scaleSpeed, f32 fadeSpeed, s16 kill, Vec* vel);
+void func_8010C5C4_2A1894_name_3E(omObjData* obj);
 void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
 void func_8010CAE8_2A1DB8_name_3E(void);
