@@ -278,7 +278,11 @@ typedef struct HmfMotionSlot {
     /* 0x00 */ u8 unk00;
     /* 0x01 */ char unk01;
     /* 0x02 */ s16 unk02; /* length; -1 when the slot is free */
-    /* 0x04 */ char unk04[0x14];
+    /* 0x04 */ char unk04[4];
+    /* 0x08 */ struct HmfMotionTrack** unk08; /* tracks (0x10 bytes each; 30560's HmfMotionTrack) */
+    /* 0x0C */ u8* unk0C; /* per track: its kind (0x4E transform tree, 0x0D motion object) */
+    /* 0x10 */ s16* unk10; /* key frames */
+    /* 0x14 */ f32* unk14; /* key values */
     /* 0x18 */ s32 unk18;
 } HmfMotionSlot; /* size 0x1C */
 
