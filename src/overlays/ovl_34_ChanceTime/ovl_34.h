@@ -148,7 +148,8 @@ extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
 /* 0x80110070: the second variant's holder walks from path[0] (0x80110074) to path[1]; splat
    labels path[1] D_80110080 (retail addresses both from &path[1]). */
 typedef struct CTPath70 {
-    /* 0x00 */ s32 unk_00;
+    /* 0x00 */ s8 unk_00; /* fork C: written as a byte (sb), 1 = the star swap is over */
+    /* 0x01 */ char unk_01[3];
     /* 0x04 */ Vec path[2];
 } CTPath70;
 extern CTPath70 D_80110070_267170_ChanceTime;
@@ -285,6 +286,38 @@ void func_8010FF1C_26701C_ChanceTime(void); /* process */
 #include "game/hmfman.h"
 #include "game/data.h"
 #include "game/malloc.h"
+/* A star model of the swap (D_801109F8[10]; MP1 CTCoin). No pointers. */
+typedef struct CTCoin {
+    /* 0x00 */ s16 unk_00; /* model (D_80110908's model[21 + i]) */
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ f32 unk_04; /* x */
+    /* 0x08 */ f32 unk_08; /* y */
+    /* 0x0C */ f32 unk_0C; /* z */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14;
+    /* 0x18 */ s8 unk_18;  /* 1 rising */
+    /* 0x19 */ s8 unk_19;  /* 1 done */
+    /* 0x1A */ char unk_1A[2];
+} CTCoin; /* size = 0x1C */
+extern CTCoin D_801109F8_267AF8_ChanceTime[10];
+extern s8 D_80110904_267A04_ChanceTime[2]; /* star models per side */
+extern s8 D_80110069_267169_ChanceTime; /* the swap is over */
+extern ModelEmitterWork* D_8011006C_26716C_ChanceTime;
+extern MBModel* D_80110900_267A00_ChanceTime; /* the flying star */
+extern Vec D_80110854_267954_ChanceTime; /* player idx[1]'s position */
+extern Vec D_80110860_267960_ChanceTime; /* player idx[0]'s position */
+extern Vec D_8011087C_26797C_ChanceTime[2]; /* position, facing (to the camera midpoint) */
+extern Vec D_801108C4_2679C4_ChanceTime[2];
+#define CT_CAMERA ((HuCamera*)D_800FD2A8_FDEA8)
+void func_80056658_57258(Vec* from, Vec* to, Vec* rot); /* direction from a to b as a rotation */
+void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
+MBModel* func_80043510_44110(s32, void*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void MBModelKill(void*);
+void func_8005A1D8_5ADD8(void);
+void func_800614E8_620E8(s32 player, s32 arg1);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 extern s16 D_80110194_267294_ChanceTime; /* the fourth panel was reached (MP1 D_8010131A) */
 extern s16 D_8011092C_267A2C_ChanceTime; /* panel model (0x440001) the four panels copy */
 void Hu3DCamUpdateMtx(s16 camIndex);

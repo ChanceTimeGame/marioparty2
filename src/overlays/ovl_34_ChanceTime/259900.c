@@ -1,6 +1,12 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* The star swap (outcomes 9 and 10): each player's stars rise from them as star models
+   (D_801109F8, D_80110904[] per side) while the counts run down, then one star model (and, in a
+   tie, a second one the other way) flies between the two players, and the two players' star
+   counts are exchanged. Outcome 10 with no stars on either side does nothing. */
+
+
 /* A panel (side 0 left, 1 the outcome reel, 2 right, 3 the fourth, blank): its reel of four
    sprite faces over the panel model, filled with the players' characters (0, 2: random start of
    0 or 2), the outcome table D_80110920 (1) or face 6 (3). (MP1 func_800FCC18 / func_800FD7DC) */
@@ -1177,8 +1183,260 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010985C_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109CC4_260DC4_ChanceTime);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109D84_260E84_ChanceTime);
+// NON_MATCHING (masked ~100 of 1194): the per-side star divisions reuse the comparison's loads
+// (retail reloads them), loop-invariant constants and addresses land in other registers, and the
+// done/continue branch is laid out differently. Logic checked against the asm.
+#ifdef NON_MATCHING
+void func_80109D84_260E84_ChanceTime(void) {
+    s8 idx[2];       /* the two players' D_80110D6A positions: [0] fewer stars */
+    s8 pl[2];        /* the two players, [0] the one with fewer stars */
+    Vec mid;
+    f32 prog[2];     /* star models released so far per side */
+    s16 saved[2];
+    s16 dec[2];      /* stars taken per frame */
+    CTCoin* coins[2];
+    u8 tie;
+    s32 i;
+    s32 side;
+    s32 j;
+    s16 done;
+    s32 n;
+    f32 rot;
+    f32 t;
+    f32 a;
 
+    if (D_80110182_267282_ChanceTime == 10) {
+        HuPrcSleep(30);
+        if (gPlayers[D_80110180_267280_ChanceTime].stars == 0 && gPlayers[D_80110181_267281_ChanceTime].stars == 0) {
+            D_80110070_267170_ChanceTime.unk_00 = 1;
+            D_80110069_267169_ChanceTime = 1;
+            return;
+        }
+    } else {
+        HuPrcSleep(20);
+    }
+    if (gPlayers[D_80110180_267280_ChanceTime].stars == gPlayers[D_80110181_267281_ChanceTime].stars) {
+        tie = 1;
+        pl[0] = D_80110180_267280_ChanceTime;
+        pl[1] = D_80110181_267281_ChanceTime;
+    } else {
+        tie = 0;
+        if (gPlayers[D_80110180_267280_ChanceTime].stars < gPlayers[D_80110181_267281_ChanceTime].stars) {
+            pl[0] = D_80110180_267280_ChanceTime;
+            pl[1] = D_80110181_267281_ChanceTime;
+        } else {
+            pl[0] = D_80110181_267281_ChanceTime;
+            pl[1] = D_80110180_267280_ChanceTime;
+        }
+    }
+    saved[0] = gPlayers[D_80110180_267280_ChanceTime].stars;
+    saved[1] = gPlayers[D_80110181_267281_ChanceTime].stars;
+    for (i = 0; i < 4; i++) {
+        if (pl[0] == D_80110D6A_267E6A_ChanceTime[i]) {
+            break;
+        }
+    }
+    idx[0] = i;
+    for (i = 0; i < 4; i++) {
+        if (pl[1] == D_80110D6A_267E6A_ChanceTime[i]) {
+            break;
+        }
+    }
+    idx[1] = i;
+    D_80110854_267954_ChanceTime.x = D_800FFFD8_100BD8[idx[1]]->trans.x;
+    D_80110854_267954_ChanceTime.y = D_800FFFD8_100BD8[idx[1]]->trans.y;
+    D_80110854_267954_ChanceTime.z = D_800FFFD8_100BD8[idx[1]]->trans.z;
+    D_80110860_267960_ChanceTime.x = D_800FFFD8_100BD8[idx[0]]->trans.x;
+    D_80110860_267960_ChanceTime.y = D_800FFFD8_100BD8[idx[0]]->trans.y;
+    D_80110860_267960_ChanceTime.z = D_800FFFD8_100BD8[idx[0]]->trans.z;
+    D_8011087C_26797C_ChanceTime[0].x = D_80110854_267954_ChanceTime.x;
+    D_8011087C_26797C_ChanceTime[0].y = D_80110854_267954_ChanceTime.y;
+    D_8011087C_26797C_ChanceTime[0].z = D_80110854_267954_ChanceTime.z;
+    D_801108C4_2679C4_ChanceTime[0].x = D_80110860_267960_ChanceTime.x;
+    D_801108C4_2679C4_ChanceTime[0].y = D_80110860_267960_ChanceTime.y;
+    D_801108C4_2679C4_ChanceTime[0].z = D_80110860_267960_ChanceTime.z;
+    mid.x = (CT_CAMERA->pos.x + D_80110860_267960_ChanceTime.x) / 2.0f;
+    mid.y = (CT_CAMERA->pos.y + D_80110860_267960_ChanceTime.y) / 2.0f;
+    mid.z = (CT_CAMERA->pos.z + D_80110860_267960_ChanceTime.z) / 2.0f;
+    func_80056658_57258(&D_8011087C_26797C_ChanceTime[0], &mid, &D_8011087C_26797C_ChanceTime[1]);
+    func_80056658_57258(&D_801108C4_2679C4_ChanceTime[0], &D_8011087C_26797C_ChanceTime[0], &D_801108C4_2679C4_ChanceTime[1]);
+    for (i = 0; i < D_80110904_267A04_ChanceTime[0]; i++) {
+        D_801109F8_267AF8_ChanceTime[i].unk_00 = D_80110908_267A08_ChanceTime->model[i + 21];
+        D_801109F8_267AF8_ChanceTime[i].unk_04 = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.x;
+        D_801109F8_267AF8_ChanceTime[i].unk_08 = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.y + 140.0f;
+        D_801109F8_267AF8_ChanceTime[i].unk_0C = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.z;
+        D_801109F8_267AF8_ChanceTime[i].unk_10 = 0.0f;
+        D_801109F8_267AF8_ChanceTime[i].unk_14 = 0.0f;
+        D_801109F8_267AF8_ChanceTime[i].unk_18 = 1;
+        D_801109F8_267AF8_ChanceTime[i].unk_19 = 0;
+    }
+    for (i = 0; i < D_80110904_267A04_ChanceTime[1]; i++) {
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_00 =
+            D_80110908_267A08_ChanceTime->model[D_80110904_267A04_ChanceTime[0] + i + 21];
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_04 =
+            D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.x;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_08 =
+            D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.y + 140.0f;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_0C =
+            D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.z;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_10 = 0.0f;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_14 = 0.0f;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_18 = 1;
+        D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0] + i].unk_19 = 0;
+    }
+    prog[0] = prog[1] = 0.0f;
+    n = 1;
+    if (D_80110904_267A04_ChanceTime[0] < gPlayers[D_80110180_267280_ChanceTime].stars) {
+        n = gPlayers[D_80110180_267280_ChanceTime].stars / D_80110904_267A04_ChanceTime[0];
+    }
+    dec[0] = n;
+    n = 1;
+    if (D_80110904_267A04_ChanceTime[1] < gPlayers[D_80110181_267281_ChanceTime].stars) {
+        n = gPlayers[D_80110181_267281_ChanceTime].stars / D_80110904_267A04_ChanceTime[1];
+    }
+    dec[1] = n;
+    if (tie != 1) {
+        omVibrate(pl[1], 30, 0, 30);
+    }
+    coins[0] = D_801109F8_267AF8_ChanceTime;
+    coins[1] = &D_801109F8_267AF8_ChanceTime[D_80110904_267A04_ChanceTime[0]];
+    do {
+        done = 0;
+        for (side = 0; side < 2; side++) {
+            CTCoin* c = coins[side];
+            CTCoin* p;
+
+            if (D_80110904_267A04_ChanceTime[side] > 0) {
+                for (j = 0; j < (s32)prog[side]; j++) {
+                    p = &c[j];
+                    if (p->unk_19 != 0) {
+                        done++;
+                    } else if (p->unk_18 == 1) {
+                        func_800298A4_2A4A4(p->unk_00, 4, 0);
+                        p->unk_08 += 10.0f;
+                        if (D_800FFFD8_100BD8[idx[side]]->trans.y + 200.0f <= p->unk_08) {
+                            p->unk_19 = 1;
+                        }
+                        func_80029714_2A314(c[j].unk_00, c[j].unk_04, c[j].unk_08, c[j].unk_0C);
+                        func_8002979C_2A39C(c[j].unk_00, 90.0f, 0.0f, 0.0f);
+                    }
+                }
+            }
+            /* retail: both counts run down once per side, twice a frame */
+            gPlayers[D_80110180_267280_ChanceTime].stars -= dec[0];
+            gPlayers[D_80110181_267281_ChanceTime].stars -= dec[1];
+            if (gPlayers[D_80110180_267280_ChanceTime].stars < 0) {
+                gPlayers[D_80110180_267280_ChanceTime].stars = 0;
+            }
+            if (gPlayers[D_80110181_267281_ChanceTime].stars < 0) {
+                gPlayers[D_80110181_267281_ChanceTime].stars = 0;
+            }
+            prog[side] += 0.4;
+            if (D_80110904_267A04_ChanceTime[side] < (s32)prog[side]) {
+                prog[side] = D_80110904_267A04_ChanceTime[side];
+            }
+        }
+        HuPrcVSleep();
+    } while (done < D_80110904_267A04_ChanceTime[0] + D_80110904_267A04_ChanceTime[1]);
+    gPlayers[D_80110180_267280_ChanceTime].stars = gPlayers[D_80110181_267281_ChanceTime].stars = 0;
+    HuPrcSleep(10);
+    if (tie == 0) {
+        func_8005A1D8_5ADD8();
+        PlaySound(0x34C);
+        MBModelInit();
+        D_80110900_267A00_ChanceTime = func_80043510_44110(0x19, 0);
+        HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos, D_80110854_267954_ChanceTime.x,
+                     D_80110854_267954_ChanceTime.y + 200.0f, D_80110854_267954_ChanceTime.z);
+        HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->scale, 0.5f, 0.5f, 0.5f);
+        D_8011006C_26716C_ChanceTime = func_80049ED4_4AAD4(D_80110900_267A00_ChanceTime, 0);
+        for (i = 0; i < D_80110904_267A04_ChanceTime[0] + D_80110904_267A04_ChanceTime[1]; i++) {
+            func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[i].unk_00, 4, 4);
+        }
+        if (D_80110904_267A04_ChanceTime[0] != 0 && D_80110904_267A04_ChanceTime[1] != 0) {
+            func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[0].unk_00, 4, 0);
+            func_8002979C_2A39C(D_801109F8_267AF8_ChanceTime[0].unk_00, 90.0f, 0.0f, 0.0f);
+        }
+        rot = 0.0f;
+        for (i = 0; i < 181; i += 5) {
+            t = i;
+            HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos,
+                         (D_80110860_267960_ChanceTime.x - D_80110854_267954_ChanceTime.x) * t / 180.0f + D_80110854_267954_ChanceTime.x,
+                         D_80110854_267954_ChanceTime.y + 200.0f + HuMathSin(t) * 100.0f,
+                         D_80110854_267954_ChanceTime.z + (D_80110860_267960_ChanceTime.z - D_80110854_267954_ChanceTime.z) * t / 180.0);
+            a = i * 10;
+            D_80110900_267A00_ChanceTime->rot.x = HuMathSin(a);
+            D_80110900_267A00_ChanceTime->rot.z = func_800B7890_B8490(a);
+            func_80029714_2A314(D_801109F8_267AF8_ChanceTime[0].unk_00,
+                                (D_80110854_267954_ChanceTime.x - D_80110860_267960_ChanceTime.x) * t / 180.0f + D_80110860_267960_ChanceTime.x,
+                                D_80110860_267960_ChanceTime.y + 200.0f + HuMathSin(t) * 50.0f,
+                                D_80110860_267960_ChanceTime.z + (D_80110854_267954_ChanceTime.z - D_80110860_267960_ChanceTime.z) * t / 180.0);
+            rot += 20.0f;
+            func_8002979C_2A39C(D_801109F8_267AF8_ChanceTime[0].unk_00, 90.0f, rot, 0.0f);
+            HuPrcVSleep();
+        }
+        MBModelKill(D_80110900_267A00_ChanceTime);
+        D_80110900_267A00_ChanceTime = NULL;
+        func_80049F90_4AB90(D_8011006C_26716C_ChanceTime);
+        D_8011006C_26716C_ChanceTime = NULL;
+        if (D_80110904_267A04_ChanceTime[0] != 0 && D_80110904_267A04_ChanceTime[1] != 0) {
+            func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[0].unk_00, 4, 4);
+        }
+        func_800614E8_620E8(pl[0], 1);
+        func_80056658_57258(&D_801108C4_2679C4_ChanceTime[0], &CT_CAMERA->pos, &D_801108C4_2679C4_ChanceTime[1]);
+    } else {
+        if (saved[0] > 0 || saved[1] > 0) {
+            PlaySound(0x34C);
+        }
+        MBModelInit();
+        D_80110900_267A00_ChanceTime = func_80043510_44110(0x19, 0);
+        HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos, D_80110854_267954_ChanceTime.x,
+                     D_80110854_267954_ChanceTime.y + 200.0f, D_80110854_267954_ChanceTime.z);
+        HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->scale, 0.5f, 0.5f, 0.5f);
+        D_8011006C_26716C_ChanceTime = func_80049ED4_4AAD4(D_80110900_267A00_ChanceTime, 0);
+        for (i = 0; i < D_80110904_267A04_ChanceTime[0] + D_80110904_267A04_ChanceTime[1]; i++) {
+            func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[i].unk_00, 4, 4);
+        }
+        func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[0].unk_00, 4, 0);
+        func_8002979C_2A39C(D_801109F8_267AF8_ChanceTime[0].unk_00, 90.0f, 0.0f, 0.0f);
+        rot = 0.0f;
+        for (i = 0; i < 181; i += 5) {
+            t = i;
+            HuVecCopyXYZ(&D_80110900_267A00_ChanceTime->pos,
+                         (D_80110860_267960_ChanceTime.x - D_80110854_267954_ChanceTime.x) * t / 180.0f + D_80110854_267954_ChanceTime.x,
+                         D_80110854_267954_ChanceTime.y + 200.0f + HuMathSin(t) * 100.0f,
+                         D_80110854_267954_ChanceTime.z + (D_80110860_267960_ChanceTime.z - D_80110854_267954_ChanceTime.z) * t / 180.0);
+            a = i * 10;
+            D_80110900_267A00_ChanceTime->rot.x = HuMathSin(a);
+            D_80110900_267A00_ChanceTime->rot.z = func_800B7890_B8490(a);
+            func_80029714_2A314(D_801109F8_267AF8_ChanceTime[0].unk_00,
+                                (D_80110854_267954_ChanceTime.x - D_80110860_267960_ChanceTime.x) * t / 180.0f + D_80110860_267960_ChanceTime.x,
+                                D_80110860_267960_ChanceTime.y + 200.0f + HuMathSin(t) * 50.0f,
+                                D_80110860_267960_ChanceTime.z + (D_80110854_267954_ChanceTime.z - D_80110860_267960_ChanceTime.z) * t / 180.0);
+            rot += 20.0f;
+            func_8002979C_2A39C(D_801109F8_267AF8_ChanceTime[0].unk_00, 90.0f, rot, 0.0f);
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 2; i++) {
+            func_800298A4_2A4A4(D_801109F8_267AF8_ChanceTime[i].unk_00, 4, 4);
+            func_8002979C_2A39C(D_801109F8_267AF8_ChanceTime[i].unk_00, 90.0f, 0.0f, 0.0f);
+        }
+        MBModelKill(D_80110900_267A00_ChanceTime);
+        D_80110900_267A00_ChanceTime = NULL;
+        func_80049F90_4AB90(D_8011006C_26716C_ChanceTime);
+        D_8011006C_26716C_ChanceTime = NULL;
+    }
+    D_80110069_267169_ChanceTime = 1;
+    gPlayers[D_80110180_267280_ChanceTime].stars = saved[1];
+    gPlayers[D_80110181_267281_ChanceTime].stars = saved[0];
+    D_80110070_267170_ChanceTime.unk_00 = 1;
+    HuPrcSleep(36);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109D84_260E84_ChanceTime);
+#endif
 void func_8010B02C_26212C_ChanceTime(omObjData* obj) {
     obj->model[0] = LoadFormFile(0xA0067, 0x6A9);
     func_8002D1EC_2DDEC(obj->model[0], 1);
