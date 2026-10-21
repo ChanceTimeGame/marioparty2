@@ -155,7 +155,15 @@ typedef struct HitXform {
 
 typedef struct HmfData {
     /* 0x00 */ u8 unk00;
-    /* 0x01 */ char unk01[9];
+    /* 0x01 */ u8 unk01; /* the model's draw flags (HmfModel.unk00) */
+    /* 0x02 */ u8 unk02; /* 0x02-0x05: colour (MP1 0x2A) */
+    /* 0x03 */ u8 unk03;
+    /* 0x04 */ u8 unk04;
+    /* 0x05 */ u8 unk05;
+    /* 0x06 */ u8 unk06; /* 0x06-0x09: second colour (MP1 0x2E) */
+    /* 0x07 */ u8 unk07;
+    /* 0x08 */ u8 unk08;
+    /* 0x09 */ u8 unk09;
     /* 0x0A */ u8 unk0A;
     /* 0x0B */ u8 unk0B; /* link count */
     /* 0x0C */ char unk0C[2];
@@ -246,7 +254,7 @@ typedef struct HmfModel {
     /* 0x5C */ f32 unk5C;
     /* 0x60 */ f32 unk60;
     /* 0x64 */ HmfData* hmf;
-    /* 0x68 */ char unk68[4];
+    /* 0x68 */ HmfData* unk68; /* the model whose part unk0A this one follows (MP1 0x70) */
     /* 0x6C */ HmfData* unk6C; /* released instead of hmf while unk09 is set and unk14 != 0 */
     /* 0x70 */ void (*unk70)(Gfx**, s32, s32);
     /* 0x74 */ f32 mtx[16];

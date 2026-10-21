@@ -1793,7 +1793,14 @@ void func_8002C5E4_2D1E4(s16 arg0, s16 arg1) {
     D_800FC834_FD434[arg0].hmf = D_800FC834_FD434[arg1].hmf;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C628_2D228);
+/* MP1 func_8002859C (src/24740.c): make model arg0 follow part arg2 of model arg1 */
+void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2) {
+    HmfData* model = D_800FC834_FD434[arg1].hmf;
+    s16 idx = func_80038398_38F98(model, arg2);
+
+    D_800FC834_FD434[arg0].unk68 = model;
+    D_800FC834_FD434[arg0].unk0A = idx;
+}
 
 void func_8002C6A8_2D2A8(s16 arg0) {
     HmfData* model = D_800FC834_FD434[arg0].hmf;
@@ -1801,11 +1808,55 @@ void func_8002C6A8_2D2A8(s16 arg0) {
     model->unkA0 = func_8003CF84_3DB84(model);
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C6F4_2D2F4);
+f32 func_8003B628_3C228(HmfMotionSlot*, s16, f32, f32, f32);
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C810_2D410);
+/* MP1 func_80028668 (src/24740.c): advance a model's three motions */
+void func_8002C6F4_2D2F4(HmfModel* arg0, u16 arg1) {
+    arg0->unk40 = func_8003B628_3C228(&D_800F92B4_F9EB4[arg0->unk02], arg0->unk03, arg0->unk40, arg0->unk48, (f32)arg1 * arg0->unk44);
+    if (arg0->unk04 != 0xFF) {
+        arg0->unk4C = func_8003B628_3C228(&D_800F92B4_F9EB4[arg0->unk04], arg0->unk05, arg0->unk4C, arg0->unk54, (f32)arg1 * arg0->unk50);
+    }
+    if (arg0->unk06 != 0xFF) {
+        arg0->unk58 = func_8003B628_3C228(&D_800F92B4_F9EB4[arg0->unk06], (u8)arg0->unk07, arg0->unk58, arg0->unk60, (f32)arg1 * arg0->unk5C);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002C8B8_2D4B8);
+void func_8003F57C_4017C(s16, s16);
+
+void func_8002C810_2D410(HmfModel* arg0) {
+    HmfData* hmf = arg0->hmf;
+    s16 frame = arg0->unk40;
+    s16 i;
+
+    /* unkC8 holds a u8* (a pointer in an s32 field) */
+    for (i = 0; i < hmf->unk28; i++) {
+        func_8003E4F4_3F0F4(((u8*)hmf->unkC8)[i], 1, 1);
+        func_8003F57C_4017C(((u8*)hmf->unkC8)[i], frame);
+    }
+}
+
+extern HmfData D_800F8438_F9038; /* scratch model for motion-only files */
+
+/* MP1 func_80028784 (src/24740.c): load a motion file */
+s16 func_8002C8B8_2D4B8(u8* arg0, s16 arg1) {
+    s16 ret;
+
+    if (arg0[0] != 'M' || arg0[1] != 'T' || arg0[2] != 'N' || arg0[3] != 'X') {
+        D_8010106C_101C6C = 10256;
+        D_800FA1AA_FADAA = 10257;
+        D_800F8438_F9038.unk0E = D_8010106C_101C6C;
+        func_8001D190_1DD90(&D_800F8438_F9038, arg0, arg1);
+        ret = func_80038E38_39A38(arg0, &D_800F8438_F9038);
+        func_80027274_27E74(D_8010106C_101C6C);
+        func_80027274_27E74(D_800FA1AA_FADAA);
+    } else {
+        ret = func_80038F0C_39B0C(arg0);
+    }
+    if (arg1 & 8) {
+        D_800FD440_FE040(arg0);
+    }
+    return ret;
+}
 
 void func_8002C9C0_2D5C0(s16 arg0, s16 arg1) {
     HmfModel *temp_v0;
@@ -1829,21 +1880,105 @@ void func_8002CA48_2D648(u8 arg0, u8 arg1, u8 arg2) {
     D_800C9B72_CA772 = arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CA64_2D664);
+/* MP1 func_80028928 (src/24740.c) */
+void func_8002CA64_2D664(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
+    HmfModel* p = &D_800FC834_FD434[arg0];
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CB0C_2D70C);
+    if ((arg1 & 1) && p->unk02 != 0xFF) {
+        p->unk03 = (p->unk03 & ~arg2) | arg3;
+        if ((arg1 & 2) && p->unk04 != 0xFF) {
+            p->unk05 = (p->unk05 & ~arg2) | arg3;
+        }
+        if ((arg1 & 4) && p->unk06 != 0xFF) {
+            p->unk07 = arg3 | (p->unk07 & ~arg2);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CB78_2D778);
+/* MP1 func_800289D0 (src/24740.c): level of detail, model arg1 replaces arg0 beyond distance arg2 */
+void func_8002CB0C_2D70C(s16 arg0, s16 arg1, f32 arg2) {
+    HmfModel* p = &D_800FC834_FD434[arg0];
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CD24_2D924);
+    p->unk09 = arg1;
+    p->unk6C = p->hmf;
+    p->unk14 = arg2;
+    p = &D_800FC834_FD434[arg1];
+    p->unk09 = arg0;
+    p->unk6C = NULL;
+    p->unk14 = 0.0f;
+    p->unk18 |= 4;
+}
+
+f32 func_800B1830_B2430(f32);
+#define CAM ((HuCamera*)D_800FD2A8_FDEA8)
+
+/* MP1 func_80028A34 (src/24740.c): pick the level-of-detail model by camera distance */
+void func_8002CB78_2D778(s16 arg0) {
+    HmfModel* p = &D_800FC834_FD434[arg0];
+    f32 dx = CAM->pos.x - p->pos.x;
+    f32 dy = CAM->pos.y - p->pos.y;
+    f32 dz = CAM->pos.z - p->pos.z;
+    HmfData* model;
+    HmfModel* q;
+    s32 flags;
+    s16 i;
+
+    if (p->unk14 < func_800B1830_B2430(dx * dx + dy * dy + dz * dz)) {
+        model = p->unk6C;
+    } else {
+        model = D_800FC834_FD434[p->unk09].hmf;
+    }
+    if (model != p->hmf) {
+        p->hmf = model;
+        for (i = 0; i < HU3D_MODEL_MAX; i++) {
+            q = &D_800FC834_FD434[i];
+            if (q->hmf != NULL) {
+                continue;
+            }
+            flags = q->unk18;
+            if (flags & 4) {
+                continue;
+            }
+            if (!(flags & 0x4000)) {
+                continue;
+            }
+            if (p->hmf == q->unk68 || D_800FC834_FD434[p->unk09].hmf == q->unk68) {
+                D_800FC834_FD434[i].unk68 = model;
+            }
+        }
+    }
+    D_800FC834_FD434[p->unk09].unk18 |= 4;
+}
+
+s32 func_8002CD24_2D924(s16 arg0) {
+    HmfModel* p = &D_800FC834_FD434[arg0];
+
+    return p->hmf == D_800FC834_FD434[p->unk09].hmf;
+}
 
 void func_8002CD6C_2D96C(u8 arg0) {
     D_800F8C48_F9848 = arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CD78_2D978);
+/* MP1 func_80028BEC (src/24740.c) */
+void func_8002CD78_2D978(s16 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
 
-INCLUDE_ASM("asm/nonmatchings/274D0", func_8002CDB4_2D9B4);
+    model->unk02 = arg1;
+    model->unk03 = arg2;
+    model->unk04 = arg3;
+    model->unk05 = arg4;
+}
+
+/* MP1 func_80028C28 (src/24740.c) */
+void func_8002CDB4_2D9B4(s16 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
+    HmfData* model = D_800FC834_FD434[arg0].hmf;
+
+    model->unk06 = arg1;
+    model->unk07 = arg2;
+    model->unk08 = arg3;
+    model->unk09 = arg4;
+}
 
 void func_8002CDF0_2D9F0(s16 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
     func_8002CD78_2D978(arg0, arg1, arg2, arg3, arg4);
