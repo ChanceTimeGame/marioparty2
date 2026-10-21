@@ -115,7 +115,7 @@ typedef struct CTPlayerWork {
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
     /* 0x58 */ char unk_58;
-    /* 0x59 */ s8 unk_59; /* player index (forks B, D) */
+    /* 0x59 */ s8 unk_59; /* player index (forks B, C, D) */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -149,7 +149,7 @@ extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
 /* 0x80110070: the second variant's holder walks from path[0] (0x80110074) to path[1]; splat
    labels path[1] D_80110080 (retail addresses both from &path[1]). */
 typedef struct CTPath70 {
-    /* 0x00 */ s8 unk_00; /* fork B: only byte accesses (1 while coins/stars fly) */
+    /* 0x00 */ s8 unk_00; /* byte accesses only: 1 while coins/stars fly; the star swap sets it when over */
     /* 0x01 */ char unk_01[3];
     /* 0x04 */ Vec path[2];
 } CTPath70;
@@ -243,8 +243,7 @@ extern CTCoin D_80110B20_267C20_ChanceTime[20];
 /* The second coin/star set: 10 entries up to D_80110B10, but func_801077D8 clears 20 (retail
    overrun into D_80110B10..D_80110C27, which it then clears or func_80106548 refills). */
 extern CTCoin D_801109F8_267AF8_ChanceTime[10];
-extern s16 D_801100C0_2671C0_ChanceTime; /* coins thrown in outcomes 1/3/5 (MP1 D_80101324) */
-extern s16 D_801100C2_2671C2_ChanceTime; /* coins thrown in outcomes 0/2/4/11/12 (MP1 D_80101326) */
+extern s16 D_801100C0_2671C0_ChanceTime[2]; /* coin deltas [player 0, player 1] (MP1 D_80101324); [1] thrown in outcomes 0/2/4, [0] in 1/3/5 */
 extern s8 D_8011091A_267A1A_ChanceTime;  /* outcome 10: the coin half of the swap is done */
 u16 func_80059348_59F48(void); /* loads model 0xA0158 */
 extern s8 D_80110069_267169_ChanceTime;  /* the star exchange is over (MP1 D_80101370) */
@@ -416,14 +415,18 @@ s8 func_801097F8_2608F8_ChanceTime(s8 arg0, s8 arg1);
 void func_8010985C_26095C_ChanceTime(void); /* process */
 s8 func_80109CC4_260DC4_ChanceTime(s16 arg0, s16 arg1);
 /* fork C */
+#include "game/hmfman.h"
+#include "game/data.h"
+#include "game/malloc.h"
 void func_80109D84_260E84_ChanceTime(void); /* process */
 void func_8010B02C_26212C_ChanceTime(omObjData* obj);
 void func_8010B214_262314_ChanceTime(omObjData* obj);
 void func_8010B28C_26238C_ChanceTime(void); /* process */
 void func_8010B328_262428_ChanceTime(void); /* process */
-void func_8010B3C4_2624C4_ChanceTime(s16 arg0, s16* arg1);
+struct CTExchange;
+void func_8010B3C4_2624C4_ChanceTime(s32 amount, struct CTExchange* ex);
 void func_8010B7F8_2628F8_ChanceTime(void); /* process */
-void func_8010BB0C_262C0C_ChanceTime(s16 arg0, s16* arg1, s16* arg2);
+void func_8010BB0C_262C0C_ChanceTime(s32 amount, s16* max, s16* n);
 void func_8010BB74_262C74_ChanceTime(void); /* process */
 void func_8010BF28_263028_ChanceTime(omObjData* obj);
 void func_8010BF50_263050_ChanceTime(void);
@@ -436,7 +439,7 @@ void func_8010C008_263108_ChanceTime(omObjData* obj);
 void func_8010C024_263124_ChanceTime(omObjData* obj);
 void func_8010C080_263180_ChanceTime(omObjData* obj);
 void func_8010C09C_26319C_ChanceTime(void);
-void* func_8010C268_263368_ChanceTime(void);
+s8* func_8010C268_263368_ChanceTime(omObjData* player); /* player unused: it reads D_800FFFD8[0] */
 void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 arg1);
 /* fork D */
 void func_8010CCF4_263DF4_ChanceTime(omObjData* obj, s8 arg1);
@@ -459,5 +462,77 @@ void func_8010FC18_266D18_ChanceTime(void); /* process */
 void func_8010FD28_266E28_ChanceTime(void); /* process */
 void func_8010FE50_266F50_ChanceTime(s16 arg0);
 void func_8010FF1C_26701C_ChanceTime(void); /* process */
+
+/* fork C */
+#include "game/hmfman.h"
+#include "game/data.h"
+#include "game/malloc.h"
+/* A star model of the swap (D_801109F8[10]; MP1 CTCoin). No pointers. */
+extern s8 D_80110069_267169_ChanceTime; /* the swap is over */
+extern ModelEmitterWork* D_8011006C_26716C_ChanceTime;
+extern MBModel* D_80110900_267A00_ChanceTime; /* the flying star */
+extern Vec D_80110854_267954_ChanceTime; /* player idx[1]'s position */
+extern Vec D_80110860_267960_ChanceTime; /* player idx[0]'s position */
+#define CT_CAMERA ((HuCamera*)D_800FD2A8_FDEA8)
+void func_80056658_57258(Vec* from, Vec* to, Vec* rot); /* direction from a to b as a rotation */
+void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
+MBModel* func_80043510_44110(s32, void*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void MBModelKill(void*);
+void func_8005A1D8_5ADD8(void);
+void func_800614E8_620E8(s32 player, s32 arg1);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+extern s16 D_80110194_267294_ChanceTime; /* the fourth panel was reached (MP1 D_8010131A) */
+extern s16 D_8011092C_267A2C_ChanceTime; /* panel model (0x440001) the four panels copy */
+void Hu3DCamUpdateMtx(s16 camIndex);
+/* func_8010B3C4's result for the outcome window (MP1 func_800FED28's locals) */
+typedef struct CTExchange {
+    /* 0x00 */ s16 coins; /* coins moved */
+    /* 0x02 */ s16 stars; /* stars moved (outcomes 9, 10) */
+    /* 0x04 */ s16 mes;   /* window message */
+    /* 0x06 */ s16 kind;  /* D_801100E0 word: 0 stars, 1 coins, 2 both */
+    /* 0x08 */ s16 swap;  /* 1: player 1 gives, the names swap */
+} CTExchange;
+extern s16 D_801100C4_2671C4_ChanceTime[2]; /* star deltas (MP1 D_80101328) */
+extern char* D_801100E0_2671E0_ChanceTime[3]; /* [kind] (MP1 D_80101348) */
+extern char D_80110808_267908_ChanceTime[16]; /* the outcome window's words */
+extern char D_80110818_267918_ChanceTime[16];
+extern char D_80110828_267928_ChanceTime[16];
+extern char D_80110838_267938_ChanceTime[16]; /* the bank window's words */
+extern char D_80110848_267948_ChanceTime[16];
+extern s16 D_8011014E_26724E_ChanceTime; /* the voice's length / 2 */
+/* The outcome tables (bss, filled by func_8010C09C); D_80110920 points at the one in use. */
+extern s8* D_80110920_267A20_ChanceTime;
+extern s8 D_80110930_267A30_ChanceTime[24];
+extern s8 D_80110948_267A48_ChanceTime[24];
+extern s8 D_80110960_267A60_ChanceTime[24];
+extern s8 D_80110978_267A78_ChanceTime[24];
+extern s8 D_80110990_267A90_ChanceTime[24];
+extern s8 D_801109A8_267AA8_ChanceTime[24];
+s32 func_80059FD0_5ABD0(s32 player); /* the player's rank */
+extern char* D_80110184_267284_ChanceTime[4]; /* "tex0_DEF" .. "tex3_DEF": the reel's four faces */
+extern s16 D_80110D64_267E64_ChanceTime; /* the first panel's face-0 sprite, copied by the others */
+/* CTPanelWork::unk_B0 (0x3C bytes; MP1 CTReel). No pointers. Endian: the low bytes of unk_0A and
+   unk_0C[i] are read as u8 arguments: written (u8)r->unk_0C[i], never a byte field at +1. */
+/* omObjData::unk_50 of the four panels (0xB4 bytes on the N64; the pointer is last, so only the
+   size grows on the host: allocate sizeof). */
+typedef struct CTPanelWork {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04; /* 2 left, 1 outcome reel, 3 right / fourth */
+    /* 0x05 */ char unk_05[0xAB];
+    /* 0xB0 */ CTReel* unk_B0;
+} CTPanelWork;
+s16 func_8003DBE8_3E7E8(HmfData* arg0, u16 arg1, s16 arg2, char* arg3); /* sprite copy (3D6A0.c) */
+void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
+void func_8003E52C_3F12C(s16 arg0, u8 arg1); /* sprite face */
+void func_80029AFC_2A6FC(s16);
+void func_800614B4_620B4(s32 player, s32 coins); /* give coins */
+void func_80019B9C_1A79C(omObjData* obj, s32 motion);
+s16 func_80073014_73C14(u32 arg0, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*); the sound's length */
+s16 func_800797DC_7A3DC(s32, s16);
+void func_800798F8_7A4F8(s16, s16);
+void func_8008AD44_8B944(s16 win);
 
 #endif
