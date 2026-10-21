@@ -1,6 +1,10 @@
 #include "common.h"
 #include "game/object.h"
 
+s32 func_8004CC7C_4D87C(s32, s32, s32);
+
+
+
 extern u16 D_800CCD74_CD974[];
 extern u8 D_800CCD7C_CD97C[][3];
 extern u16 D_800CCDB8_CD9B8[];
@@ -13,8 +17,6 @@ void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 s32 MBRand(f32);
 
-/* Battle space with everyone's coins pooled: the Goomba takes a random stake from each player
-   (all of a player's coins when short); returns 0 when nobody has 10 coins */
 
 
 extern s32 D_800CCD5C_CD95C[];
@@ -29,7 +31,6 @@ void omDelObj(omObjData*);
 void MBDlgWinExecY(s32, s32, s32);
 void MBBattleKuriboObjMain(omObjData* arg0);
 
-/* Battle space: the Goomba drops in; returns 1 when a Battle minigame is called */
 
 
 void PlaySound(s32);
@@ -912,6 +913,7 @@ void MBBattleKuriboObjMain(omObjData *arg0) {
     arg0->rot.x += 10.0f;
 }
 
+/* Battle space: the Goomba drops in; returns 1 when a Battle minigame is called */
 s32 func_80064200_64E00(GW_PLAYER* player) {
     omObjData* obj;
     s32 n;
@@ -971,6 +973,8 @@ battle:
     func_80067EF8_68AF8(D_800CCD54_CD954[GwSystem.current_board_index]);
     return 1;
 }
+/* Battle space with everyone's coins pooled: the Goomba takes a random stake from each player
+   (all of a player's coins when short); returns 0 when nobody has 10 coins */
 s32 func_800645C8_651C8(GW_PLAYER* player) {
     char buf[16];
     GW_SYSTEM* sys = &GwSystem;
@@ -1158,8 +1162,25 @@ void func_80064DA8_659A8(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/63670", func_80064F1C_65B1C);
-
+/* Opens the four help windows (MP1 func_80045D84 handles; a pointer on the MP1 host) */
+void func_80064F1C_65B1C(void) {
+    if (_CheckFlag(0xD) == 0) {
+        if (D_800CCDD0_CD9D0 == 0) {
+            D_800CCDD0_CD9D0 = func_8004CC7C_4D87C(2, 0xA0, 1);
+        }
+        if (D_800CCDD4_CD9D4 == 0) {
+            D_800CCDD4_CD9D4 = func_8004CC7C_4D87C(0xD, 0xAE, 1);
+        }
+    } else if (D_800CCDD0_CD9D0 == 0) {
+        D_800CCDD0_CD9D0 = func_8004CC7C_4D87C(2, 0xAE, 1);
+    }
+    if (D_800CCDD8_CD9D8 == 0) {
+        D_800CCDD8_CD9D8 = func_8004CC7C_4D87C(3, 0xBC, 1);
+    }
+    if (D_800CCDDC_CD9DC == 0) {
+        D_800CCDDC_CD9DC = func_8004CC7C_4D87C(0xB, 0xCA, 1);
+    }
+}
 void func_80064FF8_65BF8(void) {
     if (D_800CCDD0_CD9D0 != NULL) {
         MBHelpWinKill(D_800CCDD0_CD9D0);
