@@ -3538,7 +3538,32 @@ void func_8008E434_8F034(s32 arg0) {
     func_80089284_89E84(arg0, 0x4000, 0x4000);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E4D0_8F0D0);
+/* MP1 func_80071E80: closes the window with a shrinking animation */
+void func_8008E4D0_8F0D0(s32 winId, s32 sound) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    f32 scale = 1.0f;
+
+    if (tw->unk_38 & 0x4000) {
+        func_8008D808_8E408(winId, 1);
+        if (sound != 0) {
+            if (tw->unk_38 & 0x20) {
+                PlaySound(0x12B);
+            } else {
+                PlaySound(0x322);
+            }
+        }
+        while (scale > 0.0f) {
+            SprScaleSet(tw->unk_6C, tw->unk274, scale, scale);
+            func_80089764_8A364(winId, scale, scale);
+            scale -= 0.1f;
+            HuPrcVSleep();
+        }
+        SprScaleSet(tw->unk_6C, tw->unk274, scale, scale);
+        func_80089764_8A364(winId, scale, scale);
+        func_8008D808_8E408(winId, 0);
+        func_80089284_89E84(winId, 0x4000, 0);
+    }
+}
 
 /* MP1 func_80071FF4; MP2 has one sprite */
 void func_8008E644_8F244(s32 arg0, u8 arg1) {
@@ -3562,7 +3587,41 @@ void func_8008E6CC_8F2CC(s16 arg0, s16 arg1) {
     SprPrioSet(tw->unk_6C, tw->unk274, arg1 + 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E73C_8F33C);
+extern s32 D_800CDB98_CE798[]; /* portrait graphics */
+extern s32 D_800CDC40_CE840; /* window colour scheme */
+
+/* opens a message window, with a portrait unless portrait is -1 */
+s32 func_8008E73C_8F33C(s16 portrait, s16 x, s16 y, s32 w, s32 h, u16 flags) {
+    TextWindow* tw;
+    s32 id;
+
+    w += 2;
+    if (portrait != -1 && h < 0x30) {
+        h = 0x30;
+    }
+    id = (s16)func_800888A8_894A8(x, y, w, h, 0, flags);
+    func_80089A48_8A648(id, 0);
+    tw = &D_800F920C_F9E0C[id];
+    func_800898F0_8A4F0(id, w / 2, h / 2);
+    func_800896DC_8A2DC(id, tw->unk3C + w / 2, tw->unk3E + h / 2);
+    tw->unk276 = portrait;
+    if (portrait != -1) {
+        tw->unk274 = func_80089404_8A004(id, D_800CDB98_CE798[portrait], 0x18 - tw->unk48, 0x18 - tw->unk4A, 0);
+    }
+    tw->unk4C = tw->unk54 = 6;
+    func_80089B2C_8A72C(id, 0xD0);
+    if (D_800CDC40_CE840 == 1) {
+        func_8008D530_8E130(id, 0x60, 0x20, 0x80);
+    } else if (D_800CDC40_CE840 == 2) {
+        func_8008D530_8E130(id, 0x20, 0x50, 0x80);
+    } else if (D_800CDC40_CE840 == 3) {
+        func_8008D530_8E130(id, 0x80, 0x70, 0x40);
+    }
+    func_8008AD44_8B944(id);
+    func_8008D5D8_8E1D8(id);
+    func_8008D23C_8DE3C();
+    return id;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E978_8F578);
 
