@@ -70,6 +70,7 @@ void AdjustPlayerCoins(s32 index, s32 count);
 GW_PLAYER* BoardPlayerGet(s32);
 void espDispOff(u16);
 void espDispOn(u16);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void espPosSet(u16 spriteId, s16 x, s16 y);
 s16 func_8001A2F8_1AEF8(s32 arg0);
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);

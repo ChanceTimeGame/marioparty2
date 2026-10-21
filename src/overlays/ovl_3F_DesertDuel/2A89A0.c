@@ -1508,10 +1508,62 @@ void func_801073FC_2AD59C_DesertDuel(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073FC_2AD59C_DesertDuel);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107940_2ADAE0_DesertDuel);
+u16 func_80107940_2ADAE0_DesertDuel(void) {
+    u16 btn;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107A00_2ADBA0_DesertDuel);
+    btn = 0;
+    if (!(gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1)) {
+        btn = ContDStkTrg[gPlayers[D_80108C18_2AEDB8_DesertDuel].port];
+    }
+    if (D_80108C1C_2AEDBC_DesertDuel != -1 && btn == 0) {
+        if (!(gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1)) {
+            btn = ContDStkTrg[gPlayers[D_80108C1C_2AEDBC_DesertDuel].port];
+        }
+    }
+    return btn;
+}
+/* Pulses (scale 0.8-1.2, forever) the "MISS" mark of the first false-starter who did not win;
+   ends at once when there is none. */
+void func_80107A00_2ADBA0_DesertDuel(void) {
+    GAMEMES* mes;
+    f32 sx;
+    f32 sy;
+    s32 i;
 
+    if (D_80108C7C_2AEE1C_DesertDuel == 0) {
+        omDelPrcObj(NULL);
+    }
+    for (i = 0; i < D_80108C7C_2AEE1C_DesertDuel; i++) {
+        if (D_80108C80_2AEE20_DesertDuel[i] != D_80108C30_2AEDD0_DesertDuel) {
+            break;
+        }
+    }
+    mes = &D_800F9570_FA170[D_80108C88_2AEE28_DesertDuel[i]];
+    sx = mes->unk68;
+    sy = mes->unk6C;
+    while (TRUE) {
+        while (sx >= 0.8f) {
+            i = 0;
+            while (i < mes->unk08) {
+                i++;
+                SprScaleSet(mes->strGId[0], i, sx, sy);
+            }
+            sx -= 0.05f;
+            sy -= 0.05f;
+            HuPrcVSleep();
+        }
+        while (sx <= 1.2f) {
+            i = 0;
+            while (i < mes->unk08) {
+                i++;
+                SprScaleSet(mes->strGId[0], i, sx, sy);
+            }
+            sx += 0.05f;
+            sy += 0.05f;
+            HuPrcVSleep();
+        }
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107BF8_2ADD98_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
