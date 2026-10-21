@@ -113,7 +113,8 @@ typedef struct CTPlayerWork {
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[2];
+    /* 0x58 */ char unk_58[1];
+    /* 0x59 */ s8 unk_59; /* fork B: player index (gPlayers) */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -147,7 +148,8 @@ extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
 /* 0x80110070: the second variant's holder walks from path[0] (0x80110074) to path[1]; splat
    labels path[1] D_80110080 (retail addresses both from &path[1]). */
 typedef struct CTPath70 {
-    /* 0x00 */ s32 unk_00;
+    /* 0x00 */ s8 unk_00; /* fork B: only byte accesses (1 while coins/stars fly) */
+    /* 0x01 */ char unk_01[3];
     /* 0x04 */ Vec path[2];
 } CTPath70;
 extern CTPath70 D_80110070_267170_ChanceTime;
@@ -207,6 +209,91 @@ extern s16 D_80110D72_267E72_ChanceTime[4]; /* buttons held */
 /* The panels' objects; retail writes the third (D_80110D88) as [2] in one branch. */
 extern omObjData* D_80110D80_267E80_ChanceTime[2];
 extern omObjData* D_80110D88_267E88_ChanceTime;
+
+/* fork B */
+/* A flying coin of the exchanges (MP1 CTCoin, D_80101868). */
+typedef struct CTCoin {
+    /* 0x00 */ s16 unk_00; /* model (obj->model[1 + i] of the coin object) */
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ f32 unk_04; /* x */
+    /* 0x08 */ f32 unk_08; /* y */
+    /* 0x0C */ f32 unk_0C; /* z */
+    /* 0x10 */ f32 unk_10; /* bounce height */
+    /* 0x14 */ f32 unk_14; /* bounce angle */
+    /* 0x18 */ s8 unk_18;  /* 1 flying */
+    /* 0x19 */ s8 unk_19;  /* 1 free */
+    /* 0x1A */ char unk_1A[2];
+} CTCoin; /* size = 0x1C */
+extern s8 D_8011012A_26722A_ChanceTime;  /* func_80106604 started (MP1 D_8010128C) */
+extern f32 D_8011012C_26722C_ChanceTime; /* coin spin angle */
+extern s8 D_80110130_267230_ChanceTime;  /* func_80106B5C started (MP1 D_80101294) */
+extern s8 D_80110134_267234_ChanceTime[2]; /* func_80106B5C: each side's coins paid */
+extern f32 D_80110138_267238_ChanceTime; /* coin spin angle */
+extern s8 D_801107E8_2678E8_ChanceTime;  /* func_80106604: direction (MP1 D_80101740) */
+extern s8 D_801107E9_2678E9_ChanceTime;  /* all coins thrown */
+extern s16 D_801107EA_2678EA_ChanceTime; /* coin count */
+extern s16 D_801107EC_2678EC_ChanceTime; /* coins thrown */
+extern s16 D_801107EE_2678EE_ChanceTime; /* coins arrived */
+extern f32 D_801107F0_2678F0_ChanceTime; /* throw rate accumulator */
+extern s16 D_801107F4_2678F4_ChanceTime[2]; /* func_80106B5C: coins shown per side (MP1 D_8010174C) */
+extern f32 D_801107F8_2678F8_ChanceTime[2]; /* throw rate accumulators */
+extern s16 D_80110800_267900_ChanceTime[2]; /* the two players' coins */
+extern CTCoin D_80110B20_267C20_ChanceTime[20];
+/* The second coin/star set: 10 entries up to D_80110B10, but func_801077D8 clears 20 (retail
+   overrun into D_80110B10..D_80110C27, which it then clears or func_80106548 refills). */
+extern CTCoin D_801109F8_267AF8_ChanceTime[10];
+extern s16 D_801100C0_2671C0_ChanceTime; /* coins thrown in outcomes 1/3/5 (MP1 D_80101324) */
+extern s16 D_801100C2_2671C2_ChanceTime; /* coins thrown in outcomes 0/2/4/11/12 (MP1 D_80101326) */
+extern s8 D_8011091A_267A1A_ChanceTime;  /* outcome 10: the coin half of the swap is done */
+u16 func_80059348_59F48(void); /* loads model 0xA0158 */
+extern s8 D_80110069_267169_ChanceTime;  /* the star exchange is over (MP1 D_80101370) */
+extern ModelEmitterWork* D_8011006C_26716C_ChanceTime; /* the flying star's emitter (MP1 D_80101374) */
+extern s8 D_8011014C_26724C_ChanceTime;  /* func_801097F8 started (MP1 D_80101378) */
+extern s8 D_8011014D_26724D_ChanceTime;  /* func_80109CC4 started (MP1 D_80101379) */
+extern s8 D_80110851_267951_ChanceTime;  /* the star goes to this player (MP1 D_8010183C) */
+extern s8 D_80110852_267952_ChanceTime;  /* from this one */
+extern Vec D_80110854_267954_ChanceTime; /* the giver's position (MP1 D_80101824) */
+extern Vec D_80110860_267960_ChanceTime; /* the taker's position */
+extern Vec D_8011087C_26797C_ChanceTime[6]; /* func_80056658 paths (MP1 D_8010179C) */
+extern Vec D_801108C4_2679C4_ChanceTime[5];
+extern MBModel* D_80110900_267A00_ChanceTime; /* the flying star */
+extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
+extern s8 D_80110904_267A04_ChanceTime[2]; /* func_80109CC4's two star counts, at most 5 (MP1 D_8010183E); splat labels [1] D_80110905 */
+void func_80019B9C_1A79C(omObjData* obj, s32 arg1); /* C8E0.c: player motion */
+void func_8005A1D8_5ADD8(void);
+void func_800614E8_620E8(s32 player, s32 arg1);
+void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
+MBModel* func_80043510_44110(s32, void*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
+void MBModelKill(void*);
+/* Per-character data, 0x18 bytes each (ovl_00 D57F0.c's UnkDebug0); unk_04 is the
+   character's file directory. */
+typedef struct CTCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04;
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} CTCharData; /* size = 0x18 */
+extern CTCharData D_800CD438_CE038[];
+extern s16 D_8011013C_26723C_ChanceTime; /* func_80107B00 state (MP1 D_801012A0) */
+extern s16 D_8011013E_26723E_ChanceTime; /* outcome had no effect: wait 30 frames, not the motions */
+extern s16 D_80110140_267240_ChanceTime; /* func_80107B00 frame counter */
+extern s32 D_80110144_267244_ChanceTime; /* func_80107B00 frame counter (voices) */
+extern s8 D_80110148_267248_ChanceTime;  /* the music 0x5C has started */
+extern s16 D_8011014A_26724A_ChanceTime; /* frame of the next voice */
+s16 func_80073014_73C14(u32 file, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*) */
+s16 func_800797DC_7A3DC(s32, s16);
+void func_800798F8_7A4F8(s16 arg0, s16 arg1);
+void PlayMusic(s16);
+int abs(int);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
+void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
 
 /* ---- overlay functions (all 62; signatures past fork A's range are inferred) ---- */
 /* fork A */
