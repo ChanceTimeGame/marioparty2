@@ -1849,8 +1849,213 @@ void func_80035C18_36818(HmfData* arg0, s16 arg1) {
 
     gSPCullDisplayList(D_800FDBCC_FE7CC++, 0, 7);
 }
-INCLUDE_ASM("asm/nonmatchings/30560", func_80035FBC_36BBC);
+/* MP1 func_80031054 (src/2C0C0.c, NON_MATCHING there too): combine and render modes for a material.
+   Block layout only: GCC turns the 64-bit combine if/else pairs into default-then-override and
+   shares the render-mode tails that retail keeps per arm (masked 119); every branch checked against the asm */
+#ifdef NON_MATCHING
+void func_80035FBC_36BBC(HmfMat* arg0, HmfTexRef* arg1, s32 arg2) {
+    u64 cc;
+    s64 rm;
+    s32 flags;
+    s32 zbuf;
+    s16 zmode;
+    s32 t;
 
+    flags = arg0->unk0C;
+    zbuf = 0;
+    if ((D_800F64C4_F70C4 & 0x180) != 0x100) {
+        zbuf = (u16) D_800F64C4_F70C4 & 0x180;
+    }
+    if (arg2 & 0x80000) {
+        return;
+    }
+    if (D_800F64C4_F70C4 & 0x80000) {
+        cc = 0xFCFFFFFFFFFFFFFFLL;
+    } else if (D_800F64C4_F70C4 & 0x10000) {
+        cc = 0xFC127E2455FDF2F9LL;
+    } else if (arg2 & 0x200000) {
+        cc = 0xFCFFFFFFFFFE793CLL;
+    } else if (arg1 == (HmfTexRef*) -1) {
+        if (arg0->unk0C & 1) {
+            cc = 0xFC327E64FFFFF7FBLL;
+        } else {
+            if (!(flags & 4)) {
+                gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk05[0], arg0->unk05[1], arg0->unk05[2], 1);
+            }
+            if (D_800FA60C_FB20C == 0) {
+                cc = 0xFC327E64FFFFFDFELL;
+            } else {
+                cc = 0xFC327FFFFFFFFC38LL;
+            }
+        }
+    } else if (arg1->unk0C->unk1C == 3) {
+        if (D_800FA60C_FB20C == 0) {
+            cc = 0xFC119623FF2FFFFFLL;
+            flags |= 1;
+        } else {
+            cc = 0xFC1197FFFFFFFE38LL;
+            flags |= 1;
+        }
+    } else if (arg1->unk0C->unk1C == 4) {
+        if (D_800FA60C_FB20C == 0) {
+            cc = 0xFCFF97FFFF2DFEFFLL;
+            flags |= 1;
+        } else {
+            cc = 0xFCFF97FFFFFDFE38LL;
+            flags |= 1;
+        }
+    } else if (arg1->unk0C->unk1D == 3) {
+        if (D_800FA60C_FB20C == 0) {
+            cc = 0xFC121624FF2FFFFFLL;
+            flags |= 1;
+        } else {
+            cc = 0xFC1217FFFFFFFE38LL;
+            flags |= 1;
+        }
+    } else if (flags & 1) {
+        if (D_800FA60C_FB20C == 0) {
+            cc = 0xFC121624FF2FFFFFLL;
+        } else {
+            cc = 0xFC1217FFFFFFFE38LL;
+        }
+    } else if (D_800FA60C_FB20C == 0) {
+        cc = 0xFC127E24FFFFF3F9LL;
+    } else {
+        cc = 0xFC127FFFFFFFF238LL;
+    }
+
+    t = D_800F64C4_F70C4 & 0x60;
+    if (t == 0x20) {
+        zmode = 0x48;
+    } else {
+        zmode = (t == 0x40) ? 8 : 0;
+    }
+    if (D_800F64C4_F70C4 & 0x80000) {
+        rm = 0x5553F0;
+    } else if (arg2 & 0x8000) {
+        gDPSetBlendColor(D_800FDBCC_FE7CC++, 0, 0, 0, 1);
+        gDPSetAlphaCompare(D_800FDBCC_FE7CC++, G_AC_THRESHOLD);
+        if (!(flags & 4)) {
+            gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk05[0], arg0->unk05[1], arg0->unk05[2], arg0->unk0D);
+        }
+        rm = (arg1 == (HmfTexRef*) -1) ? 0x50007B : 0x50307B;
+        D_800FA720_FB320 = 0;
+    } else if (arg2 & 0x200000) {
+        rm = 0x507858;
+    } else if (arg2 < 0) {
+        if (flags & 1) {
+            gDPSetBlendColor(D_800FDBCC_FE7CC++, 0, 0, 0, 1);
+            gDPSetAlphaCompare(D_800FDBCC_FE7CC++, G_AC_THRESHOLD);
+            if (!(flags & 4)) {
+                gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk05[0], arg0->unk05[1], arg0->unk05[2], arg0->unk0D);
+            }
+            if (D_800FA60C_FB20C == 0) {
+                rm = 0x504DD8;
+            } else {
+                rm = (s32) 0xC8104DD8;
+            }
+        } else {
+            gDPSetAlphaCompare(D_800FDBCC_FE7CC++, G_AC_NONE);
+            if (D_800FA60C_FB20C == 0) {
+                rm = zmode | 0x553D10;
+            } else {
+                rm = (s32) 0xC8113D10 | zmode;
+            }
+        }
+        D_800DEFB0_DFBB0->unk00 = arg0->unk00;
+    } else if (flags & 1) {
+        gDPSetBlendColor(D_800FDBCC_FE7CC++, 0, 0, 0, 1);
+        gDPSetAlphaCompare(D_800FDBCC_FE7CC++, G_AC_THRESHOLD);
+        if (!(flags & 4)) {
+            gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk05[0], arg0->unk05[1], arg0->unk05[2], arg0->unk0D);
+        }
+        if (zmode != 0) {
+            zmode |= 0x180;
+        } else {
+            zmode |= 0x200;
+        }
+        if (zbuf != 0) {
+            if (D_800FA60C_FB20C == 0) {
+                rm = zmode | 0x504850;
+            } else {
+                rm = (s32) 0xC8104850 | zmode;
+            }
+        } else if (D_800FA60C_FB20C == 0) {
+            rm = zmode | 0x504040;
+        } else {
+            rm = (s32) 0xC8104040 | zmode;
+        }
+        D_800DEFB0_DFBB0->unk00 = arg0->unk00;
+    } else {
+        gDPSetAlphaCompare(D_800FDBCC_FE7CC++, G_AC_NONE);
+        if (arg1 == (HmfTexRef*) -1) {
+            if (zmode == 0) {
+                zmode |= 0x200;
+            }
+            if (zbuf != 0) {
+                if (D_800FA60C_FB20C == 0) {
+                    rm = zmode | 0x552030;
+                } else {
+                    rm = (s32) 0xC8112030 | zmode;
+                }
+            } else if (D_800FA60C_FB20C == 0) {
+                rm = zmode | 0x552000;
+            } else {
+                rm = (s32) 0xC8112000 | zmode;
+            }
+        } else if (D_800F64C4_F70C4 & 0x20000) {
+            if (zmode == 0) {
+                zmode |= 0x200;
+            }
+            if (zbuf != 0) {
+                if (D_800FA60C_FB20C == 0) {
+                    rm = zmode | 0x552030;
+                } else {
+                    rm = (s32) 0xC8112030 | zmode;
+                }
+            } else if (D_800FA60C_FB20C == 0) {
+                rm = zmode | 0x552000;
+            } else {
+                rm = (s32) 0xC8112000 | zmode;
+            }
+        } else if (zbuf != 0) {
+            if (D_800FA60C_FB20C == 0) {
+                rm = zmode | 0x553038;
+            } else {
+                rm = (s32) 0xC8113038 | zmode;
+            }
+        } else if (D_800FA60C_FB20C == 0) {
+            rm = zmode | 0x0F0A7008;
+        } else {
+            rm = (s32) 0xCB027008 | zmode;
+        }
+    }
+
+    if (D_800FD8A0_FE4A0 != cc || D_800FA720_FB320 != (u64) rm) {
+        gDPPipeSync(D_800FDBCC_FE7CC++);
+        if (D_800FD8A0_FE4A0 != cc) {
+            D_800FD8A0_FE4A0 = cc;
+            {
+                Gfx* g = D_800FDBCC_FE7CC++;
+
+                g->words.w0 = cc >> 32;
+                g->words.w1 = cc;
+            }
+        }
+        if (D_800FA720_FB320 != (u64) rm) {
+            {
+                Gfx* g = D_800FDBCC_FE7CC++;
+
+                g->words.w0 = 0xE200001C;
+                g->words.w1 = rm;
+            }
+            D_800FA720_FB320 = rm;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/30560", func_80035FBC_36BBC);
+#endif
 /* exact c: marioparty func_800318D0 (src/2C0C0.c) */
 void func_800368B4_374B4(u16 arg0) {
     u8 temp_v1;
