@@ -1,6 +1,22 @@
 #include "common.h"
 #include "game/object.h"
 
+extern u16 D_800CCD74_CD974[];
+extern u8 D_800CCD7C_CD97C[][3];
+extern u16 D_800CCDB8_CD9B8[];
+extern u8* D_800CCDC0_CD9C0[]; /* host: pointer table in .data */
+extern s16 D_800F9208_F9E08;
+void func_80056068_56C68(s32, s32, s32);
+void func_800563FC_56FFC(s32, s32, char*, s32, s32, s32, s32, s32);
+void func_800564B4_570B4(void);
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+s32 MBRand(f32);
+
+/* Battle space with everyone's coins pooled: the Goomba takes a random stake from each player
+   (all of a player's coins when short); returns 0 when nobody has 10 coins */
+
+
 extern s32 D_800CCD5C_CD95C[];
 extern u8 D_800CCD54_CD954[];
 extern s16 D_800F8D1A_F991A;
@@ -955,10 +971,135 @@ battle:
     func_80067EF8_68AF8(D_800CCD54_CD954[GwSystem.current_board_index]);
     return 1;
 }
-INCLUDE_ASM("asm/nonmatchings/63670", func_800645C8_651C8);
+s32 func_800645C8_651C8(GW_PLAYER* player) {
+    char buf[16];
+    GW_SYSTEM* sys = &GwSystem;
+    omObjData* obj;
+    s32 i;
+    s32 row; /* the turn row, then the player shown taking the stake */
+    s32 col;
+    s32 rnd;   /* the roll, then the pooled total */
+    s32 bestCoins;
+    s32 stake; /* the lowest coin count, then the stake */
 
-const char D_800D3020_D3C20[] __attribute__((aligned(8), section(".rodata"))) = "%d";
-
+    func_800115B4_121B4(D_800FA188_FAD88);
+    D_800F64B0_F70B0 = func_80079428_7A028(0x3D);
+    mbBattleKuriboMdl = func_80043510_44110(0xA, NULL);
+    func_800297E8_2A3E8(mbBattleKuriboMdl->omObj1->model[0], 0, 0, 0);
+    func_8002D4A0_2E0A0(mbBattleKuriboMdl->omObj1->model[0]);
+    mbBattleKuriboMdl->flags |= 1;
+    mbBattleKuriboUpperMdl = func_80043510_44110(0x6D, NULL);
+    func_800297E8_2A3E8(mbBattleKuriboUpperMdl->omObj1->model[0], 0, 0, 0);
+    func_800B3170_B3D70(&mbBattleKuriboMdl->coords, &PLAYER_MODEL(player)->coords);
+    func_800B3170_B3D70(&mbBattleKuriboUpperMdl->coords, &PLAYER_MODEL(player)->coords);
+    mbBattleKuriboMdl->velocity.x = 120.0f;
+    mbBattleKuriboUpperMdl->velocity.x = 122.0f;
+    while (mbBattleKuriboMdl->velocity.x > 30.0f) {
+        HuPrcVSleep();
+        mbBattleKuriboMdl->velocity.x -= 1.0f;
+        mbBattleKuriboUpperMdl->velocity.x -= 1.0f;
+    }
+    obj = omAddObj(0x1F4, 0, 0, -1, MBBattleKuriboObjMain);
+    obj->rot.x = 180.0f;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].coins >= 10) {
+            break;
+        }
+    }
+    PlaySound(0xE8);
+    if (i == 4) {
+        func_80056068_56C68(6, 0x23, 0x88);
+        omDelObj(obj);
+        while (mbBattleKuriboMdl->velocity.x <= 120.0f) {
+            HuPrcVSleep();
+            mbBattleKuriboMdl->velocity.x += 3.0f;
+            mbBattleKuriboUpperMdl->velocity.x += 3.0f;
+        }
+        MBModelKill(mbBattleKuriboMdl);
+        MBModelKill(mbBattleKuriboUpperMdl);
+        func_800114E8_120E8(D_800F64B0_F70B0, 0x3C);
+        D_800F64B0_F70B0 = -1;
+        D_800FA652_FB252 = 1;
+        omPrcSetStatBit(omAddPrcObj(func_80064134_64D34, 0, 0, 0), 0xA0);
+        return 0;
+    }
+    for (row = 0; row < 2; row++) {
+        if (sys->current_turn >= D_800CCD7C_CD97C[sys->current_game_length][row]
+            && sys->current_turn < D_800CCD7C_CD97C[sys->current_game_length][row + 1]) {
+            break;
+        }
+    }
+    stake = 999;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].coins < stake) {
+            stake = gPlayers[i].coins;
+        }
+    }
+    for (col = 0; col < 3; col++) {
+        if (stake < D_800CCD74_CD974[col]) {
+            break;
+        }
+    }
+    rnd = MBRand(100.0f);
+    for (i = 0; i < 4; i++) {
+        if (rnd < D_800CCDC0_CD9C0[col][row * 4 + i]) {
+            break;
+        }
+    }
+    stake = D_800CCDB8_CD9B8[i];
+    sprintf(buf, "%d", stake);
+    func_800563FC_56FFC(6, 0x20, buf, 0, 0, 0, 0, 0x88);
+    row = -1;
+    func_800564B4_570B4();
+    i = 0;
+    MBDlgWinClose();
+    func_80056168_56D68();
+    HuPrcVSleep();
+    bestCoins = 0;
+    for (; i < 4; i++) {
+        if (gPlayers[i].coins >= stake) {
+            row = i;
+            break;
+        }
+        if (bestCoins < gPlayers[i].coins) {
+            row = i;
+            bestCoins = gPlayers[i].coins;
+        }
+    }
+    rnd = 0;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].coins < stake) {
+            rnd += gPlayers[i].coins;
+            func_8004CA14_4D614(i, -gPlayers[i].coins);
+            if (i == row) {
+                func_8006135C_61F5C(i, -gPlayers[i].coins, 1);
+            } else {
+                func_8006135C_61F5C(i, -gPlayers[i].coins, 0);
+            }
+        } else {
+            rnd += stake;
+            func_8004CA14_4D614(i, -stake);
+            if (i == row) {
+                func_8006135C_61F5C(i, -stake, 1);
+            } else {
+                func_8006135C_61F5C(i, -stake, 0);
+            }
+        }
+    }
+    HuPrcSleep(30);
+    sprintf(buf, "%d", rnd);
+    if (rnd < stake * 4) {
+        func_800563FC_56FFC(6, 0x22, buf, 0, 0, 0, 0, 0x88);
+        func_800564B4_570B4();
+    } else {
+        func_800563FC_56FFC(6, 0x21, buf, 0, 0, 0, 0, 0x88);
+    }
+    func_800564B4_570B4();
+    MBDlgWinClose();
+    func_80056168_56D68();
+    D_800F9208_F9E08 = rnd;
+    return 1;
+}
 void func_80064C98_65898(void) {
     s32 var_a0;
     s32 var_s2;
