@@ -2,6 +2,11 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
+/* HmfModel.unkB4 holds the model's lights (HmfData_UnkD0, 0x48 bytes), not an HmfModel */
+#define MODEL_LIGHTS(p) (*(HmfData_UnkD0**)&(p)->unkB4)
+/* the camera being drawn (D_800FD2A8_FDEA8 is a void* in hmfman.h) */
+#define CAM ((HuCamera*)D_800FD2A8_FDEA8)
+
 /* ---- Model manager (MP3 src/hmfman.c, MP1 src/24740.c); MP3's HmfModel layout ---- */
 
 typedef struct {
@@ -37,7 +42,9 @@ void func_800B2060_B2C60(f32 (*)[4], f32, f32, f32);
 void func_8002741C_2801C(void);
 void func_8003847C_3907C(HmfData*, char*, HmfData*);
 s16 func_80038398_38F98(HmfData*, char*);
-void* func_8003CF84_3DB84(HmfData*);
+/* really HmfTex* (HmfData*, u8*) (3D6A0); retail calls it with the model only (MP1
+   func_8002861C does too), so it is declared without a prototype: a1 is whatever it held */
+HmfTex* func_8003CF84_3DB84();
 void func_80029A8C_2A68C(s16);
 void func_800298A4_2A4A4(s16 arg0, s32 arg1, s32 arg2);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
@@ -853,7 +860,286 @@ void func_8002864C_2924C(void) {
     D_800F8F80_F9B80[0] = D_800F8F80_F9B80[1] = NULL;
 }
 
+extern u16 D_800F8710_F9310[];
+extern u16 D_800FCA00_FD600[][HU3D_MODEL_MAX];
+extern u8 D_800FA5D8_FB1D8;
+extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
+extern Gfx* D_800FDBD0_FE7D0;
+extern u8 D_800F9914_FA514; /* the camera being drawn */
+extern s16 D_800FFFD6_100BD6;
+extern Gfx D_800C9F78_CAB78[];
+extern s32 D_800C9E60_CAA60;
+
+/* D_800F8C58_F9858[D_800FDC48_FE848[group][part].unk02].unk44: the matrix a part-following
+   model (HmfModel.unk18 & 0x4000) is drawn with */
+typedef struct {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ char unk04[4];
+} Unk274D0Rec8; /* size 0x8 */
+
+typedef struct {
+    /* 0x00 */ char unk00[0x44];
+    /* 0x44 */ Mtx* unk44;
+    /* 0x48 */ char unk48[0x10];
+} Unk274D0Rec58; /* size 0x58 */
+
+typedef struct {
+    /* 0x00 */ Unk274D0Rec8* unk00;
+} Unk274D0Group;
+
+extern Unk274D0Group D_800FDC48_FE848[];
+extern Unk274D0Rec58* D_800F8C58_F9858;
+
+Gfx* func_80029368_29F68(Gfx* arg0, s16 arg1, u16 arg2);
+u8 func_8001D054_1DC54(void* arg0, u16 arg1, s32 arg2, void* arg3, s32 arg4);
+void func_8002FCAC_308AC(void);
+void func_800204C0_210C0(s16, Gfx**);
+void func_8002064C_2124C(s16, Gfx**);
+s16 func_8007C058_7CC58(u8, u8, u8);
+void func_8007C094_7CC94(s16);
+void func_8002CB78_2D778(s16);
+void func_80025770_26370(f32 (*)[4], f32, f32, f32); /* MP1 MtxTranslate */
+void func_80025830_26430(f32 (*)[4], f32, f32, f32); /* MP1 MtxScale */
+void func_80025BA4_267A4(f32 (*)[4], f32 (*)[4], f32 (*)[4]); /* MP1 MtxMult */
+void func_80030CD4_318D4(f32 (*)[4], f32 (*)[4]);
+void func_800B30D0_B3CD0(f32 (*)[4], Mtx*);
+void func_80030A78_31678(HmfData*, f32 (*)[4], f32 (*)[4]);
+void func_8003BCBC_3C8BC(HmfModel*, f32);
+s32 func_8003AFF4_3BBF4(HmfData*);
+void func_8002C810_2D410(HmfModel*);
+void func_8002C6F4_2D2F4(HmfModel*, u16);
+Gfx* func_800322BC_32EBC(u8, Gfx*, Gfx*);
+void func_8003E65C_3F25C(u16);
+void func_8008EFF8_8FBF8(Gfx**);
+Gfx* pfDrawFonts(Gfx*);
+void func_80026F00_27B00(HmfData_UnkD0* arg0);
+
+/* MP1 func_800247FC (src/24740.c): draw every model, camera by camera, and send the list */
+// register allocation (arg1, the gfx and 0xFF registers renumbered) and retail forming
+// &D_800FDC48_FE848[group] before the part index (masked 32); MP1's is NON_MATCHING too
+#ifdef NON_MATCHING
+void func_800286FC_292FC(void* arg0, s32 arg1) {
+    f32 sp18[4][4];
+    f32 sp58[4][4];
+    f32 sp98[4][4];
+    HmfModel* p;
+    HmfData* hmf;
+    Gfx* gfx;
+    Gfx* var_s5;
+    Gfx* var_s1;
+    s16 mask = 1;
+    Gfx* var_s3 = NULL;
+    s16 temp;
+    s16 layer;
+    s16 i;
+
+    if (D_800FDCD0_FE8D0 == 0) {
+        return;
+    }
+
+    gSPEndDisplayList(D_800FDBCC_FE7CC++);
+    D_800F8710_F9310[0] = D_800F8710_F9310[1] = D_800F8710_F9310[2] = D_800F8710_F9310[3] = 0;
+
+    for (i = 0; i < HU3D_MODEL_MAX; i++) {
+        p = &D_800FC834_FD434[i];
+        if (p->hmf != NULL && !(p->unk18 & 4) && (u8)p->unk00 != 0) {
+            layer = 0;
+            switch ((u8)p->unk00 & 6) {
+                case 6:
+                    layer++;
+                case 4:
+                    layer++;
+                case 2:
+                    layer++;
+                case 0:
+                    D_800FCA00_FD600[layer][D_800F8710_F9310[layer]] = i;
+                    D_800F8710_F9310[layer]++;
+                    break;
+            }
+        }
+    }
+
+    var_s1 = D_800FDBD0_FE7D0;
+    D_800FA5D8_FB1D8 = 0;
+    for (D_800F9914_FA514 = 0; D_800F9914_FA514 < D_800F64B2_F70B2; D_800F9914_FA514++) {
+        if (var_s1 == NULL) {
+            gfx = func_80029368_29F68(var_s3, 1, mask);
+            gDPFullSync(D_800FDBCC_FE7CC++);
+            gSPEndDisplayList(D_800FDBCC_FE7CC++);
+            func_8001D054_1DC54(gfx, D_800FA5D8_FB1D8, 0, NULL, 0);
+        }
+        func_8002FCAC_308AC();
+        D_800FD2A8_FDEA8 = &D_800C9B80_CA780[D_800F9914_FA514];
+        D_800FC88C_FD48C = &CAM->mtxs[D_800FFFD6_100BD6];
+        var_s3 = D_800FDBCC_FE7CC;
+        func_800204C0_210C0(D_800F9914_FA514, &D_800FDBCC_FE7CC);
+        func_8002064C_2124C(D_800F9914_FA514, &D_800FDBCC_FE7CC);
+        mask = 1 << D_800F9914_FA514;
+        gSPDisplayList(D_800FDBCC_FE7CC++, D_800C9F78_CAB78);
+        gSPEndDisplayList(D_800FDBCC_FE7CC++);
+        var_s5 = D_800FDBCC_FE7CC;
+        if (var_s1 != NULL) {
+            gSPDisplayList(D_800FDBCC_FE7CC++, var_s1);
+        }
+        func_8002064C_2124C(D_800F9914_FA514, &D_800FDBCC_FE7CC);
+        if (CAM->unkB0 != NULL) {
+            ((void (*)(u8))CAM->unkB0)(D_800F9914_FA514);
+        }
+        if (D_800F8F80_F9B80[0] != NULL) {
+            ((void (*)(Gfx**, HuCamMtxs*, u8))D_800F8F80_F9B80[0])(&D_800FDBCC_FE7CC, D_800FC88C_FD48C, D_800F9914_FA514);
+        }
+        if (D_800F8F80_F9B80[1] != NULL) {
+            ((void (*)(Gfx**, HuCamMtxs*, u8))D_800F8F80_F9B80[1])(&D_800FDBCC_FE7CC, D_800FC88C_FD48C, D_800F9914_FA514);
+        }
+        var_s5 = func_80029368_29F68(var_s5, 0, mask);
+        gSPEndDisplayList(D_800FDBCC_FE7CC++);
+        temp = func_8007C058_7CC58(0, 200, 0);
+
+        for (i = 0; i < HU3D_MODEL_MAX; i++) {
+            p = &D_800FC834_FD434[i];
+            if (p->hmf != NULL) {
+                hmf = p->hmf;
+                if (D_800F9914_FA514 == 0) {
+                    hmf->unk0C = 0;
+                }
+                if (!(p->unk18 & 4) && (p->unk01 & mask) && ((u8)p->unk00 == 0 || ((u8)p->unk00 & 6) == 4)) {
+                    if (hmf->unk38 != NULL && CAM->unkA8 != NULL) {
+                        ((void (*)(void*, HmfModel*))CAM->unkA8)(CAM->unkAC, p);
+                    } else {
+                        if (p->unk09 != 0xFF) {
+                            func_8002CB78_2D778(i);
+                        }
+                        hmf->unk0A = 1;
+                        hmf->unk01 = p->unk00;
+                        D_800F64C4_F70C4 = p->unk18;
+                        if (!(p->unk18 & 0x40000)) {
+                            guMtxL2F(sp98, &D_800FC88C_FD48C->lookAtMtx);
+                            if (p->pos.x != 0.0f || p->pos.y != 0.0f || p->pos.z != 0.0f) {
+                                func_80025770_26370(sp98, p->pos.x, p->pos.y, p->pos.z);
+                            }
+                            if (p->rot.x != 0.0f || p->rot.y != 0.0f || p->rot.z != 0.0f) {
+                                func_80025884_26484(sp98, p->rot.x, p->rot.y, p->rot.z);
+                            }
+                            if (p->scale.x != 1.0f || p->scale.y != 1.0f || p->scale.z != 1.0f) {
+                                func_80025830_26430(sp98, p->scale.x, p->scale.y, p->scale.z);
+                                sp58[0][0] = p->scale.x;
+                                sp58[1][1] = p->scale.y;
+                                sp58[2][2] = p->scale.z;
+                                sp58[3][3] = 1.0f;
+                                sp58[0][1] = sp58[0][2] = sp58[0][3] = sp58[1][0] = sp58[1][2] = sp58[1][3] =
+                                    sp58[2][0] = sp58[2][1] = sp58[2][3] = sp58[3][0] = sp58[3][1] = sp58[3][2] = 0.0f;
+                            } else {
+                                func_800B37C0_B43C0((f32*)sp58);
+                            }
+                            func_80025BA4_267A4((f32 (*)[4])p->mtx, sp98, sp18);
+                        } else {
+                            func_80030CD4_318D4(sp18, (f32 (*)[4])p->mtx);
+                            if (p->pos.x != 0.0f || p->pos.y != 0.0f || p->pos.z != 0.0f) {
+                                func_80025770_26370(sp18, p->pos.x, p->pos.y, p->pos.z);
+                            }
+                            if (p->rot.x != 0.0f || p->rot.y != 0.0f || p->rot.z != 0.0f) {
+                                func_80025884_26484(sp18, p->rot.x, p->rot.y, p->rot.z);
+                            }
+                            if (p->scale.x != 1.0f || p->scale.y != 1.0f || p->scale.z != 1.0f) {
+                                func_80025830_26430(sp18, p->scale.x, p->scale.y, p->scale.z);
+                                sp58[0][0] = p->scale.x;
+                                sp58[1][1] = p->scale.y;
+                                sp58[2][2] = p->scale.z;
+                                sp58[3][3] = 1.0f;
+                                sp58[0][1] = sp58[0][2] = sp58[0][3] = sp58[1][0] = sp58[1][2] = sp58[1][3] =
+                                    sp58[2][0] = sp58[2][1] = sp58[2][3] = sp58[3][0] = sp58[3][1] = sp58[3][2] = 0.0f;
+                            } else {
+                                func_800B37C0_B43C0((f32*)sp58);
+                            }
+                        }
+                        hmf->unkD0 = MODEL_LIGHTS(p);
+                        if (MODEL_LIGHTS(p) != NULL) {
+                            func_80026F00_27B00(MODEL_LIGHTS(p));
+                        }
+                        if (p->unk02 != 0xFF) {
+                            hmf->unk90 = &D_800F92B4_F9EB4[p->unk02];
+                            hmf->unkA4 = p->unk40;
+                            if (p->unk06 != 0xFF) {
+                                hmf->unk98 = &D_800F92B4_F9EB4[p->unk06];
+                                hmf->unkB0 = p->unk58;
+                            } else {
+                                hmf->unk98 = NULL;
+                            }
+                            if (p->unk04 != 0xFF && p->unk0C != 0) {
+                                hmf->unk94 = &D_800F92B4_F9EB4[p->unk04];
+                                hmf->unkA8 = p->unk4C;
+                                hmf->unkAC = (f32)p->unk0E / (f32)p->unk0C;
+                                if (D_800FDC9C_FE89C == 0) {
+                                    p->unk0E = arg1 + p->unk0E;
+                                }
+                                if (p->unk0E >= p->unk0C) {
+                                    p->unk02 = p->unk04;
+                                    p->unk40 = p->unk4C;
+                                    p->unk03 = p->unk05;
+                                    p->unk48 = p->unk54;
+                                    p->unk04 = 0xFF;
+                                }
+                            } else {
+                                hmf->unk94 = NULL;
+                            }
+                        } else {
+                            hmf->unk90 = hmf->unk94 = hmf->unk98 = NULL;
+                        }
+                        if (D_800F64C4_F70C4 & 0x4000) {
+                            func_800B30D0_B3CD0(sp18, D_800F8C58_F9858[D_800FDC48_FE848[p->unk68->unk00].unk00[p->unk68->unk64[p->unk0A].unk2F].unk02].unk44);
+                        }
+                        func_80030A78_31678(hmf, sp18, sp58);
+                        hmf->unk0C++;
+                        if (p->unk08 != 0xFF || hmf->unkB8 != NULL) {
+                            func_8003BCBC_3C8BC(p, p->unk40);
+                        }
+                        if (hmf->unk9C != NULL) {
+                            func_8003AFF4_3BBF4(hmf);
+                        }
+                        if (hmf->unkC8 != 0) {
+                            func_8002C810_2D410(p);
+                        }
+                    }
+                }
+            }
+        }
+        func_8007C094_7CC94(temp);
+        var_s3 = func_800322BC_32EBC(D_800F9914_FA514, var_s3, var_s5);
+        var_s1 = NULL;
+        if (CAM->unkB4 != NULL) {
+            ((void (*)(u8))CAM->unkB4)(D_800F9914_FA514);
+        }
+    }
+
+    for (i = 0; i < HU3D_MODEL_MAX; i++) {
+        p = &D_800FC834_FD434[i];
+        if (p->hmf != NULL && !(p->unk18 & 4) && (D_800FDC9C_FE89C == 0 || (p->unk18 & 0x8000))) {
+            if (p->unk02 != 0xFF) {
+                func_8002C6F4_2D2F4(p, arg1);
+                if (p->hmf->unk9C != NULL && (u8)p->unk00 == 0) {
+                    p->hmf->unk9C->unk08 = p->unk40;
+                }
+            }
+        }
+    }
+    if (D_800FDC9C_FE89C == 0) {
+        func_8003E65C_3F25C(arg1);
+    }
+    gfx = func_80029368_29F68(var_s3, 1, mask);
+    gDPSetScissor(D_800FDBCC_FE7CC++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    var_s3 = func_80029368_29F68(gfx, 3, 0);
+    gDPSetScissor(D_800FDBCC_FE7CC++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    func_8008EFF8_8FBF8(&D_800FDBCC_FE7CC);
+    D_800FDBCC_FE7CC = pfDrawFonts(D_800FDBCC_FE7CC);
+    gDPFullSync(D_800FDBCC_FE7CC++);
+    gSPEndDisplayList(D_800FDBCC_FE7CC++);
+    func_8001D054_1DC54(var_s3, D_800FA5D8_FB1D8, 1, arg0, 0x309);
+    D_800C9E60_CAA60++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/274D0", func_800286FC_292FC);
+#endif
 
 extern u16 D_800F8710_F9310[];
 extern u16 D_800FCA00_FD600[][HU3D_MODEL_MAX];
@@ -1910,7 +2196,6 @@ void func_8002CB0C_2D70C(s16 arg0, s16 arg1, f32 arg2) {
 }
 
 f32 func_800B1830_B2430(f32);
-#define CAM ((HuCamera*)D_800FD2A8_FDEA8)
 
 /* MP1 func_80028A34 (src/24740.c): pick the level-of-detail model by camera distance */
 void func_8002CB78_2D778(s16 arg0) {
@@ -2017,9 +2302,6 @@ void func_8002D124_2DD24(s16 index) {
     }
     func_80029A8C_2A68C(index);
 }
-
-/* HmfModel.unkB4 holds the model's lights (HmfData_UnkD0, 0x48 bytes), not an HmfModel */
-#define MODEL_LIGHTS(p) (*(HmfData_UnkD0**)&(p)->unkB4)
 
 void func_8002D1EC_2DDEC(s16 arg0, u8 arg1) {
     HmfModel* p = &D_800FC834_FD434[arg0];

@@ -114,7 +114,8 @@ typedef struct HmfPart {
     /* 0x10 */ u16 unk10; /* face count */
     /* 0x12 */ char unk12[0x1C];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
-    /* 0x2F */ char unk2F[0x13];
+    /* 0x2F */ u8 unk2F;
+    /* 0x30 */ char unk30[0x12];
     /* 0x42 */ s16 unk42; /* 0x42-0x4C: -0x8000 in a display-list model (274D0) */
     /* 0x44 */ s16 unk44;
     /* 0x46 */ s16 unk46;
@@ -166,7 +167,8 @@ typedef struct HmfData {
     /* 0x09 */ u8 unk09;
     /* 0x0A */ u8 unk0A;
     /* 0x0B */ u8 unk0B; /* link count */
-    /* 0x0C */ char unk0C[2];
+    /* 0x0C */ u8 unk0C; /* times drawn this frame */
+    /* 0x0D */ char unk0D;
     /* 0x0E */ s16 unk0E; /* MP1 0x68; MP3's s16 (s16/u16 both match) */
     /* 0x10 */ s16 unk10;
     /* 0x12 */ s16 unk12; /* texture count; MP1 0x6C */
@@ -177,8 +179,10 @@ typedef struct HmfData {
     /* 0x1C */ char unk1C[2];
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ char unk20[8];
-    /* 0x28 */ s16 unk28; /* count of unkC8's entries */
-    /* 0x2A */ char unk2A[0xE];
+    /* 0x28 */ s16 unk28; /* texture-animation count (3D6A0); unkC8's entry count (274D0) */
+    /* 0x2A */ char unk2A[6];
+    /* 0x30 */ u8* unk30; /* chunk end (3D6A0) */
+    /* 0x34 */ u8* unk34; /* chunk start (3D6A0) */
     /* 0x38 */ void* unk38; /* the MAP1 chunk */
     /* 0x3C */ HmfDisp* unk3C; /* or a single Gfx* list, by flag */
     /* 0x40 */ HmfVtx* unk40; /* MP1 0x04 */
@@ -196,16 +200,20 @@ typedef struct HmfData {
     /* 0x88 */ HmfTexRef* unk88; /* MP1 0xA4 */
     /* 0x8C */ HmfMat* unk8C; /* MP1 0xA8 */
     /* 0x90 */ void* unk90; /* MP1 0xAC, an HmfMotion */
-    /* 0x94 */ char unk94[8];
+    /* 0x94 */ void* unk94; /* MP1 0xB0: the motion blended in */
+    /* 0x98 */ void* unk98; /* MP1 0xB4: the third motion */
     /* 0x9C */ HmfAnim* unk9C; /* MP1 0xB8 */
     /* 0xA0 */ void* unkA0;
     /* 0xA4 */ f32 unkA4; /* MP1 0xC0 */
-    /* 0xA8 */ char unkA8[0xC];
+    /* 0xA8 */ f32 unkA8; /* unk94's frame */
+    /* 0xAC */ f32 unkAC; /* blend weight */
+    /* 0xB0 */ f32 unkB0; /* unk98's frame */
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
     /* 0xB8 */ void* unkB8; /* 1D0B0's HmfDispData */
     /* 0xBC */ char unkBC[0xC];
     /* 0xC8 */ s32 unkC8; /* a u8* list (274D0 reads unk28 bytes): a pointer in an s32 slot */
-    /* 0xCC */ char unkCC[8];
+    /* 0xCC */ char unkCC[4];
+    /* 0xD0 */ struct HmfData_UnkD0* unkD0; /* the drawing model's lights */
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
     /* 0xD8 */ void (*unkD8)(f32 (*)[4], f32, f32, f32);
     /* 0xDC */ char unkDC[4];
