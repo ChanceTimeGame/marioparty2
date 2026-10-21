@@ -3137,11 +3137,54 @@ void func_8008D530_8E130(s16 arg0, u8 arg1, u8 arg2, u8 arg3) {
     func_80082450_83050(textWindow->unk_6C, 0, arg1, arg2, arg3);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D59C_8E19C);
+/* MP1 func_8007155C: the controller ports that drive the window */
+void func_8008D59C_8E19C(s16 winId, s16 ports) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D5D8_8E1D8);
+    tw->unk21 = (tw->unk21 & 0xF0) | ports;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D6F0_8E2F0);
+/* MP1 func_80071598: hides the window */
+void func_8008D5D8_8E1D8(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+
+    SprAttrSet(tw->unk_6C, 0, 0x8000);
+    SprAttrSet(tw->unk_6C, 1, 0x8000);
+    for (i = 4; i < 0x16; i++) {
+        if (tw->unk_6E[i] != -1) {
+            SprAttrSet(tw->unk_6C, i, 0x8000);
+        }
+    }
+    if (tw->unk6A != -1) {
+        SprAttrSet(tw->unk_6C, 2, 0x8000);
+    }
+    if (tw->unk20 & 2) {
+        SprAttrSet(tw->unk_6C, 3, 0x8000);
+    }
+    func_80089284_89E84(winId, 0x4008, 8);
+}
+
+/* MP1 func_8007166C: shows the window again */
+void func_8008D6F0_8E2F0(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+
+    SprAttrReset(tw->unk_6C, 0, 0x8000);
+    SprAttrReset(tw->unk_6C, 1, 0x8000);
+    for (i = 4; i < 0x16; i++) {
+        if (tw->unk_6E[i] != -1) {
+            SprAttrReset(tw->unk_6C, i, 0x8000);
+        }
+    }
+    if (tw->unk6A != -1) {
+        SprAttrReset(tw->unk_6C, 2, 0x8000);
+    }
+    if (tw->unk20 & 2) {
+        SprAttrReset(tw->unk_6C, 3, 0x8000);
+    }
+    func_80089284_89E84(winId, 0x4008, 0x4000);
+}
 
 void func_8008D808_8E408(s16 winId, s32 arg1) {
     TextWindow* window;
@@ -3177,7 +3220,13 @@ void func_8008D8BC_8E4BC(u8* arg0, u8* arg1) {
     *arg1 = *arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D904_8E504);
+/* MP1 func_800718DC: func_80089308 with the line breaks removed */
+void func_8008D904_8E504(s16 winId, u32 str, s8 idx) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    func_80089308_89F08(winId, str, idx);
+    func_8008D8BC_8E4BC(tw->unk_B8[idx], tw->unk_B8[idx]);
+}
 
 void func_8008D974_8E574(s32 arg0, s16 arg1) {
     D_800ED8E6_EE4E6 = 1;
@@ -3187,11 +3236,37 @@ void func_8008D974_8E574(s32 arg0, s16 arg1) {
     D_8010106E_101C6E[arg1] = D_800ED8E9_EE4E9;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008D9D0_8E5D0);
+/* measures a text (a message id, or a pointer above 0x80000000) into D_8010106E[idx].
+   Host: the id/pointer test assumes N64 addresses, and the text is passed on as a u32. */
+void func_8008D9D0_8E5D0(u32 str, s16 idx) {
+    u8 loaded;
+    u8* text;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DA84_8E684);
+    D_800ED8E6_EE4E6 = 1;
+    D_800ED8EA_EE4EA = 0;
+    D_800ED8E8_EE4E8 = 0;
+    if (str > 0x80000000) {
+        loaded = 0;
+        text = (u8*)str;
+    } else {
+        loaded = 1;
+        text = func_80068CD4_698D4(str);
+    }
+    func_8008D8BC_8E4BC(text, text);
+    func_8008DCDC_8E8DC((s32)text);
+    if (loaded) {
+        func_80068D24_69924(text);
+    }
+    D_8010106E_101C6E[idx] = D_800ED8E9_EE4E9;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DAC0_8E6C0);
+void func_8008DA84_8E684(s16 winId, s16 idx, s8 color) {
+    D_800F920C_F9E0C[winId].unk_B2[idx] = color;
+}
+
+void func_8008DAC0_8E6C0(s8 arg0) {
+    D_801013FA_101FFA = arg0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DACC_8E6CC);
 
