@@ -61,8 +61,9 @@ typedef struct HmfMotion {
     /* 0x08 */ HmfMotionTrack** unk_08;
     /* 0x0C */ u8* unk_0C; /* per track: 0x4E transform tree, 0x0D motion object */
     /* 0x10 */ s16* unk_10; /* start frames */
-    /* 0x14 */ char unk_14[4];
-} HmfMotion; /* size = 0x18 */
+    /* 0x14 */ f32* unk_14; /* key values */
+    /* 0x18 */ s32 unk_18;
+} HmfMotion; /* size = 0x1C: the header's HmfMotionSlot under 30560's own field types */
 
 /* HmfData.unk84 entries (0x98 bytes; MP1 unk2C0C0Struct50) */
 typedef struct HmfMotionObj {
@@ -2893,6 +2894,12 @@ s32 func_80039A88_3A688(HmfMotionSlot* arg0, HmfMotionFile* arg1) {
 
     return 1;
 }
+/* A Bezier key value (MP1 unk34D80Bezier) */
+typedef struct HmfBezierKey {
+    /* 0x00 */ f32 v;
+    /* 0x04 */ f32 in;
+    /* 0x08 */ f32 out;
+} HmfBezierKey; /* size = 0xC */
 f32 func_8003A154_3AD54(HmfMotion*, HmfMotionTrack*, f32);
 f32 func_8003A2B0_3AEB0(HmfMotion*, HmfMotionTrack*, f32);
 
@@ -3064,10 +3071,85 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003A154_3AD54);
+f32 func_8003A154_3AD54(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
+    f32* vals;
+    s16* keys;
+    s16 i;
+    s16 j;
+    s16 d;
 
+    vals = &arg0->unk_14[arg1->unk_0C];
+    if (arg2 == 0.0f || arg1->unk_0E == 1) {
+        return vals[0];
+    }
+    keys = &arg0->unk_10[arg1->unk_0A];
+    for (i = 0; i < arg1->unk_0E; i++) {
+        if (arg2 < keys[i]) {
+            break;
+        }
+    }
+    if (i == arg1->unk_0E) {
+        return vals[arg1->unk_0E - 1];
+    }
+    j = i - 1;
+    d = keys[i] - keys[j];
+    return (vals[i] - vals[j]) / d * (arg2 - keys[j]) + vals[j];
+}
+#ifdef W2A_RODATA
+/* Hermite interpolation of a track's keys (MP1 func_80035630 is a Bezier one). The tangents
+   both come from the earlier key (retail) */
+f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
+    HmfBezierKey* vals;
+    HmfBezierKey* cur;
+    HmfBezierKey* prev;
+    s16* keys;
+    s16* kc;
+    s16* kp;
+    s16 n;
+    s16 i;
+    s16 j;
+    s16 k0;
+    f32 t;
+    f32 r;
+    f32 r2;
+    f32 t2;
+    f32 a;
+    f32 b;
+    f32 h1;
+    f32 h2;
+
+    vals = (HmfBezierKey*) &arg0->unk_14[arg1->unk_0C];
+    if (arg2 == 0.0f || arg1->unk_0E == 1) {
+        return vals[0].v;
+    }
+    keys = &arg0->unk_10[arg1->unk_0A];
+    n = arg1->unk_0E;
+    for (i = 0, kp = keys; i < n; i++) {
+        if (arg2 < *kp++) {
+            break;
+        }
+    }
+    if (i == n) {
+        return vals[arg1->unk_0E - 1].v;
+    }
+    cur = &vals[i];
+    kc = &keys[i];
+    j = i - 1;
+    prev = &vals[j];
+    k0 = keys[j];
+    t = arg2 - k0;
+    r = 1.0 / (*kc - k0);
+    r2 = r * r;
+    t2 = t * t;
+    a = t2 * r;
+    b = t2 * t * r2;
+    h1 = 2.0 * b * r;
+    h2 = t2 * 3.0 * r2;
+    return (h1 - h2 + 1.0f) * prev->v + (-h1 + h2) * cur->v + (b - a - a + t) * prev->in + (b - a) * prev->out;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003A2B0_3AEB0);
-
+#endif
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003A4B8_3B0B8);
 
 #define B4_DUR(p, k) (((s16*) (p)->unk08)[k])
