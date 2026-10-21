@@ -966,7 +966,86 @@ void func_800872A8_87EA8(omObjData* obj, u16 mode) {
     }
 }
 
+s16 LoadFormFile(s32, s32);
+s16 func_80018A64_19664(s32, s32);
+u16 func_80018D64_19964(s32, s32, s32);
+s16 func_8002109C_21C9C(s16, s32);
+void func_80021160_21D60(s16, s32, s32);
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+s16 func_80027D3C_2893C(s16);
+void func_80029E80_2AA80(s16, s32, s32);
+void HmfModelObjAttrSet(s16, s32, s32);
+void func_80087794_88394(omObjData* obj);
+
+// register allocation: obj and the loop counter j swap s5/s6 (masked 0; MP1 func_8006BC38 has the same)
+#ifdef NON_MATCHING
+/* MP1 func_8006BC38: loads the models and sprites (cached in D_800ED6B0) */
+void func_800873D8_87FD8(omObjData* obj) {
+    Unk6C470Work* w = obj->unk_50;
+    u16 idx;
+    s16 sprite;
+    s32 i;
+    s16 j;
+    s16 k;
+
+    if (D_800ED6B0_EE2B0[0] < 0) {
+        idx = LoadFormFile(0x23, w->unk282);
+        D_800ED6B0_EE2B0[0] = idx;
+    } else {
+        idx = func_80027D3C_2893C(D_800ED6B0_EE2B0[0]);
+    }
+    obj->model[0] = idx;
+    func_80029E80_2AA80(idx, 1, 1);
+    if (D_800ED6B0_EE2B0[1] < 0) {
+        idx = func_80018A64_19664(w->unk288 == 0 ? 4 : 0xD, w->unk284);
+        D_800ED6B0_EE2B0[1] = idx;
+    } else {
+        idx = func_80027D3C_2893C(D_800ED6B0_EE2B0[1]);
+    }
+    obj->model[1] = idx;
+    if (D_800ED6B0_EE2B0[2] < 0) {
+        sprite = func_80018D64_19964(0x14, w->unk286 | 4, 8);
+        D_800ED6B0_EE2B0[2] = sprite;
+    } else {
+        sprite = func_8002109C_21C9C(D_800ED6B0_EE2B0[2], 8);
+    }
+    w->sprites[2] = sprite;
+    idx = D_800F86D8_F92D8[sprite].unk00;
+    obj->model[2] = idx;
+    func_800298A4_2A4A4(idx, 4, 4);
+    func_800211E8_21DE8(sprite, 0xC0);
+    func_80021250_21E50(sprite, 0xFF, 0xFF, 0xBE);
+    HmfModelObjAttrSet(idx, 0x70000000, 0x70000000);
+    func_80021160_21D60(sprite, 4, 0);
+    func_800297E8_2A3E8(idx, w->unk28E * 3.0f, w->unk28E * 3.0f, w->unk28E * 3.0f);
+    for (j = 3, k = 13, i = 0; i < 10; i++, j++, k++) {
+        if (D_800ED6B0_EE2B0[3] < 0) {
+            sprite = func_80018D64_19964(0xE, w->unk286, 8);
+            D_800ED6B0_EE2B0[3] = sprite;
+        } else {
+            sprite = func_8002109C_21C9C(D_800ED6B0_EE2B0[3], 8);
+        }
+        w->sprites[j] = sprite;
+        idx = D_800F86D8_F92D8[sprite].unk00;
+        obj->model[j] = idx;
+        HmfModelObjAttrSet(idx, 0x70000000, 0x70000000);
+        func_800297E8_2A3E8(idx, 2.0f, 2.0f, 2.0f);
+        func_800298A4_2A4A4(idx, 4, 4);
+        sprite = func_8002109C_21C9C(D_800ED6B0_EE2B0[3], 8);
+        w->sprites[k] = sprite;
+        idx = D_800F86D8_F92D8[sprite].unk00;
+        obj->model[k] = idx;
+        HmfModelObjAttrSet(idx, 0x70000000, 0x70000000);
+        func_800297E8_2A3E8(idx, 2.0f, 2.0f, 2.0f);
+        func_800298A4_2A4A4(idx, 4, 4);
+        func_800211E8_21DE8(sprite, i * 15 + 0x60);
+    }
+    obj->func_ptr = func_80087794_88394;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_800873D8_87FD8);
+#endif
 
 void func_80087794_88394(omObjData* obj) {
     Unk6C470Work* w = obj->unk_50;
