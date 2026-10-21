@@ -2,6 +2,14 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
+/* Set the off flag (0x8000) of model arg0's motion arg1 track for the motion object holding
+   part arg2, channel arg3, axis arg4 */
+
+
+/* Retail calls func_8003B7A8_3C3A8 unprototyped here (its flag argument arrives as the int
+   -0x8000; its definition reads it as u16) */
+
+
 /* MP1 func_80034E04 (src/34D80.c): point a motion slot into a motion file loaded whole. Host
    hazard: the file's offsets are big-endian words, and its pointers are rebuilt from them */
 
@@ -265,6 +273,19 @@ s32 func_800B0FD0_B1BD0(char*, char*); /* strcmp */
 void func_800B37C0_B43C0(Matrix4f); /* identity */
 void func_800386DC_392DC(HmfData*, s16);
 void func_80038964_39564(HmfData*, s16);
+/* D_801016C4_1022C4's entries (16): texture animations */
+typedef struct HmfTexAnimSlot {
+    /* 0x00 */ void* unk00;
+    /* 0x04 */ u8* unk04; /* the animation data */
+    /* 0x08 */ u8* unk08; /* its frames; NULL when the slot is free */
+    /* 0x0C */ s16 unk0C;
+    /* 0x0E */ s16 unk0E;
+} HmfTexAnimSlot; /* size = 0x10 */
+extern HmfTexAnimSlot* D_801016C4_1022C4;
+void func_8003B7A8_3C3A8(s16, s16, char*, s16, u16, u16);
+void func_8003BAD8_3C6D8(s32);
+void func_8003BD08_3C908(HmfData*, u8, f32);
+void func_8003C6AC_3D2AC(HmfData*);
 void func_8002024C_20E4C();
 void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
@@ -3502,8 +3523,9 @@ f32 func_8003B628_3C228(HmfMotion* arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4)
     return arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003B6E8_3C2E8);
-
+void func_8003B6E8_3C2E8(HmfData* arg0) {
+    arg0->unkA4 = 0.0f;
+}
 /* same c: marioparty func_80036AC4 (src/34D80.c) */
 void func_8003B6F0_3C2F0(HmfData* arg0) {
     arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02 - 1;
@@ -3514,24 +3536,131 @@ s16 func_8003B710_3C310(HmfData* arg0) {
     return arg0->unkA4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003B72C_3C32C);
+void func_8003B72C_3C32C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4) {
+    ((void (*)()) func_8003B7A8_3C3A8)(arg0, arg1, arg2, arg3, arg4, -0x8000);
+}
+void func_8003B76C_3C36C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4) {
+    ((void (*)()) func_8003B7A8_3C3A8)(arg0, arg1, arg2, arg3, arg4, 0);
+}
+void func_8003B7A8_3C3A8(s16 arg0, s16 arg1, char* arg2, s16 arg3, u16 arg4, u16 arg5) {
+    HmfMotionSlot* slot;
+    HmfData* hmf;
+    HmfMotionTrack* e;
+    s16 part;
+    s16 i;
+    s16 j;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003B76C_3C36C);
+    slot = &D_800F92B4_F9EB4[arg1];
+    hmf = D_800FC834_FD434[arg0].hmf;
+    part = func_80038398_38F98(hmf, arg2);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003B7A8_3C3A8);
+    for (i = 0; i < hmf->unk16; i++) {
+        for (j = 0; j < ((HmfMotionObj*) hmf->unk84)[i].unk_00; j++) {
+            if (((HmfMotionObj*) hmf->unk84)[i].unk_50[j] == part) {
+                break;
+            }
+        }
+        if (j != ((HmfMotionObj*) hmf->unk84)[i].unk_00) {
+            break;
+        }
+    }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003B9D0_3C5D0);
+    for (j = 0; j < slot->unk00; j++) {
+        e = slot->unk08[j];
+        if ((e->unk_08 & 0x7FFF) == i && e->unk_00 == arg3 && e->unk_01 == (s16) arg4) {
+            e->unk_04 = arg5 | (e->unk_04 & 0x7FFF);
+            return;
+        }
+    }
+}
+void func_8003B9D0_3C5D0(void) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003BA2C_3C62C);
+    D_801016C4_1022C4 = HuMemAlloc(16 * sizeof(HmfTexAnimSlot));
+    for (i = 0; i < 16; i++) {
+        D_801016C4_1022C4[i].unk08 = NULL;
+    }
+}
+s16 func_8003BA2C_3C62C(void* arg0, u8* arg1) {
+    HmfTexAnimSlot* temp_a0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003BAD8_3C6D8);
+    for (i = 0; i < 16; i++) {
+        if (D_801016C4_1022C4[i].unk08 == NULL) {
+            break;
+        }
+    }
+    if (i == 16) {
+        return -1;
+    }
+    temp_a0 = &D_801016C4_1022C4[i];
+    temp_a0->unk00 = arg0;
+    temp_a0->unk04 = arg1;
+    temp_a0->unk0C = (arg1[8] << 8) + arg1[9];
+    temp_a0->unk0E = (arg1[10] << 8) + arg1[11];
+    temp_a0->unk08 = arg1 + 12;
+    return i;
+}
+void func_8003BAD8_3C6D8(s32 arg0) {
+    D_801016C4_1022C4[arg0].unk08 = NULL;
+}
+void func_8003BAF0_3C6F0(void) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003BAF0_3C6F0);
+    for (i = 0; i < 16; i++) {
+        if (D_801016C4_1022C4[i].unk08 != NULL) {
+            func_8003BAD8_3C6D8(i);
+        }
+    }
+}
+void func_8003BB58_3C758(HmfData* arg0) {
+    HmfVtxCopy* c;
+    HmfVtx* v;
+    ColVtx* pos;
+    u8* col;
+    s16 n;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003BB58_3C758);
+    if (arg0->unk5C != NULL) {
+        c = arg0->unk5C;
+        HuMemFree(c->unk04);
+        HuMemFree(c->unk08);
+        HuMemFree(c->unk0C);
+        HuMemFree(c);
+    }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003BCBC_3C8BC);
+    n = arg0->unk18;
+    c = func_80027154_27D54(sizeof(HmfVtxCopy), D_800FA1AA_FADAA);
+    arg0->unk5C = c;
+    c->unk00 = n;
+    pos = func_80027154_27D54(n * sizeof(ColVtx), D_800FA1AA_FADAA);
+    c->unk04 = pos;
+    col = func_80027154_27D54(n * 3, D_800FA1AA_FADAA);
+    c->unk08 = col;
+    c->unk0C = func_80027154_27D54((n + 7) / 8, D_800FA1AA_FADAA);
 
+    v = arg0->unk40;
+    for (i = 0; i < n; i++) {
+        pos->x = v->unk00;
+        pos->y = v->unk02;
+        pos->z = v->unk04;
+        col[0] = v->unk0C[0];
+        col[1] = v->unk0C[1];
+        col[2] = v->unk0C[2];
+        v++;
+        pos++;
+        col += 3;
+    }
+}
+void func_8003BCBC_3C8BC(HmfModel* arg0, f32 arg1) {
+    HmfData* temp_a0 = arg0->hmf;
+
+    if (temp_a0->unkB8 != NULL) {
+        func_8003C6AC_3D2AC(temp_a0);
+        return;
+    }
+    func_8003BD08_3C908(temp_a0, arg0->unk08, arg1);
+}
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003BD08_3C908);
 
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003C6AC_3D2AC);

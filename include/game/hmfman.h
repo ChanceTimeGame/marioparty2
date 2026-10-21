@@ -138,6 +138,15 @@ typedef struct ColVtx {
     /* 0x4 */ s16 z;
 } ColVtx;
 
+/* A copy of a model's vertex positions and colours (HmfData.unk5C; 30560) */
+typedef struct HmfVtxCopy {
+    /* 0x00 */ s16 unk00; /* vertex count */
+    /* 0x02 */ char unk02[2];
+    /* 0x04 */ ColVtx* unk04;
+    /* 0x08 */ u8* unk08; /* colours, 3 bytes each */
+    /* 0x0C */ u8* unk0C; /* one bit per vertex */
+} HmfVtxCopy; /* size = 0x10 */
+
 typedef struct HitXform {
     /* 0x00 */ s16 unk00; /* part index, < 0 for none */
     /* 0x02 */ s16 unk02; /* offset to the next sibling */
@@ -191,7 +200,7 @@ typedef struct HmfData {
     /* 0x44 */ HmfVtx* unk44[4]; /* per frame buffer; MP1 0x08 */
     /* 0x54 */ ColVtx* unk54; /* MP1 0x78 */
     /* 0x58 */ u8* unk58; /* vertex colours, 3 bytes each; MP1 0x7C */
-    /* 0x5C */ char unk5C[4];
+    /* 0x5C */ HmfVtxCopy* unk5C;
     /* 0x60 */ s16* unk60; /* per vertex: its slot in the frame's vertex buffer */
     /* 0x64 */ HmfPart* unk64;
     /* 0x68 */ s16 unk68; /* MP1 0x84 */
