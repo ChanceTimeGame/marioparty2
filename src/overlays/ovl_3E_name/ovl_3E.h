@@ -261,7 +261,7 @@ void func_80107D6C_29D03C_name_3E(void);
 void func_80107E84_29D154_name_3E(void);
 void func_80107F9C_29D26C_name_3E(void);
 void func_801080B4_29D384_name_3E(void);
-s32 func_801081CC_29D49C_name_3E(s32 arg0);
+s32 func_801081CC_29D49C_name_3E(s32 arg0); /* the chosen option */
 void func_80108424_29D6F4_name_3E(void);
 void func_8010871C_29D9EC_name_3E(void);
 void func_80108A14_29DCE4_name_3E(void);
@@ -358,6 +358,16 @@ s32 DirectionPrompt(struct unk_8003B8D4Struct*);
 void func_8004108C_41C8C(struct unk_8003B8D4Struct*);
 s32 PlayerIsCPU(s16);
 s16 func_80044800_45400(DecisionTreeNonLeafNode*); /* RunDecisionTree */
+void MBDlgWinCreate(s32, s32);
+void MBDlgWinExec(s32, s32);
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+Process* MBDCameraZoomMotStart(f32);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+s32 func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void* func_800672BC_67EBC(s16, s16, s32);
+void func_8006735C_67F5C(void*);
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
 extern s16 D_80111B90_2A6E60_name_3E[]; /* minecart chain, by D_800F8CE4[0] */
