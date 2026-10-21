@@ -25,12 +25,8 @@ extern u16 D_800FD410_FE010[4];
 
 void func_80011128_11D28(s16);
 void func_80011354_11F54(s8);
-void func_80015664_16264(s16, s16);
 s32 func_80014B30_15730(s16, UnkAudStruct*);
-void func_80015710_16310(s16, s16);
-void func_80015868_16468(s16);
 
-void func_800155B8_161B8(s16, s8);
 s32 func_80011018_11C18(s16);
 void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
 extern u16 D_800CD522_CE122;

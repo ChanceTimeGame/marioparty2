@@ -131,7 +131,6 @@ s16 func_8003DF08_3EB08(void*);
 s16 func_8003F4C0_400C0(void);
 s16 func_8003F520_40120(void);
 s16 func_8003F240_3FE40(HmfData*, u8*);
-HmfTex* func_8003CF48_3DB48(HmfData*, s16);
 
 void func_800B10E0_B1CE0(void*, void*); /* strcpy */
 

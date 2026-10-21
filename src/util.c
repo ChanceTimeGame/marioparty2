@@ -34,6 +34,8 @@ void CameraScissorSet(s16, void*);
 void CameraViewportSet(s16, Vec*, Vec*);
 void HuMemMemoryFreePerm(void*);
 s32 func_80020EBC_21ABC(void*, s32, u8);
+/* really s16 (HmfData*, void*, s16, char*) (hmfman.h, 3D6A0); declared returning s32 because
+   func_80018DC0_199C0 only matches when it sign-extends the result itself */
 s32 func_8003D8F0_3E4F0(s32, void*, s32, s32);
 
 u16 func_80018A30_19630(s32 arg0, s32 arg1) {

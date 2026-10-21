@@ -335,4 +335,9 @@ extern s8 D_800FDC9C_FE89C;  /* MP3 HmfPauseF; s8 as 5F3B0/58080/80230 load it *
 extern u16 D_800FDCD0_FE8D0; /* set while models are live (274D0, 30560) */
 extern void* D_800FD2A8_FDEA8; /* model matrix buffer (274D0 passes it to HmfModel.unk70) */
 
+/* 3D6A0 */
+void func_8003CB70_3D770(HmfData*);
+HmfTex* func_8003CF48_3DB48(HmfData*, s16);
+s16 func_8003D8F0_3E4F0(HmfData*, void*, s16, char*);
+
 #endif

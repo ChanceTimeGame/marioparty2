@@ -510,10 +510,6 @@ typedef struct {
     s32 unk08;
 } HmfModelData_Unk64_Unk98_Struct;
 
-typedef struct {
-    char unk_00[0x30];
-    s32 unk_30;
-} HmfData_Unk84_Entry2;
 
 // New struct for the array at unk84 (0x10 bytes per entry)
 typedef struct {
@@ -523,7 +519,7 @@ typedef struct {
     u8 unk5[4];
     u8 unk9;
     u8 unkA[2];
-    HmfData_Unk84_Entry2* unkC;  // Pointer to something with unk30 field
+    HmfTex* unkC;
 } HmfData_Unk84_Entry;
 
 
@@ -781,7 +777,6 @@ void *func_8001EB18_1F718(void *);
 void func_8001EB48_1F748(HmfLoadData *, s16, s16, s16);
 void func_8001EF00_1FB00(HmfFaceRec *, u8 *, HmfLoadData *, u16 *);
 void func_8001F1B8_1FDB8(s8 *, u16 *, u16 *, u16 *);
-HmfData_Unk84_Entry2 *func_8003CF48_3DB48(HmfLoadData *, s16);
 s16 func_8001F380_1FF80(HmfLoadData *, void *, s16);
 s32 func_8001F50C_2010C(HmfLoadData *);
 s32 func_8001F8C0_204C0(HmfLoadData *);
@@ -792,7 +787,6 @@ void func_8001203C_12C3C(HmfLoadData *, u8 *, s32);
 void func_8002CAE4_2D6E4(HmfLoadData *);
 void func_80031630_32230(HmfLoadData *);
 void func_800339D0_345D0(HmfLoadData *);
-void func_8003CB70_3D770(HmfLoadData *);
 void func_80038654_39254(HmfLoadData *);
 void func_8003EF04_3FB04(HmfLoadData *);
 void osSyncPrintf(const char *fmt, ...);
@@ -862,7 +856,7 @@ void func_8001D190_1DD90(HmfLoadData *hmf, void *fileData, s32 flags) {
         func_8001E108_1ED08(hmf);
     }
     D_800F92DD_F9EDD = flags;
-    func_8003CB70_3D770(hmf);
+    func_8003CB70_3D770((HmfData *)hmf); /* HmfLoadData is this unit's view of HmfData */
     if (D_800DEF88_DFB88 != NULL) {
         func_8001E57C_1F17C(hmf);
     }
@@ -1317,7 +1311,7 @@ s16 func_8001E57C_1F17C(HmfLoadData *hmf) {
                 entry->unk0[2] = 1;
                 break;
         }
-        entry->unkC = func_8003CF48_3DB48(hmf, (data[0xA] << 8) + data[0xB]);
+        entry->unkC = func_8003CF48_3DB48((HmfData *)hmf, (data[0xA] << 8) + data[0xB]);
         fill = -1;
         entry->unk3 = fill;
         entry->unk4 = fill;
