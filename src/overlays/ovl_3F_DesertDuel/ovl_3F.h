@@ -93,6 +93,7 @@ void func_800600F8_60CF8(s32, s16, s16);
 void func_8006135C_61F5C(s32 player, s32 coins, s32);
 void func_800614B4_620B4(s32, s32);
 s16 func_800691FC_69DFC(s16 mesNo, ...);
+void func_800695D8_6A1D8(s16 mesId, s16 time);
 s32 func_80069538_6A138(void);
 s32 func_800696E4_6A2E4(void);
 void func_80069770_6A370(void);

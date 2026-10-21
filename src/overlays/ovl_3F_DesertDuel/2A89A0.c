@@ -1158,8 +1158,65 @@ void func_80106328_2AC4C8_DesertDuel(omObjData* obj) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106600_2AC7A0_DesertDuel);
+/* The countdown: "3", "2", "1" (the duelists walk apart on 2 and 1), a random 30-74 frames, then
+   "GO!" and the draw is open (D_80108C64). Ends as soon as the outcome is decided; a false start in
+   the first 10 frames also removes that duelist's object from func_800446B4. */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80106600_2AC7A0_DesertDuel(void) {
+    Vec pos[2];
+    MBModel* model;
+    omObjData* obj1;
+    omObjData* obj2;
+    s32 wait;
+    s32 i;
 
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x52", 160, 56, 1.0, 1.0, 1), 25); /* SJIS "3" */
+    D_80108C10_2AEDB0_DesertDuel = 4;
+    model = PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel);
+    HuVecCopyXYZ(&pos[0], -1000.0f, model->pos.y, model->pos.z);
+    model = PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel);
+    HuVecCopyXYZ(&pos[1], 1000.0f, model->pos.y, model->pos.z);
+    obj1 = func_800446B4_452B4(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), &pos[0], 10);
+    obj2 = func_800446B4_452B4(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), &pos[1], 10);
+    for (i = 0; i < 30; i++) {
+        if (D_80108C58_2AEDF8_DesertDuel != 0) {
+            if (i < 10) {
+                if (D_80108C58_2AEDF8_DesertDuel == 2) {
+                    omDelObj(obj1);
+                }
+                if (D_80108C58_2AEDF8_DesertDuel == 4) {
+                    omDelObj(obj2);
+                }
+            }
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    }
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x51", 160, 56, 1.0, 1.0, 1), 25); /* SJIS "2" */
+    omAddPrcObj(func_80105DB8_2ABF58_DesertDuel, 0x12, 0, 0);
+    for (i = 0; i < 30; i++) {
+        if (D_80108C58_2AEDF8_DesertDuel != 0) {
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    }
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x50", 160, 56, 1.0, 1.0, 1), 25); /* SJIS "1" */
+    omAddPrcObj(func_80105DB8_2ABF58_DesertDuel, 0x12, 0, 0);
+    wait = (u8)(rand8() % 45) + 30;
+    for (i = 0; i < wait; i++) {
+        if (D_80108C58_2AEDF8_DesertDuel != 0) {
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    }
+    PlaySound(0xE8);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x66\x82\x6E\x81\x49", 160, 56, 1.0, 1.0, 1), 45); /* SJIS "GO!" */
+    D_80108C64_2AEE04_DesertDuel = 1;
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106600_2AC7A0_DesertDuel);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
