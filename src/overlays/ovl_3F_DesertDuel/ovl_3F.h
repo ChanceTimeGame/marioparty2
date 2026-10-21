@@ -60,6 +60,7 @@ s16 LoadFormFile(s32, s32);
 void MBDBackKill(void);
 void MBModelDispOff(MBModel*);
 MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void MBPlayerModelCreate(s16, void*, s32);
 void MBVsSprCreateY(f32 arg0, f32 arg1);
@@ -75,6 +76,7 @@ s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
 void func_80029714_2A314(s16, f32, f32, f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+f32 func_80029CE4_2A8E4(s16);
 f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80043DAC_449AC(MBModel*);
@@ -85,6 +87,7 @@ void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotati
 void func_80057730_58330(s16, s32);
 void func_80057A78_58678(s32, s32, s32); /* both duelists' portraits in a window */
 void func_80059400_5A000(void);
+s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
 ModelPathWork* func_8005A718_5B318(MBModel* model, f32 speed, s16 count, Vec* points);
 s32 func_8005A778_5B378(ModelPathWork*); /* path finished */
 void func_8005AA48_5B648(MBModel*, char*, s16);
@@ -100,10 +103,12 @@ s16 func_800691FC_69DFC(s16 mesNo, ...);
 void func_800695D8_6A1D8(s16 mesId, s16 time);
 s32 func_80069538_6A138(void);
 s32 func_800696E4_6A2E4(void);
+void func_80069764_6A364(s16 time);
 void func_80069770_6A370(void);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
 /* Defined (u32, s16, s16) in 73BA0.c; retail passes full words here. */
 omObjData* func_800732FC_73EFC(u32 arg0, s32 arg1, s32 arg2);
+void func_80079614_7A214(s16 time); /* music fade-out */
 s16 func_800797DC_7A3DC(s32, s16);
 void func_800798F8_7A4F8(s16 arg0, s16 arg1);
 void func_800799A4_7A5A4(s16, s32);
@@ -163,6 +168,12 @@ typedef struct Unk3FShot {
     /* 0x0C */ s32 target; /* player index */
     /* 0x10 */ s16 bounces;
 } Unk3FShot; /* size 0x14 */
+
+/* The drawing duelist (func_80107128/func_801071C8). */
+typedef struct Unk3FDrawer {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 timer;
+} Unk3FDrawer; /* size 0x08 */
 
 /* Status-window layouts (D_80108730): four corner positions as from/to pairs, and the frames
    the move takes. */

@@ -1311,18 +1311,93 @@ void func_80106C94_2ACE34_DesertDuel(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107018_2AD1B8_DesertDuel);
+/* The duelist who drew (outcome 2/3: the challenger, 4/5: the opponent) draws (motion 3) and turns
+   to face the other. */
+void func_80107018_2AD1B8_DesertDuel(void) {
+    s32 self;
+    s32 other;
+    s32 done;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107128_2AD2C8_DesertDuel);
+    other = 0;
+    self = 0;
+    if (D_80108C58_2AEDF8_DesertDuel == 2 || D_80108C58_2AEDF8_DesertDuel == 3) {
+        self = D_80108C18_2AEDB8_DesertDuel;
+        other = D_80108C1C_2AEDBC_DesertDuel;
+    }
+    if (D_80108C58_2AEDF8_DesertDuel == 4 || D_80108C58_2AEDF8_DesertDuel == 5) {
+        self = D_80108C1C_2AEDBC_DesertDuel;
+        other = D_80108C18_2AEDB8_DesertDuel;
+    }
+    MBMotionSet(PLAYER_MODEL(self), 3, 0);
+    do {
+        done = func_8005A7E8_5B3E8(PLAYER_MODEL(self), &PLAYER_MODEL(other)->pos, 20.0f);
+        HuPrcVSleep();
+    } while (done == 0);
+    omDelPrcObj(NULL);
+}
+/* Watches the drawing duelist's motion (func_801071C8). */
+void func_80107128_2AD2C8_DesertDuel(void) {
+    omObjData* obj;
+    Unk3FDrawer* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801071C8_2AD368_DesertDuel);
+    obj = omAddObj(0x10, 0, 0, -1, func_801071C8_2AD368_DesertDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Unk3FDrawer), 0x7918);
+    if (D_80108C58_2AEDF8_DesertDuel == 2 || D_80108C58_2AEDF8_DesertDuel == 3) {
+        work->player = D_80108C18_2AEDB8_DesertDuel;
+    }
+    if (D_80108C58_2AEDF8_DesertDuel == 4 || D_80108C58_2AEDF8_DesertDuel == 5) {
+        work->player = D_80108C1C_2AEDBC_DesertDuel;
+    }
+    work->timer = 0;
+}
+/* At frame 50 of the draw (motion 3) the duelist fires at the other, unless it was a false start;
+   back to idle when D_80108C78 is set. Retail also reads the motion's frame here and drops it. */
+void func_801071C8_2AD368_DesertDuel(omObjData* obj) {
+    Unk3FDrawer* work = obj->unk_50;
+    s32 target;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107314_2AD4B4_DesertDuel);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107350_2AD4F0_DesertDuel);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073A8_2AD548_DesertDuel);
-
+    work->timer += 2;
+    func_80029CE4_2A8E4(PLAYER_MODEL(work->player)->obj->motion[3]);
+    if (PLAYER_MODEL(work->player)->curMot == 3 && work->timer == 50) {
+        if (work->player == D_80108C18_2AEDB8_DesertDuel) {
+            target = D_80108C1C_2AEDBC_DesertDuel;
+        } else {
+            target = D_80108C18_2AEDB8_DesertDuel;
+        }
+        if ((D_80108C58_2AEDF8_DesertDuel == 3) | (D_80108C58_2AEDF8_DesertDuel == 5)) {
+            func_80106988_2ACB28_DesertDuel(work->player, target);
+        }
+    }
+    if (D_80108C78_2AEE18_DesertDuel == 1) {
+        MBMotionShiftSet(PLAYER_MODEL(work->player), 2, 0, 5, 0);
+        omDelObj(obj);
+    }
+}
+/* The scene's end: when func_800696E4 reports no game message left, fade out (the music too
+   when there is no referee) and return to the board. */
+void func_80107314_2AD4B4_DesertDuel(void) {
+    omAddObj(0x10, 0, 0, -1, func_80107350_2AD4F0_DesertDuel);
+    func_80069764_6A364(60);
+}
+void func_80107350_2AD4F0_DesertDuel(omObjData* obj) {
+    if (func_800696E4_6A2E4() == 0) {
+        InitFadeOut(0, 20);
+        if (D_80108C9C_2AEE3C_DesertDuel != 0) {
+            func_80079614_7A214(20);
+        }
+        obj->func_ptr = func_801073A8_2AD548_DesertDuel;
+    }
+}
+void func_801073A8_2AD548_DesertDuel(void) {
+    if (func_8008F618_90218() == 0) {
+        MBDBackKill();
+        func_80050AE0_516E0();
+        func_80059400_5A000();
+        func_80069770_6A370();
+        func_8008CE5C_8DA5C();
+        omOvlReturnEx(1);
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073FC_2AD59C_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107940_2ADAE0_DesertDuel);
