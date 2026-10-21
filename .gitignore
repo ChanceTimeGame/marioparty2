@@ -7,5 +7,6 @@ assets/
 expected/
 marioparty2.ld
 ctx.c
+ctx.c.m2c
 __pycache__
 venv/
