@@ -13,6 +13,7 @@
 #include "game/object.h"
 #include "game/hmfman.h"
 #include "game/camera.h"
+#include "game/data.h" /* fork D */
 
 /* ---- main-segment API used by 3E ---- */
 
@@ -100,7 +101,7 @@ void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
 void func_80055928_56528(s16* arg0);
 void func_80055980_56580(s16* arg0);
 void func_8004D60C_4E20C(s32, void (*)(void)); /* board event slot */
-void func_80044D98_45998(void (*)(void));
+void func_80044D98_45998(s32 (*)(void)); /* fork D: the CPU item check callback returns s32 */
 void func_800542E8_54EE8(s32, s16);
 void func_800632F0_63EF0(s16 arg0);
 void func_80020070_20C70(s32);
@@ -264,6 +265,12 @@ s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 void func_80063734_64334(Vec* arg0);
 void CameraScissorSet(s16, void*);
 extern f32 D_80112914_2A7BE4_name_3E[4]; /* scissor box {0, 0, 320, 240} */
+extern s32 D_80112F24_2A81F4_name_3E[]; /* decision trees (CPU item use) */
+extern s32 D_80112F84_2A8254_name_3E[];
+extern s32 D_80113248_2A8518_name_3E[];
+extern s32 D_801133BC_2A868C_name_3E[];
+s16 GetCurrentPlayerIndex(void);
+s16 RNGPercentChance(s8 arg0);
 s16 func_800558F4_564F4(void);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 void func_8004CA34_4D634(s32, s32);
@@ -412,7 +419,7 @@ s32 func_801104E0_2A57B0_name_3E(void);
 void func_80110794_2A5A64_name_3E(void);
 void func_80110F78_2A6248_name_3E(void);
 void func_801112E4_2A65B4_name_3E(void);
-void func_80111338_2A6608_name_3E(void);
+s32 func_80111338_2A6608_name_3E(void); /* fork D: returns the use-item answer */
 s32 func_8011155C_2A682C_name_3E(void);
 s32 func_801118D8_2A6BA8_name_3E(void);
 

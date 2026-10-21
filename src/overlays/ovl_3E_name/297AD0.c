@@ -2535,7 +2535,76 @@ void func_801112E4_2A65B4_name_3E(void) {
     omAddPrcObj(func_80102FFC_2982CC_name_3E, 0x1005, 0x1000, 0);
 }
 
+/* CPU item check (registered with func_80044D98): 1 = use the held item now. Several items are
+   used on the last turn, or when their decision tree D_80112F24/80112F84/80113248/801133BC
+   says so, or with enough coins. */
+#ifdef NON_MATCHING /* rodata-pending */
+s32 func_80111338_2A6608_name_3E(void) {
+    s32 cur;
+    s32 i;
+    GW_SYSTEM* gw;
+
+    cur = GetCurrentPlayerIndex();
+    gw = &GwSystem;
+    switch (gPlayers[cur].item) {
+        case 0:
+            if (gw->total_turns != gw->current_turn && !RNGPercentChance(80)) {
+                return 0;
+            }
+            break;
+        case -1:
+        case 1:
+        case 3:
+            return 0;
+        case 6:
+            if (gw->total_turns != gw->current_turn && func_80044800_45400(D_80112F24_2A81F4_name_3E) != 0) {
+                return 0;
+            }
+            break;
+        case 8:
+            if (gw->total_turns != gw->current_turn && func_80044800_45400(D_80112F84_2A8254_name_3E) != 0) {
+                return 0;
+            }
+            break;
+        case 5:
+            if (func_80044800_45400(D_80113248_2A8518_name_3E) != 0) {
+                return 0;
+            }
+            break;
+        case 2:
+            for (i = 0; i < 4; i++) {
+                if (i != cur && gPlayers[i].item != -1 && gPlayers[i].item != 3) {
+                    break;
+                }
+            }
+            if (i == 4) {
+                return 0;
+            }
+            break;
+        case 7:
+            if (gPlayers[cur].coins < 5) {
+                return 0;
+            }
+            break;
+        case 9:
+            if (func_80044800_45400(D_801133BC_2A868C_name_3E) != 0) {
+                return 0;
+            }
+            if (gPlayers[cur].coins < 20) {
+                return 0;
+            }
+            break;
+        case 4:
+            if (gPlayers[cur].coins < 10 && GwSystem.total_turns != GwSystem.current_turn) {
+                return 0;
+            }
+            break;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80111338_2A6608_name_3E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8011155C_2A682C_name_3E);
 
