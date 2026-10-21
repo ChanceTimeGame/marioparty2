@@ -2,6 +2,10 @@
 #include "ovl_34.h"
 #include "game/pad.h"
 
+/* The other three players' objects. Retail quirk kept: the model file comes from the holder's
+   character (D_80110D6A[0]), the motions from the player's own. */
+
+
 /* The block holder's player object (MP1 func_800F7818). */
 
 
@@ -238,12 +242,24 @@ void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 play
     func_8000C024_CC24(obj, 1, 1);
     func_800298A4_2A4A4(obj->model[0], 4, 4);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010F760_266860_ChanceTime);
+void func_8010F760_266860_ChanceTime(omObjData* obj) {
+    u32 dir = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[1]].character].unk_04;
+    s32 file = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[0]].character].unk_0C;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010F82C_26692C_ChanceTime);
+    func_8010F4B4_2665B4_ChanceTime(obj, dir, file, D_80110D6A_267E6A_ChanceTime[1], -800.0f, 10.0f, 800.0f);
+}
+void func_8010F82C_26692C_ChanceTime(omObjData* obj) {
+    u32 dir = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[2]].character].unk_04;
+    s32 file = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[0]].character].unk_0C;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010F8F8_2669F8_ChanceTime);
+    func_8010F4B4_2665B4_ChanceTime(obj, dir, file, D_80110D6A_267E6A_ChanceTime[2], -700.0f, 10.0f, 800.0f);
+}
+void func_8010F8F8_2669F8_ChanceTime(omObjData* obj) {
+    u32 dir = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[3]].character].unk_04;
+    s32 file = D_800CD438_CE038[gPlayers[D_80110D6A_267E6A_ChanceTime[0]].character].unk_0C;
 
+    func_8010F4B4_2665B4_ChanceTime(obj, dir, file, D_80110D6A_267E6A_ChanceTime[3], -600.0f, 10.0f, 800.0f);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010F9C4_266AC4_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010FC18_266D18_ChanceTime);
