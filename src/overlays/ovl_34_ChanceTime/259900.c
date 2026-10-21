@@ -214,20 +214,152 @@ void func_80102E4C_259F4C_ChanceTime(omObjData* obj) {
 const u32 D_80110260_267360_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x826481F3, 0x00000000 };
 const u32 D_8011027C_26737C_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x82640000, 0x00000000 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80102E4C_259F4C_ChanceTime);
+/* GCC thinks it is still in .rodata after the strings above; INCLUDE_ASM switched to .text. */
+__asm__(".section .rodata");
 #endif
 
-/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
- * .text: switch back by hand (harmless once a C function precedes this). */
-__asm__(".section .rodata");
-const char D_801102A0_2673A0_ChanceTime[] = "item_hook";
+/* The left block holder (second variant of the scene off): a model with a hook node holding a
+   block (0x440008), ten random copies of the three scenery models around it. */
+void func_80103398_25A498_ChanceTime(omObjData* obj) {
+    CTPlayerWork* work;
+    s32 i;
+    CTMotion* motionSlot;
+    s16 motion;
+    s32 dir = 0x80000; /* file directory 8 */
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103398_25A498_ChanceTime);
+    obj->model[0] = LoadFormFile(0x80000, 0x8A9);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D2B4_2DEB4(obj->model[0], 0.0f, -69.0f, 100.0f);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0xFF, 0x20);
+    obj->unk_50 = func_80027154_27D54(sizeof(CTPlayerWork), 31000);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(CTPlayerWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(CTMotion), 31000);
+    work->unk_5A = obj->model[0];
+    work->unk_5B = 0;
+    func_80025384_25F84(obj->model[0], 0, 8, 0x80039);
+    obj->model[1] = LoadFormFile(0xD, 0x8A9);
+    obj->model[2] = LoadFormFile(0x440008, 0x8A9);
+    func_800298A4_2A4A4(obj->model[2], 0x4000, 0x4000);
+    func_8002C628_2D228(obj->model[2], obj->model[0], "item_hook");
+    obj->model[3] = LoadFormFile(8, 0x2CD);
+    for (i = 4; i < 14; i++) {
+        switch ((rand8() * 3) >> 8) {
+        case 0:
+            obj->model[i] = func_80027D3C_2893C(D_80110914_267A14_ChanceTime);
+            break;
+        case 1:
+            obj->model[i] = func_80027D3C_2893C(D_80110916_267A16_ChanceTime);
+            break;
+        default:
+            obj->model[i] = func_80027D3C_2893C(D_80110918_267A18_ChanceTime);
+            break;
+        }
+    }
+    func_80018CCC_198CC(obj, 0, dir | 1);
+    motionSlot = work->unk_E8;
+    motionSlot->unk_04 = motion = func_80025684_26284(dir | 0x3A);
+    func_80018CCC_198CC(obj, 1, dir | 2);
+    work->unk_E8[1].unk_04 = motion;
+    func_80018CCC_198CC(obj, 2, dir | 2);
+    work->unk_E8[2].unk_04 = motion;
+    func_80018CCC_198CC(obj, 3, dir | 0xF);
+    work->unk_E8[3].unk_04 = motion;
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    obj->trans.x = -D_8011008C_26718C_ChanceTime.x;
+    obj->trans.y = D_8011008C_26718C_ChanceTime.y;
+    obj->trans.z = D_8011008C_26718C_ChanceTime.z;
+    obj->rot.y = 0.0f;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->rot.y, obj->trans.z);
+    obj->scale.x = obj->scale.y = obj->scale.z = 0.9f;
+    for (i = 4; i < 14; i++) {
+        func_80029714_2A314(obj->model[i], obj->trans.x - 50.0f, obj->trans.y + 50.0f, obj->trans.z);
+    }
+    obj->func_ptr = func_801036C4_25A7C4_ChanceTime;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801036C4_25A7C4_ChanceTime);
+void func_801036C4_25A7C4_ChanceTime(omObjData* obj) {
+    if (D_80110062_267162_ChanceTime == 1) {
+        func_80103ADC_25ABDC_ChanceTime(obj, 1);
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, obj->trans.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103714_25A814_ChanceTime);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103A64_25AB64_ChanceTime);
+/* The right block holder: func_80103398 mirrored (scale.x -0.9). */
+void func_80103714_25A814_ChanceTime(omObjData* obj) {
+    CTPlayerWork* work;
+    s32 i;
+    CTMotion* motionSlot;
+    s16 motion;
+    s32 dir = 0x80000; /* file directory 8 */
+
+    obj->model[0] = LoadFormFile(0x80000, 0x8A9);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D2B4_2DEB4(obj->model[0], 0.0f, -69.0f, 100.0f);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0xFF, 0x20);
+    obj->unk_50 = func_80027154_27D54(sizeof(CTPlayerWork), 31000);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(CTPlayerWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(CTMotion), 31000);
+    work->unk_5A = obj->model[0];
+    work->unk_5B = 0;
+    func_80025384_25F84(obj->model[0], 0, 8, 0x8003A);
+    obj->model[1] = LoadFormFile(0xD, 0x8A9);
+    obj->model[2] = LoadFormFile(0x440008, 0x8B9);
+    func_800298A4_2A4A4(obj->model[2], 0x4000, 0x4000);
+    func_8002C628_2D228(obj->model[2], obj->model[0], "item_hook");
+    obj->model[3] = LoadFormFile(8, 0x8AD);
+    for (i = 4; i < 14; i++) {
+        switch ((rand8() * 3) >> 8) {
+        case 0:
+            obj->model[i] = func_80027D3C_2893C(D_80110914_267A14_ChanceTime);
+            break;
+        case 1:
+            obj->model[i] = func_80027D3C_2893C(D_80110916_267A16_ChanceTime);
+            break;
+        default:
+            obj->model[i] = func_80027D3C_2893C(D_80110918_267A18_ChanceTime);
+            break;
+        }
+    }
+    func_80018CCC_198CC(obj, 0, dir | 1);
+    motionSlot = work->unk_E8;
+    motionSlot->unk_04 = motion = func_80025684_26284(dir | 0x3A);
+    func_80018CCC_198CC(obj, 1, dir | 2);
+    work->unk_E8[1].unk_04 = motion;
+    func_80018CCC_198CC(obj, 2, dir | 2);
+    work->unk_E8[2].unk_04 = motion;
+    func_80018CCC_198CC(obj, 3, dir | 0xF);
+    work->unk_E8[3].unk_04 = motion;
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    obj->scale.x = -0.9f;
+    obj->scale.y = obj->scale.z = 0.9f;
+    func_8002C3A0_2CFA0(obj->model[0]);
+    func_80029A8C_2A68C(obj->model[0]);
+    obj->trans.x = D_8011008C_26718C_ChanceTime.x;
+    obj->trans.y = D_8011008C_26718C_ChanceTime.y;
+    obj->trans.z = D_8011008C_26718C_ChanceTime.z;
+    obj->rot.y = 0.0f;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->rot.y, obj->trans.z);
+    for (i = 4; i < 14; i++) {
+        func_80029714_2A314(obj->model[i], obj->trans.x + 50.0f, obj->trans.y + 50.0f, obj->trans.z);
+    }
+    obj->func_ptr = func_80103A64_25AB64_ChanceTime;
+}
+
+void func_80103A64_25AB64_ChanceTime(omObjData* obj) {
+    switch (D_80110062_267162_ChanceTime) {
+    case 1:
+        func_80103ADC_25ABDC_ChanceTime(obj, 0);
+        break;
+    case 2:
+        func_801052B4_25C3B4_ChanceTime(obj);
+        break;
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, obj->trans.z);
+}
+
 
 /* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
  * .text: switch back by hand (harmless once a C function precedes this). */

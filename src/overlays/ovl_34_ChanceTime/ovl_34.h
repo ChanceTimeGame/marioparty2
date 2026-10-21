@@ -43,6 +43,21 @@ s32 func_80069538_6A138(void);
 void func_80069770_6A370(void);
 f32 func_800B7890_B8490(f32); /* cos */
 s32 PlaySound(s32);
+s16 LoadFormFile(s32, s32);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void func_8002D1EC_2DDEC(s16 arg0, u8 arg1);
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* 2DE74.c: s8; retail passes 255 */
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+s16 func_80025684_26284(s32 id);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2); /* attach to a model's hook node */
+void func_8002C3A0_2CFA0(s16 arg0);
+void func_80029A8C_2A68C(s16 arg0);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* util.c: (UnkUtil*, ...) loads obj->motion[slot] */
 
 extern s8 D_80102708_103308;
 extern u16 D_800F8FE0_F9BE0;           /* player object count (C8E0) */
@@ -56,15 +71,28 @@ extern s32 D_800F8FD0_F9BD0;           /* scene state (C8E0 func_8000C3C8 copies
 
 /* ---- 34 work types ---- */
 
-/* omObjData::unk_50 of the player objects (C8E0.c's MgWork, 0x15C bytes; MP1 CTPlayerWork). */
+/* A motion slot of CTPlayerWork::unk_E8 (C8E0.c's MgMotion). */
+typedef struct CTMotion {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x08 */ s32 unk_08;
+} CTMotion; /* size = 0xC */
+
+/* omObjData::unk_50 of the player objects and of the two block holders (C8E0.c's MgWork,
+   0x15C bytes; MP1 CTPlayerWork). One pointer, at 0xE8: later fields shift on the host. */
 typedef struct CTPlayerWork {
     /* 0x00 */ char unk_00[0x38];
     /* 0x38 */ f32 unk_38; /* vertical speed; 1000.0f = on the ground */
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ char unk_44[0x18];
+    /* 0x44 */ char unk_44[0x16];
+    /* 0x5A */ u8 unk_5A;
+    /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
-    /* 0x60 */ char unk_60[0xFC];
+    /* 0x60 */ char unk_60[0x88];
+    /* 0xE8 */ CTMotion* unk_E8; /* [obj->mtncnt] */
+    /* 0xEC */ char unk_EC[0x70];
 } CTPlayerWork; /* size = 0x15C */
 
 #define CT_PWORK(obj) ((CTPlayerWork*)(obj)->unk_50)
@@ -86,6 +114,7 @@ extern s8 D_801100FC_2671FC_ChanceTime;
 extern f32 D_80110100_267200_ChanceTime;
 extern s16 D_80110104_267204_ChanceTime; /* 0xFF: title alpha; retail reads (u8) as D_80110105 */
 extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
+extern Vec D_8011008C_26718C_ChanceTime; /* block holders' position (x mirrored for the second) */
 extern u8 D_80110230_267330_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ？" */
 extern u8 D_80110248_267348_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ" */
 
