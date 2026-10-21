@@ -17,7 +17,8 @@ typedef struct Object {
     /* 0x30 */ Vec velocity;
     /* 0x3C */ omObjData* omObj1;
     /* 0x40 */ omObjData* omObj2;
-    /* 0x44 */ f32 unk44;
+    /* 0x44 */ s16 unk44; /* MBModel.baseMot (board.h): the same object */
+    /* 0x46 */ s16 unk46; /* MBModel.curMot; 63670's turn loop tests it */
     /* 0x48 */ f32 unk48;
     /* 0x4C */ s32 unk4C;
     /* 0x50 */ char unk50[3];

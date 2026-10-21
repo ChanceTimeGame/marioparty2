@@ -143,7 +143,6 @@ void func_80029A8C_2A68C(s16);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
 void func_8002A00C_2AC0C(s16);
-s16 func_8003D8F0_3E4F0(void*, void*, s32, char*);
 void func_8003E964_3F564(s16);
 void func_80057724_58324(s32);
 void func_80057768_58368(s32, s32, s32);

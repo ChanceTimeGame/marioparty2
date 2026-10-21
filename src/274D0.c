@@ -2,8 +2,6 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
-/* HmfModel.unkB4 holds the model's lights (HmfData_UnkD0, 0x48 bytes), not an HmfModel */
-#define MODEL_LIGHTS(p) (*(HmfData_UnkD0**)&(p)->unkB4)
 /* the camera being drawn (D_800FD2A8_FDEA8 is a void* in hmfman.h) */
 #define CAM ((HuCamera*)D_800FD2A8_FDEA8)
 
@@ -542,7 +540,7 @@ s16 Hu3DModelCreate(u8 *data, u32 arg1) {
         hmf->unk14 = 0;
         hmf->unk88 = 0;
         hmf->unk38 = 0;
-        hmf->unkC8 = 0;
+        hmf->unkC8 = NULL;
         if (data[2] == 'N' && data[3] == 'X') {
             modelP->unk02 = func_80038F0C_39B0C(data);
             arg1 &= ~(0x10 | 0x1);
@@ -728,11 +726,11 @@ s16 func_80027FA4_28BA4(u32 arg0, void* arg1, u8 arg2) {
             hmf->unk10 = 1;
             hmf->unk14 = 1;
             hmf->unk38 = NULL;
-            hmf->unkC8 = 0;
+            hmf->unkC8 = NULL;
             hmf->unk64->unk50 = 0;
             hmf->unk64->unk02 = -1;
-            hmf->unk64->unk5C = -1;
-            hmf->unk64->unk60 = 0;
+            hmf->unk64->unk5C = (HmfTexRef*) -1;
+            hmf->unk64->unk60 = NULL;
             hmf->unkB8 = NULL;
             hmf->unk0A = 0;
             hmf->unkD4 = func_80025884_26484;
@@ -820,10 +818,9 @@ void func_800283DC_28FDC(s16 arg0) {
             if (j != 0xFF) {
                 func_8003BAD8_3C6D8(j);
             }
-            if (hmf->unkC8 != 0) {
-                /* unkC8 holds a u8* (a pointer in an s32 field) */
+            if (hmf->unkC8 != NULL) {
                 for (i = 0; i < hmf->unk28; i++) {
-                    func_8003E888_3F488(((u8*)hmf->unkC8)[i]);
+                    func_8003E888_3F488(hmf->unkC8[i]);
                 }
             }
             func_80027340_27F40(hmf);
@@ -1052,9 +1049,9 @@ void func_800286FC_292FC(void* arg0, s32 arg1) {
                                 func_800B37C0_B43C0((f32*)sp58);
                             }
                         }
-                        hmf->unkD0 = MODEL_LIGHTS(p);
-                        if (MODEL_LIGHTS(p) != NULL) {
-                            func_80026F00_27B00(MODEL_LIGHTS(p));
+                        hmf->unkD0 = p->unkB4;
+                        if (p->unkB4 != NULL) {
+                            func_80026F00_27B00(p->unkB4);
                         }
                         if (p->unk02 != 0xFF) {
                             hmf->unk90 = &D_800F92B4_F9EB4[p->unk02];
@@ -1096,7 +1093,7 @@ void func_800286FC_292FC(void* arg0, s32 arg1) {
                         if (hmf->unk9C != NULL) {
                             func_8003AFF4_3BBF4(hmf);
                         }
-                        if (hmf->unkC8 != 0) {
+                        if (hmf->unkC8 != NULL) {
                             func_8002C810_2D410(p);
                         }
                     }
@@ -1579,13 +1576,6 @@ void func_8002A9E8_2B5E8(s16 arg0) {
     D_800CA028_CAC28 = arg0;
 }
 
-/* HmfData.unk84 entries (MP1 unk2C0C0Struct50, 0xA4 there) */
-typedef struct HmfMotionGroup {
-    /* 0x00 */ s16 unk00; /* count of unk50 */
-    /* 0x02 */ char unk02[0x4E];
-    /* 0x50 */ s16* unk50; /* part indices */
-    /* 0x54 */ char unk54[0x44];
-} HmfMotionGroup; /* size = 0x98 */
 
 /* MP1 func_80026A0C (src/24740.c; its decomp-permuter shape): the motion group holding a part;
    MP2 falls back to the hit transforms (unk6C) when the model has no groups */
@@ -1599,9 +1589,9 @@ void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
 
     if (model->unk84 != (void*)-1) {
         for (i = 0; i < model->unk16; i++) {
-            n = ((HmfMotionGroup*)model->unk84)[i].unk00;
+            n = model->unk84[i].unk00;
             for (j = 0; j < n; j++) {
-                if (((HmfMotionGroup*)model->unk84)[i].unk50[j] == idx) {
+                if (model->unk84[i].unk50[j] == idx) {
                     break;
                 }
             }
@@ -1613,7 +1603,7 @@ void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
         if (i == model->unk16) {
             return (void*)-1;
         }
-        return &((HmfMotionGroup*)model->unk84)[i];
+        return &model->unk84[i];
     }
     for (i = 0; i < model->unk68; i++) {
         if (model->unk6C[i].unk00 == idx) {
@@ -2004,17 +1994,6 @@ void func_8002C20C_2CE0C(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg
     }
 }
 
-/* A part's face (MP1 unk2C0C0Struct20; 30560 has the same view) */
-typedef struct HmfFaceRec {
-    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
-    /* 0x01 */ s8 unk01[3]; /* normal */
-    /* 0x04 */ s16 unk04[4]; /* vertices */
-    /* 0x0C */ f32 unk0C[4]; /* s */
-    /* 0x1C */ f32 unk1C[4]; /* t */
-    /* 0x2C */ u8 unk2C[4];
-    /* 0x30 */ s16 unk30;
-    /* 0x32 */ s16 unk32;
-} HmfFaceRec; /* size 0x34 */
 
 /* MP1 func_80028314 (src/24740.c): reverse every face's winding */
 void func_8002C3A0_2CFA0(s16 arg0) {
@@ -2113,10 +2092,9 @@ void func_8002C810_2D410(HmfModel* arg0) {
     s16 frame = arg0->unk40;
     s16 i;
 
-    /* unkC8 holds a u8* (a pointer in an s32 field) */
     for (i = 0; i < hmf->unk28; i++) {
-        func_8003E4F4_3F0F4(((u8*)hmf->unkC8)[i], 1, 1);
-        func_8003F57C_4017C(((u8*)hmf->unkC8)[i], frame);
+        func_8003E4F4_3F0F4(hmf->unkC8[i], 1, 1);
+        func_8003F57C_4017C(hmf->unkC8[i], frame);
     }
 }
 
@@ -2306,8 +2284,8 @@ void func_8002D1EC_2DDEC(s16 arg0, u8 arg1) {
     HmfModel* p = &D_800FC834_FD434[arg0];
     HmfData_UnkD0* l;
 
-    if (MODEL_LIGHTS(p) == NULL) {
-        l = MODEL_LIGHTS(p) = func_80027154_27D54(0x48, D_800FA1AA_FADAA);
+    if (p->unkB4 == NULL) {
+        l = p->unkB4 = func_80027154_27D54(0x48, D_800FA1AA_FADAA);
         l->unk03 = arg1;
         l->unk00 = l->unk01 = l->unk02 = 0x40;
         l->unk04 = l->unk05 = l->unk06 = 0x64;
@@ -2315,7 +2293,7 @@ void func_8002D1EC_2DDEC(s16 arg0, u8 arg1) {
 }
 
 void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3) {
-    HmfModel *other;
+    HmfData_UnkD0 *other;
 
     other = D_800FC834_FD434[arg0].unkB4;
     if (other != NULL) {
@@ -2329,7 +2307,7 @@ void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3) {
 // register allocation: retail loads unkB4 into v0 and copies it to s0 after the NULL test (masked 1)
 #ifdef NON_MATCHING
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    HmfData_UnkD0* l = MODEL_LIGHTS(&D_800FC834_FD434[arg0]);
+    HmfData_UnkD0* l = D_800FC834_FD434[arg0].unkB4;
     f32 len;
 
     if (l != NULL) {

@@ -45,36 +45,7 @@ typedef struct HmfMotionTrack {
     /* 0x0E */ s16 unk_0E; /* key count */
 } HmfMotionTrack; /* size = 0x10; MP1 unk34D80Struct60 */
 
-typedef struct HmfMotion {
-    /* 0x00 */ u8 unk_00; /* track count */
-    /* 0x01 */ char unk_01;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ void** unk_04;
-    /* 0x08 */ HmfMotionTrack** unk_08;
-    /* 0x0C */ u8* unk_0C; /* per track: 0x4E transform tree, 0x0D motion object */
-    /* 0x10 */ s16* unk_10; /* start frames */
-    /* 0x14 */ f32* unk_14; /* key values */
-    /* 0x18 */ s32 unk_18;
-} HmfMotion; /* size = 0x1C: the header's HmfMotionSlot under 30560's own field types */
 
-/* HmfData.unk84 entries (0x98 bytes; MP1 unk2C0C0Struct50) */
-typedef struct HmfMotionObj {
-    /* 0x00 */ s16 unk_00; /* child count */
-    /* 0x02 */ char unk_02[2];
-    /* 0x04 */ Vec unk_04;
-    /* 0x10 */ Vec unk_10;
-    /* 0x1C */ Vec unk_1C;
-    /* 0x28 */ Vec unk_28;
-    /* 0x34 */ Vec unk_34;
-    /* 0x40 */ Vec unk_40;
-    /* 0x4C */ u8 unk_4C;
-    /* 0x4D */ u8 unk_4D;
-    /* 0x4E */ u8 unk_4E;
-    /* 0x4F */ char unk_4F;
-    /* 0x50 */ s16* unk_50; /* children: part index, or 0x8000 | motion object index */
-    /* 0x54 */ struct HmfData* unk_54; /* the model owning the parts */
-    /* 0x58 */ f32 unk_58[4][4];
-} HmfMotionObj; /* size = 0x98 */
 
 /* MP1 unk2C0C0StructB4 */
 
@@ -221,7 +192,7 @@ s32 func_80038024_38C24(HmfData*, s16, Matrix4f, Matrix4f);
 void func_80030D58_31958(HmfData*, s16);
 void func_80031170_31D70(HmfData*, s16);
 void func_800316F0_322F0(HmfData*, s16);
-void func_80039B54_3A754(HmfData*, f32, HmfMotion*, s32);
+void func_80039B54_3A754(HmfData*, f32, HmfMotionSlot*, s32);
 void func_8003A4B8_3B0B8(HmfData*, f32, f32);
 extern Matrix4f D_80100010_100C10[];
 extern s16 D_800F64B2_F70B2;
@@ -504,16 +475,16 @@ void func_8002FD38_30938(HmfData* arg0) {
         part->unk10 = D_80101646_102246 - part->unk0E;
 
         gSPEndDisplayList(D_800FDBCC_FE7CC++);
-        part->unk60 = (s32) D_800FC888_FD488; /* a pointer in an s32 slot */
+        part->unk60 = D_800FC888_FD488;
 
         if (D_8010271C_10331C == buf2) {
             HMF_DL(arg0)[i] = func_80027154_27D54(size = (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], size);
-            part->unk5C = 0;
+            part->unk5C = NULL;
             part->unk64 = NULL;
         } else {
             gSPEndDisplayList(D_8010271C_10331C++);
-            part->unk5C = (s32) D_800F8C4C_F984C; /* a pointer in an s32 slot */
+            part->unk5C = D_800F8C4C_F984C;
             HMF_DL(arg0)[i] = func_80027154_27D54(
                 (D_800FDBCC_FE7CC - var_s4 + D_8010271C_10331C - buf2) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx));
@@ -904,38 +875,38 @@ void func_80031170_31D70(HmfData* arg0, s16 arg1) {
     Matrix4f sp50;
     s16 i;
 
-    temp_s1 = &((HmfMotionObj*) arg0->unk84)[arg1 & 0x7FFF];
+    temp_s1 = &arg0->unk84[arg1 & 0x7FFF];
     var_s7 = 0;
     var_s4 = 0;
 
     if (arg0->unk90 == NULL) {
-        func_80025BA4_267A4(temp_s1->unk_58, D_801016D0_1022D0[0], sp10);
-        if (temp_s1->unk_1C.x != 1.0f || temp_s1->unk_1C.y != 1.0f || temp_s1->unk_1C.z != 1.0f) {
-            func_800B1E50_B2A50(sp50, temp_s1->unk_1C.x, temp_s1->unk_1C.y, temp_s1->unk_1C.z);
+        func_80025BA4_267A4(temp_s1->unk58, D_801016D0_1022D0[0], sp10);
+        if (temp_s1->unk1C.x != 1.0f || temp_s1->unk1C.y != 1.0f || temp_s1->unk1C.z != 1.0f) {
+            func_800B1E50_B2A50(sp50, temp_s1->unk1C.x, temp_s1->unk1C.y, temp_s1->unk1C.z);
             D_8010107C_101C7C++;
             func_80025BA4_267A4(sp50, D_80100010_100C10[D_8010107C_101C7C], D_80100010_100C10[D_8010107C_101C7C + 1]);
             var_s7 = 1;
         }
     } else {
-        if (temp_s1->unk_28.x != 0.0f || temp_s1->unk_28.y != 0.0f || temp_s1->unk_28.z != 0.0f) {
-            func_800B1F50_B2B50(sp10, temp_s1->unk_28.x, temp_s1->unk_28.y, temp_s1->unk_28.z);
+        if (temp_s1->unk28.x != 0.0f || temp_s1->unk28.y != 0.0f || temp_s1->unk28.z != 0.0f) {
+            func_800B1F50_B2B50(sp10, temp_s1->unk28.x, temp_s1->unk28.y, temp_s1->unk28.z);
             var_s4 = 1;
         }
-        if (temp_s1->unk_34.x != 0.0f || temp_s1->unk_34.y != 0.0f || temp_s1->unk_34.z != 0.0f) {
+        if (temp_s1->unk34.x != 0.0f || temp_s1->unk34.y != 0.0f || temp_s1->unk34.z != 0.0f) {
             if (var_s4 == 0) {
-                arg0->unkD8(sp10, temp_s1->unk_34.x, temp_s1->unk_34.y, temp_s1->unk_34.z);
+                arg0->unkD8(sp10, temp_s1->unk34.x, temp_s1->unk34.y, temp_s1->unk34.z);
             } else {
-                arg0->unkD4(sp10, temp_s1->unk_34.x, temp_s1->unk_34.y, temp_s1->unk_34.z);
+                arg0->unkD4(sp10, temp_s1->unk34.x, temp_s1->unk34.y, temp_s1->unk34.z);
             }
             var_s4 = 1;
         }
-        if (temp_s1->unk_40.x != 1.0f || temp_s1->unk_40.y != 1.0f || temp_s1->unk_40.z != 1.0f) {
+        if (temp_s1->unk40.x != 1.0f || temp_s1->unk40.y != 1.0f || temp_s1->unk40.z != 1.0f) {
             if (var_s4 != 0) {
-                func_80025830_26430(sp10, temp_s1->unk_40.x, temp_s1->unk_40.y, temp_s1->unk_40.z);
+                func_80025830_26430(sp10, temp_s1->unk40.x, temp_s1->unk40.y, temp_s1->unk40.z);
             } else {
-                func_800B1E50_B2A50(sp10, temp_s1->unk_40.x, temp_s1->unk_40.y, temp_s1->unk_40.z);
+                func_800B1E50_B2A50(sp10, temp_s1->unk40.x, temp_s1->unk40.y, temp_s1->unk40.z);
             }
-            func_800B1E50_B2A50(sp50, temp_s1->unk_40.x, temp_s1->unk_40.y, temp_s1->unk_40.z);
+            func_800B1E50_B2A50(sp50, temp_s1->unk40.x, temp_s1->unk40.y, temp_s1->unk40.z);
             D_8010107C_101C7C++;
             func_80025BA4_267A4(sp50, D_80100010_100C10[D_8010107C_101C7C], D_80100010_100C10[D_8010107C_101C7C + 1]);
             var_s7 = 1;
@@ -946,7 +917,7 @@ void func_80031170_31D70(HmfData* arg0, s16 arg1) {
             func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
         }
         if (D_800F64B2_F70B2 != 1 && arg0->unk0B == 1) {
-            func_80030CD4_318D4(temp_s1->unk_58, D_801016D0_1022D0[D_800FD470_FE070]);
+            func_80030CD4_318D4(temp_s1->unk58, D_801016D0_1022D0[D_800FD470_FE070]);
         }
         func_80025BA4_267A4(D_801016D0_1022D0[D_800FD470_FE070], D_801016D0_1022D0[0], sp10);
     }
@@ -954,8 +925,8 @@ void func_80031170_31D70(HmfData* arg0, s16 arg1) {
     func_800B3040_B3C40(sp10, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
     var_s3 = D_800F928C_F9E8C++;
 
-    list = temp_s1->unk_50;
-    count = temp_s1->unk_00;
+    list = temp_s1->unk50;
+    count = temp_s1->unk00;
     for (i = 0; i < count; i++) {
         temp_v1 = *list++;
         if (temp_v1 & 0x8000) {
@@ -963,15 +934,15 @@ void func_80031170_31D70(HmfData* arg0, s16 arg1) {
                 func_80031170_31D70(arg0, temp_v1 & 0x7FFF);
             }
         } else {
-            if (temp_s1->unk_54->unk64[temp_v1].unk50 & 0x70000000) {
-                func_80038024_38C24(temp_s1->unk_54, temp_v1, sp10, sp50);
+            if (temp_s1->unk54->unk64[temp_v1].unk50 & 0x70000000) {
+                func_80038024_38C24(temp_s1->unk54, temp_v1, sp10, sp50);
                 func_80025BA4_267A4(D_80100010_100C10[D_8010107C_101C7C + 1], sp50, sp10);
                 func_800B3040_B3C40(sp10, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
                 var_s3 = D_800F928C_F9E8C++;
             }
-            func_80031FD8_32BD8(temp_s1->unk_54, temp_v1, (u8*) D_800FD83C_FE43C + 0x40 * var_s3, sp10);
+            func_80031FD8_32BD8(temp_s1->unk54, temp_v1, (u8*) D_800FD83C_FE43C + 0x40 * var_s3, sp10);
             if (arg0->unk64[temp_v1].unk58 != NULL) {
-                if (arg0 == temp_s1->unk_54) {
+                if (arg0 == temp_s1->unk54) {
                     func_80031170_31D70(arg0->unk64[temp_v1].unk58, 0);
                 }
             }
@@ -997,12 +968,12 @@ void func_800316F0_322F0(HmfData* arg0, s16 arg1) {
     Matrix4f sp50;
     s16 i;
 
-    temp_s1 = &((HmfMotionObj*) arg0->unk84)[arg1 & 0x7FFF];
+    temp_s1 = &arg0->unk84[arg1 & 0x7FFF];
     var_s7 = 0;
 
-    func_80025BA4_267A4(temp_s1->unk_58, D_801016D0_1022D0[0], sp10);
-    if (temp_s1->unk_1C.x != 1.0f || temp_s1->unk_1C.y != 1.0f || temp_s1->unk_1C.z != 1.0f) {
-        func_800B1E50_B2A50(sp50, temp_s1->unk_1C.x, temp_s1->unk_1C.y, temp_s1->unk_1C.z);
+    func_80025BA4_267A4(temp_s1->unk58, D_801016D0_1022D0[0], sp10);
+    if (temp_s1->unk1C.x != 1.0f || temp_s1->unk1C.y != 1.0f || temp_s1->unk1C.z != 1.0f) {
+        func_800B1E50_B2A50(sp50, temp_s1->unk1C.x, temp_s1->unk1C.y, temp_s1->unk1C.z);
         D_8010107C_101C7C++;
         func_80025BA4_267A4(sp50, D_80100010_100C10[D_8010107C_101C7C], D_80100010_100C10[D_8010107C_101C7C + 1]);
         var_s7 = 1;
@@ -1011,8 +982,8 @@ void func_800316F0_322F0(HmfData* arg0, s16 arg1) {
     func_800B3040_B3C40(sp10, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
     var_s3 = D_800F928C_F9E8C++;
 
-    list = temp_s1->unk_50;
-    count = temp_s1->unk_00;
+    list = temp_s1->unk50;
+    count = temp_s1->unk00;
     for (i = 0; i < count; i++) {
         temp_v1 = *list++;
         if (temp_v1 & 0x8000) {
@@ -1020,15 +991,15 @@ void func_800316F0_322F0(HmfData* arg0, s16 arg1) {
                 func_800316F0_322F0(arg0, temp_v1 & 0x7FFF);
             }
         } else {
-            if (temp_s1->unk_54->unk64[temp_v1].unk50 & 0x70000000) {
-                func_80038024_38C24(temp_s1->unk_54, temp_v1, sp10, sp50);
+            if (temp_s1->unk54->unk64[temp_v1].unk50 & 0x70000000) {
+                func_80038024_38C24(temp_s1->unk54, temp_v1, sp10, sp50);
                 func_80025BA4_267A4(D_80100010_100C10[D_8010107C_101C7C + 1], sp50, sp10);
                 func_800B3040_B3C40(sp10, (u8*) D_800FD83C_FE43C + 0x40 * D_800F928C_F9E8C);
                 var_s3 = D_800F928C_F9E8C++;
             }
-            func_80031FD8_32BD8(temp_s1->unk_54, temp_v1, (u8*) D_800FD83C_FE43C + 0x40 * var_s3, sp10);
+            func_80031FD8_32BD8(temp_s1->unk54, temp_v1, (u8*) D_800FD83C_FE43C + 0x40 * var_s3, sp10);
             if (arg0->unk64[temp_v1].unk58 != NULL) {
-                if (arg0 == temp_s1->unk_54) {
+                if (arg0 == temp_s1->unk54) {
                     func_800316F0_322F0(arg0->unk64[temp_v1].unk58, 0);
                 }
             }
@@ -1058,11 +1029,11 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
             func_80036C44_37844(arg0, temp_s4->unk50 & ~0x06000000, arg1);
 
             gSPSegment(D_800FDBCC_FE7CC++, 0x01, osVirtualToPhysical(arg0->unk44[D_800FDBE0_FE7E0]));
-            if (temp_s4->unk5C != 0) {
-                if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
+            if (temp_s4->unk5C != NULL) {
+                if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
                     gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
                 }
-                D_800FC888_FD488 = (void*) temp_s4->unk60;
+                D_800FC888_FD488 = temp_s4->unk60;
             } else {
                 D_800FC888_FD488 = NULL;
             }
@@ -1098,11 +1069,11 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
         if (HMF_DL(arg0)[arg1] == NULL) {
             return;
         }
-        if (temp_s4->unk5C != 0) {
-            if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
+        if (temp_s4->unk5C != NULL) {
+            if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
                 gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
             }
-            D_800FC888_FD488 = (void*) temp_s4->unk60;
+            D_800FC888_FD488 = temp_s4->unk60;
         } else {
             D_800FC888_FD488 = NULL;
         }
@@ -1333,17 +1304,6 @@ Gfx* func_800322BC_32EBC(u16 arg0, Gfx* arg1, Gfx* arg2) {
 #else
 INCLUDE_ASM("asm/nonmatchings/30560", func_800322BC_32EBC);
 #endif
-/* A part's face (MP1 unk2C0C0Struct20; 1D0B0's HmfFaceData) */
-typedef struct HmfFaceRec {
-    /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
-    /* 0x01 */ s8 unk01[3]; /* normal */
-    /* 0x04 */ s16 unk04[4]; /* vertices */
-    /* 0x0C */ f32 unk0C[4]; /* s */
-    /* 0x1C */ f32 unk1C[4]; /* t */
-    /* 0x2C */ u8 unk2C[4]; /* per vertex material (unlit faces) */
-    /* 0x30 */ s16 unk30; /* material */
-    /* 0x32 */ s16 unk32; /* texture, < 0 for none */
-} HmfFaceRec; /* size 0x34 */
 
 /* A batch of faces drawn with one material and texture (MP1 unk2C0C0StructD0) */
 typedef struct HmfDrawFace {
@@ -2498,7 +2458,7 @@ void func_800386DC_392DC(HmfData* arg0, s16 arg1) {
 }
 /* MP1 func_80033CBC (src/2C0C0.c); as func_800386DC_392DC, a scale pops D_8010107C_101C7C unpushed */
 void func_80038964_39564(HmfData* arg0, s16 arg1) {
-    HmfMotionObj* temp_s1 = &((HmfMotionObj*) arg0->unk84)[arg1];
+    HmfMotionObj* temp_s1 = &arg0->unk84[arg1];
     s16 var_s5 = 0;
     s16 var_s2 = 0;
     s16 i;
@@ -2506,18 +2466,18 @@ void func_80038964_39564(HmfData* arg0, s16 arg1) {
 
     func_800B37C0_B43C0(sp10);
 
-    if (temp_s1->unk_04.x != 0.0f || temp_s1->unk_04.y != 0.0f || temp_s1->unk_04.z != 0.0f) {
-        func_80025770_26370(sp10, temp_s1->unk_04.x, temp_s1->unk_04.y, temp_s1->unk_04.z);
+    if (temp_s1->unk04.x != 0.0f || temp_s1->unk04.y != 0.0f || temp_s1->unk04.z != 0.0f) {
+        func_80025770_26370(sp10, temp_s1->unk04.x, temp_s1->unk04.y, temp_s1->unk04.z);
         var_s2 = 1;
     }
 
-    if (temp_s1->unk_10.x != 0.0f || temp_s1->unk_10.y != 0.0f || temp_s1->unk_10.z != 0.0f) {
-        arg0->unkD4(sp10, temp_s1->unk_10.x, temp_s1->unk_10.y, temp_s1->unk_10.z);
+    if (temp_s1->unk10.x != 0.0f || temp_s1->unk10.y != 0.0f || temp_s1->unk10.z != 0.0f) {
+        arg0->unkD4(sp10, temp_s1->unk10.x, temp_s1->unk10.y, temp_s1->unk10.z);
         var_s2 = 1;
     }
 
-    if (temp_s1->unk_1C.x != 1.0f || temp_s1->unk_1C.y != 1.0f || temp_s1->unk_1C.z != 1.0f) {
-        func_80025830_26430(sp10, temp_s1->unk_1C.x, temp_s1->unk_1C.y, temp_s1->unk_1C.z);
+    if (temp_s1->unk1C.x != 1.0f || temp_s1->unk1C.y != 1.0f || temp_s1->unk1C.z != 1.0f) {
+        func_80025830_26430(sp10, temp_s1->unk1C.x, temp_s1->unk1C.y, temp_s1->unk1C.z);
         var_s5 = 1;
         var_s2 = 1;
     }
@@ -2527,11 +2487,11 @@ void func_80038964_39564(HmfData* arg0, s16 arg1) {
         func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
     }
 
-    func_80030CD4_318D4(temp_s1->unk_58, D_801016D0_1022D0[D_800FD470_FE070]);
+    func_80030CD4_318D4(temp_s1->unk58, D_801016D0_1022D0[D_800FD470_FE070]);
 
-    for (i = 0; i < temp_s1->unk_00; i++) {
-        if ((temp_s1->unk_50[i] & 0x8000) && (temp_s1->unk_50[i] != -1)) {
-            func_80038964_39564(arg0, temp_s1->unk_50[i] & ~0x8000);
+    for (i = 0; i < temp_s1->unk00; i++) {
+        if ((temp_s1->unk50[i] & 0x8000) && (temp_s1->unk50[i] != -1)) {
+            func_80038964_39564(arg0, temp_s1->unk50[i] & ~0x8000);
         }
     }
 
@@ -2968,11 +2928,11 @@ typedef struct HmfBezierKey {
     /* 0x04 */ f32 in;
     /* 0x08 */ f32 out;
 } HmfBezierKey; /* size = 0xC */
-f32 func_8003A154_3AD54(HmfMotion*, HmfMotionTrack*, f32);
-f32 func_8003A2B0_3AEB0(HmfMotion*, HmfMotionTrack*, f32);
+f32 func_8003A154_3AD54(HmfMotionSlot*, HmfMotionTrack*, f32);
+f32 func_8003A2B0_3AEB0(HmfMotionSlot*, HmfMotionTrack*, f32);
 
 /* MP1 func_80034ED8 (src/34D80.c): apply a motion's tracks at frame arg1 */
-void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
+void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotionSlot* arg2, s32 arg3) {
     HitXform* p40;
     HitXform* q;
     HmfMotionObj* p50;
@@ -3001,27 +2961,27 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
             p50 = arg0->unk84;
             n = arg0->unk16;
             for (i = 0; i < n; i++) {
-                if (p50->unk_4C != 0) {
-                    p50->unk_28 = p50->unk_04;
+                if (p50->unk4C != 0) {
+                    p50->unk28 = p50->unk04;
                 }
-                if (p50->unk_4D != 0) {
-                    p50->unk_34 = p50->unk_10;
+                if (p50->unk4D != 0) {
+                    p50->unk34 = p50->unk10;
                 }
-                if (p50->unk_4E != 0) {
-                    p50->unk_40 = p50->unk_1C;
+                if (p50->unk4E != 0) {
+                    p50->unk40 = p50->unk1C;
                 }
-                p50->unk_4E = 0;
-                p50->unk_4D = 0;
-                p50->unk_4C = 0;
+                p50->unk4E = 0;
+                p50->unk4D = 0;
+                p50->unk4C = 0;
                 p50++;
             }
         }
     }
 
-    if (arg2 != (HmfMotion*) -1) {
-        n = arg2->unk_00;
+    if (arg2 != (HmfMotionSlot*) -1) {
+        n = arg2->unk00;
         for (i = 0; i < n; i++) {
-            e = arg2->unk_08[i];
+            e = arg2->unk08[i];
             if (e->unk_04 & 0x8000) {
                 continue;
             }
@@ -3029,10 +2989,10 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
             if (idx == 0x7FFF) {
                 idx = 0;
             }
-            if (arg1 < arg2->unk_10[e->unk_0A]) {
+            if (arg1 < arg2->unk10[e->unk_0A]) {
                 continue;
             }
-            switch (arg2->unk_0C[i]) {
+            switch (arg2->unk0C[i]) {
                 case 78:
                     switch (e->unk_00) {
                         case 76:
@@ -3088,12 +3048,12 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
                     }
                     break;
                 case 13:
-                    p50 = &((HmfMotionObj*) arg0->unk84)[idx];
+                    p50 = &arg0->unk84[idx];
                     switch (e->unk_00) {
                         case 23:
-                            dst = &p50->unk_28.x;
+                            dst = &p50->unk28.x;
                             if (e->unk_01 == 'F') {
-                                dst = &p50->unk_28.y;
+                                dst = &p50->unk28.y;
                             } else if (e->unk_01 == 'G') {
                                 dst += 2;
                             }
@@ -3102,12 +3062,12 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
                             } else {
                                 *dst = func_8003A2B0_3AEB0(arg2, e, arg1);
                             }
-                            p50->unk_4C = 0x80;
+                            p50->unk4C = 0x80;
                             break;
                         case 76:
-                            dst = &p50->unk_34.x;
+                            dst = &p50->unk34.x;
                             if (e->unk_01 == 'F') {
-                                dst = &p50->unk_34.y;
+                                dst = &p50->unk34.y;
                             } else if (e->unk_01 == 'G') {
                                 dst += 2;
                             }
@@ -3116,12 +3076,12 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
                             } else {
                                 *dst = func_8003A2B0_3AEB0(arg2, e, arg1);
                             }
-                            p50->unk_4D = 0x80;
+                            p50->unk4D = 0x80;
                             break;
                         case 27:
-                            dst = &p50->unk_40.x;
+                            dst = &p50->unk40.x;
                             if (e->unk_01 == 'F') {
-                                dst = &p50->unk_40.y;
+                                dst = &p50->unk40.y;
                             } else if (e->unk_01 == 'G') {
                                 dst += 2;
                             }
@@ -3130,7 +3090,7 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
                             } else {
                                 *dst = func_8003A2B0_3AEB0(arg2, e, arg1);
                             }
-                            p50->unk_4E = 0x80;
+                            p50->unk4E = 0x80;
                             break;
                     }
                     break;
@@ -3139,18 +3099,18 @@ void func_80039B54_3A754(HmfData* arg0, f32 arg1, HmfMotion* arg2, s32 arg3) {
     }
 }
 
-f32 func_8003A154_3AD54(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
+f32 func_8003A154_3AD54(HmfMotionSlot* arg0, HmfMotionTrack* arg1, f32 arg2) {
     f32* vals;
     s16* keys;
     s16 i;
     s16 j;
     s16 d;
 
-    vals = &arg0->unk_14[arg1->unk_0C];
+    vals = &arg0->unk14[arg1->unk_0C];
     if (arg2 == 0.0f || arg1->unk_0E == 1) {
         return vals[0];
     }
-    keys = &arg0->unk_10[arg1->unk_0A];
+    keys = &arg0->unk10[arg1->unk_0A];
     for (i = 0; i < arg1->unk_0E; i++) {
         if (arg2 < keys[i]) {
             break;
@@ -3171,7 +3131,7 @@ const f64 D_800D22D8_D2ED8 __attribute__((section(".rodata"))) = 3.0;
 #ifdef NON_MATCHING
 /* Hermite interpolation of a track's keys (MP1 func_80035630 is a Bezier one). The tangents
    both come from the earlier key (retail) */
-f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
+f32 func_8003A2B0_3AEB0(HmfMotionSlot* arg0, HmfMotionTrack* arg1, f32 arg2) {
     HmfBezierKey* vals;
     HmfBezierKey* cur;
     HmfBezierKey* prev;
@@ -3191,11 +3151,11 @@ f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
     f32 h1;
     f32 h2;
 
-    vals = (HmfBezierKey*) &arg0->unk_14[arg1->unk_0C];
+    vals = (HmfBezierKey*) &arg0->unk14[arg1->unk_0C];
     if (arg2 == 0.0f || arg1->unk_0E == 1) {
         return vals[0].v;
     }
-    keys = &arg0->unk_10[arg1->unk_0A];
+    keys = &arg0->unk10[arg1->unk_0A];
     n = arg1->unk_0E;
     for (kp = keys, i = 0; i < n; i++) {
         if (arg2 < *kp++) {
@@ -3228,7 +3188,7 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_8003A2B0_3AEB0);
    everything else is identical */
 #ifdef NON_MATCHING
 void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
-    HmfMotion* anim;
+    HmfMotionSlot* anim;
     HmfMotionTrack* e;
     HitXform* p40;
     HmfMotionObj* p50;
@@ -3246,8 +3206,8 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
     w = arg2;
     anim = arg0->unk94;
     inv = 1.0f - w;
-    for (i = 0; i < anim->unk_00; i++) {
-        e = anim->unk_08[i];
+    for (i = 0; i < anim->unk00; i++) {
+        e = anim->unk08[i];
         if (e->unk_04 & 0x8000) {
             continue;
         }
@@ -3255,7 +3215,7 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
         if (idx == 0x7FFF) {
             idx = 0;
         }
-        if (time < anim->unk_10[e->unk_0A]) {
+        if (time < anim->unk10[e->unk_0A]) {
             continue;
         }
         if (e->unk_01 != 'E') {
@@ -3266,7 +3226,7 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
         } else {
             axis = 0;
         }
-        switch (anim->unk_0C[i]) {
+        switch (anim->unk0C[i]) {
             case 78:
                 switch (e->unk_00) {
                     case 76:
@@ -3306,17 +3266,17 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
             case 13:
                 switch (e->unk_00) {
                     case 23:
-                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_28.x)[axis];
+                    dst = &(&arg0->unk84[idx].unk28.x)[axis];
                     if (e->unk_02 == 'I') {
                         val = func_8003A154_3AD54(anim, e, time);
                     } else {
                         val = func_8003A2B0_3AEB0(anim, e, time);
                     }
                     *dst = inv * *dst + val * w;
-                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4C |= (1 << axis) | 0x40;
+                    arg0->unk84[idx].unk4C |= (1 << axis) | 0x40;
                     break;
                     case 76:
-                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_34.x)[axis];
+                    dst = &(&arg0->unk84[idx].unk34.x)[axis];
                     if (e->unk_02 == 'I') {
                         val = func_8003A154_3AD54(anim, e, time);
                     } else {
@@ -3336,17 +3296,17 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
                         val -= 360.0f;
                     }
                     *dst = inv * *dst + val * w;
-                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4D |= (1 << axis) | 0x40;
+                    arg0->unk84[idx].unk4D |= (1 << axis) | 0x40;
                     break;
                     case 27:
-                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_40.x)[axis];
+                    dst = &(&arg0->unk84[idx].unk40.x)[axis];
                     if (e->unk_02 == 'I') {
                         val = func_8003A154_3AD54(anim, e, time);
                     } else {
                         val = func_8003A2B0_3AEB0(anim, e, time);
                     }
                     *dst = inv * *dst + val * w;
-                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4E |= (1 << axis) | 0x40;
+                    arg0->unk84[idx].unk4E |= (1 << axis) | 0x40;
                     break;
                 }
                 break;
@@ -3399,61 +3359,61 @@ void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
         }
     } else {
         for (i = 0; i < arg0->unk16; i++) {
-            p50 = &((HmfMotionObj*) arg0->unk84)[i];
-            if (p50->unk_4C != 0) {
-            f = p50->unk_4C;
-            dst = &p50->unk_28.x;
+            p50 = &arg0->unk84[i];
+            if (p50->unk4C != 0) {
+            f = p50->unk4C;
+            dst = &p50->unk28.x;
             if (!(f & 0x40)) {
-                dst[0] = inv * dst[0] + w * p50->unk_04.x;
-                dst[1] = inv * dst[1] + w * p50->unk_04.y;
-                dst[2] = inv * dst[2] + w * p50->unk_04.z;
+                dst[0] = inv * dst[0] + w * p50->unk04.x;
+                dst[1] = inv * dst[1] + w * p50->unk04.y;
+                dst[2] = inv * dst[2] + w * p50->unk04.z;
             } else {
                 if (!(f & 1)) {
-                    dst[0] = inv * dst[0] + w * p50->unk_04.x;
+                    dst[0] = inv * dst[0] + w * p50->unk04.x;
                 }
                 if (!(f & 2)) {
-                    dst[1] = inv * dst[1] + w * p50->unk_04.y;
+                    dst[1] = inv * dst[1] + w * p50->unk04.y;
                 }
                 if (!(f & 4)) {
-                    dst[2] = inv * dst[2] + w * p50->unk_04.z;
+                    dst[2] = inv * dst[2] + w * p50->unk04.z;
                 }
             }
         }
-            if (p50->unk_4D != 0) {
-            f = p50->unk_4D;
-            dst = &p50->unk_34.x;
+            if (p50->unk4D != 0) {
+            f = p50->unk4D;
+            dst = &p50->unk34.x;
             if (!(f & 0x40)) {
-                dst[0] = inv * dst[0] + w * p50->unk_10.x;
-                dst[1] = inv * dst[1] + w * p50->unk_10.y;
-                dst[2] = inv * dst[2] + w * p50->unk_10.z;
+                dst[0] = inv * dst[0] + w * p50->unk10.x;
+                dst[1] = inv * dst[1] + w * p50->unk10.y;
+                dst[2] = inv * dst[2] + w * p50->unk10.z;
             } else {
                 if (!(f & 1)) {
-                    dst[0] = inv * dst[0] + w * p50->unk_10.x;
+                    dst[0] = inv * dst[0] + w * p50->unk10.x;
                 }
                 if (!(f & 2)) {
-                    dst[1] = inv * dst[1] + w * p50->unk_10.y;
+                    dst[1] = inv * dst[1] + w * p50->unk10.y;
                 }
                 if (!(f & 4)) {
-                    dst[2] = inv * dst[2] + w * p50->unk_10.z;
+                    dst[2] = inv * dst[2] + w * p50->unk10.z;
                 }
             }
         }
-            if (p50->unk_4E != 0) {
-            f = p50->unk_4E;
-            dst = &p50->unk_40.x;
+            if (p50->unk4E != 0) {
+            f = p50->unk4E;
+            dst = &p50->unk40.x;
             if (!(f & 0x40)) {
-                dst[0] = inv * dst[0] + w * p50->unk_1C.x;
-                dst[1] = inv * dst[1] + w * p50->unk_1C.y;
-                dst[2] = inv * dst[2] + w * p50->unk_1C.z;
+                dst[0] = inv * dst[0] + w * p50->unk1C.x;
+                dst[1] = inv * dst[1] + w * p50->unk1C.y;
+                dst[2] = inv * dst[2] + w * p50->unk1C.z;
             } else {
                 if (!(f & 1)) {
-                    dst[0] = inv * dst[0] + w * p50->unk_1C.x;
+                    dst[0] = inv * dst[0] + w * p50->unk1C.x;
                 }
                 if (!(f & 2)) {
-                    dst[1] = inv * dst[1] + w * p50->unk_1C.y;
+                    dst[1] = inv * dst[1] + w * p50->unk1C.y;
                 }
                 if (!(f & 4)) {
-                    dst[2] = inv * dst[2] + w * p50->unk_1C.z;
+                    dst[2] = inv * dst[2] + w * p50->unk1C.z;
                 }
             }
         }
@@ -3529,11 +3489,11 @@ void func_8003B4D8_3C0D8(HmfData* arg0, f32 arg1) {
 /* same c: marioparty func_80036930 (src/34D80.c) */
 void func_8003B55C_3C15C(HmfData* arg0, f32 arg1) {
     arg0->unkA4 += arg1;
-    if (((HmfMotion*)arg0->unk90)->unk_02 <= arg0->unkA4) {
+    if (((HmfMotionSlot*)arg0->unk90)->unk02 <= arg0->unkA4) {
         if (D_800CAD20_CB920 != 0) {
             arg0->unkA4 = 0.0f;
         } else {
-            arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02;
+            arg0->unkA4 = ((HmfMotionSlot*)arg0->unk90)->unk02;
         }
     }
 }
@@ -3543,7 +3503,7 @@ void func_8003B5CC_3C1CC(HmfData* arg0, f32 arg1) {
     arg0->unkA4 -= arg1;
     if (arg0->unkA4 < 0.0f) {
         if (D_800CAD20_CB920 != 0) {
-            arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02;
+            arg0->unkA4 = ((HmfMotionSlot*)arg0->unk90)->unk02;
         } else {
             arg0->unkA4 = 0.0f;
         }
@@ -3551,22 +3511,22 @@ void func_8003B5CC_3C1CC(HmfData* arg0, f32 arg1) {
 }
 
 /* exact c: marioparty func_800369FC (src/34D80.c) */
-f32 func_8003B628_3C228(HmfMotion* arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4) {
+f32 func_8003B628_3C228(HmfMotionSlot* arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4) {
     arg4 *= D_800CA028_CAC28;
     if (!(arg1 & 9)) {
         if (!(arg1 & 4)) {
             arg2 += arg4;
-            if (arg0->unk_02 <= arg2) {
+            if (arg0->unk02 <= arg2) {
                 if (arg1 & 2) {
                     return arg3;
                 }
-                return arg0->unk_02;
+                return arg0->unk02;
             }
         } else {
             arg2 -= arg4;
             if (arg2 < arg3) {
                 if (arg1 & 2) {
-                    return arg0->unk_02 - arg4;
+                    return arg0->unk02 - arg4;
                 }
                 return arg3;
             }
@@ -3580,7 +3540,7 @@ void func_8003B6E8_3C2E8(HmfData* arg0) {
 }
 /* same c: marioparty func_80036AC4 (src/34D80.c) */
 void func_8003B6F0_3C2F0(HmfData* arg0) {
-    arg0->unkA4 = ((HmfMotion*)arg0->unk90)->unk_02 - 1;
+    arg0->unkA4 = ((HmfMotionSlot*)arg0->unk90)->unk02 - 1;
 }
 
 /* same c: marioparty func_80036AE4 (src/34D80.c) */
@@ -3611,12 +3571,12 @@ void func_8003B7A8_3C3A8(s16 arg0, s16 arg1, char* arg2, s16 arg3, u16 arg4, u16
     part = func_80038398_38F98(hmf, arg2);
 
     for (i = 0; i < hmf->unk16; i++) {
-        for (j = 0; j < ((HmfMotionObj*) hmf->unk84)[i].unk_00; j++) {
-            if (((HmfMotionObj*) hmf->unk84)[i].unk_50[j] == part) {
+        for (j = 0; j < hmf->unk84[i].unk00; j++) {
+            if (hmf->unk84[i].unk50[j] == part) {
                 break;
             }
         }
-        if (j != ((HmfMotionObj*) hmf->unk84)[i].unk_00) {
+        if (j != hmf->unk84[i].unk00) {
             break;
         }
     }

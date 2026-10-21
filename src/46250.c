@@ -118,7 +118,6 @@ void func_800297E8_2A3E8(s16, f32, f32, f32);
 void HmfModelObjAttrSet(s16, s32, s32);
 void func_80029A8C_2A68C(s16);
 void func_8002A00C_2AC0C(s16);
-s16 func_8003D8F0_3E4F0(HmfData*, void*, s32, void*);
 s16 func_8003DBE8_3E7E8(HmfData*, u16, s32, void*);
 void func_800456BC_462BC(omObjData*);
 extern u8 D_800DF647_E0247;

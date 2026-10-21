@@ -71,5 +71,10 @@ s32 func_80018E78_19A78(void); //get current cam index
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void func_80079E60_7AA60(void);
 void omSetStatBit(omObjData *obj, u16 stat);
+/* ECE0: sound slot volume, pitch, pan, stop */
+void func_800155B8_161B8(s32 slot, s32 vol);
+void func_80015664_16264(s32 slot, s32 pitch);
+void func_80015710_16310(s32 slot, s32 pan);
+void func_80015868_16468(s32 slot);
 
 #endif

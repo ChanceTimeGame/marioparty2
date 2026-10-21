@@ -74,15 +74,15 @@ typedef struct HuSprAnmDesc {
 typedef struct HuSprite {
     /* 0x000 */ s16 unk_00;
     /* 0x002 */ s16 unk_02;
-    /* 0x004 */ s32 unk_04;
-    /* 0x008 */ s32 unk_08;
+    /* 0x004 */ f32 unk_04; /* screen x */
+    /* 0x008 */ f32 unk_08; /* screen y */
     /* 0x00C */ s16 unk_0C;
     /* 0x00E */ s16 unk_0E;
     /* 0x010 */ f32 unk_10;
     /* 0x014 */ u16 prio;
     /* 0x018 */ f32 unk_18;
     /* 0x01C */ f32 unk_1C;
-    /* 0x020 */ s32 unk_20;
+    /* 0x020 */ f32 unk_20; /* rotation */
     /* 0x024 */ s32 unk_24;
     /* 0x028 */ u8 unk_28[4];
     /* 0x02C */ u16 unk_2C;
@@ -118,13 +118,13 @@ typedef struct HuSprite {
     /* 0x0BC */ s32 unk_BC[0x10];
     /* 0x0FC */ f32 unk_FC;
     /* 0x100 */ s16 unk_100;
-    /* 0x104 */ s32 unk_104;
+    /* 0x104 */ u16* unk_104; /* palette (84FF0's TLUT load) */
     /* 0x108 */ void* unk_108[3];
     /* 0x114 */ s16 unk_114; // next sibling in the group's tree
     /* 0x116 */ s16 unk_116; // first child
     /* 0x118 */ struct HuSprite* unk_118; // next in the priority-sorted draw list
     /* 0x11C */ struct HuSprite* unk_11C; // previous in the draw list
-    /* 0x120 */ void* unk_120;
+    /* 0x120 */ s32 unk_120; /* index (0-2) into unk_128/unk_134 */
     /* 0x124 */ void* unk_124;
     /* 0x128 */ void* unk_128[3];
     /* 0x134 */ void* unk_134[3];

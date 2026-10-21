@@ -1214,21 +1214,6 @@ void func_800650BC_65CBC(void) {
     func_80067040_67C40(0x54, 0, 0);
 }
 
-/* MP1's BoardPlayerObj view of a player model: unk_46 is a motion flag where Object has f32 unk44 */
-typedef struct BoardPlayerObj {
-    /* 0x00 */ struct Object* prev;
-    /* 0x04 */ struct Object* next;
-    /* 0x08 */ s16 unk_08;
-    /* 0x0A */ u16 flags;
-    /* 0x0C */ Vec coords;
-    /* 0x18 */ Vec rot;
-    /* 0x24 */ Vec scale;
-    /* 0x30 */ Vec velocity;
-    /* 0x3C */ omObjData* omObj1;
-    /* 0x40 */ omObjData* omObj2;
-    /* 0x44 */ s16 unk_44;
-    /* 0x46 */ s16 unk_46;
-} BoardPlayerObj;
 
 extern s32 D_800E1F90_E2B90;
 extern s16 D_800F8D12_F9912;
@@ -1500,7 +1485,7 @@ void func_800650F0_65CF0(void) {
                 PLAYER_MODEL(player)->velocity.z = -0.5f;
                 func_80056E34_57A34(gs->current_player_index, 15);
             } else {
-                if (((BoardPlayerObj*)player->unk_24)->unk_46 != 0) {
+                if (((Object*)player->unk_24)->unk46 != 0) {
                     MBPlayerMotionSet(-1, 0, 2);
                 }
                 func_80056E34_57A34(gs->current_player_index, 10);
