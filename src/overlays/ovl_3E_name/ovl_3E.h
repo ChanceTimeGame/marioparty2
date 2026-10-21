@@ -247,6 +247,20 @@ extern s16 D_8011273C_2A7A0C_name_3E; /* space */
 extern s32 D_80112780_2A7A50_name_3E[]; /* decision trees */
 extern s32 D_801127A4_2A7A74_name_3E[];
 extern s32 D_801127C8_2A7A98_name_3E[];
+extern s16 D_80112750_2A7A20_name_3E[4]; /* per D_800F8CE4_F98E4[0]: chain */
+extern s16 D_80112758_2A7A28_name_3E[4]; /* per D_800F8CE4_F98E4[0]: space in the chain */
+extern Vec2f3E D_80112760_2A7A30_name_3E[4]; /* per player: x/z offsets */
+void MBPlayerForwardSet(s16 playerNo);
+void func_80061518_62118(void);
+void func_80061584_62184(void);
+s32 func_8004CC7C_4D87C(s32, s32, s32); /* help window */
+void MBHelpWinKill(s32);
+Process* func_80048A48_49648(s32 player);
+s32 func_80047E70_48A70(s32);
+void func_800495A8_4A1A8(s8 arg0);
+void func_80063710_64310(Vec* pos);
+void func_800558E8_564E8(s16);
+s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 s16 func_800558F4_564F4(void);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 void func_8004CA34_4D634(s32, s32);
