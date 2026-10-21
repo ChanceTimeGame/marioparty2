@@ -2788,10 +2788,6 @@ s32 func_8008BCB8_8C8B8(s16 winId) {
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BCB8_8C8B8);
 #endif
 
-/* func_8008C828_8D428's jump table, defined here while it is asm */
-const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8008C8A8, 0x8008C8C0, 0x8008CA50, 0x8008C914, 0x8008CAC0, 0x8008CB50,
-};
 
 /* Shift-JIS character rows, 16 characters each, pointed to by D_800CDAB0_CE6B0 (in .data) */
 const u8 D_800D3740_D4340[] __attribute__((aligned(4), section(".rodata"))) = {
@@ -2859,7 +2855,105 @@ const u8 D_800D395C_D455C[] __attribute__((aligned(4), section(".rodata"))) = {
     0x94, 0x92, 0x81, 0xA6, 0x8D, 0x73, 0x95, 0xC5, 0x81, 0x83, 0x81, 0x84, 0x8A, 0xD4, 0x81, 0x6D, 0x00,
 };
 
+f32 func_800B1830_B2430(f32); /* sqrtf */
+
+// register allocation (masked 0): sx and py swap f28/f30
+#ifdef NON_MATCHING
+/* MP1 func_8007094C: animates and places the choice cursor (sprite 2) */
+void func_8008C828_8D428(TextWindow* tw, TWEntry* e) {
+    f32 sy;
+    f32 px;
+    f32 py;
+    f32 sx;
+    f32 dx;
+    f32 dy;
+    f32 len;
+    f32 mx;
+    f32 my;
+
+    sy = 1.0f;
+    px = e->unk2 - 12;
+    py = e->unk4 + 8;
+    sx = sy;
+    switch (tw->unk9A) {
+        case 0:
+            if (tw->unk6A != -1) {
+                SprAttrSet(tw->unk_6C, 2, 0x8000);
+            }
+            return;
+        case 1:
+            if (!(tw->unk_38 & 0x8000)) {
+                sx = sy = tw->unkA4 / 8.0f;
+                if (++tw->unkA4 >= 8) {
+                    tw->unkA4 = 0;
+                    tw->unk9A = 2;
+                }
+            } else {
+                tw->unkA4 = 0;
+                tw->unk9A = 2;
+            }
+            break;
+        case 3:
+            tw->unkA4++;
+            dx = tw->unkA0 - tw->unk9C;
+            dy = tw->unkA2 - tw->unk9E;
+            len = func_800B1830_B2430(dx * dx + dy * dy);
+            mx = dx / len * 10.0f * tw->unkA4;
+            my = dy / len * 10.0f * tw->unkA4;
+            dx = tw->unk9C + mx - tw->unkA0;
+            dy = tw->unk9E + my - tw->unkA2;
+            if (dx * dx + dy * dy < 100.0f) {
+                px = tw->unkA0;
+                py = tw->unkA2;
+                tw->unkA4 = 0;
+                tw->unk9A = 2;
+            } else {
+                px = tw->unk9C + mx;
+                py = tw->unk9E + my;
+            }
+            break;
+        case 2:
+            tw->unkA4 = tw->unkA4 + 10.0f;
+            if (tw->unkA4 >= 181) {
+                tw->unkA4 = 0;
+            }
+            px += HuMathSin(tw->unkA4) * 4.0f;
+            break;
+        case 4:
+            if (tw->unk_38 & 0x8000) {
+                sx = sy = 0.0f;
+            } else if (tw->unkA4 >= 11) {
+                sx = sy = 4.0f / 3.0f;
+            } else {
+                sx = sy = ++tw->unkA4 / 30.0f + 1.0f;
+            }
+            break;
+        case 5:
+            if (--tw->unkA4 == 0) {
+                tw->unkA4 = 0;
+                tw->unk9A = 2;
+            }
+            break;
+    }
+    if (sx == 0.0f || sy == 0.0f) {
+        SprAttrSet(tw->unk_6C, 2, 0x8000);
+        return;
+    }
+    dy = 0.8f;
+    dx = sx * dy;
+    SprScaleSet(tw->unk_6C, 2, dx * tw->unkEC, (dy = sy * dy) * tw->unkF0);
+    dx = px / dx * tw->unkEC;
+    SprPosSet(tw->unk_6C, 2, dx, dy = py / dy * tw->unkF0);
+    if (!(tw->unk_38 & 8)) {
+        SprAttrReset(tw->unk_6C, 2, 0x8000);
+    }
+}
+#else
+const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x8008C8A8, 0x8008C8C0, 0x8008CA50, 0x8008C914, 0x8008CAC0, 0x8008CB50,
+};
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008C828_8D428);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008CCA8_8D8A8);
 
