@@ -6,6 +6,7 @@
 #include "game/pad.h"
 #include "game/si.h"
 #include "game/sprite.h"
+#include "lib2.0I/libc/stdarg.h"
 
 /* Window system, rumble and the queued-input ring (MP1 src/6C470.c, src/6D4E0.c, src/388E0.c, MP3
    src/window.c). MP2's TextWindow has MP3's layout (0x27C bytes). MP2's names are kept. */
@@ -167,8 +168,8 @@ extern u8 D_800FD808_FE408;
 extern u8 D_801026D4_1032D4;
 extern u8 D_800CDA98_CE698[];
 extern u8* D_800CDAB0_CE6B0[];
-extern s8 D_800ED8E6_EE4E6;
-extern s8 D_801013FA_101FFA;
+extern u8 D_800ED8E6_EE4E6;
+extern u8 D_801013FA_101FFA; /* tab width */
 
 void func_800873D8_87FD8(omObjData* obj);
 s32 func_800877FC_883FC(omObjData* obj);
@@ -211,7 +212,7 @@ void func_8008D0BC_8DCBC(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4);
 u8 func_8008D3C8_8DFC8(u8* arg0);
 void func_8008CCA8_8D8A8(s16);
 
-void func_8008DCDC_8E8DC(s32);
+void func_8008DCDC_8E8DC(u8* str);
 extern u16 D_800ED8E8_EE4E8;
 extern u8 D_800ED8E9_EE4E9;
 extern u16 D_800ED8EA_EE4EA;
@@ -1653,7 +1654,7 @@ s16 func_80089234_89E34(u8* str) {
     return len;
 }
 
-void func_8008DACC_8E6CC(s32 arg0, s16* out, u8* str);
+void func_8008DACC_8E6CC(s16 count, s16* out, ...);
 
 /* text width of str */
 s16 func_8008925C_89E5C(u8* str) {
@@ -3232,7 +3233,7 @@ void func_8008D974_8E574(s32 arg0, s16 arg1) {
     D_800ED8E6_EE4E6 = 1;
     D_800ED8EA_EE4EA = 0;
     D_800ED8E8_EE4E8 = 0;
-    func_8008DCDC_8E8DC(arg0);
+    func_8008DCDC_8E8DC((u8*)arg0);
     D_8010106E_101C6E[arg1] = D_800ED8E9_EE4E9;
 }
 
@@ -3253,7 +3254,7 @@ void func_8008D9D0_8E5D0(u32 str, s16 idx) {
         text = func_80068CD4_698D4(str);
     }
     func_8008D8BC_8E4BC(text, text);
-    func_8008DCDC_8E8DC((s32)text);
+    func_8008DCDC_8E8DC(text);
     if (loaded) {
         func_80068D24_69924(text);
     }
@@ -3268,7 +3269,25 @@ void func_8008DAC0_8E6C0(s8 arg0) {
     D_801013FA_101FFA = arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DACC_8E6CC);
+/* measures count texts (ids or pointers); out = width + 10, height + 6 */
+void func_8008DACC_8E6CC(s16 count, s16* out, ...) {
+    va_list args;
+    s16 i;
+
+    D_800ED8E6_EE4E6 = 0;
+    va_start(args, out);
+    D_800ED8EA_EE4EA = 0;
+    D_800ED8E8_EE4E8 = 0;
+    for (i = 0; i < count; i++) {
+        func_8008DCDC_8E8DC(va_arg(args, u8*));
+    }
+    for (i = 0; i < 5; i++) {
+        D_8010106E_101C6E[i] = 0;
+    }
+    D_801013FA_101FFA = 0xC;
+    out[0] = D_800ED8E8_EE4E8 + 10;
+    out[1] = D_800ED8EA_EE4EA + 6;
+}
 
 void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2) {
     u32 i;
@@ -3284,7 +3303,7 @@ void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2) {
     D_800ED8E8_EE4E8 = 0;
 
     for (i = arg1; arg2 >= i; i++) {
-        func_8008DCDC_8E8DC(i);
+        func_8008DCDC_8E8DC((u8*)i);
     }
 
     for (i = 0; i < ARRAY_COUNT(D_8010106E_101C6E); i++) {
@@ -3296,15 +3315,120 @@ void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2) {
     arg0[1] = D_800ED8EA_EE4EA + 6;
 }
 
-/* func_8008DCDC_8E8DC's jump table, defined here while it is asm */
+// register allocation (masked 36): the text pointer and the character width swap a0/a1, which
+// moves the tab-stop arithmetic around; the code is otherwise retail's
+#ifdef NON_MATCHING
+/* measures one text (an id, or a pointer above 0x80000000) into the width D_800ED8E8 and
+   height D_800ED8EA. Host: the id/pointer test assumes N64 addresses. */
+void func_8008DCDC_8E8DC(u8* str) {
+    s32 cw;
+    u8* p = str;
+    u8* loaded = NULL;
+    u8 freeIt;
+    s16 w;
+    s16 h;
+    s32 dh;
+
+    if ((u32)str > 0x80000000) {
+        freeIt = 0;
+    } else {
+        freeIt = 1;
+        loaded = func_80068CD4_698D4((s32)str);
+        p = loaded;
+    }
+    h = 14;
+    w = 0;
+    for (; *p != 0; p++, h = dh + h) {
+        dh = 0;
+        if (D_800CD851_CE451 == 1) {
+            cw = ((u8)(*p + 0x80) >= 2) ? 10 : 0;
+        } else {
+            cw = D_800CD888_CE488[*p];
+        }
+        if (*p != 0 && *p < 9) {
+            cw = 0;
+        }
+        switch (*p) {
+            case 0x10:
+            case 0x1A:
+            case 0x20:
+                cw = (D_800CD851_CE451 == 1 || *p == 0x1A) ? 10 : 4;
+                break;
+            case 10:
+                if (D_800F9512_FA112 == 0) {
+                    goto newline;
+                }
+            case 12:
+            case 13:
+            case 15:
+            case 0x16:
+            case 0x19:
+                cw = 0;
+                break;
+            newline:
+                cw = 0;
+                if ((s16)D_800ED8E8_EE4E8 < w) {
+                    D_800ED8E8_EE4E8 = w;
+                }
+                w = 0;
+                if (p[1] != 0) {
+                    dh = 14;
+                }
+                break;
+            case 0x17:
+                dh = 5;
+                cw = 0;
+                break;
+            case 11:
+                if (D_800ED8E6_EE4E6 == 0) {
+                    if ((s16)D_800ED8E8_EE4E8 < w) {
+                        D_800ED8E8_EE4E8 = w;
+                    }
+                    if ((s16)D_800ED8EA_EE4EA < h) {
+                        D_800ED8EA_EE4EA = h;
+                    }
+                    h = 14;
+                    dh = 0;
+                    cw = 0;
+                    w = 0;
+                }
+                break;
+            case 14:
+                cw = (w + D_801013FA_101FFA) / D_801013FA_101FFA * D_801013FA_101FFA - w;
+                break;
+            case 0x18:
+                p++;
+                cw = D_800CD988_CE588[*p].width;
+                break;
+            case 0x11:
+            case 0x12:
+            case 0x13:
+            case 0x14:
+            case 0x15:
+                cw = D_8010106E_101C6E[*p - 0x11];
+                break;
+        }
+        w += cw;
+    }
+    if ((s16)D_800ED8E8_EE4E8 < w) {
+        D_800ED8E8_EE4E8 = w;
+    }
+    if ((s16)D_800ED8EA_EE4EA < h) {
+        D_800ED8EA_EE4EA = h;
+    }
+    if (freeIt) {
+        func_80068D24_69924(loaded);
+    }
+}
+#else
 const u32 jtbl_800D3980_D4580[] __attribute__((aligned(8), section(".rodata"))) = {
     0x8008DDD0, 0x8008DE24, 0x8008DDE0, 0x8008DDE0, 0x8008DE90, 0x8008DDE0,
     0x8008DDB4, 0x8008DF10, 0x8008DF10, 0x8008DF10, 0x8008DF10, 0x8008DF10,
     0x8008DDE0, 0x8008DE1C, 0x8008DEE8, 0x8008DDE0, 0x8008DDB4, 0x8008DF20,
     0x8008DF20, 0x8008DF20, 0x8008DF20, 0x8008DF20, 0x8008DDB4,
 };
-
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DCDC_8E8DC);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DF9C_8EB9C);
 
