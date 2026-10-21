@@ -7,12 +7,33 @@
 /* Sprite-model slots and the coin-sparkle effect. Functions with C come from MP1 src/1EA70.c
    (and two one-liners from MP1 ovl_15/ovl_28); the rest is asm. */
 
+typedef f32 Matrix4f[4][4];
+
 typedef struct unk1EA70StructC {
     /* 0x00 */ s16 unk_00;
     /* 0x02 */ s16 unk_02;
     /* 0x04 */ s16* unk_04;
-    /* 0x08 */ void* unk_08;
+    /* 0x08 */ Matrix4f* unk_08;
 } unk1EA70StructC; // sizeof 0xC
+
+/* HmfData.unk84 entries (0x98 bytes; MP1 unk2C0C0Struct50); 30560's local HmfMotionObj. */
+typedef struct HmfMotionObj {
+    /* 0x00 */ s16 unk_00; /* child count */
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ Vec unk_04;
+    /* 0x10 */ Vec unk_10;
+    /* 0x1C */ Vec unk_1C;
+    /* 0x28 */ Vec unk_28;
+    /* 0x34 */ Vec unk_34;
+    /* 0x40 */ Vec unk_40;
+    /* 0x4C */ u8 unk_4C;
+    /* 0x4D */ u8 unk_4D;
+    /* 0x4E */ u8 unk_4E;
+    /* 0x4F */ char unk_4F;
+    /* 0x50 */ s16* unk_50; /* children: part index, or 0x8000 | motion object index; -1 ends a leaf */
+    /* 0x54 */ struct HmfData* unk_54;
+    /* 0x58 */ f32 unk_58[4][4];
+} HmfMotionObj; /* size = 0x98 */
 
 typedef struct unk1EA70Struct20 {
     /* 0x00 */ char unk_00[2];
@@ -115,6 +136,24 @@ void func_800246F8_252F8(unk1EA70Struct1C* arg0, s16 arg1, s16 arg2);
 unk1EA70Struct1C* func_800240C8_24CC8(s32 arg0, s16 arg1);
 void func_800242BC_24EBC(unk1EA70Struct1C*);
 void func_80024D58_25958(void);
+s16 func_80038398_38F98(HmfData*, char*);
+void func_80039B54_3A754(HmfData*, f32, HmfMotionSlot*, s32);
+void func_80023434_24034(s16 arg0, s16 arg1, unk1EA70StructC* arg2, s16 arg3);
+void func_80023680_24280(HmfData* arg0, s16 arg1, s16 arg2);
+void func_800B37C0_B43C0(Matrix4f); /* guMtxIdentF */
+void func_80025770_26370(Matrix4f, f32, f32, f32); /* MP1 MtxTranslate */
+void func_80025884_26484(Matrix4f, f32, f32, f32); /* MP1 MtxRotate */
+void func_80025830_26430(Matrix4f, f32, f32, f32); /* MP1 MtxScale */
+void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* MP1 MtxMult */
+void func_80030CD4_318D4(Matrix4f, Matrix4f); /* MP1 func_8002C37C */
+void guMtxIdentF(float mf[4][4]);
+
+extern Matrix4f* D_800FD43C_FE03C; /* matrix table being filled */
+extern s16* D_800FC8F0_FD4F0; /* per matrix: its motion object */
+extern s16 D_800F93D0_F9FD0; /* matrices written */
+extern s16 D_800FD470_FE070; /* matrix stack depth */
+extern Matrix4f D_801016D0_1022D0[]; /* matrix stack */
+extern const char D_800D20E8_D2CE8[];
 
 void func_80020D20_21920(s16 arg0) {
     s16 i;
@@ -486,15 +525,133 @@ void func_80023124_23D24() {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800231D8_23DD8);
+/* Bakes model arg0's motion into a matrix table, one set of part matrices every arg1 frames
+   (MP1 func_800202E8). */
+unk1EA70StructC* func_800231D8_23DD8(s16 arg0, s16 arg1) {
+    HmfData* model;
+    HmfMotionSlot* anim;
+    unk1EA70StructC* ret;
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800232FC_23EFC);
+    model = D_800FC834_FD434[arg0].hmf;
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02];
+    ret = HuMemMemoryAllocPerm(sizeof(unk1EA70StructC));
+    ret->unk_08 = HuMemMemoryAllocPerm(((anim->unk02 + arg1) / arg1) * (model->unk16 << 6));
+    ret->unk_04 = HuMemMemoryAllocPerm(model->unk16 * 2);
+    ret->unk_00 = anim->unk02;
+    ret->unk_02 = arg1;
+    func_80023434_24034(arg0, arg1, ret, -1);
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023434_24034);
+/* The same for the one part named arg2 (MP1 func_8002040C). */
+unk1EA70StructC* func_800232FC_23EFC(s16 arg0, s16 arg1, char* arg2) {
+    HmfData* model;
+    HmfMotionSlot* anim;
+    unk1EA70StructC* ret;
+    s16 temp;
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023554_24154);
+    model = D_800FC834_FD434[arg0].hmf;
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02];
+    temp = func_80038398_38F98(model, arg2);
+    ret = HuMemMemoryAllocPerm(sizeof(unk1EA70StructC));
+    ret->unk_08 = HuMemMemoryAllocPerm(((anim->unk02 + arg1) / arg1) << 6);
+    ret->unk_04 = HuMemMemoryAllocPerm(model->unk16 * 2);
+    ret->unk_00 = anim->unk02;
+    ret->unk_02 = arg1;
+    func_80023434_24034(arg0, arg1, ret, temp);
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023680_24280);
+/* MP1 func_80020544. */
+void func_80023434_24034(s16 arg0, s16 arg1, unk1EA70StructC* arg2, s16 arg3) {
+    HmfData* model;
+    HmfMotionSlot* anim;
+    s16 i;
+
+    model = D_800FC834_FD434[arg0].hmf;
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02];
+    D_800FD43C_FE03C = arg2->unk_08;
+    D_800FC8F0_FD4F0 = arg2->unk_04;
+    D_800F93D0_F9FD0 = 0;
+    guMtxIdentF(D_801016D0_1022D0[0]);
+    for (i = 0; i < anim->unk02; i += arg1) {
+        func_80039B54_3A754(model, i, anim, 1);
+        D_800FD470_FE070 = 0;
+        func_80023680_24280(model, 0, arg3);
+    }
+}
+
+/* Writes the matrix of model arg0's part arg2 at motion frame arg1 to arg3 (no MP1 equivalent). */
+void func_80023554_24154(s16 arg0, s16 arg1, char* arg2, Matrix4f* arg3) {
+    HmfData* model;
+    HmfMotionSlot* anim;
+    s16 temp;
+    s16 parts[4]; /* retail's frame leaves 8 bytes here; one entry per matching part */
+
+    model = D_800FC834_FD434[arg0].hmf;
+    temp = func_80038398_38F98(model, arg2);
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[arg0].unk02];
+    D_800FD43C_FE03C = arg3;
+    D_800FC8F0_FD4F0 = parts;
+    D_800F93D0_F9FD0 = 0;
+    guMtxIdentF(D_801016D0_1022D0[0]);
+    func_80039B54_3A754(model, arg1, anim, 1);
+    D_800FD470_FE070 = 0;
+    func_80023680_24280(model, 0, temp);
+    if (D_800F93D0_F9FD0 >= 2) {
+        osSyncPrintf(D_800D20E8_D2CE8); /* "Mtx Made Over\n" */
+    }
+}
+
+/* Walks the motion-object tree from node arg1, storing each part's matrix (all parts when arg2
+   is -1, else only part arg2) and its node in the tables func_80023434_24034 set up
+   (MP1 func_80020654, reshaped). */
+void func_80023680_24280(HmfData* arg0, s16 arg1, s16 arg2) {
+    Matrix4f sp10;
+    HmfMotionObj* node;
+    s16 pushed;
+    s16 i;
+
+    node = &((HmfMotionObj*) arg0->unk84)[arg1];
+    pushed = 0;
+    func_800B37C0_B43C0(sp10);
+    if (node->unk_28.x != 0.0f || node->unk_28.y != 0.0f || node->unk_28.z != 0.0f) {
+        func_80025770_26370(sp10, node->unk_28.x, node->unk_28.y, node->unk_28.z);
+        pushed = 1;
+    }
+    if (node->unk_34.x != 0.0f || node->unk_34.y != 0.0f || node->unk_34.z != 0.0f) {
+        func_80025884_26484(sp10, node->unk_34.x, node->unk_34.y, node->unk_34.z);
+        pushed = 1;
+    }
+    if (node->unk_40.x != 1.0f || node->unk_40.y != 1.0f || node->unk_40.z != 1.0f) {
+        func_80025830_26430(sp10, node->unk_40.x, node->unk_40.y, node->unk_40.z);
+        pushed = 1;
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070++;
+        func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+    for (i = 0; i < node->unk_00; i++) {
+        if (node->unk_50[i] & 0x8000) {
+            if (node->unk_50[i] == -1) {
+                if ((D_800F93D0_F9FD0 < arg0->unk16) & (arg2 == -1)) {
+                    D_800FC8F0_FD4F0[D_800F93D0_F9FD0] = arg1;
+                    func_80030CD4_318D4(D_800FD43C_FE03C[D_800F93D0_F9FD0++], D_801016D0_1022D0[D_800FD470_FE070]);
+                }
+            } else {
+                func_80023680_24280(arg0, node->unk_50[i] & 0x7FFF, arg2);
+            }
+        } else if (arg2 == -1 || arg2 == (node->unk_50[i] & 0x7FFF)) {
+            if (D_800F93D0_F9FD0 < arg0->unk16) {
+                D_800FC8F0_FD4F0[D_800F93D0_F9FD0] = arg1;
+            }
+            func_80030CD4_318D4(D_800FD43C_FE03C[D_800F93D0_F9FD0++], D_801016D0_1022D0[D_800FD470_FE070]);
+        }
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070--;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/21920", func_80023A08_24608);
 
