@@ -2,12 +2,19 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
-/* Model (HMF) setup, texture and display-list state, matrix copies and animation helpers. The
-   functions in C are MP1 src/2C0C0.c and src/34D80.c code (two from MP3 src/22EB0.c); the rest
-   have no MP1/MP3 C and stay asm, as does func_80038C04, whose jump table sits in this unit's
-   piece of the data blob next to rodata of functions still in asm (so the piece is not carved;
-   func_8003076C names its string instead).
-   MP2's model structs have MP3's layout; fields are named by their MP2 offset. */
+/* Model (HMF) setup, display-list build and drawing, materials and textures, matrix walks, motion
+   and morph/vertex animation. Most functions are MP1 src/2C0C0.c and src/34D80.c code (a few from
+   MP3 src/22EB0.c); the rest were decompiled fresh. MP2's model structs have MP3's layout; fields are
+   named by their MP2 offset. */
+
+/* 30560's rodata (D2E30-D2EE0, carved): the strings first, then func_80038C04_39804's jump table
+   and func_8003A2B0_3AEB0's doubles. Named, as functions still in asm use them */
+const char D_800D2230_D2E30[] __attribute__((section(".rodata"))) = "Vertex Over!\n";
+const char D_800D2240_D2E40[] __attribute__((section(".rodata"))) = "Texture Anime Over\n";
+const char D_800D2254_D2E54[] __attribute__((section(".rodata"))) = "Mtx Over\n";
+const char D_800D2260_D2E60[] __attribute__((section(".rodata"))) = "GfxMax Over\n";
+const char D_800D2270_D2E70[] __attribute__((section(".rodata"))) = "Model Object Entry Over!! UCODE%d\n";
+const char D_800D2294_D2E94[] __attribute__((section(".rodata"))) = "Can't find ObjName %s\n";
 
 typedef f32 Matrix4f[4][4];
 
@@ -193,7 +200,6 @@ typedef struct HmfLightSet {
 } HmfLightSet;
 extern HmfLightSet* D_800FA620_FB220;
 /* "Vertex Over!\n" (30560's rodata, D2E30) */
-extern char D_800D2230_D2E30[];
 
 void osSyncPrintf(const char* fmt, ...);
 void func_80026C40_27840(void);
@@ -208,7 +214,6 @@ extern f32 D_80100050_100C50[4][4];
 extern s16 D_8010107C_101C7C;
 extern u8 D_800F9914_FA514;
 /* "Mtx Over\n" (D2E54) */
-extern char D_800D2254_D2E54[];
 
 void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* multiply */
 void func_800B3040_B3C40(Matrix4f, void*);           /* guMtxF2L */
@@ -225,8 +230,6 @@ void func_80025830_26430(Matrix4f, f32, f32, f32);   /* scale */
 void func_800B1E50_B2A50(Matrix4f, f32, f32, f32);   /* scale matrix */
 void func_800B1F50_B2B50(Matrix4f, f32, f32, f32);   /* translation matrix */
 /* "GfxMax Over\n" (D2E60), "Model Object Entry Over!! UCODE%d\n" (D2E70) */
-extern char D_800D2260_D2E60[];
-extern char D_800D2270_D2E70[];
 
 #define SQ(x) ((x) * (x))
 
@@ -244,7 +247,6 @@ void func_80036B98_37798(void);
 void func_800319EC_325EC(HmfData*, s16, HmfDrawRec*);
 void func_80035FBC_36BBC(HmfMat*, HmfTexRef*, s32);
 /* "Can't find ObjName %s\n" (D2E94) */
-extern char D_800D2294_D2E94[];
 s16 func_8001F4AC_200AC(char*); /* name hash */
 s32 func_800B0FD0_B1BD0(char*, char*); /* strcmp */
 void func_800B37C0_B43C0(Matrix4f); /* identity */
@@ -643,7 +645,6 @@ void func_80030668_31268(HmfData* arg0) {
 void osSyncPrintf(const char* fmt, ...);
 /* "Texture Anime Over\n": 30560's rodata (D2E30) is not carved while functions using it are asm,
    so C names the string, as MP3's hmfman.c does */
-extern char D_800D2240_D2E40[];
 
 /* MP1 func_8002BEC4 (src/2C0C0.c) */
 void func_8003076C_3136C(HmfData* arg0) {
