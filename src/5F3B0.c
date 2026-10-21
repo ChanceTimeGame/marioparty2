@@ -2,38 +2,13 @@
 #include "game/sprite.h"
 #include "game/hmfman.h"
 #include "game/gamework.h"
+#include "game/board.h"
 
 typedef struct Unk {
     s16 unk_00;
     s16 unk_02;
 } Unk;
 
-typedef struct BoardStatus {
-    /* 0x00 */ s8 unk_00;
-    /* 0x01 */ s8 unk1;
-    /* 0x02 */ u8 unk2[2];
-    /* 0x04 */ u8 spaceType; /* MP3 spaceType */
-    /* 0x05 */ s8 unk5;
-    /* 0x06 */ u8 unk_06;
-    /* 0x07 */ char pad7[1];
-    /* 0x08 */ s16 unk_08;
-    /* 0x0A */ char padA[2];
-    /* 0x0C */ s16 unk_0C;
-    /* 0x0E */ char padE[2];
-    /* 0x10 */ f32 xPos;
-    /* 0x14 */ f32 yPos;
-    /* 0x18 */ f32 unk_18;
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ f32 unk_20;
-    /* 0x24 */ f32 unk_24;
-    /* 0x28 */ f32 unk_28;
-    /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ omObjData* unk30;
-    /* 0x34 */ char pad34[2];
-    /* 0x36 */ s16 unk_36;
-    /* 0x38 */ u8 unk_38[12];
-    /* 0x44 */ s16 unk_44[2];
-} BoardStatus;
 
 void SprAttrReset(s16, s16, s32);                        /* extern */
 void SprAttrSet(s16, s16, u32);                          /* extern */
