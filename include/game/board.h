@@ -31,6 +31,16 @@ typedef struct unk_Struct02 {
     /* 0x0C */ s16* unk0C;
 } unk_Struct02; /* size = 0x10 */
 
+/* Board guide (the host character shown in board scenes): MP3 UnkMBGuideData
+   (include/game/board.h; MBGuideCreate/MBGuideKill there are func_80050304_50F04 and
+   func_8005057C_5117C here). */
+typedef struct UnkMBGuideData {
+    /* 0x00 */ MBModel* obj;
+    /* 0x04 */ struct Process* unk_04;
+    /* 0x08 */ s16 amount; /* the guide's text window */
+    /* 0x0A */ s16 spriteGroup;
+} UnkMBGuideData; /* size = 0xC */
+
 extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
 extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
 

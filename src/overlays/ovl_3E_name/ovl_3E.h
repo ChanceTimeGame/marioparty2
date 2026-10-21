@@ -1,0 +1,212 @@
+#ifndef _OVL_3E_H
+#define _OVL_3E_H
+
+/* Board overlay 3E (297AD0.c). Board-library types shared by the other boards are in
+   include/game/board.h; this header holds 3E's own structs, its data/bss and a prototype for
+   every function of 297AD0.c. Prototypes after 80106944 (forks B-D) came from the asm's register
+   use only: arguments read before any write, a return value its callers read. Integer arguments
+   are written s32 even where the asm narrows them; the fork that owns a function fixes its line. */
+
+#include "common.h"
+#include "game/board.h"
+#include "game/object.h"
+#include "game/hmfman.h"
+
+/* ---- main-segment API used by 3E ---- */
+
+typedef struct MbTextWindow {
+    /* 0x000 */ u8 unk_00[0x20];
+    /* 0x020 */ u8 unk_20;
+    /* 0x021 */ u8 unk_21[0x27C - 0x21];
+} MbTextWindow; /* size 0x27C; the full type is TextWindow in 84FF0.c */
+
+extern MbTextWindow* D_800F920C_F9E0C;
+extern s32 D_800CCC18_CD818;
+extern s32 D_800CC6A8_CD2A8[]; /* per board: the guide's model */
+extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */
+extern s16 D_800F8D12_F9912;
+extern s16 D_800CD414_CE014;
+extern HmfModel* D_800FC834_FD434;
+
+void ExecBoardScene(void*, s16);
+void MBArrayShuffle(u8* output, s32 count);
+void BoardSpaceTypeSet(s16 spaceIndex, u8 spaceType);
+void func_800509C4_515C4(s16);
+SpaceData* GetSpaceData(s16);
+s32 PlaySound(s32);
+void PlayMusic(s16);
+MBModel* func_80043510_44110(s32, void*);
+void func_80056754_57354(MBModel*);
+void func_800B3170_B3D70(Vec*, Vec*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
+void func_800B39F0_B45F0(f32*, f32);
+void MBModelKill(void*);
+void MBMotionSet(MBModel*, s16, s32);
+void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
+void func_8005B338_5BF38(void*);
+UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+void func_8005AB50_5B750(MBModel* arg0, s16 arg1, s16 arg2, s32 arg3);
+void func_8005AC6C_5B86C(MBModel*, s32);
+void func_80067558_68158(void);
+void func_80067720_68320(void);
+void func_80051500_52100(void);
+void func_80053608_54208(f32);
+s32 func_80053998_54598(void); /* camera still moving */
+void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_8008E2DC_8EEDC(s32 winId, s32 sound);
+void func_8008E4D0_8F0D0(s32 winId, s32 sound);
+void func_80057DC0_589C0(s16);
+void func_8002D4A0_2E0A0(s16);
+void func_80029FE4_2ABE4(s16, f32);
+u16 MBDCameraPos3DSet(Vec*);
+void MBCameraSpeedSet(f32);
+
+/* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
+
+extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
+extern s16 D_80111950_2A6C20_name_3E[8]; /* star positions, shuffled */
+extern s16 D_80111960_2A6C30_name_3E[8]; /* each position's earliest slot */
+extern s16 D_80111970_2A6C40_name_3E[]; /* positions not to show first, -1 ended */
+extern s16 D_80111974_2A6C44_name_3E[8]; /* star position board flags */
+extern s16 D_80111984_2A6C54_name_3E[8]; /* star spaces */
+extern s16 D_80111994_2A6C64_name_3E[8]; /* star camera spaces */
+extern s32 D_801119A4_2A6C74_name_3E; /* guide motions */
+extern s32 D_801119A8_2A6C78_name_3E;
+extern f32 D_801119AC_2A6C7C_name_3E[9]; /* per board */
+
+/* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
+
+extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
+
+/* ---- 297AD0.c ---- */
+
+void func_80102800_297AD0_name_3E(void);
+s16 func_80102830_297B00_name_3E(void);
+void func_8010285C_297B2C_name_3E(void);
+void func_80102A44_297D14_name_3E(void);
+void func_80102AB0_297D80_name_3E(void);
+void func_80102B54_297E24_name_3E(void);
+s32 func_80102C3C_297F0C_name_3E(s32 space);
+void func_80102D28_297FF8_name_3E(void);
+void func_80102F4C_29821C_name_3E(UnkMBGuideData* guide);
+void func_80102FFC_2982CC_name_3E(void);
+void func_80103548_298818_name_3E(void);
+void func_80103968_298C38_name_3E(s32 arg0);
+void func_801039E4_298CB4_name_3E(s32 arg0);
+s32 func_80103A64_298D34_name_3E(void);
+void func_80103AF4_298DC4_name_3E(void);
+s32 func_80103B70_298E40_name_3E(void);
+void func_80103BC4_298E94_name_3E(void);
+void func_80103C94_298F64_name_3E(void);
+s32 func_80103CF4_298FC4_name_3E(s32 arg0);
+s32 func_80103FB0_299280_name_3E(void);
+s32 func_801041D4_2994A4_name_3E(void);
+void func_80104380_299650_name_3E(void);
+s32 func_801045C0_299890_name_3E(void);
+void func_80104778_299A48_name_3E(void);
+void func_80104F7C_29A24C_name_3E(void);
+s32 func_8010537C_29A64C_name_3E(s32 arg0);
+s32 func_80105630_29A900_name_3E(s32 arg0);
+void func_801058A4_29AB74_name_3E(void);
+void func_801058DC_29ABAC_name_3E(void);
+void func_80105974_29AC44_name_3E(void);
+void func_80105B9C_29AE6C_name_3E(void);
+void func_80105C24_29AEF4_name_3E(void);
+void func_80105C50_29AF20_name_3E(s32 arg0);
+void func_80105D54_29B024_name_3E(void);
+void func_80105DDC_29B0AC_name_3E(void);
+void func_80105EC4_29B194_name_3E(void);
+void func_80105F0C_29B1DC_name_3E(s32 arg0);
+void func_8010602C_29B2FC_name_3E(void);
+s32 func_8010608C_29B35C_name_3E(void);
+void func_80106188_29B458_name_3E(s32 arg0);
+void func_801062F4_29B5C4_name_3E(void);
+void func_8010635C_29B62C_name_3E(s32 arg0);
+void func_801064B8_29B788_name_3E(void);
+void func_80106518_29B7E8_name_3E(void);
+s32 func_80106574_29B844_name_3E(s32 arg0);
+void func_80106618_29B8E8_name_3E(s32 arg0);
+void func_80106684_29B954_name_3E(void);
+void func_801066FC_29B9CC_name_3E(void);
+void func_80106738_29BA08_name_3E(void);
+void func_80106944_29BC14_name_3E(void);
+void func_801069C8_29BC98_name_3E(void);
+void func_80106B08_29BDD8_name_3E(void);
+void func_80106C44_29BF14_name_3E(void);
+void func_80106D78_29C048_name_3E(s32 arg0);
+void func_80106DCC_29C09C_name_3E(s32 arg0, s32 arg1);
+s32 func_80106FE0_29C2B0_name_3E(void);
+s32 func_801075F8_29C8C8_name_3E(void);
+void func_80107C54_29CF24_name_3E(void);
+void func_80107D6C_29D03C_name_3E(void);
+void func_80107E84_29D154_name_3E(void);
+void func_80107F9C_29D26C_name_3E(void);
+void func_801080B4_29D384_name_3E(void);
+s32 func_801081CC_29D49C_name_3E(s32 arg0);
+void func_80108424_29D6F4_name_3E(void);
+void func_8010871C_29D9EC_name_3E(void);
+void func_80108A14_29DCE4_name_3E(void);
+void func_80108A38_29DD08_name_3E(void);
+void func_80108A5C_29DD2C_name_3E(void);
+void func_80108A80_29DD50_name_3E(void);
+void func_80108AA4_29DD74_name_3E(void);
+void func_80108AC8_29DD98_name_3E(void);
+void func_80108AEC_29DDBC_name_3E(void);
+void func_80108B10_29DDE0_name_3E(void);
+void func_80108B34_29DE04_name_3E(void);
+void func_80108B58_29DE28_name_3E(void);
+void func_80108B7C_29DE4C_name_3E(void);
+void func_80108BA0_29DE70_name_3E(void);
+void func_80108BC4_29DE94_name_3E(void);
+void func_80108BE8_29DEB8_name_3E(void);
+void func_80108C0C_29DEDC_name_3E(void);
+void func_80108E0C_29E0DC_name_3E(void);
+void func_8010964C_29E91C_name_3E(void);
+s32 func_80109A78_29ED48_name_3E(s32 arg0);
+s32 func_80109AE4_29EDB4_name_3E(void);
+void func_80109B30_29EE00_name_3E(void);
+s32 func_8010A13C_29F40C_name_3E(s32 arg0);
+void func_8010A1DC_29F4AC_name_3E(s32 arg0);
+void func_8010A27C_29F54C_name_3E(s32 arg0);
+void func_8010AB58_29FE28_name_3E(void);
+s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
+void func_8010B8B8_2A0B88_name_3E(void);
+void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
+void func_8010BA48_2A0D18_name_3E(void);
+void func_8010C44C_2A171C_name_3E(void);
+void func_8010C468_2A1738_name_3E(void);
+void func_8010C484_2A1754_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8010C5C4_2A1894_name_3E(s32 arg0);
+void func_8010C6DC_2A19AC_name_3E(void);
+void func_8010CA78_2A1D48_name_3E(void);
+void func_8010CAE8_2A1DB8_name_3E(void);
+void func_8010CCD4_2A1FA4_name_3E(void);
+s32 func_8010CF20_2A21F0_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8010CFCC_2A229C_name_3E(void);
+s32 func_8010D37C_2A264C_name_3E(void);
+void func_8010D6C8_2A2998_name_3E(void);
+void func_8010D9F4_2A2CC4_name_3E(void);
+void func_8010DE58_2A3128_name_3E(void);
+void func_8010E3D0_2A36A0_name_3E(void);
+void func_8010E640_2A3910_name_3E(void);
+void func_8010E874_2A3B44_name_3E(void);
+void func_8010EB88_2A3E58_name_3E(void);
+void func_8010F1FC_2A44CC_name_3E(void);
+void func_8010F430_2A4700_name_3E(void);
+void func_8010F940_2A4C10_name_3E(void);
+s32 func_8010FB50_2A4E20_name_3E(void);
+void func_8010FD84_2A5054_name_3E(void);
+s32 func_801104E0_2A57B0_name_3E(void);
+void func_80110794_2A5A64_name_3E(void);
+void func_80110F78_2A6248_name_3E(void);
+void func_801112E4_2A65B4_name_3E(void);
+void func_80111338_2A6608_name_3E(void);
+s32 func_8011155C_2A682C_name_3E(void);
+s32 func_801118D8_2A6BA8_name_3E(void);
+
+#endif
