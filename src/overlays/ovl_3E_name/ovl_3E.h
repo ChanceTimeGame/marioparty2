@@ -252,16 +252,16 @@ void func_80106944_29BC14_name_3E(void);
 void func_801069C8_29BC98_name_3E(void);
 void func_80106B08_29BDD8_name_3E(void);
 void func_80106C44_29BF14_name_3E(void);
-void func_80106D78_29C048_name_3E(s32 arg0);
-void func_80106DCC_29C09C_name_3E(s16 arg0, s32 arg1);
-s32 func_80106FE0_29C2B0_name_3E(void);
-s32 func_801075F8_29C8C8_name_3E(void);
+void func_80106D78_29C048_name_3E(omObjData* obj);
+void func_80106DCC_29C09C_name_3E(s32 player, s32 arg1);
+s32 func_80106FE0_29C2B0_name_3E(void); /* players run over, bits */
+s32 func_801075F8_29C8C8_name_3E(void); /* players run over, bits */
 void func_80107C54_29CF24_name_3E(void);
 void func_80107D6C_29D03C_name_3E(void);
 void func_80107E84_29D154_name_3E(void);
 void func_80107F9C_29D26C_name_3E(void);
 void func_801080B4_29D384_name_3E(void);
-s32 func_801081CC_29D49C_name_3E(s32 arg0);
+s32 func_801081CC_29D49C_name_3E(s32 arg0); /* the chosen option */
 void func_80108424_29D6F4_name_3E(void);
 void func_8010871C_29D9EC_name_3E(void);
 void func_80108A14_29DCE4_name_3E(void);
@@ -279,13 +279,13 @@ void func_80108BA0_29DE70_name_3E(void);
 void func_80108BC4_29DE94_name_3E(void);
 void func_80108BE8_29DEB8_name_3E(void);
 void func_80108C0C_29DEDC_name_3E(void);
-void func_80108E0C_29E0DC_name_3E(void);
+void func_80108E0C_29E0DC_name_3E(void); /* star / bank space */
 void func_8010964C_29E91C_name_3E(void);
 s32 func_80109A78_29ED48_name_3E(s32 arg0);
 s32 func_80109AE4_29EDB4_name_3E(void);
 void func_80109B30_29EE00_name_3E(void);
-s32 func_8010A13C_29F40C_name_3E(s32 arg0);
-void func_8010A1DC_29F4AC_name_3E(s32 arg0);
+void func_8010A13C_29F40C_name_3E(MBModel* model);
+void func_8010A1DC_29F4AC_name_3E(MBModel* model);
 void func_8010A27C_29F54C_name_3E(s32 arg0);
 void func_8010AB58_29FE28_name_3E(void);
 s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
@@ -294,7 +294,7 @@ void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
-void func_8010C484_2A1754_name_3E(s32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8010C484_2A1754_name_3E(Vec* pos, f32 arg1, f32 arg2, s32 arg3, Vec* arg4); /* fork B: a0 and the stack argument are Vec* */
 void func_8010C5C4_2A1894_name_3E(s32 arg0);
 void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
@@ -322,5 +322,130 @@ void func_801112E4_2A65B4_name_3E(void);
 void func_80111338_2A6608_name_3E(void);
 s32 func_8011155C_2A682C_name_3E(void);
 s32 func_801118D8_2A6BA8_name_3E(void);
+
+/* fork B */
+#include "game/data.h"
+struct unk_8003B8D4Struct; /* 41B20.c's direction prompt */
+
+/* RunDecisionTree's node (MP1 common_structs.h) */
+typedef struct DecisionTreeNonLeafNode {
+    u32 type;
+    union {
+        void (*func)();
+        s32 data;
+    } node_data1;
+    union {
+        s32 data;
+        s32* node_data;
+    } node_data2;
+} DecisionTreeNonLeafNode;
+
+typedef struct Unk3Halves {
+    s16 v[3];
+} Unk3Halves;
+
+void SetNextChainAndSpace(s16 arg0, s16 arg1, s16 arg2);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+void HuVecMulScalar(Vec*, f32, Vec*);
+s16 func_80079798_7A398(s16, s16);
+void func_800797DC_7A3DC(s32, s16);
+void omDelObj(omObjData*);
+void func_8002D0A0_2DCA0(s16, u8);
+/* 41B20.c defines this void: it returns func_800419A4_425A4's prompt only through v0 */
+struct unk_8003B8D4Struct* func_80041A74_42674(s16, s16*);
+s32 func_800417EC_423EC(struct unk_8003B8D4Struct*, s16, s16);
+s32 func_80041610_42210(struct unk_8003B8D4Struct*, s32);
+s32 DirectionPrompt(struct unk_8003B8D4Struct*);
+void func_8004108C_41C8C(struct unk_8003B8D4Struct*);
+s32 PlayerIsCPU(s16);
+s16 func_80044800_45400(DecisionTreeNonLeafNode*); /* RunDecisionTree */
+void MBDlgWinCreate(s32, s32);
+void MBDlgWinExec(s32, s32);
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+Process* MBDCameraZoomMotStart(f32);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+s32 func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void* func_800672BC_67EBC(s16, s16, s32);
+void func_8006735C_67F5C(void*);
+s16 BoardGetChainLength(u16 chainIndex);
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void MBVecNormalize(Vec*);
+/* B2470.c types it (Vec*), but it is HuVecGetLength3F(x, y, z): func_800B1840_B2440 squares f12, f14, a2 */
+f32 func_800B1870_B2470(f32 x, f32 y, f32 z);
+f32 HuVecDistance(Vec* a, Vec* b);
+Process* func_80056FD4_57BD4(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
+Process* func_80057150_57D50(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
+void func_800B3B80_B4780(f32* mtx, f32 angle); /* MP3 func_8008A430_8B030: matrix rotation */
+void ChangeSpaceTextures(s16);
+s16 func_800558F4_564F4(void);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void func_80056124_56D24(void);
+void func_80056458_57058(void);
+s32 func_800573AC_57FAC(void);
+/* 54CB0.c takes arg2 as s32; it is the message's insert string */
+void func_80056368_56F68(s16, u32, char*, s32, s32, s32, s32);
+void func_80059120_59D20(void*, f32, f32);
+void func_80059158_59D58(void*);
+/* 63670.c defines it (void); retail passes 2 */
+void func_8006706C_67C6C();
+extern s8 D_800CCC16;
+extern s16 D_800F64B0_F70B0;
+s32 func_80047DE8_489E8(s32);
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16, s16, s32);
+void SprPosSet(s16, s16, s16, s16);
+void func_80082488_83088(s16, s16, u16);
+void SprAnimKill(s16);
+void SprKill(s16);
+Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3);
+void MBItemDescExec(s32 arg0);
+void func_8008DAC0_8E6C0(s8 arg0);
+void func_80056524_57124(s32);
+extern u8 D_800CC000[]; /* item prices */
+extern s32 D_800CCBDC_CD7DC[]; /* item sprite files */
+#define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
+
+extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
+extern s16 D_80111B90_2A6E60_name_3E[]; /* minecart chain, by D_800F8CE4[0] */
+extern s16* D_80111BF4_2A6EC4_name_3E[]; /* spaces the minecart passes, by D_800F8CE4[0] */
+extern Vec D_80111C00_2A6ED0_name_3E[]; /* minecart end offset, by D_800F8CE4[0] */
+extern DecisionTreeNonLeafNode D_80111C3C_2A6F0C_name_3E[];
+extern DecisionTreeNonLeafNode D_80111C6C_2A6F3C_name_3E[];
+extern DecisionTreeNonLeafNode D_80111CA8_2A6F78_name_3E[];
+extern DecisionTreeNonLeafNode D_80111D50_2A7020_name_3E[];
+extern DecisionTreeNonLeafNode D_80111DEC_2A70BC_name_3E[];
+extern DecisionTreeNonLeafNode D_80111E34_2A7104_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F0C_2A71DC_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F60_2A7230_name_3E[];
+extern DecisionTreeNonLeafNode D_80111F84_2A7254_name_3E[];
+extern DecisionTreeNonLeafNode D_80111FB4_2A7284_name_3E[];
+extern DecisionTreeNonLeafNode D_80111FFC_2A72CC_name_3E[];
+extern DecisionTreeNonLeafNode D_80112044_2A7314_name_3E[];
+extern DecisionTreeNonLeafNode D_801120A4_2A7374_name_3E[];
+extern s16 D_801120E0_2A73B0_name_3E[]; /* direction prompt choices */
+extern s16 D_801120F8_2A73C8_name_3E[];
+extern s16 D_80112110_2A73E0_name_3E[];
+extern s16 D_80112128_2A73F8_name_3E[];
+extern s16 D_80112140_2A7410_name_3E[];
+extern s16 D_80112158_2A7428_name_3E[];
+extern DecisionTreeNonLeafNode D_80112178_2A7448_name_3E[];
+extern s16 D_801121AC_2A747C_name_3E[];
+extern u8 D_801122A4_2A7574_name_3E[]; /* by rank */
+extern u8 D_801122C8_2A7598_name_3E[][4]; /* shop by turn band, rank */
+extern u8 D_801122D4_2A75A4_name_3E[][3]; /* turn band starts by game length */
+extern s8 D_801122E0_2A75B0_name_3E[][5]; /* shop items, -1 none */
+extern u32 D_80112304_2A75D4_name_3E[]; /* shop messages */
+extern Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
+extern Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
+extern char D_801135C8_2A8898_name_3E[]; /* "%d": rodata */
+extern s32 D_801138B4_2A8B84_name_3E;
+extern u8* D_801138B8_2A8B88_name_3E;
 
 #endif
