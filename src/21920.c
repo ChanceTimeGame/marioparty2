@@ -137,6 +137,28 @@ extern s16 D_800C9CB0_CA8B0[13 * 3]; /* data file by animation (x3) and set */
 extern u8 D_800FDCA0_FE8A0[13][3];
 extern s16 D_800FFE00_100A00[6][3][13]; /* loaded texture animations, -1 none */
 extern u8 D_801026FC_1032FC[6]; /* set while a character has one loaded */
+extern char* D_800C9D64_CA964[3 * 13]; /* per set (x13) and animation: texture-animation name */
+extern s16 D_800C9E00_CAA00[13 * 3];
+extern u8 D_80101658_102258[13][3];
+
+/* 3D6A0's texture-animation slot (unk388E0Struct40 there). */
+typedef struct TexAnimSlot {
+    /* 0x00 */ s16 unk_00; /* frame */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ char unk_08[2];
+    /* 0x0A */ u8 unk_0A;
+    /* 0x0B */ u8 unk_0B;
+} TexAnimSlot; //sizeof 0xC
+
+extern TexAnimSlot* D_800FD7F8_FE3F8;
+s32 func_80025718_26318(s16, s16, s16);
+s16 func_8003DBE8_3E7E8(HmfData*, u16, s16, char*);
+void func_8003E888_3F488(s16);
+void func_8003E4F4_3F0F4(s16, u8, u8);
+void func_8003EE44_3FA44(HmfData*);
+void func_8003EEA4_3FAA4(HmfData*);
 s16 func_800244F4_250F4(unk1EA70Struct1C*, s16, f32, f32, f32, u16);
 void func_80029F2C_2AB2C(s16, s32);
 void func_80020E70_21A70(void);
@@ -164,8 +186,6 @@ extern s16* D_800FC8F0_FD4F0; /* per matrix: its motion object */
 extern s16 D_800F93D0_F9FD0; /* matrices written */
 extern s16 D_800FD470_FE070; /* matrix stack depth */
 extern Matrix4f D_801016D0_1022D0[]; /* matrix stack */
-extern const char D_800D20E8_D2CE8[];
-extern const char D_800D20F8_D2CF8[];
 void func_80029714_2A314(s16, f32, f32, f32); /* model position (MP1 func_80025798) */
 void func_800211E8_21DE8(s16 index, u8 arg1);
 void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
@@ -173,6 +193,31 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale (MP1 func_80025830)
 void func_80029EDC_2AADC(s16, s16); /* model layer mask (MP1 func_80025F10) */
 s16 func_8001F4AC_200AC(char*); /* name hash */
 s32 func_800B0FD0_B1BD0(char*, char**); /* strcmp; retail passes the address of the name */
+
+/* The unit's .rodata in retail order, defined here (before any INCLUDE_ASM, so GCC keeps them in
+   .rodata): the names are referenced by asm .data tables and by the asm switch of
+   func_800252C4_25EC4. */
+const char D_800D20E8_D2CE8[] = "Mtx Made Over\n";
+const char D_800D20F8_D2CF8[] = "Can't find ObjName %s\n";
+const char D_800D2110_D2D10[] = "c005n_0_DEF";
+const char D_800D211C_D2D1C[] = "c004n_0_DEF";
+const char D_800D2128_D2D28[] = "c003n_0_DEF";
+const char D_800D2134_D2D34[] = "c002n_0_DEF";
+const char D_800D2140_D2D40[] = "c001n_0_DEF";
+const char D_800D214C_D2D4C[] = "c000n_0_DEF";
+const char D_800D2158_D2D58[] = "c005l_0_DEF";
+const char D_800D2164_D2D64[] = "c004l_0_DEF";
+const char D_800D2170_D2D70[] = "c003l_0_DEF";
+const char D_800D217C_D2D7C[] = "c002l_0_DEF";
+const char D_800D2188_D2D88[] = "c001l_0_DEF";
+const char D_800D2194_D2D94[] = "c000l_0_DEF";
+/* func_800252C4_25EC4's jump table (case bodies of the asm function) */
+const u32 jtbl_800D21A0_D2DA0[] = { 0x80025320, 0x80025318, 0x80025308, 0x80025300, 0x800252F8, 0x80025310 };
+const char D_800D21B8_D2DB8[] = "c164m_0_DEF";
+const char D_800D21C4_D2DC4[] = "c162n_0_DEF";
+const char D_800D21D0_D2DD0[] = "c161n_0_DEF";
+const char D_800D21DC_D2DDC[] = "c160n_0_DEF";
+const char D_800D21E8_D2DE8[] = "c103m_0_DEF";
 
 void func_80020D20_21920(s16 arg0) {
     s16 i;
@@ -997,7 +1042,46 @@ s32 func_80024AB4_256B4(s16 arg0, s16 arg1, s16 arg2) {
     return (D_800C9C5C_CA85C[arg0] << 16) | D_800C9CB0_CA8B0[arg2 * 3 + arg1];
 }
 
+/* Loads, or reloads in place, texture animation arg2 & 0xF of set (arg2 & 0xC0) for character
+   arg1 on model arg0 (MP1 func_80021CDC). */
+// as func_80024938_25538: retail copies arg2 and masks the index from the copy (masked 10, same logic)
+#ifdef NON_MATCHING
+void func_80024B00_25700(s16 arg0, s16 arg1, s32 arg2) {
+    void* file;
+    u8 flag;
+    s16 idx;
+    u16 old;
+    s32 dataNum;
+
+    flag = 0;
+    switch (arg2 & 0xC0) {
+        case 0x40:
+            flag = 1;
+            break;
+        case 0x80:
+            flag = 0;
+            break;
+        case 0:
+            flag = 2;
+            break;
+    }
+    idx = arg2 & 0xF;
+    if (D_800FFE00_100A00[arg1][flag][idx] == -1) {
+        dataNum = func_80025718_26318(arg1, flag, idx);
+        if (dataNum != -1) {
+            file = DataRead(dataNum);
+            D_800FFE00_100A00[arg1][flag][idx] = func_8003D8F0_3E4F0(D_800FC834_FD434[arg0].hmf, file, 0, D_800C9C68_CA868[flag * 6 + arg1]);
+            DataClose(file);
+        }
+    } else {
+        old = D_800FFE00_100A00[arg1][flag][idx];
+        D_800FFE00_100A00[arg1][flag][idx] = func_8003DBE8_3E7E8(D_800FC834_FD434[arg0].hmf, old, 0, D_800C9C68_CA868[flag * 6 + arg1]);
+        func_8003E888_3F488(old);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/21920", func_80024B00_25700);
+#endif
 
 void func_80024D10_25910(void) {
     omAddObj(0x7F76, 0, 0, -1, func_80024D58_25958);
@@ -1074,18 +1158,108 @@ void func_80024D78_25978(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_8002523C_25E3C);
+/* Sets model arg0's colour word in the model, its data and its motion slot. */
+void func_8002523C_25E3C(s16 arg0, s32 arg1) {
+    HmfModel* obj;
+
+    obj = &D_800FC834_FD434[arg0];
+    obj->unkB8 = arg1;
+    if (obj->hmf != NULL) {
+        obj->hmf->unkDC = arg1;
+    }
+    if (obj->unk02 != 0xFF) {
+        D_800F92B4_F9EB4[obj->unk02].unk18 = arg1;
+    }
+}
 
 /* MP1's neighbour in src/1EA70.c (func_8001E2D0) reads a field of a table by index the same way. */
 void func_8002529C_25E9C(s16 index, s32 arg1) {
     D_800F92B4_F9EB4[index].unk18 = arg1;
 }
 
+/* Maps a data number (directory 2-7, file 0xD1-0xD3) to a texture-animation key, -1 if none. */
+// retail re-extends a copy of arg0 for the 0xD1 test (masked 6, same logic)
+#ifdef NON_MATCHING
+s16 func_800252C4_25EC4(s32 arg0) {
+    s16 ret;
+
+    ret = -1;
+    switch ((s16) (arg0 >> 16)) {
+        case 6:
+            ret = 0x500;
+            break;
+        case 5:
+            ret = 0x400;
+            break;
+        case 4:
+            ret = 0x300;
+            break;
+        case 7:
+            ret = 0x200;
+            break;
+        case 3:
+            ret = 0x100;
+            break;
+        case 2:
+            ret = 0;
+            break;
+    }
+    if (ret == -1) {
+        return -1;
+    }
+    if ((s16) arg0 != 0xD3) {
+        if ((s16) arg0 == 0xD2) {
+            ret |= 1;
+        } else if ((s16) arg0 == 0xD1) {
+            ret |= 2;
+        }
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/21920", func_800252C4_25EC4);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80025384_25F84);
+/* Replaces texture animation arg2 of set arg1 on model arg0 with data file arg3; returns the
+   new animation's first frame. */
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3) {
+    void* file;
+    s16 slot;
+    u16 ret;
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80025554_26154);
+    if (D_800FDCA0_FE8A0[arg2][arg1] != 0xFF) {
+        func_8003E888_3F488(D_800FDCA0_FE8A0[arg2][arg1]);
+        func_8003E888_3F488(D_80101658_102258[arg2][arg1]);
+    }
+    file = DataRead(arg3);
+    slot = func_8003D8F0_3E4F0(D_800FC834_FD434[arg0].hmf, file, 0, D_800C9D64_CA964[arg2 + arg1 * 13]);
+    D_80101658_102258[arg2][arg1] = slot;
+    func_8003E4F4_3F0F4(slot, 1, 1);
+    DataClose(file);
+    ret = D_800FD7F8_FE3F8[slot].unk_00;
+    D_800FDCA0_FE8A0[arg2][arg1] = func_8003DBE8_3E7E8(D_800FC834_FD434[arg0].hmf, slot, 0, D_800C9D64_CA964[arg2 + arg1 * 13]);
+    func_80029A8C_2A68C(arg0);
+    return ret;
+}
+
+/* Pauses (arg3 -1) or restarts at frame arg3 the texture animation arg2 of set arg1 on model arg0. */
+void func_80025554_26154(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
+    TexAnimSlot* p;
+
+    if (D_800FDCA0_FE8A0[arg2][arg1] != 0xFF) {
+        if (arg3 == -1) {
+            func_8003EE44_3FA44(D_800FC834_FD434[arg0].hmf);
+            return;
+        }
+        func_8003EEA4_3FAA4(D_800FC834_FD434[arg0].hmf);
+        p = &D_800FD7F8_FE3F8[D_800FDCA0_FE8A0[arg2][arg1]];
+        p->unk_00 = arg3;
+        p->unk_04 = 0;
+        p->unk_0A = 0;
+        p->unk_06 = 0;
+        p->unk_02 = 0;
+    }
+}
 
 s16 func_80025684_26284(s32 id) {
     void* file;
@@ -1097,6 +1271,11 @@ s16 func_80025684_26284(s32 id) {
     return sprite;
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_800256CC_262CC);
+void func_800256CC_262CC(s16 arg0, s16 arg1, s32 arg2, s32 arg3) {
+    func_8003E4F4_3F0F4(D_800FDCA0_FE8A0[arg1][arg0], arg2, arg3);
+}
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80025718_26318);
+/* func_80024AB4_256B4 for reloads: its own file table. */
+s32 func_80025718_26318(s16 arg0, s16 arg1, s16 arg2) {
+    return (D_800C9C5C_CA85C[arg0] << 16) | D_800C9E00_CAA00[arg2 * 3 + arg1];
+}
