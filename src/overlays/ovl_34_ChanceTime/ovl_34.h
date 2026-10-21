@@ -50,13 +50,23 @@ void func_8002D1EC_2DDEC(s16 arg0, u8 arg1);
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* 2DE74.c: s8; retail passes 255 */
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
-s16 func_80025684_26284(s32 id);
+s32 func_80025684_26284(s32 id); /* 26284.c: s16; retail callers re-extend the result */
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2); /* attach to a model's hook node */
 void func_8002C3A0_2CFA0(s16 arg0);
 void func_80029A8C_2A68C(s16 arg0);
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_80025554_26154(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+void func_80029B80_2A780(s16 arg0, s16 arg1); /* model motion */
+void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4);
+f32 func_80029D0C_2A90C(s16 arg0); /* motion length */
+s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_80079848_7A448(s16 arg0);
+f32 HuMathSin(f32);
 void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* util.c: (UnkUtil*, ...) loads obj->motion[slot] */
 
 extern s8 D_80102708_103308;
@@ -114,15 +124,38 @@ extern s8 D_801100FC_2671FC_ChanceTime;
 extern f32 D_80110100_267200_ChanceTime;
 extern s16 D_80110104_267204_ChanceTime; /* 0xFF: title alpha; retail reads (u8) as D_80110105 */
 extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
-extern Vec D_8011008C_26718C_ChanceTime; /* block holders' position (x mirrored for the second) */
+/* 0x80110070: the second variant's holder walks from path[0] (0x80110074) to path[1]; splat
+   labels path[1] D_80110080 (retail addresses both from &path[1]). */
+typedef struct CTPath70 {
+    /* 0x00 */ s32 unk_00;
+    /* 0x04 */ Vec path[2];
+} CTPath70;
+extern CTPath70 D_80110070_267170_ChanceTime;
+/* The block holders walk from [0] to [1] (x mirrored for the second); splat labels [1]
+   D_80110098, and retail addresses [0] from &[1]. */
+extern Vec D_8011008C_26718C_ChanceTime[2];
+extern s8 D_801100BC_2671BC_ChanceTime;
+extern u32 D_8011010C_26720C_ChanceTime; /* func_80103ADC state */
+extern s32 D_80110110_267210_ChanceTime; /* func_80103ADC sub-state */
+extern s32 D_80110114_267214_ChanceTime; /* func_80103ADC frame counter */
+extern s32 D_80110118_267218_ChanceTime;
+extern s16 D_8011011C_26721C_ChanceTime;
+extern s8 D_80110156_267256_ChanceTime;
 extern u8 D_80110230_267330_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ？" */
 extern u8 D_80110248_267348_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ" */
 
 /* ---- .bss (ovl_34_bss.bss.s) ---- */
 extern s16 D_801106B0_2677B0_ChanceTime; /* title message */
+extern s16 D_801106B2_2677B2_ChanceTime; /* sound */
+extern f32 D_801106B4_2677B4_ChanceTime; /* sway angle of the scenery copies */
+extern f32 D_801106B8_2677B8_ChanceTime; /* sway damping */
+extern Vec D_801106C0_2677C0_ChanceTime[10]; /* the ten scenery copies: position */
+extern Vec D_80110738_267838_ChanceTime[10]; /* rotation */
 extern omObjData* D_80110908_267A08_ChanceTime;
 extern omObjData* D_8011090C_267A0C_ChanceTime; /* the two block holders */
 extern omObjData* D_80110910_267A10_ChanceTime;
+#define HOLDER0 D_8011090C_267A0C_ChanceTime
+#define HOLDER1 D_80110910_267A10_ChanceTime
 extern s16 D_80110914_267A14_ChanceTime; /* three models (0x440009..B) */
 extern s16 D_80110916_267A16_ChanceTime;
 extern s16 D_80110918_267A18_ChanceTime;
