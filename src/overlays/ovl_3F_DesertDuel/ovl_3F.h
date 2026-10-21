@@ -1,10 +1,11 @@
 #ifndef _OVL_3F_H
 #define _OVL_3F_H
 
-/* Overlay 3F (2A89A0.c): the duel scene board 3E (Western Land) calls when a player starts a duel.
-   The challenger (D_80108C18) picks an opponent if more than one is eligible, both stake coins,
-   the duel is played out on a desert stage (a referee model and a rolling tumbleweed), and the
-   winner takes the stake; the result is left for the board in D_800FC87C/D_800F8C58 [1].
+/* Overlay 3F (2A89A0.c): board 3E's duel scene, a stand-alone scene (its own omInitObjMan) on a
+   desert stage with a referee and a rolling tumbleweed. The challenger (D_800F8D1A.attacker) picks
+   an opponent when several are eligible, both stake coins, rounds are played (fork B's 80106600)
+   until one is decided, and the winner takes both stakes; the result is left for the board in
+   D_800FC880 (winner) and D_800F8C5C (loser), -1 both for a draw.
    Prototypes after 80105054 (fork B) come from the asm's register use; fork B owns them. */
 
 #include "common.h"
@@ -17,11 +18,6 @@
 /* ---- main-segment API used by 3F ---- */
 
 #define PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
-
-typedef struct BattleTargets {
-    /* 0x00 */ s16 targets;  /* bit per player: who can be challenged */
-    /* 0x02 */ s16 attacker; /* bit of the challenger */
-} BattleTargets; /* 63670.c's type */
 
 /* A path the model walks (func_8005A718_5B318 in 58080). */
 typedef struct ModelPathWork {
@@ -40,15 +36,14 @@ extern u16 D_800FC87A_FD47A;
 extern s16 D_800FA604_FB204;
 extern s16 D_800FA606_FB206;
 extern BattleTargets D_800F8D1A_F991A;
-extern u8 D_01164160[]; /* the board scene font/texture block */
+extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern BoardStatus D_80101510_102110[];
 extern Vec2f D_800FC990_FD590[];
 extern Vec2f D_800FD854_FE454[];
 extern s8 D_80102708_103308;
-/* Minigame result words: [1] is the winner (D_800FC87C) and the loser (D_800F8C58); [0] is a
-   pointer in other units (84FF0, 274D0). */
-extern s32 D_800FC87C_FD47C[];
-extern s32 D_800F8C58_F9858[];
+/* The duel's result for the board: the winner and the loser (-1 both for a draw). */
+extern s32 D_800FC880_FD480;
+extern s32 D_800F8C5C_F985C;
 
 s32 BoardSpaceGet(s32 index, s32 count);
 void HidePlayerHUDVisibility(s32 arg0, s32 arg1);
@@ -70,7 +65,6 @@ void MBVsSprKill(void);
 s32 PlaySound(s32);
 void AdjustPlayerCoins(s32 index, s32 count);
 GW_PLAYER* BoardPlayerGet(s32);
-f32 __sinf(f32);
 void espDispOff(u16);
 void espDispOn(u16);
 void espPosSet(u16 spriteId, s16 x, s16 y);
@@ -102,7 +96,8 @@ s32 func_80069538_6A138(void);
 s32 func_800696E4_6A2E4(void);
 void func_80069770_6A370(void);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
-omObjData* func_800732FC_73EFC(u32 arg0, s16 arg1, s16 arg2);
+/* Defined (u32, s16, s16) in 73BA0.c; retail passes full words here. */
+omObjData* func_800732FC_73EFC(u32 arg0, s32 arg1, s32 arg2);
 s16 func_800797DC_7A3DC(s32, s16);
 void func_800798F8_7A4F8(s16 arg0, s16 arg1);
 void func_800799A4_7A5A4(s16, s32);

@@ -141,7 +141,353 @@ void func_80102D1C_2A8EBC_DesertDuel(void) {
     }
 }
 
+/* NON_MATCHING once carved (masked ~110 of 1995, all scheduling/registers): GCC copies the exit test
+   of the referee's drop loop to the loop top (retail keeps only the bottom test), which renames
+   registers after it; the per-character table load picks other registers. */
+/* The duel: duelists and the referee walk in, the opponent and the stake are chosen, then rounds
+   are played until one decides it (D_80108C58, from func_80106600: 1 draw, 3/5 a duelist wins,
+   2/4 decided only when D_80108C5C[0]/[1] is 2); the winner takes both stakes. */
+#define WAIT_STEP()                              \
+    while (TRUE) {                               \
+        if (D_80108C50_2AEDF0_DesertDuel != 0) { \
+            break;                               \
+        }                                        \
+        HuPrcVSleep();                           \
+    }
+
+#define WAIT_MESSAGE()                                                        \
+    while (func_80069538_6A138() != 0 && !(func_80069538_6A138() & 2)) {     \
+        HuPrcVSleep();                                                        \
+    }
+
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80102D48_2A8EE8_DesertDuel(void) {
+    ModelPathWork* work[4];
+    s16 hook[4];
+    Vec pos[2];
+    u32 motions[4] = { 3, 0x800A7, 0x800AC, 0x800AA };
+    MBModel* model;
+    s16 mes;
+    u16 done;
+    s32 rounds;
+    s32 layout;
+    s32 i;
+
+    func_80050E00_51A00(3);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    for (i = 0; i < 4; i++) {
+        if (D_80108C38_2AEDD8_DesertDuel[i] != 0) {
+            MBPlayerModelCreate(i, D_80108928_2AEAC8_DesertDuel[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 1, 0);
+            PLAYER_MODEL(i)->pos.x = -1000.0f;
+            PLAYER_MODEL(i)->pos.y = 0.0f;
+            PLAYER_MODEL(i)->pos.z = 700.0f;
+            gPlayers[i].flags |= 2;
+            func_80043DAC_449AC(PLAYER_MODEL(i));
+            hook[i] = LoadFormFile(0xA0191, 0x689);
+            func_8005AA48_5B648(PLAYER_MODEL(i), "item_hook", hook[i]);
+        }
+    }
+    D_80108CA4_2AEE44_DesertDuel = MBModelFileCreate(0x800A6, 0xD, 1.0f, 1.0f, motions);
+    func_8005AB50_5B750(D_80108CA4_2AEE44_DesertDuel, 1, 0xB, D_80108940_2AEAE0_DesertDuel);
+    D_80108CA4_2AEE44_DesertDuel->pos.x = D_80108948_2AEAE8_DesertDuel.x;
+    D_80108CA4_2AEE44_DesertDuel->pos.y = 0.0f;
+    D_80108CA4_2AEE44_DesertDuel->pos.z = D_80108948_2AEAE8_DesertDuel.z;
+    func_80056658_57258(&D_80108CA4_2AEE44_DesertDuel->pos, &D_80108948_2AEAE8_DesertDuel, &D_80108CA4_2AEE44_DesertDuel->rot);
+    if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+        D_80108CA4_2AEE44_DesertDuel->jumpY = D_80108948_2AEAE8_DesertDuel.y;
+        D_80108CA4_2AEE44_DesertDuel->jumpVel = 7.5f;
+        D_80108CA4_2AEE44_DesertDuel->jumpAccel = 0.0f;
+        D_80108CA8_2AEE48_DesertDuel = MBModelFileCreate(0xA019D, 0xD, 1.0f, 1.0f, NULL);
+        D_80108CA8_2AEE48_DesertDuel->pos.x = D_80108948_2AEAE8_DesertDuel.x;
+        D_80108CA8_2AEE48_DesertDuel->pos.y = 0.0f;
+        D_80108CA8_2AEE48_DesertDuel->pos.z = D_80108948_2AEAE8_DesertDuel.z;
+        D_80108CA8_2AEE48_DesertDuel->jumpY = D_80108948_2AEAE8_DesertDuel.y;
+        D_80108CA8_2AEE48_DesertDuel->jumpVel = 7.5f;
+        D_80108CA8_2AEE48_DesertDuel->jumpAccel = 0.0f;
+    }
+    PlayMusic(0x25);
+    InitFadeIn(0, 0x10);
+    if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+        /* the referee drops in with his hat */
+        for (D_80108C4C_2AEDEC_DesertDuel = 0;; D_80108C4C_2AEDEC_DesertDuel++) {
+            D_80108CA8_2AEE48_DesertDuel->jumpY = D_80108CA4_2AEE44_DesertDuel->jumpY;
+            D_80108CA4_2AEE44_DesertDuel->jumpY -= D_80108CA4_2AEE44_DesertDuel->jumpVel;
+            if (D_80108CA4_2AEE44_DesertDuel->jumpY <= D_80108CA4_2AEE44_DesertDuel->pos.y) {
+                break;
+            }
+            if (D_80108C4C_2AEDEC_DesertDuel == 1) {
+                func_80104DF4_2AAF94_DesertDuel(D_80108CD4_2AEE74_DesertDuel);
+            }
+            HuPrcVSleep();
+        }
+        D_80108CA4_2AEE44_DesertDuel->jumpY = D_80108CA4_2AEE44_DesertDuel->pos.y;
+        func_80104354_2AA4F4_DesertDuel();
+        layout = (D_80108C48_2AEDE8_DesertDuel == 4) ? 0 : -1;
+        if (D_80108C48_2AEDE8_DesertDuel == 3) {
+            layout = 6;
+        }
+        if (layout != -1) {
+            /* three or four players: the challenger picks the opponent */
+            func_80104474_2AA614_DesertDuel(layout);
+            WAIT_STEP();
+            PlaySound(0xE8);
+            omAddPrcObj(func_801049AC_2AAB4C_DesertDuel, 0x12, 0, 0);
+            D_80108C50_2AEDF0_DesertDuel = 0;
+            WAIT_STEP();
+            func_80104474_2AA614_DesertDuel(1);
+            WAIT_STEP();
+            func_80104474_2AA614_DesertDuel(2);
+            WAIT_STEP();
+        } else {
+            func_80104474_2AA614_DesertDuel(7);
+            WAIT_STEP();
+        }
+        MBVsSprCreateY(160.0f, 90.0f);
+        HuPrcSleep(10);
+        D_80108CD8_2AEE78_DesertDuel = 6;
+        func_80104474_2AA614_DesertDuel(3);
+        WAIT_STEP();
+        omAddPrcObj(func_80105054_2AB1F4_DesertDuel, 0x12, 0, 0);
+        func_80104C9C_2AAE3C_DesertDuel();
+        D_80108C50_2AEDF0_DesertDuel = 0;
+        WAIT_STEP();
+        func_80104474_2AA614_DesertDuel(4);
+        MBVsSprKill();
+        if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+            omDelObj(D_80108CE0_2AEE80_DesertDuel);
+        }
+        WAIT_STEP();
+    }
+    /* the duelists walk to their marks */
+    PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel)->pos.x = -400.0f;
+    PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel)->pos.x = 400.0f;
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 0, 0, 5, 2);
+    work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 15.0f, 1, D_80108984_2AEB24_DesertDuel);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 0, 0, 5, 2);
+    work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 15.0f, 1, D_80108990_2AEB30_DesertDuel);
+    while (TRUE) {
+        done = 0;
+        for (i = 0; i < 2; i++) {
+            if (func_8005A778_5B378(work[i]) != 0) {
+                done++;
+            }
+        }
+        if (done == 2) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 2; i++) {
+        HuMemMemoryFreePerm(work[i]);
+    }
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 2, 0, 5, 2);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 2, 0, 5, 2);
+    /* the referee walks to the middle */
+    work[0] = func_8005A718_5B318(D_80108CA4_2AEE44_DesertDuel, 30.0f, 1, D_80108960_2AEB00_DesertDuel);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work[0]);
+    model = D_80108CA4_2AEE44_DesertDuel;
+    model->rot.x = __sinf(0.34906584f); /* 20 degrees */
+    model = D_80108CA4_2AEE44_DesertDuel;
+    model->rot.y = 0.0f;
+    model->rot.z = __cosf(0.34906584f);
+    D_80108CA4_2AEE44_DesertDuel->obj->rot.z = 20.0f;
+    PlaySound(0xE8);
+    omAddPrcObj(func_801058C8_2ABA68_DesertDuel, 0x12, 0, 0);
+    D_80108C50_2AEDF0_DesertDuel = 0;
+    WAIT_STEP();
+    D_80108CA4_2AEE44_DesertDuel->rot.x = HuMathSin(0.0f);
+    D_80108CA4_2AEE44_DesertDuel->rot.y = 0.0f;
+    D_80108CA4_2AEE44_DesertDuel->rot.z = func_800B7890_B8490(D_80108CA4_2AEE44_DesertDuel->rot.y);
+    D_80108CA4_2AEE44_DesertDuel->obj->rot.z = 0.0f;
+    work[0] = func_8005A718_5B318(D_80108CA4_2AEE44_DesertDuel, 30.0f, 1, D_80108954_2AEAF4_DesertDuel);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    rounds = 0;
+    HuMemMemoryFreePerm(work[0]);
+    D_80108CA4_2AEE44_DesertDuel->rot.x = HuMathSin(0.0f);
+    D_80108CA4_2AEE44_DesertDuel->rot.y = 0.0f;
+    D_80108CA4_2AEE44_DesertDuel->rot.z = func_800B7890_B8490(D_80108CA4_2AEE44_DesertDuel->rot.y);
+    func_8008CE5C_8DA5C();
+    do {
+        D_80108C78_2AEE18_DesertDuel = 0;
+        HuPrcSleep(15);
+        func_80088640_89240();
+        D_80108C68_2AEE08_DesertDuel = 0x214;
+        D_80108C6C_2AEE0C_DesertDuel = 90;
+        D_80108C70_2AEE10_DesertDuel = 70;
+        D_80108C74_2AEE14_DesertDuel = 4;
+        omAddPrcObj(func_80105AAC_2ABC4C_DesertDuel, 0x12, 0, 0);
+        D_80108C50_2AEDF0_DesertDuel = 0;
+        WAIT_STEP();
+        /* face off */
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 0, 0, 5, 2);
+        func_8005ACD0_5B8D0(&gPlayers[D_80108C18_2AEDB8_DesertDuel], 0xB);
+        work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 5.0f, 1, &D_8010899C_2AEB3C_DesertDuel[0]);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 0, 0, 5, 2);
+        func_8005ACD0_5B8D0(&gPlayers[D_80108C1C_2AEDBC_DesertDuel], 0xB);
+        work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 5.0f, 1, &D_8010899C_2AEB3C_DesertDuel[1]);
+        while (TRUE) {
+            done = 0;
+            for (i = 0; i < 2; i++) {
+                if (func_8005A778_5B378(work[i]) != 0) {
+                    done++;
+                }
+            }
+            if (done == 2) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 2; i++) {
+            HuMemMemoryFreePerm(work[i]);
+        }
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), 2, 0, 5, 2);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), 2, 0, 5, 2);
+        HuVecCopyXYZ(&pos[0], 0.0f, PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel)->pos.y, PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel)->pos.z);
+        HuVecCopyXYZ(&pos[1], 0.0f, PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel)->pos.y, PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel)->pos.z);
+        func_800446B4_452B4(PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel), &pos[0], 10);
+        func_800446B4_452B4(PLAYER_MODEL(D_80108C1C_2AEDBC_DesertDuel), &pos[1], 10);
+        HuPrcSleep(20);
+        func_8008CE5C_8DA5C();
+        func_800691FC_69DFC(1);
+        WAIT_MESSAGE();
+        HuPrcSleep(18);
+        D_80108C50_2AEDF0_DesertDuel = 0;
+        D_80108C58_2AEDF8_DesertDuel = 0;
+        func_80106040_2AC1E0_DesertDuel();
+        omAddPrcObj(func_80106600_2AC7A0_DesertDuel, 0x12, 0, 0);
+        WAIT_STEP();
+        switch (D_80108C58_2AEDF8_DesertDuel) {
+            case 2:
+                rounds += D_80108C5C_2AEDFC_DesertDuel[0] == 2;
+                break;
+            case 4:
+                rounds += D_80108C5C_2AEDFC_DesertDuel[1] == 2;
+                break;
+            case 3:
+                D_80108C30_2AEDD0_DesertDuel = D_80108C18_2AEDB8_DesertDuel;
+                rounds++;
+                break;
+            case 5:
+                D_80108C30_2AEDD0_DesertDuel = D_80108C1C_2AEDBC_DesertDuel;
+                rounds++;
+                break;
+            case 1:
+                D_80108C30_2AEDD0_DesertDuel = -1;
+                if (D_80108C9C_2AEE3C_DesertDuel != 0) {
+                    func_800794A8_7A0A8(30);
+                    HuPrcSleep(45);
+                }
+                rounds++;
+                break;
+        }
+    } while (rounds == 0);
+    if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+        D_80108C50_2AEDF0_DesertDuel = 0;
+        func_80104474_2AA614_DesertDuel(2);
+        WAIT_STEP();
+    }
+    if (D_80108C30_2AEDD0_DesertDuel == -1) {
+        /* a draw: both get their stake back */
+        D_800F8C5C_F985C = D_800FC880_FD480 = D_80108C30_2AEDD0_DesertDuel;
+        if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+            MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 2, 0, 5, 0);
+            HuPrcSleep(23);
+            MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 0, 0, 20, 2);
+            func_80088640_89240();
+            D_80102708_103308 = 1;
+            PlaySound(0xE8);
+            D_80108C68_2AEE08_DesertDuel = 0x216;
+            D_80108C6C_2AEE0C_DesertDuel = 85;
+            D_80108C70_2AEE10_DesertDuel = 70;
+            D_80108C74_2AEE14_DesertDuel = 5;
+            omAddPrcObj(func_80105AAC_2ABC4C_DesertDuel, 0x12, 0, 0);
+            D_80108C50_2AEDF0_DesertDuel = 0;
+            WAIT_STEP();
+            func_800614B4_620B4(D_80108C18_2AEDB8_DesertDuel, D_80108C34_2AEDD4_DesertDuel);
+            func_8006135C_61F5C(D_80108C1C_2AEDBC_DesertDuel, D_80108C34_2AEDD4_DesertDuel, 0);
+            func_800794A8_7A0A8(30);
+            HuPrcSleep(30);
+        }
+        PlayMusic(0x57);
+        func_800691FC_69DFC(0x13);
+        WAIT_MESSAGE();
+    } else {
+        D_800FC880_FD480 = D_80108C30_2AEDD0_DesertDuel;
+        if (D_80108C30_2AEDD0_DesertDuel == D_80108C18_2AEDB8_DesertDuel) {
+            D_800F8C5C_F985C = D_80108C1C_2AEDBC_DesertDuel;
+        } else {
+            D_800F8C5C_F985C = D_80108C18_2AEDB8_DesertDuel;
+        }
+        func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 0);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C30_2AEDD0_DesertDuel), 4, 0, 5, 0);
+        MBMotionShiftSet(PLAYER_MODEL(D_800F8C5C_F985C), 4, 0, 5, 0);
+        HuPrcSleep(55);
+        func_800298A4_2A4A4(hook[D_80108C30_2AEDD0_DesertDuel], 4, 4);
+        func_800298A4_2A4A4(hook[D_800F8C5C_F985C], 4, 4);
+        /* both turn to the camera; retail takes y from the challenger for both */
+        HuVecCopyXYZ(&pos[0], D_800C9B80_CA780->pos.x, PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel)->pos.y, D_800C9B80_CA780->pos.z);
+        HuVecCopyXYZ(&pos[1], D_800C9B80_CA780->pos.x, PLAYER_MODEL(D_80108C18_2AEDB8_DesertDuel)->pos.y, D_800C9B80_CA780->pos.z);
+        func_800446B4_452B4(PLAYER_MODEL(D_80108C30_2AEDD0_DesertDuel), &pos[0], 10);
+        func_800446B4_452B4(PLAYER_MODEL(D_800F8C5C_F985C), &pos[1], 10);
+        HuPrcSleep(20);
+        if (D_80108C9C_2AEE3C_DesertDuel == 0) {
+            MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 2, 0, 5, 0);
+            HuPrcSleep(23);
+            MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 0, 0, 20, 2);
+            func_80088640_89240();
+            D_80102708_103308 = 1;
+            PlaySound(0xE8);
+            D_80108C68_2AEE08_DesertDuel = 0x215;
+            D_80108C6C_2AEE0C_DesertDuel = 90;
+            D_80108C70_2AEE10_DesertDuel = 70;
+            D_80108C74_2AEE14_DesertDuel = 7;
+            omAddPrcObj(func_80105AAC_2ABC4C_DesertDuel, 0x12, 0, 0);
+            D_80108C50_2AEDF0_DesertDuel = 0;
+            WAIT_STEP();
+            func_800614B4_620B4(D_80108C30_2AEDD0_DesertDuel, D_80108C34_2AEDD4_DesertDuel * 2);
+            func_800794A8_7A0A8(30);
+            if (D_80108CA2_2AEE42_DesertDuel != -1) {
+                func_800799A4_7A5A4(D_80108CA2_2AEE42_DesertDuel, 40);
+            }
+            HuPrcSleep(30);
+        }
+        PlayMusic(0x51);
+        func_800732FC_73EFC(D_80108928_2AEAC8_DesertDuel[gPlayers[D_80108C30_2AEDD0_DesertDuel].character][7],
+                            (D_80108C30_2AEDD0_DesertDuel == D_80108C18_2AEDB8_DesertDuel) ? 0x2C : 0x54, D_800FC880_FD480);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108C30_2AEDD0_DesertDuel), 6, 0, 5, 0);
+        func_8005ACD0_5B8D0(&gPlayers[D_80108C30_2AEDD0_DesertDuel], 1);
+        mes = func_800797DC_7A3DC(0xFC, D_800F8C5C_F985C);
+        if (D_800F8C5C_F985C == D_80108C18_2AEDB8_DesertDuel) {
+            func_800798F8_7A4F8(mes, 0x2C);
+        } else {
+            func_800798F8_7A4F8(mes, 0x54);
+        }
+        MBMotionShiftSet(PLAYER_MODEL(D_800F8C5C_F985C), 7, 0, 5, 0);
+        func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 2);
+        if (D_80108C58_2AEDF8_DesertDuel == 2 || D_80108C58_2AEDF8_DesertDuel == 4) {
+            omAddPrcObj(func_80107A00_2ADBA0_DesertDuel, 0x12, 0, 0);
+        }
+        func_800691FC_69DFC(6, gPlayers[D_80108C30_2AEDD0_DesertDuel].character);
+        WAIT_MESSAGE();
+    }
+    HuPrcSleep(8);
+    for (i = 0; i < D_80108C7C_2AEE1C_DesertDuel; i++) {
+        D_800F9570_FA170[D_80108C88_2AEE28_DesertDuel[i]].stat |= 2;
+    }
+    func_80107314_2AD4B4_DesertDuel();
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80102D48_2A8EE8_DesertDuel);
+#endif
 
 /* The referee's hat flies off: it shrinks and spins for 15 frames, then hides. */
 void func_80104354_2AA4F4_DesertDuel(void) {

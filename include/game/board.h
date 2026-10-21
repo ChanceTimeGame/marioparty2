@@ -82,6 +82,12 @@ typedef struct BoardStatus {
     /* 0x44 */ s16 unk_44[2];
 } BoardStatus;
 
+/* Battle/duel participants as bit masks (63670.c, overlay 3F). */
+typedef struct BattleTargets {
+    /* 0x00 */ s16 targets;  /* bit per player: who can be challenged */
+    /* 0x02 */ s16 attacker; /* bit of the challenger */
+} BattleTargets;
+
 extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
 extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
 
