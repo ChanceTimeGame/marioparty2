@@ -231,6 +231,14 @@ f32 func_800B1830_B2430(f32); /* sqrtf */
 void func_80031FD8_32BD8(HmfData*, s16, void*, Matrix4f);
 void func_80036C44_37844(HmfData*, s32, s16);
 void func_8003EBC8_3F7C8(HmfData*);
+u8 func_8001D054_1DC54(void* arg0, u16 arg1, s32 arg2, void* arg3, s32 arg4);
+void func_8002064C_2124C(s16, Gfx**);
+void func_8002699C_2759C(s16);
+s16 func_8007C058_7CC58(u8, u8, u8);
+void func_8007C094_7CC94(s16);
+void func_800368B4_374B4(u16);
+void func_80036B98_37798(void);
+void func_800319EC_325EC(HmfData*, s16, HmfDrawRec*);
 void func_8002024C_20E4C();
 void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
@@ -1131,8 +1139,140 @@ void func_80031FD8_32BD8(HmfData* arg0, s16 arg1, void* arg2, Matrix4f arg3) {
     rec->unk4C = arg0->unk64[arg1].unk50;
     rec->unk54 = arg0->unkD0;
 }
-INCLUDE_ASM("asm/nonmatchings/30560", func_800322BC_32EBC);
+/* MP1 func_8002D614 (src/2C0C0.c): draw the depth-sorted part lists. Register allocation and
+   loop-invariant choice differ (retail hoists &D_80102758[i] and &D_800FDC48[i], keeps the light
+   colours as bytes; masked 116) */
+#ifdef NON_MATCHING
+Gfx* func_800322BC_32EBC(u16 arg0, Gfx* arg1, Gfx* arg2) {
+    s16 sp36;
+    u8 sp3F;
+    u8 sp47;
+    u8 sp4F;
+    Gfx* var_s7;
+    s32 var_fp;
+    s16 sp2E;
+    HmfDrawRec* temp_s1;
+    HmfData* temp_s2;
+    HmfLayerEnt* var_s3;
+    s16 var_s4;
+    s16 i;
+    s16 j;
+    s16 k;
 
+    sp2E = func_8007C058_7CC58(0, 0, 230);
+    var_s7 = D_800FDBCC_FE7CC;
+
+    if (arg2 != NULL) {
+        gSPDisplayList(D_800FDBCC_FE7CC++, arg2);
+    }
+
+    var_fp = (D_800FA5D8_FB1D8 != 0);
+
+    func_8002699C_2759C(arg0);
+
+    sp3F = D_800F8424_F9024->l.col[0];
+    sp47 = D_800F8424_F9024->l.col[1];
+    sp4F = D_800F8424_F9024->l.col[2];
+
+    for (i = 0, sp36 = 0; i < 8; i++) {
+        if (D_80102758_103358[i] == 2) {
+            continue;
+        }
+
+        if (var_fp != 0) {
+            gDPFullSync(D_800FDBCC_FE7CC++);
+            gSPEndDisplayList(D_800FDBCC_FE7CC++);
+            func_8001D054_1DC54(var_s7, D_800FA5D8_FB1D8, 0, NULL, 0);
+            var_s7 = D_800FDBCC_FE7CC;
+        }
+
+        func_8002064C_2124C(arg0, &D_800FDBCC_FE7CC);
+
+        sp36++;
+        var_fp = 1;
+        D_800FA5D8_FB1D8 = i;
+
+        gSPDisplayList(D_800FDBCC_FE7CC++, arg1);
+
+        D_800FA720_FB320 = 0xFFFFFFFF;
+        D_800FD8A0_FE4A0 = 0xFFFFFFFF;
+        D_800FD84C_FE44C = 0xFFFFFFFF;
+        D_800FC888_FD488 = NULL;
+
+        gSPNumLights(D_800FDBCC_FE7CC++, D_800FA620_FB220->unk00);
+
+        for (j = 1; j < D_800FA620_FB220->unk00 + 1; j++) {
+            gSPLight(D_800FDBCC_FE7CC++, D_800F8424_F9024 + j, j);
+        }
+
+        gSPLight(D_800FDBCC_FE7CC++, D_800F8424_F9024, D_800FA620_FB220->unk00 + 1);
+
+        D_800F94C0_FA0C0 = 255;
+        D_800FDEA0_FEAA0 = 255;
+        D_800FD800_FE400 = 255;
+        var_s4 = -1;
+
+        func_80036B98_37798();
+
+        var_s3 = &D_800FDC48_FE848[i][D_800FDC48_FE848[i]->unk00];
+        for (k = 2; k < D_80102758_103358[i]; k++) {
+            temp_s1 = &D_800F8C58_F9858[var_s3->unk02];
+            temp_s2 = temp_s1->unk48;
+
+            D_800FD850_FE450 = sp3F;
+            D_800FD8C0_FE4C0 = sp47;
+            D_800F9D22_FA922 = sp4F;
+            D_800F9D38_FA938 = 0;
+            D_800FA5B0_FB1B0 = 0;
+            D_800FA19A_FAD9A = 0;
+
+            func_80038C04_39804(&D_800FDBCC_FE7CC, D_800FA620_FB220->unk00 + 1,
+                (D_800FD850_FE450 << 0x18) + (D_800FD8C0_FE4C0 << 0x10) + (D_800F9D22_FA922 << 8));
+            func_80038C04_39804(&D_800FDBCC_FE7CC, 1, 0);
+
+            if (temp_s1->unk54 != NULL) {
+                gSPLight(D_800FDBCC_FE7CC++, &temp_s2->unkD0->unk08[D_800FDBE0_FE7E0], 2);
+            }
+
+            if (var_s4 != temp_s1->unk4C) {
+                var_s4 = temp_s1->unk4C;
+                func_800368B4_374B4(var_s4);
+            }
+
+            gSPMatrix(D_800FDBCC_FE7CC++, osVirtualToPhysical(temp_s1->unk44), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+            D_800F64C4_F70C4 = temp_s1->unk50;
+            func_800319EC_325EC(temp_s2, temp_s1->unk00, temp_s1);
+
+            if (temp_s1->unk54 != NULL) {
+                gSPLight(D_800FDBCC_FE7CC++, &D_800F8424_F9024[2], 2);
+            }
+
+            var_s3 = &D_800FDC48_FE848[i][var_s3->unk00];
+            if (var_s3->unk00 == 0) {
+                break;
+            }
+        }
+    }
+
+    if (sp36 == 0) {
+        gSPDisplayList(D_800FDBCC_FE7CC++, arg1);
+        gSPNumLights(D_800FDBCC_FE7CC++, D_800FA620_FB220->unk00);
+
+        for (j = 1; j < D_800FA620_FB220->unk00 + 1; j++) {
+            gSPLight(D_800FDBCC_FE7CC++, D_800F8424_F9024 + j, j);
+        }
+
+        gSPLight(D_800FDBCC_FE7CC++, D_800F8424_F9024, D_800FA620_FB220->unk00 + 1);
+    }
+
+    func_8007C094_7CC94(sp2E);
+
+    return var_s7;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/30560", func_800322BC_32EBC);
+#endif
 /* A part's face (MP1 unk2C0C0Struct20; 1D0B0's HmfFaceData) */
 typedef struct HmfFaceRec {
     /* 0x00 */ u8 unk00; /* vertex count | 0x80 unlit */
