@@ -1496,7 +1496,274 @@ void func_801077D8_25E8D8_ChanceTime(omObjData* obj) {
     }
     obj->func_ptr = func_80107B00_25EC00_ChanceTime;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80107B00_25EC00_ChanceTime);
+/* The voice a player plays once the frame counter reaches half the length of the character's
+   file `file` (func_80107B00). */
+#define CT_VOICE(w, file, snd, pan)                                                                        \
+    D_8011014A_26724A_ChanceTime =                                                                         \
+        func_80073014_73C14(D_800CD438_CE038[gPlayers[(w)->unk_59].character].unk_04 | (file), NULL) / 2; \
+    if (D_8011014A_26724A_ChanceTime == D_80110144_267244_ChanceTime) {                                    \
+        func_800798F8_7A4F8(func_800797DC_7A3DC(snd, (w)->unk_59), pan);                                    \
+    }
+
+/* The coin object's update (MP1 func_800FB00C): 0 an outcome that cannot move anything ends at
+   once (func_80109718); 1 runs the exchange; 3 waits 32 frames; 4 the players react (motions
+   and voices; the swap outcomes start music 0x5C) until both motions end, or 30 frames when
+   nothing changed hands; 5 ends the event. */
+void func_80107B00_25EC00_ChanceTime(omObjData* obj) {
+    omObjData* p0;
+    omObjData* p1;
+    CTPlayerWork* w0;
+    CTPlayerWork* w1;
+    s16 d;
+
+    if (D_80110065_267165_ChanceTime == 0) {
+        return;
+    }
+    p0 = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]];
+    p1 = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]];
+    w0 = CT_PWORK(p0);
+    w1 = CT_PWORK(p1);
+    switch (D_8011013C_26723C_ChanceTime) {
+    case 0:
+        switch (D_80110182_267282_ChanceTime) {
+        case 6:
+            if (gPlayers[D_80110180_267280_ChanceTime].stars == 0) {
+                func_80109718_260818_ChanceTime(1, 0);
+            }
+            break;
+        case 7:
+            if (gPlayers[D_80110181_267281_ChanceTime].stars == 0) {
+                func_80109718_260818_ChanceTime(1, 1);
+            }
+            break;
+        case 0:
+        case 2:
+        case 4:
+        case 11:
+        case 12:
+            if (gPlayers[D_80110180_267280_ChanceTime].coins == 0) {
+                func_80109718_260818_ChanceTime(0, 0);
+            }
+            break;
+        case 1:
+        case 3:
+        case 5:
+            if (gPlayers[D_80110181_267281_ChanceTime].coins == 0) {
+                func_80109718_260818_ChanceTime(0, 1);
+            }
+            break;
+        case 8:
+            if (gPlayers[D_80110180_267280_ChanceTime].coins == 0 && gPlayers[D_80110181_267281_ChanceTime].coins == 0) {
+                func_80109718_260818_ChanceTime(0, 0);
+            }
+            break;
+        case 9:
+            if (gPlayers[D_80110180_267280_ChanceTime].stars == 0 && gPlayers[D_80110181_267281_ChanceTime].stars == 0) {
+                func_80109718_260818_ChanceTime(1, 0);
+            }
+            break;
+        case 10:
+            if (gPlayers[D_80110180_267280_ChanceTime].stars == 0 && gPlayers[D_80110181_267281_ChanceTime].stars == 0
+                && gPlayers[D_80110180_267280_ChanceTime].coins == 0 && gPlayers[D_80110181_267281_ChanceTime].coins == 0) {
+                func_80109718_260818_ChanceTime(2, 0);
+            }
+            break;
+        }
+        D_8011013C_26723C_ChanceTime++;
+        break;
+    case 1:
+        if (func_80107594_25E694_ChanceTime(obj) == 1) {
+            D_8011013C_26723C_ChanceTime++;
+        }
+        break;
+    case 2:
+        D_8011013C_26723C_ChanceTime++;
+        break;
+    case 3:
+        if (D_80110144_267244_ChanceTime++ >= 31) {
+            D_80110144_267244_ChanceTime = 0;
+            D_8011013C_26723C_ChanceTime++;
+        }
+        break;
+    case 4:
+        w0->unk_3C = w1->unk_3C = 0.0f;
+        p0->rot.y = p1->rot.y = 0.0f;
+        w0->unk_40 = w1->unk_40 = 0.0f;
+        switch (D_80110182_267282_ChanceTime) {
+        case 6:
+            func_80019B9C_1A79C(p0, 0x2A);
+            func_80019B9C_1A79C(p1, 0x28);
+            if (D_80110148_267248_ChanceTime == 0) {
+                PlayMusic(0x5C);
+                D_80110148_267248_ChanceTime = 1;
+            }
+            CT_VOICE(w0, 0x55, 0xFC, 0x2C);
+            CT_VOICE(w1, 0x4E, 0xF5, 0x54);
+            break;
+        case 7:
+            func_80019B9C_1A79C(p0, 0x28);
+            func_80019B9C_1A79C(p1, 0x2A);
+            if (D_80110148_267248_ChanceTime == 0) {
+                PlayMusic(0x5C);
+                D_80110148_267248_ChanceTime = 1;
+            }
+            CT_VOICE(w0, 0x4E, 0xF5, 0x2C);
+            CT_VOICE(w1, 0x55, 0xFC, 0x54);
+            break;
+        case 0:
+            func_80019B9C_1A79C(p0, 0x29);
+            func_80019B9C_1A79C(p1, 0x29);
+            CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+            CT_VOICE(w1, 0x58, 0xFC, 0x54);
+            break;
+        case 2:
+            func_80019B9C_1A79C(p0, 0x29);
+            func_80019B9C_1A79C(p1, 0x26);
+            CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+            CT_VOICE(w1, 0x52, 0x103, 0x54);
+            break;
+        case 4:
+            func_80019B9C_1A79C(p0, 0x29);
+            func_80019B9C_1A79C(p1, 0x27);
+            CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+            CT_VOICE(w1, 0x50, 0x103, 0x54);
+            break;
+        case 1:
+            func_80019B9C_1A79C(p0, 0x29);
+            func_80019B9C_1A79C(p1, 0x29);
+            CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+            CT_VOICE(w1, 0x58, 0xFC, 0x54);
+            break;
+        case 3:
+            func_80019B9C_1A79C(p0, 0x26);
+            func_80019B9C_1A79C(p1, 0x29);
+            CT_VOICE(w0, 0x52, 0x103, 0x2C);
+            CT_VOICE(w1, 0x58, 0xFC, 0x54);
+            break;
+        case 5:
+            func_80019B9C_1A79C(p0, 0x27);
+            func_80019B9C_1A79C(p1, 0x29);
+            CT_VOICE(w0, 0x50, 0x103, 0x2C);
+            CT_VOICE(w1, 0x58, 0xFC, 0x54);
+            break;
+        case 8:
+            if (gPlayers[D_80110180_267280_ChanceTime].coins == gPlayers[D_80110181_267281_ChanceTime].coins) {
+                goto tie;
+            }
+            d = gPlayers[D_80110180_267280_ChanceTime].coins - gPlayers[D_80110181_267281_ChanceTime].coins;
+            if (gPlayers[D_80110181_267281_ChanceTime].coins < gPlayers[D_80110180_267280_ChanceTime].coins) {
+                func_80019B9C_1A79C(p1, 0x29);
+                CT_VOICE(w1, 0x58, 0xFC, 0x54);
+                if (abs(d) < 4) {
+                    func_80019B9C_1A79C(p0, 0x29);
+                    CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+                } else if (abs(d) < 21) {
+                    func_80019B9C_1A79C(p0, 0x26);
+                    CT_VOICE(w0, 0x52, 0x103, 0x2C);
+                } else {
+                    func_80019B9C_1A79C(p0, 0x27);
+                    CT_VOICE(w0, 0x50, 0x103, 0x2C);
+                }
+            } else {
+                func_80019B9C_1A79C(p0, 0x29);
+                CT_VOICE(w0, 0x58, 0xFC, 0x2C);
+                if (abs(d) < 4) {
+                    func_80019B9C_1A79C(p1, 0x29);
+                    CT_VOICE(w1, 0x58, 0xFC, 0x54);
+                } else if (abs(d) < 21) {
+                    func_80019B9C_1A79C(p1, 0x26);
+                    CT_VOICE(w1, 0x52, 0x103, 0x54);
+                } else {
+                    func_80019B9C_1A79C(p1, 0x27);
+                    CT_VOICE(w1, 0x50, 0x103, 0x54);
+                }
+            }
+            break;
+        case 9:
+            if (gPlayers[D_80110180_267280_ChanceTime].stars == gPlayers[D_80110181_267281_ChanceTime].stars) {
+                goto tie;
+            }
+            if (gPlayers[D_80110180_267280_ChanceTime].stars > gPlayers[D_80110181_267281_ChanceTime].stars) {
+                func_80019B9C_1A79C(p0, 0x28);
+                func_80019B9C_1A79C(p1, 0x2A);
+                if (D_80110148_267248_ChanceTime == 0) {
+                    PlayMusic(0x5C);
+                    D_80110148_267248_ChanceTime = 1;
+                }
+                CT_VOICE(w1, 0x55, 0xFC, 0x54);
+                CT_VOICE(w0, 0x4E, 0xF5, 0x2C);
+            } else {
+                func_80019B9C_1A79C(p0, 0x2A);
+                func_80019B9C_1A79C(p1, 0x28);
+                if (D_80110148_267248_ChanceTime == 0) {
+                    PlayMusic(0x5C);
+                    D_80110148_267248_ChanceTime = 1;
+                }
+                CT_VOICE(w0, 0x55, 0xFC, 0x2C);
+                CT_VOICE(w1, 0x4E, 0xF5, 0x54);
+            }
+            break;
+        case 10:
+            if (gPlayers[D_80110180_267280_ChanceTime].stars > gPlayers[D_80110181_267281_ChanceTime].stars) {
+                func_80019B9C_1A79C(p0, 0x28);
+                func_80019B9C_1A79C(p1, 0x2A);
+                if (D_80110148_267248_ChanceTime == 0) {
+                    PlayMusic(0x5C);
+                    D_80110148_267248_ChanceTime = 1;
+                }
+                CT_VOICE(w0, 0x4E, 0xF5, 0x2C);
+                CT_VOICE(w1, 0x55, 0xFC, 0x54);
+            } else if (gPlayers[D_80110180_267280_ChanceTime].stars < gPlayers[D_80110181_267281_ChanceTime].stars) {
+                func_80019B9C_1A79C(p0, 0x2A);
+                func_80019B9C_1A79C(p1, 0x28);
+                if (D_80110148_267248_ChanceTime == 0) {
+                    PlayMusic(0x5C);
+                    D_80110148_267248_ChanceTime = 1;
+                }
+                CT_VOICE(w0, 0x55, 0xFC, 0x2C);
+                CT_VOICE(w1, 0x4E, 0xF5, 0x54);
+            } else if (gPlayers[D_80110180_267280_ChanceTime].coins > gPlayers[D_80110181_267281_ChanceTime].coins) {
+                func_80019B9C_1A79C(p0, 0x28);
+                func_80019B9C_1A79C(p1, 0x2A);
+                CT_VOICE(w0, 0x4E, 0x103, 0x2C);
+                CT_VOICE(w1, 0x55, 0xFC, 0x54);
+            } else if (gPlayers[D_80110180_267280_ChanceTime].coins < gPlayers[D_80110181_267281_ChanceTime].coins) {
+                func_80019B9C_1A79C(p0, 0x2A);
+                func_80019B9C_1A79C(p1, 0x28);
+                CT_VOICE(w0, 0x55, 0xFC, 0x2C);
+                CT_VOICE(w1, 0x4E, 0x103, 0x54);
+            } else {
+            tie:
+                func_80019B9C_1A79C(p0, 0);
+                func_80019B9C_1A79C(p1, 0);
+                D_8011013E_26723E_ChanceTime = 1;
+            }
+            break;
+        }
+        if (D_80110070_267170_ChanceTime.unk_00 == 1) {
+            if (D_8011013E_26723E_ChanceTime == 1) {
+                if (D_80110140_267240_ChanceTime >= 30) {
+                    D_80110140_267240_ChanceTime = 0;
+                    D_8011013C_26723C_ChanceTime++;
+                }
+                D_80110140_267240_ChanceTime++;
+            } else if (D_80110140_267240_ChanceTime >= func_80029D0C_2A90C(p0->model[0])
+                       && D_80110140_267240_ChanceTime >= func_80029D0C_2A90C(p1->model[0])) {
+                D_80110140_267240_ChanceTime = 0;
+                D_8011013C_26723C_ChanceTime++;
+            } else {
+                D_80110140_267240_ChanceTime++;
+            }
+        }
+        D_80110144_267244_ChanceTime++;
+        break;
+    case 5:
+        D_80110065_267165_ChanceTime = 0;
+        D_80110066_267166_ChanceTime = 1;
+        D_8011013C_26723C_ChanceTime++;
+        break;
+    }
+}
 
 /* End of an exchange: both players face front and stop, play motion 0, and the outcome window
    opens (what: D_80110067, swap: the names' order). MP1 does this inline in func_800FB00C. */

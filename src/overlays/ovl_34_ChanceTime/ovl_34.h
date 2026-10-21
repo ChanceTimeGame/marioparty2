@@ -113,7 +113,8 @@ typedef struct CTPlayerWork {
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[2];
+    /* 0x58 */ char unk_58[1];
+    /* 0x59 */ s8 unk_59; /* fork B: player index (gPlayers) */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -267,6 +268,29 @@ ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
 void func_80049F90_4AB90(ModelEmitterWork*);
 void HuVecCopyXYZ(Vec*, f32, f32, f32);
 void MBModelKill(void*);
+/* Per-character data, 0x18 bytes each (ovl_00 D57F0.c's UnkDebug0); unk_04 is the
+   character's file directory. */
+typedef struct CTCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04;
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} CTCharData; /* size = 0x18 */
+extern CTCharData D_800CD438_CE038[];
+extern s16 D_8011013C_26723C_ChanceTime; /* func_80107B00 state (MP1 D_801012A0) */
+extern s16 D_8011013E_26723E_ChanceTime; /* outcome had no effect: wait 30 frames, not the motions */
+extern s16 D_80110140_267240_ChanceTime; /* func_80107B00 frame counter */
+extern s32 D_80110144_267244_ChanceTime; /* func_80107B00 frame counter (voices) */
+extern s8 D_80110148_267248_ChanceTime;  /* the music 0x5C has started */
+extern s16 D_8011014A_26724A_ChanceTime; /* frame of the next voice */
+s16 func_80073014_73C14(u32 file, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*) */
+s16 func_800797DC_7A3DC(s32, s16);
+void func_800798F8_7A4F8(s16 arg0, s16 arg1);
+void PlayMusic(s16);
+int abs(int);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
 void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
