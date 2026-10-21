@@ -3623,9 +3623,66 @@ s32 func_8008E73C_8F33C(s16 portrait, s16 x, s16 y, s32 w, s32 h, u16 flags) {
     return id;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E978_8F578);
+/* opens the message window with a vertical stretch, then pops the portrait in */
+void func_8008E978_8F578(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+    f32 s;
+    f32 inv;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008EBE4_8F7E4);
+    func_8008D808_8E408(winId, 1);
+    if (tw->unk276 != -1) {
+        SprScaleSet(tw->unk_6C, tw->unk274, 0.0f, 0.0f);
+    }
+    func_8008D6F0_8E2F0(winId);
+    for (i = 1; i < 5; i++) {
+        func_8008980C_8A40C(winId, 1.0f, HuMathSin(i * 18.0f));
+        HuPrcVSleep();
+    }
+    func_8008980C_8A40C(winId, 1.0f, 1.0f);
+    if (tw->unk276 != -1) {
+        for (i = 1; i < 5; i++) {
+            s = HuMathSin(i * 18.0f) * 1.2f;
+            inv = -(1.0f / s);
+            SprPosSet(tw->unk_6C, tw->unk274, inv * (tw->unk48 - 24), inv * (tw->unk4A - 24));
+            SprScaleSet(tw->unk_6C, tw->unk274, s, s);
+            HuPrcVSleep();
+        }
+        SprPosSet(tw->unk_6C, tw->unk274, 24 - tw->unk48, 24 - tw->unk4A);
+        SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, 1.0f);
+    }
+    func_8008D808_8E408(winId, 0);
+}
+
+/* turns the portrait over to show another one */
+void func_8008EBE4_8F7E4(s16 winId, s16 portrait) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+    f32 s;
+
+    func_8008D808_8E408(winId, 1);
+    if (tw->unk274 != -1) {
+        for (i = 1; i < 6; i++) {
+            s = HuMathSin(i * 18.0f + 90.0f);
+            if (s != 0.0f) {
+                SprPosSet(tw->unk_6C, tw->unk274, 24 - tw->unk48, -(1.0f / s) * (tw->unk4A - 24));
+            }
+            SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, s);
+            HuPrcVSleep();
+        }
+        func_80089544_8A144(winId, tw->unk274);
+    }
+    tw->unk274 = func_80089404_8A004(winId, D_800CDB98_CE798[portrait], 24 - tw->unk48, 24 - tw->unk4A, 0);
+    for (i = 1; i < 5; i++) {
+        s = HuMathSin(i * 18.0f);
+        SprPosSet(tw->unk_6C, tw->unk274, 24 - tw->unk48, -(1.0f / s) * (tw->unk4A - 24));
+        SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, s);
+        HuPrcVSleep();
+    }
+    SprPosSet(tw->unk_6C, tw->unk274, 24 - tw->unk48, 24 - tw->unk4A);
+    SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, 1.0f);
+    func_8008D808_8E408(winId, 0);
+}
 
 
 /* MP3 func_80061A5C_6265C; MP2 has no extra sleep and always ends with the close */
