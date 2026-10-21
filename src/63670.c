@@ -1,6 +1,12 @@
 #include "common.h"
 #include "game/object.h"
 
+/* Board flow: overlay history, scene setup/teardown, the turn loop, Battle spaces, camera and
+   rumble. C from MP1 src/57330.c, src/5CDB0.c, src/59510.c and MP3 ovl_80_shared_board 10C230.c /
+   113520.c, ovl_81 E3CD0.c / E78B0.c, the rest decompiled fresh (shaped after MP1 57330.c). The
+   unit's rodata (D3BE8-D3D60) is carved; func_800650F0's jump tables are defined beside its
+   INCLUDE_ASM while it is NON_MATCHING. */
+
 extern u8 D_800F8C56_F9856;
 extern s16 D_800F9048_F9C48;
 void func_80049498_4A098(s32);
@@ -11,10 +17,7 @@ void func_8004E10C_4ED0C(s32);
 s32 func_80044DA4_459A4(void);
 void func_8005DA20_5E620(s32);
 
-
 s32 func_8004CC7C_4D87C(s32, s32, s32);
-
-
 
 extern u16 D_800CCD74_CD974[];
 extern u8 D_800CCD7C_CD97C[][3];
@@ -27,8 +30,6 @@ void func_800564B4_570B4(void);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 s32 MBRand(f32);
-
-
 
 extern s32 D_800CCD5C_CD95C[];
 extern u8 D_800CCD54_CD954[];
@@ -47,13 +48,10 @@ void omDelObj(omObjData*);
 void MBDlgWinExecY(s32, s32, s32);
 void MBBattleKuriboObjMain(omObjData* arg0);
 
-
-
 void PlaySound(s32);
 void func_800116B4_122B4(s16, s32);
 s16 GetCurrentPlayerIndex(void);
 void omVibrate(s16, s16, s16, s16);
-
 
 extern s8 D_800CCC14_CD814;
 extern s8 D_800CCC15_CD815;
@@ -81,8 +79,6 @@ extern s16 D_800FA652_FB252;
 void func_8004A908_4B508(void);
 void func_8005DF18_5EB18(s32);
 
-
-
 extern s32 D_800CCC10;
 void func_80047B78_48778(void);
 void func_8005FF9C_60B9C(void);
@@ -102,8 +98,6 @@ void func_80050AE0_516E0(void);
 void func_80050AD4_516D4(void);
 void func_80053DEC_549EC(void);
 void func_80053DD0_549D0(void);
-
-
 
 extern u8 D_01164160[];
 void func_80053A8C_5468C(void);
@@ -132,19 +126,11 @@ void func_80088640_89240(void);
 void func_80056530_57130(void);
 void func_80062D50_63950(void);
 
-
-
 extern s32 D_800CCC40_CD840[];
 extern void (*D_800CCC68_CD868)(void);
 extern s16 D_800E1F88_E2B88;
 void func_80056A3C_5763C(s8);
 void func_80063308_63F08(void);
-
-
-/* Board flow: overlay history, scenes, camera and rumble. C from MP1 src/57330.c, src/5CDB0.c,
-   src/59510.c and MP3 ovl_80_shared_board 10C230.c / 113520.c, ovl_81 E3CD0.c / E78B0.c; the rest
-   have no reference or differ (near) and stay asm, and func_80063BBC and MBPlayerVibrate stay asm
-   because their rodata (D3BE8-D3D48) is shared with asm functions. */
 
 #define CUR_PLAYER -1
 
@@ -1984,12 +1970,6 @@ const u32 jtbl_800D3130_D3D30[] __attribute__((aligned(8), section(".rodata"))) 
     0x8006670C,
 };
 #endif
-
-
-
-
-
-
 
 void func_8006692C_6752C(void) {
     HuPrcVSleep();
