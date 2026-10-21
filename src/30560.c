@@ -2,6 +2,13 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
+/* MP1 func_80033CBC (src/2C0C0.c); as func_800386DC_392DC, a scale pops D_8010107C_101C7C unpushed */
+
+
+/* MP1 func_800339E0 (src/2C0C0.c). MP2 scales in place only, yet still pops D_8010107C_101C7C
+   when it scaled (retail behaviour, kept) */
+
+
 /* Model (HMF) setup, texture and display-list state, matrix copies and animation helpers. The
    functions in C are MP1 src/2C0C0.c and src/34D80.c code (two from MP3 src/22EB0.c); the rest
    have no MP1/MP3 C and stay asm, as does func_80038C04, whose jump table sits in this unit's
@@ -240,6 +247,13 @@ void func_800368B4_374B4(u16);
 void func_80036B98_37798(void);
 void func_800319EC_325EC(HmfData*, s16, HmfDrawRec*);
 void func_80035FBC_36BBC(HmfMat*, HmfTexRef*, s32);
+/* "Can't find ObjName %s\n" (D2E94) */
+extern char D_800D2294_D2E94[];
+s16 func_8001F4AC_200AC(char*); /* name hash */
+s32 func_800B0FD0_B1BD0(char*, char*); /* strcmp */
+void func_800B37C0_B43C0(Matrix4f); /* identity */
+void func_800386DC_392DC(HmfData*, s16);
+void func_80038964_39564(HmfData*, s16);
 void func_8002024C_20E4C();
 void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
@@ -251,7 +265,7 @@ void func_8002FD38_30938(HmfData*);
 void func_80030CD4_318D4(Matrix4f, Matrix4f);
 void func_80036D5C_3795C(HmfData*, s16);
 void func_80037C7C_3887C(HmfData*, s16);
-void func_8003811C_38D1C(HmfData*, s32, s16);
+s32 func_8003811C_38D1C(HmfData*, s16, s16);
 s16 func_80038398_38F98(HmfData*, char*);
 void func_800384C8_390C8(HmfData*, s16, HmfData*);
 s16 func_80038E38_39A38(u8*, HmfData*);
@@ -2282,10 +2296,62 @@ void func_80038084_38C84(HmfData* arg0, s16 arg1, Matrix4f arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003811C_38D1C);
+s32 func_8003811C_38D1C(HmfData* arg0, s16 arg1, s16 arg2) {
+    Matrix4f sp10;
+    HitXform* node;
+    s16 pushed;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038398_38F98);
+    node = &arg0->unk6C[arg1];
+    pushed = 0;
+    guMtxIdentF(sp10);
+    if (node->unk08.x != 0.0f || node->unk08.y != 0.0f || node->unk08.z != 0.0f) {
+        func_80025770_26370(sp10, node->unk08.x, node->unk08.y, node->unk08.z);
+        pushed = 1;
+    }
+    if (node->unk14.x != 0.0f || node->unk14.y != 0.0f || node->unk14.z != 0.0f) {
+        arg0->unkD4(sp10, node->unk14.x, node->unk14.y, node->unk14.z);
+        pushed = 1;
+    }
+    if (node->unk20.x != 1.0f || node->unk20.y != 1.0f || node->unk20.z != 1.0f) {
+        func_80025830_26430(sp10, node->unk20.x, node->unk20.y, node->unk20.z);
+        pushed = 1;
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070++;
+        func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+    if (arg2 == arg1) {
+        return 0;
+    }
+    if (node->unk04 != 0 && func_8003811C_38D1C(arg0, arg1 + node->unk04, arg2) == 0) {
+        return 0;
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070--;
+    }
+    if (node->unk02 != 0 && func_8003811C_38D1C(arg0, arg1 + node->unk02, arg2) == 0) {
+        return 0;
+    }
+    return 1;
+}
+s16 func_80038398_38F98(HmfData* arg0, char* arg1) {
+    s16 temp_a1;
+    s16 i;
 
+    temp_a1 = func_8001F4AC_200AC(arg1);
+    for (i = 0; i < arg0->unk10; i++) {
+        if (arg0->unk64[i].unk08 == temp_a1 && func_800B0FD0_B1BD0(arg0->unk64[i].unk12, arg1) == 0) {
+            break;
+        }
+    }
+
+    if (i == arg0->unk10) {
+        osSyncPrintf(D_800D2294_D2E94, arg1);
+        return -1;
+    }
+
+    return i;
+}
 /* exact c: marioparty func_800337E4 (src/2C0C0.c) */
 void func_8003847C_3907C(HmfData* arg0, char* arg1, HmfData* arg2) {
     s16 idx;
@@ -2296,14 +2362,139 @@ void func_8003847C_3907C(HmfData* arg0, char* arg1, HmfData* arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_800384C8_390C8);
+void func_800384C8_390C8(HmfData* arg0, s16 arg1, HmfData* arg2) {
+    s16 i;
+    s16 j;
+    s16 name;
+    HitXform* node;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038654_39254);
+    name = arg0->unk64[arg1].unk08;
+    for (i = 0; i < arg2->unk10; i++) {
+        if (arg2->unk64[i].unk08 == name && func_800B0FD0_B1BD0(arg2->unk64[i].unk12, arg0->unk64[arg1].unk12) == 0) {
+            break;
+        }
+    }
+    if (i != arg2->unk10) {
+        for (j = 0; j < arg0->unk68; j++) {
+            node = &arg0->unk6C[j];
+            if (node->unk00 == arg1) {
+                node->unk48 = arg2;
+                node->unk00 = i;
+            }
+        }
+    }
+}
+void func_80038654_39254(HmfData* arg0) {
+    if (arg0->unk14 != 0) {
+        D_8010107C_101C7C = 0;
+        D_800FD470_FE070 = 0;
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_800386DC_392DC);
+        func_800B37C0_B43C0(D_801016D0_1022D0[0]);
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038964_39564);
+        if (arg0->unk84 == (void*) -1) {
+            if (arg0->unk68 != 0) {
+                func_800386DC_392DC(arg0, 0);
+            }
+        } else if (arg0->unk16 != 0) {
+            func_80038964_39564(arg0, 0);
+        }
+    }
+}
+void func_800386DC_392DC(HmfData* arg0, s16 arg1) {
+    HitXform* temp_s1 = &arg0->unk6C[arg1];
+    s16 var_s3 = 0;
+    s16 var_s0 = 0;
+    Matrix4f sp10;
 
+    func_800B37C0_B43C0(sp10);
+
+    if (arg0->unk90 == 0) {
+        if (temp_s1->unk08.x != 0.0f || temp_s1->unk08.y != 0.0f || temp_s1->unk08.z != 0.0f) {
+            func_80025770_26370(sp10, temp_s1->unk08.x, temp_s1->unk08.y, temp_s1->unk08.z);
+            var_s0 = 1;
+        }
+
+        if (temp_s1->unk14.x != 0.0f || temp_s1->unk14.y != 0.0f || temp_s1->unk14.z != 0.0f) {
+            arg0->unkD4(sp10, temp_s1->unk14.x, temp_s1->unk14.y, temp_s1->unk14.z);
+            var_s0 = 1;
+        }
+    }
+
+    if (temp_s1->unk20.x != 1.0f || temp_s1->unk20.y != 1.0f || temp_s1->unk20.z != 1.0f) {
+        func_80025830_26430(sp10, temp_s1->unk20.x, temp_s1->unk20.y, temp_s1->unk20.z);
+        var_s3 = 1;
+        var_s0 = 1;
+    }
+
+    if (var_s0 != 0) {
+        D_800FD470_FE070++;
+        func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+
+    func_80030CD4_318D4(temp_s1->unk4C, D_801016D0_1022D0[D_800FD470_FE070]);
+
+    if (temp_s1->unk04 != 0) {
+        func_800386DC_392DC(arg0, arg1 + temp_s1->unk04);
+    }
+
+    if (var_s0) {
+        D_800FD470_FE070--;
+    }
+
+    if (var_s3) {
+        D_8010107C_101C7C--;
+    }
+
+    if (temp_s1->unk02 != 0) {
+        func_800386DC_392DC(arg0, arg1 + temp_s1->unk02);
+    }
+}
+void func_80038964_39564(HmfData* arg0, s16 arg1) {
+    HmfMotionObj* temp_s1 = &((HmfMotionObj*) arg0->unk84)[arg1];
+    s16 var_s5 = 0;
+    s16 var_s2 = 0;
+    s16 i;
+    Matrix4f sp10;
+
+    func_800B37C0_B43C0(sp10);
+
+    if (temp_s1->unk_04.x != 0.0f || temp_s1->unk_04.y != 0.0f || temp_s1->unk_04.z != 0.0f) {
+        func_80025770_26370(sp10, temp_s1->unk_04.x, temp_s1->unk_04.y, temp_s1->unk_04.z);
+        var_s2 = 1;
+    }
+
+    if (temp_s1->unk_10.x != 0.0f || temp_s1->unk_10.y != 0.0f || temp_s1->unk_10.z != 0.0f) {
+        arg0->unkD4(sp10, temp_s1->unk_10.x, temp_s1->unk_10.y, temp_s1->unk_10.z);
+        var_s2 = 1;
+    }
+
+    if (temp_s1->unk_1C.x != 1.0f || temp_s1->unk_1C.y != 1.0f || temp_s1->unk_1C.z != 1.0f) {
+        func_80025830_26430(sp10, temp_s1->unk_1C.x, temp_s1->unk_1C.y, temp_s1->unk_1C.z);
+        var_s5 = 1;
+        var_s2 = 1;
+    }
+
+    if (var_s2) {
+        D_800FD470_FE070++;
+        func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+
+    func_80030CD4_318D4(temp_s1->unk_58, D_801016D0_1022D0[D_800FD470_FE070]);
+
+    for (i = 0; i < temp_s1->unk_00; i++) {
+        if ((temp_s1->unk_50[i] & 0x8000) && (temp_s1->unk_50[i] != -1)) {
+            func_80038964_39564(arg0, temp_s1->unk_50[i] & ~0x8000);
+        }
+    }
+
+    if (var_s2) {
+        D_800FD470_FE070--;
+    }
+
+    if (var_s5) {
+        D_8010107C_101C7C--;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/30560", func_80038C04_39804);
 
 extern s16 D_800FA6E4_FB2E4;
