@@ -86,11 +86,14 @@ void func_8005321C_53E1C(f32, f32);
 void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
 void func_80057730_58330(s16, s32);
 void func_80057A78_58678(s32, s32, s32); /* both duelists' portraits in a window */
+void func_80059120_59D20(void*, f32, f32); /* jump: velocity, gravity */
+void func_80059158_59D58(void*); /* start the jump */
 void func_80059400_5A000(void);
 s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
 ModelPathWork* func_8005A718_5B318(MBModel* model, f32 speed, s16 count, Vec* points);
 s32 func_8005A778_5B378(ModelPathWork*); /* path finished */
 void func_8005AA48_5B648(MBModel*, char*, s16);
+void func_8005AC6C_5B86C(MBModel*, s32);
 void func_8005AB50_5B750(MBModel* arg0, s16 arg1, s16 arg2, s32 arg3);
 void func_8005ABC0_5B7C0(GW_PLAYER*, s16, s16);
 void func_8005ACD0_5B8D0(GW_PLAYER*, s16);
@@ -211,7 +214,7 @@ extern s32 D_80108C4C_2AEDEC_DesertDuel; /* frame counter / tumbleweed timer */
 extern s32 D_80108C50_2AEDF0_DesertDuel; /* a step finished */
 extern s16 D_80108C54_2AEDF4_DesertDuel;
 extern s32 D_80108C58_2AEDF8_DesertDuel; /* the duel's outcome (1-5) */
-extern s32 D_80108C5C_2AEDFC_DesertDuel[2];
+extern s32 D_80108C5C_2AEDFC_DesertDuel[2]; /* false starts: challenger, opponent */
 extern s32 D_80108C64_2AEE04_DesertDuel;
 extern s32 D_80108C68_2AEE08_DesertDuel; /* message for func_80105AAC */
 extern s32 D_80108C6C_2AEE0C_DesertDuel;
@@ -219,6 +222,7 @@ extern s32 D_80108C70_2AEE10_DesertDuel;
 extern s32 D_80108C74_2AEE14_DesertDuel;
 extern s32 D_80108C78_2AEE18_DesertDuel;
 extern s32 D_80108C7C_2AEE1C_DesertDuel; /* entries in D_80108C88 */
+extern s32 D_80108C80_2AEE20_DesertDuel[2]; /* the player each D_80108C88 message is about */
 extern s16 D_80108C88_2AEE28_DesertDuel[]; /* game message ids */
 extern s32 D_80108C8C_2AEE2C_DesertDuel; /* the minimum stake */
 extern s32 D_80108C90_2AEE30_DesertDuel; /* the turn */

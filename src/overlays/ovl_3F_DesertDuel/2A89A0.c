@@ -1398,8 +1398,116 @@ void func_801073A8_2AD548_DesertDuel(void) {
         omOvlReturnEx(1);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073FC_2AD59C_DesertDuel);
+/* A false start: the referee hops, runs to the offender and stops the duel. The first false start
+   is a warning (message 0x217, a "MISS" mark over the offender's side); the second loses the duel
+   to the other duelist (0x218). Then the referee goes back to his spot.
+   Retail quirk: the distance test takes sqrt(x*x - rx*rx + z*z - rz*rz), not the distance. */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_801073FC_2AD59C_DesertDuel(void) {
+    Vec pos;
+    ModelPathWork* work;
+    s32 player;
+    s32 markX;
+    s16 mes;
 
+    markX = -1;
+    func_80059120_59D20(D_80108CA4_2AEE44_DesertDuel, 32.0f, -4.0f);
+    func_80059158_59D58(D_80108CA4_2AEE44_DesertDuel);
+    if (D_80108C58_2AEDF8_DesertDuel == 2) {
+        player = D_80108C18_2AEDB8_DesertDuel;
+    } else {
+        player = D_80108C1C_2AEDBC_DesertDuel;
+    }
+    pos.x = PLAYER_MODEL(player)->pos.x;
+    pos.y = PLAYER_MODEL(player)->pos.y;
+    pos.z = PLAYER_MODEL(player)->pos.z;
+    work = func_8005A718_5B318(D_80108CA4_2AEE44_DesertDuel, 30.0f, 1, &pos);
+    while (func_8005A778_5B378(work) == 0) {
+        if (func_800B1830_B2430(pos.x * pos.x - D_80108CA4_2AEE44_DesertDuel->pos.x * D_80108CA4_2AEE44_DesertDuel->pos.x
+                                + (pos.z * pos.z - D_80108CA4_2AEE44_DesertDuel->pos.z * D_80108CA4_2AEE44_DesertDuel->pos.z)) < 350.0f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work);
+    func_8005AC6C_5B86C(D_80108CA4_2AEE44_DesertDuel, D_80108944_2AEAE4_DesertDuel);
+    MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 1, 0, 5, 2);
+    func_8005ACD0_5B8D0(&gPlayers[D_80108C18_2AEDB8_DesertDuel], 0);
+    func_8005ACD0_5B8D0(&gPlayers[D_80108C1C_2AEDBC_DesertDuel], 0);
+    func_80059120_59D20(D_80108CA4_2AEE44_DesertDuel, 32.0f, -4.0f);
+    HuPrcSleep(3);
+    PlaySound(0x3A6);
+    func_80059158_59D58(D_80108CA4_2AEE44_DesertDuel);
+    D_80108C78_2AEE18_DesertDuel = 1;
+    PlaySound(0x3A7);
+    func_80088640_89240();
+    D_80102708_103308 = 1;
+    switch (D_80108C58_2AEDF8_DesertDuel) {
+        case 2:
+            if (D_80108C5C_2AEDFC_DesertDuel[0] == 0) {
+                D_80108C68_2AEE08_DesertDuel = 0x217;
+                D_80108C6C_2AEE0C_DesertDuel = 90;
+                D_80108C70_2AEE10_DesertDuel = 70;
+                D_80108C74_2AEE14_DesertDuel = 6;
+                markX = 64;
+                func_80105AAC_2ABC4C_DesertDuel();
+                D_80108C80_2AEE20_DesertDuel[D_80108C7C_2AEE1C_DesertDuel] = D_80108C18_2AEDB8_DesertDuel;
+            } else {
+                D_80108C68_2AEE08_DesertDuel = 0x218;
+                D_80108C6C_2AEE0C_DesertDuel = 90;
+                D_80108C70_2AEE10_DesertDuel = 70;
+                D_80108C74_2AEE14_DesertDuel = 6;
+                func_80105AAC_2ABC4C_DesertDuel();
+                D_80108C30_2AEDD0_DesertDuel = D_80108C1C_2AEDBC_DesertDuel;
+            }
+            D_80108C5C_2AEDFC_DesertDuel[0]++;
+            break;
+        case 4:
+            if (D_80108C5C_2AEDFC_DesertDuel[1] == 0) {
+                D_80108C68_2AEE08_DesertDuel = 0x217;
+                D_80108C6C_2AEE0C_DesertDuel = 90;
+                D_80108C70_2AEE10_DesertDuel = 70;
+                D_80108C74_2AEE14_DesertDuel = 6;
+                markX = 256;
+                func_80105AAC_2ABC4C_DesertDuel();
+                D_80108C80_2AEE20_DesertDuel[D_80108C7C_2AEE1C_DesertDuel] = D_80108C1C_2AEDBC_DesertDuel;
+            } else {
+                D_80108C68_2AEE08_DesertDuel = 0x218;
+                D_80108C6C_2AEE0C_DesertDuel = 90;
+                D_80108C70_2AEE10_DesertDuel = 70;
+                D_80108C74_2AEE14_DesertDuel = 6;
+                func_80105AAC_2ABC4C_DesertDuel();
+                D_80108C30_2AEDD0_DesertDuel = D_80108C18_2AEDB8_DesertDuel;
+            }
+            D_80108C5C_2AEDFC_DesertDuel[1]++;
+            break;
+    }
+    if (markX != -1) {
+        mes = func_800691FC_69DFC(9, "\x82\x6C\x82\x68\x82\x72\x82\x72", markX, 64, 1.0, 1.0, 0); /* SJIS "MISS" */
+        D_80108C88_2AEE28_DesertDuel[D_80108C7C_2AEE1C_DesertDuel] = mes;
+        func_800695D8_6A1D8(mes, -1);
+        D_80108C7C_2AEE1C_DesertDuel++;
+    }
+    func_8005AC6C_5B86C(D_80108CA4_2AEE44_DesertDuel, D_80108940_2AEAE0_DesertDuel);
+    MBMotionShiftSet(D_80108CA4_2AEE44_DesertDuel, 0, 0, 5, 2);
+    work = func_8005A718_5B318(D_80108CA4_2AEE44_DesertDuel, 30.0f, 1, D_80108954_2AEAF4_DesertDuel);
+    while (func_8005A778_5B378(work) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work);
+    D_80108CA4_2AEE44_DesertDuel->rot.x = HuMathSin(0.0f);
+    D_80108CA4_2AEE44_DesertDuel->rot.y = 0.0f;
+    D_80108CA4_2AEE44_DesertDuel->rot.z = func_800B7890_B8490(D_80108CA4_2AEE44_DesertDuel->rot.y);
+    D_80108C50_2AEDF0_DesertDuel = 1;
+    func_8008CE5C_8DA5C();
+    if (markX == -1 && D_80108C9C_2AEE3C_DesertDuel != 0) {
+        func_800794A8_7A0A8(60);
+    }
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801073FC_2AD59C_DesertDuel);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107940_2ADAE0_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107A00_2ADBA0_DesertDuel);
