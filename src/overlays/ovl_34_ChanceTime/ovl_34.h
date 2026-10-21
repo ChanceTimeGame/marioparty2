@@ -211,16 +211,50 @@ extern omObjData* D_80110D80_267E80_ChanceTime[2];
 extern omObjData* D_80110D88_267E88_ChanceTime;
 
 /* fork D */
+#include "game/hmfman.h"
+
+/* A block's reel (MP1 CTReel): the faces shown and the entries they cycle through. */
+typedef struct CTReel {
+    /* 0x00 */ s8 unk_00;      /* face shown, 0..3 (& 3) */
+    /* 0x01 */ char unk_01;
+    /* 0x02 */ s16 unk_02[4];  /* sprite per face */
+    /* 0x0A */ s16 unk_0A;     /* current entry of unk_0C */
+    /* 0x0C */ s16 unk_0C[21]; /* entries: characters or outcome ids (read as (u8)) */
+    /* 0x36 */ s16 unk_36;     /* entry count */
+    /* 0x38 */ f32 unk_38;     /* spin angle */
+} CTReel; /* size = 0x3C */
+
 /* omObjData::unk_50 of the hit-box objects (0xB4 bytes; C8E0 func_8000BF24 writes 0x06, 0x14,
-   0xA0..0xAC). */
+   0xA0..0xAC); the blocks keep their reel at 0xB0. Pointer last: offsets hold on the host. */
 typedef struct CTBoxWork {
     /* 0x00 */ char unk_00[3];
     /* 0x03 */ u8 unk_03;
     /* 0x04 */ u8 unk_04;
     /* 0x05 */ char unk_05[3];
     /* 0x08 */ f32 unk_08;
-    /* 0x0C */ char unk_0C[0xA8];
+    /* 0x0C */ char unk_0C[0xA4];
+    /* 0xB0 */ CTReel* unk_B0;
 } CTBoxWork; /* size = 0xB4 */
+
+#define CT_REEL(obj) (((CTBoxWork*)(obj)->unk_50)->unk_B0)
+#define CT_MDL(obj) (D_800FC834_FD434[(obj)->model[1]])
+
+/* func_8010C268 is called with the player object (fork C's prototype takes none). */
+#define func_8010C268_263368_ChanceTime_1 ((void* (*)(omObjData*))func_8010C268_263368_ChanceTime)
+void func_8003E52C_3F12C(s16, u8);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+extern s8 D_80110160_267260_ChanceTime[3]; /* the block's spin sound started */
+extern s16 D_80110164_267264_ChanceTime[3]; /* its sound */
+extern s16 D_8011016C_26726C_ChanceTime[3]; /* 1 spinning, 2 stopped */
+extern s8 D_80110172_267272_ChanceTime; /* blocks stopped so far */
+extern f32 D_80110174_267274_ChanceTime[2]; /* spin speeds (first variant) */
+extern f32 D_8011017C_26727C_ChanceTime; /* spin speed (second variant) */
+extern s16 D_801101A8_2672A8_ChanceTime[3]; /* the block is done */
+extern s8 D_801101B0_2672B0_ChanceTime[3];
+extern s8 D_801101B4_2672B4_ChanceTime[3]; /* wobble phase */
+extern s8 D_801101B8_2672B8_ChanceTime[3]; /* the block's result is taken */
+extern s8 D_80110924_267A24_ChanceTime; /* wobble direction */
+extern void* D_80110928_267A28_ChanceTime;
 
 void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
 void func_8000BFF0_CBF0(omObjData* obj);
@@ -331,7 +365,7 @@ void* func_8010C268_263368_ChanceTime(void);
 void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 arg1);
 /* fork D */
 void func_8010CCF4_263DF4_ChanceTime(omObjData* obj, s8 arg1);
-s32 func_8010DFF8_2650F8_ChanceTime(omObjData* obj, f32 size, omObjData* other);
+s16 func_8010DFF8_2650F8_ChanceTime(omObjData* obj, f32 size, omObjData* other);
 void func_8010E0D4_2651D4_ChanceTime(omObjData* obj);
 void func_8010E214_265314_ChanceTime(omObjData* obj);
 void func_8010E440_265540_ChanceTime(omObjData* obj);
