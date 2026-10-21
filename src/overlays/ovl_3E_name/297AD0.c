@@ -1830,9 +1830,145 @@ void func_8010EB88_2A3E58_name_3E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010EB88_2A3E58_name_3E);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F1FC_2A44CC_name_3E);
+/* Board event 12: the Bowser suit wears off (the current player is shown again). */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_8010F1FC_2A44CC_name_3E(void) {
+    MBModel* obj;
+    f32 scale;
+    f32 rot;
 
+    func_800794A8_7A0A8(60);
+    PlaySound(0x36C);
+    obj = func_80043510_44110(0x6F, NULL);
+    func_800B3170_B3D70(&obj->pos, &D_800CC1F0_CCDF0->pos);
+    obj->pos.z += 20.0f;
+    obj->pos.y += 30.0f;
+
+    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 0.5) {
+        HuVecCopyXYZ(&obj->scale, scale, scale, scale);
+        func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
+    }
+
+    func_800636F8_642F8(3);
+    func_80050860_51460();
+
+    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 0.5) {
+        HuVecCopyXYZ(&obj->scale, scale, scale, scale);
+        func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
+    }
+    MBModelKill(obj);
+    PlayMusic(func_800632FC_63EFC());
+    MBDlgResultWinExec(D_80112584_2A7854_name_3E[GwSystem.current_board_index] + 8);
+    D_800F8D16_F9916 = 0;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F1FC_2A44CC_name_3E);
+#endif
+
+/* Board event 11 (Bowser suit passing players): every player on the current player's space is
+   stomped and loses all their coins; the richest one's coins go to the current player.
+   Differs only in the message index: retail adds count + 1 to the table entry, GCC here adds 1
+   to the entry first (masked 2). */
+#ifdef NON_MATCHING /* NON_MATCHING */
+void func_8010F430_2A4700_name_3E(void) {
+    s8 hit[8];
+    Vec dir;
+    char names[4][4];
+    GW_PLAYER* player;
+    GW_SYSTEM* gw;
+    s32 cur;
+    s32 count;
+    s32 i;
+    s32 total;
+    s32 best;
+    s32 max;
+    s32 flag;
+
+    cur = GwSystem.current_player_index;
+    player = BoardPlayerGet(-1);
+    gw = &GwSystem;
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        if (GetAbsSpaceIndexFromChainSpaceIndex(gPlayers[cur].cur_chain_index, gPlayers[cur].cur_space_index) ==
+            GetAbsSpaceIndexFromChainSpaceIndex(gPlayers[i].cur_chain_index, gPlayers[i].cur_space_index)) {
+            hit[count++] = i;
+            MBPlayerVibrate(i, 4);
+        }
+    }
+    if (count == 0) {
+        return;
+    }
+    flag = func_80046D2C_4792C(cur);
+    MBKSuitMotionSet(-1, 2);
+    func_8005670C_5730C(&dir);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &dir, &((MBModel*)player->unk_24)->rot, 8);
+    HuPrcSleep(8);
+    PlaySound(0x123);
+    total = 0;
+    for (i = 0; i < count; i++) {
+        total += gPlayers[hit[i]].coins;
+    }
+    if (total == 0) {
+        if (count == 1) {
+            names[0][0] = 0x18;
+            names[0][1] = gPlayers[hit[0]].character;
+            names[0][2] = 0;
+            func_80056368_56F68(D_8011259C_2A786C_name_3E[gw->current_board_index],
+                                D_80112584_2A7854_name_3E[gw->current_board_index] + 6, (s32)names[0], 0, 0, 0, 0);
+            func_80056458_57058();
+            MBDlgWinClose();
+            func_80056168_56D68();
+        } else {
+            MBDlgWinExec(D_8011259C_2A786C_name_3E[gw->current_board_index],
+                         D_80112584_2A7854_name_3E[gw->current_board_index] + 7);
+        }
+    } else {
+        names[0][0] = names[1][0] = names[2][0] = names[3][0] = 0;
+        for (i = 0; i < count; i++) {
+            names[i][0] = 0x18;
+            names[i][1] = gPlayers[hit[i]].character;
+            names[i][2] = 0;
+        }
+        func_80056368_56F68(D_8011259C_2A786C_name_3E[gw->current_board_index],
+                            (count + 1) + D_80112584_2A7854_name_3E[gw->current_board_index], (s32)names[0],
+                            (s32)names[1], (s32)names[2], (s32)names[3], 0);
+        func_80056458_57058();
+        if (gw->current_board_index == 4) {
+            func_80056458_57058();
+        }
+        best = -1;
+        MBDlgWinClose();
+        func_80056168_56D68();
+        max = 0;
+        for (i = 0; i < count; i++) {
+            if (max < gPlayers[hit[i]].coins) {
+                best = hit[i];
+                max = gPlayers[hit[i]].coins;
+            }
+        }
+        for (i = 0; i < count; i++) {
+            if (gPlayers[hit[i]].coins >= 5) {
+                func_800797DC_7A3DC(0xFC, hit[i]);
+            }
+            MBPlayerVibrate(hit[i], 3);
+            func_8004CA14_4D614(hit[i], -gPlayers[hit[i]].coins);
+            if (best == hit[i]) {
+                func_8006135C_61F5C(best, -gPlayers[best].coins, 1);
+            } else {
+                func_8006135C_61F5C(hit[i], -gPlayers[hit[i]].coins, 0);
+            }
+        }
+        MBKSuitMotionSet(5, 2);
+        HuPrcSleep(30);
+    }
+    if (flag != 0) {
+        func_8004655C_4715C(GwSystem.current_player_index);
+    }
+    MBKSuitMotionSet(0, 2);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F430_2A4700_name_3E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F940_2A4C10_name_3E);
 

@@ -219,6 +219,15 @@ void func_800509FC_515FC(void);
 void func_80054C78_55878(s16 space, s16* chainOut, s16* linkOut);
 void MBDlgWinExec(s32, s32);
 void func_800495D8_4A1D8(s32, s32);
+s16 func_800632FC_63EFC(void); /* the board's music */
+extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] */
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+s32 func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void func_80056458_57058(void); /* wait for the message window */
+void func_8004CA14_4D614(s32 player, s32 coins); /* add coins */
+void func_8006135C_61F5C(s32 player, s32 coins, s32);
+void func_800797DC_7A3DC(s32, s32);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
