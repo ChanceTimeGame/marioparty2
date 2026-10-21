@@ -3150,8 +3150,246 @@ f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
 #else
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003A2B0_3AEB0);
 #endif
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003A4B8_3B0B8);
+/* MP1 func_8003589C (src/34D80.c): blend a second motion into the transforms. One load order
+   differs (retail loads -180.0f before *dst in the second wrap test, GCC the reverse, plus a nop);
+   everything else is identical */
+#ifdef NON_MATCHING
+void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
+    HmfMotion* anim;
+    HmfMotionTrack* e;
+    HitXform* p40;
+    HmfMotionObj* p50;
+    f32* dst;
+    f32 time;
+    f32 w;
+    f32 inv;
+    f32 val;
+    s32 axis;
+    u8 f;
+    s16 idx;
+    s16 i;
 
+    time = arg1;
+    w = arg2;
+    anim = arg0->unk94;
+    inv = 1.0f - w;
+    for (i = 0; i < anim->unk_00; i++) {
+        e = anim->unk_08[i];
+        if (e->unk_04 & 0x8000) {
+            continue;
+        }
+        idx = e->unk_08 & 0x7FFF;
+        if (idx == 0x7FFF) {
+            idx = 0;
+        }
+        if (time < anim->unk_10[e->unk_0A]) {
+            continue;
+        }
+        if (e->unk_01 != 'E') {
+            axis = 2;
+            if (e->unk_01 == 'F') {
+                axis = 1;
+            }
+        } else {
+            axis = 0;
+        }
+        switch (anim->unk_0C[i]) {
+            case 78:
+                switch (e->unk_00) {
+                    case 76:
+                    dst = &(&arg0->unk6C[idx].unk38.x)[axis];
+                    if (e->unk_02 == 'I') {
+                        val = func_8003A154_3AD54(anim, e, time);
+                    } else {
+                        val = func_8003A2B0_3AEB0(anim, e, time);
+                    }
+                    if (val < -180.0f) {
+                        val += 360.0f;
+                    }
+                    if (*dst < -180.0f) {
+                        *dst += 360.0f;
+                    }
+                    if (val > 180.0f) {
+                        val -= 360.0f;
+                    }
+                    if (*dst > 180.0f) {
+                        *dst -= 360.0f;
+                    }
+                    *dst = inv * *dst + val * w;
+                    arg0->unk6C[idx].unk45 |= (1 << axis) | 0x40;
+                    break;
+                    case 79:
+                    dst = &(&arg0->unk6C[idx].unk2C.x)[axis];
+                    if (e->unk_02 == 'I') {
+                        val = func_8003A154_3AD54(anim, e, time);
+                    } else {
+                        val = func_8003A2B0_3AEB0(anim, e, time);
+                    }
+                    *dst = inv * *dst + val * w;
+                    arg0->unk6C[idx].unk44 |= (1 << axis) | 0x40;
+                    break;
+                }
+                break;
+            case 13:
+                switch (e->unk_00) {
+                    case 23:
+                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_28.x)[axis];
+                    if (e->unk_02 == 'I') {
+                        val = func_8003A154_3AD54(anim, e, time);
+                    } else {
+                        val = func_8003A2B0_3AEB0(anim, e, time);
+                    }
+                    *dst = inv * *dst + val * w;
+                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4C |= (1 << axis) | 0x40;
+                    break;
+                    case 76:
+                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_34.x)[axis];
+                    if (e->unk_02 == 'I') {
+                        val = func_8003A154_3AD54(anim, e, time);
+                    } else {
+                        val = func_8003A2B0_3AEB0(anim, e, time);
+                    }
+                    if (val < 0.0f) {
+                        val += 360.0f;
+                    }
+                    if (*dst < 0.0f) {
+                        *dst += 360.0f;
+                    }
+                    if (val < 180.0f) {
+                        if (val + 180.0f < *dst) {
+                            *dst -= 360.0f;
+                        }
+                    } else if (*dst < val - 180.0f) {
+                        val -= 360.0f;
+                    }
+                    *dst = inv * *dst + val * w;
+                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4D |= (1 << axis) | 0x40;
+                    break;
+                    case 27:
+                    dst = &(&((HmfMotionObj*) arg0->unk84)[idx].unk_40.x)[axis];
+                    if (e->unk_02 == 'I') {
+                        val = func_8003A154_3AD54(anim, e, time);
+                    } else {
+                        val = func_8003A2B0_3AEB0(anim, e, time);
+                    }
+                    *dst = inv * *dst + val * w;
+                    ((HmfMotionObj*) arg0->unk84)[idx].unk_4E |= (1 << axis) | 0x40;
+                    break;
+                }
+                break;
+        }
+    }
+
+    if (arg0->unk84 == (void*) -1) {
+        p40 = arg0->unk6C;
+        idx = arg0->unk68;
+        for (i = 0; i < idx; i++) {
+            if (p40->unk44 != 0) {
+            f = p40->unk44;
+            dst = &p40->unk2C.x;
+            if (!(f & 0x40)) {
+                dst[0] = inv * dst[0] + w * p40->unk08.x;
+                dst[1] = inv * dst[1] + w * p40->unk08.y;
+                dst[2] = inv * dst[2] + w * p40->unk08.z;
+            } else {
+                if (!(f & 1)) {
+                    dst[0] = inv * dst[0] + w * p40->unk08.x;
+                }
+                if (!(f & 2)) {
+                    dst[1] = inv * dst[1] + w * p40->unk08.y;
+                }
+                if (!(f & 4)) {
+                    dst[2] = inv * dst[2] + w * p40->unk08.z;
+                }
+            }
+        }
+            if (p40->unk45 != 0) {
+            f = p40->unk45;
+            dst = &p40->unk38.x;
+            if (!(f & 0x40)) {
+                dst[0] = inv * dst[0] + w * p40->unk14.x;
+                dst[1] = inv * dst[1] + w * p40->unk14.y;
+                dst[2] = inv * dst[2] + w * p40->unk14.z;
+            } else {
+                if (!(f & 1)) {
+                    dst[0] = inv * dst[0] + w * p40->unk14.x;
+                }
+                if (!(f & 2)) {
+                    dst[1] = inv * dst[1] + w * p40->unk14.y;
+                }
+                if (!(f & 4)) {
+                    dst[2] = inv * dst[2] + w * p40->unk14.z;
+                }
+            }
+        }
+            p40++;
+        }
+    } else {
+        for (i = 0; i < arg0->unk16; i++) {
+            p50 = &((HmfMotionObj*) arg0->unk84)[i];
+            if (p50->unk_4C != 0) {
+            f = p50->unk_4C;
+            dst = &p50->unk_28.x;
+            if (!(f & 0x40)) {
+                dst[0] = inv * dst[0] + w * p50->unk_04.x;
+                dst[1] = inv * dst[1] + w * p50->unk_04.y;
+                dst[2] = inv * dst[2] + w * p50->unk_04.z;
+            } else {
+                if (!(f & 1)) {
+                    dst[0] = inv * dst[0] + w * p50->unk_04.x;
+                }
+                if (!(f & 2)) {
+                    dst[1] = inv * dst[1] + w * p50->unk_04.y;
+                }
+                if (!(f & 4)) {
+                    dst[2] = inv * dst[2] + w * p50->unk_04.z;
+                }
+            }
+        }
+            if (p50->unk_4D != 0) {
+            f = p50->unk_4D;
+            dst = &p50->unk_34.x;
+            if (!(f & 0x40)) {
+                dst[0] = inv * dst[0] + w * p50->unk_10.x;
+                dst[1] = inv * dst[1] + w * p50->unk_10.y;
+                dst[2] = inv * dst[2] + w * p50->unk_10.z;
+            } else {
+                if (!(f & 1)) {
+                    dst[0] = inv * dst[0] + w * p50->unk_10.x;
+                }
+                if (!(f & 2)) {
+                    dst[1] = inv * dst[1] + w * p50->unk_10.y;
+                }
+                if (!(f & 4)) {
+                    dst[2] = inv * dst[2] + w * p50->unk_10.z;
+                }
+            }
+        }
+            if (p50->unk_4E != 0) {
+            f = p50->unk_4E;
+            dst = &p50->unk_40.x;
+            if (!(f & 0x40)) {
+                dst[0] = inv * dst[0] + w * p50->unk_1C.x;
+                dst[1] = inv * dst[1] + w * p50->unk_1C.y;
+                dst[2] = inv * dst[2] + w * p50->unk_1C.z;
+            } else {
+                if (!(f & 1)) {
+                    dst[0] = inv * dst[0] + w * p50->unk_1C.x;
+                }
+                if (!(f & 2)) {
+                    dst[1] = inv * dst[1] + w * p50->unk_1C.y;
+                }
+                if (!(f & 4)) {
+                    dst[2] = inv * dst[2] + w * p50->unk_1C.z;
+                }
+            }
+        }
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/30560", func_8003A4B8_3B0B8);
+#endif
 #define B4_DUR(p, k) (((s16*) (p)->unk08)[k])
 #define B4_COL(p, k) ((u8*) (p)->unk0C + (k) * 4)
 
