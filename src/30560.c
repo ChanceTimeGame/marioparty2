@@ -214,7 +214,7 @@ void func_80030D58_31958(HmfData*, s16);
 void func_80031170_31D70(HmfData*, s16);
 void func_800316F0_322F0(HmfData*, s16);
 void func_80039B54_3A754(HmfData*, f32, HmfMotion*, s32);
-void func_8003A4B8_3B0B8(HmfData*, s32, s32);
+void func_8003A4B8_3B0B8(HmfData*, f32, f32);
 extern Matrix4f D_80100010_100C10[];
 extern s16 D_800F64B2_F70B2;
 void func_80025770_26370(Matrix4f, f32, f32, f32);   /* translate */
@@ -444,16 +444,16 @@ void func_8002FD38_30938(HmfData* arg0) {
         part->unk10 = D_80101646_102246 - part->unk0E;
 
         gSPEndDisplayList(D_800FDBCC_FE7CC++);
-        part->unk60 = D_800FC888_FD488;
+        part->unk60 = (s32) D_800FC888_FD488; /* a pointer in an s32 slot */
 
         if (D_8010271C_10331C == buf2) {
             HMF_DL(arg0)[i] = func_80027154_27D54(size = (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], size);
-            part->unk5C = NULL;
+            part->unk5C = 0;
             part->unk64 = NULL;
         } else {
             gSPEndDisplayList(D_8010271C_10331C++);
-            part->unk5C = D_800F8C4C_F984C;
+            part->unk5C = (s32) D_800F8C4C_F984C; /* a pointer in an s32 slot */
             HMF_DL(arg0)[i] = func_80027154_27D54(
                 (D_800FDBCC_FE7CC - var_s4 + D_8010271C_10331C - buf2) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx));
@@ -1000,10 +1000,10 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
 
             gSPSegment(D_800FDBCC_FE7CC++, 0x01, osVirtualToPhysical(arg0->unk44[D_800FDBE0_FE7E0]));
             if (temp_s4->unk5C != 0) {
-                if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
+                if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
                     gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
                 }
-                D_800FC888_FD488 = temp_s4->unk60;
+                D_800FC888_FD488 = (void*) temp_s4->unk60;
             } else {
                 D_800FC888_FD488 = NULL;
             }
@@ -1031,8 +1031,8 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
     }
 
     if (D_800F64C4_F70C4 & 0x10000) {
-        gDPSetEnvColor(D_800FDBCC_FE7CC++, arg0->unk02[4], arg0->unk02[5], arg0->unk02[6], arg0->unk02[7]);
-        gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk02[0], arg0->unk02[1], arg0->unk02[2], arg0->unk02[3]);
+        gDPSetEnvColor(D_800FDBCC_FE7CC++, arg0->unk06, arg0->unk07, arg0->unk08, arg0->unk09);
+        gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, arg0->unk02, arg0->unk03, arg0->unk04, arg0->unk05);
     }
 
     if (D_800F64C4_F70C4 & 1) {
@@ -1040,10 +1040,10 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
             return;
         }
         if (temp_s4->unk5C != 0) {
-            if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
+            if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
                 gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
             }
-            D_800FC888_FD488 = temp_s4->unk60;
+            D_800FC888_FD488 = (void*) temp_s4->unk60;
         } else {
             D_800FC888_FD488 = NULL;
         }
@@ -1804,44 +1804,44 @@ void func_80035C18_36818(HmfData* arg0, s16 arg1) {
     gSPClearGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[0];
-    *p++ = arg0->unk64[arg1].unk42[1];
-    *p = arg0->unk64[arg1].unk42[2];
+    *p++ = arg0->unk64[arg1].unk42;
+    *p++ = arg0->unk64[arg1].unk44;
+    *p = arg0->unk64[arg1].unk46;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[0];
-    *p++ = arg0->unk64[arg1].unk42[4];
-    *p = arg0->unk64[arg1].unk42[2];
+    *p++ = arg0->unk64[arg1].unk42;
+    *p++ = arg0->unk64[arg1].unk4A;
+    *p = arg0->unk64[arg1].unk46;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[3];
-    *p++ = arg0->unk64[arg1].unk42[4];
-    *p = arg0->unk64[arg1].unk42[2];
+    *p++ = arg0->unk64[arg1].unk48;
+    *p++ = arg0->unk64[arg1].unk4A;
+    *p = arg0->unk64[arg1].unk46;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[3];
-    *p++ = arg0->unk64[arg1].unk42[1];
-    *p = arg0->unk64[arg1].unk42[2];
+    *p++ = arg0->unk64[arg1].unk48;
+    *p++ = arg0->unk64[arg1].unk44;
+    *p = arg0->unk64[arg1].unk46;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[0];
-    *p++ = arg0->unk64[arg1].unk42[1];
-    *p = arg0->unk64[arg1].unk42[5];
+    *p++ = arg0->unk64[arg1].unk42;
+    *p++ = arg0->unk64[arg1].unk44;
+    *p = arg0->unk64[arg1].unk4C;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[0];
-    *p++ = arg0->unk64[arg1].unk42[4];
-    *p = arg0->unk64[arg1].unk42[5];
+    *p++ = arg0->unk64[arg1].unk42;
+    *p++ = arg0->unk64[arg1].unk4A;
+    *p = arg0->unk64[arg1].unk4C;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[3];
-    *p++ = arg0->unk64[arg1].unk42[4];
-    *p = arg0->unk64[arg1].unk42[5];
+    *p++ = arg0->unk64[arg1].unk48;
+    *p++ = arg0->unk64[arg1].unk4A;
+    *p = arg0->unk64[arg1].unk4C;
 
     p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
-    *p++ = arg0->unk64[arg1].unk42[3];
-    *p++ = arg0->unk64[arg1].unk42[1];
-    *p = arg0->unk64[arg1].unk42[5];
+    *p++ = arg0->unk64[arg1].unk48;
+    *p++ = arg0->unk64[arg1].unk44;
+    *p = arg0->unk64[arg1].unk4C;
 
     gSPVertex(D_800FDBCC_FE7CC++, D_800FA1A6_FADA6 * 16 + 0x01000000, D_800FA61C_FB21C - D_800FA1A6_FADA6, 0);
 
