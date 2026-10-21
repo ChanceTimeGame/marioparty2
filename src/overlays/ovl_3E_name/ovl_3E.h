@@ -279,7 +279,7 @@ void func_80108BA0_29DE70_name_3E(void);
 void func_80108BC4_29DE94_name_3E(void);
 void func_80108BE8_29DEB8_name_3E(void);
 void func_80108C0C_29DEDC_name_3E(void);
-void func_80108E0C_29E0DC_name_3E(void);
+void func_80108E0C_29E0DC_name_3E(void); /* star / bank space */
 void func_8010964C_29E91C_name_3E(void);
 s32 func_80109A78_29ED48_name_3E(s32 arg0);
 s32 func_80109AE4_29EDB4_name_3E(void);
@@ -378,6 +378,20 @@ Process* func_80056FD4_57BD4(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
 Process* func_80057150_57D50(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
 void func_800B3B80_B4780(f32* mtx, f32 angle); /* MP3 func_8008A430_8B030: matrix rotation */
 void ChangeSpaceTextures(s16);
+s16 func_800558F4_564F4(void);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void func_80056124_56D24(void);
+void func_80056458_57058(void);
+s32 func_800573AC_57FAC(void);
+/* 54CB0.c takes arg2 as s32; it is the message's insert string */
+void func_80056368_56F68(s16, u32, char*, s32, s32, s32, s32);
+void func_80059120_59D20(void*, f32, f32);
+void func_80059158_59D58(void*);
+/* 63670.c defines it (void); retail passes 2 */
+void func_8006706C_67C6C();
+extern s8 D_800CCC16;
+extern s16 D_800F64B0_F70B0;
 #define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
@@ -405,6 +419,7 @@ extern s16 D_80112140_2A7410_name_3E[];
 extern s16 D_80112158_2A7428_name_3E[];
 extern DecisionTreeNonLeafNode D_80112178_2A7448_name_3E[];
 extern s16 D_801121AC_2A747C_name_3E[];
+extern u8 D_801122A4_2A7574_name_3E[]; /* by rank */
 extern s8 D_801122E0_2A75B0_name_3E[][5];
 extern Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
 extern Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
