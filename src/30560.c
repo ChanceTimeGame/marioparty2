@@ -2,6 +2,10 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
+/* MP1 func_80034E04 (src/34D80.c): point a motion slot into a motion file loaded whole. Host
+   hazard: the file's offsets are big-endian words, and its pointers are rebuilt from them */
+
+
 /* MP1 func_80034974 (src/34D80.c; its decomp-permuter shape). Host hazard: kind 35's
    three key values are big-endian floats copied byte by byte */
 
@@ -2512,7 +2516,17 @@ u8* func_8001EA88_1F688(s32, void*, void*);
 void* func_8001EB18_1F718(void*);
 s32 func_800395F8_3A1F8(HmfMotionSlot*, s16, u8*);
 s32 func_800398AC_3A4AC(HmfData*, s16, u8*);
-void func_80039A88_3A688(HmfMotionSlot*, void*);
+/* A motion file loaded whole (MP1 unk34D80Struct40) */
+typedef struct HmfMotionFile {
+    /* 0x00 */ char unk00[9];
+    /* 0x09 */ u8 unk09; /* track count */
+    /* 0x0A */ s16 unk0A; /* length */
+    /* 0x0C */ s32 unk0C; /* offsets from the file start: track kinds, */
+    /* 0x10 */ s32 unk10; /* key frames, */
+    /* 0x14 */ s32 unk14; /* key values, */
+    /* 0x18 */ s32 unk18[1]; /* and each track (unk09 of them) */
+} HmfMotionFile;
+s32 func_80039A88_3A688(HmfMotionSlot*, HmfMotionFile*);
 void func_80027274_27E74(s16);
 s16 func_80038F30_39B30(HmfData* arg0, u8* arg1, s16 arg2);
 
@@ -2854,8 +2868,31 @@ s32 func_800398AC_3A4AC(HmfData* arg0, s16 arg1, u8* arg2) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/30560", func_80039A88_3A688);
+s32 func_80039A88_3A688(HmfMotionSlot* arg0, HmfMotionFile* arg1) {
+    HmfMotionTrack** tracks;
+    HmfMotionTrack** var_v1;
+    s32* var_a0;
+    s16 temp_s3;
+    s16 i;
 
+    temp_s3 = arg0->unk00 = arg1->unk09;
+    arg0->unk02 = arg1->unk0A;
+    arg0->unk0C = (u8*) arg1 + arg1->unk0C;
+    arg0->unk10 = (s16*) ((u8*) arg1 + arg1->unk10);
+    arg0->unk14 = (f32*) ((u8*) arg1 + arg1->unk14);
+    tracks = func_80027154_27D54(temp_s3 * sizeof(HmfMotionTrack*), D_800FA6E4_FB2E4);
+    arg0->unk08 = tracks;
+
+    var_a0 = arg1->unk18;
+    var_v1 = tracks;
+    for (i = 0; i < temp_s3; i++) {
+        *var_v1 = (HmfMotionTrack*) ((u8*) arg1 + *var_a0);
+        var_v1++;
+        var_a0++;
+    }
+
+    return 1;
+}
 f32 func_8003A154_3AD54(HmfMotion*, HmfMotionTrack*, f32);
 f32 func_8003A2B0_3AEB0(HmfMotion*, HmfMotionTrack*, f32);
 
