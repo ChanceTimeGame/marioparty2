@@ -227,7 +227,7 @@ void func_8004655C_4715C(s32);
 void func_80056458_57058(void); /* wait for the message window */
 void func_8004CA14_4D614(s32 player, s32 coins); /* add coins */
 void func_8006135C_61F5C(s32 player, s32 coins, s32);
-void func_800797DC_7A3DC(s32, s32);
+void func_800797DC_7A3DC(s32, s16);
 extern u16 D_800CAFD8[]; /* item ids; the low byte is the item */
 extern s32 D_800CCBDC_CD7DC[]; /* per item: picture file */
 s16 SprCreate(s32 num, s32 attr);
@@ -242,6 +242,19 @@ void SprAnimKill(s16 animIdx);
 void SprKill(s16 idx);
 s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
 extern s32 D_801126BC_2A798C_name_3E[]; /* decision tree */
+extern Vec2f3E D_8011271C_2A79EC_name_3E[4]; /* x/z offsets around a space */
+extern s16 D_8011273C_2A7A0C_name_3E; /* space */
+s16 func_800558F4_564F4(void);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+void InitFadeOut(s32, s32);
+void InitFadeIn(s32, s32);
+s32 func_8008F618_90218(void); /* fade still running */
+void func_80063C40_64840(s32, s32);
+void* func_800672BC_67EBC(s16 arg0, s16 arg1, s32 arg2);
+void func_8006735C_67F5C(void*);
+void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
