@@ -557,7 +557,220 @@ void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
     *gfx = g;
 }
 
+extern s32 D_800ED69C_EE29C; /* texture-load strips drawn */
+void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u16 lrt, u16 shiftS,
+                u16 shiftT, u16 maskS, u16 maskT);
+
+// register allocation (masked 87): tstep and sx swap f30/s8, the zero for the initialisers is
+// f30 instead of f20; the code is otherwise retail's
+#ifdef NON_MATCHING
+Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam) {
+    f32 s0;
+    s32 shiftS;
+    s32 shiftT;
+    s32 maskS;
+    s32 maskT;
+    Vtx* vtxbase;
+    f32 ystep;
+    HuSprite_Unk84_Unk00_Struct* cel;
+    f32 sx;
+    f32 sy;
+    f32 y;
+    f32 tstep;
+    f32 x0;
+    f32 x1;
+    f32 y0;
+    f32 step;
+    f32 t;
+    f32 d;
+    s32 flipS;
+    s32 flipT;
+    s32 i;
+    s32 j;
+    s32 rows;
+    s32 n;
+    s32 dy;
+
+    tstep = s0 = 0.0f;
+    cel = &obj->unk_84->unk00[obj->unk_90];
+    sx = obj->unk_18;
+    sy = obj->unk_1C;
+    ystep = y = 0.0f;
+    vtxbase = NULL;
+    if (obj->unk_24 & 0x2000) {
+        gDPSetCycleType(gfx++, G_CYC_2CYCLE);
+        gDPPipeSync(gfx++);
+        gDPSetCombine(gfx++, 0x2527FF, 0x1FFC9238);
+        gDPSetRenderMode(gfx++, 0x0C1841C8, 0);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, obj->unk_2C);
+        D_800ED690_EE290 *= 2;
+        D_800ED694_EE294 >>= 1;
+    }
+    if ((obj->unk_24 & 0x30000) == 0x30000) {
+        obj->unk_30 = (f32)((s16)obj->unk_40 - obj->unk_3C) / (cel->unk04 * sx);
+        obj->unk_34 = (f32)((s16)obj->unk_42 - obj->unk_3E) / (cel->unk06 * sy);
+    }
+    if (obj->unk_24 & 0x04000000) {
+        gDPSetDepthSource(gfx++, G_ZS_PRIM);
+        gDPSetPrimDepth(gfx++, obj->unk_44, 0);
+    }
+    if (D_800ED698_EE298 != 0) {
+        D_800ED69C_EE29C = D_800ED690_EE290 + 1;
+    } else {
+        D_800ED69C_EE29C = D_800ED690_EE290;
+    }
+    if (D_800ED6A0_EE2A0 != 0) {
+        vtxbase = vtx;
+        flipS = 0;
+        if (obj->unk_24 & 1) {
+            x1 = 0.0f;
+            x0 = cel->unk04 * 63.999;
+        } else {
+            x0 = 0.0f;
+            x1 = cel->unk04 * 63.999;
+            flipS = 1;
+        }
+        if (obj->unk_24 & 2) {
+            if (obj->unk_24 & 0x10000) {
+                y0 = (f32)(obj->unk_3E - (s16)obj->unk_42) / obj->unk_34;
+            } else {
+                y0 = -cel->unk06;
+            }
+            flipT = -1;
+        } else {
+            y0 = 0.0f;
+            flipT = 1;
+        }
+        t = 0.0f;
+        rows = cel->unk06;
+        for (i = 0; i < D_800ED690_EE290 + 2; i++) {
+            if (rows < D_800ED694_EE294) {
+            n = rows;
+        } else {
+            n = D_800ED694_EE294;
+        }
+            rows -= D_800ED694_EE294;
+            if (obj->unk_24 & 0x10000) {
+                vtx[0].v.ob[0] = 0;
+                vtx[1].v.ob[0] = (f32)((s16)obj->unk_40 - obj->unk_3C) / obj->unk_30;
+            } else {
+                vtx[0].v.ob[0] = -cel->unk04 * (obj->unk_30 - 1.0f) * (flipS ^ 1);
+                vtx[1].v.ob[0] = cel->unk04;
+            }
+            vtx[0].v.ob[1] = vtx[1].v.ob[1] = y0;
+            vtx[0].v.tc[0] = x0;
+            vtx[1].v.tc[0] = x1;
+            vtx[0].v.tc[1] = vtx[1].v.tc[1] = t * 128.0f;
+            for (j = 0; j < 2; j++) {
+                vtx[j].v.ob[2] = -1;
+                vtx[j].v.cn[0] = 0;
+                vtx[j].v.cn[1] = 0;
+                vtx[j].v.cn[2] = 0;
+                vtx[j].v.cn[3] = 0xFF;
+            }
+            if ((obj->unk_24 & 0xC0000) && (u16)obj->unk_38 != 0) {
+                vtx[1].v.ob[0] = vtx[1].v.ob[0] * obj->unk_30;
+                vtx[0].v.tc[0] = vtx[0].v.tc[0] * obj->unk_30;
+                vtx[1].v.tc[0] = vtx[1].v.tc[0] * obj->unk_30;
+            }
+            if ((obj->unk_24 & 0x300000) && (u16)obj->unk_3A != 0) {
+                vtx[0].v.ob[1] = vtx[0].v.ob[1] * obj->unk_34;
+                vtx[1].v.ob[1] = vtx[1].v.ob[1] * obj->unk_34;
+                vtx[0].v.tc[1] = vtx[0].v.tc[1] * obj->unk_34;
+                vtx[1].v.tc[1] = vtx[1].v.tc[1] * obj->unk_34;
+            }
+            y0 += (obj->unk_24 & 0x10000)
+                      ? ((flipT < 0) ? (f32)(((s16)obj->unk_42 - obj->unk_3E) * n / D_800ED694_EE294) / obj->unk_34
+                                     : (f32)((obj->unk_3E - (s16)obj->unk_42) * n / D_800ED694_EE294) / obj->unk_34)
+                      : -flipT * n;
+            vtx += 2;
+            t += n;
+        }
+    } else {
+        if (obj->unk_24 & 0x10000) {
+            x0 = obj->unk_3C;
+            x1 = (s16)obj->unk_40;
+            y0 = obj->unk_3E;
+            sx = (f32)((s16)obj->unk_40 - obj->unk_3C) / cel->unk04;
+            dy = (s16)obj->unk_42 - obj->unk_3E;
+            step = dy / D_800ED690_EE290;
+            sy = (f32)dy / cel->unk06;
+        } else {
+            x0 = SPR_F(obj, unk_04) - (u16)cel->unk08 * sx;
+            x1 = x0 + cel->unk04 * sx;
+            y0 = SPR_F(obj, unk_08) - (u16)cel->unk0A * sy;
+            step = D_800ED694_EE294 * sy;
+        }
+        flipS = -1;
+        if (obj->unk_24 & 1) {
+            s0 = cel->unk04;
+        } else {
+            s0 = 0.0f;
+            flipS = 1;
+        }
+        flipT = -1;
+        if (obj->unk_24 & 2) {
+            y = y0 + step * (D_800ED690_EE290 - 1) + D_800ED698_EE298 * sy;
+            ystep = -step;
+            t = step / sy - 1.0f;
+        } else {
+            y = y0;
+            ystep = step;
+            flipT = 1;
+            t = 0.0f;
+        }
+        tstep = step / sy;
+    }
+    if (obj->unk_24 & 0xC0000) {
+        maskS = (u16)obj->unk_38;
+        shiftS = (u32)obj->unk_24 >> 18;
+        shiftS -= 1;
+    } else {
+        maskS = 0;
+        shiftS = 0;
+    }
+    if (obj->unk_24 & 0x300000) {
+        maskT = (u16)obj->unk_3A;
+        shiftT = (u32)obj->unk_24 >> 20;
+        shiftT -= 1;
+    } else {
+        maskT = 0;
+        shiftT = 0;
+    }
+    rows = cel->unk06;
+    for (i = 0; i < D_800ED69C_EE29C; i++) {
+        if (rows < D_800ED694_EE294) {
+            n = rows;
+        } else {
+            n = D_800ED694_EE294;
+        }
+        rows -= D_800ED694_EE294;
+        SprTexLoad(&gfx, obj, n, 0, i * D_800ED694_EE294, cel->unk04 - 1, i * D_800ED694_EE294 + n - 1, shiftS,
+                   shiftT, maskS, maskT);
+        if (D_800ED6A0_EE2A0 != 0) {
+            gSPVertex(gfx++, vtxbase + i * 2, 4, 0);
+            gSP2Triangles(gfx++, 0, 2, 3, 0, 0, 3, 1, 0);
+        } else {
+            gSPScisTextureRectangle(gfx++, (s32)x0 * 4, (s16)(s32)y << 2, (s32)x1 * 4, (s32)(y + n * sy) * 4,
+                                    G_TX_RENDERTILE, (s16)(s32)s0 << 5, (s16)(s32)t << 5,
+                                    (s32)(D_800ED68C_EE28C / sx * 1024.0f * flipS),
+                                    (s32)(1.0f / sy * 1024.0f * flipT));
+            if (flipT < 0 && rows < D_800ED694_EE294) {
+                ystep = -(f32)rows * sy;
+                tstep = rows / sy;
+            }
+            t += tstep;
+            y += ystep;
+        }
+    }
+    gDPPipeSync(gfx++);
+    return gfx;
+}
+#else
+const f64 D_800D36A0_D42A0 __attribute__((section(".rodata"))) = 63.999;
+const f64 D_800D36A8_D42A8 __attribute__((section(".rodata"))) = 63.999;
 INCLUDE_ASM("asm/nonmatchings/84FF0", PutSprite);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", SprTexLoad);
 
@@ -1130,6 +1343,15 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089CAC_8A8AC);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089DA0_8A9A0);
 
+/* func_80089DDC_8A9DC's rodata, defined here while it is asm */
+const char D_800D36B0_D42B0[] __attribute__((section(".rodata"))) = "Select Max Over!\n";
+const u32 jtbl_800D36C8_D42C8[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x8008A054, 0x8008A0C0, 0x8008A10C, 0x8008A148, 0x8008A1C8, 0x8008A2B0,
+    0x80089FF8, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0,
+    0x8008A240, 0x8008A090, 0x8008A254, 0x8008A2A8, 0x80089FF8, 0x8008A2B0,
+    0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x8008A2B0, 0x80089FF8,
+};
+
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089DDC_8A9DC);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A6DC_8B2DC);
@@ -1179,6 +1401,77 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BB18_8C718);
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BB48_8C748);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BCB8_8C8B8);
+
+/* func_8008C828_8D428's jump table, defined here while it is asm */
+const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x8008C8A8, 0x8008C8C0, 0x8008CA50, 0x8008C914, 0x8008CAC0, 0x8008CB50,
+};
+
+/* Shift-JIS character rows, 16 characters each, pointed to by D_800CDAB0_CE6B0 (in .data) */
+const u8 D_800D3740_D4340[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x83, 0x7E, 0x83, 0x80, 0x83, 0x81, 0x83, 0x82, 0x83, 0x84, 0x83, 0x86, 0x83, 0x88, 0x83, 0x89,
+    0x83, 0x8A, 0x83, 0x8B, 0x83, 0x8C, 0x83, 0x8D, 0x83, 0x8F, 0x83, 0x93, 0x81, 0x63, 0x81, 0xA5, 0x00,
+};
+const u8 D_800D3764_D4364[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x83, 0x5E, 0x83, 0x60, 0x83, 0x63, 0x83, 0x65, 0x83, 0x67, 0x83, 0x69, 0x83, 0x6A, 0x83, 0x6B,
+    0x83, 0x6C, 0x83, 0x6D, 0x83, 0x6E, 0x83, 0x71, 0x83, 0x74, 0x83, 0x77, 0x83, 0x7A, 0x83, 0x7D, 0x00,
+};
+const u8 D_800D3788_D4388[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0xA6, 0x83, 0x41, 0x83, 0x43, 0x83, 0x45, 0x83, 0x47, 0x83, 0x49, 0x83, 0x4A, 0x83, 0x4C,
+    0x83, 0x4E, 0x83, 0x50, 0x83, 0x52, 0x83, 0x54, 0x83, 0x56, 0x83, 0x58, 0x83, 0x5A, 0x83, 0x5C, 0x00,
+};
+const u8 D_800D37AC_D43AC[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0x75, 0x81, 0x76, 0x81, 0x49, 0x81, 0x48, 0x81, 0xF2, 0x81, 0xF3, 0x83, 0x92, 0x83, 0x40,
+    0x83, 0x42, 0x83, 0x44, 0x83, 0x46, 0x83, 0x48, 0x83, 0x83, 0x83, 0x85, 0x83, 0x87, 0x83, 0x62, 0x00,
+};
+const u8 D_800D37D0_D43D0[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x82, 0xDD, 0x82, 0xDE, 0x82, 0xDF, 0x82, 0xE0, 0x82, 0xE2, 0x82, 0xE4, 0x82, 0xE6, 0x82, 0xE7,
+    0x82, 0xE8, 0x82, 0xE9, 0x82, 0xEA, 0x82, 0xEB, 0x82, 0xED, 0x82, 0xF1, 0x81, 0xA6, 0x81, 0xA6, 0x00,
+};
+const u8 D_800D37F4_D43F4[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x82, 0xBD, 0x82, 0xBF, 0x82, 0xC2, 0x82, 0xC4, 0x82, 0xC6, 0x82, 0xC8, 0x82, 0xC9, 0x82, 0xCA,
+    0x82, 0xCB, 0x82, 0xCC, 0x82, 0xCD, 0x82, 0xD0, 0x82, 0xD3, 0x82, 0xD6, 0x82, 0xD9, 0x82, 0xDC, 0x00,
+};
+const u8 D_800D3818_D4418[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0xA6, 0x82, 0xA0, 0x82, 0xA2, 0x82, 0xA4, 0x82, 0xA6, 0x82, 0xA8, 0x82, 0xA9, 0x82, 0xAB,
+    0x82, 0xAD, 0x82, 0xAF, 0x82, 0xB1, 0x82, 0xB3, 0x82, 0xB5, 0x82, 0xB7, 0x82, 0xB9, 0x82, 0xBB, 0x00,
+};
+const u8 D_800D383C_D443C[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0x4A, 0x81, 0x4B, 0x81, 0x41, 0x81, 0x42, 0x81, 0x5B, 0x81, 0x44, 0x82, 0xF0, 0x82, 0x9F,
+    0x82, 0xA1, 0x82, 0xA3, 0x82, 0xA5, 0x82, 0xA7, 0x82, 0xE1, 0x82, 0xE3, 0x82, 0xE5, 0x82, 0xC1, 0x00,
+};
+const u8 D_800D3860_D4460[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x82, 0x90, 0x82, 0x91, 0x82, 0x92, 0x82, 0x93, 0x82, 0x94, 0x82, 0x95, 0x82, 0x96, 0x82, 0x97,
+    0x82, 0x98, 0x82, 0x99, 0x82, 0x9A, 0x81, 0x46, 0x81, 0x93, 0x81, 0x45, 0x81, 0xA6, 0x81, 0xA6, 0x00,
+};
+const u8 D_800D3884_D4484[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0xA6, 0x82, 0x81, 0x82, 0x82, 0x82, 0x83, 0x82, 0x84, 0x82, 0x85, 0x82, 0x86, 0x82, 0x87,
+    0x82, 0x88, 0x82, 0x89, 0x82, 0x8A, 0x82, 0x8B, 0x82, 0x8C, 0x82, 0x8D, 0x82, 0x8E, 0x82, 0x8F, 0x00,
+};
+const u8 D_800D38A8_D44A8[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x82, 0x6F, 0x82, 0x70, 0x82, 0x71, 0x82, 0x72, 0x82, 0x73, 0x82, 0x74, 0x82, 0x75, 0x82, 0x76,
+    0x82, 0x77, 0x82, 0x78, 0x82, 0x79, 0x81, 0x68, 0x81, 0x66, 0x81, 0x69, 0x81, 0x6A, 0x81, 0x5E, 0x00,
+};
+const u8 D_800D38CC_D44CC[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0xA6, 0x82, 0x60, 0x82, 0x61, 0x82, 0x62, 0x82, 0x63, 0x82, 0x64, 0x82, 0x65, 0x82, 0x66,
+    0x82, 0x67, 0x82, 0x68, 0x82, 0x69, 0x82, 0x6A, 0x82, 0x6B, 0x82, 0x6C, 0x82, 0x6D, 0x82, 0x6E, 0x00,
+};
+const u8 D_800D38F0_D44F0[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x82, 0x4F, 0x82, 0x50, 0x82, 0x51, 0x82, 0x52, 0x82, 0x53, 0x82, 0x54, 0x82, 0x55, 0x82, 0x56,
+    0x82, 0x57, 0x82, 0x58, 0x81, 0x9B, 0x81, 0x99, 0x81, 0x7B, 0x81, 0x7C, 0x81, 0x7E, 0x81, 0xA8, 0x00,
+};
+const u8 D_800D3914_D4514[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0xA6, 0x83, 0xBF, 0x83, 0xC0, 0x87, 0x85, 0x87, 0x89, 0x87, 0x88, 0x87, 0x87, 0x83, 0xA4,
+    0x81, 0xA7, 0x81, 0x9C, 0x81, 0x9A, 0x8E, 0x6E, 0x89, 0x45, 0x81, 0xA6, 0x81, 0xA6, 0x81, 0xA6, 0x00,
+};
+const u8 D_800D3938_D4538[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x81, 0x40, 0x87, 0x40, 0x87, 0x41, 0x87, 0x42, 0x87, 0x43, 0x87, 0x44, 0x81, 0x6E, 0x94, 0xBC,
+    0x93, 0xC1, 0x8A, 0xEE, 0x81, 0xA6, 0x81, 0xA6, 0x81, 0xA6, 0x81, 0xA6, 0x81, 0xA6, 0x81, 0xA6, 0x00,
+};
+const u8 D_800D395C_D455C[] __attribute__((aligned(4), section(".rodata"))) = {
+    0x8F, 0x49, 0x8D, 0x95, 0x90, 0xC2, 0x90, 0xD4, 0x8E, 0x87, 0x97, 0xCE, 0x90, 0x85, 0x89, 0xA9,
+    0x94, 0x92, 0x81, 0xA6, 0x8D, 0x73, 0x95, 0xC5, 0x81, 0x83, 0x81, 0x84, 0x8A, 0xD4, 0x81, 0x6D, 0x00,
+};
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008C828_8D428);
 
@@ -1344,6 +1637,14 @@ void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2) {
     arg0[0] = D_800ED8E8_EE4E8 + 10;
     arg0[1] = D_800ED8EA_EE4EA + 6;
 }
+
+/* func_8008DCDC_8E8DC's jump table, defined here while it is asm */
+const u32 jtbl_800D3980_D4580[] __attribute__((aligned(8), section(".rodata"))) = {
+    0x8008DDD0, 0x8008DE24, 0x8008DDE0, 0x8008DDE0, 0x8008DE90, 0x8008DDE0,
+    0x8008DDB4, 0x8008DF10, 0x8008DF10, 0x8008DF10, 0x8008DF10, 0x8008DF10,
+    0x8008DDE0, 0x8008DE1C, 0x8008DEE8, 0x8008DDE0, 0x8008DDB4, 0x8008DF20,
+    0x8008DF20, 0x8008DF20, 0x8008DF20, 0x8008DF20, 0x8008DDB4,
+};
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DCDC_8E8DC);
 

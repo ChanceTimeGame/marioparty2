@@ -354,6 +354,9 @@ build/src/ECE0.c.o: export VR4300MUL = ON
 # w2-B: 84FF0 (sprite put, window system) is built as 1D0B0 is: GCC's assembly with blank lines removed,
 # assembled with the KMC VR4300 mul fix on (SprDispCheck: a nop between dependent mul.s)
 W2B_BLANKSTRIP_UNITS := build/src/84FF0.c.o
+# w2-B: 84FF0's whole rodata (D42A0-D45E0) is carved out of the data blob
+CARVED_RODATA_UNITS += $(W2B_BLANKSTRIP_UNITS)
+$(W2B_BLANKSTRIP_UNITS): RODATA_AS_DATA = 1
 $(W2B_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(W2B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
