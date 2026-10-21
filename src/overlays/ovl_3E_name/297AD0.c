@@ -1,9 +1,6 @@
 #include "common.h"
 #include "ovl_3E.h"
 
-/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
-
-
 /* Matches, but retail pads it to 16 bytes: it is the overlay entry point, its own file in retail
    (as ovl_3D_entrypoint.c, with D_80111920 as that file's .data). Needs a
    [0x297AD0, c, ovl_3E_entrypoint] split before the C can replace the asm. */
@@ -1433,6 +1430,7 @@ void func_80106C44_29BF14_name_3E(void) {
     func_80106738_29BA08_name_3E();
     D_8011378C_2A8A5C_name_3E = 0;
 }
+/* a run-over player: hidden when the counter runs out */
 void func_80106D78_29C048_name_3E(omObjData* obj) {
     GW_PLAYER* player = BoardPlayerGet(obj->work[0]);
 
@@ -1484,10 +1482,225 @@ void func_80106DCC_29C09C_name_3E(s32 player, s32 arg1) {
         MBPlayerVibrate(-1, 0);
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80106FE0_29C2B0_name_3E);
+/* The minecart runs forward along its chain; returns the players it ran over (bits). */
+s32 func_80106FE0_29C2B0_name_3E(void) {
+    Vec dir;
+    Vec delta;
+    Vec pos;
+    Unk3Halves counts;
+    Vec fxPos;
+    Vec fxVel;
+    s32 count;
+    s16* spaces;
+    GW_PLAYER* player;
+    Process* process;
+    Process* child;
+    SpaceData* from;
+    SpaceData* to;
+    f32 dist;
+    f32 angle;
+    f32 target;
+    f32 step;
+    s32 steps;
+    s32 prev;
+    s32 mask;
+    s32 next;
+    s32 i;
+    s32 j;
 
+    counts = D_801135A4_2A8874_name_3E;
+    if (D_801119E0_2A6CB0_name_3E == 0) {
+        D_801119E0_2A6CB0_name_3E = 1;
+        spaces = D_80111BF4_2A6EC4_name_3E[D_800F8CE4_F98E4[0]];
+        mask = 0;
+        next = 0;
+        count = counts.v[D_800F8CE4_F98E4[0]];
+        PlaySound(0x398);
+        for (i = 0; i < BoardGetChainLength(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]]) - 1; i++) {
+            from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i));
+            to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i + 1));
+            process = HuPrcCurrentGet();
+            func_800B3170_B3D70(&pos, &D_80113784_2A8A54_name_3E->pos);
+            if (i == BoardGetChainLength(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]]) - 2) {
+                child = func_80056FD4_57BD4(&pos, &to->coords, &D_80113784_2A8A54_name_3E->pos, 2.0f);
+            } else {
+                child = func_80057150_57D50(&pos, &to->coords, &D_80113784_2A8A54_name_3E->pos, 2.0f);
+            }
+            HuPrcChildLink(process, child);
+            dist = func_800B1870_B2470(from->coords.x - to->coords.x, from->coords.y - to->coords.y,
+                                       from->coords.z - to->coords.z);
+            HuVecSubtract(&dir, &from->coords, &to->coords);
+            MBVecNormalize(&dir);
+            HuVecMulScalar(&dir, 2.0f, &dir);
+            steps = dist / func_800B1870_B2470(dir.x, dir.y, dir.z);
+            HuVecSubtract(&delta, &to->coords, &from->coords);
+            angle = func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot);
+            target = func_80042BE0_437E0(&delta);
+            if (target < angle && ABS_F(angle - target) > 180.0f) {
+                target += 360.0f;
+            }
+            if (angle < target && ABS_F(angle - target) > 180.0f) {
+                angle += 360.0f;
+            }
+            step = target - angle;
+            step /= steps;
+            PlaySound(0x399);
+            fxVel = D_801135AC_2A887C_name_3E;
+            func_800B3170_B3D70(&fxPos, &D_80113784_2A8A54_name_3E->pos);
+            fxPos.x += HuMathSin(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+            fxPos.z += func_800B7890_B8490(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+            fxPos.y += 35.0f;
+            func_8010C484_2A1754_name_3E(&fxPos, 0.3f, 8.0f, 1, &fxVel);
+            while (process->oldest_child != NULL) {
+                angle += step;
+                D_80113784_2A8A54_name_3E->rot.x = HuMathSin(angle);
+                D_80113784_2A8A54_name_3E->rot.y = 0.0f;
+                D_80113784_2A8A54_name_3E->rot.z = func_800B7890_B8490(angle);
+                func_801069C8_29BC98_name_3E();
+                HuPrcVSleep();
+                if (next < count) {
+                    if (HuVecDistance(&GetSpaceData(spaces[next])->coords, &D_80113784_2A8A54_name_3E->pos) <= 20.0f) {
+                        prev = mask;
+                        for (j = 0; j < 4; j++) {
+                            if (j != GwSystem.current_player_index) {
+                                player = BoardPlayerGet(j);
+                                if (GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index) ==
+                                    spaces[next]) {
+                                    func_80106DCC_29C09C_name_3E(j, 0);
+                                    mask |= 1 << j;
+                                }
+                            }
+                        }
+                        if (prev != mask) {
+                            PlaySound(0x3A8);
+                        }
+                        next++;
+                    }
+                }
+            }
+        }
+        PlaySound(0x39A);
+        D_800F8CE4_F98E4[0] = (s16)(D_800F8CE4_F98E4[0] + 1) % 3;
+        D_801119E0_2A6CB0_name_3E = 0;
+        return mask;
+    }
+    return 0;
+}
+/* The minecart runs back along its chain; returns the players it ran over (bits).
+   NON_MATCHING: one instruction, retail tests next >= 0 as slti/bnez where this gives bltz (masked 8). */
+#ifdef NON_MATCHING
+s32 func_801075F8_29C8C8_name_3E(void) {
+    Vec dir;
+    Vec delta;
+    Vec pos;
+    Vec dest;
+    Unk3Halves counts;
+    Vec fxPos;
+    Vec fxVel;
+    s16* spaces;
+    GW_PLAYER* player;
+    Process* process;
+    Process* child;
+    SpaceData* from;
+    SpaceData* to;
+    f32 dist;
+    f32 angle;
+    f32 target;
+    f32 step;
+    s32 steps;
+    s32 prev;
+    s32 mask;
+    s32 next;
+    s32 i;
+    s32 j;
+
+    counts = D_801135A4_2A8874_name_3E;
+    if (D_801119E0_2A6CB0_name_3E == 0) {
+        D_801119E0_2A6CB0_name_3E = 1;
+        if (--D_800F8CE4_F98E4[0] < 0) {
+            D_800F8CE4_F98E4[0] = 2;
+        }
+        spaces = D_80111BF4_2A6EC4_name_3E[D_800F8CE4_F98E4[0]];
+        mask = 0;
+        next = counts.v[D_800F8CE4_F98E4[0]] - 1;
+        PlaySound(0x398);
+        for (i = BoardGetChainLength(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]]) - 1; i > 0; i--) {
+            from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i));
+            to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i - 1));
+            process = HuPrcCurrentGet();
+            func_800B3170_B3D70(&pos, &D_80113788_2A8A58_name_3E->pos);
+            func_800B3170_B3D70(&dest, &to->coords);
+            if (i == 1) {
+                dest.x += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].x;
+                dest.y += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].y;
+                dest.z += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].z;
+                child = func_80056FD4_57BD4(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
+            } else {
+                child = func_80057150_57D50(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
+            }
+            HuPrcChildLink(process, child);
+            dist = func_800B1870_B2470(from->coords.x - to->coords.x, from->coords.y - to->coords.y,
+                                       from->coords.z - to->coords.z);
+            HuVecSubtract(&dir, &from->coords, &to->coords);
+            MBVecNormalize(&dir);
+            HuVecMulScalar(&dir, 2.0f, &dir);
+            steps = dist / func_800B1870_B2470(dir.x, dir.y, dir.z);
+            HuVecSubtract(&delta, &to->coords, &from->coords);
+            angle = func_80042BE0_437E0(&D_80113788_2A8A58_name_3E->rot);
+            target = func_80042BE0_437E0(&delta) + 180.0f;
+            while (target < angle && ABS_F(angle - target) > 180.0f) {
+                target += 360.0f;
+            }
+            while (angle < target && ABS_F(angle - target) > 180.0f) {
+                angle += 360.0f;
+            }
+            step = target - angle;
+            step /= steps;
+            PlaySound(0x399);
+            fxVel = D_801135AC_2A887C_name_3E;
+            func_800B3170_B3D70(&fxPos, &D_80113784_2A8A54_name_3E->pos);
+            fxPos.x += HuMathSin(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+            fxPos.z += func_800B7890_B8490(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+            fxPos.y += 35.0f;
+            func_8010C484_2A1754_name_3E(&fxPos, 0.3f, 8.0f, 1, &fxVel);
+            while (process->oldest_child != NULL) {
+                angle += step;
+                D_80113788_2A8A58_name_3E->rot.x = HuMathSin(angle);
+                D_80113788_2A8A58_name_3E->rot.y = 0.0f;
+                D_80113788_2A8A58_name_3E->rot.z = func_800B7890_B8490(angle);
+                func_80106B08_29BDD8_name_3E();
+                HuPrcVSleep();
+                if (next >= 0) {
+                    if (HuVecDistance(&GetSpaceData(spaces[next])->coords, &D_80113788_2A8A58_name_3E->pos) <= 15.0f) {
+                        prev = mask;
+                        for (j = 0; j < 4; j++) {
+                            if (j != GwSystem.current_player_index) {
+                                player = BoardPlayerGet(j);
+                                if (GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index) ==
+                                    spaces[next]) {
+                                    func_80106DCC_29C09C_name_3E(j, 1);
+                                    mask |= 1 << j;
+                                }
+                            }
+                        }
+                        if (prev != mask) {
+                            PlaySound(0x3A8);
+                        }
+                        next--;
+                    }
+                }
+            }
+        }
+        PlaySound(0x39A);
+        D_801119E0_2A6CB0_name_3E = 0;
+        return mask;
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801075F8_29C8C8_name_3E);
-
+#endif
+/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_80107C54_29CF24_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;
@@ -1522,6 +1735,7 @@ void func_80107C54_29CF24_name_3E(void) {
     }
     omDelPrcObj(NULL);
 }
+/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_80107D6C_29D03C_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;
@@ -1556,6 +1770,7 @@ void func_80107D6C_29D03C_name_3E(void) {
     }
     omDelPrcObj(NULL);
 }
+/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_80107E84_29D154_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;
@@ -1590,6 +1805,7 @@ void func_80107E84_29D154_name_3E(void) {
     }
     omDelPrcObj(NULL);
 }
+/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_80107F9C_29D26C_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;
@@ -1624,6 +1840,7 @@ void func_80107F9C_29D26C_name_3E(void) {
     }
     omDelPrcObj(NULL);
 }
+/* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_801080B4_29D384_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;
@@ -1700,6 +1917,7 @@ s32 func_801081CC_29D49C_name_3E(s32 arg0) {
     }
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
+/* A gate: open it with the key item (option 0) or turn back (1); option 2 runs func_80103A64 and asks again. */
 void func_80108424_29D6F4_name_3E(void) {
     GW_SYSTEM* gw = &GwSystem;
     struct unk_8003B8D4Struct* prompt;
@@ -1771,6 +1989,7 @@ void func_80108424_29D6F4_name_3E(void) {
     }
     omDelPrcObj(NULL);
 }
+/* A gate: open it with the key item (option 0) or turn back (1); option 2 runs func_80103A64 and asks again. */
 void func_8010871C_29D9EC_name_3E(void) {
     GW_SYSTEM* gw = &GwSystem;
     struct unk_8003B8D4Struct* prompt;
@@ -1914,6 +2133,7 @@ s32 func_80109AE4_29EDB4_name_3E(void) {
 }
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80109B30_29EE00_name_3E);
 
+/* MP3 func_8010C914_322484_ChillyWaters: fade a model in */
 void func_8010A13C_29F40C_name_3E(MBModel* model) {
     s32 i;
 
@@ -1925,6 +2145,7 @@ void func_8010A13C_29F40C_name_3E(MBModel* model) {
     func_8002D0A0_2DCA0(model->obj->model[0], 0xFF);
     func_8002D0A0_2DCA0(model->shadow->model[0], 0xFF);
 }
+/* MP3 func_8010DD44_3A30C4_w06: fade a model out */
 void func_8010A1DC_29F4AC_name_3E(MBModel* model) {
     s32 i;
 

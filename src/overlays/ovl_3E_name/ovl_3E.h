@@ -254,8 +254,8 @@ void func_80106B08_29BDD8_name_3E(void);
 void func_80106C44_29BF14_name_3E(void);
 void func_80106D78_29C048_name_3E(omObjData* obj);
 void func_80106DCC_29C09C_name_3E(s32 player, s32 arg1);
-s32 func_80106FE0_29C2B0_name_3E(void);
-s32 func_801075F8_29C8C8_name_3E(void);
+s32 func_80106FE0_29C2B0_name_3E(void); /* players run over, bits */
+s32 func_801075F8_29C8C8_name_3E(void); /* players run over, bits */
 void func_80107C54_29CF24_name_3E(void);
 void func_80107D6C_29D03C_name_3E(void);
 void func_80107E84_29D154_name_3E(void);
@@ -294,7 +294,7 @@ void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
-void func_8010C484_2A1754_name_3E(s32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8010C484_2A1754_name_3E(Vec* pos, f32 arg1, f32 arg2, s32 arg3, Vec* arg4); /* fork B: a0 and the stack argument are Vec* */
 void func_8010C5C4_2A1894_name_3E(s32 arg0);
 void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
@@ -368,10 +368,20 @@ s32 func_80046D2C_4792C(s32);
 void func_8004655C_4715C(s32);
 void* func_800672BC_67EBC(s16, s16, s32);
 void func_8006735C_67F5C(void*);
+s16 BoardGetChainLength(u16 chainIndex);
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void MBVecNormalize(Vec*);
+/* B2470.c types it (Vec*), but it is HuVecGetLength3F(x, y, z): func_800B1840_B2440 squares f12, f14, a2 */
+f32 func_800B1870_B2470(f32 x, f32 y, f32 z);
+f32 HuVecDistance(Vec* a, Vec* b);
+Process* func_80056FD4_57BD4(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
+Process* func_80057150_57D50(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
+#define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
 extern s16 D_80111B90_2A6E60_name_3E[]; /* minecart chain, by D_800F8CE4[0] */
 extern s16* D_80111BF4_2A6EC4_name_3E[]; /* spaces the minecart passes, by D_800F8CE4[0] */
+extern Vec D_80111C00_2A6ED0_name_3E[]; /* minecart end offset, by D_800F8CE4[0] */
 extern DecisionTreeNonLeafNode D_80111C3C_2A6F0C_name_3E[];
 extern DecisionTreeNonLeafNode D_80111C6C_2A6F3C_name_3E[];
 extern DecisionTreeNonLeafNode D_80111CA8_2A6F78_name_3E[];
