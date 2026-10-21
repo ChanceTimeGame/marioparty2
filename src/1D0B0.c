@@ -724,7 +724,7 @@ typedef struct {
     HmfMtnData *unkBC;
     void *unkC0; /* inferred: one field where MP3 has two (0xBC, 0xC0) */
     HmfMapData *unkC4;
-    s32 unkC8;
+    u8 *unkC8;
     void *unkCC;
     HmfData_UnkD0 *unkD0;
     void (*unkD4)(f32 *, f32, f32, f32);

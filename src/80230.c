@@ -8,16 +8,11 @@
 
 f32 __sinf(f32);
 f32 __cosf(f32);
-/* HuSprite's unk_04, unk_08 (screen position) and unk_20 (rotation) hold floats, though the header
-   types them s32. */
-#define SPR_F(s, f) (*(f32*)&(s)->f)
 
 #define READ32(p) (((p)[0] << 24) + ((p)[1] << 16) + ((p)[2] << 8) + (p)[3])
 #define READ16(p) (((p)[0] << 8) + (p)[1])
 
 f64 fabs(f64);
-/* unk_120 holds an index (0-2) into unk_128/unk_134, though the header types it void*. */
-#define SPR_BUF(s) ((s32)(s)->unk_120)
 
 /* Palette animation state, HuSprite 0x98-0x113 */
 typedef struct SprPalAnim {
@@ -434,7 +429,7 @@ void InitData(HuSprGrp* group, u16 count) {
             sprite->unk_BC[j] = 0;
         }
         sprite->unk_100 = 0;
-        sprite->unk_104 = 0;
+        sprite->unk_104 = NULL;
         sprite->unk_108[0] = sprite->unk_108[1] = sprite->unk_108[2] = NULL;
         sprite->unk_00 = i;
         sprite->unk_02 = count;
@@ -444,7 +439,7 @@ void InitData(HuSprGrp* group, u16 count) {
         func_800B3820_B4420(&sprite->unk_140[0]);
         func_800B3820_B4420(&sprite->unk_140[1]);
         func_800B3820_B4420(&sprite->unk_140[2]);
-        sprite->unk_120 = NULL;
+        sprite->unk_120 = 0;
         sprite->unk_124 = NULL;
     }
 }
@@ -604,9 +599,9 @@ void SprBegin(void) {
                 for (cur = 0; cur < grp->count; cur++) {
                     obj = grp->members[cur];
                     SprFinish(obj);
-                    SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
-                    SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
-                    SPR_F(obj, unk_20) = obj->unk_58;
+                    obj->unk_04 = obj->unk_93 + obj->unk_48;
+                    obj->unk_08 = obj->unk_94 + obj->unk_4C;
+                    obj->unk_20 = obj->unk_58;
                     func_80083748_84348(obj);
                 }
                 break;
@@ -616,14 +611,14 @@ void SprBegin(void) {
                     obj = grp->members[cur];
                     SprFinish(obj);
                     if (obj->unk_2E < 0) {
-                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
-                        SPR_F(obj, unk_20) = obj->unk_58;
+                        obj->unk_04 = obj->unk_93 + obj->unk_48;
+                        obj->unk_08 = obj->unk_94 + obj->unk_4C;
+                        obj->unk_20 = obj->unk_58;
                     } else {
                         parent = grp->members[obj->unk_2E];
-                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
-                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                        obj->unk_04 = obj->unk_93 + obj->unk_48;
+                        obj->unk_08 = obj->unk_94 + obj->unk_4C;
+                        obj->unk_20 = parent->unk_20 + obj->unk_58;
                     }
                     func_80083748_84348(obj);
                     if (obj->unk_116 >= 0) {
@@ -646,14 +641,14 @@ void SprBegin(void) {
                     obj = grp->members[cur];
                     SprFinish(obj);
                     if (obj->unk_2E < 0) {
-                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
+                        obj->unk_04 = obj->unk_93 + obj->unk_48;
+                        obj->unk_08 = obj->unk_94 + obj->unk_4C;
                     } else {
                         parent = grp->members[obj->unk_2E];
-                        SPR_F(obj, unk_04) = (obj->unk_93 + obj->unk_48) * obj->unk_18 + SPR_F(parent, unk_04);
-                        SPR_F(obj, unk_08) = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + SPR_F(parent, unk_08);
+                        obj->unk_04 = (obj->unk_93 + obj->unk_48) * obj->unk_18 + parent->unk_04;
+                        obj->unk_08 = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + parent->unk_08;
                     }
-                    SPR_F(obj, unk_20) = obj->unk_58;
+                    obj->unk_20 = obj->unk_58;
                     func_80083748_84348(obj);
                     if (obj->unk_116 >= 0) {
                         stack[sp++] = cur;
@@ -675,14 +670,14 @@ void SprBegin(void) {
                     obj = grp->members[cur];
                     SprFinish(obj);
                     if (obj->unk_2E < 0) {
-                        SPR_F(obj, unk_04) = obj->unk_93 + obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_94 + obj->unk_4C;
-                        SPR_F(obj, unk_20) = obj->unk_58;
+                        obj->unk_04 = obj->unk_93 + obj->unk_48;
+                        obj->unk_08 = obj->unk_94 + obj->unk_4C;
+                        obj->unk_20 = obj->unk_58;
                     } else {
                         parent = grp->members[obj->unk_2E];
-                        SPR_F(obj, unk_04) = (obj->unk_93 + obj->unk_48) * obj->unk_18 + SPR_F(parent, unk_04);
-                        SPR_F(obj, unk_08) = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + SPR_F(parent, unk_08);
-                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                        obj->unk_04 = (obj->unk_93 + obj->unk_48) * obj->unk_18 + parent->unk_04;
+                        obj->unk_08 = (obj->unk_94 + obj->unk_4C) * obj->unk_1C + parent->unk_08;
+                        obj->unk_20 = parent->unk_20 + obj->unk_58;
                     }
                     func_80083748_84348(obj);
                     if (obj->unk_116 >= 0) {
@@ -709,18 +704,18 @@ void SprBegin(void) {
                         mA[0][1] = mA[1][0] = 0.0f;
                         mA[2][0] = obj->unk_93 + obj->unk_48;
                         mA[2][1] = obj->unk_94 + obj->unk_4C;
-                        SPR_F(obj, unk_04) = obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_4C;
+                        obj->unk_04 = obj->unk_48;
+                        obj->unk_08 = obj->unk_4C;
                     } else {
                         mB[0][0] = mB[1][1] = 1.0f;
                         mB[0][1] = mB[1][0] = 0.0f;
                         mB[2][0] = (obj->unk_93 + obj->unk_48) * obj->unk_18;
                         mB[2][1] = (obj->unk_94 + obj->unk_4C) * obj->unk_1C;
                         CalcGroupCenter(mB, mtx[obj->unk_2E], mA);
-                        SPR_F(obj, unk_04) = (s16)mA[2][0];
-                        SPR_F(obj, unk_08) = (s16)mA[2][1];
+                        obj->unk_04 = (s16)mA[2][0];
+                        obj->unk_08 = (s16)mA[2][1];
                     }
-                    SPR_F(obj, unk_20) = obj->unk_58;
+                    obj->unk_20 = obj->unk_58;
                     angle = -obj->unk_58 * 0.0174532925222222225;
                     mB[0][0] = mB[1][1] = __cosf(angle);
                     s = __sinf(angle);
@@ -753,9 +748,9 @@ void SprBegin(void) {
                         mA[0][1] = mA[1][0] = 0.0f;
                         mA[2][0] = obj->unk_93 + obj->unk_48;
                         mA[2][1] = obj->unk_94 + obj->unk_4C;
-                        SPR_F(obj, unk_04) = obj->unk_48;
-                        SPR_F(obj, unk_08) = obj->unk_4C;
-                        SPR_F(obj, unk_20) = obj->unk_58;
+                        obj->unk_04 = obj->unk_48;
+                        obj->unk_08 = obj->unk_4C;
+                        obj->unk_20 = obj->unk_58;
                     } else {
                         parent = grp->members[obj->unk_2E];
                         mB[0][0] = mB[1][1] = 1.0f;
@@ -763,9 +758,9 @@ void SprBegin(void) {
                         mB[2][0] = (obj->unk_93 + obj->unk_48) * obj->unk_18;
                         mB[2][1] = (obj->unk_94 + obj->unk_4C) * obj->unk_1C;
                         CalcGroupCenter(mB, mtx[obj->unk_2E], mA);
-                        SPR_F(obj, unk_04) = (s16)mA[2][0];
-                        SPR_F(obj, unk_08) = (s16)mA[2][1];
-                        SPR_F(obj, unk_20) = SPR_F(parent, unk_20) + obj->unk_58;
+                        obj->unk_04 = (s16)mA[2][0];
+                        obj->unk_08 = (s16)mA[2][1];
+                        obj->unk_20 = parent->unk_20 + obj->unk_58;
                     }
                     angle = -obj->unk_58 * 0.0174532925222222225;
                     mB[0][0] = mB[1][1] = __cosf(angle);
@@ -1581,7 +1576,7 @@ void func_80083748_84348(HuSprite* sprite) {
 
     sprite->unk_24 = (u8)sprite->unk_92 ^ sprite->unk_5C;
     if (sprite->unk_84 != NULL && !(sprite->unk_24 & 0x8000)) {
-        if (fabs(func_800B0D98_B1998(*(f32*)&sprite->unk_20, 360.0)) > 0.1f || (sprite->unk_24 & 0x3C0C00) ||
+        if (fabs(func_800B0D98_B1998(sprite->unk_20, 360.0)) > 0.1f || (sprite->unk_24 & 0x3C0C00) ||
             (sprite->unk_24 & 0x30000) == 0x30000 || (sprite->unk_24 & 0x20000000)) {
             anim = sprite->unk_84;
             frame = &anim->unk00[sprite->unk_90];
@@ -1643,16 +1638,16 @@ void func_80083748_84348(HuSprite* sprite) {
                     sprite->unk_24 |= 0x10000000;
                 }
                 if (sprite->unk_24 & 0x10000000) {
-                    if (sprite->unk_128[SPR_BUF(sprite)] != NULL) {
-                        HuMemFree(sprite->unk_128[SPR_BUF(sprite)]);
-                        HuMemFree(sprite->unk_134[SPR_BUF(sprite)]);
-                        sprite->unk_128[SPR_BUF(sprite)] = NULL;
-                        sprite->unk_134[SPR_BUF(sprite)] = NULL;
+                    if (sprite->unk_128[sprite->unk_120] != NULL) {
+                        HuMemFree(sprite->unk_128[sprite->unk_120]);
+                        HuMemFree(sprite->unk_134[sprite->unk_120]);
+                        sprite->unk_128[sprite->unk_120] = NULL;
+                        sprite->unk_134[sprite->unk_120] = NULL;
                     }
                     if (!(sprite->unk_24 & 0x2000)) {
-                        sprite->unk_134[SPR_BUF(sprite)] = HuMemAlloc((n + 2) << 5);
+                        sprite->unk_134[sprite->unk_120] = HuMemAlloc((n + 2) << 5);
                     } else {
-                        sprite->unk_134[SPR_BUF(sprite)] = HuMemAlloc((n + 2) << 6);
+                        sprite->unk_134[sprite->unk_120] = HuMemAlloc((n + 2) << 6);
                     }
                 }
             }
@@ -1664,11 +1659,11 @@ void func_80083748_84348(HuSprite* sprite) {
                     sprite->unk_24 |= 0x10000000;
                 }
                 if (sprite->unk_24 & 0x10000000) {
-                    if (sprite->unk_128[SPR_BUF(sprite)] != NULL) {
-                        HuMemFree(sprite->unk_128[SPR_BUF(sprite)]);
-                        HuMemFree(sprite->unk_134[SPR_BUF(sprite)]);
-                        sprite->unk_128[SPR_BUF(sprite)] = NULL;
-                        sprite->unk_134[SPR_BUF(sprite)] = NULL;
+                    if (sprite->unk_128[sprite->unk_120] != NULL) {
+                        HuMemFree(sprite->unk_128[sprite->unk_120]);
+                        HuMemFree(sprite->unk_134[sprite->unk_120]);
+                        sprite->unk_128[sprite->unk_120] = NULL;
+                        sprite->unk_134[sprite->unk_120] = NULL;
                     }
                 }
             }
@@ -1814,7 +1809,7 @@ void func_80084098_84C98(s16 group, s16 member, s16 arg2) {
         sprite->unk_9C[i] = 0xFFFF;
         sprite->unk_BC[i] = 0;
     }
-    sprite->unk_104 = 0;
+    sprite->unk_104 = NULL;
 }
 
 void func_8008411C_84D1C(s16 grpIdx, s16 idx, f32 speed) {

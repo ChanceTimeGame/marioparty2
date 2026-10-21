@@ -133,8 +133,6 @@ s16 func_8003F520_40120(void);
 s16 func_8003F240_3FE40(HmfData*, u8*);
 HmfTex* func_8003CF48_3DB48(HmfData*, s16);
 
-/* HmfData.unkC8 holds a u8* (typed s32 in the shared header; on a 64-bit host it must be retyped) */
-#define HMF_TEXANIM(h) (*(u8**) &(h)->unkC8)
 void func_800B10E0_B1CE0(void*, void*); /* strcpy */
 
 extern HmfTex* D_800FD89C_FE49C; /* 128 textures */
@@ -1084,12 +1082,12 @@ s32 func_8003EF04_3FB04(HmfData* arg0) {
         chunk = func_8001EB18_1F718(chunk + 4);
     }
     if (n == 0) {
-        HMF_TEXANIM(arg0) = NULL;
+        arg0->unkC8 = NULL;
         return 0;
     }
-    HMF_TEXANIM(arg0) = func_80027154_27D54(n, arg0->unk0E + 1);
+    arg0->unkC8 = func_80027154_27D54(n, arg0->unk0E + 1);
     for (i = 0; i < n; i++) {
-        HMF_TEXANIM(arg0)[i] = sp10[i];
+        arg0->unkC8[i] = sp10[i];
     }
     arg0->unk28 = n;
     return 1;

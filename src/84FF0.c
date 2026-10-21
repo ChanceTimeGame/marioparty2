@@ -132,9 +132,6 @@ typedef struct SprPoint {
     /* 0x04 */ f32 y;
 } SprPoint; // size 0x8
 
-/* HuSprite's unk_04, unk_08 (screen position) and unk_20 (rotation) hold floats, though the header
-   types them s32 (as in 80230.c). */
-#define SPR_F(s, f) (*(f32*)&(s)->f)
 
 extern SprPoint D_800ED660_EE260[4]; /* corners of the sprite being checked */
 f32 func_800B7890_B8490(f32); /* HuMathCos */
@@ -150,8 +147,8 @@ s32 SprDispCheck(HuSprite* obj) {
     f32 y1;
 
     cel = &obj->unk_84->unk00[obj->unk_90];
-    s = HuMathSin(SPR_F(obj, unk_20));
-    c = func_800B7890_B8490(SPR_F(obj, unk_20));
+    s = HuMathSin(obj->unk_20);
+    c = func_800B7890_B8490(obj->unk_20);
     if (!(obj->unk_24 & 0x10000)) {
         x0 = -(u16)cel->unk08 * obj->unk_18;
         y0 = -(u16)cel->unk0A * obj->unk_1C;
@@ -163,14 +160,14 @@ s32 SprDispCheck(HuSprite* obj) {
         x1 = (s16)obj->unk_40;
         y1 = (s16)obj->unk_42;
     }
-    D_800ED660_EE260[0].x = c * x0 + s * y0 + SPR_F(obj, unk_04);
-    D_800ED660_EE260[0].y = -s * x0 + c * y0 + SPR_F(obj, unk_08);
-    D_800ED660_EE260[1].x = c * x1 + s * y0 + SPR_F(obj, unk_04);
-    D_800ED660_EE260[1].y = -s * x1 + c * y0 + SPR_F(obj, unk_08);
-    D_800ED660_EE260[2].x = c * x1 + s * y1 + SPR_F(obj, unk_04);
-    D_800ED660_EE260[2].y = -s * x1 + c * y1 + SPR_F(obj, unk_08);
-    D_800ED660_EE260[3].x = c * x0 + s * y1 + SPR_F(obj, unk_04);
-    D_800ED660_EE260[3].y = -s * x0 + c * y1 + SPR_F(obj, unk_08);
+    D_800ED660_EE260[0].x = c * x0 + s * y0 + obj->unk_04;
+    D_800ED660_EE260[0].y = -s * x0 + c * y0 + obj->unk_08;
+    D_800ED660_EE260[1].x = c * x1 + s * y0 + obj->unk_04;
+    D_800ED660_EE260[1].y = -s * x1 + c * y0 + obj->unk_08;
+    D_800ED660_EE260[2].x = c * x1 + s * y1 + obj->unk_04;
+    D_800ED660_EE260[2].y = -s * x1 + c * y1 + obj->unk_08;
+    D_800ED660_EE260[3].x = c * x0 + s * y1 + obj->unk_04;
+    D_800ED660_EE260[3].y = -s * x0 + c * y1 + obj->unk_08;
     return DispCheck(D_800ED660_EE260);
 }
 
@@ -268,8 +265,6 @@ void func_80025830_26430(f32 mtx[4][4], f32 sx, f32 sy, f32 sz);
 void func_800B3040_B3C40(f32 mtx[4][4], Mtx* m); /* guMtxF2L */
 Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam);
 
-/* unk_120 holds an index (0-2) into unk_128/unk_134, though the header types it void* */
-#define SPR_BUF(s) (*(s32*)&(s)->unk_120)
 
 void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
     f32 mf[4][4];
@@ -477,15 +472,15 @@ void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
         if (obj->unk_24 & 0x10000) {
             ox = ((obj->unk_3C - (s16)obj->unk_40) * (u16)cel->unk08) / cel->unk04;
             oy = (((s16)obj->unk_42 - obj->unk_3E) * (u16)cel->unk0A) / cel->unk06;
-            SPR_F(obj, unk_04) = obj->unk_3C + (((s16)obj->unk_40 - obj->unk_3C) * (u16)cel->unk08) / cel->unk04;
-            SPR_F(obj, unk_08) = obj->unk_3E + (((s16)obj->unk_42 - obj->unk_3E) * (u16)cel->unk0A) / cel->unk06;
+            obj->unk_04 = obj->unk_3C + (((s16)obj->unk_40 - obj->unk_3C) * (u16)cel->unk08) / cel->unk04;
+            obj->unk_08 = obj->unk_3E + (((s16)obj->unk_42 - obj->unk_3E) * (u16)cel->unk0A) / cel->unk06;
         } else {
             ox = -(u16)cel->unk08;
             oy = (u16)cel->unk0A;
         }
         mf[0][2] = mf[0][3] = mf[1][2] = mf[1][3] = mf[2][0] = mf[2][1] = mf[2][3] = mf[3][2] = 0.0f;
         mf[2][2] = mf[3][3] = 1.0f;
-        func_8004075C_4135C(mf, SPR_F(obj, unk_04) - 160.0f, 120.0f - SPR_F(obj, unk_08), SPR_F(obj, unk_20));
+        func_8004075C_4135C(mf, obj->unk_04 - 160.0f, 120.0f - obj->unk_08, obj->unk_20);
         func_80025830_26430(mf, sx, sy, 1.0f);
         func_80025770_26370(mf, ox, oy, 0.0f);
         func_800B3040_B3C40(mf, &obj->unk_140[D_800FDBE0_FE7E0]);
@@ -494,17 +489,17 @@ void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
     if (obj->unk_24 & 0x08000000) {
         if (obj->unk_24 & 0x10000000) {
             if (D_800ED6A0_EE2A0 != 0) {
-                end = PutSprite(D_800F9294_F9E94, obj, obj->unk_134[SPR_BUF(obj)], &obj->unk_140[D_800FDBE0_FE7E0], cam);
+                end = PutSprite(D_800F9294_F9E94, obj, obj->unk_134[obj->unk_120], &obj->unk_140[D_800FDBE0_FE7E0], cam);
             } else {
                 end = PutSprite(D_800F9294_F9E94, obj, NULL, NULL, cam);
             }
             gSPEndDisplayList(end++);
             size = (u8*)end - (u8*)D_800F9294_F9E94;
-            obj->unk_128[SPR_BUF(obj)] = HuMemAlloc(size);
-            bcopy(D_800F9294_F9E94, obj->unk_128[SPR_BUF(obj)], size);
-            obj->unk_124 = obj->unk_128[SPR_BUF(obj)];
-            if (++SPR_BUF(obj) >= 3) {
-                SPR_BUF(obj) = 0;
+            obj->unk_128[obj->unk_120] = HuMemAlloc(size);
+            bcopy(D_800F9294_F9E94, obj->unk_128[obj->unk_120], size);
+            obj->unk_124 = obj->unk_128[obj->unk_120];
+            if (++obj->unk_120 >= 3) {
+                obj->unk_120 = 0;
             }
             obj->unk_24 &= ~0x10000000;
         }
@@ -662,9 +657,9 @@ Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam) {
             step = dy / D_800ED690_EE290;
             sy = (f32)dy / cel->unk06;
         } else {
-            x0 = SPR_F(obj, unk_04) - (u16)cel->unk08 * sx;
+            x0 = obj->unk_04 - (u16)cel->unk08 * sx;
             x1 = x0 + cel->unk04 * sx;
-            y0 = SPR_F(obj, unk_08) - (u16)cel->unk0A * sy;
+            y0 = obj->unk_08 - (u16)cel->unk0A * sy;
             step = D_800ED694_EE294 * sy;
         }
         flipS = -1;

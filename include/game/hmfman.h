@@ -127,8 +127,8 @@ typedef struct HmfPart {
     /* 0x50 */ s32 unk50;
     /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
     /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */
-    /* 0x5C */ s32 unk5C; /* 30560: a HmfTexRef* (the texture its second list loads), -1 none */
-    /* 0x60 */ s32 unk60; /* 30560: a HmfTexRef* (the texture loaded last) */
+    /* 0x5C */ HmfTexRef* unk5C; /* the texture its second list loads; NULL no second list, -1 none */
+    /* 0x60 */ HmfTexRef* unk60; /* the texture loaded last */
     /* 0x64 */ Gfx* unk64; /* second display list, appended to the part's own (30560) */
 } HmfPart; /* size = 0x68; MP3 HmfModelData_Unk64_Unk60_Struct */
 
@@ -225,7 +225,7 @@ typedef struct HmfData {
     /* 0xB8 */ void* unkB8; /* 1D0B0's HmfDispData */
     /* 0xBC */ void* unkBC; /* 1D0B0's HmfMtnData: morph animations (unk22) */
     /* 0xC0 */ char unkC0[8];
-    /* 0xC8 */ s32 unkC8; /* a u8* list (texture animation slots, unk28 entries): a pointer in an s32 slot; HMF_TEXANIM (3D6A0) */
+    /* 0xC8 */ u8* unkC8; /* texture animation slots (unk28 entries; 3D6A0) */
     /* 0xCC */ Gfx*** unkCC; /* -> per-part second display lists (30560) */
     /* 0xD0 */ struct HmfData_UnkD0* unkD0; /* the drawing model's lights */
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
@@ -280,7 +280,7 @@ typedef struct HmfModel {
     /* 0x6C */ HmfData* unk6C; /* released instead of hmf while unk09 is set and unk14 != 0 */
     /* 0x70 */ void (*unk70)(Gfx**, s32, s32);
     /* 0x74 */ f32 mtx[16];
-    /* 0xB4 */ struct HmfModel* unkB4;
+    /* 0xB4 */ HmfData_UnkD0* unkB4; /* the model's lights (0x48 bytes) */
     /* 0xB8 */ s32 unkB8;
     /* 0xBC */ void* unkBC;
 } HmfModel; /* size = 0xC0 */

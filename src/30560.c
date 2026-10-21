@@ -475,16 +475,16 @@ void func_8002FD38_30938(HmfData* arg0) {
         part->unk10 = D_80101646_102246 - part->unk0E;
 
         gSPEndDisplayList(D_800FDBCC_FE7CC++);
-        part->unk60 = (s32) D_800FC888_FD488; /* a pointer in an s32 slot */
+        part->unk60 = D_800FC888_FD488;
 
         if (D_8010271C_10331C == buf2) {
             HMF_DL(arg0)[i] = func_80027154_27D54(size = (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], size);
-            part->unk5C = 0;
+            part->unk5C = NULL;
             part->unk64 = NULL;
         } else {
             gSPEndDisplayList(D_8010271C_10331C++);
-            part->unk5C = (s32) D_800F8C4C_F984C; /* a pointer in an s32 slot */
+            part->unk5C = D_800F8C4C_F984C;
             HMF_DL(arg0)[i] = func_80027154_27D54(
                 (D_800FDBCC_FE7CC - var_s4 + D_8010271C_10331C - buf2) * sizeof(Gfx), D_800FA1AA_FADAA);
             bcopy(var_s4, HMF_DL(arg0)[i], (D_800FDBCC_FE7CC - var_s4) * sizeof(Gfx));
@@ -1029,11 +1029,11 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
             func_80036C44_37844(arg0, temp_s4->unk50 & ~0x06000000, arg1);
 
             gSPSegment(D_800FDBCC_FE7CC++, 0x01, osVirtualToPhysical(arg0->unk44[D_800FDBE0_FE7E0]));
-            if (temp_s4->unk5C != 0) {
-                if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
+            if (temp_s4->unk5C != NULL) {
+                if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
                     gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
                 }
-                D_800FC888_FD488 = (void*) temp_s4->unk60;
+                D_800FC888_FD488 = temp_s4->unk60;
             } else {
                 D_800FC888_FD488 = NULL;
             }
@@ -1069,11 +1069,11 @@ void func_800319EC_325EC(HmfData* arg0, s16 arg1, HmfDrawRec* arg2) {
         if (HMF_DL(arg0)[arg1] == NULL) {
             return;
         }
-        if (temp_s4->unk5C != 0) {
-            if ((D_800FC888_FD488 != (void*) temp_s4->unk5C && temp_s4->unk5C != -1) || arg0->unk38 != NULL) {
+        if (temp_s4->unk5C != NULL) {
+            if ((D_800FC888_FD488 != temp_s4->unk5C && temp_s4->unk5C != (HmfTexRef*) -1) || arg0->unk38 != NULL) {
                 gSPDisplayList(D_800FDBCC_FE7CC++, temp_s4->unk64);
             }
-            D_800FC888_FD488 = (void*) temp_s4->unk60;
+            D_800FC888_FD488 = temp_s4->unk60;
         } else {
             D_800FC888_FD488 = NULL;
         }
