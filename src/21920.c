@@ -147,6 +147,7 @@ void func_80025830_26430(Matrix4f, f32, f32, f32); /* MP1 MtxScale */
 void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* MP1 MtxMult */
 void func_80030CD4_318D4(Matrix4f, Matrix4f); /* MP1 func_8002C37C */
 void guMtxIdentF(float mf[4][4]);
+void guMtxCatF(float m[4][4], float n[4][4], float r[4][4]);
 
 extern Matrix4f* D_800FD43C_FE03C; /* matrix table being filled */
 extern s16* D_800FC8F0_FD4F0; /* per matrix: its motion object */
@@ -154,6 +155,9 @@ extern s16 D_800F93D0_F9FD0; /* matrices written */
 extern s16 D_800FD470_FE070; /* matrix stack depth */
 extern Matrix4f D_801016D0_1022D0[]; /* matrix stack */
 extern const char D_800D20E8_D2CE8[];
+extern const char D_800D20F8_D2CF8[];
+s16 func_8001F4AC_200AC(char*); /* name hash */
+s32 func_800B0FD0_B1BD0(char*, char**); /* strcmp; retail passes the address of the name */
 
 void func_80020D20_21920(s16 arg0) {
     s16 i;
@@ -653,9 +657,51 @@ void func_80023680_24280(HmfData* arg0, s16 arg1, s16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023A08_24608);
+/* Poses model arg0 from baked frame arg2 of arg1 and stops its own motion (MP1 func_80020958). */
+void func_80023A08_24608(s16 arg0, unk1EA70StructC* arg1, s16 arg2) {
+    HmfData* model;
+    s16 i;
+    s16 frame;
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023B7C_2477C);
+    if (arg2 >= arg1->unk_00) {
+        arg2 = arg1->unk_00 - 1;
+    }
+    if (arg2 < 0) {
+        arg2 = 0;
+    }
+    model = D_800FC834_FD434[arg0].hmf;
+    D_800FC834_FD434[arg0].unk02 = 0xFF;
+    frame = model->unk16 * (arg2 / arg1->unk_02);
+    D_800F93D0_F9FD0 = 0;
+    D_800FD43C_FE03C = &arg1->unk_08[frame];
+    for (i = 0; i < model->unk16; i++) {
+        func_80030CD4_318D4(((HmfMotionObj*) model->unk84)[i].unk_58, D_800FD43C_FE03C[arg1->unk_04[i]]);
+    }
+}
+
+/* Model arg0's world matrix times baked frame arg3 of arg1, into arg2 (MP1 func_80020ACC). */
+void func_80023B7C_2477C(s16 arg0, unk1EA70StructC* arg1, Matrix4f arg2, s16 arg3) {
+    HmfModel* obj;
+
+    obj = &D_800FC834_FD434[arg0];
+    if (arg3 >= arg1->unk_00) {
+        arg3 = arg1->unk_00 - 1;
+    }
+    if (arg3 < 0) {
+        arg3 = 0;
+    }
+    func_800B37C0_B43C0(arg2);
+    if (obj->pos.x != 0.0f || obj->pos.y != 0.0f || obj->pos.z != 0.0f) {
+        func_80025770_26370(arg2, obj->pos.x, obj->pos.y, obj->pos.z);
+    }
+    if (obj->rot.x != 0.0f || obj->rot.y != 0.0f || obj->rot.z != 0.0f) {
+        func_80025884_26484(arg2, obj->rot.x, obj->rot.y, obj->rot.z);
+    }
+    if (obj->scale.x != 1.0f || obj->scale.y != 1.0f || obj->scale.z != 1.0f) {
+        func_80025830_26430(arg2, obj->scale.x, obj->scale.y, obj->scale.z);
+    }
+    guMtxCatF(arg1->unk_08[arg3 / arg1->unk_02], arg2, arg2);
+}
 
 void func_80023D74_24974(unk1EA70StructC* arg0) {
     HuMemMemoryFreePerm(arg0->unk_08);
@@ -663,7 +709,63 @@ void func_80023D74_24974(unk1EA70StructC* arg0) {
     HuMemMemoryFreePerm(arg0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/21920", func_80023DAC_249AC);
+/* Hangs model arg0's part arg1 onto model arg2's part arg3 (MP1 func_80020EA0). Retail compares
+   each name against the address of the name argument (&arg1, &arg3), as MP1 does. */
+void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3) {
+    HmfData* src;
+    HmfData* dst;
+    HitXform* obj40;
+    HmfMotionObj* obj50;
+    s16 hash;
+    s16 i;
+    s16 j;
+    s16 k;
+    s16 l;
+
+    src = D_800FC834_FD434[arg0].hmf;
+    dst = D_800FC834_FD434[arg2].hmf;
+    hash = func_8001F4AC_200AC(arg1);
+    for (i = 0; i < src->unk10; i++) {
+        if (src->unk64[i].unk08 == hash && func_800B0FD0_B1BD0(dst->unk64[i].unk12, &arg1) != 0) {
+            break;
+        }
+    }
+    if (i == src->unk10) {
+        osSyncPrintf(D_800D20F8_D2CF8, arg1); /* "Can't find ObjName %s\n" */
+        return;
+    }
+    hash = func_8001F4AC_200AC(arg3);
+    for (j = 0; j < dst->unk10; j++) {
+        if (dst->unk64[j].unk08 == hash && func_800B0FD0_B1BD0(dst->unk64[j].unk12, &arg3) != 0) {
+            break;
+        }
+    }
+    if (j == dst->unk10) {
+        osSyncPrintf(D_800D20F8_D2CF8, arg3);
+        return;
+    }
+    if (dst->unk84 == (void*) -1) {
+        for (k = 0; k < dst->unk68; k++) {
+            obj40 = &dst->unk6C[k];
+            if (obj40->unk00 == j) {
+                obj40->unk48 = src;
+                obj40->unk00 = i;
+                return;
+            }
+        }
+    } else {
+        for (k = 0; k < dst->unk16; k++) {
+            obj50 = &((HmfMotionObj*) dst->unk84)[k];
+            for (l = 0; l < obj50->unk_00; l++) {
+                if (obj50->unk_50[l] == j) {
+                    obj50->unk_54 = src;
+                    obj50->unk_50[l] = i;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 unk1EA70Struct1C* func_800240C8_24CC8(s32 arg0, s16 arg1) {
     unk1EA70Struct1C* ret;
