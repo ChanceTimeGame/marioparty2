@@ -2546,7 +2546,247 @@ s8 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
     return tw->unk_31;
 }
 
+// register allocation (masked 16; MP1 func_8006FE4C has the same residue): the new entry's index and
+// the close-button test reuse sign extensions differently
+#ifdef NON_MATCHING
+/* MP1 func_8006FE4C: moves the choice cursor between the entries; 0 once one is chosen or cancelled */
+s32 func_8008BCB8_8C8B8(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    TWEntry* e;
+    s16 cur;
+    s16 sel;
+    s16 dir;
+    s16 x;
+    s16 y;
+    s16 count;
+    s16 i;
+    s16 best;
+    s16 dy;
+    s16 d2;
+    s16 dx;
+    s16 btn;
+    s16 cancel;
+    f32 d;
+    f32 bestDx;
+    f32 bestDy;
+
+    sel = cur = tw->unk_31;
+    dir = -1;
+    if (tw->unk9A != 3) {
+        btn = func_8008D250_8DE50(tw);
+    } else {
+        btn = 0;
+    }
+    if (btn & 0x200) {
+        dir = 0;
+    }
+    if (btn & 0x100) {
+        dir = 2;
+    }
+    if (btn & 0x800) {
+        dir = 1;
+    }
+    if (btn & 0x400) {
+        dir = 3;
+    }
+    x = tw->unk_F4[cur].unk2;
+    y = tw->unk_F4[cur].unk4;
+    bestDx = 100000.0f;
+    count = tw->unk_30;
+    bestDy = bestDx;
+    switch (dir) {
+    case 0:
+        for (i = 0; i < count; i++) {
+            if (i != cur && tw->unk_F4[i].unk4 == y && tw->unk_F4[i].unk2 < x) {
+                break;
+            }
+        }
+        if (i != count) {
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == y && tw->unk_F4[i].unk2 < x) {
+                    d = x - tw->unk_F4[i].unk2;
+                    if (d < bestDy) {
+                        bestDy = d;
+                        sel = i;
+                    }
+                }
+            }
+        } else {
+            best = -1000;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == y && tw->unk_F4[i].unk2 > best) {
+                    best = tw->unk_F4[i].unk2;
+                    sel = i;
+                }
+            }
+        }
+        break;
+    case 1:
+        for (i = 0; i < count; i++) {
+            if (i != cur && tw->unk_F4[i].unk4 < y) {
+                break;
+            }
+        }
+        if (i != count) {
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 < y) {
+                    dy = y - tw->unk_F4[i].unk4;
+                    if (dy <= bestDy) {
+                        if (dy < bestDy) {
+                            bestDx = 100000.0f;
+                        }
+                        dx = x - tw->unk_F4[i].unk2;
+                        d2 = dx * dx;
+                        if (d2 < bestDx) {
+                            bestDy = dy;
+                            bestDx = d2;
+                            sel = i;
+                        }
+                    }
+                }
+            }
+        } else {
+            best = -1000;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 > best) {
+                    best = tw->unk_F4[i].unk4;
+                }
+            }
+            bestDx = 100000.0f;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == best) {
+                    dx = x - tw->unk_F4[i].unk2;
+                    d2 = dx * dx;
+                    if (d2 < bestDx) {
+                        bestDx = d2;
+                        sel = i;
+                    }
+                }
+            }
+        }
+        break;
+    case 2:
+        for (i = 0; i < count; i++) {
+            if (i != cur && tw->unk_F4[i].unk4 == y && x < tw->unk_F4[i].unk2) {
+                break;
+            }
+        }
+        if (i != count) {
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == y && x < tw->unk_F4[i].unk2) {
+                    d = tw->unk_F4[i].unk2 - x;
+                    if (d < bestDy) {
+                        bestDy = d;
+                        sel = i;
+                    }
+                }
+            }
+        } else {
+            best = 1000;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == y && tw->unk_F4[i].unk2 < best) {
+                    best = tw->unk_F4[i].unk2;
+                    sel = i;
+                }
+            }
+        }
+        break;
+    case 3:
+        for (i = 0; i < count; i++) {
+            if (i != cur && y < tw->unk_F4[i].unk4) {
+                break;
+            }
+        }
+        if (i != count) {
+            for (i = 0; i < count; i++) {
+                if (i != cur && y < tw->unk_F4[i].unk4) {
+                    dy = tw->unk_F4[i].unk4 - y;
+                    if (dy <= bestDy) {
+                        if (dy < bestDy) {
+                            bestDx = 100000.0f;
+                        }
+                        dx = x - tw->unk_F4[i].unk2;
+                        d2 = dx * dx;
+                        if (d2 < bestDx) {
+                            bestDy = dy;
+                            bestDx = d2;
+                            sel = i;
+                        }
+                    }
+                }
+            }
+        } else {
+            best = 1000;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 < best) {
+                    best = tw->unk_F4[i].unk4;
+                }
+            }
+            bestDx = 100000.0f;
+            for (i = 0; i < count; i++) {
+                if (i != cur && tw->unk_F4[i].unk4 == best) {
+                    dx = x - tw->unk_F4[i].unk2;
+                    d2 = dx * dx;
+                    if (d2 < bestDx) {
+                        bestDx = d2;
+                        sel = i;
+                    }
+                }
+            }
+        }
+        break;
+    }
+    if (tw->unk_31 != sel) {
+        e = &tw->unk_F4[tw->unk_31];
+        tw->unk_31 = tw->unk32 = sel;
+        tw->unk9A = 3;
+        tw->unk9C = e->unk2 - 12;
+        tw->unk9E = e->unk4 + 8;
+        e = &tw->unk_F4[sel];
+        tw->unkA0 = e->unk2 - 12;
+        tw->unkA2 = e->unk4 + 8;
+        tw->unkA4 = 0;
+        PlaySound(1);
+    }
+    cancel = (tw->unk_38 & 1) ? 0 : 0x4000;
+    if (btn & 0x8000) {
+        if (tw->unk_F4[tw->unk_31].unk0 == 2) {
+            if (tw->unkAA != -1) {
+                PlaySound(5);
+            }
+            return 1;
+        }
+        tw->unk9A = 4;
+        tw->unkA4 = 0;
+        if (tw->unkAA != -1) {
+            if (tw->unk_38 & 0x20) {
+                PlaySound(2);
+            } else {
+                PlaySound(3);
+            }
+        }
+        tw->unk_38 |= 0x200;
+        tw->unkA8 = btn;
+        return 0;
+    }
+    if ((btn & cancel) || (btn & tw->unkA6)) {
+        tw->unk9A = 0;
+        tw->unkA4 = 0;
+        tw->unk_31 = -1;
+        if (btn & cancel) {
+            if (tw->unkAA != -1) {
+                PlaySound(4);
+            }
+        }
+        tw->unk_38 |= 0x200;
+        tw->unkA8 = btn;
+        return 0;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BCB8_8C8B8);
+#endif
 
 /* func_8008C828_8D428's jump table, defined here while it is asm */
 const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) = {
