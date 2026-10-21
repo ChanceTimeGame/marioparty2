@@ -274,7 +274,78 @@ s16 func_80104844_2AA9E4_DesertDuel(s16 x, s16 y, s16 w, s16 h, s16 arg4, s16 ar
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104844_2AA9E4_DesertDuel);
 #endif
 
+/* The challenger picks an opponent from D_80108C20 (cursor rows at ys[]); a CPU challenger's
+   input comes from func_80107EE4's script. Sets D_80108C1C and D_80108C50, then ends. */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_801049AC_2AAB4C_DesertDuel(void) {
+    s32 ys4[3] = { 32, 90, 148 };
+    s32 ys3[2] = { 59, 121 };
+    s32 ys[4];
+    s16 size[2];
+    s32* src;
+    s16 win;
+    s16 spr;
+    u16 btn;
+    s32 sel;
+    s32 count;
+    s32 i;
+
+    func_8008DACC_8E6CC(1, size, 0x212);
+    win = func_80104844_2AA9E4_DesertDuel(70, 178, size[0], size[1], 0, 0, 200);
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, 0x212, -1, -1);
+    sel = 0;
+    count = D_80108C48_2AEDE8_DesertDuel - 1;
+    if (D_80108C48_2AEDE8_DesertDuel == 4) {
+        src = ys4;
+    } else {
+        src = ys3;
+    }
+    for (i = 0; i < D_80108C48_2AEDE8_DesertDuel; i++) {
+        ys[i] = *src++;
+    }
+    spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x42), 1, 1);
+    espPosSet(spr, 184, ys[sel]);
+    espDispOn(spr);
+    if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+        func_80107EE4_2AE084_DesertDuel(sel, 0, 2);
+    }
+    while (TRUE) {
+        btn = func_80107940_2ADAE0_DesertDuel();
+        if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+            btn = func_80108720_2AE8C0_DesertDuel();
+        }
+        if ((btn & 0x8000) && BoardSpaceGet(D_80108C20_2AEDC0_DesertDuel[sel], 1) != 0) {
+            PlaySound(2);
+            D_800F851A_F911A = 0;
+            D_80108C50_2AEDF0_DesertDuel = 1;
+            D_80108C1C_2AEDBC_DesertDuel = D_80108C20_2AEDC0_DesertDuel[sel];
+            espDispOff(spr);
+            func_8008CCA8_8D8A8(win);
+            omDelPrcObj(NULL);
+        }
+        if (btn & 0x400) {
+            PlaySound(1);
+            sel++;
+            if (sel >= count) {
+                sel = 0;
+            }
+        }
+        if (btn & 0x800) {
+            PlaySound(1);
+            sel--;
+            if (sel < 0) {
+                sel = count - 1;
+            }
+        }
+        espPosSet(spr, 184, ys[sel]);
+        D_800F851A_F911A = 1;
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801049AC_2AAB4C_DesertDuel);
+#endif
 
 /* A tumbleweed every 210 frames. */
 void func_80104C9C_2AAE3C_DesertDuel(void) {

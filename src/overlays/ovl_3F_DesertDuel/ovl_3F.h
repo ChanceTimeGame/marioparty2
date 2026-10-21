@@ -116,7 +116,7 @@ void func_8008AD44_8B944(s16);
 void func_8008CCA8_8D8A8(s16);
 void func_8008D88C_8E48C(s16);
 void func_8008D974_8E574(s32, s16);
-void func_8008DACC_8E6CC(s32, char*, s32);
+void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 u32 func_800A5610_A6210(char*); /* strlen */
 omObjData* omAddObj(s16, u16, u16, s16, void*);
 void omDelObj(omObjData*);
