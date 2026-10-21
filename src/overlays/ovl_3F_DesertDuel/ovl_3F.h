@@ -6,7 +6,8 @@
    an opponent when several are eligible, both stake coins, rounds are played (fork B's 80106600)
    until one is decided, and the winner takes both stakes; the result is left for the board in
    D_800FC880 (winner) and D_800F8C5C (loser), -1 both for a draw.
-   Prototypes after 80105054 (fork B) come from the asm's register use; fork B owns them. */
+   The unit's .rodata is carved ([0x2AEB90, .rodata, 2A89A0]); the tables of the asm functions
+   80102D48, 80106C94 and 80107EE4 are defined in C beside their INCLUDE_ASM. */
 
 #include "common.h"
 #include "game/board.h"
@@ -51,6 +52,8 @@ void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
+f32 func_800B1830_B2430(f32); /* sqrtf */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 f32 __sinf(f32);
 f32 __cosf(f32);
 void HuVecCopyXYZ(Vec*, f32, f32, f32);
@@ -58,6 +61,7 @@ s16 LoadFormFile(s32, s32);
 void MBDBackKill(void);
 void MBModelDispOff(MBModel*);
 MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void MBPlayerModelCreate(s16, void*, s32);
 void MBVsSprCreateY(f32 arg0, f32 arg1);
@@ -67,11 +71,15 @@ void AdjustPlayerCoins(s32 index, s32 count);
 GW_PLAYER* BoardPlayerGet(s32);
 void espDispOff(u16);
 void espDispOn(u16);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void espPosSet(u16 spriteId, s16 x, s16 y);
 s16 func_8001A2F8_1AEF8(s32 arg0);
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
 void func_80029714_2A314(s16, f32, f32, f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80043DAC_449AC(MBModel*);
 omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
@@ -79,10 +87,16 @@ void func_80050AE0_516E0(void);
 void func_8005321C_53E1C(f32, f32);
 void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
 void func_80057730_58330(s16, s32);
+void func_80057A78_58678(s32, s32, s32); /* both duelists' portraits in a window */
+void func_80059120_59D20(void*, f32, f32); /* jump: velocity, gravity */
+void func_80059158_59D58(void*); /* start the jump */
 void func_80059400_5A000(void);
+s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
+s32 func_80059FD0_5ABD0(s32 player); /* the player's rank, 0 = first */
 ModelPathWork* func_8005A718_5B318(MBModel* model, f32 speed, s16 count, Vec* points);
 s32 func_8005A778_5B378(ModelPathWork*); /* path finished */
 void func_8005AA48_5B648(MBModel*, char*, s16);
+void func_8005AC6C_5B86C(MBModel*, s32);
 void func_8005AB50_5B750(MBModel* arg0, s16 arg1, s16 arg2, s32 arg3);
 void func_8005ABC0_5B7C0(GW_PLAYER*, s16, s16);
 void func_8005ACD0_5B8D0(GW_PLAYER*, s16);
@@ -92,12 +106,15 @@ void func_800600F8_60CF8(s32, s16, s16);
 void func_8006135C_61F5C(s32 player, s32 coins, s32);
 void func_800614B4_620B4(s32, s32);
 s16 func_800691FC_69DFC(s16 mesNo, ...);
+void func_800695D8_6A1D8(s16 mesId, s16 time);
 s32 func_80069538_6A138(void);
 s32 func_800696E4_6A2E4(void);
+void func_80069764_6A364(s16 time);
 void func_80069770_6A370(void);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
 /* Defined (u32, s16, s16) in 73BA0.c; retail passes full words here. */
 omObjData* func_800732FC_73EFC(u32 arg0, s32 arg1, s32 arg2);
+void func_80079614_7A214(s16 time); /* music fade-out */
 s16 func_800797DC_7A3DC(s32, s16);
 void func_800798F8_7A4F8(s16 arg0, s16 arg1);
 void func_800799A4_7A5A4(s16, s32);
@@ -140,6 +157,39 @@ typedef struct Unk3FTumbleweed {
     /* 0x14 */ s32 count;
 } Unk3FTumbleweed; /* size 0x18 */
 
+/* fork B */
+/* The quick draw (func_80106328): frames since "GO!", and each CPU duelist's reaction time. */
+typedef struct Unk3FDraw {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 cpuWait1; /* the challenger's */
+    /* 0x08 */ s32 cpuWait2; /* the opponent's */
+} Unk3FDraw; /* size 0x0C */
+
+/* A shot (func_80106988/func_80106C94): model 0xA0192 flies at the target, hits, bounces and
+   rolls to a stop. */
+typedef struct Unk3FShot {
+    /* 0x00 */ s32 hit;
+    /* 0x04 */ f32 vx;
+    /* 0x08 */ f32 vy;
+    /* 0x0C */ s32 target; /* player index */
+    /* 0x10 */ s16 bounces;
+} Unk3FShot; /* size 0x14 */
+
+/* The drawing duelist (func_80107128/func_801071C8). */
+typedef struct Unk3FDrawer {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 timer;
+} Unk3FDrawer; /* size 0x08 */
+
+/* The CPU input script (func_80107EE4/func_80108580): mode 0 presses Start, 2 moves the cursor
+   to an opponent and presses A, 3 raises the stake to a target and presses A. */
+typedef struct Unk3FCpuInput {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 cur;    /* the cursor row / the stake now */
+    /* 0x08 */ s32 target; /* the row / the stake wanted */
+    /* 0x0C */ s32 mode;
+} Unk3FCpuInput; /* size 0x10 */
+
 /* Status-window layouts (D_80108730): four corner positions as from/to pairs, and the frames
    the move takes. */
 typedef struct Unk3FStatusLayout {
@@ -176,7 +226,7 @@ extern s32 D_80108C4C_2AEDEC_DesertDuel; /* frame counter / tumbleweed timer */
 extern s32 D_80108C50_2AEDF0_DesertDuel; /* a step finished */
 extern s16 D_80108C54_2AEDF4_DesertDuel;
 extern s32 D_80108C58_2AEDF8_DesertDuel; /* the duel's outcome (1-5) */
-extern s32 D_80108C5C_2AEDFC_DesertDuel[2];
+extern s32 D_80108C5C_2AEDFC_DesertDuel[2]; /* false starts: challenger, opponent */
 extern s32 D_80108C64_2AEE04_DesertDuel;
 extern s32 D_80108C68_2AEE08_DesertDuel; /* message for func_80105AAC */
 extern s32 D_80108C6C_2AEE0C_DesertDuel;
@@ -184,6 +234,7 @@ extern s32 D_80108C70_2AEE10_DesertDuel;
 extern s32 D_80108C74_2AEE14_DesertDuel;
 extern s32 D_80108C78_2AEE18_DesertDuel;
 extern s32 D_80108C7C_2AEE1C_DesertDuel; /* entries in D_80108C88 */
+extern s32 D_80108C80_2AEE20_DesertDuel[2]; /* the player each D_80108C88 message is about */
 extern s16 D_80108C88_2AEE28_DesertDuel[]; /* game message ids */
 extern s32 D_80108C8C_2AEE2C_DesertDuel; /* the minimum stake */
 extern s32 D_80108C90_2AEE30_DesertDuel; /* the turn */
@@ -238,6 +289,6 @@ void func_80107A00_2ADBA0_DesertDuel(void);
 s32 func_80107BF8_2ADD98_DesertDuel(void);
 void func_80107EE4_2AE084_DesertDuel(s32 arg0, s32 arg1, s32 arg2); /* CPU input script */
 void func_80108580_2AE720_DesertDuel(omObjData* obj);
-u16 func_80108720_2AE8C0_DesertDuel(void); /* CPU pad triggers (D_80108C98) */
+s32 func_80108720_2AE8C0_DesertDuel(void); /* CPU pad triggers (D_80108C98) */
 
 #endif
