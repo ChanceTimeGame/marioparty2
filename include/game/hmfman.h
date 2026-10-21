@@ -188,7 +188,9 @@ typedef struct HmfData {
     /* 0x1A */ s16 unk1A; /* MP1 0x74 */
     /* 0x1C */ s16 unk1C; /* u16 in 1D0B0's view */
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ char unk20[6];
+    /* 0x20 */ char unk20[2];
+    /* 0x22 */ s16 unk22; /* morph animation count (unkBC) */
+    /* 0x24 */ char unk24[2];
     /* 0x26 */ s16 unk26;
     /* 0x28 */ s16 unk28; /* texture-animation count (3D6A0); unkC8's entry count (274D0) */
     /* 0x2A */ char unk2A[6];
@@ -221,7 +223,8 @@ typedef struct HmfData {
     /* 0xB0 */ f32 unkB0; /* unk98's frame */
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
     /* 0xB8 */ void* unkB8; /* 1D0B0's HmfDispData */
-    /* 0xBC */ char unkBC[0xC];
+    /* 0xBC */ void* unkBC; /* 1D0B0's HmfMtnData: morph animations (unk22) */
+    /* 0xC0 */ char unkC0[8];
     /* 0xC8 */ s32 unkC8; /* a u8* list (texture animation slots, unk28 entries): a pointer in an s32 slot; HMF_TEXANIM (3D6A0) */
     /* 0xCC */ Gfx*** unkCC; /* -> per-part second display lists (30560) */
     /* 0xD0 */ struct HmfData_UnkD0* unkD0; /* the drawing model's lights */

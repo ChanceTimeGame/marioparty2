@@ -2,29 +2,6 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 
-/* Set the off flag (0x8000) of model arg0's motion arg1 track for the motion object holding
-   part arg2, channel arg3, axis arg4 */
-
-
-/* Retail calls func_8003B7A8_3C3A8 unprototyped here (its flag argument arrives as the int
-   -0x8000; its definition reads it as u16) */
-
-
-/* MP1 func_80034E04 (src/34D80.c): point a motion slot into a motion file loaded whole. Host
-   hazard: the file's offsets are big-endian words, and its pointers are rebuilt from them */
-
-
-/* MP1 func_80034974 (src/34D80.c; its decomp-permuter shape). Host hazard: kind 35's
-   three key values are big-endian floats copied byte by byte */
-
-
-/* MP1 func_80033CBC (src/2C0C0.c); as func_800386DC_392DC, a scale pops D_8010107C_101C7C unpushed */
-
-
-/* MP1 func_800339E0 (src/2C0C0.c). MP2 scales in place only, yet still pops D_8010107C_101C7C
-   when it scaled (retail behaviour, kept) */
-
-
 /* Model (HMF) setup, texture and display-list state, matrix copies and animation helpers. The
    functions in C are MP1 src/2C0C0.c and src/34D80.c code (two from MP3 src/22EB0.c); the rest
    have no MP1/MP3 C and stay asm, as does func_80038C04, whose jump table sits in this unit's
@@ -285,7 +262,24 @@ extern HmfTexAnimSlot* D_801016C4_1022C4;
 void func_8003B7A8_3C3A8(s16, s16, char*, s16, u16, u16);
 void func_8003BAD8_3C6D8(s32);
 void func_8003BD08_3C908(HmfData*, u8, f32);
-void func_8003C6AC_3D2AC(HmfData*);
+void func_8003C6AC_3D2AC(HmfData*, f32);
+
+/* HmfData.unkB8's entries (1D0B0's HmfDispData): a morph target */
+typedef struct HmfMorph {
+    /* 0x00 */ char unk00[0x1C];
+    /* 0x1C */ s16 unk1C; /* vertex count */
+    /* 0x1E */ char unk1E[0xA];
+    /* 0x28 */ s16* unk28; /* vertices */
+    /* 0x2C */ ColVtx* unk2C; /* their positions */
+    /* 0x30 */ u8* unk30; /* and colours (3 bytes each; 0, 0, 0 keeps the model's) */
+} HmfMorph; /* size = 0x34 */
+
+/* HmfData.unkBC's entries (1D0B0's HmfMtnData): a morph animation */
+typedef struct HmfMorphAnim {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02; /* frame count */
+    /* 0x04 */ s16* unk04; /* per frame: the HmfMorph */
+} HmfMorphAnim; /* size = 0x8 */
 void func_8002024C_20E4C();
 void func_800260A4_26CA4(Matrix4f, Matrix4f);
 void func_80026994_27594(s32);
@@ -2432,6 +2426,8 @@ void func_80038654_39254(HmfData* arg0) {
         }
     }
 }
+/* MP1 func_800339E0 (src/2C0C0.c). MP2 scales in place only, yet still pops D_8010107C_101C7C
+   when it scaled (retail behaviour, kept) */
 void func_800386DC_392DC(HmfData* arg0, s16 arg1) {
     HitXform* temp_s1 = &arg0->unk6C[arg1];
     s16 var_s3 = 0;
@@ -2481,6 +2477,7 @@ void func_800386DC_392DC(HmfData* arg0, s16 arg1) {
         func_800386DC_392DC(arg0, arg1 + temp_s1->unk02);
     }
 }
+/* MP1 func_80033CBC (src/2C0C0.c); as func_800386DC_392DC, a scale pops D_8010107C_101C7C unpushed */
 void func_80038964_39564(HmfData* arg0, s16 arg1) {
     HmfMotionObj* temp_s1 = &((HmfMotionObj*) arg0->unk84)[arg1];
     s16 var_s5 = 0;
@@ -2765,6 +2762,8 @@ s32 func_80039110_39D10(HmfMotionSlot* arg0, HmfData* arg1) {
 
     return 1;
 }
+/* MP1 func_80034974 (src/34D80.c; its decomp-permuter shape). Host hazard: kind 35's
+   three key values are big-endian floats copied byte by byte */
 s32 func_800395F8_3A1F8(HmfMotionSlot *arg0, s16 arg1, u8 *arg2)
 {
   HmfMotionTrack *p;
@@ -2890,6 +2889,8 @@ s32 func_800398AC_3A4AC(HmfData* arg0, s16 arg1, u8* arg2) {
     return 1;
 }
 
+/* MP1 func_80034E04 (src/34D80.c): point a motion slot into a motion file loaded whole. Host
+   hazard: the file's offsets are big-endian words, and its pointers are rebuilt from them */
 s32 func_80039A88_3A688(HmfMotionSlot* arg0, HmfMotionFile* arg1) {
     HmfMotionTrack** tracks;
     HmfMotionTrack** var_v1;
@@ -3536,12 +3537,16 @@ s16 func_8003B710_3C310(HmfData* arg0) {
     return arg0->unkA4;
 }
 
+/* Retail calls func_8003B7A8_3C3A8 unprototyped here (its flag argument arrives as the int
+   -0x8000; its definition reads it as u16) */
 void func_8003B72C_3C32C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4) {
     ((void (*)()) func_8003B7A8_3C3A8)(arg0, arg1, arg2, arg3, arg4, -0x8000);
 }
 void func_8003B76C_3C36C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4) {
     ((void (*)()) func_8003B7A8_3C3A8)(arg0, arg1, arg2, arg3, arg4, 0);
 }
+/* Set the off flag (0x8000) of model arg0's motion arg1 track for the motion object holding
+   part arg2, channel arg3, axis arg4 */
 void func_8003B7A8_3C3A8(s16 arg0, s16 arg1, char* arg2, s16 arg3, u16 arg4, u16 arg5) {
     HmfMotionSlot* slot;
     HmfData* hmf;
@@ -3656,11 +3661,66 @@ void func_8003BCBC_3C8BC(HmfModel* arg0, f32 arg1) {
     HmfData* temp_a0 = arg0->hmf;
 
     if (temp_a0->unkB8 != NULL) {
-        func_8003C6AC_3D2AC(temp_a0);
+        func_8003C6AC_3D2AC(temp_a0, arg1);
         return;
     }
     func_8003BD08_3C908(temp_a0, arg0->unk08, arg1);
 }
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003BD08_3C908);
 
+// register allocation only (masked 0)
+#ifdef NON_MATCHING
+/* Apply the morph targets of the current frame arg1 to this frame's vertex buffer */
+void func_8003C6AC_3D2AC(HmfData* arg0, f32 arg1) {
+    HmfMorph* m;
+    HmfVtx* dst;
+    HmfVtx* src;
+    HmfVtx* v;
+    s16* idx;
+    ColVtx* pos;
+    s8* col;
+    s16 n;
+    s16 i;
+    s16 j;
+
+    if (arg0->unkB8 != NULL) {
+        if (arg0->unkBC != NULL) {
+            src = arg0->unk40;
+            dst = arg0->unk44[D_800FDBE0_FE7E0];
+            n = arg0->unk18;
+            for (i = 0; i < n; i++) {
+                *dst = *src;
+                src++;
+                dst++;
+            }
+            dst = arg0->unk44[D_800FDBE0_FE7E0];
+            if (((HmfMorphAnim*) arg0->unkBC)->unk02 - 1 <= arg1) {
+                arg1 = ((HmfMorphAnim*) arg0->unkBC)->unk02 - 1;
+            }
+            for (i = 0; i < arg0->unk22; i++) {
+                m = &((HmfMorph*) arg0->unkB8)[((HmfMorphAnim*) arg0->unkBC)[i].unk04[(s16) arg1]];
+                idx = m->unk28;
+                pos = m->unk2C;
+                col = (s8*) m->unk30;
+                n = m->unk1C;
+                for (j = 0; j < n; j++) {
+                    v = &dst[arg0->unk60[*idx]];
+                    v->unk00 = pos->x;
+                    v->unk02 = pos->y;
+                    v->unk04 = pos->z;
+                    if (col[0] != 0 || col[1] != 0 || col[2] != 0) {
+                        v->unk0C[0] = col[0];
+                        v->unk0C[1] = col[1];
+                        v->unk0C[2] = col[2];
+                    }
+                    idx++;
+                    pos++;
+                    col += 3;
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003C6AC_3D2AC);
+#endif
