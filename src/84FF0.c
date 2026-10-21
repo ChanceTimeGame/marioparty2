@@ -1629,13 +1629,40 @@ void func_800890CC_89CCC(s16 win_id, u32 str, s16 x, s16 y) {
     tw->unk_30 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089234_89E34);
+/* MP1 func_8006D93C: string length */
+s16 func_80089234_89E34(u8* str) {
+    s16 len = 0;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008925C_89E5C);
+    while (*str != 0) {
+        str++;
+        len++;
+    }
+    return len;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089284_89E84);
+void func_8008DACC_8E6CC(s32 arg0, s16* out, u8* str);
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_800892D8_89ED8);
+/* text width of str */
+s16 func_8008925C_89E5C(u8* str) {
+    s16 size[2];
+
+    func_8008DACC_8E6CC(1, size, str);
+    return size[0];
+}
+
+/* clears the window flags in mask, then sets bits */
+void func_80089284_89E84(s16 winId, s32 mask, s32 bits) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    tw->unk_38 = bits | (~mask & tw->unk_38);
+    if (bits & 0x20) {
+        tw->unkAA = 0x12C;
+    }
+}
+
+u32 func_800892D8_89ED8(s16 winId) {
+    return D_800F920C_F9E0C[winId].unk_38;
+}
 
 void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2) {
     TextWindow* textWindow = &D_800F920C_F9E0C[win_id];
@@ -2055,7 +2082,6 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DFC4_8EBC4);
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E2DC_8EEDC);
 
 void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
-void func_80089284_89E84(s16 winId, s32 x, s32 y);
 
 /* MP1 func_80071DE0; MP2 scales one sprite and the window */
 void func_8008E434_8F034(s32 arg0) {
