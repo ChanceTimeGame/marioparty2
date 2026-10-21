@@ -76,7 +76,7 @@ typedef struct TextWindow {
     /* 0x021 */ s8 unk21;
     /* 0x022 */ u8 unk22; /* text colour */
     /* 0x023 */ s8 unk23;
-    /* 0x024 */ s8 unk24;
+    /* 0x024 */ u8 unk24; /* current unkE0 buffer */
     /* 0x025 */ u8 unk25;
     /* 0x026 */ u8 unk26;
     /* 0x027 */ u8 unk27;
@@ -136,8 +136,7 @@ typedef struct TextWindow {
     /* 0x0D5 */ char padD5[3];
     /* 0x0D8 */ u8* unkD8; /* where the text resumes after an inserted string */
     /* 0x0DC */ u8* unkDC; /* window image (4-bit) */
-    /* 0x0E0 */ s32 unkE0;
-    /* 0x0E4 */ char padE4[8];
+    /* 0x0E0 */ u8* unkE0[3]; /* triple-buffered text image (4-bit) */
     /* 0x0EC */ f32 unkEC;
     /* 0x0F0 */ f32 unkF0;
     /* 0x0F4 */ TWEntry unk_F4[0x18];
@@ -1544,7 +1543,7 @@ s16 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
         tw->unk_B8[i] = NULL;
         tw->unk_B2[i] = -1;
     }
-    tw->unkE0 = 0;
+    tw->unkE0[0] = NULL;
     tw->unk6A = -1;
     tw->unk24 = 0;
     for (i = 0; i < 0x16; i++) {
@@ -2137,7 +2136,7 @@ void func_8008A834_8B434(TextWindow* tw) {
 
     func_8008B66C_8C26C(tw);
     buf = func_8008B3BC_8BFBC(((u8*)tw - (u8*)D_800F920C_F9E0C) / sizeof(TextWindow));
-    if (tw->unkE0 != 0) {
+    if (tw->unkE0[0] != NULL) {
         func_800B0EF0_B1AF0(buf, 0, (tw->unk44 * tw->unk46) / 2);
     }
     func_8008A8C0_8B4C0(tw);
@@ -2319,17 +2318,100 @@ void func_8008AD94_8B994(s16 winId, u8 c, u8 color, s16 x, s16 y) {
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AD94_8B994);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B154_8BD54);
+/* MP1 func_8006F3BC: clears a w x h box of the text image */
+void func_8008B154_8BD54(s16 winId, s16 x, s16 y, s16 w, s16 h) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    u8* dst;
+    s16 row;
+    s16 col;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B3BC_8BFBC);
+    func_8008B62C_8C22C(winId);
+    y = (y < 0) ? 0 : y;
+    x = (x < 0) ? 0 : x;
+    if (tw->unkE0[0] != NULL) {
+        dst = func_8008B3BC_8BFBC(winId) + (x + y * tw->unk44) / 2;
+        if (x & 1) {
+            for (row = 0; row < h; row++) {
+                for (col = 0; col < w / 2; col++) {
+                    dst[col] &= 0xF0;
+                    dst[col + 1] &= 0xF;
+                }
+                dst += tw->unk44 / 2;
+            }
+        } else {
+            for (row = 0; row < h; row++) {
+                for (col = 0; col < w / 2; col++) {
+                    dst[col] = 0;
+                }
+                dst += tw->unk44 / 2;
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B5AC_8C1AC);
+/* MP1 func_8006F718: the current text image, allocating the three buffers on first use */
+u8* func_8008B3BC_8BFBC(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 grp = tw->unk_6C;
+    HuSprite* spr;
+    s16 i;
+    s16 w;
+    s16 h;
+
+    if (tw->unkE0[0] != NULL) {
+        return func_80082550_83150(grp, 1)->unk_84->unk00[tw->unk24].unk00;
+    }
+    w = tw->unk44;
+    h = tw->unk46;
+    spr = func_80082550_83150(grp, 1);
+    for (i = 0; i < 3; i++) {
+        HuMemFree(spr->unk_84->unk00[i].unk00);
+        spr->unk_84->unk00[i].unk04 = w;
+        spr->unk_84->unk00[i].unk06 = tw->unk42;
+        spr->unk_84->unk00[i].unk00 = tw->unkE0[i] = HuMemAlloc((w * h) / 2);
+        func_800B0EF0_B1AF0(tw->unkE0[i], 0, (w * h) / 2);
+    }
+    HuMemFree(spr->unk_84->unk0C);
+    spr->unk_84->unk0C = HuMemAlloc(0x20);
+    bcopy(tw, spr->unk_84->unk0C, 0x20);
+    if (!(tw->unk_38 & 8)) {
+        SprAttrReset(grp, 1, 0x8000);
+    }
+    return spr->unk_84->unk00[tw->unk24].unk00;
+}
+
+void SprBankSet(s16 grpIdx, s16 idx, u16 bank);
+
+/* shows the current text image and moves to the next buffer */
+void func_8008B5AC_8C1AC(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    SprBankSet(tw->unk_6C, 1, tw->unk24);
+    tw->unk24++;
+    if (tw->unk24 >= 3) {
+        tw->unk24 = 0;
+    }
+    tw->unk_38 &= ~0x100;
+}
 
 void func_8008B62C_8C22C(s16 win_id) {
     func_8008B66C_8C26C(&D_800F920C_F9E0C[win_id]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B66C_8C26C);
+/* starts a new text image from a copy of the previous one (once per frame) */
+void func_8008B66C_8C26C(TextWindow* tw) {
+    u8 prev = 2;
+
+    if (tw->unk24 != 0) {
+        prev = tw->unk24 - 1;
+    }
+    if (!(tw->unk_38 & 0x100)) {
+        tw->unk_38 |= 0x100;
+        if (tw->unkE0[0] != NULL) {
+            bcopy(tw->unkE0[prev], tw->unkE0[tw->unk24], (tw->unk44 * tw->unk46) / 2);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B6F4_8C2F4);
 
