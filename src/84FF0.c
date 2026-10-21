@@ -277,7 +277,285 @@ s32 DispCheck(SprPoint* p) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", SprDisp);
+/* sprite texture-load state, set by SprDisp for PutSprite and SprTexLoad */
+extern s32 D_800ED680_EE280; /* texture format (G_IM_FMT_*) */
+extern s32 D_800ED684_EE284; /* texel size (G_IM_SIZ_*) */
+extern s32 D_800ED688_EE288;
+extern s32 D_800ED68C_EE28C;
+extern s32 D_800ED690_EE290; /* texture-load strips */
+extern s32 D_800ED694_EE294; /* rows per strip */
+extern s32 D_800ED698_EE298; /* rows in the last strip */
+extern s32 D_800ED6A0_EE2A0; /* drawn with a matrix */
+extern s32 D_800CD5B0_CE1B0;
+extern s32 D_800CD5B4_CE1B4[4]; /* other-mode shifts */
+extern s32 D_800CD5C4_CE1C4[4];
+extern s32 D_800CD5D0_CE1D0[4];
+extern s16 D_800CD5E0_CE1E0[];
+extern s16 D_800CD718_CE318[];
+extern u8 D_800FDBE0_FE7E0;
+extern Gfx* D_800F9294_F9E94; /* scratch display list for cached sprites */
+extern Vtx* D_801016C0_1022C0;
+void* HuMemAlloc(s32 size);
+void func_8004075C_4135C(void* mtx, f64 x, f64 y, f64 rot);
+void func_80025770_26370(f32 mtx[4][4], f32 x, f32 y, f32 z);
+void func_80025830_26430(f32 mtx[4][4], f32 sx, f32 sy, f32 sz);
+void func_800B3040_B3C40(f32 mtx[4][4], Mtx* m); /* guMtxF2L */
+Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam);
+
+/* unk_120 holds an index (0-2) into unk_128/unk_134, though the header types it void* */
+#define SPR_BUF(s) (*(s32*)&(s)->unk_120)
+
+void SprDisp(Gfx** gfx, HuSprite* obj, void* cam) {
+    f32 mf[4][4];
+    Gfx* g;
+    f32 sx;
+    f32 sy;
+    f32 ox;
+    f32 oy;
+    HuSprite_Unk84_Unk00_Struct* cel;
+    s32 w;
+    s32 idx;
+    s32 rm;
+    u32 intensity;
+    Vtx* vtx;
+    Gfx* end;
+    s32 size;
+
+    g = *gfx;
+    sx = obj->unk_18;
+    sy = obj->unk_1C;
+    if (obj->unk_84 == NULL) {
+        return;
+    }
+    cel = &obj->unk_84->unk00[obj->unk_90];
+    if ((sx <= 0.0f) | (sy <= 0.0f)) {
+        return;
+    }
+    if (SprDispCheck(obj) == 0) {
+        return;
+    }
+    switch (obj->unk_84->unk18) {
+        case 4:
+            D_800ED684_EE284 = G_IM_SIZ_4b;
+            if (obj->unk_84->unk1A == 1) {
+                D_800ED680_EE280 = G_IM_FMT_IA;
+                gDPSetTextureLUT(g++, G_TT_NONE);
+            } else {
+                D_800ED680_EE280 = G_IM_FMT_CI;
+                if (obj->unk_98 != NULL) {
+                    gDPLoadTLUT_pal16(g++, 0, obj->unk_104);
+                } else {
+                    gDPLoadTLUT_pal16(g++, 0, obj->unk_84->unk0C);
+                }
+                gDPSetTextureLUT(g++, G_TT_RGBA16);
+                D_800CD5B0_CE1B0 = 0x80;
+            }
+            D_800ED688_EE288 = 0;
+            break;
+        case 8:
+            D_800ED684_EE284 = G_IM_SIZ_8b;
+            if (obj->unk_84->unk1A == 1) {
+                D_800ED680_EE280 = G_IM_FMT_IA;
+                gDPSetTextureLUT(g++, G_TT_NONE);
+            } else {
+                D_800ED680_EE280 = G_IM_FMT_CI;
+                if (obj->unk_98 != NULL) {
+                    gDPLoadTLUT_pal256(g++, obj->unk_104);
+                } else {
+                    gDPLoadTLUT_pal256(g++, obj->unk_84->unk0C);
+                }
+                gDPSetTextureLUT(g++, G_TT_RGBA16);
+                D_800CD5B0_CE1B0 = 0x80;
+            }
+            D_800ED688_EE288 = 2;
+            break;
+        case 0x10:
+            D_800ED684_EE284 = G_IM_SIZ_16b;
+            if (obj->unk_84->unk1A == 1) {
+                D_800ED680_EE280 = G_IM_FMT_IA;
+            } else {
+                D_800ED680_EE280 = G_IM_FMT_RGBA;
+            }
+            gDPSetTextureLUT(g++, G_TT_NONE);
+            D_800CD5B0_CE1B0 = 0x100;
+            D_800ED688_EE288 = 2;
+            break;
+        case 0x20:
+            D_800ED684_EE284 = G_IM_SIZ_32b;
+            D_800ED680_EE280 = G_IM_FMT_RGBA;
+            gDPSetTextureLUT(g++, G_TT_NONE);
+            D_800CD5B0_CE1B0 = 0x100;
+            D_800ED688_EE288 = 2;
+            break;
+        case 0x8004:
+            D_800ED684_EE284 = G_IM_SIZ_4b;
+            D_800ED680_EE280 = G_IM_FMT_I;
+            gDPSetTextureLUT(g++, G_TT_NONE);
+            D_800CD5B0_CE1B0 = 0x100;
+            D_800ED688_EE288 = 0;
+            break;
+        case 0x8008:
+            D_800ED684_EE284 = G_IM_SIZ_8b;
+            D_800ED680_EE280 = G_IM_FMT_I;
+            gDPSetTextureLUT(g++, G_TT_NONE);
+            D_800CD5B0_CE1B0 = 0x100;
+            D_800ED688_EE288 = 2;
+            break;
+    }
+    w = (((cel->unk04 << D_800ED684_EE284) >> 4) << 4) >> D_800ED684_EE284;
+    if (w < cel->unk04) {
+        w += 16 >> D_800ED684_EE284;
+    }
+    switch (D_800ED680_EE280) {
+        case G_IM_FMT_CI:
+            if ((0x1000 >> D_800ED684_EE284) >= cel->unk06 * w) {
+                D_800ED694_EE294 = cel->unk06;
+            } else {
+                D_800ED694_EE294 = (0x1000 >> D_800ED684_EE284) / w;
+            }
+            break;
+        case G_IM_FMT_I:
+            if (cel->unk06 * w <= 0x1000) {
+                D_800ED694_EE294 = cel->unk06;
+            } else {
+                D_800ED694_EE294 = 0x1000 / w;
+            }
+            break;
+        default:
+            if ((0x2000 >> D_800ED684_EE284) >= cel->unk06 * w) {
+                D_800ED694_EE294 = cel->unk06;
+            } else {
+                D_800ED694_EE294 = (0x2000 >> D_800ED684_EE284) / w;
+            }
+            break;
+    }
+    D_800ED690_EE290 = cel->unk06 / D_800ED694_EE294;
+    D_800ED698_EE298 = cel->unk06 - D_800ED690_EE290 * D_800ED694_EE294;
+    if (cel->unk04 % (16 >> D_800ED684_EE284) == 0 && ((cel->unk04 * D_800ED694_EE294) << D_800ED684_EE284) <= 0x1000) {
+        idx = cel->unk04 >> D_800CD5D0_CE1D0[D_800ED684_EE284];
+        if (D_800CD5E0_CE1E0[idx] >= D_800ED694_EE294 || D_800ED694_EE294 == D_800CD718_CE318[idx]) {
+            D_800ED688_EE288++;
+        }
+    }
+    gDPPipeSync(g++);
+    gSPSetOtherMode(g++, G_SETOTHERMODE_H, D_800CD5B4_CE1B4[0], 2, (((u32)obj->unk_24 >> 2) & 3) << D_800CD5B4_CE1B4[0]);
+    gSPSetOtherMode(g++, G_SETOTHERMODE_H, D_800CD5B4_CE1B4[1], 2, ((((u32)obj->unk_24 >> 4) ^ 3) & 3) << D_800CD5B4_CE1B4[1]);
+    gSPSetOtherMode(g++, G_SETOTHERMODE_H, D_800CD5B4_CE1B4[2], 2, (((u32)obj->unk_24 >> 6) & 3) << D_800CD5B4_CE1B4[2]);
+    gSPSetOtherMode(g++, G_SETOTHERMODE_L, D_800CD5B4_CE1B4[3], 2, D_800CD5C4_CE1C4[((u32)obj->unk_24 >> 22) & 3]);
+    if (((u32)obj->unk_24 >> 6) & 2) {
+        gDPSetRenderMode(g++, 0, 0);
+        gDPSetCombine(g++, 0xFFFFFF, 0xFFFCF279);
+        D_800ED68C_EE28C = 4;
+    } else {
+        intensity = obj->unk_84->unk18 >> 15;
+        rm = (((u32)obj->unk_24 >> 26) & 1) ? 0x30 : 0;
+        switch (((u32)obj->unk_24 >> 10) & 3) {
+            case 0:
+                if (obj->unk_24 & 0x1000) {
+                    if (obj->unk_2C == 0x100 && intensity == 0) {
+                        rm |= 0x0C087008;
+                    } else {
+                        rm |= 0x404240;
+                    }
+                } else {
+                    rm |= 0x0C084000;
+                }
+                break;
+            case 1:
+                if (obj->unk_24 & 0x1000) {
+                    if (obj->unk_2C == 0x100 && intensity == 0) {
+                        rm |= 0x443048;
+                    } else {
+                        rm |= 0x4041C8;
+                    }
+                } else {
+                    rm |= 0x442008;
+                }
+                break;
+            case 2:
+                if (obj->unk_24 & 0x1000) {
+                    if (obj->unk_2C == 0x100 && intensity == 0) {
+                        rm |= 0x443048;
+                    } else {
+                        rm |= 0x4041C8;
+                    }
+                } else {
+                    rm |= 0x442048;
+                }
+                break;
+        }
+        gDPSetRenderMode(g++, rm, 0);
+        if (intensity) {
+            if (obj->unk_2C == 0x100) {
+                gDPSetCombine(g++, 0xFFFFFF, 0xFFFDF2F9);
+            } else {
+                gDPSetCombine(g++, 0xFF97FF, 0xFF2DFEFF);
+            }
+        } else if (obj->unk_2C == 0x100) {
+            if (obj->unk_24 & 0x2000000) {
+                gDPSetCombine(g++, 0x60FEC1, 0x33FDF2F9);
+            } else {
+                gDPSetCombine(g++, 0xFFFFFF, 0xFFFCF279);
+            }
+        } else if (obj->unk_24 & 0x2000000) {
+            gDPSetCombine(g++, 0x6096C1, 0x332DFEFF);
+        } else {
+            gDPSetCombine(g++, 0xFF97FF, 0xFF2CFE7F);
+        }
+        gDPSetPrimColor(g++, 0, 0, obj->unk_28[0], obj->unk_28[1], obj->unk_28[2], obj->unk_2C);
+        D_800ED68C_EE28C = 1;
+    }
+    D_800ED6A0_EE2A0 = ((u32)obj->unk_24 >> 30) & 1;
+    gSPSegment(g++, 2, osVirtualToPhysical(cel->unk00));
+    if (D_800ED6A0_EE2A0 != 0) {
+        if (obj->unk_24 & 0x10000) {
+            ox = ((obj->unk_3C - (s16)obj->unk_40) * (u16)cel->unk08) / cel->unk04;
+            oy = (((s16)obj->unk_42 - obj->unk_3E) * (u16)cel->unk0A) / cel->unk06;
+            SPR_F(obj, unk_04) = obj->unk_3C + (((s16)obj->unk_40 - obj->unk_3C) * (u16)cel->unk08) / cel->unk04;
+            SPR_F(obj, unk_08) = obj->unk_3E + (((s16)obj->unk_42 - obj->unk_3E) * (u16)cel->unk0A) / cel->unk06;
+        } else {
+            ox = -(u16)cel->unk08;
+            oy = (u16)cel->unk0A;
+        }
+        mf[0][2] = mf[0][3] = mf[1][2] = mf[1][3] = mf[2][0] = mf[2][1] = mf[2][3] = mf[3][2] = 0.0f;
+        mf[2][2] = mf[3][3] = 1.0f;
+        func_8004075C_4135C(mf, SPR_F(obj, unk_04) - 160.0f, 120.0f - SPR_F(obj, unk_08), SPR_F(obj, unk_20));
+        func_80025830_26430(mf, sx, sy, 1.0f);
+        func_80025770_26370(mf, ox, oy, 0.0f);
+        func_800B3040_B3C40(mf, &obj->unk_140[D_800FDBE0_FE7E0]);
+        gSPMatrix(g++, osVirtualToPhysical(&obj->unk_140[D_800FDBE0_FE7E0]), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+    }
+    if (obj->unk_24 & 0x08000000) {
+        if (obj->unk_24 & 0x10000000) {
+            if (D_800ED6A0_EE2A0 != 0) {
+                end = PutSprite(D_800F9294_F9E94, obj, obj->unk_134[SPR_BUF(obj)], &obj->unk_140[D_800FDBE0_FE7E0], cam);
+            } else {
+                end = PutSprite(D_800F9294_F9E94, obj, NULL, NULL, cam);
+            }
+            gSPEndDisplayList(end++);
+            size = (u8*)end - (u8*)D_800F9294_F9E94;
+            obj->unk_128[SPR_BUF(obj)] = HuMemAlloc(size);
+            bcopy(D_800F9294_F9E94, obj->unk_128[SPR_BUF(obj)], size);
+            obj->unk_124 = obj->unk_128[SPR_BUF(obj)];
+            if (++SPR_BUF(obj) >= 3) {
+                SPR_BUF(obj) = 0;
+            }
+            obj->unk_24 &= ~0x10000000;
+        }
+        gSPDisplayList(g++, obj->unk_124);
+    } else if (D_800ED6A0_EE2A0 != 0) {
+        vtx = D_801016C0_1022C0;
+        g = PutSprite(g, obj, vtx, &obj->unk_140[D_800FDBE0_FE7E0], cam);
+        if (!(obj->unk_24 & 0x2000)) {
+            D_801016C0_1022C0 = vtx + (D_800ED690_EE290 + 2) * 2;
+        } else {
+            D_801016C0_1022C0 = vtx + (D_800ED690_EE290 + 2) * 4;
+        }
+    } else {
+        g = PutSprite(g, obj, NULL, NULL, cam);
+    }
+    *gfx = g;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", PutSprite);
 
