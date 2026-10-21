@@ -274,9 +274,9 @@ void MBModelKill(void*);
 typedef struct CTCharData {
     /* 0x00 */ s16 unk_00;
     /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s32 unk_04;
+    /* 0x04 */ s32 unk_04; /* motion file base (MP1 D_800C59AC unk_00) */
     /* 0x08 */ s32 unk_08;
-    /* 0x0C */ s32 unk_0C;
+    /* 0x0C */ s32 unk_0C; /* MP1 D_800C59AC unk_04 */
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ char unk_14[4];
 } CTCharData; /* size = 0x18 */
@@ -369,17 +369,6 @@ void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4)
 void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
 extern f32 D_800BF7A4_C03A4; /* jump speed (MP1 D_800B8964) */
 extern f32 D_800BF7A8_C03A8; /* MP1 D_800B8968 */
-/* Per character (0x18 bytes; ovl_00 D57F0.c's UnkDebug0): motion and model file bases. */
-typedef struct CTCharFiles {
-    /* 0x00 */ s16 unk_00;
-    /* 0x02 */ s16 unk_02;
-    /* 0x04 */ s32 unk_04; /* motion file base (MP1 D_800C59AC unk_00) */
-    /* 0x08 */ s32 unk_08;
-    /* 0x0C */ s32 unk_0C; /* MP1 D_800C59AC unk_04 */
-    /* 0x10 */ f32 unk_10;
-    /* 0x14 */ char unk_14[4];
-} CTCharFiles;
-extern CTCharFiles D_800CD438_CE038[];
 
 extern s8 D_80110061_267161_ChanceTime; /* the holder landed */
 extern s8 D_801101D7_2672D7_ChanceTime; /* func_8010FC18 state */
