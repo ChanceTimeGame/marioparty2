@@ -2103,7 +2103,35 @@ void func_80108BC4_29DE94_name_3E(void) {
 void func_80108BE8_29DEB8_name_3E(void) {
     SetNextChainAndSpace(-1, 7, 0);
 }
+/* MP3 MB1Ev_KSuitEnd's shape: a puff grows over the marker model, the marker is rebuilt, the puff shrinks. */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80108C0C_29DEDC_name_3E(void) {
+    MBModel* obj;
+    f32 scale;
+    f32 rot;
+
+    PlaySound(0x36C);
+    obj = func_80043510_44110(0x6F, NULL);
+    func_800B3170_B3D70(&obj->pos, &D_800F64C8_F70C8->pos);
+    obj->pos.z += 20.0f;
+    obj->pos.y += 30.0f;
+    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 1.0) {
+        HuVecCopyXYZ(&obj->scale, scale, scale, scale);
+        func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
+    }
+    func_80105EC4_29B194_name_3E();
+    D_800F8D12_F9912 = 0;
+    ChangeSpaceTextures(0);
+    func_80105DDC_29B0AC_name_3E();
+    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 1.0) {
+        HuVecCopyXYZ(&obj->scale, scale, scale, scale);
+        func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
+    }
+    MBModelKill(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80108C0C_29DEDC_name_3E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80108E0C_29E0DC_name_3E);
 

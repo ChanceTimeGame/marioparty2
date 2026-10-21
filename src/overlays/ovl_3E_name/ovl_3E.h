@@ -376,6 +376,8 @@ f32 func_800B1870_B2470(f32 x, f32 y, f32 z);
 f32 HuVecDistance(Vec* a, Vec* b);
 Process* func_80056FD4_57BD4(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
 Process* func_80057150_57D50(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
+void func_800B3B80_B4780(f32* mtx, f32 angle); /* MP3 func_8008A430_8B030: matrix rotation */
+void ChangeSpaceTextures(s16);
 #define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
