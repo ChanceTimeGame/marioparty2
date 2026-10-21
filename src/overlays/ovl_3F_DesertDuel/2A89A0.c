@@ -903,9 +903,117 @@ void func_80105054_2AB1F4_DesertDuel(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105054_2AB1F4_DesertDuel);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801058C8_2ABA68_DesertDuel);
+/* The duel's opening message (0x219, both duelists named); waits for Start from either duelist (or
+   from the CPU script when both are CPUs). */
+void func_801058C8_2ABA68_DesertDuel(void) {
+    s16 size[2];
+    s16 win;
+    u16 btn;
 
+    func_8008DACC_8E6CC(1, size, 0x219);
+    win = func_80104844_2AA9E4_DesertDuel(100, 40, size[0], size[1], 0, 0, 200);
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, 0x219, -1, -1);
+    func_80057A78_58678(win, D_80108C18_2AEDB8_DesertDuel, D_80108C1C_2AEDBC_DesertDuel);
+    D_800F851A_F911A = 1;
+    if ((gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) && (gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1)) {
+        func_80107EE4_2AE084_DesertDuel(0, 0, 0);
+    }
+    while (TRUE) {
+        if ((gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) && (gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1)) {
+            btn = func_80108720_2AE8C0_DesertDuel();
+        } else {
+            btn = func_80107940_2ADAE0_DesertDuel();
+        }
+        if (btn & 0x1000) {
+            PlaySound(2);
+            D_80108C50_2AEDF0_DesertDuel = 1;
+            func_8008CCA8_8D8A8(win);
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    }
+}
+
+/* A duel message window: message D_80108C68 at (D_80108C6C, D_80108C70); mode D_80108C74 says
+   what it shows (5: the stake, 7: the stake and the winner's name) and how it ends (0: when
+   D_80108C50 is set, 1: Start, 2/3: A, 4/5/7: at once, 6: at once, leaving the process running). */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80105AAC_2ABC4C_DesertDuel(void) {
+    s16 size[2];
+    char num[0x100];
+    char name[0x100];
+    s16 win;
+
+    if (D_80108C74_2AEE14_DesertDuel == 5) {
+        sprintf(num, "%d", D_80108C34_2AEDD4_DesertDuel);
+        func_8008D974_8E574(num, 0);
+    }
+    if (D_80108C74_2AEE14_DesertDuel == 7) {
+        sprintf(num, "%d", D_80108C34_2AEDD4_DesertDuel);
+        sprintf(name, "%c%c", 0x18, gPlayers[D_80108C30_2AEDD0_DesertDuel].character);
+        func_8008D974_8E574(name, 0);
+        func_8008D974_8E574(num, 1);
+        func_8008D974_8E574(name, 2);
+    }
+    func_8008DACC_8E6CC(1, size, D_80108C68_2AEE08_DesertDuel);
+    win = func_80104844_2AA9E4_DesertDuel((s16)D_80108C6C_2AEE0C_DesertDuel, (s16)D_80108C70_2AEE10_DesertDuel, size[0], size[1], 0, 0, 200);
+    if (D_80108C74_2AEE14_DesertDuel == 5) {
+        func_80089308_89F08(win, num, 0);
+    }
+    if (D_80108C74_2AEE14_DesertDuel == 7) {
+        func_80089308_89F08(win, name, 0);
+        func_80089308_89F08(win, num, 1);
+        func_80089308_89F08(win, name, 2);
+    }
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, D_80108C68_2AEE08_DesertDuel, -1, -1);
+    func_80057A78_58678(win, D_80108C18_2AEDB8_DesertDuel, D_80108C1C_2AEDBC_DesertDuel);
+    while (TRUE) {
+        switch (D_80108C74_2AEE14_DesertDuel) {
+            case 0:
+                if (D_80108C50_2AEDF0_DesertDuel == 1) {
+                    func_8008CCA8_8D8A8(win);
+                    omDelPrcObj(NULL);
+                }
+                break;
+            case 1:
+                if (func_80107940_2ADAE0_DesertDuel() & 0x1000) {
+                    D_80108C50_2AEDF0_DesertDuel = 1;
+                    func_8008CCA8_8D8A8(win);
+                    omDelPrcObj(NULL);
+                }
+                break;
+            case 2:
+                if (func_80107940_2ADAE0_DesertDuel() & 0x8000) {
+                    D_80108C50_2AEDF0_DesertDuel = 1;
+                    func_8008CCA8_8D8A8(win);
+                    omDelPrcObj(NULL);
+                }
+                break;
+            case 3:
+                if (func_80107940_2ADAE0_DesertDuel() & 0x8000) {
+                    func_8008CCA8_8D8A8(win);
+                    omDelPrcObj(NULL);
+                }
+                break;
+            case 4:
+            case 5:
+            case 7:
+                func_8008CCA8_8D8A8(win);
+                D_80108C50_2AEDF0_DesertDuel = 1;
+                omDelPrcObj(NULL);
+                break;
+            case 6:
+                func_8008CCA8_8D8A8(win);
+                return;
+        }
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105AAC_2ABC4C_DesertDuel);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105DB8_2ABF58_DesertDuel);
 

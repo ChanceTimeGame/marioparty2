@@ -79,6 +79,7 @@ void func_80050AE0_516E0(void);
 void func_8005321C_53E1C(f32, f32);
 void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
 void func_80057730_58330(s16, s32);
+void func_80057A78_58678(s32, s32, s32); /* both duelists' portraits in a window */
 void func_80059400_5A000(void);
 ModelPathWork* func_8005A718_5B318(MBModel* model, f32 speed, s16 count, Vec* points);
 s32 func_8005A778_5B378(ModelPathWork*); /* path finished */
