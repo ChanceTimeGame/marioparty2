@@ -60,8 +60,15 @@ typedef struct TWInput {
 
 typedef struct TWEntry {
     /* 0x00 */ u8 unk0;
-    /* 0x01 */ char pad1[0xF];
-} TWEntry; // size 0x10
+    /* 0x01 */ char unk1;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8;
+    /* 0x0A */ s16 unkA;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+} TWEntry; // size 0x10 (MP1 SubTextWindow)
 
 typedef struct TextWindow {
     /* 0x000 */ u8 unk_00[0x20]; /* copied from D_800CD874_CE474 */
@@ -1452,6 +1459,7 @@ void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
 void HuMemFree(void* data);
+void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
 void func_80088F44_89B44(u8* buf, s16 w, s16 h);
 
 // register allocation (masked 29): retail keeps the flags in fp and (s16)w, (s16)h in s5/s4 across the
@@ -1683,7 +1691,7 @@ void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2) {
     textWindow->unk_B2[arg2] = -1;
 }
 
-s16 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, u16 arg4) {
+s16 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, s16 arg4) {
     TextWindow* window = &D_800F920C_F9E0C[win_id];
     s16 spriteId;
     void* spriteBytes;
@@ -1714,13 +1722,32 @@ void func_80089544_8A144(s16 arg0, s16 arg1) {
     D_800F920C_F9E0C[arg0].unk_6E[arg1] = -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_800895C0_8A1C0);
+/* MP1 func_8006DC7C: adds a sprite to the window and records it as a text entry */
+s16 func_800895C0_8A1C0(s16 winId, u32 file, s16 x, s16 y, s16 arg4) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    TWEntry* e;
+    s16 ret;
+
+    ret = func_80089404_8A004(winId, file, x, y, arg4);
+    e = &tw->unk_F4[tw->unk_30];
+    e->unk2 = x;
+    e->unk4 = y;
+    e->unk6 = 0;
+    e->unk8 = 0;
+    e->unk0 = 1;
+    tw->unk_30++;
+    return ret;
+}
 
 TextWindow* func_80089674_8A274(s16 arg0) {
     return &D_800F920C_F9E0C[arg0];
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_800896A0_8A2A0);
+s16 func_800896A0_8A2A0(s16 winId, s16 idx) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    return tw->unk_6E[idx];
+}
 
 void func_800896DC_8A2DC(s16 winId, s16 arg1, s16 arg2) {
     TextWindow* window;
@@ -1732,11 +1759,50 @@ void func_800896DC_8A2DC(s16 winId, s16 arg1, s16 arg2) {
     window->unk3E = arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089764_8A364);
+/* MP1 func_8006DE20: window scale */
+void func_80089764_8A364(s16 winId, f32 sx, f32 sy) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008980C_8A40C);
+    tw->unkEC = sx;
+    tw->unkF0 = sy;
+    for (i = 0; i < 0x16; i++) {
+        SprScaleSet(tw->unk_6C, i, sx, sy);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_800898F0_8A4F0);
+/* func_80089764 without the window's own sprites 4-11 */
+void func_8008980C_8A40C(s16 winId, f32 sx, f32 sy) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+
+    tw->unkEC = sx;
+    tw->unkF0 = sy;
+    for (i = 0; i < 4; i++) {
+        SprScaleSet(tw->unk_6C, i, sx, sy);
+    }
+    for (i = 12; i < 0x16; i++) {
+        SprScaleSet(tw->unk_6C, i, sx, sy);
+    }
+}
+
+/* MP1 func_8006DEC8: sets the frame and cursor sprites' cel offsets */
+void func_800898F0_8A4F0(s16 winId, s16 x, s16 y) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    HuSprite* spr;
+    s16 i;
+
+    tw->unk48 = x;
+    tw->unk4A = y;
+    spr = func_80082550_83150(tw->unk_6C, 0);
+    spr->unk_84->unk00->unk08 = x;
+    spr->unk_84->unk00->unk0A = y;
+    spr = func_80082550_83150(tw->unk_6C, 1);
+    for (i = 0; i < spr->unk_84->unk12; i++) {
+        spr->unk_84->unk00[i].unk08 = x;
+        spr->unk_84->unk00[i].unk0A = y;
+    }
+}
 
 void func_800899F4_8A5F4(s16 winId, f32 arg1) {
     TextWindow* window;
@@ -1745,7 +1811,12 @@ void func_800899F4_8A5F4(s16 winId, f32 arg1) {
     SprRotSet(window->unk_6C, 0, arg1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089A48_8A648);
+void func_80089A48_8A648(s16 winId, s8 arg1) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    tw->unk25 = arg1;
+    tw->unk26 = arg1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089A7C_8A67C);
 
@@ -2081,7 +2152,6 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DFC4_8EBC4);
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E2DC_8EEDC);
 
-void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
 
 /* MP1 func_80071DE0; MP2 scales one sprite and the window */
 void func_8008E434_8F034(s32 arg0) {
