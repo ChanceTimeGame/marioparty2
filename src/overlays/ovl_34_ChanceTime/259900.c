@@ -1,6 +1,9 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* The second variant's holder: models, motions, placed at path[1]. (MP1 func_800FC1C8) */
+
+
 void func_80102800_259900_ChanceTime(void) {
     Vec pos;
     Vec rot;
@@ -1158,14 +1161,73 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109CC4_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109D84_260E84_ChanceTime);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B02C_26212C_ChanceTime);
+void func_8010B02C_26212C_ChanceTime(omObjData* obj) {
+    obj->model[0] = LoadFormFile(0xA0067, 0x6A9);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D2B4_2DEB4(obj->model[0], 0.0f, -69.0f, 100.0f);
+    func_8002D274_2DE74(obj->model[0], 0x20, 0xFF, 0xFF);
+    obj->model[1] = func_80018A64_19664(0xD, 0x2B9);
+    func_800297E8_2A3E8(obj->model[1], 2.6999998f, 1.0f, 2.6999998f);
+    func_80018CCC_198CC(obj, 0, 0xA0067);
+    func_80018CCC_198CC(obj, 2, 0xA0068);
+    func_80018CCC_198CC(obj, 3, 0xA0069);
+    func_80018CCC_198CC(obj, 4, 0xA006A);
+    func_80018CCC_198CC(obj, 5, 0xA006B);
+    func_80018CCC_198CC(obj, 6, 0xA006C);
+    func_80018CCC_198CC(obj, 1, 0xA006D);
+    func_80018CCC_198CC(obj, 7, 0xA006E);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    func_800298A4_2A4A4(obj->model[0], 4, 4);
+    func_800298A4_2A4A4(obj->model[1], 4, 4);
+    obj->trans.x = D_80110070_267170_ChanceTime.path[1].x;
+    obj->trans.y = D_80110070_267170_ChanceTime.path[1].y;
+    obj->trans.z = D_80110070_267170_ChanceTime.path[1].z;
+    obj->rot.y = 0.0f;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->rot.y, obj->trans.z);
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.3499999f;
+    obj->func_ptr = func_8010B214_262314_ChanceTime;
+}
+void func_8010B214_262314_ChanceTime(omObjData* obj) {
+    switch (D_80110063_267163_ChanceTime) {
+    case 1:
+        func_80103ADC_25ABDC_ChanceTime(obj, -1);
+        break;
+    case 2:
+        func_801052B4_25C3B4_ChanceTime(obj);
+        break;
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, 3.0f, obj->trans.z);
+}
+void func_8010B28C_26238C_ChanceTime(void) {
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B214_262314_ChanceTime);
+    D_801100BC_2671BC_ChanceTime = 0;
+    win = func_80057480_58080(100, 140, 17, 4);
+    ShowTextWindow(win);
+    func_800890CC_89CCC(win, 6, -1, -1);
+    func_80089A48_8A648(win, 0);
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    D_801100BC_2671BC_ChanceTime = 1;
+    func_8005762C_5822C(win);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+void func_8010B328_262428_ChanceTime(void) {
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B28C_26238C_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B328_262428_ChanceTime);
-
+    D_801100BC_2671BC_ChanceTime = 0;
+    win = func_80057480_58080(30, 60, 18, 4);
+    ShowTextWindow(win);
+    func_800890CC_89CCC(win, 0, -1, -1);
+    func_80089A48_8A648(win, 0);
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    D_801100BC_2671BC_ChanceTime = 1;
+    func_8005762C_5822C(win);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B3C4_2624C4_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B7F8_2628F8_ChanceTime);
@@ -1174,26 +1236,49 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB0C_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB74_262C74_ChanceTime);
 
+/* Matches, but retail pads it with three nops to 0x8010BF50, where its second file (MP1's
+   DAF90.c, from func_800FC390) begins: C here would shift everything after it until the unit is
+   split at 0x263050. */
+#ifdef NON_MATCHING
+void func_8010BF28_263028_ChanceTime(omObjData* obj) {
+    Hu3DCamUpdateMtx(0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BF28_263028_ChanceTime);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BF50_263050_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BF7C_26307C_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BF98_263098_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BFB4_2630B4_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BFD0_2630D0_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BFEC_2630EC_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C008_263108_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C024_263124_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C080_263180_ChanceTime);
-
+void func_8010BF50_263050_ChanceTime(void) {
+    D_8011092C_267A2C_ChanceTime = func_80018A64_19664(0x440001, 0x28D);
+}
+void func_8010BF7C_26307C_ChanceTime(omObjData* obj) {
+    func_8010C44C_26354C_ChanceTime(obj, 0);
+}
+void func_8010BF98_263098_ChanceTime(omObjData* obj) {
+    func_8010CCF4_263DF4_ChanceTime(obj, 0);
+}
+void func_8010BFB4_2630B4_ChanceTime(omObjData* obj) {
+    func_8010CCF4_263DF4_ChanceTime(obj, 1);
+}
+void func_8010BFD0_2630D0_ChanceTime(omObjData* obj) {
+    func_8010C44C_26354C_ChanceTime(obj, 1);
+}
+void func_8010BFEC_2630EC_ChanceTime(omObjData* obj) {
+    func_8010CCF4_263DF4_ChanceTime(obj, 2);
+}
+void func_8010C008_263108_ChanceTime(omObjData* obj) {
+    func_8010C44C_26354C_ChanceTime(obj, 2);
+}
+void func_8010C024_263124_ChanceTime(omObjData* obj) {
+    if ((s16)func_8010DFF8_2650F8_ChanceTime(obj, 80.0f, D_800FFFD8_100BD8[0]) != 0 &&
+        D_80110194_267294_ChanceTime == 0) {
+        D_80110194_267294_ChanceTime = 1;
+    }
+    D_80110150_267250_ChanceTime[2] = 1;
+    D_80110181_267281_ChanceTime = 0;
+}
+void func_8010C080_263180_ChanceTime(omObjData* obj) {
+    func_8010C44C_26354C_ChanceTime(obj, 3);
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C09C_26319C_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C268_263368_ChanceTime);

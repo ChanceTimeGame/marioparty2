@@ -276,4 +276,9 @@ void func_8010FD28_266E28_ChanceTime(void); /* process */
 void func_8010FE50_266F50_ChanceTime(s16 arg0);
 void func_8010FF1C_26701C_ChanceTime(void); /* process */
 
+/* fork C */
+extern s16 D_80110194_267294_ChanceTime; /* the fourth panel was reached (MP1 D_8010131A) */
+extern s16 D_8011092C_267A2C_ChanceTime; /* panel model (0x440001) the four panels copy */
+void Hu3DCamUpdateMtx(s16 camIndex);
+
 #endif
