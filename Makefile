@@ -415,3 +415,6 @@ build/src/B6E0.c.o: RODATA_AS_DATA = 1
 
 # 34-A: ovl_34 (259900.c) has a nop between back-to-back mul.s (func_801052B4): KMC mul fix on
 build/src/overlays/ovl_34_ChanceTime/259900.c.o: export VR4300MUL := ON
+# 34-D: retail's ovl_34 is three files from 0x265540 (8010E440) and 0x2658C0 (8010E7C0) on (each
+# previous one padded to 16 bytes); built like 259900.c
+build/src/overlays/ovl_34_ChanceTime/265540.c.o build/src/overlays/ovl_34_ChanceTime/2658C0.c.o: export VR4300MUL := ON

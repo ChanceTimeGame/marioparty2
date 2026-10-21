@@ -107,14 +107,15 @@ typedef struct CTMotion {
 /* omObjData::unk_50 of the player objects and of the two block holders (C8E0.c's MgWork,
    0x15C bytes; MP1 CTPlayerWork). One pointer, at 0xE8: later fields shift on the host. */
 typedef struct CTPlayerWork {
-    /* 0x00 */ char unk_00[0x38];
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34; /* height of the hit box centre (fork D) */
     /* 0x38 */ f32 unk_38; /* vertical speed; 1000.0f = on the ground */
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ char unk_44[0x13];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[1];
-    /* 0x59 */ s8 unk_59; /* fork B: player index (gPlayers) */
+    /* 0x58 */ char unk_58;
+    /* 0x59 */ s8 unk_59; /* player index (forks B, D) */
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -295,6 +296,113 @@ void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
 void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
 
+/* fork D */
+#include "game/hmfman.h"
+
+/* A block's reel (MP1 CTReel): the faces shown and the entries they cycle through. */
+typedef struct CTReel {
+    /* 0x00 */ s8 unk_00;      /* face shown, 0..3 (& 3) */
+    /* 0x01 */ char unk_01;
+    /* 0x02 */ s16 unk_02[4];  /* sprite per face */
+    /* 0x0A */ s16 unk_0A;     /* current entry of unk_0C */
+    /* 0x0C */ s16 unk_0C[21]; /* entries: characters or outcome ids (read as (u8)) */
+    /* 0x36 */ s16 unk_36;     /* entry count */
+    /* 0x38 */ f32 unk_38;     /* spin angle */
+} CTReel; /* size = 0x3C */
+
+/* omObjData::unk_50 of the hit-box objects (0xB4 bytes; C8E0 func_8000BF24 writes 0x06, 0x14,
+   0xA0..0xAC); the blocks keep their reel at 0xB0. Pointer last: offsets hold on the host. */
+typedef struct CTBoxWork {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04;
+    /* 0x05 */ char unk_05[3];
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ char unk_0C[0xA4];
+    /* 0xB0 */ CTReel* unk_B0;
+} CTBoxWork; /* size = 0xB4 */
+
+#define CT_REEL(obj) (((CTBoxWork*)(obj)->unk_50)->unk_B0)
+#define CT_MDL(obj) (D_800FC834_FD434[(obj)->model[1]])
+
+/* func_8010C268 is called with the player object (fork C's prototype takes none). */
+#define func_8010C268_263368_ChanceTime_1 ((void* (*)(omObjData*))func_8010C268_263368_ChanceTime)
+void func_8003E52C_3F12C(s16, u8);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+extern s8 D_80110160_267260_ChanceTime[3]; /* the block's spin sound started */
+extern s16 D_80110164_267264_ChanceTime[3]; /* its sound */
+extern s16 D_8011016C_26726C_ChanceTime[3]; /* 1 spinning, 2 stopped */
+extern s8 D_80110172_267272_ChanceTime; /* blocks stopped so far */
+extern f32 D_80110174_267274_ChanceTime[2]; /* spin speeds (first variant) */
+extern f32 D_8011017C_26727C_ChanceTime; /* spin speed (second variant) */
+extern s16 D_801101A8_2672A8_ChanceTime[3]; /* the block is done */
+extern s8 D_801101B0_2672B0_ChanceTime[3];
+extern s8 D_801101B4_2672B4_ChanceTime[3]; /* wobble phase */
+extern s8 D_801101B8_2672B8_ChanceTime[3]; /* the block's result is taken */
+extern s8 D_80110924_267A24_ChanceTime; /* wobble direction */
+extern void* D_80110928_267A28_ChanceTime;
+
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
+void func_8000BFF0_CBF0(omObjData* obj);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_8001A708_1B308(u16, u16);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
+void espDispOn(u16);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+
+extern s16 D_80110198_267298_ChanceTime[3]; /* the three blocks' scale animation running */
+extern s16 D_801101A0_2672A0_ChanceTime[3]; /* its frame (0..16) */
+extern s8 D_801101BC_2672BC_ChanceTime[3]; /* it finished */
+extern s8 D_801101C0_2672C0_ChanceTime;
+extern u16 D_801109C0_267AC0_ChanceTime; /* sprite */
+extern s16 D_801109C2_267AC2_ChanceTime;
+
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup (MP1 func_8000979C) */
+void func_8000CC74_D874(omObjData* obj, s16 model, s32 arg2);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion (MP1 func_8001874C) */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
+extern f32 D_800BF7A4_C03A4; /* jump speed (MP1 D_800B8964) */
+extern f32 D_800BF7A8_C03A8; /* MP1 D_800B8968 */
+/* Per character (0x18 bytes; ovl_00 D57F0.c's UnkDebug0): motion and model file bases. */
+typedef struct CTCharFiles {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* motion file base (MP1 D_800C59AC unk_00) */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C; /* MP1 D_800C59AC unk_04 */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} CTCharFiles;
+extern CTCharFiles D_800CD438_CE038[];
+
+extern s8 D_80110061_267161_ChanceTime; /* the holder landed */
+extern s8 D_801101D7_2672D7_ChanceTime; /* func_8010FC18 state */
+extern s8 D_801101D8_2672D8_ChanceTime; /* func_8010FD28 state */
+extern s8 D_801101D9_2672D9_ChanceTime; /* func_8010FF1C state */
+extern s32 D_801101DC_2672DC_ChanceTime; /* func_8010FF1C frame counter */
+extern CTPlayerWork* D_801109DC_267ADC_ChanceTime; /* the walk processes' player work */
+extern CTPlayerWork* D_801109E0_267AE0_ChanceTime;
+extern CTPlayerWork* D_801109E4_267AE4_ChanceTime;
+/* The CPU holder's block run (MP1 D_80101266, D_80101268, D_8010126C, D_8010126A) */
+extern u16 D_801101D0_2672D0_ChanceTime; /* the block order is chosen */
+extern u16 D_801101D2_2672D2_ChanceTime; /* buttons last frame */
+extern u16 D_801101D4_2672D4_ChanceTime; /* 1: under a block, waiting */
+extern u8 D_801101D6_2672D6_ChanceTime; /* blocks hit so far */
+extern u8 D_801109D0_267AD0_ChanceTime[3]; /* block order (MP1 D_801016F8); [2] MP1 D_801016FA */
+extern s32 D_801109D4_267AD4_ChanceTime; /* wait counter (MP1 D_801016F4) */
+extern s16 D_801109D8_267AD8_ChanceTime; /* wait length (MP1 D_801016FC) */
+/* saved real controller state per port, restored after the update (MP1 D_80101AA6 ...) */
+extern u16 D_80110D5A_267E5A_ChanceTime[4];
+extern s8 D_80110B10_267C10_ChanceTime[4];
+extern s8 D_80110D66_267E66_ChanceTime[4];
+extern u16 D_801109F0_267AF0_ChanceTime[4];
+
 /* ---- overlay functions (all 62; signatures past fork A's range are inferred) ---- */
 /* fork A */
 void func_80102800_259900_ChanceTime(void); /* scene setup */
@@ -343,7 +451,7 @@ void* func_8010C268_263368_ChanceTime(void);
 void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 arg1);
 /* fork D */
 void func_8010CCF4_263DF4_ChanceTime(omObjData* obj, s8 arg1);
-s32 func_8010DFF8_2650F8_ChanceTime(omObjData* obj, f32 size, omObjData* other);
+s16 func_8010DFF8_2650F8_ChanceTime(omObjData* obj, f32 size, omObjData* other);
 void func_8010E0D4_2651D4_ChanceTime(omObjData* obj);
 void func_8010E214_265314_ChanceTime(omObjData* obj);
 void func_8010E440_265540_ChanceTime(omObjData* obj);
@@ -351,13 +459,13 @@ void func_8010E668_265768_ChanceTime(omObjData* obj);
 void func_8010E71C_26581C_ChanceTime(omObjData* obj);
 void func_8010E7C0_2658C0_ChanceTime(omObjData* obj);
 void func_8010EED0_265FD0_ChanceTime(omObjData* obj);
-void func_8010EF84_266084_ChanceTime(omObjData* obj, u32 arg1, s32 arg2, s32 arg3, f32 x, f32 y, f32 z);
+void func_8010EF84_266084_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
 void func_8010F304_266404_ChanceTime(omObjData* obj);
-void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, f32 x, f32 y, f32 z);
+void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
 void func_8010F760_266860_ChanceTime(omObjData* obj);
 void func_8010F82C_26692C_ChanceTime(omObjData* obj);
 void func_8010F8F8_2669F8_ChanceTime(omObjData* obj);
-void func_8010F9C4_266AC4_ChanceTime(void* arg0, s8 arg1);
+void func_8010F9C4_266AC4_ChanceTime(s8* state, s8 target);
 void func_8010FC18_266D18_ChanceTime(void); /* process */
 void func_8010FD28_266E28_ChanceTime(void); /* process */
 void func_8010FE50_266F50_ChanceTime(s16 arg0);
