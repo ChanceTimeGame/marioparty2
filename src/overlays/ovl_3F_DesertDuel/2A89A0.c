@@ -423,7 +423,139 @@ void func_80104EF8_2AB098_DesertDuel(omObjData* obj) {
     }
 }
 
+/* The stake: the starting amount comes from the turn (D_80108A68 bands) and the poorer player's
+   coins (D_80108A50 amounts); right/left add or take 1, up/down 10, A accepts. Both duelists pay
+   the stake as it changes. Retail quirk: at the 999 cap a further raise still takes the coin from
+   both players. */
+#define DUEL_STAKE_SHOW(win, stake)                                         \
+    sprintf(num, "%d", stake);                                              \
+    len = func_800A5610_A6210(num);                                         \
+    for (j = 0; j < 3 - len; j++) {                                         \
+        pad[j] = 0x1A;                                                      \
+    }                                                                       \
+    pad[j] = 0;                                                             \
+    sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
+    func_800890CC_89CCC(win, (s32)buf, x, y)
+
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80105054_2AB1F4_DesertDuel(void) {
+    char buf[0x200];
+    char mess[0x20];
+    s16 size[2];
+    s32 stakes[6] = { 1, 5, 10, 20, 30, 50 };
+    s32 turns[4] = { 11, 21, 36, 46 };
+    char num[8];
+    char pad[16];
+    s16 win;
+    s32 coins1;
+    s32 coins2;
+    u16 btn;
+    s32 stake;
+    s32 len;
+    s32 turn;
+    s32 x;
+    s32 y;
+    s32 i;
+    s32 j;
+
+    turn = D_80108C90_2AEE30_DesertDuel;
+    i = 0;
+    while (turn >= turns[i]) {
+        if (++i == 4) {
+            break;
+        }
+    }
+    coins1 = BoardPlayerGet(D_80108C18_2AEDB8_DesertDuel)->coins;
+    coins2 = BoardPlayerGet(D_80108C1C_2AEDBC_DesertDuel)->coins;
+    D_80108C94_2AEE34_DesertDuel = coins1;
+    if (coins2 < coins1) {
+        D_80108C94_2AEE34_DesertDuel = coins2;
+    }
+    i++;
+    while (D_80108C94_2AEE34_DesertDuel < stakes[i]) {
+        if (--i == 0) {
+            break;
+        }
+    }
+    D_80108C34_2AEDD4_DesertDuel = D_80108C8C_2AEE2C_DesertDuel = stakes[i];
+    x = 0x2F;
+    y = 0x2E;
+    stake = D_80108C8C_2AEE2C_DesertDuel;
+    sprintf(mess, "", stake);
+    func_8008D974_8E574(mess, 0);
+    func_8008DACC_8E6CC(1, size, 0x213);
+    win = func_80104844_2AA9E4_DesertDuel(24, 72, size[0], size[1], 0, 0, 200);
+    func_80089308_89F08(win, mess, 0);
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, 0x213, -1, -1);
+    HuPrcVSleep();
+    func_80089284_89E84(win, 0x10004, 0x10004);
+    DUEL_STAKE_SHOW(win, stake);
+    func_80057730_58330(win, D_80108C18_2AEDB8_DesertDuel);
+    AdjustPlayerCoins(D_80108C18_2AEDB8_DesertDuel, -D_80108C34_2AEDD4_DesertDuel);
+    AdjustPlayerCoins(D_80108C1C_2AEDBC_DesertDuel, -D_80108C34_2AEDD4_DesertDuel);
+    func_80089284_89E84(win, 0x10004, 0x10004);
+    if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+        func_80107EE4_2AE084_DesertDuel(D_80108C34_2AEDD4_DesertDuel, D_80108C94_2AEE34_DesertDuel, 3);
+    }
+    while (TRUE) {
+        D_80108C34_2AEDD4_DesertDuel = stake;
+        btn = ContDStkTrg[gPlayers[D_80108C18_2AEDB8_DesertDuel].port];
+        if (gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) {
+            btn = func_80108720_2AE8C0_DesertDuel();
+        }
+        if (btn & 0x8000) {
+            PlaySound(2);
+            D_800F851A_F911A = 0;
+            func_8008CCA8_8D8A8(win);
+            D_80108C50_2AEDF0_DesertDuel = 1;
+            omDelPrcObj(NULL);
+        } else if (btn & 0x800) {
+            if (gPlayers[D_80108C18_2AEDB8_DesertDuel].coins > 0 && gPlayers[D_80108C1C_2AEDBC_DesertDuel].coins > 0) {
+                if (++stake >= 1000) {
+                    stake = 999;
+                } else {
+                    PlaySound(0x37B);
+                }
+                DUEL_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80108C18_2AEDB8_DesertDuel, -1);
+                AdjustPlayerCoins(D_80108C1C_2AEDBC_DesertDuel, -1);
+            }
+        } else if (btn & 0x400) {
+            if (D_80108C8C_2AEE2C_DesertDuel < stake) {
+                stake--;
+                PlaySound(0x37C);
+                DUEL_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80108C18_2AEDB8_DesertDuel, 1);
+                AdjustPlayerCoins(D_80108C1C_2AEDBC_DesertDuel, 1);
+            }
+        } else if (btn & 0x200) {
+            if (stake - 10 >= D_80108C8C_2AEE2C_DesertDuel) {
+                stake -= 10;
+                PlaySound(0x37C);
+                DUEL_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80108C18_2AEDB8_DesertDuel, 10);
+                AdjustPlayerCoins(D_80108C1C_2AEDBC_DesertDuel, 10);
+            }
+        } else if (btn & 0x100) {
+            if (gPlayers[D_80108C18_2AEDB8_DesertDuel].coins >= 10 && gPlayers[D_80108C1C_2AEDBC_DesertDuel].coins >= 10) {
+                stake += 10;
+                if (stake >= 1000) {
+                    stake = 999;
+                } else {
+                    PlaySound(0x37B);
+                }
+                DUEL_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80108C18_2AEDB8_DesertDuel, -10);
+                AdjustPlayerCoins(D_80108C1C_2AEDBC_DesertDuel, -10);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105054_2AB1F4_DesertDuel);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801058C8_2ABA68_DesertDuel);
 

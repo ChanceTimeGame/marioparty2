@@ -109,13 +109,13 @@ void func_800799A4_7A5A4(s16, s32);
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
 void func_800890CC_89CCC(s16, s32, s32, s32);
 void func_80089284_89E84(s16, s32, s32);
-void func_80089308_89F08(s16, s32, s32);
+void func_80089308_89F08(s16, char*, s32); /* window message argument */
 void func_80089A48_8A648(s16, s16);
 void func_80089B2C_8A72C(s16, s16);
 void func_8008AD44_8B944(s16);
 void func_8008CCA8_8D8A8(s16);
 void func_8008D88C_8E48C(s16);
-void func_8008D974_8E574(s32, s16);
+void func_8008D974_8E574(char*, s16);
 void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 u32 func_800A5610_A6210(char*); /* strlen */
 omObjData* omAddObj(s16, u16, u16, s16, void*);
