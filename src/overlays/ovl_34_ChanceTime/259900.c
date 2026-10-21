@@ -1054,13 +1054,85 @@ void func_801052B4_25C3B4_ChanceTime(omObjData* obj) {
     }
 }
 
-
-/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
- * .text: switch back by hand (harmless once a C function precedes this). */
-__asm__(".section .rodata");
+/* "%d" (also read by the asm of 8010B7F8 and 8010BB74) */
 const char D_80110414_267514_ChanceTime[] = "%d";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801060E0_25D1E0_ChanceTime);
+/* Process: the outcome window. Message 0x46/0x3C with the two players' names, what moves
+   (D_80110067: 0 nothing, 1 stars, else stars and coins?) and the amount for outcome
+   D_80110182; it stays open (D_80110066 = 1) until the process is killed. */
+void func_801060E0_25D1E0_ChanceTime(void) {
+    s16 win;
+
+    win = func_80057480_58080(0x46, 0x3C, 0x10, 4);
+    ShowTextWindow(win);
+    if (D_80110850_267950_ChanceTime == 0) {
+        sprintf(D_801107C8_2678C8_ChanceTime, D_801100C8_2671C8_ChanceTime[gPlayers[D_80110180_267280_ChanceTime].character]);
+        sprintf(D_801107D8_2678D8_ChanceTime, D_801100C8_2671C8_ChanceTime[gPlayers[D_80110181_267281_ChanceTime].character]);
+    } else {
+        sprintf(D_801107C8_2678C8_ChanceTime, D_801100C8_2671C8_ChanceTime[gPlayers[D_80110181_267281_ChanceTime].character]);
+        sprintf(D_801107D8_2678D8_ChanceTime, D_801100C8_2671C8_ChanceTime[gPlayers[D_80110180_267280_ChanceTime].character]);
+    }
+    if (D_80110067_267167_ChanceTime == 0) {
+        func_8008D4DC_8E0DC(D_801107B8_2678B8_ChanceTime, D_80110224_267324_ChanceTime);
+    } else if (D_80110067_267167_ChanceTime == 1) {
+        func_8008D4DC_8E0DC(D_801107B8_2678B8_ChanceTime, D_80110228_267328_ChanceTime);
+    } else {
+        func_8008D4DC_8E0DC(D_801107B8_2678B8_ChanceTime, D_80110214_267314_ChanceTime);
+    }
+    func_80089308_89F08(win, D_801107C8_2678C8_ChanceTime, 0);
+    func_80089308_89F08(win, D_801107D8_2678D8_ChanceTime, 1);
+    switch (D_80110182_267282_ChanceTime) {
+    case 0:
+    case 1:
+        sprintf(D_801107B8_2678B8_ChanceTime, D_80110414_267514_ChanceTime, 3);
+        break;
+    case 2:
+    case 3:
+        sprintf(D_801107B8_2678B8_ChanceTime, D_80110414_267514_ChanceTime, 20);
+        break;
+    case 4:
+    case 5:
+        sprintf(D_801107B8_2678B8_ChanceTime, D_80110414_267514_ChanceTime, 30);
+        break;
+    case 11:
+        sprintf(D_801107B8_2678B8_ChanceTime, D_80110414_267514_ChanceTime, 10);
+        break;
+    case 12:
+        sprintf(D_801107B8_2678B8_ChanceTime, D_80110414_267514_ChanceTime, 40);
+        break;
+    }
+    func_80089308_89F08(win, D_801107B8_2678B8_ChanceTime, 2);
+    switch (D_80110182_267282_ChanceTime) {
+    case 8:
+        func_800890CC_89CCC(win, 14, -1, -1);
+        break;
+    case 9:
+        func_800890CC_89CCC(win, 16, -1, -1);
+        break;
+    case 6:
+    case 7:
+        func_800890CC_89CCC(win, 12, -1, -1);
+        break;
+    case 10:
+        func_800890CC_89CCC(win, 18, -1, -1);
+        break;
+    case 0:
+    case 1:
+        func_800890CC_89CCC(win, 8, -1, -1);
+        break;
+    default:
+        func_800890CC_89CCC(win, 10, -1, -1);
+        break;
+    }
+    func_80089A48_8A648(win, 0);
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    func_8005762C_5822C(win);
+    D_80110066_267166_ChanceTime = 1;
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80106434_25D534_ChanceTime);
 

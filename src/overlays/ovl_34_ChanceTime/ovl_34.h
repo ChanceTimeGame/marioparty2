@@ -68,6 +68,15 @@ void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32
 void func_80079848_7A448(s16 arg0);
 f32 HuMathSin(f32);
 f32 func_800B75A8_B81A8(f32, f32); /* atan2 */
+s32 func_80057480_58080(s32 arg0, s32 arg1, s32 arg2, s32 arg3); /* 58080.c: s16; retail callers re-extend the window id */
+void ShowTextWindow(s32 arg0);
+void func_8005762C_5822C(s32 arg0);
+void func_80057730_58330(s16, s32);
+void func_8008D4DC_8E0DC(char* dst, char* src); /* strcpy (8E0DC.c: u8*) */
+void func_80089308_89F08(s16, char*, s32); /* window message argument */
+void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_80089A48_8A648(s16, s16);
+int sprintf(char* dst, const char* fmt, ...);
 void func_80061584_62184(void);
 void func_80061720_62320(s32 arg0, s32 arg1); /* stores both words (D_800CC990, D_800CC994) */
 void func_80061734_62334(void);
@@ -122,6 +131,7 @@ extern s8 D_80110063_267163_ChanceTime;
 extern s8 D_80110064_267164_ChanceTime;
 extern s8 D_80110065_267165_ChanceTime;
 extern s8 D_80110066_267166_ChanceTime;
+extern s8 D_80110067_267167_ChanceTime;
 extern s8 D_80110068_267168_ChanceTime;
 extern u32 D_801100F0_2671F0_ChanceTime; /* func_80102E4C frame counter */
 extern s32 D_801100F4_2671F4_ChanceTime;
@@ -159,6 +169,11 @@ extern s8 D_80110129_267229_ChanceTime;
 extern s8 D_80110156_267256_ChanceTime;
 extern u8 D_80110180_267280_ChanceTime; /* the two chosen players (MP1 D_801012E0/E1) */
 extern u8 D_80110181_267281_ChanceTime;
+extern u8 D_80110182_267282_ChanceTime; /* the outcome (MP1 D_801012E2) */
+extern char* D_801100C8_2671C8_ChanceTime[6]; /* [character]: "MARIO" .. "DK" */
+extern char D_80110214_267314_ChanceTime[]; /* SJIS window words for D_80110067 */
+extern char D_80110224_267324_ChanceTime[];
+extern char D_80110228_267328_ChanceTime[];
 extern u8 D_80110230_267330_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ？" */
 extern u8 D_80110248_267348_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ" */
 
@@ -170,6 +185,10 @@ extern f32 D_801106B8_2677B8_ChanceTime; /* sway damping */
 extern Vec D_801106C0_2677C0_ChanceTime[10]; /* the ten scenery copies: position */
 extern Vec D_80110738_267838_ChanceTime[10]; /* rotation */
 extern s16 D_801107B0_2678B0_ChanceTime; /* sound */
+extern char D_801107B8_2678B8_ChanceTime[16]; /* the outcome window's sprintf buffers */
+extern char D_801107C8_2678C8_ChanceTime[16];
+extern char D_801107D8_2678D8_ChanceTime[16];
+extern s8 D_80110850_267950_ChanceTime; /* swap the names' order */
 extern omObjData* D_80110908_267A08_ChanceTime;
 extern omObjData* D_8011090C_267A0C_ChanceTime; /* the two block holders */
 extern omObjData* D_80110910_267A10_ChanceTime;
