@@ -244,6 +244,9 @@ s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
 extern s32 D_801126BC_2A798C_name_3E[]; /* decision tree */
 extern Vec2f3E D_8011271C_2A79EC_name_3E[4]; /* x/z offsets around a space */
 extern s16 D_8011273C_2A7A0C_name_3E; /* space */
+extern s32 D_80112780_2A7A50_name_3E[]; /* decision trees */
+extern s32 D_801127A4_2A7A74_name_3E[];
+extern s32 D_801127C8_2A7A98_name_3E[];
 s16 func_800558F4_564F4(void);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 void func_8004CA34_4D634(s32, s32);
