@@ -8,35 +8,8 @@
 /* Game message windows (MP3 src/gamemes.c, MP1 src/72D90.c), all in C; rodata D3D60-D40C0 is carved.
    MP2's names are kept. */
 
-#define GMES_MAX 8
-#define GMES_MES_TIMER 10
-#define GMES_STAT_NONE 0
+#include "game/gamemes.h"
 
-typedef struct {
-    /* 0x00 */ u8 mesNo;
-    /* 0x01 */ u8 stat;
-    /* 0x02 */ s8 unk02;
-    /* 0x03 */ u8 unk03;
-    /* 0x04 */ s16 unk04;
-    /* 0x06 */ s16 unk06;
-    /* 0x08 */ s16 unk08;
-    /* 0x0A */ s16 unk0A;
-    /* 0x0C */ s16 unk0C;
-    /* 0x0E */ s16 unk0E;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18; /* second timer (func_800708AC_714AC) */
-    /* 0x1C */ u8* unk1C; /* message (modes 8, 9) */
-    /* 0x20 */ s16 strGId[16];
-    /* 0x40 */ s16 strSprId[16];
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ f32 unk6C;
-    /* 0x70 */ f32 unk70; /* rotation */
-} GAMEMES; // size 0x74
-
-extern GAMEMES D_800F9570_FA170[GMES_MAX]; /* MP3 gMesData */
 extern s8 D_8010002D_100C2D;               /* MP3 gMesTimerId */
 extern u8 D_800FD432_FE032;                /* MP1 GMesCloseF */
 extern Gfx* D_800FDBCC_FE7CC;

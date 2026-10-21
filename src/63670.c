@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/object.h"
+#include "game/board.h"
 
 /* Board flow: overlay history, scene setup/teardown, the turn loop, Battle spaces, camera and
    rumble. C from MP1 src/57330.c, src/5CDB0.c, src/59510.c and MP3 ovl_80_shared_board 10C230.c /
@@ -34,10 +35,6 @@ s32 MBRand(f32);
 extern s32 D_800CCD5C_CD95C[];
 extern u8 D_800CCD54_CD954[];
 /* Battle space targets: players sharing the space (bit mask) and the attacker's bit */
-typedef struct BattleTargets {
-    /* 0x00 */ s16 targets;
-    /* 0x02 */ s16 attacker;
-} BattleTargets;
 extern BattleTargets D_800F8D1A_F991A;
 void func_800115B4_121B4(s16);
 s16 func_80079428_7A028(s32);
