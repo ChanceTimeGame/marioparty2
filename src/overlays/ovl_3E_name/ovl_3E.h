@@ -5,12 +5,14 @@
    include/game/board.h; this header holds 3E's own structs, its data/bss and a prototype for
    every function of 297AD0.c. Prototypes after 80106944 (forks B-D) came from the asm's register
    use only: arguments read before any write, a return value its callers read. Integer arguments
-   are written s32 even where the asm narrows them; the fork that owns a function fixes its line. */
+   are written s32 even where the asm narrows them; the fork that owns a function fixes its line.
+   Data and bss below are the symbols 80102800-80106944 use; add others in address order. */
 
 #include "common.h"
 #include "game/board.h"
 #include "game/object.h"
 #include "game/hmfman.h"
+#include "game/camera.h"
 
 /* ---- main-segment API used by 3E ---- */
 
@@ -66,7 +68,6 @@ void func_80029FE4_2ABE4(s16, f32);
 u16 MBDCameraPos3DSet(Vec*);
 void MBCameraSpeedSet(f32);
 
-#include "game/camera.h"
 extern s16 D_800FC734_FD334;
 extern s16 D_800FA198_FAD98; /* camera button enabled */
 extern s16 D_80101058_101C58;
@@ -119,6 +120,7 @@ void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotati
 omObjData* omAddObj(s16, u16, u16, s16, void*);
 void func_80041B60_42760(s8 arg0, Vec* arg1, s16 arg2, s16 arg3);
 f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
+
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -131,56 +133,55 @@ extern s16 D_80111994_2A6C64_name_3E[8]; /* star camera spaces */
 extern s32 D_801119A4_2A6C74_name_3E; /* guide motions */
 extern s32 D_801119A8_2A6C78_name_3E;
 extern f32 D_801119AC_2A6C7C_name_3E[9]; /* per board */
-
 extern s32 D_801119D0_2A6CA0_name_3E;
+extern u8 D_801119D4_2A6CA4_name_3E[3][4]; /* steal-a-star chance by turn band, coin band */
+extern s16 D_801119E4_2A6CB4_name_3E[8];
+extern s16 D_801119F4_2A6CC4_name_3E[8];
+extern s16 D_80111A04_2A6CD4_name_3E[7][2]; /* star space marker offsets */
+extern s16 D_80111A20_2A6CF0_name_3E[2][2];
+extern s16 D_80111A28_2A6CF8_name_3E[2][2];
+extern s16 D_80111A30_2A6D00_name_3E[2];
+extern s16 D_80111A34_2A6D04_name_3E[2][2]; /* signpost marker offsets */
+extern s16 D_80111A3C_2A6D0C_name_3E[2][2]; /* signpost facing: from, to spaces */
+extern s16 D_80111A44_2A6D14_name_3E[8]; /* star spaces (markers) */
+extern s16 D_80111A54_2A6D24_name_3E[8]; /* their flags */
+extern s32 D_80111A64_2A6D34_name_3E; /* marker id, -1 none */
+extern s16 D_80111A68_2A6D38_name_3E[2];
+extern s16 D_80111A6C_2A6D3C_name_3E[2]; /* bank spaces */
+extern Vec D_80111A70_2A6D40_name_3E[5]; /* bank coin offsets */
+extern Vec D_80111AAC_2A6D7C_name_3E[5]; /* bank coin rotations (x, z used) */
+extern s16 D_80111AE8_2A6DB8_name_3E[2]; /* signpost spaces */
+extern u8 D_80111AED_2A6DBD_name_3E[]; /* signpost model per board, at [board * 2] */
+extern s32 D_80111AF8_2A6DC8_name_3E[9]; /* per board: sound, -1 none (played as s16) */
+extern s32 D_80111B1C_2A6DEC_name_3E[9]; /* per board: sound, -1 none (played as s16) */
+extern s32 D_80111B40_2A6E10_name_3E[9]; /* per board: delay */
+extern s32 D_80111B64_2A6E34_name_3E[9]; /* per board: sound, -1 none (played as s16) */
+extern s16 D_80111B88_2A6E58_name_3E[2];
+extern s16 D_80111B8C_2A6E5C_name_3E;
+extern BoardEventTableEntry D_80112484_2A7754_name_3E[];
+extern BoardEventTableEntry D_801124EC_2A77BC_name_3E[];
+extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
+
 /* 3E's rodata (0x2A8860-0x2A89A0, carved by the coordinator) */
 typedef struct Unk4Bytes {
     u8 b[4];
 } Unk4Bytes;
 extern u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
 
-extern u8 D_801119D4_2A6CA4_name_3E[3][4]; /* steal-a-star chance by turn band, coin band */
-extern s16 D_801119E4_2A6CB4_name_3E[8];
-extern s16 D_801119F4_2A6CC4_name_3E[8];
-extern s16 D_80111A04_2A6CD4_name_3E[7][2]; /* star space marker offsets */
-extern s16 D_80111A20_2A6CF0_name_3E[2][2];
-extern s16 D_80111A44_2A6D14_name_3E[8]; /* star spaces (markers) */
-extern s16 D_80111A54_2A6D24_name_3E[8]; /* their flags */
-extern s32 D_80111A64_2A6D34_name_3E; /* marker id, -1 none */
-extern s16 D_80111A68_2A6D38_name_3E[2];
-extern BoardEventTableEntry D_80112484_2A7754_name_3E[];
-extern BoardEventTableEntry D_801124EC_2A77BC_name_3E[];
-extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
-extern s16 D_80111A34_2A6D04_name_3E[2][2]; /* signpost marker offsets */
-extern s16 D_80111A3C_2A6D0C_name_3E[2][2]; /* signpost facing: from, to spaces */
-extern s16 D_80111A6C_2A6D3C_name_3E[2]; /* bank spaces */
-extern Vec D_80111A70_2A6D40_name_3E[5]; /* bank coin offsets */
-extern Vec D_80111AAC_2A6D7C_name_3E[5]; /* bank coin rotations (x, z used) */
-extern s16 D_80111AE8_2A6DB8_name_3E[2]; /* signpost spaces */
-extern u8 D_80111AED_2A6DBD_name_3E[]; /* signpost model per board, at [board * 2] */
-extern s32 D_80111B1C_2A6DEC_name_3E[9]; /* per board: sound, -1 none (played as s16) */
-extern s32 D_80111B40_2A6E10_name_3E[9]; /* per board: delay */
-extern s16 D_80111A28_2A6CF8_name_3E[2][2];
-extern s16 D_80111A30_2A6D00_name_3E[2];
-extern s32 D_80111AF8_2A6DC8_name_3E[9]; /* per board: sound, -1 none (played as s16) */
-extern s32 D_80111B64_2A6E34_name_3E[9]; /* per board: sound, -1 none (played as s16) */
-extern s16 D_80111B88_2A6E58_name_3E[2];
-extern s16 D_80111B8C_2A6E5C_name_3E;
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
-
 extern s32 D_801136D4_2A89A4_name_3E; /* star process: 1 = take a star away */
 extern s32 D_801136D8_2A89A8_name_3E; /* help windows */
 extern s32 D_801136DC_2A89AC_name_3E;
 extern s32 D_801136E0_2A89B0_name_3E;
 extern s32 D_801136E4_2A89B4_name_3E;
 extern s32 D_801136E8_2A89B8_name_3E;
-extern s32 D_80113710_2A89E0_name_3E; /* what can be stolen: 0 coins, 1 a star, 2 nothing */
-extern s32 D_80113700_2A89D0_name_3E[4]; /* players other than the current one, by coins */
 extern s32 D_801136F0_2A89C0_name_3E[4]; /* the other players, by rank */
-extern s32 D_80113718_2A89E8_name_3E; /* Boo's choice: a player slot, or 0/1/2 */
+extern s32 D_80113700_2A89D0_name_3E[4]; /* players other than the current one, by coins */
+extern s32 D_80113710_2A89E0_name_3E; /* what can be stolen: 0 coins, 1 a star, 2 nothing */
 extern s32 D_80113714_2A89E4_name_3E; /* the player Boo steals from */
+extern s32 D_80113718_2A89E8_name_3E; /* Boo's choice: a player slot, or 0/1/2 */
 extern MBModel* D_8011371C_2A89EC_name_3E;
 extern MBModel* D_80113720_2A89F0_name_3E[7];
 extern MBModel* D_8011373C_2A8A0C_name_3E;
@@ -195,6 +196,7 @@ extern s32 D_8011378C_2A8A5C_name_3E;
 extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
 extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
 extern s32 D_801138B0_2A8B80_name_3E; /* path step */
+
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -251,7 +253,7 @@ void func_801069C8_29BC98_name_3E(void);
 void func_80106B08_29BDD8_name_3E(void);
 void func_80106C44_29BF14_name_3E(void);
 void func_80106D78_29C048_name_3E(s32 arg0);
-void func_80106DCC_29C09C_name_3E(s32 arg0, s32 arg1);
+void func_80106DCC_29C09C_name_3E(s16 arg0, s32 arg1);
 s32 func_80106FE0_29C2B0_name_3E(void);
 s32 func_801075F8_29C8C8_name_3E(void);
 void func_80107C54_29CF24_name_3E(void);
@@ -292,7 +294,7 @@ void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
-void func_8010C484_2A1754_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8010C484_2A1754_name_3E(s32 arg0, f32 arg1, f32 arg2, s32 arg3);
 void func_8010C5C4_2A1894_name_3E(s32 arg0);
 void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);

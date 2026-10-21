@@ -1197,7 +1197,15 @@ void func_80105F0C_29B1DC_name_3E(s16 arg0) {
     func_80041AEC_426EC(8, obj, D_80111A20_2A6CF0_name_3E[arg0][0], D_80111A20_2A6CF0_name_3E[arg0][1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010602C_29B2FC_name_3E);
+void func_8010602C_29B2FC_name_3E(void) {
+    s32 i;
+
+    D_8011373C_2A8A0C_name_3E = NULL;
+    for (i = 0; i < 2; i++) {
+        D_80113740_2A8A10_name_3E[i] = NULL;
+        func_80105F0C_29B1DC_name_3E(i);
+    }
+}
 
 void func_8010608C_29B35C_name_3E(void) {
     s32 i;
