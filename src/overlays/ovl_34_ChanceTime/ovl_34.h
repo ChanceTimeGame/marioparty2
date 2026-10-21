@@ -237,7 +237,8 @@ void func_8010B02C_26212C_ChanceTime(omObjData* obj);
 void func_8010B214_262314_ChanceTime(omObjData* obj);
 void func_8010B28C_26238C_ChanceTime(void); /* process */
 void func_8010B328_262428_ChanceTime(void); /* process */
-void func_8010B3C4_2624C4_ChanceTime(s16 arg0, s16* arg1);
+struct CTExchange;
+void func_8010B3C4_2624C4_ChanceTime(s32 amount, struct CTExchange* ex);
 void func_8010B7F8_2628F8_ChanceTime(void); /* process */
 void func_8010BB0C_262C0C_ChanceTime(s16 arg0, s16* arg1, s16* arg2);
 void func_8010BB74_262C74_ChanceTime(void); /* process */
@@ -280,5 +281,19 @@ void func_8010FF1C_26701C_ChanceTime(void); /* process */
 extern s16 D_80110194_267294_ChanceTime; /* the fourth panel was reached (MP1 D_8010131A) */
 extern s16 D_8011092C_267A2C_ChanceTime; /* panel model (0x440001) the four panels copy */
 void Hu3DCamUpdateMtx(s16 camIndex);
+/* func_8010B3C4's result for the outcome window (MP1 func_800FED28's locals) */
+typedef struct CTExchange {
+    /* 0x00 */ s16 coins; /* coins moved */
+    /* 0x02 */ s16 stars; /* stars moved (outcomes 9, 10) */
+    /* 0x04 */ s16 mes;   /* window message */
+    /* 0x06 */ s16 kind;  /* D_801100E0 word: 0 stars, 1 coins, 2 both */
+    /* 0x08 */ s16 swap;  /* 1: player 1 gives, the names swap */
+} CTExchange;
+extern s16 D_801100C0_2671C0_ChanceTime[2]; /* coin deltas [player 0, player 1] (MP1 D_80101324) */
+extern s16 D_801100C4_2671C4_ChanceTime[2]; /* star deltas (MP1 D_80101328) */
+extern char* D_801100E0_2671E0_ChanceTime[3]; /* [kind] (MP1 D_80101348) */
+extern char D_80110808_267908_ChanceTime[16]; /* the outcome window's words */
+extern char D_80110818_267918_ChanceTime[16];
+extern char D_80110828_267928_ChanceTime[16];
 
 #endif

@@ -1,6 +1,11 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* The outcome's exchange: how much moves (amount, capped at the giver's coins), the window
+   message, which word goes in slot 2 and whether the names swap; the coin and star deltas go to
+   D_801100C0 / D_801100C4 [player 0, player 1]. (MP1 func_800FED28's switch) */
+
+
 /* The second variant's holder: models, motions, placed at path[1]. (MP1 func_800FC1C8) */
 
 
@@ -1228,10 +1233,184 @@ void func_8010B328_262428_ChanceTime(void) {
         HuPrcVSleep();
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B3C4_2624C4_ChanceTime);
+void func_8010B3C4_2624C4_ChanceTime(s32 amount, CTExchange* ex) {
+    s32 pad[4]; /* retail's leaf frame has 0x10 unreferenced bytes */
+    s16 coins;
+    s32 c;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010B7F8_2628F8_ChanceTime);
+    switch (D_80110182_267282_ChanceTime) {
+    case 0:
+    case 2:
+    case 4:
+    case 11:
+    case 12:
+        if ((c = gPlayers[D_80110180_267280_ChanceTime].coins) != 0) {
+            coins = c;
+            if (c < amount) {
+                ex->coins = coins;
+            } else {
+                ex->coins = amount;
+            }
+        }
+        D_801100C0_2671C0_ChanceTime[0] -= ex->coins;
+        D_801100C0_2671C0_ChanceTime[1] += ex->coins;
+        ex->swap = 0;
+        if (D_80110182_267282_ChanceTime == 0) {
+            ex->mes = 7;
+        } else {
+            ex->mes = 9;
+        }
+        ex->kind = 1;
+        break;
+    case 1:
+    case 3:
+    case 5:
+        if ((c = gPlayers[D_80110181_267281_ChanceTime].coins) != 0) {
+            coins = c;
+            if (c < amount) {
+                ex->coins = coins;
+            } else {
+                ex->coins = amount;
+            }
+        }
+        D_801100C0_2671C0_ChanceTime[0] += ex->coins;
+        D_801100C0_2671C0_ChanceTime[1] -= ex->coins;
+        ex->swap = 1;
+        if (D_80110182_267282_ChanceTime == 0) {
+            ex->mes = 7;
+        } else {
+            ex->mes = 9;
+        }
+        ex->kind = 1;
+        break;
+    case 6:
+        if (gPlayers[D_80110180_267280_ChanceTime].stars != 0) {
+            D_801100C4_2671C4_ChanceTime[0]--;
+            D_801100C4_2671C4_ChanceTime[1]++;
+        }
+        ex->swap = 0;
+        ex->mes = 11;
+        ex->kind = 0;
+        break;
+    case 7:
+        if (gPlayers[D_80110181_267281_ChanceTime].stars != 0) {
+            D_801100C4_2671C4_ChanceTime[0]++;
+            D_801100C4_2671C4_ChanceTime[1]--;
+        }
+        ex->swap = 1;
+        ex->mes = 11;
+        ex->kind = 0;
+        break;
+    case 8:
+        ex->coins = gPlayers[D_80110180_267280_ChanceTime].coins;
+        D_801100C0_2671C0_ChanceTime[0] = gPlayers[D_80110181_267281_ChanceTime].coins - gPlayers[D_80110180_267280_ChanceTime].coins;
+        D_801100C0_2671C0_ChanceTime[1] = ex->coins - gPlayers[D_80110181_267281_ChanceTime].coins;
+        ex->swap = 0;
+        ex->mes = 13;
+        ex->kind = 1;
+        break;
+    case 9:
+        ex->stars = gPlayers[D_80110180_267280_ChanceTime].stars;
+        D_801100C4_2671C4_ChanceTime[0] = gPlayers[D_80110181_267281_ChanceTime].stars - gPlayers[D_80110180_267280_ChanceTime].stars;
+        D_801100C4_2671C4_ChanceTime[1] = ex->stars - gPlayers[D_80110181_267281_ChanceTime].stars;
+        ex->swap = 0;
+        ex->mes = 15;
+        ex->kind = 0;
+        break;
+    case 10:
+        ex->coins = gPlayers[D_80110180_267280_ChanceTime].coins;
+        D_801100C0_2671C0_ChanceTime[0] = gPlayers[D_80110181_267281_ChanceTime].coins - gPlayers[D_80110180_267280_ChanceTime].coins;
+        D_801100C0_2671C0_ChanceTime[1] = ex->coins - gPlayers[D_80110181_267281_ChanceTime].coins;
+        ex->stars = gPlayers[D_80110180_267280_ChanceTime].stars;
+        D_801100C4_2671C4_ChanceTime[0] = gPlayers[D_80110181_267281_ChanceTime].stars - gPlayers[D_80110180_267280_ChanceTime].stars;
+        D_801100C4_2671C4_ChanceTime[1] = ex->stars - gPlayers[D_80110181_267281_ChanceTime].stars;
+        ex->swap = 0;
+        ex->mes = 17;
+        ex->kind = 2;
+        break;
+    }
+}
+void func_8010B7F8_2628F8_ChanceTime(void) {
+    CTExchange ex;
+    s16 win;
+    u8 left;
+    u8 right;
 
+    D_801100BC_2671BC_ChanceTime = 0;
+    ex.coins = ex.mes = ex.kind = ex.swap = 0;
+    win = func_80057480_58080(100, 140, 17, 4);
+    ShowTextWindow(win);
+    switch (D_80110182_267282_ChanceTime) {
+    case 0:
+    case 1:
+        func_8010B3C4_2624C4_ChanceTime(3, &ex);
+        break;
+    case 2:
+    case 3:
+        func_8010B3C4_2624C4_ChanceTime(20, &ex);
+        break;
+    case 4:
+    case 5:
+        func_8010B3C4_2624C4_ChanceTime(30, &ex);
+        break;
+    case 6:
+    case 7:
+        func_8010B3C4_2624C4_ChanceTime(1, &ex);
+        break;
+    case 8:
+    case 9:
+    case 10:
+        func_8010B3C4_2624C4_ChanceTime(0, &ex);
+        break;
+    case 11:
+        func_8010B3C4_2624C4_ChanceTime(10, &ex);
+        break;
+    case 12:
+        func_8010B3C4_2624C4_ChanceTime(40, &ex);
+        break;
+    }
+    if (ex.swap == 0) {
+        left = gPlayers[D_80110180_267280_ChanceTime].character;
+        right = gPlayers[D_80110181_267281_ChanceTime].character;
+    } else {
+        right = gPlayers[D_80110180_267280_ChanceTime].character;
+        left = gPlayers[D_80110181_267281_ChanceTime].character;
+    }
+    sprintf(D_80110818_267918_ChanceTime, D_801100C8_2671C8_ChanceTime[left]);
+    sprintf(D_80110828_267928_ChanceTime, D_801100C8_2671C8_ChanceTime[right]);
+    func_8008D4DC_8E0DC(D_80110808_267908_ChanceTime, D_801100E0_2671E0_ChanceTime[ex.kind]);
+    func_80089308_89F08(win, D_80110818_267918_ChanceTime, 0);
+    func_80089308_89F08(win, D_80110828_267928_ChanceTime, 1);
+    switch (D_80110182_267282_ChanceTime) {
+    case 0:
+    case 1:
+        sprintf(D_80110808_267908_ChanceTime, D_80110414_267514_ChanceTime, 3);
+        break;
+    case 2:
+    case 3:
+        sprintf(D_80110808_267908_ChanceTime, D_80110414_267514_ChanceTime, 20);
+        break;
+    case 4:
+    case 5:
+        sprintf(D_80110808_267908_ChanceTime, D_80110414_267514_ChanceTime, 30);
+        break;
+    case 11:
+        sprintf(D_80110808_267908_ChanceTime, D_80110414_267514_ChanceTime, 10);
+        break;
+    case 12:
+        sprintf(D_80110808_267908_ChanceTime, D_80110414_267514_ChanceTime, 40);
+        break;
+    }
+    func_80089308_89F08(win, D_80110808_267908_ChanceTime, 2);
+    func_800890CC_89CCC(win, ex.mes, -1, -1);
+    func_80089A48_8A648(win, 0);
+    func_80057730_58330(win, D_80110D6A_267E6A_ChanceTime[0]);
+    D_801100BC_2671BC_ChanceTime = 1;
+    func_8005762C_5822C(win);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB0C_262C0C_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010BB74_262C74_ChanceTime);
