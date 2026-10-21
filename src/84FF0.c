@@ -2158,17 +2158,87 @@ void func_8008A8C0_8B4C0(TextWindow* tw) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A960_8B560);
+/* shows the "more text" cursor (sprite 3) at the end of the text */
+void func_8008A960_8B560(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AA44_8B644);
+    SprAnimSet(tw->unk_6C, 3, D_800ED8E4_EE4E4, 0);
+    SprAttrReset(tw->unk_6C, 3, 0xFFFF);
+    SprAttrSet(tw->unk_6C, 3, 0x01000000);
+    SprPrioSet(tw->unk_6C, 3, tw->unk60 - 1);
+    SprPosSet(tw->unk_6C, 3, tw->unk58 - tw->unk48, tw->unk5A - tw->unk4A);
+    if (tw->unk_38 & 8) {
+        SprAttrSet(tw->unk_6C, 3, 0x8000);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AA90_8B690);
+void func_8008AA44_8B644(s16 winId) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+
+    SprAttrSet(tw->unk_6C, 3, 0x8000);
+}
+
+typedef struct TWIcon {
+    /* 0x00 */ s32 file2; /* used when the window flag 0x2000 is set */
+    /* 0x04 */ s32 file;
+    /* 0x08 */ u8 anim;
+    /* 0x09 */ u8 width;
+} TWIcon; // size 0xC
+
+extern TWIcon D_800CD988_CE588[];
+
+/* places icon idx (a sprite, cached in D_800ED8B8) at the text cursor; returns its width */
+s16 func_8008AA90_8B690(s16 winId, s16 idx) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 anim;
+    s16 i;
+    void* data;
+
+    anim = D_800ED8B8_EE4B8[idx];
+    if (anim == -1) {
+        if (tw->unk_38 & 0x2000) {
+            data = DataRead(D_800CD988_CE588[idx].file2);
+        } else {
+            data = DataRead(D_800CD988_CE588[idx].file);
+        }
+        D_800ED8B8_EE4B8[idx] = anim = SprAnimRead(data);
+        HuMemMemoryFreePerm(data);
+    }
+    for (i = 12; i < 0x16; i++) {
+        if (tw->unk_6E[i] == -1) {
+            break;
+        }
+    }
+    if (i >= 0x16) {
+        return 0;
+    }
+    tw->unk_6E[i] = anim;
+    SprAttrSet(tw->unk_6C, i, 0x1000);
+    SprAnimSet(tw->unk_6C, i, anim, D_800CD988_CE588[idx].anim);
+    SprPosSet(tw->unk_6C, i, tw->unk54 - tw->unk48, tw->unk56 - tw->unk4A);
+    func_800824F4_830F4(tw->unk_6C, i, 0);
+    if (tw->unk22 == 0) {
+        func_80082450_83050(tw->unk_6C, i, 0, 0, 0);
+    } else if (tw->unk_38 & 0x2000) {
+        func_80082450_83050(tw->unk_6C, i, 0x61, 0x61, 0xF8);
+    } else {
+        func_80082450_83050(tw->unk_6C, i, 0x38, 0xF8, 0x25);
+    }
+    if (tw->unk_38 & 8) {
+        SprAttrSet(tw->unk_6C, i, 0x8000);
+    } else {
+        SprAttrReset(tw->unk_6C, i, 0x8000);
+    }
+    return D_800CD988_CE588[idx].width;
+}
 
 void func_8008AD44_8B944(s16 win_id) {
     func_8008A834_8B434(&D_800F920C_F9E0C[win_id]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AD84_8B984);
+void func_8008AD84_8B984(void) {
+    D_800F9512_FA112 = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AD94_8B994);
 
