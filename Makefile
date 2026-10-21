@@ -396,3 +396,19 @@ $(W3C_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 W3C_NOPAD := build/asm/data/D4728.data.s.o
 NOPAD_DATA_PIECES += $(W3C_NOPAD)
 $(W3C_NOPAD): ASFLAGS += --no-pad-sections
+# w3-B: 7AA60 (camera-anchored sprite objects, sound fades) and B6E0 (minigame player actions;
+# func_8000B298_BE98: a nop between dependent mul.s) are built as 1D0B0 is: GCC's assembly with
+# blank lines removed, assembled with the KMC VR4300 mul fix on (func_8007B818_7C418: a nop between
+# dependent mul.s; omOutView: none after a call)
+W3B_BLANKSTRIP_UNITS := build/src/7AA60.c.o build/src/B6E0.c.o
+$(W3B_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(W3B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# w3-B: B6E0 rodata 0xD2400-0xD2410 (whole; func_8000BAF0_C6F0's doubles 500.0 and 1.0) carved out of the data blob
+CARVED_RODATA_UNITS += build/src/B6E0.c.o
+build/src/B6E0.c.o: RODATA_AS_DATA = 1
