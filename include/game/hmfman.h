@@ -119,7 +119,7 @@ typedef struct HmfPart {
     /* 0x50 */ s32 unk50;
     /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
     /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */
-    /* 0x5C */ s32 unk5C;
+    /* 0x5C */ struct HmfTexRef* unk5C; /* the texture its second list loads; -1 none */
     /* 0x60 */ void* unk60;
     /* 0x64 */ Gfx* unk64; /* second display list, appended to the part's own (30560) */
 } HmfPart; /* size = 0x68; MP3 HmfModelData_Unk64_Unk60_Struct */
