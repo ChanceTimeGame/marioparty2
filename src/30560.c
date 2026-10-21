@@ -2542,8 +2542,35 @@ void func_80038964_39564(HmfData* arg0, s16 arg1) {
         D_8010107C_101C7C--;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/30560", func_80038C04_39804);
-
+void func_80038C04_39804(Gfx** arg0, s16 arg1, s32 arg2) {
+    switch (arg1) {
+        case 0:
+        case 1:
+            gSPLightColor((*arg0)++, LIGHT_1, arg2);
+            break;
+        case 2:
+            gSPLightColor((*arg0)++, LIGHT_2, arg2);
+            break;
+        case 3:
+            gSPLightColor((*arg0)++, LIGHT_3, arg2);
+            break;
+        case 4:
+            gSPLightColor((*arg0)++, LIGHT_4, arg2);
+            break;
+        case 5:
+            gSPLightColor((*arg0)++, LIGHT_5, arg2);
+            break;
+        case 6:
+            gSPLightColor((*arg0)++, LIGHT_6, arg2);
+            break;
+        case 7:
+            gSPLightColor((*arg0)++, LIGHT_7, arg2);
+            break;
+        default:
+            gSPLightColor((*arg0)++, LIGHT_8, arg2);
+            break;
+    }
+}
 extern s16 D_800FA6E4_FB2E4;
 s32 func_80039110_39D10(HmfMotionSlot*, HmfData*);
 extern u16 D_800DEFC0_DFBC0; /* key frame count */
@@ -3135,7 +3162,12 @@ f32 func_8003A154_3AD54(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
     d = keys[i] - keys[j];
     return (vals[i] - vals[j]) / d * (arg2 - keys[j]) + vals[j];
 }
-#ifdef W2A_RODATA
+/* func_8003A2B0_3AEB0's doubles (named so the asm build emits them too) */
+const f64 D_800D22D0_D2ED0 __attribute__((section(".rodata"))) = 1.0;
+const f64 D_800D22D8_D2ED8 __attribute__((section(".rodata"))) = 3.0;
+
+// addu operand order for &keys[i] (raw 1, masked 0; MP1 func_80035630 has the same residue)
+#ifdef NON_MATCHING
 /* Hermite interpolation of a track's keys (MP1 func_80035630 is a Bezier one). The tangents
    both come from the earlier key (retail) */
 f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
@@ -3164,7 +3196,7 @@ f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
     }
     keys = &arg0->unk_10[arg1->unk_0A];
     n = arg1->unk_0E;
-    for (i = 0, kp = keys; i < n; i++) {
+    for (kp = keys, i = 0; i < n; i++) {
         if (arg2 < *kp++) {
             break;
         }
@@ -3178,13 +3210,13 @@ f32 func_8003A2B0_3AEB0(HmfMotion* arg0, HmfMotionTrack* arg1, f32 arg2) {
     prev = &vals[j];
     k0 = keys[j];
     t = arg2 - k0;
-    r = 1.0 / (*kc - k0);
+    r = D_800D22D0_D2ED0 / (*kc - k0);
     r2 = r * r;
     t2 = t * t;
     a = t2 * r;
     b = t2 * t * r2;
     h1 = 2.0 * b * r;
-    h2 = t2 * 3.0 * r2;
+    h2 = t2 * D_800D22D8_D2ED8 * r2;
     return (h1 - h2 + 1.0f) * prev->v + (-h1 + h2) * cur->v + (b - a - a + t) * prev->in + (b - a) * prev->out;
 }
 #else
