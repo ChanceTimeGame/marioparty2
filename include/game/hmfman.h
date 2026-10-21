@@ -115,7 +115,9 @@ typedef struct HmfPart {
     /* 0x12 */ char unk12[0x1C];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
     /* 0x2F */ u8 unk2F; /* its slot in the depth-sorted list (30560) */
-    /* 0x30 */ char unk30[0x20];
+    /* 0x30 */ char unk30[0x12];
+    /* 0x42 */ s16 unk42[6]; /* bounding box: min x, y, z, max x, y, z */
+    /* 0x4E */ char unk4E[2];
     /* 0x50 */ s32 unk50;
     /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
     /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */

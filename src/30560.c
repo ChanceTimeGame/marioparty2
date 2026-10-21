@@ -1306,7 +1306,7 @@ extern HmfDrawFace D_800F9918_FA518[];
 extern s16 D_80101646_102246;
 extern u32 D_800F64C4_F70C4;
 void func_80033288_33E88(HmfData*, s32*);
-void func_80035C18_36818(HmfData*);
+void func_80035C18_36818(HmfData*, s16);
 
 /* MP1 func_8002DC84 (src/2C0C0.c): batch a part's faces and their vertices. MP2 limits a batch's
    vertices by a per-mode table, keeps a vertex slot table (unk60) and records the faces (unkB4)
@@ -1349,7 +1349,7 @@ void func_800329E8_335E8(HmfData* arg0, s16 arg1) {
     record = (temp_v0 & 0x06020000) == 0x20000;
 
     if ((D_800F64C4_F70C4 & 0x2001) == 0x2001) {
-        func_80035C18_36818(arg0);
+        func_80035C18_36818(arg0, arg1);
     }
 
     var_s6 = var_s4 = temp_s1->unk00 & 0x80;
@@ -1798,8 +1798,57 @@ void func_80033288_33E88(HmfData* arg0, s32* arg1) {
 
     D_800FA1A6_FADA6 = D_800FA61C_FB21C;
 }
-INCLUDE_ASM("asm/nonmatchings/30560", func_80035C18_36818);
+void func_80035C18_36818(HmfData* arg0, s16 arg1) {
+    s16* p;
 
+    gSPClearGeometryMode(D_800FDBCC_FE7CC++, G_LIGHTING);
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[0];
+    *p++ = arg0->unk64[arg1].unk42[1];
+    *p = arg0->unk64[arg1].unk42[2];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[0];
+    *p++ = arg0->unk64[arg1].unk42[4];
+    *p = arg0->unk64[arg1].unk42[2];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[3];
+    *p++ = arg0->unk64[arg1].unk42[4];
+    *p = arg0->unk64[arg1].unk42[2];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[3];
+    *p++ = arg0->unk64[arg1].unk42[1];
+    *p = arg0->unk64[arg1].unk42[2];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[0];
+    *p++ = arg0->unk64[arg1].unk42[1];
+    *p = arg0->unk64[arg1].unk42[5];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[0];
+    *p++ = arg0->unk64[arg1].unk42[4];
+    *p = arg0->unk64[arg1].unk42[5];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[3];
+    *p++ = arg0->unk64[arg1].unk42[4];
+    *p = arg0->unk64[arg1].unk42[5];
+
+    p = &D_80101170_101D70[D_800FA61C_FB21C++].unk00;
+    *p++ = arg0->unk64[arg1].unk42[3];
+    *p++ = arg0->unk64[arg1].unk42[1];
+    *p = arg0->unk64[arg1].unk42[5];
+
+    gSPVertex(D_800FDBCC_FE7CC++, D_800FA1A6_FADA6 * 16 + 0x01000000, D_800FA61C_FB21C - D_800FA1A6_FADA6, 0);
+
+    D_800FA1A6_FADA6 = D_800FA61C_FB21C;
+
+    gSPCullDisplayList(D_800FDBCC_FE7CC++, 0, 7);
+}
 INCLUDE_ASM("asm/nonmatchings/30560", func_80035FBC_36BBC);
 
 /* exact c: marioparty func_800318D0 (src/2C0C0.c) */
