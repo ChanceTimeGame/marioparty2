@@ -64,29 +64,73 @@ typedef struct TWEntry {
 } TWEntry; // size 0x10
 
 typedef struct TextWindow {
-    /* 0x000 */ char pad0[0x2D];
+    /* 0x000 */ u8 unk_00[0x20]; /* copied from D_800CD874_CE474 */
+    /* 0x020 */ u8 unk20;
+    /* 0x021 */ s8 unk21;
+    /* 0x022 */ s8 unk22;
+    /* 0x023 */ s8 unk23;
+    /* 0x024 */ s8 unk24;
+    /* 0x025 */ s8 unk25;
+    /* 0x026 */ s8 unk26;
+    /* 0x027 */ u8 unk27;
+    /* 0x028 */ u8 unk28;
+    /* 0x029 */ s8 unk29;
+    /* 0x02A */ s8 unk2A;
+    /* 0x02B */ char pad2B[2];
     /* 0x02D */ u8 unk_2D;
     /* 0x02E */ u8 unk_2E;
     /* 0x02F */ u8 unk_2F;
     /* 0x030 */ s8 unk_30;
     /* 0x031 */ s8 unk_31;
-    /* 0x032 */ char pad32[6];
+    /* 0x032 */ s8 unk32;
+    /* 0x033 */ s8 unk33;
+    /* 0x034 */ char pad34[1];
+    /* 0x035 */ s8 unk35;
+    /* 0x036 */ char pad36[2];
     /* 0x038 */ u32 unk_38;
-    /* 0x03C */ u16 unk3C;
-    /* 0x03E */ u16 unk3E;
-    /* 0x040 */ char pad40[0x1E];
-    /* 0x05E */ s16 unk5E;
-    /* 0x060 */ char pad60[2];
-    /* 0x062 */ s16 unk62;
-    /* 0x064 */ s16 unk64;
-    /* 0x066 */ char pad66[6];
-    /* 0x06C */ s16 unk_6C;
-    /* 0x06E */ s16 unk_6E[0xC];
-    /* 0x086 */ char pad86[0x27];
+    /* 0x03C */ u16 unk3C; /* x */
+    /* 0x03E */ u16 unk3E; /* y */
+    /* 0x040 */ u16 unk40; /* width */
+    /* 0x042 */ u16 unk42; /* height */
+    /* 0x044 */ s16 unk44;
+    /* 0x046 */ s16 unk46;
+    /* 0x048 */ s16 unk48;
+    /* 0x04A */ s16 unk4A;
+    /* 0x04C */ s16 unk4C;
+    /* 0x04E */ s16 unk4E;
+    /* 0x050 */ s16 unk50;
+    /* 0x052 */ s16 unk52;
+    /* 0x054 */ s16 unk54;
+    /* 0x056 */ s16 unk56;
+    /* 0x058 */ s16 unk58;
+    /* 0x05A */ s16 unk5A;
+    /* 0x05C */ char pad5C[2];
+    /* 0x05E */ s16 unk5E; /* -1 = free */
+    /* 0x060 */ u16 unk60; /* sprite priority */
+    /* 0x062 */ s16 unk62; /* previous window in the list */
+    /* 0x064 */ s16 unk64; /* next window in the list */
+    /* 0x066 */ s16 unk66;
+    /* 0x068 */ s16 unk68;
+    /* 0x06A */ s16 unk6A;
+    /* 0x06C */ s16 unk_6C; /* sprite group */
+    /* 0x06E */ s16 unk_6E[0x16];
+    /* 0x09A */ s16 unk9A;
+    /* 0x09C */ char pad9C[0xA];
+    /* 0x0A6 */ s16 unkA6;
+    /* 0x0A8 */ char padA8[2];
+    /* 0x0AA */ s16 unkAA;
+    /* 0x0AC */ s8 unkAC;
     /* 0x0AD */ s8 usingStringIDBool[5];
     /* 0x0B2 */ s8 unk_B2[6];
-    /* 0x0B8 */ void* unk_B8[4];
-    /* 0x0C8 */ char padC8[0x2C];
+    /* 0x0B8 */ void* unk_B8[5];
+    /* 0x0CC */ char padCC[4];
+    /* 0x0D0 */ s32 unkD0;
+    /* 0x0D4 */ char padD4[8];
+    /* 0x0DC */ u8* unkDC; /* window image (4-bit) */
+    /* 0x0E0 */ s32 unkE0;
+    /* 0x0E4 */ char padE4[8];
+    /* 0x0EC */ f32 unkEC;
+    /* 0x0F0 */ f32 unkF0;
     /* 0x0F4 */ TWEntry unk_F4[0x18];
     /* 0x274 */ s16 unk274;
     /* 0x276 */ s16 unk276;
@@ -1396,7 +1440,155 @@ void func_80088640_89240(void) {
     }
 }
 
+typedef struct TWColor {
+    u8 r, g, b;
+} TWColor;
+
+extern TWColor D_800CD854_CE454[];
+extern u8 D_800CD874_CE474[0x20];
+s16 SprCreate(s32 num, s32 attr);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void HuMemFree(void* data);
+void func_80088F44_89B44(u8* buf, s16 w, s16 h);
+
+// register allocation (masked 29): retail keeps the flags in fp and (s16)w, (s16)h in s5/s4 across the
+// HuMemAlloc and memset calls; this C keeps one register fewer
+#ifdef NON_MATCHING
+/* MP3 func_8005A968_5B568, MP1 func_8006D010: opens a window, returns its id or -1 */
+s16 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
+    TextWindow* tw;
+    HuSprite* spr;
+    s16 id;
+    s16 i;
+    s16 grp;
+    s32 size;
+
+    for (id = 2; id < 14; id++) {
+        if (D_800F920C_F9E0C[id].unk5E == -1) {
+            break;
+        }
+    }
+    if (id == 14) {
+        return -1;
+    }
+    if (w & 1) {
+        w++;
+    }
+    tw = &D_800F920C_F9E0C[id];
+    tw->unk64 = 1;
+    tw->unk62 = D_800F920C_F9E0C[1].unk62;
+    tw->unk5E = 0x7D00;
+    D_800F920C_F9E0C[D_800F920C_F9E0C[1].unk62].unk64 = id;
+    D_800F920C_F9E0C[1].unk62 = id;
+    tw->unk40 = w;
+    tw->unk42 = h;
+    if (flags & 2) {
+        tw->unk3C = (320 - w) / 2;
+        tw->unk3E = (240 - h) / 2;
+    } else if (!(flags & 4)) {
+        if (x + w > 0x128) {
+            tw->unk3C = 0x128 - w;
+        } else {
+            tw->unk3C = x;
+        }
+        if (y + h > 0xE0) {
+            tw->unk3E = 0xE0 - h;
+        } else {
+            tw->unk3E = y;
+        }
+    } else {
+        tw->unk3C = x;
+        tw->unk3E = y;
+    }
+    tw->unk44 = (w + 0xF) & 0xFFF0;
+    tw->unk46 = h + 0x10;
+    tw->unkEC = tw->unkF0 = 1.0f;
+    tw->unk4C = tw->unk4E = tw->unk54 = tw->unk56 = 4;
+    tw->unk50 = w - 8;
+    tw->unk52 = h - 8;
+    tw->unk20 = 0;
+    tw->unk23 = tw->unk33 = tw->unk22 = 7;
+    tw->unk25 = tw->unk26 = 1;
+    tw->unk27 = 10;
+    tw->unk28 = 12;
+    tw->unk29 = 0;
+    tw->unk2A = 2;
+    tw->unk58 = tw->unk40 - tw->unk27;
+    tw->unk5A = tw->unk42 - tw->unk28;
+    tw->unk48 = tw->unk4A = 0;
+    tw->unk_2D = D_800CD854_CE454[0].r;
+    tw->unk_2E = D_800CD854_CE454[0].g;
+    tw->unk_2F = D_800CD854_CE454[0].b;
+    tw->unk21 = 0xF;
+    tw->unk32 = 0;
+    tw->unk_31 = 0;
+    tw->unk_38 = 0;
+    tw->unkD0 = 0;
+    tw->unkA6 = 0;
+    tw->unkAC = -1;
+    tw->unk35 = 0xC;
+    for (i = 0; i < 5; i++) {
+        tw->unk_B8[i] = NULL;
+        tw->unk_B2[i] = -1;
+    }
+    tw->unkE0 = 0;
+    tw->unk6A = -1;
+    tw->unk24 = 0;
+    for (i = 0; i < 0x16; i++) {
+        tw->unk_6E[i] = (i >= 3) ? -1 : 0;
+    }
+    tw->unk9A = 0;
+    tw->unk66 = SprAnimRead(D_800FFDF4_1009F4);
+    tw->unk68 = SprAnimRead(D_800FA6F4_FB2F4);
+    tw->unk_6C = grp = SprCreate(0x16, 5);
+    func_80082488_83088(grp, 0, 0x100);
+    SprAttrReset(grp, 0, 0xFFFF);
+    SprAttrSet(grp, 0, 0x01009000);
+    SprAnimSet(grp, 0, tw->unk66, 0);
+    func_8008225C_82E5C(grp, 0, 0);
+    func_800824F4_830F4(grp, 0, -1);
+    SprPosSet(grp, 0, tw->unk3C, tw->unk3E);
+    func_80082450_83050(tw->unk_6C, 0, 0x40, 0x40, 0x80);
+    spr = func_80082550_83150(grp, 0);
+    if (!(flags & 8)) {
+        spr->unk_84->unk00->unk04 = w;
+        spr->unk_84->unk00->unk06 = h;
+        HuMemFree(spr->unk_84->unk00->unk00);
+        size = (w * h) / 2;
+        spr->unk_84->unk00->unk00 = tw->unkDC = HuMemAlloc(size);
+        func_800B0EF0_B1AF0(tw->unkDC, 0xFF, size);
+        if (!(flags & 1)) {
+            func_80088F44_89B44(tw->unkDC, w, h);
+        }
+        func_80082488_83088(grp, 0, 100);
+        SprAttrReset(grp, 0, 0x8000);
+    } else {
+        func_80082488_83088(grp, 0, 0);
+        SprAttrSet(grp, 0, 0x8000);
+    }
+    func_8008225C_82E5C(grp, 0, 0);
+    func_80082488_83088(grp, 1, 0x100);
+    SprAttrReset(grp, 1, 0xFFFF);
+    SprAttrSet(grp, 1, 0x01009000);
+    SprAnimSet(grp, 1, tw->unk68, 0);
+    func_8008225C_82E5C(grp, 1, 0);
+    SprPosSet(grp, 1, 0, 0);
+    func_800824F4_830F4(grp, 1, 0);
+    bcopy(D_800CD874_CE474, tw, 0x20);
+    for (i = 0; i < 0x16; i++) {
+        SprPrioSet(grp, i, D_800ED8B0_EE4B0);
+    }
+    SprPrioSet(grp, 2, D_800ED8B0_EE4B0 - 1);
+    tw->unk60 = D_800ED8B0_EE4B0;
+    D_800ED8B0_EE4B0 -= 0x20;
+    tw->unkAA = 0x32D;
+    return id;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_800888A8_894A8);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80088F44_89B44);
 
@@ -1435,13 +1627,13 @@ s16 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, u1
     void* spriteBytes;
     s16 i;
 
-    for (i = 4; i < ARRAY_COUNT(window->unk_6E); i++) {
+    for (i = 4; i < 0xC; i++) {
         if (window->unk_6E[i] != -1) {
             continue;
         }
         break;
     }
-    if (i >= ARRAY_COUNT(window->unk_6E)) {
+    if (i >= 0xC) {
         return -1;
     }
 
