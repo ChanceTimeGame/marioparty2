@@ -733,7 +733,327 @@ void func_80103ADC_25ABDC_ChanceTime(omObjData* obj, s8 side) {
 }
 
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801052B4_25C3B4_ChanceTime);
+/* The block holder after the three blocks stopped (state D_80110120): in the first variant it
+   turns, starts the swap/exchange processes and, when the two chosen players
+   (D_80110180/D_80110181) are not the first in the order, walks the two player objects
+   (D_80110D62[0..1]) to their places by driving their CPU sticks; in the second variant it
+   plays its motions and starts the result processes. */
+void func_801052B4_25C3B4_ChanceTime(omObjData* obj) {
+    CTPlayerWork* work;
+    f32 dx;
+    f32 dz;
+    f32 angle;
+    f32 rot;
+
+    switch (D_80110120_267220_ChanceTime) {
+    case 0:
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+        if (D_80110060_267160_ChanceTime != 0) {
+            func_80029B80_2A780(obj->model[0], obj->motion[1]);
+            obj->rot.y = -90.0f;
+            if (D_80110180_267280_ChanceTime == 0) {
+                func_80061720_62320(0, 1);
+            } else {
+                func_80061720_62320(D_80110180_267280_ChanceTime, 0);
+            }
+            func_80061584_62184();
+            omAddPrcObj(func_8010FF1C_26701C_ChanceTime, 0x3F00, 0x800, 0);
+        } else {
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            obj->rot.y = 90.0f;
+            omAddPrcObj(func_8010FC18_266D18_ChanceTime, 0x3F00, 0x800, 0);
+        }
+        func_80029E80_2AA80(obj->model[0], 2, 2);
+        D_80110124_267224_ChanceTime = 0;
+        D_80110120_267220_ChanceTime++;
+        break;
+    case 1:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (D_80110124_267224_ChanceTime >= 31) {
+                D_80110124_267224_ChanceTime = 0;
+                D_80110120_267220_ChanceTime++;
+            }
+            D_80110124_267224_ChanceTime++;
+        } else if (D_80110124_267224_ChanceTime < 16) {
+            D_80110124_267224_ChanceTime++;
+            obj->trans.x = (D_8011008C_26718C_ChanceTime[1].x - D_8011008C_26718C_ChanceTime[0].x) / 16.0f + obj->trans.x;
+            obj->trans.y = (D_8011008C_26718C_ChanceTime[1].y - D_8011008C_26718C_ChanceTime[0].y) / 16.0f + obj->trans.y;
+            obj->trans.z = (D_8011008C_26718C_ChanceTime[1].z - D_8011008C_26718C_ChanceTime[0].z) / 16.0f + obj->trans.z;
+        } else {
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 2:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (D_80110124_267224_ChanceTime < 30) {
+                D_80110124_267224_ChanceTime++;
+                obj->trans.x = (D_80110070_267170_ChanceTime.path[1].x - D_80110070_267170_ChanceTime.path[0].x) / 30.0f + obj->trans.x;
+                obj->trans.y = (D_80110070_267170_ChanceTime.path[1].y - D_80110070_267170_ChanceTime.path[0].y) / 30.0f + obj->trans.y;
+                obj->trans.z = (D_80110070_267170_ChanceTime.path[1].z - D_80110070_267170_ChanceTime.path[0].z) / 30.0f + obj->trans.z;
+            } else {
+                D_80110120_267220_ChanceTime++;
+            }
+        } else if (obj->rot.y > 14.0f) {
+            obj->rot.y -= 6.0f;
+        } else {
+            obj->rot.y = 14.0f;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 3:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (obj->rot.y < 0.0f) {
+                obj->rot.y += 6.0f;
+                if (obj->rot.y >= 0.0f) {
+                    obj->rot.y = 0.0f;
+                    D_80110120_267220_ChanceTime++;
+                }
+            }
+        } else {
+            func_80079848_7A448(D_801107B0_2678B0_ChanceTime);
+            func_80029B80_2A780(obj->model[0], obj->motion[0]);
+            func_80029E80_2AA80(obj->model[0], 2, 2);
+            obj->rot.y = 14.0f;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 4:
+        if (D_80110060_267160_ChanceTime != 0) {
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 30, 2);
+            func_80061734_62334();
+        } else {
+            omAddPrcObj(func_8010B7F8_2628F8_ChanceTime, 0x3F00, 0x800, 0);
+        }
+        D_80110120_267220_ChanceTime++;
+        break;
+    case 5:
+        if (D_80110060_267160_ChanceTime != 0) {
+            omAddPrcObj(func_8010BB74_262C74_ChanceTime, 0x3F00, 0x800, 0);
+            PlaySound(0x123);
+            D_80110120_267220_ChanceTime++;
+        } else if (D_801100BC_2671BC_ChanceTime == 1) {
+            D_80110120_267220_ChanceTime++;
+            D_80110124_267224_ChanceTime = 0;
+        }
+        break;
+    case 6:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (D_801100BC_2671BC_ChanceTime == 1) {
+                D_80110120_267220_ChanceTime++;
+                D_80110124_267224_ChanceTime = 0;
+            }
+        } else {
+            if (D_80110180_267280_ChanceTime != D_80110D6A_267E6A_ChanceTime[0] &&
+                D_80110181_267281_ChanceTime != D_80110D6A_267E6A_ChanceTime[0]) {
+                omAddPrcObj(func_8010FD28_266E28_ChanceTime, 0x3F00, 0x800, 0);
+            }
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 7:
+        if (D_80110060_267160_ChanceTime != 0) {
+            PlaySound(0x122);
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[3]), 0, 30, 2);
+            D_80110124_267224_ChanceTime = 0;
+            D_80110120_267220_ChanceTime++;
+        } else if (obj->rot.y < 270.0f) {
+            rot = obj->rot.y - 6.0f;
+            obj->rot.y = rot;
+            if (rot < 0.0f) {
+                obj->rot.y = rot + 360.0f;
+            }
+        } else {
+            obj->rot.y = 270.0f;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 8:
+        if (D_80110060_267160_ChanceTime != 0) {
+            if (++D_80110124_267224_ChanceTime >= 31) {
+                D_80110120_267220_ChanceTime++;
+            }
+        } else {
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            func_80029E80_2AA80(obj->model[0], 2, 2);
+            obj->rot.y = 270.0f;
+            D_80110124_267224_ChanceTime = 0;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 9:
+        if (D_80110060_267160_ChanceTime != 0) {
+            D_80110063_267163_ChanceTime = 0;
+            D_80110120_267220_ChanceTime = 0;
+            D_80110124_267224_ChanceTime = 0;
+            func_8000C398_CF98();
+        } else if (D_80110124_267224_ChanceTime < 16) {
+            D_80110124_267224_ChanceTime++;
+            obj->trans.x -= (D_8011008C_26718C_ChanceTime[1].x - D_8011008C_26718C_ChanceTime[0].x) / 16.0f;
+            obj->trans.y -= (D_8011008C_26718C_ChanceTime[1].y - D_8011008C_26718C_ChanceTime[0].y) / 16.0f;
+            obj->trans.z -= (D_8011008C_26718C_ChanceTime[1].z - D_8011008C_26718C_ChanceTime[0].z) / 16.0f;
+        } else {
+            func_80079848_7A448(D_801107B0_2678B0_ChanceTime);
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            func_800298A4_2A4A4(obj->model[1], 4, 4);
+            if (D_80110180_267280_ChanceTime != D_80110D6A_267E6A_ChanceTime[0] &&
+                D_80110181_267281_ChanceTime != D_80110D6A_267E6A_ChanceTime[0]) {
+                D_80110124_267224_ChanceTime = 0;
+            } else {
+                D_80110124_267224_ChanceTime = 30;
+            }
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 10:
+        if (D_80110060_267160_ChanceTime == 0) {
+            if (++D_80110124_267224_ChanceTime >= 21) {
+                if (D_80110D62_267E62_ChanceTime[0] != 0) {
+                    func_8010FE50_266F50_ChanceTime(D_80110D62_267E62_ChanceTime[0]);
+                }
+                D_80110120_267220_ChanceTime++;
+            }
+        }
+        break;
+    case 11:
+        D_80110120_267220_ChanceTime++;
+        break;
+    case 12:
+        if (D_80110060_267160_ChanceTime == 0) {
+            if (D_80110D62_267E62_ChanceTime[1] != 0) {
+                func_8010FE50_266F50_ChanceTime(D_80110D62_267E62_ChanceTime[1]);
+            }
+            D_80110124_267224_ChanceTime = 0;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 13:
+        if (D_80110060_267160_ChanceTime == 0) {
+            if (++D_80110124_267224_ChanceTime > 0) {
+                func_80061720_62320(D_80110180_267280_ChanceTime, D_80110181_267281_ChanceTime);
+                func_80061584_62184();
+                if (D_80110D62_267E62_ChanceTime[0] != 0) {
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.x = D_801100A4_2671A4_ChanceTime.x;
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.y = D_801100A4_2671A4_ChanceTime.y;
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->trans.z = D_801100A4_2671A4_ChanceTime.z;
+                    func_8000C024_CC24(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]], 0, 2);
+                    func_8000C024_CC24(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]], 1, 1);
+                    func_800298A4_2A4A4(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]->model[0], 4, 0);
+                }
+                if (D_80110D62_267E62_ChanceTime[1] != 0) {
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.x = -D_801100A4_2671A4_ChanceTime.x;
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.y = D_801100A4_2671A4_ChanceTime.y;
+                    D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->trans.z = D_801100A4_2671A4_ChanceTime.z;
+                    func_8000C024_CC24(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]], 0, 2);
+                    func_8000C024_CC24(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]], 1, 1);
+                    func_800298A4_2A4A4(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]->model[0], 4, 0);
+                }
+                D_80110120_267220_ChanceTime++;
+            }
+        }
+        break;
+    case 14:
+        if (D_80110060_267160_ChanceTime == 0) {
+            /* block-scope player: retail's register choice */
+            {
+                omObjData* player = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]];
+                work = CT_PWORK(player);
+                dx = D_801100B0_2671B0_ChanceTime.x - player->trans.x;
+                dz = D_801100B0_2671B0_ChanceTime.z - player->trans.z;
+            }
+            if (dx * dx + dz * dz > 400.0f) {
+                angle = func_800B75A8_B81A8(dz, dx);
+                D_80110D56_267E56_ChanceTime[work->unk_57] = func_800B7890_B8490(angle) * 60.0f;
+                D_80110D6E_267E6E_ChanceTime[work->unk_57] = -HuMathSin(angle) * 60.0f;
+                D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+                D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+            } else {
+                D_80110D56_267E56_ChanceTime[work->unk_57] = 0;
+                D_80110D6E_267E6E_ChanceTime[work->unk_57] = 0;
+                D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+                D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+                work->unk_40 = 0.0f;
+                work->unk_3C = 30.0f;
+                if (D_80110128_267228_ChanceTime == 0) {
+                    func_80061734_62334();
+                    D_80110128_267228_ChanceTime = 1;
+                }
+            }
+            /* block-scope player: retail's register choice */
+            {
+                omObjData* player = D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]];
+                work = CT_PWORK(player);
+                dx = -D_801100B0_2671B0_ChanceTime.x - player->trans.x;
+                dz = D_801100B0_2671B0_ChanceTime.z - player->trans.z;
+            }
+            if (dx * dx + dz * dz > 400.0f) {
+                angle = func_800B75A8_B81A8(dz, dx);
+                D_80110D56_267E56_ChanceTime[work->unk_57] = func_800B7890_B8490(angle) * 60.0f;
+                D_80110D6E_267E6E_ChanceTime[work->unk_57] = -HuMathSin(angle) * 60.0f;
+                D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+                D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+            } else {
+                D_80110D56_267E56_ChanceTime[work->unk_57] = 0;
+                D_80110D6E_267E6E_ChanceTime[work->unk_57] = 0;
+                D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+                D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+                work->unk_40 = 0.0f;
+                work->unk_3C = 330.0f;
+                if (D_80110129_267229_ChanceTime == 0) {
+                    func_80061750_62350();
+                    D_80110129_267229_ChanceTime = 1;
+                }
+            }
+            if (D_80110128_267228_ChanceTime == 1 && D_80110129_267229_ChanceTime == D_80110128_267228_ChanceTime) {
+                D_80110124_267224_ChanceTime = 0;
+                D_80110120_267220_ChanceTime++;
+            }
+        }
+        break;
+    case 15:
+        if (D_80110060_267160_ChanceTime == 0) {
+            work = CT_PWORK(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[0]]);
+            D_80110D56_267E56_ChanceTime[work->unk_57] = 0;
+            D_80110D6E_267E6E_ChanceTime[work->unk_57] = 0;
+            D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+            D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+            work->unk_3C = 30.0f;
+            work->unk_40 = 0.0f;
+            work = CT_PWORK(D_800FFFD8_100BD8[D_80110D62_267E62_ChanceTime[1]]);
+            D_80110D56_267E56_ChanceTime[work->unk_57] = 0;
+            D_80110D6E_267E6E_ChanceTime[work->unk_57] = 0;
+            D_80110D72_267E72_ChanceTime[work->unk_57] = 0;
+            D_80110B14_267C14_ChanceTime[work->unk_57] = 0;
+            work->unk_3C = 330.0f;
+            work->unk_40 = 0.0f;
+            if (D_80110124_267224_ChanceTime++ >= 21) {
+                D_80110124_267224_ChanceTime = 0;
+                D_80110120_267220_ChanceTime++;
+            }
+        }
+        break;
+    case 16:
+        if (D_80110060_267160_ChanceTime == 0) {
+            D_80110065_267165_ChanceTime = 1;
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 17:
+        if (D_80110060_267160_ChanceTime == 0 && D_80110066_267166_ChanceTime == 1) {
+            D_80110120_267220_ChanceTime++;
+        }
+        break;
+    case 18:
+        if (D_80110060_267160_ChanceTime == 0) {
+            D_80110062_267162_ChanceTime = 0;
+            D_80110120_267220_ChanceTime = 0;
+            D_80110124_267224_ChanceTime = 0;
+            func_8000C398_CF98();
+        }
+        break;
+    }
+}
+
 
 /* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
  * .text: switch back by hand (harmless once a C function precedes this). */

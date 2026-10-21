@@ -67,6 +67,12 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 void func_80079848_7A448(s16 arg0);
 f32 HuMathSin(f32);
+f32 func_800B75A8_B81A8(f32, f32); /* atan2 */
+void func_80061584_62184(void);
+void func_80061720_62320(s32 arg0, s32 arg1); /* stores both words (D_800CC990, D_800CC994) */
+void func_80061734_62334(void);
+void func_80061750_62350(void);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val); /* ((u8*)obj->unk_50)[idx] = val */
 void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* util.c: (UnkUtil*, ...) loads obj->motion[slot] */
 
 extern s8 D_80102708_103308;
@@ -96,7 +102,9 @@ typedef struct CTPlayerWork {
     /* 0x38 */ f32 unk_38; /* vertical speed; 1000.0f = on the ground */
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ char unk_44[0x16];
+    /* 0x44 */ char unk_44[0x13];
+    /* 0x57 */ s8 unk_57; /* controller port */
+    /* 0x58 */ char unk_58[2];
     /* 0x5A */ u8 unk_5A;
     /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C; /* flags (& 6 tested) */
@@ -112,6 +120,8 @@ extern s8 D_80110060_267160_ChanceTime; /* _CheckFlag(0x45): the event's second 
 extern s8 D_80110062_267162_ChanceTime; /* state of the two block holders (1 spin, 2 stop) */
 extern s8 D_80110063_267163_ChanceTime;
 extern s8 D_80110064_267164_ChanceTime;
+extern s8 D_80110065_267165_ChanceTime;
+extern s8 D_80110066_267166_ChanceTime;
 extern s8 D_80110068_267168_ChanceTime;
 extern u32 D_801100F0_2671F0_ChanceTime; /* func_80102E4C frame counter */
 extern s32 D_801100F4_2671F4_ChanceTime;
@@ -134,13 +144,21 @@ extern CTPath70 D_80110070_267170_ChanceTime;
 /* The block holders walk from [0] to [1] (x mirrored for the second); splat labels [1]
    D_80110098, and retail addresses [0] from &[1]. */
 extern Vec D_8011008C_26718C_ChanceTime[2];
+extern Vec D_801100A4_2671A4_ChanceTime; /* the two players' places (x mirrored for the second) */
+extern Vec D_801100B0_2671B0_ChanceTime; /* where they walk to (x mirrored) */
 extern s8 D_801100BC_2671BC_ChanceTime;
 extern u32 D_8011010C_26720C_ChanceTime; /* func_80103ADC state */
 extern s32 D_80110110_267210_ChanceTime; /* func_80103ADC sub-state */
 extern s32 D_80110114_267214_ChanceTime; /* func_80103ADC frame counter */
 extern s32 D_80110118_267218_ChanceTime;
 extern s16 D_8011011C_26721C_ChanceTime;
+extern u32 D_80110120_267220_ChanceTime; /* func_801052B4 state */
+extern s32 D_80110124_267224_ChanceTime; /* func_801052B4 frame counter */
+extern s8 D_80110128_267228_ChanceTime; /* the two players arrived */
+extern s8 D_80110129_267229_ChanceTime;
 extern s8 D_80110156_267256_ChanceTime;
+extern u8 D_80110180_267280_ChanceTime; /* the two chosen players (MP1 D_801012E0/E1) */
+extern u8 D_80110181_267281_ChanceTime;
 extern u8 D_80110230_267330_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ？" */
 extern u8 D_80110248_267348_ChanceTime[]; /* SJIS "ＣＨＡＮＣＥＴＩＭＥ" */
 
@@ -151,6 +169,7 @@ extern f32 D_801106B4_2677B4_ChanceTime; /* sway angle of the scenery copies */
 extern f32 D_801106B8_2677B8_ChanceTime; /* sway damping */
 extern Vec D_801106C0_2677C0_ChanceTime[10]; /* the ten scenery copies: position */
 extern Vec D_80110738_267838_ChanceTime[10]; /* rotation */
+extern s16 D_801107B0_2678B0_ChanceTime; /* sound */
 extern omObjData* D_80110908_267A08_ChanceTime;
 extern omObjData* D_8011090C_267A0C_ChanceTime; /* the two block holders */
 extern omObjData* D_80110910_267A10_ChanceTime;
@@ -159,7 +178,13 @@ extern omObjData* D_80110910_267A10_ChanceTime;
 extern s16 D_80110914_267A14_ChanceTime; /* three models (0x440009..B) */
 extern s16 D_80110916_267A16_ChanceTime;
 extern s16 D_80110918_267A18_ChanceTime;
+/* CPU controller state per controller port (MP1 D_80101AB8 / AB2 / ACE / A9C) */
+extern s16 D_80110B14_267C14_ChanceTime[4]; /* buttons pressed */
+extern s8 D_80110D56_267E56_ChanceTime[4]; /* stick x */
+extern s8 D_80110D62_267E62_ChanceTime[2]; /* the two players' D_800FFFD8 indices (MP1 D_80101AA4) */
 extern s8 D_80110D6A_267E6A_ChanceTime[4]; /* player order */
+extern s8 D_80110D6E_267E6E_ChanceTime[4]; /* stick y */
+extern s16 D_80110D72_267E72_ChanceTime[4]; /* buttons held */
 /* The panels' objects; retail writes the third (D_80110D88) as [2] in one branch. */
 extern omObjData* D_80110D80_267E80_ChanceTime[2];
 extern omObjData* D_80110D88_267E88_ChanceTime;

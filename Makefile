@@ -412,3 +412,6 @@ $(W3B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # w3-B: B6E0 rodata 0xD2400-0xD2410 (whole; func_8000BAF0_C6F0's doubles 500.0 and 1.0) carved out of the data blob
 CARVED_RODATA_UNITS += build/src/B6E0.c.o
 build/src/B6E0.c.o: RODATA_AS_DATA = 1
+
+# 34-A: ovl_34 (259900.c) has a nop between back-to-back mul.s (func_801052B4): KMC mul fix on
+build/src/overlays/ovl_34_ChanceTime/259900.c.o: export VR4300MUL := ON
