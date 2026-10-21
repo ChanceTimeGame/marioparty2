@@ -1564,8 +1564,42 @@ void func_80107A00_2ADBA0_DesertDuel(void) {
         }
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107BF8_2ADD98_DesertDuel);
+/* A CPU challenger's choice of opponent: a random one among the best-ranked opponents who have
+   coins. Returns an index into D_80108C20. */
+s32 func_80107BF8_2ADD98_DesertDuel(void) {
+    s32 cand[4];
+    s32 n;
+    s32 i;
 
+    n = 0;
+    for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+        if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 0 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins > 0) {
+            cand[n++] = i;
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 1 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 2 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 3 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    return cand[rand8() % n];
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80108580_2AE720_DesertDuel);

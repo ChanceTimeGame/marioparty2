@@ -91,6 +91,7 @@ void func_80059120_59D20(void*, f32, f32); /* jump: velocity, gravity */
 void func_80059158_59D58(void*); /* start the jump */
 void func_80059400_5A000(void);
 s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
+s32 func_80059FD0_5ABD0(s32 player); /* the player's rank, 0 = first */
 ModelPathWork* func_8005A718_5B318(MBModel* model, f32 speed, s16 count, Vec* points);
 s32 func_8005A778_5B378(ModelPathWork*); /* path finished */
 void func_8005AA48_5B648(MBModel*, char*, s16);
