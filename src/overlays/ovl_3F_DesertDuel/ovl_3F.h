@@ -72,6 +72,8 @@ s16 func_8001A2F8_1AEF8(s32 arg0);
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
 void func_80029714_2A314(s16, f32, f32, f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80043DAC_449AC(MBModel*);
 omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
@@ -149,6 +151,16 @@ typedef struct Unk3FDraw {
     /* 0x04 */ s32 cpuWait1; /* the challenger's */
     /* 0x08 */ s32 cpuWait2; /* the opponent's */
 } Unk3FDraw; /* size 0x0C */
+
+/* A shot (func_80106988/func_80106C94): model 0xA0192 flies at the target, hits, bounces and
+   rolls to a stop. */
+typedef struct Unk3FShot {
+    /* 0x00 */ s32 hit;
+    /* 0x04 */ f32 vx;
+    /* 0x08 */ f32 vy;
+    /* 0x0C */ s32 target; /* player index */
+    /* 0x10 */ s16 bounces;
+} Unk3FShot; /* size 0x14 */
 
 /* Status-window layouts (D_80108730): four corner positions as from/to pairs, and the frames
    the move takes. */

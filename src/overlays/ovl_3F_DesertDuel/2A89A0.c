@@ -1217,8 +1217,49 @@ void func_80106600_2AC7A0_DesertDuel(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106600_2AC7A0_DesertDuel);
 #endif
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);
+/* Fires a shot from player `shooter` at player `target`: it starts at the shooter's hand (per
+   character offsets) and flies sideways at 30 per frame. */
+#ifdef NON_MATCHING /* rodata-pending */
+void func_80106988_2ACB28_DesertDuel(s32 shooter, s32 target) {
+    f32 side[6] = { -47.5f, -10.0f, -15.0f, -19.0f, -35.0f, -0.5f };
+    f32 height[6] = { 77.5f, 85.0f, 102.0f, 65.0f, 90.0f, 124.0f };
+    f32 front[6] = { 87.5f, 60.0f, 62.5f, 80.0f, 80.0f, 87.5f };
+    omObjData* obj;
+    Unk3FShot* work;
+    f32 dir;
 
+    obj = omAddObj(0x10, 3, 3, -1, func_80106C94_2ACE34_DesertDuel);
+    obj->model[0] = LoadFormFile(0xA0192, 0x699);
+    obj->model[1] = LoadFormFile(0xD, 0x299);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Unk3FShot), 0x7918);
+    obj->trans.x = PLAYER_MODEL(shooter)->pos.x - HuMathSin(func_80042BE0_437E0(&PLAYER_MODEL(shooter)->rot)) * side[gPlayers[shooter].character];
+    obj->trans.y = height[gPlayers[shooter].character];
+    obj->trans.z = PLAYER_MODEL(shooter)->pos.z + func_800B7890_B8490(func_80042BE0_437E0(&PLAYER_MODEL(shooter)->rot)) * front[gPlayers[shooter].character];
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    obj->scale.x = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.z = 1.0f;
+    work->target = target;
+    work->bounces = 0;
+    dir = PLAYER_MODEL(target)->pos.x - PLAYER_MODEL(shooter)->pos.x;
+    if (dir > 0.0f) {
+        dir = 1.0f;
+    } else if (dir < 0.0f) {
+        dir = -1.0f;
+    } else {
+        dir = 0.0f;
+    }
+    work->vx = dir * 30.0f;
+    work->vy = 30.0f;
+    work->hit = 0;
+    func_800297E8_2A3E8(obj->model[1], 0.3f, 0.3f, 0.3f);
+    PlaySound(0x3A0);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_2ACB28_DesertDuel);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106C94_2ACE34_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107018_2AD1B8_DesertDuel);
