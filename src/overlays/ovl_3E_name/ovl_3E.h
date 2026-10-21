@@ -279,7 +279,6 @@ extern s32 D_801134C4_2A8794_name_3E; /* set: the CPU's next answer is option 2 
 extern u8* D_80113510_2A87E0_name_3E[]; /* per character: items the CPU tries to buy */
 extern s8* D_80113570_2A8840_name_3E[]; /* per character: their percent chances */
 extern u8 D_80113588_2A8858_name_3E[]; /* per character: list length */
-s16 func_800558F4_564F4(void);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 void func_8004CA34_4D634(s32, s32);
 void func_800614B4_620B4(s32, s32);
@@ -304,6 +303,129 @@ void MBKSuitMotionSet(s16 arg0, s32 arg1);
 void func_800B3B80_B4780(f32* mtx, f32 angle); /* rotate a model matrix */
 void func_80050860_51460(void); /* MBKSuitKill */
 Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* turn arg0 toward arg1 */
+/* fork C */
+typedef struct Unk3EParticle {
+    /* 0x00 */ Vec vel;
+    /* 0x0C */ f32 alpha;
+    /* 0x10 */ f32 scaleSpeed;
+    /* 0x14 */ f32 fadeSpeed;
+    /* 0x18 */ MBModel* model;
+    /* 0x1C */ u16 kill; /* delete when faded out, else only pause */
+    /* 0x1E */ char unk_1E[2];
+} Unk3EParticle; /* size 0x20 (MP3 UnkChillyWaters) */
+
+extern s8 D_800CCC16; /* set while the lamp's star event runs */
+extern s16 D_800FA188_FAD88;
+extern MBModel* D_801138BC_2A8B8C_name_3E;
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+s32 MBRand(f32);
+void omDelObj(omObjData*);
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+s32 func_800556F4_562F4(s16, s16); /* space event call */
+s16 func_800670B0_67CB0(void);
+void* func_800672BC_67EBC(s16, s16, s32); /* player vibrate start */
+void func_8006735C_67F5C(void*); /* player vibrate stop */
+void func_8008F624_90224(s32, s32, s32); /* wipe colour */
+void func_80054C78_55878(s16 space, s16* chainOut, s16* indexOut);
+void func_800650BC_65CBC(void);
+void func_80078FF8_79BF8(void);
+void func_800115B4_121B4(s32);
+void func_80055E60_56A60(void);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void func_8006296C_6356C(s16 player, f32* x, f32* y); /* status window position */
+void func_800629AC_635AC(s16 player, s16 x, s16 y); /* status window move */
+#include "game/malloc.h"
+#include "game/data.h"
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void* arg0);
+/* Retail calls these two as int-returning (no sign extension of the result at the call). Every
+   user here passes the id on to s16 parameters or stores it in a 16-bit slot, so the host's
+   truncation keeps it right. */
+#define SprCreate_s32(num, attr) (((s32(*)(s32, s32))SprCreate)(num, attr))
+#define SprAnimRead_s32(data) (((s32(*)(void*))SprAnimRead)(data))
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprKill(s16 idx);
+void SprAnimKill(s16 animIdx);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
+void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
+void func_80062A28_63628(s16 player, f32 arg1); /* status window shake */
+
+typedef Vec2f3E Unk3EVec2f; /* fork C name for fork D's Vec2f3E */
+extern s32 D_8011237C_2A764C_name_3E[6]; /* per character: sprite file */
+extern Unk3EVec2f D_8011233C_2A760C_name_3E[4]; /* per player: lost star start */
+extern Unk3EVec2f D_8011235C_2A762C_name_3E[4]; /* per player: lost star velocity */
+f32 __sinf(f32);
+typedef struct Unk3ERange {
+    u8 min;
+    u8 max;
+    u8 value;
+} Unk3ERange; /* size 3 */
+extern Unk3ERange D_80112394_2A7664_name_3E[6]; /* turn range -> star price */
+extern Unk3ERange D_801123A8_2A7678_name_3E[14]; /* press count range -> discount */
+extern u16 ContDStkTrg[4];
+void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void func_80055E3C_56A3C(s32 arg0);
+typedef struct Unk3EStealRange {
+    u8 turnMin;
+    u8 turnMax;
+    u8 min;
+    u8 max;
+    u8 mess; /* index into D_8011243E */
+} Unk3EStealRange; /* size 5 */
+extern u8 D_80112330_2A7600_name_3E[4][3]; /* per player: the other players */
+extern Unk3EStealRange D_801123D4_2A76A4_name_3E[24]; /* turn and coin range -> message */
+/* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
+   layout-dependent label, keep the data in place on the host. */
+extern s16 D_8011243E_2A770E_name_3E[];
+s32 func_800558F4_564F4(void); /* the current space (retail: int-returning) */
+s32 func_80046D2C_4792C(s32 arg0);
+omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+Process* MBDCameraZoomMotStart(f32 arg0);
+void MBDlgWinExec(s32 arg0, s32 arg1);
+void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+void func_80078EC8_79AC8(void);
+void func_8004CA34_4D634(s32 arg0, s32 arg1);
+void func_800614B4_620B4(s32 arg0, s32 arg1);
+void func_8006135C_61F5C(s32 arg0, s32 arg1, s32 arg2);
+void func_8004655C_4715C(s32 arg0);
+void func_80047A50_48650(s32);
+s16 func_80046F98_47B98(s32);
+void func_80064FF8_65BF8(void);
+void func_80059120_59D20(void*, f32, f32);
+void func_80047BB8_487B8(s32);
+void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
+void func_80053F7C_54B7C(void);
+void func_8004CDE0_4D9E0(void);
+s32 func_8004CE80_4DA80(void);
+void func_8004D5B0_4E1B0(void);
+void func_80053F54_54B54(void);
+void func_80079848_7A448(s16 arg0);
+void func_80046EDC_47ADC(s32);
+s32 func_80060210_60E10(s32);
+s32 func_800609D8_615D8(void);
+void MBStatusItemDispSetAll(s32 arg0);
+void func_80047D78_48978(s32 arg0, s32 arg1);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+void func_800558E8_564E8(s16 arg0);
+void func_80045650_46250(s32 arg0);
+
+typedef struct Unk3EWindowSlide {
+    /* 0x00 */ s16 x0;
+    /* 0x02 */ s16 y0;
+    /* 0x04 */ s16 x1;
+    /* 0x06 */ s16 y1;
+    /* 0x08 */ s16 frames;
+    /* 0x0A */ s16 sprite; /* -1: none */
+    /* 0x0C */ char unk_0C[4];
+} Unk3EWindowSlide; /* size 0x10 */
 
 /* ---- 297AD0.c ---- */
 
@@ -394,23 +516,23 @@ s32 func_80109AE4_29EDB4_name_3E(void);
 void func_80109B30_29EE00_name_3E(void);
 void func_8010A13C_29F40C_name_3E(MBModel* model);
 void func_8010A1DC_29F4AC_name_3E(MBModel* model);
-void func_8010A27C_29F54C_name_3E(s32 arg0);
+s32 func_8010A27C_29F54C_name_3E(s32 player);
 void func_8010AB58_29FE28_name_3E(void);
-s32 func_8010AB7C_29FE4C_name_3E(s32 arg0);
+s32 func_8010AB7C_29FE4C_name_3E(s32 player);
 void func_8010B8B8_2A0B88_name_3E(void);
-void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
+void func_8010BA0C_2A0CDC_name_3E(MBModel* parent);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
-void func_8010C484_2A1754_name_3E(Vec* pos, f32 arg1, f32 arg2, s32 arg3, Vec* arg4); /* fork B: a0 and the stack argument are Vec* */
-void func_8010C5C4_2A1894_name_3E(s32 arg0);
+omObjData* func_8010C484_2A1754_name_3E(Vec* pos, f32 scaleSpeed, f32 fadeSpeed, s16 kill, Vec* vel);
+void func_8010C5C4_2A1894_name_3E(omObjData* obj);
 void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
 void func_8010CAE8_2A1DB8_name_3E(void);
 void func_8010CCD4_2A1FA4_name_3E(void);
-Process* func_8010CF20_2A21F0_name_3E(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5); /* fork D: from its entry and callers */
+Process* func_8010CF20_2A21F0_name_3E(s16 sprite, s16 x0, s16 y0, s16 x1, s16 y1, s16 frames);
 void func_8010CFCC_2A229C_name_3E(void);
-s32 func_8010D37C_2A264C_name_3E(void);
+void func_8010D37C_2A264C_name_3E(void);
 void func_8010D6C8_2A2998_name_3E(void);
 void func_8010D9F4_2A2CC4_name_3E(void);
 void func_8010DE58_2A3128_name_3E(void);
@@ -486,7 +608,6 @@ Process* func_80056FD4_57BD4(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
 Process* func_80057150_57D50(Vec* arg0, Vec* arg1, Vec* arg2, f32 arg3);
 void func_800B3B80_B4780(f32* mtx, f32 angle); /* MP3 func_8008A430_8B030: matrix rotation */
 void ChangeSpaceTextures(s16);
-s16 func_800558F4_564F4(void);
 void func_8004CA34_4D634(s32, s32);
 void func_800614B4_620B4(s32, s32);
 void func_80056124_56D24(void);
