@@ -1,6 +1,10 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* Runs the exchange of outcome D_80110182 for one frame; returns 1 when it is over (MP1
+   func_800FAE60). */
+
+
 /* A free coin starts at the player on `side` (MP1 func_800F9D60); returns its slot or -1. */
 
 
@@ -1137,6 +1141,7 @@ void func_801060E0_25D1E0_ChanceTime(void) {
 }
 
 
+/* A free coin starts at the player on `side` (MP1 func_800F9D60); returns its slot or -1. */
 s32 func_80106434_25D534_ChanceTime(s8 side) {
     s16 i;
 
@@ -1154,6 +1159,7 @@ s32 func_80106434_25D534_ChanceTime(s8 side) {
     }
     return -1;
 }
+/* Reset the 20 coins to the coin object's models (MP1 func_800F9E74). */
 void func_80106548_25D648_ChanceTime(omObjData* obj) {
     s16 i;
 
@@ -1168,6 +1174,8 @@ void func_80106548_25D648_ChanceTime(omObjData* obj) {
         D_80110B20_267C20_ChanceTime[i].unk_19 = 1;
     }
 }
+/* `count` coins fly from one player to the other (dir 0: first to second); returns 1 when all
+   have arrived (MP1 func_800F9F30). */
 s32 func_80106604_25D704_ChanceTime(omObjData* obj, s8 dir, s16 count) {
     s16 i;
     u8 player;
@@ -1251,6 +1259,8 @@ s32 func_80106604_25D704_ChanceTime(omObjData* obj, s8 dir, s16 count) {
     }
     return ret;
 }
+/* Coin swap: each player's coins (at most 10 shown) fly to the other, who is paid the
+   other's total; returns 1 when all have arrived (MP1 func_800FA458). */
 s32 func_80106B5C_25DC5C_ChanceTime(omObjData* obj, s16 a, s16 b) {
     s16 i;
     s16 n;
@@ -1375,10 +1385,117 @@ s32 func_80106B5C_25DC5C_ChanceTime(omObjData* obj, s16 a, s16 b) {
     }
     return ret;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80107594_25E694_ChanceTime);
+/* Runs the exchange of outcome D_80110182 for one frame; returns 1 when it is over (MP1
+   func_800FAE60). */
+s8 func_80107594_25E694_ChanceTime(omObjData* obj) {
+    s16 coins[2];
+    s16 stars[2];
+    s8 ret;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801077D8_25E8D8_ChanceTime);
+    D_8011091A_267A1A_ChanceTime = 0;
+    stars[0] = stars[1] = 0;
+    coins[0] = coins[1] = 0;
+    ret = 1;
+    switch (D_80110182_267282_ChanceTime) {
+    case 6:
+        ret = func_801097F8_2608F8_ChanceTime(D_80110181_267281_ChanceTime, D_80110180_267280_ChanceTime);
+        break;
+    case 7:
+        ret = func_801097F8_2608F8_ChanceTime(D_80110180_267280_ChanceTime, D_80110181_267281_ChanceTime);
+        break;
+    case 0:
+    case 2:
+    case 4:
+    case 11:
+    case 12:
+        D_80110070_267170_ChanceTime.unk_00 = 1;
+        ret = func_80106604_25D704_ChanceTime(obj, 0, D_801100C2_2671C2_ChanceTime);
+        break;
+    case 1:
+    case 3:
+    case 5:
+        D_80110070_267170_ChanceTime.unk_00 = 1;
+        ret = func_80106604_25D704_ChanceTime(obj, 1, D_801100C0_2671C0_ChanceTime);
+        break;
+    case 8:
+        D_80110070_267170_ChanceTime.unk_00 = 1;
+        coins[0] = gPlayers[D_80110180_267280_ChanceTime].coins;
+        coins[1] = gPlayers[D_80110181_267281_ChanceTime].coins;
+        ret = func_80106B5C_25DC5C_ChanceTime(obj, coins[0], coins[1]);
+        break;
+    case 10:
+        coins[0] = gPlayers[D_80110180_267280_ChanceTime].coins;
+        coins[1] = gPlayers[D_80110181_267281_ChanceTime].coins;
+        D_8011091A_267A1A_ChanceTime = func_80106B5C_25DC5C_ChanceTime(obj, coins[0], coins[1]);
+        /* fall through: then the stars */
+    case 9:
+        stars[0] = gPlayers[D_80110180_267280_ChanceTime].stars;
+        stars[1] = gPlayers[D_80110181_267281_ChanceTime].stars;
+        ret = func_80109CC4_260DC4_ChanceTime(stars[0], stars[1]);
+        break;
+    }
+    return ret;
+}
 
+/* Coin object setup: clears both coin sets, loads 20 coins (model[1..20]), 10 stars
+   (model[21..30]) and two more models (model[31..32]) (MP1 func_800FB950). */
+void func_801077D8_25E8D8_ChanceTime(omObjData* obj) {
+    s16 i;
+    s16 m;
+    s16 base;
+    s16 base2;
+    s16 base3;
+    s16 loaded;
+
+    base = 0;
+    base2 = 0;
+    base3 = 0;
+    for (i = 0; i < 20; i++) {
+        D_80110B20_267C20_ChanceTime[i].unk_00 = D_801109F8_267AF8_ChanceTime[i].unk_00 = -1;
+        D_80110B20_267C20_ChanceTime[i].unk_04 = D_801109F8_267AF8_ChanceTime[i].unk_04 = 0.0f;
+        D_80110B20_267C20_ChanceTime[i].unk_08 = D_801109F8_267AF8_ChanceTime[i].unk_08 = 0.0f;
+        D_80110B20_267C20_ChanceTime[i].unk_0C = D_801109F8_267AF8_ChanceTime[i].unk_0C = 0.0f;
+        D_80110B20_267C20_ChanceTime[i].unk_10 = D_801109F8_267AF8_ChanceTime[i].unk_10 = 0.0f;
+        D_80110B20_267C20_ChanceTime[i].unk_14 = D_801109F8_267AF8_ChanceTime[i].unk_14 = 0.0f;
+        D_80110B20_267C20_ChanceTime[i].unk_18 = D_801109F8_267AF8_ChanceTime[i].unk_18 = 0;
+        D_80110B20_267C20_ChanceTime[i].unk_19 = D_801109F8_267AF8_ChanceTime[i].unk_19 = 0;
+    }
+    obj->model[0] = -1;
+    loaded = 0;
+    for (i = 1; i < 21; i++) {
+        if (loaded == 0) {
+            m = LoadFormFile(0x330000, 0x6B9);
+            base = m;
+            loaded = 1;
+        } else {
+            m = func_80027D3C_2893C(base);
+        }
+        obj->model[i] = m;
+        func_800297E8_2A3E8(obj->model[i], 0.135f, 0.135f, 0.135f);
+        func_800298A4_2A4A4(obj->model[i], 4, 4);
+    }
+    loaded = 0;
+    for (i = 21; i < 31; i++) {
+        if (loaded == 0) {
+            loaded = 1;
+            obj->model[i] = base2 = func_80059348_59F48();
+        } else {
+            obj->model[i] = func_80027D3C_2893C(base2);
+        }
+        func_800297E8_2A3E8(obj->model[i], 0.5f, 0.5f, 0.5f);
+        func_800298A4_2A4A4(obj->model[i], 4, 4);
+    }
+    loaded = 0;
+    for (i = 31; i < 33; i++) {
+        if (loaded == 0) {
+            obj->model[i] = base3 = LoadFormFile(0xA00E3, 0x6BD);
+            loaded = 1;
+        } else {
+            obj->model[i] = func_80027D3C_2893C(base3);
+        }
+    }
+    obj->func_ptr = func_80107B00_25EC00_ChanceTime;
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80107B00_25EC00_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80109718_260818_ChanceTime);

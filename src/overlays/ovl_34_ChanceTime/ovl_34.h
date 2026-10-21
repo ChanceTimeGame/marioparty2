@@ -147,7 +147,8 @@ extern GAMEMES* D_80110108_267208_ChanceTime; /* the title message */
 /* 0x80110070: the second variant's holder walks from path[0] (0x80110074) to path[1]; splat
    labels path[1] D_80110080 (retail addresses both from &path[1]). */
 typedef struct CTPath70 {
-    /* 0x00 */ s32 unk_00;
+    /* 0x00 */ s8 unk_00; /* fork B: only byte accesses (1 while coins/stars fly) */
+    /* 0x01 */ char unk_01[3];
     /* 0x04 */ Vec path[2];
 } CTPath70;
 extern CTPath70 D_80110070_267170_ChanceTime;
@@ -237,6 +238,13 @@ extern s16 D_801107F4_2678F4_ChanceTime[2]; /* func_80106B5C: coins shown per si
 extern f32 D_801107F8_2678F8_ChanceTime[2]; /* throw rate accumulators */
 extern s16 D_80110800_267900_ChanceTime[2]; /* the two players' coins */
 extern CTCoin D_80110B20_267C20_ChanceTime[20];
+/* The second coin/star set: 10 entries up to D_80110B10, but func_801077D8 clears 20 (retail
+   overrun into D_80110B10..D_80110C27, which it then clears or func_80106548 refills). */
+extern CTCoin D_801109F8_267AF8_ChanceTime[10];
+extern s16 D_801100C0_2671C0_ChanceTime; /* coins thrown in outcomes 1/3/5 (MP1 D_80101324) */
+extern s16 D_801100C2_2671C2_ChanceTime; /* coins thrown in outcomes 0/2/4/11/12 (MP1 D_80101326) */
+extern s8 D_8011091A_267A1A_ChanceTime;  /* outcome 10: the coin half of the swap is done */
+u16 func_80059348_59F48(void); /* loads model 0xA0158 */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */
 void func_800614B4_620B4(s32 player, s32 coins); /* gain coins */
