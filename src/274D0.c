@@ -443,10 +443,9 @@ extern void* D_800F64D0_F70D0[];
 extern void* D_800FDEB0_FEAB0[];
 extern s16 D_800C9E52_CAA52;
 void osSyncPrintf(const char* fmt, ...);
-/* "%x\n" and "Model Entry Over!\n": 274D0's rodata (D2DF8) is not carved while
-   func_80027FA4_28BA4 is asm, so C names the strings, as MP3's hmfman.c/mallocblock.c do */
-extern char D_800D21F8_D2DF8[];
-extern char D_800D21FC_D2DFC[];
+/* "%x\n" and "Model Entry Over!\n" (defined with the unit's rodata at the end of the file) */
+extern const char sHmfStrHex[];
+extern const char sHmfStrEntryOver[];
 
 /* MP3 HuMemDebugCheck (src/mallocblock.c) */
 s32 func_800275C4_281C4(void) {
@@ -473,7 +472,7 @@ s32 func_800275C4_281C4(void) {
                     break;
             }
             if (var_v1 == D_800C9E52_CAA52) {
-                osSyncPrintf(D_800D21F8_D2DF8, D_800F64D0_F70D0[i]);
+                osSyncPrintf(sHmfStrHex, D_800F64D0_F70D0[i]);
             }
         }
     }
@@ -530,7 +529,7 @@ s16 Hu3DModelCreate(u8 *data, u32 arg1) {
         }
     }
     if (modelId == HU3D_MODEL_MAX) {
-        osSyncPrintf(D_800D21FC_D2DFC);
+        osSyncPrintf(sHmfStrEntryOver);
         return -1;
     }
     D_8010106C_101C6C = 10000 + modelId * 2;
@@ -641,7 +640,7 @@ s16 func_80027D3C_2893C(s16 linkMdlId) {
         }
     }
     if (modelId == HU3D_MODEL_MAX) {
-        osSyncPrintf(D_800D21FC_D2DFC);
+        osSyncPrintf(sHmfStrEntryOver);
         return -1;
     }
     modelP = &D_800FC834_FD434[modelId];
@@ -689,7 +688,7 @@ s16 func_80027FA4_28BA4(u32 arg0, void* arg1, u8 arg2) {
         }
     }
     if (i == HU3D_MODEL_MAX) {
-        osSyncPrintf(D_800D21FC_D2DFC);
+        osSyncPrintf(sHmfStrEntryOver);
         return -1;
     }
     D_8010106C_101C6C = i * 2 + 10000;
@@ -1692,7 +1691,7 @@ void func_8002ACF0_2B8F0(s16 arg0, f32 arg1, f32 arg2, char* arg3, s32 arg4) {
 INCLUDE_ASM("asm/nonmatchings/274D0", func_8002ACF0_2B8F0);
 #endif
 
-extern f32 D_800D2210_D2E10[];
+extern const f32 sHmfBlendScales[];
 extern f32 D_800CA02C_CAC2C;
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32);
@@ -1733,7 +1732,7 @@ void func_8002AF2C_2BB2C(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
 }
 
 void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) {
-    unk24740Floats8 sp0 = *(unk24740Floats8*)D_800D2210_D2E10;
+    unk24740Floats8 sp0 = *(const unk24740Floats8*)sHmfBlendScales;
     HmfFace* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
     HmfVtx* src;
@@ -1773,7 +1772,7 @@ void func_8002B184_2BD84(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) 
 }
 
 void func_8002B4C4_2C0C4(HmfData* arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4) {
-    unk24740Floats8 sp10 = *(unk24740Floats8*)D_800D2210_D2E10;
+    unk24740Floats8 sp10 = *(const unk24740Floats8*)sHmfBlendScales;
     HmfFace* b = &arg0->unkB4[arg3];
     f32 inv = 1.0f - arg1;
     f32 s = HuMathSin(D_800CA02C_CAC2C);
@@ -2368,3 +2367,10 @@ void func_8002D3C0_2DFC0(s16 arg0) {
 void func_8002D4A0_2E0A0(s16 arg0) {
     D_800FC834_FD434[arg0].unk02 = 0xFF;
 }
+
+/* 274D0's rodata (ROM D2DF8-D2E30), in retail order */
+const char sHmfStrHex[] = "%x\n";
+const char sHmfStrEntryOver[] = "Model Entry Over!\n";
+const f32 sHmfBlendScales[] = {
+    1.0f, 0.8f, 1.1f, 1.3f, 0.5f, 1.2f, 0.9f, 1.5f
+};
