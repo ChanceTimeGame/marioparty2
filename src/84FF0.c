@@ -122,7 +122,11 @@ typedef struct TextWindow {
     /* 0x06C */ s16 unk_6C; /* sprite group */
     /* 0x06E */ s16 unk_6E[0x16];
     /* 0x09A */ s16 unk9A;
-    /* 0x09C */ char pad9C[0xA];
+    /* 0x09C */ s16 unk9C;
+    /* 0x09E */ s16 unk9E;
+    /* 0x0A0 */ s16 unkA0;
+    /* 0x0A2 */ s16 unkA2;
+    /* 0x0A4 */ s16 unkA4;
     /* 0x0A6 */ u16 unkA6; /* buttons that also close the window */
     /* 0x0A8 */ u16 unkA8; /* buttons that closed it */
     /* 0x0AA */ s16 unkAA;
@@ -2491,11 +2495,56 @@ void func_8008B6F4_8C2F4(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BA30_8C630);
+/* MP1 func_8006FCC0: the window's state; for -1 the states of all windows or'ed */
+s16 func_8008BA30_8C630(s16 winId) {
+    s16 state = 0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BB18_8C718);
+    if (winId != -1) {
+        return D_800F920C_F9E0C[winId].unk20;
+    }
+    i = D_800F920C_F9E0C[0].unk64;
+    while (D_800F920C_F9E0C[i].unk64 != -1) {
+        state |= D_800F920C_F9E0C[i].unk20;
+        i = D_800F920C_F9E0C[i].unk64;
+    }
+    return state;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BB48_8C748);
+void func_8008BB18_8C718(s16 winId, u8 tab) {
+    D_800F920C_F9E0C[winId].unk35 = tab;
+}
+
+/* MP1 func_8006FCF0: lets the player choose one of the window's entries; returns it, or -1 */
+s8 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    void* file;
+
+    if (tw->unk_30 == 0) {
+        return -1;
+    }
+    if (tw->unk6A == -1) {
+        file = DataRead(0x42);
+        tw->unk6A = SprAnimRead(file);
+        HuMemMemoryFreePerm(file);
+        SprAnimSet(tw->unk_6C, 2, tw->unk6A, 0);
+        func_80082488_83088(tw->unk_6C, 2, 0x100);
+        SprAttrReset(tw->unk_6C, 2, 0xFFFF);
+        SprAttrSet(tw->unk_6C, 2, 0x01009000);
+        SprPrioSet(tw->unk_6C, 2, tw->unk60 - 1);
+    }
+    if (arg2 != 0) {
+        tw->unk_38 |= 1;
+    }
+    tw->unk_31 = start;
+    tw->unk20 = 5;
+    tw->unk9A = 1;
+    tw->unkA4 = 0;
+    while (func_8008BA30_8C630(winId) == 5) {
+        HuPrcVSleep();
+    }
+    return tw->unk_31;
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BCB8_8C8B8);
 
