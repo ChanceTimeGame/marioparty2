@@ -143,27 +143,214 @@ void func_80102D1C_2A8EBC_DesertDuel(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80102D48_2A8EE8_DesertDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104354_2AA4F4_DesertDuel);
+/* The referee's hat flies off: it shrinks and spins for 15 frames, then hides. */
+void func_80104354_2AA4F4_DesertDuel(void) {
+    omObjData* obj;
+    Unk3FShrink* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801043E4_2AA584_DesertDuel);
+    obj = omAddObj(0x10, 0, 0, -1, func_801043E4_2AA584_DesertDuel);
+    work = func_80027154_27D54(sizeof(Unk3FShrink), 0x7918);
+    obj->unk_50 = work;
+    work->scaleSpeed = -0.06666667f;
+    work->rotSpeed = -3.0f;
+    work->unk10 = 0;
+    work->unkC = 1.0f;
+    work->timer = 15;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104474_2AA614_DesertDuel);
+void func_801043E4_2AA584_DesertDuel(omObjData* obj) {
+    Unk3FShrink* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801047AC_2AA94C_DesertDuel);
+    D_80108CA8_2AEE48_DesertDuel->scale.x += work->scaleSpeed;
+    D_80108CA8_2AEE48_DesertDuel->scale.y += work->scaleSpeed;
+    D_80108CA8_2AEE48_DesertDuel->scale.z += work->scaleSpeed;
+    D_80108CA8_2AEE48_DesertDuel->obj->rot.x += work->rotSpeed;
+    if (--work->timer == 0) {
+        MBModelDispOff(D_80108CA8_2AEE48_DesertDuel);
+        omDelObj(obj);
+    }
+}
 
+/* Moves the status windows of the players in the scene to layout `layout` of D_80108730; the
+   challenger takes slot 3, the chosen opponent slot 2, the others slots 0, 1 (and are listed in
+   D_80108C20). D_80108C50 is set when every window has arrived. */
+void func_80104474_2AA614_DesertDuel(s32 layout) {
+    omObjData* obj;
+    s32* work;
+    BoardStatus* status;
+    s32 slot;
+    s32 i;
+    s32 next;
+
+    D_80108C50_2AEDF0_DesertDuel = 0;
+    obj = omAddObj(0x12, 0, 0, -1, func_801047AC_2AA94C_DesertDuel);
+    work = func_80027154_27D54(8, 0x7918);
+    obj->unk_50 = work;
+    *work = layout;
+    next = 0;
+    for (i = 0; i < 4; i++) {
+        if (D_80108C38_2AEDD8_DesertDuel[i] != 0) {
+            status = &D_80101510_102110[i];
+            slot = 3;
+            if (i != D_80108C18_2AEDB8_DesertDuel) {
+                if (i == D_80108C1C_2AEDBC_DesertDuel) {
+                    slot = 2;
+                } else {
+                    slot = next;
+                    D_80108C20_2AEDC0_DesertDuel[slot] = i;
+                    next = slot + 1;
+                }
+            }
+            if (D_80108730_2AE8D0_DesertDuel[layout].pos[slot][0] != -1) {
+                status->xPos = D_80108730_2AE8D0_DesertDuel[layout].pos[slot][0];
+            }
+            if (D_80108730_2AE8D0_DesertDuel[layout].pos[slot][1] != -1) {
+                status->yPos = D_80108730_2AE8D0_DesertDuel[layout].pos[slot][1];
+            }
+            func_800600F8_60CF8(i, status->xPos, status->yPos);
+            status->unk_0C = D_80108730_2AE8D0_DesertDuel[layout].frames - 1;
+            if (D_80108730_2AE8D0_DesertDuel[layout].pos[slot][2] != -1) {
+                status->unk_18 = D_80108730_2AE8D0_DesertDuel[layout].pos[slot][2];
+            }
+            if (D_80108730_2AE8D0_DesertDuel[layout].pos[slot][3] != -1) {
+                status->unk_1C = D_80108730_2AE8D0_DesertDuel[layout].pos[slot][3];
+            }
+            status->unk_20 = status->unk_28 = 2.0f * (status->unk_18 - status->xPos) / ((status->unk_0C + 1) * (status->unk_0C + 1));
+            status->unk_24 = status->unk_2C = 2.0f * (status->unk_1C - status->yPos) / ((status->unk_0C + 1) * (status->unk_0C + 1));
+        }
+    }
+    if (D_80108CD8_2AEE78_DesertDuel == 6) {
+        status = &D_80101510_102110[D_80108C18_2AEDB8_DesertDuel];
+        D_800FD854_FE454[0].unk_00 = D_800FC990_FD590[0].unk_00 = status->unk_28;
+        D_800FD854_FE454[0].unk_04 = D_800FC990_FD590[0].unk_04 = status->unk_2C;
+        D_800FA604_FB204 = D_80108730_2AE8D0_DesertDuel[layout].frames - 1;
+    }
+}
+
+void func_801047AC_2AA94C_DesertDuel(omObjData* obj) {
+    BoardStatus* status;
+    s32 done;
+    s32 i;
+
+    done = 0;
+    for (i = 0; i < 4; i++) {
+        if (D_80108C38_2AEDD8_DesertDuel[i] != 0) {
+            status = &D_80101510_102110[i];
+            if (status->unk_0C == 0) {
+                status->xPos = status->unk_18;
+                status->yPos = status->unk_1C;
+                done++;
+            }
+        }
+    }
+    if (done == D_80108C48_2AEDE8_DesertDuel) {
+        D_80108C50_2AEDF0_DesertDuel = 1;
+        omDelObj(obj);
+    }
+}
+
+/* Opens a message window that only the duelists' pads can advance. */
+/* NON_MATCHING: registers (masked 14): retail keeps the raw window id in s2 and its s16 copy in s1
+   (arg6 in s0) and narrows the mask in each branch. */
+#ifdef NON_MATCHING
+s16 func_80104844_2AA9E4_DesertDuel(s16 x, s16 y, s16 w, s16 h, s16 arg4, s16 arg5, s32 arg6) {
+    s16 win;
+    s16 mask;
+
+    win = func_800888A8_894A8(x, y, w, h, arg4, arg5);
+    func_80089284_89E84(win, 0x40, 0x40);
+    func_80089A48_8A648(win, 0);
+    func_8008D88C_8E48C(win);
+    func_80089B2C_8A72C(win, arg6);
+    if (D_80108C1C_2AEDBC_DesertDuel != -1) {
+        mask = (1 << gPlayers[D_80108C18_2AEDB8_DesertDuel].port) | (1 << gPlayers[D_80108C1C_2AEDBC_DesertDuel].port);
+    } else {
+        mask = 1 << gPlayers[D_80108C18_2AEDB8_DesertDuel].port;
+    }
+    func_8008D59C_8E19C(win, mask);
+    return win;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104844_2AA9E4_DesertDuel);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_801049AC_2AAB4C_DesertDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104C9C_2AAE3C_DesertDuel);
+/* A tumbleweed every 210 frames. */
+void func_80104C9C_2AAE3C_DesertDuel(void) {
+    D_80108C4C_2AEDEC_DesertDuel = 210;
+    D_80108CE0_2AEE80_DesertDuel = omAddObj(0x10, 0, 0, -1, func_80104CE4_2AAE84_DesertDuel);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104CE4_2AAE84_DesertDuel);
+void func_80104CE4_2AAE84_DesertDuel(omObjData* obj) {
+    if (--D_80108C4C_2AEDEC_DesertDuel == 0) {
+        func_80104DF4_2AAF94_DesertDuel(D_80108CD4_2AEE74_DesertDuel);
+        D_80108C4C_2AEDEC_DesertDuel = 210;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104D28_2AAEC8_DesertDuel);
+/* The tumbleweed: model 0xA019E with shadow 0x0D. */
+void func_80104D28_2AAEC8_DesertDuel(void) {
+    omObjData* obj;
+    Unk3FTumbleweed* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104DF4_2AAF94_DesertDuel);
+    obj = omAddObj(0x10, 3, 3, -1, func_80104EF8_2AB098_DesertDuel);
+    obj->model[0] = LoadFormFile(0xA019E, 0x699);
+    obj->model[1] = LoadFormFile(0xD, 0x299);
+    work = func_80027154_27D54(sizeof(Unk3FTumbleweed), 0x7918);
+    obj->unk_50 = work;
+    obj->trans.x = 600.0f;
+    obj->trans.y = 45.0f;
+    obj->trans.z = 1500.0f;
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    work->active = 0;
+    work->count = 0;
+    D_80108CD4_2AEE74_DesertDuel = obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80104EF8_2AB098_DesertDuel);
+/* Starts the tumbleweed across the stage: the first time from the right, then from a random side. */
+void func_80104DF4_2AAF94_DesertDuel(omObjData* obj) {
+    Unk3FTumbleweed* work = obj->unk_50;
+
+    work->active = 1;
+    work->rot = 0.0f;
+    work->count &= 0xFF;
+    if (work->count == 0 || (rand8() & 1)) {
+        work->startX = 140.0f;
+        work->endX = -300.0f;
+        work->speed = -13.0f;
+    } else {
+        work->startX = -140.0f;
+        work->endX = 300.0f;
+        work->speed = 13.0f;
+    }
+    obj->trans.x = work->startX * 5.0f;
+    obj->trans.y = 45.0f;
+    obj->trans.z = 1350.0f;
+    work->count++;
+}
+
+void func_80104EF8_2AB098_DesertDuel(omObjData* obj) {
+    Unk3FTumbleweed* work = obj->unk_50;
+
+    if (work->active) {
+        obj->trans.x += work->speed;
+        obj->trans.y = 36.0f;
+        obj->trans.z = 850.0f;
+        work->rot -= work->speed;
+        if (work->rot < 0.0f) {
+            work->rot += 360.0f;
+        }
+        omSetRot(obj, 0.0f, 0.0f, work->rot);
+        omSetSca(obj, 0.8f, 0.8f, 0.8f);
+        func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+        if ((work->speed < 0.0f && obj->trans.x < work->endX) || (work->speed > 0.0f && obj->trans.x > work->endX)) {
+            work->active = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80105054_2AB1F4_DesertDuel);
 

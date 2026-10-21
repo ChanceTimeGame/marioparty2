@@ -215,7 +215,7 @@ void func_80104354_2AA4F4_DesertDuel(void);
 void func_801043E4_2AA584_DesertDuel(omObjData* obj);
 void func_80104474_2AA614_DesertDuel(s32 layout);
 void func_801047AC_2AA94C_DesertDuel(omObjData* obj);
-s16 func_80104844_2AA9E4_DesertDuel(s16 x, s16 y, s16 w, s16 h, s16 arg4, s32 arg5, s32 arg6);
+s16 func_80104844_2AA9E4_DesertDuel(s16 x, s16 y, s16 w, s16 h, s16 arg4, s16 arg5, s32 arg6);
 void func_801049AC_2AAB4C_DesertDuel(void);
 void func_80104C9C_2AAE3C_DesertDuel(void);
 void func_80104CE4_2AAE84_DesertDuel(omObjData* obj);
