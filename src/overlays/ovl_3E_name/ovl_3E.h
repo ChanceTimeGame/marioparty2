@@ -466,7 +466,6 @@ s32 func_80041610_42210(struct unk_8003B8D4Struct*, s32);
 s32 DirectionPrompt(struct unk_8003B8D4Struct*);
 void func_8004108C_41C8C(struct unk_8003B8D4Struct*);
 s32 PlayerIsCPU(s16);
-s16 func_80044800_45400(DecisionTreeNonLeafNode*); /* RunDecisionTree */
 void MBDlgWinCreate(s32, s32);
 void MBDlgWinExec(s32, s32);
 void MBDlgWinClose(void);
@@ -493,8 +492,6 @@ void func_800614B4_620B4(s32, s32);
 void func_80056124_56D24(void);
 void func_80056458_57058(void);
 s32 func_800573AC_57FAC(void);
-/* 54CB0.c takes arg2 as s32; it is the message's insert string */
-void func_80056368_56F68(s16, u32, char*, s32, s32, s32, s32);
 void func_80059120_59D20(void*, f32, f32);
 void func_80059158_59D58(void*);
 /* 63670.c defines it (void); retail passes 2 */
