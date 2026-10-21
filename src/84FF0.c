@@ -1369,7 +1369,8 @@ extern u8 D_800CD850_CE450;      /* window system initialised */
 extern u8 D_800CD851_CE451;      /* MP3 gLanguageIndex */
 extern s16 D_800ED8B0_EE4B0;
 extern u8 D_01142DD0[];
-extern void* D_800FD8C4_FE4C4;
+typedef struct FontFile FontFile;
+extern FontFile* D_800FD8C4_FE4C4; /* font */
 extern Process* D_800FC87C_FD47C;
 extern u8 D_800F9512_FA112;
 extern u8 D_800F851A_F911A;
@@ -2240,7 +2241,83 @@ void func_8008AD84_8B984(void) {
     D_800F9512_FA112 = 1;
 }
 
+struct FontFile {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8; /* offset of the 4-bit glyphs */
+};
+
+void func_8008B62C_8C22C(s16 win_id);
+void func_8008B154_8BD54(s16 winId, s16 x, s16 y, s16 w, s16 h);
+
+// register allocation (masked 0): c & 0xFF in a0 instead of a3, one addu operand order
+#ifdef NON_MATCHING
+/* MP1 func_8006EEB8: draws character c (a 10x12 4-bit glyph) into the window image in colour color */
+void func_8008AD94_8B994(s16 winId, u8 c, u8 color, s16 x, s16 y) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    u8* buf;
+    u8* src;
+    u8* dst;
+    s16 row;
+    s16 i;
+    s16 w;
+    s16 h;
+    s16 stride;
+    s16 srcStride;
+
+    func_8008B62C_8C22C(winId);
+    y = (y < 0) ? 0 : y;
+    x = (x < 0) ? 0 : x;
+    buf = func_8008B3BC_8BFBC(winId);
+    src = (u8*)D_800FD8C4_FE4C4 + D_800FD8C4_FE4C4->unk8 + (c - 0x30) * 60;
+    w = 10;
+    if (D_800CD851_CE451 != 1) {
+        w = D_800CD888_CE488[c];
+    }
+    h = 12;
+    srcStride = 5;
+    tw->unk34 = w;
+    if ((tw->unk_38 & 4) && c != 0x80 && c != 0x81 && color == 0) {
+        func_8008B154_8BD54(winId, x - 1, y - 2, tw->unk29 + 3 + w, 14);
+    }
+    dst = &buf[(x + y * tw->unk44) / 2];
+    stride = tw->unk44 / 2;
+    color++;
+    if (x & 1) {
+        for (row = 0; row < h; row++) {
+            for (i = 0; i < w / 2; i++) {
+                if ((*src & 0xF0) == 0xF0) {
+                    dst[i] = color | (dst[i] & 0xF0);
+                }
+                if ((*src & 0xF) == 0xF) {
+                    dst[i + 1] = (dst[i + 1] & 0xF) | (color << 4);
+                }
+                src++;
+            }
+            src += srcStride - i;
+            dst += stride;
+        }
+    } else {
+        w >>= 1;
+        for (row = 0; row < h; row++) {
+            for (i = 0; i < w; i++) {
+                if ((*src & 0xF0) == 0xF0) {
+                    *dst = (*dst & 0xF) | (color << 4);
+                }
+                if ((*src & 0xF) == 0xF) {
+                    *dst = color | (*dst & 0xF0);
+                }
+                src++;
+                dst++;
+            }
+            src += srcStride - i;
+            dst += stride - i;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008AD94_8B994);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B154_8BD54);
 
