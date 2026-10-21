@@ -141,7 +141,7 @@ typedef struct ColVtx {
 /* A copy of a model's vertex positions and colours (HmfData.unk5C; 30560) */
 typedef struct HmfVtxCopy {
     /* 0x00 */ s16 unk00; /* vertex count */
-    /* 0x02 */ char unk02[2];
+    /* 0x02 */ s16 unk02; /* the vertex animation frame they hold */
     /* 0x04 */ ColVtx* unk04;
     /* 0x08 */ u8* unk08; /* colours, 3 bytes each */
     /* 0x0C */ u8* unk0C; /* one bit per vertex */
