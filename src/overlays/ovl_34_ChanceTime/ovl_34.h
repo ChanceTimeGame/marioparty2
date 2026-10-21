@@ -233,6 +233,9 @@ s8 func_801097F8_2608F8_ChanceTime(s8 arg0, s8 arg1);
 void func_8010985C_26095C_ChanceTime(void); /* process */
 s8 func_80109CC4_260DC4_ChanceTime(s16 arg0, s16 arg1);
 /* fork C */
+#include "game/hmfman.h"
+#include "game/data.h"
+#include "game/malloc.h"
 void func_80109D84_260E84_ChanceTime(void); /* process */
 void func_8010B02C_26212C_ChanceTime(omObjData* obj);
 void func_8010B214_262314_ChanceTime(omObjData* obj);
@@ -254,7 +257,7 @@ void func_8010C008_263108_ChanceTime(omObjData* obj);
 void func_8010C024_263124_ChanceTime(omObjData* obj);
 void func_8010C080_263180_ChanceTime(omObjData* obj);
 void func_8010C09C_26319C_ChanceTime(void);
-s8* func_8010C268_263368_ChanceTime(void);
+s8* func_8010C268_263368_ChanceTime(omObjData* player); /* player unused: it reads D_800FFFD8[0] */
 void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 arg1);
 /* fork D */
 void func_8010CCF4_263DF4_ChanceTime(omObjData* obj, s8 arg1);
@@ -279,6 +282,9 @@ void func_8010FE50_266F50_ChanceTime(s16 arg0);
 void func_8010FF1C_26701C_ChanceTime(void); /* process */
 
 /* fork C */
+#include "game/hmfman.h"
+#include "game/data.h"
+#include "game/malloc.h"
 extern s16 D_80110194_267294_ChanceTime; /* the fourth panel was reached (MP1 D_8010131A) */
 extern s16 D_8011092C_267A2C_ChanceTime; /* panel model (0x440001) the four panels copy */
 void Hu3DCamUpdateMtx(s16 camIndex);
@@ -309,6 +315,32 @@ extern s8 D_80110978_267A78_ChanceTime[24];
 extern s8 D_80110990_267A90_ChanceTime[24];
 extern s8 D_801109A8_267AA8_ChanceTime[24];
 s32 func_80059FD0_5ABD0(s32 player); /* the player's rank */
+extern char* D_80110184_267284_ChanceTime[4]; /* "tex0_DEF" .. "tex3_DEF": the reel's four faces */
+extern s16 D_80110D64_267E64_ChanceTime; /* the first panel's face-0 sprite, copied by the others */
+/* CTPanelWork::unk_B0 (0x3C bytes; MP1 CTReel). No pointers. Endian: the low bytes of unk_0A and
+   unk_0C[i] are read as u8 arguments: written (u8)r->unk_0C[i], never a byte field at +1. */
+typedef struct CTReel {
+    /* 0x00 */ u8 unk_00;      /* face shown, 0..3 */
+    /* 0x01 */ char unk_01;
+    /* 0x02 */ s16 unk_02[4];  /* sprite per face */
+    /* 0x0A */ s16 unk_0A;     /* current entry of unk_0C */
+    /* 0x0C */ s16 unk_0C[21]; /* entries: characters or outcomes */
+    /* 0x36 */ s16 unk_36;     /* entry count */
+    /* 0x38 */ f32 unk_38;     /* spin angle */
+} CTReel; /* size = 0x3C */
+/* omObjData::unk_50 of the four panels (0xB4 bytes on the N64; the pointer is last, so only the
+   size grows on the host: allocate sizeof). */
+typedef struct CTPanelWork {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04; /* 2 left, 1 outcome reel, 3 right / fourth */
+    /* 0x05 */ char unk_05[0xAB];
+    /* 0xB0 */ CTReel* unk_B0;
+} CTPanelWork;
+s16 func_8003DBE8_3E7E8(HmfData* arg0, u16 arg1, s16 arg2, char* arg3); /* sprite copy (3D6A0.c) */
+void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
+void func_8003E52C_3F12C(s16 arg0, u8 arg1); /* sprite face */
+void func_80029AFC_2A6FC(s16);
 void func_800614B4_620B4(s32 player, s32 coins); /* give coins */
 void func_80019B9C_1A79C(omObjData* obj, s32 motion);
 s16 func_80073014_73C14(u32 arg0, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*); the sound's length */

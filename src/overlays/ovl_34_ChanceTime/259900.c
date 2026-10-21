@@ -1,6 +1,11 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* A panel (side 0 left, 1 the outcome reel, 2 right, 3 the fourth, blank): its reel of four
+   sprite faces over the panel model, filled with the players' characters (0, 2: random start of
+   0 or 2), the outcome table D_80110920 (1) or face 6 (3). (MP1 func_800FCC18 / func_800FD7DC) */
+
+
 /* Fills the six outcome tables the block reel draws from (first variant: 20 entries, early /
    middle / late game; second variant: 10). */
 
@@ -1645,7 +1650,7 @@ void func_8010C09C_26319C_ChanceTime(void) {
     D_801109A8_267AA8_ChanceTime[8] = 4;
     D_801109A8_267AA8_ChanceTime[9] = 12;
 }
-s8* func_8010C268_263368_ChanceTime(void) {
+s8* func_8010C268_263368_ChanceTime(omObjData* player) {
     s16 stage;
     s32 rank;
 
@@ -1715,8 +1720,169 @@ s8* func_8010C268_263368_ChanceTime(void) {
         return D_80110948_267A48_ChanceTime;
     }
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C44C_26354C_ChanceTime);
+void func_8010C44C_26354C_ChanceTime(omObjData* obj, s8 side) {
+    CTPanelWork* work;
+    CTReel* r;
+    void* data;
+    s8 i;
+    s8 rnd;
+    s8 a;
+    s8 b;
 
+    func_8010C09C_26319C_ChanceTime();
+    D_80110920_267A20_ChanceTime = func_8010C268_263368_ChanceTime(D_800FFFD8_100BD8[0]);
+    obj->model[0] = func_80027D3C_2893C(D_8011092C_267A2C_ChanceTime);
+    obj->model[1] = func_80018A64_19664(0x440001, 0x6A9);
+    obj->model[2] = LoadFormFile(0xC, 0x2CD);
+    switch (side) {
+    case 0:
+        obj->trans.x = -140.0f;
+        break;
+    case 1:
+        obj->trans.x = 0.0f;
+        break;
+    case 2:
+    case 3:
+        obj->trans.x = 140.0f;
+        break;
+    }
+    obj->trans.y = 240.0f;
+    obj->trans.z = 1400.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.5f;
+    obj->rot.x = obj->rot.y = obj->rot.z = 0.0f;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], 0.8f, 0.8f, 0.8f);
+    func_8002979C_2A39C(obj->model[1], 90.0f, 0.0f, 0.0f);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(CTPanelWork), 0x7918);
+    func_800B0EF0_B1AF0(work, 0, sizeof(CTPanelWork));
+    work->unk_03 = 1;
+    switch (side) {
+    case 0:
+        work->unk_04 = 2;
+        break;
+    case 1:
+        work->unk_04 = 1;
+        break;
+    case 2:
+    case 3:
+        work->unk_04 = 3;
+        break;
+    }
+    work->unk_B0 = func_80027154_27D54(sizeof(CTReel), 0x7918);
+    func_800B0EF0_B1AF0(work->unk_B0, 0, sizeof(CTReel));
+    r = work->unk_B0;
+    switch (side) {
+    case 0:
+        data = DataRead(0x440002);
+        D_80110D64_267E64_ChanceTime = r->unk_02[0] =
+            func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[1]].hmf, data, 0, D_80110184_267284_ChanceTime[0]);
+        func_8003E4F4_3F0F4(r->unk_02[0], 1, 1);
+        HuMemMemoryFreePerm(data);
+        break;
+    case 1:
+        data = DataRead(0x440003);
+        r->unk_02[0] =
+            func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[1]].hmf, data, 0, D_80110184_267284_ChanceTime[0]);
+        HuMemMemoryFreePerm(data);
+        break;
+    }
+    if (side != 3) {
+        /* face 0 too: side 1 copies its own first face over it (retail) */
+        for (i = 0; i < 4; i++) {
+            if (side == 1) {
+                r->unk_02[i] = func_8003DBE8_3E7E8(D_800FC834_FD434[obj->model[1]].hmf, r->unk_02[0], 0,
+                                                   D_80110184_267284_ChanceTime[i]);
+            } else {
+                r->unk_02[i] = func_8003DBE8_3E7E8(D_800FC834_FD434[obj->model[1]].hmf,
+                                                   D_80110D64_267E64_ChanceTime, 0, D_80110184_267284_ChanceTime[i]);
+            }
+            func_8003E4F4_3F0F4(r->unk_02[i], 1, 1);
+        }
+        func_80029A8C_2A68C(obj->model[1]);
+        func_80029AFC_2A6FC(obj->model[1]);
+        if (side == 1) {
+            if (D_80110060_267160_ChanceTime == 0) {
+                r->unk_36 = 20;
+            } else {
+                r->unk_36 = 10;
+            }
+            for (i = 0; i < r->unk_36; i++) {
+                r->unk_0C[i] = D_80110920_267A20_ChanceTime[i];
+            }
+            r->unk_38 = 0.0f;
+            r->unk_0A = 2;
+            r->unk_00 = 2;
+            rnd = a = 0;
+            for (i = 0, b = 0; i < 4; i++) {
+                if (a >= r->unk_36) {
+                    a = 0;
+                }
+                b &= 3;
+                func_8003E52C_3F12C(r->unk_02[b], (u8)r->unk_0C[a]);
+                b--;
+                a++;
+            }
+            D_800FC834_FD434[obj->model[1]].rot.x += rnd * 90;
+            D_800FC834_FD434[obj->model[1]].rot.x = (s32)D_800FC834_FD434[obj->model[1]].rot.x % 360;
+        } else {
+            for (i = 0; i < 4; i++) {
+                r->unk_0C[i] = gPlayers[i].character;
+            }
+            r->unk_38 = 0.0f;
+            r->unk_36 = 4;
+            r->unk_00 = 2;
+            r->unk_0A = 2;
+            if ((s32)((u32)(rand8() * 5) >> 7) < 5) {
+                rnd = a = 2;
+            } else {
+                rnd = a = 0;
+            }
+            i = 0;
+            b = rnd;
+            do {
+                a &= 3;
+                b &= 3;
+                func_8003E52C_3F12C(r->unk_02[b], (u8)r->unk_0C[a]);
+                b--;
+                i++;
+                a++;
+            } while (i < 4);
+            r->unk_0A += rnd;
+            if (r->unk_0A >= r->unk_36) {
+                r->unk_0A -= r->unk_36;
+            }
+            r->unk_00 = (r->unk_00 - rnd) & 3;
+            D_800FC834_FD434[obj->model[1]].rot.x += r->unk_0A * 90;
+            D_800FC834_FD434[obj->model[1]].rot.x = (s32)D_800FC834_FD434[obj->model[1]].rot.x % 360;
+        }
+    } else {
+        for (i = 0; i < 4; i++) {
+            s16 spr = func_8003DBE8_3E7E8(D_800FC834_FD434[obj->model[1]].hmf, D_80110D64_267E64_ChanceTime, 0,
+                                          D_80110184_267284_ChanceTime[i]);
+            r->unk_02[i] = spr;
+            func_8003E4F4_3F0F4(spr, 1, 1);
+        }
+        func_80029A8C_2A68C(obj->model[1]);
+        func_80029AFC_2A6FC(obj->model[1]);
+        for (i = 0; i < 4; i++) {
+            func_8003E52C_3F12C(r->unk_02[i], 6);
+        }
+    }
+    switch (side) {
+    case 0:
+        obj->func_ptr = func_8010BF98_263098_ChanceTime;
+        break;
+    case 1:
+        obj->func_ptr = func_8010BFB4_2630B4_ChanceTime;
+        break;
+    case 2:
+        obj->func_ptr = func_8010BFEC_2630EC_ChanceTime;
+        break;
+    case 3:
+        obj->func_ptr = func_8010C024_263124_ChanceTime;
+        break;
+    }
+}
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010CCF4_263DF4_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010DFF8_2650F8_ChanceTime);
