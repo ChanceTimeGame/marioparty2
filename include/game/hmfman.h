@@ -154,7 +154,11 @@ typedef struct HmfData {
     /* 0x1A */ s16 unk1A; /* MP1 0x74 */
     /* 0x1C */ char unk1C[2];
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ char unk20[0x18];
+    /* 0x20 */ char unk20[8];
+    /* 0x28 */ s16 unk28; /* texture animation count (unkC8) */
+    /* 0x2A */ char unk2A[6];
+    /* 0x30 */ u8* unk30; /* end of the file's chunks */
+    /* 0x34 */ u8* unk34; /* first chunk */
     /* 0x38 */ void* unk38; /* the MAP1 chunk */
     /* 0x3C */ HmfDisp* unk3C; /* or a single Gfx* list, by flag */
     /* 0x40 */ HmfVtx* unk40; /* MP1 0x04 */
@@ -179,7 +183,7 @@ typedef struct HmfData {
     /* 0xA8 */ char unkA8[0xC];
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
     /* 0xB8 */ char unkB8[0x10];
-    /* 0xC8 */ s32 unkC8;
+    /* 0xC8 */ s32 unkC8; /* a u8* (texture animation slots, 3D6A0); read through HMF_TEXANIM */
     /* 0xCC */ char unkCC[8];
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
     /* 0xD8 */ char unkD8[8];

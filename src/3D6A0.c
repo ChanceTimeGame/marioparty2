@@ -1,11 +1,11 @@
 #include "common.h"
 #include "game/hmfman.h"
 
-/* Model textures and texture animation (MP1 src/388E0.c) and texture-load display lists
-   (MP1 src/3AC60.c). Functions without MP1 C stay asm. The rest of the unit's rodata
-   (D2EE0-D2F40, strings) belongs to asm functions; only func_8004075C's doubles at its tail are
-   carved. MP2's model structs have MP3's layout; fields are named by their MP2 offset
-   (MP1 offset in the comment). */
+/* Model textures, palettes and texture animation (MP1 src/388E0.c) and texture-load display
+   lists (MP1 src/3AC60.c). MP2 adds texture animations defined in the model file ("VX" entries,
+   func_8003EF04/func_8003F240) and per-frame palettes. The unit's whole rodata (D2EE0-D2F60) is
+   carved. MP2's model structs have MP3's layout; fields are named by their MP2 offset (MP1 offset
+   in the comment). */
 
 typedef struct unk388E0Struct40 {
     /* 0x00 */ s16 unk_00;
@@ -17,11 +17,38 @@ typedef struct unk388E0Struct40 {
     /* 0x0B */ u8 unk_0B;
 } unk388E0Struct40; //sizeof 0xC
 
-typedef struct unk388E0StructC8 {
+typedef struct unk388E0Struct44 {
     /* 0x00 */ s16 unk_00;
     /* 0x02 */ s16 unk_02;
-    /* 0x04 */ void* unk_04;
+} unk388E0Struct44; //sizeof 4
+
+/* one step of a sprite animation */
+typedef struct unk388E0StructC4 {
+    /* 0x00 */ s16 unk_00; /* frame, -1 for none */
+    /* 0x02 */ s16 unk_02; /* duration */
+    /* 0x04 */ u8 unk_04;
+    /* 0x05 */ u8 unk_05;
+    /* 0x06 */ u8 unk_06;
+    /* 0x07 */ char unk_07;
+} unk388E0StructC4; //sizeof 8
+
+typedef struct unk388E0StructC8 {
+    /* 0x00 */ s16 unk_00; /* step count */
+    /* 0x02 */ s16 unk_02; /* total duration */
+    /* 0x04 */ unk388E0StructC4* unk_04;
 } unk388E0StructC8; //sizeof 8
+
+/* one sprite frame (MP1 unk388E0StructCC, 0xC bytes there) */
+typedef struct unk388E0StructCC {
+    /* 0x00 */ s16 unk_00; /* width */
+    /* 0x02 */ s16 unk_02; /* height */
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ u16 unk_08; /* palette size */
+    /* 0x0A */ char unk_0A[2];
+    /* 0x0C */ u16* unk_0C; /* palette */
+    /* 0x10 */ void* unk_10; /* image */
+} unk388E0StructCC; //sizeof 0x14
 
 typedef struct unk388E0StructC0 {
     /* 0x00 */ s16 unk_00;
@@ -30,7 +57,7 @@ typedef struct unk388E0StructC0 {
     /* 0x06 */ s16 unk_06;
     /* 0x08 */ s16 unk_08;
     /* 0x0A */ char unk_0A[2];
-    /* 0x0C */ void* unk_0C;
+    /* 0x0C */ unk388E0StructCC* unk_0C;
     /* 0x10 */ unk388E0StructC8* unk_10;
     /* 0x14 */ u16* unk_14;
 } unk388E0StructC0; //sizeof 0x18
@@ -90,11 +117,99 @@ HmfPal* func_8003D55C_3E15C(HmfData*, s16);
 void func_8003D6B8_3E2B8(HmfPal*);
 void func_8003DEA4_3EAA4(void);
 void func_8003E8E4_3F4E4(s16);
-void func_8003CFA0_3DBA0(void);
+HmfTex* func_8003CFA0_3DBA0(HmfData*, u8*);
+void func_8003D070_3DC70(u8*, HmfData*, HmfTex*);
+void func_8003D318_3DF18(HmfData*);
+void func_8003D6DC_3E2DC(u8*, HmfData*, HmfPal*);
+void func_8003D880_3E480(void);
+u8* func_8001EA88_1F688(s32, u8*, u8*);
+u8* func_8001EB18_1F718(u8*);
+s16 func_8001F380_1FF80(HmfData*, u8*, s16);
+s16 func_8001F4AC_200AC(u8*);
+s32 func_800B0FD0_B1BD0(void*, void*); /* strcmp */
+s16 func_8003DF08_3EB08(void*);
+s16 func_8003F4C0_400C0(void);
+s16 func_8003F520_40120(void);
+s16 func_8003F240_3FE40(HmfData*, u8*);
+HmfTex* func_8003CF48_3DB48(HmfData*, s16);
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003CAA0_3D6A0);
+/* HmfData.unkC8 holds a u8* (typed s32 in the shared header; on a 64-bit host it must be retyped) */
+#define HMF_TEXANIM(h) (*(u8**) &(h)->unkC8)
+void func_800B10E0_B1CE0(void*, void*); /* strcpy */
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003CB70_3D770);
+extern HmfTex* D_800FD89C_FE49C; /* 128 textures */
+extern HmfPal* D_800F9568_FA168; /* 128 palettes */
+extern u8 D_800F92DD_F9EDD; /* model load flags (1D0B0) */
+
+/* MP1 func_80037CE0 (src/388E0.c) */
+void func_8003CAA0_3D6A0(void) {
+    s16 i;
+
+    D_800FD89C_FE49C = HuMemAlloc(128 * sizeof(HmfTex));
+    D_800F9568_FA168 = HuMemAlloc(128 * sizeof(HmfPal));
+
+    for (i = 0; i < 128; i++) {
+        D_800FD89C_FE49C[i].unk24 = 0;
+    }
+
+    for (i = 0; i < 128; i++) {
+        D_800F9568_FA168[i].unk20 = 0;
+    }
+
+    D_800F92DD_F9EDD = 0;
+    func_8003D880_3E480();
+}
+
+/* MP1 func_80037DA0 (src/388E0.c); MP2 prints and stops when the table is full */
+void func_8003CB70_3D770(HmfData* arg0) {
+    HmfTex* var_s0;
+    s16 temp_s4;
+    u8* var_s1;
+    u8 sp10[32];
+    s16 i;
+
+    func_8003D318_3DF18(arg0);
+
+    for (var_s1 = arg0->unk34; var_s1 < arg0->unk30;) {
+        var_s1 = func_8001EA88_1F688(0x424D5031, var_s1, arg0->unk30);
+        if (var_s1 == NULL) {
+            break;
+        }
+
+        temp_s4 = func_8001F380_1FF80(arg0, sp10, (var_s1[8] << 8) + var_s1[9]);
+        for (i = 0; i < 128; i++) {
+            if (D_800FD89C_FE49C[i].unk24 == temp_s4 && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], sp10) == 0) {
+                break;
+            }
+        }
+
+        if (i == 128) {
+            for (i = 0; i < 128; i++) {
+                if (D_800FD89C_FE49C[i].unk24 == 0) {
+                    break;
+                }
+            }
+            if (i == 128) {
+                osSyncPrintf("TEXTURE OVER!\n");
+                break;
+            }
+            var_s0 = &D_800FD89C_FE49C[i];
+            var_s0->unk24 = temp_s4;
+            func_800B10E0_B1CE0(var_s0, sp10);
+            var_s0->unk2C = arg0;
+            func_8003D070_3DC70(var_s1, arg0, var_s0);
+        } else {
+            var_s0 = &D_800FD89C_FE49C[i];
+            if (D_800F92DD_F9EDD & 2) {
+                func_80027340_27F40(var_s0->unk28);
+                var_s0->unk2C = arg0;
+                func_8003D070_3DC70(var_s1, arg0, var_s0);
+            }
+        }
+
+        var_s1 = func_8001EB18_1F718(var_s1 + 4);
+    }
+}
 
 /* same c: marioparty func_80037FA0 (src/388E0.c) */
 void func_8003CDAC_3D9AC(HmfData* arg0) {
@@ -142,14 +257,40 @@ void func_8003CDAC_3D9AC(HmfData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003CF48_3DB48);
+/* MP1 func_8003813C (src/388E0.c) */
+HmfTex* func_8003CF48_3DB48(HmfData* arg0, s16 arg1) {
+    u8 sp10[32];
 
-/* exact c: marioparty func_800F7310_PaddleBattle (src/overlays/ovl_33_PaddleBattle/2341E0.c) */
-void func_8003CF84_3DB84(void) {
-    func_8003CFA0_3DBA0();
+    func_8001F380_1FF80(arg0, sp10, arg1);
+    return func_8003CFA0_3DBA0(arg0, sp10);
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003CFA0_3DBA0);
+/* exact c: marioparty func_800F7310_PaddleBattle (src/overlays/ovl_33_PaddleBattle/2341E0.c) */
+/* 274D0 uses the result */
+HmfTex* func_8003CF84_3DB84(HmfData* arg0, u8* arg1) {
+    return func_8003CFA0_3DBA0(arg0, arg1);
+}
+
+/* MP1 func_80038194 (src/388E0.c) */
+HmfTex* func_8003CFA0_3DBA0(HmfData* arg0, u8* arg1) {
+    u16 temp_s2;
+    u16 i;
+
+    temp_s2 = func_8001F4AC_200AC(arg1);
+
+    for (i = 0; i < 128; i++) {
+        if (D_800FD89C_FE49C[i].unk24 != 0 && D_800FD89C_FE49C[i].unk24 == temp_s2
+            && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], arg1) == 0) {
+            break;
+        }
+    }
+
+    if (i == 128) {
+        return NULL;
+    }
+
+    return &D_800FD89C_FE49C[i];
+}
 
 /* same c: marioparty func_80038254 (src/388E0.c) */
 void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
@@ -269,15 +410,114 @@ void func_8003D070_3DC70(u8 *arg0, HmfData *arg1, HmfTex *arg2)
   }
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D318_3DF18);
+/* MP1 func_800384FC (src/388E0.c) */
+void func_8003D318_3DF18(HmfData* arg0) {
+    HmfPal* var_s0;
+    s16 temp_s4;
+    u8* var_s1;
+    u8 sp10[32];
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D55C_3E15C);
+    for (var_s1 = arg0->unk34; var_s1 < arg0->unk30;) {
+        var_s1 = func_8001EA88_1F688(0x50414C31, var_s1, arg0->unk30);
+        if (var_s1 == NULL) {
+            break;
+        }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D628_3E228);
+        temp_s4 = func_8001F380_1FF80(arg0, sp10, (var_s1[8] << 8) + var_s1[9]);
+        for (i = 0; i < 128; i++) {
+            if (D_800F9568_FA168[i].unk20 == temp_s4 && func_800B0FD0_B1BD0(&D_800F9568_FA168[i], sp10) == 0) {
+                break;
+            }
+        }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D6B8_3E2B8);
+        if (i == 128) {
+            for (i = 0; i < 128; i++) {
+                if (D_800F9568_FA168[i].unk20 == 0) {
+                    break;
+                }
+            }
+            if (i == 128) {
+                break;
+            }
+            var_s0 = &D_800F9568_FA168[i];
+            var_s0->unk20 = temp_s4;
+            func_800B10E0_B1CE0(var_s0, sp10);
+            var_s0->unk24 = arg0;
+            var_s0->unk1C = 1;
+            func_8003D6DC_3E2DC(var_s1, arg0, var_s0);
+        } else {
+            var_s0 = &D_800F9568_FA168[i];
+            if (D_800F92DD_F9EDD & 2) {
+                func_80027340_27F40(var_s0->unk28);
+                var_s0->unk24 = arg0;
+                func_8003D6DC_3E2DC(var_s1, arg0, var_s0);
+            }
+            var_s0->unk1C++;
+        }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D6DC_3E2DC);
+        var_s1 = func_8001EB18_1F718(var_s1 + 4);
+    }
+}
+
+/* MP1 func_80038720 (src/388E0.c) */
+HmfPal* func_8003D55C_3E15C(HmfData* arg0, s16 arg1) {
+    u8 sp10[32];
+    u16 id;
+    u16 i;
+
+    id = func_8001F380_1FF80(arg0, sp10, arg1);
+
+    for (i = 0; i < 128; i++) {
+        if ((u16) D_800F9568_FA168[i].unk20 != 0 && (u16) D_800F9568_FA168[i].unk20 == id
+            && func_800B0FD0_B1BD0(&D_800F9568_FA168[i], sp10) == 0) {
+            break;
+        }
+    }
+
+    if (i == 128) {
+        return NULL;
+    }
+
+    return &D_800F9568_FA168[i];
+}
+
+/* MP1 func_800387DC (src/388E0.c) */
+void func_8003D628_3E228(HmfData* arg0) {
+    s16 i;
+
+    for (i = 0; i < 128; i++) {
+        if (D_800F9568_FA168[i].unk20 != 0 && D_800F9568_FA168[i].unk24 == arg0) {
+            func_8003D6B8_3E2B8(&D_800F9568_FA168[i]);
+        }
+    }
+}
+
+/* MP1 func_80038864 (src/388E0.c) */
+void func_8003D6B8_3E2B8(HmfPal* arg0) {
+    arg0->unk20 = 0;
+    arg0->unk24 = NULL;
+    func_80027340_27F40(arg0->unk28);
+}
+
+/* MP1 func_80038888 (src/388E0.c, NON_MATCHING there) */
+void func_8003D6DC_3E2DC(u8* arg0, HmfData* arg1, HmfPal* arg2) {
+    u16* tbl;
+    s16 count;
+    s16 i;
+    s32 c;
+
+    arg0 += 0xA;
+    count = (arg0[0] << 8) + arg0[1];
+    arg2->unk28 = func_80027154_27D54(count * 2, 15000);
+    arg2->unk1E = count;
+    arg0 += 2;
+    tbl = arg2->unk28;
+    for (i = 0; i < count; i++) {
+        tbl[i] = (c = ((arg0[i * 4 + 0] & 0xF8) << 8) + ((arg0[i * 4 + 1] & 0xF8) << 3) + ((arg0[i * 4 + 2] & 0xF8) >> 2),
+                  (arg0[i * 4 + 3] >= 0x80) ? c + 1 : c);
+    }
+}
 
 /* same c: marioparty func_8003897C (src/388E0.c) */
 void func_8003D7D0_3E3D0(HmfTex* arg0) {
@@ -310,9 +550,119 @@ void func_8003D880_3E480(void) {
     func_8003DEA4_3EAA4();
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003D8F0_3E4F0);
+/* MP1 func_80038A9C (src/388E0.c): start a texture animation (sprite bank arg1) on the texture
+   named arg3 in model arg0, or in every model when arg0 is -1 */
+s16 func_8003D8F0_3E4F0(HmfData* arg0, void* arg1, s16 arg2, char* arg3) {
+    HmfTex* tex;
+    s16 id;
+    s16 i;
+    s16 slot;
+    s16 j;
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003DBE8_3E7E8);
+    id = func_8001F4AC_200AC((u8*) arg3);
+    for (i = 0; i < 128; i++) {
+        if (D_800FD89C_FE49C[i].unk24 == id && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], arg3) == 0) {
+            break;
+        }
+    }
+    if (i == 128) {
+        osSyncPrintf("Can't Find TextureName! EntryAnimMAn\n");
+        return -1;
+    }
+
+    for (slot = 0; slot < 128; slot++) {
+        if (D_800FD7F8_FE3F8[slot].unk_00 == -1) {
+            break;
+        }
+    }
+    if (slot == 128) {
+        return -1;
+    }
+
+    D_800FD7F8_FE3F8[slot].unk_00 = func_8003DF08_3EB08(arg1);
+    D_800FD7F8_FE3F8[slot].unk_04 = arg2;
+    D_800FD7F8_FE3F8[slot].unk_02 = 0;
+    D_800FD7F8_FE3F8[slot].unk_06 = 0;
+    D_800FD7F8_FE3F8[slot].unk_0B = 0x10;
+    D_800FD7F8_FE3F8[slot].unk_0A = 0;
+    D_800FFDFC_1009FC[D_800FD7F8_FE3F8[slot].unk_00].unk_08 = 1;
+    tex = &D_800FD89C_FE49C[i];
+    if (arg0 != (HmfData*) -1) {
+        for (i = 0; i < arg0->unk12; i++) {
+            if (arg0->unk88[i].unk0C == tex) {
+                arg0->unk88[i].unk09 = slot;
+            }
+        }
+    } else {
+        for (j = 0; j < 128; j++) {
+            if (D_800FC834_FD434[j].hmf != NULL && (u8) D_800FC834_FD434[j].unk00 == 0) {
+                arg0 = D_800FC834_FD434[j].hmf;
+                for (i = 0; i < arg0->unk12; i++) {
+                    if (arg0->unk88[i].unk0C == tex) {
+                        arg0->unk88[i].unk09 = slot;
+                    }
+                }
+            }
+        }
+    }
+    return slot;
+}
+
+/* MP1 func_80038D5C (src/388E0.c): link the texture named arg3 to the sprite bank of
+   animation arg1 */
+s16 func_8003DBE8_3E7E8(HmfData* arg0, u16 arg1, s16 arg2, char* arg3) {
+    HmfTex* tex;
+    unk388E0Struct40* p;
+    s16 id;
+    s16 i;
+    s16 slot;
+    s16 j;
+
+    id = func_8001F4AC_200AC((u8*) arg3);
+    for (i = 0; i < 128; i++) {
+        if (D_800FD89C_FE49C[i].unk24 == id && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], arg3) == 0) {
+            break;
+        }
+    }
+    if (i == 128) {
+        osSyncPrintf("Can't Find TextureName! LinkAnimMAn\n");
+        return -1;
+    }
+
+    slot = func_8003F4C0_400C0();
+    if (slot == -1) {
+        return -1;
+    }
+
+    p = &D_800FD7F8_FE3F8[slot];
+    p->unk_00 = D_800FD7F8_FE3F8[arg1].unk_00;
+    p->unk_04 = arg2;
+    p->unk_0A = 0;
+    p->unk_06 = 0;
+    p->unk_02 = 0;
+    p->unk_0B = 0x10;
+    D_800FFDFC_1009FC[p->unk_00].unk_08++;
+    tex = &D_800FD89C_FE49C[i];
+    if (arg0 != (HmfData*) -1) {
+        for (i = 0; i < arg0->unk12; i++) {
+            if (arg0->unk88[i].unk0C == tex) {
+                arg0->unk88[i].unk09 = slot;
+            }
+        }
+    } else {
+        for (j = 0; j < 128; j++) {
+            if (D_800FC834_FD434[j].hmf != NULL && (u8) D_800FC834_FD434[j].unk00 == 0) {
+                arg0 = D_800FC834_FD434[j].hmf;
+                for (i = 0; i < arg0->unk12; i++) {
+                    if (arg0->unk88[i].unk0C == tex) {
+                        arg0->unk88[i].unk09 = slot;
+                    }
+                }
+            }
+        }
+    }
+    return slot;
+}
 
 /* exact c: marioparty func_80039020 (src/388E0.c) */
 void func_8003DEA4_3EAA4(void) {
@@ -325,7 +675,122 @@ void func_8003DEA4_3EAA4(void) {
     }
 }
 
+// register allocation: retail keeps nframes on the stack and data in s4 (masked 20)
+#ifdef NON_MATCHING
+/* MP1 func_80039084 (src/388E0.c, NON_MATCHING there): load a sprite bank file into a free slot;
+   MP2 frames carry their own palette */
+s16 func_8003DF08_3EB08(void* arg) {
+    u8* arg0 = arg;
+    u8* data;
+    s16 nframes;
+    unk388E0StructC0* spr;
+    s16 w;
+    s16 h;
+    unk388E0StructCC* fr;
+    unk388E0StructC4* af;
+    u8* p;
+    u8* q;
+    s16 bpp;
+    s32 npal;
+    s16 slot;
+    s16 i;
+    s16 j;
+    s16 n;
+    s16 t;
+    s16 total;
+    s16 d;
+
+    for (slot = 0; slot < 32; slot++) {
+        if (D_800FFDFC_1009FC[slot].unk_0C == NULL) {
+            break;
+        }
+    }
+    if (slot == 32) {
+        return -1;
+    }
+
+    spr = &D_800FFDFC_1009FC[slot];
+    spr->unk_06 = (arg0[0x18] << 8) + arg0[0x19];
+    bpp = spr->unk_06 & 0xFF;
+    npal = arg0[0x1A];
+    spr->unk_04 = npal;
+    p = arg0 + (arg0[0xD] << 16) + (arg0[0xE] << 8) + arg0[0xF];
+    if (bpp < 9) {
+        if (npal >= 2 && !(spr->unk_06 & 0x8000)) {
+            spr->unk_14 = func_80027154_27D54(npal * 2, slot + 20000);
+            bcopy(p, spr->unk_14, npal * 2);
+        } else {
+            spr->unk_04 = 0;
+            spr->unk_14 = NULL;
+        }
+    } else {
+        spr->unk_04 = 0;
+        spr->unk_14 = NULL;
+    }
+
+    nframes = arg0[0x10];
+    nframes = (nframes << 8) + arg0[0x11];
+    spr->unk_00 = nframes;
+    spr->unk_0C = func_80027154_27D54(nframes * sizeof(*spr->unk_0C), slot + 20000);
+    p = arg0 + (arg0[1] << 16) + (arg0[2] << 8) + arg0[3];
+    for (i = 0; i < nframes; i++) {
+        fr = &spr->unk_0C[i];
+        data = arg0 + (p[1] << 16) + (p[2] << 8) + p[3];
+        w = fr->unk_00 = (p[4] << 8) + p[5];
+        h = fr->unk_02 = (p[6] << 8) + p[7];
+        fr->unk_04 = (p[8] << 8) + p[9];
+        fr->unk_06 = (p[10] << 8) + p[11];
+        fr->unk_10 = func_80027154_27D54(w * h * bpp / 8, slot + 20000);
+        bcopy(data, fr->unk_10, w * h * bpp / 8);
+        fr->unk_0C = spr->unk_14;
+        fr->unk_08 = spr->unk_04;
+        p += 12;
+    }
+
+    spr->unk_02 = n = (arg0[0x12] << 8) + arg0[0x13];
+    if (n != 0) {
+        spr->unk_10 = func_80027154_27D54(n * sizeof(*spr->unk_10), slot + 20000);
+        p = arg0 + (arg0[5] << 16) + (arg0[6] << 8) + arg0[7];
+        for (i = 0; i < n; i++) {
+            q = arg0 + (p[i * 4 + 1] << 16) + (p[i * 4 + 2] << 8) + p[i * 4 + 3];
+            spr->unk_10[i].unk_00 = t = (q[0] << 8) + q[1];
+            spr->unk_10[i].unk_04 = func_80027154_27D54(t * sizeof(*spr->unk_10->unk_04), slot + 20000);
+            q += 2;
+            total = 0;
+            for (j = 0; j < t; j++) {
+                af = &spr->unk_10[i].unk_04[j];
+                af->unk_00 = (q[0] << 8) + q[1];
+                af->unk_02 = d = (q[2] << 8) + q[3];
+                if (d > 0) {
+                    total += d;
+                }
+                af->unk_04 = q[4];
+                af->unk_05 = q[5];
+                af->unk_06 = q[6];
+                q += 7;
+            }
+            spr->unk_10[i].unk_02 = total;
+        }
+    } else {
+        spr->unk_02 = 1;
+        spr->unk_10 = func_80027154_27D54(sizeof(*spr->unk_10), slot + 20000);
+        spr->unk_10->unk_00 = nframes;
+        spr->unk_10->unk_04 = func_80027154_27D54(nframes * sizeof(*spr->unk_10->unk_04), slot + 20000);
+        for (j = 0; j < nframes; j++) {
+            af = &spr->unk_10->unk_04[j];
+            af->unk_00 = j;
+            af->unk_02 = 1;
+            af->unk_05 = 0;
+            af->unk_04 = 0;
+            af->unk_06 = 0;
+        }
+        spr->unk_10->unk_02 = nframes;
+    }
+    return slot;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003DF08_3EB08);
+#endif
 
 /* exact c: marioparty func_80039644 (src/388E0.c) */
 void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2) {
@@ -369,7 +834,43 @@ u8 func_8003E608_3F208(s16 arg0)
   return (*new_var).unk_00;
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003E65C_3F25C);
+/* MP1 func_800397AC (src/388E0.c): advance every texture animation by arg0 ticks; MP2 adds
+   the pause flag 4 and restarts a looping animation at its first tick */
+void func_8003E65C_3F25C(u16 arg0) {
+    unk388E0Struct40* p;
+    unk388E0StructC8* bank;
+    s16 i;
+    s16 k;
+
+    for (i = 0; i < 128; i++) {
+        if (D_800FD7F8_FE3F8[i].unk_00 == -1) {
+            continue;
+        }
+        if (D_800FD7F8_FE3F8[i].unk_0A & 4) {
+            continue;
+        }
+        p = &D_800FD7F8_FE3F8[i];
+        if (p->unk_0A & 1) {
+            continue;
+        }
+        bank = &D_800FFDFC_1009FC[p->unk_00].unk_10[p->unk_04];
+        for (k = 0; k < arg0; k++) {
+            p->unk_06 += p->unk_0B;
+            while (p->unk_06 >= bank->unk_04[p->unk_02].unk_02 * 16) {
+                p->unk_06 -= bank->unk_04[p->unk_02].unk_02 * 16;
+                p->unk_02++;
+                if (bank->unk_00 <= p->unk_02) {
+                    if ((p->unk_0A & 2) || bank->unk_04[p->unk_02 - 1].unk_02 != -1) {
+                        p->unk_02--;
+                    } else {
+                        p->unk_02 = 0;
+                        p->unk_06 = 0;
+                    }
+                }
+            }
+        }
+    }
+}
 
 /* exact c: marioparty func_80039970 (src/388E0.c) */
 void func_8003E808_3F408(s16 arg0, f32 arg1) {
@@ -417,11 +918,87 @@ void func_8003E984_3F584(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003EA44_3F644);
+/* MP1 func_80039BAC (src/388E0.c) */
+void func_8003EA44_3F644(void) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003EAF0_3F6F0);
+    for (i = 0; i < 128; i++) {
+        D_800FD89C_FE49C[i].unk24 = 0;
+    }
 
+    for (i = 0; i < 128; i++) {
+        D_800F9568_FA168[i].unk20 = 0;
+    }
+
+    func_800273A8_27FA8(15000);
+}
+
+/* MP1 func_80039C48 (src/388E0.c): the size of the texture named arg0 */
+void func_8003EAF0_3F6F0(char* arg0, void* arg1) {
+    unk388E0Struct44* out = arg1;
+    u16 id;
+    u16 i;
+
+    id = func_8001F4AC_200AC((u8*) arg0);
+
+    for (i = 0; i < 128; i++) {
+        if (D_800FD89C_FE49C[i].unk24 == id && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], arg0) == 0) {
+            break;
+        }
+    }
+
+    if (i == 128) {
+        return;
+    }
+    out->unk_00 = D_800FD89C_FE49C[i].unk1E;
+    out->unk_02 = D_800FD89C_FE49C[i].unk1F;
+}
+
+extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
+
+// register allocation and scheduling of the animation-slot lookup (masked 19), as in MP1
+#ifdef NON_MATCHING
+/* MP1 func_80039D10 (src/388E0.c, NON_MATCHING there): point each texture's segments at its
+   image and palette, or at the current frame of its texture animation */
+void func_8003EBC8_3F7C8(HmfData* arg0) {
+    unk388E0Struct40* p;
+    unk388E0StructC0* spr;
+    HmfTex* tex;
+    s16 frame;
+    s16 i;
+    s32 idx;
+
+    for (i = 0; i < arg0->unk12; i++) {
+        if (arg0->unk88[i].unk03 == -1) {
+            continue;
+        }
+        idx = arg0->unk88[i].unk09;
+        if (!(idx & 0x80)) {
+            p = &D_800FD7F8_FE3F8[idx];
+            if (p->unk_00 != -1) {
+                spr = &D_800FFDFC_1009FC[p->unk_00];
+                frame = spr->unk_10[p->unk_04].unk_04[p->unk_02].unk_00;
+                if (frame != -1) {
+                    gSPSegment(D_800FDBCC_FE7CC++, arg0->unk88[i].unk03,
+                               osVirtualToPhysical(spr->unk_0C[frame].unk_10));
+                    if (D_800FFDFC_1009FC[p->unk_00].unk_14 != NULL) {
+                        gSPSegment(D_800FDBCC_FE7CC++, arg0->unk88[i].unk04,
+                                   osVirtualToPhysical(spr->unk_0C[frame].unk_0C));
+                    }
+                    continue;
+                }
+            }
+        }
+        tex = arg0->unk88[i].unk0C;
+        gSPSegment(D_800FDBCC_FE7CC++, arg0->unk88[i].unk03, osVirtualToPhysical(tex->unk28));
+        if (tex->unk30 != NULL) {
+            gSPSegment(D_800FDBCC_FE7CC++, arg0->unk88[i].unk04, osVirtualToPhysical(tex->unk30->unk28));
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003EBC8_3F7C8);
+#endif
 
 /* same c: marioparty func_80039F9C (src/388E0.c) */
 void func_8003EE44_3FA44(HmfData* arg0) {
@@ -445,15 +1022,197 @@ void func_8003EEA4_3FAA4(HmfData* arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003EF04_3FB04);
+/* start the texture animations a model file defines ("VX" entries of its MTN1 chunks); their
+   slots are kept in the model (unkC8, unk28). Returns 0 when it has none */
+s32 func_8003EF04_3FB04(HmfData* arg0) {
+    u8 sp10[32];
+    HmfTexRef* ref;
+    HmfTex* tex;
+    u8* chunk;
+    u8* p;
+    u8* e;
+    s16 n;
+    s16 k;
+    s16 cnt;
+    s16 slot;
+    s16 id;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003F240_3FE40);
+    n = 0;
+    chunk = arg0->unk34;
+    while (TRUE) {
+        chunk = func_8001EA88_1F688(0x4D544E31, chunk, arg0->unk30);
+        if (chunk == NULL) {
+            break;
+        }
+        p = chunk + 0xD;
+        cnt = chunk[0xA];
+        for (k = 0; k < cnt; k++) {
+            e = p;
+            p += (p[0] << 8) + p[1] + 2;
+            if (e[2] != 'V' || e[3] != 'X') {
+                continue;
+            }
+            e += 4;
+            slot = func_8003F4C0_400C0();
+            if (slot == -1) {
+                break;
+            }
+            sp10[n] = slot;
+            D_800FD7F8_FE3F8[slot].unk_00 = func_8003F240_3FE40(arg0, e);
+            D_800FD7F8_FE3F8[slot].unk_04 = 0;
+            D_800FD7F8_FE3F8[slot].unk_02 = 0;
+            D_800FD7F8_FE3F8[slot].unk_06 = 0;
+            D_800FD7F8_FE3F8[slot].unk_0B = 0x10;
+            D_800FD7F8_FE3F8[slot].unk_0A = 4;
+            D_800FFDFC_1009FC[D_800FD7F8_FE3F8[slot].unk_00].unk_08 = 1;
+            ref = &arg0->unk88[(e[2] << 8) + e[3]];
+            id = ref->unk0C->unk24;
+            for (i = 0; i < 128; i++) {
+                if (D_800FD89C_FE49C[i].unk24 == id && func_800B0FD0_B1BD0(&D_800FD89C_FE49C[i], ref->unk0C) == 0) {
+                    break;
+                }
+            }
+            tex = &D_800FD89C_FE49C[i];
+            for (i = 0; i < arg0->unk12; i++) {
+                if (arg0->unk88[i].unk0C == tex) {
+                    arg0->unk88[i].unk09 = slot;
+                }
+            }
+            n++;
+        }
+        chunk = func_8001EB18_1F718(chunk + 4);
+    }
+    if (n == 0) {
+        HMF_TEXANIM(arg0) = NULL;
+        return 0;
+    }
+    HMF_TEXANIM(arg0) = func_80027154_27D54(n, arg0->unk0E + 1);
+    for (i = 0; i < n; i++) {
+        HMF_TEXANIM(arg0)[i] = sp10[i];
+    }
+    arg0->unk28 = n;
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003F4C0_400C0);
+/* build a sprite bank whose frames are the model's own textures (a "VX" entry at arg1:
+   frame count, then texture index and duration per frame); the last step loops */
+s16 func_8003F240_3FE40(HmfData* arg0, u8* arg1) {
+    unk388E0StructC0* spr;
+    unk388E0StructCC* fr;
+    unk388E0StructC4* af;
+    HmfTex* tex;
+    u8* p;
+    s16 slot;
+    s16 n;
+    s16 id;
+    s16 i;
+    s16 total;
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003F520_40120);
+    af = NULL;
+    slot = func_8003F520_40120();
+    if (slot == -1) {
+        return -1;
+    }
+    spr = &D_800FFDFC_1009FC[slot];
+    n = (arg1[4] << 8) + arg1[5];
+    spr->unk_00 = n;
+    spr->unk_0C = func_80027154_27D54(n * sizeof(*spr->unk_0C), id = slot + 20000);
+    p = arg1 + 6;
+    spr->unk_06 = (arg1[0x18] << 8) + arg1[0x19];
+    spr->unk_02 = 1;
+    spr->unk_10 = func_80027154_27D54(sizeof(*spr->unk_10), id);
+    spr->unk_10->unk_00 = n + 1;
+    spr->unk_10->unk_04 = func_80027154_27D54((n + 1) * sizeof(*spr->unk_10->unk_04), id);
+    total = 0;
+    for (i = 0; i < n; i++) {
+        fr = &spr->unk_0C[i];
+        af = &spr->unk_10->unk_04[i];
+        tex = func_8003CF48_3DB48(arg0, (p[0] << 8) + p[1]);
+        fr->unk_00 = tex->unk1E;
+        fr->unk_02 = tex->unk1F;
+        fr->unk_06 = 0;
+        fr->unk_04 = 0;
+        fr->unk_10 = tex->unk28;
+        af->unk_00 = i;
+        af->unk_02 = (p[2] << 8) + p[3];
+        if (af->unk_02 == 0) {
+            af->unk_02 = 1;
+        }
+        if (af->unk_02 > 0) {
+            total += af->unk_02;
+        }
+        af->unk_06 = 0;
+        af->unk_05 = 0;
+        af->unk_04 = 0;
+        if (tex->unk1C == 2) {
+            fr->unk_08 = tex->unk30->unk1E;
+            fr->unk_0C = tex->unk30->unk28;
+        }
+        p += 4;
+    }
+    af++; /* retail writes through NULL + 8 when n is 0 */
+    af->unk_00 = 0;
+    af->unk_02 = -1;
+    spr->unk_10->unk_02 = total;
+    spr->unk_04 = spr->unk_0C->unk_08;
+    spr->unk_14 = spr->unk_0C->unk_0C;
+    return slot;
+}
 
-INCLUDE_ASM("asm/nonmatchings/3D6A0", func_8003F57C_4017C);
+/* a free texture animation slot, or -1 */
+s16 func_8003F4C0_400C0(void) {
+    s16 i;
+
+    for (i = 0; i < 128; i++) {
+        if (D_800FD7F8_FE3F8[i].unk_00 == -1) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/* a free sprite bank slot, or -1 */
+s16 func_8003F520_40120(void) {
+    s16 i;
+
+    for (i = 0; i < 32; i++) {
+        if (D_800FFDFC_1009FC[i].unk_0C == NULL) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/* restart texture animation arg0 and advance it by arg1 ticks (16 per frame unit at speed 1) */
+void func_8003F57C_4017C(s16 arg0, s16 arg1) {
+    unk388E0Struct40* p;
+    unk388E0StructC8* bank;
+    s16 k;
+
+    if (D_800FD7F8_FE3F8[arg0].unk_00 == -1) {
+        return;
+    }
+    p = &D_800FD7F8_FE3F8[arg0];
+    bank = &D_800FFDFC_1009FC[p->unk_00].unk_10[p->unk_04];
+    p->unk_02 = 0;
+    p->unk_06 = 0;
+    for (k = 0; k < arg1; k++) {
+        p->unk_06++;
+        while (p->unk_06 >= bank->unk_04[p->unk_02].unk_02) {
+            p->unk_06 -= bank->unk_04[p->unk_02].unk_02;
+            p->unk_02++;
+            if (bank->unk_00 <= p->unk_02) {
+                if ((p->unk_0A & 2) || bank->unk_04[p->unk_02 - 1].unk_02 != -1) {
+                    p->unk_02--;
+                } else {
+                    p->unk_02 = 0;
+                    p->unk_06 = 0;
+                }
+            }
+        }
+    }
+}
 
 s32 func_8003F6F0_402F0(s16 overlayID) {
     s32 explanationOverlayID;
