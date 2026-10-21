@@ -113,6 +113,9 @@ void func_80041B40_42740(s32 arg0);
 void func_8002D124_2DD24(s16 index);
 void MBModelDispOff(MBModel*);
 void MBModelDispOn(MBModel*);
+void HuVecAdd(Vec*, Vec*, Vec*);
+void func_80029E80_2AA80(s16, s32, s32);
+void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -145,6 +148,15 @@ extern s16 D_80111A68_2A6D38_name_3E[2];
 extern BoardEventTableEntry D_80112484_2A7754_name_3E[];
 extern BoardEventTableEntry D_801124EC_2A77BC_name_3E[];
 extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
+extern s16 D_80111A34_2A6D04_name_3E[2][2]; /* signpost marker offsets */
+extern s16 D_80111A3C_2A6D0C_name_3E[2][2]; /* signpost facing: from, to spaces */
+extern s16 D_80111A6C_2A6D3C_name_3E[2]; /* bank spaces */
+extern Vec D_80111A70_2A6D40_name_3E[5]; /* bank coin offsets */
+extern Vec D_80111AAC_2A6D7C_name_3E[5]; /* bank coin rotations (x, z used) */
+extern s16 D_80111AE8_2A6DB8_name_3E[2]; /* signpost spaces */
+extern u8 D_80111AED_2A6DBD_name_3E[]; /* signpost model per board, at [board * 2] */
+extern s16 D_80111B1C_2A6DEC_name_3E[9][2]; /* per board: sound in [1] */
+extern s32 D_80111B40_2A6E10_name_3E[9]; /* per board: delay */
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
@@ -164,6 +176,10 @@ extern MBModel* D_8011371C_2A89EC_name_3E;
 extern MBModel* D_80113720_2A89F0_name_3E[7];
 extern MBModel* D_8011373C_2A8A0C_name_3E;
 extern MBModel* D_80113740_2A8A10_name_3E[2];
+extern MBModel* D_80113748_2A8A18_name_3E;
+extern MBModel* D_80113750_2A8A20_name_3E[10]; /* bank coins */
+extern MBModel* D_80113778_2A8A48_name_3E;
+extern MBModel* D_8011377C_2A8A4C_name_3E[2]; /* signposts */
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -204,10 +220,10 @@ void func_80105DDC_29B0AC_name_3E(void);
 void func_80105EC4_29B194_name_3E(void);
 void func_80105F0C_29B1DC_name_3E(s16 arg0);
 void func_8010602C_29B2FC_name_3E(void);
-s32 func_8010608C_29B35C_name_3E(void);
-void func_80106188_29B458_name_3E(s32 arg0);
+void func_8010608C_29B35C_name_3E(void);
+void func_80106188_29B458_name_3E(s16 arg0);
 void func_801062F4_29B5C4_name_3E(void);
-void func_8010635C_29B62C_name_3E(s32 arg0);
+void func_8010635C_29B62C_name_3E(s16 arg0);
 void func_801064B8_29B788_name_3E(void);
 void func_80106518_29B7E8_name_3E(void);
 s32 func_80106574_29B844_name_3E(s32 arg0);

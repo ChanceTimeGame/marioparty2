@@ -1199,17 +1199,104 @@ void func_80105F0C_29B1DC_name_3E(s16 arg0) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010602C_29B2FC_name_3E);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010608C_29B35C_name_3E);
+void func_8010608C_29B35C_name_3E(void) {
+    s32 i;
+    s32 j;
+    s32 count;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80106188_29B458_name_3E);
+    for (i = 0; i < 2; i++) {
+        count = (D_800F8CE4_F98E4[0x1D] + 9) / 10;
+        if (count > 5) {
+            count = 5;
+        }
+        for (j = 0; j < count; j++) {
+            MBModelDispOn(D_80113750_2A8A20_name_3E[i * 5 + j]);
+        }
+        for (; j < 5; j++) {
+            MBModelDispOff(D_80113750_2A8A20_name_3E[i * 5 + j]);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801062F4_29B5C4_name_3E);
+void func_80106188_29B458_name_3E(s16 arg0) {
+    MBModel* coin;
+    Vec* pos;
+    s32 bank;
+    s16 slot;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010635C_29B62C_name_3E);
+    if (D_80113750_2A8A20_name_3E[arg0] == NULL) {
+        if (D_80113748_2A8A18_name_3E == NULL) {
+            coin = func_80043510_44110(0x6C, NULL);
+            func_80043DAC_449AC(coin);
+            D_80113748_2A8A18_name_3E = coin;
+        } else {
+            coin = MBModelParamCreate(D_80113748_2A8A18_name_3E);
+        }
+        D_80113750_2A8A20_name_3E[arg0] = coin;
+        coin->attr |= 2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801064B8_29B788_name_3E);
+        bank = arg0 / 5;
+        pos = &coin->pos;
+        func_800B3170_B3D70(pos, &GetSpaceData(D_80111A6C_2A6D3C_name_3E[bank])->coords);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80106518_29B7E8_name_3E);
+        slot = arg0 % 5;
+        HuVecAdd(pos, &D_80111A70_2A6D40_name_3E[slot], pos);
+        coin->obj->rot.x = D_80111AAC_2A6D7C_name_3E[slot].x;
+        coin->obj->rot.z = D_80111AAC_2A6D7C_name_3E[slot].z;
+        MBModelDispOff(coin);
+    }
+}
+
+void func_801062F4_29B5C4_name_3E(void) {
+    s32 i;
+
+    D_80113748_2A8A18_name_3E = NULL;
+    for (i = 0; i < 10; i++) {
+        D_80113750_2A8A20_name_3E[i] = NULL;
+        func_80106188_29B458_name_3E(i);
+    }
+    func_8010608C_29B35C_name_3E();
+}
+
+void func_8010635C_29B62C_name_3E(s16 arg0) {
+    MBModel* obj;
+    SpaceData* space;
+    char pad[4]; /* frame size, as MP3 func_80108748 (ChillyWaters) */
+
+    if (D_8011377C_2A8A4C_name_3E[arg0] == NULL) {
+        if (D_80113778_2A8A48_name_3E == NULL) {
+            /* D_80111AED[board * 2]: column 1 of a u8 [][2] table one byte before it */
+            obj = func_80043510_44110(D_80111AED_2A6DBD_name_3E[GwSystem.current_board_index * 2], NULL);
+            func_80043DAC_449AC(obj);
+            D_80113778_2A8A48_name_3E = obj;
+        } else {
+            obj = MBModelParamCreate(D_80113778_2A8A48_name_3E);
+        }
+        D_8011377C_2A8A4C_name_3E[arg0] = obj;
+        obj->attr |= 2;
+        func_80029E80_2AA80(obj->obj->model[0], 2, 1);
+        func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80111AE8_2A6DB8_name_3E[arg0])->coords);
+        space = GetSpaceData(D_80111A3C_2A6D0C_name_3E[arg0][0]);
+        func_80056658_57258(&GetSpaceData(D_80111A3C_2A6D0C_name_3E[arg0][1])->coords, &space->coords, &obj->rot);
+        func_80041AEC_426EC(0xC, obj, D_80111A34_2A6D04_name_3E[arg0][0], D_80111A34_2A6D04_name_3E[arg0][1]);
+    }
+}
+
+void func_801064B8_29B788_name_3E(void) {
+    s32 i;
+
+    D_80113778_2A8A48_name_3E = NULL;
+    for (i = 0; i < 2; i++) {
+        D_8011377C_2A8A4C_name_3E[i] = NULL;
+        func_8010635C_29B62C_name_3E(i);
+    }
+}
+
+void func_80106518_29B7E8_name_3E(void) {
+    HuPrcSleep(D_80111B40_2A6E10_name_3E[GwSystem.current_board_index]);
+    PlaySound(D_80111B1C_2A6DEC_name_3E[GwSystem.current_board_index][1]);
+    omDelPrcObj(NULL);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80106574_29B844_name_3E);
 
