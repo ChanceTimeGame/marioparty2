@@ -1202,44 +1202,61 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010C44C_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010CCF4_263DF4_ChanceTime);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010DFF8_2650F8_ChanceTime);
+s32 func_8010DFF8_2650F8_ChanceTime(omObjData* obj, f32 size, omObjData* other) {
+    Vec d;
+    CTPlayerWork* work = CT_PWORK(other);
+    f32 half;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E0D4_2651D4_ChanceTime);
+    d.x = other->trans.x - obj->trans.x;
+    d.y = other->trans.y + work->unk_34 + 10.0f - obj->trans.y;
+    d.z = other->trans.z - obj->trans.z;
+    half = size / 2.0f;
+    if (-half < d.x && d.x < half && -half < d.z && d.z < half && -half < d.y && d.y < half) {
+        return 1;
+    }
+    return 0;
+}
+void func_8010E0D4_2651D4_ChanceTime(omObjData* obj) {
+    obj->model[0] = func_80018A64_19664(0x440000, 0x2B9);
+    obj->trans.x = -140.0f;
+    obj->trans.y = 3.0f;
+    obj->trans.z = 1400.0f;
+    obj->scale.x = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.z = 1.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->model[1] = func_80027D3C_2893C(obj->model[0]);
+    func_80029714_2A314(obj->model[1], 0.0f, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->model[2] = func_80027D3C_2893C(obj->model[0]);
+    func_80029714_2A314(obj->model[2], 140.0f, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[2], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->func_ptr = func_8010E214_265314_ChanceTime;
+}
+void func_8010E214_265314_ChanceTime(omObjData* obj) {
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E214_265314_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E440_265540_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E668_265768_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E71C_26581C_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010E7C0_2658C0_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010EED0_265FD0_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010EF84_266084_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F304_266404_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F4B4_2665B4_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F760_266860_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F82C_26692C_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F8F8_2669F8_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010F9C4_266AC4_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FC18_266D18_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FD28_266E28_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FE50_266F50_ChanceTime);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FF1C_26701C_ChanceTime);
-
+    if (D_801101BC_2672BC_ChanceTime[0] == 0 && D_80110198_267298_ChanceTime[0] == 1) {
+        s = 1.0f - HuMathSin(D_801101A0_2672A0_ChanceTime[0] / 16.0f * 180.0f) * 0.5f;
+        obj->scale.x = obj->scale.y = obj->scale.z = s;
+        if (D_801101A0_2672A0_ChanceTime[0] == 16) {
+            D_801101BC_2672BC_ChanceTime[0] = 1;
+        }
+    } else if (D_801101BC_2672BC_ChanceTime[1] == 0 && D_80110198_267298_ChanceTime[1] == 1) {
+        s = 1.0f - HuMathSin(D_801101A0_2672A0_ChanceTime[1] / 16.0f * 180.0f) * 0.5f;
+        func_800297E8_2A3E8(obj->model[1], s, s, s);
+        if (D_801101A0_2672A0_ChanceTime[1] == 16) {
+            D_801101BC_2672BC_ChanceTime[1] = 1;
+        }
+    } else if (D_801101BC_2672BC_ChanceTime[2] == 0 && D_80110198_267298_ChanceTime[2] == 1) {
+        s = 1.0f - HuMathSin(D_801101A0_2672A0_ChanceTime[2] / 16.0f * 180.0f) * 0.5f;
+        func_800297E8_2A3E8(obj->model[2], s, s, s);
+        if (D_801101A0_2672A0_ChanceTime[2] == 16) {
+            D_801101BC_2672BC_ChanceTime[1] = 1; /* retail sets [1], not [2] */
+        }
+    }
+}
 /* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
  * .text: switch back by hand (harmless once a C function precedes this). */
 __asm__(".section .rodata");

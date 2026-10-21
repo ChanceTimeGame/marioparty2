@@ -107,7 +107,8 @@ typedef struct CTMotion {
 /* omObjData::unk_50 of the player objects and of the two block holders (C8E0.c's MgWork,
    0x15C bytes; MP1 CTPlayerWork). One pointer, at 0xE8: later fields shift on the host. */
 typedef struct CTPlayerWork {
-    /* 0x00 */ char unk_00[0x38];
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34; /* height of the hit box centre (fork D) */
     /* 0x38 */ f32 unk_38; /* vertical speed; 1000.0f = on the ground */
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
@@ -207,6 +208,34 @@ extern s16 D_80110D72_267E72_ChanceTime[4]; /* buttons held */
 /* The panels' objects; retail writes the third (D_80110D88) as [2] in one branch. */
 extern omObjData* D_80110D80_267E80_ChanceTime[2];
 extern omObjData* D_80110D88_267E88_ChanceTime;
+
+/* fork D */
+/* omObjData::unk_50 of the hit-box objects (0xB4 bytes; C8E0 func_8000BF24 writes 0x06, 0x14,
+   0xA0..0xAC). */
+typedef struct CTBoxWork {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04;
+    /* 0x05 */ char unk_05[3];
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ char unk_0C[0xA8];
+} CTBoxWork; /* size = 0xB4 */
+
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
+void func_8000BFF0_CBF0(omObjData* obj);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_8001A708_1B308(u16, u16);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
+void espDispOn(u16);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+
+extern s16 D_80110198_267298_ChanceTime[3]; /* the three blocks' scale animation running */
+extern s16 D_801101A0_2672A0_ChanceTime[3]; /* its frame (0..16) */
+extern s8 D_801101BC_2672BC_ChanceTime[3]; /* it finished */
+extern s8 D_801101C0_2672C0_ChanceTime;
+extern u16 D_801109C0_267AC0_ChanceTime; /* sprite */
+extern s16 D_801109C2_267AC2_ChanceTime;
 
 /* ---- overlay functions (all 62; signatures past fork A's range are inferred) ---- */
 /* fork A */
