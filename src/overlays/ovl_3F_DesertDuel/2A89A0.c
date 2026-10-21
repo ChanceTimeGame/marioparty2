@@ -1262,7 +1262,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80106988_
 #endif
 /* The shot in flight: on reaching the target (within 30) it knocks them back (motion 5, rumble,
    sound), then bounces back and rolls to a stop, a sound on each bounce; then D_80108C50. */
-#define ABS3F(x) ((x) < 0.0f ? -(x) : (x))
+#define ABS3F(x) ((x) < 0 ? -(x) : (x))
 /* NON_MATCHING: float registers (masked 0): retail computes the shadow's x in f2 with -10.0f in f2
    and 215.0f in f0; inline in the call it matches but loads obj->model one step early. */
 #ifdef NON_MATCHING
@@ -1600,8 +1600,122 @@ s32 func_80107BF8_2ADD98_DesertDuel(void) {
     }
     return cand[rand8() % n];
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
+/* Starts a CPU duelist's input script (func_80108580, pad triggers in D_80108C98). Mode 2 (the
+   challenger picks an opponent): with 20 coins or more, a random opponent with 20 coins among
+   the best-ranked ones, else func_80107BF8's choice. Mode 3 (the stake): a percentage of the
+   poorer player's coins from the two ranks and whether the star counts are within one
+   (D_80108B68 picks a row of D_80108BE8 ranges and D_80108BF8 bases), at least the minimum.
+   Retail quirks: the rank-1 pass runs twice; equal ranks index row -1 of the ranges. */
+/* NON_MATCHING: masked 39, all loop-guard and delay-slot shape: GCC tests the passes' loop guard
+   as `n < count - 1` (n is known to be 0) where retail tests `count - 1 > 0`; one register in
+   the star difference. */
+#ifdef NON_MATCHING
+void func_80107EE4_2AE084_DesertDuel(s32 cur, s32 target, s32 mode) {
+    s32 cand[4];
+    s32 flag[4];
+    s32 rows[32] = {
+        -1, 1, 3, 2, 3, 3, 3, 3,
+        0, 1, -1, 1, 1, 2, 1, 2,
+        0, 1, 0, 1, -1, 1, 1, 2,
+        0, 0, 0, 1, 0, 1, -1, -1,
+    };
+    s32 range[4] = { 10, 20, 20, 9 };
+    s32 base[4] = { 90, 60, 20, 1 };
+    s32 unused[10];
+    omObjData* obj;
+    Unk3FCpuInput* work;
+    s32 diff;
+    s32 row;
+    s32 n;
+    s32 i;
 
+    obj = omAddObj(0x10, 0, 0, -1, func_80108580_2AE720_DesertDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Unk3FCpuInput), 0x7918);
+    work->timer = 0;
+    work->cur = cur;
+    work->target = target;
+    work->mode = mode;
+    D_80108C98_2AEE38_DesertDuel = 0;
+    if (mode == 2) {
+        if (gPlayers[D_80108C18_2AEDB8_DesertDuel].coins >= 20) {
+            n = 0;
+            for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                flag[i] = 0;
+            }
+            for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 0) {
+                    flag[i] = 1;
+                    n++;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 1) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 1) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 2) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108C20_2AEDC0_DesertDuel[i]) == 3) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            n = 0;
+            for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                if (flag[i] != 0 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins >= 20) {
+                    cand[n++] = i;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108C48_2AEDE8_DesertDuel - 1; i++) {
+                    if (flag[i] == 0 && gPlayers[D_80108C20_2AEDC0_DesertDuel[i]].coins >= 20) {
+                        cand[n++] = i;
+                    }
+                }
+            }
+            if (n > 0) {
+                work->target = cand[rand8() % n];
+            } else {
+                work->target = func_80107BF8_2ADD98_DesertDuel();
+            }
+        } else {
+            work->target = func_80107BF8_2ADD98_DesertDuel();
+        }
+    }
+    if (mode == 3) {
+        row = func_80059FD0_5ABD0(D_80108C18_2AEDB8_DesertDuel) * 8;
+        row += func_80059FD0_5ABD0(D_80108C1C_2AEDBC_DesertDuel) * 2;
+        diff = ABS3F(gPlayers[D_80108C18_2AEDB8_DesertDuel].stars - gPlayers[D_80108C1C_2AEDBC_DesertDuel].stars);
+        row += diff < 2;
+        work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_80108C94_2AEE34_DesertDuel / 100;
+        if (work->target < D_80108C8C_2AEE2C_DesertDuel) {
+            work->target = D_80108C8C_2AEE2C_DesertDuel;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80107EE4_2AE084_DesertDuel);
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80108580_2AE720_DesertDuel);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3F_DesertDuel/2A89A0", func_80108720_2AE8C0_DesertDuel);

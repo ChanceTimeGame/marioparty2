@@ -180,6 +180,15 @@ typedef struct Unk3FDrawer {
     /* 0x04 */ s32 timer;
 } Unk3FDrawer; /* size 0x08 */
 
+/* The CPU input script (func_80107EE4/func_80108580): mode 0 presses Start, 2 moves the cursor
+   to an opponent and presses A, 3 raises the stake to a target and presses A. */
+typedef struct Unk3FCpuInput {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 cur;    /* the cursor row / the stake now */
+    /* 0x08 */ s32 target; /* the row / the stake wanted */
+    /* 0x0C */ s32 mode;
+} Unk3FCpuInput; /* size 0x10 */
+
 /* Status-window layouts (D_80108730): four corner positions as from/to pairs, and the frames
    the move takes. */
 typedef struct Unk3FStatusLayout {
