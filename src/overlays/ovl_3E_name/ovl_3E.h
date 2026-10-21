@@ -167,7 +167,7 @@ extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
 typedef struct Unk4Bytes {
     u8 b[4];
 } Unk4Bytes;
-extern u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
+extern const u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
 
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
@@ -668,9 +668,9 @@ extern u8 D_801122C8_2A7598_name_3E[][4]; /* shop by turn band, rank */
 extern u8 D_801122D4_2A75A4_name_3E[][3]; /* turn band starts by game length */
 extern s8 D_801122E0_2A75B0_name_3E[][5]; /* shop items, -1 none */
 extern u32 D_80112304_2A75D4_name_3E[]; /* shop messages */
-extern Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
-extern Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
-extern char D_801135C8_2A8898_name_3E[]; /* "%d": rodata */
+extern const Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
+extern const Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
+extern const char D_801135C8_2A8898_name_3E[]; /* "%d": rodata */
 extern s32 D_801138B4_2A8B84_name_3E;
 extern u8* D_801138B8_2A8B88_name_3E;
 

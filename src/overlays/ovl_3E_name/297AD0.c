@@ -1,16 +1,6 @@
 #include "common.h"
 #include "ovl_3E.h"
 
-/* Matches, but retail pads it to 16 bytes: it is the overlay entry point, its own file in retail
-   (as ovl_3D_entrypoint.c, with D_80111920 as that file's .data). Needs a
-   [0x297AD0, c, ovl_3E_entrypoint] split before the C can replace the asm. */
-#ifdef NON_MATCHING
-void func_80102800_297AD0_name_3E(void) {
-    ExecBoardScene(D_80111920_2A6BF0_name_3E, D_800CD414_CE014);
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80102800_297AD0_name_3E);
-#endif
 s16 func_80102830_297B00_name_3E(void) {
     return D_80111994_2A6C64_name_3E[GwSystem.star_spawn_indices[GwSystem.unk_0A]];
 }
@@ -451,6 +441,8 @@ void func_80103C94_298F64_name_3E(void) {
     MBHelpWinKill(D_801136E4_2A89B4_name_3E);
 }
 
+const u8 D_80113590_2A8860_name_3E[4] = { 1, 2, 4, 8 };
+
 s32 func_80103CF4_298FC4_name_3E(u8* items) {
     s32 count = 0;
     s16 sp18[4];
@@ -627,7 +619,6 @@ coins:
     }
 }
 
-#ifdef NON_MATCHING /* rodata-pending */
 s32 func_801045C0_299890_name_3E(void) {
     s32 flags[4] = { 0, 0, 0, 0 };
     s32 i;
@@ -657,9 +648,6 @@ s32 func_801045C0_299890_name_3E(void) {
     }
     return min;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801045C0_299890_name_3E);
-#endif
 
 /* MP1 func_800F6B3C (ovl_65) logic, checked case by case against this asm; retail keeps the
    duplicate cases apart and reloads stars between tests (masked 541) */
@@ -1482,6 +1470,9 @@ void func_80106DCC_29C09C_name_3E(s32 player, s32 arg1) {
         MBPlayerVibrate(-1, 0);
     }
 }
+const Unk3Halves D_801135A4_2A8874_name_3E = { 14, 13, 17 };
+const Vec D_801135AC_2A887C_name_3E = { 0.0f, 0.0f, 0.0f };
+
 /* The minecart runs forward along its chain; returns the players it ran over (bits). */
 s32 func_80106FE0_29C2B0_name_3E(void) {
     Vec dir;
@@ -2104,7 +2095,6 @@ void func_80108BE8_29DEB8_name_3E(void) {
     SetNextChainAndSpace(-1, 7, 0);
 }
 /* MP3 MB1Ev_KSuitEnd's shape: a puff grows over the marker model, the marker is rebuilt, the puff shrinks. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_80108C0C_29DEDC_name_3E(void) {
     MBModel* obj;
     f32 scale;
@@ -2129,9 +2119,8 @@ void func_80108C0C_29DEDC_name_3E(void) {
     }
     MBModelKill(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80108C0C_29DEDC_name_3E);
-#endif
+
+const char D_801135C8_2A8898_name_3E[] = "%d";
 
 /* A star space (func_80102C3C 1: buy a star for 20 coins) or the bank (2: passing pays out the
    bank, D_800F8D18; landing pays in up to 5 coins, or a lucky roll pays 5 out; with the star
@@ -2574,7 +2563,7 @@ void func_8010A1DC_29F4AC_name_3E(MBModel* model) {
     func_8002D0A0_2DCA0(model->shadow->model[0], 0);
     MBModelDispOff(model);
 }
-#ifdef NON_MATCHING /* rodata-pending */
+#ifdef NON_MATCHING /* NON_MATCHING: float register allocation in the two sine loops (raw 58) */
 /* A star flies out of the player's status window (player -1: of every other player that has
    one) and the player loses it. */
 s32 func_8010A27C_29F54C_name_3E(s32 player) {
@@ -2887,7 +2876,6 @@ s32 func_8010AB7C_29FE4C_name_3E(s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010AB7C_29FE4C_name_3E);
 #endif
 
-#ifdef NON_MATCHING /* rodata-pending */
 void func_8010B8B8_2A0B88_name_3E(void) {
     MBModel* model;
     f32 angle;
@@ -2912,9 +2900,6 @@ void func_8010B8B8_2A0B88_name_3E(void) {
     MBModelKill(model);
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010B8B8_2A0B88_name_3E);
-#endif
 
 void func_8010BA0C_2A0CDC_name_3E(MBModel* parent) {
     Process* process = omAddPrcObj(func_8010B8B8_2A0B88_name_3E, 0x1000, 0, 0);
@@ -3221,7 +3206,6 @@ void func_8010C5C4_2A1894_name_3E(omObjData* obj) {
     func_8002D0A0_2DCA0(model->obj->model[0], work->alpha);
 }
 
-#ifdef NON_MATCHING /* rodata-pending */
 /* The lamp brings the player to the star (MP3 w06 func_8011068C). */
 void func_8010C6DC_2A19AC_name_3E(void) {
     Vec pos;
@@ -3311,9 +3295,6 @@ void func_8010C6DC_2A19AC_name_3E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010C6DC_2A19AC_name_3E);
-#endif
 
 void func_8010CA78_2A1D48_name_3E(void) {
     GW_SYSTEM* gw = &GwSystem;
@@ -3734,7 +3715,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010DE58_2A3128
 #endif
 
 /* Bowser suit start (item event 4); MP3 MB1Ev_KSuitStart. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_8010E3D0_2A36A0_name_3E(void) {
     GW_PLAYER* player = BoardPlayerGet(-1);
     MBModel* obj;
@@ -3773,12 +3753,8 @@ void func_8010E3D0_2A36A0_name_3E(void) {
     MBKSuitMotionSet(-1, 2);
     MBDlgResultWinExec(0x1E6);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010E3D0_2A36A0_name_3E);
-#endif
 
 /* Bowser suit end (item event 5); MP3 MB1Ev_KSuitEnd. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_8010E640_2A3910_name_3E(void) {
     GW_PLAYER* player = BoardPlayerGet(-1);
     Vec fwd;
@@ -3810,9 +3786,6 @@ void func_8010E640_2A3910_name_3E(void) {
     }
     MBModelKill(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010E640_2A3910_name_3E);
-#endif
 
 /* Board event 9: the current player gets item 3, shown in their status window. */
 void func_8010E874_2A3B44_name_3E(void) {
@@ -3866,7 +3839,6 @@ void func_8010E874_2A3B44_name_3E(void) {
 
 /* Board event 10 (Bowser suit, from the item marker): a player holding item 3 loses it, the
    suit appears on the marker and the current player walks to the star space. */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_8010EB88_2A3E58_name_3E(void) {
     Vec dir;
     GW_PLAYER* player;
@@ -3933,7 +3905,7 @@ void func_8010EB88_2A3E58_name_3E(void) {
     obj->pos.z += 20.0f;
     obj->pos.y += 30.0f;
 
-    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 0.5) {
+    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 1.0) {
         HuVecCopyXYZ(&obj->scale, scale, scale, scale);
         func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
     }
@@ -3941,7 +3913,7 @@ void func_8010EB88_2A3E58_name_3E(void) {
     func_800509FC_515FC();
     MBModelDispOff(D_800F64C8_F70C8);
 
-    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 0.5) {
+    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 1.0) {
         HuVecCopyXYZ(&obj->scale, scale, scale, scale);
         func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
     }
@@ -3979,12 +3951,8 @@ void func_8010EB88_2A3E58_name_3E(void) {
     HuPrcVSleep();
     func_800495D8_4A1D8(gw->current_player_index, 3);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010EB88_2A3E58_name_3E);
-#endif
 
 /* Board event 12: the Bowser suit wears off (the current player is shown again). */
-#ifdef NON_MATCHING /* rodata-pending */
 void func_8010F1FC_2A44CC_name_3E(void) {
     MBModel* obj;
     f32 scale;
@@ -3997,7 +3965,7 @@ void func_8010F1FC_2A44CC_name_3E(void) {
     obj->pos.z += 20.0f;
     obj->pos.y += 30.0f;
 
-    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 0.5) {
+    for (rot = 0.0f, scale = 1.0f; scale < 10.0f; rot += 20.0f, HuPrcVSleep(), scale += 1.0) {
         HuVecCopyXYZ(&obj->scale, scale, scale, scale);
         func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
     }
@@ -4005,7 +3973,7 @@ void func_8010F1FC_2A44CC_name_3E(void) {
     func_800636F8_642F8(3);
     func_80050860_51460();
 
-    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 0.5) {
+    for (; scale >= 1.0f; rot += 20.0f, HuPrcVSleep(), scale -= 1.0) {
         HuVecCopyXYZ(&obj->scale, scale, scale, scale);
         func_800B3B80_B4780(D_800FC834_FD434[obj->obj->model[0]].mtx, rot);
     }
@@ -4014,9 +3982,6 @@ void func_8010F1FC_2A44CC_name_3E(void) {
     MBDlgResultWinExec(D_80112584_2A7854_name_3E[GwSystem.current_board_index] + 8);
     D_800F8D16_F9916 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010F1FC_2A44CC_name_3E);
-#endif
 
 /* Board event 11 (Bowser suit passing players): every player on the current player's space is
    stomped and loses all their coins; the richest one's coins go to the current player.
@@ -4691,7 +4656,6 @@ void func_801112E4_2A65B4_name_3E(void) {
 /* CPU item check (registered with func_80044D98): 1 = use the held item now. Several items are
    used on the last turn, or when their decision tree D_80112F24/80112F84/80113248/801133BC
    says so, or with enough coins. */
-#ifdef NON_MATCHING /* rodata-pending */
 s32 func_80111338_2A6608_name_3E(void) {
     s32 cur;
     s32 i;
@@ -4755,9 +4719,6 @@ s32 func_80111338_2A6608_name_3E(void) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80111338_2A6608_name_3E);
-#endif
 
 /* CPU shop choice: the menu row (slot + 1) of an item to buy. Per character, D_80113510 lists
    items to try with D_80113570 percent chances (needing price + 20 coins); then items 9 and 7,
