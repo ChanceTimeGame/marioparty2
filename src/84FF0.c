@@ -71,7 +71,7 @@ typedef struct TWEntry {
 } TWEntry; // size 0x10 (MP1 SubTextWindow)
 
 typedef struct TextWindow {
-    /* 0x000 */ u8 unk_00[0x20]; /* copied from D_800CD874_CE474 */
+    /* 0x000 */ u16 unk_00[0x10]; /* palette (RGBA5551), copied from D_800CD874_CE474 */
     /* 0x020 */ u8 unk20;
     /* 0x021 */ s8 unk21;
     /* 0x022 */ s8 unk22;
@@ -1818,7 +1818,19 @@ void func_80089A48_8A648(s16 winId, s8 arg1) {
     tw->unk26 = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089A7C_8A67C);
+/* MP1 func_8006E0A4: window sprite priority */
+void func_80089A7C_8A67C(s16 winId, s16 prio) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
+
+    tw->unk60 = prio;
+    for (i = 0; i < 0x16; i++) {
+        SprPrioSet(tw->unk_6C, i, prio);
+    }
+    if (tw->unk6A != -1) {
+        SprPrioSet(tw->unk_6C, 2, prio - 1);
+    }
+}
 
 void func_80089B2C_8A72C(s16 winId, s16 arg1) {
     TextWindow* window;
@@ -1833,13 +1845,44 @@ void func_80089B2C_8A72C(s16 winId, s16 arg1) {
     func_80082488_83088(window->unk_6C, 0, arg1 & 0xFFFF);
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089BBC_8A7BC);
+/* sets the alpha of the cursor and the added sprites */
+void func_80089BBC_8A7BC(s16 winId, s32 alpha) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089C78_8A878);
+    func_80082488_83088(tw->unk_6C, 1, alpha);
+    for (i = 12; i < 0x16; i++) {
+        if (tw->unk_6E[i] != -1) {
+            func_80082488_83088(tw->unk_6C, i, alpha);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089CAC_8A8AC);
+void func_80089C78_8A878(s16 winId, s8 arg1) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_80089DA0_8A9A0);
+    tw->unk22 = arg1;
+    tw->unk23 = arg1;
+}
+
+void func_80027340_27F40(void* ptr);
+
+/* sets palette entry idx + 1 (RGBA5551) and gives the cursor sprite a fresh copy of the palette */
+void func_80089CAC_8A8AC(s16 winId, u8 idx, u8 r, u8 g, u8 b) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    HuSprite* spr = func_80082550_83150(tw->unk_6C, 1);
+    void* pal;
+
+    tw->unk_00[idx + 1] = ((r << 8) & 0xF800) | ((g << 3) & 0x7C0) | ((b >> 2) & 0x3E) | 1;
+    pal = HuMemAlloc(0x20);
+    bcopy(tw, pal, 0x20);
+    func_80027340_27F40(spr->unk_84->unk0C);
+    spr->unk_84->unk0C = pal;
+}
+
+void func_80089DA0_8A9A0(s16 winId, u8 r, u8 g, u8 b) {
+    func_80089CAC_8A8AC(winId, 0, r, g, b);
+}
 
 /* func_80089DDC_8A9DC's rodata, defined here while it is asm */
 const char D_800D36B0_D42B0[] __attribute__((section(".rodata"))) = "Select Max Over!\n";
@@ -2178,7 +2221,6 @@ void func_8008E6AC_8F2AC(s16 arg0) {
     func_8008CCA8_8D8A8(arg0);
 }
 
-void func_80089A7C_8A67C(s16 winId, s16 prio);
 void SprPrioSet(s16 grpIdx, s16 idx, u16 prio);
 
 /* MP1 func_80072108; MP2 has one sprite */
