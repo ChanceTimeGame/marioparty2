@@ -240,6 +240,8 @@ void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void SprAnimKill(s16 animIdx);
 void SprKill(s16 idx);
+s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
+extern s32 D_801126BC_2A798C_name_3E[]; /* decision tree */
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
