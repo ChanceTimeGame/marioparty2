@@ -82,7 +82,7 @@ typedef struct TextWindow {
     /* 0x027 */ u8 unk27;
     /* 0x028 */ u8 unk28;
     /* 0x029 */ u8 unk29;
-    /* 0x02A */ s8 unk2A;
+    /* 0x02A */ u8 unk2A; /* line spacing */
     /* 0x02B */ char pad2B[2];
     /* 0x02D */ u8 unk_2D;
     /* 0x02E */ u8 unk_2E;
@@ -91,7 +91,7 @@ typedef struct TextWindow {
     /* 0x031 */ s8 unk_31;
     /* 0x032 */ s8 unk32;
     /* 0x033 */ s8 unk33;
-    /* 0x034 */ s8 unk34; /* character spacing */
+    /* 0x034 */ u8 unk34; /* character spacing */
     /* 0x035 */ u8 unk35; /* tab width */
     /* 0x036 */ char pad36[2];
     /* 0x038 */ u32 unk_38;
@@ -2087,17 +2087,76 @@ s32 func_80089DDC_8A9DC(s16 winId) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A6DC_8B2DC);
+/* MP1 func_8006E87C's caller: advances past one character */
+s32 func_8008A6DC_8B2DC(TextWindow* tw) {
+    return func_8008A700_8B300(tw, tw->unk34 + tw->unk29);
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A700_8B300);
+extern s32 D_800FDC80_FE880; /* last advance */
+extern u8 D_800CD888_CE488[]; /* character widths */
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A7A0_8B3A0);
+/* MP1 func_8006E87C: advances the cursor by w; wraps the line when the next character does not fit */
+s32 func_8008A700_8B300(TextWindow* tw, s16 w) {
+    s32 cw;
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A7E8_8B3E8);
+    D_800FDC80_FE880 = w;
+    tw->unk54 += w;
+    if (D_800CD851_CE451 == 1) {
+        cw = tw->unk27;
+    } else {
+        cw = D_800CD888_CE488[*tw->unkCC];
+    }
+    if (cw + tw->unk54 > tw->unk4C + tw->unk50) {
+        if (*tw->unkCC >= 0x20) {
+            return func_8008A7A0_8B3A0(tw);
+        }
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A834_8B434);
+/* MP1 func_8006E93C: new line; 0 when the window is full */
+s32 func_8008A7A0_8B3A0(TextWindow* tw) {
+    tw->unk54 = tw->unk4C;
+    tw->unk56 = tw->unk56 + (tw->unk28 + tw->unk2A);
+    return (tw->unk56 + tw->unk28 > tw->unk4E + tw->unk52) ^ 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A8C0_8B4C0);
+/* func_8008A7A0 with a quarter-height line */
+s32 func_8008A7E8_8B3E8(TextWindow* tw) {
+    tw->unk54 = tw->unk4C;
+    tw->unk56 = tw->unk56 + ((tw->unk28 >> 2) + tw->unk2A);
+    return (tw->unk56 + tw->unk28 > tw->unk4E + tw->unk52) ^ 1;
+}
+
+u8* func_8008B3BC_8BFBC(s16 winId);
+
+/* clears the window's text */
+void func_8008A834_8B434(TextWindow* tw) {
+    u8* buf;
+
+    func_8008B66C_8C26C(tw);
+    buf = func_8008B3BC_8BFBC(((u8*)tw - (u8*)D_800F920C_F9E0C) / sizeof(TextWindow));
+    if (tw->unkE0 != 0) {
+        func_800B0EF0_B1AF0(buf, 0, (tw->unk44 * tw->unk46) / 2);
+    }
+    func_8008A8C0_8B4C0(tw);
+}
+
+/* resets the text cursor and removes the added sprites */
+void func_8008A8C0_8B4C0(TextWindow* tw) {
+    s16 i;
+
+    tw->unk54 = tw->unk4C;
+    tw->unk56 = tw->unk4E;
+    tw->unk_30 = 0;
+    tw->unk9A = 0;
+    for (i = 12; i < 0x16; i++) {
+        if (tw->unk_6E[i] != -1) {
+            SprAttrSet(tw->unk_6C, i, 0x8000);
+            tw->unk_6E[i] = -1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008A960_8B560);
 
