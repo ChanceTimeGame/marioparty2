@@ -67,8 +67,6 @@ f32 func_800B75A8_B81A8(f32, f32);          /* atan2 (degrees) */
 void func_800209C4_215C4(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void func_8000E9E8_F5E8(SndConfigView* out);
 s32 func_80015388_15F88(s32 slot);
-void func_800155B8_161B8(s16 slot, s16 vol);
-void func_80015868_16468(s16 slot);
 
 void func_8007A2CC_7AECC(s32 prio, s16 sprId, void (*draw)(CamSprWork*), f32 fov, Vec* eye, Vec* at);
 void func_8007A4A0_7B0A0(u8 count, s32 prio, u16* sprIds, void (*draw)(CamSprWork*), f32 fov, Vec* eye, Vec* at);
@@ -493,10 +491,10 @@ void func_8007BB74_7C774(void) {
                 work->vol2[i] -= work->vol2Step[i];
                 if (work->vol2[i] <= 0.0f) {
                     work->vol2[i] = 0.0f;
-                    func_800155B8_161B8(i, 0);
+                    func_800155B8_161B8((s16)i, 0);
                     work->flags[i] &= ~4;
                 } else {
-                    func_800155B8_161B8(i, work->vol2[i]);
+                    func_800155B8_161B8((s16)i, (s16)work->vol2[i]);
                 }
             }
         } else if (work->flags[i] & 1) {
@@ -506,11 +504,11 @@ void func_8007BB74_7C774(void) {
                 work->vol[i] -= work->volStep[i];
                 if (work->vol[i] <= 0.0f) {
                     work->vol[i] = 0.0f;
-                    func_800155B8_161B8(i, 0);
-                    func_80015868_16468(i);
+                    func_800155B8_161B8((s16)i, 0);
+                    func_80015868_16468((s16)i);
                     work->flags[i] &= ~1;
                 } else {
-                    func_800155B8_161B8(i, work->vol[i]);
+                    func_800155B8_161B8((s16)i, (s16)work->vol[i]);
                 }
             }
         }

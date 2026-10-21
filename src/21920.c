@@ -16,24 +16,7 @@ typedef struct unk1EA70StructC {
     /* 0x08 */ Matrix4f* unk_08;
 } unk1EA70StructC; // sizeof 0xC
 
-/* HmfData.unk84 entries (0x98 bytes; MP1 unk2C0C0Struct50); 30560's local HmfMotionObj. */
-typedef struct HmfMotionObj {
-    /* 0x00 */ s16 unk_00; /* child count */
-    /* 0x02 */ char unk_02[2];
-    /* 0x04 */ Vec unk_04;
-    /* 0x10 */ Vec unk_10;
-    /* 0x1C */ Vec unk_1C;
-    /* 0x28 */ Vec unk_28;
-    /* 0x34 */ Vec unk_34;
-    /* 0x40 */ Vec unk_40;
-    /* 0x4C */ u8 unk_4C;
-    /* 0x4D */ u8 unk_4D;
-    /* 0x4E */ u8 unk_4E;
-    /* 0x4F */ char unk_4F;
-    /* 0x50 */ s16* unk_50; /* children: part index, or 0x8000 | motion object index; -1 ends a leaf */
-    /* 0x54 */ struct HmfData* unk_54;
-    /* 0x58 */ f32 unk_58[4][4];
-} HmfMotionObj; /* size = 0x98 */
+/* HmfMotionObj: include/game/hmfman.h */
 
 typedef struct unk1EA70Struct20 {
     /* 0x00 */ char unk_00[2];
@@ -679,33 +662,33 @@ void func_80023680_24280(HmfData* arg0, s16 arg1, s16 arg2) {
     node = &((HmfMotionObj*) arg0->unk84)[arg1];
     pushed = 0;
     func_800B37C0_B43C0(sp10);
-    if (node->unk_28.x != 0.0f || node->unk_28.y != 0.0f || node->unk_28.z != 0.0f) {
-        func_80025770_26370(sp10, node->unk_28.x, node->unk_28.y, node->unk_28.z);
+    if (node->unk28.x != 0.0f || node->unk28.y != 0.0f || node->unk28.z != 0.0f) {
+        func_80025770_26370(sp10, node->unk28.x, node->unk28.y, node->unk28.z);
         pushed = 1;
     }
-    if (node->unk_34.x != 0.0f || node->unk_34.y != 0.0f || node->unk_34.z != 0.0f) {
-        func_80025884_26484(sp10, node->unk_34.x, node->unk_34.y, node->unk_34.z);
+    if (node->unk34.x != 0.0f || node->unk34.y != 0.0f || node->unk34.z != 0.0f) {
+        func_80025884_26484(sp10, node->unk34.x, node->unk34.y, node->unk34.z);
         pushed = 1;
     }
-    if (node->unk_40.x != 1.0f || node->unk_40.y != 1.0f || node->unk_40.z != 1.0f) {
-        func_80025830_26430(sp10, node->unk_40.x, node->unk_40.y, node->unk_40.z);
+    if (node->unk40.x != 1.0f || node->unk40.y != 1.0f || node->unk40.z != 1.0f) {
+        func_80025830_26430(sp10, node->unk40.x, node->unk40.y, node->unk40.z);
         pushed = 1;
     }
     if (pushed != 0) {
         D_800FD470_FE070++;
         func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
     }
-    for (i = 0; i < node->unk_00; i++) {
-        if (node->unk_50[i] & 0x8000) {
-            if (node->unk_50[i] == -1) {
+    for (i = 0; i < node->unk00; i++) {
+        if (node->unk50[i] & 0x8000) {
+            if (node->unk50[i] == -1) {
                 if ((D_800F93D0_F9FD0 < arg0->unk16) & (arg2 == -1)) {
                     D_800FC8F0_FD4F0[D_800F93D0_F9FD0] = arg1;
                     func_80030CD4_318D4(D_800FD43C_FE03C[D_800F93D0_F9FD0++], D_801016D0_1022D0[D_800FD470_FE070]);
                 }
             } else {
-                func_80023680_24280(arg0, node->unk_50[i] & 0x7FFF, arg2);
+                func_80023680_24280(arg0, node->unk50[i] & 0x7FFF, arg2);
             }
-        } else if (arg2 == -1 || arg2 == (node->unk_50[i] & 0x7FFF)) {
+        } else if (arg2 == -1 || arg2 == (node->unk50[i] & 0x7FFF)) {
             if (D_800F93D0_F9FD0 < arg0->unk16) {
                 D_800FC8F0_FD4F0[D_800F93D0_F9FD0] = arg1;
             }
@@ -735,7 +718,7 @@ void func_80023A08_24608(s16 arg0, unk1EA70StructC* arg1, s16 arg2) {
     D_800F93D0_F9FD0 = 0;
     D_800FD43C_FE03C = &arg1->unk_08[frame];
     for (i = 0; i < model->unk16; i++) {
-        func_80030CD4_318D4(((HmfMotionObj*) model->unk84)[i].unk_58, D_800FD43C_FE03C[arg1->unk_04[i]]);
+        func_80030CD4_318D4(((HmfMotionObj*) model->unk84)[i].unk58, D_800FD43C_FE03C[arg1->unk_04[i]]);
     }
 }
 
@@ -816,10 +799,10 @@ void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3) {
     } else {
         for (k = 0; k < dst->unk16; k++) {
             obj50 = &((HmfMotionObj*) dst->unk84)[k];
-            for (l = 0; l < obj50->unk_00; l++) {
-                if (obj50->unk_50[l] == j) {
-                    obj50->unk_54 = src;
-                    obj50->unk_50[l] = i;
+            for (l = 0; l < obj50->unk00; l++) {
+                if (obj50->unk50[l] == j) {
+                    obj50->unk54 = src;
+                    obj50->unk50[l] = i;
                     break;
                 }
             }
