@@ -123,8 +123,8 @@ typedef struct TextWindow {
     /* 0x06E */ s16 unk_6E[0x16];
     /* 0x09A */ s16 unk9A;
     /* 0x09C */ char pad9C[0xA];
-    /* 0x0A6 */ s16 unkA6;
-    /* 0x0A8 */ char padA8[2];
+    /* 0x0A6 */ u16 unkA6; /* buttons that also close the window */
+    /* 0x0A8 */ u16 unkA8; /* buttons that closed it */
     /* 0x0AA */ s16 unkAA;
     /* 0x0AC */ s8 unkAC;
     /* 0x0AD */ s8 usingStringIDBool[5];
@@ -2413,7 +2413,83 @@ void func_8008B66C_8C26C(TextWindow* tw) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008B6F4_8C2F4);
+u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320;
+u16 func_8008D250_8DE50(TextWindow* tw);
+s32 func_8008BCB8_8C8B8(s16 winId);
+void func_8008C828_8D428(TextWindow* tw, TWEntry* e);
+void func_8008AD44_8B944(s16 win_id);
+
+/* MP1 func_8006F9B0: the window process, runs every open window once per frame */
+void func_8008B6F4_8C2F4(void) {
+    TextWindow* tw;
+    s16 id;
+    s16 idle;
+    s16 count;
+    u16 btn;
+
+    while (1) {
+        idle = 0;
+        HuPrcVSleep();
+        count = 0;
+        id = D_800F920C_F9E0C[0].unk64;
+        while (D_800F920C_F9E0C[id].unk64 != -1) {
+            tw = &D_800F920C_F9E0C[id];
+            count++;
+            if ((tw->unk_38 & 0x400) ||
+                ((D_800F851A_F911A == 0 || (tw->unk_38 & 0x40)) && func_80078EA8_79AA8() + D_80102720_103320 != 0)) {
+                if (tw->unk_38 & 0x100) {
+                    func_8008B5AC_8C1AC(id);
+                }
+                id = D_800F920C_F9E0C[id].unk64;
+                continue;
+            }
+            tw->unk_38 &= ~0x200;
+            switch (tw->unk20) {
+                case 1:
+                    func_80089DDC_8A9DC(id);
+                    break;
+                case 2:
+                case 6:
+                    if ((!(tw->unk_38 & 0x10) || tw->unk20 == 6) &&
+                        (((btn = func_8008D250_8DE50(tw)) & 0xC000) || (btn & tw->unkA6))) {
+                        if (tw->unkAA != -1) {
+                            PlaySound(tw->unkAA);
+                            if (tw->unk_38 & 0x20) {
+                                PlaySound(0x12C);
+                            } else {
+                                PlaySound(0x32D);
+                            }
+                        }
+                        if (tw->unk20 == 6) {
+                            func_8008AD44_8B944(id);
+                        }
+                        tw->unk20 = 1;
+                        tw->unk_38 |= 0x200;
+                        tw->unkA8 = btn;
+                        func_8008AA44_8B644(id);
+                    }
+                    break;
+                case 5:
+                    if (func_8008BCB8_8C8B8(id) == 0) {
+                        tw->unk20 = 0;
+                    }
+                    break;
+                default:
+                    idle++;
+                    break;
+            }
+            if (tw->unk_38 & 0x100) {
+                func_8008B5AC_8C1AC(id);
+            }
+            func_8008C828_8D428(tw, &tw->unk_F4[tw->unk_31]);
+            id = D_800F920C_F9E0C[id].unk64;
+        }
+        if ((D_800F9512_FA112 != 0) & (idle == count)) {
+            D_800F9512_FA112 = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BA30_8C630);
 
