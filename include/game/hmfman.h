@@ -114,7 +114,8 @@ typedef struct HmfPart {
     /* 0x10 */ s16 unk10; /* face count */
     /* 0x12 */ char unk12[0x1C];
     /* 0x2E */ u8 unk2E; /* reflection texture (unk88 index), 0xFF for none; MP3 0x1C */
-    /* 0x2F */ char unk2F[0x21];
+    /* 0x2F */ u8 unk2F; /* its slot in the depth-sorted list (30560) */
+    /* 0x30 */ char unk30[0x20];
     /* 0x50 */ s32 unk50;
     /* 0x54 */ struct HmfFaceRec* unk54; /* faces (0x34 bytes each; 30560) */
     /* 0x58 */ struct HmfData* unk58; /* linked model drawn after this part */
@@ -149,7 +150,7 @@ typedef struct HitXform {
 typedef struct HmfData {
     /* 0x00 */ u8 unk00;
     /* 0x01 */ u8 unk01; /* flags; 4: a single transform (MP1 0x29) */
-    /* 0x02 */ char unk02[8];
+    /* 0x02 */ u8 unk02[8]; /* prim colour, env colour (RGBA each) */
     /* 0x0A */ u8 unk0A;
     /* 0x0B */ u8 unk0B; /* link count */
     /* 0x0C */ u8 unk0C;
@@ -196,9 +197,10 @@ typedef struct HmfData {
     /* 0xBC */ char unkBC[0xC];
     /* 0xC8 */ s32 unkC8;
     /* 0xCC */ Gfx*** unkCC; /* -> per-part second display lists (30560) */
-    /* 0xD0 */ char unkD0[4];
+    /* 0xD0 */ struct HmfData_UnkD0* unkD0;
     /* 0xD4 */ void (*unkD4)(f32 (*)[4], f32, f32, f32); /* rotation */
-    /* 0xD8 */ char unkD8[8];
+    /* 0xD8 */ void (*unkD8)(f32 (*)[4], f32, f32, f32); /* rotation matrix (unkD4 rotates in place) */
+    /* 0xDC */ char unkDC[4];
 } HmfData; /* size 0xE0 (Hu3DModelCreate allocates it); MP1 unk2C0C0StructC0 */
 
 typedef struct HmfData_UnkD0 {
