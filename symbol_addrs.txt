@@ -821,6 +821,7 @@ D_800D3F00_D4B00 = 0x800D3F00; // size:0x200
 // 3F-A: the duel result words (winner, loser) read by ovl_3F, separate from the pointers before them
 D_800F8C5C_F985C = 0x800F8C5C; // size:0x4
 D_800FC880_FD480 = 0x800FC880; // size:0x4
-// 34-D: ovl_34 .data words that are two variables (MP1 D_80101266/D_80101268, D_8010126C/D_8010126A)
+// 34-D: ovl_34 .data words that hold several variables (MP1 D_80101266/D_80101268, D_8010126C/D_8010126A; the walk states)
 D_801101D2_2672D2_ChanceTime = 0x801101D2; // rom:0x2672D2 size:0x2
 D_801101D6_2672D6_ChanceTime = 0x801101D6; // rom:0x2672D6 size:0x1
+D_801101D9_2672D9_ChanceTime = 0x801101D9; // rom:0x2672D9 size:0x1

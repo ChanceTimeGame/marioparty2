@@ -262,6 +262,13 @@ typedef struct CTCharFiles {
 extern CTCharFiles D_800CD438_CE038[];
 
 extern s8 D_80110061_267161_ChanceTime; /* the holder landed */
+extern s8 D_801101D7_2672D7_ChanceTime; /* func_8010FC18 state */
+extern s8 D_801101D8_2672D8_ChanceTime; /* func_8010FD28 state */
+extern s8 D_801101D9_2672D9_ChanceTime; /* func_8010FF1C state */
+extern s32 D_801101DC_2672DC_ChanceTime; /* func_8010FF1C frame counter */
+extern CTPlayerWork* D_801109DC_267ADC_ChanceTime; /* the walk processes' player work */
+extern CTPlayerWork* D_801109E0_267AE0_ChanceTime;
+extern CTPlayerWork* D_801109E4_267AE4_ChanceTime;
 /* The CPU holder's block run (MP1 D_80101266, D_80101268, D_8010126C, D_8010126A) */
 extern u16 D_801101D0_2672D0_ChanceTime; /* the block order is chosen */
 extern u16 D_801101D2_2672D2_ChanceTime; /* buttons last frame */
@@ -338,7 +345,7 @@ void func_8010F4B4_2665B4_ChanceTime(omObjData* obj, u32 dir, s32 file, u16 play
 void func_8010F760_266860_ChanceTime(omObjData* obj);
 void func_8010F82C_26692C_ChanceTime(omObjData* obj);
 void func_8010F8F8_2669F8_ChanceTime(omObjData* obj);
-void func_8010F9C4_266AC4_ChanceTime(void* arg0, s8 arg1);
+void func_8010F9C4_266AC4_ChanceTime(s8* state, s8 target);
 void func_8010FC18_266D18_ChanceTime(void); /* process */
 void func_8010FD28_266E28_ChanceTime(void); /* process */
 void func_8010FE50_266F50_ChanceTime(s16 arg0);

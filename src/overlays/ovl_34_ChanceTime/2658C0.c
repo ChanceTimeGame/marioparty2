@@ -2,6 +2,10 @@
 #include "ovl_34.h"
 #include "game/pad.h"
 
+/* Walk player D_800FFFD8[0] to place `target` (0, 1: the holder's spot, 2) by its CPU stick;
+   on arrival (within 20) stop it and advance *state. */
+
+
 /* The other three players' objects. Retail quirk kept: the model file comes from the holder's
    character (D_80110D6A[0]), the motions from the player's own. */
 
@@ -260,12 +264,136 @@ void func_8010F8F8_2669F8_ChanceTime(omObjData* obj) {
 
     func_8010F4B4_2665B4_ChanceTime(obj, dir, file, D_80110D6A_267E6A_ChanceTime[3], -600.0f, 10.0f, 800.0f);
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010F9C4_266AC4_ChanceTime);
+void func_8010F9C4_266AC4_ChanceTime(s8* state, s8 target) {
+    f32 dx;
+    f32 dz;
+    f32 angle;
+    CTPlayerWork* work;
+    s8 port;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010FC18_266D18_ChanceTime);
+    dx = 0.0f;
+    work = CT_PWORK(D_800FFFD8_100BD8[0]);
+    port = work->unk_57;
+    dz = dx;
+    switch (target) {
+    case 0:
+        dx = 0.0f - D_800FFFD8_100BD8[0]->trans.x;
+        dz = 1400.0f - D_800FFFD8_100BD8[0]->trans.z;
+        break;
+    case 1:
+        dx = -140.0f - D_800FFFD8_100BD8[0]->trans.x;
+        dz = 1400.0f - D_800FFFD8_100BD8[0]->trans.z;
+        break;
+    case 2:
+        dx = -350.0f - D_800FFFD8_100BD8[0]->trans.x;
+        dz = 1400.0f - D_800FFFD8_100BD8[0]->trans.z;
+        break;
+    }
+    if (dx * dx + dz * dz > 400.0f) {
+        angle = func_800B75A8_B81A8(dz, dx);
+        if (target == 2) {
+            D_80110D56_267E56_ChanceTime[port] = func_800B7890_B8490(angle) * 60.0f;
+            D_80110D6E_267E6E_ChanceTime[port] = -HuMathSin(angle) * 60.0f;
+        } else {
+            D_80110D56_267E56_ChanceTime[port] = func_800B7890_B8490(angle) * 40.0f;
+            D_80110D6E_267E6E_ChanceTime[port] = -HuMathSin(angle) * 40.0f;
+        }
+        D_80110B14_267C14_ChanceTime[port] = 0;
+        D_80110D72_267E72_ChanceTime[port] = 0;
+        return;
+    }
+    if (target == 1) {
+        work->unk_40 = 0.0f;
+        work->unk_3C = 30.0f;
+        D_80110D6E_267E6E_ChanceTime[port] = 0;
+    } else {
+        D_80110D6E_267E6E_ChanceTime[port] = -80;
+    }
+    D_80110B14_267C14_ChanceTime[port] = 0;
+    D_80110D72_267E72_ChanceTime[port] = 0;
+    D_80110D56_267E56_ChanceTime[port] = 0;
+    (*state)++;
+}
+void func_8010FC18_266D18_ChanceTime(void) {
+    s8 port;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010FD28_266E28_ChanceTime);
+    D_801109DC_267ADC_ChanceTime = CT_PWORK(D_800FFFD8_100BD8[0]);
+    port = D_801109DC_267ADC_ChanceTime->unk_57;
+    while (1) {
+        switch (D_801101D7_2672D7_ChanceTime) {
+        case 0:
+            func_8010F9C4_266AC4_ChanceTime(&D_801101D7_2672D7_ChanceTime, 0);
+            break;
+        case 1:
+            D_801109DC_267ADC_ChanceTime->unk_3C = D_801109DC_267ADC_ChanceTime->unk_40 = 0.0f;
+            D_800FFFD8_100BD8[0]->rot.y = 0.0f;
+            D_80110D6E_267E6E_ChanceTime[port] = 0;
+            D_80110D56_267E56_ChanceTime[port] = 0;
+            D_80110D72_267E72_ChanceTime[port] = D_80110B14_267C14_ChanceTime[port] = 0;
+            D_801101D7_2672D7_ChanceTime++;
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
+void func_8010FD28_266E28_ChanceTime(void) {
+    s8 port;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010FE50_266F50_ChanceTime);
+    D_801109E0_267AE0_ChanceTime = CT_PWORK(D_800FFFD8_100BD8[0]);
+    port = D_801109E0_267AE0_ChanceTime->unk_57;
+    while (1) {
+        switch (D_801101D8_2672D8_ChanceTime) {
+        case 0:
+            func_8010F9C4_266AC4_ChanceTime(&D_801101D8_2672D8_ChanceTime, 2);
+            break;
+        case 1:
+            func_800298A4_2A4A4(D_800FFFD8_100BD8[0]->model[0], 4, 4);
+            D_801109E0_267AE0_ChanceTime->unk_3C = D_801109E0_267AE0_ChanceTime->unk_40 = 0.0f;
+            D_800FFFD8_100BD8[0]->rot.y = 0.0f;
+            D_80110D6E_267E6E_ChanceTime[port] = 0;
+            D_80110D56_267E56_ChanceTime[port] = 0;
+            D_80110D72_267E72_ChanceTime[port] = D_80110B14_267C14_ChanceTime[port] = 0;
+            D_801101D8_2672D8_ChanceTime++;
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
+void func_8010FE50_266F50_ChanceTime(s16 arg0) {
+    switch (arg0) {
+    case 1:
+        D_800FFFD8_100BD8[1] = omAddObj(10, 2, 60, -1, func_8010F760_266860_ChanceTime);
+        return;
+    case 2:
+        D_800FFFD8_100BD8[2] = omAddObj(10, 2, 60, -1, func_8010F82C_26692C_ChanceTime);
+        return;
+    case 3:
+        D_800FFFD8_100BD8[3] = omAddObj(10, 2, 60, -1, func_8010F8F8_2669F8_ChanceTime);
+        return;
+    }
+}
+void func_8010FF1C_26701C_ChanceTime(void) {
+    s8 port;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/2658C0", func_8010FF1C_26701C_ChanceTime);
+    D_801109E4_267AE4_ChanceTime = CT_PWORK(D_800FFFD8_100BD8[0]);
+    port = D_801109E4_267AE4_ChanceTime->unk_57;
+    while (1) {
+        switch (D_801101D9_2672D9_ChanceTime) {
+        case 0:
+            func_8010F9C4_266AC4_ChanceTime(&D_801101D9_2672D9_ChanceTime, 1);
+            break;
+        case 1:
+            D_801109E4_267AE4_ChanceTime = CT_PWORK(D_800FFFD8_100BD8[0]);
+            D_80110D6E_267E6E_ChanceTime[port] = 0;
+            D_80110D56_267E56_ChanceTime[port] = 0;
+            D_80110D72_267E72_ChanceTime[port] = D_80110B14_267C14_ChanceTime[port] = 0;
+            D_801109E4_267AE4_ChanceTime->unk_3C = 30.0f;
+            D_801109E4_267AE4_ChanceTime->unk_40 = 0.0f;
+            if (++D_801101DC_2672DC_ChanceTime > 10) {
+                D_801101D9_2672D9_ChanceTime++;
+            }
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
