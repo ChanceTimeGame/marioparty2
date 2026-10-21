@@ -41,6 +41,19 @@ typedef struct UnkMBGuideData {
     /* 0x0A */ s16 spriteGroup;
 } UnkMBGuideData; /* size = 0xC */
 
+/* A board's space events: 54CB0.c's EventTableEntry (space -> event list, ended by space -1) and
+   MbEventListEntry (ended by activation_type 0). Same layout, board-overlay names. */
+typedef struct BoardEventListEntry {
+    /* 0x00 */ s16 activation_type;
+    /* 0x02 */ s16 execution_type;
+    /* 0x04 */ void (*event_fn)();
+} BoardEventListEntry; /* size = 0x8 */
+
+typedef struct BoardEventTableEntry {
+    /* 0x00 */ s16 spaceIndex;
+    /* 0x04 */ BoardEventListEntry* eventList;
+} BoardEventTableEntry; /* size = 0x8 */
+
 extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
 extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
 

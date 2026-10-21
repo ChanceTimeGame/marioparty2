@@ -89,6 +89,30 @@ void func_8008D07C_8DC7C(s16, s16, s16, s16);
 void func_8008D854_8E454(s32 arg0, s16 arg1);
 s32 func_8008BB48_8C748(s16, s16, s32);
 s32 func_80059FD0_5ABD0(s32); /* the player's rank */
+extern s16 D_800F8CE4_F98E4[]; /* board state halfwords; D_800F8D12 is [0x17] */
+extern MBModel* D_800F64C8_F70C8; /* the item/Boo marker model */
+void omInitObjMan(s32, s32);
+void omOvlGotoEx(s32 arg0, s16 arg1, u16 arg2);
+void SetPlayerOntoChain(s16 player, s16 chain_index, s16 space_index);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
+void func_80055928_56528(s16* arg0);
+void func_80055980_56580(s16* arg0);
+void func_8004D60C_4E20C(s32, void (*)(void)); /* board event slot */
+void func_80044D98_45998(void (*)(void));
+void func_800542E8_54EE8(s32, s16);
+void func_800632F0_63EF0(s16 arg0);
+void func_80020070_20C70(s32);
+void func_80053AA0_546A0(s32);
+void EventTableHydrate(BoardEventTableEntry* table);
+void func_80066C34_67834(u32 arg0);
+void func_80043DAC_449AC(MBModel*);
+MBModel* MBModelParamCreate(MBModel*);
+s32 func_80041AEC_426EC(s8 arg0, void* arg1, s16 arg2, s16 arg3); /* space marker */
+void func_80041B40_42740(s32 arg0);
+void func_8002D124_2DD24(s16 index);
+void MBModelDispOff(MBModel*);
+void MBModelDispOn(MBModel*);
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
 extern board_overlay_entrypoint D_80111920_2A6BF0_name_3E[]; /* the overlay's scene table */
@@ -110,6 +134,17 @@ typedef struct Unk4Bytes {
 extern u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
 
 extern u8 D_801119D4_2A6CA4_name_3E[3][4]; /* steal-a-star chance by turn band, coin band */
+extern s16 D_801119E4_2A6CB4_name_3E[8];
+extern s16 D_801119F4_2A6CC4_name_3E[8];
+extern s16 D_80111A04_2A6CD4_name_3E[7][2]; /* star space marker offsets */
+extern s16 D_80111A20_2A6CF0_name_3E[2][2];
+extern s16 D_80111A44_2A6D14_name_3E[8]; /* star spaces (markers) */
+extern s16 D_80111A54_2A6D24_name_3E[8]; /* their flags */
+extern s32 D_80111A64_2A6D34_name_3E; /* marker id, -1 none */
+extern s16 D_80111A68_2A6D38_name_3E[2];
+extern BoardEventTableEntry D_80112484_2A7754_name_3E[];
+extern BoardEventTableEntry D_801124EC_2A77BC_name_3E[];
+extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
 extern Process* D_801136D0_2A89A0_name_3E; /* star appear process */
@@ -125,6 +160,10 @@ extern s32 D_80113700_2A89D0_name_3E[4]; /* players other than the current one, 
 extern s32 D_801136F0_2A89C0_name_3E[4]; /* the other players, by rank */
 extern s32 D_80113718_2A89E8_name_3E; /* Boo's choice: a player slot, or 0/1/2 */
 extern s32 D_80113714_2A89E4_name_3E; /* the player Boo steals from */
+extern MBModel* D_8011371C_2A89EC_name_3E;
+extern MBModel* D_80113720_2A89F0_name_3E[7];
+extern MBModel* D_8011373C_2A8A0C_name_3E;
+extern MBModel* D_80113740_2A8A10_name_3E[2];
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -159,11 +198,11 @@ void func_801058DC_29ABAC_name_3E(void);
 void func_80105974_29AC44_name_3E(void);
 void func_80105B9C_29AE6C_name_3E(void);
 void func_80105C24_29AEF4_name_3E(void);
-void func_80105C50_29AF20_name_3E(s32 arg0);
+void func_80105C50_29AF20_name_3E(s16 arg0);
 void func_80105D54_29B024_name_3E(void);
 void func_80105DDC_29B0AC_name_3E(void);
 void func_80105EC4_29B194_name_3E(void);
-void func_80105F0C_29B1DC_name_3E(s32 arg0);
+void func_80105F0C_29B1DC_name_3E(s16 arg0);
 void func_8010602C_29B2FC_name_3E(void);
 s32 func_8010608C_29B35C_name_3E(void);
 void func_80106188_29B458_name_3E(s32 arg0);
