@@ -1467,12 +1467,13 @@ void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
 void HuMemFree(void* data);
 void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
 void func_80088F44_89B44(u8* buf, s16 w, s16 h);
+s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags);
 
 // register allocation (masked 29): retail keeps the flags in fp and (s16)w, (s16)h in s5/s4 across the
 // HuMemAlloc and memset calls; this C keeps one register fewer
 #ifdef NON_MATCHING
 /* MP3 func_8005A968_5B568, MP1 func_8006D010: opens a window, returns its id or -1 */
-s16 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
+s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
     TextWindow* tw;
     HuSprite* spr;
     s16 id;
@@ -1697,7 +1698,7 @@ void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2) {
     textWindow->unk_B2[arg2] = -1;
 }
 
-s16 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, s16 arg4) {
+s32 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, s16 arg4) {
     TextWindow* window = &D_800F920C_F9E0C[win_id];
     s16 spriteId;
     void* spriteBytes;
@@ -1864,7 +1865,7 @@ void func_80089BBC_8A7BC(s16 winId, s32 alpha) {
     }
 }
 
-void func_80089C78_8A878(s16 winId, s8 arg1) {
+void func_80089C78_8A878(s16 winId, u8 arg1) {
     TextWindow* tw = &D_800F920C_F9E0C[winId];
 
     tw->unk22 = arg1;
@@ -3430,11 +3431,100 @@ const u32 jtbl_800D3980_D4580[] __attribute__((aligned(8), section(".rodata"))) 
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DCDC_8E8DC);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DF9C_8EB9C);
+void func_8008DF9C_8EB9C(s32 winId, u16 btn) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008DFC4_8EBC4);
+    tw->unkA6 = btn;
+}
 
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008E2DC_8EEDC);
+typedef struct TWStyle {
+    /* 0x00 */ s32 frame; /* window frame graphic */
+    /* 0x04 */ s16 width;
+    /* 0x06 */ s16 height;
+    /* 0x08 */ s16 textX;
+    /* 0x0A */ s16 textY;
+    /* 0x0C */ s16 textW;
+    /* 0x0E */ s16 textH;
+    /* 0x10 */ s16 offsetX;
+    /* 0x12 */ s16 offsetY;
+    /* 0x14 */ u8 color;
+} TWStyle; // size 0x18
+
+extern TWStyle D_800CDAC0_CE6C0[];
+
+/* MP1 func_8007194C: opens a window in one of the preset styles */
+s32 func_8008DFC4_8EBC4(s16 x, s16 y, s32 style) {
+    TWStyle* st = &D_800CDAC0_CE6C0[style];
+    TextWindow* tw;
+    HuSprite* spr;
+    s32 id;
+    s32 sub;
+    s32 i;
+
+    id = (s16)func_800888A8_894A8(x, y, st->width, st->height, 0, 0xC);
+    func_80089A48_8A648(id, 0);
+    func_80089CAC_8A8AC(id, 2, 0xFF, 0, 0);
+    func_80089CAC_8A8AC(id, 4, 0, 0x90, 0);
+    func_80089CAC_8A8AC(id, 5, 0, 0xB0, 0xC0);
+    func_80089CAC_8A8AC(id, 6, 0xFF, 0xAD, 0);
+    tw = &D_800F920C_F9E0C[id];
+    tw->unk54 = tw->unk4C = st->textX;
+    tw->unk56 = tw->unk4E = st->textY;
+    tw->unk50 = st->textW;
+    tw->unk52 = st->textH;
+    func_800898F0_8A4F0(id, st->offsetX, st->offsetY);
+    tw->unk58 = tw->unk54 + st->textW - tw->unk27;
+    tw->unk5A = tw->unk56 + st->textH - tw->unk28;
+    if (style == 5) {
+        tw->unk29 = 0;
+    }
+    tw->unk274 = sub = (s16)func_80089404_8A004(id, st->frame, 0, 0, 0);
+    SprPrioSet(tw->unk_6C, sub, 15000);
+    SprPosSet(tw->unk_6C, sub, 0, 0);
+    SprScaleSet(tw->unk_6C, sub, 0.0f, 0.0f);
+    spr = func_80082550_83150(tw->unk_6C, sub);
+    for (i = 0; i < spr->unk_84->unk12; i++) {
+        spr->unk_84->unk00[i].unk08 = st->offsetX;
+        spr->unk_84->unk00[i].unk0A = st->offsetY;
+    }
+    spr = func_80082550_83150(tw->unk_6C, sub);
+    for (i = 0; i < spr->unk_84->unk12; i++) {
+        spr->unk_84->unk00[i].unk08 = st->offsetX;
+        spr->unk_84->unk00[i].unk0A = st->offsetY;
+    }
+    tw->unk_38 |= 0x2000;
+    func_80089B2C_8A72C(id, 0);
+    func_80089DA0_8A9A0(id, 0xC0, 0xC0, 0xC0);
+    func_80089C78_8A878(id, st->color);
+    func_80089764_8A364(id, 0.0f, 0.0f);
+    return id;
+}
+
+/* MP1 func_80071C8C: opens the window with a growing animation */
+void func_8008E2DC_8EEDC(s32 winId, s32 sound) {
+    TextWindow* tw = &D_800F920C_F9E0C[winId];
+    f32 scale;
+
+    if (!(tw->unk_38 & 0x4000)) {
+        func_8008D808_8E408(winId, 1);
+        if (sound != 0) {
+            if (tw->unk_38 & 0x20) {
+                PlaySound(0x12A);
+            } else {
+                PlaySound(0x321);
+            }
+        }
+        for (scale = 0.0f; scale <= 1.0f; scale += 0.1f) {
+            SprScaleSet(tw->unk_6C, tw->unk274, scale, scale);
+            func_80089764_8A364(winId, scale, scale);
+            HuPrcVSleep();
+        }
+        SprScaleSet(tw->unk_6C, tw->unk274, 1.0f, 1.0f);
+        func_80089764_8A364(winId, 1.0f, 1.0f);
+        func_8008D808_8E408(winId, 0);
+        func_80089284_89E84(winId, 0x4000, 0x4000);
+    }
+}
 
 
 /* MP1 func_80071DE0; MP2 scales one sprite and the window */
