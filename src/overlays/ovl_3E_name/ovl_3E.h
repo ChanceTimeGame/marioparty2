@@ -197,6 +197,29 @@ extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
 extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
 extern s32 D_801138B0_2A8B80_name_3E; /* path step */
 
+/* fork D */
+typedef struct Vec2f3E {
+    f32 x;
+    f32 y;
+} Vec2f3E;
+extern Vec2f3E D_80112524_2A77F4_name_3E[4]; /* per player: window positions (item events) */
+extern Vec2f3E D_80112544_2A7814_name_3E[4];
+extern Vec2f3E D_80112564_2A7834_name_3E[4];
+void MBDlgResultWinExec(s32);
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+s32 MBRand(f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_800629F0_635F0(s16, s32);
+void func_80062588_63188(s16);
+extern MBModel* D_800CC1F0_CCDF0; /* the Bowser suit model */
+void func_8005070C_5130C(void); /* MBKSuitCreate */
+void MBKSuitMotionSet(s16 arg0, s32 arg1);
+void func_800B3B80_B4780(f32* mtx, f32 angle); /* rotate a model matrix */
+void func_80050860_51460(void); /* MBKSuitKill */
+Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* turn arg0 toward arg1 */
+
 /* ---- 297AD0.c ---- */
 
 void func_80102800_297AD0_name_3E(void);
@@ -300,7 +323,7 @@ void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
 void func_8010CAE8_2A1DB8_name_3E(void);
 void func_8010CCD4_2A1FA4_name_3E(void);
-s32 func_8010CF20_2A21F0_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+Process* func_8010CF20_2A21F0_name_3E(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5); /* fork D: from its entry and callers */
 void func_8010CFCC_2A229C_name_3E(void);
 s32 func_8010D37C_2A264C_name_3E(void);
 void func_8010D6C8_2A2998_name_3E(void);
