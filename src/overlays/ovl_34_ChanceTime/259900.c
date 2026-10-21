@@ -2,7 +2,16 @@
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80102800_259900_ChanceTime);
 
+/* Two SJIS strings (local char-array initialisers?) as raw words until their user is C */
+const u32 D_80110260_267360_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x826481F3, 0x00000000 };
+const u32 D_8011027C_26737C_ChanceTime[] = { 0x82628267, 0x8260826D, 0x82628264, 0x81408273, 0x8268826C, 0x82640000, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80102E4C_259F4C_ChanceTime);
+
+/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
+ * .text: switch back by hand (harmless once a C function precedes this). */
+__asm__(".section .rodata");
+const char D_801102A0_2673A0_ChanceTime[] = "item_hook";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103398_25A498_ChanceTime);
 
@@ -12,9 +21,28 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103714_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103A64_25AB64_ChanceTime);
 
+/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
+ * .text: switch back by hand (harmless once a C function precedes this). */
+__asm__(".section .rodata");
+/* 16 vec3 (x, y, z) as raw words until its user is C */
+const u32 D_801102AC_2673AC_ChanceTime[] = {
+    0x3F64F95D, 0x3EE4F8B6, 0x00000000, 0x3F51B90F, 0x3F12CE46, 0x00000000, 0x3F350481, 
+    0x3F350481, 0x00000000, 0x3F12CE46, 0x3F51B90F, 0x00000000, 0x3EE4F8B6, 0x3F64F95D, 
+    0x00000000, 0x3F64F95D, 0x3EE4F8B6, 0x3F800000, 0x3F51B90F, 0x3F12CE46, 0x3F800000, 
+    0x3F350481, 0x3F350481, 0x3F800000, 0x3F12CE46, 0x3F51B90F, 0x3F800000, 0x3EE4F8B6, 
+    0x3F64F95D, 0x3F800000, 0x3F64F95D, 0x3EE4F8B6, 0xBF800000, 0x3F51B90F, 0x3F12CE46, 
+    0xBF800000, 0x3F350481, 0x3F350481, 0xBF800000, 0x3F12CE46, 0x3F51B90F, 0xBF800000, 
+    0x3EE4F8B6, 0x3F64F95D, 0xBF800000, 0x3F64F95D, 0x3EE4F8B6, 0x3F000000
+};
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_80103ADC_25ABDC_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801052B4_25C3B4_ChanceTime);
+
+/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
+ * .text: switch back by hand (harmless once a C function precedes this). */
+__asm__(".section .rodata");
+const char D_80110414_267514_ChanceTime[] = "%d";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_801060E0_25D1E0_ChanceTime);
 
@@ -123,3 +151,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FD28_
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FE50_266F50_ChanceTime);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_34_ChanceTime/259900", func_8010FF1C_26701C_ChanceTime);
+
+/* GCC still thinks it is in .rodata after the previous const, but INCLUDE_ASM switched to
+ * .text: switch back by hand (harmless once a C function precedes this). */
+__asm__(".section .rodata");
+/* Read only by .data (a texture-name table): rodata order is source order. */
+const char D_80110680_267780_ChanceTime[] = "tex3_DEF";
+const char D_8011068C_26778C_ChanceTime[] = "tex2_DEF";
+const char D_80110698_267798_ChanceTime[] = "tex1_DEF";
+const char D_801106A4_2677A4_ChanceTime[] = "tex0_DEF";
