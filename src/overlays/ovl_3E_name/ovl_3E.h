@@ -324,6 +324,7 @@ s32 func_8011155C_2A682C_name_3E(void);
 s32 func_801118D8_2A6BA8_name_3E(void);
 
 /* fork B */
+#include "game/data.h"
 struct unk_8003B8D4Struct; /* 41B20.c's direction prompt */
 
 /* RunDecisionTree's node (MP1 common_structs.h) */
@@ -393,6 +394,22 @@ void func_8006706C_67C6C();
 extern s8 D_800CCC16;
 extern s16 D_800F64B0_F70B0;
 s32 func_80047DE8_489E8(s32);
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16, s16, s32);
+void SprPosSet(s16, s16, s16, s16);
+void func_80082488_83088(s16, s16, u16);
+void SprAnimKill(s16);
+void SprKill(s16);
+Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3);
+void MBItemDescExec(s32 arg0);
+void func_8008DAC0_8E6C0(s8 arg0);
+void func_80056524_57124(s32);
+extern u8 D_800CC000[]; /* item prices */
+extern s32 D_800CCBDC_CD7DC[]; /* item sprite files */
 #define ABS_F(x) ((x) > 0.0f ? (x) : 0.0f - (x))
 
 extern s32 D_801119E0_2A6CB0_name_3E; /* minecart busy */
@@ -421,7 +438,10 @@ extern s16 D_80112158_2A7428_name_3E[];
 extern DecisionTreeNonLeafNode D_80112178_2A7448_name_3E[];
 extern s16 D_801121AC_2A747C_name_3E[];
 extern u8 D_801122A4_2A7574_name_3E[]; /* by rank */
-extern s8 D_801122E0_2A75B0_name_3E[][5];
+extern u8 D_801122C8_2A7598_name_3E[][4]; /* shop by turn band, rank */
+extern u8 D_801122D4_2A75A4_name_3E[][3]; /* turn band starts by game length */
+extern s8 D_801122E0_2A75B0_name_3E[][5]; /* shop items, -1 none */
+extern u32 D_80112304_2A75D4_name_3E[]; /* shop messages */
 extern Unk3Halves D_801135A4_2A8874_name_3E; /* {14, 13, 17}: rodata */
 extern Vec D_801135AC_2A887C_name_3E; /* {0, 0, 0}: rodata */
 extern char D_801135C8_2A8898_name_3E[]; /* "%d": rodata */

@@ -2418,8 +2418,137 @@ s32 func_80109AE4_29EDB4_name_3E(void) {
     }
     return i;
 }
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80109B30_29EE00_name_3E);
+/* The item shop: items by turn band and rank, the choice window, buying and the item shown.
+   NON_MATCHING: register allocation, count and shop swap s2/s3, and the order of the bought
+   item's address sum (masked 4). */
+#ifdef NON_MATCHING
+void func_80109B30_29EE00_name_3E(void) {
+    u8 enabled[8];
+    char names[5][4];
+    Vec rot;
+    GW_SYSTEM* gw = &GwSystem;
+    GW_PLAYER* player;
+    s8* item;
+    void* data;
+    s32 choice;
+    s32 sel;
+    s32 count;
+    s32 band;
+    s32 shop;
+    s32 i;
+    s16 spr;
+    s16 anim;
 
+    player = BoardPlayerGet(-1);
+    if (gw->current_player_index != 4) {
+        MBPlayerMotionSet(-1, -1, 2);
+        func_80056C30_57830(-1, 8, 0x9A);
+        HuPrcSleep(8);
+        func_80046D2C_4792C(gw->current_player_index);
+        PlaySound(0xE6);
+        if (gw->current_turn == gw->total_turns) {
+            MBDlgWinExec(1, 0x1F9);
+        } else if (gPlayers[gw->current_player_index].item != -1) {
+            MBDlgWinExec(1, 0x1F0);
+        } else if (gPlayers[gw->current_player_index].coins < 10) {
+            MBDlgWinExec(1, 0x1EF);
+        } else {
+        loop:
+            MBDlgWinCreate(1, 0x1EE);
+            choice = func_80103FB0_299280_name_3E();
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+            case 0:
+            shop:
+                for (band = 0; band < 2; band++) {
+                    if (gw->current_turn >= D_801122D4_2A75A4_name_3E[gw->current_game_length][band] &&
+                        gw->current_turn < D_801122D4_2A75A4_name_3E[gw->current_game_length][band + 1]) {
+                        break;
+                    }
+                }
+                count = 0;
+                shop = D_801122C8_2A7598_name_3E[band][func_80059FD0_5ABD0(gw->current_player_index)];
+                for (i = 0; i < 5; i++) {
+                    enabled[i] = 1;
+                    names[i][0] = 0;
+                    if (D_801122E0_2A75B0_name_3E[shop][i] != -1) {
+                        if (D_800CC000[D_801122E0_2A75B0_name_3E[shop][i]] > gPlayers[gw->current_player_index].coins) {
+                            enabled[i] = 0;
+                            names[i][0] = 1;
+                        }
+                        names[i][1] = 0;
+                        count++;
+                    }
+                }
+                for (; i < 8; i++) {
+                    enabled[i] = 1;
+                }
+                func_8008DAC0_8E6C0(0x28);
+                func_80056524_57124(0x28);
+                func_80056368_56F68(1, D_80112304_2A75D4_name_3E[shop], names[0], (s32)names[1], (s32)names[2],
+                                    (s32)names[3], (s32)names[4]);
+                func_80056524_57124(0);
+                D_801138B4_2A8B84_name_3E = shop;
+                D_801138B8_2A8B88_name_3E = enabled;
+                sel = func_80103CF4_298FC4_name_3E(enabled);
+                MBDlgWinClose();
+                func_80056168_56D68();
+                if (sel == count) {
+                    D_800FC734_FD334 = 0;
+                    MBItemDescExec(gw->current_player_index);
+                    D_800FC734_FD334 = 1;
+                    goto shop;
+                }
+                if ((sel == count + 1) | (sel == -1)) {
+                    goto loop;
+                }
+                item = &D_801122E0_2A75B0_name_3E[shop][sel];
+                func_8004CA34_4D634(gw->current_player_index, -D_800CC000[*item]);
+                func_800614B4_620B4(gw->current_player_index, -D_800CC000[*item]);
+                HuPrcSleep(30);
+                gPlayers[gw->current_player_index].item = *item;
+                spr = SprCreate(1, 5);
+                data = DataRead(D_800CCBDC_CD7DC[*item]);
+                anim = SprAnimRead(data);
+                DataClose(data);
+                SprAnimSet(spr, 0, anim, 0);
+                SprPrioSet(spr, 0, 10);
+                func_8008225C_82E5C(spr, 0, 0);
+                SprAttrSet(spr, 0, 0x1000);
+                SprPosSet(spr, 0, 160, 90);
+                func_80082488_83088(spr, 0, 0);
+                func_8005670C_5730C(&rot);
+                func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot, &((MBModel*)player->unk_24)->rot, 10);
+                PlaySound(0x19);
+                for (i = 0; i < 10; i++) {
+                    func_80082488_83088(spr, 0, i * 25);
+                    HuPrcVSleep();
+                }
+                func_80082488_83088(spr, 0, 0x100);
+                MBPlayerMotionSet(-1, 5, 0);
+                HuPrcSleep(5);
+                func_80079718_7A318(0x103, gPlayers[gw->current_player_index].character);
+                HuPrcSleep(45);
+                MBPlayerMotionSet(-1, -1, 2);
+                HuPrcSleep(10);
+                SprAnimKill(anim);
+                SprKill(spr);
+                break;
+            case 1:
+                MBDlgWinExec(1, 0x1F1);
+                break;
+            case 2:
+                func_80103A64_298D34_name_3E();
+                goto loop;
+            }
+        }
+        func_8004655C_4715C(gw->current_player_index);
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80109B30_29EE00_name_3E);
+#endif
 /* MP3 func_8010C914_322484_ChillyWaters: fade a model in */
 void func_8010A13C_29F40C_name_3E(MBModel* model) {
     s32 i;
