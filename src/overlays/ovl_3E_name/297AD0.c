@@ -1656,11 +1656,97 @@ void func_8010CA78_2A1D48_name_3E(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CAE8_2A1DB8_name_3E);
+void func_8010CAE8_2A1DB8_name_3E(void) {
+    s32 playerNo;
+    GW_PLAYER* player;
+    s16 space;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CCD4_2A1FA4_name_3E);
+    playerNo = GwSystem.current_player_index;
+    player = BoardPlayerGet(-1);
+    func_8010D37C_2A264C_name_3E();
+    func_80047A50_48650(playerNo);
+    _SetFlag(4);
+    func_80046F98_47B98(playerNo);
+    func_80078FF8_79BF8();
+    func_80064FF8_65BF8();
+    HuPrcSleep(5);
+    MBPlayerVibrate(-1, 3);
+    HuPrcSleep(25);
+    MBPlayerMotionSet(playerNo, 2, 0);
+    func_80059120_59D20(gPlayers[playerNo].unk_24, 2.0f, -0.3f);
+    HuPrcSleep(5);
+    func_80047BB8_487B8(playerNo);
+    func_8005DDEC_5E9EC(playerNo, -1, 0, 10, 2);
+    HuPrcSleep(20);
+    func_80053F7C_54B7C();
+    func_8004CDE0_4D9E0();
+    func_8004CE80_4DA80();
+    func_8004D5B0_4E1B0();
+    func_80053F54_54B54();
+    _ClearFlag(4);
+    func_80079848_7A448(func_80046F98_47B98(playerNo));
+    func_80046EDC_47ADC(playerNo);
+    func_80060210_60E10(0x19);
+    while (func_800609D8_615D8()) {
+        HuPrcVSleep();
+    }
+    MBStatusItemDispSetAll(0);
+    func_80060210_60E10(0x1A);
+    while (func_800609D8_615D8()) {
+        HuPrcVSleep();
+    }
+    func_80047D78_48978(playerNo, -1);
+    space = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+    func_800558E8_564E8(space);
+    func_800556F4_562F4(space, 1);
+    if (func_800670B0_67CB0() >= 0) {
+        HuPrcSleep(-1);
+    }
+    func_80045650_46250(playerNo);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CF20_2A21F0_name_3E);
+/* Slides a sprite (when not -1) and the current player's status window by the same offset. */
+void func_8010CCD4_2A1FA4_name_3E(void) {
+    f32 x;
+    f32 y;
+    f32 dx;
+    f32 dy;
+    Unk3EWindowSlide* work;
+    s32 i;
+
+    i = 1;
+    work = HuPrcCurrentGet()->user_data;
+    dx = (f32)(work->x1 - work->x0) / work->frames;
+    dy = (f32)(work->y1 - work->y0) / work->frames;
+    func_8006296C_6356C(GwSystem.current_player_index, &x, &y);
+    for (; i <= work->frames; i++) {
+        if (work->sprite != -1) {
+            SprPosSet(work->sprite, 0, work->x0 + dx * i, work->y0 + dy * i);
+        }
+        func_800629AC_635AC(GwSystem.current_player_index, dx * i + x, dy * i + y);
+        HuPrcVSleep();
+    }
+    if (work->sprite != -1) {
+        SprPosSet(work->sprite, 0, work->x1, work->y1);
+    }
+    func_800629AC_635AC(GwSystem.current_player_index, (work->x1 + x) - work->x0, (work->y1 + y) - work->y0);
+    omDelPrcObj(NULL);
+}
+
+Process* func_8010CF20_2A21F0_name_3E(s16 sprite, s16 x0, s16 y0, s16 x1, s16 y1, s16 frames) {
+    Process* process;
+    Unk3EWindowSlide* work;
+
+    process = omAddPrcObj(func_8010CCD4_2A1FA4_name_3E, 0x4001, 0, 0x40);
+    work = process->user_data = HuMemMemoryAlloc(process->heap, sizeof(Unk3EWindowSlide));
+    work->x0 = x0;
+    work->y0 = y0;
+    work->x1 = x1;
+    work->y1 = y1;
+    work->frames = frames;
+    work->sprite = sprite;
+    return process;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010CFCC_2A229C_name_3E);
 

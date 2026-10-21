@@ -227,6 +227,40 @@ void func_800650BC_65CBC(void);
 void func_80078FF8_79BF8(void);
 void func_800115B4_121B4(s32);
 void func_80055E60_56A60(void);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void func_8006296C_6356C(s16 player, f32* x, f32* y); /* status window position */
+void func_800629AC_635AC(s16 player, s16 x, s16 y); /* status window move */
+#include "game/malloc.h"
+void func_80047A50_48650(s32);
+s16 func_80046F98_47B98(s32);
+void func_80064FF8_65BF8(void);
+void func_80059120_59D20(void*, f32, f32);
+void func_80047BB8_487B8(s32);
+void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
+void func_80053F7C_54B7C(void);
+void func_8004CDE0_4D9E0(void);
+s32 func_8004CE80_4DA80(void);
+void func_8004D5B0_4E1B0(void);
+void func_80053F54_54B54(void);
+void func_80079848_7A448(s16 arg0);
+void func_80046EDC_47ADC(s32);
+s32 func_80060210_60E10(s32);
+s32 func_800609D8_615D8(void);
+void MBStatusItemDispSetAll(s32 arg0);
+void func_80047D78_48978(s32 arg0, s32 arg1);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+void func_800558E8_564E8(s16 arg0);
+void func_80045650_46250(s32 arg0);
+
+typedef struct Unk3EWindowSlide {
+    /* 0x00 */ s16 x0;
+    /* 0x02 */ s16 y0;
+    /* 0x04 */ s16 x1;
+    /* 0x06 */ s16 y1;
+    /* 0x08 */ s16 frames;
+    /* 0x0A */ s16 sprite; /* -1: none */
+    /* 0x0C */ char unk_0C[4];
+} Unk3EWindowSlide; /* size 0x10 */
 
 /* ---- 297AD0.c ---- */
 
@@ -331,7 +365,7 @@ void func_8010C6DC_2A19AC_name_3E(void);
 void func_8010CA78_2A1D48_name_3E(void);
 void func_8010CAE8_2A1DB8_name_3E(void);
 void func_8010CCD4_2A1FA4_name_3E(void);
-s32 func_8010CF20_2A21F0_name_3E(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+Process* func_8010CF20_2A21F0_name_3E(s16 sprite, s16 x0, s16 y0, s16 x1, s16 y1, s16 frames);
 void func_8010CFCC_2A229C_name_3E(void);
 s32 func_8010D37C_2A264C_name_3E(void);
 void func_8010D6C8_2A2998_name_3E(void);
