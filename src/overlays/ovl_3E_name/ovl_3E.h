@@ -202,16 +202,30 @@ typedef struct Vec2f3E {
     f32 x;
     f32 y;
 } Vec2f3E;
+extern Vec2f3E D_80112504_2A77D4_name_3E[4];
 extern Vec2f3E D_80112524_2A77F4_name_3E[4]; /* per player: window positions (item events) */
 extern Vec2f3E D_80112544_2A7814_name_3E[4];
 extern Vec2f3E D_80112564_2A7834_name_3E[4];
+extern s32 D_80112584_2A7854_name_3E[6]; /* per board: message */
+s32 func_80060210_60E10(s32);
+s32 func_800609D8_615D8(void); /* status windows still moving */
+void MBStatusItemDispSetAll(s32);
+extern s16 D_8011259C_2A786C_name_3E[6]; /* per board: message window */
+Process* MBDCameraZoomMotStart(f32);
+void func_800628C0_634C0(s32 player, f32, f32);
+s32 func_8006286C_6346C(s32 player);
+void func_800636F8_642F8(s32);
+void func_800509FC_515FC(void);
+void func_80054C78_55878(s16 space, s16* chainOut, s16* linkOut);
+void MBDlgWinExec(s32, s32);
+void func_800495D8_4A1D8(s32, s32);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
 s32 MBRand(f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
-void func_800629F0_635F0(s16, s32);
+void func_800629F0_635F0(s32 player, s16); /* status window */
 void func_80062588_63188(s16);
 extern MBModel* D_800CC1F0_CCDF0; /* the Bowser suit model */
 void func_8005070C_5130C(void); /* MBKSuitCreate */
