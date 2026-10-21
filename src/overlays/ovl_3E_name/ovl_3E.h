@@ -234,8 +234,9 @@ void func_800629AC_635AC(s16 player, s16 x, s16 y); /* status window move */
 #include "game/data.h"
 s16 SprCreate(s32 num, s32 attr);
 s16 SprAnimRead(void* arg0);
-/* Retail calls these two as int-returning (no sign extension of the result at the call). The ids
-   are only passed on to s16 parameters, so the host's truncation keeps them right. */
+/* Retail calls these two as int-returning (no sign extension of the result at the call). Every
+   user here passes the id on to s16 parameters or stores it in a 16-bit slot, so the host's
+   truncation keeps it right. */
 #define SprCreate_s32(num, attr) (((s32(*)(s32, s32))SprCreate)(num, attr))
 #define SprAnimRead_s32(data) (((s32(*)(void*))SprAnimRead)(data))
 void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
@@ -268,6 +269,32 @@ extern Unk3ERange D_801123A8_2A7678_name_3E[14]; /* press count range -> discoun
 extern u16 ContDStkTrg[4];
 void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
 void func_80055E3C_56A3C(s32 arg0);
+typedef struct Unk3EStealRange {
+    u8 turnMin;
+    u8 turnMax;
+    u8 min;
+    u8 max;
+    u8 mess; /* index into D_8011243E */
+} Unk3EStealRange; /* size 5 */
+extern u8 D_80112330_2A7600_name_3E[4][3]; /* per player: the other players */
+extern Unk3EStealRange D_801123D4_2A76A4_name_3E[24]; /* turn and coin range -> message */
+/* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
+   layout-dependent label, keep the data in place on the host. */
+extern s16 D_8011243E_2A770E_name_3E[];
+s32 func_800558F4_564F4(void); /* the current space (retail: int-returning) */
+s32 func_80046D2C_4792C(s32 arg0);
+omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
+void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
+Process* MBDCameraZoomMotStart(f32 arg0);
+void MBDlgWinExec(s32 arg0, s32 arg1);
+void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void MBDlgWinClose(void);
+void func_80056168_56D68(void);
+void func_80078EC8_79AC8(void);
+void func_8004CA34_4D634(s32 arg0, s32 arg1);
+void func_800614B4_620B4(s32 arg0, s32 arg1);
+void func_8006135C_61F5C(s32 arg0, s32 arg1, s32 arg2);
+void func_8004655C_4715C(s32 arg0);
 extern Unk3EVec2f D_80112504_2A77D4_name_3E[4]; /* per player: window slide positions */
 extern Unk3EVec2f D_80112524_2A77F4_name_3E[4];
 extern Unk3EVec2f D_80112544_2A7814_name_3E[4];
@@ -390,13 +417,13 @@ void func_8010964C_29E91C_name_3E(void);
 s32 func_80109A78_29ED48_name_3E(s32 arg0);
 s32 func_80109AE4_29EDB4_name_3E(void);
 void func_80109B30_29EE00_name_3E(void);
-s32 func_8010A13C_29F40C_name_3E(s32 arg0);
-void func_8010A1DC_29F4AC_name_3E(s32 arg0);
+void func_8010A13C_29F40C_name_3E(MBModel* model);
+void func_8010A1DC_29F4AC_name_3E(MBModel* model);
 s32 func_8010A27C_29F54C_name_3E(s32 player);
 void func_8010AB58_29FE28_name_3E(void);
 s32 func_8010AB7C_29FE4C_name_3E(s32 player);
 void func_8010B8B8_2A0B88_name_3E(void);
-void func_8010BA0C_2A0CDC_name_3E(s32 arg0);
+void func_8010BA0C_2A0CDC_name_3E(MBModel* parent);
 void func_8010BA48_2A0D18_name_3E(void);
 void func_8010C44C_2A171C_name_3E(void);
 void func_8010C468_2A1738_name_3E(void);
