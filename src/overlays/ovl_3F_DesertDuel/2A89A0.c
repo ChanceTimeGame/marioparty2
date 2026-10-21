@@ -160,7 +160,7 @@ void func_80102D1C_2A8EBC_DesertDuel(void) {
         HuPrcVSleep();                                                        \
     }
 
-#ifdef NON_MATCHING /* rodata-pending */
+#ifdef NON_MATCHING /* NON_MATCHING; also a rodata user (motions, "item_hook", the jump table) */
 void func_80102D48_2A8EE8_DesertDuel(void) {
     ModelPathWork* work[4];
     s16 hook[4];
