@@ -64,6 +64,7 @@ s32 _CheckFlag(s32);
 void omDelObj(omObjData*);
 s8 func_80011308_11F08(s16);
 void func_80015950_16550(s32);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
 void func_800209C4_215C4(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void func_800283DC_28FDC(s16 arg0);
 void func_800298A4_2A4A4(s16, s32, s32);
@@ -145,7 +146,7 @@ extern Vec D_8010F940_342580_name_4F[2]; /* D_80110560 */
 extern Vec D_8010F958_342598_name_4F[2]; /* D_8011056C: start; [1] the centre it circles */
 extern u16 D_8010F970_3425B0_name_4F[6];     /* per character: frames to the winner's voice */
 extern s32 D_8010F97C_3425BC_name_4F[6];     /* per board: the flag that allows skipping */
-extern s32 D_8010FAA8_3426E8_name_4F[6];     /* per character: MBPlayerModelCreate list */
+extern u32* D_8010FAA8_3426E8_name_4F[6];    /* per character: MBPlayerModelCreate list */
 extern u32 D_8010FAC0_342700_name_4F[];
 extern u32 D_8010FAD4_342714_name_4F[];
 extern s32 D_8010FB04_342744_name_4F;
