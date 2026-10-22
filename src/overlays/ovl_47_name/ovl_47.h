@@ -403,7 +403,6 @@ void func_8010654C_2FAE4C_name_47(void);
 void func_80106120_2FAA20_name_47(void);
 void func_8010621C_2FAB1C_name_47(s16 arg0);
 void func_80106388_2FAC88_name_47(void);
-void func_801063F0_2FACF0_name_47(s16 arg0);
 void func_801065AC_2FAEAC_name_47(void);
 void func_80106608_2FAF08_name_47(s32 arg0);
 void func_801066AC_2FAFAC_name_47(s32 arg0);

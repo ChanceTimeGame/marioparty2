@@ -1822,7 +1822,7 @@ void func_80108654_2FCF54_name_47(void) {
     player = BoardPlayerGet(-1);
     if (gw->current_player_index != 4) {
         MBPlayerMotionSet(-1, -1, 2);
-        func_80056C30_57830(-1, 8, 0x9A);
+        func_80056C30_57830(-1, 8, 0x55);
         HuPrcSleep(8);
         func_80046D2C_4792C(gw->current_player_index);
         PlaySound(0xE6);
