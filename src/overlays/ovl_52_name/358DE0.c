@@ -291,17 +291,138 @@ const u32 D_80106AF8_35D0D8_name_52[4] = { 0x00000603, 0x00000604, 0x00000605, 0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80103814_359DF4_name_52);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105574_35BB54_name_52);
+/* The scene's end: tear down, then the results overlay for the board. */
+void func_80105574_35BB54_name_52(void) {
+    if (func_8008F618_90218() == 0) {
+        func_80105C24_35C204_name_52();
+        func_80105A48_35C028_name_52();
+        func_8008CE5C_8DA5C();
+        if (D_80106B30_35D110_name_52 == 6) {
+            func_80102978_358F58_name_52();
+        }
+        if (D_801011FC_101DFC != 0) {
+            omOvlReturnEx(1);
+            return;
+        }
+        switch (GwSystem.current_board_index) {
+        case 0:
+        case 1:
+        case 3:
+            omOvlGotoEx(0x4F, 0, 0x92);
+            break;
+        case 2:
+        case 4:
+        case 5:
+            omOvlGotoEx(0x50, 0, 0x92);
+            break;
+        case 6:
+            omOvlGotoEx(0x51, 0, 0x92);
+            break;
+        }
+        D_800FD866_FE466 = 1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105640_35BC20_name_52);
+void func_80105640_35BC20_name_52(omObjData* obj) {
+    if (D_801011FC_101DFC != 0 || D_801067F0_35CDD0_name_52 != 0) {
+        obj->func_ptr = func_80105574_35BB54_name_52;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105674_35BC54_name_52);
+/* The players at their places, the host, the bonus star models and their effects. */
+void func_80105674_35BC54_name_52(void) {
+    Vec target;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105A48_35C028_name_52);
+    MBModelInit();
+    func_8005E2B8_5EEB8();
+    func_800593C0_59FC0();
+    for (i = 0; i < 4; i++) {
+        MBPlayerModelCreate(i, D_80106960_35CF40_name_52[gPlayers[i].character], 2);
+        func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+        ((MBModel*)gPlayers[i].unk_24)->pos.x = D_80106828_35CE08_name_52[i].x;
+        ((MBModel*)gPlayers[i].unk_24)->pos.y = D_80106828_35CE08_name_52[i].y;
+        ((MBModel*)gPlayers[i].unk_24)->pos.z = D_80106828_35CE08_name_52[i].z;
+        target.x = D_80106828_35CE08_name_52[i].x;
+        target.y = D_80106828_35CE08_name_52[i].y;
+        target.z = D_80106828_35CE08_name_52[i].z + 500.0f;
+        gPlayers[i].flags |= 2;
+        func_80056658_57258(&((MBModel*)gPlayers[i].unk_24)->pos, &target, &((MBModel*)gPlayers[i].unk_24)->rot);
+    }
+    D_80106B34_35D114_name_52 = MBModelFileCreate(D_80106984_35CF64_name_52[D_80106B30_35D110_name_52], 0xD, 0.8f, 0.8f,
+                                                  D_801069A0_35CF80_name_52[D_80106B30_35D110_name_52]);
+    MBMotionSet(D_80106B34_35D114_name_52, 0, 2);
+    D_80106B34_35D114_name_52->pos.x = D_80106864_35CE44_name_52.x;
+    D_80106B34_35D114_name_52->pos.y = D_80106864_35CE44_name_52.y;
+    D_80106B34_35D114_name_52->pos.z = D_80106864_35CE44_name_52.z;
+    target.x = 0.0f;
+    target.y = 0.0f;
+    target.z = 2900.0f;
+    func_80056658_57258(&D_80106B34_35D114_name_52->pos, &target, &D_80106B34_35D114_name_52->rot);
+    for (i = 0; i < 4; i++) {
+        if (i == 0) {
+            D_80106B40_35D120_name_52[0] = func_80043510_44110(0x19, NULL);
+            MBModelDispOff(D_80106B40_35D120_name_52[0]);
+            D_80106B50_35D130_name_52[0] = func_80059370_s32();
+            func_8002D124_2DD24((s16)D_80106B50_35D130_name_52[0]);
+            func_800298A4_2A4A4((s16)D_80106B50_35D130_name_52[0], 4, 4);
+        } else {
+            D_80106B40_35D120_name_52[i] = MBModelParamCreate(D_80106B40_35D120_name_52[0]);
+            MBModelDispOff(D_80106B40_35D120_name_52[i]);
+            D_80106B50_35D130_name_52[i] = func_80027D3C_s32((s16)D_80106B50_35D130_name_52[0]);
+        }
+        HuVecCopyXYZ(&D_80106B40_35D120_name_52[i]->pos, ((MBModel*)gPlayers[i].unk_24)->pos.x,
+                     ((MBModel*)gPlayers[i].unk_24)->pos.y + 200.0f, ((MBModel*)gPlayers[i].unk_24)->pos.z);
+        HuVecCopyXYZ(&D_80106B40_35D120_name_52[i]->scale, 0.75f, 0.75f, 0.75f);
+        D_80106B40_35D120_name_52[i]->rot.x = 0.0f;
+        D_80106B40_35D120_name_52[i]->rot.z = 1.0f;
+        func_80029714_2A314((s16)D_80106B50_35D130_name_52[i], ((MBModel*)gPlayers[i].unk_24)->pos.x,
+                            ((MBModel*)gPlayers[i].unk_24)->pos.y + 200.0f, ((MBModel*)gPlayers[i].unk_24)->pos.z);
+        func_800297E8_2A3E8((s16)D_80106B50_35D130_name_52[i], 0.2f, 0.2f, 0.2f);
+        func_8002979C_2A39C((s16)D_80106B50_35D130_name_52[i], 0.0f, 0.0f, 0.0f);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105B8C_35C16C_name_52);
+void func_80105A48_35C028_name_52(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105C24_35C204_name_52);
+    for (i = 0; i < 4; i++) {
+        func_8005E260_5EE60(i);
+    }
+    func_800592E4_59EE4();
+    MBModelKill(D_80106B34_35D114_name_52);
+    for (i = 0; i < 4; i++) {
+        MBModelKill(D_80106B40_35D120_name_52[i]);
+        func_800283DC_28FDC((s16)D_80106B50_35D130_name_52[i]);
+        if (D_801067FC_35CDDC_name_52[i] != NULL) {
+            omDelObj(D_801067FC_35CDDC_name_52[i]);
+        }
+        if (D_801067E0_35CDC0_name_52[i] != NULL) {
+            func_80049F90_4AB90(D_801067E0_35CDC0_name_52[i]);
+        }
+    }
+    if (D_801067F4_35CDD4_name_52 != -1) {
+        func_800283DC_28FDC((s16)D_801067F4_35CDD4_name_52);
+        D_801067F4_35CDD4_name_52 = -1;
+    }
+    if (D_801067F8_35CDD8_name_52 != NULL) {
+        omDelObj(D_801067F8_35CDD8_name_52);
+        D_801067F8_35CDD8_name_52 = NULL;
+    }
+    func_80059400_5A000();
+}
+
+void func_80105B8C_35C16C_name_52(void) {
+    func_80018E30_19A30(1);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_80050A30_51630(D_01164160);
+}
+
+void func_80105C24_35C204_name_52(void) {
+    MBDBackKill();
+    func_80050AE0_516E0();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105C48_35C228_name_52);
 

@@ -69,6 +69,27 @@ void func_80059618_5A218(void* arg0);
 s16 func_800797DC_7A3DC(s32, s16);
 extern s16 D_800F8CE4_F98E4[]; /* board state halfwords; [10 + i]: player i's bonus stars */
 
+void MBPlayerModelCreate(s16, void*, s32);
+void func_8005ABC0_5B7C0(GW_PLAYER*, s16, s16);
+void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+void MBMotionSet(MBModel*, s16, s32);
+MBModel* func_80043510_44110(s32, void*);
+MBModel* MBModelParamCreate(MBModel*);
+u16 func_80059370_59F70(void);
+void func_8002D124_2DD24(s16 index);
+void func_800298A4_2A4A4(s16, s32, s32);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void MBModelInit(void);
+void func_8005E2B8_5EEB8(void);
+void func_800593C0_59FC0(void);
+extern u16 D_801011FC_101DFC;
+extern u8 D_800FD866_FE466;
+extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
+
 /* ---- overlay 52 data ---- */
 
 extern ModelEmitterWork* D_801067E0_35CDC0_name_52[4];
@@ -77,9 +98,15 @@ extern s32 D_801067F4_35CDD4_name_52; /* the winner effect's model (-1: none); r
 extern omObjData* D_801067F8_35CDD8_name_52;
 extern omObjData* D_801067FC_35CDDC_name_52[4]; /* the leaders' pulsing digits */
 extern s32 D_8010680C_35CDEC_name_52[7]; /* per board: the stage */
+extern Vec D_80106828_35CE08_name_52[4]; /* each player's place (splat: D_8010682C, D_80106830) */
+extern Vec D_80106858_35CE38_name_52; /* a single winner's spot */
+extern Vec D_80106864_35CE44_name_52; /* the host's place */
+extern u32* D_80106960_35CF40_name_52[6]; /* per character: the board model's file list */
 extern s8 D_80106978_35CF58_name_52[4]; /* per player: sound pan */
 extern char* D_8010697C_35CF5C_name_52; /* "YOU ARE THE WINNER" */
 extern s16 D_80106980_35CF60_name_52[2]; /* its position */
+extern s32 D_80106984_35CF64_name_52[7]; /* per board: the host's model */
+extern u32 D_801069A0_35CF80_name_52[7][2]; /* per board: the host's motions */
 
 /* ---- overlay 52 bss ---- */
 
@@ -119,6 +146,8 @@ void func_8010670C_35CCEC_name_52(void);
 #define SprCreate_s32(num, attr) (((s32(*)(s32, s32))SprCreate)(num, attr))
 #define SprAnimRead_s32(data) (((s32(*)(void*))SprAnimRead)(data))
 #define func_8006A608_s32(g, s, f, x, y) (((s32(*)(GAMEMES*, char*, u8, s16, s16))func_8006A608_6B208)(g, s, f, x, y))
+#define func_80059370_s32() (((s32(*)(void))func_80059370_59F70)())
+#define func_80027D3C_s32(m) (((s32(*)(s16))func_80027D3C_2893C)(m))
 
 #define DEG 0.017453292519943295
 
