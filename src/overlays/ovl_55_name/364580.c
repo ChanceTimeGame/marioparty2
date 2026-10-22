@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_55.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/364580", func_80105690_364580_name_55);
 
