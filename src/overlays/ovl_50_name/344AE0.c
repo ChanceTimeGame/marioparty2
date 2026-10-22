@@ -61,7 +61,329 @@ const char D_80112554_352DB4_name_50[] = "c001_000-migi-te2_2";
 __asm__(".section .rodata");
 const char D_80112568_352DC8_name_50[16] = "migi-te2_4";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801044DC_344D3C_name_50);
+/* Board 2's scene, part 1: the host (D_80112748) walks in and turns, a ghost (0x800C1) fades in
+   and floats to the centre, music 0x3C; the partner (D_8011275C) arrives, the host's spell
+   (func_80108290/80108448/80108630/80108830) changes it into a new model (0xA022D) which hops
+   away with the host as the doors (0xA018E) slide. Messages 0x2E6-0x2EE. */
+void func_801044DC_344D3C_name_50(void) {
+    s32 flags[2];
+    Vec dir;
+    MBModel* door1;
+    MBModel* door2;
+    MBModel* ghost;
+    s16 alpha;
+    MBModel* morph1;
+    MBModel* morph2;
+    s16 win2;
+    s32 i;
+    s32 wait;
+    s32 jumping;
+    s32 n;
+    f32 vel;
+
+    func_80050E00_51A00(0x13);
+    alpha = 0;
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBModelKill(D_8011274C_352FAC_name_50);
+    D_8011274C_352FAC_name_50 = MBModelFileCreate(0x80028, 13, 0.8f, 0.8f, D_80111CA0_352500_name_50);
+    func_8005AB50_5B750(D_8011274C_352FAC_name_50, 2, 8, D_80111D00_352560_name_50);
+    func_8002D1EC_2DDEC(*D_8011274C_352FAC_name_50->obj->model, 1);
+    MBModelDispOff(D_8011274C_352FAC_name_50);
+    door1 = MBModelFileCreate(0xA018E, -1, 1.0f, 0.0f, NULL);
+    func_80043DAC_449AC(door1);
+    door1->pos.x = D_80111D74_3525D4_name_50[0].x;
+    door1->pos.y = D_80111D74_3525D4_name_50[0].y;
+    door1->pos.z = D_80111D74_3525D4_name_50[0].z;
+    door1->attr |= 4;
+    door2 = MBModelFileCreate(0xA018E, -1, 1.0f, 0.0f, NULL);
+    func_80043DAC_449AC(door2);
+    door2->pos.x = D_80111D74_3525D4_name_50[0].x;
+    door2->pos.y = D_80111D74_3525D4_name_50[0].y;
+    door2->pos.z = D_80111D74_3525D4_name_50[0].z;
+    door2->attr |= 4;
+    D_80112748_352FA8_name_50 = MBModelFileCreate(0x8008B, 13, 1.0f, 1.3f, D_80111CAC_35250C_name_50);
+    HmfModelObjAttrSet(*D_80112748_352FA8_name_50->obj->model, 0x22000, 0x20000);
+    func_80029A8C_2A68C(*D_80112748_352FA8_name_50->obj->model);
+    func_8002A00C_2AC0C(*D_80112748_352FA8_name_50->obj->model);
+    func_8005AB50_5B750(D_80112748_352FA8_name_50, 2, 7, D_80111D08_352568_name_50);
+    func_8002D1EC_2DDEC(*D_80112748_352FA8_name_50->obj->model, 1);
+    D_80112748_352FA8_name_50->pos.x = D_80111D2C_35258C_name_50[0].x;
+    D_80112748_352FA8_name_50->pos.y = D_80111D2C_35258C_name_50[0].y;
+    D_80112748_352FA8_name_50->pos.z = D_80111D2C_35258C_name_50[0].z;
+    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80111D2C_35258C_name_50[1], &D_80112748_352FA8_name_50->rot);
+    MBMotionSet(D_80112748_352FA8_name_50, 11, 2);
+    ghost = MBModelFileCreate(0x800C1, 13, 1.0f, 1.2f, D_80111D8C_3525EC_name_50);
+    MBMotionSet(ghost, 0, 2);
+    ghost->pos.x = D_80111D44_3525A4_name_50[0].x;
+    ghost->pos.y = 0.0f;
+    ghost->pos.z = D_80111D44_3525A4_name_50[0].z;
+    ghost->jumpY = 275.0f;
+    func_8002D124_2DD24(*ghost->obj->model);
+    func_8002D124_2DD24(*ghost->shadow->model);
+    func_8002D0A0_2DCA0(*ghost->obj->model, 0);
+    func_8002D0A0_2DCA0(*ghost->shadow->model, 0);
+    func_80056658_57258(&ghost->pos, &D_80111D44_3525A4_name_50[1], &ghost->rot);
+    morph1 = MBModelFileCreate(0xA022D, 13, 1.0f, 1.3f, NULL);
+    morph2 = MBModelFileCreate(0xA022D, 13, 1.0f, 1.3f, D_80111D20_352580_name_50);
+    HmfModelObjAttrSet(*morph1->obj->model, 0x22000, 0x20000);
+    func_80029A8C_2A68C(*morph1->obj->model);
+    func_8002A00C_2AC0C(*morph1->obj->model);
+    func_80029E80_2AA80(*morph2->obj->model, 1, 1);
+    MBModelDispOff(morph1);
+    MBModelDispOff(morph2);
+    D_8011275C_352FBC_name_50 = MBModelFileCreate(0x8005A, 13, 1.0f, 3.0f, D_80111CE4_352544_name_50);
+    HmfModelObjAttrSet(*D_8011275C_352FBC_name_50->obj->model, 0x22000, 0x20000);
+    func_80029A8C_2A68C(*D_8011275C_352FBC_name_50->obj->model);
+    func_8002A00C_2AC0C(*D_8011275C_352FBC_name_50->obj->model);
+    func_8005AB50_5B750(D_8011275C_352FBC_name_50, 2, 9, D_80111D14_352574_name_50);
+    MBMotionSet(D_8011275C_352FBC_name_50, 0, 2);
+    func_80043DAC_449AC(D_8011275C_352FBC_name_50);
+    func_8002D1EC_2DDEC(*D_8011275C_352FBC_name_50->obj->model, 1);
+    D_8011275C_352FBC_name_50->pos.x = D_80111D5C_3525BC_name_50.x;
+    D_8011275C_352FBC_name_50->pos.y = D_80111D5C_3525BC_name_50.y;
+    D_8011275C_352FBC_name_50->pos.z = D_80111D5C_3525BC_name_50.z;
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &D_80112748_352FA8_name_50->pos, &D_8011275C_352FBC_name_50->rot);
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    D_80112750_352FB0_name_50 = LoadFormFile(0xA0231, 0x489);
+    func_8005AA48_5B648(D_8011275C_352FBC_name_50, D_801124F0_352D50_name_50, D_80112750_352FB0_name_50);
+    func_800298A4_2A4A4(D_80112750_352FB0_name_50, 4, 4);
+    func_80026D50_27950(1, 1, 1);
+    func_80026E00_27A00(1, -37.0f, 8.0f, -113.0f);
+    func_80026D50_27950(3, 1, 1);
+    func_80026E00_27A00(3, -5.0f, 109.0f, 48.0f);
+    func_80026DAC_279AC(3, 0x3C, 0x9C, 0xFF);
+    PlaySound(0x3E9);
+    InitFadeIn(3, 16);
+    HuPrcSleep(16);
+    while (func_8005A5E8_5B1E8(D_80112748_352FA8_name_50, &D_80111D38_352598_name_50, 6.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80111D50_3525B0_name_50, &dir);
+    dir.x = -dir.x;
+    dir.z = -dir.z;
+    MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 8, 2);
+    dir.x = dir.x * 500.0f + D_80111D50_3525B0_name_50.x;
+    dir.z = dir.z * 500.0f + D_80111D50_3525B0_name_50.z;
+    while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &dir, 5.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 4, 0, 8, 2);
+    HuPrcSleep(15);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2E6);
+    win2 = func_8005AAC0_5B6C0((320 - D_80112752_352FB2_name_50[0]) / 2, 60, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2E6, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(30);
+    func_8008CCA8_8D8A8(win2);
+    while (func_8005A5E8_5B1E8(ghost, &D_80111D50_3525B0_name_50, 15.0f) == 0) {
+        ghost->jumpY -= 2.4166667f;
+        alpha += 11;
+        if (alpha >= 256) {
+            alpha = 255;
+        }
+        func_8002D0A0_2DCA0(*ghost->obj->model, alpha);
+        func_8002D0A0_2DCA0(*ghost->shadow->model, alpha);
+        HuPrcVSleep();
+    }
+    PlaySound(0xEB);
+    HuPrcSleep(15);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 4, 2);
+    while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &ghost->pos, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    HuPrcSleep(10);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2E7);
+    win2 = func_8005AAC0_5B6C0(50, 70, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2E7, -1, -1);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 7, 0, 2, 2);
+    PlaySound(0xE7);
+    HuPrcSleep(10);
+    PlaySound(0xE7);
+    HuPrcSleep(10);
+    PlaySound(0xE7);
+    HuPrcSleep(20);
+    func_8008CCA8_8D8A8(win2);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 3, 0, 4, 2);
+    HuPrcSleep(20);
+    PlayMusic(0x3C);
+    for (i = 0; i < 15; i++) {
+        alpha -= 16;
+        func_8002D0A0_2DCA0(*ghost->obj->model, alpha);
+        func_8002D0A0_2DCA0(*ghost->shadow->model, alpha);
+        HuPrcVSleep();
+    }
+    MBModelKill(ghost);
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    func_800298A4_2A4A4(D_80112750_352FB0_name_50, 4, 0);
+    while (func_8005A5E8_5B1E8(D_8011275C_352FBC_name_50, &D_80111D68_3525C8_name_50, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    {
+        s32 winA;
+        s32 winB;
+
+        func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2E8);
+        winA = func_8005AAC0_5B6C0(80, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+        func_800890CC_89CCC(winA, 0x2E8, -1, -1);
+        PlaySound(0x124);
+        HuPrcSleep(20);
+        MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 4, 2);
+        HuPrcSleep(15);
+        func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2E9);
+        winB = func_8005AAC0_5B6C0(110, 80, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+        func_800890CC_89CCC(winB, 0x2E9, -1, -1);
+        PlaySound(0xE7);
+        HuPrcSleep(15);
+        while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &D_8011275C_352FBC_name_50->pos, 15.0f) == 0) {
+            HuPrcVSleep();
+        }
+        MBMotionSet(D_8011275C_352FBC_name_50, 1, 0);
+        HuPrcSleep(20);
+        func_8008CCA8_8D8A8(winA);
+        func_8008CCA8_8D8A8(winB);
+    }
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 7, 0, 2, 2);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2EA);
+    win2 = func_8005AAC0_5B6C0(140, 80, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2EA, -1, -1);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 4, 2);
+    PlaySound(0xE7);
+    HuPrcSleep(10);
+    PlaySound(0xE7);
+    HuPrcSleep(10);
+    func_8008CCA8_8D8A8(win2);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 3, 0, 2, 2);
+    PlaySound(0xE7);
+    HuPrcSleep(15);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2EB);
+    win2 = func_8005AAC0_5B6C0(100, 40, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2EB, -1, -1);
+    PlaySound(0x123);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 3, 0, 4, 0);
+    HuPrcSleep(19);
+    PlaySound(0x3DB);
+    func_80108290_348AF0_name_50(D_8011275C_352FBC_name_50->pos.x + 230.0f, D_8011275C_352FBC_name_50->pos.y + 355.0f, D_8011275C_352FBC_name_50->pos.z + 200.0f);
+    HuPrcSleep(10);
+    func_8008CCA8_8D8A8(win2);
+    func_80108448_348CA8_name_50(D_8011275C_352FBC_name_50->pos.x + 230.0f, D_8011275C_352FBC_name_50->pos.y + 355.0f, D_8011275C_352FBC_name_50->pos.z + 200.0f, -66.0f);
+    func_8002D2B4_2DEB4(*D_8011275C_352FBC_name_50->obj->model, 50.0f, 91.0f, -59.0f);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0xFB, 0x14, 0xFB);
+    for (i = 0; i < 10; i++) {
+        D_801125D8_352E38_name_50->scale.x += 0.4f;
+        HuPrcVSleep();
+    }
+    func_80108630_348E90_name_50(D_80112748_352FA8_name_50->pos.x, D_80112748_352FA8_name_50->pos.y + 45.0f, D_80112748_352FA8_name_50->pos.z, 0);
+    func_8002D2B4_2DEB4(*D_80112748_352FA8_name_50->obj->model, 42.0f, 21.0f, 110.0f);
+    func_8002D274_2DE74(*D_80112748_352FA8_name_50->obj->model, 0xFB, 0x14, 0xFB);
+    HuPrcSleep(45);
+    func_80079848_7A448(D_801125D2_352E32_name_50);
+    func_801087FC_34905C_name_50();
+    func_801085FC_348E5C_name_50();
+    func_80108414_348C74_name_50();
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0, 0, 0);
+    func_8002D274_2DE74(*D_80112748_352FA8_name_50->obj->model, 0, 0, 0);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 4, 2);
+    PlaySound(0x3DC);
+    func_80108830_349090_name_50(D_80112748_352FA8_name_50->pos.x + 70.0f, D_80112748_352FA8_name_50->pos.y, D_80112748_352FA8_name_50->pos.z + 150.0f);
+    HuPrcSleep(5);
+    morph1->pos = D_80112748_352FA8_name_50->pos;
+    morph2->pos = morph1->pos;
+    morph1->rot = D_80112748_352FA8_name_50->rot;
+    morph2->rot = morph1->rot;
+    D_801125E8_352E48_name_50 = D_80112748_352FA8_name_50->pos;
+    D_801125F4_352E54_name_50 = D_80112748_352FA8_name_50->rot;
+    for (i = 0; i < 11; i++) {
+        func_8002AC10_2B810(*D_80112748_352FA8_name_50->obj->model, i * 0.07f, i, 2);
+        D_800CA02C_CAC2C += 24.0f;
+        if (D_800CA02C_CAC2C >= 360.0f) {
+            D_800CA02C_CAC2C -= 360.0f;
+        }
+        HuPrcVSleep();
+    }
+    MBModelKill(D_80112748_352FA8_name_50);
+    MBModelDispOn(morph1);
+    for (i = 0; i < 11; i++) {
+        func_8002AC10_2B810(*morph1->obj->model, 1.0f - i * 0.07f, 10.0f - i, 2);
+        D_800CA02C_CAC2C += 24.0f;
+        if (D_800CA02C_CAC2C >= 360.0f) {
+            D_800CA02C_CAC2C -= 360.0f;
+        }
+        HuPrcVSleep();
+    }
+    MBModelKill(morph1);
+    MBModelDispOn(morph2);
+    MBMotionSet(morph2, -1, 2);
+    HuPrcSleep(15);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 2, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2EC);
+    i = func_8005AAC0_5B6C0(180, 110, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(i, 0x2EC, -1, -1);
+    PlaySound(0x3D8);
+    HuPrcSleep(35);
+    func_8008CCA8_8D8A8(i);
+    while (func_8005A5E8_5B1E8(door1, &D_80111D80_3525E0_name_50, 10.0f) == 0) {
+        func_8005A5E8_5B1E8(door2, &D_80111D80_3525E0_name_50, 10.0f);
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    wait = 30;
+    flags[1] = 0;
+    flags[0] = 0;
+    jumping = 0;
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 12, 2);
+    n = 0;
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_80111D0C_35256C_name_50);
+    while (1) {
+        if (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &door1->pos, 6.0f) != 0) {
+            n = 1;
+            if (flags[0] == 0) {
+                flags[0] = 1;
+                func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2ED);
+                i = func_8005AAC0_5B6C0(120, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+                func_800890CC_89CCC(i, 0x2ED, -1, -1);
+                PlaySound(0x125);
+            }
+        }
+        if (wait == 0) {
+            if (jumping == 0) {
+                MBMotionShiftSet(morph2, 0, 0, 4, 0);
+                vel = 42.0f;
+                jumping = 1;
+            }
+            morph2->jumpY += vel;
+            vel -= 6.5f;
+            if (morph2->jumpY < 0.0f) {
+                morph2->jumpY = 0.0f;
+            }
+            n += func_8005A7E8_5B3E8(morph2, &door1->pos, 10.0f) != 0;
+        } else {
+            wait--;
+        }
+        if (n == 2) {
+            morph2->jumpY = 0.0f;
+            break;
+        }
+        n = 0;
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(morph2, -1, 0, 4, 2);
+    HuPrcSleep(18);
+    func_800794A8_7A0A8(0x78);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2EE);
+    win2 = func_8005AAC0_5B6C0(126, 90, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2EE, -1, -1);
+    PlaySound(0x3D8);
+    HuPrcSleep(80);
+    func_8008CCA8_8D8A8(i);
+    func_8008CCA8_8D8A8(win2);
+    func_801089CC_34922C_name_50();
+    MBModelKill(door1);
+    MBModelKill(door2);
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    MBModelKill(morph2);
+    func_800298A4_2A4A4(D_80112750_352FB0_name_50, 4, 4);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80105900_346160_name_50);
 

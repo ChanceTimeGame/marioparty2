@@ -301,7 +301,7 @@ void func_80108290_348AF0_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_80108414_348C74_name_50(void);
 void func_80108448_348CA8_name_50(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_801085FC_348E5C_name_50(void);
-void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2);
+void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2, s32 arg3); /* 50-B: a3 from the asm */
 void func_801087FC_34905C_name_50(void);
 void func_80108830_349090_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_801089CC_34922C_name_50(void);
@@ -329,6 +329,27 @@ void func_8010D320_34DB80_name_50(omObjData* obj);
 extern u32* D_80111C88_3524E8_name_50[6]; /* board 2, per character: MBPlayerModelCreate list */
 extern u32 D_80111CA0_352500_name_50[];   /* board 2's host (0x80028): MBModelFileCreate list */
 extern s32 D_80111D00_352560_name_50;
+/* board 2, part 1 */
+extern u32 D_80111CAC_35250C_name_50[];   /* the host (0x8008B): MBModelFileCreate list */
+extern u32 D_80111CE4_352544_name_50[];   /* the partner (0x8005A) */
+extern s32 D_80111D08_352568_name_50;
+extern s32 D_80111D0C_35256C_name_50;
+extern s32 D_80111D14_352574_name_50;
+extern u32 D_80111D20_352580_name_50[];   /* the changed partner (0xA022D) */
+extern Vec D_80111D2C_35258C_name_50[2];  /* the host: start, target (D_80111D38) */
+extern Vec D_80111D38_352598_name_50;
+extern Vec D_80111D44_3525A4_name_50[2];  /* the ghost: start, centre (D_80111D50) */
+extern Vec D_80111D50_3525B0_name_50;
+extern Vec D_80111D5C_3525BC_name_50;     /* the partner's start */
+extern Vec D_80111D68_3525C8_name_50;     /* the partner's place */
+extern Vec D_80111D74_3525D4_name_50[2];  /* the doors: start, end (D_80111D80) */
+extern Vec D_80111D80_3525E0_name_50;
+extern u32 D_80111D8C_3525EC_name_50[];   /* the ghost (0x800C1) */
+extern s16 D_801125D2_352E32_name_50;     /* a sound handle (func_80108290..) */
+extern omObjData* D_801125D8_352E38_name_50; /* func_80108448's effect object */
+extern Vec D_801125E8_352E48_name_50;
+extern Vec D_801125F4_352E54_name_50;
+extern s16 D_80112750_352FB0_name_50;     /* the partner's held-item form (0xA0231) */
 
 /* ---- 34DBC0.c ---- */
 
