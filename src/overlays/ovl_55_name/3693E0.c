@@ -186,14 +186,151 @@ end:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010A804_3696F4_name_55);
 #endif
 
+/* Board 5's sign: two halves drop in from the top, a glow (spr[24], spr[25]) grows behind them,
+   twenty sparkles (func_8010B444) rise, the halves roll apart and the glow drops down. */
+/* NON_MATCHING: retail keeps two constant additions where they are written (file[i % 3 + 5]
+   adds 5 before scaling; the sparkle x adds 118 to the random part before adding i * 4); GCC
+   here folds the 5 into the load offset and reassociates the 118. */
+#ifdef NON_MATCHING
+void func_8010AE68_369D58_name_55(void) {
+    Ovl55Sign5* sign;
+    f32 rotL;
+    f32 rotR;
+    f32 scale;
+    f32 t;
+    s32 i;
+    s32 n;
+
+    sign = D_8010C570_36B460_name_55 = HuMemMemoryAllocPerm(sizeof(Ovl55Sign5));
+    sign->file[0] = func_8001A2F8_1AEF8(0xA01BD);
+    sign->file[1] = func_8001A2F8_1AEF8(0xA01BE);
+    sign->file[2] = func_8001A2F8_1AEF8(0xA01BF);
+    sign->file[3] = func_8001A2F8_1AEF8(0xA01BC);
+    sign->file[4] = func_8001A2F8_1AEF8(0xA01C0);
+    sign->file[5] = func_8001A2F8_1AEF8(0xA01C1);
+    sign->file[6] = func_8001A2F8_1AEF8(0xA01C2);
+    sign->file[7] = func_8001A2F8_1AEF8(0xA01C3);
+    sign->spr[0] = func_8001AAAC_1B6AC(sign->file[0], 0, 1);
+    sign->spr[1] = func_8001AAAC_1B6AC(sign->file[1], 0, 1);
+    sign->spr[2] = func_8001AAAC_1B6AC(sign->file[2], 0, 1);
+    sign->spr[3] = func_8001AAAC_1B6AC(sign->file[2], 0, 1);
+    sign->spr[24] = func_8001AAAC_1B6AC(sign->file[4], 0, 1);
+    sign->spr[25] = func_8001AAAC_1B6AC(sign->file[3], 0, 1);
+    for (i = 0; i < 20; i++) {
+        sign->spr[i + 4] = func_8001AAAC_1B6AC(sign->file[i % 3 + 5], 0, 2);
+        espDispOff(sign->spr[i + 4]);
+    }
+    for (i = 0; i < 26; i++) {
+        func_8001A708_1B308(sign->spr[i], 0x4008);
+        func_8001A788_1B388(sign->spr[i], (u16)(i * 10 + 0x1000));
+    }
+    espDispOff(sign->spr[25]);
+    espDispOff(sign->spr[24]);
+    func_8001A708_1B308(sign->spr[3], 1);
+    for (n = 100; n >= 0; n -= 10) {
+        espPosSet(sign->spr[0], 132, 30 - n);
+        espPosSet(sign->spr[1], 187, 30 - n);
+        espPosSet(sign->spr[2], 135, 10 - n);
+        espPosSet(sign->spr[3], 184, 10 - n);
+        HuPrcVSleep();
+    }
+    rotR = 0.0f;
+    rotL = 0.0f;
+    scale = 0.6f;
+    t = 0.0f;
+    espDispOn(sign->spr[25]);
+    espPosSet(sign->spr[25], 160, 50);
+    espDispOn(sign->spr[24]);
+    espPosSet(sign->spr[24], 160, 50);
+    func_8001A91C_1B51C(sign->spr[24], scale, 1.0f);
+    func_8001A91C_1B51C(sign->spr[25], scale, t);
+    for (i = 0; i < 20; i++) {
+        func_8010B444_36A334_name_55(sign->spr[i + 4], i * 4 + ((u8)(rand8() % 3) + 118), (u8)(rand8() % 41) + 30, (u8)(rand8() % 20) + 20.0f);
+    }
+    PlaySound(0x40A);
+    for (i = 0; i < 4; i++) {
+        func_8005A4EC_5B0EC(i, 2);
+    }
+    for (i = 0; i < 8; i++) {
+        rotL -= 8.0f;
+        rotR += 8.0f;
+        func_8001A9C0_1B5C0(sign->spr[0], rotL);
+        func_8001A9C0_1B5C0(sign->spr[1], rotR);
+        scale += 0.05f;
+        func_8001A91C_1B51C(sign->spr[24], scale, 1.0f);
+        func_8001A91C_1B51C(sign->spr[25], scale, t);
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 5; i++) {
+        t += 0.2f;
+        func_8001A91C_1B51C(sign->spr[25], 1.0f, t);
+        espPosSet(sign->spr[24], 160, t * 104.0f + 50.0f);
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010AE68_369D58_name_55);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010B3B4_36A2A4_name_55);
+/* Board 5's sign is freed (from the overlay's exit, func_80102AE0). */
+void func_8010B3B4_36A2A4_name_55(void) {
+    Ovl55Sign5* sign;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010B444_36A334_name_55);
+    if (D_8010C570_36B460_name_55 != NULL) {
+        sign = D_8010C570_36B460_name_55;
+        for (i = 0; i < 26; i++) {
+            func_8001AC44_1B844(sign->spr[i]);
+        }
+        for (i = 0; i < 8; i++) {
+            SprAnimKill(sign->file[i]);
+        }
+        HuMemMemoryFreePerm(D_8010C570_36B460_name_55);
+        D_8010C570_36B460_name_55 = NULL;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010B518_36A408_name_55);
+/* A sparkle: an object that moves sprite spr down by speed / 10 a frame (trans.z) until y 180. */
+void func_8010B444_36A334_name_55(s16 spr, f32 x, f32 y, f32 speed) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010B5C0_36A4B0_name_55);
+    obj = omAddObj(500, 0, 0, -1, func_8010B518_36A408_name_55);
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = speed / 10.0f;
+    obj->unk_10 = spr;
+    espPosSet(spr, x, y);
+    espDispOn(spr);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3693E0", func_8010B6C0_36A5B0_name_55);
+void func_8010B518_36A408_name_55(omObjData* obj) {
+    u16 spr;
+
+    spr = obj->unk_10;
+    obj->trans.y += obj->trans.z;
+    espPosSet(spr, obj->trans.x, obj->trans.y);
+    if (obj->trans.y >= 180.0f) {
+        espDispOff(spr);
+        omDelObj(obj);
+    }
+}
+
+/* Board 6's scene setup: the players' models and the host. */
+void func_8010B5C0_36A4B0_name_55(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        gPlayers[i].unk_24 = func_80043510_44110((u8)(gPlayers[i].character + 15), D_8010C4C8_36B3B8_name_55[gPlayers[i].character]);
+        func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+        MBModelDispOff(PLAYER_MODEL(i));
+    }
+    D_8010C56C_36B45C_name_55 = MBModelFileCreate(0x80035, 13, 1.0f, 0.7f, D_8010C4E0_36B3D0_name_55);
+    MBModelDispOff(D_8010C56C_36B45C_name_55);
+}
+
+/* Board 6: a player's model. */
+void func_8010B6C0_36A5B0_name_55(s32 player) {
+    MBPlayerModelCreate(player, D_8010C4C8_36B3B8_name_55[gPlayers[player].character], 2);
+    gPlayers[player].flags |= 2;
+    func_8005ABC0_5B7C0(&gPlayers[player], 2, 0);
+}

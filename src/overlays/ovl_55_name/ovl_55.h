@@ -70,6 +70,12 @@ typedef struct Ovl55EspSlot {
     /* 0x06 */ char unk06[0x1E];
 } Ovl55EspSlot; /* size = 0x24 */
 
+/* ev-C: board 5's sign (D_8010C570). */
+typedef struct Ovl55Sign5 {
+    /* 0x00 */ s16 file[8];
+    /* 0x10 */ u16 spr[26]; /* [0..3] the halves, [4..23] sparkles, [24] [25] the glow */
+} Ovl55Sign5; /* size = 0x44 */
+
 /* ev-C: board 4's bubble object work (omObjData.unk_50). */
 typedef struct Ovl55Bubbles {
     /* 0x00 */ u16 delay[12]; /* frames until the bubble restarts; 0 = growing */
@@ -274,7 +280,7 @@ extern u32 D_8010C3A0_36B290_name_55[]; /* board 5: host model's motions */
 extern s32 D_8010C3B0_36B2A0_name_55[7]; /* board 5: queue spacing ([1..6]) */
 extern Ovl55Item D_8010C3CC_36B2BC_name_55[6]; /* board 5: the queue's items */
 extern void* D_8010C4C8_36B3B8_name_55[6];
-extern s32 D_8010C4E0_36B3D0_name_55[];
+extern u32 D_8010C4E0_36B3D0_name_55[]; /* board 6: host's motions */
 
 /* ---- overlay bss (ovl_55_bss.bss.s) ---- */
 
@@ -369,9 +375,9 @@ void func_8010A6A4_369594_name_55(void);
 void func_8010A804_3696F4_name_55(void);
 void func_8010AE68_369D58_name_55(void);
 void func_8010B3B4_36A2A4_name_55(void);
-void func_8010B444_36A334_name_55(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8010B444_36A334_name_55(s16 spr, f32 x, f32 y, f32 speed);
 void func_8010B518_36A408_name_55(omObjData* obj);
 void func_8010B5C0_36A4B0_name_55(void);
-void func_8010B6C0_36A5B0_name_55(s16 player);
+void func_8010B6C0_36A5B0_name_55(s32 player);
 
 #endif
