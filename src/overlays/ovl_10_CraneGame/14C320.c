@@ -54,6 +54,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106C98_1
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106D58_150878_CraneGame);
 
+__asm__(".section .rodata");
+const u32 D_8010C000_155B20_CraneGame[18] = { 0x00020000, 0x000F000E, 0x00030000, 0x0010000C, 0x00040000, 0x0010000C, 0x00050000, 0x0010000C, 0x00060000, 0x00110010, 0x00070000, 0x00130013, 0x00080001, 0x0004000F, 0x00090001, 0x0004000F, 0x000A0001, 0x0004000F };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106F00_150A20_CraneGame);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107460_150F80_CraneGame);
@@ -97,29 +100,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801093A0_1
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801095A4_1530C4_CraneGame);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801097A0_1532C0_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109A70_153590_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109AA8_1535C8_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109BAC_1536CC_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109C00_153720_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109E48_153968_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109FF8_153B18_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010A43C_153F5C_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010A4D8_153FF8_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010A798_1542B8_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010A8E8_154408_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010AD5C_15487C_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010AE2C_15494C_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010B364_154E84_CraneGame);
