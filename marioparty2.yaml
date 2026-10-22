@@ -660,7 +660,12 @@ segments:
     bss_size: 0x340
     subsegments:
       - [0x144190, c]
+      - [0x1479E0, c]
+      - [0x149120, c]
       - [0x14C080, data]
+      - [0x14C250, .rodata, 144190]
+      - [0x14C2A0, .rodata, 1479E0]
+      - [0x14C300, .rodata, 149120]
       - {0x14C320, type: bss, vram: 0x8010A990, name: ovl_0F_bss}
   - type: code
     start: 0x14C320
