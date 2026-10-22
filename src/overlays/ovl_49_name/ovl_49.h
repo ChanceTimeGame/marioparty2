@@ -620,7 +620,7 @@ void func_80110188_31A638_name_49(s32 player);
 void func_801101E0_31A690_name_49(void); /* B: unknown */
 void func_8011056C_31AA1C_name_49(void); /* B: unknown */
 s32 func_80111300_31B7B0_name_49(s32 arg0); /* as func_80110CCC_2D61BC_name_43 */
-void func_80111588_31BA38_name_49(s32 arg0); /* B: from callers */
+void func_80111588_31BA38_name_49(s32 which);
 void func_80111A78_31BF28_name_49(void);
 void func_80111A94_31BF44_name_49(void);
 void func_80111AB0_31BF60_name_49(void);
@@ -686,6 +686,9 @@ void func_80029C74_2A874(s16, f32);
 void func_80056030_56C30(s32, s32);
 void func_8005E310_5EF10(void);
 void func_8005E374_5EF74(void);
+extern s16 D_80113AD4_31DF84_name_49[3]; /* func_80111588: the switch spaces */
+extern s16 D_80113ADC_31DF8C_name_49[]; /* func_80111588: the 3-way switch's direction list */
+struct unk_8003B8D4Struct* func_800419A4_425A4(s16, s16*, s32);
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif
