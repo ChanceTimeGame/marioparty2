@@ -466,11 +466,11 @@ void func_801058E0_2FA1E0_name_47(void);
 void func_80105C5C_2FA55C_name_47(void);
 void func_80105FA4_2FA8A4_name_47(s16 arg0);
 void func_801060C4_2FA9C4_name_47(void);
-void func_801067CC_2FB0CC_name_47(void);
+void func_801067CC_2FB0CC_name_47(s32 arg0);
 void func_80106844_2FB144_name_47(void);
-void func_801068A8_2FB1A8_name_47(void);
-void func_80106A6C_2FB36C_name_47(void);
-void func_80106B44_2FB444_name_47(void);
+void func_801068A8_2FB1A8_name_47(omObjData* obj);
+void func_80106A6C_2FB36C_name_47(s32 arg0);
+void func_80106B44_2FB444_name_47(s32 arg0);
 void func_80106BBC_2FB4BC_name_47(void);
 void func_801075C8_2FBEC8_name_47(void);
 void func_801075EC_2FBEEC_name_47(void);
@@ -583,5 +583,25 @@ extern s8 D_80110DEC_3056EC_name_47[][5]; /* shop items, -1 none */
 extern u32 D_80110E10_305710_name_47[]; /* shop messages */
 extern s32 D_80112370_306C70_name_47;
 extern u8* D_80112374_306C74_name_47;
+
+/* 47-B */
+extern BoardEventTableEntry D_80110F90_305890_name_47[];
+extern BoardEventTableEntry D_80110FF8_3058F8_name_47[];
+extern BoardEventTableEntry D_80111728_306028_name_47[];
+extern MBModel* D_80112350_306C50_name_47[4]; /* per player: the model each D_80112360 object carries */
+void func_800632E4_63EE4(void (*arg0)(void));
+extern s16 D_801110BC_3059BC_name_47[4]; /* warp destination: current space */
+extern s16 D_801110C4_3059C4_name_47[4]; /* warp destination: next space */
+extern DecisionTreeNonLeafNode* D_801116BC_305FBC_name_47[4]; /* per player: CPU decision tree */
+void func_80049FA0_4ABA0(void);
+void func_800517C0_523C0(void);
+void func_80051788_52388(void);
+void func_800514F0_520F0(void);
+f32 MBCameraSpeedGet(void);
+f32 func_80053614_54214(void);
+void func_8005660C_5720C(s16 arg0, s16 arg1); /* MBPlayerPosMasuSet */
+extern s16 D_8011170C_30600C_name_47[2]; /* the launcher's facing: from space [1] toward [0] */
+extern s16 D_80111710_306010_name_47[2]; /* per side: launch space */
+extern s16 D_80111714_306014_name_47[2]; /* per side: landing chain space */
 
 #endif
