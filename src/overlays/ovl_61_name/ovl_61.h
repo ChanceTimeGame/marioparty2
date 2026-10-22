@@ -1,14 +1,15 @@
 #ifndef _OVL_61_H
 #define _OVL_61_H
 
-/* Overlay 61 ("donchou", the curtain): MP2's opening scene. A stage curtain rises on the six
-   characters; the host (object 7) and Toad (object 6) talk in a message window; pairs of
-   characters walk out, face the camera, call out and walk back while an iris mask (a 320x240
-   8-bit coverage buffer drawn as a textured full-screen fill, func_801062B8..func_80107054)
-   leaves holes over the speakers; the host's Bowser scene ends with sparks and a fade.
-   START (with _CheckFlag(0x1A), the scene seen once) skips; then it goes to overlay 0x72, or
-   returns when called from the menu (D_801011FC set).
-   One retail file (3D0050.c). .data stays asm; .rodata is carved. */
+/* Overlay 61 ("donchou", the curtain): MP2's opening stage scene. Six characters (objects 0-5)
+   stand on a stage; the presenter (object 6, scaled 0.7) talks in a message window (0xAB-0xB8)
+   while an iris mask (a 320x240 8-bit coverage buffer per frame buffer, drawn as a full-screen
+   textured fill: func_801062B8..func_80107054) dims the screen and cuts holes over the speakers.
+   Three pairs walk forward, face the camera and call out (func_80102F74); the curtain closes and
+   object 7 rises from below, turns and breathes sparks (func_80105C6C/func_80105DEC); then the
+   presenter's finale and a fade out. START skips once _CheckFlag(0x1A) is set (D_801011FC);
+   the scene then goes to overlay 0x72, or returns 1 when it was called (D_801011FC set).
+   One retail file (3D0050.c). .data stays asm; .rodata is carved (two tables, two strings). */
 
 #include "common.h"
 #include "process.h"
