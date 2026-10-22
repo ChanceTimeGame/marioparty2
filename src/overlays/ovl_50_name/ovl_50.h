@@ -301,11 +301,11 @@ void func_80108290_348AF0_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_80108414_348C74_name_50(void);
 void func_80108448_348CA8_name_50(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_801085FC_348E5C_name_50(void);
-void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2);
+void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2, s32 arg3); /* 50-B: a3 from the asm */
 void func_801087FC_34905C_name_50(void);
 void func_80108830_349090_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_801089CC_34922C_name_50(void);
-void func_80108A00_349260_name_50(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80108A00_349260_name_50(Vec* arg0, Vec* arg1, f32 arg2, s32 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8); /* 50-B: from the asm */
 void func_80108C6C_3494CC_name_50(void);
 void func_80108F1C_34977C_name_50(void); /* main's func_8004B214 */
 void func_80108F2C_34978C_name_50(void);
@@ -324,6 +324,55 @@ void func_8010CF08_34D768_name_50(omObjData* obj);
 omObjData* func_8010CFE8_34D848_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_8010D198_34D9F8_name_50(omObjData* obj);
 void func_8010D320_34DB80_name_50(omObjData* obj);
+
+/* 50-B */
+extern u32* D_80111C88_3524E8_name_50[6]; /* board 2, per character: MBPlayerModelCreate list */
+extern u32 D_80111CA0_352500_name_50[];   /* board 2's host (0x80028): MBModelFileCreate list */
+extern s32 D_80111D00_352560_name_50;
+/* board 2, part 1 */
+extern u32 D_80111CAC_35250C_name_50[];   /* the host (0x8008B): MBModelFileCreate list */
+extern u32 D_80111CE4_352544_name_50[];   /* the partner (0x8005A) */
+extern s32 D_80111D08_352568_name_50;
+extern s32 D_80111D0C_35256C_name_50;
+extern s32 D_80111D14_352574_name_50;
+extern u32 D_80111D20_352580_name_50[];   /* the changed partner (0xA022D) */
+extern Vec D_80111D2C_35258C_name_50[2];  /* the host: start, target (D_80111D38) */
+extern Vec D_80111D38_352598_name_50;
+extern Vec D_80111D44_3525A4_name_50[2];  /* the ghost: start, centre (D_80111D50) */
+extern Vec D_80111D50_3525B0_name_50;
+extern Vec D_80111D5C_3525BC_name_50;     /* the partner's start */
+extern Vec D_80111D68_3525C8_name_50;     /* the partner's place */
+extern Vec D_80111D74_3525D4_name_50[2];  /* the doors: start, end (D_80111D80) */
+extern Vec D_80111D80_3525E0_name_50;
+extern u32 D_80111D8C_3525EC_name_50[];   /* the ghost (0x800C1) */
+extern s16 D_801125D2_352E32_name_50;     /* a sound handle (func_80108290..) */
+extern omObjData* D_801125D8_352E38_name_50; /* func_80108448's effect object */
+extern Vec D_801125E8_352E48_name_50;
+extern Vec D_801125F4_352E54_name_50;
+extern s16 D_80112750_352FB0_name_50;     /* the partner's held-item form (0xA0231) */
+/* board 2, part 2 */
+extern Vec D_80111D94_3525F4_name_50;     /* the winner's place */
+extern Vec D_80111DA0_352600_name_50[];   /* per character: the beam's offset from the winner */
+extern s16 D_801125D0_352E30_name_50;     /* a sound handle (0x3DA) */
+extern s16 D_80112758_352FB8_name_50;     /* the winner's held-item form (0xA0230) */
+/* board 2, part 3 */
+extern Vec D_80111DE8_352648_name_50;     /* the host's place */
+extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00) */
+extern Vec D_80111E00_352660_name_50;
+extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
+extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
+/* func_80108A00's work (D_801125E4's unk_50, 0x7918 bytes); fork 50-C owns the full layout. */
+typedef struct Ovl50BeamWork {
+    /* 0x00 */ u8 unk_00[0x38];
+    /* 0x38 */ f32 length; /* func_80108A00's third argument */
+} Ovl50BeamWork;
+/* board 2, part 6 */
+extern Vec D_80111EB4_352714_name_50[];   /* per character: the fourth beam's offset */
+extern omObjData* D_801125DC_352E3C_name_50; /* func_80108630's object (the beams' meeting point) */
+/* board 2, parts 4 and 5 */
+extern Vec D_80111E60_3526C0_name_50;     /* the partner's place */
+extern Vec D_80111E6C_3526CC_name_50[];   /* per character: the third beam's offset */
+extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; work[1] == 1 while it runs */
 
 /* ---- 34DBC0.c ---- */
 
