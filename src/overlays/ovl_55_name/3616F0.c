@@ -263,11 +263,127 @@ void func_8010308C_361F7C_name_55(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_801036B4_3625A4_name_55);
+/* Board 5's walk-in: the host walks across and hides, its stand-in walks on and turns round. */
+void func_801036B4_3625A4_name_55(void) {
+    Vec pos;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_8010390C_3627FC_name_55);
+    MBMotionSet(D_8010C56C_36B45C_name_55, 0, 2);
+    D_8010C56C_36B45C_name_55->pos.x = D_8010B8D0_36A7C0_name_55[0][0].x;
+    D_8010C56C_36B45C_name_55->pos.y = D_8010B8D0_36A7C0_name_55[0][0].y;
+    D_8010C56C_36B45C_name_55->pos.z = D_8010B8D0_36A7C0_name_55[0][0].z;
+    MBModelDispOn(D_8010C56C_36B45C_name_55);
+    while (func_8005A5E8_5B1E8(D_8010C56C_36B45C_name_55, &D_8010B8D0_36A7C0_name_55[0][1], 40.0f) != 1) {
+        HuPrcVSleep();
+    }
+    MBModelDispOff(D_8010C56C_36B45C_name_55);
+    MBMotionSet(D_8010C564_36B454_name_55, 0, 2);
+    D_8010C564_36B454_name_55->pos.x = D_8010B948_36A838_name_55[0][0].x;
+    D_8010C564_36B454_name_55->pos.y = D_8010B948_36A838_name_55[0][0].y;
+    D_8010C564_36B454_name_55->pos.z = D_8010B948_36A838_name_55[0][0].z;
+    MBModelDispOn(D_8010C564_36B454_name_55);
+    HuPrcSleep(36);
+    while (func_8005A5E8_5B1E8(D_8010C564_36B454_name_55, &D_8010B948_36A838_name_55[0][1], 25.0f) == 0) {
+        HuPrcVSleep();
+    }
+    pos.x = D_8010C564_36B454_name_55->pos.x;
+    pos.y = D_8010C564_36B454_name_55->pos.y;
+    pos.z = D_8010C564_36B454_name_55->pos.z - 100.0f;
+    while (func_8005A7E8_5B3E8(D_8010C564_36B454_name_55, &pos, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(D_8010C564_36B454_name_55, -1, 0, 5, 2);
+    HuPrcSleep(20);
+    MBMotionSet(D_8010C564_36B454_name_55, 0, 2);
+    while (func_8005A7E8_5B3E8(D_8010C564_36B454_name_55, &D_8010B9C0_36A8B0_name_55, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    while (func_8005A5E8_5B1E8(D_8010C564_36B454_name_55, &D_8010B9C0_36A8B0_name_55, 25.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBModelKill(D_8010C564_36B454_name_55);
+    D_8010B760_36A650_name_55 = 1;
+    D_8010B8CC_36A7BC_name_55++;
+    D_8010C538_36B428_name_55[4] = 1;
+    omDelPrcObj(NULL);
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80103D08_362BF8_name_55);
+/* Board 5's player walk-in: 8010308C's shape with the model swap's calls gone (the position is
+   still saved and written back), and no bow. Sets D_8010C54C, not the player's done flag. */
+void func_8010390C_3627FC_name_55(void) {
+    Vec pos;
+    s32 i;
+    u32 j;
+
+    i = (s32)HuPrcCurrentGet()->user_data;
+    MBMotionSet(PLAYER_MODEL(i), 4, 2);
+    PLAYER_MODEL(i)->pos.x = D_8010B8D0_36A7C0_name_55[i + 1][0].x;
+    PLAYER_MODEL(i)->pos.y = D_8010B8D0_36A7C0_name_55[i + 1][0].y;
+    PLAYER_MODEL(i)->pos.z = D_8010B8D0_36A7C0_name_55[i + 1][0].z;
+    MBModelDispOn(PLAYER_MODEL(i));
+    while (func_8005A5E8_5B1E8(PLAYER_MODEL(i), &D_8010B8D0_36A7C0_name_55[i + 1][1], 40.0f) != 1) {
+        HuPrcVSleep();
+    }
+    PLAYER_MODEL(i)->pos.x = D_8010B948_36A838_name_55[i + 1][0].x;
+    PLAYER_MODEL(i)->pos.y = D_8010B948_36A838_name_55[i + 1][0].y;
+    PLAYER_MODEL(i)->pos.z = D_8010B948_36A838_name_55[i + 1][0].z;
+    D_8010B754_36A644_name_55++;
+    if (i == 3) {
+        PlaySound(0x31E);
+    }
+    for (j = 0; j < 36; j++) {
+        if (D_8010B754_36A644_name_55 >= 4 && D_8010B758_36A648_name_55[i] == 0) {
+            pos.x = PLAYER_MODEL(i)->pos.x;
+            pos.y = PLAYER_MODEL(i)->pos.y;
+            pos.z = PLAYER_MODEL(i)->pos.z;
+            PLAYER_MODEL(i)->pos.x = pos.x;
+            PLAYER_MODEL(i)->pos.y = pos.y;
+            PLAYER_MODEL(i)->pos.z = pos.z;
+            D_8010B758_36A648_name_55[i] = 1;
+        }
+        HuPrcVSleep();
+    }
+    j = 0;
+    while (func_8005A5E8_5B1E8(PLAYER_MODEL(i), &D_8010B948_36A838_name_55[i + 1][1], 25.0f) == 0) {
+        j++;
+        if (j == 1) {
+            if (i == 0) {
+                PlaySound(0x4B4);
+            }
+        }
+        if (D_8010B754_36A644_name_55 == 4 && D_8010B758_36A648_name_55[i] == 0) {
+            pos.x = PLAYER_MODEL(i)->pos.x;
+            pos.y = PLAYER_MODEL(i)->pos.y;
+            pos.z = PLAYER_MODEL(i)->pos.z;
+            PLAYER_MODEL(i)->pos.x = pos.x;
+            PLAYER_MODEL(i)->pos.y = pos.y;
+            PLAYER_MODEL(i)->pos.z = pos.z;
+            D_8010B758_36A648_name_55[i] = 1;
+        }
+        HuPrcVSleep();
+    }
+    D_8010B8CC_36A7BC_name_55++;
+    D_8010C54C_36B43C_name_55 = 1;
+    omDelPrcObj(NULL);
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+
+void func_80103D08_362BF8_name_55(void) {
+    if (D_8010C568_36B458_name_55->work[0] == 0) {
+        PlayMusic(0x3A);
+        D_8010B9CC_36A8BC_name_55[D_8010C58A_36B47A_name_55]();
+    }
+    func_8008F624_90224(0, 0, 0);
+    func_800794A8_7A0A8(60);
+    func_80079614_7A214(60);
+    InitFadeOut(2, 20);
+    HuPrcSleep(20);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80103D94_362C84_name_55);
 
