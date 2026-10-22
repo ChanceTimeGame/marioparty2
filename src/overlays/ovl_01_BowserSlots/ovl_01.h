@@ -15,6 +15,9 @@
 #include "game/hmfman.h"
 #include "game/pad.h"
 #include "game/data.h"
+#include "game/sprite.h"
+#include "game/malloc.h"
+#include "game/camera.h"
 
 /* ---- main-segment API used by 01 ---- */
 
@@ -98,7 +101,7 @@ void func_80029A8C_2A68C(s16);
 void func_8002A00C_2AC0C(s16);
 void func_80029F2C_2AB2C(s16, s32);
 void func_8002A15C_2AD5C(s16 arg0, s16 arg1, f32 arg2);
-void* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
+HmfMotionObj* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80030CD4_318D4(Matrix4f, Matrix4f);
 u16 func_80078EA8_79AA8(void);
@@ -225,14 +228,13 @@ extern s32 D_8010C0D4_E3B64_BowserSlots;          /* the first two reels match *
 extern s32 D_8010C0D8_E3B68_BowserSlots;          /* their symbol */
 extern s32 D_8010C0DC_E3B6C_BowserSlots;
 extern s32 D_8010C0E0_E3B70_BowserSlots;          /* won symbol, -1 none */
-extern s32 D_8010C0E4_E3B74_BowserSlots;
-extern s32 D_8010C0E8_E3B78_BowserSlots;
-extern s32 D_8010C0EC_E3B7C_BowserSlots;
+extern struct BSVtxWeight* D_8010C0E4_E3B74_BowserSlots; /* MG01-B: the wobbling model's vertex weights */
+extern f32 D_8010C0E8_E3B78_BowserSlots[2];      /* MG01-B: heights of the block and its top */
 extern s32 D_8010C0F0_E3B80_BowserSlots[2];       /* sprite animations of the block object */
 extern s32 D_8010C0F8_E3B88_BowserSlots[2];       /* sprite animations of the machine */
 extern s32 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
-extern void* D_8010C170_E3C00_BowserSlots;
-extern void* D_8010C174_E3C04_BowserSlots;
+extern struct BSModelSlot* D_8010C170_E3C00_BowserSlots; /* MG01-B: 64 entries */
+extern struct BSFx* D_8010C174_E3C04_BowserSlots; /* MG01-B: six effect sprites */
 extern s16 D_8010C17E_E3C0E_BowserSlots;
 extern s16 D_8010C180_E3C10_BowserSlots;
 extern s16 D_8010C182_E3C12_BowserSlots;
@@ -283,6 +285,103 @@ s32 func_801067DC_DE26C_BowserSlots(void);
 void func_80106820_DE2B0_BowserSlots(omObjData* obj);
 void func_80106B30_DE5C0_BowserSlots(omObjData* obj);
 
+/* ---- MG01-B ---- */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+f32 func_800B7890_B8490(f32); /* cos */
+extern u8 D_800FDBE0_FE7E0; /* current vertex buffer */
+extern u8 D_800FDBCA_FE7CA; /* vertex buffer count */
+void* HuMemAlloc(s32 size);
+void HuMemFree(void* ptr);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, the caller here does not re-extend it */
+s16 func_80038398_38F98(HmfData* hmf, char* name); /* part index by name */
+void func_800B37C0_B43C0(f32* mtx); /* identity */
+extern Gfx D_8010B9C0_E3450_BowserSlots[];
+
+/* D_8010C0E4: one per vertex of the wobbling model (func_80107740) */
+typedef struct BSVtxWeight {
+    /* 0x00 */ f32 weight; /* (height / max height)^2 */
+    /* 0x04 */ f32 angle;  /* around the y axis, 0-360 */
+} BSVtxWeight;
+
+/* D_8010C170: models whose attribute func_8010A138 sets by group */
+typedef struct BSModelSlot {
+    /* 0x00 */ s32 model; /* -1 free */
+    /* 0x04 */ s32 group;
+    /* 0x08 */ s32 attr;
+} BSModelSlot; /* size = 0xC */
+
+/* D_8010C174: one effect sprite (six; MP1 SlotMachine's SlotFx) */
+typedef struct BSFx {
+    /* 0x00 */ u8 unk_00; /* flags: 0xC0 = visible */
+    /* 0x01 */ u8 unk_01; /* kind */
+    /* 0x02 */ u8 unk_02; /* phase */
+    /* 0x03 */ u8 unk_03; /* sprite frame */
+    /* 0x04 */ f32 unk_04;
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ f32 unk_0C;
+    /* 0x10 */ f32 unk_10; /* x (screen, from the centre) */
+    /* 0x14 */ f32 unk_14; /* y */
+    /* 0x18 */ f32 unk_18; /* scale x */
+    /* 0x1C */ f32 unk_1C; /* scale y */
+    /* 0x20 */ f32 unk_20; /* rotation */
+    /* 0x24 */ f32 unk_24; /* alpha (0..1) */
+    /* 0x28 */ f32 unk_28; /* start x */
+    /* 0x2C */ f32 unk_2C; /* start y */
+    /* 0x30 */ f32 unk_30; /* start scale x */
+    /* 0x34 */ f32 unk_34; /* start scale y */
+    /* 0x38 */ s16 unk_38; /* symbol */
+    /* 0x3A */ s16 unk_3A; /* frame counter */
+    /* 0x3C */ s16 unk_3C;
+    /* 0x3E */ s16 unk_3E;
+    /* 0x40 */ s16 unk_40;
+    /* 0x42 */ s16 unk_42;
+    /* 0x44 */ s16 unk_44;
+    /* 0x46 */ char unk_46[2];
+} BSFx; /* size = 0x48 */
+/* D_8010BA24[8]: per symbol (MP1 SlotSymFx) */
+typedef struct BSSymFx {
+    /* 0x00 */ u8 unk_00; /* effect kind (D_8010BA50 index) */
+    /* 0x01 */ u8 unk_01; /* kind once landed */
+    /* 0x02 */ u8 unk_02;
+    /* 0x03 */ u8 unk_03; /* sprite frame */
+} BSSymFx;
+/* D_8010BA50[4]: per effect kind (MP1 SlotFxKind) */
+typedef struct BSFxKind {
+    /* 0x00 */ u8 unk_00; /* sprite count */
+    /* 0x01 */ u8 unk_01; /* alpha * 10 */
+    /* 0x02 */ u8 unk_02; /* scale x * 10 */
+    /* 0x03 */ u8 unk_03; /* scale y * 10 */
+} BSFxKind;
+extern Vec D_8010BA00_E3490_BowserSlots; /* the three reels' effect points */
+extern Vec D_8010BA0C_E349C_BowserSlots;
+extern Vec D_8010BA18_E34A8_BowserSlots;
+extern BSSymFx D_8010BA24_E34B4_BowserSlots[];
+extern BSFxKind D_8010BA50_E34E0_BowserSlots[];
+extern s8 D_8010BA60_E34F0_BowserSlots[4][3][2]; /* start offsets / 10; 0x7F: start at the reels */
+extern s16 D_8010C178_E3C08_BowserSlots; /* effect sprite animation */
+extern s16 D_800CAFE4[4]; /* item chances (percent; follows D_800CAFD8) */
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+void func_800B1960_B2560(Matrix4f m, f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz); /* guLookAtF */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
+void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
+extern s16 D_8010C17A_E3C0A_BowserSlots; /* effect sprite group */
+extern s16 D_8010C17C_E3C0C_BowserSlots;
+extern s16 D_8010C184_E3C14_BowserSlots;
+extern s16 D_8010C186_E3C16_BowserSlots;
+extern s16 D_8010C188_E3C18_BowserSlots;
+extern s16 D_8010C18A_E3C1A_BowserSlots;
+extern s16 D_8010C18C_E3C1C_BowserSlots;
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void SprRotSet(s16 group, s16 member, f32 rot);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprAttrReset(s16 group, s16 member, s32 flag);
+void SprBankSet(s16 group, s16 member, u16 bank);
+void func_80082488_83088(s16 group, s16 member, u16 alpha);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+
 /* ---- fork B (80106B30+): inferred from register use, check against the asm ---- */
 void func_801076EC_DF17C_BowserSlots(void);
 s32 func_8010770C_DF19C_BowserSlots(s32 symbol); /* symbol -> item (retail callers use it unprototyped: int) */
@@ -291,15 +390,15 @@ void func_801078F0_DF380_BowserSlots(s32 model, s32 arg1);
 void func_801079B8_DF448_BowserSlots(s32 model, f32 arg1, f32 arg2, f32 arg3);
 void func_80107BCC_DF65C_BowserSlots(s32 model, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
 s32 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items); /* returns a u16 (callers re-mask it) */
-s16 func_8010879C_E022C_BowserSlots(void* anim, f32 scale);
-s16 func_80108EE4_E0974_BowserSlots(void* anim, f32 scale);
-void func_80109AF8_E1588_BowserSlots(u16 model, void* anim, s32 frame);
-s16 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
-s32 func_80109C5C_E16EC_BowserSlots(void* arg0, void* arg1, f32 arg2, u16 arg3, u16 arg4);
+s32 func_8010879C_E022C_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
+s32 func_80108EE4_E0974_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
+void func_80109AF8_E1588_BowserSlots(u16 model, HuSprite_Unk84_Struct* spr, u16 frame);
+s32 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
+s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 arg3, u16 arg4);
 s32 func_8010A074_E1B04_BowserSlots(s32 file); /* sprite animation from a file; returns a u16 (callers re-mask it: retail called it unprototyped) */
 void func_8010A0B8_E1B48_BowserSlots(void);
-void func_8010A0EC_E1B7C_BowserSlots(s32 arg0, s32 arg1, s32 arg2);
-void func_8010A138_E1BC8_BowserSlots(s32 arg0, s32 arg1);
+void func_8010A0EC_E1B7C_BowserSlots(s32 model, s32 group, s32 attr);
+void func_8010A138_E1BC8_BowserSlots(s32 group, s32 attr);
 void func_8010A1F4_E1C84_BowserSlots(void);
 void func_8010A3CC_E1E5C_BowserSlots(void);
 void func_8010A53C_E1FCC_BowserSlots(void);

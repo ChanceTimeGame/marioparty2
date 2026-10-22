@@ -100,7 +100,8 @@ typedef struct HmfAnim {
 } HmfAnim;
 
 typedef struct HmfDisp {
-    /* 0x00 */ void* unk00[4];
+    /* 0x00 */ void* unk00[4]; /* [0] the list drawn; [1..] one per vertex buffer (ovl_01 80108EE4) */
+    /* 0x10 */ void* unk10; /* the shared list those call (ovl_01 80108EE4, MP3 too) */
 } HmfDisp; /* MP3 HmfModelData_Unk64_Unk3C_Struct */
 
 typedef struct HmfPart {
