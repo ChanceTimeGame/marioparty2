@@ -479,3 +479,6 @@ $(MG2BC_MULFIX_UNITS): export VR4300MUL := ON
 
 # FE1: KMC mul fix (nop between back-to-back mul.s)
 build/src/overlays/ovl_56_name/36B420.c.o: export VR4300MUL := ON
+
+# MG19-A: ovl_19 1913A0.c needs the KMC VR4300 mul fix (func_80102D78: a nop between back-to-back mul.s)
+build/src/overlays/ovl_19_BobsledRun/1913A0.c.o: export VR4300MUL := ON
