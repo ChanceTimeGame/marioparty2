@@ -684,7 +684,108 @@ void func_80106CF8_347558_name_50(void) {
     func_800298A4_2A4A4(D_80112758_352FB8_name_50, 4, 4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80106FDC_34783C_name_50);
+/* Board 2's scene, part 6: the partner and the winner cast at each other; the winner's beam
+   (func_80108A00's object D_801125E4) pushes and pulls three times before it wins out. */
+void func_80106FDC_34783C_name_50(void) {
+    Vec tra;
+    Vec pos;
+    Vec rot;
+    MBModel* winner;
+    Ovl50BeamWork* beam;
+    s32 i;
+    s32 j;
+
+    func_80050E00_51A00(0x13);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(3, -5.0f, 109.0f, 48.0f);
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    winner->pos.x = D_80111E00_352660_name_50.x;
+    winner->pos.y = D_80111E00_352660_name_50.y;
+    winner->pos.z = D_80111E00_352660_name_50.z;
+    D_8011275C_352FBC_name_50->pos.x = D_80111D68_3525C8_name_50.x;
+    D_8011275C_352FBC_name_50->pos.y = D_80111D68_3525C8_name_50.y;
+    D_8011275C_352FBC_name_50->pos.z = D_80111D68_3525C8_name_50.z;
+    func_80056658_57258(&winner->pos, &D_8011275C_352FBC_name_50->pos, &winner->rot);
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &winner->pos, &D_8011275C_352FBC_name_50->rot);
+    func_800298A4_2A4A4(D_80112750_352FB0_name_50, 4, 0);
+    func_800298A4_2A4A4(D_80112758_352FB8_name_50, 4, 0);
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    MBModelDispOn(winner);
+    PlaySound(0x3E7);
+    func_80108290_348AF0_name_50(D_8011275C_352FBC_name_50->pos.x + 238.0f, D_8011275C_352FBC_name_50->pos.y + 355.0f, D_8011275C_352FBC_name_50->pos.z + 200.0f);
+    func_80108448_348CA8_name_50(D_8011275C_352FBC_name_50->pos.x + 238.0f, D_8011275C_352FBC_name_50->pos.y + 355.0f, D_8011275C_352FBC_name_50->pos.z + 200.0f, -41.0f);
+    pos.x = winner->pos.x + D_80111EB4_352714_name_50[gPlayers[D_8011275A_352FBA_name_50].character].x;
+    pos.y = winner->pos.y + D_80111EB4_352714_name_50[gPlayers[D_8011275A_352FBA_name_50].character].y;
+    pos.z = winner->pos.z + D_80111EB4_352714_name_50[gPlayers[D_8011275A_352FBA_name_50].character].z;
+    func_80056658_57258(&pos, &D_80111E0C_35266C_name_50, &rot);
+    func_80108A00_349260_name_50(&pos, &rot, 350.0f, 2, 2, 0.5f, 3.0f, 60.0f, 90.0f);
+    for (i = 0; i < 10; i++) {
+        D_801125D8_352E38_name_50->scale.x += 0.2f;
+        HuPrcVSleep();
+    }
+    func_80108630_348E90_name_50(D_80111E0C_35266C_name_50.x + 90.0f, D_80111E0C_35266C_name_50.y - 40.0f, D_80111E0C_35266C_name_50.z + 150.0f, 1);
+    func_8002D2B4_2DEB4(*D_8011275C_352FBC_name_50->obj->model, 114.0f, 23.0f, -28.0f);
+    func_8002D2B4_2DEB4(*winner->obj->model, -59.0f, 95.0f, 42.0f);
+    for (i = 0; i < 15; i++) {
+        func_80108F98_3497F8_name_50();
+        HuPrcVSleep();
+    }
+    beam = D_801125E4_352E44_name_50->unk_50;
+    for (i = 0; i < 20; i++) {
+        beam->length -= 10.0f;
+        D_801125D8_352E38_name_50->scale.x += 0.12f;
+        tra = pos;
+        tra.x += rot.x * beam->length + 90.0f;
+        tra.y += rot.y * beam->length - 40.0f;
+        tra.z += rot.z * beam->length + 150.0f;
+        omSetTra(D_801125DC_352E3C_name_50, tra.x, tra.y, tra.z);
+        func_80108F98_3497F8_name_50();
+        HuPrcVSleep();
+    }
+    for (j = 0; j < 2; j++) {
+        for (i = 0; i < 20; i++) {
+            beam->length += 10.0f;
+            D_801125D8_352E38_name_50->scale.x -= 0.12f;
+            tra = pos;
+            tra.x += rot.x * beam->length + 90.0f;
+            tra.y += rot.y * beam->length - 40.0f;
+            tra.z += rot.z * beam->length + 150.0f;
+            omSetTra(D_801125DC_352E3C_name_50, tra.x, tra.y, tra.z);
+            func_80108F98_3497F8_name_50();
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 20; i++) {
+            beam->length -= 10.0f;
+            D_801125D8_352E38_name_50->scale.x += 0.12f;
+            tra = pos;
+            tra.x += rot.x * beam->length + 90.0f;
+            tra.y += rot.y * beam->length - 40.0f;
+            tra.z += rot.z * beam->length + 150.0f;
+            omSetTra(D_801125DC_352E3C_name_50, tra.x, tra.y, tra.z);
+            func_80108F98_3497F8_name_50();
+            HuPrcVSleep();
+        }
+    }
+    for (i = 0; i < 30; i++) {
+        beam->length += 10.0f;
+        D_801125D8_352E38_name_50->scale.x -= 0.12f;
+        tra = pos;
+        tra.x += rot.x * beam->length + 90.0f;
+        tra.y += rot.y * beam->length - 40.0f;
+        tra.z += rot.z * beam->length + 150.0f;
+        omSetTra(D_801125DC_352E3C_name_50, tra.x, tra.y, tra.z);
+        func_80108F98_3497F8_name_50();
+        HuPrcVSleep();
+    }
+    func_80079848_7A448(D_801125D2_352E32_name_50);
+    MBModelDispOff(winner);
+    func_800298A4_2A4A4(D_80112758_352FB8_name_50, 4, 4);
+    func_80108F2C_34978C_name_50();
+    func_80108414_348C74_name_50();
+    func_801085FC_348E5C_name_50();
+    func_801087FC_34905C_name_50();
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801077E0_348040_name_50);
 
