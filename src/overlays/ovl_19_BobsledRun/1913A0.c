@@ -624,13 +624,246 @@ void func_80104748_1932E8_BobsledRun(omObjData* obj) {
     w->unk_04 = 5;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104820_1933C0_BobsledRun);
+/* A bobsled for team, with its front rider (dir: the character's file directory). */
+void func_80104820_1933C0_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team) {
+    BRWork* work;
+    s32 sled;
+    s32 mot;
+    s32 spr;
+    s32 chr;
+    s32 motFile;
+    s32 file4E;
+    s16 mdl;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104BE0_193780_BobsledRun);
+    motFile = 0x22A99;
+    switch ((u32)dir >> 16) {
+        case 2:
+            sled = 0x17;
+            mot = 0x1D;
+            spr = 0xD;
+            chr = 0;
+            break;
+        case 3:
+            sled = 0x18;
+            mot = 0x22;
+            spr = 0xE;
+            chr = 1;
+            break;
+        case 7:
+            sled = 0x19;
+            mot = 0x27;
+            spr = 0xF;
+            chr = 2;
+            break;
+        case 4:
+            sled = 0x1A;
+            mot = 0x2C;
+            spr = 0x10;
+            chr = 3;
+            break;
+        case 5:
+            sled = 0x1B;
+            mot = 0x31;
+            spr = 0x11;
+            chr = 4;
+            break;
+        default:
+            sled = 0x1C;
+            mot = 0x36;
+            spr = 0x12;
+            chr = 5;
+            break;
+    }
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    func_80103B4C_1926EC_BobsledRun(obj, 0x290000, sled, team, motFile | 4, motFile);
+    work = obj->unk_50;
+    D_8010C048_19ABE8_BobsledRun[team].mdl[1] = obj->model[0];
+    func_800297E8_2A3E8(obj->model[1], 2.0f, 2.0f, 2.0f);
+    obj->model[0] = mdl = LoadFormFile(dir | file, 0x2AC9);
+    D_8010C048_19ABE8_BobsledRun[team].mdl[0] = mdl;
+    work->unk_5A = mdl;
+    work->unk_5B = 2;
+    func_80025384_25F84(D_8010C048_19ABE8_BobsledRun[team].mdl[0], 2, chr, dir | func_80025718_26318(chr, 2, 0));
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    work->unk_59 = D_8010C048_19ABE8_BobsledRun[team].player[0];
+    func_80019F0C_1AB0C(obj, 0x26, mot | 0x290000, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x27, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 6, dir | 0x3A, 0, 0);
+    func_80019F0C_1AB0C(obj, 0, dir | 0x3B, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 0x3C, 0, 0);
+    func_80019F0C_1AB0C(obj, 0x15, dir | 0x2E, 2, 0);
+    file4E = dir | 0x4E;
+    func_8001A12C_1AD2C(obj, 0xD, file4E, 1, 0x78, 1);
+    D_8010CB30_19B6D0_BobsledRun[work->unk_59] = file4E;
+    work->unk_59 = team;
+    obj->func_ptr = func_8010A3AC_198F4C_BobsledRun;
+    func_8000BEB0_CAB0(obj, 100.0f);
+    work->unk_3C = 0.0f;
+    func_8000C024_CC24(obj, 0, 2);
+    func_8000C024_CC24(obj, 1, 2);
+    func_8000C024_CC24(obj, 2, 2);
+    func_8000C024_CC24(obj, 3, 2);
+    func_8000C024_CC24(obj, 4, 2);
+    func_8000C024_CC24(obj, 5, 2);
+    func_80105720_1942C0_BobsledRun();
+    obj->model[3] = mdl = LoadFormFile(0x290016, 0x889);
+    D_8010C048_19ABE8_BobsledRun[team].mdl[6] = mdl;
+    D_8010C048_19ABE8_BobsledRun[team].sprite = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(spr | 0x290000), 0, 1);
+}
 
+/* The back rider of team (player). */
+void func_80104BE0_193780_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 player, u16 team) {
+    BRWork* work;
+    s32 body;
+    s32 mot;
+    s32 spr;
+    s32 chr;
+    s32 flags;
+    s32 file4E;
+    s16 mdl;
+
+    flags = 0x22A99;
+    switch ((u32)dir >> 16) {
+        case 2:
+            body = 0x17;
+            mot = 0x1D;
+            spr = 0xD;
+            break;
+        case 3:
+            body = 0x18;
+            mot = 0x22;
+            spr = 0xE;
+            break;
+        case 7:
+            body = 0x19;
+            mot = 0x27;
+            spr = 0xF;
+            break;
+        case 4:
+            body = 0x1A;
+            mot = 0x2C;
+            spr = 0x10;
+            break;
+        case 5:
+            body = 0x1B;
+            mot = 0x31;
+            spr = 0x11;
+            break;
+        default:
+            body = 0x1C;
+            mot = 0x36;
+            spr = 0x12;
+            break;
+    }
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    func_8000C6FC_D2FC(obj, 0x290000, body, player, flags | 4, flags | 4);
+    D_8010C048_19ABE8_BobsledRun[team].mdl[3] = obj->model[0];
+    work = obj->unk_50;
+    obj->model[0] = mdl = LoadFormFile(dir | file, 0x2AC9);
+    D_8010C048_19ABE8_BobsledRun[team].mdl[2] = mdl;
+    chr = gPlayers[player].character;
+    work->unk_5A = mdl;
+    work->unk_5B = 2;
+    func_80025384_25F84(D_8010C048_19ABE8_BobsledRun[team].mdl[2], 2, chr, dir | func_80025718_26318(chr, 2, 0));
+    func_80019F0C_1AB0C(obj, 0x26, mot | 0x290000, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x27, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 6, dir | 0x3A, 2, 0);
+    func_80019F0C_1AB0C(obj, 0, dir | 0x3B, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 0x3C, 0, 0);
+    file4E = dir | 0x4E;
+    func_8001A12C_1AD2C(obj, 0xD, file4E, 1, 0x78, 1);
+    D_8010CB30_19B6D0_BobsledRun[player] = file4E;
+    obj->func_ptr = func_8010982C_1983CC_BobsledRun;
+    work->unk_59 = team;
+    D_8010C048_19ABE8_BobsledRun[team].sprite2 = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(spr | 0x290000), 0, 1);
+}
+
+/* Draw layers of a sled by distance to the other team's camera (1: top screen only, 2: bottom,
+   3: both); close up (or while the other team's riders do anim 5) its effect model shows. */
+// register allocation: retail keeps obj in s1 and moves the layer into s0 for the last three calls
+#ifdef NON_MATCHING
+void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
+    s8* t; /* &D_8010C048_19ABE8_BobsledRun[other].anim: retail's base register */
+    s32 layer;
+    s32 layer2;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 d;
+
+    layer = 2;
+    if (BR_WORK(obj)->unk_59 == 0) {
+        layer = 1;
+        layer2 = 1;
+        dx = obj->trans.x - D_801013B0_101FB0[1].x;
+        dy = obj->trans.y - D_801013B0_101FB0[1].y;
+        dz = obj->trans.z - D_801013B0_101FB0[1].z;
+        d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+        if (d < 5000.0f) {
+            layer = 3;
+            if (d < 1350.0f) {
+                layer2 = 3;
+                func_800298A4_2A4A4(obj->model[6], 4, 4);
+            } else {
+                func_800298A4_2A4A4(obj->model[6], 4, 0);
+            }
+        }
+        t = &D_8010C048_19ABE8_BobsledRun[1].anim;
+    } else {
+        layer2 = 2;
+        dx = obj->trans.x - D_801013B0_101FB0[0].x;
+        dy = obj->trans.y - D_801013B0_101FB0[0].y;
+        dz = obj->trans.z - D_801013B0_101FB0[0].z;
+        d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+        if (d < 5000.0f) {
+            layer = 3;
+            if (d < 1350.0f) {
+                layer2 = 3;
+                func_800298A4_2A4A4(obj->model[6], 4, 4);
+            } else {
+                func_800298A4_2A4A4(obj->model[6], 4, 0);
+            }
+        }
+        t = &D_8010C048_19ABE8_BobsledRun[0].anim;
+    }
+    if (t[0] == 5) { /* anim */
+        func_800298A4_2A4A4(obj->model[6], 4, 4);
+        func_800298A4_2A4A4(t[10], 4, 4); /* mdl[5] */
+    }
+    func_80029EDC_2AADC(obj->model[0], layer);
+    func_80029EDC_2AADC(obj->model[1], layer);
+    func_80029EDC_2AADC(obj->model[5], layer2);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104EAC_193A4C_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801050F8_193C98_BobsledRun);
+/* Draw layer of a rider by distance to the other team's camera. */
+void func_801050F8_193C98_BobsledRun(omObjData* obj) {
+    Vec3f* c;
+    s32 layer;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+
+    layer = 2;
+    if (BR_WORK(obj)->unk_59 == 0) {
+        c = &D_801013B0_101FB0[1];
+        layer = 1;
+    } else {
+        c = &D_801013B0_101FB0[0];
+    }
+    dx = obj->trans.x - c->x;
+    dy = obj->trans.y - c->y;
+    dz = obj->trans.z - c->z;
+    if (func_800B1830_B2430(dx * dx + dy * dy + dz * dz) < 5000.0f) {
+        layer = 3;
+    }
+    func_80029EDC_2AADC(obj->model[0], layer);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801051BC_193D5C_BobsledRun);
 

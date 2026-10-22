@@ -84,7 +84,8 @@ typedef struct BRWork {
     /* 0x57 */ s8 unk_57;     /* controller port (MP1 0x56) */
     /* 0x58 */ u8 unk_58;
     /* 0x59 */ s8 unk_59;     /* team (MP1 0x58) */
-    /* 0x5A */ char unk_5A[2];
+    /* 0x5A */ s8 unk_5A;     /* character model */
+    /* 0x5B */ u8 unk_5B;
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ f32 unk_60;
     /* 0x64 */ f32 unk_64;
@@ -148,6 +149,7 @@ extern s32 D_8010C130_19ACD0_BobsledRun;
 extern u16 D_8010C9F0_19B590_BobsledRun; /* progress bar: track piece */
 extern u16 D_8010C9F2_19B592_BobsledRun; /* progress bar: flag */
 extern u16 D_8010C9F4_19B594_BobsledRun; /* progress bar: goal */
+extern s32 D_8010CB30_19B6D0_BobsledRun[4]; /* per player: the character's motion file 0x4E */
 extern u16 D_8010CB40_19B6E0_BobsledRun; /* team 1's progress-bar sled */
 extern u8 D_8010CB42_19B6E2_BobsledRun[3]; /* the three background models */
 extern u16 D_8010CC3C_19B7DC_BobsledRun; /* progress-bar frame (hidden) */
@@ -241,6 +243,14 @@ s16 func_8001AAAC_1B6AC(s16, s32, s32);
 void func_8001A788_1B388(u16 spriteId, s32 arg1);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y); /* sprite scale */
 void espDispOff(u16);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_800298A4_2A4A4(s16, s32, s32);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+s32 func_80025718_26318(s16, s16, s16);
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
+void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val); /* ((u8*)obj->unk_50)[idx] = val */
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* MP1 func_8000979C */
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (B's half, after 801064F0, inferred from the asm: check)
