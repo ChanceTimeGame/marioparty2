@@ -393,8 +393,8 @@ extern s32 D_8010D004_2233F4_BombsAway[];
 extern Vec D_8010D010_223400_BombsAway[4]; /* cannon: intro start, play pos; [2], [3] their rotations */
 extern s32 D_8010D01C_22340C_BombsAway[];
 extern s16 D_8010D040_223430_BombsAway; /* title sprite y */
-extern s32 D_8010D044_223434_BombsAway[];
-extern s32 D_8010D1F8_2235E8_BombsAway[];
+extern HmfVtx D_8010D044_223434_BombsAway[12]; /* splash quads (func_80109A68) */
+extern Gfx D_8010D1F8_2235E8_BombsAway[]; /* display list the splash model calls first */
 extern f32 D_8010D238_223628_BombsAway[]; /* blast model scale per kind (func_8010A350) */
 extern u16 D_8010D248_223638_BombsAway;
 extern f32 D_8010D24C_22363C_BombsAway; /* water texture scroll s (MP1 D_800FFB24) */
@@ -594,6 +594,11 @@ void SprPosSet(s16, s16, s16, s16);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void omSetStatBit(omObjData* obj, u16 stat);
+void* HuMemAlloc(s32 size);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, retail does not re-extend it here */
+extern void bcopy(const void*, void*, int);
+extern s16 D_800FA1AA_FADAA;
+extern u8 D_800FDBCA_FE7CA; /* frame buffers */
 int abs(int);
 void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
 void omSetRot(omObjData*, f32, f32, f32);

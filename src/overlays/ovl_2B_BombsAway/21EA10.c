@@ -414,7 +414,79 @@ void func_801099C4_21FDB4_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109A68_21FE58_BombsAway);
+s16 func_80109A68_21FE58_BombsAway(s32 arg0, HuSprite_Unk84_Struct* anim, s32 arg2) {
+    HmfData* hmf;
+    Gfx* buf;
+    Gfx* gfx;
+    HmfVtx* to;
+    HmfVtx* from;
+    s32 size;
+    s32 idx;
+    s32 i;
+    s32 j;
+
+    buf = gfx = HuMemAlloc(0x200);
+    idx = func_80027FA4_28BA4(0x8A0, buf, 4);
+    hmf = D_800FC834_FD434[idx].hmf;
+    hmf->unk64->unk50 |= 0x71010000;
+    HuMemFree(hmf->unk3C);
+    hmf->unk3C = func_80027154_27D54(0x14, D_800FA1AA_FADAA);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        to = hmf->unk44[i] = func_80027154_27D54(0xC0, hmf->unk0E);
+        from = D_8010D044_223434_BombsAway;
+        for (j = 0; j < 12; j++) {
+            *to++ = *from++;
+        }
+    }
+    gSPDisplayList(gfx++, osVirtualToPhysical(D_8010D1F8_2235E8_BombsAway));
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, G_CULL_BOTH | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR);
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
+    gDPSetBlendColor(gfx++, 0x01, 0x01, 0x01, 0x01);
+    gDPPipeSync(gfx++);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureLUT(gfx++, G_TT_NONE);
+    gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_I, anim->unk00->unk04, anim->unk00->unk06, 0,
+                           G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                           G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetRenderMode(gfx++, 0x4049D8, 0);
+    gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+    gDPPipeSync(gfx++);
+    gSPVertex(gfx++, 0x01000000, 12, 0);
+    for (i = 0; i < 3; i++) {
+        switch (i) {
+            case 0:
+                gDPSetPrimColor(gfx++, 0, 0, 0x7E, 0xFF, 0xFF, 0x40);
+                break;
+            case 1:
+                gDPSetPrimColor(gfx++, 0, 0, 0xC8, 0xFF, 0xFF, 0x40);
+                break;
+            default:
+                gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, 0x40);
+                break;
+        }
+        gDPPipeSync(gfx++);
+        gSP2Triangles(gfx++, i * 4, i * 4 + 1, i * 4 + 2, 0, i * 4 + 1, i * 4 + 3, i * 4 + 2, 0);
+    }
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    size = (u32)gfx - (u32)buf;
+    hmf->unk3C->unk00[0] = hmf->unk3C->unk10 = func_80027154_27D54(size, hmf->unk0E);
+    bcopy(buf, hmf->unk3C->unk00[0], size);
+    HuMemFree(buf);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        hmf->unk3C->unk00[i + 1] = func_80027154_27D54(0x80, hmf->unk0E);
+    }
+    return idx;
+}
 
 void func_8010A0D0_2204C0_BombsAway(s32 model, HuSprite_Unk84_Struct* anim, s32 frame) {
     HmfModel* m = &D_800FC834_FD434[model];
