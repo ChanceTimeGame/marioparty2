@@ -569,19 +569,135 @@ void func_8010A4CC_2208BC_BombsAway(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4CC_2208BC_BombsAway);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AA9C_220E8C_BombsAway);
+void func_8010AA9C_220E8C_BombsAway(omObjData* obj) {
+    obj->func_ptr = func_8010AB08_220EF8_BombsAway;
+    *obj->model = func_80018A30_19630(0x3B0003, 0x99);
+    D_8010E520_224910_BombsAway = *obj->model;
+    func_8002A00C_2AC0C(*obj->model);
+    func_8010C444_222834_BombsAway(*obj->model);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AB08_220EF8_BombsAway);
+void func_8010AB08_220EF8_BombsAway(omObjData* obj) {
+    func_8010C8A0_222C90_BombsAway(*obj->model, (u16)(D_8010D248_223638_BombsAway % 361), obj->model);
+    func_8002BCA8_2C8A8(*obj->model, D_8010D24C_22363C_BombsAway, D_8010D250_223640_BombsAway, 0x20, 0x20);
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_8010D248_223638_BombsAway++;
+        if (D_8010CFF0_2233E0_BombsAway >= 2) {
+            D_8010D24C_22363C_BombsAway += 0.3;
+        } else {
+            D_8010D24C_22363C_BombsAway -= 0.3;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AC2C_22101C_BombsAway);
+void func_8010AC2C_22101C_BombsAway(void) {
+    func_800298A4_2A4A4(D_8010E520_224910_BombsAway, 4, 4);
+    HuMemFree(D_8010E524_224914_BombsAway);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AC60_221050_BombsAway);
+void func_8010AC60_221050_BombsAway(void) {
+    void* file;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AD18_221108_BombsAway);
+    for (i = 0; i < 32; i++) {
+        D_8010E398_224788_BombsAway[i].unk_00 = -1;
+        D_8010E398_224788_BombsAway[i].unk_02 = 0;
+    }
+    file = DataRead(0x3B0011);
+    D_8010E518_224908_BombsAway[1] = SprAnimRead(file);
+    DataClose(file);
+    file = DataRead(0x3B0010);
+    D_8010E518_224908_BombsAway[3] = SprAnimRead(file);
+    DataClose(file);
+}
 
+void func_8010AD18_221108_BombsAway(void) {
+    u16 i;
+    s16 t;
+
+    for (i = 0; i < 32; i++) {
+        if (D_8010E398_224788_BombsAway[i].unk_04 <= 0x20) {
+            if (D_8010E398_224788_BombsAway[i].unk_02 == 1) {
+                SprKill(D_8010E398_224788_BombsAway[i].unk_00);
+                D_8010E398_224788_BombsAway[i].unk_00 = -1;
+            }
+            if ((t = D_8010E398_224788_BombsAway[i].unk_02) > 0) {
+                D_8010E398_224788_BombsAway[i].unk_02 = t - 1;
+            }
+        }
+    }
+}
+
+// register allocation at entry: the kind test and the life argument (masked 0; MP1's twin is
+// NON_MATCHING the same way)
+#ifdef NON_MATCHING
+s16 func_8010ADF8_2211E8_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, f32 alpha) {
+    u16 i;
+
+    if ((u16)kind >= 33) {
+        return 0;
+    }
+    if (alpha <= 0.0f) {
+        return 0;
+    }
+    for (i = 0; i < 32; i++) {
+        if (D_8010E398_224788_BombsAway[i].unk_02 != 0) {
+            continue;
+        }
+        if (D_8010E398_224788_BombsAway[i].unk_00 != -1) {
+            continue;
+        }
+        D_8010E398_224788_BombsAway[i].unk_02 = life;
+        D_8010E398_224788_BombsAway[i].unk_04 = kind;
+        D_8010E398_224788_BombsAway[i].unk_00 = SprCreate(1, 0);
+        SprAnimSet(D_8010E398_224788_BombsAway[i].unk_00, 0, D_8010E518_224908_BombsAway[kind], 0);
+        func_8008221C_82E1C(D_8010E398_224788_BombsAway[i].unk_00, 0, alpha);
+        if (kind != 3) {
+            func_8008225C_82E5C(D_8010E398_224788_BombsAway[i].unk_00, 0, 2);
+        } else {
+            func_8008225C_82E5C(D_8010E398_224788_BombsAway[i].unk_00, 0, 3);
+        }
+        if (kind != 3) {
+            SprAttrSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0x100C);
+        } else {
+            SprAttrSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0x503C);
+        }
+        if ((u16)kind < 2) {
+            func_800824B4_830B4(D_8010E398_224788_BombsAway[i].unk_00, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+        }
+        SprPos3DSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0, x, y, z);
+        switch (kind) {
+            case 0:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.6;
+                break;
+            case 1:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.5;
+                break;
+            case 2:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.08;
+                break;
+            case 3:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale;
+                break;
+        }
+        SprScaleSet(D_8010E398_224788_BombsAway[i].unk_00, 0, D_8010E398_224788_BombsAway[i].unk_08,
+                    D_8010E398_224788_BombsAway[i].unk_08);
+        break;
+    }
+    /* With every effect busy (i == 32) retail reads past the array: D_8010E518[0] on the N64. */
+    return D_8010E398_224788_BombsAway[i].unk_00;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010ADF8_2211E8_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B1AC_22159C_BombsAway);
+u16 func_8010B1AC_22159C_BombsAway(u32 n) {
+    D_8010D254_223644_BombsAway = (u32)(D_8010D254_223644_BombsAway * 0x19971204 + 0x19760831) >> 16;
+    if (n == 0) {
+        return (u16)D_8010D254_223644_BombsAway;
+    }
+    return (u32)D_8010D254_223644_BombsAway % n;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B214_221604_BombsAway);
 
