@@ -3085,7 +3085,7 @@ void func_801103EC_2BECAC_name_41(void) {
 }
 
 /* CPU item check (registered with func_80044D98): 1 = use the held item now. Several items are
-   used on the last turn, or when their decision tree D_80112F24/80112F84/80113248/801133BC
+   used on the last turn, or when their decision tree D_80111868/801118C8/80111A48/80111B80
    says so, or with enough coins. */
 s32 func_80110440_2BED00_name_41(void) {
     s32 cur;
