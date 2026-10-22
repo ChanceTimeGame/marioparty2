@@ -1,5 +1,8 @@
 #include "ovl_10.h"
 
+#define CG_ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+
 void func_80109A70_153590_CraneGame(void) {
     D_8010CE08_156928_CraneGame = 0;
     D_8010CB00_156620_CraneGame = func_8002838C_28F8C(0, func_80109C00_153720_CraneGame, 2);
@@ -103,7 +106,46 @@ void func_80109E48_153968_CraneGame(CGCol* e, s16 model) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109E48_153968_CraneGame);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109FF8_153B18_CraneGame);
+/* The plane (unit normal, distance) and dominant axis of each face. */
+void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f, s16 n) {
+    Vec p;
+    Vec e1;
+    Vec e2;
+    f32 inv;
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < n; out++, i++, f++) {
+        for (j = 0; j < 4; j++) {
+            out->v[j] = f->unk04[j];
+        }
+        if ((f->unk00 & 7) < 4U) {
+            out->v[3] = -1;
+        }
+        p.x = verts[out->v[1]].x;
+        e1.x = verts[out->v[0]].x - p.x;
+        e2.x = verts[out->v[2]].x - p.x;
+        p.y = verts[out->v[1]].y;
+        e1.y = verts[out->v[0]].y - p.y;
+        e2.y = verts[out->v[2]].y - p.y;
+        p.z = verts[out->v[1]].z;
+        e1.z = verts[out->v[0]].z - p.z;
+        e2.z = verts[out->v[2]].z - p.z;
+        out->nx = e1.y * e2.z - e1.z * e2.y;
+        out->ny = e1.z * e2.x - e1.x * e2.z;
+        out->nz = e1.x * e2.y - e1.y * e2.x;
+        inv = 1.0 / sqrtf(out->nx * out->nx + out->ny * out->ny + out->nz * out->nz);
+        out->nx = inv * out->nx;
+        out->ny = inv * out->ny;
+        out->nz = inv * out->nz;
+        out->d = -(p.x * out->nx + p.y * out->ny + p.z * out->nz);
+        if (CG_ABS(out->nx) >= CG_ABS(out->ny)) {
+            out->axis = (CG_ABS(out->nx) >= CG_ABS(out->nz)) ? 0 : 2;
+        } else {
+            out->axis = (CG_ABS(out->ny) >= CG_ABS(out->nz)) ? 1 : 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A43C_153F5C_CraneGame);
 
