@@ -245,6 +245,16 @@ typedef struct PdStreak {
         HuPrcVSleep();                                                        \
     }
 
+/* func_80106A64's mash object (func_80106DEC). */
+typedef struct MashWork {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 frame;    /* 0..150 */
+    /* 0x08 */ s32 alpha[6]; /* the arrows' alpha, up to 255 */
+    /* 0x20 */ s32 unk20;
+    /* 0x24 */ s32 unk24;
+    /* 0x28 */ s32 fade;     /* alpha step */
+} MashWork; /* size 0x2C */
+
 /* ---- 48 data (asm/data/overlays/ovl_48_name/30C870.data.s) ---- */
 
 extern PdStatusLayout D_801084D0_30C870_name_48[8];
@@ -259,9 +269,7 @@ extern Vec D_80108720_30CAC0_name_48;
 extern Vec D_8010872C_30CACC_name_48; /* splat took it for a string: it is { -215, 0, 700 } */
 extern Vec D_80108738_30CAD8_name_48;
 extern Vec D_80108744_30CAE4_name_48;
-extern f32 D_80108750_30CAF0_name_48;
-extern f32 D_80108754_30CAF4_name_48;
-extern f32 D_80108758_30CAF8_name_48[4];
+extern Vec D_80108750_30CAF0_name_48[2]; /* the arrows' two columns */
 extern s16 D_80108768_30CB08_name_48;
 extern s16 D_8010876A_30CB0A_name_48[7];
 extern s32 D_80108778_30CB18_name_48;
@@ -293,8 +301,16 @@ extern s32 D_80108980_30CD20_name_48[2];
 extern s32 D_80108988_30CD28_name_48; /* CPU pad triggers */
 extern s32 D_80108BEC_30CF8C_name_48; /* no referee (flag 0x17 clear) */
 /* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
+extern s32 D_80108970_30CD10_name_48[4]; /* presses, per player */
+extern s16 D_80108990_30CD30_name_48[2][150]; /* per duelist: the frames a CPU presses on */
 extern MBModel* D_80108BF4_30CF94_name_48; /* the referee's hat (scaled away) */
 extern s16 D_80108BF8_30CF98_name_48[2];
+extern s16 D_80108C00_30CFA0_name_48[6]; /* the six arrow models */
+extern s16 D_80108C0E_30CFAE_name_48[2]; /* per duelist: the A prompt sprite */
+extern s16 D_80108C12_30CFB2_name_48[2]; /* per duelist: the B prompt sprite */
+extern s16 D_80108C18_30CFB8_name_48[2]; /* per duelist: the mash sound */
+extern s16 D_80108C1C_30CFBC_name_48[2]; /* per duelist: its pitch */
+extern f32 D_80108C20_30CFC0_name_48[6]; /* the arrows' scales */
 extern f32 D_80108C40_30CFE0_name_48[2];
 extern f32 D_80108C48_30CFE8_name_48;
 

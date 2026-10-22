@@ -555,10 +555,79 @@ void func_801061E8_30A588_name_48(void) {
     }
 }
 
+/* Starts the mash (func_80106DEC): clears both duelists' press counts and, for each, marks the
+   frames of a 150-frame timeline on which the CPU presses (30-40, 42-57, 58-65 or 60-75 presses by
+   difficulty); shows the first button prompts, and sets the six arrows' scales and positions. */
+/* NON_MATCHING: masked 23: retail recomputes the row address k * 300 inside the count loop from
+   hoisted k * 5 and k * 80 and keeps the % 150 multiplier out of a register; GCC hoists both. Logic
+   checked against the asm. */
+#ifdef NON_MATCHING
+void func_80106A64_30AE04_name_48(void) {
+    f32 scale[3] = { 1.4f, 1.0f, 1.0f };
+    omObjData* obj;
+    MashWork* work;
+    s32 player;
+    s32 count;
+    s32 i;
+    s32 k;
+    s16* p;
+    s16 (*tl)[150];
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80106DEC_30B18C_name_48);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(MashWork), 0x7918);
+    D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] = 0;
+    D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48] = 0;
+    count = 0;
+    tl = D_80108990_30CD30_name_48;
+    for (k = 0; k < 2; k++) {
+        if (k == 0) {
+            player = D_80108930_30CCD0_name_48;
+        } else {
+            player = D_80108934_30CCD4_name_48;
+        }
+        switch (gPlayers[player].cpu_difficulty) {
+            case 3:
+                count = (rand8() & 0xF) + 60;
+                break;
+            case 2:
+                count = (rand8() & 7) + 58;
+                break;
+            case 1:
+                count = (rand8() & 0xF) + 42;
+                break;
+            case 0:
+                count = (u8)(rand8() % 11) + 30;
+                break;
+        }
+        for (i = 0; i < 150; i++) {
+            tl[k][i] = 0;
+        }
+        for (i = 0; i < count; i++) {
+            do {
+                p = &tl[k][(u8)(rand8() % 150)];
+            } while (*p != 0);
+            *p = 1;
+        }
+        espDispOn(D_80108C0E_30CFAE_name_48[k]);
+        func_800298A4_2A4A4(D_80108C00_30CFA0_name_48[k], 4, 0);
+        for (i = 0; i < 150; i++) {
+        }
+    }
+    for (i = 0; i < 6; i++) {
+        D_80108C20_30CFC0_name_48[i] = scale[i >> 1];
+        func_80029714_2A314(D_80108C00_30CFA0_name_48[i], D_80108750_30CAF0_name_48[i & 1].x, 237.02071f, D_80108750_30CAF0_name_48[i & 1].z);
+        func_800297E8_2A3E8(D_80108C00_30CFA0_name_48[i], D_80108C20_30CFC0_name_48[i], D_80108C20_30CFC0_name_48[i], D_80108C20_30CFC0_name_48[i]);
+        work->alpha[i] = 0;
+    }
+    work->frame = 0;
+    work->fade = 5;
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80108838_30CBD8_name_48[3] = { 0x3FB33333, 0x3F800000, 0x3F800000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80106A64_30AE04_name_48);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80106DEC_30B18C_name_48);
 
