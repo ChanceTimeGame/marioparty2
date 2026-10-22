@@ -587,6 +587,9 @@ extern MBModel* D_80115464_2DA954_name_43;
 extern MBModel* D_80115468_2DA958_name_43[3]; /* 43: three */
 extern MBModel* D_80115474_2DA964_name_43;
 extern MBModel* D_80115478_2DA968_name_43[2];
+extern u8 D_80114198_2D9688_name_43[4][3]; /* per player: the other players */
+extern Unk3EStealRange D_8011423C_2D972C_name_43[24]; /* turn and coin range -> message */
+extern s16 D_801142A6_2D9796_name_43[];
 extern s16 D_80113B64_2D9054_name_43[10];
 extern s16 D_80113B78_2D9068_name_43[8];
 extern DecisionTreeNonLeafNode D_80113D7C_2D926C_name_43[];

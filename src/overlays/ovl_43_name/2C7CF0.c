@@ -3541,7 +3541,247 @@ void func_8010FDC4_2D52B4_name_43(void) {
     func_8010FD0C_2D51FC_name_43(2);
 }
 
+#ifdef NON_MATCHING /* NON_MATCHING */
+/* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
+   player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
+void func_8010FDE0_2D52D0_name_43(void) {
+    char msgs[4][16];
+    u8 items[4];
+    s32 flag;
+    s32 space;
+    s32 boo;
+    s16 cam;
+    MBModel* model;
+    SpaceData* spaceData;
+    s16 choice;
+    s16 sel;
+    s32 i;
+    s32 k;
+    s32 amount;
+    void* vib;
+    f32 step;
+    f32 acc;
+    GW_SYSTEM* gw;
+
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    if (gw->current_player_index == 4) {
+        return;
+    }
+    choice = 0;
+    flag = func_80046D2C_4792C(gw->current_player_index);
+    MBPlayerMotionSet(-1, -1, 2);
+    switch ((s16)space) {
+    case 0xAF:
+        boo = 0;
+        cam = 0x9D;
+        break;
+    case 0xB4:
+        boo = 1;
+        cam = 0x9F;
+        break;
+    default:
+        boo = -1;
+        cam = -1;
+        model = MBModelParamCreate(D_80115474_2DA964_name_43);
+        MBModelDispOff(model);
+        model->jumpY = 10.0f;
+        spaceData = GetSpaceData(space);
+        HuVecCopyXYZ(&model->pos, spaceData->coords.x, spaceData->coords.y + 10.0f, spaceData->coords.z);
+        goto created;
+    }
+    model = D_80115478_2DA968_name_43[boo];
+created:
+    PlaySound(0xEB);
+    func_80109234_2CE724_name_43(model);
+    spaceData = GetSpaceData(space);
+    if (cam != -1) {
+        func_800446B4_452B4(model, &spaceData->coords, 10);
+        func_80056C30_57830(-1, 8, cam);
+        HuPrcSleep(10);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+    }
+    if (gPlayers[gw->current_player_index].coins < 5) {
+        MBDlgWinExec(7, 0x6B6);
+    } else {
+    menu:
+        for (i = 0; i < 4; i++) {
+            if (i != gw->current_player_index && gPlayers[i].coins != 0) {
+                break;
+            }
+        }
+        if (i == 4) {
+            msgs[0][0] = 1;
+            items[0] = 0;
+        } else {
+            msgs[0][0] = 8;
+            items[0] = 1;
+        }
+        msgs[0][1] = 0;
+        for (i = 0; i < 4; i++) {
+            if (i != gw->current_player_index && gPlayers[i].stars != 0) {
+                break;
+            }
+        }
+        if (i == 4 || gPlayers[gw->current_player_index].coins < 50 || gPlayers[gw->current_player_index].stars >= 99) {
+            msgs[1][0] = 1;
+            items[1] = 0;
+        } else {
+            msgs[1][0] = 8;
+            items[1] = 1;
+        }
+        msgs[1][1] = 0;
+        items[2] = items[3] = 1;
+        func_80056368_56F68(7, 0x6B5, (s32)msgs[0], (s32)msgs[1], 0, 0, 0);
+        choice = func_801056C8_2CABB8_name_43(items);
+        MBDlgWinClose();
+        func_80056168_56D68();
+        switch (choice) {
+        case 0:
+        case 1:
+        menu2:
+            for (i = 0, k = 0; i < 4; i++) {
+                if (i == gw->current_player_index) {
+                    continue;
+                }
+                if (choice == 0) {
+                    if (gPlayers[i].coins != 0) {
+                        items[k] = 1;
+                        goto available;
+                    }
+                    goto unavailable;
+                } else if (gPlayers[i].stars == 0) {
+                unavailable:
+                    items[k] = 0;
+                    msgs[k][0] = 1;
+                } else {
+                    items[k] = 1;
+                available:
+                    msgs[k][0] = 8;
+                }
+                msgs[k][1] = 0x18;
+                msgs[k][2] = gPlayers[i].character;
+                msgs[k][3] = 0;
+                k++;
+            }
+            items[3] = 1;
+            func_80056368_56F68(7, 0x6B8, (s32)msgs[0], (s32)msgs[1], (s32)msgs[2], 0, 0);
+            sel = func_8010597C_2CAE6C_name_43(choice, items);
+            MBDlgWinClose();
+            func_80056168_56D68();
+            if (sel == -1) {
+                goto menu;
+            }
+            if (sel == 3) {
+                if (boo == -1) {
+                    func_80103E40_2C9330_name_43();
+                    D_800F851A_F911A = 1;
+                    func_80078EC8_79AC8();
+                } else {
+                    func_80103DB0_2C92A0_name_43();
+                }
+                goto menu2;
+            }
+            if (choice == 0) {
+                func_8004CA34_4D634(gw->current_player_index, -5);
+                func_800614B4_620B4(gw->current_player_index, -5);
+            } else {
+                func_8004CA34_4D634(gw->current_player_index, -50);
+                func_800614B4_620B4(gw->current_player_index, -50);
+            }
+            HuPrcSleep(30);
+            func_801092D4_2CE7C4_name_43(model);
+            if (choice == 0) {
+                amount = func_80109C74_2CF164_name_43(D_80114198_2D9688_name_43[gw->current_player_index][sel]);
+                func_80109234_2CE724_name_43(model);
+                if (amount == -1) {
+                    amount = gPlayers[D_80114198_2D9688_name_43[gw->current_player_index][sel]].coins;
+                    sprintf(msgs[0], D_801152A8_2DA798_name_43, amount);
+                    func_80056368_56F68(7, 0x6BF, (s32)msgs[0], 0, 0, 0, 0);
+                } else {
+                    for (i = 0; i < sizeof(D_8011423C_2D972C_name_43) / sizeof(D_8011423C_2D972C_name_43[0]); i++) {
+                        if (gw->current_turn >= D_8011423C_2D972C_name_43[i].turnMin
+                            && gw->current_turn <= D_8011423C_2D972C_name_43[i].turnMax
+                            && amount >= D_8011423C_2D972C_name_43[i].min && amount <= D_8011423C_2D972C_name_43[i].max) {
+                            break;
+                        }
+                    }
+                    sprintf(msgs[0], D_801152A8_2DA798_name_43, amount);
+                    func_80056368_56F68(7, D_801142A6_2D9796_name_43[D_8011423C_2D972C_name_43[i].mess], (s32)msgs[0], 0,
+                                        0, 0, 0);
+                }
+                MBDlgWinClose();
+                func_80056168_56D68();
+                step = amount / 90.0f;
+                acc = 0.0f;
+                D_80115488_2DA978_name_43 = func_80043510_44110(0x18, NULL);
+                func_80043DAC_449AC(D_80115488_2DA978_name_43);
+                MBModelDispOff(D_80115488_2DA978_name_43);
+                vib = func_800672BC_67EBC(D_80114198_2D9688_name_43[gw->current_player_index][sel], 3, 5);
+                while (amount != 0) {
+                    acc += step;
+                    if (acc >= 1.0f) {
+                        acc -= 1.0f;
+                        func_8010B9BC_2D0EAC_name_43(model);
+                        func_800614B4_620B4(gw->current_player_index, 1);
+                        func_8006135C_61F5C(D_80114198_2D9688_name_43[gw->current_player_index][sel], -1, 0);
+                        amount--;
+                    }
+                    HuPrcVSleep();
+                }
+                func_8006735C_67F5C(vib);
+                HuPrcSleep(20);
+                MBModelKill(D_80115488_2DA978_name_43);
+                func_8005670C_5730C(&((MBModel*)BoardPlayerGet(-1)->unk_24)->rot);
+                MBPlayerMotionSet(-1, 5, 0);
+                HuPrcSleep(5);
+                func_80079718_7A318(0x103, gPlayers[gw->current_player_index].character);
+                HuPrcSleep(45);
+            } else {
+                func_80109374_2CE864_name_43(D_80114198_2D9688_name_43[gw->current_player_index][sel]);
+                func_80109234_2CE724_name_43(model);
+                D_80113B54_2D9044_name_43 = 1;
+                func_80103968_2C8E58_name_43(model);
+                D_80113B54_2D9044_name_43 = 0;
+            }
+            if (boo == -1) {
+                MBPlayerMotionSet(-1, -1, 2);
+            }
+            break;
+        case 2:
+            func_801092D4_2CE7C4_name_43(model);
+            MBDlgWinExec(7, 0x6B7);
+            break;
+        case 3:
+            if (boo == -1) {
+                func_80103E40_2C9330_name_43();
+                D_800F851A_F911A = 1;
+                func_80078EC8_79AC8();
+            } else {
+                func_80103DB0_2C92A0_name_43();
+            }
+            goto menu;
+        }
+    }
+    if (choice != 2) {
+        func_801092D4_2CE7C4_name_43(model);
+    }
+    func_8005670C_5730C(&model->rot);
+    if (boo == -1) {
+        MBModelKill(model);
+    }
+    if (flag != 0) {
+        func_8004655C_4715C(gw->current_player_index);
+    }
+    if (boo != -1) {
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010FDE0_2D52D0_name_43);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8011081C_2D5D0C_name_43);
 
