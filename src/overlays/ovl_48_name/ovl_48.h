@@ -1,14 +1,14 @@
 #ifndef _OVL_48_H
 #define _OVL_48_H
 
-/* Overlay 42 (2C0780.c): board 41's duel scene, the successor of board 3E's (overlay 3F, ovl_3F.h):
-   a stand-alone scene (its own omInitObjMan) with a referee. The challenger
-   (D_800F8D1A.attacker) picks an opponent when several are eligible, both stake coins, then the
-   duel is played (fork B's processes 80109214/80109780/801064E8) until D_80109DC8 decides it;
+/* Overlay 48 (306BA0.c): board 47's duel scene, 42's flow (ovl_42.h) with its own duel game, a
+   button mash: the challenger (D_800F8D1A.attacker) picks an opponent when several are eligible,
+   both stake coins, two signs crash down, then for five seconds (the countdown func_80107FC8) each
+   duelist presses A and B alternately (func_80106A64/func_80106DEC; a CPU presses on random frames,
+   more of them the harder it is). More presses wins (D_80108968: 1 draw, 2 challenger, 3 opponent);
    the winner takes both stakes. The result is left for the board in D_800FC880 (winner) and
-   D_800F8C5C (loser), -1 both for a draw.
-   The unit's .rodata is carved ([0x2C7B40, .rodata, 2C0780]); leftovers are defined raw in C by
-   tools/mp2rodefs.py beside their first user. */
+   D_800F8C5C (loser), -1 for a draw. Types and names follow ovl_42.h.
+   The unit's .rodata is carved ([0x30CB30, .rodata, 306BA0]); leftovers are defined raw in C. */
 
 #include "common.h"
 #include "game/board.h"
@@ -155,7 +155,7 @@ void omSetRot(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 int sprintf(char* dst, const char* fmt, ...);
 
-/* ---- 42 work types ---- */
+/* ---- duel work types (ovl_42.h's) ---- */
 
 /* Status-window layouts (D_801098A0): four slots as from/to positions, and the frames the move
    takes (ovl_3F.h's Unk3FStatusLayout). */
@@ -174,7 +174,7 @@ typedef struct PdShrink {
     /* 0x10 */ s32 unk10;
 } PdShrink; /* size 0x14 */
 
-/* ---- 42-B ---- */
+/* ---- more main-segment API ---- */
 
 extern u16 ContBtnTrg[];
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
@@ -203,40 +203,13 @@ typedef struct PdCpuInput {
     /* 0x0C */ s32 mode;
 } PdCpuInput; /* size 0x10 */
 
-/* func_801062FC's timeline object (func_80106B5C). */
-typedef struct PdTimeline {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 frame; /* 0..149 */
-} PdTimeline; /* size 0x08 */
 
-/* func_801088FC's slide (func_80108F98). */
-typedef struct PdSlideWork {
-    /* 0x00 */ s32 count;
-    /* 0x04 */ s32 player;
-    /* 0x08 */ f32 x;     /* the shadow's x at the start */
-    /* 0x0C */ s32 frame;
-    /* 0x10 */ f32 offs[100];
-} PdSlideWork; /* size 0x1A0 */
 
 /* A move sprite's pop (func_80109344/func_801093D8) or a wrong move's pause
    (func_801094D4/func_80109648). */
-typedef struct PdMoveWork {
-    /* 0x00 */ s32 side;  /* 0 the challenger, 1 the opponent */
-    /* 0x04 */ s32 timer;
-    /* 0x08 */ s32 slot;  /* the move's sprite; for a wrong move, the player */
-    /* 0x0C */ f32 angle;
-} PdMoveWork; /* size 0x10 */
 
-/* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
-typedef struct PdStreak {
-    /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ f32 len;
-    /* 0x1C */ Vec dir;
-    /* 0x28 */ f32 speed;
-} PdStreak; /* size 0x2C */
 
-/* Wait for the step flag (D_80109D70) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
+/* Wait for the step flag (D_80108910) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
 #define PD_WAIT_STEP()                           \
     while (TRUE) {                               \
         if (D_80108910_30CCB0_name_48 != 0) { \
@@ -283,7 +256,7 @@ extern f32 D_8010877C_30CB1C_name_48[5];
 
 extern s32 D_80108910_30CCB0_name_48; /* a step finished */
 extern s32 D_80108914_30CCB4_name_48; /* the stake */
-/* func_80104B88's message: window x and y (stored as s32, read as s16), variant, id, the
+/* func_80105354's message: window x and y (stored as s32, read as s16), variant, id, the
    player it names. */
 extern s32 D_80108918_30CCB8_name_48;
 extern s32 D_8010891C_30CCBC_name_48;
@@ -302,7 +275,6 @@ extern s32 D_8010896C_30CD0C_name_48; /* the poorer player's coins */
 extern s32 D_80108980_30CD20_name_48[2];
 extern s32 D_80108988_30CD28_name_48; /* CPU pad triggers */
 extern s32 D_80108BEC_30CF8C_name_48; /* no referee (flag 0x17 clear) */
-/* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern s32 D_80108968_30CD08_name_48; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
 extern s32 D_80108970_30CD10_name_48[4]; /* presses, per player */
 extern s16 D_80108990_30CD30_name_48[2][150]; /* per duelist: the frames a CPU presses on */
