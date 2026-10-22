@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_2A.h"
 
 __asm__(".section .rodata");
 const char D_8010A0A0_218A40_BumperBalls[] = "152_01f_DEF";
@@ -21,7 +22,68 @@ const char D_8010A0DC_218A7C_BumperBalls[] = "152_01a_DEF";
 __asm__(".section .rodata");
 const char D_8010A0E8_218A88_BumperBalls[] = "\202`\202a\202b";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80102800_2111A0_BumperBalls);
+void func_80102800_2111A0_BumperBalls(void) {
+    void* data;
+    s32 i;
+
+    omInitObjMan(32, 0);
+    func_80079128_79D28();
+    D_8010A26E_218C0E_BumperBalls = 4;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].flags & 1) {
+            D_8010A26E_218C0E_BumperBalls--;
+        }
+    }
+    D_8010A272_218C12_BumperBalls = D_800FA656;
+    func_8002D4D0_2E0D0(2);
+    func_80020D20_21920(24);
+    func_8002F290_2FE90(D_800F9D30_FA930, 64);
+    func_8002CA48_2D648(0, 32, 128);
+    func_80029708_2A308(1);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_80020718_21318(0, &func_8002E544_2F144, &D_800FA5B8_FB1B8);
+    func_80026D28_27928(3);
+    func_80026DAC_279AC(0, 44, 44, 64);
+    func_80076BD0_777D0(0, 4);
+    D_8010A29C_218C3C_BumperBalls = func_80076D80_77980(0);
+    func_80076BD0_777D0(1, 4);
+    D_8010A2A0_218C40_BumperBalls = func_80076D80_77980(1);
+    omSetStatBit(omAddObj(100, 0, 0, -1, &func_801084C8_216E68_BumperBalls), 160);
+    if ((D_8010A262_218C02_BumperBalls = _CheckFlag(0xC)) != 0) {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].flags & 1) {
+                gPlayers[i].cpu_difficulty = D_800FD8AC[0];
+            }
+        }
+    }
+    omAddObj(20, 13, 7, 0, &func_8010351C_211EBC_BumperBalls);
+    omAddObj(20, 13, 7, 0, &func_80103558_211EF8_BumperBalls);
+    omAddObj(20, 13, 7, 0, &func_80103574_211F14_BumperBalls);
+    omAddObj(20, 13, 7, 0, &func_80103590_211F30_BumperBalls);
+    if (D_8010A272_218C12_BumperBalls == 2) {
+        omAddObj(10, 7, 0, 1, &func_80105690_214030_BumperBalls);
+        omAddObj(10, 7, 0, 1, &func_801056AC_21404C_BumperBalls);
+        omAddObj(10, 7, 0, 1, &func_801056C8_214068_BumperBalls);
+        omAddObj(10, 7, 0, 1, &func_801056E4_214084_BumperBalls);
+    }
+    omAddObj(0, 0, 0, -1, &func_80102C5C_2115FC_BumperBalls);
+    D_8010A290_218C30_BumperBalls = omAddObj(6, 3, 0, -1, &func_80102F98_211938_BumperBalls);
+    omAddObj(0x2710, 0, 0, -1, &func_80106730_2150D0_BumperBalls);
+    D_8010A268_218C08_BumperBalls = func_8001A2F8_1AEF8(0x2F);
+    data = DataRead(0x10);
+    D_8010A26A_218C0A_BumperBalls = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    data = DataRead(0xF);
+    D_8010A26C_218C0C_BumperBalls = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    func_8007273C_7333C((u8*)D_8010A0E8_218A88_BumperBalls, 1);
+    D_8010A564_218F04_BumperBalls = 0;
+    InitFadeIn(0, 16);
+    if (D_8010A272_218C12_BumperBalls == 0) {
+        D_8010A274_218C14_BumperBalls = PlaySound(0x4AF);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80102C5C_2115FC_BumperBalls);
 
