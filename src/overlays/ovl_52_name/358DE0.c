@@ -499,6 +499,128 @@ void func_80105C48_35C228_name_52(void) {
     HuPrcSleep(20);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_8010604C_35C62C_name_52);
+/* The winner (D_800F8CE4_F98E4[0]) is named, walks to the front and faces the camera; a star falls
+   onto them in a burst, the character's fanfare plays and "YOU ARE THE WINNER" is shown until a
+   human presses A or B (90 frames at most), then the fade. */
+void func_8010604C_35C62C_name_52(void) {
+    void* data;
+    s16 form;
+    MBModel* model;
+    omObjData* star;
+    omObjData* burst;
+    s32 win;
+    s32 i;
+    s32 t;
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_8010670C_35CCEC_name_52);
+    data = DataRead(0xA01ED);
+    form = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    model = gPlayers[D_800F8CE4_F98E4[0]].unk_24;
+    star = omAddObj(0x1F4, 1, 0, -1, NULL);
+    star->model[0] = LoadFormFile(0xA0251, 0x6A9);
+    omSetTra(star, model->pos.x, 600.0f, model->pos.z);
+    star->rot.x = star->rot.z = 0.0f;
+    omSetSca(star, 1.0f, 1.0f, 1.0f);
+    burst = omAddObj(0x1F4, 2, 0, -1, NULL);
+    burst->model[1] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+    D_800F86D8_F92D8[burst->model[1]].unk02 = form;
+    func_80021160_21D60(burst->model[1], 6, 0);
+    burst->model[0] = D_800F86D8_F92D8[burst->model[1]].unk00;
+    HmfModelObjAttrSet(burst->model[0], 0x20000000, 0x20000000);
+    func_80021250_21E50(burst->model[1], 0xFA, 0xFF, 0xFF);
+    func_800211E8_21DE8(burst->model[1], 0x90);
+    omSetSca(burst, 0.0f, 0.0f, 1.0f);
+    burst->rot.y = burst->rot.x = burst->rot.z = 0.0f;
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_800F8CE4_F98E4[0]].character], 0);
+    func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, 0x6CB);
+    win = func_8005AAC0_5B6C0(40, 45, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_800F8CE4_F98E4[0]].character], 0);
+    func_800890CC_89CCC(win, 0x6CB, -1, -1);
+    ShowTextWindow(win);
+    func_80057DA4_589A4(win);
+    func_8005762C_5822C(win);
+    func_8005ACD0_5B8D0(&gPlayers[D_800F8CE4_F98E4[0]], 12);
+    MBMotionShiftSet(model, 8, 0, 4, 0);
+    HuPrcSleep(34);
+    MBMotionShiftSet(model, -1, 0, 4, 0);
+    func_800794A8_7A0A8(60);
+    while (func_8005A7E8_5B3E8(model, &D_80106858_35CE38_name_52, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(model, 6, 0, 4, 2);
+    while (func_8005A5E8_5B1E8(model, &D_80106858_35CE38_name_52, 15.0f) == 0) {
+        HuPrcVSleep();
+    }
+    star->trans.x = model->pos.x;
+    star->trans.z = model->pos.z;
+    while (func_8005A7E8_5B3E8(model, &((HuCamera*)D_800FD2A8_FDEA8)->pos, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(model, -1, 0, 4, 0);
+    for (t = 0, i = 0; i < 60; i++) {
+        if (++t == 10) {
+            PlayMusic(0x10);
+        }
+        star->trans.y += -6.1666665f;
+        HuPrcVSleep();
+    }
+    omSetTra(burst, star->trans.x - 20.0f, star->trans.y + 80.0f, star->trans.z + 30.0f);
+    func_800298A4_2A4A4(burst->model[0], 4, 0);
+    for (i = 0; i < 10; i++) {
+        if (i < 5) {
+            s = burst->scale.x + 0.2f;
+        } else {
+            s = burst->scale.x - 0.2f;
+        }
+        burst->scale.x = s;
+        burst->scale.y = s;
+        HuPrcVSleep();
+    }
+    func_8002308C_23C8C(burst->model[1]);
+    omDelObj(burst);
+    omAddPrcObj(func_8010670C_35CCEC_name_52, 0x5010, 0x2000, 0)->user_data = star;
+    func_8005ACD0_5B8D0(&gPlayers[D_800F8CE4_F98E4[0]], 12);
+    MBMotionShiftSet(model, 5, 0, 4, 0);
+    func_800732B0_73EB0(D_80106960_35CF40_name_52[gPlayers[D_800F8CE4_F98E4[0]].character][6]);
+    HuPrcSleep(94);
+    func_801028C4_358EA4_name_52();
+    HuPrcSleep(60);
+    for (i = 0; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1)) {
+            break;
+        }
+    }
+    if (i != 4) {
+        for (t = 0; t < 90; t++) {
+            for (i = 0; i < 4; i++) {
+                if (!(gPlayers[i].flags & 1) && (ContBtnTrg[gPlayers[i].port] & 0xC000)) {
+                    break;
+                }
+            }
+            if (i != 4) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+    InitFadeOut(0, 20);
+    HuPrcSleep(20);
+}
+
+/* The star's process: it spins and bobs above the winner. */
+void func_8010670C_35CCEC_name_52(void) {
+    omObjData* obj = HuPrcCurrentGet()->user_data;
+    f32 a = 180.0f;
+
+    while (TRUE) {
+        if ((obj->rot.y += 4.0f) >= 360.0f) {
+            obj->rot.y -= 360.0f;
+        }
+        obj->trans.y = HuMathSin(a) * 10.0f + 230.0f;
+        if ((a += 10.0f) >= 360.0f) {
+            a -= 360.0f;
+        }
+        HuPrcVSleep();
+    }
+}

@@ -98,6 +98,23 @@ s32 func_8005AAC0_5B6C0(s32 x, s32 y, s32 w, s32 h); /* board message window */
 void func_800890CC_89CCC(s16, s32, s32, s32);
 void func_8005762C_5822C(s32 arg0);
 void func_800794A8_7A0A8(s32);
+s16 func_8003DF08_3EB08(void* arg);
+s16 LoadFormFile(s32, s32);
+void omSetTra(omObjData*, f32, f32, f32);
+void omSetSca(omObjData*, f32, f32, f32);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2);
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_8002308C_23C8C(s32 index);
+void func_8008D974_8E574(s32, s16); /* message argument: a message id or a string */
+void func_80089308_89F08(s16, s32, s32); /* window message argument */
+void ShowTextWindow(s32 arg0);
+void func_80057DA4_589A4(s32 arg0);
+void func_8005ACD0_5B8D0(GW_PLAYER*, s16);
+omObjData* func_800732B0_73EB0(u32 arg0);
+extern s32 D_800CC5F8[]; /* per character: the name message */
 extern u16 D_801011FC_101DFC;
 extern u8 D_800FD866_FE466;
 extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
