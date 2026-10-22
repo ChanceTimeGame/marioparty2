@@ -1503,17 +1503,131 @@ void func_80106B30_DE5C0_BowserSlots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80106B30_DE5C0_BowserSlots);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801076EC_DF17C_BowserSlots);
+void func_801076EC_DF17C_BowserSlots(void) {
+    if (D_8010C03C_E3ACC_BowserSlots->work[0] == 0) {
+        D_8010C03C_E3ACC_BowserSlots->work[0] = 1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010770C_DF19C_BowserSlots);
+/* Symbol 1-5 -> its prize item (clamped). */
+s32 func_8010770C_DF19C_BowserSlots(s32 symbol) {
+    symbol--;
+    if (symbol >= 5) {
+        symbol = 4;
+    }
+    if (symbol < 0) {
+        symbol = 0;
+    }
+    return (u16)D_8010C0CC_E3B5C_BowserSlots[symbol];
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80107740_DF1D0_BowserSlots);
+/* Builds the wobble weights of a model's vertices: (height / max height)^2 and the vertex's angle
+   around the y axis (0-360). */
+void func_80107740_DF1D0_BowserSlots(s32 model) {
+    HmfData* hmf = BS_MODEL(model)->hmf;
+    s32 n = hmf->unk18;
+    s32 size = n * 8;
+    HmfVtx* v;
+    BSVtxWeight* w;
+    f32 max;
+    f32 t;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801078F0_DF380_BowserSlots);
+    D_8010C0E4_E3B74_BowserSlots = func_80027154_27D54(size, hmf->unk0E + 1);
+    func_800B0EF0_B1AF0(D_8010C0E4_E3B74_BowserSlots, 0, size);
+    max = 0.0f;
+    v = hmf->unk40;
+    for (i = 0; i < n; i++, v++) {
+        if (max < v->unk02) {
+            max = v->unk02;
+        }
+    }
+    w = D_8010C0E4_E3B74_BowserSlots;
+    v = hmf->unk40;
+    for (i = 0; i < n; i++, w++, v++) {
+        t = v->unk02 / max;
+        w->weight = t * t;
+        w->angle = func_800B75A8_B81A8(v->unk00, -v->unk04);
+        if (w->angle >= 360.0) {
+            w->angle -= 360.0;
+        } else if (w->angle < 0.0) {
+            w->angle += 360.0;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801079B8_DF448_BowserSlots);
+/* Records the heights of two models (D_8010C0E8), then builds the first one's weights. */
+void func_801078F0_DF380_BowserSlots(s32 model, s32 model2) {
+    s32 models[2];
+    HmfData* hmf;
+    HmfVtx* v;
+    s32 n;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80107BCC_DF65C_BowserSlots);
+    models[0] = model;
+    models[1] = model2;
+    for (i = 0; i < 2; i++) {
+        hmf = BS_MODEL(models[i])->hmf;
+        n = hmf->unk18;
+        v = hmf->unk40;
+        D_8010C0E8_E3B78_BowserSlots[i] = 0;
+        for (j = 0; j < n; j++, v++) {
+            if (D_8010C0E8_E3B78_BowserSlots[i] < v->unk02) {
+                D_8010C0E8_E3B78_BowserSlots[i] = v->unk02;
+            }
+        }
+    }
+    func_80107740_DF1D0_BowserSlots(model);
+}
+
+/* Bends the model's current vertex frame toward direction `angle` by `amp`, squashing by `squash`. */
+void func_801079B8_DF448_BowserSlots(s32 model, f32 angle, f32 amp, f32 squash) {
+    BSVtxWeight* w = D_8010C0E4_E3B74_BowserSlots;
+    f32 inv180 = 1.0f / 180.0f;
+    HmfData* hmf = BS_MODEL(model)->hmf;
+    s32 n = hmf->unk18;
+    HmfVtx* v = hmf->unk44[D_800FDBE0_FE7E0];
+    f32 d;
+    s32 i;
+
+    for (i = 0; i < n; i++, v++, w++) {
+        v->unk00 += HuMathSin(angle) * amp * 100.0 * w->weight;
+        v->unk04 += func_800B7890_B8490(angle) * amp * 100.0 * w->weight;
+        d = 180.0 - func_8010B2FC_E2D8C_BowserSlots(angle, w->angle);
+        if (d < 0.0) {
+            d += 360.0;
+        }
+        if (d > 180.0) {
+            d = 180.0f;
+        }
+        v->unk02 -= d * inv180 * w->weight * squash * 100.0;
+    }
+}
+
+/* Moves model2 (the top part) onto the bent model, then bends the model. */
+void func_80107BCC_DF65C_BowserSlots(s32 model, s32 model2, f32 angle, f32 amp, f32 squash) {
+    HmfModel* m;
+    HmfModel* top;
+    f32 s;
+    f32 c;
+
+    if (model2 != -1) {
+        m = BS_MODEL(model);
+        top = BS_MODEL(model2);
+        top->pos.x = m->pos.x;
+        top->pos.y = m->pos.y;
+        top->pos.z = m->pos.z;
+        s = HuMathSin(angle) * amp;
+        c = func_800B7890_B8490(angle) * amp;
+        top->pos.x += s * 100.0 * m->scale.x;
+        top->pos.z += c * 100.0 * m->scale.z;
+        top->rot.x = c * 30.0;
+        top->rot.z = -(s * 30.0);
+        top->pos.y += ((D_8010C0E8_E3B78_BowserSlots[1] + squash * (D_8010C0E8_E3B78_BowserSlots[0] - D_8010C0E8_E3B78_BowserSlots[1])) + -80.0) * m->scale.y;
+    }
+    func_801079B8_DF448_BowserSlots(model, angle, amp, squash);
+}
 
 __asm__(".section .rodata");
 const u32 D_8010BE08_E3898_BowserSlots[8] = { 0x00000001, 0x00000001, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001 };

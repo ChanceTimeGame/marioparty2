@@ -225,9 +225,8 @@ extern s32 D_8010C0D4_E3B64_BowserSlots;          /* the first two reels match *
 extern s32 D_8010C0D8_E3B68_BowserSlots;          /* their symbol */
 extern s32 D_8010C0DC_E3B6C_BowserSlots;
 extern s32 D_8010C0E0_E3B70_BowserSlots;          /* won symbol, -1 none */
-extern s32 D_8010C0E4_E3B74_BowserSlots;
-extern s32 D_8010C0E8_E3B78_BowserSlots;
-extern s32 D_8010C0EC_E3B7C_BowserSlots;
+extern struct BSVtxWeight* D_8010C0E4_E3B74_BowserSlots; /* MG01-B: the wobbling model's vertex weights */
+extern f32 D_8010C0E8_E3B78_BowserSlots[2];      /* MG01-B: heights of the block and its top */
 extern s32 D_8010C0F0_E3B80_BowserSlots[2];       /* sprite animations of the block object */
 extern s32 D_8010C0F8_E3B88_BowserSlots[2];       /* sprite animations of the machine */
 extern s32 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
@@ -282,6 +281,17 @@ s32 func_801067A4_DE234_BowserSlots(void);
 s32 func_801067DC_DE26C_BowserSlots(void);
 void func_80106820_DE2B0_BowserSlots(omObjData* obj);
 void func_80106B30_DE5C0_BowserSlots(omObjData* obj);
+
+/* ---- MG01-B ---- */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+f32 func_800B7890_B8490(f32); /* cos */
+extern u8 D_800FDBE0_FE7E0; /* current vertex buffer */
+
+/* D_8010C0E4: one per vertex of the wobbling model (func_80107740) */
+typedef struct BSVtxWeight {
+    /* 0x00 */ f32 weight; /* (height / max height)^2 */
+    /* 0x04 */ f32 angle;  /* around the y axis, 0-360 */
+} BSVtxWeight;
 
 /* ---- fork B (80106B30+): inferred from register use, check against the asm ---- */
 void func_801076EC_DF17C_BowserSlots(void);
