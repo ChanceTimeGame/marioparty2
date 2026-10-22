@@ -4643,7 +4643,17 @@ void func_8011150C_2D69FC_name_43(void) {
     func_80110F2C_2D641C_name_43(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80111528_2D6A18_name_43);
+/* The event waiting in board state [5]: the current player's cheer, the day message 0xEE, then clear it. */
+void func_80111528_2D6A18_name_43(void) {
+    if (D_800F8CE4_F98E4[5] != 0) {
+        func_80079718_7A318(0x111, gPlayers[GwSystem.current_player_index].character);
+        PlaySound(0x3D1);
+        MBDlgResultWinExec(0xEE);
+        D_800F8CE4_F98E4[5] = 0;
+        func_8005DDEC_5E9EC(-1, -1, 0, 10, 2);
+        HuPrcSleep(10);
+    }
+}
 
 s32 func_801115C0_2D6AB0_name_43(void) {
     s32 count = 0;
@@ -4689,7 +4699,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801117F4_2D6CE4
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801119D4_2D6EC4_name_43);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80112248_2D7738_name_43);
+/* The event waiting in board state [6]: the night message 0x43C, then clear it. */
+void func_80112248_2D7738_name_43(void) {
+    if (D_800F8CE4_F98E4[6] != 0) {
+        PlaySound(0x3D2);
+        MBDlgResultWinExec(0x43C);
+        D_800F8CE4_F98E4[6] = 0;
+    }
+}
 
 s32 func_8011228C_2D777C_name_43(void) {
     s32 count = 0;
