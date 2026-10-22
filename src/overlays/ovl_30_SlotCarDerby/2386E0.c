@@ -752,10 +752,176 @@ void func_80104E54_23AD34_SlotCarDerby(SCDCar* car, f32 ahead) {
     car->unk_44 = d * 0.3;
 }
 
+/* One instruction: retail converts f to double again in the pitch's else arm (bc1fl delay slot)
+   where GCC reuses the comparison's conversion. */
+#ifdef NON_MATCHING
+void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
+    Vec pos;
+    Vec dir;
+    f32 accel[4] = { 0.060666665f, 0.075833336f, 0.101111114f, 0.15166667f }; /* 9.1 / 150, 120, 90, 60 */
+    SCDCar* car;
+    f32 target;
+    f32 speed;
+    f32 cur;
+    f32 prev;
+    f32 f;
+    f64 d;
+    s32 lim;
+
+    car = func_801032E0_2391C0_SlotCarDerby(obj);
+    if (car->unk_62 != 0) {
+        throttle = 0.1f;
+        car->unk_62--;
+    }
+    if (SCD_CAR_FRAMES0(car)) {
+        car->unk_66 = 1;
+        if (throttle != 0.0f) {
+            car->unk_07 = 1;
+            func_80079798_7A398(0x2AC, car->unk_01);
+        }
+    }
+    target = throttle * 9.1;
+    cur = car->unk_50;
+    if (cur < target) {
+        speed = cur + accel[car->unk_05];
+        if (target < speed) {
+            speed = target;
+        }
+    } else if (target < cur) {
+        if (car->unk_60 != 0) {
+            speed = cur - (f32)(20 - car->unk_60) / 10.0 * 0.546;
+        } else {
+            speed = car->unk_50 - 0.546;
+        }
+        if (speed < target) {
+            speed = target;
+        }
+    } else {
+        speed = car->unk_50;
+    }
+    car->unk_50 = speed;
+    target = speed;
+    if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+        if (car->unk_74 < 0) {
+            if (car->unk_76 == 0) {
+                car->unk_74 = func_80079798_7A398(0x2AE, car->unk_01);
+            }
+        }
+        if (car->unk_74 >= 0) {
+            if (func_801030B0_238F90_SlotCarDerby(car->unk_74) == 0) {
+                car->unk_74 = func_80079798_7A398(0x2AE, car->unk_01);
+            }
+            f = speed / 9.1 - 0.2;
+            if (f >= 0.0) {
+                d = f / 0.8 * 1000.0;
+            } else {
+                d = f / 0.2 * 1400.0;
+            }
+            f = d - 400.0;
+            func_800796F0_7A2F0(car->unk_74, f);
+        }
+    }
+    if (car->unk_07 != 0) {
+        speed = 0.0f;
+        car->unk_50 = speed;
+        target = speed;
+        if (++car->unk_07 >= 31) {
+            car->unk_07 = 0;
+        }
+    }
+    prev = car->unk_4C;
+    car->unk_4C = func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, prev, target, &car->unk_0C, &car->unk_30);
+    if (car->unk_00 & 0x80) {
+        if (D_801109D6_2468B6_SlotCarDerby == 0) {
+            D_800FC834_FD434[obj->model[0]].unk18 ^= 4;
+        }
+    } else {
+        if (D_80110250_246130_SlotCarDerby * 0.9 < prev && car->unk_4C < D_80110250_246130_SlotCarDerby * 0.1) {
+            car->unk_00 |= 0x80;
+            if (car->unk_04 == 0) {
+                car->unk_04 = D_80110802_2466E2_SlotCarDerby++;
+                if (car->unk_04 == 1) {
+                    PlaySound(0x4AD);
+                    D_801102DC_2461BC_SlotCarDerby = 1;
+                    D_801109D4_2468B4_SlotCarDerby = 1;
+                }
+            }
+            car->unk_06 = 0;
+            D_801102D2_2461B2_SlotCarDerby = 60;
+            D_801102DE_2461BE_SlotCarDerby += func_801091DC_23F0BC_SlotCarDerby(car->unk_01, 1);
+        }
+    }
+    if (car->unk_62 != 0 && car->unk_50 < 1.82) {
+        func_8010DAD8_2439B8_SlotCarDerby(obj->work[0], 0.0f);
+    } else {
+        func_8010DAD8_2439B8_SlotCarDerby(obj->work[0], car->unk_50 / 9.1);
+    }
+    lim = func_80105E60_23BD40_SlotCarDerby(car->unk_4C + car->unk_48) + D_8010F46C_24534C_SlotCarDerby[car->unk_05];
+    if (lim > 100) {
+        lim = 100;
+    }
+    speed = (f32)lim * 9.1 / 100.0;
+    if (speed < target && (((car->unk_00 & 0x80) == 0) & (throttle != 0.0f))) {
+        if (car->unk_06 == 0) {
+            omVibrate(car->unk_01, 10, 0, 10);
+        } else if (!(car->unk_06 & 3)) {
+            omVibrate(car->unk_01, 2, 3, 10);
+        }
+        if (car->unk_06++ >= 26) {
+            if (throttle > 0.0f) {
+                car->unk_62 = 40;
+                car->unk_5C = 0.0f;
+            }
+            car->unk_06 = 0;
+            omVibrate(car->unk_01, 20, 0, 20);
+            func_80079798_7A398(0x2AF, car->unk_01);
+        }
+    } else {
+        car->unk_06 = 0;
+    }
+    if (car->unk_06 >= 8) {
+        car->unk_60 = car->unk_06 - 6;
+    }
+    if (car->unk_60 != 0) {
+        if (--car->unk_60 < 0) {
+            car->unk_60 = 0;
+        }
+    }
+    car->unk_00 |= 0x10;
+    if (car->unk_62 == 0) {
+        func_80104E54_23AD34_SlotCarDerby(car, -car->unk_50 * 16.0f);
+        car->unk_5C = 0.0f;
+    } else {
+        car->unk_40 = 0.0f;
+        if ((car->unk_5C += 27.0) > 360.0f) {
+            car->unk_5C -= 360.0f;
+        }
+        if (!(car->unk_62 & 3)) {
+            func_80103650_239530_SlotCarDerby(1, car);
+        }
+    }
+    if (D_801102C8_2461A8_SlotCarDerby.unk_00 != 7 && D_801102C8_2461A8_SlotCarDerby.unk_00 != 8) {
+        func_80106B74_23CA54_SlotCarDerby(&car->unk_0C.x, 0.15f);
+    }
+    func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, car->unk_4C, 40.0f, &pos, &dir);
+    if (D_801102C8_2461A8_SlotCarDerby.unk_00 != 7 && D_801102C8_2461A8_SlotCarDerby.unk_00 != 8) {
+        if (car->unk_05 == 0) {
+            pos.y -= 10.0;
+            func_80106B74_23CA54_SlotCarDerby(&pos.x, 0.3f);
+        } else {
+            pos.y -= 10.0;
+            func_80106B74_23CA54_SlotCarDerby(&pos.x, 0.15f);
+        }
+    }
+    if (!(car->unk_64 & 0xF) && car->unk_50 >= 8.19) {
+        func_80103650_239530_SlotCarDerby(0, car);
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_8010FE18_245CF8_SlotCarDerby[4] = { 0x3D787D9C, 0x3D9B4E82, 0x3DCF1358, 0x3E1B4E82 };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104F3C_23AE1C_SlotCarDerby);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_8010FED0_245DB0_SlotCarDerby[10] = { 0x41A00000, 0x00000000, 0x00000000, 0xC1A00000, 0x00000000, 0x00000000, 0x00000000, 0x41A00000, 0x00000000, 0x00000000 };
