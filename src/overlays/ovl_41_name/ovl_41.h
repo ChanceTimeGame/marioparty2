@@ -560,4 +560,14 @@ s32 func_80110440_2BED00_name_41(void); /* fork D: returns the use-item answer *
 s32 func_80110664_2BEF24_name_41(void);
 s32 func_801109E0_2BF2A0_name_41(void);
 
+/* 41-B */
+extern s8 D_80110E34_2BF6F4_name_41[][5]; /* shop items, -1 none */
+extern s32 D_80110ED0_2BF790_name_41[6]; /* per character: sprite file */
+extern Vec2f3E D_80111050_2BF910_name_41[4];
+extern Vec2f3E D_80111070_2BF930_name_41[4]; /* per player: window positions (item events) */
+extern Vec2f3E D_80111090_2BF950_name_41[4];
+extern s32 D_80111F7C_2C083C_name_41;
+extern u8* D_80111F80_2C0840_name_41;
+extern MBModel* D_80111F84_2C0844_name_41;
+
 #endif
