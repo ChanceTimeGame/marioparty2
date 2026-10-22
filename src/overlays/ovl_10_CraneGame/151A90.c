@@ -166,6 +166,7 @@ Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
     Vtx* vbuf;
     Vtx* v;
     CGShadowGroup* grp;
+    HmfPart* part;
     Mtx* mtx;
     s32 i;
     s32 j;
@@ -179,7 +180,8 @@ Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
     gSPSegment(gfx++, 1, osVirtualToPhysical(vbuf));
     grp = D_8010C7E8_156308_CraneGame[D_8010C8F0_156410_CraneGame];
     for (i = 0; i < (m->unk10 & 0x3F); i++, grp++) {
-        mtx = D_800F8C58_F9858[D_800FDC48_FE848[m->unk00][m->unk64[i].unk2F].unk02].unk44;
+        part = &m->unk64[i];
+        mtx = D_800F8C58_F9858[D_800FDC48_FE848[m->unk00][part->unk2F].unk02].unk44;
         func_800B30D0_B3CD0(mf, mtx);
         gSPMatrix(gfx++, osVirtualToPhysical(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         func_800B6410_B7010(mf, inv, r);
