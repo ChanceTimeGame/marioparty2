@@ -67,7 +67,124 @@ void func_80103C6C_4100CC_Results(void) {
     func_8008CE5C_8DA5C();
 }
 
+// the noCoins test: retail copies it to v0 first (masked 1)
+#ifdef NON_MATCHING
+/* The screen's process: show the table, count the minigame bonus coins, then the minigame coins,
+   re-rank the players and wait for A/Start (or for nobody, when all four are CPUs). */
+void func_80103DB4_410214_Results(void) {
+    s16 i;
+    s8 cpus;
+    s32 allCpu;
+    s32 autoSkip;
+    s32 noCoins;
+
+    noCoins = 0;
+    func_80102944_40EDA4_Results();
+    InitFadeIn(0, 16);
+    if (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (D_80107830_413C90_Results[i] != 0 || D_80107838_413C98_Results[i] != 0) {
+            break;
+        }
+    }
+    if (i >= 4) {
+        noCoins = 1;
+    }
+    D_801076A2_413B02_Results = 0;
+    if (noCoins == 0) {
+        HuPrcSleep(10);
+    }
+    if (D_801076A1_413B01_Results == 0) {
+        for (i = 24; i > 0; i--) {
+            HuPrcVSleep();
+            if (D_801076A1_413B01_Results != 0) {
+                break;
+            }
+        }
+    }
+    func_801046DC_410B3C_Results();
+    HuPrcSleep(10);
+    if (D_801076A1_413B01_Results == 0) {
+        for (i = 24; i > 0; i--) {
+            HuPrcVSleep();
+            if (D_801076A1_413B01_Results != 0) {
+                break;
+            }
+        }
+    }
+    func_80107140_4135A0_Results(30, 0);
+    while (func_801072B0_413710_Results(0) == 0) {
+        func_801038A4_40FD04_Results();
+        func_80105AB8_411F18_Results();
+        if (D_801076A1_413B01_Results == 0) {
+            HuPrcVSleep();
+        }
+    }
+    func_801038A4_40FD04_Results();
+    func_80105AB8_411F18_Results();
+    HuPrcSleep(10);
+    if (D_801076A1_413B01_Results == 0) {
+        for (i = 8; i > 0; i--) {
+            HuPrcVSleep();
+            if (D_801076A1_413B01_Results != 0) {
+                break;
+            }
+        }
+    }
+    func_80107140_4135A0_Results(30, 1);
+    while (func_801072B0_413710_Results(1) == 0) {
+        func_801038A4_40FD04_Results();
+        func_80105F50_4123B0_Results();
+        if (D_801076A1_413B01_Results == 0) {
+            HuPrcVSleep();
+        }
+    }
+    func_801038A4_40FD04_Results();
+    func_80105F50_4123B0_Results();
+    if (D_801076A1_413B01_Results != 0 && noCoins != 1) {
+        HuPrcSleep(8);
+    }
+    func_801044D0_410930_Results();
+    func_801063E8_412848_Results();
+    allCpu = 0;
+    cpus = 0;
+    for (i = 0; i < MAX_PLAYERS; i++) {
+        if (gPlayers[i].flags & 1) {
+            cpus++;
+        }
+    }
+    if (cpus >= 4) {
+        allCpu = 1;
+    }
+    autoSkip = allCpu;
+    while (D_801077A4_413C04_Results == 0) {
+        for (i = 0; i < MAX_PLAYERS; i++) {
+            if (!(gPlayers[i].flags & 1)) {
+                if (ContBtn[gPlayers[i].port] & (A_BUTTON | START_BUTTON)) {
+                    D_801077A4_413C04_Results = 1;
+                }
+            }
+        }
+        if (autoSkip == 1) {
+            HuPrcSleep(8);
+            D_801077A4_413C04_Results = 1;
+        }
+        HuPrcVSleep();
+    }
+    HuPrcSleep(8);
+    D_801076A2_413B02_Results = 1;
+    InitFadeOut(0, 16);
+    func_800794A8_7A0A8(40);
+    D_801076A0_413B00_Results = 1;
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80103DB4_410214_Results);
+#endif
 
 void func_801041C8_410628_Results(void) {
     s32 i;
