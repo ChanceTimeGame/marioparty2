@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_30.h"
 
 __asm__(".section .rodata");
 const char D_8010FC50_245B30_SlotCarDerby[32] = "\202r\202s\202`\202q\202s\202f\202n\202`\202k\202v\202h\202m\201I";

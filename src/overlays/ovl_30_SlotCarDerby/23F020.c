@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_30.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_80109140_23F020_SlotCarDerby);
 
