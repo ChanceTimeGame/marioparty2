@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_0F.h"
 
 __asm__(".section .rodata");
 const char D_8010A8C0_14C250_RainbowRun[16] = "\202r\202s\202`\202q\202s";

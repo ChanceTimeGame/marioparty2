@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_0F.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80107790_149120_RainbowRun);
 
