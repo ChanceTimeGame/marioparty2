@@ -377,6 +377,9 @@ void func_8010AE68_369D58_name_55(void);
 void func_8010B3B4_36A2A4_name_55(void);
 void func_8010B444_36A334_name_55(s16 spr, f32 x, f32 y, f32 speed);
 void func_8010B518_36A408_name_55(omObjData* obj);
+
+/* ---- 36A4B0.c (fork C): a sixth retail file (16-byte text pad after func_8010B518) ---- */
+
 void func_8010B5C0_36A4B0_name_55(void);
 void func_8010B6C0_36A5B0_name_55(s32 player);
 
