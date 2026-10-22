@@ -121,10 +121,143 @@ void func_80102D6C_3359AC_name_4F(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_80102DB4_3359F4_name_4F);
 
+#ifdef NON_MATCHING
+/* masked 0: angle and rise get each other's float register (f24/f26) */
+void func_801039BC_3365FC_name_4F(void) {
+    Vec2f screen;
+    f32 angle;
+    f32 radius;
+    f32 spin;
+    f32 rise;
+    f32 speed;
+    f32 step;
+    f32 vol;
+    s16 sound;
+    s32 done;
+
+    radius = 350.0f;
+    spin = 0.0f;
+    rise = 1.0f;
+    speed = 1.0f;
+    done = 0;
+    D_80110430_343070_name_4F = func_80049ED4_4AAD4(D_8011056C_3431AC_name_4F, 1);
+    angle = 0.0f;
+    step = 5.0f;
+    sound = PlaySound(0x36F);
+    do {
+        if (done == 0) {
+            D_8011056C_3431AC_name_4F->pos.x = -func_800B7890_B8490(angle) * radius + D_8010F964_3425A4_name_4F.x;
+            D_8011056C_3431AC_name_4F->pos.y += rise * 1.304f;
+            D_8011056C_3431AC_name_4F->pos.z = HuMathSin(angle) * radius + D_8010F964_3425A4_name_4F.z;
+            func_800209C4_215C4(0, &D_8011056C_3431AC_name_4F->pos, &screen);
+            vol = screen.unk_00 * 0.3f + 16.0f;
+            if (vol < 16.0f) {
+                vol = 16.0f;
+            }
+            if (vol > 112.0f) {
+                vol = 112.0f;
+            }
+            func_800798F8_7A4F8(sound, vol);
+            angle += step * speed;
+            if (angle <= 720.0f) {
+                speed += 0.01f;
+                radius -= 1.3f;
+            } else if (angle < 1090.0f) {
+                speed *= 0.99f;
+                rise -= 0.01f;
+                radius -= speed * 1.4f;
+            } else {
+                done = 1;
+            }
+        } else {
+            D_8011056C_3431AC_name_4F->pos.x += speed;
+            D_8011056C_3431AC_name_4F->pos.y += rise;
+            if (D_8011056C_3431AC_name_4F->pos.x >= 20000.0f) {
+                D_8011056C_3431AC_name_4F->pos.x = 20000.0f;
+            }
+            speed *= 1.15f;
+            rise += 0.5f;
+            step = 1.0f;
+        }
+        spin += 30.0f;
+        if (spin >= 360.0f) {
+            spin -= 360.0f;
+        }
+        D_8011056C_3431AC_name_4F->rot.x = HuMathSin(spin);
+        D_8011056C_3431AC_name_4F->rot.z = func_800B7890_B8490(spin);
+        func_80103DF0_336A30_name_4F(0);
+        HuPrcVSleep();
+    } while (!(D_8011056C_3431AC_name_4F->pos.y >= 500.0f));
+    D_8011056C_3431AC_name_4F->pos.y = 500.0f;
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_801039BC_3365FC_name_4F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_80103D60_3369A0_name_4F);
+void func_80103D60_3369A0_name_4F(void) {
+    f32 angle;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_80103DF0_336A30_name_4F);
+    angle = 0.0f;
+    while (1) {
+        D_8011056C_3431AC_name_4F->pos.y += HuMathSin(angle);
+        angle += 9.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        }
+        func_80103DF0_336A30_name_4F(1);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_801040E0_336D20_name_4F);
+void func_80103DF0_336A30_name_4F(s32 arg0) {
+    MBModel* models[3];
+    Vec dir;
+    f32 light;
+    s32 i;
+
+    models[0] = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    models[1] = D_80110568_3431A8_name_4F;
+    models[2] = D_80110560_3431A0_name_4F;
+    for (i = 0; i < 3; i++) {
+        light = 1.0f - (func_800B1830_B2430((D_8011056C_3431AC_name_4F->pos.x - models[i]->pos.x) *
+                                                (D_8011056C_3431AC_name_4F->pos.x - models[i]->pos.x) +
+                                            (D_8011056C_3431AC_name_4F->pos.y - models[i]->pos.y) *
+                                                (D_8011056C_3431AC_name_4F->pos.y - models[i]->pos.y) +
+                                            (D_8011056C_3431AC_name_4F->pos.z - models[i]->pos.z) *
+                                                (D_8011056C_3431AC_name_4F->pos.z - models[i]->pos.z)) -
+                        130.9f) /
+                           236.17801f;
+        if (light < 0.0f) {
+            light = 0.0f;
+        }
+        dir.x = D_8011056C_3431AC_name_4F->pos.x - models[i]->pos.x;
+        dir.y = D_8011056C_3431AC_name_4F->pos.y - models[i]->pos.y;
+        dir.z = D_8011056C_3431AC_name_4F->pos.z - models[i]->pos.z;
+        MBVecNormalize(&dir);
+        if (arg0 == 1) {
+            light *= 2.0f;
+            if (light > 1.0f) {
+                light = 1.0f;
+            }
+        }
+        func_8002D2B4_2DEB4(*models[i]->obj->model, dir.x, dir.y, dir.z);
+        func_8002D274_2DE74(*models[i]->obj->model, light * 255.0f, light * 250.0f, light * 230.0f);
+    }
+}
+
+void func_801040E0_336D20_name_4F(omObjData* obj) {
+    s32 i;
+
+    if (_CheckFlag(D_8010F97C_3425BC_name_4F[D_80110574_3431B4_name_4F]) != 0) {
+        if (func_8008F618_90218() == 0) {
+            for (i = 0; i < 4; i++) {
+                if (!(gPlayers[i].flags & 1)) {
+                    if (ContBtnTrg[gPlayers[i].port] & 0x1000) {
+                        D_801011FC_101DFC = 1;
+                    }
+                }
+            }
+        }
+    }
+}
