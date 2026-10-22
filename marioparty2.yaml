@@ -1793,8 +1793,11 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0x1B80
     subsegments:
-      - [0x3D4D20, c]
+      - [0x3D4D20, c, ovl_62_entrypoint]
+      - [0x3D4D50, c]
+      - [0x3D4F20, c]
       - [0x3E3530, data]
+      - [0x3E4060, .rodata, 3D4F20]
       - {0x3E4250, type: bss, vram: 0x80111D30, name: ovl_62_bss}
   - type: code
     start: 0x3E4250
