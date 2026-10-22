@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_1F.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801071C0_1C2D40_DungeonDash);
 
