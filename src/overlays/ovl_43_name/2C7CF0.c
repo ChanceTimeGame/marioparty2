@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_43.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80102830_2C7D20_name_43);
 
@@ -39,7 +40,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80103F10_2C9400
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80103FE0_2C94D0_name_43);
 
 __asm__(".section .rodata");
-const u32 D_80115280_2DA770_name_43[1] = { 0x01020408 };
+const u8 D_80115280_2DA770_name_43[4] = { 1, 2, 4, 8 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80104040_2C9530_name_43);
 
