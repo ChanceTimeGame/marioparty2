@@ -55,7 +55,17 @@ s32 func_801030B0_238F90_SlotCarDerby(s16 slot) {
     return func_80015388_15F88(slot) != 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801030D4_238FB4_SlotCarDerby);
+void func_801030D4_238FB4_SlotCarDerby(SCDCar* car, s16 sound) {
+    if (car->unk_74 >= 0) {
+        func_80079848_7A448(car->unk_74);
+    }
+    car->unk_74 = -1;
+    if (sound >= 0 && car->unk_76 == 0) {
+        if (func_80079798_7A398(sound, car->unk_01) != -1) {
+            car->unk_76 = 30;
+        }
+    }
+}
 
 /* NON_MATCHING: registers only (retail copies n before the increment) */
 #ifdef NON_MATCHING
@@ -164,7 +174,25 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103FE
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801048BC_23A79C_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104E54_23AD34_SlotCarDerby);
+void func_80104E54_23AD34_SlotCarDerby(SCDCar* car, f32 ahead) {
+    Vec a;
+    Vec b;
+    Vec c;
+    f32 d;
+
+    func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, car->unk_4C, ahead, &a, &b);
+    func_80106750_23C630_SlotCarDerby(&car->unk_30, &a.x);
+    func_80106750_23C630_SlotCarDerby(&b, &c.x);
+    car->unk_40 = a.y;
+    d = c.y - a.y;
+    if (d < 0.0f) {
+        d += 360.0;
+    }
+    if (d > 180.0) {
+        d -= 360.0;
+    }
+    car->unk_44 = d * 0.3;
+}
 
 __asm__(".section .rodata");
 const u32 D_8010FE18_245CF8_SlotCarDerby[4] = { 0x3D787D9C, 0x3D9B4E82, 0x3DCF1358, 0x3E1B4E82 };
@@ -178,9 +206,40 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801056F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801059F0_23B8D0_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105DB4_23BC94_SlotCarDerby);
+void func_80105DB4_23BC94_SlotCarDerby(omObjData* obj) {
+    SCDCar* car = func_801032E0_2391C0_SlotCarDerby(obj);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105E60_23BD40_SlotCarDerby);
+    if (SCD_CAR_FRAMES0(car)) {
+        func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, 0.0f, 0.0f, &car->unk_0C, &car->unk_30);
+        car->unk_00 |= 0x10;
+    }
+    car->unk_40 = car->unk_24.y;
+    car->unk_3C = car->unk_44 = 0.0f;
+    if (car->unk_74 < 0 && car->unk_76 <= 0) {
+        car->unk_74 = func_80079798_7A398(0x2AE, car->unk_01);
+        func_800796F0_7A2F0(car->unk_74, -1800);
+    }
+}
+
+s32 func_80105E60_23BD40_SlotCarDerby(f32 dist) {
+    u16(*p)[3];
+    s32 cls;
+
+    if (dist >= 0.0f) {
+        dist = func_800B0D98_B1998(dist, D_80110250_246130_SlotCarDerby);
+    } else {
+        dist += D_80110250_246130_SlotCarDerby;
+    }
+    p = D_8010F864_245744_SlotCarDerby[D_8011023C_24611C_SlotCarDerby];
+    cls = 6;
+    for (; (*p)[0] != 0x400; p++) {
+        if (D_8011024C_24612C_SlotCarDerby[(*p)[0]] <= dist && dist < D_8011024C_24612C_SlotCarDerby[(*p)[1]]) {
+            cls = (*p)[2];
+            break;
+        }
+    }
+    return D_8010F450_245330_SlotCarDerby[cls] + 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105F5C_23BE3C_SlotCarDerby);
 
@@ -304,20 +363,124 @@ void func_80106BE0_23CAC0_SlotCarDerby(s32 x, s32 y, s32 z, s32 weight) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106C68_23CB48_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107708_23D5E8_SlotCarDerby);
+void func_80107708_23D5E8_SlotCarDerby(void) {
+    SCDParticle* p;
+    s32 i;
+    s32 sprite;
+    s32 group;
+    void* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107864_23D744_SlotCarDerby);
+    for (i = 0; i < 16; i++) {
+        D_801104F8_2463D8_SlotCarDerby[i].unk_00 = 0;
+    }
+    data = DataRead(0x400018);
+    sprite = SprAnimRead(data);
+    DataClose(data);
+    group = SprCreate(16, 0);
+    for (p = D_801104F8_2463D8_SlotCarDerby, i = 0; i < 16; i++, p++) {
+        SprAnimSet(group, i, sprite, 0);
+        func_8008225C_82E5C(group, i, 0);
+        SprBankSet(group, i, i & 3);
+        func_80082488_83088(group, i, 0xE8);
+        SprAttrSet(group, i, 0x9008);
+        p->unk_00 = -0x7FFF;
+        p->unk_02 = sprite;
+        p->unk_04 = group;
+        p->unk_06 = i;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107AD4_23D9B4_SlotCarDerby);
+void func_80107864_23D744_SlotCarDerby(void) {
+    SCDParticle* p;
+    s32 i;
+    f32 s;
+
+    for (p = D_801104F8_2463D8_SlotCarDerby, i = 0; i < 16; i++, p++) {
+        if (p->unk_00 != 0) {
+            p->unk_00 &= 1;
+            p->unk_0C = 160.0 - (f32)(((((rand8() << 8) | rand8())) >> 8) - 128);
+            p->unk_10 = 200.0 - (f32)(((((rand8() << 8) | rand8())) >> 10) - 32);
+            p->unk_18 = -(f32)(((((rand8() << 8) | rand8()) * 75) >> 13) + 200) * 0.01;
+            p->unk_24 = (f32)((((rand8() << 8) | rand8()) * 75) >> 14) * 0.01;
+            s = (f32)((((rand8() << 8) | rand8()) * 15) >> 13) * 0.01 + 0.8;
+            p->unk_1C = p->unk_20 = p->unk_28 = s;
+            p->unk_08 = 0;
+            p->unk_0A = (((rand8() << 8) | rand8()) * 45) >> 13;
+            SprPosSet(p->unk_04, p->unk_06, p->unk_0C, p->unk_10);
+            SprScaleSet(p->unk_04, p->unk_06, p->unk_1C, p->unk_20);
+            SprAttrReset(p->unk_04, p->unk_06, 0x8000);
+        }
+    }
+}
+
+void func_80107AD4_23D9B4_SlotCarDerby(void) {
+    SCDParticle* p;
+    s32 i;
+
+    for (p = D_801104F8_2463D8_SlotCarDerby, i = 0; i < 16; i++, p++) {
+        if (p->unk_00 > 0) {
+            p->unk_0C += HuMathSin(p->unk_0A) * p->unk_24;
+            p->unk_10 += p->unk_18;
+            p->unk_1C = p->unk_20 = p->unk_28;
+            SprPosSet(p->unk_04, p->unk_06, p->unk_0C, p->unk_10);
+            SprScaleSet(p->unk_04, p->unk_06, p->unk_1C, p->unk_20);
+            p->unk_0A = (p->unk_0A + 2) % 360;
+            if (p->unk_10 < -100.0) {
+                p->unk_00 |= 0x8000;
+                SprAttrSet(p->unk_04, p->unk_06, 0x8000);
+            }
+            p->unk_08++;
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const u32 D_801100B8_245F98_SlotCarDerby[6] = { 0x00000006, 0x00000007, 0x00000008, 0x00000009, 0x0000000A, 0x0000000B };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107C40_23DB20_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107E0C_23DCEC_SlotCarDerby);
+void func_80107E0C_23DCEC_SlotCarDerby(void) {
+    func_80109140_23F020_SlotCarDerby(5);
+    D_801102C8_2461A8_SlotCarDerby.unk_00 = 0;
+    D_801102C8_2461A8_SlotCarDerby.unk_06 = 0;
+    D_801102C8_2461A8_SlotCarDerby.unk_08 = 9000;
+    D_801102C8_2461A8_SlotCarDerby.unk_0C = 0;
+    func_80109140_23F020_SlotCarDerby(0);
+    func_80102C98_238B78_SlotCarDerby();
+    func_80102F6C_238E4C_SlotCarDerby();
+    func_80106A00_23C8E0_SlotCarDerby();
+    func_80107708_23D5E8_SlotCarDerby();
+    func_80107864_23D744_SlotCarDerby();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107E74_23DD54_SlotCarDerby);
+void func_80107E74_23DD54_SlotCarDerby(void) {
+    SCDCar* car;
+    SCDCar* other;
+    s32 i;
+    s32 j;
+    s16 most = 0;
+
+    if (!(D_801102CE_2461AE_SlotCarDerby & 0xF)) {
+        for (car = D_801102E8_2461C8_SlotCarDerby, i = 0; i < 4; i++, car++) {
+            car->unk_05 = 0;
+            if ((car->unk_00 & 1) && car->unk_04 == 0) {
+                for (other = D_801102E8_2461C8_SlotCarDerby, j = 0; j < 4; j++, other++) {
+                    if ((other->unk_00 & 1) && other->unk_04 == 0 && car->unk_4C < other->unk_4C) {
+                        car->unk_05++;
+                    }
+                }
+            }
+            if (car->unk_03 != 0) {
+                s16 n = car->unk_05;
+
+                if (most < n) {
+                    most = n;
+                }
+            }
+        }
+        D_801102D4_2461B4_SlotCarDerby = most;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107F48_23DE28_SlotCarDerby);
 

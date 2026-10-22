@@ -74,6 +74,9 @@ typedef struct SCDCar {
     /* 0x7C */ omObjData* unk_7C; /* the player object (func_800F6F38) */
 } SCDCar; /* size = 0x80 (N64) */
 
+/* Retail tests unk_64 and unk_66 together with one word load (lw 0x64) on a state's first frame. */
+#define SCD_CAR_FRAMES0(car) (*(s32*)&(car)->unk_64 == 0)
+
 
 /* The race state D_80101DE0 (one object: retail addresses its fields from one base register,
    named after the first field each function touches: D_80101DE2/E6/E8/EA). No pointers. */
@@ -300,12 +303,29 @@ s32 func_80015388_15F88(s32 slot);
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 f64 func_800B0D98_B1998(f64, f64); /* fmod */
 f32 sqrtf(f32);
+void func_80079848_7A448(s16 arg0);
+s16 func_80079798_7A398(s16, s16);
+void func_800796F0_7A2F0(s16 sound, s16 pitch);
+s16 SprAnimRead(void*);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprBankSet(s16 group, s16 member, u16 bank);
+void func_80082488_83088(s16 group, s16 member, u16 alpha);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void SprAttrReset(s16 group, s16 member, s32 flag);
+f32 HuMathSin(f32);
 
 /* ---------------------------------------------------------------------------------------------
    .data (243CA0.data.s, stays asm): MP1 name in the comment
    --------------------------------------------------------------------------------------------- */
 extern s16 D_8010F430_245310_SlotCarDerby[3][4]; /* MP1 D_80100C7C: [course][lane] start segment */
 extern s16 D_8010F448_245328_SlotCarDerby[3];    /* MP1 D_80100C8C: [course] start offset */
+extern s32 D_8010F450_245330_SlotCarDerby[7];    /* MP1 D_80100C90: speed limits by corner class */
+extern u16 (*D_8010F864_245744_SlotCarDerby[3])[3]; /* MP1 D_80100D3C/D5C: [course] corners: first,
+                                                      last segment, class; 0x400 ends */
 
 /* ---------------------------------------------------------------------------------------------
    .bss (ovl_30_bss, 0x80110230..0x801109E0): MP1 name in the comment. Split labels the asm names
@@ -334,6 +354,7 @@ extern s16 D_80110802_2466E2_SlotCarDerby;      /* MP1 D_80102312: next finishin
 extern s16 D_80110804_2466E4_SlotCarDerby;      /* MP1 D_80102314 */
 extern s32 D_80110808_2466E8_SlotCarDerby;      /* MP1 D_80102318: focus points this frame */
 extern SCDFocus D_80110810_2466F0_SlotCarDerby[16]; /* MP1 D_80102320 */
+extern SCDParticle D_801104F8_2463D8_SlotCarDerby[16]; /* MP1 D_80102008 */
 /* MG30-A */
 
 #endif
