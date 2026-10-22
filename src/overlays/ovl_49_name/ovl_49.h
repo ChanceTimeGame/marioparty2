@@ -520,6 +520,9 @@ extern s32 D_80114A80_31EF30_name_49;
 extern u8* D_80114A84_31EF34_name_49;
 
 /* data the copied twins use */
+extern DecisionTreeNonLeafNode D_80113A74_31DF24_name_49[]; /* item choice CPU trees, by func_80111300's arg0 */
+extern DecisionTreeNonLeafNode D_80113A8C_31DF3C_name_49[];
+extern DecisionTreeNonLeafNode D_80113ABC_31DF6C_name_49[];
 extern s16 D_80113364_31D814_name_49[]; /* as D_801120E0_2A73B0_name_3E */
 extern DecisionTreeNonLeafNode D_801130AC_31D55C_name_49[]; /* as D_80111C3C_2A6F0C_name_3E */
 extern DecisionTreeNonLeafNode D_801132B0_31D760_name_49[]; /* as D_80111F84_2A7254_name_3E */
