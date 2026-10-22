@@ -3647,7 +3647,45 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010E9D0_2ED100
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010EA40_2ED170_name_45);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010F680_2EDDB0_name_45);
+s32 func_8010F680_2EDDB0_name_45(s32 arg0) {
+    s32 count = 0;
+    s16 sp18[4];
+    u8 sp20[4];
+    s32 i;
+    s32 j;
+
+    *(Unk4Bytes*)sp20 = *(Unk4Bytes*)D_80112EC0_2F15F0_name_45;
+    for (i = 0; i < 4; i++) {
+        if (i == GwSystem.current_player_index) {
+            if (gPlayers[i].flags & 1) {
+                count = func_80044800_45400(arg0 == 0 ? D_80111964_2F0094_name_45 : D_801119A0_2F00D0_name_45) + 1;
+                sp18[gPlayers[i].port] = 0x400;
+            } else {
+                func_8008D59C_8E19C(mbDlgWinId, sp20[gPlayers[i].port]);
+                sp18[gPlayers[i].port] = -1;
+            }
+        } else {
+            sp18[gPlayers[i].port] = 0;
+        }
+    }
+
+    if (count != 0) {
+        func_80089284_89E84(mbDlgWinId, 2, 2);
+        for (j = 0; count != 0; j++) {
+            if (--count == 0) {
+                sp18[gPlayers[GwSystem.current_player_index].port] = -0x8000;
+            }
+            if (j == 0) {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], func_80057718_58318());
+            } else {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], 16);
+            }
+        }
+    } else {
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+    }
+    return func_8008BB48_8C748(mbDlgWinId, 0, 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010F8E0_2EE010_name_45);
 

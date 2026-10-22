@@ -542,6 +542,8 @@ extern MBModel* D_80113050_2F1780_name_45[7]; /* as 3E D_80113720_2A89F0_name_3E
 extern u8 D_80111660_2EFD90_name_45[4][3]; /* as 3E D_80112330: per player, the other players */
 extern Unk3EStealRange D_80111704_2EFE34_name_45[24]; /* as 3E D_801123D4 */
 extern s16 D_8011176E_2EFE9E_name_45[]; /* as 3E D_8011243E */
+extern DecisionTreeNonLeafNode D_80111964_2F0094_name_45[]; /* 8010F680: CPU choice, arg0 == 0 */
+extern DecisionTreeNonLeafNode D_801119A0_2F00D0_name_45[]; /* 8010F680: CPU choice, arg0 != 0 */
 extern MBModel* D_801130B4_2F17E4_name_45; /* as 3E D_8011371C_2A89EC_name_3E (second set) */
 extern MBModel* D_801130B8_2F17E8_name_45[2]; /* as 3E D_80113720_2A89F0_name_3E (second set) */
 extern MBModel* D_8011306C_2F179C_name_45; /* as 3E D_8011373C_2A8A0C_name_3E */
