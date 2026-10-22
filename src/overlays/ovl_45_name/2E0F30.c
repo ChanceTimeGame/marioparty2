@@ -1021,7 +1021,7 @@ s32 func_80105630_2E3D60_name_45(s32 arg0, u8* items) {
 }
 
 void func_801058A4_2E3FD4_name_45(void) {
-    GwSystem.current_board_index = 1;
+    GwSystem.current_board_index = 3;
     omInitObjMan(10, 0);
     omOvlGotoEx(0x3D, 0, 0x192);
 }
@@ -1296,9 +1296,9 @@ void func_80106B58_2E5288_name_45(void) {
     func_8004108C_41C8C(prompt);
     func_80103C94_2E23C4_name_45();
     if (dir == 0) {
-        SetNextChainAndSpace(-1, 2, 0);
+        SetNextChainAndSpace(-1, 3, 0);
     } else {
-        SetNextChainAndSpace(-1, 8, 0);
+        SetNextChainAndSpace(-1, 9, 0);
     }
     omDelPrcObj(NULL);
 }
@@ -1315,7 +1315,7 @@ s32 func_80106C70_2E53A0_name_45(s32 arg0) {
         if (i == GwSystem.current_player_index) {
             if (gPlayers[i].flags & 1) {
                 count = 1;
-                if (arg0 == 0) {
+                if (arg0 != 0) {
                     count = func_80044800_45400(D_80111484_2EFBB4_name_45) + 1;
                 }
                 sp18[gPlayers[i].port] = 0x400;
@@ -1359,7 +1359,7 @@ void func_80106EC8_2E55F8_name_45(void) {
     if (gPlayers[gw->current_player_index].item == 1) {
         func_80046D2C_4792C(gw->current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
-        func_80056C30_57830(-1, 8, 0x94);
+        func_80056C30_57830(-1, 8, 0x79);
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
         HuPrcChildWatch();
         MBPlayerVibrate(-1, 1);
@@ -1395,15 +1395,15 @@ void func_80106EC8_2E55F8_name_45(void) {
             func_8004108C_41C8C(prompt);
             func_80103C94_2E23C4_name_45();
             if (dir == 0) {
-                SetNextChainAndSpace(-1, 0xf, 0);
+                SetNextChainAndSpace(-1, 11, 0);
             } else {
-                SetNextChainAndSpace(-1, 0xe, 0);
+                SetNextChainAndSpace(-1, 5, 0);
                 func_80106700_2E4E30_name_45(0);
             }
             break;
         case 1:
             MBDlgWinExec(0x14, 0x15);
-            SetNextChainAndSpace(-1, 0xe, 0);
+            SetNextChainAndSpace(-1, 5, 0);
             break;
         case 2:
             func_80103A64_2E2194_name_45();
@@ -1413,7 +1413,7 @@ void func_80106EC8_2E55F8_name_45(void) {
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
         HuPrcChildWatch();
     } else {
-        SetNextChainAndSpace(-1, 0xe, 0);
+        SetNextChainAndSpace(-1, 5, 0);
     }
     omDelPrcObj(NULL);
 }
@@ -1446,9 +1446,9 @@ void func_801071C0_2E58F0_name_45(void) {
     func_8004108C_41C8C(prompt);
     func_80103C94_2E23C4_name_45();
     if (dir == 0) {
-        SetNextChainAndSpace(-1, 2, 0);
+        SetNextChainAndSpace(-1, 6, 0);
     } else {
-        SetNextChainAndSpace(-1, 8, 0);
+        SetNextChainAndSpace(-1, 13, 0);
     }
     omDelPrcObj(NULL);
 }
@@ -1466,7 +1466,7 @@ void func_801072D8_2E5A08_name_45(void) {
     if (gPlayers[gw->current_player_index].item == 1) {
         func_80046D2C_4792C(gw->current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
-        func_80056C30_57830(-1, 8, 0x95);
+        func_80056C30_57830(-1, 8, 0x7A);
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
         HuPrcChildWatch();
         MBPlayerVibrate(-1, 1);
@@ -1502,15 +1502,15 @@ void func_801072D8_2E5A08_name_45(void) {
             func_8004108C_41C8C(prompt);
             func_80103C94_2E23C4_name_45();
             if (dir == 0) {
-                SetNextChainAndSpace(-1, 0x12, 0);
+                SetNextChainAndSpace(-1, 16, 0);
             } else {
-                SetNextChainAndSpace(-1, 0x11, 0);
+                SetNextChainAndSpace(-1, 19, 0);
                 func_80106700_2E4E30_name_45(1);
             }
             break;
         case 1:
             MBDlgWinExec(0x14, 0x15);
-            SetNextChainAndSpace(-1, 0x11, 0);
+            SetNextChainAndSpace(-1, 19, 0);
             break;
         case 2:
             func_80103A64_2E2194_name_45();
@@ -1520,7 +1520,7 @@ void func_801072D8_2E5A08_name_45(void) {
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
         HuPrcChildWatch();
     } else {
-        SetNextChainAndSpace(-1, 0x11, 0);
+        SetNextChainAndSpace(-1, 19, 0);
     }
     omDelPrcObj(NULL);
 }
@@ -1553,67 +1553,67 @@ void func_801075D0_2E5D00_name_45(void) {
     func_8004108C_41C8C(prompt);
     func_80103C94_2E23C4_name_45();
     if (dir == 0) {
-        SetNextChainAndSpace(-1, 2, 0);
+        SetNextChainAndSpace(-1, 1, 0);
     } else {
-        SetNextChainAndSpace(-1, 8, 0);
+        SetNextChainAndSpace(-1, 18, 0);
     }
     omDelPrcObj(NULL);
 }
 
 void func_801076E8_2E5E18_name_45(void) {
-    SetNextChainAndSpace(-1, 23, 3);
+    SetNextChainAndSpace(-1, 1, 4);
 }
 
 void func_8010770C_2E5E3C_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 2, 0);
 }
 
 void func_80107730_2E5E60_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 4, 0);
 }
 
 void func_80107754_2E5E84_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 7, 0);
 }
 
 void func_80107778_2E5EA8_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 2, 0);
 }
 
 void func_8010779C_2E5ECC_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 17, 0);
 }
 
 void func_801077C0_2E5EF0_name_45(void) {
-    SetNextChainAndSpace(-1, 23, 3);
+    SetNextChainAndSpace(-1, 3, 6);
 }
 
 void func_801077E4_2E5F14_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 17, 0);
 }
 
 void func_80107808_2E5F38_name_45(void) {
-    SetNextChainAndSpace(-1, 23, 3);
+    SetNextChainAndSpace(-1, 5, 2);
 }
 
 void func_8010782C_2E5F5C_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 14, 0);
 }
 
 void func_80107850_2E5F80_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 17, 0);
 }
 
 void func_80107874_2E5FA4_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 14, 0);
 }
 
 void func_80107898_2E5FC8_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 7, 0);
 }
 
 void func_801078BC_2E5FEC_name_45(void) {
-    SetNextChainAndSpace(-1, 1, 0);
+    SetNextChainAndSpace(-1, 17, 0);
 }
 
 void func_801078E0_2E6010_name_45(void) {
