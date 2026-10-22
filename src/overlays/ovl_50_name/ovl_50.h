@@ -413,6 +413,10 @@ extern Vec D_801120C8_352928_name_50[2];  /* D_8011275C's places */
 extern Vec D_801120E0_352940_name_50;     /* the doors: start */
 extern Vec D_801120EC_35294C_name_50;     /* the doors: end */
 extern u32 D_801120F8_352958_name_50[];   /* D_8011275C (0x80060) */
+extern Vec D_80112110_352970_name_50;     /* the winner's place */
+extern Vec D_8011211C_35297C_name_50;     /* D_80112748, part 3: start */
+extern Vec D_80112128_352988_name_50;     /* D_80112748, part 3: where it hops to */
+extern Vec D_80112134_352994_name_50;     /* the winner, part 3 */
 extern omObjData* D_80112600_352E60_name_50; /* the sign's sparkle (func_8010CFE8) */
 extern s16 D_80112604_352E64_name_50;     /* a sound handle (0x3F8) */
 
