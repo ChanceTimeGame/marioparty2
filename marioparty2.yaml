@@ -1468,8 +1468,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0x40
     subsegments:
-      - [0x3252C0, c]
+      - [0x3252C0, c, ovl_4B_entrypoint]
+      - [0x3252F0, c, 3252C0]
       - [0x325AE0, data]
+      - [0x325BB0, .rodata, 3252C0]
       - {0x325BC0, type: bss, vram: 0x80103100, name: ovl_4B_bss}
   - type: code
     start: 0x325BC0
@@ -1673,8 +1675,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0x200
     subsegments:
-      - [0x37EE80, c]
+      - [0x37EE80, c, ovl_59_entrypoint]
+      - [0x37EEB0, c, 37EE80]
       - [0x37F230, data]
+      - [0x37F260, .rodata, 37EE80]
       - {0x37F290, type: bss, vram: 0x80102C10, name: ovl_59_bss}
   - type: code
     start: 0x37F290
@@ -1685,7 +1689,8 @@ segments:
     exclusive_ram_id: minigame
     symbol_name_format: $VRAM_$ROM_$SEG
     subsegments:
-      - [0x37F290, c]
+      - [0x37F290, c, ovl_5A_entrypoint]
+      - [0x37F2C0, c, 37F290]
       - [0x37F4A0, data]
   - type: code
     start: 0x37F4B0
@@ -1800,7 +1805,8 @@ segments:
     exclusive_ram_id: minigame
     symbol_name_format: $VRAM_$ROM_$SEG
     subsegments:
-      - [0x3E4250, c]
+      - [0x3E4250, c, ovl_63_entrypoint]
+      - [0x3E4280, c, 3E4250]
       - [0x3E4300, data]
   - type: code
     start: 0x3E4320

@@ -1,7 +1,5 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102800_3252C0_name_4B);
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102830_3252F0_name_4B);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102874_325334_name_4B);
@@ -25,6 +23,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102C6C_32572C
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102D64_325824_name_4B);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102DC4_325884_name_4B);
+
+__asm__(".section .rodata");
+const char D_801030F0_325BB0_name_4B[16] = "%d";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102DE8_3258A8_name_4B);
 
