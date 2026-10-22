@@ -40,6 +40,69 @@ typedef struct Ovl55MotionWait {
     /* 0x08 */ omObjData* obj;
 } Ovl55MotionWait; /* size = 0xC */
 
+/* ev-B: the board-0..2 explanation sign (D_8010C570 holds one while it shows). */
+typedef struct Ovl55Sign {
+    /* 0x00 */ u16 spr;
+    /* 0x02 */ u16 spr2;
+    /* 0x04 */ s16 grp;
+    /* 0x06 */ s16 grp2;
+    /* 0x08 */ s16 x;
+    /* 0x0A */ s16 y;
+    /* 0x0C */ s16 x2;
+    /* 0x0E */ s16 y2;
+} Ovl55Sign; /* size = 0x10 */
+
+/* ev-B: a straight path. */
+typedef struct Ovl55Path {
+    /* 0x00 */ Vec start;
+    /* 0x0C */ Vec end;
+} Ovl55Path; /* size = 0x18 */
+
+/* ev-B: work of a model flying along an Ovl55Path (func_80106508 and its board copies). */
+typedef struct Ovl55FlyWork {
+    /* 0x00 */ MBModel* model;
+    /* 0x04 */ Ovl55Path* path;
+    /* 0x08 */ f32 speed;
+    /* 0x0C */ f32 rate;
+    /* 0x10 */ f32 vel;
+    /* 0x14 */ f32 grav;
+    /* 0x18 */ u16 delay;
+} Ovl55FlyWork; /* size = 0x1C */
+
+/* ev-B: a screen position. */
+typedef struct Ovl55Pos2 {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+} Ovl55Pos2;
+
+/* ev-B: board 1's sign, eight sprites (allocated 0x40). */
+typedef struct Ovl55Sign8 {
+    /* 0x00 */ s16 grp[8];
+    /* 0x10 */ u16 spr[8];
+} Ovl55Sign8;
+
+/* ev-B: board 2's sign: a board (spr[2]) and its two halves. */
+typedef struct Ovl55Sign3 {
+    /* 0x00 */ s16 grp;
+    /* 0x02 */ s16 grp2;
+    /* 0x04 */ u16 spr[3];
+    /* 0x0C */ f32 x;
+    /* 0x10 */ f32 y;
+    /* 0x14 */ f32 scale;
+    /* 0x18 */ Process* proc;
+} Ovl55Sign3; /* size = 0x1C */
+
+/* ev-B: a fading puff (func_80107744; MP3 ChillyWaters UnkChillyWaters without the drift). */
+typedef struct Ovl55PuffWork {
+    /* 0x00 */ f32 alpha;
+    /* 0x04 */ f32 grow;
+    /* 0x08 */ f32 fade;
+    /* 0x0C */ MBModel* model;
+    /* 0x10 */ u16 kill;
+} Ovl55PuffWork; /* size = 0x14 */
+
+f64 fabs(f64);
+
 /* ---- main-segment API used by 55 ---- */
 
 GW_PLAYER* BoardPlayerGet(s32);
@@ -193,28 +256,28 @@ extern Vec D_8010BB10_36AA00_name_55[4];
 extern Vec D_8010BB40_36AA30_name_55[4];
 extern Vec D_8010BB70_36AA60_name_55[4];
 /* Symbols B and C use (raw: retype them from the asm). */
-extern void* D_8010BC78_36AB68_name_55[6];
-extern s32 D_8010BC90_36AB80_name_55[];
-extern s32 D_8010BCA0_36AB90_name_55[];
-extern s32 D_8010BCB8_36ABA8_name_55[];
-extern f32 D_8010BCC0_36ABB0_name_55;
-extern f32 D_8010BCC4_36ABB4_name_55;
-extern f32 D_8010BCC8_36ABB8_name_55;
-extern void* D_8010BDC8_36ACB8_name_55[6];
-extern s32 D_8010BDE0_36ACD0_name_55[];
-extern s32 D_8010BDF0_36ACE0_name_55[];
-extern s32 D_8010BE08_36ACF8_name_55[];
-extern s32 D_8010BE10_36AD00_name_55[];
-extern s32 D_8010BE1C_36AD0C_name_55[];
-extern f32 D_8010BE28_36AD18_name_55;
-extern f32 D_8010BE2C_36AD1C_name_55;
-extern s32 D_8010BE50_36AD40_name_55[];
-extern void* D_8010BF48_36AE38_name_55[6];
-extern s32 D_8010BF60_36AE50_name_55[];
-extern s32 D_8010BF70_36AE60_name_55[];
-extern s32 D_8010BF88_36AE78_name_55[];
-extern s32 D_8010BF94_36AE84_name_55[];
-extern s32 D_8010BFA0_36AE90_name_55[];
+/* ev-B: board 0 (364580.c) */
+extern void* D_8010BC78_36AB68_name_55[6]; /* per character: the player's board model */
+extern u32 D_8010BC90_36AB80_name_55[]; /* host model's motions */
+extern Vec D_8010BCA0_36AB90_name_55[2]; /* camera pan: from, to */
+extern u32 D_8010BCB8_36ABA8_name_55[];
+extern Ovl55Path D_8010BCC0_36ABB0_name_55[2]; /* the two fliers */
+/* ev-B: board 1 (365650.c) */
+extern void* D_8010BDC8_36ACB8_name_55[6]; /* per character: the player's board model */
+extern u32 D_8010BDE0_36ACD0_name_55[]; /* host model's motions */
+extern Vec D_8010BDF0_36ACE0_name_55[2]; /* camera pan: from, to */
+extern u32 D_8010BE08_36ACF8_name_55[];
+extern Vec D_8010BE10_36AD00_name_55; /* the drop's start */
+extern Vec D_8010BE1C_36AD0C_name_55; /* where the spinner goes */
+extern Ovl55Pos2 D_8010BE28_36AD18_name_55[5]; /* sign pieces' screen positions (moved in place) */
+extern f32 D_8010BE50_36AD40_name_55[5]; /* sign pieces' flight angles */
+/* ev-B: board 2 (365650.c) */
+extern void* D_8010BF48_36AE38_name_55[6]; /* per character: the player's board model */
+extern u32 D_8010BF60_36AE50_name_55[]; /* host model's motions */
+extern Vec D_8010BF70_36AE60_name_55[2]; /* camera pan: from, to */
+extern Vec D_8010BF88_36AE78_name_55; /* the walker's start */
+extern Vec D_8010BF94_36AE84_name_55; /* the walker's target */
+extern u32 D_8010BFA0_36AE90_name_55[];
 extern void* D_8010C088_36AF78_name_55[6];
 extern s32 D_8010C0A0_36AF90_name_55[];
 extern s32 D_8010C0B0_36AFA0_name_55[];
@@ -279,7 +342,7 @@ s32 func_801055A4_364494_name_55(MBModel* model, s16 motion, s16 shiftAttr, u8 c
 /* ---- 364580.c (fork B) ---- */
 
 void func_80105690_364580_name_55(void);
-void func_801057E0_3646D0_name_55(s16 player);
+void func_801057E0_3646D0_name_55(s32 player);
 void func_80105870_364760_name_55(void);
 void func_801059D0_3648C0_name_55(void);
 void func_80105CE0_364BD0_name_55(void);
@@ -290,21 +353,21 @@ void func_80106508_3653F8_name_55(omObjData* obj);
 /* ---- 365650.c (fork B) ---- */
 
 void func_80106760_365650_name_55(void);
-void func_801068B0_3657A0_name_55(s16 player);
+void func_801068B0_3657A0_name_55(s32 player);
 void func_80106940_365830_name_55(void);
 void func_80106AA0_365990_name_55(void);
 void func_80106F44_365E34_name_55(void);
-void func_801071E0_3660D0_name_55(void* arg0, f32 arg1);
+void func_801071E0_3660D0_name_55(struct Ovl55Sign8* sign, f32 angle);
 void func_80107330_366220_name_55(void);
 omObjData* func_80107630_366520_name_55(Vec* pos, f32 arg1, f32 arg2, s16 arg3);
 void func_80107744_366634_name_55(omObjData* obj);
 void func_80107850_366740_name_55(void);
-void func_801079A0_366890_name_55(s16 player);
+void func_801079A0_366890_name_55(s32 player);
 void func_80107A30_366920_name_55(void);
 void func_80107B90_366A80_name_55(void);
 void func_80107ED0_366DC0_name_55(void);
 void func_80108238_367128_name_55(void);
-void func_801084B4_3673A4_name_55(omObjData* obj);
+void func_801084B4_3673A4_name_55(void);
 
 /* ---- 367540.c (fork C) ---- */
 
