@@ -166,6 +166,26 @@ typedef struct PdShrink {
     /* 0x10 */ s32 unk10;
 } PdShrink; /* size 0x14 */
 
+/* ---- 42-B ---- */
+
+/* The CPU input script (func_801070F4/func_80107724; ovl_3F.h's Unk3FCpuInput): mode 0 presses
+   Start, 2 moves the cursor to an opponent and presses A, 3 raises the stake to a target. */
+typedef struct PdCpuInput {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 cur;    /* the cursor row / the stake now */
+    /* 0x08 */ s32 target; /* the row / the stake wanted */
+    /* 0x0C */ s32 mode;
+} PdCpuInput; /* size 0x10 */
+
+/* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
+typedef struct PdStreak {
+    /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
+    /* 0x0C */ Vec pos;
+    /* 0x18 */ f32 len;
+    /* 0x1C */ Vec dir;
+    /* 0x28 */ f32 speed;
+} PdStreak; /* size 0x2C */
+
 /* Wait for the step flag (D_80109D70) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
 #define PD_WAIT_STEP()                           \
     while (TRUE) {                               \

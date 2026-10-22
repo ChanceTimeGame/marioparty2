@@ -992,7 +992,40 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801064E8_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80106B5C_2C4ADC_PirateDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80106E08_2C4D88_PirateDuel);
+s32 func_80106E08_2C4D88_PirateDuel(void) {
+    s32 cand[4];
+    s32 n;
+    s32 i;
+
+    n = 0;
+    for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+        if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 0 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins > 0) {
+            cand[n++] = i;
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 1 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 2 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    if (n == 0) {
+        for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+            if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 3 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins > 0) {
+                cand[n++] = i;
+            }
+        }
+    }
+    return cand[rand8() % n];
+}
 
 __asm__(".section .rodata");
 const u32 D_80109C68_2C7BE8_PirateDuel[32] = { 0xFFFFFFFF, 0x00000001, 0x00000003, 0x00000002, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF };
@@ -1005,9 +1038,64 @@ const u32 D_80109CF8_2C7C78_PirateDuel[4] = { 0x0000005A, 0x0000003C, 0x00000014
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801070F4_2C5074_PirateDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107724_2C56A4_PirateDuel);
+void func_80107724_2C56A4_PirateDuel(omObjData* obj) {
+    PdCpuInput* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801078C4_2C5844_PirateDuel);
+    D_80109DE8_2C7D68_PirateDuel = 0;
+    if (++work->timer >= 10) {
+        switch (work->mode) {
+            case 0:
+                if (work->timer >= 30) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x1000;
+                    omDelObj(obj);
+                }
+                break;
+            case 1:
+                if (work->timer >= 30) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x8000;
+                    omDelObj(obj);
+                }
+                break;
+            case 2:
+                if (work->cur == work->target) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x8000;
+                    omDelObj(obj);
+                } else if (work->cur < work->target) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x400;
+                    work->cur++;
+                    work->timer = 0;
+                } else if (work->cur > work->target) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x800;
+                    work->cur--;
+                    work->timer = 0;
+                }
+                break;
+            case 3:
+                work->cur = D_80109D74_2C7CF4_PirateDuel;
+                if (work->cur == work->target) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x8000;
+                    omDelObj(obj);
+                } else if (work->cur - work->target >= 10) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x200;
+                    work->timer = 0;
+                } else if (work->cur - work->target < -9) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x100;
+                    work->timer = 0;
+                } else if (work->cur - work->target < 10) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x800;
+                    work->timer = 0;
+                } else if (work->cur - work->target >= -9) {
+                    D_80109DE8_2C7D68_PirateDuel = 0x400;
+                    work->timer = 0;
+                }
+                break;
+        }
+    }
+}
+
+s32 func_801078C4_2C5844_PirateDuel(void) {
+    return D_80109DE8_2C7D68_PirateDuel;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801078D0_2C5850_PirateDuel);
 
