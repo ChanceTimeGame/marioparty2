@@ -147,11 +147,91 @@ void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A43C_153F5C_CraneGame);
+void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* out) {
+    *out++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *out++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *out = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}
 
+/* MP1 func_800FDC94 (NON_MATCHING there too). Residue: retail reloads D_8010CE10 once more for
+   the y component (CSE). */
+#ifdef NON_MATCHING
+/* Moves pos by (dx, dy, dz), stopped at the first collision face of any registered model other than
+   `skip`. Returns 1 when something was hit. */
+s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip) {
+    Vec to;
+    Vec a;
+    Vec b;
+    CGColGroup* g;
+    s32 i;
+    s32 j;
+    s32 ret;
+
+    D_8010CE10_156930_CraneGame = 1.1f;
+    to.x = dx + pos->x;
+    to.y = dy + pos->y;
+    to.z = dz + pos->z;
+    for (i = 0; i < D_8010CE08_156928_CraneGame; i++) {
+        if (D_8010CB08_156628_CraneGame[i].model == skip) {
+            continue;
+        }
+        if (CG_COL_UNK2(i) != 0) {
+            continue;
+        }
+        D_8010CE0C_15692C_CraneGame = CG_COL_VERTS(i);
+        g = CG_COL_GROUPS(i);
+        for (j = 0; j < CG_COL_COUNT(i); j++, g++) {
+            func_8010A43C_153F5C_CraneGame(g->mtx, pos->x, pos->y, pos->z, &a.x);
+            func_8010A43C_153F5C_CraneGame(g->mtx, to.x, to.y, to.z, &b.x);
+            b.x -= a.x;
+            b.y -= a.y;
+            b.z -= a.z;
+            if (func_8010A798_1542B8_CraneGame(&a, &b, g->radius) != 0) {
+                func_8010A8E8_154408_CraneGame(g->faces, g->n, &a, &b);
+            }
+        }
+    }
+    ret = 0;
+    if (D_8010CE10_156930_CraneGame < 0.0 || D_8010CE10_156930_CraneGame > 1.0) {
+        D_8010CE10_156930_CraneGame = 1.0f;
+    } else {
+        ret = 1;
+    }
+    pos->x = dx * D_8010CE10_156930_CraneGame + pos->x;
+    pos->y = dy * D_8010CE10_156930_CraneGame + pos->y;
+    pos->z = dz * D_8010CE10_156930_CraneGame + pos->z;
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A4D8_153FF8_CraneGame);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A798_1542B8_CraneGame);
+/* Whether the segment p + t * d (t in 0..1) passes within r of the origin. */
+s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r) {
+    f32 l2;
+    f32 t;
+    f32 rr;
+    f32 x;
+    f32 y;
+    f32 z;
+    s32 ret;
+
+    l2 = d->x * d->x + d->y * d->y + d->z * d->z;
+    t = -l2;
+    t = (p->x * d->x + p->y * d->y + p->z * d->z) / t;
+    rr = r / sqrtf(l2);
+    ret = 0;
+    if (!(t + rr < 0.0) && !(t - rr > 1.0)) {
+        x = t * d->x + p->x;
+        y = t * d->y + p->y;
+        z = t * d->z + p->z;
+        x = x * x + y * y + z * z;
+        if (!(r * r <= x)) {
+            ret = 1;
+        }
+    }
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A8E8_154408_CraneGame);
 

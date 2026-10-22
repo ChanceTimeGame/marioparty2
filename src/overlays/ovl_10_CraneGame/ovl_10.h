@@ -229,7 +229,26 @@ extern s16 D_8010CAEC_15660C_CraneGame; /* vertices in the buffer */
 extern f32 D_8010CAF0_156610_CraneGame; /* the shadow scale (MP2) */
 extern s16 D_8010CB00_156620_CraneGame; /* the collision draw callback (MP1 D_80100A52) */
 extern CGCol D_8010CB08_156628_CraneGame[64]; /* MP1 D_80100750 */
+/* Split labels of D_8010CB08[0]'s fields: 8010A4D8 addresses the fields by them. */
+typedef struct CGColU8View {
+    /* 0x00 */ u8 v;
+    /* 0x01 */ char pad[0xB];
+} CGColU8View;
+typedef struct CGColPtrView {
+    /* 0x00 */ void* v;
+    /* 0x04 */ char pad[8];
+} CGColPtrView;
+extern CGColU8View D_8010CB0A_15662A_CraneGame[];  /* .unk2 */
+extern CGColU8View D_8010CB0B_15662B_CraneGame[];  /* .count */
+extern CGColPtrView D_8010CB0C_15662C_CraneGame[]; /* .groups */
+extern CGColPtrView D_8010CB10_156630_CraneGame[]; /* .verts */
+#define CG_COL_UNK2(i) (D_8010CB0A_15662A_CraneGame[i].v)
+#define CG_COL_COUNT(i) (D_8010CB0B_15662B_CraneGame[i].v)
+#define CG_COL_GROUPS(i) ((CGColGroup*)D_8010CB0C_15662C_CraneGame[i].v)
+#define CG_COL_VERTS(i) ((ColVtx*)D_8010CB10_156630_CraneGame[i].v)
 extern s16 D_8010CE08_156928_CraneGame; /* registered models (MP1 D_80100A50) */
+extern ColVtx* D_8010CE0C_15692C_CraneGame; /* the vertices of the model being tested (MP1 D_80100A54) */
+extern f32 D_8010CE10_156930_CraneGame; /* the nearest hit along the sweep, 0..1 (MP1 D_80100A58) */
 
 /* ---- structs ---- */
 
@@ -431,10 +450,10 @@ void func_80109BAC_1536CC_CraneGame(s16 model);                      /* MP1 func
 void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FD3D0 */
 void func_80109E48_153968_CraneGame(CGCol* col, s16 model);           /* MP1 func_800FD604 */
 void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f, s16 n); /* MP1 func_800FD7B4 */
-void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, Vec* out); /* MP1 func_800FDBF8 */
+void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* out); /* MP1 func_800FDBF8 */
 s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip); /* MP1 func_800FDC94 */
 s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r);           /* MP1 func_800FDF54 */
-void func_8010A8E8_154408_CraneGame(void* f, s16 n, Vec* p, Vec* d);   /* MP1 func_800FE0A4 */
+void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d);   /* MP1 func_800FE0A4 */
 void func_8010AD5C_15487C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, f32* ow);
 s32 func_8010AE2C_15494C_CraneGame(f32 a, f32 b, f32 c, f32 d, s32 arg4, s32 arg5);
 f32 func_8010B364_154E84_CraneGame(f32 a, f32 b, f32 c, f32 d);
