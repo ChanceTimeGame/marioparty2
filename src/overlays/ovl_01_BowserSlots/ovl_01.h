@@ -232,7 +232,7 @@ extern f32 D_8010C0E8_E3B78_BowserSlots[2];      /* MG01-B: heights of the block
 extern s32 D_8010C0F0_E3B80_BowserSlots[2];       /* sprite animations of the block object */
 extern s32 D_8010C0F8_E3B88_BowserSlots[2];       /* sprite animations of the machine */
 extern s32 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
-extern void* D_8010C170_E3C00_BowserSlots;
+extern struct BSModelSlot* D_8010C170_E3C00_BowserSlots; /* MG01-B: 64 entries */
 extern void* D_8010C174_E3C04_BowserSlots;
 extern s16 D_8010C17E_E3C0E_BowserSlots;
 extern s16 D_8010C180_E3C10_BowserSlots;
@@ -302,6 +302,13 @@ typedef struct BSVtxWeight {
     /* 0x04 */ f32 angle;  /* around the y axis, 0-360 */
 } BSVtxWeight;
 
+/* D_8010C170: models whose attribute func_8010A138 sets by group */
+typedef struct BSModelSlot {
+    /* 0x00 */ s32 model; /* -1 free */
+    /* 0x04 */ s32 group;
+    /* 0x08 */ s32 attr;
+} BSModelSlot; /* size = 0xC */
+
 /* ---- fork B (80106B30+): inferred from register use, check against the asm ---- */
 void func_801076EC_DF17C_BowserSlots(void);
 s32 func_8010770C_DF19C_BowserSlots(s32 symbol); /* symbol -> item (retail callers use it unprototyped: int) */
@@ -317,8 +324,8 @@ s32 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
 s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 arg3, u16 arg4);
 s32 func_8010A074_E1B04_BowserSlots(s32 file); /* sprite animation from a file; returns a u16 (callers re-mask it: retail called it unprototyped) */
 void func_8010A0B8_E1B48_BowserSlots(void);
-void func_8010A0EC_E1B7C_BowserSlots(s32 arg0, s32 arg1, s32 arg2);
-void func_8010A138_E1BC8_BowserSlots(s32 arg0, s32 arg1);
+void func_8010A0EC_E1B7C_BowserSlots(s32 model, s32 group, s32 attr);
+void func_8010A138_E1BC8_BowserSlots(s32 group, s32 attr);
 void func_8010A1F4_E1C84_BowserSlots(void);
 void func_8010A3CC_E1E5C_BowserSlots(void);
 void func_8010A53C_E1FCC_BowserSlots(void);

@@ -2041,13 +2041,70 @@ s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f3
     return count;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A074_E1B04_BowserSlots);
+/* Loads a sprite animation from a file (MP1 KnockBlockTower's func_800FB20C). */
+s32 func_8010A074_E1B04_BowserSlots(s32 file) {
+    void* data;
+    s16 anim;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A0B8_E1B48_BowserSlots);
+    data = DataRead(file);
+    anim = SprAnimRead(data);
+    DataClose(data);
+    return (u16)anim;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A0EC_E1B7C_BowserSlots);
+/* Clears the model list (D_8010C170). */
+void func_8010A0B8_E1B48_BowserSlots(void) {
+    BSModelSlot* slot = D_8010C170_E3C00_BowserSlots;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A138_E1BC8_BowserSlots);
+    for (i = 0; i < 64; i++, slot++) {
+        slot->model = -1;
+        slot->group = -1;
+        slot->attr = 0;
+    }
+}
+
+/* Adds a model to the list with its group and the attribute (-1: 0) func_8010A138 applies. */
+void func_8010A0EC_E1B7C_BowserSlots(s32 model, s32 group, s32 attr) {
+    BSModelSlot* slot = D_8010C170_E3C00_BowserSlots;
+    s32 i;
+
+    for (i = 0; i < 64; i++, slot++) {
+        if (slot->model == -1) {
+            slot->model = model;
+            slot->group = group;
+            if (attr == -1) {
+                slot->attr = 0;
+            } else {
+                slot->attr = attr;
+            }
+            return;
+        }
+    }
+}
+
+/* Applies attr (-1: each model's own) to the listed models of `group` (-1: every group). */
+void func_8010A138_E1BC8_BowserSlots(s32 group, s32 attr) {
+    BSModelSlot* slot = D_8010C170_E3C00_BowserSlots;
+    s32 i;
+
+    for (i = 0; i < 64; i++, slot++) {
+        if (slot->model == -1) {
+            continue;
+        }
+        if (slot->group == -1) {
+            continue;
+        }
+        if ((slot->group != group) & (group != -1)) {
+            continue;
+        }
+        if (attr == -1) {
+            func_80029F2C_2AB2C((s16)slot->model, slot->attr);
+        } else {
+            func_80029F2C_2AB2C((s16)slot->model, attr);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A1F4_E1C84_BowserSlots);
 
