@@ -1466,21 +1466,212 @@ void func_801064F0_195090_BobsledRun(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801064F0_195090_BobsledRun);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107550_1960F0_BobsledRun);
+/* Running mean of the last 20 values (the camera roll). */
+f32 func_80107550_1960F0_BobsledRun(s32 team, f32 value) {
+    BRHist* h;
+    f32 sum;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801075C8_196168_BobsledRun);
+    h = &D_8010CA38_19B5D8_BobsledRun;
+    if (team == 0) {
+        h = &D_8010CB48_19B6E8_BobsledRun;
+    }
+    h->samples[h->idx++] = value;
+    if (h->idx >= 20) {
+        h->idx = 0;
+    }
+    sum = 0.0f;
+    for (i = 0; i < 20; i++) {
+        sum += h->samples[i];
+    }
+    return sum / 20.0f;
+}
 
+/* The team's race state from the ground under the sled: 1 start, 5 out of the course, past 40
+   frames on the goal ground the team finishes (first one wins, a second one makes it a tie). */
+void func_801075C8_196168_BobsledRun(omObjData* obj) {
+    BRWork* work;
+
+    work = obj->unk_50;
+    if (work->unk_53 == 1) {
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].state = 0;
+    } else if (work->unk_53 == 5) {
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].state = 2;
+    } else if (D_8010C048_19ABE8_BobsledRun[work->unk_59].timer > 40) {
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].state = 3;
+        if (D_8010BFF5_19AB95_BobsledRun == -1) {
+            D_8010BFF5_19AB95_BobsledRun = work->unk_59;
+        } else {
+            D_8010BFF5_19AB95_BobsledRun = -2;
+        }
+        func_80079798_7A398(0x1FE, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1]);
+        func_800797DC_7A3DC(0x111, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+        func_800797DC_7A3DC(0x111, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1]);
+    } else {
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].state = 1;
+    }
+}
+
+/* Mean of the last six stick samples, packed (x << 16) | y. */
+// register allocation (x/i swapped), as in MP1
+#ifdef NON_MATCHING
+s32 func_80107720_1962C0_BobsledRun(omObjData* obj) {
+    s32 x;
+    s32 y;
+    u8 i;
+    BRWork* work = obj->unk_50;
+
+    y = 0;
+    x = 0;
+    for (i = 0; i < 6; i++) {
+        /* host: the two halves of each sample are read by address (big-endian order) */
+        x += ((s16*)&work->unk_74[i])[0];
+        y += ((u16*)&work->unk_74[i])[1];
+    }
+    return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107720_1962C0_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801077A4_196344_BobsledRun);
+/* Boost rings: passing within 125 of one (at its height +-100) starts a 150-frame boost.
+   Retail quirk kept: x and z are overwritten by the distance to each ring tested. */
+void func_801077A4_196344_BobsledRun(omObjData* obj) {
+    BRWork* work;
+    f32 x;
+    f32 y;
+    f32 z;
+    s32 i;
 
+    work = obj->unk_50;
+    x = obj->trans.x;
+    y = obj->trans.y;
+    z = obj->trans.z;
+    for (i = 0; i < 3; i++) {
+        if (D_8010C018_19ABB8_BobsledRun[i].y - 100.0f < y && y < D_8010C018_19ABB8_BobsledRun[i].y + 100.0f) {
+            x = D_8010C018_19ABB8_BobsledRun[i].x - x;
+            z = D_8010C018_19ABB8_BobsledRun[i].z - z;
+            if (func_800B1830_B2430(x * x + z * z) < work->unk_48 + 125.0f) {
+                if (D_8010C048_19ABE8_BobsledRun[work->unk_59].boost == 0) {
+                    D_8010C048_19ABE8_BobsledRun[work->unk_59].boost = 150;
+                    func_80079798_7A398(0x1FD, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1]);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+/* Speed limit, radius and field of view: boosted, or catching up when behind. */
+// scheduling: retail computes both team offsets before the first progress load
+#ifdef NON_MATCHING
+void func_80107920_1964C0_BobsledRun(omObjData* obj) {
+    BRWork* work;
+    f32 add;
+    f32 f;
+    f32 mine;
+    f32 other;
+    s32 team;
+    s32 o;
+
+    work = obj->unk_50;
+    add = 0.0f;
+    func_801077A4_196344_BobsledRun(obj);
+    o = work->unk_59 == 0;
+    if ((mine = D_8010C048_19ABE8_BobsledRun[work->unk_59].progress) < (other = D_8010C048_19ABE8_BobsledRun[o].progress)
+        && other - mine > 0.001f) {
+        add = 5.0f;
+    }
+    team = work->unk_59;
+    if (D_8010C048_19ABE8_BobsledRun[team].boost != 0) {
+        f = 150 - D_8010C048_19ABE8_BobsledRun[team].boost;
+        D_800BF7C0_C03C0 = f + 80.0f;
+        work->unk_48 = f + 100.0f;
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].boost--;
+        if (D_800BF7C0_C03C0 > 100.0f) {
+            D_800BF7C0_C03C0 = 100.0f;
+        }
+        D_8010C040_19ABE0_BobsledRun[team] = work->unk_40;
+        if (D_8010C040_19ABE0_BobsledRun[team] > 100.0f) {
+            D_8010C040_19ABE0_BobsledRun[team] = 100.0f;
+        }
+        if (D_8010C040_19ABE0_BobsledRun[team] < 90.0f) {
+            D_8010C040_19ABE0_BobsledRun[team] = 90.0f;
+        }
+        if (work->unk_48 > 120.0f) {
+            work->unk_48 = 120.0f;
+        }
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].unk32 = 1;
+    } else {
+        D_800BF7C0_C03C0 = (add + 80.0f < work->unk_40) ? work->unk_40 * 0.98f : add + 80.0f;
+        if (work->unk_48 > 100.0f) {
+            work->unk_48 = work->unk_48 * 0.98f;
+        }
+        if (work->unk_48 < add + 100.0f) {
+            work->unk_48 = add + 100.0f;
+        }
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].unk32 = 0;
+        D_8010C040_19ABE0_BobsledRun[team] = D_8010C040_19ABE0_BobsledRun[team] * 0.9995f;
+        if (D_8010C040_19ABE0_BobsledRun[team] < 90.0f) {
+            D_8010C040_19ABE0_BobsledRun[team] = 90.0f;
+        }
+    }
+    Hu3DCamSetPerspective(team, D_8010C040_19ABE0_BobsledRun[team], 20.0f, 12000.0f);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107920_1964C0_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107C6C_19680C_BobsledRun);
+/* The sled's spray effect runs while boosted or in the air. */
+void func_80107C6C_19680C_BobsledRun(omObjData* obj) {
+    BRWork* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107CF4_196894_BobsledRun);
+    work = obj->unk_50;
+    if (D_8010C048_19ABE8_BobsledRun[work->unk_59].boost != 0 || work->unk_38 != 1000.0f) {
+        func_80029E80_2AA80(obj->model[5], 2, 2);
+    } else {
+        func_80029E80_2AA80(obj->model[5], 2, 0);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107E38_1969D8_BobsledRun);
+/* Turn by turn, glancing off walls the sled faces into. */
+void func_80107CF4_196894_BobsledRun(omObjData* obj, Vec3f* normal, f32 turn) {
+    BRWork* work;
+    s32 team;
+    f32 a;
+    f32 s;
+
+    work = obj->unk_50;
+    team = work->unk_59;
+    work->unk_3C = turn + work->unk_3C;
+    a = work->unk_3C - 90.0f;
+    s = HuMathSin(a);
+    a = func_8000DA2C_E62C(normal->x, normal->z, s, func_800B7890_B8490(a)); /* the wall's dot */
+    if (a > 0.7f) {
+        turn += 1.0f;
+        work->unk_3C = work->unk_3C - turn;
+    } else if (a < -0.7f) {
+        turn = fabs(turn) + 1.0;
+        work->unk_3C = turn + work->unk_3C;
+    }
+    work->unk_3C = func_8002D958_2E558(work->unk_3C);
+    D_8010C048_19ABE8_BobsledRun[team].unk08 = a;
+}
+
+BRGround* func_80107E38_1969D8_BobsledRun(BRWork* work) {
+    BRGround* g;
+    s32 i;
+
+    if (work->unk_53 >= 0) {
+        for (i = 0; i < D_800F8FE0_F9BE0; i++) {
+            g = D_800FC7B0_FD3B0[i]->unk_50;
+            if (work->unk_53 == g->unk_04) {
+                return g;
+            }
+        }
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_196A44_BobsledRun);
 

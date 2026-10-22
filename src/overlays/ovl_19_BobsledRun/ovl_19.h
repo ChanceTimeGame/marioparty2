@@ -90,7 +90,9 @@ typedef struct BRWork {
     /* 0x60 */ f32 unk_60;
     /* 0x64 */ f32 unk_64;
     /* 0x68 */ f32 unk_68;
-    /* 0x6C */ char unk_6C[0x30];
+    /* 0x6C */ char unk_6C[8];
+    /* 0x74 */ s32 unk_74[6]; /* stick samples, (x << 16) | y (MP1 0x6C) */
+    /* 0x8C */ char unk_8C[0x10];
     /* 0x9C */ f32 unk_9C;    /* MP1 0x90 */
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ f32 unk_A4;
@@ -121,7 +123,8 @@ typedef struct BRGround {
 typedef struct BRHist {
     /* 0x00 */ s32 idx;
     /* 0x04 */ f32 unk04[40];
-} BRHist; /* size = 0xA4, then f32 samples[20] */
+    /* 0xA4 */ f32 samples[20]; /* also D_8010CADC / D_8010CBEC */
+} BRHist; /* size = 0xF4 */
 
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BRCharData {
@@ -353,7 +356,7 @@ void func_801077A4_196344_BobsledRun(omObjData* obj);
 void func_80107920_1964C0_BobsledRun(omObjData* obj);
 void func_80107C6C_19680C_BobsledRun(omObjData* obj);
 void func_80107CF4_196894_BobsledRun(omObjData* obj, Vec3f* normal, f32 turn);
-void* func_80107E38_1969D8_BobsledRun(BRWork* work); /* MP1 func_800F6D20: the ground object's work */
+BRGround* func_80107E38_1969D8_BobsledRun(BRWork* work); /* MP1 func_800F6D20: the ground object's work */
 void func_80107EA4_196A44_BobsledRun(omObjData* obj);
 void func_8010982C_1983CC_BobsledRun(omObjData* obj);
 s32 func_80109D94_198934_BobsledRun(omObjData* obj, f32 arg1, s8 arg2);
@@ -367,5 +370,9 @@ void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal);
 f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z);
 f32 func_8010B630_19A1D0_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z, f32 oldY);
 void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 arg1);
+
+/* MG19-B */
+f64 fabs(f64);
+void func_800797DC_7A3DC(s16 sfx, s16 player);
 
 #endif
