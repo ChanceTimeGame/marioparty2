@@ -276,6 +276,16 @@ typedef struct Ovl4FStreak {
     /* 0x28 */ f32 speed;
 } Ovl4FStreak; /* size = 0x2C */
 
+/* Work of the coloured disc func_8010DD7C (17 vertices: the centre and 16 around it). */
+typedef struct Ovl4FDiscWork {
+    /* 0x000 */ f32 rot[16];     /* advanced but never drawn */
+    /* 0x040 */ f32 col[17][4];  /* per vertex: r, g, b phases (degrees) and the alpha */
+    /* 0x150 */ f32 vel[17][4];  /* their steps per frame; [3] the fade */
+    /* 0x260 */ f32 radius;
+} Ovl4FDiscWork; /* size = 0x264 */
+
+f64 fabs(f64);
+u8 rand8(void);
 void* DataRead(s32 dirAndFile);
 s16 func_8003DF08_3EB08(void* arg);
 void omSetTra(omObjData*, f32, f32, f32);
@@ -302,6 +312,7 @@ extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
 extern u32* D_80110008_342C48_name_4F[6]; /* per character: MBPlayerModelCreate list */
 extern u32 D_80110020_342C60_name_4F[];
 extern s32 D_80110068_342CA8_name_4F;
+extern u8 D_80110390_342FD0_name_4F[3][4]; /* func_8010DA90: the streaks' start colours */
 extern f32 D_80110454_343094_name_4F;
 extern void* D_80110460_3430A0_name_4F[4][8]; /* per effect slot, per frame buffer: vertices */
 extern Gfx* D_801104E0_343120_name_4F[4][8];  /* per effect slot, per frame buffer: display list */
@@ -320,9 +331,9 @@ void func_8010D3E8_340028_name_4F(omObjData* obj);
 omObjData* func_8010D4D8_340118_name_4F(void);
 void func_8010D528_340168_name_4F(omObjData* obj);
 void func_8010D6FC_34033C_name_4F(omObjData* obj);
-void func_8010DA90_3406D0_name_4F(void);
-s32 func_8010DD7C_3409BC_name_4F(void);
-s32 func_8010DDCC_340A0C_name_4F(omObjData* obj);
+void func_8010DA90_3406D0_name_4F(omObjData* obj, f32 x, f32 y, f32 z, u8 frames);
+omObjData* func_8010DD7C_3409BC_name_4F(void);
+void func_8010DDCC_340A0C_name_4F(omObjData* obj);
 void func_8010DFCC_340C0C_name_4F(omObjData* obj);
 void func_8010E430_341070_name_4F(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_8010E5D8_341218_name_4F(s32 arg0);
