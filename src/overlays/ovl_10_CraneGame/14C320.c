@@ -457,9 +457,69 @@ void func_80103FC8_14DAE8_CraneGame(Gfx** gfx) {
     gDPPipeSync((*gfx)++);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010422C_14DD4C_CraneGame);
+s16 func_8010422C_14DD4C_CraneGame(f32 x, f32 y, f32 z, f32 r) {
+    f32 dx;
+    f32 dz;
+    f32 d;
+    f32 rad;
+    f32 best;
+    s16 sel;
+    s16 i;
+    omObjData* o;
+    CGWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801043D8_14DEF8_CraneGame);
+    sel = -1;
+    best = 9999.0f;
+    for (i = 0; i < D_800FA606_FB206; i++) {
+        o = D_800F9CE0_FA8E0[i];
+        w = o->unk_50;
+        if (w->unk34 > w->unk38) {
+            rad = w->unk34;
+        } else {
+            rad = w->unk38;
+        }
+        if (w->unk50 >= 0) {
+            dx = o->trans.x - x;
+            if (fabs(dx) < rad + r) {
+                dz = o->trans.z - z;
+                if (fabs(dz) < rad + r) {
+                    d = sqrtf(dx * dx + dz * dz);
+                    if (d < best && d < 120.0) {
+                        best = d;
+                        sel = i;
+                    }
+                }
+            }
+        }
+    }
+    return sel;
+}
+
+s16 func_801043D8_14DEF8_CraneGame(f32 arg0, f32 arg1, f32 arg2, s16 arg3) {
+    f32 distanceSquared;
+    f32 clampedDistance;
+    s16 ret;
+    omObjData* temp_v0;
+
+    temp_v0 = D_800F9CE0_FA8E0[arg3];
+    distanceSquared = ((temp_v0->trans.x - arg0) * (temp_v0->trans.x - arg0)) + ((temp_v0->trans.z - arg1) * (temp_v0->trans.z - arg1));
+    clampedDistance = sqrtf(distanceSquared);
+
+    clampedDistance -= arg2;
+    if (clampedDistance < 0.0) {
+        clampedDistance = 0.0f;
+    }
+    if (clampedDistance < 40.0) {
+        ret = 0;
+    } else if (clampedDistance < 80.0) {
+        ret = 1;
+    } else if (clampedDistance < 120.0) {
+        ret = 2;
+    } else {
+        ret = -1;
+    }
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801044E0_14E000_CraneGame);
 

@@ -76,6 +76,22 @@ extern f32 D_800FA610_FB210;  /* CZoom */
 
 /* ---- structs ---- */
 
+/* Work of the prizes (D_800F9CE0_FA8E0, func_80106F00) and of the claw operator (func_80104854):
+   main's minigame work (0xE8+ bytes; pointers at the end). Fields from the asm. */
+typedef struct CGWork {
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk34; /* half width */
+    /* 0x38 */ f32 unk38; /* half depth */
+    /* 0x3C */ f32 unk3C; /* move angle, -1 none */
+    /* 0x40 */ f32 unk40; /* speed */
+    /* 0x44 */ char unk_44[0xC];
+    /* 0x50 */ s16 unk50; /* state; < 0 out of play */
+} CGWork;
+
+#define CG_WORK(obj) ((CGWork*)(obj)->unk_50)
+
+double fabs(double);
+
 /* A hanging prize model of the backdrop (D_8010B764_155284, func_80103974). */
 typedef struct CGHang {
     /* 0x00 */ f32 x;
@@ -148,7 +164,7 @@ void func_80103CB8_14D7D8_CraneGame(omObjData* obj);
 void func_80103F38_14DA58_CraneGame(void);
 void func_80103FC8_14DAE8_CraneGame(Gfx** gfx);
 s16 func_8010422C_14DD4C_CraneGame(f32 x, f32 y, f32 z, f32 r);
-s16 func_801043D8_14DEF8_CraneGame(f32 x, f32 y, f32 z, s16 arg3);
+s16 func_801043D8_14DEF8_CraneGame(f32 x, f32 z, f32 r, s16 i); /* grab quality of prize i */
 f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b);
 s32 func_801046E8_14E208_CraneGame(void);
 void func_80104854_14E374_CraneGame(omObjData* obj);
