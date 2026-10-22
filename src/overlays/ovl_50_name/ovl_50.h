@@ -299,14 +299,14 @@ void func_80107A3C_34829C_name_50(void);
 void func_8010804C_3488AC_name_50(void);
 void func_80108290_348AF0_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_80108414_348C74_name_50(void);
-void func_80108448_348CA8_name_50(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_80108448_348CA8_name_50(f32 x, f32 y, f32 z, f32 rotZ);
 void func_801085FC_348E5C_name_50(void);
-void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2, s32 arg3); /* 50-B: a3 from the asm */
+void func_80108630_348E90_name_50(f32 x, f32 y, f32 z, u16 dim);
 void func_801087FC_34905C_name_50(void);
 void func_80108830_349090_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_801089CC_34922C_name_50(void);
-void func_80108A00_349260_name_50(Vec* arg0, Vec* arg1, f32 arg2, s32 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8); /* 50-B: from the asm */
-void func_80108C6C_3494CC_name_50(void);
+void func_80108A00_349260_name_50(Vec* start, Vec* dir, f32 length, u16 interval, u16 mode, f32 scale0, f32 scale1, f32 speed, f32 rotY);
+void func_80108C6C_3494CC_name_50(omObjData* obj);
 void func_80108F1C_34977C_name_50(void); /* main's func_8004B214 */
 void func_80108F2C_34978C_name_50(void);
 void func_80108F98_3497F8_name_50(void);
@@ -318,7 +318,7 @@ void func_8010A580_34ADE0_name_50(void);
 void func_8010A9B8_34B218_name_50(void);
 void func_8010AB4C_34B3AC_name_50(void);
 void func_8010B230_34BA90_name_50(void);
-void func_8010CD24_34D584_name_50(s32 arg0, s32 arg1, s32 arg2);
+omObjData* func_8010CD24_34D584_name_50(Vec* pos, f32 grow, f32 fade); /* a fading puff (4F's func_801063AC) */
 void func_8010CE28_34D688_name_50(omObjData* obj);
 void func_8010CF08_34D768_name_50(omObjData* obj);
 omObjData* func_8010CFE8_34D848_name_50(f32 arg0, f32 arg1, f32 arg2);
@@ -361,11 +361,29 @@ extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00)
 extern Vec D_80111E00_352660_name_50;
 extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
 extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
-/* func_80108A00's work (D_801125E4's unk_50, 0x7918 bytes); fork 50-C owns the full layout. */
+/* func_80108A00's work (D_801125E4's unk_50, tag 0x7918): a beam of up to 8 rings. */
 typedef struct Ovl50BeamWork {
-    /* 0x00 */ u8 unk_00[0x38];
-    /* 0x38 */ f32 length; /* func_80108A00's third argument */
-} Ovl50BeamWork;
+    /* 0x000 */ u16 mode;     /* bit 0: 8 rings (else 4); bit 1: the rings move along dir */
+    /* 0x002 */ u16 count;
+    /* 0x004 */ s16 tex;
+    /* 0x006 */ s16 model[8];
+    /* 0x016 */ s16 slot[8];  /* func_80020EBC instances */
+    /* 0x026 */ u16 active[8];
+    /* 0x036 */ char unk_36[2];
+    /* 0x038 */ f32 length;   /* func_80108A00's third argument: a ring dies at this distance */
+    /* 0x03C */ f32 scale[8];
+    /* 0x05C */ f32 dist[8];
+    /* 0x07C */ Vec pos[8];
+    /* 0x0DC */ Vec start;
+    /* 0x0E8 */ Vec dir;
+    /* 0x0F4 */ f32 rotY;
+    /* 0x0F8 */ f32 speed;
+    /* 0x0FC */ f32 grow;     /* scale per frame */
+    /* 0x100 */ u16 timer;    /* frames to the next ring */
+    /* 0x102 */ u16 interval;
+    /* 0x104 */ f32 scale0;
+    /* 0x108 */ f32 scale1;
+} Ovl50BeamWork; /* size = 0x10C */
 /* board 2, part 6 */
 extern Vec D_80111EB4_352714_name_50[];   /* per character: the fourth beam's offset */
 extern omObjData* D_801125DC_352E3C_name_50; /* func_80108630's object (the beams' meeting point) */
@@ -373,6 +391,51 @@ extern omObjData* D_801125DC_352E3C_name_50; /* func_80108630's object (the beam
 extern Vec D_80111E60_3526C0_name_50;     /* the partner's place */
 extern Vec D_80111E6C_3526CC_name_50[];   /* per character: the third beam's offset */
 extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; work[1] == 1 while it runs */
+
+/* 50-C */
+extern omObjData* D_801125D4_352E34_name_50; /* func_80108290's glow */
+extern omObjData* D_801125E0_352E40_name_50; /* func_80108830's burst */
+/* A fading puff (func_8010CD24; 4F's Ovl4FPuffWork without the kill flag). */
+typedef struct Ovl50PuffWork {
+    /* 0x00 */ f32 alpha;
+    /* 0x04 */ f32 grow;
+    /* 0x08 */ f32 fade;
+    /* 0x0C */ MBModel* model;
+} Ovl50PuffWork; /* size = 0x10 */
+void SprAnimKill(s16);
+void espDispOn(u16);
+extern s16 D_80111EFC_35275C_name_50;     /* func_80108F98's tint toggle */
+/* board 4 */
+extern u32* D_80112008_352868_name_50[6]; /* per character: MBPlayerModelCreate list */
+extern u32 D_80112020_352880_name_50[];   /* the host (0x80023): MBModelFileCreate list */
+extern u32 D_80112034_352894_name_50[];   /* D_80112748 (0x8008B) */
+extern s32 D_80112064_3528C4_name_50;
+extern s32 D_8011206C_3528CC_name_50;
+extern s32 D_80112070_3528D0_name_50[3];  /* D_8011275C's motions (splat's D_80112078 is [2]) */
+extern Vec D_8011208C_3528EC_name_50;     /* the sign */
+extern Vec D_80112098_3528F8_name_50[2];  /* D_80112748: start, place */
+extern Vec D_801120B0_352910_name_50;
+extern Vec D_801120BC_35291C_name_50;     /* D_8011275C's start */
+extern Vec D_801120C8_352928_name_50[2];  /* D_8011275C's places */
+extern Vec D_801120E0_352940_name_50;     /* the doors: start */
+extern Vec D_801120EC_35294C_name_50;     /* the doors: end */
+extern u32 D_801120F8_352958_name_50[];   /* D_8011275C (0x80060) */
+extern Vec D_80112110_352970_name_50;     /* the winner's place */
+extern Vec D_8011211C_35297C_name_50;     /* D_80112748, part 3: start */
+extern Vec D_80112128_352988_name_50;     /* D_80112748, part 3: where it hops to */
+extern Vec D_80112134_352994_name_50;     /* the winner, part 3 */
+extern char* D_80112140_3529A0_name_50[6]; /* per character: the part the prize hangs on */
+extern s32 D_80112158_3529B8_name_50[6];  /* per character: the prize's form (0xA025E-63) */
+extern Vec D_80112170_3529D0_name_50;     /* the winner, part 5 */
+extern u32 D_8011207C_3528DC_name_50[];   /* part 6's figures (0x800D5): MBModelFileCreate list */
+extern Vec D_8011217C_3529DC_name_50;     /* part 6: where the figure lands (y: its drop height) */
+extern Vec D_80112188_3529E8_name_50[2];  /* part 6: the other two figures (splat's D_80112190 is [0].z) */
+void func_800517F8_523F8(void);
+void func_8002CA48_2D648(u8, u8, u8);
+void func_8001A96C_1B56C(u16, u8, u8, u8); /* sprite colour */
+void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3); /* hangs arg0's part arg1 on arg2's arg3 */
+extern omObjData* D_80112600_352E60_name_50; /* the sign's sparkle (func_8010CFE8) */
+extern s16 D_80112604_352E64_name_50;     /* a sound handle (0x3F8) */
 
 /* ---- 34DBC0.c ---- */
 
