@@ -325,6 +325,11 @@ omObjData* func_8010CFE8_34D848_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_8010D198_34D9F8_name_50(omObjData* obj);
 void func_8010D320_34DB80_name_50(omObjData* obj);
 
+/* 50-B */
+extern u32* D_80111C88_3524E8_name_50[6]; /* board 2, per character: MBPlayerModelCreate list */
+extern u32 D_80111CA0_352500_name_50[];   /* board 2's host (0x80028): MBModelFileCreate list */
+extern s32 D_80111D00_352560_name_50;
+
 /* ---- 34DBC0.c ---- */
 
 void func_8010D360_34DBC0_name_50(void); /* board 5's scene */
