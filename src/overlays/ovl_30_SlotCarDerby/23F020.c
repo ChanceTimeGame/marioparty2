@@ -434,19 +434,229 @@ void func_8010A55C_24043C_SlotCarDerby(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A55C_24043C_SlotCarDerby);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A8CC_2407AC_SlotCarDerby);
+void func_8010A8CC_2407AC_SlotCarDerby(omObjData* obj) {
+    Vec pos;
+    Vec screen;
+    SCDFx* fx;
+    s32 i;
 
+    D_8010FB08_2459E8_SlotCarDerby = (D_8010FB08_2459E8_SlotCarDerby + 1) % 3;
+    if (D_8010FB00_2459E0_SlotCarDerby != 6) {
+        for (i = 0; i < 32; i++) {
+            fx = &D_8011096C_24684C_SlotCarDerby[i];
+            if (fx->unk_01 == -1) {
+                continue;
+            }
+            pos.x = fx->unk_08.x;
+            pos.y = fx->unk_08.y + 80.0;
+            pos.z = fx->unk_08.z;
+            func_8010B0E4_240FC4_SlotCarDerby(0, &pos, &screen);
+            switch (fx->unk_01) {
+                case 0:
+                    fx->unk_20 *= 0.8;
+                    fx->unk_24 *= 0.8;
+                    func_8010C9A4_242884_SlotCarDerby(fx->unk_00, fx->unk_20, fx->unk_24, fx->unk_28);
+                    func_8010C8D4_2427B4_SlotCarDerby(fx->unk_00, fx->unk_02);
+                    fx->unk_02++;
+                    if ((s16)fx->unk_04 == 0) {
+                        func_8010CA44_242924_SlotCarDerby(fx->unk_00, 0x20);
+                        fx->unk_01 = -1;
+                        fx->unk_02 = 0;
+                        fx->unk_04 = 0;
+                    }
+                    break;
+                case 1:
+                    SprPosSet((s16)D_8011098C_24686C_SlotCarDerby, i, screen.x, screen.y);
+                    screen.z = screen.z + (8 - (s16)fx->unk_04) * screen.z * 0.05;
+                    SprScaleSet((s16)D_8011098C_24686C_SlotCarDerby, i, screen.z * fx->unk_20, screen.z * fx->unk_24);
+                    SprBankSet((s16)D_8011098C_24686C_SlotCarDerby, i, fx->unk_02 + 4);
+                    fx->unk_02++;
+                    if ((s16)fx->unk_04 == 0) {
+                        SprAttrSet((s16)D_8011098C_24686C_SlotCarDerby, i, 0x8000);
+                        fx->unk_01 = -1;
+                    }
+                    break;
+                case 2:
+                    SprPosSet((s16)D_8011098C_24686C_SlotCarDerby, i, screen.x, screen.y);
+                    screen.z = screen.z + (fx->unk_04 & 3) * screen.z * 0.25;
+                    SprScaleSet((s16)D_8011098C_24686C_SlotCarDerby, i, screen.z * fx->unk_20, screen.z * fx->unk_24);
+                    fx->unk_02 ^= 1;
+                    SprBankSet((s16)D_8011098C_24686C_SlotCarDerby, i, fx->unk_02);
+                    if ((s16)fx->unk_04 == 0) {
+                        SprAttrSet((s16)D_8011098C_24686C_SlotCarDerby, i, 0x8000);
+                        fx->unk_01 = -1;
+                    }
+                    break;
+            }
+            fx->unk_04--;
+        }
+        func_8010D0B0_242F90_SlotCarDerby();
+    }
+}
+
+/* Bobs the five floating billboards: their scale swings with a sine of the bob angle. */
+// 8 bytes more frame in retail, and the angle wrap is not folded into one addiu (masked ~9)
+#ifdef NON_MATCHING
+void func_8010AC5C_240B3C_SlotCarDerby(void) {
+    SCDFloater* f = D_80110978_246858_SlotCarDerby;
+    s16 id;
+    s16 angle;
+    f32 s;
+    f32 c;
+    s16 i;
+
+    for (i = 0; i < 5; i++, f++) {
+        if ((id = f->unk_00) == -1) {
+            continue;
+        }
+        if (f->unk_02 == -1) {
+            continue;
+        }
+        angle = f->unk_04 + 8;
+        if (angle > 360) {
+            angle -= 360;
+        }
+        s = HuMathSin(angle);
+        c = -s;
+        func_8010C9A4_242884_SlotCarDerby(id, (s * 10.0 * 0.15 + 10.0) * f->unk_08,
+                                          (c * 10.0 * 0.15 + 10.0) * f->unk_08, 1.0f);
+        f->unk_04 = angle;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010AC5C_240B3C_SlotCarDerby);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010AD94_240C74_SlotCarDerby);
+void func_8010AD94_240C74_SlotCarDerby(s32 type, Vec* pos, Vec* rot) {
+    func_8010ADB0_240C90_SlotCarDerby(type, pos, rot);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010ADB0_240C90_SlotCarDerby);
+void func_8010ADB0_240C90_SlotCarDerby(s32 type, Vec* pos, Vec* rot) {
+    SCDFx* fx;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B098_240F78_SlotCarDerby);
+    for (i = 0; i < 32; i++) {
+        fx = &D_8011096C_24684C_SlotCarDerby[i];
+        if (fx->unk_01 == -1) {
+            break;
+        }
+    }
+    if (i == 32) {
+        return;
+    }
+    fx->unk_01 = type;
+    fx->unk_04 = 0;
+    fx->unk_02 = 0;
+    fx->unk_08.x = pos->x * 10.0f;
+    fx->unk_08.y = pos->y * 10.0f;
+    fx->unk_08.z = pos->z * 10.0f;
+    fx->unk_14.x = rot->x;
+    fx->unk_14.y = rot->y;
+    fx->unk_14.z = rot->z;
+    switch (fx->unk_01) {
+        case 0:
+            func_8010CA88_242968_SlotCarDerby(fx->unk_00, 0x20);
+            func_8010C954_242834_SlotCarDerby(fx->unk_00, fx->unk_08.x, fx->unk_08.y, fx->unk_08.z);
+            func_8010C9F4_2428D4_SlotCarDerby(fx->unk_00, fx->unk_14.z, fx->unk_14.y - 90.0f, fx->unk_14.x);
+            func_8010CAD0_2429B0_SlotCarDerby(fx->unk_00, 0xFF, 0x96, 0, 0xFF);
+            fx->unk_20 = 60.0f;
+            fx->unk_24 = 20.0f;
+            fx->unk_28 = 1.0f;
+            func_8010C9A4_242884_SlotCarDerby(fx->unk_00, fx->unk_20, fx->unk_24, fx->unk_28);
+            func_8010C914_2427F4_SlotCarDerby(fx->unk_00, 4.0f);
+            fx->unk_04 = 15;
+            break;
+        case 1:
+            func_800824B4_830B4((s16)D_8011098C_24686C_SlotCarDerby, (s16)i, 0xFF, 0xFF, 0xFF, 0xFF);
+            SprAnimSet((s16)D_8011098C_24686C_SlotCarDerby, i, (s16)D_80110980_246860_SlotCarDerby[fx->unk_01], 0);
+            SprAttrReset((s16)D_8011098C_24686C_SlotCarDerby, i, 0x8000);
+            fx->unk_20 = 2.5f;
+            fx->unk_24 = 2.5f;
+            fx->unk_28 = 1.0f;
+            fx->unk_04 = 7;
+            break;
+        case 2:
+            fx->unk_08.y += 160.0f;
+            func_800824B4_830B4((s16)D_8011098C_24686C_SlotCarDerby, (s16)i, 0, 0, 0, 0xFF);
+            SprAnimSet((s16)D_8011098C_24686C_SlotCarDerby, i, (s16)D_80110980_246860_SlotCarDerby[fx->unk_01], 0);
+            fx->unk_20 = 10.0f;
+            fx->unk_24 = 10.0f;
+            fx->unk_28 = 1.0f;
+            SprAttrReset((s16)D_8011098C_24686C_SlotCarDerby, i, 0x8000);
+            fx->unk_04 = 7;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B0B8_240F98_SlotCarDerby);
+/* Keeps rec's address in obj->work (big-endian bytes). Host: a pointer does not fit the four
+   bytes on LP64 (MP1's port stores the record index there instead). */
+void func_8010B098_240F78_SlotCarDerby(omObjData* obj, SCDObj* rec) {
+    u32 v = (u32)rec;
 
+    obj->work[0] = v >> 24;
+    obj->work[1] = v >> 16;
+    obj->work[2] = v >> 8;
+    obj->work[3] = v;
+}
+
+SCDObj* func_8010B0B8_240F98_SlotCarDerby(omObjData* obj) {
+    u32 v = (obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3];
+
+    return (SCDObj*)v;
+}
+
+/* Projects pos through camera cam's view into screen x, y and a perspective scale (z). */
+// scheduling of &Center and the viewport registers, as MP1 func_800FDD54 (masked 8)
+#ifdef NON_MATCHING
+void func_8010B0E4_240FC4_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
+    Mtx look;
+    Mtx mtx;
+    Vec eye;
+    Vec at;
+    Vec up;
+    HuCamera* c = &D_800C9B80_CA780[cam];
+    Mtx* m = &mtx;
+    HuCamera* vp;
+    f32 rx;
+    f32 ry;
+    f32 sx;
+    f32 sy;
+    f32 sz;
+    f32 sn;
+    f32 dist;
+
+    rx = D_800FD474_FE074.x;
+    ry = D_800FD474_FE074.y;
+    eye.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+    eye.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
+    eye.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
+    at.x = D_8010274C_10334C.x;
+    at.y = D_8010274C_10334C.y;
+    at.z = D_8010274C_10334C.z;
+    up.x = HuMathSin(ry) * HuMathSin(rx);
+    up.y = func_800B7890_B8490(rx);
+    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+    guLookAt(&look, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
+    func_800B1FA0_B2BA0(m, pos->x, pos->y, pos->z);
+    guMtxCatL(m, &look, m);
+    sx = (s32)((((u16*)&mtx)[12] << 16) | ((u16*)&mtx)[28]) >> 16;
+    sy = (s32)((((u16*)&mtx)[13] << 16) | ((u16*)&mtx)[29]) >> 16;
+    sz = (s32)((((u16*)&mtx)[14] << 16) | ((u16*)&mtx)[30]) >> 16;
+    sn = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
+    dist = fabsf(sz * sn / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
+    if (dist != 0.0) {
+        vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16); /* c->viewports[D_800FFFD6] */
+        /* written through f32* (not Vec fields): retail reloads D_800FFFD6 after the store */
+        ((f32*)screen)[0] =
+            (s16)(vp->viewports[0].vp.vscale[0] / 4.0 * sx / dist / 1.3333334f) + vp->viewports[0].vp.vtrans[0] / 4.0;
+        vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16);
+        ((f32*)screen)[1] = (s16)(vp->viewports[0].vp.vscale[1] / 4.0 * -sy / dist) + vp->viewports[0].vp.vtrans[1] / 4.0;
+        ((f32*)screen)[2] = vp->viewports[0].vp.vscale[1] / 4.0 / dist;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B0E4_240FC4_SlotCarDerby);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B4D0_2413B0_SlotCarDerby);
 

@@ -437,11 +437,15 @@ void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
 HuSprite_Unk84_Struct* SprAnimGet(s16 animIdx);
 void GWMgRecordSet(s16 index, u16 value);
 extern u8 D_80102720_103320; /* board.h */
+void func_800824B4_830B4(s16 group, s16 member, u8 r, u8 g, u8 b, u8 a);
+void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
+f32 fabsf(f32);
+extern s16 D_800FFFD6_100BD6; /* current viewport */
 
 /* A floating billboard D_80110978[5] (80109EC0, 8010AC5C): new in MP2. No pointers. */
 typedef struct SCDFloater {
     /* 0x00 */ s16 unk_00; /* billboard, -1 none */
-    /* 0x02 */ char unk_02[2];
+    /* 0x02 */ s16 unk_02; /* -1: still */
     /* 0x04 */ s16 unk_04; /* bob angle (degrees) */
     /* 0x06 */ s16 unk_06;
     /* 0x08 */ f32 unk_08; /* bob speed */
