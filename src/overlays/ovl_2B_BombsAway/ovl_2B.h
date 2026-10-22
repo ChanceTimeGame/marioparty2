@@ -155,8 +155,9 @@ typedef struct BaPlayer {
     /* 0x3A */ s16 unk_3A;
     /* 0x3C */ s16 unk_3C; /* frames in the state */
     /* 0x3E */ s16 unk_3E;
-    /* 0x40 */ char unk_40[4];
-    /* 0x44 */ s16 unk_44; /* 12 at setup (MP1 0x42) */
+    /* 0x40 */ char unk_40[2];
+    /* 0x42 */ s16 unk_42; /* splash voice played (new in MP2) */
+    /* 0x44 */ s16 unk_44; /* 12 at setup (MP1 0x42); cleared at the results */
     /* 0x46 */ s16 unk_46; /* -1 at setup (MP1 0x44) */
     /* 0x48 */ omObjData* unk_48; /* the player's object */
     /* 0x4C */ f32 unk_4C; /* CPU stick angle */
@@ -441,6 +442,24 @@ void func_80107B60_21DF50_BombsAway(omObjData* obj, u8 arg1);
 void func_80107C48_21E038_BombsAway(omObjData* obj);
 void func_801082EC_21E6DC_BombsAway(void);
 
+/* MG2B-B */
+extern Vec D_8010DB60_223F50_BombsAway; /* = D_8010DB28.unk_38 (own label in retail) */
+extern f32 D_8010DB58_223F48_BombsAway; /* = D_8010DB28.unk_30 */
+extern f32 D_8010DB5C_223F4C_BombsAway; /* = D_8010DB28.unk_34 */
+extern f32 D_8010DB64_223F54_BombsAway; /* = D_8010DB28.unk_38.y */
+extern f32 D_8010DB68_223F58_BombsAway; /* = D_8010DB28.unk_38.z */
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
+void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
+void func_80019644_1A244(omObjData* obj); /* MP1 func_8001802C */
+s16 func_800797DC_7A3DC(s32 sfx, s16 player); /* MP1 func_80060618: player voice */
+s16 func_80079798_7A398(s16 sfx, s16 player); /* MP1 func_80060540: sound for a player */
+void func_80079848_7A448(s16 id); /* MP1 func_8006071C: stop a sound */
+void func_800B1CC0_B28C0(Matrix4f m, f32 ang, f32 x, f32 y, f32 z); /* MP1 func_8009E060: rotate about an axis */
+void func_800B2060_B2C60(Matrix4f m, f32 x, f32 y, f32 z); /* MP1 func_8009ECB0: rotate x, y, z */
+void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800AC0B0: multiply */
+
 /* ---- functions: 21EA10.c (inferred from MP1 and the asm; fork C checks them) ---- */
 
 s16 func_80108620_21EA10_BombsAway(HmfData* model, const char* name);
@@ -469,7 +488,7 @@ void func_80109908_21FCF8_BombsAway(void);
 void func_801099C4_21FDB4_BombsAway(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 s16 func_80109A68_21FE58_BombsAway(void);
 void func_8010A0D0_2204C0_BombsAway(s32 arg0, s32* arg1, s32 arg2);
-void func_8010A198_220588_BombsAway(void);
+void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale); /* MP1 func_800FD4B8 (splash) */
 void func_8010A1EC_2205DC_BombsAway(void);
 void func_8010A298_220688_BombsAway(void);
 void func_8010A350_220740_BombsAway(f32 arg0, f32 arg1, f32 arg2, s32 arg3);

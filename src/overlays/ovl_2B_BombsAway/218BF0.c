@@ -922,9 +922,258 @@ void func_80104CD0_21B0C0_BombsAway(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80104CD0_21B0C0_BombsAway);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801055FC_21B9EC_BombsAway);
+/* A player's scripted states (MP1 func_800F8D48): 3 stunned, 5 falling into the sea and swept
+   back to the edge, 6 out, 7 placed for the results, 9 thrown by a blast. New in MP2: the splash
+   voice plays once (unk_42), and the results no longer add 10 coins.
+   NON_MATCHING: only KMC's mul-fix nop after the cos and sin calls in case 9 (retail has none). */
+#ifdef NON_MATCHING
+void func_801055FC_21B9EC_BombsAway(omObjData* obj) {
+    Vec d;
+    Vec pos;
+    Vec vel;
+    Matrix4f m1;
+    Matrix4f m2;
+    BaPlayer* p;
+    f32 ang;
+    f32 t;
+    s16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801060C8_21C4B8_BombsAway);
+    p = func_80104058_21A448_BombsAway(obj);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    vel.x = p->unk_0C;
+    vel.y = p->unk_10;
+    vel.z = p->unk_14;
+    switch (p->unk_02) {
+        case 0:
+            func_801040A0_21A490_BombsAway(obj, 0);
+            if (p->unk_46 >= 0) {
+                func_80079848_7A448(p->unk_46);
+            }
+            p->unk_46 = -1;
+            break;
+        case 3:
+            if (p->unk_3C == 0) {
+                p->unk_3A = 0;
+                p->unk_3C++;
+                omVibrate(p->unk_06, 20, 0, 20);
+            }
+            func_801040A0_21A490_BombsAway(obj, 11);
+            vel.x = vel.z = 0.0f;
+            vel.y = -20.0f;
+            if (p->unk_3A >= 16) {
+                p->unk_05 = 0;
+                p->unk_02 = 0;
+                if (p->unk_46 >= 0) {
+                    func_80079848_7A448(p->unk_46);
+                }
+                p->unk_46 = -1;
+            }
+            break;
+        case 5:
+            ang = func_80106D78_21D168_BombsAway(&pos);
+            d.x = func_800B7890_B8490(ang) * 5.5 * 100.0 + D_8010DB60_223F50_BombsAway.x - pos.x;
+            d.z = HuMathSin(ang) * 4.5 * 100.0 + D_8010DB60_223F50_BombsAway.z - pos.z;
+            func_80108A4C_21EE3C_BombsAway(d.x, d.z);
+            sqrtf(d.x * d.x + d.z * d.z);
+            switch (p->unk_3C) {
+                case 0:
+                    p->unk_00 |= 8;
+                    vel.y = p->unk_30 = -5.0f;
+                    vel.x = vel.z = 0.0f;
+                    D_8010DB14_223F04_BombsAway--;
+                    p->unk_00 |= 2;
+                    if (p->unk_46 >= 0) {
+                        func_80079848_7A448(p->unk_46);
+                    }
+                    p->unk_46 = -1;
+                    p->unk_3E = 0;
+                    p->unk_3A = 0;
+                    p->unk_3C++;
+                    break;
+                case 1:
+                    func_801040A0_21A490_BombsAway(obj, 16);
+                    if (p->unk_3E == 0 && pos.y < 0.0) {
+                        if (p->unk_42 == 0) {
+                            func_80108E98_21F288_BombsAway(func_800797DC_7A3DC(0x111, p->unk_06), &pos);
+                            p->unk_42 = 1;
+                        }
+                        func_8010A198_220588_BombsAway(pos.x, pos.y, pos.z, 0.75f);
+                        p->unk_00 |= 0x10;
+                        if (D_8010D948_223D38_BombsAway != 0 && gPlayers[p->unk_06].group == 0) {
+                            D_8010D94A_223D3A_BombsAway = 1;
+                        }
+                        p->unk_3E++;
+                    }
+                    if (vel.y > -50.0) {
+                        vel.y += p->unk_30;
+                    }
+                    ang = (f32)p->unk_3A / 15.0;
+                    if (ang > 1.0) {
+                        ang = 1.0f;
+                    }
+                    vel.x = d.x * 0.1 * ang;
+                    vel.z = d.z * 0.1 * ang;
+                    if (pos.y < -100.0) {
+                        p->unk_3C++;
+                    }
+                    break;
+                case 2:
+                    func_801040A0_21A490_BombsAway(obj, 16);
+                    if (pos.y + vel.y > -50.0) {
+                        pos.y = -50.0f;
+                        vel.y = 0.0f;
+                        p->unk_3C++;
+                        func_80107A34_21DE24_BombsAway(obj);
+                    } else {
+                        vel.y -= p->unk_30;
+                    }
+                    ang = (f32)p->unk_3A / 15.0;
+                    if (ang > 1.0) {
+                        ang = 1.0f;
+                    }
+                    vel.x = d.x * 0.1 * ang;
+                    vel.z = d.z * 0.1 * ang;
+                    break;
+                case 3:
+                case 4:
+                    vel.x = d.x * 0.1;
+                    vel.z = d.z * 0.1;
+                    vel.y = 0.0f;
+                    pos.y = -50.0f;
+                    if (p->unk_3C == 4) {
+                        vel.x = vel.z = vel.y;
+                        p->unk_02 = 6;
+                        func_801040A0_21A490_BombsAway(obj, 15);
+                        guMtxIdentF((f32(*)[4])D_800FC834_FD434[obj->model[0]].mtx);
+                        p->unk_3C = 0;
+                    }
+                    break;
+            }
+            pos.x += vel.x;
+            pos.y += vel.y;
+            pos.z += vel.z;
+            if (p->unk_3C >= 3) {
+                func_80104198_21A588_BombsAway(obj, 15, 16);
+            }
+            break;
+        case 6:
+            if (p->unk_3C != 0) {
+                D_800FC834_FD434[obj->model[0]].unk03 |= 1;
+                func_800298A4_2A4A4(obj->model[0], 4, 4);
+            }
+            func_80104198_21A588_BombsAway(obj, 15, 16);
+            break;
+        case 7:
+            if (p->unk_46 >= 0) {
+                func_80079848_7A448(p->unk_46);
+            }
+            p->unk_46 = -1;
+            func_80107060_21D450_BombsAway(&obj->trans, &obj->trans);
+            obj->rot.y = 0.0f;
+            guMtxIdentF((f32(*)[4])D_800FC834_FD434[obj->model[0]].mtx);
+            vel.x = vel.y = vel.z = 0.0f;
+            D_800FC834_FD434[obj->model[1]].pos.y = obj->trans.y;
+            if (D_8010D940_223D30_BombsAway.unk_00 != 3) {
+                func_801040A0_21A490_BombsAway(obj, 0);
+            } else if (D_8010D948_223D38_BombsAway == 0) {
+                func_801040A0_21A490_BombsAway(obj, 13);
+                p->unk_44 = 0;
+            } else {
+                func_801040A0_21A490_BombsAway(obj, 0);
+                p->unk_44 = 0;
+            }
+            break;
+        case 9:
+            if (p->unk_3C == 0) {
+                p->unk_00 |= 2;
+                func_801040A0_21A490_BombsAway(obj, 11);
+                if (p->unk_46 >= 0) {
+                    func_80079848_7A448(p->unk_46);
+                }
+                p->unk_46 = -1;
+                ang = func_80106D78_21D168_BombsAway(&pos);
+                t = (600.0 - func_80106DB0_21D1A0_BombsAway(&pos)) / 30.0;
+                vel.x = func_800B7890_B8490(ang) * t;
+                vel.y = 60.0f;
+                vel.z = HuMathSin(ang) * t;
+                p->unk_30 = -4.0f;
+                p->unk_3E = ang;
+                p->unk_3C++;
+                p->unk_3A = 0;
+                func_80108E98_21F288_BombsAway(func_800797DC_7A3DC(0x111, p->unk_06), &pos);
+                p->unk_42 = 1;
+                omVibrate(p->unk_06, 30, 0, 30);
+                if (D_8010DEB4_2242A4_BombsAway == 0) {
+                    func_80079798_7A398(0x290, p->unk_06);
+                    D_8010DEB4_2242A4_BombsAway = 10;
+                }
+            }
+            vel.y += p->unk_30;
+            pos.x += vel.x;
+            pos.y += vel.y;
+            pos.z += vel.z;
+            n = p->unk_3A;
+            if (n >= 7) {
+                p->unk_3A = n - 6;
+            }
+            func_800B37C0_B43C0(m1);
+            func_800B1CC0_B28C0(m1, p->unk_3A * 60.0f, 0.0f, 1.0f, 0.0f);
+            m1[3][3] = 1.0f;
+            func_80108ACC_21EEBC_BombsAway(&vel, &d);
+            func_800B37C0_B43C0(m2);
+            func_800B2060_B2C60(m2, d.x + 90.0f, d.y, d.z);
+            m2[3][3] = 1.0f;
+            func_800B6410_B7010(m1, m2, m2);
+            func_80108B54_21EF44_BombsAway(m2, &d);
+            obj->rot.x = d.x;
+            obj->rot.y = d.y;
+            obj->rot.z = d.z;
+            if (vel.y < 0.0 && pos.y < -50.0) {
+                p->unk_02 = 5;
+                p->unk_3C = 0;
+                obj->rot.x = obj->rot.z = 0.0f;
+            }
+            break;
+    }
+    p->unk_18 = pos.x - obj->trans.x;
+    p->unk_1C = pos.y - obj->trans.y;
+    p->unk_20 = pos.z - obj->trans.z;
+    p->unk_0C = vel.x;
+    p->unk_10 = vel.y;
+    p->unk_14 = vel.z;
+    obj->trans.x = pos.x;
+    obj->trans.y = pos.y;
+    obj->trans.z = pos.z;
+    p->unk_3A++;
+    func_80019378_19F78(obj);
+    func_80019644_1A244(obj);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801055FC_21B9EC_BombsAway);
+#endif
+
+/* The platform object's setup (MP1 func_800F9824). */
+void func_801060C8_21C4B8_BombsAway(omObjData* obj) {
+    u8* w;
+
+    obj->func_ptr = func_80106228_21C618_BombsAway;
+    obj->model[0] = func_80018A30_19630(0x3B0002, 0x99);
+    D_8010DB60_223F50_BombsAway.x = obj->trans.x = 0.0f;
+    D_8010DB64_223F54_BombsAway = obj->trans.y = -20.0f;
+    D_8010DB68_223F58_BombsAway = obj->trans.z = 670.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    D_8010DB58_223F48_BombsAway = 160.0f;
+    D_8010DB5C_223F4C_BombsAway = 0.8f;
+    obj->unk_50 = w = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    w[3] = 1;
+    w[4] = 0;
+    func_8000BF24_CB24(obj, 0.0f, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106228_21C618_BombsAway);
 
