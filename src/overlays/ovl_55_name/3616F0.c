@@ -738,11 +738,83 @@ void func_80104B1C_363A0C_name_55(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80105074_363F64_name_55);
+void func_80105074_363F64_name_55(void) {
+    s32 win;
+    s32 mes;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80105284_364174_name_55);
+    if (D_8010C58A_36B47A_name_55 != 5) {
+        func_8008DACC_8E6CC(1, D_8010C530_36B420_name_55, 0x4DE);
+    } else {
+        func_8008DACC_8E6CC(1, D_8010C530_36B420_name_55, 0x23C);
+    }
+    win = func_8005AAC0_5B6C0(30, 70, D_8010C530_36B420_name_55[0], D_8010C530_36B420_name_55[1]);
+    if (D_8010C58A_36B47A_name_55 != 5) {
+        func_800890CC_89CCC(win, 0x4DE, -1, -1);
+    } else {
+        func_800890CC_89CCC(win, 0x23C, -1, -1);
+    }
+    ShowTextWindow(win);
+    func_80057DA4_589A4(win);
+    func_8005762C_5822C(win);
+    for (i = 0; i < 4; i++) {
+        if (i == 0) {
+            func_800614B4_620B4(0, 10);
+        } else {
+            func_8006135C_61F5C(i, 10, 0);
+        }
+        func_800595E8_5A1E8(PLAYER_MODEL(i), 7, 0);
+        func_80059520_5A120(PLAYER_MODEL(i), 2, 2);
+    }
+    HuPrcSleep(30);
+    if (D_8010C58A_36B47A_name_55 != 5) {
+        if (D_8010C58A_36B47A_name_55 != 6) {
+            mes = 0x4DF;
+        } else {
+            mes = 0x6CD;
+        }
+    } else {
+        mes = 0x23D;
+    }
+    func_8008DACC_8E6CC(1, D_8010C530_36B420_name_55, mes);
+    win = func_8005AAC0_5B6C0(30, 70, D_8010C530_36B420_name_55[0], D_8010C530_36B420_name_55[1]);
+    func_800890CC_89CCC(win, mes, -1, -1);
+    ShowTextWindow(win);
+    func_80057DA4_589A4(win);
+    func_8005762C_5822C(win);
+    if (D_8010C58A_36B47A_name_55 == 5) {
+        MBMotionShiftSet(D_8010C56C_36B45C_name_55, 1, 0, 4, 2);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80105328_364218_name_55);
+/* MP1 func_800F66E8: sort the player records by GW_PLAYER.unk_1C[0] (the turn order). */
+void func_80105284_364174_name_55(void) {
+    s32 i;
+    s32 j;
+
+    for (i = 3; i > 0; i--) {
+        for (j = 0; j < i; j++) {
+            if ((u8)gPlayers[j].unk_1C[0] > (u8)gPlayers[j + 1].unk_1C[0]) {
+                func_80105328_364218_name_55(j, j + 1);
+            }
+        }
+    }
+}
+
+/* MP1 func_800F6660: swap two player records. */
+void func_80105328_364218_name_55(s32 a, s32 b) {
+    GW_PLAYER* pa;
+    GW_PLAYER* pb;
+    GW_PLAYER* tmp;
+
+    pa = BoardPlayerGet(a);
+    pb = BoardPlayerGet(b);
+    tmp = HuMemMemoryAllocPerm(sizeof(GW_PLAYER));
+    bcopy(pa, tmp, sizeof(GW_PLAYER));
+    bcopy(pb, pa, sizeof(GW_PLAYER));
+    bcopy(tmp, pb, sizeof(GW_PLAYER));
+    HuMemMemoryFreePerm(tmp);
+}
 
 __asm__(".section .rodata");
 const u32 D_8010C4F0_36B3E0_name_55[3] = { 0x3F800000, 0x00000000, 0x00000000 };
