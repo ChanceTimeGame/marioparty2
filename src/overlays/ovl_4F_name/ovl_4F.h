@@ -257,7 +257,9 @@ void func_8010ADA0_33D9E0_name_4F(void);
 void func_8010AED4_33DB14_name_4F(void);
 void func_8010B4E8_33E128_name_4F(void);
 void func_8010B620_33E260_name_4F(void);
-/* fork D */
+/* fork D: 8010C7CC-8010D15C end 336DE0.c; retail's third file 33FE50.c (8010D210-8010F188, its own
+   .rodata from 0x343040) is an effect library: up to four effect objects (slots) with per-frame-buffer
+   vertex/display-list buffers, func_8010D4D8 streaks, func_8010DD7C a disc, func_8010E610 a bolt. */
 
 /* Work of a growing, fading ring (func_8010CE1C). */
 typedef struct Ovl4FRingWork {
@@ -283,6 +285,32 @@ typedef struct Ovl4FDiscWork {
     /* 0x150 */ f32 vel[17][4];  /* their steps per frame; [3] the fade */
     /* 0x260 */ f32 radius;
 } Ovl4FDiscWork; /* size = 0x264 */
+
+/* Work of the bolt func_8010E610: a jagged ribbon that grows segment by segment from the
+   object along dir (two edges, an inner and an outer strip, each side of a spine). */
+typedef struct Ovl4FBoltWork {
+    /* 0x0000 */ Vec dir;
+    /* 0x000C */ Vec edge[2][65];    /* inner strip, per side */
+    /* 0x0624 */ Vec spine[65];
+    /* 0x0930 */ Vec side;           /* horizontal, perpendicular to dir */
+    /* 0x093C */ Vec dirA[2];        /* inner points' directions of travel */
+    /* 0x0954 */ Vec targetA[2];
+    /* 0x096C */ Vec fwd;            /* this segment's direction */
+    /* 0x0978 */ Vec edge2[2][65];   /* outer strip */
+    /* 0x0F90 */ Vec dirB[2];
+    /* 0x0FA8 */ Vec targetB[2];
+    /* 0x0FC0 */ f32 width;
+    /* 0x0FC4 */ f32 seg[65];        /* per segment: length left to grow */
+    /* 0x10C8 */ f32 speed;
+    /* 0x10CC */ f32 length;
+    /* 0x10D0 */ s16 count;          /* points so far (at most 64) */
+    /* 0x10D2 */ s16 sign;           /* zigzag side */
+    /* 0x10D4 */ u16 mode;           /* at the end: 0 grow again turned, 1 fade */
+    /* 0x10D6 */ u16 done;
+    /* 0x10D8 */ u8 col0[4];
+    /* 0x10DC */ f32 colVel[4];
+    /* 0x10EC */ f32 col[65][4];
+} Ovl4FBoltWork; /* size = 0x14FC */
 
 f64 fabs(f64);
 u8 rand8(void);
@@ -335,14 +363,15 @@ void func_8010DA90_3406D0_name_4F(omObjData* obj, f32 x, f32 y, f32 z, u8 frames
 omObjData* func_8010DD7C_3409BC_name_4F(void);
 void func_8010DDCC_340A0C_name_4F(omObjData* obj);
 void func_8010DFCC_340C0C_name_4F(omObjData* obj);
-void func_8010E430_341070_name_4F(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_8010E5D8_341218_name_4F(s32 arg0);
-s32 func_8010E610_341250_name_4F(void);
+void func_8010E430_341070_name_4F(omObjData* obj, f32 x, f32 y, f32 z, f32 rotY);
+void func_8010E5D8_341218_name_4F(omObjData* obj);
+omObjData* func_8010E610_341250_name_4F(void);
 void func_8010E660_3412A0_name_4F(omObjData* obj);
-s32 func_8010E70C_34134C_name_4F(omObjData* obj, s32 arg1, s32 arg2);
+void func_8010E70C_34134C_name_4F(omObjData* obj, Gfx* gfx, Vtx* vtx);
 void func_8010E950_341590_name_4F(omObjData* obj);
-void func_8010EF9C_341BDC_name_4F(omObjData* obj, s32 arg1, s32 arg2, s32 arg3);
-void func_8010F128_341D68_name_4F(void);
-void func_8010F188_341DC8_name_4F(s32 arg0);
+void func_8010EF9C_341BDC_name_4F(omObjData* obj, u8* col, f32* colVel, Vec* dir, f32 width, f32 length, f32 speed,
+                                  u16 mode);
+void func_8010F128_341D68_name_4F(Ovl4FBoltWork* work);
+u16 func_8010F188_341DC8_name_4F(Ovl4FBoltWork* work);
 
 #endif
