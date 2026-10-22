@@ -23,6 +23,7 @@
 #include "game/malloc.h"
 #include "game/camera.h"
 #include "game/sprite.h"
+#include "game/pad.h"
 
 /* ---- types ---- */
 
