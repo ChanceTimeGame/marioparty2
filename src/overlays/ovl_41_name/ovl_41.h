@@ -592,5 +592,14 @@ extern s16 D_801112E0_2BFBA0_name_41[3][2]; /* boat: per pier, its space and the
 extern s16 D_801112EC_2BFBAC_name_41[3]; /* boat: per pier, the space where the turn continues */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029A8C_2A68C(s16);
+extern s16* D_8011133C_2BFBFC_name_41[2]; /* cannon: per cannon, its target spaces (-1 ends) */
+extern s16 D_80111344_2BFC04_name_41[2]; /* cannon: per cannon, its space */
+extern f32 D_80111348_2BFC08_name_41[4][2]; /* per player: x, z offset at the start space */
+extern f32 D_80111368_2BFC28_name_41[2][2]; /* cannon: per cannon, camera x, z offset */
+void func_80023124_23D24(void);
+void func_800599F0_5A5F0(void);
+s32 func_80059A68_5A668(s32 arg0, s32 arg1);
+void func_80059B08_5A708(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
+void func_80059BCC_5A7CC(s32 arg0);
 
 #endif

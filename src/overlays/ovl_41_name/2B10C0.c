@@ -2939,10 +2939,133 @@ void func_8010FC54_2BE514_name_41(s32 player) {
     MBMotionSet(p->unk_24, 4, 2);
 }
 
-__asm__(".section .rodata");
-const u32 D_80111E60_2C0720_name_41[12] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x3F800000, 0x00000000, 0x3F800000, 0x00000000, 0x00000000, 0xBF800000, 0x00000000, 0x00000000 };
+/* The cannon (arg0: which, D_8011133C[arg0] lists its target spaces, ending -1): the camera
+   centres on the targets (their mean + D_80111368[arg0]); for each target space with players on
+   it a cannonball (model 0x7F) flies from space D_80111344[arg0], explodes (func_8010ABC4) and
+   knocks them back (func_8010FC54). After a fade the hit players are back at the start space
+   (chain 0, space 0), offset by D_80111348[player]. */
+void func_8010FD98_2BE658_name_41(s32 arg0) {
+    Vec pos[4];
+    Vec save;
+    s16* targets = D_8011133C_2BFBFC_name_41[arg0];
+    GW_PLAYER* player = BoardPlayerGet(-1);
+    Vec vel[4] = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f } };
+    SpaceData* space;
+    MBModel* ball;
+    s32 i;
+    s32 j;
+    s32 hit;
+    s32 allHit;
+    s32 fx;
+    SpaceData* cannon;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_8010FD98_2BE658_name_41);
+    i = 0;
+    func_80061518_62118();
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.0f));
+    HuPrcChildWatch();
+    HuVecCopyXYZ(&pos[0], 0.0f, 0.0f, 0.0f);
+    while (targets[i] != -1) {
+        space = GetSpaceData(targets[i++]);
+        pos[0].x += space->coords.x;
+        pos[0].y += space->coords.y;
+        pos[0].z += space->coords.z;
+    }
+    pos[0].x /= i;
+    pos[0].y /= i;
+    pos[0].z /= i;
+    pos[0].x += D_80111368_2BFC28_name_41[arg0][0];
+    pos[0].z += D_80111368_2BFC28_name_41[arg0][1];
+    func_800B3170_B3D70(&save, &((MBModel*)player->unk_24)->pos);
+    func_800636F8_642F8(4);
+    func_80063734_64334(&pos[0]);
+    MBCameraSpeedSet(3.0f);
+    HuPrcSleep(5);
+    while (func_80053998_54598() != 0) {
+        HuPrcVSleep();
+    }
+    HuPrcSleep(5);
+    allHit = 0;
+    MBCameraSpeedSet(-1.0f);
+    i = 0;
+    cannon = GetSpaceData(D_80111344_2BFC04_name_41[arg0]);
+    func_800599F0_5A5F0();
+    fx = func_80059A68_5A668(0xA015F, 4);
+    if (targets[0] != -1) {
+        do {
+            hit = 0;
+            for (j = 0; j < 4; j++) {
+                player = BoardPlayerGet(j);
+                if (GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index) == targets[i]) {
+                    allHit |= 1 << j;
+                    hit |= 1 << j;
+                }
+            }
+            if (hit != 0) {
+                PlaySound(0x3AA);
+                func_8010ABC4_2B9484_name_41(&cannon->coords, 0.1f, 4.0f, 1, vel);
+                ball = func_80043510_44110(0x7F, NULL);
+                func_800B3170_B3D70(&ball->pos, &cannon->coords);
+                func_80056D80_57980(&ball->pos, &GetSpaceData(targets[i])->coords, &ball->pos, 30);
+                ball->jumpVel = 9.0f;
+                ball->jumpAccel = -0.6f;
+                HuPrcSleep(27);
+                MBModelDispOff(ball);
+                for (j = 0; j < 4; j++) {
+                    if (hit & (1 << j)) {
+                        player = BoardPlayerGet(j);
+                        func_8010FC54_2BE514_name_41(j);
+                        func_80059B08_5A708(fx, ((MBModel*)player->unk_24)->pos.x, ((MBModel*)player->unk_24)->pos.y,
+                                            ((MBModel*)player->unk_24)->pos.z, 4);
+                    }
+                }
+                HuPrcSleep(3);
+                MBModelKill(ball);
+            }
+            i++;
+        } while (targets[i] != -1);
+    }
+    HuPrcSleep(30);
+    func_80059BCC_5A7CC(fx);
+    func_80023124_23D24();
+    InitFadeOut(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    func_800636F8_642F8(2);
+    space = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(0, 0));
+    func_80063710_64310(&space->coords);
+    HuPrcSleep(5);
+    func_80061584_62184();
+    InitFadeIn(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (allHit & (1 << i)) {
+            MBPlayerForwardSet(i);
+            player = BoardPlayerGet(i);
+            MBModelDispOn(player->unk_24);
+            ((MBModel*)player->unk_24)->attr &= ~1;
+            HuVecCopyXYZ(&((MBModel*)player->unk_24)->pos, space->coords.x + D_80111348_2BFC08_name_41[i][0], 120.0f,
+                         space->coords.z + D_80111348_2BFC08_name_41[i][1]);
+            HuVecCopyXYZ(&pos[i], ((MBModel*)player->unk_24)->pos.x, 0.0f, ((MBModel*)player->unk_24)->pos.z);
+            func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &pos[i], &((MBModel*)player->unk_24)->pos, 10);
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if (allHit & (1 << i)) {
+            func_800797DC_7A3DC(0xFC, i);
+        }
+    }
+    HuPrcSleep(10);
+    for (i = 0; i < 4; i++) {
+        if (allHit & (1 << i)) {
+            func_80079798_7A398(0xA6, i);
+        }
+    }
+    HuPrcSleep(50);
+    omDelPrcObj(NULL);
+}
 
 void func_801103B4_2BEC74_name_41(void) {
     func_8010FD98_2BE658_name_41(0);
