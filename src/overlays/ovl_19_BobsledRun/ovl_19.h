@@ -400,6 +400,10 @@ s32 PlaySound(s32);
    from the first one's y (D_8010C15E): [-1..1] = first, [2..4] = second. */
 extern s16 D_8010C15E_19ACFE_BobsledRun[];
 extern Vec3f D_8010C168_19AD08_BobsledRun[6]; /* CPU aim points behind the gate (x 0 = end) */
+extern Vec3f D_8010C1BC_19AD5C_BobsledRun[82]; /* CPU path, BRTeam::path != 0 */
+extern Vec3f D_8010C4F8_19B098_BobsledRun[82]; /* CPU path, BRTeam::path == 0 */
+extern Vec3f D_8010C8C4_19B464_BobsledRun[6]; /* CPU brake zones (top y, bottom y, speed / 80) */
+extern Vec3f D_8010C90C_19B4AC_BobsledRun[6];
 f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);

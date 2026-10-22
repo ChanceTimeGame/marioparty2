@@ -2204,7 +2204,98 @@ s32 func_80109D94_198934_BobsledRun(omObjData* obj, f32 skill, s8 port) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80109F78_198B18_BobsledRun);
+/* CPU team: push off at random, then steer along the path and brake in the brake zones. */
+void func_80109F78_198B18_BobsledRun(omObjData* obj, s8 player, s8 port) {
+    BRWork* work;
+    f32 skill;
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 a;
+    f32 s;
+    f32 ty;
+    u32 chance;
+    s32 i;
+
+    work = obj->unk_50;
+    switch (gPlayers[player].cpu_difficulty) {
+        case 0:
+            skill = 0.7f;
+            chance = 0xD8;
+            break;
+        case 1:
+            skill = 0.8f;
+            chance = 0xB8;
+            break;
+        case 2:
+            skill = 0.9f;
+            chance = 0x90;
+            break;
+        default:
+            chance = 0x60;
+            skill = 1.0f;
+            break;
+    }
+    switch (D_8010C048_19ABE8_BobsledRun[work->unk_59].state) {
+        case 0:
+            if (chance < rand8()) {
+                ContBtnTrg[port] |= 0x8000;
+            }
+            break;
+        case 2:
+            ContStkY[port] = -60;
+            break;
+        default:
+            if (func_80109D94_198934_BobsledRun(obj, skill, port) == 0) {
+                i = 0;
+                do {
+                    if (D_8010C048_19ABE8_BobsledRun[work->unk_59].path != 0) {
+                        px = D_8010C1BC_19AD5C_BobsledRun[i].x;
+                        py = D_8010C1BC_19AD5C_BobsledRun[i].y;
+                        pz = D_8010C1BC_19AD5C_BobsledRun[i].z;
+                    } else {
+                        px = D_8010C4F8_19B098_BobsledRun[i].x;
+                        py = D_8010C4F8_19B098_BobsledRun[i].y;
+                        pz = D_8010C4F8_19B098_BobsledRun[i].z;
+                    }
+                    if (px == 0.0f) {
+                        break;
+                    }
+                    i++;
+                    if (py < obj->trans.y) {
+                        px -= obj->trans.x;
+                        pz -= obj->trans.z;
+                        a = work->unk_3C - 90.0f;
+                        s = HuMathSin(a);
+                        ContStkX[port] = func_8000DA2C_E62C(px, pz, s, func_800B7890_B8490(a)) * 120.0f * skill;
+                        break;
+                    }
+                } while (i < 82);
+            }
+            ContStkY[port] = skill * 60.0f;
+            for (i = 0; i < 6; i++) {
+                if (D_8010C048_19ABE8_BobsledRun[work->unk_59].path != 0) {
+                    px = D_8010C8C4_19B464_BobsledRun[i].x;
+                    py = D_8010C8C4_19B464_BobsledRun[i].y;
+                    pz = D_8010C8C4_19B464_BobsledRun[i].z;
+                } else {
+                    px = D_8010C90C_19B4AC_BobsledRun[i].x;
+                    py = D_8010C90C_19B4AC_BobsledRun[i].y;
+                    pz = D_8010C90C_19B4AC_BobsledRun[i].z;
+                }
+                ty = obj->trans.y;
+                if (ty <= px) {
+                    if (py <= ty) {
+                        if (pz * 80.0f < work->unk_40) {
+                            ContStkY[port] = skill * -60.0f;
+                        }
+                        break;
+                    }
+                }
+            }
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A3AC_198F4C_BobsledRun);
 
