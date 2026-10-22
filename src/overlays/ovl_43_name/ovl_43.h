@@ -592,6 +592,8 @@ extern DecisionTreeNonLeafNode D_80113F2C_2D941C_name_43[];
 extern DecisionTreeNonLeafNode D_80113F5C_2D944C_name_43[];
 extern s16 D_80113FC8_2D94B8_name_43[]; /* direction prompt choices */
 extern s16 D_80113FE0_2D94D0_name_43[]; /* direction prompt choices */
+extern DecisionTreeNonLeafNode D_80114558_2D9A48_name_43[];
+extern DecisionTreeNonLeafNode D_8011457C_2D9A6C_name_43[];
 extern DecisionTreeNonLeafNode D_801145EC_2D9ADC_name_43[];
 extern DecisionTreeNonLeafNode D_80114620_2D9B10_name_43[];
 
