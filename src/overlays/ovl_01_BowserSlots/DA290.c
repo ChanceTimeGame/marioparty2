@@ -606,17 +606,218 @@ void func_80104834_DC2C4_BowserSlots(omObjData* obj) {
     obj->scale.x = obj->scale.y = obj->scale.z = 5.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104914_DC3A4_BowserSlots);
+/* The block object: Bowser's "?" block the player jumps into (model[2]) and two sprite banners. */
+void func_80104914_DC3A4_BowserSlots(omObjData* obj) {
+    s32 anim1;
+    s32 anim2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104BAC_DC63C_BowserSlots);
+    obj->func_ptr = func_80104BAC_DC63C_BowserSlots;
+    obj->model[0] = func_80018A30_19630(0x110003, 0x99);
+    obj->model[1] = func_80018A30_19630(0x110002, 0x4CD);
+    func_800298A4_2A4A4(obj->model[1], 4, 0);
+    func_80029714_2A314(obj->model[1], 0.0f, 250.0f, 0.0f);
+    BS_MODEL(obj->model[1])->unk40 = 0.0f;
+    BS_MODEL(obj->model[1])->unk44 = 0.0f;
+    D_8010C0F0_E3B80_BowserSlots[0] = anim1 = func_8010A074_E1B04_BowserSlots(0x11000D) & 0xFFFF;
+    obj->model[2] = func_80108EE4_E0974_BowserSlots(SprAnimGet(anim1), 1.0f);
+    func_80109AF8_E1588_BowserSlots(obj->model[2], SprAnimGet(anim1), 0);
+    obj->model[3] = func_80109BC8_E1658_BowserSlots(obj->model[3], obj->model[2]);
+    func_80029714_2A314(obj->model[2], -790.0f, 900.0f, -1600.0f);
+    func_80029714_2A314(obj->model[3], 790.0f, 900.0f, -1600.0f);
+    D_8010C0F0_E3B80_BowserSlots[1] = anim2 = func_8010A074_E1B04_BowserSlots(0x11000C) & 0xFFFF;
+    obj->model[4] = func_80108EE4_E0974_BowserSlots(SprAnimGet(anim2), 0.25f);
+    obj->model[5] = func_80109BC8_E1658_BowserSlots(obj->model[5], obj->model[4]);
+    func_80029714_2A314(obj->model[4], -780.0f, 830.0f, -1550.0f);
+    func_80029714_2A314(obj->model[5], 780.0f, 830.0f, -1550.0f);
+    func_800297E8_2A3E8(obj->model[4], 3.0f, 3.0f, 1.0f);
+    func_800297E8_2A3E8(obj->model[5], 3.0f, 3.0f, 1.0f);
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
+    obj->work[2] = anim1;
+    obj->work[3] = anim2;
+    InitFadeIn(0, 16);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104DDC_DC86C_BowserSlots);
+/* Block object: work[0] drops the block back down after a hit, work[1] waits for its bump
+   animation; the banners pulse. */
+void func_80104BAC_DC63C_BowserSlots(omObjData* obj) {
+    HmfModel* block = BS_MODEL(obj->model[1]);
+    f32 scale;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80105034_DCAC4_BowserSlots);
+    switch (obj->work[0]) {
+        case 1:
+            block->pos.y = 310.0f;
+            D_8010C0C8_E3B58_BowserSlots = 0.0f;
+            obj->work[0]++;
+        case 2:
+            block->pos.y += D_8010C0C8_E3B58_BowserSlots;
+            D_8010C0C8_E3B58_BowserSlots -= 6.0;
+            if (block->pos.y <= 250.0) {
+                block->pos.y = 250.0f;
+                D_8010C0C8_E3B58_BowserSlots = 0.0f;
+                obj->work[0]++;
+            }
+            break;
+    }
+    if (obj->work[1] == 1 && func_80029D0C_2A90C(obj->model[1]) <= block->unk40) {
+        block->unk18 |= 4;
+        obj->work[1] = 0;
+    }
+    if (++D_8010B7E4_E3274_BowserSlots >= 16) {
+        D_8010B7E4_E3274_BowserSlots = 0;
+    }
+    func_80109AF8_E1588_BowserSlots(obj->model[2], SprAnimGet(obj->work[2]), (u16)D_8010B7E4_E3274_BowserSlots);
+    obj->model[3] = func_80109BC8_E1658_BowserSlots(obj->model[3], obj->model[2]);
+    D_8010B7E8_E3278_BowserSlots += 30;
+    if (D_8010B7E8_E3278_BowserSlots >= 360) {
+        D_8010B7E8_E3278_BowserSlots -= 360;
+    }
+    scale = HuMathSin(D_8010B7E8_E3278_BowserSlots) * 0.3 + 3.0;
+    func_800297E8_2A3E8(obj->model[4], scale, scale, 1.0f);
+    func_800297E8_2A3E8(obj->model[5], scale, scale, 1.0f);
+}
 
+/* The player against the block: landing on it from below stops a reel (func_80106254), the
+   sides push the player out. */
+void func_80104DDC_DC86C_BowserSlots(omObjData* obj) {
+    BSPlayerWork* work = obj->unk_50;
+    HmfModel* block = BS_MODEL(D_8010C034_E3AC4_BowserSlots->model[1]);
+    s32 under = 0;
+    f32 dx;
+    f32 dz;
+
+    if (D_8010C034_E3AC4_BowserSlots->work[1] == 0) {
+        if (block->pos.y <= obj->trans.y + D_8010B7EC_E327C_BowserSlots[D_8010C060_E3AF0_BowserSlots]) {
+            under = 1;
+        }
+        dx = obj->trans.x - block->pos.x;
+        dz = obj->trans.z - block->pos.z;
+        if (fabs(dx) <= 60.0 && fabs(dz) <= 60.0) {
+            if (under) {
+                if (D_8010B804_E3294_BowserSlots == 0 && work->unk_38 < 0.0) {
+                    obj->trans.y = block->pos.y - D_8010B7EC_E327C_BowserSlots[D_8010C060_E3AF0_BowserSlots] * 1.1;
+                    work->unk_38 = 0.0f;
+                    D_8010C034_E3AC4_BowserSlots->work[0] = 1;
+                    if (func_80106254_DDCE4_BowserSlots() >= 2) {
+                        func_80105034_DCAC4_BowserSlots();
+                    }
+                } else if (under) {
+                    if (dz < dx) {
+                        if (dx >= 0.0) {
+                            obj->trans.x = block->pos.x + 60.0;
+                        } else {
+                            obj->trans.x = block->pos.x - 60.0;
+                        }
+                    } else {
+                        if (dz >= 0.0) {
+                            obj->trans.z = block->pos.z + 60.0;
+                        } else {
+                            obj->trans.z = block->pos.z - 60.0;
+                        }
+                    }
+                }
+            }
+        }
+        D_8010B804_E3294_BowserSlots = under;
+    }
+}
+
+/* Starts the block's bump animation. */
+void func_80105034_DCAC4_BowserSlots(void) {
+    HmfModel* block = BS_MODEL(D_8010C034_E3AC4_BowserSlots->model[1]);
+
+    if (D_8010C034_E3AC4_BowserSlots->work[1] == 0) {
+        block->unk40 = 0.0f;
+        block->unk44 = 1.0f;
+        D_8010C034_E3AC4_BowserSlots->work[1] = 1;
+    }
+}
+
+/* The machine object: the slot machine, its lever and lamps, the item sprite and the three
+   reels (a texture of the eight faces' items on each, func_80107D68). */
+#ifdef NON_MATCHING
+/* masked 4: the lever model id is kept in s6 sign-extended at once and copied to s0 for two calls; GCC extends it at the copy */
+void func_80105088_DCB18_BowserSlots(omObjData* obj) {
+    BSReel* reel = D_8010C0D0_E3B60_BowserSlots;
+    s16 model;
+    s32 anim;
+    s32 i;
+    s32 j;
+
+    omSetStatBit(obj, 0xA0);
+    obj->func_ptr = func_801054E8_DCF78_BowserSlots;
+    obj->model[0] = func_80018A30_19630(0x110000, 0xB9);
+    D_8010C0CC_E3B5C_BowserSlots = func_80027154_27D54(10, BS_MODEL(obj->model[0])->hmf->unk0E);
+    for (i = 0; i < 5; i++) {
+        D_8010C0CC_E3B5C_BowserSlots[i] = D_800CAFD8[i];
+    }
+    model = func_80018A30_19630(0x110001, 0x8D);
+    obj->model[1] = model;
+    HmfModelObjAttrSet(model, 0x20000, 0x20000);
+    func_80029A8C_2A68C(model);
+    D_8010C0F8_E3B88_BowserSlots[0] = func_8010A074_E1B04_BowserSlots(0x11000A) & 0xFFFF;
+    anim = D_8010C0F8_E3B88_BowserSlots[0];
+    obj->model[2] = func_80018A30_19630(0x110004, 0xB9);
+    BS_MODEL(obj->model[2])->unk44 = 0.0f;
+    BS_MODEL(obj->model[2])->unk40 = 0.0f;
+    obj->model[3] = func_80018A30_19630(0x110005, 0xB9);
+    BS_MODEL(obj->model[3])->unk44 = 0.0f;
+    BS_MODEL(obj->model[3])->unk40 = 0.0f;
+    obj->model[4] = func_80018A30_19630(0x110007, 0x9D);
+    obj->model[5] = func_80018A30_19630(0x110006, 0x9D);
+    func_80029714_2A314(obj->model[4], 0.0f, 550.0f, -400.0f);
+    func_8002A00C_2AC0C(obj->model[4]);
+    func_801078F0_DF380_BowserSlots(obj->model[4], obj->model[5]);
+    D_8010C0F8_E3B88_BowserSlots[1] = func_8010A074_E1B04_BowserSlots(0x11000B) & 0xFFFF;
+    obj->model[6] = func_8010879C_E022C_BowserSlots(SprAnimGet((s16)D_8010C0F8_E3B88_BowserSlots[1]), 1.0f);
+    func_800298A4_2A4A4(obj->model[6], 4, 4);
+    for (i = 0; i < 3; i++, reel++) {
+        for (j = 0; j < 8; j++) {
+            D_8010BFB0_E3A40_BowserSlots[j] = func_8010770C_DF19C_BowserSlots(D_8010B6D0_E3160_BowserSlots[i][j]);
+        }
+        reel->model = func_80107D68_DF7F8_BowserSlots(model, anim, D_8010B818_E32A8_BowserSlots[i], D_8010BFB0_E3A40_BowserSlots) & 0xFFFF;
+        reel->state = 6;
+        reel->timer = -2;
+        reel->turns = 0;
+        reel->passed = 0;
+        reel->symbol = -1;
+        reel->face = -1;
+        reel->target = -1;
+        reel->unk_20 = 0;
+        reel->angle = (u8)(rand8() % 7) * 45.0;
+        reel->offset = 135.0f;
+        reel->speed = 0.0f;
+        reel->accel = 0.0f;
+        reel->maxSpeed = 7.0f;
+        reel->part = func_8002A9F4_2B5F4(model, D_8010B818_E32A8_BowserSlots[i]);
+    }
+    D_8010C0D4_E3B64_BowserSlots = 0;
+    D_8010C0D8_E3B68_BowserSlots = -1;
+    D_8010C0DC_E3B6C_BowserSlots = -1;
+    D_8010C0E0_E3B70_BowserSlots = -1;
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80105088_DCB18_BowserSlots);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801054E8_DCF78_BowserSlots);
+void func_801054E8_DCF78_BowserSlots(omObjData* obj) {
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        func_80105568_DCFF8_BowserSlots(obj);
+        if (obj->work[0] != 0) {
+            func_80105AE4_DD574_BowserSlots(obj);
+        }
+        if (obj->work[1] != 0) {
+            func_80105C28_DD6B8_BowserSlots(obj);
+        }
+    }
+    if (obj->work[2] != 0) {
+        func_80105D5C_DD7EC_BowserSlots(obj);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80105568_DCFF8_BowserSlots);
 

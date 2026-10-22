@@ -103,6 +103,7 @@ void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80030CD4_318D4(Matrix4f, Matrix4f);
 u16 func_80078EA8_79AA8(void);
 f32 HuMathSin(f32);
+f64 fabs(f64);
 s32 PlaySound(s32);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s16 DrawDebugText(u16, u16, char*);
@@ -165,8 +166,7 @@ extern s32 D_8010B7D4_E3264_BowserSlots;
 extern s32 D_8010B7D8_E3268_BowserSlots;          /* CPU: A held frames */
 extern s32 D_8010B7DC_E326C_BowserSlots;          /* CPU: wait frames */
 extern s32 D_8010B7E0_E3270_BowserSlots;          /* CPU: last face seen */
-extern s16 D_8010B7E4_E3274_BowserSlots;
-extern s16 D_8010B7E6_E3276_BowserSlots;
+extern s32 D_8010B7E4_E3274_BowserSlots;
 extern s32 D_8010B7E8_E3278_BowserSlots;          /* sine angle */
 extern f32 D_8010B7EC_E327C_BowserSlots[];        /* per character: height */
 extern s32 D_8010B804_E3294_BowserSlots;          /* player was under the block */
@@ -291,13 +291,13 @@ void func_80107740_DF1D0_BowserSlots(s32 model);
 void func_801078F0_DF380_BowserSlots(s32 model, s32 arg1);
 void func_801079B8_DF448_BowserSlots(s32 model, f32 arg1, f32 arg2, f32 arg3);
 void func_80107BCC_DF65C_BowserSlots(s32 model, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
-u16 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items);
+s32 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items); /* returns a u16 (callers re-mask it) */
 s16 func_8010879C_E022C_BowserSlots(void* anim, f32 scale);
 s16 func_80108EE4_E0974_BowserSlots(void* anim, f32 scale);
 void func_80109AF8_E1588_BowserSlots(u16 model, void* anim, s32 frame);
 s16 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
 s32 func_80109C5C_E16EC_BowserSlots(void* arg0, void* arg1, f32 arg2, u16 arg3, u16 arg4);
-u16 func_8010A074_E1B04_BowserSlots(s32 file); /* sprite animation from a file */
+s32 func_8010A074_E1B04_BowserSlots(s32 file); /* sprite animation from a file; returns a u16 (callers re-mask it: retail called it unprototyped) */
 void func_8010A0B8_E1B48_BowserSlots(void);
 void func_8010A0EC_E1B7C_BowserSlots(s32 arg0, s32 arg1, s32 arg2);
 void func_8010A138_E1BC8_BowserSlots(s32 arg0, s32 arg1);
