@@ -61,6 +61,26 @@ s32 func_8002838C_28F8C(s32, void*, s32);
 void* HuMemAlloc(s32 size);
 void HuMemFree(void*);
 void func_800204C0_210C0(s32, Gfx**);
+s16 LoadFormFile(s32, s32);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+void func_8000C36C_CF6C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->rot */
+void func_8000C37C_CF7C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->scale */
+s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
+void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4); /* model motion blend */
+f32 func_80029D0C_2A90C(s16); /* motion length */
+
+/* Per-character data, 0x18 bytes each (as 2C's TipsyCharData). */
+typedef struct CGCharData {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s32 unk_04; /* motion file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ char unk_10[8];
+} CGCharData;
+extern CGCharData D_800CD438_CE038[];
 extern u16 D_800F9564_FA164; /* the model being drawn */
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
@@ -77,7 +97,7 @@ extern f32 D_800FA610_FB210;  /* CZoom */
 /* ---- structs ---- */
 
 /* Work of the prizes (D_800F9CE0_FA8E0, func_80106F00) and of the claw operator (func_80104854):
-   main's minigame work (0xE8+ bytes; pointers at the end). Fields from the asm. */
+   main's minigame work (0x15C bytes; MP1's 0xE8 with fields from 0x50 moved). Fields from the asm. */
 typedef struct CGWork {
     /* 0x00 */ char unk_00[0x34];
     /* 0x34 */ f32 unk34; /* half width */
@@ -86,7 +106,17 @@ typedef struct CGWork {
     /* 0x40 */ f32 unk40; /* speed */
     /* 0x44 */ char unk_44[0xC];
     /* 0x50 */ s16 unk50; /* state; < 0 out of play */
-} CGWork;
+    /* 0x52 */ u8 unk52;
+    /* 0x53 */ char unk_53[4];
+    /* 0x57 */ s8 unk57; /* controller port */
+    /* 0x58 */ char unk_58[1];
+    /* 0x59 */ u8 unk59; /* player */
+    /* 0x5A */ char unk_5A[0x76];
+    /* 0xD0 */ u16 unkD0; /* MP1 0xC0 */
+    /* 0xD2 */ char unk_D2[0x16];
+    /* 0xE8 */ void* unkE8; /* per motion blocks (MP1 0xD8) */
+    /* 0xEC */ char unk_EC[0x70];
+} CGWork; /* size = 0x15C */
 
 #define CG_WORK(obj) ((CGWork*)(obj)->unk_50)
 
