@@ -274,7 +274,7 @@ void func_80105284_364174_name_55(void);
 void func_80105328_364218_name_55(s32 a, s32 b);
 void func_801053B0_3642A0_name_55(void);
 void func_801054B4_3643A4_name_55(omObjData* obj);
-u8 func_801055A4_364494_name_55(MBModel* model, s16 motion, s16 shiftAttr, u8 count);
+s32 func_801055A4_364494_name_55(MBModel* model, s16 motion, s16 shiftAttr, u8 count);
 
 /* ---- 364580.c (fork B) ---- */
 

@@ -816,17 +816,64 @@ void func_80105328_364218_name_55(s32 a, s32 b) {
     HuMemMemoryFreePerm(tmp);
 }
 
-__asm__(".section .rodata");
-const u32 D_8010C4F0_36B3E0_name_55[3] = { 0x3F800000, 0x00000000, 0x00000000 };
+/* The board camera: fixed position, target and up angles (pitch, yaw) from three local tables. */
+void func_801053B0_3642A0_name_55(void) {
+    Vec angle = { 1.0f, 0.0f, 0.0f };
+    Vec target = { 0.0f, 100.0f, 2000.0f };
+    Vec pos = { 0.0f, 100.0f, -900.0f };
+    Vec up;
 
-__asm__(".section .rodata");
-const u32 D_8010C4FC_36B3EC_name_55[3] = { 0x00000000, 0x42C80000, 0x44FA0000 };
+    Hu3DCamSetPerspective(0, 45.0f, 80.0f, 8000.0f);
+    while (TRUE) {
+        up.x = HuMathSin(angle.y) * HuMathSin(angle.x);
+        up.y = func_800B7890_B8490(angle.x);
+        up.z = func_800B7890_B8490(angle.y) * HuMathSin(angle.x);
+        Hu3DCamSetPositionOrientation(0, &pos, &target, &up);
+        Hu3DCamUpdateMtx(0);
+        HuPrcVSleep();
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_8010C508_36B3F8_name_55[6] = { 0x00000000, 0x42C80000, 0xC4610000, 0x00000000, 0x00000000, 0x00000000 };
+/* 58080.c's func_8005946C with a repeat count: when the model's motion ends, replay it until
+   work[1] plays, then shift to the stored motion and free the slot. */
+void func_801054B4_3643A4_name_55(omObjData* obj) {
+    Ovl55MotionWait* p = &D_800FDCD8_FE8D8[obj->work[0]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_801053B0_3642A0_name_55);
+    if (func_80029CE4_2A8E4(*p->model->obj->model) == func_80029D0C_2A90C(*p->model->obj->model)) {
+        if (++obj->work[2] >= obj->work[1]) {
+            MBMotionShiftSet(p->model, p->motion, 0, 10, p->shiftAttr);
+            p->model = NULL;
+            p->obj = NULL;
+            omDelObj(obj);
+            return;
+        }
+        func_80029C74_2A874(*p->model->obj->model, 0.0f);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_801054B4_3643A4_name_55);
+/* 58080.c's func_80059520 with a repeat count. */
+s32 func_801055A4_364494_name_55(MBModel* model, s16 motion, s16 shiftAttr, u8 count) {
+    Ovl55MotionWait* p;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_801055A4_364494_name_55);
+    for (i = 0; i < 16; i++) {
+        p = &D_800FDCD8_FE8D8[i];
+        if (p->obj == NULL) {
+            break;
+        }
+    }
+    if (i == 16) {
+        return -1;
+    }
+    p->obj = omAddObj(0x2000, 0, 0, -1, func_801054B4_3643A4_name_55);
+    p->obj->work[0] = i;
+    p->obj->work[1] = count;
+    p->obj->work[2] = 0;
+    p->model = model;
+    p->motion = motion;
+    p->shiftAttr = shiftAttr;
+    return i;
+}
+
+/* Retail's assembler padded each file's .rodata to 16 bytes (0x24 of tables, 0xC of zeros). */
+__asm__(".section .rodata\n\t.balign 16\n\t.text");
