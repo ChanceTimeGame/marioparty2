@@ -997,7 +997,164 @@ s32 func_80106228_32DBE8_name_4E(u8* wins) {
     return n;
 }
 
+#ifdef NON_MATCHING
+/* The win stamps: for each winner (wins[player] != 0; a team's members share one stamp in team
+   modes 1 and 2) a stamp sprite (D_8010DB20[D_8010DBDE++]) is placed in the player's row at the
+   column of their new win count, then shrinks from scale 4 while fading in; when it lands the
+   winners react (func_8005A4EC(player, 3)) and sound 0x37A plays.
+   Same logic as retail; retail's frame is 32 bytes larger (wins spilled to the stack) and its
+   registers differ. */
+void func_801064F0_32DEB0_name_4E(u8* wins) {
+    s8 who[4][4];
+    s16 sprs[4];
+    s16 alpha[4];
+    f32 scale[4];
+    s16 i;
+    s32 j;
+    f32 delay;
+    s32 x0;
+    s32 y;
+    s16 n;
+    s32 k;
+    s32 p;
+    s16 spr;
+    s32 max;
+    s16 cnt;
+    s32 end;
+    s32 left;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            who[i][j] = -1;
+        }
+    }
+    delay = 4.0f;
+    x0 = D_8010D4AC_334E6C_name_4E[D_800FA1A8] + 36;
+    y = (D_801013B8_101FB8.unk40 == 2) ? 0x56 : 0x40;
+    n = 0;
+    switch (D_801013B8_101FB8.unk40) {
+    case 0:
+    case 3:
+    case 7:
+        for (k = 0; k < D_8010DBE0_3355A0_name_4E; k++) {
+            p = D_800F9D48_FA948[0x2F8 + k];
+            if (wins[p] != 0) {
+                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+                espPosSet(spr, x0 + ((D_800FC9B8_FD5B8[2 + p] - 1) << 5), y);
+                func_8001A6BC_1B2BC(spr, 0);
+                func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+                who[n][0] = p;
+                sprs[n] = spr;
+                alpha[n] = 0;
+                scale[n] = delay;
+                delay += 1.0f;
+                n++;
+            }
+            y += 0x2C;
+        }
+        break;
+    case 1:
+        p = D_800F9D48_FA948[0x2F8];
+        if (wins[p] != 0) {
+            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+            espPosSet(spr, x0 + ((D_800FC9B8_FD5B8[2 + p] - 1) << 5), y);
+            func_8001A6BC_1B2BC(spr, 0);
+            func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+            who[n][0] = p;
+            sprs[n] = spr;
+            alpha[n] = 0;
+            scale[n] = delay;
+            delay += 1.0f;
+            n++;
+        }
+        max = 0;
+        cnt = 0;
+        for (k = 1; k < 4; k++) {
+            p = D_800F9D48_FA948[0x2F8 + k];
+            if (wins[p] != 0) {
+                who[n][k - 1] = p;
+                cnt++;
+            }
+            if (max < D_800FC9B8_FD5B8[2 + p]) {
+                max = D_800FC9B8_FD5B8[2 + p];
+            }
+        }
+        if (cnt != 0) {
+            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+            espPosSet(spr, x0 + ((max - 1) << 5), D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40] + y);
+            func_8001A6BC_1B2BC(spr, 0);
+            func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+            sprs[n] = spr;
+            alpha[n] = 0;
+            scale[n] = delay;
+            n++;
+        }
+        break;
+    case 2:
+        k = 0;
+        max = 0;
+        for (end = 2; end < 5; end += 2) {
+            cnt = 0;
+            for (; k < end; k++) {
+                p = D_800F9D48_FA948[0x2F8 + k];
+                if (wins[p] != 0) {
+                    who[n][k - (end - 2)] = p;
+                    cnt++;
+                }
+                if (max < D_800FC9B8_FD5B8[2 + p]) {
+                    max = D_800FC9B8_FD5B8[2 + p];
+                }
+            }
+            if (cnt != 0) {
+                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+                espPosSet(spr, x0 + ((max - 1) << 5), y);
+                func_8001A6BC_1B2BC(spr, 0);
+                func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+                sprs[n] = spr;
+                alpha[n] = 0;
+                scale[n] = delay;
+                delay += 1.0f;
+                n++;
+            }
+            y += D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40];
+            max = 0;
+        }
+        break;
+    }
+    do {
+        HuPrcVSleep();
+        left = n;
+        for (k = 0; k < n; k++) {
+            spr = sprs[k];
+            if (alpha[k] >= 256) {
+                if (scale[k] <= 0.0f) {
+                    func_8001A6BC_1B2BC(spr, 255);
+                    func_8001A91C_1B51C(spr, 1.0f, 1.0f);
+                    PlaySound(0x37A);
+                    for (j = 0; j < 4; j++) {
+                        if (who[k][j] < 0) {
+                            break;
+                        }
+                        func_8005A4EC_5B0EC(who[k][j], 3);
+                    }
+                    scale[k] = 180.0f;
+                }
+                left--;
+            } else {
+                scale[k] -= 0.25f;
+                if (scale[k] < 4.0f) {
+                    alpha[k] += 16;
+                    func_8001A6BC_1B2BC(spr, alpha[k]);
+                    func_8001A91C_1B51C(spr, scale[k], scale[k]);
+                }
+            }
+        }
+    } while (left != 0);
+    HuPrcVSleep();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801064F0_32DEB0_name_4E);
+#endif
 
 void func_80106BF8_32E5B8_name_4E(u16 spr, s32 dx, s32 dy) {
     Ovl4EEsprite* e = &((Ovl4EEsprite*)D_800F93FC_F9FFC)[spr];
