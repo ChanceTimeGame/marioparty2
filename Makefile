@@ -469,3 +469,7 @@ $(MG01A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# MG2B-A: ovl_2B 218BF0.c has the KMC VR4300 mul fix (func_80103F10: a nop before a mul.s after a
+# call and after a branch target)
+MG2B_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/218BF0.c.o
+$(MG2B_MULFIX_UNITS): export VR4300MUL := ON
