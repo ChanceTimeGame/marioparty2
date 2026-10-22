@@ -1,12 +1,12 @@
 #ifndef _OVL_41_H
 #define _OVL_41_H
 
-/* Board overlay 3E (297AD0.c). Board-library types shared by the other boards are in
-   include/game/board.h; this header holds 3E's own structs, its data/bss and a prototype for
-   every function of 297AD0.c. Prototypes after 80106944 (forks B-D) came from the asm's register
-   use only: arguments read before any write, a return value its callers read. Integer arguments
-   are written s32 even where the asm narrows them; the fork that owns a function fixes its line.
-   Data and bss below are the symbols 80102800-80106944 use; add others in address order. */
+/* Board overlay 41 (2B10C0.c), mostly a copy of board 3E's code. Generated from ovl_3E.h: each 3E
+   data/bss symbol was renamed to 41's by aligning the relocations of every 3E twin
+   (tools/mp2twins.py) with 41's asm; 3E symbols with no 41 counterpart were dropped, and array
+   sizes are 3E's unless a comment says 41. Board types both boards use are in
+   include/game/board.h. Each function's prototype is its 3E twin's; functions without a 3E twin
+   are void(void) until their fork fixes them. Main-segment declarations are 3E's. */
 
 #include "common.h"
 #include "game/board.h"
@@ -165,10 +165,6 @@ extern BoardEventTableEntry D_80110FD8_2BF898_name_41[];
 extern BoardEventTableEntry D_80111040_2BF900_name_41[];
 extern BoardEventTableEntry D_80111398_2BFC58_name_41[];
 
-/* 3E's rodata (0x2A8860-0x2A89A0, carved by the coordinator) */
-typedef struct Unk4Bytes {
-    u8 b[4];
-} Unk4Bytes;
 
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
 
@@ -199,11 +195,6 @@ extern MBModel* D_80111F64_2C0824_name_41[2]; /* signposts */
 extern MBModel* D_80111F78_2C0838_name_41;
 extern s32 D_80110C98_2BF558_name_41;
 
-/* fork D */
-typedef struct Vec2f3E {
-    f32 x;
-    f32 y;
-} Vec2f3E;
 s32 func_80060210_60E10(s32);
 s32 func_800609D8_615D8(void); /* status windows still moving */
 void MBStatusItemDispSetAll(s32);
@@ -277,16 +268,6 @@ void MBKSuitMotionSet(s16 arg0, s32 arg1);
 void func_800B3B80_B4780(f32* mtx, f32 angle); /* rotate a model matrix */
 void func_80050860_51460(void); /* MBKSuitKill */
 Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* turn arg0 toward arg1 */
-/* fork C */
-typedef struct Unk3EParticle {
-    /* 0x00 */ Vec vel;
-    /* 0x0C */ f32 alpha;
-    /* 0x10 */ f32 scaleSpeed;
-    /* 0x14 */ f32 fadeSpeed;
-    /* 0x18 */ MBModel* model;
-    /* 0x1C */ u16 kill; /* delete when faded out, else only pause */
-    /* 0x1E */ char unk_1E[2];
-} Unk3EParticle; /* size 0x20 (MP3 UnkChillyWaters) */
 
 extern s8 D_800CCC16; /* set while the lamp's star event runs */
 extern s16 D_800FA188_FAD88;
@@ -328,23 +309,10 @@ void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void func_80062A28_63628(s16 player, f32 arg1); /* status window shake */
 
-typedef Vec2f3E Unk3EVec2f; /* fork C name for fork D's Vec2f3E */
 f32 __sinf(f32);
-typedef struct Unk3ERange {
-    u8 min;
-    u8 max;
-    u8 value;
-} Unk3ERange; /* size 3 */
 extern u16 ContDStkTrg[4];
 void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
 void func_80055E3C_56A3C(s32 arg0);
-typedef struct Unk3EStealRange {
-    u8 turnMin;
-    u8 turnMax;
-    u8 min;
-    u8 max;
-    u8 mess; /* index into D_8011243E */
-} Unk3EStealRange; /* size 5 */
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
    layout-dependent label, keep the data in place on the host. */
 s32 func_800558F4_564F4(void); /* the current space (retail: int-returning) */
@@ -382,15 +350,6 @@ s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
 void func_800558E8_564E8(s16 arg0);
 void func_80045650_46250(s32 arg0);
 
-typedef struct Unk3EWindowSlide {
-    /* 0x00 */ s16 x0;
-    /* 0x02 */ s16 y0;
-    /* 0x04 */ s16 x1;
-    /* 0x06 */ s16 y1;
-    /* 0x08 */ s16 frames;
-    /* 0x0A */ s16 sprite; /* -1: none */
-    /* 0x0C */ char unk_0C[4];
-} Unk3EWindowSlide; /* size 0x10 */
 
 /* ---- 297AD0.c ---- */
 
@@ -399,22 +358,7 @@ typedef struct Unk3EWindowSlide {
 #include "game/data.h"
 struct unk_8003B8D4Struct; /* 41B20.c's direction prompt */
 
-/* RunDecisionTree's node (MP1 common_structs.h) */
-typedef struct DecisionTreeNonLeafNode {
-    u32 type;
-    union {
-        void (*func)();
-        s32 data;
-    } node_data1;
-    union {
-        s32 data;
-        s32* node_data;
-    } node_data2;
-} DecisionTreeNonLeafNode;
 
-typedef struct Unk3Halves {
-    s16 v[3];
-} Unk3Halves;
 
 void SetNextChainAndSpace(s16 arg0, s16 arg1, s16 arg2);
 s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
