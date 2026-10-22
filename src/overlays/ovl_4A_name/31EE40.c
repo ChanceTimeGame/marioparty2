@@ -117,6 +117,557 @@ void func_80102C14_31F254_name_4A(void) {
     Hu3DCamUpdateMtx(0);
 }
 
+/* Wait until both duelists' paths (work[0], work[1]) are walked, then free them (44's D44_WAIT_PATHS). */
+#define D4A_WAIT_PATHS()                                       \
+    while (TRUE) {                                             \
+        done = 0;                                              \
+        for (i = 0; i < 2; i++) {                              \
+            if (func_8005A778_5B378(work[i]) != 0) {           \
+                done++;                                        \
+            }                                                  \
+        }                                                      \
+        if (done == 2) {                                       \
+            break;                                             \
+        }                                                      \
+        HuPrcVSleep();                                         \
+    }                                                          \
+    for (i = 0; i < 2; i++) {                                  \
+        HuMemMemoryFreePerm(work[i]);                          \
+    }
+
+/* Both duelists walk back to their marks (motion 3) and turn to the camera. */
+#define D4A_WALK_BACK(a, b)                                                                                          \
+    PLAYER_MODEL(D_80108CA0_3252E0_name_4A)->pos.y = 0.0f;                                                           \
+    PLAYER_MODEL(D_80108CA4_3252E4_name_4A)->pos.y = -0.0f;                                                          \
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 3, 0, 5, 2);                                           \
+    work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 15.0f, 1, D_80108A78_3250B8_name_4A);     \
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 3, 0, 5, 2);                                           \
+    work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 15.0f, 1, D_80108A84_3250C4_name_4A);     \
+    D4A_WAIT_PATHS();                                                                                                \
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 2, 0, 5, 2);                                           \
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 2, 0, 5, 2);                                           \
+    HuVecCopyXYZ(&pos[0], D_800C9B80_CA780->pos.x, PLAYER_MODEL(a)->pos.y, D_800C9B80_CA780->pos.z);                 \
+    HuVecCopyXYZ(&pos[1], D_800C9B80_CA780->pos.x, PLAYER_MODEL(b)->pos.y, D_800C9B80_CA780->pos.z);                 \
+    func_800446B4_452B4(PLAYER_MODEL(a), &pos[0], 10);                                                               \
+    func_800446B4_452B4(PLAYER_MODEL(b), &pos[1], 10);                                                               \
+    HuPrcSleep(20)
+
+/* The referee's message (func_801057C8): message id, window position, variant; wait for it. */
+#define D4A_MESSAGE(id, x, y, kind)                            \
+    D_80108C94_3252D4_name_4A = id;                            \
+    D_80108C88_3252C8_name_4A = x;                             \
+    D_80108C8C_3252CC_name_4A = y;                             \
+    D_80108C90_3252D0_name_4A = kind;                          \
+    omAddPrcObj(func_801057C8_321E08_name_4A, 0x12, 0, 0);     \
+    D_80108C80_3252C0_name_4A = 0;                             \
+    PD_WAIT_STEP()
+
+/* The winner's ending: the stake is paid twice over (the referee's message 0x215 or 0x223), the
+   winner cheers and the loser despairs. */
+#define D4A_WIN(mesId)                                                                                               \
+    if (D_80108F54_325594_name_4A == 0) {                                                                            \
+        MBMotionShiftSet(D_80108F58_325598_name_4A, 1, 0, 5, 0);                                                     \
+        HuPrcSleep(23);                                                                                              \
+        MBMotionShiftSet(D_80108F58_325598_name_4A, 0, 0, 20, 2);                                                    \
+        PlaySound(0xE8);                                                                                             \
+        func_80088640_89240();                                                                                       \
+        D_80102708_103308 = 1;                                                                                       \
+        D_80108C9C_3252DC_name_4A = D_800FC880_FD480;                                                                \
+        D4A_MESSAGE(mesId, 90, 70, 3);                                                                               \
+        func_800614B4_620B4(D_800FC880_FD480, D_80108C84_3252C4_name_4A * 2);                                        \
+        if (D_80108F50_325590_name_4A != -1) {                                                                       \
+            func_800799A4_7A5A4(D_80108F50_325590_name_4A, 40);                                                      \
+        }                                                                                                            \
+        HuPrcSleep(30);                                                                                              \
+    }                                                                                                                \
+    PlayMusic(0x51);                                                                                                 \
+    func_800732FC_73EFC(D_80108A20_325060_name_4A[gPlayers[D_800FC880_FD480].character][5],                          \
+                        (D_800FC880_FD480 != D_80108CA0_3252E0_name_4A) ? 0x54 : 0x2C, D_800FC880_FD480);            \
+    MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 4, 0);                                                               \
+    func_8005ACD0_5B8D0(&gPlayers[D_800FC880_FD480], 1);                                                             \
+    mes = func_800797DC_7A3DC(0xFC, D_800F8C5C_F985C);                                                               \
+    if (D_800F8C5C_F985C == D_80108CA0_3252E0_name_4A) {                                                             \
+        func_800798F8_7A4F8(mes, 0x2C);                                                                              \
+    } else {                                                                                                         \
+        func_800798F8_7A4F8(mes, 0x54);                                                                              \
+    }                                                                                                                \
+    MBMotionSet(PLAYER_MODEL(D_800F8C5C_F985C), 5, 0);                                                               \
+    func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 2);                                                             \
+    func_800691FC_69DFC(6, gPlayers[D_800FC880_FD480].character);                                                    \
+    PD_WAIT_MESSAGE();                                                                                               \
+    finished = TRUE
+
+/* NON_MATCHING: masked 201, registers and block layout, same logic: as 44's func_80102D00 the
+   referee's drop swaps f0/f2; GCC hoists the sprite-position bases in the setup loop; the round
+   outcome test (D_80108CD8 1-3) sits after the hands' block in retail; the time-out switch and
+   the strike's alpha setup are scheduled differently. */
+#ifdef NON_MATCHING
+/* The duel scene's flow (44's func_80102D00 with a rock-paper-scissors duel): duelists and the
+   referee walk in, the opponent and the stake are chosen; then rounds until one is decided: the
+   title and hand sprites drop, both pick a hand (func_80106ED8/func_80107224), the two hands
+   (D_80108F68[hand * 2 + side]) rise; the winning hand strikes the losing one (which spins away,
+   func_80108540) or, on a draw, both sink and the round is replayed. If neither picks in time
+   both stakes are returned; if only one picks, that one wins. The winner takes both stakes. */
+void func_80102CA0_31F2E0_name_4A(void) {
+    s16 hands[3] = { 0, 2, 6 };
+    u32 list0[5] = { 4, 0x20000, 0x20003, 0x20005, 0x20008 };
+    u32 list1[5] = { 4, 0x70000, 0x7004E, 0, 0x70055 };
+    u32 list2[5] = { 4, 0x8003D, 0x80048, 0, 0x80044 };
+    u32* lists[3] = { list0, list1, list2 };
+    s32 winSide = 0;
+    s32 loseSide = 0;
+    s16 mdl[3];
+    ModelPathWork* work[4];
+    Vec pos[2];
+    s32 files[3] = { 0xA021F, 0xA021E, 0xA021D };
+    f32 angles[2] = { 30.0f, -30.0f };
+    u32 motions[3] = { 2, 0x800A7, 0x800AA };
+    s16 sounds[3] = { 0x411, 0x410, 0x412 };
+    MBModel* model;
+    s32 finished;
+    s32 rounds;
+    s16 mes;
+    u16 done;
+    s32 layout;
+    s32 alpha;
+    s32 angle;
+    s32 frame;
+    f32 y;
+    f32 scale;
+    s32 i;
+
+    func_80050E00_51A00(0x26);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    for (i = 0; i < 4; i++) {
+        if (D_80108CA8_3252E8_name_4A[i] != 0) {
+            MBPlayerModelCreate(i, D_80108A20_325060_name_4A[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 1, 0);
+            PLAYER_MODEL(i)->pos.x = -1000.0f;
+            PLAYER_MODEL(i)->pos.y = 0.0f;
+            PLAYER_MODEL(i)->pos.z = 700.0f;
+            gPlayers[i].flags |= 2;
+            MBMotionSet(PLAYER_MODEL(i), 1, 1);
+            func_80043DAC_449AC(PLAYER_MODEL(i));
+        }
+    }
+    D_80108F58_325598_name_4A = MBModelFileCreate(0x800A6, 0xD, 1.0f, 1.0f, motions);
+    func_8005AB50_5B750(D_80108F58_325598_name_4A, 1, 0xB, 0x800AD);
+    func_80056658_57258(&D_80108F58_325598_name_4A->pos, &D_80108A3C_32507C_name_4A, &D_80108F58_325598_name_4A->rot);
+    D_80108F58_325598_name_4A->pos.x = D_80108A3C_32507C_name_4A.x;
+    D_80108F58_325598_name_4A->pos.y = 0.0f;
+    D_80108F58_325598_name_4A->pos.z = D_80108A3C_32507C_name_4A.z;
+    if (D_80108F54_325594_name_4A == 0) {
+        D_80108F58_325598_name_4A->jumpY = D_80108A3C_32507C_name_4A.y;
+        D_80108F58_325598_name_4A->jumpVel = 7.5f;
+        D_80108F58_325598_name_4A->jumpAccel = 0.0f;
+        D_80108F5C_32559C_name_4A = MBModelFileCreate(0xA019D, 0xD, 1.0f, 1.0f, NULL);
+        D_80108F5C_32559C_name_4A->pos.x = D_80108A3C_32507C_name_4A.x;
+        D_80108F5C_32559C_name_4A->pos.y = 0.0f;
+        D_80108F5C_32559C_name_4A->pos.z = D_80108A3C_32507C_name_4A.z;
+        D_80108F5C_32559C_name_4A->jumpY = D_80108A3C_32507C_name_4A.y;
+        D_80108F5C_32559C_name_4A->jumpVel = 7.5f;
+        D_80108F5C_32559C_name_4A->jumpAccel = 0.0f;
+    }
+    /* the hand bases, the hand sprites and the title sprite */
+    for (i = 0; i < 2; i++) {
+        D_80108F60_3255A0_name_4A[i] = func_80043510_44110(0xE, NULL);
+        D_80108F60_3255A0_name_4A[i]->pos.x = D_80108AC0_325100_name_4A[i].x;
+        D_80108F60_3255A0_name_4A[i]->pos.y = 0.0f;
+        D_80108F60_3255A0_name_4A[i]->pos.z = D_80108AC0_325100_name_4A[i].z;
+        D_80108F60_3255A0_name_4A[i]->scale.y = 0.0f;
+        MBModelDispOff(D_80108F60_3255A0_name_4A[i]);
+    }
+    D_80108F9C_3255DC_name_4A = func_8001A2F8_1AEF8(0xA0222);
+    for (i = 0; i < 2; i++) {
+        D_80108FA0_3255E0_name_4A[i] = func_8001AAAC_1B6AC(D_80108F9C_3255DC_name_4A, 1, 1);
+        D_80108FA8_3255E8_name_4A[i] = D_80108ADC_32511C_name_4A[i * 2];
+        D_80108FB0_3255F0_name_4A[i] = D_80108ADE_32511E_name_4A[i * 2];
+        espPosSet(D_80108FA0_3255E0_name_4A[i], D_80108FA8_3255E8_name_4A[i], D_80108FB0_3255F0_name_4A[i]);
+        func_8001A788_1B388(D_80108FA0_3255E0_name_4A[i], 0xF000);
+    }
+    D_80108F90_3255D0_name_4A = func_8001A2F8_1AEF8(0xA0221);
+    D_80108F92_3255D2_name_4A = func_8001AAAC_1B6AC(D_80108F90_3255D0_name_4A, 1, 1);
+    D_80108F94_3255D4_name_4A = D_80108AD8_325118_name_4A[0][0];
+    D_80108F98_3255D8_name_4A = D_80108AD8_325118_name_4A[0][1];
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+    func_8001A788_1B388(D_80108F92_3255D2_name_4A, 0xF000);
+    /* per hand: the model for each side and its strike effect */
+    for (i = 0; i < 3; i++) {
+        D_80108F68_3255A8_name_4A[i * 2] = func_80043510_44110((u8)hands[i], lists[i]);
+        func_80029F2C_2AB2C(*D_80108F68_3255A8_name_4A[i * 2]->obj->model, 0);
+        D_80108F68_3255A8_name_4A[i * 2]->pos.x = 0.0f;
+        D_80108F68_3255A8_name_4A[i * 2]->pos.y = 0.0f;
+        D_80108F68_3255A8_name_4A[i * 2]->pos.z = 600.0f;
+        MBModelDispOff(D_80108F68_3255A8_name_4A[i * 2]);
+        D_80108F68_3255A8_name_4A[i * 2]->scale.x = 1.2f;
+        D_80108F68_3255A8_name_4A[i * 2]->scale.y = 1.2f;
+        D_80108F68_3255A8_name_4A[i * 2]->scale.z = 1.2f;
+        D_80108F68_3255A8_name_4A[i * 2 + 1] = MBModelParamCreate(D_80108F68_3255A8_name_4A[i * 2]);
+        func_80029F2C_2AB2C(*D_80108F68_3255A8_name_4A[i * 2 + 1]->obj->model, 0);
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->pos.x = 0.0f;
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->pos.y = 0.0f;
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->pos.z = 600.0f;
+        MBModelDispOff(D_80108F68_3255A8_name_4A[i * 2 + 1]);
+        mdl[i] = LoadFormFile(files[i], 0x689);
+        func_8002D124_2DD24(mdl[i]);
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->scale.x = 1.2f;
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->scale.y = 1.2f;
+        D_80108F68_3255A8_name_4A[i * 2 + 1]->scale.z = 1.2f;
+    }
+    for (i = 0; i < 2; i++) {
+        D_80108F80_3255C0_name_4A[i] = LoadFormFile(0xA020D, 0x289);
+        func_80029714_2A314(D_80108F80_3255C0_name_4A[i], D_80108AC0_325100_name_4A[i].x, 120.0f, D_80108AC0_325100_name_4A[i].z + 250.0f);
+        func_8002D124_2DD24(D_80108F80_3255C0_name_4A[i]);
+        func_8002D0A0_2DCA0(D_80108F80_3255C0_name_4A[i], 0x80);
+        D_80108F84_3255C4_name_4A[i] = LoadFormFile(0xA020E, 0x699);
+        func_80029714_2A314(D_80108F84_3255C4_name_4A[i], D_80108AC0_325100_name_4A[i].x, 0.0f, D_80108AC0_325100_name_4A[i].z - 250.0f);
+    }
+    D_800FC834_FD434[D_80108F84_3255C4_name_4A[0]].pos.x = D_80108AC0_325100_name_4A[0].x - 50.0f;
+    D_800FC834_FD434[D_80108F84_3255C4_name_4A[1]].pos.x = D_80108AC0_325100_name_4A[1].x + 50.0f;
+    D_800FC834_FD434[D_80108F80_3255C0_name_4A[0]].pos.x = D_80108AC0_325100_name_4A[0].x + 35.0f;
+    D_800FC834_FD434[D_80108F80_3255C0_name_4A[1]].pos.x = D_80108AC0_325100_name_4A[1].x - 35.0f;
+    PlayMusic(0x25);
+    InitFadeIn(0, 0x10);
+    if (D_80108F54_325594_name_4A == 0) {
+        /* the referee drops in with his hat */
+        goto drop;
+    fall:
+        HuPrcVSleep();
+    drop:
+        D_80108F5C_32559C_name_4A->jumpY = D_80108F58_325598_name_4A->jumpY;
+        D_80108F58_325598_name_4A->jumpY -= D_80108F58_325598_name_4A->jumpVel;
+        if (!(D_80108F58_325598_name_4A->jumpY <= D_80108F58_325598_name_4A->pos.y)) {
+            goto fall;
+        }
+        D_80108F58_325598_name_4A->jumpY = D_80108F58_325598_name_4A->pos.y;
+        func_80106270_3228B0_name_4A();
+        layout = (D_80108CB8_3252F8_name_4A == 4) ? 0 : -1;
+        if (D_80108CB8_3252F8_name_4A == 3) {
+            layout = 6;
+        }
+        if (layout != -1) {
+            /* three or four players: the challenger picks the opponent */
+            func_80105DB8_3223F8_name_4A(layout);
+            PD_WAIT_STEP();
+            PlaySound(0xE8);
+            omAddPrcObj(func_80106390_3229D0_name_4A, 0x12, 0, 0);
+            D_80108C80_3252C0_name_4A = 0;
+            PD_WAIT_STEP();
+            func_80105DB8_3223F8_name_4A(1);
+            PD_WAIT_STEP();
+            func_80105DB8_3223F8_name_4A(2);
+            PD_WAIT_STEP();
+        } else {
+            func_80105DB8_3223F8_name_4A(7);
+            PD_WAIT_STEP();
+        }
+        MBVsSprCreateY(160.0f, 90.0f);
+        HuPrcSleep(10);
+        D_80108A38_325078_name_4A = 1;
+        func_80105DB8_3223F8_name_4A(3);
+        PD_WAIT_STEP();
+        omAddPrcObj(func_8010665C_322C9C_name_4A, 0x12, 0, 0);
+        D_80108C80_3252C0_name_4A = 0;
+        PD_WAIT_STEP();
+        func_80105DB8_3223F8_name_4A(4);
+        MBVsSprKill();
+        PD_WAIT_STEP();
+    }
+    /* the duelists walk to their marks */
+    PLAYER_MODEL(D_80108CA0_3252E0_name_4A)->pos.x = -400.0f;
+    PLAYER_MODEL(D_80108CA4_3252E4_name_4A)->pos.x = 400.0f;
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 0, 0, 5, 2);
+    work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 15.0f, 1, D_80108A78_3250B8_name_4A);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 0, 0, 5, 2);
+    work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 15.0f, 1, D_80108A84_3250C4_name_4A);
+    D4A_WAIT_PATHS();
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 2, 0, 5, 2);
+    MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 2, 0, 5, 2);
+    /* the referee walks to the middle and explains */
+    work[0] = func_8005A718_5B318(D_80108F58_325598_name_4A, 30.0f, 1, D_80108A54_325094_name_4A);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work[0]);
+    model = D_80108F58_325598_name_4A;
+    model->rot.x = __sinf(0.34906584f); /* 20 degrees */
+    model = D_80108F58_325598_name_4A;
+    model->rot.y = 0.0f;
+    model->rot.z = __cosf(0.34906584f);
+    D_80108F58_325598_name_4A->obj->rot.z = 20.0f;
+    PlaySound(0xE8);
+    D4A_MESSAGE(0x220, 90, 47, 2);
+    D_80108F58_325598_name_4A->rot.x = HuMathSin(0.0f);
+    D_80108F58_325598_name_4A->rot.y = 0.0f;
+    D_80108F58_325598_name_4A->rot.z = func_800B7890_B8490(D_80108F58_325598_name_4A->rot.y);
+    D_80108F58_325598_name_4A->obj->rot.z = 0.0f;
+    work[0] = func_8005A718_5B318(D_80108F58_325598_name_4A, 30.0f, 1, D_80108A48_325088_name_4A);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work[0]);
+    D_80108F58_325598_name_4A->rot.x = HuMathSin(0.0f);
+    D_80108F58_325598_name_4A->rot.y = 0.0f;
+    D_80108F58_325598_name_4A->rot.z = func_800B7890_B8490(D_80108F58_325598_name_4A->rot.y);
+    HuPrcSleep(15);
+    finished = FALSE;
+    rounds = 0;
+    do {
+        omAddPrcObj(func_801080E8_324728_name_4A, 0x12, 0, 0);
+        D4A_MESSAGE(0x221, 85, 70, 0);
+        if (rounds == 0) {
+            omAddPrcObj(func_80108394_3249D4_name_4A, 0x12, 0, 0);
+        }
+        MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 0, 0, 5, 2);
+        work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 15.0f, 1, &D_80108A90_3250D0_name_4A[0]);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 0, 0, 5, 2);
+        work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 15.0f, 1, &D_80108A90_3250D0_name_4A[1]);
+        D4A_WAIT_PATHS();
+        MBMotionShiftSet(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), 2, 0, 5, 2);
+        MBMotionShiftSet(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), 2, 0, 5, 2);
+        HuVecCopyXYZ(&pos[0], D_80108AC0_325100_name_4A[0].x, 0.0f, D_80108AC0_325100_name_4A[0].z);
+        HuVecCopyXYZ(&pos[1], D_80108AC0_325100_name_4A[1].x, 0.0f, D_80108AC0_325100_name_4A[1].z);
+        func_800446B4_452B4(PLAYER_MODEL(D_80108CA0_3252E0_name_4A), &pos[0], 10);
+        func_800446B4_452B4(PLAYER_MODEL(D_80108CA4_3252E4_name_4A), &pos[1], 10);
+        HuPrcSleep(10);
+        func_8008CE5C_8DA5C();
+        func_800691FC_69DFC(0);
+        PD_WAIT_MESSAGE();
+        HuPrcSleep(18);
+        /* the hands */
+        D_80108C80_3252C0_name_4A = 0;
+        D_80108CD8_325318_name_4A = 0;
+        func_80106ED8_323518_name_4A();
+        while (D_80108CD8_325318_name_4A == 0) {
+            HuPrcVSleep();
+        }
+        if (D_80108F54_325594_name_4A != 0 &&
+            (D_80108CD8_325318_name_4A == 4 || D_80108CD8_325318_name_4A == 5 || D_80108CD8_325318_name_4A == 6)) {
+            func_800794A8_7A0A8(60);
+        }
+        omAddPrcObj(func_8010828C_3248CC_name_4A, 0x12, 0, 0);
+        HuPrcSleep(60);
+        if (D_80108CD8_325318_name_4A < 4) {
+            if (D_80108CD8_325318_name_4A >= 2) {
+                func_800691FC_69DFC(0xF);
+                PD_WAIT_MESSAGE();
+            }
+        }
+        switch (D_80108CD8_325318_name_4A) {
+            case 4:
+            case 5:
+            case 6:
+                /* time out */
+                switch (D_80108CD8_325318_name_4A) {
+                    case 4:
+                        D_800FC880_FD480 = -1;
+                        D_800F8C5C_F985C = -1;
+                        break;
+                    case 5:
+                        D_800FC880_FD480 = D_80108CA0_3252E0_name_4A;
+                        D_800F8C5C_F985C = D_80108CA4_3252E4_name_4A;
+                        break;
+                    case 6:
+                        D_800FC880_FD480 = D_80108CA4_3252E4_name_4A;
+                        D_800F8C5C_F985C = D_80108CA0_3252E0_name_4A;
+                        break;
+                }
+                omAddPrcObj(func_80108468_324AA8_name_4A, 0x12, 0, 0);
+                HuPrcSleep(30);
+                if (D_80108F54_325594_name_4A == 0) {
+                    func_80105DB8_3223F8_name_4A(2);
+                }
+                D4A_WALK_BACK(D_80108CA0_3252E0_name_4A, D_80108CA0_3252E0_name_4A);
+                if (D_80108CD8_325318_name_4A == 4) {
+                    /* neither picked: both stakes go back */
+                    if (D_80108F54_325594_name_4A == 0) {
+                        MBMotionShiftSet(D_80108F58_325598_name_4A, 1, 0, 5, 0);
+                        HuPrcSleep(23);
+                        MBMotionShiftSet(D_80108F58_325598_name_4A, 0, 0, 20, 2);
+                        func_80088640_89240();
+                        D_80102708_103308 = 1;
+                        PlaySound(0xE8);
+                        D4A_MESSAGE(0x216, 90, 70, 0);
+                        func_800614B4_620B4(D_80108CA0_3252E0_name_4A, D_80108C84_3252C4_name_4A);
+                        func_8006135C_61F5C(D_80108CA4_3252E4_name_4A, D_80108C84_3252C4_name_4A, 0);
+                        func_800794A8_7A0A8(30);
+                        HuPrcSleep(30);
+                    }
+                    PlayMusic(0x57);
+                    func_800691FC_69DFC(0x13);
+                    PD_WAIT_MESSAGE();
+                    finished = TRUE;
+                }
+                break;
+            case 1:
+            case 2:
+                D_800FC880_FD480 = D_80108CA0_3252E0_name_4A;
+                D_800F8C5C_F985C = D_80108CA4_3252E4_name_4A;
+                D_80108FC0_325600_name_4A = D_80108CE0_325320_name_4A[0] * 2;
+                D_80108FC4_325604_name_4A = D_80108CE0_325320_name_4A[1] * 2 + 1;
+                winSide = 0;
+                loseSide = 1;
+                break;
+            case 3:
+                D_800FC880_FD480 = D_80108CA4_3252E4_name_4A;
+                D_800F8C5C_F985C = D_80108CA0_3252E0_name_4A;
+                D_80108FC0_325600_name_4A = D_80108CE0_325320_name_4A[1] * 2 + 1;
+                D_80108FC4_325604_name_4A = D_80108CE0_325320_name_4A[0] * 2;
+                winSide = 1;
+                loseSide = 0;
+                break;
+        }
+        if (D_80108CD8_325318_name_4A <= 0) {
+        } else if (D_80108CD8_325318_name_4A < 4) {
+            /* the two hands rise in front of the duelists */
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.x = D_80108AC0_325100_name_4A[winSide].x;
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.y = 0.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.z = D_80108AC0_325100_name_4A[winSide].z - 25.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.x = D_80108AC0_325100_name_4A[loseSide].x;
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.y = 0.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.z = D_80108AC0_325100_name_4A[loseSide].z - 25.0f;
+            if (D_80108CE0_325320_name_4A[winSide] == 2) {
+                D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->scale.x = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->scale.y = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->scale.z = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.z -= 25.0f;
+            }
+            MBModelDispOn(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]);
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->rot.x = HuMathSin(angles[winSide]);
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->rot.y = 0.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->rot.z = func_800B7890_B8490(angles[winSide]);
+            if (D_80108CE0_325320_name_4A[loseSide] == 2) {
+                D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.x = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.y = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.z = 0.7f;
+                D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.z -= 25.0f;
+            }
+            MBModelDispOn(D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]);
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.x = HuMathSin(angles[loseSide]);
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.y = 0.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.z = func_800B7890_B8490(angles[loseSide]);
+            y = 0.0f;
+            for (i = 0; i < 15; i++) {
+                y += 10.0f;
+                D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.y = y;
+                D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.y = y;
+                HuPrcVSleep();
+            }
+            if (D_80108CD8_325318_name_4A != 1) {
+                /* the winning hand strikes */
+                MBMotionShiftSet(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A], 1, 0, 5, 0);
+                func_8002CA14_2D614(1);
+                HuPrcSleep(10);
+                switch (D_80108CE0_325320_name_4A[winSide]) {
+                    case 0:
+                        func_8007975C_7A35C(0x103, D_800FC880_FD480);
+                        break;
+                    case 1:
+                        func_8007975C_7A35C(0x105, D_800FC880_FD480);
+                        break;
+                    case 2:
+                        func_8007975C_7A35C(0x123, D_800FC880_FD480);
+                        break;
+                }
+                if (D_80108CE0_325320_name_4A[winSide] == 0) {
+                    MBMotionShiftSet(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A], 2, 0, 5, 0);
+                    func_8002CA14_2D614(2);
+                    HuPrcSleep(15);
+                } else {
+                    HuPrcSleep(10);
+                }
+                PlaySound(sounds[D_80108CE0_325320_name_4A[winSide]]);
+                func_800298A4_2A4A4(mdl[D_80108CE0_325320_name_4A[winSide]], 4, 0);
+                alpha = 0xFF;
+                func_80029714_2A314(mdl[D_80108CE0_325320_name_4A[winSide]],
+                                    D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.x,
+                                    D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.y + 75.0f,
+                                    D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.z + 100.0f);
+                scale = 2.6f;
+                do {
+                    scale -= 0.2f;
+                    func_800297E8_2A3E8(mdl[D_80108CE0_325320_name_4A[winSide]], scale, scale, scale);
+                    HuPrcVSleep();
+                } while (scale > 1.0f);
+                angle = 0;
+                omVibrate(D_800F8C5C_F985C, 20, 0, 20);
+                omAddPrcObj(func_80108540_324B80_name_4A, 0x12, 0, 0);
+                frame = 0;
+                while (alpha > 0) {
+                    scale = HuMathSin(angle % 360) * 0.3f + 1.0f;
+                    func_800297E8_2A3E8(mdl[D_80108CE0_325320_name_4A[winSide]], scale, scale, scale);
+                    if (angle >= 540) {
+                        alpha -= 8;
+                        if (alpha < 0) {
+                            alpha = 0;
+                        }
+                    }
+                    func_8002D0A0_2DCA0(mdl[D_80108CE0_325320_name_4A[winSide]], alpha);
+                    frame++;
+                    angle += 20;
+                    if (frame == 30) {
+                        switch (D_80108CE0_325320_name_4A[loseSide]) {
+                            case 0:
+                                func_8007975C_7A35C(0x111, D_800F8C5C_F985C);
+                                break;
+                            case 1:
+                                func_8007975C_7A35C(0x113, D_800F8C5C_F985C);
+                                break;
+                            case 2:
+                                func_8007975C_7A35C(0x124, D_800F8C5C_F985C);
+                                break;
+                        }
+                    }
+                    HuPrcVSleep();
+                }
+                func_800298A4_2A4A4(mdl[D_80108CE0_325320_name_4A[winSide]], 4, 4);
+            } else {
+                /* a draw: both hands sink */
+                HuPrcSleep(30);
+                for (i = 0; i < 30; i++) {
+                    y -= 5.0f;
+                    D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.y = y;
+                    D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->pos.y = y;
+                    HuPrcVSleep();
+                }
+                MBModelDispOff(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]);
+                MBModelDispOff(D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]);
+            }
+            if (D_80108F54_325594_name_4A == 0 && D_80108CD8_325318_name_4A != 1) {
+                func_80105DB8_3223F8_name_4A(2);
+            }
+            D4A_WALK_BACK(D_800FC880_FD480, D_800F8C5C_F985C);
+            if (D_80108CD8_325318_name_4A != 1) {
+                func_800794A8_7A0A8(45);
+                D4A_WIN(0x215);
+            } else {
+                /* a draw: once more */
+                MBMotionShiftSet(D_80108F58_325598_name_4A, 1, 0, 5, 0);
+                HuPrcSleep(23);
+                MBMotionShiftSet(D_80108F58_325598_name_4A, 0, 0, 20, 2);
+                PlaySound(0xE8);
+                func_80088640_89240();
+                D_80102708_103308 = 1;
+                D_80108C9C_3252DC_name_4A = D_800FC880_FD480;
+                D4A_MESSAGE(0x222, 90, 70, 3);
+                rounds++;
+            }
+        } else if (D_80108CD8_325318_name_4A < 7) {
+            if (D_80108CD8_325318_name_4A >= 5) {
+                /* only one picked a hand in time: that one wins */
+                D_80108F50_325590_name_4A = PlaySound(0x4B5);
+                func_800794A8_7A0A8(45);
+                D4A_WIN(0x223);
+            }
+        }
+    } while (!finished);
+    HuPrcSleep(8);
+    func_80106188_3227C8_name_4A();
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80108AF0_325130_name_4A[2] = { 0x00000002, 0x00060000 };
 
@@ -143,6 +694,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80102CA0_31F2E0
 /* With func_80102CA0 as INCLUDE_ASM, GCC still believes it is in .rodata here (the asm switched to
    .text): switch for real, so the string literals below land in .rodata. */
 __asm__(".section .rodata");
+#endif
 
 /* The duel's message window (42's func_80104B88): variant 1 names the opponent, 3 the stake and
    the opponent; 2 waits for A (the CPU script presses it when both duelists are CPUs), the others

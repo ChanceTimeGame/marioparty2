@@ -1,14 +1,15 @@
 #ifndef _OVL_4A_H
 #define _OVL_4A_H
 
-/* Overlay 42 (2C0780.c): board 41's duel scene, the successor of board 3E's (overlay 3F, ovl_3F.h):
-   a stand-alone scene (its own omInitObjMan) with a referee. The challenger
-   (D_800F8D1A.attacker) picks an opponent when several are eligible, both stake coins, then the
-   duel is played (fork B's processes 80109214/80109780/801064E8) until D_80109DC8 decides it;
-   the winner takes both stakes. The result is left for the board in D_800FC880 (winner) and
-   D_800F8C5C (loser), -1 both for a draw.
-   The unit's .rodata is carved ([0x2C7B40, .rodata, 2C0780]); leftovers are defined raw in C by
-   tools/mp2rodefs.py beside their first user. */
+/* Overlay 4A (31EE40.c): board 49's duel scene, 42's/44's flow with a rock-paper-scissors duel
+   (func_80102CA0): the challenger (D_800F8D1A.attacker) picks an opponent when several are
+   eligible, both stake coins, then rounds are played until one is decided: each duelist picks a
+   hand with A/B/Z (a CPU at random, func_80106ED8/func_80107224), 0 beats 2, otherwise the higher
+   hand wins; a draw replays the round. If only one picks in time that one wins; if neither, the
+   stakes go back. The winner takes both stakes; the result is left for the board in D_800FC880
+   (winner) and D_800F8C5C (loser), -1 both when neither picked.
+   Types and most declarations come from ovl_42.h (tools/mp2twincopy.py header). The unit's .rodata
+   is carved ([0x325130, .rodata, 31EE40]); leftovers are defined raw in C beside their first user. */
 
 #include "common.h"
 #include "game/board.h"
@@ -18,7 +19,7 @@
 #include "game/gamemes.h"
 #include "game/hmfman.h"
 
-/* ---- main-segment API used by 42 ---- */
+/* ---- main-segment API ---- */
 
 #define PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
 
@@ -148,7 +149,7 @@ void omSetRot(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 int sprintf(char* dst, const char* fmt, ...);
 
-/* ---- 42 work types ---- */
+/* ---- work types (from ovl_42.h) ---- */
 
 /* Status-window layouts (D_801098A0): four slots as from/to positions, and the frames the move
    takes (ovl_3F.h's Unk3FStatusLayout). */
@@ -167,7 +168,7 @@ typedef struct PdShrink {
     /* 0x10 */ s32 unk10;
 } PdShrink; /* size 0x14 */
 
-/* ---- 42-B ---- */
+/* ---- more main-segment API ---- */
 
 extern u16 ContBtnTrg[];
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
@@ -254,19 +255,42 @@ typedef struct D4AHandWork {
 
 void func_80069654_6A254(s16 mesId); /* close a message */
 void MBModelDispOn(MBModel*);
+MBModel* func_80043510_44110(s32, void*);
+MBModel* MBModelParamCreate(MBModel*);
+void func_80029F2C_2AB2C(s16, s32);
+void func_8002D124_2DD24(s16 index);
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002CA14_2D614(s32);
+s32 func_8007975C_7A35C(s16 arg0, s16 arg1); /* sound for a player */
+void func_8008CE5C_8DA5C(void);
+void PlayMusic(s16);
+void InitFadeIn(s32, s32);
+void func_80050E00_51A00(s32);
+void HuMemMemoryFreePerm(void* ptr);
+extern HmfModel* D_800FC834_FD434; /* HmfModelData */
 
-/* ---- 42 data (asm/data/overlays/ovl_42_PirateDuel/2C7820.data.s) ---- */
+/* ---- 4A data (asm/data/overlays/ovl_4A_name/324E80.data.s) ---- */
 
 extern PdStatusLayout D_80108840_324E80_name_4A[8];
 extern u32* D_80108A20_325060_name_4A[6]; /* per character: motion list (count, files) */
 extern s32 D_80108A38_325078_name_4A;
+extern Vec D_80108A3C_32507C_name_4A; /* the referee's spot */
+extern Vec D_80108A48_325088_name_4A[1]; /* the referee's paths: back, to the middle */
+extern Vec D_80108A54_325094_name_4A[3];
+extern Vec D_80108A78_3250B8_name_4A[1]; /* the duelists' marks */
+extern Vec D_80108A84_3250C4_name_4A[1];
+extern Vec D_80108A90_3250D0_name_4A[4]; /* where the duelists stand for a round */
+extern Vec D_80108AC0_325100_name_4A[2]; /* per side: the hand's spot */
 extern s16 D_80108AD8_325118_name_4A[3][2]; /* sprite positions: the title, the two hands */
+/* D_80108AD8[1][0] and [1][1] by their own labels: the setup loop indexes them [side * 2]. */
+extern s16 D_80108ADC_32511C_name_4A[];
+extern s16 D_80108ADE_32511E_name_4A[];
 
-/* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */
+/* ---- 4A bss (asm/data/overlays/ovl_4A_name/ovl_4A_bss.bss.s) ---- */
 
 extern s32 D_80108C80_3252C0_name_4A; /* a step finished */
 extern s32 D_80108C84_3252C4_name_4A; /* the stake */
-/* func_80104B88's message: window x and y (stored as s32, read as s16), variant, id, the
+/* func_801057C8's message: window x and y (stored as s32, read as s16), variant, id, the
    player it names. */
 extern s32 D_80108C88_3252C8_name_4A;
 extern s32 D_80108C8C_3252CC_name_4A;
@@ -289,10 +313,12 @@ extern s32 D_80108CF0_325330_name_4A; /* CPU pad triggers */
 extern s16 D_80108CF8_325338_name_4A[2][150]; /* per side: 5 rows of 30 frames, a few marked */
 extern s16 D_80108F50_325590_name_4A; /* the drop sound */
 extern s32 D_80108F54_325594_name_4A; /* no referee (flag 0x17 clear) */
-/* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
-extern MBModel* D_80108F5C_32559C_name_4A; /* the referee's hat (scaled away) */
+extern MBModel* D_80108F58_325598_name_4A; /* the referee */
+extern MBModel* D_80108F5C_32559C_name_4A; /* the referee's hat */
 extern MBModel* D_80108F60_3255A0_name_4A[2];
-extern MBModel* D_80108F68_3255A8_name_4A[2]; /* per side: the hand model */
+extern MBModel* D_80108F68_3255A8_name_4A[6]; /* [hand * 2 + side]: the hand models */
+extern s16 D_80108F80_3255C0_name_4A[2]; /* per side: the lamp */
+extern s16 D_80108F84_3255C4_name_4A[2]; /* per side: the stand */
 /* Sprites (ids and positions are s32, read as their low halves): the title, the two hands. */
 extern s16 D_80108F90_3255D0_name_4A;
 extern s16 D_80108F92_3255D2_name_4A; /* the title sprite */
