@@ -33,25 +33,112 @@ s16 func_8003DF08_3EB08(void*);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
 void func_80029708_2A308(s32);
 void func_8002E544_2F144(void);
+void func_8006D4D0_6E0D0(s16); /* MP1 func_80079078: the seconds counter */
+
+void espDispOff(u16);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_80026D50_27950(s16 arg0, u8 arg1, u8 arg2);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002A00C_2AC0C(s16);
+void func_8002BED4_2CAD4(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6); /* texture scroll */
+void func_8002D1EC_2DDEC(s16 arg0, u8 arg1);
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */
+u16 func_80078EA8_79AA8(void);
+void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
+void func_8007A7FC_7B3FC(void*);
+
+/* 1AE60.c's esprite slot */
+typedef struct BumperBallsEspSlot {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04; /* sprite group */
+    /* 0x06 */ char unk_06[0x1E];
+} BumperBallsEspSlot; /* size = 0x24 */
+
+/* func_8003EAF0_3F6F0's output */
+typedef struct BumperBallsTexSize {
+    /* 0x00 */ u16 unk_00;
+    /* 0x02 */ u16 unk_02;
+} BumperBallsTexSize;
 
 extern s32 D_800F9D30_FA930[];
+extern BumperBallsEspSlot* D_800F93FC_F9FFC;
+extern f32 D_8010105C_101C5C;
+extern f32 D_80101300_101F00;
+extern u8 D_80102720_103320;
 extern s32 D_800FA5B8_FB1B8;
 extern u8 D_800FA656; /* minigame variant: 0 plays the music, 2 adds the rescue boats */
 extern u8 D_800FD8AC[]; /* CPU difficulty when flag 0xC is set */
 
+/* A player's ball work (func_801035AC; MP1 BumperBallsWork, 0x5C bytes). */
+typedef struct BumperBallsWork {
+    /* 0x00 */ u16 unk_00; /* state: 0 idle, 1 roll, 2 fast, 3 falling, 4 floating, 5 rescued, 6 winner */
+    /* 0x02 */ s16 character;
+    /* 0x04 */ u16 player;
+    /* 0x06 */ char pad_06[2];
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ f32 unk_0C; /* heading */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14; /* wanted heading */
+    /* 0x18 */ f32 unk_18;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ f32 unk_20; /* radius */
+    /* 0x24 */ f32 unk_24; /* velocity x */
+    /* 0x28 */ f32 unk_28; /* velocity y */
+    /* 0x2C */ f32 unk_2C; /* velocity z */
+    /* 0x30 */ f32 unk_30; /* ball rotation */
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ u16 unk_3C;
+    /* 0x3E */ u16 unk_3E;
+    /* 0x40 */ u8 unk_40[2];
+    /* 0x42 */ u16 unk_42; /* CPU mode */
+    /* 0x44 */ u16 unk_44;
+    /* 0x46 */ u16 unk_46;
+    /* 0x48 */ u16 unk_48;
+    /* 0x4A */ u16 unk_4A;
+    /* 0x4C */ u16 unk_4C;
+    /* 0x4E */ char pad_4E[2];
+    /* 0x50 */ f32 unk_50; /* CPU heading (bob phase once floating) */
+    /* 0x54 */ omObjData* unk_54; /* CPU target */
+    /* 0x58 */ u16 unk_58;
+    /* 0x5A */ u16 unk_5A;
+} BumperBallsWork;
+
+/* ---- overlay .data ---- */
+
+extern s32 D_8010A028_2189C8_BumperBalls[3]; /* the island model per variant */
+
 /* ---- overlay .bss ---- */
 
+extern s16 D_8010A25E_218BFE_BumperBalls; /* MP1 D_800FCD0E */
+extern u16 D_8010A260_218C00_BumperBalls; /* balls still on the island (MP1 D_800FCD10) */
+
 extern s16 D_8010A262_218C02_BumperBalls; /* _CheckFlag(0xC) */
+extern u16 D_8010A264_218C04_BumperBalls; /* frames to the next second */
+extern u16 D_8010A266_218C06_BumperBalls; /* seconds left */
 extern s16 D_8010A268_218C08_BumperBalls;
 extern s16 D_8010A26A_218C0A_BumperBalls;
 extern s16 D_8010A26C_218C0C_BumperBalls;
-extern s16 D_8010A26E_218C0E_BumperBalls; /* humans still on the island (MP1 D_800FCD1E) */
+extern s16 D_8010A26E_218C0E_BumperBalls;
+extern u16 D_8010A270_218C10_BumperBalls; /* variant 1: the backdrop sprite */ /* humans still on the island (MP1 D_800FCD1E) */
 extern u16 D_8010A272_218C12_BumperBalls; /* D_800FA656 */
 extern s16 D_8010A274_218C14_BumperBalls; /* music handle */
+extern f32 D_8010A278_218C18_BumperBalls; /* variant 0: lava texture scroll */
+extern f32 D_8010A27C_218C1C_BumperBalls;
+extern BumperBallsTexSize D_8010A280_218C20_BumperBalls; /* "152_yougan2_IA44" */
+extern BumperBallsTexSize D_8010A284_218C24_BumperBalls; /* "152_yougan1_DEF" */
 extern omObjData* D_8010A290_218C30_BumperBalls; /* the island */
+extern omObjData* D_8010A294_218C34_BumperBalls; /* the start object (func_80105EBC) */
+extern omObjData* D_8010A298_218C38_BumperBalls; /* the end object (func_80105FB0) */
 extern omObjData** D_8010A29C_218C3C_BumperBalls; /* the balls */
 extern omObjData** D_8010A2A0_218C40_BumperBalls; /* the boats */
-extern u16 D_8010A564_218F04_BumperBalls;
+extern u16 D_8010A560_218F00_BumperBalls; /* end state: 10 one winner, 13 none */
+extern u16 D_8010A562_218F02_BumperBalls; /* game state: 0 start, 1 play, 2 end */
+extern u16 D_8010A564_218F04_BumperBalls; /* start object state (MP1 D_800FCFF0) */
 
 /* ---- overlay functions (fork A: 80102800-80105FB0; fork B: 80106730 on) ---- */
 
@@ -105,7 +192,7 @@ f32 func_80108384_216D24_BumperBalls(omObjData* arg0);
 void func_80108410_216DB0_BumperBalls(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7);
 void func_801084C8_216E68_BumperBalls(omObjData* arg0);
 void func_80108500_216EA0_BumperBalls(omObjData* arg0);
-void func_8010851C_216EBC_BumperBalls(void);
+void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2); /* water mesh (MP1 func_800FB2EC) */
 void func_80108C70_217610_BumperBalls(void);
 void func_80109868_218208_BumperBalls(void);
 void func_80109D80_218720_BumperBalls(omObjData* arg0);
