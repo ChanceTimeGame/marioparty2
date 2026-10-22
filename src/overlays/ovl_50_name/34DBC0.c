@@ -15,7 +15,33 @@ void func_8010D360_34DBC0_name_50(void) {
     D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010D3F4_34DC54_name_50);
+/* Board 5's setup: a background model (D_80112618), only the winner's player model, and the
+   host's (D_8011274C). */
+void func_8010D3F4_34DC54_name_50(void) {
+    s32 i;
+
+    D_80112618_352E78_name_50 = MBModelFileCreate(0x8007B, 13, 1.0f, 3.0f, D_8011236C_352BCC_name_50);
+    func_800298A4_2A4A4(*D_80112618_352E78_name_50->obj->model, 0x2060, 0x22040);
+    func_80029A8C_2A68C(*D_80112618_352E78_name_50->obj->model);
+    MBModelDispOff(D_80112618_352E78_name_50);
+    for (i = 0; i < 4; i++) {
+        if (i == D_8011275A_352FBA_name_50) {
+            MBPlayerModelCreate(i, D_80112308_352B68_name_50[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+            func_80043DAC_449AC(OVL50_PLAYER_MODEL(i));
+            gPlayers[i].flags |= 2;
+            MBMotionSet(OVL50_PLAYER_MODEL(i), 0, 2);
+            if (D_8011275A_352FBA_name_50 == i) {
+                func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(i)->obj->model, 1);
+            }
+            MBModelDispOff(OVL50_PLAYER_MODEL(i));
+        }
+    }
+    D_8011274C_352FAC_name_50 = MBModelFileCreate(0x80000, 13, 0.8f, 0.8f, D_80112320_352B80_name_50);
+    func_8005AB50_5B750(D_8011274C_352FAC_name_50, 2, 8, D_80112398_352BF8_name_50);
+    func_8002D1EC_2DDEC(*D_8011274C_352FAC_name_50->obj->model, 1);
+    MBModelDispOff(D_8011274C_352FAC_name_50);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010D614_34DE74_name_50);
 

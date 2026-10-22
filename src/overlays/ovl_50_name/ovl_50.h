@@ -183,6 +183,10 @@ extern Vec D_80111B50_3523B0_name_50[2]; /* D_8011274C */
 extern Vec D_80111B68_3523C8_name_50[2]; /* D_80112740: start; [1] the centre it circles */
 extern u16 D_80111B80_3523E0_name_50[6];     /* per character: frames to the winner's voice */
 extern s32 D_80111B8C_3523EC_name_50[6];     /* per board: the flag that allows skipping */
+extern u32* D_80112308_352B68_name_50[6];    /* board 5, per character: MBPlayerModelCreate list */
+extern u32 D_80112320_352B80_name_50[];      /* board 5's host: MBModelFileCreate list */
+extern u32 D_8011236C_352BCC_name_50[];      /* board 5's background (0x8007B) */
+extern s32 D_80112398_352BF8_name_50;
 
 /* ---- overlay .bss (asm) ---- */
 
@@ -190,6 +194,7 @@ extern s32 D_801125B0_352E10_name_50[2]; /* func_8005973C handles; splat's D_801
 extern omObjData* D_801125B8_352E18_name_50;
 extern Process* D_801125BC_352E1C_name_50;
 extern ModelEmitterWork* D_801125C0_352E20_name_50;
+extern MBModel* D_80112618_352E78_name_50; /* board 5's background */
 extern omObjData* D_80112638_352E98_name_50; /* board 5: an object func_80110EFC..80110F10 flag through work[0] */
 extern void* D_80112640_352EA0_name_50[4][8]; /* per effect slot, per frame buffer: vertices */
 extern Gfx* D_801126C0_352F20_name_50[4][8];  /* per effect slot, per frame buffer: display list */
