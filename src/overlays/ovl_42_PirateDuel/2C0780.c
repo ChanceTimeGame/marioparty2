@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_42.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80102800_2C0780_PirateDuel);
 
