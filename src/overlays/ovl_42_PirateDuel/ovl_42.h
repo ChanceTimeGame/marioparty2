@@ -71,6 +71,7 @@ void AdjustPlayerCoins(s32 index, s32 count);
 GW_PLAYER* BoardPlayerGet(s32);
 void espDispOff(u16);
 void espDispOn(u16);
+void ShowTextWindow(s32 arg0);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void espPosSet(u16 spriteId, s16 x, s16 y);
 s16 func_8001A2F8_1AEF8(s32 arg0);
@@ -90,6 +91,7 @@ omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
 void func_80050AE0_516E0(void);
 void func_8005321C_53E1C(f32, f32);
 void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotation */
+void func_8005762C_5822C(s32 arg0); /* close a window that waited for a press */
 void func_80057730_58330(s16, s32);
 void func_80057A78_58678(s32, s32, s32); /* both duelists' portraits in a window */
 void func_800581A0_58DA0(void);

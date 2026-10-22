@@ -1,6 +1,5 @@
 #include "ovl_42.h"
 
-
 void func_80102800_2C0780_PirateDuel(void) {
     omInitObjMan(30, 15);
     func_80079128_79D28();
@@ -127,13 +126,86 @@ const u32 D_80109BD8_2C7B58_PirateDuel[6] = { 0x00000023, 0x0000001E, 0x00000032
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80102CA0_2C0C20_PirateDuel);
 
+/* GCC still believes it is in .rodata here (INCLUDE_ASM switched to .text): switch for real, so the
+   string literals below land in .rodata. */
 __asm__(".section .rodata");
-const char D_80109BFC_2C7B7C_PirateDuel[] = "%d";
 
-__asm__(".section .rodata");
-const char D_80109C00_2C7B80_PirateDuel[] = "%c%c";
+/* A message window (3F's func_80105AAC): D_80109D84 at (D_80109D78, D_80109D7C); D_80109D80 is the
+   variant: 1 waits for a duelist's press (both CPU: the CPU script), 3 shows the stake, 4 the
+   winner's character and the stake, 5 the character; 2-5 close at once. Bit 0 of D_80109D88 keeps
+   the window for a press (ShowTextWindow/func_8005762C). */
+void func_80104B88_2C2B08_PirateDuel(void) {
+    s16 size[2];
+    char num[0x100];
+    char name[0x100];
+    s32 win;
+    u16 btn;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80104B88_2C2B08_PirateDuel);
+    if (D_80109D80_2C7D00_PirateDuel == 3) {
+        sprintf(num, "%d", D_80109D74_2C7CF4_PirateDuel);
+        func_8008D974_8E574(num, 0);
+    }
+    if (D_80109D80_2C7D00_PirateDuel == 4) {
+        sprintf(num, "%d", D_80109D74_2C7CF4_PirateDuel);
+        sprintf(name, "%c%c", 0x18, gPlayers[D_80109D8C_2C7D0C_PirateDuel].character);
+        func_8008D974_8E574(name, 0);
+        func_8008D974_8E574(num, 1);
+        func_8008D974_8E574(name, 2);
+    }
+    if (D_80109D80_2C7D00_PirateDuel == 5) {
+        sprintf(num, "%c%c", 0x18, gPlayers[D_80109D8C_2C7D0C_PirateDuel].character);
+        func_8008D974_8E574(num, 0);
+    }
+    func_8008DACC_8E6CC(1, size, D_80109D84_2C7D04_PirateDuel);
+    win = func_80104FB4_2C2F34_PirateDuel((s16)D_80109D78_2C7CF8_PirateDuel, (s16)D_80109D7C_2C7CFC_PirateDuel, size[0], size[1], 0, 0, 200);
+    if (D_80109D88_2C7D08_PirateDuel & 1) {
+        ShowTextWindow((s16)win);
+    }
+    if (D_80109D80_2C7D00_PirateDuel == 3 || D_80109D80_2C7D00_PirateDuel == 5) {
+        func_80089308_89F08(win, num, 0);
+    }
+    if (D_80109D80_2C7D00_PirateDuel == 4) {
+        func_80089308_89F08(win, name, 0);
+        func_80089308_89F08(win, num, 1);
+        func_80089308_89F08(win, name, 2);
+    }
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, D_80109D84_2C7D04_PirateDuel, -1, -1);
+    func_80057A78_58678((s16)win, D_80109D90_2C7D10_PirateDuel, D_80109D94_2C7D14_PirateDuel);
+    if (D_80109D80_2C7D00_PirateDuel == 1 && (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) && (gPlayers[D_80109D94_2C7D14_PirateDuel].flags & 1)) {
+        func_801070F4_2C5074_PirateDuel(0, 0, 0);
+    }
+    while (TRUE) {
+        switch (D_80109D80_2C7D00_PirateDuel) {
+            case 1:
+                if ((gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) && (gPlayers[D_80109D94_2C7D14_PirateDuel].flags & 1)) {
+                    btn = func_801078C4_2C5844_PirateDuel();
+                } else {
+                    btn = func_8010511C_2C309C_PirateDuel();
+                }
+                if (btn & 0x1000) {
+                    PlaySound(2);
+                    D_80109D70_2C7CF0_PirateDuel = 1;
+                    func_8008CCA8_8D8A8(win);
+                    omDelPrcObj(NULL);
+                }
+                break;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                if (D_80109D88_2C7D08_PirateDuel & 1) {
+                    func_8005762C_5822C((s16)win);
+                } else {
+                    func_8008CCA8_8D8A8(win);
+                }
+                D_80109D70_2C7CF0_PirateDuel = 1;
+                omDelPrcObj(NULL);
+                break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 /* NON_MATCHING: registers (masked 14), as overlay 40's func_801041B4 and 3F's func_80104844: retail
    keeps arg6 in s0 and the narrowed window id in s1 */
@@ -372,7 +444,7 @@ void func_801057B4_2C3734_PirateDuel(void) {
    duelists pay the stake as it changes. Retail quirk: at the 999 cap a further raise still takes
    the coin from both players. */
 #define PD_STAKE_SHOW(win, stake)                                           \
-    sprintf(num, D_80109BFC_2C7B7C_PirateDuel, stake);                      \
+    sprintf(num, "%d", stake);                                 \
     len = func_800A5610_A6210(num);                                         \
     for (j = 0; j < 3 - len; j++) {                                         \
         pad[j] = 0x1A;                                                      \
