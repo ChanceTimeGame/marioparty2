@@ -678,11 +678,96 @@ void func_80104B70_213510_BumperBalls(omObjData* object) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80104E04_2137A4_BumperBalls);
+void func_80104E04_2137A4_BumperBalls(omObjData* object) {
+    BumperBallsWork* work = object->unk_50;
+    omObjData* obj;
+    s16 model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010515C_213AFC_BumperBalls);
+    if (D_8010A562_218F02_BumperBalls != 1) {
+        return;
+    }
+    object->trans.y += work->unk_28;
+    work->unk_28 = work->unk_28 - (fabs(work->unk_28 / 100.0f) + 5.0);
+    omSetTra(object, object->trans.x + work->unk_24, object->trans.y, object->trans.z + work->unk_2C);
+    func_80029714_2A314(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+    func_80029714_2A314(object->model[1], object->trans.x, 120.0f, object->trans.z);
+    func_8002979C_2A39C(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    if (func_80106E94_215834_BumperBalls(object) == 1) {
+        work->unk_28 = -work->unk_28;
+        work->unk_24 *= 1.1f;
+        work->unk_2C *= 1.1f;
+    }
+    if (object->trans.y < -20.0f && work->unk_3E == 0) {
+        work->unk_3E = 1;
+        model = D_800F86D8_F92D8[object->model[4]].unk00;
+        func_80029714_2A314(model, object->trans.x, 0.0f, object->trans.z + 80.0f);
+        func_800297E8_2A3E8(model, 5.0f, 5.0f, 5.0f);
+        func_800298A4_2A4A4(model, 4, 0);
+        omVibrate(work->player, 2, 2, 0x14);
+    }
+    if (object->trans.y < -80.0f) {
+        omSetTra(object, object->trans.x, -80.0f, object->trans.z);
+        model = D_800F86D8_F92D8[object->model[3]].unk00;
+        func_80029714_2A314(model, object->trans.x, -60.0f, object->trans.z + 160.0f);
+        func_800297E8_2A3E8(model, 10.0f, 10.0f, 10.0f);
+        func_800298A4_2A4A4(model, 4, 0);
+        obj = omAddObj(0x14, 1, 0, -1, &func_8010545C_213DFC_BumperBalls);
+        obj->model[0] = object->model[2];
+        omSetTra(obj, object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+        omSetRot(obj, work->unk_30, work->unk_34, work->unk_30);
+        work->unk_00 = 4;
+        work->unk_5C = 0.0f;
+        PlaySound(0x28A);
+        object->func_ptr = &func_8010515C_213AFC_BumperBalls;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105244_213BE4_BumperBalls);
+void func_8010515C_213AFC_BumperBalls(omObjData* arg0) {
+    BumperBallsWork* temp_s1 = arg0->unk_50;
+    s32 temp_v1 = arg0->unk_10;
+
+    if (temp_v1 != 0) {
+        arg0->unk_10 = 0;
+        if (temp_v1 == 1) {
+            temp_s1->unk_00 = 5;
+            func_80029BF0_2A7F0(arg0->model[0], func_80029E14_2AA14(arg0->motion[5]), 0, 15, 0);
+        }
+    }
+    if (temp_s1->unk_00 != 5) {
+        omSetTra(arg0, arg0->trans.x, (2.0f * HuMathSin(temp_s1->unk_5C)) + arg0->trans.y, arg0->trans.z);
+        temp_s1->unk_5C = temp_s1->unk_5C + 8.0f;
+        if (temp_s1->unk_5C >= 360.0f) {
+            temp_s1->unk_5C = temp_s1->unk_5C - 360.0f;
+        }
+    }
+}
+
+void func_80105244_213BE4_BumperBalls(omObjData* object) {
+    BumperBallsWork* work = object->unk_50;
+    f32 angle;
+    f32 x;
+    f32 z;
+
+    object->trans.y += work->unk_28;
+    work->unk_28 = work->unk_28 - (fabs(work->unk_28 / 100.0f) + 5.0);
+    angle = func_800B75A8_B81A8(object->trans.x, object->trans.z);
+    x = object->trans.x + work->unk_24;
+    z = object->trans.z + work->unk_2C;
+    if (func_800B1830_B2430(x * x + z * z) < (220.0f - object->trans.y) * 0.5f + 528.0f) {
+        x = HuMathSin(angle) * ((220.0f - object->trans.y) * 0.5f + 528.0f);
+        z = func_800B7890_B8490(angle) * ((220.0f - object->trans.y) * 0.5f + 528.0f);
+    }
+    omSetTra(object, x, object->trans.y, z);
+    func_80029714_2A314(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+    func_8002979C_2A39C(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    if (object->trans.y <= -650.0f) {
+        work->unk_00 = 4;
+        work->unk_5C = 0.0f;
+        func_800298A4_2A4A4(object->model[2], 4, 4);
+        func_800298A4_2A4A4(object->model[0], 4, 4);
+        object->func_ptr = NULL;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010545C_213DFC_BumperBalls);
 
