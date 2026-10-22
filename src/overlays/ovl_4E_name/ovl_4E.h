@@ -17,7 +17,23 @@
 #include "game/window.h"
 #include "game/pad.h"
 
+/* ---- types ---- */
+
+/* A camera key (0x1C): D_8010E144 points at a table of them (D_8010D1F8 has one). */
+typedef struct Ovl4ECamKey {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ Vec unk0C;
+    /* 0x18 */ f32 unk18;
+} Ovl4ECamKey; /* size = 0x1C */
+
 /* ---- main ---- */
+
+/* Main symbols this overlay reaches at an offset (declared raw; their own types are elsewhere). */
+extern s8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i */
+extern s8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared */
+extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
+extern s16 D_800F904A;
+extern s16 D_801013B8_101FB8[]; /* CenterM + 8; [0x20] (0x801013F8): 0 or 7 */
 
 void CameraViewportSet(s16, Vec*, Vec*);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
@@ -87,7 +103,38 @@ extern u8 D_01164160[];
 
 /* ---- data (.data, asm) ---- */
 
+extern s16 D_8010D1F0_334BB0_name_4E;
+extern s16 D_8010D1F4_334BB4_name_4E;
+extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
+extern s32 D_8010D214_334BD4_name_4E[];
+extern Vec D_8010D5A4_334F64_name_4E;
+extern Vec D_8010D5B0_334F70_name_4E;
+extern Vec D_8010D5BC_334F7C_name_4E;
+extern Vec D_8010D5C8_334F88_name_4E;
+extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
+extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
+extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
+
 /* ---- bss (asm) ---- */
+
+extern s16 D_8010DAB6_335476_name_4E;
+extern s16 D_8010DAB8_335478_name_4E;
+extern u16 D_8010DABC_33547C_name_4E;
+extern u16 D_8010DAC4_335484_name_4E[3];
+extern s16 D_8010DB60_335520_name_4E;
+extern s16 D_8010DBE0_3355A0_name_4E;
+extern s8 D_8010DBE2_3355A2_name_4E;
+extern s8 D_8010DBE3_3355A3_name_4E;
+extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
+extern s16 D_8010DC90_335650_name_4E;
+extern s16 D_8010E140_335B00_name_4E;
+extern Ovl4ECamKey* D_8010E144_335B04_name_4E;
+extern f32 D_8010E150_335B10_name_4E;   /* camera far */
+extern s16 D_8010E5F2_335FB2_name_4E;
+extern s16 D_8010E5F4_335FB4_name_4E;
+extern s16 D_8010E618_335FD8_name_4E;
+extern f32 D_8010E63C_335FFC_name_4E;   /* camera near */
+extern s32 D_8010E648_336008_name_4E[];
 
 /* ---- 32A1C0.c ---- */
 
@@ -163,7 +210,7 @@ void func_8010BCB8_333678_name_4E(f32 *arg0, f32 arg1, void* fn);
 void func_8010C218_333BD8_name_4E(void);
 void func_8010C4AC_333E6C_name_4E(void);
 void func_8010C5BC_333F7C_name_4E(s16 arg0);
-void func_8010C5F4_333FB4_name_4E(s32 arg0);
+void func_8010C5F4_333FB4_name_4E(s32* arg0);
 void func_8010C600_333FC0_name_4E(s16 arg0);
 void func_8010C60C_333FCC_name_4E(s16 arg0);
 void func_8010C618_333FD8_name_4E(s32 *arg0);

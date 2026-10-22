@@ -1,11 +1,217 @@
 #include "ovl_4E.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80102800_32A1C0_name_4E);
+void func_80102800_32A1C0_name_4E(void) {
+    s32 i;
+
+    func_80020070_20C70(1);
+    func_8002D4D0_2E0D0(1);
+    func_80020D20_21920(0x19);
+    omInitObjMan(0x33, 0x19);
+    func_80088640_89240();
+    omAddObj(0x2710, 0, 0, -1, func_80107D3C_32F6FC_name_4E);
+    func_80026D28_27928(3);
+    func_80026DAC_279AC(2, 0, 0, 0);
+    func_80026E00_27A00(2, 0.0f, 0.0f, 100.0f);
+    func_80026DAC_279AC(3, 0x64, 0x64, 0x64);
+    func_80026E00_27A00(3, 0.0f, 100.0f, 0.0f);
+    func_80050A30_51630(D_01164160);
+    MBModelInit();
+    func_8005E2B8_5EEB8();
+    func_800593C0_59FC0();
+    func_800581A0_58DA0();
+    func_8005965C_5A25C();
+    for (i = 0; i < 4; i++) {
+        gPlayers[i].cpu_difficulty = gPlayers[i].cpu_difficulty2;
+    }
+    omAddPrcObj(func_80102B9C_32A55C_name_4E, 0x3F00, 0x1800, 0);
+    D_8010E63C_335FFC_name_4E = 80.0f;
+    D_8010E150_335B10_name_4E = 8000.0f;
+    D_8010D7B0_335170_name_4E = 20.0f;
+    Hu3DCamSetPositionOrientation(0, &D_8010D5A4_334F64_name_4E, &D_8010D5B0_334F70_name_4E, &D_8010D5BC_334F7C_name_4E);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    CameraViewportSet(0, &D_8010D5C8_334F88_name_4E, &D_8010D5C8_334F88_name_4E);
+    Hu3DCamSetPerspective(0, D_8010D7B0_335170_name_4E, D_8010E63C_335FFC_name_4E, D_8010E150_335B10_name_4E);
+    Hu3DCamUpdateMtx(0);
+    omAddPrcObj(func_80109778_331138_name_4E, 0x1001, 0x800, 0);
+    func_80029708_2A308(0);
+    func_8002CA48_2D648(0xFF, 0xFF, 0xFF);
+    func_8002C59C_2D19C(0x3DE, 0x3E8, 0xFF, 0xFF, 0xFF);
+    D_8010E144_335B04_name_4E = D_8010D1F8_334BB8_name_4E;
+    D_8010E5F4_335FB4_name_4E = 0;
+    if (!(D_800CD414_CE014 & 1)) {
+        D_8010DAB6_335476_name_4E = 1;
+        D_8010DBE0_3355A0_name_4E = 4;
+        if (!(D_800CD414_CE014 & 4)) {
+            D_801013B8_101FB8[0x20] = 0;
+        }
+    } else {
+        D_8010DAB6_335476_name_4E = 0;
+        D_8010DBE0_3355A0_name_4E = 2;
+        D_801013B8_101FB8[0x20] = 7;
+    }
+    if (D_800CD414_CE014 < 4) {
+        func_8010A244_331C04_name_4E();
+        for (i = 0; i < 4; i++) {
+            D_800F9D48_FA948[0x2F8 + i] = i;
+            D_800FC9B8_FD5B8[2 + i] = 0;
+        }
+        D_800FC8F0_FD4F0[2] = 0;
+        D_8010DBE2_3355A2_name_4E = 1;
+        if (D_800CD414_CE014 & 2) {
+            D_8010DAB8_335478_name_4E = 0;
+            PlayMusic(0x35);
+        } else {
+            D_8010DAB8_335478_name_4E = 1;
+        }
+    } else {
+        D_8010DAB8_335478_name_4E = 0;
+        D_8010D1F4_334BB4_name_4E = func_80105F80_32D940_name_4E();
+        if (D_8010D1F4_334BB4_name_4E == 0) {
+            PlayMusic(0x35);
+        }
+        D_8010DBE2_3355A2_name_4E = 0;
+    }
+    D_8010DC90_335650_name_4E = 0;
+    D_8010E140_335B00_name_4E = 0x73;
+    D_8010E618_335FD8_name_4E = 0;
+}
 
 void func_80102B94_32A554_name_4E(void) {
 }
 
+#ifdef NON_MATCHING
+/* The overlay's main process: the mode/character setup state machine. Retail keeps the switch
+   index and the confirm flag in copies (v1, v0) at the loop's back edges; this C tests s0/s2
+   directly (same logic, 4 instructions shorter). */
+void func_80102B9C_32A55C_name_4E(void) {
+    s16 i;
+    s32 state;
+    s32 confirm;
+
+    func_80102B94_32A554_name_4E();
+    if (D_8010DAB6_335476_name_4E != 0) {
+        D_8010DC2C_3355EC_name_4E = D_8010D5D4_334F94_name_4E;
+    } else {
+        D_8010DC2C_3355EC_name_4E = D_8010D5F4_334FB4_name_4E;
+    }
+    func_8010A2A0_331C60_name_4E();
+    func_8010C618_333FD8_name_4E(D_8010D214_334BD4_name_4E);
+    omAddPrcObj(func_8010C218_333BD8_name_4E, 0x3F00, 0x800, 0);
+    func_8010C5F4_333FB4_name_4E(D_8010E648_336008_name_4E);
+    omAddPrcObj(func_80107554_32EF14_name_4E, 0x3F00, 0x800, 0);
+    omAddPrcObj(func_801047E8_32C1A8_name_4E, 0x3F00, 0x800, 0);
+    D_8010DBE3_3355A3_name_4E = 0;
+    omAddPrcObj(func_80105148_32CB08_name_4E, 0x3F00, 0x800, 0);
+    D_8010E5F2_335FB2_name_4E = 0;
+    func_80108BE0_3305A0_name_4E();
+    func_80107F10_32F8D0_name_4E();
+    espDispOn(D_8010DABC_33547C_name_4E);
+    if (D_800CD414_CE014 < 4) {
+        func_801076E4_32F0A4_name_4E();
+        if (D_800CD414_CE014 < 2) {
+            espPosSet(D_8010DABC_33547C_name_4E, 0xA0, 0x2E);
+            for (i = 0; i < 11; i++) {
+                espPosSet(D_8010DABC_33547C_name_4E, 0xA0, 36.0f - (1.0f - HuMathSin(i * 9.0f)) * 80.0f);
+                HuPrcVSleep();
+            }
+        }
+        state = 0;
+    } else {
+        state = 4;
+    }
+    confirm = 0;
+    while (1) {
+        switch (state) {
+        case 0:
+            if (func_80103034_32A9F4_name_4E() == 0) {
+                confirm = 1;
+                break;
+            }
+            state = 1;
+            if (D_8010DAB6_335476_name_4E != 0) {
+                break;
+            }
+            if (D_800CD414_CE014 & 4) {
+                func_80089284_89E84(D_8010DB60_335520_name_4E, 1, 1);
+            }
+            func_8010760C_32EFCC_name_4E(0xA2);
+            i = func_80107638_32EFF8_name_4E();
+            if (i < 0) {
+                for (i = 0; i < 3; i++) {
+                    espPosSet(D_8010DAC4_335484_name_4E[i], -0x50, i * 36 + 0x4F);
+                    espDispOff(D_8010DAC4_335484_name_4E[i]);
+                }
+                state = 0;
+                HuPrcVSleep();
+                HuPrcVSleep();
+                break;
+            }
+            if (i != 0) {
+                D_800F904A = 0;
+            } else {
+                D_800F904A = 1;
+            }
+            D_801013B8_101FB8[0x20] = 7;
+            state = 3;
+            break;
+        case 1:
+            if (func_80103608_32AFC8_name_4E() == 0) {
+                state = 0;
+                break;
+            }
+            state = 3;
+            if (D_801013B8_101FB8[0x20] < 3) {
+                state = (D_801013B8_101FB8[0x20] < 1) ? 3 : 2;
+            }
+            break;
+        case 2:
+            state = (func_80103CD0_32B690_name_4E() != 0) ? 3 : 1;
+            break;
+        case 3:
+            state = 0;
+            func_80104AF0_32C4B0_name_4E();
+            break;
+        case 4:
+            switch (func_80105454_32CE14_name_4E()) {
+            case 1:
+                D_8010DC90_335650_name_4E = 1;
+                D_8010E140_335B00_name_4E = 0x4E;
+                D_8010E618_335FD8_name_4E = (D_800CD414_CE014 & 1) | 2;
+                D_8010D1F0_334BB0_name_4E = 1;
+                InitFadeOut(0, 10);
+                while (1) {
+                    HuPrcVSleep();
+                }
+            case 0:
+                state = 3;
+                break;
+            default:
+                state = 5;
+                break;
+            }
+            break;
+        case 5:
+        default:
+            D_8010DC90_335650_name_4E = 0;
+            D_8010E140_335B00_name_4E = 0x5C;
+            D_8010E618_335FD8_name_4E = 0;
+            D_8010D1F0_334BB0_name_4E = 1;
+            HuPrcVSleep();
+            break;
+        }
+        if (confirm) {
+            confirm = 0;
+            func_8010760C_32EFCC_name_4E(D_8010DC2C_3355EC_name_4E[1]);
+            if (func_80107638_32EFF8_name_4E() == 0) {
+                D_8010D1F0_334BB0_name_4E = 1;
+                state = 5;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80102B9C_32A55C_name_4E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103034_32A9F4_name_4E);
 
