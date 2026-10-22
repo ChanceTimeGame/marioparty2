@@ -1796,7 +1796,52 @@ void func_801079D0_2CCEC0_name_43(void) {
     SetNextChainAndSpace(-1, 2, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801079F4_2CCEE4_name_43);
+/* Let the other players answer a window: those with coins who are not CPUs press; with none, the
+   CPU presses through seven times. */
+void func_801079F4_2CCEE4_name_43(void) {
+    s16 sp18[4];
+    u8 sp20[4];
+    u8 mask;
+    u16 win;
+    s32 i;
+
+    *(Unk4Bytes*)sp20 = *(Unk4Bytes*)D_80115280_2DA770_name_43;
+    mask = 0;
+    win = mbWinId;
+    for (i = 0; i < 4; i++) {
+        if (i != GwSystem.current_player_index && gPlayers[i].coins != 0 && !(gPlayers[i].flags & 1)) {
+            break;
+        }
+    }
+    if (i == 4) {
+        func_80089284_89E84(win, 2, 2);
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        func_8008CFD0_8DBD0(-0x8000, -0x8000, -0x8000, -0x8000, func_80057718_58318());
+        while (func_8008BA30_8C630(win) != 0) {
+            HuPrcVSleep();
+        }
+        func_8008D23C_8DE3C();
+    } else {
+        for (i = 0; i < 4; i++) {
+            if ((gPlayers[i].flags & 1) || i == GwSystem.current_player_index || gPlayers[i].coins == 0) {
+                sp18[gPlayers[i].port] = 0;
+            } else {
+                mask |= sp20[gPlayers[i].port];
+                sp18[gPlayers[i].port] = -1;
+            }
+        }
+        func_8008D59C_8E19C(win, mask);
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+        while (func_8008BA30_8C630(win) != 0) {
+            HuPrcVSleep();
+        }
+    }
+}
 
 void func_80107CFC_2CD1EC_name_43(void) {
     MBModel* obj;

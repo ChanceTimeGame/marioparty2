@@ -617,5 +617,8 @@ extern s16 D_80113D2C_2D921C_name_43[3]; /* the space each one faces */
 extern s16 D_80113D34_2D9224_name_43[3]; /* the D_800F8CE4 index that picks its space */
 extern s16 D_80113D44_2D9234_name_43[2]; /* Boo spaces by day */
 extern s16 D_80113D48_2D9238_name_43[2]; /* by night */
+extern s16 mbWinId;
+s16 func_8008BA30_8C630(s16); /* window still open */
+void func_8008D23C_8DE3C(void);
 
 #endif
