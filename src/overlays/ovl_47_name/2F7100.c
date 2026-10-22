@@ -1298,7 +1298,51 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106B44_2FB444
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106BBC_2FB4BC_name_47);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106C60_2FB560_name_47);
+s32 func_80106C60_2FB560_name_47(s32 arg0) {
+    s32 count = 0;
+    s16 sp18[4];
+    u8 sp20[4];
+    s32 i;
+    s32 j;
+    DecisionTreeNonLeafNode* tree;
+
+    *(Unk4Bytes*)sp20 = *(Unk4Bytes*)D_80112170_306A70_name_47;
+    for (i = 0; i < 4; i++) {
+        if (i == GwSystem.current_player_index) {
+            if (gPlayers[i].flags & 1) {
+                if (arg0 == 0) {
+                    tree = D_80110CA0_3055A0_name_47;
+                } else {
+                    tree = D_80110CB8_3055B8_name_47;
+                }
+                count = func_80044800_45400(tree) + 1;
+                sp18[gPlayers[i].port] = 0x400;
+            } else {
+                func_8008D59C_8E19C(mbDlgWinId, sp20[gPlayers[i].port]);
+                sp18[gPlayers[i].port] = -1;
+            }
+        } else {
+            sp18[gPlayers[i].port] = 0;
+        }
+    }
+
+    if (count != 0) {
+        func_80089284_89E84(mbDlgWinId, 2, 2);
+        for (j = 0; count != 0; j++) {
+            if (--count == 0) {
+                sp18[gPlayers[GwSystem.current_player_index].port] = -0x8000;
+            }
+            if (j == 0) {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], func_80057718_58318());
+            } else {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], 16);
+            }
+        }
+    } else {
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+    }
+    return func_8008BB48_8C748(mbDlgWinId, 0, 1);
+}
 
 void func_80106EC0_2FB7C0_name_47(void) {
     GW_SYSTEM* gw = &GwSystem;
@@ -3355,7 +3399,51 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010EE00_303700
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F098_303998_name_47);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F6B0_303FB0_name_47);
+s32 func_8010F6B0_303FB0_name_47(s32 arg0) {
+    s32 count = 0;
+    s16 sp18[4];
+    u8 sp20[4];
+    s32 i;
+    s32 j;
+    DecisionTreeNonLeafNode* tree;
+
+    *(Unk4Bytes*)sp20 = *(Unk4Bytes*)D_80112170_306A70_name_47;
+    for (i = 0; i < 4; i++) {
+        if (i == GwSystem.current_player_index) {
+            if (gPlayers[i].flags & 1) {
+                if (arg0 == 0) {
+                    tree = D_801116DC_305FDC_name_47;
+                } else {
+                    tree = D_801116F4_305FF4_name_47;
+                }
+                count = func_80044800_45400(tree) + 1;
+                sp18[gPlayers[i].port] = 0x400;
+            } else {
+                func_8008D59C_8E19C(mbDlgWinId, sp20[gPlayers[i].port]);
+                sp18[gPlayers[i].port] = -1;
+            }
+        } else {
+            sp18[gPlayers[i].port] = 0;
+        }
+    }
+
+    if (count != 0) {
+        func_80089284_89E84(mbDlgWinId, 2, 2);
+        for (j = 0; count != 0; j++) {
+            if (--count == 0) {
+                sp18[gPlayers[GwSystem.current_player_index].port] = -0x8000;
+            }
+            if (j == 0) {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], func_80057718_58318());
+            } else {
+                func_8008CFD0_8DBD0(sp18[0], sp18[1], sp18[2], sp18[3], 16);
+            }
+        }
+    } else {
+        func_8008D07C_8DC7C(sp18[0], sp18[1], sp18[2], sp18[3]);
+    }
+    return func_8008BB48_8C748(mbDlgWinId, 0, 1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F910_304210_name_47);
 

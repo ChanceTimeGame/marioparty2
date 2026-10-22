@@ -450,6 +450,10 @@ s32 func_80110364_304C64_name_47(void); /* fork D: returns the use-item answer *
 s32 func_80110588_304E88_name_47(void);
 s32 func_80110904_305204_name_47(void);
 extern omObjData* D_80112360_306C60_name_47[4]; /* 47-A: objects deleted by func_80106844 (fork B: their use) */
+extern DecisionTreeNonLeafNode D_80110CA0_3055A0_name_47[]; /* 47-A: CPU choice trees, by func_80106C60's arg0 */
+extern DecisionTreeNonLeafNode D_80110CB8_3055B8_name_47[];
+extern DecisionTreeNonLeafNode D_801116DC_305FDC_name_47[]; /* the same for func_8010F6B0 */
+extern DecisionTreeNonLeafNode D_801116F4_305FF4_name_47[];
 /* 47-A: the rest (fork B's own functions are void(void) unless a caller shows more) */
 void func_801058A4_2FA1A4_name_47(void);
 void func_801058E0_2FA1E0_name_47(void);
