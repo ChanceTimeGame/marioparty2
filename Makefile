@@ -418,3 +418,16 @@ build/src/overlays/ovl_34_ChanceTime/259900.c.o: export VR4300MUL := ON
 # ovl_34 is four files: 259900, 263050 (8010BF50), 265540 (8010E440), 2658C0 (8010E7C0); each
 # previous one padded to 16 bytes; all built like 259900.c
 build/src/overlays/ovl_34_ChanceTime/263050.c.o build/src/overlays/ovl_34_ChanceTime/265540.c.o build/src/overlays/ovl_34_ChanceTime/2658C0.c.o: export VR4300MUL := ON
+
+# ev-B: ovl_55 365650.c is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled
+# with the KMC VR4300 mul fix on (func_801071E0_3660D0: a nop between back-to-back mul.s, none
+# before a mul.s after a call)
+EVB_BLANKSTRIP_UNITS := build/src/overlays/ovl_55_name/365650.c.o
+$(EVB_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(EVB_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
