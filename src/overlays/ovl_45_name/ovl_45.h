@@ -625,4 +625,24 @@ void func_80056030_56C30(s16 arg0, s32 arg1);
 /* The laser's path: spaces in beam order, -1-terminated (8010EA40 aims at [10] first). */
 extern s16 D_801118F4_2F0024_name_45[];
 
+void func_80015950_16550(s32 arg);
+/* The two paid boosters (models 0x84, 80106820): per booster the spaces it slides between. */
+extern s16 D_801119C4_2F00F4_name_45[2][2];
+/* The ride's four routes, -1-terminated space lists: [booster * 2 + paid]. */
+extern s16* D_80111A8C_2F01BC_name_45[4];
+extern u8 D_80111A9C_2F01CC_name_45[2]; /* step at which a paid ride launches the booster */
+extern u8 D_80111AA0_2F01D0_name_45[2]; /* step taken at 1.5x speed */
+extern u8 D_80111AA4_2F01D4_name_45[]; /* [booster * 2 + 0/1] */ /* booster: steps it accelerates over (lo, hi] */
+extern u8 D_80111AA8_2F01D8_name_45[]; /* [booster * 2 + 0/1] */ /* ride: two steps taken by the other mover */
+extern s16 D_80111AAC_2F01DC_name_45[4]; /* per route: the space riders are set down on */
+extern Vec D_80111AB4_2F01E4_name_45[]; /* per rider slot: offset from the path */
+extern MBModel* D_801130DC_2F180C_name_45; /* the ride's vehicle */
+/* user_data of 8010FE08, one per player the ride picks up (allocated 0x20 bytes). */
+typedef struct Ovl45Rider {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 step;  /* index of the player's space in the route */
+    /* 0x08 */ s32 route; /* D_80111A8C index */
+    /* 0x0C */ s32 slot;  /* D_80111AB4 index */
+} Ovl45Rider;
+
 #endif

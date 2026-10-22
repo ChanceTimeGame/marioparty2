@@ -4135,9 +4135,123 @@ s32 func_8010F680_2EDDB0_name_45(s32 arg0) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010F8E0_2EE010_name_45);
+#ifdef NON_MATCHING
+/* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3. */
+void func_8010F8E0_2EE010_name_45(void) {
+    GW_SYSTEM* gw;
+    s32 idx;
+    s16 space;
+    s16 dest;
+    s32 choice;
+    MBModel* obj;
+    SpaceData* from;
+    SpaceData* to;
+    char pad[8]; /* frame size */
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010FBD8_2EE308_name_45);
+    idx = 0;
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    dest = 0;
+    if (gw->current_player_index != 4) {
+        func_80046D2C_4792C(gw->current_player_index);
+        MBPlayerMotionSet(-1, -1, 2);
+        switch (space) {
+            case 7:
+                dest = 0x6D;
+                idx = 0;
+                break;
+            case 3:
+                dest = 0x6E;
+                idx = 1;
+                break;
+        }
+        func_80056C30_57830(-1, 8, dest);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        if (D_800F8CE4_F98E4[idx + 1] != 0) {
+            MBDlgResultWinExec(0x42A);
+        } else if (gPlayers[gw->current_player_index].coins < 5) {
+            MBDlgWinExec(0x19, 0x429);
+        } else {
+        retry:
+            MBDlgWinCreate(0x19, 0x428);
+            choice = func_8010F680_2EDDB0_name_45(idx);
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+                case 0:
+                    func_8004CA34_4D634(gw->current_player_index, -5);
+                    func_800614B4_620B4(gw->current_player_index, -5);
+                    HuPrcSleep(30);
+                    MBDlgWinExec(0x19, 0x42C);
+                    from = GetSpaceData(D_801119C4_2F00F4_name_45[idx][0]);
+                    to = GetSpaceData(D_801119C4_2F00F4_name_45[idx][1]);
+                    func_80106820_2E4F50_name_45(idx);
+                    obj = D_801130B8_2F17E8_name_45[idx];
+                    func_800B3170_B3D70(&obj->pos, &from->coords);
+                    func_80056658_57258(&from->coords, &to->coords, &obj->rot);
+                    func_80056D80_57980(&obj->pos, &to->coords, &obj->pos, 20);
+                    HuPrcSleep(20);
+                    MBDlgWinExec(0x19, 0x42D);
+                    D_800F8CE4_F98E4[idx + 1] = 1;
+                    break;
+                case 1:
+                    MBDlgWinExec(0x19, 0x42B);
+                    break;
+                case 2:
+                    func_80103A64_2E2194_name_45();
+                    goto retry;
+            }
+        }
+        func_8004655C_4715C(gw->current_player_index);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010F8E0_2EE010_name_45);
+#endif
+
+void func_8010FBD8_2EE308_name_45(void) {
+    Vec dir;
+    s32 idx;
+    s16* path;
+    MBModel* obj;
+    s32 n;
+    SpaceData* space;
+
+    idx = (s32)HuPrcCurrentGet()->user_data;
+    path = D_80111A8C_2F01BC_name_45[idx * 2 + 1] + D_80111A9C_2F01CC_name_45[idx];
+    obj = D_801130B8_2F17E8_name_45[idx];
+    n = 0;
+    space = GetSpaceData(*path);
+    HuPrcSleep(10);
+    do {
+        n++;
+        if (D_80111AA4_2F01D4_name_45[idx * 2] < n && D_80111AA4_2F01D4_name_45[idx * 2 + 1] >= n) {
+            HuPrcChildLink(HuPrcCurrentGet(),
+                           func_80057150_57D50(&obj->pos, &space->coords, &obj->pos, n / 13.0f + 3.0f));
+        } else {
+            HuPrcChildLink(HuPrcCurrentGet(), func_80056FD4_57BD4(&obj->pos, &space->coords, &obj->pos, 3.0f));
+        }
+        HuPrcChildWatch();
+        if (*path == -1) {
+            break;
+        }
+        path++;
+        if (*path == -1) {
+            break;
+        }
+        space = GetSpaceData(*path);
+        if (*path == -1) {
+            break;
+        }
+        func_80056658_57258(&obj->pos, &space->coords, &dir);
+        func_80056B78_57778(&obj->rot, &dir, &obj->rot, 5);
+    } while (*path != -1);
+    omDelPrcObj(NULL);
+}
 
 void func_8010FDCC_2EE4FC_name_45(s32 arg0) {
     Process* process;
@@ -4146,9 +4260,193 @@ void func_8010FDCC_2EE4FC_name_45(s32 arg0) {
     process->user_data = (void*)arg0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010FE08_2EE538_name_45);
+#ifdef NON_MATCHING
+/* Scheduling only: retail loads rider->step before rider->route, and builds &D_80111AAC[route] index-first. */
+void func_8010FE08_2EE538_name_45(void) {
+    Vec target;
+    Ovl45Rider* rider;
+    MBModel* ship;
+    f32 speed;
+    GW_PLAYER* player;
+    MBModel* obj;
+    s32 route;
+    s16* path;
+    Process* process;
+    void* fx;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8011012C_2EE85C_name_45);
+    rider = HuPrcCurrentGet()->user_data;
+    ship = D_801130DC_2F180C_name_45;
+    speed = 2.5f;
+    player = BoardPlayerGet(rider->player);
+    obj = player->unk_24;
+    route = rider->route;
+    path = D_80111A8C_2F01BC_name_45[route];
+    path += rider->step + 1;
+    if (route & 1) {
+        speed = 3.0f;
+    }
+    process = HuPrcCurrentGet();
+    while (!(HuVecDistance(&GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index,
+                                                                              player->cur_space_index))
+                               ->coords,
+                           &ship->pos) < 31.0f)) {
+        func_80056658_57258(&obj->pos, &ship->pos, &obj->rot);
+        HuPrcVSleep();
+    }
+    fx = func_800672BC_67EBC(rider->player, 0, 5);
+    func_800797DC_7A3DC(0x111, rider->player);
+    MBMotionSet(obj, 1, 2);
+    while (path[1] != -1) {
+        func_800B3170_B3D70(&target, &GetSpaceData(*path++)->coords);
+        target.x += D_80111AB4_2F01E4_name_45[rider->slot].x;
+        target.z += D_80111AB4_2F01E4_name_45[rider->slot].z;
+        func_80056658_57258(&obj->pos, &target, &obj->rot);
+        HuPrcChildLink(process, func_80057150_57D50(&obj->pos, &target, &obj->pos, speed));
+        HuPrcChildWatch();
+    }
+    path = &D_80111AAC_2F01DC_name_45[route];
+    func_800B3170_B3D70(&target, &GetSpaceData(*path)->coords);
+    target.x += D_80111AB4_2F01E4_name_45[rider->slot].x;
+    target.z += D_80111AB4_2F01E4_name_45[rider->slot].z;
+    func_80056658_57258(&obj->pos, &target, &obj->rot);
+    HuPrcChildLink(process, func_80056FD4_57BD4(&obj->pos, &target, &obj->pos, speed));
+    HuPrcChildWatch();
+    func_8006735C_67F5C(fx);
+    MBMotionSet(obj, -1, 2);
+    func_80054C78_55878(*path, &player->cur_chain_index, &player->cur_space_index);
+    player->next_chain_index = player->cur_chain_index;
+    player->next_space_index = player->cur_space_index + 1;
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010FE08_2EE538_name_45);
+#endif
+
+void func_8011012C_2EE85C_name_45(s32 arg0) {
+    Vec dir;
+    MBModel* booster;
+    f32 speed;
+    s32 paid;
+    s16* path;
+    s32 slot;
+    s32 step;
+    s32 i;
+    GW_PLAYER* player;
+    Process* process;
+    Ovl45Rider* rider;
+    MBModel* ship;
+    SpaceData* from;
+    SpaceData* to;
+    s32 id;
+
+    booster = NULL;
+    speed = 2.5f;
+    paid = 0;
+    if (D_800F8CE4_F98E4[arg0 + 1] != 0) {
+        paid = 1;
+        booster = D_801130B8_2F17E8_name_45[arg0];
+        speed = 3.0f;
+    }
+    path = D_80111A8C_2F01BC_name_45[arg0 * 2 + paid];
+    InitFadeOut(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    slot = 0;
+    step = 0;
+    while (*path != -1) {
+        for (i = 0; i < 4; i++) {
+            player = BoardPlayerGet(i);
+            if (*path == GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index)) {
+                process = omAddPrcObj(func_8010FE08_2EE538_name_45, 0x4800, 0, 0x40);
+                rider = HuMemMemoryAlloc(process->heap, 0x20);
+                process->user_data = rider;
+                rider->player = i;
+                rider->step = step;
+                rider->route = arg0 * 2 + paid;
+                rider->slot = slot++;
+            }
+        }
+        path++;
+        step++;
+    }
+    path = D_80111A8C_2F01BC_name_45[arg0 * 2 + paid];
+    id = 0x86;
+    if (paid == 0) {
+        id = 0x85;
+    }
+    ship = func_80043510_44110(id, NULL);
+    ship->jumpY = 5.0f;
+    D_801130DC_2F180C_name_45 = ship;
+    func_80043DAC_449AC(ship);
+    from = GetSpaceData(*path++);
+    to = GetSpaceData(*path);
+    func_800B3170_B3D70(&ship->pos, &from->coords);
+    func_80056658_57258(&from->coords, &to->coords, &ship->rot);
+    func_800636F8_642F8(4);
+    func_80063734_64334(&to->coords);
+    HuPrcSleep(5);
+    func_80061518_62118();
+    InitFadeIn(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    PlaySound(0x3BA);
+    i = 0;
+    do {
+        if (i == D_80111AA0_2F01D0_name_45[arg0]) {
+            HuPrcChildLink(HuPrcCurrentGet(), func_80057150_57D50(&ship->pos, &to->coords, &ship->pos, speed * 1.5f));
+        } else if (i != D_80111AA8_2F01D8_name_45[arg0 * 2] && i != D_80111AA8_2F01D8_name_45[arg0 * 2 + 1]) {
+            HuPrcChildLink(HuPrcCurrentGet(), func_80057150_57D50(&ship->pos, &to->coords, &ship->pos, speed));
+        } else {
+            HuPrcChildLink(HuPrcCurrentGet(), func_80056FD4_57BD4(&ship->pos, &to->coords, &ship->pos, speed));
+        }
+        HuPrcChildWatch();
+        if (*path != -1) {
+            path++;
+            if (*path != -1) {
+                to = GetSpaceData(*path);
+            }
+        }
+        i++;
+        if ((i == D_80111A9C_2F01CC_name_45[arg0]) & (booster != NULL)) {
+            PlaySound(0x3B9);
+            func_8010FDCC_2EE4FC_name_45(arg0);
+        }
+        if (*path != -1) {
+            func_80056658_57258(&ship->pos, &to->coords, &dir);
+            func_80056B78_57778(&ship->rot, &dir, &ship->rot, 5);
+        }
+        if (path[1] == -1 || *path == -1) {
+            func_800636F8_642F8(3);
+        } else {
+            func_800636F8_642F8(4);
+            func_80063734_64334(&ship->pos);
+        }
+    } while (*path != -1);
+    InitFadeOut(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    func_80015950_16550(30);
+    MBModelKill(ship);
+    if (booster != NULL) {
+        MBModelDispOff(booster);
+    }
+    D_800F8CE4_F98E4[arg0 + 1] = 0;
+    func_800636F8_642F8(1);
+    HuPrcSleep(5);
+    func_80063C40_64840(0, 1);
+    func_80063C40_64840(1, 1);
+    func_80063C40_64840(2, 1);
+    func_80063C40_64840(3, 1);
+    func_80061584_62184();
+    InitFadeIn(4, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
 
 void func_80110658_2EED88_name_45(void) {
     func_8011012C_2EE85C_name_45(0);
