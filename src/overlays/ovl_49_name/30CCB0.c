@@ -196,7 +196,109 @@ void func_80102F4C_30D3FC_name_49(UnkMBGuideData* guide) {
     func_8005B338_5BF38(guide);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80102FFC_30D4AC_name_49);
+void func_80102FFC_30D4AC_name_49(void) {
+    UnkMBGuideData* guide;
+    SpaceData* space;
+    Process* proc;
+    s32 mes;
+    s32 pick;
+    GW_SYSTEM* gw = &GwSystem;
+
+    pick = 0;
+    D_800CCC18_CD818 = 0;
+    guide = func_80050304_50F04(D_800CC6A8_CD2A8[gw->current_board_index], 0);
+    guide->obj->rot.x = HuMathSin(D_800CC6C4_CD2C4[gw->current_board_index]);
+    guide->obj->rot.z = func_800B7890_B8490(D_800CC6C4_CD2C4[gw->current_board_index]);
+    func_8005B338_5BF38(guide);
+    PlayMusic(0x11);
+    func_80067558_68158();
+    InitFadeIn(2, 16);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    func_80051500_52100();
+    func_80053608_54208(3.0f);
+    func_80102F4C_30D3FC_name_49(guide);
+    if (gw->unk_0A == 0 && !_CheckFlag(0x44)) {
+        mes = (D_800F8D12_F9912 != 0) ? 0x6B4 : 0x6B2;
+    } else {
+        mes = (D_800F8D12_F9912 != 0) ? 0x6B4 : 0x6B3;
+    }
+    func_800890CC_89CCC(guide->amount, mes, -1, -1);
+    func_8008E2DC_8EEDC(guide->amount, 1);
+    PlaySound(0x363);
+    func_80057DC0_589C0(guide->amount);
+    MBMotionShiftSet(guide->obj, -1, 0, 6, 2);
+    func_8005B338_5BF38(guide);
+    func_8008E4D0_8F0D0(guide->amount, 1);
+    func_8002D4A0_2E0A0(guide->obj->obj->model[0]);
+    if (D_800F8D12_F9912 != 0 && (u8)(pick = rand8() & 1) == 0) {
+        space = GetSpaceData(D_80112C68_31D118_name_49[gw->unk_1C]);
+    } else {
+        space = GetSpaceData(D_80112C68_31D118_name_49[gw->star_spawn_indices[gw->unk_0A]]);
+    }
+    MBDCameraPos3DSet(&space->coords);
+    MBCameraSpeedSet(3.5f);
+    HuPrcSleep(5);
+    while (func_80053998_54598() != 0) {
+        HuPrcVSleep();
+    }
+    HuPrcSleep(5);
+    MBMotionSet(guide->obj, 0, 2);
+    func_8005B338_5BF38(guide);
+    if (D_800F8D12_F9912 == 0) {
+        proc = omAddPrcObj(func_80102D28_30D1D8_name_49, 0x4800, 0, 0);
+        D_80114990_31EE40_name_49 = proc;
+        proc->user_data = space;
+        HuPrcSleep(30);
+    } else {
+        D_80114990_31EE40_name_49 = NULL;
+    }
+    D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+    HuPrcVSleep();
+    func_8008E2DC_8EEDC(guide->amount, 1);
+    func_80057DC0_589C0(guide->amount);
+    MBMotionShiftSet(guide->obj, -1, 0, 6, 2);
+    func_8005B338_5BF38(guide);
+    func_8008E4D0_8F0D0(guide->amount, 1);
+    func_8002D4A0_2E0A0(guide->obj->obj->model[0]);
+    if (gw->unk_1C != -1) {
+        while (D_80114990_31EE40_name_49 != NULL) {
+            HuPrcVSleep();
+        }
+        if (D_800F8D12_F9912 != 0 && (u8)pick == 0) {
+            space = GetSpaceData(D_80112C68_31D118_name_49[gw->star_spawn_indices[gw->unk_0A]]);
+        } else {
+            space = GetSpaceData(D_80112C68_31D118_name_49[gw->unk_1C]);
+        }
+        MBDCameraPos3DSet(&space->coords);
+        MBCameraSpeedSet(3.5f);
+        HuPrcSleep(5);
+        while (func_80053998_54598() != 0) {
+            HuPrcVSleep();
+        }
+        HuPrcSleep(5);
+        MBMotionSet(guide->obj, 0, 2);
+        func_80029FE4_2ABE4(guide->obj->obj->model[0], 2.0f);
+        func_8005B338_5BF38(guide);
+            D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+        HuPrcVSleep();
+        func_8008E2DC_8EEDC(guide->amount, 1);
+        func_80057DC0_589C0(guide->amount);
+        func_8008E4D0_8F0D0(guide->amount, 1);
+    }
+    func_800794A8_7A0A8(90);
+    HuPrcSleep(30);
+    InitFadeOut(2, 16);
+    HuPrcSleep(17);
+    D_800CCC18_CD818 = 1;
+    func_80067720_68320();
+    func_8005057C_5117C(guide);
+    func_80063178_63D78();
+    omOvlReturnEx(1);
+    omOvlKill();
+    HuPrcVSleep();
+}
 
 void func_80103500_30D9B0_name_49(void) {
     Vec target;
