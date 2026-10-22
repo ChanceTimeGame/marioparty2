@@ -408,6 +408,8 @@ void func_800B8070_B8C70(f32 angle, f32* s, f32* c); /* sin and cos */
 extern f32 D_800FC8F8_FD4F8[][6]; /* per camera: rot, x, z, fov, far, near (7AA60.c) */
 void Hu3DCamSetPositionOrientation(s16, Vec3f*, Vec3f*, Vec3f*);
 void Hu3DCamUpdateMtx(s16 camIndex);
+extern f32 D_8010C140_19ACE0_BobsledRun; /* camera pitch on level ground */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);

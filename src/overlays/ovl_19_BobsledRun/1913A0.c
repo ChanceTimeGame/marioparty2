@@ -2468,11 +2468,64 @@ void func_8010A840_1993E0_BobsledRun(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A840_1993E0_BobsledRun);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AB30_1996D0_BobsledRun);
+/* Pitch the team's camera with the slope under the sled (MP1 func_800FA15C). */
+void func_8010AB30_1996D0_BobsledRun(s8 team, Vec3f* normal) {
+    f32 target;
+
+    target = D_8010C140_19ACE0_BobsledRun - (1.0f - normal->y) * 400.0f;
+    if (D_80102770_103370[team].x < target) {
+        D_80102770_103370[team].x += 0.5f;
+        if (target < D_80102770_103370[team].x) {
+            D_80102770_103370[team].x = target;
+        }
+    } else {
+        D_80102770_103370[team].x -= 0.5f;
+        if (D_80102770_103370[team].x < target) {
+            D_80102770_103370[team].x = target;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AC18_1997B8_BobsledRun);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010ADD8_199978_BobsledRun);
+/* Tilt the sled (rot.x / rot.z) towards the ground normal (MP1 func_800FBE04). */
+void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal) {
+    BRWork* work;
+    f32 rx;
+    f32 rz;
+    f32 cx;
+    f32 cz;
+
+    work = obj->unk_50;
+    rx = -(func_800B75A8_B81A8(normal->y, normal->z) - 90.0f);
+    rz = func_800B75A8_B81A8(normal->y, normal->x) - 90.0f;
+    cx = work->unk_9C;
+    cz = work->unk_A4;
+    if (cx < rx) {
+        work->unk_9C += 0.8f;
+        if (rx < work->unk_9C) {
+            work->unk_9C = rx;
+        }
+    } else if (rx < cx) {
+        work->unk_9C -= 0.8f;
+        if (work->unk_9C < rx) {
+            work->unk_9C = rx;
+        }
+    }
+    if (cz < rz) {
+        work->unk_A4 += 0.8f;
+        if (rz < work->unk_A4) {
+            work->unk_A4 = rz;
+        }
+    } else if (rz < cz) {
+        work->unk_A4 -= 0.8f;
+        if (work->unk_A4 < rz) {
+            work->unk_A4 = rz;
+        }
+    }
+    obj->rot.x = work->unk_9C;
+    obj->rot.z = work->unk_A4;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
 
