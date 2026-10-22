@@ -40,6 +40,9 @@ void func_801028A0_40ED00_Results(void) {
 }
 
 //related to creating(?) and moving the player sprites
+__asm__(".section .rodata");
+const char D_80107800_413C60_Results[] = "RESULTS";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80102944_40EDA4_Results);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801038A4_40FD04_Results);

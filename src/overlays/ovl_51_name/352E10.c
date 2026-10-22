@@ -8,6 +8,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80102B90_3531A0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80102E7C_35348C_name_51);
 
+__asm__(".section .rodata");
+const char D_80108770_358D80_name_51[] = "%3d";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80102EB4_3534C4_name_51);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_8010361C_353C2C_name_51);
@@ -18,7 +21,16 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_8010418C_35479C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104308_354918_name_51);
 
+__asm__(".section .rodata");
+const char D_801087A4_358DB4_name_51[] = "RESULTS";
+
+__asm__(".section .rodata");
+const char D_801087AC_358DBC_name_51[] = "%d";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104490_354AA0_name_51);
+
+__asm__(".section .rodata");
+const char D_801087B4_358DC4_name_51[] = "X%2d";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104F6C_35557C_name_51);
 
@@ -29,6 +41,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801055E4_355BF4
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801058CC_355EDC_name_51);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105BE0_3561F0_name_51);
+
+__asm__(".section .rodata");
+const char D_801087BC_358DCC_name_51[] = "%5d";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105D38_356348_name_51);
 
@@ -51,6 +66,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801076B8_357CC8
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801077A8_357DB8_name_51);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107818_357E28_name_51);
+
+__asm__(".section .rodata");
+const u32 D_801087C0_358DD0_name_51[4] = { 0x58000000, 0x00000000, 0x00000000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107EA4_3584B4_name_51);
 

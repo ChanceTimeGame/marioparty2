@@ -6,6 +6,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_801028C4_358EA4
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80102978_358F58_name_52);
 
+__asm__(".section .rodata");
+const char D_80106AA0_35D080_name_52[] = "YOU ARE THE WINNER";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80102998_358F78_name_52);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80102AA0_359080_name_52);
@@ -16,7 +19,19 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80102F78_359558
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80103338_359918_name_52);
 
+__asm__(".section .rodata");
+const u32 D_80106AC8_35D0A8_name_52[2] = { 0x034A034A, 0x034A034A };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_801033D4_3599B4_name_52);
+
+__asm__(".section .rodata");
+const u32 D_80106AD8_35D0B8_name_52[4] = { 0x000005F9, 0x000005FA, 0x000005FB, 0x000005FC };
+
+__asm__(".section .rodata");
+const u32 D_80106AE8_35D0C8_name_52[4] = { 0x000005FE, 0x000005FF, 0x00000600, 0x00000601 };
+
+__asm__(".section .rodata");
+const u32 D_80106AF8_35D0D8_name_52[4] = { 0x00000603, 0x00000604, 0x00000605, 0x00000606 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80103814_359DF4_name_52);
 
