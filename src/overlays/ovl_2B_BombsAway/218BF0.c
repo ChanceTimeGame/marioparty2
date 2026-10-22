@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_2B.h"
 
 __asm__(".section .rodata");
 const char D_8010D2C0_2236B0_BombsAway[] = "\202r\202s\202`\202q\202s";
