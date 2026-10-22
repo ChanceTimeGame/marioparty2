@@ -758,11 +758,179 @@ void func_80105BE0_3561F0_name_51(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105D38_356348_name_51);
+/* The stars-total counter process (MP1 func_800F972C): D_8010888C in five digits. */
+void func_80105D38_356348_name_51(void) {
+    u8 buf[5]; /* "%5d" writes six bytes: the NUL lands in frame padding (host hazard) */
+    s32 i;
+    s32 started;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105E6C_35647C_name_51);
+    while (1) {
+        started = 0;
+        sprintf((char*)buf, D_801087BC_358DCC_name_51, D_8010888C_358E9C_name_51);
+        for (i = 0; i < 5; i++) {
+            func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[1], i, 1);
+            if (started == 0 && (buf[i] == ' ') & (i != 4)) {
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, 0, 0);
+                SprAttrSet((s16)D_801088A0_358EB0_name_51[1], i, 0x8000);
+            } else {
+                started = 1;
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, buf[i] - '0', 0);
+                SprAttrReset((s16)D_801088A0_358EB0_name_51[1], i, 0x8000);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801062AC_3568BC_name_51);
+/* One falling coin (MP1 func_800F9860): spins, rises (trans.z < 0, coins taken from the bank) or
+   falls into it; each coin adds trans.z coins to the bank (capped at 99999) and plays a sound every
+   other coin. When the first coin lands the bank's bounce object starts. */
+void func_80105E6C_35647C_name_51(omObjData* obj) {
+    D_801087D8_358DE8_name_51[obj->work[0]]->rot.x = HuMathSin(obj->rot.y);
+    D_801087D8_358DE8_name_51[obj->work[0]]->rot.z = func_800B7890_B8490(obj->rot.y);
+    if ((obj->rot.y += obj->trans.y) >= 360.0f) {
+        obj->rot.y -= 360.0f;
+    }
+    if (obj->trans.z < 0.0f) {
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y += 15.0f;
+        if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y >= 35.0f) {
+            if (obj->work[2] == 1) {
+                obj->trans.x -= 2.0f;
+            } else if (obj->work[2] == 2) {
+                obj->trans.x += 2.0f;
+            }
+        }
+    } else {
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y -= 15.0f;
+        if (obj->trans.x > D_801083E0_3589F0_name_51[0].x) {
+            if ((obj->trans.x -= 2.0f) < D_801083E0_3589F0_name_51[0].x) {
+                obj->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+        } else if (obj->trans.x < D_801083E0_3589F0_name_51[0].x) {
+            if ((obj->trans.x += 2.0f) > D_801083E0_3589F0_name_51[0].x) {
+                obj->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+        }
+    }
+    D_801087D8_358DE8_name_51[obj->work[0]]->pos.x = obj->trans.x;
+    if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y == 430.0f && obj->trans.z <= 0.0f) {
+        D_800F8C60.coinNum += (s32)obj->trans.z;
+        if (D_801083C4_3589D4_name_51 >= 3) {
+            PlaySound(0x33C);
+            D_801083C4_3589D4_name_51 -= 3;
+        } else {
+            D_801083C4_3589D4_name_51 += 2;
+        }
+    }
+    if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y <= 280.0f || D_801087D8_358DE8_name_51[obj->work[0]]->pos.y >= 580.0f) {
+        if (obj->trans.z > 0.0f) {
+            D_800F8C60.coinNum += (s32)obj->trans.z;
+            if (D_800F8C60.coinNum > 99999) {
+                D_800F8C60.coinNum = 99999;
+            }
+            if (D_801083C4_3589D4_name_51 >= 3) {
+                PlaySound(9);
+                D_801083C4_3589D4_name_51 -= 3;
+            } else {
+                D_801083C4_3589D4_name_51 += 2;
+            }
+        }
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y = D_801083E0_3589F0_name_51[0].y;
+        if (D_80108A4C_35905C_name_51 == NULL) {
+            D_80108A4C_35905C_name_51 = omAddObj(0x1000, 0, 0, -1, func_801082AC_3588BC_name_51);
+            D_80108A4C_35905C_name_51->scale.x = 0.05f;
+            D_80108A4C_35905C_name_51->scale.y = 0.05f;
+            D_80108A4C_35905C_name_51->scale.z = 0.05f;
+            D_80108A4C_35905C_name_51->work[0] = 0;
+            D_80108A4C_35905C_name_51->work[1] = D_80108A4C_35905C_name_51->work[2] = 3;
+        }
+        omDelObj(obj);
+    }
+}
+
+/* The coin dispenser (MP1 func_800F9C74): takes up to trans.x coins a frame from the players in
+   turn (work[0] 0..3) or, from work[0] 4, from the total D_80108880, and drops one coin object a
+   frame; work[0] 5 sends them up out of the bank instead. */
+void func_801062AC_3568BC_name_51(omObjData* obj) {
+    omObjData* coin;
+    s32 p;
+    s32 n;
+    s32 j;
+
+    p = obj->work[0];
+    n = 0;
+    if (obj->scale.x >= 1.0f) {
+        while (1) {
+            if (p >= 4) {
+                if (D_80108880_358E90_name_51 > 0) {
+                    D_80108880_358E90_name_51--;
+                    n++;
+                }
+                if (D_80108880_358E90_name_51 == 0) {
+                    break;
+                }
+            } else {
+                if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[p]] > 0) {
+                    D_80108870_358E80_name_51[D_800F8CE4_F98E4[p]]--;
+                    gPlayers[D_800F8CE4_F98E4[p]].coins--;
+                    n++;
+                }
+                p = (p + 1) & 3;
+                for (j = 0; j < 4; j++) {
+                    if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[j]] > 0) {
+                        break;
+                    }
+                }
+                if (j == 4) {
+                    break;
+                }
+            }
+            if (obj->scale.x < n + 1.0f) {
+                obj->scale.x -= n;
+                break;
+            }
+        }
+    }
+    obj->scale.x += obj->trans.x;
+    obj->work[0] = p;
+    if (n != 0) {
+        p = 1; /* retail reuses the player counter as the one-coin-per-frame limit */
+        while ((n != 0) & (p != 0)) {
+            coin = omAddObj(0x1000, 0, 0, -1, func_80105E6C_35647C_name_51);
+            coin->rot.y = rand8() & 0xFF;
+            coin->trans.y = 20.0f;
+            coin->work[2] = (rand8() & 0xFF) % 3;
+            coin->work[0] = (u8)D_801086B8_358CC8_name_51;
+            coin->trans.x = D_801083E0_3589F0_name_51[coin->work[2]].x;
+            coin->trans.z = n;
+            coin->scale.z = 3.0f;
+            if (obj->work[0] == 5) {
+                D_801087D8_358DE8_name_51[D_801086B8_358CC8_name_51]->pos.y = 0.0f;
+                coin->trans.z = -coin->trans.z;
+                coin->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+            D_801086B8_358CC8_name_51 = (D_801086B8_358CC8_name_51 + 1) % 20;
+            n--;
+            p--;
+        }
+    } else {
+        D_801083C4_3589D4_name_51 += 2;
+    }
+    if (obj->work[0] >= 4) {
+        if (D_80108880_358E90_name_51 == 0) {
+            omDelObj(obj);
+        }
+    } else {
+        for (j = 0; j < 4; j++) {
+            if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[j]] > 0) {
+                break;
+            }
+        }
+        if (j == 4) {
+            omDelObj(obj);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106660_356C70_name_51);
 

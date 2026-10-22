@@ -121,6 +121,11 @@ extern s32 D_801085B0_358BC0_name_51[12]; /* per row: the explanation message */
 
 /* R51B */
 extern s32 D_801083C0_3589D0_name_51; /* the star count the tally adds up (MP1 GwCommon.starNum) */
+extern s32 D_801083C4_3589D4_name_51; /* falling-coin sound pacing (MP1 D_800FC050) */
+extern Vec D_801083C8_3589D8_name_51; /* star pile centre */
+extern Vec D_801083D4_3589E4_name_51;
+extern Vec D_801083E0_3589F0_name_51[3]; /* coin start points; [0].y is where a finished coin returns */
+extern s32 D_801086B8_358CC8_name_51; /* next coin model (0..19) */
 extern s16 D_801085E4_358BF4_name_51[2]; /* tally: title position */
 extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
 extern s16 D_801085F8_358C08_name_51[4][2];
@@ -144,7 +149,9 @@ extern s32 D_80108884_358E94_name_51;
 extern s32 D_80108888_358E98_name_51; /* total stars with the bonus stars */
 extern s32 D_8010888C_358E9C_name_51;
 /* R51B */
+extern MBModel* D_801087D8_358DE8_name_51[20]; /* the coin models */
 extern s32 D_801088A0_358EB0_name_51[2]; /* the coin and star counters' sprites */
+extern omObjData* D_80108A4C_35905C_name_51; /* the bank's bounce object */
 extern s32 D_80108A50_359060_name_51; /* character name sprites */
 extern s32 D_80108A58_359068_name_51[4];
 extern s32 D_80108A68_359078_name_51; /* character icon sprites */
