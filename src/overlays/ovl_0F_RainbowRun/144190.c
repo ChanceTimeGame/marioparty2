@@ -164,7 +164,56 @@ void func_80103648_144FD8_RainbowRun(omObjData* obj) {
     func_8010393C_1452CC_RainbowRun(obj, dir, file, D_8010ACC0_14C650_RainbowRun[0], 0.0f, 0.0f, 1370.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_801036CC_14505C_RainbowRun);
+/* The runner's collision callback: a hit knocks it back and the object explodes. */
+s32 func_801036CC_14505C_RainbowRun(omObjData* obj, omObjData* other) {
+    RRPlayerWork* w = obj->unk_50;
+    RRBomb* bomb = ((RRItemWork*)other->unk_50)->bomb;
+    s16 i;
+
+    if (w->unk_BE != 0) {
+        return 1;
+    }
+    w->unk_BE = 60;
+    w->unk_50 |= 0x200;
+    if (D_8010A6F5_14C085_RainbowRun == 1) {
+        return 1;
+    }
+    {
+        f32 s = HuMathSin(w->angle);
+
+        if (func_8000DA2C_E62C(s, func_800B7890_B8490(w->angle), other->trans.x - obj->trans.x,
+                               other->trans.z - obj->trans.z) > 0.0f) {
+            w->angle = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
+            func_80019B9C_1A79C(obj, 9);
+            if (D_8010A6F8_14C088_RainbowRun == 1) {
+                w->speed = 0.0f;
+            } else {
+                w->speed = -4.55f;
+            }
+        } else {
+            w->angle = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
+            func_80019B9C_1A79C(obj, 10);
+            if (D_8010A6F8_14C088_RainbowRun == 1) {
+                w->speed = 0.0f;
+            } else {
+                w->speed = 4.55f;
+            }
+        }
+    }
+    omVibrate(w->player, 30, 0, 30);
+    func_80079798_7A398(0x18B, bomb->sound);
+    PlaySound(0x18D);
+    bomb->active = 0;
+    bomb->lit = 0;
+    for (i = 0; i < 6; i++) {
+        func_800298A4_2A4A4(other->model[i], 4, 4);
+    }
+    func_80021198_21D98(bomb->mdl, 0);
+    func_800298A4_2A4A4(other->model[5], 4, 0);
+    func_80029714_2A314(other->model[5], other->trans.x, other->trans.y - 50.0f, other->trans.z);
+    other->trans.x = other->trans.y = other->trans.z = 1000.0f;
+    return 1;
+}
 
 /* The runner's setup: motions, its sounds and the collision callback. */
 void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z) {

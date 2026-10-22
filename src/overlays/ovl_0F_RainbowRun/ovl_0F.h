@@ -22,18 +22,39 @@ typedef f32 Matrix4f[4][4];
 typedef struct RRPlayerWork {
     /* 0x00 */ char unk_00[0x3C];
     /* 0x3C */ f32 angle; /* facing angle (degrees) */
-    /* 0x40 */ char unk_40[8];
+    /* 0x40 */ f32 speed;
+    /* 0x44 */ char unk_44[4];
     /* 0x48 */ f32 radius;
-    /* 0x4C */ char unk_4C[0xB];
+    /* 0x4C */ char unk_4C[4];
+    /* 0x50 */ u16 unk_50; /* flags */
+    /* 0x52 */ char unk_52[5];
     /* 0x57 */ s8 port; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 player; /* player index */
-    /* 0x5A */ char unk_5A[0x92];
+    /* 0x5A */ char unk_5A[0x64];
+    /* 0xBE */ u16 unk_BE; /* stun timer after a hit (MP1 0xAE) */
+    /* 0xC0 */ char unk_C0[0x2C];
     /* 0xEC */ s32 (*unk_EC)(omObjData*, omObjData*); /* collision callback (MP1 0xDC) */
     /* 0xF0 */ char unk_F0[0x6C];
 } RRPlayerWork; /* size = 0x15C */
 
 #define RR_WORK(obj) ((RRPlayerWork*)(obj)->unk_50)
+
+/* A thrown object's state (RRItemWork::bomb; MP1 TTBomb). No pointers. */
+typedef struct RRBomb {
+    /* 0x00 */ s8 active;
+    /* 0x01 */ s8 lit;
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ s16 sound; /* the fuse sound's owner (func_80079798_7A398's second argument) */
+    /* 0x06 */ char unk_06[4];
+    /* 0x0A */ s16 mdl; /* 3D sprite (func_80021198_21D98) */
+} RRBomb;
+
+/* A thrown object's work: main's minigame work view, the state pointer at 0xA8 (MP1 0x68). */
+typedef struct RRItemWork {
+    /* 0x00 */ char unk_00[0xA8];
+    /* 0xA8 */ RRBomb* bomb;
+} RRItemWork;
 
 #define RR_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
@@ -119,6 +140,15 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
+void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+s16 func_80079798_7A398(s16, s16);
+s32 PlaySound(s32);
+void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
+void func_80021198_21D98(s16 index, u16 arg1);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
 void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup */
 extern u16 D_800BF7E4_C03E4[][14]; /* per player sound ids */
 void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
@@ -179,6 +209,8 @@ extern s8 ContStkY[4];
 
 /* ---- .data (14C080) ---- */
 
+extern s8 D_8010A6F5_14C085_RainbowRun; /* the runner cannot be hit */
+extern s8 D_8010A6F8_14C088_RainbowRun; /* hits do not push the runner */
 extern s32 D_8010A704_14C094_RainbowRun[2]; /* the title sprite's scroll x, y */
 extern s8 D_8010A751_14C0E1_RainbowRun; /* the camera shakes */
 extern s16 D_8010A752_14C0E2_RainbowRun; /* shake frame */
