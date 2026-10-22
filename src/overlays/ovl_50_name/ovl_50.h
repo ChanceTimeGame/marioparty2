@@ -361,6 +361,9 @@ extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00)
 extern Vec D_80111E00_352660_name_50;
 extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
 extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
+/* board 2, parts 4 and 5 */
+extern Vec D_80111E60_3526C0_name_50;     /* the partner's place */
+extern Vec D_80111E6C_3526CC_name_50[];   /* per character: the third beam's offset */
 extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; work[1] == 1 while it runs */
 
 /* ---- 34DBC0.c ---- */

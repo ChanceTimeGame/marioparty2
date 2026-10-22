@@ -607,9 +607,82 @@ void func_80105E58_3466B8_name_50(void) {
     MBDBackKill();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80106A90_3472F0_name_50);
+/* Board 2's scene, part 4: the partner casts a spell at the camera (message 0x2F3). */
+void func_80106A90_3472F0_name_50(void) {
+    Vec cam;
+    s16 win2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80106CF8_347558_name_50);
+    func_80050E00_51A00(0x14);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(3, 7.0f, 53.0f, 107.0f);
+    D_8011275C_352FBC_name_50->pos.x = D_80111E60_3526C0_name_50.x;
+    D_8011275C_352FBC_name_50->pos.y = D_80111E60_3526C0_name_50.y;
+    D_8011275C_352FBC_name_50->pos.z = D_80111E60_3526C0_name_50.z;
+    MBMotionSet(D_8011275C_352FBC_name_50, -1, 2);
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_8011275C_352FBC_name_50->rot);
+    cam.x = 0.0f;
+    cam.y = 600.0f;
+    cam.z = 0.0f;
+    func_8005A950_5B550(&cam, 1.0f, 1.3f, 8);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x2F3);
+    win2 = func_8005AAC0_5B6C0((320 - D_80112752_352FB2_name_50[0]) / 2, 160, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x2F3, -1, -1);
+    PlaySound(0x124);
+    HuPrcSleep(30);
+    PlaySound(0x125);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 3, 0, 4, 0);
+    HuPrcSleep(19);
+    PlaySound(0x3E6);
+    func_80108290_348AF0_name_50(D_8011275C_352FBC_name_50->pos.x - 55.0f, D_8011275C_352FBC_name_50->pos.y + 375.0f, D_8011275C_352FBC_name_50->pos.z + 200.0f);
+    func_8002D2B4_2DEB4(*D_8011275C_352FBC_name_50->obj->model, -55.0f, 95.0f, 47.0f);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0xDC, 0x28, 0xDC);
+    HuPrcSleep(30);
+    func_8008CCA8_8D8A8(win2);
+    func_80108414_348C74_name_50();
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    func_800298A4_2A4A4(D_80112750_352FB0_name_50, 4, 4);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0, 0, 0);
+    MBDBackKill();
+}
+
+/* Board 2's scene, part 5: the winner, in front of the camera, sends a third beam. */
+void func_80106CF8_347558_name_50(void) {
+    Vec cam;
+    Vec pos;
+    Vec rot;
+    MBModel* model;
+
+    func_80050E00_51A00(0x14);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    model = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    model->pos.x = D_80111D94_3525F4_name_50.x;
+    model->pos.y = D_80111D94_3525F4_name_50.y;
+    model->pos.z = D_80111D94_3525F4_name_50.z;
+    func_80056658_57258(&model->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &model->rot);
+    MBModelDispOn(model);
+    func_800298A4_2A4A4(D_80112758_352FB8_name_50, 4, 0);
+    cam.x = 0.0f;
+    cam.y = 105.0f;
+    cam.z = 0.0f;
+    func_8005A950_5B550(&cam, 2.0f, 1.2f, 1);
+    MBMotionShiftSet(model, 7, 0, 2, 0);
+    HuPrcSleep(30);
+    pos.x = model->pos.x + D_80111E6C_3526CC_name_50[gPlayers[D_8011275A_352FBA_name_50].character].x;
+    pos.y = model->pos.y + D_80111E6C_3526CC_name_50[gPlayers[D_8011275A_352FBA_name_50].character].y;
+    pos.z = model->pos.z + D_80111E6C_3526CC_name_50[gPlayers[D_8011275A_352FBA_name_50].character].z;
+    func_80056658_57258(&pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &rot);
+    func_80108A00_349260_name_50(&pos, &rot, 300.0f, 8, 1, 0.2f, 3.0f, 20.0f, 0.0f);
+    D_801125D0_352E30_name_50 = PlaySound(0x3E4);
+    func_8002D2B4_2DEB4(*model->obj->model, -3.0f, -35.0f, 114.0f);
+    func_8002D274_2DE74(*model->obj->model, 0xF0, 0xF0, 0x3C);
+    func_8002D2B4_2DEB4(D_80112758_352FB8_name_50, -3.0f, -35.0f, 114.0f);
+    func_8002D274_2DE74(D_80112758_352FB8_name_50, 0xF0, 0xF0, 0x3C);
+    HuPrcSleep(60);
+    MBDBackKill();
+    func_80108F2C_34978C_name_50();
+    MBModelDispOff(model);
+    func_800298A4_2A4A4(D_80112758_352FB8_name_50, 4, 4);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80106FDC_34783C_name_50);
 
