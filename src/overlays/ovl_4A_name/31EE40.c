@@ -27,7 +27,67 @@ void func_80102800_31EE40_name_4A(void) {
     omAddObj(1000, 0, 0, -1, func_80102BC0_31F200_name_4A);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_8010298C_31EFCC_name_4A);
+void func_8010298C_31EFCC_name_4A(void) {
+    s32 bits;
+    s32 i;
+
+    D_80108CA4_3252E4_name_4A = -1;
+    D_80108C98_3252D8_name_4A = 0;
+    D_80108F54_325594_name_4A = 0;
+    if (_CheckFlag(0x17) == 0) {
+        D_80108F54_325594_name_4A = 1;
+    }
+    bits = D_800F8D1A_F991A.attacker;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 1;
+            D_80108F54_325594_name_4A = 0;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 1;
+            D_80108F54_325594_name_4A = 1;
+        }
+    }
+    D_80108CA0_3252E0_name_4A = 0;
+    for (i = 0; bits != 0; i++) {
+        bits >>= 1;
+        if (bits == 0) {
+            break;
+        }
+        D_80108CA0_3252E0_name_4A++;
+    }
+    D_80108CB8_3252F8_name_4A = 1;
+    D_80108CA8_3252E8_name_4A[i] = 1;
+    bits = D_800F8D1A_F991A.targets;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 0xE;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 2;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if ((bits >> i) & 1) {
+            D_80108CB8_3252F8_name_4A++;
+            D_80108CA8_3252E8_name_4A[i] = 1;
+        }
+    }
+    for (i = 0; i < 2; i++) {
+        D_80108CE8_325328_name_4A[i] = 0;
+    }
+    if (D_80108CB8_3252F8_name_4A == 2) {
+        for (i = 0; i < 4; i++) {
+            if (D_80108CA8_3252E8_name_4A[i] == 1 && i != D_80108CA0_3252E0_name_4A) {
+                D_80108CA4_3252E4_name_4A = i;
+                break;
+            }
+        }
+    }
+    D_800FC880_FD480 = 0;
+    D_800F8C5C_F985C = 0;
+    D_80108CD4_325314_name_4A = GwSystem.current_turn;
+}
 
 void func_80102BC0_31F200_name_4A(omObjData* obj) {
     if (D_801011FC_101DFC != 0) {
@@ -556,6 +616,110 @@ s32 func_8010762C_323C6C_name_4A(void) {
     return cand[rand8() % n];
 }
 
+#define PD_ABS(x) ((x) < 0 ? -(x) : (x))
+/* NON_MATCHING: masked 36, the same logic as 42's/44's twin (also NON_MATCHING) with 4A's changes
+   (the first rank pass runs over three opponents; the stake row is (rank & 3) << 3 | (opponent's
+   rank & 3) << 1 | close in stars). GCC reuses n's register (known 0) for the rank passes' first
+   loop test where retail compares D_80108CB8 - 1 with zero, and keeps the star difference in a1. */
+#ifdef NON_MATCHING
+void func_80107918_323F58_name_4A(s32 cur, s32 target, s32 mode) {
+    s32 cand[4];
+    s32 flag[4];
+    s32 rows[32] = {
+        -1, 1, 3, 2, 3, 3, 3, 3,
+        0, 1, -1, 1, 1, 2, 1, 2,
+        0, 1, 0, 1, -1, 1, 1, 2,
+        0, 0, 0, 1, 0, 1, -1, -1,
+    };
+    s32 range[4] = { 10, 20, 20, 9 };
+    s32 base[4] = { 90, 60, 20, 1 };
+    s32 unused[7];
+    omObjData* obj;
+    PdCpuInput* work;
+    s32 diff;
+    s32 row;
+    s32 n;
+    s32 i;
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80107F3C_32457C_name_4A);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdCpuInput), 0x7918);
+    work->timer = 0;
+    work->cur = cur;
+    work->target = target;
+    work->mode = mode;
+    D_80108CF0_325330_name_4A = 0;
+    if (mode == 2) {
+        if (gPlayers[D_80108CA0_3252E0_name_4A].coins >= 20) {
+            n = 0;
+            for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                flag[i] = 0;
+            }
+            for (i = 0; i < 3; i++) {
+                if (func_80059FD0_5ABD0(D_80108CC0_325300_name_4A[i]) == 0) {
+                    flag[i] = 1;
+                    n++;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108CC0_325300_name_4A[i]) == 1) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108CC0_325300_name_4A[i]) == 2) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108CC0_325300_name_4A[i]) == 3) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            n = 0;
+            for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                if (flag[i] != 0 && gPlayers[D_80108CC0_325300_name_4A[i]].coins >= 20) {
+                    cand[n++] = i;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108CB8_3252F8_name_4A - 1; i++) {
+                    if (flag[i] == 0 && gPlayers[D_80108CC0_325300_name_4A[i]].coins >= 20) {
+                        cand[n++] = i;
+                    }
+                }
+            }
+            if (n > 0) {
+                work->target = cand[rand8() % n];
+            } else {
+                work->target = func_8010762C_323C6C_name_4A();
+            }
+        } else {
+            work->target = func_8010762C_323C6C_name_4A();
+        }
+    }
+    if (mode == 3) {
+        row = (func_80059FD0_5ABD0(D_80108CA0_3252E0_name_4A) & 3) << 3;
+        row |= (func_80059FD0_5ABD0(D_80108CA4_3252E4_name_4A) & 3) << 1;
+        diff = PD_ABS(gPlayers[D_80108CA0_3252E0_name_4A].stars - gPlayers[D_80108CA4_3252E4_name_4A].stars);
+        if (diff < 2) {
+            row |= 1;
+        }
+        work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_80108CDC_32531C_name_4A / 100;
+        if (work->target < D_80108CD0_325310_name_4A) {
+            work->target = D_80108CD0_325310_name_4A;
+        }
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80108BE0_325220_name_4A[32] = { 0xFFFFFFFF, 0x00000001, 0x00000003, 0x00000002, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF };
 
@@ -566,6 +730,7 @@ __asm__(".section .rodata");
 const u32 D_80108C70_3252B0_name_4A[4] = { 0x0000005A, 0x0000003C, 0x00000014, 0x00000001 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80107918_323F58_name_4A);
+#endif
 
 void func_80107F3C_32457C_name_4A(omObjData* obj) {
     PdCpuInput* work = obj->unk_50;
