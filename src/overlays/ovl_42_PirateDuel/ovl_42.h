@@ -196,6 +196,15 @@ typedef struct PdTimeline {
     /* 0x04 */ s32 frame; /* 0..149 */
 } PdTimeline; /* size 0x08 */
 
+/* func_801088FC's slide (func_80108F98). */
+typedef struct PdSlideWork {
+    /* 0x00 */ s32 count;
+    /* 0x04 */ s32 player;
+    /* 0x08 */ f32 x;     /* the shadow's x at the start */
+    /* 0x0C */ s32 frame;
+    /* 0x10 */ f32 offs[100];
+} PdSlideWork; /* size 0x1A0 */
+
 /* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
 typedef struct PdStreak {
     /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
@@ -318,7 +327,7 @@ void func_80107E20_2C5DA0_PirateDuel(void);
 void func_80108000_2C5F80_PirateDuel(omObjData* obj);
 void func_80108384_2C6304_PirateDuel(f32 x, f32 y, f32 z, u8 frames);
 void func_801086B0_2C6630_PirateDuel(void);
-void func_801088FC_2C687C_PirateDuel(s32 player, s32 arg1);
+void func_801088FC_2C687C_PirateDuel(s32 player, s32 move);
 void func_80108F98_2C6F18_PirateDuel(omObjData* obj);
 void func_80109040_2C6FC0_PirateDuel(void);
 void func_8010913C_2C70BC_PirateDuel(void);

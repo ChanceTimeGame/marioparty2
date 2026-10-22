@@ -1679,21 +1679,108 @@ void func_801086B0_2C6630_PirateDuel(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801086B0_2C6630_PirateDuel);
 #endif
 
-__asm__(".section .rodata");
-const u32 D_80109D08_2C7C88_PirateDuel[6] = { 0x425C0000, 0x41F00000, 0x425C0000, 0x42480000, 0x41F00000, 0x41A00000 };
+/* Starts player's second model (D_80109DFC) sliding along x with the player's motion `move`
+   (0..5), from per-character offset tables, mirrored for the opponent; func_80108F98 plays it
+   at two steps a frame from the shadow's x. */
+void func_801088FC_2C687C_PirateDuel(s32 player, s32 move) {
+    f32 near[6] = { 55.0f, 30.0f, 55.0f, 50.0f, 30.0f, 20.0f };
+    f32 far[6] = { 70.0f, 80.0f, 80.0f, 80.0f, 70.0f, 50.0f };
+    f32 back[6] = { 40.0f, 30.0f, 0.0f, 0.0f, 0.0f, -10.0f };
+    f32 hold[6] = { 10.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f };
+    omObjData* obj;
+    PdSlideWork* work;
+    f32 from;
+    f32 to;
+    s32 i;
 
-__asm__(".section .rodata");
-const u32 D_80109D20_2C7CA0_PirateDuel[6] = { 0x428C0000, 0x42A00000, 0x42A00000, 0x42A00000, 0x428C0000, 0x42480000 };
+    obj = omAddObj(0x10, 0, 0, -1, func_80108F98_2C6F18_PirateDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdSlideWork), 0x7918);
+    if (move == 0) {
+        from = 0.0f;
+        to = near[gPlayers[player].character];
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model);
+        for (i = 0; i < work->count; i++) {
+            work->offs[i] = (to - from) * i / work->count + from;
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    if (move == 1) {
+        from = near[gPlayers[player].character];
+        to = far[gPlayers[player].character];
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model);
+        for (i = 0; i < work->count; i++) {
+            work->offs[i] = (to - from) * i / work->count + from;
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    if (move == 2) {
+        from = far[gPlayers[player].character];
+        to = near[gPlayers[player].character];
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model) * 10.0f;
+        for (i = 0; i < work->count; i++) {
+            work->offs[i] = (to - from) * i / work->count + from;
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    if (move == 3) {
+        from = near[gPlayers[player].character];
+        to = 0.0f;
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model);
+        for (i = 0; i < work->count; i++) {
+            work->offs[i] = (to - from) * i / work->count + from;
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    if (move == 4) {
+        from = near[gPlayers[player].character];
+        to = back[gPlayers[player].character];
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model);
+        for (i = 0; i < work->count; i++) {
+            if (i < (s32)hold[gPlayers[player].character]) {
+                work->offs[i] = from;
+            } else {
+                work->offs[i] = to;
+            }
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    if (move == 5) {
+        from = back[gPlayers[player].character];
+        to = 0.0f;
+        work->count = func_80029D0C_2A90C(*PLAYER_MODEL(player)->obj->model);
+        for (i = 0; i < work->count; i++) {
+            work->offs[i] = (to - from) * i / work->count + from;
+            if (player == D_80109D94_2C7D14_PirateDuel) {
+                work->offs[i] = -work->offs[i];
+            }
+        }
+    }
+    work->frame = 0;
+    work->player = player;
+    work->x = PLAYER_MODEL(player)->shadow->trans.x;
+}
 
-__asm__(".section .rodata");
-const u32 D_80109D38_2C7CB8_PirateDuel[6] = { 0x42200000, 0x41F00000, 0x00000000, 0x00000000, 0x00000000, 0xC1200000 };
+void func_80108F98_2C6F18_PirateDuel(omObjData* obj) {
+    PdSlideWork* work = obj->unk_50;
+    f32 x;
 
-__asm__(".section .rodata");
-const u32 D_80109D50_2C7CD0_PirateDuel[6] = { 0x41200000, 0x41200000, 0x41200000, 0x00000000, 0x00000000, 0x00000000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801088FC_2C687C_PirateDuel);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80108F98_2C6F18_PirateDuel);
+    x = work->x + work->offs[work->frame];
+    func_80029714_2A314(D_80109DFC_2C7D7C_PirateDuel[work->player], x, 0.0f, PLAYER_MODEL(work->player)->pos.z);
+    work->frame += 2;
+    if (work->frame >= work->count) {
+        omDelObj(obj);
+    }
+}
 
 __asm__(".section .rodata");
 const u32 D_80109D68_2C7CE8_PirateDuel[2] = { 0x0058002E, 0x00E8002E };
