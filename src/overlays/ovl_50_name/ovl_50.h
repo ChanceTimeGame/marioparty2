@@ -100,6 +100,7 @@ void func_8008D974_8E574(s32, s16);
 void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 f32 func_800B1830_B2430(f32); /* sqrtf */
 f32 func_800B7890_B8490(f32); /* cos */
+f32 func_800B75A8_B81A8(f32, f32); /* atan2 (degrees) */
 
 extern f32 D_80101300_101F00;
 extern f32 D_8010105C_101C5C;
@@ -191,6 +192,7 @@ extern s32 D_80112398_352BF8_name_50;
 extern s32 D_801123A0_352C00_name_50;
 extern s32 D_801123A4_352C04_name_50[2];
 extern s32 D_801123AC_352C0C_name_50;
+extern s32 D_801123B0_352C10_name_50;
 extern Vec D_801123B8_352C18_name_50[2]; /* D_80112748: start, target (splat's D_801123C4 is [1]) */
 extern Vec D_801123D0_352C30_name_50;
 extern Vec D_801123DC_352C3C_name_50;
@@ -198,6 +200,10 @@ extern Vec D_801123E8_352C48_name_50[2];
 extern Vec D_80112400_352C60_name_50;    /* the doors' start */
 extern Vec D_8011240C_352C6C_name_50;    /* the doors' end */
 extern Vec D_80112418_352C78_name_50;    /* the winner, part 2 */
+extern Vec D_80112424_352C84_name_50[4];
+extern Vec D_80112454_352CB4_name_50;
+extern Vec D_80112460_352CC0_name_50;
+extern Vec D_8011246C_352CCC_name_50;
 
 /* ---- overlay .bss (asm) ---- */
 
@@ -206,6 +212,9 @@ extern omObjData* D_801125B8_352E18_name_50;
 extern Process* D_801125BC_352E1C_name_50;
 extern ModelEmitterWork* D_801125C0_352E20_name_50;
 extern MBModel* D_80112618_352E78_name_50; /* board 5's background */
+extern Vec D_8011261C_352E7C_name_50;
+extern Vec D_80112628_352E88_name_50;
+extern s16 D_80112634_352E94_name_50; /* a sound handle (0x406) */
 extern omObjData* D_80112638_352E98_name_50; /* board 5: an object func_80110EFC..80110F10 flag through work[0] */
 extern void* D_80112640_352EA0_name_50[4][8]; /* per effect slot, per frame buffer: vertices */
 extern Gfx* D_801126C0_352F20_name_50[4][8];  /* per effect slot, per frame buffer: display list */

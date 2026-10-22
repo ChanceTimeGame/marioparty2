@@ -297,7 +297,213 @@ void func_8010E164_34E9C4_name_50(void) {
     MBDBackKill();
 }
 
+/* Board 5's scene, part 3: the third model (D_8011275C) and the winner meet; it turns into the
+   background model D_80112618, circles the winner and leaves; the host walks in. Messages
+   0x349-0x34E. */
+#ifdef NON_MATCHING
+/* Register residue only: the 16-frame walk's counter gets s0 (retail s1). */
+void func_8010E478_34ECD8_name_50(void) {
+    Vec v;
+    Vec v2;
+    MBModel* winner;
+    f32 angle;
+    f32 dist;
+    s16 win;
+    s32 win2;
+    s32 r;
+    s32 n;
+    s32 i;
+
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    func_80050E00_51A00(40);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    v.x = D_8011275C_352FBC_name_50->pos.x;
+    v.y = 190.0f;
+    v.z = D_8011275C_352FBC_name_50->pos.z;
+    func_8005A950_5B550(&v, 1.8f, 1.8f, 1);
+    func_8011099C_3511FC_name_50();
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_8011275C_352FBC_name_50->rot);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x349);
+    win = func_8005AAC0_5B6C0(0x2D, 0x28, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_800890CC_89CCC(win, 0x349, -1, -1);
+    PlaySound(0x123);
+    HuPrcSleep(20);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 8, 0, 4, 0);
+    HuPrcSleep(20);
+    func_8008CCA8_8D8A8(win);
+    func_80110EFC_35175C_name_50();
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_801123AC_352C0C_name_50);
+    D_80112634_352E94_name_50 = PlaySound(0x406);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0x8C, 0x3C, 0x3C);
+    func_8002D2B4_2DEB4(*D_8011275C_352FBC_name_50->obj->model, 50.0f, -76.0f, 77.0f);
+    HuPrcSleep(30);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 9, 0, 4, 2);
+    v.x = D_8011275C_352FBC_name_50->pos.x;
+    v.y = 190.0f;
+    v.z = D_8011275C_352FBC_name_50->pos.z;
+    func_8005A950_5B550(&v, 2.0f, 1.0f, 1);
+    MBModelDispOn(winner);
+    winner->pos.x = D_80112424_352C84_name_50[0].x;
+    winner->pos.y = D_80112424_352C84_name_50[0].y;
+    winner->pos.z = D_80112424_352C84_name_50[0].z;
+    func_80056658_57258(&winner->pos, &D_8011275C_352FBC_name_50->pos, &winner->rot);
+    while (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 5.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(winner, 1, 0, 2, 2);
+    while (1) {
+        r = func_80110F20_351780_name_50();
+        if (r != 0) {
+            func_8005A7E8_5B3E8(winner, &D_8011275C_352FBC_name_50->pos, 14.0f);
+        }
+        r += func_801112EC_351B4C_name_50();
+        if (r == 2) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(winner, -1, 0, 4, 2);
+    func_80110F10_351770_name_50();
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 4, 2);
+    while (func_8005A7E8_5B3E8(winner, &D_8011275C_352FBC_name_50->pos, 14.0f) == 0) {
+        func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 14.0f);
+        HuPrcVSleep();
+    }
+    while (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 14.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x34A);
+    win = func_8005AAC0_5B6C0(0x8C, 0x2D, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_800890CC_89CCC(win, 0x34A, -1, -1);
+    PlaySound(0x122);
+    func_80110E9C_3516FC_name_50();
+    HuPrcSleep(25);
+    func_8008CCA8_8D8A8(win);
+    HuPrcSleep(20);
+    v2.x = -D_8011275C_352FBC_name_50->rot.x + D_8011275C_352FBC_name_50->pos.x;
+    v2.y = D_8011275C_352FBC_name_50->rot.y + D_8011275C_352FBC_name_50->pos.y;
+    v2.z = -D_8011275C_352FBC_name_50->rot.z + D_8011275C_352FBC_name_50->pos.z;
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 0, 0, 4, 2);
+    while (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &v2, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_801123B0_352C10_name_50);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 4, 2);
+    HuPrcSleep(30);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 1, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x34B);
+    win2 = func_8005AAC0_5B6C0(0x8C, 0x2D, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x34B, -1, -1);
+    PlaySound(0x123);
+    HuPrcSleep(40);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 10, 2);
+    MBMotionShiftSet(winner, 0, 0, 4, 2);
+    for (n = 0; n < 16; n++) {
+        func_8005A5E8_5B1E8(winner, &D_8011275C_352FBC_name_50->pos, 8.0f);
+        HuPrcVSleep();
+    }
+    D_8011261C_352E7C_name_50.x = winner->pos.x;
+    D_8011261C_352E7C_name_50.y = winner->pos.y;
+    D_8011261C_352E7C_name_50.z = winner->pos.z;
+    MBMotionShiftSet(winner, 6, 0, 2, 0);
+    HuPrcSleep(17);
+    func_8008CCA8_8D8A8(win2);
+    D_80112628_352E88_name_50.x = D_8011275C_352FBC_name_50->pos.x;
+    D_80112628_352E88_name_50.y = D_8011275C_352FBC_name_50->pos.y;
+    D_80112628_352E88_name_50.z = D_8011275C_352FBC_name_50->pos.z;
+    D_80112618_352E78_name_50->pos = D_8011275C_352FBC_name_50->pos;
+    D_80112618_352E78_name_50->rot = D_8011275C_352FBC_name_50->rot;
+    r = 0;
+    MBModelDispOn(D_80112618_352E78_name_50);
+    MBModelKill(D_8011275C_352FBC_name_50);
+    func_8002D274_2DE74(*D_80112618_352E78_name_50->obj->model, 0x6E, 0x28, 0x28);
+    func_8002D2B4_2DEB4(*D_80112618_352E78_name_50->obj->model, 22.0f, -110.0f, 42.0f);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x34C);
+    win2 = func_8005AAC0_5B6C0(0x8C, 0x2D, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x34C, -1, -1);
+    PlaySound(0x125);
+    PlaySound(0x407);
+    HuPrcSleep(10);
+    angle = func_800B75A8_B81A8(winner->rot.z, winner->rot.x);
+    dist = func_800B1830_B2430((D_80112618_352E78_name_50->pos.x - winner->pos.x) * (D_80112618_352E78_name_50->pos.x - winner->pos.x) +
+                               (D_80112618_352E78_name_50->pos.z - winner->pos.z) * (D_80112618_352E78_name_50->pos.z - winner->pos.z));
+    for (i = 0; i < 65; i++) {
+        angle += 0.5f;
+        winner->rot.x = func_800B7890_B8490(angle);
+        winner->rot.z = HuMathSin(angle);
+        MBVecNormalize(&winner->rot);
+        r++;
+        if (r >= 5) {
+            D_80112618_352E78_name_50->pos.x = dist * winner->rot.x + winner->pos.x;
+            D_80112618_352E78_name_50->pos.z = dist * winner->rot.z + winner->pos.z;
+            D_80112618_352E78_name_50->rot = winner->rot;
+        }
+        HuPrcVSleep();
+    }
+    HuPrcSleep(10);
+    func_8008CCA8_8D8A8(win2);
+    func_80079718_7A318(0xFC, gPlayers[D_8011275A_352FBA_name_50].character);
+    func_8005ACD0_5B8D0(&gPlayers[D_8011275A_352FBA_name_50], 2);
+    MBMotionSet(winner, 12, 0);
+    func_8005AA98_5B698(*D_80112618_352E78_name_50->obj->model);
+    MBMotionSet(D_80112618_352E78_name_50, -1, 2);
+    HuPrcSleep(15);
+    HuPrcSleep(25);
+    while (func_8005A7E8_5B3E8(D_80112618_352E78_name_50, &((HuCamera*)D_800FD2A8_FDEA8)->pos, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    v.x = D_80112618_352E78_name_50->pos.x;
+    v.y = 190.0f;
+    v.z = D_80112618_352E78_name_50->pos.z;
+    MBModelDispOff(winner);
+    func_8005A950_5B550(&v, 1.0f, 1.8f, 1);
+    MBMotionShiftSet(D_80112618_352E78_name_50, 6, 0, 4, 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x34D);
+    win = func_8005AAC0_5B6C0(0x8C, 0x2D, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x34D, -1, -1);
+    PlaySound(0x122);
+    HuPrcSleep(50);
+    func_8008CCA8_8D8A8(win);
+    MBModelKill(D_80112618_352E78_name_50);
+    MBDBackKill();
+    MBModelDispOn(winner);
+    func_80050E00_51A00(66);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    winner->pos.x = D_80112454_352CB4_name_50.x;
+    winner->pos.y = D_80112454_352CB4_name_50.y;
+    winner->pos.z = D_80112454_352CB4_name_50.z;
+    func_80056658_57258(&winner->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &winner->rot);
+    func_800794A8_7A0A8(180);
+    HuPrcSleep(25);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x34E);
+    win = func_8005AAC0_5B6C0(0xAA, 0x32, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_800890CC_89CCC(win, 0x34E, -1, -1);
+    MBMotionSet(winner, 9, 0);
+    HuPrcSleep(50);
+    func_8008CCA8_8D8A8(win);
+    D_8011274C_352FAC_name_50->pos.x = D_80112460_352CC0_name_50.x;
+    D_8011274C_352FAC_name_50->pos.y = D_80112460_352CC0_name_50.y;
+    D_8011274C_352FAC_name_50->pos.z = D_80112460_352CC0_name_50.z;
+    MBModelDispOn(D_8011274C_352FAC_name_50);
+    func_80056658_57258(&D_8011274C_352FAC_name_50->pos, &winner->pos, &D_8011274C_352FAC_name_50->rot);
+    while (func_8005A608_5B208(D_8011274C_352FAC_name_50, &D_8011246C_352CCC_name_50, 15.0f) == 0) {
+        HuPrcVSleep();
+    }
+    PlayMusic(0x3B);
+    HuPrcSleep(20);
+    MBDBackKill();
+    MBModelDispOff(winner);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010E478_34ECD8_name_50);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010F1A8_34FA08_name_50);
 
