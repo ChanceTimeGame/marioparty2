@@ -524,6 +524,12 @@ extern u32 D_80111634_2EFD64_name_45[]; /* shop messages */
 extern s32 D_801130C4_2F17F4_name_45;
 extern u8* D_801130C8_2F17F8_name_45;
 
+/* ---- 45: other data and main-segment API ---- */
+extern s16 D_800F8CE4_F98E4[]; /* board state halfwords */
+extern void* D_80110F4C_2EF67C_name_45; /* a loaded data file */
+extern s16 D_80110F50_2EF680_name_45; /* a sprite, -1 when none */
+void func_8003E964_3F564(s16);
+
 /* ---- 45: data that is a second copy of a 3E symbol (45 has more instances of some objects) ---- */
 extern DecisionTreeNonLeafNode D_80110F9C_2EF6CC_name_45[]; /* as 3E D_80111C3C_2A6F0C_name_3E */
 extern DecisionTreeNonLeafNode D_801110E0_2EF810_name_45[]; /* as 3E D_80111C3C_2A6F0C_name_3E */
@@ -533,6 +539,8 @@ extern DecisionTreeNonLeafNode D_801113D4_2EFB04_name_45[]; /* as 3E D_80111F84_
 extern DecisionTreeNonLeafNode D_80111404_2EFB34_name_45[]; /* as 3E D_80111F84_2A7254_name_3E */
 extern MBModel* D_8011304C_2F177C_name_45; /* as 3E D_8011371C_2A89EC_name_3E */
 extern MBModel* D_80113050_2F1780_name_45[7]; /* as 3E D_80113720_2A89F0_name_3E */
+extern MBModel* D_801130B4_2F17E4_name_45; /* as 3E D_8011371C_2A89EC_name_3E (second set) */
+extern MBModel* D_801130B8_2F17E8_name_45[2]; /* as 3E D_80113720_2A89F0_name_3E (second set) */
 extern MBModel* D_8011306C_2F179C_name_45; /* as 3E D_8011373C_2A8A0C_name_3E */
 extern MBModel* D_80113070_2F17A0_name_45[2]; /* as 3E D_80113740_2A8A10_name_3E */
 extern s16 D_80110E04_2EF534_name_45[8]; /* as 3E D_80111A54_2A6D24_name_3E */
@@ -549,7 +557,7 @@ void func_80105E3C_2E456C_name_45(void);
 void func_80105FF4_2E4724_name_45(s16 arg0);
 void func_80106114_2E4844_name_45(void);
 void func_801065A0_2E4CD0_name_45(void);
-void func_80106820_2E4F50_name_45(void); /* 45-B */
+void func_80106820_2E4F50_name_45(s16 arg0); /* 45-B: from its caller */
 void func_80106954_2E5084_name_45(void);
 void func_801069D8_2E5108_name_45(void); /* 45-B */
 void func_80106A18_2E5148_name_45(void); /* twin func_8005FA50_60650: no prototype found */
