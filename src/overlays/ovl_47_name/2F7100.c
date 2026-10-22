@@ -4154,7 +4154,223 @@ s32 func_8010F6B0_303FB0_name_47(s32 arg0) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
+/* Space event (10 coins): the player walks to launch space D_80111710[side], a launcher model
+   (0x89) arrives, the player shrinks into a beam (model 0x8B) and is carried to the other side
+   (D_80111710[side ^ 1], placed on chain space D_80111714[side]); one time in six it lands on
+   space 0x48 instead and the launcher overshoots. */
+#ifdef NON_MATCHING
+/* Same residue as func_8010F098: retail reloads current_player_index (lh a0,0x1E(s7)) for
+   func_80046D2C after the != 4 test; this C reuses the tested value. Logic otherwise identical. */
+void func_8010F910_304210_name_47(void) {
+    GW_SYSTEM* gw;
+    GW_PLAYER* player;
+    s32 space;
+    s32 masu;
+    s32 side;
+    s32 miss;
+    s32 choice;
+    s32 i;
+    s32 abs;
+    MBModel* launcher;
+    MBModel* beam;
+    SpaceData* dest;
+    SpaceData* sd;
+    Vec dir;
+    Vec end;
+
+    side = 0;
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    masu = 0;
+    player = BoardPlayerGet(-1);
+    miss = 0;
+    if (gw->current_player_index != 4) {
+        func_80046D2C_4792C(gw->current_player_index);
+        MBPlayerMotionSet(-1, -1, 2);
+        switch ((s16)space) {
+        case 0x67:
+            masu = 0x5D;
+            side = 0;
+            break;
+        case 0x6D:
+            masu = 0x5E;
+            side = 1;
+            break;
+        }
+        func_80056C30_57830(-1, 8, masu);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        if (gPlayers[gw->current_player_index].coins < 10) {
+            MBDlgWinExec(-1, 0x6CF);
+        } else {
+        loop:
+            MBDlgWinCreate(-1, 0x6CE);
+            choice = func_8010F6B0_303FB0_name_47(side);
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+            case 0:
+                MBPlayerMotionSet(-1, 0, 2);
+                sd = GetSpaceData(D_80111710_306010_name_47[side]);
+                func_80056658_57258(&((MBModel*)player->unk_24)->pos, &sd->coords, &dir);
+                func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &dir, &((MBModel*)player->unk_24)->rot, 10);
+                HuPrcSleep(10);
+                HuPrcChildLink(HuPrcCurrentGet(), func_80056FD4_57BD4(&((MBModel*)player->unk_24)->pos, &sd->coords,
+                                                                     &((MBModel*)player->unk_24)->pos, 2.0f));
+                HuPrcChildWatch();
+                MBPlayerMotionSet(-1, -1, 2);
+                func_8005670C_5730C(&dir);
+                func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &dir, &((MBModel*)player->unk_24)->rot, 5);
+                HuPrcSleep(5);
+                func_8004CA34_4D634(gw->current_player_index, -10);
+                func_800614B4_620B4(gw->current_player_index, -10);
+                HuPrcSleep(30);
+                launcher = func_80043510_44110(0x89, NULL);
+                func_800B3170_B3D70(&launcher->pos, &((MBModel*)player->unk_24)->pos);
+                launcher->pos.x += 100.0f;
+                launcher->pos.z -= 100.0f;
+                dest = GetSpaceData(D_8011170C_30600C_name_47[0]);
+                func_80056658_57258(&GetSpaceData(D_8011170C_30600C_name_47[1])->coords, &dest->coords,
+                                    &launcher->rot);
+                HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&launcher->pos, &((MBModel*)player->unk_24)->pos,
+                                                                     &launcher->pos, 60));
+                HuPrcChildWatch();
+                PlaySound(0x3EF);
+                MBDlgWinExec(0x1D, 0x6D0);
+                PlaySound(0x3F4);
+                beam = func_80043510_44110(0x8B, NULL);
+                func_800B3170_B3D70(&beam->pos, &((MBModel*)player->unk_24)->pos);
+                HuVecCopyXYZ(&beam->scale, 0.05f, 1.5f, 0.05f);
+                for (i = 100; i >= 0; i -= 10) {
+                    beam->jumpY = i;
+                    HuPrcVSleep();
+                }
+                for (i = 2; i < 30; i++) {
+                    HuVecCopyXYZ(&beam->scale, i / 30.0f, 1.5f, i / 30.0f);
+                    HuPrcVSleep();
+                }
+                HuVecCopyXYZ(&beam->scale, 1.0f, 1.5f, 1.0f);
+                MBPlayerVibrate(-1, 3);
+                for (i = 0; i < 15; i++) {
+                    ((MBModel*)player->unk_24)->scale.x = 1.0f - i / 15.0f;
+                    ((MBModel*)player->unk_24)->scale.y = i / 15.0f + 1.0f;
+                    ((MBModel*)player->unk_24)->scale.z = 1.0f - i / 15.0f;
+                    ((MBModel*)player->unk_24)->jumpY += 6.0f;
+                    HuPrcVSleep();
+                }
+                MBModelDispOff(player->unk_24);
+                for (i = 30; i > 0; i--) {
+                    HuVecCopyXYZ(&beam->scale, i / 30.0f, 1.5f, i / 30.0f);
+                    HuPrcVSleep();
+                }
+                for (i = 0; i <= 100; i += 10) {
+                    beam->jumpY = i;
+                    HuPrcVSleep();
+                }
+                MBModelKill(beam);
+                if (MBRand(6.0f) == 0) {
+                    dest = GetSpaceData(0x48);
+                    miss = 1;
+                    abs = 0x48;
+                } else {
+                    dest = GetSpaceData(D_80111710_306010_name_47[side ^ 1]);
+                    abs = D_80111714_306014_name_47[side];
+                }
+                func_80054C78_55878(abs, &player->cur_chain_index, &player->cur_space_index);
+                player->next_chain_index = player->cur_chain_index;
+                player->next_space_index = player->cur_space_index + 1;
+                func_80063C40_64840(0, 1);
+                func_80063C40_64840(1, 1);
+                func_80063C40_64840(2, 1);
+                func_80063C40_64840(3, 1);
+                func_800636F8_642F8(4);
+                func_80063734_64334(&launcher->pos);
+                if (miss) {
+                    end.x = (dest->coords.x - launcher->pos.x) * 2.0f + dest->coords.x;
+                    end.y = (dest->coords.y - launcher->pos.y) * 2.0f + dest->coords.y;
+                    end.z = (dest->coords.z - launcher->pos.z) * 2.0f + dest->coords.z;
+                } else {
+                    end.x = (dest->coords.x - launcher->pos.x) / 2.0f + dest->coords.x;
+                    end.y = (dest->coords.y - launcher->pos.y) / 2.0f + dest->coords.y;
+                    end.z = (dest->coords.z - launcher->pos.z) / 2.0f + dest->coords.z;
+                }
+                func_80061518_62118();
+                func_80053F7C_54B7C();
+                HuPrcChildLink(HuPrcCurrentGet(), func_80056FD4_57BD4(&launcher->pos, &dest->coords, &launcher->pos, 2.0f));
+                HuPrcChildWatch();
+                func_80061584_62184();
+                func_80053F54_54B54();
+                func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &launcher->pos);
+                func_800636F8_642F8(1);
+                PlaySound(0x3F4);
+                beam = func_80043510_44110(0x8B, NULL);
+                func_800B3170_B3D70(&beam->pos, &((MBModel*)player->unk_24)->pos);
+                HuVecCopyXYZ(&beam->scale, 0.05f, 1.5f, 0.05f);
+                for (i = 100; i >= 0; i -= 10) {
+                    beam->jumpY = i;
+                    HuPrcVSleep();
+                }
+                for (i = 2; i < 30; i++) {
+                    HuVecCopyXYZ(&beam->scale, i / 30.0f, 1.5f, i / 30.0f);
+                    HuPrcVSleep();
+                }
+                HuVecCopyXYZ(&beam->scale, 1.0f, 1.5f, 1.0f);
+                MBPlayerVibrate(-1, 3);
+                if (player->turn_status == 0) {
+                    MBModelDispOn(player->unk_24);
+                }
+                for (i = 14; i >= 0; i--) {
+                    ((MBModel*)player->unk_24)->scale.x = 1.0f - i / 15.0f;
+                    ((MBModel*)player->unk_24)->scale.y = i / 15.0f + 1.0f;
+                    ((MBModel*)player->unk_24)->scale.z = 1.0f - i / 15.0f;
+                    ((MBModel*)player->unk_24)->jumpY -= 6.0f;
+                    HuPrcVSleep();
+                }
+                for (i = 30; i > 0; i--) {
+                    HuVecCopyXYZ(&beam->scale, i / 30.0f, 1.5f, i / 30.0f);
+                    HuPrcVSleep();
+                }
+                for (i = 0; i <= 100; i += 10) {
+                    beam->jumpY = i;
+                    HuPrcVSleep();
+                }
+                MBModelKill(beam);
+                if (!miss) {
+                    MBDlgWinExec(0x1D, 0x6D1);
+                } else {
+                    MBDlgWinExec(0x1D, 0x6D2);
+                }
+                HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&launcher->pos, &end, &launcher->pos, 15));
+                HuPrcChildWatch();
+                MBModelKill(launcher);
+                if (!miss) {
+                    MBPlayerMotionSet(-1, 0, 2);
+                    sd = GetSpaceData(D_80111714_306014_name_47[side]);
+                    func_80056658_57258(&((MBModel*)player->unk_24)->pos, &sd->coords, &dir);
+                    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &dir, &((MBModel*)player->unk_24)->rot, 5);
+                    HuPrcSleep(5);
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056FD4_57BD4(&((MBModel*)player->unk_24)->pos, &sd->coords,
+                                                                         &((MBModel*)player->unk_24)->pos, 2.0f));
+                    HuPrcChildWatch();
+                    MBPlayerMotionSet(-1, -1, 2);
+                }
+                break;
+            case 1:
+                break;
+            case 2:
+                func_80103A64_2F8364_name_47();
+                goto loop;
+            }
+        }
+        func_8004655C_4715C(gw->current_player_index);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F910_304210_name_47);
+#endif
 
 void func_80110310_304C10_name_47(void) {
     func_80020070_20C70(2);

@@ -600,5 +600,8 @@ void func_800514F0_520F0(void);
 f32 MBCameraSpeedGet(void);
 f32 func_80053614_54214(void);
 void func_8005660C_5720C(s16 arg0, s16 arg1); /* MBPlayerPosMasuSet */
+extern s16 D_8011170C_30600C_name_47[2]; /* the launcher's facing: from space [1] toward [0] */
+extern s16 D_80111710_306010_name_47[2]; /* per side: launch space */
+extern s16 D_80111714_306014_name_47[2]; /* per side: landing chain space */
 
 #endif
