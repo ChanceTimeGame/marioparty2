@@ -49,8 +49,11 @@ typedef struct BRTeam {
     /* 0x34 */ s8 anim;
     /* 0x35 */ s8 player[2];  /* the two players */
     /* 0x37 */ s8 port[2];    /* their controller ports */
-    /* 0x39 */ s8 mdl[10];    /* model indices */
-    /* 0x43 */ s8 path;       /* which CPU path table */
+    /* 0x39 */ s8 mdl[7];     /* model indices */
+    /* 0x40 */ s8 path;       /* which CPU path table (MP1 0x43) */
+    /* 0x41 */ s8 unk41;
+    /* 0x42 */ u8 unk42;
+    /* 0x43 */ u8 unk43;
 } BRTeam; /* size = 0x44 */
 
 /* A motion slot of BRWork::unk_E8 (C8E0.c's MgMotion). */
@@ -108,9 +111,28 @@ typedef struct BRWork {
 /* ---------------------------------------------------------------------------------------------
    Data (.data, 19AB90.data.s, asm)
    --------------------------------------------------------------------------------------------- */
+extern f32 D_8010BFF0_19AB90_BobsledRun; /* camera pitch */
+extern s8 D_8010BFF4_19AB94_BobsledRun; /* winning team, -1 none yet */
+extern s8 D_8010BFF5_19AB95_BobsledRun; /* result: -1 racing, -2 both crashed, -3 time up */
 extern f32 D_8010C040_19ABE0_BobsledRun[2]; /* camera field of view, per team */
 extern BRTeam D_8010C048_19ABE8_BobsledRun[2];
 extern s16 D_8010C0DC_19AC7C_BobsledRun; /* race time (frames) */
+/* Sound handles kept as s32; retail reads the low half (D_8010C0E2 / D_8010C0E6). */
+extern s32 D_8010C0E0_19AC80_BobsledRun;
+extern s32 D_8010C0E4_19AC84_BobsledRun;
+extern u32 D_8010C118_19ACB8_BobsledRun;
+extern s32 D_8010C11C_19ACBC_BobsledRun;
+extern s32 D_8010C120_19ACC0_BobsledRun;
+extern s32 D_8010C124_19ACC4_BobsledRun;
+extern s32 D_8010C128_19ACC8_BobsledRun;
+extern s32 D_8010C12C_19ACCC_BobsledRun;
+extern s32 D_8010C130_19ACD0_BobsledRun;
+
+/* ---------------------------------------------------------------------------------------------
+   Bss (ovl_19_bss)
+   --------------------------------------------------------------------------------------------- */
+extern u16 D_8010CB40_19B6E0_BobsledRun; /* team 1's progress-bar sled */
+extern u16 D_8010CC3E_19B7DE_BobsledRun; /* team 0's progress-bar sled */
 
 /* ---------------------------------------------------------------------------------------------
    Main code
@@ -135,7 +157,7 @@ void func_80029708_2A308(s32);
 void func_8002CA48_2D648(u8 arg0, u8 arg1, u8 arg2);
 void func_8000C460_D060(void);
 void func_8000C018_CC18(u16);
-s16 func_800680D4_68CD4(s32);
+u16 func_800680D4_68CD4(s32); /* the minigame record (time) */
 void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
 void func_8002CD6C_2D96C(s32);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
@@ -148,6 +170,20 @@ f32 func_800B1830_B2430(f32); /* sqrtf */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_8000DA2C_E62C(f32, f32, f32, f32);
+u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320;
+extern s32 D_800F8FD0_F9BD0; /* scene state */
+extern u16 D_801011FC_101DFC;
+void func_8000C3C8_CFC8(void);
+void func_8000C3B8_CFB8(void);
+void func_8000C398_CF98(void);
+void func_8000C3A8_CFA8(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+s32 func_80069538_6A138(void);
+void func_80079848_7A448(s16 arg0);
+void func_80079614_7A214(s16 time); /* music fade-out */
+void GWMgRecordSet(s32, u16);
+void espPosSet(u16 spriteId, s16 x, s16 y);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (B's half, after 801064F0, inferred from the asm: check)
