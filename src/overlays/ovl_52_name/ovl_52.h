@@ -86,6 +86,18 @@ void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void MBModelInit(void);
 void func_8005E2B8_5EEB8(void);
 void func_800593C0_59FC0(void);
+void func_8005AB50_5B750(MBModel* arg0, s16 arg1, s16 arg2, s32 arg3);
+void func_80043DAC_449AC(MBModel*);
+s32 func_8005A5E8_5B1E8(MBModel* model, Vec* target, f32 speed); /* walk toward; TRUE when there */
+s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
+void* func_8005A718_5B318(MBModel* model, f32 speed, u16 count, Vec* points); /* a path walk (3F ModelPathWork) */
+s32 func_8005A778_5B378(void*); /* path finished */
+void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
+void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
+s32 func_8005AAC0_5B6C0(s32 x, s32 y, s32 w, s32 h); /* board message window */
+void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_8005762C_5822C(s32 arg0);
+void func_800794A8_7A0A8(s32);
 extern u16 D_801011FC_101DFC;
 extern u8 D_800FD866_FE466;
 extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
@@ -108,16 +120,24 @@ extern s16 D_80106980_35CF60_name_52[2]; /* its position */
 extern s32 D_80106984_35CF64_name_52[7]; /* per board: the host's model */
 extern u32 D_801069A0_35CF80_name_52[7][2]; /* per board: the host's motions */
 
+extern u32 D_801069D8_35CFB8_name_52[]; /* its file list */
+extern s32 D_80106A04_35CFE4_name_52;
+extern u16 D_80106A50_35D030_name_52[4]; /* per player: exit path length */
+extern Vec* D_80106A58_35D038_name_52[4]; /* per player: exit path */
+extern Vec D_80106A68_35D048_name_52; /* its start */
+extern Vec D_80106A74_35D054_name_52; /* where it stops */
+extern s32 D_80106A80_35D060_name_52[]; /* per board: its message */
+
 /* ---- overlay 52 bss ---- */
 
 extern u8 D_80106B30_35D110_name_52; /* board index */
 extern MBModel* D_80106B34_35D114_name_52;
+extern MBModel* D_80106B38_35D118_name_52; /* the character who ends the scene */
 extern MBModel* D_80106B40_35D120_name_52[4]; /* the bonus star models */
 extern s32 D_80106B50_35D130_name_52[4]; /* their effects; read as (s16) */
 extern s32 D_80106B60_35D140_name_52[4]; /* the digit sprites; read as (s16) */
 extern s32 D_80106B70_35D150_name_52; /* the digit graphic; read as (s16) */
-extern s16 D_80106B74_35D154_name_52;
-extern s16 D_80106B76_35D156_name_52;
+extern s16 D_80106B74_35D154_name_52[2]; /* a message window's size */
 extern GAMEMES D_80106B78_35D158_name_52; /* the "YOU ARE THE WINNER" text */
 
 /* ---- overlay 52 functions ---- */

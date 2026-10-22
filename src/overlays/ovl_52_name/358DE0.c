@@ -424,7 +424,80 @@ void func_80105C24_35C204_name_52(void) {
     func_80050AE0_516E0();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80105C48_35C228_name_52);
+/* The ending: a character walks in and speaks, the host and the players face it, then everyone walks
+   off along the exit paths while the screen fades. */
+void func_80105C48_35C228_name_52(void) {
+    Vec target;
+    void* paths[4];
+    s32 win;
+    s32 i;
+    s32 t;
+    u16 done;
+
+    D_80106B38_35D118_name_52 = MBModelFileCreate(0x800A3, 0xD, 1.0f, 1.3f, D_801069D8_35CFB8_name_52);
+    func_8005AB50_5B750(D_80106B38_35D118_name_52, 2, 6, D_80106A04_35CFE4_name_52);
+    func_80043DAC_449AC(D_80106B38_35D118_name_52);
+    D_80106B38_35D118_name_52->pos.x = D_80106A68_35D048_name_52.x;
+    D_80106B38_35D118_name_52->pos.y = D_80106A68_35D048_name_52.y;
+    D_80106B38_35D118_name_52->pos.z = D_80106A68_35D048_name_52.z;
+    HuPrcSleep(10);
+    MBMotionSet(D_80106B38_35D118_name_52, 7, 2);
+    t = 0;
+    while (func_8005A5E8_5B1E8(D_80106B38_35D118_name_52, &D_80106A74_35D054_name_52, 20.0f) == 0) {
+        for (i = 0; i < 4; i++) {
+            func_8005A7E8_5B3E8(gPlayers[i].unk_24, &D_80106B38_35D118_name_52->pos, 5.0f);
+        }
+        func_8005A7E8_5B3E8(D_80106B34_35D114_name_52, &D_80106B38_35D118_name_52->pos, 8.0f);
+        t++;
+        HuPrcVSleep();
+        if (t == 16) {
+            func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, D_80106A80_35D060_name_52[D_80106B30_35D110_name_52]);
+            win = func_8005AAC0_5B6C0(72, 50, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]);
+            func_800890CC_89CCC(win, D_80106A80_35D060_name_52[D_80106B30_35D110_name_52], -1, -1);
+            PlaySound(0xE6);
+        }
+    }
+    MBMotionShiftSet(D_80106B38_35D118_name_52, 8, 0, 10, 2);
+    target.x = 0.0f;
+    target.y = 0.0f;
+    target.z = 2050.0f;
+    while (func_8005A7E8_5B3E8(D_80106B38_35D118_name_52, &target, 8.0f) == 0) {
+        HuPrcVSleep();
+    }
+    HuPrcSleep(30);
+    func_8005762C_5822C(win);
+    func_800794A8_7A0A8(120);
+    for (i = 0; i < 4; i++) {
+        MBMotionShiftSet(gPlayers[i].unk_24, 7, 0, 5, 2);
+        paths[i] = func_8005A718_5B318(gPlayers[i].unk_24, 15.0f, D_80106A50_35D030_name_52[i], D_80106A58_35D038_name_52[i]);
+    }
+    t = 0;
+    while (TRUE) {
+        done = 0;
+        for (i = 0; i < 4; i++) {
+            if (func_8005A778_5B378(paths[i]) != 0) {
+                done++;
+            }
+        }
+        if (done == 4) {
+            break;
+        }
+        func_8005A7E8_5B3E8(D_80106B38_35D118_name_52, &((MBModel*)gPlayers[0].unk_24)->pos, 6.0f);
+        func_8005A7E8_5B3E8(D_80106B34_35D114_name_52, &((MBModel*)gPlayers[0].unk_24)->pos, 6.0f);
+        HuPrcVSleep();
+        if (t == 40) {
+            InitFadeOut(2, 20);
+        }
+        if (t == 60) {
+            break;
+        }
+        t++;
+    }
+    for (i = 0; i < 4; i++) {
+        HuMemMemoryFreePerm(paths[i]);
+    }
+    HuPrcSleep(20);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_8010604C_35C62C_name_52);
 
