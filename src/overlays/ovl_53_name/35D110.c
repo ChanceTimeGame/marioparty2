@@ -28,6 +28,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_801041E4_35EAF4
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_801044A8_35EDB8_name_53);
 
+__asm__(".section .rodata");
+const char D_80105D58_360668_name_53[] = "%d";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104570_35EE80_name_53);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104A30_35F340_name_53);
