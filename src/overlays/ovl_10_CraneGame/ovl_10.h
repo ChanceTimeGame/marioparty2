@@ -12,6 +12,8 @@
 #include "game/camera.h"
 #include "game/pad.h"
 #include "game/malloc.h" /* MG10-B */
+#include "game/gamemes.h" /* MG10-B */
+#include "game/board.h"   /* MG10-B: D_80102720_103320 */
 
 typedef f32 Matrix4f[4][4];
 
@@ -278,6 +280,8 @@ f32 func_80106C98_1507B8_CraneGame(f32 x, f32 z);
 void func_80106D58_150878_CraneGame(Matrix4f m, Vec* out);
 void func_80106F00_150A20_CraneGame(omObjData* obj);
 /* MG10-B's range (inferred) */
+u16 func_80078EA8_79AA8(void);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1);       /* MP1 func_800FA684 */
 void func_8010755C_15107C_CraneGame(omObjData* obj);                 /* MP1 func_800FA770 */
 CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* obj);               /* MP1 func_800F704C (claw alloc) */

@@ -1385,7 +1385,195 @@ void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1) {
     c->unk42 = (c->unk42 + 1) & 0x1F;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010755C_15107C_CraneGame);
+void func_8010755C_15107C_CraneGame(omObjData* obj) {
+    f32 y;
+    s32 bit;
+    u16 btn;
+    HmfData* hmf;
+    CGWork* w;
+    CGClaw* claw;
+    CGClaw* c;
+    GAMEMES* mes;
+
+    w = obj->unk_50;
+    btn = 0;
+    claw = func_80107F40_151A60_CraneGame(*D_800FFFD8_100BD8);
+    c = func_80107F40_151A60_CraneGame(obj);
+    if (c->unk0 == 0) {
+        c->unk0 |= 1;
+        c->unk2 = 6;
+        c->unk8 = 0;
+        c->unk3C = c->unk40 * 8 + 0x60;
+        c->unk3E = 0;
+        c->unk42 = 0;
+        c->unk4C = 0;
+        c->unk4E = 0;
+        c->unk50 = 0;
+        c->unk56 = 0;
+        c->unk58 = 0;
+    }
+    if (c->unk40 < 3 && D_8010C178_155C98_CraneGame == 0) {
+        if (!(gPlayers[D_8010C196_155CB6_CraneGame[c->unk40]].flags & 1)) {
+            btn = ContBtnTrg[w->unk57];
+        } else {
+            btn = 0;
+            if (rand8() < gPlayers[D_8010C196_155CB6_CraneGame[c->unk40]].cpu_difficulty * 12 + 8) {
+                bit = 0x8000;
+                btn = bit;
+            }
+        }
+        if (btn & 0x8000) {
+            if (D_800FC834_FD434[obj->model[0]].unk40 == D_800F92B4_F9EB4[D_800FC834_FD434[obj->model[0]].unk02].unk02) {
+                D_800FC834_FD434[obj->model[0]].unk44 = 1.0f;
+                D_800FC834_FD434[obj->model[0]].unk40 = 0.0f;
+            }
+        }
+    }
+    switch (c->unk8) {
+    case 0:
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            if (--c->unk3C == 0) {
+                c->unk8++;
+                return;
+            }
+        }
+        return;
+    case 1:
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            y = obj->trans.y;
+            c->unk1C += -4.0;
+            obj->trans.y += c->unk1C;
+            if (!(c->unk2 & 1)) {
+                if (func_80106568_150088_CraneGame(obj) != 0) {
+                    c->unk1C = -16.0f;
+                    if (c->unk2 & 2) {
+                        c->unk2 &= ~2;
+                        PlaySound(0x193);
+                        if (D_8010C17C_155C9C_CraneGame == 0) {
+                            D_8010C17A_155C9A_CraneGame = 1;
+                        }
+                        D_8010C258_155D78_CraneGame++;
+                    }
+                } else {
+                    c->unk2 |= 2;
+                }
+            } else {
+                if (c->unk58 < 48) {
+                    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f - c->unk58 / 48.0f;
+                    c->unk58++;
+                }
+                if (obj->trans.y < 300.0) {
+                    hmf = D_800FC834_FD434[D_8010C186_155CA6_CraneGame].hmf;
+                    if (obj->trans.x != hmf->unk84->unk04.x) {
+                        if (hmf->unk84->unk04.x < obj->trans.x) {
+                            obj->trans.x -= 20.0;
+                            if (obj->trans.x < hmf->unk84->unk04.x) {
+                                obj->trans.x = hmf->unk84->unk04.x;
+                            }
+                        } else {
+                            obj->trans.x += 20.0;
+                            if (hmf->unk84->unk04.x < obj->trans.x) {
+                                obj->trans.x = hmf->unk84->unk04.x;
+                            }
+                        }
+                    }
+                    if (obj->trans.z != hmf->unk84->unk04.z) {
+                        if (hmf->unk84->unk04.z < obj->trans.z) {
+                            obj->trans.z -= 20.0;
+                            if (obj->trans.z < hmf->unk84->unk04.z) {
+                                obj->trans.z = hmf->unk84->unk04.z;
+                            }
+                        } else {
+                            obj->trans.z += 20.0;
+                            if (hmf->unk84->unk04.z < obj->trans.z) {
+                                obj->trans.z = hmf->unk84->unk04.z;
+                            }
+                        }
+                    }
+                }
+                if (y >= 300.0 && obj->trans.y < 300.0) {
+                    PlaySound(0x194);
+                    omVibrate(D_8010C194_155CB4_CraneGame, 2, 2, 20);
+                    mes = &D_800F9570_FA170[D_8010C170_155C90_CraneGame->work[0]];
+                    switch (c->unk40) {
+                    default:
+                        D_8010C1A0_155CC0_CraneGame++;
+                        break;
+                    case 3:
+                        D_8010C17C_155C9C_CraneGame += 600;
+                        mes->unk0A = 0;
+                        mes->unk04 = 2;
+                        break;
+                    case 4:
+                        D_8010C17C_155C9C_CraneGame += 450;
+                        mes->unk0A = 0;
+                        mes->unk04 = 2;
+                        break;
+                    case 5:
+                        D_8010C17C_155C9C_CraneGame += 900;
+                        mes->unk0A = 0;
+                        mes->unk04 = 2;
+                        break;
+                    }
+                    if (D_8010C1A0_155CC0_CraneGame == 3) {
+                        D_8010C17A_155C9A_CraneGame = 1;
+                    }
+                    claw->unk56 = 32;
+                }
+                if (obj->trans.y < -2000.0) {
+                    c->unk8 = -1;
+                    c->unk2 &= ~4;
+                    if (D_8010C17C_155C9C_CraneGame == 0) {
+                        D_8010C17A_155C9A_CraneGame = 1;
+                    }
+                }
+            }
+        }
+        if ((c->unk2 & 1) && func_801033E4_14CF04_CraneGame(obj->trans.y) != 0) {
+            func_80108238_151D58_CraneGame(D_8010C186_155CA6_CraneGame, 0.0f);
+        }
+        func_80106A28_150548_CraneGame(obj);
+        if (w->unk34 > w->unk38) {
+            y = w->unk34;
+        } else {
+            y = w->unk38;
+        }
+        func_801035C0_14D0E0_CraneGame(&obj->trans.x, &obj->trans.y, &obj->trans.z, 0.0f, 0.0f, 0.0f, y, (c->unk2 & 1) + 1);
+        return;
+    case 2:
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            if (c->unk3E != 0) {
+                c->unk8 = 1;
+                c->unk2 |= 2;
+                if ((s16)func_80103338_14CE58_CraneGame(obj) != 0) {
+                    c->unk2 |= 1;
+                } else {
+                    c->unk2 &= ~1;
+                }
+                c->unk3E = 0;
+                c->unk1C = 0.0f;
+                c->unk4E = 0;
+                c->unk4C = 0;
+                return;
+            }
+            func_801081C8_151CE8_CraneGame(obj->model[0], 0.0f);
+            c->unk4E++;
+            if (btn & 0x8000) {
+                c->unk4C++;
+                if (c->unk56 == 0) {
+                    omVibrate(D_8010C194_155CB4_CraneGame, 5, 0, 5);
+                    c->unk56 = 4;
+                }
+            }
+            c->unk50 = (f32)c->unk4C / (f32)c->unk4E * 30.0;
+            if (c->unk56 != 0) {
+                c->unk56--;
+            }
+            func_80107460_150F80_CraneGame(obj, claw->unk40);
+        }
+        break;
+    }
+}
 
 CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* arg0) {
     CGClaw* temp_v0;
