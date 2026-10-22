@@ -379,15 +379,100 @@ f32 func_80103EB4_40D1B4_BattleResults(s16 model) {
     return m->pos.y;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80103EDC_40D1DC_BattleResults);
+/* Bobs a rank's pedestal and its shadow (work[0] rank, work[1] frames, work[2] height step). */
+void func_80103EDC_40D1DC_BattleResults(omObjData* obj) {
+    f32 dy = 0.0f;
+    u8 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80103FD8_40D2D8_BattleResults);
+    switch (obj->work[2]) {
+    case 0:
+        dy = 7.0f;
+        break;
+    case 1:
+        dy = 5.0f;
+        break;
+    case 2:
+        dy = 3.0f;
+        break;
+    case 3:
+        dy = 1.0f;
+        break;
+    }
+    func_80103E60_40D160_BattleResults((s16)D_80105960_40EC60_BattleResults[obj->work[0]], dy);
+    func_80103E60_40D160_BattleResults((s16)D_80105970_40EC70_BattleResults[obj->work[0]], dy);
+    t = obj->work[1];
+    obj->work[1] = t + 0xFF; /* t - 1; retail adds 0xFF */
+    if (t == 0) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104064_40D364_BattleResults);
+/* Raises every character by work[3] / work[2] a frame for work[1] frames. */
+void func_80103FD8_40D2D8_BattleResults(omObjData* obj) {
+    s32 i;
+    u8 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801040F8_40D3F8_BattleResults);
+    for (i = 0; i < 4; i++) {
+        func_80102E64_40C164_BattleResults(i, 0.0f, (f32)obj->work[3] / (f32)obj->work[2]);
+    }
+    t = obj->work[1];
+    obj->work[1] = t + 0xFF; /* t - 1; retail adds 0xFF */
+    if (t == 0) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801041C0_40D4C0_BattleResults);
+/* The carrier lets its coins go: swap the hooks, play the release motion. */
+void func_80104064_40D364_BattleResults(void) {
+    func_800298A4_2A4A4((s16)D_801059B4_40ECB4_BattleResults, 4, 4);
+    func_800298A4_2A4A4((s16)D_801059B4_40ECB4_BattleResults, 0x4000, 0);
+    func_800298A4_2A4A4((s16)D_801059B8_40ECB8_BattleResults, 0x4000, 0x4000);
+    func_800298A4_2A4A4((s16)D_801059B8_40ECB8_BattleResults, 4, 0);
+    func_8002C9C0_2D5C0((s16)D_801059B0_40ECB0_BattleResults, (s16)D_80105A1C_40ED1C_BattleResults);
+    func_80029E80_2AA80((s16)D_801059B0_40ECB0_BattleResults, 0, 2);
+}
+
+/* Drops n coins (5, 3 or 1) onto a pedestal at height y; the last one rumbles the player's pad. */
+void func_801040F8_40D3F8_BattleResults(s32 n, f32 y, s32 player) {
+    f32 floor = y + 250.0f;
+
+    switch (n) {
+    case 5:
+        func_8010342C_40C72C_BattleResults(0, floor, 0, player);
+        func_8010342C_40C72C_BattleResults(8, floor, 0, player);
+    case 3:
+        func_8010342C_40C72C_BattleResults(2, floor, 0, player);
+        func_8010342C_40C72C_BattleResults(6, floor, 0, player);
+    case 1:
+        func_8010342C_40C72C_BattleResults(4, floor, 1, player);
+        break;
+    }
+}
+
+/* The carrier passes rank position pos: drop that player's coins if they won any. */
+void func_801041C0_40D4C0_BattleResults(omObjData* obj, s32 pos) {
+    s32 player = D_80105A08_40ED08_BattleResults[pos];
+    s32 n;
+
+    if (D_80105A58_40ED58_BattleResults[D_801059F8_40ECF8_BattleResults[player]] > 0) {
+        /* Retail counts in work[pos], which overlaps the carrier's speed and state bytes. */
+        if (++obj->work[pos] == 1) {
+            func_80104064_40D364_BattleResults();
+        }
+        switch (D_801059F8_40ECF8_BattleResults[D_80105A08_40ED08_BattleResults[pos]]) {
+        case 0:
+            n = 5;
+            break;
+        case 1:
+            n = 3;
+            break;
+        default:
+            n = 1;
+            break;
+        }
+        func_801040F8_40D3F8_BattleResults(n, func_80103EB4_40D1B4_BattleResults((s16)D_80105960_40EC60_BattleResults[pos]), player);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801042B0_40D5B0_BattleResults);
 
