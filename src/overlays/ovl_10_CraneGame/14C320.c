@@ -1041,9 +1041,77 @@ void func_80104CB0_14E7D0_CraneGame(omObjData* obj) {
     func_80019378_19F78(obj);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106268_14FD88_CraneGame);
+#ifdef NON_MATCHING
+/* Scheduling: retail loads w->unk34 in both arms and passes 0.0f as an integer zero; the
+   MP1 pointer form (p = table[i]) is further off. */
+s32 func_80106268_14FD88_CraneGame(omObjData* obj, Vec* out) {
+    f32 m[4][4];
+    f32 m2[4][4];
+    Vec r;
+    s32 cnt = 0;
+    f32 px;
+    f32 pz;
+    CGWork* w;
+    s32 i;
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010646C_14FF8C_CraneGame);
+    w = obj->unk_50;
+    guRotateRPYF(m, obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80025770_26370(m, 0.0f, 1.0f, 0.0f);
+    r.x = -func_800B75A8_B81A8(sqrtf(m[3][0] * m[3][0] + m[3][2] * m[3][2]), m[3][1]);
+    n = 4;
+    r.y = -(func_800B75A8_B81A8(m[3][2], m[3][0]) + 90.0f);
+    guTranslateF(m, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80025884_26484(m, r.x, r.y, 0.0f);
+    if (w->unk53 == 0) {
+        n = 3;
+    }
+    for (i = 0; i < n; i++) {
+        if (w->unk53 == 0) {
+            px = D_8010B998_1554B8_CraneGame[i][0];
+            pz = D_8010B998_1554B8_CraneGame[i][1];
+        } else {
+            px = D_8010B9B0_1554D0_CraneGame[i][0];
+            pz = D_8010B9B0_1554D0_CraneGame[i][1];
+        }
+        guTranslateF(m2, 0.0f, px * w->unk34, pz * w->unk38);
+        guMtxCatF(m2, m, m2);
+        if (m2[3][1] < 0.0f) {
+            out[cnt].x = m2[3][0];
+            out[cnt].y = m2[3][1];
+            out[cnt].z = m2[3][2];
+            cnt++;
+        }
+    }
+    return cnt;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106268_14FD88_CraneGame);
+#endif
+
+void func_8010646C_14FF8C_CraneGame(s16 n, Vec* v) {
+    s16 i;
+    s16 j;
+    f32 x;
+    f32 y;
+    f32 z;
+
+    for (i = 0; i < n - 1; i++) {
+        for (j = n - 1; j > i; j--) {
+            if (v[i].y > v[j].y) {
+                x = v[i].x;
+                y = v[i].y;
+                z = v[i].z;
+                v[i].x = v[j].x;
+                v[i].y = v[j].y;
+                v[i].z = v[j].z;
+                v[j].x = x;
+                v[j].y = y;
+                v[j].z = z;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106568_150088_CraneGame);
 

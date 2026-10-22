@@ -83,6 +83,8 @@ void func_800795D8_7A1D8(s16 sound, s8 volume);
 void func_800796F0_7A2F0(s16 sound, s16 pitch);
 void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
 void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
+void func_80025770_26370(Matrix4f m, f32 x, f32 y, f32 z); /* translate (MP1 MtxTranslate) */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate (MP1 MtxRotate) */
 
 /* Per-character data, 0x18 bytes each (as 2C's TipsyCharData). */
 typedef struct CGCharData {
@@ -119,7 +121,8 @@ typedef struct CGWork {
     /* 0x44 */ char unk_44[0xC];
     /* 0x50 */ s16 unk50; /* state; < 0 out of play */
     /* 0x52 */ u8 unk52;
-    /* 0x53 */ char unk_53[4];
+    /* 0x53 */ s8 unk53; /* shape: 0 three contact points, 1 four */
+    /* 0x54 */ char unk_54[3];
     /* 0x57 */ s8 unk57; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 unk59; /* player */
@@ -192,6 +195,8 @@ extern s32 D_8010B7B8_1552D8_CraneGame[7]; /* their model files */
 extern s16 D_8010B978_155498_CraneGame[]; /* grip strength per grab quality */
 extern f32 D_8010B980_1554A0_CraneGame[]; /* claw depth per character */
 extern Gfx D_8010B8E8_155408_CraneGame[];
+extern f32 D_8010B998_1554B8_CraneGame[3][2]; /* contact points, three-point prizes */
+extern f32 D_8010B9B0_1554D0_CraneGame[4][2]; /* contact points, four-point prizes */
 extern Gfx D_8010B928_155448_CraneGame[];
 
 /* ---- overlay bss (ovl_10_bss, 8010C170) ---- */
