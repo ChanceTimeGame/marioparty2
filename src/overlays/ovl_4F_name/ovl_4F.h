@@ -226,6 +226,23 @@ void func_8002D124_2DD24(s16 index);
 extern u32* D_8010FD10_342950_name_4F[6]; /* board 1, per character: MBPlayerModelCreate list */
 extern u32 D_8010FD28_342968_name_4F[];
 extern s32 D_8010FD74_3429B4_name_4F;
+extern u32 D_8010FD3C_34297C_name_4F[]; /* board 1's host: MBModelFileCreate list */
+extern s32 D_8010FD7C_3429BC_name_4F;
+extern s32 D_8010FD80_3429C0_name_4F;
+extern Vec D_8010FD8C_3429CC_name_4F;
+extern Vec D_8010FD98_3429D8_name_4F;
+extern Vec D_8010FDA4_3429E4_name_4F;
+extern Vec D_8010FDB0_3429F0_name_4F;
+extern Vec D_8010FDC8_342A08_name_4F; /* the doors' start */
+extern Vec D_8010FDD4_342A14_name_4F; /* the doors' end */
+extern Vec D_8010FDE0_342A20_name_4F;
+extern u32 D_8010FDEC_342A2C_name_4F[];
+extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */
+extern const char D_801103BC_342FFC_name_4F[]; /* "item_hook" (336DE0.c, board 1's copy) */
+void func_80026D50_27950(s16, u8, u8);
+void func_80026E00_27A00(s16, f32, f32, f32);
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16); /* motion length */
 
 /* ---- 335440.c ---- */
 
