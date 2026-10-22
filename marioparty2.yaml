@@ -1783,6 +1783,7 @@ segments:
     subsegments:
       - [0x3D0050, c]
       - [0x3D48D0, data]
+      - [0x3D4CC0, .rodata, 3D0050]
       - {0x3D4D20, type: bss, vram: 0x801074D0, name: ovl_61_bss}
   - type: code
     start: 0x3D4D20
