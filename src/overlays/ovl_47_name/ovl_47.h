@@ -590,5 +590,15 @@ extern BoardEventTableEntry D_80110FF8_3058F8_name_47[];
 extern BoardEventTableEntry D_80111728_306028_name_47[];
 extern MBModel* D_80112350_306C50_name_47[4]; /* per player: the model each D_80112360 object carries */
 void func_800632E4_63EE4(void (*arg0)(void));
+extern s16 D_801110BC_3059BC_name_47[4]; /* warp destination: current space */
+extern s16 D_801110C4_3059C4_name_47[4]; /* warp destination: next space */
+extern DecisionTreeNonLeafNode* D_801116BC_305FBC_name_47[4]; /* per player: CPU decision tree */
+void func_80049FA0_4ABA0(void);
+void func_800517C0_523C0(void);
+void func_80051788_52388(void);
+void func_800514F0_520F0(void);
+f32 MBCameraSpeedGet(void);
+f32 func_80053614_54214(void);
+void func_8005660C_5720C(s16 arg0, s16 arg1); /* MBPlayerPosMasuSet */
 
 #endif

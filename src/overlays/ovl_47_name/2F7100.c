@@ -3714,9 +3714,111 @@ void func_8010E43C_302D3C_name_47(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010E64C_302F4C_name_47);
+/* The current player loses the companion model (flag D_800F8CE4[player]): message, fade out. */
+void func_8010E64C_302F4C_name_47(void) {
+    GW_SYSTEM* gw = &GwSystem;
+    s32 alpha;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010E738_303038_name_47);
+    if (gw->current_player_index != 4 && D_800F8CE4_F98E4[gw->current_player_index] != 0) {
+        D_800F8CE4_F98E4[gw->current_player_index] = 0;
+        _SetFlag(3);
+        MBDlgWinExec(-1, 0xF8);
+        for (alpha = 0xA0; alpha >= 0; alpha -= 12) {
+            func_8002D0A0_2DCA0(D_80112350_306C50_name_47[gw->current_player_index]->obj->model[0], alpha);
+            HuPrcVSleep();
+        }
+        func_8002D0A0_2DCA0(D_80112350_306C50_name_47[gw->current_player_index]->obj->model[0], 0);
+        func_801067CC_2FB0CC_name_47(gw->current_player_index);
+    }
+}
+
+/* Warp process: the current player shrinks away, reappears at warp destination arg0 (0-3; 4 or
+   more: a random one), camera cut. */
+void func_8010E738_303038_name_47(s32 arg0) {
+    GW_SYSTEM* gw = &GwSystem;
+    GW_PLAYER* player;
+    MBModel* model;
+    ModelEmitterWork* emitter;
+    s32 i;
+    s32 warp;
+    f32 scale;
+    f32 speed;
+    f32 camB;
+
+    player = BoardPlayerGet(-1);
+    func_800636F8_642F8(0);
+    player->flags |= 4;
+    PlaySound(0x3EE);
+    model = player->unk_24;
+    emitter = func_80049ED4_4AAD4(model, 3);
+    HuVecCopyXYZ(&emitter->offset, 0.0f, 100.0f, 0.0f);
+    emitter->unk18 = 0.1f;
+    HuPrcSleep(10);
+    MBPlayerVibrate(-1, 2);
+    for (i = 0; i < 15; i++) {
+        scale = 1.0f - i / 15.0f;
+        model->scale.x = scale;
+        model->scale.y = 1.0f;
+        model->scale.z = scale;
+        HuPrcVSleep();
+    }
+    model->scale.x = 0.0f;
+    model->scale.y = 0.0f;
+    model->scale.z = 0.0f;
+    HuPrcVSleep();
+    model->attr &= ~2;
+    MBModelDispOff(model);
+    if (arg0 < 4) {
+        warp = arg0;
+    } else {
+        warp = MBRand(4.0f);
+    }
+    func_80054C78_55878(D_801110BC_3059BC_name_47[warp], &player->cur_chain_index, &player->cur_space_index);
+    func_80054C78_55878(D_801110C4_3059C4_name_47[warp], &player->next_chain_index, &player->next_space_index);
+    func_8005660C_5720C(gw->current_player_index,
+                        GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+    InitFadeOut(6, 16);
+    HuPrcSleep(16);
+    func_80049F90_4AB90(emitter);
+    func_80049FA0_4ABA0();
+    func_800517C0_523C0();
+    func_80051788_52388();
+    speed = MBCameraSpeedGet();
+    MBCameraSpeedSet(-1.0f);
+    camB = func_80053614_54214();
+    func_80053608_54208(1.0f);
+    func_800514F0_520F0();
+    MBDCameraPos3DSet(&model->pos);
+    HuPrcVSleep();
+    func_80053608_54208(camB);
+    MBCameraSpeedSet(speed);
+    func_80063C40_64840(0, 1);
+    func_80063C40_64840(1, 1);
+    func_80063C40_64840(2, 1);
+    func_80063C40_64840(3, 1);
+    InitFadeIn(6, 16);
+    HuPrcSleep(16);
+    PlaySound(0x3EE);
+    model->attr |= 2;
+    MBModelDispOn(model);
+    emitter = func_80049ED4_4AAD4(player->unk_24, 3);
+    HuVecCopyXYZ(&emitter->offset, 0.0f, 100.0f, 0.0f);
+    emitter->unk18 = 0.1f;
+    HuPrcSleep(10);
+    for (i = 14; i >= 0; i--) {
+        scale = 1.0f - i / 15.0f;
+        model->scale.x = scale;
+        model->scale.y = 1.0f;
+        model->scale.z = scale;
+        HuPrcVSleep();
+    }
+    HuPrcSleep(5);
+    func_80049F90_4AB90(emitter);
+    func_80049FA0_4ABA0();
+    player->flags &= ~4;
+    func_800636F8_642F8(1);
+    omDelPrcObj(NULL);
+}
 
 void func_8010EA94_303394_name_47(void) {
     func_8010E738_303038_name_47(0);
@@ -3778,7 +3880,22 @@ s32 func_8010EB20_303420_name_47(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010ED54_303654_name_47);
+/* CPU pick of another player (random order, first whose decision tree says 0); else itself. */
+s32 func_8010ED54_303654_name_47(void) {
+    GW_SYSTEM* gw = &GwSystem;
+    u8 order[4];
+    s32 i;
+
+    MBArrayShuffle(order, 3);
+    for (i = 0; i < 4; i++) {
+        if (order[i] != gw->current_player_index) {
+            if (func_80044800_45400(D_801116BC_305FBC_name_47[order[i]]) == 0) {
+                return order[i];
+            }
+        }
+    }
+    return gw->current_player_index;
+}
 
 s32 func_8010EE00_303700_name_47(u8* items) {
     s32 count = 0;
