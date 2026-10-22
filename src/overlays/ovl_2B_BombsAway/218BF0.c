@@ -1673,12 +1673,96 @@ void func_80107B60_21DF50_BombsAway(omObjData* obj, u8 kind) {
     obj->work[3] = kind;
 }
 
-__asm__(".section .rodata");
-const u32 D_8010D600_2239F0_BombsAway[8] = { 0xC2480000, 0xC1A00000, 0x447A0000, 0xC2B40000, 0x42480000, 0xC2480000, 0xC47A0000, 0x42B40000 };
+/* A bomb carrier (MP1 func_800FB2E4): takes the next player waiting in a slot (work[0] 0),
+   flies to them from its side (1), and carries them back to the drop point (2, 3); its two
+   blended models follow the state (D_8010CFD4). */
+void func_80107C48_21E038_BombsAway(omObjData* obj) {
+    f32 drop[] = { -50.0f, -20.0f, 1000.0f, -90.0f, 50.0f, -50.0f, -1000.0f, 90.0f };
+    f32 start[] = { -800.0f, 300.0f, 800.0f, 300.0f, -200.0f, 400.0f, 200.0f, 400.0f };
+    s16 visible;
+    s32 side;
+    omObjData* carrier;
+    BaPlayer* cp;
+    f32 dx;
+    f32 dz;
+    f32 ang;
+    f32 s;
+    s32 k;
+    s16 n; /* the slot (case 0), then k * 4 (cases 2, 3) */
+    u16 m0;
+    u16 m1;
 
-__asm__(".section .rodata");
-const u32 D_8010D620_223A10_BombsAway[8] = { 0xC4480000, 0x43960000, 0x44480000, 0x43960000, 0xC3480000, 0x43C80000, 0x43480000, 0x43C80000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107C48_21E038_BombsAway);
+    visible = 1;
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        visible = obj->work[0] != 0;
+    } else {
+        switch (obj->work[0]) {
+            case 0:
+                n = func_80107A84_21DE74_BombsAway();
+                if (n >= 0) {
+                    obj->work[0]++;
+                    obj->work[1] = n;
+                    carrier = D_8010DCE0_2240D0_BombsAway.unk_10[n];
+                    obj->work[3] = carrier->trans.x >= 0.0;
+                } else {
+                    visible = 0;
+                }
+                side = obj->work[3];
+                obj->trans.x = start[side * 2];
+                obj->trans.z = start[side * 2 + 1];
+                break;
+            case 1:
+                carrier = D_8010DCE0_2240D0_BombsAway.unk_10[obj->work[1]];
+                cp = func_80104058_21A448_BombsAway(carrier);
+                dx = carrier->trans.x - obj->trans.x;
+                dz = carrier->trans.z - obj->trans.z;
+                ang = func_80108A4C_21EE3C_BombsAway(dx, dz);
+                s = HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5;
+                obj->trans.x += func_800B7890_B8490(ang) * (s * 0.1 + 0.05) * 100.0;
+                obj->trans.z += HuMathSin(ang) * (s * 0.1 + 0.05) * 100.0;
+                if (sqrtf(dx * dx + dz * dz) < 50.0) {
+                    cp->unk_3C = 4;
+                    if (carrier->trans.x > 0.0) {
+                        obj->work[0] = 2;
+                    } else {
+                        obj->work[0] = 3;
+                    }
+                }
+                break;
+            case 2:
+            case 3:
+                carrier = D_8010DCE0_2240D0_BombsAway.unk_10[obj->work[1]];
+                cp = func_80104058_21A448_BombsAway(carrier);
+                k = obj->work[0] - 2;
+                n = k * 4;
+                s = HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5;
+                dx = drop[k * 4 + 2] - obj->trans.x;
+                dz = 200.0 - obj->trans.z;
+                ang = func_80108A4C_21EE3C_BombsAway(dx, dz);
+                obj->trans.x += func_800B7890_B8490(ang) * (s * 0.1 + 0.05) * 100.0;
+                obj->trans.z += HuMathSin(ang) * (s * 0.1 + 0.05) * 100.0;
+                if (sqrtf(dx * dx + dz * dz) < 50.0) {
+                    obj->work[0] = 0;
+                    cp->unk_3C++;
+                    func_80107B00_21DEF0_BombsAway(obj->work[1]);
+                }
+                carrier->trans.x += (obj->trans.x + drop[n] - carrier->trans.x) * 0.2;
+                carrier->trans.y += (obj->trans.y + drop[n + 1] - carrier->trans.y) * 0.2;
+                carrier->trans.z += (obj->trans.z - carrier->trans.z) * 0.2;
+                carrier->rot.y = drop[n + 3];
+                break;
+        }
+        obj->work[2] += 8;
+    }
+    if (visible) {
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        m0 = D_8010DCD0_2240C0_BombsAway[D_8010CFD4_2233C4_BombsAway[obj->work[0]][0]];
+        m1 = D_8010DCD0_2240C0_BombsAway[D_8010CFD4_2233C4_BombsAway[obj->work[0]][1]];
+        func_80108868_21EC58_BombsAway(obj->model[0], m0, m1,
+                                       HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5);
+    } else {
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801082EC_21E6DC_BombsAway);
