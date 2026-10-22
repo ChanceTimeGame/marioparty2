@@ -643,6 +643,16 @@ extern BoardEventTableEntry D_80113C48_31E0F8_name_49[];
 extern s16 D_80112E4C_31D2FC_name_49[3]; /* func_80106BF8: model spaces */
 extern f32 D_80112E54_31D304_name_49[3][3]; /* func_80106BF8: facing angle by D_800F8CE4[1+i] */
 extern s16 D_801134C8_31D978_name_49[3]; /* func_80108650: the bank spaces */
+extern s16 D_801137C8_31DC78_name_49[8]; /* pipe spaces */
+extern s16 D_801137D8_31DC88_name_49[5]; /* where each destination pipe drops the player */
+extern s32 D_801137E4_31DC94_name_49[8]; /* pipe size (0 short, 1 tall) */
+extern u8 D_80113804_31DCB4_name_49[2]; /* pipe model by size */
+void func_800517C0_523C0(void);
+void func_80051788_52388(void);
+void func_800514F0_520F0(void);
+f32 MBCameraSpeedGet(void);
+void MBCameraSpeedSet(f32);
+f32 func_80053614_54214(void);
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif

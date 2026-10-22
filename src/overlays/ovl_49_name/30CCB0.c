@@ -3897,7 +3897,130 @@ void func_8010EAB4_318F64_name_49(void) {
     }
 }
 
+#ifdef NON_MATCHING
+/* NON_MATCHING: register residue only (retail keeps the two SpaceData* and adds 8 later; 2 instrs).
+   Warp pipe event: the player jumps into pipe `pipe`, sinks, and comes out of a random one of
+   pipes 0-4 other than `exclude` (pipes 5-7 are entrances only), then hops to its landing space. */
+#define PIPE_PLAYER ((MBModel*)player->unk_24)
+s32 func_8010ECC4_319174_name_49(s32 exclude, s32 pipe) {
+    Vec vec[2]; /* [0] a facing, [1] a jump target (one array: retail packs them) */
+    char msg[0]; /* retail: zero-sized, so the three bytes below land on the saved $s0 slot */
+    GW_PLAYER* player;
+    MBModel* model;
+    Vec* in;
+    Vec* from;
+    Vec* to;
+    void* vib;
+    s32 dest;
+    f32 camSpeed;
+    f32 camZoom;
+    GW_SYSTEM* gw;
+
+    player = BoardPlayerGet(-1);
+    gw = &GwSystem;
+    msg[0] = 0x18;
+    msg[1] = gPlayers[gw->current_player_index].character;
+    msg[2] = 0;
+    MBWinInsertOpen(0x356, msg, 0, 0, 0, 0);
+    func_80055E3C_56A3C(gw->current_player_index);
+    func_80055E60_56A60();
+    model = func_80043510_44110(D_80113804_31DCB4_name_49[D_801137E4_31DC94_name_49[pipe]], NULL);
+    func_800298A4_2A4A4(model->obj->model[0], 0x80000, 0x80000);
+    func_80029A8C_2A68C(model->obj->model[0]);
+    in = &GetSpaceData(D_801137C8_31DC78_name_49[pipe])->coords;
+    func_800B3170_B3D70(&model->pos, in);
+    func_80056658_57258(&PIPE_PLAYER->pos, in, &PIPE_PLAYER->rot);
+    func_800B3170_B3D70(&vec[1], in);
+    vec[1].y += (D_801137E4_31DC94_name_49[pipe] * 10.0f + 40.0f) / 2.0f;
+    func_80056D80_57980(&PIPE_PLAYER->pos, &vec[1], &PIPE_PLAYER->pos, 20);
+    PIPE_PLAYER->jumpVel = 5.5f;
+    PIPE_PLAYER->jumpAccel = -0.5f;
+    MBPlayerMotionSet(-1, 2, 0);
+    func_800797DC_7A3DC(0x42, gw->current_player_index);
+    HuPrcSleep(20);
+    MBPlayerMotionSet(-1, -1, 2);
+    PIPE_PLAYER->attr |= 1;
+    func_800636F8_642F8(0);
+    PlaySound(0x408);
+    func_8005670C_5730C(&vec[0]);
+    func_80056B78_57778(&PIPE_PLAYER->rot, &vec[0], &PIPE_PLAYER->rot, 10);
+    vec[1].y = 0.0f;
+    func_80056D80_57980(&PIPE_PLAYER->pos, &vec[1], &PIPE_PLAYER->pos, 20);
+    vib = func_800672BC_67EBC(gw->current_player_index, 2, 5);
+    HuPrcSleep(20);
+    func_8006735C_67F5C(vib);
+    PIPE_PLAYER->attr &= ~2;
+    MBModelDispOff(PIPE_PLAYER);
+    do {
+        dest = MBRand(5.0f);
+    } while (dest == exclude);
+    func_80054C78_55878(D_801137D8_31DC88_name_49[dest], &player->cur_chain_index, &player->cur_space_index);
+    player->next_chain_index = player->cur_chain_index;
+    player->next_space_index = player->cur_space_index + 1;
+    InitFadeOut(6, 16);
+    HuPrcSleep(16);
+    MBModelKill(model);
+    from = &GetSpaceData(D_801137C8_31DC78_name_49[dest])->coords;
+    to = &GetSpaceData(D_801137D8_31DC88_name_49[dest])->coords;
+    func_800B3170_B3D70(&PIPE_PLAYER->pos, from);
+    PIPE_PLAYER->pos.y += (D_801137E4_31DC94_name_49[dest] * 10.0f + 40.0f) / 2.0f;
+    func_8005670C_5730C(&PIPE_PLAYER->rot);
+    model = func_80043510_44110(D_80113804_31DCB4_name_49[D_801137E4_31DC94_name_49[dest]], NULL);
+    func_800298A4_2A4A4(model->obj->model[0], 0x80000, 0x80000);
+    func_80029A8C_2A68C(model->obj->model[0]);
+    func_800B3170_B3D70(&model->pos, from);
+    func_800517C0_523C0();
+    func_80051788_52388();
+    camSpeed = MBCameraSpeedGet();
+    MBCameraSpeedSet(-1.0f);
+    camZoom = func_80053614_54214();
+    func_80053608_54208(1.0f);
+    func_800514F0_520F0();
+    MBDCameraPos3DSet(&PIPE_PLAYER->pos);
+    HuPrcVSleep();
+    func_80053608_54208(camZoom);
+    MBCameraSpeedSet(camSpeed);
+    func_80063C40_64840(0, 1);
+    func_80063C40_64840(1, 1);
+    func_80063C40_64840(2, 1);
+    func_80063C40_64840(3, 1);
+    func_800B3170_B3D70(&PIPE_PLAYER->pos, from);
+    InitFadeIn(6, 16);
+    HuPrcSleep(16);
+    PIPE_PLAYER->attr |= 2;
+    MBModelDispOn(PIPE_PLAYER);
+    PlaySound(0x408);
+    func_800B3170_B3D70(&vec[1], from);
+    vec[1].y += (D_801137E4_31DC94_name_49[dest] * 10.0f + 40.0f) / 2.0f;
+    func_80056D80_57980(&PIPE_PLAYER->pos, &vec[1], &PIPE_PLAYER->pos, 20);
+    vib = func_800672BC_67EBC(gw->current_player_index, 2, 5);
+    HuPrcSleep(20);
+    func_8006735C_67F5C(vib);
+    PIPE_PLAYER->attr &= ~1;
+    MBModelKill(model);
+    func_800636F8_642F8(1);
+    func_80056658_57258(from, to, &PIPE_PLAYER->rot);
+    func_800B3170_B3D70(&vec[1], to);
+    func_80056D80_57980(&PIPE_PLAYER->pos, &vec[1], &PIPE_PLAYER->pos, 20);
+    PIPE_PLAYER->jumpVel = 5.5f;
+    PIPE_PLAYER->jumpAccel = -0.5f;
+    MBPlayerMotionSet(-1, 2, 0);
+    func_800797DC_7A3DC(0x42, gw->current_player_index);
+    HuPrcSleep(20);
+    MBPlayerMotionSet(-1, -1, 2);
+    HuPrcSleep(5);
+    return omDelPrcObj(NULL);
+}
+#undef PIPE_PLAYER
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010ECC4_319174_name_49);
+#endif
+#undef PIPE_PLAYER
+#undef PIPE_PLAYER
+#undef PIPE_PLAYER
+#undef PIPE_PLAYER
+#undef PIPE_PLAYER
+#undef PIPE_PLAYER
 
 s32 func_8010F320_3197D0_name_49(void) {
     return func_8010ECC4_319174_name_49(0, 0);
