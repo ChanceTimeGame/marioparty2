@@ -94,6 +94,7 @@ void func_8008E434_8F034(s32 arg0);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void omDelObj(omObjData*);
 extern u16 ContDStkTrg[4];
+extern s16 D_800FA188_FAD88; /* R51B: the current music */
 extern u16 D_801011FC_101DFC; /* R51B: set when the scene may end (MP1 D_800F5144) */
 extern s16 D_800F8CE4_F98E4[]; /* board state halfwords: [0..3] player order, [10 + p] bonus stars */
 
@@ -126,9 +127,11 @@ extern s32 D_801083C4_3589D4_name_51; /* falling-coin sound pacing (MP1 D_800FC0
 extern Vec D_801083C8_3589D8_name_51; /* star pile centre */
 extern Vec D_801083D4_3589E4_name_51;
 extern Vec D_801083E0_3589F0_name_51[3]; /* coin start points; [0].y is where a finished coin returns */
+extern s32 D_8010845C_358A6C_name_51[4]; /* the players' status windows' slots (14..17) */
 extern Vec D_80108404_358A14_name_51[4]; /* where each player's stars start */
 extern Vec D_80108434_358A44_name_51; /* where the stars fly to */
 extern s32 D_801086B8_358CC8_name_51; /* next coin model (0..19) */
+extern char* D_801085E0_358BF0_name_51; /* "RESULTS" */
 extern s16 D_801085E4_358BF4_name_51[2]; /* tally: title position */
 extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
 extern s16 D_801085F8_358C08_name_51[4][2];
@@ -158,6 +161,7 @@ extern MBModel* D_80108828_358E38_name_51[7]; /* the star models */
 extern s32 D_80108890_358EA0_name_51[3]; /* tally icons: coins, stars, star coins */
 extern s32 D_801088A0_358EB0_name_51[3]; /* the five-digit counters: coins, stars, star coins */
 extern ModelEmitterWork* D_801088C0_358ED0_name_51[8]; /* the star models' trails */
+extern s32 D_801088E0_358EF0_name_51[4]; /* each player's stars before the bonus stars */
 extern GAMEMES D_801088F0_358F00_name_51[3]; /* "X" beside each counter */
 extern omObjData* D_80108A4C_35905C_name_51; /* the bank's bounce object */
 extern s32 D_80108A50_359060_name_51; /* character name sprites */
