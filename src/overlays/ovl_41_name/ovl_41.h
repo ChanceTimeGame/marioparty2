@@ -139,7 +139,7 @@ extern u8 D_80110AE4_2BF3A4_name_41[3][4]; /* steal-a-star chance by turn band, 
 extern s16 D_80110AF0_2BF3B0_name_41[2]; /* -1 ended */
 extern s16 D_80110AF4_2BF3B4_name_41[8]; /* -1 ended */
 extern s16 D_80110B04_2BF3C4_name_41[7][2]; /* star space marker offsets */
-extern s16 D_80110B20_2BF3E0_name_41[2][2];
+extern s16 D_80110B20_2BF3E0_name_41[1][2]; /* 41: one entry */
 extern s16 D_80110B24_2BF3E4_name_41[2][2];
 extern s16 D_80110B2C_2BF3EC_name_41[2];
 extern s16 D_80110B30_2BF3F0_name_41[2][2]; /* signpost marker offsets */
@@ -185,7 +185,7 @@ extern MBModel* D_80111F10_2C07D0_name_41[7];
 extern MBModel* D_80111F2C_2C07EC_name_41;
 extern MBModel* D_80111F60_2C0820_name_41;
 extern MBModel* D_80111F6C_2C082C_name_41;
-extern MBModel* D_80111F30_2C07F0_name_41[2];
+extern MBModel* D_80111F30_2C07F0_name_41[1]; /* 41: one */
 extern MBModel* D_80111F64_2C0824_name_41[2];
 extern MBModel* D_80111F70_2C0830_name_41[2];
 extern MBModel* D_80111F34_2C07F4_name_41;
