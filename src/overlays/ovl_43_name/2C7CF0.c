@@ -2619,7 +2619,226 @@ s32 func_80109C74_2CF164_name_43(s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80109C74_2CF164_name_43);
 #endif
 
+#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked 0, raw 168): the frame counter and the
+                       stack-array base swap s3/s4 */
+/* Every other player with coins gets a star over their status window for 150 frames and presses A
+   (CPUs by difficulty) to lower its price; then the stars leave. out[i] gets player i's price (the
+   turn table's price less the press table's discount, at most the player's coins; 0 for players
+   left out), and the return value is their sum. The all-players version of func_80109C74. */
+s32 func_8010A9B0_2CFEA0_name_43(u8* out) {
+    s32 work[4]; /* shown flag; at the end the price */
+    s32 frame[4];
+    s32 presses[4];
+    s32 state[4];
+    s16 star[4];
+    s16 portrait[4];
+    s16 portraitAnim[4];
+    void* vib[4];
+    void* data;
+    u16 starAnim;
+    s32 i;
+    s32 k;
+    s16 timer;
+    f32 x;
+    f32 y;
+    u32 j;
+    s32 total;
+
+    data = DataRead(0xA000B);
+    starAnim = SprAnimRead_s32(data);
+    DataClose(data);
+    for (k = 0; k < 4; k++) {
+        if (k == GwSystem.current_player_index || gPlayers[k].coins == 0) {
+            star[k] = -1;
+        } else {
+            SprAnimSet(star[k] = SprCreate_s32(1, 5), 0, starAnim, 0);
+            SprPrioSet(star[k], 0, 10);
+            func_8008225C_82E5C(star[k], 0, 0);
+            SprAttrSet(star[k], 0, 0x1000);
+            SprPosSet(star[k], 0, D_801141A4_2D9694_name_43[k].x, D_801141A4_2D9694_name_43[k].y);
+            func_80082488_83088(star[k], 0, 0);
+            portrait[k] = SprCreate_s32(1, 5);
+            data = DataRead(D_801141E4_2D96D4_name_43[gPlayers[k].character]);
+            portraitAnim[k] = SprAnimRead_s32(data);
+            DataClose(data);
+            SprAnimSet(portrait[k], 0, portraitAnim[k], 0);
+            SprPrioSet(portrait[k], 0, 10);
+            func_8008225C_82E5C(portrait[k], 0, 1);
+            if (k & 1) {
+                SprAttrSet(portrait[k], 0, 0x1001);
+            } else {
+                SprAttrSet(portrait[k], 0, 0x1000);
+            }
+            SprPosSet(portrait[k], 0, D_801141A4_2D9694_name_43[k].x - D_801141C4_2D96B4_name_43[k].x * 16.0f - 8.0f,
+                      D_801141C4_2D96B4_name_43[k].y * 16.0f + D_801141A4_2D9694_name_43[k].y);
+            func_80082488_83088(portrait[k], 0, 0);
+        }
+    }
+    for (k = 0; k < 17; k++) {
+        for (i = 0; i < 4; i++) {
+            if (star[i] != -1) {
+                SprPosSet(star[i], 0, k * D_801141C4_2D96B4_name_43[i].x + D_801141A4_2D9694_name_43[i].x,
+                          k * D_801141C4_2D96B4_name_43[i].y + D_801141A4_2D9694_name_43[i].y);
+                func_80082488_83088(star[i], 0, k * 16);
+                func_80082488_83088(portrait[i], 0, k * 16);
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            func_80082488_83088(star[i], 0, 255);
+            func_80082488_83088(portrait[i], 0, 255);
+        }
+    }
+    MBWinInsertOpen(0x43, NULL, 0, 0, 0, 0);
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            MBPlayerVibrate(i, 2);
+        }
+    }
+    func_801079F4_2CCEE4_name_43();
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            presses[i] = 0;
+            state[i] = 0;
+            frame[i] = 0;
+            work[i] = 0;
+            vib[i] = func_800672BC_67EBC(i, 3, 5);
+        }
+    }
+    PlaySound(0x376);
+    timer = MBRand(10.0f) + 1;
+    for (k = 0; k < 150; k++, timer--) {
+        if (timer == 0) {
+            PlaySound(0xE4);
+            timer = MBRand(15.0f) + 30;
+        }
+        for (i = 0; i < 4; i++) {
+            if (star[i] == -1) {
+                continue;
+            }
+            if (state[i] >= 2) {
+                state[i]--;
+            }
+            if (state[i] == 0) {
+                y = D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y;
+                SprPosSet(star[i], 0, D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x,
+                          y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+            } else if (state[i] == 9) {
+                x = D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x;
+                SprPosSet(star[i], 0, x + 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
+                          D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
+                x = D_801141A4_2D9694_name_43[i].x - 8.0f;
+                SprPosSet(portrait[i], 0, x + 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
+                          D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
+                frame[i]++;
+            }
+            if (gPlayers[i].flags & 1) {
+                if (state[i] == 0) {
+                    goto press;
+                }
+                if (gPlayers[i].cpu_difficulty2 == 0) {
+                    if (state[i] < 7) {
+                        goto press;
+                    }
+                } else if (gPlayers[i].cpu_difficulty2 == 1) {
+                    if (state[i] < 8) {
+                        goto press;
+                    }
+                } else if (state[i] < 10) {
+                    goto press;
+                }
+            } else if (ContDStkTrg[gPlayers[i].port] & 0x8000) {
+            press:
+                presses[i]++;
+                state[i] = 10;
+                if (work[i] == 0) {
+                    func_800822A8_82EA8(portrait[i], 0, 1, 0);
+                    func_8008225C_82E5C(portrait[i], 0, 1);
+                    work[i] = 1;
+                    SprPosSet(portrait[i], 0, D_801141A4_2D9694_name_43[i].x - 8.0f,
+                              D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
+                }
+            }
+            if (state[i] == 0 && work[i] == 1) {
+                func_800822A8_82EA8(portrait[i], 0, 0, 0);
+                func_8008225C_82E5C(portrait[i], 0, 1);
+                work[i] = 0;
+                SprPosSet(portrait[i], 0, D_801141A4_2D9694_name_43[i].x - D_801141C4_2D96B4_name_43[i].x * 16.0f - 8.0f,
+                          D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            func_8006735C_67F5C(vib[i]);
+        }
+    }
+    omAddPrcObj(func_80109C50_2CF140_name_43, 0x1000, 0, 0);
+    for (k = 16; k >= -16; k -= 2) {
+        for (i = 0; i < 4; i++) {
+            if (star[i] != -1) {
+                SprPosSet(star[i], 0, k * D_801141C4_2D96B4_name_43[i].x + D_801141A4_2D9694_name_43[i].x,
+                          k * D_801141C4_2D96B4_name_43[i].y + D_801141A4_2D9694_name_43[i].y);
+                SprPosSet(portrait[i], 0, (k - 16) * D_801141C4_2D96B4_name_43[i].x + D_801141A4_2D9694_name_43[i].x - 8.0f,
+                          k * D_801141C4_2D96B4_name_43[i].y + D_801141A4_2D9694_name_43[i].y);
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            func_800822A8_82EA8(portrait[i], 0, 0, 0);
+            func_8008225C_82E5C(portrait[i], 0, 1);
+        }
+    }
+    for (k = 16; k >= 0; k -= 2) {
+        for (i = 0; i < 4; i++) {
+            if (star[i] != -1) {
+                func_80082488_83088(star[i], 0, k * 16);
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (star[i] != -1) {
+            SprKill(star[i]);
+            SprKill(portrait[i]);
+            SprAnimKill(portraitAnim[i]);
+        }
+    }
+    SprAnimKill(starAnim);
+    total = 0;
+    for (i = 0; i < 4; i++) {
+        if (star[i] == -1) {
+            out[i] = 0;
+        } else {
+            for (j = 0; j < 6; j++) {
+                if (GwSystem.current_turn >= D_801141FC_2D96EC_name_43[j].min && GwSystem.current_turn <= D_801141FC_2D96EC_name_43[j].max) {
+                    break;
+                }
+            }
+            work[i] = D_801141FC_2D96EC_name_43[j].value;
+            for (j = 0; j < 14; j++) {
+                if (presses[i] >= D_80114210_2D9700_name_43[j].min && presses[i] <= D_80114210_2D9700_name_43[j].max) {
+                    break;
+                }
+            }
+            work[i] -= D_80114210_2D9700_name_43[j].value;
+            if (work[i] >= gPlayers[i].coins) {
+                work[i] = gPlayers[i].coins;
+            }
+            total += work[i];
+            out[i] = work[i];
+        }
+    }
+    return total;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010A9B0_2CFEA0_name_43);
+#endif
 
 void func_8010B868_2D0D58_name_43(void) {
     MBModel* model;

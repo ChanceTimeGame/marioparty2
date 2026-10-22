@@ -439,7 +439,7 @@ void func_801092D4_2CE7C4_name_43(MBModel* model);
 s32 func_80109374_2CE864_name_43(s32 player);
 void func_80109C50_2CF140_name_43(void);
 s32 func_80109C74_2CF164_name_43(s32 player);
-void func_8010A9B0_2CFEA0_name_43(void);
+s32 func_8010A9B0_2CFEA0_name_43(u8* out); /* 43-B: the prices, their sum */
 void func_8010B868_2D0D58_name_43(void);
 Process* func_8010B9BC_2D0EAC_name_43(void* arg0);
 void func_8010B9F8_2D0EE8_name_43(void);
