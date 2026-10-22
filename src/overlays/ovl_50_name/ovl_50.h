@@ -102,6 +102,11 @@ f32 func_800B1830_B2430(f32); /* sqrtf */
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_800B75A8_B81A8(f32, f32); /* atan2 (degrees) */
 void func_80026DAC_279AC(s16, u8, u8, u8);
+void func_800B2060_B2C60(f32 (*)[4], f32, f32, f32); /* rotate a matrix */
+void func_80029E80_2AA80(s16, s32, s32);
+void func_8002A00C_2AC0C(s16);
+void func_8002AC10_2B810(s16, f32, f32, s32);
+extern f32 D_800CA02C_CAC2C;
 void func_800795D8_7A1D8(s16 index, s8 val); /* sound volume */
 
 extern f32 D_80101300_101F00;
@@ -195,6 +200,7 @@ extern s32 D_801123A0_352C00_name_50;
 extern s32 D_801123A4_352C04_name_50[2];
 extern s32 D_801123AC_352C0C_name_50;
 extern s32 D_801123B0_352C10_name_50;
+extern s32 D_801123B4_352C14_name_50;
 extern Vec D_801123B8_352C18_name_50[2]; /* D_80112748: start, target (splat's D_801123C4 is [1]) */
 extern Vec D_801123D0_352C30_name_50;
 extern Vec D_801123DC_352C3C_name_50;

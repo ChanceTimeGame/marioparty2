@@ -773,9 +773,135 @@ void func_8010F79C_34FFFC_name_50(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010F79C_34FFFC_name_50);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_801100EC_35094C_name_50);
+/* Board 5's scene, part 6: the background model swings round the scene in a wide arc (0x351). */
+void func_801100EC_35094C_name_50(void) {
+    f32 angle;
+    f32 scale;
+    s32 i;
+    s32 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8011039C_350BFC_name_50);
+    func_80050E00_51A00(0);
+    i = 0;
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(1, -24.0f, -51.0f, 105.0f);
+    PlaySound(0x40C);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x351);
+    win = func_8005AAC0_5B6C0((320 - D_80112752_352FB2_name_50[0]) / 2, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x351, -1, -1);
+    PlaySound(0x124);
+    MBMotionSet(D_80112618_352E78_name_50, 2, 0);
+    func_80056658_57258(&D_80112618_352E78_name_50->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_80112618_352E78_name_50->rot);
+    D_80112618_352E78_name_50->pos.y = 0.0f;
+    angle = 120.0f;
+    D_80112618_352E78_name_50->obj->rot.z = -90.0f;
+    D_80112618_352E78_name_50->rot.x = HuMathSin(180.0f);
+    D_80112618_352E78_name_50->rot.z = func_800B7890_B8490(180.0f);
+    do {
+        D_80112618_352E78_name_50->pos.x = func_800B7890_B8490(angle) * 900.0f - 200.0f;
+        D_80112618_352E78_name_50->pos.z = -HuMathSin(angle) * 900.0f - 400.0f;
+        D_80112618_352E78_name_50->scale.x = D_80112618_352E78_name_50->scale.y = D_80112618_352E78_name_50->scale.z = 1.0f - HuMathSin(angle) / 4.0f;
+        angle += 5.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        }
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[*D_80112618_352E78_name_50->obj->model].mtx, angle, 0.0f, 0.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 60);
+    func_8008CCA8_8D8A8(win);
+    MBDBackKill();
+}
+
+/* Board 5's scene, part 7: the background model drops onto the winner and is replaced by the
+   third model; the winner walks back to the centre and the board music (0x10) starts. */
+void func_8011039C_350BFC_name_50(void) {
+    MBModel* winner;
+    f32 vel;
+    s32 i;
+
+    func_80050E00_51A00(41);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(1, -30.0f, 0.0f, -116.0f);
+    func_80026DAC_279AC(3, 0x6E, 0x28, 0x28);
+    func_80026E00_27A00(3, 22.0f, -110.0f, 42.0f);
+    func_80026E00_27A00(1, -8.0f, 76.0f, 91.0f);
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    MBModelDispOn(winner);
+    winner->pos.x = -150.0f;
+    winner->pos.y = 0.0f;
+    winner->pos.z = -250.0f;
+    D_8011275C_352FBC_name_50 = MBModelFileCreate(0x80049, 13, 1.0f, 3.0f, D_8011236C_352BCC_name_50);
+    func_8005AB50_5B750(D_8011275C_352FBC_name_50, 2, 9, D_801123B4_352C14_name_50);
+    MBMotionSet(D_8011275C_352FBC_name_50, 0, 2);
+    func_80043DAC_449AC(D_8011275C_352FBC_name_50);
+    func_8002D1EC_2DDEC(*D_8011275C_352FBC_name_50->obj->model, 1);
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, 0x6E, 0x28, 0x28);
+    func_8002D2B4_2DEB4(*D_8011275C_352FBC_name_50->obj->model, 22.0f, -110.0f, 42.0f);
+    MBMotionSet(D_8011275C_352FBC_name_50, 7, 0);
+    MBMotionSet(D_80112618_352E78_name_50, 7, 0);
+    D_80112618_352E78_name_50->pos.x = 325.0f;
+    D_80112618_352E78_name_50->pos.y = 0.0f;
+    D_80112618_352E78_name_50->pos.z = -1250.0f;
+    D_80112618_352E78_name_50->jumpY = 600.0f;
+    D_80112618_352E78_name_50->scale.x = D_80112618_352E78_name_50->scale.y = D_80112618_352E78_name_50->scale.z = 1.0f;
+    D_80112618_352E78_name_50->obj->rot.x = 0.0f;
+    D_80112618_352E78_name_50->obj->rot.z = 0.0f;
+    func_80056658_57258(&D_80112618_352E78_name_50->pos, &winner->pos, &D_80112618_352E78_name_50->rot);
+    MBMotionSet(winner, 8, 0);
+    func_80029E80_2AA80(*winner->obj->model, 1, 1);
+    func_80056658_57258(&winner->pos, &D_80112618_352E78_name_50->pos, &winner->rot);
+    func_80029E80_2AA80(*D_80112618_352E78_name_50->obj->model, 2, 0);
+    HmfModelObjAttrSet(*D_80112618_352E78_name_50->obj->model, 0x22000, 0x20000);
+    i = 0;
+    func_80029A8C_2A68C(*D_80112618_352E78_name_50->obj->model);
+    func_8002A00C_2AC0C(*D_80112618_352E78_name_50->obj->model);
+    vel = 2.0f;
+    while (1) {
+        if (i == 8) {
+            func_80029E80_2AA80(*winner->obj->model, 1, 0);
+        }
+        D_80112618_352E78_name_50->jumpY -= vel;
+        vel *= 1.35f;
+        if (D_80112618_352E78_name_50->jumpY <= 0.0f) {
+            D_80112618_352E78_name_50->jumpY = 0.0f;
+            break;
+        }
+        i++;
+        HuPrcVSleep();
+    }
+    PlaySound(0x40B);
+    i = 0;
+    func_80029C74_2A874(*D_8011275C_352FBC_name_50->obj->model, func_80029D0C_2A90C(*D_8011275C_352FBC_name_50->obj->model));
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    D_8011275C_352FBC_name_50->pos.x = D_80112618_352E78_name_50->pos.x;
+    D_8011275C_352FBC_name_50->pos.y = D_80112618_352E78_name_50->pos.y;
+    D_8011275C_352FBC_name_50->pos.z = D_80112618_352E78_name_50->pos.z;
+    D_8011275C_352FBC_name_50->rot = D_80112618_352E78_name_50->rot;
+    do {
+        func_8002AC10_2B810(*D_80112618_352E78_name_50->obj->model, i * 0.033333335f, i * 0.3f, 2);
+        D_800CA02C_CAC2C += 24.0f;
+        if (D_800CA02C_CAC2C >= 360.0f) {
+            D_800CA02C_CAC2C -= 360.0f;
+        }
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    MBModelKill(D_80112618_352E78_name_50);
+    MBMotionShiftSet(winner, 0, 0, 2, 2);
+    while (func_8005A5E8_5B1E8(winner, &D_80111AE4_352344_name_50, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    while (func_8005A7E8_5B3E8(winner, &((HuCamera*)D_800FD2A8_FDEA8)->pos, 10.0f) == 0) {
+        HuPrcVSleep();
+    }
+    PlayMusic(0x10);
+    D_80111960_3521C0_name_50 = 0x10;
+    MBMotionShiftSet(winner, 13, 0, 4, 0);
+    HuPrcSleep(70);
+    MBMotionShiftSet(winner, -1, 0, 4, 2);
+    func_8005ACD0_5B8D0(&gPlayers[D_8011275A_352FBA_name_50], 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8011099C_3511FC_name_50);
 
