@@ -1011,9 +1011,68 @@ void func_8010763C_33A27C_name_4F(void) {
     MBDBackKill();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801078B0_33A4F0_name_4F);
+/* Board 1: the winner walks toward the camera and out of view. */
+void func_801078B0_33A4F0_name_4F(void) {
+    Vec v;
+    MBModel* model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801079D4_33A614_name_4F);
+    func_80050E00_51A00(14);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(1, 77.0f, 46.0f, -79.0f);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    MBMotionSet(model, 2, 2);
+    MBModelDispOn(model);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 0);
+    v.x = ((HuCamera*)D_800FD2A8_FDEA8)->pos.x;
+    v.y = 0.0f;
+    v.z = ((HuCamera*)D_800FD2A8_FDEA8)->pos.z - 100.0f;
+    while (func_8005A5E8_5B1E8(model, &v, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBModelDispOff(model);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 4);
+    HuPrcVSleep();
+    MBDBackKill();
+}
+
+/* Board 1: the host and the item-hook carrier lead the winner off (func_801084F4 each frame). */
+void func_801079D4_33A614_name_4F(void) {
+    MBModel* model;
+
+    D_80110578_3431B8_name_4F = func_8010D4D8_340118_name_4F();
+    func_80050E00_51A00(13);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(1, 30.0f, 85.0f, -78.0f);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    D_80110580_3431C0_name_4F->pos.x = D_8010FE20_342A60_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_8010FE20_342A60_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_8010FE20_342A60_name_4F.z;
+    model->pos.x = D_8010FE38_342A78_name_4F.x;
+    model->pos.y = D_8010FE38_342A78_name_4F.y;
+    model->pos.z = D_8010FE38_342A78_name_4F.z;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &model->pos, &D_80110580_3431C0_name_4F->rot);
+    func_80056658_57258(&model->pos, &D_80110580_3431C0_name_4F->pos, &model->rot);
+    MBMotionSet(D_80110568_3431A8_name_4F, 2, 2);
+    MBMotionSet(D_80110580_3431C0_name_4F, 1, 2);
+    MBMotionSet(model, 4, 2);
+    MBModelDispOn(D_80110440_343080_name_4F);
+    MBModelDispOn(model);
+    MBModelDispOn(D_80110580_3431C0_name_4F);
+    MBModelDispOn(D_80110568_3431A8_name_4F);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 0);
+    func_800298A4_2A4A4(D_80110584_3431C4_name_4F, 4, 0);
+    func_8005AC6C_5B86C(D_80110580_3431C0_name_4F, D_8010FD88_3429C8_name_4F);
+    while (1) {
+        func_801084F4_33B134_name_4F();
+        func_8005A5E8_5B1E8(D_80110568_3431A8_name_4F, &D_8010FE14_342A54_name_4F, 20.0f);
+        func_8005A608_5B208(model, &D_8010FE44_342A84_name_4F, 3.0f);
+        if (func_8005A608_5B208(D_80110580_3431C0_name_4F, &D_8010FE2C_342A6C_name_4F, 4.0f) == 1) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    MBModelDispOff(D_80110568_3431A8_name_4F);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80107BE8_33A828_name_4F);
 

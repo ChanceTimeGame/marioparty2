@@ -238,6 +238,15 @@ extern Vec D_8010FDD4_342A14_name_4F; /* the doors' end */
 extern Vec D_8010FDE0_342A20_name_4F;
 extern u32 D_8010FDEC_342A2C_name_4F[];
 extern Vec D_8010FE08_342A48_name_4F; /* board 1: the winner alone */
+extern s32 D_8010FD88_3429C8_name_4F;
+extern Vec D_8010FE14_342A54_name_4F;
+extern Vec D_8010FE20_342A60_name_4F;
+extern Vec D_8010FE2C_342A6C_name_4F;
+extern Vec D_8010FE38_342A78_name_4F;
+extern Vec D_8010FE44_342A84_name_4F;
+extern s32 D_80110578_3431B8_name_4F;
+extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
+s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* func_8005A5E8, rotation discarded */
 extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */
 extern const char D_801103BC_342FFC_name_4F[]; /* "item_hook" (336DE0.c, board 1's copy) */
 void func_80026D50_27950(s16, u8, u8);
