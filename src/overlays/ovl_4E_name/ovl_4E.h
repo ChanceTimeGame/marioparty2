@@ -31,7 +31,7 @@ typedef struct Ovl4ECamKey {
 /* ---- main ---- */
 
 /* Main symbols this overlay reaches at an offset (declared raw; their own types are elsewhere). */
-extern s8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i */
+extern u8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i (the player order) */
 extern s8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared */
 extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
 extern s16 D_800F904A;
@@ -112,6 +112,9 @@ extern s16 D_8010D1F0_334BB0_name_4E;
 extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
 extern s32 D_8010D214_334BD4_name_4E[];
+extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8) */
+extern Vec D_8010D544_334F04_name_4E[4]; /* 1 vs 3 positions */
+extern Vec D_8010D574_334F34_name_4E[4]; /* 2 vs 2 positions */
 extern Vec D_8010D5A4_334F64_name_4E;
 extern Vec D_8010D5B0_334F70_name_4E;
 extern Vec D_8010D5BC_334F7C_name_4E;
@@ -119,6 +122,12 @@ extern Vec D_8010D5C8_334F88_name_4E;
 extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
 extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
 extern s16 D_8010D614_334FD4_name_4E[4]; /* second menu row -> D_801013F8 */
+extern s16 D_8010D61C_334FDC_name_4E[6]; /* third menu (1 vs 3): x offsets of the icons [1..4] and D_8010DAF0 [5] */
+extern s16 D_8010D628_334FE8_name_4E[6]; /* ... 2 vs 2 */
+extern s8 D_8010D634_334FF4_name_4E[4][4]; /* third menu (1 vs 3): icon order per choice */
+extern s8 D_8010D644_335004_name_4E[4][4]; /* ... 2 vs 2 */
+extern s8 D_8010D654_335014_name_4E[4][4]; /* (1 vs 3): D_8010DBE8 slot of each D_8010D544 position */
+extern s8 D_8010D664_335024_name_4E[4][4]; /* ... 2 vs 2, D_8010D574 */
 extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 
 /* ---- bss (asm) ---- */
@@ -128,10 +137,15 @@ extern s16 D_8010DAB8_335478_name_4E;
 extern u16 D_8010DABC_33547C_name_4E;
 extern u16 D_8010DAC4_335484_name_4E[3]; /* first menu's three row sprites */
 extern u16 D_8010DAD2_335492_name_4E[4]; /* second menu's four row sprites */
+extern u16 D_8010DAE6_3354A6_name_4E[6]; /* third menu: [0] panel, [1..4] = D_8010DAE8, [5] = D_8010DAF0 */
+extern u16 D_8010DAE8_3354A8_name_4E[4]; /* third menu: the four character icons */
+extern u16 D_8010DAF0_3354B0_name_4E;
 extern s16 D_8010DB60_335520_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
 extern s8 D_8010DBE3_3355A3_name_4E;
+extern Vec D_8010DBE8_3355A8_name_4E[4]; /* per-player target positions */
+extern s8 D_8010DC20_3355E0_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
 extern s16 D_8010DC90_335650_name_4E;
 extern s16 D_8010DCA0_335660_name_4E[4];
