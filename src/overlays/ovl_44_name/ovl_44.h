@@ -1,14 +1,15 @@
 #ifndef _OVL_44_H
 #define _OVL_44_H
 
-/* Overlay 42 (2C0780.c): board 41's duel scene, the successor of board 3E's (overlay 3F, ovl_3F.h):
-   a stand-alone scene (its own omInitObjMan) with a referee. The challenger
-   (D_800F8D1A.attacker) picks an opponent when several are eligible, both stake coins, then the
-   duel is played (fork B's processes 80109214/80109780/801064E8) until D_80109DC8 decides it;
-   the winner takes both stakes. The result is left for the board in D_800FC880 (winner) and
+/* Overlay 44 (2DA8B0.c): board 43's duel scene, overlay 42's flow (ovl_42.h) with its own game:
+   the challenger (D_800F8D1A.attacker) picks an opponent when several are eligible, both stake
+   coins and stand on podiums; the referee shows a 16-move sequence (moves 0-2, func_801079E4) one
+   beat at a time and each duelist answers every beat with A, B or Z (CPUs: func_801068CC). More
+   right answers (D_80108FB8) wins: the winner's podium is launched and the winner takes both
+   stakes; a draw returns them. The result is left for the board in D_800FC880 (winner) and
    D_800F8C5C (loser), -1 both for a draw.
-   The unit's .rodata is carved ([0x2C7B40, .rodata, 2C0780]); leftovers are defined raw in C by
-   tools/mp2rodefs.py beside their first user. */
+   The unit's .rodata is carved ([0x2E0C80, .rodata, 2DA8B0]); leftovers are defined raw in C
+   beside their first user. */
 
 #include "common.h"
 #include "game/board.h"
@@ -150,7 +151,7 @@ int sprintf(char* dst, const char* fmt, ...);
 
 /* ---- duel work types (copies of the ovl_42.h ones) ---- */
 
-/* Status-window layouts (D_801098A0): four slots as from/to positions, and the frames the move
+/* Status-window layouts (D_80108920): four slots as from/to positions, and the frames the move
    takes (ovl_3F.h's Unk3FStatusLayout). */
 typedef struct PdStatusLayout {
     /* 0x00 */ s16 pos[4][4]; /* x0, y0, x1, y1; -1 keeps the current value */
@@ -158,7 +159,7 @@ typedef struct PdStatusLayout {
     /* 0x22 */ s16 frames;
 } PdStatusLayout; /* size 0x24 */
 
-/* func_80105694's shrinking-hat object (ovl_3F.h's Unk3FShrink). */
+/* func_80105C64's shrinking-hat object (ovl_3F.h's Unk3FShrink). */
 typedef struct PdShrink {
     /* 0x00 */ s32 timer;
     /* 0x04 */ f32 scaleSpeed;
@@ -197,7 +198,7 @@ void func_80049FA0_4ABA0(void);
 void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 
-/* The CPU input script (func_801070F4/func_80107724; ovl_3F.h's Unk3FCpuInput): mode 0 presses
+/* The CPU input script (func_80107208/func_80107838; ovl_3F.h's Unk3FCpuInput): mode 0 presses
    Start, 2 moves the cursor to an opponent and presses A, 3 raises the stake to a target. */
 typedef struct PdCpuInput {
     /* 0x00 */ s32 timer;
@@ -205,39 +206,6 @@ typedef struct PdCpuInput {
     /* 0x08 */ s32 target; /* the row / the stake wanted */
     /* 0x0C */ s32 mode;
 } PdCpuInput; /* size 0x10 */
-
-/* func_801062FC's timeline object (func_80106B5C). */
-typedef struct PdTimeline {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 frame; /* 0..149 */
-} PdTimeline; /* size 0x08 */
-
-/* func_801088FC's slide (func_80108F98). */
-typedef struct PdSlideWork {
-    /* 0x00 */ s32 count;
-    /* 0x04 */ s32 player;
-    /* 0x08 */ f32 x;     /* the shadow's x at the start */
-    /* 0x0C */ s32 frame;
-    /* 0x10 */ f32 offs[100];
-} PdSlideWork; /* size 0x1A0 */
-
-/* A move sprite's pop (func_80109344/func_801093D8) or a wrong move's pause
-   (func_801094D4/func_80109648). */
-typedef struct PdMoveWork {
-    /* 0x00 */ s32 side;  /* 0 the challenger, 1 the opponent */
-    /* 0x04 */ s32 timer;
-    /* 0x08 */ s32 slot;  /* the move's sprite; for a wrong move, the player */
-    /* 0x0C */ f32 angle;
-} PdMoveWork; /* size 0x10 */
-
-/* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
-typedef struct PdStreak {
-    /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ f32 len;
-    /* 0x1C */ Vec dir;
-    /* 0x28 */ f32 speed;
-} PdStreak; /* size 0x2C */
 
 /* Wait for the step flag (D_80108E80) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
 #define PD_WAIT_STEP()                           \
