@@ -323,6 +323,9 @@ void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 void func_8002D4D0_2E0D0(s16 n);
 void* func_80027154_27D54(s32 size, s16 tag); /* allocate */
 int abs(int);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+s16 func_800797DC_7A3DC(s32, s16); /* MP1 func_80060618: player voice */
+f32 func_800B7890_B8490(f32); /* cos */
 void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* translate (MP1 func_8009EA40) */
 void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
 void func_80020D20_21920(s16 arg0);
