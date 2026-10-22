@@ -590,11 +590,103 @@ s32 func_80103CD0_32B690_name_4E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103CD0_32B690_name_4E);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801047B8_32C178_name_4E);
+void func_801047B8_32C178_name_4E(s16 x0, s16 y0, s16 x1, s16 y1) {
+    D_8010DC22_3355E2_name_4E = x0;
+    D_8010DC24_3355E4_name_4E = x1;
+    D_8010DC26_3355E6_name_4E = y0;
+    D_8010DC28_3355E8_name_4E = y1;
+    D_8010DC21_3355E1_name_4E = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801047E8_32C1A8_name_4E);
+void func_801047E8_32C1A8_name_4E(void) {
+    s16 grp0;
+    s16 grp1;
+    s16 arrow0;
+    s16 arrow1;
+    s16 hint;
+    s8 prev;
+    s8 fading;
+    s16 alpha;
+    s16 old;
+    s32 step;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80104A9C_32C45C_name_4E);
+    prev = 0;
+    fading = 0;
+    D_8010DC20_3355E0_name_4E = 0;
+    D_8010DC21_3355E1_name_4E = 0;
+    grp0 = func_8001A2F8_1AEF8(0x900C7);
+    grp1 = func_8001A2F8_1AEF8(0x900C8);
+    arrow0 = func_8001AAAC_1B6AC(grp0, 0, 1);
+    arrow1 = func_8001AAAC_1B6AC(grp1, 0, 1);
+    func_8001A788_1B388(arrow0, 0x4800);
+    func_8001A788_1B388(arrow1, 0x4800);
+    espPosSet(arrow0, 0xA0, 0x78);
+    espPosSet(arrow1, 0xA0, 0x78);
+    espDispOff(arrow0);
+    espDispOff(arrow1);
+    hint = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xA0160), 0, 1);
+    func_8001A788_1B388(hint, 0x4800);
+    espDispOff(hint);
+    alpha = 0;
+    step = 0;
+    while (1) {
+        HuPrcVSleep();
+        if (prev != D_8010DC20_3355E0_name_4E) {
+            prev = D_8010DC20_3355E0_name_4E;
+            fading = 1;
+            step = -63;
+            if (D_8010DC20_3355E0_name_4E != 0) {
+                step = 63;
+            }
+        }
+        if (fading) {
+            old = alpha;
+            alpha += step;
+            if (alpha >= 255) {
+                fading = 0;
+                alpha = 255;
+            } else if (alpha <= 0) {
+                fading = 0;
+                alpha = 0;
+            }
+            if (alpha != 0) {
+                if (old == 0) {
+                    espDispOn(arrow0);
+                    espDispOn(arrow1);
+                    if (D_801013B8_101FB8[0x20] == 1) {
+                        espPosSet(hint, 0x96, 0x98);
+                    } else {
+                        espPosSet(hint, 0xA0, 0x98);
+                    }
+                    espDispOn(hint);
+                }
+                func_8001A6BC_1B2BC(arrow0, alpha);
+                func_8001A6BC_1B2BC(arrow1, alpha);
+                func_8001A6BC_1B2BC(hint, alpha);
+            } else {
+                espDispOff(arrow0);
+                espDispOff(arrow1);
+                espDispOff(hint);
+            }
+        }
+        if (D_8010DC21_3355E1_name_4E != 0) {
+            espPosSet(arrow0, D_8010DC22_3355E2_name_4E, D_8010DC26_3355E6_name_4E);
+            espPosSet(arrow1, D_8010DC24_3355E4_name_4E, D_8010DC28_3355E8_name_4E);
+            D_8010DC21_3355E1_name_4E = 0;
+        }
+    }
+}
+
+void func_80104A9C_32C45C_name_4E(void) {
+    s32 i;
+    s16 n;
+
+    for (i = 0; i < 4; i++) {
+        n = D_800FC9B8_FD5B8[2 + i];
+        gPlayers[i].stars = n;
+        gPlayers[i].coins_mg_bonus = n;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80104AF0_32C4B0_name_4E);
 

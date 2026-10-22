@@ -32,7 +32,7 @@ typedef struct Ovl4ECamKey {
 
 /* Main symbols this overlay reaches at an offset (declared raw; their own types are elsewhere). */
 extern u8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i (the player order) */
-extern s8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared */
+extern u8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared; copied to stars */
 extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
 extern s16 D_800F904A;
 extern s16 D_800FA1A8;          /* chosen item of the three-row menu (func_80103034) */
@@ -145,7 +145,12 @@ extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
 extern s8 D_8010DBE3_3355A3_name_4E;
 extern Vec D_8010DBE8_3355A8_name_4E[4]; /* per-player target positions */
-extern s8 D_8010DC20_3355E0_name_4E;
+extern s8 D_8010DC20_3355E0_name_4E;   /* the team menu is waiting for input (arrows shown) */
+extern s8 D_8010DC21_3355E1_name_4E;   /* move the arrows to D_8010DC22.. (func_801047B8) */
+extern s16 D_8010DC22_3355E2_name_4E;
+extern s16 D_8010DC24_3355E4_name_4E;
+extern s16 D_8010DC26_3355E6_name_4E;
+extern s16 D_8010DC28_3355E8_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
 extern s16 D_8010DC90_335650_name_4E;
 extern s16 D_8010DCA0_335660_name_4E[4];
@@ -168,7 +173,7 @@ void func_80102B9C_32A55C_name_4E(void);
 s32 func_80103034_32A9F4_name_4E(void);
 s32 func_80103608_32AFC8_name_4E(void);
 s32 func_80103CD0_32B690_name_4E(void);
-void func_801047B8_32C178_name_4E(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+void func_801047B8_32C178_name_4E(s16 x0, s16 y0, s16 x1, s16 y1);
 void func_801047E8_32C1A8_name_4E(void);
 void func_80104A9C_32C45C_name_4E(void);
 s32 func_80104AF0_32C4B0_name_4E(void);
