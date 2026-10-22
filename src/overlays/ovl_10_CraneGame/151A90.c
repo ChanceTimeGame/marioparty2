@@ -275,7 +275,64 @@ void func_80108D18_152838_CraneGame(s16 model) {
     HuMemFree(D_8010CA94_1565B4_CraneGame);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_80109024_152B44_CraneGame);
+/* Builds the group's face list over unique vertices (D_8010CA90) and counts how many faces use
+   each vertex (D_8010CA9C). Retail's face-type test `(t < 3) & (t >= 5)` is never true, so every
+   face is taken. */
+void func_80109024_152B44_CraneGame(HmfPart* g, ColVtx* verts, s16 nverts) {
+    u16* refs;
+    CGShadowOrder* order;
+    HmfFaceRec* f;
+    u16* dst;
+    ColVtx* p;
+    ColVtx* u;
+    s32 nv;
+    s32 i;
+    s32 nf;
+    s32 j;
+    s32 k;
+    s32 t;
+
+    refs = D_8010CA9C_1565BC_CraneGame;
+    func_800B0EF0_B1AF0(refs, 0, nverts * 2);
+    order = D_8010CAA4_1565C4_CraneGame;
+    f = g->unk54;
+    nv = 0;
+    i = 0;
+    nf = 0;
+    for (; i < (g->unk04 & 0x7FFF); i++, f++) {
+        t = f->unk00 & 7;
+        if ((t < 3) & (t >= 5)) {
+            continue;
+        }
+        dst = D_8010CA98_1565B8_CraneGame[i].v;
+        for (j = 0; j < t; j++) {
+            p = &verts[f->unk04[j]];
+            u = D_8010CA90_1565B0_CraneGame;
+            u[nv].x = p->x;
+            u[nv].y = p->y;
+            u[nv].z = p->z;
+            k = 0;
+            while (p->x != u->x || p->y != u->y || p->z != u->z) {
+                k++;
+                u++;
+            }
+            nv += (k >= nv);
+            refs[k]++;
+            if (j == 0) {
+                if (t >= 4) {
+                    k |= 0x8000;
+                }
+            }
+            *dst++ = k;
+        }
+        order->key = 0;
+        order->face = nf;
+        order++;
+        nf++;
+    }
+    D_8010CAA0_1565C0_CraneGame = nv;
+    D_8010CAA2_1565C2_CraneGame = nf;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801091D4_152CF4_CraneGame);
 
