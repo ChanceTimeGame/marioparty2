@@ -524,6 +524,22 @@ extern u32 D_80111634_2EFD64_name_45[]; /* shop messages */
 extern s32 D_801130C4_2F17F4_name_45;
 extern u8* D_801130C8_2F17F8_name_45;
 
+/* ---- 45: data that is a second copy of a 3E symbol (45 has more instances of some objects) ---- */
+extern DecisionTreeNonLeafNode D_80110F9C_2EF6CC_name_45[]; /* as 3E D_80111C3C_2A6F0C_name_3E */
+extern DecisionTreeNonLeafNode D_801110E0_2EF810_name_45[]; /* as 3E D_80111C3C_2A6F0C_name_3E */
+extern DecisionTreeNonLeafNode D_8011117C_2EF8AC_name_45[]; /* as 3E D_80111C3C_2A6F0C_name_3E */
+extern DecisionTreeNonLeafNode D_80111398_2EFAC8_name_45[]; /* as 3E D_80111F84_2A7254_name_3E */
+extern DecisionTreeNonLeafNode D_801113D4_2EFB04_name_45[]; /* as 3E D_80111F84_2A7254_name_3E */
+extern DecisionTreeNonLeafNode D_80111404_2EFB34_name_45[]; /* as 3E D_80111F84_2A7254_name_3E */
+extern MBModel* D_8011304C_2F177C_name_45; /* as 3E D_8011371C_2A89EC_name_3E */
+extern MBModel* D_80113050_2F1780_name_45[7]; /* as 3E D_80113720_2A89F0_name_3E */
+extern MBModel* D_8011306C_2F179C_name_45; /* as 3E D_8011373C_2A8A0C_name_3E */
+extern MBModel* D_80113070_2F17A0_name_45[2]; /* as 3E D_80113740_2A8A10_name_3E */
+extern s16 D_80110E04_2EF534_name_45[8]; /* as 3E D_80111A54_2A6D24_name_3E */
+extern s16 D_80111428_2EFB58_name_45[]; /* as 3E D_801120E0_2A73B0_name_3E */
+extern s16 D_801114AC_2EFBDC_name_45[]; /* as 3E D_801120E0_2A73B0_name_3E */
+extern s16 D_801114DC_2EFC0C_name_45[]; /* as 3E D_801120E0_2A73B0_name_3E */
+
 /* ---- 45: functions whose twin is shared with another 45 function, a main-segment twin, or none
    (void(void) when unknown; 45-B fixes its own) ---- */
 void func_801058A4_2E3FD4_name_45(void);
@@ -555,19 +571,19 @@ void func_80107850_2E5F80_name_45(void);
 void func_80107874_2E5FA4_name_45(void);
 void func_80107898_2E5FC8_name_45(void);
 void func_801078BC_2E5FEC_name_45(void);
-void func_8010A6E8_2E8E18_name_45(void); /* twin func_800491B4_49DB4: no prototype found */
-void func_8010B124_2E9854_name_45(void); /* twin func_80017228_17E28: no prototype found */
-void func_8010B140_2E9870_name_45(void); /* twin func_80061734_62334: no prototype found */
+Process* func_8010A6E8_2E8E18_name_45(void* arg0);
+void func_8010B124_2E9854_name_45(void);
+void func_8010B140_2E9870_name_45(void);
 void func_8010E828_2ECF58_name_45(void); /* 45-B */
 void func_8010E9D0_2ED100_name_45(void); /* 45-B */
 void func_8010EA40_2ED170_name_45(void); /* 45-B */
 s32 func_8010F680_2EDDB0_name_45(s32 arg0);
 void func_8010F8E0_2EE010_name_45(void); /* 45-B */
 void func_8010FBD8_2EE308_name_45(void); /* 45-B */
-void func_8010FDCC_2EE4FC_name_45(void); /* twin func_800553A8_55FA8: no prototype found */
+void func_8010FDCC_2EE4FC_name_45(s32 arg0);
 void func_8010FE08_2EE538_name_45(void); /* 45-B */
-void func_8011012C_2EE85C_name_45(void); /* 45-B */
-void func_80110658_2EED88_name_45(void); /* twin func_80017228_17E28: no prototype found */
-void func_80110674_2EEDA4_name_45(void); /* twin func_80061734_62334: no prototype found */
+void func_8011012C_2EE85C_name_45(s32 arg0); /* 45-B: from its callers */
+void func_80110658_2EED88_name_45(void);
+void func_80110674_2EEDA4_name_45(void);
 
 #endif
