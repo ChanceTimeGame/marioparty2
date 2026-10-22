@@ -145,8 +145,12 @@ extern s32 D_8010C130_19ACD0_BobsledRun;
 /* ---------------------------------------------------------------------------------------------
    Bss (ovl_19_bss)
    --------------------------------------------------------------------------------------------- */
+extern u16 D_8010C9F0_19B590_BobsledRun; /* progress bar: track piece */
+extern u16 D_8010C9F2_19B592_BobsledRun; /* progress bar: flag */
+extern u16 D_8010C9F4_19B594_BobsledRun; /* progress bar: goal */
 extern u16 D_8010CB40_19B6E0_BobsledRun; /* team 1's progress-bar sled */
 extern u8 D_8010CB42_19B6E2_BobsledRun[3]; /* the three background models */
+extern u16 D_8010CC3C_19B7DC_BobsledRun; /* progress-bar frame (hidden) */
 extern u16 D_8010CC3E_19B7DE_BobsledRun; /* team 0's progress-bar sled */
 
 /* ---------------------------------------------------------------------------------------------
@@ -225,6 +229,18 @@ void func_8002D124_2DD24(s16 index);
 u16 func_80018A30_19630(s32, s32); /* model load */
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
 void func_80029EDC_2AADC(s16, s32);
+void func_8000C004_CC04(omObjData*);
+void func_8000BFF0_CBF0(omObjData*);
+void func_8000BE8C_CA8C(omObjData*, f32);
+void func_8000BEA4_CAA4(omObjData*, f32);
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+extern Vec3f D_80102770_103370[]; /* CRotM */
+extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16, s32, s32);
+void func_8001A788_1B388(u16 spriteId, s32 arg1);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y); /* sprite scale */
+void espDispOff(u16);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (B's half, after 801064F0, inferred from the asm: check)

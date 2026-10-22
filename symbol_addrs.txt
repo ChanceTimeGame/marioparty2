@@ -837,3 +837,6 @@ D_8010DFDA_2243CA_BombsAway = 0x8010DFDA; // size:0x2 segment:BombsAway
 D_8010D258_223648_BombsAway = 0x8010D258; // rom:0x223648 size:0x2
 D_8010D25A_22364A_BombsAway = 0x8010D25A; // rom:0x22364A size:0x2
 D_8010D27C_22366C_BombsAway = 0x8010D27C; // rom:0x22366C size:0x10
+// MG19-A: ovl_19 bss u16 pair retail addresses by halves (progress bar: track piece, flag)
+D_8010C9F0_19B590_BobsledRun = 0x8010C9F0; // size:0x2 segment:BobsledRun
+D_8010C9F2_19B592_BobsledRun = 0x8010C9F2; // size:0x2 segment:BobsledRun

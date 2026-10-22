@@ -470,15 +470,159 @@ void func_80103F24_192AC4_BobsledRun(omObjData* obj) {
     func_80029714_2A314(D_8010CB42_19B6E2_BobsledRun[2], D_8010C018_19ABB8_BobsledRun[2].x, D_8010C018_19ABB8_BobsledRun[2].y, D_8010C018_19ABB8_BobsledRun[2].z);
 }
 
+/* The track (D_800FC7B0_FD3B0[1]): runs the game controller; cameras and the progress bar. */
+// register allocation: retail keeps the sprite in s0 and x in s1 (as in MP1)
+#ifdef NON_MATCHING
+void func_80104084_192C24_BobsledRun(omObjData* obj) {
+    s16 x;
+    s16 spr;
+    BRGround* w;
+
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = func_80018A30_19630(0x290007, 0x220D9);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = func_80102EE0_191A80_BobsledRun;
+    w->unk_03 = 1;
+    func_8000C004_CC04(obj);
+    func_8000BE8C_CA8C(obj, 0.2f);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 1;
+    D_801013B0_101FB0[0].x = -200.0f;
+    D_801013B0_101FB0[0].y = 13500.0f;
+    D_801013B0_101FB0[0].z = -1000.0f;
+    D_80102770_103370[0].x = D_8010BFF0_19AB90_BobsledRun;
+    D_800F94A8_FA0A8[0] = 600.0f;
+    D_801013B0_101FB0[1].x = 200.0f;
+    D_801013B0_101FB0[1].y = 13500.0f;
+    D_801013B0_101FB0[1].z = -1000.0f;
+    D_80102770_103370[1].x = D_8010BFF0_19AB90_BobsledRun;
+    D_800F94A8_FA0A8[1] = 600.0f;
+    omSetStatBit(obj, 0xA0);
+    func_80029EDC_2AADC(obj->model[0], 3);
+    spr = func_8001A2F8_1AEF8(0x29000A);
+    x = 8;
+    do {
+        D_8010C9F0_19B590_BobsledRun = func_8001AAAC_1B6AC(spr, 0, 1);
+        espPosSet(D_8010C9F0_19B590_BobsledRun, x, 120);
+        func_8001A788_1B388(D_8010C9F0_19B590_BobsledRun, 16);
+        x += 16;
+    } while (x < 0x120);
+    D_8010C9F0_19B590_BobsledRun = func_8001AAAC_1B6AC(spr, 0, 1);
+    espPosSet(D_8010C9F0_19B590_BobsledRun, 0x130, 120);
+    func_8001A788_1B388(D_8010C9F0_19B590_BobsledRun, 16);
+    D_8010C9F2_19B592_BobsledRun = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x29000B), 0, 1);
+    espPosSet(D_8010C9F2_19B592_BobsledRun, 0x120, 120);
+    func_8001A788_1B388(D_8010C9F2_19B592_BobsledRun, 16);
+    D_8010C9F4_19B594_BobsledRun = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x29000C), 0, 1);
+    espPosSet(D_8010C9F4_19B594_BobsledRun, 0x120, 104);
+    func_8001A788_1B388(D_8010C9F4_19B594_BobsledRun, 16);
+    D_8010CC3E_19B7DE_BobsledRun = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x290013), 0, 1);
+    func_8001A91C_1B51C(D_8010CC3E_19B7DE_BobsledRun, 1.0f, 1.0f);
+    func_8001A788_1B388(D_8010CC3E_19B7DE_BobsledRun, 8);
+    D_8010CB40_19B6E0_BobsledRun = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x290014), 0, 1);
+    func_8001A91C_1B51C(D_8010CB40_19B6E0_BobsledRun, 1.0f, 1.0f);
+    func_8001A788_1B388(D_8010CB40_19B6E0_BobsledRun, 6);
+    espPosSet(D_8010CC3E_19B7DE_BobsledRun, 0x12, 112);
+    espPosSet(D_8010CB40_19B6E0_BobsledRun, 0x12, 116);
+    D_8010CC3C_19B7DC_BobsledRun = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x290015), 0, 1);
+    func_8001A91C_1B51C(D_8010CC3C_19B7DC_BobsledRun, 40.0f, 14.0f);
+    func_8001A788_1B388(D_8010CC3C_19B7DC_BobsledRun, 32);
+    espDispOff(D_8010CC3C_19B7DC_BobsledRun);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104084_192C24_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104490_193030_BobsledRun);
+void func_80104490_193030_BobsledRun(omObjData* obj) {
+    BRGround* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104578_193118_BobsledRun);
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = func_80018A30_19630(0x290004, 0x220D9);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = NULL;
+    w->unk_03 = 1;
+    func_8000C004_CC04(obj);
+    func_8000BE8C_CA8C(obj, 0.1f);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 2;
+    func_8000BFF0_CBF0(obj);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104660_193200_BobsledRun);
+void func_80104578_193118_BobsledRun(omObjData* obj) {
+    BRGround* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104748_1932E8_BobsledRun);
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = func_80018A30_19630(0x290005, 0x220D9);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = NULL;
+    w->unk_03 = 1;
+    func_8000C004_CC04(obj);
+    func_8000BE8C_CA8C(obj, 0.1f);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 3;
+    func_8000BFF0_CBF0(obj);
+}
+
+void func_80104660_193200_BobsledRun(omObjData* obj) {
+    BRGround* w;
+
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = func_80018A30_19630(0x290006, 0x220D9);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = NULL;
+    w->unk_03 = 1;
+    func_8000C004_CC04(obj);
+    func_8000BE8C_CA8C(obj, 0.1f);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 4;
+    func_8000BFF0_CBF0(obj);
+}
+
+void func_80104748_1932E8_BobsledRun(omObjData* obj) {
+    BRGround* w;
+
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = func_80018A30_19630(0x290008, 0x99);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = NULL;
+    w->unk_03 = 1;
+    func_8000C004_CC04(obj);
+    func_8000BE8C_CA8C(obj, 0.5f);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 5;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104820_1933C0_BobsledRun);
 
