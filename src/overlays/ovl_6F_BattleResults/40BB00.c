@@ -176,7 +176,7 @@ void func_80102F24_40C224_BattleResults(void) {
     }
 }
 
-/* A coin dropped from the carrier: waits, falls onto the target model, bursts. */
+/* A coin dropped from the carrier: waits, falls onto the pedestal, bursts. */
 void func_80103138_40C438_BattleResults(omObjData* obj) {
     BRFallWork* work = obj->unk_50;
     s32 coin = obj->work[1];
@@ -194,13 +194,13 @@ void func_80103138_40C438_BattleResults(omObjData* obj) {
         carrier = &D_800FC834_FD434[D_801059B0_40ECB0_BattleResults];
         func_80029714_2A314(D_800F86D8_F92D8[coin].unk00, carrier->pos.x + 50.0f, carrier->pos.y, carrier->pos.z - 10.0f);
         func_800298A4_2A4A4(D_800F86D8_F92D8[coin].unk00, 4, 0);
-        work->vel = 1.0f;
-        work->ofs = 0.0f;
+        work->accel = 1.0f;
+        work->vy = 0.0f;
         obj->work[0] = 2;
         break;
     case 2:
-        work->ofs -= work->vel;
-        work->vel += 0.05f;
+        work->vy -= work->accel;
+        work->accel += 0.05f;
         if (m->pos.y < work->floor) {
             obj->work[0] = 3;
         }
@@ -219,7 +219,7 @@ void func_80103138_40C438_BattleResults(omObjData* obj) {
         omDelObj(obj);
         return;
     }
-    func_80029714_2A314(D_800F86D8_F92D8[coin].unk00, m->pos.x, m->pos.y + work->ofs, 800.0f);
+    func_80029714_2A314(D_800F86D8_F92D8[coin].unk00, m->pos.x, m->pos.y + work->vy, 800.0f);
 }
 
 /* Starts a coin drop after a delay; vibrate/player: rumble that player's pad on landing. */
@@ -474,13 +474,139 @@ void func_801041C0_40D4C0_BattleResults(omObjData* obj, s32 pos) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801042B0_40D5B0_BattleResults);
+/* The carrier flies right to left over the pedestals, dropping each player's coins in turn;
+   work[1] is its speed, work[2] its state, work[0] = 100 when it has left. */
+void func_801042B0_40D5B0_BattleResults(omObjData* obj) {
+    HmfModel* m = &D_800FC834_FD434[D_801059B0_40ECB0_BattleResults];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801044AC_40D7AC_BattleResults);
+    func_80029714_2A314((s16)D_801059B0_40ECB0_BattleResults, m->pos.x - obj->work[1], m->pos.y, m->pos.z);
+    switch (obj->work[2]) {
+    case 0:
+        PlaySound(0xE8);
+        obj->work[2] = 1;
+        break;
+    case 1:
+        if (m->pos.x < D_80105710_40EA10_BattleResults[3].x + 10.0f) {
+            func_801041C0_40D4C0_BattleResults(obj, 3);
+            obj->work[2] = 2;
+        }
+        break;
+    case 2:
+        if (m->pos.x < D_80105710_40EA10_BattleResults[2].x + 10.0f) {
+            func_801041C0_40D4C0_BattleResults(obj, 2);
+            obj->work[2] = 3;
+        }
+        break;
+    case 3:
+        if (m->pos.x < D_80105710_40EA10_BattleResults[1].x + 10.0f) {
+            func_801041C0_40D4C0_BattleResults(obj, 1);
+            obj->work[2] = 4;
+        }
+        break;
+    case 4:
+        if (m->pos.x < D_80105710_40EA10_BattleResults[0].x + 10.0f) {
+            func_801041C0_40D4C0_BattleResults(obj, 0);
+            obj->work[2] = 5;
+        }
+        break;
+    }
+    if (m->pos.x < -330.0f) {
+        func_800298A4_2A4A4((s16)D_801059B0_40ECB0_BattleResults, 4, 4);
+        func_800298A4_2A4A4((s16)D_801059B8_40ECB8_BattleResults, 4, 4);
+        obj->work[0] = 100;
+    }
+}
 
+/* The remainder coin: thrown from the carrier along an arc onto its player's pedestal. */
+void func_801044AC_40D7AC_BattleResults(omObjData* obj) {
+    BRFallWork* work = obj->unk_50;
+    s32 coin = obj->work[1];
+    s32 burst = obj->work[2];
+    HmfModel* m = &D_800FC834_FD434[D_800F86D8_F92D8[coin].unk00];
+    HmfModel* carrier;
+
+    switch (obj->work[0]) {
+    case 0:
+        carrier = &D_800FC834_FD434[D_801059B0_40ECB0_BattleResults];
+        func_80029714_2A314(D_800F86D8_F92D8[coin].unk00, carrier->pos.x + 50.0f, carrier->pos.y, carrier->pos.z - 10.0f);
+        func_800298A4_2A4A4(D_800F86D8_F92D8[coin].unk00, 4, 0);
+        obj->work[0] = 1;
+        break;
+    case 1:
+        work->vy -= work->accel;
+        work->accel += 0.05f;
+        if (m->pos.y < work->floor) {
+            obj->work[0] = 2;
+        }
+        break;
+    case 2:
+        PlaySound(9);
+        func_800212A4_21EA4(burst);
+        func_80021160_21D60(burst, 4, 4);
+        func_80021250_21E50(burst, 0xFF, 0xFF, 0xBE);
+        func_80029714_2A314(D_800F86D8_F92D8[burst].unk00, m->pos.x, m->pos.y, m->pos.z);
+        func_800297E8_2A3E8(D_800F86D8_F92D8[burst].unk00, 2.5f, 2.5f, 2.5f);
+        omVibrate(obj->work[3], 5, 0, 5);
+        func_800298A4_2A4A4(D_800F86D8_F92D8[coin].unk00, 4, 4);
+        D_80105A70_40ED70_BattleResults = 1;
+        omDelObj(obj);
+        return;
+    }
+    func_80029714_2A314(D_800F86D8_F92D8[coin].unk00, m->pos.x + work->dx, m->pos.y + work->vy, 800.0f);
+}
+
+#ifdef NON_MATCHING
+/* NON_MATCHING: the two float parameters are moved to FPRs in the other order */
+/* Frames a coin dropped from height y with this work takes to fall below floor. */
+s32 func_80104770_40DA70_BattleResults(BRFallWork* work, f32 y, f32 floor) {
+    f32 vy = work->vy;
+    f32 accel = work->accel;
+    s32 n = 0;
+
+    while (floor < y) {
+        vy -= accel;
+        accel += 0.05f;
+        y += vy;
+        n++;
+    }
+    return n;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104770_40DA70_BattleResults);
+#endif
 
+#ifdef NON_MATCHING
+/* NON_MATCHING: scheduling and registers around the pedestal pointer and the model base load */
+/* Throws the remainder coin from the carrier to the player's pedestal. */
+s32 func_801047C8_40DAC8_BattleResults(s32 player) {
+    HmfModel* carrier = &D_800FC834_FD434[D_801059B0_40ECB0_BattleResults];
+    omObjData* obj;
+    BRFallWork* work;
+    s32* ped;
+    s32 coin;
+    s32 burst;
+
+    coin = func_8002109C_21C9C((s16)D_801059BC_40ECBC_BattleResults, 8);
+    burst = func_8002109C_21C9C((s16)D_801059C0_40ECC0_BattleResults, 8);
+    obj = omAddObj(200, 0, 0, -1, func_801044AC_40D7AC_BattleResults);
+    obj->unk_50 = func_80027154_27D54(sizeof(BRFallWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(BRFallWork));
+    work = obj->unk_50;
+    ped = &D_80105960_40EC60_BattleResults[func_80102EBC_40C1BC_BattleResults(player)];
+    work->floor = func_80103EB4_40D1B4_BattleResults((s16)*ped) + 250.0f;
+    work->accel = 0.0f;
+    work->vy = 5.0f;
+    work->dx = (D_800FC834_FD434[*ped].pos.x - (carrier->pos.x + 50.0f)) /
+               func_80104770_40DA70_BattleResults(work, carrier->pos.y, work->floor);
+    obj->work[0] = 0;
+    obj->work[1] = coin;
+    obj->work[2] = burst;
+    obj->work[3] = player;
+    return coin;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801047C8_40DAC8_BattleResults);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104960_40DC60_BattleResults);
 

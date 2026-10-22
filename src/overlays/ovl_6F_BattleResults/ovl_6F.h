@@ -86,10 +86,10 @@ extern EspriteSlot6F* D_800F93FC_F9FFC;
 
 /* The coin-drop objects' work (omObjData.unk_50), 0x18 bytes. */
 typedef struct BRFallWork {
-    /* 0x00 */ f32 vel;  /* fall speed, grows by 0.05 a frame */
-    /* 0x04 */ f32 ofs;  /* height offset */
-    /* 0x08 */ f32 floor; /* lands when the target's height is below this */
-    /* 0x0C */ f32 dx;   /* horizontal step (func_801047C8) */
+    /* 0x00 */ f32 accel; /* subtracted from vy each frame, grows by 0.05 */
+    /* 0x04 */ f32 vy;    /* height step a frame */
+    /* 0x08 */ f32 floor; /* lands once the coin's height is below this */
+    /* 0x0C */ f32 dx;    /* horizontal step a frame (func_801047C8) */
     /* 0x10 */ s32 vibrate;
     /* 0x14 */ s32 player; /* omVibrate's player (read as s16) */
 } BRFallWork;
@@ -151,7 +151,7 @@ void func_801041C0_40D4C0_BattleResults(omObjData* obj, s32 pos);
 void func_801042B0_40D5B0_BattleResults(omObjData* obj);
 void func_801044AC_40D7AC_BattleResults(omObjData* obj);
 s32 func_80104770_40DA70_BattleResults(BRFallWork* work, f32 y, f32 floor);
-u8 func_801047C8_40DAC8_BattleResults(u8 player);
+s32 func_801047C8_40DAC8_BattleResults(s32 player);
 void func_80104960_40DC60_BattleResults(omObjData* obj);
 void func_80104BAC_40DEAC_BattleResults(s16 model, s32 player);
 void func_80104C14_40DF14_BattleResults(omObjData* obj);
