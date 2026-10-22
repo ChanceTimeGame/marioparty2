@@ -426,6 +426,22 @@ void func_80019178_19D78(omObjData* obj);
 void func_80019378_19F78(omObjData* obj);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 s32 PlaySound(s32);
+void PlayMusic(s16);
+void InitFadeIn(s32, s32);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_800794A8_7A0A8(s32);
+void func_80079718_7A318(s32, s32); /* character voice */
+extern u16 D_801011FC_101DFC;
+extern SCDFocus D_8010F900_2457E0_SlotCarDerby[18]; /* [course * 3 + 0..2] race focus (MP1 D_80100E00);
+                                                       [9..11] (+ course * 3 in the result) the result's */
+extern SCDFocus D_8010FA20_245900_SlotCarDerby[9];  /* [course * 3 + 0..2] intro focus */
+extern Vec D_8010FAB0_245990_SlotCarDerby[3];       /* [course] intro focus drift */
+extern s16 D_8010FAF4_2459D4_SlotCarDerby;          /* crowd sound, -1 none (MP1 D_80100E90) */
+extern s16 D_8010FAF6_2459D6_SlotCarDerby;          /* frames to the next result step (MP1 D_80100E92) */
+extern f32 D_8010FAF8_2459D8_SlotCarDerby;          /* intro focus weight (MP1 D_80100E94) */
+extern s16 D_8010FAFC_2459DC_SlotCarDerby;          /* frames before leaving */
+extern s32 D_801109D0_2468B0_SlotCarDerby;
 void func_800B1960_B2560(Matrix4f m, f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz); /* guLookAtF */
 f64 fabs(f64);
 f32 fabsf(f32);

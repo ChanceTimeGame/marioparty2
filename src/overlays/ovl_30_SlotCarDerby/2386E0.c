@@ -1658,7 +1658,309 @@ void func_80107E74_23DD54_SlotCarDerby(void) {
     }
 }
 
+/* Register allocation (two more saved registers) and base-register choices for the game state's
+   fields (masked 97, mostly branch offsets); MP1 func_800FB2FC was NON_MATCHING too. Retail quirk
+   kept: state 3 sets D_8010FAF6 to 48/36 and then to 1, so the voice step runs on the next frame. */
+#ifdef NON_MATCHING
+void func_80107F48_23DE28_SlotCarDerby(s32 x, s32 y, s32 z) {
+    s16 unused[16]; /* retail stores [1] and [9] before func_80079718 and never reads them */
+    Vec v;
+    Vec ab[2];
+    Vec* start;
+    SCDCar* car;
+    s32 c;
+    s32 i;
+    s32 j;
+    s32 player;
+    s32 lost;
+    s16 alive;
+    s16 winner;
+    s32 mes;
+    f32 t;
+
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    start = &D_8010FAB0_245990_SlotCarDerby[D_8011023C_24611C_SlotCarDerby];
+    c = D_8011023C_24611C_SlotCarDerby * 3;
+    switch (D_801102C8_2461A8_SlotCarDerby.unk_00) {
+        case 0:
+            if (D_801102C8_2461A8_SlotCarDerby.unk_06 == 1) {
+                D_801102C8_2461A8_SlotCarDerby.unk_0A = 0;
+                D_8010FAF6_2459D6_SlotCarDerby = 0;
+                PlayMusic(0x58);
+                func_80108D6C_23EC4C_SlotCarDerby();
+                InitFadeIn(0, 16);
+            }
+            if (D_8010FAF4_2459D4_SlotCarDerby < 0) {
+                D_8010FAF4_2459D4_SlotCarDerby = PlaySound(0x4AC);
+                D_801102DC_2461BC_SlotCarDerby = 0;
+            }
+            if (D_8010FAF8_2459D8_SlotCarDerby > 0.0) {
+                if (D_801102C8_2461A8_SlotCarDerby.unk_06 >= 140) {
+                    t = (D_801102C8_2461A8_SlotCarDerby.unk_06 - 140) / 29.0f;
+                    if (t < 0.0) {
+                        t = 0.0f;
+                    } else if (t > 1.0) {
+                        t = 1.0f;
+                    }
+                    func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[c].pos.x,
+                                                      D_8010F900_2457E0_SlotCarDerby[c + 1].weight * D_8010FAF8_2459D8_SlotCarDerby * 0.7);
+                    func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[c + 1].pos.x,
+                                                      D_8010F900_2457E0_SlotCarDerby[c + 1].weight * D_8010FAF8_2459D8_SlotCarDerby * 0.7);
+                    v.x = t * (D_8010F900_2457E0_SlotCarDerby[c + 2].pos.x - D_8010FA20_245900_SlotCarDerby[c + 2].pos.x) + D_8010FA20_245900_SlotCarDerby[c + 2].pos.x;
+                    v.y = t * (D_8010F900_2457E0_SlotCarDerby[c + 2].pos.y - D_8010FA20_245900_SlotCarDerby[c + 2].pos.y) + D_8010FA20_245900_SlotCarDerby[c + 2].pos.y;
+                    v.z = t * (D_8010F900_2457E0_SlotCarDerby[c + 2].pos.z - D_8010FA20_245900_SlotCarDerby[c + 2].pos.z) + D_8010FA20_245900_SlotCarDerby[c + 2].pos.z;
+                } else {
+                    if (D_801102C8_2461A8_SlotCarDerby.unk_06 >= 96) {
+                        t = (D_801102C8_2461A8_SlotCarDerby.unk_06 - 95) / 45.0f;
+                        if (t > 1.0) {
+                            t = 1.0f;
+                        }
+                    } else {
+                        t = 0.0f;
+                    }
+                    ab[0].x = t * start->x + D_8010FA20_245900_SlotCarDerby[c].pos.x;
+                    ab[0].y = t * start->y + D_8010FA20_245900_SlotCarDerby[c].pos.y;
+                    ab[0].z = t * start->z + D_8010FA20_245900_SlotCarDerby[c].pos.z;
+                    ab[1].x = t * start->x + D_8010FA20_245900_SlotCarDerby[c + 1].pos.x;
+                    ab[1].y = t * start->y + D_8010FA20_245900_SlotCarDerby[c + 1].pos.y;
+                    ab[1].z = t * start->z + D_8010FA20_245900_SlotCarDerby[c + 1].pos.z;
+                    func_80106B74_23CA54_SlotCarDerby(&ab[0].x, D_8010FA20_245900_SlotCarDerby[c].weight * D_8010FAF8_2459D8_SlotCarDerby);
+                    func_80106B74_23CA54_SlotCarDerby(&ab[1].x, D_8010FA20_245900_SlotCarDerby[c + 1].weight * D_8010FAF8_2459D8_SlotCarDerby);
+                    v.x = D_8010FA20_245900_SlotCarDerby[c + 2].pos.x;
+                    v.y = D_8010FA20_245900_SlotCarDerby[c + 2].pos.y;
+                    v.z = D_8010FA20_245900_SlotCarDerby[c + 2].pos.z;
+                }
+            } else {
+                v.x = D_8010FA20_245900_SlotCarDerby[c + 2].pos.x;
+                v.y = D_8010FA20_245900_SlotCarDerby[c + 2].pos.y;
+                v.z = D_8010FA20_245900_SlotCarDerby[c + 2].pos.z;
+            }
+            if (D_801102C8_2461A8_SlotCarDerby.unk_06 == 60) {
+                D_8010FAF8_2459D8_SlotCarDerby = 0.01f;
+            } else if (D_801102C8_2461A8_SlotCarDerby.unk_06 >= 170) {
+                D_801102C8_2461A8_SlotCarDerby.unk_00 = 1;
+                D_801102C8_2461A8_SlotCarDerby.unk_06 = 0;
+                D_801102C8_2461A8_SlotCarDerby.unk_04 = -1;
+                D_801102C8_2461A8_SlotCarDerby.unk_02 = 3;
+                func_80109140_23F020_SlotCarDerby(1);
+            }
+            break;
+        case 1:
+            func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[c].pos.x,
+                                              D_8010F900_2457E0_SlotCarDerby[c].weight * D_8010FAF8_2459D8_SlotCarDerby);
+            func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[c + 1].pos.x,
+                                              D_8010F900_2457E0_SlotCarDerby[c + 1].weight * D_8010FAF8_2459D8_SlotCarDerby);
+            v.x = D_8010F900_2457E0_SlotCarDerby[c + 2].pos.x;
+            v.y = D_8010F900_2457E0_SlotCarDerby[c + 2].pos.y;
+            v.z = D_8010F900_2457E0_SlotCarDerby[c + 2].pos.z;
+            if (D_801102C8_2461A8_SlotCarDerby.unk_06 >= 31) {
+                D_801102C8_2461A8_SlotCarDerby.unk_02--;
+                D_801102C8_2461A8_SlotCarDerby.unk_06 = 0;
+                if (D_801102C8_2461A8_SlotCarDerby.unk_02 == 0) {
+                    D_801102C8_2461A8_SlotCarDerby.unk_00 = 2;
+                    func_80109140_23F020_SlotCarDerby(2);
+                    D_801102C8_2461A8_SlotCarDerby.unk_0A = 60;
+                    D_801102C8_2461A8_SlotCarDerby.unk_0C = 0;
+                    PlaySound(0x2AB);
+                    PlayMusic(0x22);
+                } else {
+                    PlaySound(0x2AA);
+                }
+            }
+            if (D_801102C8_2461A8_SlotCarDerby.unk_02 == 1 && D_801102C8_2461A8_SlotCarDerby.unk_06 == 0) {
+                func_800691FC_69DFC(15);
+            }
+            break;
+        case 2:
+            if (D_801102D8_2461B8_SlotCarDerby == 0) {
+                D_801102C8_2461A8_SlotCarDerby.unk_08--;
+                if (D_801102C8_2461A8_SlotCarDerby.unk_0A != 0) {
+                    for (i = 0; i < 3; i++) {
+                        func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[i + 9].pos.x,
+                                                          D_8010F900_2457E0_SlotCarDerby[i + 9].weight);
+                    }
+                    if (D_801109D6_2468B6_SlotCarDerby == 0) {
+                        D_801102D2_2461B2_SlotCarDerby--;
+                    }
+                }
+                i = 0;
+                func_801032F8_2391D8_SlotCarDerby();
+                func_80107E74_23DD54_SlotCarDerby();
+                car = D_801102E8_2461C8_SlotCarDerby;
+                lost = 0;
+                alive = 0;
+                winner = -1;
+                for (; i < 4; i++, car++) {
+                    if (!(car->unk_00 & 1)) {
+                        continue;
+                    }
+                    if (car->unk_04 == 0 && !(car->unk_00 & 0x40)) {
+                        alive++;
+                        continue;
+                    }
+                    if (car->unk_04 == 1) {
+                        winner = i;
+                        continue;
+                    }
+                    if (D_801109D6_2468B6_SlotCarDerby != 0) {
+                        if (gPlayers[car->unk_7C->work[0]].group == 0) {
+                            lost = 1;
+                            continue;
+                        }
+                    }
+                }
+                if (lost == 1) {
+                    alive = 0;
+                }
+                if (winner >= 0) {
+                    D_801102CC_2461AC_SlotCarDerby = winner;
+                    for (i = 0, car = D_801102E8_2461C8_SlotCarDerby; i < 4; i++, car++) {
+                        if ((car->unk_00 & 1) && car->unk_02 == 1) {
+                            car->unk_02 = 2;
+                            car->unk_06 = 0;
+                            car->unk_64 = car->unk_66 = 0;
+                            if (car->unk_04 == 1) {
+                                gPlayers[car->unk_7C->work[0]].coins_mg_bonus += 10;
+                            }
+                        }
+                    }
+                    func_800794A8_7A0A8(75);
+                    D_801102C8_2461A8_SlotCarDerby.unk_00 = 3;
+                    D_801102C8_2461A8_SlotCarDerby.unk_06 = 0;
+                    func_80109140_23F020_SlotCarDerby(3);
+                } else if (D_801102C8_2461A8_SlotCarDerby.unk_08 <= 0 || alive == 0) {
+                    func_800794A8_7A0A8(75);
+                    D_801102C8_2461A8_SlotCarDerby.unk_06 = 0;
+                    if (D_801109D6_2468B6_SlotCarDerby == 0) {
+                        func_800691FC_69DFC(0x12);
+                        D_801102C8_2461A8_SlotCarDerby.unk_00 = 8;
+                    } else {
+                        func_800691FC_69DFC(D_801102D0_2461B0_SlotCarDerby > 0 ? 3 : 0x12);
+                        D_801102C8_2461A8_SlotCarDerby.unk_00 = 4;
+                        D_8010FAFC_2459DC_SlotCarDerby = 60;
+                    }
+                    for (j = 0; j < 4; j++) {
+                        func_801030D4_238FB4_SlotCarDerby(&D_801102E8_2461C8_SlotCarDerby[j], -1);
+                        func_801091DC_23F0BC_SlotCarDerby(D_801102E8_2461C8_SlotCarDerby[j].unk_01, 0);
+                    }
+                }
+            }
+            break;
+        case 3:
+            if (D_801102D8_2461B8_SlotCarDerby == 0) {
+                func_801032F8_2391D8_SlotCarDerby();
+                if (D_801109D6_2468B6_SlotCarDerby != 0) {
+                    if (D_801109D0_2468B0_SlotCarDerby != 0) {
+                        D_801102C8_2461A8_SlotCarDerby.unk_00 = 4;
+                        D_8010FAFC_2459DC_SlotCarDerby = 60;
+                    }
+                } else if (D_8010FAF6_2459D6_SlotCarDerby == 0) {
+                    if ((func_80069538_6A138() == 0 || D_801102C8_2461A8_SlotCarDerby.unk_06 == 100) &&
+                        D_801109D0_2468B0_SlotCarDerby != 0 && D_801102E0_2461C0_SlotCarDerby >= 11 &&
+                        D_801102C8_2461A8_SlotCarDerby.unk_0A < 15) {
+                        if (D_801102DE_2461BE_SlotCarDerby != 0) {
+                            D_8010FAF6_2459D6_SlotCarDerby = 48;
+                            mes = 0x55;
+                        } else {
+                            D_8010FAF6_2459D6_SlotCarDerby = 36;
+                            mes = 0x51;
+                        }
+                        PlayMusic(mes);
+                        for (j = 0; j < 4; j++) {
+                            if (D_801102E8_2461C8_SlotCarDerby[j].unk_04 == 1) {
+                                func_800691FC_69DFC(6, gPlayers[D_801102E8_2461C8_SlotCarDerby[j].unk_7C->work[0]].character);
+                                break;
+                            }
+                        }
+                        D_8010FAF6_2459D6_SlotCarDerby = 1;
+                        D_801102C8_2461A8_SlotCarDerby.unk_06 = 101;
+                    }
+                } else if (--D_8010FAF6_2459D6_SlotCarDerby == 0) {
+                    for (j = 0; j < 4; j++) {
+                        if (D_801102E8_2461C8_SlotCarDerby[j].unk_04 == 1) {
+                            break;
+                        }
+                    }
+                    player = D_801102E8_2461C8_SlotCarDerby[j].unk_7C->work[0];
+                    unused[1] = player;
+                    unused[9] = j;
+                    func_80079718_7A318(0x103, gPlayers[player].character);
+                    D_801102C8_2461A8_SlotCarDerby.unk_00 = 4;
+                    D_801102C8_2461A8_SlotCarDerby.unk_06 = 233;
+                    D_801102C8_2461A8_SlotCarDerby.unk_00 = 4;
+                    D_8010FAFC_2459DC_SlotCarDerby = (D_801102DE_2461BE_SlotCarDerby != 0) ? 162 : 120;
+                }
+                if (D_801102C8_2461A8_SlotCarDerby.unk_0A != 0) {
+                    for (i = 0; i < 3; i++) {
+                        func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[c + i + 9].pos.x,
+                                                          D_8010F900_2457E0_SlotCarDerby[c + i + 9].weight);
+                    }
+                    D_801102C8_2461A8_SlotCarDerby.unk_0A--;
+                }
+            }
+            break;
+        case 7:
+            func_801032F8_2391D8_SlotCarDerby();
+            for (i = 0; i < 3; i++) {
+                func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[i + 9].pos.x,
+                                                  D_8010F900_2457E0_SlotCarDerby[i + 9].weight);
+            }
+            if ((D_801102C8_2461A8_SlotCarDerby.unk_06 < 300 && func_80069538_6A138() == 2) ||
+                (D_801109D6_2468B6_SlotCarDerby != 0 && D_801102C8_2461A8_SlotCarDerby.unk_06 == 90)) {
+                if (D_801109D6_2468B6_SlotCarDerby == 0) {
+                    D_8010FAF6_2459D6_SlotCarDerby = 90;
+                    PlayMusic(0x57);
+                } else if (D_801102C8_2461A8_SlotCarDerby.unk_06 == 90) {
+                    D_8010FAF6_2459D6_SlotCarDerby = 10;
+                } else {
+                    D_8010FAF6_2459D6_SlotCarDerby = 60;
+                }
+                D_801102C8_2461A8_SlotCarDerby.unk_06 = 300;
+            }
+            if (D_8010FAF6_2459D6_SlotCarDerby != 0) {
+                if (--D_8010FAF6_2459D6_SlotCarDerby == 0) {
+                    D_801102D6_2461B6_SlotCarDerby = 1;
+                }
+            }
+            break;
+        case 8:
+            func_801032F8_2391D8_SlotCarDerby();
+            for (i = 0; i < 3; i++) {
+                func_80106B74_23CA54_SlotCarDerby(&D_8010F900_2457E0_SlotCarDerby[i + 9].pos.x,
+                                                  D_8010F900_2457E0_SlotCarDerby[i + 9].weight);
+            }
+            if (func_80069538_6A138() == 0) {
+                func_800691FC_69DFC(0x13);
+                D_8010FAFC_2459DC_SlotCarDerby = 120;
+                D_801102C8_2461A8_SlotCarDerby.unk_00 = 4;
+                if (D_801109D6_2468B6_SlotCarDerby == 0) {
+                    PlayMusic(0x57);
+                }
+            }
+            break;
+        case 4:
+            if (D_8010FAFC_2459DC_SlotCarDerby <= 0) {
+                D_801102D6_2461B6_SlotCarDerby = 1;
+            } else {
+                D_8010FAFC_2459DC_SlotCarDerby--;
+            }
+            break;
+    }
+    D_801102C8_2461A8_SlotCarDerby.unk_06++;
+    if (D_8010FAF8_2459D8_SlotCarDerby > 0.0 && D_8010FAF8_2459D8_SlotCarDerby < 1.0) {
+        D_8010FAF8_2459D8_SlotCarDerby += 0.05;
+    }
+    func_80106C68_23CB48_SlotCarDerby(&v);
+    func_80107AD4_23D9B4_SlotCarDerby();
+    if (D_801011FC_101DFC == 1) {
+        D_801102D6_2461B6_SlotCarDerby = 1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107F48_23DE28_SlotCarDerby);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108D48_23EC28_SlotCarDerby);
 
