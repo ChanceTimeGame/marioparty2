@@ -186,6 +186,7 @@ void func_800794A8_7A0A8(s32);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
+s32 func_8007975C_7A35C(s16 arg0, s16 arg1); /* sound for a player */
 void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 
@@ -261,19 +262,20 @@ typedef struct D44CpuWork {
 typedef struct D44SprWork {
     /* 0x00 */ s32 timer;
     /* 0x04 */ s32 side;
-} D44SprWork; /* size 0x08 */
+    /* 0x08 */ s32 unk8[16]; /* allocated, unused */
+} D44SprWork; /* size 0x48 */
 
 /* func_80107BF4's answer (func_80107F28). */
 typedef struct D44AnswerWork {
     /* 0x00 */ s32 move;
     /* 0x04 */ s32 side;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
+    /* 0x08 */ f32 y;   /* the move model's height while it drops */
+    /* 0x0C */ f32 vel;
     /* 0x10 */ s32 timer;
     /* 0x14 */ s32 player;
-    /* 0x18 */ s32 x; /* on screen */
-    /* 0x1C */ s32 y;
-    /* 0x20 */ s32 unk20;
+    /* 0x18 */ s32 sx; /* on screen */
+    /* 0x1C */ s32 sy;
+    /* 0x20 */ s32 flags; /* bit 0: landed */
     /* 0x24 */ f32 scale;
     /* 0x28 */ f32 alpha;
     /* 0x2C */ s32 correct;
@@ -284,6 +286,7 @@ typedef struct D44AnswerWork {
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
 extern u32* D_80108AD0_2E0B80_name_44[6]; /* per character: motion list (count, files) */
 extern s32 D_80108AE8_2E0B98_name_44[16]; /* frames between the beats ([0] is 0) */
+extern Vec D_80108B98_2E0C48_name_44[2]; /* per side: where the answer sprite sits (y from the caller) */
 
 /* ---- 44 bss (asm/data/overlays/ovl_44_name/ovl_44_bss.bss.s) ---- */
 
@@ -313,15 +316,15 @@ extern s32 D_80108F4C_2E0FFC_name_44[3]; /* per move: its sprite */
 extern s32 D_80108F58_2E1008_name_44; /* the move expected now */
 extern s32 D_80108F60_2E1010_name_44[2]; /* per side: a sprite */
 extern s32 D_80108F70_2E1020_name_44[18]; /* [side]: func_80108750's sprite */
-extern s32 D_80108FB8_2E1068_name_44[2];
+extern s32 D_80108FB8_2E1068_name_44[2]; /* per side: right answers */
 extern omObjData* D_80108FC8_2E1078_name_44[2]; /* per side: the answer object */
-extern s32 D_80108FD0_2E1080_name_44[2];
+extern omObjData* D_80108FD0_2E1080_name_44[2]; /* per side: func_801085BC's object */
 extern s32 D_80108FD8_2E1088_name_44[2];
 extern omObjData* D_80108FC4_2E1074_name_44; /* func_80106C24's object */
 extern s32 D_80108FE0_2E1090_name_44;
 extern s32 D_80108FE4_2E1094_name_44; /* no referee (flag 0x17 clear) */
 extern MBModel* D_80108FF0_2E10A0_name_44; /* the referee's hat (scaled away) */
-extern s32 D_80109000_2E10B0_name_44[3][2]; /* [i][side]: three models per side */
+extern s32 D_80109000_2E10B0_name_44[6]; /* [move * 2 + side]: each move's model per side */
 extern s32 D_80109018_2E10C8_name_44[2]; /* per side: an answer is showing */
 extern Vec D_80109020_2E10D0_name_44[2]; /* per side: where the answer appears */
 
@@ -354,9 +357,9 @@ s32 func_801079D8_2DFA88_name_44(void); /* CPU pad triggers (D_80108EE8) */
 void func_801079E4_2DFA94_name_44(void);
 void func_80107B1C_2DFBCC_name_44(void);
 void func_80107BF4_2DFCA4_name_44(s32 move, s32 side, s32 player, s32 correct);
-void func_80107F28_2DFFD8_name_44(void);
+void func_80107F28_2DFFD8_name_44(omObjData* obj);
 void func_8010838C_2E043C_name_44(void);
-void func_801085BC_2E066C_name_44(void);
+void func_801085BC_2E066C_name_44(s32 side, f32 y);
 void func_80108750_2E0800_name_44(omObjData* obj);
 void func_80108870_2E0920_name_44(void);
 void func_801088A4_2E0954_name_44(void); /* an empty object function */
