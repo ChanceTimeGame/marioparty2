@@ -439,7 +439,7 @@ void func_801092D4_2CE7C4_name_43(MBModel* model);
 s32 func_80109374_2CE864_name_43(s32 player);
 void func_80109C50_2CF140_name_43(void);
 s32 func_80109C74_2CF164_name_43(s32 player);
-void func_8010A9B0_2CFEA0_name_43(void);
+s32 func_8010A9B0_2CFEA0_name_43(u8* out); /* 43-B: the prices, their sum */
 void func_8010B868_2D0D58_name_43(void);
 Process* func_8010B9BC_2D0EAC_name_43(void* arg0);
 void func_8010B9F8_2D0EE8_name_43(void);
@@ -468,12 +468,12 @@ void func_8010F23C_2D472C_name_43(void);
 void func_8010F26C_2D475C_name_43(void);
 void func_8010F2B4_2D47A4_name_43(void);
 s32 func_8010F32C_2D481C_name_43(void);
-s32 func_8010F548_2D4A38_name_43(s32 arg0); /* 43 (169B0 func_80016A44-like) */
+void func_8010F548_2D4A38_name_43(s32 arg0); /* 43-B: junction with a day/night model */
 void func_8010FAD0_2D4FC0_name_43(void);
 void func_8010FAEC_2D4FDC_name_43(void);
 void func_8010FB08_2D4FF8_name_43(void);
 void func_8010FB24_2D5014_name_43(void);
-s32 func_8010FD0C_2D51FC_name_43(s32 arg0);
+void func_8010FD0C_2D51FC_name_43(s32 arg0);
 void func_8010FD8C_2D527C_name_43(void);
 void func_8010FDA8_2D5298_name_43(void);
 void func_8010FDC4_2D52B4_name_43(void);
@@ -481,7 +481,7 @@ void func_8010FDE0_2D52D0_name_43(void);
 void func_8011081C_2D5D0C_name_43(void);
 void func_801109A4_2D5E94_name_43(void);
 s32 func_80110CCC_2D61BC_name_43(s32 arg0);
-s32 func_80110F2C_2D641C_name_43(s32 arg0);
+void func_80110F2C_2D641C_name_43(s32 arg0);
 void func_801114F0_2D69E0_name_43(void);
 void func_8011150C_2D69FC_name_43(void);
 void func_80111528_2D6A18_name_43(void);
@@ -602,5 +602,58 @@ extern DecisionTreeNonLeafNode D_80114558_2D9A48_name_43[];
 extern DecisionTreeNonLeafNode D_8011457C_2D9A6C_name_43[];
 extern DecisionTreeNonLeafNode D_801145EC_2D9ADC_name_43[];
 extern DecisionTreeNonLeafNode D_80114620_2D9B10_name_43[];
+
+/* ---- 43-B: board 43's own functions ---- */
+extern BoardEventTableEntry D_801142DC_2D97CC_name_43[];
+extern BoardEventTableEntry D_8011466C_2D9B5C_name_43[];
+extern BoardEventTableEntry D_8011478C_2D9C7C_name_43[]; /* night */
+extern BoardEventTableEntry D_8011479C_2D9C8C_name_43[]; /* day */
+extern BoardEventTableEntry D_801147C4_2D9CB4_name_43[]; /* night */
+extern s16 D_80113BA4_2D9094_name_43[2][2]; /* Boo marker offsets by day */
+extern s16 D_80113BAC_2D909C_name_43[2][2]; /* by night */
+extern s32 D_80113D18_2D9208_name_43[2]; /* model 9's create parameter */
+extern s16 D_80113D20_2D9210_name_43[3 * 2]; /* the three models' spaces: [i * 2 + state] */
+extern s16 D_80113D2C_2D921C_name_43[3]; /* the space each one faces */
+extern s16 D_80113D34_2D9224_name_43[3]; /* the D_800F8CE4 index that picks its space */
+extern s16 D_80113D44_2D9234_name_43[2]; /* Boo spaces by day */
+extern s16 D_80113D48_2D9238_name_43[2]; /* by night */
+extern s16 mbWinId;
+s16 func_8008BA30_8C630(s16); /* window still open */
+void func_8008D23C_8DE3C(void);
+extern s16 D_80113D3C_2D922C_name_43[3]; /* the space each model faces after moving */
+extern s16* D_80114428_2D9918_name_43[3]; /* per junction: direction prompt choices */
+extern DecisionTreeNonLeafNode D_80113EB4_2D93A4_name_43[]; /* CPU direction, per junction */
+extern DecisionTreeNonLeafNode D_80113ED8_2D93C8_name_43[];
+extern DecisionTreeNonLeafNode D_80113EFC_2D93EC_name_43[];
+extern DecisionTreeNonLeafNode D_80113F80_2D9470_name_43[]; /* the same for player index 4 */
+extern DecisionTreeNonLeafNode D_80113F98_2D9488_name_43[];
+extern DecisionTreeNonLeafNode D_80113FB0_2D94A0_name_43[];
+void func_80066FD8_67BD8(s16);
+void func_80067004_67C04(s16);
+void func_800558DC_564DC(s16);
+
+/* The Boo's ride (func_80110F2C starts one func_801109A4 per player on its path). */
+typedef struct Ovl43BooRide {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 step; /* the player's index in the Boo's path */
+    /* 0x08 */ s32 order; /* the order the player was picked up in */
+    /* 0x0C */ s32 boo;
+} Ovl43BooRide; /* allocated 0x20 */
+extern MBModel* D_8011548C_2DA97C_name_43; /* the Boo */
+extern s16 D_801144CC_2D99BC_name_43[2]; /* per Boo: its space */
+extern s16 D_801144D0_2D99C0_name_43[2]; /* per Boo: a camera space */
+extern s16 D_801144D4_2D99C4_name_43[4]; /* the ride's price by time of day */
+extern s32 D_801144DC_2D99CC_name_43[2]; /* the Boo model's create parameter */
+extern s16* D_8011451C_2D9A0C_name_43[2]; /* per Boo: its path, -1 ended */
+extern s16 D_80114524_2D9A14_name_43[2]; /* per Boo: the path's end */
+extern Vec D_80114528_2D9A18_name_43[4]; /* landing offsets by order */
+void func_80059618_5A218(void*);
+void func_80029C74_2A874(s16, f32);
+f32 func_80029D0C_2A90C(s16);
+extern f32 D_801145C4_2D9AB4_name_43[5]; /* the whirl's angles: the player's, then the four models' */
+extern MBModel* D_80115490_2DA980_name_43[4]; /* the whirl's four models */
+extern f32 D_801145B4_2D9AA4_name_43[4]; /* the centre Boos' angles as they appear */
+extern u8 D_801145D8_2D9AC8_name_43[4]; /* the centre Boos' models (8 or 0xA0) */
+extern void* D_801145DC_2D9ACC_name_43[4]; /* their create parameters */
 
 #endif
