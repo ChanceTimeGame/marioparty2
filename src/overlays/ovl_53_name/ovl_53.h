@@ -81,6 +81,12 @@ void func_80089C78_8A878(s16 winId, u8 arg1);
 void func_80089DA0_8A9A0(s16 winId, u8 r, u8 g, u8 b);
 void func_80089A48_8A648(s16, s16);
 void func_8005A4EC_5B0EC(s32 player, s32 reaction); /* a player's reaction */
+s16 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32, s16 flags); /* create a window */
+void func_8008D88C_8E48C(s16);
+void func_800898F0_8A4F0(s16 winId, s16 x, s16 y);
+void func_8008D5D8_8E1D8(s16 winId);
+s32 func_8004E94C_4F54C(void);
+s32 func_80059FD0_5ABD0(s32 player); /* the player's rank, 0 = first */
 
 extern u8 D_01164160[];
 extern s16 D_800CD414_CE014;
@@ -123,8 +129,11 @@ extern void (*D_80105C2C_36053C_name_53[])(void); /* the events */
 extern s32 D_80105C58_360568_name_53[6]; /* per board: the board overlay */
 extern u32 D_80105C70_360580_name_53;
 extern s32 D_80105C74_360584_name_53[]; /* per event: who reacts (3-5 the player, 13-15 everyone) */
+extern u16 D_80105C9C_3605AC_name_53[2][3][4]; /* coins: [kind][stage][rank] */
+extern s32 D_80105CCC_3605DC_name_53[][2]; /* per game length: the last turn of stages 0 and 1 */
 
 extern char D_80105D60_360670_name_53[10]; /* sprintf("%d") buffer: a panel's number */
+extern const char D_80105D58_360668_name_53[]; /* "%d" */
 extern s16 D_80105D6A_36067A_name_53; /* the "Bowser roulette" title window */
 extern Ovl53Box D_80105D70_360680_name_53[5];
 extern u8 D_80105DA2_3606B2_name_53[5]; /* each panel's event */

@@ -536,11 +536,116 @@ void func_801044A8_35EDB8_name_53(void) {
 __asm__(".section .rodata");
 const char D_80105D58_360668_name_53[] = "%d";
 
+/* Build the roulette (MP1 func_800499CC): panels 0 and 1 are coin events (0), panel 2 one of the
+   rare events 6-9, panels 3 and 4 events 1-5 by weight (5 always while func_8004E94C is set);
+   then shuffle, label, and start the roulette object for the player. */
+/* NON_MATCHING: registers only (masked 0): the hoisted constants 2-5 and `prev` land in other
+   saved registers */
+#ifdef NON_MATCHING
+void func_80104570_35EE80_name_53(s32 player) {
+    Ovl53Box* box;
+    Ovl53Rect* rect;
+    omObjData* obj;
+    s32 i;
+    s32 a;
+    s32 b;
+    u8 t;
+    s32 r;
+    u8 prev;
+
+    prev = 0xFF;
+    i = 0;
+    do {
+        box = &D_80105D70_360680_name_53[i];
+        rect = D_80105B60_360470_name_53 + i;
+        box->x = rect->x;
+        box->y = rect->y;
+        box->w = rect->w;
+        box->h = rect->h;
+        box->win = func_800888A8_894A8(box->x + box->w / 2, box->y + box->h / 2, box->w, box->h, 0, 4);
+        func_8008D88C_8E48C(box->win);
+        func_800898F0_8A4F0(box->win, box->w / 2, box->h / 2);
+        func_80089B2C_8A72C(box->win, 0);
+        if (i < 2) {
+            D_80105DA2_3606B2_name_53[i] = 0;
+        } else if (i == 2) {
+            D_80105DA2_3606B2_name_53[i] = (rand8() & 3) + 6;
+        } else {
+            do {
+                r = (u8)(rand8() % 150);
+                if (r < 50) {
+                    D_80105DA2_3606B2_name_53[i] = 1;
+                } else if (r < 90) {
+                    D_80105DA2_3606B2_name_53[i] = 2;
+                } else if (r < 120) {
+                    D_80105DA2_3606B2_name_53[i] = 3;
+                } else if (func_8004E94C_4F54C() != 0 || r < 140) {
+                    D_80105DA2_3606B2_name_53[i] = 5;
+                } else {
+                    D_80105DA2_3606B2_name_53[i] = 4;
+                }
+            } while (i == 4 && D_80105DA2_3606B2_name_53[4] == prev);
+            if (i == 3) {
+                prev = D_80105DA2_3606B2_name_53[i];
+            }
+        }
+        i++;
+    } while (i < 5);
+
+    for (i = 0; i < 10; i++) {
+        do {
+            a = (u8)(rand8() % 5);
+            b = (u8)(rand8() % 5);
+        } while (a == b);
+        t = D_80105DA2_3606B2_name_53[a];
+        D_80105DA2_3606B2_name_53[a] = D_80105DA2_3606B2_name_53[b];
+        D_80105DA2_3606B2_name_53[b] = t;
+    }
+
+    for (i = 0; i < 5; i++) {
+        box = &D_80105D70_360680_name_53[i];
+        if (D_80105DA2_3606B2_name_53[i] == 0) {
+            sprintf(D_80105D60_360670_name_53, D_80105D58_360668_name_53,
+                    func_80104A40_35F350_name_53(0, D_80105DD2_3606E2_name_53));
+            func_80089308_89F08(box->win, (s32)D_80105D60_360670_name_53, 0);
+            func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+        }
+        func_800890CC_89CCC(box->win, D_80105DA2_3606B2_name_53[i] + 0x258, -2, 4);
+        func_80089A48_8A648(box->win, 0);
+    }
+
+    obj = D_80105DA8_3606B8_name_53 = omAddObj(-0x8000, 0, 0, -1, func_80102ED0_35D7E0_name_53);
+    obj->work[0] = 3;
+    obj->trans.y = 0.0f;
+    obj->rot.z = 0.0f;
+    func_801041E4_35EAF4_name_53();
+    D_80105DC0_3606D0_name_53 = player;
+    D_80105D6A_36067A_name_53 = func_800888A8_894A8(95, 200, 130, 20, 0, 0);
+    func_80089B2C_8A72C(D_80105D6A_36067A_name_53, 0);
+    func_800890CC_89CCC(D_80105D6A_36067A_name_53, 0x27C, -1, -1);
+    func_80089A48_8A648(D_80105D6A_36067A_name_53, 0);
+    func_80057730_58330(D_80105D6A_36067A_name_53, D_80105DD2_3606E2_name_53);
+    func_8008D5D8_8E1D8(D_80105D6A_36067A_name_53);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104570_35EE80_name_53);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104A30_35F340_name_53);
+void func_80104A30_35F340_name_53(void) {
+    D_80105DA8_3606B8_name_53->work[0] = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104A40_35F350_name_53);
+/* Coins at stake: by kind, by the game's stage (turn against D_80105CCC) and the player's rank. */
+s32 func_80104A40_35F350_name_53(s32 kind, s32 player) {
+    s32 i;
+
+    for (i = 0; i < 2; i++) {
+        if (GwSystem.current_turn <= D_80105CCC_3605DC_name_53[GwSystem.current_game_length][i]) {
+            break;
+        }
+    }
+    return D_80105C9C_3605AC_name_53[kind][i][func_80059FD0_5ABD0(player)];
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104AEC_35F3FC_name_53);
 
