@@ -14,6 +14,7 @@
 #include "game/sprite.h"
 #include "game/hmfman.h"
 #include "game/pad.h"
+#include "game/camera.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -120,8 +121,7 @@ typedef struct SCDCamPose {
 typedef struct SCDCamera {
     /* 0x00 */ SCDCamPose target;
     /* 0x1C */ SCDCamPose cur;
-    /* 0x38 */ char unk_38[8];
-} SCDCamera; /* size = 0x40 */
+} SCDCamera; /* size = 0x38 (MP1 0x40) */
 
 /* A scenery record: D_80102468 (HuMemDirectMalloc(0x600): 16) and D_8010246C (0x300: 8). The
    board (D_80102468[0], func_800FC0BC's object) and the time board (D_80102468[1], func_800FC394's
@@ -317,12 +317,18 @@ void SprPosSet(s16 group, s16 member, s16 x, s16 y);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void SprAttrReset(s16 group, s16 member, s32 flag);
 f32 HuMathSin(f32);
+u16 func_80018A30_19630(s32, s32); /* model load */
+void func_80029714_2A314(s16 model, f32 x, f32 y, f32 z); /* position */
+void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 
 /* ---------------------------------------------------------------------------------------------
    .data (243CA0.data.s, stays asm): MP1 name in the comment
    --------------------------------------------------------------------------------------------- */
 extern s16 D_8010F430_245310_SlotCarDerby[3][4]; /* MP1 D_80100C7C: [course][lane] start segment */
 extern s16 D_8010F448_245328_SlotCarDerby[3];    /* MP1 D_80100C8C: [course] start offset */
+extern f32 D_8010F870_245750_SlotCarDerby[6];    /* MP1 D_80100D94: course 0 camera: centre, view */
+extern f32 D_8010F888_245768_SlotCarDerby[6];    /* course 1's */
+extern f32 D_8010F8A0_245780_SlotCarDerby[6];    /* course 2's */
 extern s32 D_8010F450_245330_SlotCarDerby[7];    /* MP1 D_80100C90: speed limits by corner class */
 extern u16 (*D_8010F864_245744_SlotCarDerby[3])[3]; /* MP1 D_80100D3C/D5C: [course] corners: first,
                                                       last segment, class; 0x400 ends */
@@ -354,6 +360,12 @@ extern s16 D_80110802_2466E2_SlotCarDerby;      /* MP1 D_80102312: next finishin
 extern s16 D_80110804_2466E4_SlotCarDerby;      /* MP1 D_80102314 */
 extern s32 D_80110808_2466E8_SlotCarDerby;      /* MP1 D_80102318: focus points this frame */
 extern SCDFocus D_80110810_2466F0_SlotCarDerby[16]; /* MP1 D_80102320 */
+extern SCDCamera D_80110910_2467F0_SlotCarDerby; /* MP1 D_80102420 */
+extern f32 D_80110914_2467F4_SlotCarDerby;      /* .target.pos[1] */
+extern f32 D_80110918_2467F8_SlotCarDerby;      /* .target.pos[2] */
+extern f32 D_8011091C_2467FC_SlotCarDerby;      /* .target.view[0] */
+extern f32 D_80110920_246800_SlotCarDerby;      /* .target.view[1] */
+extern f32 D_80110924_246804_SlotCarDerby;      /* .target.view[2] */
 extern SCDParticle D_801104F8_2463D8_SlotCarDerby[16]; /* MP1 D_80102008 */
 /* MG30-A */
 

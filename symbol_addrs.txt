@@ -837,3 +837,7 @@ D_8010DFDA_2243CA_BombsAway = 0x8010DFDA; // size:0x2 segment:BombsAway
 D_8010D258_223648_BombsAway = 0x8010D258; // rom:0x223648 size:0x2
 D_8010D25A_22364A_BombsAway = 0x8010D25A; // rom:0x22364A size:0x2
 D_8010D27C_22366C_BombsAway = 0x8010D27C; // rom:0x22366C size:0x10
+// MG30-A: ovl_30 Slot Car Derby camera tables (named by 80106A00's local initialiser)
+D_8010F870_245750_SlotCarDerby = 0x8010F870; // size:0x18 segment:SlotCarDerby
+D_8010F888_245768_SlotCarDerby = 0x8010F888; // size:0x18 segment:SlotCarDerby
+D_8010F8A0_245780_SlotCarDerby = 0x8010F8A0; // size:0x18 segment:SlotCarDerby
