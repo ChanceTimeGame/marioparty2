@@ -2,8 +2,9 @@
 #define _OVL_10_H
 
 /* Overlay 10: Crane Game, descended from MP1's ovl_23_CraneGame (1B3E00.c game, 1B9050.c shadows,
-   1BAA60.c collision and camera). Retail is two files: 14C320.c (game, claw, prizes, shadows) and
-   153590.c from 80109A70 (collision meshes, MP1 1BAA60.c). .data stays asm (155280); .rodata is
+   1BAA60.c collision and camera). Retail is three files: 14C320.c (game, claw, prizes), 151A90.c
+   from 80107F70 (drop shadows, MP1 1B9050.c) and 153590.c from 80109A70 (collision meshes, MP1
+   1BAA60.c). .data stays asm (155280); .rodata is
    carved per file. Types from the asm's accesses; MP1 names and offsets in the comments. */
 
 #include "common.h"
@@ -11,6 +12,9 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 #include "game/pad.h"
+#include "game/malloc.h" /* MG10-B */
+#include "game/gamemes.h" /* MG10-B */
+#include "game/board.h"   /* MG10-B: D_80102720_103320 */
 
 typedef f32 Matrix4f[4][4];
 
@@ -109,6 +113,144 @@ extern Vec D_8010274C_10334C; /* Center */
 extern Vec D_800FD474_FE074;  /* CRot */
 extern f32 D_800FA610_FB210;  /* CZoom */
 
+/* ---- MG10-B: 151A90.c and 153590.c (MP1 1B9050.c shadows, 1BAA60.c collision) ---- */
+
+#include "game/data.h"
+s16 SprAnimRead(void*);
+void*** SprAnimGet(s16);
+s32 func_800283DC_28FDC(s16); /* remove a draw callback */
+void func_800B30D0_B3CD0(Matrix4f m, Mtx* mtx); /* MP1 func_800A0B90: Mtx to float */
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* MP1 func_8009EA40: translation */
+void func_80025F00_26B00(Matrix4f src, Matrix4f dst); /* MP1 MtxInv */
+void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800AC0B0: multiply */
+void func_800B3040_B3C40(Matrix4f m, Mtx* mtx); /* MP1 func_800A0A20: float to Mtx */
+/* Views of main's per-part draw records (30560.c's HmfLayerEnt and HmfDrawRec): a part's matrix is
+   D_800F8C58[D_800FDC48[hmf->unk00][part->unk2F].unk02].unk44. */
+typedef struct CGLayerEnt {
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ u8 unk01;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ f32 unk04;
+} CGLayerEnt;
+typedef struct CGDrawRec {
+    /* 0x00 */ char unk00[0x44];
+    /* 0x44 */ Mtx* unk44;
+    /* 0x48 */ char unk48[0x10];
+} CGDrawRec; /* size = 0x58 */
+extern CGLayerEnt* D_800FDC48_FE848[8];
+extern CGDrawRec* D_800F8C58_F9858;
+u32 osVirtualToPhysical(void*);
+extern Gfx D_8010BCE0_155800_CraneGame[]; /* shadow render setup (MP1 D_800FF870) */
+extern Vtx D_8010BD20_155840_CraneGame[3]; /* the claw's round shadow (MP1 D_800FF8B0) */
+
+/* A model group's shadow display list (D_8010C7E8, func_80108D18): gSPVertex/gSP1Triangle commands
+   that load from segment 1 (the frame's vertex buffer). */
+typedef struct CGShadowGroup {
+    /* 0x00 */ Gfx* dl;
+    /* 0x04 */ u16 start; /* first vertex in the buffer */
+    /* 0x06 */ u16 count;
+} CGShadowGroup; /* size = 0x8 */
+
+/* Shadow opacity per shadowed model (D_8010C2E8): eases toward target, reset to 1.0 each frame. */
+typedef struct CGShadowFade {
+    /* 0x00 */ f32 cur;
+    /* 0x04 */ f32 target;
+} CGShadowFade;
+
+/* A face of the shadow mesh (D_8010CA98): unique-vertex indices, bit 15 of v[0] = quad. */
+typedef struct CGShadowFace {
+    /* 0x00 */ u16 v[4];
+} CGShadowFace;
+
+/* Draw order of the faces (D_8010CAA4). */
+typedef struct CGShadowOrder {
+    /* 0x00 */ s16 key;
+    /* 0x02 */ s16 face;
+} CGShadowOrder;
+
+/* A collision face (func_80109FF8): plane and corner vertex indices. */
+typedef struct CGColFace {
+    /* 0x00 */ f32 nx;
+    /* 0x04 */ f32 ny;
+    /* 0x08 */ f32 nz;
+    /* 0x0C */ f32 d;
+    /* 0x10 */ s16 v[4]; /* v[3] = -1 for a triangle */
+    /* 0x18 */ s16 axis; /* dominant normal axis: 0 x, 1 y, 2 z */
+    /* 0x1A */ char unk_1A[2];
+} CGColFace; /* size = 0x1C */
+
+/* A model group's collision faces (CGCol.groups, func_80109E48). */
+typedef struct CGColGroup {
+    /* 0x00 */ s16 n;
+    /* 0x02 */ s16 radius;
+    /* 0x04 */ Matrix4f mtx; /* world to group space (func_80109C00) */
+    /* 0x44 */ CGColFace* faces;
+} CGColGroup; /* size = 0x48 */
+
+/* A model registered for collision (D_8010CB08, func_80109BAC). */
+typedef struct CGCol {
+    /* 0x00 */ s16 model;
+    /* 0x02 */ u8 unk2; /* frames before it collides */
+    /* 0x03 */ u8 count; /* groups */
+    /* 0x04 */ CGColGroup* groups;
+    /* 0x08 */ void* verts;
+} CGCol; /* size = 0xC */
+
+/* bss (MP1 names: D_800FFEC0.. = MP2 D_8010C260..) */
+extern s16 D_8010C260_155D80_CraneGame; /* the draw callback */
+extern s16 D_8010C262_155D82_CraneGame; /* shadowed models */
+extern s16 D_8010C264_155D84_CraneGame; /* frame buffer index, 0-2 */
+extern s16 D_8010C268_155D88_CraneGame[64];
+extern CGShadowFade D_8010C2E8_155E08_CraneGame[64];
+/* The split label of D_8010C2E8[0].target: 801082F4 addresses the targets by it. */
+extern CGShadowFade D_8010C2EC_155E0C_CraneGame[];
+#define CG_FADE_TARGET(i) (D_8010C2EC_155E0C_CraneGame[i].cur)
+extern Vtx* D_8010C4E8_156008_CraneGame[64][3];
+extern CGShadowGroup* D_8010C7E8_156308_CraneGame[64];
+extern s16 D_8010C8E8_156408_CraneGame; /* the shadow sprite */
+extern u8* D_8010C8EC_15640C_CraneGame; /* its texture */
+extern s16 D_8010C8F0_156410_CraneGame; /* the model being processed */
+extern f32 D_8010C8F4_156414_CraneGame; /* its shadow opacity */
+extern Vec D_8010C8F8_156418_CraneGame; /* light position */
+extern s32 D_8010C904_156424_CraneGame;
+extern s16 D_8010C908_156428_CraneGame; /* the claw's round shadow is on */
+extern f32 D_8010C90C_15642C_CraneGame; /* its height */
+extern Vtx D_8010C910_156430_CraneGame[3][4]; /* the claw's round shadow, per frame buffer */
+extern Mtx D_8010C9D0_1564F0_CraneGame[3];
+extern ColVtx* D_8010CA90_1565B0_CraneGame; /* unique vertices of the group being built */
+extern Vtx* D_8010CA94_1565B4_CraneGame; /* the vertex buffer being built */
+extern CGShadowFace* D_8010CA98_1565B8_CraneGame;
+extern u16* D_8010CA9C_1565BC_CraneGame; /* faces using each vertex */
+extern s16 D_8010CAA0_1565C0_CraneGame; /* unique vertices */
+extern s16 D_8010CAA2_1565C2_CraneGame; /* faces */
+extern CGShadowOrder* D_8010CAA4_1565C4_CraneGame;
+extern s16 D_8010CAA8_1565C8_CraneGame[33]; /* the vertex cache */
+extern s16 D_8010CAEA_15660A_CraneGame;
+extern s16 D_8010CAEC_15660C_CraneGame; /* vertices in the buffer */
+extern f32 D_8010CAF0_156610_CraneGame; /* the shadow scale (MP2) */
+extern s16 D_8010CB00_156620_CraneGame; /* the collision draw callback (MP1 D_80100A52) */
+extern CGCol D_8010CB08_156628_CraneGame[64]; /* MP1 D_80100750 */
+/* Split labels of D_8010CB08[0]'s fields: 8010A4D8 addresses the fields by them. */
+typedef struct CGColU8View {
+    /* 0x00 */ u8 v;
+    /* 0x01 */ char pad[0xB];
+} CGColU8View;
+typedef struct CGColPtrView {
+    /* 0x00 */ void* v;
+    /* 0x04 */ char pad[8];
+} CGColPtrView;
+extern CGColU8View D_8010CB0A_15662A_CraneGame[];  /* .unk2 */
+extern CGColU8View D_8010CB0B_15662B_CraneGame[];  /* .count */
+extern CGColPtrView D_8010CB0C_15662C_CraneGame[]; /* .groups */
+extern CGColPtrView D_8010CB10_156630_CraneGame[]; /* .verts */
+#define CG_COL_UNK2(i) (D_8010CB0A_15662A_CraneGame[i].v)
+#define CG_COL_COUNT(i) (D_8010CB0B_15662B_CraneGame[i].v)
+#define CG_COL_GROUPS(i) ((CGColGroup*)D_8010CB0C_15662C_CraneGame[i].v)
+#define CG_COL_VERTS(i) ((ColVtx*)D_8010CB10_156630_CraneGame[i].v)
+extern s16 D_8010CE08_156928_CraneGame; /* registered models (MP1 D_80100A50) */
+extern ColVtx* D_8010CE0C_15692C_CraneGame; /* the vertices of the model being tested (MP1 D_80100A54) */
+extern f32 D_8010CE10_156930_CraneGame; /* the nearest hit along the sweep, 0..1 (MP1 D_80100A58) */
+
 /* ---- structs ---- */
 
 /* Work of the prizes (D_800F9CE0_FA8E0, func_80106F00) and of the claw operator (func_80104854):
@@ -143,7 +285,7 @@ float fabsf(float);
    func_80107F40 returns it), kept in D_8010CE30_156950_CraneGame. In MP2 the prizes own one too:
    their unk8 == 2 while held, unk3E = 1 drops them, unk40 = their index (func_80106F00), unk4C/4E/50
    their side of the grip contest, unk56 a blink timer. Offsets as MP1's; field use from MG10-A's
-   range (80104CB0, 80106A28, 80106F00): MG10-B, check it against 80107DD4. */
+   range (80104CB0, 80106A28, 80106F00): 80107DD4 allocates it as MP1 does. */
 typedef struct CGClaw {
     /* 0x00 */ s16 unk0; /* 1 once initialised */
     /* 0x02 */ u16 unk2; /* flags: 1/2 clamped by func_801035C0, 4 empty-handed */
@@ -244,8 +386,7 @@ extern omObjData* D_8010D230_156D50_CraneGame;
 extern s16 D_8010D234_156D54_CraneGame;
 
 /* ---- overlay functions ---- */
-/* MG10-A's range (to 80106F00) checked against the asm; MG10-B's inferred from the asm's register
-   use and MP1's twins: check yours. */
+/* All checked against the asm and their callers. */
 
 /* 14C320.c */
 void func_80102800_14C320_CraneGame(void);
@@ -276,12 +417,15 @@ void func_80106A28_150548_CraneGame(omObjData* obj);
 f32 func_80106C98_1507B8_CraneGame(f32 x, f32 z);
 void func_80106D58_150878_CraneGame(Matrix4f m, Vec* out);
 void func_80106F00_150A20_CraneGame(omObjData* obj);
-/* MG10-B's range (inferred) */
+/* MG10-B's range (checked against the asm) */
+u16 func_80078EA8_79AA8(void);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1);       /* MP1 func_800FA684 */
 void func_8010755C_15107C_CraneGame(omObjData* obj);                 /* MP1 func_800FA770 */
 CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* obj);               /* MP1 func_800F704C (claw alloc) */
 void func_80107EC0_1519E0_CraneGame(void);                           /* MP1 func_800F7138 */
 CGClaw* func_80107F40_151A60_CraneGame(omObjData* obj);               /* MP1 func_800F71B8 (claw get) */
+/* 151A90.c (retail file from 80107F70, MP1 1B9050.c: shadows and the crane's cable) */
 void func_80107F70_151A90_CraneGame(void);                           /* MP1 func_800FB830 */
 void func_80108038_151B58_CraneGame(void);                           /* MP1 func_800FB8E8 */
 void func_80108114_151C34_CraneGame(s16 model);                      /* MP1 func_800FB9C4 */
@@ -291,11 +435,11 @@ void func_801082B8_151DD8_CraneGame(f32 y);                          /* MP1 func
 void func_801082D0_151DF0_CraneGame(f32 x, f32 y, f32 z);            /* MP1 func_800FBB00 */
 void func_801082E8_151E08_CraneGame(f32 arg0);
 void func_801082F4_151E14_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FBB18 */
-Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, void* m, Matrix4f inv); /* MP1 func_800FC0A0 */
+Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv); /* MP1 func_800FC0A0 */
 void func_80108D18_152838_CraneGame(s16 model);                      /* MP1 func_800FC4F4 */
-void func_80109024_152B44_CraneGame(void* g, void* verts, s16 n);    /* MP1 func_800FC800 */
-s32 func_801091D4_152CF4_CraneGame(void);                            /* MP1 func_800FC9B0 */
-void func_801093A0_152EC0_CraneGame(Gfx** gfx, void* m);             /* MP1 func_800FCB78 */
+void func_80109024_152B44_CraneGame(HmfPart* g, ColVtx* verts, s16 n);    /* MP1 func_800FC800 */
+void func_801091D4_152CF4_CraneGame(void);                            /* MP1 func_800FC9B0 */
+void func_801093A0_152EC0_CraneGame(Gfx** gfx, HmfData* m);             /* MP1 func_800FCB78 */
 Gfx* func_801095A4_1530C4_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n);  /* MP1 func_800FCD7C */
 Gfx* func_801097A0_1532C0_CraneGame(Gfx* gfx, Mtx* mtx);             /* MP1 func_800FCF78 */
 
@@ -304,14 +448,14 @@ void func_80109A70_153590_CraneGame(void);                           /* MP1 func
 void func_80109AA8_1535C8_CraneGame(void);                           /* MP1 func_800FD278 */
 void func_80109BAC_1536CC_CraneGame(s16 model);                      /* MP1 func_800FD37C */
 void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FD3D0 */
-void func_80109E48_153968_CraneGame(void* col, s16 model);           /* MP1 func_800FD604 */
-void func_80109FF8_153B18_CraneGame(void* verts, void* out, u8* f, s16 n); /* MP1 func_800FD7B4 */
-void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, Vec* out); /* MP1 func_800FDBF8 */
+void func_80109E48_153968_CraneGame(CGCol* col, s16 model);           /* MP1 func_800FD604 */
+void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f, s16 n); /* MP1 func_800FD7B4 */
+void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* out); /* MP1 func_800FDBF8 */
 s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip); /* MP1 func_800FDC94 */
 s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r);           /* MP1 func_800FDF54 */
-void func_8010A8E8_154408_CraneGame(void* f, s16 n, Vec* p, Vec* d);   /* MP1 func_800FE0A4 */
+void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d);   /* MP1 func_800FE0A4 */
 void func_8010AD5C_15487C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, f32* ow);
-s32 func_8010AE2C_15494C_CraneGame(f32 a, f32 b, f32 c, f32 d, s32 arg4, s32 arg5);
-f32 func_8010B364_154E84_CraneGame(f32 a, f32 b, f32 c, f32 d);
+s32 func_8010AE2C_15494C_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1, s32 n, Vec* poly); /* clips poly to the box */
+f32 func_8010B364_154E84_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1); /* highest collision face in the box */
 
 #endif

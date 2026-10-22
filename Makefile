@@ -493,3 +493,13 @@ $(MG10_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+# MG10-B: ovl_10 151A90.c (retail file from 80107F70, split from 14C320.c) and 153590.c are built as
+# 14C320.c is (153590.c: func_80109FF8 has a nop between back-to-back mul.s)
+MG10B_BLANKSTRIP_UNITS := build/src/overlays/ovl_10_CraneGame/151A90.c.o build/src/overlays/ovl_10_CraneGame/153590.c.o
+$(MG10B_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(MG10B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
