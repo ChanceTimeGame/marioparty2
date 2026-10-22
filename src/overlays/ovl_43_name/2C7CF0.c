@@ -5103,7 +5103,203 @@ s32 func_801128E0_2D7DD0_name_43(u8* items) {
     return i;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80112C2C_2D811C_name_43);
+/* The Boo at space 0x7B, night only (by day message 0x45): for 15 coins it steals coins from every
+   other player (func_8010A9B0: they press to keep the price down; the one who loses most is marked),
+   for 150 coins a star from each player who has one (func_80109374). */
+void func_80112C2C_2D811C_name_43(void) {
+    char msgs[4][16];
+    u8 items[4];
+    u8 prices[4];
+    void* vib[4];
+    GW_SYSTEM* gw = &GwSystem;
+    SpaceData* sd;
+    MBModel* model;
+    s16 choice;
+    s32 i;
+    s32 total;
+    s32 richest;
+    s32 max;
+    f32 step;
+    f32 acc;
+
+    if (gw->current_player_index == 4) {
+        return;
+    }
+    choice = 0;
+    func_80046D2C_4792C(gw->current_player_index);
+    MBPlayerMotionSet(-1, -1, 2);
+    if (D_800F8CE4_F98E4[0] >= 0 && *D_800F8CE4_F98E4 < 2) {
+        func_80056C30_57830(-1, 8, 0x7B);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        MBDlgResultWinExec(0x45);
+    } else {
+        sd = GetSpaceData(0x7B);
+        model = MBModelParamCreate(D_80115474_2DA964_name_43);
+        model->jumpY = -10.0f;
+        HuVecCopyXYZ(&model->scale, 2.5f, 2.5f, 2.5f);
+        HuVecCopyXYZ(&model->pos, sd->coords.x, sd->coords.y + 10.0f, sd->coords.z);
+        MBModelDispOff(model);
+        PlaySound(0xEB);
+        func_80109234_2CE724_name_43(model);
+        func_800446B4_452B4(model, &((MBModel*)BoardPlayerGet(-1)->unk_24)->pos, 10);
+        func_80056C30_57830(-1, 8, 0x7B);
+        HuPrcSleep(10);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        if (gPlayers[gw->current_player_index].coins < 15) {
+            MBDlgWinExec(0x28, 0x3D);
+        } else {
+        menu:
+            for (i = 0; i < 4; i++) {
+                if (i != gw->current_player_index && gPlayers[i].coins != 0) {
+                    break;
+                }
+            }
+            if (i == 4) {
+                msgs[0][0] = 1;
+                items[0] = 0;
+            } else {
+                msgs[0][0] = 8;
+                items[0] = 1;
+            }
+            msgs[0][1] = 0;
+            for (i = 0; i < 4; i++) {
+                if (i != gw->current_player_index && gPlayers[i].stars != 0) {
+                    break;
+                }
+            }
+            if (i == 4 || gPlayers[gw->current_player_index].coins < 150 || gPlayers[gw->current_player_index].stars >= 99) {
+                msgs[1][0] = 1;
+                items[1] = 0;
+            } else {
+                msgs[1][0] = 8;
+                items[1] = 1;
+            }
+            msgs[1][1] = 0;
+            items[2] = items[3] = 1;
+            func_80056368_56F68(0x28, 0x3C, (s32)msgs[0], (s32)msgs[1], 0, 0, 0);
+            choice = func_801128E0_2D7DD0_name_43(items);
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+                case 0:
+                case 1:
+                    if (choice == 0) {
+                        func_8004CA34_4D634(gw->current_player_index, -15);
+                        func_800614B4_620B4(gw->current_player_index, -15);
+                    } else {
+                        func_8004CA34_4D634(gw->current_player_index, -150);
+                        func_800614B4_620B4(gw->current_player_index, -150);
+                    }
+                    HuPrcSleep(30);
+                    MBDlgWinExec(0x28, 0x3F);
+                    func_801092D4_2CE7C4_name_43(model);
+                    if (choice == 0) {
+                        total = func_8010A9B0_2CFEA0_name_43(prices);
+                        func_80109234_2CE724_name_43(model);
+                        richest = -1;
+                        max = 0;
+                        for (i = 0; i < 4; i++) {
+                            if (max < prices[i]) {
+                                richest = i;
+                                max = prices[i];
+                            }
+                        }
+                        for (i = 0; i < 4; i++) {
+                            if (prices[i] != 0) {
+                                func_8004CA14_4D614(i, -prices[i]);
+                                if (i == richest) {
+                                    func_8006135C_61F5C(i, -prices[i], 1);
+                                } else {
+                                    func_8006135C_61F5C(i, -prices[i], 0);
+                                }
+                            }
+                        }
+                        sprintf(msgs[0], D_801152A8_2DA798_name_43, total);
+                        func_80056368_56F68(0x28, 0x44, (s32)msgs[0], 0, 0, 0, 0);
+                        MBDlgWinClose();
+                        func_80056168_56D68();
+                        step = total / 90.0f;
+                        acc = 0.0f;
+                        D_80115488_2DA978_name_43 = func_80043510_44110(0x18, NULL);
+                        func_80043DAC_449AC(D_80115488_2DA978_name_43);
+                        MBModelDispOff(D_80115488_2DA978_name_43);
+                        for (i = 0; i < 4; i++) {
+                            if (i != gw->current_player_index) {
+                                vib[i] = func_800672BC_67EBC(i, 3, 5);
+                            }
+                        }
+                        while (total != 0) {
+                            acc += step;
+                            if (acc >= 1.0f) {
+                                acc -= 1.0f;
+                                func_8010B9BC_2D0EAC_name_43(model);
+                                func_800614B4_620B4(gw->current_player_index, 1);
+                                total--;
+                            }
+                            HuPrcVSleep();
+                        }
+                        for (i = 0; i < 4; i++) {
+                            if (i != gw->current_player_index) {
+                                func_8006735C_67F5C(vib[i]);
+                            }
+                        }
+                        HuPrcSleep(20);
+                        MBModelKill(D_80115488_2DA978_name_43);
+                        func_8005670C_5730C(&((MBModel*)BoardPlayerGet(-1)->unk_24)->rot);
+                        MBPlayerMotionSet(-1, 5, 0);
+                        HuPrcSleep(5);
+                        func_80079718_7A318(0x103, gPlayers[gw->current_player_index].character);
+                        HuPrcSleep(45);
+                    } else {
+                        total = func_80109374_2CE864_name_43(-1);
+                        func_80109234_2CE724_name_43(model);
+                        switch (total) {
+                            case 1:
+                                MBDlgWinExec(0x28, 0x42);
+                                break;
+                            case 2:
+                                MBDlgWinExec(0x28, 0x41);
+                                break;
+                            case 3:
+                                MBDlgWinExec(0x28, 0x40);
+                                break;
+                        }
+                        while (total != 0) {
+                            if (total == 1) {
+                                D_80113B54_2D9044_name_43 = 1;
+                                func_80103968_2C8E58_name_43(model);
+                                D_80113B54_2D9044_name_43 = 0;
+                            } else {
+                                func_80103D48_2C9238_name_43(model);
+                            }
+                            total--;
+                        }
+                        if (gPlayers[gw->current_player_index].stars >= 100) {
+                            gPlayers[gw->current_player_index].stars = 99;
+                        }
+                    }
+                    break;
+                case 2:
+                    func_801092D4_2CE7C4_name_43(model);
+                    MBDlgWinExec(0x28, 0x3E);
+                    break;
+                case 3:
+                    func_80103DB0_2C92A0_name_43();
+                    goto menu;
+            }
+        }
+        if (choice != 2) {
+            func_801092D4_2CE7C4_name_43(model);
+        }
+        func_8005670C_5730C(&model->rot);
+        MBModelKill(model);
+    }
+    func_8004655C_4715C(gw->current_player_index);
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+    HuPrcChildWatch();
+}
 
 void func_80113460_2D8950_name_43(void) {
     func_80020070_20C70(2);
