@@ -2695,6 +2695,141 @@ f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
 #endif
 
+/* Airborne probe: lands the sled when the ground comes up under it; places its shadow
+   (MP1 func_800F9A8C). */
+// argument setup order around both func_80006F34 calls, as in 8010AF5C
+#ifdef NON_MATCHING
+f32 func_8010B630_19A1D0_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z, f32 oldY) {
+    Vec4f probe;
+    Vec3f n;
+    Vec3f n2;
+    BRWork* work;
+    BRGround* gw;
+    ColVtx* verts;
+    u16* tri;
+    Vec3f* normal;
+    f32 speed;
+    f32 nx;
+    f32 nz;
+    f32 floorY;
+    f32 shadowY;
+    f32 h;
+    f32 s;
+    s16 mdl;
+
+    work = obj->unk_50;
+    work->unk_54 = -1;
+    work->unk_53 = -1;
+    speed = work->unk_40 * work->unk_4C;
+    nx = x + HuMathSin(work->unk_3C) * speed + D_800F94A0_FA0A0;
+    nz = z + func_800B7890_B8490(work->unk_3C) * speed + D_80101308_101F08;
+    shadowY = -65536.0f;
+    floorY = -65536.0f;
+    if (func_801038C4_192464_BobsledRun(obj, nx, y, nz) != 2) {
+        func_8010AC18_1997B8_BobsledRun(obj);
+        speed = work->unk_40;
+        nx = x + HuMathSin(work->unk_3C) * speed;
+        nz = z + func_800B7890_B8490(work->unk_3C) * speed;
+        probe.x = nx + D_800F94A0_FA0A0;
+        probe.y = y;
+        probe.z = nz + D_80101308_101F08;
+        probe.w = work->unk_48;
+        func_80006F34_7B34(obj, &probe, 0, 0);
+        func_8010AC18_1997B8_BobsledRun(obj);
+        probe.x = nx + D_800F94A0_FA0A0;
+        probe.y = y;
+        probe.z = nz + D_80101308_101F08;
+        if (!(((u8*)work)[D_800BF794_C0394] & 1)) {
+            gw = D_800FC7B0_FD3B0[D_800BF794_C0394]->unk_50;
+            if (gw->unk_06 & 0x1A) {
+                if (func_8000DC10_E810(&probe, gw) == 1) {
+                    h = gw->unk_14;
+                    if (floorY < h && h < y + 150.0f) {
+                        floorY = h;
+                        D_800BF798_C0398 = D_800BF794_C0394;
+                        if (shadowY < floorY && shadowY < y + 35.0f) {
+                            shadowY = floorY;
+                            n.x = 0.0f;
+                            n.y = 1.0f;
+                            n.z = 0.0f;
+                            normal = &n;
+                        }
+                    }
+                }
+            } else {
+                mdl = D_800FC7B0_FD3B0[D_800BF794_C0394]->model[0];
+                verts = D_800FC834_FD434[mdl].hmf->unk54;
+                func_8002F2C4_2FEC4(mdl, D_800F9D30_FA930, func_80005110_5D10, &probe);
+                for (tri = func_8002F848_30448(D_800F9D30_FA930); tri != NULL; tri = func_8002F848_30448(D_800F9D30_FA930)) {
+                    h = func_8002DBA4_2E7A4(nx + D_800F94A0_FA0A0, y, nz + D_80101308_101F08, verts, tri);
+                    if (floorY < h && h < y + 150.0f) {
+                        floorY = h;
+                        D_800BF798_C0398 = D_800BF794_C0394;
+                    }
+                    if (shadowY < h && shadowY < y + 35.0f) {
+                        shadowY = h;
+                        func_8002DA3C_2E63C(&verts[(s16)tri[1]], &verts[(s16)tri[2]], &verts[(s16)tri[3]], &n);
+                        normal = &n;
+                    }
+                }
+                if (floorY == -65536.0f) {
+                    floorY = -65536.0f;
+                }
+            }
+        }
+        h = func_800023CC_2FCC(obj, nx + D_800F94A0_FA0A0, y, nz + D_80101308_101F08, &n2);
+        if (floorY < h && h < y + 150.0f) {
+            floorY = h;
+        } else {
+            work->unk_53 = -1;
+        }
+        if (shadowY < h && h < y + 150.0f) {
+            shadowY = h;
+            normal = &n2;
+        }
+        if (floorY == -65536.0f) {
+            shadowY = -65536.0f;
+            work->unk_4C = 0.5f;
+            if (work->unk_38 < 0.0f) {
+                work->unk_38 = 0.0f;
+            }
+            work->unk_53 = -1;
+        } else if (y < floorY) {
+            work->unk_53 = D_800BF798_C0398;
+            y = func_80003910_4510(obj, floorY);
+            work->unk_38 = 1000.0f;
+            work->unk_50 &= 0xFFF7;
+        } else {
+            work->unk_53 = -1;
+        }
+    } else {
+        probe.x = nx + D_800F94A0_FA0A0;
+        probe.y = y;
+        probe.z = nz + D_80101308_101F08;
+        probe.w = work->unk_48;
+        func_80006F34_7B34(obj, &probe, 0, 0);
+    }
+    if (obj->model[1] != 0) {
+        if (shadowY != -65536.0f) {
+            func_80029714_2A314(obj->model[1], nx, shadowY, nz);
+            shadowY = y - shadowY;
+            if (shadowY > 200.0f) {
+                s = 1.5f;
+            } else {
+                s = 2.0f - fabsf(shadowY) / 2000.0f;
+            }
+            func_800297E8_2A3E8(obj->model[1], s, s, s);
+            func_8003C984_3D584(obj->model[1], normal);
+            func_800298A4_2A4A4(obj->model[1], 4, 0);
+        } else {
+            func_800298A4_2A4A4(obj->model[1], 4, 4);
+        }
+    }
+    work->unk_90.x = work->unk_90.y = work->unk_90.z = 0.0f;
+    return y;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010B630_19A1D0_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010BD18_19A8B8_BobsledRun);

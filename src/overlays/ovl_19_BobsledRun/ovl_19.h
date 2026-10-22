@@ -385,6 +385,7 @@ void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 arg1);
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 f64 fabs(f64);
+f32 fabsf(f32);
 void func_800797DC_7A3DC(s16 sfx, s16 player);
 extern s16 D_800FD7FC_FE3FC; /* MP1 D_800F370C */
 extern f32 D_8010C0D0_19AC70_BobsledRun; /* strongest shove, team 0 */
@@ -430,6 +431,8 @@ void func_8002F2C4_2FEC4(s16 model, s32* list, void* filter, void* probe); /* co
 u16* func_8002F848_30448(s32* list); /* next face, NULL at the end */
 f32 func_8002DBA4_2E7A4(f32 x, f32 y, f32 z, ColVtx* verts, u16* tri); /* height on a face */
 void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec3f* n); /* face normal */
+f32 func_80003910_4510(omObjData* obj, f32 y); /* landing height (MP1 func_800006E4) */
+void func_8003C984_3D584(s16 model, Vec3f* normal); /* align the shadow (MP1 func_80037178) */
 f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
