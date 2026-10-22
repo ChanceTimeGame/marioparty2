@@ -1466,9 +1466,59 @@ void func_801078D0_2C5850_PirateDuel(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107D00_2C5C80_PirateDuel);
+/* Creates the streak effect (4F's func_8010D248/func_8010D4D8 for one slot): its object
+   D_8010A100 (func_80108000), sixteen streaks, vertices and display lists per frame buffer. */
+void func_80107D00_2C5C80_PirateDuel(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107E20_2C5DA0_PirateDuel);
+    D_8010A100_2C8080_PirateDuel = omAddObj(0x1F4, 1, 0, -1, func_80108000_2C5F80_PirateDuel);
+    D_8010A100_2C8080_PirateDuel->unk_50 = func_80027154_27D54(16 * sizeof(PdStreak), 0x7918);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        D_8010A0C0_2C8040_PirateDuel[i] = func_80027154_27D54(48 * sizeof(Vtx), 0x7918);
+        D_8010A0E0_2C8060_PirateDuel[i] = func_80027154_27D54(114 * sizeof(Gfx), 0x7918);
+    }
+    func_80107E20_2C5DA0_PirateDuel();
+    D_8010A100_2C8080_PirateDuel->model[0] = func_80027FA4_28BA4(0x684, D_8010A0E0_2C8060_PirateDuel[D_800FDBE0_FE7E0], 4);
+    D_8010A100_2C8080_PirateDuel->work[0] = 0;
+}
+
+/* The streaks' display lists: 16 shaded triangles (4F's func_8010D528). */
+void func_80107E20_2C5DA0_PirateDuel(void) {
+    Gfx* gfx;
+    Vtx* vtx;
+    s32 i;
+    s32 rest;
+    s32 n;
+    s32 base;
+    s32 k;
+
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        gfx = D_8010A0E0_2C8060_PirateDuel[i];
+        vtx = D_8010A0C0_2C8040_PirateDuel[i];
+        rest = 48;
+        gDPPipeSync(gfx++);
+        gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+        gDPSetRenderMode(gfx++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+        gSPClearGeometryMode(gfx++, G_LIGHTING);
+        gDPSetCombineMode(gfx++, G_CC_SHADE, G_CC_SHADE);
+        gSPTexture(gfx++, 0, 0x8000, 0, G_TX_RENDERTILE, G_OFF);
+        base = 0;
+        do {
+            n = rest;
+            if (rest >= 30) {
+                n = 30;
+            }
+            rest -= n;
+            gSPVertex(gfx++, &vtx[base], n, 0);
+            for (k = 0; k < n; k += 3) {
+                gSP1Triangle(gfx++, k, k + 1, k + 2, 0);
+            }
+            base += n;
+        } while (rest != 0);
+        gDPPipeSync(gfx++);
+        gSPEndDisplayList(gfx++);
+    }
+}
 
 /* The streak effect's update (4F's func_8010D6FC): sixteen coloured streaks fly out from the
    object and fade; the effect object is D_8010A100 (one slot, unlike 4F's four).

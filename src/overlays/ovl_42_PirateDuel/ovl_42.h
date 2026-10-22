@@ -174,6 +174,8 @@ void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light co
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
 void func_80042E44_43A44(Vec* v, f32 angle); /* rotate v about y */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
+s16 func_80027FA4_28BA4(u32, void*, u8);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 
