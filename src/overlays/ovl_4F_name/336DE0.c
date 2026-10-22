@@ -599,7 +599,9 @@ void func_80106198_338DD8_name_4F(omObjData* obj) {
     work->model->pos.x += step * work->dx;
     work->model->pos.z += step * work->dz;
     work->model->jumpY += work->vel;
-    angle = func_80042BE0_437E0(&work->model->rot);
+    /* Retail quirk: this file called func_80042BE0 (which returns f32) unprototyped, so it
+       converts whatever is in v0; on the host this is garbage. */
+    angle = ((s32 (*)(Vec*))func_80042BE0_437E0)(&work->model->rot);
     work->model->obj->rot.x = func_800B7890_B8490(angle) * work->tilt;
     work->model->obj->rot.z = HuMathSin(angle) * work->tilt;
     work->tilt -= work->tiltStep;
@@ -1226,11 +1228,103 @@ void func_80107FC8_33AC08_name_4F(void) {
     MBModelDispOff(D_80110560_3431A0_name_4F);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801084F4_33B134_name_4F);
+/* Board 1, each frame of the walk off: at four frames of the carrier's motion (D_8010FED4) a
+   spark (func_8010DA90 on D_80110578) at the carrier's offset D_8010FEA4[i], a sound, and both
+   models lit from it for four frames. */
+void func_801084F4_33B134_name_4F(void) {
+    Vec dir;
+    Vec pos;
+    MBModel* model;
+    s32 idx;
+    s32 i;
+    f32 t;
+    f32 angle;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80108900_33B540_name_4F);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    idx = -1;
+    t = func_80029CE4_2A8E4(*D_80110580_3431C0_name_4F->obj->model);
+    for (i = 0; i < 4; i++) {
+        if (D_8010FED4_342B14_name_4F[i] <= t && D_8010FEE4_342B24_name_4F[i] == 0) {
+            idx = i;
+            D_8010FEE4_342B24_name_4F[i] = 1;
+        }
+    }
+    if (t < D_8010FED4_342B14_name_4F[3] && D_8010FEE4_342B24_name_4F[3] == 1) {
+        for (i = 0; i < 4; i++) {
+            D_8010FEE4_342B24_name_4F[i] = 0;
+        }
+    }
+    if (D_8010FEF4_342B34_name_4F == 0 && idx >= 0) {
+        PlaySound((s16)D_8010FC10_342850_name_4F[rand8() & 3]);
+        angle = func_80042BE0_437E0(&D_80110580_3431C0_name_4F->rot);
+        pos.x = D_8010FEA4_342AE4_name_4F[idx].x;
+        pos.y = D_8010FEA4_342AE4_name_4F[idx].y;
+        pos.z = D_8010FEA4_342AE4_name_4F[idx].z;
+        func_80042E44_43A44(&pos, angle);
+        pos.x += D_80110580_3431C0_name_4F->pos.x;
+        pos.y += D_80110580_3431C0_name_4F->pos.y;
+        pos.z += D_80110580_3431C0_name_4F->pos.z;
+        func_8010DA90_3406D0_name_4F(D_80110578_3431B8_name_4F, pos.x, pos.y, pos.z, 9);
+        D_8010FEF4_342B34_name_4F = 4;
+        dir.x = D_8010FEA4_342AE4_name_4F[idx].x;
+        dir.y = D_8010FEA4_342AE4_name_4F[idx].y;
+        dir.z = D_8010FEA4_342AE4_name_4F[idx].z;
+        MBVecNormalize(&dir);
+        func_80042E44_43A44(&dir, angle);
+        func_8002D2B4_2DEB4(*D_80110580_3431C0_name_4F->obj->model, dir.x, dir.y, dir.z);
+        func_8002D274_2DE74(*D_80110580_3431C0_name_4F->obj->model, 0xF0, 0x96, 0x50);
+        dir.x = D_80110580_3431C0_name_4F->pos.x + D_8010FEA4_342AE4_name_4F[idx].x - model->pos.x;
+        dir.y = D_80110580_3431C0_name_4F->pos.y + D_8010FEA4_342AE4_name_4F[idx].y - model->pos.y;
+        dir.z = D_80110580_3431C0_name_4F->pos.z + D_8010FEA4_342AE4_name_4F[idx].z - model->pos.z;
+        MBVecNormalize(&dir);
+        func_80042E44_43A44(&dir, func_80042BE0_437E0(&model->rot) - 180.0f);
+        func_8002D2B4_2DEB4(*model->obj->model, dir.x, dir.y, dir.z);
+        func_8002D274_2DE74(*model->obj->model, 0xF0, 0x96, 0x50);
+    }
+    if (D_8010FEF4_342B34_name_4F != 0 && --D_8010FEF4_342B34_name_4F == 0) {
+        func_8002D274_2DE74(*D_80110580_3431C0_name_4F->obj->model, 0, 0, 0);
+        func_8002D274_2DE74(*OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F)->obj->model, 0, 0, 0);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801089AC_33B5EC_name_4F);
+/* Board 3's scene (the setup is func_801089AC), at 0.7 speed; most of it is fork C's and D's. */
+void func_80108900_33B540_name_4F(void) {
+    D_8010105C_101C5C = D_80101300_101F00 = 0.7f;
+    func_8005E260_5EE60(D_80110564_3431A4_name_4F);
+    func_80020D20_21920(4);
+    func_80108B30_33B770_name_4F();
+    func_8010A150_33CD90_name_4F();
+    func_8010A4A8_33D0E8_name_4F();
+    func_8010A6A0_33D2E0_name_4F();
+    func_8010A8AC_33D4EC_name_4F();
+    func_8010ADA0_33D9E0_name_4F();
+    func_8010AED4_33DB14_name_4F();
+    func_8010B4E8_33E128_name_4F();
+    func_8010B620_33E260_name_4F();
+    func_8010C7CC_33F40C_name_4F();
+    D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
+}
+
+/* Board 3's setup: only the winner's model (board 3's list), and the host's. */
+void func_801089AC_33B5EC_name_4F(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (i == D_80110564_3431A4_name_4F) {
+            MBPlayerModelCreate(i, D_80110008_342C48_name_4F[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+            func_80043DAC_449AC(OVL4F_PLAYER_MODEL(i));
+            gPlayers[i].flags |= 2;
+            MBMotionSet(OVL4F_PLAYER_MODEL(i), 0, 2);
+            func_8002D1EC_2DDEC(*OVL4F_PLAYER_MODEL(i)->obj->model, 1);
+            MBModelDispOff(OVL4F_PLAYER_MODEL(i));
+        }
+    }
+    D_80110560_3431A0_name_4F = MBModelFileCreate(0x8001C, 13, 0.8f, 0.8f, D_80110020_342C60_name_4F);
+    func_8005AB50_5B750(D_80110560_3431A0_name_4F, 2, 8, D_80110068_342CA8_name_4F);
+    func_80043DAC_449AC(D_80110560_3431A0_name_4F);
+    MBModelDispOff(D_80110560_3431A0_name_4F);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80108B30_33B770_name_4F);
 

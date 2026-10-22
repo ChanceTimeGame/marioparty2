@@ -219,8 +219,9 @@ typedef struct Ovl4FBounceWork {
 extern f32 D_80101300_101F00;
 extern f32 D_8010105C_101C5C;
 f32 HuVecDistance(Vec* a, Vec* b);
-/* 437E0.c returns f32; retail 4F calls it unprototyped and converts v0 (see func_80106198). */
-s32 func_80042BE0_437E0(Vec*);
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation; func_80106198 calls it as s32 */
+void func_80042E44_43A44(Vec* v, f32 angle); /* rotate v about y */
+void func_80020D20_21920(s16 arg0);
 void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
 void func_8002D124_2DD24(s16 index);
 extern u32* D_8010FD10_342950_name_4F[6]; /* board 1, per character: MBPlayerModelCreate list */
@@ -244,7 +245,7 @@ extern Vec D_8010FE20_342A60_name_4F;
 extern Vec D_8010FE2C_342A6C_name_4F;
 extern Vec D_8010FE38_342A78_name_4F;
 extern Vec D_8010FE44_342A84_name_4F;
-extern s32 D_80110578_3431B8_name_4F;
+extern omObjData* D_80110578_3431B8_name_4F; /* board 1's spark (func_8010D4D8) */
 extern s32 D_8010FC10_342850_name_4F[4]; /* sounds; retail reads the low halves (PlaySound((s16)w)) */
 extern Vec D_8010FE50_342A90_name_4F;
 extern Vec D_8010FE5C_342A9C_name_4F;
@@ -253,6 +254,13 @@ extern Vec D_8010FE74_342AB4_name_4F;
 extern Vec D_8010FE80_342AC0_name_4F;
 extern Vec D_8010FE8C_342ACC_name_4F;
 extern Vec D_8010FE98_342AD8_name_4F;
+extern Vec D_8010FEA4_342AE4_name_4F[4];  /* spark offsets from the carrier */
+extern f32 D_8010FED4_342B14_name_4F[4];  /* their motion frames; splat's D_8010FEE0 is [3] */
+extern s32 D_8010FEE4_342B24_name_4F[4];  /* their done flags; splat's D_8010FEF0 is [3] */
+extern s32 D_8010FEF4_342B34_name_4F;     /* lit frames left */
+extern u32* D_80110008_342C48_name_4F[6]; /* board 3, per character: MBPlayerModelCreate list */
+extern u32 D_80110020_342C60_name_4F[];
+extern s32 D_80110068_342CA8_name_4F;
 void func_80029C74_2A874(s16, f32);
 extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
 s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* func_8005A5E8, rotation discarded */
@@ -334,10 +342,10 @@ void func_8010D15C_33FD9C_name_4F(omObjData* obj);
 s32 func_8010D210_33FE50_name_4F(void);
 void func_8010D248_33FE88_name_4F(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8010D3E8_340028_name_4F(s32 arg0);
-s32 func_8010D4D8_340118_name_4F(void);
+omObjData* func_8010D4D8_340118_name_4F(void); /* 4F-B: from the asm (an object) */
 s32 func_8010D528_340168_name_4F(omObjData* obj);
 void func_8010D6FC_34033C_name_4F(omObjData* obj);
-void func_8010DA90_3406D0_name_4F(void);
+void func_8010DA90_3406D0_name_4F(omObjData* obj, f32 x, f32 y, f32 z, u8 arg4); /* 4F-B: from the asm */
 s32 func_8010DD7C_3409BC_name_4F(void);
 s32 func_8010DDCC_340A0C_name_4F(omObjData* obj);
 void func_8010DFCC_340C0C_name_4F(omObjData* obj);
