@@ -1175,7 +1175,158 @@ void func_801060C8_21C4B8_BombsAway(omObjData* obj) {
     func_8000BF24_CB24(obj, 0.0f, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106228_21C618_BombsAway);
+/* The platform's update (MP1 func_800F997C): it slides in at the start, tilts towards the weight
+   of the players on it (func_8010770C adds them), bobs and wobbles, shakes after a hit, then
+   rebuilds its matrix, inverse and surface plane. New in MP2: it stops at z 70 (MP1 100), and a
+   hit strength above 1 decays twice as fast. */
+void func_80106228_21C618_BombsAway(omObjData* obj) {
+    Matrix4f m;
+    f32 p0[3];
+    f32 p1[3];
+    f32 p2[3];
+    f32 out[3];
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    f32 sx;
+    f32 sz;
+    f32 a;
+    f32 t;
+    s32 i;
+    s32 j;
+
+    if (D_8010D940_223D30_BombsAway.unk_00 == 0 && D_8010D940_223D30_BombsAway.unk_04 >= 61) {
+        if (D_8010DB68_223F58_BombsAway > 70.0) {
+            D_8010DB68_223F58_BombsAway = obj->trans.z = D_8010DB68_223F58_BombsAway - 10.0;
+        }
+    }
+    if (s->unk_130 != 0) {
+        sx = sz = 0.0f;
+        for (i = 0; i < s->unk_130; i++) {
+            /* Retail adds the weight's z where the plane's c * z belongs. */
+            func_801088FC_21ECEC_BombsAway(s->unk_90, s->unk_134[i].unk_00,
+                                           -(s->unk_110[0] * s->unk_134[i].unk_00 + s->unk_110[2] +
+                                             s->unk_134[i].unk_08 - s->unk_110[3]) /
+                                               s->unk_110[1],
+                                           s->unk_134[i].unk_08, out);
+            t = s->unk_134[i].unk_04 / 4.0;
+            sx += t * out[0];
+            sz += t * out[2];
+        }
+        t = func_80108A4C_21EE3C_BombsAway(sx, sz) + 90.0;
+        t -= (s32)(t / 360.0f) * 360;
+        if (t < 0.0) {
+            t += 360.0;
+        }
+        t -= s->unk_0C;
+        if (t >= 0.0f) {
+            if (t > 180.0) {
+                t -= 360.0;
+            }
+        } else if (t < -180.0) {
+            t += 360.0;
+        }
+        t = s->unk_0C + t * 0.2;
+        if (t >= 360.0) {
+            t -= 360.0;
+        } else if (t < 0.0) {
+            t += 360.0;
+        }
+        s->unk_0C = t;
+        t = sqrtf(sx * sx + sz * sz) / 300.0;
+        if (t > 1.0) {
+            t = 1.0f;
+        } else if (t < -1.0) {
+            t = -1.0f;
+        }
+        s->unk_10 += (t - s->unk_10) * 0.2;
+        s->unk_130 = 0;
+    } else {
+        s->unk_10 -= s->unk_10 * 0.1;
+    }
+    if (s->unk_20 > 0.0f) {
+        s->unk_14 = (f32)(s->unk_14 + 6.0) - (s32)((f32)(s->unk_14 + 6.0) / 360.0f) * 360;
+        if (s->unk_14 < 0.0) {
+            s->unk_14 += 360.0;
+        }
+    }
+    s->unk_18 = (f32)(s->unk_18 + 5.0) - (s32)((f32)(s->unk_18 + 5.0) / 360.0f) * 360;
+    if (s->unk_18 < 0.0) {
+        s->unk_18 += 360.0;
+    }
+    if (s->unk_1C > 1.0) {
+        s->unk_1C -= 0.02;
+        if (s->unk_1C < 0.0) {
+            s->unk_1C = 0.0f;
+        }
+    } else if (s->unk_1C > 0.0) {
+        s->unk_1C -= 0.01;
+        if (s->unk_1C < 0.0) {
+            s->unk_1C = 0.0f;
+        }
+    }
+    s->unk_28 -= 0.02;
+    if (s->unk_28 < 0.0) {
+        s->unk_28 = 0.0f;
+    }
+    if (s->unk_2C != 0) {
+        s->unk_2C--;
+    }
+    s->unk_00 = (f32)(s->unk_00 + 2.0) - (s32)((f32)(s->unk_00 + 2.0) / 360.0f) * 360;
+    if (s->unk_00 < 0.0) {
+        s->unk_00 += 360.0;
+    }
+    s->unk_38.y = HuMathSin(s->unk_00) * 20.0 + -20.0;
+    obj->trans.y = s->unk_38.y + ((f32)(D_8010D944_223D34_BombsAway & 1) - 0.5) * 0.2 * 100.0 * s->unk_28;
+    s->unk_04 += 2.0;
+    if (s->unk_04 >= 360.0) {
+        s->unk_04 -= 360.0;
+    }
+    s->unk_08 += 1.0;
+    if (s->unk_08 >= 360.0) {
+        s->unk_08 -= 360.0;
+    }
+    a = HuMathSin(s->unk_08) * 2.0;
+    func_800B1CC0_B28C0(s->unk_50, a, func_800B7890_B8490(s->unk_04), 0.0f, HuMathSin(s->unk_04));
+    s->unk_50[3][3] = 1.0f;
+    a = s->unk_10 * 8.0;
+    func_800B1CC0_B28C0(m, a, func_800B7890_B8490(s->unk_0C), 0.0f, HuMathSin(s->unk_0C));
+    m[3][3] = 1.0f;
+    func_800B6410_B7010(m, s->unk_50, s->unk_50);
+    a = HuMathSin(s->unk_18) * 20.0;
+    func_800B1CC0_B28C0(m, a * s->unk_1C, func_800B7890_B8490(s->unk_14), 0.0f, HuMathSin(s->unk_14));
+    m[3][3] = 1.0f;
+    func_800B6410_B7010(m, s->unk_50, m);
+    func_800B1F50_B2B50((f32*)s->unk_50, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800B6410_B7010(m, s->unk_50, s->unk_50);
+    func_80108B54_21EF44_BombsAway(s->unk_50, (Vec*)p0);
+    obj->rot.x = s->unk_44.x = p0[0];
+    obj->rot.y = s->unk_44.y = p0[1];
+    obj->rot.z = s->unk_44.z = p0[2];
+    for (j = 0; j < 4; j++) {
+        s->unk_D0[j][0] = s->unk_90[j][0];
+        s->unk_D0[j][1] = s->unk_90[j][1];
+        s->unk_D0[j][2] = s->unk_90[j][2];
+        s->unk_D0[j][3] = s->unk_90[j][3];
+    }
+    func_800B1F50_B2B50((f32*)m, -obj->trans.x, -obj->trans.y, -obj->trans.z);
+    func_80025F00_26B00(s->unk_50, s->unk_90);
+    func_800B6410_B7010(m, s->unk_90, s->unk_90);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 0.0f, s->unk_30, 0.0f, p0);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 1.0f, s->unk_30, 0.0f, p1);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 0.0f, s->unk_30, 1.0f, p2);
+    for (j = 0; j < 3; j++) {
+        p1[j] -= p0[j];
+        p2[j] = p0[j] - p2[j];
+    }
+    s->unk_110[0] = p1[1] * p2[2] - p1[2] * p2[1];
+    s->unk_110[1] = p1[2] * p2[0] - p1[0] * p2[2];
+    s->unk_110[2] = p1[0] * p2[1] - p1[1] * p2[0];
+    s->unk_110[3] = p0[0] * s->unk_110[0] + p0[1] * s->unk_110[1] + p0[2] * s->unk_110[2];
+    s->unk_120 = 1.0 / sqrtf(s->unk_110[0] * s->unk_110[0] + s->unk_110[1] * s->unk_110[1] +
+                             s->unk_110[2] * s->unk_110[2]);
+    s->unk_124.x = s->unk_110[0] * s->unk_120;
+    s->unk_124.y = s->unk_110[1] * s->unk_120;
+    s->unk_124.z = s->unk_110[2] * s->unk_120;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106D78_21D168_BombsAway);
 

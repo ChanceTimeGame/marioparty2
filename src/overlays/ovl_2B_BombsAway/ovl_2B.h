@@ -444,6 +444,8 @@ void func_801082EC_21E6DC_BombsAway(void);
 
 /* MG2B-B */
 extern Vec D_8010DB60_223F50_BombsAway; /* = D_8010DB28.unk_38 (own label in retail) */
+extern s16 D_8010D944_223D34_BombsAway; /* = D_8010D940.unk_04 */
+void func_80025F00_26B00(Matrix4f src, Matrix4f dst); /* MP1 MtxInv */
 extern f32 D_8010DB58_223F48_BombsAway; /* = D_8010DB28.unk_30 */
 extern f32 D_8010DB5C_223F4C_BombsAway; /* = D_8010DB28.unk_34 */
 extern f32 D_8010DB64_223F54_BombsAway; /* = D_8010DB28.unk_38.y */
