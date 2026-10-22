@@ -204,6 +204,9 @@ extern Vec D_80112424_352C84_name_50[4];
 extern Vec D_80112454_352CB4_name_50;
 extern Vec D_80112460_352CC0_name_50;
 extern Vec D_8011246C_352CCC_name_50;
+extern Vec D_80112478_352CD8_name_50;    /* the host, part 4 */
+extern Vec D_80112484_352CE4_name_50[3]; /* the other players, part 4 */
+extern Vec D_801124A8_352D08_name_50;
 
 /* ---- overlay .bss (asm) ---- */
 
