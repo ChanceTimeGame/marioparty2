@@ -963,7 +963,60 @@ void func_80105C38_3100E8_name_49(void) {
     omOvlReturnEx(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80105CE8_310198_name_49);
+void func_80105CE8_310198_name_49(void) {
+    s32 i;
+    SpaceData* from;
+    Vec dir;
+
+    omInitObjMan(0xA0, 0x3C);
+    func_80026DAC_279AC(1, 100, 100, 100);
+    func_80026DAC_279AC(2, 200, 200, 200);
+    func_80062E10_63A10(0x25, 0x45, 0x2A, 0);
+    func_80055928_56528(D_80112C88_31D138_name_49);
+    func_80055980_56580(D_80112C9C_31D14C_name_49);
+    from = GetSpaceData(0x83);
+    func_80056658_57258(&from->coords, &GetSpaceData(0x65)->coords, &dir);
+    MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    from = GetSpaceData(0x8C);
+    func_80056658_57258(&from->coords, &GetSpaceData(0x64)->coords, &dir);
+    MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    func_8004D60C_4E20C(0, func_8010ABC0_315070_name_49);
+    func_8004D60C_4E20C(1, func_8010B850_315D00_name_49);
+    func_8004D60C_4E20C(8, func_8010BBEC_31609C_name_49);
+    func_8004D60C_4E20C(2, func_8010BC5C_31610C_name_49);
+    func_8004D60C_4E20C(3, func_8010CFCC_31747C_name_49);
+    func_8004D60C_4E20C(4, func_8010D544_3179F4_name_49);
+    func_8004D60C_4E20C(5, func_8010D7B4_317C64_name_49);
+    func_8004D60C_4E20C(6, func_8010C140_3165F0_name_49);
+    func_8004D60C_4E20C(7, func_8010CB68_317018_name_49);
+    func_8004D60C_4E20C(9, func_8010D9E8_317E98_name_49);
+    func_8004D60C_4E20C(10, func_8010DCFC_3181AC_name_49);
+    func_8004D60C_4E20C(12, func_8010E370_318820_name_49);
+    func_8004D60C_4E20C(11, func_8010E5A4_318A54_name_49);
+    func_8004D60C_4E20C(13, func_8010EAB4_318F64_name_49);
+    func_80044D98_45998(func_80112604_31CAB4_name_49);
+    for (i = 0; i < 7; i++) {
+        func_800542E8_54EE8(i, D_80112C68_31D118_name_49[i]);
+    }
+    if (_CheckFlag(0x4D)) {
+        _ClearFlag(0x4D);
+        if (D_800F8D12_F9912 != 0) {
+            func_80102A44_30CEF4_name_49();
+        } else {
+            func_80102AB0_30CF60_name_49();
+        }
+    }
+    func_80102B54_30D004_name_49();
+    func_80106210_3106C0_name_49();
+    func_80106188_310638_name_49();
+    func_80106460_310910_name_49();
+    func_80106740_310BF0_name_49();
+    func_80106904_310DB4_name_49();
+    func_80106AD0_310F80_name_49();
+    func_80106B0C_310FBC_name_49();
+    func_80106B84_311034_name_49();
+    func_80106D34_3111E4_name_49();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80105F94_310444_name_49);
 

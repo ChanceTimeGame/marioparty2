@@ -520,6 +520,9 @@ extern s32 D_80114A80_31EF30_name_49;
 extern u8* D_80114A84_31EF34_name_49;
 
 /* data the copied twins use */
+void MBMasuArrowAngleAdd(f32); /* 49-A: as ovl_41.h (unprototyped it passes a double) */
+extern s16 D_80112C88_31D138_name_49[10]; /* setup space list, -1 ended */
+extern s16 D_80112C9C_31D14C_name_49[]; /* setup space list, -1 ended */
 extern DecisionTreeNonLeafNode D_80113A74_31DF24_name_49[]; /* item choice CPU trees, by func_80111300's arg0 */
 extern DecisionTreeNonLeafNode D_80113A8C_31DF3C_name_49[];
 extern DecisionTreeNonLeafNode D_80113ABC_31DF6C_name_49[];
