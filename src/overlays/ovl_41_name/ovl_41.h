@@ -508,7 +508,7 @@ s32 func_801089E4_2B72A4_name_41(s32 player);
 void func_801092C0_2B7B80_name_41(void);
 s32 func_801092E4_2B7BA4_name_41(s32 player);
 void func_8010A020_2B88E0_name_41(void);
-void func_8010A174_2B8A34_name_41(void); /* twin func_800491B4_49DB4 (main) */
+void func_8010A174_2B8A34_name_41(MBModel* parent);
 void func_8010A1B0_2B8A70_name_41(void);
 void func_8010AB8C_2B944C_name_41(void); /* twin func_80017228_17E28 (main) */
 void func_8010ABA8_2B9468_name_41(void); /* twin func_80061734_62334 (main) */
@@ -569,5 +569,17 @@ extern Vec2f3E D_80111090_2BF950_name_41[4];
 extern s32 D_80111F7C_2C083C_name_41;
 extern u8* D_80111F80_2C0840_name_41;
 extern MBModel* D_80111F84_2C0844_name_41;
+extern u8 D_80110E84_2BF744_name_41[4][3]; /* per player: the other players */
+extern Unk3EStealRange D_80110F28_2BF7E8_name_41[24]; /* turn and coin range -> message */
+extern s16 D_80110F92_2BF852_name_41[];
+
+extern u8 D_80110DF8_2BF6B8_name_41[]; /* by rank */
+extern u8 D_80110E1C_2BF6DC_name_41[][4]; /* shop by turn band, rank */
+extern u8 D_80110E28_2BF6E8_name_41[][3]; /* turn band starts by game length */
+extern u32 D_80110E58_2BF718_name_41[]; /* shop messages */
+extern Unk3EVec2f D_80110E90_2BF750_name_41[4]; /* per player: lost star start */
+extern Unk3EVec2f D_80110EB0_2BF770_name_41[4]; /* per player: lost star velocity */
+extern Unk3ERange D_80110EE8_2BF7A8_name_41[6]; /* turn range -> star price */
+extern Unk3ERange D_80110EFC_2BF7BC_name_41[14]; /* press count range -> discount */
 
 #endif
