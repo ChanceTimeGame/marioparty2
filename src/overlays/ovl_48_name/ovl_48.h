@@ -53,6 +53,9 @@ void HidePlayerHUDVisibility(s32 arg0, s32 arg1);
 void CameraScissorSet(s16 camIndex, RectF* rect);
 void func_80054040_54C40(s16 arg0, s16 arg1); /* camera shake offset */
 void func_800796F0_7A2F0(s16 arg0, s16 arg1); /* sound pitch */
+s32 func_8007975C_7A35C(s16 arg0, s16 arg1); /* a player's looping sound */
+void func_8002D124_2DD24(s16 model);
+double fabs(double);
 void func_8002D0A0_2DCA0(s16 model, u8 alpha);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
@@ -272,8 +275,7 @@ extern Vec D_8010872C_30CACC_name_48; /* splat took it for a string: it is { -21
 extern Vec D_80108738_30CAD8_name_48;
 extern Vec D_80108744_30CAE4_name_48;
 extern Vec D_80108750_30CAF0_name_48[2]; /* the arrows' two columns */
-extern s16 D_80108768_30CB08_name_48;
-extern s16 D_8010876A_30CB0A_name_48[7];
+extern s16 D_80108768_30CB08_name_48[4][2]; /* the A and B prompts' positions, per duelist */
 extern s32 D_80108778_30CB18_name_48;
 extern f32 D_8010877C_30CB1C_name_48[5];
 
@@ -304,15 +306,21 @@ extern s32 D_80108BEC_30CF8C_name_48; /* no referee (flag 0x17 clear) */
 extern s32 D_80108968_30CD08_name_48; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
 extern s32 D_80108970_30CD10_name_48[4]; /* presses, per player */
 extern s16 D_80108990_30CD30_name_48[2][150]; /* per duelist: the frames a CPU presses on */
-extern MBModel* D_80108BF4_30CF94_name_48; /* the referee's hat (scaled away) */
-extern s16 D_80108BF8_30CF98_name_48[2];
+extern s16 D_80108BE8_30CF88_name_48; /* the crash sound */
+extern MBModel* D_80108BF0_30CF90_name_48; /* the referee */
+extern MBModel* D_80108BF4_30CF94_name_48; /* the referee's hat */
+extern s16 D_80108BF8_30CF98_name_48[2]; /* per duelist: the sign model */
+extern s16 D_80108BFC_30CF9C_name_48[2]; /* per duelist: the sign's shadow */
 extern s16 D_80108C00_30CFA0_name_48[6]; /* the six arrow models */
+extern s16 D_80108C0C_30CFAC_name_48; /* the A prompt sprite file */
 extern s16 D_80108C0E_30CFAE_name_48[2]; /* per duelist: the A prompt sprite */
 extern s16 D_80108C12_30CFB2_name_48[2]; /* per duelist: the B prompt sprite */
+extern s16 D_80108C16_30CFB6_name_48; /* the B prompt sprite file */
 extern s16 D_80108C18_30CFB8_name_48[2]; /* per duelist: the mash sound */
 extern s16 D_80108C1C_30CFBC_name_48[2]; /* per duelist: its pitch */
 extern f32 D_80108C20_30CFC0_name_48[6]; /* the arrows' scales */
-extern f32 D_80108C40_30CFE0_name_48[2];
+extern f32 D_80108C38_30CFD8_name_48[2]; /* the signs' x */
+extern f32 D_80108C40_30CFE0_name_48[2]; /* the signs' y rotation */
 extern f32 D_80108C48_30CFE8_name_48;
 
 /* ---- 306BA0.c ---- */
