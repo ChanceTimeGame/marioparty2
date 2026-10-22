@@ -166,6 +166,20 @@ typedef struct PdShrink {
     /* 0x10 */ s32 unk10;
 } PdShrink; /* size 0x14 */
 
+/* Wait for the step flag (D_80109D70) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
+#define PD_WAIT_STEP()                           \
+    while (TRUE) {                               \
+        if (D_80109D70_2C7CF0_PirateDuel != 0) { \
+            break;                               \
+        }                                        \
+        HuPrcVSleep();                           \
+    }
+
+#define PD_WAIT_MESSAGE()                                                     \
+    while (func_80069538_6A138() != 0 && !(func_80069538_6A138() & 2)) {     \
+        HuPrcVSleep();                                                        \
+    }
+
 /* ---- 42 data (asm/data/overlays/ovl_42_PirateDuel/2C7820.data.s) ---- */
 
 extern PdStatusLayout D_801098A0_2C7820_PirateDuel[8];

@@ -115,6 +115,416 @@ void func_80102C14_2C0B94_PirateDuel(void) {
     Hu3DCamUpdateMtx(0);
 }
 
+/* NON_MATCHING: registers only (masked 0, raw 29): retail keeps i * 2 (the hook arrays' index) in s2
+   and the character's table offset in s3, GCC swaps them; everything else matches, the drop loop
+   included (written with gotos: a while/do loop gets its exit test copied to the top or loses the
+   values CSE carries out of it). */
+/* The duel scene's flow: duelists and the referee walk in, the five sword moves are dealt, the opponent
+   and the stake are chosen, then the duel (fork B's processes) decides D_80109DC8: 1 a draw, 2 the
+   challenger wins, 3 the opponent; the winner takes both stakes. */
+#ifdef NON_MATCHING
+void func_80102CA0_2C0C20_PirateDuel(void) {
+    s32 chr;
+    ModelPathWork* work[4];
+    Vec pos[2];
+    s32 counts[3];
+    u32 motions[3] = { 2, 0x800A7, 0x800AA };
+    s32 files[3] = { 0xA01A8, 0xA01A9, 0xA01AA };
+    s32 waits[6] = { 35, 30, 50, 35, 30, 35 };
+    MBModel* model;
+    s16 mes;
+    u16 done;
+    s32 snd;
+    s32 layout;
+    s32 slot;
+    s32 move;
+    s32 i;
+
+    func_80050E00_51A00(11);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80107D00_2C5C80_PirateDuel();
+    for (i = 0; i < 4; i++) {
+        if (D_80109D98_2C7D18_PirateDuel[i] != 0) {
+            chr = gPlayers[i].character;
+
+            MBPlayerModelCreate(i, D_80109AF8_2C7A78_PirateDuel[chr], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 1, 0);
+            PLAYER_MODEL(i)->pos.x = -1000.0f;
+            PLAYER_MODEL(i)->pos.y = 0.0f;
+            PLAYER_MODEL(i)->pos.z = 700.0f;
+            gPlayers[i].flags |= 2;
+            func_80043DAC_449AC(PLAYER_MODEL(i));
+            D_80109DF4_2C7D74_PirateDuel[i] = LoadFormFile(0xA01A2, 0x489);
+            D_80109DFC_2C7D7C_PirateDuel[i] = LoadFormFile(0xD, 0x48D);
+            func_800297E8_2A3E8(D_80109DFC_2C7D7C_PirateDuel[i], D_80109B80_2C7B00_PirateDuel[chr], 1.0f, D_80109B80_2C7B00_PirateDuel[chr]);
+            func_8005AA48_5B648(PLAYER_MODEL(i), "item_hook", D_80109DF4_2C7D74_PirateDuel[i]);
+        }
+    }
+    D_8010A0B4_2C8034_PirateDuel = MBModelFileCreate(0x800A6, 0xD, 1.0f, 1.0f, motions);
+    func_8005AB50_5B750(D_8010A0B4_2C8034_PirateDuel, 1, 0xB, 0x800AD);
+    D_8010A0B4_2C8034_PirateDuel->pos.x = D_80109B14_2C7A94_PirateDuel.x;
+    D_8010A0B4_2C8034_PirateDuel->pos.y = 0.0f;
+    D_8010A0B4_2C8034_PirateDuel->pos.z = D_80109B14_2C7A94_PirateDuel.z;
+    func_80056658_57258(&D_8010A0B4_2C8034_PirateDuel->pos, &D_80109B14_2C7A94_PirateDuel, &D_8010A0B4_2C8034_PirateDuel->rot);
+    if (D_8010A060_2C7FE0_PirateDuel == 0) {
+        D_8010A0B4_2C8034_PirateDuel->jumpY = D_80109B14_2C7A94_PirateDuel.y;
+        D_8010A0B4_2C8034_PirateDuel->jumpVel = 7.5f;
+        D_8010A0B4_2C8034_PirateDuel->jumpAccel = 0.0f;
+        D_8010A0B8_2C8038_PirateDuel = MBModelFileCreate(0xA019D, 0xD, 1.0f, 1.0f, NULL);
+        D_8010A0B8_2C8038_PirateDuel->pos.x = D_80109B14_2C7A94_PirateDuel.x;
+        D_8010A0B8_2C8038_PirateDuel->pos.y = 0.0f;
+        D_8010A0B8_2C8038_PirateDuel->pos.z = D_80109B14_2C7A94_PirateDuel.z;
+        D_8010A0B8_2C8038_PirateDuel->jumpY = D_80109B14_2C7A94_PirateDuel.y;
+        D_8010A0B8_2C8038_PirateDuel->jumpVel = 7.5f;
+        D_8010A0B8_2C8038_PirateDuel->jumpAccel = 0.0f;
+    }
+    /* the five moves: each 0..2, all three used, never three alike in a row */
+    for (i = 0; i < 3; i++) {
+        D_8010A064_2C7FE4_PirateDuel[i] = func_8001A2F8_1AEF8(files[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        counts[i] = 0;
+    }
+    while (counts[0] == 0 || counts[1] == 0 || counts[2] == 0) {
+        for (i = 0; i < 3; i++) {
+            counts[i] = 0;
+        }
+        for (i = 0; i < 5; i++) {
+            D_8010A0A0_2C8020_PirateDuel[i] = -1;
+        }
+        i = 0;
+        move = rand8() % 3;
+        do {
+            slot = rand8() % 5;
+            if (D_8010A0A0_2C8020_PirateDuel[slot] == -1) {
+                if (!(slot < 3 && D_8010A0A0_2C8020_PirateDuel[slot + 1] == move && D_8010A0A0_2C8020_PirateDuel[slot + 2] == move)
+                    && !(slot - 1 < 3U && D_8010A0A0_2C8020_PirateDuel[slot - 1] == move && D_8010A0A0_2C8020_PirateDuel[slot + 1] == move)
+                    && !(slot >= 2 && D_8010A0A0_2C8020_PirateDuel[slot - 1] == move && D_8010A0A0_2C8020_PirateDuel[slot - 2] == move)) {
+                    D_8010A0A0_2C8020_PirateDuel[slot] = move;
+                    counts[move]++;
+                    i++;
+                }
+            }
+            move = (move + 1) % 3;
+        } while (i < 5);
+    }
+    for (i = 0; i < 5; i++) {
+        D_8010A070_2C7FF0_PirateDuel[i] = func_8001AAAC_1B6AC(D_8010A064_2C7FE4_PirateDuel[D_8010A0A0_2C8020_PirateDuel[i]], 0, 1);
+        D_8010A07A_2C7FFA_PirateDuel[i] = func_8001AAAC_1B6AC(D_8010A064_2C7FE4_PirateDuel[D_8010A0A0_2C8020_PirateDuel[i]], 0, 1);
+        espDispOff(D_8010A070_2C7FF0_PirateDuel[i]);
+        espDispOff(D_8010A07A_2C7FFA_PirateDuel[i]);
+    }
+    D_8010A084_2C8004_PirateDuel = func_8001A2F8_1AEF8(0xA01AB);
+    D_8010A086_2C8006_PirateDuel = func_8001A2F8_1AEF8(0xA01AC);
+    for (i = 0; i < 2; i++) {
+        D_8010A088_2C8008_PirateDuel[i] = func_8001AAAC_1B6AC(D_8010A084_2C8004_PirateDuel, 0, 1);
+        D_8010A08C_2C800C_PirateDuel[i] = func_8001AAAC_1B6AC(D_8010A086_2C8006_PirateDuel, 0, 1);
+        func_8001A96C_1B56C(D_8010A08C_2C800C_PirateDuel[i], 0xFF, 0xFF, 0xFF);
+        func_8001A96C_1B56C(D_8010A088_2C8008_PirateDuel[i], 0xE2, 0, 0x7F);
+        espDispOff(D_8010A088_2C8008_PirateDuel[i]);
+        espDispOff(D_8010A08C_2C800C_PirateDuel[i]);
+    }
+    PlayMusic(0x25);
+    InitFadeIn(0, 0x10);
+    if (D_8010A060_2C7FE0_PirateDuel == 0) {
+        /* the referee drops in with his hat */
+        goto drop;
+    fall:
+        HuPrcVSleep();
+    drop:
+        D_8010A0B8_2C8038_PirateDuel->jumpY = D_8010A0B4_2C8034_PirateDuel->jumpY;
+        D_8010A0B4_2C8034_PirateDuel->jumpY = D_8010A0B4_2C8034_PirateDuel->jumpY - D_8010A0B4_2C8034_PirateDuel->jumpVel;
+        if (!(D_8010A0B4_2C8034_PirateDuel->jumpY <= D_8010A0B4_2C8034_PirateDuel->pos.y)) {
+            goto fall;
+        }
+        D_8010A0B4_2C8034_PirateDuel->jumpY = D_8010A0B4_2C8034_PirateDuel->pos.y;
+        func_80105694_2C3614_PirateDuel();
+        layout = (D_80109DA8_2C7D28_PirateDuel == 4) ? 0 : -1;
+        if (D_80109DA8_2C7D28_PirateDuel == 3) {
+            layout = 6;
+        }
+        if (layout != -1) {
+            /* three or four players: the challenger picks the opponent */
+            func_801051DC_2C315C_PirateDuel(layout);
+            PD_WAIT_STEP();
+            PlaySound(0xE8);
+            omAddPrcObj(func_801057B4_2C3734_PirateDuel, 0x12, 0, 0);
+            D_80109D70_2C7CF0_PirateDuel = 0;
+            PD_WAIT_STEP();
+            func_801051DC_2C315C_PirateDuel(1);
+            PD_WAIT_STEP();
+            func_801051DC_2C315C_PirateDuel(2);
+            PD_WAIT_STEP();
+        } else {
+            func_801051DC_2C315C_PirateDuel(7);
+            PD_WAIT_STEP();
+        }
+        MBVsSprCreateY(160.0f, 90.0f);
+        HuPrcSleep(10);
+        D_80109B10_2C7A90_PirateDuel = 1;
+        func_801051DC_2C315C_PirateDuel(3);
+        PD_WAIT_STEP();
+        omAddPrcObj(func_80105A80_2C3A00_PirateDuel, 0x12, 0, 0);
+        D_80109D70_2C7CF0_PirateDuel = 0;
+        PD_WAIT_STEP();
+        func_801051DC_2C315C_PirateDuel(4);
+        MBVsSprKill();
+        PD_WAIT_STEP();
+    }
+    /* the duelists walk to their marks */
+    PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->pos.x = -400.0f;
+    PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->pos.x = 400.0f;
+    MBMotionShiftSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 0, 0, 5, 2);
+    work[0] = func_8005A718_5B318(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 15.0f, 1, D_80109B50_2C7AD0_PirateDuel);
+    MBMotionShiftSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 0, 0, 5, 2);
+    work[1] = func_8005A718_5B318(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 15.0f, 1, D_80109B5C_2C7ADC_PirateDuel);
+    while (TRUE) {
+        done = 0;
+        for (i = 0; i < 2; i++) {
+            if (func_8005A778_5B378(work[i]) != 0) {
+                done++;
+            }
+        }
+        if (done == 2) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 2; i++) {
+        HuMemMemoryFreePerm(work[i]);
+    }
+    MBMotionShiftSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 2, 0, 5, 2);
+    MBMotionShiftSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 2, 0, 5, 2);
+    /* the referee walks to the middle */
+    work[0] = func_8005A718_5B318(D_8010A0B4_2C8034_PirateDuel, 30.0f, 1, D_80109B2C_2C7AAC_PirateDuel);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work[0]);
+    model = D_8010A0B4_2C8034_PirateDuel;
+    model->rot.x = __sinf(0.34906584f); /* 20 degrees */
+    model = D_8010A0B4_2C8034_PirateDuel;
+    model->rot.y = 0.0f;
+    model->rot.z = __cosf(0.34906584f);
+    D_8010A0B4_2C8034_PirateDuel->obj->rot.z = 20.0f;
+    PlaySound(0xE8);
+    D_80109D84_2C7D04_PirateDuel = 0x21A;
+    D_80109D78_2C7CF8_PirateDuel = 95;
+    D_80109D7C_2C7CFC_PirateDuel = 33;
+    D_80109D80_2C7D00_PirateDuel = 1;
+    omAddPrcObj(func_80104B88_2C2B08_PirateDuel, 0x12, 0, 0);
+    D_80109D70_2C7CF0_PirateDuel = 0;
+    PD_WAIT_STEP();
+    D_8010A0B4_2C8034_PirateDuel->rot.x = HuMathSin(0.0f);
+    D_8010A0B4_2C8034_PirateDuel->rot.y = 0.0f;
+    D_8010A0B4_2C8034_PirateDuel->rot.z = func_800B7890_B8490(D_8010A0B4_2C8034_PirateDuel->rot.y);
+    D_8010A0B4_2C8034_PirateDuel->obj->rot.z = 0.0f;
+    work[0] = func_8005A718_5B318(D_8010A0B4_2C8034_PirateDuel, 30.0f, 1, D_80109B20_2C7AA0_PirateDuel);
+    while (func_8005A778_5B378(work[0]) == 0) {
+        HuPrcVSleep();
+    }
+    HuMemMemoryFreePerm(work[0]);
+    D_8010A0B4_2C8034_PirateDuel->rot.x = HuMathSin(0.0f);
+    D_8010A0B4_2C8034_PirateDuel->rot.y = 0.0f;
+    D_8010A0B4_2C8034_PirateDuel->rot.z = func_800B7890_B8490(D_8010A0B4_2C8034_PirateDuel->rot.y);
+    HuPrcSleep(15);
+    D_80109D84_2C7D04_PirateDuel = 0x214;
+    D_80109D78_2C7CF8_PirateDuel = 90;
+    D_80109D7C_2C7CFC_PirateDuel = 70;
+    D_80109D80_2C7D00_PirateDuel = 2;
+    omAddPrcObj(func_80104B88_2C2B08_PirateDuel, 0x12, 0, 0);
+    D_80109D70_2C7CF0_PirateDuel = 0;
+    PD_WAIT_STEP();
+    /* both draw their swords */
+    PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->attr |= 1;
+    func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_80109D90_2C7D10_PirateDuel], 4, 0);
+    MBMotionSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 8, 0);
+    func_8005ACD0_5B8D0(&gPlayers[D_80109D90_2C7D10_PirateDuel], 0xB);
+    func_801088FC_2C687C_PirateDuel(D_80109D90_2C7D10_PirateDuel, 0);
+    PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->attr |= 1;
+    func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_80109D94_2C7D14_PirateDuel], 4, 0);
+    MBMotionSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 8, 0);
+    func_8005ACD0_5B8D0(&gPlayers[D_80109D94_2C7D14_PirateDuel], 0xB);
+    func_801088FC_2C687C_PirateDuel(D_80109D94_2C7D14_PirateDuel, 0);
+    HuPrcSleep(30);
+    MBMotionSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 3, 1);
+    MBMotionSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 3, 1);
+    func_8008CE5C_8DA5C();
+    func_800691FC_69DFC(1);
+    PD_WAIT_MESSAGE();
+    HuPrcSleep(18);
+    /* the duel (fork B's processes) */
+    func_80109040_2C6FC0_PirateDuel();
+    func_8010913C_2C70BC_PirateDuel();
+    D_8010A090_2C8010_PirateDuel[0] = 0;
+    D_8010A090_2C8010_PirateDuel[1] = 0;
+    omAddPrcObj(func_80109214_2C7194_PirateDuel, 0x12, 0, 0);
+    D_80109D70_2C7CF0_PirateDuel = 0;
+    D_80109DC8_2C7D48_PirateDuel = 0;
+    func_801062FC_2C427C_PirateDuel();
+    omAddPrcObj(func_80109780_2C7700_PirateDuel, 0x12, 0, 0);
+    omAddPrcObj(func_801064E8_2C4468_PirateDuel, 0x12, 0, 0);
+    PD_WAIT_STEP();
+    HuPrcVSleep();
+    switch (D_80109DC8_2C7D48_PirateDuel) {
+        case 2:
+            D_800FC880_FD480 = D_80109D90_2C7D10_PirateDuel;
+            D_800F8C5C_F985C = D_80109D94_2C7D14_PirateDuel;
+            break;
+        case 3:
+            D_800FC880_FD480 = D_80109D94_2C7D14_PirateDuel;
+            D_800F8C5C_F985C = D_80109D90_2C7D10_PirateDuel;
+            break;
+        case 1:
+            D_800F8C5C_F985C = D_800FC880_FD480 = -1;
+            break;
+    }
+    if (D_800FC880_FD480 == -1) {
+        /* a draw: both get their stake back */
+        if (D_8010A060_2C7FE0_PirateDuel == 0) {
+            D_80109D70_2C7CF0_PirateDuel = 0;
+            func_801051DC_2C315C_PirateDuel(2);
+            PD_WAIT_STEP();
+        }
+        MBMotionSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 8, 4);
+        func_80029C74_2A874(*PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->obj->model,
+                            func_80029D0C_2A90C(*PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->obj->model));
+        MBMotionSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 8, 4);
+        func_80029C74_2A874(*PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->obj->model,
+                            func_80029D0C_2A90C(*PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->obj->model));
+        func_801088FC_2C687C_PirateDuel(D_80109D90_2C7D10_PirateDuel, 3);
+        func_801088FC_2C687C_PirateDuel(D_80109D94_2C7D14_PirateDuel, 3);
+        MBMotionShiftSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 2, 0, 5, 2);
+        MBMotionShiftSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 2, 0, 5, 2);
+        HuPrcSleep(40);
+        PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->attr &= ~1;
+        func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_80109D90_2C7D10_PirateDuel], 4, 4);
+        PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->attr &= ~1;
+        func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_80109D94_2C7D14_PirateDuel], 4, 4);
+        if (D_8010A060_2C7FE0_PirateDuel == 0) {
+            MBMotionShiftSet(D_8010A0B4_2C8034_PirateDuel, 1, 0, 5, 0);
+            HuPrcSleep(23);
+            MBMotionShiftSet(D_8010A0B4_2C8034_PirateDuel, 0, 0, 20, 2);
+            func_80088640_89240();
+            D_80102708_103308 = 1;
+            PlaySound(0xE8);
+            D_80109D84_2C7D04_PirateDuel = 0x216;
+            D_80109D78_2C7CF8_PirateDuel = 85;
+            D_80109D7C_2C7CFC_PirateDuel = 70;
+            D_80109D80_2C7D00_PirateDuel = 3;
+            omAddPrcObj(func_80104B88_2C2B08_PirateDuel, 0x12, 0, 0);
+            D_80109D70_2C7CF0_PirateDuel = 0;
+            PD_WAIT_STEP();
+            func_800614B4_620B4(D_80109D90_2C7D10_PirateDuel, D_80109D74_2C7CF4_PirateDuel);
+            func_8006135C_61F5C(D_80109D94_2C7D14_PirateDuel, D_80109D74_2C7CF4_PirateDuel, 0);
+            func_800794A8_7A0A8(30);
+            HuPrcSleep(30);
+        }
+        PlayMusic(0x57);
+        func_800691FC_69DFC(0x13);
+        PD_WAIT_MESSAGE();
+    } else {
+        /* the winner strikes, the loser falls */
+        MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 4, 0);
+        func_801088FC_2C687C_PirateDuel(D_800FC880_FD480, 1);
+        omVibrate(D_800F8C5C_F985C, 20, 0, 20);
+        HuPrcSleep(2);
+        MBMotionSet(PLAYER_MODEL(D_800F8C5C_F985C), 9, 0);
+        func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 8);
+        func_801088FC_2C687C_PirateDuel(D_800F8C5C_F985C, 4);
+        func_800797DC_7A3DC(0x111, D_800F8C5C_F985C);
+        PlaySound(0x3B1);
+        func_800794A8_7A0A8(10);
+        snd = PlaySound(0x4B5);
+        func_800794A8_7A0A8(35);
+        D_80109DEC_2C7D6C_PirateDuel = D_800F8C5C_F985C;
+        D_80109DF0_2C7D70_PirateDuel = 1;
+        omAddPrcObj(func_801086B0_2C6630_PirateDuel, 0x12, 0, 0);
+        HuPrcSleep(15);
+        HuPrcSleep(11);
+        MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 4, 4);
+        func_80029FE4_2ABE4(*PLAYER_MODEL(D_800FC880_FD480)->obj->model, 0.1f);
+        func_801088FC_2C687C_PirateDuel(D_800FC880_FD480, 2);
+        func_80029C74_2A874(*PLAYER_MODEL(D_800FC880_FD480)->obj->model,
+                            func_80029D0C_2A90C(*PLAYER_MODEL(D_800FC880_FD480)->obj->model));
+        HuPrcSleep(10);
+        MBMotionSet(PLAYER_MODEL(D_800F8C5C_F985C), 10, 0);
+        func_801088FC_2C687C_PirateDuel(D_800F8C5C_F985C, 5);
+        func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 0);
+        if (D_8010A060_2C7FE0_PirateDuel == 0) {
+            D_80109D70_2C7CF0_PirateDuel = 0;
+            func_801051DC_2C315C_PirateDuel(2);
+            PD_WAIT_STEP();
+        }
+        HuPrcSleep(20);
+        MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 8, 4);
+        func_801088FC_2C687C_PirateDuel(D_800FC880_FD480, 3);
+        func_80029C74_2A874(*PLAYER_MODEL(D_800FC880_FD480)->obj->model,
+                            func_80029D0C_2A90C(*PLAYER_MODEL(D_800FC880_FD480)->obj->model));
+        func_8005ACD0_5B8D0(&gPlayers[D_800FC880_FD480], 0);
+        HuPrcSleep(30);
+        MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 2, 2);
+        MBMotionSet(PLAYER_MODEL(D_800F8C5C_F985C), 2, 2);
+        PLAYER_MODEL(D_800FC880_FD480)->attr &= ~1;
+        func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_800FC880_FD480], 4, 4);
+        PLAYER_MODEL(D_800F8C5C_F985C)->attr &= ~1;
+        func_800298A4_2A4A4(D_80109DFC_2C7D7C_PirateDuel[D_800F8C5C_F985C], 4, 4);
+        func_800298A4_2A4A4(D_80109DF4_2C7D74_PirateDuel[D_800F8C5C_F985C], 4, 4);
+        /* both turn to the camera */
+        HuVecCopyXYZ(&pos[0], D_800C9B80_CA780->pos.x, PLAYER_MODEL(D_800FC880_FD480)->pos.y, D_800C9B80_CA780->pos.z);
+        HuVecCopyXYZ(&pos[1], D_800C9B80_CA780->pos.x, PLAYER_MODEL(D_800F8C5C_F985C)->pos.y, D_800C9B80_CA780->pos.z);
+        func_800446B4_452B4(PLAYER_MODEL(D_800FC880_FD480), &pos[0], 10);
+        func_800446B4_452B4(PLAYER_MODEL(D_800F8C5C_F985C), &pos[1], 10);
+        HuPrcSleep(20);
+        if (D_8010A060_2C7FE0_PirateDuel == 0) {
+            MBMotionShiftSet(D_8010A0B4_2C8034_PirateDuel, 1, 0, 5, 0);
+            HuPrcSleep(23);
+            MBMotionShiftSet(D_8010A0B4_2C8034_PirateDuel, 0, 0, 20, 2);
+            func_80088640_89240();
+            D_80102708_103308 = 1;
+            PlaySound(0xE8);
+            D_80109D8C_2C7D0C_PirateDuel = D_800FC880_FD480;
+            D_80109D84_2C7D04_PirateDuel = 0x215;
+            D_80109D78_2C7CF8_PirateDuel = 90;
+            D_80109D7C_2C7CFC_PirateDuel = 70;
+            D_80109D80_2C7D00_PirateDuel = 4;
+            omAddPrcObj(func_80104B88_2C2B08_PirateDuel, 0x12, 0, 0);
+            D_80109D70_2C7CF0_PirateDuel = 0;
+            PD_WAIT_STEP();
+            func_800614B4_620B4(D_800FC880_FD480, D_80109D74_2C7CF4_PirateDuel * 2);
+            if ((s16)snd != -1) {
+                func_800799A4_7A5A4(snd, 40);
+            }
+            HuPrcSleep(30);
+        }
+        MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 5, 0);
+        func_8005ACD0_5B8D0(&gPlayers[D_800FC880_FD480], 1);
+        HuPrcSleep(waits[gPlayers[D_800FC880_FD480].character]);
+        MBMotionSet(PLAYER_MODEL(D_800F8C5C_F985C), 6, 0);
+        func_8005ACD0_5B8D0(&gPlayers[D_800F8C5C_F985C], 2);
+        PlayMusic(0x51);
+        mes = func_800797DC_7A3DC(0xF5, D_800FC880_FD480);
+        if (D_800FC880_FD480 == D_80109D90_2C7D10_PirateDuel) {
+            func_800798F8_7A4F8(mes, 0x2C);
+        } else {
+            func_800798F8_7A4F8(mes, 0x54);
+        }
+        mes = func_800797DC_7A3DC(0xFC, D_800F8C5C_F985C);
+        if (D_800F8C5C_F985C == D_80109D90_2C7D10_PirateDuel) {
+            func_800798F8_7A4F8(mes, 0x2C);
+        } else {
+            func_800798F8_7A4F8(mes, 0x54);
+        }
+        func_800691FC_69DFC(6, gPlayers[D_800FC880_FD480].character);
+        PD_WAIT_MESSAGE();
+    }
+    HuPrcSleep(8);
+    func_801055AC_2C352C_PirateDuel();
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80109BC0_2C7B40_PirateDuel[3] = { 0x00000002, 0x000800A7, 0x000800AA };
 
@@ -125,9 +535,10 @@ __asm__(".section .rodata");
 const u32 D_80109BD8_2C7B58_PirateDuel[6] = { 0x00000023, 0x0000001E, 0x00000032, 0x00000023, 0x0000001E, 0x00000023 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80102CA0_2C0C20_PirateDuel);
+#endif
 
-/* GCC still believes it is in .rodata here (INCLUDE_ASM switched to .text): switch for real, so the
-   string literals below land in .rodata. */
+/* With func_80102CA0 as INCLUDE_ASM, GCC still believes it is in .rodata here (the asm switched to
+   .text): switch for real, so the string literals below land in .rodata. */
 __asm__(".section .rodata");
 
 /* A message window (3F's func_80105AAC): D_80109D84 at (D_80109D78, D_80109D7C); D_80109D80 is the
