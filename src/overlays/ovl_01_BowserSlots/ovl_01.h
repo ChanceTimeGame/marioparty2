@@ -152,10 +152,8 @@ extern s32 D_8010B7C0_E3250_BowserSlots;          /* flow frame counter */
 extern s32 D_8010B7C4_E3254_BowserSlots;          /* flow wait */
 extern s32 D_8010B7C8_E3258_BowserSlots;          /* exit countdown */
 extern s32 D_8010B7CC_E325C_BowserSlots;          /* camera test mode */
-extern s16 D_8010B7D0_E3260_BowserSlots;
-extern s16 D_8010B7D2_E3262_BowserSlots;
-extern s16 D_8010B7D4_E3264_BowserSlots;
-extern s16 D_8010B7D6_E3266_BowserSlots;
+extern s32 D_8010B7D0_E3260_BowserSlots;
+extern s32 D_8010B7D4_E3264_BowserSlots;
 extern s32 D_8010B7D8_E3268_BowserSlots;          /* CPU: A held frames */
 extern s32 D_8010B7DC_E326C_BowserSlots;          /* CPU: wait frames */
 extern s32 D_8010B7E0_E3270_BowserSlots;          /* CPU: last face seen */

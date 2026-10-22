@@ -431,3 +431,6 @@ $(EVB_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
+# MG01-A: ovl_01 (DA290.c) has a nop between back-to-back mul.d (func_801030C0): KMC mul fix on
+build/src/overlays/ovl_01_BowserSlots/DA290.c.o: export VR4300MUL := ON

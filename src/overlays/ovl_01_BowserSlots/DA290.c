@@ -199,45 +199,210 @@ void func_80103000_DAA90_BowserSlots(void) {
     omAddObj(0x1F, 0, 0, -1, func_801038FC_DB38C_BowserSlots);
 }
 
-__asm__(".section .rodata");
-const u32 D_8010BAE0_E3570_BowserSlots[9] = { 0 };
+/* Debug camera (not called in retail): Z cycles the mode; mode 1 moves the camera with the stick,
+   C and the D-pad (R doubles, Z... START resets), mode 2 moves the text; mode 1 prints on Z. */
+void func_801030C0_DAB50_BowserSlots(void) {
+    BSCamera c = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f, 0.0f };
+    f32 speed = 1.0f;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801030C0_DAB50_BowserSlots);
+    switch (D_8010B7CC_E325C_BowserSlots) {
+        case 1:
+            if (ContBtn[0] & 0x8000) {
+                speed = 2.0f;
+            }
+            if (ContBtn[0] & 0x4000) {
+                speed = 0.5f;
+            }
+            if (ContBtnTrg[0] & 0x1000) {
+                D_8010274C_10334C.x = 0.0f;
+                D_8010274C_10334C.y = 191.2f;
+                D_8010274C_10334C.z = 0.2f;
+                D_800FD474_FE074.x = -14.5f;
+                D_800FD474_FE074.y = 0.0f;
+                D_800FD474_FE074.z = 0.0f;
+                D_800FA610_FB210 = 1069.0f;
+            } else {
+                c.rot.x = (f32)ContStkY[0] * 0.125 * speed;
+                c.rot.y = (f32)ContStkX[0] * 0.125 * speed;
+                if (ContBtn[0] & 0x200) {
+                    c.center.x = 2.0 * speed;
+                }
+                if (ContBtn[0] & 0x100) {
+                    c.center.x = -(2.0 * speed);
+                }
+                if (ContBtn[0] & 0x800) {
+                    c.center.z = -(2.0 * speed);
+                }
+                if (ContBtn[0] & 0x400) {
+                    c.center.z = 2.0 * speed;
+                }
+                if (ContBtn[0] & 8) {
+                    c.center.y = 2.0 * speed;
+                }
+                if (ContBtn[0] & 4) {
+                    c.center.y = -(2.0 * speed);
+                }
+                if (ContBtn[0] & 1) {
+                    c.zoom = 2.0 * speed;
+                }
+                if (ContBtn[0] & 2) {
+                    c.zoom = -(2.0 * speed);
+                }
+                c.center.x += D_8010274C_10334C.x;
+                c.center.y += D_8010274C_10334C.y;
+                c.center.z += D_8010274C_10334C.z;
+                c.rot.x += D_800FD474_FE074.x;
+                c.rot.y += D_800FD474_FE074.y;
+                c.rot.z += D_800FD474_FE074.z;
+                c.zoom += D_800FA610_FB210;
+                func_80103B4C_DB5DC_BowserSlots(c.center.x, c.center.y, c.center.z, c.rot.x, c.rot.y, c.rot.z, c.zoom, 1);
+            }
+            sprintf(pfStrBuf, "CAMERA TEST_MODE");
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 80, pfStrBuf);
+            sprintf(pfStrBuf, " CENTER X>%3.3f Y>%3.3f Z>%3.3f ", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 88, pfStrBuf);
+            sprintf(pfStrBuf, " ROT    X>%3.3f Y>%3.3f Z>%3.3f ", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 96, pfStrBuf);
+            sprintf(pfStrBuf, " ZOOM   %3.3f ", D_800FA610_FB210);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 104, pfStrBuf);
+            D_800F8FD0_F9BD0 = 0;
+            break;
+        case 2:
+            if ((ContBtn[0] & 0x100) || (ContBtn[0] & 1)) {
+                D_8010B7D0_E3260_BowserSlots++;
+            }
+            if (ContBtn[0] & 0x202) {
+                D_8010B7D0_E3260_BowserSlots--;
+            }
+            if (ContBtn[0] & 0x404) {
+                D_8010B7D4_E3264_BowserSlots++;
+            }
+            if (ContBtn[0] & 0x808) {
+                D_8010B7D4_E3264_BowserSlots--;
+            }
+            fontcolor = 8;
+            sprintf(pfStrBuf, "CAMERA TEST_MODE ");
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 80, pfStrBuf);
+            sprintf(pfStrBuf, " CENTER X>%3.3f Y>%3.3f Z>%3.3f ", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 88, pfStrBuf);
+            sprintf(pfStrBuf, " ROT    X>%3.3f Y>%3.3f Z>%3.3f ", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 96, pfStrBuf);
+            sprintf(pfStrBuf, " ZOOM   %3.3f ", D_800FA610_FB210);
+            DrawDebugText((u16)D_8010B7D0_E3260_BowserSlots + 20, (u16)D_8010B7D4_E3264_BowserSlots + 104, pfStrBuf);
+            break;
+        default:
+            D_800F8FD0_F9BD0 = 1;
+            break;
+    }
+    if (ContBtnTrg[0] & 0x10) {
+        if (D_8010B7CC_E325C_BowserSlots & 1) {
+            osSyncPrintf("CAMERA TEST_MODE \n");
+            osSyncPrintf(" CENTER X>%3.3f Y>%3.3f Z>%3.3f \n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+            osSyncPrintf(" ROT    X>%3.3f Y>%3.3f Z>%3.3f \n", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+            osSyncPrintf(" ZOOM   %3.3f \n\n", D_800FA610_FB210);
+        }
+        if (++D_8010B7CC_E325C_BowserSlots >= 3) {
+            D_8010B7CC_E325C_BowserSlots = 0;
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const char D_8010BB18_E35A8_BowserSlots[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f ";
+/* Camera blend object: from D_8010C078[1] (the start) to D_8010C078[0] over D_8010C0C4 frames. */
+void func_801038FC_DB38C_BowserSlots(omObjData* obj) {
+    f32 t;
 
-__asm__(".section .rodata");
-const char D_8010BB3C_E35CC_BowserSlots[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f ";
+    if (D_8010C0C4_E3B54_BowserSlots > 0) {
+        if (D_8010C0C0_E3B50_BowserSlots == 0) {
+            D_8010274C_10334C.x = D_8010C078_E3B08_BowserSlots[0].center.x;
+            D_8010274C_10334C.y = D_8010C078_E3B08_BowserSlots[0].center.y;
+            D_8010274C_10334C.z = D_8010C078_E3B08_BowserSlots[0].center.z;
+            D_800FD474_FE074.x = D_8010C078_E3B08_BowserSlots[0].rot.x;
+            D_800FD474_FE074.y = D_8010C078_E3B08_BowserSlots[0].rot.y;
+            D_800FD474_FE074.z = D_8010C078_E3B08_BowserSlots[0].rot.z;
+            D_800FA610_FB210 = D_8010C078_E3B08_BowserSlots[0].zoom;
+            func_8010B1D4_E2C64_BowserSlots(&D_800FD474_FE074);
+            D_8010C0C4_E3B54_BowserSlots = 0;
+            return;
+        }
+        t = (f32)D_8010C0C0_E3B50_BowserSlots / (f32)D_8010C0C4_E3B54_BowserSlots;
+        D_8010274C_10334C.x = D_8010C078_E3B08_BowserSlots[1].center.x + t * (D_8010C078_E3B08_BowserSlots[0].center.x - D_8010C078_E3B08_BowserSlots[1].center.x);
+        D_8010274C_10334C.y = D_8010C078_E3B08_BowserSlots[1].center.y + t * (D_8010C078_E3B08_BowserSlots[0].center.y - D_8010C078_E3B08_BowserSlots[1].center.y);
+        D_8010274C_10334C.z = D_8010C078_E3B08_BowserSlots[1].center.z + t * (D_8010C078_E3B08_BowserSlots[0].center.z - D_8010C078_E3B08_BowserSlots[1].center.z);
+        D_800FD474_FE074.x = D_8010C078_E3B08_BowserSlots[1].rot.x + t * (D_8010C078_E3B08_BowserSlots[0].rot.x - D_8010C078_E3B08_BowserSlots[1].rot.x);
+        D_800FD474_FE074.y = D_8010C078_E3B08_BowserSlots[1].rot.y + t * (D_8010C078_E3B08_BowserSlots[0].rot.y - D_8010C078_E3B08_BowserSlots[1].rot.y);
+        D_800FD474_FE074.z = D_8010C078_E3B08_BowserSlots[1].rot.z + t * (D_8010C078_E3B08_BowserSlots[0].rot.z - D_8010C078_E3B08_BowserSlots[1].rot.z);
+        D_800FA610_FB210 = D_8010C078_E3B08_BowserSlots[1].zoom + t * (D_8010C078_E3B08_BowserSlots[0].zoom - D_8010C078_E3B08_BowserSlots[1].zoom);
+        func_8010B1D4_E2C64_BowserSlots(&D_800FD474_FE074);
+        if (D_8010C0C0_E3B50_BowserSlots > 0) {
+            D_8010C0C0_E3B50_BowserSlots--;
+        } else {
+            D_8010C0C0_E3B50_BowserSlots++;
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const char D_8010BB60_E35F0_BowserSlots[] = " ZOOM   %3.3f ";
+/* Saves the current camera in D_8010C078[idx]. */
+void func_80103A9C_DB52C_BowserSlots(s32 idx) {
+    D_8010C078_E3B08_BowserSlots[idx].center.x = D_8010274C_10334C.x;
+    D_8010C078_E3B08_BowserSlots[idx].center.y = D_8010274C_10334C.y;
+    D_8010C078_E3B08_BowserSlots[idx].center.z = D_8010274C_10334C.z;
+    D_8010C078_E3B08_BowserSlots[idx].rot.x = D_800FD474_FE074.x;
+    D_8010C078_E3B08_BowserSlots[idx].rot.y = D_800FD474_FE074.y;
+    D_8010C078_E3B08_BowserSlots[idx].rot.z = D_800FD474_FE074.z;
+    D_8010C078_E3B08_BowserSlots[idx].zoom = D_800FA610_FB210;
+    D_8010C078_E3B08_BowserSlots[idx].unk_1C = D_8010C078_E3B08_BowserSlots[idx].unk_20 = 0.0f;
+}
 
-__asm__(".section .rodata");
-const char D_8010BB70_E3600_BowserSlots[] = "CAMERA TEST_MODE ";
+/* Starts a camera blend to the given position over `frames` frames; 65535.0f keeps a value. */
+void func_80103B4C_DB5DC_BowserSlots(f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, f32 zoom, s32 frames) {
+    if (frames > 0) {
+        func_8010B1D4_E2C64_BowserSlots(&D_800FD474_FE074);
+        D_8010C0C0_E3B50_BowserSlots = frames - 1;
+        D_8010C0C4_E3B54_BowserSlots = frames;
+        if (cx != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].center.x = cx;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].center.x = D_8010274C_10334C.x;
+        }
+        if (cy != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].center.y = cy;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].center.y = D_8010274C_10334C.y;
+        }
+        if (cz != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].center.z = cz;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].center.z = D_8010274C_10334C.z;
+        }
+        if (rx != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].rot.x = rx;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].rot.x = D_800FD474_FE074.x;
+        }
+        if (ry != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].rot.y = ry;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].rot.y = D_800FD474_FE074.y;
+        }
+        if (rz != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].rot.z = rz;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].rot.z = D_800FD474_FE074.z;
+        }
+        if (zoom != 65535.0f) {
+            D_8010C078_E3B08_BowserSlots[0].zoom = zoom;
+        } else {
+            D_8010C078_E3B08_BowserSlots[0].zoom = D_800FA610_FB210;
+        }
+        func_80103A9C_DB52C_BowserSlots(1);
+    }
+}
 
-__asm__(".section .rodata");
-const char D_8010BB84_E3614_BowserSlots[] = "CAMERA TEST_MODE \012";
-
-__asm__(".section .rodata");
-const char D_8010BB98_E3628_BowserSlots[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f \012";
-
-__asm__(".section .rodata");
-const char D_8010BBBC_E364C_BowserSlots[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f \012";
-
-__asm__(".section .rodata");
-const char D_8010BBE0_E3670_BowserSlots[] = " ZOOM   %3.3f \012\012";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010BBF8_E3688_BowserSlots[2] = { 0x3FC00000, 0x00000000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801038FC_DB38C_BowserSlots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103A9C_DB52C_BowserSlots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103B4C_DB5DC_BowserSlots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103D84_DB814_BowserSlots);
+void func_80103D84_DB814_BowserSlots(void) {
+    func_8000C460_D060();
+    func_8000C578_D178(1);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0x10, 9, 60, -1, func_80103DEC_DB87C_BowserSlots);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103DEC_DB87C_BowserSlots);
 
