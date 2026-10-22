@@ -457,6 +457,9 @@ extern DecisionTreeNonLeafNode D_801116F4_305FF4_name_47[];
 extern s16 D_80110A10_305310_name_47[6]; /* 47-A: -1 ended space lists for func_80105984 (41: D_80110AF0) */
 extern s16 D_80110A1C_30531C_name_47[]; /* -1 ended */
 void MBMasuArrowAngleAdd(f32); /* 47-A: as ovl_41.h (unprototyped it passes a double) */
+extern u8 D_80110E3C_30573C_name_47[4][3]; /* 47-A: per player: the other players (3E: D_80112330) */
+extern Unk3EStealRange D_80110EE0_3057E0_name_47[24]; /* turn and coin range -> message */
+extern s16 D_80110F4A_30584A_name_47[];
 /* 47-A: the rest (fork B's own functions are void(void) unless a caller shows more) */
 void func_801058A4_2FA1A4_name_47(void);
 void func_801058E0_2FA1E0_name_47(void);
