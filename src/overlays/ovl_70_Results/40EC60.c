@@ -31,7 +31,216 @@ void func_801028A0_40ED00_Results(void) {
 __asm__(".section .rodata");
 const char D_80107800_413C60_Results[] = "RESULTS";
 
+// register allocation of the title string index (masked 2)
+#ifdef NON_MATCHING
+/* Builds the results table: title, place sprites, characters, coin icons, coin and star counts. */
+void func_80102944_40EDA4_Results(void) {
+    char buf[16];
+    s16 coins[4];
+    s8 digits[4][3];
+    s8 nd[4];
+    s32 i;
+    s32 j;
+    s32 n;
+    s32 str;
+    void* file;
+
+    i = 0;
+    func_801042D8_410738_Results();
+    func_80088640_89240();
+    D_80107868_413CC8_Results = func_800888A8_894A8(0, 0, 320, 240, 0, 4);
+    func_80089B2C_8A72C(D_80107868_413CC8_Results, 200);
+    func_8008D530_8E130(D_80107868_413CC8_Results, 0, 0, 0);
+    str = func_8006A608_6B208(&D_80107870_413CD0_Results, D_801076BC_413B1C_Results, 1, -1, -1);
+    SprPosSet(D_80107870_413CD0_Results.strGId[str], 0, D_801076C0_413B20_Results[0], D_801076C0_413B20_Results[1]);
+    for (; i < 7; i++) {
+        SprPrioSet(D_80107870_413CD0_Results.strGId[str], i + 1, 6);
+    }
+
+    D_801078E4_413D44_Results = SprCreate(0x11, 5);
+    SprPosSet(D_801078E4_413D44_Results, 0, 0, 0);
+    for (i = 0, n = 0; i < 4; i++) {
+        file = DataRead((i + 0xD1) | 0xA0000);
+        D_801078E8_413D48_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        for (j = 0; j < 4; j++) {
+            SprAnimSet(D_801078E4_413D44_Results, n + 1, D_801078E8_413D48_Results[i], 0);
+            func_8008225C_82E5C(D_801078E4_413D44_Results, n + 1, 1);
+            SprPrioSet(D_801078E4_413D44_Results, n + 1, 0x10);
+            SprAttrSet(D_801078E4_413D44_Results, n + 1, 0x1000);
+            if (D_80107850_413CB0_Results[j].rank == i) {
+                if (_CheckFlag(0xD) != 0) {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_PLACE_D][D_80107850_413CB0_Results[j].place][0],
+                              D_801076C4_413B24_Results[RES_ROW_PLACE_D][D_80107850_413CB0_Results[j].place][1]);
+                } else {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_PLACE][D_80107850_413CB0_Results[j].place][0],
+                              D_801076C4_413B24_Results[RES_ROW_PLACE][D_80107850_413CB0_Results[j].place][1]);
+                }
+            } else {
+                if (_CheckFlag(0xD) != 0) {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, -1000, D_801076C4_413B24_Results[RES_ROW_PLACE_D][D_80107850_413CB0_Results[j].place][1]);
+                } else {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, -1000, D_801076C4_413B24_Results[RES_ROW_PLACE][D_80107850_413CB0_Results[j].place][1]);
+                }
+            }
+            n++;
+        }
+    }
+
+    D_801078F8_413D58_Results = SprCreate(5, 5);
+    SprPosSet(D_801078F8_413D58_Results, 0, 0, 0);
+    for (i = 0; i < 4; i++) {
+        file = DataRead(D_801076A4_413B04_Results[gPlayers[i].character]);
+        D_80107900_413D60_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet(D_801078F8_413D58_Results, i + 1, D_80107900_413D60_Results[i], 0);
+        func_8008225C_82E5C(D_801078F8_413D58_Results, i + 1, 1);
+        SprPrioSet(D_801078F8_413D58_Results, i + 1, 0x10);
+        SprAttrSet(D_801078F8_413D58_Results, i + 1, 0x1000);
+        func_800822A8_82EA8(D_801078F8_413D58_Results, i + 1, 0, 0);
+        func_8008221C_82E1C(D_801078F8_413D58_Results, i + 1, 0);
+        if (_CheckFlag(0xD) != 0) {
+            SprPosSet(D_801078F8_413D58_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][1]);
+        } else {
+            SprPosSet(D_801078F8_413D58_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][1]);
+        }
+    }
+
+    D_80107CE8_414148_Results = SprCreate(5, 5);
+    SprPosSet(D_80107CE8_414148_Results, 0, 0, 0);
+    file = DataRead(0xA010E);
+    D_80107CEC_41414C_Results = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0; i < 4; i++) {
+        SprAnimSet(D_80107CE8_414148_Results, i + 1, D_80107CEC_41414C_Results, 0);
+        func_8008225C_82E5C(D_80107CE8_414148_Results, i + 1, 1);
+        SprPrioSet(D_80107CE8_414148_Results, i + 1, 0x11);
+        SprAttrSet(D_80107CE8_414148_Results, i + 1, 0x1000);
+        SprScaleSet(D_80107CE8_414148_Results, i + 1, 0.5f, 0.5f);
+        if (_CheckFlag(0xD) != 0) {
+            SprPosSet(D_80107CE8_414148_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][0] * 2,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][1] * 2);
+        } else {
+            SprPosSet(D_80107CE8_414148_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][0] * 2,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][1] * 2);
+        }
+        func_8008221C_82E1C(D_80107CE8_414148_Results, i + 1, 0);
+    }
+
+    D_80107910_413D70_Results = SprCreate(5, 5);
+    SprPosSet(D_80107910_413D70_Results, 0, 0, 0);
+    file = DataRead(0xA0011);
+    D_80107914_413D74_Results = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0; i < 4; i++) {
+        SprAnimSet(D_80107910_413D70_Results, i + 1, D_80107914_413D74_Results, 0);
+        func_8008225C_82E5C(D_80107910_413D70_Results, i + 1, 1);
+        SprPrioSet(D_80107910_413D70_Results, i + 1, 0x10);
+        SprAttrSet(D_80107910_413D70_Results, i + 1, 0x1000);
+        if (_CheckFlag(0xD) != 0) {
+            SprAttrSet(D_80107910_413D70_Results, i + 1, 0x8000);
+        }
+        SprPosSet(D_80107910_413D70_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINICON][D_80107850_413CB0_Results[i].place][0],
+                  D_801076C4_413B24_Results[RES_ROW_COINICON][D_80107850_413CB0_Results[i].place][1]);
+        func_8008221C_82E1C(D_80107910_413D70_Results, i + 1, 0);
+    }
+
+    D_80107918_413D78_Results = SprCreate(5, 5);
+    SprPosSet(D_80107918_413D78_Results, 0, 0, 0);
+    file = DataRead(0xA0010);
+    D_8010791C_413D7C_Results = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0; i < 4; i++) {
+        SprAnimSet(D_80107918_413D78_Results, i + 1, D_8010791C_413D7C_Results, 0);
+        func_8008225C_82E5C(D_80107918_413D78_Results, i + 1, 1);
+        SprPrioSet(D_80107918_413D78_Results, i + 1, 0x10);
+        SprAttrSet(D_80107918_413D78_Results, i + 1, 0x1000);
+        if (_CheckFlag(0xD) != 0) {
+            SprPosSet(D_80107918_413D78_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][1]);
+        } else {
+            SprPosSet(D_80107918_413D78_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][1]);
+        }
+        func_8008221C_82E1C(D_80107918_413D78_Results, i + 1, 0);
+    }
+
+    for (i = (_CheckFlag(0xD) != 0) * 4; i < 8; i++) {
+        if (i < 4) {
+            if (gPlayers[i].stars < 10) {
+                sprintf(buf, "X%d", gPlayers[i].stars);
+            } else {
+                sprintf(buf, "%d", gPlayers[i].stars);
+            }
+        } else {
+            sprintf(buf, "X");
+        }
+        D_80107CC0_414120_Results[i] =
+            D_80107920_413D80_Results[i].strGId[func_8006A608_6B208(&D_80107920_413D80_Results[i], buf, 0, 0, -1)];
+        if (i < 4) {
+            SprPosSet(D_80107CC0_414120_Results[i], 0, D_801076C4_413B24_Results[RES_ROW_STARS][D_80107850_413CB0_Results[i].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_STARS][D_80107850_413CB0_Results[i].place][1]);
+        } else if (_CheckFlag(0xD) != 0) {
+            SprPosSet(D_80107CC0_414120_Results[i], 0, D_801076C4_413B24_Results[RES_ROW_STARS_D][D_80107850_413CB0_Results[i - 4].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_STARS_D][D_80107850_413CB0_Results[i - 4].place][1]);
+        } else {
+            SprPosSet(D_80107CC0_414120_Results[i], 0, D_801076C4_413B24_Results[RES_ROW_STARS][D_80107850_413CB0_Results[i - 4].place][0],
+                      D_801076C4_413B24_Results[RES_ROW_STARS][D_80107850_413CB0_Results[i - 4].place][1]);
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        coins[i] = gPlayers[i].coins;
+        digits[i][0] = coins[i] / 100;
+        digits[i][1] = (coins[i] - digits[i][0] * 100) / 10;
+        digits[i][2] = coins[i] - digits[i][0] * 100 - digits[i][1] * 10;
+        nd[i] = 0;
+        if (coins[i] >= 10) {
+            nd[i] = 1;
+        }
+        if (coins[i] >= 100) {
+            nd[i] = 2;
+        }
+    }
+
+    D_80107CE0_414140_Results = SprCreate(0xD, 5);
+    SprPosSet(D_80107CE0_414140_Results, 0, 0, 0);
+    file = DataRead(0x38);
+    D_80107CE4_414144_Results = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0, n = 0; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            SprAnimSet(D_80107CE0_414140_Results, n + 1, D_80107CE4_414144_Results, 0);
+            func_8008225C_82E5C(D_80107CE0_414140_Results, n + 1, 1);
+            SprPrioSet(D_80107CE0_414140_Results, n + 1, 0x10);
+            SprAttrSet(D_80107CE0_414140_Results, n + 1, 0x1000);
+            if (_CheckFlag(0xD) != 0) {
+                SprPosSet(D_80107CE0_414140_Results, n + 1,
+                          D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][0] + (s16)(j * 16 + 24) +
+                              D_80107774_413BD4_Results[0][nd[i]][j],
+                          D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][1] + 4);
+            } else {
+                SprPosSet(D_80107CE0_414140_Results, n + 1,
+                          D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][0] + (s16)(j * 16 + 24) +
+                              D_80107774_413BD4_Results[0][nd[i]][j],
+                          D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][1] + 4);
+            }
+            func_800822A8_82EA8(D_80107CE0_414140_Results, n + 1, digits[i][j], 0);
+            func_8008221C_82E1C(D_80107CE0_414140_Results, n + 1, 0);
+            n++;
+        }
+        if (_CheckFlag(0xD) != 0) {
+            func_80104418_410878_Results(D_80107CC0_414120_Results[4 + i], 0, D_80107774_413BD4_Results[1][nd[i]][3]);
+        } else {
+            func_80104418_410878_Results(D_80107CC0_414120_Results[4 + i], 0, D_80107774_413BD4_Results[0][nd[i]][3]);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80102944_40EDA4_Results);
+#endif
 
 // register allocation: n and j swap s0/s1 (masked 0)
 #ifdef NON_MATCHING
