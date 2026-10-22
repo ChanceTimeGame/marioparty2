@@ -299,14 +299,14 @@ void func_80107A3C_34829C_name_50(void);
 void func_8010804C_3488AC_name_50(void);
 void func_80108290_348AF0_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_80108414_348C74_name_50(void);
-void func_80108448_348CA8_name_50(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_80108448_348CA8_name_50(f32 x, f32 y, f32 z, f32 rotZ);
 void func_801085FC_348E5C_name_50(void);
-void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2, s32 arg3); /* 50-B: a3 from the asm */
+void func_80108630_348E90_name_50(f32 x, f32 y, f32 z, u16 dim);
 void func_801087FC_34905C_name_50(void);
 void func_80108830_349090_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_801089CC_34922C_name_50(void);
-void func_80108A00_349260_name_50(Vec* arg0, Vec* arg1, f32 arg2, s32 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8); /* 50-B: from the asm */
-void func_80108C6C_3494CC_name_50(void);
+void func_80108A00_349260_name_50(Vec* start, Vec* dir, f32 length, u16 interval, u16 mode, f32 scale0, f32 scale1, f32 speed, f32 rotY);
+void func_80108C6C_3494CC_name_50(omObjData* obj);
 void func_80108F1C_34977C_name_50(void); /* main's func_8004B214 */
 void func_80108F2C_34978C_name_50(void);
 void func_80108F98_3497F8_name_50(void);
@@ -361,11 +361,29 @@ extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00)
 extern Vec D_80111E00_352660_name_50;
 extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
 extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
-/* func_80108A00's work (D_801125E4's unk_50, 0x7918 bytes); fork 50-C owns the full layout. */
+/* func_80108A00's work (D_801125E4's unk_50, tag 0x7918): a beam of up to 8 rings. */
 typedef struct Ovl50BeamWork {
-    /* 0x00 */ u8 unk_00[0x38];
-    /* 0x38 */ f32 length; /* func_80108A00's third argument */
-} Ovl50BeamWork;
+    /* 0x000 */ u16 mode;     /* bit 0: 8 rings (else 4); bit 1: the rings move along dir */
+    /* 0x002 */ u16 count;
+    /* 0x004 */ s16 tex;
+    /* 0x006 */ s16 model[8];
+    /* 0x016 */ s16 slot[8];  /* func_80020EBC instances */
+    /* 0x026 */ u16 active[8];
+    /* 0x036 */ char unk_36[2];
+    /* 0x038 */ f32 length;   /* func_80108A00's third argument: a ring dies at this distance */
+    /* 0x03C */ f32 scale[8];
+    /* 0x05C */ f32 dist[8];
+    /* 0x07C */ Vec pos[8];
+    /* 0x0DC */ Vec start;
+    /* 0x0E8 */ Vec dir;
+    /* 0x0F4 */ f32 rotY;
+    /* 0x0F8 */ f32 speed;
+    /* 0x0FC */ f32 grow;     /* scale per frame */
+    /* 0x100 */ u16 timer;    /* frames to the next ring */
+    /* 0x102 */ u16 interval;
+    /* 0x104 */ f32 scale0;
+    /* 0x108 */ f32 scale1;
+} Ovl50BeamWork; /* size = 0x10C */
 /* board 2, part 6 */
 extern Vec D_80111EB4_352714_name_50[];   /* per character: the fourth beam's offset */
 extern omObjData* D_801125DC_352E3C_name_50; /* func_80108630's object (the beams' meeting point) */
@@ -373,6 +391,10 @@ extern omObjData* D_801125DC_352E3C_name_50; /* func_80108630's object (the beam
 extern Vec D_80111E60_3526C0_name_50;     /* the partner's place */
 extern Vec D_80111E6C_3526CC_name_50[];   /* per character: the third beam's offset */
 extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; work[1] == 1 while it runs */
+
+/* 50-C */
+extern omObjData* D_801125D4_352E34_name_50; /* func_80108290's glow */
+extern omObjData* D_801125E0_352E40_name_50; /* func_80108830's burst */
 
 /* ---- 34DBC0.c ---- */
 

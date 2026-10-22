@@ -962,25 +962,221 @@ void func_8010804C_3488AC_name_50(void) {
     func_80026E00_27A00(1, -8.0f, 76.0f, 91.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108290_348AF0_name_50);
+/* A glow (sprite model 0x689, texture 0xA0249) at a point; D_801125D4. */
+void func_80108290_348AF0_name_50(f32 x, f32 y, f32 z) {
+    void* data;
+    s16 tex;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108414_348C74_name_50);
+    data = DataRead(0xA0249);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    D_801125D4_352E34_name_50 = omAddObj(0x1F4, 2, 0, -1, NULL);
+    D_801125D4_352E34_name_50->model[1] = func_80020EBC_21ABC((void*)-1, 0x689, 8);
+    D_800F86D8_F92D8[D_801125D4_352E34_name_50->model[1]].unk02 = tex;
+    func_80021160_21D60(D_801125D4_352E34_name_50->model[1], 6, 0);
+    D_801125D4_352E34_name_50->model[0] = D_800F86D8_F92D8[D_801125D4_352E34_name_50->model[1]].unk00;
+    HmfModelObjAttrSet(D_801125D4_352E34_name_50->model[0], 0x70000000, 0x70000000);
+    func_80021250_21E50(D_801125D4_352E34_name_50->model[1], 0xFF, 0, 0xE6);
+    omSetSca(D_801125D4_352E34_name_50, 2.0f, 2.0f, 2.0f);
+    omSetTra(D_801125D4_352E34_name_50, x, y, z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108448_348CA8_name_50);
+void func_80108414_348C74_name_50(void) {
+    func_8002308C_23C8C(D_801125D4_352E34_name_50->model[1]);
+    omDelObj(D_801125D4_352E34_name_50);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801085FC_348E5C_name_50);
+/* A flash (0xA024A) at a point, turned to the camera, rotated about z by rotZ; D_801125D8. */
+void func_80108448_348CA8_name_50(f32 x, f32 y, f32 z, f32 rotZ) {
+    Vec pos;
+    Vec rot;
+    void* data;
+    s16 tex;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108630_348E90_name_50);
+    data = DataRead(0xA024A);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    D_801125D8_352E38_name_50 = omAddObj(0x1F4, 2, 0, -1, NULL);
+    D_801125D8_352E38_name_50->model[1] = func_80020EBC_21ABC((void*)-1, 0x689, 8);
+    D_800F86D8_F92D8[D_801125D8_352E38_name_50->model[1]].unk02 = tex;
+    func_80021160_21D60(D_801125D8_352E38_name_50->model[1], 6, 0);
+    D_801125D8_352E38_name_50->model[0] = D_800F86D8_F92D8[D_801125D8_352E38_name_50->model[1]].unk00;
+    func_80021250_21E50(D_801125D8_352E38_name_50->model[1], 0xFF, 0, 0xE6);
+    omSetSca(D_801125D8_352E38_name_50, 1.0f, 2.0f, 1.0f);
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+    func_80056658_57258(&pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &rot);
+    D_801125D8_352E38_name_50->rot.y = func_80042BE0_437E0(&rot);
+    omSetTra(D_801125D8_352E38_name_50, x, y, z);
+    D_801125D8_352E38_name_50->rot.z = rotZ;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801087FC_34905C_name_50);
+void func_801085FC_348E5C_name_50(void) {
+    func_8002308C_23C8C(D_801125D8_352E38_name_50->model[1]);
+    omDelObj(D_801125D8_352E38_name_50);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108830_349090_name_50);
+/* The beams' meeting point (0xA024B), turned to the camera; dim is a darker tint. */
+void func_80108630_348E90_name_50(f32 x, f32 y, f32 z, u16 dim) {
+    Vec pos;
+    Vec rot;
+    void* data;
+    s16 tex;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801089CC_34922C_name_50);
+    data = DataRead(0xA024B);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    D_801125DC_352E3C_name_50 = omAddObj(0x1F4, 2, 0, -1, NULL);
+    D_801125DC_352E3C_name_50->model[1] = func_80020EBC_21ABC((void*)-1, 0x689, 8);
+    D_800F86D8_F92D8[D_801125DC_352E3C_name_50->model[1]].unk02 = tex;
+    func_80021160_21D60(D_801125DC_352E3C_name_50->model[1], 6, 0);
+    D_801125DC_352E3C_name_50->model[0] = D_800F86D8_F92D8[D_801125DC_352E3C_name_50->model[1]].unk00;
+    if (dim == 0) {
+        func_80021250_21E50(D_801125DC_352E3C_name_50->model[1], 0xFF, 0, 0xE6);
+    } else {
+        func_80021250_21E50(D_801125DC_352E3C_name_50->model[1], 0xFF, 0xA4, 0xE6);
+    }
+    omSetSca(D_801125DC_352E3C_name_50, 6.5f, 3.5f, 6.5f);
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+    func_80056658_57258(&pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &rot);
+    D_801125DC_352E3C_name_50->rot.y = func_80042BE0_437E0(&rot);
+    omSetTra(D_801125DC_352E3C_name_50, x, y, z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108A00_349260_name_50);
+void func_801087FC_34905C_name_50(void) {
+    func_8002308C_23C8C(D_801125DC_352E3C_name_50->model[1]);
+    omDelObj(D_801125DC_352E3C_name_50);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108C6C_3494CC_name_50);
+/* A white burst (0xA024F) at a point, turned to the camera; D_801125E0. */
+void func_80108830_349090_name_50(f32 x, f32 y, f32 z) {
+    Vec pos;
+    Vec rot;
+    void* data;
+    s16 tex;
+
+    data = DataRead(0xA024F);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    D_801125E0_352E40_name_50 = omAddObj(0x1F4, 2, 0, -1, NULL);
+    D_801125E0_352E40_name_50->model[1] = func_80020EBC_21ABC((void*)-1, 0x689, 8);
+    D_800F86D8_F92D8[D_801125E0_352E40_name_50->model[1]].unk02 = tex;
+    func_80021160_21D60(D_801125E0_352E40_name_50->model[1], 6, 0);
+    D_801125E0_352E40_name_50->model[0] = D_800F86D8_F92D8[D_801125E0_352E40_name_50->model[1]].unk00;
+    func_80021250_21E50(D_801125E0_352E40_name_50->model[1], 0xFF, 0xFF, 0xFF);
+    omSetSca(D_801125E0_352E40_name_50, 8.0f, 8.0f, 8.0f);
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+    func_80056658_57258(&pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &rot);
+    D_801125E0_352E40_name_50->rot.y = func_80042BE0_437E0(&rot);
+    omSetTra(D_801125E0_352E40_name_50, x, y, z);
+}
+
+void func_801089CC_34922C_name_50(void) {
+    func_8002308C_23C8C(D_801125E0_352E40_name_50->model[1]);
+    omDelObj(D_801125E0_352E40_name_50);
+}
+
+/* A beam: every interval frames, while obj->work[0] is 1, a ring (sprite model 0x68D, texture
+   0xA024D) starts at start and grows by grow per frame (from scale0 to scale1 over the length);
+   mode bit 1 moves it along dir at speed, bit 0 gives 8 rings instead of 4. work[1] is 1 until
+   the last ring of a stopped beam has gone. */
+void func_80108A00_349260_name_50(Vec* start, Vec* dir, f32 length, u16 interval, u16 mode, f32 scale0, f32 scale1, f32 speed, f32 rotY) {
+    Ovl50BeamWork* work;
+    void* data;
+    s32 i;
+
+    D_801125E4_352E44_name_50 = omAddObj(0x1F4, 0, 0, -1, func_80108C6C_3494CC_name_50);
+    work = D_801125E4_352E44_name_50->unk_50 = func_80027154_27D54(sizeof(Ovl50BeamWork), 0x7918);
+    data = DataRead(0xA024D);
+    work->tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    work->length = length;
+    work->mode = mode;
+    if (mode & 1) {
+        work->count = 8;
+    } else {
+        work->count = 4;
+    }
+    for (i = 0; i < work->count; i++) {
+        work->slot[i] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+        D_800F86D8_F92D8[work->slot[i]].unk02 = work->tex;
+        func_80021160_21D60(work->slot[i], 6, 0);
+        work->model[i] = D_800F86D8_F92D8[work->slot[i]].unk00;
+        func_80021250_21E50(work->slot[i], 0xFF, 0xE6, 0);
+        HmfModelObjAttrSet(work->model[i], 0x70000000, 0);
+    }
+    for (i = 0; i < 8; i++) {
+        work->active[i] = 0;
+    }
+    work->start = *start;
+    work->dir = *dir;
+    work->rotY = rotY;
+    work->scale0 = scale0;
+    work->scale1 = scale1;
+    work->speed = speed;
+    work->timer = 0;
+    work->interval = interval;
+    work->grow = (work->scale1 - scale0) / (length / speed);
+    D_801125E4_352E44_name_50->work[0] = 1;
+}
+
+void func_80108C6C_3494CC_name_50(omObjData* obj) {
+    Ovl50BeamWork* work = D_801125E4_352E44_name_50->unk_50;
+    s32 idle = 0;
+    s32 i;
+
+    for (i = 0; i < 8; i++) {
+        if (work->active[i] == 0) {
+            idle++;
+            continue;
+        }
+        work->dist[i] += work->speed;
+        if (work->length <= work->dist[i]) {
+            work->active[i] = 0;
+            func_800298A4_2A4A4(work->model[i], 4, 4);
+            continue;
+        }
+        if (work->mode & 2) {
+            work->pos[i].x += work->dir.x * work->speed;
+            work->pos[i].y += work->dir.y * work->speed;
+            work->pos[i].z += work->dir.z * work->speed;
+        }
+        func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+        work->scale[i] += work->grow;
+        func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], 1.0f);
+    }
+    if (work->timer == 0) {
+        if (D_801125E4_352E44_name_50->work[0] == 1) {
+            D_801125E4_352E44_name_50->work[1] = 1;
+            work->timer = work->interval;
+            for (i = 0; i < 8; i++) {
+                if (work->active[i] == 0) {
+                    break;
+                }
+            }
+            if (i != 8) {
+                work->active[i] = 1;
+                func_800298A4_2A4A4(work->model[i], 4, 0);
+                work->scale[i] = work->scale0;
+                work->dist[i] = 0.0f;
+                work->pos[i] = work->start;
+                func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+                func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], 1.0f);
+                func_8002979C_2A39C(work->model[i], 0.0f, work->rotY, 0.0f);
+            }
+        }
+    } else {
+        work->timer--;
+    }
+    if (idle == 8 && D_801125E4_352E44_name_50->work[0] == 0) {
+        D_801125E4_352E44_name_50->work[1] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108F1C_34977C_name_50);
 
