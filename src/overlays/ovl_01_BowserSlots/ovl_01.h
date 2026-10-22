@@ -337,6 +337,26 @@ typedef struct BSFx {
     /* 0x44 */ s16 unk_44;
     /* 0x46 */ char unk_46[2];
 } BSFx; /* size = 0x48 */
+/* D_8010BA24[8]: per symbol (MP1 SlotSymFx) */
+typedef struct BSSymFx {
+    /* 0x00 */ u8 unk_00; /* effect kind (D_8010BA50 index) */
+    /* 0x01 */ u8 unk_01; /* kind once landed */
+    /* 0x02 */ u8 unk_02;
+    /* 0x03 */ u8 unk_03; /* sprite frame */
+} BSSymFx;
+/* D_8010BA50[4]: per effect kind (MP1 SlotFxKind) */
+typedef struct BSFxKind {
+    /* 0x00 */ u8 unk_00; /* sprite count */
+    /* 0x01 */ u8 unk_01; /* alpha * 10 */
+    /* 0x02 */ u8 unk_02; /* scale x * 10 */
+    /* 0x03 */ u8 unk_03; /* scale y * 10 */
+} BSFxKind;
+extern Vec D_8010BA00_E3490_BowserSlots; /* the three reels' effect points */
+extern Vec D_8010BA0C_E349C_BowserSlots;
+extern Vec D_8010BA18_E34A8_BowserSlots;
+extern BSSymFx D_8010BA24_E34B4_BowserSlots[];
+extern BSFxKind D_8010BA50_E34E0_BowserSlots[];
+extern s8 D_8010BA60_E34F0_BowserSlots[4][3][2]; /* start offsets / 10; 0x7F: start at the reels */
 extern s16 D_8010C178_E3C08_BowserSlots; /* effect sprite animation */
 extern s16 D_8010C17A_E3C0A_BowserSlots; /* effect sprite group */
 extern s16 D_8010C17C_E3C0C_BowserSlots;

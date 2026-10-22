@@ -2159,7 +2159,251 @@ void func_8010A3CC_E1E5C_BowserSlots(void) {
     }
 }
 
+/* Runs the effect sprites over the reels (MP1 SlotMachine's func_800FD590): a burst when a symbol
+   is won or matched, sprites flying from the screen edge to the reels, then pulsing until the
+   machine stops showing them. */
+/* NON_MATCHING: GCC hoists the 0.8f constant out of the sprite loop into f28 (retail reloads it at
+   each use), which grows the frame by 8; the rest is register choice (`done`, i % 3). As in MP1's
+   func_800FD590 (NON_MATCHING there too). */
+#ifdef NON_MATCHING
+void func_8010A53C_E1FCC_BowserSlots(void) {
+    f32 pos[3][2];
+    BSFx* fx;
+    s32 i;
+    s32 burst;
+    s32 done;
+    s32 b;
+    BSFx* e;
+    s32 k;
+    s16 sym;
+    s16 kind;
+    u8 frame;
+    f32 a;
+
+    func_8010B43C_E2ECC_BowserSlots(0, &D_8010BA00_E3490_BowserSlots, pos[0]);
+    func_8010B43C_E2ECC_BowserSlots(0, &D_8010BA0C_E349C_BowserSlots, pos[1]);
+    func_8010B43C_E2ECC_BowserSlots(0, &D_8010BA18_E34A8_BowserSlots, pos[2]);
+    burst = 0;
+    if (D_8010C17E_E3C0E_BowserSlots != D_8010C17C_E3C0C_BowserSlots) {
+        D_8010C17C_E3C0C_BowserSlots = D_8010C17E_E3C0E_BowserSlots;
+        switch (D_8010C17E_E3C0E_BowserSlots) {
+            case 3:
+                D_8010C18C_E3C1C_BowserSlots = 0;
+                break;
+            case 1:
+            case 2:
+                D_8010C184_E3C14_BowserSlots = 0;
+                break;
+            case 0:
+                if (D_8010C180_E3C10_BowserSlots < 0) {
+                    D_8010C18C_E3C1C_BowserSlots = -1;
+                } else {
+                    if (D_8010C184_E3C14_BowserSlots == 0) {
+                        D_8010C182_E3C12_BowserSlots = D_8010C180_E3C10_BowserSlots;
+                    }
+                    D_8010C186_E3C16_BowserSlots = D_8010C180_E3C10_BowserSlots;
+                    D_8010C188_E3C18_BowserSlots = 20;
+                }
+                break;
+        }
+    }
+    if (D_8010C182_E3C12_BowserSlots >= 0 && D_8010C184_E3C14_BowserSlots == 0) {
+        sym = D_8010C182_E3C12_BowserSlots;
+        kind = D_8010BA24_E34B4_BowserSlots[sym].unk_00;
+        frame = D_8010BA24_E34B4_BowserSlots[sym].unk_03;
+        for (fx = D_8010C174_E3C04_BowserSlots, i = 0; i < D_8010BA50_E34E0_BowserSlots[kind].unk_00; fx++, i++) {
+            k = i % 3;
+            fx->unk_00 = 0xC0;
+            fx->unk_01 = kind;
+            fx->unk_03 = frame;
+            fx->unk_02 = 0;
+            fx->unk_38 = sym;
+            if (D_8010BA60_E34F0_BowserSlots[kind][0][0] == 0x7F) {
+                fx->unk_28 = fx->unk_10 = pos[k][0];
+                fx->unk_2C = fx->unk_14 = pos[k][1];
+            } else {
+                fx->unk_28 = fx->unk_10 = (D_8010BA60_E34F0_BowserSlots + kind)[0][k][0] * 10.0;
+                fx->unk_2C = fx->unk_14 = (D_8010BA60_E34F0_BowserSlots + kind)[0][k][1] * 10.0;
+            }
+            fx->unk_24 = D_8010BA50_E34E0_BowserSlots[kind].unk_01 * 0.1;
+            fx->unk_30 = fx->unk_18 = D_8010BA50_E34E0_BowserSlots[kind].unk_02 * 0.1;
+            fx->unk_34 = fx->unk_1C = D_8010BA50_E34E0_BowserSlots[kind].unk_03 * 0.1;
+            fx->unk_20 = 0.0f;
+            fx->unk_3A = fx->unk_3C = 0;
+            fx->unk_3E = fx->unk_40 = fx->unk_42 = fx->unk_44 = 0;
+        }
+        for (; i < 6; i++) {
+            D_8010C174_E3C04_BowserSlots[i].unk_00 = 0;
+        }
+        burst = 1;
+        D_8010C18A_E3C1A_BowserSlots = -1;
+        D_8010C184_E3C14_BowserSlots = burst;
+        func_80079798_7A398(0x129, 2);
+    } else if (D_8010C188_E3C18_BowserSlots != 0) {
+        for (i = 0; i < 3; i++) {
+            if (D_8010C174_E3C04_BowserSlots[i].unk_02 != 1) {
+                break;
+            }
+        }
+        if (i >= 3 && --D_8010C188_E3C18_BowserSlots == 0) {
+            if (D_8010C18A_E3C1A_BowserSlots & 0x1F) {
+                D_8010C188_E3C18_BowserSlots++;
+            } else {
+                for (fx = D_8010C174_E3C04_BowserSlots, i = 0; i < 3; fx++, i++) {
+                    fx->unk_02 = 2;
+                    fx->unk_3A = fx->unk_3C = 0;
+                }
+                for (; i < 6; i++) {
+                    D_8010C174_E3C04_BowserSlots[i].unk_00 = 0;
+                }
+                D_8010C186_E3C16_BowserSlots = -1;
+            }
+        }
+    }
+    if (D_8010C18A_E3C1A_BowserSlots >= 0) {
+        D_8010C18A_E3C1A_BowserSlots = (D_8010C18A_E3C1A_BowserSlots + 1) & 0x7FFF;
+    }
+    b = burst;
+    fx = D_8010C174_E3C04_BowserSlots;
+    for (i = 0; i < 6; i++) {
+        e = &fx[i];
+        if (e->unk_00 == 0) {
+            continue;
+        }
+        e->unk_3A++;
+        if (e->unk_02 == 0) {
+            done = 0;
+            if (i % 3 == 2 && D_8010C18C_E3C1C_BowserSlots < 0) {
+                e->unk_00 = 0;
+            }
+            if ((e->unk_40 == 0 || e->unk_3E != 0) && D_8010C18C_E3C1C_BowserSlots < 0) {
+                e->unk_00 = 0;
+                continue;
+            }
+            if (!b) {
+                if (e->unk_40 == 0) {
+                    if (D_8010C0D0_E3B60_BowserSlots[i % 3].state == 0 || D_8010C0D0_E3B60_BowserSlots[i % 3].state == 6) {
+                        e->unk_40++;
+                    }
+                    continue;
+                }
+                if (e->unk_3E != 0) {
+                    e->unk_3E--;
+                    continue;
+                }
+                a = e->unk_24 + 0.1;
+                if (a >= 1.0) {
+                    a = 1.0f;
+                    e->unk_3C++;
+                    done = 1;
+                }
+                e->unk_24 = a;
+            }
+            a = e->unk_24;
+            switch (e->unk_01) {
+                case 0:
+                case 1:
+                    if (b) {
+                        if (i >= 3) {
+                            e->unk_3E = 5;
+                        } else {
+                            e->unk_3E = 0;
+                        }
+                        continue;
+                    }
+                    e->unk_10 = (pos[i % 3][0] - e->unk_28) * a + e->unk_28;
+                    e->unk_14 = (pos[i % 3][1] - e->unk_2C) * a + e->unk_2C;
+                case 2:
+                case 3:
+                    e->unk_18 = e->unk_30 + (1.0 - e->unk_30) * a;
+                    e->unk_1C = e->unk_34 + (1.0 - e->unk_34) * a;
+                    break;
+            }
+            if (done) {
+                e->unk_02 = 1;
+                if (i < 3) {
+                    e->unk_01 = D_8010BA24_E34B4_BowserSlots[e->unk_38].unk_01;
+                } else {
+                    e->unk_01 = 0;
+                }
+                if (D_8010C18A_E3C1A_BowserSlots < 0) {
+                    D_8010C18A_E3C1A_BowserSlots = 0;
+                }
+                e->unk_3A = D_8010C18A_E3C1A_BowserSlots;
+                e->unk_3C = 0;
+            }
+        } else if (e->unk_02 == 1) {
+            if (e->unk_3C == 0) {
+                e->unk_24 = 0.8f;
+                e->unk_3C++;
+                e->unk_18 = e->unk_1C = 1.0f;
+            }
+            switch (e->unk_01) {
+                case 0:
+                    e->unk_24 = (f32)(D_8010C18A_E3C1A_BowserSlots & 0xF) / 16.0 * 0.6 + 0.2;
+                    e->unk_20 = HuMathSin((D_8010C18A_E3C1A_BowserSlots & 0x1F) * 360.0 / 32.0) * 15.0;
+                    break;
+                case 1:
+                    e->unk_18 = e->unk_1C = HuMathSin((D_8010C18A_E3C1A_BowserSlots & 0xF) * 90.0 / 16.0) * 0.6 + 1.0;
+                    e->unk_24 = (1.0 - (f32)(D_8010C18A_E3C1A_BowserSlots & 0xF) / 16.0) * 0.8;
+                    e->unk_20 = HuMathSin((D_8010C18A_E3C1A_BowserSlots & 0x1F) * 360.0 / 32.0) * 15.0;
+                    break;
+                case 2:
+                    e->unk_20 = HuMathSin((D_8010C18A_E3C1A_BowserSlots & 0xF) * 360.0 / 16.0) * 30.0;
+                    break;
+                case 4:
+                    e->unk_20 = HuMathSin((D_8010C18A_E3C1A_BowserSlots & 0x1F) * 360.0 / 32.0) * 30.0;
+                case 3:
+                    e->unk_1C = (func_800B7890_B8490((D_8010C18A_E3C1A_BowserSlots & 0xF) * 360.0 / 16.0 - 90.0) + 1.0) * 0.15 + 1.0;
+                    break;
+            }
+            if (D_8010C18C_E3C1C_BowserSlots < 0 && i % 3 != 2) {
+                e->unk_02 = 3;
+                e->unk_3C = 0;
+            }
+        } else if (e->unk_02 == 2) {
+            if (e->unk_3C == 0) {
+                if (i >= 3) {
+                    e->unk_00 = 0;
+                }
+                e->unk_3C++;
+                e->unk_24 = 0.8f;
+                e->unk_18 = e->unk_1C = 1.0f;
+                e->unk_20 = 0.0f;
+                e->unk_28 = e->unk_2C = 1.0f;
+                e->unk_3A = 0;
+            }
+            if (e->unk_3A >= i * 2) {
+                e->unk_18 = e->unk_1C = e->unk_2C;
+                e->unk_2C += 0.2;
+                e->unk_24 = e->unk_28 * 0.8;
+                if ((e->unk_28 -= 0.1) <= 0.0f) {
+                    e->unk_00 = 0;
+                }
+            }
+        } else if (e->unk_02 == 3) {
+            if (e->unk_3C == 0) {
+                if (i >= 3) {
+                    e->unk_00 = 0;
+                }
+                e->unk_3C++;
+                e->unk_24 = 0.8f;
+                e->unk_18 = e->unk_1C = 1.0f;
+                e->unk_20 = 0.0f;
+                e->unk_28 = 1.0f;
+            }
+            e->unk_24 = e->unk_28 * 0.8;
+            e->unk_1C = e->unk_28;
+            if ((e->unk_28 -= 0.2) <= 0.0f) {
+                e->unk_00 = 0;
+            }
+        }
+    }
+    func_8010A3CC_E1E5C_BowserSlots();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A53C_E1FCC_BowserSlots);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B148_E2BD8_BowserSlots);
 
