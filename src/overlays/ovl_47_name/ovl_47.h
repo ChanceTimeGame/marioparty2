@@ -454,6 +454,9 @@ extern DecisionTreeNonLeafNode D_80110CA0_3055A0_name_47[]; /* 47-A: CPU choice 
 extern DecisionTreeNonLeafNode D_80110CB8_3055B8_name_47[];
 extern DecisionTreeNonLeafNode D_801116DC_305FDC_name_47[]; /* the same for func_8010F6B0 */
 extern DecisionTreeNonLeafNode D_801116F4_305FF4_name_47[];
+extern s16 D_80110A10_305310_name_47[6]; /* 47-A: -1 ended space lists for func_80105984 (41: D_80110AF0) */
+extern s16 D_80110A1C_30531C_name_47[]; /* -1 ended */
+void MBMasuArrowAngleAdd(f32); /* 47-A: as ovl_41.h (unprototyped it passes a double) */
 /* 47-A: the rest (fork B's own functions are void(void) unless a caller shows more) */
 void func_801058A4_2FA1A4_name_47(void);
 void func_801058E0_2FA1E0_name_47(void);
