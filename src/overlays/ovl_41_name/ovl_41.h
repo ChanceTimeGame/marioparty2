@@ -532,7 +532,7 @@ void func_801065BC_2B4E7C_name_41(s32 arg0);
 void func_80106660_2B4F20_name_41(s32 arg0);
 void func_801066CC_2B4F8C_name_41(void);
 void func_80106744_2B5004_name_41(void);
-void func_80106780_2B5040_name_41(void);
+void func_80106780_2B5040_name_41(s16 arg0); /* a variant of 3E func_80105F0C */
 void func_80106904_2B51C4_name_41(void);
 void func_80106964_2B5224_name_41(void);
 s32 func_801069E8_2B52A8_name_41(s32 arg0); /* the chosen option */
