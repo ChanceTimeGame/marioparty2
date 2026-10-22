@@ -153,6 +153,8 @@ extern Vec D_8010D5C8_334F88_name_4E;
 extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
 extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
 extern s16 D_8010D5FE_334FBE_name_4E[]; /* board per minigame index (inside D_8010D5F4's words) */
+extern s32 D_8010D680_335040_name_4E[2]; /* messages naming two winners */
+extern s32 D_8010D688_335048_name_4E[3]; /* ... three winners */
 extern char* D_8010D694_335054_name_4E[7]; /* per character: name (" MARIO " ... "  ALL  ") */
 extern s16 D_8010D614_334FD4_name_4E[4]; /* second menu row -> D_801013F8 */
 extern s16 D_8010D61C_334FDC_name_4E[6]; /* third menu (1 vs 3): x offsets of the icons [1..4] and D_8010DAF0 [5] */
@@ -249,7 +251,7 @@ s32 func_80107638_32EFF8_name_4E(void);
 void func_801076C0_32F080_name_4E(void);
 void func_801076E4_32F0A4_name_4E(void);
 void func_801076F4_32F0B4_name_4E(void);
-void func_80107718_32F0D8_name_4E(s32 arg0, s8 arg1);
+void func_80107718_32F0D8_name_4E(s32 arg0, s16 arg1);
 void func_80107748_32F108_name_4E(s16 arg0, s32 arg1, s32 arg2);
 void func_80107804_32F1C4_name_4E(s16 arg0, s32 arg1, s32 arg2);
 void func_801078EC_32F2AC_name_4E(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
