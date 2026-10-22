@@ -430,7 +430,80 @@ s32 func_80105E60_23BD40_SlotCarDerby(f32 dist) {
     return D_8010F450_245330_SlotCarDerby[cls] + 1;
 }
 
+/* NON_MATCHING: one FP register (the quotient lands in f12, retail f0); masked 0 */
+#ifdef NON_MATCHING
+f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec* pos, Vec* dir) {
+    f32 d;
+    f32 at;
+    f32 sum;
+    f32 prev;
+    f32 t;
+    f32 u;
+    Vec* a;
+    Vec* b;
+    s16 i;
+    s16 next;
+
+    d = dist + step;
+    if (d >= 0.0f) {
+        d = func_800B0D98_B1998(d, D_80110250_246130_SlotCarDerby);
+    } else {
+        d += D_80110250_246130_SlotCarDerby;
+    }
+    at = start + d;
+    if (at >= 0.0f) {
+        at = func_800B0D98_B1998(at, D_80110250_246130_SlotCarDerby);
+    } else {
+        at += D_80110250_246130_SlotCarDerby;
+    }
+    sum = 0.0f;
+    prev = sum;
+    for (i = 0; i < D_80110244_246124_SlotCarDerby; i++) {
+        sum += D_80110248_246128_SlotCarDerby[i];
+        if (at <= sum) {
+            break;
+        }
+        prev = sum;
+    }
+    if (i >= D_80110244_246124_SlotCarDerby) {
+        i = 0;
+        at -= D_80110250_246130_SlotCarDerby;
+        prev = 0.0f;
+    }
+    at -= prev;
+    step = at / D_80110248_246128_SlotCarDerby[i];
+    t = fabsf(step);
+    if (t >= 0.5) {
+        t = t - 0.5;
+    } else {
+        t = t + 0.5;
+        i = (i != 0) ? i - 1 : D_80110244_246124_SlotCarDerby - 1;
+    }
+    if (i < D_80110244_246124_SlotCarDerby - 1) {
+        next = i + 1;
+    } else {
+        next = 0;
+    }
+    step = t;
+    if (step < 0.5) {
+        u = step * 2.0;
+        a = &D_80110254_246134_SlotCarDerby[i];
+        b = &D_80110240_246120_SlotCarDerby[next];
+    } else {
+        u = t - 0.5;
+        u = u * 2.0;
+        a = &D_80110240_246120_SlotCarDerby[next];
+        b = &D_80110254_246134_SlotCarDerby[next];
+    }
+    pos->x = u * (b->x - a->x) + a->x;
+    pos->y = u * (b->y - a->y) + a->y;
+    pos->z = u * (b->z - a->z) + a->z;
+    func_80106560_23C440_SlotCarDerby(step, &D_80110254_246134_SlotCarDerby[i], &D_80110240_246120_SlotCarDerby[next], &D_80110254_246134_SlotCarDerby[next], dir);
+    return d;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105F5C_23BE3C_SlotCarDerby);
+#endif
 
 /* NON_MATCHING: retail advances the pos pointer once (addiu a0, 4) before reading y and z; logic as retail */
 #ifdef NON_MATCHING
