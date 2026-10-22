@@ -1113,7 +1113,101 @@ void func_8010646C_14FF8C_CraneGame(s16 n, Vec* v) {
     }
 }
 
+#ifdef NON_MATCHING
+/* Float register allocation only (masked 0), as MP1's func_800F97D4. */
+s16 func_80106568_150088_CraneGame(omObjData* obj) {
+    f32 m1[4][4];
+    f32 m2[4][4];
+    Vec rot;
+    Vec pts[64];
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 len;
+    f32 l;
+    f32 nx;
+    f32 ny;
+    f32 nz;
+    f32 a1;
+    f32 a2;
+    s32 n;
+    s32 n2;
+
+    n = func_80106268_14FD88_CraneGame(obj, pts);
+    if (n != 0) {
+        if (n >= 2) {
+            func_8010646C_14FF8C_CraneGame(n, pts);
+            l = 0.0 - pts[1].y;
+            obj->trans.y += l;
+            pts[0].y += l;
+        }
+        if (obj->trans.y < 0.0) {
+            l = 0.0 - pts[0].y;
+            obj->trans.y += l;
+            pts[0].y += l;
+        } else {
+            px = pts[0].x;
+            py = pts[0].y;
+            pz = pts[0].z;
+            dx = obj->trans.x - px;
+            dy = obj->trans.y - py;
+            dz = obj->trans.z - pz;
+            if (n == 1 && dx == 0.0 && dz == 0.0) {
+                obj->trans.x = (obj->trans.x > 0.0f) ? obj->trans.x - 1.0 : obj->trans.x + 1.0;
+            }
+            len = sqrtf(dx * dx + dy * dy + dz * dz);
+            x = obj->trans.x;
+            y = obj->trans.y;
+            z = obj->trans.z;
+            l = 0.0 - py;
+            obj->trans.y = l + y;
+            py += l;
+            dx = x - px;
+            dy = y - py;
+            dz = z - pz;
+            l = sqrtf(dx * dx + dy * dy + dz * dz);
+            if (l != 0.0) {
+                nx = px + dx / l * len;
+                ny = py + dy / l * len;
+                nz = pz + dz / l * len;
+                a1 = 90.0 - func_800B75A8_B81A8(py - obj->trans.y, sqrtf((px - obj->trans.x) * (px - obj->trans.x) +
+                                                                  (pz - obj->trans.z) * (pz - obj->trans.z)));
+                a2 = 90.0 - func_800B75A8_B81A8(py - ny, sqrtf((px - nx) * (px - nx) + (pz - nz) * (pz - nz)));
+                a1 -= a2;
+                obj->trans.x = nx;
+                obj->trans.y = ny;
+                obj->trans.z = nz;
+                guRotateRPYF(m1, obj->rot.x, obj->rot.y, obj->rot.z);
+                px -= obj->trans.x;
+                pz -= obj->trans.z;
+                l = sqrtf(px * px + pz * pz);
+                if (l != 0.0) {
+                    guRotateF(m2, -a1, pz / l, 0.0f, -(px / l));
+                    guMtxCatF(m1, m2, m2);
+                    func_80106D58_150878_CraneGame(m2, &rot);
+                    obj->rot.x = rot.x;
+                    obj->rot.y = rot.y;
+                    obj->rot.z = rot.z;
+                }
+            }
+            n2 = func_80106268_14FD88_CraneGame(obj, pts);
+            if (n2 != 0) {
+                func_8010646C_14FF8C_CraneGame(n2, pts);
+                obj->trans.y -= pts[n2 - 1].y;
+            }
+        }
+    }
+    return n;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106568_150088_CraneGame);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106A28_150548_CraneGame);
 
