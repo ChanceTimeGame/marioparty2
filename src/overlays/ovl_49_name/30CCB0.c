@@ -4302,7 +4302,97 @@ void func_80110188_31A638_name_49(s32 player) {
     work->player = player;
 }
 
+#ifdef NON_MATCHING
+/* NON_MATCHING: retail reloads D_80113A60 after the wait loop (GCC here reuses the loop's load:
+   4 instructions); the logic is complete. */
+/* A player's run (process; work Ovl49RunWork): wait for the chain leader to come within 20 of
+   the player's space, then hop along the route's legs (a coin pop, func_80110188, on each
+   space of types 1, 2, 4-7, 9 and 12), then jump to space 0x80 with one more coin. Reading
+   D_80113990[route][3] after the third leg is retail's (it is the next route's first leg). */
+void func_801101E0_31A690_name_49(void) {
+    Vec target;
+    Ovl49RunWork* work;
+    s32 player;
+    GW_PLAYER* p;
+    MBModel* model;
+    s32 route;
+    s32 leg;
+    s32 slot;
+    s16* path;
+    Vec* leaderPos;
+    Process* proc;
+    Vec* pos;
+    Vec* rot;
+
+    work = HuPrcCurrentGet()->user_data;
+    player = work->player;
+    p = BoardPlayerGet(player);
+    model = p->unk_24;
+    route = work->route;
+    leg = work->leg;
+    slot = work->slot;
+    path = work->path;
+    if (D_80113A60_31DF10_name_49 == NULL) {
+        do {
+            HuPrcVSleep();
+        } while (D_80113A60_31DF10_name_49 == NULL);
+    }
+    leaderPos = &D_80113A60_31DF10_name_49->pos;
+    proc = HuPrcCurrentGet();
+    while (!(HuVecDistance(&GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(p->cur_chain_index, p->cur_space_index))->coords, leaderPos) < 20.0f)) {
+        func_80056658_57258(&model->pos, leaderPos, &model->rot);
+        HuPrcVSleep();
+    }
+    func_8006735C_67F5C(D_801149E0_31EE90_name_49[player]);
+    D_801149E0_31EE90_name_49[player] = func_800672BC_67EBC(player, 3, 5);
+    func_800797DC_7A3DC(0x111, player);
+    MBMotionSet(model, 2, 2);
+    for (; leg < 3;) {
+        while (path[1] != -1) {
+            switch (GetSpaceData(path[1])->space_type) {
+                case 1:
+                case 2:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 9:
+                case 12:
+                    D_801157C8_31FC78_name_49[player]++;
+                    func_80110188_31A638_name_49(player);
+                    break;
+            }
+            func_8010F9A0_319E50_name_49(path[0], path[1], 2.0f, 1, player, slot);
+            HuPrcChildWatch();
+            path++;
+        }
+        path = D_80113990_31DE40_name_49[route][++leg];
+        if (path == D_80113980_31DE30_name_49) {
+            break;
+        }
+    }
+    func_80110188_31A638_name_49(player);
+    D_801157C8_31FC78_name_49[player]++;
+    func_800B3170_B3D70(&target, &GetSpaceData(0x80)->coords);
+    target.x += D_80113A24_31DED4_name_49[slot].x;
+    target.z += D_80113A24_31DED4_name_49[slot].z;
+    pos = &model->pos;
+    rot = &model->rot;
+    func_80056658_57258(pos, &target, rot);
+    HuPrcChildLink(proc, func_80056FD4_57BD4(pos, &target, pos, 2.0f));
+    HuPrcChildWatch();
+    func_8005670C_5730C(&target);
+    func_80056B78_57778(rot, &target, rot, 5);
+    MBMotionSet(model, 4, 2);
+    func_800797DC_7A3DC(0xFC, player);
+    func_80054C78_55878(0x80, &p->cur_chain_index, &p->cur_space_index);
+    p->next_chain_index = p->cur_chain_index;
+    p->next_space_index = p->cur_space_index + 1;
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_801101E0_31A690_name_49);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8011056C_31AA1C_name_49);
 

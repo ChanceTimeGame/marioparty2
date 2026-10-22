@@ -664,6 +664,19 @@ extern Vec D_801156E8_31FB98_name_49[4]; /* func_8010F9A0: per player facing */
 extern Vec D_80113A24_31DED4_name_49[]; /* func_8010F9A0: offset by slot (x, z) */
 extern Vec D_80115718_31FBC8_name_49[7]; /* func_8010FC3C: chain targets */
 extern Vec D_80115770_31FC20_name_49[7]; /* func_8010FC3C: chain facings */
+extern MBModel* D_80113A60_31DF10_name_49; /* the chain leader once it is out (func_801101E0 waits on it) */
+extern void* D_801149E0_31EE90_name_49[4]; /* per player vibration handle */
+extern s32 D_801157C8_31FC78_name_49[4]; /* per player coins collected on the run */
+extern s16* D_80113990_31DE40_name_49[][3]; /* the run's legs by route; D_80113980 ends a route */
+extern s16 D_80113980_31DE30_name_49[];
+/* func_801101E0's process work */
+typedef struct Ovl49RunWork {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 route;
+    /* 0x08 */ s32 leg;
+    /* 0x0C */ s32 slot;
+    /* 0x10 */ s16* path; /* space pairs walked from path[0] while path[1] != -1 */
+} Ovl49RunWork;
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif
