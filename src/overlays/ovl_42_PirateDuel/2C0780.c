@@ -1,5 +1,6 @@
 #include "ovl_42.h"
 
+
 void func_80102800_2C0780_PirateDuel(void) {
     omInitObjMan(30, 15);
     func_80079128_79D28();
@@ -301,24 +302,200 @@ void func_80105724_2C36A4_PirateDuel(omObjData* obj) {
     }
 }
 
-__asm__(".section .rodata");
-const u32 D_80109C08_2C7B88_PirateDuel[3] = { 0x00000020, 0x0000005A, 0x00000094 };
+void func_801057B4_2C3734_PirateDuel(void) {
+    s32 ys4[3] = { 32, 90, 148 };
+    s32 ys3[2] = { 59, 121 };
+    s32 ys[4];
+    s16 size[2];
+    s32* src;
+    s32 win;
+    s16 spr;
+    u16 btn;
+    s32 sel;
+    s32 count;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801057B4_2C3734_PirateDuel);
+    func_8008DACC_8E6CC(1, size, 0x212);
+    win = func_80104FB4_2C2F34_PirateDuel(70, 178, size[0], size[1], 0, 0, 200);
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, 0x212, -1, -1);
+    sel = 0;
+    count = D_80109DA8_2C7D28_PirateDuel - 1;
+    if (D_80109DA8_2C7D28_PirateDuel == 4) {
+        src = ys4;
+    } else {
+        src = ys3;
+    }
+    for (i = 0; i < D_80109DA8_2C7D28_PirateDuel; i++) {
+        ys[i] = *src++;
+    }
+    spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x42), 1, 1);
+    espDispOn(spr);
+    if (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) {
+        func_801070F4_2C5074_PirateDuel(sel, 0, 2);
+    }
+    while (TRUE) {
+        btn = func_8010511C_2C309C_PirateDuel();
+        if (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) {
+            btn = func_801078C4_2C5844_PirateDuel();
+        }
+        if ((btn & 0x8000) && BoardSpaceGet(D_80109DB0_2C7D30_PirateDuel[sel], 1) != 0) {
+            PlaySound(2);
+            D_80109D70_2C7CF0_PirateDuel = 1;
+            D_80109D94_2C7D14_PirateDuel = D_80109DB0_2C7D30_PirateDuel[sel];
+            espDispOff(spr);
+            func_8008CCA8_8D8A8(win);
+            omDelPrcObj(NULL);
+        }
+        if (btn & 0x400) {
+            PlaySound(1);
+            sel++;
+            if (sel >= count) {
+                sel = 0;
+            }
+        }
+        if (btn & 0x800) {
+            PlaySound(1);
+            sel--;
+            if (sel < 0) {
+                sel = count - 1;
+            }
+        }
+        espPosSet(spr, 184, ys[sel]);
+        D_800F851A_F911A = 1;
+        HuPrcVSleep();
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_80109C14_2C7B94_PirateDuel[6] = { 0x00000001, 0x00000005, 0x0000000A, 0x00000014, 0x0000001E, 0x00000032 };
+/* The stake (as 3F's func_80105054): the starting amount comes from the turn (turns[] bands) and
+   the poorer player's coins (stakes[]); right/left add or take 1, up/down 10, A accepts. Both
+   duelists pay the stake as it changes. Retail quirk: at the 999 cap a further raise still takes
+   the coin from both players. */
+#define PD_STAKE_SHOW(win, stake)                                           \
+    sprintf(num, D_80109BFC_2C7B7C_PirateDuel, stake);                      \
+    len = func_800A5610_A6210(num);                                         \
+    for (j = 0; j < 3 - len; j++) {                                         \
+        pad[j] = 0x1A;                                                      \
+    }                                                                       \
+    pad[j] = 0;                                                             \
+    sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
+    func_800890CC_89CCC(win, (s32)buf, x, y)
 
-__asm__(".section .rodata");
-const u32 D_80109C2C_2C7BAC_PirateDuel[4] = { 0x0000000B, 0x00000015, 0x00000024, 0x0000002E };
+void func_80105A80_2C3A00_PirateDuel(void) {
+    s32 stakes[6] = { 1, 5, 10, 20, 30, 50 };
+    s32 turns[4] = { 11, 21, 36, 46 };
+    char buf[0x200];
+    char mess[0x20];
+    s16 size[2];
+    char num[8];
+    char pad[16];
+    s32 win;
+    s32 coins1;
+    s32 coins2;
+    u16 btn;
+    s32 stake;
+    s32 len;
+    s32 turn;
+    s32 y;
+    s32 x;
+    s32 i;
+    s32 j;
 
-__asm__(".section .rodata");
-const char D_80109C3C_2C7BBC_PirateDuel[] = "";
-
-__asm__(".section .rodata");
-const char D_80109C40_2C7BC0_PirateDuel[] = "%c%c%s%d";
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80105A80_2C3A00_PirateDuel);
+    turn = D_80109DC4_2C7D44_PirateDuel;
+    i = 0;
+    while (turn >= turns[i]) {
+        if (++i == 4) {
+            break;
+        }
+    }
+    coins1 = BoardPlayerGet(D_80109D90_2C7D10_PirateDuel)->coins;
+    coins2 = BoardPlayerGet(D_80109D94_2C7D14_PirateDuel)->coins;
+    D_80109DCC_2C7D4C_PirateDuel = coins1;
+    if (coins2 < coins1) {
+        D_80109DCC_2C7D4C_PirateDuel = coins2;
+    }
+    i++;
+    while (D_80109DCC_2C7D4C_PirateDuel < stakes[i]) {
+        if (--i == 0) {
+            break;
+        }
+    }
+    D_80109D74_2C7CF4_PirateDuel = D_80109DC0_2C7D40_PirateDuel = stakes[i];
+    x = 0x2F;
+    y = 0x2E;
+    stake = D_80109DC0_2C7D40_PirateDuel;
+    sprintf(mess, "", stake);
+    func_8008D974_8E574(mess, 0);
+    func_8008DACC_8E6CC(1, size, 0x213);
+    win = func_80104FB4_2C2F34_PirateDuel(24, 72, size[0], size[1], 0, 0, 200);
+    func_80089308_89F08(win, mess, 0);
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, 0x213, -1, -1);
+    HuPrcVSleep();
+    func_80089284_89E84(win, 0x10004, 0x10004);
+    PD_STAKE_SHOW(win, stake);
+    func_80057730_58330(win, D_80109D90_2C7D10_PirateDuel);
+    AdjustPlayerCoins(D_80109D90_2C7D10_PirateDuel, -D_80109D74_2C7CF4_PirateDuel);
+    AdjustPlayerCoins(D_80109D94_2C7D14_PirateDuel, -D_80109D74_2C7CF4_PirateDuel);
+    func_80089284_89E84(win, 4, 4);
+    if (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) {
+        func_801070F4_2C5074_PirateDuel(D_80109D74_2C7CF4_PirateDuel, D_80109DCC_2C7D4C_PirateDuel, 3);
+    }
+    while (TRUE) {
+        D_80109D74_2C7CF4_PirateDuel = stake;
+        btn = ContDStkTrg[gPlayers[D_80109D90_2C7D10_PirateDuel].port];
+        if (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) {
+            btn = func_801078C4_2C5844_PirateDuel();
+        }
+        if (btn & 0x8000) {
+            PlaySound(2);
+            D_800F851A_F911A = 0;
+            func_8008CCA8_8D8A8(win);
+            D_80109D70_2C7CF0_PirateDuel = 1;
+            omDelPrcObj(NULL);
+        } else if (btn & 0x800) {
+            if (gPlayers[D_80109D90_2C7D10_PirateDuel].coins > 0 && gPlayers[D_80109D94_2C7D14_PirateDuel].coins > 0) {
+                if (++stake >= 1000) {
+                    stake = 999;
+                } else {
+                    PlaySound(0x37B);
+                }
+                PD_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80109D90_2C7D10_PirateDuel, -1);
+                AdjustPlayerCoins(D_80109D94_2C7D14_PirateDuel, -1);
+            }
+        } else if (btn & 0x400) {
+            if (D_80109DC0_2C7D40_PirateDuel < stake) {
+                stake--;
+                PlaySound(0x37C);
+                PD_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80109D90_2C7D10_PirateDuel, 1);
+                AdjustPlayerCoins(D_80109D94_2C7D14_PirateDuel, 1);
+            }
+        } else if (btn & 0x200) {
+            if (stake - 10 >= D_80109DC0_2C7D40_PirateDuel) {
+                stake -= 10;
+                PlaySound(0x37C);
+                PD_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80109D90_2C7D10_PirateDuel, 10);
+                AdjustPlayerCoins(D_80109D94_2C7D14_PirateDuel, 10);
+            }
+        } else if (btn & 0x100) {
+            if (gPlayers[D_80109D90_2C7D10_PirateDuel].coins >= 10 && gPlayers[D_80109D94_2C7D14_PirateDuel].coins >= 10) {
+                stake += 10;
+                if (stake >= 1000) {
+                    stake = 999;
+                } else {
+                    PlaySound(0x37B);
+                }
+                PD_STAKE_SHOW(win, stake);
+                AdjustPlayerCoins(D_80109D90_2C7D10_PirateDuel, -10);
+                AdjustPlayerCoins(D_80109D94_2C7D14_PirateDuel, -10);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801062FC_2C427C_PirateDuel);
 
