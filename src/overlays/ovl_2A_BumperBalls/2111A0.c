@@ -1173,45 +1173,630 @@ void func_80105FB0_214950_BumperBalls(omObjData* arg0) {
    next retail file's .rodata (MP1's water mesh, 196300.c). No function in between has rodata. */
 __asm__(".section .rodata\n\t.balign 16\n\t.text");
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106730_2150D0_BumperBalls);
+/* Ends the minigame when it is over or skipped: fade out, then return to the board. */
+void func_80106730_2150D0_BumperBalls(omObjData* arg0) {
+    if (D_8010A080_218A20_BumperBalls != 0 || D_801011FC_101DFC != 0) {
+        if (D_8010A044_2189E4_BumperBalls == 0) {
+            D_8010A044_2189E4_BumperBalls = 1;
+            D_8010A562_218F02_BumperBalls = 2;
+            D_8010A560_218F00_BumperBalls = 8;
+            InitFadeOut(0, 20);
+            if (D_8010A262_218C02_BumperBalls == 0) {
+                func_800794A8_7A0A8(20);
+            }
+        } else if (func_8008F618_90218() == 0) {
+            func_80108500_216EA0_BumperBalls(0);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801067D8_215178_BumperBalls);
+/* Ball collision: bounces this ball off the first rolling ball it touches. */
+u16 func_801067D8_215178_BumperBalls(omObjData* object) {
+    BumperBallsWork* work = object->unk_50;
+    BumperBallsWork* otherWork;
+    omObjData* other;
+    f32 x;
+    f32 z;
+    f32 dist;
+    f32 otherSpeed;
+    f32 len;
+    f32 nx;
+    f32 nz;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106AD8_215478_BumperBalls);
+    x = object->trans.x + work->unk_24;
+    z = object->trans.z + work->unk_2C;
+    for (i = 0; i < 4; i++) {
+        other = D_8010A29C_218C3C_BumperBalls[i];
+        if (other == object) {
+            continue;
+        }
+        otherWork = other->unk_50;
+        if (otherWork->unk_00 != 1 && otherWork->unk_00 != 2) {
+            continue;
+        }
+        dist = func_800B1830_B2430((other->trans.x - x) * (other->trans.x - x) + (other->trans.z - z) * (other->trans.z - z));
+        if (!(dist <= func_800B1830_B2430((work->unk_20 + otherWork->unk_20) * (work->unk_20 + otherWork->unk_20)))) {
+            continue;
+        }
+        dist = func_800B1830_B2430(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
+        otherSpeed = func_800B1830_B2430(otherWork->unk_24 * otherWork->unk_24 + otherWork->unk_2C * otherWork->unk_2C);
+        if (otherSpeed <= dist) {
+            func_80106AD8_215478_BumperBalls(dist, work->player);
+        } else {
+            func_80106AD8_215478_BumperBalls(otherSpeed, otherWork->player);
+        }
+        omVibrate(work->player, 0xA, 0, 0xA);
+        omVibrate(otherWork->player, 0xA, 0, 0xA);
+        x = otherWork->unk_24;
+        z = otherWork->unk_2C;
+        otherWork->unk_24 = work->unk_24 * 1.1f - x * 0.4f;
+        otherWork->unk_2C = work->unk_2C * 1.1f - otherWork->unk_2C * 0.4f;
+        work->unk_24 = x * 1.1f - work->unk_24 * 0.4f;
+        work->unk_2C = z * 1.1f - work->unk_2C * 0.4f;
+        if (D_8010A26E_218C0E_BumperBalls == 0) {
+            otherWork->unk_24 *= 1.01f;
+            otherWork->unk_2C *= 1.01f;
+        }
+        len = func_800B1830_B2430(otherWork->unk_24 * otherWork->unk_24 + otherWork->unk_2C * otherWork->unk_2C);
+        if (len > 22.0f) {
+            nx = otherWork->unk_24 / len;
+            nz = otherWork->unk_2C / len;
+            otherWork->unk_24 = nx * 22.0f;
+            otherWork->unk_2C = nz * 22.0f;
+        }
+        len = func_800B1830_B2430(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C);
+        if (len > 22.0f) {
+            nx = work->unk_24 / len;
+            nz = work->unk_2C / len;
+            work->unk_24 = nx * 22.0f;
+            work->unk_2C = nz * 22.0f;
+        }
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106C88_215628_BumperBalls);
+/* The bump sound, pitched and loudened by the impact speed. */
+void func_80106AD8_215478_BumperBalls(f32 speed, u16 player) {
+    s16 sound;
+    s16 pitch;
+    s16 volume;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106E94_215834_BumperBalls);
+    if (speed < 8.0f) {
+        sound = func_80079798_7A398(0x289, player);
+        if (speed < 4.0f) {
+            pitch = speed * -25.0f;
+        } else {
+            pitch = (speed - 4.0f) * 75.0f;
+        }
+        if (pitch > 300) {
+            pitch = 300;
+        }
+    } else {
+        sound = func_80079798_7A398(0x288, player);
+        if (speed < 12.0f) {
+            pitch = (speed - 8.0f) * -25.0f;
+        } else {
+            pitch = (speed - 12.0f) * 150.0f;
+        }
+        if (pitch > 600) {
+            pitch = 600;
+        }
+    }
+    volume = speed * 1.9375f;
+    if (volume > 31) {
+        volume = 31;
+    }
+    func_800796F0_7A2F0(sound, pitch);
+    func_800795D8_7A1D8(sound, volume + 0x60);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106FCC_21596C_BumperBalls);
+/* The island's ground height under (x, z), -10000 off the island; the face's surface type goes to
+   *surface and a downhill push from its slope to push[0], push[2]. */
+f32 func_80106C88_215628_BumperBalls(s16* surface, f32* push, f32 x, f32 y, f32 z) {
+    BumperBallsHitProbe probe;
+    Vec normal;
+    ColVtx* verts;
+    u16* tri;
+    u16* found;
+    f32 best;
+    f32 angle;
+    f32 h;
+    s16 model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106FEC_21598C_BumperBalls);
+    best = -10000.0f;
+    probe.x = x;
+    probe.y = y;
+    probe.z = z;
+    model = D_8010A290_218C30_BumperBalls->model[0];
+    verts = D_800FC834_FD434[model].hmf->unk54;
+    func_8002F2C4_2FEC4(model, D_800F9D30_FA930, func_80106FCC_21596C_BumperBalls, &probe);
+    goto next;
+    do {
+        h = func_8002DBA4_2E7A4(x, y, z, verts, tri);
+        if (best < h) {
+            best = h;
+            *surface = tri[0] & 0x3FFF;
+            found = tri;
+        }
+    next:
+        tri = func_8002F848_30448(D_800F9D30_FA930);
+    } while (tri != NULL);
+    if (best != -10000.0f) {
+        func_8002DA3C_2E63C(&verts[(s16)found[1]], &verts[(s16)found[2]], &verts[(s16)found[3]], &normal);
+        angle = func_800B75A8_B81A8(normal.x, normal.z);
+        push[0] = -HuMathSin(angle) * (1.0f - normal.y) * -4.0f;
+        push[2] = -func_800B7890_B8490(angle) * (1.0f - normal.y) * -4.0f;
+    } else {
+        push[0] = 0.0f;
+        push[1] = 0.0f;
+        push[2] = 0.0f;
+    }
+    return best;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80107204_215BA4_BumperBalls);
+/* Lifts the ball onto a floating (or rescued) ball it lands on. */
+u16 func_80106E94_215834_BumperBalls(omObjData* object) {
+    omObjData* other;
+    BumperBallsWork* otherWork;
+    f32 top;
+    f32 dx;
+    f32 dz;
+    f32 dist;
+    s32 i;
 
+    for (i = 0; i < 4; i++) {
+        other = D_8010A29C_218C3C_BumperBalls[i];
+        if (object == other) {
+            continue;
+        }
+        otherWork = other->unk_50;
+        if (otherWork->unk_00 != 4 && otherWork->unk_00 != 5) {
+            continue;
+        }
+        dx = other->trans.x;
+        top = other->trans.y;
+        dz = other->trans.z;
+        dx -= object->trans.x;
+        dx *= dx;
+        dz -= object->trans.z;
+        dist = func_800B1830_B2430(dx + dz * dz);
+        if (dist <= func_800B1830_B2430(10000.0f)) {
+            if (top + 50.0f >= object->trans.y + -50.0f) {
+                object->trans.y = object->trans.y + fabs(top + 50.0f - (object->trans.y + -50.0f));
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+/* func_8002F2C4's face filter: the probe's (x, z) inside the face. */
+s32 func_80106FCC_21596C_BumperBalls(s32 arg0, u16* polygon, ColVtx* vertices, BumperBallsHitProbe* probe) {
+    return func_80106FEC_21598C_BumperBalls(probe, polygon - 1, vertices);
+}
+
+s32 func_80106FEC_21598C_BumperBalls(BumperBallsHitProbe* probe, u16* poly, ColVtx* verts) {
+    f32 x = probe->x;
+    f32 z = probe->z;
+    s32 cnt = (poly[0] >> 14) + 2;
+    s32 i;
+    s32 j;
+
+    poly++;
+    if (func_8002DB3C_2E73C(x, z, &verts[(s16)poly[0]], &verts[(s16)poly[1]]) > 0.0f) {
+        for (i = 1; i < cnt; i++) {
+            j = (i + 1) % cnt;
+            if (func_8002DB3C_2E73C(x, z, &verts[(s16)poly[i]], &verts[(s16)poly[j]]) < 0.0f) {
+                return 0;
+            }
+        }
+    } else {
+        for (i = 1; i < cnt; i++) {
+            j = (i + 1) % cnt;
+            if (func_8002DB3C_2E73C(x, z, &verts[(s16)poly[i]], &verts[(s16)poly[j]]) > 0.0f) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+/* Whether every ball has fallen (state 3). */
+u16 func_80107204_215BA4_BumperBalls(void) {
+    u16 count = 0;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (((BumperBallsWork*)D_8010A29C_218C3C_BumperBalls[i]->unk_50)->unk_00 != 3) {
+            count++;
+        }
+    }
+    return (count < 4) ^ 1;
+}
+
+/* CPU: picks the next behaviour (1 chase the outermost ball, 2 wait, 3 chase one ball, 4 dodge)
+   from the difficulty's table. */
+/* register allocation: work and table swap s0/s1 (masked 0; MP1 func_800F9F30 has the same) */
+#ifdef NON_MATCHING
+void func_80107254_215BF4_BumperBalls(omObjData* object) {
+    u16* table;
+    BumperBallsWork* work = object->unk_50;
+    u16 candidates[4];
+    s32 bias;
+    u16 count;
+    s32 i;
+
+    work->unk_54 = 0;
+    if (D_8010A26E_218C0E_BumperBalls != 0) {
+        switch (gPlayers[work->player].cpu_difficulty) {
+        case 0:
+            table = D_8010A048_2189E8_BumperBalls;
+            bias = 5;
+            break;
+        case 1:
+            table = D_8010A048_2189E8_BumperBalls;
+            bias = 4;
+            break;
+        case 2:
+            table = D_8010A068_218A08_BumperBalls;
+            bias = 3;
+            break;
+        case 3:
+            table = D_8010A068_218A08_BumperBalls;
+            bias = 2;
+            break;
+        }
+    } else {
+        switch (gPlayers[work->player].cpu_difficulty) {
+        case 0:
+            table = D_8010A058_2189F8_BumperBalls;
+            bias = 4;
+            break;
+        case 1:
+            table = D_8010A058_2189F8_BumperBalls;
+            bias = 3;
+            break;
+        case 2:
+            table = D_8010A068_218A08_BumperBalls;
+            bias = 2;
+            break;
+        case 3:
+            table = D_8010A068_218A08_BumperBalls;
+            bias = 2;
+            break;
+        }
+    }
+    if (work->unk_64 == 1) {
+        work->unk_64 = 0;
+        table = D_8010A068_218A08_BumperBalls;
+    }
+    work->unk_50 = table[rand8() & 7];
+    while (1) {
+        switch (work->unk_50) {
+        case 1:
+            work->unk_56 = ((u8)(rand8() % 180) + 180) >> 1;
+            work->unk_52 = bias;
+            work->unk_58 = 1;
+            work->unk_66 = 0;
+            return;
+        case 2:
+            if (work->unk_66 < 3) {
+                work->unk_56 = ((u8)(rand8() % 21) + 20) >> 1;
+                work->unk_66++;
+                return;
+            }
+            work->unk_50 = 1;
+            continue;
+        case 3:
+            count = 0;
+            work->unk_56 = ((u8)(rand8() % 180) + 180) >> 1;
+            for (i = 0; i < 4; i++) {
+                omObjData* other = D_8010A29C_218C3C_BumperBalls[i];
+                BumperBallsWork* otherWork;
+
+                if (object == other) {
+                    continue;
+                }
+                otherWork = other->unk_50;
+                if (otherWork->unk_00 == 3 || otherWork->unk_00 == 4) {
+                    continue;
+                }
+                if (otherWork->unk_00 == 5 || otherWork->unk_00 == 6) {
+                    continue;
+                }
+                candidates[count++] = i;
+            }
+            work->unk_66 = 0;
+            if (count == 0) {
+                work->unk_50 = 2;
+                continue;
+            }
+            work->unk_60 = D_8010A29C_218C3C_BumperBalls[candidates[rand8() % count]];
+            work->unk_52 = bias;
+            work->unk_58 = 1;
+            return;
+        case 4:
+            work->unk_56 = ((u8)(rand8() % 180) + 60) >> 1;
+            work->unk_66 = 0;
+            return;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80107254_215BF4_BumperBalls);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801076A0_216040_BumperBalls);
+/* Whether the ball is out of play (fallen, floating or rescued). */
+u16 func_801076A0_216040_BumperBalls(omObjData* arg0) {
+    BumperBallsWork* temp_v1 = arg0->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801076D4_216074_BumperBalls);
+    if (temp_v1->unk_00 == 3 || temp_v1->unk_00 == 4 || temp_v1->unk_00 == 5) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80107868_216208_BumperBalls);
+/* CPU: whether the ball, carried scale times its speed further, is still over the island. */
+u16 func_801076D4_216074_BumperBalls(omObjData* object, f32 scale) {
+    BumperBallsWork* work = object->unk_50;
+    f32 push[3];
+    s16 surface;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801078FC_21629C_BumperBalls);
+    switch (gPlayers[work->player].cpu_difficulty) {
+    case 0:
+        scale *= 0.65f;
+        break;
+    case 1:
+        scale *= 0.8f;
+        break;
+    case 2:
+        scale *= 0.95f;
+        break;
+    }
+    if (D_8010A26E_218C0E_BumperBalls == 0) {
+        scale *= 0.8f;
+    }
+    t = func_800B1830_B2430(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C) * scale;
+    D_8010A288_218C28_BumperBalls = t * work->unk_24 + object->trans.x;
+    D_8010A28C_218C2C_BumperBalls = t * work->unk_2C + object->trans.z;
+    if (func_80106C88_215628_BumperBalls(&surface, push, D_8010A288_218C28_BumperBalls, object->trans.y + -100.0f,
+                                         D_8010A28C_218C2C_BumperBalls) < 120.0f) {
+        return 0;
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80107C3C_2165DC_BumperBalls);
+/* CPU: runs the current behaviour, steering through the stick. */
+void func_80107868_216208_BumperBalls(omObjData* arg0, s8* stickX, s8* stickY) {
+    switch (((BumperBallsWork*)arg0->unk_50)->unk_50) {
+    case 1:
+        func_801078FC_21629C_BumperBalls(arg0, stickX, stickY);
+        return;
+    case 2:
+        func_80107C3C_2165DC_BumperBalls(arg0, stickX, stickY);
+        return;
+    case 3:
+        func_80107DD4_216774_BumperBalls(arg0, stickX, stickY);
+        return;
+    case 4:
+        func_80108074_216A14_BumperBalls(arg0, stickX, stickY);
+        return;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80107DD4_216774_BumperBalls);
+/* CPU behaviour 1: chase the ball farthest from the island's centre. */
+void func_801078FC_21629C_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
+    BumperBallsWork* work;
+    omObjData* other;
+    omObjData* target;
+    BumperBallsWork* otherWork;
+    f32 best;
+    f32 dist;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108074_216A14_BumperBalls);
+    best = -100000.0f;
+    work = object->unk_50;
+    if (work->unk_54 != 0) {
+        *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+        *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+        work->unk_54--;
+        return;
+    }
+    if (--work->unk_56 == 0) {
+        work->unk_50 = 0;
+        func_80107254_215BF4_BumperBalls(object);
+        return;
+    }
+    for (i = 0; i < 4; i++) {
+        other = D_8010A29C_218C3C_BumperBalls[i];
+        if (other == object) {
+            continue;
+        }
+        otherWork = other->unk_50;
+        if (otherWork->unk_00 == 3 || otherWork->unk_00 == 4) {
+            continue;
+        }
+        if (otherWork->unk_00 == 5) {
+            continue;
+        }
+        dist = func_800B1830_B2430(other->trans.x * other->trans.x + other->trans.z * other->trans.z);
+        if (best < dist) {
+            target = other;
+            best = dist;
+        }
+    }
+    if (best == -100000.0f) {
+        *stickX = *stickY = 0;
+        return;
+    }
+    if (--work->unk_58 == 0) {
+        work->unk_5C = func_800B75A8_B81A8(target->trans.z - object->trans.z, target->trans.x - object->trans.x);
+        if (work->unk_52 < 2) {
+            work->unk_58 = 1;
+        } else {
+            work->unk_58 = rand8() % work->unk_52 + 1;
+        }
+    }
+    if (func_801076D4_216074_BumperBalls(object, 1.05f) == 0) {
+        BB_FLEE_EDGE(object, work, stickX, stickY);
+        return;
+    }
+    *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+    *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108384_216D24_BumperBalls);
+/* CPU behaviour 2: wait, keeping away from the edge. */
+void func_80107C3C_2165DC_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
+    BumperBallsWork* work = object->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108410_216DB0_BumperBalls);
+    if (work->unk_54 != 0) {
+        *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+        *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+        if (--work->unk_54 == 0) {
+            work->unk_50 = 0;
+        }
+        return;
+    }
+    if (--work->unk_56 == 0) {
+        work->unk_50 = 0;
+        func_80107254_215BF4_BumperBalls(object);
+        return;
+    }
+    if (func_801076D4_216074_BumperBalls(object, 1.2f) == 0) {
+        BB_FLEE_EDGE(object, work, stickX, stickY);
+    } else {
+        *stickX = *stickY = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801084C8_216E68_BumperBalls);
+/* CPU behaviour 3: chase the chosen ball (unk_60). */
+void func_80107DD4_216774_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
+    BumperBallsWork* work = object->unk_50;
+    omObjData* target;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108500_216EA0_BumperBalls);
+    if (work->unk_54 != 0) {
+        *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+        *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+        work->unk_54--;
+        return;
+    }
+    if (--work->unk_56 == 0) {
+        work->unk_50 = 0;
+        func_80107254_215BF4_BumperBalls(object);
+        return;
+    }
+    if (func_801076A0_216040_BumperBalls(work->unk_60) == 1) {
+        func_80107254_215BF4_BumperBalls(object);
+        func_80107868_216208_BumperBalls(object, stickX, stickY);
+        return;
+    }
+    if (--work->unk_58 == 0) {
+        target = work->unk_60;
+        work->unk_5C = func_800B75A8_B81A8(target->trans.z - object->trans.z, target->trans.x - object->trans.x);
+        if (work->unk_52 < 2) {
+            work->unk_58 = 1;
+        } else {
+            work->unk_58 = rand8() % work->unk_52 + 1;
+        }
+    }
+    if (func_801076D4_216074_BumperBalls(object, 1.1f) == 0) {
+        BB_FLEE_EDGE(object, work, stickX, stickY);
+        return;
+    }
+    *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+    *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+}
+
+/* CPU behaviour 4: dodge, turning in 20-degree steps until no rolling ball lies ahead. */
+void func_80108074_216A14_BumperBalls(omObjData* object, s8* stickX, s8* stickY) {
+    BumperBallsWork* work = object->unk_50;
+    omObjData* other;
+    f32 angles[4];
+    u16 count;
+    u16 i;
+    u16 j;
+
+    if (work->unk_54 != 0) {
+        *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+        *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+        work->unk_54--;
+        return;
+    }
+    if (--work->unk_56 == 0) {
+        work->unk_50 = 0;
+        func_80107254_215BF4_BumperBalls(object);
+        return;
+    }
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        other = D_8010A29C_218C3C_BumperBalls[i];
+        if (object != other) {
+            u16 state = ((BumperBallsWork*)other->unk_50)->unk_00;
+
+            if (state == 1 || state == 2) {
+                angles[count++] = func_800B75A8_B81A8(other->trans.z - object->trans.z, other->trans.x - object->trans.x);
+            }
+        }
+    }
+    if (count == 0) {
+        work->unk_50 = 0;
+        return;
+    }
+    j = 0;
+    do {
+        for (i = 0; i < count; i++) {
+            if (fabsf(angles[i] - work->unk_5C) <= 20.0f) {
+                break;
+            }
+        }
+        if (i == count) {
+            break;
+        }
+        work->unk_5C += 20.0f;
+    } while (++j < 18);
+    if (func_801076D4_216074_BumperBalls(object, 1.3f) == 0) {
+        BB_FLEE_EDGE(object, work, stickX, stickY);
+        return;
+    }
+    *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;
+    *stickY = -HuMathSin(work->unk_5C) * 80.0f;
+}
+
+/* A heading away from the island's centre, randomised over 90 degrees. */
+f32 func_80108384_216D24_BumperBalls(omObjData* object) {
+    f32 angle = func_800B75A8_B81A8(-object->trans.z, -object->trans.x) - 45.0f;
+
+    return angle + (u8)(rand8() % 90);
+}
+
+/* Sets the camera (MP1 func_800FB1E0). */
+void func_80108410_216DB0_BumperBalls(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
+    func_80018E30_19A30(1);
+    func_80018E78_19A78();
+    D_800FA610_FB210 = arg1;
+    D_800FD474_FE074.x = arg2;
+    D_800FD474_FE074.y = arg3;
+    D_800FD474_FE074.z = arg4;
+    D_8010274C_10334C.x = arg5;
+    D_8010274C_10334C.y = arg6;
+    D_8010274C_10334C.z = arg7;
+    D_800C9B80_CA780->fov[0] = arg0;
+}
+
+/* An empty loop over the controllers (MP1 func_800FB298). */
+void func_801084C8_216E68_BumperBalls(omObjData* arg0) {
+    s32 i;
+
+    for (i = 0; i < gNumOfControllers; i++) {}
+}
+
+void func_80108500_216EA0_BumperBalls(omObjData* arg0) {
+    omOvlReturnEx(1);
+}
 
 __asm__(".section .rodata");
 const char D_8010A220_218BC0_BumperBalls[] = "47mt003_DEF";

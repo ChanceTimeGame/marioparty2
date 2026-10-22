@@ -196,7 +196,7 @@ extern u8 D_8010A034_2189D4_BumperBalls[4]; /* start positions taken */
 extern u8 D_8010A038_2189D8_BumperBalls; /* 3: take the start positions in order */
 extern u16 D_8010A03A_2189DA_BumperBalls; /* entries in D_8010A03C */
 extern u16 D_8010A03C_2189DC_BumperBalls[4]; /* winners */
-extern s16 D_8010A080_218A20_BumperBalls; /* the minigame is over */
+extern u16 D_8010A080_218A20_BumperBalls; /* the minigame is over */
 
 /* ---- overlay .bss ---- */
 
@@ -230,6 +230,48 @@ extern omObjData** D_8010A2A0_218C40_BumperBalls; /* the boats */
 extern u16 D_8010A560_218F00_BumperBalls; /* end state: 10 one winner, 13 none */
 extern u16 D_8010A562_218F02_BumperBalls; /* game state: 0 start, 1 play, 2 end */
 extern u16 D_8010A564_218F04_BumperBalls; /* start object state (MP1 D_800FCFF0) */
+
+/* MG2A-B: types, data and main-segment API of 80106730 on */
+
+#include "game/camera.h"
+
+/* func_8002F2C4's probe point (2E0D0.c's HitProbe) */
+typedef struct BumperBallsHitProbe {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ f32 r;
+} BumperBallsHitProbe;
+
+void func_800794A8_7A0A8(s32);
+s32 func_8008F618_90218(void); /* fade still running */
+s16 func_80079798_7A398(s16 sfx, s16 player); /* play a sound effect for a player */
+void func_800796F0_7A2F0(s16 sound, s16 pitch);
+void func_800795D8_7A1D8(s16 sound, s8 volume);
+void func_8002F2C4_2FEC4(s16 model, s32* list, void* filter, void* probe); /* collect the model's faces */
+u16* func_8002F848_30448(s32* list); /* next face, NULL at the end */
+f32 func_8002DBA4_2E7A4(f32 x, f32 y, f32 z, ColVtx* verts, u16* tri); /* height on a face */
+void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec* n); /* face normal */
+f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of an edge */
+f32 fabsf(f32);
+
+extern u16 D_801011FC_101DFC; /* set: skip the minigame */
+extern s16 gNumOfControllers;
+extern u16 D_8010A044_2189E4_BumperBalls; /* the end fade has started */
+extern u16 D_8010A048_2189E8_BumperBalls[8]; /* CPU behaviours, by difficulty and humans left */
+extern u16 D_8010A058_2189F8_BumperBalls[8];
+extern u16 D_8010A068_218A08_BumperBalls[8];
+extern f32 D_8010A288_218C28_BumperBalls; /* CPU: the predicted position */
+extern f32 D_8010A28C_218C2C_BumperBalls;
+
+/* CPU: turn away from the island's edge for 15-29 frames. */
+#define BB_FLEE_EDGE(object, work, stickX, stickY)                                                  \
+    {                                                                                                \
+        work->unk_5C = func_80108384_216D24_BumperBalls(object);                                     \
+        *stickX = func_800B7890_B8490(work->unk_5C) * 80.0f;                                         \
+        *stickY = -HuMathSin(work->unk_5C) * 80.0f;                                                  \
+        work->unk_54 = (u8)(rand8() % 15) + 15;                                                      \
+    }
 
 /* ---- overlay functions (fork A: 80102800-80105FB0; fork B: 80106730 on) ---- */
 
@@ -268,9 +310,9 @@ u16 func_801067D8_215178_BumperBalls(omObjData* arg0);
 void func_80106AD8_215478_BumperBalls(f32 arg0, u16 arg1);
 f32 func_80106C88_215628_BumperBalls(s16* surface, f32* push, f32 x, f32 y, f32 z); /* ground height under (x, z) */
 u16 func_80106E94_215834_BumperBalls(omObjData* arg0);
-s32 func_80106FCC_21596C_BumperBalls(s32 arg0, u16* arg1, void* arg2, void* arg3);
-s32 func_80106FEC_21598C_BumperBalls(void* arg0, u16* arg1, void* arg2);
-u16 func_80107204_215BA4_BumperBalls(void);
+s32 func_80106FCC_21596C_BumperBalls(s32 arg0, u16* polygon, ColVtx* vertices, BumperBallsHitProbe* probe);
+s32 func_80106FEC_21598C_BumperBalls(BumperBallsHitProbe* probe, u16* poly, ColVtx* verts);
+u16 func_80107204_215BA4_BumperBalls(void); /* every ball has fallen */
 void func_80107254_215BF4_BumperBalls(omObjData* arg0);
 u16 func_801076A0_216040_BumperBalls(omObjData* arg0);
 u16 func_801076D4_216074_BumperBalls(omObjData* arg0, f32 arg1);
