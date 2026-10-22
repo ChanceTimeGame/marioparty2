@@ -1323,8 +1323,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0xD0
     subsegments:
-      - [0x2B10C0, c]
+      - [0x2B10C0, c, ovl_41_entrypoint]
+      - [0x2B10F0, c, 2B10C0]
       - [0x2BF2F0, data]
+      - [0x2C0620, .rodata, 2B10C0]
       - {0x2C0780, type: bss, vram: 0x80111EC0, name: ovl_41_bss}
   - type: code
     start: 0x2C0780
