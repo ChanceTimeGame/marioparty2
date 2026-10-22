@@ -945,11 +945,122 @@ const u32 D_801103C8_343008_name_4F[5] = { 0x41400000, 0x41600000, 0x41700000, 0
 __asm__(".section .rodata");
 const char D_801103DC_34301C_name_4F[] = "e000p15_IA44";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A150_33CD90_name_4F);
+/* The winner's appearance on board 3 (as board 0's func_80104A0C). */
+void func_8010A150_33CD90_name_4F(void) {
+    Vec v;
+    MBModel* winner;
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A4A8_33D0E8_name_4F);
+    func_80050E00_51A00(0x1C);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBPlayerModelCreate(D_80110564_3431A4_name_4F, D_80110008_342C48_name_4F[gPlayers[D_80110564_3431A4_name_4F].character], 2);
+    func_8005ABC0_5B7C0(&gPlayers[D_80110564_3431A4_name_4F], 2, 11);
+    func_80043DAC_449AC(OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F));
+    gPlayers[D_80110564_3431A4_name_4F].flags |= 2;
+    MBMotionSet(OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F), -1, 2);
+    func_8002D1EC_2DDEC(*OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F)->obj->model, 1);
+    winner = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    winner->pos.x = D_801101E4_342E24_name_4F.x;
+    winner->pos.y = D_801101E4_342E24_name_4F.y;
+    winner->pos.z = D_801101E4_342E24_name_4F.z;
+    D_8011058A_3431CA_name_4F = LoadFormFile(0xA01E3, 0x49D);
+    func_8002D1EC_2DDEC(D_8011058A_3431CA_name_4F, 1);
+    func_8005AA48_5B648(winner, "item_hook", D_8011058A_3431CA_name_4F);
+    MBModelDispOn(winner);
+    PlayMusic(0x3B);
+    v.x = 0.0f;
+    v.y = 105.0f;
+    v.z = 0.0f;
+    func_8005A950_5B550(&v, 3.0f, 1.0f, 8);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x30F);
+    win = func_8005AAC0_5B6C0(0x2D, 0x28, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    func_800890CC_89CCC(win, 0x30F, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(6);
+    PlaySound(0xE7);
+    HuPrcSleep(54);
+    func_8008CCA8_8D8A8(win);
+    MBModelDispOff(winner);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 4);
+    MBDBackKill();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A6A0_33D2E0_name_4F);
+/* Retail has 8 zero bytes after func_8010A150's "item_hook" (splat: two unreferenced ""), so the
+   doubles of func_8010DFCC start 16-aligned: a file's rodata tail, or padding. */
+__asm__(".section .rodata\n\t.balign 16\n\t.text");
+
+/* D_80110580 walks off to the doors; D_80110568 turns and follows from frame 25. */
+void func_8010A4A8_33D0E8_name_4F(void) {
+    s32 win;
+    s32 frame;
+
+    func_80050E00_51A00(0x1B);
+    frame = 0;
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBModelDispOn(D_80110568_3431A8_name_4F);
+    MBModelDispOn(D_80110580_3431C0_name_4F);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x310);
+    win = func_8005AAC0_5B6C0(0x50, 0x28, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_800890CC_89CCC(win, 0x310, -1, -1);
+    PlaySound(0x123);
+    MBMotionShiftSet(D_80110580_3431C0_name_4F, 1, 0, 4, 2);
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &D_80110090_342CD0_name_4F, &D_80110580_3431C0_name_4F->rot);
+    while (func_8005A5E8_5B1E8(D_80110580_3431C0_name_4F, &D_80110090_342CD0_name_4F, 20.0f) == 0) {
+        if (frame == 25) {
+            func_80056658_57258(&D_80110568_3431A8_name_4F->pos, &D_801101F0_342E30_name_4F, &D_80110568_3431A8_name_4F->rot);
+            MBMotionShiftSet(D_80110568_3431A8_name_4F, 2, 0, 3, 2);
+        }
+        if (frame >= 26) {
+            func_8005A5E8_5B1E8(D_80110568_3431A8_name_4F, &D_801101F0_342E30_name_4F, 50.0f);
+        }
+        if (frame == 50) {
+            func_8008CCA8_8D8A8(win);
+        }
+        frame++;
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(D_80110580_3431C0_name_4F, -1, 0, 4, 2);
+    MBModelDispOff(D_80110580_3431C0_name_4F);
+    MBModelDispOff(D_80110568_3431A8_name_4F);
+    MBDBackKill();
+}
+
+/* The winner jumps; a func_8010CA90 object for its character appears. */
+void func_8010A6A0_33D2E0_name_4F(void) {
+    s32 character;
+    MBModel* winner;
+    omObjData* obj;
+
+    character = gPlayers[D_80110564_3431A4_name_4F].character;
+    func_80050E00_51A00(0x1C);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    winner = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    obj = func_8010CA90_33F6D0_name_4F(func_8010CDD4_33FA14_name_4F(0xA01ED), D_801101FC_342E3C_name_4F[character].x,
+                                       D_801101FC_342E3C_name_4F[character].y, D_801101FC_342E3C_name_4F[character].z,
+                                       0, 1, 1.0f);
+    func_80021250_21E50(obj->model[1], 0xFF, 0xE6, 0);
+    MBMotionSet(winner, 0, 2);
+    MBModelDispOn(winner);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 0);
+    winner->pos.x = winner->pos.x;
+    winner->pos.y = winner->pos.y;
+    winner->pos.z = winner->pos.z - 200.0f;
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 4);
+    HuPrcSleep(5);
+    MBMotionShiftSet(winner, 5, 0, 2, 0);
+    HuPrcSleep(2);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 0);
+    HuPrcSleep(25);
+    D_80110458_343098_name_4F = PlaySound(0x3C3);
+    D_8011045A_34309A_name_4F = PlaySound(0x3C4);
+    obj->work[1] = 1;
+    HuPrcSleep(5);
+    MBModelDispOff(winner);
+    MBDBackKill();
+    obj->work[0] = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A8AC_33D4EC_name_4F);
 

@@ -293,6 +293,11 @@ extern Vec D_801101B4_342DF4_name_4F[4];    /* splat's D_801101B8/BC are fields 
 extern Process* D_80110450_343090_name_4F;
 extern f32 D_80110454_343094_name_4F;
 extern s16 D_80110458_343098_name_4F;
+extern u32* D_80110008_342C48_name_4F[6];    /* per character: MBPlayerModelCreate list */
+extern Vec D_801101E4_342E24_name_4F;
+extern Vec D_801101F0_342E30_name_4F;
+extern Vec D_801101FC_342E3C_name_4F[6];    /* per character (splat's D_80110200/04 are fields) */
+extern s16 D_8011045A_34309A_name_4F;
 extern const char D_801103DC_34301C_name_4F[]; /* "e000p15_IA44" (80108B30, 8010A8AC, 8010B620) */
 /* fork D (inferred) */
 void func_8010C7CC_33F40C_name_4F(void);
