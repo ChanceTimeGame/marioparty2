@@ -1949,7 +1949,7 @@ void func_80107E10_3122C0_name_49(void) {
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
                 } else {
-                    sprintf(buf, D_801135C8_2A8898_name_3E, D_800F8D18[0]);
+                    sprintf(buf, D_801147D8_31EC88_name_49, D_800F8D18[0]);
                     func_80056368_56F68(5, 0x426, buf, 0, 0, 0, 0);
                     func_80056458_57058();
                     MBDlgWinClose();
@@ -1980,7 +1980,7 @@ void func_80107E10_3122C0_name_49(void) {
                             func_8004CA34_4D634(gw->current_player_index, -5);
                             func_800614B4_620B4(gw->current_player_index, -5);
                         } else {
-                            sprintf(buf, D_801135C8_2A8898_name_3E, gPlayers[gw->current_player_index].coins);
+                            sprintf(buf, D_801147D8_31EC88_name_49, gPlayers[gw->current_player_index].coins);
                             func_80056368_56F68(5, 0x425, buf, 0, 0, 0, 0);
                             MBDlgWinClose();
                             func_80056168_56D68();
@@ -2060,7 +2060,7 @@ void func_80108CA8_313158_name_49(void) {
     player = BoardPlayerGet(-1);
     if (gw->current_player_index != 4) {
         MBPlayerMotionSet(-1, -1, 2);
-        func_80056C30_57830(-1, 8, 0x9A);
+        func_80056C30_57830(-1, 8, 0x64);
         HuPrcSleep(8);
         func_80046D2C_4792C(gw->current_player_index);
         PlaySound(0xE6);
@@ -2569,13 +2569,13 @@ void func_8010ABC0_315070_name_49(void) {
     flag = func_80046D2C_4792C(gw->current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
     switch ((s16)space) {
-    case 9:
+    case 0x95:
         boo = 0;
-        cam = 0x82;
+        cam = 0x75;
         break;
-    case 5:
+    case 0x85:
         boo = 1;
-        cam = 0x83;
+        cam = 0x74;
         break;
     default:
         boo = -1;
