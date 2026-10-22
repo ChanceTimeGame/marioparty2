@@ -228,9 +228,95 @@ s32 func_80103338_14CE58_CraneGame(omObjData* obj) {
     return var_s0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801033E4_14CF04_CraneGame);
+s16 func_801033E4_14CF04_CraneGame(f32 arg0) {
+    f32 temp_f0;
+    f32 var_f12;
+    s16 var_s4;
+    HmfData* temp_s2;
+    HmfVtx* var_s0;
+    HmfVtx* var_s1;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801035C0_14D0E0_CraneGame);
+    var_s4 = 0;
+    temp_s2 = D_800FC834_FD434[D_8010C186_155CA6_CraneGame].hmf;
+    var_s1 = temp_s2->unk40;
+    var_s0 = temp_s2->unk44[D_800FDBE0_FE7E0];
+
+    for (i = 0; i < temp_s2->unk18; i++) {
+        var_f12 = (temp_s2->unk84->unk04.y + var_s0->unk02 - arg0) / 4.0;
+        if (var_f12 < -90.0) {
+            var_f12 = -90.0f;
+        }
+        if (var_f12 > 90.0) {
+            var_f12 = 90.0f;
+        }
+        temp_f0 = func_800B7890_B8490(var_f12);
+        if (temp_f0 != 0.0) {
+            var_s4 = 1;
+        }
+        var_s0->unk00 = (var_s1->unk00 + (var_s1->unk00 * 0.8 * temp_f0));
+        var_s0->unk04 = (var_s1->unk04 + (var_s1->unk04 * 0.8 * temp_f0));
+        var_s1++;
+        var_s0++;
+    }
+
+    return var_s4;
+}
+
+s16 func_801035C0_14D0E0_CraneGame(f32* x, f32* y, f32* z, f32 dx, f32 dy, f32 dz, f32 r, s16 mode) {
+    Vec d;
+    HmfData* m;
+    f32 dist;
+    f32 h;
+    f32 f;
+    s16 ret;
+
+    ret = 0;
+    if (mode != 2) {
+        m = D_800FC834_FD434[D_8010C186_155CA6_CraneGame].hmf;
+        d.x = m->unk84->unk04.x - *x;
+        d.z = m->unk84->unk04.z - *z;
+        dist = sqrtf(d.x * d.x + d.z * d.z);
+        if (dist < r + 280.0) {
+            h = *y - r;
+            if (h < 300.0) {
+                if (mode == 0 && h - dy >= 300.0) {
+                    *y = r + 300.0;
+                } else {
+                    f = 300.0 - (*y - r);
+                    if (r < f) {
+                        f = r;
+                    }
+                    h = HuMathSin(f / r * 90.0) * r + 280.0;
+                    if (dist != 0.0) {
+                        d.x /= dist;
+                        d.z /= dist;
+                        *x = m->unk84->unk04.x + -d.x * h;
+                        *z = m->unk84->unk04.z + -d.z * h;
+                    }
+                }
+                ret = 2;
+            }
+        }
+    }
+    if (*x < -360.0) {
+        *x = -360.0f;
+        ret |= 1;
+    }
+    if (*x > 420.0) {
+        *x = 420.0f;
+        ret |= 1;
+    }
+    if (*z < -360.0) {
+        *z = -360.0f;
+        ret |= 1;
+    }
+    if (*z > 640.0) {
+        *z = 640.0f;
+        ret |= 1;
+    }
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801038FC_14D41C_CraneGame);
 

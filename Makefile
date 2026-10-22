@@ -476,3 +476,14 @@ $(MG2B_MULFIX_UNITS): export VR4300MUL := ON
 # MG2B-C: ovl_2B 21EA10.c has the KMC VR4300 mul fix (func_80109264: a nop between back-to-back mul.d)
 MG2BC_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(MG2BC_MULFIX_UNITS): export VR4300MUL := ON
+# MG10-A: ovl_10 14C320.c is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled
+# with the KMC VR4300 mul fix on (func_801033E4: a nop between back-to-back mul.d; func_801035C0:
+# none before a mul.s after a call)
+MG10_BLANKSTRIP_UNITS := build/src/overlays/ovl_10_CraneGame/14C320.c.o
+$(MG10_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(MG10_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name

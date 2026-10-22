@@ -35,6 +35,9 @@ void SprKill(s16);
 void func_8006D4D0_6E0D0(s16); /* the seconds counter (MP1 func_80079078) */
 void func_8006D518_6E118(void);
 f32 sqrtf(f32);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern s32 D_800F9D30_FA930[];
