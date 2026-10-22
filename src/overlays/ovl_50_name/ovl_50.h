@@ -355,6 +355,13 @@ extern Vec D_80111D94_3525F4_name_50;     /* the winner's place */
 extern Vec D_80111DA0_352600_name_50[];   /* per character: the beam's offset from the winner */
 extern s16 D_801125D0_352E30_name_50;     /* a sound handle (0x3DA) */
 extern s16 D_80112758_352FB8_name_50;     /* the winner's held-item form (0xA0230) */
+/* board 2, part 3 */
+extern Vec D_80111DE8_352648_name_50;     /* the host's place */
+extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00) */
+extern Vec D_80111E00_352660_name_50;
+extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
+extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
+extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; work[1] == 1 while it runs */
 
 /* ---- 34DBC0.c ---- */
 
