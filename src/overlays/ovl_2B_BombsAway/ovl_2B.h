@@ -446,13 +446,13 @@ void func_801082EC_21E6DC_BombsAway(void);
 s16 func_80108620_21EA10_BombsAway(HmfData* model, const char* name);
 HmfMotionObj* func_801086A0_21EA90_BombsAway(HmfData* model, s16 index, s32 arg2);
 HmfMotionObj* func_80108794_21EB84_BombsAway(s16 model, const char* name);
-Vec3f* func_80108810_21EC00_BombsAway(s16 model, const char* name);
-Vec3f* func_8010883C_21EC2C_BombsAway(s16 model, const char* name);
-void func_80108868_21EC58_BombsAway(s16 arg0, s16 arg1, s16 arg2, f32 arg3);
+Vec* func_80108810_21EC00_BombsAway(s16 model, const char* name);
+Vec* func_8010883C_21EC2C_BombsAway(s16 model, const char* name);
+void func_80108868_21EC58_BombsAway(s16 model, s16 src, s16 motion, f32 t);
 void func_801088FC_21ECEC_BombsAway(Matrix4f m, f32 x, f32 y, f32 z, f32* out);
 void func_80108998_21ED88_BombsAway(Vec* v);
 f32 func_80108A4C_21EE3C_BombsAway(f32 x, f32 z);
-void func_80108ACC_21EEBC_BombsAway(Vec* a, Vec* b);
+void func_80108ACC_21EEBC_BombsAway(Vec* dir, f32* angles);
 void func_80108B54_21EF44_BombsAway(Matrix4f m, Vec* v);
 void func_80108CFC_21F0EC_BombsAway(s16 arg0);
 void func_80108DE0_21F1D0_BombsAway(Vec* a, Vec* b);
@@ -492,5 +492,15 @@ void func_8010BFAC_22239C_BombsAway(void);
 void func_8010C444_222834_BombsAway(s16 arg0);
 void func_8010C8A0_222C90_BombsAway(s16 arg0, s32 arg1, s16* arg2);
 void func_8010CBF0_222FE0_BombsAway(s16* arg0, u16 arg1);
+
+/* MG2B-C */
+/* main API 21EA10.c uses (missing from include/) */
+#include "game/camera.h"
+s32 func_800B0FD0_B1BD0(void*, void*); /* strcmp */
+f32 func_800B75A8_B81A8(f32, f32);     /* atan2 (degrees) */
+void func_800B1960_B2560(Matrix4f m, f32 px, f32 py, f32 pz, f32 ax, f32 ay, f32 az, f32 ux, f32 uy,
+                         f32 uz); /* look-at (MP1 HuGuLookAtF) */
+void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t);
+void func_800798F8_7A4F8(s16 sound, s16 pan); /* MP1 func_800607C4 */
 
 #endif

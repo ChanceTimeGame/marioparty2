@@ -473,3 +473,6 @@ $(MG01A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # call and after a branch target)
 MG2B_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/218BF0.c.o
 $(MG2B_MULFIX_UNITS): export VR4300MUL := ON
+# MG2B-C: ovl_2B 21EA10.c has the KMC VR4300 mul fix (func_80109264: a nop between back-to-back mul.d)
+MG2BC_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
+$(MG2BC_MULFIX_UNITS): export VR4300MUL := ON
