@@ -623,7 +623,120 @@ void func_80103D94_362C84_name_55(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80103D94_362C84_name_55);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80104B1C_363A0C_name_55);
+/* The turn order (MP1 func_800F8334): each player hits a dice block (CPUs after a random 5-34
+   frames), the players are ranked by their numbers, GW_PLAYER.unk_1C[0] gets each one's place
+   and the records are sorted into it (80105284); then each player is introduced in turn. */
+void func_80104B1C_363A0C_name_55(void) {
+    s32 state[4];
+    s32 count[4];
+    s32 timers[4];
+    s32 order[4];
+    s32 i;
+    s32 j;
+    s32 tmp;
+    s32 win;
+
+    func_800461C8_46DC8();
+    for (i = 0; i < 4; i++) {
+        func_80046F98_47B98(i);
+        func_80046308_46F08(i);
+    }
+    func_80047D2C_4892C();
+    HuPrcSleep(20);
+    for (i = 0; i < 4; i++) {
+        state[i] = 1;
+        count[i] = 0;
+        timers[i] = (u8)(rand8() % 30) + 5;
+    }
+    while (TRUE) {
+        for (i = 0; i < 4; i++) {
+            timers[i]--;
+            if (state[i] == 1) {
+                if (gPlayers[i].flags & 1) {
+                    if (timers[i] <= 0) {
+                        goto press;
+                    }
+                } else if (ContBtnTrg[gPlayers[i].port] & 0x8000) {
+                press:
+                    state[i] = 2;
+                    MBMotionSet(PLAYER_MODEL(i), 5, 0);
+                    func_80059520_5A120(PLAYER_MODEL(i), 2, 2);
+                }
+            } else if (state[i] == 2) {
+                count[i]++;
+                if (count[i] == 5) {
+                    func_80047BB8_487B8(i);
+                    state[i] = 0;
+                }
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (state[i] != 0) {
+                break;
+            }
+        }
+        if (i == 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    for (i = 0; i < 4; i++) {
+        state[i] = func_80047DE8_489E8(i);
+        order[i] = i;
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = i; j < 4; j++) {
+            if (state[i] < state[j]) {
+                tmp = state[i];
+                state[i] = state[j];
+                state[j] = tmp;
+                tmp = order[i];
+                order[i] = order[j];
+                order[j] = tmp;
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        gPlayers[order[i]].unk_1C[0] = i;
+        func_80046CD8_478D8(i);
+    }
+    func_80105284_364174_name_55();
+    func_8005FE10_60A10();
+    D_8010B750_36A640_name_55 = 1;
+    for (i = 0; i < 4; i++) {
+        HidePlayerHUDVisibility(i, 1);
+    }
+    HuPrcSleep(5);
+    for (i = 0; i < 4; i++) {
+        func_8008D974_8E574(D_800CC5F8[gPlayers[i].character], i);
+        if (D_8010C58A_36B47A_name_55 != 5) {
+            func_8008DACC_8E6CC(1, D_8010C530_36B420_name_55, i + 0x4DA);
+        } else {
+            func_8008DACC_8E6CC(1, D_8010C530_36B420_name_55, i + 0x238);
+        }
+        win = func_8005AAC0_5B6C0(30, 70, D_8010C530_36B420_name_55[0], D_8010C530_36B420_name_55[1]);
+        if (D_8010C58A_36B47A_name_55 != 5) {
+            func_800890CC_89CCC(win, i + 0x4DA, -1, -1);
+        } else {
+            func_800890CC_89CCC(win, i + 0x238, -1, -1);
+        }
+        func_80089308_89F08(win, D_800CC5F8[gPlayers[i].character], i);
+        ShowTextWindow(win);
+        func_80057DA4_589A4(win);
+        func_8005762C_5822C(win);
+        func_800595E8_5A1E8(PLAYER_MODEL(i), 6, 0);
+        func_80059520_5A120(PLAYER_MODEL(i), 2, 2);
+        func_80079718_7A318(0x103, gPlayers[i].character);
+        func_80046D2C_4792C(order[i]);
+        func_80060210_60E10(i + 10);
+        while (func_800609D8_615D8() != 0) {
+            HuPrcVSleep();
+        }
+        omVibrate(i, 2, 2, 20);
+        HuPrcSleep(20);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/3616F0", func_80105074_363F64_name_55);
 

@@ -138,7 +138,7 @@ Process* func_80076F14_77B14(process_func arg0, u16 arg1, s32 arg2, s32 arg3, Pr
 void func_80079614_7A214(s16 time); /* music fade-out */
 void func_80079718_7A318(s32, s32);
 void func_800890CC_89CCC(s16, s32, s32, s32);
-void func_80089308_89F08(s16, char*, s32); /* window message argument */
+void func_80089308_89F08(s16, char*, s8); /* window message argument (slot; retail narrows it to s8) */
 void func_80089A48_8A648(s16, s16);
 s16 func_8008BA30_8C630(s16 winId);
 void func_8008D974_8E574(char*, s16);
