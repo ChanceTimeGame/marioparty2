@@ -658,29 +658,359 @@ void func_8010B0E4_240FC4_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B0E4_240FC4_SlotCarDerby);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B4D0_2413B0_SlotCarDerby);
+void func_8010B4D0_2413B0_SlotCarDerby(u8 count) {
+    SCDBillboard* b;
+    s16 i;
 
+    D_80110990_246870_SlotCarDerby = count;
+    for (i = 0; i < 3; i++) {
+        D_80110994_246874_SlotCarDerby[i] = HuMemMemoryAllocPerm(D_80110990_246870_SlotCarDerby * 20 * sizeof(Gfx));
+        D_801109A0_246880_SlotCarDerby[i] = HuMemMemoryAllocPerm(D_80110990_246870_SlotCarDerby * sizeof(Mtx));
+    }
+    D_801109AC_24688C_SlotCarDerby = func_80027FA4_28BA4(0x499, D_80110994_246874_SlotCarDerby[0], 4);
+    D_8011097C_24685C_SlotCarDerby = HuMemMemoryAllocPerm(D_80110990_246870_SlotCarDerby * sizeof(SCDBillboard));
+    for (i = 0; i < D_80110990_246870_SlotCarDerby; i++) {
+        b = &D_8011097C_24685C_SlotCarDerby[i];
+        b->unk_00 = (Gfx*)-1;
+        b->unk_20 = 0;
+        b->unk_28 = 0;
+        b->unk_22 = 0;
+        b->unk_29 = b->unk_2A = b->unk_2B = b->unk_2C = 0xFF;
+        b->unk_30 = 0.0f;
+        b->unk_24 = 0;
+        b->unk_26 = 0;
+        b->unk_34 = 1.0f;
+        b->unk_38.x = b->unk_38.y = b->unk_38.z = 0.0f;
+        b->unk_44.x = b->unk_44.y = b->unk_44.z = 1.0f;
+        b->unk_50.x = b->unk_50.y = b->unk_50.z = 0.0f;
+    }
+}
+
+/* gDPSetTile's mask for a texture dimension (as src/1EA70.c's TEX_MASK). */
+#define SCD_TEX_MASK(x) \
+    ((x) < 3 ? 1 : (x) < 5 ? 2 : (x) < 9 ? 3 : (x) < 17 ? 4 : (x) < 33 ? 5 : (x) < 65 ? 6 : (x) < 129 ? 7 : (x) < 257 ? 8 : 9)
+
+/* Takes a free billboard for sprite and builds its display list (texture and quad), its
+   per-frame vertex copies and its per-frame material lists. Returns its id, -1 if none is free. */
+// register allocation: the vertex buffer copy and the frame width take t1/t2 in retail (masked 10, as MP1)
+#ifdef NON_MATCHING
+s16 func_8010B688_241568_SlotCarDerby(s16 sprite, u8 flags) {
+    SCDBillboard* b;
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    Gfx* dl;
+    Gfx* gfx;
+    Vtx* vbuf;
+    Vtx* v;
+    s32 size;
+    u16 w;
+    u16 h;
+    s16 x;
+    s16 y;
+    s16 nh;
+    s16 i;
+    s16 id;
+
+    for (id = 0; id < D_80110990_246870_SlotCarDerby; id++) {
+        if (D_8011097C_24685C_SlotCarDerby[id].unk_00 == (Gfx*)-1) {
+            break;
+        }
+    }
+    if (id == D_80110990_246870_SlotCarDerby) {
+        return -1;
+    }
+    b = &D_8011097C_24685C_SlotCarDerby[id];
+    b->unk_22 = sprite;
+    b->unk_28 = flags;
+    dl = HuMemMemoryAllocPerm(0x2000 * sizeof(Gfx)); /* 0x10000 bytes on the N64 */
+    vbuf = v = HuMemMemoryAllocPerm(8 * sizeof(Vtx));
+    gfx = dl;
+    gDPPipeSync(gfx++);
+    anim = D_800F60B0_F6CB0[b->unk_22];
+    if (anim->unk18 & 0x8000) {
+        gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+        gDPSetRenderMode(gfx++, 0x4049D8, 0);
+        gDPSetBlendColor(gfx++, 1, 1, 1, 1);
+    } else if (b->unk_29 == 0xFF) {
+        gDPSetRenderMode(gfx++, 0x443078, 0);
+        gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
+    } else {
+        gDPSetBlendColor(gfx++, 0, 0, 0, 1);
+        gDPSetRenderMode(gfx++, 0x5049D8, 0);
+        gDPSetCombine(gfx++, 0x143228, 0xFF65FEFF);
+    }
+    frame = &anim->unk00[b->unk_24];
+    w = frame->unk04;
+    h = frame->unk06;
+    if (anim->unk18 & 0x8000) {
+        gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_I, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                               SCD_TEX_MASK((s16)w), SCD_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+    } else if (anim->unk18 < 0x11) {
+        gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_CI, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                               SCD_TEX_MASK((s16)w), SCD_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+    } else {
+        gDPLoadTextureBlock(gfx++, 0x02000000, G_IM_FMT_CI, G_IM_SIZ_8b, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                            SCD_TEX_MASK((s16)w), SCD_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+    }
+    gSPVertex(gfx++, 0x01000000, 4, 0);
+    gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+    gSPEndDisplayList(gfx++);
+    nh = -h;
+    x = -frame->unk08;
+    y = frame->unk0A;
+    v->v.ob[0] = x;
+    v->v.ob[1] = y;
+    v->v.ob[2] = 0;
+    v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+    v->v.tc[0] = 0;
+    v->v.tc[1] = 0;
+    v->n.a = 0xFF;
+    v++;
+    v->v.ob[0] = x;
+    v->v.ob[1] = nh + y;
+    v->v.ob[2] = 0;
+    v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+    v->v.tc[0] = 0;
+    v->v.tc[1] = (-nh - 1) << 6;
+    v->n.a = 0xFF;
+    v++;
+    v->v.ob[0] = (s16)w + x;
+    v->v.ob[1] = nh + y;
+    v->v.ob[2] = 0;
+    v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+    v->v.tc[0] = ((s16)w - 1) << 6;
+    v->v.tc[1] = (-nh - 1) << 6;
+    v->n.a = 0xFF;
+    v++;
+    v->v.ob[0] = (s16)w + x;
+    v->v.ob[1] = y;
+    v->v.ob[2] = 0;
+    v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+    v->v.tc[0] = ((s16)w - 1) << 6;
+    v->v.tc[1] = 0;
+    v->n.a = 0xFF;
+    size = (u8*)gfx - (u8*)dl;
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        b->unk_10[i] = HuMemMemoryAllocPerm(8 * sizeof(Vtx));
+        bcopy(vbuf, b->unk_10[i], 8 * sizeof(Vtx));
+    }
+    b->unk_00 = HuMemMemoryAllocPerm(size);
+    bcopy(dl, b->unk_00, size);
+    HuMemMemoryFreePerm(dl);
+    HuMemMemoryFreePerm(vbuf);
+    dl = HuMemMemoryAllocPerm(0x2000 * sizeof(Gfx)); /* 0x10000 bytes on the N64 */
+    gfx = dl;
+    gDPPipeSync(gfx++);
+    gDPSetPrimColor(gfx++, 0, 0, b->unk_2A, b->unk_2B, b->unk_2C, b->unk_29);
+    gDPSetTextureFilter(gfx++, D_8010FC28_245B08_SlotCarDerby[(b->unk_28 & 0x18) >> 3]);
+    if (anim->unk18 & 0x8000) {
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+    } else {
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        if (anim->unk18 < 0x11) {
+            gDPLoadTLUT_pal16(gfx++, 0, anim->unk0C);
+        } else {
+            gDPLoadTLUT_pal256(gfx++, anim->unk0C);
+        }
+    }
+    gSPSegment(gfx++, 2, osVirtualToPhysical(frame->unk00));
+    gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_10[0]));
+    gSPDisplayList(gfx++, b->unk_00);
+    gSPEndDisplayList(gfx++);
+    size = (u8*)gfx - (u8*)dl;
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        b->unk_04[i] = HuMemMemoryAllocPerm(size);
+        bcopy(dl, b->unk_04[i], size);
+    }
+    HuMemMemoryFreePerm(dl);
+    return id;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B688_241568_SlotCarDerby);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010C8D4_2427B4_SlotCarDerby);
+void func_8010C8D4_2427B4_SlotCarDerby(s16 id, s16 frame) {
+    SCDBillboard* b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010C914_2427F4_SlotCarDerby);
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_24 = frame;
+        b->unk_30 = 0.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010C954_242834_SlotCarDerby);
+void func_8010C914_2427F4_SlotCarDerby(s16 id, f32 speed) {
+    if (id != -1) {
+        SCDBillboard* b = &D_8011097C_24685C_SlotCarDerby[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010C9A4_242884_SlotCarDerby);
+        b->unk_34 = speed;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010C9F4_2428D4_SlotCarDerby);
+void func_8010C954_242834_SlotCarDerby(s16 id, f32 x, f32 y, f32 z) {
+    SCDBillboard* b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010CA44_242924_SlotCarDerby);
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_38.x = x;
+        b->unk_38.y = y;
+        b->unk_38.z = z;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010CA88_242968_SlotCarDerby);
+void func_8010C9A4_242884_SlotCarDerby(s16 id, f32 x, f32 y, f32 z) {
+    SCDBillboard* b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010CAD0_2429B0_SlotCarDerby);
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_44.x = x;
+        b->unk_44.y = y;
+        b->unk_44.z = z;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010CB1C_2429FC_SlotCarDerby);
+void func_8010C9F4_2428D4_SlotCarDerby(s16 id, f32 x, f32 y, f32 z) {
+    SCDBillboard* b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010CC3C_242B1C_SlotCarDerby);
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_50.x = x;
+        b->unk_50.y = y;
+        b->unk_50.z = z;
+    }
+}
+
+void func_8010CA44_242924_SlotCarDerby(s16 id, u8 flags) {
+    SCDBillboard* b;
+
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_28 |= flags;
+    }
+}
+
+void func_8010CA88_242968_SlotCarDerby(s16 id, u8 flags) {
+    SCDBillboard* b;
+
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        b->unk_28 &= ~flags;
+    }
+}
+
+void func_8010CAD0_2429B0_SlotCarDerby(s16 id, u8 r, u8 g, u8 b, s32 a) {
+    SCDBillboard* bb;
+
+    if (id != -1) {
+        bb = &D_8011097C_24685C_SlotCarDerby[id];
+        bb->unk_2A = r;
+        bb->unk_2B = g;
+        bb->unk_2C = b;
+        bb->unk_29 = a;
+    }
+}
+
+/* Frees a billboard's display lists and resets it. */
+void func_8010CB1C_2429FC_SlotCarDerby(s16 id) {
+    SCDBillboard* b;
+    s32 i;
+
+    if (id != -1) {
+        b = &D_8011097C_24685C_SlotCarDerby[id];
+        if (b->unk_00 != (Gfx*)-1) {
+            for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+                HuMemMemoryFreePerm(b->unk_10[i]);
+                HuMemMemoryFreePerm(b->unk_04[i]);
+            }
+            HuMemMemoryFreePerm(b->unk_00);
+            b->unk_00 = (Gfx*)-1;
+            b->unk_1C = 0;
+            b->unk_20 = 0;
+            b->unk_28 = 0;
+            b->unk_22 = 0;
+            b->unk_29 = b->unk_2A = b->unk_2B = b->unk_2C = 0xFF;
+            b->unk_30 = 0.0f;
+            b->unk_24 = 0;
+            b->unk_26 = 0;
+            b->unk_38.x = b->unk_38.y = b->unk_38.z = 0.0f;
+            b->unk_34 = b->unk_44.x = b->unk_44.y = b->unk_44.z = 1.0f;
+        }
+    }
+}
+
+/* Rewrites each visible billboard's material list for this frame and advances its animation
+   (two steps a frame; flags 4/0x40/2 hide, free or hold it at the end). */
+void func_8010CC3C_242B1C_SlotCarDerby(void) {
+    SCDBillboard* b;
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    Gfx* gfx;
+    HuSprCelAnm* seq;
+    s32 len;
+    s32 count;
+    s16 j;
+    s16 i;
+
+    for (i = 0; i < D_80110990_246870_SlotCarDerby; i++) {
+        b = &D_8011097C_24685C_SlotCarDerby[i];
+        if (b->unk_00 == (Gfx*)-1 || b->unk_20 != 0 || (b->unk_28 & 0x20)) {
+            continue;
+        }
+        gfx = b->unk_04[D_800FDBE0_FE7E0];
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, b->unk_2A, b->unk_2B, b->unk_2C, b->unk_29);
+        gDPSetTextureFilter(gfx++, D_8010FC28_245B08_SlotCarDerby[(b->unk_28 & 0x18) >> 3]);
+        anim = D_800F60B0_F6CB0[b->unk_22];
+        frame = &anim->unk00[b->unk_24];
+        if (anim->unk18 & 0x8000) {
+            gDPSetTextureLUT(gfx++, G_TT_NONE);
+        } else {
+            gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+            if (anim->unk18 < 0x11) {
+                gDPLoadTLUT_pal16(gfx++, 0, anim->unk0C);
+            } else {
+                gDPLoadTLUT_pal256(gfx++, anim->unk0C);
+            }
+        }
+        gSPSegment(gfx++, 2, osVirtualToPhysical(frame->unk00));
+        gSPSegment(gfx++, 1, osVirtualToPhysical(b->unk_10[D_800FDBE0_FE7E0]));
+        gSPDisplayList(gfx++, b->unk_00);
+        gSPEndDisplayList(gfx++);
+        if (b->unk_28 & 1) {
+            continue;
+        }
+        if (anim->unk04 != NULL) {
+            seq = *anim->unk04;
+            len = (s16)seq->unk04[b->unk_24].unk02;
+            count = seq->unk00;
+        } else {
+            len = 8;
+            count = anim->unk10;
+        }
+        for (j = 0; j < 2; j++) {
+            b->unk_30 += b->unk_34;
+            if (b->unk_30 >= len) {
+                b->unk_24++;
+                b->unk_30 -= len;
+                if (b->unk_24 + 1 >= count) {
+                    if (b->unk_28 & 4) {
+                        func_8010CA44_242924_SlotCarDerby(i, 0x20);
+                        break;
+                    }
+                    if (b->unk_28 & 0x40) {
+                        func_8010CB1C_2429FC_SlotCarDerby(i);
+                        break;
+                    }
+                    if (b->unk_28 & 2) {
+                        b->unk_24--;
+                        break;
+                    }
+                    b->unk_24 = 0;
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010D0B0_242F90_SlotCarDerby);
 

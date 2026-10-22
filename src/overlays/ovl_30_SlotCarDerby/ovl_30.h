@@ -441,6 +441,10 @@ void func_800824B4_830B4(s16 group, s16 member, u8 r, u8 g, u8 b, u8 a);
 void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
 f32 fabsf(f32);
 extern s16 D_800FFFD6_100BD6; /* current viewport */
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list */
+extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
+extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
+extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
 
 /* A floating billboard D_80110978[5] (80109EC0, 8010AC5C): new in MP2. No pointers. */
 typedef struct SCDFloater {
@@ -471,6 +475,7 @@ extern s32 D_8010FBE8_245AC8_SlotCarDerby[3];   /* [course] record index (GWMgRe
 extern s32 D_8010FBF4_245AD4_SlotCarDerby;      /* 1: new-record message up, 2: done */
 extern s32 D_8010FBF8_245AD8_SlotCarDerby[6];   /* MP1 D_80100F58: countdown frames per step */
 extern s32 D_8010FC10_245AF0_SlotCarDerby[6];   /* MP1 D_80100F70: race time digits */
+extern s16 D_8010FC28_245B08_SlotCarDerby[4];   /* MP1 D_80100F88: texture filters by SCDBillboard.unk_28 & 0x18 */
 
 /* 23F020.c's .bss */
 extern SCDObj* D_80110968_246848_SlotCarDerby;  /* MP1 D_80102468: 16 scenery records */
@@ -482,5 +487,10 @@ extern s32 D_801109D0_2468B0_SlotCarDerby;      /* 1: the end message is up (801
 extern s32 D_80110960_246840_SlotCarDerby[2];   /* MP1 D_80102460: the board's two blend models */
 extern s32 D_80110980_246860_SlotCarDerby[3];   /* MP1 D_8010247C: effect sprites by SCDFx type */
 extern s32 D_8011098C_24686C_SlotCarDerby;      /* MP1 D_80102488: effect sprite group (s16 in +2) */
+extern SCDBillboard* D_8011097C_24685C_SlotCarDerby; /* MP1 D_80103298: the billboards */
+extern s32 D_80110990_246870_SlotCarDerby;      /* MP1 D_8010248C: billboard count */
+extern Gfx* D_80110994_246874_SlotCarDerby[3];  /* MP1 D_80102490: per-frame billboard display lists */
+extern Mtx* D_801109A0_246880_SlotCarDerby[3];  /* MP1 D_8010249C: per-frame billboard matrices */
+extern s32 D_801109AC_24688C_SlotCarDerby;      /* MP1 D_801024A8: the display-list model */
 
 #endif
