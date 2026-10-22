@@ -245,6 +245,13 @@ extern Vec D_8010FE2C_342A6C_name_4F;
 extern Vec D_8010FE38_342A78_name_4F;
 extern Vec D_8010FE44_342A84_name_4F;
 extern s32 D_80110578_3431B8_name_4F;
+extern s32 D_8010FC10_342850_name_4F[4]; /* sounds; retail reads the low halves (PlaySound((s16)w)) */
+extern Vec D_8010FE50_342A90_name_4F;
+extern Vec D_8010FE5C_342A9C_name_4F;
+extern Vec D_8010FE68_342AA8_name_4F;
+extern Vec D_8010FE74_342AB4_name_4F;
+extern Vec D_8010FE80_342AC0_name_4F;
+extern Vec D_8010FE8C_342ACC_name_4F;
 extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
 s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* func_8005A5E8, rotation discarded */
 extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */

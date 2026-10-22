@@ -1074,9 +1074,81 @@ void func_801079D4_33A614_name_4F(void) {
     MBModelDispOff(D_80110568_3431A8_name_4F);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80107BE8_33A828_name_4F);
+/* Board 1: the carrier and the winner walk on, camera pulled back; message 0x2D8 after 25 frames. */
+void func_80107BE8_33A828_name_4F(void) {
+    Vec v;
+    MBModel* model;
+    s32 n;
+    s32 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80107DD8_33AA18_name_4F);
+    func_80026E00_27A00(1, 30.0f, 85.0f, -78.0f);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    D_80110580_3431C0_name_4F->pos.x = D_8010FE50_342A90_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_8010FE50_342A90_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_8010FE50_342A90_name_4F.z;
+    model->pos.x = D_8010FE68_342AA8_name_4F.x;
+    model->pos.y = D_8010FE68_342AA8_name_4F.y;
+    model->pos.z = D_8010FE68_342AA8_name_4F.z;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &model->pos, &D_80110580_3431C0_name_4F->rot);
+    func_80056658_57258(&model->pos, &D_80110580_3431C0_name_4F->pos, &model->rot);
+    v.x = 600.0f;
+    v.y = 160.0f;
+    v.z = 600.0f;
+    func_8005A950_5B550(&v, 1.0f, 1.9f, 1);
+    n = 0;
+    /* Retail quirk: win is closed below even if the walk ended before it was opened. */
+    while (func_8005A608_5B208(D_80110580_3431C0_name_4F, &D_8010FE5C_342A9C_name_4F, 2.0f) == 0) {
+        n++;
+        func_801084F4_33B134_name_4F();
+        func_8005A608_5B208(model, &D_8010FE74_342AB4_name_4F, 2.0f);
+        if (n == 25) {
+            func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x2D8);
+            win = func_8005AAC0_5B6C0(100, 40, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+            func_800890CC_89CCC(win, 0x2D8, -1, -1);
+            PlaySound(0x125);
+        }
+        HuPrcVSleep();
+    }
+    func_8008CCA8_8D8A8(win);
+}
+
+/* Board 1: last shot; both models go dark, the winner and the carrier play a motion, a random
+   sound (D_8010FC10) three frames in. */
+void func_80107DD8_33AA18_name_4F(void) {
+    Vec v;
+    MBModel* model;
+    s32 i;
+    s32 n;
+
+    func_80026E00_27A00(1, 6.0f, 40.0f, -112.0f);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    D_80110580_3431C0_name_4F->pos.x = D_8010FE80_342AC0_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_8010FE80_342AC0_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_8010FE80_342AC0_name_4F.z;
+    model->pos.x = D_8010FE8C_342ACC_name_4F.x;
+    model->pos.y = D_8010FE8C_342ACC_name_4F.y;
+    model->pos.z = D_8010FE8C_342ACC_name_4F.z;
+    v.x = 100.0f;
+    v.y = 160.0f;
+    v.z = 600.0f;
+    func_8005A950_5B550(&v, 1.0f, 1.9f, 1);
+    for (i = 0; i < 90; i++) {
+        func_801084F4_33B134_name_4F();
+        HuPrcVSleep();
+    }
+    func_8002D274_2DE74(*model->obj->model, 0, 0, 0);
+    func_8002D274_2DE74(*D_80110580_3431C0_name_4F->obj->model, 0, 0, 0);
+    func_800794A8_7A0A8(0x78);
+    MBMotionShiftSet(model, 5, 0, 5, 0);
+    MBMotionShiftSet(D_80110580_3431C0_name_4F, 3, 0, 5, 0);
+    n = 0;
+    while (!(MBMotionCheck(model) & 1)) {
+        if (++n == 3) {
+            PlaySound((s16)D_8010FC10_342850_name_4F[rand8() & 3]);
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80107FC8_33AC08_name_4F);
 
