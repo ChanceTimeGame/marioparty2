@@ -101,6 +101,8 @@ void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 f32 func_800B1830_B2430(f32); /* sqrtf */
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_800B75A8_B81A8(f32, f32); /* atan2 (degrees) */
+void func_80026DAC_279AC(s16, u8, u8, u8);
+void func_800795D8_7A1D8(s16 index, s8 val); /* sound volume */
 
 extern f32 D_80101300_101F00;
 extern f32 D_8010105C_101C5C;
