@@ -243,11 +243,24 @@ typedef struct PdStreak {
         HuPrcVSleep();                                                        \
     }
 
+/* The hands' object (func_80106ED8/func_80107224). */
+typedef struct D4AHandWork {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 timer;
+    /* 0x08 */ s32 unk8[8];
+    /* 0x28 */ s32 unk28;
+    /* 0x2C */ s32 picked[2]; /* per side: a hand was picked */
+} D4AHandWork; /* size 0x34 */
+
+void func_80069654_6A254(s16 mesId); /* close a message */
+void MBModelDispOn(MBModel*);
+
 /* ---- 42 data (asm/data/overlays/ovl_42_PirateDuel/2C7820.data.s) ---- */
 
 extern PdStatusLayout D_80108840_324E80_name_4A[8];
 extern u32* D_80108A20_325060_name_4A[6]; /* per character: motion list (count, files) */
 extern s32 D_80108A38_325078_name_4A;
+extern s16 D_80108AD8_325118_name_4A[3][2]; /* sprite positions: the title, the two hands */
 
 /* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */
 
@@ -268,12 +281,30 @@ extern s32 D_80108CB8_3252F8_name_4A; /* how many */
 extern s32 D_80108CC0_325300_name_4A[4]; /* opponents to choose from */
 extern s32 D_80108CD0_325310_name_4A; /* the minimum stake */
 extern s32 D_80108CD4_325314_name_4A; /* the turn */
+extern s32 D_80108CD8_325318_name_4A; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins, 4-6 time out */
 extern s32 D_80108CDC_32531C_name_4A; /* the poorer player's coins */
+extern s32 D_80108CE0_325320_name_4A[2]; /* per side: the hand, 0-2 */
 extern s32 D_80108CE8_325328_name_4A[2];
 extern s32 D_80108CF0_325330_name_4A; /* CPU pad triggers */
+extern s16 D_80108CF8_325338_name_4A[2][150]; /* per side: 5 rows of 30 frames, a few marked */
+extern s16 D_80108F50_325590_name_4A; /* the drop sound */
 extern s32 D_80108F54_325594_name_4A; /* no referee (flag 0x17 clear) */
 /* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern MBModel* D_80108F5C_32559C_name_4A; /* the referee's hat (scaled away) */
+extern MBModel* D_80108F60_3255A0_name_4A[2];
+extern MBModel* D_80108F68_3255A8_name_4A[2]; /* per side: the hand model */
+/* Sprites (ids and positions are s32, read as their low halves): the title, the two hands. */
+extern s16 D_80108F90_3255D0_name_4A;
+extern s16 D_80108F92_3255D2_name_4A; /* the title sprite */
+extern s32 D_80108F94_3255D4_name_4A;
+extern s32 D_80108F98_3255D8_name_4A;
+extern s32 D_80108F9C_3255DC_name_4A;
+extern s32 D_80108FA0_3255E0_name_4A[2];
+extern s32 D_80108FA8_3255E8_name_4A[2];
+extern s32 D_80108FB0_3255F0_name_4A[2];
+extern s32 D_80108FB8_3255F8_name_4A[2]; /* per side: the "READY" message, -1 for none */
+extern s32 D_80108FC0_325600_name_4A; /* the winner's side */
+extern s32 D_80108FC4_325604_name_4A; /* the loser's side */
 
 /* ---- 31EE40.c ---- */
 
@@ -296,8 +327,8 @@ void func_80106300_322940_name_4A(omObjData* obj);
 void func_80106390_3229D0_name_4A(void);
 void func_8010665C_322C9C_name_4A(void);
 void func_80106ED8_323518_name_4A(void);
-void func_80107224_323864_name_4A(void);
-void func_801075B0_323BF0_name_4A(void);
+void func_80107224_323864_name_4A(omObjData* obj);
+void func_801075B0_323BF0_name_4A(omObjData* obj);
 s32 func_8010762C_323C6C_name_4A(void);
 void func_80107918_323F58_name_4A(s32 arg0, s32 arg1, s32 arg2); /* CPU input script */
 void func_80107F3C_32457C_name_4A(omObjData* obj);

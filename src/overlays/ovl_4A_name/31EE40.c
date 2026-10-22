@@ -572,14 +572,168 @@ void func_8010665C_322C9C_name_4A(void) {
     }
 }
 
+/* Start the hands (the process func_80107224): each duelist's hidden table of 5 x 30 frames gets
+   a CPU-difficulty number of marked frames per row (3-6, 7-10, 9-12; difficulty 3 keeps the last
+   count), a CPU duelist picks its hand at random, and the hand sprite is shown. */
+/* NON_MATCHING: masked 17, registers and one hoist: retail keeps the side's table base in its own
+   register (one more saved register, so the work pointer lives on the stack); GCC folds it into
+   the address each time. */
+#ifdef NON_MATCHING
+void func_80106ED8_323518_name_4A(void) {
+    omObjData* obj;
+    D4AHandWork* work;
+    s16* frame;
+    s32 count;
+    s32 player;
+    s32 side;
+    s32 row;
+    s32 i;
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80107224_323864_name_4A);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(D4AHandWork), 0x7918);
+    D_80108CE0_325320_name_4A[0] = 0;
+    D_80108CE0_325320_name_4A[1] = 0;
+    count = 0;
+    for (side = 0; side < 2; side++) {
+        if (side == 0) {
+            player = D_80108CA0_3252E0_name_4A;
+        } else {
+            player = D_80108CA4_3252E4_name_4A;
+        }
+        switch (gPlayers[player].cpu_difficulty) {
+            case 0:
+                count = (rand8() & 3) + 3;
+                break;
+            case 1:
+                count = (rand8() & 3) + 7;
+                break;
+            case 2:
+                count = (rand8() & 3) + 9;
+                break;
+        }
+        for (row = 0; row < 5; row++) {
+            for (i = 0; i < 30; i++) {
+                D_80108CF8_325338_name_4A[side][row * 30 + i] = 0;
+            }
+            for (i = 0; i < count; i++) {
+                do {
+                    frame = &D_80108CF8_325338_name_4A[side][row * 30 + (u8)(rand8() % 30)];
+                } while (*frame != 0);
+                *frame = 1;
+            }
+        }
+        espDispOn(D_80108F92_3255D2_name_4A);
+    }
+    work->timer = 0;
+    work->unk28 = 5;
+    work->unk0 = 0;
+    work->picked[0] = 0;
+    work->picked[1] = 0;
+    if (gPlayers[D_80108CA0_3252E0_name_4A].flags & 1) {
+        D_80108CE0_325320_name_4A[0] = (u8)(rand8() % 3);
+    }
+    if (gPlayers[D_80108CA4_3252E4_name_4A].flags & 1) {
+        D_80108CE0_325320_name_4A[1] = (u8)(rand8() % 3);
+    }
+    D_80108FB8_3255F8_name_4A[0] = -1;
+    D_80108FB8_3255F8_name_4A[1] = -1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80106ED8_323518_name_4A);
+#endif
 
-__asm__(".section .rodata");
-const char D_80108BC0_325200_name_4A[] = "\202q\202d\202`\202c\202x";
+/* The hands: a person picks with A, B or Z (0, 1, 2), a CPU after 30 frames; "READY" shows over
+   each side that picked. 0 beats 2, otherwise the higher hand wins: D_80108CD8 is 1 for a draw, 2
+   when the challenger wins, 3 when the opponent wins; after 900 frames 5 (the opponent did not
+   pick), 6 (the challenger did not) or 4 (neither). The countdown starts at frame 750. */
+void func_80107224_323864_name_4A(omObjData* obj) {
+    D4AHandWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80107224_323864_name_4A);
+    if (!(gPlayers[D_80108CA0_3252E0_name_4A].flags & 1)) {
+        if (work->picked[0] == 0) {
+            switch (ContBtnTrg[gPlayers[D_80108CA0_3252E0_name_4A].port]) {
+                case 0x8000:
+                    D_80108CE0_325320_name_4A[0] = 0;
+                    goto picked0;
+                case 0x4000:
+                    D_80108CE0_325320_name_4A[0] = 1;
+                    goto picked0;
+                case 0x2000:
+                    D_80108CE0_325320_name_4A[0] = 2;
+                    goto picked0;
+            }
+        }
+    } else if (work->timer == 30) {
+    picked0:
+        work->picked[0]++;
+        D_80108FB8_3255F8_name_4A[0] = func_800691FC_69DFC(9, "\x82\x71\x82\x64\x82\x60\x82\x63\x82\x78", 100, 96, 1.0, 1.0, 0);
+        func_800695D8_6A1D8(D_80108FB8_3255F8_name_4A[0], -1);
+    }
+    if (!(gPlayers[D_80108CA4_3252E4_name_4A].flags & 1)) {
+        if (work->picked[1] == 0) {
+            switch (ContBtnTrg[gPlayers[D_80108CA4_3252E4_name_4A].port]) {
+                case 0x8000:
+                    D_80108CE0_325320_name_4A[1] = 0;
+                    goto picked1;
+                case 0x4000:
+                    D_80108CE0_325320_name_4A[1] = 1;
+                    goto picked1;
+                case 0x2000:
+                    D_80108CE0_325320_name_4A[1] = 2;
+                    goto picked1;
+            }
+        }
+    } else if (work->timer == 30) {
+    picked1:
+        work->picked[1]++;
+        D_80108FB8_3255F8_name_4A[1] = func_800691FC_69DFC(9, "\x82\x71\x82\x64\x82\x60\x82\x63\x82\x78", 220, 96, 1.0, 1.0, 0);
+        func_800695D8_6A1D8(D_80108FB8_3255F8_name_4A[1], -1);
+    }
+    if (work->picked[0] != 0 && work->picked[1] != 0) {
+        if (D_80108CE0_325320_name_4A[0] == 0 && D_80108CE0_325320_name_4A[1] == 2) {
+            D_80108CD8_325318_name_4A = 2;
+        } else if (D_80108CE0_325320_name_4A[0] == 2 && D_80108CE0_325320_name_4A[1] == 0) {
+            D_80108CD8_325318_name_4A = 3;
+        } else if (D_80108CE0_325320_name_4A[0] > D_80108CE0_325320_name_4A[1]) {
+            D_80108CD8_325318_name_4A = 2;
+        } else if (D_80108CE0_325320_name_4A[0] == D_80108CE0_325320_name_4A[1]) {
+            D_80108CD8_325318_name_4A = 1;
+        } else {
+            D_80108CD8_325318_name_4A = 3;
+        }
+        work->timer = 30;
+        obj->func_ptr = func_801075B0_323BF0_name_4A;
+    }
+    if (++work->timer == 750) {
+        omAddPrcObj(func_80108780_324DC0_name_4A, 0x12, 0, 0);
+    }
+    if (work->timer == 900) {
+        if (work->picked[0] != 0) {
+            D_80108CD8_325318_name_4A = 5;
+        } else if (work->picked[1] != 0) {
+            D_80108CD8_325318_name_4A = 6;
+        } else {
+            D_80108CD8_325318_name_4A = 4;
+        }
+        work->timer = 30;
+        obj->func_ptr = func_801075B0_323BF0_name_4A;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_801075B0_323BF0_name_4A);
+/* After the hands: 30 frames later the "READY" messages close and the object ends. */
+void func_801075B0_323BF0_name_4A(omObjData* obj) {
+    D4AHandWork* work = obj->unk_50;
+
+    if (--work->timer == 0) {
+        if (D_80108FB8_3255F8_name_4A[0] != -1) {
+            func_80069654_6A254(D_80108FB8_3255F8_name_4A[0]);
+        }
+        if (D_80108FB8_3255F8_name_4A[1] != -1) {
+            func_80069654_6A254(D_80108FB8_3255F8_name_4A[1]);
+        }
+        omDelObj(obj);
+    }
+}
 
 s32 func_8010762C_323C6C_name_4A(void) {
     s32 cand[4];
@@ -791,14 +945,154 @@ s32 func_801080DC_32471C_name_4A(void) {
     return D_80108CF0_325330_name_4A;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_801080E8_324728_name_4A);
+/* The sprites drop in: the title sprite and the two hand sprites move down 4 a frame for 30
+   frames, then the title bounces. */
+void func_801080E8_324728_name_4A(void) {
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_8010828C_3248CC_name_4A);
+    D_80108F98_3255D8_name_4A = D_80108AD8_325118_name_4A[0][1];
+    for (i = 0; i < 30; i++) {
+        espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+        D_80108F98_3255D8_name_4A += 4;
+        for (j = 0; j < 2; j++) {
+            espPosSet(D_80108FA0_3255E0_name_4A[j], D_80108FA8_3255E8_name_4A[j], D_80108FB0_3255F0_name_4A[j]);
+            D_80108FB0_3255F0_name_4A[j] += 4;
+        }
+        HuPrcVSleep();
+    }
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+    D_80108F98_3255D8_name_4A += 4;
+    HuPrcVSleep();
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+    D_80108F98_3255D8_name_4A -= 4;
+    HuPrcVSleep();
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+    D_80108F98_3255D8_name_4A += 4;
+    HuPrcVSleep();
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+    omDelPrcObj(NULL);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80108394_3249D4_name_4A);
+/* The sprites leave: up 6 a frame for 20 frames; the title goes back to its start. */
+void func_8010828C_3248CC_name_4A(void) {
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80108468_324AA8_name_4A);
+    for (i = 0; i < 20; i++) {
+        espPosSet(D_80108F92_3255D2_name_4A, D_80108F94_3255D4_name_4A, D_80108F98_3255D8_name_4A);
+        D_80108F98_3255D8_name_4A -= 6;
+        for (j = 0; j < 2; j++) {
+            espPosSet(D_80108FA0_3255E0_name_4A[j], D_80108FA8_3255E8_name_4A[j], D_80108FB0_3255F0_name_4A[j]);
+            D_80108FB0_3255F0_name_4A[j] -= 6;
+        }
+        HuPrcVSleep();
+    }
+    espPosSet(D_80108F92_3255D2_name_4A, D_80108AD8_325118_name_4A[0][0], D_80108AD8_325118_name_4A[0][1]);
+    omDelPrcObj(NULL);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80108540_324B80_name_4A);
+/* The two hand models appear and stretch up (scale.y = 0.8 sin(3t)) over 30 frames. */
+void func_80108394_3249D4_name_4A(void) {
+    f32 s;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80108780_324DC0_name_4A);
+    for (j = 0; j < 2; j++) {
+        MBModelDispOn(D_80108F60_3255A0_name_4A[j]);
+    }
+    for (i = 0; i < 30; i++) {
+        s = HuMathSin(i * 3) * 0.8f;
+        for (j = 0; j < 2; j++) {
+            D_80108F60_3255A0_name_4A[j]->scale.y = s;
+        }
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
+
+/* ... and shrink away again (0.8 sin(3t + 90)), then hide. */
+void func_80108468_324AA8_name_4A(void) {
+    f32 s;
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < 30; i++) {
+        s = HuMathSin(i * 3 + 90) * 0.8f;
+        for (j = 0; j < 2; j++) {
+            D_80108F60_3255A0_name_4A[j]->scale.y = s;
+        }
+        HuPrcVSleep();
+    }
+    for (j = 0; j < 2; j++) {
+        MBModelDispOff(D_80108F60_3255A0_name_4A[j]);
+    }
+    omDelPrcObj(NULL);
+}
+
+/* The loser's hand model (D_80108F68[D_80108FC4]) spins and shrinks to nothing over 60 frames;
+   from frame 45 the winner's drops away (sound 0x4B5) and is hidden at frame 59. */
+void func_80108540_324B80_name_4A(void) {
+    f32 step;
+    f32 angle;
+    f32 y;
+    s32 i;
+
+    if (D_80108CE0_325320_name_4A[D_80108FC4_325604_name_4A] == 0) {
+        MBMotionShiftSet(D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A], 3, 0, 5, 2);
+    } else {
+        MBMotionShiftSet(D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A], 3, 0, 5, 0);
+    }
+    HuPrcSleep(30);
+    step = D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.x / 60.0f;
+    angle = 0.0f;
+    y = 150.0f;
+    for (i = 0; i < 60.0f; i++) {
+        angle += 30.0f;
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.x = HuMathSin(angle);
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.y = 0.0f;
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->rot.z = func_800B7890_B8490(angle);
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.x -= step;
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.y -= step;
+        D_80108F68_3255A8_name_4A[D_80108FC4_325604_name_4A]->scale.z -= step;
+        if (i >= 45 && i < 60) {
+            if (i == 45) {
+                MBMotionShiftSet(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A], 0, 0, 5, 2);
+                D_80108F50_325590_name_4A = PlaySound(0x4B5);
+            }
+            y -= 10.0f;
+            D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]->pos.y = y;
+            if (i == 59) {
+                MBModelDispOff(D_80108F68_3255A8_name_4A[D_80108FC0_325600_name_4A]);
+            }
+        }
+        HuPrcVSleep();
+    }
+    HuPrcSleep(30);
+    omDelPrcObj(NULL);
+}
+
+/* The five-second countdown (42's func_80108DB8 tail): ends early once the step flag is set. */
+void func_80108780_324DC0_name_4A(void) {
+    s32 timer;
+    s32 secs;
+
+    secs = 5;
+    timer = 30;
+    func_8006961C_6A21C(func_800691FC_69DFC(10, 5, 160, 28), 154.0f, 28.0f);
+    PlaySound(8);
+    do {
+        if (--timer == 0) {
+            timer = 30;
+            secs--;
+        }
+        func_8006D4D0_6E0D0(secs);
+        if (D_80108C80_3252C0_name_4A != 0) {
+            func_8006D518_6E118();
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    } while (secs > 0);
+    func_8006D518_6E118();
+    omDelPrcObj(NULL);
+}
