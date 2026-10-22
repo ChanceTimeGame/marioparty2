@@ -1,9 +1,100 @@
 #include "common.h"
 #include "ovl_46.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80102800_2F1730_name_46);
+void func_80102800_2F1730_name_46(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_801029F8_2F1928_name_46);
+    omInitObjMan(40, 15);
+    func_80079128_79D28();
+    func_80018E30_19A30(1);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_80050A30_51630(D_01164160);
+    MBModelInit();
+    func_8005E2B8_5EEB8();
+    func_800593C0_59FC0();
+    func_800581A0_58DA0();
+    func_801029F8_2F1928_name_46();
+    func_80088640_89240();
+    func_801070C8_2F5FF8_name_46();
+    func_8005FE10_60A10();
+    func_80060034_60C34(0, (u8)gPlayers[0].player_space_color);
+    func_80060034_60C34(1, (u8)gPlayers[1].player_space_color);
+    func_80060034_60C34(2, (u8)gPlayers[2].player_space_color);
+    func_80060034_60C34(3, (u8)gPlayers[3].player_space_color);
+    HidePlayerHUDVisibility(0, 1);
+    HidePlayerHUDVisibility(1, 1);
+    HidePlayerHUDVisibility(2, 1);
+    HidePlayerHUDVisibility(3, 1);
+    omAddPrcObj(func_80102D0C_2F1C3C_name_46, 0x5000, 0x2000, 0);
+    omAddObj(1000, 0, 0, -1, func_80102C2C_2F1B5C_name_46);
+    for (i = 0; i < 2; i++) {
+        D_80108268_2F7198_name_46[i] = func_80107158_2F6088_name_46(i * 116 + 110, 80);
+        func_801073EC_2F631C_name_46(D_80108268_2F7198_name_46[i]);
+    }
+}
+
+void func_801029F8_2F1928_name_46(void) {
+    s32 bits;
+    s32 i;
+
+    D_801081F4_2F7124_name_46 = -1;
+    D_801081E8_2F7118_name_46 = 0;
+    D_8010826C_2F719C_name_46 = 0;
+    if (_CheckFlag(0x17) == 0) {
+        D_8010826C_2F719C_name_46 = 1;
+    }
+    bits = D_800F8D1A_F991A.attacker;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 1;
+            D_8010826C_2F719C_name_46 = 0;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 1;
+            D_8010826C_2F719C_name_46 = 1;
+        }
+    }
+    D_801081F0_2F7120_name_46 = 0;
+    for (i = 0; bits != 0; i++) {
+        bits >>= 1;
+        if (bits == 0) {
+            break;
+        }
+        D_801081F0_2F7120_name_46++;
+    }
+    D_80108208_2F7138_name_46 = 1;
+    D_801081F8_2F7128_name_46[i] = 1;
+    bits = D_800F8D1A_F991A.targets;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 0xE;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 2;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if ((bits >> i) & 1) {
+            D_80108208_2F7138_name_46++;
+            D_801081F8_2F7128_name_46[i] = 1;
+        }
+    }
+    for (i = 0; i < 2; i++) {
+        D_80108240_2F7170_name_46[i] = 0;
+    }
+    if (D_80108208_2F7138_name_46 == 2) {
+        for (i = 0; i < 4; i++) {
+            if (D_801081F8_2F7128_name_46[i] == 1 && i != D_801081F0_2F7120_name_46) {
+                D_801081F4_2F7124_name_46 = i;
+                break;
+            }
+        }
+    }
+    D_800FC880_FD480 = 0;
+    D_800F8C5C_F985C = 0;
+    D_80108224_2F7154_name_46 = GwSystem.current_turn;
+}
 
 void func_80102C2C_2F1B5C_name_46(omObjData* obj) {
     if (D_801011FC_101DFC != 0) {
@@ -471,9 +562,94 @@ void func_80105754_2F4684_name_46(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80105FD0_2F4F00_name_46);
+void func_80105FD0_2F4F00_name_46(void) {
+    omObjData* obj;
+    s32* work;
 
+    obj = omAddObj(0x10, 0, 0, -1, func_80106038_2F4F68_name_46);
+    work = func_80027154_27D54(8, 0x7918);
+    obj->unk_50 = work;
+    work[1] = 0;
+    D_80108238_2F7168_name_46[0] = -1;
+    D_80108238_2F7168_name_46[1] = -1;
+}
+
+/* The duel: each side presses A (a CPU at its preset frame); the press nearer the target
+   (D_80108298 seconds, 30 frames each) wins; nobody pressing by frame 900 counts as 1000. */
+#ifdef NON_MATCHING
+/* masked 0: only the registers of the final comparison differ. */
+void func_80106038_2F4F68_name_46(omObjData* obj) {
+    s32* work;
+    s32 diff1;
+    s32 diff0;
+    s32 target;
+
+    work = obj->unk_50;
+    if (gPlayers[D_801081F0_2F7120_name_46].flags & 1) {
+        if (work[1] == D_80108228_2F7158_name_46) {
+            func_80029E80_2AA80(PLAYER_MODEL(D_801081F0_2F7120_name_46)->obj->model[0], 1, 0);
+            func_80029E80_2AA80(D_80108260_2F7190_name_46->obj->model[0], 1, 0);
+            func_80029E80_2AA80(D_80108260_2F7190_name_46->obj->model[0], 2, 0);
+            D_80108238_2F7168_name_46[0] = work[1];
+            func_8007975C_7A35C(0x3C8, (s16)D_801081F0_2F7120_name_46);
+        }
+    } else if ((ContBtnTrg[gPlayers[D_801081F0_2F7120_name_46].port] & 0x8000) && D_80108238_2F7168_name_46[0] == -1) {
+        func_80029E80_2AA80(PLAYER_MODEL(D_801081F0_2F7120_name_46)->obj->model[0], 1, 0);
+        func_80029E80_2AA80(D_80108260_2F7190_name_46->obj->model[0], 1, 0);
+        func_80029E80_2AA80(D_80108260_2F7190_name_46->obj->model[0], 2, 0);
+        D_80108238_2F7168_name_46[0] = work[1];
+        func_8007975C_7A35C(0x3C8, (s16)D_801081F0_2F7120_name_46);
+    }
+    if (gPlayers[D_801081F4_2F7124_name_46].flags & 1) {
+        if (work[1] == D_8010822C_2F715C_name_46) {
+            func_80029E80_2AA80(PLAYER_MODEL(D_801081F4_2F7124_name_46)->obj->model[0], 1, 0);
+            func_80029E80_2AA80(D_80108264_2F7194_name_46->obj->model[0], 1, 0);
+            func_80029E80_2AA80(D_80108264_2F7194_name_46->obj->model[0], 2, 0);
+            D_80108238_2F7168_name_46[1] = work[1];
+            func_8007975C_7A35C(0x3C8, (s16)D_801081F4_2F7124_name_46);
+        }
+    } else if ((ContBtnTrg[gPlayers[D_801081F4_2F7124_name_46].port] & 0x8000) && D_80108238_2F7168_name_46[1] == -1) {
+        func_80029E80_2AA80(PLAYER_MODEL(D_801081F4_2F7124_name_46)->obj->model[0], 1, 0);
+        func_80029E80_2AA80(D_80108264_2F7194_name_46->obj->model[0], 1, 0);
+        func_80029E80_2AA80(D_80108264_2F7194_name_46->obj->model[0], 2, 0);
+        D_80108238_2F7168_name_46[1] = work[1];
+        func_8007975C_7A35C(0x3C8, (s16)D_801081F4_2F7124_name_46);
+    }
+    if (++work[1] == 900) {
+        if (D_80108238_2F7168_name_46[0] == -1) {
+            D_80108238_2F7168_name_46[0] = 1000;
+        }
+        if (D_80108238_2F7168_name_46[1] == -1) {
+            D_80108238_2F7168_name_46[1] = 1000;
+        }
+    }
+    if ((diff0 = D_80108238_2F7168_name_46[0]) != -1 && (diff1 = D_80108238_2F7168_name_46[1]) != -1) {
+        target = D_80108298_2F71C8_name_46 * 30;
+        diff0 = target - diff0;
+        if (diff0 < 0) {
+            diff0 = -diff0;
+        }
+        diff1 = target - diff1;
+        if (diff1 < 0) {
+            diff1 = -diff1;
+        }
+        if (diff0 < diff1) {
+            D_80108230_2F7160_name_46 = 2;
+        }
+        if (diff1 < diff0) {
+            D_80108230_2F7160_name_46 = 3;
+        }
+        if (diff0 == diff1) {
+            D_80108230_2F7160_name_46 = 1;
+        }
+        D_801081D0_2F7100_name_46 = 1;
+        func_80079848_7A448(D_80108272_2F71A2_name_46);
+        omDelObj(obj);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80106038_2F4F68_name_46);
+#endif
 
 s32 func_80106470_2F53A0_name_46(void) {
     s32 cand[4];

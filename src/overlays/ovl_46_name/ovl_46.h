@@ -302,6 +302,8 @@ void func_8002AC10_2B810(s16 arg0, f32 arg1, f32 arg2, s32 arg3);
 void func_80029E80_2AA80(s16 arg0, s32 arg1, s32 arg2);
 extern f32 D_800CA02C_CAC2C;
 
+#define PD_ABS(x) ((x) < 0 ? -(x) : (x))
+
 /* func_80107850's blast (func_80107978): the loser's model grows, then blows up. */
 typedef struct Ovl46Blast {
     /* 0x00 */ f32 unk0;
