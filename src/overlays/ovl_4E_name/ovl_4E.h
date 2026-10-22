@@ -143,6 +143,7 @@ extern u8 D_8010D448_334E08_name_4E[4];  /* wins needed per first-menu choice: 3
 extern s8 D_8010D44C_334E0C_name_4E[4];  /* per team mode: stamp row spacing */
 extern u16 D_8010D4AC_334E6C_name_4E[];  /* per first-menu choice: stamp column origin */
 extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8) */
+extern Vec D_8010D52C_334EEC_name_4E[2]; /* team mode 7 positions */
 extern Vec D_8010D544_334F04_name_4E[4]; /* 1 vs 3 positions */
 extern Vec D_8010D574_334F34_name_4E[4]; /* 2 vs 2 positions */
 extern Vec D_8010D5A4_334F64_name_4E;
@@ -174,12 +175,17 @@ extern u16 D_8010DAD2_335492_name_4E[4]; /* second menu's four row sprites */
 extern u16 D_8010DAE6_3354A6_name_4E[6]; /* third menu: [0] panel, [1..4] = D_8010DAE8, [5] = D_8010DAF0 */
 extern u16 D_8010DAE8_3354A8_name_4E[4]; /* third menu: the four character icons */
 extern u16 D_8010DAF0_3354B0_name_4E;
-extern u16 D_8010DAFA_3354BA_name_4E[4];
+extern s16 D_8010DAF2_3354B2_name_4E[4]; /* per player: sprite animations */
+extern u16 D_8010DAFA_3354BA_name_4E[4]; /* per player: esprites */
+extern s16 D_8010DB02_3354C2_name_4E;
 extern u16 D_8010DB04_3354C4_name_4E;
+extern s16 D_8010DB06_3354C6_name_4E[5];
 extern s16 D_8010DB10_3354D0_name_4E[8];
+extern s16 D_8010DB1A_3354DA_name_4E;
 extern s16 D_8010DB20_3354E0_name_4E[32];
 extern s16 D_8010DB60_335520_name_4E;   /* the message window */
 extern s16 D_8010DB62_335522_name_4E;   /* 1: window sound request (func_80107554) */
+extern u8 D_8010DB68_335528_name_4E[0x20]; /* a 0x20-byte message state (func_8006985C) */
 extern s16 D_8010DB88_335548_name_4E[];
 extern s16 D_8010DBDC_33559C_name_4E;
 extern s16 D_8010DBDE_33559E_name_4E;
@@ -195,6 +201,7 @@ extern s16 D_8010DC24_3355E4_name_4E;
 extern s16 D_8010DC26_3355E6_name_4E;
 extern s16 D_8010DC28_3355E8_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
+extern omObjData* D_8010DC1C_3355DC_name_4E; /* the winners' models (func_801070AC) */
 extern s16 D_8010DC90_335650_name_4E;
 extern s16 D_8010DCA0_335660_name_4E[4];
 extern s16 D_8010DCA6_335666_name_4E;   /* = D_8010DCA0[3] */
@@ -232,7 +239,7 @@ void func_80106BF8_32E5B8_name_4E(u16 spr, s32 dx, s32 dy);
 void func_80106C30_32E5F0_name_4E(s16 grp, s16 idx, s16 dx, s16 dy);
 void func_80106CB0_32E670_name_4E(void);
 void func_80106E18_32E7D8_name_4E(void);
-void func_801070AC_32EA6C_name_4E(u8 *arg0, s16 arg1);
+void func_801070AC_32EA6C_name_4E(u8* list, s16 count);
 void func_80107324_32ECE4_name_4E(void);
 void func_8010732C_32ECEC_name_4E(s16 arg0);
 void func_80107554_32EF14_name_4E(void);
