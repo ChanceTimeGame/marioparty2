@@ -150,8 +150,7 @@ extern s32 D_8010B7A4_E3234_BowserSlots[];        /* per character: losing motio
 extern s32 D_8010B7BC_E324C_BowserSlots;          /* flow state */
 extern s32 D_8010B7C0_E3250_BowserSlots;          /* flow frame counter */
 extern s32 D_8010B7C4_E3254_BowserSlots;          /* flow wait */
-extern s16 D_8010B7C8_E3258_BowserSlots;          /* exit countdown */
-extern s16 D_8010B7CA_E325A_BowserSlots;          /* exit fade time */
+extern s32 D_8010B7C8_E3258_BowserSlots;          /* exit countdown */
 extern s32 D_8010B7CC_E325C_BowserSlots;          /* camera test mode */
 extern s16 D_8010B7D0_E3260_BowserSlots;
 extern s16 D_8010B7D2_E3262_BowserSlots;
@@ -233,8 +232,7 @@ extern s16 D_8010C17E_E3C0E_BowserSlots;
 extern s16 D_8010C180_E3C10_BowserSlots;
 extern s16 D_8010C182_E3C12_BowserSlots;
 extern s16 D_8010C18E_E3C1E_BowserSlots;          /* sound 0x127, -1 none */
-extern s16 D_8010C190_E3C20_BowserSlots;          /* player motion to wait for, -1 none */
-extern s16 D_8010C192_E3C22_BowserSlots;
+extern s32 D_8010C190_E3C20_BowserSlots;          /* player motion to wait for, -1 none */
 
 /* ---- overlay functions (fork A: 80102800-80106B30) ---- */
 void func_80102800_DA290_BowserSlots(void);
@@ -282,7 +280,7 @@ void func_80106B30_DE5C0_BowserSlots(omObjData* obj);
 
 /* ---- fork B (80106B30+): inferred from register use, check against the asm ---- */
 void func_801076EC_DF17C_BowserSlots(void);
-u16 func_8010770C_DF19C_BowserSlots(s32 symbol); /* symbol -> item */
+s32 func_8010770C_DF19C_BowserSlots(s32 symbol); /* symbol -> item (retail callers use it unprototyped: int) */
 void func_80107740_DF1D0_BowserSlots(s32 model);
 void func_801078F0_DF380_BowserSlots(s32 model, s32 arg1);
 void func_801079B8_DF448_BowserSlots(s32 model, f32 arg1, f32 arg2, f32 arg3);
