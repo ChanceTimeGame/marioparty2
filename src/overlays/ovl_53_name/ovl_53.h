@@ -87,6 +87,20 @@ void func_800898F0_8A4F0(s16 winId, s16 x, s16 y);
 void func_8008D5D8_8E1D8(s16 winId);
 s32 func_8004E94C_4F54C(void);
 s32 func_80059FD0_5ABD0(s32 player); /* the player's rank, 0 = first */
+void func_800614B4_620B4(s32 player, s32 coins); /* give coins */
+void func_8006135C_61F5C(s32 player, s32 coins, s32);
+s32 func_80060210_60E10(s32);
+void func_80060F90_61B90(s32);
+void func_80061078_61C78(s32);
+void func_80057448_58048(void);
+void func_800615F0_621F0(s32);
+extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] (ovl_3E.h) */
+
+/* A board message window centred at y 80, sized for message mes (Bowser's lines). */
+#define OVL53_MES_WIN(win, mes)                                                                   \
+    func_8008DACC_8E6CC(1, D_80105DCC_3606DC_name_53, mes);                                      \
+    win = func_8005AAC0_5B6C0((320 - D_80105DCC_3606DC_name_53[0]) / 2, 80, D_80105DCC_3606DC_name_53[0], \
+                              D_80105DCC_3606DC_name_53[1])
 
 extern u8 D_01164160[];
 extern s16 D_800CD414_CE014;
