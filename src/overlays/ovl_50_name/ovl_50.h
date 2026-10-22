@@ -305,7 +305,7 @@ void func_80108630_348E90_name_50(f32 arg0, f32 arg1, f32 arg2, s32 arg3); /* 50
 void func_801087FC_34905C_name_50(void);
 void func_80108830_349090_name_50(f32 arg0, f32 arg1, f32 arg2);
 void func_801089CC_34922C_name_50(void);
-void func_80108A00_349260_name_50(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80108A00_349260_name_50(Vec* arg0, Vec* arg1, f32 arg2, s32 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8); /* 50-B: from the asm */
 void func_80108C6C_3494CC_name_50(void);
 void func_80108F1C_34977C_name_50(void); /* main's func_8004B214 */
 void func_80108F2C_34978C_name_50(void);
@@ -350,6 +350,11 @@ extern omObjData* D_801125D8_352E38_name_50; /* func_80108448's effect object */
 extern Vec D_801125E8_352E48_name_50;
 extern Vec D_801125F4_352E54_name_50;
 extern s16 D_80112750_352FB0_name_50;     /* the partner's held-item form (0xA0231) */
+/* board 2, part 2 */
+extern Vec D_80111D94_3525F4_name_50;     /* the winner's place */
+extern Vec D_80111DA0_352600_name_50[];   /* per character: the beam's offset from the winner */
+extern s16 D_801125D0_352E30_name_50;     /* a sound handle (0x3DA) */
+extern s16 D_80112758_352FB8_name_50;     /* the winner's held-item form (0xA0230) */
 
 /* ---- 34DBC0.c ---- */
 
