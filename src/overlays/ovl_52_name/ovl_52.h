@@ -109,11 +109,24 @@ void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
 void func_800211E8_21DE8(s16 index, u8 arg1);
 void func_8002308C_23C8C(s32 index);
 void func_8008D974_8E574(s32, s16); /* message argument: a message id or a string */
-void func_80089308_89F08(s16, s32, s32); /* window message argument */
+void func_80089308_89F08(s16, s32, s8); /* window message argument */
 void ShowTextWindow(s32 arg0);
 void func_80057DA4_589A4(s32 arg0);
 void func_8005ACD0_5B8D0(GW_PLAYER*, s16);
 omObjData* func_800732B0_73EB0(u32 arg0);
+omObjData* func_80058F18_59B18(s32 player, Vec* target, s32 time, Object* arg3); /* turn toward */
+omObjData* func_8005845C_5905C(s32 player, Vec* target, s32 time, Object* arg3); /* walk to */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8005A0CC_5ACCC(void);
+void func_80046238_46E38(void);
+void func_800461C8_46DC8(void);
+s16 func_80046F98_47B98(s32);
+void func_80046308_46F08(s32 arg0);
+void func_80047D2C_4892C(void);
+void func_80047BB8_487B8(s32);
+s32 func_80047DE8_489E8(s32);
+void func_80047B78_48778(void);
+void func_80059520_5A120(MBModel*, s32, s32);
 extern s32 D_800CC5F8[]; /* per character: the name message */
 extern u16 D_801011FC_101DFC;
 extern u8 D_800FD866_FE466;

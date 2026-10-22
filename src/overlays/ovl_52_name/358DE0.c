@@ -280,16 +280,430 @@ const u32 D_80106AC8_35D0A8_name_52[2] = { 0x034A034A, 0x034A034A };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_801033D4_3599B4_name_52);
 #endif
 
+/* A board message window at (x, y) sized for message mes, shown until confirmed. */
+#define OVL52_MES(win, x, y, mes)                                                                   \
+    func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, mes);                                         \
+    win = func_8005AAC0_5B6C0(x, y, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]);   \
+    func_800890CC_89CCC(win, mes, -1, -1);                                                          \
+    ShowTextWindow(win);                                                                            \
+    func_80057DA4_589A4(win);                                                                       \
+    func_8005762C_5822C(win)
+
+/* One bonus star: the players with the highest value get it (k of them, listed in timers[]). */
+#define OVL52_BONUS_STAR(field, mtbl)                                                                 \
+    for (i = 0, j = -100000; i < 4; i++) {                                                            \
+        if (j < field(i)) {                                                                           \
+            j = field(i);                                                                             \
+        }                                                                                             \
+    }                                                                                                 \
+    for (i = 0, k = 0; i < 4; i++) {                                                                  \
+        if (field(i) == j) {                                                                          \
+            flags[i] = 1;                                                                             \
+            k++;                                                                                      \
+        } else {                                                                                      \
+            flags[i] = 0;                                                                             \
+        }                                                                                             \
+    }                                                                                                 \
+    {                                                                                                 \
+        s32 msgs[4] = mtbl;                                                                           \
+                                                                                                      \
+        for (i = 0, j = 0; i < 4; i++) {                                                              \
+            if (flags[i] != 0) {                                                                      \
+                func_8008D974_8E574(D_800CC5F8[gPlayers[i].character], j++);                          \
+            }                                                                                         \
+        }                                                                                             \
+        func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, msgs[k - 1]);                               \
+        win2 = func_8005AAC0_5B6C0(30, 42, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]); \
+        for (i = 0, j = 0; i < 4; i++) {                                                              \
+            if (flags[i] != 0) {                                                                      \
+                timers[j] = i;                                                                        \
+                func_80089308_89F08(win2, D_800CC5F8[gPlayers[i].character], j++);                    \
+            }                                                                                         \
+        }                                                                                             \
+        func_800890CC_89CCC(win2, msgs[k - 1], -1, -1);                                               \
+        ShowTextWindow((s16)win2);                                                                    \
+        func_80057DA4_589A4((s16)win2);                                                               \
+        func_8005762C_5822C((s16)win2);                                                               \
+    }                                                                                                 \
+    if (k == 1) {                                                                                     \
+        func_80058F18_59B18(timers[0], &D_80106858_35CE38_name_52, 1, NULL);                          \
+        func_8005845C_5905C(timers[0], &D_80106858_35CE38_name_52, 30, NULL);                         \
+        func_800595E8_5A1E8(gPlayers[timers[0]].unk_24, 6, 2);                                        \
+        HuPrcSleep(30);                                                                               \
+        func_80058F18_59B18(timers[0], &((HuCamera*)D_800FD2A8_FDEA8)->pos, 1, NULL);                 \
+    }                                                                                                 \
+    if (k != 4) {                                                                                     \
+        func_801033D4_3599B4_name_52(k, flags);                                                       \
+    }                                                                                                 \
+    if (k == 1) {                                                                                     \
+        func_80058F18_59B18(timers[0], &D_80106828_35CE08_name_52[timers[0]], 10, NULL);              \
+        func_8005845C_5905C(timers[0], &D_80106828_35CE08_name_52[timers[0]], 30, NULL);              \
+        func_800595E8_5A1E8(gPlayers[timers[0]].unk_24, 6, 2);                                        \
+        HuPrcSleep(30);                                                                               \
+        func_80058F18_59B18(timers[0], &((HuCamera*)D_800FD2A8_FDEA8)->pos, 10, NULL);                \
+        func_800595E8_5A1E8(gPlayers[timers[0]].unk_24, 3, 2);                                        \
+    }
+
+#define OVL52_MINIGAME_COINS(i) gPlayers[i].coins_total
+#define OVL52_MAX_COINS(i) gPlayers[i].coins_max
+#define OVL52_HAPPENINGS(i) (s8)gPlayers[i].happening_spaces_landed_on
+#define OVL52_MSGS(a, b, c, d) { a, b, c, d }
+
+/* The ceremony (MP1 ovl_42/43 func_800F7C18/func_800F7DE0): the stars and coins are shown, the
+   minigame, coin and happening bonus stars are awarded (when bonus stars are on), the ranking is
+   computed (stars, then coins; board 6 coins only) and ties are broken with a dice block, then the
+   winner is announced and the ending scene runs. */
+/* NON_MATCHING: registers (masked 0 apart from scheduling): the loop counters take s2/s1 and the
+   message id s4 where retail has s1/s2/s3; the tie sort's inner loop copies j = k after the k < 4
+   test where retail copies it first */
+#ifdef NON_MATCHING
+void func_80103814_359DF4_name_52(void) {
+    s32 timers[4]; /* also a bonus's winners, and the sort's swap temporary */
+    s32 order[4];  /* also each player's stars at the start */
+    s32 score[4];  /* then how many players share each rank */
+    s32 rank[4];
+    u8 state[4];
+    u8 count[4];
+    u8 flags[4];
+    s32 j;
+    s32 i;
+    s32 mes;
+    s32 k;
+    s32 shown;
+    s16 alpha;
+    MBModel* m;
+    s16 win;
+    s32 win2;
+
+    shown = 0;
+    for (i = 0; i < 4; i++) {
+        D_800F8CE4_F98E4[10 + i] = 0;
+    }
+    InitFadeIn(2, 16);
+    HuPrcSleep(16);
+    PlayMusic(0xF);
+    HuPrcSleep(10);
+    mes = 0x5F5;
+    if (D_80106B30_35D110_name_52 == 6) {
+        mes = 0x6C4;
+    }
+    OVL52_MES(win, 30, 42, mes);
+
+    /* the stars */
+    if (D_80106B30_35D110_name_52 != 6) {
+        for (j = 0; j < 4; j++) {
+            order[j] = gPlayers[j].stars;
+            flags[j] = 0;
+            for (i = 0; i < 4; i++) {
+                if (i != j && gPlayers[j].stars < gPlayers[i].stars) {
+                    flags[j] = 1;
+                }
+            }
+        }
+        for (j = 0; j < 4; j++) {
+            if (flags[j] != 0) {
+                func_800595E8_5A1E8(gPlayers[j].unk_24, 4, 0);
+            }
+        }
+        for (j = 0; j < 4; j++) {
+        }
+        PlaySound(0x348);
+        PlaySound(0x34A);
+        for (j = 0; j < 4; j++) {
+            if (order[j] > 0) {
+                D_801067E0_35CDC0_name_52[j] = func_80049ED4_4AAD4(D_80106B40_35D120_name_52[j], 1);
+            }
+        }
+        for (k = 200; k < 800; k += 15) {
+            for (j = 0; j < 4; j++) {
+                if (order[j] > 0) {
+                    MBModelDispOn(D_80106B40_35D120_name_52[j]);
+                    HuVecCopyXYZ(&D_80106B40_35D120_name_52[j]->pos, ((MBModel*)gPlayers[j].unk_24)->pos.x,
+                                 k + ((MBModel*)gPlayers[j].unk_24)->pos.y, ((MBModel*)gPlayers[j].unk_24)->pos.z);
+                    m = D_80106B40_35D120_name_52[j];
+                    m->rot.x = __sinf((k * 2) * DEG);
+                    m = D_80106B40_35D120_name_52[j];
+                    m->rot.z = __cosf((k * 2) * DEG);
+                }
+            }
+            HuPrcVSleep();
+            if (k == 350) {
+                func_80102F78_359558_name_52();
+            }
+        }
+        for (j = 0; j < 4; j++) {
+            if (order[j] > 0) {
+                func_80049F90_4AB90(D_801067E0_35CDC0_name_52[j]);
+                D_801067E0_35CDC0_name_52[j] = NULL;
+            }
+        }
+        func_8005A0CC_5ACCC();
+        func_80103338_359918_name_52();
+        for (i = 0; i < 4; i++) {
+            if (flags[i] != 0) {
+                func_800595E8_5A1E8(gPlayers[i].unk_24, 3, 2);
+            }
+        }
+        OVL52_MES(win, 30, 42, 0x5F6);
+    }
+
+    /* the coins */
+    PlaySound(0x349);
+    for (alpha = 255, k = 200, i = 0; k < 382; k += 12, i += 44) {
+        for (j = 0; j < 4; j++) {
+            func_800298A4_2A4A4((s16)D_80106B50_35D130_name_52[j], 4, 0);
+            func_80029714_2A314((s16)D_80106B50_35D130_name_52[j], ((MBModel*)gPlayers[j].unk_24)->pos.x,
+                                k + ((MBModel*)gPlayers[j].unk_24)->pos.y, ((MBModel*)gPlayers[j].unk_24)->pos.z);
+            func_8002979C_2A39C((s16)D_80106B50_35D130_name_52[j], 0.0f, i, 0.0f);
+            if (j == 0) {
+                func_8002D0A0_2DCA0((s16)D_80106B50_35D130_name_52[0], alpha);
+            }
+        }
+        if (k >= 310 && shown != 1) {
+            shown = 1;
+            func_80102AA0_359080_name_52();
+        }
+        if (k >= 310) {
+            alpha -= 42;
+            if (alpha < 0) {
+                alpha = 0;
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (j = 0; j < 4; j++) {
+        func_800298A4_2A4A4((s16)D_80106B50_35D130_name_52[j], 4, 4);
+    }
+    func_8005A0CC_5ACCC();
+    func_80102EDC_3594BC_name_52();
+
+    /* the bonus stars */
+    if (_CheckFlag(0x4E) && D_80106B30_35D110_name_52 != 6) {
+        OVL52_MES(win, 30, 42, 0x5F7);
+        OVL52_MES(win, 30, 42, 0x5F8);
+        OVL52_BONUS_STAR(OVL52_MINIGAME_COINS, OVL52_MSGS(0x5F9, 0x5FA, 0x5FB, 0x5FC));
+        OVL52_MES(win, 30, 42, 0x5FD);
+        OVL52_BONUS_STAR(OVL52_MAX_COINS, OVL52_MSGS(0x5FE, 0x5FF, 0x600, 0x601));
+        OVL52_MES(win, 30, 42, 0x602);
+        OVL52_BONUS_STAR(OVL52_HAPPENINGS, OVL52_MSGS(0x603, 0x604, 0x605, 0x606));
+    }
+
+    /* the ranking: stars first, then coins */
+    for (j = 0; j < 4; j++) {
+        if (D_80106B30_35D110_name_52 != 6) {
+            score[j] = (gPlayers[j].stars + D_800F8CE4_F98E4[10 + j]) * 1000 + gPlayers[j].coins;
+        } else {
+            score[j] = gPlayers[j].coins;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0, k = 0; j < 4; j++) {
+            if (i != j) {
+                k += score[i] < score[j];
+            }
+        }
+        rank[i] = k;
+    }
+    for (i = 0; i < 4; i++) {
+        score[i] = 0;
+    }
+    for (i = 0; i < 4; i++) {
+        score[rank[i]]++;
+    }
+    for (i = 0; i < 4; i++) { /* retail: a search whose result is never used */
+        if (score[i] == 0) {
+            break;
+        }
+    }
+    /* ties: a dice block decides */
+    for (i = 0; i < 4; i++) {
+        if (score[i] < 2) {
+            continue;
+        }
+        for (j = 0, k = 0; j < 4; j++) {
+            if (rank[j] == i) {
+                func_8008D974_8E574(D_800CC5F8[gPlayers[j].character], k++);
+            }
+        }
+        if (k == 4) {
+            mes = 0x60A;
+            if (D_80106B30_35D110_name_52 == 6) {
+                mes = 0x6C7;
+            }
+        } else if (k == 3) {
+            mes = 0x609;
+            if (D_80106B30_35D110_name_52 == 6) {
+                mes = 0x6C6;
+            }
+        } else {
+            mes = 0x608;
+            if (D_80106B30_35D110_name_52 == 6) {
+                mes = 0x6C5;
+            }
+        }
+        func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, mes);
+        win2 = func_8005AAC0_5B6C0(30, 42, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]);
+        for (j = 0, k = 0; j < 4; j++) {
+            if (rank[j] == i) {
+                func_80089308_89F08(win2, D_800CC5F8[gPlayers[j].character], k++);
+            }
+        }
+        func_800890CC_89CCC(win2, mes, -1, -1);
+        ShowTextWindow((s16)win2);
+        func_80057DA4_589A4((s16)win2);
+        func_8005762C_5822C((s16)win2);
+        func_80046238_46E38();
+        func_800461C8_46DC8();
+        for (j = 0; j < 4; j++) {
+            if (rank[j] == i) {
+                func_80046F98_47B98(j);
+                func_80046308_46F08(j);
+                state[j] = 1;
+            } else {
+                state[j] = 0;
+            }
+            count[j] = 0;
+            timers[j] = (u8)(rand8() % 30) + 5;
+        }
+        func_80047D2C_4892C();
+        HuPrcSleep(20);
+        while (TRUE) {
+            for (j = 0; j < 4; j++) {
+                timers[j]--;
+                switch (state[j]) {
+                case 1:
+                    if (gPlayers[j].flags & 1) {
+                        if (timers[j] <= 0) {
+                            goto press;
+                        }
+                    } else if (ContBtnTrg[gPlayers[j].port] & 0x8000) {
+                    press:
+                        state[j] = 2;
+                        MBMotionSet(gPlayers[j].unk_24, 2, 0);
+                        func_80059520_5A120(gPlayers[j].unk_24, 3, 2);
+                    }
+                    break;
+                case 2:
+                    count[j]++;
+                    if (count[j] == 5) {
+                        func_80047BB8_487B8(j);
+                        state[j] = 0;
+                    }
+                    break;
+                }
+            }
+            for (j = 0; j < 4; j++) {
+                if (state[j] != 0) {
+                    break;
+                }
+            }
+            if (j == 4) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+        HuPrcSleep(20);
+        for (j = 0; j < 4; j++) {
+            state[j] = func_80047DE8_489E8(j);
+            order[j] = j;
+        }
+        for (k = 0; k < 4; k++) {
+            for (j = k; j < 4; j++) {
+                if (state[k] < state[j]) {
+                    timers[0] = state[k];
+                    state[k] = state[j];
+                    state[j] = timers[0];
+                    timers[0] = order[k];
+                    order[k] = order[j];
+                    order[j] = timers[0];
+                }
+            }
+        }
+        if (score[i] == 2 || score[i] == 4) {
+            rank[order[1]] = i + 1;
+            if (score[i] == 4) {
+                rank[order[2]] = i + 2;
+                rank[order[3]] = i + 3;
+            }
+            func_8008D974_8E574(D_800CC5F8[gPlayers[order[0]].character], 0);
+            mes = 0x60B;
+            if (D_80106B30_35D110_name_52 == 6) {
+                mes = 0x6C8;
+            }
+            func_8008DACC_8E6CC(1, D_80106B74_35D154_name_52, mes);
+            win = func_8005AAC0_5B6C0(30, 60, D_80106B74_35D154_name_52[0], D_80106B74_35D154_name_52[1]);
+            func_80089308_89F08(win, D_800CC5F8[gPlayers[order[0]].character], 0);
+            func_800890CC_89CCC(win, mes, -1, -1);
+            ShowTextWindow(win);
+            func_80057DA4_589A4(win);
+            func_8005762C_5822C(win);
+        } else {
+            for (j = 0; j < 3; j++) {
+                rank[order[j]] = i + j;
+            }
+        }
+        func_80047B78_48778();
+    }
+
+    /* the winner */
+    if (D_80106B30_35D110_name_52 == 6) {
+        HuPrcSleep(25);
+        mes = 0x6C9;
+    } else {
+        HuPrcSleep(55);
+        mes = 0x607;
+    }
+    OVL52_MES(win, 40, 70, mes);
+    for (j = 0; j < 4; j++) { /* retail: a search whose result is never used */
+        if (rank[j] == 0) {
+            break;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        D_800F8CE4_F98E4[rank[i]] = i;
+    }
+    if (D_80106B30_35D110_name_52 != 6) {
+        j = 0;
+        while (TRUE) {
+            k = 0;
+            for (i = 0; i < 4; i++) {
+                k += func_8005A7E8_5B3E8(gPlayers[i].unk_24, &D_80106B34_35D114_name_52->pos, 8.0f) != 0;
+            }
+            if (j == 8) {
+                k += func_8005A7E8_5B3E8(D_80106B34_35D114_name_52, &((MBModel*)gPlayers[2].unk_24)->pos, 6.0f) != 0;
+            } else {
+                j++;
+            }
+            if (k == 5) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+    HuPrcSleep(15);
+    mes = 0x60C;
+    if (D_80106B30_35D110_name_52 == 6) {
+        mes = 0x6CA;
+    }
+    OVL52_MES(win, 40, 70, mes);
+    if (D_80106B30_35D110_name_52 != 6) {
+        func_80105C48_35C228_name_52();
+    } else {
+        func_8010604C_35C62C_name_52();
+    }
+    D_801067F0_35CDD0_name_52 = 1;
+    omDelPrcObj(NULL);
+    while (TRUE) {
+        HuPrcVSleep();
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80106AD8_35D0B8_name_52[4] = { 0x000005F9, 0x000005FA, 0x000005FB, 0x000005FC };
-
-__asm__(".section .rodata");
 const u32 D_80106AE8_35D0C8_name_52[4] = { 0x000005FE, 0x000005FF, 0x00000600, 0x00000601 };
-
-__asm__(".section .rodata");
 const u32 D_80106AF8_35D0D8_name_52[4] = { 0x00000603, 0x00000604, 0x00000605, 0x00000606 };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_80103814_359DF4_name_52);
+#endif
 
 /* The scene's end: tear down, then the results overlay for the board. */
 void func_80105574_35BB54_name_52(void) {
