@@ -1368,44 +1368,59 @@ void func_80106F00_150A20_CraneGame(omObjData* obj) {
     D_8010C180_155CA0_CraneGame++;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107460_150F80_CraneGame);
+void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1) {
+    f32 m1[4][4];
+    f32 m2[4][4];
+    Vec rot;
+    CGClaw* c;
+
+    c = func_80107F40_151A60_CraneGame(obj);
+    guRotateRPYF(m1, obj->rot.x, obj->rot.y, obj->rot.z);
+    guRotateF(m2, HuMathSin((f32)c->unk42 * 11.25) * (2.0 * arg1), 1.0f, 0.0f, 0.0f);
+    guMtxCatF(m1, m2, m2);
+    func_80106D58_150878_CraneGame(m2, &rot);
+    obj->rot.x = rot.x;
+    obj->rot.y = rot.y;
+    obj->rot.z = rot.z;
+    c->unk42 = (c->unk42 + 1) & 0x1F;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010755C_15107C_CraneGame);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107DD4_1518F4_CraneGame);
+CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* arg0) {
+    CGClaw* temp_v0;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107EC0_1519E0_CraneGame);
+    temp_v0 = HuMemMemoryAllocPerm(sizeof(CGClaw));
+    D_8010CE30_156950_CraneGame[D_8010D234_156D54_CraneGame] = temp_v0;
+    arg0->work[0] = (u32)temp_v0 >> 0x18;
+    arg0->work[1] = (u32)temp_v0 >> 0x10;
+    arg0->work[2] = (u32)temp_v0 >> 8;
+    arg0->work[3] = (u32)temp_v0;
+    temp_v0->unk0 = 0;
+    temp_v0->unk2 = 0;
+    temp_v0->unk8 = 0;
+    temp_v0->unkA = (u16)D_8010D234_156D54_CraneGame;
+    temp_v0->unkC = temp_v0->unk10 = temp_v0->unk14 = 0.0f;
+    temp_v0->unk18 = temp_v0->unk1C = temp_v0->unk20 = 0.0f;
+    temp_v0->unk24 = temp_v0->unk28 = temp_v0->unk2C = 0.0f;
+    temp_v0->unk3C = temp_v0->unk3E = temp_v0->unk40 = temp_v0->unk42 = 0;
+    temp_v0->unk44 = temp_v0->unk46 = temp_v0->unk48 = temp_v0->unk4A = 0;
+    temp_v0->unk4C = temp_v0->unk4E = temp_v0->unk50 = temp_v0->unk52 = 0;
+    temp_v0->unk54 = temp_v0->unk56 = temp_v0->unk58 = temp_v0->unk5A = 0;
+    D_8010D234_156D54_CraneGame++;
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107F40_151A60_CraneGame);
+void func_80107EC0_1519E0_CraneGame(void) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107F70_151A90_CraneGame);
+    for (i = 0; i < D_8010D234_156D54_CraneGame; i++) {
+        if (D_8010CE30_156950_CraneGame[i] != NULL) {
+            HuMemMemoryFreePerm(D_8010CE30_156950_CraneGame[i]);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80108038_151B58_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80108114_151C34_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801081C8_151CE8_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80108238_151D58_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801082B8_151DD8_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801082D0_151DF0_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801082E8_151E08_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801082F4_151E14_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010887C_15239C_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80108D18_152838_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80109024_152B44_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801091D4_152CF4_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801093A0_152EC0_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801095A4_1530C4_CraneGame);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801097A0_1532C0_CraneGame);
+CGClaw* func_80107F40_151A60_CraneGame(omObjData* arg0) {
+    return (CGClaw*)((arg0->work[0] << 0x18) | (arg0->work[1] << 0x10) | (arg0->work[2] << 8) | arg0->work[3]);
+}

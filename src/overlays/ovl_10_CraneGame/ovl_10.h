@@ -11,6 +11,7 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 #include "game/pad.h"
+#include "game/malloc.h" /* MG10-B */
 
 typedef f32 Matrix4f[4][4];
 
@@ -282,6 +283,7 @@ void func_8010755C_15107C_CraneGame(omObjData* obj);                 /* MP1 func
 CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* obj);               /* MP1 func_800F704C (claw alloc) */
 void func_80107EC0_1519E0_CraneGame(void);                           /* MP1 func_800F7138 */
 CGClaw* func_80107F40_151A60_CraneGame(omObjData* obj);               /* MP1 func_800F71B8 (claw get) */
+/* 151A90.c (retail file from 80107F70, MP1 1B9050.c: shadows and the crane's cable) */
 void func_80107F70_151A90_CraneGame(void);                           /* MP1 func_800FB830 */
 void func_80108038_151B58_CraneGame(void);                           /* MP1 func_800FB8E8 */
 void func_80108114_151C34_CraneGame(s16 model);                      /* MP1 func_800FB9C4 */
