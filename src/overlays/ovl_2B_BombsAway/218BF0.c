@@ -1598,22 +1598,80 @@ void func_80107758_21DB48_BombsAway(f32 x, f32 z, f32 dir) {
     }
 }
 
-__asm__(".section .rodata");
-const u32 D_8010D5F0_2239E0_BombsAway[4] = { 0x00060007, 0x00080009, 0x000A000B, 0xFFFF0000 };
+/* Loads the bomb models and clears the carrier slots (MP1 func_800FAFB4). */
+void func_80107918_21DD08_BombsAway(void) {
+    u16 ids[] = { 6, 7, 8, 9, 10, 11, 0xFFFF };
+    s32 dir = 0x3B0000;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107918_21DD08_BombsAway);
+    for (i = 0; ids[i] != 0xFFFF; i++) {
+        D_8010DCD0_2240C0_BombsAway[i] = func_80018A30_19630(dir | ids[i], 0x9D);
+    }
+    for (i = 0; i < 4; i++) {
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = NULL;
+        D_8010DCE0_2240D0_BombsAway.unk_10[i] = NULL;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107A34_21DE24_BombsAway);
+/* Queues a player for a bomb-carrier slot (MP1 func_800FB0D0). */
+void func_80107A34_21DE24_BombsAway(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107A84_21DE74_BombsAway);
+    for (i = 0; i < 4; i++) {
+        if (D_8010DCE0_2240D0_BombsAway.unk_00[i] == NULL) {
+            break;
+        }
+    }
+    if (i < 4) {
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = obj;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B00_21DEF0_BombsAway);
+/* Takes the first waiting player into its slot; the slot index or -1 (MP1 func_800FB120). */
+s16 func_80107A84_21DE74_BombsAway(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B28_21DF18_BombsAway);
+    for (i = 0; i < 4; i++) {
+        if (D_8010DCE0_2240D0_BombsAway.unk_00[i] >= (omObjData*)2) {
+            break;
+        }
+    }
+    if (i < 4) {
+        D_8010DCE0_2240D0_BombsAway.unk_10[i] = D_8010DCE0_2240D0_BombsAway.unk_00[i];
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = (omObjData*)1;
+        return i;
+    }
+    return -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B44_21DF34_BombsAway);
+/* Frees a slot (MP1 func_800FB19C). */
+void func_80107B00_21DEF0_BombsAway(s16 i) {
+    D_8010DCE0_2240D0_BombsAway.unk_00[i] = D_8010DCE0_2240D0_BombsAway.unk_10[i] = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B60_21DF50_BombsAway);
+void func_80107B28_21DF18_BombsAway(omObjData* obj) {
+    func_80107B60_21DF50_BombsAway(obj, 0);
+}
+
+void func_80107B44_21DF34_BombsAway(omObjData* obj) {
+    func_80107B60_21DF50_BombsAway(obj, 1);
+}
+
+/* A bomb-carrier object's setup (MP1 func_800FB1FC); kind 0 or 1. */
+void func_80107B60_21DF50_BombsAway(omObjData* obj, u8 kind) {
+    obj->func_ptr = func_80107C48_21E038_BombsAway;
+    omSetStatBit(obj, 0xA0);
+    obj->model[0] = func_80018A30_19630(0x3B0006, 0x99);
+    func_8002A00C_2AC0C(obj->model[0]);
+    obj->trans.x = obj->trans.z = 0.0f;
+    obj->trans.y = -80.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 0.8f;
+    obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->work[0] = 0;
+    obj->work[3] = kind;
+}
 
 __asm__(".section .rodata");
 const u32 D_8010D600_2239F0_BombsAway[8] = { 0xC2480000, 0xC1A00000, 0x447A0000, 0xC2B40000, 0x42480000, 0xC2480000, 0xC47A0000, 0x42B40000 };
