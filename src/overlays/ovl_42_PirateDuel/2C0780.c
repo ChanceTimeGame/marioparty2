@@ -1629,7 +1629,55 @@ void func_80108384_2C6304_PirateDuel(f32 x, f32 y, f32 z, u8 frames) {
     }
 }
 
+/* A process: player D_80109DEC's item_hook model (D_80109DF4) is knocked off and falls out of
+   view; D_80109DF0 is the style (1 spinning, 2 straight back). */
+/* NON_MATCHING: masked 52, constant placement only: retail keeps 20.0f and 45.0f in FPRs and the
+   call's 0.0f/90.0f bit patterns in GPRs; GCC here does the reverse for 20.0f and 0.0f. Same
+   operations in the same order. */
+#ifdef NON_MATCHING
+void func_801086B0_2C6630_PirateDuel(void) {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 vy;
+    f32 rot;
+
+    func_8005AA98_5B698(D_80109DF4_2C7D74_PirateDuel[D_80109DEC_2C7D6C_PirateDuel]);
+    func_8002979C_2A39C(D_80109DF4_2C7D74_PirateDuel[D_80109DEC_2C7D6C_PirateDuel], 0.0f, 0.0f, 0.0f);
+    vy = 20.0f;
+    if (D_80109DF0_2C7D70_PirateDuel == 2) {
+        vy = 0.0f;
+    }
+    x = PLAYER_MODEL(D_80109DEC_2C7D6C_PirateDuel)->pos.x;
+    y = PLAYER_MODEL(D_80109DEC_2C7D6C_PirateDuel)->pos.y + 100.0f;
+    z = PLAYER_MODEL(D_80109DEC_2C7D6C_PirateDuel)->pos.z;
+    rot = 0.0f;
+    while (y > 0.0f) {
+        if (D_80109DF0_2C7D70_PirateDuel == 2) {
+            x -= 40.0f;
+        } else if (D_80109DEC_2C7D6C_PirateDuel != D_80109D90_2C7D10_PirateDuel) {
+            x += 20.0f;
+        } else {
+            x -= 20.0f;
+        }
+        y += vy;
+        vy -= 2.0f;
+        if (D_80109DF0_2C7D70_PirateDuel == 1) {
+            if (D_80109DEC_2C7D6C_PirateDuel != D_80109D90_2C7D10_PirateDuel) {
+                rot += 45.0f;
+            } else {
+                rot -= 45.0f;
+            }
+        }
+        func_80029714_2A314(D_80109DF4_2C7D74_PirateDuel[D_80109DEC_2C7D6C_PirateDuel], x, y, z);
+        func_8002979C_2A39C(D_80109DF4_2C7D74_PirateDuel[D_80109DEC_2C7D6C_PirateDuel], 0.0f, 90.0f, rot);
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801086B0_2C6630_PirateDuel);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_80109D08_2C7C88_PirateDuel[6] = { 0x425C0000, 0x41F00000, 0x425C0000, 0x42480000, 0x41F00000, 0x41A00000 };

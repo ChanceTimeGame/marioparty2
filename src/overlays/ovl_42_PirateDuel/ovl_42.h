@@ -176,6 +176,8 @@ void func_80042E44_43A44(Vec* v, f32 angle); /* rotate v about y */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
 extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
 s16 func_80027FA4_28BA4(u32, void*, u8);
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_8005AA98_5B698(s16);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 
