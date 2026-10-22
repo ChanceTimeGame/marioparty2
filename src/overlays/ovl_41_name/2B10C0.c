@@ -2745,7 +2745,7 @@ void func_8010F3D8_2BDC98_name_41(omObjData* obj) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: masked 4: retail's frame is 8 bytes larger (an extra spill slot after obj's)
+/* NON_MATCHING: masked 14, all the frame: retail's is 8 bytes larger (an extra spill slot after obj's)
    and computes idx * 4 after the table address; logic checked against the asm.
    The boat ride (event on spaces 3, 20 and 29): the player walks to the pier, the boat
    (D_80111F78, model 0x7E) and its wake (model 0x7D) surface and bob (func_8010F3D8); the fare is
@@ -3151,10 +3151,10 @@ s32 func_80110440_2BED00_name_41(void) {
     return 1;
 }
 
-/* CPU shop choice: the menu row (slot + 1) of an item to buy. Per character, D_80113510 lists
-   items to try with D_80113570 percent chances (needing price + 20 coins); then items 9 and 7,
-   decision trees D_8011341C (item 1) and D_80113434 (a second pass at plain price), else on
-   board 4 func_80109AE4's row, else item 0's row or 1. */
+/* CPU shop choice: the menu row (slot + 1) of an item to buy. Per character, D_80111CD4 lists
+   items to try with D_80111D34 percent chances (needing price + 20 coins); then items 9 and 7,
+   decision trees D_80111BE0 (item 1) and D_80111BF8 (a second pass at plain price), else on
+   board 4 func_8010824C's row, else item 0's row or 1. */
 s32 func_80110664_2BEF24_name_41(void) {
     GW_PLAYER* player;
     s32 slot;
