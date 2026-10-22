@@ -426,6 +426,22 @@ void func_80019178_19D78(omObjData* obj);
 void func_80019378_19F78(omObjData* obj);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 s32 PlaySound(s32);
+void func_800B1960_B2560(Matrix4f m, f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz); /* guLookAtF */
+f64 fabs(f64);
+f32 fabsf(f32);
+extern s16 D_800FA1AA_FADAA; /* heap tag for func_80027154 */
+extern f32 D_800FA610_FB210; /* camera zoom (MP1 CZoom) */
+extern Vec D_800FD474_FE074; /* camera rotation (MP1 CRot) */
+extern Vec D_8010274C_10334C; /* camera centre (MP1 Center) */
+extern f32* D_8010FAD4_2459B4_SlotCarDerby; /* the last 5 zooms (allocated on first use) */
+extern s32 D_8010FAD8_2459B8_SlotCarDerby; /* its write index */
+extern f32* D_8010FADC_2459BC_SlotCarDerby[3]; /* [course] fixed camera: centre, view (MP1 D_80100DF4) */
+extern f32 D_8010FAE8_2459C8_SlotCarDerby; /* fixed camera ease (MP1 D_80100DFC) */
+extern s32 D_8010FAEC_2459CC_SlotCarDerby; /* 1: measure the track's z extent */
+extern f32 D_8010FAF0_2459D0_SlotCarDerby; /* race zoom bias, 0..5 */
+extern f32 D_80110230_246110_SlotCarDerby; /* track z extent */
+extern f32 D_80110234_246114_SlotCarDerby; /* track max z */
+extern f32 D_80110238_246118_SlotCarDerby; /* track min z */
 void func_800799A4_7A5A4(s16 sound, s32 frames); /* fade out a sound */
 f32 func_800B1830_B2430(f32); /* sqrtf */
 extern s8 ContStkX[];

@@ -1328,7 +1328,197 @@ void func_80106BE0_23CAC0_SlotCarDerby(s32 x, s32 y, s32 z, s32 weight) {
     func_80106B74_23CA54_SlotCarDerby(&v.x, weight * 0.01);
 }
 
+/* Register allocation: GCC hoists the zoom loop's 1.0 into s2/s3 (two more saved registers and a
+   larger frame), retail reloads it each pass; MP1 func_800FA3B4 had the same residue. Otherwise
+   scheduling only (masked 80, mostly branch offsets). */
+#ifdef NON_MATCHING
+void func_80106C68_23CB48_SlotCarDerby(Vec* look) {
+    f32 max[3];
+    f32 min[3];
+    Matrix4f mtx;
+    f32 out[3];
+    f32 up[3];
+    SCDCamera* cam;
+    SCDCamPose* cur;
+    Vec* pt;
+    s32 i;
+    s32 j;
+    s32 n;
+    f64 t;
+    f32 best;
+    f32 ease;
+    f32 lean;
+    f32 d;
+    f32* p;
+    f32* pmax;
+    f32* pmin;
+
+    lean = 0.0f;
+    cam = &D_80110910_2467F0_SlotCarDerby;
+    D_8011091C_2467FC_SlotCarDerby = look->x;
+    D_80110920_246800_SlotCarDerby = look->y;
+    D_80110924_246804_SlotCarDerby = look->z;
+    up[0] = up[2] = lean;
+    up[1] = 1.0f;
+    cur = &cam->cur;
+    if (D_8010FAEC_2459CC_SlotCarDerby != 0) {
+        D_8010FAEC_2459CC_SlotCarDerby = 0;
+        D_80110238_246118_SlotCarDerby = D_80110234_246114_SlotCarDerby = lean;
+        for (i = 0, pt = D_80110240_246120_SlotCarDerby; i < D_80110244_246124_SlotCarDerby; i++, pt++) {
+            if (pt->z > D_80110234_246114_SlotCarDerby) {
+                D_80110234_246114_SlotCarDerby = pt->z;
+            }
+            if (pt->z < D_80110238_246118_SlotCarDerby) {
+                D_80110238_246118_SlotCarDerby = pt->z;
+            }
+        }
+        D_80110230_246110_SlotCarDerby = fabsf(D_80110234_246114_SlotCarDerby - D_80110238_246118_SlotCarDerby);
+    }
+    ease = 0.0f;
+    if (D_80110808_2466E8_SlotCarDerby != 0) {
+        for (i = 0; i < 3; i++) {
+            max[i] = -30000.0f;
+            min[i] = 30000.0f;
+        }
+        for (i = 0; i < D_80110808_2466E8_SlotCarDerby; i++) {
+            pmax = max;
+            pmin = min;
+            for (j = 0, p = &D_80110810_2466F0_SlotCarDerby[i].pos.x; j < 3; j++, pmax++, pmin++) {
+                if (p[j] > *pmax) {
+                    *pmax = p[j];
+                }
+                if (p[j] < *pmin) {
+                    *pmin = p[j];
+                }
+            }
+        }
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 3) {
+            cam->target.view[1] = 170.0 - cam->target.pos[2] / 1.5;
+            lean = 0.3f;
+        } else if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            cam->target.view[2] += cam->target.pos[2] * 0.5;
+            lean = (cur->view[2] - D_80110234_246114_SlotCarDerby) / D_80110230_246110_SlotCarDerby;
+        }
+        for (i = 0; i < 3; i++) {
+            cam->target.pos[i] = min[i] + (max[i] - min[i]) * 0.5;
+            cam->target.view[i] -= cam->target.pos[i];
+        }
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            cam->target.view[0] = 0.0f;
+        }
+        for (i = 0; i < D_80110808_2466E8_SlotCarDerby; i++) {
+            for (j = 0, p = &D_80110810_2466F0_SlotCarDerby[i].pos.x; j < 3; j++) {
+                p[j] -= cam->target.pos[j];
+            }
+        }
+        func_800B1960_B2560(mtx, cam->target.view[0], cam->target.view[1], cam->target.view[2], 0.0f, 0.0f, 0.0f,
+                            up[0], up[1], up[2]);
+        best = mtx[3][0] = mtx[3][1] = mtx[3][2] = 0.0f;
+        t = HuMathSin(D_800C9B80_CA780->fov[0] * 0.5) / func_800B7890_B8490(D_800C9B80_CA780->fov[0] * 0.5);
+        for (i = 0; i < D_80110808_2466E8_SlotCarDerby; i++) {
+            func_801067D8_23C6B8_SlotCarDerby(mtx, D_80110810_2466F0_SlotCarDerby[i].pos.x,
+                                              D_80110810_2466F0_SlotCarDerby[i].pos.y,
+                                              D_80110810_2466F0_SlotCarDerby[i].pos.z, out);
+            max[0] = fabs(fabs(out[0]) / t) + out[2];
+            max[1] = fabs(fabs(out[1]) / t) + out[2];
+            d = (max[1] <= max[0]) ? max[0] : max[1];
+            max[2] = d * (1.0 - d / 6000.0 * 0.3);
+            if (best < max[2]) {
+                best = max[2];
+            }
+        }
+        best *= 1.5384615384615383;
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            if (D_8010FAF0_2459D0_SlotCarDerby < 5.0) {
+                D_8010FAF0_2459D0_SlotCarDerby += 0.5;
+            }
+        } else if (D_8010FAF0_2459D0_SlotCarDerby > 0.0) {
+            D_8010FAF0_2459D0_SlotCarDerby -= 0.5;
+        }
+        best += D_8010FAF0_2459D0_SlotCarDerby;
+        switch (D_8011023C_24611C_SlotCarDerby) {
+        case 0:
+        case 1:
+            if (best > 600.0) {
+                best = 600.0f;
+            }
+            break;
+        default:
+            if (best > 700.0) {
+                best = 700.0f;
+            }
+            break;
+        }
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            if (best < 160.0) {
+                best = 160.0f;
+            }
+        } else if (best < 40.0) {
+            best = 40.0f;
+        }
+        cam->target.zoom = best;
+        if (D_8010FAD4_2459B4_SlotCarDerby == NULL) {
+            D_8010FAD4_2459B4_SlotCarDerby = func_80027154_27D54(5 * sizeof(f32), D_800FA1AA_FADAA);
+            for (i = 0; i < 5; i++) {
+                D_8010FAD4_2459B4_SlotCarDerby[i] = 160.0f;
+            }
+        } else {
+            if (++D_8010FAD8_2459B8_SlotCarDerby >= 5) {
+                D_8010FAD8_2459B8_SlotCarDerby = 0;
+            }
+            D_8010FAD4_2459B4_SlotCarDerby[D_8010FAD8_2459B8_SlotCarDerby] = best;
+            if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 3 && D_801102E0_2461C0_SlotCarDerby == 0 &&
+                D_801102C8_2461A8_SlotCarDerby.unk_0A == 0) {
+                D_801102E0_2461C0_SlotCarDerby = 1;
+            } else if (D_801102E0_2461C0_SlotCarDerby != 0) {
+                D_801102E0_2461C0_SlotCarDerby++;
+            }
+        }
+    } else {
+        p = D_8010FADC_2459BC_SlotCarDerby[D_8011023C_24611C_SlotCarDerby];
+        cam->target.pos[0] = *p++;
+        cam->target.pos[1] = *p++;
+        cam->target.pos[2] = *p++;
+        cam->target.view[0] = *p++;
+        cam->target.view[1] = *p++;
+        cam->target.view[2] = *p;
+        ease = (cam->target.view[0] - cam->target.pos[0]) * (cam->target.view[0] - cam->target.pos[0]);
+        ease += (cam->target.view[1] - cam->target.pos[1]) * (cam->target.view[1] - cam->target.pos[1]);
+        ease += (cam->target.view[2] - cam->target.pos[2]) * (cam->target.view[2] - cam->target.pos[2]);
+        cam->target.zoom = sqrtf(ease);
+        D_8010FAE8_2459C8_SlotCarDerby += 0.002;
+        if (D_8010FAE8_2459C8_SlotCarDerby > 0.075) {
+            D_8010FAE8_2459C8_SlotCarDerby = 0.075f;
+        }
+        ease = D_8010FAE8_2459C8_SlotCarDerby;
+    }
+    n = 0;
+    for (i = 0; i < D_80110808_2466E8_SlotCarDerby; i++) {
+        if (D_80110810_2466F0_SlotCarDerby[i].weight != 0.0f) {
+            ease += D_80110810_2466F0_SlotCarDerby[i].weight;
+        }
+        n++;
+    }
+    if (n != 0) {
+        ease /= n;
+    }
+    for (i = 0; i < 3; i++) {
+        cur->pos[i] = (cam->target.pos[i] - cur->pos[i]) * ease + cur->pos[i];
+        cur->view[i] = (cam->target.view[i] - cur->view[i]) * ease + cur->view[i];
+    }
+    cur->zoom = (cam->target.zoom - cur->zoom) * ease + cur->zoom;
+    D_800FA610_FB210 = cur->zoom * 10.0;
+    func_80106750_23C630_SlotCarDerby((Vec*)cur->view, &D_800FD474_FE074.x);
+    lean *= 2.0;
+    D_800FD474_FE074.x -= lean * lean * lean * 17.0;
+    D_8010274C_10334C.x = cur->pos[0] * 10.0;
+    D_8010274C_10334C.y = cur->pos[1] * 10.0;
+    D_8010274C_10334C.z = cur->pos[2] * 10.0;
+    D_80110808_2466E8_SlotCarDerby = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106C68_23CB48_SlotCarDerby);
+#endif
 
 void func_80107708_23D5E8_SlotCarDerby(void) {
     SCDParticle* p;
