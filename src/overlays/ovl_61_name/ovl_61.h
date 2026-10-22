@@ -17,11 +17,7 @@
 #include "game/sprite.h"
 #include "game/pad.h"
 
-/* A motion list: count, then that many motion file ids (DataRead). */
-typedef struct Ovl61MotList {
-    /* 0x00 */ s32 count;
-    /* 0x04 */ s32 ids[1]; /* count entries */
-} Ovl61MotList;
+/* A motion list (s32[]): count, then that many motion file ids (DataRead). */
 
 /* omObjData.unk_50 of the eight character objects (D_801074D8). */
 typedef struct Ovl61ChrWork {
@@ -93,6 +89,7 @@ void HuMemMemoryFreeTemp(void* ptr);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
+f64 fabs(f64);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 HuVecDistance(Vec* a, Vec* b);
@@ -168,21 +165,21 @@ extern s16 D_801070A4_3D48F4_name_61[8];
 extern s32* D_80107174_3D49C4_name_61[8];
 extern s16 D_80107194_3D49E4_name_61;
 extern Vec D_80107198_3D49E8_name_61;
-extern Ovl61MotList* D_801071EC_3D4A3C_name_61[6];
-extern Ovl61MotList D_80107204_3D4A54_name_61;
-extern Ovl61MotList D_8010720C_3D4A5C_name_61;
+extern s32* D_801071EC_3D4A3C_name_61[6];
+extern s32 D_80107204_3D4A54_name_61[];
+extern s32 D_8010720C_3D4A5C_name_61[];
 extern Vec D_80107224_3D4A74_name_61[2];
 extern Vec D_8010723C_3D4A8C_name_61[2];
 extern Vec D_80107254_3D4AA4_name_61;
-extern Ovl61MotList D_801072D8_3D4B28_name_61;
+extern s32 D_801072D8_3D4B28_name_61[];
 extern Vec D_801072F8_3D4B48_name_61[8];
-extern Ovl61MotList* D_80107388_3D4BD8_name_61[6];
+extern s32* D_80107388_3D4BD8_name_61[6];
 extern Vec D_801073A0_3D4BF0_name_61;
 extern Vec D_801073AC_3D4BFC_name_61;
 extern s32 D_801073B8_3D4C08_name_61[8];
 extern Vec D_801073D8_3D4C28_name_61[8];
 extern s32 D_80107440_3D4C90_name_61[3][2];
-extern Ovl61MotList* D_80107458_3D4CA8_name_61[3][2];
+extern s32* D_80107458_3D4CA8_name_61[3][2];
 
 /* .bss */
 extern omObjData* D_801074D0_3D4D20_name_61;    /* the curtain */
@@ -229,12 +226,12 @@ void func_80105398_3D2BE8_name_61(f32 y);
 void func_801053AC_3D2BFC_name_61(s32 file);
 void func_8010544C_3D2C9C_name_61(void);
 void func_801054A0_3D2CF0_name_61(void);
-void func_8010568C_3D2EDC_name_61(s32 idx, Ovl61MotList* list);
+void func_8010568C_3D2EDC_name_61(s32 idx, s32* list);
 void func_80105744_3D2F94_name_61(s32 idx);
 void func_801057D4_3D3024_name_61(s32 idx, s32 mot, s16 arg2, s16 arg3);
 void func_80105858_3D30A8_name_61(s32 idx, s32 mot, s16 arg2, s16 arg3, s16 arg4);
 void func_801058B0_3D3100_name_61(s32 idx);
-void func_801058F0_3D3140_name_61(s32 idx, s16 mode);
+void func_801058F0_3D3140_name_61(s32 idx, s32 mode);
 s16 func_801059B0_3D3200_name_61(s32 idx, Vec* target, f32 speed);
 s32 func_80105ABC_3D330C_name_61(s32 idx, Vec* target, f32 step);
 void func_80105C6C_3D34BC_name_61(void);
@@ -251,7 +248,7 @@ void func_8010652C_3D3D7C_name_61(Gfx** gfx, s32 arg1, s32 arg2);
 void func_801066B8_3D3F08_name_61(s32 fb, s16 build);
 void func_80106A04_3D4254_name_61(s32 fb, s32 hole);
 void func_80106D18_3D4568_name_61(s32 fb);
-s16 func_80106D54_3D45A4_name_61(s16 x, s16 y, f32 sx, f32 sy);
+s16 func_80106D54_3D45A4_name_61(s32 x, s32 y, f32 sx, f32 sy);
 void func_80106E88_3D46D8_name_61(s16 hole);
 void func_80106EAC_3D46FC_name_61(u8 r, u8 g, u8 b, u8 a);
 void func_80106EE0_3D4730_name_61(s16 time, f32 dr, f32 dg, f32 db, f32 da);
