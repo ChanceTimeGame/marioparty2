@@ -681,6 +681,107 @@ void func_80104C14_40DF14_BattleResults(omObjData* obj) {
     }
 }
 
+#ifdef NON_MATCHING
+/* NON_MATCHING: loop-invariant hoisting differs (retail keeps D_801059F8 in fp; this keeps another table base), so registers and a few address loads differ. */
+/* Draws each rank's coin count (sign and up to three digits) at the given scale; 0 hides it. */
+void func_80104D30_40E030_BattleResults(f32 scale) {
+    s32 i;
+    s32 coins;
+    s32 grp;
+    s16 x;
+    s32 d;
+    s32 y;
+
+    for (i = 0; i < 4; i++) {
+        coins = D_80105A58_40ED58_BattleResults[D_801059F8_40ECF8_BattleResults[D_80105A08_40ED08_BattleResults[i]]];
+        if (D_80105A6C_40ED6C_BattleResults == D_80105A08_40ED08_BattleResults[i]) {
+            coins += D_80105A58_40ED58_BattleResults[4];
+        }
+        grp = D_80105A48_40ED48_BattleResults[i];
+        if (scale != 0.0f) {
+            SprAttrReset(grp, 0, 0x8000);
+        } else {
+            SprAttrSet(grp, 0, 0x8000);
+        }
+        SprBankSet(grp, 0, 0);
+        SprScaleSet(grp, 0, scale, scale);
+        SprPosSet(grp, 0, (s16)D_80105888_40EB88_BattleResults[i],
+                  (s16)D_80105898_40EB98_BattleResults[D_801059F8_40ECF8_BattleResults[D_80105A08_40ED08_BattleResults[i]]]);
+        if ((coins >= 0) ? (coins < 100) : (-coins < 100)) {
+            x = 8;
+        } else {
+            x = 12;
+        }
+        y = -2;
+        if (scale != 0.0f) {
+            SprAttrReset(grp, 1, 0x8000);
+        } else {
+            SprAttrSet(grp, 1, 0x8000);
+        }
+        if (coins >= 0) {
+            d = coins % 10;
+        } else {
+            d = -coins % 10;
+        }
+        func_800822A8_82EA8(grp, 1, d, 0);
+        SprScaleSet(grp, 1, scale, scale);
+        SprPosSet(grp, 1, x, y);
+        x -= 8;
+        if ((coins >= 0) ? (coins >= 10) : (-coins >= 10)) {
+            if (scale != 0.0f) {
+                SprAttrReset(grp, 2, 0x8000);
+            } else {
+                SprAttrSet(grp, 2, 0x8000);
+            }
+            if (coins >= 0) {
+                d = coins % 100 / 10;
+            } else {
+                d = -coins % 100 / 10;
+            }
+            if (d >= 10) {
+                d = 9;
+            }
+            func_800822A8_82EA8(grp, 2, d, 0);
+            SprScaleSet(grp, 2, scale, scale);
+            SprPosSet(grp, 2, x, y);
+            x -= 8;
+        }
+        if ((coins >= 0) ? (coins >= 100) : (-coins >= 100)) {
+            if (scale != 0.0f) {
+                SprAttrReset(grp, 3, 0x8000);
+            } else {
+                SprAttrSet(grp, 3, 0x8000);
+            }
+            if (coins >= 0) {
+                d = coins / 100;
+            } else {
+                d = -coins / 100;
+            }
+            if (d >= 10) {
+                d = 9;
+            }
+            func_800822A8_82EA8(grp, 3, d, 0);
+            SprScaleSet(grp, 3, scale, scale);
+            SprPosSet(grp, 3, x, y);
+            x -= 8;
+        }
+        if (scale != 0.0f) {
+            SprAttrReset(grp, 4, 0x8000);
+        } else {
+            SprAttrSet(grp, 4, 0x8000);
+        }
+        /* Retail: frame 11 for a gain, 1 for a loss (a loss cannot happen here). */
+        if (coins >= 0) {
+            func_800822A8_82EA8(grp, 4, 11, 0);
+        } else {
+            func_800822A8_82EA8(grp, 4, 1, 0);
+        }
+        SprScaleSet(grp, 4, scale, scale);
+        SprPosSet(grp, 4, x, y);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104D30_40E030_BattleResults);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801052D8_40E5D8_BattleResults);

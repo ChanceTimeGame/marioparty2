@@ -825,3 +825,6 @@ D_800FC880_FD480 = 0x800FC880; // size:0x4
 D_801101D2_2672D2_ChanceTime = 0x801101D2; // rom:0x2672D2 size:0x2
 D_801101D6_2672D6_ChanceTime = 0x801101D6; // rom:0x2672D6 size:0x1
 D_801101D9_2672D9_ChanceTime = 0x801101D9; // rom:0x2672D9 size:0x1
+// R6F: ovl_6F .data s32 tables the code reads as s16 (the digit sprites' x and y)
+D_80105888_40EB88_BattleResults = 0x80105888; // rom:0x40EB88 size:0x10
+D_80105898_40EB98_BattleResults = 0x80105898; // rom:0x40EB98 size:0x10
