@@ -147,7 +147,7 @@ extern s32 D_8010E648_336008_name_4E[];
 void func_80102800_32A1C0_name_4E(void);
 void func_80102B94_32A554_name_4E(void);
 void func_80102B9C_32A55C_name_4E(void);
-s32 func_80103034_32A9F4_name_4E(void);
+s8 func_80103034_32A9F4_name_4E(void);
 s32 func_80103608_32AFC8_name_4E(void);
 s32 func_80103CD0_32B690_name_4E(void);
 void func_801047B8_32C178_name_4E(s16 arg0, s16 arg1, s16 arg2, s16 arg3);

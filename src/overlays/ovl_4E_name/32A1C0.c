@@ -80,13 +80,13 @@ void func_80102B94_32A554_name_4E(void) {
 }
 
 #ifdef NON_MATCHING
-/* The overlay's main process: the mode/character setup state machine. Retail keeps the switch
-   index and the confirm flag in copies (v1, v0) at the loop's back edges; this C tests s0/s2
-   directly (same logic, 4 instructions shorter). */
+/* The overlay's main process: the mode/character setup state machine (state 0 first menu,
+   1 second menu, 2 third menu, 3 back, 4 the resumed path, 5 leave). Same logic as retail; the
+   residue is the inner switch's compare tree (retail tests 1 first) and one delay slot. */
 void func_80102B9C_32A55C_name_4E(void) {
     s16 i;
-    s32 state;
-    s32 confirm;
+    s8 state;
+    s8 confirm;
 
     func_80102B94_32A554_name_4E();
     if (D_8010DAB6_335476_name_4E != 0) {
@@ -213,14 +213,12 @@ void func_80102B9C_32A55C_name_4E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80102B9C_32A55C_name_4E);
 #endif
 
-#ifdef NON_MATCHING
 /* First menu: three rows (D_8010DAC4) slide in; the stick moves the cursor (D_8010E5F2), A picks
-   (D_800FA1A8, returns 1: the others slide out, the chosen one rises), B backs out (returns 0).
-   Retail tests a copy of ok (move v0,s6; beqz v0) where this C tests s6: one instruction. */
-s32 func_80103034_32A9F4_name_4E(void) {
+   (D_800FA1A8, returns 1: the others slide out, the chosen one rises), B backs out (returns 0). */
+s8 func_80103034_32A9F4_name_4E(void) {
     s16 i;
     s16 j;
-    s32 ok;
+    s8 ok;
 
     if (D_8010DBE2_3355A2_name_4E != 0) {
         PlaySound(0x11E);
@@ -294,9 +292,6 @@ s32 func_80103034_32A9F4_name_4E(void) {
     }
     return ok;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103034_32A9F4_name_4E);
-#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103608_32AFC8_name_4E);
 
