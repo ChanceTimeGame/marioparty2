@@ -454,6 +454,9 @@ extern s16 D_8010D944_223D34_BombsAway; /* = D_8010D940.unk_04 */
 extern Vec D_8010DB6C_223F5C_BombsAway; /* = D_8010DB28.unk_44 */
 extern Matrix4f D_8010DBB8_223FA8_BombsAway; /* = D_8010DB28.unk_90 */
 void func_8002A00C_2AC0C(s16 model); /* MP1 func_80026040 */
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+void SprBankSet(s16 grpIdx, s16 idx, u16 bank);
 extern f32 D_8010DC38_224028_BombsAway; /* = D_8010DB28.unk_110[0] (plane a) */
 extern f32 D_8010DC3C_22402C_BombsAway; /* = D_8010DB28.unk_110[1] */
 extern f32 D_8010DC40_224030_BombsAway; /* = D_8010DB28.unk_110[2] */

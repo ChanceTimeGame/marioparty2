@@ -1765,4 +1765,51 @@ void func_80107C48_21E038_BombsAway(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801082EC_21E6DC_BombsAway);
+/* Stun sparkles: three circle over each stunned player (state 3); the stun sound plays while
+   anyone is stunned; ages the blast-sound cooldown (MP1 func_800FB988). */
+void func_801082EC_21E6DC_BombsAway(void) {
+    Vec v;
+    s32 i;
+    s32 j;
+    s32 idx;
+    s32 ph;
+    BaSparkle* sp;
+    omObjData* obj;
+
+    D_8010DEB2_2242A2_BombsAway = -1;
+    for (i = 0; i < 4; i++) {
+        idx = i * 3;
+        sp = &D_8010DDC0_2241B0_BombsAway[idx];
+        if (D_8010D950_223D40_BombsAway[i].unk_02 == 3) {
+            obj = D_8010D950_223D40_BombsAway[i].unk_48;
+            for (j = 0; j < 3; j++) {
+                SprAttrReset(D_8010DF1C_22430C_BombsAway, idx, 0x8000);
+                ph = (sp->unk_02 + j * 10) & 0x1F;
+                v.x = obj->trans.x + func_800B7890_B8490(ph * 360 / 32) * 100.0 * 0.5;
+                v.z = obj->trans.z + HuMathSin(ph * 360 / 32) * 100.0 * 0.5;
+                v.y = obj->trans.y + 160.0 + HuMathSin((ph & 0xF) * 24) * 100.0 * 0.2;
+                SprPos3DSet(D_8010DF1C_22430C_BombsAway, idx, 0, v.x, v.y, v.z);
+                SprBankSet(D_8010DF1C_22430C_BombsAway, idx, 0);
+                sp->unk_02++;
+                idx++;
+                sp++;
+            }
+            D_8010DEB2_2242A2_BombsAway = i;
+        } else {
+            for (; idx < (i + 1) * 3; idx++) {
+                SprAttrSet(D_8010DF1C_22430C_BombsAway, idx, 0x8000);
+            }
+        }
+    }
+    if (D_8010DEB0_2242A0_BombsAway < 0) {
+        if (D_8010DEB2_2242A2_BombsAway >= 0) {
+            D_8010DEB0_2242A0_BombsAway = func_80079798_7A398(0xA7, D_8010DEB2_2242A2_BombsAway);
+        }
+    } else if (D_8010DEB2_2242A2_BombsAway < 0) {
+        func_80079848_7A448(D_8010DEB0_2242A0_BombsAway);
+        D_8010DEB0_2242A0_BombsAway = -1;
+    }
+    if (D_8010DEB4_2242A4_BombsAway != 0) {
+        D_8010DEB4_2242A4_BombsAway--;
+    }
+}
