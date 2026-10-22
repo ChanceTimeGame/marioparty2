@@ -471,7 +471,7 @@ extern s16 D_8010E518_224908_BombsAway[4]; /* sprite animation per effect kind (
 extern s32 D_8010E51A_22490A_BombsAway[];
 extern s16 D_8010E520_224910_BombsAway; /* water model */
 extern struct BaVtxMap* D_8010E524_224914_BombsAway; /* water vertex map (func_8010C444) */
-extern s32 D_8010E528_224918_BombsAway[];
+extern s32 D_8010E528_224918_BombsAway[2]; /* water grid spacing x, z */
 extern s16 D_8010E530_224920_BombsAway;
 extern s16 D_8010E532_224922_BombsAway;
 extern s16 D_8010E534_224924_BombsAway; /* splash sprite animation */
@@ -576,9 +576,9 @@ void func_8010B7BC_221BAC_BombsAway(u16 n, f32 tx, f32 tz, f32 speed, u16 kind);
 void func_8010BD44_222134_BombsAway(u16 i, u16 kind);
 void func_8010BE7C_22226C_BombsAway(void);
 void func_8010BFAC_22239C_BombsAway(void);
-void func_8010C444_222834_BombsAway(s16 arg0);
-void func_8010C8A0_222C90_BombsAway(s16 arg0, s32 arg1, s16* arg2);
-void func_8010CBF0_222FE0_BombsAway(s16* arg0, u16 arg1);
+void func_8010C444_222834_BombsAway(s16 model);
+void func_8010C8A0_222C90_BombsAway(s16 model, s32 angle, s16* unused);
+void func_8010CBF0_222FE0_BombsAway(s16* a, u16 n);
 
 /* MG2B-C */
 /* main API 21EA10.c uses (missing from include/) */
@@ -594,6 +594,8 @@ void SprPosSet(s16, s16, s16, s16);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void omSetStatBit(omObjData* obj, u16 stat);
+int abs(int);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
 void omSetRot(omObjData*, f32, f32, f32);
 void func_8002A00C_2AC0C(s16);
 void func_8002BCA8_2C8A8(s16 model, f32 s, f32 t, s32 arg3, s32 arg4); /* texture scroll (MP1 func_80027C1C) */

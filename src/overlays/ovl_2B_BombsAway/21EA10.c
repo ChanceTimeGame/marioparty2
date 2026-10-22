@@ -1064,8 +1064,159 @@ void func_8010BFAC_22239C_BombsAway(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BFAC_22239C_BombsAway);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010C444_222834_BombsAway);
+void func_8010C444_222834_BombsAway(s16 model) {
+    s16 xs[32];
+    s16 zs[32];
+    HmfData* m;
+    HmfVtx* v;
+    s16 nz;
+    s16 nx;
+    s16 i;
+    s16 j;
+    s16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010C8A0_222C90_BombsAway);
+    m = D_800FC834_FD434[model].hmf;
+    v = m->unk40;
+    nz = 0;
+    nx = 0;
+    i = 0;
+    n = m->unk18;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            xs[nx] = v->unk00;
+            nx++;
+        }
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            zs[nz] = v->unk04;
+            nz++;
+        }
+    }
+    func_8010CBF0_222FE0_BombsAway(xs, nx);
+    func_8010CBF0_222FE0_BombsAway(zs, nz);
+    D_8010E524_224914_BombsAway = func_80027154_27D54(n * 6, 0x7918);
+    for (i = 0; i < n; i++) {
+        D_8010E524_224914_BombsAway[i].unk_00 = 1;
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            j = nx - 1;
+        }
+        D_8010E524_224914_BombsAway[i].unk_02 = j;
+        if (j == 0 || j == nx - 1) {
+            D_8010E524_224914_BombsAway[i].unk_00 = 0;
+        }
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            j = nz - 1;
+        }
+        D_8010E524_224914_BombsAway[i].unk_04 = j;
+        if (j == 0 || j == nz - 1) {
+            D_8010E524_224914_BombsAway[i].unk_00 = 0;
+        }
+    }
+    D_8010E528_224918_BombsAway[0] = abs(xs[0] - xs[1]);
+    D_8010E528_224918_BombsAway[1] = abs(zs[0] - zs[1]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010CBF0_222FE0_BombsAway);
+void func_8010C8A0_222C90_BombsAway(s16 model, s32 angle, s16* unused) {
+    HmfData* m;
+    BaVtxMap* map;
+    HmfVtx* src;
+    HmfVtx* dst;
+    u16 n;
+    s16 phase;
+    u16 i;
+    f32 a;
+    f32 s1;
+    f32 s2;
+    f32 ax;
+    f32 ay;
+    f32 d;
+    s32 pad[4]; /* unused: retail's frame is 16 bytes larger */
+
+    phase = 0;
+    m = D_800FC834_FD434[model].hmf;
+    map = D_8010E524_224914_BombsAway;
+    src = m->unk40;
+    dst = m->unk44[D_800FDBE0_FE7E0];
+    n = m->unk18;
+    a = angle;
+    s1 = HuMathSin(a);
+    s2 = HuMathSin(angle * 2);
+    HuMathSin(a);
+    ax = (f32)((u32)D_8010E528_224918_BombsAway[0] / 6) * D_800FC834_FD434[model].scale.x;
+    ay = (f32)((u32)D_8010E528_224918_BombsAway[0] / 10) * D_800FC834_FD434[model].scale.y;
+    if (angle == 0) {
+        phase++;
+    }
+    for (i = 0; i < n; src++, dst++, i++, map++) {
+        if (map->unk_00 != 0) {
+            d = s1 * ax;
+            if (map->unk_04 & 1) {
+                dst->unk00 = src->unk00 + d;
+            } else {
+                dst->unk00 = src->unk00 - d;
+            }
+            if (phase & 1) {
+                if ((map->unk_02 & 1) && (map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->unk_02 + map->unk_04) & 1) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            } else {
+                if (!(map->unk_02 & 1) && !(map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->unk_02 & 1) && (map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            }
+        } else {
+            dst->unk00 = src->unk00;
+            dst->unk02 = src->unk02;
+            dst->unk04 = src->unk04;
+        }
+    }
+}
+
+void func_8010CBF0_222FE0_BombsAway(s16* a, u16 n) {
+    u16 i;
+    u16 j;
+    s16 t;
+
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (a[i] > a[j]) {
+                t = a[i];
+                a[i] = a[j];
+                a[j] = t;
+            }
+        }
+    }
+}
