@@ -64,6 +64,14 @@ typedef struct Ovl61Iris {
     /* 0xE0 */ f32 colStep[4];
 } Ovl61Iris; /* size = 0xF0 */
 
+/* Copies of D_80107440 / D_80107458 that func_80102F74 takes onto its stack. */
+typedef struct Ovl61Pairs {
+    s32 v[3][2]; /* the three pairs of character indices */
+} Ovl61Pairs;
+typedef struct Ovl61MotPairs {
+    s32* v[3][2]; /* their motion lists */
+} Ovl61MotPairs;
+
 #define OVL61_WORK(obj, T) ((T*)(obj)->unk_50)
 /* The drawn camera's position (D_800FD2A8 + 0xC). */
 #define OVL61_CAM_POS ((Vec*)((u8*)D_800FD2A8_FDEA8 + 0xC))

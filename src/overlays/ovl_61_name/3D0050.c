@@ -134,12 +134,222 @@ void func_80102BC0_3D0410_name_61(void) {
 }
 
 __asm__(".section .rodata");
-const u32 D_80107470_3D4CC0_name_61[6] = { 0x00000000, 0x0000003A, 0x00000026, 0x0000002D, 0x0000001E, 0x0000001E };
+/* func_80102F74's per-pair voice timers and voice ids, copied to its stack. */
+const s32 D_80107470_3D4CC0_name_61[3][2] = { { 0, 58 }, { 38, 45 }, { 30, 30 } };
+const s32 D_80107488_3D4CD8_name_61[3][2] = { { 0xF5, 0xF5 }, { 0x10A, 0x103 }, { 0xF5, 0xF5 } };
 
-__asm__(".section .rodata");
-const u32 D_80107488_3D4CD8_name_61[6] = { 0x000000F5, 0x000000F5, 0x0000010A, 0x00000103, 0x000000F5, 0x000000F5 };
+void func_80102F74_3D07C4_name_61(void) {
+    Vec pos;
+    s16 holes[2];
+    Vec2f scr[2];
+    Ovl61Pairs pairs;
+    Ovl61MotPairs mots;
+    Ovl61Pairs timer;
+    Ovl61Pairs voice;
+    omObjData* obj;
+    Ovl61ChrWork* work;
+    Ovl61ChrWork* hostWork;
+    f32 scale;
+    s32 n;
+    s32 j;
+    s32 k;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102F74_3D07C4_name_61);
+    pairs = *(Ovl61Pairs*)D_80107440_3D4C90_name_61;
+    mots = *(Ovl61MotPairs*)D_80107458_3D4CA8_name_61;
+    timer = *(Ovl61Pairs*)D_80107470_3D4CC0_name_61;
+    voice = *(Ovl61Pairs*)D_80107488_3D4CD8_name_61;
+    HuPrcSleep(45);
+    D_80107504_3D4D54_name_61 = func_80106D54_3D45A4_name_61(0, 65, 1.0f, 1.0f);
+    pos.x = D_801074D8_3D4D28_name_61[6]->trans.x;
+    pos.y = D_801074D8_3D4D28_name_61[6]->trans.y + 65.0f;
+    pos.z = D_801074D8_3D4D28_name_61[6]->trans.z;
+    func_800209C4_215C4(0, &pos, &scr[0]);
+    func_80106F84_3D47D4_name_61(&scr[0]);
+    func_80106F44_3D4794_name_61(D_80107504_3D4D54_name_61, scr[0].unk_00, scr[0].unk_04);
+    HuPrcSleep(25);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xAE);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xAE, -1, -1);
+    HuPrcSleep(45);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    HuPrcSleep(20);
+    omAddPrcObj(func_80104F24_3D2774_name_61, 0x5000, 0x2000, 0);
+    HuPrcSleep(130);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xAF);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xAF, -1, -1);
+    D_80107194_3D49E4_name_61 = 1;
+    omAddPrcObj(func_801046E0_3D1F30_name_61, 0x5000, 0x2000, 0);
+    for (k = 0; k < 3; k++) {
+        func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[pairs.v[k][0]]->model[0], 4, 0);
+        func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[pairs.v[k][1]]->model[0], 4, 0);
+        omSetTra(D_801074D8_3D4D28_name_61[pairs.v[k][0]], D_8010723C_3D4A8C_name_61[0].x, D_8010723C_3D4A8C_name_61[0].y, D_8010723C_3D4A8C_name_61[0].z);
+        omSetTra(D_801074D8_3D4D28_name_61[pairs.v[k][1]], D_80107224_3D4A74_name_61[0].x, D_80107224_3D4A74_name_61[0].y, D_80107224_3D4A74_name_61[0].z);
+        obj = D_801074D8_3D4D28_name_61[pairs.v[k][0]];
+        work = D_801074D8_3D4D28_name_61[pairs.v[k][1]]->unk_50;
+        func_80056658_57258(&D_8010723C_3D4A8C_name_61[0], &D_8010723C_3D4A8C_name_61[1], obj->unk_50);
+        func_80056658_57258(&D_80107224_3D4A74_name_61[0], &D_80107224_3D4A74_name_61[1], work);
+        func_801058B0_3D3100_name_61(pairs.v[k][0]);
+        func_801058B0_3D3100_name_61(pairs.v[k][1]);
+        func_8010568C_3D2EDC_name_61(pairs.v[k][0], mots.v[k][0]);
+        func_8010568C_3D2EDC_name_61(pairs.v[k][1], mots.v[k][1]);
+        func_801057D4_3D3024_name_61(pairs.v[k][0], 0, 2, 2);
+        func_801057D4_3D3024_name_61(pairs.v[k][1], 0, 2, 2);
+        for (j = 0; j < 2; j++) {
+            pos.x = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.x;
+            pos.y = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.y + 65.0f;
+            pos.z = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.z;
+            func_800209C4_215C4(0, &pos, &scr[j]);
+            func_80106F84_3D47D4_name_61(&scr[j]);
+            holes[j] = func_80106D54_3D45A4_name_61(scr[j].unk_00, scr[j].unk_04, 1.0f, 1.0f);
+            func_80107030_3D4880_name_61(holes[j]);
+        }
+        func_801058F0_3D3140_name_61(pairs.v[k][0], 2);
+        func_801058F0_3D3140_name_61(pairs.v[k][1], 2);
+        n = 0;
+        while (func_801059B0_3D3200_name_61(pairs.v[k][0], &D_8010723C_3D4A8C_name_61[1], 6.0f) == 0) {
+            func_801059B0_3D3200_name_61(pairs.v[k][1], &D_80107224_3D4A74_name_61[1], 6.0f);
+            if (++n == 30) {
+                PlaySound(0x4B3);
+            }
+            if (n > 30) {
+                for (j = 0; j < 2; j++) {
+                    func_80107054_3D48A4_name_61(holes[j]);
+                    pos.x = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.x;
+                    pos.y = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.y + 65.0f;
+                    pos.z = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.z;
+                    func_800209C4_215C4(0, &pos, &scr[j]);
+                    func_80106F84_3D47D4_name_61(&scr[j]);
+                    func_80106F44_3D4794_name_61(holes[j], scr[j].unk_00, scr[j].unk_04);
+                }
+            }
+            HuPrcVSleep();
+        }
+        func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+        func_80105858_3D30A8_name_61(pairs.v[k][0], 3, 0, 4, 2);
+        func_80105858_3D30A8_name_61(pairs.v[k][1], 3, 0, 4, 2);
+        func_801058F0_3D3140_name_61(pairs.v[k][0], 3);
+        func_801058F0_3D3140_name_61(pairs.v[k][1], 3);
+        while (func_80105ABC_3D330C_name_61(pairs.v[k][0], OVL61_CAM_POS, 5.0f) == 0) {
+            func_80105ABC_3D330C_name_61(pairs.v[k][1], OVL61_CAM_POS, 5.0f);
+            HuPrcVSleep();
+        }
+        func_80105858_3D30A8_name_61(pairs.v[k][0], 1, 0, 8, 0);
+        func_80105858_3D30A8_name_61(pairs.v[k][1], 1, 0, 8, 0);
+        n = 0;
+        if (k == 2) {
+            HuPrcSleep(83);
+            scale = 1.0f;
+            for (j = 0; j < 7; j++) {
+                scale += 0.05f;
+                func_80106F64_3D47B4_name_61(holes[0], scale, scale);
+                func_80106F64_3D47B4_name_61(holes[1], scale, scale);
+                HuPrcVSleep();
+            }
+            func_8007975C_7A35C(voice.v[k][0] + pairs.v[k][0], 0);
+            func_8007975C_7A35C(voice.v[k][1] + pairs.v[k][1], 1);
+        } else {
+            for (n = 0; n < 90; n++) {
+                for (j = 0; j < 2; j++) {
+                    if (timer.v[k][j] == 0) {
+                        func_8007975C_7A35C(voice.v[k][j] + pairs.v[k][j], j);
+                        timer.v[k][j] = 0x442;
+                    } else {
+                        timer.v[k][j]--;
+                    }
+                }
+                HuPrcVSleep();
+            }
+        }
+        func_80105858_3D30A8_name_61(pairs.v[k][0], 2, 0, 8, 2);
+        func_80105858_3D30A8_name_61(pairs.v[k][1], 2, 0, 8, 2);
+        func_801058F0_3D3140_name_61(pairs.v[k][0], 4);
+        func_801058F0_3D3140_name_61(pairs.v[k][1], 4);
+        while (func_80105ABC_3D330C_name_61(pairs.v[k][0], &D_8010723C_3D4A8C_name_61[0], 9.0f) == 0) {
+            func_80105ABC_3D330C_name_61(pairs.v[k][1], &D_80107224_3D4A74_name_61[0], 9.0f);
+            HuPrcVSleep();
+        }
+        n = 0;
+        while (func_801059B0_3D3200_name_61(pairs.v[k][0], &D_8010723C_3D4A8C_name_61[0], 6.0f) == 0) {
+            func_801059B0_3D3200_name_61(pairs.v[k][1], &D_80107224_3D4A74_name_61[0], 6.0f);
+            if (++n == 60) {
+                func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, k + 0xB0);
+                func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, k + 0xB0, -1, -1);
+                if (k != 2) {
+                    D_80107194_3D49E4_name_61 = 1;
+                    omAddPrcObj(func_801046E0_3D1F30_name_61, 0x5000, 0x2000, 0);
+                }
+            }
+            if (n == 70) {
+                func_80106E88_3D46D8_name_61(holes[0]);
+                func_80106E88_3D46D8_name_61(holes[1]);
+            }
+            if (n < 70) {
+                for (j = 0; j < 2; j++) {
+                    pos.x = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.x;
+                    pos.y = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.y + 65.0f;
+                    pos.z = D_801074D8_3D4D28_name_61[pairs.v[k][j]]->trans.z;
+                    func_800209C4_215C4(0, &pos, &scr[j]);
+                    func_80106F84_3D47D4_name_61(&scr[j]);
+                    func_80106F44_3D4794_name_61(holes[j], scr[j].unk_00, scr[j].unk_04);
+                }
+            }
+            HuPrcVSleep();
+        }
+        func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[pairs.v[k][0]]->model[0], 4, 4);
+        func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[pairs.v[k][1]]->model[0], 4, 4);
+        func_80105744_3D2F94_name_61(pairs.v[k][0]);
+        func_80105744_3D2F94_name_61(pairs.v[k][1]);
+    }
+    func_8010509C_3D28EC_name_61(-40.0f, 20);
+    func_80105398_3D2BE8_name_61(-300.0f);
+    func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[7]->model[0], 4, 0);
+    func_801058F0_3D3140_name_61(7, 0);
+    omSetTra(D_801074D8_3D4D28_name_61[7], 0.0f, -300.0f, 0.0f);
+    hostWork = D_801074D8_3D4D28_name_61[7]->unk_50;
+    pos.x = D_801074D8_3D4D28_name_61[7]->trans.x;
+    pos.y = D_801074D8_3D4D28_name_61[7]->trans.y;
+    pos.z = D_801074D8_3D4D28_name_61[7]->trans.z;
+    func_80056658_57258(&pos, OVL61_CAM_POS, hostWork);
+    func_801058B0_3D3100_name_61(7);
+    func_8010568C_3D2EDC_name_61(7, D_801072D8_3D4B28_name_61);
+    func_801057D4_3D3024_name_61(7, 1, 2, 2);
+    func_80105160_3D29B0_name_61(90);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    HuPrcSleep(30);
+    func_80105858_3D30A8_name_61(7, 2, 0, 10, 2);
+    func_80105C6C_3D34BC_name_61();
+    func_80105858_3D30A8_name_61(7, 2, 0, 4, 2);
+    for (k = 0; k < 10; k++) {
+        D_801074D8_3D4D28_name_61[7]->rot.y -= 4.0f;
+        HuPrcVSleep();
+    }
+    func_801058F0_3D3140_name_61(7, 3);
+    omAddPrcObj(func_80104C14_3D2464_name_61, 0x5000, 0x2000, 0);
+    func_80106208_3D3A58_name_61();
+    func_80105858_3D30A8_name_61(7, 6, 0, 4, 2);
+    for (k = 0; k < 60; k++) {
+        D_801074D8_3D4D28_name_61[7]->rot.y += 1.3333334f;
+        func_801059B0_3D3200_name_61(7, &D_80107254_3D4AA4_name_61, 20.0f);
+        HuPrcVSleep();
+    }
+    func_80105858_3D30A8_name_61(7, 3, 0, 15, 2);
+    func_8010621C_3D3A6C_name_61();
+    while (func_80106168_3D39B8_name_61() != 0) {
+        HuPrcVSleep();
+    }
+    func_801061A8_3D39F8_name_61();
+    func_801058F0_3D3140_name_61(7, 0);
+    func_80105858_3D30A8_name_61(7, 4, 0, 4, 2);
+    for (k = 0; k < 10; k++) {
+        D_801074D8_3D4D28_name_61[7]->rot.y -= 4.0f;
+        HuPrcVSleep();
+    }
+    func_80105858_3D30A8_name_61(7, 3, 0, 4, 2);
+    HuPrcSleep(70);
+    func_80106E88_3D46D8_name_61(D_80107502_3D4D52_name_61);
+    while (D_80107506_3D4D56_name_61 == 0) {
+        HuPrcVSleep();
+    }
+}
 
 void func_80103EA0_3D16F0_name_61(void) {
     Vec pos;
