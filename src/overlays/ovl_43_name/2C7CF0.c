@@ -1090,7 +1090,32 @@ void func_80105BF0_2CB0E0_name_43(void) {
     omOvlGotoEx(0x3D, 0, 0x192);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80105C2C_2CB11C_name_43);
+/* Debug start: everyone on chain 0, next space 0xF/9, the board state cleared. */
+void func_80105C2C_2CB11C_name_43(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    SetNextChainAndSpace(0, 0xF, 9);
+    SetPlayerOntoChain(1, 0, 0);
+    SetPlayerOntoChain(2, 0, 0);
+    SetPlayerOntoChain(3, 0, 0);
+    SetNextChainAndSpace(1, 0xF, 9);
+    SetNextChainAndSpace(2, 0xF, 9);
+    SetNextChainAndSpace(3, 0xF, 9);
+    _SetFlag(0x43);
+    func_8010285C_2C7D4C_name_43();
+    D_800F8CE4_F98E4[0x1E] = 0;
+    D_800F8CE4_F98E4[0x1D] = 0;
+    D_800F8CE4_F98E4[0x1A] = 0;
+    D_800F8CE4_F98E4[0x19] = 0;
+    D_800F8CE4_F98E4[0x17] = 0;
+    D_800F8CE4_F98E4[0] = 0;
+    D_800F8CE4_F98E4[2] = 0;
+    D_800F8CE4_F98E4[3] = 0;
+    D_800F8CE4_F98E4[4] = 0;
+    D_800F8CE4_F98E4[5] = 0;
+    D_800F8CE4_F98E4[6] = 0;
+    omOvlReturnEx(1);
+}
 
 void func_80105D18_2CB208_name_43(void) {
     s32 i;
@@ -1161,7 +1186,37 @@ void func_80105D18_2CB208_name_43(void) {
     func_80106BEC_2CC0DC_name_43();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80106004_2CB4F4_name_43);
+/* Board start: music, the board setup, then the space event tables; D_800F8CE4[0] is the time of
+   day (0-1 day, 2-3 night), and night adds its own tables. */
+void func_80106004_2CB4F4_name_43(void) {
+    PlayMusic(0xB);
+    func_800632F0_63EF0(0xB);
+    func_80020070_20C70(2);
+    func_80105D18_2CB208_name_43();
+    switch (D_800F8CE4_F98E4[0]) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+        case 3:
+            func_80053AA0_546A0(2);
+            break;
+    }
+    EventTableHydrate(D_801142DC_2D97CC_name_43);
+    EventTableHydrate(D_8011466C_2D9B5C_name_43);
+    switch (D_800F8CE4_F98E4[0]) {
+        case 0:
+        case 1:
+            EventTableHydrate(D_8011479C_2D9C8C_name_43);
+            break;
+        case 2:
+        case 3:
+            EventTableHydrate(D_801147C4_2D9CB4_name_43);
+            EventTableHydrate(D_8011478C_2D9C7C_name_43);
+            break;
+    }
+    func_80066C34_67834(0);
+}
 
 void func_801060C8_2CB5B8_name_43(void) {
     func_80020070_20C70(1);
@@ -1357,7 +1412,43 @@ void func_80106A20_2CBF10_name_43(void) {
                         D_80113BBC_2D90AC_name_43[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80106A5C_2CBF4C_name_43);
+/* One of the three models whose place and facing follow a board state halfword; model 9 by day,
+   0xA4 by night. */
+void func_80106A5C_2CBF4C_name_43(s16 arg0) {
+    MBModel* obj;
+    Vec* pos;
+    s32 model;
+    void* param;
+
+    if (D_80115468_2DA958_name_43[arg0] == NULL) {
+        if (D_80115464_2DA954_name_43 == NULL) {
+            if (D_800F8CE4_F98E4[0] >= 0 && (model = 9, D_800F8CE4_F98E4[0] < 2)) {
+                param = D_80113D18_2D9208_name_43;
+            } else {
+                model = 0xA4;
+                param = NULL;
+            }
+            obj = func_80043510_44110(model, param);
+            func_80043DAC_449AC(obj);
+            D_80115464_2DA954_name_43 = obj;
+        } else {
+            obj = MBModelParamCreate(D_80115464_2DA954_name_43);
+        }
+        D_80115468_2DA958_name_43[arg0] = obj;
+        obj->attr |= 2;
+        pos = &GetSpaceData(D_80113D20_2D9210_name_43[arg0 * 2 + D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[arg0]]])->coords;
+        func_800B3170_B3D70(&obj->pos, pos);
+        func_80056658_57258(pos, &GetSpaceData(D_80113D2C_2D921C_name_43[arg0])->coords, &obj->rot);
+        switch (D_800F8CE4_F98E4[0]) {
+            case 2:
+            case 3:
+                func_8002D4A0_2E0A0(obj->obj->model[0]);
+                break;
+        }
+    } else {
+        MBModelDispOn(D_80115468_2DA958_name_43[arg0]);
+    }
+}
 
 void func_80106BEC_2CC0DC_name_43(void) {
     s32 i;
@@ -1369,7 +1460,38 @@ void func_80106BEC_2CC0DC_name_43(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80106C4C_2CC13C_name_43);
+/* One of the two Boos: its place depends on the time of day. */
+void func_80106C4C_2CC13C_name_43(s16 arg0) {
+    MBModel* obj;
+
+    if (D_80115478_2DA968_name_43[arg0] != NULL) {
+        return;
+    }
+    if (D_80115474_2DA964_name_43 == NULL) {
+        obj = func_80043510_44110(8, NULL);
+        func_8002D124_2DD24(obj->obj->model[0]);
+        func_8002D124_2DD24(obj->shadow->model[0]);
+        D_80115474_2DA964_name_43 = obj;
+    } else {
+        obj = MBModelParamCreate(D_80115474_2DA964_name_43);
+    }
+    MBModelDispOff(obj);
+    D_80115478_2DA968_name_43[arg0] = obj;
+    obj->attr |= 2;
+    obj->jumpY = 10.0f;
+    switch (D_800F8CE4_F98E4[0]) {
+        case 0:
+        case 1:
+            func_80041AEC_426EC(8, obj, D_80113BA4_2D9094_name_43[arg0][0], D_80113BA4_2D9094_name_43[arg0][1]);
+            func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80113D44_2D9234_name_43[arg0])->coords);
+            break;
+        case 2:
+        case 3:
+            func_80041AEC_426EC(8, obj, D_80113BAC_2D909C_name_43[arg0][0], D_80113BAC_2D909C_name_43[arg0][1]);
+            func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80113D48_2D9238_name_43[arg0])->coords);
+            break;
+    }
+}
 
 void func_80106DD8_2CC2C8_name_43(void) {
     s32 i;

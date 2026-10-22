@@ -603,4 +603,19 @@ extern DecisionTreeNonLeafNode D_8011457C_2D9A6C_name_43[];
 extern DecisionTreeNonLeafNode D_801145EC_2D9ADC_name_43[];
 extern DecisionTreeNonLeafNode D_80114620_2D9B10_name_43[];
 
+/* ---- 43-B: board 43's own functions ---- */
+extern BoardEventTableEntry D_801142DC_2D97CC_name_43[];
+extern BoardEventTableEntry D_8011466C_2D9B5C_name_43[];
+extern BoardEventTableEntry D_8011478C_2D9C7C_name_43[]; /* night */
+extern BoardEventTableEntry D_8011479C_2D9C8C_name_43[]; /* day */
+extern BoardEventTableEntry D_801147C4_2D9CB4_name_43[]; /* night */
+extern s16 D_80113BA4_2D9094_name_43[2][2]; /* Boo marker offsets by day */
+extern s16 D_80113BAC_2D909C_name_43[2][2]; /* by night */
+extern s32 D_80113D18_2D9208_name_43[2]; /* model 9's create parameter */
+extern s16 D_80113D20_2D9210_name_43[3 * 2]; /* the three models' spaces: [i * 2 + state] */
+extern s16 D_80113D2C_2D921C_name_43[3]; /* the space each one faces */
+extern s16 D_80113D34_2D9224_name_43[3]; /* the D_800F8CE4 index that picks its space */
+extern s16 D_80113D44_2D9234_name_43[2]; /* Boo spaces by day */
+extern s16 D_80113D48_2D9238_name_43[2]; /* by night */
+
 #endif
