@@ -9,6 +9,8 @@
 
 #include "common.h"
 #include "game/object.h"
+#include "game/hmfman.h"
+#include "game/pad.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -126,7 +128,7 @@ extern RectF D_801099F4_143D84_BowlOver[2]; /* camera scissor */
    --------------------------------------------------------------------------------------------- */
 
 extern u8 D_80109A40_143DD0_BowlOver; /* alley (0-2; main's D_800FA656) */
-extern u8 D_80109A41_143DD1_BowlOver;
+extern u8 D_80109A41_143DD1_BowlOver; /* shells left */
 extern s16 D_80109A50_143DE0_BowlOver;
 
 /* ---------------------------------------------------------------------------------------------
@@ -157,6 +159,9 @@ extern u16 D_800FA606_FB206;
 extern s32 D_800F9D30_FA930[];
 extern s32 D_800F8FD0_F9BD0; /* scene state */
 extern u8 D_800FA656;
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+void func_8003B6E8_3C2E8(HmfData* arg0);
 extern f32 D_8010105C_101C5C;
 extern f32 D_80101300_101F00;
 
