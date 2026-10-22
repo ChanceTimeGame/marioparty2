@@ -187,6 +187,13 @@ void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 s32 func_8007975C_7A35C(s16 arg0, s16 arg1); /* sound for a player */
+void func_8001A708_1B308(u16 arg0, u16 arg1);
+/* s16 in 27D54 (the copy's id); retail stores the result here without re-extending it. */
+s32 func_80027D3C_2893C(s16);
+void MBModelDispOn(MBModel*);
+ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
+void func_80049F90_4AB90(ModelEmitterWork*);
+void func_80049FA0_4ABA0(void);
 void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 
@@ -286,7 +293,15 @@ typedef struct D44AnswerWork {
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
 extern u32* D_80108AD0_2E0B80_name_44[6]; /* per character: motion list (count, files) */
 extern s32 D_80108AE8_2E0B98_name_44[16]; /* frames between the beats ([0] is 0) */
-extern Vec D_80108B98_2E0C48_name_44[2]; /* per side: where the answer sprite sits (y from the caller) */
+extern Vec D_80108B2C_2E0BDC_name_44; /* the referee's spot */
+extern Vec D_80108B38_2E0BE8_name_44[1]; /* the referee's paths: back, to the middle */
+extern Vec D_80108B44_2E0BF4_name_44[3];
+extern Vec D_80108B68_2E0C18_name_44[1]; /* the duelists' marks */
+extern Vec D_80108B74_2E0C24_name_44[1];
+extern Vec D_80108B80_2E0C30_name_44[1]; /* the duelists' podiums */
+extern Vec D_80108B8C_2E0C3C_name_44[1];
+extern Vec D_80108B98_2E0C48_name_44[2]; /* per side: the podium (y: where it drops from) */
+extern f32 D_80108BB0_2E0C60_name_44[6]; /* per character: the sword's scale */
 
 /* ---- 44 bss (asm/data/overlays/ovl_44_name/ovl_44_bss.bss.s) ---- */
 
@@ -311,19 +326,29 @@ extern s32 D_80108ED8_2E0F88_name_44; /* the outcome: 1 draw, 2 challenger wins,
 extern s32 D_80108EDC_2E0F8C_name_44; /* the poorer player's coins */
 extern s32 D_80108EE0_2E0F90_name_44[2];
 extern s32 D_80108EE8_2E0F98_name_44; /* CPU pad triggers */
+extern s16 D_80108EEC_2E0F9C_name_44[4]; /* each player's item_hook model */
+extern s16 D_80108EF4_2E0FA4_name_44[4]; /* each player's second model */
 extern s32 D_80108F00_2E0FB0_name_44[16]; /* the move sequence, 0..2 each */
+extern s32 D_80108F40_2E0FF0_name_44[3]; /* per move: its sprite file */
 extern s32 D_80108F4C_2E0FFC_name_44[3]; /* per move: its sprite */
 extern s32 D_80108F58_2E1008_name_44; /* the move expected now */
-extern s32 D_80108F60_2E1010_name_44[2]; /* per side: a sprite */
+extern s32 D_80108F5C_2E100C_name_44; /* the answer pop's sprite file */
+extern s32 D_80108F60_2E1010_name_44[2]; /* per side: the answer pop sprite */
+extern s32 D_80108F68_2E1018_name_44; /* the side sprite's file */
 extern s32 D_80108F70_2E1020_name_44[18]; /* [side]: func_80108750's sprite */
 extern s32 D_80108FB8_2E1068_name_44[2]; /* per side: right answers */
 extern omObjData* D_80108FC8_2E1078_name_44[2]; /* per side: the answer object */
 extern omObjData* D_80108FD0_2E1080_name_44[2]; /* per side: func_801085BC's object */
 extern s32 D_80108FD8_2E1088_name_44[2];
+extern s32 D_80108FC0_2E1070_name_44; /* the winner's side, -1 for a draw */
 extern omObjData* D_80108FC4_2E1074_name_44; /* func_80106C24's object */
 extern s32 D_80108FE0_2E1090_name_44;
 extern s32 D_80108FE4_2E1094_name_44; /* no referee (flag 0x17 clear) */
+extern s16 D_80108FE8_2E1098_name_44; /* the launch sound */
+extern MBModel* D_80108FEC_2E109C_name_44; /* the referee */
 extern MBModel* D_80108FF0_2E10A0_name_44; /* the referee's hat (scaled away) */
+extern s16 D_80108FF4_2E10A4_name_44[2]; /* per side: the podium model */
+extern s16 D_80108FF8_2E10A8_name_44[2]; /* per side: the podium's shadow */
 extern s32 D_80109000_2E10B0_name_44[6]; /* [move * 2 + side]: each move's model per side */
 extern s32 D_80109018_2E10C8_name_44[2]; /* per side: an answer is showing */
 extern Vec D_80109020_2E10D0_name_44[2]; /* per side: where the answer appears */
