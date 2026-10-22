@@ -274,7 +274,7 @@ void func_80109EC0_23FDA0_SlotCarDerby(omObjData* obj);
 void func_8010A190_240070_SlotCarDerby(omObjData* obj);
 void func_8010A55C_24043C_SlotCarDerby(omObjData* obj);
 void func_8010A8CC_2407AC_SlotCarDerby(omObjData* obj);
-void func_8010AC5C_240B3C_SlotCarDerby(void);
+void func_8010AC5C_240B3C_SlotCarDerby(omObjData* obj);
 void func_8010AD94_240C74_SlotCarDerby(s32 type, Vec* pos, Vec* rot);
 void func_8010ADB0_240C90_SlotCarDerby(s32 type, Vec* pos, Vec* rot); /* type: SCDFx.unk_01 */
 void func_8010B098_240F78_SlotCarDerby(omObjData* obj, SCDObj* rec);
@@ -294,10 +294,10 @@ void func_8010CB1C_2429FC_SlotCarDerby(s16 id);
 void func_8010CC3C_242B1C_SlotCarDerby(void);
 void func_8010D0B0_242F90_SlotCarDerby(void);
 void func_8010D590_243470_SlotCarDerby(void); /* MP1 func_801001F8? */
-s16 func_8010D644_243524_SlotCarDerby(void);
+s16 func_8010D644_243524_SlotCarDerby(s32 file);
 void func_8010D68C_24356C_SlotCarDerby(void);
-void func_8010D6DC_2435BC_SlotCarDerby(s32, s32);
-void func_8010DAD8_2439B8_SlotCarDerby(s32, f32);
+void func_8010D6DC_2435BC_SlotCarDerby(s32 type, s32 player);
+void func_8010DAD8_2439B8_SlotCarDerby(s32 player, f32 speed); /* speed 0..1, < 0 hides */
 
 /* ---------------------------------------------------------------------------------------------
    Main-segment API used here (missing from include/)
@@ -479,7 +479,9 @@ extern s32 D_8010FBE8_245AC8_SlotCarDerby[3];   /* [course] record index (GWMgRe
 extern s32 D_8010FBF4_245AD4_SlotCarDerby;      /* 1: new-record message up, 2: done */
 extern s32 D_8010FBF8_245AD8_SlotCarDerby[6];   /* MP1 D_80100F58: countdown frames per step */
 extern s32 D_8010FC10_245AF0_SlotCarDerby[6];   /* MP1 D_80100F70: race time digits */
-extern s16 D_8010FC28_245B08_SlotCarDerby[4];   /* MP1 D_80100F88: texture filters by SCDBillboard.unk_28 & 0x18 */
+extern s16 D_8010FC28_245B08_SlotCarDerby[4];
+extern s16 D_8010FC30_245B10_SlotCarDerby[4][2]; /* [player] speedometer x, y */
+extern s16 D_8010FC40_245B20_SlotCarDerby;      /* speedometer sprites read */   /* MP1 D_80100F88: texture filters by SCDBillboard.unk_28 & 0x18 */
 
 /* 23F020.c's .bss */
 extern SCDObj* D_80110968_246848_SlotCarDerby;  /* MP1 D_80102468: 16 scenery records */
@@ -496,5 +498,9 @@ extern s32 D_80110990_246870_SlotCarDerby;      /* MP1 D_8010248C: billboard cou
 extern Gfx* D_80110994_246874_SlotCarDerby[3];  /* MP1 D_80102490: per-frame billboard display lists */
 extern Mtx* D_801109A0_246880_SlotCarDerby[3];  /* MP1 D_8010249C: per-frame billboard matrices */
 extern s32 D_801109AC_24688C_SlotCarDerby;      /* MP1 D_801024A8: the display-list model */
+extern s16 D_801109B0_246890_SlotCarDerby[4];   /* [player] speedometer dial sprite */
+extern s16 D_801109BA_24689A_SlotCarDerby[3];   /* speedometer "MAX", digit, unit sprites */
+extern s16 D_801109C0_2468A0_SlotCarDerby[4];   /* [player] speedometer sprite group, -1 none */
+void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
 
 #endif

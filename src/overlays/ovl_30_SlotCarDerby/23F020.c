@@ -498,7 +498,7 @@ void func_8010A8CC_2407AC_SlotCarDerby(omObjData* obj) {
 // 8 bytes more frame in retail, the angle wrap is not folded into one addiu, and retail has the KMC
 // mul fix nop between its mul.d pair (the unit builds without the fix: 8010B0E4 lacks its after-call nops)
 #ifdef NON_MATCHING
-void func_8010AC5C_240B3C_SlotCarDerby(void) {
+void func_8010AC5C_240B3C_SlotCarDerby(omObjData* obj) {
     SCDFloater* f = D_80110978_246858_SlotCarDerby;
     s16 id;
     s16 angle;
@@ -1103,16 +1103,147 @@ void func_8010D590_243470_SlotCarDerby(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010D644_243524_SlotCarDerby);
+s16 func_8010D644_243524_SlotCarDerby(s32 file) {
+    void* data = DataRead(file);
+    s16 sprite = SprAnimRead(data);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010D68C_24356C_SlotCarDerby);
+    DataClose(data);
+    return sprite;
+}
 
+/* Reads the speedometers' shared sprites: "MAX", digits, unit. */
+void func_8010D68C_24356C_SlotCarDerby(void) {
+    D_801109BA_24689A_SlotCarDerby[0] = func_8010D644_243524_SlotCarDerby(0x40001D);
+    D_801109BA_24689A_SlotCarDerby[1] = func_8010D644_243524_SlotCarDerby(0x43);
+    D_801109BA_24689A_SlotCarDerby[2] = func_8010D644_243524_SlotCarDerby(0x10015);
+}
+
+/* Sets up player's speedometer (sprite group D_801109C0[player]) in its screen corner: member 0
+   the dial (sprite files[type]), 1-3 the digits, 4 the unit, 5 the "MAX" sign (hidden). Odd
+   players' meters are mirrored. */
+// the loop-invariant position terms are associated differently (x - (w + 6) kept whole in retail),
+// so the hoisted values differ (masked 17)
+#ifdef NON_MATCHING
+void func_8010D6DC_2435BC_SlotCarDerby(s32 type, s32 player) {
+    s32 files[6] = { 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D };
+    HuSprite_Unk84_Struct* anim;
+    s16 x;
+    s16 y;
+    s16 w;
+    s16 h;
+    s16 group;
+    s16 i;
+
+    if (D_8010FC40_245B20_SlotCarDerby == 0) {
+        func_8010D68C_24356C_SlotCarDerby();
+        D_8010FC40_245B20_SlotCarDerby = 1;
+    }
+    x = D_8010FC30_245B10_SlotCarDerby[player][0];
+    y = D_8010FC30_245B10_SlotCarDerby[player][1];
+    D_801109B0_246890_SlotCarDerby[player] = func_8010D644_243524_SlotCarDerby(files[type]);
+    anim = SprAnimGet(D_801109B0_246890_SlotCarDerby[player]);
+    if (player & 1) {
+        anim->unk00->unk08 = anim->unk00->unk04;
+    } else {
+        anim->unk00->unk08 = 0;
+    }
+    anim = SprAnimGet(D_801109BA_24689A_SlotCarDerby[2]);
+    w = anim->unk00->unk04;
+    h = anim->unk00->unk08;
+    group = D_801109C0_2468A0_SlotCarDerby[player] = SprCreate(6, 0);
+    for (i = 0; i < 6; i++) {
+        if (i == 0) {
+            SprPosSet(group, 0, x, y);
+            SprAnimSet(group, 0, D_801109B0_246890_SlotCarDerby[player], 0);
+        } else if (i < 4) {
+            SprAnimSet(group, i, D_801109BA_24689A_SlotCarDerby[1], 0);
+            if (player & 1) {
+                SprPosSet(group, i, x - w - 6 - (3 - i) * 12, y + 16);
+            } else {
+                SprPosSet(group, i, x + (i - 1) * 12 + 6, y + 16);
+            }
+        } else if (i == 4) {
+            SprAnimSet(group, 4, D_801109BA_24689A_SlotCarDerby[2], 0);
+            if (player & 1) {
+                SprPosSet(group, 4, x - (w - h), y + 16);
+            } else {
+                SprPosSet(group, i, x + h + 36, y + 16);
+            }
+        } else {
+            SprAnimSet(group, i, D_801109BA_24689A_SlotCarDerby[0], 0);
+            if (player & 1) {
+                SprPosSet(group, i, x - (w - h) - 32 + w / 2, y + 16);
+            } else {
+                SprPosSet(group, i, x + w / 2 + 18, y + 16);
+            }
+            SprAttrSet(group, i, 0x8000);
+        }
+        func_8008225C_82E5C(group, i, 0);
+        SprBankSet(group, i, 0);
+        SprAttrSet(group, i, 0x1000);
+    }
+    func_8008225C_82E5C(group, 5, 1);
+    func_8008221C_82E1C(group, 5, 3.0f);
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80110210_2460F0_SlotCarDerby[6] = { 0x00000028, 0x00000029, 0x0000002A, 0x0000002B, 0x0000002C, 0x0000002D };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010D6DC_2435BC_SlotCarDerby);
-
+/* GCC still believes it is in .rodata (the const above) and emits the next function's local
+   initialiser without a section switch: switch back for it */
 __asm__(".section .rodata");
-const char D_80110228_246108_SlotCarDerby[] = "";
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010DAD8_2439B8_SlotCarDerby);
+/* Shows player's speed (0..1 of the top speed; < 0 or a finished race hides the meter for good):
+   in mph (200 at full speed, / 1.6093), "MAX" from 192. */
+void func_8010DAD8_2439B8_SlotCarDerby(s32 player, f32 speed) {
+    s16 digits[3] = { 0, 0, 0 };
+    s16 group;
+    s16 i;
+
+    group = D_801109C0_2468A0_SlotCarDerby[player];
+    if (group == -1) {
+        return;
+    }
+    if (speed < 0.0 || D_8010FB00_2459E0_SlotCarDerby >= 3) {
+        for (i = 0; i < 6; i++) {
+            SprAttrSet(group, i, 0x8000);
+        }
+        D_801109C0_2468A0_SlotCarDerby[player] = -1;
+        return;
+    }
+    if (speed > 1.0f) {
+        speed = 1.0f;
+    }
+    if (speed < 0.1f) {
+        speed = 0.0f;
+    }
+    speed *= 200.0f;
+    if (speed >= 192.0f) {
+        SprAttrSet(group, 1, 0x8000);
+        SprAttrSet(group, 2, 0x8000);
+        SprAttrSet(group, 3, 0x8000);
+        SprAttrSet(group, 4, 0x8000);
+        SprAttrReset(group, 5, 0x8000);
+        return;
+    }
+    speed /= 1.6093f;
+    while (speed >= 100.0f) {
+        speed -= 100.0f;
+        digits[0]++;
+    }
+    while (speed >= 10.0f) {
+        speed -= 10.0f;
+        digits[1]++;
+    }
+    digits[2] = speed;
+    SprBankSet(group, 1, digits[0]);
+    SprBankSet(group, 2, digits[1]);
+    SprBankSet(group, 3, digits[2]);
+    SprAttrReset(group, 1, 0x8000);
+    SprAttrReset(group, 2, 0x8000);
+    SprAttrReset(group, 3, 0x8000);
+    SprAttrReset(group, 4, 0x8000);
+    SprAttrSet(group, 5, 0x8000);
+}

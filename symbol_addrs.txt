@@ -860,3 +860,7 @@ D_8011098C_24686C_SlotCarDerby = 0x8011098C; // size:0x4 segment:SlotCarDerby
 D_80110994_246874_SlotCarDerby = 0x80110994; // size:0xC segment:SlotCarDerby
 D_801109A0_246880_SlotCarDerby = 0x801109A0; // size:0xC segment:SlotCarDerby
 D_8010FC28_245B08_SlotCarDerby = 0x8010FC28; // size:0x8 segment:SlotCarDerby
+D_8010FC30_245B10_SlotCarDerby = 0x8010FC30; // size:0x10 segment:SlotCarDerby
+D_801109B0_246890_SlotCarDerby = 0x801109B0; // size:0x8 segment:SlotCarDerby
+D_801109BA_24689A_SlotCarDerby = 0x801109BA; // size:0x6 segment:SlotCarDerby
+D_801109C0_2468A0_SlotCarDerby = 0x801109C0; // size:0x8 segment:SlotCarDerby
