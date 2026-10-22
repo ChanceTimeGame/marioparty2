@@ -531,28 +531,28 @@ void func_8010D2C8_2BBB88_name_41(void);
 void func_8010D93C_2BC1FC_name_41(void);
 void func_8010DB70_2BC430_name_41(void);
 void func_8010E080_2BC940_name_41(void);
-void func_8010E290_2BCB50_name_41(void);
-void func_8010E474_2BCD34_name_41(void);
-void func_8010E4B4_2BCD74_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E4D4_2BCD94_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E4F4_2BCDB4_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E514_2BCDD4_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E534_2BCDF4_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E554_2BCE14_name_41(void); /* twin func_8004D734_4E334 (main) */
-void func_8010E574_2BCE34_name_41(void);
-s32 func_8010E5B8_2BCE78_name_41(void); /* the chosen option */
-void func_8010E7E8_2BD0A8_name_41(void);
-void func_8010E960_2BD220_name_41(void);
+s32 func_8010E290_2BCB50_name_41(s32 arg0); /* CPU: coins to put in */
+s32 func_8010E474_2BCD34_name_41(s16 arg0, s16 arg1);
+s32 func_8010E4B4_2BCD74_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E4D4_2BCD94_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E4F4_2BCDB4_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E514_2BCDD4_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E534_2BCDF4_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E554_2BCE14_name_41(void); /* twin func_8004D734_4E334 (main) */
+s32 func_8010E574_2BCE34_name_41(s32 arg0);
+s32 func_8010E5B8_2BCE78_name_41(s32 arg0); /* the chosen option */
+void func_8010E7E8_2BD0A8_name_41(s32 arg0);
+void func_8010E960_2BD220_name_41(s32 arg0);
 void func_8010EADC_2BD39C_name_41(void);
 void func_8010F318_2BDBD8_name_41(void);
 void func_8010F33C_2BDBFC_name_41(void);
 void func_8010F378_2BDC38_name_41(void);
 void func_8010F39C_2BDC5C_name_41(void);
-void func_8010F3D8_2BDC98_name_41(void);
+void func_8010F3D8_2BDC98_name_41(omObjData* obj);
 void func_8010F448_2BDD08_name_41(void);
 void func_8010FC00_2BE4C0_name_41(omObjData* obj);
-void func_8010FC54_2BE514_name_41(void);
-void func_8010FD98_2BE658_name_41(void);
+void func_8010FC54_2BE514_name_41(s32 player);
+void func_8010FD98_2BE658_name_41(s32 arg0);
 void func_801103B4_2BEC74_name_41(void); /* twin func_80017228_17E28 (main) */
 void func_801103D0_2BEC90_name_41(void); /* twin func_80061734_62334 (main) */
 void func_801103EC_2BECAC_name_41(void);
@@ -562,6 +562,7 @@ s32 func_801109E0_2BF2A0_name_41(void);
 
 /* 41-B */
 extern s8 D_80110E34_2BF6F4_name_41[][5]; /* shop items, -1 none */
+/* 41-C */
 extern s32 D_80110ED0_2BF790_name_41[6]; /* per character: sprite file */
 extern Vec2f3E D_80111050_2BF910_name_41[4];
 extern Vec2f3E D_80111070_2BF930_name_41[4]; /* per player: window positions (item events) */
@@ -581,5 +582,41 @@ extern Unk3EVec2f D_80110E90_2BF750_name_41[4]; /* per player: lost star start *
 extern Unk3EVec2f D_80110EB0_2BF770_name_41[4]; /* per player: lost star velocity */
 extern Unk3ERange D_80110EE8_2BF7A8_name_41[6]; /* turn range -> star price */
 extern Unk3ERange D_80110EFC_2BF7BC_name_41[14]; /* press count range -> discount */
+extern Vec2f3E D_801110B0_2BF970_name_41[4];
+extern s32 D_801110D0_2BF990_name_41[6]; /* per board: message */
+extern s16 D_801110E8_2BF9A8_name_41[6]; /* per board: message window */
+extern f32 D_80111468_2BFD28_name_41[4]; /* scissor box {0, 0, 320, 240} */
+extern s32 D_80111868_2C0128_name_41[]; /* decision trees (CPU item use) */
+extern s32 D_801118C8_2C0188_name_41[];
+extern s32 D_80111A48_2C0308_name_41[];
+extern s32 D_80111B80_2C0440_name_41[];
+extern s32 D_80111BE0_2C04A0_name_41[]; /* decision trees (CPU shop) */
+extern s32 D_80111BF8_2C04B8_name_41[];
+extern s32 D_80111C64_2C0524_name_41[]; /* decision tree (CPU yes/no) */
+extern s32 D_80111C88_2C0548_name_41; /* set: the CPU's next answer is option 2 */
+extern u8* D_80111CD4_2C0594_name_41[]; /* per character: items the CPU tries to buy */
+extern s8* D_80111D34_2C05F4_name_41[]; /* per character: their percent chances */
+extern u8 D_80111D4C_2C060C_name_41[]; /* per character: list length */
+extern s32 D_80111190_2BFA50_name_41[]; /* decision trees (CPU) */
+extern s32 D_80111268_2BFB28_name_41[];
+s32 BoardSpaceGet(s32 index, s32 count);
+void func_8008D974_8E574(char* str, s16 slot); /* window string argument */
+void func_8008AD44_8B944(s16 win);
+extern u16 ContBtnTrg[4];
+extern u16 D_800FC9E0_FD5E0[4]; /* stick-repeat buttons per port */
+extern s16 D_801112D4_2BFB94_name_41[3][2]; /* boat: per pier, start space and landing jump space */
+extern s16 D_801112E0_2BFBA0_name_41[3][2]; /* boat: per pier, its space and the far pier's */
+extern s16 D_801112EC_2BFBAC_name_41[3]; /* boat: per pier, the space where the turn continues */
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029A8C_2A68C(s16);
+extern s16* D_8011133C_2BFBFC_name_41[2]; /* cannon: per cannon, its target spaces (-1 ends) */
+extern s16 D_80111344_2BFC04_name_41[2]; /* cannon: per cannon, its space */
+extern f32 D_80111348_2BFC08_name_41[4][2]; /* per player: x, z offset at the start space */
+extern f32 D_80111368_2BFC28_name_41[2][2]; /* cannon: per cannon, camera x, z offset */
+void func_80023124_23D24(void);
+void func_800599F0_5A5F0(void);
+s32 func_80059A68_5A668(s32 arg0, s32 arg1);
+void func_80059B08_5A708(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
+void func_80059BCC_5A7CC(s32 arg0);
 
 #endif
