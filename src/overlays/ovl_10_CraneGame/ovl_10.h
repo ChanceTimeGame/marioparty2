@@ -71,6 +71,18 @@ void func_8000C37C_CF7C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->scale */
 s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
 void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4); /* model motion blend */
 f32 func_80029D0C_2A90C(s16); /* motion length */
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+s32 PlaySound(s32);
+void func_80079848_7A448(s16 id); /* stop a sound (MP1 func_8006071C) */
+void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
+void func_80079718_7A318(s32, s32); /* character voice */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+void func_800795D8_7A1D8(s16 sound, s8 volume);
+void func_800796F0_7A2F0(s16 sound, s16 pitch);
+void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
+void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
 
 /* Per-character data, 0x18 bytes each (as 2C's TipsyCharData). */
 typedef struct CGCharData {
@@ -110,7 +122,7 @@ typedef struct CGWork {
     /* 0x53 */ char unk_53[4];
     /* 0x57 */ s8 unk57; /* controller port */
     /* 0x58 */ char unk_58[1];
-    /* 0x59 */ u8 unk59; /* player */
+    /* 0x59 */ s8 unk59; /* player */
     /* 0x5A */ char unk_5A[0x76];
     /* 0xD0 */ u16 unkD0; /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
@@ -177,6 +189,8 @@ typedef struct CGPair {
 extern s32 D_8010B760_155280_CraneGame; /* the hurry-up music started */
 extern CGHang D_8010B764_155284_CraneGame[7];
 extern s32 D_8010B7B8_1552D8_CraneGame[7]; /* their model files */
+extern s16 D_8010B978_155498_CraneGame[]; /* grip strength per grab quality */
+extern f32 D_8010B980_1554A0_CraneGame[]; /* claw depth per character */
 extern Gfx D_8010B8E8_155408_CraneGame[];
 extern Gfx D_8010B928_155448_CraneGame[];
 
@@ -233,7 +247,7 @@ void func_80103FC8_14DAE8_CraneGame(Gfx** gfx);
 s16 func_8010422C_14DD4C_CraneGame(f32 x, f32 y, f32 z, f32 r);
 s16 func_801043D8_14DEF8_CraneGame(f32 x, f32 z, f32 r, s16 i); /* grab quality of prize i */
 f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b); /* highest ground around a */
-s16 func_801046E8_14E208_CraneGame(void); /* the CPU's target prize */
+s16 func_801046E8_14E208_CraneGame(omObjData* obj); /* the CPU's target prize (obj unused) */
 void func_80104854_14E374_CraneGame(omObjData* obj);
 void func_80104CB0_14E7D0_CraneGame(omObjData* obj);
 s32 func_80106268_14FD88_CraneGame(omObjData* obj, Vec* out);
