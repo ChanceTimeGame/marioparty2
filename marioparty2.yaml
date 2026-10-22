@@ -1539,7 +1539,12 @@ segments:
     bss_size: 0x1C0
     subsegments:
       - [0x343060, c]
+      - [0x344AE0, c]
+      - [0x34DBC0, c]
       - [0x3521C0, data]
+      - [0x352D40, .rodata, 343060]
+      - [0x352D50, .rodata, 344AE0]
+      - [0x352DF0, .rodata, 34DBC0]
       - {0x352E10, type: bss, vram: 0x801125B0, name: ovl_50_bss}
   - type: code
     start: 0x352E10
