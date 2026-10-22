@@ -291,6 +291,31 @@ typedef struct BaGroundWork {
     /* 0x14 */ f32 unk_14; /* ground height under the player being moved (MP1 0x10) */
 } BaGroundWork;
 
+/* ---- MG2B-C types (21EA10.c) ---- */
+
+/* D_8010DFF0: the cannon (MP1 BaCannon). Splat labels: D_8010DFF8 (+8), D_8010E004 (+0x14),
+   D_8010E008 (+0x18). */
+typedef struct BaCannon {
+    /* 0x00 */ Vec unk_00; /* position */
+    /* 0x0C */ Vec unk_0C; /* rotation */
+    /* 0x18 */ f32 unk_18; /* velocity x */
+    /* 0x1C */ char unk_1C[4];
+} BaCannon;
+
+/* D_8010E558[5]: splashes (func_801099C4 starts one; func_80109908 animates them over 16 frames). */
+typedef struct BaSplash {
+    /* 0x00 */ s16 unk_00; /* 1 playing */
+    /* 0x02 */ s16 unk_02; /* frame */
+    /* 0x04 */ s16 unk_04; /* model (func_80109A68) */
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ Vec unk_10; /* scale */
+    /* 0x1C */ Vec unk_1C; /* position */
+    /* 0x28 */ char unk_28[4];
+    /* 0x2C */ s32 unk_2C;
+} BaSplash; /* size = 0x30 */
+
 /* ---- overlay .data (223080) ---- */
 
 extern s16 D_8010CC90_223080_BombsAway[4]; /* players out, in order (func_80102DDC) */
@@ -314,7 +339,7 @@ extern s32 D_8010D01C_22340C_BombsAway[];
 extern s16 D_8010D040_223430_BombsAway; /* title sprite y */
 extern s32 D_8010D044_223434_BombsAway[];
 extern s32 D_8010D1F8_2235E8_BombsAway[];
-extern s32 D_8010D238_223628_BombsAway[];
+extern f32 D_8010D238_223628_BombsAway[]; /* blast model scale per kind (func_8010A350) */
 extern u16 D_8010D248_223638_BombsAway;
 extern s32 D_8010D24C_22363C_BombsAway;
 extern s32 D_8010D250_223640_BombsAway;
@@ -371,7 +396,7 @@ extern u16 D_8010DFE2_2243D2_BombsAway;
 extern u16 D_8010DFE4_2243D4_BombsAway;
 extern s16 D_8010DFE6_2243D6_BombsAway;
 extern s16 D_8010DFE8_2243D8_BombsAway;
-extern struct BaCannon D_8010DFF0_2243E0_BombsAway; /* the cannon (MP1 D_80100790) */
+extern BaCannon D_8010DFF0_2243E0_BombsAway; /* the cannon (MP1 D_80100790) */
 extern s32 D_8010E004_2243F4_BombsAway[];
 extern s32 D_8010E008_2243F8_BombsAway[];
 extern s32 D_8010E010_224400_BombsAway[];
@@ -387,10 +412,10 @@ extern s32 D_8010E524_224914_BombsAway;
 extern s32 D_8010E528_224918_BombsAway[];
 extern s16 D_8010E530_224920_BombsAway;
 extern s16 D_8010E532_224922_BombsAway;
-extern s16 D_8010E534_224924_BombsAway;
-extern s32 D_8010E538_224928_BombsAway[];
+extern s16 D_8010E534_224924_BombsAway; /* splash sprite animation */
+extern s32 D_8010E538_224928_BombsAway[3]; /* blast models (u16 ids; read as (s16)) */
 extern s16 D_8010E550_224940_BombsAway; /* 1 while bombs may fall (cleared at the finish) */
-extern s32 D_8010E558_224948_BombsAway[];
+extern BaSplash D_8010E558_224948_BombsAway[5];
 
 /* ---- functions: 218BF0.c ---- */
 
@@ -466,13 +491,13 @@ void func_801091F4_21F5E4_BombsAway(void);
 void func_80109264_21F654_BombsAway(omObjData* obj);
 void func_80109810_21FC00_BombsAway(void);
 void func_80109908_21FCF8_BombsAway(void);
-void func_801099C4_21FDB4_BombsAway(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-s16 func_80109A68_21FE58_BombsAway(void);
-void func_8010A0D0_2204C0_BombsAway(s32 arg0, s32* arg1, s32 arg2);
+void func_801099C4_21FDB4_BombsAway(f32 x, f32 y, f32 z, f32 scale);
+s16 func_80109A68_21FE58_BombsAway(s32 arg0, HuSprite_Unk84_Struct* anim, s32 arg2);
+void func_8010A0D0_2204C0_BombsAway(s32 model, HuSprite_Unk84_Struct* anim, s32 frame);
 void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale);
 void func_8010A1EC_2205DC_BombsAway(void);
 void func_8010A298_220688_BombsAway(void);
-void func_8010A350_220740_BombsAway(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8010A350_220740_BombsAway(f32 x, f32 y, f32 z, s32 kind);
 void func_8010A4BC_2208AC_BombsAway(void);
 void func_8010A4CC_2208BC_BombsAway(void);
 void func_8010AA9C_220E8C_BombsAway(omObjData* obj);
@@ -507,14 +532,9 @@ void SprPosSet(s16, s16, s16, s16);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void omSetStatBit(omObjData* obj, u16 stat);
-
-/* D_8010DFF0: the cannon (MP1 BaCannon). Splat labels: D_8010DFF8 (+8), D_8010E004 (+0x14),
-   D_8010E008 (+0x18). */
-typedef struct BaCannon {
-    /* 0x00 */ Vec unk_00; /* position */
-    /* 0x0C */ Vec unk_0C; /* rotation */
-    /* 0x18 */ f32 unk_18; /* velocity x */
-    /* 0x1C */ char unk_1C[4];
-} BaCannon;
+void* SprAnimGet(s16 animIdx);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+f32 func_80029D0C_2A90C(s16); /* motion length */
+extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
 
 #endif

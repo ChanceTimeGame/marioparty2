@@ -346,25 +346,151 @@ void func_80109264_21F654_BombsAway(omObjData* obj) {
     SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, D_8010D040_223430_BombsAway + 8);
 }
 
+// register allocation: file/anim in s0/s1 swapped (masked 0)
+#ifdef NON_MATCHING
+void func_80109810_21FC00_BombsAway(void) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    void* file;
+    s16 anim;
+    u16 i;
+
+    file = DataRead(0x3B0012);
+    D_8010E534_224924_BombsAway = anim = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0; i < 5; i++, p++) {
+        p->unk_00 = 0;
+        p->unk_02 = 0;
+        p->unk_08 = 0;
+        p->unk_2C = 0;
+        p->unk_0C = 0;
+        p->unk_06 = 0;
+        p->unk_10.x = p->unk_10.y = p->unk_10.z = 1.0f;
+        p->unk_1C.x = p->unk_1C.y = p->unk_1C.z = 0.0f;
+        p->unk_04 = func_80109A68_21FE58_BombsAway(0, SprAnimGet(anim), 0);
+        func_800298A4_2A4A4(p->unk_04, 4, 4);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109810_21FC00_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109908_21FCF8_BombsAway);
+void func_80109908_21FCF8_BombsAway(void) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    HuSprite_Unk84_Struct* anim;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801099C4_21FDB4_BombsAway);
+    anim = SprAnimGet(D_8010E534_224924_BombsAway);
+    for (i = 0; i < 5; i++, p++) {
+        func_8010A0D0_2204C0_BombsAway(p->unk_04, anim, p->unk_02);
+        if (p->unk_00 != 0) {
+            func_800298A4_2A4A4(p->unk_04, 4, 0);
+            if (++p->unk_02 < 16) {
+                continue;
+            }
+            p->unk_02 = 0;
+            p->unk_00 = 0;
+        }
+        func_800298A4_2A4A4(p->unk_04, 4, 4);
+    }
+}
+
+void func_801099C4_21FDB4_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    u16 i;
+
+    for (i = 0; i < 5; i++, p++) {
+        if (p->unk_00 == 0) {
+            p->unk_00 = 1;
+            p->unk_1C.x = x;
+            p->unk_1C.y = y;
+            p->unk_1C.z = z;
+            p->unk_10.x = scale;
+            p->unk_10.y = scale;
+            p->unk_10.z = 1.0f;
+            func_80029714_2A314(p->unk_04, p->unk_1C.x, p->unk_1C.y, p->unk_1C.z);
+            func_800297E8_2A3E8(p->unk_04, p->unk_10.x, p->unk_10.y, p->unk_10.z);
+            return;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109A68_21FE58_BombsAway);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A0D0_2204C0_BombsAway);
+void func_8010A0D0_2204C0_BombsAway(s32 model, HuSprite_Unk84_Struct* anim, s32 frame) {
+    HmfModel* m = &D_800FC834_FD434[model];
+    HmfData* hmf = m->hmf;
+    Gfx* gfx = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A198_220588_BombsAway);
+    hmf->unk3C->unk00[0] = gfx;
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 0x02, osVirtualToPhysical(anim->unk00[frame].unk00));
+    gSPDisplayList(&gfx[2], osVirtualToPhysical(hmf->unk3C->unk10));
+    gDPPipeSync(&gfx[3]);
+    gSPEndDisplayList(&gfx[4]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A1EC_2205DC_BombsAway);
+void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
+    func_801099C4_21FDB4_BombsAway(x, y, z, (f32)((z + 2250.0) / 1500.0) * scale);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A298_220688_BombsAway);
+void func_8010A1EC_2205DC_BombsAway(void) {
+    HmfModel* m;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A350_220740_BombsAway);
+    for (i = 0; i < 3; i++) {
+        D_8010E538_224928_BombsAway[i] = func_80018A30_19630(0x10013, 0x99);
+        func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 4);
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        m->unk40 = 0.0f;
+        m->unk44 = 0.0f;
+        if (m->hmf->unk9C != NULL) {
+            m->hmf->unk9C->unk08 = 0.0f;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4BC_2208AC_BombsAway);
+void func_8010A298_220688_BombsAway(void) {
+    HmfModel* m;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        if (func_80029D0C_2A90C((s16)D_8010E538_224928_BombsAway[i]) <= m->unk40) {
+            func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 4);
+            m->unk40 = 0.0f;
+            m->unk44 = 0.0f;
+            if (m->hmf->unk9C != NULL) {
+                m->hmf->unk9C->unk08 = 0.0f;
+            }
+        }
+    }
+}
+
+void func_8010A350_220740_BombsAway(f32 x, f32 y, f32 z, s32 kind) {
+    HmfModel* m;
+    f32 s;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        if (m->unk18 & 4) {
+            if (y < 0.0) {
+                y = 0.0f;
+            }
+            s = D_8010D238_223628_BombsAway[kind];
+            s = s * ((z + 2250.0) / 1500.0);
+            func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 0);
+            func_80029714_2A314((s16)D_8010E538_224928_BombsAway[i], x, y + 20.0, z);
+            func_800297E8_2A3E8((s16)D_8010E538_224928_BombsAway[i], s, s, s);
+            m->unk44 = 1.0f;
+            return;
+        }
+    }
+}
+
+void func_8010A4BC_2208AC_BombsAway(void) {
+    D_8010DFE2_2243D2_BombsAway = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4CC_2208BC_BombsAway);
 
