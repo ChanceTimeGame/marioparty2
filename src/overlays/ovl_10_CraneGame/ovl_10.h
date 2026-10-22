@@ -92,6 +92,43 @@ typedef struct CGWork {
 
 double fabs(double);
 
+/* The claw block (MP1 CGClaw, HuMemDirectMalloc(0x5C) there; func_80107DD4/80107F40 here), kept in
+   D_8010CE30_156950_CraneGame. MP1's layout: MG10-B, check it against 80107DD4. */
+typedef struct CGClaw {
+    /* 0x00 */ s16 unk0; /* 1 once initialised */
+    /* 0x02 */ u16 unk2; /* flags: 1/2 clamped by func_801035C0, 4 empty-handed */
+    /* 0x04 */ s16 unk4; /* grab radius */
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8; /* state */
+    /* 0x0A */ u16 unkA; /* index in D_8010CE30_156950_CraneGame */
+    /* 0x0C */ f32 unkC; /* claw position */
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C; /* lowest height */
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ char pad30[0xC];
+    /* 0x3C */ s16 unk3C; /* timer */
+    /* 0x3E */ s16 unk3E; /* frames moving one way */
+    /* 0x40 */ s16 unk40; /* grip level */
+    /* 0x42 */ s16 unk42;
+    /* 0x44 */ s16 unk44; /* motor sound, -1 none */
+    /* 0x46 */ s16 unk46; /* motor volume step */
+    /* 0x48 */ s16 unk48; /* cable sound, -1 none */
+    /* 0x4A */ s16 unk4A;
+    /* 0x4C */ s16 unk4C; /* grip frames left */
+    /* 0x4E */ s16 unk4E; /* grip frames per level */
+    /* 0x50 */ s16 unk50;
+    /* 0x52 */ s16 unk52;
+    /* 0x54 */ s16 unk54;
+    /* 0x56 */ s16 unk56;
+    /* 0x58 */ s16 unk58; /* CPU target (D_800F9CE0_FA8E0 index) */
+    /* 0x5A */ s16 unk5A; /* grabbed prize (D_800F9CE0_FA8E0 index), -1 none */
+} CGClaw; /* size = 0x5C */
+
 /* A hanging prize model of the backdrop (D_8010B764_155284, func_80103974). */
 typedef struct CGHang {
     /* 0x00 */ f32 x;
@@ -139,7 +176,7 @@ extern CGPair D_8010C200_155D20_CraneGame[7];
 extern f32 D_8010C238_155D58_CraneGame[7];
 extern f32 D_8010C254_155D74_CraneGame;
 extern s16 D_8010C258_155D78_CraneGame;
-extern void* D_8010CE30_156950_CraneGame[256]; /* claws (MP1 D_80100BC0) */
+extern CGClaw* D_8010CE30_156950_CraneGame[256]; /* claws (MP1 D_80100BC0) */
 extern omObjData* D_8010D230_156D50_CraneGame;
 extern s16 D_8010D234_156D54_CraneGame;
 
@@ -165,8 +202,8 @@ void func_80103F38_14DA58_CraneGame(void);
 void func_80103FC8_14DAE8_CraneGame(Gfx** gfx);
 s16 func_8010422C_14DD4C_CraneGame(f32 x, f32 y, f32 z, f32 r);
 s16 func_801043D8_14DEF8_CraneGame(f32 x, f32 z, f32 r, s16 i); /* grab quality of prize i */
-f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b);
-s32 func_801046E8_14E208_CraneGame(void);
+f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b); /* highest ground around a */
+s16 func_801046E8_14E208_CraneGame(void); /* the CPU's target prize */
 void func_80104854_14E374_CraneGame(omObjData* obj);
 void func_80104CB0_14E7D0_CraneGame(omObjData* obj);
 s32 func_80106268_14FD88_CraneGame(omObjData* obj, Vec* out);
@@ -179,9 +216,9 @@ void func_80106F00_150A20_CraneGame(omObjData* obj);
 /* MG10-B's range (inferred) */
 void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1);       /* MP1 func_800FA684 */
 void func_8010755C_15107C_CraneGame(omObjData* obj);                 /* MP1 func_800FA770 */
-void* func_80107DD4_1518F4_CraneGame(omObjData* obj);                /* MP1 func_800F704C (claw alloc) */
+CGClaw* func_80107DD4_1518F4_CraneGame(omObjData* obj);               /* MP1 func_800F704C (claw alloc) */
 void func_80107EC0_1519E0_CraneGame(void);                           /* MP1 func_800F7138 */
-void* func_80107F40_151A60_CraneGame(omObjData* obj);                /* MP1 func_800F71B8 (claw get) */
+CGClaw* func_80107F40_151A60_CraneGame(omObjData* obj);               /* MP1 func_800F71B8 (claw get) */
 void func_80107F70_151A90_CraneGame(void);                           /* MP1 func_800FB830 */
 void func_80108038_151B58_CraneGame(void);                           /* MP1 func_800FB8E8 */
 void func_80108114_151C34_CraneGame(s16 model);                      /* MP1 func_800FB9C4 */

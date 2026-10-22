@@ -521,9 +521,67 @@ s16 func_801043D8_14DEF8_CraneGame(f32 arg0, f32 arg1, f32 arg2, s16 arg3) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801044E0_14E000_CraneGame);
+#ifdef NON_MATCHING
+/* Register allocation only: retail keeps the angle's double in $f20, this uses $f0. */
+f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b) {
+    f32 t;
+    f32 best;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801046E8_14E208_CraneGame);
+    best = 0.0f;
+    for (i = 0; i < 33; i++) {
+        if (i == 0) {
+            b->x = a->x;
+            b->z = a->z;
+        } else if (i < 17) {
+            t = i - 1;
+            t *= 22.5;
+            b->x = a->x + func_800B7890_B8490(t) * 10.0 * 10.0;
+            b->z = a->z + HuMathSin(t) * 10.0 * 10.0;
+        } else {
+            t = i - 17;
+            t *= 22.5;
+            b->x = a->x + func_800B7890_B8490(t) * 5.0 * 10.0;
+            b->z = a->z + HuMathSin(t) * 5.0 * 10.0;
+        }
+        b->y = 600.0f;
+        if (func_8010A4D8_153FF8_CraneGame(b, 0.0f, -800.0f, 0.0f, -1) != 0 && best < b->y) {
+            best = b->y;
+            if (i == 0) {
+                break;
+            }
+        }
+    }
+    return best;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801044E0_14E000_CraneGame);
+#endif
+
+s16 func_801046E8_14E208_CraneGame(void) {
+    s16 list[2][4]; /* [0] every free prize, [1] those from index 3 */
+    s16 nfar;
+    s16 nall;
+    s16 sel;
+    s16 i;
+
+    nfar = 0;
+    nall = 0;
+    for (i = 0; i < D_800FA606_FB206; i++) {
+        if (func_80107F40_151A60_CraneGame(D_800F9CE0_FA8E0[i])->unk2 & 4) {
+            list[0][nall++] = i;
+            if (i >= 3) {
+                list[1][nfar++] = i;
+            }
+        }
+    }
+    if ((D_8010C17C_155C9C_CraneGame < 450) & (nfar != 0)) {
+        sel = list[1][(rand8() * nfar) >> 8];
+    } else {
+        sel = list[0][(rand8() * nall) >> 8];
+    }
+    return sel;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80104854_14E374_CraneGame);
 
