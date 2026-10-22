@@ -2,9 +2,6 @@
 #include "game/malloc.h"
 #include "game/data.h"
 
-/* Retail calls SprBankSet with a signed bank (lh of the s32 table's low half). */
-#define SCD_SPR_BANK_SET ((void (*)(s16, s16, s16))SprBankSet)
-
 void func_80109140_23F020_SlotCarDerby(s16 state) {
     s32 i;
 
@@ -134,7 +131,7 @@ void func_801096D4_23F5B4_SlotCarDerby(omObjData* obj) {
     SprPosSet((s16)D_80110974_246854_SlotCarDerby, 0, 131, 28);
     SprAnimSet((s16)D_80110974_246854_SlotCarDerby, 0, colon, 0);
     func_8008225C_82E5C((s16)D_80110974_246854_SlotCarDerby, 0, 0);
-    SCD_SPR_BANK_SET((s16)D_80110974_246854_SlotCarDerby, 0, (s16)D_8010FB84_245A64_SlotCarDerby[0]);
+    SprBankSet((s16)D_80110974_246854_SlotCarDerby, 0, (s16)D_8010FB84_245A64_SlotCarDerby[0]);
     SprAttrSet((s16)D_80110974_246854_SlotCarDerby, 0, 0x1000);
     SprPosSet((s16)D_80110970_246850_SlotCarDerby, 0, 131, 44);
     SprAnimSet((s16)D_80110970_246850_SlotCarDerby, 0, digit, 0);
@@ -149,12 +146,12 @@ void func_801096D4_23F5B4_SlotCarDerby(omObjData* obj) {
         SprAnimSet((s16)D_80110974_246854_SlotCarDerby, i, colon, 0);
         SprPosSet((s16)D_80110974_246854_SlotCarDerby, i, (s16)D_8010FB68_245A48_SlotCarDerby[i], 0);
         func_800824F4_830F4((s16)D_80110974_246854_SlotCarDerby, i, 0);
-        SCD_SPR_BANK_SET((s16)D_80110974_246854_SlotCarDerby, i, (s16)D_8010FB84_245A64_SlotCarDerby[i]);
+        SprBankSet((s16)D_80110974_246854_SlotCarDerby, i, (s16)D_8010FB84_245A64_SlotCarDerby[i]);
         func_8008225C_82E5C((s16)D_80110974_246854_SlotCarDerby, i, 0);
         SprAttrSet((s16)D_80110974_246854_SlotCarDerby, i, 0x1000);
     }
-    SCD_SPR_BANK_SET((s16)D_80110970_246850_SlotCarDerby, 5, (s16)D_8010FB84_245A64_SlotCarDerby[5]);
-    SCD_SPR_BANK_SET((s16)D_80110970_246850_SlotCarDerby, 6, (s16)D_8010FB84_245A64_SlotCarDerby[6]);
+    SprBankSet((s16)D_80110970_246850_SlotCarDerby, 5, (s16)D_8010FB84_245A64_SlotCarDerby[5]);
+    SprBankSet((s16)D_80110970_246850_SlotCarDerby, 6, (s16)D_8010FB84_245A64_SlotCarDerby[6]);
     obj->model[0] = LoadFormFile(0x40000F, 0x499);
     obj->model[1] = LoadFormFile(0x400010, 0x499);
     obj->model[2] = LoadFormFile(0x400011, 0x499);
@@ -177,13 +174,265 @@ void func_801096D4_23F5B4_SlotCarDerby(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_80109CDC_23FBBC_SlotCarDerby);
+void func_80109CDC_23FBBC_SlotCarDerby(omObjData* obj) {
+    SCDFx* fx;
+    HuSprite_Unk84_Struct* anim;
+    void* data;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_80109EC0_23FDA0_SlotCarDerby);
+    obj->func_ptr = func_8010A8CC_2407AC_SlotCarDerby;
+    D_8011098C_24686C_SlotCarDerby = SprCreate(32, 0);
+    data = DataRead(0x40001B);
+    D_80110980_246860_SlotCarDerby[2] = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x40001A);
+    D_80110980_246860_SlotCarDerby[0] = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x40001C);
+    D_80110980_246860_SlotCarDerby[1] = SprAnimRead(data);
+    DataClose(data);
+    D_8011096C_24684C_SlotCarDerby = HuMemMemoryAllocPerm(32 * sizeof(SCDFx));
+    for (i = 0; i < 32; i++) {
+        fx = &D_8011096C_24684C_SlotCarDerby[i];
+        fx->unk_01 = -1;
+        fx->unk_02 = fx->unk_04 = 0;
+        fx->unk_08.x = fx->unk_08.y = fx->unk_08.z = 0.0f;
+        fx->unk_14.x = fx->unk_14.y = fx->unk_14.z = 0.0f;
+        fx->unk_20 = fx->unk_24 = fx->unk_28 = 1.0f;
+        fx->unk_2C.x = fx->unk_2C.y = fx->unk_2C.z = 0.0f;
+        anim = SprAnimGet((s16)D_80110980_246860_SlotCarDerby[0]);
+        anim->unk00->unk08 = 0;
+        anim->unk00->unk0A = 27;
+        fx->unk_00 = func_8010B688_241568_SlotCarDerby((s16)D_80110980_246860_SlotCarDerby[0], 0xB1);
+        SprAttrSet((s16)D_8011098C_24686C_SlotCarDerby, i, 0x9008);
+        func_8008225C_82E5C((s16)D_8011098C_24686C_SlotCarDerby, i, 0);
+    }
+    func_8010D0B0_242F90_SlotCarDerby();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A190_240070_SlotCarDerby);
+/* Sets up the five floating billboards (MP2 only): random bob phase and speed. */
+void func_80109EC0_23FDA0_SlotCarDerby(omObjData* obj) {
+    SCDFloater* f;
+    void* data;
+    s16 id;
+    s16 i;
 
+    data = DataRead(0x400019);
+    obj->work[0] = SprAnimRead(data);
+    DataClose(data);
+    f = D_80110978_246858_SlotCarDerby = HuMemMemoryAllocPerm(5 * sizeof(SCDFloater));
+    func_800B0EF0_B1AF0(f, 0, 5 * sizeof(SCDFloater));
+    for (i = 0; i < 5; i++, f++) {
+        f->unk_00 = id = func_8010B688_241568_SlotCarDerby(obj->work[0], 0x11);
+        if (id == -1) {
+            continue;
+        }
+        f->unk_04 = ((rand8() << 8) | rand8()) % 360;
+        f->unk_06 = 0;
+        f->unk_0C.x = D_8010FBAC_245A8C_SlotCarDerby[i].x * 10.0;
+        f->unk_0C.y = D_8010FBAC_245A8C_SlotCarDerby[i].y * 10.0;
+        f->unk_0C.z = D_8010FBAC_245A8C_SlotCarDerby[i].z * 10.0;
+        if (D_8010FB0C_2459EC_SlotCarDerby == 2 && i == 3) {
+            f->unk_0C.z += 40.0;
+        }
+        f->unk_08 = ((f32)(u8)(rand8() % 100) * 0.01 * 3.0 + 3.0) * 0.5;
+        func_8010C954_242834_SlotCarDerby(id, f->unk_0C.x, f->unk_0C.y, f->unk_0C.z);
+        func_8010C9F4_2428D4_SlotCarDerby(id, 0.0f, 0.0f, 0.0f);
+        func_8010C9A4_242884_SlotCarDerby(id, 10.0f, 10.0f, 1.0f);
+        func_8010C8D4_2427B4_SlotCarDerby(id, 0);
+        func_8010CAD0_2429B0_SlotCarDerby(id, 0xFF, 0xFF, 0xFF, 0xFF);
+    }
+    obj->func_ptr = func_8010AC5C_240B3C_SlotCarDerby;
+}
+
+void func_8010A190_240070_SlotCarDerby(omObjData* obj) {
+    SCDObj* rec = func_8010B0B8_240F98_SlotCarDerby(obj);
+
+    switch (D_8010FB00_2459E0_SlotCarDerby) {
+        case 0:
+        case 1:
+        case 5:
+            if (rec->unk_00 == 0) {
+                D_80110960_246840_SlotCarDerby[0] = obj->model[2];
+                D_80110960_246840_SlotCarDerby[1] = obj->model[3];
+                func_80019B9C_1A79C(obj, 1);
+                if (D_8010FB1C_2459FC_SlotCarDerby == 0) {
+                    func_800298A4_2A4A4(obj->model[1], 4, 0);
+                }
+                D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
+                D_800FC834_FD434[obj->model[1]].unk44 = 0.0f;
+                rec->unk_02 = 4;
+                rec->unk_40[0] = 0;
+                rec->unk_40[1] = 0;
+                rec->unk_00 = 1;
+            }
+            break;
+        case 2:
+            if (rec->unk_02 & 4) {
+                if (rec->unk_08 != 0) {
+                    if (rec->unk_08 >= 150) {
+                        func_80019B9C_1A79C(obj, 0);
+                        func_800298A4_2A4A4(obj->model[1], 4, 4);
+                        rec->unk_02 = 2;
+                        rec->unk_08 = 0;
+                        rec->unk_00 = 0;
+                        break;
+                    }
+                } else {
+                    D_800FC834_FD434[obj->model[0]].unk44 = 1.0f;
+                    D_800FC834_FD434[obj->model[1]].unk44 = 1.0f;
+                    rec->unk_40[0] = 0;
+                    rec->unk_40[1] = 0;
+                }
+                if ((func_80078EA8_79AA8() + D_80102720_103320) == 0 && D_8010FB04_2459E4_SlotCarDerby == 0) {
+                    rec->unk_08++;
+                }
+            }
+            if (D_8010FB04_2459E4_SlotCarDerby == 0) {
+                break;
+            }
+        case 3:
+        case 4:
+            if (D_8010FBF4_245AD4_SlotCarDerby == 1) {
+                if (func_80069538_6A138() == 0) {
+                    func_800691FC_69DFC(14);
+                    D_8010FBF4_245AD4_SlotCarDerby = 2;
+                    D_801109D0_2468B0_SlotCarDerby = 1;
+                }
+            } else if (rec->unk_00 == 0) {
+                rec->unk_02 = 4;
+                func_80019B9C_1A79C(obj, 1);
+                if (D_8010FB1C_2459FC_SlotCarDerby == 0) {
+                    func_800298A4_2A4A4(obj->model[1], 4, 0);
+                }
+                func_80029C74_2A874(obj->model[0], 0.0f);
+                func_80029C74_2A874(obj->model[1], 0.0f);
+                rec->unk_08 = 0;
+                rec->unk_40[0] = 0;
+                rec->unk_40[1] = 0;
+                rec->unk_00 = 1;
+                if (D_8010FB18_2459F8_SlotCarDerby != 0) {
+                    func_800691FC_69DFC(20);
+                    D_8010FBF4_245AD4_SlotCarDerby = 1;
+                    GWMgRecordSet((s16)D_8010FBE8_245AC8_SlotCarDerby[D_8010FB0C_2459EC_SlotCarDerby],
+                                  (u16)D_8010FB10_2459F0_SlotCarDerby);
+                } else {
+                    func_800691FC_69DFC(20);
+                    D_801109D0_2468B0_SlotCarDerby = 1;
+                }
+            }
+            break;
+        case 6:
+            break;
+    }
+    if ((s16)rec->unk_02 == 4) {
+        func_8002A15C_2AD5C(obj->model[1], (s16)D_80110960_246840_SlotCarDerby[rec->unk_40[0]],
+                            1.0f - HuMathSin(rec->unk_40[1]));
+        if ((func_80078EA8_79AA8() + D_80102720_103320) == 0) {
+            rec->unk_40[1] += 6;
+        }
+        if (rec->unk_40[1] >= 180) {
+            rec->unk_40[0] ^= 1;
+            rec->unk_40[1] = 0;
+        }
+    }
+    func_80019378_19F78(obj);
+}
+
+/* The time board: the start countdown lights (state 1), the race clock digits (state 2: one
+   tick a frame, three ticks a tenth; the last digit flickers at random until 5:00), the final
+   digit (states 3, 7, 8). */
+// scheduling: one sll of the bank argument after the ternary's join (masked 1)
+#ifdef NON_MATCHING
+void func_8010A55C_24043C_SlotCarDerby(omObjData* obj) {
+    SCDObj* rec = func_8010B0B8_240F98_SlotCarDerby(obj);
+    s32 i;
+    s32 d;
+
+    switch (D_8010FB00_2459E0_SlotCarDerby) {
+        case 1:
+            if (++rec->unk_08 >= D_8010FBF8_245AD8_SlotCarDerby[rec->unk_00]) {
+                if (rec->unk_00 >= 5) {
+                    rec->unk_00 = 5;
+                    rec->unk_08 = 0;
+                } else {
+                    rec->unk_08 = 0;
+                    rec->unk_00++;
+                    for (i = 0; i < 4; i++) {
+                        func_800298A4_2A4A4(obj->model[i], 4, 4);
+                    }
+                    switch (rec->unk_00) {
+                        case 1:
+                            func_800298A4_2A4A4(obj->model[0], 4, 0);
+                            break;
+                        case 2:
+                        case 3:
+                            func_800298A4_2A4A4(obj->model[1], 4, 0);
+                            break;
+                        case 4:
+                            func_800298A4_2A4A4(obj->model[2], 4, 0);
+                            break;
+                        case 5:
+                        default:
+                            func_800298A4_2A4A4(obj->model[3], 4, 0);
+                            break;
+                    }
+                }
+            }
+            break;
+        case 2:
+            if (rec->unk_00 == 5) {
+                rec->unk_00 = 0;
+                rec->unk_08 = 0;
+            }
+            if (D_8010FB04_2459E4_SlotCarDerby == 0 && D_8010FC10_245AF0_SlotCarDerby[0] != 5) {
+                D_8010FB10_2459F0_SlotCarDerby++;
+                D_8010FC10_245AF0_SlotCarDerby[4]++;
+            }
+            i = 0;
+            if (D_8010FC10_245AF0_SlotCarDerby[4] >= 3) {
+                D_8010FC10_245AF0_SlotCarDerby[4] = 0;
+                if (++D_8010FC10_245AF0_SlotCarDerby[3] >= 10) {
+                    D_8010FC10_245AF0_SlotCarDerby[3] = 0;
+                    if (++D_8010FC10_245AF0_SlotCarDerby[2] >= 10) {
+                        D_8010FC10_245AF0_SlotCarDerby[2] = 0;
+                        if (++D_8010FC10_245AF0_SlotCarDerby[1] >= 6) {
+                            D_8010FC10_245AF0_SlotCarDerby[1] = 0;
+                            D_8010FC10_245AF0_SlotCarDerby[0]++;
+                        }
+                    }
+                }
+            }
+            do {
+                if (i == 4) {
+                    SprBankSet((s16)D_80110970_246850_SlotCarDerby, i,
+                               d = D_8010FC10_245AF0_SlotCarDerby[0] == 5
+                                       ? 0
+                                       : (u8)(rand8() % 3) + D_8010FC10_245AF0_SlotCarDerby[4] * 3);
+                } else {
+                    SprBankSet((s16)D_80110970_246850_SlotCarDerby, i, (s16)D_8010FC10_245AF0_SlotCarDerby[i]);
+                }
+                i++;
+            } while (i < 5);
+            break;
+        case 4:
+        case 5:
+        case 6:
+            break;
+        case 3:
+        case 7:
+        case 8:
+            if (D_8010FB10_2459F0_SlotCarDerby == D_8010FB14_2459F4_SlotCarDerby) {
+                SprBankSet((s16)D_80110970_246850_SlotCarDerby, 4, d = D_8010FC10_245AF0_SlotCarDerby[4] * 3 + 1);
+            } else if (D_8010FB10_2459F0_SlotCarDerby < D_8010FB14_2459F4_SlotCarDerby) {
+                SprBankSet((s16)D_80110970_246850_SlotCarDerby, 4, d = D_8010FC10_245AF0_SlotCarDerby[4] * 3);
+            }
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A55C_24043C_SlotCarDerby);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A8CC_2407AC_SlotCarDerby);
 

@@ -316,7 +316,7 @@ s16 SprAnimRead(void*);
 s16 SprCreate(s32 num, s32 attr);
 void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
-void SprBankSet(s16 group, s16 member, u16 bank);
+void SprBankSet(s16 group, s16 member, s16 bank); /* u16 in main; this overlay passes it sign-extended (lh) */
 void func_80082488_83088(s16 group, s16 member, u16 alpha);
 void SprAttrSet(s16 group, s16 member, s32 flag);
 void SprPosSet(s16 group, s16 member, s16 x, s16 y);
@@ -428,6 +428,25 @@ void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_8002A00C_2AC0C(s16);
 void func_80029E80_2AA80(s16, s32, s32);
+u16 func_80078EA8_79AA8(void);
+s32 func_80069538_6A138(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+void func_80029C74_2A874(s16, f32);
+void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t); /* MP1 func_80026174: blend two models */
+void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
+HuSprite_Unk84_Struct* SprAnimGet(s16 animIdx);
+void GWMgRecordSet(s16 index, u16 value);
+extern u8 D_80102720_103320; /* board.h */
+
+/* A floating billboard D_80110978[5] (80109EC0, 8010AC5C): new in MP2. No pointers. */
+typedef struct SCDFloater {
+    /* 0x00 */ s16 unk_00; /* billboard, -1 none */
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ s16 unk_04; /* bob angle (degrees) */
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ f32 unk_08; /* bob speed */
+    /* 0x0C */ Vec unk_0C; /* position */
+} SCDFloater; /* size = 0x18 */
 
 /* 23F020.c's .data (MP1 name in the comment) */
 extern s32 D_8010FB00_2459E0_SlotCarDerby;      /* MP1 D_80100EA0: scenery state (func_80109140) */
@@ -443,13 +462,21 @@ extern Vec D_8010FB44_245A24_SlotCarDerby[3];   /* MP1 D_80100F00: [course] time
 extern s32 D_8010FB68_245A48_SlotCarDerby[7];   /* MP1 D_80100F18: time digit x */
 extern s32 D_8010FB84_245A64_SlotCarDerby[7];   /* MP1 D_80100F34: record time digits (banks) */
 extern s32 D_8010FBA0_245A80_SlotCarDerby[3];   /* [course] record index */
+extern Vec D_8010FBAC_245A8C_SlotCarDerby[5];   /* floater positions / 10 */
+extern s32 D_8010FBE8_245AC8_SlotCarDerby[3];   /* [course] record index (GWMgRecordSet) */
+extern s32 D_8010FBF4_245AD4_SlotCarDerby;      /* 1: new-record message up, 2: done */
+extern s32 D_8010FBF8_245AD8_SlotCarDerby[6];   /* MP1 D_80100F58: countdown frames per step */
+extern s32 D_8010FC10_245AF0_SlotCarDerby[6];   /* MP1 D_80100F70: race time digits */
 
 /* 23F020.c's .bss */
 extern SCDObj* D_80110968_246848_SlotCarDerby;  /* MP1 D_80102468: 16 scenery records */
-extern SCDObj* D_8011096C_24684C_SlotCarDerby;  /* MP1 D_8010246C: 8 time-board digit records */
+extern SCDFx* D_8011096C_24684C_SlotCarDerby;   /* MP1 D_80102470: 32 effects */
 extern s32 D_80110970_246850_SlotCarDerby;      /* MP1 D_80102474: digit sprite group (s16 in +2) */
 extern s32 D_80110974_246854_SlotCarDerby;      /* MP1 D_80102478: colon sprite group (s16 in +2) */
-extern SCDFx* D_80110978_246858_SlotCarDerby;   /* MP1 D_80102470: 32 effects */
-extern s32 D_801109D0_2468B0_SlotCarDerby;
+extern SCDFloater* D_80110978_246858_SlotCarDerby; /* 5 floating billboards (80109EC0) */
+extern s32 D_801109D0_2468B0_SlotCarDerby;      /* 1: the end message is up (8010A190) */
+extern s32 D_80110960_246840_SlotCarDerby[2];   /* MP1 D_80102460: the board's two blend models */
+extern s32 D_80110980_246860_SlotCarDerby[3];   /* MP1 D_8010247C: effect sprites by SCDFx type */
+extern s32 D_8011098C_24686C_SlotCarDerby;      /* MP1 D_80102488: effect sprite group (s16 in +2) */
 
 #endif
