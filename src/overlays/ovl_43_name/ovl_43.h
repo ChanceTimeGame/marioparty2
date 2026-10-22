@@ -408,9 +408,9 @@ void func_80106898_2CBD88_name_43(s32 arg0);
 void func_8010693C_2CBE2C_name_43(s32 arg0);
 void func_801069A8_2CBE98_name_43(void);
 void func_80106A20_2CBF10_name_43(void);
-void func_80106A5C_2CBF4C_name_43(void);
+void func_80106A5C_2CBF4C_name_43(s16 arg0);
 void func_80106BEC_2CC0DC_name_43(void);
-void func_80106C4C_2CC13C_name_43(void);
+void func_80106C4C_2CC13C_name_43(s16 arg0);
 void func_80106DD8_2CC2C8_name_43(void);
 void func_80106E38_2CC328_name_43(void);
 void func_80106F50_2CC440_name_43(void);
@@ -467,12 +467,12 @@ void func_8010F23C_2D472C_name_43(void);
 void func_8010F26C_2D475C_name_43(void);
 void func_8010F2B4_2D47A4_name_43(void);
 s32 func_8010F32C_2D481C_name_43(void);
-void func_8010F548_2D4A38_name_43(void);
+s32 func_8010F548_2D4A38_name_43(s32 arg0); /* 43 (169B0 func_80016A44-like) */
 void func_8010FAD0_2D4FC0_name_43(void);
 void func_8010FAEC_2D4FDC_name_43(void);
 void func_8010FB08_2D4FF8_name_43(void);
 void func_8010FB24_2D5014_name_43(void);
-void func_8010FD0C_2D51FC_name_43(void);
+s32 func_8010FD0C_2D51FC_name_43(s32 arg0);
 void func_8010FD8C_2D527C_name_43(void);
 void func_8010FDA8_2D5298_name_43(void);
 void func_8010FDC4_2D52B4_name_43(void);
@@ -480,7 +480,7 @@ void func_8010FDE0_2D52D0_name_43(void);
 void func_8011081C_2D5D0C_name_43(void);
 void func_801109A4_2D5E94_name_43(void);
 s32 func_80110CCC_2D61BC_name_43(s32 arg0);
-void func_80110F2C_2D641C_name_43(void);
+s32 func_80110F2C_2D641C_name_43(s32 arg0);
 void func_801114F0_2D69E0_name_43(void);
 void func_8011150C_2D69FC_name_43(void);
 void func_80111528_2D6A18_name_43(void);
@@ -580,5 +580,19 @@ extern s8 D_80114148_2D9638_name_43[][5]; /* shop items, -1 none */
 extern u32 D_8011416C_2D965C_name_43[]; /* shop messages */
 extern s32 D_80115480_2DA970_name_43;
 extern u8* D_80115484_2DA974_name_43;
+
+/* ---- 43-A: data the twins use that 3E's header names differently ---- */
+extern MBModel* D_80115464_2DA954_name_43;
+extern MBModel* D_80115468_2DA958_name_43[3]; /* 43: three */
+extern MBModel* D_80115474_2DA964_name_43;
+extern MBModel* D_80115478_2DA968_name_43[2];
+extern DecisionTreeNonLeafNode D_80113D7C_2D926C_name_43[];
+extern DecisionTreeNonLeafNode D_80113DC4_2D92B4_name_43[];
+extern DecisionTreeNonLeafNode D_80113F2C_2D941C_name_43[];
+extern DecisionTreeNonLeafNode D_80113F5C_2D944C_name_43[];
+extern s16 D_80113FC8_2D94B8_name_43[]; /* direction prompt choices */
+extern s16 D_80113FE0_2D94D0_name_43[]; /* direction prompt choices */
+extern DecisionTreeNonLeafNode D_801145EC_2D9ADC_name_43[];
+extern DecisionTreeNonLeafNode D_80114620_2D9B10_name_43[];
 
 #endif
