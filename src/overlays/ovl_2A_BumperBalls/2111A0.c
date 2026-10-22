@@ -411,7 +411,163 @@ void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801035AC_211F4C_BumperBalls);
 #endif
 
+/* float registers of the turn-step clamp (diff in f2, not f4; retail reloads 360 - diff), as in
+   MP1's NON_MATCHING func_800F74E8; everything after it matches */
+#ifdef NON_MATCHING
+void func_80103D68_212708_BumperBalls(omObjData* object) {
+    BumperBallsWork* work;
+    s8 stickX;
+    s8 stickY;
+    s16 port;
+    f32 diff;
+    f32 step;
+    f32 speed;
+    f32 height;
+    f32 dx;
+    f32 dz;
+
+    work = object->unk_50;
+    if (D_8010A562_218F02_BumperBalls != 1) {
+        return;
+    }
+    port = gPlayers[work->player].port;
+    if (!(gPlayers[work->player].flags & 1)) {
+        stickX = ContStkX[port];
+        stickY = ContStkY[port];
+    } else {
+        if (work->unk_50 == 0) {
+            func_80107254_215BF4_BumperBalls(object);
+        }
+        func_80107868_216208_BumperBalls(object, &stickX, &stickY);
+    }
+    if (stickX != 0 || stickY != 0) {
+        diff = func_800B75A8_B81A8(stickX, -stickY);
+        if (diff < 0.0f) {
+            diff += 360.0f;
+        }
+        work->unk_14 = diff;
+    }
+    if (work->unk_0C != work->unk_14) {
+        diff = work->unk_14 - work->unk_0C;
+        if (diff < 0.0f) {
+            diff += 360.0f;
+        }
+        if (diff < 180.0f) {
+            work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
+        } else {
+            if (360.0f - diff > 30.0f) {
+                step = 30.0f;
+            } else {
+                step = 360.0f - diff;
+            }
+            work->unk_0C = work->unk_0C - step;
+        }
+        if (work->unk_0C < 0.0f) {
+            work->unk_0C += 360.0f;
+        }
+        if (work->unk_0C >= 360.0f) {
+            work->unk_0C -= 360.0f;
+        }
+        omSetRot(object, object->rot.x, work->unk_0C, object->rot.z);
+        work->unk_34 = work->unk_0C;
+        func_8002979C_2A39C(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    }
+    speed = func_800B1830_B2430(stickX * stickX + stickY * stickY) / 100.0f;
+    if (work->unk_42 == 0x900) {
+        speed *= 0.5f;
+    }
+    work->unk_24 = HuMathSin(work->unk_0C) * speed + work->unk_24;
+    work->unk_2C = func_800B7890_B8490(work->unk_0C) * speed + work->unk_2C;
+    if (work->unk_42 == 0x200) {
+        work->unk_24 *= 0.96f;
+    } else {
+        work->unk_24 *= 0.998f;
+    }
+    if (fabs(work->unk_24) < 0.01f) {
+        work->unk_24 = 0.0f;
+    }
+    if (work->unk_42 == 0x200) {
+        work->unk_2C *= 0.96f;
+    } else {
+        work->unk_2C *= 0.998f;
+    }
+    if (fabs(work->unk_2C) < 0.01f) {
+        work->unk_2C = 0.0f;
+    }
+    work->unk_24 += work->unk_44;
+    work->unk_2C += work->unk_4C;
+    height = func_80106C88_215628_BumperBalls(&work->unk_42, &work->unk_44, object->trans.x, object->trans.y + -100.0f, object->trans.z);
+    if (height < 120.0f) {
+        func_801046B8_213058_BumperBalls(object);
+        return;
+    }
+    if (height < object->trans.y + -100.0f) {
+        object->trans.y = object->trans.y - 10.0f;
+    }
+    if (object->trans.y + -100.0f < height) {
+        object->trans.y = height - -100.0f;
+    }
+    if (func_801067D8_215178_BumperBalls(object) == 1) {
+        work->unk_50 = 0;
+    }
+    if (work->unk_2C != 0.0f || work->unk_24 != 0.0f) {
+        work->unk_30 = work->unk_30
+            - (f32) (func_800B1830_B2430(work->unk_24 * work->unk_24 + work->unk_2C * work->unk_2C) / -50.0f
+                     / 3.141592653589793 * 180.0);
+        if (work->unk_30 >= 360.0f) {
+            work->unk_30 -= 360.0f;
+        }
+        if (work->unk_30 < 0.0f) {
+            work->unk_30 += 360.0f;
+        }
+    }
+    if (fabs(work->unk_2C) + fabs(work->unk_24) > 8.0) {
+        if (work->unk_00 != 2) {
+            work->unk_00 = 2;
+            func_80029BF0_2A7F0(object->model[0], func_80029E14_2AA14(object->motion[2]), 0, 0xA, 2);
+            func_80029E80_2AA80(object->model[0], 6, 6);
+        }
+    } else if (fabs(work->unk_2C) + fabs(work->unk_24) > 1.0 || stickX != 0 || stickY != 0) {
+        if (work->unk_00 != 1) {
+            work->unk_00 = 1;
+            func_80029BF0_2A7F0(object->model[0], func_80029E14_2AA14(object->motion[1]), 0, 0xA, 2);
+            func_80029E80_2AA80(object->model[0], 6, 6);
+        }
+    } else if (work->unk_00 == 1 || work->unk_00 == 2) {
+        work->unk_00 = 0;
+        func_80029BF0_2A7F0(object->model[0], func_80029E14_2AA14(object->motion[0]), 0, 0x1E, 2);
+    }
+    if (work->unk_3C == 0) {
+        if (fabs(work->unk_2C) + fabs(work->unk_24) > 8.0) {
+            func_801054DC_213E7C_BumperBalls(object);
+            work->unk_3C = 3;
+        }
+    } else {
+        work->unk_3C--;
+    }
+    if (fabs(work->unk_14 - work->unk_10) > 90.0) {
+        dx = HuMathSin(work->unk_10) * 18.0f;
+        dz = func_800B7890_B8490(work->unk_10) * 18.0f;
+        func_800298A4_2A4A4(object->model[5], 4, 0);
+        func_80029714_2A314(object->model[5], dx + object->trans.x, 120.0f, dz + object->trans.z);
+        func_8002979C_2A39C(object->model[5], object->rot.x, object->rot.y, 0.0f);
+        if (D_800FC834_FD434[object->model[5]].hmf->unk9C != NULL) {
+            D_800FC834_FD434[object->model[5]].hmf->unk9C->unk08 = 0;
+        }
+        func_80029C74_2A874(object->model[5], 0.0f);
+    }
+    omSetTra(object, object->trans.x + work->unk_24, object->trans.y, object->trans.z + work->unk_2C);
+    func_80029714_2A314(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+    func_8002979C_2A39C(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    func_80029714_2A314(object->model[1], object->trans.x, height, object->trans.z);
+    work->unk_10 = work->unk_0C;
+    if (D_8010A272_218C12_BumperBalls == 0) {
+        func_80109D80_218720_BumperBalls(object);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103D68_212708_BumperBalls);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801046B8_213058_BumperBalls);
 

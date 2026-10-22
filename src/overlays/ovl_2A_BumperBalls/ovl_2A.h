@@ -8,6 +8,7 @@
 #include "common.h"
 #include "game/object.h"
 #include "game/sprite.h"
+#include "game/hmfman.h"
 
 /* ---- main-segment API used by 2A ---- */
 
@@ -53,6 +54,17 @@ void func_80029E80_2AA80(s16, s32, s32);
 void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
 void func_8003C8E0_3D4E0(s16);
 f32 func_800B75A8_B81A8(f32, f32); /* atan2 */
+f32 func_800B1830_B2430(f32); /* sqrtf */
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+f64 fabs(f64);
+s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
+void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4); /* model motion blend */
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029C74_2A874(s16 arg0, f32 arg1);
+
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 void func_80026D50_27950(s16 arg0, u8 arg1, u8 arg2);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -113,7 +125,7 @@ typedef struct BumperBallsWork {
     /* 0x3C */ u16 unk_3C;
     /* 0x3E */ u16 unk_3E;
     /* 0x40 */ u8 unk_40[2];
-    /* 0x42 */ u16 unk_42; /* 0x200 at start */
+    /* 0x42 */ s16 unk_42; /* ground surface (func_80106C88): 0x200 at start, 0x900 slows the ball */
     /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
@@ -219,7 +231,7 @@ void func_80105FB0_214950_BumperBalls(omObjData* arg0);
 void func_80106730_2150D0_BumperBalls(omObjData* arg0);
 u16 func_801067D8_215178_BumperBalls(omObjData* arg0);
 void func_80106AD8_215478_BumperBalls(f32 arg0, u16 arg1);
-f32 func_80106C88_215628_BumperBalls(s16* arg0, void* arg1, f32 arg2, f32 arg3, f32 arg4);
+f32 func_80106C88_215628_BumperBalls(s16* surface, f32* push, f32 x, f32 y, f32 z); /* ground height under (x, z) */
 u16 func_80106E94_215834_BumperBalls(omObjData* arg0);
 s32 func_80106FCC_21596C_BumperBalls(s32 arg0, u16* arg1, void* arg2, void* arg3);
 s32 func_80106FEC_21598C_BumperBalls(void* arg0, u16* arg1, void* arg2);
