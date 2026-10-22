@@ -922,57 +922,894 @@ void func_80104CD0_21B0C0_BombsAway(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80104CD0_21B0C0_BombsAway);
 #endif
 
+/* A player's scripted states (MP1 func_800F8D48): 3 stunned, 5 falling into the sea and swept
+   back to the edge, 6 out, 7 placed for the results, 9 thrown by a blast. New in MP2: the splash
+   voice plays once (unk_42), and the results no longer add 10 coins.
+   NON_MATCHING: only KMC's mul-fix nop after the cos and sin calls in case 9 (retail has none). */
+#ifdef NON_MATCHING
+void func_801055FC_21B9EC_BombsAway(omObjData* obj) {
+    Vec d;
+    Vec pos;
+    Vec vel;
+    Matrix4f m1;
+    Matrix4f m2;
+    BaPlayer* p;
+    f32 ang;
+    f32 t;
+    s16 n;
+
+    p = func_80104058_21A448_BombsAway(obj);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    vel.x = p->unk_0C;
+    vel.y = p->unk_10;
+    vel.z = p->unk_14;
+    switch (p->unk_02) {
+        case 0:
+            func_801040A0_21A490_BombsAway(obj, 0);
+            if (p->unk_46 >= 0) {
+                func_80079848_7A448(p->unk_46);
+            }
+            p->unk_46 = -1;
+            break;
+        case 3:
+            if (p->unk_3C == 0) {
+                p->unk_3A = 0;
+                p->unk_3C++;
+                omVibrate(p->unk_06, 20, 0, 20);
+            }
+            func_801040A0_21A490_BombsAway(obj, 11);
+            vel.x = vel.z = 0.0f;
+            vel.y = -20.0f;
+            if (p->unk_3A >= 16) {
+                p->unk_05 = 0;
+                p->unk_02 = 0;
+                if (p->unk_46 >= 0) {
+                    func_80079848_7A448(p->unk_46);
+                }
+                p->unk_46 = -1;
+            }
+            break;
+        case 5:
+            ang = func_80106D78_21D168_BombsAway(&pos);
+            d.x = func_800B7890_B8490(ang) * 5.5 * 100.0 + D_8010DB60_223F50_BombsAway.x - pos.x;
+            d.z = HuMathSin(ang) * 4.5 * 100.0 + D_8010DB60_223F50_BombsAway.z - pos.z;
+            func_80108A4C_21EE3C_BombsAway(d.x, d.z);
+            sqrtf(d.x * d.x + d.z * d.z);
+            switch (p->unk_3C) {
+                case 0:
+                    p->unk_00 |= 8;
+                    vel.y = p->unk_30 = -5.0f;
+                    vel.x = vel.z = 0.0f;
+                    D_8010DB14_223F04_BombsAway--;
+                    p->unk_00 |= 2;
+                    if (p->unk_46 >= 0) {
+                        func_80079848_7A448(p->unk_46);
+                    }
+                    p->unk_46 = -1;
+                    p->unk_3E = 0;
+                    p->unk_3A = 0;
+                    p->unk_3C++;
+                    break;
+                case 1:
+                    func_801040A0_21A490_BombsAway(obj, 16);
+                    if (p->unk_3E == 0 && pos.y < 0.0) {
+                        if (p->unk_42 == 0) {
+                            func_80108E98_21F288_BombsAway(func_800797DC_7A3DC(0x111, p->unk_06), &pos);
+                            p->unk_42 = 1;
+                        }
+                        func_8010A198_220588_BombsAway(pos.x, pos.y, pos.z, 0.75f);
+                        p->unk_00 |= 0x10;
+                        if (D_8010D948_223D38_BombsAway != 0 && gPlayers[p->unk_06].group == 0) {
+                            D_8010D94A_223D3A_BombsAway = 1;
+                        }
+                        p->unk_3E++;
+                    }
+                    if (vel.y > -50.0) {
+                        vel.y += p->unk_30;
+                    }
+                    ang = (f32)p->unk_3A / 15.0;
+                    if (ang > 1.0) {
+                        ang = 1.0f;
+                    }
+                    vel.x = d.x * 0.1 * ang;
+                    vel.z = d.z * 0.1 * ang;
+                    if (pos.y < -100.0) {
+                        p->unk_3C++;
+                    }
+                    break;
+                case 2:
+                    func_801040A0_21A490_BombsAway(obj, 16);
+                    if (pos.y + vel.y > -50.0) {
+                        pos.y = -50.0f;
+                        vel.y = 0.0f;
+                        p->unk_3C++;
+                        func_80107A34_21DE24_BombsAway(obj);
+                    } else {
+                        vel.y -= p->unk_30;
+                    }
+                    ang = (f32)p->unk_3A / 15.0;
+                    if (ang > 1.0) {
+                        ang = 1.0f;
+                    }
+                    vel.x = d.x * 0.1 * ang;
+                    vel.z = d.z * 0.1 * ang;
+                    break;
+                case 3:
+                case 4:
+                    vel.x = d.x * 0.1;
+                    vel.z = d.z * 0.1;
+                    vel.y = 0.0f;
+                    pos.y = -50.0f;
+                    if (p->unk_3C == 4) {
+                        vel.x = vel.z = vel.y;
+                        p->unk_02 = 6;
+                        func_801040A0_21A490_BombsAway(obj, 15);
+                        guMtxIdentF((f32(*)[4])D_800FC834_FD434[obj->model[0]].mtx);
+                        p->unk_3C = 0;
+                    }
+                    break;
+            }
+            pos.x += vel.x;
+            pos.y += vel.y;
+            pos.z += vel.z;
+            if (p->unk_3C >= 3) {
+                func_80104198_21A588_BombsAway(obj, 15, 16);
+            }
+            break;
+        case 6:
+            if (p->unk_3C != 0) {
+                D_800FC834_FD434[obj->model[0]].unk03 |= 1;
+                func_800298A4_2A4A4(obj->model[0], 4, 4);
+            }
+            func_80104198_21A588_BombsAway(obj, 15, 16);
+            break;
+        case 7:
+            if (p->unk_46 >= 0) {
+                func_80079848_7A448(p->unk_46);
+            }
+            p->unk_46 = -1;
+            func_80107060_21D450_BombsAway(&obj->trans, &obj->trans);
+            obj->rot.y = 0.0f;
+            guMtxIdentF((f32(*)[4])D_800FC834_FD434[obj->model[0]].mtx);
+            vel.x = vel.y = vel.z = 0.0f;
+            D_800FC834_FD434[obj->model[1]].pos.y = obj->trans.y;
+            if (D_8010D940_223D30_BombsAway.unk_00 != 3) {
+                func_801040A0_21A490_BombsAway(obj, 0);
+            } else if (D_8010D948_223D38_BombsAway == 0) {
+                func_801040A0_21A490_BombsAway(obj, 13);
+                p->unk_44 = 0;
+            } else {
+                func_801040A0_21A490_BombsAway(obj, 0);
+                p->unk_44 = 0;
+            }
+            break;
+        case 9:
+            if (p->unk_3C == 0) {
+                p->unk_00 |= 2;
+                func_801040A0_21A490_BombsAway(obj, 11);
+                if (p->unk_46 >= 0) {
+                    func_80079848_7A448(p->unk_46);
+                }
+                p->unk_46 = -1;
+                ang = func_80106D78_21D168_BombsAway(&pos);
+                t = (600.0 - func_80106DB0_21D1A0_BombsAway(&pos)) / 30.0;
+                vel.x = func_800B7890_B8490(ang) * t;
+                vel.y = 60.0f;
+                vel.z = HuMathSin(ang) * t;
+                p->unk_30 = -4.0f;
+                p->unk_3E = ang;
+                p->unk_3C++;
+                p->unk_3A = 0;
+                func_80108E98_21F288_BombsAway(func_800797DC_7A3DC(0x111, p->unk_06), &pos);
+                p->unk_42 = 1;
+                omVibrate(p->unk_06, 30, 0, 30);
+                if (D_8010DEB4_2242A4_BombsAway == 0) {
+                    func_80079798_7A398(0x290, p->unk_06);
+                    D_8010DEB4_2242A4_BombsAway = 10;
+                }
+            }
+            vel.y += p->unk_30;
+            pos.x += vel.x;
+            pos.y += vel.y;
+            pos.z += vel.z;
+            n = p->unk_3A;
+            if (n >= 7) {
+                p->unk_3A = n - 6;
+            }
+            func_800B37C0_B43C0(m1);
+            func_800B1CC0_B28C0(m1, p->unk_3A * 60.0f, 0.0f, 1.0f, 0.0f);
+            m1[3][3] = 1.0f;
+            func_80108ACC_21EEBC_BombsAway(&vel, &d);
+            func_800B37C0_B43C0(m2);
+            func_800B2060_B2C60(m2, d.x + 90.0f, d.y, d.z);
+            m2[3][3] = 1.0f;
+            func_800B6410_B7010(m1, m2, m2);
+            func_80108B54_21EF44_BombsAway(m2, &d);
+            obj->rot.x = d.x;
+            obj->rot.y = d.y;
+            obj->rot.z = d.z;
+            if (vel.y < 0.0 && pos.y < -50.0) {
+                p->unk_02 = 5;
+                p->unk_3C = 0;
+                obj->rot.x = obj->rot.z = 0.0f;
+            }
+            break;
+    }
+    p->unk_18 = pos.x - obj->trans.x;
+    p->unk_1C = pos.y - obj->trans.y;
+    p->unk_20 = pos.z - obj->trans.z;
+    p->unk_0C = vel.x;
+    p->unk_10 = vel.y;
+    p->unk_14 = vel.z;
+    obj->trans.x = pos.x;
+    obj->trans.y = pos.y;
+    obj->trans.z = pos.z;
+    p->unk_3A++;
+    func_80019378_19F78(obj);
+    func_80019644_1A244(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801055FC_21B9EC_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801060C8_21C4B8_BombsAway);
+/* The platform object's setup (MP1 func_800F9824). */
+void func_801060C8_21C4B8_BombsAway(omObjData* obj) {
+    u8* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106228_21C618_BombsAway);
+    obj->func_ptr = func_80106228_21C618_BombsAway;
+    obj->model[0] = func_80018A30_19630(0x3B0002, 0x99);
+    D_8010DB60_223F50_BombsAway.x = obj->trans.x = 0.0f;
+    D_8010DB64_223F54_BombsAway = obj->trans.y = -20.0f;
+    D_8010DB68_223F58_BombsAway = obj->trans.z = 670.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    D_8010DB58_223F48_BombsAway = 160.0f;
+    D_8010DB5C_223F4C_BombsAway = 0.8f;
+    obj->unk_50 = w = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    w[3] = 1;
+    w[4] = 0;
+    func_8000BF24_CB24(obj, 0.0f, -2000.0f, -2000.0f, 2000.0f, 2000.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106D78_21D168_BombsAway);
+/* The platform's update (MP1 func_800F997C): it slides in at the start, tilts towards the weight
+   of the players on it (func_8010770C adds them), bobs and wobbles, shakes after a hit, then
+   rebuilds its matrix, inverse and surface plane. New in MP2: it stops at z 70 (MP1 100), and a
+   hit strength above 1 decays twice as fast. */
+void func_80106228_21C618_BombsAway(omObjData* obj) {
+    Matrix4f m;
+    f32 p0[3];
+    f32 p1[3];
+    f32 p2[3];
+    f32 out[3];
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    f32 sx;
+    f32 sz;
+    f32 a;
+    f32 t;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106DB0_21D1A0_BombsAway);
+    if (D_8010D940_223D30_BombsAway.unk_00 == 0 && D_8010D940_223D30_BombsAway.unk_04 >= 61) {
+        if (D_8010DB68_223F58_BombsAway > 70.0) {
+            D_8010DB68_223F58_BombsAway = obj->trans.z = D_8010DB68_223F58_BombsAway - 10.0;
+        }
+    }
+    if (s->unk_130 != 0) {
+        sx = sz = 0.0f;
+        for (i = 0; i < s->unk_130; i++) {
+            /* Retail adds the weight's z where the plane's c * z belongs. */
+            func_801088FC_21ECEC_BombsAway(s->unk_90, s->unk_134[i].unk_00,
+                                           -(s->unk_110[0] * s->unk_134[i].unk_00 + s->unk_110[2] +
+                                             s->unk_134[i].unk_08 - s->unk_110[3]) /
+                                               s->unk_110[1],
+                                           s->unk_134[i].unk_08, out);
+            t = s->unk_134[i].unk_04 / 4.0;
+            sx += t * out[0];
+            sz += t * out[2];
+        }
+        t = func_80108A4C_21EE3C_BombsAway(sx, sz) + 90.0;
+        t -= (s32)(t / 360.0f) * 360;
+        if (t < 0.0) {
+            t += 360.0;
+        }
+        t -= s->unk_0C;
+        if (t >= 0.0f) {
+            if (t > 180.0) {
+                t -= 360.0;
+            }
+        } else if (t < -180.0) {
+            t += 360.0;
+        }
+        t = s->unk_0C + t * 0.2;
+        if (t >= 360.0) {
+            t -= 360.0;
+        } else if (t < 0.0) {
+            t += 360.0;
+        }
+        s->unk_0C = t;
+        t = sqrtf(sx * sx + sz * sz) / 300.0;
+        if (t > 1.0) {
+            t = 1.0f;
+        } else if (t < -1.0) {
+            t = -1.0f;
+        }
+        s->unk_10 += (t - s->unk_10) * 0.2;
+        s->unk_130 = 0;
+    } else {
+        s->unk_10 -= s->unk_10 * 0.1;
+    }
+    if (s->unk_20 > 0.0f) {
+        s->unk_14 = (f32)(s->unk_14 + 6.0) - (s32)((f32)(s->unk_14 + 6.0) / 360.0f) * 360;
+        if (s->unk_14 < 0.0) {
+            s->unk_14 += 360.0;
+        }
+    }
+    s->unk_18 = (f32)(s->unk_18 + 5.0) - (s32)((f32)(s->unk_18 + 5.0) / 360.0f) * 360;
+    if (s->unk_18 < 0.0) {
+        s->unk_18 += 360.0;
+    }
+    if (s->unk_1C > 1.0) {
+        s->unk_1C -= 0.02;
+        if (s->unk_1C < 0.0) {
+            s->unk_1C = 0.0f;
+        }
+    } else if (s->unk_1C > 0.0) {
+        s->unk_1C -= 0.01;
+        if (s->unk_1C < 0.0) {
+            s->unk_1C = 0.0f;
+        }
+    }
+    s->unk_28 -= 0.02;
+    if (s->unk_28 < 0.0) {
+        s->unk_28 = 0.0f;
+    }
+    if (s->unk_2C != 0) {
+        s->unk_2C--;
+    }
+    s->unk_00 = (f32)(s->unk_00 + 2.0) - (s32)((f32)(s->unk_00 + 2.0) / 360.0f) * 360;
+    if (s->unk_00 < 0.0) {
+        s->unk_00 += 360.0;
+    }
+    s->unk_38.y = HuMathSin(s->unk_00) * 20.0 + -20.0;
+    obj->trans.y = s->unk_38.y + ((f32)(D_8010D944_223D34_BombsAway & 1) - 0.5) * 0.2 * 100.0 * s->unk_28;
+    s->unk_04 += 2.0;
+    if (s->unk_04 >= 360.0) {
+        s->unk_04 -= 360.0;
+    }
+    s->unk_08 += 1.0;
+    if (s->unk_08 >= 360.0) {
+        s->unk_08 -= 360.0;
+    }
+    a = HuMathSin(s->unk_08) * 2.0;
+    func_800B1CC0_B28C0(s->unk_50, a, func_800B7890_B8490(s->unk_04), 0.0f, HuMathSin(s->unk_04));
+    s->unk_50[3][3] = 1.0f;
+    a = s->unk_10 * 8.0;
+    func_800B1CC0_B28C0(m, a, func_800B7890_B8490(s->unk_0C), 0.0f, HuMathSin(s->unk_0C));
+    m[3][3] = 1.0f;
+    func_800B6410_B7010(m, s->unk_50, s->unk_50);
+    a = HuMathSin(s->unk_18) * 20.0;
+    func_800B1CC0_B28C0(m, a * s->unk_1C, func_800B7890_B8490(s->unk_14), 0.0f, HuMathSin(s->unk_14));
+    m[3][3] = 1.0f;
+    func_800B6410_B7010(m, s->unk_50, m);
+    func_800B1F50_B2B50((f32*)s->unk_50, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800B6410_B7010(m, s->unk_50, s->unk_50);
+    func_80108B54_21EF44_BombsAway(s->unk_50, (Vec*)p0);
+    obj->rot.x = s->unk_44.x = p0[0];
+    obj->rot.y = s->unk_44.y = p0[1];
+    obj->rot.z = s->unk_44.z = p0[2];
+    for (j = 0; j < 4; j++) {
+        s->unk_D0[j][0] = s->unk_90[j][0];
+        s->unk_D0[j][1] = s->unk_90[j][1];
+        s->unk_D0[j][2] = s->unk_90[j][2];
+        s->unk_D0[j][3] = s->unk_90[j][3];
+    }
+    func_800B1F50_B2B50((f32*)m, -obj->trans.x, -obj->trans.y, -obj->trans.z);
+    func_80025F00_26B00(s->unk_50, s->unk_90);
+    func_800B6410_B7010(m, s->unk_90, s->unk_90);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 0.0f, s->unk_30, 0.0f, p0);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 1.0f, s->unk_30, 0.0f, p1);
+    func_801088FC_21ECEC_BombsAway(s->unk_50, 0.0f, s->unk_30, 1.0f, p2);
+    for (j = 0; j < 3; j++) {
+        p1[j] -= p0[j];
+        p2[j] = p0[j] - p2[j];
+    }
+    s->unk_110[0] = p1[1] * p2[2] - p1[2] * p2[1];
+    s->unk_110[1] = p1[2] * p2[0] - p1[0] * p2[2];
+    s->unk_110[2] = p1[0] * p2[1] - p1[1] * p2[0];
+    s->unk_110[3] = p0[0] * s->unk_110[0] + p0[1] * s->unk_110[1] + p0[2] * s->unk_110[2];
+    s->unk_120 = 1.0 / sqrtf(s->unk_110[0] * s->unk_110[0] + s->unk_110[1] * s->unk_110[1] +
+                             s->unk_110[2] * s->unk_110[2]);
+    s->unk_124.x = s->unk_110[0] * s->unk_120;
+    s->unk_124.y = s->unk_110[1] * s->unk_120;
+    s->unk_124.z = s->unk_110[2] * s->unk_120;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106E10_21D200_BombsAway);
+/* Direction (degrees) from the platform's centre to pos (MP1 func_800FA47C). */
+f32 func_80106D78_21D168_BombsAway(Vec* pos) {
+    return func_80108A4C_21EE3C_BombsAway(pos->x - D_8010DB60_223F50_BombsAway.x, pos->z - D_8010DB60_223F50_BombsAway.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106ED4_21D2C4_BombsAway);
+/* Horizontal distance from the platform's centre (MP1 func_800FA4B4). */
+f32 func_80106DB0_21D1A0_BombsAway(Vec* pos) {
+    f32 dx = pos->x - D_8010DB60_223F50_BombsAway.x;
+    f32 dz = pos->z - D_8010DB60_223F50_BombsAway.z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106F60_21D350_BombsAway);
+    return sqrtf(dx * dx + dz * dz);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106FC8_21D3B8_BombsAway);
+/* pos projected onto the surface plane when it is on or below it (MP1 func_800FA514). */
+s32 func_80106E10_21D200_BombsAway(Vec* pos, Vec* out) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    f32 d = pos->x * D_8010DC38_224028_BombsAway + pos->y * D_8010DC3C_22402C_BombsAway +
+            pos->z * D_8010DC40_224030_BombsAway - D_8010DC44_224034_BombsAway;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107060_21D450_BombsAway);
+    if (d <= 0.0) {
+        d *= s->unk_120;
+        out->x = pos->x - d * s->unk_124.x;
+        out->y = pos->y - d * s->unk_124.y;
+        out->z = pos->z - d * s->unk_124.z;
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_8010714C_21D53C_BombsAway);
+/* Whether pos lies within the platform's ellipse, in platform space (MP1 func_800FA5D8). */
+s32 func_80106ED4_21D2C4_BombsAway(Vec* pos) {
+    f32 out[3];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801074D8_21D8C8_BombsAway);
+    func_801088FC_21ECEC_BombsAway(D_8010DBB8_223FA8_BombsAway, pos->x, pos->y, pos->z, out);
+    if (out[0] * out[0] + out[2] * 1.35 * out[2] * 1.35 <= 230400.0) {
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_8010770C_21DAFC_BombsAway);
+/* func_80107060, plus the platform's rotation in out[1] (zero when off the platform). New in MP2. */
+s32 func_80106F60_21D350_BombsAway(Vec* pos, Vec* out) {
+    s32 ret;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107758_21DB48_BombsAway);
+    if (func_80107060_21D450_BombsAway(pos, out) == 0) {
+        out[1].x = out[1].y = out[1].z = 0.0f;
+        ret = 0;
+    } else {
+        out[1].x = D_8010DB6C_223F5C_BombsAway.x;
+        out[1].y = D_8010DB6C_223F5C_BombsAway.y;
+        out[1].z = D_8010DB6C_223F5C_BombsAway.z;
+        ret = 1;
+    }
+    return ret;
+}
 
-__asm__(".section .rodata");
-const u32 D_8010D5F0_2239E0_BombsAway[4] = { 0x00060007, 0x00080009, 0x000A000B, 0xFFFF0000 };
+/* Whether pos is over the platform and less than 50 above its surface (MP1 func_800FA664). */
+s32 func_80106FC8_21D3B8_BombsAway(Vec* pos) {
+    Vec v;
+    s32 i = 0;
+    f32 h = BA_PLANE_HEIGHT(pos, i);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107918_21DD08_BombsAway);
+    v.x = pos->x;
+    v.y = h + pos->y;
+    v.z = pos->z;
+    if (50.0 <= h) {
+        return 0;
+    }
+    return func_80106ED4_21D2C4_BombsAway(&v);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107A34_21DE24_BombsAway);
+/* pos dropped onto the platform's surface: 1 above it, -1 below, 0 off the platform or 50 or
+   more above (MP1 func_800FA6FC). */
+s32 func_80107060_21D450_BombsAway(Vec* pos, Vec* out) {
+    Vec v;
+    s32 i = 0;
+    f32 h = BA_PLANE_HEIGHT(pos, i);
+    s32 ret;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107A84_21DE74_BombsAway);
+    v.x = pos->x;
+    v.y = h + pos->y;
+    v.z = pos->z;
+    if (func_80106ED4_21D2C4_BombsAway(&v) == 0) {
+        return 0;
+    }
+    if (h < 50.0) {
+        out->x = v.x;
+        out->y = v.y;
+        out->z = v.z;
+        ret = -1;
+        if (0.0f <= h) {
+            ret = 1;
+        }
+        return ret;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B00_21DEF0_BombsAway);
+/* Moves pos by vel against the platform's surface (MP1 func_800FA7E8): 1 landed or riding on it,
+   -1 below it, 0 in the air. onStage: pos rode the platform last frame. */
+s32 func_8010714C_21D53C_BombsAway(Vec* pos, Vec* vel, Vec* out, s16 onStage) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    Vec next;
+    Vec tmp;
+    Vec cur;
+    f32 t;
+    f32 den;
+    s32 ret = 0;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B28_21DF18_BombsAway);
+    if (onStage != 0) {
+        func_801088FC_21ECEC_BombsAway(s->unk_D0, pos->x, pos->y, pos->z, &tmp.x);
+        func_801088FC_21ECEC_BombsAway(s->unk_50, tmp.x, tmp.y, tmp.z, &cur.x);
+        if (vel->x == 0.0f && vel->y == 0.0f && vel->z == 0.0f) {
+            out->x = cur.x;
+            out->y = cur.y;
+            out->z = cur.z;
+            return 1;
+        }
+        ret = 1;
+    } else {
+        if (vel->x == 0.0f && vel->y == 0.0f && vel->z == 0.0f) {
+            return 0;
+        }
+        cur.x = pos->x;
+        cur.y = pos->y;
+        cur.z = pos->z;
+    }
+    t = -(cur.x * s->unk_110[0] + cur.y * s->unk_110[1] + cur.z * s->unk_110[2] - s->unk_110[3]);
+    den = vel->x * s->unk_110[0] + vel->y * s->unk_110[1] + vel->z * s->unk_110[2];
+    t /= den;
+    if (den < 0.0 && !(t > 1.0)) {
+        ret = 1;
+    } else {
+        t = 1.0f;
+    }
+    next.x = t * vel->x + cur.x;
+    next.y = t * vel->y + cur.y;
+    next.z = t * vel->z + cur.z;
+    if (func_80106FC8_21D3B8_BombsAway(&next) == 0) {
+        out->x = cur.x + vel->x;
+        out->y = cur.y + vel->y;
+        out->z = cur.z + vel->z;
+        ret = 0;
+        if (onStage == 0) {
+            if (out->y < -50.0) {
+                out->y = -50.0f;
+                ret = -1;
+            }
+        } else {
+            ret = -1;
+        }
+        return ret;
+    }
+    if (ret != 0) {
+        cur.x += vel->x;
+        cur.y += vel->y;
+        cur.z += vel->z;
+        if (func_80106E10_21D200_BombsAway(&cur, &tmp) != 0) {
+            next.x += (tmp.x - next.x) * s->unk_34;
+            next.y += (tmp.y - next.y) * s->unk_34;
+            next.z += (tmp.z - next.z) * s->unk_34;
+        }
+    }
+    out->x = next.x;
+    out->y = next.y;
+    out->z = next.z;
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B44_21DF34_BombsAway);
+/* Where a ray from pos - dir along dir meets the platform (1) or the sea at y 0 (-1)
+   (MP1 func_800FAB74). */
+s32 func_801074D8_21D8C8_BombsAway(Vec* pos, Vec* dir, Vec* out) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    Vec v;
+    Vec d;
+    f32 t;
+    f32 den;
+    s32 ok;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107B60_21DF50_BombsAway);
+    if (dir->y >= 0.0) {
+        return 0;
+    }
+    d.x = pos->x - dir->x;
+    d.y = pos->y - dir->y;
+    d.z = pos->z - dir->z;
+    t = -(d.x * s->unk_110[0] + d.y * s->unk_110[1] + d.z * s->unk_110[2] - s->unk_110[3]);
+    den = dir->x * s->unk_110[0] + dir->y * s->unk_110[1] + dir->z * s->unk_110[2];
+    t /= den;
+    if (den < 0.0) {
+        ok = 1;
+        if (t > 1.0) {
+            ok = 0;
+        }
+    } else {
+        ok = 0;
+    }
+    if (ok) {
+        v.x = t * dir->x + d.x;
+        v.y = t * dir->y + d.y;
+        v.z = t * dir->z + d.z;
+        if (func_80106ED4_21D2C4_BombsAway(&v) != 0) {
+            out->x = v.x;
+            out->y = v.y;
+            out->z = v.z;
+            return 1;
+        }
+    }
+    if (pos->y <= 0.0) {
+        t = -(d.y - 0.0) / dir->y;
+        out->x = t * dir->x + d.x;
+        out->y = t * dir->y + d.y;
+        out->z = t * dir->z + d.z;
+        return -1;
+    }
+    return 0;
+}
 
-__asm__(".section .rodata");
-const u32 D_8010D600_2239F0_BombsAway[8] = { 0xC2480000, 0xC1A00000, 0x447A0000, 0xC2B40000, 0x42480000, 0xC2480000, 0xC47A0000, 0x42B40000 };
+/* Adds a weight on the platform for this frame's tilt, up to 8 (MP1 func_800FADA8). */
+void func_8010770C_21DAFC_BombsAway(f32 x, f32 z, f32 weight) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    s32 n = D_8010DC58_224048_BombsAway;
 
-__asm__(".section .rodata");
-const u32 D_8010D620_223A10_BombsAway[8] = { 0xC4480000, 0x43960000, 0x44480000, 0x43960000, 0xC3480000, 0x43C80000, 0x43480000, 0x43C80000 };
+    if (n < 8) {
+        D_8010DC58_224048_BombsAway = n + 1;
+        s->unk_134[n].unk_00 = x;
+        s->unk_134[n].unk_04 = weight;
+        s->unk_134[n].unk_08 = z;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107C48_21E038_BombsAway);
+/* A bomb hits the platform at (x, z) (MP1 func_800FADF4): it clears the newest landing mark and
+   starts the hit wobble; a negative strength is a blast from below. New in MP2: 5 shake frames
+   (MP1 15) and a strength up to 2 (MP1 1). */
+void func_80107758_21DB48_BombsAway(f32 x, f32 z, f32 dir) {
+    BaStage* s;
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801082EC_21E6DC_BombsAway);
+    if (D_8010D940_223D30_BombsAway.unk_00 == 1) {
+        s = &D_8010DB28_223F18_BombsAway;
+        if (D_8010DF18_224308_BombsAway >= 0) {
+            D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_00 = 0;
+        }
+        a = func_80108A4C_21EE3C_BombsAway(x, z) + 90.0;
+        a = a - (s32)(a / 360.0f) * 360;
+        s->unk_14 = a;
+        if (s->unk_14 < 0.0) {
+            s->unk_14 += 360.0;
+        }
+        if (dir >= 0.0) {
+            s->unk_00 = 270.0f;
+            s->unk_18 = 180.0f;
+            s->unk_20 = 1.0f;
+            s->unk_28 = 1.0f;
+            s->unk_2C = 5;
+        } else {
+            s->unk_00 = 0.0f;
+            s->unk_18 = 0.0f;
+            dir = -dir;
+            s->unk_20 = -1.0f;
+            s->unk_28 = 0.0f;
+            s->unk_2C = 0;
+            D_8010DCBC_2240AC_BombsAway = 2;
+        }
+        if (dir > 2.0) {
+            dir = 2.0f;
+        }
+        s->unk_1C = dir;
+    }
+}
+
+/* Loads the bomb models and clears the carrier slots (MP1 func_800FAFB4). */
+void func_80107918_21DD08_BombsAway(void) {
+    u16 ids[] = { 6, 7, 8, 9, 10, 11, 0xFFFF };
+    s32 dir = 0x3B0000;
+    s32 i;
+
+    for (i = 0; ids[i] != 0xFFFF; i++) {
+        D_8010DCD0_2240C0_BombsAway[i] = func_80018A30_19630(dir | ids[i], 0x9D);
+    }
+    for (i = 0; i < 4; i++) {
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = NULL;
+        D_8010DCE0_2240D0_BombsAway.unk_10[i] = NULL;
+    }
+}
+
+/* Queues a player for a bomb-carrier slot (MP1 func_800FB0D0). */
+void func_80107A34_21DE24_BombsAway(omObjData* obj) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (D_8010DCE0_2240D0_BombsAway.unk_00[i] == NULL) {
+            break;
+        }
+    }
+    if (i < 4) {
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = obj;
+    }
+}
+
+/* Takes the first waiting player into its slot; the slot index or -1 (MP1 func_800FB120). */
+s16 func_80107A84_21DE74_BombsAway(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (D_8010DCE0_2240D0_BombsAway.unk_00[i] >= (omObjData*)2) {
+            break;
+        }
+    }
+    if (i < 4) {
+        D_8010DCE0_2240D0_BombsAway.unk_10[i] = D_8010DCE0_2240D0_BombsAway.unk_00[i];
+        D_8010DCE0_2240D0_BombsAway.unk_00[i] = (omObjData*)1;
+        return i;
+    }
+    return -1;
+}
+
+/* Frees a slot (MP1 func_800FB19C). */
+void func_80107B00_21DEF0_BombsAway(s16 i) {
+    D_8010DCE0_2240D0_BombsAway.unk_00[i] = D_8010DCE0_2240D0_BombsAway.unk_10[i] = NULL;
+}
+
+void func_80107B28_21DF18_BombsAway(omObjData* obj) {
+    func_80107B60_21DF50_BombsAway(obj, 0);
+}
+
+void func_80107B44_21DF34_BombsAway(omObjData* obj) {
+    func_80107B60_21DF50_BombsAway(obj, 1);
+}
+
+/* A bomb-carrier object's setup (MP1 func_800FB1FC); kind 0 or 1. */
+void func_80107B60_21DF50_BombsAway(omObjData* obj, u8 kind) {
+    obj->func_ptr = func_80107C48_21E038_BombsAway;
+    omSetStatBit(obj, 0xA0);
+    obj->model[0] = func_80018A30_19630(0x3B0006, 0x99);
+    func_8002A00C_2AC0C(obj->model[0]);
+    obj->trans.x = obj->trans.z = 0.0f;
+    obj->trans.y = -80.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 0.8f;
+    obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->work[0] = 0;
+    obj->work[3] = kind;
+}
+
+/* A bomb carrier (MP1 func_800FB2E4): takes the next player waiting in a slot (work[0] 0),
+   flies to them from its side (1), and carries them back to the drop point (2, 3); its two
+   blended models follow the state (D_8010CFD4). */
+void func_80107C48_21E038_BombsAway(omObjData* obj) {
+    f32 drop[] = { -50.0f, -20.0f, 1000.0f, -90.0f, 50.0f, -50.0f, -1000.0f, 90.0f };
+    f32 start[] = { -800.0f, 300.0f, 800.0f, 300.0f, -200.0f, 400.0f, 200.0f, 400.0f };
+    s16 visible;
+    s32 side;
+    omObjData* carrier;
+    BaPlayer* cp;
+    f32 dx;
+    f32 dz;
+    f32 ang;
+    f32 s;
+    s32 k;
+    s16 n; /* the slot (case 0), then k * 4 (cases 2, 3) */
+    u16 m0;
+    u16 m1;
+
+    visible = 1;
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        visible = obj->work[0] != 0;
+    } else {
+        switch (obj->work[0]) {
+            case 0:
+                n = func_80107A84_21DE74_BombsAway();
+                if (n >= 0) {
+                    obj->work[0]++;
+                    obj->work[1] = n;
+                    carrier = D_8010DCE0_2240D0_BombsAway.unk_10[n];
+                    obj->work[3] = carrier->trans.x >= 0.0;
+                } else {
+                    visible = 0;
+                }
+                side = obj->work[3];
+                obj->trans.x = start[side * 2];
+                obj->trans.z = start[side * 2 + 1];
+                break;
+            case 1:
+                carrier = D_8010DCE0_2240D0_BombsAway.unk_10[obj->work[1]];
+                cp = func_80104058_21A448_BombsAway(carrier);
+                dx = carrier->trans.x - obj->trans.x;
+                dz = carrier->trans.z - obj->trans.z;
+                ang = func_80108A4C_21EE3C_BombsAway(dx, dz);
+                s = HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5;
+                obj->trans.x += func_800B7890_B8490(ang) * (s * 0.1 + 0.05) * 100.0;
+                obj->trans.z += HuMathSin(ang) * (s * 0.1 + 0.05) * 100.0;
+                if (sqrtf(dx * dx + dz * dz) < 50.0) {
+                    cp->unk_3C = 4;
+                    if (carrier->trans.x > 0.0) {
+                        obj->work[0] = 2;
+                    } else {
+                        obj->work[0] = 3;
+                    }
+                }
+                break;
+            case 2:
+            case 3:
+                carrier = D_8010DCE0_2240D0_BombsAway.unk_10[obj->work[1]];
+                cp = func_80104058_21A448_BombsAway(carrier);
+                k = obj->work[0] - 2;
+                n = k * 4;
+                s = HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5;
+                dx = drop[k * 4 + 2] - obj->trans.x;
+                dz = 200.0 - obj->trans.z;
+                ang = func_80108A4C_21EE3C_BombsAway(dx, dz);
+                obj->trans.x += func_800B7890_B8490(ang) * (s * 0.1 + 0.05) * 100.0;
+                obj->trans.z += HuMathSin(ang) * (s * 0.1 + 0.05) * 100.0;
+                if (sqrtf(dx * dx + dz * dz) < 50.0) {
+                    obj->work[0] = 0;
+                    cp->unk_3C++;
+                    func_80107B00_21DEF0_BombsAway(obj->work[1]);
+                }
+                carrier->trans.x += (obj->trans.x + drop[n] - carrier->trans.x) * 0.2;
+                carrier->trans.y += (obj->trans.y + drop[n + 1] - carrier->trans.y) * 0.2;
+                carrier->trans.z += (obj->trans.z - carrier->trans.z) * 0.2;
+                carrier->rot.y = drop[n + 3];
+                break;
+        }
+        obj->work[2] += 8;
+    }
+    if (visible) {
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        m0 = D_8010DCD0_2240C0_BombsAway[D_8010CFD4_2233C4_BombsAway[obj->work[0]][0]];
+        m1 = D_8010DCD0_2240C0_BombsAway[D_8010CFD4_2233C4_BombsAway[obj->work[0]][1]];
+        func_80108868_21EC58_BombsAway(obj->model[0], m0, m1,
+                                       HuMathSin((f32)obj->work[2] / 256.0 * 360.0) * 0.5 + 0.5);
+    } else {
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+    }
+}
+
+/* Stun sparkles: three circle over each stunned player (state 3); the stun sound plays while
+   anyone is stunned; ages the blast-sound cooldown (MP1 func_800FB988). */
+void func_801082EC_21E6DC_BombsAway(void) {
+    Vec v;
+    s32 i;
+    s32 j;
+    s32 idx;
+    s32 ph;
+    BaSparkle* sp;
+    omObjData* obj;
+
+    D_8010DEB2_2242A2_BombsAway = -1;
+    for (i = 0; i < 4; i++) {
+        idx = i * 3;
+        sp = &D_8010DDC0_2241B0_BombsAway[idx];
+        if (D_8010D950_223D40_BombsAway[i].unk_02 == 3) {
+            obj = D_8010D950_223D40_BombsAway[i].unk_48;
+            for (j = 0; j < 3; j++) {
+                SprAttrReset(D_8010DF1C_22430C_BombsAway, idx, 0x8000);
+                ph = (sp->unk_02 + j * 10) & 0x1F;
+                v.x = obj->trans.x + func_800B7890_B8490(ph * 360 / 32) * 100.0 * 0.5;
+                v.z = obj->trans.z + HuMathSin(ph * 360 / 32) * 100.0 * 0.5;
+                v.y = obj->trans.y + 160.0 + HuMathSin((ph & 0xF) * 24) * 100.0 * 0.2;
+                SprPos3DSet(D_8010DF1C_22430C_BombsAway, idx, 0, v.x, v.y, v.z);
+                SprBankSet(D_8010DF1C_22430C_BombsAway, idx, 0);
+                sp->unk_02++;
+                idx++;
+                sp++;
+            }
+            D_8010DEB2_2242A2_BombsAway = i;
+        } else {
+            for (; idx < (i + 1) * 3; idx++) {
+                SprAttrSet(D_8010DF1C_22430C_BombsAway, idx, 0x8000);
+            }
+        }
+    }
+    if (D_8010DEB0_2242A0_BombsAway < 0) {
+        if (D_8010DEB2_2242A2_BombsAway >= 0) {
+            D_8010DEB0_2242A0_BombsAway = func_80079798_7A398(0xA7, D_8010DEB2_2242A2_BombsAway);
+        }
+    } else if (D_8010DEB2_2242A2_BombsAway < 0) {
+        func_80079848_7A448(D_8010DEB0_2242A0_BombsAway);
+        D_8010DEB0_2242A0_BombsAway = -1;
+    }
+    if (D_8010DEB4_2242A4_BombsAway != 0) {
+        D_8010DEB4_2242A4_BombsAway--;
+    }
+}
