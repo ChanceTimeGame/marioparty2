@@ -147,7 +147,7 @@ extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
 extern s32 D_8010D214_334BD4_name_4E[];
 extern u8 D_8010D448_334E08_name_4E[4];  /* wins needed per first-menu choice: 3, 5, 7 */
-extern s8 D_8010D44C_334E0C_name_4E[4];  /* per team mode: stamp row spacing */
+extern u8 D_8010D44C_334E0C_name_4E[4];  /* per team mode: stamp row spacing (FE4E-B: u8, retail reads it with lbu) */
 extern u16 D_8010D4AC_334E6C_name_4E[];  /* per first-menu choice: stamp column origin */
 extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8) */
 extern Vec D_8010D52C_334EEC_name_4E[2]; /* team mode 7 positions */
@@ -274,6 +274,10 @@ extern s16 D_8010DADA_33549A_name_4E[6]; /* third menu's sprite animations */
 extern s32 D_8010D2DC_334C9C_name_4E[3]; /* sprite files: first menu rows */
 extern s32 D_8010D2E8_334CA8_name_4E[4]; /* ... second menu rows */
 extern s32 D_8010D2F8_334CB8_name_4E[6]; /* ... third menu */
+extern s32 D_8010D430_334DF0_name_4E[6];  /* per character: score board icon file */
+extern s32* D_8010D48C_334E4C_name_4E[6]; /* per match length (+3 when no team mode): board sprite files */
+extern s16 D_8010D4A4_334E64_name_4E[4];  /* per team mode: team icons' y */
+extern char D_8010DA84_335444_name_4E[];  /* "<n>=WIN MATCH" */
 
 /* ---- 32A1C0.c ---- */
 
@@ -323,7 +327,7 @@ void func_80108A18_3303D8_name_4E(void);
 void func_80108BE0_3305A0_name_4E(void);
 s32 func_80108E3C_3307FC_name_4E(s16 i, s16 x, s16 y, s16 n);
 void func_80108F24_3308E4_name_4E(void);
-void func_80109750_331110_name_4E(s16 arg0);
+void func_80109750_331110_name_4E(s16 cursor);
 void func_80109778_331138_name_4E(void);
 
 /* ---- 331200.c ---- */
