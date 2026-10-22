@@ -841,3 +841,6 @@ D_8010D27C_22366C_BombsAway = 0x8010D27C; // rom:0x22366C size:0x10
 D_8010F870_245750_SlotCarDerby = 0x8010F870; // size:0x18 segment:SlotCarDerby
 D_8010F888_245768_SlotCarDerby = 0x8010F888; // size:0x18 segment:SlotCarDerby
 D_8010F8A0_245780_SlotCarDerby = 0x8010F8A0; // size:0x18 segment:SlotCarDerby
+// MG19-A: ovl_19 bss u16 pair retail addresses by halves (progress bar: track piece, flag)
+D_8010C9F0_19B590_BobsledRun = 0x8010C9F0; // size:0x2 segment:BobsledRun
+D_8010C9F2_19B592_BobsledRun = 0x8010C9F2; // size:0x2 segment:BobsledRun
