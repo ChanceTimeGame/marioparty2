@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_01.h"
 
 __asm__(".section .rodata");
 const char D_8010BA80_E3510_BowserSlots[] = "\202r\202s\202`\202q\202s";
