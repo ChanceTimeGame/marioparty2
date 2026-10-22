@@ -431,7 +431,6 @@ void DataClose(void* data);
 void func_80079464_7A064(void);
 void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
 void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
-s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32); /* sprite colour r, g, b, a? */
 void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
 omObjData* omAddObj(s16, u16, u16, s16, void*);
 
