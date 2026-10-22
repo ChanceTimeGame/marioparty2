@@ -56,6 +56,12 @@ typedef struct Ovl55Sign4 {
     /* 0x04 */ s16 spr[2]; /* [0] the sign, [1] its backing */
 } Ovl55Sign4; /* size = 0x8 */
 
+/* ev-C: board 5's item table entry (D_8010C3CC); only the model is known. */
+typedef struct Ovl55Item {
+    /* 0x00 */ u8 unk00[3];
+    /* 0x03 */ u8 model;
+} Ovl55Item; /* size = 0x4 */
+
 /* ev-C: a view of main's sprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
 typedef struct Ovl55EspSlot {
     /* 0x00 */ s16 unk00;
@@ -261,12 +267,12 @@ extern f32 D_8010C22C_36B11C_name_55[12]; /* board 4: bubble columns (x) */
 extern void* D_8010C338_36B228_name_55[6];
 extern u32 D_8010C350_36B240_name_55[]; /* board 5: host's motions */
 extern u32 D_8010C360_36B250_name_55[]; /* board 5: stand-in's motions */
-extern s32 D_8010C370_36B260_name_55[];
-extern s32 D_8010C388_36B278_name_55[];
-extern s32 D_8010C394_36B284_name_55[];
-extern s32 D_8010C3A0_36B290_name_55[];
-extern s32 D_8010C3B0_36B2A0_name_55[];
-extern s32 D_8010C3CC_36B2BC_name_55[];
+extern Vec D_8010C370_36B260_name_55[2]; /* board 5: camera from, to */
+extern Vec D_8010C388_36B278_name_55; /* board 5: host start */
+extern Vec D_8010C394_36B284_name_55; /* board 5: host target */
+extern u32 D_8010C3A0_36B290_name_55[]; /* board 5: host model's motions */
+extern s32 D_8010C3B0_36B2A0_name_55[7]; /* board 5: queue spacing ([1..6]) */
+extern Ovl55Item D_8010C3CC_36B2BC_name_55[6]; /* board 5: the queue's items */
 extern void* D_8010C4C8_36B3B8_name_55[6];
 extern s32 D_8010C4E0_36B3D0_name_55[];
 
