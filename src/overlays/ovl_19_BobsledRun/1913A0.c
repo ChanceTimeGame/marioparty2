@@ -2486,7 +2486,32 @@ void func_8010AB30_1996D0_BobsledRun(s8 team, Vec3f* normal) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AC18_1997B8_BobsledRun);
+/* A shove from the other sled: if it is too strong, stop dead and bounce off (MP1 func_800F6B60). */
+void func_8010AC18_1997B8_BobsledRun(omObjData* obj) {
+    BRWork* work;
+    f32 lim;
+    f32 d;
+    f32 rot;
+
+    work = obj->unk_50;
+    lim = work->unk_48 * 0.8f;
+    d = func_800B1830_B2430(D_800F94A0_FA0A0 * D_800F94A0_FA0A0 + D_80101308_101F08 * D_80101308_101F08);
+    if (lim < d || fabs(D_800F94A0_FA0A0) > lim || fabs(D_80101308_101F08) > lim) {
+        rot = work->unk_3C;
+        work->unk_40 = D_800BF7C0_C03C0 / 5.0f;
+        omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0], 20, 0, 20);
+        omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1], 20, 0, 20);
+        D_800F94A0_FA0A0 = -HuMathSin(rot) * work->unk_40;
+        D_80101308_101F08 = -func_800B7890_B8490(rot) * work->unk_40;
+    }
+    if (work->unk_59 == 0) {
+        if (D_8010C0D0_19AC70_BobsledRun < d) {
+            D_8010C0D0_19AC70_BobsledRun = d;
+        }
+    } else if (D_8010C0D4_19AC74_BobsledRun < d) {
+        D_8010C0D4_19AC74_BobsledRun = d;
+    }
+}
 
 /* Tilt the sled (rot.x / rot.z) towards the ground normal (MP1 func_800FBE04). */
 void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal) {
