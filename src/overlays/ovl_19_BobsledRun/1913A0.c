@@ -1904,6 +1904,8 @@ void func_80107EA4_196A44_BobsledRun(omObjData* obj) {
             }
         }
         func_80107CF4_196894_BobsledRun(obj, &work->unk_90, turn);
+// argument setup order around both func_80006F34 calls (retail loads the two zeros before &probe)
+#ifdef NON_MATCHING
         t = func_8010AF5C_199AFC_BobsledRun(obj, work->unk_3C, x, y, z);
         if (t != 65536.0f) {
             y = t;
@@ -2062,6 +2064,9 @@ void func_80107EA4_196A44_BobsledRun(omObjData* obj) {
         func_80104EAC_193A4C_BobsledRun(obj);
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
+#endif
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_196A44_BobsledRun);
 #endif
@@ -2552,7 +2557,143 @@ void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal) {
     obj->rot.z = work->unk_A4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
+/* Ground probe on the track (after a bump check); returns the ground height or 65536 (airborne)
+   (MP1 func_800F93C0). */
+f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z) {
+    Vec4f probe;
+    Vec3f n;
+    Vec3f n2;
+    BRWork* work;
+    BRGround* gw;
+    BRGround* cur;
+    ColVtx* verts;
+    u16* tri;
+    Vec3f* normal;
+    f32 speed;
+    f32 nx;
+    f32 nz;
+    f32 floorY;
+    f32 shadowY;
+    f32 h;
+    s16 mdl;
+    u16 i0;
+    u16 i1;
+    u16 i2;
+    s8 ground;
+
+    ground = -1;
+    normal = NULL;
+    work = obj->unk_50;
+    work->unk_54 = -1;
+    work->unk_53 = -1;
+    speed = work->unk_40 * work->unk_B4;
+    nx = x + HuMathSin(rot) * speed + D_800F94A0_FA0A0;
+    nz = z + func_800B7890_B8490(rot) * speed + D_80101308_101F08;
+    floorY = -65536.0f;
+    shadowY = -65536.0f;
+    if (func_801038C4_192464_BobsledRun(obj, nx, y, nz) != 2) {
+        func_8010AC18_1997B8_BobsledRun(obj);
+        speed = work->unk_40;
+        nx = x + HuMathSin(rot) * speed;
+        nz = z + func_800B7890_B8490(rot) * speed;
+        probe.x = nx + D_800F94A0_FA0A0;
+        probe.y = y + work->unk_48;
+        probe.z = nz + D_80101308_101F08;
+        probe.w = work->unk_48;
+        func_80006F34_7B34(obj, &probe, 0, 0);
+        func_8010AC18_1997B8_BobsledRun(obj);
+        if (!(((u8*)work)[D_800BF794_C0394] & 1)) {
+            gw = D_800FC7B0_FD3B0[D_800BF794_C0394]->unk_50;
+            if (gw->unk_06 & 0x1A) {
+                if (func_8000DC10_E810(&probe, gw) == 1) {
+                    h = gw->unk_14;
+                    if (floorY < h && h < y + 150.0f) {
+                        floorY = h;
+                        ground = D_800BF794_C0394;
+                        if (shadowY < floorY && shadowY < y + 50.0f) {
+                            shadowY = floorY;
+                            n.x = 0.0f;
+                            n.y = 1.0f;
+                            n.z = 0.0f;
+                            normal = &n;
+                        }
+                    }
+                }
+            } else {
+                mdl = D_800FC7B0_FD3B0[D_800BF794_C0394]->model[0];
+                verts = D_800FC834_FD434[mdl].hmf->unk54;
+                func_8002F2C4_2FEC4(mdl, D_800F9D30_FA930, func_80005110_5D10, &probe);
+                for (tri = func_8002F848_30448(D_800F9D30_FA930); tri != NULL; tri = func_8002F848_30448(D_800F9D30_FA930)) {
+                    h = func_8002DBA4_2E7A4(nx, y, nz, verts, tri);
+                    if (floorY < h && h < y + 150.0f) {
+                        floorY = h;
+                        ground = D_800BF794_C0394;
+                    }
+                    if (shadowY < h && h < y + 150.0f) {
+                        shadowY = h;
+                        D_8010CA0C_19B5AC_BobsledRun = i0 = tri[1];
+                        D_8010CA0E_19B5AE_BobsledRun = i1 = tri[2];
+                        D_8010CA10_19B5B0_BobsledRun = i2 = tri[3];
+                        func_8002DA3C_2E63C(D_8010CA00_19B5A0_BobsledRun = &verts[(s16)i0],
+                                            D_8010CA04_19B5A4_BobsledRun = &verts[(s16)i1],
+                                            D_8010CA08_19B5A8_BobsledRun = &verts[(s16)i2], &n);
+                        normal = &n;
+                    }
+                }
+                if (floorY == -65536.0f) {
+                    floorY = -65536.0f;
+                }
+            }
+        }
+        h = func_800023CC_2FCC(obj, nx + D_800F94A0_FA0A0, y, nz + D_80101308_101F08, &n2);
+        if (floorY < h && h < y + 50.0f) {
+            ground = D_800BF798_C0398;
+            floorY = h;
+        } else {
+            if (h < y + 150.0f && y + 50.0f < h) {
+                floorY = 65536.0f;
+            }
+            work->unk_53 = -1;
+        }
+        if (shadowY < h && h < y + 50.0f) {
+            normal = &n2;
+        }
+        if (y - 50.0f < floorY && floorY < y + 50.0f) {
+            if (ground != -1) {
+                work->unk_53 = ground;
+            }
+            y = floorY;
+            work->unk_38 = 1000.0f;
+        } else {
+            work->unk_38 = D_800BF7A4_C03A4 * 0.1f;
+            work->unk_53 = -1;
+            PlaySound(0x1FA);
+            return 65536.0f;
+        }
+    } else {
+        probe.x = nx + D_800F94A0_FA0A0;
+        probe.y = y;
+        probe.z = nz + D_80101308_101F08;
+        probe.w = work->unk_48;
+        func_80006F34_7B34(obj, &probe, 0, 0);
+    }
+    if (obj->model[1] != 0) {
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+    }
+    if (work->unk_53 >= 0) {
+        cur = D_800FC7B0_FD3B0[work->unk_53]->unk_50;
+        work->unk_90.x = normal->x * cur->unk_10;
+        work->unk_90.y = normal->y;
+        work->unk_90.z = normal->z * cur->unk_10;
+        func_8010ADD8_199978_BobsledRun(obj, normal);
+        func_8010AB30_1996D0_BobsledRun(work->unk_59, normal);
+    } else {
+        work->unk_90.x = work->unk_90.y = work->unk_90.z = 0.0f;
+        work->unk_9C = work->unk_A4 = 0.0f;
+        obj->rot.x = obj->rot.z = 0.0f;
+    }
+    return y;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010B630_19A1D0_BobsledRun);
 

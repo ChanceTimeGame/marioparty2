@@ -118,9 +118,13 @@ typedef struct BRGround {
     /* 0x00 */ char unk_00[3];
     /* 0x03 */ u8 unk_03;
     /* 0x04 */ u8 unk_04;     /* ground id (BRWork::unk_53) */
-    /* 0x05 */ char unk_05[3];
+    /* 0x05 */ char unk_05;
+    /* 0x06 */ u16 unk_06;    /* flags: 0x1A = flat floor (height unk_14) */
     /* 0x08 */ f32 unk_08;    /* slope drag */
-    /* 0x0C */ char unk_0C[0xA8];
+    /* 0x0C */ char unk_0C[4];
+    /* 0x10 */ f32 unk_10;    /* sideways normal scale (MP1 0x0C) */
+    /* 0x14 */ f32 unk_14;    /* flat floor height (MP1 0x10) */
+    /* 0x18 */ char unk_18[0x9C];
 } BRGround; /* size = 0xB4 */
 
 /* Speed history of one team's camera (bss D_8010CA38 / D_8010CB48, 0x110 apart). Retail
@@ -410,6 +414,22 @@ void Hu3DCamSetPositionOrientation(s16, Vec3f*, Vec3f*, Vec3f*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 extern f32 D_8010C140_19ACE0_BobsledRun; /* camera pitch on level ground */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+extern u8 D_800BF794_C0394; /* collision: the course object (MP1 D_800B8954) */
+extern u8 D_800BF798_C0398; /* MP1 D_800B8958 */
+extern ColVtx* D_8010CA00_19B5A0_BobsledRun; /* last floor face's vertices */
+extern ColVtx* D_8010CA04_19B5A4_BobsledRun;
+extern ColVtx* D_8010CA08_19B5A8_BobsledRun;
+extern u16 D_8010CA0C_19B5AC_BobsledRun; /* and their indices */
+extern u16 D_8010CA0E_19B5AE_BobsledRun;
+extern u16 D_8010CA10_19B5B0_BobsledRun;
+s32 func_80006F34_7B34(omObjData* obj, Vec4f* probe, s32, s32); /* MP1 func_80004D1C */
+f32 func_800023CC_2FCC(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal); /* MP1 func_800051D4 */
+s32 func_8000DC10_E810(Vec4f* probe, BRGround* gw); /* MP1 func_8000A910 */
+s32 func_80005110_5D10(s32, u16*, ColVtx*, void*); /* face filter */
+void func_8002F2C4_2FEC4(s16 model, s32* list, void* filter, void* probe); /* collect the model's faces */
+u16* func_8002F848_30448(s32* list); /* next face, NULL at the end */
+f32 func_8002DBA4_2E7A4(f32 x, f32 y, f32 z, ColVtx* verts, u16* tri); /* height on a face */
+void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec3f* n); /* face normal */
 f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
