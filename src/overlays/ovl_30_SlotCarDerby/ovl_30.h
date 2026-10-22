@@ -290,6 +290,45 @@ void func_8010D68C_24356C_SlotCarDerby(void);
 void func_8010D6DC_2435BC_SlotCarDerby(s32, s32);
 void func_8010DAD8_2439B8_SlotCarDerby(s32, f32);
 
+/* ---------------------------------------------------------------------------------------------
+   Main-segment API used here (missing from include/)
+   --------------------------------------------------------------------------------------------- */
+void func_80079614_7A214(s16 time); /* music fade-out */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+s32 func_80019B9C_1A79C(omObjData* obj, s32 motion);
+s32 func_80015388_15F88(s32 slot);
+
+/* ---------------------------------------------------------------------------------------------
+   .data (243CA0.data.s, stays asm): MP1 name in the comment
+   --------------------------------------------------------------------------------------------- */
+extern s16 D_8010F430_245310_SlotCarDerby[3][4]; /* MP1 D_80100C7C: [course][lane] start segment */
+extern s16 D_8010F448_245328_SlotCarDerby[3];    /* MP1 D_80100C8C: [course] start offset */
+
+/* ---------------------------------------------------------------------------------------------
+   .bss (ovl_30_bss, 0x80110230..0x801109E0): MP1 name in the comment. Split labels the asm names
+   are declared on their own (retail addresses them by their own %lo).
+   --------------------------------------------------------------------------------------------- */
+extern s16 D_8011023C_24611C_SlotCarDerby;      /* MP1 D_80101420: course */
+extern Vec* D_80110240_246120_SlotCarDerby;     /* MP1 D_80101424: track points */
+extern s16 D_80110244_246124_SlotCarDerby;      /* MP1 D_80101428: their count */
+extern f32* D_80110248_246128_SlotCarDerby;     /* MP1 D_8010142C: segment lengths */
+extern f32* D_8011024C_24612C_SlotCarDerby;     /* MP1 D_80101430: distance at each point */
+extern f32 D_80110250_246130_SlotCarDerby;      /* MP1 D_80101434: lap length */
+extern SCDGame D_801102C8_2461A8_SlotCarDerby;  /* MP1 D_80101DE0 */
+extern s16 D_801102CA_2461AA_SlotCarDerby;      /* .unk_02 */
+extern s16 D_801102CC_2461AC_SlotCarDerby;      /* .unk_04 */
+extern s16 D_801102CE_2461AE_SlotCarDerby;      /* .unk_06 */
+extern s16 D_801102D0_2461B0_SlotCarDerby;      /* .unk_08 */
+extern s16 D_801102D2_2461B2_SlotCarDerby;      /* .unk_0A */
+extern s16 D_801102D4_2461B4_SlotCarDerby;      /* .unk_0C */
+extern s16 D_801102D6_2461B6_SlotCarDerby;      /* MP1 D_80101DEE: 1: leave */
+extern s16 D_801102D8_2461B8_SlotCarDerby;      /* MP1 D_80101DF0: fade-out started */
+extern s16 D_801102DA_2461BA_SlotCarDerby;      /* MP1 D_80101DF2: overlay return requested */
+extern SCDCar D_801102E8_2461C8_SlotCarDerby[4]; /* MP1 D_80101DF8 */
+extern s16 D_801107F8_2466D8_SlotCarDerby;      /* MP1 D_80102308: cars placed */
+extern s16 D_801107FA_2466DA_SlotCarDerby[4];   /* MP1 D_8010230A: lane order */
+extern s16 D_80110802_2466E2_SlotCarDerby;      /* MP1 D_80102312: next finishing place */
+extern s16 D_80110804_2466E4_SlotCarDerby;      /* MP1 D_80102314 */
 /* MG30-A */
 
 #endif
