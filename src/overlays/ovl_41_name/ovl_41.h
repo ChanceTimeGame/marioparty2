@@ -583,5 +583,9 @@ extern u8 D_80111D4C_2C060C_name_41[]; /* per character: list length */
 extern s32 D_80111190_2BFA50_name_41[]; /* decision trees (CPU) */
 extern s32 D_80111268_2BFB28_name_41[];
 s32 BoardSpaceGet(s32 index, s32 count);
+void func_8008D974_8E574(char* str, s16 slot); /* window string argument */
+void func_8008AD44_8B944(s16 win);
+extern u16 ContBtnTrg[4];
+extern u16 D_800FC9E0_FD5E0[4]; /* stick-repeat buttons per port */
 
 #endif
