@@ -254,6 +254,9 @@ extern Vec D_80107FC0_2F6EF0_name_46[1];
 extern Vec D_80107FCC_2F6EFC_name_46[3];
 extern Vec D_80107FF0_2F6F20_name_46[1];
 extern Vec D_80107FFC_2F6F2C_name_46[3];
+extern Vec D_80108020_2F6F50_name_46[2]; /* the time panels */
+extern Vec D_80108038_2F6F68_name_46[3]; /* the stands */
+extern Vec D_8010805C_2F6F8C_name_46[3]; /* the buttons */
 
 /* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */
 
@@ -295,6 +298,8 @@ void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3); /* sprite frame */
 s32 func_8007975C_7A35C(s16 arg0, s16 arg1);
 void func_80079848_7A448(s16 arg0);
+void func_80069654_6A254(s16 mesId);
+#include "process.h"
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80029A8C_2A68C(s16 arg0);
 void func_8002A00C_2AC0C(s16 arg0);
@@ -320,18 +325,19 @@ typedef struct Ovl46Bob {
     /* 0x08 */ s32 side;
 } Ovl46Bob; /* size 0x0C */
 
-extern s32 D_80108228_2F7158_name_46; /* the challenger's CPU press frame */
+extern s32 D_80108228_2F7158_name_46[2]; /* each side's CPU press frame (D_8010822C is [1]) */
 extern s32 D_8010822C_2F715C_name_46; /* the opponent's CPU press frame */
 extern s32 D_80108230_2F7160_name_46; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
 extern s32 D_80108238_2F7168_name_46[2]; /* each side's press frame, -1 until pressed */
 extern s32 D_8010824C_2F717C_name_46; /* a model (stored as s32, read as s16) */
 extern MBModel* D_80108250_2F7180_name_46[2];
-extern MBModel* D_80108258_2F7188_name_46;
+extern MBModel* D_80108258_2F7188_name_46[2]; /* each side's stand (D_8010825C is [1]) */
 extern MBModel* D_8010825C_2F718C_name_46;
-extern MBModel* D_80108260_2F7190_name_46;
+extern MBModel* D_80108260_2F7190_name_46[2]; /* each side's button (D_80108264 is [1]) */
 extern MBModel* D_80108264_2F7194_name_46;
 extern s16 D_80108268_2F7198_name_46[2]; /* each side's time display */
 extern s16 D_80108270_2F71A0_name_46;
+extern MBModel* D_80108274_2F71A4_name_46; /* the referee */
 extern s16 D_80108272_2F71A2_name_46;
 extern s16 D_8010827C_2F71AC_name_46;
 extern s16 D_8010827E_2F71AE_name_46[];
