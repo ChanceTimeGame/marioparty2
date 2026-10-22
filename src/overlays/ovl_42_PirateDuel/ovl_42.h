@@ -170,6 +170,9 @@ typedef struct PdShrink {
 /* ---- 42-B ---- */
 
 extern u16 ContBtnTrg[];
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
+void func_80042E44_43A44(Vec* v, f32 angle); /* rotate v about y */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
@@ -224,10 +227,10 @@ extern Vec D_80109B50_2C7AD0_PirateDuel[1];
 extern Vec D_80109B5C_2C7ADC_PirateDuel[3];
 extern f32 D_80109B80_2C7B00_PirateDuel[6]; /* per character: the sword's scale */
 /* fork B's (raw) */
-extern Vec D_80109B98_2C7B18_PirateDuel;
-extern f32 D_80109BA4_2C7B24_PirateDuel;
-extern s32 D_80109BA8_2C7B28_PirateDuel;
-extern s32 D_80109BAC_2C7B2C_PirateDuel;
+extern Vec D_80109B98_2C7B18_PirateDuel; /* the sword tip, from the hitting model */
+extern f32 D_80109BA4_2C7B24_PirateDuel; /* the clash frame of motion 3 */
+extern s32 D_80109BA8_2C7B28_PirateDuel[1]; /* a clash is under way */
+extern s32 D_80109BAC_2C7B2C_PirateDuel; /* flash frames left */
 extern u8 D_80109BB0_2C7B30_PirateDuel[3][4]; /* the streaks' start colours */
 
 /* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */

@@ -1395,7 +1395,76 @@ s32 func_801078C4_2C5844_PirateDuel(void) {
     return D_80109DE8_2C7D68_PirateDuel;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801078D0_2C5850_PirateDuel);
+/* Sword clashes: when one duelist's motion is at the clash frame (D_80109BA4) while the other's
+   has just started (under 15), sparks at the hit point (func_80108384) and both models flash
+   orange for four frames, lit from the hit. */
+void func_801078D0_2C5850_PirateDuel(void) {
+    Vec dir;
+    Vec pos;
+    MBModel* a;
+    MBModel* b;
+    MBModel* hit;
+    MBModel* other;
+    f32 timeA;
+    f32 timeB;
+    f32 rot;
+    s32 who;
+
+    a = PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel);
+    b = PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel);
+    who = -1;
+    timeA = func_80029CE4_2A8E4(*a->obj->model);
+    timeB = func_80029CE4_2A8E4(*b->obj->model);
+    if (timeA == D_80109BA4_2C7B24_PirateDuel && timeB > 0.0f && timeB < 15.0f && D_80109BA8_2C7B28_PirateDuel[0] == 0) {
+        who = 0;
+        D_80109BA8_2C7B28_PirateDuel[0] = 1;
+    }
+    if (timeB == D_80109BA4_2C7B24_PirateDuel && timeA > 0.0f && timeA < 15.0f && D_80109BA8_2C7B28_PirateDuel[0] == 0) {
+        who = 1;
+        D_80109BA8_2C7B28_PirateDuel[0] = 1;
+    }
+    if (timeA < D_80109BA4_2C7B24_PirateDuel && D_80109BA8_2C7B28_PirateDuel[0] == 1) {
+        D_80109BA8_2C7B28_PirateDuel[0] = 0;
+    }
+    if (D_80109BAC_2C7B2C_PirateDuel == 0 && who >= 0) {
+        if (who == 0) {
+            other = a;
+            hit = b;
+        } else {
+            other = b;
+            hit = a;
+        }
+        rot = func_80042BE0_437E0(&hit->rot);
+        pos.x = D_80109B98_2C7B18_PirateDuel.x;
+        pos.y = D_80109B98_2C7B18_PirateDuel.y;
+        pos.z = D_80109B98_2C7B18_PirateDuel.z;
+        func_80042E44_43A44(&pos, rot);
+        pos.x += hit->pos.x;
+        pos.y += hit->pos.y;
+        pos.z += hit->pos.z;
+        func_80108384_2C6304_PirateDuel(pos.x, pos.y, pos.z, 9);
+        PlaySound(0x3AE);
+        D_80109BAC_2C7B2C_PirateDuel = 4;
+        dir.x = D_80109B98_2C7B18_PirateDuel.x;
+        dir.y = D_80109B98_2C7B18_PirateDuel.y;
+        dir.z = D_80109B98_2C7B18_PirateDuel.z;
+        MBVecNormalize(&dir);
+        func_80042E44_43A44(&dir, rot);
+        func_8002D2B4_2DEB4(*hit->obj->model, dir.x, dir.y, dir.z);
+        func_8002D274_2DE74(*hit->obj->model, 240, 150, 80);
+        dir.x = hit->pos.x + D_80109B98_2C7B18_PirateDuel.x - other->pos.x;
+        dir.y = hit->pos.y + D_80109B98_2C7B18_PirateDuel.y - other->pos.y;
+        dir.z = hit->pos.z + D_80109B98_2C7B18_PirateDuel.z - other->pos.z;
+        MBVecNormalize(&dir);
+        func_80042E44_43A44(&dir, func_80042BE0_437E0(&other->rot) - 180.0f);
+        func_8002D2B4_2DEB4(*other->obj->model, dir.x, dir.y, dir.z);
+        func_8002D274_2DE74(*other->obj->model, 240, 150, 80);
+    }
+    if (D_80109BAC_2C7B2C_PirateDuel != 0 && --D_80109BAC_2C7B2C_PirateDuel == 0) {
+        func_8002D274_2DE74(*a->obj->model, 0, 0, 0);
+        func_8002D274_2DE74(*b->obj->model, 0, 0, 0);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107D00_2C5C80_PirateDuel);
 
