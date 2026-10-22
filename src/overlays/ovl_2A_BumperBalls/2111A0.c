@@ -243,15 +243,173 @@ void func_80103430_211DD0_BumperBalls(omObjData* arg0) {
     func_8002BED4_2CAD4(arg0->model[1], 0.0f, D_8010A27C_218C1C_BumperBalls, D_8010A284_218C24_BumperBalls.unk_00, D_8010A284_218C24_BumperBalls.unk_02, "152_02map-grid6_1_1", 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010351C_211EBC_BumperBalls);
+void func_8010351C_211EBC_BumperBalls(omObjData* arg0) {
+    LoadFormFile(0x3A0007, 0x69D);
+    func_801035AC_211F4C_BumperBalls(arg0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103558_211EF8_BumperBalls);
+void func_80103558_211EF8_BumperBalls(omObjData* arg0) {
+    func_801035AC_211F4C_BumperBalls(arg0, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103574_211F14_BumperBalls);
+void func_80103574_211F14_BumperBalls(omObjData* arg0) {
+    func_801035AC_211F4C_BumperBalls(arg0, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103590_211F30_BumperBalls);
+void func_80103590_211F30_BumperBalls(omObjData* arg0) {
+    func_801035AC_211F4C_BumperBalls(arg0, 3);
+}
 
+/* masked 0: pos and chrBase swap s3/s4 (two attempts at declaration order) */
+#ifdef NON_MATCHING
+void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
+    s32 chrBase;
+    BumperBallsWork* work;
+    s32 i;
+    u8 pos;
+    s32 file;
+    s32 mot;
+    s8 chr;
+    f32 zero;
+
+    if (D_8010A038_2189D8_BumperBalls == 3) {
+        for (i = 0; i < 4; i++) {
+            if (D_8010A034_2189D4_BumperBalls[i] == 0) {
+                pos = i;
+                break;
+            }
+        }
+    } else {
+        do {
+            pos = rand8() & 3;
+        } while (D_8010A034_2189D4_BumperBalls[pos] != 0);
+    }
+    D_8010A034_2189D4_BumperBalls[pos] = 1;
+    work = object->unk_50 = func_80027154_27D54(sizeof(BumperBallsWork), 0x7918);
+    work->unk_00 = 0;
+    work->player = player;
+    work->unk_20 = 50.0f;
+    work->unk_1C = 0.0f;
+    zero = work->unk_1C;
+    work->unk_30 = work->unk_34 = work->unk_38 = work->unk_24 = work->unk_2C = zero;
+    work->unk_3C = 0;
+    work->unk_50 = 0;
+    work->unk_60 = NULL;
+    work->unk_56 = work->unk_5A = work->unk_52 = work->unk_58 = work->unk_54 = 0;
+    work->unk_5C = zero;
+    work->unk_3E = 0;
+    work->unk_64 = 1;
+    work->unk_66 = 0;
+    work->unk_42 = 0x200;
+    work->unk_44 = work->unk_48 = work->unk_4C = zero;
+    for (i = 0; i < 2; i++) {
+        work->unk_40[i] = 0;
+    }
+    chr = gPlayers[player].character;
+    work->character = chr;
+    chrBase = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_08;
+    if (D_8010A272_218C12_BumperBalls == 0) {
+        D_8010105C_101C5C = D_80101300_101F00 = 0.6f;
+    }
+    object->model[0] = LoadFormFile(chrBase | file, 0x206B9);
+    omSetTra(object, D_80109FE0_218980_BumperBalls[pos].x, D_80109FE0_218980_BumperBalls[pos].y, D_80109FE0_218980_BumperBalls[pos].z);
+    if ((u16)D_800CD438_CE038[chr].unk_00 == 5) {
+        work->unk_08 = 10.0f;
+        omSetSca(object, 0.95f, 0.95f, 0.95f);
+        omSetTra(object, D_80109FE0_218980_BumperBalls[pos].x, D_80109FE0_218980_BumperBalls[pos].y - 10.0f,
+                 D_80109FE0_218980_BumperBalls[pos].z);
+    } else {
+        work->unk_08 = 0.0f;
+        omSetSca(object, 1.0f, 1.0f, 1.0f);
+    }
+    object->model[1] = func_80018A64_19664(0xD, 0x689);
+    func_8003C8E0_3D4E0(object->model[1]);
+    func_800297E8_2A3E8(object->model[1], 1.25f, 1.25f, 1.25f);
+    func_80029714_2A314(object->model[1], object->trans.x, 120.0f, object->trans.z);
+    object->model[5] = LoadFormFile(8, 0x68D);
+    for (i = 0; i < 4; i++) {
+        if (player == 0 && i == 0) {
+            object->model[6 + i] = LoadFormFile(0x10014, 0x68D);
+        } else {
+            object->model[6 + i] = func_80027D3C_2893C(D_8010A29C_218C3C_BumperBalls[0]->model[6]);
+        }
+    }
+    for (i = 0; i < 2; i++) {
+        if (player == 0 && i == 0) {
+            object->model[10 + i] = LoadFormFile(7, 0x68D);
+        } else {
+            object->model[10 + i] = func_80027D3C_2893C(D_8010A29C_218C3C_BumperBalls[0]->model[10]);
+        }
+    }
+    func_80018CCC_198CC(object, 0, chrBase | 0x5B);
+    func_80018CCC_198CC(object, 1, chrBase | 0x5C);
+    func_80018CCC_198CC(object, 2, chrBase | 0x5D);
+    if (rand8() & 1) {
+        mot = chrBase | 0x4E;
+    } else {
+        mot = chrBase | 0x4F;
+    }
+    func_80018CCC_198CC(object, 3, mot);
+    work->unk_90 = mot;
+    if (rand8() & 1) {
+        mot = chrBase | 0x55;
+    } else {
+        mot = chrBase | 0x56;
+    }
+    func_80018CCC_198CC(object, 6, mot);
+    work->unk_94 = mot;
+    switch (D_8010A272_218C12_BumperBalls) {
+    case 0:
+        func_80018CCC_198CC(object, 4, chrBase | 0x1C);
+        func_80018CCC_198CC(object, 5, chrBase | 0xA);
+        break;
+    case 1:
+        func_80018CCC_198CC(object, 4, chrBase | 0xE);
+        func_80018CCC_198CC(object, 5, chrBase | 0xA);
+        break;
+    case 2:
+        func_80018CCC_198CC(object, 4, chrBase | 0xE);
+        func_80018CCC_198CC(object, 5, chrBase | 0xA);
+        break;
+    }
+    object->model[4] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+    D_800F86D8_F92D8[object->model[4]].unk02 = D_8010A26C_218C0C_BumperBalls;
+    HmfModelObjAttrSet(D_800F86D8_F92D8[object->model[4]].unk00, 0x40000000, 0x40000000);
+    func_80021160_21D60(object->model[4], 4, 4);
+    object->model[3] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+    D_800F86D8_F92D8[object->model[3]].unk02 = D_8010A26A_218C0A_BumperBalls;
+    HmfModelObjAttrSet(D_800F86D8_F92D8[object->model[3]].unk00, 0x40000000, 0x40000000);
+    func_80021160_21D60(object->model[3], 4, 4);
+    object->model[2] = LoadFormFile(0x3A0006, 0x206A9);
+    func_8002BB4C_2C74C(object->model[2], (char*)D_8010A0DC_218A7C_BumperBalls, D_8010A010_2189B0_BumperBalls[chr]);
+    func_80029A8C_2A68C(object->model[2]);
+    work->unk_0C = func_800B75A8_B81A8(-object->trans.x, -object->trans.z);
+    if (work->unk_0C < 0.0f) {
+        work->unk_0C += 360.0f;
+    }
+    work->unk_34 = work->unk_14 = work->unk_10 = work->unk_0C;
+    omSetRot(object, 0.0f, work->unk_0C, 0.0f);
+    func_8002979C_2A39C(object->model[2], work->unk_30, work->unk_34, work->unk_38);
+    func_80029714_2A314(object->model[2], object->trans.x, object->trans.y + -50.0f + work->unk_08, object->trans.z);
+    func_80029B80_2A780(object->model[0], object->motion[0]);
+    func_80029E80_2AA80(object->model[0], 2, 2);
+    if (D_8010A272_218C12_BumperBalls == 0) {
+        D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
+        func_8002D1EC_2DDEC(object->model[0], 1);
+        func_8002D1EC_2DDEC(object->model[2], 1);
+        func_80109D80_218720_BumperBalls(object);
+    }
+    work->unk_77 = 0;
+    work->unk_78 = 0;
+    for (i = 0; i < 4; i++) {
+        work->unk_7A[i] = 0;
+    }
+    object->func_ptr = &func_80103D68_212708_BumperBalls;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801035AC_211F4C_BumperBalls);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103D68_212708_BumperBalls);
 

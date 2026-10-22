@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "game/object.h"
+#include "game/sprite.h"
 
 /* ---- main-segment API used by 2A ---- */
 
@@ -36,6 +37,22 @@ void func_8002E544_2F144(void);
 void func_8006D4D0_6E0D0(s16); /* MP1 func_80079078: the seconds counter */
 
 void espDispOff(u16);
+u8 rand8(void);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+u16 func_80018A64_19664(s32 arg0, s32 arg1);
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* loads obj->motion[slot] */
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2);
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_80029A8C_2A68C(s16);
+void func_80029B80_2A780(s16 arg0, s16 arg1); /* model motion */
+void func_80029E80_2AA80(s16, s32, s32);
+void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
+void func_8003C8E0_3D4E0(s16);
+f32 func_800B75A8_B81A8(f32, f32); /* atan2 */
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 void func_80026D50_27950(s16 arg0, u8 arg1, u8 arg2);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -73,7 +90,8 @@ extern s32 D_800FA5B8_FB1B8;
 extern u8 D_800FA656; /* minigame variant: 0 plays the music, 2 adds the rescue boats */
 extern u8 D_800FD8AC[]; /* CPU difficulty when flag 0xC is set */
 
-/* A player's ball work (func_801035AC; MP1 BumperBallsWork, 0x5C bytes). */
+/* A player's ball work (func_801035AC, 0x98 bytes). MP1's BumperBallsWork with fields added at
+   0x42-0x4F: MP1's 0x42-0x4C sit 0xE later, its 0x50-0x5A 0xC later. */
 typedef struct BumperBallsWork {
     /* 0x00 */ u16 unk_00; /* state: 0 idle, 1 roll, 2 fast, 3 falling, 4 floating, 5 rescued, 6 winner */
     /* 0x02 */ s16 character;
@@ -95,22 +113,48 @@ typedef struct BumperBallsWork {
     /* 0x3C */ u16 unk_3C;
     /* 0x3E */ u16 unk_3E;
     /* 0x40 */ u8 unk_40[2];
-    /* 0x42 */ u16 unk_42; /* CPU mode */
-    /* 0x44 */ u16 unk_44;
-    /* 0x46 */ u16 unk_46;
-    /* 0x48 */ u16 unk_48;
-    /* 0x4A */ u16 unk_4A;
-    /* 0x4C */ u16 unk_4C;
-    /* 0x4E */ char pad_4E[2];
-    /* 0x50 */ f32 unk_50; /* CPU heading (bob phase once floating) */
-    /* 0x54 */ omObjData* unk_54; /* CPU target */
+    /* 0x42 */ u16 unk_42; /* 0x200 at start */
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ f32 unk_4C;
+    /* 0x50 */ u16 unk_50; /* CPU mode (MP1 0x42) */
+    /* 0x52 */ u16 unk_52;
+    /* 0x54 */ u16 unk_54;
+    /* 0x56 */ u16 unk_56;
     /* 0x58 */ u16 unk_58;
     /* 0x5A */ u16 unk_5A;
-} BumperBallsWork;
+    /* 0x5C */ f32 unk_5C; /* CPU heading (bob phase once floating) (MP1 0x50) */
+    /* 0x60 */ omObjData* unk_60; /* CPU target (MP1 0x54) */
+    /* 0x64 */ u16 unk_64; /* MP1 0x58 */
+    /* 0x66 */ u16 unk_66; /* MP1 0x5A */
+    /* 0x68 */ char pad_68[0xF];
+    /* 0x77 */ u8 unk_77;
+    /* 0x78 */ u16 unk_78;
+    /* 0x7A */ u8 unk_7A[4];
+    /* 0x7E */ char pad_7E[0x12];
+    /* 0x90 */ s32 unk_90; /* motion file of slot 3 */
+    /* 0x94 */ s32 unk_94; /* motion file of slot 6 */
+} BumperBallsWork; /* size = 0x98 */
+
+/* Per-character data, 0x18 bytes each (ovl_34's CTCharData, ovl_6F's BRCharData). */
+typedef struct BumperBallsCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} BumperBallsCharData; /* size = 0x18 */
+extern BumperBallsCharData D_800CD438_CE038[];
 
 /* ---- overlay .data ---- */
 
+extern Vec D_80109FE0_218980_BumperBalls[4]; /* start positions */
+extern char* D_8010A010_2189B0_BumperBalls[6]; /* ball texture per character */
 extern s32 D_8010A028_2189C8_BumperBalls[3]; /* the island model per variant */
+extern u8 D_8010A034_2189D4_BumperBalls[4]; /* start positions taken */
+extern u8 D_8010A038_2189D8_BumperBalls; /* 3: take the start positions in order */
 
 /* ---- overlay .bss ---- */
 
