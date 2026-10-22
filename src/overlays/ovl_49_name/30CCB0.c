@@ -4896,7 +4896,40 @@ void func_80111AB0_31BF60_name_49(void) {
     func_80111588_31BA38_name_49(2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80111ACC_31BF7C_name_49);
+/* After message 0x354 the player is carried along path D_80113B20[n] to space 0x59 (one hop of 10 frames per space); everyone else is told to make way
+   (func_80063C40(i, 10)) before the last hop. */
+void func_80111ACC_31BF7C_name_49(s32 n) {
+    Vec rot;
+    s16* path = D_80113B20_31DFD0_name_49[n];
+    GW_PLAYER* player = BoardPlayerGet(-1);
+    SpaceData* space;
+    s32 i;
+
+    func_8005670C_5730C(&rot);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot, &((MBModel*)player->unk_24)->rot, 8);
+    HuPrcSleep(8);
+    MBDlgWinExec(0x21, 0x354);
+    MBPlayerMotionSet(-1, 0, 2);
+    while (*path != -1) {
+        space = GetSpaceData(*path);
+        func_80056658_57258(&((MBModel*)player->unk_24)->pos, &space->coords, &((MBModel*)player->unk_24)->rot);
+        if (path[1] == -1) {
+            func_80054C78_55878(0x59, &player->cur_chain_index, &player->cur_space_index);
+            player->next_chain_index = player->cur_chain_index;
+            player->next_space_index = player->cur_space_index + 1;
+            for (i = 0; i < 4; i++) {
+                if (i != GwSystem.current_player_index) {
+                    func_80063C40_64840(i, 10);
+                }
+            }
+        }
+        path++;
+        HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &space->coords, &((MBModel*)player->unk_24)->pos, 10));
+        HuPrcChildWatch();
+    }
+    MBPlayerMotionSet(-1, -1, 2);
+    omDelPrcObj(NULL);
+}
 
 void func_80111C64_31C114_name_49(void) {
     func_80111ACC_31BF7C_name_49(0);
@@ -4910,7 +4943,40 @@ void func_80111C9C_31C14C_name_49(void) {
     func_80111ACC_31BF7C_name_49(2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80111CB8_31C168_name_49);
+/* After message 0x355 the player is carried along path D_80113B84[n] to space 0x3F (one hop of 10 frames per space); everyone else is told to make way
+   (func_80063C40(i, 10)) before the last hop. */
+void func_80111CB8_31C168_name_49(s32 n) {
+    Vec rot;
+    s16* path = D_80113B84_31E034_name_49[n];
+    GW_PLAYER* player = BoardPlayerGet(-1);
+    SpaceData* space;
+    s32 i;
+
+    func_8005670C_5730C(&rot);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot, &((MBModel*)player->unk_24)->rot, 8);
+    HuPrcSleep(8);
+    MBDlgWinExec(0x21, 0x355);
+    MBPlayerMotionSet(-1, 0, 2);
+    while (*path != -1) {
+        space = GetSpaceData(*path);
+        func_80056658_57258(&((MBModel*)player->unk_24)->pos, &space->coords, &((MBModel*)player->unk_24)->rot);
+        if (path[1] == -1) {
+            func_80054C78_55878(0x3F, &player->cur_chain_index, &player->cur_space_index);
+            player->next_chain_index = player->cur_chain_index;
+            player->next_space_index = player->cur_space_index + 1;
+            for (i = 0; i < 4; i++) {
+                if (i != GwSystem.current_player_index) {
+                    func_80063C40_64840(i, 10);
+                }
+            }
+        }
+        path++;
+        HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &space->coords, &((MBModel*)player->unk_24)->pos, 10));
+        HuPrcChildWatch();
+    }
+    MBPlayerMotionSet(-1, -1, 2);
+    omDelPrcObj(NULL);
+}
 
 void func_80111E50_31C300_name_49(void) {
     func_80111CB8_31C168_name_49(0);

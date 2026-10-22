@@ -624,11 +624,11 @@ void func_80111588_31BA38_name_49(s32 which);
 void func_80111A78_31BF28_name_49(void);
 void func_80111A94_31BF44_name_49(void);
 void func_80111AB0_31BF60_name_49(void);
-void func_80111ACC_31BF7C_name_49(s32 arg0); /* B: from callers */
+void func_80111ACC_31BF7C_name_49(s32 path);
 void func_80111C64_31C114_name_49(void);
 void func_80111C80_31C130_name_49(void);
 void func_80111C9C_31C14C_name_49(void);
-void func_80111CB8_31C168_name_49(s32 arg0); /* B: from callers */
+void func_80111CB8_31C168_name_49(s32 path);
 void func_80111E50_31C300_name_49(void);
 void func_80111E6C_31C31C_name_49(void);
 void func_80111E88_31C338_name_49(void);
@@ -689,6 +689,8 @@ void func_8005E374_5EF74(void);
 extern s16 D_80113AD4_31DF84_name_49[3]; /* func_80111588: the switch spaces */
 extern s16 D_80113ADC_31DF8C_name_49[]; /* func_80111588: the 3-way switch's direction list */
 struct unk_8003B8D4Struct* func_800419A4_425A4(s16, s16*, s32);
+extern s16* D_80113B20_31DFD0_name_49[3]; /* func_80111ACC: paths (-1 ended) */
+extern s16* D_80113B84_31E034_name_49[5]; /* func_80111CB8: paths (-1 ended) */
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif
