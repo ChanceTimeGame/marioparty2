@@ -16,6 +16,7 @@
 #include "game/pad.h"
 #include "game/data.h"
 #include "game/sprite.h"
+#include "game/malloc.h"
 
 /* ---- main-segment API used by 01 ---- */
 
@@ -311,8 +312,8 @@ void func_80107BCC_DF65C_BowserSlots(s32 model, s32 arg1, f32 arg2, f32 arg3, f3
 s32 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items); /* returns a u16 (callers re-mask it) */
 s32 func_8010879C_E022C_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
 s32 func_80108EE4_E0974_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
-void func_80109AF8_E1588_BowserSlots(u16 model, void* anim, s32 frame);
-s16 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
+void func_80109AF8_E1588_BowserSlots(u16 model, HuSprite_Unk84_Struct* spr, u16 frame);
+s32 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
 s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 arg3, u16 arg4);
 s32 func_8010A074_E1B04_BowserSlots(s32 file); /* sprite animation from a file; returns a u16 (callers re-mask it: retail called it unprototyped) */
 void func_8010A0B8_E1B48_BowserSlots(void);

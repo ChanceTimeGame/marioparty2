@@ -1924,11 +1924,122 @@ s32 func_80108EE4_E0974_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha) {
     return idx;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80109AF8_E1588_BowserSlots);
+/* Points the model's current list at its per-buffer list showing sprite frame `frame`
+   (MP3 motor_rooter's func_801107FC). */
+void func_80109AF8_E1588_BowserSlots(u16 model, HuSprite_Unk84_Struct* spr, u16 frame) {
+    HmfModel* m = BS_MODEL(model);
+    HmfData* hmf = m->hmf;
+    Gfx* gfx = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80109BC8_E1658_BowserSlots);
+    hmf->unk3C->unk00[0] = gfx;
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 0x04, osVirtualToPhysical(spr->unk00[frame].unk00));
+    gSPDisplayList(&gfx[2], osVirtualToPhysical(hmf->unk3C->unk10));
+    gDPPipeSync(&gfx[3]);
+    gSPEndDisplayList(&gfx[4]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80109C5C_E16EC_BowserSlots);
+/* Makes `model` (a new flat model if -1) draw `src`'s current list. */
+s32 func_80109BC8_E1658_BowserSlots(s32 model, s32 src) {
+    HmfData* dst;
+    HmfData* from;
+
+    if (model == -1) {
+        model = func_80027FA4_28BA4(0x4C1, NULL, 4);
+    }
+    dst = BS_MODEL(model)->hmf;
+    from = BS_MODEL(src)->hmf;
+    dst->unk64->unk50 = from->unk64->unk50;
+    dst->unk3C->unk00[0] = from->unk3C->unk00[0];
+    return model;
+}
+
+/* Builds the vertex buffers of a flat sprite model: the frame strip cut into `count` quads that
+   fit texture memory, centred, offset by (x, y); returns the quad count (MP3 motor_rooter's
+   func_80110A00). */
+s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 x, u16 y) {
+    Vtx* buf;
+    Vtx* v;
+    Vtx_t* to;
+    Vtx_t* from;
+    s32 tmem;
+    s32 bpp;
+    s32 w;
+    s32 h;
+    s32 sw;
+    s32 sh;
+    s32 size;
+    s32 count;
+    s32 qh;
+    s32 qsh;
+    s32 n;
+    s32 i;
+    s32 j;
+
+    if (spr->unk1A >= 2) {
+        tmem = 0x800;
+    } else {
+        tmem = 0x1000;
+    }
+    w = spr->unk00->unk04;
+    h = spr->unk00->unk06;
+    sw = w * 20.0 * scale / 32.0;
+    sh = h * 20.0 * scale / 32.0;
+    bpp = spr->unk18 & 0x7FFF;
+    if ((spr->unk18 & 0xFFF) == 4) {
+        size = ((w + 1) & 0xFFFE) * h * bpp;
+    } else {
+        size = w * h * spr->unk18;
+    }
+    size = (size < 0) ? (size + 7) : size;
+    size >>= 3;
+    count = size / tmem;
+    if (count <= 0) {
+        count = 1;
+    }
+    qh = h / count;
+    qsh = sh / count;
+    n = count * 4;
+    buf = v = HuMemMemoryAllocPerm(n * sizeof(Vtx));
+    func_800B0EF0_B1AF0(buf, 0, n * sizeof(Vtx));
+    for (i = 0; i < count; i++, v += 4) {
+        v[0].v.ob[0] = (s32)(sw * 0.5);
+        v[0].v.ob[1] = (s32)(sh * 0.5 - qsh * i);
+        v[0].v.tc[0] = (w - 1) * 64;
+        v[0].v.tc[1] = 0;
+        v[1].v.ob[0] = (s32)(sw * 0.5);
+        v[1].v.ob[1] = (s32)(sh * 0.5 - qsh * (i + 1));
+        v[1].v.tc[0] = (w - 1) * 64;
+        v[1].v.tc[1] = (qh - 1) * 64;
+        v[2].v.ob[0] = (s32) - (sw * 0.5);
+        v[2].v.ob[1] = (s32)(sh * 0.5 - qsh * i);
+        v[2].v.tc[0] = 0;
+        v[2].v.tc[1] = 0;
+        v[3].v.ob[0] = (s32) - (sw * 0.5);
+        v[3].v.ob[1] = (s32)(sh * 0.5 - qsh * (i + 1));
+        v[3].v.tc[0] = 0;
+        v[3].v.tc[1] = (qh - 1) * 64;
+        for (j = 0; j < 4; j++) {
+            v[j].v.ob[0] += x;
+            v[j].v.ob[1] += y;
+            v[j].v.ob[2] = 0;
+            v[j].v.flag = 0;
+            v[j].v.cn[3] = 0xFF;
+            v[j].v.cn[0] = v[j].v.cn[1] = v[j].v.cn[2] = 0;
+        }
+    }
+    v = buf;
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        hmf->unk44[i] = func_80027154_27D54(n * sizeof(Vtx), hmf->unk0E);
+        to = (Vtx_t*)hmf->unk44[i];
+        from = &v->v;
+        for (j = 0; j < n; j++) {
+            *(to++) = *(from++);
+        }
+    }
+    HuMemMemoryFreePerm(buf);
+    return count;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A074_E1B04_BowserSlots);
 
