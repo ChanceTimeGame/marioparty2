@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_80109AC0_143E50_BowlOver[16] = "\202r\202s\202`\202q\202s";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80102800_13CB90_BowlOver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80102E04_13D194_BowlOver);
@@ -9,6 +12,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801040A0_13
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801041CC_13E55C_BowlOver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801042F0_13E680_BowlOver);
+
+__asm__(".section .rodata");
+const u32 D_80109B5C_143EEC_BowlOver[5] = { 0x43020000, 0xC3480000, 0xC2A00000, 0xC37A0000, 0xC2F00000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_8010487C_13EC0C_BowlOver);
 
@@ -40,54 +46,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801068D0_14
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801069D0_140D60_BowlOver);
 
+__asm__(".section .rodata");
+const u32 D_80109BB4_143F44_BowlOver[7] = { 0x43B8FFBF, 0xC3A28000, 0x43DAA6B9, 0xC3E11429, 0x43A115D2, 0x00000000, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80106C94_141024_BowlOver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80106E8C_14121C_BowlOver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80106F60_1412F0_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80106F90_141320_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801070DC_14146C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801072F0_141680_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80107390_141720_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80107570_141900_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80107738_141AC8_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_8010782C_141BBC_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801079EC_141D7C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80107DB4_142144_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801082B8_142648_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801087A0_142B30_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80108DCC_14315C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80108ECC_14325C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80109148_1434D8_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80109354_1436E4_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_8010947C_14380C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801096A0_143A30_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_8010977C_143B0C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801097F4_143B84_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80109870_143C00_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801098EC_143C7C_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80109910_143CA0_BowlOver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80109934_143CC4_BowlOver);
