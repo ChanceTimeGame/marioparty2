@@ -1207,9 +1207,114 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107D00_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80107E20_2C5DA0_PirateDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80108000_2C5F80_PirateDuel);
+/* The streak effect's update (4F's func_8010D6FC): sixteen coloured streaks fly out from the
+   object and fade; the effect object is D_8010A100 (one slot, unlike 4F's four).
+   Retail quirk: the third vertex takes the second colour (4F's takes the third). */
+/* NON_MATCHING: as 4F's twin, the green and blue fade clamps: retail sign-extends the
+   differences as s16 before the clamp (two sll/sra pairs). Logic checked. */
+#ifdef NON_MATCHING
+void func_80108000_2C5F80_PirateDuel(omObjData* obj) {
+    Vec dir;
+    Vtx* vtx;
+    PdStreak* p;
+    s32 i;
+    s32 k;
+    s32 r;
+    s16 g;
+    s16 b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80108384_2C6304_PirateDuel);
+    *(Gfx**)D_800FC834_FD434[obj->model[0]].hmf->unk3C = D_8010A0E0_2C8060_PirateDuel[D_800FDBE0_FE7E0];
+    if (D_8010A100_2C8080_PirateDuel->work[0] != 0) {
+        vtx = D_8010A0C0_2C8040_PirateDuel[D_800FDBE0_FE7E0];
+        p = obj->unk_50;
+        for (i = 0; i < 16; i++, p++) {
+            dir.x = p->dir.x;
+            dir.y = p->dir.y;
+            dir.z = p->dir.z;
+            MBVecNormalize(&dir);
+            for (k = 0; k < 4; k++) {
+                vtx->v.cn[k] = p->col[0][k];
+            }
+            vtx->v.ob[0] = p->pos.x;
+            vtx->v.ob[1] = p->pos.y;
+            vtx->v.ob[2] = p->pos.z;
+            vtx++;
+            for (k = 0; k < 4; k++) {
+                vtx->v.cn[k] = p->col[1][k];
+            }
+            vtx->v.ob[0] = dir.x * p->len + p->pos.x;
+            vtx->v.ob[1] = dir.y * p->len + p->pos.y;
+            vtx->v.ob[2] = dir.z * p->len + p->pos.z;
+            vtx++;
+            for (k = 0; k < 4; k++) {
+                vtx->v.cn[k] = p->col[1][k];
+            }
+            vtx->v.ob[0] = (dir.x + 0.08f) * (p->len - 15.0f) + p->pos.x;
+            vtx->v.ob[1] = (p->len - 15.0f) * dir.y + p->pos.y;
+            vtx->v.ob[2] = (p->len - 15.0f) * dir.z + p->pos.z;
+            vtx++;
+            p->pos.x += dir.x * p->speed;
+            p->pos.y += dir.y * p->speed;
+            p->pos.z += dir.z * p->speed;
+            for (k = 0; k < 3; k++) {
+                r = p->col[k][0] - 5;
+                if (r < 0) {
+                    r = 0;
+                }
+                p->col[k][0] = r;
+                g = p->col[k][1] - 13;
+                if (g < 0) {
+                    g = 0;
+                }
+                p->col[k][1] = g;
+                b = p->col[k][2] - 18;
+                if (b < 0) {
+                    b = 0;
+                }
+                p->col[k][2] = b;
+            }
+        }
+        if (++obj->work[2] >= obj->work[1]) {
+            obj->work[0] = 0;
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80108000_2C5F80_PirateDuel);
+#endif
+
+/* Starts the streak effect at (x, y, z) for `frames` frames (4F's func_8010DA90). */
+void func_80108384_2C6304_PirateDuel(f32 x, f32 y, f32 z, u8 frames) {
+    PdStreak* p;
+    s32 i;
+    s32 j;
+    s32 k;
+
+    omSetTra(D_8010A100_2C8080_PirateDuel, x, y, z);
+    D_8010A100_2C8080_PirateDuel->work[1] = frames;
+    D_8010A100_2C8080_PirateDuel->work[0] = 1;
+    D_8010A100_2C8080_PirateDuel->work[2] = 0;
+    func_800298A4_2A4A4(D_8010A100_2C8080_PirateDuel->model[0], 4, 0);
+    p = D_8010A100_2C8080_PirateDuel->unk_50;
+    for (i = 0; i < 16; i++, p++) {
+        for (j = 0; j < 3; j++) {
+            for (k = 0; k < 4; k++) {
+                p->col[j][k] = D_80109BB0_2C7B30_PirateDuel[j][k];
+            }
+        }
+        p->pos.x = p->pos.y = p->pos.z = 0.0f;
+        p->len = (u8)(rand8() % 120) - 40;
+        p->speed = (u8)(rand8() % 110) - 50;
+        p->dir.x = HuMathSin((rand8() + rand8()) % 360);
+        p->dir.y = HuMathSin((rand8() + rand8()) % 360);
+        p->dir.z = HuMathSin((rand8() + rand8()) % 360);
+        if (p->dir.x == 0.0f && p->dir.y == 0.0f && p->dir.z == 0.0f) {
+            p->dir.y = 1.0f;
+        }
+        MBVecNormalize(&p->dir);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801086B0_2C6630_PirateDuel);
 

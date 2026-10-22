@@ -16,6 +16,7 @@
 #include "game/malloc.h"
 #include "game/camera.h"
 #include "game/gamemes.h"
+#include "game/hmfman.h"
 
 /* ---- main-segment API used by 42 ---- */
 
@@ -168,6 +169,10 @@ typedef struct PdShrink {
 
 /* ---- 42-B ---- */
 
+extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+void MBVecNormalize(Vec*);
+void omSetTra(omObjData*, f32, f32, f32);
+
 /* The CPU input script (func_801070F4/func_80107724; ovl_3F.h's Unk3FCpuInput): mode 0 presses
    Start, 2 moves the cursor to an opponent and presses A, 3 raises the stake to a target. */
 typedef struct PdCpuInput {
@@ -216,7 +221,7 @@ extern Vec D_80109B98_2C7B18_PirateDuel;
 extern f32 D_80109BA4_2C7B24_PirateDuel;
 extern s32 D_80109BA8_2C7B28_PirateDuel;
 extern s32 D_80109BAC_2C7B2C_PirateDuel;
-extern s32 D_80109BB0_2C7B30_PirateDuel[];
+extern u8 D_80109BB0_2C7B30_PirateDuel[3][4]; /* the streaks' start colours */
 
 /* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */
 
@@ -261,8 +266,8 @@ extern s32 D_8010A098_2C8018_PirateDuel[2];
 extern s32 D_8010A0A0_2C8020_PirateDuel[5]; /* the five moves: 0..2 each */
 extern MBModel* D_8010A0B4_2C8034_PirateDuel; /* the referee */
 extern MBModel* D_8010A0B8_2C8038_PirateDuel; /* the referee's hat (scaled away) */
-extern s32 D_8010A0C0_2C8040_PirateDuel[8];
-extern s32 D_8010A0E0_2C8060_PirateDuel[8];
+extern Vtx* D_8010A0C0_2C8040_PirateDuel[8]; /* the streaks' vertices, per frame buffer */
+extern Gfx* D_8010A0E0_2C8060_PirateDuel[8]; /* their display list, per frame buffer */
 extern omObjData* D_8010A100_2C8080_PirateDuel;
 
 /* ---- 2C0780.c ---- */
