@@ -2744,7 +2744,158 @@ void func_8010F3D8_2BDC98_name_41(omObjData* obj) {
     }
 }
 
+#ifdef NON_MATCHING
+/* NON_MATCHING: masked 4: retail's frame is 8 bytes larger (an extra spill slot after obj's)
+   and computes idx * 4 after the table address; logic checked against the asm.
+   The boat ride (event on spaces 3, 20 and 29): the player walks to the pier, the boat
+   (D_80111F78, model 0x7E) and its wake (model 0x7D) surface and bob (func_8010F3D8); the fare is
+   5 coins (or all the player has); the player jumps aboard, the boat sails to the far pier
+   (D_801112E0[i][1]), the player jumps off to D_801112D6's space and lands on space
+   D_801112EC[i], where the turn continues; the boat sinks again. */
+void func_8010F448_2BDD08_name_41(void) {
+    char buf[16];
+    Vec rot;
+    Vec rot2;
+    omObjData* obj;
+    GW_SYSTEM* gw;
+    s32 i;
+    s32 idx;
+    s32 space;
+    GW_PLAYER* player;
+    SpaceData* start;
+    SpaceData* pier;
+    SpaceData* dest;
+    SpaceData* land;
+    MBModel* wake;
+    void* cam;
+    s16* pair;
+
+    idx = 0;
+    space = func_800558F4_564F4();
+    player = BoardPlayerGet(-1);
+    gw = &GwSystem;
+    switch ((s16)space) {
+    case 3:
+        idx = 0;
+        break;
+    case 20:
+        idx = 1;
+        break;
+    case 29:
+        idx = 2;
+        break;
+    }
+    MBPlayerMotionSet(-1, -1, 2);
+    pair = D_801112D4_2BFB94_name_41[idx];
+    func_80056C30_57830(-1, 8, pair[0]);
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+    HuPrcChildWatch();
+    start = GetSpaceData(pair[0]);
+    func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &start->coords, &((MBModel*)player->unk_24)->pos, 10);
+    MBPlayerMotionSet(-1, 0, 2);
+    HuPrcSleep(10);
+    MBPlayerMotionSet(-1, -1, 2);
+    D_80111F78_2C0838_name_41 = func_80043510_44110(0x7E, NULL);
+    wake = func_80043510_44110(0x7D, NULL);
+    pier = GetSpaceData(D_801112E0_2BFBA0_name_41[idx][0]);
+    dest = GetSpaceData(D_801112E0_2BFBA0_name_41[idx][1]);
+    func_800B3170_B3D70(&D_80111F78_2C0838_name_41->pos, &pier->coords);
+    func_800B3170_B3D70(&wake->pos, &pier->coords);
+    func_80056658_57258(&pier->coords, &start->coords, &D_80111F78_2C0838_name_41->rot);
+    D_80111F78_2C0838_name_41->jumpY = -25.0f;
+    func_800298A4_2A4A4(*wake->obj->model, 0x80000, 0x80000);
+    func_80029A8C_2A68C(*wake->obj->model);
+    PlaySound(0x3AD);
+    while (D_80111F78_2C0838_name_41->jumpY < 0.0f) {
+        D_80111F78_2C0838_name_41->jumpY += 1.0f;
+        HuPrcVSleep();
+    }
+    obj = omAddObj(0x6000, 0, 0, -1, func_8010F3D8_2BDC98_name_41);
+    obj->rot.y = 0.0f;
+    func_80056658_57258(&start->coords, &pier->coords, &rot);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot, &((MBModel*)player->unk_24)->rot, 1);
+    HuPrcSleep(1);
+    if (gPlayers[gw->current_player_index].coins >= 5) {
+        MBDlgWinExec(0x17, 0xFA);
+        func_8004CA34_4D634(gw->current_player_index, -5);
+        func_800614B4_620B4(gw->current_player_index, -5);
+        HuPrcSleep(30);
+    } else if (gPlayers[gw->current_player_index].coins != 0) {
+        sprintf(buf, D_80111D88_2C0648_name_41, gPlayers[gw->current_player_index].coins);
+        func_80056368_56F68(0x17, 0xFB, (s32)buf, 0, 0, 0, 0);
+        func_80056458_57058();
+        func_80056458_57058();
+        MBDlgWinClose();
+        func_80056168_56D68();
+        func_8004CA34_4D634(gw->current_player_index, -gPlayers[gw->current_player_index].coins);
+        func_800614B4_620B4(gw->current_player_index, -gPlayers[gw->current_player_index].coins);
+        HuPrcSleep(30);
+    } else {
+        MBDlgWinExec(0x17, 0xFC);
+    }
+    func_80056658_57258(&pier->coords, &dest->coords, &rot);
+    func_80056B78_57778(&D_80111F78_2C0838_name_41->rot, &rot, &D_80111F78_2C0838_name_41->rot, 30);
+    HuPrcSleep(30);
+    MBPlayerMotionSet(-1, 2, 0);
+    func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &pier->coords, &((MBModel*)player->unk_24)->pos, 20);
+    ((MBModel*)player->unk_24)->jumpVel = 5.5f;
+    ((MBModel*)player->unk_24)->jumpAccel = -0.5f;
+    func_800797DC_7A3DC(0x42, gw->current_player_index);
+    HuPrcSleep(18);
+    ((MBModel*)player->unk_24)->jumpVel = 0.0f;
+    ((MBModel*)player->unk_24)->jumpAccel = 0.0f;
+    MBPlayerMotionSet(-1, -1, 2);
+    ((MBModel*)player->unk_24)->attr |= 1;
+    D_80110C98_2BF558_name_41 = 1;
+    HuPrcSleep(10);
+    cam = func_800672BC_67EBC(-1, 1, 5);
+    func_80056D80_57980(&D_80111F78_2C0838_name_41->pos, &dest->coords, &D_80111F78_2C0838_name_41->pos, 60);
+    func_80056D80_57980(&wake->pos, &dest->coords, &wake->pos, 60);
+    HuPrcSleep(60);
+    func_8006735C_67F5C(cam);
+    func_80056658_57258(&pier->coords, &start->coords, &rot);
+    start = GetSpaceData(D_801112D4_2BFB94_name_41[idx][1]);
+    D_80110C98_2BF558_name_41 = 0;
+    ((MBModel*)player->unk_24)->attr &= ~1;
+    MBPlayerMotionSet(-1, 2, 0);
+    func_80056658_57258(&dest->coords, &start->coords, &rot2);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot2, &((MBModel*)player->unk_24)->rot, 10);
+    func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &start->coords, &((MBModel*)player->unk_24)->pos, 20);
+    ((MBModel*)player->unk_24)->jumpVel = 5.5f;
+    ((MBModel*)player->unk_24)->jumpAccel = -0.55f;
+    func_800797DC_7A3DC(0x42, gw->current_player_index);
+    HuPrcSleep(10);
+    PlaySound(0x3AD);
+    for (i = 0; i < 10; i++) {
+        D_80111F78_2C0838_name_41->pos.y -= 1.0f;
+        HuPrcVSleep();
+    }
+    MBPlayerMotionSet(-1, 0, 2);
+    func_80054C78_55878(D_801112EC_2BFBAC_name_41[idx], &player->cur_chain_index, &player->cur_space_index);
+    player->next_chain_index = player->cur_chain_index;
+    player->next_space_index = player->cur_space_index + 1;
+    for (i = 0; i < 4; i++) {
+        if (i != gw->current_player_index) {
+            func_80063C40_64840(i, 10);
+        }
+    }
+    land = GetSpaceData(D_801112EC_2BFBAC_name_41[idx]);
+    func_80056658_57258(&start->coords, &land->coords, &rot2);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot2, &((MBModel*)player->unk_24)->rot, 1);
+    func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &land->coords, &((MBModel*)player->unk_24)->pos, 10);
+    for (i = 0; i < 10; i++) {
+        D_80111F78_2C0838_name_41->pos.y -= 1.0f;
+        HuPrcVSleep();
+    }
+    MBPlayerMotionSet(-1, -1, 2);
+    omDelObj(obj);
+    MBModelKill(D_80111F78_2C0838_name_41);
+    MBModelKill(wake);
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_8010F448_2BDD08_name_41);
+#endif
 
 /* a run-over player: hidden when the counter runs out */
 void func_8010FC00_2BE4C0_name_41(omObjData* obj) {

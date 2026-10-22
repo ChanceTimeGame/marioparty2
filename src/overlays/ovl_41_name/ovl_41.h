@@ -587,5 +587,10 @@ void func_8008D974_8E574(char* str, s16 slot); /* window string argument */
 void func_8008AD44_8B944(s16 win);
 extern u16 ContBtnTrg[4];
 extern u16 D_800FC9E0_FD5E0[4]; /* stick-repeat buttons per port */
+extern s16 D_801112D4_2BFB94_name_41[3][2]; /* boat: per pier, start space and landing jump space */
+extern s16 D_801112E0_2BFBA0_name_41[3][2]; /* boat: per pier, its space and the far pier's */
+extern s16 D_801112EC_2BFBAC_name_41[3]; /* boat: per pier, the space where the turn continues */
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029A8C_2A68C(s16);
 
 #endif
