@@ -1369,7 +1369,7 @@ segments:
     subsegments:
       - [0x2DA8B0, c]
       - [0x2E09D0, data]
-      - [0x2E0D30, .rodata, 2DA8B0]
+      - [0x2E0C80, .rodata, 2DA8B0]
       - {0x2E0F30, type: bss, vram: 0x80108E80, name: ovl_44_bss}
   - type: code
     start: 0x2E0F30
