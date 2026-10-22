@@ -1684,23 +1684,422 @@ void func_801079AC_32F36C_name_4E(void) {
     }
 }
 
+/* Of the n screen slots, the nearest one seen from slot cur in direction (dx, dy) (unit
+   directions within 0.5 of each other), skipping cur and taken slots (D_8010DA98 != -1);
+   -1 if there is none. NON_MATCHING: one store scheduled after a mov.s instead of before. */
+#ifdef NON_MATCHING
+s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy) {
+    Vec2f dir[30];
+    f32 dist[30];
+    f32 x;
+    f32 y;
+    f32 len;
+    f32 ux;
+    f32 uy;
+    f32 best;
+    s16 i;
+    s16 found;
+
+    for (i = 0; i < n; i++) {
+        if (i == cur || D_8010DA98_335458_name_4E[i] != -1) {
+            dist[i] = -1.0f;
+        } else {
+            x = D_8010E648_336008_name_4E[cur].x - D_8010E648_336008_name_4E[i].x;
+            y = D_8010E648_336008_name_4E[cur].y - D_8010E648_336008_name_4E[i].y;
+            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            dir[i].unk_00 = x / len;
+            dir[i].unk_04 = y / len;
+        }
+    }
+    len = func_800B1830_B2430(dx * dx + dy * dy);
+    ux = dx / len;
+    uy = dy / len;
+    for (i = 0; i < n; i++) {
+        if (dist[i] < 0.0f) {
+            continue;
+        }
+        x = ux - dir[i].unk_00;
+        y = uy - dir[i].unk_04;
+        if (func_800B1830_B2430(x * x + y * y) > 0.5f) {
+            dist[i] = -1.0f;
+        }
+    }
+    best = 100000.0f;
+    found = -1;
+    for (i = 0; i < n; i++) {
+        if (dist[i] < 0.0f) {
+            continue;
+        }
+        if (dist[i] < best) {
+            best = dist[i];
+            found = i;
+        }
+    }
+    return found;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079EC_32F3AC_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107D3C_32F6FC_name_4E);
+/* Object function: once the setup is left (D_8010D1F0, or main's D_801011FC), fades out (D_8010D1F2:
+   0 short, 9/11 long) and hands over to func_80107E34. */
+void func_80107D3C_32F6FC_name_4E(omObjData* obj) {
+    if (D_8010D1F0_334BB0_name_4E != 0 || D_801011FC_101DFC != 0) {
+        switch (D_8010D1F2_334BB2_name_4E) {
+            case 0:
+                InitFadeOut(D_8010D1F2_334BB2_name_4E, 8);
+                break;
+            case 9:
+            case 11:
+                InitFadeOut(D_8010D1F2_334BB2_name_4E, 20);
+                break;
+        }
+        obj->func_ptr = func_80107E34_32F7F4_name_4E;
+        if (D_8010E140_335B00_name_4E != 0x4E) {
+            func_800794A8_7A0A8(60);
+            D_800CB150 = 0;
+        } else {
+            if (D_8010E618_335FD8_name_4E & 2) {
+                func_800794A8_7A0A8(45);
+            }
+            D_800CB150 = 1;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107E34_32F7F4_name_4E);
+/* Object function: when the fade is done, frees the sprites and leaves: back (0), a call (2) or
+   a jump (1) to overlay D_8010E140 with event D_8010E618. */
+void func_80107E34_32F7F4_name_4E(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        func_8001AC44_1B844(D_8010E5F0_335FB0_name_4E);
+        func_8008CE5C_8DA5C();
+        MBDBackKill();
+        func_80050AE0_516E0();
+        switch (D_8010DC90_335650_name_4E) {
+            case 0:
+                _ClearFlag(0x13);
+                omOvlReturnEx(1);
+                break;
+            case 2:
+                omOvlCallEx(D_8010E140_335B00_name_4E, D_8010E618_335FD8_name_4E, 0x11);
+                break;
+            case 1:
+                _ClearFlag(0x13);
+                omOvlGotoEx(D_8010E140_335B00_name_4E, D_8010E618_335FD8_name_4E, 0x11);
+                break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107F10_32F8D0_name_4E);
+/* Sets the scene up: the backdrop esprite, the players' models (placed per team mode, or all at
+   D_8010D4B4 and hidden when D_8010DAB8), the host model, then fades in. */
+void func_80107F10_32F8D0_name_4E(void) {
+    void** motions;
+    Vec* pos;
+    s32 model;
+    s32 i;
+    s32 j;
+    s32 file;
 
+    file = D_8010DAB6_335476_name_4E == 0 ? 0xF7 : 0;
+    D_8010DC18_3355D8_name_4E = func_8001A2F8_1AEF8(file | 0x900F6);
+    D_8010DC1A_3355DA_name_4E = func_8001AAAC_1B6AC(D_8010DC18_3355D8_name_4E, 0, 0);
+    func_8001A708_1B308(D_8010DC1A_3355DA_name_4E, 0x4000);
+    espPosSet(D_8010DC1A_3355DA_name_4E, 160, 120);
+    if (D_800CD414_CE014 & 4) {
+        motions = D_8010D418_334DD8_name_4E;
+    } else {
+        motions = D_8010D400_334DC0_name_4E;
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        gPlayers[i].unk_24 = func_80043510_44110((u8)(gPlayers[i].character + 15), motions[gPlayers[i].character]);
+        HuPrcVSleep();
+    }
+    if (D_8010DAB8_335478_name_4E != 0) {
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            PLAYER_MODEL(i)->pos.x = D_8010D4B4_334E74_name_4E.x;
+            PLAYER_MODEL(i)->pos.y = D_8010D4B4_334E74_name_4E.y;
+            PLAYER_MODEL(i)->pos.z = D_8010D4B4_334E74_name_4E.z;
+            func_80056658_57258(&PLAYER_MODEL(i)->pos, &OVL4E_CAMERA->pos, &PLAYER_MODEL(i)->rot);
+            MBModelDispOff(PLAYER_MODEL(i));
+        }
+    } else {
+        switch (D_801013B8_101FB8.unk40) {
+            default:
+            case 0:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                pos = D_8010D4FC_334EBC_name_4E;
+                break;
+            case 1:
+                pos = D_8010D544_334F04_name_4E;
+                break;
+            case 2:
+                pos = D_8010D574_334F34_name_4E;
+                break;
+            case 7:
+                pos = D_8010D52C_334EEC_name_4E;
+                break;
+        }
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            j = D_800F9D48_FA948[0x2F8 + i];
+            PLAYER_MODEL(j)->pos.x = pos[i].x;
+            PLAYER_MODEL(j)->pos.y = pos[i].y;
+            PLAYER_MODEL(j)->pos.z = pos[i].z;
+            func_80056658_57258(&PLAYER_MODEL(j)->pos, &OVL4E_CAMERA->pos, &PLAYER_MODEL(j)->rot);
+            MBMotionSet(PLAYER_MODEL(j), 0, 2);
+            MBModelDispOn(PLAYER_MODEL(j));
+        }
+    }
+    model = D_8010DC92_335652_name_4E;
+    if (D_8010DAB8_335478_name_4E != 0) {
+        func_80029714_2A314(model, D_8010D4B4_334E74_name_4E.x, D_8010D4B4_334E74_name_4E.y, D_8010D4B4_334E74_name_4E.z);
+        func_800298A4_2A4A4(model, 4, 4);
+    } else {
+        func_80029714_2A314(model, -274.0f, 0.0f, 2476.0f);
+        func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+        func_80029E80_2AA80(model, 2, 2);
+        func_800298A4_2A4A4(model, 4, 0);
+    }
+    if (D_8010DAB8_335478_name_4E == 0) {
+        func_8010896C_33032C_name_4E();
+    }
+    InitFadeIn(2, 16);
+    HuPrcSleep(16);
+    if (D_8010D1F4_334BB4_name_4E != 0) {
+        PlayMusic(0x13);
+    }
+    if (D_8010DAB8_335478_name_4E != 0) {
+        func_8010832C_32FCEC_name_4E();
+    }
+}
+
+/* The players arrive (D_8010DAB8): a pipe (model 14) grows, the host slides in, each player hops
+   from the pipe to D_8010D4CC, the pipe shrinks, the players drop from above onto their places
+   (the music starts once one is below 350) and the host drops in last. NON_MATCHING: retail
+   reads D_8010D4B4's fields without a base register, and enters the host's drop loop at its test. */
+#ifdef NON_MATCHING
+void func_8010832C_32FCEC_name_4E(void) {
+    f32 speed[4];
+    Vec dir;
+    MBModel* pipe;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 step;
+    Vec* pos;
+    s32 model;
+    s32 landed;
+    s32 i;
+    s32 j;
+
+    pipe = func_80043510_44110(14, NULL);
+    pipe->pos.x = D_8010D4B4_334E74_name_4E.x;
+    pipe->pos.y = D_8010D4B4_334E74_name_4E.y;
+    pipe->pos.z = D_8010D4B4_334E74_name_4E.z;
+    pipe->scale.y = 0.0f;
+    PlaySound(0x326);
+    for (i = 0; i < 6; i++) {
+        pipe->scale.y += 0.16666667f;
+        HuPrcVSleep();
+    }
+    model = D_8010DC92_335652_name_4E;
+    func_800298A4_2A4A4(model, 4, 0);
+    dx = (D_8010D4C0_334E80_name_4E.x - D_800FC834_FD434[model].pos.x) / 6.0f;
+    dy = (D_8010D4C0_334E80_name_4E.y - D_800FC834_FD434[model].pos.y) / 6.0f;
+    dz = (D_8010D4C0_334E80_name_4E.z - D_800FC834_FD434[model].pos.z) / 6.0f;
+    for (i = 0; i < 6; i++) {
+        D_800FC834_FD434[model].pos.x += dx;
+        D_800FC834_FD434[model].pos.y += dy;
+        D_800FC834_FD434[model].pos.z += dz;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        MBMotionSet(PLAYER_MODEL(i), 2, 0);
+        MBModelDispOn(PLAYER_MODEL(i));
+        step = HuVecDistance(&PLAYER_MODEL(i)->pos, &D_8010D4CC_334E8C_name_4E[i]) / 6.0f;
+        func_80056658_57258(&PLAYER_MODEL(i)->pos, &D_8010D4CC_334E8C_name_4E[i], &dir);
+        PlaySound(0x328);
+        for (j = 0; j < 6; j++) {
+            PLAYER_MODEL(i)->pos.x += step * dir.x;
+            PLAYER_MODEL(i)->jumpY += step * dir.y;
+            PLAYER_MODEL(i)->pos.z += step * dir.z;
+            HuPrcVSleep();
+        }
+    }
+    PlaySound(0x327);
+    for (i = 0; i < 6; i++) {
+        pipe->scale.y -= 0.16666667f;
+        HuPrcVSleep();
+    }
+    MBModelKill(pipe);
+    speed[0] = 0.59f;
+    speed[1] = 1.21f;
+    speed[2] = 0.77f;
+    speed[3] = 1.0f;
+    if (D_8010DAB6_335476_name_4E != 0) {
+        pos = D_8010D4FC_334EBC_name_4E;
+    } else {
+        pos = D_8010D52C_334EEC_name_4E;
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        PLAYER_MODEL(i)->pos.x = pos[i].x;
+        PLAYER_MODEL(i)->pos.z = pos[i].z;
+    }
+    while (1) {
+        landed = 0;
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            PLAYER_MODEL(i)->jumpY -= speed[i];
+            if (PLAYER_MODEL(i)->jumpY <= 0.0f) {
+                PLAYER_MODEL(i)->jumpY = 0.0f;
+                if (speed[i] != 0.0f) {
+                    MBMotionShiftSet(PLAYER_MODEL(i), 0, 0, 5, 2);
+                }
+                speed[i] = 0.0f;
+                func_8005A4EC_5B0EC(i, 1);
+                landed++;
+            }
+            if (D_800CB150 == 0 && PLAYER_MODEL(i)->jumpY < 350.0f) {
+                PlayMusic(0x35);
+                D_800CB150 = 1;
+            }
+            speed[i] *= 1.1f;
+        }
+        if (landed == D_8010DBE0_3355A0_name_4E) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    speed[0] = 1.0f;
+    model = D_8010DC92_335652_name_4E;
+    D_800FC834_FD434[model].pos.x = -274.0f;
+    D_800FC834_FD434[model].pos.z = 2476.0f;
+    while (!((D_800FC834_FD434[model].pos.y -= speed[0]) <= 0.0f)) {
+        speed[0] *= 1.2f;
+        HuPrcVSleep();
+    }
+    D_800FC834_FD434[model].pos.y = 0.0f;
+    func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+    func_80029E80_2AA80(model, 2, 2);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010832C_32FCEC_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010896C_33032C_name_4E);
+/* Shows the menu panel and the rows already chosen (unless D_800CD414 & 2). */
+void func_8010896C_33032C_name_4E(void) {
+    u16 spr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108A18_3303D8_name_4E);
+    espDispOn(D_8010DABC_33547C_name_4E);
+    if (!(D_800CD414_CE014 & 2)) {
+        spr = D_8010DAC4_335484_name_4E[D_800FA1A8];
+        espDispOn(spr);
+        espPosSet(spr, 160, 68);
+        if (D_8010DAB6_335476_name_4E != 0) {
+            spr = D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40];
+            espDispOn(spr);
+            espPosSet(spr, 160, 90);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108BE0_3305A0_name_4E);
+/* Fades the panel and the chosen rows out, then frees the menu sprites. */
+void func_80108A18_3303D8_name_4E(void) {
+    s16 alpha;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108E3C_3307FC_name_4E);
+    alpha = 255;
+    for (i = 10; i != 0; i--) {
+        alpha -= 25;
+        func_8001A6BC_1B2BC(D_8010DABC_33547C_name_4E, alpha);
+        func_8001A6BC_1B2BC(D_8010DAC4_335484_name_4E[D_800FA1A8], alpha);
+        if (D_8010DAB6_335476_name_4E != 0) {
+            func_8001A6BC_1B2BC(D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40], alpha);
+        }
+        HuPrcVSleep();
+    }
+    espDispOff(D_8010DABC_33547C_name_4E);
+    espDispOff(D_8010DAC4_335484_name_4E[D_800FA1A8]);
+    if (D_8010DAB6_335476_name_4E != 0) {
+        espDispOff(D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40]);
+    }
+    HuPrcVSleep();
+    func_8001AC44_1B844(D_8010DABC_33547C_name_4E);
+    SprAnimKill(D_8010DABA_33547A_name_4E);
+    for (i = 0; i < 3; i++) {
+        func_8001AC44_1B844(D_8010DAC4_335484_name_4E[i]);
+        SprAnimKill(D_8010DABE_33547E_name_4E[i]);
+    }
+    if (D_8010DAB6_335476_name_4E != 0) {
+        for (i = 0; i < 4; i++) {
+            func_8001AC44_1B844(D_8010DAD2_335492_name_4E[i]);
+            SprAnimKill(D_8010DACA_33548A_name_4E[i]);
+        }
+    }
+}
+
+/* Creates the menu sprites: the panel, the first menu's three rows, the second menu's four rows
+   (D_8010DAB6) and the third menu's six (or the stamp sprites when resuming). */
+void func_80108BE0_3305A0_name_4E(void) {
+    u16 spr;
+    s16 anim;
+    s32 i;
+
+    i = 0;
+    if (D_8010DAB6_335476_name_4E != 0) {
+        D_8010DABA_33547A_name_4E = func_8001A2F8_1AEF8(0x900D6);
+    } else {
+        D_8010DABA_33547A_name_4E = func_8001A2F8_1AEF8(0x900D7);
+    }
+    D_8010DABC_33547C_name_4E = func_8001AAAC_1B6AC(D_8010DABA_33547A_name_4E, 0, 1);
+    func_8001A788_1B388(D_8010DABC_33547C_name_4E, 0x4900);
+    espPosSet(D_8010DABC_33547C_name_4E, 160, 36);
+    espDispOff(D_8010DABC_33547C_name_4E);
+    for (i = 0; i < 3; i++) {
+        D_8010DABE_33547E_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2DC_334C9C_name_4E[i]);
+        D_8010DAC4_335484_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+        func_8001A788_1B388(spr, 0x4900);
+        espDispOff(spr);
+    }
+    if (D_8010DAB6_335476_name_4E != 0) {
+        for (i = 0; i < 4; i++) {
+            D_8010DACA_33548A_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2E8_334CA8_name_4E[i]);
+            D_8010DAD2_335492_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+            func_8001A788_1B388(spr, 0x4900);
+            espDispOff(spr);
+        }
+    }
+    if (D_800CD414_CE014 < 4) {
+        for (i = 0; i < 6; i++) {
+            D_8010DADA_33549A_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2F8_334CB8_name_4E[i]);
+            D_8010DAE6_3354A6_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+            func_8001A788_1B388(spr, 0x4900);
+            espDispOff(spr);
+        }
+    } else {
+        func_80108F24_3308E4_name_4E();
+    }
+    HuPrcVSleep();
+}
+
+/* Places up to n (at most the wins needed) stamp esprites from D_8010DB20[i] in a row from
+   (x, y), 32 apart, stopping at an unused one; returns the next index. */
+s32 func_80108E3C_3307FC_name_4E(s16 i, s16 x, s16 y, s16 n) {
+    if (n > D_8010D448_334E08_name_4E[D_800FA1A8]) {
+        n = D_8010D448_334E08_name_4E[D_800FA1A8];
+    }
+    while (n != 0) {
+        if (D_8010DB20_3354E0_name_4E[i] < 0) {
+            break;
+        }
+        espPosSet(D_8010DB20_3354E0_name_4E[i++], x, y);
+        n--;
+        x += 32;
+    }
+    return i;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108F24_3308E4_name_4E);
 

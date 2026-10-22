@@ -141,7 +141,7 @@ extern u8 D_01164160[];
 
 /* ---- data (.data, asm) ---- */
 
-extern s16 D_8010D1F0_334BB0_name_4E;
+extern u16 D_8010D1F0_334BB0_name_4E; /* leave the setup (FE4E-B: u16, retail tests it with lhu) */
 extern s16 D_8010D1F2_334BB2_name_4E;
 extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
@@ -243,6 +243,37 @@ void func_8008D904_8E504(s16 winId, s32, s8);
 void func_80023554_24154(s16 model, s16 frame, char* part, f32 mtx[4][4]); /* part matrix */
 f32 func_80029CE4_2A8E4(s16 model); /* motion frame */
 void* func_8002A9F4_2B5F4(s16 model, char* part); /* HmfMotionObj* or HitXform* */
+f32 func_800B1830_B2430(f32); /* sqrtf */
+extern u16 D_801011FC_101DFC;
+extern u8 D_800CB150;
+extern u16 D_8010E5F0_335FB0_name_4E; /* esprite freed on leaving */
+void MBDBackKill(void);
+void func_80050AE0_516E0(void);
+extern s16 D_8010DC18_3355D8_name_4E;  /* backdrop sprite file */
+extern u16 D_8010DC1A_3355DA_name_4E;  /* backdrop esprite */
+extern s16 D_8010DC92_335652_name_4E;  /* host model */
+extern s16 D_8010DCB0_335670_name_4E;
+extern void* D_8010D400_334DC0_name_4E[6]; /* per character: player model motions */
+extern void* D_8010D418_334DD8_name_4E[6]; /* ... when D_800CD414 & 4 */
+extern Vec D_8010D4B4_334E74_name_4E;  /* off-stage position */
+MBModel* func_80043510_44110(s32, void*);
+void func_8001A708_1B308(u16, u16);
+void func_8002C9C0_2D5C0(s16, s16);
+void func_800298A4_2A4A4(s16, s32, s32);
+void MBModelDispOff(MBModel*);
+void MBModelDispOn(MBModel*);
+extern Vec D_8010D4C0_334E80_name_4E;    /* host's arrival position */
+extern Vec D_8010D4CC_334E8C_name_4E[4]; /* players' hop targets */
+f32 HuVecDistance(Vec*, Vec*);
+void MBModelKill(void*);
+void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
+extern u16 D_8010DABA_33547A_name_4E;    /* the panel's sprite animation */
+extern s16 D_8010DABE_33547E_name_4E[3]; /* first menu rows' sprite animations */
+extern s16 D_8010DACA_33548A_name_4E[4]; /* second menu rows' sprite animations */
+extern s16 D_8010DADA_33549A_name_4E[6]; /* third menu's sprite animations */
+extern s32 D_8010D2DC_334C9C_name_4E[3]; /* sprite files: first menu rows */
+extern s32 D_8010D2E8_334CA8_name_4E[4]; /* ... second menu rows */
+extern s32 D_8010D2F8_334CB8_name_4E[6]; /* ... third menu */
 
 /* ---- 32A1C0.c ---- */
 
@@ -282,15 +313,15 @@ void func_80107804_32F1C4_name_4E(s32 model, s32 spr, char* part);
 void func_801078EC_32F2AC_name_4E(s16 i, s16 esp, s32 dx, s32 dy);
 void func_80107940_32F300_name_4E(s16 i, Vec2f* pos, s16 dx, s16 dy);
 void func_801079AC_32F36C_name_4E(void);
-s16 func_801079EC_32F3AC_name_4E(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy);
 void func_80107D3C_32F6FC_name_4E(omObjData* obj);
-void func_80107E34_32F7F4_name_4E(void);
+void func_80107E34_32F7F4_name_4E(omObjData* obj);
 void func_80107F10_32F8D0_name_4E(void);
 void func_8010832C_32FCEC_name_4E(void);
 void func_8010896C_33032C_name_4E(void);
 void func_80108A18_3303D8_name_4E(void);
 void func_80108BE0_3305A0_name_4E(void);
-s32 func_80108E3C_3307FC_name_4E(s32 arg0, s16 arg1, s16 arg2, s16 arg3);
+s32 func_80108E3C_3307FC_name_4E(s16 i, s16 x, s16 y, s16 n);
 void func_80108F24_3308E4_name_4E(void);
 void func_80109750_331110_name_4E(s16 arg0);
 void func_80109778_331138_name_4E(void);
