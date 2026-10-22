@@ -419,7 +419,43 @@ void func_80103F38_14DA58_CraneGame(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80103FC8_14DAE8_CraneGame);
+void func_80103FC8_14DAE8_CraneGame(Gfx** gfx) {
+    omObjData* bg;
+    HmfData* hmf;
+    HmfModel* m;
+    HmfVtx* v;
+    HmfVtx* vtx;
+    s16 i;
+
+    bg = D_800FC7B0_FD3B0[0];
+    hmf = D_800FC834_FD434[D_800F9564_FA164].hmf;
+    gSPDisplayList((*gfx)++, osVirtualToPhysical(D_8010B8E8_155408_CraneGame));
+    func_800204C0_210C0(0, gfx);
+    gSPDisplayList((*gfx)++, osVirtualToPhysical(D_8010B928_155448_CraneGame));
+    v = vtx = hmf->unk44[D_800FDBE0_FE7E0];
+    for (i = 0; i < 7; i++) {
+        m = &D_800FC834_FD434[bg->model[i + 1]];
+        v->unk00 = D_8010C1A8_155CC8_CraneGame[i].a;
+        v->unk02 = D_8010C1A8_155CC8_CraneGame[i].b;
+        v->unk04 = m->pos.z;
+        v->unk08 = v->unk0A = 0;
+        v->unk0C[0] = v->unk0C[1] = v->unk0C[2] = 0x20;
+        v->unk0F = 0xFF;
+        v++;
+        v->unk00 = m->pos.x;
+        v->unk02 = m->pos.y;
+        v->unk04 = m->pos.z;
+        v->unk08 = v->unk0A = 0;
+        v->unk0C[0] = v->unk0C[1] = v->unk0C[2] = 0x20;
+        v->unk0F = 0xFF;
+        v++;
+    }
+    for (i = 0; i < 7; i++) {
+        gSPVertex((*gfx)++, &vtx[i * 2], 2, 0);
+        CG_SP_LINE3D_01((*gfx)++);
+    }
+    gDPPipeSync((*gfx)++);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_8010422C_14DD4C_CraneGame);
 
