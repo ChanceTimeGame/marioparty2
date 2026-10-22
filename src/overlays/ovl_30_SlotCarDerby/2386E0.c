@@ -199,7 +199,81 @@ SCDCar* func_801032E0_2391C0_SlotCarDerby(omObjData* obj) {
     return &D_801102E8_2461C8_SlotCarDerby[obj->work[1]];
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801032F8_2391D8_SlotCarDerby);
+s32 func_801032F8_2391D8_SlotCarDerby(void) {
+    s8 hit[4];
+    s16 lane[4];
+    f32 dist[4];
+    SCDCar* car;
+    SCDCar* other;
+    s16 n;
+    s32 left;
+    s32 i;
+    s32 j;
+    s32 k;
+    f32 range;
+    f32 d;
+
+    n = 0;
+    car = D_801102E8_2461C8_SlotCarDerby;
+    for (i = 0; i < 4; i++, car++) {
+        if ((car->unk_00 & 1) && (car->unk_02 == 1 || car->unk_02 == 2)) {
+            hit[n] = 0;
+            lane[n] = i;
+            d = car->unk_48 + car->unk_4C;
+            dist[n] = func_800B0D98_B1998(d, D_80110250_246130_SlotCarDerby);
+            n++;
+        }
+    }
+    if (n < 2) {
+        return n;
+    }
+    range = (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) ? 15.0f : 30.0f;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            if (i == j) {
+                continue;
+            }
+            d = dist[j] - dist[i];
+            if (d < 0.0) {
+                d += D_80110250_246130_SlotCarDerby;
+            }
+            if (d > 40.0) {
+                continue;
+            }
+            car = &D_801102E8_2461C8_SlotCarDerby[lane[i]];
+            other = &D_801102E8_2461C8_SlotCarDerby[lane[j]];
+            d = 0.0f;
+            for (k = 0; k < 3; k++) {
+                d += ((&car->unk_0C.x)[k] - (&other->unk_0C.x)[k]) * ((&car->unk_0C.x)[k] - (&other->unk_0C.x)[k]);
+            }
+            if (range < sqrtf(d)) {
+                continue;
+            }
+            hit[j] = -1;
+            if (hit[i] == 0) {
+                hit[i] = 1;
+            }
+        }
+    }
+    left = n;
+    for (i = 0; i < n; i++) {
+        if (hit[i] != 0) {
+            car = &D_801102E8_2461C8_SlotCarDerby[lane[i]];
+            if (hit[i] > 0) {
+                if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+                    func_80103650_239530_SlotCarDerby(2, car);
+                }
+            } else if (D_801102C8_2461A8_SlotCarDerby.unk_00 != 2) {
+                car->unk_50 = 13.65f;
+            } else {
+                car->unk_02 = 3;
+                car->unk_64 = car->unk_66 = 0;
+                left--;
+            }
+        }
+    }
+    return left;
+}
 
 __asm__(".section .rodata");
 const u32 D_8010FC80_245B60_SlotCarDerby[3] = { 0xC1000000, 0xC1200000, 0x41200000 };
