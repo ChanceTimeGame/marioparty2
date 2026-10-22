@@ -72,7 +72,6 @@ typedef struct Ovl61MotPairs {
     s32* v[3][2]; /* their motion lists */
 } Ovl61MotPairs;
 
-#define OVL61_WORK(obj, T) ((T*)(obj)->unk_50)
 /* The drawn camera's position (D_800FD2A8 + 0xC). */
 #define OVL61_CAM_POS ((Vec*)((u8*)D_800FD2A8_FDEA8 + 0xC))
 

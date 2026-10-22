@@ -186,7 +186,7 @@ void func_80102F74_3D07C4_name_61(void) {
         obj = D_801074D8_3D4D28_name_61[pairs.v[k][0]];
         work = D_801074D8_3D4D28_name_61[pairs.v[k][1]]->unk_50;
         func_80056658_57258(&D_8010723C_3D4A8C_name_61[0], &D_8010723C_3D4A8C_name_61[1], obj->unk_50);
-        func_80056658_57258(&D_80107224_3D4A74_name_61[0], &D_80107224_3D4A74_name_61[1], work);
+        func_80056658_57258(&D_80107224_3D4A74_name_61[0], &D_80107224_3D4A74_name_61[1], &work->dir);
         func_801058B0_3D3100_name_61(pairs.v[k][0]);
         func_801058B0_3D3100_name_61(pairs.v[k][1]);
         func_8010568C_3D2EDC_name_61(pairs.v[k][0], mots.v[k][0]);
@@ -308,7 +308,7 @@ void func_80102F74_3D07C4_name_61(void) {
     pos.x = D_801074D8_3D4D28_name_61[7]->trans.x;
     pos.y = D_801074D8_3D4D28_name_61[7]->trans.y;
     pos.z = D_801074D8_3D4D28_name_61[7]->trans.z;
-    func_80056658_57258(&pos, OVL61_CAM_POS, hostWork);
+    func_80056658_57258(&pos, OVL61_CAM_POS, &hostWork->dir);
     func_801058B0_3D3100_name_61(7);
     func_8010568C_3D2EDC_name_61(7, D_801072D8_3D4B28_name_61);
     func_801057D4_3D3024_name_61(7, 1, 2, 2);
@@ -1031,7 +1031,7 @@ void func_801062B8_3D3B08_name_61(void) {
     D_8010753C_3D4D8C_name_61 = sprite->unk_84->unk16;
     D_80107540_3D4D90_name_61 = sprite->unk_84->unk08;
     for (i = 0; i < 3; i++) {
-        p = D_8010750C_3D4D5C_name_61[i] = func_80027154_27D54(320 * 240, 0x7918);
+        p = (s32*)(D_8010750C_3D4D5C_name_61[i] = func_80027154_27D54(320 * 240, 0x7918));
         for (j = 0; j < 320 * 240 / 4; j++) {
             *p++ = -1;
         }
