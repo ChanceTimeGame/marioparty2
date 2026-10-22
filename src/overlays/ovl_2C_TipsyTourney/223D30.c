@@ -528,7 +528,7 @@ void func_801047F0_225D20_TipsyTourney(void) {
     }
 }
 
-// scheduling: one sll before the lui of ContBtnTrg's address (masked 1)
+// scheduling: one sll before the lui of ContBtnTrg's address (masked 1, as in MP1)
 #ifdef NON_MATCHING
 void func_80104AEC_22601C_TipsyTourney(omObjData* obj) {
     TipsyWork* work = obj->unk_50;
@@ -539,6 +539,7 @@ void func_80104AEC_22601C_TipsyTourney(omObjData* obj) {
     s32 savedX;
     s32 savedY;
     s32 player;
+    s32* file;
     f32 cx;
     f32 dx;
     f32 dy;
@@ -569,14 +570,18 @@ void func_80104AEC_22601C_TipsyTourney(omObjData* obj) {
         break;
     case 2:
         player = work->unk_59;
-        if (D_80107B84_2290B4_TipsyTourney != 0 && _CheckFlag(0x2B) == 0 && work->unk_38 == 1000.0f) {
+        if (D_80107B84_2290B4_TipsyTourney != 0 && _CheckFlag(0xC) == 0 && work->unk_38 == 1000.0f) {
             if (player == D_80107C80_2291B0_TipsyTourney) {
-                func_800184BC(obj, 0xD);
+                func_80019B9C_1A79C(obj, 0xD);
+                file = D_80107E28_229358_TipsyTourney;
             } else {
-                func_800184BC(obj, 0xE);
+                func_80019B9C_1A79C(obj, 0xE);
+                file = D_80107E38_229368_TipsyTourney;
             }
+            func_800732B0_73EB0(file[player]);
+            file[player] = -1;
         }
-        work->unk_40 = D_800B8990;
+        work->unk_40 = D_800BF7D0_C03D0;
         work->unk_3C = 0.0f;
         D_800F94A8_FA0A8[player] -= D_800F94A8_FA0A8[player] * 0.01f;
         if (D_800F94A8_FA0A8[player] < 600.0f) {
@@ -591,12 +596,21 @@ void func_80104AEC_22601C_TipsyTourney(omObjData* obj) {
         } else if (dx < -20.0f) {
             D_801013B0_101FB0[player].x -= dx * 0.05f;
         }
-        if (dy > 100.0f) {
-            goto movey;
-        }
-        if (dy < -100.0f) {
-        movey:
-            D_801013B0_101FB0[player].y -= dy * 0.05f;
+        if (player == D_80107C80_2291B0_TipsyTourney) {
+            dy = D_801013B0_101FB0[player].y - (obj->trans.y + 80.0f);
+            if (dy > 100.0f) {
+                D_801013B0_101FB0[player].y = D_801013B0_101FB0[player].y - dy * 0.05f;
+            } else if (dy < -100.0f) {
+                D_801013B0_101FB0[player].y -= dy * 0.05f;
+            }
+        } else {
+            if (dy > 100.0f) {
+                goto movey;
+            }
+            if (dy < -100.0f) {
+            movey:
+                D_801013B0_101FB0[player].y -= dy * 0.05f;
+            }
         }
         if (dz > 100.0f) {
             goto movez;
@@ -761,7 +775,7 @@ void func_80105628_226B58_TipsyTourney(omObjData* obj) {
     }
 }
 
-// address association: retail hoists D_800FB7B8 - 0x32 into a saved register and adds the tile offset to it (masked ~10, 2 instructions shorter)
+// address association: retail hoists D_80107B88 - 0x32 into a saved register (out of the loop) and adds the tile offset to it (masked 8 with that pointer written out; as in MP1)
 #ifdef NON_MATCHING
 void func_801057F4_226D24_TipsyTourney(omObjData* obj) {
     TipsyBgWork* work = obj->unk_50;
@@ -798,7 +812,7 @@ void func_801057F4_226D24_TipsyTourney(omObjData* obj) {
                     tile = &D_80107B88_2290B8_TipsyTourney[work->unk_04 - 1][cz][cx];
                     if (*tile == 0) {
                         (*tile)++;
-                        func_80079798_7A398(0x2B7);
+                        func_80079798_7A398(0x295, plat);
                     }
                 }
             }
@@ -864,7 +878,7 @@ void func_80105C40_227170_TipsyTourney(void) {
     }
 }
 
-// register reuse: retail copies the loop start with move, this reloads it with lhu (masked 2)
+// register reuse: retail copies the loop start with move, this reloads it with lhu (masked 2, as in MP1)
 #ifdef NON_MATCHING
 void func_80105D28_227258_TipsyTourney(s16 model, s32 p) {
     HmfData* m = D_800FC834_FD434[model].hmf;
@@ -1158,7 +1172,7 @@ void func_80106C48_228178_TipsyTourney(omObjData* obj) {
     func_8010678C_227CBC_TipsyTourney(obj);
 }
 
-// address association in the first loop (base + p * 0x32 first; masked 3)
+// address association in the first loop (the base's lui after p * 0x32; masked 3, as in MP1)
 #ifdef NON_MATCHING
 s32 func_80106D14_228244_TipsyTourney(s32 p) {
     s32 i;

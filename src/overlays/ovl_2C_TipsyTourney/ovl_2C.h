@@ -51,7 +51,7 @@ typedef struct TipsyWork {
     /* 0x5A */ char unk_5A[2];
     /* 0x5C */ s32 unk_5C; /* ball: index 0..3 into the per-ball tables */
     /* 0x60 */ char unk_60[0x88];
-    /* 0xE8 */ s16 (*unk_E8)[6]; /* MgWork's motion table (MgMotion, 0xC each) */
+    /* 0xE8 */ void* unk_E8; /* MgWork motion table (MgMotion*) */
     /* 0xEC */ void* unk_EC; /* collision callback */
     /* 0xF0 */ char unk_F0[0x6C];
 } TipsyWork; /* size = 0x15C (N64) */
@@ -158,6 +158,11 @@ void func_80029EDC_2AADC(s16, s32);
 void func_8002A00C_2AC0C(s16);
 u16 func_80078EA8_79AA8(void);
 void func_8000C3C8_CFC8(void);
+s16 func_80079798_7A398(s16 sfx, s16 player); /* play a sound effect for a player */
+void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* C8E0.c: player motion */
+omObjData* func_800732B0_73EB0(u32 arg0);
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+extern f32 D_800BF7D0_C03D0; /* MP1 D_800B8990 */
 void func_8000C3B8_CFB8(void);
 void func_8000C398_CF98(void);
 void func_8000C3A8_CFA8(void);
