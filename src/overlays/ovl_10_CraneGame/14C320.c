@@ -318,9 +318,50 @@ s16 func_801035C0_14D0E0_CraneGame(f32* x, f32* y, f32* z, f32 dx, f32 dy, f32 d
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801038FC_14D41C_CraneGame);
+void func_801038FC_14D41C_CraneGame(void) {
+    D_8010C254_155D74_CraneGame = (rand8() * 0.5f / 256.0f - 0.25f) * 10.0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80103974_14D494_CraneGame);
+void func_80103974_14D494_CraneGame(omObjData* obj) {
+    HmfData* hmf;
+    s32 i;
+
+    obj->func_ptr = func_80103CB8_14D7D8_CraneGame;
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.z = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.x = 1.0f;
+    obj->model[0] = D_8010C186_155CA6_CraneGame = func_80018A30_19630(0x200001, 0xA9);
+    func_80029714_2A314(obj->model[0], 0.0f, 0.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[0], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[0], 1.0f, 1.0f, 1.0f);
+    func_8002A00C_2AC0C(obj->model[0]);
+    func_80108114_151C34_CraneGame(obj->model[0]);
+    func_801082E8_151E08_CraneGame(1.75f);
+    D_8010C19E_155CBE_CraneGame = func_8001A2F8_1AEF8(0x200011);
+    D_8010C19C_155CBC_CraneGame = SprCreate(1, 0);
+    SprAnimSet(D_8010C19C_155CBC_CraneGame, 0, D_8010C19E_155CBE_CraneGame, 0);
+    SprAttrSet(D_8010C19C_155CBC_CraneGame, 0, 0x4000);
+    SprPosSet(D_8010C19C_155CBC_CraneGame, 0, 0xA0, 0x78);
+    for (i = 0; i < 7; i++) {
+        obj->model[i + 1] = func_80018A30_19630(D_8010B7B8_1552D8_CraneGame[i], 0xA9);
+        func_80029714_2A314(obj->model[i + 1], D_8010B764_155284_CraneGame[i].x, D_8010B764_155284_CraneGame[i].y, -600.0f);
+        func_8002979C_2A39C(obj->model[i + 1], 0.0f, 0.0f, 0.0f);
+        func_800297E8_2A3E8(obj->model[i + 1], D_8010B764_155284_CraneGame[i].scale, D_8010B764_155284_CraneGame[i].scale, 1.0f);
+        D_8010C1A8_155CC8_CraneGame[i].a = D_8010B764_155284_CraneGame[i].x;
+        D_8010C1A8_155CC8_CraneGame[i].b = 1000.0f;
+        D_8010C1E0_155D00_CraneGame[i] = 1000.0f - D_8010B764_155284_CraneGame[i].y;
+        D_8010C200_155D20_CraneGame[i].b = 0.0f;
+        D_8010C200_155D20_CraneGame[i].a = 0.0f;
+        D_8010C238_155D58_CraneGame[i] = 0.0f;
+    }
+    D_8010C1A4_155CC4_CraneGame = func_8002838C_28F8C(0x1080, func_80103FC8_14DAE8_CraneGame, 2);
+    hmf = D_800FC834_FD434[D_8010C1A4_155CC4_CraneGame].hmf;
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        hmf->unk44[i] = HuMemAlloc(0xE0);
+    }
+    D_8010C254_155D74_CraneGame = 0.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80103CB8_14D7D8_CraneGame);
 

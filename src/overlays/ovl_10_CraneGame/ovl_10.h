@@ -38,6 +38,19 @@ f32 sqrtf(f32);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
+extern u8 D_800FDBCA_FE7CA; /* frame buffers */
+u16 func_80018A30_19630(s32, s32); /* model load */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002A00C_2AC0C(s16 model);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+s32 func_8002838C_28F8C(s32, void*, s32);
+void* HuMemAlloc(s32 size);
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern s32 D_800F9D30_FA930[];
@@ -52,9 +65,24 @@ extern f32 D_800FA610_FB210;  /* CZoom */
 
 /* ---- structs ---- */
 
+/* A hanging prize model of the backdrop (D_8010B764_155284, func_80103974). */
+typedef struct CGHang {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+    /* 0x08 */ f32 scale;
+} CGHang; /* size = 0xC */
+
+/* Per hanging model state (func_80103974). */
+typedef struct CGPair {
+    /* 0x00 */ f32 a;
+    /* 0x04 */ f32 b;
+} CGPair;
+
 /* ---- overlay data (155280.data.s, asm) ---- */
 
 extern s32 D_8010B760_155280_CraneGame; /* the hurry-up music started */
+extern CGHang D_8010B764_155284_CraneGame[7];
+extern s32 D_8010B7B8_1552D8_CraneGame[7]; /* their model files */
 
 /* ---- overlay bss (ovl_10_bss, 8010C170) ---- */
 
@@ -75,6 +103,12 @@ extern s16 D_8010C196_155CB6_CraneGame[3]; /* the other players (MP1 D_800FFE80)
 extern s16 D_8010C19C_155CBC_CraneGame;
 extern s16 D_8010C19E_155CBE_CraneGame;
 extern s16 D_8010C1A0_155CC0_CraneGame;
+extern s32 D_8010C1A4_155CC4_CraneGame; /* the shadow model (func_8002838C) */
+extern CGPair D_8010C1A8_155CC8_CraneGame[7];
+extern f32 D_8010C1E0_155D00_CraneGame[7];
+extern CGPair D_8010C200_155D20_CraneGame[7];
+extern f32 D_8010C238_155D58_CraneGame[7];
+extern f32 D_8010C254_155D74_CraneGame;
 extern s16 D_8010C258_155D78_CraneGame;
 extern void* D_8010CE30_156950_CraneGame[256]; /* claws (MP1 D_80100BC0) */
 extern omObjData* D_8010D230_156D50_CraneGame;
@@ -95,7 +129,7 @@ void func_801032C8_14CDE8_CraneGame(omObjData* obj);
 s32 func_80103338_14CE58_CraneGame(omObjData* obj);
 s16 func_801033E4_14CF04_CraneGame(f32 arg0);
 s16 func_801035C0_14D0E0_CraneGame(f32* x, f32* y, f32* z, f32 dx, f32 dy, f32 dz, f32 r, s16 mode);
-f32 func_801038FC_14D41C_CraneGame(void);
+void func_801038FC_14D41C_CraneGame(void);
 void func_80103974_14D494_CraneGame(omObjData* obj);
 void func_80103CB8_14D7D8_CraneGame(omObjData* obj);
 s16 func_80103F38_14DA58_CraneGame(void);
