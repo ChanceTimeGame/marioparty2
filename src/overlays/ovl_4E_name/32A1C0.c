@@ -85,8 +85,8 @@ void func_80102B94_32A554_name_4E(void) {
    residue is the inner switch's compare tree (retail tests 1 first) and one delay slot. */
 void func_80102B9C_32A55C_name_4E(void) {
     s16 i;
-    s8 state;
-    s8 confirm;
+    s16 state;
+    s16 confirm;
 
     func_80102B94_32A554_name_4E();
     if (D_8010DAB6_335476_name_4E != 0) {
@@ -1324,10 +1324,28 @@ const char D_8010D9F0_3353B0_name_4E[] = " LUIGI ";
 __asm__(".section .rodata");
 const char D_8010D9F8_3353B8_name_4E[] = " MARIO ";
 
-__asm__(".section .rodata");
-const char D_8010DA00_3353C0_name_4E[] = "WON\304 ";
+/* Shows "<name> WON" (the winner's name in message sprites, centred at y 100). */
+void func_8010732C_32ECEC_name_4E(s16 player) {
+    char won[] = "WON\304 ";
+    GAMEMES mes;
+    char* name;
+    f32 nameLen;
+    f32 wonLen;
+    f32 x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010732C_32ECEC_name_4E);
+    name = D_8010D694_335054_name_4E[gPlayers[player].character];
+    nameLen = func_800A5610_A6210(name);
+    wonLen = func_800A5610_A6210(won);
+    func_8006A608_6B208(&mes, name, 1, -1, -1);
+    func_8006A67C_6B27C(&mes, won, 1, -1, -1);
+    x = 160.0f - ((nameLen + wonLen + 1.0f) * 22.0f) / 2.0f + (nameLen * 22.0f) / 2.0f;
+    mes.unk60 = x;
+    mes.unk64 = 100.0f;
+    SprPosSet(mes.strGId[0], 0, x, 100.0f);
+    mes.unk0C = x + nameLen * 22.0f;
+    mes.unk60 = mes.unk0C;
+    SprPosSet(mes.strGId[1], 0, mes.unk60, mes.unk64);
+}
 
 void func_80107554_32EF14_name_4E(void) {
     s16 win;
