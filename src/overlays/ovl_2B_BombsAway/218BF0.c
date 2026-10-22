@@ -1328,27 +1328,275 @@ void func_80106228_21C618_BombsAway(omObjData* obj) {
     s->unk_124.z = s->unk_110[2] * s->unk_120;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106D78_21D168_BombsAway);
+/* Direction (degrees) from the platform's centre to pos (MP1 func_800FA47C). */
+f32 func_80106D78_21D168_BombsAway(Vec* pos) {
+    return func_80108A4C_21EE3C_BombsAway(pos->x - D_8010DB60_223F50_BombsAway.x, pos->z - D_8010DB60_223F50_BombsAway.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106DB0_21D1A0_BombsAway);
+/* Horizontal distance from the platform's centre (MP1 func_800FA4B4). */
+f32 func_80106DB0_21D1A0_BombsAway(Vec* pos) {
+    f32 dx = pos->x - D_8010DB60_223F50_BombsAway.x;
+    f32 dz = pos->z - D_8010DB60_223F50_BombsAway.z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106E10_21D200_BombsAway);
+    return sqrtf(dx * dx + dz * dz);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106ED4_21D2C4_BombsAway);
+/* pos projected onto the surface plane when it is on or below it (MP1 func_800FA514). */
+s32 func_80106E10_21D200_BombsAway(Vec* pos, Vec* out) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    f32 d = pos->x * D_8010DC38_224028_BombsAway + pos->y * D_8010DC3C_22402C_BombsAway +
+            pos->z * D_8010DC40_224030_BombsAway - D_8010DC44_224034_BombsAway;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106F60_21D350_BombsAway);
+    if (d <= 0.0) {
+        d *= s->unk_120;
+        out->x = pos->x - d * s->unk_124.x;
+        out->y = pos->y - d * s->unk_124.y;
+        out->z = pos->z - d * s->unk_124.z;
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80106FC8_21D3B8_BombsAway);
+/* Whether pos lies within the platform's ellipse, in platform space (MP1 func_800FA5D8). */
+s32 func_80106ED4_21D2C4_BombsAway(Vec* pos) {
+    f32 out[3];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107060_21D450_BombsAway);
+    func_801088FC_21ECEC_BombsAway(D_8010DBB8_223FA8_BombsAway, pos->x, pos->y, pos->z, out);
+    if (out[0] * out[0] + out[2] * 1.35 * out[2] * 1.35 <= 230400.0) {
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_8010714C_21D53C_BombsAway);
+/* func_80107060, plus the platform's rotation in out[1] (zero when off the platform). New in MP2. */
+s32 func_80106F60_21D350_BombsAway(Vec* pos, Vec* out) {
+    s32 ret;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801074D8_21D8C8_BombsAway);
+    if (func_80107060_21D450_BombsAway(pos, out) == 0) {
+        out[1].x = out[1].y = out[1].z = 0.0f;
+        ret = 0;
+    } else {
+        out[1].x = D_8010DB6C_223F5C_BombsAway.x;
+        out[1].y = D_8010DB6C_223F5C_BombsAway.y;
+        out[1].z = D_8010DB6C_223F5C_BombsAway.z;
+        ret = 1;
+    }
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_8010770C_21DAFC_BombsAway);
+/* Whether pos is over the platform and less than 50 above its surface (MP1 func_800FA664). */
+s32 func_80106FC8_21D3B8_BombsAway(Vec* pos) {
+    Vec v;
+    s32 i = 0;
+    f32 h = BA_PLANE_HEIGHT(pos, i);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80107758_21DB48_BombsAway);
+    v.x = pos->x;
+    v.y = h + pos->y;
+    v.z = pos->z;
+    if (50.0 <= h) {
+        return 0;
+    }
+    return func_80106ED4_21D2C4_BombsAway(&v);
+}
+
+/* pos dropped onto the platform's surface: 1 above it, -1 below, 0 off the platform or 50 or
+   more above (MP1 func_800FA6FC). */
+s32 func_80107060_21D450_BombsAway(Vec* pos, Vec* out) {
+    Vec v;
+    s32 i = 0;
+    f32 h = BA_PLANE_HEIGHT(pos, i);
+    s32 ret;
+
+    v.x = pos->x;
+    v.y = h + pos->y;
+    v.z = pos->z;
+    if (func_80106ED4_21D2C4_BombsAway(&v) == 0) {
+        return 0;
+    }
+    if (h < 50.0) {
+        out->x = v.x;
+        out->y = v.y;
+        out->z = v.z;
+        ret = -1;
+        if (0.0f <= h) {
+            ret = 1;
+        }
+        return ret;
+    }
+    return 0;
+}
+
+/* Moves pos by vel against the platform's surface (MP1 func_800FA7E8): 1 landed or riding on it,
+   -1 below it, 0 in the air. onStage: pos rode the platform last frame. */
+s32 func_8010714C_21D53C_BombsAway(Vec* pos, Vec* vel, Vec* out, s16 onStage) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    Vec next;
+    Vec tmp;
+    Vec cur;
+    f32 t;
+    f32 den;
+    s32 ret = 0;
+
+    if (onStage != 0) {
+        func_801088FC_21ECEC_BombsAway(s->unk_D0, pos->x, pos->y, pos->z, &tmp.x);
+        func_801088FC_21ECEC_BombsAway(s->unk_50, tmp.x, tmp.y, tmp.z, &cur.x);
+        if (vel->x == 0.0f && vel->y == 0.0f && vel->z == 0.0f) {
+            out->x = cur.x;
+            out->y = cur.y;
+            out->z = cur.z;
+            return 1;
+        }
+        ret = 1;
+    } else {
+        if (vel->x == 0.0f && vel->y == 0.0f && vel->z == 0.0f) {
+            return 0;
+        }
+        cur.x = pos->x;
+        cur.y = pos->y;
+        cur.z = pos->z;
+    }
+    t = -(cur.x * s->unk_110[0] + cur.y * s->unk_110[1] + cur.z * s->unk_110[2] - s->unk_110[3]);
+    den = vel->x * s->unk_110[0] + vel->y * s->unk_110[1] + vel->z * s->unk_110[2];
+    t /= den;
+    if (den < 0.0 && !(t > 1.0)) {
+        ret = 1;
+    } else {
+        t = 1.0f;
+    }
+    next.x = t * vel->x + cur.x;
+    next.y = t * vel->y + cur.y;
+    next.z = t * vel->z + cur.z;
+    if (func_80106FC8_21D3B8_BombsAway(&next) == 0) {
+        out->x = cur.x + vel->x;
+        out->y = cur.y + vel->y;
+        out->z = cur.z + vel->z;
+        ret = 0;
+        if (onStage == 0) {
+            if (out->y < -50.0) {
+                out->y = -50.0f;
+                ret = -1;
+            }
+        } else {
+            ret = -1;
+        }
+        return ret;
+    }
+    if (ret != 0) {
+        cur.x += vel->x;
+        cur.y += vel->y;
+        cur.z += vel->z;
+        if (func_80106E10_21D200_BombsAway(&cur, &tmp) != 0) {
+            next.x += (tmp.x - next.x) * s->unk_34;
+            next.y += (tmp.y - next.y) * s->unk_34;
+            next.z += (tmp.z - next.z) * s->unk_34;
+        }
+    }
+    out->x = next.x;
+    out->y = next.y;
+    out->z = next.z;
+    return ret;
+}
+
+/* Where a ray from pos - dir along dir meets the platform (1) or the sea at y 0 (-1)
+   (MP1 func_800FAB74). */
+s32 func_801074D8_21D8C8_BombsAway(Vec* pos, Vec* dir, Vec* out) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    Vec v;
+    Vec d;
+    f32 t;
+    f32 den;
+    s32 ok;
+
+    if (dir->y >= 0.0) {
+        return 0;
+    }
+    d.x = pos->x - dir->x;
+    d.y = pos->y - dir->y;
+    d.z = pos->z - dir->z;
+    t = -(d.x * s->unk_110[0] + d.y * s->unk_110[1] + d.z * s->unk_110[2] - s->unk_110[3]);
+    den = dir->x * s->unk_110[0] + dir->y * s->unk_110[1] + dir->z * s->unk_110[2];
+    t /= den;
+    if (den < 0.0) {
+        ok = 1;
+        if (t > 1.0) {
+            ok = 0;
+        }
+    } else {
+        ok = 0;
+    }
+    if (ok) {
+        v.x = t * dir->x + d.x;
+        v.y = t * dir->y + d.y;
+        v.z = t * dir->z + d.z;
+        if (func_80106ED4_21D2C4_BombsAway(&v) != 0) {
+            out->x = v.x;
+            out->y = v.y;
+            out->z = v.z;
+            return 1;
+        }
+    }
+    if (pos->y <= 0.0) {
+        t = -(d.y - 0.0) / dir->y;
+        out->x = t * dir->x + d.x;
+        out->y = t * dir->y + d.y;
+        out->z = t * dir->z + d.z;
+        return -1;
+    }
+    return 0;
+}
+
+/* Adds a weight on the platform for this frame's tilt, up to 8 (MP1 func_800FADA8). */
+void func_8010770C_21DAFC_BombsAway(f32 x, f32 z, f32 weight) {
+    BaStage* s = &D_8010DB28_223F18_BombsAway;
+    s32 n = D_8010DC58_224048_BombsAway;
+
+    if (n < 8) {
+        D_8010DC58_224048_BombsAway = n + 1;
+        s->unk_134[n].unk_00 = x;
+        s->unk_134[n].unk_04 = weight;
+        s->unk_134[n].unk_08 = z;
+    }
+}
+
+/* A bomb hits the platform at (x, z) (MP1 func_800FADF4): it clears the newest landing mark and
+   starts the hit wobble; a negative strength is a blast from below. New in MP2: 5 shake frames
+   (MP1 15) and a strength up to 2 (MP1 1). */
+void func_80107758_21DB48_BombsAway(f32 x, f32 z, f32 dir) {
+    BaStage* s;
+    f32 a;
+
+    if (D_8010D940_223D30_BombsAway.unk_00 == 1) {
+        s = &D_8010DB28_223F18_BombsAway;
+        if (D_8010DF18_224308_BombsAway >= 0) {
+            D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_00 = 0;
+        }
+        a = func_80108A4C_21EE3C_BombsAway(x, z) + 90.0;
+        a = a - (s32)(a / 360.0f) * 360;
+        s->unk_14 = a;
+        if (s->unk_14 < 0.0) {
+            s->unk_14 += 360.0;
+        }
+        if (dir >= 0.0) {
+            s->unk_00 = 270.0f;
+            s->unk_18 = 180.0f;
+            s->unk_20 = 1.0f;
+            s->unk_28 = 1.0f;
+            s->unk_2C = 5;
+        } else {
+            s->unk_00 = 0.0f;
+            s->unk_18 = 0.0f;
+            dir = -dir;
+            s->unk_20 = -1.0f;
+            s->unk_28 = 0.0f;
+            s->unk_2C = 0;
+            D_8010DCBC_2240AC_BombsAway = 2;
+        }
+        if (dir > 2.0) {
+            dir = 2.0f;
+        }
+        s->unk_1C = dir;
+    }
+}
 
 __asm__(".section .rodata");
 const u32 D_8010D5F0_2239E0_BombsAway[4] = { 0x00060007, 0x00080009, 0x000A000B, 0xFFFF0000 };

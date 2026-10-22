@@ -425,7 +425,7 @@ f32 func_80106D78_21D168_BombsAway(Vec* pos);
 f32 func_80106DB0_21D1A0_BombsAway(Vec* pos);
 s32 func_80106E10_21D200_BombsAway(Vec* a, Vec* b);
 s32 func_80106ED4_21D2C4_BombsAway(Vec* pos);
-s32 func_80106F60_21D350_BombsAway(Vec* pos);
+s32 func_80106F60_21D350_BombsAway(Vec* pos, Vec* out); /* out[0] position, out[1] rotation */
 s32 func_80106FC8_21D3B8_BombsAway(Vec* pos);
 s32 func_80107060_21D450_BombsAway(Vec* pos, Vec* out);
 s32 func_8010714C_21D53C_BombsAway(Vec* a, Vec* b, Vec* c, s16 arg3);
@@ -443,8 +443,20 @@ void func_80107C48_21E038_BombsAway(omObjData* obj);
 void func_801082EC_21E6DC_BombsAway(void);
 
 /* MG2B-B */
+/* Height of the platform's surface plane (D_8010DC38 = D_8010DB28.unk_110: a, b, c, d) above pos.
+   Retail keeps the plane's address in a register; an index variable (always 0) reproduces it. */
+#define BA_PLANE_HEIGHT(pos, i) \
+    (((pos)->x * (&D_8010DC38_224028_BombsAway)[(i)] + (pos)->y * (&D_8010DC38_224028_BombsAway)[(i) + 1] + \
+      (pos)->z * (&D_8010DC38_224028_BombsAway)[(i) + 2] - (&D_8010DC38_224028_BombsAway)[(i) + 3]) / \
+     -(&D_8010DC38_224028_BombsAway)[(i) + 1])
 extern Vec D_8010DB60_223F50_BombsAway; /* = D_8010DB28.unk_38 (own label in retail) */
 extern s16 D_8010D944_223D34_BombsAway; /* = D_8010D940.unk_04 */
+extern Vec D_8010DB6C_223F5C_BombsAway; /* = D_8010DB28.unk_44 */
+extern Matrix4f D_8010DBB8_223FA8_BombsAway; /* = D_8010DB28.unk_90 */
+extern f32 D_8010DC38_224028_BombsAway; /* = D_8010DB28.unk_110[0] (plane a) */
+extern f32 D_8010DC3C_22402C_BombsAway; /* = D_8010DB28.unk_110[1] */
+extern f32 D_8010DC40_224030_BombsAway; /* = D_8010DB28.unk_110[2] */
+extern f32 D_8010DC44_224034_BombsAway; /* = D_8010DB28.unk_110[3] */
 void func_80025F00_26B00(Matrix4f src, Matrix4f dst); /* MP1 MtxInv */
 extern f32 D_8010DB58_223F48_BombsAway; /* = D_8010DB28.unk_30 */
 extern f32 D_8010DB5C_223F4C_BombsAway; /* = D_8010DB28.unk_34 */
