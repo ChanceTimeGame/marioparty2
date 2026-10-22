@@ -1027,16 +1027,120 @@ s32 func_80106E08_2C4D88_PirateDuel(void) {
     return cand[rand8() % n];
 }
 
+/* Starts a CPU duelist's input script (func_80107724, pad triggers in D_80109DE8); 3F's
+   func_80107EE4. Mode 2 (the challenger picks an opponent): with 20 coins or more, a random
+   opponent with 20 coins among the best-ranked ones, else func_80106E08's choice. Mode 3 (the
+   stake): a percentage of the poorer player's coins from the ranks and whether the star counts
+   are within one, at least the minimum.
+   Retail quirks: equal ranks index row -1 of the ranges; unlike 3F (whose rank-1 pass runs
+   twice), the row uses the challenger's rank twice (never the opponent's). */
+/* NON_MATCHING: 3F's twin, which does not match either (loop-guard and delay-slot shape). */
+#define PD_ABS(x) ((x) < 0 ? -(x) : (x))
+#ifdef NON_MATCHING
+void func_801070F4_2C5074_PirateDuel(s32 cur, s32 target, s32 mode) {
+    s32 cand[4];
+    s32 flag[4];
+    s32 rows[32] = {
+        -1, 1, 3, 2, 3, 3, 3, 3,
+        0, 1, -1, 1, 1, 2, 1, 2,
+        0, 1, 0, 1, -1, 1, 1, 2,
+        0, 0, 0, 1, 0, 1, -1, -1,
+    };
+    s32 range[4] = { 10, 20, 20, 9 };
+    s32 base[4] = { 90, 60, 20, 1 };
+    s32 unused[8];
+    omObjData* obj;
+    PdCpuInput* work;
+    s32 diff;
+    s32 row;
+    s32 n;
+    s32 i;
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80107724_2C56A4_PirateDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdCpuInput), 0x7918);
+    work->timer = 0;
+    work->cur = cur;
+    work->target = target;
+    work->mode = mode;
+    D_80109DE8_2C7D68_PirateDuel = 0;
+    if (mode == 2) {
+        if (gPlayers[D_80109D90_2C7D10_PirateDuel].coins >= 20) {
+            n = 0;
+            for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                flag[i] = 0;
+            }
+            for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 0) {
+                    flag[i] = 1;
+                    n++;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 1) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 2) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80109DB0_2C7D30_PirateDuel[i]) == 3) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            n = 0;
+            for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                if (flag[i] != 0 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins >= 20) {
+                    cand[n++] = i;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80109DA8_2C7D28_PirateDuel - 1; i++) {
+                    if (flag[i] == 0 && gPlayers[D_80109DB0_2C7D30_PirateDuel[i]].coins >= 20) {
+                        cand[n++] = i;
+                    }
+                }
+            }
+            if (n > 0) {
+                work->target = cand[rand8() % n];
+            } else {
+                work->target = func_80106E08_2C4D88_PirateDuel();
+            }
+        } else {
+            work->target = func_80106E08_2C4D88_PirateDuel();
+        }
+    }
+    if (mode == 3) {
+        row = func_80059FD0_5ABD0(D_80109D90_2C7D10_PirateDuel) * 8;
+        row += func_80059FD0_5ABD0(D_80109D90_2C7D10_PirateDuel) * 2;
+        diff = PD_ABS(gPlayers[D_80109D90_2C7D10_PirateDuel].stars - gPlayers[D_80109D94_2C7D14_PirateDuel].stars);
+        row += diff < 2;
+        work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_80109DCC_2C7D4C_PirateDuel / 100;
+        if (work->target < D_80109DC0_2C7D40_PirateDuel) {
+            work->target = D_80109DC0_2C7D40_PirateDuel;
+        }
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80109C68_2C7BE8_PirateDuel[32] = { 0xFFFFFFFF, 0x00000001, 0x00000003, 0x00000002, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF };
 
-__asm__(".section .rodata");
 const u32 D_80109CE8_2C7C68_PirateDuel[4] = { 0x0000000A, 0x00000014, 0x00000014, 0x00000009 };
 
-__asm__(".section .rodata");
 const u32 D_80109CF8_2C7C78_PirateDuel[4] = { 0x0000005A, 0x0000003C, 0x00000014, 0x00000001 };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801070F4_2C5074_PirateDuel);
+#endif
 
 void func_80107724_2C56A4_PirateDuel(omObjData* obj) {
     PdCpuInput* work = obj->unk_50;
