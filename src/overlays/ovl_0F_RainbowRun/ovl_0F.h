@@ -95,6 +95,9 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+void func_800B8070_B8C70(f32 angle, f32* sin, f32* cos);
+void func_8002A00C_2AC0C(s16 model);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 
@@ -121,6 +124,7 @@ extern f32 D_8010ABF8_14C588_RainbowRun; /* camera rot y */
 extern f32 D_8010AC04_14C594_RainbowRun; /* camera centre z */
 extern f32 D_8010AC10_14C5A0_RainbowRun; /* camera rot x */
 extern f32 D_8010ACBC_14C64C_RainbowRun; /* camera centre x */
+extern ColVtx* D_8010A9C0_14C350_RainbowRun; /* the rainbow's base vertices (func_80106050) */
 
 /* MG0F-B */
 

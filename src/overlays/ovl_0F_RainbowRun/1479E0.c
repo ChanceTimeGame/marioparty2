@@ -1,7 +1,19 @@
 #include "common.h"
 #include "ovl_0F.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106050_1479E0_RainbowRun);
+/* Keeps a copy of a model's collision vertices (the rainbow's base shape). */
+void func_80106050_1479E0_RainbowRun(s16 model) {
+    HmfData* m;
+    ColVtx* src;
+    s32 size;
+
+    func_8002A00C_2AC0C(model);
+    m = D_800FC834_FD434[model].hmf;
+    src = m->unk54;
+    size = m->unk14 * sizeof(ColVtx);
+    D_8010A9C0_14C350_RainbowRun = func_80027154_27D54(size, 0x7918);
+    bcopy(src, D_8010A9C0_14C350_RainbowRun, size);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_801060D8_147A68_RainbowRun);
 

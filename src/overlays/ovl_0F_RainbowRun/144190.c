@@ -115,7 +115,64 @@ f32 func_80105A74_147404_RainbowRun(void) {
     return angle;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80105C40_1475D0_RainbowRun);
+/* Rotation of angle about axis, translated (retail uses pos->z where pos->x would be expected, as
+   MP1's func_800F8F70_TightropeTreachery). */
+void func_80105C40_1475D0_RainbowRun(Vec* pos, Vec* axis, f32 angle, Matrix4f m) {
+    f32 s;
+    f32 c;
+    f32 t;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 xx;
+    f32 yy;
+    f32 zz;
+    f32 xs;
+    f32 ys;
+    f32 zs;
+    f32 xy;
+    f32 xz;
+    f32 yz;
+    f32 py;
+    f32 pz;
+    f32 txy;
+    f32 txz;
+    f32 tyz;
+
+    func_800B8070_B8C70(angle, &s, &c);
+    t = 1.0f - c;
+    pz = pos->z;
+    py = pos->y;
+    x = axis->x;
+    y = axis->y;
+    z = axis->z;
+    xy = x * y;
+    yz = y * z;
+    xz = z * x;
+    xx = x * x;
+    yy = y * y;
+    zz = z * z;
+    xs = x * s;
+    ys = y * s;
+    zs = z * s;
+    m[3][3] = 1.0f;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
+    m[0][0] = t * xx + c;
+    txy = t * xy;
+    m[0][1] = txy + zs;
+    txz = t * xz;
+    m[0][2] = txz - ys;
+    m[1][0] = txy - zs;
+    m[1][1] = t * yy + c;
+    tyz = t * yz;
+    m[1][2] = tyz + xs;
+    m[2][0] = txz + ys;
+    m[2][1] = tyz - xs;
+    m[2][2] = t * zz + c;
+    m[3][0] = pz * t * (1.0f - xx) + py * (zs - txy) - pz * (txz + ys);
+    m[3][1] = -pz * (txy + zs) + py * t * (1.0f - yy) + pz * (xs - tyz);
+    m[3][2] = pz * (ys - txz) - py * (tyz + xs) + pz * t * (1.0f - zz);
+}
 
 /* A CPU player presses nothing but Z. */
 void func_80105E38_1477C8_RainbowRun(RRPlayerWork* work) {
