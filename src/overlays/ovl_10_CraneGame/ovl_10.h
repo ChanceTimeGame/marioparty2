@@ -122,6 +122,7 @@ void func_800B30D0_B3CD0(Matrix4f m, Mtx* mtx); /* MP1 func_800A0B90: Mtx to flo
 void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* MP1 func_8009EA40: translation */
 void func_80025F00_26B00(Matrix4f src, Matrix4f dst); /* MP1 MtxInv */
 void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800AC0B0: multiply */
+void func_800B3040_B3C40(Matrix4f m, Mtx* mtx); /* MP1 func_800A0A20: float to Mtx */
 /* Views of main's per-part draw records (30560.c's HmfLayerEnt and HmfDrawRec): a part's matrix is
    D_800F8C58[D_800FDC48[hmf->unk00][part->unk2F].unk02].unk44. */
 typedef struct CGLayerEnt {

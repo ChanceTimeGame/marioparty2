@@ -388,8 +388,153 @@ void func_801091D4_152CF4_CraneGame(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801091D4_152CF4_CraneGame);
 #endif
 
+/* MP1 func_800FCB78 (NON_MATCHING there too). Residue: retail rematerialises the vertex cache's
+   address in the loop and has an 8-byte larger frame (register allocation). */
+#ifdef NON_MATCHING
+/* Emits the faces in draw order as gSP1Triangle/gSP1Quadrangle batches of at most 29 vertices. */
+void func_801093A0_152EC0_CraneGame(Gfx** gfx, HmfData* m) {
+    u8 (*start)[4];
+    u8 (*cur)[4];
+    u8* out;
+    u16* f;
+    CGShadowOrder* q;
+    s32 i;
+    s32 n;
+    s32 k;
+    s16 cnt;
+    s32 quad;
+    s16 idx;
+    s16* s;
+
+    start = cur = func_80027154_27D54(D_8010CAA2_1565C2_CraneGame * 4, m->unk0E);
+    cnt = 0;
+    D_8010CAEA_15660A_CraneGame = 0;
+    q = D_8010CAA4_1565C4_CraneGame;
+    for (i = 0; i < D_8010CAA2_1565C2_CraneGame; i++, q++) {
+        f = D_8010CA98_1565B8_CraneGame[q->face].v;
+        out = start[i];
+        quad = (*f >> 15) << 7;
+        n = 3;
+        if (quad != 0) {
+            n = 4;
+        }
+        for (; n > 0; n--) {
+            idx = *f++ & 0x7FFF;
+            k = 0;
+            D_8010CAA8_1565C8_CraneGame[D_8010CAEA_15660A_CraneGame] = idx;
+            s = D_8010CAA8_1565C8_CraneGame;
+            while (idx != *s++) {
+                k++;
+            }
+            *out++ = quad | k;
+            quad = 0;
+            if (k >= D_8010CAEA_15660A_CraneGame) {
+                D_8010CAEA_15660A_CraneGame++;
+            }
+        }
+        cnt++;
+        if (D_8010CAEA_15660A_CraneGame >= 29) {
+            *gfx = func_801095A4_1530C4_CraneGame(*gfx, cur, cnt);
+            cur += cnt;
+            cnt = 0;
+        }
+    }
+    if ((D_8010CAEA_15660A_CraneGame != 0) & (cnt != 0)) {
+        *gfx = func_801095A4_1530C4_CraneGame(*gfx, cur, cnt);
+    }
+    gSPEndDisplayList((*gfx)++);
+    HuMemFree(start);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801093A0_152EC0_CraneGame);
+#endif
 
+/* MP1 func_800FCD7C (NON_MATCHING there too). Residue: register allocation; retail steps the
+   unique-vertex pointer by 2 before reading y and z. */
+#ifdef NON_MATCHING
+Gfx* func_801095A4_1530C4_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
+    Vtx* v;
+    s16* s;
+    ColVtx* p;
+    s32 i;
+
+    v = D_8010CA94_1565B4_CraneGame + D_8010CAEC_15660C_CraneGame;
+    s = D_8010CAA8_1565C8_CraneGame;
+    for (i = 0; i < D_8010CAEA_15660A_CraneGame; i++, v++, s++) {
+        p = &D_8010CA90_1565B0_CraneGame[*s];
+        v->v.ob[0] = p->x;
+        v->v.ob[1] = p->y;
+        v->v.ob[2] = p->z;
+        v->v.tc[0] = v->v.tc[1] = 0;
+        v->v.cn[0] = v->v.cn[1] = v->v.cn[2] = 0xFF;
+        v->v.cn[3] = 0xA0;
+    }
+    gSPVertex(gfx++, (Vtx*)(0x01000000 | (D_8010CAEC_15660C_CraneGame * sizeof(Vtx))), D_8010CAEA_15660A_CraneGame, 0);
+    D_8010CAEC_15660C_CraneGame += D_8010CAEA_15660A_CraneGame;
+    D_8010CAEA_15660A_CraneGame = 0;
+    for (i = 0; i < n; i++, tri++) {
+        if ((*tri)[0] & 0x80) {
+            gSP1Quadrangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], (*tri)[3], 0);
+        } else {
+            gSP1Triangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], 0);
+        }
+    }
+    return gfx;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801095A4_1530C4_CraneGame);
+#endif
 
+/* MP1 func_800FCF78 with MP2's height / 1200, clamp to 1, scale D_8010CAF0, fade 0.5 and an
+   unscaled y. Residue: the delay slots after the clamp (scheduling). */
+#ifdef NON_MATCHING
+/* The claw's round shadow: a triangle under it, wider and fainter the higher it is. */
+Gfx* func_801097A0_1532C0_CraneGame(Gfx* gfx, Mtx* mtx) {
+    Matrix4f m1;
+    Matrix4f m2;
+    Vtx* v;
+    Vtx* src;
+    f32 s;
+    f64 sc;
+    f64 a;
+    s32 i;
+
+    if (D_8010C908_156428_CraneGame == 0) {
+        return gfx;
+    }
+    func_800B30D0_B3CD0(m1, mtx + 1);
+    func_800B1F50_B2B50(m2, D_8010C8F8_156418_CraneGame.x, D_8010C90C_15642C_CraneGame, D_8010C8F8_156418_CraneGame.z);
+    func_800B6410_B7010(m2, m1, m1);
+    func_800B3040_B3C40(m1, &D_8010C9D0_1564F0_CraneGame[D_8010C264_155D84_CraneGame]);
+    gSPMatrix(gfx++, osVirtualToPhysical(&D_8010C9D0_1564F0_CraneGame[D_8010C264_155D84_CraneGame]),
+              G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    v = D_8010C910_156430_CraneGame[D_8010C264_155D84_CraneGame];
+    src = D_8010BD20_155840_CraneGame;
+    gSPVertex(gfx++, osVirtualToPhysical(v), 3, 0);
+    s = (D_8010C8F8_156418_CraneGame.y - D_8010C90C_15642C_CraneGame) / 1200.0;
+    i = 0;
+    if (s < 0.0) {
+        s = 0.0f;
+    } else if (s > 1.0) {
+        s = 1.0f;
+    }
+    sc = s + 1.0;
+    a = 176.0 - s * 176.0f * 0.5;
+    do {
+        v->v.ob[0] = src->v.ob[0] * (sc * D_8010CAF0_156610_CraneGame);
+        v->v.ob[1] = src->v.ob[1];
+        v->v.ob[2] = src->v.ob[2] * (sc * D_8010CAF0_156610_CraneGame);
+        v->v.cn[3] = a;
+        v->v.tc[0] = src->v.tc[0];
+        v->v.tc[1] = src->v.tc[1];
+        v->v.cn[0] = v->v.cn[1] = v->v.cn[2] = 0;
+        v++;
+        i++;
+        src++;
+    } while (i < 3);
+    gSP1Triangle(gfx++, 0, 1, 2, 0);
+    return gfx;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801097A0_1532C0_CraneGame);
+#endif
