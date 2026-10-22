@@ -305,13 +305,13 @@ extern f32 D_8010CF84_223374_BombsAway[4];          /* bomb scale per kind */
 extern BaKindInfo D_8010CF94_223384_BombsAway[4];
 extern f32 D_8010CFA4_223394_BombsAway[][2]; /* CPU target offsets (x, z) per corner slot (MP1 D_800FFA7C); asm also reads D_8010CFA8 = [0][1] */
 extern u8 D_8010CFD4_2233C4_BombsAway[][2]; /* MP1 D_800FFAAC; asm reads D_8010CFD5 = [0][1] */
-extern s32 D_8010CFF0_2233E0_BombsAway;
-extern s32 D_8010CFF4_2233E4_BombsAway[];
-extern s32 D_8010CFF8_2233E8_BombsAway[];
+extern s32 D_8010CFF0_2233E0_BombsAway; /* intro camera state (func_80109264) */
+extern s32 D_8010CFF4_2233E4_BombsAway; /* intro frames */
+extern Vec D_8010CFF8_2233E8_BombsAway[2]; /* intro shots ([1] = D_8010D004) */
 extern s32 D_8010D004_2233F4_BombsAway[];
-extern s32 D_8010D010_223400_BombsAway[];
+extern Vec D_8010D010_223400_BombsAway[4]; /* cannon: intro start, play pos; [2], [3] their rotations */
 extern s32 D_8010D01C_22340C_BombsAway[];
-extern u16 D_8010D040_223430_BombsAway;
+extern s16 D_8010D040_223430_BombsAway; /* title sprite y */
 extern s32 D_8010D044_223434_BombsAway[];
 extern s32 D_8010D1F8_2235E8_BombsAway[];
 extern s32 D_8010D238_223628_BombsAway[];
@@ -371,7 +371,7 @@ extern u16 D_8010DFE2_2243D2_BombsAway;
 extern u16 D_8010DFE4_2243D4_BombsAway;
 extern s16 D_8010DFE6_2243D6_BombsAway;
 extern s16 D_8010DFE8_2243D8_BombsAway;
-extern s32 D_8010DFF0_2243E0_BombsAway[]; /* the cannon (MP1 BaCannon D_80100790)? */
+extern struct BaCannon D_8010DFF0_2243E0_BombsAway; /* the cannon (MP1 D_80100790) */
 extern s32 D_8010E004_2243F4_BombsAway[];
 extern s32 D_8010E008_2243F8_BombsAway[];
 extern s32 D_8010E010_224400_BombsAway[];
@@ -463,13 +463,13 @@ void func_80109128_21F518_BombsAway(void);
 void func_80109164_21F554_BombsAway(void);
 void func_80109180_21F570_BombsAway(void);
 void func_801091F4_21F5E4_BombsAway(void);
-void func_80109264_21F654_BombsAway(void);
+void func_80109264_21F654_BombsAway(omObjData* obj);
 void func_80109810_21FC00_BombsAway(void);
 void func_80109908_21FCF8_BombsAway(void);
 void func_801099C4_21FDB4_BombsAway(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
 s16 func_80109A68_21FE58_BombsAway(void);
 void func_8010A0D0_2204C0_BombsAway(s32 arg0, s32* arg1, s32 arg2);
-void func_8010A198_220588_BombsAway(void);
+void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale);
 void func_8010A1EC_2205DC_BombsAway(void);
 void func_8010A298_220688_BombsAway(void);
 void func_8010A350_220740_BombsAway(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
@@ -502,5 +502,19 @@ void func_800B1960_B2560(Matrix4f m, f32 px, f32 py, f32 pz, f32 ax, f32 ay, f32
                          f32 uz); /* look-at (MP1 HuGuLookAtF) */
 void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t);
 void func_800798F8_7A4F8(s16 sound, s16 pan); /* MP1 func_800607C4 */
+
+void SprPosSet(s16, s16, s16, s16);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void omSetStatBit(omObjData* obj, u16 stat);
+
+/* D_8010DFF0: the cannon (MP1 BaCannon). Splat labels: D_8010DFF8 (+8), D_8010E004 (+0x14),
+   D_8010E008 (+0x18). */
+typedef struct BaCannon {
+    /* 0x00 */ Vec unk_00; /* position */
+    /* 0x0C */ Vec unk_0C; /* rotation */
+    /* 0x18 */ f32 unk_18; /* velocity x */
+    /* 0x1C */ char unk_1C[4];
+} BaCannon;
 
 #endif

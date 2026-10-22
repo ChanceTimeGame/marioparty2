@@ -182,19 +182,169 @@ void func_80108E98_21F288_BombsAway(s16 sound, Vec* pos) {
     func_800798F8_7A4F8(sound, (s32)pan + 64);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108F40_21F330_BombsAway);
+void func_80108F40_21F330_BombsAway(void) {
+    void* file;
+    s16 image;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109118_21F508_BombsAway);
+    func_8010AC60_221050_BombsAway();
+    func_80026DAC_279AC(0, 0x78, 0x78, 0x78);
+    func_80026DAC_279AC(1, 0xFF, 0xFF, 0xFF);
+    func_80026E00_27A00(1, 0.0f, 1000.0f, 5000.0f);
+    Hu3DCamSetPerspective(0, 45.0f, 80.0f, 6000.0f);
+    omAddObj(0x13, 0, 0, -1, func_80109118_21F508_BombsAway);
+    omAddObj(0xC, 2, 0, -1, func_8010B214_221604_BombsAway);
+    omSetStatBit(omAddObj(0xC, 1, 0, -1, func_8010AA9C_220E8C_BombsAway), 0xA0);
+    func_8010A4BC_2208AC_BombsAway();
+    func_8010BE7C_22226C_BombsAway();
+    func_80109810_21FC00_BombsAway();
+    func_8010A1EC_2205DC_BombsAway();
+    func_801091F4_21F5E4_BombsAway();
+    file = DataRead(0x3B000F);
+    image = SprAnimRead(file);
+    DataClose(file);
+    D_8010E530_224920_BombsAway = SprCreate(1, 0);
+    SprAnimSet(D_8010E530_224920_BombsAway, 0, image, 0);
+    SprAttrSet(D_8010E530_224920_BombsAway, 0, 0x4000);
+    SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, 0x78);
+    SprScaleSet(D_8010E530_224920_BombsAway, 0, 2.0f, 2.2f);
+    SprAttrSet(D_8010E530_224920_BombsAway, 0, 0x503C);
+    D_8010DFE0_2243D0_BombsAway = 1;
+    D_8010E532_224922_BombsAway = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109128_21F518_BombsAway);
+void func_80109118_21F508_BombsAway(omObjData* obj) {
+    obj->func_ptr = func_80109128_21F518_BombsAway;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109164_21F554_BombsAway);
+void func_80109128_21F518_BombsAway(void) {
+    func_80109908_21FCF8_BombsAway();
+    func_8010A298_220688_BombsAway();
+    func_8010A4CC_2208BC_BombsAway();
+    func_8010BFAC_22239C_BombsAway();
+    func_8010AD18_221108_BombsAway();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109180_21F570_BombsAway);
+void func_80109164_21F554_BombsAway(void) {
+    func_8010AC2C_22101C_BombsAway();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801091F4_21F5E4_BombsAway);
+void func_80109180_21F570_BombsAway(void) {
+    D_800FD474_FE074.x = -22.0f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+    D_8010274C_10334C.x = -5.0f;
+    D_8010274C_10334C.y = 254.5f;
+    D_8010274C_10334C.z = 1.0f;
+    D_800FA610_FB210 = 1378.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109264_21F654_BombsAway);
+void func_801091F4_21F5E4_BombsAway(void) {
+    D_800FD474_FE074.x = 3.0f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+    D_8010274C_10334C.x = -5.0f;
+    D_8010274C_10334C.y = 133.2f;
+    D_8010274C_10334C.z = -1000.0f;
+    D_800FA610_FB210 = 1200.0f;
+}
+
+void func_80109264_21F654_BombsAway(omObjData* obj) {
+    f32 t;
+
+    switch (D_8010CFF0_2233E0_BombsAway) {
+        case 0:
+            D_8010DFF0_2243E0_BombsAway.unk_00.x = D_8010D010_223400_BombsAway[0].x;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.x = D_8010D010_223400_BombsAway[2].x;
+            D_8010DFF0_2243E0_BombsAway.unk_00.y = D_8010D010_223400_BombsAway[0].y;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.y = D_8010D010_223400_BombsAway[2].y;
+            D_8010DFF0_2243E0_BombsAway.unk_00.z = D_8010D010_223400_BombsAway[0].z;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.z = D_8010D010_223400_BombsAway[2].z;
+            D_8010D040_223430_BombsAway = 0x93;
+            D_8010CFF4_2233E4_BombsAway = 0;
+            D_8010CFF0_2233E0_BombsAway++;
+            break;
+        case 1:
+            D_8010DFF0_2243E0_BombsAway.unk_00.x -= 15.0;
+            if (D_8010CFF4_2233E4_BombsAway == 25) {
+                func_8010B6FC_221AEC_BombsAway(700.0f, 500.0f, 1.0f, 0);
+            }
+            if (D_8010CFF4_2233E4_BombsAway == 34) {
+                func_8010B6FC_221AEC_BombsAway(700.0f, 500.0f, 1.0f, 0);
+            }
+            D_8010274C_10334C.z = D_8010DFF0_2243E0_BombsAway.unk_00.z;
+            if (D_8010CFF4_2233E4_BombsAway > 30) {
+                t = (f32)(D_8010CFF4_2233E4_BombsAway - 30) / 20.0;
+                if (t > 1.0) {
+                    t = 1.0f;
+                }
+                D_800FD474_FE074.y = D_800FD474_FE074.y - t * 1.1 * t;
+                D_800FA610_FB210 = D_800FA610_FB210 - t * 7.000000000000001; /* retail: 7 + 1 ulp */
+                D_8010D040_223430_BombsAway = (f32)(D_8010CFF4_2233E4_BombsAway - 30) / 30.0 * 5.0 + 147.0;
+            }
+            if (D_8010CFF4_2233E4_BombsAway < 60) {
+                t = 1.0 - (f32)D_8010CFF4_2233E4_BombsAway / 60.0;
+                if (t < 0.0) {
+                    t = 0.0f;
+                }
+                D_8010274C_10334C.x = D_8010DFF0_2243E0_BombsAway.unk_00.x + t * 300.0 * t;
+            } else {
+                D_8010274C_10334C.x = D_8010DFF0_2243E0_BombsAway.unk_00.x;
+            }
+            if (D_8010CFF4_2233E4_BombsAway >= 93) {
+                D_8010DFF0_2243E0_BombsAway.unk_00.x = D_8010D010_223400_BombsAway[1].x;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.x = D_8010D010_223400_BombsAway[3].x;
+                D_8010DFF0_2243E0_BombsAway.unk_00.y = D_8010D010_223400_BombsAway[1].y;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.y = D_8010D010_223400_BombsAway[3].y;
+                D_8010DFF0_2243E0_BombsAway.unk_00.z = D_8010D010_223400_BombsAway[1].z;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.z = D_8010D010_223400_BombsAway[3].z;
+                func_80109180_21F570_BombsAway();
+                D_800FA610_FB210 = 1000.0f;
+                D_8010D040_223430_BombsAway = 0x3A;
+                D_8010CFF4_2233E4_BombsAway = 0;
+                D_8010CFF0_2233E0_BombsAway++;
+            }
+            break;
+        case 2:
+            if (D_8010CFF4_2233E4_BombsAway == 18) {
+                func_8010A198_220588_BombsAway(D_8010CFF8_2233E8_BombsAway[0].x, D_8010CFF8_2233E8_BombsAway[0].y,
+                                               D_8010CFF8_2233E8_BombsAway[0].z, 1.0f);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    /* retail pans the first shot's sound at the second shot's place */
+                    func_80108E98_21F288_BombsAway(PlaySound(0x28D), &D_8010CFF8_2233E8_BombsAway[1]);
+                }
+            }
+            if (D_8010CFF4_2233E4_BombsAway == 27) {
+                func_8010A198_220588_BombsAway(D_8010CFF8_2233E8_BombsAway[1].x, D_8010CFF8_2233E8_BombsAway[1].y,
+                                               D_8010CFF8_2233E8_BombsAway[1].z, 1.0f);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    func_80108E98_21F288_BombsAway(PlaySound(0x28D), &D_8010CFF8_2233E8_BombsAway[1]);
+                }
+            }
+            D_8010D040_223430_BombsAway = (D_800FA610_FB210 - 1000.0) / 378.0 * 9.0 / 1.5 + 58.0;
+            if (D_8010D040_223430_BombsAway > 64) {
+                D_8010D040_223430_BombsAway = 64;
+            }
+            if (D_800FA610_FB210 < 1378.0) {
+                D_800FA610_FB210 += 12.5;
+            }
+            if (D_8010CFF4_2233E4_BombsAway >= 30) {
+                D_8010D040_223430_BombsAway = 0x40;
+                D_8010CFF4_2233E4_BombsAway = 0;
+                D_8010CFF0_2233E0_BombsAway++;
+            }
+            break;
+    }
+    D_8010CFF4_2233E4_BombsAway++;
+    if (D_8010DFF0_2243E0_BombsAway.unk_00.x > 0.0) {
+        if (D_8010DFF0_2243E0_BombsAway.unk_00.x < 250.0) {
+            D_8010DFF0_2243E0_BombsAway.unk_18 += 0.05;
+        }
+        if (D_8010DFF0_2243E0_BombsAway.unk_18 < 0.0f) {
+            D_8010DFF0_2243E0_BombsAway.unk_00.x += D_8010DFF0_2243E0_BombsAway.unk_18;
+        }
+    }
+    SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, D_8010D040_223430_BombsAway + 8);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109810_21FC00_BombsAway);
 
