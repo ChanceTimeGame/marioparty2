@@ -20,11 +20,17 @@ typedef f32 Matrix4f[4][4];
 /* A player object's work: main's minigame work (0x15C bytes; MP1's 0xE8 TTPlayerWork with fields
    from 0x50 moved). Fields from the asm. */
 typedef struct RRPlayerWork {
-    /* 0x00 */ char unk_00[0x57];
+    /* 0x00 */ char unk_00[0x3C];
+    /* 0x3C */ f32 angle; /* facing angle (degrees) */
+    /* 0x40 */ char unk_40[8];
+    /* 0x48 */ f32 radius;
+    /* 0x4C */ char unk_4C[0xB];
     /* 0x57 */ s8 port; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 player; /* player index */
-    /* 0x5A */ char unk_5A[0x102];
+    /* 0x5A */ char unk_5A[0x92];
+    /* 0xEC */ s32 (*unk_EC)(omObjData*, omObjData*); /* collision callback (MP1 0xDC) */
+    /* 0xF0 */ char unk_F0[0x6C];
 } RRPlayerWork; /* size = 0x15C */
 
 #define RR_WORK(obj) ((RRPlayerWork*)(obj)->unk_50)
@@ -113,6 +119,14 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup */
+extern u16 D_800BF7E4_C03E4[][14]; /* per player sound ids */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
+void func_8000CC74_D874(omObjData* obj, s16 model, s32 arg2);
+void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
 extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);

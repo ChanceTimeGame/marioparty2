@@ -166,7 +166,61 @@ void func_80103648_144FD8_RainbowRun(omObjData* obj) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_801036CC_14505C_RainbowRun);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_8010393C_1452CC_RainbowRun);
+/* The runner's setup: motions, its sounds and the collision callback. */
+void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z) {
+    RRPlayerWork* w;
+    s16 i;
+
+    func_8000C6FC_D2FC(obj, dir, file, player, 0x2A9, 0x2A9);
+    w = obj->unk_50;
+    w->angle = 180.0f;
+    w->radius = 60.0f;
+    D_800BF7E4_C03E4[w->player][0] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][1] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][2] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][3] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][4] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][5] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][6] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][7] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][8] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][9] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][10] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][11] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][12] = 0x2D2;
+    D_800BF7E4_C03E4[w->player][13] = 0x2D2;
+    obj->func_ptr = func_801041E4_145B74_RainbowRun;
+    w->unk_EC = func_801036CC_14505C_RainbowRun;
+    func_80019E84_1AA84(obj, 0, dir, 1, 0);
+    func_80019E84_1AA84(obj, 1, dir | 1, 1, 0);
+    func_80019E84_1AA84(obj, 2, dir | 1, 1, 0);
+    func_80019E84_1AA84(obj, 0x26, dir | 0x21, 1, 0);
+    func_80019F0C_1AB0C(obj, 6, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 0x27, dir | 0x39, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x28, dir | 0x20, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x29, dir | 0x20, 1, 0);
+    func_80019F0C_1AB0C(obj, 9, dir | 7, 1, 0x27);
+    func_80019F0C_1AB0C(obj, 0xA, dir | 0x12, 1, 0x27);
+    func_80019F0C_1AB0C(obj, 0x10, dir | 0xE, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x12, dir | 0x10, 2, 0);
+    func_80019F0C_1AB0C(obj, 0x13, dir | 0x11, 2, 0);
+    func_80019F0C_1AB0C(obj, 0x16, dir | 0x13, 1, 0);
+    func_80019E84_1AA84(obj, 0x15, dir | 0x2E, 0, 0);
+    func_80019E84_1AA84(obj, 0x1E, dir | 0x2F, 0, 0);
+    func_80019E84_1AA84(obj, 0x1F, dir | 0x30, 0, 0);
+    func_80019E84_1AA84(obj, 0x21, dir | 0x32, 2, 0);
+    func_80019E84_1AA84(obj, 0x22, dir | 0x33, 2, 0);
+    func_80019E84_1AA84(obj, 0xE, dir | 0x56, 1, 0x78);
+    func_8000CC74_D874(obj, obj->model[0], 1);
+    func_8001A12C_1AD2C(obj, 0xD, dir | 0x4F, 1, 0x78, 1);
+    func_8000C35C_CF5C(obj, x, y, z);
+    func_80029714_2A314(obj->model[0], x, y, z);
+    func_8000C024_CC24(obj, 0, 2);
+    func_8000C024_CC24(obj, 1, 2);
+    for (i = 2; i < 10; i++) {
+        func_8000C024_CC24(obj, i, 1);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80103E1C_1457AC_RainbowRun);
 
