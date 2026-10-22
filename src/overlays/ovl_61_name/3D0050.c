@@ -145,26 +145,141 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80103EA0_3D16F0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_801046E0_3D1F30_name_61);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_8010492C_3D217C_name_61);
+void func_8010492C_3D217C_name_61(void) {
+    Ovl61CurtainWork* work;
+    f32 y;
+
+    D_801074D0_3D4D20_name_61 = omAddObj(0x1F4, 5, 0, -1, func_80104A88_3D22D8_name_61);
+    work = D_801074D0_3D4D20_name_61->unk_50 = func_80027154_27D54(sizeof(Ovl61CurtainWork), 0x7918);
+    work->anim = -1;
+    work->esp = -1;
+    y = -1.1f;
+    work->y = y;
+    D_801074D0_3D4D20_name_61->model[0] = LoadFormFile(0xE0000, 0x689);
+    omSetTra(D_801074D0_3D4D20_name_61, 0.0f, 0.0f, 0.0f);
+    omSetRot(D_801074D0_3D4D20_name_61, 0.0f, 0.0f, 0.0f);
+    omSetSca(D_801074D0_3D4D20_name_61, 1.0f, 1.0f, 1.0f);
+    D_801074D0_3D4D20_name_61->model[4] = LoadFormFile(0xE0001, 0x689);
+    func_80029714_2A314(D_801074D0_3D4D20_name_61->model[4], 0.0f, y, 0.0f);
+    func_8002979C_2A39C(D_801074D0_3D4D20_name_61->model[4], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(D_801074D0_3D4D20_name_61->model[4], 1.0f, 1.0f, 1.0f);
+}
 
 void func_80104A88_3D22D8_name_61(void) {
 }
 
-__asm__(".section .rodata");
-const char D_801074A0_3D4CF0_name_61[] = "C161_000-donchou";
+void func_80104A90_3D22E0_name_61(f32 time) {
+    f32 t;
+    s32 i;
 
-__asm__(".section .rodata");
-const char D_801074B4_3D4D04_name_61[28] = "C161_000-donchou2";
+    t = 0.0f;
+    D_801074D0_3D4D20_name_61->model[1] = LoadFormFile(0xE0004, 0x689);
+    D_801074D0_3D4D20_name_61->model[2] = LoadFormFile(0xE0005, 0x68D);
+    func_8002A00C_2AC0C(D_801074D0_3D4D20_name_61->model[1]);
+    func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], 0.0f, "C161_000-donchou", "C161_000-donchou2", 0);
+    for (i = 0; i < time + 3.0f; i++) {
+        t += 1.0f / time;
+        if (t > 1.0f) {
+            t = 1.0f;
+        }
+        func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], t, "C161_000-donchou", "C161_000-donchou2", 0);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80104A90_3D22E0_name_61);
+void func_80104C14_3D2464_name_61(void) {
+    f32 time;
+    f32 t;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80104C14_3D2464_name_61);
+    t = 0.0f;
+    time = 180.0f;
+    D_80107506_3D4D56_name_61 = 0;
+    D_801074D0_3D4D20_name_61->model[1] = LoadFormFile(0xE0004, 0x689);
+    D_801074D0_3D4D20_name_61->model[2] = LoadFormFile(0xE0005, 0x68D);
+    func_8002A00C_2AC0C(D_801074D0_3D4D20_name_61->model[1]);
+    func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], 0.0f, "C161_000-donchou", "C161_000-donchou2", 0);
+    for (i = 0; i < time + 3.0f; i++) {
+        t += 1.0f / time;
+        if (t > 1.0f) {
+            t = 1.0f;
+        }
+        func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], t, "C161_000-donchou", "C161_000-donchou2", 0);
+        HuPrcVSleep();
+    }
+    D_80107506_3D4D56_name_61 = 1;
+    omDelPrcObj(NULL);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80104DA8_3D25F8_name_61);
+void func_80104DA8_3D25F8_name_61(f32 time) {
+    f32 t;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80104F24_3D2774_name_61);
+    t = 1.0f;
+    D_801074D0_3D4D20_name_61->model[3] = LoadFormFile(0xE000E, 0x68D);
+    for (i = 0; i < time; i++) {
+        t -= 1.0f / time;
+        if (t < 0.0f) {
+            t = 0.0f;
+        }
+        func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], t, "C161_000-donchou", "C161_000-donchou2", 0);
+        HuPrcVSleep();
+    }
+    func_80029B80_2A780(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[3]);
+    HuPrcSleep(10);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[1]);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[2]);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[3]);
+    HuPrcSleep(3);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_8010509C_3D28EC_name_61);
+void func_80104F24_3D2774_name_61(void) {
+    f32 time;
+    f32 t;
+    s32 i;
+
+    time = 180.0f;
+    t = 1.0f;
+    D_801074D0_3D4D20_name_61->model[3] = LoadFormFile(0xE000E, 0x68D);
+    for (i = 0; i < time; i++) {
+        t -= 1.0f / time;
+        if (t < 0.0f) {
+            t = 0.0f;
+        }
+        func_8002A4E0_2B0E0(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[2], t, "C161_000-donchou", "C161_000-donchou2", 0);
+        HuPrcVSleep();
+    }
+    func_80029B80_2A780(D_801074D0_3D4D20_name_61->model[1], D_801074D0_3D4D20_name_61->model[3]);
+    HuPrcSleep(10);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[1]);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[2]);
+    func_800283DC_28FDC(D_801074D0_3D4D20_name_61->model[3]);
+    HuPrcSleep(3);
+    omDelPrcObj(NULL);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+
+void func_8010509C_3D28EC_name_61(f32 y, u16 time) {
+    Ovl61CurtainWork* work = D_801074D0_3D4D20_name_61->unk_50;
+    f32 step = y / time;
+
+    while (1) {
+        work->y += step;
+        if (work->y < y) {
+            work->y = y;
+        }
+        func_80029714_2A314(D_801074D0_3D4D20_name_61->model[4], 0.0f, work->y, 0.0f);
+        if (work->y == y) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80105160_3D29B0_name_61);
 
