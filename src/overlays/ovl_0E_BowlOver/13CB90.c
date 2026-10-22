@@ -2,10 +2,92 @@
 
 
 
-__asm__(".section .rodata");
-const char D_80109AC0_143E50_BowlOver[16] = "\202r\202s\202`\202q\202s";
+void func_80102800_13CB90_BowlOver(void) {
+    s16 i;
+    s16 k;
+    s16 spr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80102800_13CB90_BowlOver);
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+    case 1:
+        D_8010A0AE_14443E_BowlOver[0] = 1;
+        break;
+    case 2:
+        D_8010A0AE_14443E_BowlOver[0] = 2;
+        break;
+    case 3:
+        D_8010A0AE_14443E_BowlOver[0] = 3;
+        break;
+    case 0:
+    default:
+        D_8010A0AE_14443E_BowlOver[0] = 0;
+        break;
+    }
+    for (i = 1, k = 0; i < 4; i++, k++) {
+        if (D_8010A0AE_14443E_BowlOver[0] == k) {
+            k++;
+        }
+        D_8010A0AE_14443E_BowlOver[i] = k;
+    }
+    func_8002D4D0_2E0D0(5);
+    func_8002F290_2FE90(D_800F9D30_FA930, 8);
+    func_80020D20_21920(0x20);
+    omInitObjMan(0x14, 0);
+    func_80079128_79D28();
+    func_80105AFC_13FE8C_BowlOver();
+    ScissorSet(0, 0.0f, 0.0f, 0.0f, 0.0f);
+    ScissorSet(1, 0.0f, 0.0f, 319.0f, 239.0f);
+    func_80026DAC_279AC(1, 0xFF, 0xA4, 0x1B);
+    func_80026E00_27A00(1, 42.0f, 90.0f, 51.0f);
+    D_80101300_101F00 = 0.8f;
+    D_8010105C_101C5C = 0.8f;
+    func_8000C38C_CF8C();
+    func_8000C3C8_CFC8();
+    func_8007273C_7333C((u8*)"\x82\x72\x82\x73\x82\x60\x82\x71\x82\x73", 1);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    D_80109A40_143DD0_BowlOver = D_800FA656;
+    D_8010A0A8_144438_BowlOver = omAddObj(0xF, 10, 0, -1, func_80105974_13FD04_BowlOver);
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(0xA, 8, 0, -1, func_801070DC_14146C_BowlOver);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(0xA, 4, 0, -1, func_801072F0_141680_BowlOver);
+    func_80107390_141720_BowlOver();
+    func_801096A0_143A30_BowlOver();
+    D_8010A0B8_144448_BowlOver[0] = omAddObj(0x14, 0x1E, 8, -1, func_8010977C_143B0C_BowlOver);
+    D_8010A0B8_144448_BowlOver[1] = omAddObj(0x14, 0x1E, 8, -1, func_801097F4_143B84_BowlOver);
+    D_8010A0B8_144448_BowlOver[2] = omAddObj(0x14, 0x1E, 8, -1, func_80109870_143C00_BowlOver);
+    D_8010A0B8_144448_BowlOver[3] = omAddObj(0x19, 0x14, 8, -1, func_801098EC_143C7C_BowlOver);
+    D_8010A0B8_144448_BowlOver[4] = omAddObj(0x19, 0x14, 8, -1, func_80109910_143CA0_BowlOver);
+    D_8010A0B8_144448_BowlOver[5] = omAddObj(0x19, 0x14, 8, -1, func_80109934_143CC4_BowlOver);
+    omAddObj(0, 0, 0, -1, func_80102E04_13D194_BowlOver);
+    omAddObj(0, 0, 0, -1, func_80106450_1407E0_BowlOver);
+    D_80109E0C_14419C_BowlOver.x = 0.0f;
+    D_80109E0C_14419C_BowlOver.y = 400.0f;
+    D_80109E0C_14419C_BowlOver.z = 0.0f;
+    D_80109E00_144190_BowlOver.x = 0.0f;
+    D_80109E00_144190_BowlOver.y = 885.0f;
+    D_80109E00_144190_BowlOver.z = 1580.0f;
+    spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x1E0019), 0, 1);
+    espDispOff(spr);
+    func_8007A27C_7AE7C(100, D_800F93FC_F9FFC[spr].unk_04, func_80105EE4_140274_BowlOver, 45.0f,
+                        (Vec*)&D_80109E00_144190_BowlOver, (Vec*)&D_80109E0C_14419C_BowlOver);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0xA, 4, 5, -1, func_801040A0_13E430_BowlOver);
+    InitFadeIn(0, 0x10);
+    D_8010A0AC_14443C_BowlOver = 2;
+    spr = func_8001A2F8_1AEF8(0x1E001B);
+    for (i = 0; i < 40; i++) {
+        D_80109EF8_144288_BowlOver[i] = func_8001AAAC_1B6AC(spr, 0, 1);
+        func_8001A91C_1B51C(D_80109EF8_144288_BowlOver[i], 1.0f, 1.0f);
+        func_8001A788_1B388(D_80109EF8_144288_BowlOver[i], 7);
+        espPosSet(D_80109EF8_144288_BowlOver[i], i * 8, 0);
+        espDispOn(D_80109EF8_144288_BowlOver[i]);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80102E04_13D194_BowlOver);
 

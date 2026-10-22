@@ -176,10 +176,20 @@ extern s8 ContStkY[4];
 void func_8003B6E8_3C2E8(HmfData* arg0);
 extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
+void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
+void InitFadeIn(s32, s32);
+/* 1AE60.c's esprite slot */
+typedef struct BOEspSlot {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04; /* sprite group */
+    /* 0x06 */ char unk_06[0x1E];
+} BOEspSlot; /* size = 0x24 */
+extern BOEspSlot* D_800F93FC_F9FFC;
 extern f32 D_8010105C_101C5C;
 extern f32 D_80101300_101F00;
 
-void func_8002D4D0_2E0D0(s16 n, s8* players);
+void func_8002D4D0_2E0D0(s16 n);
 void func_8002F290_2FE90(s32* arg0, s32 n);
 void func_80020D20_21920(s16 arg0);
 void func_80079128_79D28(void);
