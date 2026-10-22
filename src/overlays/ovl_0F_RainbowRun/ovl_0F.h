@@ -47,8 +47,8 @@ f32 func_80105A74_147404_RainbowRun(void);
 void func_80105C40_1475D0_RainbowRun(Vec* pos, Vec* axis, f32 angle, Matrix4f m);
 void func_80105E38_1477C8_RainbowRun(RRPlayerWork* work);
 void func_80105ED4_147864_RainbowRun(omObjData* obj, f32 dist);
-s32 func_80105F4C_1478DC_RainbowRun(u32 seed);
-s32 func_80106020_1479B0_RainbowRun(void);
+u32 func_80105F4C_1478DC_RainbowRun(u32 seed);
+u32 func_80106020_1479B0_RainbowRun(void);
 
 /* 1479E0.c */
 void func_80106050_1479E0_RainbowRun(s16 model);
@@ -80,6 +80,47 @@ void func_8010A514_14BEA4_RainbowRun(omObjData* obj);
 void func_8010A600_14BF90_RainbowRun(omObjData* obj);
 
 /* MG0F-A */
+
+/* ---- main-segment API used by 0F (missing from include/) ---- */
+
+extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
+extern u16 D_801011FC_101DFC;
+extern f32 D_80102750_103350[]; /* D_8010274C_10334C + 4: [1] is its z by retail's own label */
+void func_80069770_6A370(void);
+/* func_8000BF24_CB24: its second argument (s32 in main) is a float that retail passes in a1: callers
+   cast (on the host the s32 slot would get a converted value, not the bits) */
+void func_8000BF24_CB24(omObjData*, s32, f32, f32, f32, f32);
+void func_8000BFF0_CBF0(omObjData*);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+u8 rand8(void);
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+
+/* ---- .data (14C080) ---- */
+
+extern s8 D_8010A751_14C0E1_RainbowRun; /* the camera shakes */
+extern s16 D_8010A752_14C0E2_RainbowRun; /* shake frame */
+extern f32 D_8010A754_14C0E4_RainbowRun;
+extern f32 D_8010A758_14C0E8_RainbowRun[]; /* shake offsets x, y: [i * 2] */
+extern f32 D_8010A75C_14C0EC_RainbowRun[]; /* [i * 2] (D_8010A758 + 4, retail's own label) */
+extern s8 D_8010A778_14C108_RainbowRun; /* the fade-out started */
+extern s8 D_8010A77C_14C10C_RainbowRun[8]; /* stick x history */
+extern s8 D_8010A784_14C114_RainbowRun[8]; /* stick y history */
+extern s8 D_8010A78C_14C11C_RainbowRun; /* next slot of the stick histories */
+extern u16 D_8010A78E_14C11E_RainbowRun; /* func_80105E38's last buttons */
+extern u32 D_8010A790_14C120_RainbowRun; /* random seed */
+
+/* ---- .bss ---- */
+
+extern f32 D_8010AA10_14C3A0_RainbowRun; /* camera zoom */
+extern f32 D_8010ABEC_14C57C_RainbowRun; /* camera centre y */
+extern f32 D_8010ABF4_14C584_RainbowRun; /* camera rot z */
+extern f32 D_8010ABF8_14C588_RainbowRun; /* camera rot y */
+extern f32 D_8010AC04_14C594_RainbowRun; /* camera centre z */
+extern f32 D_8010AC10_14C5A0_RainbowRun; /* camera rot x */
+extern f32 D_8010ACBC_14C64C_RainbowRun; /* camera centre x */
 
 /* MG0F-B */
 
