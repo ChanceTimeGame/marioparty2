@@ -122,7 +122,7 @@ extern s32 D_80108598_358BA8_name_51[6]; /* per character: name */
 extern s32 D_801085B0_358BC0_name_51[12]; /* per row: the explanation message */
 
 /* R51B */
-extern s32 D_801083C0_3589D0_name_51; /* the star count the tally adds up (MP1 GwCommon.starNum) */
+extern s32 D_801083C0_3589D0_name_51; /* coins from the stars, 50 each (counter 2) */
 extern s32 D_801083C4_3589D4_name_51; /* falling-coin sound pacing (MP1 D_800FC050) */
 extern Vec D_801083C8_3589D8_name_51; /* star pile centre */
 extern Vec D_801083D4_3589E4_name_51;
@@ -146,6 +146,8 @@ extern s32 D_80108698_358CA8_name_51[6]; /* per character: tally icon */
 extern s16 D_801086B0_358CC0_name_51[4]; /* per column: x offset (slides in) */
 extern const char D_801087AC_358DBC_name_51[]; /* "%d" */
 extern const char D_801087B4_358DC4_name_51[]; /* "X%2d" */
+extern const char D_801087BC_358DCC_name_51[]; /* R51B: "%5d" */
+extern const char D_801087C0_358DD0_name_51[]; /* R51B: "X" */
 
 /* ---- overlay 51 bss ---- */
 
@@ -158,8 +160,10 @@ extern s32 D_8010888C_358E9C_name_51;
 extern MBModel* D_801087D0_358DE0_name_51; /* the bank model */
 extern MBModel* D_801087D8_358DE8_name_51[20]; /* the coin models */
 extern MBModel* D_80108828_358E38_name_51[7]; /* the star models */
+extern Process* D_80108858_358E68_name_51[3]; /* the counter processes (splat sizes it 8: [2] is D_80108860) */
 extern s32 D_80108890_358EA0_name_51[3]; /* tally icons: coins, stars, star coins */
 extern s32 D_801088A0_358EB0_name_51[3]; /* the five-digit counters: coins, stars, star coins */
+extern s32 D_801088B8_358EC8_name_51; /* the digits' animation */
 extern ModelEmitterWork* D_801088C0_358ED0_name_51[8]; /* the star models' trails */
 extern s32 D_801088E0_358EF0_name_51[4]; /* each player's stars before the bonus stars */
 extern GAMEMES D_801088F0_358F00_name_51[3]; /* "X" beside each counter */

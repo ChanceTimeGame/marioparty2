@@ -725,8 +725,8 @@ void func_801058CC_355EDC_name_51(void) {
 __asm__(".section .rodata");
 const char D_801087BC_358DCC_name_51[] = "%5d";
 
-/* A five-digit counter process: user_data 0 shows the bank's coins, 1 the overlay's star count
-   (MP1 func_800F95F8 and func_800F972C in one). Leading blanks are hidden; the last digit always
+/* A five-digit counter process: user_data 0 shows the bank's coins, 2 the coins the stars were
+   turned into, D_801083C0 (MP1 func_800F95F8). Leading blanks are hidden; the last digit always
    shows. */
 void func_80105BE0_3561F0_name_51(void) {
     u8 buf[5]; /* "%5d" writes six bytes: the NUL lands in frame padding (host hazard) */
@@ -1258,10 +1258,104 @@ void func_801077A8_357DB8_name_51(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107818_357E28_name_51);
+/* Builds the tally (MP1 func_800FB8C8): the three counter processes (user_data 0 coins, 2 star
+   coins; func_80105D38 stars), their icons, "X" labels and five-digit sprites off screen right,
+   the bank model facing the camera, 20 coin models and 7 star models. */
+void func_80107818_357E28_name_51(void) {
+    Vec target;
+    void* file;
+    s32 i;
+    s32 j;
+
+    D_80108858_358E68_name_51[0] = omAddPrcObj(func_80105BE0_3561F0_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[0]->user_data = (void*)0;
+    D_80108858_358E68_name_51[1] = omAddPrcObj(func_80105D38_356348_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[2] = omAddPrcObj(func_80105BE0_3561F0_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[2]->user_data = (void*)2;
+    D_80108890_358EA0_name_51[0] = func_8005973C_5A33C(0xA0010, 10, 370, 170);
+    D_80108890_358EA0_name_51[1] = func_8005973C_5A33C(0xA0011, 10, 370, 204);
+    D_80108890_358EA0_name_51[2] = func_8005973C_5A33C(0xA0010, 10, 370, 170);
+    func_80059974_5A574(D_80108890_358EA0_name_51[0], 0.0f);
+    func_80059974_5A574(D_80108890_358EA0_name_51[1], 0.0f);
+    func_80059974_5A574(D_80108890_358EA0_name_51[2], 0.0f);
+    SprPosSet(D_801088F0_358F00_name_51[0].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[0], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 170);
+    SprPosSet(D_801088F0_358F00_name_51[1].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[1], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 204);
+    SprPosSet(D_801088F0_358F00_name_51[2].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[2], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 170);
+    file = DataRead(0x38);
+    D_801088B8_358EC8_name_51 = SprAnimRead(file);
+    DataClose(file);
+    D_801088A0_358EB0_name_51[0] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[0], i, (s16)D_801088B8_358EC8_name_51, 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[0], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[0], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[0], i, 0x1000);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[0], 0, 420, 170);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[0], i, i * 16, 0);
+        }
+    }
+    D_801088A0_358EB0_name_51[1] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[1], i, (s16)D_801088B8_358EC8_name_51, 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[1], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[1], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[1], i, 0x1000);
+        func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, 0, 0);
+        func_8008221C_82E1C((s16)D_801088A0_358EB0_name_51[1], i, 0.0f);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[1], 0, 420, 204);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[1], i, i * 16, 0);
+        }
+    }
+    D_801088A0_358EB0_name_51[2] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[2], i, (s16)D_801088B8_358EC8_name_51, 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[2], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[2], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[2], i, 0x1000);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[2], 0, 420, 170);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[2], i, i * 16, 0);
+        }
+    }
+    D_801087D0_358DE0_name_51 = MBModelFileCreate(0xA013A, 0, 0.3f, 1.0f, NULL);
+    D_801087D0_358DE0_name_51->pos.x = D_801083C8_3589D8_name_51.x;
+    D_801087D0_358DE0_name_51->pos.y = D_801083C8_3589D8_name_51.y;
+    D_801087D0_358DE0_name_51->pos.z = D_801083C8_3589D8_name_51.z;
+    target.x = D_801087D0_358DE0_name_51->pos.x;
+    target.y = D_801087D0_358DE0_name_51->pos.y;
+    target.z = D_801087D0_358DE0_name_51->pos.z + 2000.0f;
+    func_80056658_57258(&D_801087D0_358DE0_name_51->pos, &target, &D_801087D0_358DE0_name_51->rot);
+    for (j = 0; j < 20; j++) {
+        if (j == 0) {
+            D_801087D8_358DE8_name_51[0] = func_80043510_44110(0x18, NULL);
+        } else {
+            D_801087D8_358DE8_name_51[j] = MBModelParamCreate(D_801087D8_358DE8_name_51[0]);
+        }
+        D_801087D8_358DE8_name_51[j]->pos.x = D_801083E0_3589F0_name_51[0].x;
+        D_801087D8_358DE8_name_51[j]->pos.y = D_801083E0_3589F0_name_51[0].y;
+        D_801087D8_358DE8_name_51[j]->pos.z = D_801083E0_3589F0_name_51[0].z;
+        D_801087D8_358DE8_name_51[j]->scale.x = D_801087D8_358DE8_name_51[j]->scale.y = D_801087D8_358DE8_name_51[j]->scale.z = 1.0f;
+    }
+    for (j = 0; j < 7; j++) {
+        if (j == 0) {
+            D_80108828_358E38_name_51[0] = func_80043510_44110(0x19, NULL);
+        } else {
+            D_80108828_358E38_name_51[j] = MBModelParamCreate(D_80108828_358E38_name_51[0]);
+        }
+        D_80108828_358E38_name_51[j]->pos.x = D_801083E0_3589F0_name_51[0].x;
+        D_80108828_358E38_name_51[j]->pos.y = D_801083E0_3589F0_name_51[0].y + 2000.0f;
+        D_80108828_358E38_name_51[j]->pos.z = D_801083E0_3589F0_name_51[0].z;
+        D_80108828_358E38_name_51[j]->scale.x = D_80108828_358E38_name_51[j]->scale.y = D_80108828_358E38_name_51[j]->scale.z = 0.5f;
+    }
+}
 
 __asm__(".section .rodata");
-const u32 D_801087C0_358DD0_name_51[4] = { 0x58000000, 0x00000000, 0x00000000, 0x00000000 };
+const char D_801087C0_358DD0_name_51[] = "X";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107EA4_3584B4_name_51);
 
