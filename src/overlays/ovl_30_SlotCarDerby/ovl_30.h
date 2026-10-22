@@ -323,6 +323,8 @@ void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 void func_8002D4D0_2E0D0(s16 n);
 void* func_80027154_27D54(s32 size, s16 tag); /* allocate */
 int abs(int);
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* translate (MP1 func_8009EA40) */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
 void func_80020D20_21920(s16 arg0);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
