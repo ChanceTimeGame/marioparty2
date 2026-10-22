@@ -517,3 +517,6 @@ $(MG19A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
+# FE4E-A: KMC mul fix (nop between back-to-back mul.s)
+build/src/overlays/ovl_4E_name/32A1C0.c.o: export VR4300MUL := ON
