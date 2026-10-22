@@ -70,6 +70,32 @@ void func_800794A8_7A0A8(s32);
 s32 func_8008F618_90218(void);
 void func_80079464_7A064(void);
 
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_800298A4_2A4A4(s16, s32, s32);
+
+void func_8000C460_D060(void);
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup */
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+void func_80029A8C_2A68C(s16);
+void func_80029AFC_2A6FC(s16);
+void func_800B1F50_B2B50(f32* m, f32 x, f32 y, f32 z); /* MP1 func_8009EA40 */
+void func_8000C2A0_CEA0(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, s32 arg4); /* MP1 func_80009340 */
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* MP1 func_8001874C */
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+
+/* Per-character data, 0x18 bytes each (as 2C's TipsyCharData). */
+typedef struct BaCharData {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s32 unk_04; /* motion file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ char unk_0C[0xC];
+} BaCharData;
+extern BaCharData D_800CD438_CE038[];
+
 extern HmfModel* D_800FC834_FD434;
 extern omObjData* D_800FFFD8_100BD8[];
 extern s32 D_800F9D30_FA930[];
@@ -123,10 +149,9 @@ typedef struct BaPlayer {
     /* 0x3A */ s16 unk_3A;
     /* 0x3C */ s16 unk_3C; /* frames in the state */
     /* 0x3E */ s16 unk_3E;
-    /* 0x40 */ char unk_40[2];
-    /* 0x42 */ s16 unk_42; /* 12 at setup */
-    /* 0x44 */ s16 unk_44; /* -1 at setup */
-    /* 0x46 */ char unk_46[2];
+    /* 0x40 */ char unk_40[4];
+    /* 0x44 */ s16 unk_44; /* 12 at setup (MP1 0x42) */
+    /* 0x46 */ s16 unk_46; /* -1 at setup (MP1 0x44) */
     /* 0x48 */ omObjData* unk_48; /* the player's object */
     /* 0x4C */ f32 unk_4C; /* CPU stick angle */
     /* 0x50 */ f32 unk_50; /* CPU stick magnitude */
@@ -241,17 +266,24 @@ typedef struct BaResult {
     /* 0x04 */ char unk_04[0xC];
 } BaResult; /* size = 0x10 */
 
-/* A player's work (obj->unk_50): main's MgWork; no pointers below 0x60. */
+/* A player's work (obj->unk_50): main's MgWork (MP2 layout, as 2C's TipsyWork); no pointers
+   below 0x60. */
 typedef struct BaPlayerWork {
     /* 0x00 */ char unk_00[0x50];
     /* 0x50 */ u16 unk_50; /* flags */
-    /* 0x52 */ char unk_52[4];
-    /* 0x56 */ s8 unk_56; /* controller port */
-    /* 0x57 */ char unk_57;
-    /* 0x58 */ s8 unk_58; /* player index */
-    /* 0x59 */ char unk_59[3];
+    /* 0x52 */ char unk_52[5];
+    /* 0x57 */ s8 unk_57; /* controller port */
+    /* 0x58 */ char unk_58;
+    /* 0x59 */ s8 unk_59; /* player index */
+    /* 0x5A */ char unk_5A[2];
     /* 0x5C */ s32 unk_5C;
 } BaPlayerWork;
+
+/* The ground object's work (D_800FC7B0_FD3B0[0]->unk_50, func_801060C8). No pointers. */
+typedef struct BaGroundWork {
+    /* 0x00 */ char unk_00[0x14];
+    /* 0x14 */ f32 unk_14; /* ground height under the player being moved (MP1 0x10) */
+} BaGroundWork;
 
 /* ---- overlay .data (223080) ---- */
 
