@@ -257,20 +257,68 @@ void func_8010ADA0_33D9E0_name_4F(void);
 void func_8010AED4_33DB14_name_4F(void);
 void func_8010B4E8_33E128_name_4F(void);
 void func_8010B620_33E260_name_4F(void);
-/* fork D (inferred) */
+/* fork D */
+
+/* Work of a growing, fading ring (func_8010CE1C). */
+typedef struct Ovl4FRingWork {
+    /* 0x00 */ f32 grow;
+    /* 0x04 */ s16 sprite;
+    /* 0x08 */ f32 alpha;
+    /* 0x0C */ f32 fade;
+} Ovl4FRingWork; /* size = 0x10 */
+
+/* A streak of the effect func_8010D4D8 (16 of them, three vertices each). */
+typedef struct Ovl4FStreak {
+    /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
+    /* 0x0C */ Vec pos;
+    /* 0x18 */ f32 len;
+    /* 0x1C */ Vec dir;
+    /* 0x28 */ f32 speed;
+} Ovl4FStreak; /* size = 0x2C */
+
+void* DataRead(s32 dirAndFile);
+s16 func_8003DF08_3EB08(void* arg);
+void omSetTra(omObjData*, f32, f32, f32);
+void omSetSca(omObjData*, f32, f32, f32);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2);
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+void espDispOff(u16);
+void func_8001AC44_1B844(u16 arg0);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
+void HuMemFree(void*);
+s16 func_80027FA4_28BA4(u32, void*, u8);
+
+extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
+extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+
+extern u32* D_80110008_342C48_name_4F[6]; /* per character: MBPlayerModelCreate list */
+extern u32 D_80110020_342C60_name_4F[];
+extern s32 D_80110068_342CA8_name_4F;
+extern f32 D_80110454_343094_name_4F;
+extern void* D_80110460_3430A0_name_4F[4][8]; /* per effect slot, per frame buffer: vertices */
+extern Gfx* D_801104E0_343120_name_4F[4][8];  /* per effect slot, per frame buffer: display list */
+
 void func_8010C7CC_33F40C_name_4F(void);
-omObjData* func_8010CA90_33F6D0_name_4F(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
+omObjData* func_8010CA90_33F6D0_name_4F(s16 form, f32 x, f32 y, f32 z, u8 spin, u8 grow, f32 scale);
 void func_8010CC2C_33F86C_name_4F(omObjData* obj);
-s32 func_8010CDD4_33FA14_name_4F(void);
-omObjData* func_8010CE1C_33FA5C_name_4F(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
+s16 func_8010CDD4_33FA14_name_4F(s32 id);
+omObjData* func_8010CE1C_33FA5C_name_4F(Vec* pos, s32 arg1, f32 grow, f32 fade);
 void func_8010CFC4_33FC04_name_4F(omObjData* obj);
-s32 func_8010D114_33FD54_name_4F(void);
-void func_8010D15C_33FD9C_name_4F(omObjData* obj);
-s32 func_8010D210_33FE50_name_4F(void);
-void func_8010D248_33FE88_name_4F(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_8010D3E8_340028_name_4F(s32 arg0);
-s32 func_8010D4D8_340118_name_4F(void);
-s32 func_8010D528_340168_name_4F(omObjData* obj);
+s32 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target);
+void func_8010D15C_33FD9C_name_4F(void);
+void func_8010D210_33FE50_name_4F(void);
+omObjData* func_8010D248_33FE88_name_4F(void (*init)(omObjData*), void (*func)(omObjData*), s32 nvtx, s32 ngfx);
+void func_8010D3E8_340028_name_4F(omObjData* obj);
+omObjData* func_8010D4D8_340118_name_4F(void);
+void func_8010D528_340168_name_4F(omObjData* obj);
 void func_8010D6FC_34033C_name_4F(omObjData* obj);
 void func_8010DA90_3406D0_name_4F(void);
 s32 func_8010DD7C_3409BC_name_4F(void);
