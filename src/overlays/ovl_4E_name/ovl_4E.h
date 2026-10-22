@@ -1,10 +1,17 @@
 #ifndef _OVL_4E_H
 #define _OVL_4E_H
 
-/* Overlay 4E: mode and character setup (see the summary at the top of 32A1C0.c once written).
+/* Overlay 4E: a "first to N wins" minigame match. The main process (func_80102B9C) runs three
+   sliding menus: match length (func_80103034: 3/5/7 wins, D_800FA1A8), team mode
+   (func_80103608: 4P, 1 vs 3, 2 vs 2, ...; D_801013F8), and for team modes the team layout
+   (func_80103CD0: sets D_800FA040[] and gPlayers[].group). func_80104AF0 then picks the minigame
+   (the list in 331200.c, or the only one) and leaves through omOvlHisChg: with D_8010DAB6 to
+   the minigame itself (event 4), otherwise to a duel on a board (event 5). Coming back
+   (D_800CD414 >= 4) the overlay starts in state 4 (func_80105454): wins are added and stamped
+   on the score board, and once a player reaches the target the winners are announced.
    Retail's overlay is two files, split at the text pad after func_80109778: 32A1C0.c
    (80102800-80109778) and 331200.c (80109840-). .data and .bss stay asm; both files' .rodata
-   is carved (0x335190, 0x335430).
+   is carved (0x335190, 0x335430). 32A1C0.c builds with the KMC mul fix.
    Prototypes past func_8010760C came from m2c's register use only: the fork that owns a function
    fixes its line. */
 
