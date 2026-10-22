@@ -430,7 +430,7 @@ void func_80109AA8_1535C8_CraneGame(void);                           /* MP1 func
 void func_80109BAC_1536CC_CraneGame(s16 model);                      /* MP1 func_800FD37C */
 void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FD3D0 */
 void func_80109E48_153968_CraneGame(CGCol* col, s16 model);           /* MP1 func_800FD604 */
-void func_80109FF8_153B18_CraneGame(void* verts, void* out, u8* f, s16 n); /* MP1 func_800FD7B4 */
+void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f, s16 n); /* MP1 func_800FD7B4 */
 void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, Vec* out); /* MP1 func_800FDBF8 */
 s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip); /* MP1 func_800FDC94 */
 s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r);           /* MP1 func_800FDF54 */

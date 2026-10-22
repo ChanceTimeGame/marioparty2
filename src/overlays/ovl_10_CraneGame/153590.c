@@ -32,9 +32,76 @@ void func_80109BAC_1536CC_CraneGame(s16 model) {
     D_8010CE08_156928_CraneGame++;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109C00_153720_CraneGame);
+/* The draw-pass callback: refreshes each group's world-to-group matrix. */
+void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx) {
+    Matrix4f m1;
+    Matrix4f m2;
+    Matrix4f inv;
+    CGCol* e;
+    HmfModel* p;
+    HmfData* m;
+    CGColGroup* g;
+    HmfPart* part;
+    s32 i;
+    s32 j;
 
+    func_800B30D0_B3CD0(m1, mtx + 1);
+    func_800B1F50_B2B50(m2, -m1[3][0], -m1[3][1], -m1[3][2]);
+    func_80025F00_26B00(m1, inv);
+    func_800B6410_B7010(m2, inv, inv);
+    for (i = 0; i < D_8010CE08_156928_CraneGame; i++) {
+        e = &D_8010CB08_156628_CraneGame[i];
+        p = &D_800FC834_FD434[e->model];
+        if (p->hmf != NULL && !(p->unk18 & 4)) {
+            m = p->hmf;
+            if (e->unk2 != 0) {
+                e->unk2--;
+            }
+            for (j = 0; j < (m->unk10 & 0x3F); j++) {
+                part = &m->unk64[j];
+                g = &e->groups[j];
+                func_800B30D0_B3CD0(m1, D_800F8C58_F9858[D_800FDC48_FE848[m->unk00][part->unk2F].unk02].unk44);
+                func_800B6410_B7010(m1, inv, m1);
+                func_80025F00_26B00(m1, m2);
+                func_800B1F50_B2B50(m1, -m1[3][0], -m1[3][1], -m1[3][2]);
+                func_800B6410_B7010(m1, m2, g->mtx);
+            }
+        }
+    }
+}
+
+/* MP1 func_800FD604 (NON_MATCHING there too, masked 0). Retail stores the group count from the low
+   byte of unk10 (a byte read at +1). Residue: retail keeps the vertex count and the group count in
+   s0 (register allocation). */
+#ifdef NON_MATCHING
+/* Registers a model for collision: copies its vertices and builds each group's face planes. */
+void func_80109E48_153968_CraneGame(CGCol* e, s16 model) {
+    HmfData* m;
+    HmfPart* part;
+    CGColGroup* g;
+    s32 size;
+    s32 i;
+
+    m = D_800FC834_FD434[model].hmf;
+    e->model = model;
+    e->unk2 = 4;
+    size = m->unk14 * sizeof(ColVtx);
+    e->verts = HuMemMemoryAllocPerm(size);
+    bcopy(m->unk54, e->verts, size);
+    e->count = (u8)m->unk10;
+    e->groups = HuMemMemoryAllocPerm(e->count * sizeof(CGColGroup));
+    for (i = 0; i < m->unk10; i++) {
+        part = &m->unk64[i];
+        g = &e->groups[i];
+        g->radius = sqrtf(part->unk48 * part->unk48 + part->unk4A * part->unk4A + part->unk4C * part->unk4C);
+        g->n = part->unk04;
+        g->faces = HuMemMemoryAllocPerm(g->n * sizeof(CGColFace));
+        func_80109FF8_153B18_CraneGame(e->verts, g->faces, part->unk54, g->n);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109E48_153968_CraneGame);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109FF8_153B18_CraneGame);
 
