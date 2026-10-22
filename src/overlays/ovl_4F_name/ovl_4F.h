@@ -198,6 +198,35 @@ extern s16 D_8011058A_3431CA_name_4F;
 
 extern const char D_801103B0_342FF0_name_4F[]; /* "item_hook" (336DE0.c) */
 
+/* 4F-B */
+
+/* A model sliding along another model's facing, then bouncing back with a wobble (func_80105F60,
+   func_80106054, func_80106198). */
+typedef struct Ovl4FBounceWork {
+    /* 0x00 */ f32 speed;
+    /* 0x04 */ MBModel* model;
+    /* 0x08 */ MBModel* dir; /* moves along this model's rot (a direction) */
+    /* 0x0C */ f32 dist;     /* left to slide */
+    /* 0x10 */ f32 bounce;   /* the next bounce's speed */
+    /* 0x14 */ f32 vel;
+    /* 0x18 */ f32 dx;
+    /* 0x1C */ f32 dz;
+    /* 0x20 */ f32 scale;
+    /* 0x24 */ f32 tiltStep;
+    /* 0x28 */ f32 tilt;
+} Ovl4FBounceWork; /* size = 0x2C */
+
+extern f32 D_80101300_101F00;
+extern f32 D_8010105C_101C5C;
+f32 HuVecDistance(Vec* a, Vec* b);
+/* 437E0.c returns f32; retail 4F calls it unprototyped and converts v0 (see func_80106198). */
+s32 func_80042BE0_437E0(Vec*);
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
+extern u32* D_8010FD10_342950_name_4F[6]; /* board 1, per character: MBPlayerModelCreate list */
+extern u32 D_8010FD28_342968_name_4F[];
+extern s32 D_8010FD74_3429B4_name_4F;
+
 /* ---- 335440.c ---- */
 
 void func_80102800_335440_name_4F(void);
@@ -225,14 +254,14 @@ void func_80104E8C_337ACC_name_4F(void);
 void func_80105B4C_33878C_name_4F(void);
 /* fork B (inferred) */
 void func_80105D14_338954_name_4F(omObjData* obj);
-omObjData* func_80105F60_338BA0_name_4F(Vec* pos, MBModel* model, f32 arg2, f32 arg3);
+omObjData* func_80105F60_338BA0_name_4F(Vec* pos, MBModel* dir, f32 dist, f32 speed);
 void func_80106054_338C94_name_4F(omObjData* obj);
 void func_80106198_338DD8_name_4F(omObjData* obj);
-void func_80106360_338FA0_name_4F(omObjData* obj, f32 arg1);
+void func_80106360_338FA0_name_4F(omObjData* obj, f32 speed);
 void func_8010636C_338FAC_name_4F(omObjData* obj);
-omObjData* func_801063AC_338FEC_name_4F(Vec* pos, f32 arg1, f32 arg2, s32 arg3);
+omObjData* func_801063AC_338FEC_name_4F(Vec* pos, f32 grow, f32 fade, s16 kill);
 void func_801064C0_339100_name_4F(omObjData* obj);
-void func_801065C8_339208_name_4F(omObjData* obj, f32 arg1, f32 arg2);
+void func_801065C8_339208_name_4F(omObjData* obj, f32 grow, f32 fade);
 void func_801065D8_339218_name_4F(omObjData* obj);
 void func_80106610_339250_name_4F(void);
 void func_801066A4_3392E4_name_4F(void);

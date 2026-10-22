@@ -489,29 +489,249 @@ void func_80105B4C_33878C_name_4F(void) {
     MBMotionSet(winner, 0, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80105D14_338954_name_4F);
+/* The flying model's object (55's func_80106508): head for target[1], hopping when vel is set. */
+void func_80105D14_338954_name_4F(omObjData* obj) {
+    Ovl4FFlyWork* work;
+    MBModel* model;
+    omObjData* mobj;
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80105F60_338BA0_name_4F);
+    work = obj->unk_50;
+    model = work->model;
+    mobj = model->obj;
+    dist = HuVecDistance(&model->pos, &work->target[1]);
+    func_80056658_57258(&model->pos, &work->target[1], &model->rot);
+    if (work->delay != 0) {
+        if (--work->delay == 0) {
+            work->vel = 3.5f;
+            work->grav = 1.0f;
+        }
+    }
+    if (work->vel != 0.0f || mobj->trans.y != 0.0f) {
+        mobj->trans.y += work->vel * work->rate;
+        work->vel -= work->grav * work->rate;
+    }
+    if (mobj->trans.y < 0.0f) {
+        work->vel = 0.0f;
+        mobj->trans.y = 0.0f;
+    }
+    if (work->speed <= dist) {
+        mobj->trans.x += model->rot.x * work->speed * work->rate;
+        mobj->trans.z += model->rot.z * work->speed * work->rate;
+        model->pos.x = mobj->trans.x;
+        model->pos.y = mobj->trans.y;
+        model->pos.z = mobj->trans.z;
+        mobj->rot.z += work->speed * 3.0f * work->rate;
+        if (mobj->rot.z >= 360.0f) {
+            mobj->rot.z -= 360.0f;
+        }
+    } else {
+        mobj->trans.x = work->target[1].x;
+        mobj->trans.y = work->target[1].y;
+        mobj->trans.z = work->target[1].z;
+        model->pos.x = mobj->trans.x;
+        model->pos.y = mobj->trans.y;
+        model->pos.z = mobj->trans.z;
+        MBModelKill(model);
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80106054_338C94_name_4F);
+/* A model (0xA0194) at pos that slides dist along dir's facing at speed, then bounces back. */
+omObjData* func_80105F60_338BA0_name_4F(Vec* pos, MBModel* dir, f32 dist, f32 speed) {
+    omObjData* obj;
+    Ovl4FBounceWork* work;
+    MBModel* model;
+    Vec unused;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80106198_338DD8_name_4F);
+    obj = omAddObj(500, 0, 0, -1, func_80106054_338C94_name_4F);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Ovl4FBounceWork), 0x7918);
+    model = MBModelFileCreate(0xA0194, 13, 1.0f, 0.4f, NULL);
+    model->jumpY = pos->y;
+    model->pos.x = pos->x;
+    model->pos.y = 0.0f;
+    model->pos.z = pos->z;
+    model->rot = dir->rot;
+    work->speed = speed;
+    work->dist = dist;
+    work->dir = dir;
+    work->model = model;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80106360_338FA0_name_4F);
+/* Slide; at the end either vanish (obj->work[0] == 0) or start bouncing back (func_80106198). */
+void func_80106054_338C94_name_4F(omObjData* obj) {
+    Ovl4FBounceWork* work;
+    Vec unused;
+    f32 step;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010636C_338FAC_name_4F);
+    work = obj->unk_50;
+    step = (work->speed < work->dist) ? work->speed : work->dist;
+    work->model->pos.x += step * work->dir->rot.x;
+    work->model->pos.z += step * work->dir->rot.z;
+    work->dist -= step;
+    if (work->dist <= 0.0f) {
+        if (obj->work[0] == 0) {
+            MBModelKill(work->model);
+            work->model = NULL;
+            omSetStatBit(obj, 8);
+        } else {
+            work->bounce = work->vel = 24.0f;
+            work->scale = 0.55f;
+            work->dx = -work->dir->rot.x;
+            work->dz = -work->dir->rot.z;
+            work->tiltStep = 10.0f;
+            work->tilt = 0.0f;
+            PlaySound(0x3A5);
+            obj->func_ptr = func_80106198_338DD8_name_4F;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801063AC_338FEC_name_4F);
+/* Bouncing back with a wobble; each bounce is 8 slower until it stops. */
+void func_80106198_338DD8_name_4F(omObjData* obj) {
+    Ovl4FBounceWork* work;
+    f32 step;
+    f32 angle;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801064C0_339100_name_4F);
+    work = obj->unk_50;
+    step = work->speed * work->scale;
+    work->model->pos.x += step * work->dx;
+    work->model->pos.z += step * work->dz;
+    work->model->jumpY += work->vel;
+    angle = func_80042BE0_437E0(&work->model->rot);
+    work->model->obj->rot.x = func_800B7890_B8490(angle) * work->tilt;
+    work->model->obj->rot.z = HuMathSin(angle) * work->tilt;
+    work->tilt -= work->tiltStep;
+    if (work->tilt >= 360.0f) {
+        work->tilt -= 360.0f;
+    }
+    work->vel -= 2.5f;
+    if (work->model->jumpY <= 0.0f) {
+        work->model->jumpY = 0.0f;
+        work->bounce -= 8.0f;
+        work->tiltStep = 30.0f;
+        work->vel = work->bounce;
+        work->scale -= 0.1f;
+        if (work->bounce == 0.0f) {
+            work->model->obj->rot.x = 0.0f;
+            work->model->obj->rot.z = 0.0f;
+            omSetStatBit(obj, 8);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801065C8_339208_name_4F);
+void func_80106360_338FA0_name_4F(omObjData* obj, f32 speed) {
+    ((Ovl4FBounceWork*)obj->unk_50)->speed = speed;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801065D8_339218_name_4F);
+void func_8010636C_338FAC_name_4F(omObjData* obj) {
+    Ovl4FBounceWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80106610_339250_name_4F);
+    if (work->model != NULL) {
+        MBModelKill(work->model);
+    }
+    omDelObj(obj);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801066A4_3392E4_name_4F);
+/* A fading, growing puff at pos (55's func_80107630). */
+omObjData* func_801063AC_338FEC_name_4F(Vec* pos, f32 grow, f32 fade, s16 kill) {
+    omObjData* obj;
+    Ovl4FPuffWork* work;
+    MBModel* model;
+
+    obj = omAddObj(500, 0, 0, -1, func_801064C0_339100_name_4F);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Ovl4FPuffWork), 0x7918);
+    work->alpha = 255.0f;
+    work->grow = grow;
+    work->fade = fade;
+    model = MBModelFileCreate(0xA015C, 0, 1.0f, 0.0f, NULL);
+    model->pos.x = pos->x;
+    model->pos.y = pos->y;
+    model->pos.z = pos->z;
+    func_8002D124_2DD24(*model->obj->model);
+    func_8002D0A0_2DCA0(*model->obj->model, 255);
+    work->model = model;
+    work->kill = kill;
+    return obj;
+}
+
+/* The puff's object (55's func_80107744, MP3 ChillyWaters func_8010F1E4). */
+void func_801064C0_339100_name_4F(omObjData* obj) {
+    Ovl4FPuffWork* work;
+    MBModel* model;
+    f32 scale;
+
+    work = obj->unk_50;
+    model = work->model;
+    scale = model->scale.z + work->grow;
+    model->scale.z = scale;
+    model->scale.y = scale;
+    model->scale.x = scale;
+    work->alpha = work->alpha - work->fade;
+    if (work->alpha < 0.0f) {
+        work->alpha = 0.0f;
+        if (work->kill != 0) {
+            MBModelKill(work->model);
+            omDelObj(obj);
+            return;
+        }
+        omSetStatBit(obj, 8);
+    }
+    func_8002D0A0_2DCA0(*model->obj->model, work->alpha);
+}
+
+void func_801065C8_339208_name_4F(omObjData* obj, f32 grow, f32 fade) {
+    Ovl4FPuffWork* work = obj->unk_50;
+
+    work->grow = grow;
+    work->fade = fade;
+}
+
+void func_801065D8_339218_name_4F(omObjData* obj) {
+    MBModelKill(((Ovl4FPuffWork*)obj->unk_50)->model);
+    omDelObj(obj);
+}
+
+/* Retail pads the text to 16 bytes here (0x8010660C): probably a file boundary, board 1
+   starting a file of its own. */
+__asm__(".balign 16");
+
+/* Board 1's scene (the setup is func_801066A4), at 0.6 speed. */
+void func_80106610_339250_name_4F(void) {
+    D_8010105C_101C5C = D_80101300_101F00 = 0.6f;
+    func_8005E260_5EE60(D_80110564_3431A4_name_4F);
+    func_80106840_339480_name_4F();
+    func_801072C0_339F00_name_4F();
+    func_8010763C_33A27C_name_4F();
+    func_801078B0_33A4F0_name_4F();
+    func_801079D4_33A614_name_4F();
+    func_80107BE8_33A828_name_4F();
+    func_80107DD8_33AA18_name_4F();
+    func_80107FC8_33AC08_name_4F();
+    D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
+}
+
+/* Board 1's setup: the players' models (the winner's with func_8002D1EC) and the host's. */
+void func_801066A4_3392E4_name_4F(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        MBPlayerModelCreate(i, D_8010FD10_342950_name_4F[gPlayers[i].character], 2);
+        func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+        func_80043DAC_449AC(OVL4F_PLAYER_MODEL(i));
+        gPlayers[i].flags |= 2;
+        MBMotionSet(OVL4F_PLAYER_MODEL(i), 0, 2);
+        if (D_80110564_3431A4_name_4F == i) {
+            func_8002D1EC_2DDEC(*OVL4F_PLAYER_MODEL(i)->obj->model, 1);
+        }
+        MBModelDispOff(OVL4F_PLAYER_MODEL(i));
+    }
+    D_80110560_3431A0_name_4F = MBModelFileCreate(0x80016, 13, 0.8f, 0.8f, D_8010FD28_342968_name_4F);
+    func_8005AB50_5B750(D_80110560_3431A0_name_4F, 2, 8, D_8010FD74_3429B4_name_4F);
+    func_80043DAC_449AC(D_80110560_3431A0_name_4F);
+    MBModelDispOff(D_80110560_3431A0_name_4F);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80106840_339480_name_4F);
 
