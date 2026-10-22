@@ -323,6 +323,10 @@ void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 void func_8002D4D0_2E0D0(s16 n);
 void* func_80027154_27D54(s32 size, s16 tag); /* allocate */
 int abs(int);
+void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
+void func_800B1CC0_B28C0(Matrix4f m, f32 ang, f32 x, f32 y, f32 z); /* rotate about an axis */
+void func_800B37C0_B43C0(Matrix4f m); /* identity */
+void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* multiply */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s16 func_800797DC_7A3DC(s32, s16); /* MP1 func_80060618: player voice */
 f32 func_800B7890_B8490(f32); /* cos */
@@ -391,6 +395,7 @@ extern f32 D_80110918_2467F8_SlotCarDerby;      /* .target.pos[2] */
 extern f32 D_8011091C_2467FC_SlotCarDerby;      /* .target.view[0] */
 extern f32 D_80110920_246800_SlotCarDerby;      /* .target.view[1] */
 extern f32 D_80110924_246804_SlotCarDerby;      /* .target.view[2] */
+extern HmfMotionObj* D_801104E8_2463C8_SlotCarDerby[4]; /* MP1 D_80101FF8: [player] the driver's head, -1 none */
 extern SCDParticle D_801104F8_2463D8_SlotCarDerby[16]; /* MP1 D_80102008 */
 extern s16 D_801109D4_2468B4_SlotCarDerby;      /* MP1 D_801024B2 */
 extern s16 D_801109D6_2468B6_SlotCarDerby;      /* MP1 D_801024B0: _CheckFlag(0xC) */
