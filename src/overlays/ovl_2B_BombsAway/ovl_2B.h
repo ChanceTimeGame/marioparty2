@@ -18,6 +18,75 @@
 
 typedef f32 Matrix4f[4][4];
 
+/* ---- main-segment API used by 2B (missing from include/) ---- */
+
+omObjData* omAddObj(s16, u16, u16, s16, void*);
+void omSetTra(omObjData*, f32, f32, f32);
+s16 LoadFormFile(s32, s32);
+s32 PlaySound(s32);
+void* DataRead(s32 dirAndFile);
+void DataClose(void* data);
+void func_8002D4D0_2E0D0(s16 n);
+void func_8002F290_2FE90(s32* arg0, s32 n);
+void func_80020D20_21920(s32);
+void func_80018E30_19A30(s32);
+s32 func_80018E78_19A78(void);
+void func_80079E60_7AA60(void);
+void ScissorSet(u8 arg0, f32 x1, f32 y1, f32 x2, f32 y2);
+void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
+void Hu3DCamSetPerspective(s16, f32, f32, f32);
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void func_800B37C0_B43C0(Matrix4f m); /* identity */
+u16 func_80018A30_19630(s32, s32); /* model load */
+void func_8000C018_CC18(u16);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+s16 SprAnimRead(void*);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+u16 func_80078EA8_79AA8(void);
+void func_80079614_7A214(s32);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_8006D4D0_6E0D0(s16);           /* the seconds counter */
+void func_8006D518_6E118(void);
+omObjData* func_800732B0_73EB0(u32 arg0);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+f32 sqrtf(f32);
+
+u8 rand8(void);
+u16 func_80018FF0_19BF0(omObjData* obj); /* current motion */
+s32 func_80019B70_1A770(omObjData* obj, u8 motion); /* retail masks the argument (definition: u16) */
+void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
+void func_800283DC_28FDC(s16 arg0);
+void InitFadeIn(s32, s32);
+void InitFadeOut(s32, s32);
+void PlayMusic(s16);
+void func_800794A8_7A0A8(s32);
+s32 func_8008F618_90218(void);
+void func_80079464_7A064(void);
+
+extern HmfModel* D_800FC834_FD434;
+extern omObjData* D_800FFFD8_100BD8[];
+extern s32 D_800F9D30_FA930[];
+extern u16 D_800FA606_FB206;
+extern u16 D_800FC87A_FD47A;
+extern u16 D_800F8FE0_F9BE0;
+extern s32 D_800F8FD0_F9BD0; /* scene state */
+extern omObjData* D_800FC7B0_FD3B0[];
+extern Vec D_8010274C_10334C; /* Center */
+extern Vec D_800FD474_FE074;  /* CRot */
+extern f32 D_800FA610_FB210;  /* CZoom */
+extern u16 D_801011FC_101DFC;
+extern u8 D_80102720_103320;
+
+/* A 16-bit random number from two rand8() calls (the first is the high byte). */
+#define BA_RAND16() ((rand8() << 8) | rand8())
+
 /* ---- structs ---- */
 
 /* D_8010D940: the game state (MP1 BaGame). */
@@ -126,7 +195,7 @@ typedef struct BaShock {
     /* 0x08 */ f32 unk_08; /* y */
     /* 0x0C */ f32 unk_0C; /* z */
     /* 0x10 */ f32 unk_10; /* radius */
-    /* 0x14 */ u16 unk_14; /* 0 sphere, else a column (radius capped at 150, height from func_80103F10) */
+    /* 0x14 */ s16 unk_14; /* 0 sphere, else a column (radius capped at 150, height from func_80103F10) */
     /* 0x16 */ char unk_16[2];
 } BaShock; /* size = 0x18 (MP1 0x14) */
 
@@ -191,6 +260,8 @@ extern s32 D_8010CC98_223088_BombsAway;    /* skip fade-out countdown; read as s
 extern s32 D_8010CC9C_22308C_BombsAway;    /* finish sub-state / results timer */
 extern BaPattern D_8010CCA0_223090_BombsAway; /* random patterns (func_8010392C) */
 extern BaPattern D_8010CD04_2230F4_BombsAway;
+extern s32 D_8010CCAC_22309C_BombsAway; /* splat label = D_8010CCA0.unk_0C[0] */
+extern s32 D_8010CD10_223100_BombsAway; /* splat label = D_8010CD04.unk_0C[0] */
 extern BaPattern* D_8010CF5C_22334C_BombsAway[10]; /* per phase; [0] NULL */
 extern f32 D_8010CF84_223374_BombsAway[4];          /* bomb scale per kind */
 extern BaKindInfo D_8010CF94_223384_BombsAway[4];
@@ -233,6 +304,9 @@ extern s32 D_8010DB1C_223F0C_BombsAway; /* firing phase (D_8010CF5C index) */
 extern s32 D_8010DB20_223F10_BombsAway;
 extern s16 D_8010DB24_223F14_BombsAway; /* model */
 extern BaStage D_8010DB28_223F18_BombsAway;
+/* Splat labels inside D_8010DB28 that retail addresses with their own lui/%lo (no shared base
+   register): the same address as the field. */
+extern s32 D_8010DC58_224048_BombsAway; /* = D_8010DB28.unk_130 */
 extern s16 D_8010DCBC_2240AC_BombsAway;
 extern s16 D_8010DCBE_2240AE_BombsAway[6]; /* corner slots, bits 1/2 */
 extern s16 D_8010DCD0_2240C0_BombsAway[8]; /* models (func_80107918) */
