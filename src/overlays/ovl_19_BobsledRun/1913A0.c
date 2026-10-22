@@ -326,13 +326,149 @@ void func_80102EE0_191A80_BobsledRun(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80102EE0_191A80_BobsledRun);
 #endif
 
+/* Bumping into the other sled: always returns 0. */
+// the bump test's delay slots: retail fills both branch-likelies with mov.s (as in MP1)
+#ifdef NON_MATCHING
+s32 func_801038C4_192464_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
+    BRWork* work;
+    BRWork* ow;
+    omObjData* o;
+    f32 speed;
+    f32 f;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dx2;
+    f32 dz2;
+    f32 d2;
+    f32 d;
+    u16 i;
+
+    work = obj->unk_50;
+    speed = work->unk_40;
+    if (work->unk_50 & 6) {
+        speed *= 0.6f;
+    }
+    speed = speed * (work->unk_38 != 1000.0f ? work->unk_4C * work->unk_B4 : work->unk_B4);
+    x += HuMathSin(work->unk_3C) * speed;
+    z += func_800B7890_B8490(work->unk_3C) * speed;
+    y += work->unk_48;
+    for (i = 0; i < 2; i++) {
+        o = D_800FFFD8_100BD8[i];
+        ow = o->unk_50;
+        if (work != ow) {
+            dx = o->trans.x - (x + D_800F94A0_FA0A0);
+            dy = (o->trans.y + ow->unk_48) - y;
+            dz = o->trans.z - (z + D_80101308_101F08);
+            dx2 = dx * dx;
+            dz2 = dz * dz;
+            func_800B1830_B2430(dx2 + dz2);
+            d2 = dx2 + dy * dy + dz2;
+            func_800B1830_B2430(d2);
+            d = func_800B1830_B2430(d2) - (ow->unk_48 + work->unk_48);
+            if (d < 0.0f) {
+                if (ow->unk_38 == 1000.0f || work->unk_38 != 1000.0f) {
+                    func_80009684_A284(dx, dz, d);
+                    func_80102D78_191918_BobsledRun(work, x, z, o->trans.x, o->trans.z);
+                    work->unk_54 = i;
+                }
+            }
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801038C4_192464_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80103B4C_1926EC_BobsledRun);
+/* Creates a sled or rider's work (MP1 func_800FA244). */
+void func_80103B4C_1926EC_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team, u16 flags, u16 motFile) {
+    BRWork* work;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80103DDC_19297C_BobsledRun);
+    for (i = 0; i < obj->mdlcnt; i++) {
+        obj->model[i] = 0;
+    }
+    obj->unk_50 = func_80027154_27D54(sizeof(BRWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(BRWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(BRMotion), 0x7918);
+    obj->model[0] = LoadFormFile(dir | file, flags);
+    obj->model[1] = func_80018A64_19664(D_800BF799_C0399 == 0 ? 1 : 0xD, motFile);
+    func_8003C8E0_3D4E0(obj->model[1]);
+    for (i = 0; i < obj->mtncnt; i++) {
+        obj->motion[i] = -1;
+    }
+    for (i = 0; i < obj->mtncnt; i++) {
+        work->unk_E8[i].unk_00 = 0;
+        work->unk_E8[i].unk_02 = 0;
+        work->unk_E8[i].unk_04 = -1;
+        work->unk_E8[i].unk_08 = -1;
+    }
+    work->unk_57 = gPlayers[D_8010C048_19ABE8_BobsledRun[team].player[0]].port;
+    obj->func_ptr = func_80007790_8390;
+    work->unk_52 = 0;
+    work->unk_B4 = 1.0f;
+    work->unk_D0 = 0xFFFF;
+    work->unk_4C = 0.5f;
+    work->unk_CC = 1.0f;
+    work->unk_60 = 0.0f;
+    func_8000BEB0_CAB0(obj, 60.0f);
+    func_8000BEBC_CABC(obj, 150.0f);
+    func_8000BEC8_CAC8(obj, 20.0f);
+    func_8000BED4_CAD4(obj, 30.0f);
+    func_8000BE74_CA74(obj, 1000.0f);
+    work->unk_9C = work->unk_A0 = work->unk_A4 = 0.0f;
+    work->unk_59 = team;
+    work->unk_C4 = work->unk_C3 = -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80103F24_192AC4_BobsledRun);
+/* The three background models: spin and pulse their alpha. */
+void func_80103DDC_19297C_BobsledRun(void) {
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        D_8010C000_19ABA0_BobsledRun[i] = func_8002D958_2E558(D_8010C000_19ABA0_BobsledRun[i] + D_8010C00C_19ABAC_BobsledRun[i]);
+        func_8002979C_2A39C(D_8010CB42_19B6E2_BobsledRun[i], 0.0f, D_8010C000_19ABA0_BobsledRun[i], 0.0f);
+        D_8010BFF8_19AB98_BobsledRun[i] += D_8010BFFC_19AB9C_BobsledRun[i];
+        if (D_8010BFF8_19AB98_BobsledRun[i] > 160) {
+            D_8010BFFC_19AB9C_BobsledRun[i] = 0xFC;
+        }
+        if (D_8010BFF8_19AB98_BobsledRun[i] < 96) {
+            D_8010BFFC_19AB9C_BobsledRun[i] = 4;
+        }
+        func_8002D0A0_2DCA0(D_8010CB42_19B6E2_BobsledRun[i], D_8010BFF8_19AB98_BobsledRun[i]);
+    }
+}
+
+/* The course object (D_800FC7B0_FD3B0[0], MP1 func_800FA890). */
+void func_80103F24_192AC4_BobsledRun(omObjData* obj) {
+    BRGround* w;
+
+    D_8010105C_101C5C = 0.8f;
+    D_80101300_101F00 = 0.8f;
+    obj->model[0] = -1;
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BRGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BRGround));
+    obj->func_ptr = func_80103DDC_19297C_BobsledRun;
+    w->unk_03 = 1;
+    func_8000BEF8_CAF8(obj, 2, -18000.0f);
+    w->unk_04 = 0;
+    D_8010CB42_19B6E2_BobsledRun[0] = func_80018A30_19630(0x290009, 0xAC9);
+    func_8002D124_2DD24(D_8010CB42_19B6E2_BobsledRun[0]);
+    func_8002D0A0_2DCA0(D_8010CB42_19B6E2_BobsledRun[0], 0x80);
+    D_8010CB42_19B6E2_BobsledRun[1] = func_80027D3C_2893C(D_8010CB42_19B6E2_BobsledRun[0]);
+    D_8010CB42_19B6E2_BobsledRun[2] = func_80027D3C_2893C(D_8010CB42_19B6E2_BobsledRun[0]);
+    func_80029EDC_2AADC(D_8010CB42_19B6E2_BobsledRun[0], 3);
+    func_80029EDC_2AADC(D_8010CB42_19B6E2_BobsledRun[1], 3);
+    func_80029EDC_2AADC(D_8010CB42_19B6E2_BobsledRun[2], 3);
+    func_80029714_2A314(D_8010CB42_19B6E2_BobsledRun[0], D_8010C018_19ABB8_BobsledRun[0].x, D_8010C018_19ABB8_BobsledRun[0].y, D_8010C018_19ABB8_BobsledRun[0].z);
+    func_80029714_2A314(D_8010CB42_19B6E2_BobsledRun[1], D_8010C018_19ABB8_BobsledRun[1].x, D_8010C018_19ABB8_BobsledRun[1].y, D_8010C018_19ABB8_BobsledRun[1].z);
+    func_80029714_2A314(D_8010CB42_19B6E2_BobsledRun[2], D_8010C018_19ABB8_BobsledRun[2].x, D_8010C018_19ABB8_BobsledRun[2].y, D_8010C018_19ABB8_BobsledRun[2].z);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104084_192C24_BobsledRun);
 

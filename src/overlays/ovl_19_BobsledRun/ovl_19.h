@@ -106,6 +106,15 @@ typedef struct BRWork {
     /* 0xEC */ char unk_EC[0x70];
 } BRWork; /* size = 0x15C */
 
+/* Work of the course object (func_80027154_27D54(0xB4); MP1 BRGround 0x2C, fields 0x04/0x05
+   moved to 0x03/0x04). No pointers. */
+typedef struct BRGround {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04;     /* ground id (BRWork::unk_53) */
+    /* 0x05 */ char unk_05[0xAF];
+} BRGround; /* size = 0xB4 */
+
 #define BR_WORK(obj) ((BRWork*)(obj)->unk_50)
 
 /* ---------------------------------------------------------------------------------------------
@@ -114,6 +123,11 @@ typedef struct BRWork {
 extern f32 D_8010BFF0_19AB90_BobsledRun; /* camera pitch */
 extern s8 D_8010BFF4_19AB94_BobsledRun; /* winning team, -1 none yet */
 extern s8 D_8010BFF5_19AB95_BobsledRun; /* result: -1 racing, -2 both crashed, -3 time up */
+extern u8 D_8010BFF8_19AB98_BobsledRun[4]; /* background models' alpha */
+extern u8 D_8010BFFC_19AB9C_BobsledRun[4]; /* their alpha step (+4 / -4) */
+extern f32 D_8010C000_19ABA0_BobsledRun[3]; /* background models' rotation */
+extern f32 D_8010C00C_19ABAC_BobsledRun[3]; /* their spin speed */
+extern Vec3f D_8010C018_19ABB8_BobsledRun[3]; /* their positions */
 extern f32 D_8010C040_19ABE0_BobsledRun[2]; /* camera field of view, per team */
 extern BRTeam D_8010C048_19ABE8_BobsledRun[2];
 extern s16 D_8010C0DC_19AC7C_BobsledRun; /* race time (frames) */
@@ -132,6 +146,7 @@ extern s32 D_8010C130_19ACD0_BobsledRun;
    Bss (ovl_19_bss)
    --------------------------------------------------------------------------------------------- */
 extern u16 D_8010CB40_19B6E0_BobsledRun; /* team 1's progress-bar sled */
+extern u8 D_8010CB42_19B6E2_BobsledRun[3]; /* the three background models */
 extern u16 D_8010CC3E_19B7DE_BobsledRun; /* team 0's progress-bar sled */
 
 /* ---------------------------------------------------------------------------------------------
@@ -184,6 +199,32 @@ void func_80079848_7A448(s16 arg0);
 void func_80079614_7A214(s16 time); /* music fade-out */
 void GWMgRecordSet(s32, u16);
 void espPosSet(u16 spriteId, s16 x, s16 y);
+extern f32 D_800F94A0_FA0A0;
+extern f32 D_80101308_101F08;
+extern f32 D_8010105C_101C5C;
+extern f32 D_80101300_101F00;
+extern u8 D_800BF799_C0399;
+void func_80009684_A284(f32, f32, f32);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+s16 LoadFormFile(s32, s32);
+u16 func_80018A64_19664(s32 arg0, s32 arg1);
+void func_8003C8E0_3D4E0(s16);
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+void func_8000BE74_CA74(omObjData*, f32);
+void func_8000BEB0_CAB0(omObjData*, f32);
+void func_8000BEBC_CABC(omObjData*, f32);
+void func_8000BEC8_CAC8(omObjData*, f32);
+void func_8000BED4_CAD4(omObjData*, f32);
+void func_8000BEF8_CAF8(omObjData*, s32, f32);
+f32 func_8002D958_2E558(f32); /* wraps an angle */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
+u16 func_80018A30_19630(s32, s32); /* model load */
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80029EDC_2AADC(s16, s32);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (B's half, after 801064F0, inferred from the asm: check)
