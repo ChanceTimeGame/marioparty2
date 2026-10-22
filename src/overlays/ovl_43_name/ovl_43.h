@@ -68,6 +68,7 @@ void func_8002D4A0_2E0A0(s16);
 void func_80029FE4_2ABE4(s16, f32);
 u16 MBDCameraPos3DSet(Vec*);
 void MBCameraSpeedSet(f32);
+void MBMasuArrowAngleAdd(f32); /* 43 */
 
 extern s16 D_800FC734_FD334;
 extern s16 D_800FA198_FAD98; /* camera button enabled */
@@ -586,6 +587,8 @@ extern MBModel* D_80115464_2DA954_name_43;
 extern MBModel* D_80115468_2DA958_name_43[3]; /* 43: three */
 extern MBModel* D_80115474_2DA964_name_43;
 extern MBModel* D_80115478_2DA968_name_43[2];
+extern s16 D_80113B64_2D9054_name_43[10];
+extern s16 D_80113B78_2D9068_name_43[8];
 extern DecisionTreeNonLeafNode D_80113D7C_2D926C_name_43[];
 extern DecisionTreeNonLeafNode D_80113DC4_2D92B4_name_43[];
 extern DecisionTreeNonLeafNode D_80113F2C_2D941C_name_43[];
