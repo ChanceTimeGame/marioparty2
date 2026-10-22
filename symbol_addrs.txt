@@ -841,3 +841,12 @@ D_8010D27C_22366C_BombsAway = 0x8010D27C; // rom:0x22366C size:0x10
 D_8010F870_245750_SlotCarDerby = 0x8010F870; // size:0x18 segment:SlotCarDerby
 D_8010F888_245768_SlotCarDerby = 0x8010F888; // size:0x18 segment:SlotCarDerby
 D_8010F8A0_245780_SlotCarDerby = 0x8010F8A0; // size:0x18 segment:SlotCarDerby
+// MG30-C: ovl_30 23F020.c .data/.bss tables retail reads by element or by s16 half (MP1 D_80100EB0, D_80100EC0, D_80100F00, D_80100F18, D_80100F34, D_80102474/78)
+D_8010FB10_2459F0_SlotCarDerby = 0x8010FB10; // size:0x4 segment:SlotCarDerby
+D_8010FB20_245A00_SlotCarDerby = 0x8010FB20; // size:0x24 segment:SlotCarDerby
+D_8010FB44_245A24_SlotCarDerby = 0x8010FB44; // size:0x24 segment:SlotCarDerby
+D_8010FB68_245A48_SlotCarDerby = 0x8010FB68; // size:0x1C segment:SlotCarDerby
+D_8010FB84_245A64_SlotCarDerby = 0x8010FB84; // size:0x1C segment:SlotCarDerby
+D_8010FBA0_245A80_SlotCarDerby = 0x8010FBA0; // size:0xC segment:SlotCarDerby
+D_80110970_246850_SlotCarDerby = 0x80110970; // size:0x4 segment:SlotCarDerby
+D_80110974_246854_SlotCarDerby = 0x80110974; // size:0x4 segment:SlotCarDerby

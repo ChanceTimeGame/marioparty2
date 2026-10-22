@@ -421,4 +421,35 @@ extern s16 D_801109D6_2468B6_SlotCarDerby;      /* MP1 D_801024B0: _CheckFlag(0x
 extern s16 D_801109D8_2468B8_SlotCarDerby;      /* MP1 D_801024B4 */
 /* MG30-A */
 
+/* MG30-C */
+/* 23F020.c's main API (missing from include/) */
+u16 func_800680D4_68CD4(s16 index); /* a minigame record (time) */
+void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_8002A00C_2AC0C(s16);
+void func_80029E80_2AA80(s16, s32, s32);
+
+/* 23F020.c's .data (MP1 name in the comment) */
+extern s32 D_8010FB00_2459E0_SlotCarDerby;      /* MP1 D_80100EA0: scenery state (func_80109140) */
+extern s32 D_8010FB04_2459E4_SlotCarDerby;      /* MP1 D_80100EA4: a car crossed the line */
+extern s32 D_8010FB08_2459E8_SlotCarDerby;      /* MP1 D_80100EA8: display-list buffer (frame % 3) */
+extern s32 D_8010FB0C_2459EC_SlotCarDerby;      /* MP1 D_80100EAC: course */
+extern s32 D_8010FB10_2459F0_SlotCarDerby;      /* MP1 D_80100EB0: race time (1/3 s ticks?) */
+extern s32 D_8010FB14_2459F4_SlotCarDerby;      /* MP1 D_80100EB4: record time */
+extern s32 D_8010FB18_2459F8_SlotCarDerby;      /* MP1 D_80100EB8: record broken */
+extern s32 D_8010FB1C_2459FC_SlotCarDerby;      /* MP1 D_80100EBC: board variant */
+extern Vec D_8010FB20_245A00_SlotCarDerby[3];   /* MP1 D_80100EC0: [course] board position / 10 */
+extern Vec D_8010FB44_245A24_SlotCarDerby[3];   /* MP1 D_80100F00: [course] time board position / 10 */
+extern s32 D_8010FB68_245A48_SlotCarDerby[7];   /* MP1 D_80100F18: time digit x */
+extern s32 D_8010FB84_245A64_SlotCarDerby[7];   /* MP1 D_80100F34: record time digits (banks) */
+extern s32 D_8010FBA0_245A80_SlotCarDerby[3];   /* [course] record index */
+
+/* 23F020.c's .bss */
+extern SCDObj* D_80110968_246848_SlotCarDerby;  /* MP1 D_80102468: 16 scenery records */
+extern SCDObj* D_8011096C_24684C_SlotCarDerby;  /* MP1 D_8010246C: 8 time-board digit records */
+extern s32 D_80110970_246850_SlotCarDerby;      /* MP1 D_80102474: digit sprite group (s16 in +2) */
+extern s32 D_80110974_246854_SlotCarDerby;      /* MP1 D_80102478: colon sprite group (s16 in +2) */
+extern SCDFx* D_80110978_246858_SlotCarDerby;   /* MP1 D_80102470: 32 effects */
+extern s32 D_801109D0_2468B0_SlotCarDerby;
+
 #endif
