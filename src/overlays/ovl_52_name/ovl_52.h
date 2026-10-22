@@ -67,6 +67,7 @@ void func_80015710_16310(s32 slot, s32 pan);
 void func_800595E8_5A1E8(void* arg0, s32 arg1, s32 arg2);
 void func_80059618_5A218(void* arg0);
 s16 func_800797DC_7A3DC(s32, s16);
+extern s16 D_800F8CE4_F98E4[]; /* board state halfwords; [10 + i]: player i's bonus stars */
 
 /* ---- overlay 52 data ---- */
 
@@ -76,7 +77,7 @@ extern s32 D_801067F4_35CDD4_name_52; /* the winner effect's model (-1: none); r
 extern omObjData* D_801067F8_35CDD8_name_52;
 extern omObjData* D_801067FC_35CDDC_name_52[4]; /* the leaders' pulsing digits */
 extern s32 D_8010680C_35CDEC_name_52[7]; /* per board: the stage */
-extern u8 D_80106978_35CF58_name_52[4]; /* per player: sound pan */
+extern s8 D_80106978_35CF58_name_52[4]; /* per player: sound pan */
 extern char* D_8010697C_35CF5C_name_52; /* "YOU ARE THE WINNER" */
 extern s16 D_80106980_35CF60_name_52[2]; /* its position */
 

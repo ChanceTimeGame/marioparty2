@@ -202,10 +202,83 @@ void func_80103338_359918_name_52(void) {
     HuPrcVSleep();
 }
 
+/* A bonus star flies down to each flagged player (count: how many get one). */
+/* NON_MATCHING: registers (masked 0): i, y and the model pointer take s1/s0/s2 where retail has s2/s1/s0 */
+#ifdef NON_MATCHING
+void func_801033D4_3599B4_name_52(s32 count, u8* flags) {
+    s16 sounds[4] = { 0x34A, 0x34A, 0x34A, 0x34A };
+    s32 n;
+    s32 y;
+    s32 i;
+    s32 k;
+    MBModel* m;
+    s32 snd;
+
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        if (flags[i] != 0) {
+            D_800F8CE4_F98E4[10 + i]++;
+            func_800595E8_5A1E8(gPlayers[i].unk_24, 5, 0);
+            snd = PlaySound(sounds[n++]);
+            if (count != 1) {
+                func_80015710_16310((s16)snd, D_80106978_35CF58_name_52[i]);
+            }
+            D_801067E0_35CDC0_name_52[i] = func_80049ED4_4AAD4(D_80106B40_35D120_name_52[i], 1);
+            for (k = 0, y = 800; y >= 250; y -= 15, k++) {
+                MBModelDispOn(D_80106B40_35D120_name_52[i]);
+                HuVecCopyXYZ(&D_80106B40_35D120_name_52[i]->pos, ((MBModel*)gPlayers[i].unk_24)->pos.x,
+                             y + ((MBModel*)gPlayers[i].unk_24)->pos.y, ((MBModel*)gPlayers[i].unk_24)->pos.z - 50.0f);
+                m = D_80106B40_35D120_name_52[i];
+                m->rot.x = __sinf((y * 2 - 160) * DEG);
+                m = D_80106B40_35D120_name_52[i];
+                m->rot.z = __cosf((y * 2 - 160) * DEG);
+                if (k == 9) {
+                    s16 h = func_800797DC_7A3DC(0x103, i);
+
+                    if (count != 1) {
+                        func_80015710_16310(h, D_80106978_35CF58_name_52[i]);
+                    }
+                }
+                HuPrcVSleep();
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if (flags[i] != 0) {
+            func_80049F90_4AB90(D_801067E0_35CDC0_name_52[i]);
+            D_801067E0_35CDC0_name_52[i] = NULL;
+        }
+    }
+    for (y = 0; y < 4; y++) {
+        if (flags[y] != 0) {
+            func_80059618_5A218(gPlayers[y].unk_24);
+        }
+    }
+    HuPrcSleep(10);
+    do {
+        for (i = 0; i < 4; i++) {
+            D_80106B40_35D120_name_52[i]->scale.x -= 0.1f;
+            D_80106B40_35D120_name_52[i]->scale.y -= 0.1f;
+            D_80106B40_35D120_name_52[i]->scale.z -= 0.1f;
+            D_80106B40_35D120_name_52[i]->pos.y -= 20.0f;
+        }
+        HuPrcVSleep();
+    } while (!(D_80106B40_35D120_name_52[0]->scale.x <= 0.05f));
+    for (i = 0; i < 4; i++) {
+        MBModelDispOff(D_80106B40_35D120_name_52[i]);
+        HuVecCopyXYZ(&D_80106B40_35D120_name_52[i]->scale, 0.75f, 0.75f, 0.75f);
+    }
+    for (y = 0; y < 4; y++) {
+        if (flags[y] != 0) {
+            func_800595E8_5A1E8(gPlayers[y].unk_24, 3, 2);
+        }
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80106AC8_35D0A8_name_52[2] = { 0x034A034A, 0x034A034A };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_52_name/358DE0", func_801033D4_3599B4_name_52);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_80106AD8_35D0B8_name_52[4] = { 0x000005F9, 0x000005FA, 0x000005FB, 0x000005FC };
