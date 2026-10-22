@@ -613,7 +613,7 @@ void func_8010F694_319B44_name_49(void); /* B: unknown */
 void func_8010F754_319C04_name_49(void); /* B: unknown */
 void func_8010F918_319DC8_name_49(s16 space);
 void func_8010F9A0_319E50_name_49(s16 from, s16 to, f32 speed, s32 arc, s32 player, s32 slot);
-void func_8010FC3C_31A0EC_name_49(void); /* B: unknown */
+void func_8010FC3C_31A0EC_name_49(s16 from, s16 to, f32 speed, s32 arc);
 void func_8010FE80_31A330_name_49(void); /* B: unknown */
 void func_8010FF2C_31A3DC_name_49(void); /* B: unknown */
 void func_80110188_31A638_name_49(s32 player);
@@ -662,6 +662,8 @@ extern s32 D_801139F8_31DEA8_name_49[7]; /* follower lag when D_800F8CE4[4] == 2
 extern Vec D_801156B8_31FB68_name_49[4]; /* func_8010F9A0: per player target */
 extern Vec D_801156E8_31FB98_name_49[4]; /* func_8010F9A0: per player facing */
 extern Vec D_80113A24_31DED4_name_49[]; /* func_8010F9A0: offset by slot (x, z) */
+extern Vec D_80115718_31FBC8_name_49[7]; /* func_8010FC3C: chain targets */
+extern Vec D_80115770_31FC20_name_49[7]; /* func_8010FC3C: chain facings */
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif

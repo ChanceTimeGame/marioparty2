@@ -4202,11 +4202,97 @@ void func_8010F9A0_319E50_name_49(s16 from, s16 to, f32 speed, s32 arc, s32 play
     func_80056B78_57778(&model->rot, &D_801156E8_31FB98_name_49[player], &model->rot, 5);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010FC3C_31A0EC_name_49);
+/* func_8010F9A0 for the chain's leader (a loop over one model): moves it from space `from` to
+   space `to`, the first move linked as a child process. */
+void func_8010FC3C_31A0EC_name_49(s16 from, s16 to, f32 speed, s32 arc) {
+    Vec dir;
+    SpaceData* fromData;
+    SpaceData* toData;
+    MBModel* model;
+    Process* proc;
+    f32 angle;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010FE80_31A330_name_49);
+    fromData = GetSpaceData(from);
+    toData = GetSpaceData(to);
+    func_80056658_57258(&fromData->coords, &toData->coords, &dir);
+    angle = func_80042BE0_437E0(&dir);
+    if ((angle >= 70.0f && angle <= 110.0f) || (angle >= 250.0f && angle <= 290.0f)) {
+        speed /= 1.3f;
+    }
+    for (i = 0; i < 1; i++) {
+        model = D_80115698_31FB48_name_49[i];
+        func_800B3170_B3D70(&D_80115718_31FBC8_name_49[i], &toData->coords);
+        if (arc) {
+            proc = func_80056FD4_57BD4(&model->pos, &D_80115718_31FBC8_name_49[i], &model->pos, speed);
+        } else {
+            proc = func_80057150_57D50(&model->pos, &D_80115718_31FBC8_name_49[i], &model->pos, speed);
+        }
+        if (i == 0) {
+            HuPrcChildLink(HuPrcCurrentGet(), proc);
+        }
+        func_80056658_57258(&fromData->coords, &toData->coords, &D_80115770_31FC20_name_49[i]);
+        func_80056B78_57778(&model->rot, &D_80115770_31FC20_name_49[i], &model->rot, 5);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010FF2C_31A3DC_name_49);
+/* Camera process: follows the average position of the chain's leader (a loop over one model). */
+void func_8010FE80_31A330_name_49(void) {
+    Vec pos;
+    s32 i;
+
+    while (1) {
+        HuVecCopyXYZ(&pos, 0.0f, 0.0f, 0.0f);
+        for (i = 0; i < 1; i++) {
+            HuVecAdd(&pos, &pos, &D_80115698_31FB48_name_49[i]->pos);
+        }
+        pos.x /= 1;
+        pos.y /= 1;
+        pos.z /= 1;
+        MBDCameraPos3DSet(&pos);
+        HuPrcVSleep();
+    }
+}
+
+
+/* Two small D_80114A20 models (coins) pop out of player work->player's head, spinning, and
+   drift apart for 20 frames. */
+void func_8010FF2C_31A3DC_name_49(void) {
+    DiceProcWork* work = HuPrcCurrentGet()->user_data;
+    MBModel* models[2];
+    Vec pos[2];
+    f32 dx[2] = { -1.0f, 1.0f };
+    GW_PLAYER* player;
+    s32 i;
+    s32 t;
+
+    player = BoardPlayerGet(work->player);
+    for (i = 0; i < 2; i++) {
+        models[i] = MBModelParamCreate(D_80114A20_31EED0_name_49);
+        HuVecCopyXYZ(&models[i]->scale, 0.25f, 0.25f, 0.25f);
+        func_800B3170_B3D70(&pos[i], &((MBModel*)player->unk_24)->pos);
+        pos[i].y += 12.0f;
+        func_800B3170_B3D70(&models[i]->pos, &pos[i]);
+        func_80056754_57354(models[i]);
+        models[i]->obj->rot.x += 90.0f;
+        models[i]->obj->rot.y += MBRand(360.0f);
+        models[i]->jumpVel = 5.0f;
+        models[i]->jumpAccel = -0.4f;
+        models[i]->attr |= 4;
+    }
+    for (t = 0; t < 20; t++) {
+        for (i = 0; i < 2; i++) {
+            pos[i].x += dx[i];
+            func_800B3170_B3D70(&models[i]->pos, &pos[i]);
+            models[i]->obj->rot.y += 20.0f;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 2; i++) {
+        MBModelKill(models[i]);
+    }
+    omDelPrcObj(NULL);
+}
 
 void func_80110188_31A638_name_49(s32 player) {
     Process* process = omAddPrcObj(func_8010FF2C_31A3DC_name_49, 0x4800, 0, 0x40);
