@@ -306,6 +306,8 @@ extern void* D_800FD2A8_FDEA8;              /* the camera (HuCamera*) */
 f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
 void func_80052E68_53A68(f32); /* MBCameraZoomSet */
 u16 MBDCameraPos3DSet(Vec*);
+extern f32 D_801102EC_342F2C_name_4F[2];     /* the two swing angles of func_8010AED4 */
+void func_80029C74_2A874(s16, f32);
 extern const char D_801103DC_34301C_name_4F[]; /* "e000p15_IA44" (80108B30, 8010A8AC, 8010B620) */
 /* fork D (inferred) */
 void func_8010C7CC_33F40C_name_4F(void);
@@ -314,7 +316,7 @@ void func_8010CC2C_33F86C_name_4F(omObjData* obj);
 s16 func_8010CDD4_33FA14_name_4F(s32 file); /* 4F-C: from its asm */
 omObjData* func_8010CE1C_33FA5C_name_4F(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
 void func_8010CFC4_33FC04_name_4F(omObjData* obj);
-s32 func_8010D114_33FD54_name_4F(void);
+u16 func_8010D114_33FD54_name_4F(f32 cur, f32 dir, f32 target); /* 4F-C: from its asm */
 void func_8010D15C_33FD9C_name_4F(omObjData* obj);
 s32 func_8010D210_33FE50_name_4F(void);
 void func_8010D248_33FE88_name_4F(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

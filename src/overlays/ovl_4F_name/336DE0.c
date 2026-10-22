@@ -1168,9 +1168,180 @@ void func_8010ADA0_33D9E0_name_4F(void) {
     MBDBackKill();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010AED4_33DB14_name_4F);
+#ifdef NON_MATCHING
+/* NON_MATCHING: GCC hoists 3.0f * dir out of the swing loops and spills the base angle to an integer
+   register; retail hoists other constants (7.0f, 1, 0, 360.0f) and keeps base in f30. Same logic. */
+/* The winner circles D_80110580 twice (out to D_801102EC[k] degrees and back), a model 7 effect
+   under its feet for the first 12 frames of each swing, then walks back to face it. */
+void func_8010AED4_33DB14_name_4F(void) {
+    Vec v;
+    MBModel* winner;
+    MBModel* fx;
+    f32 base;
+    f32 ofs;
+    f32 dir;
+    f32 radius;
+    f32 a;
+    s32 k;
+    s32 frame;
+    s32 done;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010B4E8_33E128_name_4F);
+    winner = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    func_80050E00_51A00(0x1B);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBModelDispOn(winner);
+    D_80110580_3431C0_name_4F->pos.x = D_80110244_342E84_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_80110244_342E84_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_80110244_342E84_name_4F.z;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &D_80110250_342E90_name_4F, &D_80110580_3431C0_name_4F->rot);
+    HuPrcSleep(10);
+    fx = MBModelFileCreate(7, -1, 1.0f, 0.0f, NULL);
+    MBModelDispOff(fx);
+    func_80042BE0_437E0(&D_80110580_3431C0_name_4F->rot);
+    v.x = D_80110580_3431C0_name_4F->pos.x - winner->pos.x;
+    v.y = 0.0f;
+    v.z = D_80110580_3431C0_name_4F->pos.z - winner->pos.z;
+    MBVecNormalize(&v);
+    base = func_80042BE0_437E0(&v);
+    if (base < 0.0f) {
+        base += 360.0f;
+    }
+    ofs = 0.0f;
+    radius = func_800B1830_B2430((D_80110580_3431C0_name_4F->pos.x - winner->pos.x) *
+                                     (D_80110580_3431C0_name_4F->pos.x - winner->pos.x) +
+                                 (D_80110580_3431C0_name_4F->pos.z - winner->pos.z) *
+                                     (D_80110580_3431C0_name_4F->pos.z - winner->pos.z));
+    dir = 1.0f;
+    frame = 0;
+    for (k = 0; k < 2; k++) {
+        MBMotionShiftSet(winner, 2, 0, 2, 2);
+        func_80029C74_2A874(*fx->obj->model, 0.0f);
+        MBModelDispOn(fx);
+        while (1) {
+            v.x = winner->pos.x;
+            v.y = winner->pos.y;
+            v.z = winner->pos.z;
+            done = 0;
+            ofs += 3.0f * dir;
+            if (func_8010D114_33FD54_name_4F(ofs, dir, D_801102EC_342F2C_name_4F[k]) == 1) {
+                ofs = D_801102EC_342F2C_name_4F[k];
+                done = 1;
+            }
+            a = base + ofs;
+            if (a < 0.0f) {
+                a += 360.0f;
+            }
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            }
+            winner->pos.x = D_80110580_3431C0_name_4F->pos.x - HuMathSin(a) * radius;
+            winner->pos.y = 0.0f;
+            winner->pos.z = D_80110580_3431C0_name_4F->pos.z - func_800B7890_B8490(a) * radius;
+            func_80056658_57258(&v, &winner->pos, &winner->rot);
+            fx->pos.x = winner->pos.x;
+            fx->pos.y = 0.0f;
+            fx->pos.z = winner->pos.z;
+            fx->rot = winner->rot;
+            if (frame == 12) {
+                MBModelDispOff(fx);
+            }
+            if (frame == 24) {
+                MBMotionShiftSet(winner, 9, 0, 2, 0);
+            }
+            if (frame >= 21) {
+                func_8005A7E8_5B3E8(D_80110580_3431C0_name_4F, &winner->pos, 7.0f);
+            }
+            if (done == 1) {
+                break;
+            }
+            frame++;
+            HuPrcVSleep();
+        }
+        dir = -dir;
+        frame = 0;
+        MBMotionSet(winner, 2, 2);
+        func_80029C74_2A874(*fx->obj->model, 0.0f);
+        MBModelDispOn(fx);
+        while (1) {
+            v.x = winner->pos.x;
+            v.y = winner->pos.y;
+            v.z = winner->pos.z;
+            done = 0;
+            ofs += 3.0f * dir;
+            if (func_8010D114_33FD54_name_4F(ofs, dir, 0.0f) == 1) {
+                ofs = 0.0f;
+                done = 1;
+            }
+            a = base + ofs;
+            if (a < 0.0f) {
+                a += 360.0f;
+            }
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            }
+            winner->pos.x = D_80110580_3431C0_name_4F->pos.x - HuMathSin(a) * radius;
+            winner->pos.y = 0.0f;
+            winner->pos.z = D_80110580_3431C0_name_4F->pos.z - func_800B7890_B8490(a) * radius;
+            func_80056658_57258(&v, &winner->pos, &winner->rot);
+            fx->pos.x = winner->pos.x;
+            fx->pos.y = 0.0f;
+            fx->pos.z = winner->pos.z;
+            fx->rot = winner->rot;
+            if (frame == 12) {
+                MBModelDispOff(fx);
+            }
+            if (frame == 24) {
+                MBMotionShiftSet(winner, 9, 0, 2, 0);
+            }
+            func_8005A7E8_5B3E8(D_80110580_3431C0_name_4F, &winner->pos, 7.0f);
+            if (done == 1) {
+                break;
+            }
+            frame++;
+            HuPrcVSleep();
+        }
+        MBMotionShiftSet(winner, 0, 0, 2, 2);
+        while (func_8005A7E8_5B3E8(winner, &D_80110580_3431C0_name_4F->pos, 8.0f) == 0) {
+            HuPrcVSleep();
+        }
+        HuPrcSleep(4);
+        frame = 0;
+    }
+    MBModelKill(fx);
+    while (func_8005A7E8_5B3E8(winner, &D_80110580_3431C0_name_4F->pos, 16.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBDBackKill();
+    MBModelDispOff(winner);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010AED4_33DB14_name_4F);
+#endif
+
+/* D_80110580 seen from behind again, then a message. */
+void func_8010B4E8_33E128_name_4F(void) {
+    Vec v;
+    s32 win;
+
+    func_80050E00_51A00(0x1C);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    D_80110580_3431C0_name_4F->pos.x = D_801101E4_342E24_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_801101E4_342E24_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_801101E4_342E24_name_4F.z - 1500.0f;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_80110580_3431C0_name_4F->rot);
+    v.x = 0.0f;
+    v.y = 300.0f;
+    v.z = -1410.0f;
+    func_80052E68_53A68(2.0f);
+    MBDCameraPos3DSet(&v);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x312);
+    win = func_8005AAC0_5B6C0(0x2A, 0x78, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_800890CC_89CCC(win, 0x312, -1, -1);
+    PlaySound(0x125);
+    HuPrcSleep(60);
+    func_8008CCA8_8D8A8(win);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010B620_33E260_name_4F);
 
