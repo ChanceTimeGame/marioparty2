@@ -4394,7 +4394,330 @@ void func_801101E0_31A690_name_49(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_801101E0_31A690_name_49);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8011056C_31AA1C_name_49);
+/* Bowser's parade, every fifth call (D_800F8CE4[0] counts down from 5): if any player stands on
+   the route chosen by D_800F8CE4[1..3], a seven-float parade (layout D_800F8CE4[4], cycling 0-3;
+   [0] Bowser's float, [6] a copy of it at the tail) follows the route from space 0x92 while
+   each player on it runs ahead (func_801101E0), then everyone it caught pays twice the coins
+   they passed (all their coins if short); the player paying most gets the third func_8006135C
+   argument set. */
+/* Bowser's parade, every fifth call (D_800F8CE4[0] counts down from 5): if any player stands on
+   the route chosen by D_800F8CE4[1..3], a seven-float parade (layout D_800F8CE4[4], cycling 0-3;
+   [0] Bowser's float, [6] a copy of it at the tail) follows the route from space 0x92 while
+   each player on it runs ahead (func_801101E0), then everyone it caught pays twice the coins
+   they passed (all their coins if short); the player paying most gets the third func_8006135C
+   argument set. */
+/* Bowser's parade, every fifth call (D_800F8CE4[0] counts down from 5): if any player stands on
+   the route chosen by D_800F8CE4[1..3], a seven-float parade (layout D_800F8CE4[4], cycling 0-3;
+   [0] Bowser's float, [6] a copy of it at the tail) follows the route from space 0x92 while
+   each player on it runs ahead (func_801101E0), then everyone it caught pays twice the coins
+   they passed (all their coins if short); the player paying most gets the third func_8006135C
+   argument set. */
+/* Bowser's parade, every fifth call (D_800F8CE4[0] counts down from 5): if any player stands on
+   the route chosen by D_800F8CE4[1..3], a seven-float parade (layout D_800F8CE4[4], cycling 0-3;
+   [0] Bowser's float, [6] a copy of it at the tail) follows the route from space 0x92 while
+   each player on it runs ahead (func_801101E0), then everyone it caught pays twice the coins
+   they passed (all their coins if short); the player paying most gets the third func_8006135C
+   argument set. */
+void func_8011056C_31AA1C_name_49(void) {
+    MBModel* gates[2];
+    u8 order[16];
+    s32 i;
+    s16* path;
+    s32 leg;
+    SpaceData* space;
+    SpaceData* toward;
+    s32 route;
+    s32 count;
+    s32 worst;
+    s32 max;
+    s32 k;
+    Process* cam;
+    f32 camSpeed;
+    f32 camZoom;
+    GW_SYSTEM* gw = &GwSystem;
+
+    if (--D_800F8CE4_F98E4[0] == 0) {
+        D_800F8CE4_F98E4[0] = 5;
+        if (D_800F8CE4_F98E4[1] == 0) {
+            route = 0;
+        } else if (D_800F8CE4_F98E4[1] == 1) {
+            route = 2;
+            if (D_800F8CE4_F98E4[2] == 0) {
+                route = 1;
+            }
+        } else {
+            route = 4;
+            if (D_800F8CE4_F98E4[3] == 0) {
+                route = 3;
+            }
+        }
+        D_80113A60_31DF10_name_49 = NULL;
+        count = 0;
+        for (leg = 0; leg < 3; leg++) {
+            path = D_80113990_31DE40_name_49[route][leg];
+            if (path == NULL) {
+                break;
+            }
+            do {
+                for (i = 0; i < 4; i++) {
+                    GW_PLAYER* player;
+                    Process* proc;
+                    Ovl49RunWork* work;
+
+                    D_801157C8_31FC78_name_49[i] = 0;
+                    player = BoardPlayerGet(i);
+                    if (*path == GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index)) {
+                        proc = omAddPrcObj(func_801101E0_31A690_name_49, 0x4800, 0, 0x40);
+                        work = HuMemMemoryAlloc(proc->heap, 0x20);
+                        proc->user_data = work;
+                        work->player = i;
+                        work->route = route;
+                        work->leg = leg;
+                        work->slot = count;
+                        work->path = path;
+                        count++;
+                    }
+                }
+                path++;
+            } while (*path != -1);
+        }
+        for (i = 0; i < 4; i++) {
+            func_80063C40_64840(i, 1);
+        }
+        func_800636F8_642F8(0);
+        func_800517C0_523C0();
+        func_80051788_52388();
+        camSpeed = MBCameraSpeedGet();
+        MBCameraSpeedSet(-1.0f);
+        camZoom = func_80053614_54214();
+        func_80053608_54208(1.0f);
+        func_800514F0_520F0();
+        MBDCameraPos3DSet(&GetSpaceData(0x73)->coords);
+        HuPrcVSleep();
+        func_80053608_54208(camZoom);
+        MBCameraSpeedSet(camSpeed);
+        InitFadeOut(0xFF, 1);
+        HuPrcSleep(2);
+        func_8005E310_5EF10();
+        func_800794A8_7A0A8(0x20);
+        func_80061518_62118();
+        InitFadeIn(3, 16);
+        HuPrcSleep(16);
+        PlaySound(0x40F);
+        func_80053F7C_54B7C();
+        MBPlayerVibrate(0, 3);
+        MBPlayerVibrate(1, 3);
+        MBPlayerVibrate(2, 3);
+        MBPlayerVibrate(3, 3);
+        func_8010F56C_319A1C_name_49();
+        func_80053F54_54B54();
+        if (count == 0) {
+            if (gw->total_turns == gw->current_turn) {
+                func_80056030_56C30(5, 0x507);
+            } else {
+                func_80056030_56C30(5, 0x506);
+            }
+        } else {
+            func_80056030_56C30(5, 0x503);
+            PlayMusic(0x3E);
+            HuPrcVSleep();
+            space = GetSpaceData(0x92);
+            toward = GetSpaceData(0x82);
+            D_80115698_31FB48_name_49[0] = D_80113A60_31DF10_name_49 = func_80043510_44110(0x7B, D_80113A14_31DEC4_name_49);
+            HuVecCopyXYZ(&D_80115698_31FB48_name_49[0]->scale, 1.2f, 1.2f, 1.2f);
+            MBMotionSet(D_80115698_31FB48_name_49[0], 1, 2);
+            func_80043DAC_449AC(D_80115698_31FB48_name_49[0]);
+            func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[0]->rot);
+            D_80115698_31FB48_name_49[0]->attr |= 1;
+            if (++D_800F8CE4_F98E4[4] >= 4) {
+                D_800F8CE4_F98E4[4] = 0;
+            }
+            switch (D_800F8CE4_F98E4[4]) {
+                case 1:
+                    MBArrayShuffle(order, 5);
+                    for (i = 1; i < 7; i++) {
+                        if (i == 6) {
+                            D_80115698_31FB48_name_49[i] = MBModelParamCreate(D_80115698_31FB48_name_49[0]);
+                            MBMotionSet(D_80115698_31FB48_name_49[i], 1, 2);
+                            D_80115698_31FB48_name_49[i]->attr |= 1;
+                        } else {
+                            D_80115698_31FB48_name_49[i] = func_80043510_44110(D_801139CC_31DE7C_name_49[order[i - 1]], NULL);
+                            func_80043DAC_449AC(D_80115698_31FB48_name_49[i]);
+                        }
+                        func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                    }
+                    break;
+                case 2:
+                    MBArrayShuffle(order, 5);
+                    D_80115698_31FB48_name_49[1] = func_80043510_44110(D_801139CC_31DE7C_name_49[order[0]], NULL);
+                    func_80043DAC_449AC(D_80115698_31FB48_name_49[1]);
+                    func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[1]->rot);
+                    for (i = 2; i < 6; i++) {
+                        D_80115698_31FB48_name_49[i] = func_80043510_44110(D_801139D2_31DE82_name_49[i], NULL);
+                        func_80043DAC_449AC(D_80115698_31FB48_name_49[i]);
+                        func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                        if (i == 4) {
+                            func_80029C74_2A874(D_80115698_31FB48_name_49[i]->obj->model[0], 15.0f);
+                        }
+                    }
+                    D_80115698_31FB48_name_49[i] = MBModelParamCreate(D_80115698_31FB48_name_49[0]);
+                    MBMotionSet(D_80115698_31FB48_name_49[i], 1, 2);
+                    D_80115698_31FB48_name_49[i]->attr |= 1;
+                    func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                    break;
+                case 0:
+                    MBArrayShuffle(order, 5);
+                    for (i = 1; i < 3; i++) {
+                        D_80115698_31FB48_name_49[i] = func_80043510_44110(D_801139D7_31DE87_name_49[i], NULL);
+                        func_80043DAC_449AC(D_80115698_31FB48_name_49[i]);
+                        func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                    }
+                    for (; i < 7; i++) {
+                        if (i == 6) {
+                            D_80115698_31FB48_name_49[i] = MBModelParamCreate(D_80115698_31FB48_name_49[0]);
+                            MBMotionSet(D_80115698_31FB48_name_49[i], 1, 2);
+                            D_80115698_31FB48_name_49[i]->attr |= 1;
+                        } else {
+                            D_80115698_31FB48_name_49[i] = func_80043510_44110(D_801139CC_31DE7C_name_49[order[i - 1]], NULL);
+                            func_80043DAC_449AC(D_80115698_31FB48_name_49[i]);
+                        }
+                        func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                    }
+                    break;
+                case 3:
+                    k = 5;
+                    for (i = 1; i < 7; i++) {
+                        if (i == 6) {
+                            D_80115698_31FB48_name_49[i] = MBModelParamCreate(D_80115698_31FB48_name_49[0]);
+                            MBMotionSet(D_80115698_31FB48_name_49[i], 1, 2);
+                            D_80115698_31FB48_name_49[i]->attr |= 1;
+                        } else {
+                            D_80115698_31FB48_name_49[i] = func_80043510_44110(0x99, NULL);
+                            func_80043DAC_449AC(D_80115698_31FB48_name_49[i]);
+                            func_80029C74_2A874(D_80115698_31FB48_name_49[i]->obj->model[0], k-- * 15.0f);
+                        }
+                        func_80056658_57258(&space->coords, &toward->coords, &D_80115698_31FB48_name_49[i]->rot);
+                    }
+                    break;
+            }
+            func_8010F918_319DC8_name_49(0x92);
+            space = GetSpaceData(0x91);
+            gates[0] = func_80043510_44110(0x8E, NULL);
+            func_800298A4_2A4A4(gates[0]->obj->model[0], 0x80000, 0x80000);
+            func_80029A8C_2A68C(gates[0]->obj->model[0]);
+            func_800B3170_B3D70(&gates[0]->pos, &space->coords);
+            space = GetSpaceData(0x68);
+            gates[1] = func_80043510_44110(0x8F, NULL);
+            func_800298A4_2A4A4(gates[1]->obj->model[0], 0x80000, 0x80000);
+            func_80029A8C_2A68C(gates[1]->obj->model[0]);
+            func_800B3170_B3D70(&gates[1]->pos, &space->coords);
+            D_801149E0_31EE90_name_49[0] = func_800672BC_67EBC(0, 2, 5);
+            D_801149E0_31EE90_name_49[1] = func_800672BC_67EBC(1, 2, 5);
+            D_801149E0_31EE90_name_49[2] = func_800672BC_67EBC(2, 2, 5);
+            D_801149E0_31EE90_name_49[3] = func_800672BC_67EBC(3, 2, 5);
+            func_8010FC3C_31A0EC_name_49(0x92, 0x82, 2.0f, 0);
+            while (HuPrcCurrentGet()->oldest_child != NULL) {
+                func_8010F754_319C04_name_49();
+                HuPrcVSleep();
+            }
+            D_80115698_31FB48_name_49[0]->attr &= ~1;
+            MBCameraSpeedSet(3.0f);
+            cam = omAddPrcObj(func_8010FE80_31A330_name_49, 0x1005, 0, 0);
+                for (leg = 0; leg < 3; leg++) {
+                if (leg == 1) {
+                    D_80115698_31FB48_name_49[6]->attr &= ~1;
+                }
+                path = D_80113990_31DE40_name_49[route][leg];
+                if (path == NULL) {
+                    break;
+                }
+                do {
+                    func_8010FC3C_31A0EC_name_49(path[0], path[1], 2.0f, 0);
+                    while (HuPrcCurrentGet()->oldest_child != NULL) {
+                        func_8010F754_319C04_name_49();
+                        HuPrcVSleep();
+                    }
+                    path++;
+                    HuPrcVSleep();
+                    if (*path == 0) {
+                        omDelPrcObj(cam);
+                        MBDCameraPos3DSet(&GetSpaceData(0x80)->coords);
+                    }
+                } while (path[1] != -1);
+            }
+            func_800794A8_7A0A8(0xC4);
+            for (i = 0; i < 98; i++) {
+                func_8010F754_319C04_name_49();
+                HuPrcVSleep();
+            }
+            worst = -1;
+            func_8006735C_67F5C(D_801149E0_31EE90_name_49[0]);
+            func_8006735C_67F5C(D_801149E0_31EE90_name_49[1]);
+            func_8006735C_67F5C(D_801149E0_31EE90_name_49[2]);
+            func_8006735C_67F5C(D_801149E0_31EE90_name_49[3]);
+            max = 0;
+            for (i = 0; i < 4; i++) {
+                if (D_801157C8_31FC78_name_49[i] != 0) {
+                    if (D_801157C8_31FC78_name_49[i] * 2 > gPlayers[i].coins) {
+                        if (max < gPlayers[i].coins) {
+                            worst = i;
+                            max = gPlayers[i].coins;
+                        }
+                    } else if (max < D_801157C8_31FC78_name_49[i] * 2) {
+                        worst = i;
+                        max = D_801157C8_31FC78_name_49[i] * 2;
+                    }
+                }
+            }
+            func_80061584_62184();
+            for (i = 0; i < 4; i++) {
+                if (D_801157C8_31FC78_name_49[i] != 0) {
+                    if (D_801157C8_31FC78_name_49[i] * 2 > gPlayers[i].coins) {
+                        func_8004CA14_4D614(i, -gPlayers[i].coins);
+                        if (worst == i) {
+                            func_8006135C_61F5C(i, -gPlayers[i].coins, 1);
+                        } else {
+                            func_8006135C_61F5C(i, -gPlayers[i].coins, 0);
+                        }
+                    } else {
+                        func_8004CA14_4D614(i, -D_801157C8_31FC78_name_49[i] * 2);
+                        if (worst == i) {
+                            func_8006135C_61F5C(i, -D_801157C8_31FC78_name_49[i] * 2, 1);
+                        } else {
+                            func_8006135C_61F5C(i, -D_801157C8_31FC78_name_49[i] * 2, 0);
+                        }
+                    }
+                }
+            }
+            HuPrcSleep(30);
+            if (gw->total_turns == gw->current_turn) {
+                func_80056030_56C30(5, 0x505);
+            } else {
+                func_80056030_56C30(5, 0x504);
+            }
+            MBModelKill(gates[0]);
+            MBModelKill(gates[1]);
+            for (i = 0; i < 7; i++) {
+                MBModelKill(D_80115698_31FB48_name_49[i]);
+            }
+        }
+        func_80015950_16550(30);
+        InitFadeOut(3, 16);
+        HuPrcSleep(16);
+        func_80061584_62184();
+        for (i = 0; i < 4; i++) {
+            MBMotionSet(gPlayers[i].unk_24, -1, 2);
+        }
+        func_8005E374_5EF74();
+        InitFadeIn(0xFF, 1);
+        HuPrcSleep(2);
+        MBCameraSpeedSet(-1.0f);
+        func_800636F8_642F8(1);
+        HuPrcSleep(5);
+        PlayMusic(0xD);
+    }
+    func_80061584_62184();
+}
 
 s32 func_80111300_31B7B0_name_49(s32 arg0) {
     s32 count = 0;

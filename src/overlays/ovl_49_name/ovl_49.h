@@ -677,6 +677,15 @@ typedef struct Ovl49RunWork {
     /* 0x0C */ s32 slot;
     /* 0x10 */ s16* path; /* space pairs walked from path[0] while path[1] != -1 */
 } Ovl49RunWork;
+extern u8 D_801139CC_31DE7C_name_49[6]; /* parade float models, picked through a shuffle */
+extern u8 D_801139D2_31DE82_name_49[6]; /* parade models by slot (layout 2) */
+extern u8 D_801139D7_31DE87_name_49[]; /* D_801139D2 + 5: retail indexes the next table from 1 */
+extern s32 D_80113A14_31DEC4_name_49[]; /* Bowser's float: motion list for func_80043510 */
+void func_80015950_16550(s32);
+void func_80029C74_2A874(s16, f32);
+void func_80056030_56C30(s32, s32);
+void func_8005E310_5EF10(void);
+void func_8005E374_5EF74(void);
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif
