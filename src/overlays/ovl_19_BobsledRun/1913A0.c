@@ -2359,9 +2359,109 @@ void func_8010A3AC_198F4C_BobsledRun(omObjData* obj) {
     ContStkY[p1] = sy1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A648_1991E8_BobsledRun);
+/* Rotation by angle about the axis through pos (MP1 func_800FBF88). */
+void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 angle) {
+    f32 s;
+    f32 c;
+    f32 t;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 xx;
+    f32 yy;
+    f32 zz;
+    f32 xs;
+    f32 ys;
+    f32 zs;
+    f32 xy;
+    f32 xz;
+    f32 yz;
+    f32 py;
+    f32 pz;
 
+    func_800B8070_B8C70(angle, &s, &c);
+    t = 1.0f - c;
+    pz = pos->z;
+    py = pos->y;
+    x = axis->x;
+    y = axis->y;
+    z = axis->z;
+    xy = x * y;
+    yz = y * z;
+    xz = z * x;
+    xx = x * x;
+    yy = y * y;
+    zz = z * z;
+    xs = x * s;
+    ys = y * s;
+    zs = z * s;
+    m[3][3] = 1.0f;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
+    m[0][0] = t * xx + c;
+    xy = xy * t;
+    m[0][1] = xy + zs;
+    xz = xz * t;
+    m[0][2] = xz - ys;
+    m[1][0] = xy - zs;
+    m[1][1] = t * yy + c;
+    yz = yz * t;
+    m[1][2] = yz + xs;
+    m[2][0] = xz + ys;
+    m[2][1] = yz - xs;
+    m[2][2] = t * zz + c;
+    m[3][0] = pz * t * (1.0f - xx) + py * (zs - xy) - pz * (xz + ys);
+    m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
+    m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
+}
+
+/* omOutViewMulti with each camera rolled by D_8010C144[i] (MP1 func_800FC180). */
+// scheduling: retail computes i * 4 (the zoom index) before i * 12
+#ifdef NON_MATCHING
+void func_8010A840_1993E0_BobsledRun(omObjData* obj) {
+    Vec3f pos;
+    Vec3f at;
+    Vec3f up;
+    Matrix4f m;
+    Vec3f dir;
+    f32 rx;
+    f32 ry;
+    f32 zero;
+    f32 one;
+    u8 i;
+
+    one = 1.0f;
+    zero = 0.0f;
+    for (i = 0; i < obj->work[0]; i++) {
+        rx = D_80102770_103370[i].x;
+        ry = D_80102770_103370[i].y;
+        pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].x;
+        pos.y = -HuMathSin(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].y;
+        pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].z;
+        at.x = D_801013B0_101FB0[i].x;
+        at.y = D_801013B0_101FB0[i].y;
+        at.z = D_801013B0_101FB0[i].z;
+        dir.x = at.x - pos.x;
+        dir.y = at.y - pos.y;
+        dir.z = at.z - pos.z;
+        func_8002D9AC_2E5AC(&dir);
+        func_8010A648_1991E8_BobsledRun(m, &at, &dir, D_8010C144_19ACE4_BobsledRun[i]);
+        up.x = zero * m[0][0] + one * m[1][0];
+        up.y = zero * m[0][1] + one * m[1][1];
+        up.z = zero * m[0][2] + one * m[1][2];
+        func_8002D9AC_2E5AC(&up);
+        D_800FC8F8_FD4F8[i][1] = pos.x;
+        D_800FC8F8_FD4F8[i][2] = pos.z;
+        D_800FC8F8_FD4F8[i][0] = D_80102770_103370[i].y;
+        D_800FC8F8_FD4F8[i][3] = 95.0f;
+        D_800FC8F8_FD4F8[i][4] = 19000.0f;
+        D_800FC8F8_FD4F8[i][5] = 7000.0f;
+        Hu3DCamSetPositionOrientation(i, &pos, &at, &up);
+        Hu3DCamUpdateMtx(i);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A840_1993E0_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AB30_1996D0_BobsledRun);
 
