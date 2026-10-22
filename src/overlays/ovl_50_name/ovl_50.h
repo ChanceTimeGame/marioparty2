@@ -186,7 +186,17 @@ extern s32 D_80111B8C_3523EC_name_50[6];     /* per board: the flag that allows 
 extern u32* D_80112308_352B68_name_50[6];    /* board 5, per character: MBPlayerModelCreate list */
 extern u32 D_80112320_352B80_name_50[];      /* board 5's host: MBModelFileCreate list */
 extern u32 D_8011236C_352BCC_name_50[];      /* board 5's background (0x8007B) */
+extern u32 D_80112334_352B94_name_50[];      /* board 5: 0x8008B's MBModelFileCreate list */
 extern s32 D_80112398_352BF8_name_50;
+extern s32 D_801123A0_352C00_name_50;
+extern s32 D_801123A4_352C04_name_50[2];
+extern s32 D_801123AC_352C0C_name_50;
+extern Vec D_801123B8_352C18_name_50[2]; /* D_80112748: start, target (splat's D_801123C4 is [1]) */
+extern Vec D_801123D0_352C30_name_50;
+extern Vec D_801123DC_352C3C_name_50;
+extern Vec D_801123E8_352C48_name_50[2];
+extern Vec D_80112400_352C60_name_50;    /* the doors' start */
+extern Vec D_8011240C_352C6C_name_50;    /* the doors' end */
 
 /* ---- overlay .bss (asm) ---- */
 
@@ -205,6 +215,7 @@ extern MBModel* D_8011274C_352FAC_name_50;
 extern s16 D_80112752_352FB2_name_50[2]; /* a message's window size */
 extern u16 D_80112756_352FB6_name_50;
 extern u16 D_8011275A_352FBA_name_50; /* the winner */
+extern MBModel* D_8011275C_352FBC_name_50; /* board 5 (and 344AE0.c): a third model */
 
 /* ---- 343060.c ---- */
 
