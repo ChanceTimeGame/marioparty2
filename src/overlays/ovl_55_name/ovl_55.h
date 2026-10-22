@@ -102,6 +102,7 @@ void func_80047BB8_487B8(s32);
 void func_80047D2C_4892C(void);
 s32 func_80047DE8_489E8(s32);
 void func_80050AE0_516E0(void);
+void func_80050E00_51A00(s32);
 void func_80051500_52100(void);
 void func_8005321C_53E1C(f32, f32);
 u16 func_800536E4_542E4(Vec2f* arg0); /* 51630.c: Vec2fxy*, same layout */
@@ -217,7 +218,7 @@ extern s32 D_8010BF94_36AE84_name_55[];
 extern s32 D_8010BFA0_36AE90_name_55[];
 extern void* D_8010C088_36AF78_name_55[6];
 extern s32 D_8010C0A0_36AF90_name_55[];
-extern s32 D_8010C0B0_36AFA0_name_55[];
+extern Vec D_8010C0B0_36AFA0_name_55[2]; /* board 3: camera from, to */
 extern s32 D_8010C0C8_36AFB8_name_55[];
 extern void* D_8010C1B8_36B0A8_name_55[6];
 extern s32 D_8010C1D0_36B0C0_name_55[];
@@ -309,7 +310,7 @@ void func_801084B4_3673A4_name_55(omObjData* obj);
 /* ---- 367540.c (fork C) ---- */
 
 void func_80108650_367540_name_55(void);
-void func_801087A0_367690_name_55(s16 player);
+void func_801087A0_367690_name_55(s32 player);
 void func_80108830_367720_name_55(void);
 void func_80108990_367880_name_55(void);
 void func_80108DB0_367CA0_name_55(void);
