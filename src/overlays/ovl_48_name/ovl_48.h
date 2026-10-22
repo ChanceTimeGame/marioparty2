@@ -51,6 +51,7 @@ extern s32 D_800F8C5C_F985C;
 s32 BoardSpaceGet(s32 index, s32 count);
 void HidePlayerHUDVisibility(s32 arg0, s32 arg1);
 void CameraScissorSet(s16 camIndex, RectF* rect);
+void func_80054040_54C40(s16 arg0, s16 arg1); /* camera shake offset */
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 f32 HuMathSin(f32);
@@ -293,6 +294,9 @@ extern s32 D_80108988_30CD28_name_48; /* CPU pad triggers */
 extern s32 D_80108BEC_30CF8C_name_48; /* no referee (flag 0x17 clear) */
 /* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern MBModel* D_80108BF4_30CF94_name_48; /* the referee's hat (scaled away) */
+extern s16 D_80108BF8_30CF98_name_48[2];
+extern f32 D_80108C40_30CFE0_name_48[2];
+extern f32 D_80108C48_30CFE8_name_48;
 
 /* ---- 306BA0.c ---- */
 

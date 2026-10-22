@@ -769,29 +769,70 @@ s32 func_80107FBC_30C35C_name_48(void) {
     return D_80108988_30CD28_name_48;
 }
 
-__asm__(".section .rodata");
-const u32 D_801088E4_30CC84_name_48[1] = { 0x82540000 };
+/* The countdown: full-width 5 to 0 in the centre, one a second. */
+void func_80107FC8_30C368_name_48(void) {
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x54", 160, 56, 1.0, 1.0, 1), 25);
+    HuPrcSleep(30);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x53", 160, 56, 1.0, 1.0, 1), 25);
+    HuPrcSleep(30);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x52", 160, 56, 1.0, 1.0, 1), 25);
+    HuPrcSleep(30);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x51", 160, 56, 1.0, 1.0, 1), 25);
+    HuPrcSleep(30);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x50", 160, 56, 1.0, 1.0, 1), 25);
+    HuPrcSleep(30);
+    func_800695D8_6A1D8(func_800691FC_69DFC(9, "\x82\x4F", 160, 56, 1.0, 1.0, 1), 30);
+    D_80108910_30CCB0_name_48 = 1;
+    omDelPrcObj(NULL);
+}
 
-__asm__(".section .rodata");
-const u32 D_801088E8_30CC88_name_48[1] = { 0x82530000 };
+/* Shake the camera: four rounds of up, down, left, right, each smaller. */
+void func_80108168_30C508_name_48(void) {
+    s32 i;
 
-__asm__(".section .rodata");
-const u32 D_801088EC_30CC8C_name_48[1] = { 0x82520000 };
+    for (i = 0; i < 4; i++) {
+        func_80054040_54C40(0, 8 - i * 2);
+        HuPrcVSleep();
+        func_80054040_54C40(0, i * 2 - 8);
+        HuPrcVSleep();
+        func_80054040_54C40(8 - i, 0);
+        HuPrcVSleep();
+        func_80054040_54C40(i - 8, 0);
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
 
-__asm__(".section .rodata");
-const u32 D_801088F0_30CC90_name_48[1] = { 0x82510000 };
+/* Spin the winner's sign (model D_80108BF8[D_80108778]) a quarter turn to face front, then drop it
+   32 units in eight steps. */
+void func_80108220_30C5C0_name_48(void) {
+    s32 i;
 
-__asm__(".section .rodata");
-const u32 D_801088F4_30CC94_name_48[1] = { 0x82500000 };
-
-__asm__(".section .rodata");
-const u32 D_801088F8_30CC98_name_48[2] = { 0x824F0000, 0x00000000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80107FC8_30C368_name_48);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80108168_30C508_name_48);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80108220_30C5C0_name_48);
+    if (D_80108778_30CB18_name_48 == 0) {
+        D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] = 90.0f;
+        do {
+            D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] += D_8010877C_30CB1C_name_48[D_80108778_30CB18_name_48];
+            D_800FC834_FD434[D_80108BF8_30CF98_name_48[D_80108778_30CB18_name_48]].rot.y = D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48];
+            HuPrcVSleep();
+        } while (D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] > 0.0f);
+    } else {
+        D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] = 270.0f;
+        do {
+            D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] += D_8010877C_30CB1C_name_48[D_80108778_30CB18_name_48];
+            D_800FC834_FD434[D_80108BF8_30CF98_name_48[D_80108778_30CB18_name_48]].rot.y = D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48];
+            HuPrcVSleep();
+        } while (D_80108C40_30CFE0_name_48[D_80108778_30CB18_name_48] < 360.0f);
+    }
+    D_800FC834_FD434[D_80108BF8_30CF98_name_48[D_80108778_30CB18_name_48]].rot.y = 0.0f;
+    HuPrcSleep(15);
+    D_80108C48_30CFE8_name_48 = 32.0f;
+    for (i = 0; i < 8; i++) {
+        D_80108C48_30CFE8_name_48 -= 4.0f;
+        D_800FC834_FD434[D_80108BF8_30CF98_name_48[D_80108778_30CB18_name_48]].pos.y = D_80108C48_30CFE8_name_48 + 237.02071f;
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
 
 void func_8010848C_30C82C_name_48(void) {
     omAddObj(0x10, 0, 0, -1, func_801084C0_30C860_name_48);
