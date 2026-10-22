@@ -619,4 +619,10 @@ extern DecisionTreeNonLeafNode D_8011129C_2EF9CC_name_45[];
 extern DecisionTreeNonLeafNode D_80111344_2EFA74_name_45[];
 extern Vec D_801130D0_2F1800_name_45; /* the point 8010E9D0's model stretches to */
 
+void SprScaleSet(s16, s16, f32, f32);
+void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
+void func_80056030_56C30(s16 arg0, s32 arg1);
+/* The laser's path: spaces in beam order, -1-terminated (8010EA40 aims at [10] first). */
+extern s16 D_801118F4_2F0024_name_45[];
+
 #endif
