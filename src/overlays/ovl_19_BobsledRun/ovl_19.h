@@ -92,7 +92,8 @@ typedef struct BRWork {
     /* 0x68 */ f32 unk_68;
     /* 0x6C */ char unk_6C[8];
     /* 0x74 */ s32 unk_74[6]; /* stick samples, (x << 16) | y (MP1 0x6C) */
-    /* 0x8C */ char unk_8C[0x10];
+    /* 0x8C */ char unk_8C[4];
+    /* 0x90 */ Vec3f unk_90;  /* ground normal (MP1 0x84) */
     /* 0x9C */ f32 unk_9C;    /* MP1 0x90 */
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ f32 unk_A4;
@@ -101,7 +102,9 @@ typedef struct BRWork {
     /* 0xB8 */ char unk_B8[0xB];
     /* 0xC3 */ s8 unk_C3;     /* MP1 0xB1 */
     /* 0xC4 */ s8 unk_C4;     /* MP1 0xB2 */
-    /* 0xC5 */ char unk_C5[7];
+    /* 0xC5 */ u8 unk_C5;
+    /* 0xC6 */ s16 unk_C6;    /* MP1 0xB4 */
+    /* 0xC8 */ char unk_C8[4];
     /* 0xCC */ f32 unk_CC;    /* MP1 0xBC */
     /* 0xD0 */ u16 unk_D0;    /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
@@ -115,7 +118,9 @@ typedef struct BRGround {
     /* 0x00 */ char unk_00[3];
     /* 0x03 */ u8 unk_03;
     /* 0x04 */ u8 unk_04;     /* ground id (BRWork::unk_53) */
-    /* 0x05 */ char unk_05[0xAF];
+    /* 0x05 */ char unk_05[3];
+    /* 0x08 */ f32 unk_08;    /* slope drag */
+    /* 0x0C */ char unk_0C[0xA8];
 } BRGround; /* size = 0xB4 */
 
 /* Speed history of one team's camera (bss D_8010CA38 / D_8010CB48, 0x110 apart). Retail
@@ -372,7 +377,29 @@ f32 func_8010B630_19A1D0_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z, f32 old
 void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 arg1);
 
 /* MG19-B */
+#include "game/pad.h"
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
 f64 fabs(f64);
 void func_800797DC_7A3DC(s16 sfx, s16 player);
+extern s16 D_800FD7FC_FE3FC; /* MP1 D_800F370C */
+extern f32 D_8010C0D0_19AC70_BobsledRun; /* strongest shove, team 0 */
+extern f32 D_8010C0D4_19AC74_BobsledRun; /* team 1 */
+extern s32 D_8010C0D8_19AC78_BobsledRun; /* finish banner shown */
+extern f32 D_8010C144_19ACE4_BobsledRun[2]; /* camera tilt, per team */
+void func_8000776C_836C(omObjData* obj); /* MP1 func_80005A04 */
+void func_8000CE80_DA80(s16* x, s16* y);
+s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y);
+s32 func_80019000_19C00(omObjData* obj); /* MP1 func_80017A60 */
+s32 func_80019CA4_1A8A4(omObjData* obj, u16 motion);
+void func_8000C584_D184(BRWork* work, s32 state);
+void func_8000C610_D210(BRWork* work, s32 arg1);
+void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite fade */
+s32 PlaySound(s32);
+f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
+void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
+void espDispOn(u16);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_800796F0_7A2F0(s16 sound, s16 pitch);
 
 #endif

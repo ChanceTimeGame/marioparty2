@@ -1673,7 +1673,398 @@ BRGround* func_80107E38_1969D8_BobsledRun(BRWork* work) {
     return NULL;
 }
 
+/* The bobsled (D_800FFFD8[team]): steering, jumps, bumps, boosts and the team's camera. */
+// register allocation (trans.y lives in a GPR in retail, z here), as MP1's func_800F78F4; calls, constants and fields checked against the asm
+#ifdef NON_MATCHING
+void func_80107EA4_196A44_BobsledRun(omObjData* obj) {
+    s16 stkX;
+    s16 stkY;
+    BRWork* work;
+    BRGround* gw;
+    f32 x;
+    f32 z;
+    f32 accel;
+    f32 turn;
+    f32 dy;
+    f32 v;
+    f32 f;
+    f32 r;
+    f32 s2;
+    f32 speed;
+    f32 nx;
+    f32 nz;
+    f32 push;
+    f32 sp;
+    f32 roll;
+    f32 cy;
+    f32 back;
+    f32 p;
+    f32 t;
+    s32 stick;
+    s32 hit;
+    u16 trg;
+    u16 mdl0;
+    u8 p0;
+    u8 p1;
+    s16 ground0;
+    s32 a;
+    u32 ust;
+    u32 hi;
+    f32 ny;
+    f32 y;
+    s16 ah;
+    s8 team;
+
+    accel = 0.0f;
+    work = obj->unk_50;
+    team = work->unk_59;
+    x = obj->trans.x;
+    y = obj->trans.y;
+    z = obj->trans.z;
+    func_8000776C_836C(obj);
+    mdl0 = obj->model[0];
+    D_80101308_101F08 = 0.0f;
+    D_800F94A0_FA0A0 = 0.0f;
+    D_800FD7FC_FE3FC = 0;
+    stkX = stkY = 0;
+    p0 = D_8010C048_19ABE8_BobsledRun[work->unk_59].port[0];
+    p1 = D_8010C048_19ABE8_BobsledRun[work->unk_59].port[1];
+    ground0 = work->unk_53;
+    turn = 0.0f;
+    if (D_800F8FD0_F9BD0 == 1 && !(work->unk_50 & 1)) {
+        stick = (ContStkX[(s8)p0] + ContStkX[(s8)p1]) / 2;
+        stkX = stick;
+        stkY = (ContStkY[(s8)p0] + ContStkY[(s8)p1]) / 2;
+        if (stick > 60) {
+            stkX = 60;
+        }
+        if (stkY > 60) {
+            stkY = 60;
+        }
+        if (stkX < -60) {
+            stkX = -60;
+        }
+        if (stkY < -60) {
+            stkY = -60;
+        }
+        func_8000CE80_DA80(&stkX, &stkY);
+        if (!(work->unk_50 & 6)) {
+            trg = ContBtnTrg[(s8)p1] | ContBtnTrg[(s8)p0];
+        } else {
+            trg = 0;
+        }
+    } else {
+        stkX = stkY = 0;
+        trg = 0;
+    }
+    func_80107920_1964C0_BobsledRun(obj);
+    func_80107C6C_19680C_BobsledRun(obj);
+    if (work->unk_38 != 1000.0f) {
+        v = work->unk_38;
+        if (D_800BF7D4_C03D4 < v) {
+            v = D_800BF7D4_C03D4;
+        }
+        if (work->unk_38 >= 0.0f) {
+            f = -35.0f;
+        } else {
+            f = 35.0f;
+        }
+        dy = v * v * f;
+        ny = y + dy;
+        if (!(work->unk_50 & 0x80)) {
+            work->unk_38 += D_800BF7A8_C03A8;
+            if (D_800BF7C0_C03C0 * 0.6f < work->unk_40) {
+                work->unk_40 += -1.6f;
+            }
+        } else {
+            work->unk_38 += 2.0f * D_800BF7A8_C03A8;
+        }
+        a = stkX;
+        if (a < 0) {
+            a = -a;
+        }
+        if (a >= 9) {
+            if (work->unk_40 < D_800BF7C0_C03C0 / 3.0f) {
+                turn = -(f32)stkX;
+                f = 20.0f;
+            } else if (work->unk_40 < D_800BF7C0_C03C0 / 2.0f) {
+                turn = -(f32)stkX;
+                f = 30.0f;
+            } else {
+                turn = -(f32)stkX;
+                f = 40.0f;
+            }
+            turn = turn / f;
+        }
+        work->unk_3C = turn + work->unk_3C;
+        s2 = work->unk_40 * work->unk_40;
+        r = func_800B1830_B2430(s2);
+        r = r / func_800B1830_B2430(s2 + dy * dy);
+        if (r != 0.0f) {
+            work->unk_4C = r * 0.9f;
+        }
+        y = func_8010B630_19A1D0_BobsledRun(obj, x, ny, z, y);
+        func_801060E8_194C88_BobsledRun(obj, 0, 24.0f, work->unk_3C, x, y, z);
+        if (work->unk_38 == 1000.0f) {
+            if (!(work->unk_50 & 0x80)) {
+                work->unk_38 = -D_800BF7A4_C03A4 * 0.5f;
+                work->unk_50 |= 0x80;
+            } else {
+                work->unk_50 &= 0xFF7F;
+                func_80019B9C_1A79C(obj, 0);
+            }
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].timer = 0;
+            PlaySound(0x1FB);
+            omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0], 2, 2, 20);
+            omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1], 2, 2, 20);
+            work->unk_C6 = 0;
+        } else {
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].timer++;
+            work->unk_C6 = 0;
+        }
+    } else {
+        work->unk_4C = 1.0f;
+        stick = func_80019000_19C00(obj);
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 0;
+        if (stick & 0x20) {
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 2;
+            t = func_80029E3C_2AA3C(mdl0);
+            if (t == -1.0f) {
+                t = func_80029CE4_2A8E4(mdl0);
+            }
+            if (t > 44.0f) {
+                func_800298A4_2A4A4(obj->model[0], 4, 4);
+                obj->model[0] = D_8010C048_19ABE8_BobsledRun[work->unk_59].mdl[1];
+                func_80019E04_1AA04(obj, 0x26, 0);
+                func_80019B9C_1A79C(obj, 0);
+                func_800298A4_2A4A4(obj->model[0], 4, 0);
+                D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 3;
+                func_80079798_7A398(0x1FF, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+            }
+        }
+        ust = func_8000CDC8_D9C8(obj, stkX, stkY);
+        hi = ust >> 16;
+        if (D_8010CA20_19B5C0_BobsledRun[work->unk_59].y >= 0.0f) {
+            if (D_8010C048_19ABE8_BobsledRun[work->unk_59].boost != 0) {
+                work->unk_40 = 4.0f * D_8010CA20_19B5C0_BobsledRun[work->unk_59].y + work->unk_40;
+            } else {
+                work->unk_40 = work->unk_40 + D_8010CA20_19B5C0_BobsledRun[work->unk_59].y;
+            }
+        } else {
+            work->unk_40 = D_8010CA20_19B5C0_BobsledRun[work->unk_59].y * 4.0f + work->unk_40;
+        }
+        if (D_8010C048_19ABE8_BobsledRun[work->unk_59].state == 0) {
+            if (trg & 0x8000) {
+                accel = 1.0f;
+                if (func_80019B9C_1A79C(obj, 1) == 1) {
+                    func_8000C610_D210(work, 1);
+                }
+                D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 1;
+            }
+        } else {
+            if ((s16)ust >= 9) {
+                accel = (s16)ust / 60.0f;
+            } else if ((s16)ust < -8) {
+                accel = (s16)ust / 48.0f;
+            }
+            if (D_8010C048_19ABE8_BobsledRun[work->unk_59].anim == 0) {
+                D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 4;
+            }
+        }
+        gw = func_80107E38_1969D8_BobsledRun(work);
+        if (gw != NULL) {
+            accel -= gw->unk_08;
+        }
+        work->unk_40 = accel + work->unk_40;
+        if (D_800BF7C0_C03C0 < work->unk_40) {
+            work->unk_40 = D_800BF7C0_C03C0;
+        }
+        if (work->unk_40 < 0.0f) {
+            work->unk_40 = 0.0f;
+        }
+        if (D_8010C048_19ABE8_BobsledRun[work->unk_59].state != 0 &&
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].progress >= 0.005f) {
+            if (work->unk_40 < D_800BF7C0_C03C0 / 3.0f) {
+                turn = -(f32)(s16)hi;
+                f = 15.0f;
+            } else if (work->unk_40 < D_800BF7C0_C03C0 / 2.0f) {
+                turn = -(f32)(s16)hi;
+                f = 20.0f;
+            } else {
+                turn = -(f32)(s16)hi;
+                f = 30.0f;
+            }
+            turn = turn / f;
+            if (D_8010C048_19ABE8_BobsledRun[work->unk_59].state == 1 && D_8010BFF4_19AB94_BobsledRun == -1 &&
+                work->unk_40 != 0.0f && D_800F8FD0_F9BD0 == D_8010C048_19ABE8_BobsledRun[work->unk_59].state) {
+                if (D_8010C048_19ABE8_BobsledRun[work->unk_59].sound == -1) {
+                    D_8010C048_19ABE8_BobsledRun[work->unk_59].sound = PlaySound(work->unk_59 + 0x202);
+                }
+                func_800796F0_7A2F0(D_8010C048_19ABE8_BobsledRun[work->unk_59].sound, work->unk_40 * 6.0f);
+            }
+        }
+        func_80107CF4_196894_BobsledRun(obj, &work->unk_90, turn);
+        t = func_8010AF5C_199AFC_BobsledRun(obj, work->unk_3C, x, y, z);
+        if (t != 65536.0f) {
+            y = t;
+            ah = hi;
+            if (ah < 0) {
+                ah = -ah;
+            }
+            func_801060E8_194C88_BobsledRun(obj, ah, 24.0f, work->unk_3C, x, t, z);
+            if ((ground0 != work->unk_53) & (ground0 == 1)) {
+                func_80019CA4_1A8A4(obj, 6);
+                D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 2;
+                func_8000C584_D184(work, 3);
+            }
+        } else {
+            work->unk_50 &= 0xFF7F;
+            func_80079848_7A448(D_8010C048_19ABE8_BobsledRun[work->unk_59].sound);
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].sound = -1;
+        }
+    }
+    speed = work->unk_40;
+    if (work->unk_38 != 1000.0f) {
+        speed = speed * work->unk_4C;
+    }
+    nx = x + (HuMathSin(work->unk_3C) * speed + D_800F94A0_FA0A0);
+    nz = z + (func_800B7890_B8490(work->unk_3C) * speed + D_80101308_101F08);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, work->unk_3C, 0.0f);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[5]].mtx, 0.0f, work->unk_3C, 0.0f);
+    func_8002979C_2A39C(obj->model[5], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[6]].mtx, 0.0f, work->unk_3C, 0.0f);
+    func_8002979C_2A39C(obj->model[6], obj->rot.x, obj->rot.y, obj->rot.z);
+    if (work->unk_40 == D_800BF7D0_C03D0 || work->unk_38 != 1000.0f) {
+        D_8010CA20_19B5C0_BobsledRun[work->unk_59].x = D_8010CA20_19B5C0_BobsledRun[work->unk_59].y =
+            D_8010CA20_19B5C0_BobsledRun[work->unk_59].z = 0.0f;
+    } else {
+        D_8010CA20_19B5C0_BobsledRun[work->unk_59].x = obj->trans.x - nx;
+        D_8010CA20_19B5C0_BobsledRun[work->unk_59].y = obj->trans.y - y;
+        D_8010CA20_19B5C0_BobsledRun[work->unk_59].z = obj->trans.z - nz;
+        func_8002D9AC_2E5AC(&D_8010CA20_19B5C0_BobsledRun[work->unk_59]);
+    }
+    func_8000C35C_CF5C(obj, nx, y, nz);
+    func_80029714_2A314(obj->model[5], nx, y, nz);
+    func_80029714_2A314(obj->model[6], nx, y, nz);
+    push = func_800B1830_B2430(D_800F94A0_FA0A0 * D_800F94A0_FA0A0 + D_80101308_101F08 * D_80101308_101F08);
+    if (push != 0.0f) {
+        sp = work->unk_40;
+        hit = 0;
+        if (push < sp * 0.4f) {
+            work->unk_40 = -push * 0.1f + sp;
+        } else {
+            hit = 1;
+            if (push < sp * 0.8f) {
+                work->unk_40 = -push * 0.15f + sp;
+            } else {
+                work->unk_40 = -push * 0.2f + work->unk_40;
+                hit = 2;
+            }
+        }
+        if (D_800F8FD0_F9BD0 == 1 && D_8010C048_19ABE8_BobsledRun[work->unk_59].unk41 == 0) {
+            PlaySound(0x1FC);
+            if (hit != 0) {
+                if (hit == 1) {
+                    goto shake;
+                }
+            } else {
+                omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0], 5, 0, 5);
+                omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1], 5, 0, 5);
+            shake:
+                omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0], 2, 3, 10);
+                omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1], 2, 3, 10);
+            }
+            omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0], 10, 0, 10);
+            omVibrate(D_8010C048_19ABE8_BobsledRun[work->unk_59].player[1], 10, 0, 10);
+        }
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].unk41++;
+        if (D_8010C048_19ABE8_BobsledRun[work->unk_59].unk41 > 10) {
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].unk41 = 0;
+        }
+    } else {
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].unk41 = 0;
+    }
+    if (work->unk_59 == 0) {
+        if (D_8010C0D0_19AC70_BobsledRun < push) {
+            D_8010C0D0_19AC70_BobsledRun = push;
+        }
+    } else if (D_8010C0D4_19AC74_BobsledRun < push) {
+        D_8010C0D4_19AC74_BobsledRun = push;
+    }
+    roll = func_80107550_1960F0_BobsledRun(work->unk_59, (f32)(func_80107720_1962C0_BobsledRun(obj) >> 16) / 60.0f * 15.0f *
+                                                           (work->unk_40 / (D_800BF7C0_C03C0 * 0.7)));
+    if (D_8010C048_19ABE8_BobsledRun[work->unk_59].timer < 30) {
+        D_80102770_103370[work->unk_59].y = roll + work->unk_3C + 180.0f;
+        D_8010C144_19ACE4_BobsledRun[work->unk_59] = roll * work->unk_40 * -0.003f;
+        cy = 200.0f - (sp = work->unk_40);
+        back = 2.0f * sp - D_8010C048_19ABE8_BobsledRun[work->unk_59].roll;
+        D_801013B0_101FB0[work->unk_59].x = obj->trans.x - HuMathSin(roll + work->unk_3C) * back;
+        D_801013B0_101FB0[work->unk_59].y = cy + obj->trans.y + 2.0f * D_8010C048_19ABE8_BobsledRun[work->unk_59].roll;
+        D_801013B0_101FB0[work->unk_59].z = obj->trans.z - func_800B7890_B8490(roll + work->unk_3C) * back;
+        D_800F94A8_FA0A8[work->unk_59] = work->unk_40 + 300.0f;
+        r = D_8010C048_19ABE8_BobsledRun[work->unk_59].roll;
+        if (r != 0.0f) {
+            D_80102770_103370[work->unk_59].y = D_80102770_103370[work->unk_59].y + r;
+            if (D_8010C048_19ABE8_BobsledRun[work->unk_59].state != 0) {
+                D_8010C048_19ABE8_BobsledRun[work->unk_59].roll = D_8010C048_19ABE8_BobsledRun[work->unk_59].roll * 0.98f;
+            }
+        }
+        if (work->unk_38 != 1000.0f) {
+            D_80102770_103370[work->unk_59].x = 2.0f * work->unk_38 + D_80102770_103370[work->unk_59].x;
+            if (D_80102770_103370[work->unk_59].x < 320.0f) {
+                D_80102770_103370[work->unk_59].x = 320.0f;
+            }
+            if (D_80102770_103370[work->unk_59].x > 350.0f) {
+                D_80102770_103370[work->unk_59].x = 350.0f;
+            }
+            D_801013B0_101FB0[work->unk_59].y = (200.0f - work->unk_40 * work->unk_38) + obj->trans.y;
+        }
+        p = 1.0 - (y + 8315.0f) / 21815.0f;
+        if (D_8010C048_19ABE8_BobsledRun[work->unk_59].progress < p) {
+            D_8010C048_19ABE8_BobsledRun[work->unk_59].progress = p;
+        }
+    } else if (D_8010C048_19ABE8_BobsledRun[work->unk_59].timer > 40) {
+        obj->func_ptr = NULL;
+        func_8001AA08_1B608(work->unk_59 != 0 ? D_8010CB40_19B6E0_BobsledRun : D_8010CC3E_19B7DE_BobsledRun, 0, 255, -5);
+        func_8001AA08_1B608(D_8010C048_19ABE8_BobsledRun[team].sprite, 0, 255, -5);
+        func_8001AA08_1B608(D_8010C048_19ABE8_BobsledRun[team].sprite2, 0, 255, -5);
+        func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[0], 4, 4);
+        func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[2], 4, 4);
+        func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[1], 4, 4);
+        func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[3], 4, 4);
+        func_800298A4_2A4A4(obj->model[5], 4, 4);
+        func_800298A4_2A4A4(obj->model[6], 4, 4);
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+        func_800298A4_2A4A4(obj->model[3], 4, 4);
+        obj->model[3] = 0;
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].anim = 5;
+        if (D_8010C0D8_19AC78_BobsledRun == 0) {
+            espDispOn(D_8010CC3C_19B7DC_BobsledRun);
+            func_8001A6BC_1B2BC(D_8010CC3C_19B7DC_BobsledRun, 2);
+            func_8001AA08_1B608(D_8010CC3C_19B7DC_BobsledRun, 255, 0, 8);
+            if (work->unk_59 == 0) {
+                espPosSet(D_8010CC3C_19B7DC_BobsledRun, 0, 0);
+            } else {
+                espPosSet(D_8010CC3C_19B7DC_BobsledRun, 0, 120);
+            }
+            D_8010C0D8_19AC78_BobsledRun++;
+        }
+    }
+    func_801075C8_196168_BobsledRun(obj);
+    if (D_8010C048_19ABE8_BobsledRun[work->unk_59].state == 2) {
+        work->unk_3C = 270.0f;
+        obj->func_ptr = func_801064F0_195090_BobsledRun;
+        D_8010C048_19ABE8_BobsledRun[work->unk_59].roll = 1.0f;
+    }
+    if (obj->func_ptr != NULL) {
+        func_8010BD18_19A8B8_BobsledRun(obj, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+        func_80106438_194FD8_BobsledRun(work->unk_59, obj->model[3]);
+        func_80104EAC_193A4C_BobsledRun(obj);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_196A44_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010982C_1983CC_BobsledRun);
 
