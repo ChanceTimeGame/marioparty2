@@ -455,7 +455,7 @@ s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip); 
 s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r);           /* MP1 func_800FDF54 */
 void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d);   /* MP1 func_800FE0A4 */
 void func_8010AD5C_15487C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, f32* ow);
-s32 func_8010AE2C_15494C_CraneGame(f32 a, f32 b, f32 c, f32 d, s32 arg4, s32 arg5);
-f32 func_8010B364_154E84_CraneGame(f32 a, f32 b, f32 c, f32 d);
+s32 func_8010AE2C_15494C_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1, s32 n, Vec* poly); /* clips poly to the box */
+f32 func_8010B364_154E84_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1); /* highest collision face in the box */
 
 #endif

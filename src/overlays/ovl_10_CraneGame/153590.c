@@ -329,8 +329,83 @@ void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A8E8_154408_CraneGame);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010AD5C_15487C_CraneGame);
+/* Transforms (x, y, z, 1) by m, keeping w. */
+void func_8010AD5C_15487C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, f32* ow) {
+    *ox = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *oy = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *oz = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+    *ow = x * m[0][3] + y * m[1][3] + z * m[2][3] + m[3][3];
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010AE2C_15494C_CraneGame);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010B364_154E84_CraneGame);
+/* The highest point of the registered models' faces inside the box (x0..x1, z0..z1) in world space
+   (0 when none): each face is moved to world space, clipped to the box and its highest corner kept. */
+f32 func_8010B364_154E84_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1) {
+    Matrix4f m1;
+    Matrix4f m2;
+    Matrix4f inv;
+    Vec poly[16];
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
+    HmfModel* p;
+    HmfData* m;
+    HmfPart* part;
+    HmfFaceRec* f;
+    ColVtx* cv;
+    HuCamera* cam;
+    f32 top;
+    s32 buf;
+    s32 i;
+    s32 j;
+    s32 k;
+    s32 l;
+    s32 n;
+
+    cam = D_800C9B80_CA780;
+    top = 0.0f;
+    buf = D_800FDBE0_FE7E0 - 1;
+    if (buf < 0) {
+        buf = D_800FDBCA_FE7CA - 1;
+    }
+    func_800B30D0_B3CD0(m1, &cam->mtxs[buf].lookAtMtx);
+    func_800B1F50_B2B50(m2, -m1[3][0], -m1[3][1], -m1[3][2]);
+    func_80025F00_26B00(m1, inv);
+    func_800B6410_B7010(m2, inv, inv);
+    for (i = 0; i < D_8010CE08_156928_CraneGame; i++) {
+        p = &D_800FC834_FD434[D_8010CB08_156628_CraneGame[i].model];
+        if (p->hmf != NULL && !(p->unk18 & 4)) {
+            m = p->hmf;
+            for (j = 0; j < (m->unk10 & 0x3F); j++) {
+                part = &m->unk64[j];
+                func_800B30D0_B3CD0(m1, D_800F8C58_F9858[D_800FDC48_FE848[m->unk00][part->unk2F].unk02].unk44);
+                func_800B6410_B7010(m1, inv, m1);
+                for (k = 0; k < part->unk04; k++) {
+                    f = &part->unk54[k];
+                    n = 0;
+                    if ((f->unk00 & 0x7F) != 0) {
+                        for (l = 0; l < (f->unk00 & 0x7F); l++) {
+                            cv = &m->unk54[f->unk04[l]];
+                            func_8010AD5C_15487C_CraneGame(m1, cv->x, cv->y, cv->z, &x, &y, &z, &w);
+                            poly[n].x = x;
+                            poly[n].y = y;
+                            poly[n].z = z;
+                            n++;
+                        }
+                        n = func_8010AE2C_15494C_CraneGame(x0, z0, x1, z1, n, poly);
+                        if (n >= 3) {
+                            for (l = 0; l < n; l++) {
+                                if (top < poly[l].y) {
+                                    top = poly[l].y;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return top;
+}
