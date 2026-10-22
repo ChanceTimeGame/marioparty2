@@ -117,6 +117,20 @@ extern s32 D_80108580_358B90_name_51[6]; /* per character: icon */
 extern s32 D_80108598_358BA8_name_51[6]; /* per character: name */
 extern s32 D_801085B0_358BC0_name_51[12]; /* per row: the explanation message */
 
+extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
+extern s16 D_801085F8_358C08_name_51[4][2];
+extern s16 D_80108608_358C18_name_51[4][2]; /* tally: icons (D_80108618 with flag 0xD) */
+extern s16 D_80108618_358C28_name_51[4][2];
+extern s16 D_80108628_358C38_name_51[4][2]; /* tally: star sprites */
+extern s16 D_80108638_358C48_name_51[4][2]; /* tally: coin sprites (D_80108648 with flag 0xD) */
+extern s16 D_80108648_358C58_name_51[4][2];
+extern s16 D_80108658_358C68_name_51[8][2]; /* tally: star then coin counters (D_80108678 with flag 0xD) */
+extern s16 D_80108678_358C88_name_51[8][2];
+extern s32 D_80108698_358CA8_name_51[6]; /* per character: tally icon */
+extern s16 D_801086B0_358CC0_name_51[4]; /* per column: x offset (slides in) */
+extern const char D_801087AC_358DBC_name_51[]; /* "%d" */
+extern const char D_801087B4_358DC4_name_51[]; /* "X%2d" */
+
 /* ---- overlay 51 bss ---- */
 
 extern s32 D_80108870_358E80_name_51[4]; /* each player's coins on entry */
@@ -142,6 +156,17 @@ extern UnkMBGuideData* D_80108AD8_3590E8_name_51; /* the guide (host and its tex
 extern s32 D_80108AE0_3590F0_name_51[12]; /* per row: the stats window (row 11 reuses [0]) */
 extern u8 D_80108B10_359120_name_51[12][4][8]; /* the stats table's digits */
 extern omObjData* D_80108C90_3592A0_name_51; /* the scroll-arrow object */
+extern s32 D_80108C98_3592A8_name_51[8]; /* tally counters: message slot in D_80108D70 */
+extern s32 D_80108D2C_35933C_name_51; /* tally: portrait sprites */
+extern s32 D_80108D30_359340_name_51[4];
+extern s32 D_80108D40_359350_name_51[4]; /* tally: icon backs */
+extern s32 D_80108D50_359360_name_51[4]; /* tally: icons */
+extern s32 D_80108D60_359370_name_51; /* tally: star sprites */
+extern s32 D_80108D64_359374_name_51;
+extern s32 D_80108D68_359378_name_51; /* tally: coin sprites */
+extern s32 D_80108D6C_35937C_name_51;
+extern GAMEMES D_80108D70_359380_name_51[8]; /* tally counters' digits */
+extern s32 D_80109110_359720_name_51; /* tally message window */
 
 /* ---- overlay 51 functions ---- */
 
