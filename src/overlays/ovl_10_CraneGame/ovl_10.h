@@ -112,6 +112,84 @@ extern Vec D_8010274C_10334C; /* Center */
 extern Vec D_800FD474_FE074;  /* CRot */
 extern f32 D_800FA610_FB210;  /* CZoom */
 
+/* ---- MG10-B: 151A90.c and 153590.c (MP1 1B9050.c shadows, 1BAA60.c collision) ---- */
+
+#include "game/data.h"
+s16 SprAnimRead(void*);
+void*** SprAnimGet(s16);
+s32 func_800283DC_28FDC(s16); /* remove a draw callback */
+
+/* A model group's shadow display list (D_8010C7E8, func_80108D18): gSPVertex/gSP1Triangle commands
+   that load from segment 1 (the frame's vertex buffer). */
+typedef struct CGShadowGroup {
+    /* 0x00 */ Gfx* dl;
+    /* 0x04 */ u16 start; /* first vertex in the buffer */
+    /* 0x06 */ u16 count;
+} CGShadowGroup; /* size = 0x8 */
+
+/* Shadow opacity per shadowed model (D_8010C2E8): eases toward target, reset to 1.0 each frame. */
+typedef struct CGShadowFade {
+    /* 0x00 */ f32 cur;
+    /* 0x04 */ f32 target;
+} CGShadowFade;
+
+/* A face of the shadow mesh (D_8010CA98): unique-vertex indices, bit 15 of v[0] = quad. */
+typedef struct CGShadowFace {
+    /* 0x00 */ u16 v[4];
+} CGShadowFace;
+
+/* Draw order of the faces (D_8010CAA4). */
+typedef struct CGShadowOrder {
+    /* 0x00 */ s16 key;
+    /* 0x02 */ s16 face;
+} CGShadowOrder;
+
+/* A collision face (func_80109FF8): plane and corner vertex indices. */
+typedef struct CGColFace {
+    /* 0x00 */ f32 nx;
+    /* 0x04 */ f32 ny;
+    /* 0x08 */ f32 nz;
+    /* 0x0C */ f32 d;
+    /* 0x10 */ s16 v[4]; /* v[3] = -1 for a triangle */
+    /* 0x18 */ s16 axis; /* dominant normal axis: 0 x, 1 y, 2 z */
+    /* 0x1A */ char unk_1A[2];
+} CGColFace; /* size = 0x1C */
+
+/* A model group's collision faces (CGCol.groups, func_80109E48). */
+typedef struct CGColGroup {
+    /* 0x00 */ s16 n;
+    /* 0x02 */ s16 radius;
+    /* 0x04 */ Matrix4f mtx; /* world to group space (func_80109C00) */
+    /* 0x44 */ CGColFace* faces;
+} CGColGroup; /* size = 0x48 */
+
+/* A model registered for collision (D_8010CB08, func_80109BAC). */
+typedef struct CGCol {
+    /* 0x00 */ s16 model;
+    /* 0x02 */ u8 unk2; /* frames before it collides */
+    /* 0x03 */ u8 count; /* groups */
+    /* 0x04 */ CGColGroup* groups;
+    /* 0x08 */ void* verts;
+} CGCol; /* size = 0xC */
+
+/* bss (MP1 names: D_800FFEC0.. = MP2 D_8010C260..) */
+extern s16 D_8010C260_155D80_CraneGame; /* the draw callback */
+extern s16 D_8010C262_155D82_CraneGame; /* shadowed models */
+extern s16 D_8010C264_155D84_CraneGame; /* frame buffer index, 0-2 */
+extern s16 D_8010C268_155D88_CraneGame[64];
+extern CGShadowFade D_8010C2E8_155E08_CraneGame[64];
+extern Vtx* D_8010C4E8_156008_CraneGame[64][3];
+extern CGShadowGroup* D_8010C7E8_156308_CraneGame[64];
+extern s16 D_8010C8E8_156408_CraneGame; /* the shadow sprite */
+extern u8* D_8010C8EC_15640C_CraneGame; /* its texture */
+extern s16 D_8010C8F0_156410_CraneGame; /* the model being processed */
+extern f32 D_8010C8F4_156414_CraneGame; /* its shadow opacity */
+extern Vec D_8010C8F8_156418_CraneGame; /* light position */
+extern s32 D_8010C904_156424_CraneGame;
+extern s16 D_8010C908_156428_CraneGame; /* the claw's round shadow is on */
+extern f32 D_8010C90C_15642C_CraneGame; /* its height */
+extern f32 D_8010CAF0_156610_CraneGame; /* the claw's round shadow scale (MP2) */
+
 /* ---- structs ---- */
 
 /* Work of the prizes (D_800F9CE0_FA8E0, func_80106F00) and of the claw operator (func_80104854):
