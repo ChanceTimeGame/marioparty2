@@ -31,7 +31,7 @@ void func_800212A4_21EA4(s16 index);
 void func_80026D28_27928(s32);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
-s16 func_80027D3C_2893C(s16);
+s32 func_80027D3C_2893C(s16); /* s16 elsewhere; retail uses the result unextended */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
@@ -40,7 +40,7 @@ void func_80029A8C_2A68C(s16);
 void func_80029AFC_2A6FC(s16);
 void func_8002A00C_2AC0C(s16);
 void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2); /* attach to a model's hook node */
-s16 func_8002C8B8_2D4B8(void*, s16);
+s32 func_8002C8B8_2D4B8(void*, s16); /* s16 in 274D0.c; retail uses the result unextended */
 void func_8002C9C0_2D5C0(s16, s16);
 void func_8002CA48_2D648(u8 arg0, u8 arg1, u8 arg2);
 s16 func_800797DC_7A3DC(s32, s16);
