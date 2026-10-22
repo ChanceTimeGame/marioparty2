@@ -597,6 +597,107 @@ s32 func_80107508_30B8A8_name_48(void) {
     return cand[rand8() % n];
 }
 
+/* NON_MATCHING: masked 34, as 42's and 3F's twins: the rank loops' guards and the n != 0 exits
+   (retail threads them with bnezl/blez); logic checked against the asm. Unlike 42, the flag-clearing
+   loop runs over all D_80108948 entries, not D_80108948 - 1. */
+#define PD_ABS(x) ((x) < 0 ? -(x) : (x))
+#ifdef NON_MATCHING
+void func_801077F4_30BB94_name_48(s32 cur, s32 target, s32 mode) {
+    s32 cand[4];
+    s32 flag[4];
+    s32 rows[32] = {
+        -1, 1, 3, 2, 3, 3, 3, 3,
+        0, 1, -1, 1, 1, 2, 1, 2,
+        0, 1, 0, 1, -1, 1, 1, 2,
+        0, 0, 0, 1, 0, 1, -1, -1,
+    };
+    s32 range[4] = { 10, 20, 20, 9 };
+    s32 base[4] = { 90, 60, 20, 1 };
+    s32 unused[8];
+    omObjData* obj;
+    PdCpuInput* work;
+    s32 diff;
+    s32 row;
+    s32 n;
+    s32 i;
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80107E1C_30C1BC_name_48);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdCpuInput), 0x7918);
+    work->timer = 0;
+    work->cur = cur;
+    work->target = target;
+    work->mode = mode;
+    D_80108988_30CD28_name_48 = 0;
+    if (mode == 2) {
+        if (gPlayers[D_80108930_30CCD0_name_48].coins >= 20) {
+            n = 0;
+            for (i = 0; i < D_80108948_30CCE8_name_48; i++) {
+                flag[i] = 0;
+            }
+            for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                if (func_80059FD0_5ABD0(D_80108950_30CCF0_name_48[i]) == 0) {
+                    flag[i] = 1;
+                    n++;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108950_30CCF0_name_48[i]) == 1) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108950_30CCF0_name_48[i]) == 2) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                    if (func_80059FD0_5ABD0(D_80108950_30CCF0_name_48[i]) == 3) {
+                        flag[i] = 1;
+                        n++;
+                    }
+                }
+            }
+            n = 0;
+            for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                if (flag[i] != 0 && gPlayers[D_80108950_30CCF0_name_48[i]].coins >= 20) {
+                    cand[n++] = i;
+                }
+            }
+            if (n == 0) {
+                for (i = 0; i < D_80108948_30CCE8_name_48 - 1; i++) {
+                    if (flag[i] == 0 && gPlayers[D_80108950_30CCF0_name_48[i]].coins >= 20) {
+                        cand[n++] = i;
+                    }
+                }
+            }
+            if (n > 0) {
+                work->target = cand[rand8() % n];
+            } else {
+                work->target = func_80107508_30B8A8_name_48();
+            }
+        } else {
+            work->target = func_80107508_30B8A8_name_48();
+        }
+    }
+    if (mode == 3) {
+        row = func_80059FD0_5ABD0(D_80108930_30CCD0_name_48) * 8;
+        row += func_80059FD0_5ABD0(D_80108930_30CCD0_name_48) * 2;
+        diff = PD_ABS(gPlayers[D_80108930_30CCD0_name_48].stars - gPlayers[D_80108934_30CCD4_name_48].stars);
+        row += diff < 2;
+        work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_8010896C_30CD0C_name_48 / 100;
+        if (work->target < D_80108960_30CD00_name_48) {
+            work->target = D_80108960_30CD00_name_48;
+        }
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80108844_30CBE4_name_48[32] = { 0xFFFFFFFF, 0x00000001, 0x00000003, 0x00000002, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0x00000001, 0x00000001, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF };
 
@@ -607,6 +708,7 @@ __asm__(".section .rodata");
 const u32 D_801088D4_30CC74_name_48[4] = { 0x0000005A, 0x0000003C, 0x00000014, 0x00000001 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_801077F4_30BB94_name_48);
+#endif
 
 void func_80107E1C_30C1BC_name_48(omObjData* obj) {
     PdCpuInput* work = obj->unk_50;
