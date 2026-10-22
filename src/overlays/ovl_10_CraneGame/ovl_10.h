@@ -227,6 +227,9 @@ extern s16 D_8010CAA8_1565C8_CraneGame[33]; /* the vertex cache */
 extern s16 D_8010CAEA_15660A_CraneGame;
 extern s16 D_8010CAEC_15660C_CraneGame; /* vertices in the buffer */
 extern f32 D_8010CAF0_156610_CraneGame; /* the shadow scale (MP2) */
+extern s16 D_8010CB00_156620_CraneGame; /* the collision draw callback (MP1 D_80100A52) */
+extern CGCol D_8010CB08_156628_CraneGame[64]; /* MP1 D_80100750 */
+extern s16 D_8010CE08_156928_CraneGame; /* registered models (MP1 D_80100A50) */
 
 /* ---- structs ---- */
 
@@ -426,7 +429,7 @@ void func_80109A70_153590_CraneGame(void);                           /* MP1 func
 void func_80109AA8_1535C8_CraneGame(void);                           /* MP1 func_800FD278 */
 void func_80109BAC_1536CC_CraneGame(s16 model);                      /* MP1 func_800FD37C */
 void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FD3D0 */
-void func_80109E48_153968_CraneGame(void* col, s16 model);           /* MP1 func_800FD604 */
+void func_80109E48_153968_CraneGame(CGCol* col, s16 model);           /* MP1 func_800FD604 */
 void func_80109FF8_153B18_CraneGame(void* verts, void* out, u8* f, s16 n); /* MP1 func_800FD7B4 */
 void func_8010A43C_153F5C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, Vec* out); /* MP1 func_800FDBF8 */
 s32 func_8010A4D8_153FF8_CraneGame(Vec* pos, f32 dx, f32 dy, f32 dz, s16 skip); /* MP1 func_800FDC94 */
