@@ -230,8 +230,7 @@ extern s32 D_8010C0E8_E3B78_BowserSlots;
 extern s32 D_8010C0EC_E3B7C_BowserSlots;
 extern s32 D_8010C0F0_E3B80_BowserSlots[2];       /* sprite animations of the block object */
 extern s32 D_8010C0F8_E3B88_BowserSlots[2];       /* sprite animations of the machine */
-extern s16 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
-extern s16 D_8010C102_E3B92_BowserSlots;
+extern s32 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
 extern void* D_8010C170_E3C00_BowserSlots;
 extern void* D_8010C174_E3C04_BowserSlots;
 extern s16 D_8010C17E_E3C0E_BowserSlots;
