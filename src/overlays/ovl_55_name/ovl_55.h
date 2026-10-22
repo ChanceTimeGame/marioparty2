@@ -166,7 +166,8 @@ extern s16 D_8010B760_36A650_name_55; /* host model gone */
 extern s16 D_8010B762_36A652_name_55; /* START may skip */
 extern s32 D_8010B764_36A654_name_55[7]; /* per board: the flag that allows the skip */
 extern void (*D_8010B780_36A670_name_55[7])(void); /* per board: scene setup */
-extern void (*D_8010B79C_36A68C_name_55[7])(s16 player); /* per board: player model */
+/* per board: the player's model; retail calls it unprototyped (no s16 narrowing of the index). */
+extern void (*D_8010B79C_36A68C_name_55[7])();
 extern void (*D_8010B7B8_36A6A8_name_55[6])(void);
 extern Vec D_8010B7D0_36A6C0_name_55[5][2]; /* walk-in: host, players: start, target */
 extern Vec D_8010B848_36A738_name_55[5][2]; /* walk-on: start, target */
