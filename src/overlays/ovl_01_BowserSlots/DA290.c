@@ -1,5 +1,14 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010BA80_E3510_BowserSlots[] = "\202r\202s\202`\202q\202s";
+
+__asm__(".section .rodata");
+const char D_8010BA8C_E351C_BowserSlots[] = "\202e\202h\202m\202h\202r\202g";
+
+__asm__(".section .rodata");
+const char D_8010BA9C_E352C_BowserSlots[] = "\202h\202s\202d\202l\202f\202d\202s\201I\201H";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80102800_DA290_BowserSlots);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80102A70_DA500_BowserSlots);
@@ -12,7 +21,37 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80102F58_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103000_DAA90_BowserSlots);
 
+__asm__(".section .rodata");
+const u32 D_8010BAE0_E3570_BowserSlots[9] = { 0 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801030C0_DAB50_BowserSlots);
+
+__asm__(".section .rodata");
+const char D_8010BB18_E35A8_BowserSlots[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f ";
+
+__asm__(".section .rodata");
+const char D_8010BB3C_E35CC_BowserSlots[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f ";
+
+__asm__(".section .rodata");
+const char D_8010BB60_E35F0_BowserSlots[] = " ZOOM   %3.3f ";
+
+__asm__(".section .rodata");
+const char D_8010BB70_E3600_BowserSlots[] = "CAMERA TEST_MODE ";
+
+__asm__(".section .rodata");
+const char D_8010BB84_E3614_BowserSlots[] = "CAMERA TEST_MODE \012";
+
+__asm__(".section .rodata");
+const char D_8010BB98_E3628_BowserSlots[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f \012";
+
+__asm__(".section .rodata");
+const char D_8010BBBC_E364C_BowserSlots[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f \012";
+
+__asm__(".section .rodata");
+const char D_8010BBE0_E3670_BowserSlots[] = " ZOOM   %3.3f \012\012";
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_8010BBF8_E3688_BowserSlots[2] = { 0x3FC00000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801038FC_DB38C_BowserSlots);
 
@@ -95,6 +134,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801078F0_
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801079B8_DF448_BowserSlots);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80107BCC_DF65C_BowserSlots);
+
+__asm__(".section .rodata");
+const u32 D_8010BE08_E3898_BowserSlots[8] = { 0x00000001, 0x00000001, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80107D68_DF7F8_BowserSlots);
 
