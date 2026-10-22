@@ -1018,9 +1018,6 @@ void func_80107F28_2DFFD8_name_44(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: masked 5, registers only: retail gives the side s2 and &D_80108FC8[side] s3, GCC
-   swaps them. */
-#ifdef NON_MATCHING
 /* A new beat: clears both sides' last answers (motion back, sprites off, models reset) and
    moves the CPU answers on. */
 void func_8010838C_2E043C_name_44(void) {
@@ -1052,9 +1049,6 @@ void func_8010838C_2E043C_name_44(void) {
         cpu->timer[side] = 4;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_8010838C_2E043C_name_44);
-#endif
 
 /* The answer's side sprite (func_80108750), placed on screen from D_80108B98[side] at height y. */
 void func_801085BC_2E066C_name_44(s32 side, f32 height) {
