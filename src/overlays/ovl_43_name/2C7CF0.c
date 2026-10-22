@@ -4364,7 +4364,51 @@ created:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010FDE0_2D52D0_name_43);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8011081C_2D5D0C_name_43);
+/* Passing a Boo's space: the camera shows the Boo and a message (0x304 on spaces 2 and 19, 0x303
+   on 7 and 8). */
+void func_8011081C_2D5D0C_name_43(void) {
+    s32 space;
+    GW_SYSTEM* gw;
+    s16 boo;
+
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    if (gw->current_player_index != 4) {
+        func_80046D2C_4792C(gw->current_player_index);
+        MBPlayerMotionSet(-1, -1, 2);
+        boo = 0;
+        switch ((s16)space) {
+            case 2:
+                boo = 0x7A;
+                break;
+            case 19:
+                boo = 0x79;
+                break;
+            case 7:
+                boo = 0x77;
+                break;
+            case 8:
+                boo = 0x78;
+                break;
+        }
+        func_80056C30_57830(-1, 8, boo);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        switch ((s16)space) {
+            case 2:
+            case 19:
+                MBDlgResultWinExec(0x304);
+                break;
+            case 7:
+            case 8:
+                MBDlgResultWinExec(0x303);
+                break;
+        }
+        func_8004655C_4715C(gw->current_player_index);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801109A4_2D5E94_name_43);
 
