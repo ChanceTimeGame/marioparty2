@@ -3541,7 +3541,7 @@ void func_8010FDC4_2D52B4_name_43(void) {
     func_8010FD0C_2D51FC_name_43(2);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING */
+#ifdef NON_MATCHING /* NON_MATCHING: registers only (t0-t2), as 3E's twin */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
 void func_8010FDE0_2D52D0_name_43(void) {
@@ -3572,13 +3572,21 @@ void func_8010FDE0_2D52D0_name_43(void) {
     flag = func_80046D2C_4792C(gw->current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
     switch ((s16)space) {
-    case 0xAF:
+    case 2:
         boo = 0;
-        cam = 0x9D;
+        cam = 0x7A;
         break;
-    case 0xB4:
+    case 0x13:
         boo = 1;
-        cam = 0x9F;
+        cam = 0x79;
+        break;
+    case 7:
+        boo = 0;
+        cam = 0x77;
+        break;
+    case 8:
+        boo = 1;
+        cam = 0x78;
         break;
     default:
         boo = -1;
