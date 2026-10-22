@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010FC50_245B30_SlotCarDerby[32] = "\202r\202s\202`\202q\202s\202f\202n\202`\202k\202v\202h\202m\201I";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80102800_2386E0_SlotCarDerby);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80102BC0_238AA0_SlotCarDerby);
@@ -22,7 +25,34 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801032E
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801032F8_2391D8_SlotCarDerby);
 
+__asm__(".section .rodata");
+const u32 D_8010FC80_245B60_SlotCarDerby[3] = { 0xC1000000, 0xC1200000, 0x41200000 };
+
+__asm__(".section .rodata");
+const u32 D_8010FC8C_245B6C_SlotCarDerby[3] = { 0x80000000, 0xC0A00000, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103650_239530_SlotCarDerby);
+
+__asm__(".section .rodata");
+const char D_8010FCA0_245B80_SlotCarDerby[] = "c100_1-atama";
+
+__asm__(".section .rodata");
+const char D_8010FCB0_245B90_SlotCarDerby[] = "c005_000-bmerge1";
+
+__asm__(".section .rodata");
+const char D_8010FCC4_245BA4_SlotCarDerby[] = "Luigi1-atama_1";
+
+__asm__(".section .rodata");
+const char D_8010FCD4_245BB4_SlotCarDerby[] = "c003_000-head_1";
+
+__asm__(".section .rodata");
+const char D_8010FCE4_245BC4_SlotCarDerby[] = "C002_000b-bmerge10_1";
+
+__asm__(".section .rodata");
+const char D_8010FCFC_245BDC_SlotCarDerby[] = "c001_000-atama_2";
+
+__asm__(".section .rodata");
+const char D_8010FD10_245BF0_SlotCarDerby[] = "atama_2";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103874_239754_SlotCarDerby);
 
@@ -34,6 +64,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801038D
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801038F0_2397D0_SlotCarDerby);
 
+__asm__(".section .rodata");
+const char D_8010FD18_245BF8_SlotCarDerby[] = "head";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010390C_2397EC_SlotCarDerby);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103D00_239BE0_SlotCarDerby);
@@ -44,7 +77,13 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801048B
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104E54_23AD34_SlotCarDerby);
 
+__asm__(".section .rodata");
+const u32 D_8010FE18_245CF8_SlotCarDerby[4] = { 0x3D787D9C, 0x3D9B4E82, 0x3DCF1358, 0x3E1B4E82 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104F3C_23AE1C_SlotCarDerby);
+
+__asm__(".section .rodata");
+const u32 D_8010FED0_245DB0_SlotCarDerby[10] = { 0x41A00000, 0x00000000, 0x00000000, 0xC1A00000, 0x00000000, 0x00000000, 0x00000000, 0x41A00000, 0x00000000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801056FC_23B5DC_SlotCarDerby);
 
@@ -74,6 +113,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801067D
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106874_23C754_SlotCarDerby);
 
+__asm__(".section .rodata");
+const u32 D_8010FFD8_245EB8_SlotCarDerby[4] = { 0x8010F870, 0x8010F888, 0x8010F8A0, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106A00_23C8E0_SlotCarDerby);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106B74_23CA54_SlotCarDerby);
@@ -87,6 +129,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010770
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107864_23D744_SlotCarDerby);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107AD4_23D9B4_SlotCarDerby);
+
+__asm__(".section .rodata");
+const u32 D_801100B8_245F98_SlotCarDerby[6] = { 0x00000006, 0x00000007, 0x00000008, 0x00000009, 0x0000000A, 0x0000000B };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107C40_23DB20_SlotCarDerby);
 
@@ -103,71 +148,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108D6
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108F14_23EDF4_SlotCarDerby);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108FF0_23EED0_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80109140_23F020_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801091DC_23F0BC_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80109240_23F120_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80109468_23F348_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801096D4_23F5B4_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80109CDC_23FBBC_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80109EC0_23FDA0_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010A190_240070_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010A55C_24043C_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010A8CC_2407AC_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010AC5C_240B3C_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010AD94_240C74_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010ADB0_240C90_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010B098_240F78_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010B0B8_240F98_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010B0E4_240FC4_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010B4D0_2413B0_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010B688_241568_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010C8D4_2427B4_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010C914_2427F4_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010C954_242834_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010C9A4_242884_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010C9F4_2428D4_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010CA44_242924_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010CA88_242968_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010CAD0_2429B0_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010CB1C_2429FC_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010CC3C_242B1C_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010D0B0_242F90_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010D590_243470_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010D644_243524_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010D68C_24356C_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010D6DC_2435BC_SlotCarDerby);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010DAD8_2439B8_SlotCarDerby);
