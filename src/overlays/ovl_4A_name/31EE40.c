@@ -9,6 +9,21 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80102BC0_31F200
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4A_name/31EE40", func_80102C14_31F254_name_4A);
 
 __asm__(".section .rodata");
+const u32 D_80108AF0_325130_name_4A[2] = { 0x00000002, 0x00060000 };
+
+__asm__(".section .rodata");
+const u32 D_80108AF8_325138_name_4A[5] = { 0x00000004, 0x00020000, 0x00020003, 0x00020005, 0x00020008 };
+
+__asm__(".section .rodata");
+const u32 D_80108B0C_32514C_name_4A[5] = { 0x00000004, 0x00070000, 0x0007004E, 0x00000000, 0x00070055 };
+
+__asm__(".section .rodata");
+const u32 D_80108B20_325160_name_4A[5] = { 0x00000004, 0x0008003D, 0x00080048, 0x00000000, 0x00080044 };
+
+__asm__(".section .rodata");
+const u32 D_80108B34_325174_name_4A[3] = { 0x000A021F, 0x000A021E, 0x000A021D };
+
+__asm__(".section .rodata");
 const u32 D_80108B40_325180_name_4A[3] = { 0x00000002, 0x000800A7, 0x000800AA };
 
 __asm__(".section .rodata");

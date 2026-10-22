@@ -1456,7 +1456,7 @@ segments:
     subsegments:
       - [0x31EE40, c]
       - [0x324E80, data]
-      - [0x325180, .rodata, 31EE40]
+      - [0x325130, .rodata, 31EE40]
       - {0x3252C0, type: bss, vram: 0x80108C80, name: ovl_4A_bss}
   - type: code
     start: 0x3252C0
