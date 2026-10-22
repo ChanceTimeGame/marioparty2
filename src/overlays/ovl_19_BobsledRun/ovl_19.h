@@ -116,6 +116,25 @@ typedef struct BRGround {
     /* 0x05 */ char unk_05[0xAF];
 } BRGround; /* size = 0xB4 */
 
+/* Speed history of one team's camera (bss D_8010CA38 / D_8010CB48, 0x110 apart). Retail
+   addresses the samples by their own labels (D_8010CADC / D_8010CBEC). */
+typedef struct BRHist {
+    /* 0x00 */ s32 idx;
+    /* 0x04 */ f32 unk04[40];
+} BRHist; /* size = 0xA4, then f32 samples[20] */
+
+/* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
+typedef struct BRCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C; /* its model file */
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} BRCharData; /* size = 0x18 */
+extern BRCharData D_800CD438_CE038[];
+
 #define BR_WORK(obj) ((BRWork*)(obj)->unk_50)
 
 /* ---------------------------------------------------------------------------------------------
@@ -129,6 +148,7 @@ extern u8 D_8010BFFC_19AB9C_BobsledRun[4]; /* their alpha step (+4 / -4) */
 extern f32 D_8010C000_19ABA0_BobsledRun[3]; /* background models' rotation */
 extern f32 D_8010C00C_19ABAC_BobsledRun[3]; /* their spin speed */
 extern Vec3f D_8010C018_19ABB8_BobsledRun[3]; /* their positions */
+extern s8 D_8010C03C_19ABDC_BobsledRun[4]; /* each player's team */
 extern f32 D_8010C040_19ABE0_BobsledRun[2]; /* camera field of view, per team */
 extern BRTeam D_8010C048_19ABE8_BobsledRun[2];
 extern s16 D_8010C0DC_19AC7C_BobsledRun; /* race time (frames) */
@@ -149,6 +169,10 @@ extern s32 D_8010C130_19ACD0_BobsledRun;
 extern u16 D_8010C9F0_19B590_BobsledRun; /* progress bar: track piece */
 extern u16 D_8010C9F2_19B592_BobsledRun; /* progress bar: flag */
 extern u16 D_8010C9F4_19B594_BobsledRun; /* progress bar: goal */
+extern BRHist D_8010CA38_19B5D8_BobsledRun;
+extern f32 D_8010CADC_19B67C_BobsledRun[20];
+extern BRHist D_8010CB48_19B6E8_BobsledRun;
+extern f32 D_8010CBEC_19B78C_BobsledRun[20];
 extern s32 D_8010CB30_19B6D0_BobsledRun[4]; /* per player: the character's motion file 0x4E */
 extern u16 D_8010CB40_19B6E0_BobsledRun; /* team 1's progress-bar sled */
 extern u8 D_8010CB42_19B6E2_BobsledRun[3]; /* the three background models */
@@ -243,6 +267,8 @@ s16 func_8001AAAC_1B6AC(s16, s32, s32);
 void func_8001A788_1B388(u16 spriteId, s32 arg1);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y); /* sprite scale */
 void espDispOff(u16);
+s32 func_80019B9C_1A79C(omObjData* obj, s32 motion); /* C8E0.c: player motion */
+void func_80029E80_2AA80(s16, s32, s32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800298A4_2A4A4(s16, s32, s32);
 s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
@@ -268,7 +294,7 @@ void func_80104490_193030_BobsledRun(omObjData* obj);
 void func_80104578_193118_BobsledRun(omObjData* obj);
 void func_80104660_193200_BobsledRun(omObjData* obj);
 void func_80104748_1932E8_BobsledRun(omObjData* obj);
-void func_80104820_1933C0_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team);
+void func_80104820_1933C0_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team, s32 chr);
 void func_80104BE0_193780_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 player, u16 team);
 void func_80104EAC_193A4C_BobsledRun(omObjData* obj);
 void func_801050F8_193C98_BobsledRun(omObjData* obj);

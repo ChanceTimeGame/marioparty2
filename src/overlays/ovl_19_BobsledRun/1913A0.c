@@ -625,7 +625,7 @@ void func_80104748_1932E8_BobsledRun(omObjData* obj) {
 }
 
 /* A bobsled for team, with its front rider (dir: the character's file directory). */
-void func_80104820_1933C0_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team) {
+void func_80104820_1933C0_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team, s32 chrArg) {
     BRWork* work;
     s32 sled;
     s32 mot;
@@ -870,17 +870,118 @@ void func_801050F8_193C98_BobsledRun(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801050F8_193C98_BobsledRun);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801051BC_193D5C_BobsledRun);
+/* Team 0's sled object (D_800FFFD8_100BD8[0]). */
+void func_801051BC_193D5C_BobsledRun(omObjData* obj) {
+    s32 chr;
+    s32 file;
+    s32 dir;
+    s16 mdl;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105344_193EE4_BobsledRun);
+    chr = gPlayers[D_8010C048_19ABE8_BobsledRun[0].player[0]].character;
+    file = D_800CD438_CE038[chr].unk_0C;
+    dir = D_800CD438_CE038[chr].unk_04;
+    func_80104820_1933C0_BobsledRun(obj, dir, file, 0, chr);
+    obj->model[5] = mdl = LoadFormFile(0x290000, 0x2C9);
+    D_8010C048_19ABE8_BobsledRun[0].mdl[4] = mdl;
+    D_8010105C_101C5C = 0.7f;
+    D_80101300_101F00 = 0.7f;
+    obj->model[6] = mdl = LoadFormFile(0x290002, 0xAC9);
+    D_8010C048_19ABE8_BobsledRun[0].mdl[5] = mdl;
+    func_80019B9C_1A79C(obj, 0);
+    obj->trans.x = -200.0f;
+    obj->trans.y = 13500.0f;
+    obj->trans.z = -1000.0f;
+    func_80029714_2A314(obj->model[5], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[6], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8001A788_1B388(D_8010C048_19ABE8_BobsledRun[0].sprite, 9);
+    espPosSet(D_8010C048_19ABE8_BobsledRun[0].sprite, 0x20, 0x5A);
+    func_80029EDC_2AADC(obj->model[6], 2);
+    func_80029E80_2AA80(obj->model[5], 2, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801054D0_194070_BobsledRun);
+/* Team 1's sled object (D_800FFFD8_100BD8[1]). */
+void func_80105344_193EE4_BobsledRun(omObjData* obj) {
+    s32 chr;
+    s32 file;
+    s32 dir;
+    s16 mdl;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010557C_19411C_BobsledRun);
+    chr = gPlayers[D_8010C048_19ABE8_BobsledRun[1].player[0]].character;
+    file = D_800CD438_CE038[chr].unk_0C;
+    dir = D_800CD438_CE038[chr].unk_04;
+    func_80104820_1933C0_BobsledRun(obj, dir, file, 1, chr);
+    obj->model[5] = mdl = LoadFormFile(0x290001, 0x2C9);
+    D_8010C048_19ABE8_BobsledRun[1].mdl[4] = mdl;
+    D_8010105C_101C5C = 0.7f;
+    D_80101300_101F00 = 0.7f;
+    obj->model[6] = mdl = LoadFormFile(0x290003, 0xAC9);
+    D_8010C048_19ABE8_BobsledRun[1].mdl[5] = mdl;
+    func_80019B9C_1A79C(obj, 0);
+    obj->trans.x = 200.0f;
+    obj->trans.y = 13500.0f;
+    obj->trans.z = -1000.0f;
+    func_80029714_2A314(obj->model[5], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[6], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8001A788_1B388(D_8010C048_19ABE8_BobsledRun[1].sprite, 7);
+    espPosSet(D_8010C048_19ABE8_BobsledRun[1].sprite, 0x20, 0x5E);
+    func_80029EDC_2AADC(obj->model[6], 1);
+    func_80029E80_2AA80(obj->model[5], 2, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010562C_1941CC_BobsledRun);
+/* Team 0's back rider. */
+void func_801054D0_194070_BobsledRun(omObjData* obj) {
+    s8 p = D_8010C048_19ABE8_BobsledRun[0].player[1];
+    s32 file = D_800CD438_CE038[gPlayers[p].character].unk_0C;
+    s32 dir = D_800CD438_CE038[gPlayers[p].character].unk_04;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105720_1942C0_BobsledRun);
+    func_80104BE0_193780_BobsledRun(obj, dir, file, p, 0);
+    func_80019B9C_1A79C(obj, 0);
+    func_8001A788_1B388(D_8010C048_19ABE8_BobsledRun[0].sprite2, 9);
+    espPosSet(D_8010C048_19ABE8_BobsledRun[0].sprite2, 0x16, 0x5A);
+}
+
+/* Team 1's back rider. */
+void func_8010557C_19411C_BobsledRun(omObjData* obj) {
+    s8 p = D_8010C048_19ABE8_BobsledRun[1].player[1];
+    s32 file = D_800CD438_CE038[gPlayers[p].character].unk_0C;
+    s32 dir = D_800CD438_CE038[gPlayers[p].character].unk_04;
+
+    func_80104BE0_193780_BobsledRun(obj, dir, file, p, 1);
+    func_80019B9C_1A79C(obj, 0);
+    func_8001A788_1B388(D_8010C048_19ABE8_BobsledRun[1].sprite2, 7);
+    espPosSet(D_8010C048_19ABE8_BobsledRun[1].sprite2, 0x16, 0x5E);
+}
+
+/* Teams from the players' groups. */
+void func_8010562C_1941CC_BobsledRun(void) {
+    s32 t;
+    s32 i;
+
+    for (t = 0; t < 2; t++) {
+        for (i = 0; i < 4; i++) {
+            if (t == gPlayers[i].group) {
+                if (D_8010C048_19ABE8_BobsledRun[t].player[0] < 0) {
+                    D_8010C048_19ABE8_BobsledRun[t].player[0] = i;
+                    D_8010C048_19ABE8_BobsledRun[t].port[0] = gPlayers[i].port;
+                } else if (D_8010C048_19ABE8_BobsledRun[t].player[1] < 0) {
+                    D_8010C048_19ABE8_BobsledRun[t].player[1] = i;
+                    D_8010C048_19ABE8_BobsledRun[t].port[1] = gPlayers[i].port;
+                }
+                D_8010C03C_19ABDC_BobsledRun[i] = t;
+            }
+        }
+    }
+}
+
+void func_80105720_1942C0_BobsledRun(void) {
+    s32 i;
+
+    D_8010CA38_19B5D8_BobsledRun.idx = 0;
+    D_8010CB48_19B6E8_BobsledRun.idx = 0;
+    for (i = 0; i < 20; i++) {
+        D_8010CADC_19B67C_BobsledRun[i] = D_8010CBEC_19B78C_BobsledRun[i] = 0.0f;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105770_194310_BobsledRun);
 
