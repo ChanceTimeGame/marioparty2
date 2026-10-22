@@ -50,6 +50,7 @@ extern s32 D_800F8C5C_F985C;
 
 s32 BoardSpaceGet(s32 index, s32 count);
 void HidePlayerHUDVisibility(s32 arg0, s32 arg1);
+void CameraScissorSet(s16 camIndex, RectF* rect);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 f32 HuMathSin(f32);
@@ -264,7 +265,7 @@ extern s16 D_80108768_30CB08_name_48;
 extern s16 D_8010876A_30CB0A_name_48[7];
 extern s32 D_80108778_30CB18_name_48;
 extern f32 D_8010877C_30CB1C_name_48[5];
-extern f32 D_80108790_30CB30_name_48[4];
+extern RectF D_80108790_30CB30_name_48; /* the scene's scissor */
 extern f32 D_801087A0_30CB40_name_48[4];
 
 /* ---- 48 bss (asm/data/overlays/ovl_48_name/ovl_48_bss.bss.s) ---- */
@@ -273,8 +274,12 @@ extern s32 D_80108910_30CCB0_name_48; /* a step finished */
 extern s32 D_80108914_30CCB4_name_48; /* the stake */
 /* func_80104B88's message: window x and y (stored as s32, read as s16), variant, id, the
    player it names. */
+extern s32 D_80108918_30CCB8_name_48;
+extern s32 D_8010891C_30CCBC_name_48;
 extern s32 D_80108920_30CCC0_name_48;
+extern s32 D_80108924_30CCC4_name_48;
 extern s32 D_80108928_30CCC8_name_48;
+extern s32 D_8010892C_30CCCC_name_48;
 extern s32 D_80108930_30CCD0_name_48; /* the challenger */
 extern s32 D_80108934_30CCD4_name_48; /* the opponent, -1 until chosen */
 extern s32 D_80108938_30CCD8_name_48[4]; /* players in the scene */
