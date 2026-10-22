@@ -48,6 +48,30 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801070AC_32EA6C
 void func_80107324_32ECE4_name_4E(void) {
 }
 
+__asm__(".section .rodata");
+const char D_8010D9C8_335388_name_4E[] = "  ALL  ";
+
+__asm__(".section .rodata");
+const char D_8010D9D0_335390_name_4E[] = "  DK   ";
+
+__asm__(".section .rodata");
+const char D_8010D9D8_335398_name_4E[] = " WARIO ";
+
+__asm__(".section .rodata");
+const char D_8010D9E0_3353A0_name_4E[] = " YOSHI ";
+
+__asm__(".section .rodata");
+const char D_8010D9E8_3353A8_name_4E[] = " PEACH ";
+
+__asm__(".section .rodata");
+const char D_8010D9F0_3353B0_name_4E[] = " LUIGI ";
+
+__asm__(".section .rodata");
+const char D_8010D9F8_3353B8_name_4E[] = " MARIO ";
+
+__asm__(".section .rodata");
+const char D_8010DA00_3353C0_name_4E[] = "WON\304 ";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010732C_32ECEC_name_4E);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107554_32EF14_name_4E);
@@ -97,67 +121,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108F24_3308E4
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109750_331110_name_4E);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109778_331138_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109840_331200_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109914_3312D4_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010993C_3312FC_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109988_331348_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801099D4_331394_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A244_331C04_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A2A0_331C60_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A300_331CC0_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A438_331DF8_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A588_331F48_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010A660_332020_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010AB48_332508_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010AB58_332518_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010AB64_332524_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010ADE0_3327A0_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010B480_332E40_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010B528_332EE8_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010BCB8_333678_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C218_333BD8_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C4AC_333E6C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C5BC_333F7C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C5F4_333FB4_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C600_333FC0_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C60C_333FCC_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C618_333FD8_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C708_3340C8_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C7AC_33416C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C86C_33422C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C96C_33432C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010C9AC_33436C_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010CCB4_334674_name_4E);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010CF6C_33492C_name_4E);
