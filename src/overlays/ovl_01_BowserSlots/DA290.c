@@ -1823,7 +1823,106 @@ s32 func_8010879C_E022C_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha) {
     return idx;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80108EE4_E0974_BowserSlots);
+/* A flat model (file 0x4C1) showing one sprite frame, with one display list per vertex buffer
+   (MP3 motor_rooter's func_8010EFF8). */
+s32 func_80108EE4_E0974_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha) {
+    HmfData* hmf;
+    Gfx* buf;
+    Gfx* gfx;
+    s32 size;
+    s32 idx;
+    s32 fmt;
+    s32 i;
+
+    buf = gfx = HuMemAlloc(0x10000);
+    idx = func_80027FA4_28BA4(0x4C1, buf, 4);
+    hmf = BS_MODEL(idx)->hmf;
+    hmf->unk64->unk50 |= 0x01010000;
+    HuMemFree(hmf->unk3C);
+    hmf->unk3C = func_80027154_27D54(0x14, D_800FA1AA_FADAA);
+    func_80109C5C_E16EC_BowserSlots(spr, hmf, 1.0f, 0, 0x1E);
+    gSPDisplayList(gfx++, osVirtualToPhysical(D_8010B9C0_E3450_BowserSlots));
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, G_CULL_BOTH | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR);
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_NONE);
+    gDPSetBlendColor(gfx++, 0x01, 0x01, 0x01, 0x01);
+    gDPPipeSync(gfx++);
+    gDPSetRenderMode(gfx++, G_RM_ZB_XLU_SURF, G_RM_NOOP2);
+    if (spr->unk1A >= 2) {
+        gDPSetCombineLERP(gfx++, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, alpha * 255.0f);
+    } else {
+        if (spr->unk18 & 0x8000) {
+            gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
+        } else {
+            gDPSetCombineLERP(gfx++, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
+        }
+        gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, alpha * 255.0f);
+    }
+    gDPPipeSync(gfx++);
+    gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+    gDPSetTexturePersp(gfx++, G_TP_PERSP);
+    if (spr->unk1A >= 2) {
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        if (spr->unk18 == 4) {
+            gDPLoadTLUT_pal16(gfx++, 0, spr->unk0C);
+        } else {
+            gDPLoadTLUT_pal256(gfx++, spr->unk0C);
+        }
+        gDPPipeSync(gfx++);
+        fmt = 2;
+    } else {
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        gDPPipeSync(gfx++);
+        fmt = (spr->unk18 & 0x8000) ? 4 : 0;
+    }
+    switch (spr->unk18 & 0xFFF) {
+        case 4:
+            gDPLoadTextureBlock_4b(gfx++, 0x04000000, fmt, spr->unk00->unk04, spr->unk00->unk06, 0,
+                                   G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                                   G_TX_NOLOD, G_TX_NOLOD);
+            break;
+        case 8:
+            gDPLoadTextureBlock(gfx++, 0x04000000, fmt, G_IM_SIZ_8b, spr->unk00->unk04, spr->unk00->unk06, 0,
+                                G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                                G_TX_NOLOD, G_TX_NOLOD);
+            break;
+        case 16:
+            gDPLoadTextureBlock(gfx++, 0x04000000, fmt, G_IM_SIZ_16b, spr->unk00->unk04, spr->unk00->unk06, 0,
+                                G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                                G_TX_NOLOD, G_TX_NOLOD);
+            break;
+    }
+    gDPPipeSync(gfx++);
+    gSPSegment(gfx++, 0x01, osVirtualToPhysical(hmf->unk44[0]));
+    gSPVertex(gfx++, 0x01000000, 4, 0);
+    gSP2Triangles(gfx++, 0, 1, 2, 0, 1, 3, 2, 0);
+    gSPClearGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH | G_CLIPPING | 0x0040F9FA);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_TEXTURE_GEN_LINEAR);
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    size = (u32)gfx - (u32)buf;
+    hmf->unk3C->unk00[0] = hmf->unk3C->unk10 = func_80027154_27D54(size, hmf->unk0E);
+    bcopy(buf, hmf->unk3C->unk00[0], size);
+    HuMemFree(buf);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        gfx = hmf->unk3C->unk00[i + 1] = func_80027154_27D54(0x100, hmf->unk0E);
+        gDPPipeSync(gfx++);
+        gSPSegment(gfx++, 0x04, osVirtualToPhysical(spr->unk00->unk00));
+        gSPDisplayList(gfx++, osVirtualToPhysical(hmf->unk3C->unk10));
+        gSPEndDisplayList(gfx++);
+    }
+    hmf->unk3C->unk00[0] = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
+    return idx;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80109AF8_E1588_BowserSlots);
 

@@ -310,7 +310,7 @@ void func_801079B8_DF448_BowserSlots(s32 model, f32 arg1, f32 arg2, f32 arg3);
 void func_80107BCC_DF65C_BowserSlots(s32 model, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
 s32 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items); /* returns a u16 (callers re-mask it) */
 s32 func_8010879C_E022C_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
-s16 func_80108EE4_E0974_BowserSlots(void* anim, f32 scale);
+s32 func_80108EE4_E0974_BowserSlots(HuSprite_Unk84_Struct* spr, f32 alpha); /* returns the model id unextended */
 void func_80109AF8_E1588_BowserSlots(u16 model, void* anim, s32 frame);
 s16 func_80109BC8_E1658_BowserSlots(s32 model, s32 src);
 s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 arg3, u16 arg4);
