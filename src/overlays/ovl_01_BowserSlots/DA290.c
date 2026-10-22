@@ -2405,14 +2405,99 @@ void func_8010A53C_E1FCC_BowserSlots(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A53C_E1FCC_BowserSlots);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B148_E2BD8_BowserSlots);
+/* Rebuilds a motion object's matrix from its rotation and scale, keeping its translation
+   (MP1 SlotMachine's func_800FC9A8). */
+void func_8010B148_E2BD8_BowserSlots(HmfMotionObj* part) {
+    f32 x = part->unk58[3][0];
+    f32 y = part->unk58[3][1];
+    f32 z = part->unk58[3][2];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B1D4_E2C64_BowserSlots);
+    func_800B37C0_B43C0(part->unk58);
+    part->unk58[3][0] = x;
+    part->unk58[3][1] = y;
+    part->unk58[3][2] = z;
+    func_80025884_26484(part->unk58, part->unk34.x, part->unk34.y, part->unk34.z);
+    func_80025830_26430(part->unk58, part->unk40.x, part->unk40.y, part->unk40.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B2FC_E2D8C_BowserSlots);
+/* Wraps each angle of `rot` into 0-360 (one step). */
+void func_8010B1D4_E2C64_BowserSlots(Vec* rot) {
+    if (rot->x >= 360.0) {
+        rot->x -= 360.0;
+    } else if (rot->x < 0.0) {
+        rot->x += 360.0;
+    }
+    if (rot->y >= 360.0) {
+        rot->y -= 360.0;
+    } else if (rot->y < 0.0) {
+        rot->y += 360.0;
+    }
+    if (rot->z >= 360.0) {
+        rot->z -= 360.0;
+    } else if (rot->z < 0.0) {
+        rot->z += 360.0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B38C_E2E1C_BowserSlots);
+/* The angle between two angles (0-180). */
+f32 func_8010B2FC_E2D8C_BowserSlots(f32 a, f32 b) {
+    f32 d = b - a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B43C_E2ECC_BowserSlots);
+    if (d >= 360.0) {
+        d -= 360.0;
+    } else if (d < 0.0) {
+        d += 360.0;
+    }
+    if (d >= 180.0) {
+        d = 360.0 - d;
+    }
+    return d;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010B60C_E309C_BowserSlots);
+/* A random symbol 1-5 by main's chance table (D_800CAFE4, percent per item). */
+s32 func_8010B38C_E2E1C_BowserSlots(void) {
+    s16 i;
+    s16 sum;
+    u8 r;
+
+    r = rand8() % 100;
+    i = 0;
+    sum = 0;
+    for (; i < 4; i++) {
+        sum += D_800CAFE4[i];
+        if (r < sum) {
+            break;
+        }
+    }
+    return i + 1;
+}
+
+/* Projects a world position to screen offsets from the centre for camera `camera`
+   (MP1 SlotMachine's func_800FCA34). */
+void func_8010B43C_E2ECC_BowserSlots(s16 camera, Vec* pos, f32* out) {
+    f32 v[3];
+    Matrix4f mtx;
+    HuCamera* cam;
+    f32 t;
+    f32 d;
+
+    cam = &D_800C9B80_CA780[camera];
+    func_800B1960_B2560(mtx, cam->pos.x, cam->pos.y, cam->pos.z, cam->at.x, cam->at.y, cam->at.z, cam->up.x,
+                        cam->up.y, cam->up.z);
+    func_8010B60C_E309C_BowserSlots(mtx, pos->x, pos->y, pos->z, v);
+    t = HuMathSin(cam->fov[0] * 0.5);
+    t /= func_800B7890_B8490(cam->fov[0] * 0.5);
+    d = t * v[2];
+    if (d < 0.0f) {
+        d = -d;
+    }
+    out[0] = cam->viewports[D_800FFFD6_100BD6].vp.vscale[0] / 4.0 * v[0] / d * 0.75;
+    out[1] = cam->viewports[D_800FFFD6_100BD6].vp.vscale[1] / 4.0 * -v[1] / d;
+}
+
+/* out = (x, y, z) * m (MP1 SlotMachine's func_800FCBFC). */
+void func_8010B60C_E309C_BowserSlots(Matrix4f m, f32 x, f32 y, f32 z, f32* out) {
+    *out++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *out++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *out = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}

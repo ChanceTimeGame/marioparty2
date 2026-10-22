@@ -17,6 +17,7 @@
 #include "game/data.h"
 #include "game/sprite.h"
 #include "game/malloc.h"
+#include "game/camera.h"
 
 /* ---- main-segment API used by 01 ---- */
 
@@ -358,6 +359,11 @@ extern BSSymFx D_8010BA24_E34B4_BowserSlots[];
 extern BSFxKind D_8010BA50_E34E0_BowserSlots[];
 extern s8 D_8010BA60_E34F0_BowserSlots[4][3][2]; /* start offsets / 10; 0x7F: start at the reels */
 extern s16 D_8010C178_E3C08_BowserSlots; /* effect sprite animation */
+extern s16 D_800CAFE4[4]; /* item chances (percent; follows D_800CAFD8) */
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+void func_800B1960_B2560(Matrix4f m, f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz); /* guLookAtF */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
+void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
 extern s16 D_8010C17A_E3C0A_BowserSlots; /* effect sprite group */
 extern s16 D_8010C17C_E3C0C_BowserSlots;
 extern s16 D_8010C184_E3C14_BowserSlots;
