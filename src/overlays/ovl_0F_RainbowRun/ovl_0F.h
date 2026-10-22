@@ -140,6 +140,7 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+f32 sqrtf(f32);
 f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
 void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
@@ -223,6 +224,7 @@ extern s8 D_8010A784_14C114_RainbowRun[8]; /* stick y history */
 extern s8 D_8010A78C_14C11C_RainbowRun; /* next slot of the stick histories */
 extern u16 D_8010A78E_14C11E_RainbowRun; /* func_80105E38's last buttons */
 extern u32 D_8010A790_14C120_RainbowRun; /* random seed */
+extern f32 D_8010A7D0_14C160_RainbowRun; /* x of the course's middle */
 
 /* ---- .bss ---- */
 

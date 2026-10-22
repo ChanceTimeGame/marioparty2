@@ -271,7 +271,104 @@ void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 play
     }
 }
 
+/* A CPU runner: steer back to the middle, slow down near the thrown objects (MP1
+   func_800F7450_TightropeTreachery). */
+// register allocation as MP1's (switch operands copied), and retail's mul-fix nop after sqrtf (masked 43)
+#ifdef NON_MATCHING
+void func_80103E1C_1457AC_RainbowRun(omObjData* obj) {
+    RRPlayerWork* w = obj->unk_50;
+    s32 pace;
+    s32 side;
+    s8 near;
+    s16 i;
+    f32 rope;
+
+    ContStkX[w->port] = 0;
+    ContStkY[w->port] = 0;
+    pace = 0;
+    rope = D_8010A7D0_14C160_RainbowRun;
+    if (rope + 40.0f <= obj->trans.x) {
+        side = 1;
+    } else if (rope + 15.0f <= obj->trans.x) {
+        side = 2;
+    } else if (rope + -15.0f <= obj->trans.x) {
+        side = 0;
+    } else if (rope + -40.0f <= obj->trans.x) {
+        side = 4;
+    } else {
+        side = 3;
+    }
+    near = 0;
+    for (i = 0; i < 3; i++) {
+        omObjData* bomb = D_800F9CE0_FA8E0[i];
+        f32 dx = bomb->trans.x;
+        f32 dy = bomb->trans.y;
+        f32 dz = bomb->trans.z;
+        f32 d;
+
+        dx -= obj->trans.x;
+        dy -= obj->trans.y;
+        dz -= obj->trans.z;
+        d = sqrtf(dx * dx + dy * dy);
+        if (d * d + dz * dz < 10000.0f) {
+            near++;
+        }
+    }
+    switch (near) {
+    case 3:
+        pace = 4;
+        break;
+    case 0:
+        pace = 1;
+        if ((side == 1) | (side == 3)) {
+            pace = 2;
+        }
+        break;
+    case 1:
+        pace = 2;
+        break;
+    case 2:
+        pace = 2;
+        break;
+    }
+    switch (side) {
+    case 1:
+        ContStkX[w->port] = -80;
+        break;
+    case 2:
+        ContStkX[w->port] = -40;
+        break;
+    case 3:
+        ContStkX[w->port] = 80;
+        break;
+    case 4:
+        ContStkX[w->port] = 40;
+        break;
+    default:
+        ContStkX[w->port] = 0;
+        break;
+    }
+    switch (pace) {
+    case 1:
+        ContStkY[w->port] = 80;
+        break;
+    case 2:
+        ContStkY[w->port] = 40;
+        break;
+    case 3:
+        ContStkY[w->port] = -80;
+        break;
+    case 4:
+        ContStkY[w->port] = -40;
+        break;
+    default:
+        ContStkY[w->port] = 0;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80103E1C_1457AC_RainbowRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_801041E4_145B74_RainbowRun);
 
