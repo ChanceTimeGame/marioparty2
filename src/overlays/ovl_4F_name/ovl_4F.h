@@ -252,6 +252,8 @@ extern Vec D_8010FE68_342AA8_name_4F;
 extern Vec D_8010FE74_342AB4_name_4F;
 extern Vec D_8010FE80_342AC0_name_4F;
 extern Vec D_8010FE8C_342ACC_name_4F;
+extern Vec D_8010FE98_342AD8_name_4F;
+void func_80029C74_2A874(s16, f32);
 extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
 s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* func_8005A5E8, rotation discarded */
 extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */
