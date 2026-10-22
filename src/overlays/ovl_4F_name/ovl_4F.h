@@ -26,6 +26,7 @@
 #include "game/camera.h"
 #include "game/sprite.h"
 #include "game/pad.h"
+#include "game/hmfman.h"
 
 /* ---- types ---- */
 
@@ -46,6 +47,7 @@ typedef struct Ovl4FFlyWork {
 /* ---- main-segment API used by 4F ---- */
 
 f32 HuMathSin(f32);
+f32 __sinf(f32);
 s16 LoadFormFile(s32, s32);
 void MBDBackKill(void);
 void MBModelDispOff(MBModel*);
