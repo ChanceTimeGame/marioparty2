@@ -136,6 +136,7 @@ typedef struct CGWork {
 #define CG_WORK(obj) ((CGWork*)(obj)->unk_50)
 
 double fabs(double);
+float fabsf(float);
 
 /* The claw block (MP1 CGClaw, HuMemDirectMalloc(0x5C) there; func_80107DD4/80107F40 here), kept in
    D_8010CE30_156950_CraneGame. MP1's layout: MG10-B, check it against 80107DD4. */

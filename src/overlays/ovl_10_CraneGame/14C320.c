@@ -1209,7 +1209,69 @@ s16 func_80106568_150088_CraneGame(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106568_150088_CraneGame);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106A28_150548_CraneGame);
+void func_80106A28_150548_CraneGame(omObjData* obj) {
+    f32 r;
+    f32 r2;
+    f32 dy;
+    f32 rr;
+    f32 lim;
+    f32 dx;
+    f32 dz;
+    f32 d;
+    f32 a;
+    s16 i;
+    omObjData* o;
+    CGWork* ow;
+    CGClaw* oc;
+
+    ow = obj->unk_50;
+    func_80107F40_151A60_CraneGame(obj);
+    if (ow->unk38 > ow->unk34) {
+        r = ow->unk38;
+    } else {
+        r = ow->unk34;
+    }
+    for (i = 0; i < D_800FA606_FB206; i++) {
+        o = D_800F9CE0_FA8E0[i];
+        oc = func_80107F40_151A60_CraneGame(o);
+        ow = o->unk_50;
+        if (obj == o) {
+            continue;
+        }
+        if (oc->unk2 & 1) {
+            continue;
+        }
+        if (oc->unk3C != 0) {
+            continue;
+        }
+        if (ow->unk38 > ow->unk34) {
+            r2 = ow->unk38;
+        } else {
+            r2 = ow->unk34;
+        }
+        dy = fabsf(o->trans.y - obj->trans.y);
+        rr = r + r2;
+        if (dy < rr) {
+            lim = func_800B7890_B8490(dy / rr * 90.0) * rr;
+            dx = o->trans.x - obj->trans.x;
+            dz = o->trans.z - obj->trans.z;
+            d = sqrtf(dx * dx + dz * dz);
+            if (d < lim) {
+                if (d != 0.0) {
+                    dx /= d;
+                    dz /= d;
+                } else {
+                    a = (rand8() * 45) >> 5;
+                    dx = func_800B7890_B8490(a);
+                    dz = HuMathSin(a);
+                }
+                d = lim - d;
+                obj->trans.x += -dx * d;
+                obj->trans.z += -dz * d;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106C98_1507B8_CraneGame);
 
