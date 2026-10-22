@@ -334,7 +334,59 @@ void func_80109024_152B44_CraneGame(HmfPart* g, ColVtx* verts, s16 nverts) {
     D_8010CAA2_1565C2_CraneGame = nf;
 }
 
+/* Sorts the faces far to near by how shared their vertices are (MP1 func_800FC9B0; MP2 masks the
+   quad bit off the vertex index, which MP1 did not). Residue: retail copies the vertex count to a
+   second register and the key before decrementing it (register allocation). */
+#ifdef NON_MATCHING
+void func_801091D4_152CF4_CraneGame(void) {
+    CGShadowOrder* q;
+    CGShadowOrder* best;
+    CGShadowOrder* r;
+    s16* f;
+    s32 key;
+    s32 i;
+    s32 j;
+    s32 n;
+    s16 sum;
+    s16 t;
+    s32 pad[2];
+
+    if (D_8010CAA0_1565C0_CraneGame >= 29) {
+        key = D_8010CAA0_1565C0_CraneGame;
+        q = D_8010CAA4_1565C4_CraneGame;
+        for (i = 0; i < D_8010CAA2_1565C2_CraneGame; i++, q++) {
+            f = (s16*)D_8010CA98_1565B8_CraneGame[i].v;
+            n = 3;
+            if (*f & 0x8000) {
+                n = 4;
+            }
+            sum = 0;
+            for (j = 0; j < n; j++, f++) {
+                sum += D_8010CA9C_1565BC_CraneGame[*f & 0x7FFF];
+            }
+            q->key = key-- + (sum * 100) / n;
+        }
+        q = D_8010CAA4_1565C4_CraneGame;
+        for (i = 0; i < D_8010CAA2_1565C2_CraneGame - 1; i++, q++) {
+            best = q;
+            r = q + 1;
+            for (j = i; j < D_8010CAA2_1565C2_CraneGame - 1; j++, r++) {
+                if (best->key < r->key) {
+                    best = r;
+                }
+            }
+            t = q->key;
+            q->key = best->key;
+            best->key = t;
+            t = q->face;
+            q->face = best->face;
+            best->face = t;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801091D4_152CF4_CraneGame);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801093A0_152EC0_CraneGame);
 
