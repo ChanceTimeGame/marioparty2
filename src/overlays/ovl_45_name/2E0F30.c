@@ -3768,9 +3768,67 @@ void func_8010E618_2ECD48_name_45(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010E828_2ECF58_name_45);
+#ifdef NON_MATCHING
+/* GCC turns the last CPU test (2 or 3) into set-on-condition; retail branches (bnel). */
+void func_8010E828_2ECF58_name_45(void) {
+    struct unk_8003B8D4Struct* prompt;
+    s32 dir;
+    s32 i;
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010E9D0_2ED100_name_45);
+    MBPlayerMotionSet(-1, -1, 2);
+    HuPrcVSleep();
+    func_80103BC4_2E22F4_name_45();
+    prompt = func_80041A74_42674(GwSystem.current_player_index, D_801118D8_2F0008_name_45);
+    func_800417EC_423EC(prompt, GwSystem.current_player_index, 0);
+    if (PlayerIsCPU(-1) != 0) {
+        if (GwSystem.current_player_index == 4) {
+            n = MBRand(4.0f);
+        } else if (func_80044800_45400(D_80111224_2EF954_name_45) == 0) {
+            n = 0;
+        } else if (func_80044800_45400(D_8011129C_2EF9CC_name_45) == 0) {
+            n = 1;
+        } else if (func_80044800_45400(D_80111344_2EFA74_name_45) == 0) {
+            n = 2;
+        } else {
+            n = 3;
+        }
+        for (i = 0; i < n; i++) {
+            func_80041610_42210(prompt, -2);
+        }
+        func_80041610_42210(prompt, -4);
+    }
+    dir = DirectionPrompt(prompt);
+    func_8004108C_41C8C(prompt);
+    func_80103C94_2E23C4_name_45();
+    switch (dir) {
+        case 0:
+            SetNextChainAndSpace(-1, 8, 0);
+            break;
+        case 1:
+            SetNextChainAndSpace(-1, 10, 0);
+            break;
+        case 2:
+            SetNextChainAndSpace(-1, 12, 0);
+            break;
+        default:
+            SetNextChainAndSpace(-1, 15, 0);
+            break;
+    }
+    omDelPrcObj(NULL);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010E828_2ECF58_name_45);
+#endif
+
+void func_8010E9D0_2ED100_name_45(void) {
+    MBModel* obj = HuPrcCurrentGet()->user_data;
+
+    while (TRUE) {
+        HuVecCopyXYZ(&obj->scale, 6.0f, 6.0f, HuVecDistance(&D_801130D0_2F1800_name_45, &obj->pos) / 6.0f);
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_8010EA40_2ED170_name_45);
 

@@ -613,4 +613,10 @@ extern s16 D_80110F40_2EF670_name_45[2]; /* the two spaces 80106820's models sta
 extern s16 D_80110F44_2EF674_name_45[2][2]; /* per model: the two spaces it faces between */
 extern MBModel* D_801130C0_2F17F0_name_45; /* model 0x87 on space 0x78, its texture swapped */
 
+extern s16 D_801118D8_2F0008_name_45[]; /* 8010E828's four-way prompt */
+extern DecisionTreeNonLeafNode D_80111224_2EF954_name_45[];
+extern DecisionTreeNonLeafNode D_8011129C_2EF9CC_name_45[];
+extern DecisionTreeNonLeafNode D_80111344_2EFA74_name_45[];
+extern Vec D_801130D0_2F1800_name_45; /* the point 8010E9D0's model stretches to */
+
 #endif
