@@ -118,6 +118,12 @@ extern f32 D_800FA610_FB210;  /* CZoom */
 s16 SprAnimRead(void*);
 void*** SprAnimGet(s16);
 s32 func_800283DC_28FDC(s16); /* remove a draw callback */
+void func_800B30D0_B3CD0(Matrix4f m, Mtx* mtx); /* MP1 func_800A0B90: Mtx to float */
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* MP1 func_8009EA40: translation */
+void func_80025F00_26B00(Matrix4f src, Matrix4f dst); /* MP1 MtxInv */
+void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800AC0B0: multiply */
+extern Gfx D_8010BCE0_155800_CraneGame[]; /* shadow render setup (MP1 D_800FF870) */
+extern Vtx D_8010BD20_155840_CraneGame[3]; /* the claw's round shadow (MP1 D_800FF8B0) */
 
 /* A model group's shadow display list (D_8010C7E8, func_80108D18): gSPVertex/gSP1Triangle commands
    that load from segment 1 (the frame's vertex buffer). */
@@ -178,6 +184,9 @@ extern s16 D_8010C262_155D82_CraneGame; /* shadowed models */
 extern s16 D_8010C264_155D84_CraneGame; /* frame buffer index, 0-2 */
 extern s16 D_8010C268_155D88_CraneGame[64];
 extern CGShadowFade D_8010C2E8_155E08_CraneGame[64];
+/* The split label of D_8010C2E8[0].target: 801082F4 addresses the targets by it. */
+extern CGShadowFade D_8010C2EC_155E0C_CraneGame[];
+#define CG_FADE_TARGET(i) (D_8010C2EC_155E0C_CraneGame[i].cur)
 extern Vtx* D_8010C4E8_156008_CraneGame[64][3];
 extern CGShadowGroup* D_8010C7E8_156308_CraneGame[64];
 extern s16 D_8010C8E8_156408_CraneGame; /* the shadow sprite */
