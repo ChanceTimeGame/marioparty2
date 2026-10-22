@@ -298,6 +298,14 @@ extern Vec D_801101E4_342E24_name_4F;
 extern Vec D_801101F0_342E30_name_4F;
 extern Vec D_801101FC_342E3C_name_4F[6];    /* per character (splat's D_80110200/04 are fields) */
 extern s16 D_8011045A_34309A_name_4F;
+extern Vec D_80110244_342E84_name_4F;
+extern Vec D_80110250_342E90_name_4F;
+extern Vec D_8011025C_342E9C_name_4F[6];    /* per character (splat's D_80110260/64 are fields) */
+extern Vec D_801102A4_342EE4_name_4F[6];    /* per character (splat's D_801102A8/AC are fields) */
+extern void* D_800FD2A8_FDEA8;              /* the camera (HuCamera*) */
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
+void func_80052E68_53A68(f32); /* MBCameraZoomSet */
+u16 MBDCameraPos3DSet(Vec*);
 extern const char D_801103DC_34301C_name_4F[]; /* "e000p15_IA44" (80108B30, 8010A8AC, 8010B620) */
 /* fork D (inferred) */
 void func_8010C7CC_33F40C_name_4F(void);
@@ -315,11 +323,11 @@ s32 func_8010D4D8_340118_name_4F(void);
 s32 func_8010D528_340168_name_4F(omObjData* obj);
 void func_8010D6FC_34033C_name_4F(omObjData* obj);
 void func_8010DA90_3406D0_name_4F(void);
-s32 func_8010DD7C_3409BC_name_4F(void);
+omObjData* func_8010DD7C_3409BC_name_4F(void); /* 4F-C: from its asm */
 s32 func_8010DDCC_340A0C_name_4F(omObjData* obj);
 void func_8010DFCC_340C0C_name_4F(omObjData* obj);
-void func_8010E430_341070_name_4F(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_8010E5D8_341218_name_4F(s32 arg0);
+void func_8010E430_341070_name_4F(omObjData* obj, f32 arg1, f32 arg2, f32 arg3, f32 arg4); /* 4F-C: from its asm */
+void func_8010E5D8_341218_name_4F(omObjData* obj); /* 4F-C: from its asm */
 s32 func_8010E610_341250_name_4F(void);
 void func_8010E660_3412A0_name_4F(omObjData* obj);
 s32 func_8010E70C_34134C_name_4F(omObjData* obj, s32 arg1, s32 arg2);

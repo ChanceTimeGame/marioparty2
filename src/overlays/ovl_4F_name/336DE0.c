@@ -1062,9 +1062,111 @@ void func_8010A6A0_33D2E0_name_4F(void) {
     obj->work[0] = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A8AC_33D4EC_name_4F);
+#ifdef NON_MATCHING
+/* NON_MATCHING: registers (retail keeps LoadFormFile's result unextended in s2 and copies the
+   character into s1 for the scale test; GCC needs s6); same logic. */
+/* The winner's character puppet and D_80110580 take a bow together. */
+void func_8010A8AC_33D4EC_name_4F(void) {
+    MBModel* winner;
+    s32 character;
+    s16 form2;
+    s16 form;
+    omObjData* obj;
+    omObjData* bow;
+    HmfData* hmf;
+    s16 i;
+    f32 x;
+    f32 z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010ADA0_33D9E0_name_4F);
+    func_80050E00_51A00(0x1B);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    winner = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    character = gPlayers[D_80110564_3431A4_name_4F].character;
+    form2 = func_8010CDD4_33FA14_name_4F(0xA01ED);
+    form = LoadFormFile(0xA01F1, 0x6AD);
+    func_80018DC0_199C0(D_800FC834_FD434[form].hmf, 0xA01F2, D_801103DC_34301C_name_4F);
+    hmf = D_800FC834_FD434[form].hmf;
+    HmfModelObjAttrSet(form, 0x100000, 0x100000);
+    for (i = 0; i < hmf->unk1E; i++) {
+        hmf->unk8C[i].unk05[0] = 0xFF;
+        hmf->unk8C[i].unk05[1] = 0xE6;
+        hmf->unk8C[i].unk05[2] = 0;
+    }
+    func_80029A8C_2A68C(form);
+    func_80029AFC_2A6FC(form);
+    func_80029714_2A314(form, D_8011025C_342E9C_name_4F[character].x, D_8011025C_342E9C_name_4F[character].y,
+                        D_8011025C_342E9C_name_4F[character].z);
+    func_8002979C_2A39C(form, 0.0f, func_80042BE0_437E0(&winner->rot), 177.0f);
+    func_800297E8_2A3E8(form, (character != 5) ? 2.8f : 2.4f, 1.0f, 1.0f);
+    obj = func_8010CA90_33F6D0_name_4F(form2, D_801102A4_342EE4_name_4F[character].x,
+                                       D_801102A4_342EE4_name_4F[character].y, D_801102A4_342EE4_name_4F[character].z,
+                                       1, 0, 1.0f);
+    func_80021250_21E50(obj->model[1], 0xFF, 0xE6, 0);
+    bow = func_8010DD7C_3409BC_name_4F();
+    D_80110580_3431C0_name_4F->pos.x = D_80110244_342E84_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_80110244_342E84_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_80110244_342E84_name_4F.z;
+    winner->pos.x = D_80110250_342E90_name_4F.x;
+    winner->pos.y = D_80110250_342E90_name_4F.y;
+    winner->pos.z = D_80110250_342E90_name_4F.z;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &D_80110250_342E90_name_4F, &D_80110580_3431C0_name_4F->rot);
+    func_80056658_57258(&winner->pos, &D_80110244_342E84_name_4F, &winner->rot);
+    MBModelDispOn(winner);
+    MBModelDispOn(D_80110580_3431C0_name_4F);
+    x = D_80110580_3431C0_name_4F->rot.x * 200.0f + D_80110580_3431C0_name_4F->pos.x;
+    z = D_80110580_3431C0_name_4F->rot.z * 200.0f + D_80110580_3431C0_name_4F->pos.z;
+    func_8002D2B4_2DEB4(*winner->obj->model, -119.0f, -4.0f, -3.0f);
+    func_8002D274_2DE74(*winner->obj->model, 0xFF, 0xFF, 0);
+    func_8002D2B4_2DEB4(*D_80110580_3431C0_name_4F->obj->model, 50.0f, -108.0f, -1.0f);
+    func_8002D274_2DE74(*D_80110580_3431C0_name_4F->obj->model, 0xFF, 0, 0xFF);
+    func_8010E430_341070_name_4F(bow, x, 150.0f, z, func_80042BE0_437E0(&D_80110580_3431C0_name_4F->rot));
+    HuPrcSleep(1);
+    func_800298A4_2A4A4(form, 4, 0);
+    obj->work[1] = 1;
+    HuPrcSleep(30);
+    func_800298A4_2A4A4(form, 4, 4);
+    bow->work[2] = 1;
+    obj->work[1] = 0;
+    func_80079848_7A448(D_80110458_343098_name_4F);
+    func_80079848_7A448(D_8011045A_34309A_name_4F);
+    func_8002D274_2DE74(*winner->obj->model, 0, 0, 0);
+    func_8002D274_2DE74(*D_80110580_3431C0_name_4F->obj->model, 0, 0, 0);
+    HuPrcSleep(40);
+    func_8010E5D8_341218_name_4F(bow);
+    obj->work[0] = 1;
+    func_8003E8E4_3F4E4(form2);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 4);
+    MBModelDispOff(winner);
+    MBDBackKill();
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010A8AC_33D4EC_name_4F);
+#endif
+
+/* D_80110580 seen from far behind, then a message. */
+void func_8010ADA0_33D9E0_name_4F(void) {
+    Vec v;
+    s32 win;
+
+    func_80050E00_51A00(0x1C);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    D_80110580_3431C0_name_4F->pos.x = D_801101E4_342E24_name_4F.x;
+    D_80110580_3431C0_name_4F->pos.y = D_801101E4_342E24_name_4F.y;
+    D_80110580_3431C0_name_4F->pos.z = D_801101E4_342E24_name_4F.z - 1600.0f;
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_80110580_3431C0_name_4F->rot);
+    v.x = 0.0f;
+    v.y = 280.0f;
+    v.z = -1410.0f;
+    func_80052E68_53A68(2.0f);
+    MBDCameraPos3DSet(&v);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x311);
+    win = func_8005AAC0_5B6C0(0x50, 0xA0, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_800890CC_89CCC(win, 0x311, -1, -1);
+    PlaySound(0x122);
+    HuPrcSleep(60);
+    func_8008CCA8_8D8A8(win);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010AED4_33DB14_name_4F);
 
