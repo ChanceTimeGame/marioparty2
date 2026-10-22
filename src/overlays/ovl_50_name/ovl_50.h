@@ -395,6 +395,26 @@ extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; wor
 /* 50-C */
 extern omObjData* D_801125D4_352E34_name_50; /* func_80108290's glow */
 extern omObjData* D_801125E0_352E40_name_50; /* func_80108830's burst */
+void SprAnimKill(s16);
+void espDispOn(u16);
+extern s16 D_80111EFC_35275C_name_50;     /* func_80108F98's tint toggle */
+/* board 4 */
+extern u32* D_80112008_352868_name_50[6]; /* per character: MBPlayerModelCreate list */
+extern u32 D_80112020_352880_name_50[];   /* the host (0x80023): MBModelFileCreate list */
+extern u32 D_80112034_352894_name_50[];   /* D_80112748 (0x8008B) */
+extern s32 D_80112064_3528C4_name_50;
+extern s32 D_8011206C_3528CC_name_50;
+extern s32 D_80112070_3528D0_name_50[3];  /* D_8011275C's motions (splat's D_80112078 is [2]) */
+extern Vec D_8011208C_3528EC_name_50;     /* the sign */
+extern Vec D_80112098_3528F8_name_50[2];  /* D_80112748: start, place */
+extern Vec D_801120B0_352910_name_50;
+extern Vec D_801120BC_35291C_name_50;     /* D_8011275C's start */
+extern Vec D_801120C8_352928_name_50[2];  /* D_8011275C's places */
+extern Vec D_801120E0_352940_name_50;     /* the doors: start */
+extern Vec D_801120EC_35294C_name_50;     /* the doors: end */
+extern u32 D_801120F8_352958_name_50[];   /* D_8011275C (0x80060) */
+extern omObjData* D_80112600_352E60_name_50; /* the sign's sparkle (func_8010CFE8) */
+extern s16 D_80112604_352E64_name_50;     /* a sound handle (0x3F8) */
 
 /* ---- 34DBC0.c ---- */
 

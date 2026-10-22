@@ -1178,17 +1178,377 @@ void func_80108C6C_3494CC_name_50(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108F1C_34977C_name_50);
+void func_80108F1C_34977C_name_50(void) {
+    D_801125E4_352E44_name_50->work[0] = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108F2C_34978C_name_50);
+/* Kills the beam's rings and object. */
+void func_80108F2C_34978C_name_50(void) {
+    Ovl50BeamWork* work = D_801125E4_352E44_name_50->unk_50;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80108F98_3497F8_name_50);
+    for (i = 0; i < work->count; i++) {
+        func_8002308C_23C8C(work->slot[i]);
+    }
+    omDelObj(D_801125E4_352E44_name_50);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80109070_3498D0_name_50);
+/* Flashes the winner and D_8011275C: lit and normal tints in turn. */
+void func_80108F98_3497F8_name_50(void) {
+    u8 r;
+    u8 g;
+    u8 b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_801090FC_34995C_name_50);
+    if (D_80111EFC_35275C_name_50 != 0) {
+        r = 0xF5;
+        g = 0xC8;
+        b = 0xF5;
+    } else {
+        r = 0x78;
+        g = 0x64;
+        b = 0xF5;
+    }
+    func_8002D274_2DE74(*OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->obj->model, r, g, b);
+    func_8002D274_2DE74(*D_8011275C_352FBC_name_50->obj->model, r, g, b);
+    D_80111EFC_35275C_name_50 ^= 1;
+}
 
+void func_80109070_3498D0_name_50(void) {
+    D_8010105C_101C5C = D_80101300_101F00 = 0.6f;
+    func_8005E260_5EE60(D_8011275A_352FBA_name_50);
+    func_80020D20_21920(4);
+    func_80109290_349AF0_name_50();
+    func_8010A2A4_34AB04_name_50();
+    func_8010A580_34ADE0_name_50();
+    func_8010A9B8_34B218_name_50();
+    func_8010AB4C_34B3AC_name_50();
+    func_8010B230_34BA90_name_50();
+    D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
+}
+
+void func_801090FC_34995C_name_50(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (i == D_8011275A_352FBA_name_50) {
+            MBPlayerModelCreate(i, D_80112008_352868_name_50[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+            func_80043DAC_449AC(OVL50_PLAYER_MODEL(i));
+            gPlayers[i].flags |= 2;
+            MBMotionSet(OVL50_PLAYER_MODEL(i), 0, 2);
+            func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(i)->obj->model, 1);
+            MBModelDispOff(OVL50_PLAYER_MODEL(i));
+        }
+    }
+    D_8011274C_352FAC_name_50 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, D_80112020_352880_name_50);
+    func_8005AB50_5B750(D_8011274C_352FAC_name_50, 2, 8, D_80112064_3528C4_name_50);
+    func_8002D1EC_2DDEC(*D_8011274C_352FAC_name_50->obj->model, 1);
+    MBModelDispOff(D_8011274C_352FAC_name_50);
+}
+
+/* Board 4's scene, part 1: the host (D_80112748) and D_8011275C meet before a sign (0xA0204)
+   with a sparkle (func_8010CFE8); a cage (0xA0205) drops on the host, the doors (0xA018E) open.
+   Messages 0x321-0x32B; three sprites (0xA01FA/C/E) show a picture. */
+#ifdef NON_MATCHING /* register allocation: retail hoists the constant 2 into s8 and keeps stopped in s4; this spills stopped */
+void func_80109290_349AF0_name_50(void) {
+    Vec target;
+    s16 flags[2];
+    MBModel* sign;
+    MBModel* door2;
+    s16 anim1;
+    s16 anim2;
+    s16 anim3;
+    s16 spr1;
+    s16 spr2;
+    s16 spr3;
+    MBModel* cage;
+    MBModel* door1;
+    s32 win;
+    s32 win3;
+    s32 win4;
+    s16 win2;
+    s32 i;
+    s32 turned;
+    s32 stopped;
+    s32 started;
+    f32 speed;
+
+    stopped = 0;
+    MBModelKill(D_8011274C_352FAC_name_50);
+    D_8011274C_352FAC_name_50 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, D_80112020_352880_name_50);
+    func_8005AB50_5B750(D_8011274C_352FAC_name_50, 2, 8, D_80112064_3528C4_name_50);
+    func_8002D1EC_2DDEC(*D_8011274C_352FAC_name_50->obj->model, 1);
+    MBModelDispOff(D_8011274C_352FAC_name_50);
+    func_80050E00_51A00(0x21);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    sign = MBModelFileCreate(0xA0204, 0, 1.5f, 0.0f, NULL);
+    sign->pos.x = D_8011208C_3528EC_name_50.x;
+    sign->pos.y = D_8011208C_3528EC_name_50.y;
+    sign->pos.z = D_8011208C_3528EC_name_50.z;
+    D_80112600_352E60_name_50 = func_8010CFE8_34D848_name_50(D_8011208C_3528EC_name_50.x + 15.0f, D_8011208C_3528EC_name_50.y + 230.0f, D_8011208C_3528EC_name_50.z + 100.0f);
+    D_80112748_352FA8_name_50 = MBModelFileCreate(0x8008B, 13, 1.0f, 1.3f, D_80112034_352894_name_50);
+    func_8005AB50_5B750(D_80112748_352FA8_name_50, 2, 7, D_8011206C_3528CC_name_50);
+    func_8002D1EC_2DDEC(*D_80112748_352FA8_name_50->obj->model, 1);
+    D_80112748_352FA8_name_50->pos.x = D_80112098_3528F8_name_50[0].x;
+    D_80112748_352FA8_name_50->pos.y = D_80112098_3528F8_name_50[0].y;
+    D_80112748_352FA8_name_50->pos.z = D_80112098_3528F8_name_50[0].z;
+    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80112098_3528F8_name_50[1], &D_80112748_352FA8_name_50->rot);
+    D_8011275C_352FBC_name_50 = MBModelFileCreate(0x80060, 13, 1.0f, 3.0f, D_801120F8_352958_name_50);
+    func_8005AB50_5B750(D_8011275C_352FBC_name_50, 2, 9, D_80112070_3528D0_name_50[0]);
+    MBMotionSet(D_8011275C_352FBC_name_50, 0, 2);
+    func_8002D1EC_2DDEC(*D_8011275C_352FBC_name_50->obj->model, 1);
+    D_8011275C_352FBC_name_50->pos.x = D_801120BC_35291C_name_50.x;
+    D_8011275C_352FBC_name_50->pos.y = D_801120BC_35291C_name_50.y;
+    D_8011275C_352FBC_name_50->pos.z = D_801120BC_35291C_name_50.z;
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &D_80112748_352FA8_name_50->pos, &D_8011275C_352FBC_name_50->rot);
+    cage = MBModelFileCreate(0xA0205, 0, 1.0f, 0.0f, NULL);
+    cage->pos.x = 0.0f;
+    cage->pos.y = 2000.0f;
+    cage->pos.z = 0.0f;
+    door1 = MBModelFileCreate(0xA018E, -1, 1.0f, 0.0f, NULL);
+    func_80043DAC_449AC(door1);
+    door1->pos.x = D_801120E0_352940_name_50.x;
+    door1->pos.y = D_801120E0_352940_name_50.y;
+    door1->pos.z = D_801120E0_352940_name_50.z;
+    door1->attr |= 4;
+    door2 = MBModelFileCreate(0xA018E, -1, 1.0f, 0.0f, NULL);
+    func_80043DAC_449AC(door2);
+    door2->pos.x = D_801120E0_352940_name_50.x;
+    door2->pos.y = D_801120E0_352940_name_50.y;
+    door2->pos.z = D_801120E0_352940_name_50.z;
+    door2->attr |= 4;
+    anim1 = func_8001A2F8_1AEF8(0xA01FA);
+    anim2 = func_8001A2F8_1AEF8(0xA01FC);
+    anim3 = func_8001A2F8_1AEF8(0xA01FE);
+    spr1 = func_8001AAAC_1B6AC(anim1, 0, 1);
+    spr2 = func_8001AAAC_1B6AC(anim2, 0, 1);
+    spr3 = func_8001AAAC_1B6AC(anim3, 0, 1);
+    espDispOff(spr1);
+    espDispOff(spr2);
+    espDispOff(spr3);
+    target.x = D_8011208C_3528EC_name_50.x;
+    target.y = 150.0f;
+    target.z = D_8011208C_3528EC_name_50.z;
+    func_8005A950_5B550(&target, 3.0f, 3.0f, 1);
+    D_80112748_352FA8_name_50->pos.x = D_80112098_3528F8_name_50[1].x;
+    D_80112748_352FA8_name_50->pos.y = D_80112098_3528F8_name_50[1].y;
+    D_80112748_352FA8_name_50->pos.z = D_80112098_3528F8_name_50[1].z;
+    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_8011208C_3528EC_name_50, &D_80112748_352FA8_name_50->rot);
+    InitFadeIn(3, 16);
+    HuPrcSleep(16);
+    HuPrcSleep(20);
+    D_80112600_352E60_name_50->work[0] = 1;
+    func_8005A950_5B550(&target, 3.0f, 1.0f, 30);
+    HuPrcSleep(30);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x321);
+    win = func_8005AAC0_5B6C0(80, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x321, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(15);
+    PlaySound(0xE7);
+    HuPrcSleep(35);
+    func_8008CCA8_8D8A8(win);
+    i = 0;
+    turned = 0;
+    while (func_8005A5E8_5B1E8(D_8011275C_352FBC_name_50, &D_801120C8_352928_name_50[0], 18.0f) == 0) {
+        if (i == 15) {
+            PlayMusic(0x3C);
+            func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x322);
+            win = func_8005AAC0_5B6C0(40, 45, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+            func_800890CC_89CCC(win, 0x322, -1, -1);
+            PlaySound(0x123);
+        }
+        if (i >= 15) {
+            func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &D_8011275C_352FBC_name_50->pos, 10.0f);
+        }
+        if (i >= 35) {
+            if (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &D_8011275C_352FBC_name_50->pos, 10.0f) == 1 && turned == 0) {
+                turned = 1;
+                MBMotionShiftSet(D_80112748_352FA8_name_50, 4, 0, 4, 2);
+                func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x323);
+                win3 = func_8005AAC0_5B6C0(200, 70, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+                func_800890CC_89CCC(win3, 0x323, -1, -1);
+                PlaySound(0xE7);
+            }
+            if (turned == 1 && func_8005A608_5B208(D_80112748_352FA8_name_50, &D_801120B0_352910_name_50, 10.0f) == turned && stopped == 0) {
+                MBMotionShiftSet(D_80112748_352FA8_name_50, 3, 0, 8, 2);
+                stopped = 1;
+            }
+        }
+        if (i == 65) {
+            func_8008CCA8_8D8A8(win);
+        }
+        i++;
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 4, 2);
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_80112070_3528D0_name_50[2]);
+    HuPrcSleep(15);
+    func_8008CCA8_8D8A8(win3);
+    HuPrcSleep(20);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x324);
+    win2 = func_8005AAC0_5B6C0(50, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x324, -1, -1);
+    PlaySound(0x125);
+    HuPrcSleep(35);
+    func_8008CCA8_8D8A8(win2);
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_80112070_3528D0_name_50[0]);
+    while (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &((HuCamera*)D_800FD2A8_FDEA8)->pos, 8.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x326);
+    win = func_8005AAC0_5B6C0(32, 170, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x326, -1, -1);
+    PlaySound(0x123);
+    HuPrcSleep(20);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 4, 2);
+    win4 = func_8005AAC0_5B6C0(136, 40, 48, 48);
+    espPosSet(spr1, 160, 64);
+    espDispOn(spr1);
+    PlaySound(0x3F7);
+    D_80112604_352E64_name_50 = PlaySound(0x3F8);
+    HuPrcSleep(10);
+    while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &((HuCamera*)D_800FD2A8_FDEA8)->pos, 15.0f) == 0) {
+        HuPrcVSleep();
+    }
+    HuPrcSleep(50);
+    func_80079848_7A448(D_80112604_352E64_name_50);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 5, 0, 4, 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x327);
+    win3 = func_8005AAC0_5B6C0(200, 100, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win3, 0x327, -1, -1);
+    PlaySound(0xE7);
+    while (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &D_80112748_352FA8_name_50->pos, 6.0f) == 0) {
+        HuPrcVSleep();
+    }
+    i = 0;
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_80112070_3528D0_name_50[2]);
+    HuPrcSleep(25);
+    func_8008CCA8_8D8A8(win3);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, 6, 0, 4, 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x328);
+    win3 = func_8005AAC0_5B6C0(200, 100, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win3, 0x328, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(20);
+    do {
+        func_8001A91C_1B51C(spr1, 1.0f - i * 0.2f, 1.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 5);
+    espDispOff(spr1);
+    espDispOn(spr2);
+    espPosSet(spr2, 160, 64);
+    i = 0;
+    do {
+        func_8001A91C_1B51C(spr2, i * 0.2f, 1.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 5);
+    func_8001A91C_1B51C(spr2, 1.0f, 1.0f);
+    HuPrcSleep(25);
+    espDispOn(spr3);
+    espPosSet(spr3, 160, 64);
+    PlaySound(0x3F3);
+    HuPrcSleep(20);
+    func_8008CCA8_8D8A8(win);
+    func_8008CCA8_8D8A8(win3);
+    func_8008CCA8_8D8A8(win4);
+    espDispOff(spr2);
+    espDispOff(spr3);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 2, 2);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x329);
+    win = func_8005AAC0_5B6C0(28, 40, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x329, -1, -1);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 1, 0, 4, 0);
+    cage->pos.x = D_80112748_352FA8_name_50->pos.x;
+    cage->pos.y = 500.0f;
+    cage->pos.z = D_80112748_352FA8_name_50->pos.z;
+    PlaySound(0x123);
+    HuPrcSleep(25);
+    cage->rot = D_80112748_352FA8_name_50->rot;
+    speed = 1.3f;
+    while (1) {
+        cage->pos.y -= speed;
+        speed *= 1.2f;
+        if (cage->pos.y <= 0.0f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    MBMotionSet(D_80112748_352FA8_name_50, 0, 1);
+    cage->pos.y = 0.0f;
+    PlaySound(0x3F6);
+    HuPrcSleep(15);
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, 4, 0, 4, 2);
+    HuPrcSleep(25);
+    func_8008CCA8_8D8A8(win);
+    while (func_8005A5E8_5B1E8(door1, &D_801120EC_35294C_name_50, 10.0f) == 0) {
+        func_8005A5E8_5B1E8(door2, &D_801120EC_35294C_name_50, 10.0f);
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    i = 30;
+    flags[1] = 0;
+    flags[0] = 0;
+    started = 0;
+    MBMotionShiftSet(D_8011275C_352FBC_name_50, -1, 0, 12, 2);
+    turned = 0;
+    func_8005AC6C_5B86C(D_8011275C_352FBC_name_50, D_80112070_3528D0_name_50[0]);
+    while (1) {
+        if (func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &door1->pos, 6.0f) != 0) {
+            turned = 1;
+            if (flags[0] == 0) {
+                flags[0] = 1;
+                func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x32A);
+                win = func_8005AAC0_5B6C0(120, 50, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+                func_800890CC_89CCC(win, 0x32A, -1, -1);
+                PlaySound(0x125);
+            }
+        }
+        if (i == 0) {
+            if (started == 0) {
+                started = 1;
+            }
+            if (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &door1->pos, 10.0f) != 0) {
+                turned++;
+            }
+            cage->rot = D_80112748_352FA8_name_50->rot;
+        } else {
+            i--;
+        }
+        if (turned == 2) {
+            break;
+        }
+        turned = 0;
+        HuPrcVSleep();
+    }
+    HuPrcSleep(18);
+    func_800794A8_7A0A8(120);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x32B);
+    win2 = func_8005AAC0_5B6C0(126, 90, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x32B, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(80);
+    func_8008CCA8_8D8A8(win);
+    func_8008CCA8_8D8A8(win2);
+    MBModelKill(sign);
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    MBModelDispOff(D_80112748_352FA8_name_50);
+    MBModelKill(cage);
+    MBModelKill(door2);
+    MBModelKill(door1);
+    func_8001AC44_1B844(spr1);
+    func_8001AC44_1B844(spr2);
+    func_8001AC44_1B844(spr3);
+    SprAnimKill(anim1);
+    SprAnimKill(anim2);
+    SprAnimKill(anim3);
+    MBDBackKill();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_80109290_349AF0_name_50);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010A2A4_34AB04_name_50);
 
