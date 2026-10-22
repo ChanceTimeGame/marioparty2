@@ -118,6 +118,7 @@ extern Vec D_8010D5BC_334F7C_name_4E;
 extern Vec D_8010D5C8_334F88_name_4E;
 extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
 extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
+extern s16 D_8010D614_334FD4_name_4E[4]; /* second menu row -> D_801013F8 */
 extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 
 /* ---- bss (asm) ---- */
@@ -125,13 +126,16 @@ extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 extern s16 D_8010DAB6_335476_name_4E;
 extern s16 D_8010DAB8_335478_name_4E;
 extern u16 D_8010DABC_33547C_name_4E;
-extern u16 D_8010DAC4_335484_name_4E[3];
+extern u16 D_8010DAC4_335484_name_4E[3]; /* first menu's three row sprites */
+extern u16 D_8010DAD2_335492_name_4E[4]; /* second menu's four row sprites */
 extern s16 D_8010DB60_335520_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
 extern s8 D_8010DBE3_3355A3_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
 extern s16 D_8010DC90_335650_name_4E;
+extern s16 D_8010DCA0_335660_name_4E[4];
+extern s16 D_8010DCA6_335666_name_4E;   /* = D_8010DCA0[3] */
 extern s16 D_8010E140_335B00_name_4E;
 extern Ovl4ECamKey* D_8010E144_335B04_name_4E;
 extern f32 D_8010E150_335B10_name_4E;   /* camera far */
@@ -147,7 +151,7 @@ extern s32 D_8010E648_336008_name_4E[];
 void func_80102800_32A1C0_name_4E(void);
 void func_80102B94_32A554_name_4E(void);
 void func_80102B9C_32A55C_name_4E(void);
-s8 func_80103034_32A9F4_name_4E(void);
+s32 func_80103034_32A9F4_name_4E(void);
 s32 func_80103608_32AFC8_name_4E(void);
 s32 func_80103CD0_32B690_name_4E(void);
 void func_801047B8_32C178_name_4E(s16 arg0, s16 arg1, s16 arg2, s16 arg3);

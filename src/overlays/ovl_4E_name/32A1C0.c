@@ -185,6 +185,9 @@ void func_80102B9C_32A55C_name_4E(void) {
             case 0:
                 state = 3;
                 break;
+            case 2:
+                state = 5;
+                break;
             default:
                 state = 5;
                 break;
@@ -215,7 +218,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80102B9C_32A55C
 
 /* First menu: three rows (D_8010DAC4) slide in; the stick moves the cursor (D_8010E5F2), A picks
    (D_800FA1A8, returns 1: the others slide out, the chosen one rises), B backs out (returns 0). */
-s8 func_80103034_32A9F4_name_4E(void) {
+s32 func_80103034_32A9F4_name_4E(void) {
     s16 i;
     s16 j;
     s8 ok;
@@ -293,7 +296,101 @@ s8 func_80103034_32A9F4_name_4E(void) {
     return ok;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103608_32AFC8_name_4E);
+s32 func_80103608_32AFC8_name_4E(void) {
+    s16 i;
+    s16 j;
+    s16 n;
+    s8 msg;
+    s16 ok;
+
+    func_8010760C_32EFCC_name_4E(0x26);
+    n = 4;
+    func_8010CF6C_33492C_name_4E();
+    if (D_8010DCA6_335666_name_4E <= 0) {
+        n = 3;
+    }
+    i = 0;
+    do {
+        for (j = 0; j < n; j++) {
+            if (i >= j * 5 && j * 5 + 10 >= i) {
+                espDispOn(D_8010DAD2_335492_name_4E[j]);
+                espPosSet(D_8010DAD2_335492_name_4E[j], 160.0f - (1.0f - HuMathSin((i - j * 5) * 9.0f)) * 240.0f, j * 20 + 100);
+                func_801078EC_32F2AC_name_4E(j, D_8010DAD2_335492_name_4E[j], 0, 0);
+            }
+        }
+        HuPrcVSleep();
+    } while (++i < 26);
+    msg = 0;
+    func_801079AC_32F36C_name_4E();
+    func_80109750_331110_name_4E(0);
+    D_8010E154_335B14_name_4E = 1;
+    while (1) {
+        if (ABS(ContStkX[D_8010E5F4_335FB4_name_4E]) >= 31 || ABS(ContStkY[D_8010E5F4_335FB4_name_4E]) >= 31) {
+            i = func_801079EC_32F3AC_name_4E(D_8010E5F2_335FB2_name_4E, n, -ContStkX[D_8010E5F4_335FB4_name_4E], ContStkY[D_8010E5F4_335FB4_name_4E]);
+            if (i != -1) {
+                PlaySound(1);
+                func_8010C60C_333FCC_name_4E(i);
+                HuPrcSleep(6);
+                D_8010E5F2_335FB2_name_4E = i;
+                if (msg) {
+                    func_8010760C_32EFCC_name_4E(0x26);
+                }
+            }
+        }
+        if (ContBtnTrg[D_8010E5F4_335FB4_name_4E] & 0x8000) {
+            if (D_8010DCA0_335660_name_4E[D_8010E5F2_335FB2_name_4E] < 3) {
+                PlaySound(5);
+                func_8010760C_32EFCC_name_4E(0x27);
+                msg = 1;
+            } else {
+                PlaySound(3);
+                D_801013B8_101FB8[0x20] = D_8010D614_334FD4_name_4E[D_8010E5F2_335FB2_name_4E];
+                D_8010E154_335B14_name_4E = 0;
+                ok = 1;
+                break;
+            }
+        }
+        if (ContBtnTrg[D_8010E5F4_335FB4_name_4E] & 0x4000) {
+            PlaySound(4);
+            D_8010E154_335B14_name_4E = 0;
+            ok = 0;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    i = 0;
+    if (ok) {
+        do {
+            for (j = 0; j < n; j++) {
+                if (j != D_8010E5F2_335FB2_name_4E) {
+                    espPosSet(D_8010DAD2_335492_name_4E[j], (1.0f - func_800B7890_B8490(i * 9.0f)) * 240.0f + 160.0f, j * 20 + 100);
+                    if (i == 10) {
+                        espDispOff(D_8010DAD2_335492_name_4E[j]);
+                    }
+                }
+            }
+            HuPrcVSleep();
+        } while (++i < 11);
+        if (D_8010E5F2_335FB2_name_4E != 0) {
+            for (i = 0; i < 11; i++) {
+                espPosSet(D_8010DAD2_335492_name_4E[D_8010E5F2_335FB2_name_4E], 0xA0, (f32)(D_8010E5F2_335FB2_name_4E * 24 + 100) + HuMathSin(i * 9.0f) * (f32)(-10 - D_8010E5F2_335FB2_name_4E * 20));
+                HuPrcVSleep();
+            }
+        }
+    } else {
+        for (j = 0; j < 4; j++) {
+            espPosSet(D_8010DAD2_335492_name_4E[j], -0x50, j * 20 + 100);
+            espDispOff(D_8010DAD2_335492_name_4E[j]);
+        }
+        for (j = 0; j < 3; j++) {
+            espPosSet(D_8010DAC4_335484_name_4E[j], -0x50, j * 36 + 0x4F);
+            espDispOff(D_8010DAC4_335484_name_4E[j]);
+        }
+        HuPrcVSleep();
+        HuPrcVSleep();
+    }
+    return ok;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103CD0_32B690_name_4E);
 
