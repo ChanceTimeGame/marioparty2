@@ -1028,7 +1028,63 @@ void func_801058A4_2E3FD4_name_45(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_801058E0_2E4010_name_45);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_801059C4_2E40F4_name_45);
+void func_801059C4_2E40F4_name_45(void) {
+    s32 i;
+    SpaceData* from;
+    Vec dir;
+
+    omInitObjMan(0xA0, 0x28);
+    func_80026DAC_279AC(1, 100, 100, 100);
+    func_80026DAC_279AC(2, 200, 200, 200);
+    func_80062E10_63A10(0x18, 0x43, 0x1D, 0);
+    func_80055928_56528(D_80110D90_2EF4C0_name_45);
+    func_80055980_56580(D_80110DA4_2EF4D4_name_45);
+    from = GetSpaceData(2);
+    func_80056658_57258(&from->coords, &GetSpaceData(111)->coords, &dir);
+    MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    from = GetSpaceData(3);
+    func_80056658_57258(&from->coords, &GetSpaceData(110)->coords, &dir);
+    MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    from = GetSpaceData(7);
+    func_80056658_57258(&from->coords, &GetSpaceData(109)->coords, &dir);
+    MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    func_8004D60C_4E20C(0, func_8010A724_2E8E54_name_45);
+    func_8004D60C_4E20C(1, func_8010B3B4_2E9AE4_name_45);
+    func_8004D60C_4E20C(8, func_8010B750_2E9E80_name_45);
+    func_8004D60C_4E20C(2, func_8010B7C0_2E9EF0_name_45);
+    func_8004D60C_4E20C(3, func_8010CB30_2EB260_name_45);
+    func_8004D60C_4E20C(4, func_8010D0A8_2EB7D8_name_45);
+    func_8004D60C_4E20C(5, func_8010D318_2EBA48_name_45);
+    func_8004D60C_4E20C(6, func_8010BCA4_2EA3D4_name_45);
+    func_8004D60C_4E20C(7, func_8010C6CC_2EADFC_name_45);
+    func_8004D60C_4E20C(9, func_8010D54C_2EBC7C_name_45);
+    func_8004D60C_4E20C(10, func_8010D860_2EBF90_name_45);
+    func_8004D60C_4E20C(12, func_8010DED4_2EC604_name_45);
+    func_8004D60C_4E20C(11, func_8010E108_2EC838_name_45);
+    func_8004D60C_4E20C(13, func_8010E618_2ECD48_name_45);
+    func_80044D98_45998(func_801106E4_2EEE14_name_45);
+    for (i = 0; i < 7; i++) {
+        func_800542E8_54EE8(i, D_80110D44_2EF474_name_45[i]);
+    }
+    if (_CheckFlag(0x4D)) {
+        _ClearFlag(0x4D);
+        if (D_800F8D12_F9912 != 0) {
+            func_80102A44_2E1174_name_45();
+        } else {
+            func_80102AB0_2E11E0_name_45();
+        }
+    }
+    func_80102B54_2E1284_name_45();
+    func_80105EC4_2E45F4_name_45();
+    func_80105E3C_2E456C_name_45();
+    func_80106114_2E4844_name_45();
+    func_801063DC_2E4B0C_name_45();
+    func_801065A0_2E4CD0_name_45();
+    func_8010676C_2E4E9C_name_45();
+    func_801067E4_2E4F14_name_45();
+    func_80106954_2E5084_name_45();
+    func_80106A74_2E51A4_name_45();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80105CA4_2E43D4_name_45);
 

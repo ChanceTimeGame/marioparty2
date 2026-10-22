@@ -100,6 +100,7 @@ void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80062E10_63A10(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
 void func_80055928_56528(s16* arg0);
 void func_80055980_56580(s16* arg0);
+void MBMasuArrowAngleAdd(f32); /* as ovl_41.h */
 void func_8004D60C_4E20C(s32, void (*)(void)); /* board event slot */
 void func_80044D98_45998(s32 (*)(void)); /* fork D: the CPU item check callback returns s32 */
 void func_800542E8_54EE8(s32, s16);
@@ -130,6 +131,8 @@ extern s16 D_80110D20_2EF450_name_45[]; /* positions not to show first, -1 ended
 extern s16 D_80110D24_2EF454_name_45[8]; /* star position board flags */
 extern s16 D_80110D34_2EF464_name_45[8]; /* star spaces */
 extern s16 D_80110D44_2EF474_name_45[8]; /* star camera spaces */
+extern s16 D_80110D90_2EF4C0_name_45[10]; /* -1 ended */
+extern s16 D_80110DA4_2EF4D4_name_45[8]; /* -1 ended */
 extern s32 D_80110D54_2EF484_name_45; /* guide motions */
 extern s32 D_80110D58_2EF488_name_45;
 extern f32 D_80110D5C_2EF48C_name_45[9]; /* per board */
