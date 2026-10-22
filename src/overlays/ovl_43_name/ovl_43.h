@@ -652,5 +652,8 @@ void func_80029C74_2A874(s16, f32);
 f32 func_80029D0C_2A90C(s16);
 extern f32 D_801145C4_2D9AB4_name_43[5]; /* the whirl's angles: the player's, then the four models' */
 extern MBModel* D_80115490_2DA980_name_43[4]; /* the whirl's four models */
+extern f32 D_801145B4_2D9AA4_name_43[4]; /* the centre Boos' angles as they appear */
+extern u8 D_801145D8_2D9AC8_name_43[4]; /* the centre Boos' models (8 or 0xA0) */
+extern void* D_801145DC_2D9ACC_name_43[4]; /* their create parameters */
 
 #endif

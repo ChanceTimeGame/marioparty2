@@ -4724,7 +4724,154 @@ void func_801117F4_2D6CE4_name_43(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801119D4_2D6EC4_name_43);
+/* The centre space (0x80): four Boos (two of model 8, two of 0xA0) fade in around it and face the
+   player. For 10 coins they whirl the player round the centre (func_801117F4) and it becomes day
+   (state [0] = 0, the day message pending in [5]); refusing, or under 10 coins, they fade out. */
+void func_801119D4_2D6EC4_name_43(void) {
+    Vec rot[5];
+    Vec cam;
+    SpaceData* centre;
+    GW_PLAYER* player;
+    s32 i;
+    s32 alpha;
+    s32 choice;
+    void* vib;
+    GW_SYSTEM* gw = &GwSystem;
+
+    centre = GetSpaceData(0x80);
+    player = BoardPlayerGet(-1);
+    if (gw->current_player_index == 4) {
+        return;
+    }
+    func_80046D2C_4792C(gw->current_player_index);
+    MBPlayerMotionSet(-1, -1, 2);
+    for (i = 0; i < 4; i++) {
+        D_80115490_2DA980_name_43[i] = func_80043510_44110(D_801145D8_2D9AC8_name_43[i], D_801145DC_2D9ACC_name_43[i]);
+        func_800B3170_B3D70(&D_80115490_2DA980_name_43[i]->pos, &centre->coords);
+        D_80115490_2DA980_name_43[i]->pos.x = HuMathSin(D_801145B4_2D9AA4_name_43[i]) * 18.0f + D_80115490_2DA980_name_43[i]->pos.x;
+        D_80115490_2DA980_name_43[i]->pos.z = func_800B7890_B8490(D_801145B4_2D9AA4_name_43[i]) * 18.0f + D_80115490_2DA980_name_43[i]->pos.z;
+        if (D_801145D8_2D9AC8_name_43[i] == 8) {
+            func_8002D124_2DD24(D_80115490_2DA980_name_43[i]->obj->model[0]);
+            func_8002D124_2DD24(D_80115490_2DA980_name_43[i]->shadow->model[0]);
+        }
+    }
+    PlaySound(0xEB);
+    for (alpha = 0; alpha < 256; alpha += 12) {
+        for (i = 0; i < 4; i++) {
+            switch (D_801145D8_2D9AC8_name_43[i]) {
+                case 8:
+                    func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->obj->model[0], alpha);
+                    func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->shadow->model[0], alpha);
+                    break;
+                case 0xA0:
+                    if (alpha == 0) {
+                        MBMotionSet(D_80115490_2DA980_name_43[i], 0, 0);
+                    }
+                    break;
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        if (D_801145D8_2D9AC8_name_43[i] == 8) {
+            func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->obj->model[0], 255);
+            func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->shadow->model[0], 255);
+        }
+    }
+    func_80056658_57258(&((MBModel*)player->unk_24)->pos, &D_80115490_2DA980_name_43[0]->pos, &rot[0]);
+    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &rot[0], &((MBModel*)player->unk_24)->rot, 10);
+    for (i = 0; i < 4; i++) {
+        func_80056658_57258(&D_80115490_2DA980_name_43[i]->pos, &((MBModel*)player->unk_24)->pos, &rot[i + 1]);
+        func_80056B78_57778(&D_80115490_2DA980_name_43[i]->rot, &rot[i + 1], &D_80115490_2DA980_name_43[i]->rot, 10);
+    }
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+    HuPrcChildWatch();
+    if (gPlayers[gw->current_player_index].coins < 10) {
+        MBDlgWinExec(7, 0xEB);
+    } else {
+    retry:
+        MBDlgWinCreate(7, 0xEA);
+        choice = func_801115C0_2D6AB0_name_43();
+        MBDlgWinClose();
+        func_80056168_56D68();
+        switch (choice) {
+            case 0:
+                func_8004CA34_4D634(gw->current_player_index, -10);
+                func_800614B4_620B4(gw->current_player_index, -10);
+                HuPrcSleep(30);
+                MBDlgWinExec(7, 0xED);
+                player = BoardPlayerGet(-1);
+                func_800B3170_B3D70(&cam, &((MBModel*)player->unk_24)->pos);
+                func_800636F8_642F8(4);
+                func_80063734_64334(&cam);
+                func_80056FD4_57BD4(&cam, &centre->coords, &cam, 1.0f);
+                MBPlayerMotionSet(-1, 0, 2);
+                func_80056658_57258(&((MBModel*)player->unk_24)->pos, &D_80115490_2DA980_name_43[0]->pos, &((MBModel*)player->unk_24)->rot);
+                HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&((MBModel*)player->unk_24)->pos, &D_80115490_2DA980_name_43[0]->pos, &((MBModel*)player->unk_24)->pos, 20));
+                for (i = 0; i < 4; i++) {
+                    func_800B3170_B3D70(&rot[i], &centre->coords);
+                    rot[i].x = HuMathSin(D_801145C4_2D9AB4_name_43[i + 1]) * 18.0f + rot[i].x;
+                    rot[i].z = func_800B7890_B8490(D_801145C4_2D9AB4_name_43[i + 1]) * 18.0f + rot[i].z;
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&D_80115490_2DA980_name_43[i]->pos, &rot[i], &D_80115490_2DA980_name_43[i]->pos, 20));
+                    func_80056658_57258(&rot[i], &centre->coords, &rot[i]);
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056B78_57778(&D_80115490_2DA980_name_43[i]->rot, &rot[i], &D_80115490_2DA980_name_43[i]->rot, 20));
+                }
+                HuPrcChildWatch();
+                PlaySound(0x3E2);
+                vib = func_800672BC_67EBC(-1, 1, 5);
+                omAddPrcObj(func_801117F4_2D6CE4_name_43, 0x4800, 0, 0);
+                HuPrcSleep(90);
+                func_8006735C_67F5C(vib);
+                func_800636F8_642F8(3);
+                D_800F8CE4_F98E4[5] = 1;
+                D_800F8CE4_F98E4[0] = 0;
+                func_8008F624_90224(0xFF, 0xFF, 0xFF);
+                func_80066FD8_67BD8(0);
+                func_80067004_67C04(0xD);
+                func_800558DC_564DC(1);
+                HuPrcSleep(10);
+                return;
+            case 1:
+                MBDlgWinExec(7, 0xEC);
+                break;
+            case 2:
+                for (i = 0; i < 4; i++) {
+                    if (D_801145D8_2D9AC8_name_43[i] == 8) {
+                        func_8002D4A0_2E0A0(D_80115490_2DA980_name_43[i]->obj->model[0]);
+                    }
+                }
+                func_80103DB0_2C92A0_name_43();
+                for (i = 0; i < 4; i++) {
+                    if (D_801145D8_2D9AC8_name_43[i] == 8) {
+                        MBMotionSet(D_80115490_2DA980_name_43[i], -1, 2);
+                    }
+                }
+                goto retry;
+        }
+    }
+    for (alpha = 255; alpha >= 0; alpha -= 8) {
+        for (i = 0; i < 4; i++) {
+            switch (D_801145D8_2D9AC8_name_43[i]) {
+                case 8:
+                    func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->obj->model[0], alpha);
+                    func_8002D0A0_2DCA0(D_80115490_2DA980_name_43[i]->shadow->model[0], alpha);
+                    break;
+                case 0xA0:
+                    if (alpha == 255) {
+                        func_80029E80_2AA80(D_80115490_2DA980_name_43[i]->obj->model[0], 1, 4);
+                    }
+                    break;
+            }
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        MBModelKill(D_80115490_2DA980_name_43[i]);
+    }
+    func_8004655C_4715C(gw->current_player_index);
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+    HuPrcChildWatch();
+}
 
 /* The event waiting in board state [6]: the night message 0x43C, then clear it. */
 void func_80112248_2D7738_name_43(void) {
