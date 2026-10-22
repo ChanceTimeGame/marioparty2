@@ -96,6 +96,7 @@ typedef struct CGCharData {
 } CGCharData;
 extern CGCharData D_800CD438_CE038[];
 extern u16 D_800F9564_FA164; /* the model being drawn */
+extern HmfMotionSlot* D_800F92B4_F9EB4;
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern s32 D_800F9D30_FA930[];
@@ -138,8 +139,11 @@ typedef struct CGWork {
 double fabs(double);
 float fabsf(float);
 
-/* The claw block (MP1 CGClaw, HuMemDirectMalloc(0x5C) there; func_80107DD4/80107F40 here), kept in
-   D_8010CE30_156950_CraneGame. MP1's layout: MG10-B, check it against 80107DD4. */
+/* The per-object block (MP1 CGClaw, HuMemDirectMalloc(0x5C) there; func_80107DD4 allocates it,
+   func_80107F40 returns it), kept in D_8010CE30_156950_CraneGame. In MP2 the prizes own one too:
+   their unk8 == 2 while held, unk3E = 1 drops them, unk40 = their index (func_80106F00), unk4C/4E/50
+   their side of the grip contest, unk56 a blink timer. Offsets as MP1's; field use from MG10-A's
+   range (80104CB0, 80106A28, 80106F00): MG10-B, check it against 80107DD4. */
 typedef struct CGClaw {
     /* 0x00 */ s16 unk0; /* 1 once initialised */
     /* 0x02 */ u16 unk2; /* flags: 1/2 clamped by func_801035C0, 4 empty-handed */
@@ -165,15 +169,24 @@ typedef struct CGClaw {
     /* 0x46 */ s16 unk46; /* motor volume step */
     /* 0x48 */ s16 unk48; /* cable sound, -1 none */
     /* 0x4A */ s16 unk4A;
-    /* 0x4C */ s16 unk4C; /* grip frames left */
-    /* 0x4E */ s16 unk4E; /* grip frames per level */
-    /* 0x50 */ s16 unk50;
+    /* 0x4C */ s16 unk4C; /* A presses (MP1: grip frames left) */
+    /* 0x4E */ s16 unk4E; /* frames counted (MP1: grip frames per level) */
+    /* 0x50 */ s16 unk50; /* grip score: unk4C / unk4E * 30 */
     /* 0x52 */ s16 unk52;
     /* 0x54 */ s16 unk54;
-    /* 0x56 */ s16 unk56;
-    /* 0x58 */ s16 unk58; /* CPU target (D_800F9CE0_FA8E0 index) */
-    /* 0x5A */ s16 unk5A; /* grabbed prize (D_800F9CE0_FA8E0 index), -1 none */
+    /* 0x56 */ s16 unk56; /* blink frames left (the claw's models 2 and 3 alternate) */
+    /* 0x58 */ s16 unk58; /* CPU target (D_800F9CE0_FA8E0 index), -1 none */
+    /* 0x5A */ s16 unk5A; /* grabbed prize (D_800F9CE0_FA8E0 index), -1 none; retail tests its low byte ((s8)) */
 } CGClaw; /* size = 0x5C */
+
+/* A prize type (func_80106F00's table, MP1 CGPrizeType). */
+typedef struct CGPrizeType {
+    /* 0x00 */ s16 file;
+    /* 0x02 */ u8 unk2;
+    /* 0x03 */ u8 unk3; /* CGWork.unk53 */
+    /* 0x04 */ s16 unk4; /* half width / 10 */
+    /* 0x06 */ s16 unk6; /* half depth / 10 */
+} CGPrizeType; /* size = 0x8 */
 
 /* A hanging prize model of the backdrop (D_8010B764_155284, func_80103974). */
 typedef struct CGHang {

@@ -1318,10 +1318,55 @@ void func_80106D58_150878_CraneGame(Matrix4f m, Vec* out) {
     out->y = func_80106C98_1507B8_CraneGame(c, s);
 }
 
-__asm__(".section .rodata");
-const u32 D_8010C000_155B20_CraneGame[18] = { 0x00020000, 0x000F000E, 0x00030000, 0x0010000C, 0x00040000, 0x0010000C, 0x00050000, 0x0010000C, 0x00060000, 0x00110010, 0x00070000, 0x00130013, 0x00080001, 0x0004000F, 0x00090001, 0x0004000F, 0x000A0001, 0x0004000F };
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106F00_150A20_CraneGame);
+void func_80106F00_150A20_CraneGame(omObjData* obj) {
+    CGPrizeType types[9] = {
+        { 2, 0, 0, 15, 14 }, { 3, 0, 0, 16, 12 }, { 4, 0, 0, 16, 12 }, { 5, 0, 0, 16, 12 }, { 6, 0, 0, 17, 16 },
+        { 7, 0, 0, 19, 19 }, { 8, 0, 1, 4, 15 },  { 9, 0, 1, 4, 15 },  { 10, 0, 1, 4, 15 },
+    };
+    CGWork* w;
+    HmfModel* m;
+    s16 idx;
+
+    w = func_80027154_27D54(sizeof(CGWork), 0x7918);
+    obj->unk_50 = w;
+    func_800B0EF0_B1AF0(w, 0, sizeof(CGWork));
+    if (D_8010C180_155CA0_CraneGame < 3) {
+        idx = gPlayers[D_8010C196_155CB6_CraneGame[D_8010C180_155CA0_CraneGame]].character;
+        w->unk57 = gPlayers[D_8010C196_155CB6_CraneGame[D_8010C180_155CA0_CraneGame]].port;
+    } else {
+        idx = D_8010C180_155CA0_CraneGame + 3;
+    }
+    obj->model[0] = func_80018A30_19630(types[idx].file | 0x200000, 0xA9);
+    D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
+    m = &D_800FC834_FD434[obj->model[0]];
+    m->unk40 = D_800F92B4_F9EB4[m->unk02].unk02;
+    obj->func_ptr = func_8010755C_15107C_CraneGame;
+    func_8000C35C_CF5C(obj,
+                       ((f32)(s16)(D_8010C188_155CA8_CraneGame[D_8010C180_155CA0_CraneGame] % 3) * 40.0 +
+                        ((f32)(s32)((u32)(rand8() * 5) >> 6) + -10.0) - 45.0) * 10.0,
+                       1500.0f,
+                       ((f32)(s16)(D_8010C188_155CA8_CraneGame[D_8010C180_155CA0_CraneGame] / 3) * 50.0 +
+                        ((f32)(s32)((u32)(rand8() * 5) >> 6) + -10.0) - 45.0) * 10.0);
+    if (D_8010C180_155CA0_CraneGame < 3) {
+        obj->rot.x = (rand8() * 45) >> 5;
+        obj->rot.y = (rand8() * 45) >> 5;
+        obj->rot.z = (rand8() * 45) >> 5;
+    } else {
+        obj->rot.x = ((rand8() * 45) >> 7) - 45.0f;
+        obj->rot.y = (rand8() * 45) >> 5;
+        obj->rot.z = 0.0f;
+    }
+    func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);
+    w->unk53 = types[idx].unk3;
+    w->unk34 = types[idx].unk4 * 10.0;
+    w->unk38 = types[idx].unk6 * 10.0;
+    w->unk3C = -1.0f;
+    func_80109BAC_1536CC_CraneGame(obj->model[0]);
+    func_80108114_151C34_CraneGame(obj->model[0]);
+    func_80107DD4_1518F4_CraneGame(obj)->unk40 = D_8010C180_155CA0_CraneGame;
+    D_8010C180_155CA0_CraneGame++;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80107460_150F80_CraneGame);
 
