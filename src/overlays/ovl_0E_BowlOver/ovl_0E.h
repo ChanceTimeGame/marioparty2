@@ -62,6 +62,13 @@ typedef struct BOBallWork {
     /* 0x80 */ char unk_80[0x2C];
 } BOBallWork; /* size = 0xAC */
 
+/* Per-pin state (D_80109E50_1441E0[6], indexed by the pin object's work[3]; MP1 BowlPin 0xA4). */
+typedef struct BOPin {
+    /* 0x00 */ char unk_00[0x17];
+    /* 0x17 */ u8 unk_17; /* knocked down */
+    /* 0x18 */ char unk_18[4];
+} BOPin; /* size = 0x1C */
+
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BOCharData {
     /* 0x00 */ s16 unk_00;
@@ -108,9 +115,10 @@ extern s16 D_80109994_143D24_BowlOver;
 extern u8 D_80109996_143D26_BowlOver;
 extern u8 D_80109997_143D27_BowlOver;
 extern u8 D_80109998_143D28_BowlOver;
-extern u16 D_8010999C_143D2C_BowlOver;
-extern s32 D_801099A0_143D30_BowlOver;
-extern f32 D_801099A4_143D34_BowlOver;
+extern u16 D_8010999A_143D2A_BowlOver; /* CPU bowler set up */
+extern u16 D_8010999C_143D2C_BowlOver; /* CPU: last buttons */
+extern s32 D_801099A0_143D30_BowlOver; /* CPU frames */
+extern f32 D_801099A4_143D34_BowlOver; /* CPU stick x, -1 none */
 extern u8 D_801099A8_143D38_BowlOver;
 extern f32 D_801099AC_143D3C_BowlOver;
 extern f32 D_801099B0_143D40_BowlOver;
@@ -139,7 +147,8 @@ extern Vec3f D_80109E00_144190_BowlOver;
 extern Vec3f D_80109E0C_14419C_BowlOver;
 extern u16 D_80109E18_1441A8_BowlOver;
 extern s16 D_80109E1A_1441AA_BowlOver;
-extern f32 D_80109E1C_1441AC_BowlOver;
+extern f32 D_80109E1C_1441AC_BowlOver; /* CPU aim offset by difficulty */
+extern BOPin D_80109E50_1441E0_BowlOver[6];
 extern s16 D_80109EF8_144288_BowlOver[40];
 extern Vec3f D_8010A09C_14442C_BowlOver; /* bowler start position */
 extern omObjData* D_8010A0A8_144438_BowlOver; /* the shell */

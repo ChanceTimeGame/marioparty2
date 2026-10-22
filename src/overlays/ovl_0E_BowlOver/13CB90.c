@@ -165,7 +165,126 @@ void func_801042F0_13E680_BowlOver(omObjData* obj) {
     }
 }
 
+// register allocation: port and the pin table base swap t1/t2 (masked 0)
+#ifdef NON_MATCHING
+void func_8010487C_13EC0C_BowlOver(omObjData* obj) {
+    BOPlayerWork* w;
+    u8 port;
+    u16 btn;
+    s16 i;
+    f32 sum;
+    f32 n;
+
+    w = BO_WORK(obj);
+    port = w->port;
+    if (D_80109972_143D02_BowlOver == 1) {
+        D_8010999A_143D2A_BowlOver = 0;
+        D_8010999C_143D2C_BowlOver = 0;
+        D_801099A0_143D30_BowlOver = 0;
+        D_801099A4_143D34_BowlOver = -1.0f;
+        D_80109E1C_1441AC_BowlOver = 0.0f;
+        D_80109972_143D02_BowlOver = 0;
+    }
+    if (gPlayers[w->player].flags & 1) {
+        if (D_8010999A_143D2A_BowlOver == 0) {
+            switch (gPlayers[w->player].cpu_difficulty) {
+            case 0:
+                D_80109E1C_1441AC_BowlOver = 0.0f;
+                break;
+            case 1:
+                D_80109E1C_1441AC_BowlOver = 5.0f;
+                break;
+            case 2:
+                D_80109E1C_1441AC_BowlOver = 10.0f;
+                break;
+            case 3:
+                D_80109E1C_1441AC_BowlOver = 15.0f;
+                break;
+            }
+            D_8010999A_143D2A_BowlOver = 1;
+        }
+        sum = 0.0f;
+        n = 0.0f;
+        for (i = 0; i < 3; i++) {
+            if ((D_80109E50_1441E0_BowlOver + D_8010A0B8_144448_BowlOver[i]->work[3])->unk_17 != 1) {
+                sum += D_8010A0B8_144448_BowlOver[i]->trans.x;
+                n += 1.0f;
+            } else if ((D_80109E50_1441E0_BowlOver + D_8010A0B8_144448_BowlOver[i + 3]->work[3])->unk_17 != 1) {
+                sum += D_8010A0B8_144448_BowlOver[i + 3]->trans.x;
+                n += 1.0f;
+            }
+        }
+        if (n != 0.0f) {
+            sum = sum / n;
+        } else {
+            sum = 0.0f;
+        }
+        btn = 0;
+        if (D_801099A0_143D30_BowlOver == 0x6E) {
+            btn = 0x8000;
+        }
+        D_801099A4_143D34_BowlOver = -1.0f;
+        switch (D_80109A40_143DD0_BowlOver) {
+        case 0:
+            if (D_801099A0_143D30_BowlOver == 0xFB) {
+                D_801099A4_143D34_BowlOver = -10.0f;
+            }
+            if (D_801099A0_143D30_BowlOver >= 0x123) {
+                if (D_8010A0A8_144438_BowlOver->trans.x < sum) {
+                    D_801099A4_143D34_BowlOver = D_80109E1C_1441AC_BowlOver + 35.0f;
+                } else {
+                    D_801099A4_143D34_BowlOver = -35.0f - D_80109E1C_1441AC_BowlOver;
+                }
+            }
+            break;
+        case 1:
+            if (D_801099A0_143D30_BowlOver >= 0x12D && D_801099A0_143D30_BowlOver < 0x135) {
+                D_801099A4_143D34_BowlOver = 12.0f;
+            }
+            if (D_801099A0_143D30_BowlOver >= 0x123) {
+                if (D_8010A0A8_144438_BowlOver->trans.x < sum) {
+                    D_801099A4_143D34_BowlOver = D_80109E1C_1441AC_BowlOver + 35.0f;
+                } else {
+                    D_801099A4_143D34_BowlOver = -35.0f - D_80109E1C_1441AC_BowlOver;
+                }
+            }
+            break;
+        case 2:
+            if (D_801099A0_143D30_BowlOver >= 0xC9 && D_801099A0_143D30_BowlOver < 0xD6) {
+                D_801099A4_143D34_BowlOver = 40.0f;
+            }
+            if (D_801099A0_143D30_BowlOver >= 0x105 && D_801099A0_143D30_BowlOver < 0x115) {
+                D_801099A4_143D34_BowlOver = -40.0f;
+            }
+            if (D_801099A0_143D30_BowlOver >= 0x123) {
+                if (D_8010A0A8_144438_BowlOver->trans.x < sum) {
+                    D_801099A4_143D34_BowlOver = D_80109E1C_1441AC_BowlOver + 35.0f;
+                } else {
+                    D_801099A4_143D34_BowlOver = -35.0f - D_80109E1C_1441AC_BowlOver;
+                }
+            }
+            break;
+        }
+        if (ContBtn[(s8)port] & 0x1000) {
+            btn |= 0x1000;
+        }
+        ContBtnTrg[(s8)port] = ContBtn[(s8)port] = btn;
+        ContBtnTrg[(s8)port] = btn & (btn ^ D_8010999C_143D2C_BowlOver);
+        D_8010999C_143D2C_BowlOver = btn;
+        if (D_801099A4_143D34_BowlOver == -1.0f) {
+            ContStkX[(s8)port] = 0;
+            ContStkY[(s8)port] = 0;
+        } else {
+            ContStkX[(s8)port] = D_801099A4_143D34_BowlOver;
+            ContStkY[(s8)port] = 0;
+        }
+    }
+    D_801099A0_143D30_BowlOver++;
+    func_801042F0_13E680_BowlOver(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_8010487C_13EC0C_BowlOver);
+#endif
 
 void func_80104D78_13F108_BowlOver(omObjData* obj, s32 dir, s32 file, s32 file2, u16 player, f32 x, f32 y, f32 z) {
     BOPlayerWork* w;
