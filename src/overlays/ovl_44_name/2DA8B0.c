@@ -86,7 +86,7 @@ void func_8010298C_2DAA3C_name_44(void) {
     func_801079E4_2DFA94_name_44();
     for (i = 0; i < 2; i++) {
         D_80108FB8_2E1068_name_44[i] = 0;
-        D_80108FC8_2E1078_name_44[i] = 0;
+        D_80108FC8_2E1078_name_44[i] = NULL;
         D_80108FD0_2E1080_name_44[i] = 0;
         D_80108FD8_2E1088_name_44[i] = 0;
     }
@@ -900,38 +900,111 @@ void func_801079E4_2DFA94_name_44(void) {
 
 /* Shows the sequence: each move's sprite in the middle for its beat (D_80108AE8[i + 1] frames). */
 void func_80107B1C_2DFBCC_name_44(void) {
-    u16* spr;
+    s32* spr;
     s32 move;
     s32 i;
 
     for (i = 0; i < 16; i++) {
         func_8010838C_2E043C_name_44();
         move = D_80108F58_2E1008_name_44 = D_80108F00_2E0FB0_name_44[i];
-        spr = D_80108F4C_2E0FFC_name_44[move];
-        espPosSet(spr[1], 160, 80);
-        espDispOn(spr[1]);
+        spr = &D_80108F4C_2E0FFC_name_44[move];
+        espPosSet(*spr, 160, 80);
+        espDispOn(*spr);
         HuPrcSleep(D_80108AE8_2E0B98_name_44[i + 1]);
-        espDispOff(spr[1]);
+        espDispOff(*spr);
         HuPrcSleep(5);
     }
     D_80108E80_2E0F30_name_44 = 1;
     omDelPrcObj(NULL);
 }
 
-__asm__(".section .rodata");
-const u32 D_80108DD8_2E0E88_name_44[12] = { 0x42200000, 0x42200000, 0x41C80000, 0x42340000, 0x42480000, 0x42200000, 0x42A00000, 0x42A00000, 0x40A00000, 0x42BE0000, 0x42C80000, 0x42DC0000 };
+/* A duelist answers a move: the swing motion and an answer object (func_80107F28) at a
+   per-character spot beside the model; ignored while the side's last answer is showing. */
+void func_80107BF4_2DFCA4_name_44(s32 move, s32 side, s32 player, s32 correct) {
+    Vec2f screen;
+    Vec pos;
+    f32 xs[12] = {
+        40.0f, 40.0f, 25.0f, 45.0f, 50.0f, 40.0f,
+        80.0f, 80.0f, 5.0f, 95.0f, 100.0f, 110.0f,
+    }; /* [side * 6 + character] */
+    f32 ys[12] = {
+        110.0f, 120.0f, 110.0f, 110.0f, 110.0f, 95.0f,
+        110.0f, 120.0f, 110.0f, 110.0f, 110.0f, 95.0f,
+    };
+    f32 zs[6] = { -100.0f, -65.0f, -65.0f, -88.0f, -110.0f, -115.0f };
+    omObjData* obj;
+    D44AnswerWork* work;
 
-__asm__(".section .rodata");
-const u32 D_80108E08_2E0EB8_name_44[12] = { 0x42DC0000, 0x42F00000, 0x42DC0000, 0x42DC0000, 0x42DC0000, 0x42BE0000, 0x42DC0000, 0x42F00000, 0x42DC0000, 0x42DC0000, 0x42DC0000, 0x42BE0000 };
-
-__asm__(".section .rodata");
-const u32 D_80108E38_2E0EE8_name_44[6] = { 0xC2C80000, 0xC2820000, 0xC2820000, 0xC2B00000, 0xC2DC0000, 0xC2E60000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_80107BF4_2DFCA4_name_44);
+    if (D_80109018_2E10C8_name_44[side] == 0) {
+        obj = omAddObj(0x10, 0, 0, -1, func_80107F28_2DFFD8_name_44);
+        obj->unk_50 = func_80027154_27D54(sizeof(D44AnswerWork), 0x7918);
+        D_80108FC8_2E1078_name_44[side] = obj;
+        work = obj->unk_50;
+        work->timer = 0;
+        work->move = move;
+        work->side = side;
+        work->unk8 = 250.0f;
+        work->unkC = 30.0f;
+        work->player = player;
+        D_80109018_2E10C8_name_44[side] = 1;
+        MBMotionSet(PLAYER_MODEL(player), 2, 0);
+        func_80029FE4_2ABE4(*PLAYER_MODEL(player)->obj->model, 6.0f);
+        PlaySound(0x3EA);
+        work->unk20 = 0;
+        work->scale = 1.0f;
+        work->alpha = 255.0f;
+        work->correct = correct;
+        D_80109020_2E10D0_name_44[side].x = PLAYER_MODEL(player)->pos.x + xs[side * 6 + gPlayers[player].character];
+        D_80109020_2E10D0_name_44[side].y = PLAYER_MODEL(player)->pos.y + ys[side * 6 + gPlayers[player].character];
+        D_80109020_2E10D0_name_44[side].z = PLAYER_MODEL(player)->pos.z + zs[gPlayers[player].character];
+        pos.x = D_80109020_2E10D0_name_44[side].x;
+        pos.y = D_80109020_2E10D0_name_44[side].y;
+        pos.z = D_80109020_2E10D0_name_44[side].z;
+        Hu3DCam3DToScreen(0, &pos, &screen);
+        work->x = screen.unk_00;
+        work->y = screen.unk_04;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_80107F28_2DFFD8_name_44);
 
+/* NON_MATCHING: masked 5, registers only: retail gives the side s2 and &D_80108FC8[side] s3, GCC
+   swaps them. */
+#ifdef NON_MATCHING
+/* A new beat: clears both sides' last answers (motion back, sprites off, models reset) and
+   moves the CPU answers on. */
+void func_8010838C_2E043C_name_44(void) {
+    s32 players[2] = { D_80108EA0_2E0F50_name_44, D_80108EA4_2E0F54_name_44 };
+    D44CpuWork* cpu;
+    s32 i;
+    s32 side;
+
+    cpu = D_80108FC4_2E1074_name_44->unk_50;
+    for (side = 0; side < 2; side++) {
+        if (D_80108FC8_2E1078_name_44[side] != NULL) {
+            D_80109018_2E10C8_name_44[side] = 0;
+            MBMotionShiftSet(PLAYER_MODEL(players[side]), 1, 0, 5, 2);
+            func_80029FE4_2ABE4(*PLAYER_MODEL(players[side])->obj->model, 1.0f);
+            omDelObj(D_80108FC8_2E1078_name_44[side]);
+            D_80108FC8_2E1078_name_44[side] = NULL;
+            if (D_80108FD0_2E1080_name_44[side] != 0) {
+                D_80108FD8_2E1088_name_44[side] = 1;
+                espDispOff(D_80108F70_2E1020_name_44[side]);
+            }
+            espDispOff(D_80108F60_2E1010_name_44[side]);
+            for (i = 0; i < 3; i++) {
+                func_800298A4_2A4A4(D_80109000_2E10B0_name_44[i][side], 4, 4);
+                func_800297E8_2A3E8(D_80109000_2E10B0_name_44[i][side], 1.0f, 1.0f, 1.0f);
+                D_800FC834_FD434[D_80109000_2E10B0_name_44[i][side]].pos.y = 0.0f;
+            }
+        }
+        cpu->idx[side]++;
+        cpu->timer[side] = 4;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_8010838C_2E043C_name_44);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_80108E50_2E0F00_name_44[5] = { 0x00000000, 0x00000000, 0xFFFFFFF0, 0x00000000, 0x00000000 };
@@ -943,15 +1016,14 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801085BC_2E066C
 
 void func_80108750_2E0800_name_44(omObjData* obj) {
     D44SprWork* work = obj->unk_50;
-    s32 unused[4]; /* retail's frame has 16 unused bytes */
 
     if (work->timer == 0) {
-        espDispOn(D_80108F70_2E1020_name_44[work->side][1]);
-        func_8001A854_1B454(D_80108F70_2E1020_name_44[work->side][1], 0, 0);
-        func_8001A89C_1B49C(D_80108F70_2E1020_name_44[work->side][1], 1);
+        espDispOn(D_80108F70_2E1020_name_44[work->side]);
+        func_8001A854_1B454(D_80108F70_2E1020_name_44[work->side], 0, 0);
+        func_8001A89C_1B49C(D_80108F70_2E1020_name_44[work->side], 1);
     }
     if (work->timer == 11) {
-        espDispOff(D_80108F70_2E1020_name_44[work->side][1]);
+        espDispOff(D_80108F70_2E1020_name_44[work->side]);
     }
     if (work->timer == 12 || D_80108FD8_2E1088_name_44[work->side] == 1) {
         D_80108FD0_2E1080_name_44[work->side] = 0;

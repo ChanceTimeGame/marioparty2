@@ -185,6 +185,7 @@ void func_8006D518_6E118(void);
 void func_800794A8_7A0A8(s32);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
+void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 
@@ -262,6 +263,22 @@ typedef struct D44SprWork {
     /* 0x04 */ s32 side;
 } D44SprWork; /* size 0x08 */
 
+/* func_80107BF4's answer (func_80107F28). */
+typedef struct D44AnswerWork {
+    /* 0x00 */ s32 move;
+    /* 0x04 */ s32 side;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ s32 timer;
+    /* 0x14 */ s32 player;
+    /* 0x18 */ s32 x; /* on screen */
+    /* 0x1C */ s32 y;
+    /* 0x20 */ s32 unk20;
+    /* 0x24 */ f32 scale;
+    /* 0x28 */ f32 alpha;
+    /* 0x2C */ s32 correct;
+} D44AnswerWork; /* size 0x30 */
+
 /* ---- 44 data (asm/data/overlays/ovl_44_name/2E09D0.data.s) ---- */
 
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
@@ -292,17 +309,21 @@ extern s32 D_80108EDC_2E0F8C_name_44; /* the poorer player's coins */
 extern s32 D_80108EE0_2E0F90_name_44[2];
 extern s32 D_80108EE8_2E0F98_name_44; /* CPU pad triggers */
 extern s32 D_80108F00_2E0FB0_name_44[16]; /* the move sequence, 0..2 each */
-extern u16 D_80108F4C_2E0FFC_name_44[3][2]; /* per move: [1] the move's sprite */
+extern s32 D_80108F4C_2E0FFC_name_44[3]; /* per move: its sprite */
 extern s32 D_80108F58_2E1008_name_44; /* the move expected now */
-extern u16 D_80108F70_2E1020_name_44[18][2]; /* [side][1]: func_80108750's sprite */
+extern s32 D_80108F60_2E1010_name_44[2]; /* per side: a sprite */
+extern s32 D_80108F70_2E1020_name_44[18]; /* [side]: func_80108750's sprite */
 extern s32 D_80108FB8_2E1068_name_44[2];
-extern s32 D_80108FC8_2E1078_name_44[2];
+extern omObjData* D_80108FC8_2E1078_name_44[2]; /* per side: the answer object */
 extern s32 D_80108FD0_2E1080_name_44[2];
 extern s32 D_80108FD8_2E1088_name_44[2];
 extern omObjData* D_80108FC4_2E1074_name_44; /* func_80106C24's object */
 extern s32 D_80108FE0_2E1090_name_44;
 extern s32 D_80108FE4_2E1094_name_44; /* no referee (flag 0x17 clear) */
 extern MBModel* D_80108FF0_2E10A0_name_44; /* the referee's hat (scaled away) */
+extern s32 D_80109000_2E10B0_name_44[3][2]; /* [i][side]: three models per side */
+extern s32 D_80109018_2E10C8_name_44[2]; /* per side: an answer is showing */
+extern Vec D_80109020_2E10D0_name_44[2]; /* per side: where the answer appears */
 
 /* ---- 2DA8B0.c ---- */
 
