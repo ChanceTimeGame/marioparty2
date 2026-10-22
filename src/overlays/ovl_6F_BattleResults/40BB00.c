@@ -608,11 +608,78 @@ s32 func_801047C8_40DAC8_BattleResults(s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801047C8_40DAC8_BattleResults);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104960_40DC60_BattleResults);
+/* The carrier comes back for the remainder: flies in, turns, throws the coin, turns, leaves. */
+void func_80104960_40DC60_BattleResults(omObjData* obj) {
+    HmfModel* m = &D_800FC834_FD434[D_801059B0_40ECB0_BattleResults];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104BAC_40DEAC_BattleResults);
+    switch (obj->work[1]) {
+    case 0:
+        func_800298A4_2A4A4((s16)D_801059B0_40ECB0_BattleResults, 4, 0);
+        func_8002979C_2A39C((s16)D_801059B0_40ECB0_BattleResults, 0.0f, 90.0f, 0.0f);
+        func_8002C9C0_2D5C0((s16)D_801059B0_40ECB0_BattleResults, (s16)D_80105A18_40ED18_BattleResults);
+        func_80029E80_2AA80((s16)D_801059B0_40ECB0_BattleResults, 0, 2);
+        PlaySound(0xE8);
+        obj->work[1] = 1;
+        break;
+    case 1:
+        func_80029714_2A314((s16)D_801059B0_40ECB0_BattleResults, m->pos.x + 10.0f, m->pos.y, m->pos.z);
+        if (D_80105710_40EA10_BattleResults[0].x < m->pos.x) {
+            func_8002C9C0_2D5C0((s16)D_801059B0_40ECB0_BattleResults, (s16)D_80105A20_40ED20_BattleResults);
+            func_80029E80_2AA80((s16)D_801059B0_40ECB0_BattleResults, 0, 2);
+            obj->work[1] = 2;
+            obj->work[2] = 0;
+        }
+        break;
+    case 2:
+        func_8002979C_2A39C((s16)D_801059B0_40ECB0_BattleResults, 0.0f, 0.0f, 0.0f);
+        if (obj->work[2]++ >= 5) {
+            func_801047C8_40DAC8_BattleResults(D_80105A6C_40ED6C_BattleResults);
+            obj->work[1] = 3;
+            obj->work[2] = 0;
+        }
+        break;
+    case 3:
+        if (obj->work[2]++ >= 7) {
+            func_8002979C_2A39C((s16)D_801059B0_40ECB0_BattleResults, 0.0f, -90.0f, 0.0f);
+            func_8002C9C0_2D5C0((s16)D_801059B0_40ECB0_BattleResults, (s16)D_80105A18_40ED18_BattleResults);
+            func_80029E80_2AA80((s16)D_801059B0_40ECB0_BattleResults, 0, 2);
+            obj->work[1] = 4;
+        }
+        break;
+    case 4:
+        func_80029714_2A314((s16)D_801059B0_40ECB0_BattleResults, m->pos.x - 10.0f, m->pos.y, m->pos.z);
+        if (m->pos.x < -330.0f) {
+            func_800298A4_2A4A4((s16)D_801059B0_40ECB0_BattleResults, 4, 4);
+            obj->work[0] = 100;
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104C14_40DF14_BattleResults);
+/* Puts a coin bag above a player's character. */
+void func_80104BAC_40DEAC_BattleResults(s16 model, s32 player) {
+    HmfModel* m = &D_800FC834_FD434[D_80105980_40EC80_BattleResults[player]];
+
+    func_80029714_2A314(model, m->pos.x, m->pos.y, m->pos.z + 50.0f);
+}
+
+/* Fades a player's coin bag in over work[0] frames (work[1] the player). */
+void func_80104C14_40DF14_BattleResults(omObjData* obj) {
+    s32 model = D_801059A0_40ECA0_BattleResults[obj->work[1]];
+    HmfData* hmf = D_800FC834_FD434[model].hmf;
+    s32 i;
+
+    func_800298A4_2A4A4(model, 4, 0);
+    for (i = 0; i < hmf->unk10; i++) {
+        hmf->unk64[i].unk02 += 15;
+    }
+    if (--obj->work[0] == 0xFF) {
+        for (i = 0; i < hmf->unk10; i++) {
+            hmf->unk64[i].unk02 = 0x99;
+        }
+        omDelObj(obj);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104D30_40E030_BattleResults);
 
