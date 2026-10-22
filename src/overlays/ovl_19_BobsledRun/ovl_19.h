@@ -164,6 +164,7 @@ extern s32 D_8010C124_19ACC4_BobsledRun;
 extern s32 D_8010C128_19ACC8_BobsledRun;
 extern s32 D_8010C12C_19ACCC_BobsledRun;
 extern s32 D_8010C130_19ACD0_BobsledRun;
+extern s32 D_8010C134_19ACD4_BobsledRun; /* winner's camera height offset (stays 25: s32 += 0.5f) */
 
 /* ---------------------------------------------------------------------------------------------
    Bss (ovl_19_bss)
@@ -292,6 +293,15 @@ f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16); /* motion length */
 s32 func_80019B9C_1A79C(omObjData* obj, s32 motion); /* C8E0.c: player motion */
 void func_80029E80_2AA80(s16, s32, s32);
+extern f32 D_800BF7A4_C03A4; /* jump speed (MP1 D_800B8964) */
+extern f32 D_800BF7D0_C03D0; /* MP1 D_800B8990 */
+extern f32 D_800BF7D4_C03D4; /* MP1 D_800B8994 */
+f32 func_8000312C_3D2C(omObjData* obj, f32 rot, f32 x, f32 y, f32 z); /* ground height, 65536.0f = none */
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+omObjData* func_800732B0_73EB0(u32 arg0);
+void func_80019E04_1AA04(omObjData* obj, s32 idx, u16 motion);
+void func_800B2060_B2C60(f32* m, f32 x, f32 y, f32 z); /* rotate matrix */
+void func_8002D9AC_2E5AC(Vec3f*); /* normalize */
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800298A4_2A4A4(s16, s32, s32);
 s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);

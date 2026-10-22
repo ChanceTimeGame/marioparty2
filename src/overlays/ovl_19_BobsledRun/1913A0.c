@@ -1231,7 +1231,240 @@ void func_80106438_194FD8_BobsledRun(s32 team, u8 mdl) {
     }
 }
 
+/* The bobsled after the crash zone or the goal: the winner slides to a stop (then, without
+   _CheckFlag(0xC), the riders climb out and the sled drops away), the loser spins out. */
+// register allocation (spin s5/s6, the ground height f2/f20, camera distance f20/f22) and the team*0x44 index schedule; logic follows retail
+#ifdef NON_MATCHING
+void func_801064F0_195090_BobsledRun(omObjData* obj) {
+    BRWork* work;
+    omObjData* o;
+    s32 team;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 x2;
+    f32 y2;
+    f32 z2;
+    f32 spin;
+    f32 speed;
+    f32 h;
+    f32 sp;
+    f32 cy;
+    f32 d;
+    f32 v;
+    f32 vv;
+    f32 f;
+
+    work = obj->unk_50;
+    team = work->unk_59;
+    x2 = x = obj->trans.x;
+    y = obj->trans.y;
+    z2 = z = obj->trans.z;
+    spin = D_800F94A0_FA0A0 = D_80101308_101F08 = 0.0f;
+    y2 = y;
+    if (D_8010BFF4_19AB94_BobsledRun == team) {
+        speed = work->unk_40;
+        switch (D_8010C048_19ABE8_BobsledRun[team].anim) {
+            case 6:
+                if (work->unk_38 == 1000.0f) {
+                    work->unk_38 = -D_800BF7A4_C03A4 * 0.8f;
+                }
+                if (_CheckFlag(0xC) == 0) {
+                    v = work->unk_38;
+                    if (D_800BF7D4_C03D4 < v) {
+                        v = D_800BF7D4_C03D4;
+                    }
+                    vv = v * v;
+                    if (work->unk_38 >= 0.0f) {
+                        f = vv * -35.0f;
+                    } else {
+                        f = vv * 35.0f;
+                    }
+                    y2 += f;
+                    work->unk_3C += -10.0f;
+                    if (work->unk_3C < 120.0f) {
+                        work->unk_3C = 120.0f;
+                    }
+                    work->unk_38 = D_800BF7A8_C03A8 * 1.5f + work->unk_38;
+                    if (y2 < -8315.0f) {
+                        y2 = -8315.0f;
+                        D_8010C048_19ABE8_BobsledRun[team].anim = 7;
+                        work->unk_3C = 120.0f;
+                    }
+                    x2 += HuMathSin(D_80102770_103370[team].y) * 6.0f;
+                    z2 += func_800B7890_B8490(D_80102770_103370[team].y) * 6.0f;
+                }
+                func_8000C35C_CF5C(obj, x2, y2, z2);
+            case 7:
+                if (_CheckFlag(0xC) == 0) {
+                    func_80019B9C_1A79C(obj, 0xD);
+                    func_800732B0_73EB0(D_8010CB30_19B6D0_BobsledRun[D_8010C048_19ABE8_BobsledRun[team].player[0]]);
+                    D_8010CB30_19B6D0_BobsledRun[D_8010C048_19ABE8_BobsledRun[team].player[0]] = -1;
+                }
+            default:
+                spin = -D_8010C048_19ABE8_BobsledRun[team].roll * 3.0f;
+                if (speed != D_800BF7D0_C03D0) {
+                    speed -= D_8010C048_19ABE8_BobsledRun[team].roll * 0.08f;
+                    if (speed < 1.0f) {
+                        work->unk_40 = D_800BF7D0_C03D0;
+                        speed = D_800BF7D0_C03D0;
+                        D_8010C048_19ABE8_BobsledRun[team].anim = 6;
+                        if (_CheckFlag(0xC) == 0) {
+                            func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[1], 4, 4);
+                            func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[0], 4, 0);
+                            obj->model[0] = D_8010C048_19ABE8_BobsledRun[team].mdl[0];
+                            func_80019E04_1AA04(obj, 0x27, 6);
+                            func_80019B9C_1A79C(obj, 6);
+                            func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[3], 4, 4);
+                            func_800298A4_2A4A4(D_8010C048_19ABE8_BobsledRun[team].mdl[2], 4, 0);
+                            y2 += 10.0f;
+                        }
+                    }
+                    work->unk_40 = speed;
+                    HuMathSin(work->unk_3C);
+                    func_800B7890_B8490(work->unk_3C);
+                    x += HuMathSin(work->unk_3C) * speed;
+                    z += func_800B7890_B8490(work->unk_3C) * speed;
+                    h = func_8000312C_3D2C(obj, work->unk_3C, x, y, z);
+                    if (h != 65536.0f) {
+                        y = h;
+                        func_801060E8_194C88_BobsledRun(obj, 100, 60.0f, spin + work->unk_3C, x, y, z);
+                    }
+                    x += D_800F94A0_FA0A0;
+                    z += D_80101308_101F08;
+                    func_8000C35C_CF5C(obj, x, y2, z);
+                    func_80029714_2A314(obj->model[5], x, y, z);
+                    func_80029714_2A314(obj->model[6], x, y, z);
+                }
+                cy = y + (200.0f - (D_8010C048_19ABE8_BobsledRun[team].roll * 5.0f + (sp = work->unk_40)));
+                D_8010C134_19ACD4_BobsledRun += 0.5f;
+                d = 2.0f * sp;
+                if (D_8010C134_19ACD4_BobsledRun < 25.0f) {
+                    D_8010C134_19ACD4_BobsledRun = 25;
+                }
+                D_80102770_103370[team].y = work->unk_3C + D_8010C048_19ABE8_BobsledRun[team].roll + 180.0f;
+                D_801013B0_101FB0[team].x = x - HuMathSin(work->unk_3C) * d;
+                D_801013B0_101FB0[team].z = z - func_800B7890_B8490(work->unk_3C) * d;
+                if (d != 0.0f) {
+                    D_801013B0_101FB0[team].y = cy + D_8010C134_19ACD4_BobsledRun;
+                    D_800F94A8_FA0A8[team] = work->unk_40 + 350.0f + D_8010C048_19ABE8_BobsledRun[team].roll;
+                }
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[5]].mtx, 0.0f, spin + work->unk_3C, 0.0f);
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[6]].mtx, 0.0f, spin + work->unk_3C, 0.0f);
+                func_8002979C_2A39C(obj->model[5], obj->rot.x, obj->rot.y, obj->rot.z);
+                func_8002979C_2A39C(obj->model[6], obj->rot.x, obj->rot.y, obj->rot.z);
+                break;
+        }
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, spin + work->unk_3C, 0.0f);
+        D_8010CA20_19B5C0_BobsledRun[team].x = HuMathSin(work->unk_3C + 180.0f - spin);
+        D_8010CA20_19B5C0_BobsledRun[team].y = 0.0f;
+        D_8010CA20_19B5C0_BobsledRun[team].z = func_800B7890_B8490(work->unk_3C + 180.0f - spin);
+        func_8002D9AC_2E5AC(&D_8010CA20_19B5C0_BobsledRun[team]);
+        D_8010C048_19ABE8_BobsledRun[team].roll *= 1.15f;
+        if (D_8010C048_19ABE8_BobsledRun[team].roll > 30.0f) {
+            D_8010C048_19ABE8_BobsledRun[team].roll = 30.0f;
+        }
+    } else {
+        speed = work->unk_40;
+        switch (D_8010C048_19ABE8_BobsledRun[team].anim) {
+            case 8:
+                v = work->unk_38;
+                if (D_800BF7D4_C03D4 < v) {
+                    v = D_800BF7D4_C03D4;
+                }
+                vv = v * v;
+                if (work->unk_38 >= 0.0f) {
+                    f = vv * -35.0f;
+                } else {
+                    f = vv * 35.0f;
+                }
+                y += f;
+                work->unk_40 = speed * 0.98f;
+                work->unk_38 = 2.0f * D_800BF7A8_C03A8 + work->unk_38;
+                if (y < -9500.0f) {
+                    y = -9500.0f;
+                }
+            default:
+                spin = -D_8010C048_19ABE8_BobsledRun[team].roll;
+                if (speed != D_800BF7D0_C03D0) {
+                    if (D_8010C048_19ABE8_BobsledRun[team].roll < 8.0f) {
+                        if (D_8010BFF4_19AB94_BobsledRun != -1) {
+                            o = D_800FFFD8_100BD8[D_8010BFF4_19AB94_BobsledRun];
+                        } else if (team != 0) {
+                            o = D_800FFFD8_100BD8[0];
+                        } else {
+                            o = D_800FFFD8_100BD8[1];
+                        }
+                        if (o->trans.z < obj->trans.z) {
+                            work->unk_3C = work->unk_3C + D_8010C048_19ABE8_BobsledRun[team].roll;
+                        } else {
+                            work->unk_3C = work->unk_3C - D_8010C048_19ABE8_BobsledRun[team].roll;
+                        }
+                    }
+                    speed -= D_8010C048_19ABE8_BobsledRun[team].roll * 0.02f;
+                    if (speed < 1.0f) {
+                        work->unk_40 = D_800BF7D0_C03D0;
+                        speed = D_800BF7D0_C03D0;
+                    }
+                    work->unk_40 = speed;
+                }
+                h = func_8000312C_3D2C(obj, work->unk_3C, x, y, z);
+                if (h != 65536.0f) {
+                    y = h;
+                } else if (work->unk_38 != 1000.0f && D_8010BFF4_19AB94_BobsledRun != work->unk_59) {
+                    func_800298A4_2A4A4((s8)obj->model[0], 4, 4);
+                    func_800298A4_2A4A4((s8)obj->model[1], 4, 4);
+                    obj->model[0] = D_8010C048_19ABE8_BobsledRun[team].mdl[0];
+                    func_800298A4_2A4A4((s8)obj->model[0], 4, 0);
+                    work->unk_38 = -D_800BF7A4_C03A4 * 0.4f;
+                    D_8010C048_19ABE8_BobsledRun[team].anim = 8;
+                    func_80019E04_1AA04(obj, 0x27, 6);
+                }
+                break;
+            case 9:
+                break;
+        }
+        func_801060E8_194C88_BobsledRun(obj, 30, 50.0f, work->unk_3C - spin, x, y, z);
+        x = x + (HuMathSin(work->unk_3C) * speed + D_800F94A0_FA0A0);
+        z = z + (func_800B7890_B8490(work->unk_3C) * speed + D_80101308_101F08);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, work->unk_3C, 0.0f);
+        D_8010CA20_19B5C0_BobsledRun[team].x = HuMathSin(work->unk_3C + 180.0f);
+        D_8010CA20_19B5C0_BobsledRun[team].y = 0.0f;
+        D_8010CA20_19B5C0_BobsledRun[team].z = func_800B7890_B8490(work->unk_3C + 180.0f);
+        func_8002D9AC_2E5AC(&D_8010CA20_19B5C0_BobsledRun[team]);
+        func_8000C35C_CF5C(obj, x, y, z);
+        if (D_8010C048_19ABE8_BobsledRun[team].anim == 4) {
+            func_800B2060_B2C60(D_800FC834_FD434[obj->model[5]].mtx, 0.0f, work->unk_3C, 0.0f);
+            func_8002979C_2A39C(obj->model[5], obj->rot.x, obj->rot.y, obj->rot.z);
+            func_80029714_2A314(obj->model[5], x, y, z);
+            func_800B2060_B2C60(D_800FC834_FD434[obj->model[6]].mtx, 0.0f, work->unk_3C, 0.0f);
+            func_8002979C_2A39C(obj->model[6], obj->rot.x, obj->rot.y, obj->rot.z);
+            func_80029714_2A314(obj->model[6], x, y, z);
+            cy = 200.0f - (D_8010C048_19ABE8_BobsledRun[team].roll * 3.0f + (sp = work->unk_40)) + obj->trans.y;
+            D_80102770_103370[team].y = work->unk_3C + 180.0f;
+            d = 2.0f * sp;
+            D_801013B0_101FB0[team].x = obj->trans.x - HuMathSin(work->unk_3C) * d;
+            D_801013B0_101FB0[team].z = obj->trans.z - func_800B7890_B8490(work->unk_3C) * d;
+            if (d != 0.0f) {
+                D_801013B0_101FB0[team].y = cy;
+                D_800F94A8_FA0A8[team] = work->unk_40 + 300.0f + D_8010C048_19ABE8_BobsledRun[team].roll * 3.0f;
+            }
+        } else if (D_8010C048_19ABE8_BobsledRun[team].anim == 8) {
+            func_80029714_2A314(obj->model[5], x, y, z);
+            func_80029714_2A314(obj->model[6], x, y, z);
+        }
+        D_8010C048_19ABE8_BobsledRun[team].roll = D_8010C048_19ABE8_BobsledRun[team].roll * 1.07;
+        if (D_8010C048_19ABE8_BobsledRun[team].roll > 40.0f) {
+            D_8010C048_19ABE8_BobsledRun[team].roll = 40.0f;
+        }
+    }
+    func_8010BD18_19A8B8_BobsledRun(obj, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+    func_80106438_194FD8_BobsledRun(team, obj->model[3]);
+    func_80104EAC_193A4C_BobsledRun(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801064F0_195090_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107550_1960F0_BobsledRun);
 
