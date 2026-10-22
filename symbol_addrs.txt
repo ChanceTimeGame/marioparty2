@@ -844,3 +844,26 @@ D_8010F8A0_245780_SlotCarDerby = 0x8010F8A0; // size:0x18 segment:SlotCarDerby
 // MG19-A: ovl_19 bss u16 pair retail addresses by halves (progress bar: track piece, flag)
 D_8010C9F0_19B590_BobsledRun = 0x8010C9F0; // size:0x2 segment:BobsledRun
 D_8010C9F2_19B592_BobsledRun = 0x8010C9F2; // size:0x2 segment:BobsledRun
+// MG30-C: ovl_30 23F020.c .data/.bss tables retail reads by element or by s16 half (MP1 D_80100EB0, D_80100EC0, D_80100F00, D_80100F18, D_80100F34, D_80102474/78)
+D_8010FB10_2459F0_SlotCarDerby = 0x8010FB10; // size:0x4 segment:SlotCarDerby
+D_8010FB20_245A00_SlotCarDerby = 0x8010FB20; // size:0x24 segment:SlotCarDerby
+D_8010FB44_245A24_SlotCarDerby = 0x8010FB44; // size:0x24 segment:SlotCarDerby
+D_8010FB68_245A48_SlotCarDerby = 0x8010FB68; // size:0x1C segment:SlotCarDerby
+D_8010FB84_245A64_SlotCarDerby = 0x8010FB84; // size:0x1C segment:SlotCarDerby
+D_8010FBA0_245A80_SlotCarDerby = 0x8010FBA0; // size:0xC segment:SlotCarDerby
+D_80110970_246850_SlotCarDerby = 0x80110970; // size:0x4 segment:SlotCarDerby
+D_80110974_246854_SlotCarDerby = 0x80110974; // size:0x4 segment:SlotCarDerby
+D_8010FBAC_245A8C_SlotCarDerby = 0x8010FBAC; // size:0x3C segment:SlotCarDerby
+D_8010FBE8_245AC8_SlotCarDerby = 0x8010FBE8; // size:0xC segment:SlotCarDerby
+D_8010FBF8_245AD8_SlotCarDerby = 0x8010FBF8; // size:0x18 segment:SlotCarDerby
+D_8010FC10_245AF0_SlotCarDerby = 0x8010FC10; // size:0x18 segment:SlotCarDerby
+D_80110960_246840_SlotCarDerby = 0x80110960; // size:0x8 segment:SlotCarDerby
+D_80110980_246860_SlotCarDerby = 0x80110980; // size:0xC segment:SlotCarDerby
+D_8011098C_24686C_SlotCarDerby = 0x8011098C; // size:0x4 segment:SlotCarDerby
+D_80110994_246874_SlotCarDerby = 0x80110994; // size:0xC segment:SlotCarDerby
+D_801109A0_246880_SlotCarDerby = 0x801109A0; // size:0xC segment:SlotCarDerby
+D_8010FC28_245B08_SlotCarDerby = 0x8010FC28; // size:0x8 segment:SlotCarDerby
+D_8010FC30_245B10_SlotCarDerby = 0x8010FC30; // size:0x10 segment:SlotCarDerby
+D_801109B0_246890_SlotCarDerby = 0x801109B0; // size:0x8 segment:SlotCarDerby
+D_801109BA_24689A_SlotCarDerby = 0x801109BA; // size:0x6 segment:SlotCarDerby
+D_801109C0_2468A0_SlotCarDerby = 0x801109C0; // size:0x8 segment:SlotCarDerby
