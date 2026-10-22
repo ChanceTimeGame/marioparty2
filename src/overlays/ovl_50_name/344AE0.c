@@ -1706,7 +1706,106 @@ void func_8010A9B8_34B218_name_50(void) {
     MBDBackKill();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010AB4C_34B3AC_name_50);
+/* Board 4's scene, part 5: the winner walks to D_80112170 facing D_8011275C, takes the prize
+   (form D_80112158[character], hung on part D_80112140[character]) while the picture changes
+   (0xA01FA to 0xA01FB); message 0x32F. Then the winner's board model is recreated there. */
+void func_8010AB4C_34B3AC_name_50(void) {
+    Vec rot;
+    s16 anim1;
+    s16 anim2;
+    MBModel* winner;
+    s16 spr2;
+    s16 form;
+    s16 spr1;
+    MBModel* sign;
+    s32 win;
+    s16 win2;
+    s32 i;
+
+    func_80050E00_51A00(0x21);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    D_80112600_352E60_name_50->work[0] = 1;
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    anim1 = func_8001A2F8_1AEF8(0xA01FA);
+    anim2 = func_8001A2F8_1AEF8(0xA01FB);
+    spr1 = func_8001AAAC_1B6AC(anim1, 0, 1);
+    spr2 = func_8001AAAC_1B6AC(anim2, 0, 1);
+    espDispOff(spr1);
+    espDispOff(spr2);
+    form = LoadFormFile(D_80112158_3529B8_name_50[gPlayers[D_8011275A_352FBA_name_50].character], 0x6BD);
+    func_8002D1EC_2DDEC(form, 1);
+    sign = MBModelFileCreate(0xA0204, 0, 1.5f, 0.0f, NULL);
+    sign->pos.x = D_8011208C_3528EC_name_50.x;
+    sign->pos.y = D_8011208C_3528EC_name_50.y;
+    sign->pos.z = D_8011208C_3528EC_name_50.z;
+    winner->pos.x = D_80112134_352994_name_50.x;
+    winner->pos.y = D_80112134_352994_name_50.y;
+    winner->pos.z = D_80112134_352994_name_50.z;
+    func_80056658_57258(&winner->pos, &D_8011275C_352FBC_name_50->pos, &winner->rot);
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    win = func_8005AAC0_5B6C0(136, 40, 48, 48);
+    espPosSet(spr1, 160, 64);
+    espDispOn(spr1);
+    MBMotionSet(winner, 2, 2);
+    func_80056658_57258(&winner->pos, &D_80112170_3529D0_name_50, &winner->rot);
+    while (func_8005A5E8_5B1E8(winner, &D_80112170_3529D0_name_50, 20.0f) == 0) {
+        func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 8.0f);
+        HuPrcVSleep();
+    }
+    while (func_8005A7E8_5B3E8(winner, &D_8011275C_352FBC_name_50->pos, 10.0f) == 0) {
+        func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 8.0f);
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(winner, -1, 0, 4, 2);
+    rot = winner->rot;
+    HuPrcSleep(20);
+    MBMotionShiftSet(winner, 8, 0, 4, 0);
+    HuPrcSleep(10);
+    func_80023DAC_249AC(form, D_80112140_3529A0_name_50[gPlayers[D_8011275A_352FBA_name_50].character], *winner->obj->model,
+                        D_80112140_3529A0_name_50[gPlayers[D_8011275A_352FBA_name_50].character]);
+    i = 0;
+    do {
+        func_8001A91C_1B51C(spr1, 1.0f - i * 0.2f, 1.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 5);
+    espDispOff(spr1);
+    espDispOn(spr2);
+    espPosSet(spr2, 160, 64);
+    i = 0;
+    do {
+        func_8001A91C_1B51C(spr2, i * 0.2f, 1.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 5);
+    func_8001A91C_1B51C(spr2, 1.0f, 1.0f);
+    HuPrcSleep(10);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x32F);
+    win2 = func_8005AAC0_5B6C0(24, 35, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win2, 0x32F, -1, -1);
+    PlaySound(0x122);
+    HuPrcSleep(30);
+    func_8008CCA8_8D8A8(win2);
+    func_8008CCA8_8D8A8(win);
+    MBModelKill(sign);
+    func_8001AC44_1B844(spr1);
+    func_8001AC44_1B844(spr2);
+    SprAnimKill(anim1);
+    SprAnimKill(anim2);
+    MBModelKill(winner);
+    func_800283DC_28FDC(form);
+    MBDBackKill();
+    MBPlayerModelCreate(D_8011275A_352FBA_name_50, D_80112008_352868_name_50[gPlayers[D_8011275A_352FBA_name_50].character], 2);
+    func_8005ABC0_5B7C0(&gPlayers[D_8011275A_352FBA_name_50], 2, 11);
+    gPlayers[D_8011275A_352FBA_name_50].flags |= 2;
+    MBMotionSet(OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50), 0, 2);
+    func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->obj->model, 1);
+    MBModelDispOff(OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50));
+    OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->pos.x = D_80112170_3529D0_name_50.x;
+    OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->pos.y = D_80112170_3529D0_name_50.y;
+    OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->pos.z = D_80112170_3529D0_name_50.z;
+    OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->rot = rot;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010B230_34BA90_name_50);
 

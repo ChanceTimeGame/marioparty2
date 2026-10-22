@@ -417,6 +417,10 @@ extern Vec D_80112110_352970_name_50;     /* the winner's place */
 extern Vec D_8011211C_35297C_name_50;     /* D_80112748, part 3: start */
 extern Vec D_80112128_352988_name_50;     /* D_80112748, part 3: where it hops to */
 extern Vec D_80112134_352994_name_50;     /* the winner, part 3 */
+extern char* D_80112140_3529A0_name_50[6]; /* per character: the part the prize hangs on */
+extern s32 D_80112158_3529B8_name_50[6];  /* per character: the prize's form (0xA025E-63) */
+extern Vec D_80112170_3529D0_name_50;     /* the winner, part 5 */
+void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3); /* hangs arg0's part arg1 on arg2's arg3 */
 extern omObjData* D_80112600_352E60_name_50; /* the sign's sparkle (func_8010CFE8) */
 extern s16 D_80112604_352E64_name_50;     /* a sound handle (0x3F8) */
 
