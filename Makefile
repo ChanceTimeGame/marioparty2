@@ -432,5 +432,15 @@ $(EVB_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 
-# MG01-A: ovl_01 (DA290.c) has a nop between back-to-back mul.d (func_801030C0): KMC mul fix on
-build/src/overlays/ovl_01_BowserSlots/DA290.c.o: export VR4300MUL := ON
+# MG01-A: ovl_01 DA290.c is built as 1D0B0 is: GCC's assembly with blank lines removed, assembled
+# with the KMC VR4300 mul fix on (func_801030C0: a nop between back-to-back mul.d; func_80106B30:
+# none before a mul.s after a call)
+MG01A_BLANKSTRIP_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o
+$(MG01A_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(MG01A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)

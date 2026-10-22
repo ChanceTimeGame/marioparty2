@@ -1319,7 +1319,189 @@ void func_80106820_DE2B0_BowserSlots(omObjData* obj) {
     obj->work[3] = anim;
 }
 
+/* The item flight (work[0]): 1 starts at the machine, 2 arcs up out of it, 3 falls to the player
+   on a Bezier curve (x uses 6 where 3 belongs: retail), 4 bobs over the player's head. The five
+   trail sprites follow ten frames of positions; sparkles are left behind. */
+#ifdef NON_MATCHING
+/* masked 2: the sparkle loop's hoisted constants come out in another order (20.0 after the two table addresses) */
+void func_80106B30_DE5C0_BowserSlots(omObjData* obj) {
+    HmfModel* m;
+    void* anim;
+    s32 item;
+    s32 sparkle;
+    s32 bob;
+    s32 i;
+    s32 k;
+    f32 x2;
+    f32 t;
+    f32 u;
+    f32 x;
+    f32 y;
+    f32 x1;
+    f32 y1;
+    f32 y2;
+    f32 amp;
+    f32 a;
+    Vec pos;
+
+    sparkle = 0;
+    bob = 0;
+    if (obj->work[0] == 0) {
+        return;
+    }
+    if (D_8010B8B4_E3344_BowserSlots == -1) {
+        D_8010B8B4_E3344_BowserSlots = (s16)PlaySound(0x12E);
+    }
+    switch (obj->work[0]) {
+        case 1:
+            obj->trans.x = D_8010B874_E3304_BowserSlots.x;
+            obj->trans.y = D_8010B874_E3304_BowserSlots.y;
+            obj->trans.z = D_8010B874_E3304_BowserSlots.z;
+            for (i = 0; i < 10; i++) {
+                D_8010BFB8_E3A48_BowserSlots[i].x = obj->trans.x;
+                D_8010BFB8_E3A48_BowserSlots[i].y = obj->trans.y;
+                D_8010BFB8_E3A48_BowserSlots[i].z = obj->trans.z;
+            }
+            for (i = 0; i < 5; i++) {
+                func_800298A4_2A4A4(obj->model[i], 4, 0);
+            }
+            D_8010B898_E3328_BowserSlots = -30.0f;
+            D_8010B89C_E332C_BowserSlots = 240.0f;
+            goto next;
+        case 2:
+            t = (f32)D_8010B8AC_E333C_BowserSlots / (f32)D_8010B8A0_E3330_BowserSlots;
+            obj->trans.x = D_8010B874_E3304_BowserSlots.x + t * (D_8010B880_E3310_BowserSlots.x - D_8010B874_E3304_BowserSlots.x);
+            obj->trans.z = D_8010B874_E3304_BowserSlots.z + t * (D_8010B880_E3310_BowserSlots.z - D_8010B874_E3304_BowserSlots.z);
+            obj->trans.y = D_8010B874_E3304_BowserSlots.y + 2.0 * (HuMathSin(t * 180.0 * 0.85) * 100.0);
+            if ((f64)D_8010B8AC_E333C_BowserSlots > D_8010B8A0_E3330_BowserSlots * 0.2 && !(D_8010B8AC_E333C_BowserSlots & 7)) {
+                sparkle = 1;
+            }
+            if (D_8010B8AC_E333C_BowserSlots == 10) {
+                func_8010A138_E1BC8_BowserSlots(-1, -1);
+            }
+            if (D_8010B8AC_E333C_BowserSlots >= D_8010B8A0_E3330_BowserSlots) {
+                D_8010B880_E3310_BowserSlots.y = obj->trans.y;
+                obj->work[0]++;
+                D_8010B8AC_E333C_BowserSlots = 3;
+            }
+            break;
+        case 3:
+            if (!(D_8010B8AC_E333C_BowserSlots & 3)) {
+                sparkle = 1;
+            }
+            amp = 0.0f;
+            if (D_8010B8C8_E3358_BowserSlots != 0) {
+                D_8010B8B8_E3348_BowserSlots[0] = D_8010B88C_E331C_BowserSlots.x;
+                D_8010B8C0_E3350_BowserSlots[0] = D_8010B88C_E331C_BowserSlots.y;
+                D_8010B8B8_E3348_BowserSlots[1] = D_8010B880_E3310_BowserSlots.x;
+                D_8010B8C0_E3350_BowserSlots[1] = D_8010B880_E3310_BowserSlots.y;
+                D_8010B8C8_E3358_BowserSlots = 0;
+            }
+            x1 = D_8010B8B8_E3348_BowserSlots[0] * 0.5 + 200.0;
+            y1 = D_8010B8C0_E3350_BowserSlots[0] * 0.5 + 60.0;
+            x2 = D_8010B8B8_E3348_BowserSlots[1];
+            y2 = D_8010B8C0_E3350_BowserSlots[1] - 50.0;
+            if (D_8010B8AC_E333C_BowserSlots >= 0) {
+                u = 1.0 - (f32)D_8010B8AC_E333C_BowserSlots / (f32)D_8010B8A4_E3334_BowserSlots;
+                u = (u > 1.0) ? 1.0f : u;
+                x = D_8010B8B8_E3348_BowserSlots[0] * (1.0 - u) * (1.0 - u) * (1.0 - u) + x1 * 6.0 * u * (1.0 - u) * (1.0 - u) +
+                    x2 * 3.0 * u * u * (1.0 - u) + u * D_8010B8B8_E3348_BowserSlots[1] * u * u;
+                y = D_8010B8C0_E3350_BowserSlots[0] * (1.0 - u) * (1.0 - u) * (1.0 - u) + y1 * 3.0 * u * (1.0 - u) * (1.0 - u) +
+                    y2 * 3.0 * u * u * (1.0 - u) + (D_8010B8C0_E3350_BowserSlots[1] + -20.0f) * u * u * u;
+            } else {
+                amp = (amp - 0.25 < 8.0) ? 8.0f : amp - 0.25;
+                x = D_8010B8B8_E3348_BowserSlots[1];
+                y = D_8010B8C0_E3350_BowserSlots[1] + -20.0f +
+                    HuMathSin(HuMathSin(-D_8010B8AC_E333C_BowserSlots * 6.0 + 30.0) < HuMathSin(-D_8010B8AC_E333C_BowserSlots * 6.0) * amp
+                                  ? -D_8010B8AC_E333C_BowserSlots * 6.0 + 30.0
+                                  : -D_8010B8AC_E333C_BowserSlots * 6.0) * amp + 1.0f;
+            }
+            obj->trans.x = x;
+            obj->trans.y = y;
+            if (D_8010B8AC_E333C_BowserSlots < 11) {
+                a = D_8010B8AC_E333C_BowserSlots / 10.0f;
+                pos.x = obj->trans.x;
+                pos.y = obj->trans.y;
+                obj->trans.x = a * (pos.x - D_8010B880_E3310_BowserSlots.x) + D_8010B880_E3310_BowserSlots.x;
+                obj->trans.y = a * (pos.y - D_8010B880_E3310_BowserSlots.y) + D_8010B880_E3310_BowserSlots.y;
+            }
+            if (D_8010B8AC_E333C_BowserSlots >= D_8010B8A4_E3334_BowserSlots) {
+                func_801060F0_DDB80_BowserSlots();
+                obj->trans.x = D_8010B8B8_E3348_BowserSlots[0];
+                obj->trans.y = D_8010B8C0_E3350_BowserSlots[0];
+            next:
+                obj->work[0]++;
+                D_8010B8AC_E333C_BowserSlots = 0;
+            }
+            break;
+        case 4:
+            if (D_8010B8AC_E333C_BowserSlots >= 45) {
+                D_8010B8AC_E333C_BowserSlots -= 45;
+            }
+            bob = 1;
+            y = HuMathSin(D_8010B8AC_E333C_BowserSlots * 8 - 180) * 1.2 * 20.0;
+            obj->trans.y = y + D_8010B88C_E331C_BowserSlots.y;
+            if (!(D_8010B8AC_E333C_BowserSlots & 0xF)) {
+                sparkle = 1;
+            }
+            break;
+    }
+    if (D_8010C0E0_E3B70_BowserSlots >= 0 && obj->work[0] != 0) {
+        anim = SprAnimGet((s16)D_8010C100_E3B90_BowserSlots);
+        item = func_8010770C_DF19C_BowserSlots(D_8010C0E0_E3B70_BowserSlots);
+        for (i = 0; i < 5; i++) {
+            func_80109AF8_E1588_BowserSlots(obj->model[i], anim, (u16)item);
+            if (i != 0) {
+                k = D_8010B8B0_E3340_BowserSlots - i;
+                while (k < 0) {
+                    k += 10;
+                }
+                func_80029714_2A314(obj->model[i], D_8010BFB8_E3A48_BowserSlots[k].x, D_8010BFB8_E3A48_BowserSlots[k].y, obj->trans.z - (f32)i * 10.0);
+                if (bob && D_8010BFB8_E3A48_BowserSlots[k].x == D_8010B88C_E331C_BowserSlots.x && D_8010BFB8_E3A48_BowserSlots[k].y == D_8010B88C_E331C_BowserSlots.y) {
+                    func_800298A4_2A4A4(obj->model[i], 4, 4);
+                }
+            }
+        }
+    }
+    if (sparkle) {
+        for (i = 5; i < 21; i++) {
+            m = BS_MODEL(obj->model[i]);
+            if (m->unk18 & 4) {
+                if (!bob) {
+                    m->pos.x = obj->trans.x;
+                    m->pos.y = obj->trans.y;
+                } else {
+                    if (++D_8010B8A8_E3338_BowserSlots >= 4) {
+                        D_8010B8A8_E3338_BowserSlots -= 4;
+                    }
+                    m->pos.x = obj->trans.x + D_8010B854_E32E4_BowserSlots[D_8010B8A8_E3338_BowserSlots];
+                    m->pos.y = obj->trans.y + D_8010B864_E32F4_BowserSlots[D_8010B8A8_E3338_BowserSlots];
+                }
+                m->pos.z = obj->trans.z + 20.0;
+                m->unk44 = 1.5f;
+                m->unk18 &= ~4;
+                break;
+            }
+        }
+    }
+    for (i = 5; i < 21; i++) {
+        m = BS_MODEL(obj->model[i]);
+        if (!(m->unk18 & 4) && func_80029D0C_2A90C(obj->model[i]) <= m->unk40) {
+            m->unk18 |= 4;
+            m->unk40 = 0.0f;
+        }
+    }
+    D_8010BFB8_E3A48_BowserSlots[D_8010B8B0_E3340_BowserSlots].x = obj->trans.x;
+    D_8010BFB8_E3A48_BowserSlots[D_8010B8B0_E3340_BowserSlots].y = obj->trans.y;
+    D_8010BFB8_E3A48_BowserSlots[D_8010B8B0_E3340_BowserSlots].z = obj->trans.z;
+    if (++D_8010B8B0_E3340_BowserSlots >= 10) {
+        D_8010B8B0_E3340_BowserSlots = 0;
+    }
+    D_8010B8AC_E333C_BowserSlots = (D_8010B8AC_E333C_BowserSlots + 1) & 0x7FFF;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80106B30_DE5C0_BowserSlots);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_801076EC_DF17C_BowserSlots);
 
