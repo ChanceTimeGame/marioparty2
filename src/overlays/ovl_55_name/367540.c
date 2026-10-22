@@ -497,10 +497,182 @@ end:
     MBModelKill(follower);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_80109C58_368B48_name_55);
+/* Board 4's sign rises from the bottom while the screen shakes (pads rumble every 15 frames) and
+   the bubble object starts. Retail zeroes the saved screen offset before restoring it. */
+void func_80109C58_368B48_name_55(void) {
+    Vec2f cur;
+    Vec2f saved;
+    Ovl55Sign4* sign;
+    f32 shake;
+    f32 dir;
+    s32 timer;
+    s32 i;
+    s32 j;
+    s32 y;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_80109F30_368E20_name_55);
+    dir = 1.0f;
+    sign = D_8010C570_36B460_name_55 = HuMemMemoryAllocPerm(sizeof(Ovl55Sign4));
+    sign->file[0] = func_8001A2F8_1AEF8(0xA01BA);
+    sign->file[1] = func_8001A2F8_1AEF8(0xA01BB);
+    for (i = 0; i < 2; i++) {
+        sign->spr[i] = func_8001AAAC_1B6AC(sign->file[i], 0, 1);
+        func_8001A708_1B308(sign->spr[i], 0x4000);
+        func_8001A788_1B388(sign->spr[i], (u16)(0x3000 - (i << 12)));
+        espDispOff(sign->spr[i]);
+    }
+    SprAttrReset(((Ovl55EspSlot*)D_800F93FC_F9FFC)[sign->spr[1]].grp, 0, 0x1000);
+    timer = 0;
+    espDispOn(sign->spr[1]);
+    y = 224;
+    espDispOn(sign->spr[0]);
+    espPosSet(sign->spr[1], 160, 196);
+    espPosSet(sign->spr[0], 160, 224);
+    D_8010C550_36B440_name_55[0] = func_80109F30_368E20_name_55();
+    func_800537A0_543A0(&saved);
+    saved.unk_00 = saved.unk_04 = 0.0f;
+    PlaySound(0x3EC);
+    while (y > 96) {
+        if (timer == 0) {
+            for (j = 0; j < 4; j++) {
+                func_8005A4EC_5B0EC(j, 2);
+            }
+            timer = 15;
+        } else {
+            timer--;
+        }
+        cur = saved;
+        if (dir >= 0.0f) {
+            shake = ((rand8() & 1) + 1) * dir;
+        } else {
+            shake = -shake;
+        }
+        dir = -dir;
+        cur.unk_04 -= shake;
+        func_80054040_54C40(cur.unk_00, cur.unk_04);
+        espPosSet(sign->spr[0], 160, y + shake);
+        espPosSet(sign->spr[1], 160, shake + 196.0f);
+        y -= 2;
+        HuPrcVSleep();
+    }
+    espPosSet(sign->spr[0], 160, 96);
+    espPosSet(sign->spr[1], 160, 196);
+    func_800536E4_542E4(&saved);
+    D_8010C550_36B440_name_55[0]->work[1] = 0;
+    PlaySound(0x3FE);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_8010A064_368F54_name_55);
+/* Board 4's bubbles: an object with twelve copies of one model (LoadFormFile 0xA015C). */
+omObjData* func_80109F30_368E20_name_55(void) {
+    omObjData* obj;
+    Ovl55Bubbles* work;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_8010A2E0_3691D0_name_55);
+    obj = omAddObj(500, 13, 0, -1, func_8010A064_368F54_name_55);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Ovl55Bubbles), 0x7918);
+    obj->model[0] = -1;
+    for (i = 1; i < 13; i++) {
+        if (i == 1) {
+            obj->model[1] = LoadFormFile(0xA015C, 0x6B9);
+        } else {
+            obj->model[i] = func_80027D3C_2893C(obj->model[1]);
+        }
+    }
+    for (i = 0; i < 12; i++) {
+        work->delay[i] = 1;
+        work->scale[i] = 0.0f;
+        func_800297E8_2A3E8(obj->model[i + 1], 0.0f, 0.0f, 1.0f);
+    }
+    obj->work[0] = 0;
+    obj->work[1] = 1;
+    return obj;
+}
+
+/* The bubbles: each grows to 2.0 and restarts after a random delay at a random x near its
+   column (D_8010C22C); work[1] = 1 hides them, work[0] = 1 lets them finish, and the object
+   deletes itself once all twelve are done. */
+void func_8010A064_368F54_name_55(omObjData* obj) {
+    Ovl55Bubbles* work;
+    s32 done;
+    s32 i;
+
+    done = 0;
+    work = obj->unk_50;
+    for (i = 0; i < 12; i++) {
+        if (obj->work[1] == 1) {
+            func_800298A4_2A4A4(obj->model[i + 1], 4, 0);
+        }
+        if (work->delay[i] == 0) {
+            work->scale[i] += 0.25f;
+            if (work->scale[i] > 2.0f) {
+                if (obj->work[0] == 0) {
+                    work->scale[i] = 0.0f;
+                    work->delay[i] = (u8)(rand8() % 3);
+                }
+                if (obj->work[1] == 0 || obj->work[0] == 1) {
+                    func_800298A4_2A4A4(obj->model[i + 1], 4, 4);
+                    done++;
+                }
+            }
+            func_800297E8_2A3E8(obj->model[i + 1], work->scale[i], work->scale[i], 1.0f);
+        } else if (--work->delay[i] == 0) {
+            func_80029714_2A314(obj->model[i + 1], D_8010C22C_36B11C_name_55[i] + ((u8)(rand8() % 20) - 10.0f), 0.0f, 1250.0f);
+        }
+    }
+    if (obj->work[0] == 1 && done == 12) {
+        for (i = 0; i < 12; i++) {
+            func_800283DC_28FDC(obj->model[i + 1]);
+        }
+        omDelObj(obj);
+    }
+}
+
+/* Board 4's sign sinks back while the screen shakes; the bubbles finish (work[0] = 1) and the
+   sign's first sprite is freed (retail leaves the second). */
+void func_8010A2E0_3691D0_name_55(void) {
+    Vec2f cur;
+    Vec2f saved;
+    Ovl55Sign4* sign;
+    f32 shake;
+    f32 dir;
+    s32 timer;
+    s32 j;
+    s32 y;
+
+    dir = 1.0f;
+    sign = D_8010C570_36B460_name_55;
+    D_8010C550_36B440_name_55[0]->work[1] = 1;
+    func_800537A0_543A0(&saved);
+    PlaySound(0x3ED);
+    timer = 0;
+    for (y = 96; y < 224; y += 2) {
+        if (timer == 0) {
+            for (j = 0; j < 4; j++) {
+                func_8005A4EC_5B0EC(j, 2);
+            }
+            timer = 15;
+        } else {
+            timer--;
+        }
+        cur = saved;
+        if (dir >= 0.0f) {
+            shake = ((rand8() & 1) + 1) * dir;
+        } else {
+            shake = -shake;
+        }
+        dir = -dir;
+        cur.unk_04 += shake;
+        func_80054040_54C40(cur.unk_00, cur.unk_04);
+        espPosSet(sign->spr[0], 160, y - shake);
+        espPosSet(sign->spr[1], 160, 196.0f - shake);
+        HuPrcVSleep();
+    }
+    espPosSet(sign->spr[0], 160, 224);
+    espPosSet(sign->spr[1], 160, 196);
+    func_800536E4_542E4(&saved);
+    D_8010C550_36B440_name_55[0]->work[0] = 1;
+    PlaySound(0x3FE);
+    func_8001AC44_1B844(sign->spr[0]);
+    SprAnimKill(sign->file[0]);
+    HuMemMemoryFreePerm(D_8010C570_36B460_name_55);
+    D_8010C570_36B460_name_55 = NULL;
+}

@@ -50,6 +50,26 @@ typedef struct Ovl55Banner {
     /* 0x20 */ Process* proc;
 } Ovl55Banner; /* size = 0x24 */
 
+/* ev-C: board 4's sign (D_8010C570). */
+typedef struct Ovl55Sign4 {
+    /* 0x00 */ s16 file[2];
+    /* 0x04 */ s16 spr[2]; /* [0] the sign, [1] its backing */
+} Ovl55Sign4; /* size = 0x8 */
+
+/* ev-C: a view of main's sprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
+typedef struct Ovl55EspSlot {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ s16 grp;
+    /* 0x06 */ char unk06[0x1E];
+} Ovl55EspSlot; /* size = 0x24 */
+
+/* ev-C: board 4's bubble object work (omObjData.unk_50). */
+typedef struct Ovl55Bubbles {
+    /* 0x00 */ u16 delay[12]; /* frames until the bubble restarts; 0 = growing */
+    /* 0x18 */ f32 scale[12];
+} Ovl55Bubbles; /* size = 0x48 */
+
 /* ---- main-segment API used by 55 ---- */
 
 GW_PLAYER* BoardPlayerGet(s32);
@@ -237,7 +257,7 @@ extern Vec D_8010C1F8_36B0E8_name_55; /* board 4: host start */
 extern Vec D_8010C204_36B0F4_name_55; /* board 4: host target */
 extern Vec D_8010C210_36B100_name_55; /* board 4: follower start */
 extern u32 D_8010C21C_36B10C_name_55[]; /* board 4: host model's motions */
-extern s32 D_8010C22C_36B11C_name_55[];
+extern f32 D_8010C22C_36B11C_name_55[12]; /* board 4: bubble columns (x) */
 extern void* D_8010C338_36B228_name_55[6];
 extern s32 D_8010C350_36B240_name_55[];
 extern s32 D_8010C360_36B250_name_55[];
@@ -256,7 +276,7 @@ extern s16 D_8010C530_36B420_name_55[4]; /* text window size (func_8008DACC) */
 /* Walker done flags: [0..3] players, [4] the host (D_8010C548, which retail also names). */
 extern s32 D_8010C538_36B428_name_55[5];
 extern s32 D_8010C54C_36B43C_name_55; /* board 5: a player walker finished */
-extern s32 D_8010C550_36B440_name_55[4];
+extern omObjData* D_8010C550_36B440_name_55[4]; /* ev-C: [0] board 4's bubble object */
 extern u16 D_8010C560_36B450_name_55; /* sprite */
 extern MBModel* D_8010C564_36B454_name_55; /* the host's walk-in model */
 extern omObjData* D_8010C568_36B458_name_55; /* START watcher: work[0] = 1 when skipped */
