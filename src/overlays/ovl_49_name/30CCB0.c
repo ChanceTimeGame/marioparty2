@@ -298,7 +298,22 @@ void func_8010399C_30DE4C_name_49(MBModel* parent) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80103A1C_30DECC_name_49);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80103D28_30E1D8_name_49);
+void func_80103D28_30E1D8_name_49(s32 arg0, Vec* arg1) {
+    Vec pos;
+    Process* proc;
+    Ovl49StarProcWork* work;
+
+    D_800FC734_FD334 = 0;
+    func_800B3170_B3D70(&pos, arg1);
+    proc = omAddPrcObj(func_80103A1C_30DECC_name_49, 0x4800, 0, 0x40);
+    work = HuMemMemoryAlloc(proc->heap, 0x10);
+    proc->user_data = work;
+    work->arg = arg0;
+    work->pos = &pos;
+    HuPrcChildLink(HuPrcCurrentGet(), proc);
+    HuPrcChildWatch();
+    D_800FC734_FD334 = 1;
+}
 
 void func_80103DBC_30E26C_name_49(void) {
     D_800FA198_FAD98 = 1;
@@ -927,7 +942,26 @@ void func_80105BFC_3100AC_name_49(void) {
     omOvlGotoEx(0x3D, 0, 0x192);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80105C38_3100E8_name_49);
+void func_80105C38_3100E8_name_49(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    SetPlayerOntoChain(1, 0, 0);
+    SetPlayerOntoChain(2, 0, 0);
+    SetPlayerOntoChain(3, 0, 0);
+    _SetFlag(0x43);
+    func_8010285C_30CD0C_name_49();
+    D_800F8CE4_F98E4[0x1E] = 0;
+    D_800F8CE4_F98E4[0x1D] = 0;
+    D_800F8CE4_F98E4[0x1A] = 0;
+    D_800F8CE4_F98E4[0x19] = 0;
+    D_800F8CE4_F98E4[0x17] = 0;
+    D_800F8CE4_F98E4[0] = 5;
+    D_800F8CE4_F98E4[1] = 0;
+    D_800F8CE4_F98E4[2] = 0;
+    D_800F8CE4_F98E4[3] = 0;
+    D_800F8CE4_F98E4[4] = 3;
+    omOvlReturnEx(1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80105CE8_310198_name_49);
 
@@ -1029,7 +1063,27 @@ void func_80106460_310910_name_49(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_801064C0_310970_name_49);
+void func_801064C0_310970_name_49(void) {
+    s32 i;
+    s32 j;
+    s32 count;
+
+    for (i = 0; i < 3; i++) {
+        count = 5 - (D_800F8CE4_F98E4[0x1D] - 1) / 10;
+        if (count <= 0) {
+            count = 1;
+        }
+        if (count > 5) {
+            count = 5;
+        }
+        for (j = 0; j < count; j++) {
+            MBModelDispOn(D_80114A28_31EED8_name_49[i * 5 + j]);
+        }
+        for (; j < 5; j++) {
+            MBModelDispOff(D_80114A28_31EED8_name_49[i * 5 + j]);
+        }
+    }
+}
 
 void func_801065D4_310A84_name_49(s16 arg0) {
     MBModel* coin;
@@ -3440,7 +3494,9 @@ void func_8010EAB4_318F64_name_49(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010ECC4_319174_name_49);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F320_3197D0_name_49);
+s32 func_8010F320_3197D0_name_49(void) {
+    return func_8010ECC4_319174_name_49(0, 0);
+}
 
 s32 func_8010F340_3197F0_name_49(void) {
     return func_8010ECC4_319174_name_49(1, 1);

@@ -91,7 +91,7 @@ void func_8008D07C_8DC7C(s16, s16, s16, s16);
 void func_8008D854_8E454(s32 arg0, s16 arg1);
 s32 func_8008BB48_8C748(s16, s16, s32);
 s32 func_80059FD0_5ABD0(s32); /* the player's rank */
-extern s16 D_800F8D20_F9920[]; /* board state halfwords; D_800F8D12 is [0x17] */
+extern s16 D_800F8CE4_F98E4[]; /* board state halfwords; D_800F8D12 is [0x17] */
 extern MBModel* D_800F64C8_F70C8; /* the item/Boo marker model */
 void omInitObjMan(s32, s32);
 void omOvlGotoEx(s32 arg0, s16 arg1, u16 arg2);
@@ -194,7 +194,7 @@ void func_80054C78_55878(s16 space, s16* chainOut, s16* linkOut);
 void MBDlgWinExec(s32, s32);
 void func_800495D8_4A1D8(s32, s32);
 s16 func_800632FC_63EFC(void); /* the board's music */
-extern s16 D_800F8D16_F9916; /* D_800F8D20_F9920[0x19] */
+extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] */
 s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
 s32 func_80046D2C_4792C(s32);
 void func_8004655C_4715C(s32);
@@ -549,9 +549,15 @@ typedef struct DiceProcWork {
     /* 0x04 */ s32 state;
 } DiceProcWork;
 
+/* func_80103D28's work for its star process func_80103A1C */
+typedef struct Ovl49StarProcWork {
+    /* 0x00 */ s32 arg;
+    /* 0x04 */ Vec* pos;
+} Ovl49StarProcWork;
+
 /* the rest of the board's 147 functions; "B" ones have no twin (fork 49-B) */
 void func_80103A1C_30DECC_name_49(void); /* as func_80048AA8_496A8 */
-void func_80103D28_30E1D8_name_49(void* arg0); /* as func_80048E0C_49A0C */
+void func_80103D28_30E1D8_name_49(s32 arg0, Vec* arg1);
 void func_80105BFC_3100AC_name_49(void);
 void func_80105C38_3100E8_name_49(void); /* as func_801058E0_2B41A0_name_41 */
 void func_80105F94_310444_name_49(void); /* B: unknown */
@@ -585,7 +591,7 @@ void func_8010ABC0_315070_name_49(void);
 void func_8010B5C0_315A70_name_49(void);
 void func_8010B5DC_315A8C_name_49(void);
 s32 func_8010ECC4_319174_name_49(s32 arg0, s32 arg1); /* B: from callers */
-void func_8010F320_3197D0_name_49(s32 id); /* as func_80010E58_11A58 */
+s32 func_8010F320_3197D0_name_49(void);
 s32 func_8010F340_3197F0_name_49(void);
 s32 func_8010F360_319810_name_49(void);
 s32 func_8010F380_319830_name_49(void);
