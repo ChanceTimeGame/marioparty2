@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010C960_19B500_BobsledRun[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80102800_1913A0_BobsledRun);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80102D4C_1918EC_BobsledRun);
