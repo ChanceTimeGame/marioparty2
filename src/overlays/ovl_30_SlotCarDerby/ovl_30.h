@@ -426,6 +426,7 @@ void func_80019178_19D78(omObjData* obj);
 void func_80019378_19F78(omObjData* obj);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 s32 PlaySound(s32);
+void func_800799A4_7A5A4(s16 sound, s32 frames); /* fade out a sound */
 f32 func_800B1830_B2430(f32); /* sqrtf */
 extern s8 ContStkX[];
 extern s8 ContStkY[];

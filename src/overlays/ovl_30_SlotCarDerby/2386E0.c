@@ -923,10 +923,52 @@ const u32 D_8010FE18_245CF8_SlotCarDerby[4] = { 0x3D787D9C, 0x3D9B4E82, 0x3DCF13
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104F3C_23AE1C_SlotCarDerby);
 #endif
 
-__asm__(".section .rodata");
-const u32 D_8010FED0_245DB0_SlotCarDerby[10] = { 0x41A00000, 0x00000000, 0x00000000, 0xC1A00000, 0x00000000, 0x00000000, 0x00000000, 0x41A00000, 0x00000000, 0x00000000 };
+__asm__(".section .rodata"); /* GCC thinks it is still in .rodata after the INCLUDE_ASM above */
+void func_801056FC_23B5DC_SlotCarDerby(omObjData* obj) {
+    Vec pos;
+    Vec dir;
+    Vec ang;
+    Vec offs[3] = { { 20.0f, 0.0f, 0.0f }, { -20.0f, 0.0f, 0.0f }, { 0.0f, 20.0f, 0.0f } };
+    SCDCar* car;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801056FC_23B5DC_SlotCarDerby);
+    car = func_801032E0_2391C0_SlotCarDerby(obj);
+    D_800FC834_FD434[obj->model[0]].unk18 &= ~4;
+    car->unk_50 += 0.15166666666666667;
+    if (car->unk_50 > 7.28) {
+        car->unk_50 = 7.28f;
+    }
+    func_8010DAD8_2439B8_SlotCarDerby(obj->work[0], car->unk_50 / 9.1);
+    if (car->unk_74 >= 0) {
+        func_800799A4_7A5A4(car->unk_74, 20);
+    }
+    car->unk_74 = -1;
+    car->unk_4C = func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, car->unk_4C, car->unk_50, &car->unk_0C, &car->unk_30);
+    func_80104E54_23AD34_SlotCarDerby(car, -car->unk_50 * 16.0f);
+    car->unk_5C = 0.0f;
+    if (car->unk_04 == 1) {
+        func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, car->unk_4C, car->unk_50 * 10.0f, &pos, &dir);
+        func_80106750_23C630_SlotCarDerby(&car->unk_30, &pos.x);
+        func_80106750_23C630_SlotCarDerby(&dir, &ang.x);
+        car->unk_5C = ang.y - pos.y;
+        if (D_801109D6_2468B6_SlotCarDerby == 0) {
+            func_80106B74_23CA54_SlotCarDerby(&car->unk_0C.x, 0.5f);
+        }
+        func_80105F5C_23BE3C_SlotCarDerby(car->unk_48, car->unk_4C, car->unk_03 ? 80.0f : 20.0f, &pos, &dir);
+        for (i = 0; i < 3; i++) {
+            dir.x = pos.x + offs[i].x;
+            dir.y = pos.y + offs[i].y;
+            dir.z = pos.z + offs[i].z;
+            if (D_801109D6_2468B6_SlotCarDerby == 0) {
+                func_80106B74_23CA54_SlotCarDerby(&dir.x, 0.2f);
+            }
+        }
+        if (!(car->unk_64 & 0xF)) {
+            func_80103650_239530_SlotCarDerby(0, car);
+        }
+    }
+    car->unk_00 |= 0x10;
+}
 
 void func_801059F0_23B8D0_SlotCarDerby(omObjData* obj) {
     Vec rot;
