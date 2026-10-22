@@ -139,12 +139,11 @@ extern s32 D_8010F8A4_3424E4_name_4F[6];     /* per board: a sound with the firs
 extern s32 D_8010F8BC_3424FC_name_4F[6];     /* per board: a sound with the second */
 extern Vec D_8010F8D4_342514_name_4F;
 extern Vec D_8010F8E0_342520_name_4F[3][2];  /* the other players: start, end */
-extern Vec D_8010F928_342568_name_4F;
-extern Vec D_8010F934_342574_name_4F;
-extern Vec D_8010F940_342580_name_4F[2];     /* D_80110560: position, facing */
-extern Vec D_8010F958_342598_name_4F;
-extern Vec D_8010F964_3425A4_name_4F;
-extern s16 D_8010F970_3425B0_name_4F[6];     /* per character: frames to the winner's voice */
+/* {start, target} pairs; splat's D_8010F934, D_8010F94C, D_8010F964 are their [1] */
+extern Vec D_8010F928_342568_name_4F[2]; /* D_80110568 */
+extern Vec D_8010F940_342580_name_4F[2]; /* D_80110560 */
+extern Vec D_8010F958_342598_name_4F[2]; /* D_8011056C: start; [1] the centre it circles */
+extern u16 D_8010F970_3425B0_name_4F[6];     /* per character: frames to the winner's voice */
 extern s32 D_8010F97C_3425BC_name_4F[6];     /* per board: the flag that allows skipping */
 extern s32 D_8010FAA8_3426E8_name_4F[6];     /* per character: MBPlayerModelCreate list */
 extern u32 D_8010FAC0_342700_name_4F[];
