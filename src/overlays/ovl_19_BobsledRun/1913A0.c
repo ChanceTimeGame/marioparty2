@@ -2297,7 +2297,67 @@ void func_80109F78_198B18_BobsledRun(omObjData* obj, s8 player, s8 port) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A3AC_198F4C_BobsledRun);
+/* The bobsled's process: CPU riders write the shared controls, then func_80107EA4 runs; the
+   riders' real inputs are restored afterwards (MP1 func_800FD51C without the tunnel models). */
+void func_8010A3AC_198F4C_BobsledRun(omObjData* obj) {
+    s32 team;
+    s32 p0;
+    s32 p1;
+    s32 btn0;
+    s32 trg0;
+    s32 sx0;
+    s32 sy0;
+    s32 btn1;
+    s32 trg1;
+    s32 sx1;
+    s32 sy1;
+    s32 a;
+    s32 b;
+
+    team = BR_WORK(obj)->unk_59;
+    p0 = D_8010C048_19ABE8_BobsledRun[team].port[0];
+    p1 = D_8010C048_19ABE8_BobsledRun[team].port[1];
+    trg0 = ContBtnTrg[p0];
+    btn0 = ContBtn[p0];
+    sx0 = ContStkX[p0];
+    sy0 = ContStkY[p0];
+    trg1 = ContBtnTrg[p1];
+    btn1 = ContBtn[p1];
+    sx1 = ContStkX[p1];
+    sy1 = ContStkY[p1];
+    switch (D_800F8FD0_F9BD0) {
+        case 0:
+        case 1:
+            a = D_8010C048_19ABE8_BobsledRun[team].player[0];
+            b = D_8010C048_19ABE8_BobsledRun[team].player[1];
+            if (gPlayers[a].flags & 1) {
+                ContStkY[p0] = 0;
+                ContStkX[p0] = 0;
+                ContBtnTrg[p0] = 0;
+                ContBtn[p0] = 0;
+                func_80109F78_198B18_BobsledRun(obj, a, p0);
+            }
+            if (gPlayers[b].flags & 1) {
+                ContStkY[p1] = 0;
+                ContStkX[p1] = 0;
+                ContBtnTrg[p1] = 0;
+                ContBtn[p1] = 0;
+                func_80109F78_198B18_BobsledRun(obj, b, p1);
+            }
+        case 2:
+        case 3:
+            func_80107EA4_196A44_BobsledRun(obj);
+            break;
+    }
+    ContBtnTrg[p0] = trg0;
+    ContBtn[p0] = btn0;
+    ContStkX[p0] = sx0;
+    ContStkY[p0] = sy0;
+    ContBtnTrg[p1] = trg1;
+    ContBtn[p1] = btn1;
+    ContStkX[p1] = sx1;
+    ContStkY[p1] = sy1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A648_1991E8_BobsledRun);
 
