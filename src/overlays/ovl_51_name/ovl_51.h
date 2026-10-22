@@ -58,7 +58,7 @@ omObjData* func_8005845C_5905C(s32 arg0, Vec* arg1, s32 arg2, Object* arg3);
 void func_80059698_5A298(s32 arg0);
 void func_80059704_5A304(void);
 s32 func_8005973C_5A33C(s32 arg0, u16 arg1, s16 arg2, s16 arg3);
-void func_80059868_5A468(s32 arg0, s16 arg1, s16 arg2);
+void func_80059868_5A468(s32 arg0, s32 arg1, s16 arg2); /* 5A468.c: s16 x; retail passes x unextended */
 void func_800598D4_5A4D4(s32 arg0, f32 arg1, f32 arg2);
 void func_80059974_5A574(s32 arg0, f32 arg1);
 s32 func_8005A5E8_5B1E8(MBModel* model, Vec* target, f32 speed); /* walk toward; 1 on arrival */
@@ -157,6 +157,7 @@ extern s32 D_80108AE0_3590F0_name_51[12]; /* per row: the stats window (row 11 r
 extern u8 D_80108B10_359120_name_51[12][4][8]; /* the stats table's digits */
 extern omObjData* D_80108C90_3592A0_name_51; /* the scroll-arrow object */
 extern s32 D_80108C98_3592A8_name_51[8]; /* tally counters: message slot in D_80108D70 */
+extern GAMEMES D_80108CB8_3592C8_name_51; /* the "RESULTS" title (D_80108CD8 is its strGId) */
 extern s32 D_80108D2C_35933C_name_51; /* tally: portrait sprites */
 extern s32 D_80108D30_359340_name_51[4];
 extern s32 D_80108D40_359350_name_51[4]; /* tally: icon backs */

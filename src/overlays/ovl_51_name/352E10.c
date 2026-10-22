@@ -547,9 +547,111 @@ void func_80104490_354AA0_name_51(void) {
 __asm__(".section .rodata");
 const char D_801087B4_358DC4_name_51[] = "X%2d";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104F6C_35557C_name_51);
+/* Slides the tally's columns in from the right, 16 pixels a frame, until all four are home. */
+#ifdef NON_MATCHING
+/* masked 0: the hoisted addresses of D_80108D50, D_80108D40, D_80108C98 take s6/s4/s5 where retail
+   has s5/s6/s4. */
+void func_80104F6C_35557C_name_51(void) {
+    s32 n;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105468_355A78_name_51);
+    while (1) {
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            if ((D_801086B0_358CC0_name_51[i] -= 16) <= 0) {
+                n++;
+                D_801086B0_358CC0_name_51[i] = 0;
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (_CheckFlag(0xD) == 0) {
+                SprPosSet((s16)D_80108D2C_35933C_name_51, i + 1, D_801085E8_358BF8_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                          D_801085E8_358BF8_name_51[i][1]);
+            } else {
+                SprPosSet((s16)D_80108D2C_35933C_name_51, i + 1, D_801085F8_358C08_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                          D_801085F8_358C08_name_51[i][1]);
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (_CheckFlag(0xD) == 0) {
+                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                                    D_80108608_358C18_name_51[i][1]);
+            } else {
+                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                                    D_80108618_358C28_name_51[i][1]);
+            }
+            if (_CheckFlag(0xD) == 0) {
+                func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                                    D_80108608_358C18_name_51[i][1]);
+            } else {
+                func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                                    D_80108618_358C28_name_51[i][1]);
+            }
+        }
+        if (_CheckFlag(0xD) == 0) {
+            for (i = 0; i < 4; i++) {
+                SprPosSet((s16)D_80108D60_359370_name_51, i + 1, D_80108628_358C38_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                          D_80108628_358C38_name_51[i][1]);
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (_CheckFlag(0xD) == 0) {
+                SprPosSet((s16)D_80108D68_359378_name_51, i + 1, D_80108638_358C48_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                          D_80108638_358C48_name_51[i][1]);
+            } else {
+                SprPosSet((s16)D_80108D68_359378_name_51, i + 1, D_80108648_358C58_name_51[i][0] + D_801086B0_358CC0_name_51[i],
+                          D_80108648_358C58_name_51[i][1]);
+            }
+        }
+        if (_CheckFlag(0xD) == 0) {
+            for (i = 0; i < 8; i++) {
+                SprPosSet(D_80108D70_359380_name_51[i].strGId[D_80108C98_3592A8_name_51[i]], 0,
+                          D_80108658_358C68_name_51[i][0] + D_801086B0_358CC0_name_51[i % 4], D_80108658_358C68_name_51[i][1]);
+            }
+        } else {
+            for (i = 4; i < 8; i++) {
+                SprPosSet(D_80108D70_359380_name_51[i].strGId[D_80108C98_3592A8_name_51[i]], 0,
+                          D_80108678_358C88_name_51[i][0] + D_801086B0_358CC0_name_51[i % 4], D_80108678_358C88_name_51[i][1]);
+            }
+        }
+        if (n == 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104F6C_35557C_name_51);
+#endif
+
+/* Frees the tally screen's sprites, icons, counters and window. */
+void func_80105468_355A78_name_51(void) {
+    s32 i;
+
+    func_8006AE14_6BA14(&D_80108CB8_3592C8_name_51);
+    for (i = 0; i < 4; i++) {
+        SprAnimKill((s16)D_80108D30_359340_name_51[i]);
+        func_80059698_5A298(D_80108D50_359360_name_51[i]);
+        func_80059698_5A298(D_80108D40_359350_name_51[i]);
+    }
+    SprKill((s16)D_80108D2C_35933C_name_51);
+    if (_CheckFlag(0xD) == 0) {
+        SprAnimKill((s16)D_80108D64_359374_name_51);
+        SprKill((s16)D_80108D60_359370_name_51);
+    }
+    SprAnimKill((s16)D_80108D6C_35937C_name_51);
+    SprKill((s16)D_80108D68_359378_name_51);
+    if (_CheckFlag(0xD) == 0) {
+        for (i = 0; i < 8; i++) {
+            func_8006AE14_6BA14(&D_80108D70_359380_name_51[i]);
+        }
+    } else {
+        for (i = 4; i < 8; i++) {
+            func_8006AE14_6BA14(&D_80108D70_359380_name_51[i]);
+        }
+    }
+    func_8008CCA8_8D8A8((s16)D_80109110_359720_name_51);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801055E4_355BF4_name_51);
 
