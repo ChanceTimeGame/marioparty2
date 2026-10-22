@@ -699,17 +699,280 @@ u16 func_8010B1AC_22159C_BombsAway(u32 n) {
     return (u32)D_8010D254_223644_BombsAway % n;
 }
 
+// retail stores 0 to the second model's unk40 and reads it back for trans and the cannon's x/z
+// rotation (one f2 kept); GCC here takes the 0.0f from unk44 and reloads (masked 5)
+#ifdef NON_MATCHING
+void func_8010B214_221604_BombsAway(omObjData* obj) {
+    BaBomb* p;
+    u16 i;
+
+    obj->func_ptr = func_8010B3B8_2217A8_BombsAway;
+    obj->model[0] = func_80018A30_19630(0x3B0004, 0x99);
+    D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
+    D_800FC834_FD434[obj->model[0]].unk40 = 0.0f;
+    obj->model[1] = func_80018A30_19630(0x3B000C, 0x499);
+    D_800FC834_FD434[obj->model[1]].unk44 = 0.0f;
+    obj->trans.x = obj->trans.z = D_800FC834_FD434[obj->model[1]].unk40 = 0.0f;
+    obj->trans.y = -30.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.x = 150.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.y = -50.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.z = -2250.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_18 = -3.5f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.x = 0.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.y = 50.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.z = 0.0f;
+    for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++) {
+        p->unk_14 = 0;
+        p->unk_10 = 0;
+        p->unk_08 = 0;
+        p->unk_04 = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B214_221604_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B3B8_2217A8_BombsAway);
+void func_8010B3B8_2217A8_BombsAway(omObjData* obj) {
+    BaBomb* p;
+    HmfModel* m0;
+    HmfModel* m1;
+    f32 bob;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B6FC_221AEC_BombsAway);
+    func_80109264_21F654_BombsAway(obj);
+    if ((D_8010D258_223648_BombsAway += 2) >= 360) {
+        D_8010D258_223648_BombsAway -= 360;
+    }
+    if ((D_8010D25A_22364A_BombsAway += 4) >= 360) {
+        D_8010D25A_22364A_BombsAway -= 360;
+    }
+    bob = HuMathSin(D_8010D258_223648_BombsAway) * 10.0 + 50.0;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.z = HuMathSin(D_8010D258_223648_BombsAway) * 3.0f;
+    omSetRot(obj, D_8010DFF0_2243E0_BombsAway.unk_0C.x, D_8010DFF0_2243E0_BombsAway.unk_0C.y,
+             D_8010DFF0_2243E0_BombsAway.unk_0C.z);
+    omSetTra(obj, D_8010DFF0_2243E0_BombsAway.unk_00.x, D_8010DFF0_2243E0_BombsAway.unk_00.y - 75.0 + bob,
+             D_8010DFF0_2243E0_BombsAway.unk_00.z);
+    func_8002979C_2A39C(obj->model[1], D_8010DFF0_2243E0_BombsAway.unk_0C.x, D_8010DFF0_2243E0_BombsAway.unk_0C.y,
+                        D_8010DFF0_2243E0_BombsAway.unk_0C.z);
+    func_80029714_2A314(obj->model[1], D_8010DFF0_2243E0_BombsAway.unk_00.x, D_8010DFF0_2243E0_BombsAway.unk_00.y - 75.0,
+                        D_8010DFF0_2243E0_BombsAway.unk_00.z);
+    m0 = &D_800FC834_FD434[obj->model[0]];
+    m1 = &D_800FC834_FD434[obj->model[1]];
+    for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++) {
+        if (p->unk_08 == 0) {
+            continue;
+        }
+        if (i < 2) {
+            func_8010B7BC_221BAC_BombsAway(i, p->unk_1C, p->unk_24, p->unk_18, p->unk_04);
+            p->unk_08 = 0;
+            continue;
+        }
+        if (m0->unk40 == 0.0) {
+            m0->unk44 = 0.5f;
+            p->unk_0C = 0;
+            if (D_8010E550_224940_BombsAway != 0) {
+                PlaySound(0x292);
+            }
+            continue;
+        }
+        if (m0->unk40 >= 5.0 && m1->unk40 == 0.0) {
+            m1->unk44 = 0.5f;
+            continue;
+        }
+        if (m0->unk40 >= 90.0) {
+            if (p->unk_0C == 0) {
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x293);
+                }
+            } else if (p->unk_0C >= 11) {
+                func_8010B7BC_221BAC_BombsAway(i, p->unk_1C, p->unk_24, p->unk_18, p->unk_04);
+                p->unk_08 = 0;
+            }
+            p->unk_0C++;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B7BC_221BAC_BombsAway);
+s32 func_8010B6FC_221AEC_BombsAway(f32 tx, f32 tz, f32 speed, u16 kind) {
+    BaBomb* p;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BD44_222134_BombsAway);
+    if (kind == 3) {
+        p = &D_8010E010_224400_BombsAway[2];
+        if (p->unk_08 != 0) {
+            return 0;
+        }
+    found:
+        p->unk_08 = 1;
+        p->unk_0C = 0;
+        p->unk_04 = kind;
+        p->unk_18 = speed;
+        p->unk_1C = tx;
+        p->unk_24 = tz;
+        return 1;
+    }
+    for (i = 0; i < 2; i++) {
+        if (++D_8010DFE4_2243D4_BombsAway >= 2) {
+            D_8010DFE4_2243D4_BombsAway = 0;
+        }
+        p = &D_8010E010_224400_BombsAway[D_8010DFE4_2243D4_BombsAway];
+        if (p->unk_08 == 0) {
+            goto found;
+        }
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BE7C_22226C_BombsAway);
+void func_8010B7BC_221BAC_BombsAway(u16 n, f32 tx, f32 tz, f32 speed, u16 kind) {
+    BaShell* s;
+    u16 i;
+    f32 dx;
+    f32 dz;
+
+    for (s = D_8010E098_224488_BombsAway, i = 0; i < 8; i++, s++) {
+        if (s->unk_00 == 0) {
+            break;
+        }
+    }
+    if (i < 8) {
+        func_8010BD44_222134_BombsAway(i, n);
+        s->unk_4C = tx;
+        s->unk_50 = 0.0f;
+        s->unk_54 = tz;
+        switch (kind) {
+            case 2:
+                s->unk_54 += 120.0;
+                break;
+            case 3:
+                s->unk_54 += 100.0;
+                break;
+        }
+        s->unk_58 = speed;
+        s->unk_02 = kind;
+        s->unk_34.x += D_8010DFF0_2243E0_BombsAway.unk_00.x;
+        s->unk_34.y += D_8010DFF0_2243E0_BombsAway.unk_00.y;
+        s->unk_34.z += D_8010DFF0_2243E0_BombsAway.unk_00.z;
+        dx = s->unk_34.x - s->unk_4C;
+        dz = s->unk_34.z - s->unk_54;
+        if (dx != 0.0f) {
+            s->unk_40.x = -(dx / 30.0 * s->unk_58);
+        } else {
+            s->unk_40.x = 0.0f;
+        }
+        if (dz != 0.0f) {
+            s->unk_40.z = -(dz / 30.0 * s->unk_58);
+        } else {
+            s->unk_40.z = 0.0f;
+        }
+        s->unk_40.y = 0.0f;
+        s->unk_08 = 30.0f / s->unk_58;
+        s->unk_30 = s->unk_28 = s->unk_34.y;
+        s->unk_2C = D_8010D25C_22364C_BombsAway[s->unk_02];
+        s->unk_1C = D_8010D26C_22365C_BombsAway[s->unk_02];
+        s->unk_24 = HuMathSin(s->unk_1C) * s->unk_2C;
+        s->unk_20 = (180.0 - s->unk_1C) / (f32)s->unk_08;
+        s->unk_00 = 1;
+        switch (kind) {
+            case 0:
+            case 1:
+                func_800298A4_2A4A4(s->unk_0C[0], 4, 0);
+                func_80029714_2A314(s->unk_0C[0], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x28C);
+                }
+                break;
+            case 2:
+                func_800298A4_2A4A4(s->unk_0C[1], 4, 0);
+                func_80029714_2A314(s->unk_0C[1], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x28C);
+                }
+                break;
+            case 3:
+                func_800298A4_2A4A4(s->unk_0C[2], 4, 0);
+                func_80029714_2A314(s->unk_0C[2], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                break;
+        }
+        func_800298A4_2A4A4(s->unk_0C[3], 4, 0);
+        func_80029714_2A314(s->unk_0C[3], s->unk_34.x, 0.0f, s->unk_34.z);
+        switch (s->unk_02) {
+            case 0:
+                if (n == 0) {
+                    func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, D_8010DFF0_2243E0_BombsAway.unk_00.z,
+                                                   2.0f, 16, 1.0f);
+                } else {
+                    func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 70.0, s->unk_34.y + 30.0,
+                                                   D_8010DFF0_2243E0_BombsAway.unk_00.z, 2.0f, 16, 1.0f);
+                }
+                break;
+            case 1:
+            case 2:
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 1.0f, 16, 1.0f);
+                break;
+            case 3:
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 50.0, s->unk_34.y + 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x - 50.0, s->unk_34.y + 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 50.0, s->unk_34.y - 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x - 50.0, s->unk_34.y - 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 1.0f, 16, 1.0f);
+                break;
+        }
+    }
+}
+
+void func_8010BD44_222134_BombsAway(u16 i, u16 kind) {
+    BaShell* s = &D_8010E098_224488_BombsAway[i];
+
+    s->unk_00 = 0;
+    s->unk_5C = 1.0f;
+    s->unk_04 = 0;
+    switch (kind) {
+        case 0:
+            s->unk_34.x = -200.0f;
+            s->unk_34.y = 200.0f;
+            s->unk_34.z = 200.0f;
+            break;
+        case 1:
+            s->unk_34.x = 200.0f;
+            s->unk_34.y = 200.0f;
+            s->unk_34.z = 200.0f;
+            break;
+        case 2:
+            s->unk_34.x = 50.0f;
+            s->unk_34.y = 300.0f;
+            s->unk_34.z = 300.0f;
+            break;
+    }
+    func_800298A4_2A4A4(s->unk_0C[0], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[1], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[2], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[3], 4, 4);
+    s->unk_40.x = s->unk_40.y = s->unk_40.z = 0.0f;
+}
+
+/* Retail does not re-extend func_80027D3C's s16 result here. */
+#define BA_MODEL_COPY(m) (((s32(*)(s16))func_80027D3C_2893C)(m))
+void func_8010BE7C_22226C_BombsAway(void) {
+    BaShell* s;
+    u16 i;
+
+    for (s = D_8010E098_224488_BombsAway, i = 0; i < 8; i++, s++) {
+        if (i == 0) {
+            s->unk_0C[0] = func_80018A30_19630(0x3B0000, 0x99);
+            s->unk_0C[1] = func_80018A30_19630(0x3B000D, 0x99);
+            s->unk_0C[2] = func_80018A30_19630(0x3B0001, 0x99);
+            s->unk_0C[3] = func_80018A30_19630(0x3B0005, 0x99);
+            D_800FC834_FD434[s->unk_0C[0]].hmf->unk84->unk58[3][2] = -5.0f;
+        } else {
+            s->unk_0C[0] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[0]);
+            s->unk_0C[1] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[1]);
+            s->unk_0C[2] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[2]);
+            s->unk_0C[3] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[3]);
+        }
+        func_8010BD44_222134_BombsAway(i, 0);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BFAC_22239C_BombsAway);
 

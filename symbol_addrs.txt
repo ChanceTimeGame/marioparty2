@@ -833,3 +833,7 @@ D_8010DFD4_2243C4_BombsAway = 0x8010DFD4; // size:0x2 segment:BombsAway
 D_8010DFD6_2243C6_BombsAway = 0x8010DFD6; // size:0x2 segment:BombsAway
 D_8010DFD8_2243C8_BombsAway = 0x8010DFD8; // size:0x2 segment:BombsAway
 D_8010DFDA_2243CA_BombsAway = 0x8010DFDA; // size:0x2 segment:BombsAway
+// MG2B-C: ovl_2B .data: the cannon bob angles (two u16, MP1 D_800FFB30/32) and the blast time per shell kind (s32[4] read as s16)
+D_8010D258_223648_BombsAway = 0x8010D258; // rom:0x223648 size:0x2
+D_8010D25A_22364A_BombsAway = 0x8010D25A; // rom:0x22364A size:0x2
+D_8010D27C_22366C_BombsAway = 0x8010D27C; // rom:0x22366C size:0x10
