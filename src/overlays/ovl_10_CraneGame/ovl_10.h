@@ -51,6 +51,7 @@ void SprAttrSet(s16 group, s16 member, s32 flag);
 void SprPosSet(s16 group, s16 member, s16 x, s16 y);
 s32 func_8002838C_28F8C(s32, void*, s32);
 void* HuMemAlloc(s32 size);
+void HuMemFree(void*);
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern s32 D_800F9D30_FA930[];
@@ -132,7 +133,7 @@ s16 func_801035C0_14D0E0_CraneGame(f32* x, f32* y, f32* z, f32 dx, f32 dy, f32 d
 void func_801038FC_14D41C_CraneGame(void);
 void func_80103974_14D494_CraneGame(omObjData* obj);
 void func_80103CB8_14D7D8_CraneGame(omObjData* obj);
-s16 func_80103F38_14DA58_CraneGame(void);
+void func_80103F38_14DA58_CraneGame(void);
 void func_80103FC8_14DAE8_CraneGame(omObjData* obj);
 s16 func_8010422C_14DD4C_CraneGame(f32 x, f32 y, f32 z, f32 r);
 s16 func_801043D8_14DEF8_CraneGame(f32 x, f32 y, f32 z, s16 arg3);
