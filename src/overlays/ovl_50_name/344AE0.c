@@ -1807,7 +1807,437 @@ void func_8010AB4C_34B3AC_name_50(void) {
     OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->rot = rot;
 }
 
+/* Board 4's scene, part 6: D_8011275C spins away into the distance (0x330); back at the sign it
+   shrinks to a puff (0x331); a figure (0x800D5) drops in, the sign is struck (0xA0204 fades out),
+   a light (0x8B) grows over the winner while two more figures fall and rise again (0x332-0x334);
+   a ship (0xA0203, func_8010CF08) descends, carries D_8011275C off and bursts into a star sprite
+   (0xA010C). Then the other players' models are made for the shared winner scene. */
+#ifdef NON_MATCHING /* register allocation: retail keeps the 10.0f/0.0f/360.0f constants of the first loop in s5/s3/s2 and the scales in other FPRs; the scale-down loop passes a copy of the scale as x */
+void func_8010B230_34BA90_name_50(void) {
+    MBModel* fig[3];
+    Vec v;
+    Vec dir;
+    Vec2f pos2d;
+    MBModel* winner;
+    MBModel* sign;
+    MBModel* glow;
+    MBModel* light;
+    MBModel* ship;
+    omObjData* shipObj;
+    s32 win;
+    s16 anim;
+    s16 spr;
+    s32 i;
+    s32 j;
+    f32 scale;
+    f32 r;
+    f32 x;
+    f32 angle;
+    f32 vel;
+
+    func_80050E00_51A00(0x24);
+    i = 0;
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    D_80112600_352E60_name_50->work[0] = 0;
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    D_8011275C_352FBC_name_50->pos.x = 0.0f;
+    D_8011275C_352FBC_name_50->pos.y = -100.0f;
+    D_8011275C_352FBC_name_50->pos.z = 3500.0f;
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_8011275C_352FBC_name_50->rot);
+    MBMotionSet(D_8011275C_352FBC_name_50, 2, 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x330);
+    win = func_8005AAC0_5B6C0((320 - D_80112752_352FB2_name_50[0]) / 2, 35, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x330, -1, -1);
+    PlaySound(0x3F9);
+    PlaySound(0x124);
+    scale = 1.0f;
+    do {
+        D_8011275C_352FBC_name_50->obj->rot.z -= 10.0f;
+        if (D_8011275C_352FBC_name_50->obj->rot.z < 0.0f) {
+            D_8011275C_352FBC_name_50->obj->rot.z += 360.0f;
+        }
+        scale -= 0.02;
+        r = scale * 100.0f;
+        x = HuMathSin(D_8011275C_352FBC_name_50->obj->rot.z) * r;
+        D_8011275C_352FBC_name_50->pos.x = x;
+        D_8011275C_352FBC_name_50->pos.y = -func_800B7890_B8490(D_8011275C_352FBC_name_50->obj->rot.z) * r;
+        D_8011275C_352FBC_name_50->pos.z = 3500.0f;
+        D_8011275C_352FBC_name_50->scale.x = D_8011275C_352FBC_name_50->scale.y = D_8011275C_352FBC_name_50->scale.z = scale;
+        HuPrcVSleep();
+        i++;
+    } while (i < 40);
+    D_8011275C_352FBC_name_50->obj->rot.z = 0.0f;
+    D_8011275C_352FBC_name_50->scale.x = D_8011275C_352FBC_name_50->scale.y = D_8011275C_352FBC_name_50->scale.z = 1.0f;
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    scale = 1.0f;
+    MBDBackKill();
+    func_8008CCA8_8D8A8(win);
+    func_80050E00_51A00(0x21);
+    func_8005321C_53E1C(80.0f, 20000.0f);
+    D_80112600_352E60_name_50->work[0] = 1;
+    sign = MBModelFileCreate(0xA0204, 0, 1.5f, 0.0f, NULL);
+    HmfModelObjAttrSet(*sign->obj->model, 0x22000, 0x20000);
+    func_80029A8C_2A68C(*sign->obj->model);
+    func_8002A00C_2AC0C(*sign->obj->model);
+    sign->pos.x = D_8011208C_3528EC_name_50.x;
+    sign->pos.y = D_8011208C_3528EC_name_50.y;
+    sign->pos.z = D_8011208C_3528EC_name_50.z;
+    D_8011275C_352FBC_name_50->pos.x = D_801120C8_352928_name_50[0].x;
+    D_8011275C_352FBC_name_50->pos.y = D_801120C8_352928_name_50[0].y;
+    D_8011275C_352FBC_name_50->pos.z = D_801120C8_352928_name_50[0].z;
+    func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &D_80112134_352994_name_50, &D_8011275C_352FBC_name_50->rot);
+    MBMotionSet(D_8011275C_352FBC_name_50, 3, 0);
+    func_80029C74_2A874(*D_8011275C_352FBC_name_50->obj->model, func_80029D0C_2A90C(*D_8011275C_352FBC_name_50->obj->model));
+    MBModelDispOn(D_8011275C_352FBC_name_50);
+    MBModelDispOn(winner);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x331);
+    win = func_8005AAC0_5B6C0((320 - D_80112752_352FB2_name_50[0]) / 2, 35, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x331, -1, -1);
+    PlaySound(0x3FA);
+    angle = func_80042BE0_437E0(&D_8011275C_352FBC_name_50->rot);
+    while (1) {
+        D_8011275C_352FBC_name_50->rot.x = HuMathSin(angle);
+        D_8011275C_352FBC_name_50->rot.y = 0.0f;
+        D_8011275C_352FBC_name_50->rot.z = func_800B7890_B8490(angle);
+        angle += 20.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        }
+        scale -= 0.025;
+        D_8011275C_352FBC_name_50->scale.x = D_8011275C_352FBC_name_50->scale.y = D_8011275C_352FBC_name_50->scale.z = scale;
+        if (scale <= 0.2f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    v.x = D_8011275C_352FBC_name_50->pos.x;
+    v.y = D_8011275C_352FBC_name_50->pos.y;
+    v.z = D_8011275C_352FBC_name_50->pos.z;
+    func_8010CD24_34D584_name_50(&v, 0.4f, 20.0f);
+    MBModelDispOff(D_8011275C_352FBC_name_50);
+    func_8008CCA8_8D8A8(win);
+    HuPrcSleep(60);
+    fig[0] = MBModelFileCreate(0x800D5, 13, 1.0f, 1.0f, D_8011207C_3528DC_name_50);
+    MBMotionSet(fig[0], 0, 2);
+    func_8002D1EC_2DDEC(*fig[0]->obj->model, 1);
+    fig[0]->pos.x = D_8011217C_3529DC_name_50.x;
+    fig[0]->pos.y = 0.0f;
+    fig[0]->pos.z = D_8011217C_3529DC_name_50.z;
+    fig[0]->jumpY = D_8011217C_3529DC_name_50.y;
+    func_8010D320_34DB80_name_50(D_80112600_352E60_name_50);
+    vel = 3.0f;
+    v.x = D_8011208C_3528EC_name_50.x - 30.0f;
+    v.y = 20.0f;
+    v.z = D_8011208C_3528EC_name_50.z + 20.0f;
+    func_8010CD24_34D584_name_50(&v, 0.2f, 8.0f);
+    v.x = D_8011208C_3528EC_name_50.x + 30.0f;
+    v.y = 40.0f;
+    v.z = D_8011208C_3528EC_name_50.z + 20.0f;
+    func_8010CD24_34D584_name_50(&v, 0.2f, 9.0f);
+    v.x = D_8011208C_3528EC_name_50.x + 5.0f;
+    v.y = 10.0f;
+    v.z = D_8011208C_3528EC_name_50.z + 20.0f;
+    func_8010CD24_34D584_name_50(&v, 0.3f, 8.5f);
+    func_80026E00_27A00(1, -68.0f, 22.0f, -96.0f);
+    func_8002D274_2DE74(*winner->obj->model, 0xB8, 0xB8, 0xB8);
+    func_8002D274_2DE74(*fig[0]->obj->model, 0xB8, 0xB8, 0xB8);
+    i = 0;
+    func_8002D2B4_2DEB4(*winner->obj->model, 61.0f, 69.0f, 75.0f);
+    func_8002D2B4_2DEB4(*fig[0]->obj->model, 61.0f, 69.0f, 75.0f);
+    PlaySound(0x3F5);
+    do {
+        func_8005A7E8_5B3E8(winner, &sign->pos, 10.0f);
+        func_8002AC10_2B810(*sign->obj->model, i * 0.033333335f, i * 0.3f, 2);
+        D_800CA02C_CAC2C += 24.0f;
+        if (D_800CA02C_CAC2C >= 360.0f) {
+            D_800CA02C_CAC2C -= 360.0f;
+        }
+        fig[0]->jumpY -= vel;
+        vel *= 1.2f;
+        if (fig[0]->jumpY < 0.0f) {
+            fig[0]->jumpY = 0.0f;
+        }
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    MBModelKill(sign);
+    MBMotionShiftSet(fig[0], -1, 0, 4, 2);
+    HuPrcSleep(20);
+    while (func_8005A7E8_5B3E8(fig[0], &winner->pos, 8.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(fig[0], 1, 0, 4, 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x332);
+    win = func_8005AAC0_5B6C0(60, 60, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x332, -1, -1);
+    PlaySound(0xE3);
+    HuPrcSleep(30);
+    func_8008CCA8_8D8A8(win);
+    MBMotionShiftSet(fig[0], -1, 0, 4, 2);
+    glow = MBModelFileCreate(13, 0, 1.0f, 0.0f, NULL);
+    glow->pos.x = D_8011217C_3529DC_name_50.x;
+    glow->pos.y = 0.0f;
+    glow->pos.z = D_8011217C_3529DC_name_50.z;
+    glow->scale.x = glow->scale.z = 0.0f;
+    func_80056658_57258(&glow->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &glow->rot);
+    MBMotionShiftSet(fig[0], 2, 0, 4, 0);
+    MBMotionShiftSet(winner, 9, 0, 4, 4);
+    PlaySound(0x3FF);
+    i = 0;
+    do {
+        glow->scale.x = glow->scale.z = i * 0.5f;
+        func_8002D274_2DE74(*winner->obj->model, 184.0f - i * 6.133333f, 184.0f - i * 6.133333f, 184.0f - i * 6.133333f);
+        func_8002D274_2DE74(*fig[0]->obj->model, 184.0f - i * 6.133333f, 184.0f - i * 6.133333f, 184.0f - i * 6.133333f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    light = func_80043510_44110(0x8B, NULL);
+    light->pos.x = D_8011217C_3529DC_name_50.x;
+    light->pos.y = 0.0f;
+    light->pos.z = D_8011217C_3529DC_name_50.z;
+    func_80056658_57258(&light->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &light->rot);
+    i = 1;
+    do {
+        fig[i] = MBModelFileCreate(0x800D5, 13, 1.0f, 1.0f, D_8011207C_3528DC_name_50);
+        MBMotionSet(fig[i], -1, 2);
+        func_8002D1EC_2DDEC(*fig[i]->obj->model, 1);
+        func_8002D274_2DE74(*fig[i]->obj->model, 0x3C, 0x3C, 0xFF);
+        func_8002D2B4_2DEB4(*fig[i]->obj->model, 69.0f, 69.0f, 69.0f);
+        fig[i]->pos.x = D_80112188_3529E8_name_50[i - 1].x;
+        fig[i]->pos.y = 0.0f;
+        fig[i]->pos.z = D_80112188_3529E8_name_50[i - 1].z;
+        func_80056658_57258(&fig[i]->pos, &winner->pos, &fig[i]->rot);
+        fig[i]->jumpY = 720.0f;
+        i++;
+    } while (i < 3);
+    func_8002D274_2DE74(*fig[0]->obj->model, 0x3C, 0x3C, 0xFF);
+    func_8002D274_2DE74(*winner->obj->model, 0x3C, 0x3C, 0xFF);
+    func_8002D2B4_2DEB4(*fig[0]->obj->model, 69.0f, 69.0f, 69.0f);
+    i = 2;
+    func_8002D2B4_2DEB4(*winner->obj->model, -110.0f, 47.0f, -6.0f);
+    PlaySound(0x3EB);
+    D_80112604_352E64_name_50 = PlaySound(0x3F4);
+    do {
+        light->scale.x = i / 30.0f;
+        light->scale.y = 4.0f;
+        light->scale.z = i / 30.0f;
+        HuPrcVSleep();
+        i += 3;
+    } while (i < 90);
+    MBMotionShiftSet(fig[0], -1, 0, 10, 2);
+    MBMotionShiftSet(winner, 0, 0, 10, 2);
+    light->scale.x = light->scale.z = 3.0f;
+    i = 0;
+    do {
+        for (j = 1; j < 3; j++) {
+            fig[j]->jumpY -= 24.0f;
+            if (fig[j]->jumpY < 0.0f) {
+                fig[j]->jumpY = 0.0f;
+            }
+        }
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    i = 1;
+    do {
+        fig[i]->scale.x = fig[i]->scale.z = 1.0f;
+        i++;
+    } while (i < 3);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x333);
+    win = func_8005AAC0_5B6C0(80, 60, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x333, -1, -1);
+    PlaySound(0x3FB);
+    PlaySound(0x3FC);
+    HuPrcSleep(10);
+    MBMotionShiftSet(fig[1], 1, 0, 2, 0);
+    MBMotionShiftSet(fig[2], 1, 0, 2, 0);
+    HuPrcSleep(20);
+    MBMotionShiftSet(fig[1], -1, 0, 4, 2);
+    MBMotionShiftSet(fig[2], -1, 0, 4, 2);
+    HuPrcSleep(30);
+    func_8008CCA8_8D8A8(win);
+    HuPrcSleep(20);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x334);
+    win = func_8005AAC0_5B6C0(120, 100, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_800890CC_89CCC(win, 0x334, -1, -1);
+    PlaySound(0x3FD);
+    HuPrcSleep(35);
+    func_8008CCA8_8D8A8(win);
+    PlaySound(0x401);
+    MBMotionShiftSet(winner, 9, 0, 4, 4);
+    i = 0;
+    do {
+        for (j = 0; j < 3; j++) {
+            fig[j]->jumpY += 24.0f;
+            if (fig[j]->jumpY > 720.0f) {
+                fig[j]->jumpY = 720.0f;
+            }
+        }
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    i = 90;
+    do {
+        light->scale.x = i / 30.0f;
+        light->scale.y = 4.0f;
+        light->scale.z = i / 30.0f;
+        HuPrcVSleep();
+        i -= 3;
+    } while (i >= 3);
+    light->scale.x = light->scale.z = 0.0f;
+    func_8002D274_2DE74(*winner->obj->model, 0, 0, 0);
+    i = 0;
+    do {
+        MBModelKill(fig[i]);
+        i++;
+    } while (i < 3);
+    MBModelKill(light);
+    i = 0;
+    func_8002D2B4_2DEB4(*winner->obj->model, 61.0f, 69.0f, 75.0f);
+    do {
+        glow->scale.x = glow->scale.z = 15.0f - i * 0.5f;
+        func_8002D274_2DE74(*winner->obj->model, i * 6.133333f, i * 6.133333f, i * 6.133333f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 30);
+    func_8002D274_2DE74(*winner->obj->model, 0xB8, 0xB8, 0xB8);
+    MBModelKill(glow);
+    ship = MBModelFileCreate(0xA0203, 0, 1.0f, 0.0f, NULL);
+    ship->pos.x = 0.0f;
+    ship->pos.y = 0.0f;
+    ship->pos.z = -5200.0f;
+    ship->obj->rot.x = -90.0f;
+    shipObj = omAddObj(0x1F4, 0, 0, -1, func_8010CF08_34D768_name_50);
+    shipObj->rot.z = 0.0f;
+    shipObj->work[0] = 0;
+    shipObj->unk_50 = ship;
+    MBModelDispOff(winner);
+    i = 0;
+    MBDBackKill();
+    func_80050E00_51A00(0x40);
+    func_8005321C_53E1C(80.0f, 20000.0f);
+    func_800517F8_523F8();
+    func_8002CA48_2D648(0x32, 0x43, 0x95);
+    do {
+        ship->pos.y -= 4.0f;
+        HuPrcVSleep();
+        i++;
+    } while (i < 45);
+    MBModelDispOff(ship);
+    MBDBackKill();
+    func_80050E00_51A00(0x21);
+    func_8005321C_53E1C(80.0f, 20000.0f);
+    MBModelDispOn(winner);
+    ship->pos.x = D_8011217C_3529DC_name_50.x;
+    ship->pos.y = 1500.0f;
+    ship->pos.z = D_8011217C_3529DC_name_50.z;
+    ship->obj->rot.x = 0.0f;
+    ship->obj->rot.z = 0.0f;
+    shipObj->work[0] = 1;
+    MBModelDispOn(ship);
+    func_80026E00_27A00(1, 0.0f, 0.0f, 120.0f);
+    D_8011217C_3529DC_name_50.y = 0.0f;
+    func_80056658_57258(&winner->pos, &D_8011217C_3529DC_name_50, &winner->rot);
+    MBMotionShiftSet(winner, 1, 0, 4, 2);
+    while (func_8005A5E8_5B1E8(winner, &D_8011217C_3529DC_name_50, 20.0f) == 0) {
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(winner, 0, 0, 4, 2);
+    func_80056658_57258(&D_8011217C_3529DC_name_50, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &dir);
+    dir.x = -dir.x;
+    dir.y = -dir.y;
+    dir.z = -dir.z;
+    winner->rot.x = dir.x;
+    winner->rot.y = dir.y;
+    winner->rot.z = dir.z;
+    func_800794A8_7A0A8(180);
+    i = 0;
+    do {
+        ship->pos.x += dir.x * 200.0f;
+        ship->pos.z += dir.z * 200.0f;
+        ship->pos.y += 5.0f;
+        HuPrcVSleep();
+        i++;
+    } while (i < 60);
+    i = 0;
+    do {
+        ship->scale.x = ship->scale.y = ship->scale.z = 1.0f - i * 0.033333335f;
+        HuPrcVSleep();
+        i++;
+    } while (i < 30);
+    i = 0;
+    MBModelKill(D_8011275C_352FBC_name_50);
+    HuPrcSleep(7);
+    PlaySound(0x3C9);
+    anim = func_8001A2F8_1AEF8(0xA010C);
+    spr = func_8001AAAC_1B6AC(anim, 0, 1);
+    func_800209C4_215C4(0, &ship->pos, &pos2d);
+    espPosSet(spr, pos2d.unk_00, pos2d.unk_04);
+    MBModelKill(ship);
+    omDelObj(shipObj);
+    scale = 0.0f;
+    func_8001A96C_1B56C(spr, 0xFF, 0xFF, 0xFF);
+    do {
+        scale += 0.18333334f;
+        func_8001A91C_1B51C(spr, scale, scale);
+        i++;
+        HuPrcVSleep();
+    } while (i < 6);
+    i = 0;
+    do {
+        scale -= 0.18333334f;
+        if (scale < 0.0f) {
+            scale = 0.0f;
+        }
+        func_8001A91C_1B51C(spr, scale, scale);
+        i++;
+        HuPrcVSleep();
+    } while (i < 6);
+    func_8001AC44_1B844(spr);
+    SprAnimKill(anim);
+    HuPrcSleep(3);
+    i = 0;
+    MBDBackKill();
+    do {
+        if (i != D_8011275A_352FBA_name_50) {
+            MBPlayerModelCreate(i, D_80112008_352868_name_50[gPlayers[i].character], 2);
+            func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
+            func_80043DAC_449AC(OVL50_PLAYER_MODEL(i));
+            gPlayers[i].flags |= 2;
+            MBMotionSet(OVL50_PLAYER_MODEL(i), 0, 2);
+            func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(i)->obj->model, 1);
+            func_8002D2B4_2DEB4(*OVL50_PLAYER_MODEL(i)->obj->model, 0.0f, 0.0f, 120.0f);
+            func_8002D274_2DE74(*OVL50_PLAYER_MODEL(i)->obj->model, 0xFF, 0xFF, 0xFF);
+            MBModelDispOff(OVL50_PLAYER_MODEL(i));
+        }
+        i++;
+    } while (i < 4);
+    func_80050E00_51A00(0x22);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    v.x = v.y = 0.0f;
+    v.z = 2500.0f;
+    winner->pos.x = D_80111AE4_352344_name_50.x;
+    winner->pos.y = D_80111AE4_352344_name_50.y;
+    winner->pos.z = D_80111AE4_352344_name_50.z;
+    func_80056658_57258(&winner->pos, &v, &winner->rot);
+    D_80112748_352FA8_name_50->jumpY = 0.0f;
+    D_8010105C_101C5C = D_80101300_101F00 = 1.0f;
+    func_80029A8C_2A68C(*winner->obj->model);
+    func_80029A8C_2A68C(*D_80112748_352FA8_name_50->obj->model);
+    func_80029A8C_2A68C(*D_8011274C_352FAC_name_50->obj->model);
+    func_8002D2B4_2DEB4(*winner->obj->model, 0.0f, 0.0f, 120.0f);
+    func_8002D2B4_2DEB4(*D_80112748_352FA8_name_50->obj->model, 0.0f, 0.0f, 120.0f);
+    func_8002D2B4_2DEB4(*D_8011274C_352FAC_name_50->obj->model, 0.0f, 0.0f, 120.0f);
+    func_8002D274_2DE74(*winner->obj->model, 0x40, 0x40, 0x40);
+    func_8002D274_2DE74(*D_80112748_352FA8_name_50->obj->model, 0x40, 0x40, 0x40);
+    func_8002D274_2DE74(*D_8011274C_352FAC_name_50->obj->model, 0x40, 0x40, 0x40);
+    func_80026E00_27A00(1, -39.0f, 108.0f, 32.0f);
+    PlayMusic(0x10);
+    D_80111960_3521C0_name_50 = 0x10;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010B230_34BA90_name_50);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010CD24_34D584_name_50);
 

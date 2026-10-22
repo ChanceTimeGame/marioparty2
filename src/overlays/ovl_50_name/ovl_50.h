@@ -318,7 +318,7 @@ void func_8010A580_34ADE0_name_50(void);
 void func_8010A9B8_34B218_name_50(void);
 void func_8010AB4C_34B3AC_name_50(void);
 void func_8010B230_34BA90_name_50(void);
-void func_8010CD24_34D584_name_50(s32 arg0, s32 arg1, s32 arg2);
+omObjData* func_8010CD24_34D584_name_50(Vec* pos, f32 grow, f32 fade); /* a fading puff (4F's func_801063AC) */
 void func_8010CE28_34D688_name_50(omObjData* obj);
 void func_8010CF08_34D768_name_50(omObjData* obj);
 omObjData* func_8010CFE8_34D848_name_50(f32 arg0, f32 arg1, f32 arg2);
@@ -420,6 +420,12 @@ extern Vec D_80112134_352994_name_50;     /* the winner, part 3 */
 extern char* D_80112140_3529A0_name_50[6]; /* per character: the part the prize hangs on */
 extern s32 D_80112158_3529B8_name_50[6];  /* per character: the prize's form (0xA025E-63) */
 extern Vec D_80112170_3529D0_name_50;     /* the winner, part 5 */
+extern u32 D_8011207C_3528DC_name_50[];   /* part 6's figures (0x800D5): MBModelFileCreate list */
+extern Vec D_8011217C_3529DC_name_50;     /* part 6: where the figure lands (y: its drop height) */
+extern Vec D_80112188_3529E8_name_50[2];  /* part 6: the other two figures (splat's D_80112190 is [0].z) */
+void func_800517F8_523F8(void);
+void func_8002CA48_2D648(u8, u8, u8);
+void func_8001A96C_1B56C(u16, u8, u8, u8); /* sprite colour */
 void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3); /* hangs arg0's part arg1 on arg2's arg3 */
 extern omObjData* D_80112600_352E60_name_50; /* the sign's sparkle (func_8010CFE8) */
 extern s16 D_80112604_352E64_name_50;     /* a sound handle (0x3F8) */
