@@ -95,6 +95,8 @@ void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
 void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void SprKill(s16 idx);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void SprAnimKill(s16 animIdx);
 void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
 void func_800824F4_830F4(s16 group, s16 member, s16 arg2);

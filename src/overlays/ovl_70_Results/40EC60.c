@@ -904,7 +904,222 @@ void func_80105F50_4123B0_Results(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105F50_4123B0_Results);
 #endif
 
+// register allocation (p, t, d) and the speed * 25 strength reduction (masked 30)
+#ifdef NON_MATCHING
+/* A player's rank or place changed with the coins. */
+#define MOVED(i)                                                                                      \
+    (newRank[D_80107858_413CB8_Results[i].place] != oldRank[D_80107858_413CB8_Results[i].place] || \
+     D_80107858_413CB8_Results[i].rank != D_80107850_413CB0_Results[i].rank)
+
+/* Re-ranks the players after the coins: slides the rows that change out to the right, moves them
+   to their new rows and slides them back in, one rank after another. */
+void func_801063E8_412848_Results(void) {
+    s16 delay[4];
+    s16 off[4]; /* off[0] first sums the slide out */
+    f32 ang[4];
+    s8 taken[4];
+    s8 newRank[4];
+    s8 oldRank[4];
+    u16 speed;
+    s32 spd;
+    s32 p;
+    s32 i;
+    s32 j;
+    s32 n;
+    s32 t;
+    s32 d;
+    s32 sum;
+
+    p = 0;
+    for (i = 0; i < 4; i++) {
+        D_80107858_413CB8_Results[i] = D_80107850_413CB0_Results[i];
+    }
+    func_8010492C_410D8C_Results();
+    speed = (D_801076A1_413B01_Results != 0) ? 3 : 1;
+    for (i = 0; i < 4; i++) {
+        oldRank[D_80107858_413CB8_Results[i].place] = D_80107858_413CB8_Results[i].rank;
+        newRank[D_80107850_413CB0_Results[i].place] = D_80107850_413CB0_Results[i].rank;
+    }
+
+    /* Hide the place sprites of the players who move. */
+    for (i = 0, n = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (D_80107858_413CB8_Results[j].rank == i && MOVED(j)) {
+                SprAttrSet(D_801078E4_413D44_Results, n + 1, 0x8000);
+            }
+            n++;
+        }
+    }
+
+    /* Slide them out to the right. */
+    t = 0;
+    off[0] = 0;
+    spd = speed;
+    do {
+        d = HuMathSin(t) * -30.0f * spd;
+        off[0] += d;
+        for (i = 0, n = 0; i < 4; i++) {
+            if (MOVED(i)) {
+                func_801043B0_410810_Results(D_801078F8_413D58_Results, i + 1, d, 0);
+                func_801043B0_410810_Results(D_80107CE8_414148_Results, i + 1, d * 2, 0);
+                func_801043B0_410810_Results(D_80107910_413D70_Results, i + 1, d, 0);
+                func_801043B0_410810_Results(D_80107918_413D78_Results, i + 1, d, 0);
+                func_801043B0_410810_Results(D_80107CC0_414120_Results[i], 0, d, 0);
+                func_801043B0_410810_Results(D_80107CC0_414120_Results[4 + i], 0, d, 0);
+            }
+            for (j = 0; j < 3; j++) {
+                if (MOVED(i)) {
+                    func_801043B0_410810_Results(D_80107CE0_414140_Results, n + 1, d, 0);
+                }
+                n++;
+            }
+        }
+        HuPrcVSleep();
+        t += spd * 5;
+    } while (t < 90);
+
+    /* Give each of them the first free row from its new rank down. */
+    for (i = 0; i < 4; i++) {
+        if (MOVED(i)) {
+            taken[D_80107858_413CB8_Results[i].place] = 0;
+        } else {
+            taken[D_80107858_413CB8_Results[i].place] = 1;
+        }
+    }
+    for (i = 0, n = 0; i < 4; i++) {
+        if (MOVED(i)) {
+            for (p = D_80107850_413CB0_Results[i].rank; p < 4; p++) {
+                if (taken[p] == 0) {
+                    taken[p] = 1;
+                    break;
+                }
+            }
+            if (p >= 4) {
+                p = 0;
+            }
+            /* Retail uses the normal layout's character row in both layouts. */
+            func_80104458_4108B8_Results(D_801078F8_413D58_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR][p][1]);
+            func_80104458_4108B8_Results(D_80107CE8_414148_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_CHAR][p][1] * 2);
+            func_80104458_4108B8_Results(D_80107910_413D70_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINICON][p][1]);
+            if (_CheckFlag(0xD) != 0) {
+                func_80104458_4108B8_Results(D_80107918_413D78_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINS_D][p][1]);
+            } else {
+                func_80104458_4108B8_Results(D_80107918_413D78_Results, i + 1, D_801076C4_413B24_Results[RES_ROW_COINS][p][1]);
+            }
+            func_80104458_4108B8_Results(D_80107CC0_414120_Results[i], 0, D_801076C4_413B24_Results[RES_ROW_STARS][p][1]);
+            if (_CheckFlag(0xD) != 0) {
+                func_80104458_4108B8_Results(D_80107CC0_414120_Results[4 + i], 0, D_801076C4_413B24_Results[RES_ROW_STARS_D][p][1]);
+            } else {
+                func_80104458_4108B8_Results(D_80107CC0_414120_Results[4 + i], 0, D_801076C4_413B24_Results[RES_ROW_STARS][p][1]);
+            }
+        }
+        for (j = 0; j < 3; j++) {
+            if (MOVED(i)) {
+                if (_CheckFlag(0xD) != 0) {
+                    func_80104458_4108B8_Results(D_80107CE0_414140_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_COINS_D][p][1] + 4);
+                } else {
+                    func_80104458_4108B8_Results(D_80107CE0_414140_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_COINS][p][1] + 4);
+                }
+            }
+            n++;
+        }
+        if (D_80107858_413CB8_Results[i].rank == D_80107850_413CB0_Results[i].rank) {
+            func_800822A8_82EA8(D_801078F8_413D58_Results, i + 1, 0, 0);
+        } else if (D_80107858_413CB8_Results[i].rank > D_80107850_413CB0_Results[i].rank) {
+            func_800822A8_82EA8(D_801078F8_413D58_Results, i + 1, 1, 0);
+        } else {
+            func_800822A8_82EA8(D_801078F8_413D58_Results, i + 1, 2, 0);
+        }
+    }
+
+    /* Put them as far right as the slide in will bring them back. */
+    sum = 0;
+    for (t = 0; t < 90; t += speed * 5) {
+        sum += HuMathSin(t) * 25.0f * speed;
+    }
+    if (off[0] >= 0) {
+        sum += off[0];
+    } else {
+        sum -= off[0];
+    }
+    for (i = 0; i < 4; i++) {
+        if (MOVED(i)) {
+            delay[i] = D_80107850_413CB0_Results[i].rank * 8;
+            func_801043B0_410810_Results(D_801078F8_413D58_Results, i + 1, sum, 0);
+            func_801043B0_410810_Results(D_80107CE8_414148_Results, i + 1, sum * 2, 0);
+            func_801043B0_410810_Results(D_80107910_413D70_Results, i + 1, sum, 0);
+            func_801043B0_410810_Results(D_80107918_413D78_Results, i + 1, sum, 0);
+            func_801043B0_410810_Results(D_80107CC0_414120_Results[i], 0, sum, 0);
+            func_801043B0_410810_Results(D_80107CC0_414120_Results[4 + i], 0, sum, 0);
+            for (j = 0; j < 3; j++) {
+                func_801043B0_410810_Results(D_80107CE0_414140_Results, i * 3 + j + 1, sum, 0);
+            }
+        } else {
+            delay[i] = -1;
+        }
+        ang[i] = 0.0f;
+    }
+
+    /* Slide them back in, one rank after another. */
+    t = 0;
+    do {
+        for (i = 0; i < 4; i++) {
+            if (delay[i] < 0) {
+                continue;
+            }
+            if (D_801076A1_413B01_Results != 0) {
+                delay[i] = 0;
+            }
+            if (delay[i] < t) {
+                off[i] = -HuMathSin(ang[i]) * (speed * 25);
+                func_801043B0_410810_Results(D_801078F8_413D58_Results, i + 1, off[i], 0);
+                func_801043B0_410810_Results(D_80107CE8_414148_Results, i + 1, off[i] * 2, 0);
+                func_801043B0_410810_Results(D_80107910_413D70_Results, i + 1, off[i], 0);
+                func_801043B0_410810_Results(D_80107918_413D78_Results, i + 1, off[i], 0);
+                func_801043B0_410810_Results(D_80107CC0_414120_Results[i], 0, off[i], 0);
+                func_801043B0_410810_Results(D_80107CC0_414120_Results[4 + i], 0, off[i], 0);
+                for (j = 0; j < 3; j++) {
+                    func_801043B0_410810_Results(D_80107CE0_414140_Results, i * 3 + j + 1, off[i], 0);
+                }
+                ang[i] += speed * 5;
+                if (ang[i] >= 90.0f) {
+                    delay[i] = -1;
+                    if (D_801076A1_413B01_Results == 0) {
+                        omVibrate(i, 5, 0, 5);
+                    }
+                }
+            }
+        }
+        t++;
+        HuPrcVSleep();
+    } while (delay[0] >= 0 || delay[1] >= 0 || delay[2] >= 0 || delay[3] >= 0);
+
+    /* Show the new place sprites. */
+    for (i = 0, n = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (D_80107850_413CB0_Results[j].rank == i) {
+                SprAttrReset(D_801078E4_413D44_Results, n + 1, 0x8000);
+                if (_CheckFlag(0xD) != 0) {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_PLACE_D][D_80107850_413CB0_Results[j].place][0],
+                              D_801076C4_413B24_Results[RES_ROW_PLACE_D][D_80107850_413CB0_Results[j].place][1]);
+                } else {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, D_801076C4_413B24_Results[RES_ROW_PLACE][D_80107850_413CB0_Results[j].place][0],
+                              D_801076C4_413B24_Results[RES_ROW_PLACE][D_80107850_413CB0_Results[j].place][1]);
+                }
+            } else {
+                if (_CheckFlag(0xD) != 0) {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, -1000, D_801076C4_413B24_Results[RES_ROW_PLACE_D][j][1]);
+                } else {
+                    SprPosSet(D_801078E4_413D44_Results, n + 1, -1000, D_801076C4_413B24_Results[RES_ROW_PLACE][j][1]);
+                }
+            }
+            n++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801063E8_412848_Results);
+#endif
 
 /* Sets up counting the minigame coins (which 0: bonus coins, 1: minigame coins) in steps. */
 void func_80107140_4135A0_Results(s16 steps, s32 which) {
