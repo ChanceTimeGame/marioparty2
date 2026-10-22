@@ -242,11 +242,23 @@ typedef struct PdStreak {
         HuPrcVSleep();                                                        \
     }
 
+/* ---- 44's duel game ---- */
+
+/* func_801068CC's work: the CPU duelists' answers to the 16-move sequence D_80108F00. */
+typedef struct D44CpuWork {
+    /* 0x000 */ s32 wait[16];      /* frames before each answer (shared by both sides) */
+    /* 0x040 */ s32 unk40[16];
+    /* 0x080 */ s32 idx[2];        /* per side: the move being answered */
+    /* 0x088 */ s32 wrong[32];     /* [side * 16 + i]: this answer was made wrong */
+    /* 0x108 */ s32 moves[32];     /* [side * 16 + i]: the answers */
+    /* 0x188 */ s32 timer[2];      /* per side: frames until the next answer */
+} D44CpuWork; /* size 0x190 */
+
 /* ---- 44 data (asm/data/overlays/ovl_44_name/2E09D0.data.s) ---- */
 
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
 extern u32* D_80108AD0_2E0B80_name_44[6]; /* per character: motion list (count, files) */
-extern s32 D_80108AE8_2E0B98_name_44;
+extern s32 D_80108AE8_2E0B98_name_44[16]; /* frames between the beats ([0] is 0) */
 
 /* ---- 44 bss (asm/data/overlays/ovl_44_name/ovl_44_bss.bss.s) ---- */
 
@@ -271,6 +283,14 @@ extern s32 D_80108ED8_2E0F88_name_44; /* the outcome: 1 draw, 2 challenger wins,
 extern s32 D_80108EDC_2E0F8C_name_44; /* the poorer player's coins */
 extern s32 D_80108EE0_2E0F90_name_44[2];
 extern s32 D_80108EE8_2E0F98_name_44; /* CPU pad triggers */
+extern s32 D_80108F00_2E0FB0_name_44[16]; /* the move sequence, 0..2 each */
+extern s32 D_80108F58_2E1008_name_44; /* the move expected now */
+extern s32 D_80108FB8_2E1068_name_44[2];
+extern s32 D_80108FC8_2E1078_name_44[2];
+extern s32 D_80108FD0_2E1080_name_44[2];
+extern s32 D_80108FD8_2E1088_name_44[2];
+extern omObjData* D_80108FC4_2E1074_name_44; /* func_80106C24's object */
+extern s32 D_80108FE0_2E1090_name_44;
 extern s32 D_80108FE4_2E1094_name_44; /* no referee (flag 0x17 clear) */
 extern MBModel* D_80108FF0_2E10A0_name_44; /* the referee's hat (scaled away) */
 
@@ -295,14 +315,14 @@ void func_80105CF4_2DDDA4_name_44(omObjData* obj);
 void func_80105D84_2DDE34_name_44(void);
 void func_80106050_2DE100_name_44(void);
 void func_801068CC_2DE97C_name_44(void);
-void func_80106C24_2DECD4_name_44(void);
+void func_80106C24_2DECD4_name_44(omObjData* obj);
 s32 func_80106F1C_2DEFCC_name_44(void);
 void func_80107208_2DF2B8_name_44(s32 arg0, s32 arg1, s32 arg2); /* CPU input script */
 void func_80107838_2DF8E8_name_44(omObjData* obj);
 s32 func_801079D8_2DFA88_name_44(void); /* CPU pad triggers (D_80108EE8) */
 void func_801079E4_2DFA94_name_44(void);
 void func_80107B1C_2DFBCC_name_44(void);
-void func_80107BF4_2DFCA4_name_44(void);
+void func_80107BF4_2DFCA4_name_44(s32 move, s32 side, s32 player, s32 correct);
 void func_80107F28_2DFFD8_name_44(void);
 void func_8010838C_2E043C_name_44(void);
 void func_801085BC_2E066C_name_44(void);

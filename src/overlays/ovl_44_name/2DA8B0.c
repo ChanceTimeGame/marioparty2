@@ -26,7 +26,75 @@ void func_80102800_2DA8B0_name_44(void) {
     omAddObj(1000, 0, 0, -1, func_80102C20_2DACD0_name_44);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_8010298C_2DAA3C_name_44);
+void func_8010298C_2DAA3C_name_44(void) {
+    s32 bits;
+    s32 i;
+
+    D_80108EA4_2E0F54_name_44 = -1;
+    D_80108E98_2E0F48_name_44 = 0;
+    D_80108FE4_2E1094_name_44 = 0;
+    if (_CheckFlag(0x17) == 0) {
+        D_80108FE4_2E1094_name_44 = 1;
+    }
+    bits = D_800F8D1A_F991A.attacker;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 1;
+            D_80108FE4_2E1094_name_44 = 0;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 1;
+            D_80108FE4_2E1094_name_44 = 1;
+        }
+    }
+    D_80108EA0_2E0F50_name_44 = 0;
+    for (i = 0; bits != 0; i++) {
+        bits >>= 1;
+        if (bits == 0) {
+            break;
+        }
+        D_80108EA0_2E0F50_name_44++;
+    }
+    D_80108EB8_2E0F68_name_44 = 1;
+    D_80108EA8_2E0F58_name_44[i] = 1;
+    bits = D_800F8D1A_F991A.targets;
+    if (_CheckFlag(0x19) != 0) {
+        if (ContBtn[0] & 0x8000) {
+            bits = 0xE;
+        }
+        if (ContBtn[0] & 0x4000) {
+            bits = 2;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if ((bits >> i) & 1) {
+            D_80108EB8_2E0F68_name_44++;
+            D_80108EA8_2E0F58_name_44[i] = 1;
+        }
+    }
+    for (i = 0; i < 2; i++) {
+        D_80108EE0_2E0F90_name_44[i] = 0;
+    }
+    if (D_80108EB8_2E0F68_name_44 == 2) {
+        for (i = 0; i < 4; i++) {
+            if (D_80108EA8_2E0F58_name_44[i] == 1 && i != D_80108EA0_2E0F50_name_44) {
+                D_80108EA4_2E0F54_name_44 = i;
+                break;
+            }
+        }
+    }
+    func_801079E4_2DFA94_name_44();
+    for (i = 0; i < 2; i++) {
+        D_80108FB8_2E1068_name_44[i] = 0;
+        D_80108FC8_2E1078_name_44[i] = 0;
+        D_80108FD0_2E1080_name_44[i] = 0;
+        D_80108FD8_2E1088_name_44[i] = 0;
+    }
+    D_80108FE0_2E1090_name_44 = 0;
+    D_800FC880_FD480 = 0;
+    D_800F8C5C_F985C = 0;
+    D_80108ED4_2E0F84_name_44 = GwSystem.current_turn;
+}
 
 void func_80102C20_2DACD0_name_44(omObjData* obj) {
     if (D_801011FC_101DFC != 0) {
@@ -223,7 +291,7 @@ void func_801057AC_2DD85C_name_44(s32 layout) {
             status->unk_24 = status->unk_2C = 2.0f * (status->unk_1C - status->yPos) / ((status->unk_0C + 1) * (status->unk_0C + 1));
         }
     }
-    if (D_80108AE8_2E0B98_name_44 == 1) {
+    if (D_80108AE8_2E0B98_name_44[0] == 1) {
         status = &D_80101510_102110[D_80108EA0_2E0F50_name_44];
         D_800FD854_FE454[0].unk_00 = D_800FC990_FD590[0].unk_00 = status->unk_28;
         D_800FD854_FE454[0].unk_04 = D_800FC990_FD590[0].unk_04 = status->unk_2C;
@@ -497,9 +565,108 @@ void func_80106050_2DE100_name_44(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801068CC_2DE97C_name_44);
+/* The CPU duelists' answers: a copy of the sequence with 16 - skill wrong moves in it (easy 3-7 right,
+   normal 6-10, hard 10-14, hardest 12-15), answered by func_80106C24 on the beat. */
+/* NON_MATCHING: masked 38, registers only: retail keeps the constant 1 in fp (the wrong flag, case 1)
+   and not 0xCCCCCCCD (rand8() % 5); GCC hoists the other one, and the work/count registers swap. */
+#ifdef NON_MATCHING
+void func_801068CC_2DE97C_name_44(void) {
+    omObjData* obj;
+    D44CpuWork* work;
+    s32 player;
+    s32 errors;
+    s32 side;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_80106C24_2DECD4_name_44);
+    obj = omAddObj(0x10, 0, 0, -1, func_80106C24_2DECD4_name_44);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(D44CpuWork), 0x7918);
+    errors = 0;
+    D_80108FC4_2E1074_name_44 = obj;
+    for (side = 0; side < 2; side++) {
+        if (side == 0) {
+            player = D_80108EA0_2E0F50_name_44;
+        } else {
+            player = D_80108EA4_2E0F54_name_44;
+        }
+        if (gPlayers[player].flags & 1) {
+            switch (gPlayers[player].cpu_difficulty) {
+                case 0:
+                    errors = (u8)(rand8() % 5) + 3;
+                    break;
+                case 1:
+                    errors = (u8)(rand8() % 5) + 6;
+                    break;
+                case 2:
+                    errors = (u8)(rand8() % 5) + 10;
+                    break;
+                case 3:
+                    errors = (rand8() & 3) + 12;
+                    break;
+            }
+            errors = 16 - errors;
+            for (i = 0; i < 16; i++) {
+                work->wrong[side * 16 + i] = 0;
+                work->moves[side * 16 + i] = D_80108F00_2E0FB0_name_44[i];
+            }
+            for (i = 0; i < errors; i++) {
+                do {
+                    j = rand8() & 0xF;
+                } while (work->wrong[side * 16 + j] != 0);
+                if (work->moves[side * 16 + j] == D_80108F00_2E0FB0_name_44[j]) {
+                    do {
+                        work->moves[side * 16 + j] = (u8)(rand8() % 3);
+                        work->wrong[side * 16 + j] = 1;
+                    } while (work->moves[side * 16 + j] == D_80108F00_2E0FB0_name_44[j]);
+                }
+            }
+            work->idx[side] = -1;
+            work->wait[0] = 4;
+            for (i = 1; i < 16; i++) {
+                work->wait[i] = D_80108AE8_2E0B98_name_44[i] + 5;
+            }
+            work->timer[side] = 4;
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801068CC_2DE97C_name_44);
+#endif
+
+/* The duelists' answers: A, B and Z are moves 0, 1, 2 for a person; a CPU answers its next move
+   when its timer runs out. */
+void func_80106C24_2DECD4_name_44(omObjData* obj) {
+    D44CpuWork* work = obj->unk_50;
+
+    if (!(gPlayers[D_80108EA0_2E0F50_name_44].flags & 1)) {
+        if (ContBtnTrg[gPlayers[D_80108EA0_2E0F50_name_44].port] == 0x8000) {
+            func_80107BF4_2DFCA4_name_44(0, 0, D_80108EA0_2E0F50_name_44, D_80108F58_2E1008_name_44 == 0);
+        }
+        if (ContBtnTrg[gPlayers[D_80108EA0_2E0F50_name_44].port] == 0x4000) {
+            func_80107BF4_2DFCA4_name_44(1, 0, D_80108EA0_2E0F50_name_44, D_80108F58_2E1008_name_44 == 1);
+        }
+        if (ContBtnTrg[gPlayers[D_80108EA0_2E0F50_name_44].port] == 0x2000) {
+            func_80107BF4_2DFCA4_name_44(2, 0, D_80108EA0_2E0F50_name_44, D_80108F58_2E1008_name_44 == 2);
+        }
+    } else if (work->timer[0] != 0 && --work->timer[0] == 0) {
+        func_80107BF4_2DFCA4_name_44(work->moves[work->idx[0]], 0, D_80108EA0_2E0F50_name_44,
+                                     work->moves[work->idx[0]] == D_80108F58_2E1008_name_44);
+    }
+    if (!(gPlayers[D_80108EA4_2E0F54_name_44].flags & 1)) {
+        if (ContBtnTrg[gPlayers[D_80108EA4_2E0F54_name_44].port] == 0x8000) {
+            func_80107BF4_2DFCA4_name_44(0, 1, D_80108EA4_2E0F54_name_44, D_80108F58_2E1008_name_44 == 0);
+        }
+        if (ContBtnTrg[gPlayers[D_80108EA4_2E0F54_name_44].port] == 0x4000) {
+            func_80107BF4_2DFCA4_name_44(1, 1, D_80108EA4_2E0F54_name_44, D_80108F58_2E1008_name_44 == 1);
+        }
+        if (ContBtnTrg[gPlayers[D_80108EA4_2E0F54_name_44].port] == 0x2000) {
+            func_80107BF4_2DFCA4_name_44(2, 1, D_80108EA4_2E0F54_name_44, D_80108F58_2E1008_name_44 == 2);
+        }
+    } else if (work->timer[1] != 0 && --work->timer[1] == 0) {
+        func_80107BF4_2DFCA4_name_44(work->moves[work->idx[1] + 16], 1, D_80108EA4_2E0F54_name_44,
+                                     work->moves[work->idx[1] + 16] == D_80108F58_2E1008_name_44);
+    }
+}
 
 s32 func_80106F1C_2DEFCC_name_44(void) {
     s32 cand[4];
