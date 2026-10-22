@@ -186,30 +186,121 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105F5
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801062B8_23C198_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010640C_23C2EC_SlotCarDerby);
+f32 func_8010640C_23C2EC_SlotCarDerby(f32 t, f32 a, f32 b, f32 c) {
+    f32 u = 1.0 - t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010646C_23C34C_SlotCarDerby);
+    return u * u * a + 2.0 * (u * t * b) + t * t * c;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106508_23C3E8_SlotCarDerby);
+void func_8010646C_23C34C_SlotCarDerby(f32 t, Vec* a, Vec* b, Vec* c, Vec* out) {
+    f32* pa = (f32*)a;
+    f32* pb = (f32*)b;
+    f32* pc = (f32*)c;
+    f32* po = (f32*)out;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106560_23C440_SlotCarDerby);
+    for (i = 0; i < 3; i++) {
+        *po++ = func_8010640C_23C2EC_SlotCarDerby(t, *pa++, *pb++, *pc++);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801066D0_23C5B0_SlotCarDerby);
+f32 func_80106508_23C3E8_SlotCarDerby(f32 t, f32 a, f32 b, f32 c) {
+    return 2.0 * ((t - 1.0) * a + (1.0 - 2.0 * t) * b + t * c);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106750_23C630_SlotCarDerby);
+void func_80106560_23C440_SlotCarDerby(f32 t, Vec* a, Vec* b, Vec* c, Vec* out) {
+    f32 d[3];
+    f32* pa = (f32*)a;
+    f32* pb = (f32*)b;
+    f32* pc = (f32*)c;
+    f32* po = (f32*)out;
+    f32 len;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801067D8_23C6B8_SlotCarDerby);
+    for (i = 0; i < 3; i++) {
+        d[i] = func_80106508_23C3E8_SlotCarDerby(t, *pa++, *pb++, *pc++);
+    }
+    len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+    if (len != 0.0f) {
+        for (i = 0; i < 3; i++) {
+            *po++ = (f32)(1.0 / len) * d[i];
+        }
+        return;
+    }
+    *po++ = 0.0f;
+    *po++ = 0.0f;
+    *po = 1.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106874_23C754_SlotCarDerby);
+f32 func_801066D0_23C5B0_SlotCarDerby(f32 x, f32 y) {
+    f32 a = func_800B75A8_B81A8(y, x);
+
+    if (a < 0.0) {
+        a += 360.0;
+    } else if (a >= 360.0) {
+        a -= 360.0;
+    }
+    return a;
+}
+
+void func_80106750_23C630_SlotCarDerby(Vec* dir, f32* angles) {
+    f32 h = sqrtf(dir->x * dir->x + dir->z * dir->z);
+
+    *angles++ = func_801066D0_23C5B0_SlotCarDerby(h, -dir->y);
+    *angles++ = func_801066D0_23C5B0_SlotCarDerby(dir->z, dir->x);
+    *angles = 0.0f;
+}
+
+void func_801067D8_23C6B8_SlotCarDerby(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}
+
+void func_80106874_23C754_SlotCarDerby(Matrix4f m, Vec* angles) {
+    f32 s;
+    f32 c;
+    f64 t;
+
+    angles->x = func_801066D0_23C5B0_SlotCarDerby(m[2][2], m[1][2]);
+    angles->z = func_801066D0_23C5B0_SlotCarDerby(m[0][0], m[0][1]);
+    s = -m[0][2];
+    t = 1.0 - s * s;
+    if (t < 0.0) {
+        t = -t;
+    }
+    c = sqrtf(t);
+    if (angles->x > 90.0 && angles->x < 270.0 && angles->z > 90.0 && angles->z < 270.0) {
+        angles->x = func_800B0D98_B1998(angles->x + 180.0, 360.0);
+        angles->z = func_800B0D98_B1998(angles->z + 180.0, 360.0);
+        c = -c;
+    }
+    angles->y = func_801066D0_23C5B0_SlotCarDerby(c, s);
+}
 
 __asm__(".section .rodata");
 const u32 D_8010FFD8_245EB8_SlotCarDerby[4] = { 0x8010F870, 0x8010F888, 0x8010F8A0, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106A00_23C8E0_SlotCarDerby);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106B74_23CA54_SlotCarDerby);
+void func_80106B74_23CA54_SlotCarDerby(f32* pos, f32 weight) {
+    if (D_80110808_2466E8_SlotCarDerby < 16) {
+        D_80110810_2466F0_SlotCarDerby[D_80110808_2466E8_SlotCarDerby].pos.x = *pos++;
+        D_80110810_2466F0_SlotCarDerby[D_80110808_2466E8_SlotCarDerby].pos.y = *pos++;
+        D_80110810_2466F0_SlotCarDerby[D_80110808_2466E8_SlotCarDerby].pos.z = *pos;
+        D_80110810_2466F0_SlotCarDerby[D_80110808_2466E8_SlotCarDerby].weight = weight;
+        D_80110808_2466E8_SlotCarDerby++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106BE0_23CAC0_SlotCarDerby);
+void func_80106BE0_23CAC0_SlotCarDerby(s32 x, s32 y, s32 z, s32 weight) {
+    Vec v;
+
+    v.x = x * 0.01;
+    v.y = y * 0.01;
+    v.z = z * 0.01;
+    func_80106B74_23CA54_SlotCarDerby(&v.x, weight * 0.01);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80106C68_23CB48_SlotCarDerby);
 

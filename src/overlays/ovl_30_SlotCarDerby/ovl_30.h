@@ -297,6 +297,9 @@ void func_80079614_7A214(s16 time); /* music fade-out */
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
 s32 func_80019B9C_1A79C(omObjData* obj, s32 motion);
 s32 func_80015388_15F88(s32 slot);
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
+f32 sqrtf(f32);
 
 /* ---------------------------------------------------------------------------------------------
    .data (243CA0.data.s, stays asm): MP1 name in the comment
@@ -329,6 +332,8 @@ extern s16 D_801107F8_2466D8_SlotCarDerby;      /* MP1 D_80102308: cars placed *
 extern s16 D_801107FA_2466DA_SlotCarDerby[4];   /* MP1 D_8010230A: lane order */
 extern s16 D_80110802_2466E2_SlotCarDerby;      /* MP1 D_80102312: next finishing place */
 extern s16 D_80110804_2466E4_SlotCarDerby;      /* MP1 D_80102314 */
+extern s32 D_80110808_2466E8_SlotCarDerby;      /* MP1 D_80102318: focus points this frame */
+extern SCDFocus D_80110810_2466F0_SlotCarDerby[16]; /* MP1 D_80102320 */
 /* MG30-A */
 
 #endif
