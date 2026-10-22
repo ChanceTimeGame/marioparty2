@@ -1352,8 +1352,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0x0E0
     subsegments:
-      - [0x2C7CF0, c]
+      - [0x2C7CF0, c, ovl_43_entrypoint]
+      - [0x2C7D20, c, 2C7CF0]
       - [0x2D8F90, data]
+      - [0x2DA770, .rodata, 2C7CF0]
       - {0x2DA8B0, type: bss, vram: 0x801153C0, name: ovl_43_bss}
   - type: code
     start: 0x2DA8B0
@@ -1378,8 +1380,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0xE0
     subsegments:
-      - [0x2E0F30, c]
+      - [0x2E0F30, c, ovl_45_entrypoint]
+      - [0x2E0F60, c, 2E0F30]
       - [0x2EF400, data]
+      - [0x2F15F0, .rodata, 2E0F30]
       - {0x2F1730, type: bss, vram: 0x80113000, name: ovl_45_bss}
   - type: code
     start: 0x2F1730
@@ -1404,8 +1408,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0xE0
     subsegments:
-      - [0x2F7100, c]
+      - [0x2F7100, c, ovl_47_entrypoint]
+      - [0x2F7130, c, 2F7100]
       - [0x305250, data]
+      - [0x306A70, .rodata, 2F7100]
       - {0x306BA0, type: bss, vram: 0x801122A0, name: ovl_47_bss}
   - type: code
     start: 0x306BA0
@@ -1430,8 +1436,10 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0xE50
     subsegments:
-      - [0x30CCB0, c]
+      - [0x30CCB0, c, ovl_49_entrypoint]
+      - [0x30CCE0, c, 30CCB0]
       - [0x31D0A0, data]
+      - [0x31EC60, .rodata, 30CCB0]
       - {0x31EE40, type: bss, vram: 0x80114990, name: ovl_49_bss}
   - type: code
     start: 0x31EE40

@@ -1,7 +1,5 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80102800_30CCB0_name_49);
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80102830_30CCE0_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010285C_30CD0C_name_49);
@@ -40,6 +38,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80103F1C_30E3CC
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80103FEC_30E49C_name_49);
 
+__asm__(".section .rodata");
+const u32 D_801147B0_31EC60_name_49[1] = { 0x01020408 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010404C_30E4FC_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80104308_30E7B8_name_49);
@@ -47,6 +48,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80104308_30E7B8
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010452C_30E9DC_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_801046D8_30EB88_name_49);
+
+__asm__(".section .rodata");
+const u32 D_801147B4_31EC64_name_49[5] = { 0 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80104918_30EDC8_name_49);
 
@@ -148,6 +152,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80107BEC_31209C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80107C10_3120C0_name_49);
 
+__asm__(".section .rodata");
+const char D_801147D8_31EC88_name_49[] = "%d";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80107E10_3122C0_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80108650_312B00_name_49);
@@ -181,6 +188,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010B5DC_315A8C
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010B5F8_315AA8_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010B738_315BE8_name_49);
+
+__asm__(".section .rodata");
+const u32 D_80114808_31ECB8_name_49[24] = { 0x3F800000, 0x3F800000, 0x3F800000, 0x3F800000, 0x40000000, 0x3F800000, 0x00000000, 0x40000000, 0x3F800000, 0xBF800000, 0x3F800000, 0x3F800000, 0xBF800000, 0xBF800000, 0x3F800000, 0x00000000, 0xBF800000, 0x3F800000, 0xBF800000, 0x40000000, 0x3F800000, 0x3F800000, 0xBF800000, 0x3F800000 };
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80114868_31ED18_name_49[2] = { 0x3FE00000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010B850_315D00_name_49);
 
@@ -231,6 +244,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F3A0_319850
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F3C0_319870_name_49);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F3E0_319890_name_49);
+
+__asm__(".section .rodata");
+const u32 D_801148A8_31ED58_name_49[15] = { 0xC2480000, 0x43480000, 0xC2200000, 0x00000000, 0x43480000, 0xC1A00000, 0x42480000, 0x43480000, 0x00000000, 0xC1F00000, 0x43480000, 0xC1200000, 0x41F00000, 0x43480000, 0xC1F00000 };
+
+__asm__(".section .rodata");
+const u32 D_801148E4_31ED94_name_49[15] = { 0x41A00000, 0x41A00000, 0x41A00000, 0x41200000, 0x41200000, 0x41200000, 0x41A00000, 0x41A00000, 0x41A00000, 0x41700000, 0x41700000, 0x41700000, 0x41200000, 0x41200000, 0x41200000 };
+
+__asm__(".section .rodata");
+const char D_80114920_31EDD0_name_49[] = "\234\235\236\234\235\236";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F400_3198B0_name_49);
 
