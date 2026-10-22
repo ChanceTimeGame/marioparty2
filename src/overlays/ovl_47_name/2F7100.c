@@ -1106,7 +1106,16 @@ void func_80105984_2FA284_name_47(void) {
     func_80106BBC_2FB4BC_name_47();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80105C5C_2FA55C_name_47);
+void func_80105C5C_2FA55C_name_47(void) {
+    PlayMusic(0xC);
+    func_800632F0_63EF0(0xC);
+    func_80020070_20C70(2);
+    func_80105984_2FA284_name_47();
+    EventTableHydrate(D_80110F90_305890_name_47);
+    EventTableHydrate(D_80111728_306028_name_47);
+    EventTableHydrate(D_80110FF8_3058F8_name_47);
+    func_80066C34_67834(0);
+}
 
 void func_80105CBC_2FA5BC_name_47(void) {
     func_80020070_20C70(1);
@@ -1334,7 +1343,16 @@ void func_80106790_2FB090_name_47(void) {
                         D_80110A54_305354_name_47[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801067CC_2FB0CC_name_47);
+void func_801067CC_2FB0CC_name_47(s32 arg0) {
+    if (D_80112360_306C60_name_47[arg0] != NULL) {
+        omDelObj(D_80112360_306C60_name_47[arg0]);
+        D_80112360_306C60_name_47[arg0] = NULL;
+    }
+    if (D_80112350_306C50_name_47[arg0] != NULL) {
+        MBModelKill(D_80112350_306C50_name_47[arg0]);
+        D_80112350_306C50_name_47[arg0] = NULL;
+    }
+}
 
 void func_80106844_2FB144_name_47(void) {
     s32 i;
@@ -1348,13 +1366,86 @@ void func_80106844_2FB144_name_47(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801068A8_2FB1A8_name_47);
+/* Object per player: keeps the player's companion model above the player, circling; while
+   current_player_index is 4 it first waits 40 frames. */
+void func_801068A8_2FB1A8_name_47(omObjData* obj) {
+    s32 player = obj->work[0];
+    GW_PLAYER* p;
+    MBModel* model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106A6C_2FB36C_name_47);
+    if (GwSystem.current_player_index == 4 && obj->work[2] == 0) {
+        if (obj->work[1] == 0) {
+            obj->work[1] = 40;
+            return;
+        }
+        obj->work[1]--;
+        if (obj->work[1] != 0) {
+            return;
+        }
+        obj->work[2] = 1;
+    }
+    p = BoardPlayerGet(player);
+    model = D_80112350_306C50_name_47[player];
+    func_800B3170_B3D70(&model->pos, &((MBModel*)p->unk_24)->pos);
+    model->jumpY = ((MBModel*)p->unk_24)->jumpY + 20.0f;
+    func_800B3170_B3D70(&model->scale, &((MBModel*)p->unk_24)->scale);
+    func_800B3170_B3D70(&model->rot, &((MBModel*)p->unk_24)->rot);
+    model->pos.x += HuMathSin(obj->rot.x) * obj->trans.x;
+    model->pos.z += func_800B7890_B8490(obj->rot.x) * obj->trans.x;
+    obj->rot.x += 5.0f;
+    if (obj->rot.x >= 360.0f) {
+        obj->rot.x -= 360.0f;
+    }
+    if (obj->trans.x <= 5.0f) {
+        obj->trans.x += 0.25f;
+    }
+    if (((MBModel*)p->unk_24)->attr & 8) {
+        MBModelDispOn(model);
+    } else {
+        MBModelDispOff(model);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106B44_2FB444_name_47);
+void func_80106A6C_2FB36C_name_47(s32 arg0) {
+    GW_PLAYER* p = BoardPlayerGet(arg0);
+    MBModel* model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106BBC_2FB4BC_name_47);
+    if (D_80112350_306C50_name_47[arg0] == NULL) {
+        model = func_80043510_44110(0x8A, NULL);
+        func_8002D124_2DD24(model->obj->model[0]);
+        func_8002D0A0_2DCA0(model->obj->model[0], 0xA0);
+        D_80112350_306C50_name_47[arg0] = model;
+        model->attr |= 2;
+        func_800B3170_B3D70(&model->pos, &((MBModel*)p->unk_24)->pos);
+        model->jumpY = 20.0f;
+        func_8005670C_5730C(&model->rot);
+    } else {
+        MBModelDispOn(D_80112350_306C50_name_47[arg0]);
+    }
+}
+
+void func_80106B44_2FB444_name_47(s32 arg0) {
+    D_80112360_306C60_name_47[arg0] = omAddObj(0x3FFF, 0, 0, -1, func_801068A8_2FB1A8_name_47);
+    D_80112360_306C60_name_47[arg0]->work[0] = arg0;
+    D_80112360_306C60_name_47[arg0]->work[1] = 0;
+    D_80112360_306C60_name_47[arg0]->work[2] = 0;
+    D_80112360_306C60_name_47[arg0]->rot.x = 0.0f;
+    D_80112360_306C60_name_47[arg0]->trans.x = 0.0f;
+}
+
+void func_80106BBC_2FB4BC_name_47(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        D_80112360_306C60_name_47[i] = NULL;
+        D_80112350_306C50_name_47[i] = NULL;
+        if (D_800F8CE4_F98E4[i] != 0) {
+            func_80106A6C_2FB36C_name_47(i);
+            func_80106B44_2FB444_name_47(i);
+        }
+    }
+    func_800632E4_63EE4(func_80106844_2FB144_name_47);
+}
 
 s32 func_80106C60_2FB560_name_47(s32 arg0) {
     s32 count = 0;
