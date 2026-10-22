@@ -1904,8 +1904,6 @@ void func_80107EA4_196A44_BobsledRun(omObjData* obj) {
             }
         }
         func_80107CF4_196894_BobsledRun(obj, &work->unk_90, turn);
-// argument setup order around both func_80006F34 calls (retail loads the two zeros before &probe)
-#ifdef NON_MATCHING
         t = func_8010AF5C_199AFC_BobsledRun(obj, work->unk_3C, x, y, z);
         if (t != 65536.0f) {
             y = t;
@@ -2064,9 +2062,6 @@ void func_80107EA4_196A44_BobsledRun(omObjData* obj) {
         func_80104EAC_193A4C_BobsledRun(obj);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
-#endif
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_196A44_BobsledRun);
 #endif
@@ -2559,6 +2554,8 @@ void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal) {
 
 /* Ground probe on the track (after a bump check); returns the ground height or 65536 (airborne)
    (MP1 func_800F93C0). */
+// argument setup order around both func_80006F34 calls (retail loads the two zeros before &probe)
+#ifdef NON_MATCHING
 f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z) {
     Vec4f probe;
     Vec3f n;
@@ -2694,6 +2691,9 @@ f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z
     }
     return y;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010AF5C_199AFC_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010B630_19A1D0_BobsledRun);
 
