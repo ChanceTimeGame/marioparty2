@@ -481,7 +481,7 @@ void func_8010FDE0_2D52D0_name_43(void);
 void func_8011081C_2D5D0C_name_43(void);
 void func_801109A4_2D5E94_name_43(void);
 s32 func_80110CCC_2D61BC_name_43(s32 arg0);
-s32 func_80110F2C_2D641C_name_43(s32 arg0);
+void func_80110F2C_2D641C_name_43(s32 arg0);
 void func_801114F0_2D69E0_name_43(void);
 void func_8011150C_2D69FC_name_43(void);
 void func_80111528_2D6A18_name_43(void);
@@ -647,5 +647,8 @@ extern s32 D_801144DC_2D99CC_name_43[2]; /* the Boo model's create parameter */
 extern s16* D_8011451C_2D9A0C_name_43[2]; /* per Boo: its path, -1 ended */
 extern s16 D_80114524_2D9A14_name_43[2]; /* per Boo: the path's end */
 extern Vec D_80114528_2D9A18_name_43[4]; /* landing offsets by order */
+void func_80059618_5A218(void*);
+void func_80029C74_2A874(s16, f32);
+f32 func_80029D0C_2A90C(s16);
 
 #endif
