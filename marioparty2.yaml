@@ -1921,6 +1921,7 @@ segments:
     subsegments:
       - [0x40BB00, c]
       - [0x40EA00, data]
+      - [0x40EBB0, .rodata, 40BB00]
       - {0x40EC60, type: bss, vram: 0x80105960, name: ovl_6F_bss}
   - type: code
     start: 0x40EC60

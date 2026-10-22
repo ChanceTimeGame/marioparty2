@@ -18,6 +18,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801034
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80103518_40C818_BattleResults);
 
+__asm__(".section .rodata");
+const char D_8010591C_40EC1C_BattleResults[] = "item_hook";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80103E60_40D160_BattleResults);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80103EB4_40D1B4_BattleResults);
