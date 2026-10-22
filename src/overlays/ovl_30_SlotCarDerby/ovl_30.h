@@ -321,6 +321,8 @@ u16 func_80018A30_19630(s32, s32); /* model load */
 void func_80029714_2A314(s16 model, f32 x, f32 y, f32 z); /* position */
 void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 void func_8002D4D0_2E0D0(s16 n);
+void* func_80027154_27D54(s32 size, s16 tag); /* allocate */
+int abs(int);
 void func_80020D20_21920(s16 arg0);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -335,6 +337,8 @@ extern u8 D_800FA656; /* minigame variant: the course here */
 /* ---------------------------------------------------------------------------------------------
    .data (243CA0.data.s, stays asm): MP1 name in the comment
    --------------------------------------------------------------------------------------------- */
+extern Vec* D_8010F41C_2452FC_SlotCarDerby[3];    /* MP1 D_80100C70: [course] track points */
+extern u16 D_8010F428_245308_SlotCarDerby[3];    /* MP1 D_80100C78: their counts */
 extern s16 D_8010F430_245310_SlotCarDerby[3][4]; /* MP1 D_80100C7C: [course][lane] start segment */
 extern s16 D_8010F448_245328_SlotCarDerby[3];    /* MP1 D_80100C8C: [course] start offset */
 extern f32 D_8010F870_245750_SlotCarDerby[6];    /* MP1 D_80100D94: course 0 camera: centre, view */
@@ -354,6 +358,8 @@ extern s16 D_80110244_246124_SlotCarDerby;      /* MP1 D_80101428: their count *
 extern f32* D_80110248_246128_SlotCarDerby;     /* MP1 D_8010142C: segment lengths */
 extern f32* D_8011024C_24612C_SlotCarDerby;     /* MP1 D_80101430: distance at each point */
 extern f32 D_80110250_246130_SlotCarDerby;      /* MP1 D_80101434: lap length */
+extern Vec* D_80110254_246134_SlotCarDerby;     /* MP1 D_80101440 (Vec[200] there): segment midpoints */
+extern s32 D_80110258_246138_SlotCarDerby[16];  /* MP1 D_80101DA0 */
 extern SCDGame D_801102C8_2461A8_SlotCarDerby;  /* MP1 D_80101DE0 */
 extern s16 D_801102CA_2461AA_SlotCarDerby;      /* .unk_02 */
 extern s16 D_801102CC_2461AC_SlotCarDerby;      /* .unk_04 */
