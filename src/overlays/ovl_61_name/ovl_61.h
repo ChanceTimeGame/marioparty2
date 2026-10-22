@@ -7,8 +7,9 @@
    textured fill: func_801062B8..func_80107054) dims the screen and cuts holes over the speakers.
    Three pairs walk forward, face the camera and call out (func_80102F74); the curtain closes and
    object 7 rises from below, turns and breathes sparks (func_80105C6C/func_80105DEC); then the
-   presenter's finale and a fade out. START skips once _CheckFlag(0x1A) is set (D_801011FC);
-   the scene then goes to overlay 0x72, or returns 1 when it was called (D_801011FC set).
+   presenter's finale and a fade out. Played to the end, it goes to overlay 0x72; once
+   _CheckFlag(0x1A) is set, START (any inserted pad) sets D_801011FC and the scene ends with a
+   music fade and omOvlReturnEx(1).
    One retail file (3D0050.c). .data stays asm; .rodata is carved (two tables, two strings). */
 
 #include "common.h"
