@@ -743,24 +743,177 @@ void func_801066B8_3D3F08_name_61(s32 fb, s16 build) {
     gSPEndDisplayList(gfx++);
 }
 
+#ifdef NON_MATCHING
+/* Float register allocation (invSy f16, u0 f14) and the pixel sum: retail subtracts 0xFF from
+   *p after loading the texel. */
+void func_80106A04_3D4254_name_61(s32 fb, s32 hole) {
+    f32 invSx;
+    f32 invSy;
+    f32 hw;
+    f32 hh;
+    f32 u0;
+    f32 u;
+    f32 v;
+    f32 base;
+    s32 x0;
+    s32 x1;
+    s32 y0;
+    s32 y1;
+    s32 x;
+    s32 y;
+    s32 c;
+    u8* row;
+    u8* p;
+
+    v = 0.0f;
+    invSx = 1.0f / D_80107544_3D4D94_name_61->sx[hole];
+    invSy = 1.0f / D_80107544_3D4D94_name_61->sy[hole];
+    hw = (D_8010753A_3D4D8A_name_61 / 2.0f) * D_80107544_3D4D94_name_61->sx[hole];
+    hh = (D_8010753C_3D4D8C_name_61 / 2.0f) * D_80107544_3D4D94_name_61->sy[hole];
+    x0 = D_80107544_3D4D94_name_61->x[hole] - hw;
+    x1 = D_80107544_3D4D94_name_61->x[hole] + hw;
+    y0 = D_80107544_3D4D94_name_61->y[hole] - hh;
+    y1 = D_80107544_3D4D94_name_61->y[hole] + hh;
+    u0 = 0.0f;
+    if (x0 < 0) {
+        u0 = -x0 * invSx;
+        x0 = 0;
+    }
+    if (x1 > 320) {
+        x1 = 320;
+    }
+    if (y0 < 0) {
+        v = -y0 * invSy;
+        y0 = 0;
+    }
+    if (y1 > 240) {
+        y1 = 240;
+    }
+    row = D_8010750C_3D4D5C_name_61[fb] + x0 + y0 * 320;
+    if (D_80107544_3D4D94_name_61->count >= 2) {
+        for (y = y0; y < y1; y++) {
+            p = row;
+            base = D_8010753A_3D4D8A_name_61 * (s32)v;
+            u = u0;
+            for (x = x0; x < x1; x++) {
+                c = *p - 0xFF;
+                c = D_80107540_3D4D90_name_61[(s32)(base + u)] + c;
+                *p = c & (~c >> 31);
+                p++;
+                u += invSx;
+            }
+            v += invSy;
+            row += 320;
+        }
+    } else {
+        for (y = y0; y < y1; y++) {
+            p = row;
+            base = D_8010753A_3D4D8A_name_61 * (s32)v;
+            u = u0;
+            for (x = x0; x < x1; x++) {
+                *p = D_80107540_3D4D90_name_61[(s32)(base + u)];
+                p++;
+                u += invSx;
+            }
+            v += invSy;
+            row += 320;
+        }
+    }
+    D_80107544_3D4D94_name_61->fbX[fb][hole] = D_80107544_3D4D94_name_61->x[hole];
+    D_80107544_3D4D94_name_61->fbY[fb][hole] = D_80107544_3D4D94_name_61->y[hole];
+    D_80107544_3D4D94_name_61->fbSx[fb][hole] = D_80107544_3D4D94_name_61->sx[hole];
+    D_80107544_3D4D94_name_61->fbSy[fb][hole] = D_80107544_3D4D94_name_61->sy[hole];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106A04_3D4254_name_61);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106D18_3D4568_name_61);
+void func_80106D18_3D4568_name_61(s32 fb) {
+    s32* p = (s32*)D_8010750C_3D4D5C_name_61[fb];
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106D54_3D45A4_name_61);
+    for (i = 0; i < 320 * 240; i += 4) {
+        *p++ = -1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106E88_3D46D8_name_61);
+s16 func_80106D54_3D45A4_name_61(s32 x, s32 y, f32 sx, f32 sy) {
+    s16 i;
+    s16 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106EAC_3D46FC_name_61);
+    for (i = 0; i < 4; i++) {
+        if (D_80107544_3D4D94_name_61->flags[i] == 0) {
+            break;
+        }
+    }
+    if (i == 4) {
+        return -1;
+    }
+    D_80107544_3D4D94_name_61->count++;
+    D_80107544_3D4D94_name_61->flags[i] |= 1;
+    for (j = 0; j < 3; j++) {
+        D_80107544_3D4D94_name_61->fbX[j][i] = D_80107544_3D4D94_name_61->x[i] = x;
+        D_80107544_3D4D94_name_61->fbY[j][i] = D_80107544_3D4D94_name_61->y[i] = y;
+        D_80107544_3D4D94_name_61->fbSx[j][i] = D_80107544_3D4D94_name_61->sx[i] = sx;
+        D_80107544_3D4D94_name_61->fbSy[j][i] = D_80107544_3D4D94_name_61->sy[i] = sy;
+    }
+    return i;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106EE0_3D4730_name_61);
+void func_80106E88_3D46D8_name_61(s16 hole) {
+    D_80107544_3D4D94_name_61->flags[hole] |= 2;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106F44_3D4794_name_61);
+void func_80106EAC_3D46FC_name_61(u8 r, u8 g, u8 b, u8 a) {
+    D_80107524_3D4D74_name_61 = r;
+    D_80107528_3D4D78_name_61 = g;
+    D_8010752C_3D4D7C_name_61 = b;
+    D_80107530_3D4D80_name_61 = a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106F64_3D47B4_name_61);
+void func_80106EE0_3D4730_name_61(s16 time, f32 dr, f32 dg, f32 db, f32 da) {
+    D_80107544_3D4D94_name_61->fadeTime = time;
+    D_80107544_3D4D94_name_61->colStep[0] = dr;
+    D_80107544_3D4D94_name_61->colStep[1] = dg;
+    D_80107544_3D4D94_name_61->colStep[2] = db;
+    D_80107544_3D4D94_name_61->colStep[3] = da;
+    D_80107544_3D4D94_name_61->col[0] = D_80107524_3D4D74_name_61;
+    D_80107544_3D4D94_name_61->col[1] = D_80107528_3D4D78_name_61;
+    D_80107544_3D4D94_name_61->col[2] = D_8010752C_3D4D7C_name_61;
+    D_80107544_3D4D94_name_61->col[3] = D_80107530_3D4D80_name_61;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80106F84_3D47D4_name_61);
+void func_80106F44_3D4794_name_61(s16 hole, s16 x, s16 y) {
+    D_80107544_3D4D94_name_61->x[hole] = x;
+    D_80107544_3D4D94_name_61->y[hole] = y;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80107030_3D4880_name_61);
+void func_80106F64_3D47B4_name_61(s16 hole, f32 sx, f32 sy) {
+    D_80107544_3D4D94_name_61->sx[hole] = sx;
+    D_80107544_3D4D94_name_61->sy[hole] = sy;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80107054_3D48A4_name_61);
+void func_80106F84_3D47D4_name_61(Vec2f* pos) {
+    f32 x = pos->unk_00;
+    f32 y = pos->unk_04;
+    s32 ix = x;
+    s32 iy = y;
+    f32 fx = ix;
+    f32 dx = x - fx;
+    f32 dy = y - (f32)iy;
+
+    if (dx >= 0.5f) {
+        pos->unk_00 = fx + 1.0f;
+    }
+    if (dy >= 0.5f) {
+        pos->unk_04 = (f32)iy + 1.0f;
+    }
+}
+
+void func_80107030_3D4880_name_61(s16 hole) {
+    D_80107544_3D4D94_name_61->flags[hole] |= 4;
+}
+
+void func_80107054_3D48A4_name_61(s16 hole) {
+    D_80107544_3D4D94_name_61->flags[hole] &= ~4;
+}

@@ -49,7 +49,7 @@ typedef struct Ovl61SparkWork {
 /* The iris mask (D_80107544): up to four holes, each kept for the three frame buffers. */
 typedef struct Ovl61Iris {
     /* 0x00 */ s16 count;
-    /* 0x02 */ u16 flags[4]; /* 1 used, 2 closing, 4 frozen */
+    /* 0x02 */ s16 flags[4]; /* 1 used, 2 closing, 4 frozen */
     /* 0x0A */ s16 x[4];
     /* 0x12 */ s16 y[4];
     /* 0x1A */ s16 fbX[3][4];
