@@ -16,7 +16,11 @@
 #include "game/sprite.h"
 #include "game/window.h"
 #include "game/pad.h"
+#include "game/camera.h"
+#include "game/hmfman.h"
 
+#define PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
+#define OVL4E_CAMERA ((HuCamera*)D_800FD2A8_FDEA8)
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* ---- types ---- */
@@ -35,10 +39,21 @@ extern u8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i (the p
 extern u8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared; copied to stars */
 extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
 extern s16 D_800F904A;
+extern u8 D_800F9512_FA112;
+extern BattleTargets D_800F8D1A_F991A;
+void _SetFlag(s32);
+void omOvlHisChg(s16 arg0, s32 overlay, s16 event, s16 stat);
+s32 func_8003F6F0_402F0(s16);
 extern s16 D_800FA1A8;          /* chosen item of the three-row menu (func_80103034) */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
-extern s16 D_801013B8_101FB8[]; /* CenterM + 8; [0x20] (0x801013F8): 0 or 7 */
+/* CenterM + 8 (main); only its 0x40 field is used here: the setup's team mode (0 4P, 1 1 vs 3,
+   2 2 vs 2, 3 ...; 7 is set on some exits). */
+typedef struct Ovl4ECenter {
+    /* 0x00 */ char pad00[0x40];
+    /* 0x40 */ s16 unk40;
+} Ovl4ECenter;
+extern Ovl4ECenter D_801013B8_101FB8;
 
 void CameraViewportSet(s16, Vec*, Vec*);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
@@ -109,6 +124,7 @@ extern u8 D_01164160[];
 /* ---- data (.data, asm) ---- */
 
 extern s16 D_8010D1F0_334BB0_name_4E;
+extern s16 D_8010D1F2_334BB2_name_4E;
 extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
 extern s32 D_8010D214_334BD4_name_4E[];
@@ -121,6 +137,7 @@ extern Vec D_8010D5BC_334F7C_name_4E;
 extern Vec D_8010D5C8_334F88_name_4E;
 extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
 extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
+extern s16 D_8010D5FE_334FBE_name_4E[]; /* board per minigame index (inside D_8010D5F4's words) */
 extern s16 D_8010D614_334FD4_name_4E[4]; /* second menu row -> D_801013F8 */
 extern s16 D_8010D61C_334FDC_name_4E[6]; /* third menu (1 vs 3): x offsets of the icons [1..4] and D_8010DAF0 [5] */
 extern s16 D_8010D628_334FE8_name_4E[6]; /* ... 2 vs 2 */
@@ -131,6 +148,8 @@ extern s8 D_8010D664_335024_name_4E[4][4]; /* ... 2 vs 2, D_8010D574 */
 extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 
 /* ---- bss (asm) ---- */
+
+extern u8 D_8010DA80_335440_name_4E[4]; /* per player: walking (func_80105148) */
 
 extern s16 D_8010DAB6_335476_name_4E;
 extern s16 D_8010DAB8_335478_name_4E;
@@ -143,7 +162,8 @@ extern u16 D_8010DAF0_3354B0_name_4E;
 extern s16 D_8010DB60_335520_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
-extern s8 D_8010DBE3_3355A3_name_4E;
+extern u8 D_8010DBE3_3355A3_name_4E;   /* bit per player: may walk to D_8010DBE8 (func_80105148) */
+extern u8 D_8010DBE4_3355A4_name_4E;   /* walk speed */
 extern Vec D_8010DBE8_3355A8_name_4E[4]; /* per-player target positions */
 extern s8 D_8010DC20_3355E0_name_4E;   /* the team menu is waiting for input (arrows shown) */
 extern s8 D_8010DC21_3355E1_name_4E;   /* move the arrows to D_8010DC22.. (func_801047B8) */
@@ -155,6 +175,7 @@ extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
 extern s16 D_8010DC90_335650_name_4E;
 extern s16 D_8010DCA0_335660_name_4E[4];
 extern s16 D_8010DCA6_335666_name_4E;   /* = D_8010DCA0[3] */
+extern s16 D_8010DCC0_335680_name_4E[4][0x48]; /* per team mode: the minigames (D_8010DCA0 = count) */
 extern s16 D_8010E140_335B00_name_4E;
 extern Ovl4ECamKey* D_8010E144_335B04_name_4E;
 extern f32 D_8010E150_335B10_name_4E;   /* camera far */
@@ -179,7 +200,7 @@ void func_80104A9C_32C45C_name_4E(void);
 s32 func_80104AF0_32C4B0_name_4E(void);
 void func_80105090_32CA50_name_4E(void);
 void func_80105148_32CB08_name_4E(void);
-void func_801053E0_32CDA0_name_4E(s16 arg0, s16 arg1, s32 arg2);
+void func_801053E0_32CDA0_name_4E(s32 player, s16 motion, u16 attr);
 s32 func_80105454_32CE14_name_4E(void);
 s32 func_80105F80_32D940_name_4E(void);
 s32 func_80106228_32DBE8_name_4E(s32 arg0);
@@ -228,7 +249,7 @@ void func_8010A2A0_331C60_name_4E(void);
 void func_8010A300_331CC0_name_4E(void);
 void func_8010A438_331DF8_name_4E(s32 arg0);
 void func_8010A588_331F48_name_4E(void);
-void func_8010A660_332020_name_4E(u32 arg0);
+void func_8010A660_332020_name_4E(s16 arg0);
 void func_8010AB48_332508_name_4E(void);
 s16 func_8010AB58_332518_name_4E(void);
 void func_8010AB64_332524_name_4E(void);

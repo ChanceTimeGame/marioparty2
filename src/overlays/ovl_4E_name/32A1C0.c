@@ -42,12 +42,12 @@ void func_80102800_32A1C0_name_4E(void) {
         D_8010DAB6_335476_name_4E = 1;
         D_8010DBE0_3355A0_name_4E = 4;
         if (!(D_800CD414_CE014 & 4)) {
-            D_801013B8_101FB8[0x20] = 0;
+            D_801013B8_101FB8.unk40 = 0;
         }
     } else {
         D_8010DAB6_335476_name_4E = 0;
         D_8010DBE0_3355A0_name_4E = 2;
-        D_801013B8_101FB8[0x20] = 7;
+        D_801013B8_101FB8.unk40 = 7;
     }
     if (D_800CD414_CE014 < 4) {
         func_8010A244_331C04_name_4E();
@@ -151,7 +151,7 @@ void func_80102B9C_32A55C_name_4E(void) {
             } else {
                 D_800F904A = 1;
             }
-            D_801013B8_101FB8[0x20] = 7;
+            D_801013B8_101FB8.unk40 = 7;
             state = 3;
             break;
         case 1:
@@ -160,8 +160,8 @@ void func_80102B9C_32A55C_name_4E(void) {
                 break;
             }
             state = 3;
-            if (D_801013B8_101FB8[0x20] < 3) {
-                state = (D_801013B8_101FB8[0x20] < 1) ? 3 : 2;
+            if (D_801013B8_101FB8.unk40 < 3) {
+                state = (D_801013B8_101FB8.unk40 < 1) ? 3 : 2;
             }
             break;
         case 2:
@@ -341,7 +341,7 @@ s32 func_80103608_32AFC8_name_4E(void) {
                 msg = 1;
             } else {
                 PlaySound(3);
-                D_801013B8_101FB8[0x20] = D_8010D614_334FD4_name_4E[D_8010E5F2_335FB2_name_4E];
+                D_801013B8_101FB8.unk40 = D_8010D614_334FD4_name_4E[D_8010E5F2_335FB2_name_4E];
                 D_8010E154_335B14_name_4E = 0;
                 ok = 1;
                 break;
@@ -423,7 +423,7 @@ s32 func_80103CD0_32B690_name_4E(void) {
     icons = NULL;
     func_8010760C_32EFCC_name_4E(0x28);
     func_801047B8_32C178_name_4E(0x50, 0x74, 0xF0, 0x74);
-    if (D_801013B8_101FB8[0x20] == 1) {
+    if (D_801013B8_101FB8.unk40 == 1) {
         ofs = D_8010D61C_334FDC_name_4E;
         max = 3;
     } else {
@@ -432,7 +432,7 @@ s32 func_80103CD0_32B690_name_4E(void) {
     }
     func_80105090_32CA50_name_4E();
     D_8010DBE3_3355A3_name_4E = 15;
-    if (D_801013B8_101FB8[0x20] == 1) {
+    if (D_801013B8_101FB8.unk40 == 1) {
         pos = D_8010D544_334F04_name_4E;
         perm = D_8010D654_335014_name_4E[sel];
     } else {
@@ -446,7 +446,7 @@ s32 func_80103CD0_32B690_name_4E(void) {
         D_8010DBE8_3355A8_name_4E[k].z = pos[i].z;
     }
     while (loop) {
-        if (D_801013B8_101FB8[0x20] == 1) {
+        if (D_801013B8_101FB8.unk40 == 1) {
             icons = D_8010D634_334FF4_name_4E[sel];
         } else {
             icons = D_8010D644_335004_name_4E[sel];
@@ -507,7 +507,7 @@ s32 func_80103CD0_32B690_name_4E(void) {
         D_8010DC20_3355E0_name_4E = 0;
         HuPrcVSleep();
         if (loop || ok) {
-            if (D_801013B8_101FB8[0x20] == 1) {
+            if (D_801013B8_101FB8.unk40 == 1) {
                 perm = D_8010D654_335014_name_4E[sel];
                 pos = D_8010D544_334F04_name_4E;
             } else {
@@ -546,7 +546,7 @@ s32 func_80103CD0_32B690_name_4E(void) {
         for (j = 0; j < 4; j++) {
             D_800F9D48_FA948[0x2F8 + j] = icons[j];
         }
-        switch (D_801013B8_101FB8[0x20]) {
+        switch (D_801013B8_101FB8.unk40) {
         case 1:
             for (j = 0; j < 4; j++) {
                 gPlayers[j].group = 1;
@@ -653,7 +653,7 @@ void func_801047E8_32C1A8_name_4E(void) {
                 if (old == 0) {
                     espDispOn(arrow0);
                     espDispOn(arrow1);
-                    if (D_801013B8_101FB8[0x20] == 1) {
+                    if (D_801013B8_101FB8.unk40 == 1) {
                         espPosSet(hint, 0x96, 0x98);
                     } else {
                         espPosSet(hint, 0xA0, 0x98);
@@ -688,13 +688,171 @@ void func_80104A9C_32C45C_name_4E(void) {
     }
 }
 
+#ifdef NON_MATCHING
+/* After the team menu: pick the minigame (one available: it; otherwise the list, func_8010A660..
+   func_8010AB58), set the teams (gPlayers[].group), show its name and messages, then leave:
+   D_8010DAB6 (minigame mode) -> event 4 for the chosen minigame; else a duel on board
+   D_8010D5FE[chosen] with the D_800FA040 order (event 5). Returns 0 when backed out.
+   Retail reloads D_801013F8 with lui/lh in the one-minigame branch where this C keeps its
+   address in s0: register allocation only. */
+s32 func_80104AF0_32C4B0_name_4E(void) {
+    s32 mes;
+    s32 i;
+
+    func_8010CF6C_33492C_name_4E();
+    if (D_8010DAB6_335476_name_4E == 0 && D_8010DCA0_335660_name_4E[D_801013B8_101FB8.unk40] == 0) {
+        return 0;
+    }
+    D_800F9512_FA112 = 0;
+    if (D_8010DCA0_335660_name_4E[D_801013B8_101FB8.unk40] >= 2 && (D_800F904A != 0 || D_8010DAB6_335476_name_4E != 0)) {
+        if (D_800FC8F0_FD4F0[2] == 0 && !(D_800CD414_CE014 & 4)) {
+            mes = D_8010DC2C_3355EC_name_4E[2];
+        } else {
+            mes = D_8010DC2C_3355EC_name_4E[3];
+        }
+        func_8010760C_32EFCC_name_4E(mes);
+        func_80107638_32EFF8_name_4E();
+    }
+    if (D_8010DAB6_335476_name_4E != 0) {
+        func_8010A660_332020_name_4E(D_801013B8_101FB8.unk40);
+        func_8010AB48_332508_name_4E();
+        while (func_8010AB58_332518_name_4E() != -1) {
+            HuPrcVSleep();
+        }
+    } else if (D_8010DCA0_335660_name_4E[D_801013B8_101FB8.unk40] == 1) {
+        func_8010760C_32EFCC_name_4E(0xA3);
+        func_80107638_32EFF8_name_4E();
+        GwSystem.chosenMinigameIndex = D_8010DCC0_335680_name_4E[D_801013B8_101FB8.unk40][0];
+    } else if (D_800F904A != 0) {
+        func_8010A660_332020_name_4E(D_801013B8_101FB8.unk40);
+        func_8010AB48_332508_name_4E();
+        while (func_8010AB58_332518_name_4E() != -1) {
+            HuPrcVSleep();
+        }
+    } else {
+        func_8010760C_32EFCC_name_4E(0xA6);
+        func_80107638_32EFF8_name_4E();
+        func_8010AB64_332524_name_4E();
+        func_8010AB48_332508_name_4E();
+        while (func_8010AB58_332518_name_4E() != -1) {
+            HuPrcVSleep();
+        }
+        if (GwSystem.chosenMinigameIndex < 0) {
+            return 0;
+        }
+    }
+    D_8010D1F2_334BB2_name_4E = 9;
+    switch (D_801013B8_101FB8.unk40) {
+    case 1:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = 1;
+        }
+        gPlayers[D_800F9D48_FA948[0x2F8]].group = 0;
+        break;
+    case 2:
+        gPlayers[D_800F9D48_FA948[0x2F8]].group = 0;
+        gPlayers[D_800F9D48_FA948[0x2F9]].group = 0;
+        gPlayers[D_800F9D48_FA948[0x2FA]].group = 1;
+        gPlayers[D_800F9D48_FA948[0x2FB]].group = 1;
+        break;
+    case 3:
+        D_8010D1F2_334BB2_name_4E = 0xB;
+        /* fallthrough */
+    case 0:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = i;
+        }
+        if (GwSystem.chosenMinigameIndex == 0xB || GwSystem.chosenMinigameIndex == 0x41) {
+            func_80104A9C_32C45C_name_4E();
+        }
+        break;
+    }
+    func_80107718_32F0D8_name_4E(GwSystem.chosenMinigameIndex + 0x3D8, 0);
+    func_8010760C_32EFCC_name_4E(D_8010DC2C_3355EC_name_4E[4]);
+    func_80107638_32EFF8_name_4E();
+    if (D_8010DAB6_335476_name_4E != 0) {
+        func_80089284_89E84(D_8010DB60_335520_name_4E, 1, 1);
+        func_8010760C_32EFCC_name_4E(D_8010DC2C_3355EC_name_4E[5]);
+        _SetFlag(0x13);
+        if (func_80107638_32EFF8_name_4E() != 0) {
+            GwSystem.unk_25 = 0;
+        } else {
+            GwSystem.unk_25 = 1;
+        }
+        func_80089284_89E84(D_8010DB60_335520_name_4E, 1, 0);
+        D_8010DC90_335650_name_4E = 2;
+        D_8010E140_335B00_name_4E = func_8003F6F0_402F0(GwSystem.chosenMinigameIndex);
+        D_8010E618_335FD8_name_4E = 0;
+        omOvlHisChg(0, 0x4E, 4, 0x11);
+    } else {
+        D_8010D1F2_334BB2_name_4E = 0xB;
+        D_800F8D1A_F991A.attacker = 1 << D_800F9D48_FA948[0x2F8];
+        D_800F8D1A_F991A.targets = 1 << D_800F9D48_FA948[0x2F9];
+        GwSystem.current_board_index = D_8010D5FE_334FBE_name_4E[GwSystem.chosenMinigameIndex];
+        _SetFlag(0x13);
+        D_8010DC90_335650_name_4E = 2;
+        D_8010E140_335B00_name_4E = D_800CAD90[GwSystem.chosenMinigameIndex - 1].unk_00;
+        D_8010E618_335FD8_name_4E = 0;
+        omOvlHisChg(0, 0x4E, 5, 0x11);
+    }
+    D_8010D1F0_334BB0_name_4E = 1;
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80104AF0_32C4B0_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80105090_32CA50_name_4E);
+void func_80105090_32CA50_name_4E(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80105148_32CB08_name_4E);
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        D_8010DBE8_3355A8_name_4E[i].x = PLAYER_MODEL(i)->pos.x;
+        D_8010DBE8_3355A8_name_4E[i].y = PLAYER_MODEL(i)->pos.y;
+        D_8010DBE8_3355A8_name_4E[i].z = PLAYER_MODEL(i)->pos.z;
+    }
+    D_8010DBE3_3355A3_name_4E = 0;
+    D_8010DBE4_3355A4_name_4E = 20;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801053E0_32CDA0_name_4E);
+void func_80105148_32CB08_name_4E(void) {
+    s32 i;
+
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        D_8010DA80_335440_name_4E[i] = 0;
+    }
+    D_8010DBE3_3355A3_name_4E = 0;
+    D_8010DBE4_3355A4_name_4E = 20;
+    while (1) {
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            if (D_8010DA80_335440_name_4E[i] != 0) {
+                if (func_8005A5E8_5B1E8(PLAYER_MODEL(i), &D_8010DBE8_3355A8_name_4E[i], D_8010DBE4_3355A4_name_4E) == 1) {
+                    PLAYER_MODEL(i)->pos.x = D_8010DBE8_3355A8_name_4E[i].x;
+                    PLAYER_MODEL(i)->pos.y = D_8010DBE8_3355A8_name_4E[i].y;
+                    PLAYER_MODEL(i)->pos.z = D_8010DBE8_3355A8_name_4E[i].z;
+                    MBMotionSet(PLAYER_MODEL(i), 0, 2);
+                    func_80056658_57258(&PLAYER_MODEL(i)->pos, &OVL4E_CAMERA->pos, &PLAYER_MODEL(i)->rot);
+                    D_8010DA80_335440_name_4E[i] = 0;
+                }
+            } else if (((D_8010DBE3_3355A3_name_4E >> i) & 1) &&
+                       (PLAYER_MODEL(i)->pos.x != D_8010DBE8_3355A8_name_4E[i].x ||
+                        PLAYER_MODEL(i)->pos.y != D_8010DBE8_3355A8_name_4E[i].y ||
+                        PLAYER_MODEL(i)->pos.z != D_8010DBE8_3355A8_name_4E[i].z)) {
+                MBMotionSet(PLAYER_MODEL(i), 1, 2);
+                D_8010DA80_335440_name_4E[i] = 1;
+            }
+        }
+        HuPrcVSleep();
+    }
+}
+
+void func_801053E0_32CDA0_name_4E(s32 player, s16 motion, u16 attr) {
+    MBMotionSet(PLAYER_MODEL(player), motion, attr);
+    if (motion == 2) {
+        func_800797DC_7A3DC(0x103, player);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80105454_32CE14_name_4E);
 
