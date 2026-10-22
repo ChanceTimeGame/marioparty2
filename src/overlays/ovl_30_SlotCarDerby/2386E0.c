@@ -355,7 +355,62 @@ void func_801038F0_2397D0_SlotCarDerby(omObjData* obj) {
 __asm__(".section .rodata");
 const char D_8010FD18_245BF8_SlotCarDerby[] = "head";
 
+/* NON_MATCHING: registers only (the file id lands in v0, retail a0); masked 0 */
+#ifdef NON_MATCHING
+void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
+    SCDPlayerWork* work;
+    HmfMotionObj* head;
+    u32 chr;
+    s32 file;
+
+    obj->func_ptr = func_80103D00_239BE0_SlotCarDerby;
+    obj->work[0] = player;
+    obj->unk_50 = func_80027154_27D54(sizeof(SCDPlayerWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(SCDPlayerWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * 12, 0x7918);
+    func_800B0EF0_B1AF0(work->unk_E8, 0, obj->mtncnt * 12);
+    chr = gPlayers[player].character;
+    if ((D_801109D6_2468B6_SlotCarDerby == 2) & (player == 3)) {
+        chr = 6;
+    }
+    if (chr < 6) {
+        file = D_800CD438_CE038[chr].unk_04 | D_800CD438_CE038[chr].unk_0C;
+    } else {
+        chr = 6;
+        file = 0x80000;
+    }
+    obj->model[1] = LoadFormFile(file, 0x6BD);
+    obj->model[0] = LoadFormFile(D_8010F498_245378_SlotCarDerby[chr] | 0x400000, 0x6B9);
+    obj->model[2] = LoadFormFile(0xC, 0x68D);
+    func_800297E8_2A3E8(obj->model[2], 0.5f, 0.5f, 0.5f);
+    func_80039018_39C18(D_800FC834_FD434[obj->model[1]].unk02);
+    head = func_8002A9F4_2B5F4(obj->model[0], (char*)D_8010FD18_245BF8_SlotCarDerby);
+    D_801104E8_2463C8_SlotCarDerby[obj->work[0]] = head;
+    func_80023DAC_249AC(obj->model[1], D_8010F47C_24535C_SlotCarDerby[chr], obj->model[0], (char*)D_8010FD18_245BF8_SlotCarDerby);
+    head->unk28.y += D_8010F4C4_2453A4_SlotCarDerby[chr][0];
+    head->unk28.z += D_8010F4C4_2453A4_SlotCarDerby[chr][1];
+    head->unk40.x = D_8010F4A8_245388_SlotCarDerby[chr];
+    head->unk40.y = D_8010F4A8_245388_SlotCarDerby[chr];
+    head->unk40.z = D_8010F4A8_245388_SlotCarDerby[chr];
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.4f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    work->unk_D0 = 0xFFFF;
+    func_80019E84_1AA84(obj, 0, 0x400014, 1, 0);
+    D_800FC834_FD434[obj->model[0]].unk02 = 0;
+    work->unk_57 = gPlayers[player].port;
+    func_801032A0_239180_SlotCarDerby(obj);
+    func_801032E0_2391C0_SlotCarDerby(obj)->unk_0A = chr;
+    D_80110298_246178_SlotCarDerby[obj->work[1]] = 0;
+    D_801102B8_246198_SlotCarDerby[obj->work[1]] = -30.0f;
+    D_801102A8_246188_SlotCarDerby[obj->work[1]] = ((3 - obj->work[1]) * 10 + 100) * 40.0 + 6.0;
+    func_8010D6DC_2435BC_SlotCarDerby(chr, obj->work[0]);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010390C_2397EC_SlotCarDerby);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103D00_239BE0_SlotCarDerby);
 

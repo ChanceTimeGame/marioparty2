@@ -183,22 +183,28 @@ typedef struct SCDBillboard {
     /* 0x50 */ Vec unk_50; /* rotation */
 } SCDBillboard; /* size = 0x5C (N64) */
 
-/* omObjData::unk_50 of the car-driver objects (func_800F76E8) and of the board object
-   (func_800FC0BC): func_80023684(0xE8), MgWork's layout (src/99E0.c), whose pointers sit at 0xB8,
-   0xD8, 0xDC and 0xE4. */
+/* omObjData::unk_50 of the car-driver objects (8010390C): MP2's MgWork-like player work, 0x15C
+   bytes (MP1 0xE8); only the fields this overlay touches. */
 typedef struct SCDPlayerWork {
-    /* 0x00 */ char unk_00[0x56];
-    /* 0x56 */ s8 unk_56; /* controller port */
-    /* 0x57 */ char unk_57[0x61];
-    /* 0xB8 */ void* unk_B8;
-    /* 0xBC */ char unk_BC[4];
-    /* 0xC0 */ u16 unk_C0; /* current motion, 0xFFFF none */
-    /* 0xC2 */ char unk_C2[0x16];
-    /* 0xD8 */ void* unk_D8; /* motion table: obj->mtncnt * 4 (drivers), * sizeof (board) */
-    /* 0xDC */ void* unk_DC;
-    /* 0xE0 */ char unk_E0[4];
-    /* 0xE4 */ void* unk_E4;
-} SCDPlayerWork; /* size = 0xE8 (N64) */
+    /* 0x000 */ char unk_00[0x57];
+    /* 0x057 */ s8 unk_57; /* controller port */
+    /* 0x058 */ char unk_58[0x78];
+    /* 0x0D0 */ u16 unk_D0; /* current motion, 0xFFFF none */
+    /* 0x0D2 */ char unk_D2[0x16];
+    /* 0x0E8 */ void* unk_E8; /* motion table: obj->mtncnt * 12 bytes */
+    /* 0x0EC */ char unk_EC[0x70];
+} SCDPlayerWork; /* size = 0x15C */
+
+/* Per-character data in main (0x18 bytes; ovl_2A's BumperBallsCharData) */
+typedef struct SCDCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ char unk_14[4];
+} SCDCharData; /* size = 0x18 */
 
 #define SCD_WORK(obj) ((SCDPlayerWork*)(obj)->unk_50)
 
@@ -323,6 +329,12 @@ void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
 void func_8002D4D0_2E0D0(s16 n);
 void* func_80027154_27D54(s32 size, s16 tag); /* allocate */
 int abs(int);
+s16 LoadFormFile(s32, s32);
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+HmfMotionObj* func_8002A9F4_2B5F4(s16 model, char* name); /* a model's motion object by name */
+void func_80023DAC_249AC(s16 model, char* part, s16 target, char* targetPart); /* attach a part */
+void func_80039018_39C18(u8);
+extern SCDCharData D_800CD438_CE038[];
 void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
 void func_800B1CC0_B28C0(Matrix4f m, f32 ang, f32 x, f32 y, f32 z); /* rotate about an axis */
 void func_800B37C0_B43C0(Matrix4f m); /* identity */
@@ -353,7 +365,11 @@ extern s16 D_8010F448_245328_SlotCarDerby[3];    /* MP1 D_80100C8C: [course] sta
 extern f32 D_8010F870_245750_SlotCarDerby[6];    /* MP1 D_80100D94: course 0 camera: centre, view */
 extern f32 D_8010F888_245768_SlotCarDerby[6];    /* course 1's */
 extern f32 D_8010F8A0_245780_SlotCarDerby[6];    /* course 2's */
-extern s32 D_8010F450_245330_SlotCarDerby[7];    /* MP1 D_80100C90: speed limits by corner class */
+extern s32 D_8010F450_245330_SlotCarDerby[7];
+extern char* D_8010F47C_24535C_SlotCarDerby[7];  /* MP1 D_80100CBC: [character] head part name */
+extern u16 D_8010F498_245378_SlotCarDerby[7];    /* MP1 D_80100CD8: [character] car model */
+extern f32 D_8010F4A8_245388_SlotCarDerby[7];    /* MP1 D_80100CE8: [character] head scale */
+extern f32 D_8010F4C4_2453A4_SlotCarDerby[7][2]; /* MP1 D_80100D04: [character] head offset y, z */    /* MP1 D_80100C90: speed limits by corner class */
 extern u16 (*D_8010F864_245744_SlotCarDerby[3])[3]; /* MP1 D_80100D3C/D5C: [course] corners: first,
                                                       last segment, class; 0x400 ends */
 
@@ -369,6 +385,9 @@ extern f32* D_8011024C_24612C_SlotCarDerby;     /* MP1 D_80101430: distance at e
 extern f32 D_80110250_246130_SlotCarDerby;      /* MP1 D_80101434: lap length */
 extern Vec* D_80110254_246134_SlotCarDerby;     /* MP1 D_80101440 (Vec[200] there): segment midpoints */
 extern s32 D_80110258_246138_SlotCarDerby[16];  /* MP1 D_80101DA0 */
+extern s32 D_80110298_246178_SlotCarDerby[4];   /* [lane] */
+extern s32 D_801102A8_246188_SlotCarDerby[4];   /* [lane] */
+extern f32 D_801102B8_246198_SlotCarDerby[4];   /* [lane] */
 extern SCDGame D_801102C8_2461A8_SlotCarDerby;  /* MP1 D_80101DE0 */
 extern s16 D_801102CA_2461AA_SlotCarDerby;      /* .unk_02 */
 extern s16 D_801102CC_2461AC_SlotCarDerby;      /* .unk_04 */
