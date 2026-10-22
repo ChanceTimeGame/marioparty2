@@ -4922,7 +4922,113 @@ s32 func_8011228C_2D777C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
+#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked: one lui); retail reads the coins check
+                       through gw (s1), GCC rematerialises &GwSystem */
+/* Space 0x7F by day: for 10 coins a lamp (model 0xA2) descends over the player, sparkles and makes
+   it night (state [0] = 2, the night message pending in [6]). By night it only says 0x43D. */
+void func_801124C0_2D79B0_name_43(void) {
+    Vec pos;
+    GW_PLAYER* player;
+    MBModel* lamp;
+    void* vib;
+    s32 angle;
+    s32 i;
+    s32 choice;
+    GW_SYSTEM* gw = &GwSystem;
+
+    player = BoardPlayerGet(-1);
+    if (gw->current_player_index == 4) {
+        return;
+    }
+    func_80046D2C_4792C(gw->current_player_index);
+    MBPlayerMotionSet(-1, -1, 2);
+    func_80056C30_57830(-1, 8, 0x7F);
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+    HuPrcChildWatch();
+    if (D_800F8CE4_F98E4[0] >= 0 && *D_800F8CE4_F98E4 < 2) {
+        if (gPlayers[gw->current_player_index].coins < 10) {
+            MBDlgWinExec(0x22, 0x439);
+        } else {
+        retry:
+            MBDlgWinCreate(0x22, 0x438);
+            choice = func_8011228C_2D777C_name_43();
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+                case 0:
+                    func_8004CA34_4D634(gw->current_player_index, -10);
+                    func_800614B4_620B4(gw->current_player_index, -10);
+                    HuPrcSleep(30);
+                    MBDlgWinExec(0x22, 0x43B);
+                    func_8005670C_5730C(&pos);
+                    func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &pos, &((MBModel*)player->unk_24)->rot, 10);
+                    func_80061518_62118();
+                    lamp = func_80043510_44110(0xA2, NULL);
+                    func_800B3170_B3D70(&lamp->pos, &((MBModel*)player->unk_24)->pos);
+                    lamp->pos.y = 100.0f;
+                    do {
+                        lamp->pos.y -= 1.0f;
+                        HuPrcVSleep();
+                    } while (lamp->pos.y > 30.0f);
+                    PlaySound(0x379);
+                    vib = func_800672BC_67EBC(-1, 1, 5);
+                    angle = 0xB4;
+                    i = 0;
+                    while (angle < 0x5A0) {
+                        Vec particleDir[8] = {
+                            { 1.0f, 1.0f, 1.0f },
+                            { 1.0f, 2.0f, 1.0f },
+                            { 0.0f, 2.0f, 1.0f },
+                            { -1.0f, 1.0f, 1.0f },
+                            { -1.0f, -1.0f, 1.0f },
+                            { 0.0f, -1.0f, 1.0f },
+                            { -1.0f, 2.0f, 1.0f },
+                            { 1.0f, -1.0f, 1.0f },
+                        };
+
+                        lamp->pos.y = (2.0f * HuMathSin(angle)) + 30.0f;
+                        if (i & 1) {
+                            HuVecCopyXYZ(&pos, lamp->pos.x, lamp->pos.y, lamp->pos.z);
+                            pos.y += 25.0f;
+                            pos.z += 15.0f;
+                            func_8010BB70_2D1060_name_43(&pos, 0.1f, 2.0f, 1, &particleDir[(i / 2) & 7]);
+                        }
+                        HuPrcVSleep();
+                        if (angle == 0x438) {
+                            func_80066FD8_67BD8(0);
+                            func_80067004_67C04(0xE);
+                        }
+                        angle += 0x14;
+                        i++;
+                    }
+                    func_8006735C_67F5C(vib);
+                    D_800F8CE4_F98E4[6] = 1;
+                    D_800F8CE4_F98E4[0] = 2;
+                    func_800558DC_564DC(1);
+                    return;
+                case 1:
+                    MBDlgWinExec(0x22, 0x43A);
+                    break;
+                case 2:
+                    func_80103DB0_2C92A0_name_43();
+                    goto retry;
+            }
+        }
+    } else {
+        MBDlgResultWinExec(0x43D);
+    }
+    func_8004655C_4715C(gw->current_player_index);
+    HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+    HuPrcChildWatch();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801124C0_2D79B0_name_43);
+/* 43-A: the particle-direction table and the 0.5 after it are func_8010BDC8's pooled initialisers
+   (GCC 2.7.2 shares identical constant initialisers); the asm uses them by name. The C above
+   shares the table itself. */
+__asm__(".globl D_801152E0_2DA7D0_name_43\n\t.set D_801152E0_2DA7D0_name_43, D_80115280_2DA770_name_43 + 0x60\n\t"
+        ".globl D_80115340_2DA830_name_43\n\t.set D_80115340_2DA830_name_43, D_80115280_2DA770_name_43 + 0xC0");
+#endif
 
 s32 func_801128E0_2D7DD0_name_43(u8* items) {
     s32 count = 0;
@@ -5149,8 +5255,3 @@ s32 func_80113A54_2D8F44_name_43(void) {
     return func_80044800_45400(D_80115190_2DA680_name_43) + 1;
 }
 
-/* 43-A: the particle-direction table and the 0.5 after it are func_8010BDC8's pooled initialisers
-   (GCC 2.7.2 shares identical constant initialisers); func_801124C0 (still asm) uses them by
-   name. Drop these two labels once func_801124C0 is C. */
-__asm__(".globl D_801152E0_2DA7D0_name_43\n\t.set D_801152E0_2DA7D0_name_43, D_80115280_2DA770_name_43 + 0x60\n\t"
-        ".globl D_80115340_2DA830_name_43\n\t.set D_80115340_2DA830_name_43, D_80115280_2DA770_name_43 + 0xC0");
