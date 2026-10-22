@@ -1278,7 +1278,17 @@ void func_80106790_2FB090_name_47(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801067CC_2FB0CC_name_47);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80106844_2FB144_name_47);
+void func_80106844_2FB144_name_47(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        omObjData** p = &D_80112360_306C60_name_47[i];
+        if (*p != NULL) {
+            omDelObj(*p);
+            *p = NULL;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801068A8_2FB1A8_name_47);
 

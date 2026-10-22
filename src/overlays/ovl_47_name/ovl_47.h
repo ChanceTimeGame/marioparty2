@@ -449,6 +449,7 @@ void func_80110310_304C10_name_47(void);
 s32 func_80110364_304C64_name_47(void); /* fork D: returns the use-item answer */
 s32 func_80110588_304E88_name_47(void);
 s32 func_80110904_305204_name_47(void);
+extern omObjData* D_80112360_306C60_name_47[4]; /* 47-A: objects deleted by func_80106844 (fork B: their use) */
 /* 47-A: the rest (fork B's own functions are void(void) unless a caller shows more) */
 void func_801058A4_2FA1A4_name_47(void);
 void func_801058E0_2FA1E0_name_47(void);
