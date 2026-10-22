@@ -1282,11 +1282,11 @@ void func_80107818_357E28_name_51(void) {
     SprPosSet(D_801088F0_358F00_name_51[1].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[1], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 204);
     SprPosSet(D_801088F0_358F00_name_51[2].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[2], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 170);
     file = DataRead(0x38);
-    D_801088B8_358EC8_name_51 = SprAnimRead(file);
+    D_801088B8_358EC8_name_51[0] = SprAnimRead(file);
     DataClose(file);
     D_801088A0_358EB0_name_51[0] = SprCreate(5, 5);
     for (i = 0; i < 5; i++) {
-        SprAnimSet((s16)D_801088A0_358EB0_name_51[0], i, (s16)D_801088B8_358EC8_name_51, 0);
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[0], i, (s16)D_801088B8_358EC8_name_51[0], 0);
         func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[0], i, 1);
         SprPrioSet((s16)D_801088A0_358EB0_name_51[0], i, 10);
         SprAttrSet((s16)D_801088A0_358EB0_name_51[0], i, 0x1000);
@@ -1298,7 +1298,7 @@ void func_80107818_357E28_name_51(void) {
     }
     D_801088A0_358EB0_name_51[1] = SprCreate(5, 5);
     for (i = 0; i < 5; i++) {
-        SprAnimSet((s16)D_801088A0_358EB0_name_51[1], i, (s16)D_801088B8_358EC8_name_51, 0);
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[1], i, (s16)D_801088B8_358EC8_name_51[0], 0);
         func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[1], i, 1);
         SprPrioSet((s16)D_801088A0_358EB0_name_51[1], i, 10);
         SprAttrSet((s16)D_801088A0_358EB0_name_51[1], i, 0x1000);
@@ -1312,7 +1312,7 @@ void func_80107818_357E28_name_51(void) {
     }
     D_801088A0_358EB0_name_51[2] = SprCreate(5, 5);
     for (i = 0; i < 5; i++) {
-        SprAnimSet((s16)D_801088A0_358EB0_name_51[2], i, (s16)D_801088B8_358EC8_name_51, 0);
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[2], i, (s16)D_801088B8_358EC8_name_51[0], 0);
         func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[2], i, 1);
         SprPrioSet((s16)D_801088A0_358EB0_name_51[2], i, 10);
         SprAttrSet((s16)D_801088A0_358EB0_name_51[2], i, 0x1000);
@@ -1357,13 +1357,70 @@ void func_80107818_357E28_name_51(void) {
 __asm__(".section .rodata");
 const char D_801087C0_358DD0_name_51[] = "X";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107EA4_3584B4_name_51);
+/* Frees the tally's models, counter processes, digit sprites and "X" labels (MP1
+   func_800FBDF0). */
+void func_80107EA4_3584B4_name_51(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107FE8_3585F8_name_51);
+    if (D_801087D0_358DE0_name_51 != NULL) {
+        MBModelKill(D_801087D0_358DE0_name_51);
+    }
+    for (i = 0; i < 20; i++) {
+        if (D_801087D8_358DE8_name_51[i] != NULL) {
+            MBModelKill(D_801087D8_358DE8_name_51[i]);
+        }
+    }
+    for (i = 0; i < 7; i++) {
+        if (D_80108828_358E38_name_51[i] != NULL) {
+            MBModelKill(D_80108828_358E38_name_51[i]);
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        omDelPrcObj(D_80108858_358E68_name_51[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        SprKill((s16)D_801088A0_358EB0_name_51[i]);
+    }
+    for (i = 0; i < 1; i++) {
+        SprAnimKill((s16)D_801088B8_358EC8_name_51[i]);
+    }
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[0]);
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[1]);
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[2]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80108034_358644_name_51);
+/* Camera and background for the scene: the board's background (D_80108440). */
+void func_80107FE8_3585F8_name_51(void) {
+    func_80018E30_19A30(2);
+    func_80050A30_51630(D_01164160);
+    func_80050E00_51A00(D_80108440_358A50_name_51[GwSystem.current_board_index]);
+    func_8005390C_5450C(0x80);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80108058_358668_name_51);
+/* Frees the background (MP1 func_800F70E8, Last5Turns). */
+void func_80108034_358644_name_51(void) {
+    MBDBackKill();
+    func_80050AE0_516E0();
+}
+
+/* Creates the four player models in their standing motion, places them in turn order
+   (D_80108704) facing D_80108734. */
+void func_80108058_358668_name_51(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        MBPlayerModelCreate(i, D_801086EC_358CFC_name_51[gPlayers[i].character], 2);
+        MBMotionSet(gPlayers[i].unk_24, 0, 2);
+        ((MBModel*)gPlayers[i].unk_24)->attr |= 1;
+    }
+    for (i = 0; i < 4; i++) {
+        D_80108848_358E58_name_51[i] = gPlayers[D_800F8CE4_F98E4[i]].unk_24;
+        D_80108848_358E58_name_51[i]->pos.x = D_80108704_358D14_name_51[i].x;
+        D_80108848_358E58_name_51[i]->pos.y = D_80108704_358D14_name_51[i].y;
+        D_80108848_358E58_name_51[i]->pos.z = D_80108704_358D14_name_51[i].z;
+        func_80056658_57258(&D_80108848_358E58_name_51[i]->pos, &D_80108734_358D44_name_51[i], &D_80108848_358E58_name_51[i]->rot);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801081CC_3587DC_name_51);
 
