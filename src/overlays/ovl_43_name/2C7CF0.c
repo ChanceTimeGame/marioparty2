@@ -4039,9 +4039,45 @@ void func_8010FB08_2D4FF8_name_43(void) {
     func_8010F548_2D4A38_name_43(2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010FB24_2D5014_name_43);
+/* Process: day/night model user_data[0] walks to its other place and faces the way it now bars. */
+void func_8010FB24_2D5014_name_43(void) {
+    Vec rot;
+    SpaceData* sd;
+    s32 i = *(s32*)HuPrcCurrentGet()->user_data;
+    MBModel* model = D_80115468_2DA958_name_43[i];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010FD0C_2D51FC_name_43);
+    GetSpaceData(D_80113D20_2D9210_name_43[i * 2 + D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[i]]]);
+    D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[i]] ^= 1;
+    sd = GetSpaceData(D_80113D20_2D9210_name_43[i * 2 + D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[i]]]);
+    MBMotionSet(model, 0, 2);
+    func_80056658_57258(&model->pos, &sd->coords, &rot);
+    HuPrcChildLink(HuPrcCurrentGet(), func_80056B78_57778(&model->rot, &rot, &model->rot, 10));
+    HuPrcChildWatch();
+    HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(&model->pos, &sd->coords, &model->pos, 30));
+    HuPrcChildWatch();
+    func_80056658_57258(&model->pos, &GetSpaceData(D_80113D3C_2D922C_name_43[i])->coords, &rot);
+    HuPrcChildLink(HuPrcCurrentGet(), func_80056B78_57778(&model->rot, &rot, &model->rot, 10));
+    HuPrcChildWatch();
+    MBMotionSet(model, -1, 2);
+    omDelPrcObj(NULL);
+}
+
+/* By day, passing junction arg0 makes its model move (func_8010FB24). */
+void func_8010FD0C_2D51FC_name_43(s32 arg0) {
+    Process* process;
+
+    if (GwSystem.current_player_index == 4) {
+        return;
+    }
+    switch (D_800F8CE4_F98E4[0]) {
+        case 0:
+        case 1:
+            process = omAddPrcObj(func_8010FB24_2D5014_name_43, 0x1005, 0, 0x40);
+            process->user_data = HuMemMemoryAlloc(process->heap, 0x10);
+            *(s32*)process->user_data = arg0;
+            break;
+    }
+}
 
 void func_8010FD8C_2D527C_name_43(void) {
     func_8010FD0C_2D51FC_name_43(0);

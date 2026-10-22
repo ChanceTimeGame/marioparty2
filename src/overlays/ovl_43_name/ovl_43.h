@@ -473,7 +473,7 @@ void func_8010FAD0_2D4FC0_name_43(void);
 void func_8010FAEC_2D4FDC_name_43(void);
 void func_8010FB08_2D4FF8_name_43(void);
 void func_8010FB24_2D5014_name_43(void);
-s32 func_8010FD0C_2D51FC_name_43(s32 arg0);
+void func_8010FD0C_2D51FC_name_43(s32 arg0);
 void func_8010FD8C_2D527C_name_43(void);
 void func_8010FDA8_2D5298_name_43(void);
 void func_8010FDC4_2D52B4_name_43(void);
