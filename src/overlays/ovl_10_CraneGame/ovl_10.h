@@ -26,6 +26,15 @@ void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 u8 rand8(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_80079614_7A214(s32);
+extern u16 D_801011FC_101DFC;
+void SprAnimKill(s16 animIdx);
+void SprKill(s16);
+void func_8006D4D0_6E0D0(s16); /* the seconds counter (MP1 func_80079078) */
+void func_8006D518_6E118(void);
+f32 sqrtf(f32);
 
 extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern s32 D_800F9D30_FA930[];
@@ -40,6 +49,10 @@ extern f32 D_800FA610_FB210;  /* CZoom */
 
 /* ---- structs ---- */
 
+/* ---- overlay data (155280.data.s, asm) ---- */
+
+extern s32 D_8010B760_155280_CraneGame; /* the hurry-up music started */
+
 /* ---- overlay bss (ovl_10_bss, 8010C170) ---- */
 
 extern omObjData* D_8010C170_155C90_CraneGame;
@@ -52,9 +65,12 @@ extern s16 D_8010C17E_155C9E_CraneGame; /* state timer (MP1 D_800FFE30) */
 extern s16 D_8010C180_155CA0_CraneGame;
 extern s16 D_8010C182_155CA2_CraneGame; /* _CheckFlag(0xC) (MP1 D_800FFE34, flag 0x2B) */
 extern s16 D_8010C184_155CA4_CraneGame;
+extern s16 D_8010C186_155CA6_CraneGame; /* the crane's model (MP1 D_800FFE70) */
 extern s16 D_8010C188_155CA8_CraneGame[6]; /* shuffled prize order (MP1 D_800FFE72) */
 extern s16 D_8010C194_155CB4_CraneGame; /* the solo player (MP1 D_800FFE7E) */
 extern s16 D_8010C196_155CB6_CraneGame[3]; /* the other players (MP1 D_800FFE80) */
+extern s16 D_8010C19C_155CBC_CraneGame;
+extern s16 D_8010C19E_155CBE_CraneGame;
 extern s16 D_8010C1A0_155CC0_CraneGame;
 extern s16 D_8010C258_155D78_CraneGame;
 extern void* D_8010CE30_156950_CraneGame[256]; /* claws (MP1 D_80100BC0) */
