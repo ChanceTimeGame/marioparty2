@@ -1026,7 +1026,28 @@ void func_801058A4_2E3FD4_name_45(void) {
     omOvlGotoEx(0x3D, 0, 0x192);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_801058E0_2E4010_name_45);
+void func_801058E0_2E4010_name_45(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    SetPlayerOntoChain(1, 0, 0);
+    SetPlayerOntoChain(2, 0, 0);
+    SetPlayerOntoChain(3, 0, 0);
+    SetNextChainAndSpace(0, 1, 2);
+    SetNextChainAndSpace(1, 1, 2);
+    SetNextChainAndSpace(2, 1, 2);
+    SetNextChainAndSpace(3, 1, 2);
+    _SetFlag(0x43);
+    func_8010285C_2E0F8C_name_45();
+    D_800F8CE4_F98E4[0x1E] = 0;
+    D_800F8CE4_F98E4[0x1D] = 0;
+    D_800F8CE4_F98E4[0x1A] = 0;
+    D_800F8CE4_F98E4[0x19] = 0;
+    D_800F8CE4_F98E4[0x17] = 0;
+    D_800F8CE4_F98E4[0] = 5;
+    D_800F8CE4_F98E4[1] = 0;
+    D_800F8CE4_F98E4[2] = 0;
+    omOvlReturnEx(1);
+}
 
 void func_801059C4_2E40F4_name_45(void) {
     s32 i;
@@ -1086,7 +1107,17 @@ void func_801059C4_2E40F4_name_45(void) {
     func_80106A74_2E51A4_name_45();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80105CA4_2E43D4_name_45);
+void func_80105CA4_2E43D4_name_45(void) {
+    PlayMusic(10);
+    func_800632F0_63EF0(10);
+    func_80020070_20C70(2);
+    func_801059C4_2E40F4_name_45();
+    func_80053AA0_546A0(3);
+    EventTableHydrate(D_801117B4_2EFEE4_name_45);
+    EventTableHydrate(D_80111B04_2F0234_name_45);
+    EventTableHydrate(D_8011181C_2EFF4C_name_45);
+    func_80066C34_67834(0);
+}
 
 void func_80105D0C_2E443C_name_45(void) {
     func_80020070_20C70(1);
@@ -1314,7 +1345,29 @@ void func_801067E4_2E4F14_name_45(void) {
                         D_80110DE0_2EF510_name_45[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80106820_2E4F50_name_45);
+void func_80106820_2E4F50_name_45(s16 arg0) {
+    MBModel* obj;
+    SpaceData* space;
+    char pad[8]; /* frame size */
+
+    if (D_801130B8_2F17E8_name_45[arg0] == NULL) {
+        if (D_801130B4_2F17E4_name_45 == NULL) {
+            obj = func_80043510_44110(0x84, NULL);
+            func_80043DAC_449AC(obj);
+            D_801130B4_2F17E4_name_45 = obj;
+        } else {
+            obj = MBModelParamCreate(D_801130B4_2F17E4_name_45);
+        }
+        D_801130B8_2F17E8_name_45[arg0] = obj;
+        obj->attr |= 2;
+        func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80110F40_2EF670_name_45[arg0])->coords);
+        obj->jumpY = 5.0f;
+        space = GetSpaceData(D_80110F44_2EF674_name_45[arg0][0]);
+        func_80056658_57258(&space->coords, &GetSpaceData(D_80110F44_2EF674_name_45[arg0][1])->coords, &obj->rot);
+    } else {
+        MBModelDispOn(D_801130B8_2F17E8_name_45[arg0]);
+    }
+}
 
 void func_80106954_2E5084_name_45(void) {
     s32 i;
@@ -1328,7 +1381,10 @@ void func_80106954_2E5084_name_45(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_801069D8_2E5108_name_45);
+void func_801069D8_2E5108_name_45(void) {
+    func_8003E52C_3F12C(D_80110F50_2EF680_name_45, (u8)D_800F8CE4_F98E4[0]);
+    func_80029A8C_2A68C(D_801130C0_2F17F0_name_45->obj->model[0]);
+}
 
 void func_80106A18_2E5148_name_45(void) {
     if (D_80110F4C_2EF67C_name_45 != NULL) {
@@ -1341,7 +1397,22 @@ void func_80106A18_2E5148_name_45(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80106A74_2E51A4_name_45);
+void func_80106A74_2E51A4_name_45(void) {
+    MBModel* obj;
+    void* data;
+
+    obj = func_80043510_44110(0x87, NULL);
+    D_801130C0_2F17F0_name_45 = obj;
+    obj->attr |= 2;
+    func_800B3170_B3D70(&obj->pos, &GetSpaceData(0x78)->coords);
+    HuVecCopyXYZ(&obj->scale, 0.6f, 0.6f, 0.6f);
+    obj->pos.y = -5.0f;
+    data = DataRead(0xA01E8);
+    D_80110F4C_2EF67C_name_45 = data;
+    D_80110F50_2EF680_name_45 = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->obj->model[0]].hmf, data, 0, "b004_0400_DEF");
+    func_801069D8_2E5108_name_45();
+    func_800632E4_63EE4(func_80106A18_2E5148_name_45);
+}
 
 void func_80106B58_2E5288_name_45(void) {
     struct unk_8003B8D4Struct* prompt;

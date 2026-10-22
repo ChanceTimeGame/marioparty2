@@ -602,4 +602,15 @@ void func_8011012C_2EE85C_name_45(s32 arg0); /* 45-B: from its callers */
 void func_80110658_2EED88_name_45(void);
 void func_80110674_2EEDA4_name_45(void);
 
+/* 45-B */
+void func_800632E4_63EE4(void (*arg0)(void));
+void func_8003E52C_3F12C(s16, u8);
+void func_80029A8C_2A68C(s16);
+extern BoardEventTableEntry D_801117B4_2EFEE4_name_45[];
+extern BoardEventTableEntry D_8011181C_2EFF4C_name_45[];
+extern BoardEventTableEntry D_80111B04_2F0234_name_45[];
+extern s16 D_80110F40_2EF670_name_45[2]; /* the two spaces 80106820's models stand on */
+extern s16 D_80110F44_2EF674_name_45[2][2]; /* per model: the two spaces it faces between */
+extern MBModel* D_801130C0_2F17F0_name_45; /* model 0x87 on space 0x78, its texture swapped */
+
 #endif
