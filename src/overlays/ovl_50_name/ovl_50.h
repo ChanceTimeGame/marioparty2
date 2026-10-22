@@ -197,6 +197,7 @@ extern Vec D_801123DC_352C3C_name_50;
 extern Vec D_801123E8_352C48_name_50[2];
 extern Vec D_80112400_352C60_name_50;    /* the doors' start */
 extern Vec D_8011240C_352C6C_name_50;    /* the doors' end */
+extern Vec D_80112418_352C78_name_50;    /* the winner, part 2 */
 
 /* ---- overlay .bss (asm) ---- */
 

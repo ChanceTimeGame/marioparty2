@@ -258,7 +258,44 @@ void func_8010D614_34DE74_name_50(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010D614_34DE74_name_50);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010E164_34E9C4_name_50);
+/* Board 5's scene, part 2: the winner alone, lit red, with message 0x348. */
+void func_8010E164_34E9C4_name_50(void) {
+    Vec v;
+    MBModel* winner;
+    s16 win;
+
+    func_80050E00_51A00(41);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBPlayerModelCreate(D_8011275A_352FBA_name_50, D_80112308_352B68_name_50[gPlayers[D_8011275A_352FBA_name_50].character], 2);
+    func_8005ABC0_5B7C0(&gPlayers[D_8011275A_352FBA_name_50], 2, 11);
+    func_80043DAC_449AC(OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50));
+    gPlayers[D_8011275A_352FBA_name_50].flags |= 2;
+    func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->obj->model, 1);
+    winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
+    winner->pos.x = D_80112418_352C78_name_50.x;
+    winner->pos.y = D_80112418_352C78_name_50.y;
+    winner->pos.z = D_80112418_352C78_name_50.z;
+    MBModelDispOn(winner);
+    func_80026E00_27A00(1, -30.0f, 0.0f, -116.0f);
+    func_8002D2B4_2DEB4(*winner->obj->model, 5.0f, -105.0f, 56.0f);
+    func_8002D274_2DE74(*winner->obj->model, 0x6E, 0x28, 0x28);
+    v.x = 0.0f;
+    v.y = 105.0f;
+    v.z = 0.0f;
+    func_8005A950_5B550(&v, 3.0f, 1.0f, 8);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, 0x348);
+    win = func_8005AAC0_5B6C0(0x2D, 0x28, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
+    func_800890CC_89CCC(win, 0x348, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(10);
+    PlaySound(0xE7);
+    HuPrcSleep(50);
+    func_8008CCA8_8D8A8(win);
+    MBModelDispOff(winner);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010E478_34ECD8_name_50);
 
