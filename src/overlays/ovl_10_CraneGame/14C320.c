@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_10.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80102800_14C320_CraneGame);
 
