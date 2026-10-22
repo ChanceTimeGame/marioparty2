@@ -292,6 +292,87 @@ typedef struct BaGroundWork {
     /* 0x14 */ f32 unk_14; /* ground height under the player being moved (MP1 0x10) */
 } BaGroundWork;
 
+/* ---- MG2B-C types (21EA10.c) ---- */
+
+/* D_8010DFF0: the cannon (MP1 BaCannon). Splat labels: D_8010DFF8 (+8), D_8010E004 (+0x14),
+   D_8010E008 (+0x18). */
+typedef struct BaCannon {
+    /* 0x00 */ Vec unk_00; /* position */
+    /* 0x0C */ Vec unk_0C; /* rotation */
+    /* 0x18 */ f32 unk_18; /* velocity x */
+    /* 0x1C */ char unk_1C[4];
+} BaCannon;
+
+/* D_8010E398[32]: effect sprites (func_8010ADF8 makes one). Splat labels D_8010E39A/9C/A0 are
+   [0]'s fields. */
+typedef struct BaEffect {
+    /* 0x00 */ s16 unk_00; /* sprite group, -1 free */
+    /* 0x02 */ s16 unk_02; /* frames to live */
+    /* 0x04 */ u8 unk_04; /* kind (< 0x21) */
+    /* 0x05 */ char unk_05[3];
+    /* 0x08 */ f32 unk_08; /* scale */
+} BaEffect; /* size = 0xC */
+
+/* D_8010E524: one per water-model vertex (func_8010C444). */
+typedef struct BaVtxMap {
+    /* 0x00 */ s16 unk_00; /* 1 moves, 0 edge */
+    /* 0x02 */ s16 unk_02; /* column */
+    /* 0x04 */ s16 unk_04; /* row */
+} BaVtxMap; /* size = 0x6 */
+
+/* D_8010E010[3]: bombs waiting to be fired (func_8010B6FC queues one; [2] is the big one). */
+typedef struct BaBomb {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ u16 unk_04; /* kind */
+    /* 0x06 */ char unk_06[2];
+    /* 0x08 */ s32 unk_08; /* queued */
+    /* 0x0C */ s32 unk_0C; /* frames */
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ s32 unk_14;
+    /* 0x18 */ f32 unk_18; /* speed */
+    /* 0x1C */ f32 unk_1C; /* target x */
+    /* 0x20 */ f32 unk_20;
+    /* 0x24 */ f32 unk_24; /* target z */
+    /* 0x28 */ char unk_28[4];
+} BaBomb; /* size = 0x2C */
+
+/* D_8010E098[8]: shells in flight (func_8010B7BC fires one, func_8010BFAC moves them). Model ids
+   are s32 holding u16 (read as (s16)). */
+typedef struct BaShell {
+    /* 0x00 */ u16 unk_00; /* 1 flying */
+    /* 0x02 */ u16 unk_02; /* kind */
+    /* 0x04 */ s32 unk_04; /* frames flown */
+    /* 0x08 */ s32 unk_08; /* frames of the arc */
+    /* 0x0C */ s32 unk_0C[4]; /* models: kinds 0-1, 2, 3, shadow */
+    /* 0x1C */ f32 unk_1C; /* arc angle */
+    /* 0x20 */ f32 unk_20; /* arc angle step */
+    /* 0x24 */ f32 unk_24;
+    /* 0x28 */ f32 unk_28; /* start y */
+    /* 0x2C */ f32 unk_2C; /* arc height */
+    /* 0x30 */ f32 unk_30; /* last height */
+    /* 0x34 */ Vec unk_34; /* position */
+    /* 0x40 */ Vec unk_40; /* velocity */
+    /* 0x4C */ f32 unk_4C; /* target x */
+    /* 0x50 */ f32 unk_50;
+    /* 0x54 */ f32 unk_54; /* target z */
+    /* 0x58 */ f32 unk_58; /* speed */
+    /* 0x5C */ f32 unk_5C; /* scale */
+} BaShell; /* size = 0x60 */
+
+/* D_8010E558[5]: splashes (func_801099C4 starts one; func_80109908 animates them over 16 frames). */
+typedef struct BaSplash {
+    /* 0x00 */ s16 unk_00; /* 1 playing */
+    /* 0x02 */ s16 unk_02; /* frame */
+    /* 0x04 */ s16 unk_04; /* model (func_80109A68) */
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ Vec unk_10; /* scale */
+    /* 0x1C */ Vec unk_1C; /* position */
+    /* 0x28 */ char unk_28[4];
+    /* 0x2C */ s32 unk_2C;
+} BaSplash; /* size = 0x30 */
+
 /* ---- overlay .data (223080) ---- */
 
 extern s16 D_8010CC90_223080_BombsAway[4]; /* players out, in order (func_80102DDC) */
@@ -306,27 +387,29 @@ extern f32 D_8010CF84_223374_BombsAway[4];          /* bomb scale per kind */
 extern BaKindInfo D_8010CF94_223384_BombsAway[4];
 extern f32 D_8010CFA4_223394_BombsAway[][2]; /* CPU target offsets (x, z) per corner slot (MP1 D_800FFA7C); asm also reads D_8010CFA8 = [0][1] */
 extern u8 D_8010CFD4_2233C4_BombsAway[][2]; /* MP1 D_800FFAAC; asm reads D_8010CFD5 = [0][1] */
-extern s32 D_8010CFF0_2233E0_BombsAway;
-extern s32 D_8010CFF4_2233E4_BombsAway[];
-extern s32 D_8010CFF8_2233E8_BombsAway[];
+extern s32 D_8010CFF0_2233E0_BombsAway; /* intro camera state (func_80109264) */
+extern s32 D_8010CFF4_2233E4_BombsAway; /* intro frames */
+extern Vec D_8010CFF8_2233E8_BombsAway[2]; /* intro shots ([1] = D_8010D004) */
 extern s32 D_8010D004_2233F4_BombsAway[];
-extern s32 D_8010D010_223400_BombsAway[];
+extern Vec D_8010D010_223400_BombsAway[4]; /* cannon: intro start, play pos; [2], [3] their rotations */
 extern s32 D_8010D01C_22340C_BombsAway[];
-extern u16 D_8010D040_223430_BombsAway;
-extern s32 D_8010D044_223434_BombsAway[];
-extern s32 D_8010D1F8_2235E8_BombsAway[];
-extern s32 D_8010D238_223628_BombsAway[];
+extern s16 D_8010D040_223430_BombsAway; /* title sprite y */
+extern HmfVtx D_8010D044_223434_BombsAway[12]; /* splash quads (func_80109A68) */
+extern Gfx D_8010D1F8_2235E8_BombsAway[]; /* display list the splash model calls first */
+extern f32 D_8010D238_223628_BombsAway[]; /* blast model scale per kind (func_8010A350) */
 extern u16 D_8010D248_223638_BombsAway;
-extern s32 D_8010D24C_22363C_BombsAway;
-extern s32 D_8010D250_223640_BombsAway;
+extern f32 D_8010D24C_22363C_BombsAway; /* water texture scroll s (MP1 D_800FFB24) */
+extern f32 D_8010D250_223640_BombsAway; /* water texture scroll t */
 extern s32 D_8010D254_223644_BombsAway; /* random seed (MP1 D_800FFB2C) */
+/* the cannon bob angles: two u16 retail addresses by their own labels (MP1 D_800FFB30/32) */
 extern u16 D_8010D258_223648_BombsAway;
+extern u16 D_8010D25A_22364A_BombsAway;
 extern f32 D_8010D25C_22364C_BombsAway[];
 extern f32 D_8010D26C_22365C_BombsAway[];
-extern s16 D_8010D27E_22366E_BombsAway;
+extern s32 D_8010D27C_22366C_BombsAway[4]; /* blast time per shell kind; read as (s16) (lh +2) */
 extern f32 D_8010D28C_22367C_BombsAway[];
-extern s16 D_8010D29C_22368C_BombsAway;
-extern s32 D_8010D2A4_223694_BombsAway;
+extern s16 D_8010D29C_22368C_BombsAway[4]; /* blast is a column, per shell kind */
+extern f32 D_8010D2A4_223694_BombsAway[]; /* platform hit weight per shell kind */
 
 /* ---- overlay .bss (ovl_2B_bss, 0x8010D940..0x8010E650); MP1 address + 0xD800 up to the blasts,
    + 0xD820 after them, + 0xD860 from D_8010DF80 ---- */
@@ -363,8 +446,12 @@ extern BaResult D_8010DF38_224328_BombsAway[4];
 extern Matrix4f D_8010DF80_224370_BombsAway; /* camera look-at (MP1 D_80100720) */
 extern f32 D_8010DFC0_2243B0_BombsAway;
 extern f32 D_8010DFD0_2243C0_BombsAway;
+/* Two s16 pairs retail addresses by halves (separate labels; MP1 D_80100774/76, D_80100778/7A):
+   the backdrop sprites' wave angles and their scale angles. */
 extern s16 D_8010DFD4_2243C4_BombsAway;
+extern s16 D_8010DFD6_2243C6_BombsAway;
 extern s16 D_8010DFD8_2243C8_BombsAway;
+extern s16 D_8010DFDA_2243CA_BombsAway;
 extern s16 D_8010DFDC_2243CC_BombsAway;
 extern s16 D_8010DFDE_2243CE_BombsAway;
 extern u8 D_8010DFE0_2243D0_BombsAway;
@@ -372,26 +459,26 @@ extern u16 D_8010DFE2_2243D2_BombsAway;
 extern u16 D_8010DFE4_2243D4_BombsAway;
 extern s16 D_8010DFE6_2243D6_BombsAway;
 extern s16 D_8010DFE8_2243D8_BombsAway;
-extern s32 D_8010DFF0_2243E0_BombsAway[]; /* the cannon (MP1 BaCannon D_80100790)? */
+extern BaCannon D_8010DFF0_2243E0_BombsAway; /* the cannon (MP1 D_80100790) */
 extern s32 D_8010E004_2243F4_BombsAway[];
 extern s32 D_8010E008_2243F8_BombsAway[];
-extern s32 D_8010E010_224400_BombsAway[];
+extern BaBomb D_8010E010_224400_BombsAway[3]; /* [2] = D_8010E068 */
 extern s32 D_8010E068_224458_BombsAway[];
 extern s32 D_8010E070_224460_BombsAway[];
-extern s32 D_8010E098_224488_BombsAway[];
+extern BaShell D_8010E098_224488_BombsAway[8];
 extern s32 D_8010E0A4_224494_BombsAway[];
-extern s16 D_8010E398_224788_BombsAway[]; /* effects (MP1 BaEffect D_80100990)? */
-extern s32 D_8010E518_224908_BombsAway[];
+extern BaEffect D_8010E398_224788_BombsAway[32]; /* effect sprites (MP1 D_80100990) */
+extern s16 D_8010E518_224908_BombsAway[4]; /* sprite animation per effect kind ([1], [3] loaded) */
 extern s32 D_8010E51A_22490A_BombsAway[];
-extern s16 D_8010E520_224910_BombsAway;
-extern s32 D_8010E524_224914_BombsAway;
-extern s32 D_8010E528_224918_BombsAway[];
+extern s16 D_8010E520_224910_BombsAway; /* water model */
+extern struct BaVtxMap* D_8010E524_224914_BombsAway; /* water vertex map (func_8010C444) */
+extern s32 D_8010E528_224918_BombsAway[2]; /* water grid spacing x, z */
 extern s16 D_8010E530_224920_BombsAway;
 extern s16 D_8010E532_224922_BombsAway;
-extern s16 D_8010E534_224924_BombsAway;
-extern s32 D_8010E538_224928_BombsAway[];
+extern s16 D_8010E534_224924_BombsAway; /* splash sprite animation */
+extern s32 D_8010E538_224928_BombsAway[3]; /* blast models (u16 ids; read as (s16)) */
 extern s16 D_8010E550_224940_BombsAway; /* 1 while bombs may fall (cleared at the finish) */
-extern s32 D_8010E558_224948_BombsAway[];
+extern BaSplash D_8010E558_224948_BombsAway[5];
 
 /* ---- functions: 218BF0.c ---- */
 
@@ -483,13 +570,13 @@ void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800A
 s16 func_80108620_21EA10_BombsAway(HmfData* model, const char* name);
 HmfMotionObj* func_801086A0_21EA90_BombsAway(HmfData* model, s16 index, s32 arg2);
 HmfMotionObj* func_80108794_21EB84_BombsAway(s16 model, const char* name);
-Vec3f* func_80108810_21EC00_BombsAway(s16 model, const char* name);
-Vec3f* func_8010883C_21EC2C_BombsAway(s16 model, const char* name);
-void func_80108868_21EC58_BombsAway(s16 arg0, s16 arg1, s16 arg2, f32 arg3);
+Vec* func_80108810_21EC00_BombsAway(s16 model, const char* name);
+Vec* func_8010883C_21EC2C_BombsAway(s16 model, const char* name);
+void func_80108868_21EC58_BombsAway(s16 model, s16 src, s16 motion, f32 t);
 void func_801088FC_21ECEC_BombsAway(Matrix4f m, f32 x, f32 y, f32 z, f32* out);
 void func_80108998_21ED88_BombsAway(Vec* v);
 f32 func_80108A4C_21EE3C_BombsAway(f32 x, f32 z);
-void func_80108ACC_21EEBC_BombsAway(Vec* a, Vec* b);
+void func_80108ACC_21EEBC_BombsAway(Vec* dir, f32* angles);
 void func_80108B54_21EF44_BombsAway(Matrix4f m, Vec* v);
 void func_80108CFC_21F0EC_BombsAway(s16 arg0);
 void func_80108DE0_21F1D0_BombsAway(Vec* a, Vec* b);
@@ -500,16 +587,16 @@ void func_80109128_21F518_BombsAway(void);
 void func_80109164_21F554_BombsAway(void);
 void func_80109180_21F570_BombsAway(void);
 void func_801091F4_21F5E4_BombsAway(void);
-void func_80109264_21F654_BombsAway(void);
+void func_80109264_21F654_BombsAway(omObjData* obj);
 void func_80109810_21FC00_BombsAway(void);
 void func_80109908_21FCF8_BombsAway(void);
-void func_801099C4_21FDB4_BombsAway(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-s16 func_80109A68_21FE58_BombsAway(void);
-void func_8010A0D0_2204C0_BombsAway(s32 arg0, s32* arg1, s32 arg2);
-void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale); /* MP1 func_800FD4B8 (splash) */
+void func_801099C4_21FDB4_BombsAway(f32 x, f32 y, f32 z, f32 scale);
+s16 func_80109A68_21FE58_BombsAway(s32 arg0, HuSprite_Unk84_Struct* anim, s32 arg2);
+void func_8010A0D0_2204C0_BombsAway(s32 model, HuSprite_Unk84_Struct* anim, s32 frame);
+void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale);
 void func_8010A1EC_2205DC_BombsAway(void);
 void func_8010A298_220688_BombsAway(void);
-void func_8010A350_220740_BombsAway(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8010A350_220740_BombsAway(f32 x, f32 y, f32 z, s32 kind);
 void func_8010A4BC_2208AC_BombsAway(void);
 void func_8010A4CC_2208BC_BombsAway(void);
 void func_8010AA9C_220E8C_BombsAway(omObjData* obj);
@@ -517,17 +604,52 @@ void func_8010AB08_220EF8_BombsAway(omObjData* obj);
 void func_8010AC2C_22101C_BombsAway(void);
 void func_8010AC60_221050_BombsAway(void);
 void func_8010AD18_221108_BombsAway(void);
-s16 func_8010ADF8_2211E8_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 arg4, s16 arg5, f32 arg6);
+s16 func_8010ADF8_2211E8_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, f32 alpha);
 u16 func_8010B1AC_22159C_BombsAway(u32 range);
 void func_8010B214_221604_BombsAway(omObjData* obj);
 void func_8010B3B8_2217A8_BombsAway(omObjData* obj);
-s32 func_8010B6FC_221AEC_BombsAway(f32 x, f32 z, f32 scale, u16 kind);
-void func_8010B7BC_221BAC_BombsAway(s32 arg0, f32 x, f32 y, f32 z, u16 arg4);
-void func_8010BD44_222134_BombsAway(u16 arg0, u16 arg1);
+s32 func_8010B6FC_221AEC_BombsAway(f32 tx, f32 tz, f32 speed, u16 kind);
+void func_8010B7BC_221BAC_BombsAway(u16 n, f32 tx, f32 tz, f32 speed, u16 kind);
+void func_8010BD44_222134_BombsAway(u16 i, u16 kind);
 void func_8010BE7C_22226C_BombsAway(void);
 void func_8010BFAC_22239C_BombsAway(void);
-void func_8010C444_222834_BombsAway(s16 arg0);
-void func_8010C8A0_222C90_BombsAway(s16 arg0, s32 arg1, s16* arg2);
-void func_8010CBF0_222FE0_BombsAway(s16* arg0, u16 arg1);
+void func_8010C444_222834_BombsAway(s16 model);
+void func_8010C8A0_222C90_BombsAway(s16 model, s32 angle, s16* unused);
+void func_8010CBF0_222FE0_BombsAway(s16* a, u16 n);
+
+/* MG2B-C */
+/* main API 21EA10.c uses (missing from include/) */
+#include "game/camera.h"
+s32 func_800B0FD0_B1BD0(void*, void*); /* strcmp */
+f32 func_800B75A8_B81A8(f32, f32);     /* atan2 (degrees) */
+void func_800B1960_B2560(Matrix4f m, f32 px, f32 py, f32 pz, f32 ax, f32 ay, f32 az, f32 ux, f32 uy,
+                         f32 uz); /* look-at (MP1 HuGuLookAtF) */
+void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t);
+void func_800798F8_7A4F8(s16 sound, s16 pan); /* MP1 func_800607C4 */
+
+void SprPosSet(s16, s16, s16, s16);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void omSetStatBit(omObjData* obj, u16 stat);
+void* HuMemAlloc(s32 size);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, retail does not re-extend it here */
+extern void bcopy(const void*, void*, int);
+extern s16 D_800FA1AA_FADAA;
+extern u8 D_800FDBCA_FE7CA; /* frame buffers */
+int abs(int);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
+void omSetRot(omObjData*, f32, f32, f32);
+void func_8002A00C_2AC0C(s16);
+void func_8002BCA8_2C8A8(s16 model, f32 s, f32 t, s32 arg3, s32 arg4); /* texture scroll (MP1 func_80027C1C) */
+void HuMemFree(void*);
+void SprKill(s16);
+void func_8008221C_82E1C(s16 group, s16 member, f32 alpha);
+s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
+void SprPos3DSet(s16 group, s16 member, s16 camera, f32 x, f32 y, f32 z);
+void SprBankSet(s16 group, s16 member, u16 bank);
+void* SprAnimGet(s16 animIdx);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+f32 func_80029D0C_2A90C(s16); /* motion length */
+extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
 
 #endif

@@ -1,100 +1,1294 @@
 #include "common.h"
 #include "ovl_2B.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108620_21EA10_BombsAway);
+s16 func_80108620_21EA10_BombsAway(HmfData* model, const char* name) {
+    HmfPart* p = model->unk64;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801086A0_21EA90_BombsAway);
+    for (i = 0; i < model->unk10; i++, p++) {
+        if (func_800B0FD0_B1BD0(p->unk12, (void*)name) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108794_21EB84_BombsAway);
+HmfMotionObj* func_801086A0_21EA90_BombsAway(HmfData* model, s16 id, s32 idx) {
+    HmfMotionObj* n = &model->unk84[idx & 0x7FFF];
+    HmfMotionObj* r;
+    s32 i;
+    s16 c;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108810_21EC00_BombsAway);
+    if (n == (HmfMotionObj*)-1) {
+        return NULL;
+    }
+    for (i = 0; i < n->unk00; i++) {
+        c = n->unk50[i];
+        if (c & 0x8000) {
+            if (c != -1) {
+                r = func_801086A0_21EA90_BombsAway(model, id, c & 0x7FFF);
+                if (r != NULL) {
+                    return r;
+                }
+            }
+        } else if (c == id) {
+            return n;
+        }
+    }
+    return NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010883C_21EC2C_BombsAway);
+HmfMotionObj* func_80108794_21EB84_BombsAway(s16 model, const char* name) {
+    HmfData* m = D_800FC834_FD434[model].hmf;
+    s16 id = func_80108620_21EA10_BombsAway(m, name);
+    HmfMotionObj* n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108868_21EC58_BombsAway);
+    if (id < 0) {
+        return NULL;
+    }
+    n = func_801086A0_21EA90_BombsAway(m, id, 0);
+    if (n != NULL) {
+        return n;
+    }
+    return NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801088FC_21ECEC_BombsAway);
+Vec* func_80108810_21EC00_BombsAway(s16 model, const char* name) {
+    HmfMotionObj* n = func_80108794_21EB84_BombsAway(model, name);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108998_21ED88_BombsAway);
+    if (n == NULL) {
+        return NULL;
+    }
+    return &n->unk34;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108A4C_21EE3C_BombsAway);
+Vec* func_8010883C_21EC2C_BombsAway(s16 model, const char* name) {
+    HmfMotionObj* n = func_80108794_21EB84_BombsAway(model, name);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108ACC_21EEBC_BombsAway);
+    if (n == NULL) {
+        return NULL;
+    }
+    return &n->unk40;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108B54_21EF44_BombsAway);
+void func_80108868_21EC58_BombsAway(s16 model, s16 src, s16 motion, f32 t) {
+    HmfData* m = D_800FC834_FD434[model].hmf;
+    HmfVtx* save = m->unk40;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108CFC_21F0EC_BombsAway);
+    m->unk40 = D_800FC834_FD434[src].hmf->unk40;
+    func_8002A15C_2AD5C(model, motion, t);
+    D_800FC834_FD434[model].hmf->unk40 = save;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108DE0_21F1D0_BombsAway);
+void func_801088FC_21ECEC_BombsAway(Matrix4f m, f32 x, f32 y, f32 z, f32* o) {
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    *o++ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    *o = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108E98_21F288_BombsAway);
+void func_80108998_21ED88_BombsAway(Vec* v) {
+    f32 len = v->x * v->x + v->y * v->y + v->z * v->z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80108F40_21F330_BombsAway);
+    len = sqrtf(len);
+    if (len != 0.0f) {
+        len = 1.0 / len;
+        v->x = len * v->x;
+        v->y = len * v->y;
+        v->z = len * v->z;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109118_21F508_BombsAway);
+f32 func_80108A4C_21EE3C_BombsAway(f32 x, f32 z) {
+    f32 a = func_800B75A8_B81A8(z, x);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109128_21F518_BombsAway);
+    if (a < 0.0) {
+        a += 360.0;
+    } else if (a >= 360.0) {
+        a -= 360.0;
+    }
+    return a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109164_21F554_BombsAway);
+void func_80108ACC_21EEBC_BombsAway(Vec* dir, f32* angles) {
+    f32 h = sqrtf(dir->x * dir->x + dir->z * dir->z);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109180_21F570_BombsAway);
+    *angles++ = func_80108A4C_21EE3C_BombsAway(h, -dir->y);
+    *angles++ = func_80108A4C_21EE3C_BombsAway(dir->z, dir->x);
+    *angles = 0.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801091F4_21F5E4_BombsAway);
+void func_80108B54_21EF44_BombsAway(Matrix4f m, Vec* r) {
+    f32 s;
+    f32 c;
+    f64 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109264_21F654_BombsAway);
+    r->x = func_80108A4C_21EE3C_BombsAway(m[2][2], m[1][2]);
+    r->z = func_80108A4C_21EE3C_BombsAway(m[0][0], m[0][1]);
+    s = -m[0][2];
+    d = 1.0 - s * s;
+    if (d < 0.0f) {
+        d = -d;
+    }
+    c = sqrtf(d);
+    if (r->x > 90.0 && r->x < 270.0 && r->z > 90.0 && r->z < 270.0) {
+        r->x += 180.0;
+        if (r->x >= 360.0) {
+            r->x -= 360.0;
+        }
+        r->z += 180.0;
+        if (r->z >= 360.0) {
+            r->z -= 360.0;
+        }
+        c = -c;
+    }
+    r->y = func_80108A4C_21EE3C_BombsAway(c, s);
+}
 
+void func_80108CFC_21F0EC_BombsAway(s16 camera) {
+    HuCamera* cam = &D_800C9B80_CA780[camera];
+
+    func_800B1960_B2560(D_8010DF80_224370_BombsAway, cam->pos.x, cam->pos.y, cam->pos.z, cam->at.x, cam->at.y,
+                        cam->at.z, cam->up.x, cam->up.y, cam->up.z);
+    D_8010DFC0_2243B0_BombsAway = HuMathSin(cam->fov[0] * 0.5) / func_800B7890_B8490(cam->fov[0] * 0.5);
+}
+
+void func_80108DE0_21F1D0_BombsAway(Vec* pos, Vec* out) {
+    f32 v[3];
+    f32 d;
+
+    func_801088FC_21ECEC_BombsAway(D_8010DF80_224370_BombsAway, pos->x, pos->y, pos->z, v);
+    d = v[2] * D_8010DFC0_2243B0_BombsAway;
+    if (d < 0.0f) {
+        d = -d;
+    }
+    out->x = v[0] * 0.75 / d;
+    out->y = -v[1] / d;
+    out->z = 400.0 / d;
+}
+/* An unreferenced 0.0 after func_80108DE0_21F1D0's literals (retail's, kept for the layout). */
+const f64 D_8010D768_223B58_BombsAway = 0.0;
+
+void func_80108E98_21F288_BombsAway(s16 sound, Vec* pos) {
+    Vec o;
+    f32 pan;
+
+    func_80108DE0_21F1D0_BombsAway(pos, &o);
+    pan = o.x * 32.0f;
+    if (pan < -32.0f) {
+        pan = -32.0f;
+    } else if (pan > 32.0f) {
+        pan = 32.0f;
+    }
+    func_800798F8_7A4F8(sound, (s32)pan + 64);
+}
+
+void func_80108F40_21F330_BombsAway(void) {
+    void* file;
+    s16 image;
+
+    func_8010AC60_221050_BombsAway();
+    func_80026DAC_279AC(0, 0x78, 0x78, 0x78);
+    func_80026DAC_279AC(1, 0xFF, 0xFF, 0xFF);
+    func_80026E00_27A00(1, 0.0f, 1000.0f, 5000.0f);
+    Hu3DCamSetPerspective(0, 45.0f, 80.0f, 6000.0f);
+    omAddObj(0x13, 0, 0, -1, func_80109118_21F508_BombsAway);
+    omAddObj(0xC, 2, 0, -1, func_8010B214_221604_BombsAway);
+    omSetStatBit(omAddObj(0xC, 1, 0, -1, func_8010AA9C_220E8C_BombsAway), 0xA0);
+    func_8010A4BC_2208AC_BombsAway();
+    func_8010BE7C_22226C_BombsAway();
+    func_80109810_21FC00_BombsAway();
+    func_8010A1EC_2205DC_BombsAway();
+    func_801091F4_21F5E4_BombsAway();
+    file = DataRead(0x3B000F);
+    image = SprAnimRead(file);
+    DataClose(file);
+    D_8010E530_224920_BombsAway = SprCreate(1, 0);
+    SprAnimSet(D_8010E530_224920_BombsAway, 0, image, 0);
+    SprAttrSet(D_8010E530_224920_BombsAway, 0, 0x4000);
+    SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, 0x78);
+    SprScaleSet(D_8010E530_224920_BombsAway, 0, 2.0f, 2.2f);
+    SprAttrSet(D_8010E530_224920_BombsAway, 0, 0x503C);
+    D_8010DFE0_2243D0_BombsAway = 1;
+    D_8010E532_224922_BombsAway = 0;
+}
+
+void func_80109118_21F508_BombsAway(omObjData* obj) {
+    obj->func_ptr = func_80109128_21F518_BombsAway;
+}
+
+void func_80109128_21F518_BombsAway(void) {
+    func_80109908_21FCF8_BombsAway();
+    func_8010A298_220688_BombsAway();
+    func_8010A4CC_2208BC_BombsAway();
+    func_8010BFAC_22239C_BombsAway();
+    func_8010AD18_221108_BombsAway();
+}
+
+void func_80109164_21F554_BombsAway(void) {
+    func_8010AC2C_22101C_BombsAway();
+}
+
+void func_80109180_21F570_BombsAway(void) {
+    D_800FD474_FE074.x = -22.0f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+    D_8010274C_10334C.x = -5.0f;
+    D_8010274C_10334C.y = 254.5f;
+    D_8010274C_10334C.z = 1.0f;
+    D_800FA610_FB210 = 1378.0f;
+}
+
+void func_801091F4_21F5E4_BombsAway(void) {
+    D_800FD474_FE074.x = 3.0f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+    D_8010274C_10334C.x = -5.0f;
+    D_8010274C_10334C.y = 133.2f;
+    D_8010274C_10334C.z = -1000.0f;
+    D_800FA610_FB210 = 1200.0f;
+}
+
+void func_80109264_21F654_BombsAway(omObjData* obj) {
+    f32 t;
+
+    switch (D_8010CFF0_2233E0_BombsAway) {
+        case 0:
+            D_8010DFF0_2243E0_BombsAway.unk_00.x = D_8010D010_223400_BombsAway[0].x;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.x = D_8010D010_223400_BombsAway[2].x;
+            D_8010DFF0_2243E0_BombsAway.unk_00.y = D_8010D010_223400_BombsAway[0].y;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.y = D_8010D010_223400_BombsAway[2].y;
+            D_8010DFF0_2243E0_BombsAway.unk_00.z = D_8010D010_223400_BombsAway[0].z;
+            D_8010DFF0_2243E0_BombsAway.unk_0C.z = D_8010D010_223400_BombsAway[2].z;
+            D_8010D040_223430_BombsAway = 0x93;
+            D_8010CFF4_2233E4_BombsAway = 0;
+            D_8010CFF0_2233E0_BombsAway++;
+            break;
+        case 1:
+            D_8010DFF0_2243E0_BombsAway.unk_00.x -= 15.0;
+            if (D_8010CFF4_2233E4_BombsAway == 25) {
+                func_8010B6FC_221AEC_BombsAway(700.0f, 500.0f, 1.0f, 0);
+            }
+            if (D_8010CFF4_2233E4_BombsAway == 34) {
+                func_8010B6FC_221AEC_BombsAway(700.0f, 500.0f, 1.0f, 0);
+            }
+            D_8010274C_10334C.z = D_8010DFF0_2243E0_BombsAway.unk_00.z;
+            if (D_8010CFF4_2233E4_BombsAway > 30) {
+                t = (f32)(D_8010CFF4_2233E4_BombsAway - 30) / 20.0;
+                if (t > 1.0) {
+                    t = 1.0f;
+                }
+                D_800FD474_FE074.y = D_800FD474_FE074.y - t * 1.1 * t;
+                D_800FA610_FB210 = D_800FA610_FB210 - t * 7.000000000000001; /* retail: 7 + 1 ulp */
+                D_8010D040_223430_BombsAway = (f32)(D_8010CFF4_2233E4_BombsAway - 30) / 30.0 * 5.0 + 147.0;
+            }
+            if (D_8010CFF4_2233E4_BombsAway < 60) {
+                t = 1.0 - (f32)D_8010CFF4_2233E4_BombsAway / 60.0;
+                if (t < 0.0) {
+                    t = 0.0f;
+                }
+                D_8010274C_10334C.x = D_8010DFF0_2243E0_BombsAway.unk_00.x + t * 300.0 * t;
+            } else {
+                D_8010274C_10334C.x = D_8010DFF0_2243E0_BombsAway.unk_00.x;
+            }
+            if (D_8010CFF4_2233E4_BombsAway >= 93) {
+                D_8010DFF0_2243E0_BombsAway.unk_00.x = D_8010D010_223400_BombsAway[1].x;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.x = D_8010D010_223400_BombsAway[3].x;
+                D_8010DFF0_2243E0_BombsAway.unk_00.y = D_8010D010_223400_BombsAway[1].y;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.y = D_8010D010_223400_BombsAway[3].y;
+                D_8010DFF0_2243E0_BombsAway.unk_00.z = D_8010D010_223400_BombsAway[1].z;
+                D_8010DFF0_2243E0_BombsAway.unk_0C.z = D_8010D010_223400_BombsAway[3].z;
+                func_80109180_21F570_BombsAway();
+                D_800FA610_FB210 = 1000.0f;
+                D_8010D040_223430_BombsAway = 0x3A;
+                D_8010CFF4_2233E4_BombsAway = 0;
+                D_8010CFF0_2233E0_BombsAway++;
+            }
+            break;
+        case 2:
+            if (D_8010CFF4_2233E4_BombsAway == 18) {
+                func_8010A198_220588_BombsAway(D_8010CFF8_2233E8_BombsAway[0].x, D_8010CFF8_2233E8_BombsAway[0].y,
+                                               D_8010CFF8_2233E8_BombsAway[0].z, 1.0f);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    /* retail pans the first shot's sound at the second shot's place */
+                    func_80108E98_21F288_BombsAway(PlaySound(0x28D), &D_8010CFF8_2233E8_BombsAway[1]);
+                }
+            }
+            if (D_8010CFF4_2233E4_BombsAway == 27) {
+                func_8010A198_220588_BombsAway(D_8010CFF8_2233E8_BombsAway[1].x, D_8010CFF8_2233E8_BombsAway[1].y,
+                                               D_8010CFF8_2233E8_BombsAway[1].z, 1.0f);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    func_80108E98_21F288_BombsAway(PlaySound(0x28D), &D_8010CFF8_2233E8_BombsAway[1]);
+                }
+            }
+            D_8010D040_223430_BombsAway = (D_800FA610_FB210 - 1000.0) / 378.0 * 9.0 / 1.5 + 58.0;
+            if (D_8010D040_223430_BombsAway > 64) {
+                D_8010D040_223430_BombsAway = 64;
+            }
+            if (D_800FA610_FB210 < 1378.0) {
+                D_800FA610_FB210 += 12.5;
+            }
+            if (D_8010CFF4_2233E4_BombsAway >= 30) {
+                D_8010D040_223430_BombsAway = 0x40;
+                D_8010CFF4_2233E4_BombsAway = 0;
+                D_8010CFF0_2233E0_BombsAway++;
+            }
+            break;
+    }
+    D_8010CFF4_2233E4_BombsAway++;
+    if (D_8010DFF0_2243E0_BombsAway.unk_00.x > 0.0) {
+        if (D_8010DFF0_2243E0_BombsAway.unk_00.x < 250.0) {
+            D_8010DFF0_2243E0_BombsAway.unk_18 += 0.05;
+        }
+        if (D_8010DFF0_2243E0_BombsAway.unk_18 < 0.0f) {
+            D_8010DFF0_2243E0_BombsAway.unk_00.x += D_8010DFF0_2243E0_BombsAway.unk_18;
+        }
+    }
+    SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, D_8010D040_223430_BombsAway + 8);
+}
+
+// register allocation: file/anim in s0/s1 swapped (masked 0)
+#ifdef NON_MATCHING
+void func_80109810_21FC00_BombsAway(void) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    void* file;
+    s16 anim;
+    u16 i;
+
+    file = DataRead(0x3B0012);
+    D_8010E534_224924_BombsAway = anim = SprAnimRead(file);
+    DataClose(file);
+    for (i = 0; i < 5; i++, p++) {
+        p->unk_00 = 0;
+        p->unk_02 = 0;
+        p->unk_08 = 0;
+        p->unk_2C = 0;
+        p->unk_0C = 0;
+        p->unk_06 = 0;
+        p->unk_10.x = p->unk_10.y = p->unk_10.z = 1.0f;
+        p->unk_1C.x = p->unk_1C.y = p->unk_1C.z = 0.0f;
+        p->unk_04 = func_80109A68_21FE58_BombsAway(0, SprAnimGet(anim), 0);
+        func_800298A4_2A4A4(p->unk_04, 4, 4);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109810_21FC00_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109908_21FCF8_BombsAway);
+void func_80109908_21FCF8_BombsAway(void) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    HuSprite_Unk84_Struct* anim;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_801099C4_21FDB4_BombsAway);
+    anim = SprAnimGet(D_8010E534_224924_BombsAway);
+    for (i = 0; i < 5; i++, p++) {
+        func_8010A0D0_2204C0_BombsAway(p->unk_04, anim, p->unk_02);
+        if (p->unk_00 != 0) {
+            func_800298A4_2A4A4(p->unk_04, 4, 0);
+            if (++p->unk_02 < 16) {
+                continue;
+            }
+            p->unk_02 = 0;
+            p->unk_00 = 0;
+        }
+        func_800298A4_2A4A4(p->unk_04, 4, 4);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109A68_21FE58_BombsAway);
+void func_801099C4_21FDB4_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
+    BaSplash* p = D_8010E558_224948_BombsAway;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A0D0_2204C0_BombsAway);
+    for (i = 0; i < 5; i++, p++) {
+        if (p->unk_00 == 0) {
+            p->unk_00 = 1;
+            p->unk_1C.x = x;
+            p->unk_1C.y = y;
+            p->unk_1C.z = z;
+            p->unk_10.x = scale;
+            p->unk_10.y = scale;
+            p->unk_10.z = 1.0f;
+            func_80029714_2A314(p->unk_04, p->unk_1C.x, p->unk_1C.y, p->unk_1C.z);
+            func_800297E8_2A3E8(p->unk_04, p->unk_10.x, p->unk_10.y, p->unk_10.z);
+            return;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A198_220588_BombsAway);
+s16 func_80109A68_21FE58_BombsAway(s32 arg0, HuSprite_Unk84_Struct* anim, s32 arg2) {
+    HmfData* hmf;
+    Gfx* buf;
+    Gfx* gfx;
+    HmfVtx* to;
+    HmfVtx* from;
+    s32 size;
+    s32 idx;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A1EC_2205DC_BombsAway);
+    buf = gfx = HuMemAlloc(0x200);
+    idx = func_80027FA4_28BA4(0x8A0, buf, 4);
+    hmf = D_800FC834_FD434[idx].hmf;
+    hmf->unk64->unk50 |= 0x71010000;
+    HuMemFree(hmf->unk3C);
+    hmf->unk3C = func_80027154_27D54(0x14, D_800FA1AA_FADAA);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        to = hmf->unk44[i] = func_80027154_27D54(0xC0, hmf->unk0E);
+        from = D_8010D044_223434_BombsAway;
+        for (j = 0; j < 12; j++) {
+            *to++ = *from++;
+        }
+    }
+    gSPDisplayList(gfx++, osVirtualToPhysical(D_8010D1F8_2235E8_BombsAway));
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, G_CULL_BOTH | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR);
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
+    gDPSetBlendColor(gfx++, 0x01, 0x01, 0x01, 0x01);
+    gDPPipeSync(gfx++);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureLUT(gfx++, G_TT_NONE);
+    gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_I, anim->unk00->unk04, anim->unk00->unk06, 0,
+                           G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                           G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetRenderMode(gfx++, 0x4049D8, 0);
+    gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+    gDPPipeSync(gfx++);
+    gSPVertex(gfx++, 0x01000000, 12, 0);
+    for (i = 0; i < 3; i++) {
+        switch (i) {
+            case 0:
+                gDPSetPrimColor(gfx++, 0, 0, 0x7E, 0xFF, 0xFF, 0x40);
+                break;
+            case 1:
+                gDPSetPrimColor(gfx++, 0, 0, 0xC8, 0xFF, 0xFF, 0x40);
+                break;
+            default:
+                gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, 0x40);
+                break;
+        }
+        gDPPipeSync(gfx++);
+        gSP2Triangles(gfx++, i * 4, i * 4 + 1, i * 4 + 2, 0, i * 4 + 1, i * 4 + 3, i * 4 + 2, 0);
+    }
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    size = (u32)gfx - (u32)buf;
+    hmf->unk3C->unk00[0] = hmf->unk3C->unk10 = func_80027154_27D54(size, hmf->unk0E);
+    bcopy(buf, hmf->unk3C->unk00[0], size);
+    HuMemFree(buf);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        hmf->unk3C->unk00[i + 1] = func_80027154_27D54(0x80, hmf->unk0E);
+    }
+    return idx;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A298_220688_BombsAway);
+void func_8010A0D0_2204C0_BombsAway(s32 model, HuSprite_Unk84_Struct* anim, s32 frame) {
+    HmfModel* m = &D_800FC834_FD434[model];
+    HmfData* hmf = m->hmf;
+    Gfx* gfx = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A350_220740_BombsAway);
+    hmf->unk3C->unk00[0] = gfx;
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 0x02, osVirtualToPhysical(anim->unk00[frame].unk00));
+    gSPDisplayList(&gfx[2], osVirtualToPhysical(hmf->unk3C->unk10));
+    gDPPipeSync(&gfx[3]);
+    gSPEndDisplayList(&gfx[4]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4BC_2208AC_BombsAway);
+void func_8010A198_220588_BombsAway(f32 x, f32 y, f32 z, f32 scale) {
+    func_801099C4_21FDB4_BombsAway(x, y, z, (f32)((z + 2250.0) / 1500.0) * scale);
+}
 
+void func_8010A1EC_2205DC_BombsAway(void) {
+    HmfModel* m;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        D_8010E538_224928_BombsAway[i] = func_80018A30_19630(0x10013, 0x99);
+        func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 4);
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        m->unk40 = 0.0f;
+        m->unk44 = 0.0f;
+        if (m->hmf->unk9C != NULL) {
+            m->hmf->unk9C->unk08 = 0.0f;
+        }
+    }
+}
+
+void func_8010A298_220688_BombsAway(void) {
+    HmfModel* m;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        if (func_80029D0C_2A90C((s16)D_8010E538_224928_BombsAway[i]) <= m->unk40) {
+            func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 4);
+            m->unk40 = 0.0f;
+            m->unk44 = 0.0f;
+            if (m->hmf->unk9C != NULL) {
+                m->hmf->unk9C->unk08 = 0.0f;
+            }
+        }
+    }
+}
+
+void func_8010A350_220740_BombsAway(f32 x, f32 y, f32 z, s32 kind) {
+    HmfModel* m;
+    f32 s;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        m = &D_800FC834_FD434[D_8010E538_224928_BombsAway[i]];
+        if (m->unk18 & 4) {
+            if (y < 0.0) {
+                y = 0.0f;
+            }
+            s = D_8010D238_223628_BombsAway[kind];
+            s = s * ((z + 2250.0) / 1500.0);
+            func_800298A4_2A4A4((s16)D_8010E538_224928_BombsAway[i], 4, 0);
+            func_80029714_2A314((s16)D_8010E538_224928_BombsAway[i], x, y + 20.0, z);
+            func_800297E8_2A3E8((s16)D_8010E538_224928_BombsAway[i], s, s, s);
+            m->unk44 = 1.0f;
+            return;
+        }
+    }
+}
+
+void func_8010A4BC_2208AC_BombsAway(void) {
+    D_8010DFE2_2243D2_BombsAway = 1;
+}
+
+// the KMC mul fix puts a nop before the second sprite's mul.s after func_800B7890 (its delay slot
+// filled); retail has none there (one instruction)
+#ifdef NON_MATCHING
+void func_8010A4CC_2208BC_BombsAway(void) {
+    s32 x;
+    s32 x2;
+
+    if (D_8010DFE2_2243D2_BombsAway == 1) {
+        if (D_8010CFF0_2233E0_BombsAway < 2) {
+            return;
+        }
+        D_8010DFE6_2243D6_BombsAway = func_8010ADF8_2211E8_BombsAway(3, 0.0f, 1200.0f, 0.0f, 0.5f, -1, 0.5f);
+        D_8010DFE8_2243D8_BombsAway = func_8010ADF8_2211E8_BombsAway(3, -500.0f, 1000.0f, 0.0f, 0.5f, -1, 0.5f);
+        D_8010DFD4_2243C4_BombsAway = 90;
+        D_8010DFD6_2243C6_BombsAway = 270;
+        D_8010DFD8_2243C8_BombsAway = func_8010B1AC_22159C_BombsAway(360);
+        D_8010DFDA_2243CA_BombsAway = func_8010B1AC_22159C_BombsAway(360);
+        if (D_8010DFD6_2243C6_BombsAway < 180) {
+            D_8010DFDC_2243CC_BombsAway = -1;
+        } else {
+            D_8010DFDC_2243CC_BombsAway = 1;
+        }
+        if (D_8010DFD4_2243C4_BombsAway < 180) {
+            D_8010DFDE_2243CE_BombsAway = -1;
+        } else {
+            D_8010DFDE_2243CE_BombsAway = 1;
+        }
+        D_8010DFD0_2243C0_BombsAway = 0.0f;
+        D_8010DFE2_2243D2_BombsAway = 0;
+    }
+    if (D_8010CFF0_2233E0_BombsAway == 2) {
+        D_8010DFD0_2243C0_BombsAway += 0.5;
+    } else {
+        if ((D_8010DFD4_2243C4_BombsAway += func_8010B1AC_22159C_BombsAway(5)) > 360) {
+            D_8010DFD4_2243C4_BombsAway -= 360;
+        }
+        if ((D_8010DFD6_2243C6_BombsAway += func_8010B1AC_22159C_BombsAway(5)) > 360) {
+            D_8010DFD6_2243C6_BombsAway -= 360;
+        }
+        if ((D_8010DFD8_2243C8_BombsAway += func_8010B1AC_22159C_BombsAway(2)) > 360) {
+            D_8010DFD8_2243C8_BombsAway -= 360;
+        }
+        if ((D_8010DFDA_2243CA_BombsAway += func_8010B1AC_22159C_BombsAway(2)) > 360) {
+            D_8010DFDA_2243CA_BombsAway -= 360;
+        }
+    }
+    if (D_8010DFDC_2243CC_BombsAway > 0 && D_8010DFD6_2243C6_BombsAway < 180) {
+        D_8010DFDC_2243CC_BombsAway = -1;
+        func_8008225C_82E5C(D_8010DFE6_2243D6_BombsAway, 0, 0);
+        SprBankSet(D_8010DFE6_2243D6_BombsAway, 0, 3);
+    } else if (D_8010DFDC_2243CC_BombsAway < 0 && D_8010DFD6_2243C6_BombsAway > 180) {
+        D_8010DFDC_2243CC_BombsAway = 1;
+        func_8008225C_82E5C(D_8010DFE6_2243D6_BombsAway, 0, 3);
+    }
+    if (D_8010DFDE_2243CE_BombsAway > 0 && D_8010DFD4_2243C4_BombsAway < 180) {
+        D_8010DFDE_2243CE_BombsAway = -1;
+        func_8008225C_82E5C(D_8010DFE8_2243D8_BombsAway, 0, 0);
+        SprBankSet(D_8010DFE8_2243D8_BombsAway, 0, 3);
+    } else if (D_8010DFDE_2243CE_BombsAway < 0 && D_8010DFD4_2243C4_BombsAway > 180) {
+        D_8010DFDE_2243CE_BombsAway = 1;
+        func_8008225C_82E5C(D_8010DFE8_2243D8_BombsAway, 0, 3);
+    }
+    x = (s16)(HuMathSin(D_8010DFD4_2243C4_BombsAway * 2) * 10.0f + 130.0f);
+    SprPosSet(D_8010DFE6_2243D6_BombsAway, 0, x,
+              (0.0f - func_800B7890_B8490(D_8010DFD6_2243C6_BombsAway) * 6.0f) + D_8010DFD0_2243C0_BombsAway);
+    x2 = (s16)(HuMathSin(D_8010DFD6_2243C6_BombsAway * 2) * 10.0f + 170.0f);
+    SprPosSet(D_8010DFE8_2243D8_BombsAway, 0, x2,
+              (10.0f - func_800B7890_B8490(D_8010DFD4_2243C4_BombsAway) * 6.0f) + D_8010DFD0_2243C0_BombsAway);
+    SprScaleSet(D_8010DFE6_2243D6_BombsAway, 0, HuMathSin(D_8010DFD8_2243C8_BombsAway) / 8.0f + 0.625,
+                HuMathSin(D_8010DFD8_2243C8_BombsAway) / 8.0f + 0.625);
+    SprScaleSet(D_8010DFE8_2243D8_BombsAway, 0, HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625,
+                HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4CC_2208BC_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AA9C_220E8C_BombsAway);
+void func_8010AA9C_220E8C_BombsAway(omObjData* obj) {
+    obj->func_ptr = func_8010AB08_220EF8_BombsAway;
+    *obj->model = func_80018A30_19630(0x3B0003, 0x99);
+    D_8010E520_224910_BombsAway = *obj->model;
+    func_8002A00C_2AC0C(*obj->model);
+    func_8010C444_222834_BombsAway(*obj->model);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AB08_220EF8_BombsAway);
+void func_8010AB08_220EF8_BombsAway(omObjData* obj) {
+    func_8010C8A0_222C90_BombsAway(*obj->model, (u16)(D_8010D248_223638_BombsAway % 361), obj->model);
+    func_8002BCA8_2C8A8(*obj->model, D_8010D24C_22363C_BombsAway, D_8010D250_223640_BombsAway, 0x20, 0x20);
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_8010D248_223638_BombsAway++;
+        if (D_8010CFF0_2233E0_BombsAway >= 2) {
+            D_8010D24C_22363C_BombsAway += 0.3;
+        } else {
+            D_8010D24C_22363C_BombsAway -= 0.3;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AC2C_22101C_BombsAway);
+void func_8010AC2C_22101C_BombsAway(void) {
+    func_800298A4_2A4A4(D_8010E520_224910_BombsAway, 4, 4);
+    HuMemFree(D_8010E524_224914_BombsAway);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AC60_221050_BombsAway);
+void func_8010AC60_221050_BombsAway(void) {
+    void* file;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AD18_221108_BombsAway);
+    for (i = 0; i < 32; i++) {
+        D_8010E398_224788_BombsAway[i].unk_00 = -1;
+        D_8010E398_224788_BombsAway[i].unk_02 = 0;
+    }
+    file = DataRead(0x3B0011);
+    D_8010E518_224908_BombsAway[1] = SprAnimRead(file);
+    DataClose(file);
+    file = DataRead(0x3B0010);
+    D_8010E518_224908_BombsAway[3] = SprAnimRead(file);
+    DataClose(file);
+}
 
+void func_8010AD18_221108_BombsAway(void) {
+    u16 i;
+    s16 t;
+
+    for (i = 0; i < 32; i++) {
+        if (D_8010E398_224788_BombsAway[i].unk_04 <= 0x20) {
+            if (D_8010E398_224788_BombsAway[i].unk_02 == 1) {
+                SprKill(D_8010E398_224788_BombsAway[i].unk_00);
+                D_8010E398_224788_BombsAway[i].unk_00 = -1;
+            }
+            if ((t = D_8010E398_224788_BombsAway[i].unk_02) > 0) {
+                D_8010E398_224788_BombsAway[i].unk_02 = t - 1;
+            }
+        }
+    }
+}
+
+// register allocation at entry: the kind test and the life argument (masked 0; MP1's twin is
+// NON_MATCHING the same way)
+#ifdef NON_MATCHING
+s16 func_8010ADF8_2211E8_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, f32 alpha) {
+    u16 i;
+
+    if ((u16)kind >= 33) {
+        return 0;
+    }
+    if (alpha <= 0.0f) {
+        return 0;
+    }
+    for (i = 0; i < 32; i++) {
+        if (D_8010E398_224788_BombsAway[i].unk_02 != 0) {
+            continue;
+        }
+        if (D_8010E398_224788_BombsAway[i].unk_00 != -1) {
+            continue;
+        }
+        D_8010E398_224788_BombsAway[i].unk_02 = life;
+        D_8010E398_224788_BombsAway[i].unk_04 = kind;
+        D_8010E398_224788_BombsAway[i].unk_00 = SprCreate(1, 0);
+        SprAnimSet(D_8010E398_224788_BombsAway[i].unk_00, 0, D_8010E518_224908_BombsAway[kind], 0);
+        func_8008221C_82E1C(D_8010E398_224788_BombsAway[i].unk_00, 0, alpha);
+        if (kind != 3) {
+            func_8008225C_82E5C(D_8010E398_224788_BombsAway[i].unk_00, 0, 2);
+        } else {
+            func_8008225C_82E5C(D_8010E398_224788_BombsAway[i].unk_00, 0, 3);
+        }
+        if (kind != 3) {
+            SprAttrSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0x100C);
+        } else {
+            SprAttrSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0x503C);
+        }
+        if ((u16)kind < 2) {
+            func_800824B4_830B4(D_8010E398_224788_BombsAway[i].unk_00, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+        }
+        SprPos3DSet(D_8010E398_224788_BombsAway[i].unk_00, 0, 0, x, y, z);
+        switch (kind) {
+            case 0:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.6;
+                break;
+            case 1:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.5;
+                break;
+            case 2:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale * 0.08;
+                break;
+            case 3:
+                D_8010E398_224788_BombsAway[i].unk_08 = scale;
+                break;
+        }
+        SprScaleSet(D_8010E398_224788_BombsAway[i].unk_00, 0, D_8010E398_224788_BombsAway[i].unk_08,
+                    D_8010E398_224788_BombsAway[i].unk_08);
+        break;
+    }
+    /* With every effect busy (i == 32) retail reads past the array: D_8010E518[0] on the N64. */
+    return D_8010E398_224788_BombsAway[i].unk_00;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010ADF8_2211E8_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B1AC_22159C_BombsAway);
+u16 func_8010B1AC_22159C_BombsAway(u32 n) {
+    D_8010D254_223644_BombsAway = (u32)(D_8010D254_223644_BombsAway * 0x19971204 + 0x19760831) >> 16;
+    if (n == 0) {
+        return (u16)D_8010D254_223644_BombsAway;
+    }
+    return (u32)D_8010D254_223644_BombsAway % n;
+}
 
+// retail stores 0 to the second model's unk40 and reads it back for trans and the cannon's x/z
+// rotation (one f2 kept); GCC here takes the 0.0f from unk44 and reloads (masked 5)
+#ifdef NON_MATCHING
+void func_8010B214_221604_BombsAway(omObjData* obj) {
+    BaBomb* p;
+    u16 i;
+
+    obj->func_ptr = func_8010B3B8_2217A8_BombsAway;
+    obj->model[0] = func_80018A30_19630(0x3B0004, 0x99);
+    D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
+    D_800FC834_FD434[obj->model[0]].unk40 = 0.0f;
+    obj->model[1] = func_80018A30_19630(0x3B000C, 0x499);
+    D_800FC834_FD434[obj->model[1]].unk44 = 0.0f;
+    obj->trans.x = obj->trans.z = D_800FC834_FD434[obj->model[1]].unk40 = 0.0f;
+    obj->trans.y = -30.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.x = 150.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.y = -50.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_00.z = -2250.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_18 = -3.5f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.x = 0.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.y = 50.0f;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.z = 0.0f;
+    for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++) {
+        p->unk_14 = 0;
+        p->unk_10 = 0;
+        p->unk_08 = 0;
+        p->unk_04 = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B214_221604_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B3B8_2217A8_BombsAway);
+void func_8010B3B8_2217A8_BombsAway(omObjData* obj) {
+    BaBomb* p;
+    HmfModel* m0;
+    HmfModel* m1;
+    f32 bob;
+    u16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B6FC_221AEC_BombsAway);
+    func_80109264_21F654_BombsAway(obj);
+    if ((D_8010D258_223648_BombsAway += 2) >= 360) {
+        D_8010D258_223648_BombsAway -= 360;
+    }
+    if ((D_8010D25A_22364A_BombsAway += 4) >= 360) {
+        D_8010D25A_22364A_BombsAway -= 360;
+    }
+    bob = HuMathSin(D_8010D258_223648_BombsAway) * 10.0 + 50.0;
+    D_8010DFF0_2243E0_BombsAway.unk_0C.z = HuMathSin(D_8010D258_223648_BombsAway) * 3.0f;
+    omSetRot(obj, D_8010DFF0_2243E0_BombsAway.unk_0C.x, D_8010DFF0_2243E0_BombsAway.unk_0C.y,
+             D_8010DFF0_2243E0_BombsAway.unk_0C.z);
+    omSetTra(obj, D_8010DFF0_2243E0_BombsAway.unk_00.x, D_8010DFF0_2243E0_BombsAway.unk_00.y - 75.0 + bob,
+             D_8010DFF0_2243E0_BombsAway.unk_00.z);
+    func_8002979C_2A39C(obj->model[1], D_8010DFF0_2243E0_BombsAway.unk_0C.x, D_8010DFF0_2243E0_BombsAway.unk_0C.y,
+                        D_8010DFF0_2243E0_BombsAway.unk_0C.z);
+    func_80029714_2A314(obj->model[1], D_8010DFF0_2243E0_BombsAway.unk_00.x, D_8010DFF0_2243E0_BombsAway.unk_00.y - 75.0,
+                        D_8010DFF0_2243E0_BombsAway.unk_00.z);
+    m0 = &D_800FC834_FD434[obj->model[0]];
+    m1 = &D_800FC834_FD434[obj->model[1]];
+    for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++) {
+        if (p->unk_08 == 0) {
+            continue;
+        }
+        if (i < 2) {
+            func_8010B7BC_221BAC_BombsAway(i, p->unk_1C, p->unk_24, p->unk_18, p->unk_04);
+            p->unk_08 = 0;
+            continue;
+        }
+        if (m0->unk40 == 0.0) {
+            m0->unk44 = 0.5f;
+            p->unk_0C = 0;
+            if (D_8010E550_224940_BombsAway != 0) {
+                PlaySound(0x292);
+            }
+            continue;
+        }
+        if (m0->unk40 >= 5.0 && m1->unk40 == 0.0) {
+            m1->unk44 = 0.5f;
+            continue;
+        }
+        if (m0->unk40 >= 90.0) {
+            if (p->unk_0C == 0) {
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x293);
+                }
+            } else if (p->unk_0C >= 11) {
+                func_8010B7BC_221BAC_BombsAway(i, p->unk_1C, p->unk_24, p->unk_18, p->unk_04);
+                p->unk_08 = 0;
+            }
+            p->unk_0C++;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B7BC_221BAC_BombsAway);
+s32 func_8010B6FC_221AEC_BombsAway(f32 tx, f32 tz, f32 speed, u16 kind) {
+    BaBomb* p;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BD44_222134_BombsAway);
+    if (kind == 3) {
+        p = &D_8010E010_224400_BombsAway[2];
+        if (p->unk_08 != 0) {
+            return 0;
+        }
+    found:
+        p->unk_08 = 1;
+        p->unk_0C = 0;
+        p->unk_04 = kind;
+        p->unk_18 = speed;
+        p->unk_1C = tx;
+        p->unk_24 = tz;
+        return 1;
+    }
+    for (i = 0; i < 2; i++) {
+        if (++D_8010DFE4_2243D4_BombsAway >= 2) {
+            D_8010DFE4_2243D4_BombsAway = 0;
+        }
+        p = &D_8010E010_224400_BombsAway[D_8010DFE4_2243D4_BombsAway];
+        if (p->unk_08 == 0) {
+            goto found;
+        }
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BE7C_22226C_BombsAway);
+void func_8010B7BC_221BAC_BombsAway(u16 n, f32 tx, f32 tz, f32 speed, u16 kind) {
+    BaShell* s;
+    u16 i;
+    f32 dx;
+    f32 dz;
 
+    for (s = D_8010E098_224488_BombsAway, i = 0; i < 8; i++, s++) {
+        if (s->unk_00 == 0) {
+            break;
+        }
+    }
+    if (i < 8) {
+        func_8010BD44_222134_BombsAway(i, n);
+        s->unk_4C = tx;
+        s->unk_50 = 0.0f;
+        s->unk_54 = tz;
+        switch (kind) {
+            case 2:
+                s->unk_54 += 120.0;
+                break;
+            case 3:
+                s->unk_54 += 100.0;
+                break;
+        }
+        s->unk_58 = speed;
+        s->unk_02 = kind;
+        s->unk_34.x += D_8010DFF0_2243E0_BombsAway.unk_00.x;
+        s->unk_34.y += D_8010DFF0_2243E0_BombsAway.unk_00.y;
+        s->unk_34.z += D_8010DFF0_2243E0_BombsAway.unk_00.z;
+        dx = s->unk_34.x - s->unk_4C;
+        dz = s->unk_34.z - s->unk_54;
+        if (dx != 0.0f) {
+            s->unk_40.x = -(dx / 30.0 * s->unk_58);
+        } else {
+            s->unk_40.x = 0.0f;
+        }
+        if (dz != 0.0f) {
+            s->unk_40.z = -(dz / 30.0 * s->unk_58);
+        } else {
+            s->unk_40.z = 0.0f;
+        }
+        s->unk_40.y = 0.0f;
+        s->unk_08 = 30.0f / s->unk_58;
+        s->unk_30 = s->unk_28 = s->unk_34.y;
+        s->unk_2C = D_8010D25C_22364C_BombsAway[s->unk_02];
+        s->unk_1C = D_8010D26C_22365C_BombsAway[s->unk_02];
+        s->unk_24 = HuMathSin(s->unk_1C) * s->unk_2C;
+        s->unk_20 = (180.0 - s->unk_1C) / (f32)s->unk_08;
+        s->unk_00 = 1;
+        switch (kind) {
+            case 0:
+            case 1:
+                func_800298A4_2A4A4(s->unk_0C[0], 4, 0);
+                func_80029714_2A314(s->unk_0C[0], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x28C);
+                }
+                break;
+            case 2:
+                func_800298A4_2A4A4(s->unk_0C[1], 4, 0);
+                func_80029714_2A314(s->unk_0C[1], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                if (D_8010E550_224940_BombsAway != 0) {
+                    PlaySound(0x28C);
+                }
+                break;
+            case 3:
+                func_800298A4_2A4A4(s->unk_0C[2], 4, 0);
+                func_80029714_2A314(s->unk_0C[2], s->unk_34.x, s->unk_34.y, s->unk_34.z);
+                break;
+        }
+        func_800298A4_2A4A4(s->unk_0C[3], 4, 0);
+        func_80029714_2A314(s->unk_0C[3], s->unk_34.x, 0.0f, s->unk_34.z);
+        switch (s->unk_02) {
+            case 0:
+                if (n == 0) {
+                    func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, D_8010DFF0_2243E0_BombsAway.unk_00.z,
+                                                   2.0f, 16, 1.0f);
+                } else {
+                    func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 70.0, s->unk_34.y + 30.0,
+                                                   D_8010DFF0_2243E0_BombsAway.unk_00.z, 2.0f, 16, 1.0f);
+                }
+                break;
+            case 1:
+            case 2:
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 1.0f, 16, 1.0f);
+                break;
+            case 3:
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 50.0, s->unk_34.y + 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x - 50.0, s->unk_34.y + 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x + 50.0, s->unk_34.y - 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x - 50.0, s->unk_34.y - 50.0, s->unk_34.z, 1.5f, 16, 1.0f);
+                func_8010ADF8_2211E8_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 1.0f, 16, 1.0f);
+                break;
+        }
+    }
+}
+
+void func_8010BD44_222134_BombsAway(u16 i, u16 kind) {
+    BaShell* s = &D_8010E098_224488_BombsAway[i];
+
+    s->unk_00 = 0;
+    s->unk_5C = 1.0f;
+    s->unk_04 = 0;
+    switch (kind) {
+        case 0:
+            s->unk_34.x = -200.0f;
+            s->unk_34.y = 200.0f;
+            s->unk_34.z = 200.0f;
+            break;
+        case 1:
+            s->unk_34.x = 200.0f;
+            s->unk_34.y = 200.0f;
+            s->unk_34.z = 200.0f;
+            break;
+        case 2:
+            s->unk_34.x = 50.0f;
+            s->unk_34.y = 300.0f;
+            s->unk_34.z = 300.0f;
+            break;
+    }
+    func_800298A4_2A4A4(s->unk_0C[0], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[1], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[2], 4, 4);
+    func_800298A4_2A4A4(s->unk_0C[3], 4, 4);
+    s->unk_40.x = s->unk_40.y = s->unk_40.z = 0.0f;
+}
+
+/* Retail does not re-extend func_80027D3C's s16 result here. */
+#define BA_MODEL_COPY(m) (((s32(*)(s16))func_80027D3C_2893C)(m))
+void func_8010BE7C_22226C_BombsAway(void) {
+    BaShell* s;
+    u16 i;
+
+    for (s = D_8010E098_224488_BombsAway, i = 0; i < 8; i++, s++) {
+        if (i == 0) {
+            s->unk_0C[0] = func_80018A30_19630(0x3B0000, 0x99);
+            s->unk_0C[1] = func_80018A30_19630(0x3B000D, 0x99);
+            s->unk_0C[2] = func_80018A30_19630(0x3B0001, 0x99);
+            s->unk_0C[3] = func_80018A30_19630(0x3B0005, 0x99);
+            D_800FC834_FD434[s->unk_0C[0]].hmf->unk84->unk58[3][2] = -5.0f;
+        } else {
+            s->unk_0C[0] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[0]);
+            s->unk_0C[1] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[1]);
+            s->unk_0C[2] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[2]);
+            s->unk_0C[3] = BA_MODEL_COPY(D_8010E098_224488_BombsAway[0].unk_0C[3]);
+        }
+        func_8010BD44_222134_BombsAway(i, 0);
+    }
+}
+
+// as MP1's twin (func_800FEE2C): retail computes a dead (z + 2250) / 150 that GCC deletes here
+// (its two doubles then drop out of .rodata), keeps 0.0f in f22 across the loop, and has a
+// 16-byte larger frame; calls, stores and the rest are the same
+#ifdef NON_MATCHING
+void func_8010BFAC_22239C_BombsAway(void) {
+    BaShell* s;
+    Vec out[2];
+    Vec dir;
+    f32 f;
+    s32 hit;
+    u16 model;
+    u16 i;
+
+    for (i = 0; i < 8; i++) {
+        s = &D_8010E098_224488_BombsAway[i];
+        if (s->unk_00 != 0) {
+            if (s->unk_34.x > 2500.0 || (s->unk_02 == 0 && s->unk_40.y < 0.0f)) {
+                func_8010BD44_222134_BombsAway(i, 0);
+                continue;
+            }
+            hit = func_801074D8_21D8C8_BombsAway(&s->unk_34, &s->unk_40, &s->unk_34);
+            if (hit != 0) {
+                f = (s->unk_34.z + 2250.0) / 150.0; /* retail computes this and never uses it */
+                if (hit > 0) {
+                    if (D_8010E550_224940_BombsAway != 0) {
+                        PlaySound(s->unk_02 == 3 ? 0x294 : 0x28E);
+                    }
+                    func_8010A350_220740_BombsAway(s->unk_34.x, s->unk_34.y, s->unk_34.z, s->unk_02);
+                    func_80107758_21DB48_BombsAway(s->unk_34.x, s->unk_34.z, D_8010D2A4_223694_BombsAway[s->unk_02]);
+                    /* retail passes the column flag as an s16 (func_80103FC4 reads a u16) */
+                    ((void (*)(s16, f32, f32, f32, f32, s16))func_80103FC4_21A3B4_BombsAway)(
+                        D_8010D27C_22366C_BombsAway[s->unk_02], s->unk_34.x, s->unk_34.y, s->unk_34.z,
+                        D_8010D28C_22367C_BombsAway[s->unk_02] * 100.0, D_8010D29C_22368C_BombsAway[s->unk_02]);
+                } else {
+                    if (D_8010E550_224940_BombsAway != 0) {
+                        func_80108E98_21F288_BombsAway(PlaySound(0x28D), &s->unk_34);
+                    }
+                    func_80107758_21DB48_BombsAway(s->unk_34.x, s->unk_34.z, -1.0f);
+                    func_8010A198_220588_BombsAway(s->unk_34.x, 0.0f, s->unk_34.z, 1.0f);
+                }
+                func_8010BD44_222134_BombsAway(i, 0);
+            } else {
+                s->unk_34.x += s->unk_40.x;
+                s->unk_34.z += s->unk_40.z;
+                if (s->unk_04 >= s->unk_08) {
+                    f = s->unk_30 - 30.0;
+                } else {
+                    s->unk_1C += s->unk_20;
+                    f = HuMathSin(s->unk_1C) * s->unk_2C;
+                }
+                s->unk_34.y = f + s->unk_28 - s->unk_24;
+                s->unk_40.y = f - s->unk_30;
+                s->unk_30 = f;
+                s->unk_04++;
+                func_80103FC4_21A3B4_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 50.0f, 0);
+                if (s->unk_34.z <= -750.0) {
+                    s->unk_5C = -(750.0 / s->unk_34.z);
+                }
+            }
+        }
+        if (s->unk_02 < 4 && s->unk_02 >= 2) {
+            model = s->unk_0C[s->unk_02 - 1];
+            dir.x = s->unk_40.x;
+            dir.y = s->unk_40.y;
+            dir.z = s->unk_40.z;
+            func_80108998_21ED88_BombsAway(&dir);
+            func_80108ACC_21EEBC_BombsAway(&dir, &out[0].x);
+            func_8002979C_2A39C(model, out[0].x, out[0].y, out[0].z);
+        } else {
+            model = s->unk_0C[0];
+            func_8002979C_2A39C(s->unk_0C[0], 0.0f, 0.0f, 0.0f);
+        }
+        f = s->unk_5C * 1.1 * 0.2 * 5.0;
+        func_800297E8_2A3E8(model, f, f, f);
+        func_800297E8_2A3E8(s->unk_0C[3], f, f, f);
+        func_80029714_2A314(model, s->unk_34.x, s->unk_34.y, s->unk_34.z);
+        /* func_80106F60 fills out[0] (ground position) and out[1] (its rotation) */
+        if (func_80106F60_21D350_BombsAway(&s->unk_34, out) != 0) {
+            func_80029714_2A314(s->unk_0C[3], s->unk_34.x, out[0].y, s->unk_34.z);
+            func_8002979C_2A39C(s->unk_0C[3], out[1].x, out[1].y, out[1].z);
+        } else {
+            func_80029714_2A314(s->unk_0C[3], s->unk_34.x, 100.0f, s->unk_34.z);
+            func_8002979C_2A39C(s->unk_0C[3], 0.0f, 0.0f, 0.0f);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BFAC_22239C_BombsAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010C444_222834_BombsAway);
+void func_8010C444_222834_BombsAway(s16 model) {
+    s16 xs[32];
+    s16 zs[32];
+    HmfData* m;
+    HmfVtx* v;
+    s16 nz;
+    s16 nx;
+    s16 i;
+    s16 j;
+    s16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010C8A0_222C90_BombsAway);
+    m = D_800FC834_FD434[model].hmf;
+    v = m->unk40;
+    nz = 0;
+    nx = 0;
+    i = 0;
+    n = m->unk18;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            xs[nx] = v->unk00;
+            nx++;
+        }
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            zs[nz] = v->unk04;
+            nz++;
+        }
+    }
+    func_8010CBF0_222FE0_BombsAway(xs, nx);
+    func_8010CBF0_222FE0_BombsAway(zs, nz);
+    D_8010E524_224914_BombsAway = func_80027154_27D54(n * 6, 0x7918);
+    for (i = 0; i < n; i++) {
+        D_8010E524_224914_BombsAway[i].unk_00 = 1;
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            j = nx - 1;
+        }
+        D_8010E524_224914_BombsAway[i].unk_02 = j;
+        if (j == 0 || j == nx - 1) {
+            D_8010E524_224914_BombsAway[i].unk_00 = 0;
+        }
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            j = nz - 1;
+        }
+        D_8010E524_224914_BombsAway[i].unk_04 = j;
+        if (j == 0 || j == nz - 1) {
+            D_8010E524_224914_BombsAway[i].unk_00 = 0;
+        }
+    }
+    D_8010E528_224918_BombsAway[0] = abs(xs[0] - xs[1]);
+    D_8010E528_224918_BombsAway[1] = abs(zs[0] - zs[1]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010CBF0_222FE0_BombsAway);
+void func_8010C8A0_222C90_BombsAway(s16 model, s32 angle, s16* unused) {
+    HmfData* m;
+    BaVtxMap* map;
+    HmfVtx* src;
+    HmfVtx* dst;
+    u16 n;
+    s16 phase;
+    u16 i;
+    f32 a;
+    f32 s1;
+    f32 s2;
+    f32 ax;
+    f32 ay;
+    f32 d;
+    s32 pad[4]; /* unused: retail's frame is 16 bytes larger */
+
+    phase = 0;
+    m = D_800FC834_FD434[model].hmf;
+    map = D_8010E524_224914_BombsAway;
+    src = m->unk40;
+    dst = m->unk44[D_800FDBE0_FE7E0];
+    n = m->unk18;
+    a = angle;
+    s1 = HuMathSin(a);
+    s2 = HuMathSin(angle * 2);
+    HuMathSin(a);
+    ax = (f32)((u32)D_8010E528_224918_BombsAway[0] / 6) * D_800FC834_FD434[model].scale.x;
+    ay = (f32)((u32)D_8010E528_224918_BombsAway[0] / 10) * D_800FC834_FD434[model].scale.y;
+    if (angle == 0) {
+        phase++;
+    }
+    for (i = 0; i < n; src++, dst++, i++, map++) {
+        if (map->unk_00 != 0) {
+            d = s1 * ax;
+            if (map->unk_04 & 1) {
+                dst->unk00 = src->unk00 + d;
+            } else {
+                dst->unk00 = src->unk00 - d;
+            }
+            if (phase & 1) {
+                if ((map->unk_02 & 1) && (map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->unk_02 + map->unk_04) & 1) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            } else {
+                if (!(map->unk_02 & 1) && !(map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->unk_02 & 1) && (map->unk_04 & 1)) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            }
+        } else {
+            dst->unk00 = src->unk00;
+            dst->unk02 = src->unk02;
+            dst->unk04 = src->unk04;
+        }
+    }
+}
+
+void func_8010CBF0_222FE0_BombsAway(s16* a, u16 n) {
+    u16 i;
+    u16 j;
+    s16 t;
+
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (a[i] > a[j]) {
+                t = a[i];
+                a[i] = a[j];
+                a[j] = t;
+            }
+        }
+    }
+}
