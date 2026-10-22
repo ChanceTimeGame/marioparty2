@@ -32,7 +32,17 @@ typedef struct Ovl4ECamKey {
     /* 0x18 */ f32 unk18;
 } Ovl4ECamKey; /* size = 0x1C */
 
+/* A view of main's esprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
+typedef struct Ovl4EEsprite {
+    /* 0x00 */ char pad00[0xA];
+    /* 0x0A */ s16 x;
+    /* 0x0C */ s16 y;
+    /* 0x0E */ char pad0E[0x16];
+} Ovl4EEsprite; /* size = 0x24 */
+
 /* ---- main ---- */
+
+extern void* D_800F93FC_F9FFC; /* 1AE60.c: EspriteSlot* */
 
 /* Main symbols this overlay reaches at an offset (declared raw; their own types are elsewhere). */
 extern u8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i (the player order) */
@@ -150,6 +160,7 @@ extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 /* ---- bss (asm) ---- */
 
 extern u8 D_8010DA80_335440_name_4E[4]; /* per player: walking (func_80105148) */
+extern s16 D_8010DA90_335450_name_4E;   /* closes the message window (func_80107554) */
 
 extern s16 D_8010DAB6_335476_name_4E;
 extern s16 D_8010DAB8_335478_name_4E;
@@ -159,7 +170,15 @@ extern u16 D_8010DAD2_335492_name_4E[4]; /* second menu's four row sprites */
 extern u16 D_8010DAE6_3354A6_name_4E[6]; /* third menu: [0] panel, [1..4] = D_8010DAE8, [5] = D_8010DAF0 */
 extern u16 D_8010DAE8_3354A8_name_4E[4]; /* third menu: the four character icons */
 extern u16 D_8010DAF0_3354B0_name_4E;
-extern s16 D_8010DB60_335520_name_4E;
+extern u16 D_8010DAFA_3354BA_name_4E[4];
+extern u16 D_8010DB04_3354C4_name_4E;
+extern s16 D_8010DB10_3354D0_name_4E[8];
+extern s16 D_8010DB20_3354E0_name_4E[32];
+extern s16 D_8010DB60_335520_name_4E;   /* the message window */
+extern s16 D_8010DB62_335522_name_4E;   /* 1: window sound request (func_80107554) */
+extern s16 D_8010DB88_335548_name_4E[];
+extern s16 D_8010DBDC_33559C_name_4E;
+extern s16 D_8010DBDE_33559E_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
 extern u8 D_8010DBE3_3355A3_name_4E;   /* bit per player: may walk to D_8010DBE8 (func_80105148) */
@@ -205,15 +224,15 @@ s32 func_80105454_32CE14_name_4E(void);
 s32 func_80105F80_32D940_name_4E(void);
 s32 func_80106228_32DBE8_name_4E(s32 arg0);
 void func_801064F0_32DEB0_name_4E(s32 arg0);
-void func_80106BF8_32E5B8_name_4E(s32 arg0, s32 arg1, s32 arg2);
-void func_80106C30_32E5F0_name_4E(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+void func_80106BF8_32E5B8_name_4E(u16 spr, s32 dx, s32 dy);
+void func_80106C30_32E5F0_name_4E(s16 grp, s16 idx, s16 dx, s16 dy);
 void func_80106CB0_32E670_name_4E(void);
 void func_80106E18_32E7D8_name_4E(void);
 void func_801070AC_32EA6C_name_4E(u8 *arg0, s16 arg1);
 void func_80107324_32ECE4_name_4E(void);
 void func_8010732C_32ECEC_name_4E(s16 arg0);
 void func_80107554_32EF14_name_4E(void);
-void func_8010760C_32EFCC_name_4E(s32 arg0);
+void func_8010760C_32EFCC_name_4E(s32 mes);
 s32 func_80107638_32EFF8_name_4E(void);
 void func_801076C0_32F080_name_4E(void);
 void func_801076E4_32F0A4_name_4E(void);
