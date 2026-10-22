@@ -681,30 +681,261 @@ s32 func_80106F2C_2F5E5C_name_46(void) {
     return D_80108248_2F7178_name_46;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80106F38_2F5E68_name_46);
+void func_80106F38_2F5E68_name_46(void) {
+    f32 scale;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_801070C8_2F5FF8_name_46);
+    scale = D_80108250_2F7180_name_46[0]->scale.x;
+    while (TRUE) {
+        while (scale >= 0.95f) {
+            for (i = 0; i < 2; i++) {
+                if (D_80108238_2F7168_name_46[i] == 0) {
+                    D_80108250_2F7180_name_46[i]->scale.x = scale;
+                    D_80108250_2F7180_name_46[i]->scale.y = scale;
+                    D_80108250_2F7180_name_46[i]->scale.z = scale;
+                }
+            }
+            scale -= 0.0071f;
+            HuPrcVSleep();
+        }
+        while (scale <= 1.05f) {
+            for (i = 0; i < 2; i++) {
+                if (D_80108238_2F7168_name_46[i] == 0) {
+                    D_80108250_2F7180_name_46[i]->scale.x = scale;
+                    D_80108250_2F7180_name_46[i]->scale.y = scale;
+                    D_80108250_2F7180_name_46[i]->scale.z = scale;
+                }
+            }
+            scale += 0.0071f;
+            HuPrcVSleep();
+        }
+        if (scale >= 1.05f && D_80108238_2F7168_name_46[0] != 0 && D_80108238_2F7168_name_46[1] != 0) {
+            omDelPrcObj(NULL);
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_80108198_2F70C8_name_46[5] = { 0xFFFFFFDC, 0xFFFFFFF0, 0x00000004, 0x00000008, 0x00000016 };
+void func_801070C8_2F5FF8_name_46(void) {
+    void* data;
 
-__asm__(".section .rodata");
-const u32 D_801081AC_2F70DC_name_46[5] = { 0x00000000, 0x00000000, 0x00000000, 0x00000004, 0x00000004 };
+    data = DataRead(0x3A);
+    D_8010827C_2F71AC_name_46 = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x38);
+    D_8010828C_2F71BC_name_46 = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x3C);
+    D_8010828A_2F71BA_name_46 = SprAnimRead(data);
+    DataClose(data);
+    D_80108288_2F71B8_name_46 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107158_2F6088_name_46);
+s16 func_80107158_2F6088_name_46(s16 x, s16 y) {
+    s32 xs[5] = { -36, -16, 4, 8, 22 };
+    s32 ys[5] = { 0, 0, 0, 4, 4 };
+    s32 anims[5] = { D_8010827C_2F71AC_name_46, D_8010827C_2F71AC_name_46, D_8010828A_2F71BA_name_46,
+                     D_8010828C_2F71BC_name_46, D_8010828C_2F71BC_name_46 };
+    s16 group;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_801073EC_2F631C_name_46);
+    group = D_8010827E_2F71AE_name_46[D_80108288_2F71B8_name_46] = SprCreate(6, 5);
+    func_800824F4_830F4(group, 1, 0);
+    func_800824F4_830F4(group, 2, 0);
+    func_800824F4_830F4(group, 3, 0);
+    func_800824F4_830F4(group, 4, 0);
+    func_800824F4_830F4(group, 5, 0);
+    SprAnimSet(group, 0, D_8010827C_2F71AC_name_46, 0);
+    SprAttrReset(group, 0, 0xFFFF);
+    SprAttrSet(group, 0, 0x8000);
+    SprPosSet(group, 0, x, y);
+    for (i = 1; i < 6; i++) {
+        SprAnimSet(group, i, anims[i - 1], 0);
+        SprAttrReset(group, i, 0xFFFF);
+        SprAttrSet(group, i, 0x8000);
+        SprPosSet(group, i, xs[i - 1], ys[i - 1]);
+    }
+    D_80108288_2F71B8_name_46++;
+    return group;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107448_2F6378_name_46);
+void func_801073EC_2F631C_name_46(s16 group) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107644_2F6574_name_46);
+    for (i = 0; i < 6; i++) {
+        SprAttrSet(group, i, 0x8000);
+    }
+}
 
+void func_80107448_2F6378_name_46(s16 group, f32 secs) {
+    s32 n;
+
+    n = secs * 100.0f;
+    SprAttrReset(group, 5, 0x8000);
+    func_800822A8_82EA8(group, 5, n % 10, 0);
+    n /= 10;
+    func_8008225C_82E5C(group, 5, 1);
+    SprAttrReset(group, 4, 0x8000);
+    func_800822A8_82EA8(group, 4, n % 10, 0);
+    n /= 10;
+    func_8008225C_82E5C(group, 4, 1);
+    SprAttrReset(group, 3, 0x8000);
+    func_800822A8_82EA8(group, 3, 7, 0);
+    func_8008225C_82E5C(group, 3, 1);
+    SprAttrReset(group, 2, 0x8000);
+    func_800822A8_82EA8(group, 2, n % 10, 0);
+    n /= 10;
+    func_8008225C_82E5C(group, 2, 1);
+    if (n != 0) {
+        SprAttrReset(group, 1, 0x8000);
+        func_800822A8_82EA8(group, 1, n, 0);
+        func_8008225C_82E5C(group, 1, 1);
+    } else {
+        SprAttrSet(group, 1, 0x8000);
+    }
+}
+
+void func_80107644_2F6574_name_46(s16 group, f32 scale) {
+    s16 i;
+
+    for (i = 0; i < 6; i++) {
+        SprScaleSet(group, i, scale, scale);
+    }
+}
+
+/* The winner's time pulses (1.0 -> 0.8 -> 1.2) for at least 30 frames; nothing on a draw. */
+#ifdef NON_MATCHING
+/* Only the winner test differs: retail branches (and reloads D_80108230) where this compiles
+   to a set-on-equal. */
+void func_801076B4_2F65E4_name_46(void) {
+    f32 scale;
+    f32 step;
+    s32 side;
+    s32 i;
+
+    scale = 1.0f;
+    side = 0;
+    if (D_80108230_2F7160_name_46 == 3) {
+        side = 1;
+    }
+    if (D_80108230_2F7160_name_46 == 1) {
+        omDelPrcObj(NULL);
+    }
+    step = -0.05f;
+    i = 0;
+    while (TRUE) {
+        scale += step;
+        if ((step < 0.0f) & (scale < 0.8f)) {
+            step = -step;
+        } else if ((step > 0.0f) & (scale > 1.2f)) {
+            step = -step;
+        }
+        i++;
+        func_80107644_2F6574_name_46(D_80108268_2F7198_name_46[side], scale);
+        HuPrcVSleep();
+        if ((i >= 30) & (scale == 1.0f)) {
+            break;
+        }
+    }
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_801076B4_2F65E4_name_46);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107850_2F6780_name_46);
+void func_80107850_2F6780_name_46(void) {
+    omObjData* obj;
+    Ovl46Blast* work;
+    s32 side;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107978_2F68A8_name_46);
+    side = (D_80108230_2F7160_name_46 == 2);
+    if (D_80108230_2F7160_name_46 == 3) {
+        side = 0;
+    }
+    if (D_80108230_2F7160_name_46 != 1) {
+        obj = omAddObj(0x10, 0, 0, -1, func_80107978_2F68A8_name_46);
+        work = func_80027154_27D54(sizeof(Ovl46Blast), 0x7918);
+        obj->unk_50 = work;
+        work->unk0 = 0;
+        work->scale = 0;
+        work->frame = 0;
+        work->side = side;
+        work->grow = 1.0f;
+        HmfModelObjAttrSet(D_80108250_2F7180_name_46[work->side]->obj->model[0], 0x20000, 0x20000);
+        func_80029A8C_2A68C(D_80108250_2F7180_name_46[work->side]->obj->model[0]);
+        func_8002A00C_2AC0C(D_80108250_2F7180_name_46[work->side]->obj->model[0]);
+        D_800CA02C_CAC2C = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107C44_2F6B74_name_46);
+void func_80107978_2F68A8_name_46(omObjData* obj) {
+    Ovl46Blast* work;
+    MBModel* model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_46_name/2F1730", func_80107D00_2F6C30_name_46);
+    work = obj->unk_50;
+    work->grow += 0.01f;
+    if (work->grow < 1.3f) {
+        D_80108250_2F7180_name_46[work->side]->scale.x = work->grow;
+        D_80108250_2F7180_name_46[work->side]->scale.y = work->grow;
+        D_80108250_2F7180_name_46[work->side]->scale.z = work->grow;
+        return;
+    }
+    if (work->unk0 == 0.0f) {
+        func_800298A4_2A4A4((s16)D_8010824C_2F717C_name_46, 4, 0);
+        model = D_80108250_2F7180_name_46[work->side];
+        func_80029714_2A314((s16)D_8010824C_2F717C_name_46, model->pos.x, model->pos.y + 250.0f, model->pos.z);
+        func_800297E8_2A3E8((s16)D_8010824C_2F717C_name_46, 5.0f, 5.0f, 5.0f);
+        func_80029E80_2AA80((s16)D_8010824C_2F717C_name_46, 1, 0);
+        func_80029FE4_2ABE4((s16)D_8010824C_2F717C_name_46, 2.5f);
+        omVibrate(D_800F8C5C_F985C, 20, 0, 20);
+        func_800794A8_7A0A8(45);
+        PlaySound(0x3C7);
+        D_80108270_2F71A0_name_46 = PlaySound(0x4B5);
+    }
+    func_8002AC10_2B810(D_80108250_2F7180_name_46[work->side]->obj->model[0], work->unk0, work->scale, 2);
+    D_800CA02C_CAC2C += 20.0f;
+    if (work->unk0 < 1.0f) {
+        work->unk0 += 0.02f;
+    }
+    func_800297E8_2A3E8(D_80108250_2F7180_name_46[work->side]->obj->model[0], work->scale, work->scale, work->scale);
+    work->scale += 0.4f;
+    if (++work->frame == 2) {
+        D_801081D0_2F7100_name_46 = 1;
+    }
+    if (work->scale >= 16.0f) {
+        MBModelDispOff(D_80108250_2F7180_name_46[work->side]);
+        omDelObj(obj);
+    }
+}
+
+void func_80107C44_2F6B74_name_46(s32 side) {
+    f32 v[2][2];
+    omObjData* obj;
+    Ovl46Bob* work;
+
+    v[0][0] = 2.5f;
+    v[0][1] = -2.5f;
+    v[1][0] = 1.0f;
+    v[1][1] = -1.0f;
+    obj = omAddObj(0x10, 0, 0, -1, func_80107D00_2F6C30_name_46);
+    work = func_80027154_27D54(sizeof(Ovl46Bob), 0x7918);
+    obj->unk_50 = work;
+    work->vel = v[0][side];
+    work->acc = v[1][side];
+    work->side = side;
+}
+
+void func_80107D00_2F6C30_name_46(omObjData* obj) {
+    Ovl46Bob* work;
+
+    work = obj->unk_50;
+    D_80108250_2F7180_name_46[work->side]->pos.y += work->vel;
+    work->vel += work->acc * 0.1f;
+    if (work->vel >= 1.0) {
+        work->vel = 1.0f;
+        work->acc = -work->acc;
+    }
+    if (work->vel <= -1.0) {
+        work->vel = -1.0f;
+        work->acc = -work->acc;
+    }
+}

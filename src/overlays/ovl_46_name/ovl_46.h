@@ -17,6 +17,7 @@
 #include "game/camera.h"
 #include "game/gamemes.h"
 #include "game/hmfman.h"
+#include "game/data.h"
 
 /* ---- main-segment API used by 42 ---- */
 
@@ -281,6 +282,61 @@ extern s32 D_8010826C_2F719C_name_46; /* no referee (flag 0x17 clear) */
 extern s32 D_80108298_2F71C8_name_46; /* a number shown by message variant 4 */
 extern MBModel* D_80108278_2F71A8_name_46; /* the referee's hat (scaled away) */
 
+/* ---- 46 (D46) ---- */
+
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void* data);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprAttrReset(s16 group, s16 member, s32 flag);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3); /* sprite frame */
+s32 func_8007975C_7A35C(s16 arg0, s16 arg1);
+void func_80079848_7A448(s16 arg0);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+void func_80029A8C_2A68C(s16 arg0);
+void func_8002A00C_2AC0C(s16 arg0);
+void func_8002AC10_2B810(s16 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_80029E80_2AA80(s16 arg0, s32 arg1, s32 arg2);
+extern f32 D_800CA02C_CAC2C;
+
+/* func_80107850's blast (func_80107978): the loser's model grows, then blows up. */
+typedef struct Ovl46Blast {
+    /* 0x00 */ f32 unk0;
+    /* 0x04 */ f32 scale;
+    /* 0x08 */ s32 frame;
+    /* 0x0C */ s32 side;
+    /* 0x10 */ f32 grow;
+} Ovl46Blast; /* size 0x14 */
+
+/* func_80107C44's bob (func_80107D00). */
+typedef struct Ovl46Bob {
+    /* 0x00 */ f32 vel;
+    /* 0x04 */ f32 acc;
+    /* 0x08 */ s32 side;
+} Ovl46Bob; /* size 0x0C */
+
+extern s32 D_80108228_2F7158_name_46; /* the challenger's CPU press frame */
+extern s32 D_8010822C_2F715C_name_46; /* the opponent's CPU press frame */
+extern s32 D_80108230_2F7160_name_46; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
+extern s32 D_80108238_2F7168_name_46[2]; /* each side's press frame, -1 until pressed */
+extern s32 D_8010824C_2F717C_name_46; /* a model (stored as s32, read as s16) */
+extern MBModel* D_80108250_2F7180_name_46[2];
+extern MBModel* D_80108258_2F7188_name_46;
+extern MBModel* D_8010825C_2F718C_name_46;
+extern MBModel* D_80108260_2F7190_name_46;
+extern MBModel* D_80108264_2F7194_name_46;
+extern s16 D_80108268_2F7198_name_46[2]; /* each side's time display */
+extern s16 D_80108270_2F71A0_name_46;
+extern s16 D_80108272_2F71A2_name_46;
+extern s16 D_8010827C_2F71AC_name_46;
+extern s16 D_8010827E_2F71AE_name_46[];
+extern s16 D_80108288_2F71B8_name_46;
+extern s16 D_8010828A_2F71BA_name_46;
+extern s16 D_8010828C_2F71BC_name_46;
+
 /* ---- 2F1730.c ---- */
 
 void func_80102800_2F1730_name_46(void);
@@ -302,21 +358,21 @@ void func_801053F8_2F4328_name_46(omObjData* obj);
 void func_80105488_2F43B8_name_46(void);
 void func_80105754_2F4684_name_46(void);
 void func_80105FD0_2F4F00_name_46(void);
-void func_80106038_2F4F68_name_46(void);
+void func_80106038_2F4F68_name_46(omObjData* obj);
 s32 func_80106470_2F53A0_name_46(void);
 void func_8010675C_2F568C_name_46(s32 cur, s32 target, s32 mode); /* CPU input script */
 void func_80106D8C_2F5CBC_name_46(omObjData* obj);
 s32 func_80106F2C_2F5E5C_name_46(void); /* CPU pad triggers (D_80108248) */
 void func_80106F38_2F5E68_name_46(void);
 void func_801070C8_2F5FF8_name_46(void);
-void func_80107158_2F6088_name_46(void);
-void func_801073EC_2F631C_name_46(void);
-void func_80107448_2F6378_name_46(void);
-void func_80107644_2F6574_name_46(void);
+s16 func_80107158_2F6088_name_46(s16 x, s16 y); /* a time display (6 sprites) */
+void func_801073EC_2F631C_name_46(s16 group); /* hide a time display */
+void func_80107448_2F6378_name_46(s16 group, f32 secs); /* show secs as d.dd */
+void func_80107644_2F6574_name_46(s16 group, f32 scale);
 void func_801076B4_2F65E4_name_46(void);
 void func_80107850_2F6780_name_46(void);
-void func_80107978_2F68A8_name_46(void);
-void func_80107C44_2F6B74_name_46(void);
-void func_80107D00_2F6C30_name_46(void);
+void func_80107978_2F68A8_name_46(omObjData* obj);
+void func_80107C44_2F6B74_name_46(s32 side);
+void func_80107D00_2F6C30_name_46(omObjData* obj);
 
 #endif
