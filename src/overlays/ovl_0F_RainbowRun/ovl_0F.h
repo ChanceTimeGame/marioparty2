@@ -2,8 +2,8 @@
 #define _OVL_0F_H
 
 /* Overlay 0F: Rainbow Run. Its game code descends from MP1's ovl_1F_TightropeTreachery (197E20.c,
-   19A360.c, 19ACC0.c, 19D510.c). Retail is three files: 144190.c, 1479E0.c from 80106050 and
-   149120.c from 80107790. .data stays asm (14C080); .rodata is carved per file. Prototypes past
+   19A360.c, 19ACC0.c, 19D510.c). Retail is four files: 144190.c, 147180.c from 801057F0 (MP1's
+   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790. .data stays asm (14C080); .rodata is carved per file. Prototypes past
    801060D8 are inferred from register use (MG0F-B: check them). */
 
 #include "common.h"
@@ -92,6 +92,8 @@ void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 play
 void func_80103E1C_1457AC_RainbowRun(omObjData* obj);
 void func_801041E4_145B74_RainbowRun(omObjData* obj);
 void func_80104FB4_146944_RainbowRun(omObjData* obj);
+
+/* 147180.c */
 void func_801057F0_147180_RainbowRun(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz);
 void func_80105870_147200_RainbowRun(void);
 void func_80105978_147308_RainbowRun(omObjData* obj);
@@ -148,6 +150,15 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+extern s32 D_800F8FD0_F9BD0; /* scene state */
+void func_8000C3B8_CFB8(void);
+void func_8000C398_CF98(void);
+void func_8000C3A8_CFA8(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_8006D4D0_6E0D0(s16); /* the seconds counter */
+void func_8006D518_6E118(void);
+void func_80079848_7A448(s16 arg0); /* stop a sound */
 extern u16 D_800FD410_FE010[4];
 void func_80019E04_1AA04(omObjData* obj, s32 slot, s32 motion);
 void func_80019CA4_1A8A4(omObjData* obj, s32 arg1);
@@ -237,6 +248,7 @@ extern s8 ContStkY[4];
 /* ---- .data (14C080) ---- */
 
 extern s16 D_8010A6F0_14C080_RainbowRun; /* the game is over */
+extern s8 D_8010A6F2_14C082_RainbowRun;
 extern s8 D_8010A6F3_14C083_RainbowRun; /* the start message is done */
 extern s8 D_8010A6F4_14C084_RainbowRun; /* the runner reached its start */
 extern s8 D_8010A6F5_14C085_RainbowRun; /* the runner cannot be hit */
@@ -263,6 +275,17 @@ extern f32 D_8010A718_14C0A8_RainbowRun; /* z of the next course pull */
 extern s32 D_8010A71C_14C0AC_RainbowRun;
 extern f32 D_8010A720_14C0B0_RainbowRun;
 extern s16 D_8010A724_14C0B4_RainbowRun; /* course pulls so far */
+extern u32 D_8010A728_14C0B8_RainbowRun; /* frames before the start message */
+extern s8 D_8010A72C_14C0BC_RainbowRun; /* the fade-out started */
+extern s8 D_8010A72D_14C0BD_RainbowRun; /* the result is paid */
+extern s32 D_8010A730_14C0C0_RainbowRun; /* time left, frames */
+extern s32 D_8010A734_14C0C4_RainbowRun;
+extern s8 D_8010A738_14C0C8_RainbowRun;
+extern s32 D_8010A73C_14C0CC_RainbowRun; /* frames to show the result */
+extern s32 D_8010A740_14C0D0_RainbowRun;
+extern s16 D_8010A744_14C0D4_RainbowRun; /* opening pan frame */
+extern s8 D_8010A746_14C0D6_RainbowRun;
+extern s8 D_8010A747_14C0D7_RainbowRun;
 extern s8 D_8010A750_14C0E0_RainbowRun; /* the followers are being pulled */
 extern s8 D_8010A751_14C0E1_RainbowRun; /* the camera shakes */
 extern s16 D_8010A752_14C0E2_RainbowRun; /* shake frame */
@@ -275,6 +298,8 @@ extern s8 D_8010A784_14C114_RainbowRun[8]; /* stick y history */
 extern s8 D_8010A78C_14C11C_RainbowRun; /* next slot of the stick histories */
 extern u16 D_8010A78E_14C11E_RainbowRun; /* func_80105E38's last buttons */
 extern u32 D_8010A790_14C120_RainbowRun; /* random seed */
+extern s8 D_8010A7A4_14C134_RainbowRun;
+extern s16 D_8010A7A6_14C136_RainbowRun; /* a sound to stop */
 extern s8 D_8010A7A8_14C138_RainbowRun; /* the goal was reached (set up) */
 extern f32 D_8010A7D0_14C160_RainbowRun; /* x of the course's middle */
 extern f32 D_8010A7D4_14C164_RainbowRun; /* y of the course */

@@ -660,6 +660,7 @@ segments:
     bss_size: 0x340
     subsegments:
       - [0x144190, c]
+      - [0x147180, c]
       - [0x1479E0, c]
       - [0x149120, c]
       - [0x14C080, data]
