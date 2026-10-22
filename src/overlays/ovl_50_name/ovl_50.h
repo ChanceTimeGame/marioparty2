@@ -32,6 +32,19 @@
 /* A player's board model (GW_PLAYER.unk_24 is void* in common_structs.h). */
 #define OVL50_PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
 
+/* Board 5's spark emitter (D_80112638's unk_50; func_8011099C, func_80110B1C). */
+typedef struct Ovl50SparkWork {
+    /* 0x000 */ Vec pos[16];
+    /* 0x0C0 */ Vec vel[16];
+    /* 0x180 */ s16 active[16];
+    /* 0x1A0 */ s16 inst[16];  /* func_80020EBC instances */
+    /* 0x1C0 */ s16 model[16]; /* their models */
+    /* 0x1E0 */ s16 form;
+    /* 0x1E2 */ s16 delay;     /* frames to the next spark */
+    /* 0x1E4 */ f32 life[16];
+    /* 0x224 */ f32 scale[16];
+} Ovl50SparkWork; /* size = 0x264 */
+
 /* ---- main-segment API used by 50 ---- */
 
 f32 HuMathSin(f32);
@@ -106,6 +119,9 @@ void func_800B2060_B2C60(f32 (*)[4], f32, f32, f32); /* rotate a matrix */
 void func_80029E80_2AA80(s16, s32, s32);
 void func_8002A00C_2AC0C(s16);
 void func_8002AC10_2B810(s16, f32, f32, s32);
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_8002308C_23C8C(s32 index);
+void HuMemMemoryFreePerm(void*);
 extern f32 D_800CA02C_CAC2C;
 void func_800795D8_7A1D8(s16 index, s8 val); /* sound volume */
 

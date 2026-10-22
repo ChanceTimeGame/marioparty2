@@ -903,15 +903,118 @@ void func_8011039C_350BFC_name_50(void) {
     func_8005ACD0_5B8D0(&gPlayers[D_8011275A_352FBA_name_50], 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8011099C_3511FC_name_50);
+/* Board 5: the spark emitter object D_80112638 (func_80110B1C), 16 sparks of form file 0xA0226. */
+void func_8011099C_3511FC_name_50(void) {
+    Ovl50SparkWork* work;
+    void* data;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_80110B1C_35137C_name_50);
+    D_80112638_352E98_name_50 = omAddObj(0x1F4, 0, 0, -1, func_80110B1C_35137C_name_50);
+    work = D_80112638_352E98_name_50->unk_50 = func_80027154_27D54(sizeof(Ovl50SparkWork), 0x7918);
+    data = DataRead(0xA0226);
+    work->form = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    for (i = 0; i < 16; i++) {
+        work->inst[i] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+        D_800F86D8_F92D8[work->inst[i]].unk02 = work->form;
+        func_80021160_21D60(work->inst[i], 6, 0);
+        work->model[i] = D_800F86D8_F92D8[work->inst[i]].unk00;
+        func_80021250_21E50(work->inst[i], 0xFF, 0x40, 8);
+        func_800211E8_21DE8(work->inst[i], 200);
+        HmfModelObjAttrSet(work->model[i], 0x70000000, 0x70000000);
+    }
+    for (i = 0; i < 16; i++) {
+        work->active[i] = 0;
+    }
+    D_80112638_352E98_name_50->work[0] = 0;
+    work->delay = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_80110E5C_3516BC_name_50);
+/* The spark emitter: moves live sparks (they fade over 400 units of life and grow to 3x); while
+   work[0] is 1 it fires one from D_8011275C's front every other frame. */
+void func_80110B1C_35137C_name_50(omObjData* obj) {
+    Ovl50SparkWork* work = obj->unk_50;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_80110E9C_3516FC_name_50);
+    for (i = 0; i < 16; i++) {
+        if (work->active[i] != 0) {
+            work->pos[i].x += work->vel[i].x;
+            work->pos[i].y += work->vel[i].y;
+            work->pos[i].z += work->vel[i].z;
+            if (work->pos[i].y < 30.0f) {
+                work->pos[i].y = 30.0f;
+            }
+            func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+            work->life[i] -= 25.0f;
+            if (work->life[i] <= 0.0f) {
+                work->active[i] = 0;
+                func_800298A4_2A4A4(work->model[i], 4, 4);
+            }
+            work->scale[i] += 0.12f;
+            if (work->scale[i] >= 3.0f) {
+                work->scale[i] = 3.0f;
+            }
+            func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], work->scale[i]);
+        }
+    }
+    if (obj->work[0] == 1) {
+        if (work->delay == 0) {
+            for (i = 0; i < 16; i++) {
+                if (work->active[i] == 0) {
+                    break;
+                }
+            }
+            if (i != 16) {
+                work->active[i] = 1;
+                work->delay = 1;
+                work->vel[i].x = D_8011275C_352FBC_name_50->rot.x;
+                work->vel[i].y = -0.8f;
+                work->vel[i].z = D_8011275C_352FBC_name_50->rot.z;
+                MBVecNormalize(&work->vel[i]);
+                work->vel[i].x *= 25.0f;
+                work->vel[i].y *= 25.0f;
+                work->vel[i].z *= 25.0f;
+                work->pos[i].x = D_8011275C_352FBC_name_50->rot.x * 200.0f + D_8011275C_352FBC_name_50->pos.x;
+                work->pos[i].z = D_8011275C_352FBC_name_50->rot.z * 200.0f + D_8011275C_352FBC_name_50->pos.z;
+                work->pos[i].y = D_8011275C_352FBC_name_50->pos.y + 150.0f;
+                work->life[i] = 400.0f;
+                work->scale[i] = 1.2f;
+                func_800298A4_2A4A4(work->model[i], 4, 0);
+                func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+                func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], work->scale[i]);
+            }
+        } else {
+            work->delay--;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_80110EFC_35175C_name_50);
+/* TRUE while a spark is live. */
+s32 func_80110E5C_3516BC_name_50(void) {
+    Ovl50SparkWork* work = D_80112638_352E98_name_50->unk_50;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        if (work->active[i] != 0) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+void func_80110E9C_3516FC_name_50(void) {
+    Ovl50SparkWork* work = D_80112638_352E98_name_50->unk_50;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        func_8002308C_23C8C(work->inst[i]);
+    }
+    omDelObj(D_80112638_352E98_name_50);
+}
+
+void func_80110EFC_35175C_name_50(void) {
+    D_80112638_352E98_name_50->work[0] = 1;
+}
 
 void func_80110F10_351770_name_50(void) {
     D_80112638_352E98_name_50->work[0] = 0;
