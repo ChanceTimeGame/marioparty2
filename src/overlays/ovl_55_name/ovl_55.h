@@ -227,16 +227,16 @@ extern s32 D_8010BF88_36AE78_name_55[];
 extern s32 D_8010BF94_36AE84_name_55[];
 extern s32 D_8010BFA0_36AE90_name_55[];
 extern void* D_8010C088_36AF78_name_55[6];
-extern s32 D_8010C0A0_36AF90_name_55[];
+extern u32 D_8010C0A0_36AF90_name_55[]; /* board 3: host's motions */
 extern Vec D_8010C0B0_36AFA0_name_55[2]; /* board 3: camera from, to */
-extern s32 D_8010C0C8_36AFB8_name_55[];
+extern u32 D_8010C0C8_36AFB8_name_55[]; /* board 3: host model's motions */
 extern void* D_8010C1B8_36B0A8_name_55[6];
-extern s32 D_8010C1D0_36B0C0_name_55[];
-extern s32 D_8010C1E0_36B0D0_name_55[];
-extern s32 D_8010C1F8_36B0E8_name_55[];
-extern s32 D_8010C204_36B0F4_name_55[];
-extern s32 D_8010C210_36B100_name_55[];
-extern s32 D_8010C21C_36B10C_name_55[];
+extern u32 D_8010C1D0_36B0C0_name_55[]; /* board 4: host's motions */
+extern Vec D_8010C1E0_36B0D0_name_55[2]; /* board 4: camera from, to */
+extern Vec D_8010C1F8_36B0E8_name_55; /* board 4: host start */
+extern Vec D_8010C204_36B0F4_name_55; /* board 4: host target */
+extern Vec D_8010C210_36B100_name_55; /* board 4: follower start */
+extern u32 D_8010C21C_36B10C_name_55[]; /* board 4: host model's motions */
 extern s32 D_8010C22C_36B11C_name_55[];
 extern void* D_8010C338_36B228_name_55[6];
 extern s32 D_8010C350_36B240_name_55[];

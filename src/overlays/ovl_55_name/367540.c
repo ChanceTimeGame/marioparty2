@@ -9,9 +9,9 @@ void func_80108650_367540_name_55(void) {
         func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
         MBModelDispOff(PLAYER_MODEL(i));
     }
-    D_8010C56C_36B45C_name_55 = MBModelFileCreate(0x8001C, 13, 0.8f, 0.8f, (u32*)D_8010C0A0_36AF90_name_55);
+    D_8010C56C_36B45C_name_55 = MBModelFileCreate(0x8001C, 13, 0.8f, 0.8f, D_8010C0A0_36AF90_name_55);
     MBModelDispOff(D_8010C56C_36B45C_name_55);
-    D_8010C564_36B454_name_55 = MBModelFileCreate(0x8001C, 13, 0.8f, 0.8f, (u32*)D_8010C0A0_36AF90_name_55);
+    D_8010C564_36B454_name_55 = MBModelFileCreate(0x8001C, 13, 0.8f, 0.8f, D_8010C0A0_36AF90_name_55);
     func_8005AB50_5B750(D_8010C56C_36B45C_name_55, 2, 8, 0x80039);
     MBModelDispOff(D_8010C564_36B454_name_55);
 }
@@ -68,7 +68,7 @@ void func_80108990_367880_name_55(void) {
     func_80050E00_51A00(24);
     HuPrcSleep(3);
     MBDCameraPos3DSet(&D_8010C0B0_36AFA0_name_55[0]);
-    host = MBModelFileCreate(0x8008B, 13, 1.0f, 1.3f, (u32*)D_8010C0C8_36AFB8_name_55);
+    host = MBModelFileCreate(0x8008B, 13, 1.0f, 1.3f, D_8010C0C8_36AFB8_name_55);
     MBMotionSet(host, 0, 2);
     hostX = 0.0f;
     hostY = 0.0f;
@@ -323,9 +323,9 @@ void func_80109380_368270_name_55(void) {
         func_8005ABC0_5B7C0(&gPlayers[i], 2, 0);
         MBModelDispOff(PLAYER_MODEL(i));
     }
-    D_8010C56C_36B45C_name_55 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, (u32*)D_8010C1D0_36B0C0_name_55);
+    D_8010C56C_36B45C_name_55 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, D_8010C1D0_36B0C0_name_55);
     MBModelDispOff(D_8010C56C_36B45C_name_55);
-    D_8010C564_36B454_name_55 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, (u32*)D_8010C1D0_36B0C0_name_55);
+    D_8010C564_36B454_name_55 = MBModelFileCreate(0x80023, 13, 0.8f, 0.8f, D_8010C1D0_36B0C0_name_55);
     func_8005AB50_5B750(D_8010C56C_36B45C_name_55, 2, 8, 0x80039);
     MBModelDispOff(D_8010C564_36B454_name_55);
 }
@@ -367,7 +367,135 @@ void func_80109560_368450_name_55(void) {
     func_8001A91C_1B51C(D_8010C588_36B478_name_55, 1.0f, 1.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_801096C0_3685B0_name_55);
+/* Board 4's explanation opening: the host walks on with a model (0x89) following it, turns to it,
+   a beam (model 0x8B) drops on the host, which stretches up and vanishes; the beam lifts and the
+   follower backs off. START jumps to the end. func_80056658 leaves a direction in rot, which the
+   last loop uses. */
+void func_801096C0_3685B0_name_55(void) {
+    MBModel* host;
+    MBModel* follower;
+    MBModel* beam;
+    f32 t;
+    s32 n;
+    s32 len;
+
+    beam = NULL;
+    func_80029708_2A308(0);
+    func_80050E00_51A00(30);
+    HuPrcSleep(3);
+    MBDCameraPos3DSet(&D_8010C1E0_36B0D0_name_55[0]);
+    host = MBModelFileCreate(0x8008B, 13, 1.0f, 1.3f, D_8010C21C_36B10C_name_55);
+    MBMotionSet(host, 0, 2);
+    host->pos.x = D_8010C1F8_36B0E8_name_55.x;
+    host->pos.y = D_8010C1F8_36B0E8_name_55.y;
+    host->pos.z = D_8010C1F8_36B0E8_name_55.z;
+    func_80056658_57258(&host->pos, &D_8010C204_36B0F4_name_55, &host->rot);
+    follower = func_80043510_44110(0x89, NULL);
+    follower->pos.x = D_8010C210_36B100_name_55.x;
+    follower->pos.y = D_8010C210_36B100_name_55.y;
+    follower->pos.z = D_8010C210_36B100_name_55.z;
+    func_80056658_57258(&follower->pos, &host->pos, &follower->rot);
+    follower->rot.x = -follower->rot.x;
+    follower->rot.y = -follower->rot.y;
+    follower->rot.z = -follower->rot.z;
+    InitFadeIn(0, 16);
+    for (n = 0; n < 26; n++) {
+        func_8005A5E8_5B1E8(host, &D_8010C204_36B0F4_name_55, 1.0f);
+        func_8005A608_5B208(follower, &host->pos, 6.0f);
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    while (func_8005A7E8_5B3E8(host, &follower->pos, 20.0f) != 1) {
+        func_8005A608_5B208(follower, &host->pos, 6.0f);
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    MBMotionShiftSet(host, -1, 0, 3, 2);
+    while (func_8005A608_5B208(follower, &host->pos, 6.0f) != 1) {
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    beam = func_80043510_44110(0x8B, NULL);
+    func_800B3170_B3D70(&beam->pos, &host->pos);
+    HuVecCopyXYZ(&beam->scale, 0.05f, 1.8f, 0.05f);
+    for (n = 100; n >= 0; n -= 10) {
+        beam->jumpY = n;
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    for (n = 2; n < 30; n++) {
+        if (n == 10) {
+            MBMotionShiftSet(host, 1, 0, 4, 2);
+        }
+        t = n / 30.0f;
+        HuVecCopyXYZ(&beam->scale, t, 1.8f, t);
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    HuVecCopyXYZ(&beam->scale, 1.0f, 1.8f, 1.0f);
+    for (n = 0; n < 15; n++) {
+        t = n / 15.0f;
+        host->scale.x = 1.0f - t;
+        host->scale.y = t + 1.0f;
+        host->scale.z = 1.0f - t;
+        host->jumpY += 6.0f;
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    MBModelDispOff(host);
+    for (n = 30; n > 0; n--) {
+        t = n / 30.0f;
+        HuVecCopyXYZ(&beam->scale, t, 1.8f, t);
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    for (n = 0; n <= 100; n += 10) {
+        beam->jumpY = n;
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    for (n = 0; n < 30; n++) {
+        follower->pos.x += -follower->rot.x * 12.0f;
+        follower->pos.y += -follower->rot.y * 12.0f;
+        follower->pos.z += -follower->rot.z * 12.0f;
+        if (D_8010C568_36B458_name_55->work[0] == 1) {
+            goto end;
+        }
+        HuPrcVSleep();
+    }
+    if (D_8010C568_36B458_name_55->work[0] == 0) {
+        func_80051500_52100();
+        len = func_80059E7C_5AA7C(&D_8010C1E0_36B0D0_name_55[0], &D_8010C1E0_36B0D0_name_55[1], 3.0f) + 20;
+        for (n = 0; n < len; n++) {
+            if (D_8010C568_36B458_name_55->work[0] == 1) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+end:
+    if (beam != NULL) {
+        MBModelKill(beam);
+    }
+    MBModelKill(host);
+    MBModelKill(follower);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_55_name/367540", func_80109C58_368B48_name_55);
 
