@@ -20,7 +20,8 @@ typedef f32 Matrix4f[4][4];
 /* A player object's work: main's minigame work (0x15C bytes; MP1's 0xE8 TTPlayerWork with fields
    from 0x50 moved). Fields from the asm. */
 typedef struct RRPlayerWork {
-    /* 0x00 */ char unk_00[0x3C];
+    /* 0x00 */ char unk_00[0x38];
+    /* 0x38 */ f32 unk_38;
     /* 0x3C */ f32 angle; /* facing angle (degrees) */
     /* 0x40 */ f32 speed;
     /* 0x44 */ char unk_44[4];
@@ -150,6 +151,9 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320;
+extern u8 D_800FDBE0_FE7E0; /* current vertex buffer */
 extern s32 D_800F8FD0_F9BD0; /* scene state */
 void func_8000C3B8_CFB8(void);
 void func_8000C398_CF98(void);
@@ -303,6 +307,12 @@ extern s16 D_8010A7A6_14C136_RainbowRun; /* a sound to stop */
 extern s8 D_8010A7A8_14C138_RainbowRun; /* the goal was reached (set up) */
 extern f32 D_8010A7D0_14C160_RainbowRun; /* x of the course's middle */
 extern f32 D_8010A7D4_14C164_RainbowRun; /* y of the course */
+extern f32 D_8010A7D8_14C168_RainbowRun; /* last frame's D_8010A7D0 */
+extern f32 D_8010A7DC_14C16C_RainbowRun; /* D_8010A7D0's change this frame */
+extern f32 D_8010A7E0_14C170_RainbowRun; /* the rainbow's sway, -20..20 */
+extern f32 D_8010A7E4_14C174_RainbowRun; /* the ripple's phase */
+extern s8 D_8010A7E8_14C178_RainbowRun; /* the sway's direction */
+extern s8 D_8010A7E9_14C179_RainbowRun; /* the runner passed z -1150 */
 
 /* ---- .bss ---- */
 
@@ -312,6 +322,7 @@ extern f32 D_8010A9A8_14C338_RainbowRun; /* the goal camera's rot x step */
 extern f32 D_8010A9AC_14C33C_RainbowRun; /* centre y step */
 extern f32 D_8010A9B0_14C340_RainbowRun; /* centre z step */
 extern f32 D_8010ABFC_14C58C_RainbowRun[2]; /* wind drift x, z */
+extern f32 D_8010AC0C_14C59C_RainbowRun; /* the sway (copy) */
 extern omObjData* D_8010AC14_14C5A4_RainbowRun[3]; /* the followers */
 extern s8 D_8010ACC0_14C650_RainbowRun[4]; /* [0] the player of group 0, [1..3] the others */
 extern omObjData* D_8010ACC4_14C654_RainbowRun[3];
