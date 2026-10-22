@@ -400,9 +400,69 @@ void func_801039E4_2C8ED4_name_43(MBModel* parent) {
     D_800FC734_FD334 = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80103A64_2C8F54_name_43);
+void func_80103A64_2C8F54_name_43(void) {
+    Vec target;
+    MBModel* parent;
+    GW_PLAYER* player;
+    MBModel* star;
+    ModelEmitterWork* emitter;
+    f32 scale;
+    f32 rot;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80103D48_2C9238_name_43);
+    parent = HuPrcCurrentGet()->user_data;
+    player = BoardPlayerGet(-1);
+    PlaySound(0x34E);
+    star = func_80043510_44110(D_801153C4_2DA8B4_name_43 == 0 ? 0x19 : 0xD, NULL);
+    star->attr |= 4;
+    func_80056754_57354(star);
+    HuVecCopyXYZ(&star->pos, parent->pos.x, parent->pos.y + 10.0f, parent->pos.z);
+    HuVecCopyXYZ(&target, D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z);
+    star->jumpY = 15.0f;
+    emitter = func_80049ED4_4AAD4((Object*)star, 0);
+    emitter->unk18 = 0.1f;
+    for (scale = 0.0f, i = 0; i < 6; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale += 0.5f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 3; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale -= 0.4f;
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    PlaySound(0x32C);
+    rot = 0.0f;
+    HuVecCopyXYZ(&target, ((MBModel*)player->unk_24)->pos.x, ((MBModel*)player->unk_24)->pos.y - 10.0f,
+                 ((MBModel*)player->unk_24)->pos.z);
+    func_80056D80_57980(&star->pos, &target, &star->pos, 40);
+    for (i = 0; i < 40; i++) {
+        func_800B39F0_B45F0(D_800FC834_FD434[star->obj->model[0]].mtx, rot);
+        rot += 20.0f;
+        scale -= 0.05f;
+        if (scale < 0.0f) {
+            scale = 0.0f;
+        }
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        HuPrcVSleep();
+    }
+    MBModelKill(star);
+    func_80049F90_4AB90(emitter);
+    MBPlayerVibrate(-1, 5);
+    gPlayers[GwSystem.current_player_index].stars++;
+    omDelPrcObj(NULL);
+}
+
+void func_80103D48_2C9238_name_43(MBModel* parent) {
+    Process* proc;
+
+    D_801153C4_2DA8B4_name_43 = 0;
+    proc = omAddPrcObj(func_80103A64_2C8F54_name_43, 0x4800, 0, 0);
+    proc->user_data = parent;
+    HuPrcChildLink(HuPrcCurrentGet(), proc);
+    HuPrcChildWatch();
+}
 
 void func_80103DB0_2C92A0_name_43(void) {
     D_800FA198_FAD98 = 1;
@@ -1693,7 +1753,7 @@ void func_80107EFC_2CD3EC_name_43(void) {
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
                 } else {
-                    sprintf(buf, D_801135C8_2A8898_name_3E, D_800F8D18[0]);
+                    sprintf(buf, D_801152A8_2DA798_name_43, D_800F8D18[0]);
                     func_80056368_56F68(5, 0x426, buf, 0, 0, 0, 0);
                     func_80056458_57058();
                     MBDlgWinClose();
@@ -1724,7 +1784,7 @@ void func_80107EFC_2CD3EC_name_43(void) {
                             func_8004CA34_4D634(gw->current_player_index, -5);
                             func_800614B4_620B4(gw->current_player_index, -5);
                         } else {
-                            sprintf(buf, D_801135C8_2A8898_name_3E, gPlayers[gw->current_player_index].coins);
+                            sprintf(buf, D_801152A8_2DA798_name_43, gPlayers[gw->current_player_index].coins);
                             func_80056368_56F68(5, 0x425, buf, 0, 0, 0, 0);
                             MBDlgWinClose();
                             func_80056168_56D68();
