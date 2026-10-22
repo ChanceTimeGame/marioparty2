@@ -29,6 +29,7 @@
 
 /* A player's board model (GW_PLAYER.unk_24 is void* in common_structs.h). */
 #define PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
+#define OVL55_CAMERA ((HuCamera*)D_800FD2A8_FDEA8)
 
 /* Motion-shift waiters in main (58080.c's local Unk4E530Motion, MP1 4E530.c): func_801055A4 is
    55's copy of func_80059520 with a repeat count in work[1]. */
@@ -122,7 +123,9 @@ void func_8005A4EC_5B0EC(s32 arg0, s32 arg1);
 s32 func_8005A5E8_5B1E8(MBModel* model, Vec* target, f32 speed); /* walk toward; 1 on arrival */
 s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* the same, rotation discarded */
 s32 func_8005A7E8_5B3E8(MBModel* model, Vec* target, f32 step); /* turn toward; TRUE when facing */
-s16 func_8005AAC0_5B6C0(s16 x, s16 y, s16 w, s16 h); /* text window */
+/* A text window; returns its s16 id. 58080.c narrows the arguments itself; retail callers pass
+   them unnarrowed and keep the result as an int. */
+s32 func_8005AAC0_5B6C0(s32 x, s32 y, s32 w, s32 h);
 void func_8005AB50_5B750(MBModel* arg0, s16 arg1, s16 arg2, s32 arg3);
 void func_8005ABC0_5B7C0(GW_PLAYER*, s16, s16);
 void func_8005FE10_60A10(void);
