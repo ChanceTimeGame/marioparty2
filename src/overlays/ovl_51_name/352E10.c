@@ -653,48 +653,824 @@ void func_80105468_355A78_name_51(void) {
     func_8008CCA8_8D8A8((s16)D_80109110_359720_name_51);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801055E4_355BF4_name_51);
+/* Slides the tally off to the right (xoff 320) and kills the tally window (MP1 func_800F8EB8). */
+void func_801055E4_355BF4_name_51(void) {
+    s32 i;
+    s32 xoff = 320;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801058CC_355EDC_name_51);
+    if (_CheckFlag(0xD) == 0) {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D60_359370_name_51, 0, xoff, 0);
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 0; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108658_358C68_name_51[i][0] + xoff, D_80108658_358C68_name_51[i][1]);
+        }
+    } else {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 4; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108678_358C88_name_51[i][0] + xoff, D_80108678_358C88_name_51[i][1]);
+        }
+    }
+    func_8008CCA8_8D8A8((s16)D_80109110_359720_name_51);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105BE0_3561F0_name_51);
+/* Puts the tally in place (xoff 0) and opens the tally message window (MP1 func_800F9250). */
+void func_801058CC_355EDC_name_51(void) {
+    s16 size[2];
+    s32 i;
+    s32 xoff = 0;
+
+    if (_CheckFlag(0xD) == 0) {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D60_359370_name_51, 0, xoff, 0);
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 0; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108658_358C68_name_51[i][0] + xoff, D_80108658_358C68_name_51[i][1]);
+        }
+    } else {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 4; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108678_358C88_name_51[i][0] + xoff, D_80108678_358C88_name_51[i][1]);
+        }
+    }
+    func_8008DACC_8E6CC(1, size, 0x619);
+    D_80109110_359720_name_51 = func_8005AAC0_5B6C0(0x46, 0xD0, size[0], size[1]);
+    func_80089B2C_8A72C((s16)D_80109110_359720_name_51, 0);
+    func_80089A48_8A648((s16)D_80109110_359720_name_51, 0);
+    func_800890CC_89CCC((s16)D_80109110_359720_name_51, 0x619, -1, -1);
+}
 
 __asm__(".section .rodata");
 const char D_801087BC_358DCC_name_51[] = "%5d";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105D38_356348_name_51);
+/* A five-digit counter process: user_data 0 shows the bank's coins, 2 the coins the stars were
+   turned into, D_801083C0 (MP1 func_800F95F8). Leading blanks are hidden; the last digit always
+   shows. */
+void func_80105BE0_3561F0_name_51(void) {
+    u8 buf[5]; /* "%5d" writes six bytes: the NUL lands in frame padding (host hazard) */
+    s32 i;
+    s32 started;
+    s32 v;
+    s32 which = (s32)HuPrcCurrentGet()->user_data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105E6C_35647C_name_51);
+    while (1) {
+        if (which == 0) {
+            v = D_800F8C60.coinNum;
+        } else {
+            v = D_801083C0_3589D0_name_51;
+        }
+        started = 0;
+        sprintf((char*)buf, D_801087BC_358DCC_name_51, v);
+        for (i = 0; i < 5; i++) {
+            func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[which], i, 1);
+            if (started == 0 && (buf[i] == ' ') & (i != 4)) {
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[which], i, 0, 0);
+                SprAttrSet((s16)D_801088A0_358EB0_name_51[which], i, 0x8000);
+            } else {
+                started = 1;
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[which], i, buf[i] - '0', 0);
+                SprAttrReset((s16)D_801088A0_358EB0_name_51[which], i, 0x8000);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801062AC_3568BC_name_51);
+/* The stars-total counter process (MP1 func_800F972C): D_8010888C in five digits. */
+void func_80105D38_356348_name_51(void) {
+    u8 buf[5]; /* "%5d" writes six bytes: the NUL lands in frame padding (host hazard) */
+    s32 i;
+    s32 started;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106660_356C70_name_51);
+    while (1) {
+        started = 0;
+        sprintf((char*)buf, D_801087BC_358DCC_name_51, D_8010888C_358E9C_name_51);
+        for (i = 0; i < 5; i++) {
+            func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[1], i, 1);
+            if (started == 0 && (buf[i] == ' ') & (i != 4)) {
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, 0, 0);
+                SprAttrSet((s16)D_801088A0_358EB0_name_51[1], i, 0x8000);
+            } else {
+                started = 1;
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, buf[i] - '0', 0);
+                SprAttrReset((s16)D_801088A0_358EB0_name_51[1], i, 0x8000);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106884_356E94_name_51);
+/* One falling coin (MP1 func_800F9860): spins, rises (trans.z < 0, coins taken from the bank) or
+   falls into it; each coin adds trans.z coins to the bank (capped at 99999) and plays a sound every
+   other coin. When the first coin lands the bank's bounce object starts. */
+void func_80105E6C_35647C_name_51(omObjData* obj) {
+    D_801087D8_358DE8_name_51[obj->work[0]]->rot.x = HuMathSin(obj->rot.y);
+    D_801087D8_358DE8_name_51[obj->work[0]]->rot.z = func_800B7890_B8490(obj->rot.y);
+    if ((obj->rot.y += obj->trans.y) >= 360.0f) {
+        obj->rot.y -= 360.0f;
+    }
+    if (obj->trans.z < 0.0f) {
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y += 15.0f;
+        if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y >= 35.0f) {
+            if (obj->work[2] == 1) {
+                obj->trans.x -= 2.0f;
+            } else if (obj->work[2] == 2) {
+                obj->trans.x += 2.0f;
+            }
+        }
+    } else {
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y -= 15.0f;
+        if (obj->trans.x > D_801083E0_3589F0_name_51[0].x) {
+            if ((obj->trans.x -= 2.0f) < D_801083E0_3589F0_name_51[0].x) {
+                obj->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+        } else if (obj->trans.x < D_801083E0_3589F0_name_51[0].x) {
+            if ((obj->trans.x += 2.0f) > D_801083E0_3589F0_name_51[0].x) {
+                obj->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+        }
+    }
+    D_801087D8_358DE8_name_51[obj->work[0]]->pos.x = obj->trans.x;
+    if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y == 430.0f && obj->trans.z <= 0.0f) {
+        D_800F8C60.coinNum += (s32)obj->trans.z;
+        if (D_801083C4_3589D4_name_51 >= 3) {
+            PlaySound(0x33C);
+            D_801083C4_3589D4_name_51 -= 3;
+        } else {
+            D_801083C4_3589D4_name_51 += 2;
+        }
+    }
+    if (D_801087D8_358DE8_name_51[obj->work[0]]->pos.y <= 280.0f || D_801087D8_358DE8_name_51[obj->work[0]]->pos.y >= 580.0f) {
+        if (obj->trans.z > 0.0f) {
+            D_800F8C60.coinNum += (s32)obj->trans.z;
+            if (D_800F8C60.coinNum > 99999) {
+                D_800F8C60.coinNum = 99999;
+            }
+            if (D_801083C4_3589D4_name_51 >= 3) {
+                PlaySound(9);
+                D_801083C4_3589D4_name_51 -= 3;
+            } else {
+                D_801083C4_3589D4_name_51 += 2;
+            }
+        }
+        D_801087D8_358DE8_name_51[obj->work[0]]->pos.y = D_801083E0_3589F0_name_51[0].y;
+        if (D_80108A4C_35905C_name_51 == NULL) {
+            D_80108A4C_35905C_name_51 = omAddObj(0x1000, 0, 0, -1, func_801082AC_3588BC_name_51);
+            D_80108A4C_35905C_name_51->scale.x = 0.05f;
+            D_80108A4C_35905C_name_51->scale.y = 0.05f;
+            D_80108A4C_35905C_name_51->scale.z = 0.05f;
+            D_80108A4C_35905C_name_51->work[0] = 0;
+            D_80108A4C_35905C_name_51->work[1] = D_80108A4C_35905C_name_51->work[2] = 3;
+        }
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106A60_357070_name_51);
+/* The coin dispenser (MP1 func_800F9C74): takes up to trans.x coins a frame from the players in
+   turn (work[0] 0..3) or, from work[0] 4, from the total D_80108880, and drops one coin object a
+   frame; work[0] 5 sends them up out of the bank instead. */
+void func_801062AC_3568BC_name_51(omObjData* obj) {
+    omObjData* coin;
+    s32 p;
+    s32 n;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106A9C_3570AC_name_51);
+    p = obj->work[0];
+    n = 0;
+    if (obj->scale.x >= 1.0f) {
+        while (1) {
+            if (p >= 4) {
+                if (D_80108880_358E90_name_51 > 0) {
+                    D_80108880_358E90_name_51--;
+                    n++;
+                }
+                if (D_80108880_358E90_name_51 == 0) {
+                    break;
+                }
+            } else {
+                if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[p]] > 0) {
+                    D_80108870_358E80_name_51[D_800F8CE4_F98E4[p]]--;
+                    gPlayers[D_800F8CE4_F98E4[p]].coins--;
+                    n++;
+                }
+                p = (p + 1) & 3;
+                for (j = 0; j < 4; j++) {
+                    if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[j]] > 0) {
+                        break;
+                    }
+                }
+                if (j == 4) {
+                    break;
+                }
+            }
+            if (obj->scale.x < n + 1.0f) {
+                obj->scale.x -= n;
+                break;
+            }
+        }
+    }
+    obj->scale.x += obj->trans.x;
+    obj->work[0] = p;
+    if (n != 0) {
+        p = 1; /* retail reuses the player counter as the one-coin-per-frame limit */
+        while ((n != 0) & (p != 0)) {
+            coin = omAddObj(0x1000, 0, 0, -1, func_80105E6C_35647C_name_51);
+            coin->rot.y = rand8() & 0xFF;
+            coin->trans.y = 20.0f;
+            coin->work[2] = (rand8() & 0xFF) % 3;
+            coin->work[0] = (u8)D_801086B8_358CC8_name_51;
+            coin->trans.x = D_801083E0_3589F0_name_51[coin->work[2]].x;
+            coin->trans.z = n;
+            coin->scale.z = 3.0f;
+            if (obj->work[0] == 5) {
+                D_801087D8_358DE8_name_51[D_801086B8_358CC8_name_51]->pos.y = 0.0f;
+                coin->trans.z = -coin->trans.z;
+                coin->trans.x = D_801083E0_3589F0_name_51[0].x;
+            }
+            D_801086B8_358CC8_name_51 = (D_801086B8_358CC8_name_51 + 1) % 20;
+            n--;
+            p--;
+        }
+    } else {
+        D_801083C4_3589D4_name_51 += 2;
+    }
+    if (obj->work[0] >= 4) {
+        if (D_80108880_358E90_name_51 == 0) {
+            omDelObj(obj);
+        }
+    } else {
+        for (j = 0; j < 4; j++) {
+            if (D_80108870_358E80_name_51[D_800F8CE4_F98E4[j]] > 0) {
+                break;
+            }
+        }
+        if (j == 4) {
+            omDelObj(obj);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107090_3576A0_name_51);
+/* The bank's dispenser (no MP1 twin; func_801062AC's total-only branch): drops the coins of the
+   total D_80108880, up to trans.x a frame, one coin object a frame. */
+void func_80106660_356C70_name_51(omObjData* obj) {
+    omObjData* coin;
+    s32 n;
+    s32 k;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801076B8_357CC8_name_51);
+    n = 0;
+    while (D_80108880_358E90_name_51 != 0) {
+        n++;
+        D_80108880_358E90_name_51--;
+        if (obj->scale.x < n + 1.0f) {
+            obj->scale.x -= n;
+            break;
+        }
+    }
+    obj->scale.x += obj->trans.x;
+    if (n != 0) {
+        k = 1;
+        while ((n != 0) & (k != 0)) {
+            coin = omAddObj(0x1000, 0, 0, -1, func_80105E6C_35647C_name_51);
+            coin->rot.y = rand8() & 0xFF;
+            coin->trans.y = 20.0f;
+            coin->work[2] = (rand8() & 0xFF) % 3;
+            coin->work[0] = (u8)D_801086B8_358CC8_name_51;
+            coin->trans.x = D_801083E0_3589F0_name_51[coin->work[2]].x;
+            coin->trans.z = n;
+            coin->scale.z = 3.0f;
+            D_801086B8_358CC8_name_51 = (D_801086B8_358CC8_name_51 + 1) % 20;
+            n--;
+            k--;
+        }
+    } else {
+        D_801083C4_3589D4_name_51 += 2;
+    }
+    if (D_80108880_358E90_name_51 == 0) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801077A8_357DB8_name_51);
+/* One star flying into the pile (MP1 func_800FA3A4): moves by scale, spins, and after work[2]
+   frames adds one to the star total (capped at 999) and parks its model. */
+void func_80106884_356E94_name_51(omObjData* obj) {
+    D_80108828_358E38_name_51[obj->work[0]]->pos.x = obj->trans.x;
+    D_80108828_358E38_name_51[obj->work[0]]->pos.y = obj->trans.y;
+    D_80108828_358E38_name_51[obj->work[0]]->pos.z = obj->trans.z;
+    D_80108828_358E38_name_51[obj->work[0]]->rot.x = HuMathSin(2.0f * -obj->rot.y);
+    D_80108828_358E38_name_51[obj->work[0]]->rot.z = func_800B7890_B8490(2.0f * -obj->rot.y);
+    obj->trans.x += obj->scale.x;
+    obj->trans.y += obj->scale.y;
+    obj->trans.z += obj->scale.z;
+    obj->work[1]++;
+    obj->rot.y += 10.0f;
+    if ((obj->rot.x -= 1.25f) < 0.0f) {
+        obj->rot.x = 0.0f;
+    }
+    obj->trans.y -= 1.25f;
+    if (--obj->work[2] == 0) {
+        if (++D_8010888C_358E9C_name_51 > 999) {
+            D_8010888C_358E9C_name_51 = 999;
+        }
+        D_80108828_358E38_name_51[obj->work[0]]->pos.y = D_801083E0_3589F0_name_51[0].y + 1000.0f;
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107818_357E28_name_51);
+/* Waits 30, 60 or 90 frames for a speed setting of 1, 2 or other (MP1 func_800FA5E0). */
+void func_80106A60_357070_name_51(s32 arg0) {
+    if (arg0 == 1) {
+        arg0 = 30;
+    } else if (arg0 == 2) {
+        arg0 = 60;
+    } else {
+        arg0 = 90;
+    }
+    HuPrcSleep(arg0);
+}
+
+/* The tally process (MP1 func_800FA61C without the board item): the bank model hops, the players'
+   coins drop into it; then (except on board 6) each star of the total flies from its owner's
+   place to the pile, the star total turns into coins at 50 a star, and those coins drop too. Sets
+   D_801011FC when done. */
+void func_80106A9C_3570AC_name_51(void) {
+    omObjData* obj;
+    s32 i;
+    s32 j;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+
+    func_8005845C_5905C(0, &D_801083D4_3589E4_name_51, 10, (Object*)D_801087D0_358DE0_name_51);
+    HuPrcSleep(10);
+    func_80059868_5A468(D_80108890_358EA0_name_51[0], 50, 190);
+    SprPosSet(D_801088F0_358F00_name_51[0].strGId[0], 0, 80, 190);
+    SprPosSet((s16)D_801088A0_358EB0_name_51[0], 0, 100, 190);
+    D_80108884_358E94_name_51 = D_80108880_358E90_name_51;
+    if (D_80108880_358E90_name_51 + D_800F8C60.coinNum > 99999) {
+        D_80108884_358E94_name_51 = 99999 - D_800F8C60.coinNum;
+    }
+    HuPrcSleep(20);
+    if (D_80108880_358E90_name_51 != 0) {
+        D_80108A4C_35905C_name_51 = NULL;
+        obj = omAddObj(0x1000, 0, 0, -1, func_801062AC_3568BC_name_51);
+        obj->trans.x = D_80108880_358E90_name_51 / 60.0f;
+        obj->work[0] = 0;
+        obj->scale.x = 1.0f;
+        func_80106A60_357070_name_51(D_80108880_358E90_name_51);
+    }
+    if (GwSystem.current_board_index != 6) {
+        HuPrcSleep(20);
+        func_80059868_5A468(D_80108890_358EA0_name_51[1], 50, 32);
+        SprPosSet(D_801088F0_358F00_name_51[1].strGId[0], 0, 80, 32);
+        SprPosSet((s16)D_801088A0_358EB0_name_51[1], 0, 100, 32);
+        HuPrcSleep(20);
+        for (i = 0; i < 7; i++) {
+            D_801088C0_358ED0_name_51[i] = func_80049ED4_4AAD4(D_80108828_358E38_name_51[i], 2);
+        }
+        for (i = 0; i < D_80108888_358E98_name_51; i++) {
+            /* j reaches 4 when nobody has a star left: D_80108404[4] is D_80108434 (retail) */
+            for (j = 0; j < 4; j++) {
+                if (gPlayers[D_800F8CE4_F98E4[j]].stars != 0) {
+                    gPlayers[D_800F8CE4_F98E4[j]].stars--;
+                    break;
+                }
+            }
+            PlaySound(0x355);
+            obj = omAddObj(0x1000, 0, 0, -1, func_80106884_356E94_name_51);
+            obj->rot.x = 100.0f;
+            obj->rot.y = 0.0f;
+            obj->trans.y = 160.0f;
+            obj->work[0] = i % 7;
+            obj->work[1] = 0;
+            obj->work[2] = 20;
+            dx = D_80108434_358A44_name_51.x - D_80108404_358A14_name_51[j].x;
+            dy = D_80108434_358A44_name_51.y - D_80108404_358A14_name_51[j].y;
+            dz = D_80108434_358A44_name_51.z - D_80108404_358A14_name_51[j].z;
+            dx /= 20.0f;
+            dy /= 20.0f;
+            dz /= 20.0f;
+            obj->scale.x = dx;
+            obj->scale.y = dy;
+            obj->scale.z = dz;
+            obj->trans.x = D_80108404_358A14_name_51[j].x;
+            obj->trans.y = D_80108404_358A14_name_51[j].y;
+            obj->trans.z = D_80108404_358A14_name_51[j].z;
+            HuPrcSleep(20);
+        }
+        for (i = 0; i < 7; i++) {
+            func_80049F90_4AB90(D_801088C0_358ED0_name_51[i]);
+        }
+        func_80059868_5A468(D_80108890_358EA0_name_51[2], 50, 70);
+        SprPosSet(D_801088F0_358F00_name_51[2].strGId[0], 0, 80, 70);
+        SprPosSet((s16)D_801088A0_358EB0_name_51[2], 0, 100, 70);
+        HuPrcSleep(20);
+        D_801083C0_3589D0_name_51 = 0;
+        for (i = 0; i < D_80108888_358E98_name_51; i++) {
+            D_8010888C_358E9C_name_51--;
+            D_801083C0_3589D0_name_51 += 25;
+            PlaySound(9);
+            HuPrcVSleep();
+            D_801083C0_3589D0_name_51 += 25;
+            HuPrcVSleep();
+        }
+        HuPrcSleep(30);
+        func_80059868_5A468(D_80108890_358EA0_name_51[2], 50, -170);
+        SprPosSet(D_801088F0_358F00_name_51[2].strGId[0], 0, 80, -170);
+        SprPosSet((s16)D_801088A0_358EB0_name_51[2], 0, 100, -170);
+        func_80059868_5A468(D_80108890_358EA0_name_51[1], 50, -170);
+        SprPosSet(D_801088F0_358F00_name_51[1].strGId[0], 0, 80, -170);
+        SprPosSet((s16)D_801088A0_358EB0_name_51[1], 0, 100, -170);
+    }
+    D_80108880_358E90_name_51 = D_801083C0_3589D0_name_51;
+    if (D_80108880_358E90_name_51 != 0) {
+        D_80108A4C_35905C_name_51 = NULL;
+        obj = omAddObj(0x1000, 0, 0, -1, func_80106660_356C70_name_51);
+        obj->trans.x = D_80108880_358E90_name_51 / 60.0f;
+        obj->work[0] = 0;
+        obj->scale.x = 1.0f;
+        func_80106A60_357070_name_51(D_80108880_358E90_name_51);
+    }
+    HuPrcSleep(20);
+    D_801011FC_101DFC = 1;
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+
+/* The scene's main process (MP1 func_800FB054): the "RESULTS" title, the tally sliding in, the
+   bonus stars added to each player's stars; waits for A (or, unless flag 0xD, Z to look at the
+   stats table again), slides the tally out, shows the players' status windows, then runs the coin
+   and star tally. */
+void func_80107090_3576A0_name_51(void) {
+    s32 i;
+    s32 xoff;
+
+    SprPosSet(D_80108CB8_3592C8_name_51.strGId[func_8006A608_6B208(&D_80108CB8_3592C8_name_51, D_801085E0_358BF0_name_51, 1, -1, -1)], 0,
+              D_801085E4_358BF4_name_51[0], D_801085E4_358BF4_name_51[1]);
+    func_80108058_358668_name_51();
+    func_80104490_354AA0_name_51();
+    InitFadeIn(0, 16);
+    HuPrcSleep(16);
+    if (func_80011018_11C18(D_800FA188_FAD88) == 0 || func_80011018_11C18(D_800FA188_FAD88) == 2) {
+        PlayMusic(16);
+    }
+    HuPrcSleep(10);
+    func_801081CC_3587DC_name_51();
+    func_80104F6C_35557C_name_51();
+    func_8008D6F0_8E2F0((s16)D_80109110_359720_name_51);
+    for (i = 0; i < 4; i++) {
+        D_801088E0_358EF0_name_51[i] = gPlayers[i].stars;
+        gPlayers[i].stars += D_800F8CE4_F98E4[i + 10];
+    }
+    HuPrcSleep(2);
+    for (i = 0; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1)) {
+            break;
+        }
+    }
+    if (i == 4) {
+        HuPrcSleep(30);
+    } else {
+        while (1) {
+            for (i = 0; i < 4; i++) {
+                if (gPlayers[i].flags & 1) {
+                    continue;
+                }
+                if (ContBtnTrg[gPlayers[i].port] & 0x8000) {
+                    break;
+                }
+                if (_CheckFlag(0xD) == 0 && (ContBtnTrg[gPlayers[i].port] & 0x1000)) {
+                    i = 4;
+                    func_801055E4_355BF4_name_51();
+                    func_801037E0_353DF0_name_51();
+                    func_8010418C_35479C_name_51();
+                    func_80104308_354918_name_51();
+                    func_801058CC_355EDC_name_51();
+                    HuPrcSleep(5);
+                    break;
+                }
+            }
+            if (i != 4) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_8008D5D8_8E1D8((s16)D_80109110_359720_name_51);
+    for (xoff = 0; xoff >= -320; xoff -= 16) {
+        if (_CheckFlag(0xD) == 0) {
+            SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+            SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+            for (i = 0; i < 4; i++) {
+                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+                func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+            }
+            SprPosSet((s16)D_80108D60_359370_name_51, 0, xoff, 0);
+            SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+            for (i = 0; i < 8; i++) {
+                SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108658_358C68_name_51[i][0] + xoff, D_80108658_358C68_name_51[i][1]);
+            }
+        } else {
+            SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+            SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+            for (i = 0; i < 4; i++) {
+                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+                func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+            }
+            SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+            for (i = 4; i < 8; i++) {
+                SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108678_358C88_name_51[i][0] + xoff, D_80108678_358C88_name_51[i][1]);
+            }
+        }
+        HuPrcVSleep();
+    }
+    func_80105468_355A78_name_51();
+    func_8005FE10_60A10();
+    for (i = 0; i < 4; i++) {
+        func_800601DC_60DDC(D_800F8CE4_F98E4[i], i + 0x1C);
+        func_800600DC_60CDC(D_800F8CE4_F98E4[i], i);
+    }
+    for (i = 0; i < 4; i++) {
+        func_80060210_60E10(D_8010845C_358A6C_name_51[i]);
+    }
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    func_80107818_357E28_name_51();
+    func_80106A9C_3570AC_name_51();
+}
+
+/* Ends the scene once the fade-out is over (MP1 func_800FB71C): restores the players' stars
+   without the bonus stars, records the winner's character, frees everything and returns. */
+void func_801076B8_357CC8_name_51(omObjData* obj) {
+    s32 i;
+
+    if (func_8008F618_90218() == 0) {
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].stars = D_801088E0_358EF0_name_51[i];
+        }
+        func_80068150_68D50(-1);
+        func_800681D8_68DD8(-1, gPlayers[D_800F8CE4_F98E4[0]].character);
+        _ClearFlag(0xD);
+        func_8007DF98_7EB98();
+        func_80108034_358644_name_51();
+        func_80107EA4_3584B4_name_51();
+        func_80059704_5A304();
+        func_8005FF9C_60B9C();
+        func_8008CE5C_8DA5C();
+        func_8005E584_5F184();
+        func_8004340C_4400C();
+        omOvlReturnEx(1);
+    }
+}
+
+/* Waits for the tally to finish, then fades out (and the music, unless on board 5 before flag
+   0xB) and hands over to func_801076B8 (MP1 func_800FB87C). */
+void func_801077A8_357DB8_name_51(omObjData* obj) {
+    if (D_801011FC_101DFC != 0) {
+        InitFadeOut(0, 0x4B);
+        if (GwSystem.current_board_index != 5 || _CheckFlag(0xB) != 0) {
+            func_800794A8_7A0A8(0x78);
+        }
+        obj->func_ptr = func_801076B8_357CC8_name_51;
+    }
+}
+
+/* Builds the tally (MP1 func_800FB8C8): the three counter processes (user_data 0 coins, 2 star
+   coins; func_80105D38 stars), their icons, "X" labels and five-digit sprites off screen right,
+   the bank model facing the camera, 20 coin models and 7 star models. */
+void func_80107818_357E28_name_51(void) {
+    Vec target;
+    void* file;
+    s32 i;
+    s32 j;
+
+    D_80108858_358E68_name_51[0] = omAddPrcObj(func_80105BE0_3561F0_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[0]->user_data = (void*)0;
+    D_80108858_358E68_name_51[1] = omAddPrcObj(func_80105D38_356348_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[2] = omAddPrcObj(func_80105BE0_3561F0_name_51, 0x1001, 0, 0);
+    D_80108858_358E68_name_51[2]->user_data = (void*)2;
+    D_80108890_358EA0_name_51[0] = func_8005973C_5A33C(0xA0010, 10, 370, 170);
+    D_80108890_358EA0_name_51[1] = func_8005973C_5A33C(0xA0011, 10, 370, 204);
+    D_80108890_358EA0_name_51[2] = func_8005973C_5A33C(0xA0010, 10, 370, 170);
+    func_80059974_5A574(D_80108890_358EA0_name_51[0], 0.0f);
+    func_80059974_5A574(D_80108890_358EA0_name_51[1], 0.0f);
+    func_80059974_5A574(D_80108890_358EA0_name_51[2], 0.0f);
+    SprPosSet(D_801088F0_358F00_name_51[0].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[0], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 170);
+    SprPosSet(D_801088F0_358F00_name_51[1].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[1], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 204);
+    SprPosSet(D_801088F0_358F00_name_51[2].strGId[func_8006A608_6B208(&D_801088F0_358F00_name_51[2], D_801087C0_358DD0_name_51, 0, -1, -1)], 0, 400, 170);
+    file = DataRead(0x38);
+    D_801088B8_358EC8_name_51[0] = SprAnimRead(file);
+    DataClose(file);
+    D_801088A0_358EB0_name_51[0] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[0], i, (s16)D_801088B8_358EC8_name_51[0], 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[0], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[0], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[0], i, 0x1000);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[0], 0, 420, 170);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[0], i, i * 16, 0);
+        }
+    }
+    D_801088A0_358EB0_name_51[1] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[1], i, (s16)D_801088B8_358EC8_name_51[0], 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[1], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[1], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[1], i, 0x1000);
+        func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[1], i, 0, 0);
+        func_8008221C_82E1C((s16)D_801088A0_358EB0_name_51[1], i, 0.0f);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[1], 0, 420, 204);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[1], i, i * 16, 0);
+        }
+    }
+    D_801088A0_358EB0_name_51[2] = SprCreate(5, 5);
+    for (i = 0; i < 5; i++) {
+        SprAnimSet((s16)D_801088A0_358EB0_name_51[2], i, (s16)D_801088B8_358EC8_name_51[0], 0);
+        func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[2], i, 1);
+        SprPrioSet((s16)D_801088A0_358EB0_name_51[2], i, 10);
+        SprAttrSet((s16)D_801088A0_358EB0_name_51[2], i, 0x1000);
+        if (i == 0) {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[2], 0, 420, 170);
+        } else {
+            SprPosSet((s16)D_801088A0_358EB0_name_51[2], i, i * 16, 0);
+        }
+    }
+    D_801087D0_358DE0_name_51 = MBModelFileCreate(0xA013A, 0, 0.3f, 1.0f, NULL);
+    D_801087D0_358DE0_name_51->pos.x = D_801083C8_3589D8_name_51.x;
+    D_801087D0_358DE0_name_51->pos.y = D_801083C8_3589D8_name_51.y;
+    D_801087D0_358DE0_name_51->pos.z = D_801083C8_3589D8_name_51.z;
+    target.x = D_801087D0_358DE0_name_51->pos.x;
+    target.y = D_801087D0_358DE0_name_51->pos.y;
+    target.z = D_801087D0_358DE0_name_51->pos.z + 2000.0f;
+    func_80056658_57258(&D_801087D0_358DE0_name_51->pos, &target, &D_801087D0_358DE0_name_51->rot);
+    for (j = 0; j < 20; j++) {
+        if (j == 0) {
+            D_801087D8_358DE8_name_51[0] = func_80043510_44110(0x18, NULL);
+        } else {
+            D_801087D8_358DE8_name_51[j] = MBModelParamCreate(D_801087D8_358DE8_name_51[0]);
+        }
+        D_801087D8_358DE8_name_51[j]->pos.x = D_801083E0_3589F0_name_51[0].x;
+        D_801087D8_358DE8_name_51[j]->pos.y = D_801083E0_3589F0_name_51[0].y;
+        D_801087D8_358DE8_name_51[j]->pos.z = D_801083E0_3589F0_name_51[0].z;
+        D_801087D8_358DE8_name_51[j]->scale.x = D_801087D8_358DE8_name_51[j]->scale.y = D_801087D8_358DE8_name_51[j]->scale.z = 1.0f;
+    }
+    for (j = 0; j < 7; j++) {
+        if (j == 0) {
+            D_80108828_358E38_name_51[0] = func_80043510_44110(0x19, NULL);
+        } else {
+            D_80108828_358E38_name_51[j] = MBModelParamCreate(D_80108828_358E38_name_51[0]);
+        }
+        D_80108828_358E38_name_51[j]->pos.x = D_801083E0_3589F0_name_51[0].x;
+        D_80108828_358E38_name_51[j]->pos.y = D_801083E0_3589F0_name_51[0].y + 2000.0f;
+        D_80108828_358E38_name_51[j]->pos.z = D_801083E0_3589F0_name_51[0].z;
+        D_80108828_358E38_name_51[j]->scale.x = D_80108828_358E38_name_51[j]->scale.y = D_80108828_358E38_name_51[j]->scale.z = 0.5f;
+    }
+}
 
 __asm__(".section .rodata");
-const u32 D_801087C0_358DD0_name_51[4] = { 0x58000000, 0x00000000, 0x00000000, 0x00000000 };
+const char D_801087C0_358DD0_name_51[] = "X";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107EA4_3584B4_name_51);
+/* Frees the tally's models, counter processes, digit sprites and "X" labels (MP1
+   func_800FBDF0). */
+void func_80107EA4_3584B4_name_51(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107FE8_3585F8_name_51);
+    if (D_801087D0_358DE0_name_51 != NULL) {
+        MBModelKill(D_801087D0_358DE0_name_51);
+    }
+    for (i = 0; i < 20; i++) {
+        if (D_801087D8_358DE8_name_51[i] != NULL) {
+            MBModelKill(D_801087D8_358DE8_name_51[i]);
+        }
+    }
+    for (i = 0; i < 7; i++) {
+        if (D_80108828_358E38_name_51[i] != NULL) {
+            MBModelKill(D_80108828_358E38_name_51[i]);
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        omDelPrcObj(D_80108858_358E68_name_51[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        SprKill((s16)D_801088A0_358EB0_name_51[i]);
+    }
+    for (i = 0; i < 1; i++) {
+        SprAnimKill((s16)D_801088B8_358EC8_name_51[i]);
+    }
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[0]);
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[1]);
+    func_8006AE14_6BA14(&D_801088F0_358F00_name_51[2]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80108034_358644_name_51);
+/* Camera and background for the scene: the board's background (D_80108440). */
+void func_80107FE8_3585F8_name_51(void) {
+    func_80018E30_19A30(2);
+    func_80050A30_51630(D_01164160);
+    func_80050E00_51A00(D_80108440_358A50_name_51[GwSystem.current_board_index]);
+    func_8005390C_5450C(0x80);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80108058_358668_name_51);
+/* Frees the background (MP1 func_800F70E8, Last5Turns). */
+void func_80108034_358644_name_51(void) {
+    MBDBackKill();
+    func_80050AE0_516E0();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801081CC_3587DC_name_51);
+/* Creates the four player models in their standing motion, places them in turn order
+   (D_80108704) facing D_80108734. */
+void func_80108058_358668_name_51(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801082AC_3588BC_name_51);
+    for (i = 0; i < 4; i++) {
+        MBPlayerModelCreate(i, D_801086EC_358CFC_name_51[gPlayers[i].character], 2);
+        MBMotionSet(gPlayers[i].unk_24, 0, 2);
+        ((MBModel*)gPlayers[i].unk_24)->attr |= 1;
+    }
+    for (i = 0; i < 4; i++) {
+        D_80108848_358E58_name_51[i] = gPlayers[D_800F8CE4_F98E4[i]].unk_24;
+        D_80108848_358E58_name_51[i]->pos.x = D_80108704_358D14_name_51[i].x;
+        D_80108848_358E58_name_51[i]->pos.y = D_80108704_358D14_name_51[i].y;
+        D_80108848_358E58_name_51[i]->pos.z = D_80108704_358D14_name_51[i].z;
+        func_80056658_57258(&D_80108848_358E58_name_51[i]->pos, &D_80108734_358D44_name_51[i], &D_80108848_358E58_name_51[i]->rot);
+    }
+}
+
+/* Walks the four player models to D_80108734 (off screen left), hiding each on arrival, until all
+   four arrive in one frame; then removes the players' board status (func_8005E260). */
+void func_801081CC_3587DC_name_51(void) {
+    s32 i;
+    s32 n;
+
+    while (1) {
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            if (func_8005A5E8_5B1E8(D_80108848_358E58_name_51[i], &D_80108734_358D44_name_51[i], 32.0f) == 1) {
+                MBModelDispOff(D_80108848_358E58_name_51[i]);
+                n++;
+            }
+        }
+        if (n == 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        func_8005E260_5EE60(i);
+    }
+}
+
+/* The bank model's bounce when coins land: work[1] frames growing by scale, work[1] frames
+   shrinking back (work[2] frames each), then clears D_80108A4C and ends. */
+void func_801082AC_3588BC_name_51(omObjData* obj) {
+    switch (obj->work[0]) {
+        case 0:
+            D_801087D0_358DE0_name_51->scale.x += obj->scale.x;
+            D_801087D0_358DE0_name_51->scale.y += obj->scale.y;
+            D_801087D0_358DE0_name_51->scale.z += obj->scale.z;
+            if (--obj->work[1] == 0) {
+                obj->work[0] = 1;
+                obj->work[1] = obj->work[2];
+            }
+            break;
+        case 1:
+            D_801087D0_358DE0_name_51->scale.x -= obj->scale.x;
+            D_801087D0_358DE0_name_51->scale.y -= obj->scale.y;
+            D_801087D0_358DE0_name_51->scale.z -= obj->scale.z;
+            if (--obj->work[1] == 0) {
+                obj->work[0] = 2;
+                obj->work[1] = obj->work[2];
+            }
+            break;
+        case 2:
+            D_80108A4C_35905C_name_51 = NULL;
+            omDelObj(obj);
+            break;
+    }
+}

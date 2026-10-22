@@ -16,6 +16,8 @@
 #include "game/window.h"
 #include "game/gamemes.h"
 #include "game/pad.h"
+#include "game/gamework.h" /* R51B */
+#include "process.h" /* R51B */
 
 /* ---- main-segment API used by 51 ---- */
 
@@ -92,6 +94,9 @@ void func_8008E434_8F034(s32 arg0);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void omDelObj(omObjData*);
 extern u16 ContDStkTrg[4];
+extern u8 D_01164160[]; /* R51B */
+extern s16 D_800FA188_FAD88; /* R51B: the current music */
+extern u16 D_801011FC_101DFC; /* R51B: set when the scene may end (MP1 D_800F5144) */
 extern s16 D_800F8CE4_F98E4[]; /* board state halfwords: [0..3] player order, [10 + p] bonus stars */
 
 /* ---- overlay 51 data ---- */
@@ -117,6 +122,22 @@ extern s32 D_80108580_358B90_name_51[6]; /* per character: icon */
 extern s32 D_80108598_358BA8_name_51[6]; /* per character: name */
 extern s32 D_801085B0_358BC0_name_51[12]; /* per row: the explanation message */
 
+/* R51B */
+extern s32 D_801083C0_3589D0_name_51; /* coins from the stars, 50 each (counter 2) */
+extern s32 D_801083C4_3589D4_name_51; /* falling-coin sound pacing (MP1 D_800FC050) */
+extern Vec D_801083C8_3589D8_name_51; /* star pile centre */
+extern Vec D_801083D4_3589E4_name_51;
+extern Vec D_801083E0_3589F0_name_51[3]; /* coin start points; [0].y is where a finished coin returns */
+extern s32 D_80108440_358A50_name_51[7]; /* per board: the background */
+extern s32 D_8010845C_358A6C_name_51[4]; /* the players' status windows' slots (14..17) */
+extern Vec D_80108404_358A14_name_51[4]; /* where each player's stars start */
+extern Vec D_80108434_358A44_name_51; /* where the stars fly to */
+extern s32 D_801086B8_358CC8_name_51; /* next coin model (0..19) */
+extern void* D_801086EC_358CFC_name_51[6]; /* per character: the player model's motions */
+extern Vec D_80108704_358D14_name_51[4]; /* player model places, in turn order */
+extern Vec D_80108734_358D44_name_51[4]; /* where they face, and walk off to */
+extern char* D_801085E0_358BF0_name_51; /* "RESULTS" */
+extern s16 D_801085E4_358BF4_name_51[2]; /* tally: title position */
 extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
 extern s16 D_801085F8_358C08_name_51[4][2];
 extern s16 D_80108608_358C18_name_51[4][2]; /* tally: icons (D_80108618 with flag 0xD) */
@@ -130,6 +151,8 @@ extern s32 D_80108698_358CA8_name_51[6]; /* per character: tally icon */
 extern s16 D_801086B0_358CC0_name_51[4]; /* per column: x offset (slides in) */
 extern const char D_801087AC_358DBC_name_51[]; /* "%d" */
 extern const char D_801087B4_358DC4_name_51[]; /* "X%2d" */
+extern const char D_801087BC_358DCC_name_51[]; /* R51B: "%5d" */
+extern const char D_801087C0_358DD0_name_51[]; /* R51B: "X" */
 
 /* ---- overlay 51 bss ---- */
 
@@ -138,6 +161,19 @@ extern s32 D_80108880_358E90_name_51; /* total coins */
 extern s32 D_80108884_358E94_name_51;
 extern s32 D_80108888_358E98_name_51; /* total stars with the bonus stars */
 extern s32 D_8010888C_358E9C_name_51;
+/* R51B */
+extern MBModel* D_801087D0_358DE0_name_51; /* the bank model */
+extern MBModel* D_801087D8_358DE8_name_51[20]; /* the coin models */
+extern MBModel* D_80108828_358E38_name_51[7]; /* the star models */
+extern MBModel* D_80108848_358E58_name_51[4]; /* the player models in turn order */
+extern Process* D_80108858_358E68_name_51[3]; /* the counter processes (splat sizes it 8: [2] is D_80108860) */
+extern s32 D_80108890_358EA0_name_51[3]; /* tally icons: coins, stars, star coins */
+extern s32 D_801088A0_358EB0_name_51[3]; /* the five-digit counters: coins, stars, star coins */
+extern s32 D_801088B8_358EC8_name_51[1]; /* the digits' animation */
+extern ModelEmitterWork* D_801088C0_358ED0_name_51[8]; /* the star models' trails */
+extern s32 D_801088E0_358EF0_name_51[4]; /* each player's stars before the bonus stars */
+extern GAMEMES D_801088F0_358F00_name_51[3]; /* "X" beside each counter */
+extern omObjData* D_80108A4C_35905C_name_51; /* the bank's bounce object */
 extern s32 D_80108A50_359060_name_51; /* character name sprites */
 extern s32 D_80108A58_359068_name_51[4];
 extern s32 D_80108A68_359078_name_51; /* character icon sprites */
@@ -194,7 +230,7 @@ void func_80106884_356E94_name_51(omObjData*);
 void func_80106A60_357070_name_51(s32);
 void func_80106A9C_3570AC_name_51(void);
 void func_80107090_3576A0_name_51(void);
-void func_801076B8_357CC8_name_51(void);
+void func_801076B8_357CC8_name_51(omObjData*);
 void func_801077A8_357DB8_name_51(omObjData*);
 void func_80107818_357E28_name_51(void);
 void func_80107EA4_3584B4_name_51(void);
