@@ -15,6 +15,7 @@
 #include "game/object.h"
 #include "game/sprite.h"
 #include "game/hmfman.h"
+#include "game/pad.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -95,6 +96,11 @@ typedef struct BaCharData {
     /* 0x0C */ char unk_0C[0xC];
 } BaCharData;
 extern BaCharData D_800CD438_CE038[];
+
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+extern s16 D_800FC9BE_FD5BE[4]; /* stick x as s16 (MP1 D_800F2CE2) */
+extern s16 D_800FD468_FE068[4]; /* stick y as s16 (MP1 D_800F33CC) */
 
 extern HmfModel* D_800FC834_FD434;
 extern omObjData* D_800FFFD8_100BD8[];
@@ -297,8 +303,7 @@ extern s32 D_8010CD10_223100_BombsAway; /* splat label = D_8010CD04.unk_0C[0] */
 extern BaPattern* D_8010CF5C_22334C_BombsAway[10]; /* per phase; [0] NULL */
 extern f32 D_8010CF84_223374_BombsAway[4];          /* bomb scale per kind */
 extern BaKindInfo D_8010CF94_223384_BombsAway[4];
-extern f32 D_8010CFA4_223394_BombsAway;
-extern f32 D_8010CFA8_223398_BombsAway;
+extern f32 D_8010CFA4_223394_BombsAway[][2]; /* CPU target offsets (x, z) per corner slot (MP1 D_800FFA7C); asm also reads D_8010CFA8 = [0][1] */
 extern u8 D_8010CFD4_2233C4_BombsAway[][2]; /* MP1 D_800FFAAC; asm reads D_8010CFD5 = [0][1] */
 extern s32 D_8010CFF0_2233E0_BombsAway;
 extern s32 D_8010CFF4_2233E4_BombsAway[];

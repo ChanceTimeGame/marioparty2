@@ -797,7 +797,130 @@ void func_8010488C_21AC7C_BombsAway(omObjData* obj, s16 player) {
     p->unk_46 = -1;
 }
 
+/* CPU control of a player (MP1 func_800F8538): picks a target near the platform (away from the
+   newest landing mark, or a corner slot at the finish), presses A to jump, and writes the pad.
+   NON_MATCHING: same code, but obj/diff/move/the stage base permute s1/s3/s4/s5, and KMC adds a
+   mul-fix nop after the cos call for unk_58 (retail has none). */
+#ifdef NON_MATCHING
+void func_80104CD0_21B0C0_BombsAway(omObjData* obj) {
+    BaPlayer* p;
+    s32 port;
+    s16 move;
+    s32 diff;
+    f32 dx;
+    f32 dz;
+    f32 ang;
+    f32 r;
+    s32 stick;
+    s32 pad;
+
+    p = func_80104058_21A448_BombsAway(obj);
+    port = gPlayers[p->unk_06].port;
+    diff = gPlayers[p->unk_06].cpu_difficulty;
+    move = 0;
+    if (D_8010DB28_223F18_BombsAway.unk_1C != 0.0) {
+        move = 1;
+    }
+    if (D_8010DB28_223F18_BombsAway.unk_1C > 0.75) {
+        if (!(D_8010D940_223D30_BombsAway.unk_04 & 7)) {
+            p->unk_58 = (s32)((u32)(BA_RAND16() * 25) >> 13) + D_8010DB28_223F18_BombsAway.unk_38.x;
+            p->unk_60 = (s32)((u32)(BA_RAND16() * 25) >> 13) + D_8010DB28_223F18_BombsAway.unk_38.z;
+        }
+    } else if (D_8010DF18_224308_BombsAway >= 0) {
+        move = 1;
+        dx = D_8010DB28_223F18_BombsAway.unk_38.x - D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_04;
+        dz = D_8010DB28_223F18_BombsAway.unk_38.z - D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_08;
+        if (D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_02 < 2) {
+            if ((s32)((u32)(BA_RAND16() * 25) >> 14) < 18 - diff * 5) {
+                p->unk_54 = 1;
+            } else if (dx * dx + dz * dz < 160000.0 && (s32)((u32)(BA_RAND16() * 25) >> 14) < diff * 20 + 20) {
+                p->unk_54 = 1;
+            }
+        }
+        if (!((D_8010DEB8_2242A8_BombsAway[D_8010DF18_224308_BombsAway].unk_00 + p->unk_3E) & 0xF)) {
+            ang = func_80108A4C_21EE3C_BombsAway(dx, dz);
+            ang += (((BA_RAND16() * 15) >> 13) - 60);
+            if (ang >= 360.0f) {
+                ang -= 360.0f;
+            } else if (ang < 0.0f) {
+                ang += 360.0f;
+            }
+            dx = D_8010DB28_223F18_BombsAway.unk_38.x + func_800B7890_B8490(ang) * 2.0 * 100.0;
+            dz = D_8010DB28_223F18_BombsAway.unk_38.z + HuMathSin(ang) * 1.5 * 100.0;
+            ang = (BA_RAND16() * 45) >> 13;
+            r = ((BA_RAND16() * (s32)((2.5 - diff * 0.5) * 100.0)) >> 16) + 30.0;
+            p->unk_58 = dx + func_800B7890_B8490(ang) * r;
+            p->unk_60 = dz + HuMathSin(ang) * r * 0.8;
+        }
+    }
+    if (D_8010DB28_223F18_BombsAway.unk_2C != 0) {
+        if ((s32)((u32)(BA_RAND16() * 25) >> 14) < diff * 10 + 60) {
+            p->unk_54 = 1;
+        }
+    }
+    if (p->unk_6A != 0) {
+        move = 1;
+        p->unk_58 = D_8010DB28_223F18_BombsAway.unk_38.x + D_8010CFA4_223394_BombsAway[p->unk_68][0];
+        p->unk_60 = D_8010DB28_223F18_BombsAway.unk_38.z + D_8010CFA4_223394_BombsAway[p->unk_68][1];
+    }
+    /* New in MP2: a CPU 400 or more from the platform's centre heads back to it at full tilt. */
+    if (move != 0) {
+        dx = D_8010DB28_223F18_BombsAway.unk_38.x - obj->trans.x;
+        dz = D_8010DB28_223F18_BombsAway.unk_38.z - obj->trans.z;
+        if (sqrtf(dx * dx + dz * dz) >= 400.0) {
+            p->unk_4C = func_80108A4C_21EE3C_BombsAway(dx, -dz) + 90.0;
+            p->unk_50 = 1.0f;
+        } else {
+            dx = p->unk_58 - obj->trans.x;
+            dz = p->unk_60 - obj->trans.z;
+            p->unk_4C = func_80108A4C_21EE3C_BombsAway(dx, -dz) + 90.0;
+            if (p->unk_4C >= 360.0) {
+                p->unk_4C -= 360.0;
+            }
+            p->unk_50 = sqrtf(dx * dx + dz * dz) / 150.0;
+            if (p->unk_50 < 0.2) {
+                p->unk_50 = 0.0f;
+            }
+            if (p->unk_50 > 1.0) {
+                p->unk_50 = 1.0f;
+            }
+        }
+    } else {
+        dx = D_8010DB28_223F18_BombsAway.unk_38.x - obj->trans.x;
+        dz = D_8010DB28_223F18_BombsAway.unk_38.z - obj->trans.z;
+        if (sqrtf(dx * dx + dz * dz) >= 400.0) {
+            p->unk_4C = func_80108A4C_21EE3C_BombsAway(dx, -dz) + 90.0;
+            p->unk_50 = 1.0f;
+        } else {
+            p->unk_50 = 0.0f;
+        }
+    }
+    ContBtn[port] &= 0x1030;
+    ContBtnTrg[port] &= 0x1030;
+    if (D_8010D940_223D30_BombsAway.unk_00 == 1 || p->unk_6A != 0) {
+        if (p->unk_54 != 0) {
+            ContBtnTrg[port] |= 0x8000;
+        }
+        pad = port;
+        ContBtn[pad] = ContBtnTrg[pad];
+        stick = HuMathSin(p->unk_4C) * p->unk_50 * 64.0f;
+        D_800FC9BE_FD5BE[pad] = stick;
+        ContStkX[pad] = stick;
+        stick = -func_800B7890_B8490(p->unk_4C) * p->unk_50 * 64.0f;
+        D_800FD468_FE068[pad] = stick;
+        ContStkY[pad] = stick;
+    } else {
+        pad = port;
+        D_800FC9BE_FD5BE[pad] = 0;
+        ContStkX[pad] = 0;
+        D_800FD468_FE068[pad] = 0;
+        ContStkY[pad] = 0;
+    }
+    p->unk_54 = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80104CD0_21B0C0_BombsAway);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801055FC_21B9EC_BombsAway);
 
