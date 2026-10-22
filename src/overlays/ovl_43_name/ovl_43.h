@@ -632,4 +632,20 @@ void func_80066FD8_67BD8(s16);
 void func_80067004_67C04(s16);
 void func_800558DC_564DC(s16);
 
+/* The Boo's ride (func_80110F2C starts one func_801109A4 per player on its path). */
+typedef struct Ovl43BooRide {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 step; /* the player's index in the Boo's path */
+    /* 0x08 */ s32 order; /* the order the player was picked up in */
+    /* 0x0C */ s32 boo;
+} Ovl43BooRide; /* allocated 0x20 */
+extern MBModel* D_8011548C_2DA97C_name_43; /* the Boo */
+extern s16 D_801144CC_2D99BC_name_43[2]; /* per Boo: its space */
+extern s16 D_801144D0_2D99C0_name_43[2]; /* per Boo: a camera space */
+extern s16 D_801144D4_2D99C4_name_43[4]; /* the ride's price by time of day */
+extern s32 D_801144DC_2D99CC_name_43[2]; /* the Boo model's create parameter */
+extern s16* D_8011451C_2D9A0C_name_43[2]; /* per Boo: its path, -1 ended */
+extern s16 D_80114524_2D9A14_name_43[2]; /* per Boo: the path's end */
+extern Vec D_80114528_2D9A18_name_43[4]; /* landing offsets by order */
+
 #endif

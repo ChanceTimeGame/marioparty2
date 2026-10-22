@@ -4410,7 +4410,70 @@ void func_8011081C_2D5D0C_name_43(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801109A4_2D5E94_name_43);
+/* Process: one player rides with the Boo. It waits until the Boo comes near the player's space
+   (the player turns to watch it), then walks the rest of the Boo's path and lands, offset by its
+   order, on the far end, which becomes the player's space. */
+void func_801109A4_2D5E94_name_43(void) {
+    Vec dest;
+    void* vib;
+    Ovl43BooRide* work;
+    Vec* target;
+    GW_PLAYER* player;
+    MBModel* model;
+    s32 step;
+    s32 order;
+    s32 boo;
+    s16* path;
+    Process* process;
+    SpaceData* sd;
+
+    work = HuPrcCurrentGet()->user_data;
+    target = (Vec*)D_8011548C_2DA97C_name_43;
+    target = &((MBModel*)target)->pos;
+    player = BoardPlayerGet(work->player);
+    model = player->unk_24;
+    step = work->step;
+    order = work->order;
+    boo = work->boo;
+    path = D_8011451C_2D9A0C_name_43[boo];
+    path += step + 1;
+    process = HuPrcCurrentGet();
+    while (!(HuVecDistance(&GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index))->coords, target) < order * 2.5f * 2.0f + 31.0f)) {
+        func_80056658_57258(&model->pos, target, &model->rot);
+        HuPrcVSleep();
+    }
+    vib = func_800672BC_67EBC(work->player, 0, 5);
+    func_800797DC_7A3DC(0x111, work->player);
+    if (work->player == GwSystem.current_player_index) {
+        MBPlayerMotionSet(-1, 1, 2);
+    } else {
+        MBMotionSet(model, 1, 2);
+    }
+    while (*path != -1) {
+        sd = GetSpaceData(*path);
+        path++;
+        func_800B3170_B3D70(&dest, &sd->coords);
+        func_80056658_57258(&model->pos, &dest, &model->rot);
+        HuPrcChildLink(process, func_80057150_57D50(&model->pos, &dest, &model->pos, 2.5f));
+        HuPrcChildWatch();
+    }
+    func_800B3170_B3D70(&dest, &GetSpaceData(D_80114524_2D9A14_name_43[boo])->coords);
+    dest.x += D_80114528_2D9A18_name_43[order].x;
+    dest.z += D_80114528_2D9A18_name_43[order].z;
+    func_80056658_57258(&model->pos, &dest, &model->rot);
+    HuPrcChildLink(process, func_80056FD4_57BD4(&model->pos, &dest, &model->pos, 2.5f));
+    HuPrcChildWatch();
+    func_8006735C_67F5C(vib);
+    if (work->player == GwSystem.current_player_index) {
+        MBPlayerMotionSet(-1, -1, 2);
+    } else {
+        MBMotionSet(model, -1, 2);
+    }
+    func_80054C78_55878(D_80114524_2D9A14_name_43[boo], &player->cur_chain_index, &player->cur_space_index);
+    player->next_chain_index = player->cur_chain_index;
+    player->next_space_index = player->cur_space_index + 1;
+    omDelPrcObj(NULL);
+}
 
 s32 func_80110CCC_2D61BC_name_43(s32 arg0) {
     s32 count = 0;
