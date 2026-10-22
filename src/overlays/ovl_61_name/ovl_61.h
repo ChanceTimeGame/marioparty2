@@ -59,7 +59,7 @@ typedef struct Ovl61Iris {
     /* 0x5C */ f32 sy[4];
     /* 0x6C */ f32 fbSx[3][4];
     /* 0x9C */ f32 fbSy[3][4];
-    /* 0xCC */ s16 fadeTime;
+    /* 0xCC */ u16 fadeTime;
     /* 0xD0 */ f32 col[4];
     /* 0xE0 */ f32 colStep[4];
 } Ovl61Iris; /* size = 0xF0 */
