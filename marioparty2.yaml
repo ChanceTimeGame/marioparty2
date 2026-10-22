@@ -1636,6 +1636,7 @@ segments:
     subsegments:
       - [0x36B420, c]
       - [0x36CAE0, data]
+      - [0x36CF60, .rodata, 36B420]
       - {0x36D9A0, type: bss, vram: 0x80104D80, name: ovl_56_bss}
   - type: code
     start: 0x36D9A0
