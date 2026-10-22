@@ -188,6 +188,11 @@ void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_800B75A8_B81A8(f32 y, f32 x);
+void func_80018CCC_198CC(omObjData* obj, u16 idx, s32 file);
+void func_8002D1EC_2DDEC(s16, u8);
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
+void func_80029B80_2A780(s16 arg0, s16 arg1);
 u8 rand8(void);
 
 /* ---------------------------------------------------------------------------------------------
