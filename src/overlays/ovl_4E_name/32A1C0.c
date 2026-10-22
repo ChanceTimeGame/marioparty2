@@ -185,9 +185,6 @@ void func_80102B9C_32A55C_name_4E(void) {
             case 0:
                 state = 3;
                 break;
-            case 2:
-                state = 5;
-                break;
             default:
                 state = 5;
                 break;
