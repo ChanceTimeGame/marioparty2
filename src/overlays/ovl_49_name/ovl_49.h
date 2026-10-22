@@ -611,8 +611,8 @@ void func_8010F400_3198B0_name_49(void); /* B: unknown */
 void func_8010F56C_319A1C_name_49(void); /* B: unknown */
 void func_8010F694_319B44_name_49(void); /* B: unknown */
 void func_8010F754_319C04_name_49(void); /* B: unknown */
-void func_8010F918_319DC8_name_49(void); /* B: unknown */
-void func_8010F9A0_319E50_name_49(void); /* B: unknown */
+void func_8010F918_319DC8_name_49(s16 space);
+void func_8010F9A0_319E50_name_49(s16 from, s16 to, f32 speed, s32 arc, s32 player, s32 slot);
 void func_8010FC3C_31A0EC_name_49(void); /* B: unknown */
 void func_8010FE80_31A330_name_49(void); /* B: unknown */
 void func_8010FF2C_31A3DC_name_49(void); /* B: unknown */
@@ -653,6 +653,15 @@ void func_800514F0_520F0(void);
 f32 MBCameraSpeedGet(void);
 void MBCameraSpeedSet(f32);
 f32 func_80053614_54214(void);
+extern Vec D_80114A90_31EF40_name_49[128]; /* the chain's trail: positions, a ring */
+extern Vec D_80115090_31F540_name_49[128]; /* the chain's trail: rotations */
+extern s32 D_80115690_31FB40_name_49; /* the trail's write index */
+extern MBModel* D_80115698_31FB48_name_49[7]; /* the chain: [0] leads, 1-6 follow its trail */
+extern s32 D_801139DC_31DE8C_name_49[7]; /* follower lag in trail entries */
+extern s32 D_801139F8_31DEA8_name_49[7]; /* follower lag when D_800F8CE4[4] == 2 */
+extern Vec D_801156B8_31FB68_name_49[4]; /* func_8010F9A0: per player target */
+extern Vec D_801156E8_31FB98_name_49[4]; /* func_8010F9A0: per player facing */
+extern Vec D_80113A24_31DED4_name_49[]; /* func_8010F9A0: offset by slot (x, z) */
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif

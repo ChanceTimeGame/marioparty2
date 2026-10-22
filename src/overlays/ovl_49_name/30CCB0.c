@@ -4050,26 +4050,157 @@ s32 func_8010F3E0_319890_name_49(void) {
     return func_8010ECC4_319174_name_49(-1, 7);
 }
 
-__asm__(".section .rodata");
-const u32 D_801148A8_31ED58_name_49[15] = { 0xC2480000, 0x43480000, 0xC2200000, 0x00000000, 0x43480000, 0xC1A00000, 0x42480000, 0x43480000, 0x00000000, 0xC1F00000, 0x43480000, 0xC1200000, 0x41F00000, 0x43480000, 0xC1F00000 };
+/* One burst of func_8010F56C: model ids[n] (n = the s16 at user_data + 2) at pos[n], scale[n],
+   for 30 frames. */
+/* One burst of func_8010F56C: model ids[n] (n = the s16 at user_data + 2) at pos[n], scale[n],
+   for 30 frames. */
+void func_8010F400_3198B0_name_49(void) {
+    s16* work = HuPrcCurrentGet()->user_data;
+    Vec pos[5] = {
+        { -50.0f, 200.0f, -40.0f }, { 0.0f, 200.0f, -20.0f }, { 50.0f, 200.0f, 0.0f },
+        { -30.0f, 200.0f, -10.0f }, { 30.0f, 200.0f, -30.0f },
+    };
+    Vec scale[5] = {
+        { 20.0f, 20.0f, 20.0f }, { 10.0f, 10.0f, 10.0f }, { 20.0f, 20.0f, 20.0f },
+        { 15.0f, 15.0f, 15.0f }, { 10.0f, 10.0f, 10.0f },
+    };
+    u8 ids[6] = { 0x9C, 0x9D, 0x9E, 0x9C, 0x9D, 0x9E };
+    MBModel* model;
+    s16 n;
 
-__asm__(".section .rodata");
-const u32 D_801148E4_31ED94_name_49[15] = { 0x41A00000, 0x41A00000, 0x41A00000, 0x41200000, 0x41200000, 0x41200000, 0x41A00000, 0x41A00000, 0x41A00000, 0x41700000, 0x41700000, 0x41700000, 0x41200000, 0x41200000, 0x41200000 };
+    PlaySound(0x409);
+    n = work[1];
+    model = func_80043510_44110(ids[n], NULL);
+    func_800B3170_B3D70(&model->pos, &pos[n]);
+    func_800B3170_B3D70(&model->scale, &scale[n]);
+    HuPrcSleep(30);
+    MBModelKill(model);
+    omDelPrcObj(NULL);
+}
 
-__asm__(".section .rodata");
-const char D_80114920_31EDD0_name_49[] = "\234\235\236\234\235\236";
+/* A centred sprite (0xA0220) and five func_8010F400 bursts 5 frames apart. */
+void func_8010F56C_319A1C_name_49(void) {
+    s32 spr;
+    void* data;
+    s32 anim;
+    Process* proc;
+    s16* work;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F400_3198B0_name_49);
+    spr = SprCreate_s32(1, 5);
+    data = DataRead(0xA0220);
+    anim = SprAnimRead_s32(data);
+    DataClose(data);
+    SprAnimSet(spr, 0, anim, 0);
+    SprPrioSet(spr, 0, 0x10);
+    SprAttrSet(spr, 0, 0x5000);
+    SprPosSet(spr, 0, 0xA0, 0x78);
+    for (i = 0; i < 5; i++) {
+        proc = omAddPrcObj(func_8010F400_3198B0_name_49, 0x4800, 0, 0x40);
+        work = HuMemMemoryAlloc(proc->heap, 0x20);
+        proc->user_data = work;
+        work[1] = i;
+        HuPrcSleep(5);
+    }
+    HuPrcSleep(20);
+    SprKill(spr);
+    SprAnimKill(anim);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F56C_319A1C_name_49);
+/* Fills the whole trail with the leader's current position and rotation. */
+void func_8010F694_319B44_name_49(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F694_319B44_name_49);
+    D_80115690_31FB40_name_49 = 0;
+    for (i = 0; i < 128; i++) {
+        D_80114A90_31EF40_name_49[i].x = D_80115698_31FB48_name_49[0]->pos.x;
+        D_80114A90_31EF40_name_49[i].y = D_80115698_31FB48_name_49[0]->pos.y;
+        D_80114A90_31EF40_name_49[i].z = D_80115698_31FB48_name_49[0]->pos.z;
+        D_80115090_31F540_name_49[i].x = D_80115698_31FB48_name_49[0]->rot.x;
+        D_80115090_31F540_name_49[i].y = D_80115698_31FB48_name_49[0]->rot.y;
+        D_80115090_31F540_name_49[i].z = D_80115698_31FB48_name_49[0]->rot.z;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F754_319C04_name_49);
+/* Records the leader in the trail and places each follower at its lag behind it. */
+void func_8010F754_319C04_name_49(void) {
+    s32 i;
+    s32 idx;
+    s32* lag;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F918_319DC8_name_49);
+    D_80114A90_31EF40_name_49[D_80115690_31FB40_name_49].x = D_80115698_31FB48_name_49[0]->pos.x;
+    D_80114A90_31EF40_name_49[D_80115690_31FB40_name_49].y = D_80115698_31FB48_name_49[0]->pos.y;
+    D_80114A90_31EF40_name_49[D_80115690_31FB40_name_49].z = D_80115698_31FB48_name_49[0]->pos.z;
+    D_80115090_31F540_name_49[D_80115690_31FB40_name_49].x = D_80115698_31FB48_name_49[0]->rot.x;
+    D_80115090_31F540_name_49[D_80115690_31FB40_name_49].y = D_80115698_31FB48_name_49[0]->rot.y;
+    D_80115090_31F540_name_49[D_80115690_31FB40_name_49].z = D_80115698_31FB48_name_49[0]->rot.z;
+    if (++D_80115690_31FB40_name_49 >= 128) {
+        D_80115690_31FB40_name_49 = 0;
+    }
+    for (i = 1; i < 7; i++) {
+        if (D_800F8CE4_F98E4[4] == 2) {
+            lag = &D_801139F8_31DEA8_name_49[i];
+        } else {
+            lag = &D_801139DC_31DE8C_name_49[i];
+        }
+        idx = D_80115690_31FB40_name_49 - *lag;
+        if (idx < 0) {
+            idx += 128;
+        }
+        func_800B3170_B3D70(&D_80115698_31FB48_name_49[i]->pos, &D_80114A90_31EF40_name_49[idx]);
+        func_800B3170_B3D70(&D_80115698_31FB48_name_49[i]->rot, &D_80115090_31F540_name_49[idx]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010F9A0_319E50_name_49);
+/* Puts the whole chain on space `space` and resets the trail. */
+void func_8010F918_319DC8_name_49(s16 space) {
+    SpaceData* data = GetSpaceData(space);
+    MBModel* model;
+    s32 i;
+
+    for (i = 0; i < 7; i++) {
+        model = D_80115698_31FB48_name_49[i];
+        func_80042BE0_437E0(&model->rot);
+        func_800B3170_B3D70(&model->pos, &data->coords);
+    }
+    func_8010F694_319B44_name_49();
+}
+
+
+
+/* Starts moving player `player` from space `from` to space `to` (offset by slot `slot`), as a
+   child process: an arc (func_80056FD4) when `arc`, else a straight walk; slower (speed / 1.3)
+   on a north-south-ish heading. */
+void func_8010F9A0_319E50_name_49(s16 from, s16 to, f32 speed, s32 arc, s32 player, s32 slot) {
+    Vec dir;
+    SpaceData* fromData;
+    SpaceData* toData;
+    MBModel* model;
+    Vec* target;
+    Process* proc;
+    f32 angle;
+
+    fromData = GetSpaceData(from);
+    toData = GetSpaceData(to);
+    func_80056658_57258(&fromData->coords, &toData->coords, &dir);
+    angle = func_80042BE0_437E0(&dir);
+    if ((angle >= 70.0f && angle <= 110.0f) || (angle >= 250.0f && angle <= 290.0f)) {
+        speed /= 1.3f;
+    }
+    model = gPlayers[player].unk_24;
+    target = &D_801156B8_31FB68_name_49[player];
+    func_800B3170_B3D70(target, &toData->coords);
+    D_801156B8_31FB68_name_49[player].x += D_80113A24_31DED4_name_49[slot].x;
+    D_801156B8_31FB68_name_49[player].z += D_80113A24_31DED4_name_49[slot].z;
+    if (arc) {
+        proc = func_80056FD4_57BD4(&model->pos, target, &model->pos, speed);
+    } else {
+        proc = func_80057150_57D50(&model->pos, &D_801156B8_31FB68_name_49[player], &model->pos, speed);
+    }
+    HuPrcChildLink(HuPrcCurrentGet(), proc);
+    func_80056658_57258(&fromData->coords, &toData->coords, &D_801156E8_31FB98_name_49[player]);
+    func_80056B78_57778(&model->rot, &D_801156E8_31FB98_name_49[player], &model->rot, 5);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_8010FC3C_31A0EC_name_49);
 
