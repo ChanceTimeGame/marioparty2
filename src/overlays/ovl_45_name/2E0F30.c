@@ -2531,13 +2531,13 @@ void func_8010A724_2E8E54_name_45(void) {
     flag = func_80046D2C_4792C(gw->current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
     switch ((s16)space) {
-    case 0xAF:
+    case 9:
         boo = 0;
-        cam = 0x9D;
+        cam = 0x82;
         break;
-    case 0xB4:
+    case 5:
         boo = 1;
-        cam = 0x9F;
+        cam = 0x83;
         break;
     default:
         boo = -1;
