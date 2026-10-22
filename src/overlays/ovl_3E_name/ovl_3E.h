@@ -164,9 +164,6 @@ extern BoardEventTableEntry D_801124EC_2A77BC_name_3E[];
 extern BoardEventTableEntry D_8011280C_2A7ADC_name_3E[];
 
 /* 3E's rodata (0x2A8860-0x2A89A0, carved by the coordinator) */
-typedef struct Unk4Bytes {
-    u8 b[4];
-} Unk4Bytes;
 extern const u8 D_80113590_2A8860_name_3E[4]; /* {1, 2, 4, 8}: window choice masks per pad; read by 6 functions */
 
 /* ---- 3E bss (asm/data/overlays/ovl_3E_name/ovl_3E_bss.bss.s) ---- */
@@ -198,11 +195,6 @@ extern Vec D_80113790_2A8A60_name_3E[12]; /* path positions */
 extern Vec D_80113820_2A8AF0_name_3E[12]; /* path rotations */
 extern s32 D_801138B0_2A8B80_name_3E; /* path step */
 
-/* fork D */
-typedef struct Vec2f3E {
-    f32 x;
-    f32 y;
-} Vec2f3E;
 extern Vec2f3E D_80112504_2A77D4_name_3E[4];
 extern Vec2f3E D_80112524_2A77F4_name_3E[4]; /* per player: window positions (item events) */
 extern Vec2f3E D_80112544_2A7814_name_3E[4];
@@ -303,16 +295,6 @@ void MBKSuitMotionSet(s16 arg0, s32 arg1);
 void func_800B3B80_B4780(f32* mtx, f32 angle); /* rotate a model matrix */
 void func_80050860_51460(void); /* MBKSuitKill */
 Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3); /* turn arg0 toward arg1 */
-/* fork C */
-typedef struct Unk3EParticle {
-    /* 0x00 */ Vec vel;
-    /* 0x0C */ f32 alpha;
-    /* 0x10 */ f32 scaleSpeed;
-    /* 0x14 */ f32 fadeSpeed;
-    /* 0x18 */ MBModel* model;
-    /* 0x1C */ u16 kill; /* delete when faded out, else only pause */
-    /* 0x1E */ char unk_1E[2];
-} Unk3EParticle; /* size 0x20 (MP3 UnkChillyWaters) */
 
 extern s8 D_800CCC16; /* set while the lamp's star event runs */
 extern s16 D_800FA188_FAD88;
@@ -355,28 +337,15 @@ void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void func_80062A28_63628(s16 player, f32 arg1); /* status window shake */
 
-typedef Vec2f3E Unk3EVec2f; /* fork C name for fork D's Vec2f3E */
 extern s32 D_8011237C_2A764C_name_3E[6]; /* per character: sprite file */
 extern Unk3EVec2f D_8011233C_2A760C_name_3E[4]; /* per player: lost star start */
 extern Unk3EVec2f D_8011235C_2A762C_name_3E[4]; /* per player: lost star velocity */
 f32 __sinf(f32);
-typedef struct Unk3ERange {
-    u8 min;
-    u8 max;
-    u8 value;
-} Unk3ERange; /* size 3 */
 extern Unk3ERange D_80112394_2A7664_name_3E[6]; /* turn range -> star price */
 extern Unk3ERange D_801123A8_2A7678_name_3E[14]; /* press count range -> discount */
 extern u16 ContDStkTrg[4];
 void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
 void func_80055E3C_56A3C(s32 arg0);
-typedef struct Unk3EStealRange {
-    u8 turnMin;
-    u8 turnMax;
-    u8 min;
-    u8 max;
-    u8 mess; /* index into D_8011243E */
-} Unk3EStealRange; /* size 5 */
 extern u8 D_80112330_2A7600_name_3E[4][3]; /* per player: the other players */
 extern Unk3EStealRange D_801123D4_2A76A4_name_3E[24]; /* turn and coin range -> message */
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
@@ -417,15 +386,6 @@ s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
 void func_800558E8_564E8(s16 arg0);
 void func_80045650_46250(s32 arg0);
 
-typedef struct Unk3EWindowSlide {
-    /* 0x00 */ s16 x0;
-    /* 0x02 */ s16 y0;
-    /* 0x04 */ s16 x1;
-    /* 0x06 */ s16 y1;
-    /* 0x08 */ s16 frames;
-    /* 0x0A */ s16 sprite; /* -1: none */
-    /* 0x0C */ char unk_0C[4];
-} Unk3EWindowSlide; /* size 0x10 */
 
 /* ---- 297AD0.c ---- */
 
@@ -557,22 +517,7 @@ s32 func_801118D8_2A6BA8_name_3E(void);
 #include "game/data.h"
 struct unk_8003B8D4Struct; /* 41B20.c's direction prompt */
 
-/* RunDecisionTree's node (MP1 common_structs.h) */
-typedef struct DecisionTreeNonLeafNode {
-    u32 type;
-    union {
-        void (*func)();
-        s32 data;
-    } node_data1;
-    union {
-        s32 data;
-        s32* node_data;
-    } node_data2;
-} DecisionTreeNonLeafNode;
 
-typedef struct Unk3Halves {
-    s16 v[3];
-} Unk3Halves;
 
 void SetNextChainAndSpace(s16 arg0, s16 arg1, s16 arg2);
 s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);

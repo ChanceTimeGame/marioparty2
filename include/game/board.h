@@ -91,4 +91,68 @@ typedef struct BattleTargets {
 extern u8 D_800F851A_F911A;  /* board window/marker busy flag (426A0, 4D660, 565E0) */
 extern u8 D_80102720_103320; /* cleared by objmain, tested by 4D660 */
 
+/* 41-A: board types boards 3E and 41 share (moved from ovl_3E.h; names kept) */
+
+typedef struct Unk4Bytes {
+    u8 b[4];
+} Unk4Bytes;
+
+typedef struct Vec2f3E {
+    f32 x;
+    f32 y;
+} Vec2f3E;
+
+/* fork C */
+typedef struct Unk3EParticle {
+    /* 0x00 */ Vec vel;
+    /* 0x0C */ f32 alpha;
+    /* 0x10 */ f32 scaleSpeed;
+    /* 0x14 */ f32 fadeSpeed;
+    /* 0x18 */ MBModel* model;
+    /* 0x1C */ u16 kill; /* delete when faded out, else only pause */
+    /* 0x1E */ char unk_1E[2];
+} Unk3EParticle; /* size 0x20 (MP3 UnkChillyWaters) */
+
+typedef struct Unk3ERange {
+    u8 min;
+    u8 max;
+    u8 value;
+} Unk3ERange; /* size 3 */
+
+typedef struct Unk3EStealRange {
+    u8 turnMin;
+    u8 turnMax;
+    u8 min;
+    u8 max;
+    u8 mess; /* index into D_8011243E */
+} Unk3EStealRange; /* size 5 */
+
+typedef struct Unk3EWindowSlide {
+    /* 0x00 */ s16 x0;
+    /* 0x02 */ s16 y0;
+    /* 0x04 */ s16 x1;
+    /* 0x06 */ s16 y1;
+    /* 0x08 */ s16 frames;
+    /* 0x0A */ s16 sprite; /* -1: none */
+    /* 0x0C */ char unk_0C[4];
+} Unk3EWindowSlide; /* size 0x10 */
+
+/* RunDecisionTree's node (MP1 common_structs.h) */
+typedef struct DecisionTreeNonLeafNode {
+    u32 type;
+    union {
+        void (*func)();
+        s32 data;
+    } node_data1;
+    union {
+        s32 data;
+        s32* node_data;
+    } node_data2;
+} DecisionTreeNonLeafNode;
+
+typedef struct Unk3Halves {
+    s16 v[3];
+} Unk3Halves;
+typedef Vec2f3E Unk3EVec2f; /* 3E fork C name for Vec2f3E */
+
 #endif
