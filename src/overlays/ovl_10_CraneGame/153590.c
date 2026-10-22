@@ -233,7 +233,101 @@ s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r) {
     return ret;
 }
 
+/* MP1 func_800FE0A4 (NON_MATCHING there too). Residue: register allocation (the face count and
+   the previous/current vertex pointers). */
+#ifdef NON_MATCHING
+/* Intersects the segment p + t * d with the faces and keeps the nearest t in D_8010CE10. */
+void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
+    ColVtx* prev;
+    ColVtx* cur;
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dn;
+    s16 ix;
+    s16 iy;
+    s16 iz;
+    s32 i;
+    s32 j;
+    s32 nv;
+    s32 sgn;
+    s32 c;
+
+    px = p->x;
+    py = p->y;
+    pz = p->z;
+    dx = d->x;
+    dy = d->y;
+    dz = d->z;
+    for (i = 0; i < n; i++, f++) {
+        dn = dx * f->nx + dy * f->ny + dz * f->nz;
+        if (dn == 0.0) {
+            continue;
+        }
+        dn = -(px * f->nx + py * f->ny + pz * f->nz + f->d) / dn;
+        if (dn < 0.0) {
+            continue;
+        }
+        if (D_8010CE10_156930_CraneGame <= dn) {
+            continue;
+        }
+        ix = px + dn * dx;
+        iy = py + dn * dy;
+        iz = pz + dn * dz;
+        if (f->v[3] >= 0) {
+            prev = &D_8010CE0C_15692C_CraneGame[f->v[3]];
+            nv = 4;
+        } else {
+            prev = &D_8010CE0C_15692C_CraneGame[f->v[2]];
+            nv = 3;
+        }
+        switch (f->axis) {
+            case 0:
+                sgn = (0.0f <= f->nx) ? 1 : -1;
+                for (j = 0; j < nv; j++, prev = cur) {
+                    cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
+                    c = (iy - prev->y) * (cur->z - prev->z) - (iz - prev->z) * (cur->y - prev->y);
+                    if (c != 0 && (sgn ^ c) < 0) {
+                        break;
+                    }
+                }
+                break;
+            case 1:
+                sgn = (0.0f <= f->ny) ? 1 : -1;
+                for (j = 0; j < nv; j++, prev = cur) {
+                    cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
+                    c = (iz - prev->z) * (cur->x - prev->x) - (ix - prev->x) * (cur->z - prev->z);
+                    if (c != 0 && (sgn ^ c) < 0) {
+                        break;
+                    }
+                }
+                break;
+            case 2:
+                sgn = (0.0f <= f->nz) ? 1 : -1;
+                for (j = 0; j < nv; j++, prev = cur) {
+                    cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
+                    c = (ix - prev->x) * (cur->y - prev->y) - (iy - prev->y) * (cur->x - prev->x);
+                    if (c != 0 && (sgn ^ c) < 0) {
+                        break;
+                    }
+                }
+                break;
+            default:
+                osSyncPrintf("Normal Error!\n");
+                continue;
+        }
+        if (j < nv) {
+            continue;
+        }
+        D_8010CE10_156930_CraneGame = dn;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010A8E8_154408_CraneGame);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010AD5C_15487C_CraneGame);
 
