@@ -223,7 +223,7 @@ extern Vec D_801123DC_352C3C_name_50;
 extern Vec D_801123E8_352C48_name_50[2];
 extern Vec D_80112400_352C60_name_50;    /* the doors' start */
 extern Vec D_8011240C_352C6C_name_50;    /* the doors' end */
-extern Vec D_80112418_352C78_name_50;    /* the winner, part 2 */
+extern Vec D_80112418_352C78_name_50[1];  /* the winner, part 2; func_80110F20 reads [idx] (D_80112424[idx - 1]) */
 extern Vec D_80112424_352C84_name_50[4];
 extern Vec D_80112454_352CB4_name_50;
 extern Vec D_80112460_352CC0_name_50;
@@ -231,6 +231,19 @@ extern Vec D_8011246C_352CCC_name_50;
 extern Vec D_80112478_352CD8_name_50;    /* the host, part 4 */
 extern Vec D_80112484_352CE4_name_50[3]; /* the other players, part 4 */
 extern Vec D_801124A8_352D08_name_50;
+/* func_80110F20's state: frames to a hop per point, point, step, done, hopping */
+extern u16 D_801124B2_352D12_name_50[4];
+extern s16 D_801124BC_352D1C_name_50;
+extern s16 D_801124BE_352D1E_name_50;
+extern s16 D_801124C0_352D20_name_50;
+extern s16 D_801124C2_352D22_name_50;
+/* func_801112EC's state: point, step, done, timer, frame count, turn speed */
+extern s16 D_801124C4_352D24_name_50;
+extern s16 D_801124C6_352D26_name_50;
+extern s16 D_801124C8_352D28_name_50;
+extern s16 D_801124CA_352D2A_name_50;
+extern s16 D_801124CC_352D2C_name_50;
+extern f32 D_801124D0_352D30_name_50;
 
 /* ---- overlay .bss (asm) ---- */
 
@@ -239,6 +252,8 @@ extern omObjData* D_801125B8_352E18_name_50;
 extern Process* D_801125BC_352E1C_name_50;
 extern ModelEmitterWork* D_801125C0_352E20_name_50;
 extern MBModel* D_80112618_352E78_name_50; /* board 5's background */
+extern s16 D_80112610_352E70_name_50; /* func_80110F20's step timer */
+extern f32 D_80112614_352E74_name_50; /* the winner's hop speed */
 extern Vec D_8011261C_352E7C_name_50;
 extern Vec D_80112628_352E88_name_50;
 extern s16 D_80112634_352E94_name_50; /* a sound handle (0x406) */
@@ -323,7 +338,7 @@ void func_801100EC_35094C_name_50(void);
 void func_8011039C_350BFC_name_50(void);
 void func_8011099C_3511FC_name_50(void);
 void func_80110B1C_35137C_name_50(omObjData* obj);
-s32 func_80110E5C_3516BC_name_50(void);
+s16 func_80110E5C_3516BC_name_50(void); /* TRUE while a spark is live */
 void func_80110E9C_3516FC_name_50(void);
 void func_80110EFC_35175C_name_50(void);
 void func_80110F10_351770_name_50(void);
