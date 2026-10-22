@@ -537,7 +537,66 @@ void func_80105C6C_3D34BC_name_61(void) {
     work->delay = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80105DEC_3D363C_name_61);
+void func_80105DEC_3D363C_name_61(omObjData* obj) {
+    Vec dir;
+    Ovl61SparkWork* work = obj->unk_50;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        if (work->active[i] != 0) {
+            work->pos[i].x += work->vel[i].x;
+            work->pos[i].y += work->vel[i].y;
+            work->pos[i].z += work->vel[i].z;
+            if (work->pos[i].y < 30.0f) {
+                work->pos[i].y = 30.0f;
+            }
+            func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+            work->life[i] -= 25.0f;
+            if (work->life[i] <= 0.0f) {
+                work->active[i] = 0;
+                func_800298A4_2A4A4(work->model[i], 4, 4);
+            }
+            work->scale[i] += 0.12f;
+            if (3.0f <= work->scale[i]) {
+                work->scale[i] = 3.0f;
+            }
+            func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], work->scale[i]);
+        }
+    }
+    if (obj->work[0] == 1) {
+        if (work->delay == 0) {
+            for (i = 0; i < 16; i++) {
+                if (work->active[i] == 0) {
+                    break;
+                }
+            }
+            if (i != 16) {
+                work->active[i] = 1;
+                work->delay = 1;
+                dir.x = HuMathSin(D_801074D8_3D4D28_name_61[7]->rot.y);
+                dir.y = 0.0f;
+                dir.z = func_800B7890_B8490(D_801074D8_3D4D28_name_61[7]->rot.y);
+                work->vel[i].x = dir.x;
+                work->vel[i].y = -0.8f;
+                work->vel[i].z = dir.z;
+                MBVecNormalize(&work->vel[i]);
+                work->vel[i].x *= 25.0f;
+                work->vel[i].y *= 25.0f;
+                work->vel[i].z *= 25.0f;
+                work->pos[i].x = D_801074D8_3D4D28_name_61[7]->trans.x + dir.x * 200.0f;
+                work->pos[i].z = D_801074D8_3D4D28_name_61[7]->trans.z + dir.z * 200.0f;
+                work->pos[i].y = D_801074D8_3D4D28_name_61[7]->trans.y + 150.0f;
+                work->life[i] = 400.0f;
+                work->scale[i] = 1.2f;
+                func_800298A4_2A4A4(work->model[i], 4, 0);
+                func_80029714_2A314(work->model[i], work->pos[i].x, work->pos[i].y, work->pos[i].z);
+                func_800297E8_2A3E8(work->model[i], work->scale[i], work->scale[i], work->scale[i]);
+            }
+        } else {
+            work->delay--;
+        }
+    }
+}
 
 s16 func_80106168_3D39B8_name_61(void) {
     Ovl61SparkWork* work = D_80107508_3D4D58_name_61->unk_50;
