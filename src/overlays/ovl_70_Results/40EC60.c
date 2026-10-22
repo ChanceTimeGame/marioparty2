@@ -33,7 +33,56 @@ const char D_80107800_413C60_Results[] = "RESULTS";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80102944_40EDA4_Results);
 
+// register allocation: n and j swap s0/s1 (masked 0)
+#ifdef NON_MATCHING
+/* Redraws each player's coin count. */
+void func_801038A4_40FD04_Results(void) {
+    s16 coins[4];
+    s8 digits[4][3];
+    s8 nd[4];
+    s16 i;
+    s16 j;
+    s32 n;
+
+    for (i = 0; i < 4; i++) {
+        coins[i] = gPlayers[i].coins;
+        digits[i][0] = coins[i] / 100;
+        digits[i][1] = (coins[i] - digits[i][0] * 100) / 10;
+        digits[i][2] = coins[i] - digits[i][0] * 100 - digits[i][1] * 10;
+        nd[i] = 0;
+        if (coins[i] >= 10) {
+            nd[i] = 1;
+        }
+        if (coins[i] >= 100) {
+            nd[i] = 2;
+        }
+    }
+    for (i = 0, n = 0; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            if (_CheckFlag(0xD) != 0) {
+                SprPosSet(D_80107CE0_414140_Results, n + 1,
+                          D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][0] + (s16)(j * 16 + 24) +
+                              D_80107774_413BD4_Results[0][nd[i]][j],
+                          D_801076C4_413B24_Results[RES_ROW_COINS_D][D_80107850_413CB0_Results[i].place][1] + 4);
+            } else {
+                SprPosSet(D_80107CE0_414140_Results, n + 1,
+                          D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][0] + (s16)(j * 16 + 24) +
+                              D_80107774_413BD4_Results[0][nd[i]][j],
+                          D_801076C4_413B24_Results[RES_ROW_COINS][D_80107850_413CB0_Results[i].place][1] + 4);
+            }
+            n++;
+            func_800822A8_82EA8(D_80107CE0_414140_Results, n, digits[i][j], 0);
+        }
+        if (_CheckFlag(0xD) != 0) {
+            func_80104418_410878_Results(D_80107CC0_414120_Results[4 + i], 0, D_80107774_413BD4_Results[1][nd[i]][3]);
+        } else {
+            func_80104418_410878_Results(D_80107CC0_414120_Results[4 + i], 0, D_80107774_413BD4_Results[0][nd[i]][3]);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801038A4_40FD04_Results);
+#endif
 
 void func_80103C6C_4100CC_Results(void) {
     s32 i;
