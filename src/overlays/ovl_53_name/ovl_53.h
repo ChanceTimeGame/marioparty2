@@ -17,6 +17,7 @@
 #include "game/sprite.h"
 #include "game/window.h"
 #include "game/gamemes.h"
+#include "game/pad.h"
 
 /* ---- main-segment API used by 53 ---- */
 
@@ -70,6 +71,16 @@ void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void SprAnimKill(s16 animIdx);
 void SprKill(s16 idx);
 void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
+void func_800896DC_8A2DC(s16 winId, s16 x, s16 y); /* window position */
+void func_8008D6F0_8E2F0(s16 winId);
+void func_8008D530_8E130(s16 winId, u8 r, u8 g, u8 b);
+void func_80089B2C_8A72C(s16, s16);
+void func_80089A7C_8A67C(s16 winId, s16 prio);
+void func_8008AD44_8B944(s16);
+void func_80089C78_8A878(s16 winId, u8 arg1);
+void func_80089DA0_8A9A0(s16 winId, u8 r, u8 g, u8 b);
+void func_80089A48_8A648(s16, s16);
+void func_8005A4EC_5B0EC(s32 player, s32 reaction); /* a player's reaction */
 
 extern u8 D_01164160[];
 extern s16 D_800CD414_CE014;
@@ -97,7 +108,13 @@ typedef struct Ovl53Rect {
 
 extern Ovl53Rect D_80105B60_360470_name_53[5];
 extern u8 D_80105B88_360498_name_53; /* the cursor's y */
-extern s8 D_80105B8C_36049C_name_53[]; /* cursor animation steps {limit, x} (MP1 D_800C4F40) */
+/* Cursor animation step (MP1 unk48D90Step). */
+typedef struct Ovl53Step {
+    /* 0x00 */ s8 limit;
+    /* 0x01 */ s8 x;
+} Ovl53Step; /* size = 2 */
+
+extern Ovl53Step D_80105B8C_36049C_name_53[]; /* MP1 D_800C4F40 */
 extern s32 D_80105B94_3604A4_name_53[6];
 extern s32 D_80105BAC_3604BC_name_53[6]; /* per board: Bowser's model */
 extern u32 D_80105BC4_3604D4_name_53[6][4]; /* per board: Bowser's motions */
@@ -105,8 +122,9 @@ extern s32 D_80105C24_360534_name_53;
 extern void (*D_80105C2C_36053C_name_53[])(void); /* the events */
 extern s32 D_80105C58_360568_name_53[6]; /* per board: the board overlay */
 extern u32 D_80105C70_360580_name_53;
+extern s32 D_80105C74_360584_name_53[]; /* per event: who reacts (3-5 the player, 13-15 everyone) */
 
-extern s16 D_80105D60_360670_name_53[5];
+extern char D_80105D60_360670_name_53[10]; /* sprintf("%d") buffer: a panel's number */
 extern s16 D_80105D6A_36067A_name_53; /* the "Bowser roulette" title window */
 extern Ovl53Box D_80105D70_360680_name_53[5];
 extern u8 D_80105DA2_3606B2_name_53[5]; /* each panel's event */

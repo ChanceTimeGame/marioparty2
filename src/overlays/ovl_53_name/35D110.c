@@ -127,7 +127,263 @@ void func_80102E84_35D794_name_53(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80102ED0_35D7E0_name_53);
+/* The roulette object (MP1 func_8004858C): 0 slides the panels in, 1 spins (A or a CPU stops it),
+   2 flashes the chosen panel, 4 slides the panels out and records the event. */
+void func_80102ED0_35D7E0_name_53(omObjData* obj) {
+    Ovl53Box* box;
+    s32 i;
+    s32 j;
+    s32 k;
+    s32 r;
+
+    switch (obj->work[0]) {
+        case 3:
+            break;
+        case 0:
+            obj->trans.y += 16.0f;
+            for (i = 0; i < 5; i++) {
+                box = &D_80105D70_360680_name_53[i];
+                func_800896DC_8A2DC(box->win, box->x + box->w / 2, box->y + box->h / 2 + (s16)obj->trans.y);
+            }
+            if (D_80105DB6_3606C6_name_53 != -1) {
+                SprPosSet(D_80105DB6_3606C6_name_53, 0, D_80105D70_360680_name_53[0].x + 100,
+                          (s32)obj->trans.y + D_80105D70_360680_name_53[0].y + 50);
+            }
+            if (D_80105DB2_3606C2_name_53 != -1) {
+                SprPosSet(D_80105DB2_3606C2_name_53, 0, D_80105D70_360680_name_53[0].x + 100,
+                          (s32)obj->trans.y + D_80105D70_360680_name_53[0].y - 30);
+            }
+            for (i = 0; i < 2; i++) {
+                if (D_80105DAC_3606BC_name_53[i] != -1) {
+                    SprPosSet(D_80105DAC_3606BC_name_53[i], 0, D_80105D70_360680_name_53[0].x + i * 200,
+                              (s32)obj->trans.y + D_80105D70_360680_name_53[0].y - 40);
+                }
+            }
+            if (obj->trans.y >= 288.0f) {
+                func_80102E84_35D794_name_53();
+                func_8008D6F0_8E2F0(D_80105D6A_36067A_name_53);
+                obj->work[0] = 1;
+                obj->scale.x = 1.0f;
+                obj->scale.z = -1.0f;
+                obj->scale.y = 0.0f;
+                obj->work[1] = 0;
+                obj->work[3] = 0;
+                obj->trans.z = 0.0f;
+                for (i = 0; i < 5; i++) {
+                }
+                r = (u8)(rand8() % 50);
+                i = rand8();
+                if (i < 76.8) {
+                    obj->rot.y = 0.0f;
+                } else if (i < 115.2) {
+                    obj->rot.y = 1.0f;
+                } else if (i < 161.28) {
+                    obj->rot.y = 2.0f;
+                } else if (i < 186.88) {
+                    obj->rot.y = 3.0f;
+                } else if (i < 199.68) {
+                    obj->rot.y = 4.0f;
+                } else if (i < 225.28) {
+                    obj->rot.y = -1.0f;
+                } else if (i < 243.20000000000002) {
+                    obj->rot.y = -2.0f;
+                } else {
+                    obj->rot.y = -3.0f;
+                }
+                if (r == 25) {
+                    /* one roll in 50 aims at a rare event (6 and up) */
+                    for (i = 0; i < 5; i++) {
+                        if (D_80105DA2_3606B2_name_53[i] >= 6) {
+                            j = i - (s32)obj->rot.y;
+                            break;
+                        }
+                    }
+                    if (j < 0) {
+                        j += 5;
+                    } else {
+                        j %= 5;
+                    }
+                } else {
+                    do {
+                        j = (u8)(rand8() % 5) - (s32)obj->rot.y;
+                        if (j < 0) {
+                            j += 5;
+                        } else {
+                            j %= 5;
+                        }
+                    } while (D_80105DA2_3606B2_name_53[j] >= 6);
+                }
+                obj->work[2] = j;
+                i = rand8();
+                if (i < 153.6) {
+                    obj->mdlcnt = 20;
+                } else if (i < 230.4) {
+                    obj->mdlcnt = 14;
+                } else {
+                    obj->mdlcnt = 8;
+                }
+                obj->mtncnt = 0;
+                func_801044A8_35EDB8_name_53();
+            }
+            break;
+        case 1:
+            if (gPlayers[D_80105DC0_3606D0_name_53].flags & 1) {
+                obj->trans.z = 1.0f;
+            } else if (ContBtnTrg[gPlayers[D_80105DC0_3606D0_name_53].port] & 0x8000) {
+                obj->trans.z = 1.0f;
+            }
+            if (obj->mtncnt != 0) {
+                obj->scale.x = obj->mdlcnt / 100.0f;
+            }
+            obj->scale.z += obj->scale.x;
+            if (obj->scale.z >= 1.0f) {
+                if (obj->work[3] != 0 && obj->scale.x <= 0.08f) {
+                    obj->work[3]--;
+                }
+                obj->scale.z -= 1.0f;
+                if (obj->scale.y == 0.0f) {
+                    obj->work[1]++;
+                    obj->work[1] %= 5;
+                } else {
+                    obj->work[1]--;
+                    if (obj->work[1] >= 0x80) {
+                        obj->work[1] = 4;
+                    }
+                }
+                func_80102E84_35D794_name_53();
+            }
+            for (i = 0; i < 5; i++) {
+                box = &D_80105D70_360680_name_53[i];
+                if (i == obj->work[1]) {
+                    func_8008D530_8E130(box->win, 0, 200, 0);
+                    func_80089B2C_8A72C(box->win, 0x100);
+                    func_80089A7C_8A67C(box->win, 9000);
+                } else {
+                    func_8008D530_8E130(box->win, 0x40, 0x40, 0x80);
+                    func_80089B2C_8A72C(box->win, 0);
+                    func_80089A7C_8A67C(box->win, 10000);
+                }
+            }
+            if (obj->work[1] == obj->work[2] || obj->scale.x < 1.0f) {
+                if (obj->trans.z != 0.0f && obj->mtncnt == 0) {
+                    obj->scale.x -= 0.02;
+                }
+            }
+            if (obj->scale.x <= 0.08f || obj->mtncnt != 0) {
+                if (obj->mtncnt == 0) {
+                    obj->scale.x = 0.08f;
+                }
+                if (obj->work[1] == obj->work[2] && obj->work[3] == 0 && obj->scale.z + obj->scale.x >= 1.0f) {
+                    if ((obj->rot.y > 0.0f ? obj->rot.y : 0.0f - obj->rot.y) <= 0.5f) {
+                        PlaySound(0x325);
+                        obj->work[0] = 2;
+                        obj->work[3] = 60;
+                        func_8008AD44_8B944(D_80105D70_360680_name_53[obj->work[1]].win);
+                        if (D_80105DA2_3606B2_name_53[obj->work[1]] == 0) {
+                            func_80089308_89F08(D_80105D70_360680_name_53[obj->work[1]].win, (s32)D_80105D60_360670_name_53, 0);
+                            func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+                        }
+                        func_800890CC_89CCC(D_80105D70_360680_name_53[obj->work[1]].win,
+                                            D_80105DA2_3606B2_name_53[obj->work[1]] + 0x258, -2, 4);
+                        func_80089C78_8A878(D_80105D70_360680_name_53[obj->work[1]].win, 1);
+                        func_80089DA0_8A9A0(D_80105D70_360680_name_53[obj->work[1]].win, 0xA0, 0xA0, 0xA0);
+                        func_8008D530_8E130(D_80105D70_360680_name_53[obj->work[1]].win, 0xFE, 0xFF, 0xD0);
+                        func_80089A48_8A648(D_80105D70_360680_name_53[obj->work[1]].win, 0);
+                        /* the players Bowser's event hits react (3, 4, 5: the victim; 13, 14, 15: everyone) */
+                        k = D_80105C74_360584_name_53[D_80105DA2_3606B2_name_53[obj->work[2]]];
+                        if (k != 0) {
+                            if (k > 10) {
+                                for (i = 0; i < 4; i++) {
+                                    switch (k - 10) {
+                                        case 3:
+                                            func_8005A4EC_5B0EC(i, 3);
+                                            break;
+                                        case 4:
+                                            func_8005A4EC_5B0EC(i, 4);
+                                            break;
+                                        case 5:
+                                            func_8005A4EC_5B0EC(i, 5);
+                                            break;
+                                    }
+                                }
+                            } else {
+                                switch (k) {
+                                    case 3:
+                                        func_8005A4EC_5B0EC(D_80105DD2_3606E2_name_53, 3);
+                                        break;
+                                    case 4:
+                                        func_8005A4EC_5B0EC(D_80105DD2_3606E2_name_53, 4);
+                                        break;
+                                    case 5:
+                                        func_8005A4EC_5B0EC(D_80105DD2_3606E2_name_53, 5);
+                                        break;
+                                }
+                            }
+                        }
+                    } else {
+                        obj->mtncnt = 1;
+                        if (obj->rot.y >= 0.5f) {
+                            obj->rot.y -= 1.0f;
+                            obj->work[2]++;
+                            obj->work[2] %= 5;
+                        } else {
+                            obj->rot.y += 1.0f;
+                            obj->scale.y = 1.0f;
+                            obj->work[2]--;
+                            if (obj->work[2] >= 0x80) {
+                                obj->work[2] = 4;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+        case 2:
+            if (obj->work[3] == 0) {
+                obj->work[0] = 4;
+                func_80103FB8_35E8C8_name_53();
+            } else {
+                obj->work[3]--;
+                obj->rot.z += 1.0f;
+                if (obj->rot.z >= 13.0f) {
+                    obj->rot.z -= 13.0f;
+                }
+            }
+            break;
+        case 4:
+            obj->trans.y -= 32.0f;
+            for (i = 0; i < 5; i++) {
+                box = &D_80105D70_360680_name_53[i];
+                func_800896DC_8A2DC(box->win, box->x + box->w / 2, box->y + box->h / 2 + (s16)obj->trans.y);
+            }
+            if (D_80105DB6_3606C6_name_53 != -1) {
+                SprPosSet(D_80105DB6_3606C6_name_53, 0, D_80105D70_360680_name_53[0].x + 100,
+                          (s32)obj->trans.y + D_80105D70_360680_name_53[0].y + 50);
+            }
+            if (D_80105DB2_3606C2_name_53 != -1) {
+                SprPosSet(D_80105DB2_3606C2_name_53, 0, D_80105D70_360680_name_53[0].x + 100,
+                          (s32)obj->trans.y + D_80105D70_360680_name_53[0].y - 30);
+            }
+            for (i = 0; i < 2; i++) {
+                if (D_80105DAC_3606BC_name_53[i] != -1) {
+                    SprPosSet(D_80105DAC_3606BC_name_53[i], 0, D_80105D70_360680_name_53[0].x + i * 200,
+                              (s32)obj->trans.y + D_80105D70_360680_name_53[0].y - 40);
+                }
+            }
+            if (obj->trans.y <= 0.0f) {
+                D_80105DC4_3606D4_name_53 = D_80105DA2_3606B2_name_53[obj->work[2]];
+                func_8010401C_35E92C_name_53();
+            }
+            break;
+    }
+
+    if (D_80105DBA_3606CA_name_53 != -1) {
+        for (i = 0; !(obj->rot.z < (D_80105B8C_36049C_name_53 + i)->limit); i++) {
+        }
+        SprPosSet(D_80105DBA_3606CA_name_53, 0, D_80105B8C_36049C_name_53[i].x + 50,
+                  D_80105B88_360498_name_53 + obj->work[1] * 20);
+    }
+}
 
 s32 func_80103ECC_35E7DC_name_53(void) {
     return D_80105DC4_3606D4_name_53;
