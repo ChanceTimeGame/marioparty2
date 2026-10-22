@@ -153,7 +153,7 @@ void func_801044AC_40D7AC_BattleResults(omObjData* obj);
 s32 func_80104770_40DA70_BattleResults(BRFallWork* work, f32 y, f32 floor);
 s32 func_801047C8_40DAC8_BattleResults(s32 player);
 void func_80104960_40DC60_BattleResults(omObjData* obj);
-void func_80104BAC_40DEAC_BattleResults(s16 model, s32 player);
+void func_80104BAC_40DEAC_BattleResults(); /* (s16 model, s32 player), defined old-style */
 void func_80104C14_40DF14_BattleResults(omObjData* obj);
 void func_80104D30_40E030_BattleResults(f32 scale);
 void func_801052D8_40E5D8_BattleResults(void);

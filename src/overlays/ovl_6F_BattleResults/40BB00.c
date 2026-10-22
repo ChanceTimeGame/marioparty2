@@ -657,7 +657,11 @@ void func_80104960_40DC60_BattleResults(omObjData* obj) {
 }
 
 /* Puts a coin bag above a player's character. */
-void func_80104BAC_40DEAC_BattleResults(s16 model, s32 player) {
+/* Old-style definition: retail's caller passes the model id unnarrowed (lw, not lh). */
+void func_80104BAC_40DEAC_BattleResults(model, player)
+    s16 model;
+    s32 player;
+{
     HmfModel* m = &D_800FC834_FD434[D_80105980_40EC80_BattleResults[player]];
 
     func_80029714_2A314(model, m->pos.x, m->pos.y, m->pos.z + 50.0f);
@@ -784,4 +788,85 @@ void func_80104D30_40E030_BattleResults(f32 scale) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_80104D30_40E030_BattleResults);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6F_BattleResults/40BB00", func_801052D8_40E5D8_BattleResults);
+/* The result process: pedestals rise, the carrier drops everyone's coins (and comes back with
+   the remainder), the counts zoom in and out, the coin bags fade in, each character plays its
+   result motion and message, then fade out and return to the board. */
+void func_801052D8_40E5D8_BattleResults(void) {
+    omObjData* obj;
+    s32 i;
+    s32 player;
+    f32 scale;
+
+    for (i = 0; i < 4; i++) {
+        obj = omAddObj(100, 0, 0, -1, func_80103EDC_40D1DC_BattleResults);
+        obj->work[0] = i;
+        obj->work[1] = 10;
+        obj->work[2] = D_801059F8_40ECF8_BattleResults[D_80105A08_40ED08_BattleResults[i]];
+    }
+    obj = omAddObj(200, 0, 0, -1, func_80103FD8_40D2D8_BattleResults);
+    obj->work[1] = 15;
+    obj->work[2] = 15;
+    obj->work[3] = 150;
+    for (i = 0; i < 15; i++) {
+        func_80102F24_40C224_BattleResults();
+        HuPrcVSleep();
+    }
+    obj = omAddObj(200, 0, 0, -1, func_801042B0_40D5B0_BattleResults);
+    obj->work[1] = 10;
+    obj->work[2] = 0;
+    obj->work[3] = 0;
+    while (obj->work[0] != 100) {
+        func_80102F24_40C224_BattleResults();
+        HuPrcVSleep();
+    }
+    omDelObj(obj);
+    HuPrcVSleep();
+    if (D_80105A6C_40ED6C_BattleResults != -1) {
+        D_80105A70_40ED70_BattleResults = 0;
+        obj = omAddObj(200, 0, 0, -1, func_80104960_40DC60_BattleResults);
+        obj->work[1] = 0;
+        while (D_80105A70_40ED70_BattleResults == 0) {
+            func_80102F24_40C224_BattleResults();
+            HuPrcVSleep();
+        }
+        omDelObj(obj);
+        HuPrcVSleep();
+    }
+    for (scale = 0.0f; scale < 1.0f; scale += 1.0f / 15.0f) {
+        func_80104D30_40E030_BattleResults(scale);
+        HuPrcVSleep();
+    }
+    func_80104D30_40E030_BattleResults(1.0f);
+    HuPrcSleep(30);
+    for (scale = 1.0f; scale > 0.0f; scale -= 0.1f) {
+        func_80104D30_40E030_BattleResults(scale);
+        HuPrcVSleep();
+    }
+    func_80104D30_40E030_BattleResults(0.0f);
+    for (i = 0; i < 4; i++) {
+        player = D_80105A08_40ED08_BattleResults[i];
+        if (D_801059A0_40ECA0_BattleResults[player] != -1) {
+            obj = omAddObj(300, 0, 0, -1, func_80104C14_40DF14_BattleResults);
+            obj->work[0] = 10;
+            obj->work[1] = player;
+            func_80104BAC_40DEAC_BattleResults(D_801059A0_40ECA0_BattleResults[player], player);
+        }
+        func_8002C9C0_2D5C0((s16)D_80105980_40EC80_BattleResults[player], (s16)D_80105A28_40ED28_BattleResults[player]);
+        if (D_80105A38_40ED38_BattleResults[player] != -1) {
+            func_800798F8_7A4F8(func_800797DC_7A3DC((s16)D_80105A38_40ED38_BattleResults[player], player),
+                                (s16)D_80105700_40EA00_BattleResults[i]);
+        }
+    }
+    HuPrcSleep(90);
+    func_800794A8_7A0A8(40);
+    InitFadeOut(0, 20);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    func_8002CA48_2D648(0, 0, 0);
+    omOvlKill();
+    omOvlReturnEx(1);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
