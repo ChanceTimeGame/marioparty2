@@ -213,7 +213,19 @@ extern Vec D_8010C8F8_156418_CraneGame; /* light position */
 extern s32 D_8010C904_156424_CraneGame;
 extern s16 D_8010C908_156428_CraneGame; /* the claw's round shadow is on */
 extern f32 D_8010C90C_15642C_CraneGame; /* its height */
-extern f32 D_8010CAF0_156610_CraneGame; /* the claw's round shadow scale (MP2) */
+extern Vtx D_8010C910_156430_CraneGame[3][4]; /* the claw's round shadow, per frame buffer */
+extern Mtx D_8010C9D0_1564F0_CraneGame[3];
+extern ColVtx* D_8010CA90_1565B0_CraneGame; /* unique vertices of the group being built */
+extern Vtx* D_8010CA94_1565B4_CraneGame; /* the vertex buffer being built */
+extern CGShadowFace* D_8010CA98_1565B8_CraneGame;
+extern u16* D_8010CA9C_1565BC_CraneGame; /* faces using each vertex */
+extern s16 D_8010CAA0_1565C0_CraneGame; /* unique vertices */
+extern s16 D_8010CAA2_1565C2_CraneGame; /* faces */
+extern CGShadowOrder* D_8010CAA4_1565C4_CraneGame;
+extern s16 D_8010CAA8_1565C8_CraneGame[33]; /* the vertex cache */
+extern s16 D_8010CAEA_15660A_CraneGame;
+extern s16 D_8010CAEC_15660C_CraneGame; /* vertices in the buffer */
+extern f32 D_8010CAF0_156610_CraneGame; /* the shadow scale (MP2) */
 
 /* ---- structs ---- */
 
@@ -402,9 +414,9 @@ void func_801082E8_151E08_CraneGame(f32 arg0);
 void func_801082F4_151E14_CraneGame(Gfx** gfx, Mtx* mtx);            /* MP1 func_800FBB18 */
 Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv); /* MP1 func_800FC0A0 */
 void func_80108D18_152838_CraneGame(s16 model);                      /* MP1 func_800FC4F4 */
-void func_80109024_152B44_CraneGame(void* g, void* verts, s16 n);    /* MP1 func_800FC800 */
+void func_80109024_152B44_CraneGame(HmfPart* g, ColVtx* verts, s16 n);    /* MP1 func_800FC800 */
 s32 func_801091D4_152CF4_CraneGame(void);                            /* MP1 func_800FC9B0 */
-void func_801093A0_152EC0_CraneGame(Gfx** gfx, void* m);             /* MP1 func_800FCB78 */
+void func_801093A0_152EC0_CraneGame(Gfx** gfx, HmfData* m);             /* MP1 func_800FCB78 */
 Gfx* func_801095A4_1530C4_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n);  /* MP1 func_800FCD7C */
 Gfx* func_801097A0_1532C0_CraneGame(Gfx* gfx, Mtx* mtx);             /* MP1 func_800FCF78 */
 

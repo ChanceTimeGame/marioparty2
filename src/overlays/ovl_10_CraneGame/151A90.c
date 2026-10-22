@@ -223,7 +223,57 @@ Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_8010887C_15239C_CraneGame);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_80108D18_152838_CraneGame);
+void func_80108D18_152838_CraneGame(s16 model) {
+    CGShadowGroup grp[64];
+    s16 offs[64];
+    Gfx* gp;
+    Gfx* base;
+    Gfx* dl;
+    CGShadowGroup* g;
+    HmfData* m;
+    s32 i;
+    s32 size;
+    Vtx* v;
+
+    m = D_800FC834_FD434[model].hmf;
+    D_8010C7E8_156308_CraneGame[D_8010C8F0_156410_CraneGame] = func_80027154_27D54((m->unk10 & 0x3F) * sizeof(CGShadowGroup), m->unk0E);
+    base = gp = func_80027154_27D54(0x2000 * sizeof(Gfx), m->unk0E);
+    D_8010CA94_1565B4_CraneGame = func_80027154_27D54(0x10000, m->unk0E);
+    D_8010CA90_1565B0_CraneGame = func_80027154_27D54(m->unk14 * sizeof(ColVtx), m->unk0E);
+    D_8010CA98_1565B8_CraneGame = func_80027154_27D54(0x8000, m->unk0E);
+    D_8010CA9C_1565BC_CraneGame = func_80027154_27D54(m->unk14 * 2, m->unk0E);
+    D_8010CAA4_1565C4_CraneGame = func_80027154_27D54(0x4000, m->unk0E);
+    D_8010CAEC_15660C_CraneGame = 0;
+    for (i = 0; i < (m->unk10 & 0x3F); i++) {
+        offs[i] = ((u32)gp - (u32)base) >> 3;
+        grp[i].start = D_8010CAEC_15660C_CraneGame;
+        func_80109024_152B44_CraneGame(&m->unk64[i], m->unk54, m->unk14);
+        func_801091D4_152CF4_CraneGame();
+        func_801093A0_152EC0_CraneGame(&gp, m);
+        grp[i].count = D_8010CAEC_15660C_CraneGame - grp[i].start;
+    }
+    HuMemFree(D_8010CA90_1565B0_CraneGame);
+    HuMemFree(D_8010CA98_1565B8_CraneGame);
+    HuMemFree(D_8010CA9C_1565BC_CraneGame);
+    HuMemFree(D_8010CAA4_1565C4_CraneGame);
+    size = (u8*)gp - (u8*)base;
+    dl = func_80027154_27D54(size, m->unk0E);
+    bcopy(base, dl, size);
+    g = D_8010C7E8_156308_CraneGame[D_8010C8F0_156410_CraneGame];
+    for (i = 0; i < (m->unk10 & 0x3F); i++) {
+        g[i].dl = dl + offs[i];
+        g[i].start = grp[i].start;
+        g[i].count = grp[i].count;
+    }
+    HuMemFree(base);
+    for (i = 0; i < 3; i++) {
+        size = D_8010CAEC_15660C_CraneGame * sizeof(Vtx);
+        v = func_80027154_27D54(size, m->unk0E);
+        D_8010C4E8_156008_CraneGame[D_8010C8F0_156410_CraneGame][i] = v;
+        bcopy(D_8010CA94_1565B4_CraneGame, v, size);
+    }
+    HuMemFree(D_8010CA94_1565B4_CraneGame);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_80109024_152B44_CraneGame);
 
