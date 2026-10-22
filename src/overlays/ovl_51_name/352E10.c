@@ -932,11 +932,83 @@ void func_801062AC_3568BC_name_51(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106660_356C70_name_51);
+/* The bank's dispenser (no MP1 twin; func_801062AC's total-only branch): drops the coins of the
+   total D_80108880, up to trans.x a frame, one coin object a frame. */
+void func_80106660_356C70_name_51(omObjData* obj) {
+    omObjData* coin;
+    s32 n;
+    s32 k;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106884_356E94_name_51);
+    n = 0;
+    while (D_80108880_358E90_name_51 != 0) {
+        n++;
+        D_80108880_358E90_name_51--;
+        if (obj->scale.x < n + 1.0f) {
+            obj->scale.x -= n;
+            break;
+        }
+    }
+    obj->scale.x += obj->trans.x;
+    if (n != 0) {
+        k = 1;
+        while ((n != 0) & (k != 0)) {
+            coin = omAddObj(0x1000, 0, 0, -1, func_80105E6C_35647C_name_51);
+            coin->rot.y = rand8() & 0xFF;
+            coin->trans.y = 20.0f;
+            coin->work[2] = (rand8() & 0xFF) % 3;
+            coin->work[0] = (u8)D_801086B8_358CC8_name_51;
+            coin->trans.x = D_801083E0_3589F0_name_51[coin->work[2]].x;
+            coin->trans.z = n;
+            coin->scale.z = 3.0f;
+            D_801086B8_358CC8_name_51 = (D_801086B8_358CC8_name_51 + 1) % 20;
+            n--;
+            k--;
+        }
+    } else {
+        D_801083C4_3589D4_name_51 += 2;
+    }
+    if (D_80108880_358E90_name_51 == 0) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106A60_357070_name_51);
+/* One star flying into the pile (MP1 func_800FA3A4): moves by scale, spins, and after work[2]
+   frames adds one to the star total (capped at 999) and parks its model. */
+void func_80106884_356E94_name_51(omObjData* obj) {
+    D_80108828_358E38_name_51[obj->work[0]]->pos.x = obj->trans.x;
+    D_80108828_358E38_name_51[obj->work[0]]->pos.y = obj->trans.y;
+    D_80108828_358E38_name_51[obj->work[0]]->pos.z = obj->trans.z;
+    D_80108828_358E38_name_51[obj->work[0]]->rot.x = HuMathSin(2.0f * -obj->rot.y);
+    D_80108828_358E38_name_51[obj->work[0]]->rot.z = func_800B7890_B8490(2.0f * -obj->rot.y);
+    obj->trans.x += obj->scale.x;
+    obj->trans.y += obj->scale.y;
+    obj->trans.z += obj->scale.z;
+    obj->work[1]++;
+    obj->rot.y += 10.0f;
+    if ((obj->rot.x -= 1.25f) < 0.0f) {
+        obj->rot.x = 0.0f;
+    }
+    obj->trans.y -= 1.25f;
+    if (--obj->work[2] == 0) {
+        if (++D_8010888C_358E9C_name_51 > 999) {
+            D_8010888C_358E9C_name_51 = 999;
+        }
+        D_80108828_358E38_name_51[obj->work[0]]->pos.y = D_801083E0_3589F0_name_51[0].y + 1000.0f;
+        omDelObj(obj);
+    }
+}
+
+/* Waits 30, 60 or 90 frames for a speed setting of 1, 2 or other (MP1 func_800FA5E0). */
+void func_80106A60_357070_name_51(s32 arg0) {
+    if (arg0 == 1) {
+        arg0 = 30;
+    } else if (arg0 == 2) {
+        arg0 = 60;
+    } else {
+        arg0 = 90;
+    }
+    HuPrcSleep(arg0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80106A9C_3570AC_name_51);
 

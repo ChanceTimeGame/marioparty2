@@ -150,6 +150,7 @@ extern s32 D_80108888_358E98_name_51; /* total stars with the bonus stars */
 extern s32 D_8010888C_358E9C_name_51;
 /* R51B */
 extern MBModel* D_801087D8_358DE8_name_51[20]; /* the coin models */
+extern MBModel* D_80108828_358E38_name_51[7]; /* the star models */
 extern s32 D_801088A0_358EB0_name_51[2]; /* the coin and star counters' sprites */
 extern omObjData* D_80108A4C_35905C_name_51; /* the bank's bounce object */
 extern s32 D_80108A50_359060_name_51; /* character name sprites */
