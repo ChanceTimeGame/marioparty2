@@ -387,8 +387,12 @@ extern BaResult D_8010DF38_224328_BombsAway[4];
 extern Matrix4f D_8010DF80_224370_BombsAway; /* camera look-at (MP1 D_80100720) */
 extern f32 D_8010DFC0_2243B0_BombsAway;
 extern f32 D_8010DFD0_2243C0_BombsAway;
+/* Two s16 pairs retail addresses by halves (separate labels; MP1 D_80100774/76, D_80100778/7A):
+   the backdrop sprites' wave angles and their scale angles. */
 extern s16 D_8010DFD4_2243C4_BombsAway;
+extern s16 D_8010DFD6_2243C6_BombsAway;
 extern s16 D_8010DFD8_2243C8_BombsAway;
+extern s16 D_8010DFDA_2243CA_BombsAway;
 extern s16 D_8010DFDC_2243CC_BombsAway;
 extern s16 D_8010DFDE_2243CE_BombsAway;
 extern u8 D_8010DFE0_2243D0_BombsAway;
@@ -532,6 +536,7 @@ void SprPosSet(s16, s16, s16, s16);
 void func_80026DAC_279AC(s32, s32, s32, s32);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void omSetStatBit(omObjData* obj, u16 stat);
+void SprBankSet(s16 group, s16 member, u16 bank);
 void* SprAnimGet(s16 animIdx);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 f32 func_80029D0C_2A90C(s16); /* motion length */

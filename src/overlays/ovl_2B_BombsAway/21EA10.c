@@ -492,7 +492,82 @@ void func_8010A4BC_2208AC_BombsAway(void) {
     D_8010DFE2_2243D2_BombsAway = 1;
 }
 
+// the KMC mul fix puts a nop before the second sprite's mul.s after func_800B7890 (its delay slot
+// filled); retail has none there (one instruction)
+#ifdef NON_MATCHING
+void func_8010A4CC_2208BC_BombsAway(void) {
+    s32 x;
+    s32 x2;
+
+    if (D_8010DFE2_2243D2_BombsAway == 1) {
+        if (D_8010CFF0_2233E0_BombsAway < 2) {
+            return;
+        }
+        D_8010DFE6_2243D6_BombsAway = func_8010ADF8_2211E8_BombsAway(3, 0.0f, 1200.0f, 0.0f, 0.5f, -1, 0.5f);
+        D_8010DFE8_2243D8_BombsAway = func_8010ADF8_2211E8_BombsAway(3, -500.0f, 1000.0f, 0.0f, 0.5f, -1, 0.5f);
+        D_8010DFD4_2243C4_BombsAway = 90;
+        D_8010DFD6_2243C6_BombsAway = 270;
+        D_8010DFD8_2243C8_BombsAway = func_8010B1AC_22159C_BombsAway(360);
+        D_8010DFDA_2243CA_BombsAway = func_8010B1AC_22159C_BombsAway(360);
+        if (D_8010DFD6_2243C6_BombsAway < 180) {
+            D_8010DFDC_2243CC_BombsAway = -1;
+        } else {
+            D_8010DFDC_2243CC_BombsAway = 1;
+        }
+        if (D_8010DFD4_2243C4_BombsAway < 180) {
+            D_8010DFDE_2243CE_BombsAway = -1;
+        } else {
+            D_8010DFDE_2243CE_BombsAway = 1;
+        }
+        D_8010DFD0_2243C0_BombsAway = 0.0f;
+        D_8010DFE2_2243D2_BombsAway = 0;
+    }
+    if (D_8010CFF0_2233E0_BombsAway == 2) {
+        D_8010DFD0_2243C0_BombsAway += 0.5;
+    } else {
+        if ((D_8010DFD4_2243C4_BombsAway += func_8010B1AC_22159C_BombsAway(5)) > 360) {
+            D_8010DFD4_2243C4_BombsAway -= 360;
+        }
+        if ((D_8010DFD6_2243C6_BombsAway += func_8010B1AC_22159C_BombsAway(5)) > 360) {
+            D_8010DFD6_2243C6_BombsAway -= 360;
+        }
+        if ((D_8010DFD8_2243C8_BombsAway += func_8010B1AC_22159C_BombsAway(2)) > 360) {
+            D_8010DFD8_2243C8_BombsAway -= 360;
+        }
+        if ((D_8010DFDA_2243CA_BombsAway += func_8010B1AC_22159C_BombsAway(2)) > 360) {
+            D_8010DFDA_2243CA_BombsAway -= 360;
+        }
+    }
+    if (D_8010DFDC_2243CC_BombsAway > 0 && D_8010DFD6_2243C6_BombsAway < 180) {
+        D_8010DFDC_2243CC_BombsAway = -1;
+        func_8008225C_82E5C(D_8010DFE6_2243D6_BombsAway, 0, 0);
+        SprBankSet(D_8010DFE6_2243D6_BombsAway, 0, 3);
+    } else if (D_8010DFDC_2243CC_BombsAway < 0 && D_8010DFD6_2243C6_BombsAway > 180) {
+        D_8010DFDC_2243CC_BombsAway = 1;
+        func_8008225C_82E5C(D_8010DFE6_2243D6_BombsAway, 0, 3);
+    }
+    if (D_8010DFDE_2243CE_BombsAway > 0 && D_8010DFD4_2243C4_BombsAway < 180) {
+        D_8010DFDE_2243CE_BombsAway = -1;
+        func_8008225C_82E5C(D_8010DFE8_2243D8_BombsAway, 0, 0);
+        SprBankSet(D_8010DFE8_2243D8_BombsAway, 0, 3);
+    } else if (D_8010DFDE_2243CE_BombsAway < 0 && D_8010DFD4_2243C4_BombsAway > 180) {
+        D_8010DFDE_2243CE_BombsAway = 1;
+        func_8008225C_82E5C(D_8010DFE8_2243D8_BombsAway, 0, 3);
+    }
+    x = (s16)(HuMathSin(D_8010DFD4_2243C4_BombsAway * 2) * 10.0f + 130.0f);
+    SprPosSet(D_8010DFE6_2243D6_BombsAway, 0, x,
+              (0.0f - func_800B7890_B8490(D_8010DFD6_2243C6_BombsAway) * 6.0f) + D_8010DFD0_2243C0_BombsAway);
+    x2 = (s16)(HuMathSin(D_8010DFD6_2243C6_BombsAway * 2) * 10.0f + 170.0f);
+    SprPosSet(D_8010DFE8_2243D8_BombsAway, 0, x2,
+              (10.0f - func_800B7890_B8490(D_8010DFD4_2243C4_BombsAway) * 6.0f) + D_8010DFD0_2243C0_BombsAway);
+    SprScaleSet(D_8010DFE6_2243D6_BombsAway, 0, HuMathSin(D_8010DFD8_2243C8_BombsAway) / 8.0f + 0.625,
+                HuMathSin(D_8010DFD8_2243C8_BombsAway) / 8.0f + 0.625);
+    SprScaleSet(D_8010DFE8_2243D8_BombsAway, 0, HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625,
+                HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4CC_2208BC_BombsAway);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010AA9C_220E8C_BombsAway);
 

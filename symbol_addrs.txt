@@ -828,3 +828,8 @@ D_801101D9_2672D9_ChanceTime = 0x801101D9; // rom:0x2672D9 size:0x1
 // R6F: ovl_6F .data s32 tables the code reads as s16 (the digit sprites' x and y)
 D_80105888_40EB88_BattleResults = 0x80105888; // rom:0x40EB88 size:0x10
 D_80105898_40EB98_BattleResults = 0x80105898; // rom:0x40EB98 size:0x10
+// MG2B-C: ovl_2B bss s16 pairs retail addresses by halves (MP1 D_80100774/76, D_80100778/7A)
+D_8010DFD4_2243C4_BombsAway = 0x8010DFD4; // size:0x2 segment:BombsAway
+D_8010DFD6_2243C6_BombsAway = 0x8010DFD6; // size:0x2 segment:BombsAway
+D_8010DFD8_2243C8_BombsAway = 0x8010DFD8; // size:0x2 segment:BombsAway
+D_8010DFDA_2243CA_BombsAway = 0x8010DFDA; // size:0x2 segment:BombsAway
