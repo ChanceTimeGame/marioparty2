@@ -628,5 +628,8 @@ extern DecisionTreeNonLeafNode D_80113EFC_2D93EC_name_43[];
 extern DecisionTreeNonLeafNode D_80113F80_2D9470_name_43[]; /* the same for player index 4 */
 extern DecisionTreeNonLeafNode D_80113F98_2D9488_name_43[];
 extern DecisionTreeNonLeafNode D_80113FB0_2D94A0_name_43[];
+void func_80066FD8_67BD8(s16);
+void func_80067004_67C04(s16);
+void func_800558DC_564DC(s16);
 
 #endif

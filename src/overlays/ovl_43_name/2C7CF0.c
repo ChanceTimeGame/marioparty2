@@ -3851,11 +3851,38 @@ void func_8010F02C_2D451C_name_43(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010F23C_2D472C_name_43);
+/* Advance the time of day: 0-1 day, 2-3 night. */
+void func_8010F23C_2D472C_name_43(void) {
+    D_800F8CE4_F98E4[0] = (D_800F8CE4_F98E4[0] + 1) % 4;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010F26C_2D475C_name_43);
+/* The day or night announcement. */
+void func_8010F26C_2D475C_name_43(void) {
+    if (D_800F8CE4_F98E4[0] == 0) {
+        PlaySound(0x3D1);
+        MBDlgResultWinExec(0x2F9);
+    } else {
+        PlaySound(0x3D2);
+        MBDlgResultWinExec(0x2F8);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010F2B4_2D47A4_name_43);
+/* Switch at once between day and night (white flash into night). */
+void func_8010F2B4_2D47A4_name_43(void) {
+    s16* time = D_800F8CE4_F98E4;
+
+    if (*time >= 0 && D_800F8CE4_F98E4[0] < 2) {
+        *time = 2;
+        func_8008F624_90224(0xFF, 0xFF, 0xFF);
+        func_80066FD8_67BD8(0xD);
+        func_80067004_67C04(0xE);
+    } else {
+        D_800F8CE4_F98E4[0] = 0;
+        func_80066FD8_67BD8(0xE);
+        func_80067004_67C04(0xD);
+    }
+    func_800558DC_564DC(1);
+}
 
 s32 func_8010F32C_2D481C_name_43(void) {
     s32 count = 0;
