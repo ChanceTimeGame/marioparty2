@@ -974,7 +974,95 @@ void func_8010BE7C_22226C_BombsAway(void) {
     }
 }
 
+// as MP1's twin (func_800FEE2C): retail computes a dead (z + 2250) / 150 that GCC deletes here
+// (its two doubles then drop out of .rodata), keeps 0.0f in f22 across the loop, and has a
+// 16-byte larger frame; calls, stores and the rest are the same
+#ifdef NON_MATCHING
+void func_8010BFAC_22239C_BombsAway(void) {
+    BaShell* s;
+    Vec out[2];
+    Vec dir;
+    f32 f;
+    s32 hit;
+    u16 model;
+    u16 i;
+
+    for (i = 0; i < 8; i++) {
+        s = &D_8010E098_224488_BombsAway[i];
+        if (s->unk_00 != 0) {
+            if (s->unk_34.x > 2500.0 || (s->unk_02 == 0 && s->unk_40.y < 0.0f)) {
+                func_8010BD44_222134_BombsAway(i, 0);
+                continue;
+            }
+            hit = func_801074D8_21D8C8_BombsAway(&s->unk_34, &s->unk_40, &s->unk_34);
+            if (hit != 0) {
+                f = (s->unk_34.z + 2250.0) / 150.0; /* retail computes this and never uses it */
+                if (hit > 0) {
+                    if (D_8010E550_224940_BombsAway != 0) {
+                        PlaySound(s->unk_02 == 3 ? 0x294 : 0x28E);
+                    }
+                    func_8010A350_220740_BombsAway(s->unk_34.x, s->unk_34.y, s->unk_34.z, s->unk_02);
+                    func_80107758_21DB48_BombsAway(s->unk_34.x, s->unk_34.z, D_8010D2A4_223694_BombsAway[s->unk_02]);
+                    /* retail passes the column flag as an s16 (func_80103FC4 reads a u16) */
+                    ((void (*)(s16, f32, f32, f32, f32, s16))func_80103FC4_21A3B4_BombsAway)(
+                        D_8010D27C_22366C_BombsAway[s->unk_02], s->unk_34.x, s->unk_34.y, s->unk_34.z,
+                        D_8010D28C_22367C_BombsAway[s->unk_02] * 100.0, D_8010D29C_22368C_BombsAway[s->unk_02]);
+                } else {
+                    if (D_8010E550_224940_BombsAway != 0) {
+                        func_80108E98_21F288_BombsAway(PlaySound(0x28D), &s->unk_34);
+                    }
+                    func_80107758_21DB48_BombsAway(s->unk_34.x, s->unk_34.z, -1.0f);
+                    func_8010A198_220588_BombsAway(s->unk_34.x, 0.0f, s->unk_34.z, 1.0f);
+                }
+                func_8010BD44_222134_BombsAway(i, 0);
+            } else {
+                s->unk_34.x += s->unk_40.x;
+                s->unk_34.z += s->unk_40.z;
+                if (s->unk_04 >= s->unk_08) {
+                    f = s->unk_30 - 30.0;
+                } else {
+                    s->unk_1C += s->unk_20;
+                    f = HuMathSin(s->unk_1C) * s->unk_2C;
+                }
+                s->unk_34.y = f + s->unk_28 - s->unk_24;
+                s->unk_40.y = f - s->unk_30;
+                s->unk_30 = f;
+                s->unk_04++;
+                func_80103FC4_21A3B4_BombsAway(1, s->unk_34.x, s->unk_34.y, s->unk_34.z, 50.0f, 0);
+                if (s->unk_34.z <= -750.0) {
+                    s->unk_5C = -(750.0 / s->unk_34.z);
+                }
+            }
+        }
+        if (s->unk_02 < 4 && s->unk_02 >= 2) {
+            model = s->unk_0C[s->unk_02 - 1];
+            dir.x = s->unk_40.x;
+            dir.y = s->unk_40.y;
+            dir.z = s->unk_40.z;
+            func_80108998_21ED88_BombsAway(&dir);
+            func_80108ACC_21EEBC_BombsAway(&dir, &out[0].x);
+            func_8002979C_2A39C(model, out[0].x, out[0].y, out[0].z);
+        } else {
+            model = s->unk_0C[0];
+            func_8002979C_2A39C(s->unk_0C[0], 0.0f, 0.0f, 0.0f);
+        }
+        f = s->unk_5C * 1.1 * 0.2 * 5.0;
+        func_800297E8_2A3E8(model, f, f, f);
+        func_800297E8_2A3E8(s->unk_0C[3], f, f, f);
+        func_80029714_2A314(model, s->unk_34.x, s->unk_34.y, s->unk_34.z);
+        /* func_80106F60 fills out[0] (ground position) and out[1] (its rotation) */
+        if (((s32(*)(Vec*, Vec*))func_80106F60_21D350_BombsAway)(&s->unk_34, out) != 0) {
+            func_80029714_2A314(s->unk_0C[3], s->unk_34.x, out[0].y, s->unk_34.z);
+            func_8002979C_2A39C(s->unk_0C[3], out[1].x, out[1].y, out[1].z);
+        } else {
+            func_80029714_2A314(s->unk_0C[3], s->unk_34.x, 100.0f, s->unk_34.z);
+            func_8002979C_2A39C(s->unk_0C[3], 0.0f, 0.0f, 0.0f);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010BFAC_22239C_BombsAway);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010C444_222834_BombsAway);
 
