@@ -4,11 +4,103 @@
 __asm__(".section .rodata");
 const char D_8010A8C0_14C250_RainbowRun[16] = "\202r\202s\202`\202q\202s";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80102800_144190_RainbowRun);
+/* Minigame setup: the player of group 0 runs alone (D_8010ACC0[0]), the other three follow. */
+void func_80102800_144190_RainbowRun(void) {
+    s16 i;
+    s16 j;
+    s16 esp;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+    case 1:
+        D_8010ACC0_14C650_RainbowRun[0] = 1;
+        break;
+    case 2:
+        D_8010ACC0_14C650_RainbowRun[0] = 2;
+        break;
+    case 3:
+        D_8010ACC0_14C650_RainbowRun[0] = 3;
+        break;
+    case 0:
+    default:
+        D_8010ACC0_14C650_RainbowRun[0] = 0;
+        break;
+    }
+    for (i = 1, j = 0; i < 4; i++) {
+        if (D_8010ACC0_14C650_RainbowRun[0] == j) {
+            j++;
+        }
+        D_8010ACC0_14C650_RainbowRun[i] = j;
+        j++;
+    }
+    func_8002D4D0_2E0D0(10);
+    func_8002F290_2FE90(D_800F9D30_FA930, 0x40);
+    func_80020D20_21920(0x40);
+    omInitObjMan(0x1E, 0);
+    func_80079128_79D28();
+    func_8000C460_D060();
+    D_800BF7AC_C03AC = 100.0f;
+    func_8000C578_D178(1);
+    func_80020070_20C70(1);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, func_80079E60_7AA60), 0xA0);
+    ScissorSet(0, 0.0f, 0.0f, 319.0f, 239.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 30.0f, 80.0f, 8000.0f);
+    func_8002C59C_2D19C(0x800, 0x990, 0x40, 0x40, 0x40);
+    func_8000C38C_CF8C();
+    func_8000C3C8_CFC8();
+    func_8007273C_7333C((u8*)D_8010A8C0_14C250_RainbowRun, 1);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(2, 0xC, 0x2E, -1, func_80103648_144FD8_RainbowRun);
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    obj = D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(3, 6, 0, -1, func_80106D60_1486F0_RainbowRun);
+    omSetStatBit(obj, 0xA0);
+    obj = D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(3, 6, 0, -1, func_80106E8C_14881C_RainbowRun);
+    omSetStatBit(obj, 0xA0);
+    omAddObj(0, 0, 0, -1, func_80105978_147308_RainbowRun);
+    omAddObj(0, 0, 0, -1, func_80104FB4_146944_RainbowRun);
+    func_80107878_149208_RainbowRun();
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = D_8010AC14_14C5A4_RainbowRun[0] = omAddObj(4, 6, 10, -1, func_8010A42C_14BDBC_RainbowRun);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = D_8010AC14_14C5A4_RainbowRun[1] = omAddObj(4, 6, 10, -1, func_8010A514_14BEA4_RainbowRun);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = D_8010AC14_14C5A4_RainbowRun[2] = omAddObj(4, 6, 10, -1, func_8010A600_14BF90_RainbowRun);
+    D_800F9CE0_FA8E0[D_800FA606_FB206++] = D_8010ACC4_14C654_RainbowRun[0] = omAddObj(0x14, 10, 0, -1, func_801087A8_14A138_RainbowRun);
+    D_800F9CE0_FA8E0[D_800FA606_FB206++] = D_8010ACC4_14C654_RainbowRun[1] = omAddObj(0x14, 10, 0, -1, func_801087CC_14A15C_RainbowRun);
+    D_800F9CE0_FA8E0[D_800FA606_FB206++] = D_8010ACC4_14C654_RainbowRun[2] = omAddObj(0x14, 10, 0, -1, func_801087F0_14A180_RainbowRun);
+    omAddObj(0x1E, 10, 0, -1, func_801075FC_148F8C_RainbowRun);
+    D_8010A99C_14C32C_RainbowRun.x = 0.0f;
+    D_8010A99C_14C32C_RainbowRun.y = 320.0f;
+    D_8010A99C_14C32C_RainbowRun.z = 299.0f;
+    D_8010A990_14C320_RainbowRun.x = 0.0f;
+    D_8010A990_14C320_RainbowRun.y = 2276.52f;
+    D_8010A990_14C320_RainbowRun.z = 1835.286f;
+    esp = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x1F0007), 0, 1);
+    espDispOff(esp);
+    func_8007A27C_7AE7C(0x7FDA, D_800F93FC_F9FFC[esp].unk_04, func_80102F3C_1448CC_RainbowRun, 30.0f,
+                        &D_8010A990_14C320_RainbowRun, &D_8010A99C_14C32C_RainbowRun);
+    Hu3DCamSetPerspective(0, 28.0f, 80.0f, 8000.0f);
+    func_8002C59C_2D19C(0x800, 0x990, 0x40, 0x40, 0x40);
+    func_801057F0_147180_RainbowRun(1900.0f, 370.0f, 0.0f, 0.0f, 0.0f, -590.0f, 1100.0f);
+    func_80026DAC_279AC(1, 0x60, 0x40, 0x40);
+    func_80026E00_27A00(1, 54.0f, -44.0f, 97.0f);
+    InitFadeIn(0, 0x10);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80102F3C_1448CC_RainbowRun);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80103648_144FD8_RainbowRun);
+void func_80103648_144FD8_RainbowRun(omObjData* obj) {
+    u8 chr = gPlayers[D_8010ACC0_14C650_RainbowRun[0]].character;
+    s32 dir = D_800CD438_CE038[chr].unk_04;
+    s32 file = D_800CD438_CE038[chr].unk_10;
+
+    func_8010393C_1452CC_RainbowRun(obj, dir, file, D_8010ACC0_14C650_RainbowRun[0], 0.0f, 0.0f, 1370.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_801036CC_14505C_RainbowRun);
 

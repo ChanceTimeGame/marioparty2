@@ -95,6 +95,48 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+void espDispOff(u16);
+void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
+void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
+void func_8000C38C_CF8C(void);
+void func_8000C3C8_CFC8(void);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+void func_8000C018_CC18(u16);
+void func_8000C460_D060(void);
+void func_8000C578_D178(u8);
+extern f32 D_800BF7AC_C03AC;
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8002D4D0_2E0D0(s16 n);
+void func_8002F290_2FE90(s32* arg0, s32 n);
+void func_80020D20_21920(s16 arg0);
+extern s32 D_800F9D30_FA930[];
+extern u16 D_800FC87A_FD47A;
+extern u16 D_800FA606_FB206;
+extern u16 D_800F8FE0_F9BE0;
+extern omObjData* D_800FC7B0_FD3B0[];
+extern omObjData* D_800F9CE0_FA8E0[]; /* collision list, D_800FA606_FB206 entries */
+
+/* An esprite slot (D_800F93FC_F9FFC[], 0x24 bytes). */
+typedef struct RREspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} RREspSlot;
+extern RREspSlot* D_800F93FC_F9FFC;
+
+/* Per-character data, 0x18 bytes each. */
+typedef struct RRCharData {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s32 unk_04; /* model directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10; /* model file */
+    /* 0x14 */ char unk_14[4];
+} RRCharData;
+extern RRCharData D_800CD438_CE038[];
 void func_800B8070_B8C70(f32 angle, f32* sin, f32* cos);
 void func_8002A00C_2AC0C(s16 model);
 void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
@@ -116,6 +158,12 @@ extern u16 D_8010A78E_14C11E_RainbowRun; /* func_80105E38's last buttons */
 extern u32 D_8010A790_14C120_RainbowRun; /* random seed */
 
 /* ---- .bss ---- */
+
+extern Vec D_8010A990_14C320_RainbowRun; /* the title camera's eye */
+extern Vec D_8010A99C_14C32C_RainbowRun; /* the title camera's target */
+extern omObjData* D_8010AC14_14C5A4_RainbowRun[3]; /* the followers */
+extern s8 D_8010ACC0_14C650_RainbowRun[4]; /* [0] the player of group 0, [1..3] the others */
+extern omObjData* D_8010ACC4_14C654_RainbowRun[3];
 
 extern f32 D_8010AA10_14C3A0_RainbowRun; /* camera zoom */
 extern f32 D_8010ABEC_14C57C_RainbowRun; /* camera centre y */
