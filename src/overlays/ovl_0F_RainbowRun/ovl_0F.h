@@ -1,0 +1,341 @@
+#ifndef _OVL_0F_H
+#define _OVL_0F_H
+
+/* Overlay 0F: Rainbow Run. Its game code descends from MP1's ovl_1F_TightropeTreachery (197E20.c,
+   19A360.c, 19ACC0.c, 19D510.c). Retail is four files: 144190.c, 147180.c from 801057F0 (MP1's
+   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790. .data stays asm (14C080); .rodata is carved per file. Prototypes past
+   801060D8 are inferred from register use (MG0F-B: check them). */
+
+#include "common.h"
+#include "game/object.h"
+#include "game/hmfman.h"
+#include "game/camera.h"
+#include "game/pad.h"
+#include "game/sprite.h"
+
+typedef f32 Matrix4f[4][4];
+
+/* ---- structs ---- */
+
+/* A player object's work: main's minigame work (0x15C bytes; MP1's 0xE8 TTPlayerWork with fields
+   from 0x50 moved). Fields from the asm. */
+typedef struct RRPlayerWork {
+    /* 0x00 */ char unk_00[0x38];
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ f32 angle; /* facing angle (degrees) */
+    /* 0x40 */ f32 speed;
+    /* 0x44 */ char unk_44[4];
+    /* 0x48 */ f32 radius;
+    /* 0x4C */ char unk_4C[4];
+    /* 0x50 */ u16 unk_50; /* flags */
+    /* 0x52 */ char unk_52[5];
+    /* 0x57 */ s8 port; /* controller port */
+    /* 0x58 */ char unk_58[1];
+    /* 0x59 */ s8 player; /* player index */
+    /* 0x5A */ char unk_5A[0x64];
+    /* 0xBE */ u16 unk_BE; /* stun timer after a hit (MP1 0xAE) */
+    /* 0xC0 */ char unk_C0[0x2C];
+    /* 0xEC */ s32 (*unk_EC)(omObjData*, omObjData*); /* collision callback (MP1 0xDC) */
+    /* 0xF0 */ char unk_F0[0x68];
+    /* 0x158 */ struct RRTeamWork* team; /* a follower's state (D_8010AA18_14C3A8_RainbowRun[]; MP1 0xE4) */
+} RRPlayerWork; /* size = 0x15C */
+
+/* A follower's state (D_8010AA18_14C3A8_RainbowRun[], RRPlayerWork::team; MP1 TTTeamWork). */
+typedef struct RRTeamWork {
+    /* 0x00 */ char unk_00[0x38];
+    /* 0x38 */ f32 unk_38; /* z */
+    /* 0x3C */ char unk_3C[0x60];
+} RRTeamWork; /* size = 0x9C */
+
+#define RR_WORK(obj) ((RRPlayerWork*)(obj)->unk_50)
+
+/* A thrown object's state (RRItemWork::bomb; MP1 TTBomb). No pointers. */
+typedef struct RRBomb {
+    /* 0x00 */ s8 active;
+    /* 0x01 */ s8 lit;
+    /* 0x02 */ char unk_02[2];
+    /* 0x04 */ s16 sound; /* the fuse sound's owner (func_80079798_7A398's second argument) */
+    /* 0x06 */ char unk_06[4];
+    /* 0x0A */ s16 mdl; /* 3D sprite (func_80021198_21D98) */
+} RRBomb;
+
+/* A thrown object's work: main's minigame work view, the state pointer at 0xA8 (MP1 0x68). */
+typedef struct RRItemWork {
+    /* 0x00 */ char unk_00[0xA8];
+    /* 0xA8 */ RRBomb* bomb;
+} RRItemWork;
+
+#define RR_ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+/* func_8007A27C_7AE7C's camera sprite work (src/7AA60.c's CamSprWork). */
+typedef struct RRCamSprWork {
+    /* 0x00 */ s16 sprId;
+    /* 0x04 */ f32 scaleX;
+    /* 0x08 */ f32 scaleY;
+    /* 0x0C */ f32 baseScaleX;
+    /* 0x10 */ f32 baseScaleY;
+    /* 0x14 */ f32 baseZoom;
+    /* 0x18 */ f32 offsetX;
+    /* 0x1C */ f32 offsetY;
+    /* 0x20 */ Vec planePos;
+    /* 0x2C */ void (*draw)(struct RRCamSprWork*);
+    /* 0x30 */ HuCamera* cam;
+} RRCamSprWork; /* size 0x34 */
+
+/* ---- overlay functions ---- */
+
+/* 144190.c */
+void func_80102800_144190_RainbowRun(void);
+void func_80102F3C_1448CC_RainbowRun(RRCamSprWork* work);
+void func_80103648_144FD8_RainbowRun(omObjData* obj);
+s32 func_801036CC_14505C_RainbowRun(omObjData* obj, omObjData* other);
+void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
+void func_80103E1C_1457AC_RainbowRun(omObjData* obj);
+void func_801041E4_145B74_RainbowRun(omObjData* obj);
+void func_80104FB4_146944_RainbowRun(omObjData* obj);
+
+/* 147180.c */
+void func_801057F0_147180_RainbowRun(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz);
+void func_80105870_147200_RainbowRun(void);
+void func_80105978_147308_RainbowRun(omObjData* obj);
+void func_801059F0_147380_RainbowRun(omObjData* obj);
+f32 func_80105A74_147404_RainbowRun(void);
+void func_80105C40_1475D0_RainbowRun(Vec* pos, Vec* axis, f32 angle, Matrix4f m);
+void func_80105E38_1477C8_RainbowRun(RRPlayerWork* work);
+void func_80105ED4_147864_RainbowRun(omObjData* obj, f32 dist);
+u32 func_80105F4C_1478DC_RainbowRun(u32 seed);
+u32 func_80106020_1479B0_RainbowRun(void);
+
+/* 1479E0.c */
+void func_80106050_1479E0_RainbowRun(s16 model);
+void func_801060D8_147A68_RainbowRun(omObjData* obj);
+void func_80106838_1481C8_RainbowRun(void);
+void func_80106CB8_148648_RainbowRun(omObjData* obj);
+void func_80106D60_1486F0_RainbowRun(omObjData* obj);
+void func_80106E70_148800_RainbowRun(omObjData* obj);
+void func_80106E8C_14881C_RainbowRun(omObjData* obj);
+void func_80107018_1489A8_RainbowRun(omObjData* obj, s32 arg1);
+void func_801075FC_148F8C_RainbowRun(omObjData* obj);
+
+/* 149120.c */
+s8 func_80107790_149120_RainbowRun(omObjData* obj);
+void func_80107878_149208_RainbowRun(void);
+void func_80107A68_1493F8_RainbowRun(omObjData* obj);
+void func_80107C5C_1495EC_RainbowRun(omObjData* obj);
+void func_80108094_149A24_RainbowRun(omObjData* obj);
+void func_8010815C_149AEC_RainbowRun(omObjData* obj, s16 arg1, s16 arg2);
+void func_801087A8_14A138_RainbowRun(omObjData* obj);
+void func_801087CC_14A15C_RainbowRun(omObjData* obj);
+void func_801087F0_14A180_RainbowRun(omObjData* obj);
+void func_80108814_14A1A4_RainbowRun(omObjData* obj);
+void* func_80109240_14ABD0_RainbowRun(omObjData* obj, s32 arg1, s16 arg2, f32 arg3);
+void func_80109534_14AEC4_RainbowRun(omObjData* obj);
+void func_80109CC4_14B654_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 idx);
+void func_8010A42C_14BDBC_RainbowRun(omObjData* obj);
+void func_8010A514_14BEA4_RainbowRun(omObjData* obj);
+void func_8010A600_14BF90_RainbowRun(omObjData* obj);
+
+/* MG0F-A */
+
+/* ---- main-segment API used by 0F (missing from include/) ---- */
+
+extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
+extern u16 D_801011FC_101DFC;
+extern f32 D_80102750_103350[]; /* D_8010274C_10334C + 4: [1] is its z by retail's own label */
+void func_80069770_6A370(void);
+/* func_8000BF24_CB24: its second argument (s32 in main) is a float that retail passes in a1: callers
+   cast (on the host the s32 slot would get a converted value, not the bits) */
+void func_8000BF24_CB24(omObjData*, s32, f32, f32, f32, f32);
+void func_8000BFF0_CBF0(omObjData*);
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+u8 rand8(void);
+u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320;
+extern u8 D_800FDBE0_FE7E0; /* current vertex buffer */
+extern s32 D_800F8FD0_F9BD0; /* scene state */
+void func_8000C3B8_CFB8(void);
+void func_8000C398_CF98(void);
+void func_8000C3A8_CFA8(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_8006D4D0_6E0D0(s16); /* the seconds counter */
+void func_8006D518_6E118(void);
+void func_80079848_7A448(s16 arg0); /* stop a sound */
+extern u16 D_800FD410_FE010[4];
+void func_80019E04_1AA04(omObjData* obj, s32 slot, s32 motion);
+void func_80019CA4_1A8A4(omObjData* obj, s32 arg1);
+void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
+omObjData* func_800732B0_73EB0(u32 arg0);
+void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
+void func_800797DC_7A3DC(s32, s16);
+/* the player motion constants (MP1 D_800B895C..D_800B898C) */
+extern f32 D_800BF79C_C039C;
+extern f32 D_800BF7A0_C03A0;
+extern f32 D_800BF7A4_C03A4;
+extern f32 D_800BF7A8_C03A8;
+extern f32 D_800BF7B0_C03B0;
+extern f32 D_800BF7BC_C03BC;
+extern f32 D_800BF7C0_C03C0; /* top speed */
+extern f32 D_800BF7C4_C03C4;
+extern f32 D_800BF7C8_C03C8;
+extern f32 D_800BF7CC_C03CC;
+f32 sqrtf(f32);
+f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
+void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+s16 func_80079798_7A398(s16, s16);
+s32 PlaySound(s32);
+void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
+void func_80021198_21D98(s16 index, u16 arg1);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup */
+extern u16 D_800BF7E4_C03E4[][14]; /* per player sound ids */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
+void func_8000CC74_D874(omObjData* obj, s16 model, s32 arg2);
+void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4, s32 arg5);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+void espDispOff(u16);
+void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
+void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
+void func_8000C38C_CF8C(void);
+void func_8000C3C8_CFC8(void);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+void func_8000C018_CC18(u16);
+void func_8000C460_D060(void);
+void func_8000C578_D178(u8);
+extern f32 D_800BF7AC_C03AC;
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8002D4D0_2E0D0(s16 n);
+void func_8002F290_2FE90(s32* arg0, s32 n);
+void func_80020D20_21920(s16 arg0);
+extern s32 D_800F9D30_FA930[];
+extern u16 D_800FC87A_FD47A;
+extern u16 D_800FA606_FB206;
+extern u16 D_800F8FE0_F9BE0;
+extern omObjData* D_800FC7B0_FD3B0[];
+extern omObjData* D_800F9CE0_FA8E0[]; /* collision list, D_800FA606_FB206 entries */
+
+/* An esprite slot (D_800F93FC_F9FFC[], 0x24 bytes). */
+typedef struct RREspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} RREspSlot;
+extern RREspSlot* D_800F93FC_F9FFC;
+
+/* Per-character data, 0x18 bytes each. */
+typedef struct RRCharData {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s32 unk_04; /* model directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10; /* model file */
+    /* 0x14 */ char unk_14[4];
+} RRCharData;
+extern RRCharData D_800CD438_CE038[];
+void func_800B8070_B8C70(f32 angle, f32* sin, f32* cos);
+void func_8002A00C_2AC0C(s16 model);
+void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+
+/* ---- .data (14C080) ---- */
+
+extern s16 D_8010A6F0_14C080_RainbowRun; /* the game is over */
+extern s8 D_8010A6F2_14C082_RainbowRun;
+extern s8 D_8010A6F3_14C083_RainbowRun; /* the start message is done */
+extern s8 D_8010A6F4_14C084_RainbowRun; /* the runner reached its start */
+extern s8 D_8010A6F5_14C085_RainbowRun; /* the runner cannot be hit */
+extern s8 D_8010A6F6_14C086_RainbowRun; /* result: 1 fell, 2 time up, 3 reached the goal */
+extern s8 D_8010A6F7_14C087_RainbowRun; /* the timer is stopped */
+extern s8 D_8010A6F8_14C088_RainbowRun; /* the course is being pulled forward */
+extern f32 D_8010A6FC_14C08C_RainbowRun; /* this frame's camera advance */
+extern s8 D_8010A700_14C090_RainbowRun;
+extern s8 D_8010A701_14C091_RainbowRun;
+extern s8 D_8010A702_14C092_RainbowRun; /* the runner reached the goal */
+extern s8 D_8010A703_14C093_RainbowRun;
+extern s32 D_8010A704_14C094_RainbowRun[2]; /* the title sprite's scroll x, y */
+extern s8 D_8010A70C_14C09C_RainbowRun; /* the runner leans sideways */
+extern s8 D_8010A70D_14C09D_RainbowRun;
+extern s8 D_8010A70E_14C09E_RainbowRun; /* the runner is falling */
+extern s8 D_8010A70F_14C09F_RainbowRun;
+extern s8 D_8010A710_14C0A0_RainbowRun; /* the music is stopped */
+extern s8 D_8010A711_14C0A1_RainbowRun;
+extern s8 D_8010A712_14C0A2_RainbowRun;
+extern s8 D_8010A713_14C0A3_RainbowRun;
+extern s8 D_8010A714_14C0A4_RainbowRun; /* the run-in's motions are set */
+extern s8 D_8010A715_14C0A5_RainbowRun; /* run-in frames with button 0x8000 */
+extern f32 D_8010A718_14C0A8_RainbowRun; /* z of the next course pull */
+extern s32 D_8010A71C_14C0AC_RainbowRun;
+extern f32 D_8010A720_14C0B0_RainbowRun;
+extern s16 D_8010A724_14C0B4_RainbowRun; /* course pulls so far */
+extern u32 D_8010A728_14C0B8_RainbowRun; /* frames before the start message */
+extern s8 D_8010A72C_14C0BC_RainbowRun; /* the fade-out started */
+extern s8 D_8010A72D_14C0BD_RainbowRun; /* the result is paid */
+extern s32 D_8010A730_14C0C0_RainbowRun; /* time left, frames */
+extern s32 D_8010A734_14C0C4_RainbowRun;
+extern s8 D_8010A738_14C0C8_RainbowRun;
+extern s32 D_8010A73C_14C0CC_RainbowRun; /* frames to show the result */
+extern s32 D_8010A740_14C0D0_RainbowRun;
+extern s16 D_8010A744_14C0D4_RainbowRun; /* opening pan frame */
+extern s8 D_8010A746_14C0D6_RainbowRun;
+extern s8 D_8010A747_14C0D7_RainbowRun;
+extern s8 D_8010A750_14C0E0_RainbowRun; /* the followers are being pulled */
+extern s8 D_8010A751_14C0E1_RainbowRun; /* the camera shakes */
+extern s16 D_8010A752_14C0E2_RainbowRun; /* shake frame */
+extern f32 D_8010A754_14C0E4_RainbowRun;
+extern f32 D_8010A758_14C0E8_RainbowRun[]; /* shake offsets x, y: [i * 2] */
+extern f32 D_8010A75C_14C0EC_RainbowRun[]; /* [i * 2] (D_8010A758 + 4, retail's own label) */
+extern s8 D_8010A778_14C108_RainbowRun; /* the fade-out started */
+extern s8 D_8010A77C_14C10C_RainbowRun[8]; /* stick x history */
+extern s8 D_8010A784_14C114_RainbowRun[8]; /* stick y history */
+extern s8 D_8010A78C_14C11C_RainbowRun; /* next slot of the stick histories */
+extern u16 D_8010A78E_14C11E_RainbowRun; /* func_80105E38's last buttons */
+extern u32 D_8010A790_14C120_RainbowRun; /* random seed */
+extern s8 D_8010A7A4_14C134_RainbowRun;
+extern s16 D_8010A7A6_14C136_RainbowRun; /* a sound to stop */
+extern s8 D_8010A7A8_14C138_RainbowRun; /* the goal was reached (set up) */
+extern f32 D_8010A7D0_14C160_RainbowRun; /* x of the course's middle */
+extern f32 D_8010A7D4_14C164_RainbowRun; /* y of the course */
+extern f32 D_8010A7D8_14C168_RainbowRun; /* last frame's D_8010A7D0 */
+extern f32 D_8010A7DC_14C16C_RainbowRun; /* D_8010A7D0's change this frame */
+extern f32 D_8010A7E0_14C170_RainbowRun; /* the rainbow's sway, -20..20 */
+extern f32 D_8010A7E4_14C174_RainbowRun; /* the ripple's phase */
+extern s8 D_8010A7E8_14C178_RainbowRun; /* the sway's direction */
+extern s8 D_8010A7E9_14C179_RainbowRun; /* the runner passed z -1150 */
+
+/* ---- .bss ---- */
+
+extern Vec D_8010A990_14C320_RainbowRun; /* the title camera's eye */
+extern Vec D_8010A99C_14C32C_RainbowRun; /* the title camera's target */
+extern f32 D_8010A9A8_14C338_RainbowRun; /* the goal camera's rot x step */
+extern f32 D_8010A9AC_14C33C_RainbowRun; /* centre y step */
+extern f32 D_8010A9B0_14C340_RainbowRun; /* centre z step */
+extern f32 D_8010ABFC_14C58C_RainbowRun[2]; /* wind drift x, z */
+extern f32 D_8010AC0C_14C59C_RainbowRun; /* the sway (copy) */
+extern omObjData* D_8010AC14_14C5A4_RainbowRun[3]; /* the followers */
+extern s8 D_8010ACC0_14C650_RainbowRun[4]; /* [0] the player of group 0, [1..3] the others */
+extern omObjData* D_8010ACC4_14C654_RainbowRun[3];
+
+extern f32 D_8010AA10_14C3A0_RainbowRun; /* camera zoom */
+extern f32 D_8010ABEC_14C57C_RainbowRun; /* camera centre y */
+extern f32 D_8010ABF4_14C584_RainbowRun; /* camera rot z */
+extern f32 D_8010ABF8_14C588_RainbowRun; /* camera rot y */
+extern f32 D_8010AC04_14C594_RainbowRun; /* camera centre z */
+extern f32 D_8010AC10_14C5A0_RainbowRun; /* camera rot x */
+extern f32 D_8010ACBC_14C64C_RainbowRun; /* camera centre x */
+extern ColVtx* D_8010A9C0_14C350_RainbowRun; /* the rainbow's base vertices (func_80106050) */
+
+/* MG0F-B */
+
+#endif

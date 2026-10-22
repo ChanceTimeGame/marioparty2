@@ -867,3 +867,5 @@ D_8010FC30_245B10_SlotCarDerby = 0x8010FC30; // size:0x10 segment:SlotCarDerby
 D_801109B0_246890_SlotCarDerby = 0x801109B0; // size:0x8 segment:SlotCarDerby
 D_801109BA_24689A_SlotCarDerby = 0x801109BA; // size:0x6 segment:SlotCarDerby
 D_801109C0_2468A0_SlotCarDerby = 0x801109C0; // size:0x8 segment:SlotCarDerby
+// MG0F-A: ovl_0F .data: func_80105E38's last buttons, addressed by its own label (MP1 D_800FE33E)
+D_8010A78E_14C11E_RainbowRun = 0x8010A78E; // rom:0x14C11E size:0x2 segment:RainbowRun
