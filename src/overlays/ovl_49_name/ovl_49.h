@@ -569,13 +569,13 @@ void func_80103A1C_30DECC_name_49(void); /* as func_80048AA8_496A8 */
 void func_80103D28_30E1D8_name_49(MBModel* arg0, Vec* arg1);
 void func_80105BFC_3100AC_name_49(void);
 void func_80105C38_3100E8_name_49(void); /* as func_801058E0_2B41A0_name_41 */
-void func_80105F94_310444_name_49(void); /* B: unknown */
+void func_80105F94_310444_name_49(void); /* board music and event tables */
 void func_80106340_3107F0_name_49(s16 arg0);
 void func_80106460_310910_name_49(void);
 void func_80106904_310DB4_name_49(void);
 void func_80106B0C_310FBC_name_49(void);
 void func_80106B84_311034_name_49(void);
-void func_80106BF8_3110A8_name_49(s16 arg0); /* B: from callers */
+void func_80106BF8_3110A8_name_49(s16 arg0); /* switch model arg0 */
 void func_80106D34_3111E4_name_49(void);
 void func_80106D94_311244_name_49(void);
 void func_80106EAC_31135C_name_49(void);
@@ -594,12 +594,12 @@ void func_80107B80_312030_name_49(void);
 void func_80107BA4_312054_name_49(void);
 void func_80107BC8_312078_name_49(void);
 void func_80107BEC_31209C_name_49(void);
-void func_80108650_312B00_name_49(void); /* B: unknown */
+void func_80108650_312B00_name_49(void); /* Bowser bank */
 Process* func_8010AB84_315034_name_49(void* arg0);
 void func_8010ABC0_315070_name_49(void);
 void func_8010B5C0_315A70_name_49(void);
 void func_8010B5DC_315A8C_name_49(void);
-s32 func_8010ECC4_319174_name_49(s32 arg0, s32 arg1); /* B: from callers */
+s32 func_8010ECC4_319174_name_49(s32 exclude, s32 pipe); /* warp pipe */
 s32 func_8010F320_3197D0_name_49(void);
 s32 func_8010F340_3197F0_name_49(void);
 s32 func_8010F360_319810_name_49(void);
@@ -607,18 +607,18 @@ s32 func_8010F380_319830_name_49(void);
 s32 func_8010F3A0_319850_name_49(void);
 s32 func_8010F3C0_319870_name_49(void);
 s32 func_8010F3E0_319890_name_49(void);
-void func_8010F400_3198B0_name_49(void); /* B: unknown */
-void func_8010F56C_319A1C_name_49(void); /* B: unknown */
-void func_8010F694_319B44_name_49(void); /* B: unknown */
-void func_8010F754_319C04_name_49(void); /* B: unknown */
+void func_8010F400_3198B0_name_49(void); /* burst process */
+void func_8010F56C_319A1C_name_49(void); /* five bursts */
+void func_8010F694_319B44_name_49(void); /* parade trail reset */
+void func_8010F754_319C04_name_49(void); /* parade trail step */
 void func_8010F918_319DC8_name_49(s16 space);
 void func_8010F9A0_319E50_name_49(s16 from, s16 to, f32 speed, s32 arc, s32 player, s32 slot);
 void func_8010FC3C_31A0EC_name_49(s16 from, s16 to, f32 speed, s32 arc);
-void func_8010FE80_31A330_name_49(void); /* B: unknown */
-void func_8010FF2C_31A3DC_name_49(void); /* B: unknown */
+void func_8010FE80_31A330_name_49(void); /* parade camera process */
+void func_8010FF2C_31A3DC_name_49(void); /* coin pop process */
 void func_80110188_31A638_name_49(s32 player);
-void func_801101E0_31A690_name_49(void); /* B: unknown */
-void func_8011056C_31AA1C_name_49(void); /* B: unknown */
+void func_801101E0_31A690_name_49(void); /* player run process (Ovl49RunWork) */
+void func_8011056C_31AA1C_name_49(void); /* Bowser parade */
 s32 func_80111300_31B7B0_name_49(s32 arg0); /* as func_80110CCC_2D61BC_name_43 */
 void func_80111588_31BA38_name_49(s32 which);
 void func_80111A78_31BF28_name_49(void);
@@ -634,7 +634,7 @@ void func_80111E6C_31C31C_name_49(void);
 void func_80111E88_31C338_name_49(void);
 void func_80111EA4_31C354_name_49(void);
 void func_80111EC0_31C370_name_49(void);
-void func_80111EDC_31C38C_name_49(void); /* B: unknown */
+void func_80111EDC_31C38C_name_49(void); /* Bowser shop */
 
 /* fork 49-B */
 extern BoardEventTableEntry D_8011369C_31DB4C_name_49[];
@@ -691,6 +691,13 @@ extern s16 D_80113ADC_31DF8C_name_49[]; /* func_80111588: the 3-way switch's dir
 struct unk_8003B8D4Struct* func_800419A4_425A4(s16, s16*, s32);
 extern s16* D_80113B20_31DFD0_name_49[3]; /* func_80111ACC: paths (-1 ended) */
 extern s16* D_80113B84_31E034_name_49[5]; /* func_80111CB8: paths (-1 ended) */
+extern u8 D_80113BE8_31E098_name_49[5]; /* Bowser's shop: item by pick */
+extern s16 D_80113BF0_31E0A0_name_49[5]; /* Bowser's shop: price by pick */
+extern s16 D_80113BFC_31E0AC_name_49[5]; /* Bowser's shop: cumulative odds (of 100) */
+extern s32 D_80113C08_31E0B8_name_49[5]; /* Bowser's shop: item name message by pick */
+extern u8 D_80113C1C_31E0CC_name_49[4]; /* Bowser's shop (turn_status set): item by pick */
+extern s16 D_80113C20_31E0D0_name_49[4]; /* Bowser's shop (turn_status set): cumulative odds */
+extern s32 D_80113C28_31E0D8_name_49[4]; /* Bowser's shop (turn_status set): item name message */
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
 
 #endif
