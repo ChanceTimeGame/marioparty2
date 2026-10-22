@@ -62,6 +62,8 @@ s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the 
 void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4); /* model motion blend */
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029C74_2A874(s16 arg0, f32 arg1);
+s16 func_800797DC_7A3DC(s32, s16); /* MP1 func_80060618: player voice */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
@@ -141,9 +143,10 @@ typedef struct BumperBallsWork {
     /* 0x66 */ u16 unk_66; /* MP1 0x5A */
     /* 0x68 */ char pad_68[0xF];
     /* 0x77 */ u8 unk_77;
-    /* 0x78 */ u16 unk_78;
-    /* 0x7A */ u8 unk_7A[4];
-    /* 0x7E */ char pad_7E[0x12];
+    /* 0x78 */ u16 unk_78; /* frames to the next lava ring */
+    /* 0x7A */ u8 unk_7A[4]; /* lava rings (model[6 + i]) in use */
+    /* 0x7E */ char pad_7E[2];
+    /* 0x80 */ f32 unk_80[4]; /* ring scale */
     /* 0x90 */ s32 unk_90; /* motion file of slot 3 */
     /* 0x94 */ s32 unk_94; /* motion file of slot 6 */
 } BumperBallsWork; /* size = 0x98 */
