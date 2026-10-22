@@ -11,6 +11,7 @@
 #include "game/hmfman.h"
 #include "game/camera.h"
 #include "game/pad.h"
+#include "game/sprite.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -28,11 +29,28 @@ typedef struct RRPlayerWork {
 
 #define RR_WORK(obj) ((RRPlayerWork*)(obj)->unk_50)
 
+#define RR_ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+/* func_8007A27C_7AE7C's camera sprite work (src/7AA60.c's CamSprWork). */
+typedef struct RRCamSprWork {
+    /* 0x00 */ s16 sprId;
+    /* 0x04 */ f32 scaleX;
+    /* 0x08 */ f32 scaleY;
+    /* 0x0C */ f32 baseScaleX;
+    /* 0x10 */ f32 baseScaleY;
+    /* 0x14 */ f32 baseZoom;
+    /* 0x18 */ f32 offsetX;
+    /* 0x1C */ f32 offsetY;
+    /* 0x20 */ Vec planePos;
+    /* 0x2C */ void (*draw)(struct RRCamSprWork*);
+    /* 0x30 */ HuCamera* cam;
+} RRCamSprWork; /* size 0x34 */
+
 /* ---- overlay functions ---- */
 
 /* 144190.c */
 void func_80102800_144190_RainbowRun(void);
-void func_80102F3C_1448CC_RainbowRun(omObjData* obj);
+void func_80102F3C_1448CC_RainbowRun(RRCamSprWork* work);
 void func_80103648_144FD8_RainbowRun(omObjData* obj);
 s32 func_801036CC_14505C_RainbowRun(omObjData* obj, omObjData* other);
 void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z);
@@ -95,6 +113,8 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 u8 rand8(void);
+extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
 s16 func_8001A2F8_1AEF8(s32 arg0);
 void espDispOff(u16);
@@ -145,6 +165,7 @@ extern s8 ContStkY[4];
 
 /* ---- .data (14C080) ---- */
 
+extern s32 D_8010A704_14C094_RainbowRun[2]; /* the title sprite's scroll x, y */
 extern s8 D_8010A751_14C0E1_RainbowRun; /* the camera shakes */
 extern s16 D_8010A752_14C0E2_RainbowRun; /* shake frame */
 extern f32 D_8010A754_14C0E4_RainbowRun;

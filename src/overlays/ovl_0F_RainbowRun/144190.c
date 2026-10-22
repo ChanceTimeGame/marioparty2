@@ -92,7 +92,69 @@ void func_80102800_144190_RainbowRun(void) {
     InitFadeIn(0, 0x10);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/144190", func_80102F3C_1448CC_RainbowRun);
+/* The title camera's sprite draw (func_8007A27C_7AE7C's callback): main's func_8007A7FC_7B3FC
+   with the sprite at the scroll position D_8010A704 (wrapped to the screen) and its strips wrapped
+   back to the top at the camera's bottom edge instead of stopping there. */
+void func_80102F3C_1448CC_RainbowRun(RRCamSprWork* work) {
+    HuSprite* spr;
+    HuCamera* cam;
+    u16 w, h, rows;
+    s16 left, top, right, bottom;
+    f32 x0, y0, x1, y1;
+    f32 step, next;
+    s32 s;
+
+    spr = func_80082550_83150(work->sprId, 0);
+    w = spr->unk_84->unk14;
+    h = spr->unk_84->unk16;
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
+    cam = work->cam;
+    left = cam->screenLeft;
+    top = cam->screenTop;
+    right = cam->screenRight;
+    bottom = cam->screenBottom;
+    gDPSetScissor(D_800FDBCC_FE7CC++, G_SC_NON_INTERLACE, left, top, right, bottom);
+    while (D_8010A704_14C094_RainbowRun[0] < 0) {
+        D_8010A704_14C094_RainbowRun[0] += 320;
+    }
+    while (D_8010A704_14C094_RainbowRun[0] >= 320) {
+        D_8010A704_14C094_RainbowRun[0] -= 320;
+    }
+    while (D_8010A704_14C094_RainbowRun[1] < 0) {
+        D_8010A704_14C094_RainbowRun[1] += 240;
+    }
+    while (D_8010A704_14C094_RainbowRun[1] >= 240) {
+        D_8010A704_14C094_RainbowRun[1] -= 240;
+    }
+    x0 = D_8010A704_14C094_RainbowRun[0] + 0.0f;
+    y0 = D_8010A704_14C094_RainbowRun[1] + 0.0f;
+    x1 = w + D_8010A704_14C094_RainbowRun[0];
+    y1 = h + D_8010A704_14C094_RainbowRun[1];
+    rows = 0x800 / w - 1;
+    x1 -= 1.0f;
+    y1 -= 1.0f;
+    step = RR_ABS(y1 - y0) / (u16)(h / rows);
+    for (s = 0; s < h - 1; s += rows) {
+        next = y0 + step;
+        if (s + rows >= h - 1) {
+            rows = h - s - 1;
+        }
+        if (top <= next) {
+            if (y1 < next) {
+                step = y1 - y0;
+            }
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, spr->unk_84->unk08, G_IM_FMT_CI, G_IM_SIZ_8b, w, h, 0, s, w,
+                               s + rows, 0, 0, 0, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)(x0 * 4.0f), (s32)(y0 * 4.0f), (s32)(x1 * 4.0f),
+                                    (s32)((y0 + step) * 4.0f), G_TX_RENDERTILE, 0, s << 5, 1024, 1024);
+        }
+        y0 += step;
+        if (bottom <= y0) {
+            y0 -= bottom;
+        }
+    }
+}
 
 void func_80103648_144FD8_RainbowRun(omObjData* obj) {
     u8 chr = gPlayers[D_8010ACC0_14C650_RainbowRun[0]].character;
