@@ -68,6 +68,11 @@ f32 func_80029CE4_2A8E4(s16); /* model motion time */
 f32 func_80029D0C_2A90C(s16); /* model motion length */
 void func_8002A15C_2AD5C(s16 arg0, s16 arg1, f32 arg2); /* MP1 func_80026174: blend two models */
 void func_80076E54_77A54(omObjData*, s32); /* MP1 func_8005DC18 */
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void); /* MP1 GMesStatAllGet */
+void func_8006D518_6E118(void); /* MP1 func_800790C0 */
+omObjData* func_800732B0_73EB0(u32 arg0);
+void func_80079848_7A448(s16 arg0); /* stop the music */
 
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
@@ -189,9 +194,17 @@ extern char* D_8010A010_2189B0_BumperBalls[6]; /* ball texture per character */
 extern s32 D_8010A028_2189C8_BumperBalls[3]; /* the island model per variant */
 extern u8 D_8010A034_2189D4_BumperBalls[4]; /* start positions taken */
 extern u8 D_8010A038_2189D8_BumperBalls; /* 3: take the start positions in order */
+extern u16 D_8010A03A_2189DA_BumperBalls; /* entries in D_8010A03C */
+extern u16 D_8010A03C_2189DC_BumperBalls[4]; /* winners */
+extern s16 D_8010A080_218A20_BumperBalls; /* the minigame is over */
 
 /* ---- overlay .bss ---- */
 
+extern s16 D_8010A250_218BF0_BumperBalls;
+extern u16 D_8010A252_218BF2_BumperBalls; /* the winner */
+extern f32 D_8010A254_218BF4_BumperBalls; /* the winner's turn step */
+extern omObjData* D_8010A258_218BF8_BumperBalls; /* the winner's ball */
+extern u16 D_8010A25C_218BFC_BumperBalls; /* end timer */
 extern s16 D_8010A25E_218BFE_BumperBalls; /* MP1 D_800FCD0E */
 extern u16 D_8010A260_218C00_BumperBalls; /* balls still on the island (MP1 D_800FCD10) */
 

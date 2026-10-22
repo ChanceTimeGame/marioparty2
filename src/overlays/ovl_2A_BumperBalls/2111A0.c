@@ -977,9 +977,201 @@ void func_80105948_2142E8_BumperBalls(omObjData* object) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105948_2142E8_BumperBalls);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105EBC_21485C_BumperBalls);
+void func_80105EBC_21485C_BumperBalls(omObjData* arg0) {
+    switch (D_8010A564_218F04_BumperBalls) {
+    case 0:
+        D_8010A564_218F04_BumperBalls = 1;
+        break;
+    case 1:
+        if (func_8008F618_90218() == 0) {
+            D_8010A564_218F04_BumperBalls = 2;
+            func_800691FC_69DFC(0);
+            PlayMusic(0x1E);
+        }
+        break;
+    case 2:
+        if (func_80069538_6A138() == 0) {
+            D_8010A562_218F02_BumperBalls = 1;
+            omDelObj(arg0);
+            D_8010A294_218C34_BumperBalls = NULL;
+            if (D_8010A272_218C12_BumperBalls == 0) {
+                func_80079848_7A448(D_8010A274_218C14_BumperBalls);
+            }
+            func_800691FC_69DFC(10, D_8010A266_218C06_BumperBalls, 0xA0, 0x20);
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105FB0_214950_BumperBalls);
+void func_80105FB0_214950_BumperBalls(omObjData* arg0) {
+    BumperBallsWork* work;
+    s32 i;
+
+    switch (D_8010A560_218F00_BumperBalls) {
+    case 10:
+        if (D_8010A260_218C00_BumperBalls == 1) {
+            for (i = 0; i < 4; i++) {
+                work = D_8010A29C_218C3C_BumperBalls[i]->unk_50;
+                if (work->unk_00 == 6) {
+                    D_8010A252_218BF2_BumperBalls = i;
+                }
+            }
+            gPlayers[D_8010A252_218BF2_BumperBalls].coins_mg_bonus += 10;
+            func_800794A8_7A0A8(0x96);
+            func_800691FC_69DFC(3);
+            if (D_8010A262_218C02_BumperBalls == 0) {
+                D_8010A560_218F00_BumperBalls = 0;
+            } else {
+                D_8010A560_218F00_BumperBalls = 12;
+                func_80029BF0_2A7F0(D_8010A29C_218C3C_BumperBalls[D_8010A252_218BF2_BumperBalls]->model[0],
+                                    func_80029E14_2AA14(D_8010A29C_218C3C_BumperBalls[D_8010A252_218BF2_BumperBalls]->motion[0]), 0, 0x14, 2);
+            }
+        } else {
+            if (D_8010A262_218C02_BumperBalls == 0) {
+                func_800691FC_69DFC(0x13);
+                D_8010A560_218F00_BumperBalls = 11;
+            } else {
+                func_800794A8_7A0A8(0x96);
+                func_800691FC_69DFC(3);
+                D_8010A560_218F00_BumperBalls = 12;
+            }
+            for (i = 0; i < 4; i++) {
+                omObjData* ball = D_8010A29C_218C3C_BumperBalls[i];
+
+                work = ball->unk_50;
+                if (work->unk_00 == 6) {
+                    func_80029BF0_2A7F0(D_8010A29C_218C3C_BumperBalls[i]->model[0], func_80029E14_2AA14(ball->motion[0]), 0, 0x14, 2);
+                }
+            }
+        }
+        func_8006D518_6E118();
+        break;
+    case 0:
+        for (i = 0; i < 4; i++) {
+            omObjData* ball = D_8010A29C_218C3C_BumperBalls[i];
+
+            work = ball->unk_50;
+            if (work->unk_00 == 6) {
+                D_8010A258_218BF8_BumperBalls = ball;
+            }
+        }
+        work = D_8010A258_218BF8_BumperBalls->unk_50;
+        if (work->unk_0C > 180.0f) {
+            work->unk_0C -= 360.0f;
+        }
+        if (fabs(work->unk_0C) > 7.0) {
+            if (work->unk_0C < 0.0f) {
+                D_8010A254_218BF4_BumperBalls = 7.0f;
+            } else {
+                D_8010A254_218BF4_BumperBalls = -7.0f;
+            }
+        } else {
+            D_8010A254_218BF4_BumperBalls = work->unk_0C;
+        }
+        D_8010A560_218F00_BumperBalls = 1;
+        func_80029BF0_2A7F0(D_8010A258_218BF8_BumperBalls->model[0], func_80029E14_2AA14(D_8010A258_218BF8_BumperBalls->motion[1]), 0, 0xA, 2);
+        func_80029E80_2AA80(D_8010A258_218BF8_BumperBalls->model[0], 6, 6);
+        break;
+    case 1:
+        work = D_8010A258_218BF8_BumperBalls->unk_50;
+        work->unk_0C += D_8010A254_218BF4_BumperBalls;
+        if (D_8010A254_218BF4_BumperBalls < 0.0f) {
+            if (work->unk_0C <= 0.0f) {
+                work->unk_0C = 0.0f;
+                func_80029BF0_2A7F0(D_8010A258_218BF8_BumperBalls->model[0], func_80029E14_2AA14(D_8010A258_218BF8_BumperBalls->motion[0]), 0, 0x14, 2);
+                D_8010A560_218F00_BumperBalls = 11;
+            }
+        } else if (work->unk_0C >= 0.0f) {
+            work->unk_0C = 0.0f;
+            func_80029BF0_2A7F0(D_8010A258_218BF8_BumperBalls->model[0], func_80029E14_2AA14(D_8010A258_218BF8_BumperBalls->motion[0]), 0, 0x14, 2);
+            D_8010A560_218F00_BumperBalls = 11;
+        }
+        omSetRot(D_8010A258_218BF8_BumperBalls, 0.0f, work->unk_0C, 0.0f);
+        break;
+    case 11:
+        if (func_80069538_6A138() & 2) {
+            D_8010A560_218F00_BumperBalls = 2;
+        }
+        break;
+    case 2:
+        for (i = 0; i < 4; i++) {
+            omObjData* ball = D_8010A29C_218C3C_BumperBalls[i];
+
+            work = ball->unk_50;
+            if (work->unk_00 == 6) {
+                if (D_8010A260_218C00_BumperBalls == 1) {
+                    func_80029BF0_2A7F0(D_8010A29C_218C3C_BumperBalls[i]->model[0], func_80029E14_2AA14(ball->motion[3]), 0, 0x1E, 0);
+                    func_800732B0_73EB0(work->unk_90);
+                    D_8010A252_218BF2_BumperBalls = work->player;
+                } else {
+                    func_80029BF0_2A7F0(D_8010A29C_218C3C_BumperBalls[i]->model[0],
+                                        func_80029E14_2AA14(D_8010A29C_218C3C_BumperBalls[i]->motion[6]), 0, 0x1E, 0);
+                    func_800732B0_73EB0(work->unk_94);
+                }
+                D_8010A03C_2189DC_BumperBalls[D_8010A03A_2189DA_BumperBalls++] = work->player;
+            }
+        }
+        if (D_8010A260_218C00_BumperBalls == 1) {
+            PlayMusic(0x51);
+            func_800691FC_69DFC(6, gPlayers[D_8010A252_218BF2_BumperBalls].character);
+        } else {
+            PlayMusic(0x57);
+        }
+        D_8010A25C_218BFC_BumperBalls = 0x78;
+        D_8010A560_218F00_BumperBalls = 8;
+        D_8010A250_218BF0_BumperBalls = 0;
+        break;
+    case 6:
+        if (func_80069538_6A138() & 2) {
+            D_8010A560_218F00_BumperBalls = 7;
+        }
+        break;
+    case 7:
+        D_8010A560_218F00_BumperBalls = 8;
+        break;
+    case 8:
+        if (--D_8010A25C_218BFC_BumperBalls == 0) {
+            D_8010A080_218A20_BumperBalls = 1;
+        }
+        break;
+    case 9:
+        if (func_8008F618_90218() == 0) {
+            D_8010A080_218A20_BumperBalls = 1;
+        }
+        break;
+    case 12:
+        D_8010A25C_218BFC_BumperBalls = 0x3C;
+        D_8010A560_218F00_BumperBalls = 8;
+        break;
+    case 13:
+        func_800794A8_7A0A8(0x96);
+        func_800691FC_69DFC(3);
+        func_8006D518_6E118();
+        for (i = 0; i < 4; i++) {
+            omObjData* ball = D_8010A29C_218C3C_BumperBalls[i];
+
+            work = ball->unk_50;
+            if (work->unk_00 == 6) {
+                func_80029BF0_2A7F0(D_8010A29C_218C3C_BumperBalls[i]->model[0], func_80029E14_2AA14(ball->motion[0]), 0, 0x14, 2);
+            }
+        }
+        if (D_8010A262_218C02_BumperBalls != 0) {
+            D_8010A560_218F00_BumperBalls = 12;
+        } else {
+            D_8010A560_218F00_BumperBalls = 14;
+        }
+        break;
+    case 14:
+        if (func_80069538_6A138() & 2) {
+            D_8010A560_218F00_BumperBalls = 10;
+        }
+        break;
+    }
+}
+
+/* Retail's .rodata pads to 16 bytes after 80105FB0's literals: "47mt003_DEF" (8010A220) starts the
+   next retail file's .rodata (MP1's water mesh, 196300.c). No function in between has rodata. */
+__asm__(".section .rodata\n\t.balign 16\n\t.text");
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80106730_2150D0_BumperBalls);
 
