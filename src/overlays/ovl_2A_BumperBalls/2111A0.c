@@ -769,21 +769,103 @@ void func_80105244_213BE4_BumperBalls(omObjData* object) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010545C_213DFC_BumperBalls);
+void func_8010545C_213DFC_BumperBalls(omObjData* object) {
+    omSetTra(object, object->trans.x, object->trans.y - 20.0f, object->trans.z);
+    if (object->trans.y < -3000.0f) {
+        func_800298A4_2A4A4(object->model[0], 4, 4);
+        omDelObj(object);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801054DC_213E7C_BumperBalls);
+void func_801054DC_213E7C_BumperBalls(omObjData* object) {
+    BumperBallsWork* work = object->unk_50;
+    omObjData* obj;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105604_213FA4_BumperBalls);
+    for (i = 0; i < 2; i++) {
+        if (work->unk_40[i] == 0) {
+            break;
+        }
+    }
+    if (i == 2) {
+        return;
+    }
+    work->unk_40[i] = 1;
+    obj = omAddObj(0x28, 0, 0, -1, &func_80105604_213FA4_BumperBalls);
+    obj->work[0] = object->model[10 + i];
+    obj->work[1] = work->player;
+    obj->work[2] = i;
+    func_80029714_2A314(obj->work[0], object->trans.x, 120.0f, object->trans.z);
+    func_8002979C_2A39C(obj->work[0], object->rot.x, object->rot.y, 0.0f);
+    func_800298A4_2A4A4(obj->work[0], 4, 0);
+    if (D_800FC834_FD434[obj->work[0]].hmf->unk9C != NULL) {
+        D_800FC834_FD434[obj->work[0]].hmf->unk9C->unk08 = 0;
+    }
+    func_80029C74_2A874(obj->work[0], 0.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105690_214030_BumperBalls);
+void func_80105604_213FA4_BumperBalls(omObjData* object) {
+    f32 time = func_80029CE4_2A8E4(object->work[0]);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801056AC_21404C_BumperBalls);
+    if (func_80029D0C_2A90C(object->work[0]) <= time) {
+        ((BumperBallsWork*)D_8010A29C_218C3C_BumperBalls[object->work[1]]->unk_50)->unk_40[object->work[2]] = 0;
+        func_800298A4_2A4A4(object->work[0], 4, 4);
+        omDelObj(object);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801056C8_214068_BumperBalls);
+void func_80105690_214030_BumperBalls(omObjData* arg0) {
+    func_80105700_2140A0_BumperBalls(arg0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801056E4_214084_BumperBalls);
+void func_801056AC_21404C_BumperBalls(omObjData* arg0) {
+    func_80105700_2140A0_BumperBalls(arg0, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105700_2140A0_BumperBalls);
+void func_801056C8_214068_BumperBalls(omObjData* arg0) {
+    func_80105700_2140A0_BumperBalls(arg0, 2);
+}
+
+void func_801056E4_214084_BumperBalls(omObjData* arg0) {
+    func_80105700_2140A0_BumperBalls(arg0, 3);
+}
+
+void func_80105700_2140A0_BumperBalls(omObjData* object, s32 player) {
+    BumperBallsBoatWork* work;
+    s32 i;
+
+    omSetStatBit(object, 0xA0);
+    work = object->unk_50 = func_80027154_27D54(sizeof(BumperBallsBoatWork), 0x7918);
+    work->player = player;
+    work->state = 0;
+    work->model = 1;
+    work->model2 = 2;
+    work->angle = 0.0f;
+    work->speed = 10.0f;
+    object->model[0] = -1;
+    if (player == 0) {
+        object->model[1] = LoadFormFile(0x3A0000, 0x69D);
+        object->model[2] = LoadFormFile(0x3A0001, 0x69D);
+        object->model[3] = LoadFormFile(0x3A0002, 0x69D);
+        object->model[4] = LoadFormFile(0x3A0003, 0x69D);
+        object->model[5] = LoadFormFile(0x3A0004, 0x69D);
+        object->model[6] = LoadFormFile(0x3A0005, 0x69D);
+    } else {
+        object->model[1] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[1]);
+        object->model[2] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[2]);
+        object->model[3] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[3]);
+        object->model[4] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[4]);
+        object->model[5] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[5]);
+        object->model[6] = func_80027D3C_2893C(D_8010A2A0_218C40_BumperBalls[0]->model[6]);
+    }
+    for (i = 1; i < 7; i++) {
+        func_800297E8_2A3E8(object->model[i], 0.7f, 0.7f, 0.7f);
+    }
+    func_8002A00C_2AC0C(object->model[1]);
+    func_8002A00C_2AC0C(object->model[3]);
+    func_8002A00C_2AC0C(object->model[5]);
+    object->func_ptr = &func_80105948_2142E8_BumperBalls;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105948_2142E8_BumperBalls);
 
