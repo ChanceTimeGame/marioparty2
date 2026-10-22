@@ -135,11 +135,132 @@ void func_80104498_4108F8_Results(s16 grp, s16 idx, s32 mask) {
     spr->unk_24 = spr->unk_5C &= mask;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801044D0_410930_Results);
+/* Shrinks the coin counters away. */
+void func_801044D0_410930_Results(void) {
+    s32 i;
+    s32 j;
+    f32 scale;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801046DC_410B3C_Results);
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 5;) {
+            j++;
+            SprScaleSet(D_80107CF0_414150_Results[i], j, 1.0f, 1.0f);
+            SprScaleSet(D_80107D00_414160_Results[i], j, 1.0f, 1.0f);
+        }
+    }
+    for (scale = 1.0f; scale > 0.0f; scale -= 0.3f) {
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 5;) {
+                j++;
+                SprScaleSet(D_80107CF0_414150_Results[i], j, scale, scale);
+                SprScaleSet(D_80107D00_414160_Results[i], j, scale, scale);
+            }
+        }
+        if (D_801076A1_413B01_Results == 0) {
+            HuPrcVSleep();
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 5;) {
+            j++;
+            SprAttrSet(D_80107CF0_414150_Results[i], j, 0x8000);
+            SprAttrSet(D_80107D00_414160_Results[i], j, 0x8000);
+        }
+    }
+}
 
+/* Grows the coin counters of the players who won coins. */
+void func_801046DC_410B3C_Results(void) {
+    s32 i;
+    s32 j;
+    f32 scale;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 5; j++) {
+            if (D_80107830_413C90_Results[i] != 0) {
+                func_80104498_4108F8_Results(D_80107CF0_414150_Results[i], j + 1, 0x7FFF);
+            }
+            if (D_80107838_413C98_Results[i] != 0) {
+                func_80104498_4108F8_Results(D_80107D00_414160_Results[i], j + 1, 0x7FFF);
+            }
+        }
+    }
+    for (scale = 0.0f; scale < 1.0; scale += 0.3) {
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 5;) {
+                j++;
+                SprScaleSet(D_80107CF0_414150_Results[i], j, scale, scale);
+                SprScaleSet(D_80107D00_414160_Results[i], j, scale, scale);
+            }
+        }
+        if (D_801076A1_413B01_Results == 0) {
+            HuPrcVSleep();
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 5;) {
+            j++;
+            SprScaleSet(D_80107CF0_414150_Results[i], j, 1.0f, 1.0f);
+            SprScaleSet(D_80107D00_414160_Results[i], j, 1.0f, 1.0f);
+        }
+    }
+}
+
+// register allocation of the rank counter (masked 2, as MP1 func_800F7F38)
+#ifdef NON_MATCHING
+/* Ranks the players: stars first, then coins. */
+void func_8010492C_410D8C_Results(void) {
+    s32 score[4];
+    s32 who[4];
+    s32 place[4];
+    s32 rank[4];
+    s16 i;
+    s16 j;
+    s32 tmp;
+    s8 r;
+    s8 k;
+
+    for (i = 0; i < 4; i++) {
+        score[i] = gPlayers[i].coins;
+        score[i] += gPlayers[i].stars * 10000;
+        who[i] = i;
+    }
+    for (j = 0; j < 3; j++) {
+        for (i = j + 1; i < 4; i++) {
+            if (score[j] < score[i]) {
+                tmp = score[j];
+                score[j] = score[i];
+                score[i] = tmp;
+                tmp = who[j];
+                who[j] = who[i];
+                who[i] = tmp;
+            }
+        }
+    }
+    D_80107850_413CB0_Results[0].rank = 0;
+    D_80107850_413CB0_Results[0].place = who[0];
+    r = 0;
+    k = 0;
+    for (i = 1; i < 4; i++) {
+        k++;
+        if (score[i - 1] != score[i]) {
+            r = k;
+        }
+        D_80107850_413CB0_Results[i].rank = r;
+        D_80107850_413CB0_Results[i].place = who[i];
+    }
+    for (i = 0; i < 4; i++) {
+        place[i] = D_80107850_413CB0_Results[i].place;
+        rank[i] = D_80107850_413CB0_Results[i].rank;
+    }
+    for (i = 0; i < 4; i++) {
+        D_80107850_413CB0_Results[place[i]].place = i;
+        D_80107850_413CB0_Results[place[i]].rank = rank[i];
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_8010492C_410D8C_Results);
+#endif
 
 void func_80104B90_410FF0_Results(void) {
     s32 i;
@@ -171,8 +292,116 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105F50_412
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801063E8_412848_Results);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80107140_4135A0_Results);
+/* Sets up counting the minigame coins (which 0: bonus coins, 1: minigame coins) in steps. */
+void func_80107140_4135A0_Results(s16 steps, s32 which) {
+    s16 i;
+    s16 c;
+    f32 f;
 
+    for (i = 0; i < 4; i++) {
+        D_80107860_413CC0_Results[i] = gPlayers[i].coins;
+        if (which == 0) {
+            c = D_80107830_413C90_Results[i];
+        } else {
+            c = D_80107838_413C98_Results[i];
+        }
+        if (!((c >= 0) ? (steps < c) : (steps < -c))) {
+            if (c >= 0) {
+                D_80107DB8_414218_Results[i] = 1;
+            } else {
+                D_80107DB8_414218_Results[i] = -1;
+            }
+        } else {
+            f = (f32)c / steps;
+            if (c >= 0) {
+                f += 0.5f;
+            } else {
+                f -= 0.5f;
+            }
+            D_80107DB8_414218_Results[i] = f;
+        }
+        D_80107DC0_414220_Results[i] = 0;
+    }
+}
+
+// stack slot of the spilled argument (retail 0x14, here above the pad; masked 2)
+#ifdef NON_MATCHING
+/* One step of counting the coins into the totals; true once every player is done. */
+s8 func_801072B0_413710_Results(s32 which) {
+    s8 upDone = 0;
+    s8 downDone = 0;
+    s8 upSound = 0;
+    s8 downSound = 0;
+    s8 i = 0;
+    s8 done = 0;
+    s32 goal;
+    s32 n;
+    s32 pad[4]; /* unused: retail frame size */
+
+    for (; i < 4; i++) {
+        if (which == 0) {
+            goal = D_80107830_413C90_Results[i];
+        } else {
+            goal = D_80107838_413C98_Results[i];
+        }
+        if (D_80107DC0_414220_Results[i] != goal) {
+            n = abs(D_80107DC0_414220_Results[i] + D_80107DB8_414218_Results[i]);
+            if ((goal >= 0) ? (goal < n) : (-goal < n)) {
+                AdjustPlayerCoins(i, goal - D_80107DC0_414220_Results[i]);
+                D_80107DC0_414220_Results[i] = goal;
+            } else {
+                D_80107DC0_414220_Results[i] += D_80107DB8_414218_Results[i];
+                AdjustPlayerCoins(i, D_80107DB8_414218_Results[i]);
+            }
+            if (upDone == 0 && D_80107DB8_414218_Results[i] > 0) {
+                if (D_801077FE_413C5E_Results < 2) {
+                    upSound = 1;
+                }
+                upDone = 1;
+                if (++D_801077FE_413C5E_Results >= 3) {
+                    D_801077FE_413C5E_Results = 0;
+                }
+            }
+            if (downDone == 0 && D_80107DB8_414218_Results[i] < 0) {
+                if (D_801077FF_413C5F_Results < 2) {
+                    downSound = 1;
+                }
+                downDone = 1;
+                if (++D_801077FF_413C5F_Results >= 3) {
+                    D_801077FF_413C5F_Results = 0;
+                }
+            }
+        } else {
+            done++;
+        }
+    }
+    if (upSound == 1) {
+        PlaySound(9);
+    } else if (downSound == 1) {
+        PlaySound(0x33C);
+    }
+    return done > 3;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801072B0_413710_Results);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80107544_4139A4_Results);
+void func_80107544_4139A4_Results(void) {
+    s16 i;
+    s16 j;
+
+    for (i = 0; i < 4; i++) {
+        SprAnimKill(D_80107D18_414178_Results[i]);
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            SprAnimKill(D_80107D58_4141B8_Results[i][j]);
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        SprAnimKill(D_80107D38_414198_Results[i]);
+    }
+    for (i = 0; i < 4; i++) {
+        SprKill(D_80107CF0_414150_Results[i]);
+    }
+}

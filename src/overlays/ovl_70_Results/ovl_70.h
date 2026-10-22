@@ -73,6 +73,14 @@ extern s32 D_80107CE0_414140_Results;
 extern s32 D_80107CE4_414144_Results;
 extern s32 D_80107CE8_414148_Results;
 extern s32 D_80107CEC_41414C_Results;
+extern s32 D_80107CF0_414150_Results[4]; /* per player: bonus coin counter group */
+extern s32 D_80107D00_414160_Results[4]; /* per player: minigame coin counter group */
+extern s32 D_80107D18_414178_Results[4];
+extern s32 D_80107D38_414198_Results[4];
+extern s32 D_80107D58_4141B8_Results[4][3];
+extern s32 D_80107D88_4141E8_Results[4][3];
+extern s16 D_80107DB8_414218_Results[4]; /* coins counted per step */
+extern s16 D_80107DC0_414220_Results[4]; /* coins counted so far */
 
 /* Main */
 s16 SprCreate(s32 num, s32 attr);
@@ -100,6 +108,7 @@ void PlayMusic(s16);
 s32 PlaySound(s32);
 void AdjustPlayerCoins(s32 index, s32 count);
 f32 HuMathSin(f32);
+int abs(int);
 int sprintf(char* dst, const char* fmt, ...);
 extern u8 D_01164160[];
 void func_80050E00_51A00(s32);
@@ -136,8 +145,8 @@ void func_80104D3C_41119C_Results(void);
 void func_80105AB8_411F18_Results(void);
 void func_80105F50_4123B0_Results(void);
 void func_801063E8_412848_Results(void);
-void func_80107140_4135A0_Results(s16 steps, s16 which);
-s8 func_801072B0_413710_Results(s16 which);
+void func_80107140_4135A0_Results(s16 steps, s32 which);
+s8 func_801072B0_413710_Results(s32 which);
 void func_80107544_4139A4_Results(void);
 
 #endif
