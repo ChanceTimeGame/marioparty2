@@ -220,7 +220,7 @@ void func_80106884_356E94_name_51(omObjData*);
 void func_80106A60_357070_name_51(s32);
 void func_80106A9C_3570AC_name_51(void);
 void func_80107090_3576A0_name_51(void);
-void func_801076B8_357CC8_name_51(void);
+void func_801076B8_357CC8_name_51(omObjData*);
 void func_801077A8_357DB8_name_51(omObjData*);
 void func_80107818_357E28_name_51(void);
 void func_80107EA4_3584B4_name_51(void);

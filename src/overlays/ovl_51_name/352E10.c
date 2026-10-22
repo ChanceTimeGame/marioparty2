@@ -1222,9 +1222,41 @@ void func_80107090_3576A0_name_51(void) {
     func_80106A9C_3570AC_name_51();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801076B8_357CC8_name_51);
+/* Ends the scene once the fade-out is over (MP1 func_800FB71C): restores the players' stars
+   without the bonus stars, records the winner's character, frees everything and returns. */
+void func_801076B8_357CC8_name_51(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801077A8_357DB8_name_51);
+    if (func_8008F618_90218() == 0) {
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].stars = D_801088E0_358EF0_name_51[i];
+        }
+        func_80068150_68D50(-1);
+        func_800681D8_68DD8(-1, gPlayers[D_800F8CE4_F98E4[0]].character);
+        _ClearFlag(0xD);
+        func_8007DF98_7EB98();
+        func_80108034_358644_name_51();
+        func_80107EA4_3584B4_name_51();
+        func_80059704_5A304();
+        func_8005FF9C_60B9C();
+        func_8008CE5C_8DA5C();
+        func_8005E584_5F184();
+        func_8004340C_4400C();
+        omOvlReturnEx(1);
+    }
+}
+
+/* Waits for the tally to finish, then fades out (and the music, unless on board 5 before flag
+   0xB) and hands over to func_801076B8 (MP1 func_800FB87C). */
+void func_801077A8_357DB8_name_51(omObjData* obj) {
+    if (D_801011FC_101DFC != 0) {
+        InitFadeOut(0, 0x4B);
+        if (GwSystem.current_board_index != 5 || _CheckFlag(0xB) != 0) {
+            func_800794A8_7A0A8(0x78);
+        }
+        obj->func_ptr = func_801076B8_357CC8_name_51;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80107818_357E28_name_51);
 
