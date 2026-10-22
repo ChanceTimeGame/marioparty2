@@ -486,7 +486,7 @@ void func_8010EAB0_3033B0_name_47(void);
 void func_8010EACC_3033CC_name_47(void);
 void func_8010EAE8_3033E8_name_47(void);
 void func_8010EB04_303404_name_47(void);
-void func_8010ED54_303654_name_47(void);
+s32 func_8010ED54_303654_name_47(void); /* 47-A: a count (func_8010EE00 adds 1) */
 s32 func_8010EE00_303700_name_47(u8* items);
 void func_8010F098_303998_name_47(void);
 s32 func_8010F6B0_303FB0_name_47(s32 arg0); /* the chosen option */
