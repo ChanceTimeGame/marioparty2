@@ -156,7 +156,72 @@ void func_801082F4_151E14_CraneGame(Gfx** gfx, Mtx* mtx) {
     gDPPipeSync((*gfx)++);
 }
 
+/* MP1 func_800FC0A0 (NON_MATCHING there too): MP2 divides the height by 1200, clamps it before the
+   texture scale, scales by D_8010CAF0 and fades by 0.5. Residue: retail hoists 16.0f out of the loops
+   and reads the part's matrix record in another order (register allocation). */
+#ifdef NON_MATCHING
+Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
+    Matrix4f mf;
+    Matrix4f r;
+    Vtx* vbuf;
+    Vtx* v;
+    CGShadowGroup* grp;
+    Mtx* mtx;
+    s32 i;
+    s32 j;
+    f32 h;
+    f32 d;
+    f32 px;
+    f32 pz;
+    f64 s;
+
+    vbuf = D_8010C4E8_156008_CraneGame[D_8010C8F0_156410_CraneGame][D_8010C264_155D84_CraneGame];
+    gSPSegment(gfx++, 1, osVirtualToPhysical(vbuf));
+    grp = D_8010C7E8_156308_CraneGame[D_8010C8F0_156410_CraneGame];
+    for (i = 0; i < (m->unk10 & 0x3F); i++, grp++) {
+        mtx = D_800F8C58_F9858[D_800FDC48_FE848[m->unk00][m->unk64[i].unk2F].unk02].unk44;
+        func_800B30D0_B3CD0(mf, mtx);
+        gSPMatrix(gfx++, osVirtualToPhysical(mtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        func_800B6410_B7010(mf, inv, r);
+        d = r[3][0];
+        if (d < 0.0f) {
+            d = -d;
+        }
+        if (d > 300.0) {
+            continue;
+        }
+        d = r[3][2];
+        if (d < 0.0f) {
+            d = -d;
+        }
+        if (d > 300.0) {
+            continue;
+        }
+        v = vbuf + grp->start;
+        for (j = 0; j < grp->count; j++, v++) {
+            px = (f32)v->v.ob[0] * r[0][0] + (f32)v->v.ob[1] * r[1][0] + (f32)v->v.ob[2] * r[2][0] + r[3][0];
+            pz = (f32)v->v.ob[0] * r[0][2] + (f32)v->v.ob[1] * r[1][2] + (f32)v->v.ob[2] * r[2][2] + r[3][2];
+            h = -((f32)v->v.ob[0] * r[0][1] + (f32)v->v.ob[1] * r[1][1] + (f32)v->v.ob[2] * r[2][1] + r[3][1]) / 1200.0;
+            if (h < 0.0) {
+                h = 0.0f;
+            } else if (h > 1.0) {
+                h = 1.0f;
+            }
+            s = (h + 1.0) * D_8010CAF0_156610_CraneGame * 120.0;
+            v->v.tc[0] = ((s16)(s32)(px * 16.0f / s) << 5) + 0x200;
+            v->v.tc[1] = ((s16)(s32)(pz * 16.0f / s) << 5) + 0x200;
+            if (h > 1.0) {
+                h = 1.0f;
+            }
+            v->v.cn[3] = (208.0 - h * 208.0f * 0.5) * D_8010C8F4_156414_CraneGame;
+        }
+        gSPDisplayList(gfx++, grp->dl);
+    }
+    return gfx;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_8010887C_15239C_CraneGame);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_80108D18_152838_CraneGame);
 
