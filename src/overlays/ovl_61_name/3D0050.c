@@ -1,14 +1,137 @@
-#include "common.h"
+#include "ovl_61.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102800_3D0050_name_61);
+void func_80102800_3D0050_name_61(void) {
+    TextWindow* win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102A10_3D0260_name_61);
+    omInitObjMan(0x14, 0xA);
+    func_80079128_79D28();
+    func_80020D20_21920(0x1A);
+    D_801074F8_3D4D48_name_61 = 0;
+    func_80088640_89240();
+    D_80107500_3D4D50_name_61 = func_800888A8_894A8(0x24, 0xC4, 0x102, 0x22, 0, 0);
+    func_80089B2C_8A72C(D_80107500_3D4D50_name_61, 0);
+    func_80089A48_8A648(D_80107500_3D4D50_name_61, 0);
+    func_80089C78_8A878(D_80107500_3D4D50_name_61, 1);
+    func_80089DA0_8A9A0(D_80107500_3D4D50_name_61, 0xC0, 0xC0, 0xC0);
+    func_8008D530_8E130(D_80107500_3D4D50_name_61, 0, 0, 0);
+    win = &D_800F920C_F9E0C[D_80107500_3D4D50_name_61];
+    SprPrioSet(win->unk_6C, func_80089404_8A004(D_80107500_3D4D50_name_61, 0xE0015, 0x7B, 0x10, 0), 15000);
+    func_8008D5D8_8E1D8(D_80107500_3D4D50_name_61);
+    func_80018E30_19A30(1);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_80088640_89240();
+    omAddPrcObj(func_80102B50_3D03A0_name_61, 0x5000, 0x2000, 0);
+    func_8010492C_3D217C_name_61();
+    omAddObj(0x7FDA, 0, 0, -1, func_8010544C_3D2C9C_name_61);
+    omAddObj(0x2000, 0, 0, -1, func_80102A10_3D0260_name_61);
+    func_801062B8_3D3B08_name_61();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102AC8_3D0318_name_61);
+void func_80102A10_3D0260_name_61(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102B50_3D03A0_name_61);
+    if (D_801011FC_101DFC != 0 || D_801074F8_3D4D48_name_61 != 0) {
+        for (i = 0; i < 8; i++) {
+            omDelObj(D_801074D8_3D4D28_name_61[i]);
+        }
+        func_8008CE5C_8DA5C();
+        func_801064A0_3D3CF0_name_61();
+        if (D_801011FC_101DFC == 0) {
+            omOvlGotoEx(0x72, 0, 0x94);
+        } else {
+            func_800794A8_7A0A8(0xA);
+            func_80015950_16550(0xA);
+            omOvlReturnEx(1);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102BC0_3D0410_name_61);
+void func_80102AC8_3D0318_name_61(void) {
+    s32 i;
+
+    if (_CheckFlag(0x1A) != 0) {
+        for (i = 0; i < 4; i++) {
+            if (HuGetPadInserted(i) != 0 && (ContBtnTrg[i] & 0x1000)) {
+                D_801011FC_101DFC = 1;
+            }
+        }
+    }
+}
+
+void func_80102B50_3D03A0_name_61(void) {
+    func_80102BC0_3D0410_name_61();
+    func_80102F74_3D07C4_name_61();
+    func_80103EA0_3D16F0_name_61();
+    HuPrcSleep(150);
+    func_800794A8_7A0A8(120);
+    func_80079614_7A214(120);
+    HuPrcSleep(60);
+    D_801074F8_3D4D48_name_61 = 1;
+    omDelPrcObj(NULL);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+
+void func_80102BC0_3D0410_name_61(void) {
+    s16 model;
+    s32 i;
+
+    func_801053AC_3D2BFC_name_61(0xE0011);
+    model = LoadFormFile(0xF003B, 0x699);
+    func_80029714_2A314(model, D_80107198_3D49E8_name_61.x, D_80107198_3D49E8_name_61.y, D_80107198_3D49E8_name_61.z);
+    func_801054A0_3D2CF0_name_61();
+    for (i = 0; i < 6; i++) {
+        func_8010568C_3D2EDC_name_61(i, D_801071EC_3D4A3C_name_61[i]);
+        func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 3, 2);
+    }
+    func_8010568C_3D2EDC_name_61(7, &D_80107204_3D4A54_name_61);
+    func_801057D4_3D3024_name_61(7, 0, 2, 2);
+    D_801074D8_3D4D28_name_61[7]->rot.y = 300.0f;
+    func_801058F0_3D3140_name_61(7, 1);
+    func_8010568C_3D2EDC_name_61(6, &D_8010720C_3D4A5C_name_61);
+    func_801057D4_3D3024_name_61(6, 0, 2, 2);
+    InitFadeIn(0, 0x10);
+    HuPrcSleep(0x10);
+    if (_CheckFlag(0x1A) != 0) {
+        PlayMusic(0x3F);
+        omAddObj(0x4E20, 0, 0, -1, func_80102AC8_3D0318_name_61);
+    }
+    PlaySound(0x4B2);
+    HuPrcSleep(14);
+    for (i = 0; i < 6; i++) {
+        func_80105858_3D30A8_name_61(i, 1, 0, 2, 0);
+    }
+    HuPrcSleep(50);
+    for (i = 0; i < 6; i++) {
+        func_80105858_3D30A8_name_61(i, 0, 0, 15, 2);
+    }
+    HuPrcSleep(20);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xAB);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xAB, -1, -1);
+    HuPrcSleep(100);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xAC);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xAC, -1, -1);
+    HuPrcSleep(100);
+    func_80105858_3D30A8_name_61(6, 4, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xAD);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xAD, -1, -1);
+    HuPrcSleep(25);
+    func_80105858_3D30A8_name_61(6, 0, 0, 4, 2);
+    HuPrcSleep(5);
+    func_80106EE0_3D4730_name_61(180, 0.0f, 0.0f, 0.0f, 0.7111111f);
+    func_80104A90_3D22E0_name_61(180.0f);
+    func_80106EAC_3D46FC_name_61(0, 0, 0, 0x80);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_801053AC_3D2BFC_name_61(0xF003C);
+    for (i = 0; i < 6; i++) {
+        func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[i]->model[0], 4, 4);
+    }
+    func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[7]->model[0], 4, 4);
+    func_800283DC_28FDC(model);
+}
 
 __asm__(".section .rodata");
 const u32 D_80107470_3D4CC0_name_61[6] = { 0x00000000, 0x0000003A, 0x00000026, 0x0000002D, 0x0000001E, 0x0000001E };
