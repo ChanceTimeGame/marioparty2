@@ -169,6 +169,7 @@ typedef struct PdShrink {
 
 /* ---- 42-B ---- */
 
+extern u16 ContBtnTrg[];
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
@@ -260,7 +261,8 @@ extern s16 D_80109DFC_2C7D7C_PirateDuel[4]; /* each player's second model */
 extern s16 D_80109E08_2C7D88_PirateDuel[2][150]; /* per duelist: the timeline's marked frames */
 extern s32 D_8010A060_2C7FE0_PirateDuel; /* no referee (flag 0x17 clear) */
 extern s16 D_8010A064_2C7FE4_PirateDuel[3]; /* the three sword sprite files */
-extern s16 D_8010A070_2C7FF0_PirateDuel[5];
+/* the five moves' sprites per duelist (D_8010A070[5 + i] is D_8010A07A[i]) */
+extern s16 D_8010A070_2C7FF0_PirateDuel[10];
 extern s16 D_8010A07A_2C7FFA_PirateDuel[5];
 extern s16 D_8010A084_2C8004_PirateDuel;
 extern s16 D_8010A086_2C8006_PirateDuel;

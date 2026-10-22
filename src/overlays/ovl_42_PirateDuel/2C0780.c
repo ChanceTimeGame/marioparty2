@@ -1020,13 +1020,136 @@ void func_801062FC_2C427C_PirateDuel(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801062FC_2C427C_PirateDuel);
 #endif
 
+/* The duel's input process: each duelist answers the sword move shown (A, B or Z for moves 0-2;
+   func_80109344 right, func_801094D4 wrong). A CPU answers after a delay from its difficulty,
+   and an easy CPU misses one time in eleven. The first to five ends it (D_80109DC8: 1 both at
+   once, 2 the challenger, 3 the opponent).
+   Retail quirk: the first loop tests `player` before setting it (an uninitialised register on
+   the first pass; either way each duelist gets a delay from its own difficulty only by luck). */
+/* NON_MATCHING: masked 0, registers only: retail gives the player s0 and the loop counter s1
+   (swapped here); declaration order and which counter is shared do not change it. */
+#ifdef NON_MATCHING
+void func_801064E8_2C4468_PirateDuel(void) {
+    s32 btn[3] = { 0x8000, 0x4000, 0x2000 };
+    s32 timer[2];
+    s32 delay[4] = { 4, 3, 2, 1 };
+    s32 sel;
+    s32 miss;
+    s32 player;
+    s32 i;
+    s32 k;
+
+    for (i = 0; i < 2; i++) {
+        if (player == 0) {
+            player = D_80109D90_2C7D10_PirateDuel;
+        } else {
+            player = D_80109D94_2C7D14_PirateDuel;
+        }
+        timer[i] = delay[gPlayers[player].cpu_difficulty] * 6 + (u8)(rand8() % 6) - 3;
+        if (timer[i] <= 0) {
+            timer[i] = 1;
+        }
+    }
+    while (D_80109D70_2C7CF0_PirateDuel == 0) {
+        sel = -1;
+        k = 0;
+        player = D_80109D90_2C7D10_PirateDuel;
+        if (D_8010A098_2C8018_PirateDuel[k] == 0) {
+            if (!(gPlayers[player].flags & 1)) {
+                for (i = 0; i < 3; i++) {
+                    if (ContBtnTrg[gPlayers[player].port] == btn[i]) {
+                        sel = i;
+                        break;
+                    }
+                }
+                if (sel >= 0) {
+                    if (sel == D_8010A0A0_2C8020_PirateDuel[D_8010A090_2C8010_PirateDuel[k]]) {
+                        func_80109344_2C72C4_PirateDuel(k);
+                    } else {
+                        func_801094D4_2C7454_PirateDuel(k);
+                    }
+                }
+            } else if (--timer[k] == 0) {
+                miss = 0;
+                if (gPlayers[player].cpu_difficulty == 0) {
+                    miss = (u8)(rand8() % 11) == 0;
+                }
+                if (miss) {
+                    func_801094D4_2C7454_PirateDuel(k);
+                } else {
+                    func_80109344_2C72C4_PirateDuel(k);
+                }
+                timer[k] = delay[gPlayers[player].cpu_difficulty] * 6 + (u8)(rand8() % 6) - 3;
+                if (timer[k] <= 0) {
+                    timer[k] = 1;
+                }
+            }
+        }
+        sel = -1;
+        k = 1;
+        player = D_80109D94_2C7D14_PirateDuel;
+        if (D_8010A098_2C8018_PirateDuel[k] == 0) {
+            if (!(gPlayers[player].flags & 1)) {
+                for (i = 0; i < 3; i++) {
+                    if (ContBtnTrg[gPlayers[player].port] == btn[i]) {
+                        sel = i;
+                        break;
+                    }
+                }
+                if (sel >= 0) {
+                    if (sel == D_8010A0A0_2C8020_PirateDuel[D_8010A090_2C8010_PirateDuel[k]]) {
+                        func_80109344_2C72C4_PirateDuel(k);
+                    } else {
+                        func_801094D4_2C7454_PirateDuel(k);
+                    }
+                }
+            } else if (--timer[k] == 0) {
+                miss = 0;
+                if (gPlayers[player].cpu_difficulty == 0) {
+                    miss = (u8)(rand8() % 11) == 0;
+                }
+                if (miss) {
+                    func_801094D4_2C7454_PirateDuel(k);
+                } else {
+                    func_80109344_2C72C4_PirateDuel(k);
+                }
+                timer[k] = delay[gPlayers[player].cpu_difficulty] * 6 + (u8)(rand8() % 6) - 3;
+                if (timer[k] <= 0) {
+                    timer[k] = 1;
+                }
+            }
+        }
+        if (D_8010A090_2C8010_PirateDuel[0] == 5) {
+            if (D_8010A090_2C8010_PirateDuel[1] == D_8010A090_2C8010_PirateDuel[0]) {
+                D_80109DC8_2C7D48_PirateDuel = 1;
+            } else {
+                D_80109DC8_2C7D48_PirateDuel = 2;
+            }
+            break;
+        }
+        if (D_8010A090_2C8010_PirateDuel[1] == 5) {
+            D_80109DC8_2C7D48_PirateDuel = 3;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    D_80109D70_2C7CF0_PirateDuel = 1;
+    for (k = 0; k < 2; k++) {
+        espDispOff(D_8010A088_2C8008_PirateDuel[k]);
+        espDispOff(D_8010A08C_2C800C_PirateDuel[k]);
+    }
+    for (k = 0; k < 10; k++) {
+        espDispOff(D_8010A070_2C7FF0_PirateDuel[k]);
+    }
+    omDelPrcObj(NULL);
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80109C4C_2C7BCC_PirateDuel[3] = { 0x00008000, 0x00004000, 0x00002000 };
-
 __asm__(".section .rodata");
 const u32 D_80109C58_2C7BD8_PirateDuel[4] = { 0x00000004, 0x00000003, 0x00000002, 0x00000001 };
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801064E8_2C4468_PirateDuel);
+#endif
 
 /* The timeline: each frame, the CPU input (func_801078D0); while neither duelist is acting, a
    marked frame starts that duelist's motion 3 until it has played out. */
