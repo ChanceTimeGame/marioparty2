@@ -476,3 +476,6 @@ $(MG2B_MULFIX_UNITS): export VR4300MUL := ON
 # MG2B-C: ovl_2B 21EA10.c has the KMC VR4300 mul fix (func_80109264: a nop between back-to-back mul.d)
 MG2BC_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(MG2BC_MULFIX_UNITS): export VR4300MUL := ON
+
+# FE1: KMC mul fix (nop between back-to-back mul.s)
+build/src/overlays/ovl_56_name/36B420.c.o: export VR4300MUL := ON
