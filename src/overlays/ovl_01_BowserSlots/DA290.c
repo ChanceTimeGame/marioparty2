@@ -404,15 +404,207 @@ void func_80103D84_DB814_BowserSlots(void) {
     D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0x10, 9, 60, -1, func_80103DEC_DB87C_BowserSlots);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80103DEC_DB87C_BowserSlots);
+/* The player object: picks the playing player (the first in group 0), CPU settings, motions. */
+void func_80103DEC_DB87C_BowserSlots(omObjData* obj) {
+    s32 jump[2] = { 0x4E, 0x4F };
+    u16 jumpTime[2] = { 999, 999 };
+    s32 land[2] = { 0x55, 0x56 };
+    u16 landTime[2] = { 999, 999 };
+    u16 i;
+    u16 player;
+    s32 dir;
+    s32 r;
+    s32 chance;
+    s32 chr;
+    s32 file;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104460_DBEF0_BowserSlots);
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+        case 0:
+            player = 0;
+            break;
+        case 1:
+            player = 1;
+            break;
+        case 2:
+            player = 2;
+            break;
+        case 3:
+            player = 3;
+            break;
+        default:
+            player = 0;
+            break;
+    }
+    D_8010C05A_E3AEA_BowserSlots = D_8010C05C_E3AEC_BowserSlots = player;
+    D_8010C064_E3AF4_BowserSlots = gPlayers[player].port;
+    if (gPlayers[player].flags & 1) {
+        D_8010C068_E3AF8_BowserSlots = 1;
+        if ((D_8010C06C_E3AFC_BowserSlots = func_8010B38C_E2E1C_BowserSlots()) <= 0) {
+            D_8010C06C_E3AFC_BowserSlots = 1;
+        } else if (D_8010C06C_E3AFC_BowserSlots >= 6) {
+            D_8010C06C_E3AFC_BowserSlots = 5;
+        }
+        D_8010C070_E3B00_BowserSlots = gPlayers[player].cpu_difficulty;
+        D_8010C074_E3B04_BowserSlots = 0;
+        switch (D_8010C070_E3B00_BowserSlots) {
+            case 0:
+                chance = (u8)(rand8() % 100) < 50;
+                break;
+            case 1:
+                chance = (u8)(rand8() % 100) < 30;
+                break;
+            case 2:
+                chance = (u8)(rand8() % 100) < 10;
+                break;
+            default:
+                chance = (u8)(rand8() % 100) < 5;
+                break;
+        }
+        if (chance) {
+            D_8010C074_E3B04_BowserSlots = 1;
+        }
+    } else {
+        D_8010C068_E3AF8_BowserSlots = 0;
+        D_8010C06C_E3AFC_BowserSlots = -1;
+    }
+    D_8010C060_E3AF0_BowserSlots = chr = gPlayers[player].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_10;
+    func_8000C6FC_D2FC(obj, dir, file, player, 0x689, 0x689);
+    obj->func_ptr = func_80104460_DBEF0_BowserSlots;
+    ((BSPlayerWork*)obj->unk_50)->unk_EC = 0;
+    obj->model[3] = LoadFormFile(7, 0x68D);
+    obj->model[4] = LoadFormFile(8, 0x68D);
+    obj->model[6] = LoadFormFile(9, 0x68D);
+    obj->model[5] = LoadFormFile(10, 0x68D);
+    obj->model[7] = LoadFormFile(12, 0x68D);
+    obj->model[8] = LoadFormFile(11, 0x68D);
+    func_80019F0C_1AB0C(obj, 0, dir, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 1, 1, 0);
+    func_80019F0C_1AB0C(obj, 2, dir | 2, 1, 0);
+    func_80019F0C_1AB0C(obj, 6, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 0x11, dir | 0xF, 0, 0);
+    func_80019F0C_1AB0C(obj, 0x12, dir | 0x10, 2, 0);
+    func_80019E84_1AA84(obj, 0x15, dir | 0x2E, 0, 0);
+    func_80019E84_1AA84(obj, 0x14, dir | 0x2B, 0, 0);
+    func_80019E84_1AA84(obj, 4, dir | 0x2D, 1, 0);
+    func_80019E84_1AA84(obj, 0x20, dir | 0x31, 0, 0);
+    func_80019E84_1AA84(obj, 0x21, dir | 0x32, 2, 0);
+    func_80019E84_1AA84(obj, 0x22, dir | 0x33, 2, 0);
+    func_80019E84_1AA84(obj, 0x26, dir | 0x54, 1, 999);
+    D_8010C048_E3AD8_BowserSlots[0] = dir | 0x54;
+    r = rand8() & 1;
+    func_80019E84_1AA84(obj, 0x27, dir | jump[r], 1, jumpTime[r]);
+    D_8010C048_E3AD8_BowserSlots[1] = dir | jump[r];
+    r = rand8() & 1;
+    func_80019E84_1AA84(obj, 0x28, dir | land[r], 1, landTime[r]);
+    D_8010C048_E3AD8_BowserSlots[2] = dir | land[r];
+    func_80019E84_1AA84(obj, 0x29, dir | 0x57, 1, 999);
+    D_8010C048_E3AD8_BowserSlots[3] = dir | 0x57;
+    func_8000C35C_CF5C(obj, 0.0f, 0.0f, -10.0f);
+    func_8000C36C_CF6C(obj, 0.0f, 0.0f, 0.0f);
+    func_8000C024_CC24(obj, 0, 2);
+    D_8010C190_E3C20_BowserSlots = -1;
+}
 
+void func_80104460_DBEF0_BowserSlots(omObjData* obj) {
+    BSPlayerWork* work = obj->unk_50;
+
+    if (D_8010C068_E3AF8_BowserSlots != 0) {
+        func_80104520_DBFB0_BowserSlots(obj);
+    }
+    if (D_800F8FD0_F9BD0 == 1) {
+        ContStkX[work->unk_57] = ContStkY[work->unk_57] = 0;
+    } else if (D_8010C190_E3C20_BowserSlots != -1 && func_80019B9C_1A79C(obj, (u16)D_8010C190_E3C20_BowserSlots) != 0) {
+        D_8010C190_E3C20_BowserSlots = -1;
+    }
+    func_80007790_8390(obj);
+    func_80019378_19F78(obj);
+    func_80104DDC_DC86C_BowserSlots(obj);
+}
+
+/* CPU input: press A when the wanted symbol is one face before the line (or at random). */
+#ifdef NON_MATCHING
+/* masked 0: v0/v1 swapped in the first branch's ContBtn |= 0x8000 */
+void func_80104520_DBFB0_BowserSlots(omObjData* obj) {
+    BSPlayerWork* work = obj->unk_50;
+    BSReel* reel = D_8010C0D0_E3B60_BowserSlots;
+    s32 face = -1;
+    s32 press;
+    s32 i;
+
+    ContBtn[work->unk_57] = ContBtnTrg[work->unk_57] = 0;
+    press = 0;
+    if (D_800F8FD0_F9BD0 != 1) {
+        return;
+    }
+    if (D_8010B7D8_E3268_BowserSlots > 0) {
+        ContBtn[work->unk_57] |= 0x8000;
+        D_8010B7D8_E3268_BowserSlots--;
+        goto wait;
+    }
+    if (D_8010B7DC_E326C_BowserSlots != 0) {
+        D_8010B7DC_E326C_BowserSlots--;
+    wait:
+        D_8010B7E0_E3270_BowserSlots = D_8010C06C_E3AFC_BowserSlots;
+        return;
+    }
+    for (i = 0; i < 3; i++, reel++) {
+        if (reel->state == 2) {
+            face = func_8010648C_DDF1C_BowserSlots(reel->angle);
+            if (D_8010C074_E3B04_BowserSlots == 0) {
+                if (D_8010C06C_E3AFC_BowserSlots == func_801065D8_DE068_BowserSlots(i, face + 1) && D_8010B7E0_E3270_BowserSlots != face) {
+                    press = 1;
+                }
+            } else if (!(D_8010C040_E3AD0_BowserSlots & 0x3F)) {
+                press = 1;
+            }
+            if (press) {
+                ContBtn[work->unk_57] |= 0x8000;
+                ContBtnTrg[work->unk_57] |= 0x8000;
+                D_8010B7D8_E3268_BowserSlots = 10;
+                D_8010B7DC_E326C_BowserSlots = rand8() % 30 + 45.0;
+            }
+            break;
+        }
+    }
+    if (i < 3) {
+        D_8010B7E0_E3270_BowserSlots = face;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104520_DBFB0_BowserSlots);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010475C_DC1EC_BowserSlots);
+void func_8010475C_DC1EC_BowserSlots(void) {
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(0, 1, 0, -1, func_80104834_DC2C4_BowserSlots);
+    func_8000C018_CC18(0);
+    D_8010C034_E3AC4_BowserSlots = omAddObj(1, 7, 0, -1, func_80104914_DC3A4_BowserSlots);
+    D_8010C038_E3AC8_BowserSlots = omAddObj(2, 8, 0, -1, func_80105088_DCB18_BowserSlots);
+    D_8010C03C_E3ACC_BowserSlots = omAddObj(3, 0x15, 0, -1, func_80106820_DE2B0_BowserSlots);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104834_DC2C4_BowserSlots);
+/* The stage (ground) object. */
+void func_80104834_DC2C4_BowserSlots(omObjData* obj) {
+    BSGroundWork* work;
+
+    obj->func_ptr = NULL;
+    obj->model[0] = func_80018A30_19630(0x110008, 0x9D);
+    obj->unk_50 = work = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(work, 0, 0xB4);
+    work->unk_03 = 1;
+    work->unk_04 = 0;
+    func_8000BF24_CB24(obj, 0.0f, -500.0f, -500.0f, 500.0f, 500.0f);
+    func_8000BEA4_CAA4(obj, 20.0f);
+    func_8000BE8C_CA8C(obj, 1.0f);
+    obj->trans.x = obj->trans.y = obj->trans.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 5.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80104914_DC3A4_BowserSlots);
 

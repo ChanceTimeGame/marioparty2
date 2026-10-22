@@ -109,6 +109,14 @@ s16 DrawDebugText(u16, u16, char*);
 
 /* ---- overlay types ---- */
 
+/* omObjData::unk_50 of the stage object (0xB4 bytes, cleared) */
+typedef struct BSGroundWork {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04;
+    /* 0x05 */ char unk_05[0xAF];
+} BSGroundWork; /* size = 0xB4 */
+
 /* One reel (D_8010C0D0, three of them, 0xB4 bytes). */
 typedef struct BSReel {
     /* 0x00 */ s32 model;   /* the reel texture's model */
