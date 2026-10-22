@@ -1026,7 +1026,25 @@ void func_801058A4_2FA1A4_name_47(void) {
     omOvlGotoEx(0x3D, 0, 0x192);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801058E0_2FA1E0_name_47);
+void func_801058E0_2FA1E0_name_47(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    SetPlayerOntoChain(1, 0, 0);
+    SetPlayerOntoChain(2, 0, 0);
+    SetPlayerOntoChain(3, 0, 0);
+    _SetFlag(0x43);
+    func_8010285C_2F715C_name_47();
+    D_800F8CE4_F98E4[0x1E] = 0;
+    D_800F8CE4_F98E4[0x1D] = 0;
+    D_800F8CE4_F98E4[0x1A] = 0;
+    D_800F8CE4_F98E4[0x19] = 0;
+    D_800F8CE4_F98E4[0x17] = 0;
+    D_800F8CE4_F98E4[0] = 0;
+    D_800F8CE4_F98E4[1] = 0;
+    D_800F8CE4_F98E4[2] = 0;
+    D_800F8CE4_F98E4[3] = 0;
+    omOvlReturnEx(1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80105984_2FA284_name_47);
 
