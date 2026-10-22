@@ -842,6 +842,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104EAC_
 #endif
 
 /* Draw layer of a rider by distance to the other team's camera. */
+// float register allocation of the distance (as in MP1)
+#ifdef NON_MATCHING
 void func_801050F8_193C98_BobsledRun(omObjData* obj) {
     Vec3f* c;
     s32 layer;
@@ -864,6 +866,9 @@ void func_801050F8_193C98_BobsledRun(omObjData* obj) {
     }
     func_80029EDC_2AADC(obj->model[0], layer);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801050F8_193C98_BobsledRun);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801051BC_193D5C_BobsledRun);
 
