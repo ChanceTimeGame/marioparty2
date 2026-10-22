@@ -1962,10 +1962,78 @@ void func_80107F48_23DE28_SlotCarDerby(s32 x, s32 y, s32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80107F48_23DE28_SlotCarDerby);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108D48_23EC28_SlotCarDerby);
+void func_80108D48_23EC28_SlotCarDerby(void) {
+    func_80079464_7A064();
+    func_80109140_23F020_SlotCarDerby(6);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108D6C_23EC4C_SlotCarDerby);
+void func_80108D6C_23EC4C_SlotCarDerby(void) {
+    SCDDust* p;
+    void* data;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108F14_23EDF4_SlotCarDerby);
+    p = D_80110948_246828_SlotCarDerby = func_80027154_27D54(3 * sizeof(SCDDust), D_800FA1AA_FADAA);
+    func_800B0EF0_B1AF0(p, 0, 3 * sizeof(SCDDust));
+    data = DataRead(0x11);
+    D_8011095C_24683C_SlotCarDerby = SprAnimRead(data);
+    DataClose(data);
+    for (i = 0; i < 3; i++, p++) {
+        p->unk_00 = SprCreate(1, 0);
+        p->unk_04 = p->unk_08 = 0;
+        p->unk_0C = p->unk_10 = p->unk_14 = 0.0f;
+        SprAnimSet((s16)p->unk_00, 0, (s16)D_8011095C_24683C_SlotCarDerby, 0);
+        SprAttrSet((s16)p->unk_00, 0, 0x9000);
+        SprPosSet((s16)p->unk_00, 0, 0, 0);
+        func_800824B4_830B4((s16)p->unk_00, 0, 0xFF, 0xFF, 0xBE, 0x40);
+        SprScaleSet((s16)p->unk_00, 0, 1.0f, 1.0f);
+        func_8008221C_82E1C((s16)p->unk_00, 0, 1.0f);
+        SprPrioSet((s16)p->unk_00, 0, i - 16);
+        func_8008225C_82E5C((s16)p->unk_00, 0, 1);
+    }
+    omAddObj(0, 0, 0, -1, func_80108F14_23EDF4_SlotCarDerby);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80108FF0_23EED0_SlotCarDerby);
+void func_80108F14_23EDF4_SlotCarDerby(omObjData* obj) {
+    SCDDust* p;
+    s32 i;
+
+    p = D_80110948_246828_SlotCarDerby;
+    for (i = 0; i < 3; i++, p++) {
+        if (p->unk_04 == 0) {
+            continue;
+        }
+        SprScaleSet((s16)p->unk_00, 0, 15.0f, 15.0f);
+        SprPosPerspectiveSet((s16)p->unk_00, 0, 0, p->unk_0C, p->unk_10 - 600.0, p->unk_14);
+        if (--p->unk_08 < 0) {
+            p->unk_08 = 0;
+            p->unk_04 = 0;
+            SprAttrSet((s16)p->unk_00, 0, 0x8000);
+        }
+    }
+}
+
+s32 func_80108FF0_23EED0_SlotCarDerby(f32 x, f32 y, f32 z) {
+    SCDDust* p;
+    s32 i;
+
+    p = D_80110948_246828_SlotCarDerby;
+    for (i = 0; i < 3; i++, p++) {
+        if (p->unk_04 != 0) {
+            continue;
+        }
+        p->unk_04 = 1;
+        p->unk_08 = 31;
+        p->unk_0C = x;
+        p->unk_10 = y;
+        p->unk_14 = z;
+        SprAnimSet((s16)p->unk_00, 0, (s16)D_8011095C_24683C_SlotCarDerby, 0);
+        SprAttrReset((s16)p->unk_00, 0, 0x8000);
+        SprScaleSet((s16)p->unk_00, 0, 15.0f, 15.0f);
+        SprPosPerspectiveSet((s16)p->unk_00, 0, 0, p->unk_0C, p->unk_10 - 600.0, p->unk_14);
+        func_800824B4_830B4((s16)p->unk_00, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+        SprBankSet((s16)p->unk_00, 0, 0);
+        func_8008221C_82E1C((s16)p->unk_00, 0, 1.0f);
+        return i;
+    }
+    return -1;
+}

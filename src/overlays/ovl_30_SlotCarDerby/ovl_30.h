@@ -262,7 +262,7 @@ void func_80107E74_23DD54_SlotCarDerby(void);
 void func_80107F48_23DE28_SlotCarDerby(s32 x, s32 y, s32 z);
 void func_80108D48_23EC28_SlotCarDerby(void);
 void func_80108D6C_23EC4C_SlotCarDerby(void);
-void func_80108F14_23EDF4_SlotCarDerby(void);
+void func_80108F14_23EDF4_SlotCarDerby(omObjData* obj);
 s32 func_80108FF0_23EED0_SlotCarDerby(f32 x, f32 y, f32 z);
 void func_80109140_23F020_SlotCarDerby(s16 state); /* MP1 func_800FBE20? */
 s32 func_801091DC_23F0BC_SlotCarDerby(u8 player, s16 crossed);
@@ -426,6 +426,27 @@ void func_80019178_19D78(omObjData* obj);
 void func_80019378_19F78(omObjData* obj);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 s32 PlaySound(s32);
+void* DataRead(s32 dirAndFile);
+void DataClose(void* data);
+void func_80079464_7A064(void);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32); /* sprite colour r, g, b, a? */
+void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
+omObjData* omAddObj(s16, u16, u16, s16, void*);
+
+/* A dust puff sprite drawn in perspective (D_80110948, 3 of them, func_80108FF0 starts one). The
+   sprite id is an s32 the code reads by its low half ((s16)unk_00). No pointers. */
+typedef struct SCDDust {
+    /* 0x00 */ s32 unk_00; /* sprite */
+    /* 0x04 */ s32 unk_04; /* in use */
+    /* 0x08 */ s32 unk_08; /* frames left */
+    /* 0x0C */ f32 unk_0C; /* position */
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14;
+} SCDDust; /* size = 0x18 */
+extern SCDDust* D_80110948_246828_SlotCarDerby;
+extern s32 D_8011095C_24683C_SlotCarDerby; /* the dust animation (an s16 the code reads by its low half) */
 void PlayMusic(s16);
 void InitFadeIn(s32, s32);
 s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
