@@ -155,6 +155,8 @@ extern s16 D_8010C0DC_19AC7C_BobsledRun; /* race time (frames) */
 /* Sound handles kept as s32; retail reads the low half (D_8010C0E2 / D_8010C0E6). */
 extern s32 D_8010C0E0_19AC80_BobsledRun;
 extern s32 D_8010C0E4_19AC84_BobsledRun;
+extern f32 D_8010C0E8_19AC88_BobsledRun[6]; /* track section i is drawn from this progress */
+extern f32 D_8010C100_19ACA0_BobsledRun[6]; /* ... to this one */
 extern u32 D_8010C118_19ACB8_BobsledRun;
 extern s32 D_8010C11C_19ACBC_BobsledRun;
 extern s32 D_8010C120_19ACC0_BobsledRun;
@@ -169,6 +171,10 @@ extern s32 D_8010C130_19ACD0_BobsledRun;
 extern u16 D_8010C9F0_19B590_BobsledRun; /* progress bar: track piece */
 extern u16 D_8010C9F2_19B592_BobsledRun; /* progress bar: flag */
 extern u16 D_8010C9F4_19B594_BobsledRun; /* progress bar: goal */
+extern s16 D_8010C9F6_19B596_BobsledRun; /* time digits (race) */
+extern s16 D_8010C9F8_19B598_BobsledRun; /* time digits (record) */
+extern s16 D_8010C9FA_19B59A_BobsledRun[2]; /* time display groups: race, record */
+extern Vec3f D_8010CA20_19B5C0_BobsledRun[2]; /* per-team shove direction */
 extern BRHist D_8010CA38_19B5D8_BobsledRun;
 extern f32 D_8010CADC_19B67C_BobsledRun[20];
 extern BRHist D_8010CB48_19B6E8_BobsledRun;
@@ -267,6 +273,23 @@ s16 func_8001AAAC_1B6AC(s16, s32, s32);
 void func_8001A788_1B388(u16 spriteId, s32 arg1);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y); /* sprite scale */
 void espDispOff(u16);
+void* DataRead(s32 dirAndFile);
+void DataClose(void* data);
+s16 SprAnimRead(void*);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
+void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void func_8001A340_1AF40(s16, f32, f32, f32);
+s16 func_80079798_7A398(s16 sfx, s16 player); /* play a sound effect for a player */
+void func_80029C74_2A874(s16, f32);
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16); /* motion length */
 s32 func_80019B9C_1A79C(omObjData* obj, s32 motion); /* C8E0.c: player motion */
 void func_80029E80_2AA80(s16, s32, s32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
@@ -308,8 +331,8 @@ void func_80105770_194310_BobsledRun(void);
 void func_801059F8_194598_BobsledRun(s16 idx, s16 time);
 void func_80105CF0_194890_BobsledRun(void);
 void func_80105D30_1948D0_BobsledRun(void);
-void func_80105D88_194928_BobsledRun(s32 x, s32 y);
-void func_80105F38_194AD8_BobsledRun(s32 x, s32 y);
+s16 func_80105D88_194928_BobsledRun(s32 x, s16 y);
+s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y);
 void func_801060E8_194C88_BobsledRun(omObjData* obj, s16 force, f32 minSpeed, f32 rot, f32 x, f32 y, f32 z);
 void func_80106438_194FD8_BobsledRun(s32 team, u8 mdl);
 void func_801064F0_195090_BobsledRun(omObjData* obj);

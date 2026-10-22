@@ -983,21 +983,253 @@ void func_80105720_1942C0_BobsledRun(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105770_194310_BobsledRun);
+/* Which track sections each team's camera draws (by progress), and which background models
+   (by the sleds' heights). */
+void func_80105770_194310_BobsledRun(void) {
+    s32 bits[2];
+    omObjData* g;
+    omObjData* sled;
+    f32 lo;
+    f32 hi;
+    f32 p;
+    s32 i;
+    s32 t;
+    s16 mask;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801059F8_194598_BobsledRun);
+    bits[0] = 1;
+    bits[1] = 2;
+    for (i = 0; i < 6; i++) {
+        g = D_800FC7B0_FD3B0[i];
+        mask = 0;
+        lo = D_8010C0E8_19AC88_BobsledRun[i];
+        hi = D_8010C100_19ACA0_BobsledRun[i];
+        for (t = 0; t < 2; t++) {
+            sled = D_800FFFD8_100BD8[t];
+            p = D_8010C048_19ABE8_BobsledRun[t].progress;
+            if ((lo <= p) & (p < hi)) {
+                if (D_8010C048_19ABE8_BobsledRun[t].progress < 50.0f) {
+                    func_8000C024_CC24(sled, i, 2);
+                    mask |= bits[t];
+                }
+            } else {
+                func_8000C024_CC24(sled, i, 1);
+            }
+        }
+        func_80029EDC_2AADC(g->model[0], mask);
+    }
+    for (i = 0; i < 3; i++) {
+        mask = 0;
+        for (t = 0; t < 2; t++) {
+            sled = D_800FFFD8_100BD8[t];
+            p = sled->trans.y;
+            if (D_8010C048_19ABE8_BobsledRun[t].anim != 5) {
+                if (D_8010C018_19ABB8_BobsledRun[i].y - 100.0f <= p && p < D_8010C018_19ABB8_BobsledRun[i].y + 500.0f) {
+                    mask |= bits[t];
+                }
+            }
+        }
+        func_80029EDC_2AADC(D_8010CB42_19B6E2_BobsledRun[i], mask);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105CF0_194890_BobsledRun);
+/* Time display m:ss"cc (frames at 60 per second) in group idx. */
+void func_801059F8_194598_BobsledRun(s16 idx, s16 time) {
+    s16 g;
+    s16 d;
+    s16 sec;
+    s16 cs;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105D30_1948D0_BobsledRun);
+    g = D_8010C9FA_19B59A_BobsledRun[idx];
+    SprAttrReset(g, 0, 0x8000);
+    d = time / 3600;
+    func_800822A8_82EA8(g, 0, d, 0);
+    func_8008225C_82E5C(g, 0, 1);
+    time -= d * 3600;
+    SprAttrReset(g, 1, 0x8000);
+    func_800822A8_82EA8(g, 1, 10, 0);
+    func_8008225C_82E5C(g, 1, 1);
+    SprAttrReset(g, 2, 0x8000);
+    d = time / 600;
+    func_800822A8_82EA8(g, 2, d, 0);
+    func_8008225C_82E5C(g, 2, 1);
+    time -= d * 600;
+    sec = time / 60;
+    SprAttrReset(g, 3, 0x8000);
+    func_800822A8_82EA8(g, 3, sec, 0);
+    func_8008225C_82E5C(g, 3, 1);
+    cs = time * 100 / 60 - sec * 100;
+    SprAttrReset(g, 4, 0x8000);
+    func_800822A8_82EA8(g, 4, 11, 0);
+    func_8008225C_82E5C(g, 4, 1);
+    SprAttrReset(g, 5, 0x8000);
+    func_800822A8_82EA8(g, 5, cs / 10, 0);
+    func_8008225C_82E5C(g, 5, 1);
+    cs %= 10;
+    SprAttrReset(g, 6, 0x8000);
+    func_800822A8_82EA8(g, 6, cs, 0);
+    func_8008225C_82E5C(g, 6, 1);
+}
 
+void func_80105CF0_194890_BobsledRun(void) {
+    void* data;
+
+    data = DataRead(0x43);
+    D_8010C9F6_19B596_BobsledRun = SprAnimRead(data);
+    DataClose(data);
+}
+
+void func_80105D30_1948D0_BobsledRun(void) {
+    void* data;
+
+    data = DataRead(0x43);
+    D_8010C9F8_19B598_BobsledRun = SprAnimRead(data);
+    DataClose(data);
+    func_8001A340_1AF40(D_8010C9F8_19B598_BobsledRun, 0.0f, 1.0f, 0.0f);
+}
+
+/* Time display group 0 (the race time) at (x, y). */
+// register allocation: retail stores the group id before copying it to s5, x in s1 (as in MP1 MinigameHouse func_800F8364)
+#ifdef NON_MATCHING
+s16 func_80105D88_194928_BobsledRun(s32 x, s16 y) {
+    s16 i;
+    s16 px;
+    s16 g;
+
+    g = SprCreate(7, 5);
+    D_8010C9FA_19B59A_BobsledRun[0] = g;
+    SprAnimSet(g, 0, D_8010C9F6_19B596_BobsledRun, 0);
+    SprAttrReset(g, 0, 0xFFFF);
+    SprAttrSet(g, 0, 0x8000);
+    SprPosSet(g, 0, x - 16, y);
+    SprPrioSet(g, 0, 1);
+    px = 4;
+    for (i = 1; i < 7; i++) {
+        SprPrioSet(g, i, 1);
+        SprAnimSet(g, i, D_8010C9F6_19B596_BobsledRun, 0);
+        SprPosSet(g, i, px, 0);
+        SprAttrReset(g, i, 0xFFFF);
+        SprAttrSet(g, i, 0x8000);
+        if (i == 3) {
+            px += 8;
+        } else {
+            px += 12;
+        }
+        func_800824F4_830F4(g, i, 0);
+    }
+    SprAttrReset(g, 2, 0x8000);
+    return g;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105D88_194928_BobsledRun);
+#endif
 
+/* Time display group 1 (the record) at (x, y). */
+// register allocation, as func_80105D88
+#ifdef NON_MATCHING
+s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y) {
+    s16 i;
+    s16 px;
+    s16 g;
+
+    g = SprCreate(7, 5);
+    D_8010C9FA_19B59A_BobsledRun[1] = g;
+    SprAnimSet(g, 0, D_8010C9F8_19B598_BobsledRun, 0);
+    SprAttrReset(g, 0, 0xFFFF);
+    SprAttrSet(g, 0, 0x8000);
+    SprPosSet(g, 0, x - 16, y);
+    SprPrioSet(g, 0, 1);
+    px = 4;
+    for (i = 1; i < 7; i++) {
+        SprPrioSet(g, i, 1);
+        SprAnimSet(g, i, D_8010C9F8_19B598_BobsledRun, 0);
+        SprPosSet(g, i, px, 0);
+        SprAttrReset(g, i, 0xFFFF);
+        SprAttrSet(g, i, 0x8000);
+        if (i == 3) {
+            px += 8;
+        } else {
+            px += 12;
+        }
+        func_800824F4_830F4(g, i, 0);
+    }
+    SprAttrReset(g, 2, 0x8000);
+    return g;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105F38_194AD8_BobsledRun);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801060E8_194C88_BobsledRun);
+/* Snow spray from the runners (model[3]) and its sliding sound. */
+void func_801060E8_194C88_BobsledRun(omObjData* obj, s16 force, f32 minSpeed, f32 rot, f32 x, f32 y, f32 z) {
+    BRWork* work;
+    s32 mdl;
+    f32 s;
+    f32 a;
+    HmfAnim* anim;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80106438_194FD8_BobsledRun);
+    work = obj->unk_50;
+    mdl = obj->model[3];
+    if (force >= 21 && minSpeed < work->unk_40) {
+        x += D_8010CA20_19B5C0_BobsledRun[work->unk_59].x * 220.0f;
+        y += D_8010CA20_19B5C0_BobsledRun[work->unk_59].y * 220.0f;
+        z += D_8010CA20_19B5C0_BobsledRun[work->unk_59].z * 220.0f;
+        s = work->unk_40 / 100.0f * 0.6f;
+        if (s > 1.0f) {
+            s = 1.0f;
+        }
+        a = (2.0f * force) / 60.0f;
+        if (a > 2.0f) {
+            a = 2.0f;
+        }
+        D_800FC834_FD434[mdl].unk44 = a;
+        func_800298A4_2A4A4(mdl, 4, 0);
+        func_80029714_2A314(mdl, x, y + 30.0f, z);
+        func_8002979C_2A39C(mdl, 0.0f, rot, 0.0f);
+        func_800297E8_2A3E8(mdl, s, s, s);
+        if (work->unk_59 == 0) {
+            if (D_8010C0E0_19AC80_BobsledRun == -1) {
+                D_8010C0E0_19AC80_BobsledRun = func_80079798_7A398(0x1F9, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+            }
+        } else if (D_8010C0E4_19AC84_BobsledRun == -1) {
+            D_8010C0E4_19AC84_BobsledRun = func_80079798_7A398(0x1F9, D_8010C048_19ABE8_BobsledRun[work->unk_59].player[0]);
+        }
+    } else {
+        if (func_80029CE4_2A8E4(mdl) > 32.0f) {
+            func_800298A4_2A4A4(mdl, 4, 4);
+            func_80029C74_2A874(mdl, 0.0f);
+            anim = D_800FC834_FD434[mdl].hmf->unk9C;
+            if (anim != NULL) {
+                anim->unk08 = 0.0f;
+            }
+        }
+        if (work->unk_59 == 0) {
+            if (D_8010C0E0_19AC80_BobsledRun != -1) {
+                func_80079848_7A448((s16)D_8010C0E0_19AC80_BobsledRun);
+                D_8010C0E0_19AC80_BobsledRun = -1;
+            }
+        } else if (D_8010C0E4_19AC84_BobsledRun != -1) {
+            func_80079848_7A448((s16)D_8010C0E4_19AC84_BobsledRun);
+            D_8010C0E4_19AC84_BobsledRun = -1;
+        }
+    }
+}
+
+/* Loop the spray animation (model mdl) back to frame 32. */
+void func_80106438_194FD8_BobsledRun(s32 team, u8 mdl) {
+    f32 cur;
+    HmfAnim* anim;
+
+    if (mdl != 0) {
+        cur = func_80029CE4_2A8E4(mdl);
+        if (func_80029D0C_2A90C(mdl) <= cur) {
+            func_80029C74_2A874(mdl, 32.0f);
+            anim = D_800FC834_FD434[mdl].hmf->unk9C;
+            if (anim != NULL) {
+                anim->unk08 = anim->unk04 * 0.6f;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801064F0_195090_BobsledRun);
 
