@@ -233,7 +233,7 @@ extern s32 D_8010C0F0_E3B80_BowserSlots[2];       /* sprite animations of the bl
 extern s32 D_8010C0F8_E3B88_BowserSlots[2];       /* sprite animations of the machine */
 extern s32 D_8010C100_E3B90_BowserSlots;          /* sprite animation of the item object */
 extern struct BSModelSlot* D_8010C170_E3C00_BowserSlots; /* MG01-B: 64 entries */
-extern void* D_8010C174_E3C04_BowserSlots;
+extern struct BSFx* D_8010C174_E3C04_BowserSlots; /* MG01-B: six effect sprites */
 extern s16 D_8010C17E_E3C0E_BowserSlots;
 extern s16 D_8010C180_E3C10_BowserSlots;
 extern s16 D_8010C182_E3C12_BowserSlots;
@@ -308,6 +308,53 @@ typedef struct BSModelSlot {
     /* 0x04 */ s32 group;
     /* 0x08 */ s32 attr;
 } BSModelSlot; /* size = 0xC */
+
+/* D_8010C174: one effect sprite (six; MP1 SlotMachine's SlotFx) */
+typedef struct BSFx {
+    /* 0x00 */ u8 unk_00; /* flags: 0xC0 = visible */
+    /* 0x01 */ u8 unk_01; /* kind */
+    /* 0x02 */ u8 unk_02; /* phase */
+    /* 0x03 */ u8 unk_03; /* sprite frame */
+    /* 0x04 */ f32 unk_04;
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ f32 unk_0C;
+    /* 0x10 */ f32 unk_10; /* x (screen, from the centre) */
+    /* 0x14 */ f32 unk_14; /* y */
+    /* 0x18 */ f32 unk_18; /* scale x */
+    /* 0x1C */ f32 unk_1C; /* scale y */
+    /* 0x20 */ f32 unk_20; /* rotation */
+    /* 0x24 */ f32 unk_24; /* alpha (0..1) */
+    /* 0x28 */ f32 unk_28; /* start x */
+    /* 0x2C */ f32 unk_2C; /* start y */
+    /* 0x30 */ f32 unk_30; /* start scale x */
+    /* 0x34 */ f32 unk_34; /* start scale y */
+    /* 0x38 */ s16 unk_38; /* symbol */
+    /* 0x3A */ s16 unk_3A; /* frame counter */
+    /* 0x3C */ s16 unk_3C;
+    /* 0x3E */ s16 unk_3E;
+    /* 0x40 */ s16 unk_40;
+    /* 0x42 */ s16 unk_42;
+    /* 0x44 */ s16 unk_44;
+    /* 0x46 */ char unk_46[2];
+} BSFx; /* size = 0x48 */
+extern s16 D_8010C178_E3C08_BowserSlots; /* effect sprite animation */
+extern s16 D_8010C17A_E3C0A_BowserSlots; /* effect sprite group */
+extern s16 D_8010C17C_E3C0C_BowserSlots;
+extern s16 D_8010C184_E3C14_BowserSlots;
+extern s16 D_8010C186_E3C16_BowserSlots;
+extern s16 D_8010C188_E3C18_BowserSlots;
+extern s16 D_8010C18A_E3C1A_BowserSlots;
+extern s16 D_8010C18C_E3C1C_BowserSlots;
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void SprRotSet(s16 group, s16 member, f32 rot);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprAttrReset(s16 group, s16 member, s32 flag);
+void SprBankSet(s16 group, s16 member, u16 bank);
+void func_80082488_83088(s16 group, s16 member, u16 alpha);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 
 /* ---- fork B (80106B30+): inferred from register use, check against the asm ---- */
 void func_801076EC_DF17C_BowserSlots(void);

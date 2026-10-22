@@ -2106,9 +2106,58 @@ void func_8010A138_E1BC8_BowserSlots(s32 group, s32 attr) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A1F4_E1C84_BowserSlots);
+/* Sets up the six effect sprites (MP1 SlotMachine's func_800FD248). */
+void func_8010A1F4_E1C84_BowserSlots(void) {
+    void* data;
+    BSFx* fx;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A3CC_E1E5C_BowserSlots);
+    data = DataRead(0x11000E);
+    D_8010C178_E3C08_BowserSlots = SprAnimRead(data);
+    DataClose(data);
+    D_8010C17A_E3C0A_BowserSlots = SprCreate(6, 0);
+    for (fx = D_8010C174_E3C04_BowserSlots, i = 0; i < 6; fx++, i++) {
+        fx->unk_02 = fx->unk_01 = fx->unk_03 = fx->unk_00 = 0;
+        fx->unk_04 = fx->unk_08 = fx->unk_0C = 0.0f;
+        fx->unk_10 = fx->unk_14 = 0.0f;
+        fx->unk_18 = fx->unk_1C = 1.0f;
+        fx->unk_20 = 0.0f;
+        fx->unk_24 = 1.0f;
+        fx->unk_28 = fx->unk_2C = fx->unk_30 = fx->unk_34 = 0.0f;
+        fx->unk_3A = fx->unk_3C = fx->unk_38 = 0;
+        fx->unk_3E = fx->unk_40 = fx->unk_42 = fx->unk_44 = 0;
+        SprAnimSet(D_8010C17A_E3C0A_BowserSlots, i, D_8010C178_E3C08_BowserSlots, 0);
+        SprPosSet(D_8010C17A_E3C0A_BowserSlots, i, 160, 120);
+        SprScaleSet(D_8010C17A_E3C0A_BowserSlots, i, 1.0f, 1.0f);
+        func_80082488_83088(D_8010C17A_E3C0A_BowserSlots, i, 0x100);
+        SprAttrSet(D_8010C17A_E3C0A_BowserSlots, i, 0x9008);
+        func_8008225C_82E5C(D_8010C17A_E3C0A_BowserSlots, i, 0);
+    }
+    D_8010C17C_E3C0C_BowserSlots = D_8010C17E_E3C0E_BowserSlots;
+    D_8010C182_E3C12_BowserSlots = D_8010C186_E3C16_BowserSlots = -1;
+    D_8010C184_E3C14_BowserSlots = D_8010C188_E3C18_BowserSlots = 0;
+    D_8010C18C_E3C1C_BowserSlots = 0;
+    D_8010C18A_E3C1A_BowserSlots = -1;
+}
+
+/* Draws the visible effect sprites (MP1 SlotMachine's func_800FD420). */
+void func_8010A3CC_E1E5C_BowserSlots(void) {
+    BSFx* fx;
+    s32 i;
+
+    for (fx = D_8010C174_E3C04_BowserSlots, i = 0; i < 6; fx++, i++) {
+        if ((fx->unk_00 & 0xC0) == 0xC0) {
+            SprAttrReset(D_8010C17A_E3C0A_BowserSlots, i, 0x8000);
+            SprBankSet(D_8010C17A_E3C0A_BowserSlots, i, fx->unk_03);
+            SprPosSet(D_8010C17A_E3C0A_BowserSlots, i, fx->unk_10 + 160.0f, fx->unk_14 + 120.0f);
+            SprScaleSet(D_8010C17A_E3C0A_BowserSlots, i, fx->unk_18, fx->unk_1C);
+            func_80082488_83088(D_8010C17A_E3C0A_BowserSlots, i, (s32)(fx->unk_24 * 256.0f));
+            SprRotSet(D_8010C17A_E3C0A_BowserSlots, i, fx->unk_20);
+        } else {
+            SprAttrSet(D_8010C17A_E3C0A_BowserSlots, i, 0x8000);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010A53C_E1FCC_BowserSlots);
 
