@@ -869,9 +869,54 @@ s32 func_801079D8_2DFA88_name_44(void) {
     return D_80108EE8_2E0F98_name_44;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801079E4_2DFA94_name_44);
+/* Deals the 16-move sequence (0..2 each): never three alike in a row. */
+void func_801079E4_2DFA94_name_44(void) {
+    s32 run;
+    s32 i;
+    s32 move;
+    s32 ok;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_80107B1C_2DFBCC_name_44);
+    run = 0;
+    for (i = 0; i < 16; i++) {
+        do {
+            move = (u8)(rand8() % 3);
+            ok = TRUE;
+            if (i > 0 && move == D_80108F00_2E0FB0_name_44[i - 1]) {
+                if (++run == 3) {
+                    run = 2;
+                    ok = FALSE;
+                }
+                if (i >= 4 && D_80108F00_2E0FB0_name_44[i - 3] == D_80108F00_2E0FB0_name_44[i - 2]) {
+                    run--;
+                    ok = FALSE;
+                }
+            } else {
+                run = 1;
+            }
+        } while (!ok);
+        D_80108F00_2E0FB0_name_44[i] = move;
+    }
+}
+
+/* Shows the sequence: each move's sprite in the middle for its beat (D_80108AE8[i + 1] frames). */
+void func_80107B1C_2DFBCC_name_44(void) {
+    u16* spr;
+    s32 move;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        func_8010838C_2E043C_name_44();
+        move = D_80108F58_2E1008_name_44 = D_80108F00_2E0FB0_name_44[i];
+        spr = D_80108F4C_2E0FFC_name_44[move];
+        espPosSet(spr[1], 160, 80);
+        espDispOn(spr[1]);
+        HuPrcSleep(D_80108AE8_2E0B98_name_44[i + 1]);
+        espDispOff(spr[1]);
+        HuPrcSleep(5);
+    }
+    D_80108E80_2E0F30_name_44 = 1;
+    omDelPrcObj(NULL);
+}
 
 __asm__(".section .rodata");
 const u32 D_80108DD8_2E0E88_name_44[12] = { 0x42200000, 0x42200000, 0x41C80000, 0x42340000, 0x42480000, 0x42200000, 0x42A00000, 0x42A00000, 0x40A00000, 0x42BE0000, 0x42C80000, 0x42DC0000 };
@@ -896,7 +941,25 @@ const u32 D_80108E64_2E0F14_name_44[7] = { 0x00000000, 0x00000010, 0x00000000, 0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801085BC_2E066C_name_44);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_80108750_2E0800_name_44);
+void func_80108750_2E0800_name_44(omObjData* obj) {
+    D44SprWork* work = obj->unk_50;
+    s32 unused[4]; /* retail's frame has 16 unused bytes */
+
+    if (work->timer == 0) {
+        espDispOn(D_80108F70_2E1020_name_44[work->side][1]);
+        func_8001A854_1B454(D_80108F70_2E1020_name_44[work->side][1], 0, 0);
+        func_8001A89C_1B49C(D_80108F70_2E1020_name_44[work->side][1], 1);
+    }
+    if (work->timer == 11) {
+        espDispOff(D_80108F70_2E1020_name_44[work->side][1]);
+    }
+    if (work->timer == 12 || D_80108FD8_2E1088_name_44[work->side] == 1) {
+        D_80108FD0_2E1080_name_44[work->side] = 0;
+        D_80108FD8_2E1088_name_44[work->side] = 0;
+        omDelObj(obj);
+    }
+    work->timer++;
+}
 
 void func_80108870_2E0920_name_44(void) {
     omAddObj(0x10, 0, 0, -1, func_801088A4_2E0954_name_44);
@@ -905,4 +968,12 @@ void func_80108870_2E0920_name_44(void) {
 void func_801088A4_2E0954_name_44(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_44_name/2DA8B0", func_801088AC_2E095C_name_44);
+/* Rumbles both duelists' pads every 20 frames until D_80108FE0 is set. */
+void func_801088AC_2E095C_name_44(void) {
+    while (D_80108FE0_2E1090_name_44 == 0) {
+        omVibrate(D_80108EA0_2E0F50_name_44, 10, 0, 10);
+        omVibrate(D_80108EA4_2E0F54_name_44, 10, 0, 10);
+        HuPrcSleep(20);
+    }
+    omDelPrcObj(NULL);
+}

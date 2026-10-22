@@ -185,6 +185,8 @@ void func_8006D518_6E118(void);
 void func_800794A8_7A0A8(s32);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
+void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
+void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 
 /* The CPU input script (func_801070F4/func_80107724; ovl_3F.h's Unk3FCpuInput): mode 0 presses
    Start, 2 moves the cursor to an opponent and presses A, 3 raises the stake to a target. */
@@ -254,6 +256,12 @@ typedef struct D44CpuWork {
     /* 0x188 */ s32 timer[2];      /* per side: frames until the next answer */
 } D44CpuWork; /* size 0x190 */
 
+/* func_80108750's work. */
+typedef struct D44SprWork {
+    /* 0x00 */ s32 timer;
+    /* 0x04 */ s32 side;
+} D44SprWork; /* size 0x08 */
+
 /* ---- 44 data (asm/data/overlays/ovl_44_name/2E09D0.data.s) ---- */
 
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
@@ -284,7 +292,9 @@ extern s32 D_80108EDC_2E0F8C_name_44; /* the poorer player's coins */
 extern s32 D_80108EE0_2E0F90_name_44[2];
 extern s32 D_80108EE8_2E0F98_name_44; /* CPU pad triggers */
 extern s32 D_80108F00_2E0FB0_name_44[16]; /* the move sequence, 0..2 each */
+extern u16 D_80108F4C_2E0FFC_name_44[3][2]; /* per move: [1] the move's sprite */
 extern s32 D_80108F58_2E1008_name_44; /* the move expected now */
+extern u16 D_80108F70_2E1020_name_44[18][2]; /* [side][1]: func_80108750's sprite */
 extern s32 D_80108FB8_2E1068_name_44[2];
 extern s32 D_80108FC8_2E1078_name_44[2];
 extern s32 D_80108FD0_2E1080_name_44[2];
@@ -326,9 +336,9 @@ void func_80107BF4_2DFCA4_name_44(s32 move, s32 side, s32 player, s32 correct);
 void func_80107F28_2DFFD8_name_44(void);
 void func_8010838C_2E043C_name_44(void);
 void func_801085BC_2E066C_name_44(void);
-void func_80108750_2E0800_name_44(void);
+void func_80108750_2E0800_name_44(omObjData* obj);
 void func_80108870_2E0920_name_44(void);
-void func_801088A4_2E0954_name_44(void);
+void func_801088A4_2E0954_name_44(void); /* an empty object function */
 void func_801088AC_2E095C_name_44(void);
 
 #endif
