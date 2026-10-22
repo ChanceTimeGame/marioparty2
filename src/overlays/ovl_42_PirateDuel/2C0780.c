@@ -980,7 +980,45 @@ void func_80105A80_2C3A00_PirateDuel(void) {
     }
 }
 
+/* Starts the duel's timeline (func_80106B5C): for each duelist, five rows of 30 frames with 7-11
+   random frames marked; a marked frame starts the duelist's taunt motion. */
+/* NON_MATCHING: masked 4, operand order only: retail adds the row offset and the table base as
+   (k * 300) + base, GCC as base + (k * 300). */
+#ifdef NON_MATCHING
+void func_801062FC_2C427C_PirateDuel(void) {
+    omObjData* obj;
+    PdTimeline* work;
+    s32 count;
+    s32 i;
+    s32 j;
+    s32 k;
+    s16* p;
+    s16 (*tl)[150];
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80106B5C_2C4ADC_PirateDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdTimeline), 0x7918);
+    D_80109DD0_2C7D50_PirateDuel[D_80109D90_2C7D10_PirateDuel] = 0;
+    D_80109DD0_2C7D50_PirateDuel[D_80109D94_2C7D14_PirateDuel] = 0;
+    tl = D_80109E08_2C7D88_PirateDuel;
+    for (k = 0; k < 2; k++) {
+        count = (u8)(rand8() % 5) + 7;
+        for (i = 0; i < 5; i++) {
+            for (j = 0; j < 30; j++) {
+                tl[k][i * 30 + j] = 0;
+            }
+            for (j = 0; j < count; j++) {
+                do {
+                    p = &tl[k][i * 30 + (u8)(rand8() % 30)];
+                } while (*p != 0);
+                *p = 1;
+            }
+        }
+    }
+    work->frame = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801062FC_2C427C_PirateDuel);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_80109C4C_2C7BCC_PirateDuel[3] = { 0x00008000, 0x00004000, 0x00002000 };
@@ -990,7 +1028,40 @@ const u32 D_80109C58_2C7BD8_PirateDuel[4] = { 0x00000004, 0x00000003, 0x00000002
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801064E8_2C4468_PirateDuel);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80106B5C_2C4ADC_PirateDuel);
+/* The timeline: each frame, the CPU input (func_801078D0); while neither duelist is acting, a
+   marked frame starts that duelist's motion 3 until it has played out. */
+void func_80106B5C_2C4ADC_PirateDuel(omObjData* obj) {
+    PdTimeline* work;
+
+    func_801078D0_2C5850_PirateDuel();
+    if (D_8010A098_2C8018_PirateDuel[0] == 0 && D_8010A098_2C8018_PirateDuel[1] == 0) {
+        work = obj->unk_50;
+        if (D_80109E08_2C7D88_PirateDuel[0][work->frame] != 0) {
+            if (D_80109DE0_2C7D60_PirateDuel[0] == 0) {
+                MBMotionSet(PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel), 3, 0);
+            }
+            D_80109DE0_2C7D60_PirateDuel[0] = 1;
+        }
+        if (D_80109E08_2C7D88_PirateDuel[1][work->frame] != 0) {
+            if (D_80109DE0_2C7D60_PirateDuel[1] == 0) {
+                MBMotionShiftSet(PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel), 3, 0, 5, 0);
+            }
+            D_80109DE0_2C7D60_PirateDuel[1] = 1;
+        }
+        if (func_80029CE4_2A8E4(*PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->obj->model) >=
+            func_80029D0C_2A90C(*PLAYER_MODEL(D_80109D90_2C7D10_PirateDuel)->obj->model)) {
+            D_80109DE0_2C7D60_PirateDuel[0] = 0;
+        }
+        if (func_80029CE4_2A8E4(*PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->obj->model) >=
+            func_80029D0C_2A90C(*PLAYER_MODEL(D_80109D94_2C7D14_PirateDuel)->obj->model)) {
+            D_80109DE0_2C7D60_PirateDuel[1] = 0;
+        }
+        if (D_80109D70_2C7CF0_PirateDuel == 1) {
+            omDelObj(obj);
+        }
+        work->frame = (work->frame + 1) % 150;
+    }
+}
 
 s32 func_80106E08_2C4D88_PirateDuel(void) {
     s32 cand[4];

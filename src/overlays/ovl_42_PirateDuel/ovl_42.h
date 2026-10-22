@@ -182,6 +182,12 @@ typedef struct PdCpuInput {
     /* 0x0C */ s32 mode;
 } PdCpuInput; /* size 0x10 */
 
+/* func_801062FC's timeline object (func_80106B5C). */
+typedef struct PdTimeline {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 frame; /* 0..149 */
+} PdTimeline; /* size 0x08 */
+
 /* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
 typedef struct PdStreak {
     /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
@@ -251,8 +257,7 @@ extern s32 D_80109DEC_2C7D6C_PirateDuel;
 extern s32 D_80109DF0_2C7D70_PirateDuel;
 extern s16 D_80109DF4_2C7D74_PirateDuel[4]; /* each player's item_hook model */
 extern s16 D_80109DFC_2C7D7C_PirateDuel[4]; /* each player's second model */
-extern s16 D_80109E08_2C7D88_PirateDuel[];
-extern s16 D_80109F34_2C7EB4_PirateDuel[];
+extern s16 D_80109E08_2C7D88_PirateDuel[2][150]; /* per duelist: the timeline's marked frames */
 extern s32 D_8010A060_2C7FE0_PirateDuel; /* no referee (flag 0x17 clear) */
 extern s16 D_8010A064_2C7FE4_PirateDuel[3]; /* the three sword sprite files */
 extern s16 D_8010A070_2C7FF0_PirateDuel[5];
