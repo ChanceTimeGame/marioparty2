@@ -636,4 +636,13 @@ void func_80111EA4_31C354_name_49(void);
 void func_80111EC0_31C370_name_49(void);
 void func_80111EDC_31C38C_name_49(void); /* B: unknown */
 
+/* fork 49-B */
+extern BoardEventTableEntry D_8011369C_31DB4C_name_49[];
+extern BoardEventTableEntry D_8011370C_31DBBC_name_49[];
+extern BoardEventTableEntry D_80113C48_31E0F8_name_49[];
+extern s16 D_80112E4C_31D2FC_name_49[3]; /* func_80106BF8: model spaces */
+extern f32 D_80112E54_31D304_name_49[3][3]; /* func_80106BF8: facing angle by D_800F8CE4[1+i] */
+extern s16 D_801134C8_31D978_name_49[3]; /* func_80108650: the bank spaces */
+extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
+
 #endif

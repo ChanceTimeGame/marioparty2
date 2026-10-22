@@ -1178,7 +1178,22 @@ void func_80105CE8_310198_name_49(void) {
     func_80106D34_3111E4_name_49();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80105F94_310444_name_49);
+void func_80105F94_310444_name_49(void) {
+    s16 temp = D_800F8CE4_F98E4[0];
+
+    if (temp != 1 || GwSystem.unk_24[0] != 2 || GwSystem.current_player_index != 0 ||
+        (func_80062D44_63944() != 0 && func_80062D44_63944() != temp)) {
+        PlayMusic(0xD);
+    }
+    func_800632F0_63EF0(0xD);
+    func_80020070_20C70(2);
+    func_80105CE8_310198_name_49();
+    func_80053AA0_546A0(4);
+    EventTableHydrate(D_8011369C_31DB4C_name_49);
+    EventTableHydrate(D_80113C48_31E0F8_name_49);
+    EventTableHydrate(D_8011370C_31DBBC_name_49);
+    func_80066C34_67834(0);
+}
 
 void func_80106058_310508_name_49(void) {
     func_80020070_20C70(1);
@@ -1418,7 +1433,26 @@ void func_80106B84_311034_name_49(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80106BF8_3110A8_name_49);
+void func_80106BF8_3110A8_name_49(s16 arg0) {
+    MBModel* obj;
+
+    if (D_80114A74_31EF24_name_49[arg0] == NULL) {
+        if (D_80114A70_31EF20_name_49 == NULL) {
+            obj = func_80043510_44110(0x90, NULL);
+            func_80043DAC_449AC(obj);
+            D_80114A70_31EF20_name_49 = obj;
+        } else {
+            obj = MBModelParamCreate(D_80114A70_31EF20_name_49);
+        }
+        D_80114A74_31EF24_name_49[arg0] = obj;
+        obj->attr |= 2;
+        func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80112E4C_31D2FC_name_49[arg0])->coords);
+        obj->rot.x = HuMathSin(D_80112E54_31D304_name_49[arg0][D_800F8CE4_F98E4[arg0 + 1]]);
+        obj->rot.z = func_800B7890_B8490(D_80112E54_31D304_name_49[arg0][D_800F8CE4_F98E4[arg0 + 1]]);
+    } else {
+        MBModelDispOn(D_80114A74_31EF24_name_49[arg0]);
+    }
+}
 
 void func_80106D34_3111E4_name_49(void) {
     s32 i;
@@ -2013,7 +2047,133 @@ void func_80107E10_3122C0_name_49(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80107E10_3122C0_name_49);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80108650_312B00_name_49);
+/* Bowser Land's Koopa Bank, Bowser's version: passing the space lends the player 5 coins (20
+   if turn_status is set) and adds them to the debt D_800F8CE4[0x1D]; landing on it repays the
+   whole debt (all coins when short, else a star, else nothing). */
+/* Bowser Land's Koopa Bank, Bowser's version: passing the space lends the player 5 coins (20
+   if turn_status is set) and adds them to the debt D_800F8D1A[2] (D_800F8CE4[0x1D]); landing on it repays the
+   whole debt (all coins when short, else a star, else nothing). */
+/* Bowser Land's Koopa Bank, Bowser's version: passing the space lends the player 5 coins (20
+   if turn_status is set) and adds them to the debt D_800F8D1A[2] (D_800F8CE4[0x1D]); landing on it repays the
+   whole debt (all coins when short, else a star, else nothing). */
+/* Bowser Land's Koopa Bank, Bowser's version: passing the space lends the player 5 coins (20
+   if turn_status is set) and adds them to the debt D_800F8D1A[2] (D_800F8CE4[0x1D]); landing on it repays the
+   whole debt (all coins when short, else a star, else nothing). */
+void func_80108650_312B00_name_49(void) {
+    char buf[16];
+    s32 space;
+    SpaceData* data;
+    s32 i;
+    GW_SYSTEM* gw;
+
+    i = 0;
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    if (gw->current_player_index == 4) {
+        return;
+    }
+    if (func_80047DE8_489E8(gw->current_player_index) <= 0) {
+        MBPlayerVibrate(-1, 4);
+    }
+    MBPlayerMotionSet(-1, -1, 2);
+    switch ((s16)space) {
+        case 0x2C:
+            i = 0;
+            break;
+        case 0x44:
+            i = 1;
+            break;
+        case 0x31:
+            i = 2;
+            break;
+    }
+    data = GetSpaceData(D_801134C8_31D978_name_49[i]);
+    func_80056C30_57830(-1, 8, D_801134C8_31D978_name_49[i]);
+    HuPrcSleep(8);
+    PlaySound(0x363);
+    if (func_80047DE8_489E8(gw->current_player_index) <= 0) {
+        sprintf(buf, D_801147D8_31EC88_name_49, D_800F8D1A_F991A[2]);
+        if (D_800F8D1A_F991A[2] == 0) {
+            MBDlgWinExec(0x1F, 0x243);
+            return;
+        }
+        if (gPlayers[gw->current_player_index].coins == 0) {
+            if (gPlayers[gw->current_player_index].stars != 0) {
+                func_80056368_56F68(0x1F, 0x241, (s32)buf, 0, 0, 0, 0);
+                func_80056458_57058();
+                MBDlgWinClose();
+                func_80056168_56D68();
+                D_800F8D1A_F991A[2] = 0;
+                func_801064C0_310970_name_49();
+                func_80103D28_30E1D8_name_49(BoardPlayerGet(-1)->unk_24, &data->coords);
+                return;
+            }
+            func_80056368_56F68(0x1F, 0x242, (s32)buf, 0, 0, 0, 0);
+            func_80056458_57058();
+            MBDlgWinClose();
+            func_80056168_56D68();
+            D_800F8D1A_F991A[2] = 0;
+            func_801064C0_310970_name_49();
+            func_8005670C_5730C(&((MBModel*)BoardPlayerGet(-1)->unk_24)->rot);
+            MBPlayerMotionSet(-1, 5, 0);
+            func_80079718_7A318(0x103, gPlayers[gw->current_player_index].character);
+            HuPrcSleep(50);
+            return;
+        }
+        if (gPlayers[gw->current_player_index].coins < D_800F8D1A_F991A[2]) {
+            func_80056368_56F68(0x1F, 0x240, (s32)buf, 0, 0, 0, 0);
+            MBDlgWinClose();
+            D_800F8D1A_F991A[2] = 0;
+            MBPlayerMotionSet(-1, 3, 0);
+            func_801064C0_310970_name_49();
+            func_8004CA34_4D634(gw->current_player_index, -gPlayers[gw->current_player_index].coins);
+            func_800614B4_620B4(gw->current_player_index, -gPlayers[gw->current_player_index].coins);
+        } else {
+            func_80056368_56F68(0x1F, 0x23F, (s32)buf, 0, 0, 0, 0);
+            MBDlgWinClose();
+            func_8004CA34_4D634(gw->current_player_index, -D_800F8D1A_F991A[2]);
+            func_800614B4_620B4(gw->current_player_index, -D_800F8D1A_F991A[2]);
+            D_800F8D1A_F991A[2] = 0;
+            MBPlayerMotionSet(-1, 3, 0);
+            func_801064C0_310970_name_49();
+        }
+        func_8005670C_5730C(&((MBModel*)BoardPlayerGet(-1)->unk_24)->rot);
+        func_80079718_7A318(0xFC, gPlayers[gw->current_player_index].character);
+        HuPrcSleep(30);
+        func_80056124_56D24();
+        func_80056458_57058();
+        MBDlgWinClose();
+        func_80056168_56D68();
+        return;
+    }
+    func_80046D2C_4792C(gw->current_player_index);
+    if (gPlayers[gw->current_player_index].turn_status == 0) {
+        D_800F8D1A_F991A[2] += 5;
+        sprintf(buf, D_801147D8_31EC88_name_49, D_800F8D1A_F991A[2]);
+        func_80056368_56F68(0x1F, 0x23E, (s32)buf, 0, 0, 0, 0);
+        MBDlgWinClose();
+        func_8004CA34_4D634(gw->current_player_index, 5);
+        func_800614B4_620B4(gw->current_player_index, 5);
+        func_801064C0_310970_name_49();
+        HuPrcSleep(30);
+        func_80056124_56D24();
+        func_80056458_57058();
+        MBDlgWinClose();
+        func_80056168_56D68();
+    } else {
+        D_800F8D1A_F991A[2] += 20;
+        sprintf(buf, D_801147D8_31EC88_name_49, D_800F8D1A_F991A[2]);
+        func_80056368_56F68(0x1F, 0x244, (s32)buf, 0, 0, 0, 0);
+        func_80056458_57058();
+        MBDlgWinClose();
+        func_80056168_56D68();
+        func_8004CA34_4D634(gw->current_player_index, 20);
+        func_800614B4_620B4(gw->current_player_index, 20);
+        func_801064C0_310970_name_49();
+        HuPrcSleep(30);
+    }
+    func_8004655C_4715C(gw->current_player_index);
+}
 
 s32 func_80108BF0_3130A0_name_49(s32 arg0) {
     s32 i;
