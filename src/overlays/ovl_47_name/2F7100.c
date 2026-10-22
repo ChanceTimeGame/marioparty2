@@ -3952,7 +3952,161 @@ s32 func_8010EE00_303700_name_47(u8* items) {
     }
 }
 
+/* Space event: for 5 coins the current player picks a player (not one who has it already; 4 =
+   view the map) to receive the companion model; camera cut to them and back. */
+#ifdef NON_MATCHING
+/* Retail reloads current_player_index for func_80046D2C's argument (lh a0,0x1E(s3)) after the
+   != 4 test; this C reuses the tested value (one instruction short). Logic otherwise identical. */
+void func_8010F098_303998_name_47(void) {
+    GW_SYSTEM* gw;
+    s32 space;
+    s32 masu;
+    s32 choice;
+    s32 target;
+    s32 i;
+    s16 saved;
+    f32 speed;
+    f32 camB;
+    char names[4][16];
+    u8 avail[5];
+
+    masu = 0;
+    space = func_800558F4_564F4();
+    gw = &GwSystem;
+    if (gw->current_player_index != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
+        MBPlayerMotionSet(-1, -1, 2);
+        switch ((s16)space) {
+        case 0x69:
+            masu = 0x53;
+            break;
+        case 0x6F:
+            masu = 0x57;
+            break;
+        }
+        func_80056C30_57830(-1, 8, masu);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        if (D_800F8CE4_F98E4[0] != 0 && D_800F8CE4_F98E4[1] != 0 && D_800F8CE4_F98E4[2] != 0 &&
+            D_800F8CE4_F98E4[3] != 0) {
+            MBDlgWinExec(0x1C, 0xF9);
+        } else if (gPlayers[gw->current_player_index].coins < 5) {
+            MBDlgWinExec(0x1C, 0xF5);
+        } else {
+        loop:
+            MBDlgWinCreate(0x1C, 0xF4);
+            choice = func_8010EB20_303420_name_47();
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+            case 0:
+            select:
+                for (i = 0; i < 4; i++) {
+                    if (D_800F8CE4_F98E4[i] != 0) {
+                        avail[i] = 0;
+                        names[i][0] = 1;
+                    } else {
+                        avail[i] = 1;
+                        names[i][0] = 8;
+                    }
+                    names[i][1] = 0x18;
+                    names[i][2] = gPlayers[i].character;
+                    names[i][3] = 0;
+                }
+                avail[4] = 1;
+                func_80056368_56F68(0x1C, 0xF6, (s32)names[0], (s32)names[1], (s32)names[2], (s32)names[3], 0);
+                target = func_8010EE00_303700_name_47(avail);
+                MBDlgWinClose();
+                func_80056168_56D68();
+                if (target == -1) {
+                    goto loop;
+                }
+                if (target == 4) {
+                    func_80103A64_2F8364_name_47();
+                    goto select;
+                }
+                func_8004CA34_4D634(gw->current_player_index, -5);
+                func_800614B4_620B4(gw->current_player_index, -5);
+                HuPrcSleep(30);
+                D_800F8CE4_F98E4[target] = 1;
+                if (target != gw->current_player_index) {
+                    func_800636F8_642F8(0);
+                    InitFadeOut(12, 16);
+                    HuPrcSleep(16);
+                    func_800517C0_523C0();
+                    func_80051788_52388();
+                    speed = MBCameraSpeedGet();
+                    MBCameraSpeedSet(-1.0f);
+                    camB = func_80053614_54214();
+                    func_80053608_54208(1.0f);
+                    func_800514F0_520F0();
+                    MBDCameraPos3DSet(&((MBModel*)BoardPlayerGet(target)->unk_24)->pos);
+                    HuPrcVSleep();
+                    func_80053608_54208(camB);
+                    MBCameraSpeedSet(speed);
+                    InitFadeIn(12, 16);
+                    HuPrcSleep(16);
+                }
+                MBPlayerVibrate(target, 3);
+                func_80106A6C_2FB36C_name_47(target);
+                PlaySound(0xD);
+                for (i = 0; i <= 0xA0; i += 12) {
+                    func_8002D0A0_2DCA0(D_80112350_306C50_name_47[target]->obj->model[0], i);
+                    HuPrcVSleep();
+                }
+                func_8002D0A0_2DCA0(D_80112350_306C50_name_47[target]->obj->model[0], 0xA0);
+                if (target == gw->current_player_index) {
+                    MBPlayerMotionSet(target, 4, 2);
+                } else {
+                    MBMotionSet(BoardPlayerGet(target)->unk_24, 4, 2);
+                }
+                func_800797DC_7A3DC(0xFC, target);
+                HuPrcSleep(20);
+                names[0][0] = 0x18;
+                names[0][1] = gPlayers[target].character;
+                names[0][2] = 0;
+                saved = gw->current_player_index;
+                gw->current_player_index = target;
+                func_80056368_56F68(-1, 0xF7, (s32)names[0], 0, 0, 0, 0);
+                gw->current_player_index = saved;
+                MBDlgWinClose();
+                func_80056168_56D68();
+                func_80106B44_2FB444_name_47(target);
+                if (target != gw->current_player_index) {
+                    InitFadeOut(12, 16);
+                    HuPrcSleep(16);
+                    func_800636F8_642F8(1);
+                    func_800517C0_523C0();
+                    func_80051788_52388();
+                    speed = MBCameraSpeedGet();
+                    MBCameraSpeedSet(-1.0f);
+                    camB = func_80053614_54214();
+                    func_80053608_54208(1.0f);
+                    func_800514F0_520F0();
+                    MBDCameraPos3DSet(&((MBModel*)BoardPlayerGet(-1)->unk_24)->pos);
+                    HuPrcVSleep();
+                    func_80053608_54208(camB);
+                    MBCameraSpeedSet(speed);
+                    InitFadeIn(12, 16);
+                    HuPrcSleep(16);
+                }
+                break;
+            case 1:
+                break;
+            case 2:
+                func_80103A64_2F8364_name_47();
+                goto loop;
+            }
+        }
+        func_8004655C_4715C(gw->current_player_index);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F098_303998_name_47);
+#endif
 
 s32 func_8010F6B0_303FB0_name_47(s32 arg0) {
     s32 count = 0;
