@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_0E.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80106F90_141320_BowlOver);
 
