@@ -1955,7 +1955,7 @@ s32 func_80109BC8_E1658_BowserSlots(s32 model, s32 src) {
 }
 
 /* Builds the vertex buffers of a flat sprite model: the frame strip cut into `count` quads that
-   fit texture memory, centred, offset by (x, y); returns the quad count (MP3 motor_rooter's
+   fit texture memory, 100/32 units per texel times scale, centred, offset by (x, y); returns the quad count (MP3 motor_rooter's
    func_80110A00). */
 s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 x, u16 y) {
     Vtx* buf;
@@ -1983,8 +1983,8 @@ s32 func_80109C5C_E16EC_BowserSlots(HuSprite_Unk84_Struct* spr, HmfData* hmf, f3
     }
     w = spr->unk00->unk04;
     h = spr->unk00->unk06;
-    sw = w * 20.0 * scale / 32.0;
-    sh = h * 20.0 * scale / 32.0;
+    sw = w * 100.0 * scale / 32.0;
+    sh = h * 100.0 * scale / 32.0;
     bpp = spr->unk18 & 0x7FFF;
     if ((spr->unk18 & 0xFFF) == 4) {
         size = ((w + 1) & 0xFFFE) * h * bpp;
