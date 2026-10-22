@@ -3,7 +3,56 @@
 __asm__(".section .rodata");
 const char D_8010FC50_245B30_SlotCarDerby[32] = "\202r\202s\202`\202q\202s\202f\202n\202`\202k\202v\202h\202m\201I";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80102800_2386E0_SlotCarDerby);
+void func_80102800_2386E0_SlotCarDerby(void) {
+    omObjData* obj;
+    u8 cam;
+
+    D_801102DA_2461BA_SlotCarDerby = 0;
+    D_801102D6_2461B6_SlotCarDerby = 0;
+    D_801102D8_2461B8_SlotCarDerby = 0;
+    D_801102DC_2461BC_SlotCarDerby = 0;
+    D_801102DE_2461BE_SlotCarDerby = 0;
+    D_801102E0_2461C0_SlotCarDerby = 0;
+    func_8002D4D0_2E0D0(50);
+    func_80020D20_21920(32);
+    omInitObjMan(32, 0);
+    func_80079128_79D28();
+    D_801109D8_2468B8_SlotCarDerby = 0;
+    D_801109D4_2468B4_SlotCarDerby = 0;
+    D_801109D6_2468B6_SlotCarDerby = 0;
+    if (_CheckFlag(0xC) != 0) {
+        D_801109D6_2468B6_SlotCarDerby = 1;
+    }
+    obj = omAddObj(0x7FDA, 0, 0, -1, func_80079E60_7AA60);
+    ((void (*)(omObjData*))func_80079E60_7AA60)(obj); /* declared (void) in functions.h */
+    omSetStatBit(obj, 0xA0);
+    func_80018E30_19A30(1);
+    cam = func_80018E78_19A78();
+    ScissorSet(cam, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(cam, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 45.0f, 80.0f, 4000.0f);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    D_8011023C_24611C_SlotCarDerby = D_800FA656;
+    if (D_8011023C_24611C_SlotCarDerby < 0) {
+        D_8011023C_24611C_SlotCarDerby = 0;
+    } else if (D_8011023C_24611C_SlotCarDerby >= 3) {
+        D_8011023C_24611C_SlotCarDerby = 2;
+    }
+    func_80026DAC_279AC(0, 0x88, 0x88, 0x88);
+    func_80026DAC_279AC(1, 0xFF, 0xFF, 0xFF);
+    func_80026E00_27A00(1, 0.0f, 2000.0f, 2000.0f);
+    D_800F8FE0_F9BE0 = 0;
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(0, 0, 0, -1, func_80102BC0_238AA0_SlotCarDerby);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(1, 3, 0, -1, func_80107C40_23DB20_SlotCarDerby);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(4, 3, 2, -1, func_8010389C_23977C_SlotCarDerby);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(5, 3, 2, -1, func_801038B8_239798_SlotCarDerby);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(6, 3, 2, -1, func_801038D4_2397B4_SlotCarDerby);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(7, 3, 2, -1, func_801038F0_2397D0_SlotCarDerby);
+    func_80109240_23F120_SlotCarDerby(D_8011023C_24611C_SlotCarDerby);
+    func_8007273C_7333C((u8*)D_8010FC50_245B30_SlotCarDerby, 1);
+}
 
 void func_80102BC0_238AA0_SlotCarDerby(omObjData* obj) {
     obj->func_ptr = func_80102BE4_238AC4_SlotCarDerby;

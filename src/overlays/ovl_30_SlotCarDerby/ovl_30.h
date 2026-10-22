@@ -320,6 +320,17 @@ f32 HuMathSin(f32);
 u16 func_80018A30_19630(s32, s32); /* model load */
 void func_80029714_2A314(s16 model, f32 x, f32 y, f32 z); /* position */
 void func_800297E8_2A3E8(s16 model, f32 x, f32 y, f32 z); /* scale */
+void func_8002D4D0_2E0D0(s16 n);
+void func_80020D20_21920(s16 arg0);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+extern s16 D_800FA606_FB206;
+extern u16 D_800FC87A_FD47A;
+extern u16 D_800F8FE0_F9BE0;
+extern omObjData* D_800FC7B0_FD3B0[];
+extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
+extern u8 D_800FA656; /* minigame variant: the course here */
 
 /* ---------------------------------------------------------------------------------------------
    .data (243CA0.data.s, stays asm): MP1 name in the comment
@@ -353,6 +364,9 @@ extern s16 D_801102D4_2461B4_SlotCarDerby;      /* .unk_0C */
 extern s16 D_801102D6_2461B6_SlotCarDerby;      /* MP1 D_80101DEE: 1: leave */
 extern s16 D_801102D8_2461B8_SlotCarDerby;      /* MP1 D_80101DF0: fade-out started */
 extern s16 D_801102DA_2461BA_SlotCarDerby;      /* MP1 D_80101DF2: overlay return requested */
+extern s16 D_801102DC_2461BC_SlotCarDerby;      /* MP1 D_80101DF4? */
+extern s16 D_801102DE_2461BE_SlotCarDerby;      /* MP1 D_80101DF6? */
+extern s16 D_801102E0_2461C0_SlotCarDerby;
 extern SCDCar D_801102E8_2461C8_SlotCarDerby[4]; /* MP1 D_80101DF8 */
 extern s16 D_801107F8_2466D8_SlotCarDerby;      /* MP1 D_80102308: cars placed */
 extern s16 D_801107FA_2466DA_SlotCarDerby[4];   /* MP1 D_8010230A: lane order */
@@ -367,6 +381,9 @@ extern f32 D_8011091C_2467FC_SlotCarDerby;      /* .target.view[0] */
 extern f32 D_80110920_246800_SlotCarDerby;      /* .target.view[1] */
 extern f32 D_80110924_246804_SlotCarDerby;      /* .target.view[2] */
 extern SCDParticle D_801104F8_2463D8_SlotCarDerby[16]; /* MP1 D_80102008 */
+extern s16 D_801109D4_2468B4_SlotCarDerby;      /* MP1 D_801024B2 */
+extern s16 D_801109D6_2468B6_SlotCarDerby;      /* MP1 D_801024B0: _CheckFlag(0xC) */
+extern s16 D_801109D8_2468B8_SlotCarDerby;      /* MP1 D_801024B4 */
 /* MG30-A */
 
 #endif
