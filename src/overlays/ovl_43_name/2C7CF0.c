@@ -3897,7 +3897,135 @@ s32 func_8010F32C_2D481C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
+#ifdef NON_MATCHING /* NON_MATCHING: registers only; retail keeps &GwSystem in s7 for the direction prompt
+                       where GCC rematerialises it (3 extra lui) */
+/* Junction arg0, barred by one of the three day/night models (func_80106A5C): the player picks a
+   way. Taking the barred way: by night the model will not move (message 0x1F) and the player
+   takes the other way; by day the player may pay 5 coins to make it walk to the other way, or
+   refuses (or has under 5 coins) and takes the other way. */
+void func_8010F548_2D4A38_name_43(s32 arg0) {
+    Vec rot;
+    s16 chain;
+    s16 index;
+    GW_SYSTEM* gw = &GwSystem;
+    MBModel* model = D_80115468_2DA958_name_43[arg0];
+    struct unk_8003B8D4Struct* prompt;
+    DecisionTreeNonLeafNode* tree;
+    Vec* pos;
+    Vec* rotp;
+    SpaceData* sd;
+    s32 n;
+    s32 i;
+    s32 dir;
+    s32 choice;
+    u16 space;
+
+    MBPlayerMotionSet(-1, -1, 2);
+    HuPrcVSleep();
+    func_80103F10_2C9400_name_43();
+    prompt = func_80041A74_42674(gw->current_player_index, D_80114428_2D9918_name_43[arg0]);
+    func_800417EC_423EC(prompt, gw->current_player_index, 0);
+    if (PlayerIsCPU(-1) != 0) {
+        if (gw->current_player_index == 4) {
+            switch (arg0) {
+                case 0:
+                    tree = D_80113F80_2D9470_name_43;
+                    break;
+                case 1:
+                    tree = D_80113F98_2D9488_name_43;
+                    break;
+                case 2:
+                default:
+                    tree = D_80113FB0_2D94A0_name_43;
+                    break;
+            }
+        } else {
+            switch (arg0) {
+                case 0:
+                    tree = D_80113EB4_2D93A4_name_43;
+                    break;
+                case 1:
+                    tree = D_80113ED8_2D93C8_name_43;
+                    break;
+                case 2:
+                default:
+                    tree = D_80113EFC_2D93EC_name_43;
+                    break;
+            }
+        }
+        n = func_80044800_45400(tree);
+        for (i = 0; i < n; i++) {
+            func_80041610_42210(prompt, -2);
+        }
+        func_80041610_42210(prompt, -4);
+    }
+    dir = DirectionPrompt(prompt);
+    func_8004108C_41C8C(prompt);
+    func_80103FE0_2C94D0_name_43();
+    space = D_80113D20_2D9210_name_43[arg0 * 2 + dir];
+    if (D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[arg0]] == dir) {
+        func_80046D2C_4792C(gw->current_player_index);
+        MBPlayerMotionSet(-1, -1, 2);
+        func_80056C30_57830(-1, 8, space);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
+        HuPrcChildWatch();
+        if (D_800F8CE4_F98E4[0] >= 2 && D_800F8CE4_F98E4[0] < 4) {
+            MBDlgResultWinExec(0x1F);
+            space = D_80113D20_2D9210_name_43[arg0 * 2 + (dir ^ 1)];
+        } else if (gPlayers[gw->current_player_index].coins < 5) {
+            PlaySound(0xEA);
+            MBDlgWinExec(0x27, 0x1C);
+            space = D_80113D20_2D9210_name_43[arg0 * 2 + (dir ^ 1)];
+        } else {
+            PlaySound(0xEA);
+        retry:
+            MBDlgWinCreate(0x27, 0x1B);
+            /* retail passes arg0 to this (void) prompt */
+            choice = ((s32(*)(s32))func_8010F32C_2D481C_name_43)(arg0);
+            MBDlgWinClose();
+            func_80056168_56D68();
+            switch (choice) {
+                case 0:
+                    func_8004CA34_4D634(gw->current_player_index, -5);
+                    func_800614B4_620B4(gw->current_player_index, -5);
+                    HuPrcSleep(30);
+                    MBDlgWinExec(0x27, 0x1E);
+                    pos = &model->pos;
+                    GetSpaceData(D_80113D20_2D9210_name_43[arg0 * 2 + D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[arg0]]]);
+                    D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[arg0]] ^= 1;
+                    rotp = &model->rot;
+                    sd = GetSpaceData(D_80113D20_2D9210_name_43[arg0 * 2 + D_800F8CE4_F98E4[D_80113D34_2D9224_name_43[arg0]]]);
+                    MBMotionSet(model, 0, 2);
+                    func_80056658_57258(pos, &sd->coords, &rot);
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056B78_57778(rotp, &rot, rotp, 10));
+                    HuPrcChildWatch();
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056D80_57980(pos, &sd->coords, pos, 30));
+                    HuPrcChildWatch();
+                    func_80056658_57258(pos, &GetSpaceData(D_80113D3C_2D922C_name_43[arg0])->coords, &rot);
+                    HuPrcChildLink(HuPrcCurrentGet(), func_80056B78_57778(rotp, &rot, rotp, 10));
+                    HuPrcChildWatch();
+                    MBMotionSet(model, -1, 2);
+                    break;
+                case 1:
+                    MBDlgWinExec(0x27, 0x1D);
+                    space = D_80113D20_2D9210_name_43[arg0 * 2 + (dir ^ 1)];
+                    break;
+                case 2:
+                    func_80103DB0_2C92A0_name_43();
+                    goto retry;
+            }
+        }
+        func_8004655C_4715C(gw->current_player_index);
+        HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
+        HuPrcChildWatch();
+    }
+    func_80054C78_55878(space, &chain, &index);
+    SetNextChainAndSpace(-1, chain, index);
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010F548_2D4A38_name_43);
+#endif
 
 void func_8010FAD0_2D4FC0_name_43(void) {
     func_8010F548_2D4A38_name_43(0);

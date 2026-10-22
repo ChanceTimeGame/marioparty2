@@ -468,7 +468,7 @@ void func_8010F23C_2D472C_name_43(void);
 void func_8010F26C_2D475C_name_43(void);
 void func_8010F2B4_2D47A4_name_43(void);
 s32 func_8010F32C_2D481C_name_43(void);
-s32 func_8010F548_2D4A38_name_43(s32 arg0); /* 43 (169B0 func_80016A44-like) */
+void func_8010F548_2D4A38_name_43(s32 arg0); /* 43-B: junction with a day/night model */
 void func_8010FAD0_2D4FC0_name_43(void);
 void func_8010FAEC_2D4FDC_name_43(void);
 void func_8010FB08_2D4FF8_name_43(void);
@@ -620,5 +620,13 @@ extern s16 D_80113D48_2D9238_name_43[2]; /* by night */
 extern s16 mbWinId;
 s16 func_8008BA30_8C630(s16); /* window still open */
 void func_8008D23C_8DE3C(void);
+extern s16 D_80113D3C_2D922C_name_43[3]; /* the space each model faces after moving */
+extern s16* D_80114428_2D9918_name_43[3]; /* per junction: direction prompt choices */
+extern DecisionTreeNonLeafNode D_80113EB4_2D93A4_name_43[]; /* CPU direction, per junction */
+extern DecisionTreeNonLeafNode D_80113ED8_2D93C8_name_43[];
+extern DecisionTreeNonLeafNode D_80113EFC_2D93EC_name_43[];
+extern DecisionTreeNonLeafNode D_80113F80_2D9470_name_43[]; /* the same for player index 4 */
+extern DecisionTreeNonLeafNode D_80113F98_2D9488_name_43[];
+extern DecisionTreeNonLeafNode D_80113FB0_2D94A0_name_43[];
 
 #endif
