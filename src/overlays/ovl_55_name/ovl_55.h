@@ -40,6 +40,35 @@ typedef struct Ovl55MotionWait {
     /* 0x08 */ omObjData* obj;
 } Ovl55MotionWait; /* size = 0xC */
 
+/* ev-B: the board-0..2 explanation sign (D_8010C570 holds one while it shows). */
+typedef struct Ovl55Sign {
+    /* 0x00 */ u16 spr;
+    /* 0x02 */ u16 spr2;
+    /* 0x04 */ s16 grp;
+    /* 0x06 */ s16 grp2;
+    /* 0x08 */ s16 x;
+    /* 0x0A */ s16 y;
+    /* 0x0C */ s16 x2;
+    /* 0x0E */ s16 y2;
+} Ovl55Sign; /* size = 0x10 */
+
+/* ev-B: a straight path. */
+typedef struct Ovl55Path {
+    /* 0x00 */ Vec start;
+    /* 0x0C */ Vec end;
+} Ovl55Path; /* size = 0x18 */
+
+/* ev-B: work of a model flying along an Ovl55Path (func_80106508 and its board copies). */
+typedef struct Ovl55FlyWork {
+    /* 0x00 */ MBModel* model;
+    /* 0x04 */ Ovl55Path* path;
+    /* 0x08 */ f32 speed;
+    /* 0x0C */ f32 rate;
+    /* 0x10 */ f32 vel;
+    /* 0x14 */ f32 grav;
+    /* 0x18 */ u16 delay;
+} Ovl55FlyWork; /* size = 0x1C */
+
 /* ---- main-segment API used by 55 ---- */
 
 GW_PLAYER* BoardPlayerGet(s32);
@@ -193,13 +222,12 @@ extern Vec D_8010BB10_36AA00_name_55[4];
 extern Vec D_8010BB40_36AA30_name_55[4];
 extern Vec D_8010BB70_36AA60_name_55[4];
 /* Symbols B and C use (raw: retype them from the asm). */
-extern void* D_8010BC78_36AB68_name_55[6];
-extern s32 D_8010BC90_36AB80_name_55[];
-extern s32 D_8010BCA0_36AB90_name_55[];
-extern s32 D_8010BCB8_36ABA8_name_55[];
-extern f32 D_8010BCC0_36ABB0_name_55;
-extern f32 D_8010BCC4_36ABB4_name_55;
-extern f32 D_8010BCC8_36ABB8_name_55;
+/* ev-B: board 0 (364580.c) */
+extern void* D_8010BC78_36AB68_name_55[6]; /* per character: the player's board model */
+extern u32 D_8010BC90_36AB80_name_55[]; /* host model's motions */
+extern Vec D_8010BCA0_36AB90_name_55[2]; /* camera pan: from, to */
+extern u32 D_8010BCB8_36ABA8_name_55[];
+extern Ovl55Path D_8010BCC0_36ABB0_name_55[2]; /* the two fliers */
 extern void* D_8010BDC8_36ACB8_name_55[6];
 extern s32 D_8010BDE0_36ACD0_name_55[];
 extern s32 D_8010BDF0_36ACE0_name_55[];
@@ -279,7 +307,7 @@ s32 func_801055A4_364494_name_55(MBModel* model, s16 motion, s16 shiftAttr, u8 c
 /* ---- 364580.c (fork B) ---- */
 
 void func_80105690_364580_name_55(void);
-void func_801057E0_3646D0_name_55(s16 player);
+void func_801057E0_3646D0_name_55(s32 player);
 void func_80105870_364760_name_55(void);
 void func_801059D0_3648C0_name_55(void);
 void func_80105CE0_364BD0_name_55(void);
