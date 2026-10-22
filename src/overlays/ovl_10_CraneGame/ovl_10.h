@@ -2,8 +2,9 @@
 #define _OVL_10_H
 
 /* Overlay 10: Crane Game, descended from MP1's ovl_23_CraneGame (1B3E00.c game, 1B9050.c shadows,
-   1BAA60.c collision and camera). Retail is two files: 14C320.c (game, claw, prizes, shadows) and
-   153590.c from 80109A70 (collision meshes, MP1 1BAA60.c). .data stays asm (155280); .rodata is
+   1BAA60.c collision and camera). Retail is three files: 14C320.c (game, claw, prizes), 151A90.c
+   from 80107F70 (drop shadows, MP1 1B9050.c) and 153590.c from 80109A70 (collision meshes, MP1
+   1BAA60.c). .data stays asm (155280); .rodata is
    carved per file. Types from the asm's accesses; MP1 names and offsets in the comments. */
 
 #include "common.h"
@@ -284,7 +285,7 @@ float fabsf(float);
    func_80107F40 returns it), kept in D_8010CE30_156950_CraneGame. In MP2 the prizes own one too:
    their unk8 == 2 while held, unk3E = 1 drops them, unk40 = their index (func_80106F00), unk4C/4E/50
    their side of the grip contest, unk56 a blink timer. Offsets as MP1's; field use from MG10-A's
-   range (80104CB0, 80106A28, 80106F00): MG10-B, check it against 80107DD4. */
+   range (80104CB0, 80106A28, 80106F00): 80107DD4 allocates it as MP1 does. */
 typedef struct CGClaw {
     /* 0x00 */ s16 unk0; /* 1 once initialised */
     /* 0x02 */ u16 unk2; /* flags: 1/2 clamped by func_801035C0, 4 empty-handed */
@@ -385,8 +386,7 @@ extern omObjData* D_8010D230_156D50_CraneGame;
 extern s16 D_8010D234_156D54_CraneGame;
 
 /* ---- overlay functions ---- */
-/* MG10-A's range (to 80106F00) checked against the asm; MG10-B's inferred from the asm's register
-   use and MP1's twins: check yours. */
+/* All checked against the asm and their callers. */
 
 /* 14C320.c */
 void func_80102800_14C320_CraneGame(void);
@@ -417,7 +417,7 @@ void func_80106A28_150548_CraneGame(omObjData* obj);
 f32 func_80106C98_1507B8_CraneGame(f32 x, f32 z);
 void func_80106D58_150878_CraneGame(Matrix4f m, Vec* out);
 void func_80106F00_150A20_CraneGame(omObjData* obj);
-/* MG10-B's range (inferred) */
+/* MG10-B's range (checked against the asm) */
 u16 func_80078EA8_79AA8(void);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_80107460_150F80_CraneGame(omObjData* obj, s16 arg1);       /* MP1 func_800FA684 */
