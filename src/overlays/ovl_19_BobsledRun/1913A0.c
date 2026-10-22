@@ -2832,4 +2832,62 @@ f32 func_8010B630_19A1D0_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z, f32 old
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010B630_19A1D0_BobsledRun);
 #endif
 
+/* Main's actor motion player (19BF0.c func_80019378, MP1 func_80017DB0) with the character's
+   voice taken from the given player instead of the work's. */
+// register allocation: req and spd swap $s3/$s4 (main's func_80019378 is NON_MATCHING too)
+#ifdef NON_MATCHING
+void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 player) {
+    u16 mdl = obj->model[0];
+    BRActorWork* w = obj->unk_50;
+    BRMotionReq* req;
+    u16 spd;
+    s16 mot;
+    s32 flip;
+    f32 t;
+    s32 chr;
+    BRMotionEntry* e;
+
+    if (w->pending != 0) {
+        chr = gPlayers[player].character;
+        flip = 0;
+        if (w->count != 0) {
+            req = &w->req;
+            if (req->flags & 4) {
+                spd = (w->unk_B8 = func_8002CA14_2D614(mot = obj->motion[req->motion] & 0x3FFF)) / 5.0f;
+            } else {
+                mot = func_80029E14_2AA14(obj->motion[req->motion] & 0x3FFF);
+                spd = (w->unk_B8 = func_80029D0C_2A90C(obj->motion[req->motion] & 0x3FFF)) / 5.0f;
+            }
+            if (req->flags & 1) {
+                flip = 2;
+            }
+            if (req->unk_06 >= 0) {
+                func_80025554_26154(w->unk_5A, w->unk_5B, chr, req->unk_06);
+            }
+            func_80029BF0_2A7F0(mdl, mot, 0, spd, flip);
+            func_80029FBC_2ABBC(mdl, req->speed);
+            if (w->flags & 0x100) {
+                func_800192E4_19EE4(obj);
+            }
+        }
+        w->pending = 0;
+    } else {
+        e = &w->table[func_80018FF0_19BF0(obj)];
+        if (!(e->flags & 1)) {
+            t = func_80029E3C_2AA3C(mdl);
+            if (t == -1.0f) {
+                t = func_80029CE4_2A8E4(mdl);
+            }
+            if (w->unk_B8 <= t) {
+                w->cur++;
+                if (w->count <= w->cur) {
+                    w->count = 0;
+                    w->cur = 0xFFFF;
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010BD18_19A8B8_BobsledRun);
+#endif

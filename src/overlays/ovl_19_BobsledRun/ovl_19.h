@@ -433,6 +433,46 @@ f32 func_8002DBA4_2E7A4(f32 x, f32 y, f32 z, ColVtx* verts, u16* tri); /* height
 void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec3f* n); /* face normal */
 f32 func_80003910_4510(omObjData* obj, f32 y); /* landing height (MP1 func_800006E4) */
 void func_8003C984_3D584(s16 model, Vec3f* normal); /* align the shadow (MP1 func_80037178) */
+/* BRWork seen as main's actor work (19BF0.c's ActorWork) for the motion player 8010BD18. */
+typedef struct BRMotionEntry {
+    /* 0x00 */ u16 flags;
+    /* 0x02 */ u16 speed;
+    /* 0x04 */ char unk_04[8];
+} BRMotionEntry; /* size = 0xC */
+typedef struct BRMotionReq {
+    /* 0x00 */ u16 flags;
+    /* 0x02 */ u16 motion;
+    /* 0x04 */ char unk_04[2];
+    /* 0x06 */ s16 unk_06; /* < 0: none; else the 4th argument of func_80025554_26154 */
+    /* 0x08 */ char unk_08[4];
+    /* 0x0C */ f32 speed;
+} BRMotionReq; /* size = 0x10 */
+typedef struct BRActorWork {
+    /* 0x00 */ char unk_00[0x50];
+    /* 0x50 */ u16 flags;
+    /* 0x52 */ char unk_52[7];
+    /* 0x59 */ s8 player;
+    /* 0x5A */ u8 unk_5A;
+    /* 0x5B */ u8 unk_5B;
+    /* 0x5C */ char unk_5C[0x4C];
+    /* 0xA8 */ u16 unk_A8;
+    /* 0xAA */ char unk_AA[0xE];
+    /* 0xB8 */ f32 unk_B8;
+    /* 0xBC */ char unk_BC[0x14];
+    /* 0xD0 */ u16 cur;
+    /* 0xD2 */ u16 count;
+    /* 0xD4 */ char unk_D4[2];
+    /* 0xD6 */ u16 pending;
+    /* 0xD8 */ BRMotionReq req;
+    /* 0xE8 */ BRMotionEntry* table;
+} BRActorWork;
+f32 func_8002CA14_2D614(s16);
+s16 func_80029E14_2AA14(s16);
+u16 func_80018FF0_19BF0(omObjData* obj);
+void func_800192E4_19EE4(omObjData* obj);
+void func_80025554_26154(s32, s32, s32, s16);
+void func_80029BF0_2A7F0(s16, s16, s16, s16, s16);
+void func_80029FBC_2ABBC(s16, f32);
 f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
