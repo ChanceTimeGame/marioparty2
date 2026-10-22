@@ -150,7 +150,10 @@ typedef struct BumperBallsWork {
     /* 0x60 */ omObjData* unk_60; /* CPU target (MP1 0x54) */
     /* 0x64 */ u16 unk_64; /* MP1 0x58 */
     /* 0x66 */ u16 unk_66; /* MP1 0x5A */
-    /* 0x68 */ char pad_68[0xF];
+    /* 0x68 */ f32 unk_68; /* variant 0: glow light position (func_80109D80) */
+    /* 0x6C */ f32 unk_6C;
+    /* 0x70 */ f32 unk_70;
+    /* 0x74 */ u8 unk_74[3]; /* glow light colour, brighter away from the centre */
     /* 0x77 */ u8 unk_77;
     /* 0x78 */ u16 unk_78; /* frames to the next lava ring */
     /* 0x7A */ u8 unk_7A[4]; /* lava rings (model[6 + i]) in use */
@@ -263,6 +266,50 @@ extern u16 D_8010A058_2189F8_BumperBalls[8];
 extern u16 D_8010A068_218A08_BumperBalls[8];
 extern f32 D_8010A288_218C28_BumperBalls; /* CPU: the predicted position */
 extern f32 D_8010A28C_218C2C_BumperBalls;
+
+/* Water mesh (MP1 196300.c): wave phases of the 6 x 6 mesh, per row the near edge's 6 pairs then
+   the far edge's 6. func_8010851C indexes the far pairs as half-rows of 6 from the splat label
+   D_8010A2E0 (= D_8010A2B0 + 0x30; far edge of row r = D_8010A2E0[2r]); func_80109868 as rows of
+   12 (BB_WAVE_FAR). On a host build D_8010A2E0 is a view into D_8010A2B0, not its own array. */
+typedef struct BumperBallsAnglePair {
+    f32 first;
+    f32 second;
+} BumperBallsAnglePair;
+extern BumperBallsAnglePair D_8010A2B0_218C50_BumperBalls[6][12];
+extern BumperBallsAnglePair D_8010A2E0_218C80_BumperBalls[][6];
+#define BB_WAVE_FAR ((BumperBallsAnglePair(*)[12])D_8010A2E0_218C80_BumperBalls)
+extern HmfTex* D_8010A4F0_218E90_BumperBalls; /* "47mt003_DEF" (water) */
+extern HmfTex* D_8010A4F4_218E94_BumperBalls; /* "47mt002_IA44" */
+extern Gfx* D_8010A4F8_218E98_BumperBalls[8]; /* water display list per screen */
+extern Vtx* D_8010A518_218EB8_BumperBalls[8]; /* water vertices per screen */
+extern Vtx* D_8010A538_218ED8_BumperBalls[8]; /* their copy for the textured pass */
+extern s32 D_8010A558_218EF8_BumperBalls; /* the water model */
+/* Water texture scroll (.data): s/t of the near edge, of the far edge (+1024), per-frame steps. */
+extern f32 D_8010A084_218A24_BumperBalls;
+extern f32 D_8010A088_218A28_BumperBalls;
+extern f32 D_8010A08C_218A2C_BumperBalls;
+extern f32 D_8010A090_218A30_BumperBalls;
+extern f32 D_8010A094_218A34_BumperBalls;
+extern f32 D_8010A098_218A38_BumperBalls;
+extern const char D_8010A220_218BC0_BumperBalls[];
+extern const char D_8010A22C_218BCC_BumperBalls[];
+
+extern u8 D_800FDBCA_FE7CA; /* screen count */
+extern u8 D_800FDBE0_FE7E0; /* frame buffer index */
+extern HmfTex* D_800FD89C_FE49C; /* the texture table, 128 entries */
+/* gDPLoadBlock/gDPSetTile parameters of the texture size (MP1 D_800ED568 ...) */
+extern u32 D_800F92E0_F9EE0; /* load block size */
+extern u32 D_800F956C_FA16C; /* increment */
+extern u32 D_801026D0_1032D0; /* bytes per texel */
+extern u32 D_800F60A4_F6CA4; /* line bytes */
+extern u32 D_800FDBD4_FE7D4; /* shift */
+s16 func_8001F4AC_200AC(char*); /* name hash */
+#ifndef INTEGER_LOG2
+#define INTEGER_LOG2(x) ((x) <= 2 ? 1 : (x) <= 4 ? 2 : (x) <= 8 ? 3 : (x) <= 16 ? 4 : (x) <= 32 ? 5 : (x) <= 64 ? 6 : (x) <= 128 ? 7 : 8)
+#endif
+s32 func_800B0FD0_B1BD0(char*, char*); /* strcmp */
+s16 func_80027FA4_28BA4(u32, void*, u8); /* display-list model */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
 
 /* CPU: turn away from the island's edge for 15-29 frames. */
 #define BB_FLEE_EDGE(object, work, stickX, stickY)                                                  \

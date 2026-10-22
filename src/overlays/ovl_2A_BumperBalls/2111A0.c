@@ -1804,10 +1804,377 @@ const char D_8010A220_218BC0_BumperBalls[] = "47mt003_DEF";
 __asm__(".section .rodata");
 const char D_8010A22C_218BCC_BumperBalls[] = "47mt002_IA44";
 
+/* The water mesh (variant 2; MP1 func_800FB2EC): 6 x 6 quads with phased wave heights, two copies
+   per screen (textured and the reflection), and the display list func_80108C70 builds. */
+/* Retail ignores its arguments and names the textures itself. NON_MATCHING: register allocation
+   (row in s6 not s8, column s7 not s6, x0 spilled through the stack; masked 93); the addressing
+   (row2/r2 kept unfolded, a separate row pointer in the vertex loop) matches. MP1 is NON_MATCHING too. */
+#ifdef NON_MATCHING
+void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
+    BumperBallsAnglePair* near;
+    BumperBallsAnglePair* far;
+    BumperBallsAnglePair* wave;
+    HmfTex* texture;
+    Vtx* source;
+    Vtx* dst;
+    Vtx* src;
+    Vtx* v;
+    f32 angle;
+    f32 rowAngle;
+    f32 second;
+    f32 farFirst;
+    f32 farSecond;
+    s32 x0;
+    s32 x1;
+    s32 z0;
+    s32 z1;
+    s32 row;
+    s32 row2;
+    s32 r2;
+    s32 column;
+    u16 textureId;
+    u16 screen;
+    u16 i;
+
+    for (screen = 0; screen < D_800FDBCA_FE7CA; screen++) {
+        D_8010A518_218EB8_BumperBalls[screen] = func_80027154_27D54(144 * sizeof(Vtx), 0x7918);
+        D_8010A538_218ED8_BumperBalls[screen] = func_80027154_27D54(144 * sizeof(Vtx), 0x7918);
+        D_8010A4F8_218E98_BumperBalls[screen] = func_80027154_27D54(0x800 * sizeof(Gfx), 0x7918);
+    }
+    rowAngle = 0.0f;
+    angle = 0.0f;
+    for (row = 0; row < 6; row++) {
+        r2 = row * 2;
+        near = D_8010A2B0_218C50_BumperBalls[row];
+        far = D_8010A2E0_218C80_BumperBalls[r2];
+        for (column = 0; column < 6; column++) {
+            second = angle + 90.0f;
+            if (second >= 360.0f) {
+                second -= 360.0f;
+            }
+            farFirst = angle + 90.0f;
+            if (farFirst >= 360.0f) {
+                farFirst -= 360.0f;
+            }
+            farSecond = angle + 180.0f;
+            if (farSecond >= 360.0f) {
+                farSecond -= 360.0f;
+            }
+            near[column].first = angle;
+            near[column].second = second;
+            far[column].first = farFirst;
+            angle += 90.0f;
+            far[column].second = farSecond;
+            if (angle >= 360.0f) {
+                angle -= 360.0f;
+            }
+        }
+        rowAngle += 90.0f;
+        if (rowAngle >= 360.0f) {
+            rowAngle -= 360.0f;
+        }
+        angle = rowAngle;
+    }
+    source = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
+    for (row = 0; row < 6; row++) {
+        row2 = row * 2;
+        wave = D_8010A2B0_218C50_BumperBalls[row];
+        for (column = 0; column < 6; column++) {
+            v = &source[column * 2 + row * 24];
+            x0 = column * 400.0f - 1200.0f;
+            v->n.ob[0] = x0;
+            v->n.ob[1] = HuMathSin(wave[column].first) * 40.0f;
+            z0 = row * 400.0f - 1200.0f + -350.0f;
+            v->n.ob[2] = z0;
+            v->n.n[0] = 0;
+            v->n.n[1] = -0x80;
+            v->n.n[2] = 0;
+            v->n.tc[0] = 0x400;
+            v->n.tc[1] = 0;
+            v->n.a = 0x90;
+            v = &source[column * 2 + (row * 24 + 1)];
+            x1 = (column + 1) * 400.0f - 1200.0f;
+            v->n.ob[0] = x1;
+            v->n.ob[1] = HuMathSin(wave[column].second) * 40.0f;
+            v->n.ob[2] = z0;
+            v->n.n[0] = 0;
+            v->n.n[1] = -0x80;
+            v->n.n[2] = 0;
+            v->n.tc[0] = 0;
+            v->n.tc[1] = 0;
+            v->n.a = 0x90;
+            v = &source[column * 2 + (row2 + 1) * 12];
+            v->n.ob[0] = x0;
+            v->n.ob[1] = HuMathSin(D_8010A2E0_218C80_BumperBalls[row2][column].first) * 40.0f;
+            z1 = (row + 1) * 400.0f - 1200.0f + -350.0f;
+            v->n.ob[2] = z1;
+            v->n.n[0] = 0;
+            v->n.n[1] = -0x80;
+            v->n.n[2] = 0;
+            v->n.tc[0] = 0x400;
+            v->n.tc[1] = 0x400;
+            v->n.a = 0x90;
+            v = &source[column * 2 + ((row2 + 1) * 12 + 1)];
+            v->n.ob[0] = x1;
+            v->n.ob[1] = HuMathSin(D_8010A2E0_218C80_BumperBalls[row2][column].second) * 40.0f;
+            v->n.ob[2] = z1;
+            v->n.n[0] = 0;
+            v->n.n[1] = -0x80;
+            v->n.n[2] = 0;
+            v->n.tc[0] = 0;
+            v->n.tc[1] = 0x400;
+            v->n.a = 0x90;
+        }
+    }
+    for (screen = 0; screen < D_800FDBCA_FE7CA; screen++) {
+        if (screen != D_800FDBE0_FE7E0) {
+            src = source;
+            dst = D_8010A518_218EB8_BumperBalls[screen];
+            for (i = 0; i < 144; i++) {
+                *dst++ = *src++;
+            }
+        }
+    }
+    for (screen = 0; screen < D_800FDBCA_FE7CA; screen++) {
+        src = source;
+        dst = D_8010A538_218ED8_BumperBalls[screen];
+        for (i = 0; i < 144; i++) {
+            *dst++ = *src++;
+        }
+    }
+    textureId = func_8001F4AC_200AC((char*)D_8010A220_218BC0_BumperBalls);
+    for (i = 0; i < 0x80; i++) {
+        texture = &D_800FD89C_FE49C[i];
+        if (texture->unk24 == textureId && func_800B0FD0_B1BD0((char*)texture, (char*)D_8010A220_218BC0_BumperBalls) == 0) {
+            break;
+        }
+    }
+    D_8010A4F0_218E90_BumperBalls = &D_800FD89C_FE49C[i];
+    textureId = func_8001F4AC_200AC((char*)D_8010A22C_218BCC_BumperBalls);
+    for (i = 0; i < 0x80; i++) {
+        texture = &D_800FD89C_FE49C[i];
+        if (texture->unk24 == textureId && func_800B0FD0_B1BD0((char*)texture, (char*)D_8010A22C_218BCC_BumperBalls) == 0) {
+            break;
+        }
+    }
+    D_8010A4F4_218E94_BumperBalls = &D_800FD89C_FE49C[i];
+    func_80108C70_217610_BumperBalls();
+    D_8010A558_218EF8_BumperBalls = func_80027FA4_28BA4(0x681, D_8010A4F8_218E98_BumperBalls[D_800FDBE0_FE7E0], 4);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010851C_216EBC_BumperBalls);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108C70_217610_BumperBalls);
+/* The water display list, per screen (MP1 func_800FBA20). */
+void func_80108C70_217610_BumperBalls(void) {
+    Gfx* gfx;
+    s32 screen;
+    s32 row;
+    s32 column;
 
+    for (screen = 0; screen < D_800FDBCA_FE7CA; screen++) {
+        gfx = D_8010A4F8_218E98_BumperBalls[screen];
+        gDPPipeSync(gfx++);
+        gSPSetOtherMode(gfx++, G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x504A50);
+        gSPClearGeometryMode(gfx++, G_LIGHTING);
+        gDPSetTextureFilter(gfx++, G_TF_BILERP);
+        gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+        gDPSetPrimColor(gfx++, 0, 0, 0x1E, 0x5E, 0xBC, 0xB0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0,
+            TEXEL0, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0);
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        switch (D_8010A4F4_218E94_BumperBalls->unk1D) {
+            case G_IM_SIZ_16b:
+                D_800F92E0_F9EE0 = G_IM_SIZ_16b_LOAD_BLOCK;
+                D_800F956C_FA16C = G_IM_SIZ_16b_INCR;
+                D_801026D0_1032D0 = G_IM_SIZ_16b_BYTES;
+                D_800F60A4_F6CA4 = G_IM_SIZ_16b_LINE_BYTES;
+                D_800FDBD4_FE7D4 = G_IM_SIZ_16b_SHIFT;
+                break;
+            case G_IM_SIZ_8b:
+                D_800F92E0_F9EE0 = G_IM_SIZ_8b_LOAD_BLOCK;
+                D_800F956C_FA16C = G_IM_SIZ_8b_INCR;
+                D_801026D0_1032D0 = G_IM_SIZ_8b_BYTES;
+                D_800F60A4_F6CA4 = G_IM_SIZ_8b_LINE_BYTES;
+                D_800FDBD4_FE7D4 = G_IM_SIZ_8b_SHIFT;
+                break;
+            case G_IM_SIZ_4b:
+                D_800F92E0_F9EE0 = G_IM_SIZ_4b_LOAD_BLOCK;
+                D_800F956C_FA16C = G_IM_SIZ_4b_INCR;
+                D_801026D0_1032D0 = G_IM_SIZ_4b_BYTES;
+                D_800F60A4_F6CA4 = G_IM_SIZ_4b_LINE_BYTES;
+                D_800FDBD4_FE7D4 = G_IM_SIZ_4b_SHIFT;
+                break;
+            default:
+                D_800F92E0_F9EE0 = G_IM_SIZ_32b_LOAD_BLOCK;
+                D_800F956C_FA16C = G_IM_SIZ_32b_INCR;
+                D_801026D0_1032D0 = G_IM_SIZ_32b_BYTES;
+                D_800F60A4_F6CA4 = G_IM_SIZ_32b_LINE_BYTES;
+                D_800FDBD4_FE7D4 = G_IM_SIZ_32b_SHIFT;
+                break;
+        }
+        gDPSetTextureImage(gfx++, D_8010A4F4_218E94_BumperBalls->unk1C, D_800F92E0_F9EE0, 1, D_8010A4F4_218E94_BumperBalls->unk28);
+        gDPSetTile(gfx++, D_8010A4F4_218E94_BumperBalls->unk1C, D_800F92E0_F9EE0, 0, 0x0000, G_TX_LOADTILE, 0,
+            G_TX_WRAP, INTEGER_LOG2(D_8010A4F4_218E94_BumperBalls->unk1F), G_TX_NOLOD,
+            G_TX_WRAP, INTEGER_LOG2(D_8010A4F4_218E94_BumperBalls->unk1E), G_TX_NOLOD);
+        gDPLoadSync(gfx++);
+        gDPLoadBlock(gfx++, G_TX_LOADTILE, 0, 0,
+            ((D_8010A4F4_218E94_BumperBalls->unk1E * D_8010A4F4_218E94_BumperBalls->unk1F + D_800F956C_FA16C) >> D_800FDBD4_FE7D4) - 1,
+            CALC_DXT(D_8010A4F4_218E94_BumperBalls->unk1E, D_801026D0_1032D0));
+        gDPPipeSync(gfx++);
+        gDPSetTile(gfx++, D_8010A4F4_218E94_BumperBalls->unk1C, D_8010A4F4_218E94_BumperBalls->unk1D,
+            (D_8010A4F4_218E94_BumperBalls->unk1E * D_800F60A4_F6CA4 + 7) >> 3, 0x0000, G_TX_RENDERTILE, 0,
+            G_TX_WRAP, INTEGER_LOG2(D_8010A4F4_218E94_BumperBalls->unk1F), G_TX_NOLOD,
+            G_TX_WRAP, INTEGER_LOG2(D_8010A4F4_218E94_BumperBalls->unk1E), G_TX_NOLOD);
+        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, (D_8010A4F4_218E94_BumperBalls->unk1E - 1) * 4,
+            (D_8010A4F4_218E94_BumperBalls->unk1F - 1) * 4);
+        for (row = 0; row < 6; row++) {
+            gSPVertex(gfx++, D_8010A538_218ED8_BumperBalls[screen] + (row * 24), 24, 0);
+            for (column = 0; column < 6; column++) {
+                gSP2Triangles(gfx++, column * 2, column * 2 + 1, column * 2 + 12, 0,
+                    column * 2 + 1, column * 2 + 13, column * 2 + 12, 0);
+            }
+        }
+        gDPPipeSync(gfx++);
+        gDPSetPrimColor(gfx++, 0, 0, 0xB2, 0xB2, 0xB2, 0xA0);
+        gDPSetCombineLERP(gfx++, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
+            TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE);
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        gDPLoadTLUT_pal16(gfx++, 0, D_8010A4F0_218E90_BumperBalls->unk30->unk28);
+        gDPLoadTextureBlock_4b(gfx++, D_8010A4F0_218E90_BumperBalls->unk28,
+            D_8010A4F0_218E90_BumperBalls->unk1C,
+            D_8010A4F0_218E90_BumperBalls->unk1E, D_8010A4F0_218E90_BumperBalls->unk1F, 0,
+            G_TX_WRAP, G_TX_WRAP, INTEGER_LOG2(D_8010A4F0_218E90_BumperBalls->unk1E),
+            INTEGER_LOG2(D_8010A4F0_218E90_BumperBalls->unk1F), G_TX_NOLOD, G_TX_NOLOD);
+        for (row = 0; row < 6; row++) {
+            gSPVertex(gfx++, D_8010A518_218EB8_BumperBalls[screen] + (row * 24), 24, 0);
+            for (column = 0; column < 6; column++) {
+                gSP2Triangles(gfx++, column * 2, column * 2 + 1, column * 2 + 12, 0,
+                    column * 2 + 1, column * 2 + 13, column * 2 + 12, 0);
+            }
+        }
+        gDPPipeSync(gfx++);
+        gSPEndDisplayList(gfx++);
+    }
+}
+
+/* Per frame: moves the waves and scrolls the water texture (MP1 func_800FC618). */
+/* NON_MATCHING: register allocation (column counter and v1 swap s3/s4; masked 0), as in MP1. */
+#ifdef NON_MATCHING
+void func_80109868_218208_BumperBalls(void) {
+    Vec normal;
+    f32* p;
+    Vtx* vertices;
+    Vtx* v0;
+    Vtx* v2;
+    Vtx* v1;
+    Vtx* v3;
+    Vtx* src;
+    Vtx* dst;
+    f32 angle;
+    s32 row;
+    s32 column;
+    s32 k;
+
+    *(Gfx**)D_800FC834_FD434[D_8010A558_218EF8_BumperBalls].hmf->unk3C = D_8010A4F8_218E98_BumperBalls[D_800FDBE0_FE7E0];
+    vertices = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
+    for (row = 0; row < 6; row++) {
+        for (column = 0; column < 6; column++) {
+            p = &D_8010A2B0_218C50_BumperBalls[row][column].first;
+            angle = *p + 4.0f;
+            *p = angle;
+            if (angle >= 360.0f) {
+                *p = angle - 360.0f;
+            }
+            v0 = &vertices[column * 2 + row * 24];
+            v0->n.ob[1] = HuMathSin(*p) * 40.0f;
+            v0->n.tc[0] = D_8010A084_218A24_BumperBalls;
+            v0->n.tc[1] = D_8010A088_218A28_BumperBalls;
+            p++;
+            angle = *p + 4.0f;
+            *p = angle;
+            if (angle >= 360.0f) {
+                *p = angle - 360.0f;
+            }
+            v1 = v0 + 1;
+            v1->n.ob[1] = HuMathSin(*p) * 40.0f;
+            v1->n.tc[0] = D_8010A08C_218A2C_BumperBalls;
+            v1->n.tc[1] = D_8010A088_218A28_BumperBalls;
+            p = &BB_WAVE_FAR[row][column].first;
+            angle = *p + 4.0f;
+            *p = angle;
+            if (angle >= 360.0f) {
+                *p = angle - 360.0f;
+            }
+            v2 = &vertices[column * 2 + (row * 2 + 1) * 12];
+            v2->n.ob[1] = HuMathSin(*p) * 40.0f;
+            v2->n.tc[0] = D_8010A084_218A24_BumperBalls;
+            v2->n.tc[1] = D_8010A090_218A30_BumperBalls;
+            p++;
+            angle = *p + 4.0f;
+            *p = angle;
+            if (angle >= 360.0f) {
+                *p = angle - 360.0f;
+            }
+            v3 = v2 + 1;
+            v3->n.ob[1] = HuMathSin(*p) * 40.0f;
+            v3->n.tc[0] = D_8010A08C_218A2C_BumperBalls;
+            v3->n.tc[1] = D_8010A090_218A30_BumperBalls;
+            func_8002DA3C_2E63C((ColVtx*)v0, (ColVtx*)v1, (ColVtx*)v2, &normal);
+            for (k = 0; k < 3; k++) {
+                v0->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v1->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v2->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+                v3->n.n[k] = ((f32*) &normal)[k] * 127.0f;
+            }
+        }
+    }
+    D_8010A084_218A24_BumperBalls += D_8010A094_218A34_BumperBalls;
+    D_8010A088_218A28_BumperBalls += D_8010A098_218A38_BumperBalls;
+    D_8010A084_218A24_BumperBalls = func_800B0D98_B1998(D_8010A084_218A24_BumperBalls, 1024.0);
+    D_8010A088_218A28_BumperBalls = func_800B0D98_B1998(D_8010A088_218A28_BumperBalls, 1024.0);
+    D_8010A08C_218A2C_BumperBalls = D_8010A084_218A24_BumperBalls + 1024.0f;
+    D_8010A090_218A30_BumperBalls = D_8010A088_218A28_BumperBalls + 1024.0f;
+    src = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
+    dst = D_8010A538_218ED8_BumperBalls[D_800FDBE0_FE7E0];
+    for (k = 0; k < 144; k++) {
+        dst->n.ob[1] = src->n.ob[1];
+        dst->n.n[0] = src->n.n[0];
+        dst->n.n[1] = src->n.n[1];
+        dst->n.n[2] = src->n.n[2];
+        src++;
+        dst++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80109868_218208_BumperBalls);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80109D80_218720_BumperBalls);
+/* Lights the ball's models from below (the lava's glow): stronger and lower the farther the ball
+   is from the island's centre, none within 47 units of it. */
+void func_80109D80_218720_BumperBalls(omObjData* object) {
+    BumperBallsWork* work = object->unk_50;
+    f32 dist;
+    f32 t;
+
+    dist = func_800B1830_B2430(object->trans.x * object->trans.x + object->trans.z * object->trans.z);
+    work->unk_68 = object->trans.x;
+    work->unk_70 = object->trans.z;
+    dist -= 47.0f;
+    t = dist / 383.0f;
+    if (dist <= 0.0f) {
+        work->unk_74[0] = work->unk_74[1] = work->unk_74[2] = 0;
+    } else {
+        if (t > 1.0f) {
+            t = 1.0f;
+        }
+        work->unk_6C = -(70.0f - t * 70.0f) - 57.0f;
+        work->unk_74[0] = t * 255.0f;
+        work->unk_74[1] = t * 95.0f;
+        work->unk_74[2] = t * 0.0f;
+    }
+    func_8002D274_2DE74(object->model[0], work->unk_74[0], work->unk_74[1], work->unk_74[2]);
+    func_8002D2B4_2DEB4(object->model[0], work->unk_68, work->unk_6C, work->unk_70);
+    func_8002D274_2DE74(object->model[2], work->unk_74[0], work->unk_74[1], work->unk_74[2]);
+    func_8002D2B4_2DEB4(object->model[2], work->unk_68, work->unk_6C, work->unk_70);
+}
