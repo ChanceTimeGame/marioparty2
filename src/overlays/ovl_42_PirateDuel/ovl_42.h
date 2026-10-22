@@ -178,6 +178,12 @@ extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
 s16 func_80027FA4_28BA4(u32, void*, u8);
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
 void func_8005AA98_5B698(s16);
+void func_8001A788_1B388(u16 spriteId, s32 arg1);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y); /* sprite scale */
+void func_8006961C_6A21C(s16 mesId, f32 x, f32 y);
+void func_8006D4D0_6E0D0(s16); /* the seconds counter */
+void func_8006D518_6E118(void);
+void func_800794A8_7A0A8(s32);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 
@@ -204,6 +210,15 @@ typedef struct PdSlideWork {
     /* 0x0C */ s32 frame;
     /* 0x10 */ f32 offs[100];
 } PdSlideWork; /* size 0x1A0 */
+
+/* A move sprite's pop (func_80109344/func_801093D8) or a wrong move's pause
+   (func_801094D4/func_80109648). */
+typedef struct PdMoveWork {
+    /* 0x00 */ s32 side;  /* 0 the challenger, 1 the opponent */
+    /* 0x04 */ s32 timer;
+    /* 0x08 */ s32 slot;  /* the move's sprite; for a wrong move, the player */
+    /* 0x0C */ f32 angle;
+} PdMoveWork; /* size 0x10 */
 
 /* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
 typedef struct PdStreak {
@@ -277,7 +292,7 @@ extern s16 D_80109DFC_2C7D7C_PirateDuel[4]; /* each player's second model */
 extern s16 D_80109E08_2C7D88_PirateDuel[2][150]; /* per duelist: the timeline's marked frames */
 extern s32 D_8010A060_2C7FE0_PirateDuel; /* no referee (flag 0x17 clear) */
 extern s16 D_8010A064_2C7FE4_PirateDuel[3]; /* the three sword sprite files */
-/* the five moves' sprites per duelist (D_8010A070[5 + i] is D_8010A07A[i]) */
+/* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern s16 D_8010A070_2C7FF0_PirateDuel[10];
 extern s16 D_8010A07A_2C7FFA_PirateDuel[5];
 extern s16 D_8010A084_2C8004_PirateDuel;
@@ -332,9 +347,9 @@ void func_80108F98_2C6F18_PirateDuel(omObjData* obj);
 void func_80109040_2C6FC0_PirateDuel(void);
 void func_8010913C_2C70BC_PirateDuel(void);
 void func_80109214_2C7194_PirateDuel(void);
-void func_80109344_2C72C4_PirateDuel(s32 arg0);
+void func_80109344_2C72C4_PirateDuel(s32 side);
 void func_801093D8_2C7358_PirateDuel(omObjData* obj);
-void func_801094D4_2C7454_PirateDuel(s32 arg0);
+void func_801094D4_2C7454_PirateDuel(s32 side);
 void func_80109648_2C75C8_PirateDuel(omObjData* obj);
 void func_80109780_2C7700_PirateDuel(void);
 

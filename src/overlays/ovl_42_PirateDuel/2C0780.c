@@ -1782,21 +1782,170 @@ void func_80108F98_2C6F18_PirateDuel(omObjData* obj) {
     }
 }
 
-__asm__(".section .rodata");
-const u32 D_80109D68_2C7CE8_PirateDuel[2] = { 0x0058002E, 0x00E8002E };
+/* Shows both duelists' score sprites (D_8010A088 behind D_8010A08C) at their corners. */
+void func_80109040_2C6FC0_PirateDuel(void) {
+    s16 pos[2][2] = { { 88, 46 }, { 232, 46 } };
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80109040_2C6FC0_PirateDuel);
+    for (i = 0; i < 2; i++) {
+        espPosSet(D_8010A088_2C8008_PirateDuel[i], pos[i][0], pos[i][1]);
+        espPosSet(D_8010A08C_2C800C_PirateDuel[i], pos[i][0], pos[i][1]);
+        espDispOn(D_8010A088_2C8008_PirateDuel[i]);
+        espDispOn(D_8010A08C_2C800C_PirateDuel[i]);
+        func_8001A788_1B388(D_8010A088_2C8008_PirateDuel[i], 0x100);
+        func_8001A788_1B388(D_8010A08C_2C800C_PirateDuel[i], 0xF8);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_8010913C_2C70BC_PirateDuel);
+/* Shows the five move sprites of each duelist in a row. */
+void func_8010913C_2C70BC_PirateDuel(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80109214_2C7194_PirateDuel);
+    for (i = 0; i < 5; i++) {
+        espPosSet(D_8010A070_2C7FF0_PirateDuel[i], i * 24 + 40, 46);
+        espPosSet(D_8010A07A_2C7FFA_PirateDuel[i], i * 24 + 184, 46);
+        espDispOn(D_8010A070_2C7FF0_PirateDuel[i]);
+        espDispOn(D_8010A07A_2C7FFA_PirateDuel[i]);
+        func_8001A788_1B388(D_8010A070_2C7FF0_PirateDuel[i], 0xF0);
+        func_8001A788_1B388(D_8010A07A_2C7FFA_PirateDuel[i], 0xF0);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80109344_2C72C4_PirateDuel);
+/* A process: each duelist's next move sprite pulses until one has made all five. */
+void func_80109214_2C7194_PirateDuel(void) {
+    f32 angle;
+    f32 scale;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801093D8_2C7358_PirateDuel);
+    angle = 0.0f;
+    do {
+        scale = HuMathSin(angle) * 0.2f + 1.0f;
+        for (i = 0; i < 2; i++) {
+            if (D_8010A090_2C8010_PirateDuel[i] < 5) {
+                func_8001A91C_1B51C(D_8010A070_2C7FF0_PirateDuel[i * 5 + D_8010A090_2C8010_PirateDuel[i]], scale, scale);
+            }
+        }
+        angle += 30.0f;
+        if (angle >= 360.0f) {
+            angle -= 360.0f;
+        }
+        HuPrcVSleep();
+    } while (D_8010A090_2C8010_PirateDuel[0] < 5 && D_8010A090_2C8010_PirateDuel[1] < 5);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801094D4_2C7454_PirateDuel);
+/* Duelist `side` made the right move: advance its count; the sprite pops (func_801093D8). */
+void func_80109344_2C72C4_PirateDuel(s32 side) {
+    omObjData* obj;
+    PdMoveWork* work;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80109648_2C75C8_PirateDuel);
+    obj = omAddObj(0x10, 0, 0, -1, func_801093D8_2C7358_PirateDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdMoveWork), 0x7918);
+    work->side = side;
+    work->slot = D_8010A090_2C8010_PirateDuel[side];
+    D_8010A090_2C8010_PirateDuel[side]++;
+    work->angle = 60.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_80109780_2C7700_PirateDuel);
+void func_801093D8_2C7358_PirateDuel(omObjData* obj) {
+    PdMoveWork* work = obj->unk_50;
+    f32 scale;
+
+    if (work->angle > 270.0f) {
+        work->angle = 270.0f;
+    }
+    scale = HuMathSin(work->angle) + 1.0f;
+    func_8001A91C_1B51C(D_8010A070_2C7FF0_PirateDuel[work->side * 5 + work->slot], scale, scale);
+    work->angle += 15.0f;
+    if (work->angle == 270.0f || D_8010A098_2C8018_PirateDuel[work->side] == 1) {
+        omDelObj(obj);
+    }
+}
+
+/* Duelist `side` made a wrong move: it reels (motion 11) and its moves are hidden for fifteen
+   frames, then start over (func_80109648). */
+void func_801094D4_2C7454_PirateDuel(s32 side) {
+    omObjData* obj;
+    PdMoveWork* work;
+    s32 i;
+    s32 snd;
+
+    obj = omAddObj(0x10, 0, 0, -1, func_80109648_2C75C8_PirateDuel);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(PdMoveWork), 0x7918);
+    work->side = side;
+    if (side == 0) {
+        work->slot = D_80109D90_2C7D10_PirateDuel;
+    } else {
+        work->slot = D_80109D94_2C7D14_PirateDuel;
+    }
+    work->timer = 0;
+    D_8010A098_2C8018_PirateDuel[side] = 1;
+    MBMotionShiftSet(PLAYER_MODEL(work->slot), 11, 0, 5, 0);
+    for (i = 0; i < 5; i++) {
+        espDispOff(D_8010A070_2C7FF0_PirateDuel[side * 5 + i]);
+        func_8001A91C_1B51C(D_8010A070_2C7FF0_PirateDuel[side * 5 + i], 1.0f, 1.0f);
+    }
+    snd = PlaySound(0x3B7);
+    if (side == 0) {
+        func_800798F8_7A4F8(snd, 0x20);
+    } else {
+        func_800798F8_7A4F8(snd, 0x60);
+    }
+}
+
+void func_80109648_2C75C8_PirateDuel(omObjData* obj) {
+    PdMoveWork* work = obj->unk_50;
+    s32 i;
+
+    if (++work->timer == 15) {
+        D_8010A098_2C8018_PirateDuel[work->side] = 0;
+        if (D_80109D70_2C7CF0_PirateDuel == 0) {
+            for (i = 0; i < 5; i++) {
+                espDispOn(D_8010A070_2C7FF0_PirateDuel[work->side * 5 + i]);
+                func_8001A91C_1B51C(D_8010A070_2C7FF0_PirateDuel[work->side * 5 + i], 1.0f, 1.0f);
+            }
+            D_8010A090_2C8010_PirateDuel[work->side] = 0;
+        }
+        omDelObj(obj);
+    }
+    if (D_80109D70_2C7CF0_PirateDuel == 1) {
+        D_8010A098_2C8018_PirateDuel[work->side] = 0;
+        omDelObj(obj);
+    }
+}
+
+/* The duel's time limit (a process): after 1650 frames a five-second countdown, then a draw. */
+void func_80109780_2C7700_PirateDuel(void) {
+    s32 i;
+    s32 timer;
+    s32 secs;
+
+    for (i = 0; i < 1650; i++) {
+        if (D_80109D70_2C7CF0_PirateDuel != 0) {
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    }
+    secs = 5;
+    timer = 30;
+    func_8006961C_6A21C(func_800691FC_69DFC(10, 5, 160, 28), 154.0f, 28.0f);
+    PlaySound(8);
+    do {
+        if (--timer == 0) {
+            timer = 30;
+            secs--;
+        }
+        func_8006D4D0_6E0D0(secs);
+        if (D_80109D70_2C7CF0_PirateDuel != 0) {
+            func_8006D518_6E118();
+            omDelPrcObj(NULL);
+        }
+        HuPrcVSleep();
+    } while (secs > 0);
+    func_8006D518_6E118();
+    if (D_8010A060_2C7FE0_PirateDuel != 0) {
+        func_800794A8_7A0A8(30);
+    }
+    D_80109D70_2C7CF0_PirateDuel = 1;
+    D_80109DC8_2C7D48_PirateDuel = 1;
+    omDelPrcObj(NULL);
+}
