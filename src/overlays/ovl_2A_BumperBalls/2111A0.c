@@ -867,7 +867,115 @@ void func_80105700_2140A0_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = &func_80105948_2142E8_BumperBalls;
 }
 
+/* case 4's arrival test: retail joins both compares at one bc1f (j to the branch); GCC here
+   branches in each arm (+5 instructions). Everything else matches (MP1 func_800F87F4 is NON_MATCHING too) */
+#ifdef NON_MATCHING
+void func_80105948_2142E8_BumperBalls(omObjData* object) {
+    BumperBallsBoatWork* work = object->unk_50;
+    omObjData* ball = D_8010A29C_218C3C_BumperBalls[work->player];
+    BumperBallsWork* ballWork = ball->unk_50;
+    f32 x;
+
+    if (ballWork->unk_00 != 4 && ballWork->unk_00 != 5) {
+        return;
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        func_8002A15C_2AD5C(object->model[work->model], object->model[work->model2], HuMathSin(work->angle));
+        return;
+    }
+    switch (work->state) {
+    case 0:
+        work->state = 1;
+        if (ball->trans.x < 0.0f) {
+            work->side = 1;
+            work->dx = 10.0f;
+            x = -1200.0f;
+            if (ball->trans.x <= -1200.0f) {
+                x = -1360.0f;
+            }
+        } else {
+            work->side = 0;
+            work->dx = -10.0f;
+            x = 1200.0f;
+            if (ball->trans.x >= 1200.0f) {
+                x = 1360.0f;
+            }
+        }
+        omSetTra(object, x, -150.0f, ball->trans.z);
+        work->endX = x;
+        func_800298A4_2A4A4(object->model[work->model], 4, 0);
+        break;
+    case 1:
+        object->trans.x = HuMathSin(work->angle) * 4.0f + work->dx + object->trans.x;
+        if (func_800B1830_B2430((ball->trans.x - object->trans.x) * (ball->trans.x - object->trans.x)
+                                + (ball->trans.z - object->trans.z) * (ball->trans.z - object->trans.z)) <= 80.0f) {
+            work->state = 3;
+            if (work->side == 1) {
+                work->model2 = 3;
+            } else {
+                work->model2 = 5;
+            }
+            work->angle = 0.0f;
+            work->speed = 5.0f;
+            func_80076E54_77A54(ball, 1);
+            work->dy = (ball->trans.y - object->trans.y) / (90.0f / work->speed);
+        }
+        break;
+    case 3:
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y + work->dy, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y + work->dy, object->trans.z);
+        }
+        if (work->angle + work->speed >= 90.0f) {
+            work->state = 2;
+            func_800298A4_2A4A4(object->model[work->model], 4, 4);
+            if (work->side == 1) {
+                work->model = 3;
+                work->model2 = 4;
+            } else {
+                work->model = 5;
+                work->model2 = 6;
+            }
+            work->angle = 0.0f;
+            work->speed = 15.0f;
+            object->trans.y += 20.0f;
+            func_800298A4_2A4A4(object->model[work->model], 4, 0);
+        }
+        break;
+    case 2:
+        work->state = 4;
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
+        }
+        break;
+    case 4:
+        object->trans.x = object->trans.x - (HuMathSin(work->angle) * 4.0f + work->dx);
+        if (work->side == 1) {
+            omSetTra(ball, object->trans.x + 80.0f, object->trans.y, object->trans.z);
+        } else {
+            omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
+        }
+        if ((work->side == 1) ? (object->trans.x < work->endX) : (object->trans.x > work->endX)) {
+            func_800298A4_2A4A4(object->model[work->model], 4, 4);
+            work->state = 5;
+        }
+        break;
+    case 5:
+        return;
+    }
+    func_8002A15C_2AD5C(object->model[work->model], object->model[work->model2], HuMathSin(work->angle));
+    func_80029714_2A314(object->model[work->model], object->trans.x, object->trans.y, object->trans.z);
+    work->angle += work->speed;
+    if (work->angle >= 360.0f) {
+        work->angle -= 360.0f;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105948_2142E8_BumperBalls);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105EBC_21485C_BumperBalls);
 

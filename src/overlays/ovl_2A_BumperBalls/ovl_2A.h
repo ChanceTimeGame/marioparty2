@@ -66,6 +66,8 @@ s16 func_800797DC_7A3DC(s32, s16); /* MP1 func_80060618: player voice */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 f32 func_80029CE4_2A8E4(s16); /* model motion time */
 f32 func_80029D0C_2A90C(s16); /* model motion length */
+void func_8002A15C_2AD5C(s16 arg0, s16 arg1, f32 arg2); /* MP1 func_80026174: blend two models */
+void func_80076E54_77A54(omObjData*, s32); /* MP1 func_8005DC18 */
 
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
