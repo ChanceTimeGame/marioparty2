@@ -237,6 +237,7 @@ extern Vec D_8010FDC8_342A08_name_4F; /* the doors' start */
 extern Vec D_8010FDD4_342A14_name_4F; /* the doors' end */
 extern Vec D_8010FDE0_342A20_name_4F;
 extern u32 D_8010FDEC_342A2C_name_4F[];
+extern Vec D_8010FE08_342A48_name_4F; /* board 1: the winner alone */
 extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */
 extern const char D_801103BC_342FFC_name_4F[]; /* "item_hook" (336DE0.c, board 1's copy) */
 void func_80026D50_27950(s16, u8, u8);

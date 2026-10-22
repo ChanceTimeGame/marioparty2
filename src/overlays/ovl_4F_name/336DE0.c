@@ -926,9 +926,90 @@ void func_80106840_339480_name_4F(void) {
 __asm__(".section .rodata");
 const char D_801103BC_342FFC_name_4F[] = "item_hook";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801072C0_339F00_name_4F);
+/* Board 1: the winner alone with the item hook, camera on them, the "<name>" message 0x2D6. */
+void func_801072C0_339F00_name_4F(void) {
+    Vec v;
+    MBModel* model;
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010763C_33A27C_name_4F);
+    func_80050E00_51A00(14);
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    MBPlayerModelCreate(D_80110564_3431A4_name_4F, D_8010FD10_342950_name_4F[gPlayers[D_80110564_3431A4_name_4F].character], 2);
+    func_8005ABC0_5B7C0(&gPlayers[D_80110564_3431A4_name_4F], 2, 11);
+    func_80043DAC_449AC(OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F));
+    gPlayers[D_80110564_3431A4_name_4F].flags |= 2;
+    MBMotionSet(OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F), 0, 2);
+    func_8002D1EC_2DDEC(*OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F)->obj->model, 1);
+    model = OVL4F_PLAYER_MODEL(D_80110564_3431A4_name_4F);
+    MBMotionSet(model, 0, 2);
+    model->pos.x = D_8010FE08_342A48_name_4F.x;
+    model->pos.y = D_8010FE08_342A48_name_4F.y;
+    model->pos.z = D_8010FE08_342A48_name_4F.z;
+    D_8011058A_3431CA_name_4F = LoadFormFile(0xA01A2, 0x499);
+    func_8002D1EC_2DDEC(D_8011058A_3431CA_name_4F, 1);
+    func_8005AA48_5B648(model, D_801103BC_342FFC_name_4F, D_8011058A_3431CA_name_4F);
+    MBModelDispOn(model);
+    func_80026E00_27A00(1, 7.0f, -19.0f, 118.0f);
+    PlayMusic(0x3B);
+    v.x = 0.0f;
+    v.y = 105.0f;
+    v.z = 0.0f;
+    func_8005A950_5B550(&v, 3.0f, 1.0f, 8);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x2D6);
+    win = func_8005AAC0_5B6C0(45, 40, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    func_800890CC_89CCC(win, 0x2D6, -1, -1);
+    PlaySound(0xE7);
+    HuPrcSleep(6);
+    PlaySound(0xE7);
+    HuPrcSleep(54);
+    func_8008CCA8_8D8A8(win);
+    MBModelDispOff(model);
+    func_800298A4_2A4A4(D_8011058A_3431CA_name_4F, 4, 4);
+    MBDBackKill();
+}
+
+/* Board 1: back to the host, message 0x2D7; the item-hook carrier walks off to the doors. */
+void func_8010763C_33A27C_name_4F(void) {
+    s32 win;
+    s32 n;
+    s32 t;
+
+    func_80050E00_51A00(13);
+    t = 0;
+    func_8005321C_53E1C(80.0f, 8000.0f);
+    func_80026E00_27A00(1, 30.0f, 85.0f, -78.0f);
+    MBModelDispOn(D_80110568_3431A8_name_4F);
+    MBModelDispOn(D_80110580_3431C0_name_4F);
+    MBModelDispOn(D_80110440_343080_name_4F);
+    func_800298A4_2A4A4(D_80110584_3431C4_name_4F, 4, 0);
+    func_8008D974_8E574(D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    func_8008DACC_8E6CC(1, D_80110586_3431C6_name_4F, 0x2D7);
+    win = func_8005AAC0_5B6C0(80, 40, D_80110586_3431C6_name_4F[0], D_80110586_3431C6_name_4F[1]);
+    func_800890CC_89CCC(win, 0x2D7, -1, -1);
+    func_80089308_89F08(win, D_800CC5F8[gPlayers[D_80110564_3431A4_name_4F].character], 0);
+    PlaySound(0x123);
+    HuPrcSleep(50);
+    MBMotionShiftSet(D_80110580_3431C0_name_4F, 0, 0, 5, 2);
+    func_80056658_57258(&D_80110580_3431C0_name_4F->pos, &D_8010FDD4_342A14_name_4F, &D_80110580_3431C0_name_4F->rot);
+    n = 0;
+    while (func_8005A5E8_5B1E8(D_80110580_3431C0_name_4F, &D_8010FDD4_342A14_name_4F, 20.0f) == 0) {
+        if (++n == 17) {
+            PlaySound(0x3B6);
+            n = 0;
+        }
+        if (++t == 10) {
+            func_8008CCA8_8D8A8(win);
+        }
+        HuPrcVSleep();
+    }
+    MBModelDispOff(D_80110580_3431C0_name_4F);
+    MBModelDispOff(D_80110568_3431A8_name_4F);
+    MBModelDispOff(D_80110440_343080_name_4F);
+    func_800298A4_2A4A4(D_80110584_3431C4_name_4F, 4, 4);
+    MBDBackKill();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_801078B0_33A4F0_name_4F);
 
