@@ -1287,7 +1287,39 @@ void func_80106EAC_31135C_name_49(void) {
     omDelPrcObj(NULL);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80106FC4_311474_name_49);
+void func_80106FC4_311474_name_49(void) {
+    struct unk_8003B8D4Struct* prompt;
+    s32 dir;
+    s32 i;
+    s32 n;
+    DecisionTreeNonLeafNode* tree;
+
+    MBPlayerMotionSet(-1, -1, 2);
+    HuPrcVSleep();
+    func_80103F1C_30E3CC_name_49();
+    prompt = func_80041A74_42674(GwSystem.current_player_index, D_80113364_31D814_name_49);
+    func_800417EC_423EC(prompt, GwSystem.current_player_index, 0);
+    if (PlayerIsCPU(-1) != 0) {
+        if (GwSystem.current_player_index == 4) {
+            tree = D_801132B0_31D760_name_49;
+        } else {
+            tree = D_801130AC_31D55C_name_49;
+        }
+        n = (s16)func_80044800_45400(tree);
+        for (i = 0; i < n; i++) {
+            func_80041610_42210(prompt, -2);
+        }
+        func_80041610_42210(prompt, -4);
+    }
+    dir = DirectionPrompt(prompt);
+    func_8004108C_41C8C(prompt);
+    func_80103FEC_30E49C_name_49();
+    if (dir == 0) {
+        SetNextChainAndSpace(-1, 0xD, 0);
+    } else {
+        SetNextChainAndSpace(-1, 0xF, 0);
+    }
+}
 
 void func_801070D4_311584_name_49(void) {
     struct unk_8003B8D4Struct* prompt;

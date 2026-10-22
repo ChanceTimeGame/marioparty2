@@ -520,6 +520,9 @@ extern s32 D_80114A80_31EF30_name_49;
 extern u8* D_80114A84_31EF34_name_49;
 
 /* data the copied twins use */
+extern s16 D_80113364_31D814_name_49[]; /* as D_801120E0_2A73B0_name_3E */
+extern DecisionTreeNonLeafNode D_801130AC_31D55C_name_49[]; /* as D_80111C3C_2A6F0C_name_3E */
+extern DecisionTreeNonLeafNode D_801132B0_31D760_name_49[]; /* as D_80111F84_2A7254_name_3E */
 extern DecisionTreeNonLeafNode D_80112EFC_31D3AC_name_49[]; /* as D_80111C3C_2A6F0C_name_3E */
 extern DecisionTreeNonLeafNode D_80112FC8_31D478_name_49[]; /* as D_80111C3C_2A6F0C_name_3E */
 extern DecisionTreeNonLeafNode D_8011316C_31D61C_name_49[]; /* as D_80111C3C_2A6F0C_name_3E */
