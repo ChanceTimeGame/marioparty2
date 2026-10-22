@@ -1427,7 +1427,7 @@ segments:
     subsegments:
       - [0x306BA0, c]
       - [0x30C870, data]
-      - [0x30CB50, .rodata, 306BA0]
+      - [0x30CB30, .rodata, 306BA0]
       - {0x30CCB0, type: bss, vram: 0x80108910, name: ovl_48_bss}
   - type: code
     start: 0x30CCB0

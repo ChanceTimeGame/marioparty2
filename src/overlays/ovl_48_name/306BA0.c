@@ -2,7 +2,7 @@
 #include "ovl_48.h"
 
 void func_80102800_306BA0_name_48(void) {
-    RectF scissor = D_80108790_30CB30_name_48;
+    RectF scissor = { 8.0f, 8.0f, 312.0f, 232.0f };
 
     omInitObjMan(40, 15);
     func_80079128_79D28();
@@ -118,6 +118,9 @@ void func_80102C28_306FC8_name_48(void) {
     Hu3DCamSetPositionOrientation(0, &pos, &rot, &up);
     Hu3DCamUpdateMtx(0);
 }
+
+__asm__(".section .rodata");
+const u32 D_801087A0_30CB40_name_48[4] = { 0xC1F00000, 0x41F00000, 0x42480000, 0xC2480000 };
 
 __asm__(".section .rodata");
 const u32 D_801087B0_30CB50_name_48[3] = { 0x00000002, 0x000800A7, 0x000800AA };

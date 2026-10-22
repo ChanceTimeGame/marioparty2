@@ -276,8 +276,6 @@ extern s16 D_80108768_30CB08_name_48;
 extern s16 D_8010876A_30CB0A_name_48[7];
 extern s32 D_80108778_30CB18_name_48;
 extern f32 D_8010877C_30CB1C_name_48[5];
-extern RectF D_80108790_30CB30_name_48; /* the scene's scissor */
-extern f32 D_801087A0_30CB40_name_48[4];
 
 /* ---- 48 bss (asm/data/overlays/ovl_48_name/ovl_48_bss.bss.s) ---- */
 
