@@ -1629,10 +1629,128 @@ void func_80107BCC_DF65C_BowserSlots(s32 model, s32 model2, f32 angle, f32 amp, 
     func_801079B8_DF448_BowserSlots(model, angle, amp, squash);
 }
 
-__asm__(".section .rodata");
-const u32 D_8010BE08_E3898_BowserSlots[8] = { 0x00000001, 0x00000001, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001 };
+/* Builds a reel model (model file 0xC1) from the part `part` of `model`: a copy of the part's
+   vertices per frame buffer with texture coordinates for one sprite frame per quad, and a display
+   list drawing each quad with the frame of items[face], the face being the one the quad points to. */
+s32 func_80107D68_DF7F8_BowserSlots(u16 model, u16 anim, char* part, u8* items) {
+    s32 uv[4][2] = { { 1, 1 }, { 1, 0 }, { 0, 0 }, { 0, 1 } };
+    f32 angles[16];
+    HmfData* dst;
+    HuSprite_Unk84_Struct* spr;
+    Gfx* buf;
+    Gfx* gfx;
+    s32 idx;
+    HmfData* hmf;
+    s32 p;
+    s32 n;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    HmfVtx* to;
+    HmfVtx* from;
+    HmfMotionObj* obj;
+    f32 sy;
+    f32 sz;
+    s32 size;
+    s32 face;
+    s32 sel;
+    s32* t;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80107D68_DF7F8_BowserSlots);
+    spr = SprAnimGet(anim);
+    buf = gfx = HuMemAlloc(0x10000);
+    idx = func_80027FA4_28BA4(0xC1, buf, 4);
+    dst = BS_MODEL(idx)->hmf;
+    dst->unk64->unk50 |= 0x01000000;
+    hmf = BS_MODEL(model)->hmf;
+    p = func_80038398_38F98(hmf, part);
+    n = hmf->unk64[p].unk0C;
+    frame = &spr->unk00[*items];
+    for (j = 0; j < D_800FDBCA_FE7CA; j++) {
+        to = dst->unk44[j] = func_80027154_27D54(n * 16, dst->unk0E);
+        from = &hmf->unk40[hmf->unk64[p].unk0A];
+        sy = sz = 0.0f;
+        for (i = 0; i < n; i++, to++) {
+            *to = *from++;
+            t = uv[i & 3];
+            to->unk08 = (frame->unk04 * t[0]) << 6;
+            to->unk0A = (frame->unk06 * t[1]) << 6;
+            if (j == 0) {
+                if ((i & 3) == 0) {
+                    sy = sz = 0.0f;
+                }
+                sy += to->unk02;
+                sz += to->unk04;
+                if ((i & 3) == 3) {
+                    angles[i >> 2] = func_800B75A8_B81A8(sz * 0.25, sy * 0.25);
+                    if (angles[i >> 2] < 0.0) {
+                        angles[i >> 2] += 360.0;
+                    }
+                }
+            }
+        }
+    }
+    gSPDisplayList(gfx++, osVirtualToPhysical(D_8010B9C0_E3450_BowserSlots));
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, G_CULL_BOTH | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR | G_SHADING_SMOOTH);
+    gDPSetColorDither(gfx++, G_CD_MAGICSQ);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_NONE);
+    gDPSetBlendColor(gfx++, 0x01, 0x01, 0x01, 0x01);
+    gDPPipeSync(gfx++);
+    gDPSetRenderMode(gfx++, G_RM_ZB_OPA_SURF, G_RM_NOOP2);
+    gDPSetCombineLERP(gfx++, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
+    gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+    gDPPipeSync(gfx++);
+    gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+    gDPSetTexturePersp(gfx++, G_TP_PERSP);
+    gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(gfx++, spr->unk0C);
+    gDPPipeSync(gfx++);
+    for (j = 0; j < n >> 2; j++) {
+        sel = 0;
+        for (face = 0; face < 8; face++) {
+            if (func_8010B2FC_E2D8C_BowserSlots(angles[j], (7 - face) * 45.0) < 10.0) {
+                sel = face;
+                break;
+            }
+        }
+        if ((u32)sel >= 8) {
+            sel = 7;
+        }
+        if (items[sel] >= spr->unk10) {
+            items[sel] = spr->unk10 - 1;
+        }
+        frame = &spr->unk00[items[sel]];
+        gSPSegment(gfx++, 0x04, osVirtualToPhysical(frame->unk00));
+        gDPLoadTextureBlock(gfx++, 0x04000000, G_IM_FMT_CI, G_IM_SIZ_8b, frame->unk04, frame->unk06, 0,
+                            G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                            G_TX_NOLOD, G_TX_NOLOD);
+        gDPPipeSync(gfx++);
+        gSPSegment(gfx++, 0x01, osVirtualToPhysical(&dst->unk44[0][j * 4]));
+        gSPVertex(gfx++, 0x01000000, 4, 0);
+        gSP2Triangles(gfx++, 0, 2, 1, 0, 0, 3, 2, 0);
+    }
+    gSPClearGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH | G_CLIPPING | 0x0040F9FA);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_TEXTURE_GEN_LINEAR);
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    size = (u32)gfx - (u32)buf;
+    dst->unk3C->unk00[0] = func_80027154_27D54(size, dst->unk0E);
+    bcopy(buf, dst->unk3C->unk00[0], size);
+    HuMemFree(buf);
+    obj = func_8002A9F4_2B5F4(model, part);
+    func_800B37C0_B43C0(BS_MODEL(model)->mtx);
+    BS_MODEL(idx)->mtx[12] = obj->unk58[3][0];
+    BS_MODEL(idx)->mtx[13] = obj->unk58[3][1];
+    BS_MODEL(idx)->mtx[14] = obj->unk58[3][2];
+    return (u16)idx;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_8010879C_E022C_BowserSlots);
 

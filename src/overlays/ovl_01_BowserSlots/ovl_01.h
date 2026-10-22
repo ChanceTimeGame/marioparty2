@@ -15,6 +15,7 @@
 #include "game/hmfman.h"
 #include "game/pad.h"
 #include "game/data.h"
+#include "game/sprite.h"
 
 /* ---- main-segment API used by 01 ---- */
 
@@ -98,7 +99,7 @@ void func_80029A8C_2A68C(s16);
 void func_8002A00C_2AC0C(s16);
 void func_80029F2C_2AB2C(s16, s32);
 void func_8002A15C_2AD5C(s16 arg0, s16 arg1, f32 arg2);
-void* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
+HmfMotionObj* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80030CD4_318D4(Matrix4f, Matrix4f);
 u16 func_80078EA8_79AA8(void);
@@ -286,6 +287,13 @@ void func_80106B30_DE5C0_BowserSlots(omObjData* obj);
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 f32 func_800B7890_B8490(f32); /* cos */
 extern u8 D_800FDBE0_FE7E0; /* current vertex buffer */
+extern u8 D_800FDBCA_FE7CA; /* vertex buffer count */
+void* HuMemAlloc(s32 size);
+void HuMemFree(void* ptr);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, the caller here does not re-extend it */
+s16 func_80038398_38F98(HmfData* hmf, char* name); /* part index by name */
+void func_800B37C0_B43C0(f32* mtx); /* identity */
+extern Gfx D_8010B9C0_E3450_BowserSlots[];
 
 /* D_8010C0E4: one per vertex of the wobbling model (func_80107740) */
 typedef struct BSVtxWeight {
