@@ -52,6 +52,8 @@ s32 BoardSpaceGet(s32 index, s32 count);
 void HidePlayerHUDVisibility(s32 arg0, s32 arg1);
 void CameraScissorSet(s16 camIndex, RectF* rect);
 void func_80054040_54C40(s16 arg0, s16 arg1); /* camera shake offset */
+void func_800796F0_7A2F0(s16 arg0, s16 arg1); /* sound pitch */
+void func_8002D0A0_2DCA0(s16 model, u8 alpha);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 f32 HuMathSin(f32);
@@ -301,6 +303,7 @@ extern s32 D_80108980_30CD20_name_48[2];
 extern s32 D_80108988_30CD28_name_48; /* CPU pad triggers */
 extern s32 D_80108BEC_30CF8C_name_48; /* no referee (flag 0x17 clear) */
 /* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
+extern s32 D_80108968_30CD08_name_48; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
 extern s32 D_80108970_30CD10_name_48[4]; /* presses, per player */
 extern s16 D_80108990_30CD30_name_48[2][150]; /* per duelist: the frames a CPU presses on */
 extern MBModel* D_80108BF4_30CF94_name_48; /* the referee's hat (scaled away) */

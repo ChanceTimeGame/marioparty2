@@ -629,7 +629,108 @@ const u32 D_80108838_30CBD8_name_48[3] = { 0x3FB33333, 0x3F800000, 0x3F800000 };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80106A64_30AE04_name_48);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_48_name/306BA0", func_80106DEC_30B18C_name_48);
+/* The mash, one frame: a duelist presses A and B alternately (a CPU presses on its timeline's
+   marked frames); each press raises the duelist's sound pitch (presses / 80 * 500, up to 500),
+   swaps the A/B prompt and speeds the arrows up. The six arrows shrink from 1.4 towards 1.1 and
+   fade in; one that reaches 1.25 restarts the arrow two behind it. After 150 frames the one with
+   more presses wins (D_80108968: 2 the challenger, 3 the opponent); a tie is a draw (1) at zero
+   presses and a coin toss otherwise. */
+void func_80106DEC_30B18C_name_48(omObjData* obj) {
+    s32 btn[2] = { 0x8000, 0x4000 };
+    MashWork* work;
+    f32 speed;
+    s32 i;
+    s32 j;
+
+    work = obj->unk_50;
+    speed = 0.005f;
+    if ((!(gPlayers[D_80108930_30CCD0_name_48].flags & 1) &&
+         (ContBtnTrg[gPlayers[D_80108930_30CCD0_name_48].port] & btn[D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] & 1])) ||
+        ((gPlayers[D_80108930_30CCD0_name_48].flags & 1) && D_80108990_30CD30_name_48[0][work->frame] != 0)) {
+        D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48]++;
+        D_80108C1C_30CFBC_name_48[0] = (f32)D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] / 80.0f * 500.0f;
+        if (D_80108C1C_30CFBC_name_48[0] > 500.0f) {
+            D_80108C1C_30CFBC_name_48[0] = 500;
+        }
+        func_800796F0_7A2F0(D_80108C18_30CFB8_name_48[0], D_80108C1C_30CFBC_name_48[0]);
+        if (D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] & 1) {
+            espDispOff(D_80108C0E_30CFAE_name_48[0]);
+            espDispOn(D_80108C12_30CFB2_name_48[0]);
+        } else {
+            espDispOn(D_80108C0E_30CFAE_name_48[0]);
+            espDispOff(D_80108C12_30CFB2_name_48[0]);
+        }
+        speed += 0.01f;
+    }
+    if ((!(gPlayers[D_80108934_30CCD4_name_48].flags & 1) &&
+         (ContBtnTrg[gPlayers[D_80108934_30CCD4_name_48].port] & btn[D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48] & 1])) ||
+        ((gPlayers[D_80108934_30CCD4_name_48].flags & 1) && D_80108990_30CD30_name_48[1][work->frame] != 0)) {
+        D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48]++;
+        D_80108C1C_30CFBC_name_48[1] = (f32)D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48] / 80.0f * 500.0f;
+        if (D_80108C1C_30CFBC_name_48[1] > 500.0f) {
+            D_80108C1C_30CFBC_name_48[1] = 500;
+        }
+        func_800796F0_7A2F0(D_80108C18_30CFB8_name_48[1], D_80108C1C_30CFBC_name_48[1]);
+        if (D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48] & 1) {
+            espDispOff(D_80108C0E_30CFAE_name_48[1]);
+            espDispOn(D_80108C12_30CFB2_name_48[1]);
+        } else {
+            espDispOn(D_80108C0E_30CFAE_name_48[1]);
+            espDispOff(D_80108C12_30CFB2_name_48[1]);
+        }
+        speed += 0.01f;
+    }
+    for (i = 0; i < 6; i++) {
+        if (D_80108C20_30CFC0_name_48[i] > 1.1f) {
+            D_80108C20_30CFC0_name_48[i] -= speed;
+            if (D_80108C20_30CFC0_name_48[i] < 1.1f) {
+                func_800298A4_2A4A4(D_80108C00_30CFA0_name_48[i], 4, 4);
+            }
+        }
+        if (D_80108C20_30CFC0_name_48[i] <= 1.25f) {
+            j = i - 2;
+            if (j < 0) {
+                j = i + 4;
+            }
+            if (D_80108C20_30CFC0_name_48[j] <= 1.1f) {
+                D_80108C20_30CFC0_name_48[j] = 1.4f;
+                work->alpha[j] = 0;
+                func_800298A4_2A4A4(D_80108C00_30CFA0_name_48[j], 4, 0);
+            }
+        }
+        func_800297E8_2A3E8(D_80108C00_30CFA0_name_48[i], D_80108C20_30CFC0_name_48[i], D_80108C20_30CFC0_name_48[i], D_80108C20_30CFC0_name_48[i]);
+        func_8002D0A0_2DCA0(D_80108C00_30CFA0_name_48[i], work->alpha[i]);
+        work->alpha[i] += work->fade;
+        if (work->alpha[i] > 255) {
+            work->alpha[i] = 255;
+        }
+    }
+    if (++work->frame == 150) {
+        if (D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] > D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48]) {
+            D_80108968_30CD08_name_48 = 2;
+        }
+        if (D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] < D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48]) {
+            D_80108968_30CD08_name_48 = 3;
+        }
+        if (D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] == D_80108970_30CD10_name_48[D_80108934_30CCD4_name_48]) {
+            if (D_80108970_30CD10_name_48[D_80108930_30CCD0_name_48] == 0) {
+                D_80108968_30CD08_name_48 = 1;
+            } else if (rand8() & 1) {
+                D_80108968_30CD08_name_48 = 3;
+            } else {
+                D_80108968_30CD08_name_48 = 2;
+            }
+        }
+        for (i = 0; i < 2; i++) {
+            espDispOff(D_80108C0E_30CFAE_name_48[i]);
+            espDispOff(D_80108C12_30CFB2_name_48[i]);
+        }
+        for (i = 0; i < 6; i++) {
+            func_800298A4_2A4A4(D_80108C00_30CFA0_name_48[i], 4, 4);
+        }
+        omDelObj(obj);
+    }
+}
 
 s32 func_80107508_30B8A8_name_48(void) {
     s32 cand[4];
