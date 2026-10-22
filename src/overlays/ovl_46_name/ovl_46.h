@@ -1,14 +1,12 @@
 #ifndef _OVL_46_H
 #define _OVL_46_H
 
-/* Overlay 42 (2C0780.c): board 41's duel scene, the successor of board 3E's (overlay 3F, ovl_3F.h):
-   a stand-alone scene (its own omInitObjMan) with a referee. The challenger
-   (D_800F8D1A.attacker) picks an opponent when several are eligible, both stake coins, then the
-   duel is played (fork B's processes 80109214/80109780/801064E8) until D_80109DC8 decides it;
-   the winner takes both stakes. The result is left for the board in D_800FC880 (winner) and
-   D_800F8C5C (loser), -1 both for a draw.
-   The unit's .rodata is carved ([0x2C7B40, .rodata, 2C0780]); leftovers are defined raw in C by
-   tools/mp2rodefs.py beside their first user. */
+/* Overlay 46 (2F1730.c): board 45's duel scene, 42's flow (ovl_42.h) with a timing game: a target
+   of 2-5 seconds is shown, each duelist presses A once and the press nearer the target wins
+   (D_80108230: 1 draw, 2 challenger, 3 opponent). The result is left for the board in D_800FC880
+   (winner) and D_800F8C5C (loser), -1 both for a draw.
+   The unit's .rodata is carved ([0x2F6FB0, .rodata, 2F1730]: the flow's first local initialiser);
+   leftovers are defined raw in C by tools/mp2rodefs.py beside their first user. */
 
 #include "common.h"
 #include "game/board.h"
@@ -19,7 +17,7 @@
 #include "game/hmfman.h"
 #include "game/data.h"
 
-/* ---- main-segment API used by 42 ---- */
+/* ---- main-segment API ---- */
 
 #define PLAYER_MODEL(i) ((MBModel*)gPlayers[i].unk_24)
 
@@ -149,9 +147,9 @@ void omSetRot(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 int sprintf(char* dst, const char* fmt, ...);
 
-/* ---- 42 work types ---- */
+/* ---- work types (42's) ---- */
 
-/* Status-window layouts (D_801098A0): four slots as from/to positions, and the frames the move
+/* Status-window layouts (D_80107DD0): four slots as from/to positions, and the frames the move
    takes (ovl_3F.h's Unk3FStatusLayout). */
 typedef struct PdStatusLayout {
     /* 0x00 */ s16 pos[4][4]; /* x0, y0, x1, y1; -1 keeps the current value */
@@ -159,7 +157,7 @@ typedef struct PdStatusLayout {
     /* 0x22 */ s16 frames;
 } PdStatusLayout; /* size 0x24 */
 
-/* func_80105694's shrinking-hat object (ovl_3F.h's Unk3FShrink). */
+/* func_80105368's shrinking-hat object (ovl_3F.h's Unk3FShrink). */
 typedef struct PdShrink {
     /* 0x00 */ s32 timer;
     /* 0x04 */ f32 scaleSpeed;
@@ -168,7 +166,7 @@ typedef struct PdShrink {
     /* 0x10 */ s32 unk10;
 } PdShrink; /* size 0x14 */
 
-/* ---- 42-B ---- */
+/* ---- more main-segment API ---- */
 
 extern u16 ContBtnTrg[];
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
@@ -188,7 +186,7 @@ void func_800794A8_7A0A8(s32);
 void MBVecNormalize(Vec*);
 void omSetTra(omObjData*, f32, f32, f32);
 
-/* The CPU input script (func_801070F4/func_80107724; ovl_3F.h's Unk3FCpuInput): mode 0 presses
+/* The CPU input script (func_8010675C/func_80106D8C; ovl_3F.h's Unk3FCpuInput): mode 0 presses
    Start, 2 moves the cursor to an opponent and presses A, 3 raises the stake to a target. */
 typedef struct PdCpuInput {
     /* 0x00 */ s32 timer;
@@ -197,40 +195,11 @@ typedef struct PdCpuInput {
     /* 0x0C */ s32 mode;
 } PdCpuInput; /* size 0x10 */
 
-/* func_801062FC's timeline object (func_80106B5C). */
-typedef struct PdTimeline {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 frame; /* 0..149 */
-} PdTimeline; /* size 0x08 */
 
-/* func_801088FC's slide (func_80108F98). */
-typedef struct PdSlideWork {
-    /* 0x00 */ s32 count;
-    /* 0x04 */ s32 player;
-    /* 0x08 */ f32 x;     /* the shadow's x at the start */
-    /* 0x0C */ s32 frame;
-    /* 0x10 */ f32 offs[100];
-} PdSlideWork; /* size 0x1A0 */
 
-/* A move sprite's pop (func_80109344/func_801093D8) or a wrong move's pause
-   (func_801094D4/func_80109648). */
-typedef struct PdMoveWork {
-    /* 0x00 */ s32 side;  /* 0 the challenger, 1 the opponent */
-    /* 0x04 */ s32 timer;
-    /* 0x08 */ s32 slot;  /* the move's sprite; for a wrong move, the player */
-    /* 0x0C */ f32 angle;
-} PdMoveWork; /* size 0x10 */
 
-/* A streak of the effect func_80108000 (ovl_4F.h's Ovl4FStreak). */
-typedef struct PdStreak {
-    /* 0x00 */ u8 col[3][4]; /* the vertices' colours; fade each frame */
-    /* 0x0C */ Vec pos;
-    /* 0x18 */ f32 len;
-    /* 0x1C */ Vec dir;
-    /* 0x28 */ f32 speed;
-} PdStreak; /* size 0x2C */
 
-/* Wait for the step flag (D_80109D70) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
+/* Wait for the step flag (D_801081D0) / for the message to finish (3F's WAIT_STEP/WAIT_MESSAGE). */
 #define PD_WAIT_STEP()                           \
     while (TRUE) {                               \
         if (D_801081D0_2F7100_name_46 != 0) { \
@@ -244,7 +213,7 @@ typedef struct PdStreak {
         HuPrcVSleep();                                                        \
     }
 
-/* ---- 42 data (asm/data/overlays/ovl_42_PirateDuel/2C7820.data.s) ---- */
+/* ---- 46 data (asm/data/overlays/ovl_46_name/2F6D00.data.s) ---- */
 
 extern PdStatusLayout D_80107DD0_2F6D00_name_46[8];
 extern u32* D_80107F98_2F6EC8_name_46[6]; /* per character: motion list (count, files) */
@@ -258,11 +227,11 @@ extern Vec D_80108020_2F6F50_name_46[2]; /* the time panels */
 extern Vec D_80108038_2F6F68_name_46[3]; /* the stands */
 extern Vec D_8010805C_2F6F8C_name_46[3]; /* the buttons */
 
-/* ---- 42 bss (asm/data/overlays/ovl_42_PirateDuel/ovl_42_bss.bss.s) ---- */
+/* ---- 46 bss (asm/data/overlays/ovl_46_name/ovl_46_bss.bss.s) ---- */
 
 extern s32 D_801081D0_2F7100_name_46; /* a step finished */
 extern s32 D_801081D4_2F7104_name_46; /* the stake */
-/* func_80104B88's message: window x and y (stored as s32, read as s16), variant, id, the
+/* func_80104880's message: window x and y (stored as s32, read as s16), variant, id, the
    player it names. */
 extern s32 D_801081D8_2F7108_name_46;
 extern s32 D_801081DC_2F710C_name_46;
@@ -278,10 +247,9 @@ extern s32 D_80108210_2F7140_name_46[4]; /* opponents to choose from */
 extern s32 D_80108220_2F7150_name_46; /* the minimum stake */
 extern s32 D_80108224_2F7154_name_46; /* the turn */
 extern s32 D_80108234_2F7164_name_46; /* the poorer player's coins */
-extern s32 D_80108240_2F7170_name_46[2];
+extern s32 D_80108240_2F7170_name_46[2]; /* cleared by the setup, otherwise unused */
 extern s32 D_80108248_2F7178_name_46; /* CPU pad triggers */
 extern s32 D_8010826C_2F719C_name_46; /* no referee (flag 0x17 clear) */
-/* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern s32 D_80108298_2F71C8_name_46; /* a number shown by message variant 4 */
 extern MBModel* D_80108278_2F71A8_name_46; /* the referee's hat (scaled away) */
 
