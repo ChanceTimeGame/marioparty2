@@ -308,13 +308,23 @@ void func_80052E68_53A68(f32); /* MBCameraZoomSet */
 u16 MBDCameraPos3DSet(Vec*);
 extern f32 D_801102EC_342F2C_name_4F[2];     /* the two swing angles of func_8010AED4 */
 void func_80029C74_2A874(s16, f32);
+extern s32 D_8011007C_342CBC_name_4F;
+extern Vec D_801102F4_342F34_name_4F[6];    /* per character (splat's D_801102F8/FC are fields) */
+extern Vec D_8011033C_342F7C_name_4F[6];    /* per character (splat's D_80110340/44 are fields) */
+extern f32 D_80110384_342FC4_name_4F[2];     /* the two swing angles of func_8010B620 */
+s16 func_8001A2F8_1AEF8(s32 arg0);
+s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+void func_8001AC44_1B844(u16 arg0);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed);
+s32 omDelPrcObj(void*);
 extern const char D_801103DC_34301C_name_4F[]; /* "e000p15_IA44" (80108B30, 8010A8AC, 8010B620) */
 /* fork D (inferred) */
 void func_8010C7CC_33F40C_name_4F(void);
 omObjData* func_8010CA90_33F6D0_name_4F(s16 arg0, f32 arg1, f32 arg2, f32 arg3, u8 arg4, u8 arg5, f32 arg6); /* 4F-C: from its asm */
 void func_8010CC2C_33F86C_name_4F(omObjData* obj);
 s16 func_8010CDD4_33FA14_name_4F(s32 file); /* 4F-C: from its asm */
-omObjData* func_8010CE1C_33FA5C_name_4F(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
+omObjData* func_8010CE1C_33FA5C_name_4F(Vec* pos, s16 arg1, f32 arg2, f32 arg3); /* 4F-C: from its asm */
 void func_8010CFC4_33FC04_name_4F(omObjData* obj);
 u16 func_8010D114_33FD54_name_4F(f32 cur, f32 dir, f32 target); /* 4F-C: from its asm */
 void func_8010D15C_33FD9C_name_4F(omObjData* obj);
