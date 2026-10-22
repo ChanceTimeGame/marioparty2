@@ -1,5 +1,26 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010A0A0_218A40_BumperBalls[] = "152_01f_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0AC_218A4C_BumperBalls[] = "152_01e_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0B8_218A58_BumperBalls[] = "152_01d_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0C4_218A64_BumperBalls[] = "152_01c_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0D0_218A70_BumperBalls[] = "152_01b_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0DC_218A7C_BumperBalls[] = "152_01a_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A0E8_218A88_BumperBalls[] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80102800_2111A0_BumperBalls);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80102C5C_2115FC_BumperBalls);
@@ -97,6 +118,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108410
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801084C8_216E68_BumperBalls);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80108500_216EA0_BumperBalls);
+
+__asm__(".section .rodata");
+const char D_8010A220_218BC0_BumperBalls[] = "47mt003_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A22C_218BCC_BumperBalls[] = "47mt002_IA44";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_8010851C_216EBC_BumperBalls);
 
