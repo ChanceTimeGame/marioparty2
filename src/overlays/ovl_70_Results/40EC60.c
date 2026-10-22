@@ -798,9 +798,111 @@ void func_80104D3C_41119C_Results(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105AB8_411F18_Results);
+// retail has the KMC VR4300 mul fix here (a nop before a mult) but 4D3C has not: probably a
+// second file from 80105AB8 (masked 2 with the fix on)
+#ifdef NON_MATCHING
+/* Redraws each player's bonus coin counter with the coins still to count. */
+void func_80105AB8_411F18_Results(void) {
+    s16 left[4];
+    s16 nd[4];
+    s16 digits[4][3];
+    s32 i;
+    s32 j;
+    s16 n;
 
+    for (i = 0; i < 4; i++) {
+        left[i] = D_80107840_413CA0_Results[i] - (gPlayers[i].coins - D_80107860_413CC0_Results[i]);
+        digits[i][0] = ABS(left[i]) / 100;
+        digits[i][1] = (ABS(left[i]) - digits[i][0] * 100) / 10;
+        digits[i][2] = ABS(left[i]) - digits[i][0] * 100 - digits[i][1] * 10;
+        nd[i] = 0;
+        if (ABS(left[i]) >= 10) {
+            nd[i] = 1;
+        }
+        if (ABS(left[i]) >= 100) {
+            nd[i] = 2;
+        }
+    }
+    for (i = 0, n = 2; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            func_800822A8_82EA8(D_80107CF0_414150_Results[i], n, digits[i][j], 0);
+            if (left[i] == 0) {
+                SprPosSet(D_80107CF0_414150_Results[i], n, D_801077D8_413C38_Results[nd[i]][j], -2);
+            } else {
+                SprPosSet(D_80107CF0_414150_Results[i], n, D_801077D8_413C38_Results[nd[i]][j] + 4, -2);
+            }
+            n++;
+        }
+        if (left[i] == 0) {
+            SprPosSet(D_80107CF0_414150_Results[i], n, -1000, -2);
+            func_800822A8_82EA8(D_80107CF0_414150_Results[i], n, 10, 0);
+        } else {
+            if (left[i] > 0) {
+                func_800822A8_82EA8(D_80107CF0_414150_Results[i], n, 11, 0);
+            } else {
+                func_800822A8_82EA8(D_80107CF0_414150_Results[i], n, 12, 0);
+            }
+            SprPosSet(D_80107CF0_414150_Results[i], n, D_801077D8_413C38_Results[nd[i]][2 - nd[i]] - 4, -2);
+        }
+        n = 2;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105AB8_411F18_Results);
+#endif
+
+// retail has the KMC VR4300 mul fix here (a nop before a mult) but 4D3C has not: probably a
+// second file from 80105AB8 (masked 2 with the fix on)
+#ifdef NON_MATCHING
+/* Redraws each player's minigame coin counter with the coins still to count. */
+void func_80105F50_4123B0_Results(void) {
+    s16 left[4];
+    s16 nd[4];
+    s16 digits[4][3];
+    s32 i;
+    s32 j;
+    s16 n;
+
+    for (i = 0; i < 4; i++) {
+        left[i] = D_80107848_413CA8_Results[i] - (gPlayers[i].coins - D_80107860_413CC0_Results[i]);
+        digits[i][0] = ABS(left[i]) / 100;
+        digits[i][1] = (ABS(left[i]) - digits[i][0] * 100) / 10;
+        digits[i][2] = ABS(left[i]) - digits[i][0] * 100 - digits[i][1] * 10;
+        nd[i] = 0;
+        if (ABS(left[i]) >= 10) {
+            nd[i] = 1;
+        }
+        if (ABS(left[i]) >= 100) {
+            nd[i] = 2;
+        }
+    }
+    for (i = 0, n = 2; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            func_800822A8_82EA8(D_80107D00_414160_Results[i], n, digits[i][j], 0);
+            if (left[i] == 0) {
+                SprPosSet(D_80107D00_414160_Results[i], n, D_801077EC_413C4C_Results[nd[i]][j], 2);
+            } else {
+                SprPosSet(D_80107D00_414160_Results[i], n, D_801077EC_413C4C_Results[nd[i]][j] + 4, 2);
+            }
+            n++;
+        }
+        if (left[i] == 0) {
+            SprPosSet(D_80107D00_414160_Results[i], n, -1000, -2);
+            func_800822A8_82EA8(D_80107D00_414160_Results[i], n, 10, 0);
+        } else {
+            if (left[i] > 0) {
+                func_800822A8_82EA8(D_80107D00_414160_Results[i], n, 11, 0);
+            } else {
+                func_800822A8_82EA8(D_80107D00_414160_Results[i], n, 12, 0);
+            }
+            SprPosSet(D_80107D00_414160_Results[i], n, D_801077EC_413C4C_Results[nd[i]][2 - nd[i]] - 4, 2);
+        }
+        n = 2;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105F50_4123B0_Results);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_801063E8_412848_Results);
 
