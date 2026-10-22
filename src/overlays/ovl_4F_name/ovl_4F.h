@@ -257,11 +257,48 @@ void func_8010ADA0_33D9E0_name_4F(void);
 void func_8010AED4_33DB14_name_4F(void);
 void func_8010B4E8_33E128_name_4F(void);
 void func_8010B620_33E260_name_4F(void);
+
+/* 4F-C: board 3 (func_80108900 runs these in order) */
+
+void HmfModelObjAttrSet(s16, s32, s32);
+f32 HuVecDistance(Vec*, Vec*);
+u8 func_80018DC0_199C0(void* arg0, s32 arg1, char* arg2);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+s16 func_80027D3C_2893C(s16); /* model copy */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_80029A8C_2A68C(s16);
+void func_80029AFC_2A6FC(s16);
+void func_8003E8E4_3F4E4(s16);
+void func_80079848_7A448(s16);
+void func_800B3170_B3D70(Vec*, Vec*); /* HuVecCopy3F */
+
+extern u32 D_80110038_342C78_name_4F[];     /* MBModelFileCreate list (the crew) */
+extern s32 D_80110070_342CB0_name_4F;
+extern s32 D_80110074_342CB4_name_4F[2];
+extern s32 D_80110080_342CC0_name_4F;
+extern Vec D_80110084_342CC4_name_4F;       /* the doors' start */
+extern Vec D_80110090_342CD0_name_4F;       /* the doors' end */
+extern u32 D_8011009C_342CDC_name_4F[];
+extern Vec D_801100AC_342CEC_name_4F[5];    /* the crew: start (splat's D_801100B0/B4 are fields) */
+extern Vec D_801100E8_342D28_name_4F[5];    /* the crew: first target */
+extern Vec D_80110124_342D64_name_4F[5];    /* the crew: second target */
+extern Vec D_80110160_342DA0_name_4F;
+extern Vec D_8011016C_342DAC_name_4F;
+extern Vec D_80110178_342DB8_name_4F[2];
+extern Vec D_80110190_342DD0_name_4F;
+extern Vec D_8011019C_342DDC_name_4F[2];    /* jump start, landing (splat's D_801101AC is [1].y) */
+extern Vec D_801101B4_342DF4_name_4F[4];    /* splat's D_801101B8/BC are fields */
+extern Process* D_80110450_343090_name_4F;
+extern f32 D_80110454_343094_name_4F;
+extern s16 D_80110458_343098_name_4F;
+extern const char D_801103DC_34301C_name_4F[]; /* "e000p15_IA44" (80108B30, 8010A8AC, 8010B620) */
 /* fork D (inferred) */
 void func_8010C7CC_33F40C_name_4F(void);
-omObjData* func_8010CA90_33F6D0_name_4F(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
+omObjData* func_8010CA90_33F6D0_name_4F(s16 arg0, f32 arg1, f32 arg2, f32 arg3, u8 arg4, u8 arg5, f32 arg6); /* 4F-C: from its asm */
 void func_8010CC2C_33F86C_name_4F(omObjData* obj);
-s32 func_8010CDD4_33FA14_name_4F(void);
+s16 func_8010CDD4_33FA14_name_4F(s32 file); /* 4F-C: from its asm */
 omObjData* func_8010CE1C_33FA5C_name_4F(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
 void func_8010CFC4_33FC04_name_4F(omObjData* obj);
 s32 func_8010D114_33FD54_name_4F(void);
