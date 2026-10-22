@@ -1422,6 +1422,55 @@ void func_80108058_358668_name_51(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801081CC_3587DC_name_51);
+/* Walks the four player models to D_80108734 (off screen left), hiding each on arrival, until all
+   four arrive in one frame; then removes the players' board status (func_8005E260). */
+void func_801081CC_3587DC_name_51(void) {
+    s32 i;
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801082AC_3588BC_name_51);
+    while (1) {
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            if (func_8005A5E8_5B1E8(D_80108848_358E58_name_51[i], &D_80108734_358D44_name_51[i], 32.0f) == 1) {
+                MBModelDispOff(D_80108848_358E58_name_51[i]);
+                n++;
+            }
+        }
+        if (n == 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        func_8005E260_5EE60(i);
+    }
+}
+
+/* The bank model's bounce when coins land: work[1] frames growing by scale, work[1] frames
+   shrinking back (work[2] frames each), then clears D_80108A4C and ends. */
+void func_801082AC_3588BC_name_51(omObjData* obj) {
+    switch (obj->work[0]) {
+        case 0:
+            D_801087D0_358DE0_name_51->scale.x += obj->scale.x;
+            D_801087D0_358DE0_name_51->scale.y += obj->scale.y;
+            D_801087D0_358DE0_name_51->scale.z += obj->scale.z;
+            if (--obj->work[1] == 0) {
+                obj->work[0] = 1;
+                obj->work[1] = obj->work[2];
+            }
+            break;
+        case 1:
+            D_801087D0_358DE0_name_51->scale.x -= obj->scale.x;
+            D_801087D0_358DE0_name_51->scale.y -= obj->scale.y;
+            D_801087D0_358DE0_name_51->scale.z -= obj->scale.z;
+            if (--obj->work[1] == 0) {
+                obj->work[0] = 2;
+                obj->work[1] = obj->work[2];
+            }
+            break;
+        case 2:
+            D_80108A4C_35905C_name_51 = NULL;
+            omDelObj(obj);
+            break;
+    }
+}

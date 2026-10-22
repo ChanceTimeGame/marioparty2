@@ -135,7 +135,7 @@ extern Vec D_80108434_358A44_name_51; /* where the stars fly to */
 extern s32 D_801086B8_358CC8_name_51; /* next coin model (0..19) */
 extern void* D_801086EC_358CFC_name_51[6]; /* per character: the player model's motions */
 extern Vec D_80108704_358D14_name_51[4]; /* player model places, in turn order */
-extern Vec D_80108734_358D44_name_51[4]; /* where they face */
+extern Vec D_80108734_358D44_name_51[4]; /* where they face, and walk off to */
 extern char* D_801085E0_358BF0_name_51; /* "RESULTS" */
 extern s16 D_801085E4_358BF4_name_51[2]; /* tally: title position */
 extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
