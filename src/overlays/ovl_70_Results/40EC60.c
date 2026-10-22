@@ -659,7 +659,144 @@ void func_80104B90_410FF0_Results(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80104D3C_41119C_Results);
+/* Builds each player's two coin counters: the minigame bonus coins (G1) and the minigame coins
+   (G2). Member 0 is the backdrop, 1 the icon, 2-4 the digits, 5 the sign. */
+void func_80104D3C_41119C_Results(void) {
+    s16 nd[4];
+    s16 nd2[4];
+    s16 digits[4][3];
+    s16 digits2[4][3];
+    s32 n;
+    s32 j;
+    s32 i;
+    void* file;
+
+    for (i = 0; i < 4; i++) {
+        digits[i][0] = ABS(D_80107840_413CA0_Results[i]) / 100;
+        digits[i][1] = (ABS(D_80107840_413CA0_Results[i]) - digits[i][0] * 100) / 10;
+        digits[i][2] = ABS(D_80107840_413CA0_Results[i]) - digits[i][0] * 100 - digits[i][1] * 10;
+        nd[i] = 0;
+        if (ABS(D_80107840_413CA0_Results[i]) >= 10) {
+            nd[i] = 1;
+        }
+        if (ABS(D_80107840_413CA0_Results[i]) >= 100) {
+            nd[i] = 2;
+        }
+        digits2[i][0] = ABS(D_80107848_413CA8_Results[i]) / 100;
+        digits2[i][1] = (ABS(D_80107848_413CA8_Results[i]) - digits2[i][0] * 100) / 10;
+        digits2[i][2] = ABS(D_80107848_413CA8_Results[i]) - digits2[i][0] * 100 - digits2[i][1] * 10;
+        nd2[i] = 0;
+        if (ABS(D_80107848_413CA8_Results[i]) >= 10) {
+            nd2[i] = 1;
+        }
+        if (ABS(D_80107848_413CA8_Results[i]) >= 100) {
+            nd2[i] = 2;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        n = 0;
+        D_80107D10_414170_Results = SprCreate(6, 5);
+        D_80107CF0_414150_Results[i] = D_80107D10_414170_Results;
+        D_80107D14_414174_Results = SprCreate(6, 5);
+        D_80107D00_414160_Results[i] = D_80107D14_414174_Results;
+        file = DataRead(0xC0000);
+        D_80107D18_414178_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        file = DataRead(0xC0001);
+        D_80107D28_414188_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet(D_80107D10_414170_Results, n, D_80107D18_414178_Results[i], 0);
+        SprAnimSet(D_80107D14_414174_Results, n, D_80107D28_414188_Results[i], 0);
+        func_800824F4_830F4(D_80107D10_414170_Results, n, -1);
+        func_800824F4_830F4(D_80107D14_414174_Results, n, -1);
+        SprAttrSet(D_80107D10_414170_Results, n, 0x8000);
+        SprAttrSet(D_80107D14_414174_Results, n, 0x8000);
+        if (_CheckFlag(0xD) != 0) {
+            SprPosSet(D_80107D10_414170_Results, n, D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][0] - 32,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][1] - 16);
+            SprPosSet(D_80107D14_414174_Results, n, D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][0] + 32,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR_D][D_80107850_413CB0_Results[i].place][1] + 16);
+        } else {
+            SprPosSet(D_80107D10_414170_Results, n, D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][0] - 32,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][1] - 16);
+            SprPosSet(D_80107D14_414174_Results, n, D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][0] + 32,
+                      D_801076C4_413B24_Results[RES_ROW_CHAR][D_80107850_413CB0_Results[i].place][1] + 16);
+        }
+        n++;
+        SprAnimSet(D_80107D10_414170_Results, n, D_80107D18_414178_Results[i], 0);
+        SprAnimSet(D_80107D14_414174_Results, n, D_80107D28_414188_Results[i], 0);
+        func_8008225C_82E5C(D_80107D10_414170_Results, n, 1);
+        func_8008225C_82E5C(D_80107D14_414174_Results, n, 1);
+        SprPrioSet(D_80107D10_414170_Results, n, 5);
+        SprPrioSet(D_80107D14_414174_Results, n, 5);
+        SprAttrSet(D_80107D10_414170_Results, n, 0x1000);
+        SprAttrSet(D_80107D14_414174_Results, n, 0x1000);
+        SprPosSet(D_80107D10_414170_Results, n, 0, 0);
+        SprPosSet(D_80107D14_414174_Results, n, 0, 0);
+        func_800824F4_830F4(D_80107D10_414170_Results, n, 0);
+        func_800824F4_830F4(D_80107D14_414174_Results, n, 0);
+        n++;
+        for (j = 0; j < 3; j++) {
+            file = DataRead(0xC000D);
+            D_80107D58_4141B8_Results[i][j] = SprAnimRead(file);
+            DataClose(file);
+            file = DataRead(0xC000D);
+            D_80107D88_4141E8_Results[i][j] = SprAnimRead(file);
+            DataClose(file);
+            SprAnimSet(D_80107D10_414170_Results, n, D_80107D58_4141B8_Results[i][j], 0);
+            SprAnimSet(D_80107D14_414174_Results, n, D_80107D88_4141E8_Results[i][j], 0);
+            func_8008225C_82E5C(D_80107D10_414170_Results, n, 1);
+            func_8008225C_82E5C(D_80107D14_414174_Results, n, 1);
+            SprPrioSet(D_80107D10_414170_Results, n, 4);
+            SprPrioSet(D_80107D14_414174_Results, n, 4);
+            SprAttrSet(D_80107D10_414170_Results, n, 0x1000);
+            SprAttrSet(D_80107D14_414174_Results, n, 0x1000);
+            func_800822A8_82EA8(D_80107D10_414170_Results, n, digits[i][j], 0);
+            func_800822A8_82EA8(D_80107D14_414174_Results, n, digits2[i][j], 0);
+            func_800824F4_830F4(D_80107D10_414170_Results, n, 0);
+            func_800824F4_830F4(D_80107D14_414174_Results, n, 0);
+            func_8008221C_82E1C(D_80107D10_414170_Results, n, 0);
+            func_8008221C_82E1C(D_80107D14_414174_Results, n, 0);
+            SprPosSet(D_80107D10_414170_Results, n, D_801077C4_413C24_Results[nd[i]][j] + 4, -2);
+            SprPosSet(D_80107D14_414174_Results, n, D_801077C4_413C24_Results[nd2[i]][j] + 4, 2);
+            n++;
+        }
+        file = DataRead(0xC000D);
+        D_80107D38_414198_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        file = DataRead(0xC000D);
+        D_80107D48_4141A8_Results[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet(D_80107D10_414170_Results, n, D_80107D38_414198_Results[i], 0);
+        SprAnimSet(D_80107D14_414174_Results, n, D_80107D48_4141A8_Results[i], 0);
+        func_8008225C_82E5C(D_80107D10_414170_Results, n, 1);
+        func_8008225C_82E5C(D_80107D14_414174_Results, n, 1);
+        SprPrioSet(D_80107D10_414170_Results, n, 4);
+        SprPrioSet(D_80107D14_414174_Results, n, 4);
+        SprAttrSet(D_80107D10_414170_Results, n, 0x1000);
+        SprAttrSet(D_80107D14_414174_Results, n, 0x1000);
+        func_800824F4_830F4(D_80107D10_414170_Results, n, 0);
+        func_800824F4_830F4(D_80107D14_414174_Results, n, 0);
+        /* Retail picks both signs from the bonus coins' sign. */
+        if (D_80107840_413CA0_Results[i] >= 0) {
+            func_800822A8_82EA8(D_80107D10_414170_Results, n, 11, 0);
+            SprPosSet(D_80107D10_414170_Results, n, D_801077C4_413C24_Results[nd[i]][2 - nd[i]] - 4, -2);
+            func_800822A8_82EA8(D_80107D14_414174_Results, n, 11, 0);
+            SprPosSet(D_80107D14_414174_Results, n, D_801077C4_413C24_Results[nd2[i]][2 - nd2[i]] - 4, 2);
+        } else {
+            func_800822A8_82EA8(D_80107D10_414170_Results, n, 12, 0);
+            SprPosSet(D_80107D10_414170_Results, n, D_801077C4_413C24_Results[nd[i]][2 - nd[i]] - 4, -2);
+            func_800822A8_82EA8(D_80107D14_414174_Results, n, 12, 0);
+            SprPosSet(D_80107D14_414174_Results, n, D_801077C4_413C24_Results[nd2[i]][2 - nd2[i]] - 4, 2);
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 5; j++) {
+            SprAttrSet(D_80107CF0_414150_Results[i], j + 1, 0x8000);
+            SprAttrSet(D_80107D00_414160_Results[i], j + 1, 0x8000);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105AB8_411F18_Results);
 

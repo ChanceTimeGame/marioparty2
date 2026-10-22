@@ -75,8 +75,12 @@ extern s32 D_80107CE8_414148_Results;
 extern s32 D_80107CEC_41414C_Results;
 extern s32 D_80107CF0_414150_Results[4]; /* per player: bonus coin counter group */
 extern s32 D_80107D00_414160_Results[4]; /* per player: minigame coin counter group */
+extern s32 D_80107D10_414170_Results; /* the group being built */
+extern s32 D_80107D14_414174_Results;
 extern s32 D_80107D18_414178_Results[4];
+extern s32 D_80107D28_414188_Results[4];
 extern s32 D_80107D38_414198_Results[4];
+extern s32 D_80107D48_4141A8_Results[4];
 extern s32 D_80107D58_4141B8_Results[4][3];
 extern s32 D_80107D88_4141E8_Results[4][3];
 extern s16 D_80107DB8_414218_Results[4]; /* coins counted per step */
@@ -93,6 +97,7 @@ void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void SprKill(s16 idx);
 void SprAnimKill(s16 animIdx);
 void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
+void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
 s16 func_8006A608_6B208(void* mes, char* str, u8 arg2, s16 arg3, s16 arg4); /* MP1 GMesFontMesCreate */
@@ -120,6 +125,8 @@ void func_80059CC8_5A8C8(void);
 void func_80059C28_5A828(void);
 void func_8004340C_4400C(void);
 void func_8005E2FC_5EEFC(void);
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* Overlay */
 void func_80102800_40EC60_Results(void);
