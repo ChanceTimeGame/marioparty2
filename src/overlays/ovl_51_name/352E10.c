@@ -173,8 +173,8 @@ void func_80102EB4_3534C4_name_51(void) {
     }
 }
 
-/* Row 11 (bank spaces) and row 0 (stars) share window 0: rows 4 and 5 at the top bring row 0 or
-   row 11 into view, so the window is refilled with the row on screen. */
+/* Row 11 (bank spaces) and row 0 (stars) share window 0, never both on screen: when the first row
+   shown is 5 (scrolling down) window 0 is refilled with the bank counts, at 4 with the stars. */
 void func_8010361C_353C2C_name_51(void) {
     s32 j;
 
@@ -200,11 +200,207 @@ void func_8010361C_353C2C_name_51(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801037E0_353DF0_name_51);
+/* Builds the scene's sprites and windows (MP1 func_800F7324): character names and icons, board
+   title, game length, cursor and its pulse object, scroll arrows, the 12 row titles, the 11 row
+   windows, then the guide (board 5 uses board 9's guide) and the first draw. */
+void func_801037E0_353DF0_name_51(void) {
+    void* file;
+    s32 i;
+    UnkMBGuideData* guide;
+    MBModel* obj;
 
+    D_80108A50_359060_name_51 = SprCreate(5, 5);
+    SprPosSet((s16)D_80108A50_359060_name_51, 0, 0, 0);
+    for (i = 0; i < 4; i++) {
+        file = DataRead(D_80108598_358BA8_name_51[gPlayers[D_800F8CE4_F98E4[i]].character]);
+        D_80108A58_359068_name_51[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet((s16)D_80108A50_359060_name_51, i + 1, (s16)D_80108A58_359068_name_51[i], 0);
+        func_8008225C_82E5C((s16)D_80108A50_359060_name_51, i + 1, 1);
+        SprPrioSet((s16)D_80108A50_359060_name_51, i + 1, 0x10);
+        SprAttrSet((s16)D_80108A50_359060_name_51, i + 1, 0x1000);
+        SprPosSet((s16)D_80108A50_359060_name_51, i + 1, D_801084D4_358AE4_name_51[i][0], D_801084D4_358AE4_name_51[i][1]);
+    }
+    D_80108A68_359078_name_51 = SprCreate(5, 5);
+    SprPosSet((s16)D_80108A68_359078_name_51, 0, 0, 0);
+    for (i = 0; i < 4; i++) {
+        file = DataRead(D_80108580_358B90_name_51[gPlayers[D_800F8CE4_F98E4[i]].character]);
+        D_80108A70_359080_name_51[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet((s16)D_80108A68_359078_name_51, i + 1, (s16)D_80108A70_359080_name_51[i], 0);
+        func_8008225C_82E5C((s16)D_80108A68_359078_name_51, i + 1, 1);
+        SprPrioSet((s16)D_80108A68_359078_name_51, i + 1, 0x10);
+        SprAttrSet((s16)D_80108A68_359078_name_51, i + 1, 0x1000);
+        SprPosSet((s16)D_80108A68_359078_name_51, i + 1, D_801084C4_358AD4_name_51[i][0], D_801084C4_358AD4_name_51[i][1]);
+    }
+    D_80108A80_359090_name_51 = SprCreate(1, 5);
+    SprPosSet((s16)D_80108A80_359090_name_51, 0, 0, 0);
+    file = DataRead(D_80108568_358B78_name_51[GwSystem.current_board_index]);
+    D_80108A84_359094_name_51 = SprAnimRead(file);
+    DataClose(file);
+    SprAnimSet((s16)D_80108A80_359090_name_51, 0, (s16)D_80108A84_359094_name_51, 0);
+    func_8008225C_82E5C((s16)D_80108A80_359090_name_51, 0, 1);
+    SprPrioSet((s16)D_80108A80_359090_name_51, 0, 0x10);
+    SprAttrSet((s16)D_80108A80_359090_name_51, 0, 0x1000);
+    SprPosSet((s16)D_80108A80_359090_name_51, 0, D_801084E4_358AF4_name_51[0], D_801084E4_358AF4_name_51[1]);
+    SprScaleSet((s16)D_80108A80_359090_name_51, 0, 1.0f, 0.8f);
+    D_80108A90_3590A0_name_51 = SprCreate(1, 5);
+    SprPosSet((s16)D_80108A90_3590A0_name_51, 0, 0, 0);
+    file = DataRead(D_8010855C_358B6C_name_51[GwSystem.current_game_length]);
+    D_80108A94_3590A4_name_51 = SprAnimRead(file);
+    DataClose(file);
+    SprAnimSet((s16)D_80108A90_3590A0_name_51, 0, (s16)D_80108A94_3590A4_name_51, 0);
+    func_8008225C_82E5C((s16)D_80108A90_3590A0_name_51, 0, 1);
+    SprPrioSet((s16)D_80108A90_3590A0_name_51, 0, 0x10);
+    SprAttrSet((s16)D_80108A90_3590A0_name_51, 0, 0x1000);
+    SprPosSet((s16)D_80108A90_3590A0_name_51, 0, D_801084E8_358AF8_name_51[0], D_801084E8_358AF8_name_51[1]);
+    func_80082450_83050((s16)D_80108A90_3590A0_name_51, 0, 0xFF, 0xFF, 0xFF);
+    D_80108A88_359098_name_51 = SprCreate(1, 5);
+    SprPosSet((s16)D_80108A88_359098_name_51, 0, 0, 0);
+    file = DataRead(0xA0118);
+    D_80108A8C_35909C_name_51 = SprAnimRead(file);
+    DataClose(file);
+    SprAnimSet((s16)D_80108A88_359098_name_51, 0, (s16)D_80108A8C_35909C_name_51, 0);
+    func_8008225C_82E5C((s16)D_80108A88_359098_name_51, 0, 1);
+    SprPrioSet((s16)D_80108A88_359098_name_51, 0, 0x8000);
+    SprAttrSet((s16)D_80108A88_359098_name_51, 0, 0x1000);
+    SprPosSet((s16)D_80108A88_359098_name_51, 0, D_80108494_358AA4_name_51[D_80108490_358AA0_name_51][0],
+              D_80108494_358AA4_name_51[D_80108490_358AA0_name_51][1]);
+    func_80082450_83050((s16)D_80108A88_359098_name_51, 0, 0x40, 0x40, 0x80);
+    D_80108C90_3592A0_name_51 = omAddObj(0x1000, 0, 0, -1, func_801029A8_352FB8_name_51);
+    D_80108C90_3592A0_name_51->trans.x = 0.0f;
+    D_80108C90_3592A0_name_51->trans.y = 0.0f;
+    D_80108484_358A94_name_51[0] = D_80108484_358A94_name_51[1] = D_80108C90_3592A0_name_51->trans.y;
+    D_80108A98_3590A8_name_51 = SprCreate(3, 5);
+    SprPosSet((s16)D_80108A98_3590A8_name_51, 0, 0, 0);
+    for (i = 0; i < 2; i++) {
+        file = DataRead(D_80108554_358B64_name_51[i]);
+        D_80108A9C_3590AC_name_51[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet((s16)D_80108A98_3590A8_name_51, i + 1, (s16)D_80108A9C_3590AC_name_51[i], 0);
+        func_8008225C_82E5C((s16)D_80108A98_3590A8_name_51, i + 1, 1);
+        SprPrioSet((s16)D_80108A98_3590A8_name_51, i + 1, 0x10);
+        SprAttrSet((s16)D_80108A98_3590A8_name_51, i + 1, 0x1000);
+        SprPosSet((s16)D_80108A98_3590A8_name_51, i + 1, D_801084EC_358AFC_name_51[i][0], D_801084EC_358AFC_name_51[i][1]);
+        func_80082450_83050((s16)D_80108A98_3590A8_name_51, (s16)(i + 1), 0xFF, 0, 0);
+    }
+    D_80108AA4_3590B4_name_51 = SprCreate(0xD, 5);
+    SprPosSet((s16)D_80108AA4_3590B4_name_51, 0, 0, 0);
+    for (i = 0; i < 12; i++) {
+        file = DataRead(D_80108524_358B34_name_51[i]);
+        D_80108AA8_3590B8_name_51[i] = SprAnimRead(file);
+        DataClose(file);
+        SprAnimSet((s16)D_80108AA4_3590B4_name_51, i + 1, (s16)D_80108AA8_3590B8_name_51[i], 0);
+        func_8008225C_82E5C((s16)D_80108AA4_3590B4_name_51, i + 1, 1);
+        SprPrioSet((s16)D_80108AA4_3590B4_name_51, i + 1, 0xF);
+        SprAttrSet((s16)D_80108AA4_3590B4_name_51, i + 1, 0x9000);
+        SprPosSet((s16)D_80108AA4_3590B4_name_51, i + 1, D_801084A4_358AB4_name_51[0][0], D_801084A4_358AB4_name_51[0][1]);
+        SprScaleSet((s16)D_80108AA4_3590B4_name_51, i + 1, D_801084F4_358B04_name_51[i], D_801084F4_358B04_name_51[i]);
+        func_8008221C_82E1C((s16)D_80108AA4_3590B4_name_51, i + 1, 0.0f);
+    }
+    for (i = 0; i < 11; i++) {
+        D_80108AE0_3590F0_name_51[i] = func_80057480_58080(D_801084B4_358AC4_name_51[0][0], D_801084B4_358AC4_name_51[0][1], 4, 6);
+        func_80089A7C_8A67C((s16)D_80108AE0_3590F0_name_51[i], 0x1000);
+        func_80089A48_8A648((s16)D_80108AE0_3590F0_name_51[i], 0);
+        func_80089B2C_8A72C((s16)D_80108AE0_3590F0_name_51[i], 0);
+        D_800F920C_F9E0C[D_80108AE0_3590F0_name_51[i]].unk2A = 8;
+        func_80089284_89E84((s16)D_80108AE0_3590F0_name_51[i], 0, 0x10000);
+        func_8008D5D8_8E1D8((s16)D_80108AE0_3590F0_name_51[i]);
+    }
+    func_80102EB4_3534C4_name_51();
+    if (GwSystem.current_board_index == 5) {
+        GwSystem.current_board_index = 9;
+    }
+    D_80108AD8_3590E8_name_51 = func_80050304_50F04(0, 0);
+    if (GwSystem.current_board_index == 9) {
+        GwSystem.current_board_index = 5;
+    }
+    func_8008E434_8F034(D_80108AD8_3590E8_name_51->amount);
+    func_8008E6CC_8F2CC(D_80108AD8_3590E8_name_51->amount, 0x1000);
+    func_80102B90_3531A0_name_51();
+    obj = D_80108AD8_3590E8_name_51->obj;
+    obj->scale.x = obj->scale.y = obj->scale.z = 0.1f;
+}
+
+/* Scrolls the table with the stick (MP1 func_800F7C28) until a player presses A: up/down move the
+   cursor, then the first row shown (0..8). */
+#ifdef NON_MATCHING
+/* Registers: retail keeps i in a0 (here v1) and branches to the increment with beqzl. */
+void func_8010418C_35479C_name_51(void) {
+    s32 i;
+
+    HuPrcSleep(2);
+    while (1) {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].flags & 1) {
+                continue;
+            }
+            if (ContDStkTrg[gPlayers[i].port] & 0x1000) {
+                break;
+            }
+            if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x200) {
+                if (D_80108490_358AA0_name_51 != 0) {
+                    D_80108490_358AA0_name_51--;
+                    func_80102B90_3531A0_name_51();
+                } else if (D_8010848C_358A9C_name_51 != 0) {
+                    D_8010848C_358A9C_name_51--;
+                    func_80102B90_3531A0_name_51();
+                }
+                i = 4;
+                break;
+            }
+            if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x100) {
+                if (D_80108490_358AA0_name_51 < 3) {
+                    D_80108490_358AA0_name_51++;
+                    func_80102B90_3531A0_name_51();
+                } else if (D_8010848C_358A9C_name_51 < 8) {
+                    D_8010848C_358A9C_name_51++;
+                    func_80102B90_3531A0_name_51();
+                }
+                i = 4;
+                break;
+            }
+        }
+        if (i != 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_8010418C_35479C_name_51);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104308_354918_name_51);
+/* Frees the table's sprites, windows, the pulse object and the guide (MP1 func_800F7D94). */
+void func_80104308_354918_name_51(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        SprAnimKill((s16)D_80108A70_359080_name_51[i]);
+        SprAnimKill((s16)D_80108A58_359068_name_51[i]);
+    }
+    SprKill((s16)D_80108A50_359060_name_51);
+    SprKill((s16)D_80108A68_359078_name_51);
+    SprAnimKill((s16)D_80108A84_359094_name_51);
+    SprKill((s16)D_80108A80_359090_name_51);
+    SprAnimKill((s16)D_80108A94_3590A4_name_51);
+    SprKill((s16)D_80108A90_3590A0_name_51);
+    SprAnimKill((s16)D_80108A8C_35909C_name_51);
+    SprKill((s16)D_80108A88_359098_name_51);
+    omDelObj(D_80108C90_3592A0_name_51);
+    for (i = 0; i < 2; i++) {
+        SprAnimKill((s16)D_80108A9C_3590AC_name_51[i]);
+    }
+    SprKill((s16)D_80108A98_3590A8_name_51);
+    for (i = 0; i < 12; i++) {
+        SprAnimKill((s16)D_80108AA8_3590B8_name_51[i]);
+    }
+    SprKill((s16)D_80108AA4_3590B4_name_51);
+    for (i = 0; i < 11; i++) {
+        func_8008CCA8_8D8A8((s16)D_80108AE0_3590F0_name_51[i]);
+    }
+    func_8005057C_5117C(D_80108AD8_3590E8_name_51);
+}
 
 __asm__(".section .rodata");
 const char D_801087A4_358DB4_name_51[] = "RESULTS";
