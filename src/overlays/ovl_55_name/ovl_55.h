@@ -103,6 +103,48 @@ typedef struct Ovl55PuffWork {
 
 f64 fabs(f64);
 
+/* ev-C: the board 3/4 explanation sign (D_8010C570 holds it while it shows). */
+typedef struct Ovl55Banner {
+    /* 0x00 */ s16 file[3];
+    /* 0x06 */ u16 spr[3]; /* [0] the sign, [1] the scrolling strip, [2] the title */
+    /* 0x0C */ char unk0C[0xC];
+    /* 0x18 */ s16 scrollY;
+    /* 0x1C */ f32 alpha;
+    /* 0x20 */ Process* proc;
+} Ovl55Banner; /* size = 0x24 */
+
+/* ev-C: board 4's sign (D_8010C570). */
+typedef struct Ovl55Sign4 {
+    /* 0x00 */ s16 file[2];
+    /* 0x04 */ s16 spr[2]; /* [0] the sign, [1] its backing */
+} Ovl55Sign4; /* size = 0x8 */
+
+/* ev-C: board 5's item table entry (D_8010C3CC); only the model is known. */
+typedef struct Ovl55Item {
+    /* 0x00 */ u8 unk00[3];
+    /* 0x03 */ u8 model;
+} Ovl55Item; /* size = 0x4 */
+
+/* ev-C: a view of main's sprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
+typedef struct Ovl55EspSlot {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 unk02;
+    /* 0x04 */ s16 grp;
+    /* 0x06 */ char unk06[0x1E];
+} Ovl55EspSlot; /* size = 0x24 */
+
+/* ev-C: board 5's sign (D_8010C570). */
+typedef struct Ovl55Sign5 {
+    /* 0x00 */ s16 file[8];
+    /* 0x10 */ u16 spr[26]; /* [0..3] the halves, [4..23] sparkles, [24] [25] the glow */
+} Ovl55Sign5; /* size = 0x44 */
+
+/* ev-C: board 4's bubble object work (omObjData.unk_50). */
+typedef struct Ovl55Bubbles {
+    /* 0x00 */ u16 delay[12]; /* frames until the bubble restarts; 0 = growing */
+    /* 0x18 */ f32 scale[12];
+} Ovl55Bubbles; /* size = 0x48 */
+
 /* ---- main-segment API used by 55 ---- */
 
 GW_PLAYER* BoardPlayerGet(s32);
@@ -165,6 +207,7 @@ void func_80047BB8_487B8(s32);
 void func_80047D2C_4892C(void);
 s32 func_80047DE8_489E8(s32);
 void func_80050AE0_516E0(void);
+void func_80050E00_51A00(s32);
 void func_80051500_52100(void);
 void func_8005321C_53E1C(f32, f32);
 u16 func_800536E4_542E4(Vec2f* arg0); /* 51630.c: Vec2fxy*, same layout */
@@ -279,28 +322,28 @@ extern Vec D_8010BF88_36AE78_name_55; /* the walker's start */
 extern Vec D_8010BF94_36AE84_name_55; /* the walker's target */
 extern u32 D_8010BFA0_36AE90_name_55[];
 extern void* D_8010C088_36AF78_name_55[6];
-extern s32 D_8010C0A0_36AF90_name_55[];
-extern s32 D_8010C0B0_36AFA0_name_55[];
-extern s32 D_8010C0C8_36AFB8_name_55[];
+extern u32 D_8010C0A0_36AF90_name_55[]; /* board 3: host's motions */
+extern Vec D_8010C0B0_36AFA0_name_55[2]; /* board 3: camera from, to */
+extern u32 D_8010C0C8_36AFB8_name_55[]; /* board 3: host model's motions */
 extern void* D_8010C1B8_36B0A8_name_55[6];
-extern s32 D_8010C1D0_36B0C0_name_55[];
-extern s32 D_8010C1E0_36B0D0_name_55[];
-extern s32 D_8010C1F8_36B0E8_name_55[];
-extern s32 D_8010C204_36B0F4_name_55[];
-extern s32 D_8010C210_36B100_name_55[];
-extern s32 D_8010C21C_36B10C_name_55[];
-extern s32 D_8010C22C_36B11C_name_55[];
+extern u32 D_8010C1D0_36B0C0_name_55[]; /* board 4: host's motions */
+extern Vec D_8010C1E0_36B0D0_name_55[2]; /* board 4: camera from, to */
+extern Vec D_8010C1F8_36B0E8_name_55; /* board 4: host start */
+extern Vec D_8010C204_36B0F4_name_55; /* board 4: host target */
+extern Vec D_8010C210_36B100_name_55; /* board 4: follower start */
+extern u32 D_8010C21C_36B10C_name_55[]; /* board 4: host model's motions */
+extern f32 D_8010C22C_36B11C_name_55[12]; /* board 4: bubble columns (x) */
 extern void* D_8010C338_36B228_name_55[6];
-extern s32 D_8010C350_36B240_name_55[];
-extern s32 D_8010C360_36B250_name_55[];
-extern s32 D_8010C370_36B260_name_55[];
-extern s32 D_8010C388_36B278_name_55[];
-extern s32 D_8010C394_36B284_name_55[];
-extern s32 D_8010C3A0_36B290_name_55[];
-extern s32 D_8010C3B0_36B2A0_name_55[];
-extern s32 D_8010C3CC_36B2BC_name_55[];
+extern u32 D_8010C350_36B240_name_55[]; /* board 5: host's motions */
+extern u32 D_8010C360_36B250_name_55[]; /* board 5: stand-in's motions */
+extern Vec D_8010C370_36B260_name_55[2]; /* board 5: camera from, to */
+extern Vec D_8010C388_36B278_name_55; /* board 5: host start */
+extern Vec D_8010C394_36B284_name_55; /* board 5: host target */
+extern u32 D_8010C3A0_36B290_name_55[]; /* board 5: host model's motions */
+extern s32 D_8010C3B0_36B2A0_name_55[7]; /* board 5: queue spacing ([1..6]) */
+extern Ovl55Item D_8010C3CC_36B2BC_name_55[6]; /* board 5: the queue's items */
 extern void* D_8010C4C8_36B3B8_name_55[6];
-extern s32 D_8010C4E0_36B3D0_name_55[];
+extern u32 D_8010C4E0_36B3D0_name_55[]; /* board 6: host's motions */
 
 /* ---- overlay bss (ovl_55_bss.bss.s) ---- */
 
@@ -308,12 +351,12 @@ extern s16 D_8010C530_36B420_name_55[4]; /* text window size (func_8008DACC) */
 /* Walker done flags: [0..3] players, [4] the host (D_8010C548, which retail also names). */
 extern s32 D_8010C538_36B428_name_55[5];
 extern s32 D_8010C54C_36B43C_name_55; /* board 5: a player walker finished */
-extern s32 D_8010C550_36B440_name_55[4];
+extern omObjData* D_8010C550_36B440_name_55[4]; /* ev-C: [0] board 4's bubble object */
 extern u16 D_8010C560_36B450_name_55; /* sprite */
 extern MBModel* D_8010C564_36B454_name_55; /* the host's walk-in model */
 extern omObjData* D_8010C568_36B458_name_55; /* START watcher: work[0] = 1 when skipped */
 extern MBModel* D_8010C56C_36B45C_name_55; /* the host */
-extern s32 D_8010C570_36B460_name_55;
+extern void* D_8010C570_36B460_name_55; /* the explanation sign (ev-C: an Ovl55Banner on boards 3-4) */
 extern u16 D_8010C588_36B478_name_55; /* sprite */
 extern u16 D_8010C58A_36B47A_name_55; /* GwSystem.current_board_index */
 
@@ -372,14 +415,14 @@ void func_801084B4_3673A4_name_55(void);
 /* ---- 367540.c (fork C) ---- */
 
 void func_80108650_367540_name_55(void);
-void func_801087A0_367690_name_55(s16 player);
+void func_801087A0_367690_name_55(s32 player);
 void func_80108830_367720_name_55(void);
 void func_80108990_367880_name_55(void);
 void func_80108DB0_367CA0_name_55(void);
-void func_8010912C_36801C_name_55(omObjData* obj);
+void func_8010912C_36801C_name_55(void);
 void func_801091B4_3680A4_name_55(void);
 void func_80109380_368270_name_55(void);
-void func_801094D0_3683C0_name_55(s16 player);
+void func_801094D0_3683C0_name_55(s32 player);
 void func_80109560_368450_name_55(void);
 void func_801096C0_3685B0_name_55(void);
 void func_80109C58_368B48_name_55(void);
@@ -390,14 +433,17 @@ void func_8010A2E0_3691D0_name_55(void);
 /* ---- 3693E0.c (fork C) ---- */
 
 void func_8010A4F0_3693E0_name_55(void);
-void func_8010A614_369504_name_55(s16 player);
+void func_8010A614_369504_name_55(s32 player);
 void func_8010A6A4_369594_name_55(void);
 void func_8010A804_3696F4_name_55(void);
 void func_8010AE68_369D58_name_55(void);
 void func_8010B3B4_36A2A4_name_55(void);
-void func_8010B444_36A334_name_55(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8010B444_36A334_name_55(s16 spr, f32 x, f32 y, f32 speed);
 void func_8010B518_36A408_name_55(omObjData* obj);
+
+/* ---- 36A4B0.c (fork C): a sixth retail file (16-byte text pad after func_8010B518) ---- */
+
 void func_8010B5C0_36A4B0_name_55(void);
-void func_8010B6C0_36A5B0_name_55(s16 player);
+void func_8010B6C0_36A5B0_name_55(s32 player);
 
 #endif
