@@ -1273,9 +1273,50 @@ void func_80106A28_150548_CraneGame(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106C98_1507B8_CraneGame);
+f32 func_80106C98_1507B8_CraneGame(f32 x, f32 z) {
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_80106D58_150878_CraneGame);
+    if (x == 0.0 && z == 0.0) {
+        a = 0.0f;
+    } else {
+        a = func_800B75A8_B81A8(z, x);
+        if (a < 0.0) {
+            a += 360.0;
+        } else if (a >= 360.0) {
+            a -= 360.0;
+        }
+    }
+    return a;
+}
+
+void func_80106D58_150878_CraneGame(Matrix4f m, Vec* out) {
+    f32 s;
+    f32 c;
+    f64 t;
+
+    out->x = func_80106C98_1507B8_CraneGame(m[2][2], m[1][2]);
+    out->z = func_80106C98_1507B8_CraneGame(m[0][0], m[0][1]);
+    s = -m[0][2];
+    t = 1.0 - s * s;
+    if (t < 0.0) {
+        t = -t;
+    }
+    c = sqrtf(t);
+    if (out->x > 90.0 && out->x < 270.0) {
+        if (out->z > 90.0 && out->z < 270.0) {
+            out->x += 180.0;
+            if (out->x >= 360.0) {
+                out->x -= 360.0;
+            }
+            out->z += 180.0;
+            c = -c;
+            if (out->z >= 360.0) {
+                out->z -= 360.0;
+            }
+        }
+    }
+    out->y = func_80106C98_1507B8_CraneGame(c, s);
+}
 
 __asm__(".section .rodata");
 const u32 D_8010C000_155B20_CraneGame[18] = { 0x00020000, 0x000F000E, 0x00030000, 0x0010000C, 0x00040000, 0x0010000C, 0x00050000, 0x0010000C, 0x00060000, 0x00110010, 0x00070000, 0x00130013, 0x00080001, 0x0004000F, 0x00090001, 0x0004000F, 0x000A0001, 0x0004000F };
