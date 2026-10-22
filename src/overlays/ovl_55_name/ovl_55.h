@@ -40,6 +40,16 @@ typedef struct Ovl55MotionWait {
     /* 0x08 */ omObjData* obj;
 } Ovl55MotionWait; /* size = 0xC */
 
+/* ev-C: the board 3/4 explanation sign (D_8010C570 holds it while it shows). */
+typedef struct Ovl55Banner {
+    /* 0x00 */ s16 file[3];
+    /* 0x06 */ u16 spr[3]; /* [0] the sign, [1] the scrolling strip, [2] the title */
+    /* 0x0C */ char unk0C[0xC];
+    /* 0x18 */ s16 scrollY;
+    /* 0x1C */ f32 alpha;
+    /* 0x20 */ Process* proc;
+} Ovl55Banner; /* size = 0x24 */
+
 /* ---- main-segment API used by 55 ---- */
 
 GW_PLAYER* BoardPlayerGet(s32);
@@ -251,7 +261,7 @@ extern u16 D_8010C560_36B450_name_55; /* sprite */
 extern MBModel* D_8010C564_36B454_name_55; /* the host's walk-in model */
 extern omObjData* D_8010C568_36B458_name_55; /* START watcher: work[0] = 1 when skipped */
 extern MBModel* D_8010C56C_36B45C_name_55; /* the host */
-extern s32 D_8010C570_36B460_name_55;
+extern void* D_8010C570_36B460_name_55; /* the explanation sign (ev-C: an Ovl55Banner on boards 3-4) */
 extern u16 D_8010C588_36B478_name_55; /* sprite */
 extern u16 D_8010C58A_36B47A_name_55; /* GwSystem.current_board_index */
 
@@ -314,10 +324,10 @@ void func_801087A0_367690_name_55(s32 player);
 void func_80108830_367720_name_55(void);
 void func_80108990_367880_name_55(void);
 void func_80108DB0_367CA0_name_55(void);
-void func_8010912C_36801C_name_55(omObjData* obj);
+void func_8010912C_36801C_name_55(void);
 void func_801091B4_3680A4_name_55(void);
 void func_80109380_368270_name_55(void);
-void func_801094D0_3683C0_name_55(s16 player);
+void func_801094D0_3683C0_name_55(s32 player);
 void func_80109560_368450_name_55(void);
 void func_801096C0_3685B0_name_55(void);
 void func_80109C58_368B48_name_55(void);
