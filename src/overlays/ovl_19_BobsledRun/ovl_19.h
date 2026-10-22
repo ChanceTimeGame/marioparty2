@@ -396,6 +396,11 @@ void func_8000C584_D184(BRWork* work, s32 state);
 void func_8000C610_D210(BRWork* work, s32 arg1);
 void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite fade */
 s32 PlaySound(s32);
+/* A gate edge, two ColVtx at 0x8010C15C (inside D_8010C144's splat range); retail addresses it
+   from the first one's y (D_8010C15E): [-1..1] = first, [2..4] = second. */
+extern s16 D_8010C15E_19ACFE_BobsledRun[];
+extern Vec3f D_8010C168_19AD08_BobsledRun[6]; /* CPU aim points behind the gate (x 0 = end) */
+f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
 f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
 void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
 void espDispOn(u16);

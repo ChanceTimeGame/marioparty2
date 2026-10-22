@@ -2166,7 +2166,43 @@ void func_8010982C_1983CC_BobsledRun(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010982C_1983CC_BobsledRun);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80109D94_198934_BobsledRun);
+/* CPU steering through the gate (inside the edge D_8010C15C): aim at the first point below the
+   sled; returns 1 when it steered. */
+s32 func_80109D94_198934_BobsledRun(omObjData* obj, f32 skill, s8 port) {
+    BRWork* work;
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 a;
+    f32 s;
+    s32 i;
+
+    px = obj->trans.x;
+    py = obj->trans.y;
+    pz = obj->trans.z;
+    if (py <= D_8010C15E_19ACFE_BobsledRun[0] && D_8010C15E_19ACFE_BobsledRun[3] <= py &&
+        func_8002DB3C_2E73C(px, pz, (ColVtx*)&D_8010C15E_19ACFE_BobsledRun[-1], (ColVtx*)&D_8010C15E_19ACFE_BobsledRun[2]) < 0.0) {
+        work = obj->unk_50;
+        for (i = 0; i < 6;) {
+            px = D_8010C168_19AD08_BobsledRun[i].x;
+            py = D_8010C168_19AD08_BobsledRun[i].y;
+            pz = D_8010C168_19AD08_BobsledRun[i].z;
+            if (px == 0.0f) {
+                break;
+            }
+            i++;
+            if (py < obj->trans.y) {
+                px -= obj->trans.x;
+                pz -= obj->trans.z;
+                a = work->unk_3C - 90.0f;
+                s = HuMathSin(a);
+                ContStkX[port] = func_8000DA2C_E62C(px, pz, s, func_800B7890_B8490(a)) * 120.0f * skill;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80109F78_198B18_BobsledRun);
 
