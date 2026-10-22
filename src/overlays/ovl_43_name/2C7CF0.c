@@ -4695,7 +4695,34 @@ s32 func_801115C0_2D6AB0_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801117F4_2D6CE4_name_43);
+#define PLAYER_MODEL43(p) ((MBModel*)(p)->unk_24)
+/* Process: the current player and the four models D_80115490 whirl around space 0x80 at radius 18,
+   ever faster, facing its centre. Runs until killed. */
+void func_801117F4_2D6CE4_name_43(void) {
+    GW_PLAYER* player = BoardPlayerGet(-1);
+    SpaceData* sd = GetSpaceData(0x80);
+    f32 angle = 0.0f;
+    f32 speed = 2.0f;
+    s32 i;
+
+    while (1) {
+        angle += speed;
+        speed += speed * 0.025;
+        func_800B3170_B3D70(&PLAYER_MODEL43(player)->pos, &sd->coords);
+        PLAYER_MODEL43(player)->pos.x = HuMathSin(angle + D_801145C4_2D9AB4_name_43[0]) * 18.0f + PLAYER_MODEL43(player)->pos.x;
+        PLAYER_MODEL43(player)->pos.z = func_800B7890_B8490(angle + D_801145C4_2D9AB4_name_43[0]) * 18.0f + PLAYER_MODEL43(player)->pos.z;
+        for (i = 0; i < 4; i++) {
+            func_800B3170_B3D70(&D_80115490_2DA980_name_43[i]->pos, &sd->coords);
+            D_80115490_2DA980_name_43[i]->pos.x = HuMathSin(angle + D_801145C4_2D9AB4_name_43[i + 1]) * 18.0f + D_80115490_2DA980_name_43[i]->pos.x;
+            D_80115490_2DA980_name_43[i]->pos.z = func_800B7890_B8490(angle + D_801145C4_2D9AB4_name_43[i + 1]) * 18.0f + D_80115490_2DA980_name_43[i]->pos.z;
+        }
+        func_80056658_57258(&PLAYER_MODEL43(player)->pos, &sd->coords, &PLAYER_MODEL43(player)->rot);
+        for (i = 0; i < 4; i++) {
+            func_80056658_57258(&D_80115490_2DA980_name_43[i]->pos, &sd->coords, &D_80115490_2DA980_name_43[i]->rot);
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801119D4_2D6EC4_name_43);
 

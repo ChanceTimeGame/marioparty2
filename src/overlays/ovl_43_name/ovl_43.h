@@ -650,5 +650,7 @@ extern Vec D_80114528_2D9A18_name_43[4]; /* landing offsets by order */
 void func_80059618_5A218(void*);
 void func_80029C74_2A874(s16, f32);
 f32 func_80029D0C_2A90C(s16);
+extern f32 D_801145C4_2D9AB4_name_43[5]; /* the whirl's angles: the player's, then the four models' */
+extern MBModel* D_80115490_2DA980_name_43[4]; /* the whirl's four models */
 
 #endif
