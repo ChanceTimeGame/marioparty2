@@ -141,7 +141,130 @@ const u32 D_80107488_3D4CD8_name_61[6] = { 0x000000F5, 0x000000F5, 0x0000010A, 0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80102F74_3D07C4_name_61);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_80103EA0_3D16F0_name_61);
+void func_80103EA0_3D16F0_name_61(void) {
+    Vec pos;
+    Vec2f scr;
+    f32 scale;
+    s16 hole;
+    s32 i;
+
+    for (i = 0; i < 8; i++) {
+        if (i != 6) {
+            omSetTra(D_801074D8_3D4D28_name_61[i], D_801072F8_3D4B48_name_61[i].x, D_801072F8_3D4B48_name_61[i].y, D_801072F8_3D4B48_name_61[i].z);
+            if (i != 7) {
+                func_8010568C_3D2EDC_name_61(i, D_80107388_3D4BD8_name_61[i]);
+                func_801057D4_3D3024_name_61(i, 0, 2, 2);
+            }
+            func_800298A4_2A4A4(D_801074D8_3D4D28_name_61[i]->model[0], 4, 0);
+            func_80056658_57258(&D_801072F8_3D4B48_name_61[i], OVL61_CAM_POS, D_801074D8_3D4D28_name_61[i]->unk_50);
+            func_801058B0_3D3100_name_61(i);
+            func_801058F0_3D3140_name_61(i, 5);
+        }
+    }
+    func_801057D4_3D3024_name_61(7, 0, 2, 2);
+    HuPrcSleep(70);
+    PlaySound(0x4B3);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xB4);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xB4, -1, -1);
+    func_80106EE0_3D4730_name_61(180, 0.0f, 0.0f, 0.0f, -0.7111111f);
+    func_80104DA8_3D25F8_name_61(180.0f);
+    func_80106EAC_3D46FC_name_61(0, 0, 0, 0);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_80106E88_3D46D8_name_61(D_80107504_3D4D54_name_61);
+    HuPrcSleep(45);
+    for (i = 0; i < 8; i++) {
+        if (i != 6) {
+            func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 1, 1);
+            func_800256CC_262CC(2, D_801070A4_3D48F4_name_61[i], 1, 1);
+        }
+    }
+    func_80079A70_7A670(5);
+    func_80106EE0_3D4730_name_61(4, 0.0f, 0.0f, 0.0f, 25.6f);
+    pos.x = D_801074D8_3D4D28_name_61[6]->trans.x;
+    pos.y = D_801074D8_3D4D28_name_61[6]->trans.y + 65.0f;
+    pos.z = D_801074D8_3D4D28_name_61[6]->trans.z;
+    func_800209C4_215C4(0, &pos, &scr);
+    func_80106F84_3D47D4_name_61(&scr);
+    hole = func_80106D54_3D45A4_name_61(scr.unk_00, scr.unk_04, 3.5f, 3.5f);
+    scale = 3.5f;
+    for (i = 6; i >= 2; i--) {
+        scale -= 0.5f;
+        func_80106F64_3D47B4_name_61(hole, scale, scale);
+        HuPrcVSleep();
+    }
+    func_80106EAC_3D46FC_name_61(0, 0, 0, 0x80);
+    HuPrcSleep(30);
+    func_80105858_3D30A8_name_61(6, 3, 0, 4, 2);
+    while (func_80105ABC_3D330C_name_61(6, &D_801073A0_3D4BF0_name_61, 12.0f) == 0) {
+        HuPrcVSleep();
+    }
+    while (func_801059B0_3D3200_name_61(6, &D_801073A0_3D4BF0_name_61, 18.0f) == 0) {
+        pos.x = D_801074D8_3D4D28_name_61[6]->trans.x;
+        pos.y = D_801074D8_3D4D28_name_61[6]->trans.y + 65.0f;
+        pos.z = D_801074D8_3D4D28_name_61[6]->trans.z;
+        func_800209C4_215C4(0, &pos, &scr);
+        func_80106F84_3D47D4_name_61(&scr);
+        func_80106F44_3D4794_name_61(hole, scr.unk_00, scr.unk_04);
+        HuPrcVSleep();
+    }
+    while (func_80105ABC_3D330C_name_61(6, OVL61_CAM_POS, 12.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_80105858_3D30A8_name_61(6, 0, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xB5);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xB5, -1, -1);
+    HuPrcSleep(60);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xB6);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xB6, -1, -1);
+    HuPrcSleep(60);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_80105858_3D30A8_name_61(6, 4, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xB7);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xB7, -1, -1);
+    HuPrcSleep(25);
+    func_80105858_3D30A8_name_61(6, 0, 0, 4, 2);
+    HuPrcSleep(24);
+    func_8010622C_3D3A7C_name_61(D_80107500_3D4D50_name_61);
+    func_80105858_3D30A8_name_61(6, 3, 0, 4, 2);
+    while (func_80105ABC_3D330C_name_61(6, &D_801073AC_3D4BFC_name_61, 12.0f) == 0) {
+        HuPrcVSleep();
+    }
+    while (func_801059B0_3D3200_name_61(6, &D_801073AC_3D4BFC_name_61, 18.0f) == 0) {
+        pos.x = D_801074D8_3D4D28_name_61[6]->trans.x;
+        pos.y = D_801074D8_3D4D28_name_61[6]->trans.y + 65.0f;
+        pos.z = D_801074D8_3D4D28_name_61[6]->trans.z;
+        func_800209C4_215C4(0, &pos, &scr);
+        func_80106F84_3D47D4_name_61(&scr);
+        func_80106F44_3D4794_name_61(hole, scr.unk_00, scr.unk_04);
+        HuPrcVSleep();
+    }
+    while (func_80105ABC_3D330C_name_61(6, OVL61_CAM_POS, 12.0f) == 0) {
+        HuPrcVSleep();
+    }
+    func_80105858_3D30A8_name_61(6, 0, 0, 4, 2);
+    HuPrcSleep(30);
+    func_80106E88_3D46D8_name_61(hole);
+    func_80106EE0_3D4730_name_61(4, 0.0f, 0.0f, 0.0f, -25.6f);
+    HuPrcSleep(5);
+    func_80106EAC_3D46FC_name_61(0, 0, 0, 0);
+    for (i = 0; i < 8; i++) {
+        func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 1, 0);
+        func_800256CC_262CC(2, D_801070A4_3D48F4_name_61[i], 1, 0);
+    }
+    func_80079B88_7A788();
+    HuPrcSleep(20);
+    D_80107194_3D49E4_name_61 = 1;
+    omAddPrcObj(func_801046E0_3D1F30_name_61, 0x5000, 0x2000, 0);
+    HuPrcSleep(15);
+    func_80105858_3D30A8_name_61(6, 1, 0, 4, 2);
+    func_8008DACC_8E6CC(1, D_801074FA_3D4D4A_name_61, 0xB8);
+    func_8010624C_3D3A9C_name_61(D_80107500_3D4D50_name_61, 0xB8, -1, -1);
+    HuPrcSleep(30);
+    omAddPrcObj(func_80104C14_3D2464_name_61, 0x5000, 0x2000, 0);
+    HuPrcSleep(30);
+    InitFadeOut(0, 210);
+}
 
 #ifdef NON_MATCHING
 /* Control flow: retail keeps the bounce loop unoptimised (33.0f, 5.0f and 0.0f reloaded, the
