@@ -135,11 +135,79 @@ void func_80104D78_13F108_BowlOver(omObjData* obj, s32 dir, s32 file, s32 file2,
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_801051B4_13F544_BowlOver);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80105974_13FD04_BowlOver);
+void func_80105974_13FD04_BowlOver(omObjData* obj) {
+    BOBallWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80105AFC_13FE8C_BowlOver);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BOBallWork), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BOBallWork));
+    obj->model[0] = func_80018A64_19664(5, 0x6B9);
+    obj->model[1] = func_80018A64_19664(0x1E0001, 0x6B9);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0xA4, 0x1B);
+    func_8002D2B4_2DEB4(obj->model[0], 42.0f, 90.0f, 51.0f);
+    w->unk_7C = 0;
+    w->unk_54 = 1;
+    w->unk_44 = 0.1f;
+    w->unk_48 = 30.0f;
+    w->unk_34 = 50.0f;
+    w->unk_3C = 0.0f;
+    w->unk_78 = 0;
+    w->unk_38 = 1000.0f;
+    w->unk_52 = 3;
+    w->unk_74 = 0.5f;
+    w->unk_50 = 0x20;
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029EDC_2AADC(obj->model[1], 0);
+    func_800297E8_2A3E8(obj->model[1], 0.0f, 0.0f, 0.0f);
+    obj->func_ptr = func_801051B4_13F544_BowlOver;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80105D14_1400A4_BowlOver);
+void func_80105AFC_13FE8C_BowlOver(void) {
+    omObjData* obj;
+    s16 i;
+
+    func_80020070_20C70(2);
+    obj = omAddObj(0x7FDA, 0, 0, -1, func_80105D14_1400A4_BowlOver);
+    omSetStatBit(obj, 0xA0);
+    for (i = 0; i < 2; i++) {
+        Hu3DCamSetPerspective(i, 53.0f, 80.0f, 8000.0f);
+        CameraViewportSet(i, &D_801099C4_143D54_BowlOver[i], &D_801099DC_143D6C_BowlOver[i]);
+        CameraScissorSet(i, &D_801099F4_143D84_BowlOver[i]);
+    }
+    func_801063D0_140760_BowlOver(0, 939.0f, 326.0f, 0.0f, 0.0f, 0.0f, -86.8f, -4828.6f);
+    func_801063D0_140760_BowlOver(1, 1900.0f, 360.5f, 0.0f, 0.0f, 0.0f, 350.0f, -860.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    ViewportSet(1, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    func_80105D14_1400A4_BowlOver(obj);
+}
+
+void func_80105D14_1400A4_BowlOver(omObjData* obj) {
+    Vec eye;
+    Vec at;
+    Vec up;
+    f32 rx;
+    f32 ry;
+    s16 i;
+
+    for (i = 0; i < 2; i++) {
+        rx = D_80102770_103370[i].x;
+        ry = D_80102770_103370[i].y;
+        eye.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].x;
+        eye.y = -HuMathSin(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].y;
+        eye.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].z;
+        at.x = D_801013B0_101FB0[i].x;
+        at.y = D_801013B0_101FB0[i].y;
+        at.z = D_801013B0_101FB0[i].z;
+        up.x = HuMathSin(ry) * HuMathSin(rx);
+        up.y = func_800B7890_B8490(rx);
+        up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+        Hu3DCamSetPositionOrientation(i, &eye, &at, &up);
+        Hu3DCamUpdateMtx(i);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80105EE4_140274_BowlOver);
 

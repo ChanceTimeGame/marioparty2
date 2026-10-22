@@ -39,6 +39,27 @@ typedef struct BOPlayerWork {
     /* 0x0EC */ char unk_EC[0x70];
 } BOPlayerWork; /* size = 0x15C */
 
+/* The shell's work (func_80105974, 0xAC; MP1 BowlBallWork 0x6C, fields from 0x58 on +0x1C). */
+typedef struct BOBallWork {
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ char unk_40[4];
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ char unk_4C[4];
+    /* 0x50 */ u16 unk_50;
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[0x1F];
+    /* 0x74 */ f32 unk_74;
+    /* 0x78 */ s32 unk_78;
+    /* 0x7C */ s32 unk_7C;
+    /* 0x80 */ char unk_80[0x2C];
+} BOBallWork; /* size = 0xAC */
+
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BOCharData {
     /* 0x00 */ s16 unk_00;
@@ -52,6 +73,7 @@ typedef struct BOCharData {
 extern BOCharData D_800CD438_CE038[];
 
 #define BO_WORK(obj) ((BOPlayerWork*)(obj)->unk_50)
+#define BO_BALL_WORK(obj) ((BOBallWork*)(obj)->unk_50)
 
 /* ---------------------------------------------------------------------------------------------
    Data (.data, 13CB90.c: 80109960-80109A40)
@@ -95,9 +117,9 @@ extern f32 D_801099B8_143D48_BowlOver;
 extern f32 D_801099BC_143D4C_BowlOver;
 extern s8 D_801099C0_143D50_BowlOver;
 extern s8 D_801099C1_143D51_BowlOver;
-extern f32 D_801099C4_143D54_BowlOver[2][3]; /* viewport scale (640, 480, 511) */
-extern f32 D_801099DC_143D6C_BowlOver[2][3]; /* viewport translate */
-extern f32 D_801099F4_143D84_BowlOver[11];
+extern Vec D_801099C4_143D54_BowlOver[2]; /* camera viewport scale (640, 480, 511) */
+extern Vec D_801099DC_143D6C_BowlOver[2]; /* camera viewport translate */
+extern RectF D_801099F4_143D84_BowlOver[2]; /* camera scissor */
 
 /* ---------------------------------------------------------------------------------------------
    Data (.data, 141320.c: 80109A40-80109AC0)
@@ -193,6 +215,14 @@ void func_8002D1EC_2DDEC(s16, u8);
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
 void func_80029B80_2A780(s16 arg0, s16 arg1);
+void func_80020070_20C70(s32);
+void CameraViewportSet(s16 camIndex, Vec* arg1, Vec* arg2);
+void CameraScissorSet(s16 camIndex, RectF* arg1);
+void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
+void Hu3DCamUpdateMtx(s16 camIndex);
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+extern Vec3f D_80102770_103370[]; /* CRotM */
+extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 u8 rand8(void);
 
 /* ---------------------------------------------------------------------------------------------
