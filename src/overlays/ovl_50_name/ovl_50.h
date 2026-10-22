@@ -395,6 +395,13 @@ extern omObjData* D_801125E4_352E44_name_50; /* func_80108A00's beam object; wor
 /* 50-C */
 extern omObjData* D_801125D4_352E34_name_50; /* func_80108290's glow */
 extern omObjData* D_801125E0_352E40_name_50; /* func_80108830's burst */
+/* A fading puff (func_8010CD24; 4F's Ovl4FPuffWork without the kill flag). */
+typedef struct Ovl50PuffWork {
+    /* 0x00 */ f32 alpha;
+    /* 0x04 */ f32 grow;
+    /* 0x08 */ f32 fade;
+    /* 0x0C */ MBModel* model;
+} Ovl50PuffWork; /* size = 0x10 */
 void SprAnimKill(s16);
 void espDispOn(u16);
 extern s16 D_80111EFC_35275C_name_50;     /* func_80108F98's tint toggle */

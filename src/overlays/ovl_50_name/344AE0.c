@@ -2239,14 +2239,149 @@ void func_8010B230_34BA90_name_50(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010B230_34BA90_name_50);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010CD24_34D584_name_50);
+/* A fading, growing puff at pos (4F's func_801063AC without the kill flag). */
+omObjData* func_8010CD24_34D584_name_50(Vec* pos, f32 grow, f32 fade) {
+    omObjData* obj;
+    Ovl50PuffWork* work;
+    MBModel* model;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010CE28_34D688_name_50);
+    obj = omAddObj(500, 0, 0, -1, func_8010CE28_34D688_name_50);
+    work = obj->unk_50 = func_80027154_27D54(sizeof(Ovl50PuffWork), 0x7918);
+    work->alpha = 255.0f;
+    work->grow = grow;
+    work->fade = fade;
+    model = MBModelFileCreate(0xA015C, 0, 1.0f, 0.0f, NULL);
+    model->pos.x = pos->x;
+    model->pos.y = pos->y;
+    model->pos.z = pos->z;
+    func_8002D124_2DD24(*model->obj->model);
+    func_8002D0A0_2DCA0(*model->obj->model, 255);
+    work->model = model;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010CF08_34D768_name_50);
+/* The puff's object: kills itself once faded out. */
+void func_8010CE28_34D688_name_50(omObjData* obj) {
+    Ovl50PuffWork* work;
+    MBModel* model;
+    f32 scale;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010CFE8_34D848_name_50);
+    work = obj->unk_50;
+    model = work->model;
+    scale = model->scale.z + work->grow;
+    model->scale.z = scale;
+    model->scale.y = scale;
+    model->scale.x = scale;
+    work->alpha = work->alpha - work->fade;
+    if (work->alpha < 0.0f) {
+        work->alpha = 0.0f;
+        MBModelKill(work->model);
+        omDelObj(obj);
+    } else {
+        func_8002D0A0_2DCA0(*model->obj->model, work->alpha);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010D198_34D9F8_name_50);
+/* The ship's object (func_8010B230): while work[0] is 1 it sways (its model's rot is a
+   direction: sin, 0, cos of obj->rot.y), else its model spins about z. */
+void func_8010CF08_34D768_name_50(omObjData* obj) {
+    MBModel* model = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/344AE0", func_8010D320_34DB80_name_50);
+    if (obj->work[0] == 1) {
+        obj->rot.y += 2.0f;
+        if (obj->rot.y >= 360.0f) {
+            obj->rot.y -= 360.0f;
+        }
+        model->rot.x = HuMathSin(obj->rot.y);
+        model->rot.y = 0.0f;
+        model->rot.z = func_800B7890_B8490(obj->rot.y);
+    } else {
+        model->obj->rot.z += 1.0f;
+        if (model->obj->rot.z >= 360.0f) {
+            model->obj->rot.z -= 360.0f;
+        }
+    }
+}
+
+/* The sign's sparkle (sprite model 0x68D, texture 0xA01ED) at a point, turned to the camera;
+   func_8010D198 runs it while work[0] is set. */
+omObjData* func_8010CFE8_34D848_name_50(f32 x, f32 y, f32 z) {
+    Vec pos;
+    Vec rot;
+    omObjData* obj;
+    void* data;
+    s16 tex;
+
+    data = DataRead(0xA01ED);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    obj = omAddObj(0x1F4, 2, 0, -1, func_8010D198_34D9F8_name_50);
+    obj->model[1] = func_80020EBC_21ABC((void*)-1, 0x68D, 8);
+    D_800F86D8_F92D8[obj->model[1]].unk02 = tex;
+    func_80021160_21D60(obj->model[1], 6, 0);
+    obj->model[0] = D_800F86D8_F92D8[obj->model[1]].unk00;
+    func_80021250_21E50(obj->model[1], 0xFF, 0xFF, 0xFA);
+    func_800211E8_21DE8(obj->model[1], 200);
+    omSetTra(obj, x, y, z);
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+    func_80056658_57258(&pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &rot);
+    obj->rot.y = func_80042BE0_437E0(&rot);
+    obj->unk_10 = 0;
+    obj->rot.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->rot.z;
+    obj->scale.z = 1.0f;
+    obj->work[0] = 0;
+    obj->work[1] = 0;
+    obj->work[2] = 0;
+    return obj;
+}
+
+/* The sparkle: grows to full size and shrinks again while spinning, then waits 90 frames;
+   hidden while work[0] is 0. work[1]: shrinking; work[2]: its sound played; unk_10: the wait. */
+void func_8010D198_34D9F8_name_50(omObjData* obj) {
+    if (obj->work[0] == 0) {
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+        obj->work[1] = 0;
+        obj->rot.z = obj->scale.x = obj->scale.y = 0.0f;
+        obj->unk_10 = 0;
+    } else {
+        if (obj->work[2] == 0) {
+            PlaySound(0x3F2);
+            obj->work[2] = 1;
+        }
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        if (obj->unk_10 == 0) {
+            if (obj->work[1] == 0) {
+                obj->scale.x = obj->scale.y = obj->scale.y + 0.2f;
+                if (obj->scale.x >= 1.0f) {
+                    obj->scale.x = obj->scale.y = 1.0f;
+                    obj->work[1] = 1;
+                }
+            } else {
+                obj->scale.x = obj->scale.y = obj->scale.y - 0.2f;
+                if (obj->scale.x <= 0.0f) {
+                    obj->scale.x = obj->scale.y = 0.0f;
+                    obj->work[1] = 0;
+                    obj->unk_10 = 90;
+                    obj->rot.z = 0.0f;
+                }
+            }
+            obj->rot.z += 50.0f;
+            if (obj->rot.z >= 360.0f) {
+                obj->rot.z -= 360.0f;
+            }
+        } else {
+            obj->unk_10--;
+        }
+    }
+}
+
+void func_8010D320_34DB80_name_50(omObjData* obj) {
+    func_8002308C_23C8C(obj->model[1]);
+    omDelObj(obj);
+}
+
+/* Retail pads the file to 16 bytes. */
+__asm__(".balign 16");
