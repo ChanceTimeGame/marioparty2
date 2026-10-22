@@ -16,6 +16,8 @@
 #include "game/window.h"
 #include "game/gamemes.h"
 #include "game/pad.h"
+#include "game/gamework.h" /* R51B */
+#include "process.h" /* R51B */
 
 /* ---- main-segment API used by 51 ---- */
 
@@ -117,6 +119,9 @@ extern s32 D_80108580_358B90_name_51[6]; /* per character: icon */
 extern s32 D_80108598_358BA8_name_51[6]; /* per character: name */
 extern s32 D_801085B0_358BC0_name_51[12]; /* per row: the explanation message */
 
+/* R51B */
+extern s32 D_801083C0_3589D0_name_51; /* the star count the tally adds up (MP1 GwCommon.starNum) */
+extern s16 D_801085E4_358BF4_name_51[2]; /* tally: title position */
 extern s16 D_801085E8_358BF8_name_51[4][2]; /* tally: portraits (D_801085F8 with flag 0xD) */
 extern s16 D_801085F8_358C08_name_51[4][2];
 extern s16 D_80108608_358C18_name_51[4][2]; /* tally: icons (D_80108618 with flag 0xD) */
@@ -138,6 +143,8 @@ extern s32 D_80108880_358E90_name_51; /* total coins */
 extern s32 D_80108884_358E94_name_51;
 extern s32 D_80108888_358E98_name_51; /* total stars with the bonus stars */
 extern s32 D_8010888C_358E9C_name_51;
+/* R51B */
+extern s32 D_801088A0_358EB0_name_51[2]; /* the coin and star counters' sprites */
 extern s32 D_80108A50_359060_name_51; /* character name sprites */
 extern s32 D_80108A58_359068_name_51[4];
 extern s32 D_80108A68_359078_name_51; /* character icon sprites */

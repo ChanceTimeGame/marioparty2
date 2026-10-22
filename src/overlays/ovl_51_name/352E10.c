@@ -653,14 +653,110 @@ void func_80105468_355A78_name_51(void) {
     func_8008CCA8_8D8A8((s16)D_80109110_359720_name_51);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801055E4_355BF4_name_51);
+/* Slides the tally off to the right (xoff 320) and kills the tally window (MP1 func_800F8EB8). */
+void func_801055E4_355BF4_name_51(void) {
+    s32 i;
+    s32 xoff = 320;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_801058CC_355EDC_name_51);
+    if (_CheckFlag(0xD) == 0) {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D60_359370_name_51, 0, xoff, 0);
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 0; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108658_358C68_name_51[i][0] + xoff, D_80108658_358C68_name_51[i][1]);
+        }
+    } else {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 4; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108678_358C88_name_51[i][0] + xoff, D_80108678_358C88_name_51[i][1]);
+        }
+    }
+    func_8008CCA8_8D8A8((s16)D_80109110_359720_name_51);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105BE0_3561F0_name_51);
+/* Puts the tally in place (xoff 0) and opens the tally message window (MP1 func_800F9250). */
+void func_801058CC_355EDC_name_51(void) {
+    s16 size[2];
+    s32 i;
+    s32 xoff = 0;
+
+    if (_CheckFlag(0xD) == 0) {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + xoff, D_80108608_358C18_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D60_359370_name_51, 0, xoff, 0);
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 0; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108658_358C68_name_51[i][0] + xoff, D_80108658_358C68_name_51[i][1]);
+        }
+    } else {
+        SprPosSet(D_80108CB8_3592C8_name_51.strGId[0], 0, D_801085E4_358BF4_name_51[0] + xoff, D_801085E4_358BF4_name_51[1]);
+        SprPosSet((s16)D_80108D2C_35933C_name_51, 0, xoff, 0);
+        for (i = 0; i < 4; i++) {
+            func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+            func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108618_358C28_name_51[i][0] + xoff, D_80108618_358C28_name_51[i][1]);
+        }
+        SprPosSet((s16)D_80108D68_359378_name_51, 0, xoff, 0);
+        for (i = 4; i < 8; i++) {
+            SprPosSet(D_80108D70_359380_name_51[i].strGId[0], 0, D_80108678_358C88_name_51[i][0] + xoff, D_80108678_358C88_name_51[i][1]);
+        }
+    }
+    func_8008DACC_8E6CC(1, size, 0x619);
+    D_80109110_359720_name_51 = func_8005AAC0_5B6C0(0x46, 0xD0, size[0], size[1]);
+    func_80089B2C_8A72C((s16)D_80109110_359720_name_51, 0);
+    func_80089A48_8A648((s16)D_80109110_359720_name_51, 0);
+    func_800890CC_89CCC((s16)D_80109110_359720_name_51, 0x619, -1, -1);
+}
 
 __asm__(".section .rodata");
 const char D_801087BC_358DCC_name_51[] = "%5d";
+
+/* A five-digit counter process: user_data 0 shows the bank's coins, 1 the overlay's star count
+   (MP1 func_800F95F8 and func_800F972C in one). Leading blanks are hidden; the last digit always
+   shows. */
+void func_80105BE0_3561F0_name_51(void) {
+    u8 buf[5]; /* "%5d" writes six bytes: the NUL lands in frame padding (host hazard) */
+    s32 i;
+    s32 started;
+    s32 v;
+    s32 which = (s32)HuPrcCurrentGet()->user_data;
+
+    while (1) {
+        if (which == 0) {
+            v = D_800F8C60.coinNum;
+        } else {
+            v = D_801083C0_3589D0_name_51;
+        }
+        started = 0;
+        sprintf((char*)buf, D_801087BC_358DCC_name_51, v);
+        for (i = 0; i < 5; i++) {
+            func_8008225C_82E5C((s16)D_801088A0_358EB0_name_51[which], i, 1);
+            if (started == 0 && (buf[i] == ' ') & (i != 4)) {
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[which], i, 0, 0);
+                SprAttrSet((s16)D_801088A0_358EB0_name_51[which], i, 0x8000);
+            } else {
+                started = 1;
+                func_800822A8_82EA8((s16)D_801088A0_358EB0_name_51[which], i, buf[i] - '0', 0);
+                SprAttrReset((s16)D_801088A0_358EB0_name_51[which], i, 0x8000);
+            }
+        }
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80105D38_356348_name_51);
 
