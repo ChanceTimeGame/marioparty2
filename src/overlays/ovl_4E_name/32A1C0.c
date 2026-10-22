@@ -856,9 +856,146 @@ void func_801053E0_32CDA0_name_4E(s32 player, s16 motion, u16 attr) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80105454_32CE14_name_4E);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80105F80_32D940_name_4E);
+s32 func_80105F80_32D940_name_4E(void) {
+    s16 winners[4];
+    s32 n;
+    s32 i;
+    s16 target;
+    s16 count;
+    s16 best;
+    s16 score;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80106228_32DBE8_name_4E);
+    n = 0;
+    target = D_8010D448_334E08_name_4E[D_800FA1A8];
+    count = 0;
+    if (D_801013B8_101FB8.unk40 == 3) {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].coins_mg_bonus == 0) {
+                winners[n++] = i;
+            }
+        }
+        if (n == 0) {
+            return count;
+        }
+        for (i = 0; i < n; i++) {
+            if (D_800FC9B8_FD5B8[2 + winners[i]] + 1 >= target) {
+                count++;
+            }
+        }
+    } else if (D_801013B8_101FB8.unk40 == 7) {
+        if (D_800FC880_FD480 != -1 && D_800FC880_FD480 < 4) {
+            winners[n++] = D_800FC880_FD480;
+        }
+        if (n != 0) {
+            if (n == D_8010DBE0_3355A0_name_4E) {
+                return count;
+            }
+            for (i = 0; i < n; i++) {
+                if (D_800FC9B8_FD5B8[2 + winners[i]] + 1 >= target) {
+                    count++;
+                }
+            }
+        }
+    } else {
+        best = 1;
+        for (i = 0; i < 4; i++) {
+            switch (GwSystem.chosenMinigameIndex) {
+            case 0x19:
+            case 0x24:
+            case 0x38:
+            case 0x47:
+            case 0x48:
+                score = gPlayers[i].coins_mg;
+                break;
+            default:
+                score = gPlayers[i].coins_mg_bonus;
+                break;
+            }
+            if (best <= score) {
+                if (best < score) {
+                    best = score;
+                    n = 0;
+                }
+                winners[n++] = i;
+            }
+        }
+        if (n != 0) {
+            for (i = 0; i < n; i++) {
+                if (D_800FC9B8_FD5B8[2 + winners[i]] + 1 >= target) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+s32 func_80106228_32DBE8_name_4E(u8* wins) {
+    s16 winners[4];
+    s32 n;
+    s32 i;
+    s16 best;
+    s16 score;
+
+    n = 0;
+    if (D_801013B8_101FB8.unk40 == 3) {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].coins_mg_bonus == 0) {
+                winners[n++] = i;
+            }
+        }
+        if (n != 0) {
+            for (i = 0; i < n; i++) {
+                D_800FC9B8_FD5B8[2 + winners[i]]++;
+                wins[winners[i]]++;
+            }
+        }
+    } else {
+        best = 1;
+        if (D_801013B8_101FB8.unk40 == 7) {
+            if (D_800FC880_FD480 != -1 && D_800FC880_FD480 < 4) {
+                winners[n++] = D_800FC880_FD480;
+            }
+            if (n == 0 || n == D_8010DBE0_3355A0_name_4E) {
+                n = 0;
+            } else {
+                for (i = 0; i < n; i++) {
+                    D_800FC9B8_FD5B8[2 + winners[i]]++;
+                    wins[winners[i]]++;
+                }
+            }
+        } else {
+            for (i = 0; i < 4; i++) {
+                switch (GwSystem.chosenMinigameIndex) {
+                case 0x19:
+                case 0x24:
+                case 0x38:
+                case 0x47:
+                case 0x48:
+                    score = gPlayers[i].coins_mg;
+                    break;
+                default:
+                    score = gPlayers[i].coins_mg_bonus;
+                    break;
+                }
+                if (best <= score) {
+                    if (best < score) {
+                        best = score;
+                        n = 0;
+                    }
+                    winners[n++] = i;
+                }
+            }
+            if (n != 0) {
+                for (i = 0; i < n; i++) {
+                    D_800FC9B8_FD5B8[2 + winners[i]]++;
+                    wins[winners[i]]++;
+                }
+            }
+        }
+    }
+    return n;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801064F0_32DEB0_name_4E);
 

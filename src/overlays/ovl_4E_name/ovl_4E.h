@@ -50,6 +50,7 @@ extern u8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared; copied to 
 extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
 extern s16 D_800F904A;
 extern u8 D_800F9512_FA112;
+extern s32 D_800FC880_FD480;   /* team mode 7: the single winner, or -1 */
 extern BattleTargets D_800F8D1A_F991A;
 void _SetFlag(s32);
 void omOvlHisChg(s16 arg0, s32 overlay, s16 event, s16 stat);
@@ -138,6 +139,7 @@ extern s16 D_8010D1F2_334BB2_name_4E;
 extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
 extern s32 D_8010D214_334BD4_name_4E[];
+extern u8 D_8010D448_334E08_name_4E[4];  /* wins needed per first-menu choice: 3, 5, 7 */
 extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8) */
 extern Vec D_8010D544_334F04_name_4E[4]; /* 1 vs 3 positions */
 extern Vec D_8010D574_334F34_name_4E[4]; /* 2 vs 2 positions */
@@ -222,7 +224,7 @@ void func_80105148_32CB08_name_4E(void);
 void func_801053E0_32CDA0_name_4E(s32 player, s16 motion, u16 attr);
 s32 func_80105454_32CE14_name_4E(void);
 s32 func_80105F80_32D940_name_4E(void);
-s32 func_80106228_32DBE8_name_4E(s32 arg0);
+s32 func_80106228_32DBE8_name_4E(u8* wins);
 void func_801064F0_32DEB0_name_4E(s32 arg0);
 void func_80106BF8_32E5B8_name_4E(u16 spr, s32 dx, s32 dy);
 void func_80106C30_32E5F0_name_4E(s16 grp, s16 idx, s16 dx, s16 dy);
