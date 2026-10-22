@@ -11,6 +11,7 @@
 #include "game/object.h"
 #include "game/hmfman.h"
 #include "game/pad.h"
+#include "game/sprite.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -83,6 +84,7 @@ extern BOCharData D_800CD438_CE038[];
 
 #define BO_WORK(obj) ((BOPlayerWork*)(obj)->unk_50)
 #define BO_BALL_WORK(obj) ((BOBallWork*)(obj)->unk_50)
+#define BO_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
 /* ---------------------------------------------------------------------------------------------
    Data (.data, 13CB90.c: 80109960-80109A40)
@@ -125,8 +127,8 @@ extern f32 D_801099B0_143D40_BowlOver;
 extern f32 D_801099B4_143D44_BowlOver;
 extern f32 D_801099B8_143D48_BowlOver;
 extern f32 D_801099BC_143D4C_BowlOver;
-extern s8 D_801099C0_143D50_BowlOver;
-extern s8 D_801099C1_143D51_BowlOver;
+extern s8 D_801099C0_143D50_BowlOver; /* rolling sounds stopped */
+extern s8 D_801099C1_143D51_BowlOver; /* rolling sounds started */
 extern Vec D_801099C4_143D54_BowlOver[2]; /* camera viewport scale (640, 480, 511) */
 extern Vec D_801099DC_143D6C_BowlOver[2]; /* camera viewport translate */
 extern RectF D_801099F4_143D84_BowlOver[2]; /* camera scissor */
@@ -148,6 +150,7 @@ extern Vec3f D_80109E0C_14419C_BowlOver;
 extern u16 D_80109E18_1441A8_BowlOver;
 extern s16 D_80109E1A_1441AA_BowlOver;
 extern f32 D_80109E1C_1441AC_BowlOver; /* CPU aim offset by difficulty */
+extern s16 D_80109E20_1441B0_BowlOver[]; /* rolling sound handles */
 extern BOPin D_80109E50_1441E0_BowlOver[6];
 extern s16 D_80109EF8_144288_BowlOver[40];
 extern Vec3f D_8010A09C_14442C_BowlOver; /* bowler start position */
@@ -171,6 +174,8 @@ extern u8 D_800FA656;
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 void func_8003B6E8_3C2E8(HmfData* arg0);
+extern Gfx* D_800FDBCC_FE7CC; /* gMainGfxPos */
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 extern f32 D_8010105C_101C5C;
 extern f32 D_80101300_101F00;
 
@@ -262,7 +267,7 @@ void func_8010655C_1408EC_BowlOver(omObjData* obj, f32 x, f32 y, f32 z);
 s32 func_80106648_1409D8_BowlOver(omObjData* obj, omObjData* ball);
 f32 func_80106704_140A94_BowlOver(void);
 f32 func_801068D0_140C60_BowlOver(void);
-s32 func_801069D0_140D60_BowlOver(omObjData* obj, f32* dx, f32* dz);
+s16 func_801069D0_140D60_BowlOver(omObjData* obj, f32* dx, f32* dz);
 void func_80106C94_141024_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Matrix4f out);
 s32 func_80106E8C_14121C_BowlOver(u32 seed);
 u32 func_80106F60_1412F0_BowlOver(void);
