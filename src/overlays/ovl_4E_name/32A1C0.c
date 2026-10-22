@@ -1604,25 +1604,85 @@ void func_8010760C_32EFCC_name_4E(s32 mes) {
     func_800890CC_89CCC(D_8010DB60_335520_name_4E, mes, -1, -1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107638_32EFF8_name_4E);
+/* Waits until the message window has finished printing; returns its choice (0 when it has none). */
+s32 func_80107638_32EFF8_name_4E(void) {
+    while (func_8008BA30_8C630(D_8010DB60_335520_name_4E) != 0) {
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_8010DB60_335520_name_4E].unk_30 != 0) {
+        return func_8008BB48_8C748(D_8010DB60_335520_name_4E, 0, 0);
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076C0_32F080_name_4E);
+void func_801076C0_32F080_name_4E(void) {
+    func_8008E2DC_8EEDC(D_8010DB60_335520_name_4E, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076E4_32F0A4_name_4E);
+void func_801076E4_32F0A4_name_4E(void) {
+    D_8010DB62_335522_name_4E = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076F4_32F0B4_name_4E);
+void func_801076F4_32F0B4_name_4E(void) {
+    func_8008E4D0_8F0D0(D_8010DB60_335520_name_4E, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107718_32F0D8_name_4E);
+void func_80107718_32F0D8_name_4E(s32 arg0, s16 arg1) {
+    func_8008D904_8E504(D_8010DB60_335520_name_4E, arg0, arg1);
+}
 
+/* Puts esprite spr on model's part at its current motion frame. NON_MATCHING: the two argument
+   copies in the prologue are swapped (scheduling only). */
+#ifdef NON_MATCHING
+void func_80107748_32F108_name_4E(s16 model, s32 spr, char* part) {
+    f32 mtx[4][4];
+
+    func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
+    func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, mtx);
+    espPosSet(spr, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107748_32F108_name_4E);
+#endif
 
+/* Puts esprite spr on model's part (its motion object's or hit transform's matrix). NON_MATCHING:
+   register allocation only (retail keeps the raw argument in a3 for the else branch). */
+#ifdef NON_MATCHING
+void func_80107804_32F1C4_name_4E(s32 model, s32 spr, char* part) {
+    void* obj;
+
+    if (D_800FC834_FD434[(s16)model].hmf->unk84 != (void*)-1) {
+        obj = func_8002A9F4_2B5F4(model, part);
+        func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, ((HmfMotionObj*)obj)->unk58);
+    } else {
+        obj = func_8002A9F4_2B5F4(model, part);
+        func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, ((HitXform*)obj)->unk4C);
+    }
+    espPosSet(spr, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107804_32F1C4_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801078EC_32F2AC_name_4E);
+/* Screen position slot i = esprite esp's position plus (dx, dy). */
+void func_801078EC_32F2AC_name_4E(s16 i, s16 esp, s32 dx, s32 dy) {
+    D_8010E648_336008_name_4E[i].x = ((Ovl4EEsprite*)D_800F93FC_F9FFC)[esp].x + dx;
+    D_8010E648_336008_name_4E[i].y = ((Ovl4EEsprite*)D_800F93FC_F9FFC)[esp].y + dy;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107940_32F300_name_4E);
+/* Screen position slot i = pos plus (dx, dy). */
+void func_80107940_32F300_name_4E(s16 i, Vec2f* pos, s16 dx, s16 dy) {
+    D_8010E648_336008_name_4E[i].x = dx + pos->unk_00;
+    D_8010E648_336008_name_4E[i].y = dy + pos->unk_04;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079AC_32F36C_name_4E);
+void func_801079AC_32F36C_name_4E(void) {
+    s16 i;
+
+    for (i = 0; i < 20; i++) {
+        D_8010DA98_335458_name_4E[i] = -1;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079EC_32F3AC_name_4E);
 

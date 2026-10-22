@@ -224,7 +224,25 @@ extern s16 D_8010E5F4_335FB4_name_4E;   /* controlling pad */
 extern s16 D_8010E154_335B14_name_4E;
 extern s16 D_8010E618_335FD8_name_4E;
 extern f32 D_8010E63C_335FFC_name_4E;   /* camera near */
-extern s32 D_8010E648_336008_name_4E[];
+/* FE4E-B: per-slot screen positions (s16 x, y) */
+typedef struct Ovl4EPos16 {
+    s16 x;
+    s16 y;
+} Ovl4EPos16;
+extern Ovl4EPos16 D_8010E648_336008_name_4E[];
+
+/* ---- FE4E-B ---- */
+
+
+extern s8 D_8010DA98_335458_name_4E[20];
+extern Vec2f D_8010E148_335B08_name_4E; /* last projected screen position */
+
+s16 func_8008BA30_8C630(s16 winId);
+s32 func_8008BB48_8C748(s16, s16, s32);
+void func_8008D904_8E504(s16 winId, s32, s8);
+void func_80023554_24154(s16 model, s16 frame, char* part, f32 mtx[4][4]); /* part matrix */
+f32 func_80029CE4_2A8E4(s16 model); /* motion frame */
+void* func_8002A9F4_2B5F4(s16 model, char* part); /* HmfMotionObj* or HitXform* */
 
 /* ---- 32A1C0.c ---- */
 
@@ -259,10 +277,10 @@ void func_801076C0_32F080_name_4E(void);
 void func_801076E4_32F0A4_name_4E(void);
 void func_801076F4_32F0B4_name_4E(void);
 void func_80107718_32F0D8_name_4E(s32 arg0, s16 arg1);
-void func_80107748_32F108_name_4E(s16 arg0, s32 arg1, s32 arg2);
-void func_80107804_32F1C4_name_4E(s16 arg0, s32 arg1, s32 arg2);
-void func_801078EC_32F2AC_name_4E(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
-void func_80107940_32F300_name_4E(s32 arg0, void *arg1, s16 arg2, s16 arg3);
+void func_80107748_32F108_name_4E(s16 model, s32 spr, char* part);
+void func_80107804_32F1C4_name_4E(s32 model, s32 spr, char* part);
+void func_801078EC_32F2AC_name_4E(s16 i, s16 esp, s32 dx, s32 dy);
+void func_80107940_32F300_name_4E(s16 i, Vec2f* pos, s16 dx, s16 dy);
 void func_801079AC_32F36C_name_4E(void);
 s16 func_801079EC_32F3AC_name_4E(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
 void func_80107D3C_32F6FC_name_4E(omObjData* obj);
@@ -300,15 +318,15 @@ void func_8010BCB8_333678_name_4E(f32 *arg0, f32 arg1, void* fn);
 void func_8010C218_333BD8_name_4E(void);
 void func_8010C4AC_333E6C_name_4E(void);
 void func_8010C5BC_333F7C_name_4E(s16 arg0);
-void func_8010C5F4_333FB4_name_4E(s32* arg0);
+void func_8010C5F4_333FB4_name_4E(Ovl4EPos16* arg0);
 void func_8010C600_333FC0_name_4E(s16 arg0);
 void func_8010C60C_333FCC_name_4E(s16 arg0);
 void func_8010C618_333FD8_name_4E(s32 *arg0);
 void func_8010C708_3340C8_name_4E(s32 arg0, s16 arg1, s16 arg2);
 void func_8010C7AC_33416C_name_4E(s32 *arg0, s16 arg1);
-void func_8010C86C_33422C_name_4E(s16 arg0, void *arg1, s32 arg2);
-void func_8010C96C_33432C_name_4E(s16 arg0, s32 arg1);
-void func_8010C9AC_33436C_name_4E(void *arg1, void *arg2);
+void func_8010C86C_33422C_name_4E(s16 model, Vec* out, f32 mtx[4][4]);
+void func_8010C96C_33432C_name_4E(s16 model, Vec2f* out, f32 mtx[4][4]);
+void func_8010C9AC_33436C_name_4E(s32 cam, Vec* pos, Vec2f* out);
 void func_8010CCB4_334674_name_4E(s16 arg0, f32 arg1, void *arg2, void *arg3);
 void func_8010CF6C_33492C_name_4E(void);
 
