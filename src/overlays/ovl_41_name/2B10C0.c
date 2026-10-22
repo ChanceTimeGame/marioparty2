@@ -1024,11 +1024,84 @@ s32 func_80105630_2B3EF0_name_41(s32 arg0, u8* items) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_801058A4_2B4164_name_41);
+void func_801058A4_2B4164_name_41(void) {
+    GwSystem.current_board_index = 1;
+    omInitObjMan(10, 0);
+    omOvlGotoEx(0x3D, 0, 0x192);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_801058E0_2B41A0_name_41);
+void func_801058E0_2B41A0_name_41(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    SetPlayerOntoChain(1, 0, 0);
+    SetPlayerOntoChain(2, 0, 0);
+    SetPlayerOntoChain(3, 0, 0);
+    _SetFlag(0x43);
+    func_8010285C_2B111C_name_41();
+    D_800F8CE4_F98E4[0] = 0;
+    D_800F8CE4_F98E4[1] = 0;
+    D_800F8CE4_F98E4[2] = 0;
+    D_800F8CE4_F98E4[0x1E] = 0;
+    D_800F8CE4_F98E4[0x1D] = 0;
+    D_800F8CE4_F98E4[0x1A] = 0;
+    D_800F8CE4_F98E4[0x19] = 0;
+    D_800F8CE4_F98E4[0x17] = 0;
+    omOvlReturnEx(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_80105980_2B4240_name_41);
+void func_80105980_2B4240_name_41(void) {
+    s32 i;
+    SpaceData* from;
+
+    omInitObjMan(0xA0, 0x28);
+    func_80026DAC_279AC(1, 100, 100, 100);
+    func_80026DAC_279AC(2, 200, 200, 200);
+    func_80062E10_63A10(10, 0x41, 15, 0);
+    func_80055928_56528(D_80110AF0_2BF3B0_name_41);
+    func_80055980_56580(D_80110AF4_2BF3B4_name_41);
+    {
+        Vec dir;
+
+        from = GetSpaceData(0x73);
+        func_80056658_57258(&from->coords, &GetSpaceData(0x60)->coords, &dir);
+        MBMasuArrowAngleAdd(func_80042BE0_437E0(&dir) + 180.0f);
+    }
+    func_8004D60C_4E20C(0, func_8010A1B0_2B8A70_name_41);
+    func_8004D60C_4E20C(1, func_8010AE1C_2B96DC_name_41);
+    func_8004D60C_4E20C(8, func_8010B1B8_2B9A78_name_41);
+    func_8004D60C_4E20C(2, func_8010B228_2B9AE8_name_41);
+    func_8004D60C_4E20C(3, func_8010C598_2BAE58_name_41);
+    func_8004D60C_4E20C(4, func_8010CB10_2BB3D0_name_41);
+    func_8004D60C_4E20C(5, func_8010CD80_2BB640_name_41);
+    func_8004D60C_4E20C(6, func_8010B70C_2B9FCC_name_41);
+    func_8004D60C_4E20C(7, func_8010C134_2BA9F4_name_41);
+    func_8004D60C_4E20C(9, func_8010CFB4_2BB874_name_41);
+    func_8004D60C_4E20C(10, func_8010D2C8_2BBB88_name_41);
+    func_8004D60C_4E20C(12, func_8010D93C_2BC1FC_name_41);
+    func_8004D60C_4E20C(11, func_8010DB70_2BC430_name_41);
+    func_8004D60C_4E20C(13, func_8010E080_2BC940_name_41);
+    func_80044D98_45998(func_80110440_2BED00_name_41);
+    for (i = 0; i < 7; i++) {
+        func_800542E8_54EE8(i, D_80110AA4_2BF364_name_41[i]);
+    }
+    if (_CheckFlag(0x4D)) {
+        _ClearFlag(0x4D);
+        if (D_800F8D12_F9912 != 0) {
+            func_80102A44_2B1304_name_41();
+        } else {
+            func_80102AB0_2B1370_name_41();
+        }
+    }
+    func_80102B54_2B1414_name_41();
+    func_80105E28_2B46E8_name_41();
+    func_80105DA0_2B4660_name_41();
+    func_80106078_2B4938_name_41();
+    func_8010633C_2B4BFC_name_41();
+    func_80106500_2B4DC0_name_41();
+    func_801066CC_2B4F8C_name_41();
+    func_80106744_2B5004_name_41();
+    func_80106904_2B51C4_name_41();
+}
 
 void func_80105BE8_2B44A8_name_41(void) {
     PlayMusic(9);
@@ -1269,7 +1342,34 @@ void func_80106744_2B5004_name_41(void) {
                         D_80110B2C_2BF3EC_name_41[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_80106780_2B5040_name_41);
+void func_80106780_2B5040_name_41(s16 arg0) {
+    MBModel* obj;
+    f32 scale;
+    SpaceData* from;
+    s32 pad[2]; /* retail's frame has 8 unused bytes */
+
+    if (D_80111F70_2C0830_name_41[arg0] != NULL) {
+        return;
+    }
+    if (D_80111F6C_2C082C_name_41 == NULL) {
+        obj = func_80043510_44110(0xB, NULL);
+        func_80043DAC_449AC(obj);
+        D_80111F6C_2C082C_name_41 = obj;
+    } else {
+        obj = MBModelParamCreate(D_80111F6C_2C082C_name_41);
+    }
+    MBModelDispOff(obj);
+    D_80111F70_2C0830_name_41[arg0] = obj;
+    obj->attr |= 2;
+    scale = (D_800F8CE4_F98E4[arg0 + 1] + 50.0f) / 50.0f;
+    if (scale > 2.0f) {
+        scale = 2.0f;
+    }
+    HuVecCopyXYZ(&obj->scale, scale, scale, scale);
+    func_800B3170_B3D70(&obj->pos, &GetSpaceData(D_80110C8C_2BF54C_name_41[arg0])->coords);
+    from = GetSpaceData(D_80110C90_2BF550_name_41[arg0][0]);
+    func_80056658_57258(&GetSpaceData(D_80110C90_2BF550_name_41[arg0][1])->coords, &from->coords, &obj->rot);
+}
 
 void func_80106904_2B51C4_name_41(void) {
     s32 i;
@@ -1281,7 +1381,16 @@ void func_80106904_2B51C4_name_41(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_80106964_2B5224_name_41);
+void func_80106964_2B5224_name_41(void) {
+    GW_PLAYER* player;
+
+    player = BoardPlayerGet(-1);
+    if (D_80110C98_2BF558_name_41 != 0) {
+        func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &D_80111F78_2C0838_name_41->pos);
+        ((MBModel*)player->unk_24)->jumpY = D_80111F78_2C0838_name_41->jumpY + 7.0f;
+        func_800B3170_B3D70(&((MBModel*)player->unk_24)->rot, &D_80111F78_2C0838_name_41->rot);
+    }
+}
 
 s32 func_801069E8_2B52A8_name_41(s32 arg0) {
     s32 count = 0;

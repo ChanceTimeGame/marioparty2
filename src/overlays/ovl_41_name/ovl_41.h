@@ -121,6 +121,7 @@ void func_80056658_57258(Vec*, Vec*, Vec*); /* direction from a to b as a rotati
 omObjData* omAddObj(s16, u16, u16, s16, void*);
 void func_80041B60_42760(s8 arg0, Vec* arg1, s16 arg2, s16 arg3);
 f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation */
+void MBMasuArrowAngleAdd(f32); /* 41 */
 
 /* ---- 3E data (asm/data/overlays/ovl_3E_name/2A6BF0.data.s) ---- */
 
@@ -135,6 +136,8 @@ extern s32 D_80110AB8_2BF378_name_41;
 extern f32 D_80110ABC_2BF37C_name_41[9]; /* per board */
 extern s32 D_80110AE0_2BF3A0_name_41;
 extern u8 D_80110AE4_2BF3A4_name_41[3][4]; /* steal-a-star chance by turn band, coin band */
+extern s16 D_80110AF0_2BF3B0_name_41[2]; /* -1 ended */
+extern s16 D_80110AF4_2BF3B4_name_41[8]; /* -1 ended */
 extern s16 D_80110B04_2BF3C4_name_41[7][2]; /* star space marker offsets */
 extern s16 D_80110B20_2BF3E0_name_41[2][2];
 extern s16 D_80110B24_2BF3E4_name_41[2][2];
@@ -156,6 +159,8 @@ extern s32 D_80110C3C_2BF4FC_name_41[9]; /* per board: delay */
 extern s32 D_80110C60_2BF520_name_41[9]; /* per board: sound, -1 none (played as s16) */
 extern s16 D_80110C84_2BF544_name_41[2];
 extern s16 D_80110C88_2BF548_name_41;
+extern s16 D_80110C8C_2BF54C_name_41[2]; /* 41: second marker spaces */
+extern s16 D_80110C90_2BF550_name_41[2][2]; /* 41: their facing, from and to spaces */
 extern BoardEventTableEntry D_80110FD8_2BF898_name_41[];
 extern BoardEventTableEntry D_80111040_2BF900_name_41[];
 extern BoardEventTableEntry D_80111398_2BFC58_name_41[];
