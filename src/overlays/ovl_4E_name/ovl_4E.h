@@ -17,6 +17,8 @@
 #include "game/window.h"
 #include "game/pad.h"
 
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
 /* ---- types ---- */
 
 /* A camera key (0x1C): D_8010E144 points at a table of them (D_8010D1F8 has one). */
@@ -33,6 +35,9 @@ extern s8 D_800F9D48_FA948[];   /* [0x2F8 + i]: per-player byte, set to i */
 extern s8 D_800FC9B8_FD5B8[];   /* [2 + i]: per-player byte, cleared */
 extern s16 D_800FC8F0_FD4F0[];  /* [2] (0x800FC8F4) cleared */
 extern s16 D_800F904A;
+extern s16 D_800FA1A8;          /* chosen item of the three-row menu (func_80103034) */
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
 extern s16 D_801013B8_101FB8[]; /* CenterM + 8; [0x20] (0x801013F8): 0 or 7 */
 
 void CameraViewportSet(s16, Vec*, Vec*);
@@ -123,15 +128,16 @@ extern u16 D_8010DABC_33547C_name_4E;
 extern u16 D_8010DAC4_335484_name_4E[3];
 extern s16 D_8010DB60_335520_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
-extern s8 D_8010DBE2_3355A2_name_4E;
+extern u8 D_8010DBE2_3355A2_name_4E;
 extern s8 D_8010DBE3_3355A3_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
 extern s16 D_8010DC90_335650_name_4E;
 extern s16 D_8010E140_335B00_name_4E;
 extern Ovl4ECamKey* D_8010E144_335B04_name_4E;
 extern f32 D_8010E150_335B10_name_4E;   /* camera far */
-extern s16 D_8010E5F2_335FB2_name_4E;
-extern s16 D_8010E5F4_335FB4_name_4E;
+extern s16 D_8010E5F2_335FB2_name_4E;   /* cursor */
+extern s16 D_8010E5F4_335FB4_name_4E;   /* controlling pad */
+extern s16 D_8010E154_335B14_name_4E;
 extern s16 D_8010E618_335FD8_name_4E;
 extern f32 D_8010E63C_335FFC_name_4E;   /* camera near */
 extern s32 D_8010E648_336008_name_4E[];
@@ -174,7 +180,7 @@ void func_80107804_32F1C4_name_4E(s16 arg0, s32 arg1, s32 arg2);
 void func_801078EC_32F2AC_name_4E(s32 arg0, s16 arg1, s32 arg2, s32 arg3);
 void func_80107940_32F300_name_4E(s32 arg0, void *arg1, s16 arg2, s16 arg3);
 void func_801079AC_32F36C_name_4E(void);
-s16 func_801079EC_32F3AC_name_4E(s16 arg0, s16 arg1, s16 arg2, u16 arg3);
+s16 func_801079EC_32F3AC_name_4E(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
 void func_80107D3C_32F6FC_name_4E(omObjData* obj);
 void func_80107E34_32F7F4_name_4E(void);
 void func_80107F10_32F8D0_name_4E(void);

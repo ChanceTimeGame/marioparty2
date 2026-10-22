@@ -213,7 +213,90 @@ void func_80102B9C_32A55C_name_4E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80102B9C_32A55C_name_4E);
 #endif
 
+#ifdef NON_MATCHING
+/* First menu: three rows (D_8010DAC4) slide in; the stick moves the cursor (D_8010E5F2), A picks
+   (D_800FA1A8, returns 1: the others slide out, the chosen one rises), B backs out (returns 0).
+   Retail tests a copy of ok (move v0,s6; beqz v0) where this C tests s6: one instruction. */
+s32 func_80103034_32A9F4_name_4E(void) {
+    s16 i;
+    s16 j;
+    s32 ok;
+
+    if (D_8010DBE2_3355A2_name_4E != 0) {
+        PlaySound(0x11E);
+        D_8010DBE2_3355A2_name_4E = 0;
+    }
+    i = 0;
+    func_8010760C_32EFCC_name_4E(D_8010DC2C_3355EC_name_4E[0]);
+    do {
+        for (j = 0; j < 3; j++) {
+            if (i >= j * 5 && j * 5 + 10 >= i) {
+                espDispOn(D_8010DAC4_335484_name_4E[j]);
+                espPosSet(D_8010DAC4_335484_name_4E[j], 160.0f - (1.0f - HuMathSin((i - j * 5) * 9.0f)) * 240.0f, j * 36 + 0x4F);
+                func_801078EC_32F2AC_name_4E(j, D_8010DAC4_335484_name_4E[j], 0, 0);
+            }
+        }
+        HuPrcVSleep();
+    } while (++i < 21);
+    func_801079AC_32F36C_name_4E();
+    func_80109750_331110_name_4E(0);
+    func_8010C600_333FC0_name_4E(5);
+    D_8010E154_335B14_name_4E = 1;
+    while (1) {
+        if (ABS(ContStkX[D_8010E5F4_335FB4_name_4E]) >= 31 || ABS(ContStkY[D_8010E5F4_335FB4_name_4E]) >= 31) {
+            i = func_801079EC_32F3AC_name_4E(D_8010E5F2_335FB2_name_4E, 3, -ContStkX[D_8010E5F4_335FB4_name_4E], ContStkY[D_8010E5F4_335FB4_name_4E]);
+            if (i != -1) {
+                PlaySound(1);
+                func_8010C60C_333FCC_name_4E(i);
+                HuPrcSleep(6);
+                D_8010E5F2_335FB2_name_4E = i;
+            }
+        }
+        if (ContBtnTrg[D_8010E5F4_335FB4_name_4E] & 0x8000) {
+            PlaySound(3);
+            D_800FA1A8 = D_8010E5F2_335FB2_name_4E;
+            D_800FC8F0_FD4F0[2] = 0;
+            D_8010E154_335B14_name_4E = 0;
+            ok = 1;
+            break;
+        }
+        if (ContBtnTrg[D_8010E5F4_335FB4_name_4E] & 0x4000) {
+            PlaySound(4);
+            D_8010E154_335B14_name_4E = 0;
+            ok = 0;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    i = 0;
+    if (ok) {
+        do {
+            for (j = 0; j < 3; j++) {
+                if (j != D_800FA1A8) {
+                    espPosSet(D_8010DAC4_335484_name_4E[j], (1.0f - func_800B7890_B8490(i * 9.0f)) * 240.0f + 160.0f, j * 36 + 0x4F);
+                    if (i == 10) {
+                        espDispOff(D_8010DAC4_335484_name_4E[j]);
+                    }
+                }
+            }
+            HuPrcVSleep();
+        } while (++i < 11);
+        for (i = 0; i < 11; i++) {
+            espPosSet(D_8010DAC4_335484_name_4E[D_800FA1A8], 0xA0, (f32)(D_800FA1A8 * 36 + 0x4F) + HuMathSin(i * 9.0f) * (f32)(-9 - D_800FA1A8 * 36));
+            HuPrcVSleep();
+        }
+    } else {
+        for (j = 0; j < 3; j++) {
+            espPosSet(D_8010DAC4_335484_name_4E[j], -0x50, j * 36 + 0x4F);
+            espDispOff(D_8010DAC4_335484_name_4E[j]);
+        }
+        HuPrcVSleep();
+    }
+    return ok;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103034_32A9F4_name_4E);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80103608_32AFC8_name_4E);
 
