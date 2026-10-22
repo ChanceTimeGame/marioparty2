@@ -337,7 +337,145 @@ void func_8010AD5C_15487C_CraneGame(Matrix4f m, f32 x, f32 y, f32 z, f32* ox, f3
     *ow = x * m[0][3] + y * m[1][3] + z * m[2][3] + m[3][3];
 }
 
+/* Fresh (no MP1/MP3 ancestor found). Residue: retail lays the crossing case's two arms out the
+   other way round and allocates the edge delta to other registers. */
+#ifdef NON_MATCHING
+/* Clips the polygon poly (n corners, at most 16) to the box x0 <= x < x1, z0 <= z < z1 in place
+   (Sutherland-Hodgman, one side per pass: z0, z1, x0, x1). Returns the corners left, 0 when none. */
+s32 func_8010AE2C_15494C_CraneGame(f32 x0, f32 z0, f32 x1, f32 z1, s32 n, Vec* poly) {
+    Vec in[16];
+    Vec a;
+    Vec b;
+    f32 t;
+    f32 d;
+    s32 inside;
+    s32 pass;
+    s32 last;
+    s32 emit;
+    s32 out;
+    s32 i;
+    s32 j;
+
+    inside = 0;
+    t = 0.0f;
+    pass = 0;
+    do {
+        for (i = 0; i < n; i++) {
+            in[i].x = poly[i].x;
+            in[i].y = poly[i].y;
+            in[i].z = poly[i].z;
+        }
+        last = -1;
+        out = 0;
+        for (i = 0; i < n; i++) {
+            j = i + 1;
+            j &= -(j < n);
+            switch (pass) {
+            case 0:
+                d = in[j].z - in[i].z;
+                if (d != 0.0f) {
+                    t = (z0 - in[i].z) / d;
+                } else {
+                    t = -1.0f;
+                }
+                inside = 1;
+                if (!(z0 <= in[i].z)) {
+                    inside = 0;
+                }
+                emit = 0;
+                break;
+            case 1:
+                d = in[j].z - in[i].z;
+                if (d != 0.0f) {
+                    t = (z1 - in[i].z) / d;
+                } else {
+                    t = -1.0f;
+                }
+                inside = 1;
+                if (!(in[i].z < z1)) {
+                    inside = 0;
+                }
+                emit = 0;
+                break;
+            case 2:
+                d = in[j].x - in[i].x;
+                if (d != 0.0f) {
+                    t = (x0 - in[i].x) / d;
+                } else {
+                    t = -1.0f;
+                }
+                inside = 1;
+                if (!(x0 <= in[i].x)) {
+                    inside = 0;
+                }
+                emit = 0;
+                break;
+            case 3:
+                d = in[j].x - in[i].x;
+                if (d != 0.0f) {
+                    t = (x1 - in[i].x) / d;
+                } else {
+                    t = -1.0f;
+                }
+                inside = 1;
+                if (!(in[i].x < x1)) {
+                    inside = 0;
+                }
+                emit = 0;
+                break;
+            default:
+                emit = 0;
+                break;
+            }
+            if ((t >= 0.0f) & (t < 1.0f)) {
+                if (!inside) {
+                    a.x = t * (in[j].x - in[i].x) + in[i].x;
+                    a.y = t * (in[j].y - in[i].y) + in[i].y;
+                    a.z = t * (in[j].z - in[i].z) + in[i].z;
+                    goto end_b;
+                } else {
+                    a.x = in[i].x;
+                    a.y = in[i].y;
+                    a.z = in[i].z;
+                    b.x = t * (in[j].x - in[i].x) + in[i].x;
+                    b.y = t * (in[j].y - in[i].y) + in[i].y;
+                    b.z = t * (in[j].z - in[i].z) + in[i].z;
+                }
+                emit = 1;
+            } else if (inside) {
+                a.x = in[i].x;
+                a.y = in[i].y;
+                a.z = in[i].z;
+            end_b:
+                b.x = in[j].x;
+                b.y = in[j].y;
+                b.z = in[j].z;
+                emit = 1;
+            }
+            if (emit) {
+                if (last < 0 || a.x != poly[last].x || a.y != poly[last].y || a.z != poly[last].z) {
+                    poly[out].x = a.x;
+                    poly[out].y = a.y;
+                    poly[out].z = a.z;
+                    out++;
+                }
+                poly[out].x = b.x;
+                poly[out].y = b.y;
+                poly[out].z = b.z;
+                last = out;
+                out++;
+            }
+        }
+        n = out;
+        if (out == 0) {
+            return 0;
+        }
+    } while (++pass < 4);
+    return out;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_8010AE2C_15494C_CraneGame);
+#endif
 
 /* The highest point of the registered models' faces inside the box (x0..x1, z0..z1) in world space
    (0 when none): each face is moved to world space, clipped to the box and its highest corner kept. */
