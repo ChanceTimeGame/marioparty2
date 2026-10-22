@@ -445,6 +445,10 @@ s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display l
 extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
 extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+void func_80025770_26370(Matrix4f m, f32 x, f32 y, f32 z); /* MP1 MtxTranslate */
+void func_800260A4_26CA4(Matrix4f, Matrix4f); /* MP1 MtxReset */
+void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* MP1 MtxMult */
+void func_800B3040_B3C40(Matrix4f, Mtx*); /* guMtxF2L */
 
 /* A floating billboard D_80110978[5] (80109EC0, 8010AC5C): new in MP2. No pointers. */
 typedef struct SCDFloater {
