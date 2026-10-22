@@ -450,6 +450,43 @@ void func_80110310_304C10_name_47(void);
 s32 func_80110364_304C64_name_47(void); /* fork D: returns the use-item answer */
 s32 func_80110588_304E88_name_47(void);
 s32 func_80110904_305204_name_47(void);
+/* 47-A: the rest (fork B's own functions are void(void) unless a caller shows more) */
+void func_801058A4_2FA1A4_name_47(void);
+void func_801058E0_2FA1E0_name_47(void);
+void func_80105C5C_2FA55C_name_47(void);
+void func_80105FA4_2FA8A4_name_47(s16 arg0);
+void func_801060C4_2FA9C4_name_47(void);
+void func_801067CC_2FB0CC_name_47(void);
+void func_80106844_2FB144_name_47(void);
+void func_801068A8_2FB1A8_name_47(void);
+void func_80106A6C_2FB36C_name_47(void);
+void func_80106B44_2FB444_name_47(void);
+void func_80106BBC_2FB4BC_name_47(void);
+void func_801075C8_2FBEC8_name_47(void);
+void func_801075EC_2FBEEC_name_47(void);
+void func_80107610_2FBF10_name_47(void);
+void func_80107634_2FBF34_name_47(void);
+void func_80107658_2FBF58_name_47(void);
+void func_8010767C_2FBF7C_name_47(void);
+void func_801076A0_2FBFA0_name_47(void);
+void func_801076C4_2FBFC4_name_47(void);
+void func_801076E8_2FBFE8_name_47(void);
+void func_8010770C_2FC00C_name_47(void);
+Process* func_8010A530_2FEE30_name_47(void* arg0);
+void func_8010AF48_2FF848_name_47(void);
+void func_8010AF64_2FF864_name_47(void);
+void func_8010E64C_302F4C_name_47(void);
+void func_8010E738_303038_name_47(s32 arg0);
+void func_8010EA94_303394_name_47(void);
+void func_8010EAB0_3033B0_name_47(void);
+void func_8010EACC_3033CC_name_47(void);
+void func_8010EAE8_3033E8_name_47(void);
+void func_8010EB04_303404_name_47(void);
+void func_8010ED54_303654_name_47(void);
+s32 func_8010EE00_303700_name_47(u8* items);
+void func_8010F098_303998_name_47(void);
+s32 func_8010F6B0_303FB0_name_47(s32 arg0); /* the chosen option */
+void func_8010F910_304210_name_47(void);
 
 /* fork B */
 #include "game/data.h"
