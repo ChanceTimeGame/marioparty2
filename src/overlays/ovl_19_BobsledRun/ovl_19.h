@@ -90,7 +90,10 @@ typedef struct BRWork {
     /* 0x60 */ f32 unk_60;
     /* 0x64 */ f32 unk_64;
     /* 0x68 */ f32 unk_68;
-    /* 0x6C */ char unk_6C[0x30];
+    /* 0x6C */ char unk_6C[8];
+    /* 0x74 */ s32 unk_74[6]; /* stick samples, (x << 16) | y (MP1 0x6C) */
+    /* 0x8C */ char unk_8C[4];
+    /* 0x90 */ Vec3f unk_90;  /* ground normal (MP1 0x84) */
     /* 0x9C */ f32 unk_9C;    /* MP1 0x90 */
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ f32 unk_A4;
@@ -99,7 +102,9 @@ typedef struct BRWork {
     /* 0xB8 */ char unk_B8[0xB];
     /* 0xC3 */ s8 unk_C3;     /* MP1 0xB1 */
     /* 0xC4 */ s8 unk_C4;     /* MP1 0xB2 */
-    /* 0xC5 */ char unk_C5[7];
+    /* 0xC5 */ u8 unk_C5;
+    /* 0xC6 */ s16 unk_C6;    /* MP1 0xB4 */
+    /* 0xC8 */ char unk_C8[4];
     /* 0xCC */ f32 unk_CC;    /* MP1 0xBC */
     /* 0xD0 */ u16 unk_D0;    /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
@@ -113,7 +118,13 @@ typedef struct BRGround {
     /* 0x00 */ char unk_00[3];
     /* 0x03 */ u8 unk_03;
     /* 0x04 */ u8 unk_04;     /* ground id (BRWork::unk_53) */
-    /* 0x05 */ char unk_05[0xAF];
+    /* 0x05 */ char unk_05;
+    /* 0x06 */ u16 unk_06;    /* flags: 0x1A = flat floor (height unk_14) */
+    /* 0x08 */ f32 unk_08;    /* slope drag */
+    /* 0x0C */ char unk_0C[4];
+    /* 0x10 */ f32 unk_10;    /* sideways normal scale (MP1 0x0C) */
+    /* 0x14 */ f32 unk_14;    /* flat floor height (MP1 0x10) */
+    /* 0x18 */ char unk_18[0x9C];
 } BRGround; /* size = 0xB4 */
 
 /* Speed history of one team's camera (bss D_8010CA38 / D_8010CB48, 0x110 apart). Retail
@@ -121,7 +132,8 @@ typedef struct BRGround {
 typedef struct BRHist {
     /* 0x00 */ s32 idx;
     /* 0x04 */ f32 unk04[40];
-} BRHist; /* size = 0xA4, then f32 samples[20] */
+    /* 0xA4 */ f32 samples[20]; /* also D_8010CADC / D_8010CBEC */
+} BRHist; /* size = 0xF4 */
 
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BRCharData {
@@ -353,7 +365,7 @@ void func_801077A4_196344_BobsledRun(omObjData* obj);
 void func_80107920_1964C0_BobsledRun(omObjData* obj);
 void func_80107C6C_19680C_BobsledRun(omObjData* obj);
 void func_80107CF4_196894_BobsledRun(omObjData* obj, Vec3f* normal, f32 turn);
-void* func_80107E38_1969D8_BobsledRun(BRWork* work); /* MP1 func_800F6D20: the ground object's work */
+BRGround* func_80107E38_1969D8_BobsledRun(BRWork* work); /* MP1 func_800F6D20: the ground object's work */
 void func_80107EA4_196A44_BobsledRun(omObjData* obj);
 void func_8010982C_1983CC_BobsledRun(omObjData* obj);
 s32 func_80109D94_198934_BobsledRun(omObjData* obj, f32 arg1, s8 arg2);
@@ -367,5 +379,105 @@ void func_8010ADD8_199978_BobsledRun(omObjData* obj, Vec3f* normal);
 f32 func_8010AF5C_199AFC_BobsledRun(omObjData* obj, f32 rot, f32 x, f32 y, f32 z);
 f32 func_8010B630_19A1D0_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z, f32 oldY);
 void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 arg1);
+
+/* MG19-B */
+#include "game/pad.h"
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+f64 fabs(f64);
+f32 fabsf(f32);
+void func_800797DC_7A3DC(s16 sfx, s16 player);
+extern s16 D_800FD7FC_FE3FC; /* MP1 D_800F370C */
+extern f32 D_8010C0D0_19AC70_BobsledRun; /* strongest shove, team 0 */
+extern f32 D_8010C0D4_19AC74_BobsledRun; /* team 1 */
+extern s32 D_8010C0D8_19AC78_BobsledRun; /* finish banner shown */
+extern f32 D_8010C144_19ACE4_BobsledRun[2]; /* camera tilt, per team */
+void func_8000776C_836C(omObjData* obj); /* MP1 func_80005A04 */
+void func_8000CE80_DA80(s16* x, s16* y);
+s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y);
+s32 func_80019000_19C00(omObjData* obj); /* MP1 func_80017A60 */
+s32 func_80019CA4_1A8A4(omObjData* obj, u16 motion);
+void func_8000C584_D184(BRWork* work, s32 state);
+void func_8000C610_D210(BRWork* work, s32 arg1);
+void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite fade */
+s32 PlaySound(s32);
+/* A gate edge, two ColVtx at 0x8010C15C (inside D_8010C144's splat range); retail addresses it
+   from the first one's y (D_8010C15E): [-1..1] = first, [2..4] = second. */
+extern s16 D_8010C15E_19ACFE_BobsledRun[];
+extern Vec3f D_8010C168_19AD08_BobsledRun[6]; /* CPU aim points behind the gate (x 0 = end) */
+extern Vec3f D_8010C1BC_19AD5C_BobsledRun[82]; /* CPU path, BRTeam::path != 0 */
+extern Vec3f D_8010C4F8_19B098_BobsledRun[82]; /* CPU path, BRTeam::path == 0 */
+extern Vec3f D_8010C8C4_19B464_BobsledRun[6]; /* CPU brake zones (top y, bottom y, speed / 80) */
+extern Vec3f D_8010C90C_19B4AC_BobsledRun[6];
+void func_800B8070_B8C70(f32 angle, f32* s, f32* c); /* sin and cos */
+extern f32 D_800FC8F8_FD4F8[][6]; /* per camera: rot, x, z, fov, far, near (7AA60.c) */
+void Hu3DCamSetPositionOrientation(s16, Vec3f*, Vec3f*, Vec3f*);
+void Hu3DCamUpdateMtx(s16 camIndex);
+extern f32 D_8010C140_19ACE0_BobsledRun; /* camera pitch on level ground */
+f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+extern u8 D_800BF794_C0394; /* collision: the course object (MP1 D_800B8954) */
+extern u8 D_800BF798_C0398; /* MP1 D_800B8958 */
+extern ColVtx* D_8010CA00_19B5A0_BobsledRun; /* last floor face's vertices */
+extern ColVtx* D_8010CA04_19B5A4_BobsledRun;
+extern ColVtx* D_8010CA08_19B5A8_BobsledRun;
+extern u16 D_8010CA0C_19B5AC_BobsledRun; /* and their indices */
+extern u16 D_8010CA0E_19B5AE_BobsledRun;
+extern u16 D_8010CA10_19B5B0_BobsledRun;
+s32 func_80006F34_7B34(omObjData* obj, Vec4f* probe, s32, s32); /* MP1 func_80004D1C */
+f32 func_800023CC_2FCC(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* normal); /* MP1 func_800051D4 */
+s32 func_8000DC10_E810(Vec4f* probe, BRGround* gw); /* MP1 func_8000A910 */
+s32 func_80005110_5D10(s32, u16*, ColVtx*, void*); /* face filter */
+void func_8002F2C4_2FEC4(s16 model, s32* list, void* filter, void* probe); /* collect the model's faces */
+u16* func_8002F848_30448(s32* list); /* next face, NULL at the end */
+f32 func_8002DBA4_2E7A4(f32 x, f32 y, f32 z, ColVtx* verts, u16* tri); /* height on a face */
+void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec3f* n); /* face normal */
+f32 func_80003910_4510(omObjData* obj, f32 y); /* landing height (MP1 func_800006E4) */
+void func_8003C984_3D584(s16 model, Vec3f* normal); /* align the shadow (MP1 func_80037178) */
+/* BRWork seen as main's actor work (19BF0.c's ActorWork) for the motion player 8010BD18. */
+typedef struct BRMotionEntry {
+    /* 0x00 */ u16 flags;
+    /* 0x02 */ u16 speed;
+    /* 0x04 */ char unk_04[8];
+} BRMotionEntry; /* size = 0xC */
+typedef struct BRMotionReq {
+    /* 0x00 */ u16 flags;
+    /* 0x02 */ u16 motion;
+    /* 0x04 */ char unk_04[2];
+    /* 0x06 */ s16 unk_06; /* < 0: none; else the 4th argument of func_80025554_26154 */
+    /* 0x08 */ char unk_08[4];
+    /* 0x0C */ f32 speed;
+} BRMotionReq; /* size = 0x10 */
+typedef struct BRActorWork {
+    /* 0x00 */ char unk_00[0x50];
+    /* 0x50 */ u16 flags;
+    /* 0x52 */ char unk_52[7];
+    /* 0x59 */ s8 player;
+    /* 0x5A */ u8 unk_5A;
+    /* 0x5B */ u8 unk_5B;
+    /* 0x5C */ char unk_5C[0x4C];
+    /* 0xA8 */ u16 unk_A8;
+    /* 0xAA */ char unk_AA[0xE];
+    /* 0xB8 */ f32 unk_B8;
+    /* 0xBC */ char unk_BC[0x14];
+    /* 0xD0 */ u16 cur;
+    /* 0xD2 */ u16 count;
+    /* 0xD4 */ char unk_D4[2];
+    /* 0xD6 */ u16 pending;
+    /* 0xD8 */ BRMotionReq req;
+    /* 0xE8 */ BRMotionEntry* table;
+} BRActorWork;
+f32 func_8002CA14_2D614(s16);
+s16 func_80029E14_2AA14(s16);
+u16 func_80018FF0_19BF0(omObjData* obj);
+void func_800192E4_19EE4(omObjData* obj);
+void func_80025554_26154(s32, s32, s32, s16);
+void func_80029BF0_2A7F0(s16, s16, s16, s16, s16);
+void func_80029FBC_2ABBC(s16, f32);
+f32 func_8002DB3C_2E73C(f32 x, f32 z, ColVtx* a, ColVtx* b); /* side of the edge a-b */
+f32 func_80029E3C_2AA3C(s16); /* motion frame, -1 at the end */
+void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
+void espDispOn(u16);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_800796F0_7A2F0(s16 sound, s16 pitch);
 
 #endif
