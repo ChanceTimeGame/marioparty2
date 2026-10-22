@@ -198,6 +198,79 @@ extern s16 D_8011058A_3431CA_name_4F;
 
 extern const char D_801103B0_342FF0_name_4F[]; /* "item_hook" (336DE0.c) */
 
+/* 4F-B */
+
+/* A model sliding along another model's facing, then bouncing back with a wobble (func_80105F60,
+   func_80106054, func_80106198). */
+typedef struct Ovl4FBounceWork {
+    /* 0x00 */ f32 speed;
+    /* 0x04 */ MBModel* model;
+    /* 0x08 */ MBModel* dir; /* moves along this model's rot (a direction) */
+    /* 0x0C */ f32 dist;     /* left to slide */
+    /* 0x10 */ f32 bounce;   /* the next bounce's speed */
+    /* 0x14 */ f32 vel;
+    /* 0x18 */ f32 dx;
+    /* 0x1C */ f32 dz;
+    /* 0x20 */ f32 scale;
+    /* 0x24 */ f32 tiltStep;
+    /* 0x28 */ f32 tilt;
+} Ovl4FBounceWork; /* size = 0x2C */
+
+extern f32 D_80101300_101F00;
+extern f32 D_8010105C_101C5C;
+f32 HuVecDistance(Vec* a, Vec* b);
+f32 func_80042BE0_437E0(Vec*); /* y angle of a rotation; func_80106198 calls it as s32 */
+void func_80042E44_43A44(Vec* v, f32 angle); /* rotate v about y */
+void func_80020D20_21920(s16 arg0);
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
+extern u32* D_8010FD10_342950_name_4F[6]; /* board 1, per character: MBPlayerModelCreate list */
+extern u32 D_8010FD28_342968_name_4F[];
+extern s32 D_8010FD74_3429B4_name_4F;
+extern u32 D_8010FD3C_34297C_name_4F[]; /* board 1's host: MBModelFileCreate list */
+extern s32 D_8010FD7C_3429BC_name_4F;
+extern s32 D_8010FD80_3429C0_name_4F;
+extern Vec D_8010FD8C_3429CC_name_4F;
+extern Vec D_8010FD98_3429D8_name_4F;
+extern Vec D_8010FDA4_3429E4_name_4F;
+extern Vec D_8010FDB0_3429F0_name_4F;
+extern Vec D_8010FDC8_342A08_name_4F; /* the doors' start */
+extern Vec D_8010FDD4_342A14_name_4F; /* the doors' end */
+extern Vec D_8010FDE0_342A20_name_4F;
+extern u32 D_8010FDEC_342A2C_name_4F[];
+extern Vec D_8010FE08_342A48_name_4F; /* board 1: the winner alone */
+extern s32 D_8010FD88_3429C8_name_4F;
+extern Vec D_8010FE14_342A54_name_4F;
+extern Vec D_8010FE20_342A60_name_4F;
+extern Vec D_8010FE2C_342A6C_name_4F;
+extern Vec D_8010FE38_342A78_name_4F;
+extern Vec D_8010FE44_342A84_name_4F;
+extern omObjData* D_80110578_3431B8_name_4F; /* board 1's spark (func_8010D4D8) */
+extern s32 D_8010FC10_342850_name_4F[4]; /* sounds; retail reads the low halves (PlaySound((s16)w)) */
+extern Vec D_8010FE50_342A90_name_4F;
+extern Vec D_8010FE5C_342A9C_name_4F;
+extern Vec D_8010FE68_342AA8_name_4F;
+extern Vec D_8010FE74_342AB4_name_4F;
+extern Vec D_8010FE80_342AC0_name_4F;
+extern Vec D_8010FE8C_342ACC_name_4F;
+extern Vec D_8010FE98_342AD8_name_4F;
+extern Vec D_8010FEA4_342AE4_name_4F[4];  /* spark offsets from the carrier */
+extern f32 D_8010FED4_342B14_name_4F[4];  /* their motion frames; splat's D_8010FEE0 is [3] */
+extern s32 D_8010FEE4_342B24_name_4F[4];  /* their done flags; splat's D_8010FEF0 is [3] */
+extern s32 D_8010FEF4_342B34_name_4F;     /* lit frames left */
+extern u32* D_80110008_342C48_name_4F[6]; /* board 3, per character: MBPlayerModelCreate list */
+extern u32 D_80110020_342C60_name_4F[];
+extern s32 D_80110068_342CA8_name_4F;
+void func_80029C74_2A874(s16, f32);
+extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*) */
+s32 func_8005A608_5B208(MBModel* model, Vec* target, f32 speed); /* func_8005A5E8, rotation discarded */
+extern MBModel* D_80110440_343080_name_4F; /* board 1's dancer (0xA01A0) */
+extern const char D_801103BC_342FFC_name_4F[]; /* "item_hook" (336DE0.c, board 1's copy) */
+void func_80026D50_27950(s16, u8, u8);
+void func_80026E00_27A00(s16, f32, f32, f32);
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16); /* motion length */
+
 /* ---- 335440.c ---- */
 
 void func_80102800_335440_name_4F(void);
@@ -225,14 +298,14 @@ void func_80104E8C_337ACC_name_4F(void);
 void func_80105B4C_33878C_name_4F(void);
 /* fork B (inferred) */
 void func_80105D14_338954_name_4F(omObjData* obj);
-omObjData* func_80105F60_338BA0_name_4F(Vec* pos, MBModel* model, f32 arg2, f32 arg3);
+omObjData* func_80105F60_338BA0_name_4F(Vec* pos, MBModel* dir, f32 dist, f32 speed);
 void func_80106054_338C94_name_4F(omObjData* obj);
 void func_80106198_338DD8_name_4F(omObjData* obj);
-void func_80106360_338FA0_name_4F(omObjData* obj, f32 arg1);
+void func_80106360_338FA0_name_4F(omObjData* obj, f32 speed);
 void func_8010636C_338FAC_name_4F(omObjData* obj);
-omObjData* func_801063AC_338FEC_name_4F(Vec* pos, f32 arg1, f32 arg2, s32 arg3);
+omObjData* func_801063AC_338FEC_name_4F(Vec* pos, f32 grow, f32 fade, s16 kill);
 void func_801064C0_339100_name_4F(omObjData* obj);
-void func_801065C8_339208_name_4F(omObjData* obj, f32 arg1, f32 arg2);
+void func_801065C8_339208_name_4F(omObjData* obj, f32 grow, f32 fade);
 void func_801065D8_339218_name_4F(omObjData* obj);
 void func_80106610_339250_name_4F(void);
 void func_801066A4_3392E4_name_4F(void);
@@ -269,10 +342,10 @@ void func_8010D15C_33FD9C_name_4F(omObjData* obj);
 s32 func_8010D210_33FE50_name_4F(void);
 void func_8010D248_33FE88_name_4F(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8010D3E8_340028_name_4F(s32 arg0);
-s32 func_8010D4D8_340118_name_4F(void);
+omObjData* func_8010D4D8_340118_name_4F(void); /* 4F-B: from the asm (an object) */
 s32 func_8010D528_340168_name_4F(omObjData* obj);
 void func_8010D6FC_34033C_name_4F(omObjData* obj);
-void func_8010DA90_3406D0_name_4F(void);
+void func_8010DA90_3406D0_name_4F(omObjData* obj, f32 x, f32 y, f32 z, u8 arg4); /* 4F-B: from the asm */
 s32 func_8010DD7C_3409BC_name_4F(void);
 s32 func_8010DDCC_340A0C_name_4F(omObjData* obj);
 void func_8010DFCC_340C0C_name_4F(omObjData* obj);
