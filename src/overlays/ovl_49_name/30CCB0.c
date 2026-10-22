@@ -398,9 +398,67 @@ void func_8010399C_30DE4C_name_49(MBModel* parent) {
     D_800FC734_FD334 = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80103A1C_30DECC_name_49);
+void func_80103A1C_30DECC_name_49(void) {
+    Vec target;
+    Ovl49StarProcWork* work;
+    MBModel* parent;
+    Vec* dest;
+    GW_PLAYER* player;
+    MBModel* star;
+    ModelEmitterWork* emitter;
+    f32 scale;
+    f32 rot;
+    s32 i;
 
-void func_80103D28_30E1D8_name_49(s32 arg0, Vec* arg1) {
+    work = HuPrcCurrentGet()->user_data;
+    player = BoardPlayerGet(-1);
+    parent = work->parent;
+    dest = work->pos;
+    PlaySound(0x34E);
+    star = func_80043510_44110(0x19, NULL);
+    star->attr |= 4;
+    func_80056754_57354(star);
+    HuVecCopyXYZ(&star->pos, parent->pos.x, parent->pos.y + 10.0f, parent->pos.z);
+    HuVecCopyXYZ(&target, D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z);
+    star->jumpY = 15.0f;
+    emitter = func_80049ED4_4AAD4((Object*)star, 0);
+    emitter->unk18 = 0.1f;
+    for (scale = 0.0f, i = 0; i < 6; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale += 0.5f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 3; i++) {
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        scale -= 0.4f;
+        HuPrcVSleep();
+    }
+    HuPrcSleep(20);
+    PlaySound(0x32C);
+    rot = 0.0f;
+    func_80056D80_57980(&star->pos, dest, &star->pos, 40);
+    for (i = 0; i < 40; i++) {
+        func_800B39F0_B45F0(D_800FC834_FD434[star->obj->model[0]].mtx, rot);
+        rot += 20.0f;
+        scale -= 0.05f;
+        if (scale < 0.0f) {
+            scale = 0.0f;
+        }
+        HuVecCopyXYZ(&star->scale, scale, scale, scale);
+        HuPrcVSleep();
+    }
+    MBModelKill(star);
+    func_80049F90_4AB90(emitter);
+    func_8005670C_5730C(&((MBModel*)player->unk_24)->rot);
+    gPlayers[GwSystem.current_player_index].stars--;
+    func_80079428_7A028(0x5D);
+    MBPlayerMotionSet(-1, 3, 0);
+    func_80079718_7A318(0x111, gPlayers[GwSystem.current_player_index].character);
+    HuPrcSleep(60);
+    omDelPrcObj(NULL);
+}
+
+void func_80103D28_30E1D8_name_49(MBModel* arg0, Vec* arg1) {
     Vec pos;
     Process* proc;
     Ovl49StarProcWork* work;
@@ -410,7 +468,7 @@ void func_80103D28_30E1D8_name_49(s32 arg0, Vec* arg1) {
     proc = omAddPrcObj(func_80103A1C_30DECC_name_49, 0x4800, 0, 0x40);
     work = HuMemMemoryAlloc(proc->heap, 0x10);
     proc->user_data = work;
-    work->arg = arg0;
+    work->parent = arg0;
     work->pos = &pos;
     HuPrcChildLink(HuPrcCurrentGet(), proc);
     HuPrcChildWatch();

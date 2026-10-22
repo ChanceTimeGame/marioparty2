@@ -560,13 +560,13 @@ typedef struct DiceProcWork {
 
 /* func_80103D28's work for its star process func_80103A1C */
 typedef struct Ovl49StarProcWork {
-    /* 0x00 */ s32 arg;
+    /* 0x00 */ MBModel* parent;
     /* 0x04 */ Vec* pos;
 } Ovl49StarProcWork;
 
 /* the rest of the board's 147 functions; "B" ones have no twin (fork 49-B) */
 void func_80103A1C_30DECC_name_49(void); /* as func_80048AA8_496A8 */
-void func_80103D28_30E1D8_name_49(s32 arg0, Vec* arg1);
+void func_80103D28_30E1D8_name_49(MBModel* arg0, Vec* arg1);
 void func_80105BFC_3100AC_name_49(void);
 void func_80105C38_3100E8_name_49(void); /* as func_801058E0_2B41A0_name_41 */
 void func_80105F94_310444_name_49(void); /* B: unknown */
