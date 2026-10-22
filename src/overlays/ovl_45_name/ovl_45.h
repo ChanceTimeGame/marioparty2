@@ -602,4 +602,47 @@ void func_8011012C_2EE85C_name_45(s32 arg0); /* 45-B: from its callers */
 void func_80110658_2EED88_name_45(void);
 void func_80110674_2EEDA4_name_45(void);
 
+/* 45-B */
+void func_800632E4_63EE4(void (*arg0)(void));
+void func_8003E52C_3F12C(s16, u8);
+void func_80029A8C_2A68C(s16);
+extern BoardEventTableEntry D_801117B4_2EFEE4_name_45[];
+extern BoardEventTableEntry D_8011181C_2EFF4C_name_45[];
+extern BoardEventTableEntry D_80111B04_2F0234_name_45[];
+extern s16 D_80110F40_2EF670_name_45[2]; /* the two spaces 80106820's models stand on */
+extern s16 D_80110F44_2EF674_name_45[2][2]; /* per model: the two spaces it faces between */
+extern MBModel* D_801130C0_2F17F0_name_45; /* model 0x87 on space 0x78, its texture swapped */
+
+extern s16 D_801118D8_2F0008_name_45[]; /* 8010E828's four-way prompt */
+extern DecisionTreeNonLeafNode D_80111224_2EF954_name_45[];
+extern DecisionTreeNonLeafNode D_8011129C_2EF9CC_name_45[];
+extern DecisionTreeNonLeafNode D_80111344_2EFA74_name_45[];
+extern Vec D_801130D0_2F1800_name_45; /* the point 8010E9D0's model stretches to */
+
+void SprScaleSet(s16, s16, f32, f32);
+void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
+void func_80056030_56C30(s16 arg0, s32 arg1);
+/* The laser's path: spaces in beam order, -1-terminated (8010EA40 aims at [10] first). */
+extern s16 D_801118F4_2F0024_name_45[];
+
+void func_80015950_16550(s32 arg);
+/* The two paid boosters (models 0x84, 80106820): per booster the spaces it slides between. */
+extern s16 D_801119C4_2F00F4_name_45[2][2];
+/* The ride's four routes, -1-terminated space lists: [booster * 2 + paid]. */
+extern s16* D_80111A8C_2F01BC_name_45[4];
+extern u8 D_80111A9C_2F01CC_name_45[2]; /* step at which a paid ride launches the booster */
+extern u8 D_80111AA0_2F01D0_name_45[2]; /* step taken at 1.5x speed */
+extern u8 D_80111AA4_2F01D4_name_45[]; /* [booster * 2 + 0/1] */ /* booster: steps it accelerates over (lo, hi] */
+extern u8 D_80111AA8_2F01D8_name_45[]; /* [booster * 2 + 0/1] */ /* ride: two steps taken by the other mover */
+extern s16 D_80111AAC_2F01DC_name_45[4]; /* per route: the space riders are set down on */
+extern Vec D_80111AB4_2F01E4_name_45[]; /* per rider slot: offset from the path */
+extern MBModel* D_801130DC_2F180C_name_45; /* the ride's vehicle */
+/* user_data of 8010FE08, one per player the ride picks up (allocated 0x20 bytes). */
+typedef struct Ovl45Rider {
+    /* 0x00 */ s32 player;
+    /* 0x04 */ s32 step;  /* index of the player's space in the route */
+    /* 0x08 */ s32 route; /* D_80111A8C index */
+    /* 0x0C */ s32 slot;  /* D_80111AB4 index */
+} Ovl45Rider;
+
 #endif
