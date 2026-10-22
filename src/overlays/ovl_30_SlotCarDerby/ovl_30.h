@@ -421,4 +421,14 @@ extern s16 D_801109D6_2468B6_SlotCarDerby;      /* MP1 D_801024B0: _CheckFlag(0x
 extern s16 D_801109D8_2468B8_SlotCarDerby;      /* MP1 D_801024B4 */
 /* MG30-A */
 
+/* MG30-B */
+void func_80019178_19D78(omObjData* obj);
+void func_80019378_19F78(omObjData* obj);
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+s32 PlaySound(s32);
+f32 func_800B1830_B2430(f32); /* sqrtf */
+extern s8 ContStkX[];
+extern s8 ContStkY[];
+extern s32 D_8010F46C_24534C_SlotCarDerby[4]; /* [cars ahead] throttle bonus (MP1 D_80100CAC) */
+
 #endif

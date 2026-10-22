@@ -412,9 +412,216 @@ void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010390C_2397EC_SlotCarDerby);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103D00_239BE0_SlotCarDerby);
+void func_80103D00_239BE0_SlotCarDerby(omObjData* obj) {
+    SCDCar* car;
+    s32 throttle;
 
+    if (D_801102DA_2461BA_SlotCarDerby == 0) {
+        car = func_801032E0_2391C0_SlotCarDerby(obj);
+        throttle = 0;
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            throttle = func_80103FE8_239EC8_SlotCarDerby(obj);
+        }
+        func_801048BC_23A79C_SlotCarDerby(obj, throttle);
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 0) {
+            switch (D_80110298_246178_SlotCarDerby[obj->work[1]]) {
+            case 0:
+                D_801102A8_246188_SlotCarDerby[obj->work[1]] -= 40.0;
+                if (D_801102A8_246188_SlotCarDerby[obj->work[1]] <= 6.0) {
+                    D_801102A8_246188_SlotCarDerby[obj->work[1]] = 6;
+                    D_80110298_246178_SlotCarDerby[obj->work[1]]++;
+                }
+                break;
+            case 1:
+                D_801102B8_246198_SlotCarDerby[obj->work[1]] += 5.0f;
+                D_801102A8_246188_SlotCarDerby[obj->work[1]] -= 1.0f;
+                if (D_801102B8_246198_SlotCarDerby[obj->work[1]] >= 0.0) {
+                    D_801102B8_246198_SlotCarDerby[obj->work[1]] = 0.0f;
+                    D_801102A8_246188_SlotCarDerby[obj->work[1]] = 0;
+                    D_80110298_246178_SlotCarDerby[obj->work[1]]++;
+                }
+                break;
+            case 2:
+                func_800191D4_19DD4(obj, 2, obj->trans.x - 20.0, obj->trans.y - 30.0, obj->trans.z, 0, 0);
+                D_800FC834_FD434[obj->model[2]].unk44 *= 2.0;
+                PlaySound(0x2B2);
+                D_80110298_246178_SlotCarDerby[obj->work[1]]++;
+                break;
+            }
+            obj->rot.x += D_801102B8_246198_SlotCarDerby[obj->work[1]];
+            obj->trans.y += D_801102A8_246188_SlotCarDerby[obj->work[1]];
+        }
+        if (car->unk_76 != 0) {
+            car->unk_76--;
+        }
+        func_80019378_19F78(obj);
+        func_80019178_19D78(obj);
+    }
+}
+
+/* Scheduling: retail computes lvl * 6 before the random term of unk_72 and the step's random
+   term before lvl (masked 13); MP1 func_800F7A7C had the same residue. */
+#ifdef NON_MATCHING
+s32 func_80103FE8_239EC8_SlotCarDerby(omObjData* obj) {
+    SCDCar* car;
+    s32 throttle;
+    u8 diff;
+    s32 go;
+    u8 lvl;
+    u8 lvl2;
+    s32 step;
+    s32 k;
+    s32 i;
+    s32 lo;
+    s32 hi;
+    s32 t;
+    s8 port;
+    s8 x;
+    s8 y;
+    s32 pad[4]; /* unused: retail's frame is 16 bytes larger */
+
+    car = func_801032E0_2391C0_SlotCarDerby(obj);
+    car->unk_03 = 0;
+    diff = gPlayers[obj->work[0]].cpu_difficulty & 3;
+    lvl2 = diff + 1;
+    lvl = 5 - diff;
+    port = SCD_WORK(obj)->unk_57;
+    if (!(gPlayers[obj->work[0]].flags & 1)) {
+        x = ContStkX[port];
+        y = ContStkY[port];
+        i = func_800B1830_B2430(x * x + y * y) / 64.0f * 5.0f;
+        if (i > 5) {
+            i = 5;
+        }
+        throttle = D_8010F450_245330_SlotCarDerby[i];
+        if (throttle != 0) {
+            throttle += D_8010F46C_24534C_SlotCarDerby[car->unk_05];
+        }
+        if (throttle > 100) {
+            throttle = 100;
+        }
+        car->unk_03 = 1;
+        if (throttle < 10 || throttle > 90) {
+            rand8();
+            rand8();
+        }
+    } else if (D_801109D6_2468B6_SlotCarDerby == 0) {
+        step = 1600 - lvl * 200;
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            throttle = car->unk_6C;
+            go = 0;
+            if (car->unk_6E == 0) {
+                go = (s32)((u32)(((rand8() << 8) | rand8()) * 25) >> 14) < lvl * 8;
+                car->unk_6A = (((rand8() << 8) | rand8()) * (lvl2 * 25 + 10)) >> 16;
+            } else if (car->unk_06 == 0 && (car->unk_6E & 7) == 1) {
+                go = 1;
+            }
+            if (go) {
+                k = 10000 - (func_80105E60_23BD40_SlotCarDerby(car->unk_48 + car->unk_4C + 40.0) +
+                             D_8010F46C_24534C_SlotCarDerby[car->unk_05]) * 100;
+                if (k < 0) {
+                    k = 0;
+                }
+                go = lvl + 1;
+                if (go > 4) {
+                    go = 4;
+                }
+                throttle = 9900 - ((((rand8() << 8) | rand8()) * 75) >> 14);
+                throttle -= k * go / 4;
+                throttle -= car->unk_6A;
+            }
+            if (car->unk_06 == 0) {
+                t = ((rand8() << 8) | rand8()) * 6;
+                car->unk_72 = lvl * 6 + ((t * lvl) >> 16) + car->unk_6A * 0.03;
+            } else {
+                if (car->unk_06 > lvl2 * 6 - car->unk_72) {
+                    throttle = 0;
+                    car->unk_6E = 0;
+                }
+                step = 4500 / (car->unk_72 + 1) - ((((rand8() << 8) | rand8()) * 100 * lvl) >> 16) - car->unk_6A * 0.5;
+            }
+            car->unk_6C = throttle;
+        }
+        if (car->unk_6C > car->unk_70) {
+            car->unk_70 += step;
+            hi = car->unk_70;
+            t = car->unk_6C;
+            lo = t;
+        } else {
+            car->unk_70 -= step;
+            lo = car->unk_70;
+            t = car->unk_6C;
+            hi = t;
+        }
+        if (lo < hi) {
+            car->unk_70 = t;
+        }
+        throttle = car->unk_70 * 0.01;
+        car->unk_6E++;
+    } else {
+        if (car->unk_0A == 6) {
+            lvl = 1;
+            if (D_801109D8_2468B8_SlotCarDerby != 0 && car->unk_68 < car->unk_6A * 4 + 390) {
+                lvl = 2;
+            }
+        } else {
+            lvl = 3;
+            if (D_801109D8_2468B8_SlotCarDerby != 0 && car->unk_68 > 600 - car->unk_6A * 2) {
+                lvl = 5;
+            }
+        }
+        if (D_801102C8_2461A8_SlotCarDerby.unk_00 == 2) {
+            throttle = car->unk_6C;
+            if (car->unk_06 == 0 && (car->unk_6E & 7) == 1) {
+                throttle = 9800 - ((((rand8() << 8) | rand8()) * 35) >> 13);
+                throttle -= lvl * 200;
+                if (diff == 5) {
+                    throttle -= car->unk_6A * 5;
+                }
+            }
+            if (car->unk_68 == 0) {
+                car->unk_6A = (((rand8() << 8) | rand8()) * (lvl2 * 25 + 10)) >> 16;
+                if (D_801109D8_2468B8_SlotCarDerby != 0 && car->unk_0A == 6) {
+                    throttle = 10000;
+                }
+            }
+            if (car->unk_06 == 0) {
+                car->unk_72 = lvl * 5 + (((((rand8() << 8) | rand8()) << 1) * lvl) >> 16) + car->unk_6A * 0.03;
+            } else {
+                if (car->unk_06 > lvl2 * 6 - car->unk_72) {
+                    throttle = 0;
+                    car->unk_6E = 0;
+                }
+                rand8();
+                rand8();
+            }
+            car->unk_6C = throttle;
+        }
+        if (car->unk_6C > car->unk_70) {
+            car->unk_70 += 1700 - lvl * 200;
+            if (car->unk_70 > car->unk_6C) {
+                car->unk_70 = car->unk_6C;
+            }
+        } else {
+            car->unk_70 -= 1700 - lvl * 200;
+            if (car->unk_70 < car->unk_6C) {
+                car->unk_70 = car->unk_6C;
+            }
+        }
+        throttle = car->unk_70 * 0.01;
+        car->unk_6E++;
+        car->unk_68++;
+    }
+    if (throttle < 0) {
+        throttle = 0;
+    } else if (throttle > 100) {
+        throttle = 100;
+    }
+    return throttle;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103FE8_239EC8_SlotCarDerby);
+#endif
 
 void func_801048BC_23A79C_SlotCarDerby(omObjData* obj, s32 throttle) {
     Matrix4f m;
