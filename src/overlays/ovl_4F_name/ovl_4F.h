@@ -44,6 +44,15 @@ typedef struct Ovl4FFlyWork {
     /* 0x18 */ u16 delay;
 } Ovl4FFlyWork; /* size = 0x1C */
 
+/* A fading puff (func_801063AC; 55's Ovl55PuffWork). */
+typedef struct Ovl4FPuffWork {
+    /* 0x00 */ f32 alpha;
+    /* 0x04 */ f32 grow;
+    /* 0x08 */ f32 fade;
+    /* 0x0C */ MBModel* model;
+    /* 0x10 */ u16 kill;
+} Ovl4FPuffWork; /* size = 0x14 */
+
 /* ---- main-segment API used by 4F ---- */
 
 f32 HuMathSin(f32);
@@ -62,7 +71,7 @@ void MBVecNormalize(Vec*);
 s32 PlaySound(s32);
 s32 _CheckFlag(s32);
 void omDelObj(omObjData*);
-s8 func_80011308_11F08(s16);
+s32 func_80011308_11F08(s16); /* 11F08.c: s8; retail keeps the result unextended */
 void func_80015950_16550(s32);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
 void func_800209C4_215C4(s16 camIndex, Vec* worldPos, Vec2f* outPos);
