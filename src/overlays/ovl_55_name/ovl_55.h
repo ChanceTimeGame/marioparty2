@@ -259,8 +259,8 @@ extern Vec D_8010C210_36B100_name_55; /* board 4: follower start */
 extern u32 D_8010C21C_36B10C_name_55[]; /* board 4: host model's motions */
 extern f32 D_8010C22C_36B11C_name_55[12]; /* board 4: bubble columns (x) */
 extern void* D_8010C338_36B228_name_55[6];
-extern s32 D_8010C350_36B240_name_55[];
-extern s32 D_8010C360_36B250_name_55[];
+extern u32 D_8010C350_36B240_name_55[]; /* board 5: host's motions */
+extern u32 D_8010C360_36B250_name_55[]; /* board 5: stand-in's motions */
 extern s32 D_8010C370_36B260_name_55[];
 extern s32 D_8010C388_36B278_name_55[];
 extern s32 D_8010C394_36B284_name_55[];
@@ -358,7 +358,7 @@ void func_8010A2E0_3691D0_name_55(void);
 /* ---- 3693E0.c (fork C) ---- */
 
 void func_8010A4F0_3693E0_name_55(void);
-void func_8010A614_369504_name_55(s16 player);
+void func_8010A614_369504_name_55(s32 player);
 void func_8010A6A4_369594_name_55(void);
 void func_8010A804_3696F4_name_55(void);
 void func_8010AE68_369D58_name_55(void);
