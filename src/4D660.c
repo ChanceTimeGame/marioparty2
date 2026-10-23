@@ -186,6 +186,13 @@ extern u8 D_800D2C54_D3854[];
 extern u8 D_800D2C68_D3868[];
 extern u8 D_800D2C78_D3878[];
 extern u8 D_800D2C8C_D388C[];
+void func_80047A50_48650(s32);
+void func_800495D8_4A1D8(s32, s32);
+s16 func_80046F98_47B98(s32);
+s32 func_80064200_64E00(GW_PLAYER* player);
+void func_8006508C_65C8C(void);
+void func_800558E8_564E8(s16 arg0);
+extern BattleTargets D_800F8D1A_F991A;
 /* Item use handlers. */
 s32 func_8004D620_4E220(void);
 s32 func_8004D6A0_4E2A0(void);
@@ -565,15 +572,39 @@ void func_8004D5B0_4E1B0(void) {
     HuPrcChildWatch();
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D600_4E200);
+/* The player the item is used on (MP3 func_800E2954). */
+s16 func_8004D600_4E200(void) {
+    return D_800DF710_E0310;
+}
 
 void func_8004D60C_4E20C(s32 index, void (*fn)(void)) {
     MBItemSubFunctions[index] = fn;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D620_4E220);
+/* Item 0 handler (before the table): "no item" message with the player's name. */
+s32 func_8004D620_4E220(void) {
+    char str[16];
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D6A0_4E2A0);
+    str[0] = 0x18;
+    str[1] = gPlayers[GwSystem.current_player_index].character;
+    str[2] = 0;
+    func_80056368_56F68(-1, 0x1EB, (s32)str, 0, 0, 0, 0);
+    MBDlgWinClose();
+    func_80056168_56D68();
+    return 1;
+}
+
+/* Mushroom (MP3 MBItemKinokoExec without the reverse checks). */
+s32 func_8004D6A0_4E2A0(void) {
+    func_80047A50_48650(GwSystem.current_player_index);
+    MBItemSubFunctions[6]();
+    gPlayers[GwSystem.current_player_index].item = -1;
+    func_800495D8_4A1D8(GwSystem.current_player_index, 2);
+    MBPlayerVibrate(-1, 2);
+    func_80046F98_47B98(GwSystem.current_player_index);
+    HuPrcSleep(15);
+    return 1;
+}
 
 s32 func_8004D734_4E334(void) {
     MBDlgWinExec(9, 0x1DF);
@@ -590,17 +621,78 @@ s32 func_8004D780_4E380(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D7A0_4E3A0);
+/* Dueling glove (item 4; MP3 MBItemKettouExec). */
+s32 func_8004D7A0_4E3A0(void) {
+    s32 one = 1;
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D858_4E458);
+    MBItemSubFunctions[7]();
+    gPlayers[GwSystem.current_player_index].item = -1;
+    D_800F8D1A_F991A.targets = ~(one << GetCurrentPlayerIndex());
+    D_800F8D1A_F991A.attacker = one << GetCurrentPlayerIndex();
+    if (func_80064200_64E00(BoardPlayerGet(-1)) != 0) {
+        func_8006508C_65C8C();
+        func_80078FF8_79BF8();
+        HuPrcSleep(-1);
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D8B0_4E4B0);
+/* Warp block (item 5). */
+s32 func_8004D858_4E458(void) {
+    gPlayers[GwSystem.current_player_index].item = -1;
+    func_8006508C_65C8C();
+    MBItemSubFunctions[2]();
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D944_4E544);
+/* Golden mushroom (MP3 MBItemSKinokoExec without the reverse checks). */
+s32 func_8004D8B0_4E4B0(void) {
+    func_80047A50_48650(GwSystem.current_player_index);
+    MBItemSubFunctions[6]();
+    gPlayers[GwSystem.current_player_index].item = -1;
+    func_800495D8_4A1D8(GwSystem.current_player_index, 3);
+    MBPlayerVibrate(-1, 3);
+    func_80046F98_47B98(GwSystem.current_player_index);
+    HuPrcSleep(15);
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004DA2C_4E62C);
+/* Boo bell (item 7; MP3 MBItemTereBellExec). */
+s32 func_8004D944_4E544(void) {
+    GW_PLAYER* player = BoardPlayerGet(-1);
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004DAC4_4E6C4);
+    MBItemSubFunctions[7]();
+    func_800558E8_564E8(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+    func_80060210_60E10(0x19);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    MBStatusItemDispSetAll(0);
+    func_80060210_60E10(0x1A);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    MBItemSubFunctions[0]();
+    gPlayers[GwSystem.current_player_index].item = -1;
+    return 1;
+}
+
+/* Bowser suit (item 8; MP3 MBItemKSuitExec). */
+s32 func_8004DA2C_4E62C(void) {
+    MBItemSubFunctions[6]();
+    MBItemSubFunctions[4]();
+    gPlayers[GwSystem.current_player_index].turn_status = 1;
+    gPlayers[GwSystem.current_player_index].item = -1;
+    return 1;
+}
+
+/* Magic lamp (item 9). */
+s32 func_8004DAC4_4E6C4(void) {
+    gPlayers[GwSystem.current_player_index].item = -1;
+    func_8006508C_65C8C();
+    MBItemSubFunctions[1]();
+    return 1;
+}
 
 void func_8004DB1C_4E71C(void) {
     D_800CC038_CCC38 = func_8004CC7C_4D87C(0xE, 0x92, 0);
