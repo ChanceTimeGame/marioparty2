@@ -399,7 +399,8 @@ segments:
       - {start: 0xCAA50, type: .data, name: 274D0, linker_section: .cdata}
       - {start: 0xCAC30, type: .data, name: 30560, linker_section: .cdata}
       - {start: 0xCB950, type: .data, name: 3D6A0, linker_section: .cdata}
-      - [0xCBC40, data]
+      - [0xCBC40, .data, 415E0]
+      - [0xCBCB0, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]
