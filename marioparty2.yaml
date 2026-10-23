@@ -390,7 +390,8 @@ segments:
       - {start: 0xC03E0, type: .data, name: C8E0, linker_section: .cdata}
       - [0xC0480, data]
       - [0xC9470, .data, util]
-      - [0xCA5C0, data]
+      - [0xCA5C0, .data, 19A30]
+      - [0xCA670, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]
