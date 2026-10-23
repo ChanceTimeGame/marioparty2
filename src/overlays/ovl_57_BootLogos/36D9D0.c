@@ -19,9 +19,10 @@ s32 func_8001AAAC_1B6AC(s16, s32, s32);
 void func_8001AC44_1B844(u16);
 
 extern s8 D_80102708_103308;
-extern s32 D_80102D50_36DEF0_BootLogos;
+/* .data (0x36DEF0-0x36DF00) */
+s32 D_80102D50_36DEF0_BootLogos = 0;
 extern u16 D_801011FC_101DFC;
-extern s32 D_80102D54_36DEF4_BootLogos;
+s32 D_80102D54_36DEF4_BootLogos = 0;
 
 //TODO: this gets put into .scommon instead of .bss
 //bss
