@@ -73,6 +73,25 @@ void SprPrioSet(s16 group, s16 member, u16 prio);
 void SprAttrSet(s16 group, s16 member, s32 attr);
 void func_8004EB58_4F758(omObjData* arg0);
 void func_8004EE40_4FA40(omObjData* obj);
+/* .data (0xCCC90-0xCCCE0) */
+extern char D_800D2CFC_D38FC[];
+extern char D_800D2CEC_D38EC[];
+extern char D_800D2CDC_D38DC[];
+extern char D_800D2CCC_D38CC[];
+extern char D_800D2CBC_D38BC[];
+extern char D_800D2CAC_D38AC[];
+extern char D_800D2D1C_D391C[];
+extern char D_800D2D14_D3914[];
+extern char D_800D2D0C_D390C[];
+char* D_800CC090_CCC90[] = {
+    D_800D2CFC_D38FC, D_800D2CEC_D38EC, D_800D2CDC_D38DC,
+    D_800D2CCC_D38CC, D_800D2CBC_D38BC, D_800D2CAC_D38AC,
+};
+s8 D_800CC0A8_CCCA8[] = { 13, 15, 15, 12, 12, 12 }; /* characters in each D_800CC090_CCC90 text */
+char* D_800CC0B0_CCCB0[] = { D_800D2D1C_D391C, D_800D2D14_D3914, D_800D2D0C_D390C };
+s8 D_800CC0BC_CCCBC[] = { -6, 0, 0, 0, 0, 0 };
+Vec2s D_800CC0C4_CCCC4[] = { { 80, 88 }, { 240, 88 }, { 155, 88 }, { 104, 88 }, { 216, 88 }, { 640, 480 } };
+
 
 
 

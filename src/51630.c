@@ -171,6 +171,30 @@ void MBCameraSpeedSet(f32);
 void func_80052E68_53A68(f32);
 
 
+/* .data (0xCCE00-0xCCE80) */
+s32* D_800CC200_CCE00 = NULL;
+u32* D_800CC204_CCE04 = NULL;
+UnkModelStruct* D_800CC208_CCE08 = NULL;
+s8 D_800CC20C_CCE0C = -1; /* fade alpha (read as u8) */
+f32 D_800CC210_CCE10 = 1.0f;
+f32 D_800CC214_CCE14 = 0.0f;
+f32 D_800CC218_CCE18 = 0.0f;
+u32* D_800CC21C_CCE1C = NULL;
+Process* D_800CC220_CCE20 = NULL;
+s32 D_800CC224_CCE24 = 0;
+Gfx D_800CC228_CCE28[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetPrimColor(0, 0, 0xFF, 0xFF, 0xFF, 0xFF),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_AVERAGE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+s32 D_800CC270_CCE70 = 1;
+
 void func_80050A30_51630(u8* arg0) {
     HVQHeader* temp_v0;
     s32* temp_v0_2;

@@ -11,10 +11,11 @@ void func_8008BB18_8C718(s16, s16);
 void func_8008D974_8E574(s32, s16);
 void func_8008DACC_8E6CC(s32, char*, s32);
 void func_8008E978_8F578(s16);
-extern s16 D_800CC590_CD190;
+/* .data (0xCD190-0xCD1A0) */
+s16 D_800CC590_CD190 = 0;
+s16 D_800CC592_CD192 = 0;
 extern s16 mbDlgWinId;
 extern s16 mbWinId;
-extern s16 D_800CC592_CD192;
 
 void func_800559E0_565E0(s16);
 void func_80089284_89E84(s16, s32, s32);

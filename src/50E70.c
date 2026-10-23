@@ -24,7 +24,8 @@ void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void CameraViewportSet(s16, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16);
 void func_8008E6AC_8F2AC(s32);
-extern u8 D_800CC0E0_CCCE0[]; /* per board: guide model id */
+/* .data (0xCCCE0-0xCCCF0): per board: guide model id */
+u8 D_800CC0E0_CCCE0[] = { 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0xA7, 0xA7, 0xA8, 0x07 };
 extern s16 D_800DF99C_E059C; /* guide x offset */
 extern s16 D_800DF99E_E059E; /* guide y offset */
 MBModel* func_80043510_44110(s32, void*);

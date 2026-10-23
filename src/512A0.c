@@ -5,8 +5,6 @@
    with omDelPrcObj; MP2 kills a model and an object) and MP1 ovl_33_PaddleBattle 2341E0.c; the rest have no reference (or an asm one) and stay asm. MP3's
    MBKSuitDispOn/Off names are swapped against what they call, so those two keep MP2 names. */
 
-extern MBModel* D_800CC1F0_CCDF0; /* MP1/MP3 Object* */
-extern omObjData* D_800CC1F4_CCDF4;
 
 void MBModelKill(void*);
 void omDelObj(omObjData*);
@@ -22,10 +20,29 @@ extern s16 D_800DF9A0_E05A0;
 extern s16 D_800FD3A0_FDFA0[2];
 extern s16 D_800FD3A4_FDFA4[2];
 extern void* D_800FD3B4_FDFB4; /* gPlayers[4].unk_24: the fifth slot's model */
-extern s32 D_800CC0F0_CCCF0[]; /* model file list */
-extern char* D_800CC110_CCD10[]; /* per character */
-extern u8 D_800CC128_CCD28[]; /* per board: model id */
-extern s32* D_800CC1D8_CCDD8[]; /* per board: model file list */
+/* .data (0xCCCF0-0xCCE00). Model file lists: a count, then the files. */
+s32 D_800CC0F0_CCCF0[] = { 7, 0x80084, 0x80084, 0x80085, 0x80088, 0x80089, 0x80087, 0x80087 };
+extern char D_800D2D98_D3998[];
+extern char D_800D2D84_D3984[];
+extern char D_800D2D6C_D396C[];
+extern char D_800D2D5C_D395C[];
+extern char D_800D2D4C_D394C[];
+extern char D_800D2D38_D3938[];
+char* D_800CC110_CCD10[] = { /* per character */
+    D_800D2D98_D3998, D_800D2D84_D3984, D_800D2D6C_D396C, D_800D2D5C_D395C, D_800D2D4C_D394C, D_800D2D38_D3938,
+};
+u8 D_800CC128_CCD28[] = { 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B }; /* per board: model id */
+s32 D_800CC130_CCD30[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80073 };
+s32 D_800CC14C_CCD4C[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80074 };
+s32 D_800CC168_CCD68[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80075 };
+s32 D_800CC184_CCD84[] = { 0x6, 0x8005D, 0x8005D, 0x8005D, 0x8005D, 0x8005D, 0x80076 };
+s32 D_800CC1A0_CCDA0[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80077 };
+s32 D_800CC1BC_CCDBC[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80078 };
+s32* D_800CC1D8_CCDD8[] = { /* per board: model file list */
+    D_800CC130_CCD30, D_800CC14C_CCD4C, D_800CC168_CCD68, D_800CC184_CCD84, D_800CC1A0_CCDA0, D_800CC1BC_CCDBC,
+};
+MBModel* D_800CC1F0_CCDF0 = NULL; /* MP1/MP3 Object* */
+omObjData* D_800CC1F4_CCDF4 = NULL;
 extern char D_800D2DA0_D39A0[];
 GW_PLAYER* BoardPlayerGet(s32 playerIndex);
 MBModel* func_80043510_44110(s32, void*);

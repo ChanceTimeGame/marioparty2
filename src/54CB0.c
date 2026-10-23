@@ -7,12 +7,6 @@ typedef f32 Matrix4f[4][4];
 
 extern s16 D_800F8D12_F9912;
 extern s16 D_800E1B8A_E278A[]; /* star space of each star spawn slot */
-extern Gfx D_800CC4E0_CD0E0[];
-extern f32 D_800CC3E0_CCFE0[]; /* space scale per space type */
-extern f32 D_800CC428_CD028[]; /* the same, 14 entries; the vertices follow it */
-/* Inside D_800CC428_CD028 (undefined_syms.txt): space quads for 32x32 and 8x8 textures */
-extern Vtx D_800CC460_CD060[];
-extern Vtx D_800CC4A0_CD0A0[];
 extern s16 D_800F928C_F9E8C;
 extern Mtx* D_800FD83C_FE43C;
 void func_800204C0_210C0(s16, Gfx**);
@@ -45,7 +39,6 @@ typedef struct EventTableEntry {
 } EventTableEntry;
 
 extern u16 gTotalSpaces; //total current board spaces
-extern void* D_800CC280_CCE80;
 extern u16 D_800E18D2_E24D2;
 extern SpaceData* D_800E18D4_E24D4;
 extern LinkData* D_800E18D8_E24D8;
@@ -57,7 +50,6 @@ extern void* D_800E1938_E2538;
 extern f32 D_800E1940_E2540[];
 extern s32 D_800E1960_E2560;
 extern u16 D_800FCE90_FDA90;
-extern u8 D_800CC570_CD170[];
 extern s16 D_800E1B66_E2766;
 extern s16 D_800E1B88_E2788; //total blue spaces hidden blocks cannot spawn on
 extern s16 D_800E1B68_E2768[];
@@ -87,12 +79,98 @@ typedef struct MbEventListEntry {
 } MbEventListEntry; // size 0x8
 
 extern s16 D_800E1928_E2528;
-extern u32 D_800CC284_CCE84[];
-extern u32 D_800CC2CC_CCECC[];
-extern u32 D_800CC314_CCF14[];
-extern u32 D_800CC350_CCF50[];
-extern u32 D_800CC398_CCF98[];
 extern s32 D_800E193C_E253C;
+
+typedef struct SpaceTexSets {
+    /* 0x00 */ u32 set2[15];
+    /* 0x3C */ u32 next[18]; /* set 3 */
+} SpaceTexSets;
+
+typedef struct SpaceQuads {
+    /* 0x00 */ f32 scale[14];
+    /* 0x38 */ Vtx quad32[4];
+    /* 0x78 */ Vtx quad8[4];
+} SpaceQuads;
+
+/* .data (0xCCE80-0xCD190) */
+void* D_800CC280_CCE80 = NULL;
+/* Space texture files by space type, per texture set (LoadSpaceTextures). */
+u32 D_800CC284_CCE84[] = {
+    0, 0xA0033, 0xA0034, 0, 0xA0036, 0xA003C,
+    0xA0037, 0xA003A, 0, 0xA0035, 0, 0,
+    0xA003B, 0xA003F, 0xA0038, 0xA0039, 0xA003D, 0xA003E,
+};
+u32 D_800CC2CC_CCECC[] = {
+    0, 0xA0051, 0xA0052, 0, 0xA0054, 0xA0055,
+    0xA005A, 0xA0059, 0, 0xA0053, 0, 0,
+    0xA0058, 0xA005B, 0xA0056, 0xA0057, 0, 0,
+};
+/* Set 2 has 15 entries and the 18-entry loop reads on into set 3 (retail): one block, so the host
+   reads the same words. D_800CC350_CCF50 is an undefined_syms.txt alias of .next. */
+SpaceTexSets D_800CC314_CCF14 = {
+    {
+        0xA005E, 0xA005D, 0xA005C, 0, 0xA005F, 0xA0060,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0,
+    },
+    {
+        0, 0xA0033, 0xA0034, 0, 0xA0036, 0xA003C,
+        0xA0037, 0xA003A, 0, 0xA0035, 0, 0,
+        0xA003B, 0xA003F, 0xA0038, 0xA0038, 0xA003D, 0xA003D,
+    },
+};
+u32 D_800CC398_CCF98[] = {
+    0, 0xA0051, 0xA0052, 0, 0xA0054, 0xA0055,
+    0xA0055, 0xA0053, 0, 0xA0053, 0, 0,
+    0xA0058, 0, 0xA0056, 0xA0056, 0, 0,
+};
+f32 D_800CC3E0_CCFE0[] = { /* space scale per space type */
+    2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f,
+    2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f,
+    2.0f, 2.0f, 2.0f, 2.0f, 1.5f, 1.5f,
+};
+/* Space scales for set 2 (14 entries: the 18-entry loop reads on into the vertices, retail) and the
+   space quads for 32x32 and 8x8 textures. D_800CC460_CD060 / D_800CC4A0_CD0A0 are undefined_syms.txt
+   aliases of .quad32 / .quad8. */
+SpaceQuads D_800CC428_CD028 = {
+    {
+        2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f,
+        2.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f,
+    },
+    {
+        { { { 50, 0, -50 }, 0, { 1024, 1024 }, { 0, 0, 127, 255 } } },
+        { { { -50, 0, -50 }, 0, { 0, 1024 }, { 0, 0, 127, 255 } } },
+        { { { -50, 0, 50 }, 0, { 0, 0 }, { 0, 0, 127, 255 } } },
+        { { { 50, 0, 50 }, 0, { 1024, 0 }, { 0, 0, 127, 255 } } },
+    },
+    {
+        { { { 50, 0, -50 }, 0, { 224, 224 }, { 0, 0, 127, 255 } } },
+        { { { -50, 0, -50 }, 0, { 0, 224 }, { 0, 0, 127, 255 } } },
+        { { { -50, 0, 50 }, 0, { 0, 0 }, { 0, 0, 127, 255 } } },
+        { { { 50, 0, 50 }, 0, { 224, 0 }, { 0, 0, 127, 255 } } },
+    },
+};
+Gfx D_800CC4E0_CD0E0[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsSPClipRatio(FRUSTRATIO_2),
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPSetGeometryMode(G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsDPSetTexturePersp(G_TP_PERSP),
+    gsDPSetTextureFilter(G_TF_AVERAGE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+u8 D_800CC570_CD170[] = { /* flags per space type */
+    0x01, 0x02, 0x04, 0x01, 0x10, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
+};
 
 void LoadSpaceTextures(s16 type) {
     s32 i;
@@ -107,10 +185,10 @@ void LoadSpaceTextures(s16 type) {
             ptr = D_800CC2CC_CCECC;
             break;
         default:
-            ptr = D_800CC314_CCF14;
+            ptr = D_800CC314_CCF14.set2;
             break;
         case 3:
-            ptr = D_800CC350_CCF50;
+            ptr = D_800CC314_CCF14.next;
             break;
         case 4:
             ptr = D_800CC398_CCF98;
@@ -196,20 +274,20 @@ void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
         switch (D_800E1928_E2528) {
             case 0:
             case 3:
-                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC460_CD060);
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC428_CD028.quad32);
                 sp6C = D_800CC3E0_CCFE0;
                 size = 32;
                 break;
             case 1:
             case 4:
-                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC4A0_CD0A0);
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC428_CD028.quad8);
                 sp6C = D_800CC3E0_CCFE0;
                 size = 8;
                 break;
             default:
                 size = 32;
-                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC460_CD060);
-                sp6C = D_800CC428_CD028;
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC428_CD028.quad32);
+                sp6C = D_800CC428_CD028.scale;
                 break;
         }
         for (i = 0; i < SPACE_TYPE_TOTAL; i++) {
