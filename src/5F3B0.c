@@ -4,6 +4,21 @@
 #include "game/gamework.h"
 #include "game/board.h"
 
+extern s16 D_800CCAD4_CD6D4[][2]; /* status sprite positions (MP3 PlayerBoardStatusRootPosition) */
+extern s16 D_800CCB04_CD704[][2]; /* the same, flag 0xD set */
+extern s32 D_800CCB84_CD784[];    /* status character sprite per character */
+extern s32 D_800CCBDC_CD7DC[];    /* item sprite per item */
+extern s8 D_800FD8AB_FE4AB;
+extern s8 D_800FD8B5_FE4B5;
+extern s32 D_800CC994_CD594;
+void SprRotSet(s16 grpIdx, s16 idx, f32 rot);
+f32 HuMathSin(f32);
+void func_80082488_83088(s16, s16, u16);
+void MBStatusSprPosGet(s16 arg0, s16 arg1, f32* arg2, f32* arg3);
+void func_800623C8_62FC8(s32);
+s32 _CheckFlag(s32);
+
+
 typedef struct Unk {
     s16 unk_00;
     s16 unk_02;
@@ -328,11 +343,64 @@ void func_8005ED40_5F940(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F210_5FE10);
+/* MP3 MBStatusCharSprCreate */
+void func_8005F210_5FE10(s32 playerNo) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+    s16 grp = status->unk_08;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F2D8_5FED8);
+    SprAnimSet(grp, 1, D_800E1D28_E2928[playerNo + 1], 0);
+    func_8008225C_82E5C(grp, 1, 1);
+    SprPrioSet(grp, 1, (playerNo * 5) + 0x4790);
+    SprAttrSet(grp, 1, 0x1000);
+    SprPosSet(grp, 1, D_800CCAD4_CD6D4[1][0], D_800CCAD4_CD6D4[1][1]);
+    status->unk5 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F454_60054);
+/* MP3 MBStatusIconSprCreate */
+void func_8005F2D8_5FED8(s32 playerNo) {
+    u16 grp = D_80101510_102110[playerNo].unk_08;
+    s32 i;
+
+    for (i = 0; i < 2; i++) {
+        SprAnimSet(grp, i + 2, D_800E1D28_E2928[i + 5], 0);
+        SprPrioSet(grp, i + 2, (playerNo * 5) + 0x4790);
+        SprAttrSet(grp, i + 2, 0x1000);
+        SprRotSet(grp, i + 2, 0.0f);
+        if (_CheckFlag(0xD) == 0) {
+            SprPosSet(grp, i + 2, D_800CCAD4_CD6D4[i + 2][0], D_800CCAD4_CD6D4[i + 2][1]);
+        } else {
+            SprPosSet(grp, i + 2, D_800CCB04_CD704[i + 2][0], D_800CCB04_CD704[i + 2][1]);
+        }
+        func_8008221C_82E1C(grp, i + 2, 0.0f);
+        func_80082488_83088(grp, i + 2, 0x100);
+    }
+}
+
+/* MP3 MBStatusNumSprCreate */
+void func_8005F454_60054(s32 playerNo) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+    void* data;
+    u16 grp;
+    s32 i;
+
+    data = DataRead(0xA016B);
+    status->unk_3A = SprAnimRead(data);
+    grp = status->unk_08;
+    for (i = 0; i < 5; i++) {
+        SprAnimSet(grp, i + 4, status->unk_3A, 0);
+        func_8008225C_82E5C(grp, i + 4, 1);
+        func_800822A8_82EA8(grp, i + 4, 10, 0);
+        SprPrioSet(grp, i + 4, (playerNo * 5) + 0x4790);
+        SprAttrSet(grp, i + 4, 0x1000);
+        if (_CheckFlag(0xD) == 0) {
+            SprPosSet(grp, i + 4, D_800CCAD4_CD6D4[i + 4][0], D_800CCAD4_CD6D4[i + 4][1]);
+        } else {
+            SprPosSet(grp, i + 4, D_800CCB04_CD704[i + 4][0], D_800CCB04_CD704[i + 4][1]);
+        }
+        func_80082450_83050(grp, (s16)(i + 4), 0xFF, 0xFF, 0xFF);
+    }
+    DataClose(data);
+}
 
 /* MP3 MBStatusBackSprCreate */
 void func_8005F604_60204(s32 playerNo) {
@@ -360,9 +428,33 @@ void func_8005F6C0_602C0(s32 playerNo) {
     SprPosSet(temp_s0, 0xA, D_800CCAFC_CD6FC[0], D_800CCAFC_CD6FC[1]);
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F784_60384);
+/* MP3 MBStatusComSprCreate */
+void func_8005F784_60384(s32 playerNo) {
+    s16 grp = D_80101510_102110[playerNo].unk_08;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005F86C_6046C);
+    SprAnimSet(grp, 9, D_800E1D28_E2928[9], 0);
+    func_8008225C_82E5C(grp, 9, 1);
+    SprPrioSet(grp, 9, (playerNo * 5) + 0x478E);
+    SprAttrSet(grp, 9, 0x1000);
+    SprPosSet(grp, 9, D_800CCAD4_CD6D4[9][0], D_800CCAD4_CD6D4[9][1]);
+    if (!(gPlayers[playerNo].flags & 1)) {
+        SprAttrSet(grp, 9, 0x8000);
+    }
+}
+
+/* MP3 MBStatusItemIconSprCreate (one item) */
+void func_8005F86C_6046C(s32 playerNo) {
+    s16 grp = D_80101510_102110[playerNo].unk_08;
+
+    SprAnimSet(grp, 0xB, D_800E1D28_E2928[10], 0);
+    func_8008225C_82E5C(grp, 0xB, 1);
+    SprPrioSet(grp, 0xB, (playerNo * 5) + 0x478E);
+    SprAttrSet(grp, 0xB, 0x1000);
+    SprPosSet(grp, 0xB, D_800CCAD4_CD6D4[11][0], D_800CCAD4_CD6D4[11][1]);
+    if (gPlayers[playerNo].item == -1) {
+        SprAttrSet(grp, 0xB, 0x8000);
+    }
+}
 
 void func_8005F954_60554(void) {
     void* data;
@@ -393,7 +485,36 @@ void func_8005FA50_60650(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FAB4_606B4);
+/* MP3 MBStatusAnimCreate */
+void func_8005FAB4_606B4(void) {
+    s32 sp10[2] = { 0xA0172, 0xA0171 };
+    void* data;
+    s32 i;
+    s16* spriteIDs = D_800E1D28_E2928;
+
+    data = DataRead(0xA0166);
+    spriteIDs[0] = SprAnimRead(data);
+    DataClose(data);
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        data = DataRead(D_800CCB84_CD784[gPlayers[i].character]);
+        spriteIDs[i + 1] = SprAnimRead(data);
+        DataClose(data);
+    }
+    for (i = 0; i < 2; i++) {
+        data = DataRead(sp10[i]);
+        spriteIDs[i + 5] = SprAnimRead(data);
+        DataClose(data);
+    }
+    data = DataRead(0xA0168);
+    spriteIDs[8] = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0xA0169);
+    spriteIDs[9] = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0xA016A);
+    spriteIDs[10] = SprAnimRead(data);
+    DataClose(data);
+}
 
 void MBStatusAnimKill(void) {
     s32 i;
@@ -459,7 +580,30 @@ void func_8005FE10_60A10(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8005FEDC_60ADC);
+/* MP3 func_800F462C: kills player playerNo's status */
+void func_8005FEDC_60ADC(s32 playerNo) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+
+    switch (status->unk_00) {
+        case 0:
+            SprAnimKill(status->unk_3A);
+            break;
+        case 1:
+            if (status->unk_36 != -1) {
+                SprAnimKill(status->unk_36);
+            }
+            break;
+    }
+    SprKill(status->unk_08);
+    if (status->unk30 != NULL) {
+        omDelObj(status->unk30);
+        status->unk30 = NULL;
+    }
+    if (D_800E1D48_E2948[playerNo] != NULL) {
+        omDelObj(D_800E1D48_E2948[playerNo]);
+        D_800E1D48_E2948[playerNo] = NULL;
+    }
+}
 
 void func_8005FF9C_60B9C(void) {
     s32 i;
@@ -486,9 +630,13 @@ void func_80060034_60C34(u32 playerNo, s32 turnStatus) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600C0_60CC0);
+u8 func_800600C0_60CC0(s32 playerNo) {
+    return D_80101510_102110[playerNo].spaceType;
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800600DC_60CDC);
+void func_800600DC_60CDC(s32 playerNo, s8 arg1) {
+    D_80101510_102110[playerNo].unk1 = arg1;
+}
 
 /* MP3 MBStatusPosSet */
 void func_800600F8_60CF8(s32 playerIndex, s16 arg1, s16 arg2) {
@@ -804,7 +952,20 @@ void MBVsSprKill(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80060DF8_619F8);
+/* Pulses the scale of player work[0]'s status sprites. */
+void func_80060DF8_619F8(omObjData* arg0) {
+    BoardStatus* status = &D_80101510_102110[arg0->work[0]];
+    s32 i;
+
+    for (i = 0; i < 12; i++) {
+        SprScaleSet(status->unk_08, i, ABS_F(HuMathSin(arg0->rot.x) * 0.15f) + D_800CCB50_CD750[i],
+                    ABS_F(HuMathSin(arg0->rot.x) * 0.15f) + D_800CCB50_CD750[i]);
+    }
+    arg0->rot.x += 10.0f;
+    if (arg0->rot.x >= 360.0f) {
+        arg0->rot.x -= 360.0f;
+    }
+}
 
 void func_80060F90_61B90(s32 arg0) {
     omObjData* temp_v0;
@@ -913,15 +1074,46 @@ s32 func_800614D0_620D0(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800614E8_620E8);
+void func_800614E8_620E8(s32 playerNo) {
+    D_80101510_102110[playerNo].unk5 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061504_62104);
+/* MP3 MBStatusHideCheck */
+s32 func_80061504_62104(void) {
+    if (D_80101510_102110[0].unk_06 & 1) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061518_62118);
+/* MP3 MBStatusHideAll */
+void func_80061518_62118(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061584_62184);
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        D_80101510_102110[i].unk_06 |= 1;
+    }
+    if (D_800CC998_CD598 != -1) {
+        SprAttrSet(D_800CC998_CD598, 0, 0x8000);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800615F0_621F0);
+/* MP3 MBStatusShowAll */
+void func_80061584_62184(void) {
+    s32 i;
+
+    for (i = 0; i < MB_MAX_PLAYERS; i++) {
+        D_80101510_102110[i].unk_06 &= ~1;
+    }
+    if (D_800CC998_CD598 != -1) {
+        SprAttrReset(D_800CC998_CD598, 0, 0x8000);
+    }
+}
+
+void func_800615F0_621F0(s32 arg0) {
+    D_800CC994_CD594 = arg0;
+}
 
 void func_800615FC_621FC(void) {
     s32 i;
@@ -949,7 +1141,10 @@ void func_800616C4_622C4(void) {
     D_800CC994_CD594 = -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061720_62320);
+void func_80061720_62320(s32 arg0, s32 arg1) {
+    D_800CC990_CD590 = arg0;
+    D_800CC994_CD594 = arg1;
+}
 
 void func_80061734_62334(void) {
     func_80060210_60E10(0x16);
@@ -988,9 +1183,59 @@ void func_8006176C_6236C(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800618F8_624F8);
+/* Shows D_800FD8AB_FE4AB (0-99) as two digits. */
+void func_800618F8_624F8(void) {
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80061A68_62668);
+    while (1) {
+        n = D_800FD8AB_FE4AB;
+        if (n < 0) {
+            n = 0;
+        }
+        if (n >= 100) {
+            n = 99;
+        }
+        if (n >= 10) {
+            func_8008225C_82E5C(D_800E1D5C_E295C, 0, 1);
+            func_800822A8_82EA8(D_800E1D5C_E295C, 0, n / 10, 0);
+            SprAttrReset(D_800E1D5C_E295C, 1, 0x8000);
+        } else {
+            func_8008225C_82E5C(D_800E1D5C_E295C, 0, 1);
+            func_800822A8_82EA8(D_800E1D5C_E295C, 0, n % 10, 0);
+            SprAttrSet(D_800E1D5C_E295C, 1, 0x8000);
+        }
+        func_8008225C_82E5C(D_800E1D5C_E295C, 1, 1);
+        func_800822A8_82EA8(D_800E1D5C_E295C, 1, n % 10, 0);
+        HuPrcVSleep();
+    }
+}
+
+/* Shows D_800FD8B5_FE4B5 (0-99) as two digits. */
+void func_80061A68_62668(void) {
+    s32 n;
+
+    while (1) {
+        n = D_800FD8B5_FE4B5;
+        if (n < 0) {
+            n = 0;
+        }
+        if (n >= 100) {
+            n = 99;
+        }
+        if (n >= 10) {
+            func_8008225C_82E5C(D_800E1DD8_E29D8, 0, 1);
+            func_800822A8_82EA8(D_800E1DD8_E29D8, 0, n / 10, 0);
+            SprAttrReset(D_800E1DD8_E29D8, 1, 0x8000);
+        } else {
+            func_8008225C_82E5C(D_800E1DD8_E29D8, 0, 1);
+            func_800822A8_82EA8(D_800E1DD8_E29D8, 0, n % 10, 0);
+            SprAttrSet(D_800E1DD8_E29D8, 1, 0x8000);
+        }
+        func_8008225C_82E5C(D_800E1DD8_E29D8, 1, 1);
+        func_800822A8_82EA8(D_800E1DD8_E29D8, 1, n % 10, 0);
+        HuPrcVSleep();
+    }
+}
 
 void func_80061BD8_627D8(void) {
     void* file;
@@ -1139,11 +1384,98 @@ void func_8006239C_62F9C(void) {
     func_80062294_62E94();
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800623C8_62FC8);
+/* MP3 MBStatusItemSprCreate (one item): the item sprite in slot 2 */
+void func_800623C8_62FC8(s32 playerNo) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+    u16 grp = status->unk_08;
+    void* data;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062588_63188);
+    if (gPlayers[playerNo].item != -1) {
+        data = DataRead(D_800CCBDC_CD7DC[gPlayers[playerNo].item]);
+    } else {
+        data = DataRead(0xA0132);
+    }
+    status->unk_36 = SprAnimRead(data);
+    DataClose(data);
+    SprAnimSet(grp, 2, status->unk_36, 0);
+    SprPrioSet(grp, 2, (playerNo * 5) + 0x478D);
+    SprAttrSet(grp, 2, 0x1000);
+    SprRotSet(grp, 2, 0.0f);
+    if (gPlayers[playerNo].item != -1) {
+        SprPosSet(grp, 2, 0x18, 0);
+    } else {
+        SprPosSet(grp, 2, 0x16, 0);
+    }
+    SprScaleSet(grp, 2, 1.0f, 1.0f);
+    func_8008221C_82E1C(grp, 2, 0.0f);
+    if (playerNo == GwSystem.current_player_index) {
+        func_80082488_83088(grp, 2, 0x100);
+    } else {
+        func_80082488_83088(grp, 2, 0x80);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", MBStatusItemDispSet);
+/* Reloads the item sprite of player playerNo */
+void func_80062588_63188(s32 playerNo) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+    u16 grp = status->unk_08;
+    void* data;
+
+    if (status->unk_36 != -1) {
+        SprAnimKill(status->unk_36);
+        status->unk_36 = -1;
+    }
+    if (gPlayers[playerNo].item != -1) {
+        data = DataRead(D_800CCBDC_CD7DC[gPlayers[playerNo].item]);
+        status->unk_36 = SprAnimRead(data);
+        DataClose(data);
+        SprAnimSet(grp, 2, status->unk_36, 0);
+    }
+}
+
+/* MP3 MBStatusItemDispSet: arg1 1 shows the item view, 0 the normal one */
+void MBStatusItemDispSet(s32 playerNo, s32 arg1) {
+    BoardStatus* status = &D_80101510_102110[playerNo];
+    s32 i;
+
+    if (status->unk_00 != arg1) {
+        status->unk_00 = arg1;
+        switch (arg1) {
+            case 0:
+                if (status->unk_36 != -1) {
+                    SprAnimKill(status->unk_36);
+                    status->unk_36 = -1;
+                    SprAttrSet(status->unk_08, 2, 0x8000);
+                }
+                func_8005F2D8_5FED8(playerNo);
+                func_8005F454_60054(playerNo);
+                func_8005F6C0_602C0(playerNo);
+                func_8005F86C_6046C(playerNo);
+                break;
+            case 1:
+                for (i = 0; i < 2; i++) {
+                    /* unk_36 and unk_38 */
+                    (&status->unk_36)[i] = -1;
+                    SprAttrSet(status->unk_08, i + 2, 0x8000);
+                    func_8008225C_82E5C(status->unk_08, i + 2, 0);
+                }
+                SprAnimKill(status->unk_3A);
+                for (i = 0; i < 5; i++) {
+                    SprAttrSet(status->unk_08, i + 4, 0x8000);
+                    func_8008225C_82E5C(status->unk_08, i + 4, 0);
+                }
+                status->unk_3A = -1;
+                SprAttrSet(status->unk_08, 0xA, 0x8000);
+                func_8008225C_82E5C(status->unk_08, 0xA, 0);
+                status->unk_3C = -1;
+                SprAttrSet(status->unk_08, 0xB, 0x8000);
+                func_8008225C_82E5C(status->unk_08, 0xB, 0);
+                status->unk_42 = -1;
+                func_800623C8_62FC8(playerNo);
+                break;
+        }
+    }
+}
 
 void MBStatusItemDispSetAll(s32 arg0) {
     s32 i;
@@ -1153,7 +1485,9 @@ void MBStatusItemDispSetAll(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006286C_6346C);
+s8 func_8006286C_6346C(s32 playerNo) {
+    return D_80101510_102110[playerNo].unk_00;
+}
 
 void MBStatusSprPosGet(s16 arg0, s16 arg1, f32 *arg2, f32 *arg3) {
     HuSprite *sprite = HuSprGrpData[arg0]->members[arg1];
@@ -1162,12 +1496,30 @@ void MBStatusSprPosGet(s16 arg0, s16 arg1, f32 *arg2, f32 *arg3) {
     *arg3 = sprite->unk_4C;
 }
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800628C0_634C0);
+/* MP3 MBStatusItemOfsApply (slot 2) */
+void func_800628C0_634C0(s32 playerNo, f32 arg1, f32 arg2) {
+    f32 x;
+    f32 y;
+    s16 grp = D_80101510_102110[playerNo].unk_08;
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_8006296C_6356C);
+    MBStatusSprPosGet(grp, 2, &x, &y);
+    x += arg1;
+    y += arg2;
+    SprPosSet(grp, 2, x, y);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800629AC_635AC);
+void func_8006296C_6356C(s32 playerNo, f32* arg1, f32* arg2) {
+    MBStatusSprPosGet(D_80101510_102110[playerNo].unk_08, 2, arg1, arg2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_800629F0_635F0);
+void func_800629AC_635AC(s32 playerNo, s16 arg1, s16 arg2) {
+    SprPosSet(D_80101510_102110[playerNo].unk_08, 2, arg1, arg2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/5F3B0", func_80062A28_63628);
+void func_800629F0_635F0(s32 playerNo, s32 arg1) {
+    func_80082488_83088(D_80101510_102110[playerNo].unk_08, 2, arg1);
+}
+
+void func_80062A28_63628(s32 playerNo, f32 arg1) {
+    SprRotSet(D_80101510_102110[playerNo].unk_08, 2, arg1);
+}
