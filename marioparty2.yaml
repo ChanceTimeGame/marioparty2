@@ -1780,7 +1780,7 @@ segments:
     subsegments:
       - [0x37F290, c, ovl_5A_entrypoint]
       - [0x37F2C0, c, 37F290]
-      - [0x37F4A0, data]
+      - [0x37F4A0, .data, ovl_5A_entrypoint]
   - type: code
     start: 0x37F4B0
     vram: 0x80102800
