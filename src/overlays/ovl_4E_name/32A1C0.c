@@ -1604,46 +1604,675 @@ void func_8010760C_32EFCC_name_4E(s32 mes) {
     func_800890CC_89CCC(D_8010DB60_335520_name_4E, mes, -1, -1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107638_32EFF8_name_4E);
+/* Waits until the message window has finished printing; returns its choice (0 when it has none). */
+s32 func_80107638_32EFF8_name_4E(void) {
+    while (func_8008BA30_8C630(D_8010DB60_335520_name_4E) != 0) {
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_8010DB60_335520_name_4E].unk_30 != 0) {
+        return func_8008BB48_8C748(D_8010DB60_335520_name_4E, 0, 0);
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076C0_32F080_name_4E);
+void func_801076C0_32F080_name_4E(void) {
+    func_8008E2DC_8EEDC(D_8010DB60_335520_name_4E, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076E4_32F0A4_name_4E);
+void func_801076E4_32F0A4_name_4E(void) {
+    D_8010DB62_335522_name_4E = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801076F4_32F0B4_name_4E);
+void func_801076F4_32F0B4_name_4E(void) {
+    func_8008E4D0_8F0D0(D_8010DB60_335520_name_4E, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107718_32F0D8_name_4E);
+void func_80107718_32F0D8_name_4E(s32 arg0, s16 arg1) {
+    func_8008D904_8E504(D_8010DB60_335520_name_4E, arg0, arg1);
+}
 
+/* Puts esprite spr on model's part at its current motion frame. NON_MATCHING: the two argument
+   copies in the prologue are swapped (scheduling only). */
+#ifdef NON_MATCHING
+void func_80107748_32F108_name_4E(s16 model, s32 spr, char* part) {
+    f32 mtx[4][4];
+
+    func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
+    func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, mtx);
+    espPosSet(spr, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107748_32F108_name_4E);
+#endif
 
+/* Puts esprite spr on model's part (its motion object's or hit transform's matrix). NON_MATCHING:
+   register allocation only (retail keeps the raw argument in a3 for the else branch). */
+#ifdef NON_MATCHING
+void func_80107804_32F1C4_name_4E(s32 model, s32 spr, char* part) {
+    void* obj;
+
+    if (D_800FC834_FD434[(s16)model].hmf->unk84 != (void*)-1) {
+        obj = func_8002A9F4_2B5F4(model, part);
+        func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, ((HmfMotionObj*)obj)->unk58);
+    } else {
+        obj = func_8002A9F4_2B5F4(model, part);
+        func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, ((HitXform*)obj)->unk4C);
+    }
+    espPosSet(spr, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107804_32F1C4_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801078EC_32F2AC_name_4E);
+/* Screen position slot i = esprite esp's position plus (dx, dy). */
+void func_801078EC_32F2AC_name_4E(s16 i, s16 esp, s32 dx, s32 dy) {
+    D_8010E648_336008_name_4E[i].x = ((Ovl4EEsprite*)D_800F93FC_F9FFC)[esp].x + dx;
+    D_8010E648_336008_name_4E[i].y = ((Ovl4EEsprite*)D_800F93FC_F9FFC)[esp].y + dy;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107940_32F300_name_4E);
+/* Screen position slot i = pos plus (dx, dy). */
+void func_80107940_32F300_name_4E(s16 i, Vec2f* pos, s16 dx, s16 dy) {
+    D_8010E648_336008_name_4E[i].x = dx + pos->unk_00;
+    D_8010E648_336008_name_4E[i].y = dy + pos->unk_04;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079AC_32F36C_name_4E);
+void func_801079AC_32F36C_name_4E(void) {
+    s16 i;
 
+    for (i = 0; i < 20; i++) {
+        D_8010DA98_335458_name_4E[i] = -1;
+    }
+}
+
+/* Of the n screen slots, the nearest one seen from slot cur in direction (dx, dy) (unit
+   directions within 0.5 of each other), skipping cur and taken slots (D_8010DA98 != -1);
+   -1 if there is none. NON_MATCHING: one store scheduled after a mov.s instead of before. */
+#ifdef NON_MATCHING
+s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy) {
+    Vec2f dir[30];
+    f32 dist[30];
+    f32 x;
+    f32 y;
+    f32 len;
+    f32 ux;
+    f32 uy;
+    f32 best;
+    s16 i;
+    s16 found;
+
+    for (i = 0; i < n; i++) {
+        if (i == cur || D_8010DA98_335458_name_4E[i] != -1) {
+            dist[i] = -1.0f;
+        } else {
+            x = D_8010E648_336008_name_4E[cur].x - D_8010E648_336008_name_4E[i].x;
+            y = D_8010E648_336008_name_4E[cur].y - D_8010E648_336008_name_4E[i].y;
+            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            dir[i].unk_00 = x / len;
+            dir[i].unk_04 = y / len;
+        }
+    }
+    len = func_800B1830_B2430(dx * dx + dy * dy);
+    ux = dx / len;
+    uy = dy / len;
+    for (i = 0; i < n; i++) {
+        if (dist[i] < 0.0f) {
+            continue;
+        }
+        x = ux - dir[i].unk_00;
+        y = uy - dir[i].unk_04;
+        if (func_800B1830_B2430(x * x + y * y) > 0.5f) {
+            dist[i] = -1.0f;
+        }
+    }
+    best = 100000.0f;
+    found = -1;
+    for (i = 0; i < n; i++) {
+        if (dist[i] < 0.0f) {
+            continue;
+        }
+        if (dist[i] < best) {
+            best = dist[i];
+            found = i;
+        }
+    }
+    return found;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079EC_32F3AC_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107D3C_32F6FC_name_4E);
+/* Object function: once the setup is left (D_8010D1F0, or main's D_801011FC), fades out (D_8010D1F2:
+   0 short, 9/11 long) and hands over to func_80107E34. */
+void func_80107D3C_32F6FC_name_4E(omObjData* obj) {
+    if (D_8010D1F0_334BB0_name_4E != 0 || D_801011FC_101DFC != 0) {
+        switch (D_8010D1F2_334BB2_name_4E) {
+            case 0:
+                InitFadeOut(D_8010D1F2_334BB2_name_4E, 8);
+                break;
+            case 9:
+            case 11:
+                InitFadeOut(D_8010D1F2_334BB2_name_4E, 20);
+                break;
+        }
+        obj->func_ptr = func_80107E34_32F7F4_name_4E;
+        if (D_8010E140_335B00_name_4E != 0x4E) {
+            func_800794A8_7A0A8(60);
+            D_800CB150 = 0;
+        } else {
+            if (D_8010E618_335FD8_name_4E & 2) {
+                func_800794A8_7A0A8(45);
+            }
+            D_800CB150 = 1;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107E34_32F7F4_name_4E);
+/* Object function: when the fade is done, frees the sprites and leaves: back (0), a call (2) or
+   a jump (1) to overlay D_8010E140 with event D_8010E618. */
+void func_80107E34_32F7F4_name_4E(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        func_8001AC44_1B844(D_8010E5F0_335FB0_name_4E);
+        func_8008CE5C_8DA5C();
+        MBDBackKill();
+        func_80050AE0_516E0();
+        switch (D_8010DC90_335650_name_4E) {
+            case 0:
+                _ClearFlag(0x13);
+                omOvlReturnEx(1);
+                break;
+            case 2:
+                omOvlCallEx(D_8010E140_335B00_name_4E, D_8010E618_335FD8_name_4E, 0x11);
+                break;
+            case 1:
+                _ClearFlag(0x13);
+                omOvlGotoEx(D_8010E140_335B00_name_4E, D_8010E618_335FD8_name_4E, 0x11);
+                break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107F10_32F8D0_name_4E);
+/* Sets the scene up: the backdrop esprite, the players' models (placed per team mode, or all at
+   D_8010D4B4 and hidden when D_8010DAB8), the host model, then fades in. */
+void func_80107F10_32F8D0_name_4E(void) {
+    void** motions;
+    Vec* pos;
+    s32 model;
+    s32 i;
+    s32 j;
+    s32 file;
 
+    file = D_8010DAB6_335476_name_4E == 0 ? 0xF7 : 0;
+    D_8010DC18_3355D8_name_4E = func_8001A2F8_1AEF8(file | 0x900F6);
+    D_8010DC1A_3355DA_name_4E = func_8001AAAC_1B6AC(D_8010DC18_3355D8_name_4E, 0, 0);
+    func_8001A708_1B308(D_8010DC1A_3355DA_name_4E, 0x4000);
+    espPosSet(D_8010DC1A_3355DA_name_4E, 160, 120);
+    if (D_800CD414_CE014 & 4) {
+        motions = D_8010D418_334DD8_name_4E;
+    } else {
+        motions = D_8010D400_334DC0_name_4E;
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        gPlayers[i].unk_24 = func_80043510_44110((u8)(gPlayers[i].character + 15), motions[gPlayers[i].character]);
+        HuPrcVSleep();
+    }
+    if (D_8010DAB8_335478_name_4E != 0) {
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            PLAYER_MODEL(i)->pos.x = D_8010D4B4_334E74_name_4E.x;
+            PLAYER_MODEL(i)->pos.y = D_8010D4B4_334E74_name_4E.y;
+            PLAYER_MODEL(i)->pos.z = D_8010D4B4_334E74_name_4E.z;
+            func_80056658_57258(&PLAYER_MODEL(i)->pos, &OVL4E_CAMERA->pos, &PLAYER_MODEL(i)->rot);
+            MBModelDispOff(PLAYER_MODEL(i));
+        }
+    } else {
+        switch (D_801013B8_101FB8.unk40) {
+            default:
+            case 0:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                pos = D_8010D4FC_334EBC_name_4E;
+                break;
+            case 1:
+                pos = D_8010D544_334F04_name_4E;
+                break;
+            case 2:
+                pos = D_8010D574_334F34_name_4E;
+                break;
+            case 7:
+                pos = D_8010D52C_334EEC_name_4E;
+                break;
+        }
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            j = D_800F9D48_FA948[0x2F8 + i];
+            PLAYER_MODEL(j)->pos.x = pos[i].x;
+            PLAYER_MODEL(j)->pos.y = pos[i].y;
+            PLAYER_MODEL(j)->pos.z = pos[i].z;
+            func_80056658_57258(&PLAYER_MODEL(j)->pos, &OVL4E_CAMERA->pos, &PLAYER_MODEL(j)->rot);
+            MBMotionSet(PLAYER_MODEL(j), 0, 2);
+            MBModelDispOn(PLAYER_MODEL(j));
+        }
+    }
+    model = D_8010DC92_335652_name_4E;
+    if (D_8010DAB8_335478_name_4E != 0) {
+        func_80029714_2A314(model, D_8010D4B4_334E74_name_4E.x, D_8010D4B4_334E74_name_4E.y, D_8010D4B4_334E74_name_4E.z);
+        func_800298A4_2A4A4(model, 4, 4);
+    } else {
+        func_80029714_2A314(model, -274.0f, 0.0f, 2476.0f);
+        func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+        func_80029E80_2AA80(model, 2, 2);
+        func_800298A4_2A4A4(model, 4, 0);
+    }
+    if (D_8010DAB8_335478_name_4E == 0) {
+        func_8010896C_33032C_name_4E();
+    }
+    InitFadeIn(2, 16);
+    HuPrcSleep(16);
+    if (D_8010D1F4_334BB4_name_4E != 0) {
+        PlayMusic(0x13);
+    }
+    if (D_8010DAB8_335478_name_4E != 0) {
+        func_8010832C_32FCEC_name_4E();
+    }
+}
+
+/* The players arrive (D_8010DAB8): a pipe (model 14) grows, the host slides in, each player hops
+   from the pipe to D_8010D4CC, the pipe shrinks, the players drop from above onto their places
+   (the music starts once one is below 350) and the host drops in last. NON_MATCHING: retail
+   reads D_8010D4B4's fields without a base register, and enters the host's drop loop at its test. */
+#ifdef NON_MATCHING
+void func_8010832C_32FCEC_name_4E(void) {
+    f32 speed[4];
+    Vec dir;
+    MBModel* pipe;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 step;
+    Vec* pos;
+    s32 model;
+    s32 landed;
+    s32 i;
+    s32 j;
+
+    pipe = func_80043510_44110(14, NULL);
+    pipe->pos.x = D_8010D4B4_334E74_name_4E.x;
+    pipe->pos.y = D_8010D4B4_334E74_name_4E.y;
+    pipe->pos.z = D_8010D4B4_334E74_name_4E.z;
+    pipe->scale.y = 0.0f;
+    PlaySound(0x326);
+    for (i = 0; i < 6; i++) {
+        pipe->scale.y += 0.16666667f;
+        HuPrcVSleep();
+    }
+    model = D_8010DC92_335652_name_4E;
+    func_800298A4_2A4A4(model, 4, 0);
+    dx = (D_8010D4C0_334E80_name_4E.x - D_800FC834_FD434[model].pos.x) / 6.0f;
+    dy = (D_8010D4C0_334E80_name_4E.y - D_800FC834_FD434[model].pos.y) / 6.0f;
+    dz = (D_8010D4C0_334E80_name_4E.z - D_800FC834_FD434[model].pos.z) / 6.0f;
+    for (i = 0; i < 6; i++) {
+        D_800FC834_FD434[model].pos.x += dx;
+        D_800FC834_FD434[model].pos.y += dy;
+        D_800FC834_FD434[model].pos.z += dz;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        MBMotionSet(PLAYER_MODEL(i), 2, 0);
+        MBModelDispOn(PLAYER_MODEL(i));
+        step = HuVecDistance(&PLAYER_MODEL(i)->pos, &D_8010D4CC_334E8C_name_4E[i]) / 6.0f;
+        func_80056658_57258(&PLAYER_MODEL(i)->pos, &D_8010D4CC_334E8C_name_4E[i], &dir);
+        PlaySound(0x328);
+        for (j = 0; j < 6; j++) {
+            PLAYER_MODEL(i)->pos.x += step * dir.x;
+            PLAYER_MODEL(i)->jumpY += step * dir.y;
+            PLAYER_MODEL(i)->pos.z += step * dir.z;
+            HuPrcVSleep();
+        }
+    }
+    PlaySound(0x327);
+    for (i = 0; i < 6; i++) {
+        pipe->scale.y -= 0.16666667f;
+        HuPrcVSleep();
+    }
+    MBModelKill(pipe);
+    speed[0] = 0.59f;
+    speed[1] = 1.21f;
+    speed[2] = 0.77f;
+    speed[3] = 1.0f;
+    if (D_8010DAB6_335476_name_4E != 0) {
+        pos = D_8010D4FC_334EBC_name_4E;
+    } else {
+        pos = D_8010D52C_334EEC_name_4E;
+    }
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        PLAYER_MODEL(i)->pos.x = pos[i].x;
+        PLAYER_MODEL(i)->pos.z = pos[i].z;
+    }
+    while (1) {
+        landed = 0;
+        for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+            PLAYER_MODEL(i)->jumpY -= speed[i];
+            if (PLAYER_MODEL(i)->jumpY <= 0.0f) {
+                PLAYER_MODEL(i)->jumpY = 0.0f;
+                if (speed[i] != 0.0f) {
+                    MBMotionShiftSet(PLAYER_MODEL(i), 0, 0, 5, 2);
+                }
+                speed[i] = 0.0f;
+                func_8005A4EC_5B0EC(i, 1);
+                landed++;
+            }
+            if (D_800CB150 == 0 && PLAYER_MODEL(i)->jumpY < 350.0f) {
+                PlayMusic(0x35);
+                D_800CB150 = 1;
+            }
+            speed[i] *= 1.1f;
+        }
+        if (landed == D_8010DBE0_3355A0_name_4E) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    speed[0] = 1.0f;
+    model = D_8010DC92_335652_name_4E;
+    D_800FC834_FD434[model].pos.x = -274.0f;
+    D_800FC834_FD434[model].pos.z = 2476.0f;
+    while (!((D_800FC834_FD434[model].pos.y -= speed[0]) <= 0.0f)) {
+        speed[0] *= 1.2f;
+        HuPrcVSleep();
+    }
+    D_800FC834_FD434[model].pos.y = 0.0f;
+    func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+    func_80029E80_2AA80(model, 2, 2);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010832C_32FCEC_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_8010896C_33032C_name_4E);
+/* Shows the menu panel and the rows already chosen (unless D_800CD414 & 2). */
+void func_8010896C_33032C_name_4E(void) {
+    u16 spr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108A18_3303D8_name_4E);
+    espDispOn(D_8010DABC_33547C_name_4E);
+    if (!(D_800CD414_CE014 & 2)) {
+        spr = D_8010DAC4_335484_name_4E[D_800FA1A8];
+        espDispOn(spr);
+        espPosSet(spr, 160, 68);
+        if (D_8010DAB6_335476_name_4E != 0) {
+            spr = D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40];
+            espDispOn(spr);
+            espPosSet(spr, 160, 90);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108BE0_3305A0_name_4E);
+/* Fades the panel and the chosen rows out, then frees the menu sprites. */
+void func_80108A18_3303D8_name_4E(void) {
+    s16 alpha;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108E3C_3307FC_name_4E);
+    alpha = 255;
+    for (i = 10; i != 0; i--) {
+        alpha -= 25;
+        func_8001A6BC_1B2BC(D_8010DABC_33547C_name_4E, alpha);
+        func_8001A6BC_1B2BC(D_8010DAC4_335484_name_4E[D_800FA1A8], alpha);
+        if (D_8010DAB6_335476_name_4E != 0) {
+            func_8001A6BC_1B2BC(D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40], alpha);
+        }
+        HuPrcVSleep();
+    }
+    espDispOff(D_8010DABC_33547C_name_4E);
+    espDispOff(D_8010DAC4_335484_name_4E[D_800FA1A8]);
+    if (D_8010DAB6_335476_name_4E != 0) {
+        espDispOff(D_8010DAD2_335492_name_4E[D_801013B8_101FB8.unk40]);
+    }
+    HuPrcVSleep();
+    func_8001AC44_1B844(D_8010DABC_33547C_name_4E);
+    SprAnimKill(D_8010DABA_33547A_name_4E);
+    for (i = 0; i < 3; i++) {
+        func_8001AC44_1B844(D_8010DAC4_335484_name_4E[i]);
+        SprAnimKill(D_8010DABE_33547E_name_4E[i]);
+    }
+    if (D_8010DAB6_335476_name_4E != 0) {
+        for (i = 0; i < 4; i++) {
+            func_8001AC44_1B844(D_8010DAD2_335492_name_4E[i]);
+            SprAnimKill(D_8010DACA_33548A_name_4E[i]);
+        }
+    }
+}
 
+/* Creates the menu sprites: the panel, the first menu's three rows, the second menu's four rows
+   (D_8010DAB6) and the third menu's six (or the stamp sprites when resuming). */
+void func_80108BE0_3305A0_name_4E(void) {
+    u16 spr;
+    s16 anim;
+    s32 i;
+
+    i = 0;
+    if (D_8010DAB6_335476_name_4E != 0) {
+        D_8010DABA_33547A_name_4E = func_8001A2F8_1AEF8(0x900D6);
+    } else {
+        D_8010DABA_33547A_name_4E = func_8001A2F8_1AEF8(0x900D7);
+    }
+    D_8010DABC_33547C_name_4E = func_8001AAAC_1B6AC(D_8010DABA_33547A_name_4E, 0, 1);
+    func_8001A788_1B388(D_8010DABC_33547C_name_4E, 0x4900);
+    espPosSet(D_8010DABC_33547C_name_4E, 160, 36);
+    espDispOff(D_8010DABC_33547C_name_4E);
+    for (i = 0; i < 3; i++) {
+        D_8010DABE_33547E_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2DC_334C9C_name_4E[i]);
+        D_8010DAC4_335484_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+        func_8001A788_1B388(spr, 0x4900);
+        espDispOff(spr);
+    }
+    if (D_8010DAB6_335476_name_4E != 0) {
+        for (i = 0; i < 4; i++) {
+            D_8010DACA_33548A_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2E8_334CA8_name_4E[i]);
+            D_8010DAD2_335492_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+            func_8001A788_1B388(spr, 0x4900);
+            espDispOff(spr);
+        }
+    }
+    if (D_800CD414_CE014 < 4) {
+        for (i = 0; i < 6; i++) {
+            D_8010DADA_33549A_name_4E[i] = anim = func_8001A2F8_1AEF8(D_8010D2F8_334CB8_name_4E[i]);
+            D_8010DAE6_3354A6_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+            func_8001A788_1B388(spr, 0x4900);
+            espDispOff(spr);
+        }
+    } else {
+        func_80108F24_3308E4_name_4E();
+    }
+    HuPrcVSleep();
+}
+
+/* Places up to n (at most the wins needed) stamp esprites from D_8010DB20[i] in a row from
+   (x, y), 32 apart, stopping at an unused one; returns the next index. */
+s32 func_80108E3C_3307FC_name_4E(s16 i, s16 x, s16 y, s16 n) {
+    if (n > D_8010D448_334E08_name_4E[D_800FA1A8]) {
+        n = D_8010D448_334E08_name_4E[D_800FA1A8];
+    }
+    while (n != 0) {
+        if (D_8010DB20_3354E0_name_4E[i] < 0) {
+            break;
+        }
+        espPosSet(D_8010DB20_3354E0_name_4E[i++], x, y);
+        n--;
+        x += 32;
+    }
+    return i;
+}
+
+/* Builds the score board (coming back from a minigame): the board panel with "<n>=WIN MATCH",
+   the team icons, each player's character icon, the 4n stamp sprites, and stamps placed for the
+   wins so far (per team: the best of its players). y is -228 either way (retail's two spellings
+   of it differ only above 16 bits); the board slides in later. NON_MATCHING: register
+   allocation (anim/spr swapped) and some scheduling; the logic follows retail. */
+#ifdef NON_MATCHING
+void func_80108F24_3308E4_name_4E(void) {
+    s32 y;
+    s32 top;
+    s32 rowY;
+    s32 panelY;
+    s32* files;
+    u16 spr;
+    s16 anim;
+    s32 x;
+    s32 next;
+    s16 max;
+    u8 w;
+    u16 col;
+    s32 count;
+    s32 i;
+    u16 set;
+
+    top = D_8010DAB6_335476_name_4E == 0 ? -228 : 0xFF1C;
+    y = top;
+    D_8010DB02_3354C2_name_4E = anim = func_8001A2F8_1AEF8(0x900E5);
+    D_8010DB04_3354C4_name_4E = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+    func_8001A788_1B388(spr, 0x4900);
+    espPosSet(spr, 160, top);
+    sprintf(D_8010DA84_335444_name_4E, "%d=WIN MATCH", D_8010D448_334E08_name_4E[D_800FA1A8]);
+    D_8010DBDC_33559C_name_4E = func_8006A608_6B208(D_8010DB68_335528_name_4E, D_8010DA84_335444_name_4E, 0, -1, -1);
+    SprPosSet(D_8010DB88_335548_name_4E[D_8010DBDC_33559C_name_4E], 0, 160, top);
+    HuPrcVSleep();
+    if (D_8010DAB6_335476_name_4E != 0) {
+        panelY = y;
+    } else {
+        panelY = y - 44;
+    }
+    set = D_800FA1A8;
+    if (D_8010DAB6_335476_name_4E == 0) {
+        set += 3;
+    }
+    files = D_8010D48C_334E4C_name_4E[(s16)set];
+    for (i = 0; i < 5; i++) {
+        D_8010DB06_3354C6_name_4E[i] = D_8010DB10_3354D0_name_4E[i] = -1;
+    }
+    anim = func_8001A2F8_1AEF8(files[0]);
+    spr = func_8001AAAC_1B6AC(anim, 0, 1);
+    func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+    func_8001A788_1B388(spr, 0x1000);
+    func_8001A6BC_1B2BC(spr, 0x80);
+    espPosSet(spr, 180, panelY + 100);
+    D_8010DB06_3354C6_name_4E[0] = anim;
+    D_8010DB10_3354D0_name_4E[0] = spr;
+    HuPrcVSleep();
+    anim = func_8001A2F8_1AEF8(files[1]);
+    spr = func_8001AAAC_1B6AC(anim, 0, 1);
+    func_8001A788_1B388(spr, 0x1000);
+    espPosSet(spr, 160, panelY + 102);
+    D_8010DB06_3354C6_name_4E[1] = anim;
+    D_8010DB10_3354D0_name_4E[1] = spr;
+    if (D_8010DAB6_335476_name_4E != 0) {
+        count = 3;
+        if (D_801013B8_101FB8.unk40 == 0 || D_801013B8_101FB8.unk40 == 3) {
+            count = 5;
+        }
+        col = D_8010D4A4_334E64_name_4E[D_801013B8_101FB8.unk40];
+        D_8010DB06_3354C6_name_4E[2] = anim = func_8001A2F8_1AEF8(files[2]);
+        for (i = 2; i < count; i++) {
+            spr = func_8001AAAC_1B6AC(anim, 0, 1);
+            func_8001A788_1B388(spr, 0x1000);
+            func_8001A91C_1B51C(spr, 4.0f, 4.0f);
+            espPosSet(spr, 180, col);
+            D_8010DB10_3354D0_name_4E[i] = spr;
+            col += 44;
+        }
+    }
+    rowY = y + 36;
+    HuPrcVSleep();
+    col = D_8010D4AC_334E6C_name_4E[D_800FA1A8];
+    for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+        D_8010DAF2_3354B2_name_4E[i] = anim =
+            func_8001A2F8_1AEF8(D_8010D430_334DF0_name_4E[gPlayers[D_800F9D48_FA948[0x2F8 + i]].character]);
+        D_8010DAFA_3354BA_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+        func_8001A788_1B388(spr, 0x1004);
+        espPosSet(spr, col, rowY);
+        rowY += 44;
+    }
+    D_8010DB1A_3354DA_name_4E = -1;
+    for (i = 0; i < 32; i++) {
+        D_8010DB20_3354E0_name_4E[i] = -1;
+    }
+    count = D_8010D448_334E08_name_4E[D_800FA1A8] * 4;
+    D_8010DB1A_3354DA_name_4E = anim = func_8001A2F8_1AEF8(0x900E6);
+    for (i = 0; i < count; i++) {
+        D_8010DB20_3354E0_name_4E[i] = spr = func_8001AAAC_1B6AC(anim, 0, 1);
+        func_8001A788_1B388(spr, 1);
+        espPosSet(spr, -100, -100);
+    }
+    x = D_8010D4AC_334E6C_name_4E[D_800FA1A8] + 36;
+    next = 0;
+    switch (D_801013B8_101FB8.unk40) {
+        case 0:
+        case 3:
+            rowY = y + 36;
+            for (i = 0; i < 4; i++) {
+                next = func_80108E3C_3307FC_name_4E(next, x, rowY, D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]]);
+                rowY += D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40];
+            }
+            break;
+        case 1:
+            rowY = y + 36;
+            next = func_80108E3C_3307FC_name_4E(next, x, rowY, D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8]]);
+            rowY += D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40];
+            max = 0;
+            for (i = 1; i < 4; i++) {
+                w = D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]];
+                if (max < w) {
+                    max = w;
+                }
+            }
+            next = func_80108E3C_3307FC_name_4E(next, x, rowY, max);
+            break;
+        case 2:
+            rowY = y + 58;
+            max = 0;
+            for (i = 0; i < 2; i++) {
+                w = D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]];
+                if (max < w) {
+                    max = w;
+                }
+            }
+            next = func_80108E3C_3307FC_name_4E(next, x, rowY, max);
+            rowY += D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40];
+            max = 0;
+            for (; i < 4; i++) {
+                w = D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]];
+                if (max < w) {
+                    max = w;
+                }
+            }
+            next = func_80108E3C_3307FC_name_4E(next, x, rowY, max);
+            break;
+        case 7:
+            rowY = y + 36;
+            for (i = 0; i < D_8010DBE0_3355A0_name_4E; i++) {
+                next = func_80108E3C_3307FC_name_4E(next, x, rowY, D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]]);
+                rowY += D_8010D44C_334E0C_name_4E[0];
+            }
+            break;
+    }
+    D_8010DBDE_33559E_name_4E = next;
+    HuPrcVSleep();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80108F24_3308E4_name_4E);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109750_331110_name_4E);
+/* Sets the cursor (and its pad, func_8010C5BC). */
+void func_80109750_331110_name_4E(s16 cursor) {
+    D_8010E5F2_335FB2_name_4E = cursor;
+    func_8010C5BC_333F7C_name_4E(cursor);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80109778_331138_name_4E);
+/* Camera process: every frame, camera 0 looks from D_8010D5A4 at D_8010D5B0, full screen. */
+void func_80109778_331138_name_4E(void) {
+    while (1) {
+        Hu3DCamSetPositionOrientation(0, &D_8010D5A4_334F64_name_4E, &D_8010D5B0_334F70_name_4E, &D_8010D5BC_334F7C_name_4E);
+        ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+        CameraViewportSet(0, &D_8010D5C8_334F88_name_4E, &D_8010D5C8_334F88_name_4E);
+        Hu3DCamSetPerspective(0, D_8010D7B0_335170_name_4E, D_8010E63C_335FFC_name_4E, D_8010E150_335B10_name_4E);
+        Hu3DCamUpdateMtx(0);
+        HuPrcVSleep();
+    }
+}
