@@ -11,8 +11,41 @@ typedef struct LEOCmdTestUnitReady {
     /* 0x0C */ u8 test;
 } LEOCmdTestUnitReady;
 
-extern void (*D_800CDD30_CE930[])(void); // command handlers, by command code
-extern LEOCmdRead D_800CDD70_CE970;      // system-area read command template
+/* .data (0xCE930-0xCE98C) */
+void func_80098650_99250(void);
+void func_800986F8_992F8(void);
+void func_8009AD90_9B990(void);
+void func_8009AE40_9BA40(void);
+void func_8009AEF0_9BAF0(void);
+void func_8009AFE0_9BBE0(void);
+void func_8009B080_9BC80(void);
+void func_8009B210_9BE10(void);
+void func_8009B3D0_9BFD0(void);
+void func_8009B470_9C070(void);
+void func_8009B530_9C130(void);
+void func_8009B570_9C170(void);
+void func_8009B810_9C410(void);
+void func_8009B940_9C540(void);
+void func_8009B9FC_9C5FC(void);
+void (*D_800CDD30_CE930[16])(void) = { /* command handlers, by command code */
+    NULL,
+    func_80098650_99250,
+    func_8009AD90_9B990,
+    func_8009B530_9C130,
+    func_8009B3D0_9BFD0,
+    func_8009B210_9BE10,
+    func_8009B810_9C410,
+    func_8009B470_9C070,
+    func_8009AEF0_9BAF0,
+    func_8009AFE0_9BBE0,
+    func_8009B570_9C170,
+    func_8009AE40_9BA40,
+    func_8009B080_9BC80,
+    func_8009B940_9C540,
+    func_8009B9FC_9C5FC,
+    func_800986F8_992F8,
+};
+LEOCmdRead D_800CDD70_CE970 = { { 5, 0, 0, 0, 0, 0, 0, 0, NULL }, 12, 1, NULL, 0 }; /* system-area read command template */
 
 void func_8009969C_9A29C(void);
 void func_80099770_9A370(void);

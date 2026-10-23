@@ -402,7 +402,10 @@ segments:
       - [0xCE190, .data, 7E850]
       - {start: 0xCE1A0, type: .data, name: 80230, linker_section: .cdata}
       - {start: 0xCE1B0, type: .data, name: 84FF0, linker_section: .cdata}
-      - [0xCE850, data]
+      - [0xCE850, .data, 8FBB0]
+      - [0xCE910, data]
+      - {start: 0xCE930, type: .data, name: 9A210, linker_section: .cdata}
+      - [0xCE990, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]
