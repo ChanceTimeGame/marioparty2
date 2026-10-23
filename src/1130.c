@@ -83,7 +83,7 @@ f32 func_800023CC_2FCC(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* n);
 f32 func_80003910_4510(omObjData* obj, f32 y);
 s32 func_80004168_4D68(omObjData* obj, f32 x, f32 y, f32 z);
 void func_80005034_5C34(omObjData* obj);
-void func_80006F34_7B34(omObjData* obj, Vec4f* p, s32 arg2);
+s32 func_80006F34_7B34(omObjData* obj, Vec4f* p, f32 arg2);
 void func_8000755C_815C(omObjData* obj, Vec3f* n);
 void func_8000BA38_C638(omObjData* obj, f32 y);
 void func_8000BAF0_C6F0(omObjData* obj, f32 x, f32 y, f32 z, f32 shadowY, Vec3f* n);
@@ -1317,6 +1317,8 @@ extern f32 D_800BF7C4_C03C4;
 extern f32 D_800BF7CC_C03CC;
 extern Vec3f D_800D5760_D6360;   /* reference point for the face-side test (func_8000776C_836C) */
 extern Vec3f D_800F9D40_FA940[]; /* contact points; D_800FD8C8_FE4C8[] holds their normals */
+extern s8 D_800FD7F4_FE3F4;      /* surface id of the last ground object touched, -1 none */
+s32 func_8000C098_CC98(s8 id);
 /* 1130's rodata past fork A's carve, still in the data blob (G carves the tail) */
 extern f64 D_800D1770_D2370; /* 0.2 */
 extern f64 D_800D1778_D2378; /* 0.5 */
@@ -1805,7 +1807,99 @@ void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80006F34_7B34);
+/* Push the player's sphere out of every ground object: the one it stands on (D_800BF794_C0394, in
+   world space) first, then the others in their local space. Returns the surface id of the last
+   object touched (-1 none); func_80006BF8_77F8 then handles a wall hit (MP1 func_80004D1C). */
+s32 func_80006F34_7B34(omObjData* obj, Vec4f* p, f32 arg2) {
+    Vec4f s;
+    ColSphere s2;
+    MgWork* w = obj->unk_50;
+    omObjData* o;
+    GroundWork* g;
+    s16 prev;
+    s16 i;
+
+    s.x = p->x;
+    s.y = w->unk_34 / 2.0f + p->y;
+    s.z = p->z;
+    s.w = p->w;
+    D_800FD7F4_FE3F4 = -1;
+    D_800BF796_C0396 = 0;
+    prev = D_800BF796_C0396;
+    if (!(w->unk_00[D_800BF794_C0394] & 1)) {
+        o = D_800FC7B0_FD3B0[D_800BF794_C0394];
+        g = o->unk_50;
+        if (g->unk_06 & 8) {
+            s.x += D_800F94A0_FA0A0;
+            s.y += D_80101308_101F08;
+            func_80005D60_6960(o, &s);
+        } else if (g->unk_06 & 0x10) {
+            s.x += D_800F94A0_FA0A0;
+            s.y += D_80101308_101F08;
+            func_800066BC_72BC(o, &s, w->unk_34 / 2.0f);
+        } else if (g->unk_06 & 0x20) {
+            s.x += D_800F94A0_FA0A0;
+            s.y += D_80101308_101F08;
+            func_800061E4_6DE4(o, &s);
+        } else if (g->unk_06 & 0x40) {
+            s.x += D_800F94A0_FA0A0;
+            s.y += D_80101308_101F08;
+            func_800062F0_6EF0(o, &s, w->unk_34 / 2.0f);
+        } else if (!(g->unk_06 & 2)) {
+            func_8002F2C4_2FEC4(*D_800FC7B0_FD3B0[D_800BF794_C0394]->model, D_800F9D30_FA930, func_80005130_5D30, &s);
+        }
+        if (prev != D_800BF796_C0396) {
+            D_800FD7F4_FE3F4 = g->unk_04;
+        }
+    }
+    for (i = 0; i < D_800F8FE0_F9BE0; i++) {
+        o = D_800FC7B0_FD3B0[i];
+        g = o->unk_50;
+        if (i == D_800BF794_C0394 || (g->unk_06 & 2) || (w->unk_00[i] & 1)) {
+            continue;
+        }
+        prev = D_800BF796_C0396;
+        s2.x = s2.x2 = p->x;
+        s2.y = s2.y2 = w->unk_34 / 2.0f + p->y;
+        s2.z = s2.z2 = p->z;
+        s2.r = s.w = p->w;
+        func_8000D434_E034(D_800FC838_FD438, D_800F94C8_FA0C8, (Vec3f*)&s2, o);
+        if ((g->unk_06 & 4) && func_8000DB30_E730(D_800FC834_FD434[*o->model].hmf->unk64, (Vec3f*)&s2, w->unk_48) == 0) {
+            continue;
+        }
+        if (g->unk_06 & 8) {
+            s2.x += D_800F94A0_FA0A0;
+            s2.y += D_80101308_101F08;
+            func_80005D60_6960(o, (Vec4f*)&s2);
+        } else if (g->unk_06 & 0x10) {
+            s2.x += D_800F94A0_FA0A0;
+            s2.y += D_80101308_101F08;
+            func_800066BC_72BC(o, (Vec4f*)&s2, w->unk_34 / 2.0f);
+        } else if (g->unk_06 & 0x20) {
+            s2.x += D_800F94A0_FA0A0;
+            s2.y += D_80101308_101F08;
+            func_800061E4_6DE4(o, (Vec4f*)&s2);
+        } else if (g->unk_06 & 0x40) {
+            s2.x += D_800F94A0_FA0A0;
+            s2.y += D_80101308_101F08;
+            func_800062F0_6EF0(o, (Vec4f*)&s2, w->unk_34 / 2.0f);
+        } else {
+            func_8002F2C4_2FEC4(*D_800FC7B0_FD3B0[i]->model, D_800F9D30_FA930, func_80005700_6300, &s2);
+        }
+        if (prev != D_800BF796_C0396) {
+            D_800FD7F4_FE3F4 = g->unk_04;
+            func_8000D6D0_E2D0(D_800FC838_FD438, &D_800FD8C8_FE4C8[D_800BF796_C0396 - 1]);
+        }
+    }
+    s.x = p->x + D_800F94A0_FA0A0;
+    s.y = w->unk_34 / 2.0f + p->y;
+    s.z = p->z + D_80101308_101F08;
+    s.w = p->w;
+    if (func_8000C098_CC98(D_800FD7F4_FE3F4) == 1) {
+        func_80006BF8_77F8(obj, (ColSphere*)&s, arg2);
+    }
+    return D_800FD7F4_FE3F4;
+}
 
 /* Tilt the player toward the floor normal (MP1 func_800057F4). The doubles are 1130's rodata
    (2.0, 0.3, 2.0, 0.3) still in the data blob: G's tail carve takes them (written as externs so
