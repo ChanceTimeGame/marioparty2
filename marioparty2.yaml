@@ -386,6 +386,8 @@ segments:
       - [0xB8AC0, c]
       - [0xB8FC0, c]
       - [0xB9190, data]
+      - [0xCD580, .data, 5EF10]
+      - [0xCD590, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]

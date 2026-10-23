@@ -20,7 +20,7 @@ typedef struct UnkList53 {
     /* 0x0C */ s16* data;
 } UnkList53;
 
-extern Vec4f D_800CC980_CD580;
+Vec4f D_800CC980_CD580 = { 16.0f, 12.0f, 304.0f, 228.0f };
 extern UnkList53* D_800E1D10_E2910;
 extern u16 D_800E1D14_E2914;
 
