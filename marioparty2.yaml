@@ -389,6 +389,8 @@ segments:
       - {start: 0xC0380, type: .data, name: 1130, linker_section: .cdata}
       - {start: 0xC03E0, type: .data, name: C8E0, linker_section: .cdata}
       - [0xC0480, data]
+      - [0xC8480, .data, pffont]
+      - [0xC9280, data]
       - [0xC9470, .data, util]
       - [0xCA5C0, .data, 19A30]
       - {start: 0xCA670, type: .data, name: 19BF0, linker_section: .cdata}
@@ -426,7 +428,7 @@ segments:
       - [0xCDEC0, .data, 74AA0]
       - {start: 0xCDF60, type: .data, name: objmain, linker_section: .cdata}
       - [0xCE120, .data, 79F90]
-      - [0xCE140, data]
+      - [0xCE140, .data, 7D1D0]
       - [0xCE190, .data, 7E850]
       - {start: 0xCE1A0, type: .data, name: 80230, linker_section: .cdata}
       - {start: 0xCE1B0, type: .data, name: 84FF0, linker_section: .cdata}
@@ -439,6 +441,8 @@ segments:
       - [0xCEA80, .data, A54C0]
       - [0xCEA90, .data, A57A0]
       - [0xCEAA0, data]
+      - [0xCEB10, .data, vimodes]
+      - [0xCFC90, data]
       - {start: 0xD0160, type: .data, name: B14D0, linker_section: .cdata}
       - [0xD0360, data]
       - [0xD0380, .data, B8AC0]

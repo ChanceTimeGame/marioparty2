@@ -39,7 +39,19 @@ typedef struct SaftyFrameColor {
 
 extern u8 pfFontTex[];
 extern u16 pfFontTlut[16][16];
-extern u16 pfFontCurPal;
+/* .data (0xCE140-0xCE190) */
+Gfx D_800CD540_CE140[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetRenderMode(G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTexturePersp(G_TP_PERSP),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsSPEndDisplayList(),
+};
+Gfx* D_800CD580_CE180 = D_800CD540_CE140;
+u16 pfFontCurPal = 0xFFFF;
 extern StrLine pfStrLines[0x200];
 extern s32 fontcolor;
 extern PfWin pfWinData[4];
