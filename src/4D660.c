@@ -130,6 +130,125 @@ extern s32 D_800CC044_CCC44;
 extern s32 D_800CC048_CCC48;
 
 
+/* Label strings (SJIS, in the data blob's rodata half after 4ABB0's rodata). */
+extern u8 D_800D2830_D3430[];
+extern u8 D_800D2840_D3440[];
+extern u8 D_800D284C_D344C[];
+extern u8 D_800D2860_D3460[];
+extern u8 D_800D2878_D3478[];
+extern u8 D_800D2888_D3488[];
+extern u8 D_800D2894_D3494[];
+extern u8 D_800D28A4_D34A4[];
+extern u8 D_800D28BC_D34BC[];
+extern u8 D_800D28CC_D34CC[];
+extern u8 D_800D28E4_D34E4[];
+extern u8 D_800D28FC_D34FC[];
+extern u8 D_800D291C_D351C[];
+extern u8 D_800D2934_D3534[];
+extern u8 D_800D2948_D3548[];
+extern u8 D_800D2960_D3560[];
+extern u8 D_800D2970_D3570[];
+extern u8 D_800D2980_D3580[];
+extern u8 D_800D2990_D3590[];
+extern u8 D_800D29A0_D35A0[];
+extern u8 D_800D29B0_D35B0[];
+extern u8 D_800D29C8_D35C8[];
+extern u8 D_800D29DC_D35DC[];
+extern u8 D_800D29F4_D35F4[];
+extern u8 D_800D2A0C_D360C[];
+extern u8 D_800D2A28_D3628[];
+extern u8 D_800D2A34_D3634[];
+extern u8 D_800D2A44_D3644[];
+extern u8 D_800D2A5C_D365C[];
+extern u8 D_800D2A6C_D366C[];
+extern u8 D_800D2A94_D3694[];
+extern u8 D_800D2AA4_D36A4[];
+extern u8 D_800D2AC0_D36C0[];
+extern u8 D_800D2AD8_D36D8[];
+extern u8 D_800D2AE8_D36E8[];
+extern u8 D_800D2AF4_D36F4[];
+extern u8 D_800D2B18_D3718[];
+extern u8 D_800D2B2C_D372C[];
+extern u8 D_800D2B40_D3740[];
+extern u8 D_800D2B60_D3760[];
+extern u8 D_800D2B78_D3778[];
+extern u8 D_800D2B7C_D377C[];
+extern u8 D_800D2B8C_D378C[];
+extern u8 D_800D2BA0_D37A0[];
+extern u8 D_800D2BB4_D37B4[];
+extern u8 D_800D2BC4_D37C4[];
+extern u8 D_800D2BD4_D37D4[];
+extern u8 D_800D2BE4_D37E4[];
+extern u8 D_800D2BFC_D37FC[];
+extern u8 D_800D2C1C_D381C[];
+extern u8 D_800D2C2C_D382C[];
+extern u8 D_800D2C54_D3854[];
+extern u8 D_800D2C68_D3868[];
+extern u8 D_800D2C78_D3878[];
+extern u8 D_800D2C8C_D388C[];
+/* Item use handlers. */
+s32 func_8004D620_4E220(void);
+s32 func_8004D6A0_4E2A0(void);
+s32 func_8004D734_4E334(void);
+s32 MBItemRobBoxExec(void);
+s32 func_8004D780_4E380(void);
+s32 func_8004D7A0_4E3A0(void);
+s32 func_8004D858_4E458(void);
+s32 func_8004D8B0_4E4B0(void);
+s32 func_8004D944_4E544(void);
+s32 func_8004DA2C_4E62C(void);
+s32 func_8004DAC4_4E6C4(void);
+
+/* .data (0xCC9F0-0xCCC90): label texts per language (0 default, 2, 3, 4). */
+LabelDef D_800CBDF0_CC9F0[] = {
+    { D_800D29A0_D35A0, 5 }, { D_800D2990_D3590, 6 }, { D_800D2980_D3580, 6 },
+    { D_800D2970_D3570, 5 }, { D_800D2960_D3560, 5 }, { D_800D2948_D3548, 9 },
+    { D_800D2934_D3534, 7 }, { D_800D291C_D351C, 9 }, { D_800D28FC_D34FC, 12 },
+    { D_800D28E4_D34E4, 11 }, { D_800D28CC_D34CC, 10 }, { D_800D28BC_D34BC, 6 },
+    { D_800D28A4_D34A4, 9 }, { D_800D2894_D3494, 6 }, { D_800D2888_D3488, 5 },
+    { D_800D2878_D3478, 6 }, { D_800D2860_D3460, 9 }, { D_800D284C_D344C, 9 },
+    { D_800D2840_D3440, 5 }, { D_800D2830_D3430, 6 },
+};
+LabelDef D_800CBE90_CCA90[] = {
+    { D_800D2B2C_D372C, 4 }, { D_800D2B18_D3718, 4 }, { D_800D2AF4_D36F4, 7 },
+    { D_800D2AE8_D36E8, 4 }, { D_800D2AD8_D36D8, 4 }, { D_800D2AC0_D36C0, 6 },
+    { D_800D2AA4_D36A4, 7 }, { D_800D2A94_D3694, 4 }, { D_800D2AD8_D36D8, 4 },
+    { D_800D2A6C_D366C, 9 }, { D_800D2A6C_D366C, 9 }, { D_800D2A5C_D365C, 4 },
+    { D_800D2A44_D3644, 6 }, { D_800D2A34_D3634, 4 }, { D_800D2A28_D3628, 4 },
+    { D_800D2A0C_D360C, 6 }, { D_800D29F4_D35F4, 6 }, { D_800D29DC_D35DC, 6 },
+    { D_800D29C8_D35C8, 5 }, { D_800D29B0_D35B0, 6 },
+};
+LabelDef D_800CBF30_CCB30[] = {
+    { D_800D2BD4_D37D4, 3 }, { D_800D2BC4_D37C4, 3 }, { D_800D2BC4_D37C4, 3 },
+    { D_800D2BB4_D37B4, 3 }, { D_800D2BA0_D37A0, 4 }, { D_800D2B8C_D378C, 4 },
+    { D_800D2B7C_D377C, 4 }, { D_800D2B78_D3778, 0 }, { D_800D2B78_D3778, 0 },
+    { D_800D2B60_D3760, 5 }, { D_800D2B78_D3778, 0 }, { D_800D2B40_D3740, 7 },
+    { D_800D2B78_D3778, 0 },
+};
+LabelDef D_800CBF98_CCB98[] = {
+    { D_800D2C8C_D388C, 4 }, { D_800D2C78_D3878, 4 }, { D_800D2C78_D3878, 4 },
+    { D_800D2C68_D3868, 4 }, { D_800D2C54_D3854, 4 }, { D_800D2C2C_D382C, 9 },
+    { D_800D2C1C_D381C, 4 }, { D_800D2B78_D3778, 0 }, { D_800D2B78_D3778, 0 },
+    { D_800D2BFC_D37FC, 7 }, { D_800D2B78_D3778, 0 }, { D_800D2BE4_D37E4, 5 },
+    { D_800D2B78_D3778, 0 },
+};
+/* Item prices, by item (board overlays' shops). */
+u8 D_800CC000[] = { 10, 10, 15, 0, 15, 15, 20, 0, 0, 30 };
+s32 (*D_800CC00C_CCC0C)(void) = func_8004D620_4E220; /* unreferenced: the handler before the table */
+s32 (*D_800CC010_CCC10[])(void) = {
+    func_8004D6A0_4E2A0, func_8004D734_4E334, MBItemRobBoxExec, func_8004D780_4E380,
+    func_8004D7A0_4E3A0, func_8004D858_4E458, func_8004D8B0_4E4B0, func_8004D944_4E544,
+    func_8004DA2C_4E62C, func_8004DAC4_4E6C4,
+};
+s32 D_800CC038_CCC38 = 0;
+s32 D_800CC03C_CCC3C = 0;
+s32 D_800CC040_CCC40 = 0;
+s32 D_800CC044_CCC44 = 0;
+s32 D_800CC048_CCC48 = 0;
+s32 D_800CC04C_CCC4C[] = { 0x1FA, 0x1FB, 0x1FD, 0x1FE, 0x1FF, 0x200, 0x201, 0x202, 0x203, 0x204 };
+s16 D_800CC074_CCC74[] = { 11, 9, 13, 14, 15, 16, 12, 17, 18, 19 };
+
+
 /* MP1 func_80045BE0 (src/467E0.c): MP2 picks the label table by language. */
 void func_8004CA60_4D660(LabelWin* w) {
     LabelDef* def;
