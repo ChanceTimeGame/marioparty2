@@ -538,3 +538,6 @@ $(MG0EA_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # h1-B
 # mp2carve C8E0: rodata 0xD2410-0xD241C ("item_hook") carved out of the data blob
 build/src/C8E0.c.o: RODATA_AS_DATA = 1
+# mp2carve 19BF0: rodata 0xD2AD0-0xD2BC0 (whole) carved out of the data blob
+build/src/19BF0.c.o: RODATA_AS_DATA = 1
+build/asm/data/D2BC0.data.s.o: ASFLAGS += --no-pad-sections
