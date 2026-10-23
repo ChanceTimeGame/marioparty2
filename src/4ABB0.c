@@ -19,25 +19,46 @@ typedef struct Rect4ABB0 {
 } Rect4ABB0;
 
 /* Minigame lists per type (lengths D_800CBDC8_CC9C8) and window rectangles per type. */
-extern u8 D_800CBCD0_CC8D0[];
-extern u8 D_800CBCE8_CC8E8[];
-extern u8 D_800CBCF4_CC8F4[];
-extern u8 D_800CBD00_CC900[];
-extern u8 D_800CBD08_CC908[];
-extern u8 D_800CBD0C_CC90C[];
-extern Rect4ABB0 D_800CBD20_CC920[];
-extern Rect4ABB0 D_800CBD38_CC938[];
-extern u8 D_800CBD77_CC977[]; /* one byte per minigame id from 1: indexed by the id */
-extern u8 D_800CBDC8_CC9C8[];
+u8 D_800CBCD0_CC8D0[] = { 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x30,
+                          0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x45, 0x46, 0x48 };
+u8 D_800CBCE8_CC8E8[] = { 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x47 };
+u8 D_800CBCF4_CC8F4[] = { 0x1A, 0x1B, 0x1C, 0x1E, 0x1F, 0x20, 0x21, 0x23, 0x24, 0x42, 0x43, 0x44 };
+u8 D_800CBD00_CC900[] = { 0x07, 0x08, 0x09, 0x0B, 0x0C, 0x0D, 0x0E, 0x41 };
+u8 D_800CBD08_CC908[] = { 0x00 };
+u8 D_800CBD0C_CC90C[] = { 0x00 };
+u8 D_800CBD10_CC910[] = { 5, 3, 3, 5, 3, 3 };
+u8 D_800CBD18_CC918[] = { 5, 3, 3, 5, 3, 3 };
+Rect4ABB0 D_800CBD20_CC920[] = {
+    { 60, 348, 200, 20 }, { 60, 368, 200, 20 }, { 60, 388, 200, 20 },
+};
+Rect4ABB0 D_800CBD38_CC938[] = {
+    { 60, 328, 200, 20 }, { 60, 348, 200, 20 }, { 60, 368, 200, 20 }, { 60, 388, 200, 20 },
+    { 60, 408, 200, 20 },
+};
+u8 D_800CBD60_CC960[] = { 50, 30, 30, 50, 30, 30 };
+u8 D_800CBD68_CC968[] = { 114, 134, 134, 114, 134, 134 };
+/* Roulette rows: { threshold, y offset }. */
+s8 D_800CBD70_CC970[][2] = { { 1, 0 }, { 9, 15 }, { 11, 8 }, { 13, 0 } };
+/* One byte per minigame id from 1. Retail addresses it from D_800CBD77_CC977 (the byte before it,
+   overlay asm uses that name: undefined_syms.txt alias); C indexes it with id - 1. */
+u8 D_800CBD78_CC978[] = {
+    0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x07, 0x07, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x06, 0x07, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x06, 0x06, 0x07, 0x07, 0x07,
+    0x00,
+};
+u32 D_800CBDC4_CC9C4 = 0;
+u8 D_800CBDC8_CC9C8[] = { 21, 11, 12, 1, 8, 1 };
+/* Coin-change popup positions per player. */
+Vec2f D_800CBDD0_CC9D0[] = { { 54.0f, 64.0f }, { 230.0f, 64.0f }, { 54.0f, 160.0f }, { 230.0f, 160.0f } };
 s32 func_80060A1C_6161C(void);
 s16 func_80068040_68C40(s16);
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
 void func_8008D88C_8E48C(s16);
 void func_800898F0_8A4F0(s16, s32, s32);
 
-extern u8 D_800CBD10_CC910[];
-extern u8 D_800CBD18_CC918[];
-extern s8 D_800CBD70_CC970[][2];
 extern s8 D_800DF6C0_E02C0[];
 void func_800896DC_8A2DC(s16, s16, s16);
 void func_8008D530_8E130(s16, u8, u8, u8);
@@ -77,9 +98,6 @@ typedef struct unkUserData_00 {
     /* 0x0C */ s32 unk_0C;
 } unkUserData_00; // size 0x10
 
-extern u32 D_800CBDC4_CC9C4;
-extern u8 D_800CBD60_CC960[];
-extern u8 D_800CBD68_CC968[];
 extern unk43760 D_800DF660_E0260[5];
 extern u16 D_800DF664_E0264;
 extern s8 D_800DF698_E0298[6][5];
@@ -121,7 +139,6 @@ void func_8004B214_4BE14(void);
 void func_8004BBFC_4C7FC(void);
 void MBCoinChangeKill(s32);
 void MBDCamera3Dto2D(Vec*, Vec2f*);
-extern Vec2f D_800CBDD0_CC9D0[];
 extern u16 ContBtnTrg[4];
 void func_80082450_83050(s16, s32, s32, s32, u8);
 void func_8008CCA8_8D8A8(s16);
@@ -457,7 +474,7 @@ void func_8004AD34_4B934(s32 arg0) {
         }
         func_8008AD84_8B984();
         func_800890CC_89CCC(p->unk_00, D_800DF6C0_E02C0[i] + 0x3D8, -2, 4);
-        func_80089C78_8A878(p->unk_00, D_800CBD77_CC977[D_800DF6C0_E02C0[i]]);
+        func_80089C78_8A878(p->unk_00, D_800CBD78_CC978[D_800DF6C0_E02C0[i] - 1]);
         func_80089A48_8A648(p->unk_00, 0);
     }
     obj = omAddObj(-0x8000, 0, 0, -1, func_80049FFC_4ABFC);
