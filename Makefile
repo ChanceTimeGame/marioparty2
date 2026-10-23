@@ -581,3 +581,8 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+# d1-A: units whose own .data is now C and whose rodata piece is already carved (renamed .rodata ->
+# .data): their .data becomes .cdata in the same objcopy call (objcopy renames by original name, so
+# the two do not chain), placed by the yaml's `linker_section: .cdata` lines in the blob's data half
+D1A_CDATA_UNITS := build/src/1130.c.o build/src/C8E0.c.o
+$(D1A_CDATA_UNITS): OBJCOPY = $(CROSS)objcopy --rename-section .data=.cdata

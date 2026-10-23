@@ -46,20 +46,37 @@ void func_800061E4_6DE4(omObjData*, Vec4f*);
 void func_800062F0_6EF0(omObjData*, Vec4f*, f32);
 void func_800066BC_72BC(omObjData*, Vec4f*, f32);
 
-extern f32 D_800BF780_C0380;
-extern f32 D_800BF784_C0384;
-extern f32 D_800BF788_C0388;
-extern f32 D_800BF78C_C038C;
-extern u8 D_800BF794_C0394;
-extern s16 D_800BF796_C0396; /* contact count */
-extern u8 D_800BF798_C0398;
-extern u8 D_800BF799_C0399;
-extern f32 D_800BF7A0_C03A0;
-extern f32 D_800BF7A4_C03A4;
-extern f32 D_800BF7C0_C03C0;
-extern f32 D_800BF7D0_C03D0;
-extern f32 D_800BF7D8_C03D8;
-extern f32 D_800BF7DC_C03DC;
+/* .data (0xC0380-0xC03E0): physics constants and actor state; C8E0, B6E0 and the minigame
+   overlays read them too */
+f32 D_800BF780_C0380 = 1.0f;
+f32 D_800BF784_C0384 = 20.0f;
+f32 D_800BF788_C0388 = 4.0f;
+f32 D_800BF78C_C038C = 0.06f;
+s32 D_800BF790_C0390 = 0;           /* scene state (C8E0) */
+u8 D_800BF794_C0394 = 0;
+u8 D_800BF795_C0395 = 1;
+s16 D_800BF796_C0396 = 0;           /* contact count */
+u8 D_800BF798_C0398 = 0xFF;
+u8 D_800BF799_C0399 = 0;
+u8 D_800BF79A_C039A = 0;            /* C8E0 */
+u8 D_800BF79B_C039B = 0;            /* debug menu: homing camera */
+f32 D_800BF79C_C039C = 15.0f;
+f32 D_800BF7A0_C03A0 = 0.5f;
+f32 D_800BF7A4_C03A4 = 1.47f;       /* jump speed */
+f32 D_800BF7A8_C03A8 = 0.15f;       /* gravity */
+f32 D_800BF7AC_C03AC = 7.0f;
+f32 D_800BF7B0_C03B0 = 30.0f;
+f32 D_800BF7B4_C03B4 = 60.0f;       /* player radius (debug menu) */
+f32 D_800BF7B8_C03B8 = 20.0f;       /* attack reach (debug menu) */
+f32 D_800BF7BC_C03BC = 3.3333333f;
+f32 D_800BF7C0_C03C0 = 18.0f;
+f32 D_800BF7C4_C03C4 = 13.5f;
+f32 D_800BF7C8_C03C8 = 9.0f;
+f32 D_800BF7CC_C03CC = 4.5f;
+f32 D_800BF7D0_C03D0 = 0.0f;        /* C8E0 declares it s32 (stores 0) */
+f32 D_800BF7D4_C03D4 = 1.7f;
+f32 D_800BF7D8_C03D8 = 0.5f;
+f32 D_800BF7DC_C03DC = 0.147f;
 extern Vec3f D_800D5750_D6350;   /* the actor's position at the start of its step */
 extern Vec3f D_800FD8C8_FE4C8[]; /* contact points */
 
