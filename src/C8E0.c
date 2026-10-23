@@ -7,11 +7,21 @@
 
 /* omObjData::unk_50 work block (MP1 MgWork; MP2 offsets) */
 typedef struct MgWork {
-    /* 0x00 */ char unk_00[0x38];
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ u8 unk_04; /* player id (MP1 0x05) */
+    /* 0x05 */ char unk_05;
+    /* 0x06 */ u16 unk_06; /* flags (MP1 u8 0x01) */
+    /* 0x08 */ f32 unk_08;
+    /* 0x0C */ char unk_0C[4];
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ f32 unk_14; /* also an s32 (func_8000BF24_CB24) */
+    /* 0x18 */ char unk_18[0x1C];
+    /* 0x34 */ f32 unk_34;
     /* 0x38 */ f32 unk_38;
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ char unk_44[8];
+    /* 0x44 */ char unk_44[4];
+    /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50; /* flags */
     /* 0x52 */ u8 unk_52;
@@ -21,17 +31,21 @@ typedef struct MgWork {
     /* 0x57 */ s8 unk_57; /* controller port (MP1 0x56) */
     /* 0x58 */ u8 unk_58; /* stick sample index (MP1 0x57) */
     /* 0x59 */ s8 unk_59; /* player (MP1 0x58) */
-    /* 0x5A */ char unk_5A[2];
+    /* 0x5A */ u8 unk_5A; /* model of the last motion (func_8000CC74_D874) */
+    /* 0x5B */ u8 unk_5B; /* that motion */
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ f32 unk_60;
-    /* 0x64 */ char unk_64[0x10];
+    /* 0x64 */ f32 unk_64;
+    /* 0x68 */ f32 unk_68;
+    /* 0x6C */ f32 unk_6C;
+    /* 0x70 */ f32 unk_70;
     /* 0x74 */ s32 unk_74[6]; /* packed (x << 16) | (y & 0xFFFF) stick samples (MP1 0x6C) */
     /* 0x8C */ f32 unk_8C;
     /* 0x90 */ char unk_90[0xC];
     /* 0x9C */ f32 unk_9C;
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ f32 unk_A4;
-    /* 0xA8 */ char unk_A8[4];
+    /* 0xA8 */ f32 unk_A8;
     /* 0xAC */ f32 unk_AC;
     /* 0xB0 */ f32 unk_B0;
     /* 0xB4 */ f32 unk_B4;
@@ -39,13 +53,21 @@ typedef struct MgWork {
     /* 0xC3 */ s8 unk_C3;
     /* 0xC4 */ s8 unk_C4; /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5; /* MP1 0xB3 */
-    /* 0xC6 */ char unk_C6[6];
+    /* 0xC6 */ char unk_C6[2];
+    /* 0xC8 */ omObjData* unk_C8; /* held item (MP1 0xB8) */
     /* 0xCC */ f32 unk_CC;
     /* 0xD0 */ u16 unk_D0;
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ struct MgMotion* unk_E8;
     /* 0xEC */ char unk_EC[0x18];
-    /* 0x104 */ s32 unk_104[21];
+    /* 0x104 */ union {
+        s32 words[21];
+        struct {
+            s32 unk_00[19];
+            /* 0x150 */ s32 (*drop)(omObjData* obj, omObjData* item); /* may refuse a drop (returns 1) */
+            s32 unk_4C;
+        } s;
+    } unk_104;
     /* 0x158 */ char unk_158[4];
 } MgWork; // size 0x15C
 
@@ -57,6 +79,54 @@ typedef struct MgMotion {
 } MgMotion; // size 0xC
 
 #define MG_WORK(obj) ((MgWork*)(obj)->unk_50)
+/* With MgWork::unk_06 & 0x80 two matrices are kept at 0x18 and 0x58 (func_8000D434_E034). */
+#define MG_MTX(w, off) ((f32(*)[4])((u8*)(w) + (off)))
+
+typedef f32 Matrix4f[4][4];
+
+/* Work block of an item a player can carry (MgWork::unk_C8; MP1 MgItemWork). */
+typedef struct MgItemWork {
+    /* 0x00 */ char unk_00[0x50];
+    /* 0x50 */ u16 unk_50; /* flags: 0x10 carried, 0x20 can be picked up, 0x40 passed to the holder */
+    /* 0x52 */ char unk_52[0x22];
+    /* 0x74 */ f32 unk_74; /* holder's unk_B4 while carried */
+    /* 0x78 */ char unk_78[8];
+    /* 0x80 */ omObjData* unk_80; /* carrier */
+} MgItemWork;
+
+/* XZ bounds of a collision model. */
+typedef struct MgColBounds {
+    /* 0x00 */ char unk_00[0x42];
+    /* 0x42 */ s16 minX;
+    /* 0x44 */ s16 minY;
+    /* 0x46 */ s16 minZ;
+    /* 0x48 */ s16 maxX;
+    /* 0x4A */ s16 maxY;
+    /* 0x4C */ s16 maxZ;
+} MgColBounds;
+
+/* Per-character data (D_800CD438_CE038, 0x18 bytes each). */
+typedef struct MgCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ char unk_08[0x10];
+} MgCharData;
+
+extern MgCharData D_800CD438_CE038[];
+extern s32 D_800BF860_C0460[]; /* per character */
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+void func_80025554_26154(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+s32 func_80025718_26318(s16 arg0, s16 arg1, s16 arg2);
+void func_80030CD4_318D4(Matrix4f dst, Matrix4f src);
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z);
+void func_800B37C0_B43C0(Matrix4f m);
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z);
+void func_8001B170_1BD70(Matrix4f src, Matrix4f dst);
+void guMtxCatF(float m[4][4], float n[4][4], float r[4][4]);
+void func_80001F44_2B44(omObjData* obj, omObjData* item);
+void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2);
+void func_8000C584_D184(void* arg0, s32 arg1);
 
 extern u16 D_800F8FE0_F9BE0;
 extern omObjData* D_800FC7B0_FD3B0[];
@@ -123,7 +193,7 @@ f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
 void func_8000DF74_EB74(MgWork*, f32, f32);
 int abs(int);
 void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
-void func_8000BCE0_C8E0(omObjData* obj, s32 idx, u16 player, s32 file, s32 arg4, f32 arg5);
+void func_8000BCE0_C8E0(omObjData* obj, u16 idx, u16 player, s32 file, s32 flags, f32 arg5);
 void func_8000BE74_CA74(omObjData* obj, f32 arg1);
 void func_8000BEB0_CAB0(omObjData* obj, f32 arg1);
 void func_8000BEBC_CABC(omObjData* obj, f32 arg1);
@@ -134,8 +204,18 @@ void func_8000BEEC_CAEC(omObjData* obj, f32 arg1);
 void func_8003C8E0_3D4E0(s16);
 void func_80007790_8390(omObjData* obj);
 extern u8 D_800BF799_C0399;
+extern s32 D_800BF790_C0390; /* scene state, copied to D_800F8FD0_F9BD0 */
+extern s32 D_800F8FD0_F9BD0;
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BCE0_C8E0);
+/* Loads player `player`'s character model into slot idx (MP1 func_80008DE0's shape). */
+void func_8000BCE0_C8E0(omObjData* obj, u16 idx, u16 player, s32 file, s32 flags, f32 arg5) {
+    s32 dir = D_800BF860_C0460[gPlayers[player].character];
+    s16 mot;
+
+    obj->model[idx] = LoadFormFile(file, flags & ~0x11);
+    mot = func_80025384_25F84(obj->model[idx], 0, gPlayers[player].character, dir);
+    func_80025554_26154(obj->model[idx], 0, gPlayers[player].character, mot);
+}
 
 void func_8000BDC4_C9C4(omObjData* obj, u16 idx, s32 dir, s32 file, f32 arg4) {
     s16 mdl = LoadFormFile(dir, file);
@@ -152,31 +232,66 @@ void func_8000BE38_CA38(omObjData* obj, f32 angle) {
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE68_CA68);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE74_CA74);
+void func_8000BE74_CA74(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_38 = arg1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE80_CA80);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE8C_CA8C);
+void func_8000BE8C_CA8C(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_08 = arg1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE98_CA98);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEA4_CAA4);
+void func_8000BEA4_CAA4(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_10 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEB0_CAB0);
+void func_8000BEB0_CAB0(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_48 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEBC_CABC);
+void func_8000BEBC_CABC(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_34 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEC8_CAC8);
+void func_8000BEC8_CAC8(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_64 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BED4_CAD4);
+void func_8000BED4_CAD4(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_68 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEE0_CAE0);
+void func_8000BEE0_CAE0(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_6C = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEEC_CAEC);
+void func_8000BEEC_CAEC(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_70 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BEF8_CAF8);
+void func_8000BEF8_CAF8(omObjData* obj, s32 flags, f32 arg2) {
+    MgWork* work = MG_WORK(obj);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF24_CB24);
+    work->unk_06 = (u8)flags | work->unk_06;
+    if (flags & 2) {
+        work->unk_14 = arg2;
+    }
+}
+
+/* Hit box: radius and XZ bounds (callers pass arg1 as a float). */
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 minX, f32 minZ, f32 maxX, f32 maxZ) {
+    MgWork* work = MG_WORK(obj);
+
+    work->unk_06 |= 8;
+    work->unk_14 = arg1;
+    work->unk_A0 = minX;
+    work->unk_A4 = minZ;
+    work->unk_A8 = maxX;
+    work->unk_AC = maxZ;
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF54_CB54);
 
@@ -188,13 +303,23 @@ INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFC8_CBC8);
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFDC_CBDC);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFF0_CBF0);
+void func_8000BFF0_CBF0(omObjData* obj) {
+    MG_WORK(obj)->unk_06 |= 0x200;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C004_CC04);
+void func_8000C004_CC04(omObjData* obj) {
+    MG_WORK(obj)->unk_06 |= 0x400;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C018_CC18);
+void func_8000C018_CC18(u16 arg0) {
+    D_800BF794_C0394 = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C024_CC24);
+void func_8000C024_CC24(omObjData* obj, u8 idx, u8 val) {
+    u8* work = obj->unk_50;
+
+    work[idx] = val;
+}
 
 void func_8000C038_CC38(omObjData* obj, u8 idx, u8 on) {
     if (on == 0) {
@@ -204,7 +329,25 @@ void func_8000C038_CC38(omObjData* obj, u8 idx, u8 on) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C098_CC98);
+/* MP1 func_80009138: 0 when player `id`'s object has flag 0x200 (or id < 0). */
+s32 func_8000C098_CC98(s8 id) {
+    s32 i;
+    MgWork* work;
+
+    if (id < 0) {
+        return 0;
+    }
+    for (i = 0; i < D_800F8FE0_F9BE0; i++) {
+        work = MG_WORK(D_800FC7B0_FD3B0[i]);
+        if (work->unk_04 == id) {
+            if (work->unk_06 & 0x200) {
+                return 0;
+            }
+            break;
+        }
+    }
+    return 1;
+}
 
 void func_8000C11C_CD1C(omObjData* obj, s32 dir, s32 file, s32 arg3) {
     MgWork* work = MG_WORK(obj);
@@ -240,21 +383,43 @@ void func_8000C2A0_CEA0(omObjData* obj, s32 idx, s32 dir, s32 file, s32 arg4) {
     func_80021160_21D60((u8)img, 4, 4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C35C_CF5C);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z) {
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C36C_CF6C);
+void func_8000C36C_CF6C(omObjData* obj, f32 x, f32 y, f32 z) {
+    obj->rot.x = x;
+    obj->rot.y = y;
+    obj->rot.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C37C_CF7C);
+void func_8000C37C_CF7C(omObjData* obj, f32 x, f32 y, f32 z) {
+    obj->scale.x = x;
+    obj->scale.y = y;
+    obj->scale.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C38C_CF8C);
+void func_8000C38C_CF8C(void) {
+    D_800BF790_C0390 = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C398_CF98);
+void func_8000C398_CF98(void) {
+    D_800BF790_C0390 = 2;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C3A8_CFA8);
+void func_8000C3A8_CFA8(void) {
+    D_800BF790_C0390 = 3;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C3B8_CFB8);
+void func_8000C3B8_CFB8(void) {
+    D_800BF790_C0390 = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C3C8_CFC8);
+void func_8000C3C8_CFC8(void) {
+    D_800F8FD0_F9BD0 = D_800BF790_C0390;
+}
 
 s32 func_8000C3DC_CFDC(s32 id) {
     s32 i;
@@ -293,9 +458,13 @@ void func_8000C460_D060(void) {
     D_800BF79A_C039A = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C56C_D16C);
+void func_8000C56C_D16C(s32 arg0) {
+    D_800BF79A_C039A = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000C578_D178);
+void func_8000C578_D178(s32 arg0) {
+    D_800BF799_C0399 = arg0;
+}
 
 void func_8000C584_D184(void* arg0, s32 arg1) {
     MgWork* work = (MgWork*)arg0;
@@ -349,7 +518,7 @@ void func_8000C6FC_D2FC(omObjData* obj, u32 arg1, s32 arg2, u16 arg3, s32 arg4, 
         obj->motion[i] = -1;
     }
     for (i = 0; i < 21; i++) {
-        work->unk_104[i] = 0;
+        work->unk_104.words[i] = 0;
     }
     for (i = 0; i < obj->mtncnt; i++) {
         work->unk_E8[i].unk_00 = 0;
@@ -409,11 +578,47 @@ void func_8000C6FC_D2FC(omObjData* obj, u32 arg1, s32 arg2, u16 arg3, s32 arg4, 
     D_800BF7E4_C03E4[work->unk_59][13] = 0xAC;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000CC74_D874);
+/* Plays motion `motion` of the player's character on model `model`. */
+void func_8000CC74_D874(omObjData* obj, s16 model, s16 motion) {
+    MgWork* work = MG_WORK(obj);
+    s32 chr;
+    s32 dir;
+
+    work->unk_5A = model;
+    work->unk_5B = motion;
+    chr = gPlayers[work->unk_59].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    func_80025384_25F84(model, motion, chr, dir | func_80025718_26318(chr, motion, 0));
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000CD28_D928);
 
+// register allocation: retail builds the packed sample in a0 (masked 2)
+#ifdef NON_MATCHING
+/* Averages the last six stick samples (MP1 func_80009C90). */
+s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y) {
+    MgWork* work = MG_WORK(obj);
+    s32 v;
+    s16 sy;
+    s16 sx;
+    u8 i;
+
+    v = (x << 16) | (y & 0xFFFF);
+    work->unk_74[work->unk_58++] = v;
+    if (work->unk_58 >= 6) {
+        work->unk_58 = 0;
+    }
+    sy = 0;
+    sx = 0;
+    for (i = 0; i < 6; i++) {
+        sx += work->unk_74[i] >> 16;
+        sy += (u16)work->unk_74[i];
+    }
+    return ((sx / 6) << 16) | ((sy / 6) & 0xFFFF);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000CDC8_D9C8);
+#endif
 
 void func_8000CE80_DA80(s16* x, s16* y) {
     Vec v;
@@ -498,7 +703,42 @@ s16 func_8000CF84_DB84(s16 player, s16 limit, s8 x, s8 y) {
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000D2F8_DEF8);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000D434_E034);
+/* Transforms p by obj's translation and rotation (or by the matrices stored in its work when
+   flag 0x80 is set); m is scratch, out receives the matrix. MP1 func_8000A1C0 grown. */
+void func_8000D434_E034(Matrix4f m, Matrix4f out, Vec* p, omObjData* obj) {
+    MgWork* work = MG_WORK(obj);
+    s32 mdl = obj->model[0];
+    f32 rx = obj->rot.x;
+    f32 ry = obj->rot.y;
+    f32 rz = obj->rot.z;
+    f32 tx = obj->trans.x;
+    f32 ty = obj->trans.y;
+    f32 tz = obj->trans.z;
+    f32 x = p->x;
+    f32 y = p->y;
+    f32 z = p->z;
+
+    if (work->unk_06 & 0x80) {
+        func_80030CD4_318D4(m, MG_MTX(work, 0x18));
+        func_80030CD4_318D4(out, MG_MTX(work, 0x58));
+    } else {
+        if (((tx != 0.0f) | (ty != 0.0f)) || tz != 0.0f) {
+            func_800B1F50_B2B50(m, tx, ty, tz);
+        } else {
+            func_800B37C0_B43C0(m);
+        }
+        if (((rx != 0.0f) | (ry != 0.0f)) || rz != 0.0f) {
+            func_80025884_26484(m, rx, ry, rz);
+        }
+        if (work->unk_06 & 0x100) {
+            guMtxCatF((f32(*)[4])D_800FC834_FD434[mdl].mtx, m, m);
+        }
+        func_8001B170_1BD70(m, out);
+    }
+    p->x = x * out[0][0] + y * out[1][0] + z * out[2][0] + out[3][0];
+    p->y = x * out[0][1] + y * out[1][1] + z * out[2][1] + out[3][1];
+    p->z = x * out[0][2] + y * out[1][2] + z * out[2][2] + out[3][2];
+}
 
 void func_8000D6D0_E2D0(f32 m[4][4], Vec* v) {
     f32 x = v->x;
@@ -528,9 +768,60 @@ void func_8000D7E0_E3E0(f32 m[4][4], Vec* v) {
     v->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000D81C_E41C);
+/* Drops the held item unless the holder's callback refuses (MP1 func_8000A534's flags). */
+void func_8000D81C_E41C(omObjData* obj, f32 arg1) {
+    MgWork* work = MG_WORK(obj);
+    omObjData* item;
+    MgItemWork* itemWork;
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000D900_E500);
+    if (work->unk_50 & 0x10) {
+        item = work->unk_C8;
+        itemWork = item->unk_50;
+        if (work->unk_104.s.drop != NULL && work->unk_104.s.drop(obj, item) == 1) {
+            return;
+        }
+        work->unk_50 &= ~0x150;
+        itemWork->unk_50 &= ~0x10;
+        func_800298A4_2A4A4(item->model[0], 0x4000, 0);
+        func_8002C570_2D170(obj->model[0]);
+        if (item->model[1] != 0) {
+            func_800298A4_2A4A4(item->model[1], 4, 0);
+        }
+        func_80001F44_2B44(obj, item);
+        work->unk_C8 = NULL;
+        work->unk_B4 = 1.0f;
+    }
+}
+
+/* Picks up `item` (MP1 func_8000A634). */
+s32 func_8000D900_E500(omObjData* obj, omObjData* item) {
+    MgWork* work = MG_WORK(obj);
+    MgItemWork* itemWork = item->unk_50;
+
+    if (!(itemWork->unk_50 & 0x20)) {
+        return 0;
+    }
+    if (itemWork->unk_50 & 0x10) {
+        return 0;
+    }
+    if (work->unk_50 & 0x10) {
+        return 0;
+    }
+    work->unk_50 |= 0x110;
+    itemWork->unk_50 |= 0x10;
+    if (itemWork->unk_50 & 0x40) {
+        work->unk_50 |= 0x40;
+    }
+    work->unk_C8 = item;
+    itemWork->unk_80 = obj;
+    func_8002C628_2D228(item->model[0], obj->model[0], "item_hook");
+    func_800298A4_2A4A4(item->model[0], 0x4000, 0x4000);
+    work->unk_B4 = itemWork->unk_74;
+    if (item->model[1] != 0) {
+        func_800298A4_2A4A4(item->model[1], 4, 4);
+    }
+    return 1;
+}
 
 void func_8000D9F4_E5F4(omObjData* obj) {
     MgWork* work = MG_WORK(obj);
@@ -554,11 +845,56 @@ f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2) {
     return func_800B3500_B4100(&b, &a);
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000DA98_E698);
+s32 func_8000DA98_E698(MgColBounds* b, Vec* p) {
+    f32 minX = b->minX;
+    f32 minZ = b->minZ;
+    f32 maxX = b->maxX;
+    f32 maxZ = b->maxZ;
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000DB30_E730);
+    if (minX <= p->x && minZ <= p->z && p->x <= maxX && p->z <= maxZ) {
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000DC10_E810);
+s32 func_8000DB30_E730(MgColBounds* b, Vec* p, f32 r) {
+    f32 x = p->x;
+    f32 z = p->z;
+    f32 minX = b->minX - r;
+    f32 maxZ;
+    f32 maxX;
+    f32 minZ = b->minZ - r;
+
+    maxX = b->maxX + r;
+    maxZ = b->maxZ + r;
+
+    if ((minX <= x) & (minZ <= z)) {
+        if ((x <= maxX) & (z <= maxZ)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* Whether p is inside g's play area: a box (flag 0x10) or a circle (flag 0x40). */
+s32 func_8000DC10_E810(Vec* p, MgWork* g) {
+    f32 x;
+    f32 z;
+
+    if (!(g->unk_06 & 0x50)) {
+        return 1;
+    }
+    x = p->x;
+    z = p->z;
+    if (g->unk_06 & 0x10) {
+        if (g->unk_A0 <= x && x <= g->unk_A8 && g->unk_A4 <= z && z <= g->unk_AC) {
+            return 1;
+        }
+    } else if (func_800B1830_B2430(x * x + z * z) <= g->unk_9C) {
+        return 1;
+    }
+    return 0;
+}
 
 void func_8000DCD4_E8D4(omObjData* obj, f32 dx, f32 dz) {
     MgWork* work = MG_WORK(obj);
@@ -610,7 +946,17 @@ void func_8000DCD4_E8D4(omObjData* obj, f32 dx, f32 dz) {
     work->unk_50 |= 0x8;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000DF74_EB74);
+void func_8000DF74_EB74(MgWork* work, f32 dx, f32 dz) {
+    f32 s = HuMathSin(work->unk_3C);
+
+    if (func_8000DA2C_E62C(s, func_800B7890_B8490(work->unk_3C), dx, dz) >= 0.0f) {
+        work->unk_40 = D_800BF7C4_C03C4;
+    } else {
+        work->unk_40 = -D_800BF7C4_C03C4;
+    }
+    work->unk_50 |= 8;
+    func_8000C584_D184(work, 7);
+}
 
 void func_8000E030_EC30(omObjData* a, omObjData* b) {
     MgWork* bw = MG_WORK(b);
