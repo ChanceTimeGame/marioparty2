@@ -30,6 +30,8 @@ extern u8 D_800F8C56_F9856;    /* fade mode */
 extern u8 D_800CDC50_CE850;    /* fade type */
 extern void* D_800CDC54_CE854; /* captured frame buffer */
 extern Gfx D_800CDC58_CE858[];
+extern Gfx D_800CDCC8_CE8C8[];
+extern void* D_800F8418_F9018; /* current frame buffer */
 extern s32 D_800CDCA8_CE8A8[4];
 extern Vp D_800CDCB8_CE8B8;
 extern f32 D_800FCE88_FDA88;   /* fade length */
@@ -522,7 +524,64 @@ Gfx* func_80090000_90C00(Gfx* arg0, Vtx* arg1) {
     return sp4C;
 }
 
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_80090460_91060);
+/* MP1 func_80073560: shrink the frame into the depth buffer and draw it back scaled */
+s32 func_80090460_91060(Gfx** arg0) {
+    f32 temp_f22;
+    f32 temp_f24;
+    u32 var_s8; /* a frame buffer address (host: a pointer kept in 32 bits) */
+    s16 i;
+    s16 j;
+
+    if (D_800FCE88_FDA88 - 1.0f <= D_80101054_101C54) {
+        func_8008F7F4_903F4(arg0, 255, D_800CDCA8_CE8A8);
+        return 0;
+    }
+
+    temp_f22 = 1.0f - D_80101054_101C54 / D_800FCE88_FDA88;
+    temp_f24 = 1.0f / temp_f22;
+
+    gSPDisplayList((*arg0)++, D_800CDC58_CE858);
+    gDPSetAlphaCompare((*arg0)++, G_AC_THRESHOLD);
+    gDPSetBlendColor((*arg0)++, 0, 0, 0, 0);
+    gDPSetTextureFilter((*arg0)++, G_TF_BILERP);
+    gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    var_s8 = (u32)D_800F8418_F9018;
+
+    gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x003D0800);
+    gSPDisplayList((*arg0)++, D_800CDCC8_CE8C8);
+    gDPSetCombineMode((*arg0)++, G_CC_DECALRGB, G_CC_DECALRGB);
+    gDPSetRenderMode((*arg0)++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+
+    for (i = 0; i < SCREEN_HEIGHT; i += 16) {
+        for (j = 0; j < SCREEN_WIDTH; j += 64) {
+            func_8003F710_40310(arg0, var_s8 + (j + i * SCREEN_WIDTH) * 2, 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 64, 16, 0, 2, 2, 0, 0, 0, 0);
+            gSPTextureRectangle((*arg0)++, j * temp_f22 * 4.0f, i * temp_f22 * 4.0f,
+                (j * temp_f22 + temp_f22 * 64.0f) * 4.0f, (i * temp_f22 + temp_f22 * 16.0f) * 4.0f,
+                G_TX_RENDERTILE, 0, 0, temp_f24 * 1024.0f, temp_f24 * 1024.0f);
+        }
+    }
+
+    gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x02000000);
+
+    var_s8 = 0x803D0800;
+    for (i = 0; i < temp_f22 * (f32)SCREEN_HEIGHT + 15.0f; i += 16) {
+        for (j = 0; j < temp_f22 * (f32)SCREEN_WIDTH + 31.0f; j += 32) {
+            func_8003F710_40310(arg0, var_s8 + (j + i * SCREEN_WIDTH) * 2, 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 32, 16, 0, 2, 2, 0, 0, 0, 0);
+            gSPTextureRectangle((*arg0)++, j * temp_f24 * 4.0f, i * temp_f24 * 4.0f,
+                (j + 32) * temp_f24 * 4.0f, (i + 16) * temp_f24 * 4.0f,
+                G_TX_RENDERTILE, 0, 0, temp_f22 * 1024.0f, temp_f22 * 1024.0f);
+        }
+    }
+
+    gDPPipeSync((*arg0)++);
+    gDPSetCombineMode((*arg0)++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetRenderMode((*arg0)++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+    gDPSetPrimColor((*arg0)++, 0, 0, 0, 0, 0, 8);
+    gDPFillRectangle((*arg0)++, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    return 1;
+}
 
 s32 func_80090E84_91A84(Gfx** arg0) {
     if (D_800FCE88_FDA88 == 0.0f) {

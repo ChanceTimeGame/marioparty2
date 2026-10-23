@@ -564,17 +564,18 @@ build/src/19BF0.c.o: RODATA_AS_DATA = 1
 # D_800D20CC_D2CCC (defined in 1C7C0.c: SUBALIGN(8) cannot start a piece at 0xD2CCC)
 build/src/1C7C0.c.o: RODATA_AS_DATA = 1
 # h1-H: MP3 libhmath and Hudson gu units (-O2 -ffast-math, KMC as mul fix on, as MP3 builds src/libhmath)
-H1H_HMATH_UNITS := build/src/B2440.c.o build/src/B7010.c.o build/src/B4470.c.o build/src/B45F0.c.o build/src/B4780.c.o build/src/B3FE0.c.o build/src/B3C40.c.o build/src/B2C60.c.o
-# B28C0 is also built as 1D0B0 is: GCC's assembly with blank lines removed (no nop before the
-# mul.s after func_800B1CC0_B28C0's sincos call)
-H1H_BLANKSTRIP_HMATH_UNITS := build/src/B28C0.c.o
-# B24A0 (guLookAtF): nop between back-to-back mul.s
-build/src/B24A0.c.o: export VR4300MUL = ON
+H1H_HMATH_UNITS := build/src/B2440.c.o build/src/B7010.c.o build/src/B4470.c.o build/src/B45F0.c.o build/src/B4780.c.o build/src/B3FE0.c.o build/src/B3C40.c.o build/src/B2C60.c.o build/src/B28C0.c.o
 $(H1H_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
 $(H1H_HMATH_UNITS): export VR4300MUL = ON
-$(H1H_BLANKSTRIP_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
-$(H1H_BLANKSTRIP_HMATH_UNITS): export VR4300MUL = ON
-$(H1H_BLANKSTRIP_HMATH_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+# B24A0 (guLookAtF): nop between back-to-back mul.s
+build/src/B24A0.c.o: export VR4300MUL = ON
+# h1-H: built as 1D0B0 is: GCC's assembly with blank lines removed, assembled with the KMC VR4300
+# mul fix on. B28C0: no nop before the mul.s after func_800B1CC0_B28C0's sincos call. 8FBB0 (MP1
+# 72D90.c, built with the mul fix): a nop between func_80090460_91060's mul.s pairs, none before
+# func_8009110C_91D0C's mult after a branch-likely
+H1H_BLANKSTRIP_UNITS := build/src/B28C0.c.o build/src/8FBB0.c.o
+$(H1H_BLANKSTRIP_UNITS): export VR4300MUL = ON
+$(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
 	@mkdir -p $(shell dirname $@)
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
