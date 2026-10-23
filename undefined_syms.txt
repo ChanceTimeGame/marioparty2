@@ -12,3 +12,7 @@ D_800CD5D0_CE1D0 = D_800CD5C4_CE1C4 + 0xC;
 /* d1-C: asm-only labels inside 84FF0's TWIcon and TWMask tables */
 D_800CD991_CE591 = D_800CD988_CE588 + 0x9;
 D_800CDA91_CE691 = D_800CDA90_CE690 + 0x1;
+/* d1-C: B8AC0's math tables, labels the asm names inside them */
+D_800CFAD4_D06D4 = D_800CFAD0_D06D0 + 0x4;
+D_800CFDC8_D09C8 = D_800CFC60_D0860 + 0x168;
+D_800D00A0_D0CA0 = D_800CFDD0_D09D0 + 0x2D0;

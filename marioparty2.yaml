@@ -413,6 +413,8 @@ segments:
       - [0xCEAA0, data]
       - {start: 0xD0160, type: .data, name: B14D0, linker_section: .cdata}
       - [0xD0360, data]
+      - [0xD0380, .data, B8AC0]
+      - [0xD0CB0, data]
       - [0xD2340, .data, 1130]
       - [0xD2400, .data, B6E0]
       - [0xD2410, .data, C8E0]
