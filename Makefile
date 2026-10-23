@@ -564,7 +564,7 @@ build/src/19BF0.c.o: RODATA_AS_DATA = 1
 # D_800D20CC_D2CCC (defined in 1C7C0.c: SUBALIGN(8) cannot start a piece at 0xD2CCC)
 build/src/1C7C0.c.o: RODATA_AS_DATA = 1
 # h1-H: MP3 libhmath and Hudson gu units (-O2 -ffast-math, KMC as mul fix on, as MP3 builds src/libhmath)
-H1H_HMATH_UNITS := build/src/B2440.c.o build/src/B2C60.c.o
+H1H_HMATH_UNITS := build/src/B2440.c.o build/src/B3C40.c.o build/src/B2C60.c.o
 # B28C0 is also built as 1D0B0 is: GCC's assembly with blank lines removed (no nop before the
 # mul.s after func_800B1CC0_B28C0's sincos call)
 H1H_BLANKSTRIP_HMATH_UNITS := build/src/B28C0.c.o
