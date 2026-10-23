@@ -128,7 +128,9 @@ typedef struct MgWork {
     /* 0xAC */ f32 unk_AC;
     /* 0xB0 */ f32 unk_B0;
     /* 0xB4 */ f32 unk_B4;  /* speed factor */
-    /* 0xB8 */ char unk_B8[0xB];
+    /* 0xB8 */ char unk_B8[6];
+    /* 0xBE */ u16 unk_BE;  /* 105 after a hazard actor hit, counting down; while set, touches only count D_800FD7FC_FE3FC */
+    /* 0xC0 */ char unk_C0[3];
     /* 0xC3 */ s8 unk_C3;
     /* 0xC4 */ s8 unk_C4;   /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5;   /* MP1 0xB3 */
@@ -137,7 +139,9 @@ typedef struct MgWork {
     /* 0xD0 */ u16 unk_D0;
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ void* unk_E8; /* C8E0.c's MgMotion* */
-    /* 0xEC */ char unk_EC[0x18];
+    /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook; 1 skips the default */
+    /* 0xF0 */ u16 unk_F0;
+    /* 0xF2 */ char unk_F2[0x12];
     /* 0x104 */ s32 unk_104[21];
     /* 0x158 */ char unk_158[4];
 } MgWork; /* size = 0x15C */

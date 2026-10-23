@@ -1326,11 +1326,264 @@ extern f64 D_800D1780_D2380; /* 2.0 */
 extern f64 D_800D1788_D2388; /* 0.3 */
 extern f64 D_800D1790_D2390; /* 2.0 */
 extern f64 D_800D1798_D2398; /* 0.3 */
+extern u8 D_800BF795_C0395;
+extern f32 D_800BF7C8_C03C8;
+extern omObjData* D_800F9CE0_FA8E0[]; /* minigame actors (ColActorWork) */
+extern u16 D_800FA606_FB206;          /* their count */
+extern u16 D_800FD7FC_FE3FC;          /* actor touches while MgWork.unk_BE is set (MP1 D_800F370C) */
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_80019B28_1A728(omObjData* obj, u8 flags);
+void func_8000C610_D210(MgWork* work, s32 arg1);
+void func_8000D81C_E41C(omObjData* obj, f32 arg1);
+void func_8000DCD4_E8D4(omObjData* obj, f32 dx, f32 dz);
+void func_8000E030_EC30(omObjData* a, omObjData* b);
 s32 func_80005130_5D30(void* arg0, s16* idx, ColVtx* verts, ColSphere* s);
 s32 func_80006440_7040(Vec4f* s, GroundWork* g);
 void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2);
 
+/* The player's step against the minigame actors (D_800F9CE0_FA8E0: hazards, bouncing actors, coins)
+   and the other players (D_800FFFD8_100BD8). Returns 2 when the player stomped or bumped another
+   player, else 0 (MP1 func_80000F3C). */
+// register allocation (masked 19): the first loop's dy/dz and 0.0f swap $f22/$f26/$f30, and the
+// last push's delay slot is filled differently (one instruction short); same logic
+#ifdef NON_MATCHING
+s32 func_80004168_4D68(omObjData* obj, f32 x, f32 y, f32 z) {
+    MgWork* w = obj->unk_50;
+    f32 radius = w->unk_48;
+    f32 speed = w->unk_40;
+    f32 py;
+    omObjData* o;
+    ColActorWork* ow;
+    MgWork* ow2;
+    f32 dx, dy, dz;
+    f32 dist, flat;
+    f32 dxx, dzz;
+    f32 a;
+    f32 dz2;
+    u16 i;
+
+    if (w->unk_50 & 6) {
+        speed *= 0.6f;
+    }
+    speed *= (w->unk_38 != 1000.0f) ? w->unk_4C * w->unk_B4 : w->unk_B4;
+    x += HuMathSin(w->unk_3C) * speed;
+    z += func_800B7890_B8490(w->unk_3C) * speed;
+    w->unk_F0 = 0;
+
+    for (i = 0; i < D_800FA606_FB206; i++) {
+        o = D_800F9CE0_FA8E0[i];
+        ow = o->unk_50;
+        if (ow->unk_54 == 0) {
+            continue;
+        }
+        dx = o->trans.x - (x + D_800F94A0_FA0A0);
+        dy = o->trans.y - y;
+        dz = o->trans.z - (z + D_80101308_101F08);
+        flat = 100.0f;
+        if (ow->unk_34 != 0.0f && o->trans.y <= y && y <= o->trans.y + ow->unk_34) {
+            flat = func_800B1830_B2430(dx * dx + dz * dz) - (radius + ow->unk_48);
+        }
+        dist = func_800B1830_B2430(dx * dx + dy * dy + dz * dz) - (radius + ow->unk_48);
+        if ((dist < 0.0f) | (flat < 0.0f)) {
+            if (w->unk_EC != NULL && w->unk_EC(obj, o) == 1) {
+                continue;
+            }
+            if (ow->unk_52 == 7) {
+                if (w->unk_BE != 0) {
+                    D_800FD7FC_FE3FC++;
+                    continue;
+                }
+                if (w->unk_50 & 0x200) {
+                    continue;
+                }
+                a = func_8000DA2C_E62C(HuMathSin(w->unk_3C), func_800B7890_B8490(w->unk_3C), dx, dz);
+                if (w->unk_50 & 0x10) {
+                    func_8000D81C_E41C(obj, D_800BF7C8_C03C8);
+                }
+                if (a > 0.0f) {
+                    func_80019B9C_1A79C(obj, 9);
+                    w->unk_40 = -D_800BF7C0_C03C0;
+                } else {
+                    func_80019B9C_1A79C(obj, 10);
+                    w->unk_40 = D_800BF7C0_C03C0;
+                }
+                w->unk_38 = -D_800BF7A4_C03A4 * 0.7f;
+                w->unk_BE = 105;
+                func_800191D4_19DD4(obj, 5, o->trans.x, y, o->trans.z, 0.0f, func_800B75A8_B81A8(dx, dz) + 180.0f);
+                func_8000C584_D184(w, 8);
+                omVibrate(w->unk_59, 20, 0, 20);
+            } else if (ow->unk_50 & 0x20) {
+                if (!(ow->unk_50 & 0x10)) {
+                    dist = func_800B1830_B2430(dx * dx + dy * dy + dz * dz) - (ow->unk_48 + w->unk_48);
+                    if (dist < 0.0f) {
+                        if (ow->unk_38 < 1000.0f) {
+                            ow->unk_38 = -D_800BF7A4_C03A4 * 0.6f;
+                            if (func_8000DA2C_E62C(HuMathSin(ow->unk_3C), func_800B7890_B8490(ow->unk_3C), dx, dz) < 0.0f) {
+                                ow->unk_40 = -D_800BF7CC_C03CC;
+                            } else {
+                                ow->unk_40 = D_800BF7CC_C03CC;
+                            }
+                        } else if (ow->unk_40 == D_800BF7D0_C03D0) {
+                            if (w->unk_38 != 1000.0f) {
+                                func_8000DCD4_E8D4(obj, dx, dz);
+                                func_8000C610_D210(w, 9);
+                            } else {
+                                if ((dx == 0.0f) & (dz == 0.0f)) {
+                                    dx = HuMathSin(w->unk_3C);
+                                    dz = func_800B7890_B8490(w->unk_3C);
+                                }
+                                func_80009684_A284(dx, dz, dist);
+                            }
+                        } else {
+                            ow->unk_40 = -ow->unk_40;
+                        }
+                    }
+                }
+            } else if (w->unk_BE != 0) {
+                D_800FD7FC_FE3FC++;
+            } else {
+                func_80001B84_2784(obj, o);
+            }
+        }
+    }
+
+    py = y + w->unk_48;
+    if (w->unk_50 & 0x400) {
+        return 0;
+    }
+    for (i = 0; i < D_800FC87A_FD47A; i++) {
+        o = D_800FFFD8_100BD8[i];
+        ow2 = o->unk_50;
+        if (w == ow2) {
+            continue;
+        }
+        dx = o->trans.x - (x + D_800F94A0_FA0A0);
+        dy = (o->trans.y + ow2->unk_48) - py;
+        dz2 = o->trans.z - (z + D_80101308_101F08);
+        if (ow2->unk_50 & 0x400) {
+            continue;
+        }
+        dxx = dx * dx;
+        dzz = dz2 * dz2;
+        dist = func_800B1830_B2430(dxx + dzz) - (w->unk_48 + ow2->unk_48) * 0.6f;
+        flat = func_800B1830_B2430(dxx + dy * dy + dzz) - (ow2->unk_48 + w->unk_48);
+        if (((dist < 0.0f) | (flat < 0.0f)) && w->unk_38 != 1000.0f && !(w->unk_50 & 0x8000)) {
+            if (py - (ow2->unk_34 + ow2->unk_48) <= o->trans.y && o->trans.y <= (py - w->unk_48) + w->unk_34) {
+                if (!(ow2->unk_50 & 7) && w->unk_BE == 0 && ow2->unk_BE == 0) {
+                    if (ow2->unk_38 != 1000.0f) {
+                        if (w->unk_5C & 0x200) {
+                            if (!(dist < 0.0f && dy < -w->unk_34 * 0.5f)) {
+                                goto block_93;
+                            }
+                            func_800191D4_19DD4(obj, 7, x, py, z, 0.0f, 0.0f);
+                            if (!(ow2->unk_50 & 0x200)) {
+                                func_80019B28_1A728(o, 1);
+                                func_80019B9C_1A79C(o, 0x1E);
+                                if (ow2->unk_50 & 0x10) {
+                                    func_8000D81C_E41C(o, D_800BF7CC_C03CC);
+                                }
+                            }
+                            ow2->unk_38 = w->unk_38;
+                            goto block_104;
+                        block_93:
+                            if (D_800BF795_C0395 != 1) {
+                                goto block_78;
+                            }
+                            func_8000E030_EC30(obj, o);
+                            return 0;
+                        }
+                        if (!(dist < 0.0f && dy < -w->unk_34 * D_800D1770_D2370)) {
+                            goto block_93;
+                        }
+                        if (!(ow2->unk_50 & 0x200)) {
+                            func_800191D4_19DD4(obj, 6, x, py, z, -90.0f, 0.0f);
+                            func_80019B28_1A728(o, 2);
+                            if (ow2->unk_50 & 0x10) {
+                                func_8000D81C_E41C(o, D_800BF7CC_C03CC);
+                            }
+                        }
+                        if (ow2->unk_38 < 0.0f) {
+                            ow2->unk_38 = 0.0f;
+                        }
+                    block_104:
+                        ow2->unk_40 = D_800BF7D0_C03D0;
+                        func_8000DCD4_E8D4(obj, dx, dz2);
+                        func_8000C610_D210(w, 9);
+                        goto block_105;
+                    block_78:
+                        func_80009684_A284(dx, dz2, func_800B1830_B2430(dx * dx + dz2 * dz2) - (ow2->unk_48 + w->unk_48));
+                        return 0;
+                    block_105:
+                        omVibrate(w->unk_59, 2, 3, 10);
+                        omVibrate(ow2->unk_59, 2, 3, 10);
+                        return 2;
+                    }
+                    if ((dist < 0.0f) & (dy < 0.0f)) {
+                        if (!(ow2->unk_50 & 0x200)) {
+                            if (w->unk_5C & 0x200) {
+                                func_80019B28_1A728(o, 1);
+                                func_80019B9C_1A79C(o, 0);
+                                func_800191D4_19DD4(obj, 7, x, py, z, 0.0f, 0.0f);
+                            } else {
+                                func_800191D4_19DD4(obj, 6, x, py, z, -90.0f, 0.0f);
+                                func_80019B28_1A728(o, 2);
+                            }
+                            if (ow2->unk_50 & 0x10) {
+                                func_8000D81C_E41C(o, D_800BF7CC_C03CC);
+                            }
+                        }
+                        func_8000DCD4_E8D4(obj, dx, dz2);
+                        func_8000C610_D210(w, 9);
+                        omVibrate(w->unk_59, 2, 3, 10);
+                        omVibrate(ow2->unk_59, 20, 0, 20);
+                        return 2;
+                    }
+                    func_8000DCD4_E8D4(obj, dx, dz2);
+                    w->unk_38 = -D_800BF7A4_C03A4 * 0.6f;
+                    w->unk_40 = w->unk_40 * D_800D1778_D2378;
+                    func_8000C610_D210(w, 9);
+                    omVibrate(w->unk_59, 2, 3, 10);
+                    omVibrate(ow2->unk_59, 20, 0, 20);
+                } else if (w->unk_38 != 1000.0f && ow2->unk_38 != 1000.0f) {
+                    if (w->unk_BE != 0 || ow2->unk_BE != 0) {
+                        if (D_800BF795_C0395 == 1) {
+                            func_8000E030_EC30(obj, o);
+                            omVibrate(w->unk_59, 2, 3, 10);
+                            return 0;
+                        }
+                        func_80009684_A284(dx, dz2, flat);
+                        return 0;
+                    }
+                } else {
+                    if (w->unk_5C & 0x200) {
+                        func_800191D4_19DD4(obj, 7, x, py, z, 0.0f, 0.0f);
+                    } else {
+                        func_800191D4_19DD4(obj, 6, x, py, z, -90.0f, 0.0f);
+                    }
+                    omVibrate(w->unk_59, 2, 3, 10);
+                    func_8000DCD4_E8D4(obj, dx, dz2);
+                    func_8000C610_D210(w, 9);
+                }
+            } else if (flat < 0.0f) {
+                if (D_800BF795_C0395 == 1) {
+                    func_8000E030_EC30(obj, o);
+                } else {
+                    func_80009684_A284(dx, dz2, flat);
+                }
+            }
+        } else {
+            flat = func_800B1830_B2430(dx * dx + dy * dy + dz2 * dz2) - (ow2->unk_48 + w->unk_48);
+            if (flat < 0.0f && (ow2->unk_38 == 1000.0f || w->unk_38 != 1000.0f)) {
+                func_80009684_A284(dx, dz2, flat);
+                w->unk_54 = i;
+            }
+        }
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/1130", func_80004168_4D68);
+#endif
 
 /* Clamp this frame's push: a push longer than the radius is replaced by one opposite the heading. */
 void func_80005034_5C34(omObjData* obj) {
