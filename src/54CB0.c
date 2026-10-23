@@ -3,6 +3,29 @@
 #include "game/data.h"
 #include "game/malloc.h"
 
+typedef f32 Matrix4f[4][4];
+
+extern s16 D_800F8D12_F9912;
+extern s16 D_800E1B8A_E278A[]; /* star space of each star spawn slot */
+extern Gfx D_800CC4E0_CD0E0[];
+extern f32 D_800CC3E0_CCFE0[]; /* space scale per space type */
+extern f32 D_800CC428_CD028[]; /* the same, 14 entries; the vertices follow it */
+/* Inside D_800CC428_CD028 (undefined_syms.txt): space quads for 32x32 and 8x8 textures */
+extern Vtx D_800CC460_CD060[];
+extern Vtx D_800CC4A0_CD0A0[];
+extern s16 D_800F928C_F9E8C;
+extern Mtx* D_800FD83C_FE43C;
+void func_800204C0_210C0(s16, Gfx**);
+void func_8002064C_2124C(s16, Gfx**);
+void func_80053754_54354(void* arg0);
+void func_800B30D0_B3CD0(Matrix4f mf, Mtx* m); /* guMtxL2F */
+void func_80025770_26370(Matrix4f, f32, f32, f32); /* translate */
+void func_80025830_26430(Matrix4f, f32, f32, f32); /* scale */
+void func_80026104_26D04(Matrix4f, f32);           /* rotate (y) */
+void func_800B3040_B3C40(Matrix4f mf, Mtx* m);     /* guMtxF2L */
+s32 _CheckFlag(s32);
+
+
 /* Board spaces and chains. C from MP1 src/engine/spaces.c (BoardSpace there is MP2's SpaceData,
    ChainData MP3's LinkData) and MP3 ovl_80_shared_board FA250.c (MBMasu*; func_800556F4_562F4 is
    MBMasuEventCall); the rest have no reference and stay asm. */
@@ -42,7 +65,7 @@ extern s16 D_800E1968_E2568[];
 SpaceData* GetSpaceData(s16);
 s32 MBRand(f32 arg0);
 void LoadSpaceTextures(s16 type);
-void MBMasuDraw(void);
+void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2);
 f32 MBDBackMdlScaleGet(void);
 u16* func_8005484C_5544C(void*, s32);
 void func_8002D018_2DC18(s32, void* func);
@@ -113,7 +136,15 @@ void FreeSpaceTextures(void) {
    }
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_80054228_54E28);
+void func_80054228_54E28(void) {
+    if (D_800F8D12_F9912 != 0) {
+        LoadSpaceTextures(3);
+    } else {
+        LoadSpaceTextures(0);
+    }
+    D_800CC280_CCE80 = NULL;
+    D_800E1960_E2560 = 0;
+}
 
 void MBMasuArrowAngleAdd(f32 arg0) {
     if (D_800E1960_E2560 != 8) {
@@ -130,11 +161,113 @@ void ChangeSpaceTextures(s16 type) {
    LoadSpaceTextures(type);
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_800542E8_54EE8);
+void func_800542E8_54EE8(s32 arg0, s16 arg1) {
+    D_800E1B8A_E278A[arg0] = arg1;
+}
 
+/* Draws every space: one quad per space, by space type. Type 16 draws only the current star space and
+   type 17 only the space GwSystem.unk_1C names (neither when flag 0xC or 0xD is set). */
+// register allocation and loop-invariant placement (retail hoists size * size and the tile size into
+// stack slots before the type loop); calls, stores and branches match
+#ifdef NON_MATCHING
+void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
+    Matrix4f sp10;
+    f32 sp50[2];
+    Mtx* sp5C;
+    Vtx* sp64;
+    f32* sp6C;
+    SpaceData* space;
+    s32 i;
+    s32 j;
+    s32 arrow;
+    s32 size;
+    Mtx* m;
+    f32 scale;
+    GW_SYSTEM* gw;
+
+    sp5C = mtx;
+    gw = &GwSystem;
+    arrow = 0;
+    if (arg2 == 0 && D_800FCE90_FDA90 != 0) {
+        gSPDisplayList((*gfx)++, D_800CC4E0_CD0E0);
+        func_800204C0_210C0(0, gfx);
+        func_8002064C_2124C(0, gfx);
+        func_80053754_54354(sp50);
+        switch (D_800E1928_E2528) {
+            case 0:
+            case 3:
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC460_CD060);
+                sp6C = D_800CC3E0_CCFE0;
+                size = 32;
+                break;
+            case 1:
+            case 4:
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC4A0_CD0A0);
+                sp6C = D_800CC3E0_CCFE0;
+                size = 8;
+                break;
+            default:
+                size = 32;
+                sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC460_CD060);
+                sp6C = D_800CC428_CD028;
+                break;
+        }
+        for (i = 0; i < SPACE_TYPE_TOTAL; i++) {
+            if (D_800E18E0_E24E0[i] == NULL) {
+                continue;
+            }
+            scale = sp6C[i];
+            gDPLoadTextureBlock((*gfx)++, (u8*)D_800E18E0_E24E0[i] + 0x10, G_IM_FMT_RGBA, G_IM_SIZ_32b, size, size, 0,
+                                G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                                G_TX_NOLOD, G_TX_NOLOD);
+            space = NULL;
+            if (i == 16) {
+                if (_CheckFlag(0xD) != 0 || _CheckFlag(0xC) != 0) {
+                    continue;
+                }
+                if (gw->current_board_index != 8) {
+                    space = GetSpaceData(D_800E1B8A_E278A[gw->star_spawn_indices[gw->unk_0A]]);
+                }
+            } else if (i == 17) {
+                if (_CheckFlag(0xD) != 0 || _CheckFlag(0xC) != 0) {
+                    continue;
+                }
+                if (gw->unk_1C != -1 && gw->current_board_index != 8) {
+                    space = GetSpaceData(D_800E1B8A_E278A[gw->unk_1C]);
+                }
+            }
+            for (j = 0; j < gTotalSpaces; j++) {
+                if ((j == 0) & (space != NULL)) {
+                    /* the one space chosen above: draw it once */
+                    j = gTotalSpaces;
+                } else {
+                    space = GetSpaceData(j);
+                    if (space->space_type != i || !(space->unk_00 & 1)) {
+                        continue;
+                    }
+                }
+                func_800B30D0_B3CD0(sp10, &sp5C[1]);
+                func_80025770_26370(sp10, space->coords.x, space->coords.y, space->coords.z);
+                if (i == 13 && arrow < D_800E1960_E2560) {
+                    func_80026104_26D04(sp10, D_800E1940_E2540[arrow++]);
+                }
+                func_80025830_26430(sp10, scale * space->rot.x, 1.0f, scale * space->rot.z);
+                m = &D_800FD83C_FE43C[D_800F928C_F9E8C++];
+                func_800B3040_B3C40(sp10, m);
+                gSPMatrix((*gfx)++, OS_K0_TO_PHYSICAL(m), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                gSPVertex((*gfx)++, sp64, 4, 0);
+                gSP1Quadrangle((*gfx)++, 0, 1, 2, 3, 0);
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/54CB0", MBMasuDraw);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_8005484C_5544C);
+u16* func_8005484C_5544C(void* base, s32 offset) {
+    return (u16*)((u8*)base + *(u16*)((u8*)base + offset));
+}
 
 s32 MBMasuCreate(s32 arg0, s32 arg1) {
     f32 sp10[3];
@@ -584,9 +717,13 @@ s32 func_800556F4_562F4(s16 arg0, s16 arg1) {
 
 INCLUDE_ASM("asm/nonmatchings/54CB0", func_800558DC_564DC);
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_800558E8_564E8);
+void func_800558E8_564E8(s16 arg0) {
+    GwSystem.curPlayerAbsSpaceIndex = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_800558F4_564F4);
+s16 func_800558F4_564F4(void) {
+    return GwSystem.curPlayerAbsSpaceIndex;
+}
 
 s16 func_80055900_56500(u8 arg0) {
     return func_80055008_55C08(2, arg0);
