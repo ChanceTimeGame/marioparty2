@@ -233,7 +233,11 @@ void func_8004EE40_4FA40(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/4F650", func_8004F1A4_4FDA4);
+extern u8 D_800DF7D8_E03D8;
+
+void func_8004F1A4_4FDA4(void) {
+    D_800DF7D8_E03D8 = 1;
+}
 
 /* Banner object (func_8004FA40_50640): slide the title in, pulse the sprite row and grow the
    text. work[3] and work[2] delay the row and the text; work[0] indexes D_800CC0A8_CCCA8 and work[1]
@@ -357,7 +361,9 @@ void func_8004F7F0_503F0(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/4F650", func_8004F9C8_505C8);
+s32 func_8004F9C8_505C8(void) {
+    return D_800DF7C6_E03C6 & 4;
+}
 
 void func_8004F9D8_505D8(void) {
     SprKill(D_800DF7C8_E03C8);

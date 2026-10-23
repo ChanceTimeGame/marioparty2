@@ -1292,7 +1292,10 @@ s32 func_80059FD0_5ABD0(s32 arg0) {
     return rank;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A084_5AC84);
+/* The ranking score func_80059FD0_5ABD0 compares: stars * 1000 + coins. */
+s32 func_8005A084_5AC84(s32 player) {
+    return gPlayers[player].stars * 1000 + gPlayers[player].coins;
+}
 
 /* MP1 func_8004FFA8: waits for a human player to press A or B (30 frames when all are CPUs) */
 void func_8005A0CC_5ACCC(void) {
@@ -2781,9 +2784,18 @@ void func_8005E1A0_5EDA0(s16 playerNo) {
     MBPlayerModelCreate(playerNo, 0, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005E1DC_5EDDC);
+/* The player's model id on this board (MBPlayerModelCreate's arg2 2 table). */
+u8 func_8005E1DC_5EDDC(s16 playerNo) {
+    GW_PLAYER* player = BoardPlayerGet(playerNo);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005E228_5EE28);
+    return D_800CC940_CD540[GwSystem.current_board_index][player->character];
+}
+
+void func_80043DF4_449F4(void* model, u8 arg1); /* MBModel* */
+
+void func_8005E228_5EE28(s16 playerNo, u8 arg1) {
+    func_80043DF4_449F4(BoardPlayerGet(playerNo)->unk_24, arg1);
+}
 
 void func_8005E260_5EE60(s16 playerIndex) {
     GW_PLAYER* temp_v0;
