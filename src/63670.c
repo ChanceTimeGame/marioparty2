@@ -6,6 +6,7 @@
 s32 D_800CCC10 = 0; /* board teardown progress */
 s8 D_800CCC14_CD814 = -1;
 s8 D_800CCC15_CD815 = -1;
+s8 D_800CCC16 = 0; /* ovl_3E: set while the lamp's star event runs */
 s32 D_800CCC18_CD818 = 1;
 s32 D_800CCC1C_CD81C[9] = { 0x3E, 0x41, 0x43, 0x45, 0x47, 0x49, 0x4B, 0x3E, 0x4C };
 s32 D_800CCC40_CD840[9] = { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x4D };
