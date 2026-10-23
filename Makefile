@@ -565,5 +565,7 @@ build/src/19BF0.c.o: RODATA_AS_DATA = 1
 build/src/1C7C0.c.o: RODATA_AS_DATA = 1
 # h1-H: MP3 libhmath and Hudson gu units (-O2 -ffast-math, KMC as mul fix on, as MP3 builds src/libhmath)
 H1H_HMATH_UNITS := build/src/B2440.c.o
+# B24A0 (guLookAtF): nop between back-to-back mul.s
+build/src/B24A0.c.o: export VR4300MUL = ON
 $(H1H_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
 $(H1H_HMATH_UNITS): export VR4300MUL = ON
