@@ -102,7 +102,8 @@ typedef struct SprCamera {
 } SprCamera;
 
 extern Mtx D_800ED610_EE210;  /* sprite orthographic projection */
-extern Vp D_800CD5A0_CE1A0;
+/* .data (0xCE1A0-0xCE1B0) */
+Vp D_800CD5A0_CE1A0 = { { { 640, 480, G_MAXZ / 2, 0 }, { 640, 480, G_MAXZ / 2, 0 } } };
 extern Gfx* D_800ED650_EE250;  /* first sprite display list command */
 extern void* D_800F9294_F9E94;
 extern s16 D_800FC89C_FD49C;

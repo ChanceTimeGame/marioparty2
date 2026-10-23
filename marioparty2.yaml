@@ -414,12 +414,35 @@ segments:
       - [0xCD190, .data, 565E0]
       - {start: 0xCD1A0, type: .data, name: 57150, linker_section: .cdata}
       - {start: 0xCD1F0, type: .data, name: 58080, linker_section: .cdata}
-      - [0xCD580, data]
+      - [0xCD580, .data, 5EF10]
+      - {start: 0xCD590, type: .data, name: 5F3B0, linker_section: .cdata}
+      - {start: 0xCD810, type: .data, name: 63670, linker_section: .cdata}
+      - [0xCD9F0, .data, 67FA0]
+      - [0xCDBB0, .data, 692F0]
+      - {start: 0xCDBC0, type: .data, name: 69950, linker_section: .cdata}
+      - [0xCDC50, .data, 733F0]
+      - [0xCDD80, .data, 73BA0]
+      - [0xCDEB0, .data, 743F0]
+      - [0xCDEC0, .data, 74AA0]
+      - {start: 0xCDF60, type: .data, name: objmain, linker_section: .cdata}
+      - [0xCE120, .data, 79F90]
+      - [0xCE140, data]
+      - [0xCE190, .data, 7E850]
+      - {start: 0xCE1A0, type: .data, name: 80230, linker_section: .cdata}
+      - {start: 0xCE1B0, type: .data, name: 84FF0, linker_section: .cdata}
+      - [0xCE850, .data, 8FBB0]
+      - [0xCE910, data]
+      - {start: 0xCE930, type: .data, name: 9A210, linker_section: .cdata}
+      - [0xCE990, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]
       - [0xCEA90, .data, A57A0]
       - [0xCEAA0, data]
+      - {start: 0xD0160, type: .data, name: B14D0, linker_section: .cdata}
+      - [0xD0360, data]
+      - [0xD0380, .data, B8AC0]
+      - [0xD0CB0, data]
       - [0xD2340, .data, 1130]
       - [0xD2400, .data, B6E0]
       - [0xD2410, .data, C8E0]

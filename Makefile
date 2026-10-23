@@ -595,3 +595,10 @@ $(D1A_CDATA_UNITS): OBJCOPY = $(CROSS)objcopy --rename-section .data=.cdata
 # syntax check, as MP1's CHECK_WARNINGS has it
 D1A_GFX_UNITS := build/src/274D0.c.o
 $(D1A_GFX_UNITS): CFLAGS_CHECK += -m32
+
+# d1-C: units with both C .data and carved .rodata. Renaming .rodata to .data alone would put both
+# into the data half's `(.data)` entry; their C .data is renamed to .cdata in the same objcopy and
+# the data half's yaml entry links it (`{start: .., type: .data, name: <unit>, linker_section: .cdata}`).
+# The rodata half's entry stays `[start, .data, <unit>]`.
+D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o build/src/69950.c.o build/src/objmain.c.o build/src/80230.c.o build/src/84FF0.c.o build/src/9A210.c.o build/src/B14D0.c.o
+$(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata

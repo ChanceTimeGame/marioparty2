@@ -49,11 +49,27 @@ void func_800744C0_750C0(void);
 void func_80073EA0_74AA0(s32 overlay, s16 event, u16 stat);
 
 extern s16 D_800E20D0_E2CD0;
-extern s32 D_800CD2D4_CDED4[];
+/* .data (0xCDEC0-0xCDF60); D_800CD2C8 and 0xCDF10 on are used only by the unit's asm */
+s32 D_800CD2C0_CDEC0 = 1;
+s32 D_800CD2C4_CDEC4 = 0;
+s32 D_800CD2C8_CDEC8[2] = { 1, 0x000A0253 }; /* model description */
+s32 D_800CD2D0_CDED0 = 0;
+s32 D_800CD2D4_CDED4[11] = { 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0, 0 }; /* overlay per chapter */
+u8 D_800CD300_CDF00[16] = { 9, 13, 18, 22, 27, 33, 39, 45, 51, 0, 0, 0, 0, 0, 0, 0 }; /* first story flag of each chapter */
+s32 D_800CD310_CDF10 = 0;
+s16 D_800CD314_CDF14 = 1;
+s16 D_800CD316_CDF16 = 0;
+u8 D_800CD318_CDF18 = 0xF0;
+u8 D_800CD319_CDF19 = 0;
+u8 D_800CD31A_CDF1A = 0xFF;
+extern const char D_800D34E0_D40E0[]; /* "CAME" */
+extern const char D_800D34E8_D40E8[];
+char* D_800CD31C_CDF1C[2] = { (char*)D_800D34E8_D40E8, (char*)D_800D34E0_D40E0 };
+s16 D_800CD324_CDF24[6] = { 0x10, 0x48, 0xE0, 0x58, 0x98, 0xE8 };
+s16 D_800CD330_CDF30[6] = { 0x10, 0x10, 0x10, 0x18, 0x18, 0x18 };
+s16 D_800CD33C_CDF3C[6] = { 0x38, 0x60, 0x100, 0x70, 0xC0, 0x108 };
+s16 D_800CD348_CDF48[6] = { 0x18, 0x18, 0x18, 0x20, 0x20, 0x20 };
 extern s16 D_800E2120_E2D20;
-extern s32 D_800CD2C0_CDEC0;
-extern s32 D_800CD2C4_CDEC4;
-extern s32 D_800CD2D0_CDED0;
 extern s8 D_800FD8AB_FE4AB;
 extern s8 D_800FD8B4_FE4B4;
 extern s8 D_800FD8B5_FE4B5;
@@ -65,7 +81,6 @@ extern s8 D_800FD8B6_FE4B6;
 extern s8 D_800FD8B7_FE4B7;
 extern s8 D_800FD8B8_FE4B8;
 extern s8 D_800FD8B9_FE4B9;
-extern u8 D_800CD300_CDF00[]; /* first story flag of each chapter */
 extern u8 D_800FD420_FE020[0x12];
 
 void func_80073EA0_74AA0(s32 overlay, s16 event, u16 stat) {

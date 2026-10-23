@@ -2,6 +2,40 @@
 #include "game/object.h"
 #include "game/board.h"
 
+/* .data (0xCD810-0xCD9F0) */
+s32 D_800CCC10 = 0; /* board teardown progress */
+s8 D_800CCC14_CD814 = -1;
+s8 D_800CCC15_CD815 = -1;
+s32 D_800CCC18_CD818 = 1;
+s32 D_800CCC1C_CD81C[9] = { 0x3E, 0x41, 0x43, 0x45, 0x47, 0x49, 0x4B, 0x3E, 0x4C };
+s32 D_800CCC40_CD840[9] = { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x4D };
+s16 D_800CCC64_CD864 = -1;
+void (*D_800CCC68_CD868)(void) = 0;
+f32 D_800CCC6C_CD86C[4][2] = { { -7.0f, -7.0f }, { 7.0f, -7.0f }, { 7.0f, 7.0f }, { -7.0f, 7.0f } };
+f32 D_800CCC8C_CD88C[3][2] = { { -7.0f, 4.0f }, { 0.0f, -8.0f }, { 7.0f, 4.0f } };
+f32 D_800CCCA4_CD8A4[2][2] = { { -5.0f, 0.0f }, { 5.0f, 0.0f } };
+f32 D_800CCCB4_CD8B4[4][2] = { { -10.0f, -10.0f }, { 10.0f, -10.0f }, { 10.0f, 10.0f }, { -10.0f, 10.0f } };
+f32 D_800CCCD4_CD8D4[3][2] = { { -10.0f, 0.0f }, { 0.0f, -10.0f }, { 10.0f, 0.0f } };
+f32 D_800CCCEC_CD8EC[2][2] = { { -7.0f, -7.0f }, { 7.0f, -7.0f } };
+u8 D_800CCCFC_CD8FC[8] = { 5, 2, 3, 4, 6, 1, 0, 0 };
+f32 D_800CCD04_CD904[5][2] = { { 0.0f, 0.0f }, { 200.0f, 250.0f }, { 110.0f, 250.0f }, { 70.0f, 290.0f }, { 0.0f, 360.0f } };
+f32 D_800CCD2C_CD92C[5][2] = { { 0.0f, 0.0f }, { 20.0f, 70.0f }, { -70.0f, 70.0f }, { 70.0f, 290.0f }, { 0.0f, 360.0f } };
+u8 D_800CCD54_CD954[8] = { 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0, 0 };
+s32 D_800CCD5C_CD95C[6] = { 0x3F, 0x42, 0x44, 0x46, 0x48, 0x4A };
+u16 D_800CCD74_CD974[4] = { 20, 30, 50, 0 };
+u8 D_800CCD7C_CD97C[3][3] = { { 1, 6, 16 }, { 1, 11, 21 }, { 1, 16, 36 } }; /* turn bounds per game length */
+u8 D_800CCD88_CD988[12] = { 90, 100, 0, 0, 70, 90, 100, 0, 40, 70, 90, 100 };
+u8 D_800CCD94_CD994[12] = { 80, 100, 0, 0, 45, 90, 100, 0, 10, 70, 90, 100 };
+u8 D_800CCDA0_CD9A0[12] = { 70, 100, 0, 0, 30, 90, 100, 0, 10, 60, 90, 100 };
+u8 D_800CCDAC_CD9AC[12] = { 60, 100, 0, 0, 20, 80, 100, 0, 10, 60, 90, 100 };
+u16 D_800CCDB8_CD9B8[4] = { 10, 20, 30, 50 };
+u8* D_800CCDC0_CD9C0[4] = { D_800CCD88_CD988, D_800CCD94_CD994, D_800CCDA0_CD9A0, D_800CCDAC_CD9AC };
+s32 D_800CCDD0_CD9D0 = 0;
+s32 D_800CCDD4_CD9D4 = 0;
+s32 D_800CCDD8_CD9D8 = 0;
+s32 D_800CCDDC_CD9DC = 0;
+s8 D_800CCDE0_CD9E0[6] = { 5, 10, 10, 20, 20, 30 };
+
 /* Board flow: overlay history, scene setup/teardown, the turn loop, Battle spaces, camera and
    rumble. C from MP1 src/57330.c, src/5CDB0.c, src/59510.c and MP3 ovl_80_shared_board 10C230.c /
    113520.c, ovl_81 E3CD0.c / E78B0.c, the rest decompiled fresh (shaped after MP1 57330.c). The
@@ -20,10 +54,6 @@ void func_8005DA20_5E620(s32);
 
 s32 func_8004CC7C_4D87C(s32, s32, s32);
 
-extern u16 D_800CCD74_CD974[];
-extern u8 D_800CCD7C_CD97C[][3];
-extern u16 D_800CCDB8_CD9B8[];
-extern u8* D_800CCDC0_CD9C0[]; /* host: pointer table in .data */
 extern s16 D_800F9208_F9E08;
 void func_80056068_56C68(s32, s32, s32);
 void func_800563FC_56FFC(s32, s32, char*, s32, s32, s32, s32, s32);
@@ -32,8 +62,6 @@ void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 s32 MBRand(f32);
 
-extern s32 D_800CCD5C_CD95C[];
-extern u8 D_800CCD54_CD954[];
 /* Battle space targets: players sharing the space (bit mask) and the attacker's bit */
 extern BattleTargets D_800F8D1A_F991A;
 void func_800115B4_121B4(s16);
@@ -50,8 +78,6 @@ void func_800116B4_122B4(s16, s32);
 s16 GetCurrentPlayerIndex(void);
 void omVibrate(s16, s16, s16, s16);
 
-extern s8 D_800CCC14_CD814;
-extern s8 D_800CCC15_CD815;
 extern s16 D_800E1FE4_E2BE4;
 extern s16 D_800E1FE6_E2BE6;
 extern s16 D_800F8518_F9118;
@@ -76,7 +102,6 @@ extern s16 D_800FA652_FB252;
 void func_8004A908_4B508(void);
 void func_8005DF18_5EB18(s32);
 
-extern s32 D_800CCC10;
 void func_80047B78_48778(void);
 void func_8005FF9C_60B9C(void);
 void func_8004EA90_4F690(void);
@@ -123,8 +148,6 @@ void func_80088640_89240(void);
 void func_80056530_57130(void);
 void func_80062D50_63950(void);
 
-extern s32 D_800CCC40_CD840[];
-extern void (*D_800CCC68_CD868)(void);
 extern s16 D_800E1F88_E2B88;
 void func_80056A3C_5763C(s8);
 void func_80063308_63F08(void);
@@ -147,7 +170,6 @@ extern u16 D_800FA654_FB254;
 extern u16 D_800FC878_FD478;
 extern s16 starBlockSpaceIndex;
 extern s16 prevStarBlockSpaceIndexes[10];
-extern s32 D_800CCC1C_CD81C[];
 extern s16 mbovlhisidx;
 extern omOvlHisData mbovlhis[5];
 extern s16 D_800E1F50_E2B50;
@@ -161,11 +183,6 @@ extern s32 D_800E1F9C_E2B9C;
 extern Vec D_800E1FA4_E2BA4;
 extern Object* mbBattleKuriboMdl;
 extern Object* mbBattleKuriboUpperMdl;
-extern s32 D_800CCDD0_CD9D0;
-extern s32 D_800CCDD4_CD9D4;
-extern s32 D_800CCDD8_CD9D8;
-extern s32 D_800CCDDC_CD9DC;
-extern s8 D_800CCDE0_CD9E0[];
 
 GW_PLAYER* BoardPlayerGet(s32);
 f32 HuMathSin(f32);
@@ -186,22 +203,13 @@ s32 func_8004E94C_4F54C(void);
 void func_800537A0_543A0(Vec2f* arg0);
 u16 func_800536E4_542E4(Vec2f* arg0);
 extern u16 ContDStkTrg[4];
-extern s32 D_800CCC18_CD818;
 extern s16 D_800E1FA2_E2BA2;
 extern Vec* D_800E1FB0_E2BB0;
 extern Vec D_800E1FE8_E2BE8[4];
-extern f32 D_800CCC6C_CD86C[][2];
-extern f32 D_800CCC8C_CD88C[][2];
-extern f32 D_800CCCA4_CD8A4[][2];
-extern f32 D_800CCCB4_CD8B4[][2];
-extern f32 D_800CCCD4_CD8D4[][2];
-extern f32 D_800CCCEC_CD8EC[][2];
 SpaceData* GetSpaceData(s16);
 s16 GetAbsSpaceIndexFromChainSpaceIndex(u16 chainIndex, u16 spaceIndex);
 void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
 void func_800B3170_B3D70(Vec* dst, Vec* src); /* HuVecCopy3F */
-extern f32 D_800CCD04_CD904[][2];
-extern f32 D_800CCD2C_CD92C[][2];
 void HuVecSubtract(Vec* out, Vec* a, Vec* b);
 f32 func_80042BE0_437E0(Vec*); /* MBVecAngleGet */
 void func_80064FF8_65BF8(void);
@@ -223,7 +231,6 @@ void func_800498CC_4A4CC(void);
 void func_80060034_60C34(s32, s32); /* MBStatusColorSet */
 void func_80061518_62118(void);
 void omPrcSetStatBit(Process* process, s32 value);
-extern s16 D_800CCC64_CD864;
 extern f32 D_800E1F84_E2B84;
 extern s16 D_800FA188_FAD88;
 extern s16 D_800FA198_FAD98;
@@ -680,7 +687,6 @@ s32 func_800638C8_644C8(void) {
 INCLUDE_ASM("asm/nonmatchings/63670", func_800638C8_644C8);
 #endif
 
-extern s32 D_800CCC10;
 extern s16 D_800E1F82_E2B82;
 extern s16 D_800E1F94_E2B94;
 extern s16 D_800E1F96_E2B96;
@@ -1214,7 +1220,6 @@ void func_800650BC_65CBC(void) {
 
 extern s32 D_800E1F90_E2B90;
 extern s16 D_800F8D12_F9912;
-extern u8 D_800CCCFC_CD8FC[];
 void func_8008DACC_8E6CC(s32, s16*, s32);
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
 void func_80089B2C_8A72C(s16, s32);

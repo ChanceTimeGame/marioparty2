@@ -23,7 +23,8 @@ void func_800740AC_74CAC(void);
 #include "game/board.h"
 
 extern UnkMBGuideData* D_800E20C4_E2CC4; /* the quit menu's guide */
-extern s32 D_800CD2B0_CDEB0[];          /* its model description */
+/* .data (0xCDEB0-0xCDEC0) */
+s32 D_800CD2B0_CDEB0[4] = { 1, 0x00080037, 0, 0 }; /* its model description */
 extern s8 D_800FDC9C_FE89C;
 void func_800890CC_89CCC(s16, s32, s32, s32);
 void func_8008D59C_8E19C(s16 winId, s16 ports);

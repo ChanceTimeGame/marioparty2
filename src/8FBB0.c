@@ -27,13 +27,34 @@ typedef struct unk72D90Struct1 {
 
 extern u8 D_800F92DC_F9EDC;    /* MP1 fadeStatus */
 extern u8 D_800F8C56_F9856;    /* fade mode */
-extern u8 D_800CDC50_CE850;    /* fade type */
-extern void* D_800CDC54_CE854; /* captured frame buffer */
-extern Gfx D_800CDC58_CE858[];
-extern Gfx D_800CDCC8_CE8C8[];
+/* .data (0xCE850-0xCE910) */
+u8 D_800CDC50_CE850 = 0;       /* fade type */
+void* D_800CDC54_CE854 = NULL; /* captured frame buffer */
+Gfx D_800CDC58_CE858[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetRenderMode(G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xC0),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_POINT),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+s32 D_800CDCA8_CE8A8[4] = { -1, -1, -1, -1 };
+Vp D_800CDCB8_CE8B8 = { { { 640, 480, G_MAXZ / 2, 0 }, { 640, 480, G_MAXZ / 2, 0 } } };
+Gfx D_800CDCC8_CE8C8[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_FILL),
+    gsDPSetRenderMode(G_RM_NOOP, G_RM_NOOP2),
+    gsDPSetFillColor(0x00000000),
+    gsDPFillRectangle(0, 0, 319, 239),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPEndDisplayList(),
+};
 extern void* D_800F8418_F9018; /* current frame buffer */
-extern s32 D_800CDCA8_CE8A8[4];
-extern Vp D_800CDCB8_CE8B8;
 extern f32 D_800FCE88_FDA88;   /* fade length */
 extern f32 D_80101054_101C54;  /* fade time */
 extern u8 D_800F9D20_FA920;    /* fade colour */

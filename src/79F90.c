@@ -11,8 +11,16 @@ typedef struct UnkAudStruct {
     /* 0x0C */ char unk0C[0x24];
 } UnkAudStruct; // size 0x30
 
-extern s16 D_800CD524_CE124;
-extern u16 D_800CD526_CE126;
+/* .data (0xCE120-0xCE132; the linker pads it to 0xCE140, probably where 7D1D0's .data starts (pfFontCurPal at 0xCE184)) */
+u16 D_800CD520_CE120 = 1;
+u16 D_800CD522_CE122 = 1;
+s16 D_800CD524_CE124 = -1;
+u16 D_800CD526_CE126 = 1;
+s16 D_800CD528_CE128 = 0;
+s16 D_800CD52A_CE12A = 0;
+s16 D_800CD52C_CE12C = 1;
+s16 D_800CD52E_CE12E = 1;
+s16 D_800CD530_CE130 = 0x40;
 extern s16 D_800FA188_FAD88;
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
@@ -29,7 +37,6 @@ s32 func_80014B30_15730(s16, UnkAudStruct*);
 
 s32 func_80011018_11C18(s16);
 void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
-extern u16 D_800CD522_CE122;
 extern s16 D_800E2140_E2D40[6];
 
 /* Per-slot sound fades (7AA60.c's SndFadeWork; D_801026F0_1032F0->unk_50) */
@@ -52,12 +59,6 @@ typedef struct SndConfigView {
     /* 0x2C */ char unk2C[0x40];
 } SndConfigView; /* size 0x6C */
 
-extern u16 D_800CD520_CE120;
-extern s16 D_800CD528_CE128;
-extern s16 D_800CD52A_CE12A;
-extern s16 D_800CD52C_CE12C;
-extern s16 D_800CD52E_CE12E;
-extern s16 D_800CD530_CE130;
 extern s16 D_800FA660_FB260[];
 extern omObjData* D_801026F0_1032F0;
 extern SndConfigView D_80101100_101D00;
