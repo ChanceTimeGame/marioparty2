@@ -62,9 +62,6 @@ typedef struct SndConfigView {
 extern s16 D_800FA660_FB260[];
 extern omObjData* D_801026F0_1032F0;
 extern SndConfigView D_80101100_101D00;
-extern u8 D_01750450[];
-extern u8 D_0190A090[];
-extern u8 D_01CBF410[];
 /* ECE0.c defines it void, but it falls through with func_80010E74_11A74's result, which
    PlayMusic returns (host: ECE0's definition should return it) */
 s32 func_80010E58_11A58(s32 id);

@@ -34,7 +34,6 @@ typedef struct L5StatusLayout {
 
 extern u16 D_801011FC_101DFC;
 extern s16 D_800FA604_FB204;
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern BoardStatus D_80101510_102110[];
 extern Vec2f D_800FC990_FD590[];
 extern Vec2f D_800FD854_FE454[];

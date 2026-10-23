@@ -33,7 +33,6 @@ extern u32 D_800FDC6C_FE86C;
 extern s32 D_800FD848_FE448;
 extern OSMesgQueue D_800F9298_F9E98;
 extern OSMesgQueue D_800F92B8_F9EB8;
-extern u8 D_0041DD30[];
 
 void* func_800B0EF0_B1AF0(void*, s32, s32); /* memset */
 void func_8007E2A0_7EEA0(s32, s32);

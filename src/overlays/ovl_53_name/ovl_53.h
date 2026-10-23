@@ -102,7 +102,6 @@ extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] (ovl_3E.h) */
     win = func_8005AAC0_5B6C0((320 - D_80105DCC_3606DC_name_53[0]) / 2, 80, D_80105DCC_3606DC_name_53[0], \
                               D_80105DCC_3606DC_name_53[1])
 
-extern u8 D_01164160[];
 extern s16 D_800CD414_CE014;
 extern s32 D_800CC5F8[]; /* per character: the name message (undefined_syms) */
 extern u16 D_801011FC_101DFC;

@@ -121,10 +121,6 @@ extern void* D_80101108_101D08[2];
 extern s16 D_800CD52E_CE12E;
 extern s16 D_800CD52C_CE12C;
 extern s32 D_800FA190_FAD90;
-extern u8 D_01142DD0[]; /* strings */
-extern u8 D_01750450[];
-extern u8 D_01CBF410[];
-extern u8 D_01E2A560[];
 
 void func_8008EFB0_8FBB0(void);
 void func_800277B0_283B0(void* (*arg0)(s32), void (*arg1)(void*), u16 arg2, u16 arg3, u16 arg4, u8 arg5);

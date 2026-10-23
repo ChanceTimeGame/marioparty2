@@ -176,7 +176,6 @@ s32 omDelPrcObj(void*);
 
 /* ---- main data ---- */
 
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern s32 D_800CC5F8[]; /* per character: the name message */
 extern u16 D_800CD526_CE126;
 extern s16 D_800F8CE4_F98E4[]; /* [0] the winner, [3] another player (see D_80112756) */

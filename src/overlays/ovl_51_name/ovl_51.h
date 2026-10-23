@@ -94,7 +94,6 @@ void func_8008E434_8F034(s32 arg0);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void omDelObj(omObjData*);
 extern u16 ContDStkTrg[4];
-extern u8 D_01164160[]; /* R51B */
 extern s16 D_800FA188_FAD88; /* R51B: the current music */
 extern u16 D_801011FC_101DFC; /* R51B: set when the scene may end (MP1 D_800F5144) */
 extern s16 D_800F8CE4_F98E4[]; /* board state halfwords: [0..3] player order, [10 + p] bonus stars */

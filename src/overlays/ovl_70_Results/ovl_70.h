@@ -117,7 +117,6 @@ void AdjustPlayerCoins(s32 index, s32 count);
 f32 HuMathSin(f32);
 int abs(int);
 int sprintf(char* dst, const char* fmt, ...);
-extern u8 D_01164160[];
 void func_80050E00_51A00(s32);
 void MBDBackKill(void);
 void func_80050AE0_516E0(void);

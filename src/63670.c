@@ -121,7 +121,6 @@ void func_80050AD4_516D4(void);
 void func_80053DEC_549EC(void);
 void func_80053DD0_549D0(void);
 
-extern u8 D_01164160[];
 void func_80053A8C_5468C(void);
 void func_80050A30_51630(u8*);
 void func_80050E00_51A00(s32);

@@ -258,7 +258,6 @@ void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
 /* ---- main data ---- */
 
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern char* D_800CC5F8[]; /* character names, by GW_PLAYER.character */
 extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256];
 extern void* D_800F93FC_F9FFC; /* 1AE60.c: EspriteSlot* */

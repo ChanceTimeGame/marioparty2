@@ -137,7 +137,6 @@ void func_8008E644_8F244(s32 arg0, u8 arg1);
 u32 func_800A5610_A6210(char*); /* strlen */
 f32 func_800B7890_B8490(f32); /* cos */
 
-extern u8 D_01164160[];
 
 /* ---- data (.data, asm) ---- */
 

@@ -59,7 +59,6 @@ typedef struct CreditsSection {
 } CreditsSection; /* size 8 */
 
 extern s16 omovlhisidx;
-extern u8 D_01164160[];
 s32 omDelPrcObj(void*);
 s32 omOvlCallEx(s32 overlayID, s16 event, u16 stat);
 u16 func_80018A30_19630(s32 arg0, s32 arg1); /* model from a file */

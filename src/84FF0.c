@@ -1537,7 +1537,6 @@ void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
 }
 
 extern s16 D_800ED8B0_EE4B0;
-extern u8 D_01142DD0[];
 typedef struct FontFile FontFile;
 extern FontFile* D_800FD8C4_FE4C4; /* font */
 extern Process* D_800FC87C_FD47C;

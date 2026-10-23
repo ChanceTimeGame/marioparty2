@@ -9,6 +9,7 @@
 #include "functions.h"
 #include "include_asm.h"
 #include "variables.h"
+#include "romdata.h"
 #include "macros.h"
 // #include "enums.h"
 

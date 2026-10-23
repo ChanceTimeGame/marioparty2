@@ -39,7 +39,6 @@ extern u16 D_800FC87A_FD47A;
 extern s16 D_800FA604_FB204;
 extern s16 D_800FA606_FB206;
 extern BattleTargets D_800F8D1A_F991A;
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern BoardStatus D_80101510_102110[];
 extern Vec2f D_800FC990_FD590[];
 extern Vec2f D_800FD854_FE454[];

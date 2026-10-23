@@ -16,7 +16,6 @@
 #define PLAYER_MODEL(p) ((MBModel*)(p)->unk_24)
 
 extern u16 D_801011FC_101DFC;
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 extern s16 D_800F64B0_F70B0;
 
 void* DataRead(s32 dirAndFile);

@@ -17,7 +17,6 @@ extern s32 D_800DFE60_E0A60;  /* current bank */
 extern BgTileBank* D_800DFE64_E0A64;
 extern u32* D_800CC21C_CCE1C;
 extern Process* D_800CC220_CCE20;
-extern u8 D_016EC470[];
 void func_80096188_96D88(u8* code, u16* outbuf, s32 outbufWidth, u8* workbuf);
 void func_80096708_97308(void* header);
 void func_80096C10_97810(u8 alpha);
@@ -122,7 +121,6 @@ extern f32 D_800E18BC_E24BC;
 extern Vec D_800FDC74_FE874;
 extern Vec D_800FDC88_FE888;
 extern Vec D_80101060_101C60;
-extern u8 D_01164160[];
 
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2fxy* outPos);
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);

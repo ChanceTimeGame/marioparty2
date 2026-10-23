@@ -17,7 +17,6 @@ void func_80103360_40AE90_MinigameCoaster(void);
 void func_80103C18_40B748_MinigameCoaster(void);
 extern void* D_80103E00_40B930_MinigameCoaster[];
 
-extern u8 D_01164160[]; //?
 
 void func_80102800_40A330(void) {
     GwSystem.current_board_index = 7;

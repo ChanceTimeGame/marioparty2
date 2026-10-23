@@ -130,7 +130,6 @@ void func_80059520_5A120(MBModel*, s32, s32);
 extern s32 D_800CC5F8[]; /* per character: the name message */
 extern u16 D_801011FC_101DFC;
 extern u8 D_800FD866_FE466;
-extern u8 D_01164160[]; /* passed to func_80050A30 by every board scene */
 
 /* ---- overlay 52 data ---- */
 
