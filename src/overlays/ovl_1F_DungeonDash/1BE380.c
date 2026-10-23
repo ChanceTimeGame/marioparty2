@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_1F.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80102800_1BE380_DungeonDash);
 
@@ -18,6 +19,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010319C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801031D0_1BED50_DungeonDash);
 
+__asm__(".section .rodata");
+const u32 D_8010ABE0_1C6760_DungeonDash[4] = { 0x00000055, 0x00000056, 0x00000057, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80103354_1BEED4_DungeonDash);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801036B0_1BF230_DungeonDash);
@@ -27,6 +31,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80104190
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801041F0_1BFD70_DungeonDash);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105464_1C0FE4_DungeonDash);
+
+__asm__(".section .rodata");
+const u32 D_8010AD38_1C68B8_DungeonDash[4] = { 0 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105618_1C1198_DungeonDash);
 
@@ -61,67 +68,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80106E08
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80106EC4_1C2A44_DungeonDash);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80106F80_1C2B00_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801071C0_1C2D40_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107290_1C2E10_DungeonDash);
-
-void func_80107350_1C2ED0_DungeonDash(void) {
-}
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107358_1C2ED8_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107484_1C3004_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107494_1C3014_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801074BC_1C303C_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801074F0_1C3070_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107560_1C30E0_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107584_1C3104_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801075A8_1C3128_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107608_1C3188_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010764C_1C31CC_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801077C8_1C3348_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801078BC_1C343C_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80107C6C_1C37EC_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108054_1C3BD4_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108308_1C3E88_DungeonDash);
-
-void func_801083A8_1C3F28_DungeonDash(void) {
-}
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801083B0_1C3F30_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108574_1C40F4_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108A14_1C4594_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108B54_1C46D4_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108BFC_1C477C_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108C8C_1C480C_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80108F9C_1C4B1C_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80109884_1C5404_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80109958_1C54D8_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010A340_1C5EC0_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010A430_1C5FB0_DungeonDash);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010A4DC_1C605C_DungeonDash);
