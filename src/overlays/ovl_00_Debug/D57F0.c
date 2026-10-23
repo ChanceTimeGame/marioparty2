@@ -158,7 +158,7 @@ extern char D_80107204_DA1F4_Debug[];
 extern s16 D_801072B2_DA2A2_Debug;
 extern s16 D_801072B4_DA2A4_Debug;
 extern s16 D_801072B6_DA2A6_Debug;
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 
 void func_80102800_D57F0_Debug(void) {
     omObjData* temp_s3;

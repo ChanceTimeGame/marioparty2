@@ -37,7 +37,7 @@ void BoardSpaceTypeSet(s16 spaceIndex, u8 spaceType);
 void func_800509C4_515C4(s16);
 SpaceData* GetSpaceData(s16);
 s32 PlaySound(s32);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 MBModel* func_80043510_44110(s32, void*);
 void func_80056754_57354(MBModel*);
 void func_800B3170_B3D70(Vec*, Vec*);

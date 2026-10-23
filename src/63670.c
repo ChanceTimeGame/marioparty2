@@ -1271,7 +1271,7 @@ void func_80050860_51460(void);
 void func_8005E260_5EE60(s16);
 void MBPlayerForwardSet(s16);
 void MBMotionSet(void* arg0, s16 arg1, u16 arg2);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 void func_800670BC_67CBC(Vec* arg0);
 s32 func_80063F88_64B88(s32 arg0);
 void func_80063C40_64840(s32 playerNo, s32 arg1);
