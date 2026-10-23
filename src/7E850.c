@@ -56,7 +56,8 @@ s32 HuGetPadInserted(s16 port);
 void func_800461C8_46DC8(void);
 void func_8000EA88_F688(s32);
 extern u8 D_800CCFBF_CDBBF;
-extern s16 D_800CD590_CE190;
+/* .data (0xCE190-0xCE192) */
+s16 D_800CD590_CE190 = 0;
 void func_80075060_75C60(void);
 void func_800751E0_75DE0(void);
 void func_80075144_75D44(void);
