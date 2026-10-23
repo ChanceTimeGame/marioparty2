@@ -75,8 +75,6 @@ extern TWInput D_800FA04E_FAC4E[];
 extern TWInput D_800FA050_FAC50[];
 extern u8 D_800FD808_FE408;
 extern u8 D_801026D4_1032D4;
-extern u8 D_800CDA98_CE698[];
-extern u8* D_800CDAB0_CE6B0[];
 extern u8 D_800ED8E6_EE4E6;
 extern u8 D_801013FA_101FFA; /* tab width */
 extern Vec D_800FD474_FE074; /* CRot */
@@ -85,7 +83,146 @@ typedef struct TWMask {
     u8 a;
     u8 b;
 } TWMask;
-extern TWMask D_800CDA90_CE690[4];
+typedef struct TWColor {
+    u8 r, g, b;
+} TWColor;
+typedef struct TWIcon {
+    /* 0x00 */ s32 file2; /* used when the window flag 0x2000 is set */
+    /* 0x04 */ s32 file;
+    /* 0x08 */ u8 anim;
+    /* 0x09 */ u8 width;
+} TWIcon; // size 0xC
+typedef struct TWStyle {
+    /* 0x00 */ s32 frame; /* window frame graphic */
+    /* 0x04 */ s16 width;
+    /* 0x06 */ s16 height;
+    /* 0x08 */ s16 textX;
+    /* 0x0A */ s16 textY;
+    /* 0x0C */ s16 textW;
+    /* 0x0E */ s16 textH;
+    /* 0x10 */ s16 offsetX;
+    /* 0x12 */ s16 offsetY;
+    /* 0x14 */ u8 color;
+} TWStyle; // size 0x18
+/* .data (0xCE1B0-0xCE844) */
+s32 D_800CD5B0_CE1B0 = 0x100;
+s32 D_800CD5B4_CE1B4[4] = { 12, 6, 20, 0 }; /* other-mode shifts */
+/* D_800CD5D0_CE1D0 is this table + 0xC (undefined_syms.txt): the code indexes [0..3] here, and
+   index 3 reads D_800CD5D0_CE1D0[0] */
+s32 D_800CD5C4_CE1C4[7] = { 1, 0, 3, 4, 3, 2, 1 };
+s16 D_800CD5E0_CE1E0[156] = {
+    0, 512, 256, 170, 128, 102, 85, 73, 64, 56, 51, 20,
+    42, 26, 14, 19, 32, 13, 28, 26, 8, 9, 4, 4,
+    5, 20, 13, 18, 3, 6, 3, 2, 16, 2, 2, 3,
+    14, 2, 13, 2, 1, 12, 4, 2, 2, 2, 2, 2,
+    2, 4, 10, 0, 1, 2, 9, 0, 1, 8, 0, 2,
+    0, 1, 0, 1, 8, 0, 0, 1, 0, 1, 0, 2,
+    0, 0, 1, 0, 6, 0, 0, 4, 0, 0, 6, 0,
+    0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+    0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    4, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+    0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0,
+};
+s16 D_800CD718_CE318[156] = {
+    0, 512, 256, 170, 128, 102, 85, 73, 64, 56, 51, 46,
+    42, 39, 36, 34, 32, 30, 28, 26, 25, 24, 23, 22,
+    21, 20, 19, 19, 18, 18, 17, 17, 16, 16, 15, 15,
+    14, 14, 13, 13, 13, 12, 12, 12, 11, 11, 11, 10,
+    10, 10, 10, 10, 9, 9, 9, 9, 9, 8, 8, 8,
+    8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7,
+    7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
+};
+u8 D_800CD850_CE450 = 0; /* window system initialised */
+u8 D_800CD851_CE451 = 2; /* MP3 gLanguageIndex */
+TWColor D_800CD854_CE454[10] = {
+    { 0x40, 0x20, 0xB0 }, { 0x00, 0x00, 0x00 }, { 0x20, 0x0E, 0x71 }, { 0xFF, 0x3C, 0x52 }, { 0xFF, 0x00, 0xFF },
+    { 0x00, 0xAB, 0x29 }, { 0x00, 0x3E, 0xF9 }, { 0xFF, 0xFF, 0x00 }, { 0xFF, 0xFF, 0xFF }, { 0x80, 0xFF, 0x80 },
+};
+/* a window template the code copies with bcopy(.., 0x20): that reads the first 12 bytes of
+   D_800CD888_CE488 too (all zero) */
+u8 D_800CD874_CE474[0x14] = {
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x3F, 0xFA, 0x11, 0xF8, 0x3F, 0x07, 0xC1, 0x07, 0xFF, 0xFF, 0xC1,
+    0xFF, 0xFF, 0x00, 0x00,
+};
+u8 D_800CD888_CE488[256] = { /* character widths */
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    4, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 10, 10, 6, 6, 6, 6,
+    4, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 8, 8, 6,
+    6, 8, 6, 6, 6, 6, 6, 8, 8, 6, 6, 6, 2, 4, 4, 6,
+    10, 6, 6, 6, 6, 6, 4, 6, 6, 2, 4, 6, 2, 8, 6, 6,
+    6, 6, 6, 6, 4, 6, 6, 8, 6, 6, 6, 2, 6, 4, 8, 10,
+    4, 4, 4, 4, 10, 4, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 6, 6, 6, 6, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    6, 6, 4, 6, 8, 8, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 6, 6, 6, 6, 6, 6, 6, 6, 4, 4, 6, 6, 6, 6, 6,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 8, 10,
+};
+TWIcon D_800CD988_CE588[22] = {
+    { 0x46, 0x46, 0, 32 }, { 0x47, 0x47, 0, 28 }, { 0x48, 0x48, 0, 30 }, { 0x49, 0x49, 0, 30 },
+    { 0x4B, 0x4B, 0, 32 }, { 0x4A, 0x4A, 0, 12 }, { 0x4C, 0x4C, 0, 38 }, { 0x4F, 0x4F, 0, 26 },
+    { 0x4D, 0x4D, 0, 38 }, { 0x4E, 0x4E, 0, 36 }, { 0x5B, 0x5B, 0, 10 }, { 0x5B, 0x5B, 1, 10 },
+    { 0x5B, 0x5B, 2, 10 }, { 0x5B, 0x5B, 3, 10 }, { 0x5B, 0x5B, 4, 10 }, { 0x5B, 0x5B, 5, 10 },
+    { 0x5B, 0x5B, 6, 10 }, { 0x5B, 0x5B, 7, 10 }, { 0x5B, 0x5B, 8, 10 }, { 0x5B, 0x5B, 9, 10 },
+    { 0x5B, 0x5B, 10, 10 }, { 0x5B, 0x5B, 11, 10 },
+};
+TWMask D_800CDA90_CE690[4] = { { 0x04, 0x8C }, { 0x4C, 0xEF }, { 0x8E, 0xFF }, { 0xCF, 0xFF } };
+u8 D_800CDA98_CE698[24] = { /* Shift-JIS */
+    0x97, 0xEB, 0x88, 0xEA, 0x93, 0xF1, 0x8E, 0x4F, 0x8E, 0x6C, 0x8C, 0xDC,
+    0x98, 0x5A, 0x8E, 0xB5, 0x94, 0xAA, 0x8B, 0xE3, 0x00, 0x00, 0x00, 0x00,
+};
+extern const u8 D_800D3740_D4340[];
+extern const u8 D_800D3764_D4364[];
+extern const u8 D_800D3788_D4388[];
+extern const u8 D_800D37AC_D43AC[];
+extern const u8 D_800D37D0_D43D0[];
+extern const u8 D_800D37F4_D43F4[];
+extern const u8 D_800D3818_D4418[];
+extern const u8 D_800D383C_D443C[];
+extern const u8 D_800D3860_D4460[];
+extern const u8 D_800D3884_D4484[];
+extern const u8 D_800D38A8_D44A8[];
+extern const u8 D_800D38CC_D44CC[];
+extern const u8 D_800D38F0_D44F0[];
+extern const u8 D_800D3914_D4514[];
+extern const u8 D_800D3938_D4538[];
+extern const u8 D_800D395C_D455C[];
+u8* D_800CDAB0_CE6B0[16] = {
+    (u8*)D_800D395C_D455C, (u8*)D_800D3938_D4538, (u8*)D_800D3914_D4514, (u8*)D_800D38F0_D44F0,
+    (u8*)D_800D38CC_D44CC, (u8*)D_800D38A8_D44A8, (u8*)D_800D3884_D4484, (u8*)D_800D3860_D4460,
+    (u8*)D_800D383C_D443C, (u8*)D_800D3818_D4418, (u8*)D_800D37F4_D43F4, (u8*)D_800D37D0_D43D0,
+    (u8*)D_800D37AC_D43AC, (u8*)D_800D3788_D4388, (u8*)D_800D3764_D4364, (u8*)D_800D3740_D4340,
+};
+TWStyle D_800CDAF0_CE6F0[7] = { /* window styles 2-8 (retail indexes them from D_800CDAC0_CE6C0) */
+    { 0x90029, 220, 46, 24, 9, 190, 28, 3, 22, 1 },
+    { 0x90028, 220, 62, 23, 12, 190, 42, 4, 38, 1 },
+    { 0x9002B, 220, 74, 27, 9, 190, 56, 3, 36, 1 },
+    { 0x9002A, 214, 42, 15, 9, 190, 28, 33, 54, 1 },
+    { 0x9002C, 214, 75, 13, 27, 190, 42, 31, 5, 1 },
+    { 0x9002D, 214, 75, 13, 27, 190, 42, 45, 0, 1 },
+    { 0x9002E, 220, 62, 23, 12, 180, 42, 4, 38, 1 },
+};
+s32 D_800CDB98_CE798[42] = { /* portrait graphics */
+    0x85, 0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x61, 0x62,
+    0x69, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71,
+    0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x63, 0x78,
+    0x79, 0x7A, 0x66, 0x67, 0x64, 0x65, 0x68, 0x7B,
+    0x7C, 0x6A, 0x7D, 0x7E, 0x7F, 0x80, 0x81, 0x82,
+    0x83, 0x84,
+};
+s32 D_800CDC40_CE840 = 0; /* window colour scheme */
 f32 func_800B7890_B8490(f32); /* cos */
 void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
 void func_80021198_21D98(s16 index, u16 arg1);
@@ -259,12 +396,7 @@ extern s32 D_800ED690_EE290; /* texture-load strips */
 extern s32 D_800ED694_EE294; /* rows per strip */
 extern s32 D_800ED698_EE298; /* rows in the last strip */
 extern s32 D_800ED6A0_EE2A0; /* drawn with a matrix */
-extern s32 D_800CD5B0_CE1B0;
-extern s32 D_800CD5B4_CE1B4[4]; /* other-mode shifts */
-extern s32 D_800CD5C4_CE1C4[4];
 extern s32 D_800CD5D0_CE1D0[4];
-extern s16 D_800CD5E0_CE1E0[];
-extern s16 D_800CD718_CE318[];
 extern u8 D_800FDBE0_FE7E0;
 extern Gfx* D_800F9294_F9E94; /* scratch display list for cached sprites */
 extern Vtx* D_801016C0_1022C0;
@@ -1404,8 +1536,6 @@ void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     func_8007EE0C_7FA0C((unkfunc_8007EE0C*)&sp10, (void*)func_800885AC_891AC, (char*)sp20, 1);
 }
 
-extern u8 D_800CD850_CE450;      /* window system initialised */
-extern u8 D_800CD851_CE451;      /* MP3 gLanguageIndex */
 extern s16 D_800ED8B0_EE4B0;
 extern u8 D_01142DD0[];
 typedef struct FontFile FontFile;
@@ -1489,12 +1619,7 @@ void func_80088640_89240(void) {
     }
 }
 
-typedef struct TWColor {
-    u8 r, g, b;
-} TWColor;
 
-extern TWColor D_800CD854_CE454[];
-extern u8 D_800CD874_CE474[0x20];
 s16 SprCreate(s32 num, s32 attr);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
@@ -2164,7 +2289,6 @@ s32 func_8008A6DC_8B2DC(TextWindow* tw) {
 }
 
 extern s32 D_800FDC80_FE880; /* last advance */
-extern u8 D_800CD888_CE488[]; /* character widths */
 
 /* MP1 func_8006E87C: advances the cursor by w; wraps the line when the next character does not fit */
 s32 func_8008A700_8B300(TextWindow* tw, s16 w) {
@@ -2249,14 +2373,7 @@ void func_8008AA44_8B644(s16 winId) {
     SprAttrSet(tw->unk_6C, 3, 0x8000);
 }
 
-typedef struct TWIcon {
-    /* 0x00 */ s32 file2; /* used when the window flag 0x2000 is set */
-    /* 0x04 */ s32 file;
-    /* 0x08 */ u8 anim;
-    /* 0x09 */ u8 width;
-} TWIcon; // size 0xC
 
-extern TWIcon D_800CD988_CE588[];
 
 /* places icon idx (a sprite, cached in D_800ED8B8) at the text cursor; returns its width */
 s16 func_8008AA90_8B690(s16 winId, s16 idx) {
@@ -3502,24 +3619,11 @@ void func_8008DF9C_8EB9C(s32 winId, u16 btn) {
     tw->unkA6 = btn;
 }
 
-typedef struct TWStyle {
-    /* 0x00 */ s32 frame; /* window frame graphic */
-    /* 0x04 */ s16 width;
-    /* 0x06 */ s16 height;
-    /* 0x08 */ s16 textX;
-    /* 0x0A */ s16 textY;
-    /* 0x0C */ s16 textW;
-    /* 0x0E */ s16 textH;
-    /* 0x10 */ s16 offsetX;
-    /* 0x12 */ s16 offsetY;
-    /* 0x14 */ u8 color;
-} TWStyle; // size 0x18
 
-extern TWStyle D_800CDAC0_CE6C0[];
 
 /* MP1 func_8007194C: opens a window in one of the preset styles */
 s32 func_8008DFC4_8EBC4(s16 x, s16 y, s32 style) {
-    TWStyle* st = &D_800CDAC0_CE6C0[style];
+    TWStyle* st = &D_800CDAF0_CE6F0[style - 2];
     TextWindow* tw;
     HuSprite* spr;
     s32 id;
@@ -3652,8 +3756,6 @@ void func_8008E6CC_8F2CC(s16 arg0, s16 arg1) {
     SprPrioSet(tw->unk_6C, tw->unk274, arg1 + 1);
 }
 
-extern s32 D_800CDB98_CE798[]; /* portrait graphics */
-extern s32 D_800CDC40_CE840; /* window colour scheme */
 
 /* opens a message window, with a portrait unless portrait is -1 */
 s32 func_8008E73C_8F33C(s16 portrait, s16 x, s16 y, s32 w, s32 h, u16 flags) {
