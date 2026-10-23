@@ -49,6 +49,11 @@ typedef struct GroundWork {
     /* 0x14 */ f32 unk_14; /* top surface height */
     /* 0x18 */ char unk_18[0x80];
     /* 0x98 */ f32 unk_98; /* subtracted from unk_14 for a player's ceiling test */
+    /* 0x9C */ f32 unk_9C; /* cylinder radius (shapes 0x20, 0x40) */
+    /* 0xA0 */ f32 unk_A0; /* box min x (shapes 8, 0x10) */
+    /* 0xA4 */ f32 unk_A4; /* box min z */
+    /* 0xA8 */ f32 unk_A8; /* box max x */
+    /* 0xAC */ f32 unk_AC; /* box max z */
 } GroundWork; /* size unknown */
 
 /* omObjData::unk_50 of a minigame item actor (coins and the like), 0xAC bytes, allocated by

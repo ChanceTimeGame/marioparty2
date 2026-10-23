@@ -41,10 +41,10 @@ s32 func_8000DB30_E730(HmfPart*, Vec3f*, f32);
 s32 func_8000DC10_E810(Vec3f*, GroundWork*);
 s32 func_80005110_5D10();
 s32 func_80005700_6300();
-void func_80005D60_6960(omObjData*, Vec3f*);
-void func_800061E4_6DE4(omObjData*, Vec3f*);
-void func_800062F0_6EF0(omObjData*, Vec3f*, f32);
-void func_800066BC_72BC(omObjData*, Vec3f*, f32);
+void func_80005D60_6960(omObjData*, Vec4f*);
+void func_800061E4_6DE4(omObjData*, Vec4f*);
+void func_800062F0_6EF0(omObjData*, Vec4f*, f32);
+void func_800066BC_72BC(omObjData*, Vec4f*, f32);
 
 extern f32 D_800BF780_C0380;
 extern f32 D_800BF784_C0384;
@@ -485,19 +485,19 @@ void func_800015D4_21D4(omObjData* obj, Vec4f* p) {
         if (gw->unk_06 & 8) {
             probe.x += D_800F94A0_FA0A0;
             probe.y += D_80101308_101F08;
-            func_80005D60_6960(g, (Vec3f*)&probe);
+            func_80005D60_6960(g, &probe);
         } else if (gw->unk_06 & 0x10) {
             probe.x += D_800F94A0_FA0A0;
             probe.y += D_80101308_101F08;
-            func_800066BC_72BC(g, (Vec3f*)&probe, w->unk_34 / 2.0f);
+            func_800066BC_72BC(g, &probe, w->unk_34 / 2.0f);
         } else if (gw->unk_06 & 0x20) {
             probe.x += D_800F94A0_FA0A0;
             probe.y += D_80101308_101F08;
-            func_800061E4_6DE4(g, (Vec3f*)&probe);
+            func_800061E4_6DE4(g, &probe);
         } else if (gw->unk_06 & 0x40) {
             probe.x += D_800F94A0_FA0A0;
             probe.y += D_80101308_101F08;
-            func_800062F0_6EF0(g, (Vec3f*)&probe, w->unk_34 / 2.0f);
+            func_800062F0_6EF0(g, &probe, w->unk_34 / 2.0f);
         } else {
             func_8002F2C4_2FEC4(*D_800FC7B0_FD3B0[i]->model, D_800F9D30_FA930, func_80005700_6300, &probe);
         }
@@ -1325,7 +1325,7 @@ extern f64 D_800D1788_D2388; /* 0.3 */
 extern f64 D_800D1790_D2390; /* 2.0 */
 extern f64 D_800D1798_D2398; /* 0.3 */
 s32 func_80005130_5D30(void* arg0, s16* idx, ColVtx* verts, ColSphere* s);
-void func_80006440_7040(void);
+s32 func_80006440_7040(Vec4f* s, GroundWork* g);
 void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2);
 
 INCLUDE_ASM("asm/nonmatchings/1130", func_80004168_4D68);
@@ -1508,15 +1508,240 @@ s32 func_80005700_6300(void* arg0, s16* idx, ColVtx* verts, ColSphere* s) {
     return hit;
 }
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80005D60_6960);
+/* Shape 8: the inside walls of a box (GroundWork.unk_A0..unk_AC); each wall the sphere reaches adds
+   a contact (pushing harder when none did) and pushes it back in (MP1 func_80003460). */
+void func_80005D60_6960(omObjData* obj, Vec4f* s) {
+    s32 i = D_800BF796_C0396;
+    GroundWork* g = obj->unk_50;
+    f32 x0 = g->unk_A0 + s->w;
+    f32 z0 = g->unk_A4 + s->w;
+    f32 x1 = g->unk_A8 - s->w;
+    f32 z1 = g->unk_AC - s->w;
+    f32 half;
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_800061E4_6DE4);
+    if (s->x <= x0) {
+        func_80009E0C_AA0C(g->unk_A0, s->y, s->z);
+        func_80009DB0_A9B0(1.0f, 0.0f, 0.0f);
+        D_800BF796_C0396++;
+    }
+    if (x1 <= s->x) {
+        func_80009E0C_AA0C(g->unk_A8, s->y, s->z);
+        func_80009DB0_A9B0(-1.0f, 0.0f, 0.0f);
+        D_800BF796_C0396++;
+    }
+    if (s->z <= z0) {
+        func_80009E0C_AA0C(s->x, s->y, g->unk_A4);
+        func_80009DB0_A9B0(0.0f, 0.0f, 1.0f);
+        D_800BF796_C0396++;
+    }
+    if (z1 <= s->z) {
+        func_80009E0C_AA0C(s->x, s->y, g->unk_AC);
+        func_80009DB0_A9B0(0.0f, 0.0f, -1.0f);
+        D_800BF796_C0396++;
+    }
+    if (i == D_800BF796_C0396) {
+        half = s->w * 0.5f;
+        if (s->x <= x0 - half) {
+            func_80009E0C_AA0C(g->unk_A0, s->y, s->z);
+            func_80009DB0_A9B0(1.0f, 0.0f, 0.0f);
+            D_800BF796_C0396++;
+        }
+        if (x1 + half <= s->x) {
+            func_80009E0C_AA0C(g->unk_A8, s->y, s->z);
+            func_80009DB0_A9B0(-1.0f, 0.0f, 0.0f);
+            D_800BF796_C0396++;
+        }
+        if (s->z <= z0 - half) {
+            func_80009E0C_AA0C(s->x, s->y, g->unk_A4);
+            func_80009DB0_A9B0(0.0f, 0.0f, 1.0f);
+            D_800BF796_C0396++;
+        }
+        if (z1 + half <= s->z) {
+            func_80009E0C_AA0C(s->x, s->y, g->unk_AC);
+            func_80009DB0_A9B0(0.0f, 0.0f, -1.0f);
+            D_800BF796_C0396++;
+        }
+    }
+    for (; i < D_800BF796_C0396; i++) {
+        x0 = D_800F9D40_FA940[i].x - s->x;
+        z0 = D_800F9D40_FA940[i].z - s->z;
+        func_80009684_A284(-x0, -z0, s->w - func_800B1830_B2430(x0 * x0 + z0 * z0));
+        if (obj->trans.x != 0.0f || obj->trans.y != 0.0f || obj->trans.z != 0.0f || obj->rot.x != 0.0f ||
+            obj->rot.y != 0.0f || obj->rot.z != 0.0f) {
+            func_8000D74C_E34C(D_800FC838_FD438, &D_800F9D40_FA940[i]);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_800062F0_6EF0);
+/* Shape 0x20: the inside wall of a cylinder (radius GroundWork.unk_9C) around the object. The
+   contact point scales the probe by the unit direction (retail; not the radius). */
+void func_800061E4_6DE4(omObjData* obj, Vec4f* s) {
+    GroundWork* g = obj->unk_50;
+    f32 x = s->x;
+    f32 z = s->z;
+    f32 d;
+    Vec3f n;
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80006440_7040);
+    d = g->unk_9C - (func_800B1830_B2430(x * x + z * z) + s->w);
+    if (d <= 0.0f) {
+        func_80009684_A284(x, z, d);
+        n.x = x;
+        n.y = 0.0f;
+        n.z = z;
+        func_8002D9AC_2E5AC(&n);
+        func_80009E0C_AA0C(s->x * n.x, s->y, s->z * n.z);
+        func_80009DB0_A9B0(-s->x, 0.0f, -s->z);
+        D_800BF796_C0396++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_800066BC_72BC);
+/* Shape 0x40: the outside of a cylinder (radius GroundWork.unk_9C, top unk_14, height unk_98). */
+void func_800062F0_6EF0(omObjData* obj, Vec4f* s, f32 h) {
+    GroundWork* g = obj->unk_50;
+    f32 x = s->x;
+    f32 z = s->z;
+    f32 d;
+    Vec3f n;
+
+    if (s->y < h + g->unk_14 && g->unk_14 - g->unk_98 - h < s->y) {
+        d = func_800B1830_B2430(x * x + z * z) - g->unk_9C;
+        if (d >= 0.0f && d <= s->w) {
+            func_80009684_A284(x, z, s->w - d);
+            n.x = x;
+            n.y = 0.0f;
+            n.z = z;
+            func_8002D9AC_2E5AC(&n);
+            func_80009E0C_AA0C(-s->x * n.x, s->y, -s->z * n.z);
+            func_80009DB0_A9B0(s->x, 0.0f, s->z);
+            D_800BF796_C0396++;
+        }
+    }
+}
+
+/* Box corners: a probe beyond a corner of the box (GroundWork.unk_A0..unk_AC) touching it adds the
+   corner as a contact and returns 0; otherwise 1 (MP1 func_8000396C). */
+s32 func_80006440_7040(Vec4f* s, GroundWork* g) {
+    f32 x = s->x;
+    f32 y = s->y;
+    f32 z = s->z;
+    f32 dx, dz;
+
+    if (x <= g->unk_A0) {
+        dx = g->unk_A0 - x;
+        dz = g->unk_A4;
+        if (z <= dz) {
+            dz -= z;
+            if (func_800B1830_B2430(dx * dx + dz * dz) - s->w < 0.0f) {
+                func_80009E0C_AA0C(g->unk_A0, y, g->unk_A4);
+                func_80009DB0_A9B0(x - g->unk_A0, 0.0f, z - g->unk_A4);
+                D_800BF796_C0396++;
+                return 0;
+            }
+        } else if ((dz = g->unk_AC) <= z) {
+            dz -= z;
+            if (func_800B1830_B2430(dx * dx + dz * dz) - s->w < 0.0f) {
+                func_80009E0C_AA0C(g->unk_A0, y, g->unk_AC);
+                func_80009DB0_A9B0(x - g->unk_A0, 0.0f, z - g->unk_AC);
+                D_800BF796_C0396++;
+                return 0;
+            }
+        }
+    } else if (s->x >= g->unk_A8) {
+        dx = g->unk_A8 - x;
+        dz = g->unk_A4;
+        if (z <= dz) {
+            dz -= z;
+            if (func_800B1830_B2430(dx * dx + dz * dz) - s->w < 0.0f) {
+                func_80009E0C_AA0C(g->unk_A8, y, g->unk_A4);
+                func_80009DB0_A9B0(x - g->unk_A8, 0.0f, z - g->unk_A4);
+                D_800BF796_C0396++;
+                return 0;
+            }
+        } else if ((dz = g->unk_AC) <= z) {
+            dz -= z;
+            if (func_800B1830_B2430(dx * dx + dz * dz) - s->w < 0.0f) {
+                func_80009E0C_AA0C(g->unk_A8, y, g->unk_AC);
+                func_80009DB0_A9B0(x - g->unk_A8, 0.0f, z - g->unk_AC);
+                D_800BF796_C0396++;
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+/* Shape 0x10: the outside of a box (GroundWork.unk_A0..unk_AC, top unk_14, height unk_98): a corner
+   (func_80006440_7040) or the face the sphere is beyond adds a contact; then the sphere is pushed
+   out (MP1 func_80003C08). */
+void func_800066BC_72BC(omObjData* obj, Vec4f* s, f32 h) {
+    s32 i = D_800BF796_C0396;
+    GroundWork* g = obj->unk_50;
+    f32 x = s->x;
+    f32 z = s->z;
+    f32 x0, z0, x1, z1;
+    f32 cx, cz;
+
+    if (s->y < h + g->unk_14 && g->unk_14 - g->unk_98 - h < s->y) {
+        x0 = g->unk_A0 - s->w;
+        z0 = g->unk_A4 - s->w;
+        x1 = g->unk_A8 + s->w;
+        z1 = g->unk_AC + s->w;
+        if ((x0 <= x) & (x < x1)) {
+            if ((z0 < z) & (z < z1)) {
+                if (func_80006440_7040(s, g) == 1) {
+                    if (x0 <= x && x <= (cx = g->unk_A0)) {
+                        if (g->unk_A4 <= s->z && s->z <= g->unk_AC) {
+                            if (cx == s->x) {
+                                cx += 1.0f;
+                            }
+                            func_80009E0C_AA0C(cx, s->y, s->z);
+                            func_80009DB0_A9B0(-1.0f, 0.0f, 0.0f);
+                            D_800BF796_C0396++;
+                        }
+                    } else if (x <= x1 && (cx = g->unk_A8) <= x) {
+                        if (g->unk_A4 <= s->z && s->z <= g->unk_AC) {
+                            if (cx == s->x) {
+                                cx -= 1.0f;
+                            }
+                            func_80009E0C_AA0C(cx, s->y, s->z);
+                            func_80009DB0_A9B0(1.0f, 0.0f, 0.0f);
+                            D_800BF796_C0396++;
+                        }
+                    } else if (z0 <= z && z <= g->unk_A4) {
+                        if (g->unk_A0 <= s->x && s->x <= g->unk_A8) {
+                            cz = g->unk_A4;
+                            if (cz == s->z) {
+                                cz += 1.0f;
+                            }
+                            func_80009E0C_AA0C(s->x, s->y, cz);
+                            func_80009DB0_A9B0(0.0f, 0.0f, -1.0f);
+                            D_800BF796_C0396++;
+                        }
+                    } else if (z <= z1 && g->unk_AC <= z) {
+                        if (g->unk_A0 <= s->x && s->x <= g->unk_A8) {
+                            cz = g->unk_AC;
+                            if (cz == s->z) {
+                                cz -= 1.0f;
+                            }
+                            func_80009E0C_AA0C(s->x, s->y, cz);
+                            func_80009DB0_A9B0(0.0f, 0.0f, 1.0f);
+                            D_800BF796_C0396++;
+                        }
+                    }
+                }
+                for (; i < D_800BF796_C0396; i++) {
+                    x0 = D_800F9D40_FA940[i].x - s->x;
+                    z0 = D_800F9D40_FA940[i].z - s->z;
+                    func_80009684_A284(x0, z0, func_800B1830_B2430(x0 * x0 + z0 * z0) - s->w);
+                    if (obj->trans.x != 0.0f || obj->trans.y != 0.0f || obj->trans.z != 0.0f ||
+                        obj->rot.x != 0.0f || obj->rot.y != 0.0f || obj->rot.z != 0.0f) {
+                        func_8000D74C_E34C(D_800FC838_FD438, &D_800F9D40_FA940[i]);
+                    }
+                }
+            }
+        }
+    }
+}
 
 /* After the wall pushes: a fast player running into a wall bounces off it (MP1 func_8000423C). */
 void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2) {
