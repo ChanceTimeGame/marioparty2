@@ -391,7 +391,6 @@ segments:
       - [0xCEA90, .data, A57A0]
       - [0xCEAA0, data]
       - [0xD2340, .data, 1130]
-      - [0xD2370, data]
       - [0xD2400, .data, B6E0]
       - [0xD2410, .data, C8E0]
       - [0xD2420, .data, ECE0]

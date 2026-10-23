@@ -38,13 +38,14 @@ typedef struct ColSphere {
 typedef struct GroundWork {
     /* 0x00 */ u8 unk_00;
     /* 0x01 */ u8 unk_01;
-    /* 0x02 */ char unk_02[2];
+    /* 0x02 */ char unk_02;
+    /* 0x03 */ u8 unk_03;  /* 2: landing on it calls func_80009744_A344 */
     /* 0x04 */ u8 unk_04;  /* surface id copied to MgWork.unk_56 */
     /* 0x05 */ char unk_05;
     /* 0x06 */ u16 unk_06; /* flags: 2 skip, 4 test the part list, 8/0x10/0x20/0x40 primitive
                               shapes, 0x50 needs func_8000DC10_E810, 0x400 tilts the rider */
     /* 0x08 */ f32 unk_08; /* friction (0: the default D_800BF7A0_C03A0) */
-    /* 0x0C */ char unk_0C[4];
+    /* 0x0C */ f32 unk_0C; /* run acceleration divisor (0: the default D_800BF79C_C039C) */
     /* 0x10 */ f32 unk_10; /* conveyor factor applied to the floor normal */
     /* 0x14 */ f32 unk_14; /* top surface height */
     /* 0x18 */ char unk_18[0x80];
@@ -110,7 +111,8 @@ typedef struct MgWork {
     /* 0x5A */ char unk_5A[2];
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ f32 unk_60;
-    /* 0x64 */ char unk_64[0x10];
+    /* 0x64 */ f32 unk_64;  /* attack reach (func_800098D0_A4D0) */
+    /* 0x68 */ char unk_68[0xC];
     /* 0x74 */ s32 unk_74[6]; /* packed (x << 16) | (y & 0xFFFF) stick samples (MP1 0x6C) */
     /* 0x8C */ f32 unk_8C;  /* ceiling height, 65536.0f none */
     /* 0x90 */ f32 unk_90;  /* ground velocity (MP1 0x84) */
@@ -123,16 +125,21 @@ typedef struct MgWork {
     /* 0xAC */ f32 unk_AC;
     /* 0xB0 */ f32 unk_B0;
     /* 0xB4 */ f32 unk_B4;  /* speed factor */
-    /* 0xB8 */ char unk_B8[0xB];
+    /* 0xB8 */ char unk_B8[6];
+    /* 0xBE */ u16 unk_BE;  /* 105 after a hazard actor hit, counting down; while set, touches only count D_800FD7FC_FE3FC */
+    /* 0xC0 */ char unk_C0[3];
     /* 0xC3 */ s8 unk_C3;
     /* 0xC4 */ s8 unk_C4;   /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5;   /* MP1 0xB3 */
-    /* 0xC6 */ char unk_C6[6];
+    /* 0xC6 */ s16 unk_C6;  /* turn lean, -12..12 (MP1 0xB4) */
+    /* 0xC8 */ char unk_C8[4];
     /* 0xCC */ f32 unk_CC;
     /* 0xD0 */ u16 unk_D0;
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ void* unk_E8; /* C8E0.c's MgMotion* */
-    /* 0xEC */ char unk_EC[0x18];
+    /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook; 1 skips the default */
+    /* 0xF0 */ u16 unk_F0;
+    /* 0xF2 */ char unk_F2[0x12];
     /* 0x104 */ s32 unk_104[21];
     /* 0x158 */ char unk_158[4];
 } MgWork; /* size = 0x15C */
