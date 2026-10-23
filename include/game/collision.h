@@ -130,9 +130,11 @@ typedef struct MgWork {
     /* 0xAC */ f32 unk_AC;
     /* 0xB0 */ f32 unk_B0;
     /* 0xB4 */ f32 unk_B4;  /* speed factor */
-    /* 0xB8 */ char unk_B8[6];
+    /* 0xB8 */ char unk_B8[4];
+    /* 0xBC */ u16 unk_BC;  /* frames running, at most 200 (MP1 0xAC) */
     /* 0xBE */ u16 unk_BE;  /* 105 after a hazard actor hit, counting down; while set, touches only count D_800FD7FC_FE3FC */
-    /* 0xC0 */ char unk_C0[3];
+    /* 0xC0 */ u16 unk_C0;  /* spin countdown (flags 0x100000) */
+    /* 0xC2 */ char unk_C2;
     /* 0xC3 */ s8 unk_C3;
     /* 0xC4 */ s8 unk_C4;   /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5;   /* MP1 0xB3 */

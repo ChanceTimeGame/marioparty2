@@ -872,7 +872,7 @@ f32 func_800023CC_2FCC(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* n) {
    func_80004168_4D68 returns 2. Host hazard: the uninitialised normal. */
 // block layout (masked 36): retail places the floorY == -65536.0f block inline
 #ifdef NON_MATCHING
-f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z) {
+f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused) {
     Vec4f probe;
     Vec3f n;
     Vec3f n2;
@@ -2220,7 +2220,7 @@ f64 D_800D1788_D2388 __attribute__((section(".rodata"))) = 0.3;
 f64 D_800D1790_D2390 __attribute__((section(".rodata"))) = 2.0;
 f64 D_800D1798_D2398 __attribute__((section(".rodata"))) = 0.3;
 
-f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z);
+f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused);
 void func_8000776C_836C(omObjData* obj);
 f32 func_800096F0_A2F0(f32 speed);
 void func_80009744_A344(omObjData* obj, f32 x, f32 y, f32 z);
@@ -2259,18 +2259,6 @@ f32 func_8002D958_2E558(f32 angle); /* wraps an angle */
 void func_80079848_7A448(s16 arg0);
 void func_800B2060_B2C60(f32 (*m)[4], f32 x, f32 y, f32 z); /* rotate matrix */
 int abs(int);
-
-/* Fork A's prototypes above declare these narrower than the callers below use them: the step
-   takes an unused fifth argument (MP1 func_80004578) and the wall push returns the side and takes
-   an f32 (MP1 func_80004D1C). Called through these until the prototypes are fixed. */
-#define STEP_FLOOR(obj, x, y, z, y0) \
-    ((f32 (*)(omObjData*, f32, f32, f32, f32))func_80002A28_3628)(obj, x, y, z, y0)
-#define WALL_PUSH(obj, p, push) ((s32 (*)(omObjData*, Vec4f*, f32))func_80006F34_7B34)(obj, p, push)
-
-/* u16 fields inside the padding that fork F's MgWork change leaves (unk_B8[6], unk_C0[3]); make
-   them fields when the branches merge. */
-#define MGW_UNK_BC(w) (*(u16*)&(w)->unk_B8[4]) /* 0xBC: frames running, at most 200 (MP1 0xAC) */
-#define MGW_UNK_C0(w) (*(u16*)&(w)->unk_C0[0]) /* 0xC0: spin countdown (flags 0x100000) */
 
 extern s8 ContStkX[];
 extern s8 ContStkY[];
@@ -2408,7 +2396,7 @@ void func_80007790_8390(omObjData* obj) {
                 func_8000C584_D184(w, 3);
                 ok = 0;
             }
-            y = STEP_FLOOR(obj, x, ny1, z, y);
+            y = func_80002A28_3628(obj, x, ny1, z, y);
             if (w->unk_38 == 1000.0f) {
                 o = D_800FC7B0_FD3B0[w->unk_53];
                 if (((GroundWork*)o->unk_50)->unk_03 == 2) {
@@ -2421,15 +2409,15 @@ void func_80007790_8390(omObjData* obj) {
         }
         w->unk_C6 = 0;
     } else if (flags & 0x100000) {
-        MGW_UNK_C0(w)--;
-        if (MGW_UNK_C0(w) == 0) {
+        w->unk_C0--;
+        if (w->unk_C0 == 0) {
             func_80019B9C_1A79C(obj, 0x13);
         }
-        if (MGW_UNK_C0(w) - 52 < 0) {
+        if (w->unk_C0 - 52 < 0) {
             w->unk_40 = D_800BF7D0_C03D0;
             obj->rot.y = 0.0f;
         } else {
-            obj->rot.y = func_8002D958_2E558(MGW_UNK_C0(w) * 45.0f);
+            obj->rot.y = func_8002D958_2E558(w->unk_C0 * 45.0f);
             if (w->unk_40 < D_800BF7D0_C03D0) {
                 w->unk_40 += D_800BF7A0_C03A0 * 0.2f;
                 if (D_800BF7D0_C03D0 <= w->unk_40) {
@@ -2492,7 +2480,7 @@ void func_80007790_8390(omObjData* obj) {
             vv = v3 * v3;
             ny = y + vv * ((w->unk_38 >= 0.0f) ? -35.0f : 35.0f);
             w->unk_38 += D_800BF7A8_C03A8;
-            y = STEP_FLOOR(obj, x, ny, z, y);
+            y = func_80002A28_3628(obj, x, ny, z, y);
             if (w->unk_38 != 1000.0f) {
             } else {
                 o = D_800FC7B0_FD3B0[w->unk_53];
@@ -2626,7 +2614,7 @@ void func_80007790_8390(omObjData* obj) {
                 func_8000B0E4_BCE4(obj, x, ny, z);
             }
         }
-        y = STEP_FLOOR(obj, x, ny, z, y);
+        y = func_80002A28_3628(obj, x, ny, z, y);
         if (w->unk_38 != 1000.0f) {
         } else {
             o = D_800FC7B0_FD3B0[w->unk_53];
@@ -2678,7 +2666,7 @@ void func_80007790_8390(omObjData* obj) {
             } else {
                 w->unk_38 += D_800BF7A8_C03A8 / 2.0f;
             }
-            y = STEP_FLOOR(obj, x, ny, z, y);
+            y = func_80002A28_3628(obj, x, ny, z, y);
             if (w->unk_38 != 1000.0f) {
             } else {
                 o = D_800FC7B0_FD3B0[w->unk_53];
@@ -2795,13 +2783,13 @@ void func_80007790_8390(omObjData* obj) {
                             func_8000C610_D210(w, 1);
                         }
                     }
-                    if (MGW_UNK_BC(w) < 60) {
+                    if (w->unk_BC < 60) {
                         px = x - HuMathSin(w->unk_3C) * 20.0f;
                         func_800191D4_19DD4(obj, 3, px, y, z - func_800B7890_B8490(w->unk_3C) * 20.0f, 0.0f, w->unk_3C);
                     }
-                    MGW_UNK_BC(w)++;
-                    if (MGW_UNK_BC(w) > 200) {
-                        MGW_UNK_BC(w) = 200;
+                    w->unk_BC++;
+                    if (w->unk_BC > 200) {
+                        w->unk_BC = 200;
                     }
                     if (w->unk_90 > D_800BF7C8_C03C8 || w->unk_98 > D_800BF7C8_C03C8) {
                         px = x - HuMathSin(w->unk_3C) * 20.0f;
@@ -2820,7 +2808,7 @@ void func_80007790_8390(omObjData* obj) {
                             func_8000C610_D210(w, 0);
                         }
                     }
-                    MGW_UNK_BC(w) = 0;
+                    w->unk_BC = 0;
                 }
             }
         }
@@ -3033,7 +3021,7 @@ void func_800098D0_A4D0(omObjData* obj, f32 x, f32 y, f32 z) {
     v.y = ny;
     v.z = func_800B7890_B8490(rot) * w->unk_48 + obj->trans.z;
     v.w = w->unk_64;
-    w->unk_55 = WALL_PUSH(obj, &v, -D_800BF7C0_C03C0);
+    w->unk_55 = func_80006F34_7B34(obj, &v, -D_800BF7C0_C03C0);
     if (D_800BF796_C0396 != 0 && func_8000C098_CC98(D_800FD7F4_FE3F4) == 1) {
         dx = func_800B75A8_B81A8(D_800F9D40_FA940[0].x - obj->trans.x, D_800F9D40_FA940[0].z - obj->trans.z);
         func_800191D4_19DD4(obj, 6, nx, ny, nz, 0.0f, dx + 180.0f);
