@@ -446,7 +446,7 @@ typedef struct SCDDust {
 } SCDDust; /* size = 0x18 */
 extern SCDDust* D_80110948_246828_SlotCarDerby;
 extern s32 D_8011095C_24683C_SlotCarDerby; /* the dust animation (an s16 the code reads by its low half) */
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 void InitFadeIn(s32, s32);
 s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
 s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */

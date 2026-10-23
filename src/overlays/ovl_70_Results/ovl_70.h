@@ -111,7 +111,7 @@ s32 func_8008F618_90218(void); /* fade still running */
 void InitFadeOut(s32, s32);
 void InitFadeIn(s32, s32);
 void func_800794A8_7A0A8(s32);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 s32 PlaySound(s32);
 void AdjustPlayerCoins(s32 index, s32 count);
 f32 HuMathSin(f32);

@@ -263,7 +263,7 @@ void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
 void func_8002CA14_2D614(s32);
 s32 func_8007975C_7A35C(s16 arg0, s16 arg1); /* sound for a player */
 void func_8008CE5C_8DA5C(void);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 void InitFadeIn(s32, s32);
 void func_80050E00_51A00(s32);
 void HuMemMemoryFreePerm(void* ptr);

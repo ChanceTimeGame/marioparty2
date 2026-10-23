@@ -66,7 +66,7 @@ s32 omDelPrcObj(void*);
 s32 func_8003F6F0_402F0(s16);
 void func_80067EF8_68AF8(s32);
 void func_800727F0_733F0(void);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 s32 func_80018E78_19A78(void); //get current cam index
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void func_80079E60_7AA60(void);

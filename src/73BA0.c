@@ -56,6 +56,10 @@ void func_800753D4_75FD4(s32);
 GW_PLAYER* BoardPlayerGet(s32);
 void MBPlayerMotionSet(s32 index, s16 animation, s32 unk);
 void func_8005670C_5730C(Vec*);
+s16 func_800797DC_7A3DC(s32 id, s16 player);
+s32 func_8007975C_7A35C(s16 arg0, s16 arg1);
+void func_800798F8_7A4F8(s16 arg0, s16 arg1);
+void func_800795D8_7A1D8(s16 index, s8 val);
 Process* func_80056B78_57778(Vec*, Vec*, Vec*, s32);
 
 s32 func_80072FA0_73BA0(s32 arg0) {
@@ -126,7 +130,47 @@ s16 func_80073014_73C14(u32 arg0, UnkPauseEntry* arg1) {
     return var_a1;
 }
 
+/* Plays the queued voice entries: a character voice (unk05 < 4: that player's character) or a
+   sound cycling through obj->work[0], then its volume (unk02) and pan (unk04). */
+// retail loads unk00 (lh) before unk06 for the second call's sound id (masked 2)
+#ifdef NON_MATCHING
+void func_80073124_73D24(omObjData* obj) {
+    s32 i;
+    s16 snd;
+    u8 pl;
+
+    for (i = 0; i < 6; i++) {
+        if (D_800E2070_E2C70[i].unk00 < 0) {
+            continue;
+        }
+        if (D_800E2070_E2C70[i].unk07 != 0) {
+            D_800E2070_E2C70[i].unk07--;
+            continue;
+        }
+        pl = D_800E2070_E2C70[i].unk05;
+        if (pl < 4) {
+            snd = func_800797DC_7A3DC((s16)(D_800E2070_E2C70[i].unk00 + 1), (s8)pl);
+        } else {
+            snd = func_8007975C_7A35C(D_800E2070_E2C70[i].unk06 + D_800E2070_E2C70[i].unk00 + 1, obj->work[0]);
+            obj->work[0]++;
+            if (obj->work[0] >= 4) {
+                obj->work[0] = 0;
+            }
+        }
+        if (snd >= 0) {
+            if (D_800E2070_E2C70[i].unk02 >= 0) {
+                func_800798F8_7A4F8(snd, D_800E2070_E2C70[i].unk02);
+            }
+            if (D_800E2070_E2C70[i].unk04 >= 0) {
+                func_800795D8_7A1D8(snd, D_800E2070_E2C70[i].unk04);
+            }
+        }
+        D_800E2070_E2C70[i].unk00 = -1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/73BA0", func_80073124_73D24);
+#endif
 
 omObjData* func_800732B0_73EB0(u32 arg0) {
     return func_80073328_73F28(arg0, -1, -1, -1);

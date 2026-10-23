@@ -81,7 +81,7 @@ f32 HuMathSin(f32);
 s16 LoadFormFile(s32, s32);
 void MBMotionSet(MBModel*, s16, s32);
 s32 PlaySound(s32);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 void InitFadeOut(s32, s32);
 void InitFadeIn(s32, s32);
 void ScissorSet(u8 arg0, f32 x1, f32 y1, f32 x2, f32 y2);

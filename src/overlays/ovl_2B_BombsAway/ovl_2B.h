@@ -66,7 +66,7 @@ void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
 void func_800283DC_28FDC(s16 arg0);
 void InitFadeIn(s32, s32);
 void InitFadeOut(s32, s32);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 void func_800794A8_7A0A8(s32);
 s32 func_8008F618_90218(void);
 void func_80079464_7A064(void);

@@ -289,7 +289,7 @@ extern s16 D_8011014A_26724A_ChanceTime; /* frame of the next voice */
 s16 func_80073014_73C14(u32 file, void* arg1); /* 73BA0.c: (u32, UnkPauseEntry*) */
 s16 func_800797DC_7A3DC(s32, s16);
 void func_800798F8_7A4F8(s16 arg0, s16 arg1);
-void PlayMusic(s16);
+s16 PlayMusic(s16);
 int abs(int);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void func_8006135C_61F5C(s32 player, s32 coins, s32); /* lose coins */

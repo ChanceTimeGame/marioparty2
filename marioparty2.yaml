@@ -417,6 +417,8 @@ segments:
       - [0xD3BE8, .data, 63670]
       - [0xD3D60, .data, 69950]
       - [0xD40C0, data]
+      - [0xD4150, .data, objmain]
+      - [0xD41E0, data]
       - [0xD4200, .data, 7FAE0]
       - [0xD4240, .data, 80230]
       - [0xD42A0, .data, 84FF0]

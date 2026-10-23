@@ -58,6 +58,15 @@ extern s8 D_800FD8AB_FE4AB;
 extern s8 D_800FD8B4_FE4B4;
 extern s8 D_800FD8B5_FE4B5;
 extern u16 D_801011FC_101DFC;
+#include "game/gamework.h"
+/* D_800FD8A8_FE4A8's fields 0x0E-0x11 (Unk_800FD8A8 unk0E-unk11): retail addresses these
+   through their own labels in func_80075060_75C60 and func_800751E0_75DE0 */
+extern s8 D_800FD8B6_FE4B6;
+extern s8 D_800FD8B7_FE4B7;
+extern s8 D_800FD8B8_FE4B8;
+extern s8 D_800FD8B9_FE4B9;
+extern u8 D_800CD300_CDF00[]; /* first story flag of each chapter */
+extern u8 D_800FD420_FE020[0x12];
 
 void func_80073EA0_74AA0(s32 overlay, s16 event, u16 stat) {
     OvlCallEntry* e = &D_800E20D8_E2CD8[D_800E20D4_E2CD4++];
@@ -112,7 +121,9 @@ void func_80073FE0_74BE0(void) {
     omOvlReturnEx(1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_800740AC_74CAC);
+void func_800740AC_74CAC(void) {
+    D_800E20D0_E2CD0 = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_800740B8_74CB8);
 
@@ -246,11 +257,92 @@ INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075010_75C10);
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_8007501C_75C1C);
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075060_75C60);
+/* Records player 1's board position and the story chapter reached (the highest chapter-clear
+   flag, D_800CD300_CDF00[chapter - 1] - 1) in the saved block D_800FD8A8_FE4A8. */
+void func_80075060_75C60(void) {
+    Unk_800FD8A8* p = &D_800FD8A8_FE4A8;
 
+    D_800FD8B6_FE4B6 = gPlayers[0].cur_chain_index;
+    D_800FD8B7_FE4B7 = gPlayers[0].cur_space_index;
+    if (func_80075390_75F90(0x32) != 0) {
+        D_800FD8B8_FE4B8 = 9;
+    } else {
+        if (func_80075390_75F90(0x2C) != 0) {
+            p->unk10 = 8;
+        } else if (func_80075390_75F90(0x26) != 0) {
+            p->unk10 = 7;
+        } else if (func_80075390_75F90(0x20) != 0) {
+            p->unk10 = 6;
+        } else if (func_80075390_75F90(0x1A) != 0) {
+            p->unk10 = 5;
+        } else if (func_80075390_75F90(0x15) != 0) {
+            p->unk10 = 4;
+        } else if (func_80075390_75F90(0x11) != 0) {
+            p->unk10 = 3;
+        } else if (func_80075390_75F90(0xC) != 0) {
+            p->unk10 = 2;
+        } else {
+            p->unk10 = 1;
+        }
+    }
+    p->unk11 = -1;
+}
+
+/* Puts player 1 back where func_80075060_75C60 recorded (two characters, the chapter). */
+// retail addresses every field through its own lui (no shared gPlayers / D_800FD8A8_FE4A8
+// base register); same loads and stores
+#ifdef NON_MATCHING
+void func_80075144_75D44(void) {
+    gPlayers[0].cur_chain_index = D_800FD8A8_FE4A8.unk0E;
+    gPlayers[0].cur_space_index = D_800FD8A8_FE4A8.unk0F;
+    gPlayers[0].next_chain_index = D_800FD8A8_FE4A8.unk0E;
+    gPlayers[0].next_space_index = D_800FD8A8_FE4A8.unk0F + 1;
+    gPlayers[0].character = D_800FD8A8_FE4A8.unk00;
+    gPlayers[1].character = D_800FD8A8_FE4A8.unk01;
+    D_800FD2A2_FDEA2 = D_800FD8A8_FE4A8.unk10;
+    D_800FD840_FE440 = D_800FD8A8_FE4A8.unk11;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075144_75D44);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_800751E0_75DE0);
+/* As func_80075060_75C60 from the current chapter state (D_800FD2A2_FDEA2/D_800FD840_FE440, -1
+   when unknown), then copies the block to D_800FD420_FE020. */
+void func_800751E0_75DE0(void) {
+    Unk_800FD8A8* p = &D_800FD8A8_FE4A8;
+
+    D_800FD8B6_FE4B6 = gPlayers[0].cur_chain_index;
+    D_800FD8B7_FE4B7 = gPlayers[0].cur_space_index;
+    D_800FD8B8_FE4B8 = D_800FD2A2_FDEA2;
+    D_800FD8B9_FE4B9 = D_800FD840_FE440;
+    if (D_800FD2A2_FDEA2 == -1) {
+        if (func_80075390_75F90(0x32) != 0) {
+            D_800FD8B8_FE4B8 = 9;
+        } else if (func_80075390_75F90(0x2C) != 0) {
+            p->unk10 = 8;
+        } else if (func_80075390_75F90(0x26) != 0) {
+            p->unk10 = 7;
+        } else if (func_80075390_75F90(0x20) != 0) {
+            p->unk10 = 6;
+        } else if (func_80075390_75F90(0x1A) != 0) {
+            p->unk10 = 5;
+        } else if (func_80075390_75F90(0x15) != 0) {
+            p->unk10 = 4;
+        } else if (func_80075390_75F90(0x11) != 0) {
+            p->unk10 = 3;
+        } else if (func_80075390_75F90(0xC) != 0) {
+            p->unk10 = 2;
+        } else {
+            p->unk10 = 1;
+        }
+    }
+    if (D_800FD840_FE440 == -1) {
+        p->unk11 = 0;
+    } else if (func_80075390_75F90(D_800CD300_CDF00[p->unk10 - 1] + p->unk11 - 1) == 0) {
+        p->unk11--;
+    }
+    bcopy(&D_800FD8A8_FE4A8, D_800FD420_FE020, sizeof(D_800FD8A8_FE4A8));
+}
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075354_75F54);
 
