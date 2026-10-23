@@ -584,5 +584,5 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # d1-A: units whose own .data is now C and whose rodata piece is already carved (renamed .rodata ->
 # .data): their .data becomes .cdata in the same objcopy call (objcopy renames by original name, so
 # the two do not chain), placed by the yaml's `linker_section: .cdata` lines in the blob's data half
-D1A_CDATA_UNITS := build/src/1130.c.o build/src/C8E0.c.o build/src/19BF0.c.o
+D1A_CDATA_UNITS := build/src/1130.c.o build/src/C8E0.c.o build/src/19BF0.c.o build/src/21920.c.o
 $(D1A_CDATA_UNITS): OBJCOPY = $(CROSS)objcopy --rename-section .data=.cdata
