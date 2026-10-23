@@ -2,14 +2,32 @@
 #include "game/malloc.h"
 #include "game/data.h"
 #include "process.h"
+#include "game/rsp.h"
 
 /* func_800409E0 is the boot thread (near MP3 main.c's func_800354A0_360A0); func_80040CF8 is MP1
    src/3BF30.c's func_8003B5EC (clear the frame buffers). */
 
-extern void* D_800CB040_CBC40[];
-extern u8 D_800CB04C_CBC4C[];
-extern u8 D_800CB05C_CBC5C[];
-extern s32 D_800CB0A0_CBCA0;
+/* microcode text and data in the data blob (host stand-ins) */
+extern u64 D_800D00B0_D0CB0[], D_800B99F0_BA5F0[], D_800D04D0_D10D0[], D_800BAD80_BB980[];
+extern u64 D_800D08F0_D14F0[], D_800BBF10_BCB10[], D_800D0D00_D1900[], D_800BD7D0_BE3D0[];
+extern u64 D_800D1090_D1C90[];
+
+/* .data (0xCBC40-0xCBCB0) */
+/* frame buffers (N64 RAM addresses) */
+void* D_800CB040_CBC40[3] = { (void*)0x80360000, (void*)0x80385800, (void*)0x803AB000 };
+/* thread stacks / RSP buffers (N64 RAM addresses), read by func_8001D13C_1DD3C */
+u64* D_800CB04C_CBC4C[4] = { (u64*)0x803F6000, (u64*)0x803F6400, (u64*)0x803FC400, (u64*)0x803FC400 };
+/* Layout-dependent: microcode text/data pairs and a count (1000), read as s32* by
+   D_800FCE7C_FDA7C's users (game/rsp.h) */
+void* D_800CB05C_CBC5C[17] = {
+    D_800B8660_B9260, D_800D00B0_D0CB0, D_800B99F0_BA5F0, D_800D04D0_D10D0,
+    D_800BAD80_BB980, D_800D08F0_D14F0, D_800BBF10_BCB10, D_800D0D00_D1900,
+    D_800BD7D0_BE3D0, D_800D1090_D1C90, D_800B8660_B9260, D_800D00B0_D0CB0,
+    D_800B99F0_BA5F0, D_800D04D0_D10D0, D_800BAD80_BB980, D_800D08F0_D14F0,
+    (void*)1000,
+};
+s32 D_800CB0A0_CBCA0 = 0;
+f32 D_800CB0A4_CBCA4[3] = { 0.0f, 0.0f, 0.0f }; /* read by B3B20, B3BB0, B41E0 (asm) */
 extern s32 D_800C9E60_CAA60;
 extern u32 D_800FDC6C_FE86C;
 extern s32 D_800FD848_FE448;

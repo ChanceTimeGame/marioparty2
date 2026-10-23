@@ -21,8 +21,18 @@ typedef struct MapMarkerBlink {
     /* 0x02 */ s16 idx;
 } MapMarkerBlink;
 
-extern s16 D_800CB10C_CBD0C[4];
-extern s16 D_800CB114_CBD14[4];
+/* .data (0xCBCB0-0xCBD60) */
+s32 D_800CB0B0_CBCB0[6] = { 0x000A00B5, 0x000A00B6, 0x000A00B7, 0x000A00B8, 0x000A00B9, 0x000A00BA };
+s32 D_800CB0C8_CBCC8[9] = { /* unreferenced */
+    0x000A00B2, 0x000A00AC, 0x000A00AF, 0x000A00B0, 0x000A00B1, 0x000A00AD, 0x000A00CE, 0x000A00CF, 0x000A00D0,
+};
+s16 D_800CB0EC_CBCEC[4][4] = { { 0, 2, 0, 1 }, { 0, 2, -1, 0 }, { -2, 0, 0, 1 }, { -2, 0, -1, 0 } };
+s16 D_800CB10C_CBD0C[4] = { 0x42, 0xFC, 0x42, 0xFC };
+s16 D_800CB114_CBD14[4] = { 0x1E, 0x1E, 0xD2, 0xD2 };
+s32 D_800CB11C_CBD1C[6] = { 0x000A00B5, 0x000A00B6, 0x000A00B7, 0x000A00B8, 0x000A00B9, 0x000A00BA };
+s32 D_800CB134_CBD34[7] = { 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0 };
+u8 D_800CB150 = 0; /* overlay 4E's flag (the map gives 0xCBD50-0xCBD60 to 426A0; 437E0 could own it) */
+
 extern s32 D_800DEFF0_DFBF0;
 extern s16 D_800DEFF4_DFBF4;
 extern UnkBoard6 D_800DEFF8_DFBF8[32];
@@ -55,10 +65,6 @@ extern s32 D_801027B8_1033B8;
 extern s8 D_800FDC9C_FE89C;
 extern u16 D_80101330_101F30;
 extern s16 D_800F8D12_F9912;
-extern s32 D_800CB0B0_CBCB0[];
-extern s16 D_800CB0EC_CBCEC[][4];
-extern s32 D_800CB11C_CBD1C[];
-extern s32 D_800CB134_CBD34[];
 extern u16 ContDStkTrg[4];
 extern u16 ContBtnTrg[4];
 

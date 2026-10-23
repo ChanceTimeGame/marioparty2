@@ -386,6 +386,24 @@ segments:
       - [0xB8AC0, c]
       - [0xB8FC0, c]
       - [0xB9190, data]
+      - {start: 0xC0380, type: .data, name: 1130, linker_section: .cdata}
+      - {start: 0xC03E0, type: .data, name: C8E0, linker_section: .cdata}
+      - [0xC0480, data]
+      - [0xC9470, .data, util]
+      - [0xCA5C0, .data, 19A30]
+      - {start: 0xCA670, type: .data, name: 19BF0, linker_section: .cdata}
+      - [0xCA760, .data, eeprom]
+      - [0xCA770, .data, 1D0B0]
+      - [0xCA780, .data, 20C70]
+      - {start: 0xCA850, type: .data, name: 21920, linker_section: .cdata}
+      - {start: 0xCAA50, type: .data, name: 274D0, linker_section: .cdata}
+      - {start: 0xCAC30, type: .data, name: 30560, linker_section: .cdata}
+      - {start: 0xCB950, type: .data, name: 3D6A0, linker_section: .cdata}
+      - [0xCBC40, .data, 415E0]
+      - [0xCBCB0, .data, 426A0]
+      - [0xCBD60, .data, 43E90]
+      - [0xCC880, .data, 45400]
+      - {start: 0xCC890, type: .data, name: 46250, linker_section: .cdata}
       - {start: 0xCC8D0, type: .data, name: 4ABB0, linker_section: .cdata}
       - [0xCC9F0, .data, 4D660]
       - [0xCCC90, .data, 4F650]

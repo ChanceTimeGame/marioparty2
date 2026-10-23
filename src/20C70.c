@@ -15,9 +15,21 @@ void HuMemFree(void* ptr);
 void CameraScissorSet(s16 camIndex, RectF* arg1);
 void CameraViewportSet(s16 camIndex, Vec* arg1, Vec* arg2);
 
-extern Vec D_800C9B84_CA784[];
-extern Vec D_800C9BC0_CA7C0[];
-extern RectF D_800C9BFC_CA7FC[];
+/* .data (0xCA780-0xCA850) */
+HuCamera* D_800C9B80_CA780 = NULL; /* gCameraList */
+/* viewport scale and translation for one camera, then four quarters */
+Vec D_800C9B84_CA784[5] = {
+    { 640.0f, 480.0f, 511.0f }, { 320.0f, 240.0f, 511.0f }, { 320.0f, 240.0f, 511.0f },
+    { 320.0f, 240.0f, 511.0f }, { 320.0f, 240.0f, 511.0f },
+};
+Vec D_800C9BC0_CA7C0[5] = {
+    { 640.0f, 480.0f, 511.0f }, { 320.0f, 240.0f, 511.0f }, { 960.0f, 240.0f, 511.0f },
+    { 320.0f, 720.0f, 511.0f }, { 960.0f, 720.0f, 511.0f },
+};
+RectF D_800C9BFC_CA7FC[5] = {
+    { 0.0f, 0.0f, 320.0f, 240.0f }, { 0.0f, 0.0f, 160.0f, 120.0f }, { 160.0f, 0.0f, 320.0f, 120.0f },
+    { 0.0f, 120.0f, 160.0f, 240.0f }, { 160.0f, 120.0f, 320.0f, 240.0f },
+};
 extern s16 D_800F64B2_F70B2;
 extern s16 D_800FFFD6_100BD6;
 extern u8 D_800FDBCA_FE7CA;

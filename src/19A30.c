@@ -4,8 +4,20 @@
 /* Camera count setup and the camera draw processes. Same code as Mario Party 1's
    src/engine/ovlman.c (func_800178A0, func_80017940 etc.). */
 
-extern u8 D_800C99C0_CA5C0;
-extern u8 D_800C99C1_CA5C1;
+/* .data (0xCA5C0-0xCA670) */
+u8 D_800C99C0_CA5C0 = 0; /* camera count */
+u8 D_800C99C1_CA5C1 = 0;
+/* unreferenced viewport scale/translation and scissor defaults (util has the live copies) */
+Vec D_800C99C4_CA5C4[4] = {
+    { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f },
+};
+Vec D_800C99F4_CA5F4[4] = {
+    { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f }, { 640.0f, 480.0f, 511.0f },
+};
+RectF D_800C9A24_CA624[4] = {
+    { 0.0f, 0.0f, 320.0f, 240.0f }, { 0.0f, 0.0f, 320.0f, 240.0f },
+    { 0.0f, 0.0f, 320.0f, 240.0f }, { 0.0f, 0.0f, 320.0f, 240.0f },
+};
 extern s32 D_800FA5B8_FB1B8;
 extern s32 D_800FC8F8_FD4F8[];
 

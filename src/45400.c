@@ -5,7 +5,8 @@
    of the table D_800DF4B0 is the 14th entry of); the others have no C reference and stay asm. */
 
 extern void (*D_800DF4B0_E00B0)(void);
-extern s16 D_800CBC80_CC880[7]; /* flags tested by node type 2 (MP1 D_800C4C30) */
+/* .data (0xCC880-0xCC890) */
+s16 D_800CBC80_CC880[7] = { 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C }; /* flags tested by node type 2 (MP1 D_800C4C30) */
 extern s16 D_800F8CE4_F98E4[]; /* board work (MP1 GwCommon.boardWork) */
 extern s32 D_80100028_100C28;
 s32 BoardSpaceGet(s32 index, s32 count);
