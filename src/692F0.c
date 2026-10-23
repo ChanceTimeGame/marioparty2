@@ -31,7 +31,9 @@ void func_800689A0_695A0(void);
 void func_80068A20_69620(void);
 s32 func_80068744_69344(void);
 void func_8000EA88_F688(s32);
-extern u8 D_800CCFBF_CDBBF;
+/* .data (0xCDBB0-0xCDBC0): 15 bytes no code addresses, then the flag */
+u8 D_800CCFB0_CDBB0[15] = { 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
+u8 D_800CCFBF_CDBBF = 0;
 
 s32 func_800686F0_692F0(void) {
     return ContDStkTrg[gPlayers[0].port] | (D_800FC9E0_FD5E0[gPlayers[0].port] & 0xF00);
