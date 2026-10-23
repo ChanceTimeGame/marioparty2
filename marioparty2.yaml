@@ -405,10 +405,10 @@ segments:
       - [0xCC880, .data, 45400]
       - {start: 0xCC890, type: .data, name: 46250, linker_section: .cdata}
       - {start: 0xCC8D0, type: .data, name: 4ABB0, linker_section: .cdata}
-      - [0xCC9F0, .data, 4D660]
-      - [0xCCC90, .data, 4F650]
+      - {start: 0xCC9F0, type: .data, name: 4D660, linker_section: .cdata}
+      - {start: 0xCCC90, type: .data, name: 4F650, linker_section: .cdata}
       - [0xCCCE0, .data, 50E70]
-      - [0xCCCF0, .data, 512A0]
+      - {start: 0xCCCF0, type: .data, name: 512A0, linker_section: .cdata}
       - [0xCCE00, .data, 51630]
       - [0xCCE80, .data, 54CB0]
       - [0xCD190, .data, 565E0]
@@ -461,10 +461,11 @@ segments:
       - [0xD3108, pad]
       - [0xD3110, .data, 46250]
       - [0xD3220, .data, 4ABB0]
-      - [0xD3430, data]
+      - [0xD3430, .data, 4D660]
+      - [0xD38A0, .data, 4F650]
+      - [0xD3938, .data, 512A0]
       - [0xD39B8, .data, 57150]
-      - [0xD39F0, data]
-      - [0xD3A38, .data, 58080]
+      - [0xD39F0, .data, 58080]
       - [0xD3B00, .data, 5F3B0]
       - [0xD3BE8, .data, 63670]
       - [0xD3D60, .data, 69950]

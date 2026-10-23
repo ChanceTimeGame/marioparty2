@@ -22,14 +22,15 @@ extern s16 D_800FD3A4_FDFA4[2];
 extern void* D_800FD3B4_FDFB4; /* gPlayers[4].unk_24: the fifth slot's model */
 /* .data (0xCCCF0-0xCCE00). Model file lists: a count, then the files. */
 s32 D_800CC0F0_CCCF0[] = { 7, 0x80084, 0x80084, 0x80085, 0x80088, 0x80089, 0x80087, 0x80087 };
-extern char D_800D2D98_D3998[];
-extern char D_800D2D84_D3984[];
-extern char D_800D2D6C_D396C[];
-extern char D_800D2D5C_D395C[];
-extern char D_800D2D4C_D394C[];
-extern char D_800D2D38_D3938[];
+/* .rodata (0xD3938-0xD39B8): model object names, by character, then D_800D2DA0_D39A0 below. */
+const char D_800D2D38_D3938[] = "c005_000-bmerge1";
+const char D_800D2D4C_D394C[] = "Luigi1-atama_1";
+const char D_800D2D5C_D395C[] = "c003_000-head_1";
+const char D_800D2D6C_D396C[] = "C002_000b-bmerge10_1";
+const char D_800D2D84_D3984[] = "c001_000-atama_2";
+const char D_800D2D98_D3998[] = "atama_2";
 char* D_800CC110_CCD10[] = { /* per character */
-    D_800D2D98_D3998, D_800D2D84_D3984, D_800D2D6C_D396C, D_800D2D5C_D395C, D_800D2D4C_D394C, D_800D2D38_D3938,
+    (char*)D_800D2D98_D3998, (char*)D_800D2D84_D3984, (char*)D_800D2D6C_D396C, (char*)D_800D2D5C_D395C, (char*)D_800D2D4C_D394C, (char*)D_800D2D38_D3938,
 };
 u8 D_800CC128_CCD28[] = { 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B }; /* per board: model id */
 s32 D_800CC130_CCD30[] = { 0x6, 0x80046, 0x80040, 0x8003E, 0x80041, 0x80044, 0x80073 };
@@ -43,7 +44,7 @@ s32* D_800CC1D8_CCDD8[] = { /* per board: model file list */
 };
 MBModel* D_800CC1F0_CCDF0 = NULL; /* MP1/MP3 Object* */
 omObjData* D_800CC1F4_CCDF4 = NULL;
-extern char D_800D2DA0_D39A0[];
+const char D_800D2DA0_D39A0[] = "21_kimoti_1b-atama_3";
 GW_PLAYER* BoardPlayerGet(s32 playerIndex);
 MBModel* func_80043510_44110(s32, void*);
 void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3);

@@ -4,8 +4,7 @@
 #include "game/gamemes.h"
 
 /* Board turn banners. C from MP1 src/47320.c (func_80046720 .. func_80048134). This unit's rodata
-   (the "%d" at D3924 and the u16 banner table at D3928) stays in the data blob: the C names it
-   through externs (D_800D2D24_D3924, D_800D2D28_D3928). */
+   (0xD38AC-0xD3938) is C, after 4D660's last two strings. */
 
 typedef struct unkUserData {
     s32 unk0;
@@ -60,11 +59,9 @@ extern char* D_800CC090_CCC90[]; /* MP1 D_800C4ED0 */
 extern s8 D_800CC0A8_CCCA8[];
 extern s8 D_800CC0BC_CCCBC[]; /* MP1 D_800C4EEC */
 extern u8 D_800DF7C5_E03C5;
-extern char D_800D2D24_D3924[]; /* "%d" */
 typedef struct BannerFiles {
     u16 file[8];
 } BannerFiles;
-extern BannerFiles D_800D2D28_D3928; /* character banner files 0x133-0x139 */
 s16 func_8006A608_6B208(void* mes, char* str, u8 arg2, s16 arg3, s16 arg4); /* MP1 GMesFontMesCreate */
 s16 SprCreate(s32, s32);
 s16 SprAnimRead(void*);
@@ -73,22 +70,29 @@ void SprPrioSet(s16 group, s16 member, u16 prio);
 void SprAttrSet(s16 group, s16 member, s32 attr);
 void func_8004EB58_4F758(omObjData* arg0);
 void func_8004EE40_4FA40(omObjData* obj);
+/* .rodata (0xD38A0-0xD3938): 4D660's two number formats (see 4D660.c), then this unit's. */
+const char D_800D2CA0_D38A0[] = "\003%2d\010";
+const char D_800D2CA8_D38A8[] = "%2d";
+const char D_800D2CAC_D38AC[] = " ITEM  GAME ";
+const char D_800D2CBC_D38BC[] = " BATTLE GAME";
+const char D_800D2CCC_D38CC[] = "1PLAYER GAME";
+const char D_800D2CDC_D38DC[] = " 2  VS  2  GAME";
+const char D_800D2CEC_D38EC[] = " 1  VS  3  GAME";
+const char D_800D2CFC_D38FC[] = "4=PLAYER GAME";
+const char D_800D2D0C_D390C[] = "TURN";
+const char D_800D2D14_D3914[] = "TURNS";
+const char D_800D2D1C_D391C[] = "LAST";
+const char D_800D2D24_D3924[] = "%d";
+const BannerFiles D_800D2D28_D3928 = { /* character banner files */
+    { 0x133, 0x134, 0x135, 0x136, 0x137, 0x138, 0x138, 0x139 },
+};
 /* .data (0xCCC90-0xCCCE0) */
-extern char D_800D2CFC_D38FC[];
-extern char D_800D2CEC_D38EC[];
-extern char D_800D2CDC_D38DC[];
-extern char D_800D2CCC_D38CC[];
-extern char D_800D2CBC_D38BC[];
-extern char D_800D2CAC_D38AC[];
-extern char D_800D2D1C_D391C[];
-extern char D_800D2D14_D3914[];
-extern char D_800D2D0C_D390C[];
 char* D_800CC090_CCC90[] = {
-    D_800D2CFC_D38FC, D_800D2CEC_D38EC, D_800D2CDC_D38DC,
-    D_800D2CCC_D38CC, D_800D2CBC_D38BC, D_800D2CAC_D38AC,
+    (char*)D_800D2CFC_D38FC, (char*)D_800D2CEC_D38EC, (char*)D_800D2CDC_D38DC,
+    (char*)D_800D2CCC_D38CC, (char*)D_800D2CBC_D38BC, (char*)D_800D2CAC_D38AC,
 };
 s8 D_800CC0A8_CCCA8[] = { 13, 15, 15, 12, 12, 12 }; /* characters in each D_800CC090_CCC90 text */
-char* D_800CC0B0_CCCB0[] = { D_800D2D1C_D391C, D_800D2D14_D3914, D_800D2D0C_D390C };
+char* D_800CC0B0_CCCB0[] = { (char*)D_800D2D1C_D391C, (char*)D_800D2D14_D3914, (char*)D_800D2D0C_D390C };
 s8 D_800CC0BC_CCCBC[] = { -6, 0, 0, 0, 0, 0 };
 Vec2s D_800CC0C4_CCCC4[] = { { 80, 88 }, { 240, 88 }, { 155, 88 }, { 104, 88 }, { 216, 88 }, { 640, 480 } };
 

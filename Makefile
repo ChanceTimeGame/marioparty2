@@ -295,7 +295,7 @@ B3E_O0_LIB_UNITS := build/src/936F0.c.o build/src/93890.c.o
 $(B3E_O0_LIB_UNITS): CFLAGS = -O0 -g -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
 $(B3E_O0_LIB_UNITS): CPPFLAGS = -I include/lib2.0I -I include/lib2.0I/PR -I include -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2 -D_LANGUAGE_C
 $(B3E_O0_LIB_UNITS): export VR4300MUL := ON
-# carve-58080: 58080's rodata (D3A38-D3B00; the head until h1-D) carved out of the data blob. KMC as gives
+# carve-58080: 58080's rodata (D39F0-D3B00 since h1-R; D3A38-D3B00 before) carved out of the data blob. KMC as gives
 # .rodata 16-byte alignment and padding once it pools an li.d literal, so the object emits 0x70
 # bytes for retail's 0x68: tools/trim_section.py drops the zero tail (SUBALIGN(8) places it)
 C58080_CARVED := build/src/58080.c.o
@@ -310,7 +310,7 @@ $(C58080_CARVED): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -c -o $@ $<
 	@$(STRIP) $@ -N dummy-symbol-name
-	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0xC8
+	$(V)$(PYTHON) tools/trim_section.py $@ .rodata 0x110
 	$(V)$(OBJCOPY) --rename-section .rodata=.data $@
 # pilot: units made fully C by the fresh-decompilation pilot, their rodata carved
 PILOT_CARVED := build/src/459D0.c.o build/src/46250.c.o build/src/4ABB0.c.o build/src/80230.c.o
@@ -602,3 +602,13 @@ $(D1A_GFX_UNITS): CFLAGS_CHECK += -m32
 # The rodata half's entry stays `[start, .data, <unit>]`.
 D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o build/src/69950.c.o build/src/objmain.c.o build/src/80230.c.o build/src/84FF0.c.o build/src/9A210.c.o build/src/B14D0.c.o
 $(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
+
+# h1-R: rodata of 4D660 (D3430-D38A0), 4F650 (D38A0-D3938: it also holds 4D660's last two strings,
+# since SUBALIGN(8) cannot start a piece at 0xD38AC) and 512A0 (D3938-D39B8) carved; their C .data
+# becomes .cdata (yaml data-half entries linker_section .cdata), as the d1 lists do. 58080's piece
+# now starts at D39F0 (its trim size in the carve-58080 block is 0x110)
+H1R_CARVED := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o
+CARVED_RODATA_UNITS += $(H1R_CARVED)
+$(H1R_CARVED): RODATA_AS_DATA = 1
+H1R_CDATA_UNITS := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o
+$(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata

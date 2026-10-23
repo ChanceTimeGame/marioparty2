@@ -86,7 +86,7 @@ extern GW_PLAYER gPlayers[];
 
 /* Board players, sprites, effects and pause menu helpers. C from MP1 src/4E530.c, src/51200.c,
    src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c, the rest decompiled fresh (h1-D).
-   The unit's whole rodata (D3A38-D3B00) is carved out of the data blob. */
+   The unit's whole rodata (D39F0-D3B00) is carved out of the data blob. */
 
 #define CUR_PLAYER -1
 #ifndef M_PI
@@ -248,22 +248,23 @@ typedef struct MBGuideData {
 /* .data (0xCD1F0-0xCD580) */
 s32 D_800CC5F0_CD1F0 = 25; /* window colour (u8 argument) */
 s32 D_800CC5F4_CD1F4 = 25;
-extern char D_800D2DF0_D39F0[];
-extern char D_800D2DF4_D39F4[];
-extern char D_800D2DF8_D39F8[];
-extern char D_800D2DFC_D39FC[];
-extern char D_800D2E00_D3A00[];
-extern char D_800D2E04_D3A04[];
-extern char D_800D2E08_D3A08[];
-extern char D_800D2E10_D3A10[];
-extern char D_800D2E18_D3A18[];
-extern char D_800D2E20_D3A20[];
-extern char D_800D2E28_D3A28[];
-extern char D_800D2E30_D3A30[];
+/* .rodata (0xD39F0-0xD3A38): character names, message codes then ASCII */
+const char D_800D2DF0_D39F0[] = "\030\005";
+const char D_800D2DF4_D39F4[] = "\030\004";
+const char D_800D2DF8_D39F8[] = "\030\003";
+const char D_800D2DFC_D39FC[] = "\030\002";
+const char D_800D2E00_D3A00[] = "\030\001";
+const char D_800D2E04_D3A04[] = "\030";
+const char D_800D2E08_D3A08[] = "DK    ";
+const char D_800D2E10_D3A10[] = "Wario ";
+const char D_800D2E18_D3A18[] = "Yoshi ";
+const char D_800D2E20_D3A20[] = "Peach ";
+const char D_800D2E28_D3A28[] = "Luigi ";
+const char D_800D2E30_D3A30[] = "Mario ";
 /* Character names, by GW_PLAYER.character: message codes, then ASCII (overlays index the first six). */
 char* D_800CC5F8[] = {
-    D_800D2E04_D3A04, D_800D2E00_D3A00, D_800D2DFC_D39FC, D_800D2DF8_D39F8, D_800D2DF4_D39F4, D_800D2DF0_D39F0,
-    D_800D2E30_D3A30, D_800D2E28_D3A28, D_800D2E20_D3A20, D_800D2E18_D3A18, D_800D2E10_D3A10, D_800D2E08_D3A08,
+    (char*)D_800D2E04_D3A04, (char*)D_800D2E00_D3A00, (char*)D_800D2DFC_D39FC, (char*)D_800D2DF8_D39F8, (char*)D_800D2DF4_D39F4, (char*)D_800D2DF0_D39F0,
+    (char*)D_800D2E30_D3A30, (char*)D_800D2E28_D3A28, (char*)D_800D2E20_D3A20, (char*)D_800D2E18_D3A18, (char*)D_800D2E10_D3A10, (char*)D_800D2E08_D3A08,
 };
 omObjData* D_800CC628_CD228 = NULL;
 s32 D_800CC62C_CD22C = -1;
