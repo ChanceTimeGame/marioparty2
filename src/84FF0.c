@@ -79,6 +79,16 @@ extern u8 D_800CDA98_CE698[];
 extern u8* D_800CDAB0_CE6B0[];
 extern u8 D_800ED8E6_EE4E6;
 extern u8 D_801013FA_101FFA; /* tab width */
+extern Vec D_800FD474_FE074; /* CRot */
+/* text-window corner masks (MP1 TWMask D_800C6034): a for the left byte, b for the right */
+typedef struct TWMask {
+    u8 a;
+    u8 b;
+} TWMask;
+extern TWMask D_800CDA90_CE690[4];
+f32 func_800B7890_B8490(f32); /* cos */
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void func_80021198_21D98(s16 index, u16 arg1);
 
 void func_800873D8_87FD8(omObjData* obj);
 s32 func_800877FC_883FC(omObjData* obj);
@@ -1022,7 +1032,128 @@ void func_80087794_88394(omObjData* obj) {
     }
 }
 
+// MP1 func_8006C058 (itself NON_MATCHING upstream: f2/f6 for the scale step, obj->model load order)
+#ifdef NON_MATCHING
+s32 func_800877FC_883FC(omObjData* obj) {
+    Unk6C470Work* w = obj->unk_50;
+    Unk6C470Part* p;
+    s32 count;
+    f32 grow;
+    f32 shrink;
+    f32 maxScale;
+    f32 ang;
+    f32 c;
+    f32 s;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 sc;
+    f32 t;
+    s32 i;
+    s16 mdl;
+
+    count = 0;
+    grow = 4.0f / w->unk28A;
+    shrink = -1.6f / w->unk28A;
+    maxScale = 2.0f * w->unk28E;
+    ang = D_800FD474_FE074.y + 90.0f;
+    p = w->parts;
+    if (ang > 360.0f) {
+        ang -= 360.0f;
+    }
+    c = HuMathSin(ang);
+    s = func_800B7890_B8490(ang);
+    for (i = 3; i < 23; p++, i++) {
+        if (i == 13) {
+            p = w->parts2;
+        }
+        if (p->state == 0) {
+            continue;
+        }
+        mdl = obj->model[i];
+        count++;
+        switch (p->state) {
+            case 1:
+                if (p->timer != 0) {
+                    p->timer--;
+                    break;
+                }
+                p->state = 2;
+                p->timer = w->unk28A;
+                func_800297E8_2A3E8(mdl, p->scale, p->scale, p->scale);
+                y = HuMathSin(p->angle) * p->radius;
+                x = y * c;
+                z = y * s;
+                y = func_800B7890_B8490(p->angle) * p->radius;
+                x += p->x;
+                y += p->y;
+                z += p->z;
+                func_80029714_2A314(mdl, x, y, z);
+                func_800298A4_2A4A4(mdl, 4, 0);
+                if (i == 3) {
+                    func_800298A4_2A4A4(obj->model[2], 4, 0);
+                    func_80029714_2A314(obj->model[2], x + c * 10.0f, y - 10.0f, z + s * 10.0f);
+                    func_80021160_21D60(w->sprites[2], 4, 4);
+                }
+                break;
+            case 2:
+                if (p->timer != 0 && p->scale < maxScale) {
+                    sc = grow + p->scale;
+                    goto update;
+                }
+                p->state = 3;
+                break;
+            case 3:
+                if (p->timer != 0) {
+                    sc = shrink + p->scale;
+            update:
+                p->scale = sc;
+                func_800297E8_2A3E8(mdl, sc, sc, sc);
+                x = w->unk10 - p->x;
+                y = w->unk14 - p->y;
+                z = w->unk18 - p->z;
+                t = p->timer;
+                x /= t;
+                y /= t;
+                z /= t;
+                p->x = x + p->x;
+                p->y = y + p->y;
+                p->z = z + p->z;
+                y = HuMathSin(p->angle) * p->radius;
+                x = y * c;
+                z = y * s;
+                y = func_800B7890_B8490(p->angle) * p->radius;
+                x += p->x;
+                y += p->y;
+                z += p->z;
+                func_80029714_2A314(mdl, x, y, z);
+                if (i == 3) {
+                    func_80029714_2A314(obj->model[2], x + c * 10.0f, y - 10.0f, z + s * 10.0f);
+                    func_80021198_21D98(w->sprites[2], p->timer % 8);
+                }
+                p->radius -= p->radius / p->timer;
+                p->angle += 450.0f / w->unk28A;
+                if (p->angle > 360.0f) {
+                    p->angle -= 360.0f;
+                } else if (p->angle < 0.0f) {
+                    p->angle += 360.0f;
+                }
+                p->timer--;
+                } else {
+                    p->state = 0;
+                    func_800298A4_2A4A4(mdl, 4, 4);
+                    if (i < 13) {
+                        PlaySound(9);
+                    }
+                }
+                break;
+        }
+    }
+    return count;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_800877FC_883FC);
+#endif
 
 void func_80087D4C_8894C(omObjData* obj) {
     Unk6C470Work* w = obj->unk_50;
@@ -1510,7 +1641,37 @@ s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_800888A8_894A8);
 #endif
 
+// MP1 func_8006D650 (NON_MATCHING upstream: retail recomputes (w - 4) / 2 for every store)
+#ifdef NON_MATCHING
+void func_80088F44_89B44(u8* mask, s16 w, s16 h) {
+    s16 i;
+    s32 top;
+    s32 bot;
+    s32 sw0;
+    s32 sw1;
+    u8* m0;
+    u8* m1;
+
+    for (i = 0; i < 4; i++) {
+        top = (i * w) / 2;
+        m0 = &D_800CDA90_CE690[i].a;
+        mask[top] &= *m0;
+        m1 = &D_800CDA90_CE690[i].b;
+        mask[top + 1] &= *m1;
+        bot = ((h - i - 1) * w) / 2;
+        mask[bot] &= *m0;
+        mask[bot + 1] &= *m1;
+        sw0 = (*m0 >> 4) | (*m0 << 4);
+        sw1 = (*m1 >> 4) | (*m1 << 4);
+        mask[(w - 4) / 2 + top] &= sw1;
+        mask[(w - 4) / 2 + top + 1] &= sw0;
+        mask[(w - 4) / 2 + bot] &= sw1;
+        mask[(w - 4) / 2 + bot + 1] &= sw0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/84FF0", func_80088F44_89B44);
+#endif
 
 s16 func_8008925C_89E5C(u8* str);
 
