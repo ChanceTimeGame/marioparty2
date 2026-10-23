@@ -1,12 +1,13 @@
 #include "common.h"
 #include "game/malloc.h"
 #include "game/board.h"
+#include "game/gamework.h"
 
 /* Board label windows, player swap and item helpers. C from MP1 src/467E0.c (func_80045CE4 ..
    func_80045E6C), src/46AE0.c (func_80045EE0 .. func_800466C0), src/3CED0.c (func_8003D20C) and MP3
    ovl_80_shared_board F5E80.c (MBItem*); the rest have no reference and stay asm.
-   func_8004CC7C_4D87C (MP1 func_80045D84) stays asm: its "%2d" string is this unit's rodata (D38A0),
-   which cannot be carved while func_8004E4FC_4F0FC (no reference) uses D38A8. */
+   This unit's rodata (the strings at D38A0 and D38A8) stays in the data blob: the C names it through
+   externs. */
 
 typedef struct {
     /* 0x00 */ u8 type;
@@ -18,7 +19,48 @@ typedef struct {
     /* 0x10 */ char* extra;
 } LabelWin;
 
+typedef struct {
+    /* 0x00 */ u8* str;
+    /* 0x04 */ s16 len;
+} LabelDef;
+
+extern LabelDef D_800CBDF0_CC9F0[]; /* label texts per language (GW_COMMON unk01) */
+extern LabelDef D_800CBE90_CCA90[];
+extern LabelDef D_800CBF30_CCB30[];
+extern LabelDef D_800CBF98_CCB98[];
+extern char D_800D2CA0_D38A0[]; /* "\x03%2d\x08" */
+extern s16 D_8010002A_100C2A;
+s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
+void func_80089308_89F08(s16 win_id, char* arg1, s8 arg2); /* definition: u32 arg1 (host: a pointer) */
+void func_80089A7C_8A67C(s16, s16);
+void func_80089B2C_8A72C(s16, s16);
+void func_8008D4DC_8E0DC(u8* arg0, u8* arg1);
+void func_80089A48_8A648(s16 winId, s8 arg1);
+void func_80089284_89E84(s16, s32, s32);
+void func_8004CC14_4D814(omObjData* obj);
 extern s16 D_800DF710_E0310;
+extern char D_800D2CA8_D38A8[]; /* "%2d" */
+extern s32 D_80100028_100C28;
+void func_8004CA14_4D614(s32 player, s32 coins);
+void func_8004CA34_4D634(s32, s32);
+void func_800614B4_620B4(s32, s32);
+s16 func_800797DC_7A3DC(s32, s16);
+s32 func_80046D2C_4792C(s32);
+void func_8004655C_4715C(s32);
+void func_8005670C_5730C(Vec*);
+Process* func_80056B78_57778(Vec* arg0, Vec* arg1, Vec* arg2, s32 arg3);
+void MBKSuitMotionSet(s16 arg0, s32 arg1);
+void func_8004E89C_4F49C(void);
+extern s32 (*D_800CC010_CCC10[])(void); /* item use handlers, by item */
+void MBStatusItemDispSetAll(s32 arg0);
+s32 PlayerIsCPU(s16);
+void func_80042B38_43738(s32);
+void func_80060210_60E10(s32);
+s32 func_800609D8_615D8(void);
+s32 func_8006286C_6346C(s32 player);
+void func_80067C6C_6886C(s32 arg0);
+void MBItemDescExec(s32 arg0);
+extern s16 D_800F8D16_F9916; /* board work word 0x19 */
 extern s16 D_800DF712_E0312;
 extern void (*MBItemSubFunctions[])(void);
 
@@ -88,7 +130,37 @@ extern s32 D_800CC044_CCC44;
 extern s32 D_800CC048_CCC48;
 
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004CA60_4D660);
+/* MP1 func_80045BE0 (src/467E0.c): MP2 picks the label table by language. */
+void func_8004CA60_4D660(LabelWin* w) {
+    LabelDef* def;
+
+    switch (D_800F8C60.unk01) {
+    case 0:
+    default:
+        def = &D_800CBDF0_CC9F0[w->type];
+        break;
+    case 2:
+        def = &D_800CBE90_CCA90[w->type];
+        break;
+    case 3:
+        def = &D_800CBF30_CCB30[w->type];
+        break;
+    case 4:
+        def = &D_800CBF98_CCB98[w->type];
+        break;
+    }
+    w->win = func_800888A8_894A8(160 - (def->len * 11 + 16) / 2, w->y, def->len * 11 + 16, 20, 0, 0);
+    if (w->extra != NULL) {
+        func_80089308_89F08(w->win, w->extra, 0);
+    }
+    func_80089A7C_8A67C(w->win, 5);
+    func_80089B2C_8A72C(w->win, 0);
+    w->str = HuMemMemoryAllocTemp(def->len * 2 + 1);
+    func_8008D4DC_8E0DC(w->str, def->str);
+    func_80089A48_8A648(w->win, 0);
+    func_80089284_89E84(w->win, 0, 0x20000);
+    func_800890CC_89CCC(w->win, (s32)w->str, -1, -1); /* host: a pointer in an s32 argument */
+}
 
 void func_8004CBDC_4D7DC(LabelWin* w) {
     func_8008CCA8_8D8A8(w->win);
@@ -108,7 +180,32 @@ void func_8004CC14_4D814(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004CC7C_4D87C);
+/* MP1 func_80045D84 (src/467E0.c; s16 type, s16 y, s8 mode there): none for player 4. Host: returns
+   the work pointer as s32. */
+s32 func_8004CC7C_4D87C(s32 type, s32 y, s32 mode) {
+    LabelWin* w;
+
+    if (GwSystem.current_player_index == 4) {
+        return 0;
+    }
+    w = HuMemMemoryAllocTemp(sizeof(LabelWin));
+    if (w != NULL) {
+        w->type = type;
+        w->y = y;
+        w->mode = mode;
+        w->obj = omAddObj(0x100, 0, 0, -1, func_8004CC14_4D814);
+        w->obj->unk_50 = w;
+        omSetStatBit(w->obj, 0x80);
+        w->win = -1;
+        if ((s16)type == 6) {
+            w->extra = HuMemMemoryAllocTemp(8);
+            sprintf(w->extra, D_800D2CA0_D38A0, D_8010002A_100C2A);
+        } else {
+            w->extra = NULL;
+        }
+    }
+    return (s32)w;
+}
 
 void MBHelpWinKill(s32 arg0) {
     LabelWin* w = (LabelWin*)arg0;
@@ -132,7 +229,9 @@ void func_8004CDE0_4D9E0(void) {
     D_800DF712_E0312 = -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004CDF8_4D9F8);
+s32 func_8004CDF8_4D9F8(s16 a, s16 b) {
+    return a != b;
+}
 
 void func_8004CE08_4DA08(s16 a, s16 b) {
     if (b == GetCurrentPlayerIndex()) {
@@ -349,7 +448,9 @@ void func_8004D5B0_4E1B0(void) {
 
 INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D600_4E200);
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D60C_4E20C);
+void func_8004D60C_4E20C(s32 index, void (*fn)(void)) {
+    MBItemSubFunctions[index] = fn;
+}
 
 INCLUDE_ASM("asm/nonmatchings/4D660", func_8004D620_4E220);
 
@@ -401,7 +502,74 @@ void func_8004DBA8_4E7A8(void) {
     }
 }
 
+/* NON_MATCHING: the order of the pad pointer's address sum (masked 2). */
+#ifdef NON_MATCHING
+/* Item menu process (func_8004DE7C_4EA7C): A or a CPU uses the item, Z describes it, B closes. */
+void func_8004DC0C_4E80C(void) {
+    s32 player = (s32)HuPrcCurrentGet()->user_data;
+    s32 port = gPlayers[player].port;
+    u16* pad;
+
+    func_80060210_60E10(0x19);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    MBStatusItemDispSetAll(1);
+    func_80060210_60E10(0x1A);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    func_8004DB1C_4E71C();
+    pad = &ContDStkTrg[port];
+    while (1) {
+        if ((*pad & 0x8000) || PlayerIsCPU(player)) {
+            func_8004DBA8_4E7A8();
+            if (D_800CC010_CCC10[gPlayers[player].item]() != 0) {
+                break;
+            }
+            func_8004DB1C_4E71C();
+        }
+        if (*pad & 0x4000) {
+            break;
+        }
+        if (*pad & 8) {
+            func_8004DBA8_4E7A8();
+            MBItemDescExec(player);
+            func_8004DB1C_4E71C();
+        }
+        if (*pad & 0x10) {
+            func_8004DBA8_4E7A8();
+            func_80067C6C_6886C(port);
+            func_8004DB1C_4E71C();
+            D_800F851A_F911A = 1;
+            func_80078EC8_79AC8();
+        }
+        if (*pad & 0x2000) {
+            func_8004DBA8_4E7A8();
+            func_80042B38_43738(port);
+            func_8004DB1C_4E71C();
+            D_800F851A_F911A = 1;
+            func_80078EC8_79AC8();
+        }
+        HuPrcVSleep();
+    }
+    func_8004DBA8_4E7A8();
+    if (func_8006286C_6346C(0) != 0) {
+        func_80060210_60E10(0x19);
+        while (func_800609D8_615D8() != 0) {
+            HuPrcVSleep();
+        }
+        MBStatusItemDispSetAll(0);
+        func_80060210_60E10(0x1A);
+        while (func_800609D8_615D8() != 0) {
+            HuPrcVSleep();
+        }
+    }
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/4D660", func_8004DC0C_4E80C);
+#endif
 
 void func_8004DE7C_4EA7C(s32 arg0) {
     Process* cur;
@@ -424,7 +592,48 @@ void func_8004DE7C_4EA7C(s32 arg0) {
     func_80064F1C_65B1C();
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004DF3C_4EB3C);
+/* Item view process (func_8004E10C_4ED0C): Z describes the item, B closes. */
+void func_8004DF3C_4EB3C(void) {
+    s32 player = (s32)HuPrcCurrentGet()->user_data;
+    u8 port = gPlayers[player].port;
+
+    func_80060210_60E10(0x19);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    MBStatusItemDispSetAll(1);
+    func_80060210_60E10(0x1A);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    D_800CC03C_CCC3C = func_8004CC7C_4D87C(4, 0xA0, 0);
+    D_800CC048_CCC48 = func_8004CC7C_4D87C(0xF, 0xAE, 0);
+    while (1) {
+        if (ContDStkTrg[port] & 0x4000) {
+            break;
+        }
+        if (ContDStkTrg[port] & 8) {
+            MBHelpWinKill(D_800CC03C_CCC3C);
+            MBHelpWinKill(D_800CC048_CCC48);
+            MBItemDescExec(player);
+            D_800CC03C_CCC3C = func_8004CC7C_4D87C(4, 0xA0, 0);
+            D_800CC048_CCC48 = func_8004CC7C_4D87C(0xF, 0xAE, 0);
+        }
+        HuPrcVSleep();
+    }
+    MBHelpWinKill(D_800CC03C_CCC3C);
+    MBHelpWinKill(D_800CC048_CCC48);
+    func_80060210_60E10(0x19);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    MBStatusItemDispSetAll(0);
+    func_80060210_60E10(0x1A);
+    while (func_800609D8_615D8() != 0) {
+        HuPrcVSleep();
+    }
+    omDelPrcObj(NULL);
+}
 
 void func_8004E10C_4ED0C(void* arg0) {
     Process* cur;
@@ -511,7 +720,93 @@ void MBItemDescExec(s32 arg0) {
     HuPrcChildWatch();
 }
 
+/* NON_MATCHING: register allocation; retail rebuilds the 0x18 text code per store (masked 16). */
+#ifdef NON_MATCHING
+/* Koopa suit: take up to 20 coins from every other player on the current player's space. */
+void func_8004E4FC_4F0FC(void) {
+    s8 targets[4];
+    Vec dir;
+    char str0[16];
+    char str1[16];
+    char str2[16];
+    s32 cur;
+    GW_PLAYER* player;
+    s32 count;
+    s32 i;
+    s32 coins;
+    s32 total;
+    s32 suit;
+
+    cur = GwSystem.current_player_index;
+    player = BoardPlayerGet(-1);
+    if (gPlayers[cur].turn_status != 0) {
+        count = 0;
+        for (i = 0; i < 4; i++) {
+            if (i == cur) {
+                continue;
+            }
+            if (GetAbsSpaceIndexFromChainSpaceIndex(gPlayers[cur].cur_chain_index, gPlayers[cur].cur_space_index) ==
+                GetAbsSpaceIndexFromChainSpaceIndex(gPlayers[i].cur_chain_index, gPlayers[i].cur_space_index)) {
+                targets[count++] = i;
+            }
+        }
+        if (count != 0) {
+            suit = func_80046D2C_4792C(cur);
+            MBKSuitMotionSet(-1, 2);
+            func_8005670C_5730C(&dir);
+            func_80056B78_57778(&((MBModel*)player->unk_24)->rot, &dir, &((MBModel*)player->unk_24)->rot, 8);
+            HuPrcSleep(8);
+            total = 0;
+            for (i = 0; i < count;) {
+                if (gPlayers[targets[i]].coins != 0) {
+                    coins = 20;
+                    if (gPlayers[targets[i]].coins < 20) {
+                        coins = gPlayers[targets[i]].coins;
+                    }
+                    str0[0] = 0x18;
+                    str0[1] = gPlayers[targets[i]].character;
+                    str0[2] = 0;
+                    sprintf(str1, D_800D2CA8_D38A8, coins);
+                    str2[0] = 0x18;
+                    str2[1] = gPlayers[cur].character;
+                    str2[2] = 0;
+                    func_80056368_56F68(-1, 0x1E7, (s32)str0, (s32)str1, (s32)str2, 0, 0);
+                    MBDlgWinClose();
+                    total += coins;
+                    func_80056168_56D68();
+                    func_800797DC_7A3DC(0xFC, targets[i]);
+                    func_8004CA14_4D614(targets[i], -coins);
+                    func_800614B4_620B4(targets[i], -coins);
+                    HuPrcSleep(30);
+                    i++;
+                } else {
+                    str0[0] = 0x18;
+                    str0[1] = gPlayers[targets[i]].character;
+                    str0[2] = 0;
+                    func_80056368_56F68(-1, 0x1E8, (s32)str0, 0, 0, 0, 0);
+                    i++;
+                    MBDlgWinClose();
+                    func_80056168_56D68();
+                }
+            }
+            if (total != 0) {
+                func_8004CA34_4D634(cur, total);
+                func_800614B4_620B4(cur, total);
+                HuPrcSleep(30);
+            }
+            if (suit != 0) {
+                func_8004655C_4715C(GwSystem.current_player_index);
+            }
+            MBKSuitMotionSet(0, 2);
+        }
+    }
+    if (D_80100028_100C28 == 0) {
+        func_8004E89C_4F49C();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/4D660", func_8004E4FC_4F0FC);
+#endif
 
 void func_8004E89C_4F49C(void) {
     s32 i = GwSystem.current_player_index;
@@ -530,7 +825,19 @@ void func_8004E928_4F528(void) {
     MBItemSubFunctions[9]();
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004E94C_4F54C);
+s32 func_8004E94C_4F54C(void) {
+    s32 i;
+
+    if (D_800F8D16_F9916 != 0) {
+        return 1;
+    }
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].item == 3) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void func_8004E9A8_4F5A8(void) {
     MBItemSubFunctions[10]();
@@ -540,7 +847,11 @@ void func_8004E9CC_4F5CC(void) {
     MBItemSubFunctions[12]();
 }
 
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004E9F0_4F5F0);
+void func_8004E9F0_4F5F0(void) {
+    if (GwSystem.current_player_index == 4) {
+        MBItemSubFunctions[11]();
+    }
+}
 
 void func_8004EA28_4F628(void) {
     MBItemSubFunctions[13]();
