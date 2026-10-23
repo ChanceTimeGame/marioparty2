@@ -12,12 +12,62 @@ s32 HuGetPadInserted(s16);
 
 
 extern u8 D_800F8CD8[];
+extern u8 D_800FD420_FE020[0x12];
+void _SetFlag(s32 input);
 
+/* MP3 GWInit: clear the common game work (save version 5) and the two other saved blocks */
+// retail stores coinNum/unk74/unk76/unk77 through D_800F8C60's own address, not the bzero
+// pointer's register; and adds gw + i * 8 the other way round (masked 10). Same stores.
+#ifdef NON_MATCHING
+void func_80067D90_68990(void) {
+    GW_COMMON* gw = &D_800F8C60;
+    s32 i;
+    s32 j;
+
+    bzero(gw, sizeof(D_800F8C60));
+    gw->unk0 = 5;
+    D_800F8C60.coinNum = 0;
+    D_800F8C60.unk74 = 0;
+    D_800F8C60.unk76 = -1;
+    D_800F8C60.unk77 = 0;
+    _SetFlag(2);
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < 6; j++) {
+            /* each board record: u16 play count and flags, then a u8 count per character */
+            ((u8*)gw->boardRecord[i])[j + 2] = 0;
+        }
+        gw->boardRecord[i][0] = 0;
+    }
+    GwSystem.current_board_index = 0;
+    GwSystem.chosenMinigameIndex = 0;
+    GwSystem.current_game_length = 0;
+    bzero(&D_800FD8A8_FE4A8, sizeof(D_800FD8A8_FE4A8));
+    bzero(D_800FD420_FE020, 0x12);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/68990", func_80067D90_68990);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/68990", func_80067E6C_68A6C);
+/* MP3 GWMgNoSet */
+void func_80067E6C_68A6C(s16 mgNo) {
+    GwSystem.chosenMinigameIndex = mgNo;
+}
 
-INCLUDE_ASM("asm/nonmatchings/68990", GWMgBitGet);
+/* MP3 GWMgBitGet: a negative bitPos means the current minigame (1-based) */
+void GWMgBitGet(s16 bitPos, s16* byteIdx, s16* bitIdx) {
+    if (bitPos < 0 && GwSystem.chosenMinigameIndex > 0) {
+        bitPos = GwSystem.chosenMinigameIndex - 1;
+    } else {
+        if (bitPos < 0) {
+            bitPos = 0;
+        } else {
+            bitPos = bitPos;
+        }
+    }
+
+    *byteIdx = bitPos / 8;
+    *bitIdx = bitPos % 8;
+}
 
 void func_80067EF8_68AF8(s32 arg0) {
     s16 var0;
@@ -108,7 +158,20 @@ void func_80068150_68D50(s16 index) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/68990", func_800681D8_68DD8);
+/* MP3 GWCharPlayNumInc: count a play of character chr on board index (capped at 99) */
+void func_800681D8_68DD8(s16 index, s16 chr) {
+    u8* rec = (u8*)func_800680F8_68CF8(index);
+
+    if (index < 0) {
+        index = GwSystem.current_board_index;
+    }
+    if (index < 8) {
+        rec += chr;
+        if (rec[2] < 99) {
+            rec[2]++;
+        }
+    }
+}
 
 s32 func_80068268_68E68(s16 index, u16 param_2) {
     u16 *ptr;
@@ -207,4 +270,7 @@ void GWContErrorSet(void) {
     D_800E2040_E2C40 = FALSE;
 }
 
-INCLUDE_ASM("asm/nonmatchings/68990", func_80068448_69048);
+/* MP3 GWContErrorGet */
+s32 func_80068448_69048(void) {
+    return D_800E2040_E2C40;
+}

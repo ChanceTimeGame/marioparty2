@@ -14,9 +14,10 @@ typedef struct GW_COMMON {
     /* 0x2E */ u16 boardRecord[8][4]; /* MP1 boardRecord */
     /* 0x6E */ char unk6E[2];
     /* 0x70 */ s32 coinNum; /* MP1 coinNum */
-    /* 0x74 */ char unk74[2];
+    /* 0x74 */ s16 unk74;
     /* 0x76 */ s8 unk76;
-    /* 0x77 */ char unk77[0x4D];
+    /* 0x77 */ u8 unk77;
+    /* 0x78 */ char unk78[0x4C];
 } GW_COMMON; /* size = 0xC4 */
 
 extern GW_COMMON D_800F8C60; /* GwCommon */
