@@ -10,9 +10,6 @@ extern u8 D_800F851A_F911A; /* board window/marker busy flag */
 extern s8 D_800CD41D_CE01D;
 extern s16 D_800F64B0_F70B0;
 extern s16 D_800FD2A6_FDEA6;
-extern u8 D_800CC8D0_CD4D0[][6]; /* player model per board and character (arg2 0) */
-extern u8 D_800CC908_CD508[][6]; /* the same, arg2 1 */
-extern u8 D_800CC940_CD540[][6]; /* the same, arg2 2 */
 void func_80078EC8_79AC8(void);
 void func_80078FF8_79BF8(void);
 void func_800884AC_890AC(s16);
@@ -37,16 +34,12 @@ void func_8005DF78_5EB78(void);
 
 extern char pfStrBuf[];
 extern s16 D_800E1CF4_E28F4; /* last pause-menu choice */
-extern s32 D_800CC6A8_CD2A8[]; /* guide model per board */
-extern f32 D_800CC6C4_CD2C4[]; /* guide facing per board */
-extern s32 D_800CC6E0_CD2E0[]; /* pause-menu help messages */
-extern s32 D_800CC6F8_CD2F8[]; /* the same, flag 0xD set */
 s16 func_80029E14_2AA14(s16); /* defined u8 in 274D0.c; retail sign-extends the result */
 void* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
 void func_8003B72C_3C32C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4);
 s16 func_8008D894_8E494(s32 winId);
 void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2);
-struct MBGuideData* func_80050304_50F04(s32, s32);
+struct MBGuideData* func_80050304_50F04(void*, s32);
 void func_8005057C_5117C(struct MBGuideData*);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void func_8008E2DC_8EEDC(s32 winId, s32 sound);
@@ -87,14 +80,6 @@ s32 func_80082450_83050(s16, s16, s32, s32, s32);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
 void MBModelKill(void*);
 
-extern s32 D_800CC754_CD354[6];
-extern s32 D_800CC76C_CD36C[6];
-extern s32 D_800CC784_CD384[8];
-extern s8 D_800CC7A4_CD3A4[8];
-extern s8 D_800CC7AC_CD3AC[8];
-extern s16 D_800CC7B4_CD3B4[8];
-extern s16 D_800CC7BC_CD3BC[8];
-extern u16 D_800CC7C4_CD3C4[22][1];
 extern struct MBGuideData* D_800E1CF0_E28F0; /* the pause-menu guide */
 extern u16 ContDStkTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
@@ -137,17 +122,6 @@ typedef struct unkMallocStruct {
     /* 0x04 */ s16 unk4;
 } unkMallocStruct;
 
-extern s32 D_800CC5F4_CD1F4;
-extern omObjData* D_800CC628_CD228;
-extern s32 D_800CC62C_CD22C;
-extern s32 D_800CC630_CD230;
-extern s32 D_800CC640_CD240[];
-extern s32 D_800CC65C_CD25C[];
-extern s16 D_800CC668_CD268[];
-extern s16 D_800CC66C_CD26C[];
-extern u8 D_800CC7F0_CD3F0[];
-extern u8 D_800CC7F4_CD3F4[];
-extern s32 D_800CC8B8_CD4B8[];
 extern Unk4E530Sprite D_800E1BA0_E27A0[16];
 extern Unk4E530Effect D_800E1BE0_E27E0[16];
 extern Unk4E530Data D_800E1C60_E2860[16];
@@ -244,19 +218,11 @@ void func_80089A7C_8A67C(s16, s32);
 s32 func_8008BB48_8C748(s16, s32, s32);
 void func_8008D59C_8E19C(s16, s16);
 void func_80056A3C_5763C(s8);
-extern s32 D_800CC710_CD310[];
-extern s32 D_800CC718_CD318[];
-extern s32 D_800CC720_CD320[];
-extern s32 D_800CC72C_CD32C[];
-extern s32 D_800CC738_CD338[];
 extern s8 D_800CCC14_CD814;
-extern s32 D_800CC744_CD344[];
-extern s32 D_800CC74C_CD34C[];
 extern s16 D_800E1D00_E2900;
 f32 HuMathSin(f32);
 extern s8 D_800CCC15_CD815;
 
-extern s32 D_800CC5F0_CD1F0;
 f32 __sinf(f32);
 f32 __cosf(f32);
 /* func_80058D18 calls these by their weak names (A5BA0.c, A30D0.c): GCC 2.7.2 then computes the
@@ -278,6 +244,110 @@ typedef struct MBGuideData {
 
 /* a player's board model (GW_PLAYER 0x24) */
 #define PLAYER_OBJ(i) ((Object*)gPlayers[i].unk_24)
+
+/* .data (0xCD1F0-0xCD580) */
+s32 D_800CC5F0_CD1F0 = 25; /* window colour (u8 argument) */
+s32 D_800CC5F4_CD1F4 = 25;
+extern char D_800D2DF0_D39F0[];
+extern char D_800D2DF4_D39F4[];
+extern char D_800D2DF8_D39F8[];
+extern char D_800D2DFC_D39FC[];
+extern char D_800D2E00_D3A00[];
+extern char D_800D2E04_D3A04[];
+extern char D_800D2E08_D3A08[];
+extern char D_800D2E10_D3A10[];
+extern char D_800D2E18_D3A18[];
+extern char D_800D2E20_D3A20[];
+extern char D_800D2E28_D3A28[];
+extern char D_800D2E30_D3A30[];
+/* Character names, by GW_PLAYER.character: message codes, then ASCII (overlays index the first six). */
+char* D_800CC5F8[] = {
+    D_800D2E04_D3A04, D_800D2E00_D3A00, D_800D2DFC_D39FC, D_800D2DF8_D39F8, D_800D2DF4_D39F4, D_800D2DF0_D39F0,
+    D_800D2E30_D3A30, D_800D2E28_D3A28, D_800D2E20_D3A20, D_800D2E18_D3A18, D_800D2E10_D3A10, D_800D2E08_D3A08,
+};
+omObjData* D_800CC628_CD228 = NULL;
+s32 D_800CC62C_CD22C = -1;
+s32 D_800CC630_CD230 = -1;
+s32 D_800CC634_CD234[] = { 0, 0, 0 }; /* unreferenced */
+s32 D_800CC640_CD240[] = { 0xA017C, 0xA017D, 0xA017E, 0xA017F, 0xA0180, 0xA0181, 0xA0182 };
+s32 D_800CC65C_CD25C[] = { 0xA00C6, 0xA00C7, 0xA00C8 }; /* per game length */
+s16 D_800CC668_CD268[] = { 0x73, 0x73 };
+s16 D_800CC66C_CD26C[] = { 0x8C, 0x8C };
+/* Guide model file lists (a count, then the files), per board. */
+s32 D_800CC670_CD270[] = { 1, 0x80010 };
+s32 D_800CC678_CD278[] = { 1, 0x80019 };
+s32 D_800CC680_CD280[] = { 1, 0x80029 };
+s32 D_800CC688_CD288[] = { 1, 0x8001C };
+s32 D_800CC690_CD290[] = { 1, 0x80024 };
+s32 D_800CC698_CD298[] = { 1, 0x800B2 };
+s32 D_800CC6A0_CD2A0[] = { 1, 0x80037 };
+s32* D_800CC6A8_CD2A8[] = { /* guide model per board */
+    D_800CC670_CD270, D_800CC678_CD278, D_800CC680_CD280, D_800CC688_CD288,
+    D_800CC690_CD290, D_800CC698_CD298, D_800CC6A0_CD2A0,
+};
+f32 D_800CC6C4_CD2C4[] = { 0.0f, 30.0f, 30.0f, 0.0f, 0.0f, 0.0f, 0.0f }; /* guide facing per board */
+s32 D_800CC6E0_CD2E0[] = { 0x509, 0x50C, 0x50F, 0x513, 0x518, 0x51A }; /* pause-menu help messages */
+s32 D_800CC6F8_CD2F8[] = { 0x509, 0x50C, 0x50F, 0x517, 0x519, 0x51A }; /* the same, flag 0xD set */
+s32 D_800CC710_CD310[] = { 0x51F, 0x520 };
+s32 D_800CC718_CD318[] = { 0x51F, 0x520 };
+s32 D_800CC720_CD320[] = { 0x524, 0x525, 0x526 };
+s32 D_800CC72C_CD32C[] = { 0x52B, 0x52B, 0x526 };
+s32 D_800CC738_CD338[] = { 0x522, 0x522, 0x522 };
+s32 D_800CC744_CD344[] = { 0x528, 0x529 };
+s32 D_800CC74C_CD34C[] = { 0x528, 0x52A };
+s32 D_800CC754_CD354[] = { 0xA01CA, 0xA01CB, 0xA01CC, 0xA01CD, 0xA01CE, 0xA01CF };
+s32 D_800CC76C_CD36C[] = { 0xA01D0, 0xA01D1, 0xA01D2, 0xA01D3, 0xA01D4, 0xA01D5 };
+s32 D_800CC784_CD384[] = { 0xA01D6, 0xA01D7, 0xA01D8, 0xA01D9, 0xA01DA, 0xA01DB, 0xA01DC, 0xA01DD };
+s8 D_800CC7A4_CD3A4[] = { 0, -1, 1, -1, 2, -1, 3, -1 };
+s8 D_800CC7AC_CD3AC[] = { 4, 7, 4, 6, 4, 5, 0, 0 };
+s16 D_800CC7B4_CD3B4[] = { 0x70, 0xD0, 0x70, 0xD0 };
+s16 D_800CC7BC_CD3BC[] = { 0x38, 0x38, 0x80, 0x80 };
+u16 D_800CC7C4_CD3C4[][1] = {
+    { 0x0 }, { 0x2 }, { 0x0 }, { 0x1 }, { 0x0 }, { 0x2 }, { 0xFFFF }, { 0x0 }, { 0xFFFE }, { 0x0 }, { 0x0 }, { 0x1 }, { 0xFFFE }, { 0x0 }, { 0xFFFF }, { 0x0 }, { 0x0 }, { 0x0 }, { 0x0 }, { 0x0 }, { 0x0 }, { 0x0 },
+};
+u8 D_800CC7F0_CD3F0[] = { 0, 1, 2, 0 };
+u8 D_800CC7F4_CD3F4[] = { 1, 2, 3, 0 };
+/* Player model file lists (a count, then the files), per character. */
+s32 D_800CC7F8_CD3F8[] = { 7, 0x20001, 0x20002, 0x20004, 0x20058, 0x20016, 0x20051, 0x20054 };
+s32 D_800CC818_CD418[] = { 7, 0x30001, 0x30002, 0x30004, 0x30058, 0x30016, 0x30051, 0x30054 };
+s32 D_800CC838_CD438[] = { 7, 0x70001, 0x70002, 0x70004, 0x70058, 0x70016, 0x70051, 0x70054 };
+s32 D_800CC858_CD458[] = { 7, 0x40001, 0x40002, 0x40004, 0x40058, 0x40016, 0x40051, 0x40054 };
+s32 D_800CC878_CD478[] = { 7, 0x50001, 0x50002, 0x50004, 0x50058, 0x50016, 0x50051, 0x50054 };
+s32 D_800CC898_CD498[] = { 7, 0x60001, 0x60002, 0x60004, 0x60058, 0x60016, 0x60051, 0x60054 };
+s32* D_800CC8B8_CD4B8[] = { D_800CC7F8_CD3F8, D_800CC818_CD418, D_800CC838_CD438, D_800CC858_CD458, D_800CC878_CD478, D_800CC898_CD498 };
+u8 D_800CC8D0_CD4D0[][6] = { /* player model per board and character (arg2 0) */
+    { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23 },
+    { 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F },
+    { 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B },
+    { 0x42, 0x43, 0x44, 0x45, 0x46, 0x47 },
+    { 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53 },
+    { 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+};
+u8 D_800CC908_CD508[][6] = { /* the same, arg2 1 */
+    { 0x24, 0x25, 0x26, 0x27, 0x28, 0x29 },
+    { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35 },
+    { 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41 },
+    { 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D },
+    { 0x54, 0x55, 0x56, 0x57, 0x58, 0x59 },
+    { 0x60, 0x61, 0x62, 0x63, 0x64, 0x65 },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 },
+};
+u8 D_800CC940_CD540[][6] = { /* the same, arg2 2 */
+    { 0x24, 0x25, 0x26, 0x27, 0x28, 0x29 },
+    { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35 },
+    { 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41 },
+    { 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D },
+    { 0x54, 0x55, 0x56, 0x57, 0x58, 0x59 },
+    { 0x60, 0x61, 0x62, 0x63, 0x64, 0x65 },
+    { 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14 },
+    { 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14 },
+    { 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14 },
+};
 
 /* NON_MATCHING: retail keeps the window id in two callee-saved registers (s0 and a copy in s1, the
    0x28 frame); this C keeps one. Logic is MP1 CreateTextWindow. */
