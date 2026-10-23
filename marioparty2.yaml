@@ -396,7 +396,8 @@ segments:
       - [0xCA770, .data, 1D0B0]
       - [0xCA780, .data, 20C70]
       - {start: 0xCA850, type: .data, name: 21920, linker_section: .cdata}
-      - [0xCAA50, data]
+      - {start: 0xCAA50, type: .data, name: 274D0, linker_section: .cdata}
+      - [0xCAC30, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]
