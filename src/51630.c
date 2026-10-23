@@ -1,6 +1,34 @@
 #include "common.h"
 #include "game/malloc.h"
 
+/* A tile bank (h1-D): an alternative set of background tiles; D_800DFE64 holds D_800DFE58 of them,
+   loaded from the ROM table at D_016EC470 by func_80053AA0_546A0. */
+typedef struct BgTileBank {
+    /* 0x00 */ s32 count; /* entries in offsets[] (ids[] has count - 1) */
+    /* 0x04 */ s32* ids;  /* tile id each replaced tile has */
+    /* 0x08 */ u32* offsets; /* ROM address of each tile */
+} BgTileBank; // size 0xC
+
+extern s32* D_800DF9D0_E05D0; /* the DMA buffer being decoded: magic word, then the data */
+extern u32 D_800DFE54_E0A54;  /* ROM address of the bank table */
+extern s32 D_800DFE58_E0A58;  /* number of banks */
+extern s32 D_800DFE5C_E0A5C;  /* current bank + 1 (0 = none) */
+extern s32 D_800DFE60_E0A60;  /* current bank */
+extern BgTileBank* D_800DFE64_E0A64;
+extern u32* D_800CC21C_CCE1C;
+extern Process* D_800CC220_CCE20;
+extern u8 D_016EC470[];
+void func_80096188_96D88(u8* code, u16* outbuf, s32 outbufWidth, u8* workbuf);
+void func_80096708_97308(void* header);
+void func_80096C10_97810(u8 alpha);
+void func_80051204_51E04(u8* input, u8* output, s32 compressedSize);
+u32 func_80053EB0_54AB0(u16 arg0);
+s32 func_80053EEC_54AEC(u16 arg0);
+void func_80053F30_54B30(u16 arg0);
+void func_800539A8_545A8(void);
+void omPrcSetStatBit(Process*, s32);
+
+
 /* Board background (HVQ tiles streamed by two threads) and the board camera. C from MP1 src/48D90.c
    and MP3 ovl_80_shared_board FA250.c / ovl_81_name CCD20.c (their copies of the same code); the
    rest have no reference and stay asm (func_80053230_53E30 is in the permuter list). MP1's unk20 is
@@ -161,7 +189,9 @@ void func_80050A30_51630(u8* arg0) {
     D_800CC208_CCE08 = NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80050AD4_516D4);
+void func_80050AD4_516D4(void) {
+    D_800CC208_CCE08 = NULL;
+}
 
 void func_80050AE0_516E0(void) {
     if (D_800CC200_CCE00 != NULL) {
@@ -240,7 +270,10 @@ void MBDBackKill(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", MBBackOffsetSet);
+void MBBackOffsetSet(s16 arg0, s16 arg1) {
+    D_800DF9C2_E05C2 = arg0;
+    D_800DF9C4_E05C4 = arg1;
+}
 
 u16 MBDBackPosClamp(Vec2fxy* arg0, f32 arg1) {
     u16 var_v1;
@@ -351,7 +384,31 @@ void func_80051204_51E04(u8 *input, u8 *output, s32 compressedSize) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_800512F8_51EF8);
+/* Tile decode thread: decodes each DMA'd tile (HVQS or the 0x1800-byte LZ form) into its buffer. */
+void func_800512F8_51EF8(void* arg0) {
+    OverlayBgEntry* entry;
+    s16 color;
+
+    func_80096C10_97810(0xFF);
+    func_80096708_97308(D_800DFE50_E0A50);
+    while (1) {
+        osRecvMesg(&D_800E12C0_E1EC0, (OSMesg*)&entry, OS_MESG_BLOCK);
+        if (entry == NULL) {
+            break;
+        }
+        D_800DF9D0_E05D0 = entry->unk_08;
+        color = func_8007C058_7CC58(0xFF, 0xFF, 0xFF);
+        if (D_800DF9D0_E05D0[0] == 0x48565153) { /* "HVQS" */
+            func_80096188_96D88((u8*)(D_800DF9D0_E05D0 + 1), entry->unk4, 0x40, D_800DF9CC_E05CC);
+        } else {
+            func_80051204_51E04((u8*)(D_800DF9D0_E05D0 + 1), entry->unk4, 0x1800);
+        }
+        func_8007C094_7CC94(color);
+        osSendMesg(&D_800E13A0_E1FA0, entry, OS_MESG_NOBLOCK);
+    }
+    osSendMesg(&D_800E1480_E2080, (OSMesg)2, OS_MESG_NOBLOCK);
+    osDestroyThread(NULL);
+}
 
 void func_800513FC_51FFC(void) {
     osCreateMesgQueue(&D_800DFE68_E0A68, &D_800DFE80_E0A80, 50);
@@ -365,9 +422,13 @@ void func_800513FC_51FFC(void) {
     osStartThread(&D_800DFF48_E0B48);
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_800514F0_520F0);
+void func_800514F0_520F0(void) {
+    D_800E0AB0_E16B0 = 3;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80051500_52100);
+void func_80051500_52100(void) {
+    D_800E0AB0_E16B0 = 1;
+}
 
 void func_80051510_52110(void) {
     if (osGetThreadPri(&D_800E0900_E1500) != D_800E0AB0_E16B0) {
@@ -486,7 +547,51 @@ s32 func_8005188C_5248C(u16 arg0) {
     return D_800DF9B8_E05B8 + D_800CC204_CCE04[(arg0)];
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_800518B8_524B8);
+/* Finds (or starts loading) the buffer of tile arg0, from the current bank when it replaces that tile. */
+OverlayBgEntry* func_800518B8_524B8(u16 arg0) {
+    OverlayBgEntry* entry;
+    OverlayBgEntry* slot;
+    u16 bank;
+    s32 i;
+    s32 idx;
+
+    slot = NULL;
+    entry = D_800DF9D8_E05D8;
+    bank = 0;
+    if (D_800DFE5C_E0A5C != 0) {
+        for (i = 0; i < D_800DFE64_E0A64[D_800DFE60_E0A60].count - 1; i++) {
+            if (arg0 == D_800DFE64_E0A64[D_800DFE60_E0A60].ids[i]) {
+                bank = D_800DFE5C_E0A5C;
+                idx = i;
+            }
+        }
+    }
+    for (i = 0; i < 50; i++, entry++) {
+        if (entry->unk2 == -1) {
+            slot = entry;
+        } else if (entry->unk2 == arg0) {
+            if (entry->unk1 == bank) {
+                entry->unk0 = 1;
+                return entry;
+            }
+        }
+    }
+    if (slot != NULL) {
+        slot->unk0 = 1;
+        slot->unk2 = arg0;
+        slot->unk1 = bank;
+        if (bank != 0) {
+            slot->unk10 = func_80053EB0_54AB0(idx);
+            slot->unkC = func_80053EEC_54AEC(idx);
+        } else {
+            slot->unk10 = func_8005188C_5248C(arg0);
+            slot->unkC = func_80051864_52464(arg0);
+        }
+        slot->unk_08 = HuMemMemoryAllocPerm(slot->unkC);
+        osSendMesg(&D_800DFE68_E0A68, slot, OS_MESG_NOBLOCK);
+    }
+    return slot;
+}
 
 void func_80051A74_52674(void) {
     s32 var_s1;
@@ -629,9 +734,13 @@ void func_80052B4C_5374C(Gfx** gfx, s32 arg1, u8 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80052E5C_53A5C);
+f32 func_80052E5C_53A5C(void) {
+    return D_800CC210_CCE10;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80052E68_53A68);
+void func_80052E68_53A68(f32 arg0) {
+    D_800CC210_CCE10 = arg0;
+}
 
 void func_80052E74_53A74(void) {
     f32 target;
@@ -731,7 +840,10 @@ void func_80053200_53E00(void) {
     func_800531AC_53DAC();
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_8005321C_53E1C);
+void func_8005321C_53E1C(f32 arg0, f32 arg1) {
+    D_800CC218_CCE18 = arg0;
+    D_800CC214_CCE14 = arg1;
+}
 
 /* Retail builds this function with the KMC VR4300 mul fix (a nop between dependent mul.s), but with
    the fix on, the assembler also pads INCLUDE_ASM functions that follow some C ones, so it stays asm
@@ -802,9 +914,13 @@ void func_80053230_53E30(void) {
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053230_53E30);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053608_54208);
+void func_80053608_54208(f32 arg0) {
+    D_800E18B8_E24B8 = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053614_54214);
+f32 func_80053614_54214(void) {
+    return D_800E18B8_E24B8;
+}
 
 u16 MBDCameraPos3DSet(Vec *arg0) {
     Vec sp10;
@@ -869,7 +985,9 @@ void MBDCamera3Dto2D(Vec *arg0, Vec2fxy *arg1) {
     arg1->y = sp10.vec.y + sp10.unk_0C;
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_8005390C_5450C);
+void func_8005390C_5450C(s32 arg0) {
+    D_800CC20C_CCE0C = arg0;
+}
 
 void func_80053918_54518(s16 flag) {
     if (flag) {
@@ -887,29 +1005,140 @@ void MBDBackFlipSet(s16 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", MBCameraSpeedSet);
+void MBCameraSpeedSet(f32 arg0) {
+    D_800DF9BC_E05BC = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", MBCameraSpeedGet);
+f32 MBCameraSpeedGet(void) {
+    return D_800DF9BC_E05BC;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053998_54598);
+s32 func_80053998_54598(void) {
+    return D_800DF9C0_E05C0 & 2;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_800539A8_545A8);
+/* Bank cycler: while the background has not moved for 16 frames, step to the next bank (0..count). */
+void func_800539A8_545A8(void) {
+    s32 timer;
+    s32 bank;
+    s16 x;
+    s16 y;
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053A8C_5468C);
+    timer = 16;
+    bank = 0;
+    x = D_800DF9C2_E05C2;
+    y = D_800DF9C4_E05C4;
+    while (1) {
+        if (x == D_800DF9C2_E05C2 && y == D_800DF9C4_E05C4 && D_800CC224_CCE24 == 1) {
+            if (--timer == 0) {
+                bank++;
+                if (bank > D_800DFE58_E0A58) {
+                    bank = 0;
+                }
+                func_80053F30_54B30(bank);
+                timer = 16;
+            }
+        }
+        x = D_800DF9C2_E05C2;
+        y = D_800DF9C4_E05C4;
+        HuPrcVSleep();
+    }
+}
 
+void func_80053A8C_5468C(void) {
+    D_800DFE5C_E0A5C = 0;
+    D_800CC220_CCE20 = NULL;
+}
+
+/* Loads tile bank set arg0 from the ROM table at D_016EC470 and starts the bank cycler. */
+// register allocation only (masked 0): retail keeps the first size's >> 4 in v0
+#ifdef NON_MATCHING
+void func_80053AA0_546A0(s32 arg0) {
+    s32* buf;
+    u32 hdrSize;
+    u32 size;
+    u32 base;
+    s32 i;
+    s32 j;
+
+    D_800DFE54_E0A54 = (u32)D_016EC470;
+    D_800DFE60_E0A60 = 0;
+    D_800DFE5C_E0A5C = 0;
+    hdrSize = (arg0 + 1) * 16;
+    buf = HuMemMemoryAllocTemp(hdrSize);
+    dmaRead(D_800DFE54_E0A54, (u8*)buf, hdrSize);
+    if (buf[0] < arg0 - 1) {
+        return;
+    }
+    D_800DFE54_E0A54 += buf[arg0 + 1];
+    HuMemMemoryFreeTemp(buf);
+    buf = HuMemMemoryAllocTemp(16);
+    dmaRead(D_800DFE54_E0A54, (u8*)buf, 16);
+    size = (D_800DFE58_E0A58 = buf[0]) * 4;
+    size = ((size + 15) >> 4) << 4;
+    D_800CC21C_CCE1C = HuMemMemoryAllocTemp(size);
+    dmaRead(D_800DFE54_E0A54 + 4, (u8*)D_800CC21C_CCE1C, size);
+    /* 0xC each on the N64 */
+    D_800DFE64_E0A64 = HuMemMemoryAllocTemp(D_800DFE58_E0A58 * sizeof(BgTileBank));
+    for (i = 0; i < D_800DFE58_E0A58; i++) {
+        base = D_800DFE54_E0A54 + D_800CC21C_CCE1C[i];
+        dmaRead(base, (u8*)buf, 16);
+        size = (D_800DFE64_E0A64[i].count = buf[0]) * 4;
+        size = ((size + 15) >> 4) << 4;
+        D_800DFE64_E0A64[i].offsets = HuMemMemoryAllocTemp(size);
+        dmaRead(base + 4, (u8*)D_800DFE64_E0A64[i].offsets, size);
+        for (j = 0; j < D_800DFE64_E0A64[i].count; j++) {
+            D_800DFE64_E0A64[i].offsets[j] += base;
+        }
+        D_800DFE64_E0A64[i].ids = HuMemMemoryAllocTemp(size);
+        for (j = 0; j < D_800DFE64_E0A64[i].count - 1; j++) {
+            dmaRead(D_800DFE64_E0A64[i].offsets[j], (u8*)buf, 16);
+            D_800DFE64_E0A64[i].ids[j] = buf[0];
+        }
+    }
+    HuMemMemoryFreeTemp(buf);
+    D_800CC220_CCE20 = omAddPrcObj(func_800539A8_545A8, 0x1001, 0, 0);
+    omPrcSetStatBit(D_800CC220_CCE20, 0x80);
+    D_800CC224_CCE24 = 1;
+}
+
+#else
 INCLUDE_ASM("asm/nonmatchings/51630", func_80053AA0_546A0);
+#endif
 
 void func_80053DD0_549D0(void) {
     func_80053DEC_549EC();
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053DEC_549EC);
+void func_80053DEC_549EC(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053EB0_54AB0);
+    if (D_800CC220_CCE20 != NULL) {
+        for (i = 0; i < D_800DFE58_E0A58; i++) {
+            HuMemMemoryFreeTemp(D_800DFE64_E0A64[i].ids);
+            HuMemMemoryFreeTemp(D_800DFE64_E0A64[i].offsets);
+        }
+        HuMemMemoryFreeTemp(D_800DFE64_E0A64);
+        HuMemMemoryFreeTemp(D_800CC21C_CCE1C);
+        omDelPrcObj(D_800CC220_CCE20);
+        D_800CC220_CCE20 = NULL;
+    }
+    D_800DFE5C_E0A5C = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053EEC_54AEC);
+u32 func_80053EB0_54AB0(u16 arg0) {
+    return D_800DFE64_E0A64[D_800DFE60_E0A60].offsets[arg0] + 4;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053F30_54B30);
+s32 func_80053EEC_54AEC(u16 arg0) {
+    return D_800DFE64_E0A64[D_800DFE60_E0A60].offsets[arg0 + 1] - D_800DFE64_E0A64[D_800DFE60_E0A60].offsets[arg0] - 4;
+}
+
+void func_80053F30_54B30(u16 arg0) {
+    if ((D_800DFE5C_E0A5C = arg0) != 0) {
+        D_800DFE60_E0A60 = arg0 - 1;
+    }
+}
 
 void func_80053F54_54B54(void) {
     D_800CC224_CCE24 = D_800CC270_CCE70;
@@ -922,9 +1151,13 @@ void func_80053F7C_54B7C(void) {
     func_80051500_52100();
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053FAC_54BAC);
+void func_80053FAC_54BAC(void) {
+    D_800CC224_CCE24 = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053FBC_54BBC);
+void func_80053FBC_54BBC(void) {
+    D_800CC224_CCE24 = 0;
+}
 
 void func_80053FC8_54BC8(void) {
     func_80050A30_51630(D_01164160);

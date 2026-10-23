@@ -77,8 +77,12 @@ typedef struct BoardStatus {
     /* 0x2C */ f32 unk_2C;
     /* 0x30 */ omObjData* unk30;
     /* 0x34 */ char pad34[2];
-    /* 0x36 */ s16 unk_36;
-    /* 0x38 */ u8 unk_38[12];
+    /* 0x36 */ s16 unk_36; /* item sprite animation; MBStatusItemDispSet clears it and unk_38 as a pair */
+    /* 0x38 */ s16 unk_38;
+    /* 0x3A */ s16 unk_3A; /* digit sprite animation (MP3 unk_3A) */
+    /* 0x3C */ s16 unk_3C;
+    /* 0x3E */ char pad3E[4];
+    /* 0x42 */ s16 unk_42;
     /* 0x44 */ s16 unk_44[2];
 } BoardStatus;
 
