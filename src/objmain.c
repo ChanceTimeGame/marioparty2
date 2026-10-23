@@ -30,11 +30,91 @@ typedef struct unkProcessStruct {
     /* 0x08 */ void (*unk8)();
 } unkProcessStruct; // sizeof 0xC
 
-extern omObjData* D_800CD420_CE020;          /* omobjall */
-extern s16 D_800CD424_CE024;                 /* process slots */
-extern s16 D_800CD426_CE026;                 /* processes in use */
-extern s16 D_800CD428_CE028;                 /* next free process slot */
-extern unkProcessStruct* D_800CD42C_CE02C;   /* process table */
+/* Per-character data (0x18 bytes each); the minigame overlays name the fields in their own copies */
+typedef struct CharData {
+    /* 0x00 */ s16 unk_00; /* character */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ f32 unk_14;
+} CharData;
+
+typedef struct DebugMenuItem {
+    /* 0x00 */ u8 unk_00;
+    /* 0x01 */ u8 unk_01;
+    /* 0x02 */ u8 unk_02;
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04;
+    /* 0x08 */ char* unk_08;
+} DebugMenuItem;
+
+extern const char D_800D359C_D419C[];
+extern const char D_800D35A4_D41A4[];
+extern const char D_800D35AC_D41AC[];
+extern const char D_800D35B4_D41B4[];
+extern const char D_800D35BC_D41BC[];
+extern const char D_800D35C4_D41C4[];
+
+/* .data (0xCDF60-0xCE114; the linker pads it to 0xCE120) */
+u8 D_800CD360_CDF60[72][2] = { /* per minigame */
+    { 4, 0x14 }, { 4, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 4, 0x14 }, { 2, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 2, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 4, 0x14 }, { 4, 0x14 }, { 2, 0x14 }, { 3, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 3, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 4, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 4, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+};
+u8 D_800CD3F0_CDFF0[9][2] = { /* per board */
+    { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 }, { 1, 0x14 },
+    { 1, 0x14 },
+};
+u8 D_800CD402_CE002 = 0;
+u8 D_800CD403_CE003 = 0;
+u16 D_800CD404_CE004 = 999;
+u32 D_800CD408_CE008 = 999;
+s32 D_800CD40C_CE00C = 0; /* unreferenced */
+u16 D_800CD410_CE010 = 0;
+u8 D_800CD412_CE012 = 0;
+s16 D_800CD414_CE014 = -1;
+s16 D_800CD416_CE016 = 0;
+s16 omovlhisidx = -1;
+s16 D_800CD41A_CE01A = 0; /* unreferenced */
+u8 D_800CD41C_CE01C = 1;
+u8 D_800CD41D_CE01D = 0;
+omObjData* D_800CD420_CE020 = NULL;          /* omobjall */
+s16 D_800CD424_CE024 = 0;                    /* process slots */
+s16 D_800CD426_CE026 = 0;                    /* processes in use */
+s16 D_800CD428_CE028 = 0;                    /* next free process slot */
+unkProcessStruct* D_800CD42C_CE02C = NULL;   /* process table */
+s16 D_800CD430_CE030 = 0;
+u8 D_800CD432_CE032 = 0;
+u8 D_800CD433_CE033 = 1;
+u8 D_800CD434_CE034 = 0;
+s8 D_800CD435_CE035 = 0;
+s16 D_800CD436_CE036 = -1;
+CharData D_800CD438_CE038[6] = {
+    { 0, 0, 0x20000, 0xD3, 0xD1, 0xD2, 1.0f },
+    { 1, 0, 0x30000, 0xD3, 0xD1, 0xD2, 1.0f },
+    { 2, 0, 0x70000, 0xD3, 0xD1, 0xD2, 1.0f },
+    { 3, 0, 0x40000, 0xD3, 0xD1, 0xD2, 0.9f },
+    { 4, 0, 0x50000, 0xD3, 0xD1, 0xD2, 0.8f },
+    { 5, 0, 0x60000, 0xD3, 0xD1, 0xD2, 0.7f },
+};
+u8 D_800CD4C8_CE0C8 = 0;
+u8 D_800CD4C9_CE0C9 = 0;
+DebugMenuItem D_800CD4CC_CE0CC[6] = { /* pause debug menu; fields named only by the asm */
+    { 0x00, 0x84, 0x70, 0x06, 0x0E, (char*)D_800D35C4_D41C4 },
+    { 0x00, 0x84, 0x78, 0x06, 0x0E, (char*)D_800D35BC_D41BC },
+    { 0x00, 0x84, 0x80, 0x06, 0x0E, (char*)D_800D35B4_D41B4 },
+    { 0x00, 0x84, 0x88, 0x06, 0x0E, (char*)D_800D35AC_D41AC },
+    { 0x00, 0x84, 0x90, 0x06, 0x0E, (char*)D_800D35A4_D41A4 },
+    { 0x00, 0x84, 0x98, 0x06, 0x0E, (char*)D_800D359C_D419C },
+};
 extern s16 D_800F8FD4_F9BD4;                 /* omobjlast */
 extern s16 D_800F92B0_F9EB0;                 /* object slots */
 extern s16 D_800F92E4_F9EE4;                 /* omnumobjs */
@@ -673,8 +753,6 @@ void omOvlKill(void) {
 }
 
 extern u8 D_800FDEAE_FEAAE;
-extern u8 D_800CD402_CE002[2];
-extern s8 D_800CD435_CE035;
 extern u16 D_800FA19C_FAD9C[4];
 extern s16 D_800FA188_FAD88;
 extern u16 D_800CD526_CE126;
@@ -695,20 +773,13 @@ void espDispOn(u16);
 void espDispOff(u16);
 
 /* omMain */
-extern u16 D_800CD410_CE010;
-extern s16 D_800CD436_CE036;
-extern u8 D_800CD433_CE033;
 extern u8 D_800FD866_FE466;
 extern void* D_800CB040_CBC40[];
-extern u8 D_800CD432_CE032;
-extern u8 D_800CD4C8_CE0C8;
-extern u8 D_800CD4C9_CE0C9;
 extern u8 D_800E2138_E2D38;
 extern s16 D_800CD52A_CE12A;
 extern s16 D_800CD52E_CE12E;
 extern f32 D_80101300_101F00;
 extern f32 D_8010105C_101C5C;
-extern u8 D_800CD41D_CE01D;
 extern s32 D_800F8F28_F9B28;
 extern omObjData* D_800FC998_FD598;
 extern void* D_800F8F5C_F9B5C;
@@ -994,8 +1065,8 @@ void func_80078A08_79608(omObjData* obj) {
         return;
     }
     if (obj->work[0] & 1) {
-        if (D_800FDEAE_FEAAE != 0 && ((D_800FA19C_FAD9C[obj->work[1]] & 0x1000) || D_800CD41C_CE01C == 1 || D_800CD402_CE002[1] == 1)) {
-            D_800CD402_CE002[1] = 0;
+        if (D_800FDEAE_FEAAE != 0 && ((D_800FA19C_FAD9C[obj->work[1]] & 0x1000) || D_800CD41C_CE01C == 1 || D_800CD403_CE003 == 1)) {
+            D_800CD403_CE003 = 0;
             D_800FDC9C_FE89C = 0;
             obj->work[0] &= ~1;
             for (j = 0; j < D_800F92B0_F9EB0; j++) {
@@ -1036,7 +1107,7 @@ void func_80078A08_79608(omObjData* obj) {
             if (HuGetPadInserted(i) != 0) {
                 if (D_800FA19C_FAD9C[i] & 0x1000) {
                     D_800FDEAE_FEAAE = 0;
-                    D_800CD402_CE002[1] = 0;
+                    D_800CD403_CE003 = 0;
                     D_800FDC9C_FE89C = 1;
                     obj->work[0] = 1;
                     obj->work[1] = i;
