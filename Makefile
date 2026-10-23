@@ -555,3 +555,11 @@ $(H1A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 H1E_CARVED := build/src/objmain.c.o
 CARVED_RODATA_UNITS += $(H1E_CARVED)
 $(H1E_CARVED): RODATA_AS_DATA = 1
+# h1-B
+# mp2carve C8E0: rodata 0xD2410-0xD241C ("item_hook") carved out of the data blob
+build/src/C8E0.c.o: RODATA_AS_DATA = 1
+# mp2carve 19BF0: rodata 0xD2AD0-0xD2BC0 (whole) carved out of the data blob
+build/src/19BF0.c.o: RODATA_AS_DATA = 1
+# mp2carve 1C7C0: rodata 0xD2BC0-0xD2CE8 carved out of the data blob; it ends with 1D0B0's string
+# D_800D20CC_D2CCC (defined in 1C7C0.c: SUBALIGN(8) cannot start a piece at 0xD2CCC)
+build/src/1C7C0.c.o: RODATA_AS_DATA = 1

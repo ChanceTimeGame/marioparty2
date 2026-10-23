@@ -7,6 +7,8 @@ typedef f32 Mat4[4][4];
 typedef f32 Mat3[3][3];
 
 void func_800B8070_B8C70(f32, f32*, f32*); // sin and cos of an angle
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
 
 void func_80025770_26370(Mat4 mtx, f32 x, f32 y, f32 z) {
      mtx[3][0] = (x * mtx[0][0]) + (y * mtx[1][0]) + (z * mtx[2][0]) + mtx[3][0];
@@ -87,7 +89,57 @@ void func_80025884_26484(Mat4 mtx, f32 angle1, f32 angle2, f32 angle3) {
     }
 }
 
+// retail sets i = 0 once before the test; loop layout otherwise the same (masked 9)
+#ifdef NON_MATCHING
+/* MtxMult (c = a * b) with a fast path when a's last column is (0, 0, 0, 1). */
+void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
+    s32 i;
+
+    if (a[0][3] != 0.0f || a[1][3] != 0.0f || a[2][3] != 0.0f || a[3][3] != 1.0f) {
+        f32 a0, a1, a2, a3;
+        f32 b00, b10, b20, b30;
+        f32 b01, b11, b21, b31;
+        f32 b02, b12, b22, b32;
+        f32 b03, b13, b23, b33;
+
+        b00 = b[0][0]; b10 = b[1][0]; b20 = b[2][0]; b30 = b[3][0];
+        b01 = b[0][1]; b11 = b[1][1]; b21 = b[2][1]; b31 = b[3][1];
+        b02 = b[0][2]; b12 = b[1][2]; b22 = b[2][2]; b32 = b[3][2];
+        b03 = b[0][3]; b13 = b[1][3]; b23 = b[2][3]; b33 = b[3][3];
+
+        for (i = 0; i < 4; i++) {
+            c[i][0] = (a0 = a[i][0]) * b00 + (a1 = a[i][1]) * b10 + (a2 = a[i][2]) * b20 + (a3 = a[i][3]) * b30;
+            c[i][1] = a0 * b01 + a1 * b11 + a2 * b21 + a3 * b31;
+            c[i][2] = a0 * b02 + a1 * b12 + a2 * b22 + a3 * b32;
+            c[i][3] = a0 * b03 + a1 * b13 + a2 * b23 + a3 * b33;
+        }
+    } else {
+        f32 a0, a1, a2;
+        f32 b00, b10, b20;
+        f32 b01, b11, b21;
+        f32 b02, b12, b22;
+        f32 b03, b13, b23;
+
+        b00 = b[0][0]; b10 = b[1][0]; b20 = b[2][0];
+        b01 = b[0][1]; b11 = b[1][1]; b21 = b[2][1];
+        b02 = b[0][2]; b12 = b[1][2]; b22 = b[2][2];
+        b03 = b[0][3]; b13 = b[1][3]; b23 = b[2][3];
+
+        for (i = 0; i < 3; i++) {
+            c[i][0] = (a0 = a[i][0]) * b00 + (a1 = a[i][1]) * b10 + (a2 = a[i][2]) * b20;
+            c[i][1] = a0 * b01 + a1 * b11 + a2 * b21;
+            c[i][2] = a0 * b02 + a1 * b12 + a2 * b22;
+            c[i][3] = a0 * b03 + a1 * b13 + a2 * b23;
+        }
+        c[3][0] = (a0 = a[3][0]) * b[0][0] + (a1 = a[3][1]) * b[1][0] + (a2 = a[3][2]) * b[2][0] + b[3][0];
+        c[3][1] = a0 * b[0][1] + a1 * b[1][1] + a2 * b[2][1] + b[3][1];
+        c[3][2] = a0 * b[0][2] + a1 * b[1][2] + a2 * b[2][2] + b[3][2];
+        c[3][3] = a0 * b[0][3] + a1 * b[1][3] + a2 * b[2][3] + b[3][3];
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/26370", func_80025BA4_267A4);
+#endif
 
 s16 func_80025F00_26B00(Mat4 a, Mat4 b) {
     u32 success;
@@ -136,10 +188,95 @@ u32 func_800260A4_26CA4(Mat4 a, Mat4 b) {
     return success;
 }
 
-INCLUDE_ASM("asm/nonmatchings/26370", func_80026104_26D04);
+/* MtxRotateY with HuMathSin/func_800B7890_B8490 (MP1 math.c). */
+void func_80026104_26D04(Mat4 mtx, f32 angle) {
+    s32 i;
+    f32 s, c;
+    f32 vec[4];
 
-INCLUDE_ASM("asm/nonmatchings/26370", func_800261CC_26DCC);
+    s = HuMathSin(angle);
+    c = func_800B7890_B8490(angle);
 
-INCLUDE_ASM("asm/nonmatchings/26370", func_800264D8_270D8);
+    for (i = 0; i < 3; i++) {
+        vec[i] = mtx[0][i];
+    }
+
+    for (i = 0; i < 3; i++) {
+        mtx[0][i] = (c * vec[i]) - (s * mtx[2][i]);
+        mtx[2][i] = (s * vec[i]) + (c * mtx[2][i]);
+    }
+}
+
+/* Rotates mtx's first three rows by angles x, y, z in another axis order than
+   func_80025884_26484 (chosen per HMF file in 1D0B0's func_8001FFCC_20BCC). */
+void func_800261CC_26DCC(Mat4 m, f32 x, f32 y, f32 z) {
+    Mat4 t;
+    f32 sx, cx;
+    f32 sy, cy;
+    f32 sz, cz;
+    f32 a, b, c;
+
+    func_800B8070_B8C70(x, &sx, &cx);
+    func_800B8070_B8C70(y, &sy, &cy);
+    func_800B8070_B8C70(z, &sz, &cz);
+    t[0][0] = m[0][0];
+    t[0][1] = m[0][1];
+    t[0][2] = m[0][2];
+    t[0][3] = m[0][3];
+    t[1][0] = m[1][0];
+    t[1][1] = m[1][1];
+    t[1][2] = m[1][2];
+    t[1][3] = m[1][3];
+    t[2][0] = m[2][0];
+    t[2][1] = m[2][1];
+    t[2][2] = m[2][2];
+    t[2][3] = m[2][3];
+
+    a = cx * sz;
+    b = -cz * sy + cy * sx * sz;
+    c = cy * cz + sx * sy * sz;
+    m[0][0] = a * t[1][0] + b * t[2][0] + c * t[0][0];
+    m[0][1] = a * t[1][1] + b * t[2][1] + c * t[0][1];
+    m[0][2] = a * t[1][2] + b * t[2][2] + c * t[0][2];
+    m[0][3] = a * t[1][3] + b * t[2][3] + c * t[0][3];
+
+    a = cx * cz;
+    b = cz * sx * sy - cy * sz;
+    c = cy * cz * sx + sy * sz;
+    m[1][0] = a * t[1][0] + b * t[0][0] + c * t[2][0];
+    m[1][1] = a * t[1][1] + b * t[0][1] + c * t[2][1];
+    m[1][2] = a * t[1][2] + b * t[0][2] + c * t[2][2];
+    m[1][3] = a * t[1][3] + b * t[0][3] + c * t[2][3];
+
+    a = cx * cy;
+    b = cx * sy;
+    m[2][0] = a * t[2][0] - t[1][0] * sx + b * t[0][0];
+    m[2][1] = a * t[2][1] - t[1][1] * sx + b * t[0][1];
+    m[2][2] = a * t[2][2] - t[1][2] * sx + b * t[0][2];
+    m[2][3] = a * t[2][3] - t[1][3] * sx + b * t[0][3];
+}
+
+/* The rotation matrix for angles x, y, z in func_800261CC_26DCC's axis order. */
+void func_800264D8_270D8(Mat4 m, f32 x, f32 y, f32 z) {
+    f32 sx, cx;
+    f32 sy, cy;
+    f32 sz, cz;
+
+    func_800B8070_B8C70(x, &sx, &cx);
+    func_800B8070_B8C70(y, &sy, &cy);
+    func_800B8070_B8C70(z, &sz, &cz);
+    m[0][0] = cy * cz + sx * sy * sz;
+    m[1][0] = -cx * sz;
+    m[2][0] = cz * sy + cy * sx * sz;
+    m[0][1] = cz * sx * sy + cy * sz;
+    m[1][1] = cx * cz;
+    m[2][1] = -cy * cz * sx + sy * sz;
+    m[0][2] = -cx * sy;
+    m[1][2] = sx;
+    m[2][2] = cx * cy;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
+    m[3][0] = m[3][1] = m[3][2] = 0.0f;
+    m[3][3] = 1.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/26370", func_8002662C_2722C);

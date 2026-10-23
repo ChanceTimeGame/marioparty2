@@ -54,7 +54,9 @@ void func_80020070_20C70(s16 count) {
     D_800FC88C_FD48C = D_800C9B80_CA780->mtxs;
 }
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_8002024C_20E4C);
+void func_8002024C_20E4C(void) {
+    D_800FFFD6_100BD6 = D_800FDBE0_FE7E0;
+}
 
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up) {
     HuCamera* camera = &D_800C9B80_CA780[camIndex];
@@ -127,7 +129,12 @@ void func_8002064C_2124C(s16 camIndex, Gfx** dispList) {
                   camera->screenBottom);
 }
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_80020718_21318);
+void func_80020718_21318(s16 index, void* arg1, void* arg2) {
+    HuCamera* cam = &D_800C9B80_CA780[index];
+
+    cam->unkA8 = arg1;
+    cam->unkAC = arg2;
+}
 
 INCLUDE_ASM("asm/nonmatchings/20C70", func_80020754_21354);
 

@@ -63,6 +63,8 @@ extern s32 D_800F8C44_F9844;
 extern void *D_800FDC68_FE868;
 extern void *D_800F8418_F9018;
 extern u32 D_800DEF60_DFB60;
+extern u8 D_800F92D0_F9ED0[]; /* per player: 1 = CPU (no pad) */
+void func_800B0EF0_B1AF0(void*, s32, s32); /* memset */
 extern OSMesgQueue D_800DEE08_DFA08;
 extern void *D_800DEE20_DFA20;
 extern s16 D_800F8F60_F9B60;
@@ -256,7 +258,28 @@ void func_8001C894_1D494(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001C8E0_1D4E0);
+/* Clears the four player records: pads present are human, the rest CPU. */
+void func_8001C8E0_1D4E0(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        func_800B0EF0_B1AF0(&gPlayers[i], 0, sizeof(GW_PLAYER));
+        if (HuGetPadInserted(i)) {
+            D_800F92D0_F9ED0[i] = 0;
+            gPlayers[i].flags = (u16)gPlayers[i].flags & ~1;
+        } else {
+            D_800F92D0_F9ED0[i] = 1;
+            gPlayers[i].flags |= 1;
+        }
+        gPlayers[i].port = i;
+        gPlayers[i].coins = 10;
+        gPlayers[i].coins_mg = 0;
+        gPlayers[i].group = i;
+        gPlayers[i].cpu_difficulty2 = 1;
+        gPlayers[i].cpu_difficulty = 0;
+        gPlayers[i].stars = 0;
+    }
+}
 
 void func_8001CA48_1D648(void) {
     func_8001C8E0_1D4E0();
@@ -469,9 +492,13 @@ void func_8001D13C_1DD3C(u64 **threadStacks) {
     D_800FA638_FB238 = *threadStacks;
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D178_1DD78);
+void func_8001D178_1DD78(s32* arg0) {
+    D_800FCE7C_FDA7C = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D184_1DD84);
+void func_8001D184_1DD84(u32 arg0) {
+    D_800DEF60_DFB60 = arg0;
+}
 
 
 /* ---- HMF loader (MP3 src/hmfload.c) ---- */
@@ -795,7 +822,8 @@ f32 func_800B1830_B2430(f32); /* sqrtf */
 /* MP3 Hmfload (src/hmfload.c) without the 0x3B records, MP2's object entries (0x68 bytes).
    Register allocation differs (recordCount stays in s0 where retail spills it, so flags and the
    counters land in other registers); otherwise the same code. Its string is the unit's only
-   rodata, D2CCC, which starts on a 4-byte boundary a carved object cannot, so it stays asm. */
+   rodata, D2CCC, which starts on a 4-byte boundary a carved object cannot: it is defined at the
+   end of 1C7C0.c's carved rodata as D_800D20CC_D2CCC. */
 #ifdef NON_MATCHING
 void func_8001D190_1DD90(HmfLoadData *hmf, void *fileData, s32 flags) {
     s16 i;
@@ -1913,7 +1941,68 @@ void func_8001FBE0_207E0(HmfLoadData *hmf, void *arg1, s16 index) {
     entry->unk28 = value + data[11];
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001FC8C_2088C);
+/* MP3 func_80011C40_12840 (src/hmfload.c) without the name compare: three map points by id. */
+s32 func_8001FC8C_2088C(HmfLoadData *hmf, void *arg1) {
+    char buf[0x20];
+    u8 *data;
+    HmfData_UnkBC *env;
+    s16 id;
+    s16 m;
+    s32 temp1, temp2;
+
+    data = arg1;
+    env = hmf->unkC0;
+    id = func_8001F380_1FF80(hmf, buf, (data[0] << 8) + data[1]);
+    for (m = 0; m < hmf->unk24; m++) {
+        if (id == hmf->unkC4[m].unk1C) {
+            break;
+        }
+    }
+    if (m == hmf->unk24) {
+        return 0;
+    }
+    env->unk08 = *(f32 *)&hmf->unkC4[m].unk20;
+    env->unk0C = *(f32 *)&hmf->unkC4[m].unk24;
+    env->unk10 = *(f32 *)&hmf->unkC4[m].unk28;
+    env->unk00 = m;
+    id = func_8001F380_1FF80(hmf, buf, (data[2] << 8) + data[3]);
+    for (m = 0; m < hmf->unk24; m++) {
+        if (id == hmf->unkC4[m].unk1C) {
+            break;
+        }
+    }
+    if (m == hmf->unk24) {
+        return 0;
+    }
+    env->unk14 = *(f32 *)&hmf->unkC4[m].unk20;
+    env->unk18 = *(f32 *)&hmf->unkC4[m].unk24;
+    env->unk1C = *(f32 *)&hmf->unkC4[m].unk28;
+    env->unk02 = m;
+    id = func_8001F380_1FF80(hmf, buf, (data[4] << 8) + data[5]);
+    for (m = 0; m < hmf->unk24; m++) {
+        if (id == hmf->unkC4[m].unk1C) {
+            break;
+        }
+    }
+    if (m == hmf->unk24) {
+        return 0;
+    }
+    env->unk20 = *(f32 *)&hmf->unkC4[m].unk20;
+    env->unk24 = *(f32 *)&hmf->unkC4[m].unk24;
+    env->unk28 = *(f32 *)&hmf->unkC4[m].unk28;
+    env->unk04 = m;
+    temp1 = data[6] << 0x18;
+    temp1 += data[7] << 0x10;
+    temp1 += data[8] << 0x8;
+    temp2 = data[9];
+    temp1 += temp2;
+    temp2 = temp1;
+    temp1 = temp2;
+
+    *((s32 *)(&env->unk2C)) = temp1;
+
+    return 1;
+}
 
 void func_8001FFCC_20BCC(HmfLoadData *hmf) {
     u8 *data;

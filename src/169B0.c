@@ -95,6 +95,7 @@ extern u32 D_800D7BB4_D87B4; /* frameSize */
 extern s32 D_800D7BB8_D87B8; /* AMConfig.extraSamples */
 extern s32 D_800D8038_D8C38;
 extern OSMesgQueue D_800D7F80_D8B80;
+extern OSIoMesg D_800D7BC0_D87C0[]; /* one PI request per DMA this frame */
 extern OSMesg D_800D7F98_D8B98[];
 extern OSMesgQueue D_800F8F40_F9B40;
 extern u64 D_800D1480_D2080[]; /* aspMainDataStart */
@@ -232,7 +233,11 @@ void func_800160FC_16CFC(AMConfig* amc) {
     osStartThread(&D_800D7908_D8508.thread);
 }
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80016190_16D90);
+void func_80016190_16D90(AMConfig* amc) {
+    osDestroyThread(&D_800D7908_D8508.thread);
+    alClose(&D_800D7908_D8508.g);
+    func_80016734_17334(amc->unk_64, 1);
+}
 
 void func_800161D4_16DD4(void* arg) {
     OSMesg msg;
@@ -294,14 +299,104 @@ u32 func_80016320_16F20(AudioInfo* info, AudioInfo* lastInfo) {
 void func_8001644C_1704C(AudioInfo* info) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80016454_17054);
+/* N64 SDK audiomgr.c __amDma (MP1 func_80013360), the PI request written out in place. */
+s32 func_80016454_17054(s32 addr, s32 len, void* state) {
+    void* foundBuffer;
+    s32 delta;
+    s32 addrEnd;
+    s32 buffEnd;
+    DMABuffer* dmaPtr;
+    DMABuffer* lastDmaPtr;
+    OSIoMesg* mb;
+
+    lastDmaPtr = NULL;
+    dmaPtr = D_800D7B90_D8790.firstUsed;
+    addrEnd = addr + len;
+    while (dmaPtr != NULL) {
+        buffEnd = dmaPtr->startAddr + D_800D7BA0_D87A0;
+        if (dmaPtr->startAddr > addr) {
+            break;
+        } else if (addrEnd <= buffEnd) {
+            dmaPtr->lastFrame = D_800D7B98_D8798;
+            foundBuffer = dmaPtr->ptr + addr - dmaPtr->startAddr;
+            return osVirtualToPhysical(foundBuffer);
+        }
+        lastDmaPtr = dmaPtr;
+        dmaPtr = (DMABuffer*)dmaPtr->node.next;
+    }
+
+    dmaPtr = D_800D7B90_D8790.firstFree;
+    if (dmaPtr == NULL) {
+        return osVirtualToPhysical(D_800D7B90_D8790.firstUsed);
+    }
+    D_800D7B90_D8790.firstFree = (DMABuffer*)dmaPtr->node.next;
+    alUnlink(&dmaPtr->node);
+    if (lastDmaPtr != NULL) {
+        alLink(&dmaPtr->node, &lastDmaPtr->node);
+    } else if (D_800D7B90_D8790.firstUsed != NULL) {
+        lastDmaPtr = D_800D7B90_D8790.firstUsed;
+        D_800D7B90_D8790.firstUsed = dmaPtr;
+        dmaPtr->node.next = &lastDmaPtr->node;
+        dmaPtr->node.prev = NULL;
+        lastDmaPtr->node.prev = &dmaPtr->node;
+    } else {
+        D_800D7B90_D8790.firstUsed = dmaPtr;
+        dmaPtr->node.next = NULL;
+        dmaPtr->node.prev = NULL;
+    }
+
+    foundBuffer = dmaPtr->ptr;
+    delta = addr & 1;
+    addr -= delta;
+    dmaPtr->startAddr = addr;
+    dmaPtr->lastFrame = D_800D7B98_D8798;
+    mb = &D_800D7BC0_D87C0[D_800D7B9C_D879C++];
+    mb->hdr.pri = OS_MESG_PRI_NORMAL;
+    mb->hdr.retQueue = &D_800D7F80_D8B80;
+    mb->dramAddr = foundBuffer;
+    mb->devAddr = addr;
+    mb->size = D_800D7BA0_D87A0;
+    /* D_800D8038_D8C38 holds an OSPiHandle* in an s32 (AMConfig.unk_68): a host hazard. */
+    osEPiStartDma((OSPiHandle*)D_800D8038_D8C38, mb, OS_READ);
+    return osVirtualToPhysical(foundBuffer) + delta;
+}
 
 ALDMAproc func_80016608_17208(void* state) {
     *(DMAState**)state = &D_800D7B90_D8790;
     return (ALDMAproc)func_80016454_17054;
 }
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80016620_17220);
+/* audiomgr.c __clearAudioDMA (MP1 func_80013524 without the buffer count). */
+void func_80016620_17220(void) {
+    OSMesg iomsg;
+    u32 i;
+    DMABuffer* dmaPtr;
+    DMABuffer* nextPtr;
+
+    for (i = 0; i < D_800D7B9C_D879C; i++) {
+        osRecvMesg(&D_800D7F80_D8B80, &iomsg, OS_MESG_NOBLOCK);
+    }
+    dmaPtr = D_800D7B90_D8790.firstUsed;
+    while (dmaPtr != NULL) {
+        nextPtr = (DMABuffer*)dmaPtr->node.next;
+        if (dmaPtr->lastFrame + D_800D7BA4_D87A4 < D_800D7B98_D8798) {
+            if (D_800D7B90_D8790.firstUsed == dmaPtr) {
+                D_800D7B90_D8790.firstUsed = nextPtr;
+            }
+            alUnlink(&dmaPtr->node);
+            if (D_800D7B90_D8790.firstFree != NULL) {
+                alLink(&dmaPtr->node, &D_800D7B90_D8790.firstFree->node);
+            } else {
+                D_800D7B90_D8790.firstFree = dmaPtr;
+                dmaPtr->node.next = NULL;
+                dmaPtr->node.prev = NULL;
+            }
+        }
+        dmaPtr = nextPtr;
+    }
+    D_800D7B9C_D879C = 0;
+    D_800D7B98_D8798++;
+}
 
 void func_80016734_17334(s32 arg0, s32 remove) {
     if (remove) {
@@ -409,7 +504,10 @@ void func_80016B44_17744(void) {
     osSendMesg(&D_800D81A0_D8DA0, NULL, 1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/169B0", func_80016BBC_177BC);
+void func_80016BBC_177BC(s8 arg0, s8 arg1) {
+    D_800D818E_D8D8E = arg0;
+    D_800D818F_D8D8F = arg1;
+}
 
 s16 func_80016BD0_177D0(void)
 {
