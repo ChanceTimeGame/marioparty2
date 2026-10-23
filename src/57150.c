@@ -416,4 +416,8 @@ s32 func_800573AC_57FAC(void) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/57150", func_80057448_58048);
+void func_80057448_58048(void) {
+    _SetFlag(GwSystem.unk_1A);
+    _SetFlag(0x4D);
+    D_800F8D12_F9912 = 1;
+}

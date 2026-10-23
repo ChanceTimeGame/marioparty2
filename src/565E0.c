@@ -301,6 +301,11 @@ void func_800564B4_570B4(void) {
     D_800CC592_CD192 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_80056524_57124);
+void func_80056524_57124(s32 arg0) {
+    D_800CC590_CD190 = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/565E0", func_80056530_57130);
+void func_80056530_57130(void) {
+    D_800CC590_CD190 = 0;
+    D_800CC592_CD192 = 0;
+}
