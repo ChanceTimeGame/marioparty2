@@ -1306,15 +1306,207 @@ s32 func_80003F40_4B40(Vec3f* p, ColTri* tri, ColVtx* verts) {
     return 1;
 }
 
+/* func_80004168_4D68 .. func_8000776C_836C (wave H2 fork F) */
+s32 func_8001B434_1C034(f32 tri[3][3], Vec3f* pos, f32 r, Vec3f* hit);  /* sphere against a triangle (MP1 func_80019964) */
+s32 func_8001B9AC_1C5AC(f32 quad[4][3], Vec3f* pos, f32 r, Vec3f* hit); /* sphere against a quad (MP1 func_80019EDC) */
+f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
+void func_80009DB0_A9B0(f32 nx, f32 ny, f32 nz); /* add a contact normal (normalised) */
+void func_80009E0C_AA0C(f32 x, f32 y, f32 z);    /* add a contact point */
+extern f32 D_800BF7C0_C03C0;
+extern f32 D_800BF7C4_C03C4;
+extern f32 D_800BF7CC_C03CC;
+extern Vec3f D_800D5760_D6360;   /* reference point for the face-side test (func_8000776C_836C) */
+extern Vec3f D_800F9D40_FA940[]; /* contact points; D_800FD8C8_FE4C8[] holds their normals */
+/* 1130's rodata past fork A's carve, still in the data blob (G carves the tail) */
+extern f64 D_800D1770_D2370; /* 0.2 */
+extern f64 D_800D1778_D2378; /* 0.5 */
+extern f64 D_800D1780_D2380; /* 2.0 */
+extern f64 D_800D1788_D2388; /* 0.3 */
+extern f64 D_800D1790_D2390; /* 2.0 */
+extern f64 D_800D1798_D2398; /* 0.3 */
+s32 func_80005130_5D30(void* arg0, s16* idx, ColVtx* verts, ColSphere* s);
+void func_80006440_7040(void);
+void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2);
+
 INCLUDE_ASM("asm/nonmatchings/1130", func_80004168_4D68);
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80005034_5C34);
+/* Clamp this frame's push: a push longer than the radius is replaced by one opposite the heading. */
+void func_80005034_5C34(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    f32 r = w->unk_48;
+    f32 rot;
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80005110_5D10);
+    if (r < func_800B1830_B2430(D_800F94A0_FA0A0 * D_800F94A0_FA0A0 + D_80101308_101F08 * D_80101308_101F08) ||
+        fabs(D_800F94A0_FA0A0) > r || fabs(D_80101308_101F08) > r) {
+        rot = w->unk_3C;
+        D_800F94A0_FA0A0 = -HuMathSin(rot) * w->unk_40;
+        D_80101308_101F08 = -func_800B7890_B8490(rot) * w->unk_40;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80005130_5D30);
+s32 func_80005110_5D10(void* arg0, s16* idx, ColVtx* verts, Vec3f* p) {
+    return func_80003F40_4B40(p, (ColTri*)(idx - 1), verts);
+}
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80005700_6300);
+/* Face filter for a face list in world space: push the sphere out of the face, recording the
+   contact point and the face normal (MP1 func_80002080). */
+s32 func_80005130_5D30(void* arg0, s16* idx, ColVtx* verts, ColSphere* s) {
+    Vec4f sph;
+    Vec3f pos;
+    Vec3f hitPos;
+    f32 quad[4][3];
+    f32 tri3[3][3];
+    Vec3f dir;
+    s16* tri;
+    s32 side;
+    s32 hit;
+    f32 pen, dz, dx;
+
+    pos.x = sph.x = s->x + D_800F94A0_FA0A0;
+    pos.y = sph.y = s->y;
+    pos.z = sph.z = s->z + D_80101308_101F08;
+    sph.w = s->r;
+    tri = idx - 1;
+    side = func_80003A54_4654(&sph, tri, verts);
+    if (side == 0) {
+        return 0;
+    }
+    if (((u16)*tri >> 14) + 2 == 4) {
+        quad[0][0] = verts[idx[0]].x;
+        quad[0][1] = verts[idx[0]].y;
+        quad[0][2] = verts[idx[0]].z;
+        quad[1][0] = verts[idx[1]].x;
+        quad[1][1] = verts[idx[1]].y;
+        quad[1][2] = verts[idx[1]].z;
+        quad[2][0] = verts[idx[2]].x;
+        quad[2][1] = verts[idx[2]].y;
+        quad[2][2] = verts[idx[2]].z;
+        quad[3][0] = verts[idx[3]].x;
+        quad[3][1] = verts[idx[3]].y;
+        quad[3][2] = verts[idx[3]].z;
+        hit = func_8001B9AC_1C5AC(quad, (Vec3f*)&pos, sph.w, &hitPos);
+    } else {
+        tri3[0][0] = verts[idx[0]].x;
+        tri3[0][1] = verts[idx[0]].y;
+        tri3[0][2] = verts[idx[0]].z;
+        tri3[1][0] = verts[idx[1]].x;
+        tri3[1][1] = verts[idx[1]].y;
+        tri3[1][2] = verts[idx[1]].z;
+        tri3[2][0] = verts[idx[2]].x;
+        tri3[2][1] = verts[idx[2]].y;
+        tri3[2][2] = verts[idx[2]].z;
+        hit = func_8001B434_1C034(tri3, (Vec3f*)&pos, sph.w, &hitPos);
+    }
+    if (hit == 1) {
+        func_80009E0C_AA0C(hitPos.x, hitPos.y, hitPos.z);
+        func_8002DA3C_2E63C(&verts[idx[0]], &verts[idx[1]], &verts[idx[2]], &D_800FD8C8_FE4C8[D_800BF796_C0396]);
+        D_800BF796_C0396++;
+        dx = hitPos.x - pos.x;
+        dz = hitPos.z - pos.z;
+        pen = sph.w - func_800B1830_B2430(dx * dx + dz * dz);
+        if (side > 0) {
+            idx--;
+            if (func_8000393C_453C(&D_800D5760_D6360, (ColTri*)idx, verts) < 0) {
+                dir.x = D_800D5760_D6360.x - pos.x;
+                dir.y = D_800D5760_D6360.y - pos.y;
+                dir.z = D_800D5760_D6360.z - pos.z;
+                func_8002D9AC_2E5AC(&dir);
+                if (func_80003CE0_48E0(&pos, idx, verts, &dir) == hit) {
+                    pen = func_800B1830_B2430(dx * dx + dz * dz) + sph.w;
+                }
+            } else {
+                pen = 0.0f;
+            }
+        }
+        func_80009684_A284(-dx, -dz, pen);
+    }
+    return hit;
+}
+
+/* func_80005130_5D30 for a ground object's local face list: the hit is moved to world space with
+   D_800FC838_FD438 and the reference point to local space (MP1 func_8000261C). */
+s32 func_80005700_6300(void* arg0, s16* idx, ColVtx* verts, ColSphere* s) {
+    Vec4f sph;
+    Vec4f pos;
+    Vec3f hitPos;
+    f32 quad[4][3];
+    f32 tri3[3][3];
+    Vec3f dir;
+    s16* tri;
+    s32 side;
+    s32 hit;
+    f32 pen, dz, dx;
+
+    pos.x = sph.x = s->x + D_800F94A0_FA0A0;
+    pos.y = sph.y = s->y;
+    pos.z = sph.z = s->z + D_80101308_101F08;
+    sph.w = pos.w = s->r;
+    tri = idx - 1;
+    side = func_80003A54_4654(&sph, tri, verts);
+    if (side == 0) {
+        return 0;
+    }
+    if (((u16)*tri >> 14) + 2 == 4) {
+        quad[0][0] = verts[idx[0]].x;
+        quad[0][1] = verts[idx[0]].y;
+        quad[0][2] = verts[idx[0]].z;
+        quad[1][0] = verts[idx[1]].x;
+        quad[1][1] = verts[idx[1]].y;
+        quad[1][2] = verts[idx[1]].z;
+        quad[2][0] = verts[idx[2]].x;
+        quad[2][1] = verts[idx[2]].y;
+        quad[2][2] = verts[idx[2]].z;
+        quad[3][0] = verts[idx[3]].x;
+        quad[3][1] = verts[idx[3]].y;
+        quad[3][2] = verts[idx[3]].z;
+        hit = func_8001B9AC_1C5AC(quad, (Vec3f*)&pos, sph.w, &hitPos);
+    } else {
+        tri3[0][0] = verts[idx[0]].x;
+        tri3[0][1] = verts[idx[0]].y;
+        tri3[0][2] = verts[idx[0]].z;
+        tri3[1][0] = verts[idx[1]].x;
+        tri3[1][1] = verts[idx[1]].y;
+        tri3[1][2] = verts[idx[1]].z;
+        tri3[2][0] = verts[idx[2]].x;
+        tri3[2][1] = verts[idx[2]].y;
+        tri3[2][2] = verts[idx[2]].z;
+        hit = func_8001B434_1C034(tri3, (Vec3f*)&pos, sph.w, &hitPos);
+    }
+    if (hit == 1) {
+        pos.x = s->x2 + D_800F94A0_FA0A0;
+        pos.y = s->y2;
+        pos.z = s->z2 + D_80101308_101F08;
+        func_8000D74C_E34C(D_800FC838_FD438, &hitPos);
+        func_80009E0C_AA0C(hitPos.x, hitPos.y, hitPos.z);
+        func_8002DA3C_2E63C(&verts[idx[0]], &verts[idx[1]], &verts[idx[2]], &D_800FD8C8_FE4C8[D_800BF796_C0396]);
+        D_800BF796_C0396++;
+        dx = hitPos.x - pos.x;
+        dz = hitPos.z - pos.z;
+        pen = sph.w - func_800B1830_B2430(dx * dx + dz * dz);
+        if (side > 0) {
+            sph.x = D_800D5760_D6360.x;
+            sph.y = D_800D5760_D6360.y;
+            sph.z = D_800D5760_D6360.z;
+            func_8000D74C_E34C(D_800F94C8_FA0C8, (Vec3f*)&sph);
+            idx--;
+            if (func_8000393C_453C((Vec3f*)&sph, (ColTri*)idx, verts) < 0) {
+                dir.x = sph.x - pos.x;
+                dir.y = sph.y - pos.y;
+                dir.z = sph.z - pos.z;
+                func_8002D9AC_2E5AC(&dir);
+                if (func_80003CE0_48E0((Vec3f*)&pos, idx, verts, &dir) == hit) {
+                    pen = func_800B1830_B2430(dx * dx + dz * dz) + sph.w;
+                }
+            } else {
+                pen = 0.0f;
+            }
+        }
+        if (pen >= 0.0f) {
+            func_80009684_A284(-dx, -dz, pen);
+        }
+    }
+    return hit;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1130", func_80005D60_6960);
 
@@ -1326,13 +1518,123 @@ INCLUDE_ASM("asm/nonmatchings/1130", func_80006440_7040);
 
 INCLUDE_ASM("asm/nonmatchings/1130", func_800066BC_72BC);
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_80006BF8_77F8);
+/* After the wall pushes: a fast player running into a wall bounces off it (MP1 func_8000423C). */
+void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2) {
+    MgWork* w;
+    f32 speed;
+    f32 sa, sb;
+    f32 dx, dy, dz;
+    f32 lim;
+    f32 nx;
+    s32 i;
+
+    if (D_800BF796_C0396 == 0) {
+        return;
+    }
+    w = obj->unk_50;
+    if (w->unk_52 == 0) {
+        sa = w->unk_40;
+        sb = w->unk_B4;
+        if (w->unk_50 & 6) {
+            speed = sa * 0.6f * sb;
+        } else {
+            speed = sa * sb;
+        }
+    } else {
+        speed = w->unk_40;
+    }
+    if (w->unk_38 != 1000.0f) {
+        speed *= w->unk_4C;
+    }
+    for (i = 0; i < D_800BF796_C0396; i++) {
+        dx = D_800F9D40_FA940[i].x - s->x;
+        dy = D_800F9D40_FA940[i].y - s->y;
+        dz = D_800F9D40_FA940[i].z - s->z;
+        func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+        nx = HuMathSin(w->unk_3C) * speed + D_800F94A0_FA0A0;
+        if (func_8000DA2C_E62C(nx, func_800B7890_B8490(w->unk_3C) * speed + D_80101308_101F08, dx, dz) > 0.9f &&
+            w->unk_38 != 1000.0f && w->unk_40 > D_800BF7C4_C03C4) {
+            lim = w->unk_40;
+            if (w->unk_50 & 6) {
+                lim *= 0.6f;
+            }
+            lim *= w->unk_4C * w->unk_B4 * 0.98f;
+            if (func_800B1830_B2430(D_800F94A0_FA0A0 * D_800F94A0_FA0A0 + D_80101308_101F08 * D_80101308_101F08) < lim) {
+                if (w->unk_50 & 8) {
+                    w->unk_40 = -D_800BF7C0_C03C0;
+                } else {
+                    w->unk_40 = -D_800BF7CC_C03CC;
+                }
+                func_80019B9C_1A79C(obj, 0x1E);
+                func_8000C584_D184(w, 7);
+                omVibrate(w->unk_59, 5, 0, 5);
+                return;
+            }
+        }
+        if (arg2 != 0.0f) {
+            w->unk_40 = arg2;
+            func_8000C584_D184(w, 7);
+            omVibrate(w->unk_59, 2, 3, 10);
+            return;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/1130", func_80006F34_7B34);
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_8000755C_815C);
+/* Tilt the player toward the floor normal (MP1 func_800057F4). The doubles are 1130's rodata
+   (2.0, 0.3, 2.0, 0.3) still in the data blob: G's tail carve takes them (written as externs so
+   this builds before it). */
+void func_8000755C_815C(omObjData* obj, Vec3f* n) {
+    MgWork* w = obj->unk_50;
+    f32 rx, rz;
+    f32 cx, cz;
 
-INCLUDE_ASM("asm/nonmatchings/1130", func_8000776C_836C);
+    if (w->unk_40 > D_800BF7C4_C03C4) {
+        rx = -(func_800B75A8_B81A8(n->y, n->z) - 90.0f);
+        rz = func_800B75A8_B81A8(n->y, n->x);
+        cx = w->unk_9C;
+        cz = w->unk_A4;
+        rz -= 90.0f;
+        if (cx < rx) {
+            w->unk_9C += 4.0f;
+            if (rx < w->unk_9C) {
+                w->unk_9C = rx;
+            }
+        } else if (rx < cx) {
+            w->unk_9C -= 4.0f;
+            if (w->unk_9C < rx) {
+                w->unk_9C = rx;
+            }
+        }
+        if (cz < rz) {
+            w->unk_A4 += 4.0f;
+            if (rz < w->unk_A4) {
+                w->unk_A4 = rz;
+            }
+        } else if (rz < cz) {
+            w->unk_A4 -= 4.0f;
+            if (w->unk_A4 < rz) {
+                w->unk_A4 = rz;
+            }
+        }
+    } else {
+        if (fabs(w->unk_9C) > D_800D1780_D2380) {
+            obj->rot.x = w->unk_9C = w->unk_9C * D_800D1788_D2388;
+        }
+        if (fabs(w->unk_A4) > D_800D1790_D2390) {
+            obj->rot.z = w->unk_A4 = w->unk_A4 * D_800D1798_D2398;
+        }
+    }
+    obj->rot.x = w->unk_9C;
+    obj->rot.z = w->unk_A4;
+}
+
+void func_8000776C_836C(omObjData* obj) {
+    D_800D5760_D6360.x = obj->trans.x;
+    D_800D5760_D6360.y = obj->trans.y;
+    D_800D5760_D6360.z = obj->trans.z;
+}
 
 INCLUDE_ASM("asm/nonmatchings/1130", func_80007790_8390);
 
