@@ -565,7 +565,18 @@ build/src/19BF0.c.o: RODATA_AS_DATA = 1
 build/src/1C7C0.c.o: RODATA_AS_DATA = 1
 # h1-H: MP3 libhmath and Hudson gu units (-O2 -ffast-math, KMC as mul fix on, as MP3 builds src/libhmath)
 H1H_HMATH_UNITS := build/src/B2440.c.o
+# B28C0 is also built as 1D0B0 is: GCC's assembly with blank lines removed (no nop before the
+# mul.s after func_800B1CC0_B28C0's sincos call)
+H1H_BLANKSTRIP_HMATH_UNITS := build/src/B28C0.c.o
 # B24A0 (guLookAtF): nop between back-to-back mul.s
 build/src/B24A0.c.o: export VR4300MUL = ON
 $(H1H_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
 $(H1H_HMATH_UNITS): export VR4300MUL = ON
+$(H1H_BLANKSTRIP_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+$(H1H_BLANKSTRIP_HMATH_UNITS): export VR4300MUL = ON
+$(H1H_BLANKSTRIP_HMATH_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
