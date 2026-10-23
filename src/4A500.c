@@ -20,6 +20,7 @@ void MBModelKill(void*);
 void MBModelDispOff(Object*);
 Object* func_80043510_44110(s32, void*);
 void func_80049B2C_4A72C(void);
+Process* func_80049A38_4A638(Object* model, Vec3f* pos, Vec3f* vel, Vec3f* scale, f32 duration);
 Object* MBModelParamCreate(Object*);
 void func_80029EDC_2AADC(s16, s32);
 s16 func_80029F04_2AB04(s16);
@@ -66,7 +67,74 @@ Process* func_80049A38_4A638(Object* model, Vec3f* pos, Vec3f* vel, Vec3f* scale
     return process;
 }
 
+/* NON_MATCHING: register allocation only (masked 2). */
+#ifdef NON_MATCHING
+/* MP1 func_8004246C (src/42E40.c, NON_MATCHING there): MP2 scales by the work's unk18 and adds
+   type 3 (unit scale, no velocity). */
+void func_80049B2C_4A72C(void) {
+    Vec3f scale;
+    Vec3f pos;
+    Vec3f vel;
+    ModelEmitterWork* work = HuPrcCurrentGet()->user_data;
+    Process* process = HuPrcCurrentGet();
+    Vec3f* velp;
+    f32 duration;
+
+    velp = &vel;
+    while (TRUE) {
+        switch (work->type) {
+        case 2:
+            HuPrcSleep(1);
+            break;
+        case 0:
+        case 1:
+        case 3:
+            HuPrcSleep(0);
+            break;
+        }
+        if (work->flags & 1) {
+            break;
+        }
+        scale.x = work->parent->scale.x;
+        scale.y = work->parent->scale.y;
+        scale.z = work->parent->scale.z;
+        if (work->type == 3) {
+            HuVecCopyXYZ(&scale, 1.0f, 1.0f, 1.0f);
+        }
+        /* parent->velocity.x is MBModel.jumpY */
+        pos.x = work->offset.x * scale.x * work->unk18 + work->parent->coords.x;
+        pos.y = work->offset.y * scale.y * work->unk18 + work->parent->coords.y + work->parent->velocity.x;
+        pos.z = work->offset.z * scale.z * work->unk18 + work->parent->coords.z;
+        pos.x = ((u8)(rand8() % 200) - 100) * 0.5f * scale.x * work->unk18 + pos.x;
+        pos.y = ((u8)(rand8() % 200) - 100) * 0.5f * scale.y * work->unk18 + pos.y;
+        pos.z = ((u8)(rand8() % 200) - 100) * 0.5f * scale.z * work->unk18 + pos.z;
+        switch (work->type) {
+        case 1:
+        case 2:
+            HuVecCopyXYZ(velp, 0.0f, work->unk18 * -8.0f, 0.0f);
+            duration = 8.0f;
+            break;
+        case 0:
+            HuVecCopyXYZ(velp, 0.0f, work->unk18 * -5.0f, 0.0f);
+            duration = 16.0f;
+            break;
+        case 3:
+            HuVecCopyXYZ(velp, 0.0f, 0.0f, 0.0f);
+            duration = 16.0f;
+            break;
+        default:
+            continue;
+        }
+        HuPrcChildLink(process, func_80049A38_4A638(work->model, &pos, velp, &scale, duration));
+    }
+    HuPrcChildWatch();
+    MBModelKill(work->model);
+    HuMemMemoryFreeTemp(work);
+    omDelPrcObj(NULL);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/4A500", func_80049B2C_4A72C);
+#endif
 
 /* near MP1 func_80042728 (src/42E40.c): MP2 adds a scale (unk18) to the work. */
 void* func_80049ED4_4AAD4(Object* ptr, s16 num) {
@@ -90,6 +158,8 @@ void* func_80049ED4_4AAD4(Object* ptr, s16 num) {
     return work;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4A500", func_80049F90_4AB90);
+void func_80049F90_4AB90(ModelEmitterWork* work) {
+    work->flags |= 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/4A500", func_80049FA0_4ABA0);

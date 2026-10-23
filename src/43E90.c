@@ -44,6 +44,22 @@ typedef struct MBModelParam {
 
 extern MBModelParam D_800CB168_CBD68[];
 
+/* The same table from its start: D_800CB168_CBD68 is its +8 view. */
+typedef struct MBModelFiles {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 shadowFile;
+    /* 0x08 */ f32 scale;
+    /* 0x0C */ f32 shadowScale;
+} MBModelFiles; /* size = 0x10 */
+
+extern MBModelFiles D_800CB160_CBD60[];
+void func_800297E8_2A3E8(s16, f32, f32, f32);
+typedef struct Vec2fxy {
+    f32 x;
+    f32 y;
+} Vec2fxy; /* as in 51630.c */
+void MBDCamera3Dto2D(Vec*, Vec2fxy*);
+
 void omSetRot(omObjData*, f32, f32, f32);
 s16 LoadFormFile(s32, s32);
 s32 func_80027D3C_2893C(s16);
@@ -139,7 +155,65 @@ MBModel* func_8004344C_4404C(void) {
     return m;
 }
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043510_44110);
+/* MP1 MBModelCreate (src/3E560.c): MP2 adds func_800297E8_2A3E8, reads the base motion only when
+   the model has one and picks the shadow's load flags by flag 0xD. */
+MBModel* func_80043510_44110(u8 id, void* arg1) {
+    MBModel* m;
+    u16 mtncnt;
+    omObjData* obj;
+    MBModelWork* work;
+    s16 model;
+    s16 i;
+
+    mtncnt = 0;
+    m = func_8004344C_4404C();
+    if (m != NULL) {
+        m->id = id;
+        if (arg1 != NULL) {
+            mtncnt = *(s32*)arg1;
+            arg1 = (s32*)arg1 + 1;
+        }
+        obj = m->obj = omAddObj(0x4000, 1, mtncnt, -1, func_80043A60_44660);
+        model = LoadFormFile(D_800CB160_CBD60[m->id].file, 0x6A9);
+        omSetStatBit(obj, 0x80);
+        *obj->model = model;
+        omSetRot(obj, 0.0f, 0.0f, 0.0f);
+        func_80029E80_2AA80(model, 2, 2);
+        func_80029EDC_2AADC(model, 1);
+        func_800297E8_2A3E8(model, 0.0f, 0.0f, 0.0f);
+        if (func_80029E14_2AA14(model) != 0xFF) {
+            m->baseMot = func_800432C0_43EC0(func_80029E14_2AA14(model));
+        }
+        work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+        obj->unk_50 = work;
+        work->model = m;
+        work->scale = D_800CB168_CBD68[m->id].scale;
+        for (i = 0; i < (s16)mtncnt; i++) {
+            obj->motion[i] = func_800432E8_43EE8(*(s32*)arg1);
+            arg1 = (s32*)arg1 + 1;
+        }
+        if (D_800CB168_CBD68[m->id].shadowScale > 0.0f) {
+            obj = m->shadow = omAddObj(0x4000, 1, 0, -1, func_80043C64_44864);
+            if (!_CheckFlag(0xD)) {
+                model = LoadFormFile(D_800CB160_CBD60[m->id].shadowFile, 0x229);
+            } else {
+                model = LoadFormFile(D_800CB160_CBD60[m->id].shadowFile, 0x2A9);
+            }
+            omSetStatBit(obj, 0x80);
+            *obj->model = model;
+            omSetRot(obj, 0.0f, 0.0f, 0.0f);
+            func_80029EDC_2AADC(model, 1);
+            func_800297E8_2A3E8(model, 0.0f, 0.0f, 0.0f);
+            work = HuMemMemoryAllocTemp(sizeof(MBModelWork));
+            obj->unk_50 = work;
+            work->model = m;
+            work->scale = D_800CB168_CBD68[m->id].shadowScale;
+        } else {
+            m->shadow = NULL;
+        }
+    }
+    return m;
+}
 
 /* near MP3 MBModelFileCreate (ECA50.c): MP2 reads the base motion from the model and sets no
    model scale. */
@@ -196,7 +270,50 @@ MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4) {
     return m;
 }
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043A60_44660);
+/* MP1 func_8003DE60 (src/3E560.c): MP2 scales by MBDBackMdlScaleGet. */
+void func_80043A60_44660(omObjData* obj) {
+    Vec2fxy pos2d;
+    MBModelWork* work = obj->unk_50;
+    MBModel* m = work->model;
+
+    if (D_80102720_103320 == 0 || (m->attr & 0x10)) {
+        if (m->jumpAccel != 0.0f) {
+            m->jumpVel += m->jumpAccel;
+            if ((m->jumpY += m->jumpVel) < 0.0f) {
+                m->jumpY = 0.0f;
+                m->jumpVel = 0.0f;
+                m->jumpAccel = 0.0f;
+            }
+        }
+    }
+    if (!(D_80101330_101F30 & 1)) {
+        goto off;
+    }
+    /* retail reloads attr for each test; only a volatile read reproduces it */
+    if (!(((volatile MBModel*)m)->attr & 8)) {
+        goto off;
+    }
+    if (!(((volatile MBModel*)m)->attr & 2)) {
+        goto on;
+    }
+    MBDCamera3Dto2D(&m->pos, &pos2d);
+    if (pos2d.x > 370.0f || pos2d.x < -50.0f || pos2d.y > 290.0f || pos2d.y < -20.0f) {
+    off:
+        MBModelAttrSetDispOff(m);
+        return;
+    }
+on:
+    MBModelAttrSetDispOn(m);
+    if (!(m->attr & 4)) {
+        obj->rot.y = func_80042BE0_437E0(&m->rot);
+    }
+    obj->trans.x = m->pos.x;
+    obj->trans.y = m->pos.y + m->jumpY;
+    obj->trans.z = m->pos.z;
+    obj->scale.x = m->scale.x * work->scale * MBDBackMdlScaleGet();
+    obj->scale.y = m->scale.y * work->scale * MBDBackMdlScaleGet();
+    obj->scale.z = m->scale.z * work->scale * MBDBackMdlScaleGet();
+}
 
 /* near MP3 func_800D95D0_ED1F0_shared_board (ECA50.c): the shadow follows its model. */
 void func_80043C64_44864(omObjData* arg0) {
