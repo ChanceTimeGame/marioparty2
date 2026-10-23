@@ -391,7 +391,8 @@ segments:
       - {start: 0xCD810, type: .data, name: 63670, linker_section: .cdata}
       - [0xCD9F0, .data, 67FA0]
       - [0xCDBB0, .data, 692F0]
-      - [0xCDBC0, data]
+      - {start: 0xCDBC0, type: .data, name: 69950, linker_section: .cdata}
+      - [0xCDC50, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]

@@ -19,11 +19,29 @@ extern s16 D_800FD85C_FE45C[];
 extern u8 D_800FC988_FD588;
 extern s16 D_800F9508_FA108;  /* MP1 D_800ED720: GMesWait's countdown */
 extern u16 D_801011FC_101DFC;
-extern s16 D_800CCFC0_CDBC0[]; /* "START" sounds */
-extern s8 D_800CCFC8_CDBC8[];  /* per minigame: index into D_800CCFC0_CDBC0, or -1 */
+/* .data (0xCDBC0-0xCDC50) */
+s16 D_800CCFC0_CDBC0[4] = { 0x0F, 0x12, 0x13, 0x0E }; /* "START" sounds */
+s8 D_800CCFC8_CDBC8[76] = { /* per minigame: index into D_800CCFC0_CDBC0, -1 none */
+    3, 3, 3, 3, 3, 3, 3, 1, -1, 1, 0, 0, 3, 1, 1, 3, 1, 3, -1, 3, 1, 1, 3, 0, 3, 3, -1, 0, 0, 0, 3, 0,
+    3, 1, 2, 0, -1, 3, 3, 3, 3, 0, 1, 2, 1, 1, 1, 3, 3, 1, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 2, 3, 0, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 0, 0,
+};
+u8 D_800CD014_CDC14[20] = { /* the 19 characters of the 0x90/0xD0 font sheet */
+    0x95, 0xA6, 0xAC, 0xAF, 0xD1, 0xD3, 0xD5, 0xD7, 0xD8, 0xD9,
+    0xDA, 0xDB, 0xDE, 0xDF, 0xE4, 0xE6, 0xE9, 0xEB, 0xEC, 0x00,
+};
+extern const char D_800D32D4_D3ED4[];
+extern const char D_800D32DC_D3EDC[];
+extern const char D_800D32E4_D3EE4[];
+extern const char D_800D32EC_D3EEC[];
+extern const char D_800D32F4_D3EF4[];
+extern const char D_800D32FC_D3EFC[];
+extern const char D_800D3304_D3F04[];
+char* D_800CD028_CDC28[10] = { /* character names, padded to 7 */
+    (char*)D_800D3304_D3F04, (char*)D_800D32FC_D3EFC, (char*)D_800D32F4_D3EF4, (char*)D_800D32EC_D3EEC,
+    (char*)D_800D32E4_D3EE4, (char*)D_800D32DC_D3EDC, (char*)D_800D32D4_D3ED4, NULL, NULL, NULL,
+};
 extern s8 D_80102708_103308;
-extern char* D_800CD028_CDC28[]; /* character names, padded to 7 */
-extern u8 D_800CD014_CDC14[]; /* the 19 characters of the 0x90/0xD0 font sheet */
 
 void func_80068E64_69A64(Gfx**);
 s32 func_80069538_6A138(void);
@@ -1652,9 +1670,6 @@ void func_8006BD2C_6C92C(GAMEMES* gMes, s32 fileId);
 void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
 void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
 s32 func_80068D50_69950(void); /* current minigame's index into D_800CCFC8_CDBC8 */
-extern s16 D_800CCFC0_CDBC0[]; /* start voice per D_800CCFC8_CDBC8 value */
-extern s8 D_800CCFC8_CDBC8[];
-extern char* D_800CD028_CDC28[]; /* character names, " MARIO " etc. */
 
 /* "NEW RECORD" banner: the two words scale and spin in, hold, then fade out. */
 s32 func_8006DAA8_6E6A8(GAMEMES* gMes, Gfx** arg1) {

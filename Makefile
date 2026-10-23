@@ -586,5 +586,5 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # into the data half's `(.data)` entry; their C .data is renamed to .cdata in the same objcopy and
 # the data half's yaml entry links it (`{start: .., type: .data, name: <unit>, linker_section: .cdata}`).
 # The rodata half's entry stays `[start, .data, <unit>]`.
-D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o
+D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o build/src/69950.c.o
 $(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
