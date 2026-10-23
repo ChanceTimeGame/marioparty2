@@ -4,6 +4,56 @@
 #include "game/object.h"
 #include "game/pad.h"
 #include "game/gamework.h"
+#include "game/window.h"
+
+extern u8 D_800F851A_F911A; /* board window/marker busy flag */
+extern s8 D_800CD41D_CE01D;
+extern s16 D_800F64B0_F70B0;
+extern s16 D_800FD2A6_FDEA6;
+extern u8 D_800CC8D0_CD4D0[][6]; /* player model per board and character (arg2 0) */
+extern u8 D_800CC908_CD508[][6]; /* the same, arg2 1 */
+extern u8 D_800CC940_CD540[][6]; /* the same, arg2 2 */
+void func_80078EC8_79AC8(void);
+void func_80078FF8_79BF8(void);
+void func_800884AC_890AC(s16);
+void func_8001122C_11E2C(s32 player, s32 vol);
+void func_80028334_28F34(s16, s32);
+void func_80029EDC_2AADC(s16, s32);
+void func_800794A8_7A0A8(s32);
+void func_800114E8_120E8(s32 player, s32 frames);
+void func_80079464_7A064(void);
+void InitFadeOut(s32, s32);
+void func_80063178_63D78(void);
+void func_80062CC0_638C0(void);
+s32 omOvlReturnEx(s16);
+void omOvlKill(void);
+void HuPrcChildLink(Process* parent, Process* child);
+void HuPrcChildWatch(void);
+Object* func_80043510_44110(s32, void*);
+void omPrcSetStatBit(Process*, s32);
+void func_8005D88C_5E48C(void);
+void func_8005DF78_5EB78(void);
+
+
+extern char pfStrBuf[];
+extern s16 D_800E1CF4_E28F4; /* last pause-menu choice */
+extern s32 D_800CC6A8_CD2A8[]; /* guide model per board */
+extern f32 D_800CC6C4_CD2C4[]; /* guide facing per board */
+extern s32 D_800CC6E0_CD2E0[]; /* pause-menu help messages */
+extern s32 D_800CC6F8_CD2F8[]; /* the same, flag 0xD set */
+s16 func_80029E14_2AA14(s16); /* defined u8 in 274D0.c; retail sign-extends the result */
+void* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
+void func_8003B72C_3C32C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4);
+s16 func_8008D894_8E494(s32 winId);
+void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2);
+struct MBGuideData* func_80050304_50F04(s32, s32);
+void func_8005057C_5117C(struct MBGuideData*);
+void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
+void func_8008E2DC_8EEDC(s32 winId, s32 sound);
+void func_8008D854_8E454(s32 arg0, s16 arg1);
+void func_8008E4D0_8F0D0(s32 winId, s32 sound);
+s16 func_8005B8B0_5C4B0(s16 arg0);
+
 
 // MP3s UnkBoard8
 typedef struct {
@@ -27,8 +77,9 @@ s32 SprScaleSet(s16, s32, f32, f32);
 void SprAttrReset(s16, s16, u16);
 void SprAttrSet(s16, s16, u32);
 s32 _CheckFlag(s32);
-s32 func_8005C8A0_5D4A0(s32);
-s32 func_8005C8AC_5D4AC(void*, s16);
+void func_8005C8A0_5D4A0(s16);
+s32 func_8005C0D8_5CCD8(s32);
+void func_8005C8AC_5D4AC(BoardPlayer*, s16);
 void func_8005C980_5D580(void);
 BoardPlayer *func_8005E688_5F288(s32, s32);
 s32 PlaySound(s32);
@@ -44,7 +95,7 @@ extern s8 D_800CC7AC_CD3AC[8];
 extern s16 D_800CC7B4_CD3B4[8];
 extern s16 D_800CC7BC_CD3BC[8];
 extern u16 D_800CC7C4_CD3C4[22][1];
-extern s16 *D_800E1CF0_E28F0;
+extern struct MBGuideData* D_800E1CF0_E28F0; /* the pause-menu guide */
 extern u16 ContDStkTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
@@ -107,7 +158,7 @@ extern s8 D_800E1CE0_E28E0;
 extern f32 D_800E1CE4_E28E4;
 extern f32 D_800E1CE8_E28E8;
 extern s16 D_800E1CF6_E28F6;
-extern void* D_800E1CFC_E28FC;
+extern BoardPlayer* D_800E1CFC_E28FC;
 extern Unk4E530Motion D_800FDCD8_FE8D8[16];
 extern omObjData* D_80101178_101D78[32];
 extern GW_SYSTEM GwSystem;
@@ -153,7 +204,7 @@ void func_800585E8_591E8(omObjData* arg0);
 void func_80058D18_59918(omObjData* arg0);
 void func_80059198_59D98(omObjData*);
 s32 func_80059E7C_5AA7C(Vec*, Vec*, f32);
-void func_8005ADCC_5B9CC(BoardPlayer*, s32, s32, s32, s32);
+void func_8005ADCC_5B9CC(BoardPlayer*, s16, s16, s16, s16);
 void func_8005B56C_5C16C(void);
 s16 func_8005D7D4_5E3D4(s16, s32);
 s32 func_80061504_62104(void);
@@ -189,7 +240,7 @@ u8 func_80025384_25F84(s16, s16, s16, s32);
 s32 func_8004CC7C_4D87C(s32, s32, s32);
 void MBHelpWinKill(s32);
 void func_800505C4_511C4(void*, s16, s32);
-void func_8005B338_5BF38(void*);
+void func_8005B338_5BF38(struct MBGuideData*);
 void HuVecCopyXYZ(Vec* out, f32 x, f32 y, f32 z);
 void func_8005BF2C_5CB2C(void);
 void func_80089A7C_8A67C(s16, s32);
@@ -208,14 +259,6 @@ extern s16 D_800E1D00_E2900;
 f32 HuMathSin(f32);
 extern s8 D_800CCC15_CD815;
 
-/* the pause/text window array (MP3 D_800CC69C; full type TextWindow in 84FF0.c) */
-typedef struct MbTextWindow {
-    /* 0x000 */ u8 unk_00[0x20];
-    /* 0x020 */ u8 unk_20;
-    /* 0x021 */ u8 unk_21[0x27C - 0x21];
-} MbTextWindow; /* size 0x27C */
-
-extern MbTextWindow* D_800F920C_F9E0C;
 extern s32 D_800CC5F0_CD1F0;
 f32 __sinf(f32);
 f32 __cosf(f32);
@@ -231,7 +274,8 @@ s32 func_800892D8_89ED8(s16);
 /* MP3 UnkMBGuideData: the pause-menu guide (model and sprite group) */
 typedef struct MBGuideData {
     /* 0x00 */ Object* obj;
-    /* 0x04 */ char unk_04[6];
+    /* 0x04 */ Process* process; /* 50E70.c ProcessHeader */
+    /* 0x08 */ s16 window;
     /* 0x0A */ s16 spriteGroup;
 } MBGuideData;
 
@@ -293,9 +337,13 @@ void func_800576F8_582F8(s32 arg0) {
     func_80057724_58324(arg0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057718_58318);
+s32 func_80057718_58318(void) {
+    return D_800CC5F4_CD1F4;
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057724_58324);
+void func_80057724_58324(s32 arg0) {
+    D_800CC5F0_CD1F0 = arg0;
+}
 
 void func_80057730_58330(s32 arg0, s32 arg1) {
     func_80057768_58368(arg0, arg1, 0);
@@ -348,7 +396,7 @@ void func_80057768_58368(s32 arg0, s32 arg1, s32 arg2) {
         while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
             HuPrcVSleep();
         }
-        D_800F920C_F9E0C[arg0].unk_20 = 7;
+        D_800F920C_F9E0C[arg0].unk20 = 7;
     }
     func_8008D23C_8DE3C();
 }
@@ -404,7 +452,7 @@ void func_80057AB0_586B0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
         while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
             HuPrcVSleep();
         }
-        D_800F920C_F9E0C[arg0].unk_20 = 7;
+        D_800F920C_F9E0C[arg0].unk20 = 7;
     }
     func_8008D23C_8DE3C();
 }
@@ -448,7 +496,7 @@ void func_80057DDC_589DC(s32 arg0, s32 arg1) {
             while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
                 HuPrcVSleep();
             }
-            D_800F920C_F9E0C[arg0].unk_20 = 7;
+            D_800F920C_F9E0C[arg0].unk20 = 7;
         }
     } else {
         for (i = 0; i < 4; i++) {
@@ -469,7 +517,7 @@ void func_80057DDC_589DC(s32 arg0, s32 arg1) {
             while ((func_8008BA30_8C630(arg0) != 0) && !(func_800892D8_89ED8(arg0) & 0x200)) {
                 HuPrcVSleep();
             }
-            D_800F920C_F9E0C[arg0].unk_20 = 7;
+            D_800F920C_F9E0C[arg0].unk20 = 7;
         }
     }
     func_8008D23C_8DE3C();
@@ -766,7 +814,11 @@ omObjData* func_80058F18_59B18(s32 arg0, Vec* arg1, s32 arg2, Object* arg3) {
     return obj;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80059120_59D20);
+/* MP1 func_8004F00C */
+void func_80059120_59D20(Object* arg0, f32 arg1, f32 arg2) {
+    arg0->velocity.y = arg1;
+    arg0->velocity.z = arg2;
+}
 
 s32 func_8005912C_59D2C(Object* arg0) {
     if (!(arg0->velocity.z != 0.0f)) {
@@ -1156,11 +1208,51 @@ s32 func_80059FB4_5ABB4(Vec* arg0, Vec* arg1) {
     return func_80059E7C_5AA7C(arg0, arg1, 30.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_80059FD0_5ABD0);
+/* MP1 func_8004FEBC: how many players rank above player arg0 (stars, then coins) */
+s32 func_80059FD0_5ABD0(s32 arg0) {
+    s32 scores[4];
+    s32 i;
+    s32 rank;
+
+    for (i = 0; i < 4; i++) {
+        scores[i] = gPlayers[i].stars * 1000 + gPlayers[i].coins;
+    }
+    for (i = 0, rank = 0; i < 4; i++) {
+        if (i != arg0) {
+            rank += scores[arg0] < scores[i];
+        }
+    }
+    return rank;
+}
 
 INCLUDE_ASM("asm/nonmatchings/58080", func_8005A084_5AC84);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A0CC_5ACCC);
+/* MP1 func_8004FFA8: waits for a human player to press A or B (30 frames when all are CPUs) */
+void func_8005A0CC_5ACCC(void) {
+    s32 i;
+
+    HuPrcSleep(2);
+    for (i = 0; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1)) {
+            break;
+        }
+    }
+    if (i == 4) {
+        HuPrcSleep(30);
+        return;
+    }
+    while (1) {
+        for (i = 0; i < 4; i++) {
+            if (!(gPlayers[i].flags & 1) && (ContBtnTrg[gPlayers[i].port] & 0xC000)) {
+                break;
+            }
+        }
+        if (i != 4) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
 
 void func_8005A1D8_5ADD8(void) {
     f32 t;
@@ -1266,25 +1358,171 @@ void func_8005A4EC_5B0EC(s32 arg0, s32 arg1) {
 void func_8005A5E0_5B1E0(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A5E8_5B1E8);
+/* A path mover (h1-D): walks obj through count points of path at speed (func_8005A778_5B378). */
+typedef struct PathMover {
+    /* 0x00 */ Object* obj;
+    /* 0x04 */ u16 count;
+    /* 0x06 */ u16 idx;
+    /* 0x08 */ f32 speed;
+    /* 0x0C */ Vec* path;
+} PathMover; /* size 0x10 */
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A608_5B208);
+extern s32 D_800E1CF8_E28F8;
+f32 HuVecDistance(Vec* a, Vec* b);
+void func_800B3170_B3D70(Vec* out, Vec* a);
+f32 func_800B7890_B8490(f32); /* HuMathCos */
+f64 fabs(f64);
+void func_80052E68_53A68(f32); /* MBCameraZoomSet */
+void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2);
+void func_800298A4_2A4A4(s16, s32, s32);
+s32 func_80025718_26318(s16, s16, s16);
+void func_8003E8E4_3F4E4(s16);
+s16 func_80025684_26284(s32 id);
+void func_80025554_26154(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+void func_800256CC_262CC(s16 arg0, s16 arg1, s32 arg2, s32 arg3);
+s32 func_8005A624_5B224(Object* obj, Vec* target, f32 speed, Vec* dir);
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A624_5B224);
+/* Steps obj toward target by speed, keeping the direction in obj->rot; 1 once it is there. */
+s32 func_8005A5E8_5B1E8(Object* obj, Vec* target, f32 speed) {
+    return func_8005A624_5B224(obj, target, speed, &obj->rot);
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A718_5B318);
+s32 func_8005A608_5B208(Object* obj, Vec* target, f32 speed) {
+    Vec dir;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A778_5B378);
+    return func_8005A624_5B224(obj, target, speed, &dir);
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A7E8_5B3E8);
+s32 func_8005A624_5B224(Object* obj, Vec* target, f32 speed, Vec* dir) {
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005A950_5B550);
+    dist = HuVecDistance(&obj->coords, target);
+    if (dist == 0.0f) {
+        return 1;
+    }
+    func_80056658_57258(&obj->coords, target, dir);
+    if (speed <= dist) {
+        obj->coords.x = speed * dir->x + obj->coords.x;
+        obj->coords.y = speed * dir->y + obj->coords.y;
+        obj->coords.z = speed * dir->z + obj->coords.z;
+        return 0;
+    }
+    func_800B3170_B3D70(&obj->coords, target);
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AA48_5B648);
+PathMover* func_8005A718_5B318(Object* obj, f32 speed, s16 count, Vec* path) {
+    PathMover* mover;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AA98_5B698);
+    /* 0x10 on the N64 */
+    mover = HuMemMemoryAllocPerm(sizeof(PathMover));
+    mover->obj = obj;
+    mover->count = count;
+    mover->idx = 0;
+    mover->speed = speed;
+    mover->path = path;
+    return mover;
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AAC0_5B6C0);
+/* One step along the path; 1 when a point was reached (idx then names the next one, or stays on the last). */
+s32 func_8005A778_5B378(PathMover* mover) {
+    u16 idx;
+
+    if (func_8005A5E8_5B1E8(mover->obj, &mover->path[mover->idx], mover->speed) != 0) {
+        idx = mover->idx;
+        if (++mover->idx >= mover->count) {
+            mover->idx = idx;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+/* Turns obj->rot toward target by at most maxStep degrees; 1 once it faces it. */
+s32 func_8005A7E8_5B3E8(Object* obj, Vec* target, f32 maxStep) {
+    Vec dir;
+    f32 targetAngle;
+    f32 angle;
+    f32 diff;
+
+    func_80056658_57258(&obj->coords, target, &dir);
+    targetAngle = func_80042BE0_437E0(&dir);
+    angle = func_80042BE0_437E0(&obj->rot);
+    diff = targetAngle - angle;
+    if (fabs(diff) > maxStep) {
+        if (diff < 0.0f) {
+            diff += 360.0f;
+        }
+        if (diff < 180.0f) {
+            if (maxStep < diff) {
+                angle += maxStep;
+            } else {
+                angle += diff;
+            }
+        } else if (maxStep < 360.0f - diff) {
+            angle -= maxStep;
+        } else {
+            angle -= 360.0f - diff;
+        }
+    } else {
+        angle = targetAngle;
+    }
+    dir.x = HuMathSin(angle);
+    dir.z = func_800B7890_B8490(angle);
+    obj->rot = dir;
+    if (angle == targetAngle) {
+        return 1;
+    }
+    return 0;
+}
+
+/* Zooms the board camera from start to end over frames, looking at pos. */
+void func_8005A950_5B550(Vec* pos, f32 start, f32 end, u32 frames) {
+    f32 step;
+
+    step = (end - start) / frames;
+    while (1) {
+        start += step;
+        if (step >= 0.0f) {
+            if (start >= end) {
+                start = end;
+            }
+        } else if (start <= end) {
+            start = end;
+        }
+        func_80052E68_53A68(start);
+        MBDCameraPos3DSet(pos);
+        if ((step >= 0.0f) ? (start >= end) : (start <= end)) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+}
+
+/* Retail .rodata has 8 zero bytes here, after func_8005A950_5B550's pooled double (likely a 16-byte
+   aligned object boundary); kept so the unit's rodata stays one piece */
+const u32 D_800D2EA8_D3AA8[2] __attribute__((section(".rodata"))) = { 0, 0 };
+
+void func_8005AA48_5B648(Object* obj, char* hook, s16 arg2) {
+    func_8002C628_2D228(arg2, obj->omObj1->model[0], hook);
+    func_800298A4_2A4A4(arg2, 0x4000, 0x4000);
+}
+
+void func_8005AA98_5B698(s16 arg0) {
+    func_800298A4_2A4A4(arg0, 0x4000, 0);
+}
+
+/* MP1 CreateTextWindow */
+s16 func_8005AAC0_5B6C0(s16 x, s16 y, s16 w, s16 h) {
+    s16 id = func_800888A8_894A8(x, y, w, h, 0, 0);
+    s32 win = id;
+
+    func_80089B2C_8A72C(win, 200);
+    func_8008D88C_8E48C(id);
+    func_80089284_89E84(win, 0x40, 0x40);
+    func_80089A48_8A648(win, 0);
+    return id;
+}
 
 void func_8005AB50_5B750(Object* arg0, s16 arg1, s16 arg2, s32 arg3) {
     arg0->omObj1->work[0] = func_80025384_25F84(arg0->omObj1->model[0], arg1, arg2, arg3);
@@ -1292,22 +1530,78 @@ void func_8005AB50_5B750(Object* arg0, s16 arg1, s16 arg2, s32 arg3) {
     arg0->omObj1->work[2] = arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005ABC0_5B7C0);
+/* func_8005AB50_5B750 for player arg0's model (GW_PLAYER 0x24), when character/motion arg1/arg2 exist */
+void func_8005ABC0_5B7C0(GW_PLAYER* player, s16 arg1, s16 arg2) {
+    s32 chr = player->character;
+    Object* obj = player->unk_24;
+    s32 id;
+
+    id = func_80025718_26318(chr, arg1, arg2);
+    if (id != -1) {
+        obj->omObj1->work[0] = func_80025384_25F84(obj->omObj1->model[0], arg1, chr, id);
+        obj->omObj1->work[1] = arg1;
+        obj->omObj1->work[2] = chr;
+    }
+}
 
 void func_8005AC64_5B864(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AC6C_5B86C);
+void func_8005AC6C_5B86C(Object* obj, s32 arg1) {
+    func_8003E8E4_3F4E4(obj->omObj1->work[0]);
+    obj->omObj1->work[0] = func_80025684_26284(arg1);
+    func_80025554_26154(obj->omObj1->model[0], obj->omObj1->work[1], obj->omObj1->work[2], obj->omObj1->work[0]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005ACD0_5B8D0);
+void func_8005ACD0_5B8D0(GW_PLAYER* player, s16 arg1) {
+    Object* obj = player->unk_24;
+    s32 id;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AD58_5B958);
+    id = func_80025718_26318(obj->omObj1->work[2], obj->omObj1->work[1], arg1);
+    if (id != -1) {
+        func_8003E8E4_3F4E4(obj->omObj1->work[0]);
+        obj->omObj1->work[0] = func_80025684_26284(id);
+        func_80025554_26154(obj->omObj1->model[0], obj->omObj1->work[1], obj->omObj1->work[2], obj->omObj1->work[0]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005AD84_5B984);
+void func_8005AD58_5B958(Object* obj) {
+    func_800256CC_262CC(obj->omObj1->work[1], obj->omObj1->work[2], 1, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", MBPauseMesNumGet);
+void func_8005AD84_5B984(Object* obj) {
+    func_800256CC_262CC(obj->omObj1->work[1], obj->omObj1->work[2], 1, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005ADCC_5B9CC);
+s32 MBPauseMesNumGet(s32 arg0) {
+    if (D_800E1CF8_E28F8 != 0) {
+        return arg0 - 0x28B;
+    }
+    return arg0;
+}
+
+/* MP1 func_80050600: draws the two digits of arg2 as sprites arg1.. of arg0, from x = arg3 */
+void func_8005ADCC_5B9CC(BoardPlayer* arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4) {
+    u8 asciiChar;
+    void* temp_s6;
+    s32 i;
+
+    temp_s6 = DataRead(0xA00CB);
+    sprintf(pfStrBuf, "%2d", arg2);
+    for (i = 0; i < 2; i++, arg3 += 0x10) {
+        asciiChar = pfStrBuf[i];
+        if (asciiChar != ' ') {
+            arg0->unk_0C[arg1] = SprAnimRead(temp_s6);
+            SprAnimSet(arg0->unk_0A, arg1, arg0->unk_0C[arg1], (u16)(asciiChar - '0'));
+            SprPrioSet(arg0->unk_0A, arg1, 7);
+            SprAttrSet(arg0->unk_0A, arg1, 0x01001000);
+            SprPosSet(arg0->unk_0A, arg1, arg3, arg4);
+            func_800824B4_830B4(arg0->unk_0A, arg1, 0xFF, 0xFF, 0xFF, 0xFF);
+            arg1++;
+        }
+    }
+    DataClose(temp_s6);
+}
 
 BoardPlayer* func_8005AF48_5BB48(s16 arg0) {
     BoardPlayer* temp_s3;
@@ -1356,7 +1650,7 @@ void func_8005B248_5BE48(void) {
     ((void (*)(void))HuMemDirectFree)();
 }
 
-s16 func_8005B264_5BE64(s32 arg0) {
+s32 func_8005B264_5BE64(s32 arg0) {
     s32 temp_s2;
     s32 temp_s3;
     s16 var_s0;
@@ -1385,7 +1679,18 @@ s16 func_8005B264_5BE64(s32 arg0) {
     return var_s0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B338_5BF38);
+/* On boards 1 and 2 the guide's head part (c100_1-atama) gets two more attachments and an offset. */
+void func_8005B338_5BF38(MBGuideData* arg0) {
+    f32* part;
+
+    if ((u16)GwSystem.current_board_index - 1 < 2U) {
+        func_8003B72C_3C32C(arg0->obj->omObj1->model[0], func_80029E14_2AA14(arg0->obj->omObj1->model[0]), "c100_1-atama", 0x4C, 0x45);
+        func_8003B72C_3C32C(arg0->obj->omObj1->model[0], func_80029E14_2AA14(arg0->obj->omObj1->model[0]), "c100_1-atama", 0x4C, 0x46);
+        part = func_8002A9F4_2B5F4(arg0->obj->omObj1->model[0], "c100_1-atama");
+        part[4] = 0.0f;
+        part[5] = -30.0f;
+    }
+}
 
 void func_8005B424_5C024(MBGuideData* arg0, s16 arg1) {
     s32 i;
@@ -1413,7 +1718,70 @@ s32 MBPauseDlgMesSet(s16 arg0, s32 arg1) {
     func_800890CC_89CCC(arg0, MBPauseMesNumGet(arg1), -1, -1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B56C_5C16C);
+/* MP1 func_80050D68 grown: shows the help message of the highlighted pause-menu choice, filling in
+   the values (players' CPU state, game options) some of them show. */
+void func_8005B56C_5C16C(void) {
+    s16 sel;
+    s16 cur;
+    s32* list;
+    s32 i;
+    s16 win;
+    GW_SYSTEM* gw;
+    Process* process = HuPrcCurrentGet();
+
+    list = ((unkMallocStruct*)process->user_data)->unk0;
+    win = ((unkMallocStruct*)process->user_data)->unk4;
+    cur = -1;
+    gw = &GwSystem;
+    while (1) {
+        sel = func_8008D894_8E494(win);
+        if ((sel != cur) & (~sel != 0)) {
+            cur = sel;
+            switch (list[sel]) {
+                case 0x509:
+                    for (i = 0; i < 4; i++) {
+                        if (gPlayers[i].flags & 1) {
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x50B), i);
+                        } else {
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x50A), i);
+                        }
+                    }
+                    break;
+                case 0x50C:
+                    func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(gw->unk_25 == 0 ? 0x50D : 0x50E), 0);
+                    break;
+                case 0x50F:
+                    switch (gw->unk_26[0]) {
+                        case 0:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x510), 0);
+                            break;
+                        case 1:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x511), 0);
+                            break;
+                        case 2:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x512), 0);
+                            break;
+                    }
+                    break;
+                case 0x513:
+                    switch (gw->unk_24[0]) {
+                        case 0:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x514), 0);
+                            break;
+                        case 1:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x515), 0);
+                            break;
+                        case 2:
+                            func_80089308_89F08(D_800E1CF0_E28F0->window, MBPauseMesNumGet(0x516), 0);
+                            break;
+                    }
+                    break;
+            }
+            MBPauseDlgMesSet(D_800E1CF0_E28F0->window, list[cur]);
+        }
+        HuPrcVSleep();
+    }
+}
 
 Process* func_8005B7A8_5C3A8(s16 arg0, s32* arg1) {
     Process* process;
@@ -1437,11 +1805,182 @@ s16 MBPauseQuitMesCreate(s32 arg0, s16 arg1) {
     return temp_v0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B8B0_5C4B0);
+/* The unk20 bits of every open window but arg0 that has unk_38 bit 0x40 (the list's last entry is
+   not looked at). */
+s16 func_8005B8B0_5C4B0(s16 arg0) {
+    s16 mask = 0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005B9A0_5C5A0);
+    i = D_800F920C_F9E0C[0].unk64;
+    while (D_800F920C_F9E0C[i].unk64 != -1) {
+        if (i != arg0 && (D_800F920C_F9E0C[i].unk_38 & 0x40)) {
+            mask |= D_800F920C_F9E0C[i].unk20;
+        }
+        i = D_800F920C_F9E0C[i].unk64;
+    }
+    return mask;
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005BF2C_5CB2C);
+/* MP1 func_80050E7C grown: the pause menu. Returns the choice (1 = closed). */
+s32 func_8005B9A0_5C5A0(s32 arg0) {
+    u8 sp18[2];
+    u8 sp20[2];
+    s16 ret;
+    BoardPlayer* spr;
+    s16 win;
+    Process* proc;
+    u8 slept;
+    s16 sel;
+    void* temp;
+
+    ret = 0;
+    win = -1;
+    proc = NULL;
+    spr = NULL;
+    slept = 0;
+    if (D_800E1CF6_E28F6 == 0) {
+        spr = func_8005E688_5F288(2, 0);
+        temp = DataRead(0xA01C4);
+        spr->unk_0C[0] = SprAnimRead(temp);
+        DataClose(temp);
+        SprAnimSet(spr->unk_0A, 0, spr->unk_0C[0], 0);
+        SprPrioSet(spr->unk_0A, 0, 8);
+        SprAttrSet(spr->unk_0A, 0, 0x1000);
+        SprPosSet(spr->unk_0A, 0, 0x9E, 0x5F);
+        func_80082450_83050(spr->unk_0A, 0, 0, 0, 0xFF);
+        temp = DataRead(0xA01C5);
+        spr->unk_0C[1] = SprAnimRead(temp);
+        DataClose(temp);
+        SprAnimSet(spr->unk_0A, 1, spr->unk_0C[1], 0);
+        SprPrioSet(spr->unk_0A, 1, 7);
+        SprAttrSet(spr->unk_0A, 1, 0x1000);
+        SprPosSet(spr->unk_0A, 1, 0x9E, 0x5F);
+        win = MBPauseQuitMesCreate(MBPauseMesNumGet(0x508), 0x32);
+        func_80089A7C_8A67C(win, 5);
+        func_80089B2C_8A72C(win, 0);
+        if (_CheckFlag(0xD) != 0) {
+            sp18[0] = 1;
+        } else {
+            sp18[0] = 8;
+        }
+        sp18[1] = 0;
+        /* a pointer passed as u32 (32-bit only) */
+        func_80089308_89F08(win, (u32)sp18, 0);
+        if (func_8005B8B0_5C4B0(win) != 0) {
+            sp20[0] = 1;
+        } else {
+            sp20[0] = 8;
+        }
+        sp20[1] = 0;
+        func_80089308_89F08(win, (u32)sp20, 1);
+        func_800890CC_89CCC(win, MBPauseMesNumGet(0x508), -1, -1);
+        func_80089A48_8A648(win, 0);
+        while (func_8008BA30_8C630(win) != 0) {
+            HuPrcVSleep();
+        }
+        if (D_800E1CF0_E28F0 == NULL) {
+            HuPrcVSleep();
+            D_800E1CF0_E28F0 = func_80050304_50F04(D_800CC6A8_CD2A8[GwSystem.current_board_index], 8);
+            D_800E1CF0_E28F0->obj->rot.x = HuMathSin(D_800CC6C4_CD2C4[GwSystem.current_board_index]);
+            D_800E1CF0_E28F0->obj->rot.z = func_800B7890_B8490(D_800CC6C4_CD2C4[GwSystem.current_board_index]);
+            HuVecCopyXYZ(&D_800E1CF0_E28F0->obj->scale, 1.0f, 1.0f, 1.0f);
+            func_8005B338_5BF38(D_800E1CF0_E28F0);
+            func_80043DAC_449AC(D_800E1CF0_E28F0->obj);
+            func_800298A4_2A4A4(D_800E1CF0_E28F0->obj->omObj1->model[0], 0x8000, 0x8000);
+            D_800E1CF0_E28F0->obj->flags |= 0x10;
+            func_800505C4_511C4(D_800E1CF0_E28F0, 0x104, 8);
+            func_8005B424_5C024(D_800E1CF0_E28F0, 0x69);
+            func_8008E6CC_8F2CC(D_800E1CF0_E28F0->window, 5);
+            func_8008E2DC_8EEDC(D_800E1CF0_E28F0->window, 1);
+        }
+        if (_CheckFlag(0xD) == 0) {
+            proc = func_8005B7A8_5C3A8(win, D_800CC6E0_CD2E0);
+        } else {
+            proc = func_8005B7A8_5C3A8(win, D_800CC6F8_CD2F8);
+        }
+        func_8008D59C_8E19C(win, (0x10000 << arg0) >> 0x10);
+        if (_CheckFlag(0xD) != 0) {
+            func_8008D854_8E454(win, 3);
+        }
+        if (sp20[0] == 1) {
+            func_8008D854_8E454(win, 0);
+        }
+        sel = func_8008BB48_8C748(win, D_800E1CF4_E28F4, 0);
+        if (sel >= 0) {
+            D_800E1CF4_E28F4 = sel;
+        }
+        switch (sel) {
+            case 0:
+                ret = 2;
+                break;
+            case 1:
+                ret = 5;
+                break;
+            case 2:
+                ret = 7;
+                break;
+            case 3:
+                ret = 6;
+                break;
+            case 4:
+                ret = 8;
+                break;
+            default:
+                ret = 1;
+                break;
+        }
+        if (ret != 1) {
+            HuMemDirectFree(spr);
+            spr = NULL;
+        }
+    }
+    if (ret < 2) {
+        if (ret >= 0) {
+            if (D_800E1CF0_E28F0 != NULL) {
+                func_8008E4D0_8F0D0(D_800E1CF0_E28F0->window, 1);
+                func_8005B424_5C024(D_800E1CF0_E28F0, 0x104);
+                func_8005057C_5117C(D_800E1CF0_E28F0);
+                D_800E1CF0_E28F0 = NULL;
+                if (spr != NULL) {
+                    HuMemDirectFree(spr);
+                }
+                slept = 1;
+            }
+        }
+    }
+    if (proc != NULL) {
+        omDelPrcObj(proc);
+    }
+    if (win != -1) {
+        func_8008CCA8_8D8A8(win);
+    }
+    if (slept) {
+        HuPrcSleep(5);
+    }
+    return ret;
+}
+
+/* MP3 last5 func_80105DEC: the two sprites under the pause menu */
+void func_8005BF2C_5CB2C(void) {
+    void* data;
+
+    D_800E1CFC_E28FC = func_8005E688_5F288(2, 0);
+    data = DataRead(0xA01C6);
+    D_800E1CFC_E28FC->unk_0C[0] = SprAnimRead(data);
+    DataClose(data);
+    SprAnimSet(D_800E1CFC_E28FC->unk_0A, 0, D_800E1CFC_E28FC->unk_0C[0], 0);
+    SprPrioSet(D_800E1CFC_E28FC->unk_0A, 0, 8);
+    SprAttrSet(D_800E1CFC_E28FC->unk_0A, 0, 0x1000);
+    SprPosSet(D_800E1CFC_E28FC->unk_0A, 0, 0x9E, 0x64);
+    func_80082450_83050(D_800E1CFC_E28FC->unk_0A, 0, 0, 0, 0xFF);
+    data = DataRead(0xA01C7);
+    D_800E1CFC_E28FC->unk_0C[1] = SprAnimRead(data);
+    DataClose(data);
+    SprAnimSet(D_800E1CFC_E28FC->unk_0A, 1, D_800E1CFC_E28FC->unk_0C[1], 0);
+    SprPrioSet(D_800E1CFC_E28FC->unk_0A, 1, 7);
+    SprAttrSet(D_800E1CFC_E28FC->unk_0A, 1, 0x1000);
+    SprPosSet(D_800E1CFC_E28FC->unk_0A, 1, 0x9E, 0x64);
+}
 
 void func_8005C0B8_5CCB8(void) {
     HuMemDirectFree(D_800E1CFC_E28FC);
@@ -1653,9 +2192,16 @@ s32 func_8005C78C_5D38C(GW_PLAYER *arg0, s16 arg1)
   return 4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005C8A0_5D4A0);
+void func_8005C8A0_5D4A0(s16 arg0) {
+    D_800E1D00_E2900 = arg0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005C8AC_5D4AC);
+/* Places sprites 0-2 of arg0 around point arg1 of D_800CC7B4/D_800CC7BC. */
+void func_8005C8AC_5D4AC(BoardPlayer* arg0, s16 arg1) {
+    SprPosSet(arg0->unk_0A, 0, D_800CC7B4_CD3B4[arg1] - 0x2C, D_800CC7BC_CD3BC[arg1] - 4);
+    SprPosSet(arg0->unk_0A, 1, D_800CC7B4_CD3B4[arg1] + 0x23, D_800CC7BC_CD3BC[arg1] + 0x10);
+    SprPosSet(arg0->unk_0A, 2, D_800CC7B4_CD3B4[arg1] - 0x23, D_800CC7BC_CD3BC[arg1] + 0x10);
+}
 
 void func_8005C980_5D580(void) {
     f32 var_f20;
@@ -1801,7 +2347,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
         _CheckFlag(0xD);
         if (sp3C != 0x51B) {
             sp3C = 0x51B;
-            MBPauseDlgMesSet(D_800E1CF0_E28F0[4], sp3C);
+            MBPauseDlgMesSet(D_800E1CF0_E28F0->window, sp3C);
         }
         HuPrcVSleep();
         var_a0_2 = -1;
@@ -1845,7 +2391,7 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
                 _CheckFlag(0xD);
                 if (sp3C != 0x51C) {
                     sp3C = 0x51C;
-                    MBPauseDlgMesSet(D_800E1CF0_E28F0[4], sp3C);
+                    MBPauseDlgMesSet(D_800E1CF0_E28F0->window, sp3C);
                 }
                 if (ContDStkTrg[arg0] & 0x200) {
                     if (i != 4 || var_s1 == 0) {
@@ -1913,7 +2459,26 @@ s32 func_8005CAD0_5D6D0(s32 arg0) {
     return 4;
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005D7D4_5E3D4);
+/* MP1 func_800526D8 (no case 3): runs pause-menu state arg0 */
+s16 func_8005D7D4_5E3D4(s16 arg0, s32 arg1) {
+    switch (arg0) {
+        case 1:
+            return func_8005B264_5BE64(arg1);
+        case 2:
+            return func_8005CAD0_5D6D0(arg1);
+        case 4:
+            return func_8005B9A0_5C5A0(arg1);
+        case 5:
+            return func_8005C0D8_5CCD8(arg1);
+        case 6:
+            return func_8005C24C_5CE4C(arg1);
+        case 7:
+            return func_8005C3B0_5CFB0(arg1);
+        case 8:
+            return func_8005C508_5D108(arg1);
+    }
+    return 0;
+}
 
 void func_8005D88C_5E48C(void) {
     s32 arg = (s32)HuPrcCurrentGet()->user_data;
@@ -1951,7 +2516,63 @@ void func_8005D88C_5E48C(void) {
     omDelPrcObj(NULL);
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005DA20_5E620);
+/* MP1 func_80052934: runs the pause menu (func_8005D88C_5E48C) for arg0, then ends the board if it was quit. */
+void func_8005DA20_5E620(void* arg0) {
+    s32 i;
+    Process* parent;
+    Process* proc;
+
+    D_800F851A_F911A = 1;
+    func_80078EC8_79AC8();
+    for (i = 0; i < 4; i++) {
+        if (HuGetPadInserted(i) != 0) {
+            func_800884AC_890AC(i);
+        }
+    }
+    func_800794F0_7A0F0(0x60);
+    if (D_800F64B0_F70B0 != -1) {
+        func_8001122C_11E2C(D_800F64B0_F70B0, 0x60);
+    }
+    func_80028334_28F34(D_800FD2A6_FDEA6, 2);
+    func_80029EDC_2AADC(D_800FD2A6_FDEA6, 1);
+    D_800E1CF0_E28F0 = NULL;
+    D_800E1CF4_E28F4 = 0;
+    D_800E1CF6_E28F6 = 0;
+    if (GwSystem.current_board_index == 5) {
+        D_800E1CF8_E28F8 = 1;
+    } else {
+        D_800E1CF8_E28F8 = 0;
+    }
+    parent = HuPrcCurrentGet();
+    proc = omAddPrcObj(func_8005D88C_5E48C, 0xEFFF, 0, 0);
+    proc->user_data = arg0;
+    omPrcSetStatBit(proc, 0x80);
+    HuPrcChildLink(parent, proc);
+    HuPrcChildWatch();
+    func_80028334_28F34(D_800FD2A6_FDEA6, 6);
+    func_800794F0_7A0F0(0x7F);
+    if (D_800F64B0_F70B0 != -1) {
+        func_8001122C_11E2C(D_800F64B0_F70B0, 0x7F);
+    }
+    if (D_800E1CF6_E28F6 != 0) {
+        D_800CD41D_CE01D = 0;
+        func_800794A8_7A0A8(0x5A);
+        if (D_800F64B0_F70B0 != -1) {
+            func_800114E8_120E8(D_800F64B0_F70B0, 0x5A);
+            D_800F64B0_F70B0 = -1;
+            func_80079464_7A064();
+        }
+        InitFadeOut(0, 0x10);
+        HuPrcSleep(0x11);
+        func_80063178_63D78();
+        func_80062CC0_638C0();
+        omOvlReturnEx(1);
+        omOvlKill();
+        HuPrcVSleep();
+    }
+    func_80078FF8_79BF8();
+    D_800F851A_F911A = 0;
+}
 
 s16 GetCurrentPlayerIndex(void) {
     return GwSystem.current_player_index;
@@ -2025,7 +2646,16 @@ void func_8005DEB0_5EAB0(s32 index, u8 b) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005DF18_5EB18);
+/* MP1 func_80052CCC without the store: the CPU difficulty from its setting */
+void func_8005DF18_5EB18(s32 arg0) {
+    GW_PLAYER* player = BoardPlayerGet(arg0);
+
+    if (_CheckFlag(0xD) == 0) {
+        player->cpu_difficulty = D_800CC7F0_CD3F0[player->cpu_difficulty2];
+    } else {
+        player->cpu_difficulty = D_800CC7F4_CD3F4[player->cpu_difficulty2];
+    }
+}
 
 void func_8005DF78_5EB78(void) {
     GW_PLAYER* player = HuPrcCurrentGet()->user_data;
@@ -2039,7 +2669,34 @@ void func_8005DF78_5EB78(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", MBPlayerModelCreate);
+/* MP1 func_80052DC8: a character below 6 takes its model from the board's table arg2 (none for other arg2) */
+void MBPlayerModelCreate(s16 playerNo, void* arg1, s32 arg2) {
+    GW_PLAYER* player;
+    Process* proc;
+    u8 chr;
+
+    player = BoardPlayerGet(playerNo);
+    player->unk_1C[0] = playerNo;
+    chr = player->character;
+    if (chr < 6) {
+        switch (arg2) {
+            case 0:
+                player->unk_24 = func_80043510_44110(D_800CC8D0_CD4D0[GwSystem.current_board_index][chr], arg1);
+                break;
+            case 1:
+                player->unk_24 = func_80043510_44110(D_800CC908_CD508[GwSystem.current_board_index][chr], arg1);
+                break;
+            case 2:
+                player->unk_24 = func_80043510_44110(D_800CC940_CD540[GwSystem.current_board_index][chr], arg1);
+                break;
+        }
+    } else {
+        player->unk_24 = func_80043510_44110(chr, arg1);
+    }
+    proc = omAddPrcObj(func_8005DF78_5EB78, 0x5000, 0, 0);
+    player->unk_20 = proc;
+    proc->user_data = player;
+}
 
 void func_8005E130_5ED30(s16 arg0, u32 *arg1) {
     MBPlayerModelCreate(arg0, arg1, 0);
@@ -2085,4 +2742,5 @@ void func_8005E2B8_5EEB8(void) {
 void func_8005E2F4_5EEF4(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005E2FC_5EEFC);
+void func_8005E2FC_5EEFC(void) {
+}
