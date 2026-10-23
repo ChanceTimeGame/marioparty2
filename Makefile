@@ -535,3 +535,8 @@ $(MG0EA_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# h1-E: objmain's rodata 0xD4150-0xD41E0 carved (omMain's strings; func_80077F50_78B50's strings
+# defined in C beside its INCLUDE_ASM); its jump table at 0xD41E0 stays in the blob
+H1E_CARVED := build/src/objmain.c.o
+CARVED_RODATA_UNITS += $(H1E_CARVED)
+$(H1E_CARVED): RODATA_AS_DATA = 1

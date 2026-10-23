@@ -11,10 +11,10 @@ extern GW_PLAYER gPlayers[4];
 extern s16 D_800FA660_FB260[];
 extern s16 D_800CD430_CE030;
 extern u16 D_800F9562_FA162;
-extern s16 D_800FCE84_FDA84;
+extern u16 D_800FCE84_FDA84; /* lhu in every user (objmain) */
 extern u16 D_800FFDF2_1009F2;
 extern u16 D_80102702_103302;
-extern s8 D_800CD412_CE012;
+extern u8 D_800CD412_CE012; /* lbu in every user (objmain) */
 extern u16 D_800E2130_E2D30;
 extern u16 D_800F93A0_F9FA0;
 extern u8 D_800CD360_CDF60[][2];
@@ -23,7 +23,7 @@ extern u16 D_800CD404_CE004;
 extern u32 D_800CD408_CE008;
 extern s16 D_800CD414_CE014;
 extern s16 D_800CD416_CE016;
-extern s8 D_800CD41C_CE01C;
+extern u8 D_800CD41C_CE01C; /* lbu in every user (objmain) */
 extern u8 D_800CD434_CE034;
 extern s16 D_800CD528_CE128;
 extern s16 D_800CD52C_CE12C;
