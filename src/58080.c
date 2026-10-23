@@ -100,11 +100,8 @@ extern u16 ContDStkTrg[]; // unknown size
 extern GW_PLAYER gPlayers[];
 
 /* Board players, sprites, effects and pause menu helpers. C from MP1 src/4E530.c, src/51200.c,
-   src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c; the rest have no C reference and
-   stay asm. The head of this unit's rodata (D3A38-D3AA0) is carved out of the data blob: its eight
-   users are C. The rest (D3AA0-D3AE0) stays in the blob for func_8005A950, func_8005B338 and
-   func_8005B9A0 (no reference), so func_8005ADCC and func_8005D7D4, which emit part of it, stay
-   asm. */
+   src/53680.c and MP3 ovl_80_shared_board 101840.c / 105D50.c, the rest decompiled fresh (h1-D).
+   The unit's whole rodata (D3A38-D3B00) is carved out of the data blob. */
 
 #define CUR_PLAYER -1
 #ifndef M_PI
