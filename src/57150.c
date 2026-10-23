@@ -19,8 +19,12 @@ typedef struct unkProcessUserDataStruct {
 
 #define PLAYER_OBJ(player) ((Object*)(player)->unk_24)
 
-extern Vec2f D_800CC5C0_CD1C0[4];
-extern s32 D_800CC5E0_CD1E0[3];
+/* .data (0xCD1A0-0xCD1F0) */
+Vec2f D_800CC5A0_CD1A0[] = { /* unreferenced: offsets like D_800CC5C0_CD1C0's, 60 apart */
+    { -60.0f, -60.0f }, { 60.0f, -60.0f }, { -60.0f, 60.0f }, { 60.0f, 60.0f },
+};
+Vec2f D_800CC5C0_CD1C0[] = { { -40.0f, -40.0f }, { 40.0f, -40.0f }, { -40.0f, 40.0f }, { 40.0f, 40.0f } };
+s32 D_800CC5E0_CD1E0[] = { 10, 25, 60 };
 extern s8 ContStkX[];
 extern s8 ContStkY[];
 extern s16 D_800F8D12_F9912;

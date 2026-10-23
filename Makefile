@@ -584,5 +584,5 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # d1-B: units whose initialised .data is now C (data half of the blob) and whose rodata is also
 # carved: their own .data is renamed .cdata (yaml data-half entry: linker_section .cdata) so it does
 # not merge with the .rodata renamed to .data
-D1B_DATA_AND_RODATA := build/src/4ABB0.c.o
+D1B_DATA_AND_RODATA := build/src/4ABB0.c.o build/src/57150.c.o
 $(D1B_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
