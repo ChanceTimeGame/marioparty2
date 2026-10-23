@@ -28,7 +28,11 @@ typedef struct Unk_800FD8A8 {
     /* 0x01 */ u8 unk01; /* player 2 character */
     /* 0x02 */ char unk02[2];
     /* 0x04 */ s8 unk04;
-    /* 0x05 */ char unk05[0xD];
+    /* 0x05 */ char unk05[9];
+    /* 0x0E */ s8 unk0E; /* player 1's chain (74AA0) */
+    /* 0x0F */ s8 unk0F; /* player 1's space */
+    /* 0x10 */ s8 unk10; /* chapter, 1-based */
+    /* 0x11 */ s8 unk11; /* step within the chapter */
 } Unk_800FD8A8; /* size = 0x12 */
 
 extern Unk_800FD8A8 D_800FD8A8_FE4A8;

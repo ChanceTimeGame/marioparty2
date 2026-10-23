@@ -879,3 +879,5 @@ D_800EBF70_ECB70 = 0x800EBF70; // size:0x1B0
 D_800EC120_ECD20 = 0x800EC120; // size:0x400
 D_800EC520_ED120 = 0x800EC520; // size:0x1B0
 D_800EC6D0_ED2D0 = 0x800EC6D0; // size:0x400
+// h1-E: 74AA0 story chapter table (retail indexes it [chapter - 1])
+D_800CD300_CDF00 = 0x800CD300; // size:0x9
