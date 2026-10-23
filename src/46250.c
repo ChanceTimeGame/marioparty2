@@ -19,8 +19,12 @@ s32 func_80047E70_48A70(s32);
 
 extern s8 D_800DF63C_E023C;
 
-extern s32 D_800CBC90_CC890[]; /* dice-block model per unk_0A */
-extern s32 D_800CBCA8_CC8A8[]; /* dice-block animation per unk_0A */
+/* .data (0xCC890-0xCC8D0) */
+s32 D_800CBC90_CC890[6] = { 0x000A0000, 0x000A0000, 0x000A0000, 0x000A0000, 0x000A0000, 0x000A0001 }; /* dice-block model per unk_0A */
+s32 D_800CBCA8_CC8A8[5] = { 0x000A0004, 0x000A0005, 0x000A0173, 0x000A0175, 0x000A0174 }; /* dice-block animation per unk_0A */
+s16 D_800CBCBC_CC8BC = 10; /* unreferenced */
+s16 D_800CBCBE_CC8BE = 6;  /* unreferenced */
+s16 D_800CBCC0_CC8C0[4][2] = { { 0x6E, 0x40 }, { 0xD2, 0x40 }, { 0xA0, 0x40 }, { 0, 0 } };
 void func_8003E52C_3F12C(s16, u8);
 void func_8003E560_3F160(s16, u8); /* defined (s16, s32) in 3D6A0.c; retail passes a u8 here */
 
@@ -110,7 +114,6 @@ void func_80079428_7A028(s32);
 f32 HuMathSin(f32);
 extern s16 D_800FA198_FAD98;
 extern s16 D_800FA1A4_FADA4;
-extern s16 D_800CBCC0_CC8C0[][2];
 extern u16 ContBtnTrg[4];
 s16 Hu3DModelCreate(void*, s32);
 void func_80029EDC_2AADC(s16, s32);
