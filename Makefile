@@ -563,3 +563,7 @@ build/src/19BF0.c.o: RODATA_AS_DATA = 1
 # mp2carve 1C7C0: rodata 0xD2BC0-0xD2CE8 carved out of the data blob; it ends with 1D0B0's string
 # D_800D20CC_D2CCC (defined in 1C7C0.c: SUBALIGN(8) cannot start a piece at 0xD2CCC)
 build/src/1C7C0.c.o: RODATA_AS_DATA = 1
+# h1-H: MP3 libhmath and Hudson gu units (-O2 -ffast-math, KMC as mul fix on, as MP3 builds src/libhmath)
+H1H_HMATH_UNITS := build/src/B2440.c.o
+$(H1H_HMATH_UNITS): CFLAGS = -O2 -G0 -mips3 -mgp32 -mfp32 -ffast-math
+$(H1H_HMATH_UNITS): export VR4300MUL = ON
