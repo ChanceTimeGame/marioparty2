@@ -151,6 +151,11 @@ void func_8007411C_74D1C(void) {
 void func_8007414C_74D4C(void) {
 }
 
+/* .rodata (0xD40C0-0xD4150), beside its asm users in address order */
+const char D_800D34C0_D40C0[] = "point2";
+const char D_800D34C8_D40C8[] = "point1";
+const f64 D_800D34D0_D40D0 = -90.0;
+
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074154_74D54);
 
 void func_800744C0_750C0(void) {
@@ -238,6 +243,10 @@ void func_8007468C_7528C(void) {
         HuPrcVSleep();
     }
 }
+
+const f64 D_800D34D8_D40D8 = -90.0;
+const char D_800D34E0_D40E0[] = "CAME";
+const char D_800D34E8_D40E8[] = "STAT";
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074808_75408);
 
@@ -388,5 +397,10 @@ void func_8007550C_7610C(s32 flag) {
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075560_76160);
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075638_76238);
+
+const char D_800D34F0_D40F0[] = "LIGHT%1d DIR%4d,%4d,%4d  STAT %s";
+const char D_800D3514_D4114[] = "COLOR    RED %3d GREEN %3d BLUE %3d";
+/* func_80075688_76288's switch: its case labels' addresses */
+const u32 jtbl_800D3538_D4138[] = { 0x800759CC, 0x80075FB8, 0x80075A44, 0x80075AA4, 0x80075B98, 0x80075C8C };
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075688_76288);

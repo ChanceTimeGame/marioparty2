@@ -606,9 +606,10 @@ $(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
 # h1-R: rodata of 4D660 (D3430-D38A0), 4F650 (D38A0-D3938: it also holds 4D660's last two strings,
 # since SUBALIGN(8) cannot start a piece at 0xD38AC) and 512A0 (D3938-D39B8) carved; their C .data
 # becomes .cdata (yaml data-half entries linker_section .cdata), as the d1 lists do. 58080's piece
-# now starts at D39F0 (its trim size in the carve-58080 block is 0x110)
-H1R_CARVED := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o
+# now starts at D39F0 (its trim size in the carve-58080 block is 0x110). 74AA0's whole piece
+# (D40C0-D4150) is C beside its asm users
+H1R_CARVED := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o build/src/74AA0.c.o
 CARVED_RODATA_UNITS += $(H1R_CARVED)
 $(H1R_CARVED): RODATA_AS_DATA = 1
-H1R_CDATA_UNITS := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o
+H1R_CDATA_UNITS := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o build/src/74AA0.c.o
 $(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata

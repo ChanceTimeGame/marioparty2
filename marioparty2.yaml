@@ -423,7 +423,7 @@ segments:
       - [0xCDC50, .data, 733F0]
       - [0xCDD80, .data, 73BA0]
       - [0xCDEB0, .data, 743F0]
-      - [0xCDEC0, .data, 74AA0]
+      - {start: 0xCDEC0, type: .data, name: 74AA0, linker_section: .cdata}
       - {start: 0xCDF60, type: .data, name: objmain, linker_section: .cdata}
       - [0xCE120, .data, 79F90]
       - [0xCE140, data]
@@ -469,7 +469,7 @@ segments:
       - [0xD3B00, .data, 5F3B0]
       - [0xD3BE8, .data, 63670]
       - [0xD3D60, .data, 69950]
-      - [0xD40C0, data]
+      - [0xD40C0, .data, 74AA0]
       - [0xD4150, .data, objmain]
       - [0xD41E0, data]
       - [0xD4200, .data, 7FAE0]
