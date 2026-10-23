@@ -338,4 +338,44 @@ extern ColVtx* D_8010A9C0_14C350_RainbowRun; /* the rainbow's base vertices (fun
 
 /* MG0F-B */
 
+void func_800795D8_7A1D8(s16 sound, s16 volume); /* sound volume */
+extern f32 D_8010A7AC_14C13C_RainbowRun[7]; /* wind directions */
+extern s8 D_8010A7C8_14C158_RainbowRun; /* wind direction (6: none) */
+extern f32 D_8010A7CC_14C15C_RainbowRun; /* wind strength */
+extern s8 D_8010A7EA_14C17A_RainbowRun; /* the wind sound fades out */
+extern s8 D_8010A7EB_14C17B_RainbowRun; /* wind sound volume */
+extern s8 D_8010A7EC_14C17C_RainbowRun; /* the wind blows */
+extern s8 D_8010A7ED_14C17D_RainbowRun; /* waiting for the next gust */
+extern s8 D_8010A7EE_14C17E_RainbowRun; /* this gust's direction */
+extern s8 D_8010A7EF_14C17F_RainbowRun; /* the last gust's direction */
+extern s8 D_8010A7F0_14C180_RainbowRun; /* the wind is set up */
+extern s32 D_8010A7F4_14C184_RainbowRun; /* gust frame */
+extern s32 D_8010A7F8_14C188_RainbowRun; /* gust length */
+extern s32 D_8010A7FC_14C18C_RainbowRun; /* frames between gusts */
+extern s32 D_8010A800_14C190_RainbowRun; /* the goal's model is hidden */
+
+/* A ground object's work (func_80027154_27D54(0xB4); MP1 TTGroundWork's 0x04/0x05 at 0x03/0x04).
+   No pointers. */
+typedef struct RRGround {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04; /* ground id */
+    /* 0x05 */ char unk_05[0xAF];
+} RRGround; /* size = 0xB4 */
+
+/* Main's collision grids (src/2E0D0.c's HitGrid; only the cell width is used here). */
+typedef struct RRHitGrid {
+    /* 0x00 */ s32 w;
+    /* 0x04 */ s32 h;
+    /* 0x08 */ f32 cw;
+    /* 0x0C */ f32 ch;
+    /* 0x10 */ char unk_10[0x14]; /* pointers on the N64 */
+} RRHitGrid;
+extern RRHitGrid* D_800FD2B8_FDEB8;
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+s16 LoadFormFile(s32, s32);
+u16 func_80018A30_19630(s32, s32); /* model load */
+void func_8000BE8C_CA8C(omObjData*, f32);
+void func_8000BEA4_CAA4(omObjData*, f32);
+
 #endif

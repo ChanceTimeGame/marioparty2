@@ -107,15 +107,147 @@ void func_801060D8_147A68_RainbowRun(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106838_1481C8_RainbowRun);
+/* The wind (MP1 func_800F9BA0_TightropeTreachery): gusts in a random direction, with their sound;
+   it stops once the goal is reached. */
+void func_80106838_1481C8_RainbowRun(void) {
+    if (D_8010A7A8_14C138_RainbowRun == 1) {
+        D_8010A7EC_14C17C_RainbowRun = 0;
+        D_8010A7ED_14C17D_RainbowRun = 0;
+        D_8010A7EA_14C17A_RainbowRun = 1;
+        D_8010A7F0_14C180_RainbowRun = 0;
+    } else if (D_8010A7F0_14C180_RainbowRun == 0) {
+        D_8010A7EC_14C17C_RainbowRun = 1;
+        D_8010A7ED_14C17D_RainbowRun = 0;
+        D_8010A7EA_14C17A_RainbowRun = 0;
+        D_8010A7F4_14C184_RainbowRun = 0;
+        D_8010A7F8_14C188_RainbowRun = 0;
+        D_8010A7FC_14C18C_RainbowRun = 0;
+        D_8010A7F0_14C180_RainbowRun = 1;
+    }
+    if (D_8010A7ED_14C17D_RainbowRun == 1) {
+        if (D_8010A7FC_14C18C_RainbowRun++ > 90) {
+            D_8010A7F8_14C188_RainbowRun = guRandom() % 120 / 2 + 30;
+            D_8010A7C8_14C158_RainbowRun = D_8010A7EE_14C17E_RainbowRun = guRandom() % 5;
+            D_8010A7F4_14C184_RainbowRun = 0;
+            D_8010A7ED_14C17D_RainbowRun = 0;
+            D_8010A7EC_14C17C_RainbowRun = 1;
+        } else {
+            D_8010A7C8_14C158_RainbowRun = D_8010A7EE_14C17E_RainbowRun = 6;
+        }
+    }
+    if (D_8010A7EC_14C17C_RainbowRun == 1) {
+        if (D_8010A7F4_14C184_RainbowRun++ < D_8010A7F8_14C188_RainbowRun) {
+            if (D_8010A7A4_14C134_RainbowRun == 0) {
+                D_8010A7A6_14C136_RainbowRun = PlaySound(0x18C);
+                D_8010A7A4_14C134_RainbowRun = 1;
+                D_8010A7EB_14C17B_RainbowRun = 0x60;
+                func_800795D8_7A1D8(D_8010A7A6_14C136_RainbowRun, 0x60);
+                D_8010A7EA_14C17A_RainbowRun = 0;
+            }
+            D_8010A7CC_14C15C_RainbowRun += 0.012f;
+            if (D_8010A7CC_14C15C_RainbowRun > 0.4f) {
+                D_8010A7CC_14C15C_RainbowRun = 0.4f;
+            }
+        } else {
+            D_8010A7EC_14C17C_RainbowRun = 0;
+            D_8010A7ED_14C17D_RainbowRun = 1;
+            D_8010A7FC_14C18C_RainbowRun = 0;
+            D_8010A7C8_14C158_RainbowRun = D_8010A7EE_14C17E_RainbowRun = 6;
+            D_8010A7EA_14C17A_RainbowRun = 1;
+        }
+    }
+    if (D_8010A7EA_14C17A_RainbowRun == 1 && D_8010A7A4_14C134_RainbowRun == 1) {
+        D_8010A7EB_14C17B_RainbowRun -= 3;
+        if (D_8010A7EB_14C17B_RainbowRun > 0) {
+            func_800795D8_7A1D8(D_8010A7A6_14C136_RainbowRun, D_8010A7EB_14C17B_RainbowRun);
+        } else {
+            D_8010A7EB_14C17B_RainbowRun = 0x7F;
+            func_80079848_7A448(D_8010A7A6_14C136_RainbowRun);
+            D_8010A7A6_14C136_RainbowRun = -2;
+            D_8010A7A4_14C134_RainbowRun = 0;
+            D_8010A7EA_14C17A_RainbowRun = 0;
+        }
+    }
+    D_8010A7CC_14C15C_RainbowRun -= 0.006666667f;
+    if (D_8010A7CC_14C15C_RainbowRun < 0.0f) {
+        D_8010A7CC_14C15C_RainbowRun = 0.0f;
+    }
+    if (D_8010A7EE_14C17E_RainbowRun != 6) {
+        D_8010ABFC_14C58C_RainbowRun[0] = HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7EE_14C17E_RainbowRun]) * D_8010A7CC_14C15C_RainbowRun * 5.0f;
+        D_8010ABFC_14C58C_RainbowRun[1] = func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7EE_14C17E_RainbowRun]) * D_8010A7CC_14C15C_RainbowRun * 5.0f;
+        D_8010A7EF_14C17F_RainbowRun = D_8010A7EE_14C17E_RainbowRun;
+    } else {
+        D_8010ABFC_14C58C_RainbowRun[0] = HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7EF_14C17F_RainbowRun]) * D_8010A7CC_14C15C_RainbowRun * 5.0f;
+        D_8010ABFC_14C58C_RainbowRun[1] = func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7EF_14C17F_RainbowRun]) * D_8010A7CC_14C15C_RainbowRun * 5.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106CB8_148648_RainbowRun);
+/* The rainbow's update: the goal's model goes once the camera passes z 350; the wind and the
+   camera run while the game is not paused. */
+void func_80106CB8_148648_RainbowRun(omObjData* obj) {
+    if (D_8010A800_14C190_RainbowRun == 0 && D_80102750_103350[1] < 350.0f) {
+        D_8010A800_14C190_RainbowRun = 1;
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        if (D_800F8FD0_F9BD0 == 1) {
+            func_80106838_1481C8_RainbowRun();
+        }
+        func_80105870_147200_RainbowRun();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106D60_1486F0_RainbowRun);
+/* The scenery (a ground object): the start and goal models. */
+void func_80106D60_1486F0_RainbowRun(omObjData* obj) {
+    RRGround* w = func_80027154_27D54(sizeof(RRGround), 0x7918);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106E70_148800_RainbowRun);
+    obj->unk_50 = w;
+    func_800B0EF0_B1AF0(w, 0, sizeof(RRGround));
+    w->unk_03 = 1;
+    w->unk_04 = 0;
+    obj->model[0] = -1;
+    obj->model[1] = LoadFormFile(0x1F0003, 0x16B9);
+    obj->model[2] = LoadFormFile(0x1F0004, 0x2B9);
+    obj->trans.x = 0.0f;
+    obj->trans.y = -1100.0f;
+    obj->trans.z = 1450.0f;
+    func_80029714_2A314(obj->model[1], 0.0f, -1100.0f, 1500.0f);
+    func_80029714_2A314(obj->model[2], 0.0f, 50.0f, -1150.0f);
+    func_80105ED4_147864_RainbowRun(obj, 0.0f);
+    obj->func_ptr = func_80106CB8_148648_RainbowRun;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80106E8C_14881C_RainbowRun);
+void func_80106E70_148800_RainbowRun(omObjData* obj) {
+    func_801060D8_147A68_RainbowRun(obj);
+}
+
+/* The rainbow (a ground object; MP1 func_800FB170_TightropeTreachery's rope). */
+void func_80106E8C_14881C_RainbowRun(omObjData* obj) {
+    RRGround* w = func_80027154_27D54(sizeof(RRGround), 0x7918);
+
+    obj->unk_50 = w;
+    func_800B0EF0_B1AF0(w, 0, sizeof(RRGround));
+    w->unk_03 = 1;
+    w->unk_04 = 1;
+    obj->model[0] = func_80018A30_19630(0x1F0005, 0x6B9);
+    func_800298A4_2A4A4(obj->model[0], 4, 4);
+    obj->model[1] = LoadFormFile(0x1F0000, 0x6B9);
+    func_80106050_1479E0_RainbowRun(obj->model[1]);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    func_8000BE8C_CA8C(obj, 0.5f);
+    obj->trans.x = obj->trans.y = 0.0f;
+    obj->trans.z = D_800FFFD8_100BD8[0]->trans.z;
+    obj->scale.y = obj->scale.z = 0.0f;
+    obj->scale.x = 1.2f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 50.0f, 0.0f);
+    {
+        RRHitGrid* g = &D_800FD2B8_FDEB8[D_800FC834_FD434[obj->model[0]].unk10];
+
+        g->cw = 500.0f;
+    }
+    obj->func_ptr = func_80106E70_148800_RainbowRun;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80107018_1489A8_RainbowRun);
 
