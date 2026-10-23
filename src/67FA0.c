@@ -75,6 +75,14 @@ extern f32 D_800E2030_E2C30;
 extern Vec2fxy D_800E2034_E2C34;
 extern Vec2s D_800CCE08_CDA08[4];
 extern f32 D_800CCE18_CDA18[4];
+extern s32 D_800CCEE8_CDAE8[][6]; /* map-view model files per board and character */
+extern s32 D_800CCE28_CDA28[][6];
+extern f32 D_800CCDF0_CD9F0[];    /* per character */
+void MBModelDispOff(void*);
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+void HuVecCopyXYZ(Vec*, f32, f32, f32);
+void func_80063C40_64840(s32, s32);
+u16 MBDCameraPos3DSet(Vec*);
 
 
 unk_Struct02* func_800673A0_67FA0(void) {
@@ -113,7 +121,35 @@ void func_800674D8_680D8(unk_Struct02* icons, u16 mask) {
     } while (i < 4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067558_68158);
+/* Swap every player's board model for a map-view model (1.2x) and hide the item model. */
+void func_80067558_68158(void) {
+    GW_PLAYER* player;
+    void* temp_a0;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        player = BoardPlayerGet(i);
+        MBModelDispOff(player->unk_24);
+        if (gPlayers[i].turn_status != 0) {
+            D_800E2020_E2C20[i] = MBModelFileCreate(D_800CCEE8_CDAE8[GwSystem.current_board_index][player->character], 0xD, 1.0f, D_800CCDF0_CD9F0[player->character], NULL);
+        } else {
+            D_800E2020_E2C20[i] = MBModelFileCreate(D_800CCE28_CDA28[GwSystem.current_board_index][player->character], 0xD, 1.0f, D_800CCDF0_CD9F0[player->character], NULL);
+        }
+        HuVecCopyXYZ(&((MBModel*)D_800E2020_E2C20[i])->scale, 1.2f, 1.2f, 1.2f);
+    }
+    if (D_800CC1F0_CCDF0 != NULL) {
+        MBModelDispOff(D_800CC1F0_CCDF0);
+    }
+    for (i = 0; i < 4; i++) {
+        player = BoardPlayerGet(i);
+        temp_a0 = player->unk_24;
+        player->unk_24 = D_800E2020_E2C20[i];
+        D_800E2020_E2C20[i] = temp_a0;
+    }
+    for (i = 0; i < 4; i++) {
+        func_80063C40_64840(i, 1);
+    }
+}
 
 void func_80067720_68320(void) {
     GW_PLAYER* player;
@@ -266,7 +302,13 @@ void func_8006784C_6844C(void) {
     } while (0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/67FA0", func_80067C18_68818);
+/* Keeps the camera on the current player's model (map scroll helper process). */
+void func_80067C18_68818(void) {
+    while (TRUE) {
+        MBDCameraPos3DSet(&((MBModel*)gPlayers[GwSystem.current_player_index].unk_24)->pos);
+        HuPrcVSleep();
+    }
+}
 
 /* MP3 MBMapScrollExec */
 void func_80067C6C_6886C(s32 arg0) {
