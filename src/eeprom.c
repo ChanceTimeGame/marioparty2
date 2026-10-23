@@ -1,7 +1,8 @@
 #include "common.h"
 #include "engine/siman.h"
 
-extern u8 D_800C9B60[];
+/* .data (0xCA760-0xCA770): the save signature */
+u8 D_800C9B60[16] = "HUDSON";
 extern u8 D_800D89F0_D95F0[];
 extern u8 D_800D89F8_D95F8[];
 extern OSMesgQueue D_800FA5E0_FB1E0;

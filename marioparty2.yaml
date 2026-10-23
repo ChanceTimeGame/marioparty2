@@ -392,7 +392,9 @@ segments:
       - [0xC9470, .data, util]
       - [0xCA5C0, .data, 19A30]
       - {start: 0xCA670, type: .data, name: 19BF0, linker_section: .cdata}
-      - [0xCA760, data]
+      - [0xCA760, .data, eeprom]
+      - [0xCA770, .data, 1D0B0]
+      - [0xCA780, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
       - [0xCEA80, .data, A54C0]

@@ -785,7 +785,11 @@ extern u8 *D_800DEF8C_DFB8C;
 extern u8 *D_800DEF90_DFB90;
 extern u8 D_800F842C_F902C;
 extern u8 D_800F92DD_F9EDD;
-extern s16 D_800C9B74_CA774;
+/* .data (0xCA770-0xCA780; objects' .data start 16-aligned, so 274D0's fill colour sits here) */
+u8 D_800C9B70_CA770 = 0; /* fill colour r, g, b (274D0) */
+u8 D_800C9B71_CA771 = 0;
+u8 D_800C9B72_CA772 = 0;
+s16 D_800C9B74_CA774 = 0;
 extern s16 D_800FA1AA_FADAA;
 extern s16 D_8010106C_101C6C;
 
