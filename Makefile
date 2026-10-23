@@ -582,7 +582,7 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 # d1-B: units whose initialised .data is now C (data half of the blob) and whose rodata is also
-# carved: their .rodata keeps its name (yaml '.rodata' subsegment with linker_section_order .data),
-# so the two halves link at their own addresses instead of merging into one .data
+# carved: their own .data is renamed .cdata (yaml data-half entry: linker_section .cdata) so it does
+# not merge with the .rodata renamed to .data
 D1B_DATA_AND_RODATA := build/src/4ABB0.c.o
-$(D1B_DATA_AND_RODATA): RODATA_AS_DATA =
+$(D1B_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata

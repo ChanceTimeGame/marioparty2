@@ -386,7 +386,7 @@ segments:
       - [0xB8AC0, c]
       - [0xB8FC0, c]
       - [0xB9190, data]
-      - [0xCC8D0, .data, 4ABB0]
+      - {start: 0xCC8D0, type: .data, name: 4ABB0, linker_section: .cdata}
       - [0xCC9F0, .data, 4D660]
       - [0xCCC90, .data, 4F650]
       - [0xCCCE0, .data, 50E70]
@@ -416,7 +416,7 @@ segments:
       - [0xD2FF0, .data, 459D0]
       - [0xD3108, pad]
       - [0xD3110, .data, 46250]
-      - {start: 0xD3220, type: .rodata, name: 4ABB0, linker_section_order: .data}
+      - [0xD3220, .data, 4ABB0]
       - [0xD3430, data]
       - [0xD39B8, .data, 57150]
       - [0xD39F0, data]
