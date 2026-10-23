@@ -50,7 +50,8 @@ segments:
     follows_vram: entry
     bss_size: 0x2DC10
     subsegments:
-      - [0x1060, asm]
+      - [0x1060, c, 1060]
+      - [0x1130, c, 1130]
       - [0xB6E0, c]
       - [0xC8E0, c]
       - [0xECC0, c]
