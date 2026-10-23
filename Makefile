@@ -582,9 +582,9 @@ $(H1H_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 
-# d1-C: units with both C .data and carved .rodata keep the two sections apart. Renaming .rodata to
-# .data would put both into the first `(.data)` entry (the data half's). Instead the rodata half's
-# yaml entry is `{start: .., type: .rodata, name: <unit>, linker_section_order: .data}`, which
-# links `(.rodata)` in data order, and the rename is turned off here.
-D1C_DATA_AND_RODATA := build/src/5F3B0.c.o
-$(D1C_DATA_AND_RODATA): RODATA_AS_DATA =
+# d1-C: units with both C .data and carved .rodata. Renaming .rodata to .data alone would put both
+# into the data half's `(.data)` entry; their C .data is renamed to .cdata in the same objcopy and
+# the data half's yaml entry links it (`{start: .., type: .data, name: <unit>, linker_section: .cdata}`).
+# The rodata half's entry stays `[start, .data, <unit>]`.
+D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o
+$(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
