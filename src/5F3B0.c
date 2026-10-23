@@ -4,13 +4,8 @@
 #include "game/gamework.h"
 #include "game/board.h"
 
-extern s16 D_800CCAD4_CD6D4[][2]; /* status sprite positions (MP3 PlayerBoardStatusRootPosition) */
-extern s16 D_800CCB04_CD704[][2]; /* the same, flag 0xD set */
-extern s32 D_800CCB84_CD784[];    /* status character sprite per character */
-extern s32 D_800CCBDC_CD7DC[];    /* item sprite per item */
 extern s8 D_800FD8AB_FE4AB;
 extern s8 D_800FD8B5_FE4B5;
-extern s32 D_800CC994_CD594;
 void SprRotSet(s16 grpIdx, s16 idx, f32 rot);
 f32 HuMathSin(f32);
 void func_80082488_83088(s16, s16, u16);
@@ -23,6 +18,67 @@ typedef struct Unk {
     s16 unk_00;
     s16 unk_02;
 } Unk;
+
+/* .data (0xCD590-0xCD810) */
+s32 D_800CC990_CD590 = -1;
+s32 D_800CC994_CD594 = -1;
+s16 D_800CC998_CD598 = -1;
+s16 D_800CC99A_CD59A = -1;
+Unk D_800CC99C_CD59C[36] = {
+    { 0x0018, 0x0010 }, { 0x00B8, 0x0010 }, { 0x0018, 0x00BA }, { 0x00B8, 0x00BA },
+    { -0x00E0, 0x0010 }, { 0x01B0, 0x0010 }, { -0x00E0, 0x00BA }, { 0x01B0, 0x00BA },
+    { 0x0030, 0x004C }, { 0x00A0, 0x004C }, { 0x0030, 0x007E }, { 0x00A0, 0x007E },
+    { 0x0068, 0x0073 }, { 0x01B0, 0x0010 }, { -0x00E0, 0x00BA }, { 0x01B0, 0x00BA },
+    { -0x00E0, 0x0010 }, { 0x0068, 0x0073 }, { -0x00E0, 0x00BA }, { 0x01B0, 0x00BA },
+    { -0x00E0, 0x0010 }, { 0x01B0, 0x0010 }, { 0x0068, 0x0073 }, { 0x01B0, 0x00BA },
+    { -0x00E0, 0x0010 }, { 0x01B0, 0x0010 }, { -0x00E0, 0x00BA }, { 0x0068, 0x0073 },
+    { 0x0220, 0x0018 }, { 0x0220, 0x004A }, { 0x0220, 0x007C }, { 0x0220, 0x00AE },
+    { 0x00B8, 0x0018 }, { 0x00B8, 0x004A }, { 0x00B8, 0x007C }, { 0x00B8, 0x00AE },
+};
+Unk D_800CCA2C_CD62C[4] = { { 0x0028, 0x005C }, { 0x00A8, 0x005C }, { 0x0028, 0x00B8 }, { 0x00A8, 0x00B8 } };
+Unk D_800CCA3C_CD63C[4] = { { 0x0028, 0x005C }, { 0x00A8, 0x005C }, { 0x0028, 0x00B8 }, { 0x00A8, 0x00B8 } };
+Unk D_800CCA4C_CD64C[4] = { { 0x00A8, 0x005C }, { 0x00A8, 0x008A }, { 0x00A8, 0x00B8 }, { 0x0028, 0x008A } };
+Unk D_800CCA5C_CD65C[4] = { { 0x0028, 0x005C }, { 0x0028, 0x00B8 }, { 0x00A8, 0x005C }, { 0x00A8, 0x00B8 } };
+Unk D_800CCA6C_CD66C[4] = { { 0x0020, 0x008A }, { 0x00B0, 0x005C }, { 0x00B0, 0x008A }, { 0x00B0, 0x00B8 } };
+u8 D_800CCA7C_CD67C[29][3] = { /* status colours per space type (RGB) */
+    { 0x80, 0x80, 0x80 }, { 0x00, 0x00, 0xFF }, { 0xFF, 0x00, 0x00 }, { 0xFF, 0xFF, 0x00 },
+    { 0x00, 0xFF, 0x00 }, { 0x40, 0xC0, 0x00 }, { 0x80, 0x80, 0x00 }, { 0xC0, 0x40, 0x00 },
+    { 0xFF, 0x00, 0x00 }, { 0xFF, 0x00, 0x00 }, { 0xFF, 0x00, 0x00 }, { 0xC0, 0x40, 0x00 },
+    { 0x80, 0x80, 0x00 }, { 0x40, 0xC0, 0x00 }, { 0x00, 0xFF, 0x00 }, { 0x00, 0xFF, 0x00 },
+    { 0x00, 0xFF, 0x00 }, { 0x00, 0xC0, 0x40 }, { 0x00, 0x80, 0x80 }, { 0x00, 0x40, 0xC0 },
+    { 0x00, 0x00, 0xFF }, { 0x00, 0x00, 0xFF }, { 0x00, 0x00, 0xFF }, { 0x00, 0x40, 0xC0 },
+    { 0x00, 0x80, 0x80 }, { 0x00, 0xC0, 0x40 }, { 0x00, 0xFF, 0x00 }, { 0x00, 0xFF, 0x00 },
+    { 0x00, 0xFF, 0x00 },
+};
+s16 D_800CCAD4_CD6D4[10][2] = { /* status sprite positions (MP3 PlayerBoardStatusRootPosition) */
+    { 0, 0 }, { 0, 0 }, { 4, 8 }, { 4, -7 }, { 17, 10 }, { 27, 10 }, { 37, 10 }, { 17, -5 },
+    { 27, -5 }, { -19, 13 },
+};
+s16 D_800CCAFC_CD6FC[2] = { -44, 1 };
+s16 D_800CCB00_CD700[2] = { 44, -7 };
+s16 D_800CCB04_CD704[12][2] = { /* the same, flag 0xD set */
+    { 0, 0 }, { 0, 0 }, { 4, 0 }, { 4, -7 }, { 17, 0 }, { 27, 0 }, { 37, 0 }, { 17, -5 },
+    { 27, -5 }, { -19, 13 }, { -44, 1 }, { 44, -7 },
+};
+u8 D_800CCB34_CD734[28] = {
+    0x00, 0x04, 0x00, 0x00, 0x08, 0x00, 0x0C, 0x10, 0x14, 0x18, 0x00, 0x00, 0x00, 0x00,
+    0x20, 0x20, 0x20, 0x20, 0x1C, 0x1C, 0x1C, 0x1C, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00,
+};
+f32 D_800CCB50_CD750[13] = {
+    1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+};
+s32 D_800CCB84_CD784[6] = { /* status character sprite per character */
+    0x000A0167, 0x000A016C, 0x000A016D, 0x000A016E, 0x000A016F, 0x000A0170,
+};
+s32 D_800CCB9C_CD79C[4] = { 0x000A0242, 0x000A0243, 0x000A0244, 0x000A0247 };
+Unk* D_800CCBAC_CD7AC[6] = {
+    D_800CCA3C_CD63C, D_800CCA6C_CD66C, D_800CCA5C_CD65C, D_800CCA4C_CD64C, D_800CCA3C_CD63C, D_800CCA2C_CD62C,
+};
+s32 D_800CCBC4_CD7C4[6] = { 0x000A00B5, 0x000A00B6, 0x000A00B7, 0x000A00B8, 0x000A00B9, 0x000A00BA };
+s32 D_800CCBDC_CD7DC[10] = { /* item sprite per item */
+    0x000A014C, 0x000A0144, 0x000A0146, 0x000A014F, 0x000A0150,
+    0x000A0149, 0x000A014D, 0x000A014E, 0x000A0151, 0x000A014B,
+};
 
 
 void SprAttrReset(s16, s16, s32);                        /* extern */
@@ -39,8 +95,6 @@ void func_8005F784_60384(s32);
 void func_8005F86C_6046C(s32);
 void func_80060034_60C34(u32, s32);
 void func_800600F8_60CF8(s32, s16, s16);
-extern s32 D_800CC990_CD590;
-extern s32 D_800CC994_CD594;
 extern s16 D_800E1D3E_E293E;
 extern f32 D_800E1D44_E2944;
 extern s16 D_800FA604_FB204;
@@ -48,7 +102,6 @@ extern Vec2f D_800FC990_FD590[];
 extern UnkItemSprite2 D_800FC9EC_FD5EC[];
 extern Vec2f D_800FD854_FE454[];
 extern BoardStatus D_80101510_102110[];
-extern Unk D_800CC99C_CD59C[];
 extern omObjData* D_800E1D48_E2948[]; /* coin-change objects per player */
 
 s32 func_80059FD0_5ABD0(s32);
@@ -61,8 +114,6 @@ void func_800822A8_82EA8(s16, s16, u16, s32);
 
 #define MB_MAX_PLAYERS 4
 
-extern s16 D_800CC998_CD598;
-extern s16 D_800CC99A_CD59A;
 extern Process* D_800E1D20_E2920;
 extern s16 D_800E1D40_E2940;
 extern s16 D_800E1DD8_E29D8;
@@ -82,21 +133,16 @@ typedef struct GMesFontMes {
 extern GMesFontMes D_800E1ED4_E2AD4;
 extern GMesFontMes D_800E1D60_E2960;
 extern GMesFontMes D_800E1DE0_E29E0;
-extern s32 D_800CCBC4_CD7C4[];
 extern s16 D_800E1EF4_E2AF4;
 extern Process* D_800E1F48_E2B48;
 extern s16 D_800FD2A2_FDEA2;
 extern s16 D_800FD840_FE440;
 extern s16 D_800E1D28_E2928[]; /* MP3 D_80105588: status sprite animations */
 extern s16 D_800E1D38_E2938;   /* D_800E1D28_E2928[8] */
-extern s16 D_800CCAFC_CD6FC[2];
 extern s16 D_800F8CE4_F98E4;
-extern s32 D_800CCB9C_CD79C[];
-extern u8 D_800CCA7C_CD67C[][3]; /* status colours per space type (MP3 RGB D_8010188C) */
 
 extern s32 D_800F8708_F9308;
 
-extern f32 D_800CCB50_CD750[12];
 void AdjustPlayerCoins(s32 index, s32 count);
 s32 PlaySound(s32);
 
@@ -111,8 +157,6 @@ void func_8006176C_6236C(void);
 void func_800618F8_624F8(void);
 void func_80061A68_62668(void);
 
-extern u8 D_800CCB34_CD734[];
-extern Unk* D_800CCBAC_CD7AC[];
 
 #define ABS_F(x) (((x) > 0.0f) ? (x) : 0.0f - (x))
 void omDelObj(omObjData*);
