@@ -578,7 +578,63 @@ void* func_80091024_91C24(s32 arg0) {
     return data;
 }
 
-INCLUDE_ASM("asm/nonmatchings/8FBB0", func_8009110C_91D0C);
+/* MP1 func_8007420C: draw the wipe texture scaled by arg1 about the centre, fill the rest
+   (MP2 renders both passes anti-aliased) */
+void func_8009110C_91D0C(Gfx** arg0, f32 arg1, f32 arg2) {
+    s16 var_t1;
+    s16 var_t2;
+    s16 var_t3;
+    s16 var_t4;
+    f32 temp_f4;
+
+    if (arg1 == 0) {
+        func_8008F7F4_903F4(arg0, 255, D_800CDCA8_CE8A8);
+        return;
+    }
+
+    gSPDisplayList((*arg0)++, D_800CDC58_CE858);
+    gDPSetAlphaCompare((*arg0)++, G_AC_THRESHOLD);
+    gDPSetBlendColor((*arg0)++, 0, 0, 0, 1);
+    gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    gDPSetTextureFilter((*arg0)++, G_TF_BILERP);
+    gDPSetRenderMode((*arg0)++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
+    gDPSetCombineLERP((*arg0)++, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0);
+    gDPLoadTextureBlock((*arg0)++, D_800FD834_FE434.unk_04, G_IM_FMT_I, G_IM_SIZ_8b, D_800FD834_FE434.unk_00, D_800FD834_FE434.unk_02, 0,
+        G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetPrimColor((*arg0)++, 0, 0, D_800F9D20_FA920, D_800FC9E8_FD5E8, D_800FDEA1_FEAA1, arg2 * 255.0f);
+
+    var_t3 = 160.0f - arg1 * 160.0f;
+    var_t1 = 120.0f - arg1 * 160.0f;
+    var_t4 = 160.0f + arg1 * 160.0f;
+    var_t2 = 120.0f + arg1 * 160.0f;
+    temp_f4 = ((f32) var_t4 - var_t3) / D_800FD834_FE434.unk_00;
+
+    gSPScisTextureRectangle((*arg0)++, var_t3 * 4, var_t1 * 4, var_t4 * 4, var_t2 * 4, 0, 0, 0,
+        (1.0f / temp_f4) * 1024.0f, (1.0f / temp_f4) * 1024.0f);
+    gDPSetRenderMode((*arg0)++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
+    gDPSetCombineMode((*arg0)++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetPrimColor((*arg0)++, 0, 0, D_800F9D20_FA920, D_800FC9E8_FD5E8, D_800FDEA1_FEAA1, arg2 * 255.0f);
+
+    if (var_t1 > 0) {
+        gDPScisFillRectangle((*arg0)++, 0, 0, SCREEN_WIDTH, var_t1);
+    } else {
+        var_t1 = 0;
+    }
+
+    if (var_t2 < SCREEN_HEIGHT) {
+        gDPScisFillRectangle((*arg0)++, 0, var_t2, SCREEN_WIDTH, SCREEN_HEIGHT);
+    } else {
+        var_t2 = SCREEN_HEIGHT;
+    }
+
+    if (var_t3 > 0) {
+        gDPScisFillRectangle((*arg0)++, 0, var_t1, var_t3, var_t2);
+    }
+
+    if (var_t4 < SCREEN_WIDTH) {
+        gDPScisFillRectangle((*arg0)++, var_t4, var_t1, SCREEN_WIDTH, var_t2);
+    }
+}
 
 s32 func_80091B20_92720(Gfx** arg0) {
     if (D_800FCE88_FDA88 == 0.0f) {
