@@ -283,6 +283,7 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 /* 5F-B */
 
 extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
+extern s16 D_800CAFEE; /* main (3D6A0.c): the minigame variant override, -1 none */
 
 /* ---- 5F functions (source order) ---- */
 

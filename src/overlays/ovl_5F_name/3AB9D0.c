@@ -1792,9 +1792,144 @@ void func_80107FE0_3B1180_name_5F(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108170_3B1310_name_5F);
+/* Sets the players' minigame groups from the minigame's type (1P minigames: func_8010881C picks
+   the item for type 4); in 2-vs-2 minigames 0x19, 0x1E, 0x1F, 0x41, 0x42 each team is split into
+   two numbered groups in random order. */
+void func_80108170_3B1310_name_5F(void) {
+    s32 i;
+    s32 n;
+    s32 m;
+    s32 g;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108458_3B15F8_name_5F);
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        func_8010881C_3B19BC_name_5F(GwSystem.current_player_index);
+    case 5:
+    case 6:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = 1;
+        }
+        gPlayers[GwSystem.current_player_index].group = 0;
+        break;
+    case 0:
+    case 3:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = i;
+        }
+        break;
+    case 2:
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            n += gPlayers[i].group == 0;
+        }
+        if (n >= 2) {
+            switch (D_80114DC0_3BDF60_name_5F) {
+            case 0x19:
+            case 0x1E:
+            case 0x1F:
+            case 0x41:
+            case 0x42:
+                i = 0;
+                n = 0;
+                m = 1;
+                for (; i < 4; i++) {
+                    if (gPlayers[i].group != 0) {
+                        gPlayers[i].group = m + gPlayers[i].group;
+                        m++;
+                    } else {
+                        gPlayers[i].group = n + gPlayers[i].group;
+                        n++;
+                    }
+                }
+                for (g = 0; g < 3; g += 2) {
+                    if (rand8() & 1) {
+                        for (i = 0; i < 4; i++) {
+                            if (gPlayers[i].group == g) {
+                                n = i;
+                            }
+                            if (gPlayers[i].group == g + 1) {
+                                m = i;
+                            }
+                        }
+                        gPlayers[n].group = g + 1;
+                        gPlayers[m].group = g;
+                    }
+                }
+                break;
+            }
+        }
+        break;
+    }
+}
+
+/* Picks the minigame's variant (D_800FA656) at random for the minigames that have one, unless the
+   player skipped (flag 0x15); main's D_800CAFEE overrides it when set. */
+void func_80108458_3B15F8_name_5F(void) {
+    s32 r;
+    s32 mg;
+
+    if (_CheckFlag(0x15) == 0) {
+        r = (rand8() & 0xFF) * 0.00390625f * 100.0f;
+        mg = D_80114DC0_3BDF60_name_5F;
+        switch (mg) {
+        case 0x34:
+            if (r < 50) {
+                r = 0;
+            } else if (r < 80) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x2D:
+            if (r < 60) {
+                r = 0;
+            } else if (r < 80) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x26:
+            if (r < 40) {
+                r = 0;
+            } else if (r < 70) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x11:
+        case 0x19:
+            r = !(r < 50);
+            break;
+        case 0xC:
+        case 0xE:
+        case 0x29:
+        case 0x43:
+        case 0x45:
+            if (r < 33) {
+                r = 0;
+            } else if (r < 66) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0xB:
+            r = rand8() & 3;
+            r = gPlayers[r].character;
+            break;
+        default:
+            r = 0;
+            break;
+        }
+        if (D_800CAFEE != -1) {
+            r = D_800CAFEE;
+        }
+        D_800FA656 = r;
+    }
+}
 
 void func_801085A0_3B1740_name_5F(s32 arg0) {
     s16 minigameOverlayID;
