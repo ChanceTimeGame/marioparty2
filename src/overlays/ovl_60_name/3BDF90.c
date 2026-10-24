@@ -2909,7 +2909,43 @@ void func_8010B4E0_3C6C40_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B884_3C6FE4_name_60);
+/* Demo setup: each player rides a vehicle (file 2 for groups 0-1, 1 for the others) with its
+   character's form; the two sides face each other. */
+void func_8010B884_3C6FE4_name_60(void) {
+    s32 i;
+    s32 chr;
+    s32 file;
+    Ovl60Player* p;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        p = D_800FA640_FB240[i];
+        if (gPlayers[i].group < 2) {
+            file = 2;
+        } else {
+            file = 1;
+        }
+        p->model = LoadFormFile(file | 0x2D0000, 0x69D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.2664f, 0.2664f, 0.2664f);
+        file = D_80113BD0_3CF330_name_60[chr];
+        p->model2 = LoadFormFile(file | 0x2D0000, 0x69D);
+        func_800297E8_2A3E8(p->model2, 0.4f, 0.4f, 0.4f);
+        if (gPlayers[i].group < 2) {
+            func_8002979C_2A39C(p->model, 30.0f, 0.0f, 0.0f);
+            func_8002979C_2A39C(p->model2, 0.0f, 90.0f, 0.0f);
+            func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->model2].mtx, 0.0f, 0.0f, 30.0f);
+        } else {
+            func_8002979C_2A39C(p->model, 30.0f, 0.0f, 0.0f);
+            func_8002979C_2A39C(p->model2, 0.0f, -90.0f, 0.0f);
+            func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->model2].mtx, 0.0f, 0.0f, -30.0f);
+        }
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
 void func_8010BAF4_3C7254_name_60(void) {
     s32 i;

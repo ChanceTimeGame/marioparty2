@@ -587,7 +587,7 @@ void func_80113264_3CE9C4_name_60(s16);
 extern s32 D_80113B9C_3CF2FC_name_60[7]; /* lw (8010F480, 80110DA8, 80112610) */
 extern u16 D_80113BB8_3CF318_name_60[6]; /* 60-B: rider 0's form file, by character (8010B048) */
 extern u16 D_80113BC4_3CF324_name_60[6]; /* 60-B: rider 1's form file, by character */
-extern u16 D_80113BD0_3CF330_name_60[6]; /* lhu (8010B884) */
+extern u16 D_80113BD0_3CF330_name_60[6]; /* 60-B: the rider form file, by character (8010B884) */
 extern s32 D_80113BDC_3CF33C_name_60[3]; /* 8010C634 */
 extern s32 D_80113BE8_3CF348_name_60; /* 8010C634 */
 extern s32 D_80113BEC_3CF34C_name_60[7]; /* 8010CE78 */
