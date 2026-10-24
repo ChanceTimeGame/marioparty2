@@ -3773,9 +3773,113 @@ void func_8010E11C_3C987C_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E454_3C9BB4_name_60);
+/* Ball demo setup: each player's ball (0x3A0006, retextured by character) with the character
+   (motions 0x5B-0x5D of its directory) standing on it, all at 0.4. */
+void func_8010E454_3C9BB4_name_60(void) {
+    s32 i;
+    s32 chr;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E6A0_3C9E00_name_60);
+    LoadFormFile(0x3A0007, 0xA9D);
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        p->scale = 0.4f;
+        p->model = LoadFormFile(0x3A0006, 0xA8D);
+        func_8002BB4C_2C74C(p->model, D_801146FC_3CFE5C_name_60, D_80113C7C_3CF3DC_name_60[chr]);
+        func_80029A8C_2A68C(p->model);
+        func_80029AFC_2A6FC(p->model);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model, 2, 2);
+        p->vel = p->rot.x = p->rot.y = p->rot.z = 0.0f;
+        p->floor = 0.5f;
+        p->model2 = LoadFormFile(dir | D_800CD438_CE038[chr].model, 0xA9D);
+        func_800297E8_2A3E8(p->model2, p->scale, p->scale, p->scale);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x5B), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x5C), 0x1D);
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 0x5D), 0x1D);
+        func_8002C9C0_2D5C0(p->model2, p->mot[0]);
+        func_80029E80_2AA80(p->model2, 0, 2);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+        obj->work[2] = 0;
+    }
+}
+
+/* Ball demo player: the stick turns the character and rolls the ball (speed up to 10, decaying
+   by 0.7); the character stands, walks or runs by the stick's tilt. */
+void func_8010E6A0_3C9E00_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    Vec stick;
+    Vec* v;
+    s32 len;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y + 24.0f, m->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, demo->unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        if (OVL60_STICK_ABS(i, 0) > 10.0f || OVL60_STICK_ABS(i, 1) > 10.0f) {
+            p->rot.y = func_800B75A8_B81A8(func_80108C8C_3C43EC_name_60(i, 0), -func_80108C8C_3C43EC_name_60(i, 1));
+        }
+        v = &stick;
+        v->x = func_80108C8C_3C43EC_name_60(i, 0);
+        v->y = 0.0f;
+        v->z = func_80108C8C_3C43EC_name_60(i, 1);
+        len = HuVecGetLength3F(v);
+        if (len > 5.0f) {
+            p->vel += len * 0.02f;
+            if (p->vel > 10.0f) {
+                p->vel = 10.0f;
+            }
+        }
+        p->rot.x = func_8002D958_2E558(p->rot.x + p->vel);
+        p->vel -= 0.7f;
+        if (p->vel < 0.0f) {
+            p->vel = 0.0f;
+        }
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->model2, 0.0f, p->rot.y, 0.0f);
+        if (OVL60_STICK_ABS(i, 0) > 30.0f || OVL60_STICK_ABS(i, 1) > 30.0f) {
+            if (obj->work[2] != 2) {
+                obj->work[2] = 2;
+                func_80029BF0_2A7F0(p->model2, p->mot[2], 0, 5, 2);
+            }
+        } else if (OVL60_STICK_ABS(i, 0) > 10.0f || OVL60_STICK_ABS(i, 1) > 10.0f) {
+            if (obj->work[2] != 1) {
+                obj->work[2] = 1;
+                func_80029BF0_2A7F0(p->model2, p->mot[1], 0, 5, 2);
+            }
+        } else if (obj->work[2] != 0) {
+            obj->work[2] = 0;
+            func_80029BF0_2A7F0(p->model2, p->mot[0], 0, 5, 2);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010EC90_3CA3F0_name_60);
 

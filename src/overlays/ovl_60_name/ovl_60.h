@@ -596,7 +596,7 @@ extern char* D_80113C08_3CF368_name_60[7][2]; /* 60-B: the two nodes 8010CE78 lo
 extern u16 D_80113C40_3CF3A0_name_60[18]; /* 60-B: model2's three texture files per character ([chr * 3 + j], 8010D3D0) */
 extern char* D_80113C64_3CF3C4_name_60[3]; /* 60-B: the textures they replace (8010D3D0) */
 extern u16 D_80113C70_3CF3D0_name_60[6]; /* 60-B: motion file, by character (8010D3D0) */
-extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
+extern char* D_80113C7C_3CF3DC_name_60[6]; /* 60-B: the ball texture, by character (8010E454) */
 extern s32 D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4 */
 extern u16 D_80113CAC_3CF40C_name_60[8]; /* lhu (8010F480) */
 extern s32 D_80113CBC_3CF41C_name_60[24]; /* 8010FA50 */
@@ -661,6 +661,8 @@ typedef struct Ovl60CounterDemo {
 } Ovl60CounterDemo;
 s16 func_8003DBE8_3E7E8(HmfData*, u16, s16, char*); /* 3D6A0.c: a second texture slot */
 void func_8003F57C_4017C(s16, s16); /* 3D6A0.c: a texture slot's frame */
+void func_8002BB4C_2C74C(s16, char*, char*); /* 274D0.c: swap a model's texture by name */
+extern const char D_801146FC_3CFE5C_name_60[]; /* "152_01a_DEF" (defined in 3BDF90.c after fork C's 8010EDD4) */
 /* end 60-B */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
