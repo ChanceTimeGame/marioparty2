@@ -607,7 +607,7 @@ extern u16 D_80113D7C_3CF4DC_name_60[6]; /* per character: the held form's file 
 extern u16 D_80113D88_3CF4E8_name_60[6]; /* lhu (801105D4) */
 extern u16 D_80113D94_3CF4F4_name_60[6]; /* per character: rider 0's form (| 0x4A0000; 80111BCC) */
 extern u16 D_80113DA0_3CF500_name_60[6]; /* per character: rider 1's form (| 0x4A0000; 80111BCC) */
-extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
+extern u16 D_80113DAC_3CF50C_name_60[10]; /* per character: the body form file (| 0x4C0000; 80112610; [6]-[9] unused) */
 
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
 extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
@@ -662,6 +662,24 @@ typedef struct Ovl60TeamDemo {
 } Ovl60TeamDemo;
 
 #define TEAM_DEMO(i) ((Ovl60TeamDemo*)D_800FA640_FB240[i])
+
+/* D_800FA640[i] in the flying demo (80112610 / 80112818): a body form with the character's head
+   on its "kubi" (neck) node. */
+typedef struct Ovl60FlyPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0xC];
+    /* 0x2C */ f32 ground; /* the start height; the flyer stays within ground .. ground + 50 */
+    /* 0x30 */ char unk30[4];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 head;
+    /* 0x4E */ char unk4E[0x46];
+    /* 0x94 */ f32 turn; /* -8 .. 8 by the stick; its sign turns the body (rot.y, +-90) */
+    /* 0x98 */ f32 vy; /* A flaps (+1.2); gravity 0.075; +-3 */
+} Ovl60FlyPlayer;
 
 /* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
