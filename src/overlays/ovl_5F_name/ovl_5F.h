@@ -16,6 +16,7 @@
 #include "game/sprite.h"
 #include "game/window.h"
 #include "game/gamemes.h"
+#include "game/pad.h"
 
 /* ---- types ---- */
 
@@ -306,7 +307,7 @@ void func_801049F4_3ADB94_name_5F(void);
 void func_80104D08_3ADEA8_name_5F(omObjData*);
 void func_80104DA8_3ADF48_name_5F(s32, s32, f32, f32, f32);
 void func_80104E98_3AE038_name_5F(s32);
-s32 func_80104F18_3AE0B8_name_5F(s32);
+s32 func_80104F18_3AE0B8_name_5F(u16);
 s32 func_80105008_3AE1A8_name_5F(s32, s32);
 s32 func_801050DC_3AE27C_name_5F(s16);
 void func_80105110_3AE2B0_name_5F(omObjData*);
