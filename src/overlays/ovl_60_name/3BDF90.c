@@ -3317,7 +3317,42 @@ void func_80110700_3CBE60_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110858_3CBFB8_name_60);
+/* The players face each other by group (groups 0 and 2 face right) and wait halfway through
+   mot[0]. */
+void func_80110858_3CBFB8_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(dir | D_800CD438_CE038[gPlayers[i].character].model, 0xA9D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        if (gPlayers[i].group < 2) {
+            if (gPlayers[i].group != 0) {
+                p->rot.y = -90.0f;
+            } else {
+                p->rot.y = 90.0f;
+            }
+        } else if (gPlayers[i].group != 2) {
+            p->rot.y = -90.0f;
+        } else {
+            p->rot.y = 90.0f;
+        }
+        func_8002979C_2A39C(p->model, 0.0f, p->rot.y, 0.0f);
+        p->scale = 0.4f;
+        func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0xC0), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot[0]);
+        func_80029E80_2AA80(p->model, 0, 1);
+        func_80029C74_2A874(p->model, func_80029D0C_2A90C(p->model) / 2.0f);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
 void func_80110A84_3CC1E4_name_60(void) {
     s32 i;
@@ -3331,7 +3366,57 @@ void func_80110A84_3CC1E4_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110B7C_3CC2DC_name_60);
+/* A plays mot[0] forwards to its end, B backwards to its start. */
+void func_80110B7C_3CC2DC_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108C24_3C4384_name_60(i, 0x8000)) {
+                func_80029E80_2AA80(p->model, 5, 0);
+                obj->work[1] = 2;
+            } else if (func_80108C24_3C4384_name_60(i, 0x4000)) {
+                func_80029E80_2AA80(p->model, 1, 4);
+                obj->work[1] = 3;
+            }
+            break;
+        case 2:
+            if (func_80029CE4_2A8E4(p->model) >= func_80029D0C_2A90C(p->model)) {
+                obj->work[1] = 1;
+            }
+            break;
+        case 3:
+            if (func_80029CE4_2A8E4(p->model) <= 0.0f) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80114780_3CFEE0_name_60[] = "c005_000-bmerge6";
