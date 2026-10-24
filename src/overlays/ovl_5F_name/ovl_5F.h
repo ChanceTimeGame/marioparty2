@@ -66,6 +66,18 @@ typedef struct Ovl5FEsprite {
     /* 0x0E */ char pad0E[0x16];
 } Ovl5FEsprite; /* size = 0x24 */
 
+/* 5F-E: a Mini-Game Coaster game's setup (D_8011429C / D_80114338 / D_801144A0, by
+   D_800FD8A8.unk04, indexed by D_80114250[minigame]; 3BC210.c). */
+typedef struct Ovl5FQuestGame {
+    /* 0x00 */ s8 group; /* player 1's group */
+    /* 0x01 */ s8 group2; /* player 2's group; -1: player 2 is a CPU */
+    /* 0x02 */ u8 variant; /* D_800FA656 */
+    /* 0x03 */ u8 cpu2; /* player 2's (and the partners') CPU difficulty */
+    /* 0x04 */ u8 cpu; /* everyone's CPU difficulty */
+    /* 0x05 */ char unk05;
+    /* 0x06 */ s16 mes[3]; /* the instruction pages' messages */
+} Ovl5FQuestGame; /* size = 0xC */
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -221,10 +233,10 @@ extern char* D_801141D0_3BD370_name_5F[6][2]; /* per character: the hook nodes (
 extern s32 D_80114204_3BD3A4_name_5F[6][2]; /* per character: CPU model file (5F-E) */
 extern u16 D_80114230_3BD3D0_name_5F[6]; /* lhu:1 */
 extern u16 D_8011423C_3BD3DC_name_5F[10]; /* lhu:1 */
-extern u8 D_80114250_3BD3F0_name_5F[76]; /* lbu:1 */
-extern s32 D_8011429C_3BD43C_name_5F[39]; /* addiu:1 */
-extern s32 D_80114338_3BD4D8_name_5F[90]; /* addiu:1 */
-extern s32 D_801144A0_3BD640_name_5F[584]; /* addiu:1 */
+extern s8 D_80114250_3BD3F0_name_5F[76]; /* 5F-E: per minigame, its Mini-Game Coaster setup (-1: none) */
+extern Ovl5FQuestGame D_8011429C_3BD43C_name_5F[]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
+extern Ovl5FQuestGame D_80114338_3BD4D8_name_5F[]; /* difficulty 1 (30 entries) */
+extern Ovl5FQuestGame D_801144A0_3BD640_name_5F[]; /* difficulty 2 (43 entries) */
 
 /* ---- 5F .bss (asm, ovl_5F_bss.bss.s) ---- */
 
@@ -276,6 +288,7 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 /* 5F-E */
 
 #include "game/malloc.h"
+#include "game/gamework.h"
 
 /* A demo player's work (D_800FA640[player], main's per-player minigame data, as 5F-E's demos
    use it; 0x35 and 0x6D are read as bytes elsewhere). */
@@ -508,7 +521,7 @@ void func_80112FE8_3BC188_name_5F(void);
 void func_80113004_3BC1A4_name_5F(void);
 void func_80113020_3BC1C0_name_5F(void);
 void func_8011303C_3BC1DC_name_5F(void);
-void func_80113070_3BC210_name_5F(s32);
-void func_801136C4_3BC864_name_5F(s32);
+void func_80113070_3BC210_name_5F(s16);
+void func_801136C4_3BC864_name_5F(s16);
 
 #endif
