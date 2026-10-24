@@ -599,11 +599,9 @@ extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
 extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
 extern char* D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4: the ball's texture: [0] the default, [chr] the character's ("152_01a_DEF"...) */
 extern u16 D_80113CAC_3CF40C_name_60[8]; /* per character: the body form file (| 0x400000; 8010F480) */
-extern s32 D_80113CBC_3CF41C_name_60[24]; /* 8010FA50 */
-extern s32 D_80113D1C_3CF47C_name_60; /* lw (8010FA50) */
-extern s32 D_80113D20_3CF480_name_60[11]; /* lw (8010FA50) */
-extern s32 D_80113D4C_3CF4AC_name_60; /* lw (8010FA50) */
-extern s32 D_80113D50_3CF4B0_name_60[11]; /* lw (8010FA50) */
+extern s32 D_80113CBC_3CF41C_name_60[6][4]; /* 8010FA50: per character, the four form files (| 0x410000) */
+extern char* D_80113D1C_3CF47C_name_60[6][2]; /* 8010FA50: per character, the hook nodes forms 0 and 1 hang from (asm label D20 is [0][1]) */
+extern char* D_80113D4C_3CF4AC_name_60[6][2]; /* 8010FA50: per character, forms 0 and 1's own nodes (asm label D50 is [0][1]) */
 extern u16 D_80113D7C_3CF4DC_name_60[6]; /* lhu (801100BC) */
 extern u16 D_80113D88_3CF4E8_name_60[6]; /* lhu (801105D4) */
 extern s32 D_80113D94_3CF4F4_name_60[3]; /* 80111BCC */
@@ -617,6 +615,24 @@ extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
 
 void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
 extern const char D_80114708_3CFE68_name_60[]; /* "item_hook" (defined in 3BDF90.c after 8010EDD4) */
+
+/* D_800FA640[i] in the form-blend demo (8010FA50 / 8010FDA8): the character model and four
+   forms; forms 0 and 1 hang from the model and blend towards forms 2 and 3. */
+typedef struct Ovl60FormPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot[11];
+    /* 0x4C */ s16 form[4];
+    /* 0x54 */ char unk54[0x40];
+    /* 0x94 */ f32 phase; /* degrees, 0-180 */
+    /* 0x98 */ f32 blend; /* sin(phase) */
+} Ovl60FormPlayer;
+
+void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t); /* MP1 func_80026174: blend two models */
 
 /* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))

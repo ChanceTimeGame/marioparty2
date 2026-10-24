@@ -3068,11 +3068,122 @@ void func_8010F6C8_3CAE28_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010FA50_3CB1B0_name_60);
+/* Each player is the character model with two forms hung from it (D_80113CBC, D_80113D1C,
+   D_80113D4C) that blend into two more. */
+void func_8010FA50_3CB1B0_name_60(void) {
+    s32 i;
+    s32 j;
+    s32 chr;
+    s32 dir;
+    Ovl60FormPlayer* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010FCC8_3CB428_name_60);
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(dir | D_800CD438_CE038[chr].model, 0xABD);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->scale = 0.3f;
+        func_800297E8_2A3E8(p->model, 0.3f, 0.3f, 0.3f);
+        for (j = 0; j < 4; j++) {
+            p->form[j] = LoadFormFile(D_80113CBC_3CF41C_name_60[chr][j] | 0x410000, 0xABD);
+        }
+        func_80023DAC_249AC(p->form[0], D_80113D4C_3CF4AC_name_60[chr][0], p->model, D_80113D1C_3CF47C_name_60[chr][0]);
+        func_80023DAC_249AC(p->form[1], D_80113D4C_3CF4AC_name_60[chr][1], p->model, D_80113D1C_3CF47C_name_60[chr][1]);
+        p->phase = 0.0f;
+        func_8002A00C_2AC0C(p->form[0]);
+        func_8002A00C_2AC0C(p->form[1]);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x4B), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x4C), 0x1D);
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 0x4D), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot[0]);
+        func_80029E80_2AA80(p->model, 0, 2);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+        obj->work[2] = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010FDA8_3CB508_name_60);
+void func_8010FCC8_3CB428_name_60(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (i < 2) {
+            func_80104DA8_3C0508_name_60(i, 3, i * 100.0f - 90.0f, 20.0f, -80.0f);
+        } else {
+            func_80104DA8_3C0508_name_60(i, 3, (i - 2.0f) * 100.0f - 40.0f, -20.0f, -80.0f);
+        }
+    }
+}
+
+/* Form-blend demo player: A or B plays mot[2] or mot[1], then mot[0] again; the forms blend
+   back and forth all the time. */
+void func_8010FDA8_3CB508_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60FormPlayer* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    omObjData* end;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, 0.0f, 0.0f, p->rot.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, demo->unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+                obj->work[1] = 2;
+                func_80029BF0_2A7F0(p->model, p->mot[2], 0, 2, 0);
+            } else if (func_80108B80_3C42E0_name_60(i, 0x4000)) {
+                obj->work[1] = 2;
+                func_80029BF0_2A7F0(p->model, p->mot[1], 0, 2, 0);
+            }
+            break;
+        case 2:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80029CE4_2A8E4(p->model) >= func_80029D0C_2A90C(p->model)) {
+                obj->work[1] = 4;
+                func_80029BF0_2A7F0(p->model, p->mot[0], 0, 20, 0);
+            }
+            break;
+        case 4:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+        p->phase += 10.0f;
+        if (p->phase > 180.0f) {
+            p->phase -= 180.0f;
+        }
+        p->blend = HuMathSin(p->phase);
+        func_8002A15C_2AD5C(p->form[0], p->form[2], p->blend);
+        func_8002A15C_2AD5C(p->form[1], p->form[3], p->blend);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801100BC_3CB81C_name_60);
 
