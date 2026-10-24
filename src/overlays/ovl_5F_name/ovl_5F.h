@@ -27,7 +27,8 @@ typedef struct Ovl5FDemo {
     /* 0x04 */ void (*unk04)(void);
     /* 0x08 */ void (*unk08)(omObjData*);
     /* 0x0C */ void (*unk0C)(omObjData*);
-    /* 0x10 */ s16 unk10;
+    /* 0x10 */ u16 unk10; /* the players' Ovl5FPlayer.flags (5F-C) */
+    /* 0x12 */ u16 unk12; /* the same for players outside group 0 */
 } Ovl5FDemo; /* size = 0x14 */
 
 /* A model's float work (omObjData.unk_50 of func_80103608 / func_8010352C: a falling,
@@ -65,6 +66,67 @@ typedef struct Ovl5FEsprite {
     /* 0x0C */ s16 y;
     /* 0x0E */ char pad0E[0x16];
 } Ovl5FEsprite; /* size = 0x24 */
+
+/* 5F-C */
+
+/* What main's D_800FA640 entries point at while a demo runs: one demo player. */
+typedef struct Ovl5FPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0xC];
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ u16 flags; /* 1, 2, 4, 8, 0x10, 0x20: which motions; 0x100: the alternative set */
+    /* 0x32 */ u16 unk32; /* bit 0: the idle motion may be set */
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot[11];
+    /* 0x4C */ s16 model2;
+    /* 0x4E */ s16 model3;
+    /* 0x50 */ char unk50[0x1C];
+    /* 0x6C */ s16 unk6C; /* item icon sprite (func_8010456C) */
+    /* 0x6E */ char unk6E[0x1E];
+    /* 0x8C */ s16 count;
+    /* 0x8E */ s16 count2;
+    /* 0x90 */ char unk90[4];
+    /* 0x94 */ f32 vel;
+    /* 0x98 */ f32 floor;
+    /* 0x9C */ char unk9C[8];
+    /* 0xA4 */ void (*actA)(omObjData*); /* A button action (flag 4) */
+    /* 0xA8 */ void (*actB)(omObjData*); /* B button action (flag 0x10) */
+} Ovl5FPlayer;
+
+/* omObjData.unk_50 of func_80108D50 (a model attached to another model's hook node). */
+typedef struct Ovl5FAttach {
+    /* 0x00 */ s32 model;
+    /* 0x04 */ s32 parent;
+    /* 0x08 */ char* hook;
+} Ovl5FAttach;
+
+/* D_80113F44: per character, a part model file and the nodes it hangs between. */
+typedef struct Ovl5FCharHook {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ char* node;
+    /* 0x08 */ char* hook;
+} Ovl5FCharHook;
+
+/* A view of main's per-character table D_800CD438 (19BF0.c's ActorCharData). */
+typedef struct Ovl5FCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;   /* the character's file directory */
+    /* 0x08 */ s32 model; /* its model file */
+    /* 0x0C */ char unk_0C[0xC];
+} Ovl5FCharData;
+
+extern Ovl5FCharData D_800CD438_CE038[];
+extern const char D_80114BD0_3BDD70_name_5F[16]; /* "item_hook" (defined in 3AB9D0.c after its user) */
+
+/* |stick axis| of demo player i as a float (func_80108C8C read up to twice, as retail does) */
+#define OVL5F_STICK_ABS(i, axis) \
+    (f32)(func_80108C8C_3B1E2C_name_5F(i, axis) < 0 ? -func_80108C8C_3B1E2C_name_5F(i, axis) \
+                                                     : func_80108C8C_3B1E2C_name_5F(i, axis))
+/* end 5F-C */
 
 /* ---- main-segment API used by 5F ---- */
 
@@ -198,17 +260,15 @@ extern s16 D_80113B50_3BCCF0_name_5F[5]; /* addiu:3 */
 extern s16 D_80113B5A_3BCCFA_name_5F[15]; /* sh:1 */
 extern s32 D_80113B78_3BCD18_name_5F[62]; /* addiu:1 */
 extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
-extern s32 D_80113EC8_3BD068_name_5F[4]; /* lw:2 sw:4 */
-extern u16 D_80113ED8_3BD078_name_5F[6]; /* lhu:1 */
-extern s32 D_80113EE4_3BD084_name_5F[6]; /* addiu:1 */
-extern s32 D_80113EFC_3BD09C_name_5F[3]; /* addiu:1 */
+extern omObjData* D_80113EC8_3BD068_name_5F[4]; /* the players' action objects (5F-C) */
+extern u16 D_80113ED8_3BD078_name_5F[6]; /* motion file per character (with flag 0x100) */
+extern char* D_80113EE4_3BD084_name_5F[6]; /* hook node per character */
+extern s16 D_80113EFC_3BD09C_name_5F[6]; /* model file per character */
 extern u16 D_80113F08_3BD0A8_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F14_3BD0B4_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F20_3BD0C0_name_5F[6]; /* lhu:1 */
-extern u16 D_80113F2C_3BD0CC_name_5F[12]; /* lhu:1 */
-extern s32 D_80113F44_3BD0E4_name_5F; /* lw:1 */
-extern s32 D_80113F48_3BD0E8_name_5F; /* lw:1 */
-extern s32 D_80113F4C_3BD0EC_name_5F[16]; /* lw:1 */
+extern u16 D_80113F2C_3BD0CC_name_5F[6][2]; /* motion files per character */
+extern Ovl5FCharHook D_80113F44_3BD0E4_name_5F[6]; /* asm labels F48, F4C are [0]'s fields */
 extern s16 D_80113F8C_3BD12C_name_5F[6]; /* lh:1 */
 extern s32 D_80113F98_3BD138_name_5F[3]; /* addiu:1 */
 extern s32 D_80113FA4_3BD144_name_5F[6]; /* lw:1 */
@@ -415,5 +475,6 @@ void func_80113020_3BC1C0_name_5F(void);
 void func_8011303C_3BC1DC_name_5F(void);
 void func_80113070_3BC210_name_5F(s32);
 void func_801136C4_3BC864_name_5F(s32);
+
 
 #endif
