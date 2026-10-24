@@ -275,6 +275,8 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 
 /* 5F-E */
 
+#include "game/malloc.h"
+
 /* A demo player's work (D_800FA640[player], main's per-player minigame data, as 5F-E's demos
    use it; 0x35 and 0x6D are read as bytes elsewhere). */
 typedef struct Ovl5FDemoPlayer {
@@ -294,7 +296,9 @@ typedef struct Ovl5FDemoPlayer {
     /* 0x4C */ s16 unk4C; /* forms */
     /* 0x4E */ s16 unk4E;
     /* 0x50 */ s16 unk50;
-    /* 0x52 */ char unk52[0x3A];
+    /* 0x52 */ char unk52[0x1A];
+    /* 0x6C */ u16 sprite; /* esprite of the button demo (80112A1C) */
+    /* 0x6E */ char unk6E[0x1E];
     /* 0x8C */ s16 unk8C;
     /* 0x8E */ char unk8E[6];
     /* 0x94 */ f32 unk94;
