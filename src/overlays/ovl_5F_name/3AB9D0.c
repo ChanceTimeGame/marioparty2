@@ -1592,7 +1592,48 @@ void func_80110784_3B9924_name_5F(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80110F2C_3BA0CC_name_5F);
+void func_80110F2C_3BA0CC_name_5F(void) {
+    Ovl5FDemoPlayer* p;
+    omObjData* o;
+    Ovl5FHookWork* w;
+    s32 dir;
+    s32 group;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].unk_04;
+        p = DEMO_PLAYER(i);
+        group = gPlayers[i].group;
+        func_80029714_2A314(p->model = func_80018A30_19630(dir | D_800CD438_CE038[gPlayers[i].character].unk_08, 0xA9D), 0.0f, -1000.0f, 0.0f);
+        p->scale = 0.5f;
+        func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+        p->unk36 = func_8002C8B8_2D4B8(DataRead((group & 1) ? (dir | 0xA9) : (dir | 0xA6)), 0x1D);
+        p->unk38 = func_8002C8B8_2D4B8(DataRead((group & 1) ? (dir | 0xAA) : (dir | 0xA7)), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->unk36);
+        func_80029E80_2AA80(p->model, 0, 2);
+        p->unk4C = func_80018A30_19630((group & 1) ? ((group < 2) ? 0x28000C : 0x28000D) : 0x28000B, 0xA9D);
+        o = omAddObj(0x64, 0, 0, -1, func_80108D50_3B1EF0_name_5F);
+        o->work[0] = 1;
+        o->unk_50 = func_80027154_27D54(0xC, 0x7918);
+        func_800B0EF0_B1AF0(o->unk_50, 0, 0xC);
+        w = o->unk_50;
+        w->form = p->unk4C;
+        w->model = p->model;
+        w->hook = D_80114BD0_3BDD70_name_5F;
+        if (!(group & 1)) {
+            func_800297E8_2A3E8(p->unk4E = func_80018A30_19630((group < 2) ? 0x280006 : 0x280007, 0xA9D), p->scale, p->scale, p->scale);
+            func_800297E8_2A3E8(p->unk50 = func_80018A30_19630(0x280008, 0xA9D), p->scale, p->scale, p->scale);
+            p->unk3A = func_8002C8B8_2D4B8(DataRead(0x280008), 0x1D);
+            p->unk3C = func_8002C8B8_2D4B8(DataRead(0x280009), 0x1D);
+            func_8002C9C0_2D5C0(p->unk50, p->unk3A);
+            func_80029E80_2AA80(p->unk50, 0, 2);
+        }
+        p->unk8C = group;
+        o = omAddObj(0x7D00, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk08);
+        o->work[0] = i;
+        o->work[1] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8011126C_3BA40C_name_5F);
 

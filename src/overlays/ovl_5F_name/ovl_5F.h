@@ -279,7 +279,8 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
    use it; 0x35 and 0x6D are read as bytes elsewhere). */
 typedef struct Ovl5FDemoPlayer {
     /* 0x00 */ Vec pos;
-    /* 0x0C */ char unk0C[8];
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
     /* 0x14 */ Vec rot;
     /* 0x20 */ char unk20[0x14];
     /* 0x34 */ s16 model;
@@ -300,6 +301,13 @@ typedef struct Ovl5FDemoPlayer {
 } Ovl5FDemoPlayer;
 
 #define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+/* func_80108D50's work: a form attached to a model's hook node */
+typedef struct Ovl5FHookWork {
+    /* 0x00 */ s32 form;
+    /* 0x04 */ s32 model;
+    /* 0x08 */ const char* hook;
+} Ovl5FHookWork;
+
 #ifndef ABS
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
