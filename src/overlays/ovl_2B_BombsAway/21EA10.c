@@ -1,6 +1,110 @@
 #include "common.h"
 #include "ovl_2B.h"
 
+/* .data (0x2233E0-0x2236C0): intro camera, cannon places, title sprite, splash quads, the splash
+   model's display lists, blast scales, water scroll, random seed, per-shell-kind tables.
+   D_8010D004 (D_8010CFF8[1]) and D_8010D01C (D_8010D010[1]) are undefined_syms aliases. */
+s32 D_8010CFF0_2233E0_BombsAway = 0;
+s32 D_8010CFF4_2233E4_BombsAway = 0;
+Vec D_8010CFF8_2233E8_BombsAway[2] = {
+    { 1000.0f, 0.0f, -1000.0f },
+    { 800.0f, 0.0f, -800.0f },
+};
+Vec D_8010D010_223400_BombsAway[4] = {
+    { 150.0f, -20.0f, -2250.0f },
+    { 200.0f, -0.0f, -2250.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+};
+s16 D_8010D040_223430_BombsAway = 54;
+HmfVtx D_8010D044_223434_BombsAway[12] = {
+    { 240, 480, 0, { 0x00, 0x00 }, 0, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { 240, 0, 0, { 0x00, 0x00 }, 0, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -240, 480, 0, { 0x00, 0x00 }, 4032, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -240, 0, 0, { 0x00, 0x00 }, 4032, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+    { 180, 360, 10, { 0x00, 0x00 }, 0, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { 180, 0, 10, { 0x00, 0x00 }, 0, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -180, 360, 10, { 0x00, 0x00 }, 4032, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -180, 0, 10, { 0x00, 0x00 }, 4032, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+    { 120, 240, 20, { 0x00, 0x00 }, 0, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { 120, 0, 20, { 0x00, 0x00 }, 0, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -120, 240, 20, { 0x00, 0x00 }, 4032, 0, { 0x00, 0x00, 0x00 }, 0xFF },
+    { -120, 0, 20, { 0x00, 0x00 }, 4032, 4032, { 0x00, 0x00, 0x00 }, 0xFF },
+};
+Gfx D_8010D108_2234F8_BombsAway[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010D1C0_2235B0_BombsAway[] = {
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010D1E0_2235D0_BombsAway[] = {
+    gsSPDisplayList(D_8010D1C0_2235B0_BombsAway),
+    gsSPDisplayList(D_8010D108_2234F8_BombsAway),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010D1F8_2235E8_BombsAway[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010D1E0_2235D0_BombsAway),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+f32 D_8010D238_223628_BombsAway[4] = {
+    1.5f, 1.5f, 2.5f, 6.0f,
+};
+u16 D_8010D248_223638_BombsAway = 0;
+f32 D_8010D24C_22363C_BombsAway = 0.0f;
+f32 D_8010D250_223640_BombsAway = 0.0f;
+s32 D_8010D254_223644_BombsAway = 0x19971204;
+u16 D_8010D258_223648_BombsAway = 0;
+u16 D_8010D25A_22364A_BombsAway = 180;
+f32 D_8010D25C_22364C_BombsAway[4] = {
+    1000.0f, 1500.0f, 600.0f, 600.0f,
+};
+f32 D_8010D26C_22365C_BombsAway[4] = {
+    30.0f, 10.0f, 20.0f, 20.0f,
+};
+s32 D_8010D27C_22366C_BombsAway[4] = {
+    2, 2, 3, 4,
+};
+f32 D_8010D28C_22367C_BombsAway[4] = {
+    0.5f, 0.5f, 0.8f, 3.0f,
+};
+s16 D_8010D29C_22368C_BombsAway[4] = {
+    0, 0, 0, 1,
+};
+f32 D_8010D2A4_223694_BombsAway[4] = {
+    0.5f, 0.5f, 0.8f, 2.0f,
+};
+
 s16 func_80108620_21EA10_BombsAway(HmfData* model, const char* name) {
     HmfPart* p = model->unk64;
     s32 i;

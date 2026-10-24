@@ -78,3 +78,9 @@ D_80109FE8_218988_BumperBalls = D_80109FE0_218980_BumperBalls + 0x8;
 D_80107BB0_2290E0_TipsyTourney = D_80107B88_2290B8_TipsyTourney + 0x28;
 D_80107C54_229184_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x4;
 D_80107C58_229188_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x8;
+/* o1-A: ovl_2B, labels inside its C objects */
+D_8010CCAC_22309C_BombsAway = D_8010CCA0_223090_BombsAway + 0xC;
+D_8010CD10_223100_BombsAway = D_8010CD04_2230F4_BombsAway + 0xC;
+D_8010CFA8_223398_BombsAway = D_8010CFA4_223394_BombsAway + 0x4;
+D_8010D004_2233F4_BombsAway = D_8010CFF8_2233E8_BombsAway + 0xC;
+D_8010D01C_22340C_BombsAway = D_8010D010_223400_BombsAway + 0xC;

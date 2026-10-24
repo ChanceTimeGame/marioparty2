@@ -615,5 +615,5 @@ H1R_CDATA_UNITS := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o b
 $(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
 # o1-A: overlay units whose .data display lists point at each other (gsSPDisplayList(sym)): a
 # 32-bit syntax check, as D1A_GFX_UNITS
-O1A_GFX_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o
+O1A_GFX_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(O1A_GFX_UNITS): CFLAGS_CHECK += -m32
