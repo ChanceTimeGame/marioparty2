@@ -1765,7 +1765,112 @@ void func_801119A8_3BAB48_name_5F(void) {
     func_80104DA8_3ADF48_name_5F(1, 4, -50.0f, -50.0f, -80.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80111A00_3BABA0_name_5F);
+void func_80111A00_3BABA0_name_5F(omObjData* obj) {
+    s32 player = obj->work[0];
+    Ovl5FPairDemo* p = PAIR_DEMO(player);
+    HmfModel* model = &D_800FC834_FD434[p->model];
+    omObjData* o;
+    f32 t;
+    s32 x;
+
+    if (p->unk94 == 0.0f) {
+        p->unk94 = 1.0f;
+        func_800298A4_2A4A4(p->unk4C[0], 4, 0);
+        func_800298A4_2A4A4(p->unk4C[1], 4, 0);
+    }
+    func_80029714_2A314(p->unk4C[0], HuMathSin(model->rot.y) * -5.0f + model->pos.x, model->pos.y,
+                        func_800B7890_B8490(model->rot.y) * 25.0f + model->pos.z);
+    func_80029714_2A314(p->unk4C[1], HuMathSin(model->rot.y) * -40.0f + model->pos.x, model->pos.y,
+                        func_800B7890_B8490(model->rot.y) * -35.0f + model->pos.z);
+    func_80029714_2A314(p->unk50[0], HuMathSin(model->rot.y) * -5.0f + model->pos.x, model->pos.y,
+                        func_800B7890_B8490(model->rot.y) * 25.0f + model->pos.z);
+    func_80029714_2A314(p->unk50[1], HuMathSin(model->rot.y) * -40.0f + model->pos.x, model->pos.y,
+                        func_800B7890_B8490(model->rot.y) * -35.0f + model->pos.z);
+    func_8002979C_2A39C(p->unk4C[0], model->rot.x, model->rot.y, model->rot.z);
+    func_8002979C_2A39C(p->unk4C[1], model->rot.x, model->rot.y, model->rot.z);
+    func_8002979C_2A39C(p->unk50[0], model->rot.x, model->rot.y, model->rot.z);
+    func_8002979C_2A39C(p->unk50[1], model->rot.x, model->rot.y, model->rot.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+        return;
+    }
+    if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        o = omAddObj(10, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk0C);
+        o->work[0] = player;
+        o->work[1] = 0;
+        p->pos.x = model->pos.x;
+        p->pos.y = model->pos.y;
+        p->pos.z = model->pos.z;
+        p->rot.x = model->rot.x;
+        p->rot.y = model->rot.y;
+        p->rot.z = model->rot.z;
+        return;
+    }
+    switch (obj->work[1]) {
+    case 2:
+        t = func_80029CE4_2A8E4(p->unk4C[0]);
+        if (func_80029D0C_2A90C(p->unk4C[0]) <= t) {
+            obj->work[1] = 1;
+        }
+        break;
+    case 3:
+        if (func_80029E3C_2AA3C(p->unk4C[0]) == -1.0f) {
+            obj->work[1] = 4;
+        }
+        break;
+    case 4:
+        t = func_80029CE4_2A8E4(p->unk4C[0]);
+        if (func_80029D0C_2A90C(p->unk4C[0]) <= t) {
+            func_800298A4_2A4A4(p->unk4C[0], 4, 4);
+            func_800298A4_2A4A4(p->unk4C[1], 4, 4);
+            func_800298A4_2A4A4(p->unk50[0], 4, 0);
+            func_800298A4_2A4A4(p->unk50[1], 4, 0);
+            func_8002C9C0_2D5C0(p->unk50[0], p->unk42[0]);
+            func_80029E80_2AA80(p->unk50[0], 0, 2);
+            func_8002C9C0_2D5C0(p->unk50[1], p->unk42[1]);
+            func_80029E80_2AA80(p->unk50[1], 0, 2);
+            obj->work[1] = 5;
+        }
+        break;
+    case 5:
+        p->unk92 = x = (s16)(func_80108C8C_3B1E2C_name_5F(p->player[0], 0) + func_80108C8C_3B1E2C_name_5F(p->player[1], 0)) / 2;
+        if (x > 10.0f) {
+            model->rot.y += 3.0f;
+            if (model->rot.y > -70.0f) {
+                model->rot.y = -70.0f;
+            }
+        }
+        if (p->unk92 < -10.0f) {
+            model->rot.y -= 3.0f;
+            if (model->rot.y < -110.0f) {
+                model->rot.y = -110.0f;
+            }
+        }
+        func_8002979C_2A39C(p->unk4C[0], model->rot.x, model->rot.y, model->rot.z);
+        func_8002979C_2A39C(p->unk4C[1], model->rot.x, model->rot.y, model->rot.z);
+        break;
+    }
+    if ((func_80108B80_3B1D20_name_5F(p->player[0], 0x8000) != 0 || func_80108B80_3B1D20_name_5F(p->player[1], 0x8000) != 0)
+        && obj->work[1] != 3 && obj->work[1] != 4 && obj->work[1] != 5) {
+        if (p->unk90 > 20) {
+            obj->work[1] = 3;
+            func_80029BF0_2A7F0(p->unk4C[0], p->unk3E[0], 0, 3, 0);
+            func_80029BF0_2A7F0(p->unk4C[1], p->unk3E[1], 0, 3, 0);
+        } else if (obj->work[1] == 1) {
+            obj->work[1] = 2;
+            func_80029BF0_2A7F0(p->unk4C[0], p->unk3A[0], 0, 3, 0);
+            func_80029BF0_2A7F0(p->unk4C[1], p->unk3A[1], 0, 3, 0);
+        }
+        p->unk90++;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80112080_3BB220_name_5F);
 
