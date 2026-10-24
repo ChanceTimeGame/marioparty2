@@ -474,19 +474,114 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103C84_3ACE24_name_5F);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801040D0_3AD270_name_5F);
+void func_801040D0_3AD270_name_5F(omObjData* obj) {
+    HmfModel* model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[4]];
+    u16 spr = obj->work[0];
+    Vec pos;
+    Vec2f screen;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801041C4_3AD364_name_5F);
+    pos.x = model->pos.x;
+    pos.y = model->pos.y;
+    pos.z = model->pos.z;
+    Hu3DCam3DToScreen(0, &pos, &screen);
+    espPosSet(spr, (s8)obj->work[1] + screen.unk_00, (s8)obj->work[3] + screen.unk_04);
+    espDispOn(spr);
+    if (obj->work[2] != 0) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80104280_3AD420_name_5F);
+void func_801041C4_3AD364_name_5F(void) {
+    omObjData* obj;
+    s32 i;
 
+    for (i = 0; i < 5; i++) {
+        obj = omAddObj(0x64, 0, 0, -1, func_801040D0_3AD270_name_5F);
+        D_80114DFC_3BDF9C_name_5F[i] = obj;
+        obj->work[0] = D_80114E2E_3BDFCE_name_5F[i];
+        obj->work[1] = D_801139A4_3BCB44_name_5F[i][0];
+        obj->work[2] = 0;
+        obj->work[3] = D_801139A4_3BCB44_name_5F[i][1];
+    }
+}
+
+void func_80104280_3AD420_name_5F(omObjData* obj) {
+    u8 idx = obj->work[0];
+    f32* work = obj->unk_50;
+
+    if (D_80114E38_3BDFD8_name_5F != idx) {
+        work[1] = 0.0f;
+        work[0] = 1.0f;
+    } else {
+        work[0] = HuMathSin(work[1]) * 0.2f + 1.0f;
+        work[1] += work[2];
+        work[1] = func_8002D958_2E558(work[1]);
+    }
+    func_8001A91C_1B51C(D_80114E2E_3BDFCE_name_5F[idx], work[0], work[0]);
+}
+
+/* NON_MATCHING: scheduling only (retail computes the slot offset before loading D_800F93FC) */
+#ifdef NON_MATCHING
+void func_8010433C_3AD4DC_name_5F(void) {
+    omObjData* obj;
+    f32* work;
+    s32 spr;
+    s32 i;
+
+    for (i = 0; i < 5; i++) {
+        spr = (s16)func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_8011397C_3BCB1C_name_5F[D_800CAFD8[i]]), 0, 0);
+        D_80114E2E_3BDFCE_name_5F[i] = spr;
+        SprAttrReset(D_800F93FC_F9FFC[spr].group, 0, 0x1000);
+        espDispOff(spr);
+        func_8001A708_1B308(spr, 0x4000);
+        obj = omAddObj(0x64, 0, 0, -1, func_80104280_3AD420_name_5F);
+        obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+        work = obj->unk_50;
+        work[0] = 1.0f;
+        work[1] = 0.0f;
+        work[2] = 10.0f;
+        obj->work[0] = i;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010433C_3AD4DC_name_5F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80104490_3AD630_name_5F);
+void func_80104490_3AD630_name_5F(omObjData* obj) {
+    f32* angle = obj->unk_50;
+    Ovl5FEsprite* esp = &D_800F93FC_F9FFC[obj->work[0]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010456C_3AD70C_name_5F);
+    esp->x = esp->x + HuMathSin(*angle) * 20.0f;
+    esp->y = esp->y + func_800B7890_B8490(*angle) * 20.0f;
+    if (esp->x < -100) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80104650_3AD7F0_name_5F);
+void func_8010456C_3AD70C_name_5F(s32 arg0, s32 spr) {
+    omObjData* obj;
+    f32* angle;
+    Ovl5FEsprite* esp;
+    Vec v;
+
+    obj = omAddObj(0x64, 0, 0, -1, func_80104490_3AD630_name_5F);
+    obj->unk_50 = func_80027154_27D54(4, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 4);
+    angle = obj->unk_50;
+    esp = &D_800F93FC_F9FFC[spr];
+    HuVecCopyXYZ(&v, esp->x - 160, 0.0f, esp->y - 120);
+    *angle = func_800B75A8_B81A8(v.x, v.z);
+    obj->work[0] = spr;
+}
+
+void func_80104650_3AD7F0_name_5F(void) {
+    s32 i;
+
+    for (i = 0; i < 5; i++) {
+        func_8010456C_3AD70C_name_5F(i, D_80114E2E_3BDFCE_name_5F[i]);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801046A4_3AD844_name_5F);
 

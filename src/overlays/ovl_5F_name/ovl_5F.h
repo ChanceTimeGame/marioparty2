@@ -55,6 +55,16 @@ typedef struct Ovl5FHostWork {
     /* 0x30 */ s16 mes[3]; /* the pages' messages while flag 0xC is set */
 } Ovl5FHostWork;
 
+/* A view of main's esprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
+typedef struct Ovl5FEsprite {
+    /* 0x00 */ char pad00[4];
+    /* 0x04 */ s16 group;
+    /* 0x06 */ char pad06[4];
+    /* 0x0A */ s16 x;
+    /* 0x0C */ s16 y;
+    /* 0x0E */ char pad0E[0x16];
+} Ovl5FEsprite; /* size = 0x24 */
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -87,7 +97,7 @@ void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void func_8001A89C_1B49C(u16 spriteId, s32 arg1);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
 void func_8001A96C_1B56C(u16, u8, u8, u8);
-s16 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2);
+s32 func_8001AAAC_1B6AC(s16 arg0, u16 arg1, u16 arg2); /* s16 elsewhere; 5F's callers extend the result themselves */
 void func_80020070_20C70(s32);
 void func_80020D20_21920(s16 arg0);
 void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3);
@@ -164,7 +174,7 @@ extern u8 D_80102708_103308;
 extern u8 D_80102720_103320;
 extern u8 D_800FA656; /* minigame variant */
 extern u16 D_800F9208_F9E08; /* the battle's coin pot */
-extern void* D_800F93FC_F9FFC; /* EspriteSlot* (1AE60.c) */
+extern Ovl5FEsprite* D_800F93FC_F9FFC; /* EspriteSlot* (1AE60.c) */
 extern u16 D_800CAFD8[]; /* item ids */
 
 /* ---- 5F .data (asm, 3BC8A0.data.s) ---- */
@@ -245,7 +255,7 @@ extern s16 D_80114E1E_3BDFBE_name_5F; /* the host model */
 extern s16 D_80114E20_3BDFC0_name_5F[5]; /* its motions */
 extern s16 D_80114E2A_3BDFCA_name_5F; /* the demo screen model */
 extern s16 D_80114E2C_3BDFCC_name_5F; /* model (battle / some minigames) */
-extern u16 D_80114E2E_3BDFCE_name_5F[5]; /* item icon sprites */
+extern s16 D_80114E2E_3BDFCE_name_5F[5]; /* item icon sprites */
 extern s16 D_80114E38_3BDFD8_name_5F; /* selected item icon */
 extern u16 D_80114E3A_3BDFDA_name_5F; /* coin count shown (battle pot) */
 extern s16 D_80114E3C_3BDFDC_name_5F; /* the instructions window */
@@ -288,7 +298,7 @@ void func_801041C4_3AD364_name_5F(void);
 void func_80104280_3AD420_name_5F(omObjData*);
 void func_8010433C_3AD4DC_name_5F(void);
 void func_80104490_3AD630_name_5F(omObjData*);
-void func_8010456C_3AD70C_name_5F(s32, u16);
+void func_8010456C_3AD70C_name_5F(s32, s32);
 void func_80104650_3AD7F0_name_5F(void);
 void func_801046A4_3AD844_name_5F(void);
 void func_801048F0_3ADA90_name_5F(void);
