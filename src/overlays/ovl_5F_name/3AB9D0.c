@@ -325,9 +325,59 @@ void func_801038D4_3ACA74_name_5F(omObjData* obj) {
     func_8002BED4_2CAD4(D_80114DC8_3BDF68_name_5F[1], D_80113978_3BCB18_name_5F, 0.0f, 48, 40, "normal_title2-face3", 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103994_3ACB34_name_5F);
+void func_80103994_3ACB34_name_5F(omObjData* obj) {
+    Ovl5FHostWork* work = D_800FC890_FD490;
+    HmfModel* model;
+    Vec v;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103B78_3ACD18_name_5F);
+    switch (obj->work[1]) {
+    case 0:
+        work->model = D_80114E1E_3BDFBE_name_5F;
+        model = &D_800FC834_FD434[(s16)work->model];
+        work->pos.x = model->pos.x;
+        work->pos.y = model->pos.y;
+        work->pos.z = model->pos.z;
+        work->rot.x = model->rot.x;
+        work->rot.y = model->rot.y;
+        work->rot.z = model->rot.z;
+        HuVecCopyXYZ(&v, work->pos.x, 0.0f, work->pos.y);
+        work->angle = func_800B75A8_B81A8(v.x, v.z);
+        work->count = 7;
+        work->step = (work->angle - work->rot.z) / 7.0f;
+        obj->work[1] = 1;
+        break;
+    case 1:
+        work->pos.x = HuMathSin(work->angle) * 20.0f + work->pos.x;
+        work->pos.y = func_800B7890_B8490(work->angle) * 20.0f + work->pos.y;
+        work->rot.y += 20.0f;
+        if (work->count != 0) {
+            work->count--;
+            work->rot.z -= work->step;
+        }
+        if (work->pos.y < -700.0f) {
+            func_800298A4_2A4A4(D_80114E1E_3BDFBE_name_5F, 4, 4);
+            omDelObj(obj);
+        }
+        break;
+    }
+    func_80029714_2A314(D_80114E1E_3BDFBE_name_5F, work->pos.x, work->pos.y, work->pos.z);
+    func_8002979C_2A39C(D_80114E1E_3BDFBE_name_5F, work->rot.x, work->rot.y, work->rot.z);
+}
+
+void func_80103B78_3ACD18_name_5F(omObjData* obj) {
+    HmfModel* model = &D_800FC834_FD434[D_80114E2C_3BDFCC_name_5F];
+    Vec v;
+    f32 angle;
+
+    HuVecCopyXYZ(&v, model->pos.x, 0.0f, model->pos.y);
+    angle = func_800B75A8_B81A8(v.x, v.z);
+    func_80029714_2A314(D_80114E2C_3BDFCC_name_5F, HuMathSin(angle) * 20.0f + model->pos.x,
+                        func_800B7890_B8490(angle) * 20.0f + model->pos.y, model->pos.z);
+    if (model->pos.y < -700.0f) {
+        func_800298A4_2A4A4(D_80114E2C_3BDFCC_name_5F, 4, 4);
+        omDelObj(obj);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103C84_3ACE24_name_5F);
 

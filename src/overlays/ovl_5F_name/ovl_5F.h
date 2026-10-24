@@ -42,6 +42,17 @@ typedef struct Ovl5FFallWork {
     /* 0x24 */ s32 model; /* read as (s16): lh 0x26 */
 } Ovl5FFallWork; /* size = 0x28 */
 
+/* What main's D_800FC890 points at while 5F runs (func_80103994 moves the host off screen). */
+typedef struct Ovl5FHostWork {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ Vec rot;
+    /* 0x1C */ u16 model;
+    /* 0x1E */ s16 count;
+    /* 0x20 */ char unk20[8];
+    /* 0x28 */ f32 step;
+} Ovl5FHostWork;
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -142,7 +153,7 @@ void osSyncPrintf(const char* fmt, ...);
 /* main bss words splat folded into a neighbour (named in symbol_addrs.txt by 5F-A) */
 extern s32 D_800F9910_FA510;   /* flag bits; bit 0 = instructions skipped (D_800F95D4 + 0x33C) */
 extern void* D_800FA640_FB240[4]; /* per-player minigame data (D_800FA63E + 2) */
-extern void* D_800FC890_FD490; /* (D_800FC88C + 4) */
+extern Ovl5FHostWork* D_800FC890_FD490; /* (D_800FC88C + 4); 80103C84 reads s16s at 0x30-0x34 (message ids) */
 extern s32 D_800FC8A0_FD4A0;   /* (D_800FC89C + 4) */
 
 extern s8 ContStkX[4];
