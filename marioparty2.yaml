@@ -1712,7 +1712,12 @@ segments:
       - [0x367540, c]
       - [0x3693E0, c]
       - [0x36A4B0, c]
-      - [0x36A640, data]
+      - [0x36A640, .data, 3616F0]
+      - [0x36AA90, .data, 364580]
+      - [0x36ABE0, .data, 365650]
+      - [0x36AEA0, .data, 367540]
+      - [0x36B150, .data, 3693E0]
+      - [0x36B2E0, .data, 36A4B0]
       - [0x36B3E0, .rodata, 3616F0]
       - [0x36B410, .rodata, 365650]
       - {0x36B420, type: bss, vram: 0x8010C530, name: ovl_55_bss}
