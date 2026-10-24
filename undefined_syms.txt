@@ -76,3 +76,8 @@ D_8010863A_358C4A_name_51 = D_80108638_358C48_name_51 + 0x2;
 D_8010864A_358C5A_name_51 = D_80108648_358C58_name_51 + 0x2;
 D_8010865A_358C6A_name_51 = D_80108658_358C68_name_51 + 0x2;
 D_8010867A_358C8A_name_51 = D_80108678_358C88_name_51 + 0x2;
+/* o1-B: ovl_6F, fields the asm names inside its .data tables */
+D_80105714_40EA14_BattleResults = D_80105710_40EA10_BattleResults + 0x4;
+D_80105718_40EA18_BattleResults = D_80105710_40EA10_BattleResults + 0x8;
+D_80105800_40EB00_BattleResults = D_801057D0_40EAD0_BattleResults + 0x30;
+D_80105882_40EB82_BattleResults = D_80105880_40EB80_BattleResults + 0x2;

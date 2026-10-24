@@ -94,7 +94,7 @@ typedef struct BRFallWork {
     /* 0x14 */ s32 player; /* omVibrate's player (read as s16) */
 } BRFallWork;
 
-/* ---- .data (40EA00.data.s) ---- */
+/* ---- .data (C, 40BB00.c) ---- */
 extern s32 D_80105700_40EA00_BattleResults[4]; /* message x per rank (read as s16) */
 extern Vec D_80105710_40EA10_BattleResults[4]; /* pedestal positions */
 extern f32 D_80105740_40EA40_BattleResults[4];
