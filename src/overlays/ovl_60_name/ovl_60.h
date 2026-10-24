@@ -563,9 +563,10 @@ void func_80110DA8_3CC508_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80110F7C_3CC6DC_name_60(omObjData*); /* from registers */
 void func_80111228_3CC988_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80111430_3CCB90_name_60(omObjData*); /* Ovl60Demo.unk08 */
-void func_801116F0_3CCE50_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_801118C8_3CD028_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_80111A90_3CD1F0_name_60(omObjData*); /* from registers */
+struct Ovl60TeamDemo; /* 60-C (below) */
+void func_801116F0_3CCE50_name_60(struct Ovl60TeamDemo* p, f32 x); /* 60-C: the arm by stick x */
+void func_801118C8_3CD028_name_60(struct Ovl60TeamDemo* p, f32 y); /* 60-C: the boom by stick y */
+void func_80111A90_3CD1F0_name_60(struct Ovl60TeamDemo* p); /* 60-C: A/B drive the model's motion */
 void func_80111BCC_3CD32C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80112100_3CD860_name_60(void); /* Ovl60Demo.unk04 */
 void func_80112158_3CD8B8_name_60(omObjData*); /* Ovl60Demo.unk08 */
@@ -636,6 +637,31 @@ void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t); /* MP1 func_80026174: bl
 
 u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2); /* a sprite-model slot (D_800F86D8) from a file */
 void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+
+f32 fabsf(f32);
+
+/* D_800FA640[team] in the two-player machine demo (80111BCC / 80112158): one machine per team
+   (models 0x4A0000-0x4A000B, the second team's set from 0x4A0005), two riders' forms; rider 0
+   steers with the stick and A/B, rider 1 fires with A. */
+typedef struct Ovl60TeamDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model; /* the base */
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 form[7]; /* [0] arm, [1] boom, [2]-[3] the firing pair, [4] lowered part, [5]-[6] the riders */
+    /* 0x5A */ char unk5A[0x32];
+    /* 0x8C */ s16 player[2]; /* the riders: the team's two players */
+    /* 0x90 */ s16 state; /* rider 1's fire state */
+    /* 0x92 */ s16 timer;
+    /* 0x94 */ f32 arm; /* -9.5 .. 9.5 */
+    /* 0x98 */ f32 boom;
+    /* 0x9C */ f32 speed; /* the base motion's speed, -1.2 .. 1.2 */
+} Ovl60TeamDemo;
+
+#define TEAM_DEMO(i) ((Ovl60TeamDemo*)D_800FA640_FB240[i])
 
 /* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))

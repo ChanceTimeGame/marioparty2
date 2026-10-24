@@ -3614,11 +3614,102 @@ void func_80111430_3CCB90_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801116F0_3CCE50_name_60);
+/* Stick x (scaled by 10) accelerates the arm (form[0]) within +-9.5, damped; the arm's motion
+   frame and the machine's rotation follow it. */
+void func_801116F0_3CCE50_name_60(Ovl60TeamDemo* p, f32 x) {
+    f32 v = x * 10.0f;
+    f32 t;
+    f32 frame;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801118C8_3CD028_name_60);
+    if (v > 10.0f) {
+        v = 10.0f;
+    }
+    if (v < -10.0f) {
+        v = -10.0f;
+    }
+    if (v != 0.0f) {
+        p->arm += v * 0.05f;
+        if (p->arm > 0.0f) {
+            if (p->arm > v) {
+                p->arm = 0.9f * p->arm;
+            }
+        } else if (p->arm < v) {
+            p->arm = 0.9f * p->arm;
+        }
+    } else {
+        p->arm *= 0.9f;
+    }
+    t = p->arm;
+    if (t >= 9.0f) {
+        t = 9.5f;
+    }
+    if (p->arm <= -9.0f) {
+        t = -9.5f;
+    }
+    frame = 10.0f - t;
+    func_80029C74_2A874(p->form[0], frame);
+    p->rot.y = 200.0f - frame * 20.0f / 10.0f;
+    p->rot.z = 10.0f - frame * 10.0f / 10.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80111A90_3CD1F0_name_60);
+/* The same for the boom (form[1]) by stick y (scaled by 20); it tilts the machine (rot.x). */
+void func_801118C8_3CD028_name_60(Ovl60TeamDemo* p, f32 y) {
+    f32 v = y * 20.0f;
+    f32 t;
+    f32 frame;
+
+    if (v > 10.0f) {
+        v = 10.0f;
+    }
+    if (v < -10.0f) {
+        v = -10.0f;
+    }
+    if (v != 0.0f) {
+        p->boom += v * 0.05f;
+        if (p->boom > 0.0f) {
+            if (p->boom > v) {
+                p->boom = 0.9f * p->boom;
+            }
+        } else if (p->boom < v) {
+            p->boom = 0.9f * p->boom;
+        }
+    } else {
+        p->boom *= 0.9f;
+    }
+    t = p->boom;
+    if (t >= 9.0f) {
+        t = 9.5f;
+    }
+    if (p->boom <= -9.0f) {
+        t = -9.5f;
+    }
+    frame = 10.0f - t;
+    func_80029C74_2A874(p->form[1], frame);
+    p->rot.x = 20.0f - frame * 20.0f / 10.0f;
+}
+
+/* Rider 0's A/B speed the base's motion up forwards/backwards (+-1.2); released, it slows. */
+void func_80111A90_3CD1F0_name_60(Ovl60TeamDemo* p) {
+    if (func_80108C24_3C4384_name_60(p->player[0], 0x8000)) {
+        p->speed += 0.02f;
+        if (p->speed > 1.2f) {
+            p->speed = 1.2f;
+        }
+    } else if (func_80108C24_3C4384_name_60(p->player[0], 0x4000)) {
+        p->speed -= 0.02f;
+        if (p->speed < -1.2f) {
+            p->speed = -1.2f;
+        }
+    } else {
+        p->speed *= 0.9f;
+    }
+    if (p->speed > 0.0f) {
+        func_80029E80_2AA80(p->model, 6, 2);
+    } else {
+        func_80029E80_2AA80(p->model, 6, 6);
+    }
+    func_80029FE4_2ABE4(p->model, fabsf(p->speed));
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80111BCC_3CD32C_name_60);
 
