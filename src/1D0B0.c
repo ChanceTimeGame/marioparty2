@@ -568,7 +568,9 @@ typedef struct {
     /* 0x50 */ s32 unk50;
     /* 0x54 */ HmfFaceRec *unk54;
     /* 0x58 */ void *unk58;
-    /* 0x5C */ char unk5C[0xC];
+    /* 0x5C */ void *unk5C; /* HmfPart's texture refs and second list */
+    /* 0x60 */ void *unk60;
+    /* 0x64 */ void *unk64;
 } HmfObjectData;
 
 typedef struct {
@@ -748,6 +750,7 @@ typedef struct {
     HmfData_UnkD0 *unkD0;
     void (*unkD4)(f32 *, f32, f32, f32);
     void (*unkD8)(f32 *, f32, f32, f32);
+    s32 unkDC;
 } HmfLoadData;
 
 typedef struct {
