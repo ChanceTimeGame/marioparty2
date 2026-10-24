@@ -596,7 +596,7 @@ extern s32 D_80113C40_3CF3A0_name_60[9]; /* 8010D3D0 */
 extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
 extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
 extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
-extern s32 D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4 */
+extern char* D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4: the ball's texture: [0] the default, [chr] the character's ("152_01a_DEF"...) */
 extern u16 D_80113CAC_3CF40C_name_60[8]; /* lhu (8010F480) */
 extern s32 D_80113CBC_3CF41C_name_60[24]; /* 8010FA50 */
 extern s32 D_80113D1C_3CF47C_name_60; /* lw (8010FA50) */
@@ -612,6 +612,12 @@ extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
 extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
 extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
+/* 60-C */
+
+void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
+extern const char D_80114708_3CFE68_name_60[]; /* "item_hook" (defined in 3BDF90.c after 8010EDD4) */
+
+/* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif

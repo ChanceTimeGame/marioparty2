@@ -2776,9 +2776,65 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E454_3C9BB4
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E6A0_3C9E00_name_60);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010EC90_3CA3F0_name_60);
+/* The players hold an item (model 0x3D000C on "item_hook") and play mot[5]. */
+void func_8010EC90_3CA3F0_name_60(void) {
+    s32 i;
+    Ovl60Player* p;
+    omObjData* obj;
+    Ovl60Attach* at;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010EDD4_3CA534_name_60);
+    func_801098FC_3C505C_name_60();
+    for (i = 0; i < 4; i++) {
+        p = D_800FA640_FB240[i];
+        p->mot[5] = func_8002C8B8_2D4B8(DataRead(D_800CD438_CE038[gPlayers[i].character].dir | 0x13), 0x1D);
+        func_8002C524_2D124(p->model, p->mot[5], 2);
+        p->model2 = func_80018A30_19630(0x3D000C, 0x69D);
+        obj = omAddObj(0x64, 0, 0, -1, func_80108D50_3C44B0_name_60);
+        obj->work[0] = 1;
+        obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+        at = obj->unk_50;
+        at->model = p->model2;
+        at->parent = p->model;
+        at->hook = (char*)D_80114708_3CFE68_name_60;
+    }
+}
+
+/* Bumper Balls: each player rides a ball (form 0x3F000B, its character's texture) with the
+   character model on top. */
+void func_8010EDD4_3CA534_name_60(void) {
+    s32 i;
+    s32 chr;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
+
+    func_8000C460_D060();
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        p->model = LoadFormFile(0x3F000B, 0x68D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->model3 = func_80018A30_19630(0x3F000C, 0x68D);
+        func_8002BB4C_2C74C(p->model, D_80113C94_3CF3F4_name_60[0], D_80113C94_3CF3F4_name_60[chr]);
+        func_80029A8C_2A68C(p->model);
+        func_80029AFC_2A6FC(p->model);
+        p->scale = 0.4f;
+        func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
+        p->model2 = func_80018A30_19630(dir | D_800CD438_CE038[chr].model, 0x69D);
+        func_800297E8_2A3E8(p->model2, 0.4f, 0.4f, 0.4f);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x1D), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x1E), 0x1D);
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 0x1F), 0x1D);
+        p->mot[3] = func_8002C8B8_2D4B8(DataRead(dir | 0x35), 0x1D);
+        func_8002C9C0_2D5C0(p->model2, p->mot[0]);
+        func_80029E80_2AA80(p->model2, 0, 2);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
 __asm__(".section .rodata");
 const char D_801146C0_3CFE20_name_60[] = "152_01f_DEF";
@@ -2819,7 +2875,96 @@ const char D_80114744_3CFEA4_name_60[] = "m159_01_DEF";
 __asm__(".section .rodata");
 const char D_80114750_3CFEB0_name_60[16] = "m159_00_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010F01C_3CA77C_name_60);
+/* Bumper Balls demo player: B plays mot[1]; A jumps (mot[2]), the ball tips back in the air and
+   rights itself on landing (mot[3]); the ball spins and the rider follows it. */
+void func_8010F01C_3CA77C_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* ball = &D_800FC834_FD434[p->model];
+    HmfModel* m = &D_800FC834_FD434[p->model2];
+    omObjData* end;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_80029714_2A314(p->model2, ball->pos.x, ball->pos.y, ball->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->model2, p->rot.x, p->rot.y, p->rot.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        p->pos.y = p->unk2C = ball->pos.y;
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = ball->pos.x;
+        p->pos.y = ball->pos.y;
+        p->pos.z = ball->pos.z;
+        p->rot.x = ball->rot.x;
+        p->rot.y = ball->rot.y;
+        p->rot.z = ball->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 2:
+            if (func_80029E3C_2AA3C(p->model2) == -1.0f) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80029CE4_2A8E4(p->model2) >= func_80029D0C_2A90C(p->model2)) {
+                func_80029BF0_2A7F0(p->model2, p->mot[0], 0, 10, 2);
+                obj->work[1] = 4;
+            }
+            break;
+        case 4:
+            if (func_80029E3C_2AA3C(p->model2) == -1.0f) {
+                obj->work[1] = 1;
+            }
+            break;
+        case 5:
+            func_80108DCC_3C452C_name_60(&p->vy, &p->pos.y, p->scale);
+            if (ball->rot.x > -45.0f) {
+                ball->rot.x -= 3.5f;
+            }
+            if (p->pos.y <= p->unk2C) {
+                p->pos.y = p->unk2C;
+                func_8002C9C0_2D5C0(p->model2, p->mot[3]);
+                p->count = func_80029D0C_2A90C(p->model2);
+                obj->work[1] = 6;
+            }
+            m->pos.y = ball->pos.y = p->pos.y;
+            break;
+        case 6:
+            ball->rot.x += 15.0f;
+            if (ball->rot.x > 0.0f) {
+                ball->rot.x = 0.0f;
+            }
+            if (p->count <= func_80029CE4_2A8E4(p->model2)) {
+                func_80029BF0_2A7F0(p->model2, p->mot[0], 0, 10, 2);
+                obj->work[1] = 7;
+            }
+            break;
+        case 7:
+            obj->work[1] = 1;
+            break;
+        }
+        if (func_80108B80_3C42E0_name_60(i, 0x4000) && obj->work[1] == 1) {
+            obj->work[1] = 2;
+            func_80029BF0_2A7F0(p->model2, p->mot[1], 0, 5, 0);
+        }
+        if (func_80108B80_3C42E0_name_60(i, 0x8000) && obj->work[1] == 1) {
+            obj->work[1] = 5;
+            func_80029BF0_2A7F0(p->model2, p->mot[2], 0, 5, 0);
+            p->vy = -D_800BF7A4_C03A4;
+        }
+        m->rot.y = ball->rot.y = func_8002D958_2E558(ball->rot.y + 2.0f);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010F480_3CABE0_name_60);
 
