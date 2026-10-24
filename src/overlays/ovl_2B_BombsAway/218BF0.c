@@ -1,6 +1,43 @@
 #include "common.h"
 #include "ovl_2B.h"
 
+/* .data (0x223080-0x2233E0): players out, results timer, the firing patterns and their phase
+   table, bomb kinds, CPU targets. D_8010CCAC/D_8010CD10 (the patterns' first shot frame, named
+   by retail) and D_8010CFA8 (asm: [0][1]) are undefined_syms aliases. */
+s16 D_8010CC90_223080_BombsAway[4] = {
+    0, 0, 0, 0,
+};
+s32 D_8010CC98_223088_BombsAway = 0;
+s32 D_8010CC9C_22308C_BombsAway = 0;
+BaPattern D_8010CCA0_223090_BombsAway = { 1, 0, 115, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 0 };
+BaPattern D_8010CD04_2230F4_BombsAway = { 1, 0, 115, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 0 };
+BaPattern D_8010CD68_223158_BombsAway = { 1, 0, 115, { 0, 15, 30, 45, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 5, 0 };
+BaPattern D_8010CDCC_2231BC_BombsAway = { 1, 0, 115, { 0, 15, 30, 45, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 5, 0 };
+BaPattern D_8010CE30_223220_BombsAway = { 2, 0, 115, { 0, 30, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 3, 0 };
+BaPattern D_8010CE94_223284_BombsAway = { 2, 0, 115, { 0, 30, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 3, 0 };
+BaPattern D_8010CEF8_2232E8_BombsAway = { 3, 0, 150, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 1, 0 };
+BaPattern* D_8010CF5C_22334C_BombsAway[10] = {
+    NULL, &D_8010CCA0_223090_BombsAway,
+    &D_8010CD04_2230F4_BombsAway, &D_8010CD68_223158_BombsAway,
+    &D_8010CDCC_2231BC_BombsAway, &D_8010CE30_223220_BombsAway,
+    &D_8010CE94_223284_BombsAway, &D_8010CEF8_2232E8_BombsAway,
+    &D_8010CEF8_2232E8_BombsAway, &D_8010CEF8_2232E8_BombsAway,
+};
+f32 D_8010CF84_223374_BombsAway[4] = {
+    0.5f, 0.5f, 0.5f, 0.5f,
+};
+BaKindInfo D_8010CF94_223384_BombsAway[4] = {
+    { 0, 60 }, { 0, 60 }, { 0, 55 }, { 0, 80 },
+};
+f32 D_8010CFA4_223394_BombsAway[6][2] = {
+    { 0.0f, 0.0f }, { 300.0f, 300.0f }, { 300.0f, -300.0f },
+    { -300.0f, 300.0f }, { -300.0f, -300.0f }, { 0.0f, 800.0f },
+};
+u8 D_8010CFD4_2233C4_BombsAway[8][2] = {
+    { 0x05, 0x04 }, { 0x05, 0x04 }, { 0x00, 0x01 }, { 0x02, 0x03 },
+    { 0x05, 0x04 }, { 0x04, 0x05 }, { 0x04, 0x05 }, { 0x04, 0x05 },
+};
+
 void func_80102800_218BF0_BombsAway(void) {
     BaPlayer* p;
     BaStage* s;

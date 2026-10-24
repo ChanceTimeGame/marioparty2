@@ -1,6 +1,59 @@
 #include "common.h"
 #include "ovl_2A.h"
 
+/* .data (0x218980-0x218A40), defined before the __asm__ section switches below: start positions,
+   ball textures, island models, winners, CPU behaviours, motion values. D_8010A078 is
+   unreferenced; D_80109FE4/FE8 (asm views of D_80109FE0[0].y/.z) are undefined_syms aliases. */
+/* The textures' names, in this unit's .rodata below. */
+extern const char D_8010A0A0_218A40_BumperBalls[];
+extern const char D_8010A0AC_218A4C_BumperBalls[];
+extern const char D_8010A0B8_218A58_BumperBalls[];
+extern const char D_8010A0C4_218A64_BumperBalls[];
+extern const char D_8010A0D0_218A70_BumperBalls[];
+extern const char D_8010A0DC_218A7C_BumperBalls[];
+Vec D_80109FE0_218980_BumperBalls[4] = {
+    { -300.0f, 220.0f, -300.0f },
+    { 300.0f, 220.0f, -300.0f },
+    { -300.0f, 220.0f, 300.0f },
+    { 300.0f, 220.0f, 300.0f },
+};
+char* D_8010A010_2189B0_BumperBalls[6] = {
+    (char*)D_8010A0DC_218A7C_BumperBalls, (char*)D_8010A0D0_218A70_BumperBalls,
+    (char*)D_8010A0C4_218A64_BumperBalls, (char*)D_8010A0B8_218A58_BumperBalls,
+    (char*)D_8010A0AC_218A4C_BumperBalls, (char*)D_8010A0A0_218A40_BumperBalls,
+};
+s32 D_8010A028_2189C8_BumperBalls[3] = {
+    0x003A0008, 0x003A0009, 0x003A000A,
+};
+u8 D_8010A034_2189D4_BumperBalls[4] = {
+    0x00, 0x00, 0x00, 0x00,
+};
+u8 D_8010A038_2189D8_BumperBalls = 0x00;
+u16 D_8010A03A_2189DA_BumperBalls = 0;
+u16 D_8010A03C_2189DC_BumperBalls[4] = {
+    10, 10, 10, 10,
+};
+u16 D_8010A044_2189E4_BumperBalls = 0;
+u16 D_8010A048_2189E8_BumperBalls[8] = {
+    1, 2, 3, 4, 1, 2, 3, 4,
+};
+u16 D_8010A058_2189F8_BumperBalls[8] = {
+    1, 2, 3, 4, 1, 2, 3, 2,
+};
+u16 D_8010A068_218A08_BumperBalls[8] = {
+    1, 3, 3, 4, 1, 1, 3, 4,
+};
+u16 D_8010A078_218A18_BumperBalls[4] = {
+    0, 0, 0, 0,
+};
+u16 D_8010A080_218A20_BumperBalls = 0;
+f32 D_8010A084_218A24_BumperBalls = 0.0f;
+f32 D_8010A088_218A28_BumperBalls = 0.0f;
+f32 D_8010A08C_218A2C_BumperBalls = 1024.0f;
+f32 D_8010A090_218A30_BumperBalls = 1024.0f;
+f32 D_8010A094_218A34_BumperBalls = 12.800000190734863f;
+f32 D_8010A098_218A38_BumperBalls = 12.800000190734863f;
+
 __asm__(".section .rodata");
 const char D_8010A0A0_218A40_BumperBalls[] = "152_01f_DEF";
 

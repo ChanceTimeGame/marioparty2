@@ -234,12 +234,12 @@ void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void SprAnimKill(s16 animIdx);
 void SprKill(s16 idx);
 s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
-extern s32 D_801126BC_2A798C_name_3E[]; /* decision tree */
+extern DecisionTreeNonLeafNode D_801126BC_2A798C_name_3E[]; /* decision tree */
 extern Vec2f3E D_8011271C_2A79EC_name_3E[4]; /* x/z offsets around a space */
 extern s16 D_8011273C_2A7A0C_name_3E; /* space */
-extern s32 D_80112780_2A7A50_name_3E[]; /* decision trees */
-extern s32 D_801127A4_2A7A74_name_3E[];
-extern s32 D_801127C8_2A7A98_name_3E[];
+extern DecisionTreeNonLeafNode D_80112780_2A7A50_name_3E[]; /* decision trees */
+extern DecisionTreeNonLeafNode D_801127A4_2A7A74_name_3E[];
+extern DecisionTreeNonLeafNode D_801127C8_2A7A98_name_3E[];
 extern s16 D_80112750_2A7A20_name_3E[4]; /* per D_800F8CE4_F98E4[0]: chain */
 extern s16 D_80112758_2A7A28_name_3E[4]; /* per D_800F8CE4_F98E4[0]: space in the chain */
 extern Vec2f3E D_80112760_2A7A30_name_3E[4]; /* per player: x/z offsets */
@@ -257,16 +257,16 @@ s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 void func_80063734_64334(Vec* arg0);
 void CameraScissorSet(s16, void*);
 extern f32 D_80112914_2A7BE4_name_3E[4]; /* scissor box {0, 0, 320, 240} */
-extern s32 D_80112F24_2A81F4_name_3E[]; /* decision trees (CPU item use) */
-extern s32 D_80112F84_2A8254_name_3E[];
-extern s32 D_80113248_2A8518_name_3E[];
-extern s32 D_801133BC_2A868C_name_3E[];
+extern DecisionTreeNonLeafNode D_80112F24_2A81F4_name_3E[]; /* decision trees (CPU item use) */
+extern DecisionTreeNonLeafNode D_80112F84_2A8254_name_3E[];
+extern DecisionTreeNonLeafNode D_80113248_2A8518_name_3E[];
+extern DecisionTreeNonLeafNode D_801133BC_2A868C_name_3E[];
 s16 GetCurrentPlayerIndex(void);
 s16 RNGPercentChance(s8 arg0);
 extern u8 D_800CC000[]; /* item prices */
-extern s32 D_8011341C_2A86EC_name_3E[]; /* decision trees (CPU shop) */
-extern s32 D_80113434_2A8704_name_3E[];
-extern s32 D_801134A0_2A8770_name_3E[]; /* decision tree (CPU yes/no) */
+extern DecisionTreeNonLeafNode D_8011341C_2A86EC_name_3E[]; /* decision trees (CPU shop) */
+extern DecisionTreeNonLeafNode D_80113434_2A8704_name_3E[];
+extern DecisionTreeNonLeafNode D_801134A0_2A8770_name_3E[]; /* decision tree (CPU yes/no) */
 extern s32 D_801134C4_2A8794_name_3E; /* set: the CPU's next answer is option 2 */
 extern u8* D_80113510_2A87E0_name_3E[]; /* per character: items the CPU tries to buy */
 extern s8* D_80113570_2A8840_name_3E[]; /* per character: their percent chances */

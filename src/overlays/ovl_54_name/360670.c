@@ -1,5 +1,12 @@
 #include "ovl_54.h"
 
+/* .data (0x361640-0x361650): the model's ride flags */
+s16 D_801037D0_361640_name_54 = 1;
+s16 D_801037D2_361642_name_54 = 0;
+s16 D_801037D4_361644_name_54 = 0;
+s16 D_801037D6_361646_name_54 = 1;
+f32 D_801037D8_361648_name_54 = 0.0f;
+
 void func_80102800_360670_name_54(void) {
     D_8010388C_3616FC_name_54 = GwSystem.current_player_index;
     omInitObjMan(80, 80);

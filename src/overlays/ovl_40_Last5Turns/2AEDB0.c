@@ -1,5 +1,44 @@
 #include "ovl_40.h"
 
+/* .data (0x2B0EF0-0x2B1010): motions, status-window layouts, places, per-character motion lists */
+s32 D_80104940_2B0EF0_Last5Turns = 0x8003A;
+s32 D_80104944_2B0EF4_Last5Turns = 0x800BC;
+s32 D_80104948_2B0EF8_Last5Turns[4] = {
+    0x800A4, 0x800A4, 0x800AD, 0x8007C,
+};
+L5StatusLayout D_80104958_2B0F08_Last5Turns[2] = {
+    { { { -1, -1, -192, -1 }, { -1, -1, -192, -1 }, { -1, -1, -192, -1 }, { -1, -1, -1, 16 } }, 0, 15 },
+    { { { -1, -1, -1, -1 }, { -1, -1, -1, -1 }, { -1, -1, -1, -1 }, { -1, -1, -192, -1 } }, 0, 15 },
+};
+s32 D_801049A0_2B0F50_Last5Turns = 0;
+s32 D_801049A4_2B0F54_Last5Turns = 0;
+s16 D_801049A8_2B0F58_Last5Turns[4] = {
+    1, 0, 2, 0,
+};
+Vec D_801049B0_2B0F60_Last5Turns = { 0.0f, 0.0f, 2250.0f };
+Vec D_801049BC_2B0F6C_Last5Turns = { 1000.0f, 0.0f, 2000.0f };
+Vec D_801049C8_2B0F78_Last5Turns = { 150.0f, 0.0f, 2000.0f };
+Vec D_801049D4_2B0F84_Last5Turns = { 150.0f, 0.0f, 1600.0f };
+u32 D_801049E0_2B0F90_Last5Turns[5] = {
+    0x00000004, 0x00080096, 0x0008008D, 0x00000000, 0x0008009C,
+};
+u32 D_801049F4_2B0FA4_Last5Turns[5] = {
+    0x00000004, 0x0008008C, 0x0008008D, 0x00000000, 0x0008009C,
+};
+u32 D_80104A08_2B0FB8_Last5Turns[5] = {
+    0x00000004, 0x000800BF, 0x000800C0, 0x00000000, 0x00000000,
+};
+u32 D_80104A1C_2B0FCC_Last5Turns[5] = {
+    0x00000004, 0x0008003D, 0x00080043, 0x0008003F, 0x00000000,
+};
+u32 D_80104A30_2B0FE0_Last5Turns[5] = {
+    0x00000003, 0x000800B0, 0x00000000, 0x000800B2, 0x00000000,
+};
+u32* D_80104A44_2B0FF4_Last5Turns[4] = {
+    D_801049E0_2B0F90_Last5Turns, D_801049F4_2B0FA4_Last5Turns,
+    D_80104A08_2B0FB8_Last5Turns, D_80104A1C_2B0FCC_Last5Turns,
+};
+
 /* Waits until the step a process or object reports in D_80104B18 is done. */
 #define WAIT_STEP()                              \
     while (TRUE) {                               \

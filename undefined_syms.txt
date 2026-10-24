@@ -92,3 +92,47 @@ D_80107734_413B94_Results = D_801076C4_413B24_Results + 0x70;
 D_80107754_413BB4_Results = D_801076C4_413B24_Results + 0x90;
 D_8010777A_413BDA_Results = D_80107774_413BD4_Results + 0x6;
 D_80107792_413BF2_Results = D_80107774_413BD4_Results + 0x1E;
+/* o1-A: ovl_3E's .data, labels inside its C objects */
+D_80111AED_2A6DBD_name_3E = D_80111AEC_2A6DBC_name_3E + 0x1;
+D_80111C04_2A6ED4_name_3E = D_80111C00_2A6ED0_name_3E + 0x4;
+D_80111C08_2A6ED8_name_3E = D_80111C00_2A6ED0_name_3E + 0x8;
+D_80112340_2A7610_name_3E = D_8011233C_2A760C_name_3E + 0x4;
+D_80112360_2A7630_name_3E = D_8011235C_2A762C_name_3E + 0x4;
+D_80112395_2A7665_name_3E = D_80112394_2A7664_name_3E + 0x1;
+D_80112396_2A7666_name_3E = D_80112394_2A7664_name_3E + 0x2;
+D_801123A9_2A7679_name_3E = D_801123A8_2A7678_name_3E + 0x1;
+D_801123AA_2A767A_name_3E = D_801123A8_2A7678_name_3E + 0x2;
+D_801123D5_2A76A5_name_3E = D_801123D4_2A76A4_name_3E + 0x1;
+D_801123D6_2A76A6_name_3E = D_801123D4_2A76A4_name_3E + 0x2;
+D_801123D7_2A76A7_name_3E = D_801123D4_2A76A4_name_3E + 0x3;
+D_801123D8_2A76A8_name_3E = D_801123D4_2A76A4_name_3E + 0x4;
+D_8011243E_2A770E_name_3E = D_8011244C_2A771C_name_3E - 0xE;
+D_80112528_2A77F8_name_3E = D_80112524_2A77F4_name_3E + 0x4;
+D_80112548_2A7818_name_3E = D_80112544_2A7814_name_3E + 0x4;
+D_80112568_2A7838_name_3E = D_80112564_2A7834_name_3E + 0x4;
+/* o1-A: ovl_34, the title alpha's low byte (retail lbu) */
+D_80110105_267205_ChanceTime = D_80110104_267204_ChanceTime + 0x1;
+/* o1-A: ovl_01, the face start angle one f32 before the boundary table */
+D_8010B6AC_E313C_BowserSlots = D_8010B6B0_E3140_BowserSlots - 0x4;
+D_8010B884_E3314_BowserSlots = D_8010B880_E3310_BowserSlots + 0x4;
+D_8010B890_E3320_BowserSlots = D_8010B88C_E331C_BowserSlots + 0x4;
+D_8010B8BC_E334C_BowserSlots = D_8010B8B8_E3348_BowserSlots + 0x4;
+D_8010B8C4_E3354_BowserSlots = D_8010B8C0_E3350_BowserSlots + 0x4;
+D_8010BA25_E34B5_BowserSlots = D_8010BA24_E34B4_BowserSlots + 0x1;
+D_8010BA27_E34B7_BowserSlots = D_8010BA24_E34B4_BowserSlots + 0x3;
+D_8010BA51_E34E1_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x1;
+D_8010BA52_E34E2_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x2;
+D_8010BA53_E34E3_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x3;
+/* o1-A: ovl_2A, asm views of the first start position */
+D_80109FE4_218984_BumperBalls = D_80109FE0_218980_BumperBalls + 0x4;
+D_80109FE8_218988_BumperBalls = D_80109FE0_218980_BumperBalls + 0x8;
+/* o1-A: ovl_2C, asm views inside its tables */
+D_80107BB0_2290E0_TipsyTourney = D_80107B88_2290B8_TipsyTourney + 0x28;
+D_80107C54_229184_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x4;
+D_80107C58_229188_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x8;
+/* o1-A: ovl_2B, labels inside its C objects */
+D_8010CCAC_22309C_BombsAway = D_8010CCA0_223090_BombsAway + 0xC;
+D_8010CD10_223100_BombsAway = D_8010CD04_2230F4_BombsAway + 0xC;
+D_8010CFA8_223398_BombsAway = D_8010CFA4_223394_BombsAway + 0x4;
+D_8010D004_2233F4_BombsAway = D_8010CFF8_2233E8_BombsAway + 0xC;
+D_8010D01C_22340C_BombsAway = D_8010D010_223400_BombsAway + 0xC;
