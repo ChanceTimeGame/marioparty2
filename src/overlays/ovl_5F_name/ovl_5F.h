@@ -84,8 +84,9 @@ typedef struct Ovl5FPlayer {
     /* 0x0C */ f32 angle;
     /* 0x10 */ f32 scale;
     /* 0x14 */ Vec rot;
-    /* 0x20 */ char unk20[0xC];
-    /* 0x2C */ f32 unk2C;
+    /* 0x20 */ f32 vy; /* jump speed (func_80108E50, 5F-B) */
+    /* 0x24 */ char unk24[8];
+    /* 0x2C */ f32 unk2C; /* the floor (func_80108E50) */
     /* 0x30 */ u16 flags; /* 1, 2, 4, 8, 0x10, 0x20: which motions; 0x100: the alternative set */
     /* 0x32 */ u16 unk32; /* bit 0: the idle motion may be set */
     /* 0x34 */ s16 model;
@@ -347,6 +348,7 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 
 extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
 extern s16 D_800CAFEE; /* main (3D6A0.c): the minigame variant override, -1 none */
+extern f32 D_800BF7A4_C03A4; /* main: jump speed (func_80108E50) */
 extern f32 D_800BF7A8_C03A8; /* main: swing step (func_80108DCC) */
 extern f32 D_800BF7D4_C03D4; /* main: swing cap (func_80108DCC) */
 extern s16 D_800CAFE4[5]; /* main (3D6A0.c): item chances */
@@ -503,7 +505,7 @@ s32 func_80108C24_3B1DC4_name_5F(s32, s32);
 s32 func_80108C8C_3B1E2C_name_5F(s32, s32);
 void func_80108D50_3B1EF0_name_5F(omObjData*);
 f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale);
-void func_80108E50_3B1FF0_name_5F(s32);
+void func_80108E50_3B1FF0_name_5F(omObjData*);
 void func_801092B0_3B2450_name_5F(omObjData*);
 void func_8010938C_3B252C_name_5F(s32);
 void func_801093D4_3B2574_name_5F(s32);

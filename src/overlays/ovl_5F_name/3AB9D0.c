@@ -2159,19 +2159,165 @@ f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale) {
     return a;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108E50_3B1FF0_name_5F);
+/* A demo player's jump (Ovl5FPlayer.actA): work[0] the player, work[1] the state. A held during
+   the rise keeps it high; B (0x2000, flag 8) and Z (0x4000, flag 0x20) start the air moves. */
+void func_80108E50_3B1FF0_name_5F(omObjData* obj) {
+    s32 player = obj->work[0];
+    Ovl5FPlayer* p = D_800FA640_FB240[player];
+    f32 a;
+    s32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801092B0_3B2450_name_5F);
+    switch (obj->work[1]) {
+    case 0:
+        func_8002C9C0_2D5C0(p->model, p->mot[4]);
+        p->vy = -D_800BF7A4_C03A4;
+        obj->work[1] = 1;
+        break;
+    case 1:
+        a = func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[8]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+            break;
+        }
+        t = func_80029CE4_2A8E4(p->model);
+        if (t > 5.0f && t < 7.0f) {
+            if (!(ContBtn[gPlayers[player].port] & 0x8000) & (a < 0.0f)) {
+                p->vy = -D_800BF7A4_C03A4 * 0.2f;
+            }
+        } else {
+            if ((p->flags & 8) && func_80108B80_3B1D20_name_5F(player, 0x2000) != 0) {
+                p->vy = -D_800BF7A4_C03A4 * 0.1f;
+                func_8002C9C0_2D5C0(p->model, p->mot[6]);
+                obj->work[1] = 4;
+            }
+            if ((p->flags & 0x20) && func_80108B80_3B1D20_name_5F(player, 0x4000) != 0) {
+                p->vy = -D_800BF7A4_C03A4 * 0.1f;
+                func_8002C9C0_2D5C0(p->model, p->mot[5]);
+                obj->work[1] = 7;
+            }
+        }
+        break;
+    case 2:
+        if ((f32)p->count <= func_80029CE4_2A8E4(p->model)) {
+            func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 2);
+            obj->work[1] = 10;
+        }
+        break;
+    case 4:
+        a = func_80029CE4_2A8E4(p->model);
+        if (func_80029D0C_2A90C(p->model) <= a) {
+            obj->work[1] = 5;
+        }
+        break;
+    case 5:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            p->vy = -D_800BF7A4_C03A4 * 0.6f;
+            obj->work[1] = 6;
+        }
+        break;
+    case 6:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[7]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+        }
+        break;
+    case 7:
+        a = func_80029CE4_2A8E4(p->model);
+        if (func_80029D0C_2A90C(p->model) <= a) {
+            func_80029BF0_2A7F0(p->model, p->mot[4], 0, 20, 0);
+            obj->work[1] = 8;
+        }
+        break;
+    case 8:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[8]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+        }
+        break;
+    case 10:
+        obj->work[1] = 100;
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010938C_3B252C_name_5F);
+/* A demo player's B action (Ovl5FPlayer.actB): one motion, then back to idle. */
+void func_801092B0_3B2450_name_5F(omObjData* obj) {
+    Ovl5FPlayer* p = D_800FA640_FB240[obj->work[0]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801093D4_3B2574_name_5F);
+    switch (obj->work[1]) {
+    case 0:
+        func_8002C9C0_2D5C0(p->model, p->mot[3]);
+        p->count = func_80029D0C_2A90C(p->model);
+        obj->work[1] = 1;
+        break;
+    case 1:
+        if ((f32)p->count <= func_80029CE4_2A8E4(p->model)) {
+            func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 2);
+            obj->work[1] = 100;
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80109424_3B25C4_name_5F);
+/* Demo player `i`'s position to its model. */
+void func_8010938C_3B252C_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010946C_3B260C_name_5F);
+    model->pos.x = p->pos.x;
+    model->pos.y = p->pos.y;
+    model->pos.z = p->pos.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801094B4_3B2654_name_5F);
+/* Demo player `i`'s position from its model (also its floor). */
+void func_801093D4_3B2574_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    p->pos.x = model->pos.x;
+    p->pos.y = model->pos.y;
+    p->pos.z = model->pos.z;
+    p->unk2C = p->pos.y;
+}
+
+/* Demo player `i`'s rotation to its model. */
+void func_80109424_3B25C4_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    model->rot.x = p->rot.x;
+    model->rot.y = p->rot.y;
+    model->rot.z = p->rot.z;
+}
+
+/* Demo player `i`'s rotation from its model. */
+void func_8010946C_3B260C_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    p->rot.x = model->rot.x;
+    p->rot.y = model->rot.y;
+    p->rot.z = model->rot.z;
+}
+
+/* Demo player `i`'s scale to its model. */
+void func_801094B4_3B2654_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    model->scale.x = model->scale.y = model->scale.z = p->scale;
+}
 
 /* Set up demo player i: its character model, its motions (by the demo's flags) and its
    control objects. group != 0 picks the demo's second flag set. */
@@ -2238,7 +2384,7 @@ void func_801094F4_3B2694_name_5F(s32 i, s32 group) {
     func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
     /* func_80108E50 is an object function; 5F-B owns its prototype */
     if (p->flags & 4) {
-        p->actA = (void (*)(omObjData*))func_80108E50_3B1FF0_name_5F;
+        p->actA = func_80108E50_3B1FF0_name_5F;
     } else {
         p->actA = NULL;
     }
