@@ -2066,17 +2066,98 @@ copy:
     func_8010879C_3B193C_name_5F(player, set);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108AEC_3B1C8C_name_5F);
+/* Overlay setup (D_80113700[1]): the per-player minigame data and the host work, then
+   func_80102830. */
+void func_80108AEC_3B1C8C_name_5F(void) {
+    s32 i;
 
+    for (i = 0; i < 4; i++) {
+        D_800FA640_FB240[i] = func_80027154_27D54(0xAC, 0x7918);
+        func_800B0EF0_B1AF0(D_800FA640_FB240[i], 0, 0xAC);
+    }
+    D_800FC890_FD490 = func_80027154_27D54(0x38, 0x7918);
+    func_800B0EF0_B1AF0(D_800FC890_FD490, 0, 0x38);
+    func_80102830_3AB9D0_name_5F();
+}
+
+/* `player`'s newly pressed buttons in `btn`, none for a CPU or once the instructions were
+   skipped (D_800F9910 bit 0). Retail reads flag 0x15 and ignores it. */
+/* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
+#ifdef NON_MATCHING
+s32 func_80108B80_3B1D20_name_5F(s32 player, s32 btn) {
+    s32 ret = 0;
+
+    _CheckFlag(0x15);
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        ret = ContBtnTrg[gPlayers[player].port] & btn;
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108B80_3B1D20_name_5F);
+#endif
 
+/* `player`'s held buttons in `btn` (as func_80108B80). */
+/* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
+#ifdef NON_MATCHING
+s32 func_80108C24_3B1DC4_name_5F(s32 player, s32 btn) {
+    s32 ret = 0;
+
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        ret = ContBtn[gPlayers[player].port] & btn;
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108C24_3B1DC4_name_5F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108C8C_3B1E2C_name_5F);
+/* `player`'s stick on `axis` (0: x, else y), 0 for a CPU, after a skip, or while its minigame
+   data disables that axis (flags 0x40 x, 0x80 y). */
+s32 func_80108C8C_3B1E2C_name_5F(s32 player, s32 axis) {
+    s32 ret = 0;
+    u8* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108D50_3B1EF0_name_5F);
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        data = D_800FA640_FB240[player];
+        if (axis == 0) {
+            if (!(*(u16*)(data + 0x30) & 0x40)) {
+                ret = ContStkX[gPlayers[player].port];
+            }
+        } else if (!(*(u16*)(data + 0x30) & 0x80)) {
+            ret = ContStkY[gPlayers[player].port];
+        }
+    }
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108DCC_3B1F6C_name_5F);
+/* Counts work[0] down, then attaches the model to its parent's hook (Ovl5FHookWork) and ends. */
+void func_80108D50_3B1EF0_name_5F(omObjData* obj) {
+    Ovl5FHookWork* hook;
+
+    if (--obj->work[0] == 0xFF) {
+        hook = obj->unk_50;
+        func_800298A4_2A4A4(hook->model, 4, 0);
+        func_800298A4_2A4A4(hook->model, 0x4000, 0x4000);
+        func_8002C628_2D228(hook->model, hook->parent, hook->name);
+        omDelObj(obj);
+    }
+}
+
+/* One step of a swing: `*angle` (capped at main's D_800BF7D4) pulls `*pos` back by
+   angle * angle * 35 * scale, and `*angle` advances by main's D_800BF7A8. Returns the capped
+   angle. */
+f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale) {
+    f32 a;
+
+    a = *angle;
+    if (D_800BF7D4_C03D4 < a) {
+        a = D_800BF7D4_C03D4;
+    }
+    *pos = *pos + a * a * (a >= 0.0f ? -35.0f : 35.0f) * scale;
+    *angle = *angle + D_800BF7A8_C03A8;
+    return a;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108E50_3B1FF0_name_5F);
 

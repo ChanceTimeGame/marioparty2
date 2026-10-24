@@ -77,6 +77,15 @@ typedef struct Ovl5FFallInit {
     /* 0x14 */ s16 work[4]; /* the object's work bytes (read as their low bytes) */
 } Ovl5FFallInit; /* size = 0x1C */
 
+/* omObjData.unk_50 of func_80108D50: a model attached to a parent model's hook after a delay. */
+typedef struct Ovl5FHookWork {
+    /* 0x00 */ s16 unk00;
+    /* 0x02 */ s16 model;
+    /* 0x04 */ s16 unk04;
+    /* 0x06 */ s16 parent;
+    /* 0x08 */ char* name; /* the hook node */
+} Ovl5FHookWork;
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -283,6 +292,8 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 
 extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
 extern s16 D_800CAFEE; /* main (3D6A0.c): the minigame variant override, -1 none */
+extern f32 D_800BF7A8_C03A8; /* main: swing step (func_80108DCC) */
+extern f32 D_800BF7D4_C03D4; /* main: swing cap (func_80108DCC) */
 extern s16 D_800CAFE4[5]; /* main (3D6A0.c): item chances */
 extern s16 D_80102758_103358[9]; /* main bss (0x12 bytes; 30560.c uses [0]-[7]); [8]: the item minigame's set */
 
@@ -341,7 +352,7 @@ s32 func_80108B80_3B1D20_name_5F(s32, s32);
 s32 func_80108C24_3B1DC4_name_5F(s32, s32);
 s32 func_80108C8C_3B1E2C_name_5F(s32, s32);
 void func_80108D50_3B1EF0_name_5F(omObjData*);
-f32 func_80108DCC_3B1F6C_name_5F(s32, s32, s32);
+f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale);
 void func_80108E50_3B1FF0_name_5F(s32);
 void func_801092B0_3B2450_name_5F(omObjData*);
 void func_8010938C_3B252C_name_5F(s32);
