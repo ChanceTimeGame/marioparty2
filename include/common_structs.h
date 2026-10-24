@@ -185,9 +185,10 @@ typedef struct SpaceData {
 } SpaceData;
 
 typedef struct UnkomOvl {
-    s32 unk_00;
-    u16 unk_04;
-    char unk_06[2]; //unused pad?
+    s32 unk_00; /* overlay */
+    u8 unk_04; /* category (5F: 3 battle, 4-5 1P, ...) */
+    u8 unk_05;
+    u16 unk_06; /* bit 15: variants; low 12 bits: instructions file (5F) */
 } UnkomOvl;
 
 #endif

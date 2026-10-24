@@ -44,7 +44,25 @@ void func_80102830_3AB9D0_name_5F(void) {
     InitFadeIn(0, 0x10);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80102A14_3ABBB4_name_5F);
+void func_80102A14_3ABBB4_name_5F(void) {
+    func_80020070_20C70(1);
+    func_8002D4D0_2E0D0(1);
+    func_80020D20_21920(0x19);
+    omInitObjMan(0x32, 0x14);
+    func_80088640_89240();
+    D_80102708_103308 = 1;
+    D_800FC8A0_FD4A0 = 0;
+    D_800F9910_FA510 = 0;
+    D_80114E4A_3BDFEA_name_5F = 0;
+    D_80114DC0_3BDF60_name_5F = D_80114F74_3BE114_name_5F = GwSystem.chosenMinigameIndex - 1;
+    D_80114DC2_3BDF62_name_5F = D_80114F72_3BE112_name_5F = D_800CAD90[D_80114DC0_3BDF60_name_5F].unk_04;
+    if (_CheckFlag(0xC) != 0) {
+        func_801136C4_3BC864_name_5F(D_80114DC0_3BDF60_name_5F);
+    } else {
+        func_80108170_3B1310_name_5F();
+        func_80108458_3B15F8_name_5F();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80102AF0_3ABC90_name_5F);
 
