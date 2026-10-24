@@ -10,7 +10,7 @@
    MP1 src/1B800.c). */
 
 typedef struct {
-    s32 unk00;
+    Gfx* unk00; /* the frame's display list */
     u16 unk04;
     s32 unk08;
     OSMesgQueue *unk0C;
@@ -449,7 +449,7 @@ graphicsMessage *func_8001D000_1DC00(void) {
     return &D_800F8720_F9320[D_800F842A_F902A++];
 }
 
-u8 func_8001D054_1DC54(s32 arg0, u16 arg1, s32 arg2, OSMesgQueue *arg3, s32 arg4) {
+u8 func_8001D054_1DC54(Gfx* arg0, u16 arg1, s32 arg2, OSMesgQueue *arg3, s32 arg4) {
     graphicsMessage *mesg;
     u32 intMask;
 

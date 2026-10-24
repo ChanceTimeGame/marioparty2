@@ -1710,8 +1710,8 @@ f32 func_80010E14_11A14(u8 depth) {
     return cents;
 }
 
-void func_80010E58_11A58(s32 id) {
-    func_80010E74_11A74(id, NULL);
+s32 func_80010E58_11A58(s32 id) {
+    return func_80010E74_11A74(id, NULL);
 }
 
 s32 func_80010E74_11A74(s32 id, SeqPlayArgs* args) {

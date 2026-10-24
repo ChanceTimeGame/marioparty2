@@ -1801,7 +1801,7 @@ s16 func_8008925C_89E5C(u8* str);
 
 /* MP1 LoadStringIntoWindow: sets the window's text (a message id, or a pointer above 0x80000000)
    and its position (-2 = centred). Host: the id/pointer test assumes N64 addresses. */
-void func_800890CC_89CCC(s16 win_id, u32 str, s16 x, s16 y) {
+void func_800890CC_89CCC(s16 win_id, void* str, s16 x, s16 y) {
     TextWindow* tw = &D_800F920C_F9E0C[win_id];
 
     if (tw->unkD0 != NULL) {
@@ -1810,12 +1810,12 @@ void func_800890CC_89CCC(s16 win_id, u32 str, s16 x, s16 y) {
         }
     }
     tw->unk5C = 1;
-    if (str > 0x80000000) {
+    if ((u32)str > 0x80000000) {
         tw->unkD4 = 0;
-        tw->unkCC = (u8*)str;
+        tw->unkCC = str;
     } else {
         tw->unkD4 = 1;
-        tw->unkCC = tw->unkD0 = func_80068CD4_698D4(str);
+        tw->unkCC = tw->unkD0 = func_80068CD4_698D4((s32)str);
     }
     if (x >= 0) {
         tw->unk54 = x;
@@ -1868,7 +1868,7 @@ u32 func_800892D8_89ED8(s16 winId) {
     return D_800F920C_F9E0C[winId].unk_38;
 }
 
-void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2) {
+void func_80089308_89F08(s16 win_id, void* arg1, s8 arg2) {
     TextWindow* textWindow = &D_800F920C_F9E0C[win_id];
 
     if (textWindow->unk_B8[arg2] != 0) {
@@ -1877,12 +1877,12 @@ void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2) {
         }
     }
     // pointer check
-    if (0x80000000 < arg1) {
+    if (0x80000000 < (u32)arg1) {
         textWindow->usingStringIDBool[arg2] = 0;
-        textWindow->unk_B8[arg2] = (char*)arg1;
+        textWindow->unk_B8[arg2] = arg1;
     } else {
         textWindow->usingStringIDBool[arg2] = 1;
-        textWindow->unk_B8[arg2] = func_80068CD4_698D4(arg1);
+        textWindow->unk_B8[arg2] = func_80068CD4_698D4((s32)arg1);
     }
     textWindow->unk_B2[arg2] = -1;
 }
@@ -2699,7 +2699,7 @@ void func_8008BB18_8C718(s16 winId, u8 tab) {
 }
 
 /* MP1 func_8006FCF0: lets the player choose one of the window's entries; returns it, or -1 */
-s8 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
+s32 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
     TextWindow* tw = &D_800F920C_F9E0C[winId];
     void* file;
 
@@ -3404,36 +3404,36 @@ void func_8008D8BC_8E4BC(u8* arg0, u8* arg1) {
 }
 
 /* MP1 func_800718DC: func_80089308 with the line breaks removed */
-void func_8008D904_8E504(s16 winId, u32 str, s8 idx) {
+void func_8008D904_8E504(s16 winId, void* str, s8 idx) {
     TextWindow* tw = &D_800F920C_F9E0C[winId];
 
     func_80089308_89F08(winId, str, idx);
     func_8008D8BC_8E4BC(tw->unk_B8[idx], tw->unk_B8[idx]);
 }
 
-void func_8008D974_8E574(s32 arg0, s16 arg1) {
+void func_8008D974_8E574(u8* arg0, s16 arg1) {
     D_800ED8E6_EE4E6 = 1;
     D_800ED8EA_EE4EA = 0;
     D_800ED8E8_EE4E8 = 0;
-    func_8008DCDC_8E8DC((u8*)arg0);
+    func_8008DCDC_8E8DC(arg0);
     D_8010106E_101C6E[arg1] = D_800ED8E9_EE4E9;
 }
 
 /* measures a text (a message id, or a pointer above 0x80000000) into D_8010106E[idx].
    Host: the id/pointer test assumes N64 addresses, and the text is passed on as a u32. */
-void func_8008D9D0_8E5D0(u32 str, s16 idx) {
+void func_8008D9D0_8E5D0(u8* str, s16 idx) {
     u8 loaded;
     u8* text;
 
     D_800ED8E6_EE4E6 = 1;
     D_800ED8EA_EE4EA = 0;
     D_800ED8E8_EE4E8 = 0;
-    if (str > 0x80000000) {
+    if ((u32)str > 0x80000000) {
         loaded = 0;
-        text = (u8*)str;
+        text = str;
     } else {
         loaded = 1;
-        text = func_80068CD4_698D4(str);
+        text = func_80068CD4_698D4((s32)str);
     }
     func_8008D8BC_8E4BC(text, text);
     func_8008DCDC_8E8DC(text);

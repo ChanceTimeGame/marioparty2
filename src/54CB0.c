@@ -368,7 +368,7 @@ s32 MBMasuCreate(s32 arg0, s32 arg1) {
         var_s0_2 = D_800CC280_CCE80;
         gTotalSpaces = var_s0_2[0];
         D_800E18D2_E24D2 = var_s0_2[1];
-        D_800E18D4_E24D4 = HuMemMemoryAllocTemp(gTotalSpaces * 0x24);
+        D_800E18D4_E24D4 = HuMemMemoryAllocTemp(gTotalSpaces * sizeof(SpaceData));
         var_s0_2 = func_8005484C_5544C(D_800CC280_CCE80, 4);
         var_s1 = D_800E18D4_E24D4;
         for (var_s2 = 0; var_s2 < gTotalSpaces; var_s2++) {
@@ -385,7 +385,7 @@ s32 MBMasuCreate(s32 arg0, s32 arg1) {
             var_s1->event_list = NULL;
             var_s1 += 1;
         }
-        D_800E18D8_E24D8 = HuMemMemoryAllocTemp(D_800E18D2_E24D2 * 8);
+        D_800E18D8_E24D8 = HuMemMemoryAllocTemp(D_800E18D2_E24D2 * sizeof(LinkData));
         temp_s3 = func_8005484C_5544C(D_800CC280_CCE80, 6);
         var_s1_2 = D_800E18D8_E24D8;
         for (var_s2 = 0; var_s2 < D_800E18D2_E24D2; var_s2++) {

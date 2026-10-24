@@ -165,7 +165,7 @@ typedef struct unk_800ECDE0 {
     /* 0x1C */ u8 unk1C;
     /* 0x1D */ u8 unk1D;
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ u32 unk20; /* key-frame list */
+    /* 0x20 */ u8* unk20; /* key-frame list */
 } unk_800ECDE0; /* size = 0x24 */
 
 extern unk_800ECDE0* D_800F86D8_F92D8;
