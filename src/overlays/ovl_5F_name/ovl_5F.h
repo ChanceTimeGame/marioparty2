@@ -39,8 +39,7 @@ typedef struct Ovl5FFallWork {
     /* 0x18 */ f32 floor;
     /* 0x1C */ f32 angle;
     /* 0x20 */ f32 angleVel;
-    /* 0x24 */ s16 unused24;
-    /* 0x26 */ s16 model;
+    /* 0x24 */ s32 model; /* read as (s16): lh 0x26 */
 } Ovl5FFallWork; /* size = 0x28 */
 
 /* ---- main-segment API used by 5F ---- */
@@ -80,7 +79,7 @@ void func_80020070_20C70(s32);
 void func_80020D20_21920(s16 arg0);
 void func_80023DAC_249AC(s16 arg0, char* arg1, s16 arg2, char* arg3);
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
-s16 func_80027D3C_2893C(s16); /* model copy */
+s32 func_80027D3C_2893C(s16); /* model copy (5F: the result is stored unextended) */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
@@ -149,6 +148,7 @@ extern s32 D_800FC8A0_FD4A0;   /* (D_800FC89C + 4) */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern u8 D_80102708_103308;
+extern u8 D_80102720_103320;
 extern u8 D_800FA656; /* minigame variant */
 extern u16 D_800F9208_F9E08; /* the battle's coin pot */
 extern void* D_800F93FC_F9FFC; /* EspriteSlot* (1AE60.c) */
@@ -262,7 +262,7 @@ void func_80102800_3AB9A0_name_5F(void);
 void func_80102830_3AB9D0_name_5F(void);
 void func_80102A14_3ABBB4_name_5F(void);
 void func_80102AF0_3ABC90_name_5F(void);
-void func_8010352C_3AC6CC_name_5F(s32);
+void func_8010352C_3AC6CC_name_5F(omObjData*);
 void func_80103608_3AC7A8_name_5F(omObjData*);
 void func_80103778_3AC918_name_5F(omObjData*);
 void func_8010382C_3AC9CC_name_5F(omObjData*);

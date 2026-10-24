@@ -232,15 +232,98 @@ void func_80102AF0_3ABC90_name_5F(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80102AF0_3ABC90_name_5F);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010352C_3AC6CC_name_5F);
+void func_8010352C_3AC6CC_name_5F(omObjData* obj) {
+    Ovl5FFallWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103608_3AC7A8_name_5F);
+    work->pos.x = HuMathSin(work->angle) * obj->work[2] + work->baseX;
+    work->angle += work->angleVel;
+    work->pos.y += work->vel;
+    func_80029714_2A314((s16)work->model, work->pos.x, work->pos.y, work->pos.z);
+    if (work->pos.y > work->floor) {
+        work->pos.y = work->floor;
+        if (obj->work[1] < 3) {
+            func_800298A4_2A4A4((s16)work->model, 4, 4);
+        }
+        func_80029714_2A314((s16)work->model, work->pos.x, work->pos.y, work->pos.z);
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103778_3AC918_name_5F);
+void func_80103608_3AC7A8_name_5F(omObjData* obj) {
+    Ovl5FFallWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010382C_3AC9CC_name_5F);
+    if (obj->work[0] == 0) {
+        work->model = func_80027D3C_2893C(D_80114DC8_3BDF68_name_5F[0]);
+    } else {
+        work->model = D_80114DC8_3BDF68_name_5F[obj->work[0]];
+    }
+    func_80029E80_2AA80((s16)work->model, 0, 2);
+    func_800298A4_2A4A4((s16)work->model, 4, 0);
+    func_80029714_2A314((s16)work->model, work->pos.x, work->pos.y, work->pos.z);
+    func_800297E8_2A3E8((s16)work->model, work->scale, work->scale, work->scale);
+    work->angle = 0.0f;
+    work->angleVel = 6.0f;
+    switch (obj->work[1]) {
+    case 0:
+        work->vel = 10.0f;
+        break;
+    case 1:
+        work->vel = 13.0f;
+        break;
+    case 2:
+        work->vel = 15.0f;
+        break;
+    default:
+        work->vel = (work->floor - work->pos.y) / 30.0f;
+        break;
+    }
+    if (obj->work[3] != 0) {
+        work->angleVel = -work->angleVel;
+    }
+    obj->func_ptr = func_8010352C_3AC6CC_name_5F;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801038D4_3ACA74_name_5F);
+void func_80103778_3AC918_name_5F(omObjData* obj) {
+    s16 model = obj->work[2];
+    f32 t;
+
+    switch (obj->work[0]) {
+    case 0:
+        t = obj->work[1] * 0.05f;
+        func_8002AC10_2B810(model, t, t * 10.0f, 1);
+        if (obj->work[1]++ > 20) {
+            obj->work[0] = 1;
+        }
+        break;
+    case 1:
+        func_800298A4_2A4A4(model, 4, 4);
+        omDelObj(obj);
+        break;
+    }
+}
+
+void func_8010382C_3AC9CC_name_5F(omObjData* obj) {
+    s32 alpha;
+
+    alpha = (obj->work[0]++ * 255) / obj->work[1];
+    if (obj->work[1] < obj->work[0]) {
+        alpha = 255;
+    }
+    func_8001A6BC_1B2BC(D_80114E10_3BDFB0_name_5F, alpha);
+    if (alpha == 255) {
+        omDelObj(obj);
+    }
+}
+
+void func_801038D4_3ACA74_name_5F(omObjData* obj) {
+    if ((u16)func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_80113978_3BCB18_name_5F += 0.3f;
+    }
+    if (D_80113978_3BCB18_name_5F > 48.0f) {
+        D_80113978_3BCB18_name_5F = -48.0f;
+    }
+    func_8002BED4_2CAD4(D_80114DC8_3BDF68_name_5F[1], D_80113978_3BCB18_name_5F, 0.0f, 48, 40, "normal_title2-face3", 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103994_3ACB34_name_5F);
 
