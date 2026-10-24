@@ -67,6 +67,15 @@ typedef struct Ovl5FEsprite {
     /* 0x0E */ char pad0E[0x16];
 } Ovl5FEsprite; /* size = 0x24 */
 
+/* 5F-B */
+/* Initial state of one falling model (D_801139D4): copied into its Ovl5FFallWork. */
+typedef struct Ovl5FFallInit {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 floor;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ s16 work[4]; /* the object's work bytes (read as their low bytes) */
+} Ovl5FFallInit; /* size = 0x1C */
+
 /* 5F-C */
 
 /* What main's D_800FA640 entries point at while a demo runs: one demo player. */
@@ -75,8 +84,9 @@ typedef struct Ovl5FPlayer {
     /* 0x0C */ f32 angle;
     /* 0x10 */ f32 scale;
     /* 0x14 */ Vec rot;
-    /* 0x20 */ char unk20[0xC];
-    /* 0x2C */ f32 unk2C;
+    /* 0x20 */ f32 vy; /* jump speed (func_80108E50, 5F-B) */
+    /* 0x24 */ char unk24[8];
+    /* 0x2C */ f32 unk2C; /* the floor (func_80108E50) */
     /* 0x30 */ u16 flags; /* 1, 2, 4, 8, 0x10, 0x20: which motions; 0x100: the alternative set */
     /* 0x32 */ u16 unk32; /* bit 0: the idle motion may be set */
     /* 0x34 */ s16 model;
@@ -261,17 +271,12 @@ extern s16 D_80113710_3BC8B0_name_5F[][4]; /* per minigame: two instruction mess
 extern f32 D_80113978_3BCB18_name_5F; /* the title face texture scroll */
 extern s32 D_8011397C_3BCB1C_name_5F[10]; /* item icon sprite files, by item id */
 extern s32 D_801139A4_3BCB44_name_5F[5][2]; /* item icon offsets (x, y) */
-extern u16 D_801139CC_3BCB6C_name_5F[4]; /* lhu:1 addiu:1 */
-extern f32 D_801139D4_3BCB74_name_5F; /* addiu:1 lwc1:1 */
-extern f32 D_801139D8_3BCB78_name_5F; /* lwc1:2 */
-extern f32 D_801139DC_3BCB7C_name_5F[33]; /* lwc1:1 */
-extern s32 D_80113A60_3BCC00_name_5F[28]; /* addiu:1 */
-extern s32 D_80113AD0_3BCC70_name_5F[21]; /* addiu:1 */
-extern s32 D_80113B24_3BCCC4_name_5F[5]; /* addiu:1 */
-extern s32 D_80113B38_3BCCD8_name_5F[6]; /* addiu:1 */
-extern s16 D_80113B50_3BCCF0_name_5F[5]; /* addiu:3 */
-extern s16 D_80113B5A_3BCCFA_name_5F[15]; /* sh:1 */
-extern s32 D_80113B78_3BCD18_name_5F[62]; /* addiu:1 */
+extern u16 D_801139CC_3BCB6C_name_5F[4]; /* window buttons, by controller port */
+extern Ovl5FFallInit D_801139D4_3BCB74_name_5F[12]; /* the falling models (5F-B; asm labels A60, AD0 are [5], [9]) */
+extern u16 D_80113B24_3BCCC4_name_5F[3][3]; /* item minigame: last turn of each stage, by game length */
+extern u16 D_80113B38_3BCCD8_name_5F[4][3]; /* item minigame: item set by rank and stage (4: random 0/1) */
+extern u16 D_80113B50_3BCCF0_name_5F[4][5]; /* item minigame: the sets' items (asm label B5A is [1][0]) */
+extern s16 D_80113B78_3BCD18_name_5F[4][5][6]; /* item minigame: each item's chance, by set and character */
 extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
 extern omObjData* D_80113EC8_3BD068_name_5F[4]; /* the players' action objects (5F-C) */
 extern u16 D_80113ED8_3BD078_name_5F[6]; /* motion file per character (with flag 0x100) */
@@ -306,10 +311,8 @@ extern s16 D_80114DC2_3BDF62_name_5F; /* its type (D_800CAD90[minigame].unk_04's
 extern s16 D_80114DC4_3BDF64_name_5F; /* the first player in group 0 */
 extern s16 D_80114DC6_3BDF66_name_5F; /* the variant's message row (func_80103C84) */
 extern s16 D_80114DC8_3BDF68_name_5F[6]; /* models: [0] backdrop, [1]-[2] title, [3]-[5] frame */
-extern omObjData* D_80114DD8_3BDF78_name_5F[4]; /* the demo players' objects (asm labels DDC, DE0, DE4 are [1]-[3]) */
-/* 80114DE8-80114DEF: the rest of asm label D_80114DE4 (12 bytes): 5F-B */
-extern s32 D_80114DF0_3BDF90_name_5F; /* addiu:4 sw:1 */
-extern s32 D_80114DF4_3BDF94_name_5F[2]; /* addiu:1 */
+extern omObjData* D_80114DD8_3BDF78_name_5F[6]; /* the falling models' objects (Ovl5FFallWork; asm labels DDC, DE0, DE4 are [1]-[3]) */
+extern omObjData* D_80114DF0_3BDF90_name_5F[8]; /* objects riding a falling model (func_80104D08); DF4, DFC, E0C are [1], [3], [7] */
 extern omObjData* D_80114DFC_3BDF9C_name_5F[5]; /* item icons / players' marker objects */
 extern u16 D_80114E10_3BDFB0_name_5F; /* full-screen sprite (fades in) */
 extern u16 D_80114E12_3BDFB2_name_5F; /* sprite shown over a model */
@@ -333,18 +336,23 @@ extern s16 D_80114E4A_3BDFEA_name_5F; /* set: the player skipped to the minigame
 extern void* D_80114E4C_3BDFEC_name_5F; /* the minigame's demo files */
 extern void* D_80114E50_3BDFF0_name_5F;
 extern void* D_80114E54_3BDFF4_name_5F;
-extern s32 D_80114E58_3BDFF8_name_5F[2]; /* addiu:2 */
-extern s32 D_80114E60_3BE000_name_5F[6]; /* addiu:3 */
-extern s32 D_80114E78_3BE018_name_5F[16]; /* addiu:2 */
-extern f32 D_80114EB8_3BE058_name_5F; /* swc1:2 lwc1:2 */
-extern f32 D_80114EBC_3BE05C_name_5F[6]; /* swc1:2 lwc1:1 */
-extern s32 D_80114ED4_3BE074_name_5F[27]; /* addiu:1 */
-extern s32 D_80114F40_3BE0E0_name_5F[4]; /* sw:1 lw:1 */
+extern GAMEMES D_80114E58_3BDFF8_name_5F[2]; /* the minigame's name, one per line (asm labels E60-ED4 are fields) */
+extern Process* D_80114F40_3BE0E0_name_5F[4]; /* [0]: func_80105860's process (type 4) */
 extern s32 D_80114F50_3BE0F0_name_5F[4]; /* lw:38 sw:1 */
 extern s16 D_80114F60_3BE100_name_5F[8]; /* lh:2 sh:1 */
 extern s16 D_80114F70_3BE110_name_5F;
 extern s16 D_80114F72_3BE112_name_5F; /* sh:1 lh:1 lhu:1 */
 extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
+
+/* 5F-B */
+
+extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
+extern s16 D_800CAFEE; /* main (3D6A0.c): the minigame variant override, -1 none */
+extern f32 D_800BF7A4_C03A4; /* main: jump speed (func_80108E50) */
+extern f32 D_800BF7A8_C03A8; /* main: swing step (func_80108DCC) */
+extern f32 D_800BF7D4_C03D4; /* main: swing cap (func_80108DCC) */
+extern s16 D_800CAFE4[5]; /* main (3D6A0.c): item chances */
+extern s16 D_80102758_103358[9]; /* main bss (0x12 bytes; 30560.c uses [0]-[7]); [8]: the item minigame's set */
 
 /* 5F-E */
 
@@ -482,7 +490,7 @@ s32 func_80105A14_3AEBB4_name_5F(void);
 s32 func_80105A54_3AEBF4_name_5F(void);
 void func_80105AB8_3AEC58_name_5F(void);
 void func_80105B94_3AED34_name_5F(void);
-void func_801072C8_3B0468_name_5F(s16, void*, void*, void*);
+void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha);
 void func_80107C84_3B0E24_name_5F(s32);
 void func_80107F74_3B1114_name_5F(void);
 void func_80107FE0_3B1180_name_5F(void);
@@ -496,8 +504,8 @@ s32 func_80108B80_3B1D20_name_5F(s32, s32);
 s32 func_80108C24_3B1DC4_name_5F(s32, s32);
 s32 func_80108C8C_3B1E2C_name_5F(s32, s32);
 void func_80108D50_3B1EF0_name_5F(omObjData*);
-f32 func_80108DCC_3B1F6C_name_5F(s32, s32, s32);
-void func_80108E50_3B1FF0_name_5F(s32);
+f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale);
+void func_80108E50_3B1FF0_name_5F(omObjData*);
 void func_801092B0_3B2450_name_5F(omObjData*);
 void func_8010938C_3B252C_name_5F(s32);
 void func_801093D4_3B2574_name_5F(s32);

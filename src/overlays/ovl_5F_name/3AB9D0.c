@@ -1027,22 +1027,909 @@ void func_80105AB8_3AEC58_name_5F(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105B94_3AED34_name_5F);
+/* The screen's main process: the falling models drop in, the host and title appear, then the
+   instruction pages run until a player confirms (or skips with START), and the screen fades out
+   to the minigame (func_801085A0). */
+void func_80105B94_3AED34_name_5F(void) {
+    omObjData* obj;
+    Ovl5FFallWork* work;
+    Ovl5FFallInit* init;
+    Vec* ofs;
+    s32 i;
+    s32 page;
+    s32 timer;
+    s32 mes;
+    s16 btn;
+    s32 wait;
+
+    D_80114E38_3BDFD8_name_5F = -1;
+    for (i = 0; i < 8; i++) {
+        D_80114DF0_3BDF90_name_5F[i] = NULL;
+    }
+    if (D_80114DC2_3BDF62_name_5F == 4) {
+        func_8010433C_3AD4DC_name_5F();
+    } else {
+        func_8011303C_3BC1DC_name_5F();
+    }
+    func_80107C84_3B0E24_name_5F(D_80114DC0_3BDF60_name_5F);
+    obj = omAddObj(0x64, 0, 0, -1, func_8010382C_3AC9CC_name_5F);
+    obj->work[0] = 0;
+    obj->work[1] = 30;
+    for (i = 0; i < 5; i++) {
+        obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+        obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+        work = obj->unk_50;
+        init = &D_801139D4_3BCB74_name_5F[i];
+        work->pos.x = work->baseX = init->pos.x;
+        work->pos.y = init->pos.y;
+        work->pos.z = init->pos.z;
+        work->scale = init->scale;
+        work->floor = init->floor;
+        obj->work[0] = init->work[0];
+        obj->work[1] = init->work[1];
+        obj->work[2] = init->work[2];
+        obj->work[3] = init->work[3];
+    }
+
+    D_80114DD8_3BDF78_name_5F[0] = obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+    work = obj->unk_50;
+    work->pos.x = work->baseX = D_801139D4_3BCB74_name_5F[5].pos.x;
+    work->pos.y = D_801139D4_3BCB74_name_5F[5].pos.y - 500.0f;
+    work->pos.z = D_801139D4_3BCB74_name_5F[5].pos.z;
+    work->scale = 0.9f;
+    work->floor = D_801139D4_3BCB74_name_5F[5].pos.y;
+    obj->work[0] = 1;
+    obj->work[1] = 3;
+    obj->work[2] = 50;
+    obj->work[3] = 1;
+
+    i = 6;
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 1:
+        i = 7;
+        break;
+    case 2:
+        if (D_80114DC0_3BDF60_name_5F != 0x21) {
+            i = 8;
+        }
+        break;
+    }
+    D_80114DD8_3BDF78_name_5F[1] = obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+    work = obj->unk_50;
+    work->pos.x = work->baseX = D_801139D4_3BCB74_name_5F[i].pos.x;
+    work->pos.y = D_801139D4_3BCB74_name_5F[i].pos.y - 600.0f;
+    work->pos.z = D_801139D4_3BCB74_name_5F[i].pos.z;
+    work->scale = 1.0f;
+    work->floor = D_801139D4_3BCB74_name_5F[i].pos.y;
+    obj->work[0] = 2;
+    obj->work[1] = 3;
+    obj->work[2] = 80;
+    obj->work[3] = 0;
+
+    D_80114DD8_3BDF78_name_5F[2] = obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+    work = obj->unk_50;
+    work->pos.x = work->baseX = D_801139D4_3BCB74_name_5F[9].pos.x;
+    work->pos.y = D_801139D4_3BCB74_name_5F[9].pos.y - 400.0f;
+    work->pos.z = D_801139D4_3BCB74_name_5F[9].pos.z;
+    work->scale = 0.8f;
+    work->floor = D_801139D4_3BCB74_name_5F[9].pos.y;
+    obj->work[0] = 3;
+    obj->work[1] = 3;
+    obj->work[2] = 50;
+    obj->work[3] = 0;
+
+    D_80114DD8_3BDF78_name_5F[3] = obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+    work = obj->unk_50;
+    work->pos.x = work->baseX = D_801139D4_3BCB74_name_5F[10].pos.x;
+    work->pos.y = D_801139D4_3BCB74_name_5F[10].pos.y - 400.0f;
+    work->pos.z = D_801139D4_3BCB74_name_5F[10].pos.z;
+    work->scale = 1.5f;
+    work->floor = D_801139D4_3BCB74_name_5F[10].pos.y;
+    obj->work[0] = 4;
+    obj->work[1] = 3;
+    obj->work[2] = 70;
+    obj->work[3] = 1;
+
+    if (D_80114DC2_3BDF62_name_5F < 3) {
+        if (D_80114DC2_3BDF62_name_5F > 0 && D_80114DC0_3BDF60_name_5F != 0x21) {
+        D_80114DD8_3BDF78_name_5F[4] = obj = omAddObj(0x64, 0, 0, -1, func_80103608_3AC7A8_name_5F);
+        obj->unk_50 = func_80027154_27D54(0x28, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0x28);
+        work = obj->unk_50;
+        work->pos.x = work->baseX = D_801139D4_3BCB74_name_5F[11].pos.x;
+        work->pos.y = D_801139D4_3BCB74_name_5F[11].pos.y - 400.0f;
+        work->pos.z = D_801139D4_3BCB74_name_5F[11].pos.z;
+        work->scale = 1.5f;
+        work->floor = D_801139D4_3BCB74_name_5F[11].pos.y;
+        obj->work[0] = 5;
+        obj->work[1] = 3;
+        obj->work[2] = 70;
+        obj->work[3] = 1;
+        }
+    }
+    HuPrcVSleep();
+
+    omAddObj(0x64, 0, 0, -1, func_801038D4_3ACA74_name_5F);
+    D_80114DF0_3BDF90_name_5F[0] = obj = omAddObj(0x65, 0, 0, -1, func_80104D08_3ADEA8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+    ofs = obj->unk_50;
+    ofs->x = 0.0f;
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        ofs->y = -70.0f;
+        break;
+    case 3:
+        ofs->y = -20.0f;
+        break;
+    default:
+        ofs->y = -60.0f;
+        break;
+    }
+    ofs->z = -80.0f;
+    work = D_80114DD8_3BDF78_name_5F[2]->unk_50; obj->work[0] = work->model;
+    obj->work[1] = D_80114E1E_3BDFBE_name_5F;
+    obj->work[2] = 0;
+    if (D_80114DC2_3BDF62_name_5F == 3) {
+        D_80114DF0_3BDF90_name_5F[7] = obj = omAddObj(0x65, 0, 0, -1, func_80104D08_3ADEA8_name_5F);
+        obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+        ofs = obj->unk_50;
+        ofs->x = 0.0f;
+        ofs->y = -20.0f;
+        ofs->z = -80.0f;
+        work = D_80114DD8_3BDF78_name_5F[2]->unk_50; obj->work[0] = work->model;
+        obj->work[1] = D_80114E2C_3BDFCC_name_5F;
+        obj->work[2] = 0;
+    }
+    D_80114DF0_3BDF90_name_5F[1] = obj = omAddObj(0x65, 0, 0, -1, func_80104D08_3ADEA8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+    ofs = obj->unk_50;
+    ofs->x = 0.0f;
+    ofs->y = 0.0f;
+    ofs->z = 10.0f;
+    work = D_80114DD8_3BDF78_name_5F[1]->unk_50; obj->work[0] = work->model;
+    obj->work[1] = D_80114E2A_3BDFCA_name_5F;
+    obj->work[2] = 0;
+    D_80114DF0_3BDF90_name_5F[2] = obj = omAddObj(0x65, 0, 0, -1, func_80104D08_3ADEA8_name_5F);
+    obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+    ofs = obj->unk_50;
+    ofs->x = 0.0f;
+    ofs->y = 0.0f;
+    ofs->z = 15.0f;
+    work = D_80114DD8_3BDF78_name_5F[1]->unk_50; obj->work[0] = work->model;
+    obj->work[1] = D_80114E18_3BDFB8_name_5F;
+    obj->work[2] = 0;
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        func_801041C4_3AD364_name_5F();
+        break;
+    case 5:
+        D_80114DF0_3BDF90_name_5F[3] = obj = omAddObj(0x65, 0, 0, -1, func_80104D08_3ADEA8_name_5F);
+        obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+        func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+        ofs = obj->unk_50;
+        ofs->x = -20.0f;
+        ofs->y = -50.0f;
+        ofs->z = -80.0f;
+        work = D_80114DD8_3BDF78_name_5F[3]->unk_50; obj->work[0] = work->model;
+        obj->work[1] = ((u8*)D_800FA640_FB240[0])[0x35];
+        obj->work[2] = 0;
+        break;
+    default:
+        func_80112FE8_3BC188_name_5F();
+        break;
+    }
+    omAddObj(0x64, 0, 0, -1, func_80107FE0_3B1180_name_5F);
+    HuPrcSleep(30);
+
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 3:
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[1], 0, 2, 0);
+        wait = 2;
+        break;
+    case 4:
+        func_8002C9C0_2D5C0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[2]);
+        func_80029C74_2A874(D_80114E1E_3BDFBE_name_5F, func_80029D0C_2A90C(D_80114E1E_3BDFBE_name_5F));
+        func_80029E80_2AA80(D_80114E1E_3BDFBE_name_5F, 0, 4);
+        wait = 30;
+        break;
+    default:
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[1], 0, 2, 0);
+        wait = 10;
+        break;
+    }
+    HuPrcSleep(wait);
+
+    /* the riders let go */
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 3:
+    case 4:
+        for (i = 0; i < 8; i++) {
+            if (D_80114DF0_3BDF90_name_5F[i] != NULL) {
+                D_80114DF0_3BDF90_name_5F[i]->work[2] = 1;
+            }
+        }
+        break;
+    case 5:
+        for (i = 0; i < 4; i++) {
+            if (D_80114DF0_3BDF90_name_5F[i] != NULL) {
+                D_80114DF0_3BDF90_name_5F[i]->work[2] = 1;
+            }
+        }
+        break;
+    default:
+        for (i = 0; i < 7; i++) {
+            if (D_80114DF0_3BDF90_name_5F[i] != NULL) {
+                D_80114DF0_3BDF90_name_5F[i]->work[2] = 1;
+            }
+        }
+        break;
+    }
+    PlaySound(0x31F);
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        wait = 0xE6;
+        break;
+    case 3:
+        wait = 0xE8;
+        break;
+    default:
+        wait = 0x11E;
+        break;
+    }
+    PlaySound(wait);
+    obj = omAddObj(0x64, 0, 0, -1, func_80103778_3AC918_name_5F);
+    obj->work[0] = 0;
+    obj->work[1] = 0;
+    obj->work[2] = D_80114DC8_3BDF68_name_5F[3];
+    PlaySound(0x329);
+    obj = omAddObj(0x64, 0, 0, -1, func_80103778_3AC918_name_5F);
+    obj->work[0] = 0;
+    obj->work[1] = 0;
+    obj->work[2] = D_80114DC8_3BDF68_name_5F[4];
+    if (D_80114DC2_3BDF62_name_5F < 3) {
+        if (D_80114DC2_3BDF62_name_5F > 0 && D_80114DC0_3BDF60_name_5F != 0x21) {
+        PlaySound(0x329);
+        obj = omAddObj(0x64, 0, 0, -1, func_80103778_3AC918_name_5F);
+        obj->work[0] = 0;
+        obj->work[1] = 0;
+        obj->work[2] = D_80114DC8_3BDF68_name_5F[5];
+        }
+    }
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        HuPrcSleep(20);
+        func_8002C9C0_2D5C0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[0]);
+        func_80029E80_2AA80(D_80114E1E_3BDFBE_name_5F, 0, 0);
+        D_80114F40_3BE0E0_name_5F[0] = omAddPrcObj(func_80105860_3AEA00_name_5F, 0x1001, 0x800, 0);
+        break;
+    case 3:
+        HuPrcSleep(20);
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[0], 0, 2, 0);
+        func_80029E80_2AA80(D_80114E1E_3BDFBE_name_5F, 0, 2);
+        omAddPrcObj(func_801046A4_3AD844_name_5F, 0x1001, 0x800, 0);
+        break;
+    default:
+        HuPrcSleep(10);
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[2], 0, 2, 2);
+        break;
+    }
+    if (func_801050DC_3AE27C_name_5F(D_80114DC0_3BDF60_name_5F) != 0) {
+        omAddObj(0x64, 0, 0, -1, func_80105110_3AE2B0_name_5F)->work[0] = 0;
+    }
+    if (D_80114DC2_3BDF62_name_5F != 4) {
+        func_80113004_3BC1A4_name_5F();
+    }
+    omAddPrcObj(func_80105258_3AE3F8_name_5F, 0x1001, 0x800, 0);
+
+    /* the instruction pages */
+    page = 0;
+    func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, 0);
+    func_8008E2DC_8EEDC(D_80114E3C_3BDFDC_name_5F, 1);
+    if (D_80114DC2_3BDF62_name_5F < 6) {
+        if (D_80114DC2_3BDF62_name_5F >= 4) {
+            btn = D_801139CC_3BCB6C_name_5F[gPlayers[D_80114DC4_3BDF64_name_5F].port];
+            goto setButtons;
+        }
+    }
+    i = 0;
+    btn = 0;
+    for (; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1)) {
+            btn |= D_801139CC_3BCB6C_name_5F[gPlayers[i].port];
+        }
+    }
+setButtons:
+    func_8008D59C_8E19C(D_80114E3C_3BDFDC_name_5F, btn);
+    D_800FC8A0_FD4A0 = 1;
+    timer = 60;
+    while (func_80105008_3AE1A8_name_5F(0x1000, timer--) == 0) {
+        if (func_80104F18_3AE0B8_name_5F(1) != 0) {
+            D_80114E38_3BDFD8_name_5F = -1;
+            page++;
+            if (D_80113710_3BC8B0_name_5F[D_80114DC0_3BDF60_name_5F][2] == -1 || _CheckFlag(0xC) != 0) {
+                if (page >= 3) {
+                    page = 0;
+                }
+            } else if (page >= 4) {
+                page = 0;
+            }
+            func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, page);
+        }
+        if (func_80104F18_3AE0B8_name_5F(2) != 0) {
+            D_80114E38_3BDFD8_name_5F = -1;
+            page--;
+            if (D_80113710_3BC8B0_name_5F[D_80114DC0_3BDF60_name_5F][2] == -1 || _CheckFlag(0xC) != 0) {
+                if (page < 0) {
+                    page = 2;
+                }
+            } else if (page < 0) {
+                page = 3;
+            }
+            func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, page);
+        }
+        if (D_80114DC2_3BDF62_name_5F == 4 && func_80104F18_3AE0B8_name_5F(4) != 0 && page == 0) {
+            /* the item list */
+            func_80089544_8A144(D_80114E3C_3BDFDC_name_5F, D_80114E3E_3BDFDE_name_5F[1]);
+            D_80114E3E_3BDFDE_name_5F[1] = func_80089404_8A004(D_80114E3C_3BDFDC_name_5F, 0xB0019, 0x37, -0x28, 0);
+            SprAttrSet(func_80089674_8A274(D_80114E3C_3BDFDC_name_5F)->unk_6C, D_80114E3E_3BDFDE_name_5F[2], 0x8000);
+            func_800890CC_89CCC(D_80114E3C_3BDFDC_name_5F, D_800CAFD8[0] + 0x1D2, -1, -1);
+            do {
+                HuPrcVSleep();
+            } while (func_8008BA30_8C630(D_80114E3C_3BDFDC_name_5F) != 0);
+            i = 0;
+            D_80114E38_3BDFD8_name_5F = 0;
+            while (1) {
+                if (func_80104F18_3AE0B8_name_5F(4) != 0) {
+                    if (++D_80114E38_3BDFD8_name_5F >= 5) {
+                        D_80114E38_3BDFD8_name_5F = 0;
+                    }
+                    func_800890CC_89CCC(D_80114E3C_3BDFDC_name_5F, D_800CAFD8[D_80114E38_3BDFD8_name_5F] + 0x1D2, -1, -1);
+                    while (func_8008BA30_8C630(D_80114E3C_3BDFDC_name_5F) != 0) {
+                        HuPrcVSleep();
+                    }
+                }
+                if (func_80104F18_3AE0B8_name_5F(8) != 0) {
+                    D_80114E38_3BDFD8_name_5F = -1;
+                    SprAttrReset(func_80089674_8A274(D_80114E3C_3BDFDC_name_5F)->unk_6C, D_80114E3E_3BDFDE_name_5F[2], 0x8000);
+                    func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, page);
+                    break;
+                }
+                if (func_80105008_3AE1A8_name_5F(0x1000, 1) != 0) {
+                    i = 1;
+                    break;
+                }
+                if (func_80105A54_3AEBF4_name_5F() != 0) {
+                    D_80114E38_3BDFD8_name_5F = -1;
+                    break;
+                }
+                HuPrcVSleep();
+            }
+            if (i != 0) {
+                break;
+            }
+        }
+        if (func_80105A54_3AEBF4_name_5F() != 0) {
+            /* START: skip to the minigame, after its last pages */
+            PlaySound(2);
+            func_8008DF9C_8EB9C(D_80114E3C_3BDFDC_name_5F, 0x1010);
+            if (D_80114DC2_3BDF62_name_5F == 3) {
+                omAddPrcObj(func_801048F0_3ADA90_name_5F, 0x1001, 0x800, 0);
+            }
+            SprAttrSet(func_80089674_8A274(D_80114E3C_3BDFDC_name_5F)->unk_6C, D_80114E3E_3BDFDE_name_5F[2], 0x8000);
+            omAddPrcObj(func_801054EC_3AE68C_name_5F, 0x1001, 0x800, 0);
+            func_80089544_8A144(D_80114E3C_3BDFDC_name_5F, D_80114E3E_3BDFDE_name_5F[1]);
+            D_80114E3E_3BDFDE_name_5F[1] = func_80089404_8A004(D_80114E3C_3BDFDC_name_5F, 0xB001A, 0x37, -0x28, 0);
+            func_80089544_8A144(D_80114E3C_3BDFDC_name_5F, D_80114E3E_3BDFDE_name_5F[3]);
+            D_80114E3E_3BDFDE_name_5F[3] = func_80089404_8A004(D_80114E3C_3BDFDC_name_5F, 0xB0023, 0xBE, -0x28, 0);
+            switch (D_80114DC2_3BDF62_name_5F) {
+            case 4:
+                mes = 0x537;
+                break;
+            case 3:
+                mes = 0x53A;
+                break;
+            default:
+                mes = 0x53D;
+                if (func_801050DC_3AE27C_name_5F(D_80114DC0_3BDF60_name_5F) != 0) {
+                    mes = 0x540;
+                }
+                break;
+            }
+            for (i = 0; ; ) {
+                func_800890CC_89CCC(D_80114E3C_3BDFDC_name_5F, mes + i, -1, -1);
+                while (func_8008BA30_8C630(D_80114E3C_3BDFDC_name_5F) != 0) {
+                    HuPrcVSleep();
+                }
+                if (D_800F920C_F9E0C[D_80114E3C_3BDFDC_name_5F].unkA8 & 0x10) {
+                    i = 200;
+                    break;
+                }
+                if (D_800F920C_F9E0C[D_80114E3C_3BDFDC_name_5F].unkA8 & 0x1000) {
+                    i = 100;
+                    break;
+                }
+                if (++i >= 3) {
+                    break;
+                }
+            }
+            if (i != 200) {
+                if (i == 100) {
+                    break;
+                }
+                if (D_80113710_3BC8B0_name_5F[D_80114DC0_3BDF60_name_5F][2] == -1 || _CheckFlag(0xC) != 0) {
+                    page = 2;
+                } else {
+                    page = 3;
+                }
+                func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, page);
+                func_800890CC_89CCC(D_80114E3C_3BDFDC_name_5F, (s32)D_801147D8_3BD978_name_5F, -1, -1);
+                while (func_8008BA30_8C630(D_80114E3C_3BDFDC_name_5F) != 0) {
+                    HuPrcVSleep();
+                }
+                if (!(D_800F920C_F9E0C[D_80114E3C_3BDFDC_name_5F].unkA8 & 0x10)) {
+                    break;
+                }
+            }
+            /* B: back to the first page */
+            page = 0;
+            func_80105AB8_3AEC58_name_5F();
+            func_80103C84_3ACE24_name_5F(D_80114E3C_3BDFDC_name_5F, 0);
+        }
+        HuPrcVSleep();
+    }
+
+    if (D_80114DC2_3BDF62_name_5F != 4) {
+        func_80113020_3BC1C0_name_5F();
+    }
+    D_800FC8A0_FD4A0 = 11;
+    if (D_80114DC2_3BDF62_name_5F < 6) {
+        if (D_80114DC2_3BDF62_name_5F >= 4) {
+            omVibrate(D_80114DC4_3BDF64_name_5F, 10, 0, 10);
+            goto vibrated;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        omVibrate(i, 10, 0, 10);
+    }
+vibrated:
+    HuPrcSleep(4);
+    if (D_80114DC2_3BDF62_name_5F == 4) {
+        func_80104650_3AD7F0_name_5F();
+    }
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        omDelPrcObj(D_80114F40_3BE0E0_name_5F[0]);
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[3], 0, 3, 2);
+        break;
+    case 3:
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[2], 0, 3, 2);
+        break;
+    default:
+        func_80029BF0_2A7F0(D_80114E1E_3BDFBE_name_5F, D_80114E20_3BDFC0_name_5F[3], 0, 3, 2);
+        break;
+    }
+    omAddObj(0x7D00, 0, 0, -1, func_80103994_3ACB34_name_5F)->work[1] = 0;
+    if (func_801050DC_3AE27C_name_5F(D_80114DC0_3BDF60_name_5F) != 0 || D_80114DC2_3BDF62_name_5F == 3) {
+        omAddObj(0x7D00, 0, 0, -1, func_80103B78_3ACD18_name_5F);
+    }
+    PlaySound(0x329);
+    obj = omAddObj(0x64, 0, 0, -1, func_80103778_3AC918_name_5F);
+    obj->work[0] = 0;
+    obj->work[1] = 0;
+    obj->work[2] = D_80114DC8_3BDF68_name_5F[2];
+    func_800298A4_2A4A4(D_80114E18_3BDFB8_name_5F, 4, 4);
+    HuPrcSleep(5);
+    PlaySound(0x329);
+    obj = omAddObj(0x64, 0, 0, -1, func_80103778_3AC918_name_5F);
+    obj->work[0] = 0;
+    obj->work[1] = 0;
+    obj->work[2] = D_80114DC8_3BDF68_name_5F[1];
+    if (D_80114DC2_3BDF62_name_5F == 3) {
+        omAddPrcObj(func_801048F0_3ADA90_name_5F, 0x1001, 0x800, 0);
+    }
+    omAddPrcObj(func_801053F0_3AE590_name_5F, 0x1001, 0x800, 0);
+    if (_CheckFlag(0x15) != 0) {
+        omAddPrcObj(func_801056A8_3AE848_name_5F, 0x1001, 0x800, 0);
+    }
+    func_8008E4D0_8F0D0(D_80114E3C_3BDFDC_name_5F, 1);
+    omAddPrcObj(func_8010578C_3AE92C_name_5F, 0x1001, 0x800, 0);
+    PlaySound(0x345);
+    func_8008F624_90224(0xFF, 0xFF, 0xFF);
+    InitFadeOut(0, 30);
+    func_800794A8_7A0A8(25);
+    while (func_8008F618_90218() != 0) {
+        HuPrcVSleep();
+    }
+    func_80069698_6A298();
+    func_801085A0_3B1740_name_5F(1);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
 __asm__(".section .rodata");
-const u32 D_801147D8_3BD978_name_5F[1] = { 0xFF000000 };
+const char D_801147D8_3BD978_name_5F[4] = "\xFF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801072C8_3B0468_name_5F);
+/* Builds the demo picture: decodes the minigame's HVQ image (128x96, alpha from `alpha`) into an
+   RGBA32 texture and gives part "gameimage-grid1" of model `model` a display list drawing each of
+   its faces with the matching tile of that texture. */
+void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha) {
+    HmfData* hmf;
+    HmfPart* part;
+    u16* buf;
+    u16 pix;
+    u8* work;
+    u8* tex;
+    Vtx* vtx;
+    Vtx* faceVtx;
+    Gfx* gfx;
+    s16 partIdx;
+    s16 i;
+    s16 j;
+    s16 w;
+    s16 h;
+    f32 x;
+    f32 y;
+    f32 minX;
+    f32 maxX;
+    f32 minY;
+    f32 maxY;
+    f32 baseX;
+    f32 baseY;
+    f32 rangeX;
+    f32 rangeY;
+    s16 v;
+    s16 uls;
+    s16 lrs;
+    u16 ult;
+    u16 lrt;
 
+    w = 128;
+    h = 96;
+    hmf = D_800FC834_FD434[model].hmf;
+    buf = HuMemMemoryAllocPerm(0x6000);
+    func_80096C10_97810(0xFF);
+    func_80096708_97308(header);
+    work = HuMemMemoryAllocPerm(0xC00);
+    func_80096188_96D88(code, buf, 128, work);
+    HuMemMemoryFreePerm(work);
+    tex = func_80027154_27D54(0xC000, hmf->unk0E);
+    alpha += (alpha[0xA] << 16) + alpha[0xB];
+    for (y = 0.0f, i = 0; y < h; y += 1.0f) {
+        for (x = 0.0f; x < w; x += 1.0f) {
+            pix = buf[i];
+            tex[i * 4 + 0] = (pix >> 8) & 0xF8;
+            tex[i * 4 + 1] = (pix >> 3) & 0xF8;
+            tex[i * 4 + 2] = (pix << 2) & ~7;
+            tex[i * 4 + 3] = alpha[i];
+            i++;
+        }
+    }
+    HuMemMemoryFreePerm(buf);
+
+    partIdx = func_80038398_38F98(hmf, "gameimage-grid1");
+    part = &hmf->unk64[partIdx];
+    vtx = func_80027154_27D54(0x500, hmf->unk0E);
+    hmf->unk3C->unk00[partIdx] = gfx = func_80027154_27D54(0x1000, hmf->unk0E);
+    part->unk50 |= 0x10000;
+    gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetRenderMode(gfx++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);
+    gSPClearGeometryMode(gfx++, G_LIGHTING);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+
+    /* the part's extent */
+    maxX = maxY = -100000.0f;
+    minX = minY = 100000.0f;
+    for (i = 0; i < part->unk04; i++) {
+        for (j = 0; j < part->unk54[i].unk00; j++) {
+            v = part->unk54[i].unk04[j];
+            if (hmf->unk54[v].x < minX) {
+                minX = hmf->unk54[v].x;
+            }
+            if (maxX < hmf->unk54[v].x) {
+                maxX = hmf->unk54[v].x;
+            }
+            if (hmf->unk54[v].y < minY) {
+                minY = hmf->unk54[v].y;
+            }
+            if (maxY < hmf->unk54[v].y) {
+                maxY = hmf->unk54[v].y;
+            }
+        }
+    }
+    rangeX = maxX - minX;
+    rangeY = maxY - minY;
+    baseX = minX;
+    baseY = minY;
+
+    /* each face: its vertices, mapped onto the picture, and its tile */
+    for (i = 0; i < part->unk04; i++) {
+        faceVtx = vtx;
+        maxX = maxY = -100000.0f;
+        minX = minY = 100000.0f;
+        for (j = 0; j < part->unk54[i].unk00; j++) {
+            v = part->unk54[i].unk04[j];
+            vtx->v.ob[0] = hmf->unk54[v].x;
+            x = vtx->v.ob[0];
+            vtx->v.ob[1] = hmf->unk54[v].y;
+            y = vtx->v.ob[1];
+            vtx->v.ob[2] = hmf->unk54[v].z;
+            if (x < minX) {
+                minX = x;
+            }
+            if (maxX < x) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            }
+            if (maxY < y) {
+                maxY = y;
+            }
+            vtx->n.n[0] = vtx->n.n[1] = vtx->n.n[2] = -1;
+            x = w - w * ((-x - baseX) / rangeX);
+            y = h * ((-y - baseY) / rangeY);
+            vtx->v.tc[0] = x * 32.0f;
+            vtx->v.tc[1] = y * 32.0f;
+            vtx->n.a = 0xFF;
+            vtx++;
+        }
+        minX = (minX - baseX) / rangeX * w;
+        maxX = (maxX - baseX) / rangeX * w;
+        minY = h - (minY - baseY) / rangeY * h;
+        if (minY == h) {
+            minY = h - 0.1f;
+        }
+        maxY = h - (maxY - baseY) / rangeY * h;
+        ult = (s32)maxY;
+        lrt = (s32)minY;
+        lrs = maxX;
+        uls = minX;
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        gDPLoadTextureTile(gfx++, tex, G_IM_FMT_RGBA, G_IM_SIZ_32b, w, h, uls, ult, lrs, lrt, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                           G_TX_NOLOD, G_TX_NOLOD);
+        gSPVertex(gfx++, faceVtx, part->unk54[i].unk00, 0);
+        if (part->unk54[i].unk00 == 3) {
+            gSP1Triangle(gfx++, 0, 1, 2, 0);
+        } else {
+            gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+        }
+    }
+    gSPEndDisplayList(gfx++);
+}
+
+/* Sets up the minigame's name (message 0x3D9 + minigame): one GAMEMES per line of the message
+   (control characters split it; at most two lines), placed at (82, 40). */
+/* NON_MATCHING: register allocation only (masked 0: p and line swap s1/s2) */
+#ifdef NON_MATCHING
+void func_80107C84_3B0E24_name_5F(s32 minigame) {
+    u8* mes;
+    u8* start;
+    u8* p;
+    u8* q;
+    GAMEMES* line;
+    s16 n;
+    s16 id;
+    s16 breaks;
+
+    mes = func_80068CD4_698D4((s16)minigame + 0x3D9);
+    start = mes + 1;
+    breaks = 0;
+    for (p = start; *p != 0; p++) {
+        if (*p < 0x20) {
+            breaks++;
+        }
+    }
+    D_80114E58_3BDFF8_name_5F[0].unk08 = D_80114E58_3BDFF8_name_5F[1].unk08 = -1;
+    n = 0;
+    for (p = start; *p != 0; p++) {
+        if (*p < 0x20) {
+            q = p - 1;
+            if (*q == 0x10 || *q == 0x20 || *q == 0x1A) {
+                *q = 0;
+            }
+            *p = 0;
+            line = &D_80114E58_3BDFF8_name_5F[n];
+            id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+            D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
+            D_80114E58_3BDFF8_name_5F[n].unk64 = 40.0f;
+            SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, 40);
+            n++;
+            start = p + 1;
+        }
+    }
+    line = &D_80114E58_3BDFF8_name_5F[n];
+    id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+    D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
+    D_80114E58_3BDFF8_name_5F[n].unk64 = (breaks != 0) ? 60.0f : 50.0f;
+    SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, D_80114E58_3BDFF8_name_5F[n].unk64);
+    func_80068D24_69924(mes);
+    func_80107F74_3B1114_name_5F();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107C84_3B0E24_name_5F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107F74_3B1114_name_5F);
+/* Hides the name's lines (MP1 func_800F8DD0). */
+void func_80107F74_3B1114_name_5F(void) {
+    SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, 0, -200);
+    if (D_80114E58_3BDFF8_name_5F[1].unk08 != -1) {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[1].strGId[D_80114E58_3BDFF8_name_5F[1].unk08], 0, 0, -200);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107FE0_3B1180_name_5F);
+/* Keeps the name's lines on the title model (D_80114DC8[1]). */
+void func_80107FE0_3B1180_name_5F(void) {
+    HmfModel* model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[1]];
+    Vec pos;
+    Vec2f screen;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108170_3B1310_name_5F);
+    pos.x = model->pos.x;
+    pos.y = model->pos.y;
+    pos.z = model->pos.z;
+    Hu3DCam3DToScreen(0, &pos, &screen);
+    screen.unk_00 += 5.0f;
+    screen.unk_04 -= 8.0f;
+    if (D_80114E58_3BDFF8_name_5F[1].unk08 != -1) {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, screen.unk_00, screen.unk_04);
+        SprPosSet(D_80114E58_3BDFF8_name_5F[1].strGId[D_80114E58_3BDFF8_name_5F[1].unk08], 0, screen.unk_00, screen.unk_04 + 16.0f);
+    } else {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, screen.unk_00, screen.unk_04 + 10.0f);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108458_3B15F8_name_5F);
+/* Sets the players' minigame groups from the minigame's type (1P minigames: func_8010881C picks
+   the item for type 4); in 2-vs-2 minigames 0x19, 0x1E, 0x1F, 0x41, 0x42 each team is split into
+   two numbered groups in random order. */
+void func_80108170_3B1310_name_5F(void) {
+    s32 i;
+    s32 n;
+    s32 m;
+    s32 g;
+
+    switch (D_80114DC2_3BDF62_name_5F) {
+    case 4:
+        func_8010881C_3B19BC_name_5F(GwSystem.current_player_index);
+    case 5:
+    case 6:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = 1;
+        }
+        gPlayers[GwSystem.current_player_index].group = 0;
+        break;
+    case 0:
+    case 3:
+        for (i = 0; i < 4; i++) {
+            gPlayers[i].group = i;
+        }
+        break;
+    case 2:
+        n = 0;
+        for (i = 0; i < 4; i++) {
+            n += gPlayers[i].group == 0;
+        }
+        if (n >= 2) {
+            switch (D_80114DC0_3BDF60_name_5F) {
+            case 0x19:
+            case 0x1E:
+            case 0x1F:
+            case 0x41:
+            case 0x42:
+                i = 0;
+                n = 0;
+                m = 1;
+                for (; i < 4; i++) {
+                    if (gPlayers[i].group != 0) {
+                        gPlayers[i].group = m + gPlayers[i].group;
+                        m++;
+                    } else {
+                        gPlayers[i].group = n + gPlayers[i].group;
+                        n++;
+                    }
+                }
+                for (g = 0; g < 3; g += 2) {
+                    if (rand8() & 1) {
+                        for (i = 0; i < 4; i++) {
+                            if (gPlayers[i].group == g) {
+                                n = i;
+                            }
+                            if (gPlayers[i].group == g + 1) {
+                                m = i;
+                            }
+                        }
+                        gPlayers[n].group = g + 1;
+                        gPlayers[m].group = g;
+                    }
+                }
+                break;
+            }
+        }
+        break;
+    }
+}
+
+/* Picks the minigame's variant (D_800FA656) at random for the minigames that have one, unless the
+   player skipped (flag 0x15); main's D_800CAFEE overrides it when set. */
+void func_80108458_3B15F8_name_5F(void) {
+    s32 r;
+    s32 mg;
+
+    if (_CheckFlag(0x15) == 0) {
+        r = (rand8() & 0xFF) * 0.00390625f * 100.0f;
+        mg = D_80114DC0_3BDF60_name_5F;
+        switch (mg) {
+        case 0x34:
+            if (r < 50) {
+                r = 0;
+            } else if (r < 80) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x2D:
+            if (r < 60) {
+                r = 0;
+            } else if (r < 80) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x26:
+            if (r < 40) {
+                r = 0;
+            } else if (r < 70) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0x11:
+        case 0x19:
+            r = !(r < 50);
+            break;
+        case 0xC:
+        case 0xE:
+        case 0x29:
+        case 0x43:
+        case 0x45:
+            if (r < 33) {
+                r = 0;
+            } else if (r < 66) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+            break;
+        case 0xB:
+            r = rand8() & 3;
+            r = gPlayers[r].character;
+            break;
+        default:
+            r = 0;
+            break;
+        }
+        if (D_800CAFEE != -1) {
+            r = D_800CAFEE;
+        }
+        D_800FA656 = r;
+    }
+}
 
 void func_801085A0_3B1740_name_5F(s32 arg0) {
     s16 minigameOverlayID;
@@ -1093,35 +1980,344 @@ void func_801085A0_3B1740_name_5F(s32 arg0) {
     omOvlHisChg(1, 0x70, 0, 0x14);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010879C_3B193C_name_5F);
+/* Item chances for the 1P item minigame: set `set`, by the player's character. */
+void func_8010879C_3B193C_name_5F(s32 player, s32 set) {
+    s32 i;
+    s32 c = gPlayers[player].character;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010881C_3B19BC_name_5F);
+    for (i = 0; i < 5; i++) {
+        D_800CAFE4[i] = D_80113B78_3BCD18_name_5F[set][i][c];
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108AEC_3B1C8C_name_5F);
+/* Chooses the item set of the 1P item minigame (type 4) for `player`: by game length, turn and the
+   player's rank (flag 0x17), or at random; kept in D_80102758[8] for a retried minigame (flag
+   0x15). Sets main's D_800CAFD8 item list and D_800CAFE4 chances. */
+void func_8010881C_3B19BC_name_5F(s32 player) {
+    s32 i;
+    s32 len;
+    s32 set;
 
+    len = 0;
+    if (_CheckFlag(0x17) == 0) {
+        if (_CheckFlag(0x15) != 0) {
+            set = D_80102758_103358[8];
+        } else {
+            set = rand8() & 3;
+            D_80102758_103358[8] = set;
+        }
+        goto copy;
+    }
+    if (_CheckFlag(0x15) != 0) {
+        set = D_80102758_103358[8];
+    } else {
+        switch (GwSystem.current_game_length) {
+        case 0:
+            len = 0;
+            break;
+        case 1:
+            len = 1;
+            break;
+        case 2:
+            len = 2;
+            break;
+        }
+        for (i = 0; i < 3; i++) {
+            if (D_80113B24_3BCCC4_name_5F[len][i] >= GwSystem.current_turn) {
+                break;
+            }
+        }
+        if (i >= 3) {
+            osSyncPrintf("instmain.c : minigameitemset error");
+            while (1) {
+            }
+        }
+        set = D_80113B38_3BCCD8_name_5F[func_80059FD0_5ABD0(player)][i];
+        if (set == 4) {
+            set = (u8)(rand8() % 10) >= 6;
+        }
+        if (set >= 4) {
+            osSyncPrintf("instmain.c : minigameitemset error2");
+            while (1) {
+            }
+        }
+        D_80102758_103358[8] = set;
+    }
+    if (func_8004E94C_4F54C() == 1) {
+        for (i = 0; i < 5; i++) {
+            if (D_80113B50_3BCCF0_name_5F[set][i] == 3) {
+                break;
+            }
+        }
+        if (i < 5) {
+            if (set == 1) {
+                D_80113B50_3BCCF0_name_5F[set][i] = 0;
+            } else {
+                D_80113B50_3BCCF0_name_5F[set][i] = 8;
+            }
+        }
+    }
+copy:
+    i = 0;
+    do {
+        D_800CAFD8[i] = D_80113B50_3BCCF0_name_5F[set][i];
+        i++;
+    } while (i < 5);
+    func_8010879C_3B193C_name_5F(player, set);
+}
+
+/* Overlay setup (D_80113700[1]): the per-player minigame data and the host work, then
+   func_80102830. */
+void func_80108AEC_3B1C8C_name_5F(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        D_800FA640_FB240[i] = func_80027154_27D54(0xAC, 0x7918);
+        func_800B0EF0_B1AF0(D_800FA640_FB240[i], 0, 0xAC);
+    }
+    D_800FC890_FD490 = func_80027154_27D54(0x38, 0x7918);
+    func_800B0EF0_B1AF0(D_800FC890_FD490, 0, 0x38);
+    func_80102830_3AB9D0_name_5F();
+}
+
+/* `player`'s newly pressed buttons in `btn`, none for a CPU or once the instructions were
+   skipped (D_800F9910 bit 0). Retail reads flag 0x15 and ignores it. */
+/* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
+#ifdef NON_MATCHING
+s32 func_80108B80_3B1D20_name_5F(s32 player, s32 btn) {
+    s32 ret = 0;
+
+    _CheckFlag(0x15);
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        ret = ContBtnTrg[gPlayers[player].port] & btn;
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108B80_3B1D20_name_5F);
+#endif
 
+/* `player`'s held buttons in `btn` (as func_80108B80). */
+/* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
+#ifdef NON_MATCHING
+s32 func_80108C24_3B1DC4_name_5F(s32 player, s32 btn) {
+    s32 ret = 0;
+
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        ret = ContBtn[gPlayers[player].port] & btn;
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108C24_3B1DC4_name_5F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108C8C_3B1E2C_name_5F);
+/* `player`'s stick on `axis` (0: x, else y), 0 for a CPU, after a skip, or while its minigame
+   data disables that axis (flags 0x40 x, 0x80 y). */
+s32 func_80108C8C_3B1E2C_name_5F(s32 player, s32 axis) {
+    s32 ret = 0;
+    u8* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108D50_3B1EF0_name_5F);
+    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
+        data = D_800FA640_FB240[player];
+        if (axis == 0) {
+            if (!(*(u16*)(data + 0x30) & 0x40)) {
+                ret = ContStkX[gPlayers[player].port];
+            }
+        } else if (!(*(u16*)(data + 0x30) & 0x80)) {
+            ret = ContStkY[gPlayers[player].port];
+        }
+    }
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108DCC_3B1F6C_name_5F);
+/* Counts work[0] down, then attaches the model to its parent's hook node (Ovl5FAttach) and ends. */
+void func_80108D50_3B1EF0_name_5F(omObjData* obj) {
+    Ovl5FAttach* hook;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108E50_3B1FF0_name_5F);
+    if (--obj->work[0] == 0xFF) {
+        hook = obj->unk_50;
+        func_800298A4_2A4A4(hook->model, 4, 0);
+        func_800298A4_2A4A4(hook->model, 0x4000, 0x4000);
+        func_8002C628_2D228(hook->model, hook->parent, hook->hook);
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801092B0_3B2450_name_5F);
+/* One step of a swing: `*angle` (capped at main's D_800BF7D4) pulls `*pos` back by
+   angle * angle * 35 * scale, and `*angle` advances by main's D_800BF7A8. Returns the capped
+   angle. */
+f32 func_80108DCC_3B1F6C_name_5F(f32* angle, f32* pos, f32 scale) {
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010938C_3B252C_name_5F);
+    a = *angle;
+    if (D_800BF7D4_C03D4 < a) {
+        a = D_800BF7D4_C03D4;
+    }
+    *pos = *pos + a * a * (a >= 0.0f ? -35.0f : 35.0f) * scale;
+    *angle = *angle + D_800BF7A8_C03A8;
+    return a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801093D4_3B2574_name_5F);
+/* A demo player's jump (Ovl5FPlayer.actA): work[0] the player, work[1] the state. A held during
+   the rise keeps it high; B (0x2000, flag 8) and Z (0x4000, flag 0x20) start the air moves. */
+void func_80108E50_3B1FF0_name_5F(omObjData* obj) {
+    s32 player = obj->work[0];
+    Ovl5FPlayer* p = D_800FA640_FB240[player];
+    f32 a;
+    s32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80109424_3B25C4_name_5F);
+    switch (obj->work[1]) {
+    case 0:
+        func_8002C9C0_2D5C0(p->model, p->mot[4]);
+        p->vy = -D_800BF7A4_C03A4;
+        obj->work[1] = 1;
+        break;
+    case 1:
+        a = func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[8]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+            break;
+        }
+        t = func_80029CE4_2A8E4(p->model);
+        if (t > 5.0f && t < 7.0f) {
+            if (!(ContBtn[gPlayers[player].port] & 0x8000) & (a < 0.0f)) {
+                p->vy = -D_800BF7A4_C03A4 * 0.2f;
+            }
+        } else {
+            if ((p->flags & 8) && func_80108B80_3B1D20_name_5F(player, 0x2000) != 0) {
+                p->vy = -D_800BF7A4_C03A4 * 0.1f;
+                func_8002C9C0_2D5C0(p->model, p->mot[6]);
+                obj->work[1] = 4;
+            }
+            if ((p->flags & 0x20) && func_80108B80_3B1D20_name_5F(player, 0x4000) != 0) {
+                p->vy = -D_800BF7A4_C03A4 * 0.1f;
+                func_8002C9C0_2D5C0(p->model, p->mot[5]);
+                obj->work[1] = 7;
+            }
+        }
+        break;
+    case 2:
+        if ((f32)p->count <= func_80029CE4_2A8E4(p->model)) {
+            func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 2);
+            obj->work[1] = 10;
+        }
+        break;
+    case 4:
+        a = func_80029CE4_2A8E4(p->model);
+        if (func_80029D0C_2A90C(p->model) <= a) {
+            obj->work[1] = 5;
+        }
+        break;
+    case 5:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            p->vy = -D_800BF7A4_C03A4 * 0.6f;
+            obj->work[1] = 6;
+        }
+        break;
+    case 6:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[7]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+        }
+        break;
+    case 7:
+        a = func_80029CE4_2A8E4(p->model);
+        if (func_80029D0C_2A90C(p->model) <= a) {
+            func_80029BF0_2A7F0(p->model, p->mot[4], 0, 20, 0);
+            obj->work[1] = 8;
+        }
+        break;
+    case 8:
+        func_80108DCC_3B1F6C_name_5F(&p->vy, &p->pos.y, p->scale);
+        if (p->pos.y <= p->unk2C) {
+            p->pos.y = p->unk2C;
+            func_8002C9C0_2D5C0(p->model, p->mot[8]);
+            p->count = func_80029D0C_2A90C(p->model);
+            obj->work[1] = 2;
+        }
+        break;
+    case 10:
+        obj->work[1] = 100;
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010946C_3B260C_name_5F);
+/* A demo player's B action (Ovl5FPlayer.actB): one motion, then back to idle. */
+void func_801092B0_3B2450_name_5F(omObjData* obj) {
+    Ovl5FPlayer* p = D_800FA640_FB240[obj->work[0]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801094B4_3B2654_name_5F);
+    switch (obj->work[1]) {
+    case 0:
+        func_8002C9C0_2D5C0(p->model, p->mot[3]);
+        p->count = func_80029D0C_2A90C(p->model);
+        obj->work[1] = 1;
+        break;
+    case 1:
+        if ((f32)p->count <= func_80029CE4_2A8E4(p->model)) {
+            func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 2);
+            obj->work[1] = 100;
+        }
+        break;
+    }
+}
+
+/* Demo player `i`'s position to its model. */
+void func_8010938C_3B252C_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    model->pos.x = p->pos.x;
+    model->pos.y = p->pos.y;
+    model->pos.z = p->pos.z;
+}
+
+/* Demo player `i`'s position from its model (also its floor). */
+void func_801093D4_3B2574_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    p->pos.x = model->pos.x;
+    p->pos.y = model->pos.y;
+    p->pos.z = model->pos.z;
+    p->unk2C = p->pos.y;
+}
+
+/* Demo player `i`'s rotation to its model. */
+void func_80109424_3B25C4_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    model->rot.x = p->rot.x;
+    model->rot.y = p->rot.y;
+    model->rot.z = p->rot.z;
+}
+
+/* Demo player `i`'s rotation from its model. */
+void func_8010946C_3B260C_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    p->rot.x = model->rot.x;
+    p->rot.y = model->rot.y;
+    p->rot.z = model->rot.z;
+}
+
+/* Demo player `i`'s scale to its model. */
+void func_801094B4_3B2654_name_5F(s32 i) {
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+
+    model->scale.x = model->scale.y = model->scale.z = p->scale;
+}
 
 /* Set up demo player i: its character model, its motions (by the demo's flags) and its
    control objects. group != 0 picks the demo's second flag set. */
@@ -1188,7 +2384,7 @@ void func_801094F4_3B2694_name_5F(s32 i, s32 group) {
     func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
     /* func_80108E50 is an object function; 5F-B owns its prototype */
     if (p->flags & 4) {
-        p->actA = (void (*)(omObjData*))func_80108E50_3B1FF0_name_5F;
+        p->actA = func_80108E50_3B1FF0_name_5F;
     } else {
         p->actA = NULL;
     }
