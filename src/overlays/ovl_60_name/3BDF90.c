@@ -2684,7 +2684,7 @@ void func_8010A834_3C5F94_name_60(omObjData* obj) {
 /* Rider 0 of a team demo: the stick (clamped to +-10) accelerates its speed, which decays by 0.9
    when the stick is released or overshot; the speed (+-9.5 at most) sets model2's and the form's
    motion speed and the vehicle's yaw and roll. */
-void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick) {
+void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider) {
     f32 t = stick * 10.0f;
     f32 v;
 
@@ -2757,7 +2757,7 @@ void func_8010AD2C_3C648C_name_60(Ovl60TeamDemo* p, f32 stick) {
 }
 
 /* The vehicle of a team demo: its motion speed follows the stick (clamped to +-1), 0 to 20. */
-void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick) {
+void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider) {
     f32 speed;
     f32 d;
 
@@ -2857,7 +2857,57 @@ void func_8010B488_3C6BE8_name_60(void) {
     func_80104DA8_3C0508_name_60(1, 4, -40.0f, 0.0f, -80.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B4E0_3C6C40_name_60);
+/* Team demo player (one per team): the forms and parts follow the vehicle; rider 0's stick x
+   drives model2, its stick y model3, rider 1's stick y the vehicle; everything turns with it. */
+void func_8010B4E0_3C6C40_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60TeamDemo* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 x;
+    f32 y;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_800298A4_2A4A4(p->model3, 4, 0);
+    func_800298A4_2A4A4(p->form[0], 4, 0);
+    func_800298A4_2A4A4(p->form[1], 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->model3, m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[0], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[1], m->pos.x, m->pos.y, m->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        x = -func_80108C8C_3C43EC_name_60(p->player[0], 0) / 60.0f;
+        y = func_80108C8C_3C43EC_name_60(p->player[0], 1) / 120.0f;
+        func_8010AB44_3C62A4_name_60(p, x, p->player[0] - i * 2);
+        func_8010AD2C_3C648C_name_60(p, y);
+        /* retail reads rider 1's stick twice more for nothing */
+        x = -func_80108C8C_3C43EC_name_60(p->player[1], 0) / 60.0f;
+        y = func_80108C8C_3C43EC_name_60(p->player[1], 1) / 120.0f;
+        func_8010AEF4_3C6654_name_60(p, func_80108C8C_3C43EC_name_60(p->player[1], 1) / 60.0f, p->player[1] - i * 2);
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->model].mtx, p->rot.x, p->rot.y, p->rot.z);
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->model2].mtx, p->rot.x, p->rot.y, p->rot.z);
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->model3].mtx, p->rot.x, p->rot.y, p->rot.z);
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->form[0]].mtx, p->rot.x, p->rot.y, p->rot.z);
+        func_800B2060_B2C60((f32 (*)[4])D_800FC834_FD434[p->form[1]].mtx, p->rot.x, p->rot.y, p->rot.z);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B884_3C6FE4_name_60);
 

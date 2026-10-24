@@ -514,9 +514,9 @@ void func_8010A580_3C5CE0_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010A60C_3C5D6C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010A834_3C5F94_name_60(omObjData*); /* Ovl60Demo.unk08 */
 typedef struct Ovl60TeamDemo Ovl60TeamDemo; /* 60-B (defined in its section below) */
-void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: rider 0 */
+void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider); /* 60-B: rider 0 (rider unused) */
 void func_8010AD2C_3C648C_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: rider 1 */
-void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: the vehicle */
+void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider); /* 60-B: the vehicle (rider unused) */
 void func_8010B048_3C67A8_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010B488_3C6BE8_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010B4E0_3C6C40_name_60(omObjData*); /* Ovl60Demo.unk08 */
