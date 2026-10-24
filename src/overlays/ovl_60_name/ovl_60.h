@@ -514,9 +514,11 @@ void func_8010A4F0_3C5C50_name_60(void);
 void func_8010A580_3C5CE0_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010A60C_3C5D6C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010A834_3C5F94_name_60(omObjData*); /* Ovl60Demo.unk08 */
-void func_8010AB44_3C62A4_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_8010AD2C_3C648C_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_8010AEF4_3C6654_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
+typedef struct Ovl60RiderDemo Ovl60RiderDemo; /* 60-B (defined in its section below) */
+typedef struct Ovl60Node Ovl60Node; /* 60-B (defined in its section below) */
+void func_8010AB44_3C62A4_name_60(Ovl60RiderDemo* p, f32 stick, s32 rider); /* 60-B: rider 0 (rider unused) */
+void func_8010AD2C_3C648C_name_60(Ovl60RiderDemo* p, f32 stick); /* 60-B: rider 1 */
+void func_8010AEF4_3C6654_name_60(Ovl60RiderDemo* p, f32 stick, s32 rider); /* 60-B: the vehicle (rider unused) */
 void func_8010B048_3C67A8_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010B488_3C6BE8_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010B4E0_3C6C40_name_60(omObjData*); /* Ovl60Demo.unk08 */
@@ -586,18 +588,17 @@ void func_80113264_3CE9C4_name_60(s16);
    fields (D_80113818 = D_80113810[0].unk08 etc.) are not declared: index D_80113810. */
 
 extern char* D_80113B9C_3CF2FC_name_60[7]; /* per character: the node the head model hangs from (8010F480, 80110DA8, 80112610) */
-extern s32 D_80113BB8_3CF318_name_60[3]; /* 8010B048 */
-extern s32 D_80113BC4_3CF324_name_60[3]; /* 8010B048 */
-extern u16 D_80113BD0_3CF330_name_60[6]; /* lhu (8010B884) */
-extern s32 D_80113BDC_3CF33C_name_60[3]; /* 8010C634 */
-extern s32 D_80113BE8_3CF348_name_60; /* 8010C634 */
-extern s32 D_80113BEC_3CF34C_name_60[7]; /* 8010CE78 */
-extern s32 D_80113C08_3CF368_name_60; /* lw (8010CE78) */
-extern s32 D_80113C0C_3CF36C_name_60[13]; /* lw (8010CE78) */
-extern s32 D_80113C40_3CF3A0_name_60[9]; /* 8010D3D0 */
-extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
-extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
-extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
+extern u16 D_80113BB8_3CF318_name_60[6]; /* 60-B: rider 0's form file, by character (8010B048) */
+extern u16 D_80113BC4_3CF324_name_60[6]; /* 60-B: rider 1's form file, by character */
+extern u16 D_80113BD0_3CF330_name_60[6]; /* 60-B: the rider form file, by character (8010B884) */
+extern u16 D_80113BDC_3CF33C_name_60[6]; /* 60-B: model file, by character (8010C634) */
+extern s16 D_80113BE8_3CF348_name_60[2]; /* 60-B: model file, by group (8010C634; groups 0-1 only) */
+extern s32 D_80113BEC_3CF34C_name_60[7]; /* 60-B: model file by character; [6]: flag 14 set, group != 0 (8010CE78) */
+extern char* D_80113C08_3CF368_name_60[7][2]; /* 60-B: the two nodes 8010CE78 looks up, by D_80113BEC index (asm label C0C is [0][1]) */
+extern u16 D_80113C40_3CF3A0_name_60[18]; /* 60-B: model2's three texture files per character ([chr * 3 + j], 8010D3D0) */
+extern char* D_80113C64_3CF3C4_name_60[3]; /* 60-B: the textures they replace (8010D3D0) */
+extern u16 D_80113C70_3CF3D0_name_60[6]; /* 60-B: motion file, by character (8010D3D0) */
+extern char* D_80113C7C_3CF3DC_name_60[6]; /* 60-B: the ball texture, by character (8010E454) */
 extern char* D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4: the ball's texture: [0] the default, [chr] the character's ("152_01a_DEF"...) */
 extern u16 D_80113CAC_3CF40C_name_60[8]; /* per character: the body form file (| 0x400000; 8010F480) */
 extern s32 D_80113CBC_3CF41C_name_60[6][4]; /* 8010FA50: per character, the four form files (| 0x410000) */
@@ -609,8 +610,6 @@ extern u16 D_80113D94_3CF4F4_name_60[6]; /* per character: rider 0's form (| 0x4
 extern u16 D_80113DA0_3CF500_name_60[6]; /* per character: rider 1's form (| 0x4A0000; 80111BCC) */
 extern u16 D_80113DAC_3CF50C_name_60[10]; /* per character: the body form file (| 0x4C0000; 80112610; [6]-[9] unused) */
 
-extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
-extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
 extern u8 D_80114AC3_3D0223_name_60; /* the low byte of D_80114AC2 (801105D4 stores D_80114AC2 into a work byte: retail reads this label) */
 /* 60-C */
 
@@ -682,6 +681,59 @@ typedef struct Ovl60FlyPlayer {
 } Ovl60FlyPlayer;
 
 /* end 60-C */
+
+extern Ovl60Node* D_80114A88_3D01E8_name_60[4][2]; /* 60-B: per player, two nodes of its model (8010CE78; asm label A8C is [0][1]) */
+/* 60-B */
+void func_8002CD78_2D978(s16, u8, u8, u8, u8); /* 274D0.c */
+void func_8002CDB4_2D9B4(s16, u8, u8, u8, u8); /* 274D0.c */
+/* D_800FA640[team] in the two-player team demo of 8010B048 / 8010B4E0: a vehicle model with two
+   moving parts (model2, model3) and the two riders' forms. */
+struct Ovl60RiderDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 model2; /* rider 0's part */
+    /* 0x4E */ s16 model3; /* rider 1's part */
+    /* 0x50 */ s16 form[2]; /* the riders */
+    /* 0x54 */ char unk54[0x38];
+    /* 0x8C */ s16 player[2]; /* the riders (players of groups team*2, team*2+1) */
+    /* 0x90 */ char unk90[4];
+    /* 0x94 */ f32 vel; /* rider 0's speed (func_8010AB44) */
+    /* 0x98 */ f32 vel2; /* rider 1's speed (func_8010AD2C) */
+};
+#define RIDER_DEMO(i) ((Ovl60RiderDemo*)D_800FA640_FB240[i])
+/* A model node as func_8002A9F4 returns it (only the rotation 8010CE78/8010D070 use). */
+struct Ovl60Node {
+    /* 0x00 */ char unk00[0x34];
+    /* 0x34 */ Vec rot;
+};
+void* func_8002A9F4_2B5F4(s16, char*); /* 274D0.c: a model node by name */
+/* D_800FA640[i] in the counter demo of 8010D994 / 8010DC98: the character, a stand (model2),
+   a board (model3) showing count in two digit textures, and model4 in front. */
+typedef struct Ovl60CounterDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot;
+    /* 0x38 */ char unk38[0x14];
+    /* 0x4C */ s16 model2;
+    /* 0x4E */ s16 model3;
+    /* 0x50 */ s16 model4;
+    /* 0x52 */ char unk52[0x3A];
+    /* 0x8C */ s16 count; /* 0-99 (A up, B down) */
+    /* 0x8E */ s16 tex[2]; /* model3's tens and ones digit textures (10: blank) */
+} Ovl60CounterDemo;
+s16 func_8003DBE8_3E7E8(HmfData*, u16, s16, char*); /* 3D6A0.c: a second texture slot */
+void func_8003F57C_4017C(s16, s16); /* 3D6A0.c: a texture slot's frame */
+extern const char D_801146FC_3CFE5C_name_60[]; /* "152_01a_DEF" (defined in 3BDF90.c after fork C's 8010EDD4) */
+/* end 60-B */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif
