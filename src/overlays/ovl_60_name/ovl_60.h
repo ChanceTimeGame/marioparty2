@@ -514,6 +514,7 @@ void func_8010A580_3C5CE0_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010A60C_3C5D6C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010A834_3C5F94_name_60(omObjData*); /* Ovl60Demo.unk08 */
 typedef struct Ovl60TeamDemo Ovl60TeamDemo; /* 60-B (defined in its section below) */
+typedef struct Ovl60Node Ovl60Node; /* 60-B (defined in its section below) */
 void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider); /* 60-B: rider 0 (rider unused) */
 void func_8010AD2C_3C648C_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: rider 1 */
 void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick, s32 rider); /* 60-B: the vehicle (rider unused) */
@@ -590,9 +591,8 @@ extern u16 D_80113BC4_3CF324_name_60[6]; /* 60-B: rider 1's form file, by charac
 extern u16 D_80113BD0_3CF330_name_60[6]; /* 60-B: the rider form file, by character (8010B884) */
 extern u16 D_80113BDC_3CF33C_name_60[6]; /* 60-B: model file, by character (8010C634) */
 extern s16 D_80113BE8_3CF348_name_60[2]; /* 60-B: model file, by group (8010C634; groups 0-1 only) */
-extern s32 D_80113BEC_3CF34C_name_60[7]; /* 8010CE78 */
-extern s32 D_80113C08_3CF368_name_60; /* lw (8010CE78) */
-extern s32 D_80113C0C_3CF36C_name_60[13]; /* lw (8010CE78) */
+extern s32 D_80113BEC_3CF34C_name_60[7]; /* 60-B: model file by character; [6]: flag 14 set, group != 0 (8010CE78) */
+extern char* D_80113C08_3CF368_name_60[7][2]; /* 60-B: the two nodes 8010CE78 looks up, by D_80113BEC index (asm label C0C is [0][1]) */
 extern s32 D_80113C40_3CF3A0_name_60[9]; /* 8010D3D0 */
 extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
 extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
@@ -610,8 +610,7 @@ extern s32 D_80113D94_3CF4F4_name_60[3]; /* 80111BCC */
 extern s32 D_80113DA0_3CF500_name_60[3]; /* 80111BCC */
 extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
 
-extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
-extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
+extern Ovl60Node* D_80114A88_3D01E8_name_60[4][2]; /* 60-B: per player, two nodes of its model (8010CE78; asm label A8C is [0][1]) */
 extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
 /* 60-B */
 void func_8002CD78_2D978(s16, u8, u8, u8, u8); /* 274D0.c */
@@ -636,6 +635,12 @@ struct Ovl60TeamDemo {
     /* 0x98 */ f32 vel2; /* rider 1's speed (func_8010AD2C) */
 };
 #define TEAM_DEMO(i) ((Ovl60TeamDemo*)D_800FA640_FB240[i])
+/* A model node as func_8002A9F4 returns it (only the rotation 8010CE78/8010D070 use). */
+struct Ovl60Node {
+    /* 0x00 */ char unk00[0x34];
+    /* 0x34 */ Vec rot;
+};
+void* func_8002A9F4_2B5F4(s16, char*); /* 274D0.c: a model node by name */
 /* end 60-B */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 

@@ -3329,9 +3329,119 @@ void func_8010CCB4_3C8414_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010CE78_3C85D8_name_60);
+/* Demo setup: each player's character model (with flag 14, the players outside group 0 get
+   model 6), two of its nodes kept in D_80114A88[i], and model2 (0x32000B). */
+void func_8010CE78_3C85D8_name_60(void) {
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    s32 i;
+    s32 chr;
+    Ovl60Player* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010D070_3C87D0_name_60);
+    for (i = 0; i < 4; i++) {
+        p = D_800FA640_FB240[i];
+        chr = gPlayers[i].character;
+        if (_CheckFlag(14)) {
+            if (gPlayers[i].group != 0) {
+                chr = 6;
+            }
+        }
+        p->model = func_80018A30_19630(D_80113BEC_3CF34C_name_60[chr] | 0x320000, 0x6BD);
+        p->scale = 0.5f;
+        func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+        D_80114A88_3D01E8_name_60[i][0] = func_8002A9F4_2B5F4(p->model, D_80113C08_3CF368_name_60[chr][0]);
+        D_80114A88_3D01E8_name_60[i][1] = func_8002A9F4_2B5F4(p->model, D_80113C08_3CF368_name_60[chr][1]);
+        D_80114A88_3D01E8_name_60[i][1]->rot.x = 0.0f;
+        D_80114A88_3D01E8_name_60[i][1]->rot.y = 0.0f;
+        D_80114A88_3D01E8_name_60[i][1]->rot.z = 0.0f;
+        p->model2 = func_80018A30_19630(0x32000B, 0x69D);
+        obj = omAddObj(100, 0, 0, -1, demo->unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+        obj->work[2] = 0;
+        obj = omAddObj(0x7D00, 0, 0, -1, func_80109FA0_3C5700_name_60);
+        obj->work[0] = i;
+    }
+}
+
+/* Demo player: the stick turns the player; A shows the effect (func_8010CCB4) for 30 frames, B
+   swings node [1] back to -45 and forward again with a raised effect, then 10 frames' rest. */
+void func_8010D070_3C87D0_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    omObjData* o;
+
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+        return;
+    }
+    if (D_800FC8A0_FD4A0 == 11) {
+        o = omAddObj(10, 0, 0, -1, demo->unk0C);
+        o->work[0] = i;
+        o->work[1] = 0;
+        omDelObj(obj);
+        return;
+    }
+    if (func_80108C8C_3C43EC_name_60(i, 0) > 10.0f) {
+        p->rot.y -= 7.0f;
+    }
+    if (func_80108C8C_3C43EC_name_60(i, 0) < -10.0f) {
+        p->rot.y += 7.0f;
+    }
+    switch (obj->work[1]) {
+    case 2:
+        if (--obj->work[2] == 0xFF) {
+            obj->work[1] = 1;
+        }
+        break;
+    case 3:
+        switch (obj->work[2]) {
+        case 0:
+            D_80114A88_3D01E8_name_60[i][1]->rot.x -= 8.0f;
+            if (D_80114A88_3D01E8_name_60[i][1]->rot.x < -45.0f) {
+                obj->work[2] = 1;
+                o = omAddObj(1000, 0, 0, -1, func_8010CCB4_3C8414_name_60);
+                o->work[0] = 0;
+                o->work[1] = 1;
+                o->work[2] = i;
+            }
+            break;
+        case 1:
+            D_80114A88_3D01E8_name_60[i][1]->rot.x += 5.0f;
+            if (D_80114A88_3D01E8_name_60[i][1]->rot.x >= 0.0f) {
+                D_80114A88_3D01E8_name_60[i][1]->rot.x = 0.0f;
+                obj->work[2] = 2;
+                obj->work[3] = 10;
+            }
+            break;
+        case 2:
+            if (--obj->work[3] == 0xFF) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+        break;
+    }
+    if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+        if (obj->work[1] == 1) {
+            obj->work[1] = 2;
+            obj->work[2] = 30;
+            o = omAddObj(1000, 0, 0, -1, func_8010CCB4_3C8414_name_60);
+            o->work[0] = 0;
+            o->work[1] = 0;
+            o->work[2] = i;
+        }
+    }
+    if (func_80108B80_3C42E0_name_60(i, 0x4000)) {
+        if (obj->work[1] == 1) {
+            obj->work[1] = 3;
+            obj->work[2] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010D3D0_3C8B30_name_60);
 
