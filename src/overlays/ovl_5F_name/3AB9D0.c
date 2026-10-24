@@ -1932,7 +1932,91 @@ void func_8011238C_3BB52C_name_5F(void) {
     func_80104DA8_3ADF48_name_5F(1, 4, -40.0f, -50.0f, -80.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801123E4_3BB584_name_5F);
+void func_801123E4_3BB584_name_5F(omObjData* obj) {
+    s32 player = obj->work[0];
+    Ovl5FPumpDemo* p = PUMP_DEMO(player);
+    HmfModel* model = &D_800FC834_FD434[p->model];
+    omObjData* o;
+    f32 angle;
+    s32 x;
+
+    func_800298A4_2A4A4(p->unk4C, 4, 0);
+    func_800298A4_2A4A4(p->unk52[0], 4, 0);
+    func_800298A4_2A4A4(p->unk52[1], 4, 0);
+    func_80029714_2A314(p->unk4C, model->pos.x, model->pos.y, model->pos.z);
+    func_80029714_2A314(p->unk52[0], HuMathSin(model->rot.y) * 50.0f + model->pos.x, model->pos.y + 45.0f,
+                        func_800B7890_B8490(model->rot.y) * 50.0f + model->pos.z);
+    func_8002979C_2A39C(p->unk52[0], 0.0f, 180.0f, 0.0f);
+    func_80029714_2A314(p->unk52[1], HuMathSin(model->rot.y + 180.0f) * 50.0f + model->pos.x, model->pos.y + 45.0f,
+                        func_800B7890_B8490(model->rot.y + 180.0f) * 50.0f + model->pos.z);
+    func_800B2060_B2C60((f32(*)[4])D_800FC834_FD434[p->unk4C].mtx, 0.0f, model->rot.y, 0.0f);
+    func_800B2060_B2C60((f32(*)[4])D_800FC834_FD434[p->unk52[0]].mtx, 0.0f, model->rot.y, 0.0f);
+    func_800B2060_B2C60((f32(*)[4])D_800FC834_FD434[p->unk52[1]].mtx, 0.0f, model->rot.y, 0.0f);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+        return;
+    }
+    if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        o = omAddObj(10, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk0C);
+        o->work[0] = player;
+        o->work[1] = 0;
+        p->pos.x = model->pos.x;
+        p->pos.y = model->pos.y;
+        p->pos.z = model->pos.z;
+        p->rot.x = model->rot.x;
+        p->rot.y = model->rot.y;
+        p->rot.z = model->rot.z;
+        return;
+    }
+    p->unk92 = x = (s16)(func_80108C8C_3B1E2C_name_5F(p->player[0], 0) + func_80108C8C_3B1E2C_name_5F(p->player[1], 0)) / 2;
+    angle = x / 50.0f * -15.0f;
+    func_8002979C_2A39C(p->unk4C, angle, 0.0f, 0.0f);
+    func_8002979C_2A39C(p->unk52[0], angle, 180.0f, 0.0f);
+    func_8002979C_2A39C(p->unk52[1], angle, 0.0f, 0.0f);
+    func_80029714_2A314(p->unk52[0], HuMathSin(model->rot.y) * 50.0f + model->pos.x,
+                        func_800B7890_B8490(angle) * 45.0f + model->pos.y,
+                        model->pos.z - HuMathSin(angle) * 45.0f + func_800B7890_B8490(model->rot.y) * 50.0f);
+    func_80029714_2A314(p->unk52[1], HuMathSin(model->rot.y + 180.0f) * 50.0f + model->pos.x,
+                        func_800B7890_B8490(angle) * 45.0f + model->pos.y,
+                        model->pos.z - HuMathSin(angle) * 45.0f + func_800B7890_B8490(model->rot.y + 180.0f) * 50.0f);
+    if (func_80108B80_3B1D20_name_5F(p->player[0], 0x8000) != 0 || func_80108B80_3B1D20_name_5F(p->player[1], 0x8000) != 0) {
+        p->unk9C += 0.3f;
+        if (p->unk9C > 5.0f) {
+            p->unk9C = 5.0f;
+        }
+    }
+    if (p->unk90 != 0) {
+        p->unk94 -= p->unk9C;
+        p->unk98 += p->unk9C;
+        if (p->unk94 <= 0.0f) {
+            p->unk90 = 0;
+            p->unk94 = 0.0f;
+            p->unk98 = func_80029D0C_2A90C(p->unk52[1]);
+        }
+    } else {
+        p->unk94 += p->unk9C;
+        p->unk98 -= p->unk9C;
+        if (func_80029D0C_2A90C(p->unk52[0]) <= p->unk94) {
+            p->unk90 = 1;
+            p->unk94 = func_80029D0C_2A90C(p->unk52[0]);
+            p->unk98 = 0.0f;
+        }
+    }
+    func_80029C74_2A874(p->unk52[0], p->unk94);
+    func_80029C74_2A874(p->unk52[1], p->unk98);
+    func_80029C74_2A874(p->unk4C, p->unk98);
+    p->unk9C -= 0.06f;
+    if (p->unk9C < 0.0f) {
+        p->unk9C = 0.0f;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80112A1C_3BBBBC_name_5F);
 
