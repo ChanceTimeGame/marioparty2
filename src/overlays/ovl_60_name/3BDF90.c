@@ -3567,9 +3567,102 @@ const char D_80114680_3CFDE0_name_60[] = "heiho_mario_elbow_DEF";
 __asm__(".section .rodata");
 const char D_80114698_3CFDF8_name_60[] = "heiho_mario_body_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010D994_3C90F4_name_60);
+/* Counter demo setup: each character (motion 0xA2 of its directory) at 0.4 with a stand, a
+   board showing a two-digit count (blank, 0) and a fourth model. */
+void func_8010D994_3C90F4_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60CounterDemo* p;
+    void* tex;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010DC98_3C93F8_name_60);
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        p->model = LoadFormFile(dir | D_800CD438_CE038[gPlayers[i].character].model, 0xA9D);
+        p->scale = 0.4f;
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, p->scale, p->scale, p->scale);
+        p->mot = func_8002C8B8_2D4B8(DataRead(dir | 0xA2), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot);
+        func_80029E80_2AA80(p->model, 0, 2);
+        p->model2 = LoadFormFile(0x360002, 0xABD);
+        func_800297E8_2A3E8(p->model2, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model2, 2, 2);
+        p->model3 = LoadFormFile(0x360001, 0xAAD);
+        func_800297E8_2A3E8(p->model3, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model3, 2, 2);
+        HmfModelObjAttrSet(p->model3, 0x180, 0);
+        tex = DataRead(0x360004);
+        p->tex[0] = func_8003D8F0_3E4F0(D_800FC834_FD434[p->model3].hmf, tex, 0, "0_DEF");
+        p->tex[1] = func_8003DBE8_3E7E8(D_800FC834_FD434[p->model3].hmf, p->tex[0], 0, "1_DEF");
+        DataClose(tex);
+        func_8003F57C_4017C(p->tex[0], 10);
+        func_8003F57C_4017C(p->tex[1], 0);
+        func_8003E4F4_3F0F4(p->tex[0], 1, 1);
+        func_8003E4F4_3F0F4(p->tex[1], 1, 1);
+        func_80029A8C_2A68C(p->model3);
+        func_80029AFC_2A6FC(p->model3);
+        p->model4 = LoadFormFile(0x360003, 0xA9D);
+        func_800297E8_2A3E8(p->model4, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model4, 2, 2);
+        p->count = 0;
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
+
+/* Counter demo player: A counts up (to 99), B down (to 0); the board shows the count. */
+void func_8010DC98_3C93F8_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60CounterDemo* p = D_800FA640_FB240[i];
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_800298A4_2A4A4(p->model3, 4, 0);
+    func_800298A4_2A4A4(p->model4, 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->model3, m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->model4, m->pos.x, m->pos.y, m->pos.z + 5.0f);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, demo->unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+            if (++p->count >= 100) {
+                p->count = 99;
+            }
+        }
+        if (func_80108B80_3C42E0_name_60(i, 0x4000)) {
+            if (--p->count < 0) {
+                p->count = 0;
+            }
+        }
+        if (p->count < 10) {
+            func_8003F57C_4017C(p->tex[0], 10);
+        } else {
+            func_8003F57C_4017C(p->tex[0], p->count / 10);
+        }
+        func_8003F57C_4017C(p->tex[1], p->count % 10);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010DF64_3C96C4_name_60);
 

@@ -641,6 +641,26 @@ struct Ovl60Node {
     /* 0x34 */ Vec rot;
 };
 void* func_8002A9F4_2B5F4(s16, char*); /* 274D0.c: a model node by name */
+/* D_800FA640[i] in the counter demo of 8010D994 / 8010DC98: the character, a stand (model2),
+   a board (model3) showing count in two digit textures, and model4 in front. */
+typedef struct Ovl60CounterDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot;
+    /* 0x38 */ char unk38[0x14];
+    /* 0x4C */ s16 model2;
+    /* 0x4E */ s16 model3;
+    /* 0x50 */ s16 model4;
+    /* 0x52 */ char unk52[0x3A];
+    /* 0x8C */ s16 count; /* 0-99 (A up, B down) */
+    /* 0x8E */ s16 tex[2]; /* model3's tens and ones digit textures (10: blank) */
+} Ovl60CounterDemo;
+s16 func_8003DBE8_3E7E8(HmfData*, u16, s16, char*); /* 3D6A0.c: a second texture slot */
+void func_8003F57C_4017C(s16, s16); /* 3D6A0.c: a texture slot's frame */
 /* end 60-B */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
