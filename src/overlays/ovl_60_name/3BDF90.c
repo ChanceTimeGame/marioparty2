@@ -3692,7 +3692,86 @@ void func_8010DF64_3C96C4_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E11C_3C987C_name_60);
+/* Demo player: A plays the motion forward then, pressed again, back; a stick flick left turns
+   the character to yaw 90 and a flick right back to 250. */
+void func_8010E11C_3C987C_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 t;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+                obj->work[1] = 2;
+                func_80029E80_2AA80(p->model, 5, 0);
+            }
+            break;
+        case 2:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+                obj->work[1] = 4;
+                func_80029E80_2AA80(p->model, 0, 4);
+            }
+            break;
+        case 4:
+            if (func_80029CE4_2A8E4(p->model) <= 0.0f) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+        switch (p->count) {
+        case 0:
+            if (func_80108C8C_3C43EC_name_60(i, 0) < -20) {
+                p->count = 1;
+            }
+            break;
+        case 1:
+            m->rot.y -= 10.0f;
+            if (m->rot.y < 90.0f) {
+                m->rot.y = 90.0f;
+                p->count = 2;
+            }
+            break;
+        case 2:
+            if (func_80108C8C_3C43EC_name_60(i, 0) > 20) {
+                p->count = 3;
+            }
+            break;
+        case 3:
+            m->rot.y += 10.0f;
+            if (m->rot.y > 250.0f) {
+                m->rot.y = 250.0f;
+                p->count = 0;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E454_3C9BB4_name_60);
 
