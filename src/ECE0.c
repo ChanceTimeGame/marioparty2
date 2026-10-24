@@ -226,17 +226,6 @@ typedef struct Snd3DParam {
     /* 0x20 */ s32 unk44A;
 } Snd3DParam;
 
-/* SndState as func_80014520_15120 reads it: bank is cfg.sbfRom, heap is hdrBuf. */
-typedef struct SndInitParam {
-    /* 0x00 */ char unk00[0xC];
-    /* 0x0C */ void* bank;
-    /* 0x10 */ char unk10[0x44];
-    /* 0x54 */ s32 numVoices;
-    /* 0x58 */ s32 maxEvents;
-    /* 0x5C */ char unk5C[0x10];
-    /* 0x6C */ void* heap;
-} SndInitParam;
-
 /* w1-C */
 /* Sound-system configuration (MP2 1D0B0's UnkSndConfig): bit N of `flags` says field N is set.
    The MBF/SBF/FXD fields are ROM addresses of the music, sound and effect bank headers. */
@@ -402,7 +391,7 @@ s32 func_8000E3FC_EFFC(SndConfig*);
 void func_8000EB3C_F73C(void* dst, u32 rom, s32 size, s32 chunk);
 void* func_8000EC10_F810(s32 size);
 s32 func_8000F968_10568(SndConfig*, ALHeap*, s32, s32);
-s32 func_80014520_15120(SndInitParam*, ALHeap*, s32, s8);
+s32 func_80014520_15120(SndState*, ALHeap*, s32, s8);
 SndMgr* func_80014AFC_156FC(void);
 void func_80014A60_15660(void);
 void func_80014B08_15708(void);
@@ -677,7 +666,7 @@ s32 func_8000E3FC_EFFC(SndConfig* cfg) {
     if ((ret = func_8000F968_10568(&D_800D5860_D6460.cfg, &D_800D5850_D6450, mbfCount, mbfArg)) != 0) {
         return ret + 300;
     }
-    if ((ret = func_80014520_15120((SndInitParam*)&D_800D5860_D6460, &D_800D5850_D6450, sbfCount, sbfArg)) != 0) {
+    if ((ret = func_80014520_15120(&D_800D5860_D6460, &D_800D5850_D6450, sbfCount, sbfArg)) != 0) {
         return ret + 400;
     }
     func_8000EC8C_F88C(100, 0);
@@ -1241,14 +1230,14 @@ s32 func_8000F968_10568(SndConfig* cfg, ALHeap* heap, s32 numSeqs, s32 arg3) {
         }
     }
     n = maxPlayer * cfg->seqMaxVoices;
-    if ((D_800D58E0_D64E0 = func_8000EC10_F810(n * 0x14)) == NULL) {
+    if ((D_800D58E0_D64E0 = func_8000EC10_F810(n * sizeof(ECE0Osc))) == NULL) {
         return 10;
     }
     n--;
     osc = D_800D58E0_D64E0;
     D_800D58DC_D64DC = osc;
     for (i = 0; i < n; i++) {
-        osc->next = (ECE0Osc*)((u8*)D_800D58E0_D64E0 + (i + 1) * 0x14);
+        osc->next = &D_800D58E0_D64E0[i + 1];
         osc = osc->next;
     }
     osc->next = NULL;
@@ -3252,11 +3241,13 @@ void func_8001434C_14F4C(void) {
 
 // register allocation: the parameter copies come out in another order (masked 0)
 #ifdef NON_MATCHING
-s32 func_80014520_15120(SndInitParam* cfg, ALHeap* heap, s32 numDefs, s8 vol3) {
+/* st->cfg.sbfRom is the sound bank, st->hdrBuf the scratch buffer its table header is read into
+   (retail keeps that pointer, the voice array size and the voice index in one register). */
+s32 func_80014520_15120(SndState* st, ALHeap* heap, s32 numDefs, s8 vol3) {
     ALSndpConfig sc;
-    s32 n; /* the heap pointer, then the voice array size, then a voice index (host: pointer in s32) */
+    SndBankInfo* info = (SndBankInfo*)st->hdrBuf;
+    s32 n;
 
-    n = (s32)cfg->heap;
     if (numDefs == 0) {
         D_800D58E4_D64E4 = NULL;
         return 0;
@@ -3265,29 +3256,29 @@ s32 func_80014520_15120(SndInitParam* cfg, ALHeap* heap, s32 numDefs, s8 vol3) {
         return 1;
     }
     bzero(D_800D58E4_D64E4, sizeof(SndMgr));
-    func_8000EB3C_F73C((void*)n, (u32)cfg->bank + 0x40, 0x34, 0);
-    if (func_800117FC_123FC((u32)cfg->bank, (SndBankInfo*)n) != 0) {
+    func_8000EB3C_F73C(info, st->cfg.sbfRom + 0x40, 0x34, 0);
+    if (func_800117FC_123FC(st->cfg.sbfRom, info) != 0) {
         return 2;
     }
-    if (func_80011938_12538((u32)cfg->bank, (SndBankInfo*)n) != 0) {
+    if (func_80011938_12538(st->cfg.sbfRom, info) != 0) {
         return 3;
     }
-    if (func_80011A28_12628((u32)cfg->bank, (SndBankInfo*)n) != 0) {
+    if (func_80011A28_12628(st->cfg.sbfRom, info) != 0) {
         return 4;
     }
-    n = cfg->numVoices * sizeof(SndVoice);
+    n = st->cfg.sndMaxVoices * sizeof(SndVoice);
     if ((D_800D58E4_D64E4->voices = func_8000EC10_F810(n)) == NULL) {
         return 5;
     }
     bzero(D_800D58E4_D64E4->voices, n);
-    sc.maxSounds = cfg->numVoices;
-    sc.maxEvents = cfg->maxEvents;
+    sc.maxSounds = st->cfg.sndMaxVoices;
+    sc.maxEvents = st->cfg.sndMaxEvents;
     sc.heap = heap;
     if ((D_800D58E4_D64E4->sndp = func_8000EC10_F810(sizeof(ALSndPlayer))) == NULL) {
         return 6;
     }
     func_8007EEE0_7FAE0(D_800D58E4_D64E4->sndp, &sc);
-    D_800D58E4_D64E4->numVoices = cfg->numVoices;
+    D_800D58E4_D64E4->numVoices = st->cfg.sndMaxVoices;
     D_800D58E4_D64E4->numDefs = numDefs;
     D_800D58E4_D64E4->vol3 = vol3;
     D_800D58E4_D64E4->pan = 0x40;
