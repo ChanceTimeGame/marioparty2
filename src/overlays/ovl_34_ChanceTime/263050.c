@@ -1,6 +1,56 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* .data (0x267260-0x2672C0): block spin state and speeds, the chosen players, reel faces */
+/* The reel's face names, in this unit's .rodata below. */
+extern const char D_80110680_267780_ChanceTime[];
+extern const char D_8011068C_26778C_ChanceTime[];
+extern const char D_80110698_267798_ChanceTime[];
+extern const char D_801106A4_2677A4_ChanceTime[];
+s8 D_80110160_267260_ChanceTime[3] = {
+    0, 0, 0,
+};
+s16 D_80110164_267264_ChanceTime[3] = {
+    0, 0, 0,
+};
+s16 D_8011016C_26726C_ChanceTime[3] = {
+    0, 0, 0,
+};
+s8 D_80110172_267272_ChanceTime = 0;
+f32 D_80110174_267274_ChanceTime[2] = {
+    10.0f, 18.0f,
+};
+f32 D_8011017C_26727C_ChanceTime = 30.0f;
+u8 D_80110180_267280_ChanceTime = 0xFF;
+u8 D_80110181_267281_ChanceTime = 0xFF;
+u8 D_80110182_267282_ChanceTime = 0xFF;
+char* D_80110184_267284_ChanceTime[4] = {
+    D_801106A4_2677A4_ChanceTime, D_80110698_267798_ChanceTime,
+    D_8011068C_26778C_ChanceTime, D_80110680_267780_ChanceTime,
+};
+s16 D_80110194_267294_ChanceTime = 0;
+s16 D_80110198_267298_ChanceTime[3] = {
+    0, 0, 0,
+};
+s16 D_801101A0_2672A0_ChanceTime[3] = {
+    0, 0, 0,
+};
+s16 D_801101A8_2672A8_ChanceTime[3] = {
+    0, 0, 0,
+};
+s8 D_801101B0_2672B0_ChanceTime[3] = {
+    0, 0, 0,
+};
+s8 D_801101B4_2672B4_ChanceTime[3] = {
+    0, 0, 0,
+};
+s8 D_801101B8_2672B8_ChanceTime[3] = {
+    0, 0, 0,
+};
+s8 D_801101BC_2672BC_ChanceTime[3] = {
+    0, 0, 0,
+};
+
 void func_8010BF50_263050_ChanceTime(void) {
     D_8011092C_267A2C_ChanceTime = func_80018A64_19664(0x440001, 0x28D);
 }

@@ -58,3 +58,5 @@ D_8011243E_2A770E_name_3E = D_8011244C_2A771C_name_3E - 0xE;
 D_80112528_2A77F8_name_3E = D_80112524_2A77F4_name_3E + 0x4;
 D_80112548_2A7818_name_3E = D_80112544_2A7814_name_3E + 0x4;
 D_80112568_2A7838_name_3E = D_80112564_2A7834_name_3E + 0x4;
+/* o1-A: ovl_34, the title alpha's low byte (retail lbu) */
+D_80110105_267205_ChanceTime = D_80110104_267204_ChanceTime + 0x1;

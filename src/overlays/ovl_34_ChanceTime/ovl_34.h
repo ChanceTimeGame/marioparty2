@@ -495,7 +495,7 @@ typedef struct CTExchange {
     /* 0x08 */ s16 swap;  /* 1: player 1 gives, the names swap */
 } CTExchange;
 extern s16 D_801100C4_2671C4_ChanceTime[2]; /* star deltas (MP1 D_80101328) */
-extern char* D_801100E0_2671E0_ChanceTime[3]; /* [kind] (MP1 D_80101348) */
+extern char* D_801100E0_2671E0_ChanceTime[4]; /* [kind] (MP1 D_80101348) */
 extern char D_80110808_267908_ChanceTime[16]; /* the outcome window's words */
 extern char D_80110818_267918_ChanceTime[16];
 extern char D_80110828_267928_ChanceTime[16];

@@ -2,6 +2,38 @@
 #include "ovl_34.h"
 #include "game/pad.h"
 
+/* .data (0x2672D0-0x267360): block-hit state, then the character names and SJIS words that
+   259900's D_801100C8/D_801100E0 point at and its windows print (they follow this unit's state in
+   retail's layout, so this object owns them) */
+u16 D_801101D0_2672D0_ChanceTime = 0x0000;
+u16 D_801101D2_2672D2_ChanceTime = 0x0000;
+u16 D_801101D4_2672D4_ChanceTime = 0x0000;
+u8 D_801101D6_2672D6_ChanceTime = 0x00;
+s8 D_801101D7_2672D7_ChanceTime = 0;
+s8 D_801101D8_2672D8_ChanceTime = 0;
+s8 D_801101D9_2672D9_ChanceTime = 0;
+s32 D_801101DC_2672DC_ChanceTime = 0;
+char D_801101E0_2672E0_ChanceTime[] = "DK";
+char D_801101E4_2672E4_ChanceTime[] = "WARIO";
+char D_801101EC_2672EC_ChanceTime[] = "YOSHI";
+char D_801101F4_2672F4_ChanceTime[] = "PEACH";
+char D_801101FC_2672FC_ChanceTime[] = "LUIGI";
+char D_80110204_267304_ChanceTime[] = "MARIO";
+char D_8011020C_26730C_ChanceTime[] = "\x82\xC8\x82\xB5";
+char D_80110214_267314_ChanceTime[] = "\x83\x58\x83\x5E\x81\x5B\x82\xC6\x83\x52\x83\x43\x83\x93";
+char D_80110224_267324_ChanceTime[] = "";
+char D_80110228_267328_ChanceTime[] = "\x83\x58\x83\x5E\x81\x5B";
+u8 D_80110230_267330_ChanceTime[] = {
+    0x82, 0x62, 0x82, 0x67, 0x82, 0x60, 0x82, 0x6D,
+    0x82, 0x62, 0x82, 0x64, 0x82, 0x73, 0x82, 0x68,
+    0x82, 0x6C, 0x82, 0x64, 0x81, 0x48, 0x00,
+};
+u8 D_80110248_267348_ChanceTime[] = {
+    0x82, 0x62, 0x82, 0x67, 0x82, 0x60, 0x82, 0x6D,
+    0x82, 0x62, 0x82, 0x64, 0x82, 0x73, 0x82, 0x68,
+    0x82, 0x6C, 0x82, 0x64, 0x00,
+};
+
 /* Walk player D_800FFFD8[0] to place `target` (0, 1: the holder's spot, 2) by its CPU stick;
    on arrival (within 20) stop it and advance *state. */
 

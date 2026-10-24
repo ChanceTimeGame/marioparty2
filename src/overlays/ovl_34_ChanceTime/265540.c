@@ -1,6 +1,9 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* .data (0x2672C0-0x2672D0) */
+s8 D_801101C0_2672C0_ChanceTime = 0;
+
 /* Retail starts a new file here (0x8010E440): the previous one is padded to 16 bytes. */
 
 void func_8010E440_265540_ChanceTime(omObjData* obj) {

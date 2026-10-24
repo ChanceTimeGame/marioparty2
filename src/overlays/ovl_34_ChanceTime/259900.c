@@ -1,6 +1,88 @@
 #include "common.h"
 #include "ovl_34.h"
 
+/* .data (0x267160-0x267260): event state, holder path and places, coin and star state */
+/* Character names and SJIS words in 2658C0's .data (retail lays them after its own state). */
+extern char D_801101E0_2672E0_ChanceTime[];
+extern char D_801101E4_2672E4_ChanceTime[];
+extern char D_801101EC_2672EC_ChanceTime[];
+extern char D_801101F4_2672F4_ChanceTime[];
+extern char D_801101FC_2672FC_ChanceTime[];
+extern char D_80110204_267304_ChanceTime[];
+extern char D_8011020C_26730C_ChanceTime[];
+s8 D_80110060_267160_ChanceTime = 0;
+s8 D_80110061_267161_ChanceTime = 1;
+s8 D_80110062_267162_ChanceTime = 0;
+s8 D_80110063_267163_ChanceTime = 0;
+s8 D_80110064_267164_ChanceTime = 0;
+s8 D_80110065_267165_ChanceTime = 0;
+s8 D_80110066_267166_ChanceTime = 0;
+s8 D_80110067_267167_ChanceTime = 0;
+s8 D_80110068_267168_ChanceTime = 0;
+s8 D_80110069_267169_ChanceTime = 0;
+ModelEmitterWork* D_8011006C_26716C_ChanceTime = NULL;
+CTPath70 D_80110070_267170_ChanceTime = { 1, { 0 }, { { 400.0f, 10.0f, 1470.0f }, { 90.0f, 10.0f, 1470.0f } } };
+Vec D_8011008C_26718C_ChanceTime[2] = {
+    { -325.0f, 10.0f, 1400.0f },
+    { -180.0f, 10.0f, 1400.0f },
+};
+Vec D_801100A4_2671A4_ChanceTime = { -400.0f, 10.0f, 1300.0f };
+Vec D_801100B0_2671B0_ChanceTime = { -90.0f, 10.0f, 1470.0f };
+s8 D_801100BC_2671BC_ChanceTime = 0;
+s16 D_801100C0_2671C0_ChanceTime[2] = {
+    0, 0,
+};
+s16 D_801100C4_2671C4_ChanceTime[2] = {
+    0, 0,
+};
+char* D_801100C8_2671C8_ChanceTime[6] = {
+    D_80110204_267304_ChanceTime, D_801101FC_2672FC_ChanceTime, D_801101F4_2672F4_ChanceTime,
+    D_801101EC_2672EC_ChanceTime, D_801101E4_2672E4_ChanceTime, D_801101E0_2672E0_ChanceTime,
+};
+char* D_801100E0_2671E0_ChanceTime[4] = {
+    D_80110228_267328_ChanceTime, D_80110224_267324_ChanceTime,
+    D_80110214_267314_ChanceTime, D_8011020C_26730C_ChanceTime,
+};
+u32 D_801100F0_2671F0_ChanceTime = 0x00000000;
+s32 D_801100F4_2671F4_ChanceTime = 0;
+s8 D_801100F8_2671F8_ChanceTime = 0;
+s8 D_801100F9_2671F9_ChanceTime = 0;
+s8 D_801100FA_2671FA_ChanceTime = 0;
+s8 D_801100FB_2671FB_ChanceTime = 0;
+s8 D_801100FC_2671FC_ChanceTime = 0;
+f32 D_80110100_267200_ChanceTime = 0.0f;
+s16 D_80110104_267204_ChanceTime = 255;
+GAMEMES* D_80110108_267208_ChanceTime = NULL;
+u32 D_8011010C_26720C_ChanceTime = 0x00000000;
+s32 D_80110110_267210_ChanceTime = 0;
+s32 D_80110114_267214_ChanceTime = 0;
+s32 D_80110118_267218_ChanceTime = 0;
+s16 D_8011011C_26721C_ChanceTime = 0;
+u32 D_80110120_267220_ChanceTime = 0x00000000;
+s32 D_80110124_267224_ChanceTime = 0;
+s8 D_80110128_267228_ChanceTime = 0;
+s8 D_80110129_267229_ChanceTime = 0;
+s8 D_8011012A_26722A_ChanceTime = 0;
+f32 D_8011012C_26722C_ChanceTime = 0.0f;
+s8 D_80110130_267230_ChanceTime = 0;
+s8 D_80110134_267234_ChanceTime[2] = {
+    0, 0,
+};
+f32 D_80110138_267238_ChanceTime = 0.0f;
+s16 D_8011013C_26723C_ChanceTime = 0;
+s16 D_8011013E_26723E_ChanceTime = 0;
+s16 D_80110140_267240_ChanceTime = 0;
+s32 D_80110144_267244_ChanceTime = 0;
+s8 D_80110148_267248_ChanceTime = 0;
+s16 D_8011014A_26724A_ChanceTime = -1;
+s8 D_8011014C_26724C_ChanceTime = 0;
+s8 D_8011014D_26724D_ChanceTime = 0;
+s16 D_8011014E_26724E_ChanceTime = -1;
+u16 D_80110150_267250_ChanceTime[3] = {
+    0x0000, 0x0000, 0x0000,
+};
+s8 D_80110156_267256_ChanceTime = 0;
+
 void func_80102800_259900_ChanceTime(void) {
     Vec pos;
     Vec rot;
