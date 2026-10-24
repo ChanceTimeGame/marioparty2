@@ -3297,7 +3297,37 @@ void func_8010CB10_3C8270_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010CCB4_3C8414_name_60);
+/* An effect object of player work[2]: model2 appears 70 in front of the player (30 or, with
+   work[1] set, 70 up) and is hidden again when its motion ends. */
+void func_8010CCB4_3C8414_name_60(omObjData* obj) {
+    Ovl60Player* p = D_800FA640_FB240[obj->work[2]];
+    f32 t;
+
+    switch (obj->work[0]) {
+    case 0:
+        if (obj->work[1] == 0) {
+            func_80029714_2A314(p->model2, HuMathSin(p->rot.y) * 70.0f + p->pos.x, p->pos.y + 30.0f,
+                                func_800B7890_B8490(p->rot.y) * 70.0f + p->pos.z);
+        } else {
+            func_80029714_2A314(p->model2, HuMathSin(p->rot.y) * 70.0f + p->pos.x, p->pos.y + 70.0f,
+                                func_800B7890_B8490(p->rot.y) * 70.0f + p->pos.z);
+        }
+        func_8002979C_2A39C(p->model2, 0.0f, 0.0f, 0.0f);
+        func_800297E8_2A3E8(p->model2, 0.1f, 0.1f, 0.1f);
+        func_800298A4_2A4A4(p->model2, 4, 0);
+        func_80029FE4_2ABE4(p->model2, 2.5f);
+        func_80029C74_2A874(p->model2, 0.0f);
+        obj->work[0] = 1;
+        break;
+    case 1:
+        t = func_80029CE4_2A8E4(p->model2);
+        if (func_80029D0C_2A90C(p->model2) <= t) {
+            func_800298A4_2A4A4(p->model2, 4, 4);
+            omDelObj(obj);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010CE78_3C85D8_name_60);
 
