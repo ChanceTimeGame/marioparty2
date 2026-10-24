@@ -1,5 +1,68 @@
 #include "ovl_2C.h"
 
+/* .data (0x2290B0-0x2292C0): drift scale, tile states, ball state, timer, the platform display
+   list, CPU state. D_80107BB0 (D_80107B88[1]) and D_80107C54/C58 (D_80107C50[0].y/.z) are asm views:
+   undefined_syms aliases. */
+f32 D_80107B80_2290B0_TipsyTourney = 20.0f;
+s16 D_80107B84_2290B4_TipsyTourney = 0;
+s16 D_80107B88_2290B8_TipsyTourney[4][5][5] = {
+    { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+    { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+    { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+    { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+};
+Vec3f D_80107C50_229180_TipsyTourney[4] = {
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+};
+s8 D_80107C80_2291B0_TipsyTourney = -1;
+s32 D_80107C84_2291B4_TipsyTourney = 0;
+s32 D_80107C88_2291B8_TipsyTourney = 0x744;
+s32 D_80107C8C_2291BC_TipsyTourney = 0;
+s32 D_80107C90_2291C0_TipsyTourney = 0;
+Gfx D_80107C98_2291C8_TipsyTourney[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineLERP(TEXEL0, PRIMITIVE, TEXEL0_ALPHA, PRIMITIVE, 0, TEXEL0, PRIMITIVE, TEXEL0, TEXEL0, PRIMITIVE, TEXEL0_ALPHA, PRIMITIVE, 0, TEXEL0, PRIMITIVE, TEXEL0),
+    gsDPSetRenderMode(G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2),
+    gsDPSetAlphaCompare(G_AC_THRESHOLD),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_POINT),
+    gsSPEndDisplayList(),
+};
+Vec3f D_80107CD8_229208_TipsyTourney[4] = {
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+};
+f32 D_80107D08_229238_TipsyTourney[4] = {
+    0.0f, 0.0f, 0.0f, 0.0f,
+};
+Vec3f D_80107D18_229248_TipsyTourney[4] = {
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+};
+f32 D_80107D48_229278_TipsyTourney[4] = {
+    0.0f, 0.0f, 0.0f, 0.0f,
+};
+u16 D_80107D58_229288_TipsyTourney[4] = {
+    0, 0, 0, 0,
+};
+f32 D_80107D60_229290_TipsyTourney[4] = {
+    1.0f, 1.0f, -1.0f, -1.0f,
+};
+s16 D_80107D70_2292A0_TipsyTourney[4] = {
+    0, 0, 0, 0,
+};
+TipsyDash D_80107D78_2292A8_TipsyTourney[4] = {
+    { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+};
+
 void func_80102800_223D30_TipsyTourney(void) {
     omObjData* obj;
 

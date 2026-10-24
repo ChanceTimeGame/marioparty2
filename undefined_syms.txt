@@ -74,3 +74,7 @@ D_8010BA53_E34E3_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x3;
 /* o1-A: ovl_2A, asm views of the first start position */
 D_80109FE4_218984_BumperBalls = D_80109FE0_218980_BumperBalls + 0x4;
 D_80109FE8_218988_BumperBalls = D_80109FE0_218980_BumperBalls + 0x8;
+/* o1-A: ovl_2C, asm views inside its tables */
+D_80107BB0_2290E0_TipsyTourney = D_80107B88_2290B8_TipsyTourney + 0x28;
+D_80107C54_229184_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x4;
+D_80107C58_229188_TipsyTourney = D_80107C50_229180_TipsyTourney + 0x8;
