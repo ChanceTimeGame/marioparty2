@@ -95,7 +95,7 @@ s32 _WriteEeprom(UnkEep* arg0) {
     return 2;
 }
 
-void func_8001AFD8_1BBD8(s32 arg0, UnkEep* arg1, s16 arg2) {
+s32 func_8001AFD8_1BBD8(s32 arg0, UnkEep* arg1, s16 arg2) {
     unkfunc_8007EE0C sp10;
     UnkEep sp20;
 
@@ -103,7 +103,7 @@ void func_8001AFD8_1BBD8(s32 arg0, UnkEep* arg1, s16 arg2) {
     sp20.unk4 = arg1;
     sp20.unk8 = arg2;
 
-    func_8007EE0C_7FA0C(&sp10, (void*)_WriteEeprom, &sp20, 1);
+    return func_8007EE0C_7FA0C(&sp10, (void*)_WriteEeprom, &sp20, 1);
 }
 
 s32 _ReadEeprom(UnkEep* arg0) {
@@ -114,7 +114,7 @@ s32 _ReadEeprom(UnkEep* arg0) {
     return 0;
 }
 
-void func_8001B078_1BC78(s32 arg0, UnkEep* arg1, s16 arg2) {
+s32 func_8001B078_1BC78(s32 arg0, UnkEep* arg1, s16 arg2) {
     unkfunc_8007EE0C sp10;
     UnkEep sp20;
 
@@ -122,7 +122,7 @@ void func_8001B078_1BC78(s32 arg0, UnkEep* arg1, s16 arg2) {
     sp20.unk4 = arg1;
     sp20.unk8 = arg2;
 
-    func_8007EE0C_7FA0C(&sp10, (void*)_ReadEeprom, &sp20, 1);
+    return func_8007EE0C_7FA0C(&sp10, (void*)_ReadEeprom, &sp20, 1);
 }
 
 s32 func_8001B0B4_1BCB4(void) {

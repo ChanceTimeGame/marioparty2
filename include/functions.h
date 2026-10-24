@@ -48,7 +48,7 @@ void func_80079464_7A064(void);
 void func_800794A8_7A0A8(s32);
 s32 func_8008F618_90218(void);
 u16 GetSaveFileChecksum(u16 checksumAddrOffset, u16 size);
-void func_8001AFD8_1BBD8(s32 arg0, UnkEep* arg1, s16 arg2);
+s32 func_8001AFD8_1BBD8(s32 arg0, UnkEep* arg1, s16 arg2);
 void ScissorSet(u8 arg0, f32 x1, f32 y1, f32 x2, f32 y2);
 void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 void func_80018E30_19A30(s32);
