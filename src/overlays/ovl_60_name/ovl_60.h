@@ -602,7 +602,7 @@ extern u16 D_80113CAC_3CF40C_name_60[8]; /* per character: the body form file (|
 extern s32 D_80113CBC_3CF41C_name_60[6][4]; /* 8010FA50: per character, the four form files (| 0x410000) */
 extern char* D_80113D1C_3CF47C_name_60[6][2]; /* 8010FA50: per character, the hook nodes forms 0 and 1 hang from (asm label D20 is [0][1]) */
 extern char* D_80113D4C_3CF4AC_name_60[6][2]; /* 8010FA50: per character, forms 0 and 1's own nodes (asm label D50 is [0][1]) */
-extern u16 D_80113D7C_3CF4DC_name_60[6]; /* lhu (801100BC) */
+extern u16 D_80113D7C_3CF4DC_name_60[6]; /* per character: the held form's file (| 0x420000; 801100BC) */
 extern u16 D_80113D88_3CF4E8_name_60[6]; /* lhu (801105D4) */
 extern s32 D_80113D94_3CF4F4_name_60[3]; /* 80111BCC */
 extern s32 D_80113DA0_3CF500_name_60[3]; /* 80111BCC */
