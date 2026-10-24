@@ -1367,7 +1367,8 @@ segments:
     subsegments:
       - [0x297AD0, c, ovl_3E_entrypoint]
       - [0x297B00, c, 297AD0]
-      - [0x2A6BF0, data]
+      - [0x2A6BF0, .data, ovl_3E_entrypoint]
+      - [0x2A6C20, .data, 297AD0]
       - [0x2A8860, .rodata, 297AD0]
       - {0x2A89A0, type: bss, vram: 0x801136D0, name: ovl_3E_bss}
   - type: code

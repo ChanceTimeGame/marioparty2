@@ -1,6 +1,1063 @@
 #include "common.h"
 #include "ovl_3E.h"
 
+/* .data (0x2A6C20-0x2A8860), in address order. Decision-tree nodes keep a child list in
+   node_data2.data as (s32)pointer; RunDecisionTree (45400.c) reads it back as an s32 (host: needs a
+   pointer-wide field). Labels inside these objects that the asm or the header address directly are
+   undefined_syms.txt aliases: D_80111AED (= D_80111AEC + 1: the signpost model ids are the low
+   bytes of s16s, read with lbu), D_80111C04/C08, D_80112340, D_80112360, D_80112395/96,
+   D_801123A9/AA, D_801123D5-D8, D_8011243E (= D_8011244C - 0xE: indexed by a message number 7-10),
+   D_80112528, D_80112548, D_80112568. */
+s16 D_80111950_2A6C20_name_3E[8] = {
+    3, 4, 2, 0, 1, 5, 6, 0,
+};
+s16 D_80111960_2A6C30_name_3E[8] = {
+    0, 0, 0, 0, 0, 1, 4, 0,
+};
+s16 D_80111970_2A6C40_name_3E[2] = {
+    6, -1,
+};
+s16 D_80111974_2A6C44_name_3E[8] = {
+    70, 71, 72, 73, 74, 75, 76, 0,
+};
+s16 D_80111984_2A6C54_name_3E[8] = {
+    55, 72, 135, 142, 126, 90, 47, 0,
+};
+s16 D_80111994_2A6C64_name_3E[8] = {
+    147, 158, 162, 163, 161, 160, 164, 0,
+};
+s32 D_801119A4_2A6C74_name_3E = 0x80039;
+s32 D_801119A8_2A6C78_name_3E = 0x8003A;
+f32 D_801119AC_2A6C7C_name_3E[9] = {
+    5.0f, 5.0f, 2.0f, 2.0f, 3.0f, 5.0f, 5.0f, 5.0f,
+    5.0f,
+};
+s32 D_801119D0_2A6CA0_name_3E = 0;
+u8 D_801119D4_2A6CA4_name_3E[3][4] = {
+    { 0x3C, 0x46, 0x50, 0x55 },
+    { 0x46, 0x50, 0x5A, 0x5F },
+    { 0x50, 0x5A, 0x5F, 0x5F },
+};
+s32 D_801119E0_2A6CB0_name_3E = 0;
+s16 D_801119E4_2A6CB4_name_3E[8] = {
+    50, 51, 43, 46, 47, 48, -1, 0,
+};
+s16 D_801119F4_2A6CC4_name_3E[8] = {
+    55, 72, 135, 142, 126, 90, 47, -1,
+};
+s16 D_80111A04_2A6CD4_name_3E[7][2] = {
+    { 3, -4 },
+    { -2, -2 },
+    { 2, -6 },
+    { 0, 0 },
+    { 0, -4 },
+    { 4, 0 },
+    { 1, -6 },
+};
+s16 D_80111A20_2A6CF0_name_3E[2][2] = {
+    { -2, 0 },
+    { 2, 0 },
+};
+s16 D_80111A28_2A6CF8_name_3E[2][2] = {
+    { 0, -2 },
+    { 4, 0 },
+};
+s16 D_80111A30_2A6D00_name_3E[2] = {
+    0, -4,
+};
+s16 D_80111A34_2A6D04_name_3E[2][2] = {
+    { 0, 0 },
+    { 0, -3 },
+};
+s16 D_80111A3C_2A6D0C_name_3E[2][2] = {
+    { 169, 49 },
+    { 170, 41 },
+};
+s16 D_80111A44_2A6D14_name_3E[8] = {
+    147, 158, 162, 163, 161, 160, 164, 0,
+};
+s16 D_80111A54_2A6D24_name_3E[8] = {
+    70, 71, 72, 73, 74, 75, 76, 0,
+};
+s32 D_80111A64_2A6D34_name_3E = -1;
+s16 D_80111A68_2A6D38_name_3E[2] = {
+    157, 159,
+};
+s16 D_80111A6C_2A6D3C_name_3E[2] = {
+    151, 150,
+};
+Vec D_80111A70_2A6D40_name_3E[5] = {
+    { 0.0f, 0.0f, 0.0f },
+    { -3.0f, 2.0f, -2.0f },
+    { 1.0f, 5.5f, -3.0f },
+    { 3.5f, 8.0f, 4.0f },
+    { -1.0f, 12.0f, 11.0f },
+};
+Vec D_80111AAC_2A6D7C_name_3E[5] = {
+    { 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f },
+    { -15.0f, 0.0f, 0.0f },
+    { 20.0f, 0.0f, -30.0f },
+    { 45.0f, 0.0f, 45.0f },
+};
+s16 D_80111AE8_2A6DB8_name_3E[2] = {
+    148, 149,
+};
+u8 D_80111AEC_2A6DBC_name_3E[6][2] = {
+    { 0x00, 0x73 }, { 0x00, 0x7C }, { 0x00, 0x80 }, { 0x00, 0x81 }, { 0x00, 0x82 }, { 0x00, 0x83 },
+};
+s32 D_80111AF8_2A6DC8_name_3E[9] = {
+    0x39B, 0x3B0, 0x3CF, 0x3CA, 0x3F0, 0x405, -1, -1,
+    -1,
+};
+s32 D_80111B1C_2A6DEC_name_3E[9] = {
+    -1, -1, -1, -1, 0x3F1, -1, -1, -1,
+    -1,
+};
+s32 D_80111B40_2A6E10_name_3E[9] = {
+    -1, -1, -1, -1, 0x28, -1, -1, -1,
+    -1,
+};
+s32 D_80111B64_2A6E34_name_3E[9] = {
+    0x39C, -1, 0x3D0, -1, -1, -1, -1, -1,
+    -1,
+};
+s16 D_80111B88_2A6E58_name_3E[2] = {
+    153, 155,
+};
+s16 D_80111B8C_2A6E5C_name_3E = 154;
+s16 D_80111B90_2A6E60_name_3E[4] = {
+    19, 20, 21, 0,
+};
+s16 D_80111B98_2A6E68_name_3E[14] = {
+    45, 52, 53, 54, 55, 56, 57, 58,
+    59, 61, 62, 63, 64, 65,
+};
+s16 D_80111BB4_2A6E84_name_3E[14] = {
+    68, 69, 70, 72, 73, 74, 75, 76,
+    77, 78, 79, 80, 82, 0,
+};
+s16 D_80111BD0_2A6EA0_name_3E[18] = {
+    85, 86, 87, 88, 89, 90, 91, 93,
+    94, 95, 96, 97, 101, 92, 103, 114,
+    125, 0,
+};
+s16* D_80111BF4_2A6EC4_name_3E[3] = {
+    D_80111B98_2A6E68_name_3E, D_80111BB4_2A6E84_name_3E, D_80111BD0_2A6EA0_name_3E,
+};
+Vec D_80111C00_2A6ED0_name_3E[3] = {
+    { 20.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 20.0f },
+    { -20.0f, 0.0f, 0.0f },
+};
+DecisionTreeNonLeafNode D_80111C24_2A6EF4_name_3E[] = {
+    { 0x04000000, { (void*)0 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111C3C_2A6F0C_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { 0x6446 } },
+    { 0x02000000, { (void*)0x54 }, { 0x16446 } },
+    { 0x02000000, { (void*)0xA }, { (s32)D_80111C24_2A6EF4_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111C6C_2A6F3C_name_3E[] = {
+    { 0x02000000, { (void*)0x8 }, { 0x16446 } },
+    { 0x09000000, { (void*)0x8 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111C90_2A6F60_name_3E[] = {
+    { 0x08000000, { (void*)0x1 }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x5032 } },
+};
+DecisionTreeNonLeafNode D_80111CA8_2A6F78_name_3E[] = {
+    { 0x02000000, { (void*)0x20 }, { 0x6446 } },
+    { 0x02000000, { (void*)0x40 }, { (s32)D_80111C90_2A6F60_name_3E } },
+    { 0x08000000, { (void*)0x1 }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x5032 } },
+};
+DecisionTreeNonLeafNode D_80111CD8_2A6FA8_name_3E[] = {
+    { 0x01000000, { (void*)0x14 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x1F }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111CFC_2A6FCC_name_3E[] = {
+    { 0x01000000, { (void*)0x32 }, { 0x6446 } },
+    { 0x01000000, { (void*)0x1E }, { 0x5A3C } },
+    { 0x01000000, { (void*)0x1E }, { 0x5032 } },
+    { 0x01000000, { (void*)0x14 }, { 0x4628 } },
+    { 0x09000000, { (void*)0x10 }, { 0x6446 } },
+    { 0x0A000000, { (void*)0xC }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x16446 } },
+};
+DecisionTreeNonLeafNode D_80111D50_2A7020_name_3E[] = {
+    { 0x02000000, { (void*)0x40 }, { 0x6446 } },
+    { 0x02000000, { (void*)0x10 }, { (s32)D_80111CD8_2A6FA8_name_3E } },
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80111CFC_2A6FCC_name_3E } },
+    { 0x09000000, { (void*)0x14 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111D8C_2A705C_name_3E[] = {
+    { 0x01000000, { (void*)0x14 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x80 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x3F }, { 0x16446 } },
+    { 0x08000000, { (void*)0x1 }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x13232 } },
+};
+DecisionTreeNonLeafNode D_80111DC8_2A7098_name_3E[] = {
+    { 0x03000000, { (void*)0x80 }, { 0x16446 } },
+    { 0x08000000, { (void*)0x1 }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x5032 } },
+};
+DecisionTreeNonLeafNode D_80111DEC_2A70BC_name_3E[] = {
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80111D8C_2A705C_name_3E } },
+    { 0x09000000, { (void*)0x4 }, { (s32)D_80111DC8_2A7098_name_3E } },
+    { 0x03000000, { (void*)0x100 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x20 }, { 0x6446 } },
+    { 0x08000000, { (void*)0x1 }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111E34_2A7104_name_3E[] = {
+    { 0x02000000, { (void*)0x31 }, { 0x6446 } },
+    { 0x02000000, { (void*)0xE }, { 0x16446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111E58_2A7128_name_3E[] = {
+    { 0x01000000, { (void*)0x14 }, { 0x6446 } },
+    { 0x03000000, { (void*)0x1F }, { 0x6446 } },
+    { 0x09000000, { (void*)0x20 }, { 0x5032 } },
+    { 0x00000000, { (void*)0 }, { 0x13232 } },
+};
+DecisionTreeNonLeafNode D_80111E88_2A7158_name_3E[] = {
+    { 0x01000000, { (void*)0x14 }, { 0x16446 } },
+    { 0x03000000, { (void*)0xF }, { 0x16446 } },
+    { 0x03000000, { (void*)0x40 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x8 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x13232 } },
+};
+DecisionTreeNonLeafNode D_80111EC4_2A7194_name_3E[] = {
+    { 0x03000000, { (void*)0x80 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x8 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x13232 } },
+};
+DecisionTreeNonLeafNode D_80111EE8_2A71B8_name_3E[] = {
+    { 0x03000000, { (void*)0x40 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x8 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x13232 } },
+};
+DecisionTreeNonLeafNode D_80111F0C_2A71DC_name_3E[] = {
+    { 0x02000000, { (void*)0x40 }, { (s32)D_80111E58_2A7128_name_3E } },
+    { 0x02000000, { (void*)0x20 }, { (s32)D_80111E88_2A7158_name_3E } },
+    { 0x09000000, { (void*)0x40 }, { (s32)D_80111EC4_2A7194_name_3E } },
+    { 0x09000000, { (void*)0x20 }, { (s32)D_80111EE8_2A71B8_name_3E } },
+    { 0x03000000, { (void*)0x80 }, { 0x16446 } },
+    { 0x03000000, { (void*)0x8 }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111F60_2A7230_name_3E[] = {
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111F6C_2A723C_name_3E[] = {
+    { 0x0E000000, { (void*)0x80007 }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x4646 } },
+};
+DecisionTreeNonLeafNode D_80111F84_2A7254_name_3E[] = {
+    { 0x0E000000, { (void*)0x20012 }, { (s32)D_80111F6C_2A723C_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x14646 } },
+};
+DecisionTreeNonLeafNode D_80111F9C_2A726C_name_3E[] = {
+    { 0x0E000000, { (void*)0x170006 }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x4646 } },
+};
+DecisionTreeNonLeafNode D_80111FB4_2A7284_name_3E[] = {
+    { 0x0E000000, { (void*)0x50004 }, { (s32)D_80111F9C_2A726C_name_3E } },
+    { 0x0E000000, { (void*)0x170006 }, { 0x14646 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80111FD8_2A72A8_name_3E[] = {
+    { 0x0E000000, { (void*)0x100004 }, { 0x3232 } },
+    { 0x0E000000, { (void*)0x110001 }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x4646 } },
+};
+DecisionTreeNonLeafNode D_80111FFC_2A72CC_name_3E[] = {
+    { 0x0E000000, { (void*)0x160002 }, { (s32)D_80111FD8_2A72A8_name_3E } },
+    { 0x0E000000, { (void*)0x100004 }, { 0x14646 } },
+    { 0x0E000000, { (void*)0x110001 }, { 0x14646 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_8011202C_2A72FC_name_3E[] = {
+    { 0x0E000000, { (void*)0xB0007 }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x4646 } },
+};
+DecisionTreeNonLeafNode D_80112044_2A7314_name_3E[] = {
+    { 0x0E000000, { (void*)0x90004 }, { (s32)D_8011202C_2A72FC_name_3E } },
+    { 0x0E000000, { (void*)0xC0002 }, { (s32)D_8011202C_2A72FC_name_3E } },
+    { 0x0E000000, { (void*)0xA0005 }, { (s32)D_8011202C_2A72FC_name_3E } },
+    { 0x0E000000, { (void*)0xB0007 }, { 0x14646 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_80112080_2A7350_name_3E[] = {
+    { 0x0E000000, { (void*)0xC0002 }, { 0x3232 } },
+    { 0x0E000000, { (void*)0xE0006 }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x4646 } },
+};
+DecisionTreeNonLeafNode D_801120A4_2A7374_name_3E[] = {
+    { 0x0E000000, { (void*)0xA0005 }, { (s32)D_80112080_2A7350_name_3E } },
+    { 0x0E000000, { (void*)0x30005 }, { (s32)D_80112080_2A7350_name_3E } },
+    { 0x0E000000, { (void*)0xC0002 }, { 0x14646 } },
+    { 0x0E000000, { (void*)0xE0006 }, { 0x14646 } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+s16 D_801120E0_2A73B0_name_3E[4] = {
+    92, 102, -1, 0,
+};
+BoardEventListEntry D_801120E8_2A73B8_name_3E[] = {
+    { 1, 2, func_80107C54_29CF24_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_801120F8_2A73C8_name_3E[4] = {
+    75, 140, -1, 0,
+};
+BoardEventListEntry D_80112100_2A73D0_name_3E[] = {
+    { 1, 2, func_80107D6C_29D03C_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_80112110_2A73E0_name_3E[4] = {
+    86, 35, -1, 0,
+};
+BoardEventListEntry D_80112118_2A73E8_name_3E[] = {
+    { 1, 2, func_80107E84_29D154_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_80112128_2A73F8_name_3E[4] = {
+    110, 120, -1, 0,
+};
+BoardEventListEntry D_80112130_2A7400_name_3E[] = {
+    { 1, 2, func_80107F9C_29D26C_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_80112140_2A7410_name_3E[4] = {
+    113, 131, -1, 0,
+};
+BoardEventListEntry D_80112148_2A7418_name_3E[] = {
+    { 1, 2, func_801080B4_29D384_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_80112158_2A7428_name_3E[4] = {
+    148, 132, -1, 0,
+};
+DecisionTreeNonLeafNode D_80112160_2A7430_name_3E[] = {
+    { 0x02000000, { (void*)0xE }, { 0x16464 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_80112178_2A7448_name_3E[] = {
+    { 0x02000000, { (void*)0x40 }, { 0x16464 } },
+    { 0x10000000, { (void*)0x1 }, { (s32)D_80112160_2A7430_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+BoardEventListEntry D_8011219C_2A746C_name_3E[] = {
+    { 1, 2, func_80108424_29D6F4_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_801121AC_2A747C_name_3E[4] = {
+    149, 39, -1, 0,
+};
+BoardEventListEntry D_801121B4_2A7484_name_3E[] = {
+    { 1, 2, func_8010871C_29D9EC_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801121C4_2A7494_name_3E[] = {
+    { 1, 1, func_80108A14_29DCE4_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801121D4_2A74A4_name_3E[] = {
+    { 1, 1, func_80108A38_29DD08_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801121E4_2A74B4_name_3E[] = {
+    { 1, 1, func_80108A5C_29DD2C_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801121F4_2A74C4_name_3E[] = {
+    { 1, 1, func_80108A80_29DD50_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112204_2A74D4_name_3E[] = {
+    { 1, 1, func_80108AA4_29DD74_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112214_2A74E4_name_3E[] = {
+    { 1, 1, func_80108AC8_29DD98_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112224_2A74F4_name_3E[] = {
+    { 1, 1, func_80108AEC_29DDBC_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112234_2A7504_name_3E[] = {
+    { 1, 1, func_80108B10_29DDE0_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112244_2A7514_name_3E[] = {
+    { 1, 1, func_80108B34_29DE04_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112254_2A7524_name_3E[] = {
+    { 1, 1, func_80108B58_29DE28_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112264_2A7534_name_3E[] = {
+    { 1, 1, func_80108B7C_29DE4C_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112274_2A7544_name_3E[] = {
+    { 1, 1, func_80108BA0_29DE70_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112284_2A7554_name_3E[] = {
+    { 1, 1, func_80108BC4_29DE94_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112294_2A7564_name_3E[] = {
+    { 1, 1, func_80108BE8_29DEB8_name_3E },
+    { 0, 0, NULL },
+};
+u8 D_801122A4_2A7574_name_3E[4] = {
+    0x02, 0x05, 0x0F, 0x14,
+};
+BoardEventListEntry D_801122A8_2A7578_name_3E[] = {
+    { 1, 1, func_80108E0C_29E0DC_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801122B8_2A7588_name_3E[] = {
+    { 1, 1, func_8010964C_29E91C_name_3E },
+    { 0, 0, NULL },
+};
+u8 D_801122C8_2A7598_name_3E[3][4] = {
+    { 0x00, 0x00, 0x01, 0x01 },
+    { 0x01, 0x02, 0x03, 0x03 },
+    { 0x04, 0x05, 0x06, 0x06 },
+};
+u8 D_801122D4_2A75A4_name_3E[4][3] = {
+    { 0x01, 0x06, 0x10 },
+    { 0x01, 0x0B, 0x15 },
+    { 0x01, 0x10, 0x24 },
+    { 0x00, 0x00, 0x00 },
+};
+s8 D_801122E0_2A75B0_name_3E[7][5] = {
+    { 0, 1, -1, -1, -1 },
+    { 0, 1, 6, -1, -1 },
+    { 0, 1, 2, 6, -1 },
+    { 0, 1, 4, 6, -1 },
+    { 0, 1, 2, 4, 6 },
+    { 0, 1, 4, 5, 6 },
+    { 0, 1, 5, 6, 9 },
+};
+u32 D_80112304_2A75D4_name_3E[7] = {
+    0x000001F2, 0x000001F3, 0x000001F4, 0x000001F5,
+    0x000001F6, 0x000001F7, 0x000001F8,
+};
+BoardEventListEntry D_80112320_2A75F0_name_3E[] = {
+    { 1, 1, func_80109B30_29EE00_name_3E },
+    { 0, 0, NULL },
+};
+u8 D_80112330_2A7600_name_3E[4][3] = {
+    { 0x01, 0x02, 0x03 },
+    { 0x00, 0x02, 0x03 },
+    { 0x00, 0x01, 0x03 },
+    { 0x00, 0x01, 0x02 },
+};
+Vec2f3E D_8011233C_2A760C_name_3E[4] = {
+    { 76.0f, 52.0f }, { 244.0f, 52.0f },
+    { 76.0f, 192.0f }, { 244.0f, 192.0f },
+};
+Vec2f3E D_8011235C_2A762C_name_3E[4] = {
+    { -1.0f, -1.0f }, { 1.0f, -1.0f },
+    { -1.0f, 1.0f }, { 1.0f, 1.0f },
+};
+s32 D_8011237C_2A764C_name_3E[6] = {
+    0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B,
+};
+Unk3ERange D_80112394_2A7664_name_3E[6] = {
+    { 0x01, 0x05, 0x0F }, { 0x06, 0x0F, 0x19 },
+    { 0x10, 0x19, 0x1B }, { 0x1A, 0x23, 0x1E },
+    { 0x24, 0x2D, 0x20 }, { 0x2E, 0x32, 0x23 },
+};
+Unk3ERange D_801123A8_2A7678_name_3E[14] = {
+    { 0x00, 0x00, 0x00 }, { 0x01, 0x0A, 0x01 },
+    { 0x0B, 0x0B, 0x04 }, { 0x0C, 0x14, 0x02 },
+    { 0x15, 0x15, 0x04 }, { 0x16, 0x1E, 0x03 },
+    { 0x1F, 0x28, 0x04 }, { 0x29, 0x2C, 0x05 },
+    { 0x2D, 0x2E, 0x02 }, { 0x33, 0x38, 0x06 },
+    { 0x39, 0x3D, 0x05 }, { 0x3E, 0x46, 0x07 },
+    { 0x47, 0x47, 0x08 }, { 0x48, 0xFF, 0x09 },
+};
+Unk3EStealRange D_801123D4_2A76A4_name_3E[24] = {
+    { 0x01, 0x05, 0x06, 0x09, 0x07 }, { 0x01, 0x05, 0x0A, 0x0C, 0x08 },
+    { 0x01, 0x05, 0x0D, 0x0E, 0x09 }, { 0x01, 0x05, 0x0F, 0x0F, 0x0A },
+    { 0x06, 0x0F, 0x10, 0x13, 0x07 }, { 0x06, 0x0F, 0x14, 0x16, 0x08 },
+    { 0x06, 0x0F, 0x17, 0x18, 0x09 }, { 0x06, 0x0F, 0x19, 0x19, 0x0A },
+    { 0x10, 0x19, 0x12, 0x15, 0x07 }, { 0x10, 0x19, 0x16, 0x18, 0x08 },
+    { 0x10, 0x19, 0x19, 0x1A, 0x09 }, { 0x10, 0x19, 0x1B, 0x1B, 0x0A },
+    { 0x1A, 0x23, 0x15, 0x18, 0x07 }, { 0x1A, 0x23, 0x19, 0x1B, 0x08 },
+    { 0x1A, 0x23, 0x1C, 0x1D, 0x09 }, { 0x1A, 0x23, 0x1E, 0x1E, 0x0A },
+    { 0x24, 0x2D, 0x17, 0x1A, 0x07 }, { 0x24, 0x2D, 0x1B, 0x1D, 0x08 },
+    { 0x24, 0x2D, 0x1E, 0x1F, 0x09 }, { 0x24, 0x2D, 0x20, 0x20, 0x0A },
+    { 0x2E, 0x32, 0x1A, 0x1D, 0x07 }, { 0x2E, 0x32, 0x1E, 0x20, 0x08 },
+    { 0x2E, 0x32, 0x21, 0x22, 0x09 }, { 0x2E, 0x32, 0x23, 0x23, 0x0A },
+};
+s16 D_8011244C_2A771C_name_3E[4] = {
+    1723, 1724, 1725, 1726,
+};
+BoardEventListEntry D_80112454_2A7724_name_3E[] = {
+    { 1, 1, func_8010BA48_2A0D18_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112464_2A7734_name_3E[] = {
+    { 1, 1, func_8010C44C_2A171C_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_80112474_2A7744_name_3E[] = {
+    { 1, 1, func_8010C468_2A1738_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventTableEntry D_80112484_2A7754_name_3E[] = {
+    { 55, D_801122A8_2A7578_name_3E }, { 72, D_801122A8_2A7578_name_3E },
+    { 135, D_801122A8_2A7578_name_3E }, { 142, D_801122A8_2A7578_name_3E },
+    { 126, D_801122A8_2A7578_name_3E }, { 90, D_801122A8_2A7578_name_3E },
+    { 47, D_801122A8_2A7578_name_3E }, { 138, D_801122B8_2A7588_name_3E },
+    { 94, D_801122B8_2A7588_name_3E }, { 167, D_80112320_2A75F0_name_3E },
+    { 148, D_80112464_2A7734_name_3E }, { 149, D_80112474_2A7744_name_3E },
+    { -1, NULL },
+};
+BoardEventTableEntry D_801124EC_2A77BC_name_3E[] = {
+    { 175, D_80112454_2A7724_name_3E }, { 180, D_80112454_2A7724_name_3E },
+    { -1, NULL },
+};
+Vec2f3E D_80112504_2A77D4_name_3E[4] = {
+    { 108.0f, 41.0f }, { 244.0f, 41.0f },
+    { 108.0f, 209.0f }, { 244.0f, 209.0f },
+};
+Vec2f3E D_80112524_2A77F4_name_3E[4] = {
+    { 164.0f, 76.0f }, { 140.0f, 76.0f },
+    { 164.0f, 76.0f }, { 140.0f, 76.0f },
+};
+Vec2f3E D_80112544_2A7814_name_3E[4] = {
+    { 132.0f, 62.0f }, { 220.0f, 62.0f },
+    { 132.0f, 180.0f }, { 220.0f, 180.0f },
+};
+Vec2f3E D_80112564_2A7834_name_3E[4] = {
+    { 164.0f, 66.0f }, { 140.0f, 66.0f },
+    { 164.0f, 66.0f }, { 140.0f, 66.0f },
+};
+s32 D_80112584_2A7854_name_3E[6] = {
+    0x2C5, 0x2DC, 0x2FA, 0x317, 0x337, 0x357,
+};
+s16 D_8011259C_2A786C_name_3E[6] = {
+    26, 27, 36, 30, 35, 37,
+};
+DecisionTreeNonLeafNode D_801125A8_2A7878_name_3E[] = {
+    { 0x0F000000, { (void*)0x28 }, { 0x3214 } },
+    { 0x00000000, { (void*)0 }, { 0x3C1E } },
+};
+DecisionTreeNonLeafNode D_801125C0_2A7890_name_3E[] = {
+    { 0x0E000000, { (void*)0x2000A }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_801125D8_2A78A8_name_3E[] = {
+    { 0x0E000000, { (void*)0x40002 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0x30005 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0xE0006 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_80112608_2A78D8_name_3E[] = {
+    { 0x0E000000, { (void*)0xE0002 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0xC0002 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0xB0007 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0x90004 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_80112644_2A7914_name_3E[] = {
+    { 0x00000000, { (void*)0 }, { 10 } },
+};
+DecisionTreeNonLeafNode D_80112650_2A7920_name_3E[] = {
+    { 0x0E000000, { (void*)0xB0004 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0x80007 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_80112674_2A7944_name_3E[] = {
+    { 0x0E000000, { (void*)0x160304 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0x110001 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x0E000000, { (void*)0x100004 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_801126A4_2A7974_name_3E[] = {
+    { 0x0E000000, { (void*)0x120005 }, { (s32)D_801125A8_2A7878_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x514 } },
+};
+DecisionTreeNonLeafNode D_801126BC_2A798C_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { (s32)D_801125C0_2A7890_name_3E } },
+    { 0x02000000, { (void*)0x2 }, { (s32)D_801125D8_2A78A8_name_3E } },
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80112608_2A78D8_name_3E } },
+    { 0x02000000, { (void*)0x8 }, { (s32)D_80112644_2A7914_name_3E } },
+    { 0x02000000, { (void*)0x10 }, { (s32)D_80112650_2A7920_name_3E } },
+    { 0x02000000, { (void*)0x20 }, { (s32)D_80112674_2A7944_name_3E } },
+    { 0x02000000, { (void*)0x40 }, { (s32)D_801126A4_2A7974_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+Vec2f3E D_8011271C_2A79EC_name_3E[4] = {
+    { -7.0f, 7.0f }, { -7.0f, -7.0f },
+    { 7.0f, -7.0f }, { 7.0f, 7.0f },
+};
+s16 D_8011273C_2A7A0C_name_3E = 76;
+BoardEventListEntry D_80112740_2A7A10_name_3E[] = {
+    { 1, 1, func_8010FD84_2A5054_name_3E },
+    { 0, 0, NULL },
+};
+s16 D_80112750_2A7A20_name_3E[4] = {
+    2, 3, 6, 0,
+};
+s16 D_80112758_2A7A28_name_3E[4] = {
+    5, 4, 3, 0,
+};
+Vec2f3E D_80112760_2A7A30_name_3E[4] = {
+    { 20.0f, -5.0f }, { 30.0f, -5.0f },
+    { 20.0f, 5.0f }, { 30.0f, 5.0f },
+};
+DecisionTreeNonLeafNode D_80112780_2A7A50_name_3E[] = {
+    { 0x02000000, { (void*)0x6A }, { 0x6446 } },
+    { 0x02000000, { (void*)0x1 }, { 0x1645A } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_801127A4_2A7A74_name_3E[] = {
+    { 0x02000000, { (void*)0x75 }, { 0x6446 } },
+    { 0x02000000, { (void*)0x8 }, { 0x1645A } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+DecisionTreeNonLeafNode D_801127C8_2A7A98_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { 0x6446 } },
+    { 0x02000000, { (void*)0x60 }, { 0x1645A } },
+    { 0x00000000, { (void*)0 }, { 0x3232 } },
+};
+BoardEventListEntry D_801127EC_2A7ABC_name_3E[] = {
+    { 1, 1, func_80110794_2A5A64_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_801127FC_2A7ACC_name_3E[] = {
+    { 3, 2, func_80110F78_2A6248_name_3E },
+    { 0, 0, NULL },
+};
+BoardEventTableEntry D_8011280C_2A7ADC_name_3E[] = {
+    { 166, D_801120E8_2A73B8_name_3E }, { 177, D_80112100_2A73D0_name_3E },
+    { 179, D_80112118_2A73E8_name_3E }, { 181, D_80112130_2A7400_name_3E },
+    { 168, D_80112148_2A7418_name_3E }, { 169, D_8011219C_2A746C_name_3E },
+    { 170, D_801121B4_2A7484_name_3E }, { 172, D_801121C4_2A7494_name_3E },
+    { 62, D_801121D4_2A74A4_name_3E }, { 67, D_801121E4_2A74B4_name_3E },
+    { 79, D_801121F4_2A74C4_name_3E }, { 95, D_80112204_2A74D4_name_3E },
+    { 101, D_80112214_2A74E4_name_3E }, { 119, D_80112224_2A74F4_name_3E },
+    { 128, D_80112234_2A7504_name_3E }, { 129, D_80112244_2A7514_name_3E },
+    { 139, D_80112254_2A7524_name_3E }, { 51, D_80112264_2A7534_name_3E },
+    { 146, D_80112274_2A7544_name_3E }, { 40, D_80112284_2A7554_name_3E },
+    { 48, D_80112294_2A7564_name_3E }, { 174, D_801127EC_2A7ABC_name_3E },
+    { 176, D_801127EC_2A7ABC_name_3E }, { 178, D_801127EC_2A7ABC_name_3E },
+    { 171, D_80112740_2A7A10_name_3E }, { 61, D_801127FC_2A7ACC_name_3E },
+    { 53, D_801127FC_2A7ACC_name_3E }, { 115, D_801127FC_2A7ACC_name_3E },
+    { 73, D_801127FC_2A7ACC_name_3E }, { 127, D_801127FC_2A7ACC_name_3E },
+    { 85, D_801127FC_2A7ACC_name_3E }, { 91, D_801127FC_2A7ACC_name_3E },
+    { -1, NULL },
+};
+f32 D_80112914_2A7BE4_name_3E[4] = {
+    0.0f, 0.0f, 320.0f, 240.0f,
+};
+DecisionTreeNonLeafNode D_80112924_2A7BF4_name_3E[] = {
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x04000000, { (void*)0x2 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112948_2A7C18_name_3E[] = {
+    { 0x0D000000, { (void*)0x170206 }, { (s32)D_80112924_2A7BF4_name_3E } },
+    { 0x0D000000, { (void*)0x50004 }, { (s32)D_80112924_2A7BF4_name_3E } },
+    { 0x0D000000, { (void*)0x60002 }, { (s32)D_80112924_2A7BF4_name_3E } },
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x20004 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x10003 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x70005 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x1 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_801129B4_2A7C84_name_3E[] = {
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x04000000, { (void*)0 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_801129D8_2A7CA8_name_3E[] = {
+    { 0x0F000000, { (void*)0x1E }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0007 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112A14_2A7CE4_name_3E[] = {
+    { 0x0F000000, { (void*)0x1E }, { 0x1E } },
+    { 0x0D000000, { (void*)0xB0004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112A38_2A7D08_name_3E[] = {
+    { 0x0D000000, { (void*)0x20004 }, { (s32)D_801129B4_2A7C84_name_3E } },
+    { 0x0D000000, { (void*)0x10004 }, { (s32)D_801129B4_2A7C84_name_3E } },
+    { 0x0D000000, { (void*)0x1 }, { (s32)D_801129B4_2A7C84_name_3E } },
+    { 0x0D000000, { (void*)0x70205 }, { (s32)D_801129B4_2A7C84_name_3E } },
+    { 0x0F000000, { (void*)0x5 }, { 0 } },
+    { 0x0D000000, { (void*)0x20610 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x30003 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x21112 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xA0005 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0304 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x90004 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x4 }, { (s32)D_801129D8_2A7CA8_name_3E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x10 }, { (s32)D_80112A14_2A7CE4_name_3E } },
+    { 0x0D000000, { (void*)0xB0004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112B28_2A7DF8_name_3E[] = {
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x0D000000, { (void*)0xB0004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112B4C_2A7E1C_name_3E[] = {
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x90004 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x80007 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x10 }, { (s32)D_80112B28_2A7DF8_name_3E } },
+    { 0x0D000000, { (void*)0xB0004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112B94_2A7E64_name_3E[] = {
+    { 0x0F000000, { (void*)0x1E }, { 0x1E } },
+    { 0x04000000, { (void*)0 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112BB8_2A7E88_name_3E[] = {
+    { 0x09000000, { (void*)0x2 }, { (s32)D_80112B94_2A7E64_name_3E } },
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x04000000, { (void*)0 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112BE8_2A7EB8_name_3E[] = {
+    { 0x0F000000, { (void*)0x23 }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112C24_2A7EF4_name_3E[] = {
+    { 0x0F000000, { (void*)0x1E }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112C60_2A7F30_name_3E[] = {
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x30005 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x40002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xA0005 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x21112 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xE0506 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x1E }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0304 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x4 }, { (s32)D_80112BE8_2A7EB8_name_3E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112CFC_2A7FCC_name_3E[] = {
+    { 0x0D000000, { (void*)0x20004 }, { (s32)D_80112BB8_2A7E88_name_3E } },
+    { 0x0D000000, { (void*)0x10004 }, { (s32)D_80112BB8_2A7E88_name_3E } },
+    { 0x0F000000, { (void*)0x5 }, { 0 } },
+    { 0x0D000000, { (void*)0x20C10 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x09000000, { (void*)0x2 }, { (s32)D_80112C60_2A7F30_name_3E } },
+    { 0x0D000000, { (void*)0x30005 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x40002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xA0005 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x21112 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xE0506 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x0D000000, { (void*)0xE0304 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x4 }, { (s32)D_80112C24_2A7EF4_name_3E } },
+    { 0x0D000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112DD4_2A80A4_name_3E[] = {
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x80007 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x10003 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x1 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x70005 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112E1C_2A80EC_name_3E[] = {
+    { 0x0F000000, { (void*)0x19 }, { 0x1E } },
+    { 0x04000000, { (void*)0x1 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112E40_2A8110_name_3E[] = {
+    { 0x0F000000, { (void*)0xA }, { 0 } },
+    { 0x0D000000, { (void*)0x170001 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112E64_2A8134_name_3E[] = {
+    { 0x0D000000, { (void*)0x30003 }, { (s32)D_80112E1C_2A80EC_name_3E } },
+    { 0x0D000000, { (void*)0xA0005 }, { (s32)D_80112E1C_2A80EC_name_3E } },
+    { 0x0D000000, { (void*)0x20B12 }, { (s32)D_80112E1C_2A80EC_name_3E } },
+    { 0x0F000000, { (void*)0x5 }, { 0 } },
+    { 0x0D000000, { (void*)0x60006 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x50004 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x40307 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x170206 }, { 0x5A3C } },
+    { 0x09000000, { (void*)0x8 }, { (s32)D_80112E40_2A8110_name_3E } },
+    { 0x0D000000, { (void*)0x170001 }, { 0x5A3C } },
+    { 0x0F000000, { (void*)0x14 }, { 0x1E } },
+    { 0x0D000000, { (void*)0x100003 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112F00_2A81D0_name_3E[] = {
+    { 0x0D000000, { (void*)0x90001 }, { 0x5A3C } },
+    { 0x0D000000, { (void*)0x80007 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0xA1E } },
+};
+DecisionTreeNonLeafNode D_80112F24_2A81F4_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { (s32)D_80112948_2A7C18_name_3E } },
+    { 0x02000000, { (void*)0x2 }, { (s32)D_80112A38_2A7D08_name_3E } },
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80112B4C_2A7E1C_name_3E } },
+    { 0x02000000, { (void*)0x8 }, { (s32)D_80112CFC_2A7FCC_name_3E } },
+    { 0x02000000, { (void*)0x10 }, { (s32)D_80112DD4_2A80A4_name_3E } },
+    { 0x02000000, { (void*)0x20 }, { (s32)D_80112E64_2A8134_name_3E } },
+    { 0x02000000, { (void*)0x40 }, { (s32)D_80112F00_2A81D0_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0 } },
+};
+DecisionTreeNonLeafNode D_80112F84_2A8254_name_3E[] = {
+    { 0x00000000, { (void*)0 }, { 0x5032 } },
+};
+DecisionTreeNonLeafNode D_80112F90_2A8260_name_3E[] = {
+    { 0x0E000000, { (void*)0x2000A }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E } },
+};
+DecisionTreeNonLeafNode D_80112FA8_2A8278_name_3E[] = {
+    { 0x0E000000, { (void*)0x2000A }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x10004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E } },
+};
+DecisionTreeNonLeafNode D_80112FCC_2A829C_name_3E[] = {
+    { 0x0D000000, { (void*)0x2000A }, { 10 } },
+    { 0x0D000000, { (void*)0x10004 }, { (s32)D_80112F90_2A8260_name_3E } },
+    { 0x0D000000, { (void*)0x70005 }, { (s32)D_80112FA8_2A8278_name_3E } },
+    { 0x0D000000, { (void*)0x1 }, { (s32)D_80112FA8_2A8278_name_3E } },
+    { 0x0E000000, { (void*)0x2000A }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x10004 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x70005 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_8011302C_2A82FC_name_3E[] = {
+    { 0x0D000000, { (void*)0x40002 }, { 10 } },
+    { 0x0D000000, { (void*)0x30005 }, { 10 } },
+    { 0x0D000000, { (void*)0xE0006 }, { 10 } },
+    { 0x0E000000, { (void*)0x40002 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x30005 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0xE0006 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_80113080_2A8350_name_3E[] = {
+    { 0x0D000000, { (void*)0xE0002 }, { 10 } },
+    { 0x0D000000, { (void*)0xC0002 }, { 10 } },
+    { 0x0D000000, { (void*)0xB0107 }, { 10 } },
+    { 0x0D000000, { (void*)0x90004 }, { 10 } },
+    { 0x0E000000, { (void*)0xE0002 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0xC0002 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0xB0107 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x90004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_801130EC_2A83BC_name_3E[] = {
+    { 0x0E000000, { (void*)0x170001 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x40007 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_80113110_2A83E0_name_3E[] = {
+    { 0x0D000000, { (void*)0x170001 }, { 10 } },
+    { 0x0D000000, { (void*)0x40007 }, { 10 } },
+    { 0x0D000000, { (void*)0x30005 }, { (s32)D_801130EC_2A83BC_name_3E } },
+    { 0x0D000000, { (void*)0xE0006 }, { (s32)D_801130EC_2A83BC_name_3E } },
+    { 0x0E000000, { (void*)0x170001 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x40007 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x30005 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0xE0006 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_8011317C_2A844C_name_3E[] = {
+    { 0x0E000000, { (void*)0xB0004 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_80113194_2A8464_name_3E[] = {
+    { 0x0D000000, { (void*)0xB0004 }, { 10 } },
+    { 0x0D000000, { (void*)0x80007 }, { (s32)D_8011317C_2A844C_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_801131B8_2A8488_name_3E[] = {
+    { 0x0D000000, { (void*)0x160004 }, { 10 } },
+    { 0x0D000000, { (void*)0x110001 }, { 10 } },
+    { 0x0D000000, { (void*)0x100004 }, { 10 } },
+    { 0x0D000000, { (void*)0x60006 }, { 10 } },
+    { 0x0E000000, { (void*)0x160004 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x110001 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x100004 }, { 0x5A3C } },
+    { 0x0E000000, { (void*)0x60006 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x1E1E } },
+};
+DecisionTreeNonLeafNode D_80113224_2A84F4_name_3E[] = {
+    { 0x0D000000, { (void*)0x120005 }, { 10 } },
+    { 0x0E000000, { (void*)0x120005 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0x3C1E } },
+};
+DecisionTreeNonLeafNode D_80113248_2A8518_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { (s32)D_80112FCC_2A829C_name_3E } },
+    { 0x02000000, { (void*)0x2 }, { (s32)D_8011302C_2A82FC_name_3E } },
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80113080_2A8350_name_3E } },
+    { 0x02000000, { (void*)0x8 }, { (s32)D_80113110_2A83E0_name_3E } },
+    { 0x02000000, { (void*)0x10 }, { (s32)D_80113194_2A8464_name_3E } },
+    { 0x02000000, { (void*)0x20 }, { (s32)D_801131B8_2A8488_name_3E } },
+    { 0x02000000, { (void*)0x40 }, { (s32)D_80113224_2A84F4_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0 } },
+};
+DecisionTreeNonLeafNode D_801132A8_2A8578_name_3E[] = {
+    { 0x0D000000, { (void*)0x2040A }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_801132C0_2A8590_name_3E[] = {
+    { 0x0D000000, { (void*)0x40002 }, { 0 } },
+    { 0x0D000000, { (void*)0x30205 }, { 0 } },
+    { 0x0D000000, { (void*)0xE0406 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_801132F0_2A85C0_name_3E[] = {
+    { 0x0D000000, { (void*)0xE0002 }, { 0 } },
+    { 0x0D000000, { (void*)0xC0002 }, { 0 } },
+    { 0x0D000000, { (void*)0xB0507 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_80113320_2A85F0_name_3E[] = {
+    { 0x0D000000, { (void*)0x170001 }, { 0 } },
+    { 0x0D000000, { (void*)0x40207 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_80113344_2A8614_name_3E[] = {
+    { 0x0D000000, { (void*)0xB0004 }, { 0 } },
+    { 0x0D000000, { (void*)0x80607 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_80113368_2A8638_name_3E[] = {
+    { 0x0D000000, { (void*)0x160004 }, { 0 } },
+    { 0x0D000000, { (void*)0x60406 }, { 0 } },
+    { 0x0D000000, { (void*)0x110001 }, { 0 } },
+    { 0x0D000000, { (void*)0x100204 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_801133A4_2A8674_name_3E[] = {
+    { 0x0D000000, { (void*)0x120005 }, { 0 } },
+    { 0x00000000, { (void*)0 }, { 0x6464 } },
+};
+DecisionTreeNonLeafNode D_801133BC_2A868C_name_3E[] = {
+    { 0x02000000, { (void*)0x1 }, { (s32)D_801132A8_2A8578_name_3E } },
+    { 0x02000000, { (void*)0x2 }, { (s32)D_801132C0_2A8590_name_3E } },
+    { 0x02000000, { (void*)0x4 }, { (s32)D_801132F0_2A85C0_name_3E } },
+    { 0x02000000, { (void*)0x8 }, { (s32)D_80113320_2A85F0_name_3E } },
+    { 0x02000000, { (void*)0x10 }, { (s32)D_80113344_2A8614_name_3E } },
+    { 0x02000000, { (void*)0x20 }, { (s32)D_80113368_2A8638_name_3E } },
+    { 0x02000000, { (void*)0x40 }, { (s32)D_801133A4_2A8674_name_3E } },
+    { 0x00000000, { (void*)0 }, { 0 } },
+};
+DecisionTreeNonLeafNode D_8011341C_2A86EC_name_3E[] = {
+    { 0x02000000, { (void*)0x40 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0 } },
+};
+DecisionTreeNonLeafNode D_80113434_2A8704_name_3E[] = {
+    { 0x02000000, { (void*)0x71 }, { 0x5A3C } },
+    { 0x00000000, { (void*)0 }, { 0 } },
+};
+DecisionTreeNonLeafNode D_8011344C_2A871C_name_3E[] = {
+    { 0x01000000, { (void*)0x1E }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x1E } },
+};
+DecisionTreeNonLeafNode D_80113464_2A8734_name_3E[] = {
+    { 0x0A000000, { (void*)0x9 }, { (s32)D_8011344C_2A871C_name_3E } },
+    { 0x01000000, { (void*)0x32 }, { 0x6446 } },
+    { 0x01000000, { (void*)0x28 }, { 0x503C } },
+    { 0x01000000, { (void*)0x1E }, { 0x3232 } },
+    { 0x00000000, { (void*)0 }, { 0x1432 } },
+};
+DecisionTreeNonLeafNode D_801134A0_2A8770_name_3E[] = {
+    { 0x02000000, { (void*)0x4 }, { (s32)D_80113464_2A8734_name_3E } },
+    { 0x01000000, { (void*)0x1E }, { 0x6446 } },
+    { 0x00000000, { (void*)0 }, { 0x5A3C } },
+};
+s32 D_801134C4_2A8794_name_3E = 0;
+u8 D_801134C8_2A8798_name_3E[9] = {
+    0x09, 0x06, 0x00, 0x07, 0x04, 0x08, 0x02, 0x05, 0x01,
+};
+u8 D_801134D4_2A87A4_name_3E[9] = {
+    0x09, 0x01, 0x06, 0x07, 0x04, 0x08, 0x00, 0x02, 0x05,
+};
+u8 D_801134E0_2A87B0_name_3E[9] = {
+    0x09, 0x07, 0x02, 0x06, 0x04, 0x08, 0x00, 0x05, 0x01,
+};
+u8 D_801134EC_2A87BC_name_3E[9] = {
+    0x09, 0x05, 0x07, 0x06, 0x04, 0x08, 0x00, 0x02, 0x01,
+};
+u8 D_801134F8_2A87C8_name_3E[9] = {
+    0x09, 0x04, 0x08, 0x07, 0x06, 0x00, 0x02, 0x05, 0x01,
+};
+u8 D_80113504_2A87D4_name_3E[9] = {
+    0x09, 0x07, 0x06, 0x04, 0x08, 0x00, 0x02, 0x05, 0x01,
+};
+u8* D_80113510_2A87E0_name_3E[6] = {
+    D_801134C8_2A8798_name_3E, D_801134D4_2A87A4_name_3E, D_801134E0_2A87B0_name_3E,
+    D_801134EC_2A87BC_name_3E, D_801134F8_2A87C8_name_3E, D_80113504_2A87D4_name_3E,
+};
+s8 D_80113528_2A87F8_name_3E[9] = {
+    100, 70, 60, 0, 50, 0, 30, 30, 10,
+};
+s8 D_80113534_2A8804_name_3E[9] = {
+    100, 70, 60, 0, 50, 0, 20, 30, 30,
+};
+s8 D_80113540_2A8810_name_3E[9] = {
+    100, 70, 60, 60, 50, 0, 20, 30, 10,
+};
+s8 D_8011354C_2A881C_name_3E[9] = {
+    100, 70, 60, 60, 50, 0, 20, 30, 10,
+};
+s8 D_80113558_2A8828_name_3E[9] = {
+    100, 70, 60, 0, 60, 20, 30, 30, 10,
+};
+s8 D_80113564_2A8834_name_3E[9] = {
+    100, 70, 60, 50, 0, 20, 30, 30, 10,
+};
+s8* D_80113570_2A8840_name_3E[6] = {
+    D_80113528_2A87F8_name_3E, D_80113534_2A8804_name_3E, D_80113540_2A8810_name_3E,
+    D_8011354C_2A881C_name_3E, D_80113558_2A8828_name_3E, D_80113564_2A8834_name_3E,
+};
+u8 D_80113588_2A8858_name_3E[6] = {
+    0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
+};
+
+
 s16 func_80102830_297B00_name_3E(void) {
     return D_80111994_2A6C64_name_3E[GwSystem.star_spawn_indices[GwSystem.unk_0A]];
 }
