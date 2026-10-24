@@ -1872,9 +1872,65 @@ void func_80111A00_3BABA0_name_5F(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80112080_3BB220_name_5F);
+/* NON_MATCHING: register operand order only (retail `addu s0,s3,s0` for &p->unk52[i], ours
+   `addu s0,s0,s3`; masked 0). */
+#ifdef NON_MATCHING
+void func_80112080_3BB220_name_5F(void) {
+    s32 members[2];
+    Ovl5FPumpDemo* p;
+    omObjData* o;
+    s32 dir;
+    s32 i;
+    s32 n;
+    s32 team;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8011238C_3BB52C_name_5F);
+    for (team = 0; team < 2; team++) {
+        for (i = 0, n = 0; i < 4; i++) {
+            if (gPlayers[i].group == team) {
+                members[n++] = i;
+            }
+        }
+        p = PUMP_DEMO(team);
+        func_80029714_2A314(p->model = func_80018A30_19630(0x2A0002, 0xA9D), 0.0f, -1000.0f, 0.0f);
+        func_8002979C_2A39C(p->model, 0.0f, 90.0f, 0.0f);
+        p->scale = 0.3f;
+        func_800297E8_2A3E8(p->model, 0.3f, 0.3f, 0.3f);
+        func_800297E8_2A3E8(p->unk4C = LoadFormFile(0x2A0001, 0xA9D), p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->unk4C, 0, 1);
+        func_80029FE4_2ABE4(p->unk4C, 0.0f);
+        func_80029C74_2A874(p->unk4C, 0.0f);
+        for (i = 0; i < 2; i++) {
+            dir = D_800CD438_CE038[gPlayers[members[i]].character].unk_04;
+            func_800297E8_2A3E8(p->unk52[i] = LoadFormFile(dir | D_800CD438_CE038[gPlayers[members[i]].character].unk_08, 0xA9D),
+                                p->scale, p->scale, p->scale);
+            func_8002C9C0_2D5C0(p->unk52[i], p->unk36[i] = func_8002C8B8_2D4B8(DataRead(dir | 0x15), 0x1D));
+            func_80029E80_2AA80(p->unk52[i], 0, 1);
+            func_80029FE4_2ABE4(p->unk52[i], 0.0f);
+            if (i == 0) {
+                p->unk94 = func_80029D0C_2A90C(p->unk52[0]);
+                func_80029C74_2A874(p->unk52[0], p->unk94);
+            } else {
+                p->unk98 = 0.0f;
+                func_80029C74_2A874(p->unk52[i], p->unk98);
+            }
+            p->unk9C = 0.0f;
+            p->player[0] = members[0];
+            p->player[1] = members[1];
+            p->unk90 = 1;
+        }
+        o = omAddObj(0x7D00, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk08);
+        o->work[0] = team;
+        o->work[1] = 0;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80112080_3BB220_name_5F);
+#endif
+
+void func_8011238C_3BB52C_name_5F(void) {
+    func_80104DA8_3ADF48_name_5F(0, 3, -70.0f, -50.0f, -80.0f);
+    func_80104DA8_3ADF48_name_5F(1, 4, -40.0f, -50.0f, -80.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801123E4_3BB584_name_5F);
 

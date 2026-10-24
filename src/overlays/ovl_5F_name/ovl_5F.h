@@ -325,6 +325,31 @@ typedef struct Ovl5FPairDemo {
 
 #define PAIR_DEMO(i) ((Ovl5FPairDemo*)D_800FA640_FB240[i])
 
+/* D_800FA640[team] in the two-rider pump demo (80112080 / 801123E4): a base form and two riders
+   whose motions run in opposite directions. */
+typedef struct Ovl5FPumpDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ char unk3A[0x12];
+    /* 0x4C */ s16 unk4C; /* the base form */
+    /* 0x4E */ char unk4E[4];
+    /* 0x52 */ s16 unk52[2]; /* the riders' forms */
+    /* 0x56 */ char unk56[0x36];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* direction */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* rider 0's motion time */
+    /* 0x98 */ f32 unk98; /* rider 1's (and the base's) motion time */
+    /* 0x9C */ f32 unk9C; /* speed */
+} Ovl5FPumpDemo;
+
+#define PUMP_DEMO(i) ((Ovl5FPumpDemo*)D_800FA640_FB240[i])
+
 /* func_80108D50's work: a form attached to a model's hook node */
 typedef struct Ovl5FHookWork {
     /* 0x00 */ s32 form;
