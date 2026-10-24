@@ -24,13 +24,7 @@ s32 func_8008E73C_8F33C(s16 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u16 ar
 void func_8008EED8_8FAD8(s16, s16);
 void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6, s16 arg7);
 
-typedef struct MbTextWindow {
-    /* 0x000 */ u8 unk_00[0x20];
-    /* 0x020 */ u8 unk_20;
-    /* 0x021 */ u8 unk_21[0x27C - 0x21];
-} MbTextWindow; /* size 0x27C; the full type is TextWindow in 84FF0.c */
-
-extern MbTextWindow* D_800F920C_F9E0C;
+#include "game/window.h" /* D_800F920C_F9E0C */
 void func_80057730_58330(s16, s32);
 void func_8005774C_5834C(s16, s32);
 void func_80057DA4_589A4(s16);
@@ -289,14 +283,14 @@ void func_800563FC_56FFC(s16 arg0, s32 arg1, char* arg2, char* arg3, char* arg4,
 }
 
 void func_80056458_57058(void) {
-    D_800F920C_F9E0C[mbDlgWinId].unk_20 = 1;
+    D_800F920C_F9E0C[mbDlgWinId].unk20 = 1;
     HuPrcVSleep();
     func_80055A38_56638(mbDlgWinId, GwSystem.current_player_index);
 }
 
 void func_800564B4_570B4(void) {
     D_800CC592_CD192 = 1;
-    D_800F920C_F9E0C[mbDlgWinId].unk_20 = 1;
+    D_800F920C_F9E0C[mbDlgWinId].unk20 = 1;
     HuPrcVSleep();
     func_80055A38_56638(mbDlgWinId, GwSystem.current_player_index);
     D_800CC592_CD192 = 0;

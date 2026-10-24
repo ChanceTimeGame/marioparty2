@@ -9,18 +9,7 @@ void omPrcSetStatBit(Process* process, s32 value);
 void func_80072874_73474(void);
 s32 func_80072E58_73A58(s16 arg0, s16 arg1);
 
-typedef struct TextWindow {
-    /* 0x000 */ char pad0[0x29];
-    /* 0x029 */ u8 unk_29;
-    /* 0x02A */ u8 unk_2A;
-    /* 0x02B */ char pad2B[0x41];
-    /* 0x06C */ s16 unk_6C;
-    /* 0x06E */ char pad6E[0x206];
-    /* 0x274 */ s16 unk_274;
-    /* 0x276 */ char pad276[6];
-} TextWindow; // size 0x27C (MP3 layout; 84FF0)
-
-extern TextWindow* D_800F920C_F9E0C;
+#include "game/window.h"
 
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
 void func_80089A7C_8A67C(s16, s16);
@@ -116,10 +105,10 @@ void func_80072874_73474(void) {
     mg = GwSystem.chosenMinigameIndex - 1;
     y = D_800CD050_CDC50[mg].str2 == -1 ? 110 : 70;
     win1 = func_80072E58_73A58(60, y);
-    D_800FC9B8_FD5B8 = func_800896A0_8A2A0(win1, D_800F920C_F9E0C[win1].unk_274);
+    D_800FC9B8_FD5B8 = func_800896A0_8A2A0(win1, D_800F920C_F9E0C[win1].unk274);
     if (D_800CD050_CDC50[mg].str2 != -1) {
         win2 = func_80072E58_73A58(60, y + 70);
-        D_8010270A_10330A = func_800896A0_8A2A0(win2, D_800F920C_F9E0C[win2].unk_274);
+        D_8010270A_10330A = func_800896A0_8A2A0(win2, D_800F920C_F9E0C[win2].unk274);
         n1 = 0;
         if (mg == 0x1E || mg == 0x42) {
             n2 = 0;
@@ -159,20 +148,20 @@ void func_80072874_73474(void) {
     SprPosSet(D_8010276A_10336A, 0, 0xA0, y - 20);
     SprPrioSet(D_8010276A_10336A, 0, 1);
     func_8008D5D8_8E1D8(win1);
-    SprAttrSet(D_800F920C_F9E0C[win1].unk_6C, D_800F920C_F9E0C[win1].unk_274, 0x8000);
+    SprAttrSet(D_800F920C_F9E0C[win1].unk_6C, D_800F920C_F9E0C[win1].unk274, 0x8000);
     SprAttrSet(D_8010276A_10336A, 0, 0x8000);
     if (win2 != -1) {
         func_8008D5D8_8E1D8(win2);
-        SprAttrSet(D_800F920C_F9E0C[win2].unk_6C, D_800F920C_F9E0C[win2].unk_274, 0x8000);
+        SprAttrSet(D_800F920C_F9E0C[win2].unk_6C, D_800F920C_F9E0C[win2].unk274, 0x8000);
     }
     HuPrcVSleep();
     PlaySound(6);
     func_8008D6F0_8E2F0(win1);
-    SprAttrReset(D_800F920C_F9E0C[win1].unk_6C, D_800F920C_F9E0C[win1].unk_274, 0x8000);
+    SprAttrReset(D_800F920C_F9E0C[win1].unk_6C, D_800F920C_F9E0C[win1].unk274, 0x8000);
     SprAttrReset(D_8010276A_10336A, 0, 0x8000);
     if (win2 != -1) {
         func_8008D6F0_8E2F0(win2);
-        SprAttrReset(D_800F920C_F9E0C[win2].unk_6C, D_800F920C_F9E0C[win2].unk_274, 0x8000);
+        SprAttrReset(D_800F920C_F9E0C[win2].unk_6C, D_800F920C_F9E0C[win2].unk274, 0x8000);
     }
     D_800FDEAE_FEAAE = 1;
     while (func_80078EA8_79AA8() != 0) {
@@ -199,13 +188,13 @@ s32 func_80072E58_73A58(s16 arg0, s16 arg1) {
     func_80089A7C_8A67C(temp_v0, 0);
 
     temp_s0 = &D_800F920C_F9E0C[temp_v0];
-    temp_s0->unk_29 = 0;
-    temp_s0->unk_2A = 1;
+    temp_s0->unk29 = 0;
+    temp_s0->unk2A = 1;
 
     func_80089A48_8A648(temp_v0, 0);
     func_80089B2C_8A72C(temp_v0, 0);
 
-    temp_s0->unk_274 = temp_v0_2 = func_80089404_8A004(temp_v0, 0xB00D7, 0, 0, 0);
+    temp_s0->unk274 = temp_v0_2 = func_80089404_8A004(temp_v0, 0xB00D7, 0, 0, 0);
 
     SprPrioSet(temp_s0->unk_6C, temp_v0_2, 1);
     SprScaleSet(temp_s0->unk_6C, temp_v0_2, 3.325f, 3.75f);

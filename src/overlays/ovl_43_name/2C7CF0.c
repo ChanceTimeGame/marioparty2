@@ -255,7 +255,7 @@ void func_80102FFC_2C84EC_name_43(void) {
     } else {
         D_801153C0_2DA8B0_name_43 = NULL;
     }
-    D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+    D_800F920C_F9E0C[guide->amount].unk20 = 1;
     HuPrcVSleep();
     func_8008E2DC_8EEDC(guide->amount, 1);
     func_80057DC0_589C0(guide->amount);
@@ -283,7 +283,7 @@ void func_80102FFC_2C84EC_name_43(void) {
         func_80029FE4_2ABE4(guide->obj->obj->model[0], D_80113B30_2D9020_name_43[gw->current_board_index]);
         func_8005B338_5BF38(guide);
         func_8005AC6C_5B86C(guide->obj, D_80113B2C_2D901C_name_43);
-        D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+        D_800F920C_F9E0C[guide->amount].unk20 = 1;
         HuPrcVSleep();
         func_8008E2DC_8EEDC(guide->amount, 1);
         func_80057DC0_589C0(guide->amount);

@@ -17,13 +17,7 @@
 
 /* ---- main-segment API used by 3E ---- */
 
-typedef struct MbTextWindow {
-    /* 0x000 */ u8 unk_00[0x20];
-    /* 0x020 */ u8 unk_20;
-    /* 0x021 */ u8 unk_21[0x27C - 0x21];
-} MbTextWindow; /* size 0x27C; the full type is TextWindow in 84FF0.c */
-
-extern MbTextWindow* D_800F920C_F9E0C;
+#include "game/window.h" /* D_800F920C_F9E0C */
 extern s32 D_800CCC18_CD818;
 extern s32* D_800CC6A8_CD2A8[]; /* per board: the guide's model */
 extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */

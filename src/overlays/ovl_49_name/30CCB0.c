@@ -254,7 +254,7 @@ void func_80102FFC_30D4AC_name_49(void) {
     } else {
         D_80114990_31EE40_name_49 = NULL;
     }
-    D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+    D_800F920C_F9E0C[guide->amount].unk20 = 1;
     HuPrcVSleep();
     func_8008E2DC_8EEDC(guide->amount, 1);
     func_80057DC0_589C0(guide->amount);
@@ -281,7 +281,7 @@ void func_80102FFC_30D4AC_name_49(void) {
         MBMotionSet(guide->obj, 0, 2);
         func_80029FE4_2ABE4(guide->obj->obj->model[0], 2.0f);
         func_8005B338_5BF38(guide);
-            D_800F920C_F9E0C[guide->amount].unk_20 = 1;
+            D_800F920C_F9E0C[guide->amount].unk20 = 1;
         HuPrcVSleep();
         func_8008E2DC_8EEDC(guide->amount, 1);
         func_80057DC0_589C0(guide->amount);
