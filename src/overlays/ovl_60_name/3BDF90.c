@@ -3277,9 +3277,45 @@ void func_801102F4_3CBA54_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801105D4_3CBD34_name_60);
+/* One player (the first in group 0) as a form (D_80113D88). */
+void func_801105D4_3CBD34_name_60(void) {
+    Ovl60Player* p = D_800FA640_FB240[D_80114AC2_3D0222_name_60];
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110700_3CBE60_name_60);
+    p->model = func_80018A30_19630(D_80113D88_3CF4E8_name_60[gPlayers[D_80114AC2_3D0222_name_60].character] | 0x430000, 0x69D);
+    func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+    p->scale = 0.5f;
+    func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+    obj = omAddObj(0x64, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+    obj->work[0] = D_80114AC2_3D0222_name_60;
+    obj->work[1] = 0;
+    omAddObj(0x7D00, 0, 0, -1, func_80109FA0_3C5700_name_60)->work[0] = D_80114AC2_3D0222_name_60;
+}
+
+/* The stick turns the form (7 degrees a frame). */
+void func_80110700_3CBE60_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    omObjData* end;
+
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+    } else {
+        if (func_80108C8C_3C43EC_name_60(i, 0) > 10.0f) {
+            p->rot.y -= 7.0f;
+        }
+        if (func_80108C8C_3C43EC_name_60(i, 0) < -10.0f) {
+            p->rot.y += 7.0f;
+        }
+        func_8002979C_2A39C(p->model, 0.0f, p->rot.y, 0.0f);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110858_3CBFB8_name_60);
 

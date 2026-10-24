@@ -610,7 +610,7 @@ extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
 
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
 extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
-extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
+extern u8 D_80114AC3_3D0223_name_60; /* the low byte of D_80114AC2 (801105D4 stores D_80114AC2 into a work byte: retail reads this label) */
 /* 60-C */
 
 void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
