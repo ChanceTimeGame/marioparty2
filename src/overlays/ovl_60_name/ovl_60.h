@@ -130,7 +130,8 @@ typedef struct Ovl60CharData {
     /* 0x02 */ s16 unk_02;
     /* 0x04 */ s32 dir;   /* the character's file directory */
     /* 0x08 */ s32 model; /* its model file */
-    /* 0x0C */ char unk_0C[0xC];
+    /* 0x0C */ s32 unk_0C; /* another model file (60-C: 8010F480's head) */
+    /* 0x10 */ char unk_10[8];
 } Ovl60CharData;
 
 extern Ovl60CharData D_800CD438_CE038[];
@@ -562,9 +563,10 @@ void func_80110DA8_3CC508_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80110F7C_3CC6DC_name_60(omObjData*); /* from registers */
 void func_80111228_3CC988_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80111430_3CCB90_name_60(omObjData*); /* Ovl60Demo.unk08 */
-void func_801116F0_3CCE50_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_801118C8_3CD028_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_80111A90_3CD1F0_name_60(omObjData*); /* from registers */
+struct Ovl60TeamDemo; /* 60-C (below) */
+void func_801116F0_3CCE50_name_60(struct Ovl60TeamDemo* p, f32 x, s32 unused); /* 60-C: the arm by stick x (80112158 passes player[0] - 2 * team, unused) */
+void func_801118C8_3CD028_name_60(struct Ovl60TeamDemo* p, f32 y); /* 60-C: the boom by stick y */
+void func_80111A90_3CD1F0_name_60(struct Ovl60TeamDemo* p); /* 60-C: A/B drive the model's motion */
 void func_80111BCC_3CD32C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80112100_3CD860_name_60(void); /* Ovl60Demo.unk04 */
 void func_80112158_3CD8B8_name_60(omObjData*); /* Ovl60Demo.unk08 */
@@ -583,7 +585,7 @@ void func_80113264_3CE9C4_name_60(s16);
 /* Declared raw from the label sizes and the asm's loads: retype yours. The demo table's
    fields (D_80113818 = D_80113810[0].unk08 etc.) are not declared: index D_80113810. */
 
-extern s32 D_80113B9C_3CF2FC_name_60[7]; /* lw (8010F480, 80110DA8, 80112610) */
+extern char* D_80113B9C_3CF2FC_name_60[7]; /* per character: the node the head model hangs from (8010F480, 80110DA8, 80112610) */
 extern s32 D_80113BB8_3CF318_name_60[3]; /* 8010B048 */
 extern s32 D_80113BC4_3CF324_name_60[3]; /* 8010B048 */
 extern u16 D_80113BD0_3CF330_name_60[6]; /* lhu (8010B884) */
@@ -596,22 +598,90 @@ extern s32 D_80113C40_3CF3A0_name_60[9]; /* 8010D3D0 */
 extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
 extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
 extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
-extern s32 D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4 */
-extern u16 D_80113CAC_3CF40C_name_60[8]; /* lhu (8010F480) */
-extern s32 D_80113CBC_3CF41C_name_60[24]; /* 8010FA50 */
-extern s32 D_80113D1C_3CF47C_name_60; /* lw (8010FA50) */
-extern s32 D_80113D20_3CF480_name_60[11]; /* lw (8010FA50) */
-extern s32 D_80113D4C_3CF4AC_name_60; /* lw (8010FA50) */
-extern s32 D_80113D50_3CF4B0_name_60[11]; /* lw (8010FA50) */
-extern u16 D_80113D7C_3CF4DC_name_60[6]; /* lhu (801100BC) */
+extern char* D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4: the ball's texture: [0] the default, [chr] the character's ("152_01a_DEF"...) */
+extern u16 D_80113CAC_3CF40C_name_60[8]; /* per character: the body form file (| 0x400000; 8010F480) */
+extern s32 D_80113CBC_3CF41C_name_60[6][4]; /* 8010FA50: per character, the four form files (| 0x410000) */
+extern char* D_80113D1C_3CF47C_name_60[6][2]; /* 8010FA50: per character, the hook nodes forms 0 and 1 hang from (asm label D20 is [0][1]) */
+extern char* D_80113D4C_3CF4AC_name_60[6][2]; /* 8010FA50: per character, forms 0 and 1's own nodes (asm label D50 is [0][1]) */
+extern u16 D_80113D7C_3CF4DC_name_60[6]; /* per character: the held form's file (| 0x420000; 801100BC) */
 extern u16 D_80113D88_3CF4E8_name_60[6]; /* lhu (801105D4) */
-extern s32 D_80113D94_3CF4F4_name_60[3]; /* 80111BCC */
-extern s32 D_80113DA0_3CF500_name_60[3]; /* 80111BCC */
-extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
+extern u16 D_80113D94_3CF4F4_name_60[6]; /* per character: rider 0's form (| 0x4A0000; 80111BCC) */
+extern u16 D_80113DA0_3CF500_name_60[6]; /* per character: rider 1's form (| 0x4A0000; 80111BCC) */
+extern u16 D_80113DAC_3CF50C_name_60[10]; /* per character: the body form file (| 0x4C0000; 80112610; [6]-[9] unused) */
 
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
 extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
-extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
+extern u8 D_80114AC3_3D0223_name_60; /* the low byte of D_80114AC2 (801105D4 stores D_80114AC2 into a work byte: retail reads this label) */
+/* 60-C */
+
+void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2); /* texture swap */
+extern const char D_80114708_3CFE68_name_60[]; /* "item_hook" (defined in 3BDF90.c after 8010EDD4) */
+
+/* D_800FA640[i] in the form-blend demo (8010FA50 / 8010FDA8): the character model and four
+   forms; forms 0 and 1 hang from the model and blend towards forms 2 and 3. */
+typedef struct Ovl60FormPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot[11];
+    /* 0x4C */ s16 form[4];
+    /* 0x54 */ char unk54[0x40];
+    /* 0x94 */ f32 phase; /* degrees, 0-180 */
+    /* 0x98 */ f32 blend; /* sin(phase) */
+} Ovl60FormPlayer;
+
+void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t); /* MP1 func_80026174: blend two models */
+
+u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2); /* a sprite-model slot (D_800F86D8) from a file */
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+
+f32 fabsf(f32);
+
+/* D_800FA640[team] in the two-player machine demo (80111BCC / 80112158): one machine per team
+   (models 0x4A0000-0x4A000B, the second team's set from 0x4A0005), two riders' forms; rider 0
+   steers with the stick and A/B, rider 1 fires with A. */
+typedef struct Ovl60TeamDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model; /* the base */
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 form[7]; /* [0] arm, [1] boom, [2]-[3] the firing pair, [4] lowered part, [5]-[6] the riders */
+    /* 0x5A */ char unk5A[0x32];
+    /* 0x8C */ s16 player[2]; /* the riders: the team's two players */
+    /* 0x90 */ s16 state; /* rider 1's fire state */
+    /* 0x92 */ s16 timer;
+    /* 0x94 */ f32 arm; /* -9.5 .. 9.5 */
+    /* 0x98 */ f32 boom;
+    /* 0x9C */ f32 speed; /* the base motion's speed, -1.2 .. 1.2 */
+} Ovl60TeamDemo;
+
+#define TEAM_DEMO(i) ((Ovl60TeamDemo*)D_800FA640_FB240[i])
+
+/* D_800FA640[i] in the flying demo (80112610 / 80112818): a body form with the character's head
+   on its "kubi" (neck) node. */
+typedef struct Ovl60FlyPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0xC];
+    /* 0x2C */ f32 ground; /* the start height; the flyer stays within ground .. ground + 50 */
+    /* 0x30 */ char unk30[4];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 head;
+    /* 0x4E */ char unk4E[0x46];
+    /* 0x94 */ f32 turn; /* -8 .. 8 by the stick; its sign turns the body (rot.y, +-90) */
+    /* 0x98 */ f32 vy; /* A flaps (+1.2); gravity 0.075; +-3 */
+} Ovl60FlyPlayer;
+
+/* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif
