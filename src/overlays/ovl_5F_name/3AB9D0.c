@@ -1980,9 +1980,91 @@ void func_801085A0_3B1740_name_5F(s32 arg0) {
     omOvlHisChg(1, 0x70, 0, 0x14);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010879C_3B193C_name_5F);
+/* Item chances for the 1P item minigame: set `set`, by the player's character. */
+void func_8010879C_3B193C_name_5F(s32 player, s32 set) {
+    s32 i;
+    s32 c = gPlayers[player].character;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010881C_3B19BC_name_5F);
+    for (i = 0; i < 5; i++) {
+        D_800CAFE4[i] = D_80113B78_3BCD18_name_5F[set][i][c];
+    }
+}
+
+/* Chooses the item set of the 1P item minigame (type 4) for `player`: by game length, turn and the
+   player's rank (flag 0x17), or at random; kept in D_80102758[8] for a retried minigame (flag
+   0x15). Sets main's D_800CAFD8 item list and D_800CAFE4 chances. */
+void func_8010881C_3B19BC_name_5F(s32 player) {
+    s32 i;
+    s32 len;
+    s32 set;
+
+    len = 0;
+    if (_CheckFlag(0x17) == 0) {
+        if (_CheckFlag(0x15) != 0) {
+            set = D_80102758_103358[8];
+        } else {
+            set = rand8() & 3;
+            D_80102758_103358[8] = set;
+        }
+        goto copy;
+    }
+    if (_CheckFlag(0x15) != 0) {
+        set = D_80102758_103358[8];
+    } else {
+        switch (GwSystem.current_game_length) {
+        case 0:
+            len = 0;
+            break;
+        case 1:
+            len = 1;
+            break;
+        case 2:
+            len = 2;
+            break;
+        }
+        for (i = 0; i < 3; i++) {
+            if (D_80113B24_3BCCC4_name_5F[len][i] >= GwSystem.current_turn) {
+                break;
+            }
+        }
+        if (i >= 3) {
+            osSyncPrintf("instmain.c : minigameitemset error");
+            while (1) {
+            }
+        }
+        set = D_80113B38_3BCCD8_name_5F[func_80059FD0_5ABD0(player)][i];
+        if (set == 4) {
+            set = (u8)(rand8() % 10) >= 6;
+        }
+        if (set >= 4) {
+            osSyncPrintf("instmain.c : minigameitemset error2");
+            while (1) {
+            }
+        }
+        D_80102758_103358[8] = set;
+    }
+    if (func_8004E94C_4F54C() == 1) {
+        for (i = 0; i < 5; i++) {
+            if (D_80113B50_3BCCF0_name_5F[set][i] == 3) {
+                break;
+            }
+        }
+        if (i < 5) {
+            if (set == 1) {
+                D_80113B50_3BCCF0_name_5F[set][i] = 0;
+            } else {
+                D_80113B50_3BCCF0_name_5F[set][i] = 8;
+            }
+        }
+    }
+copy:
+    i = 0;
+    do {
+        D_800CAFD8[i] = D_80113B50_3BCCF0_name_5F[set][i];
+        i++;
+    } while (i < 5);
+    func_8010879C_3B193C_name_5F(player, set);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108AEC_3B1C8C_name_5F);
 

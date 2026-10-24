@@ -199,11 +199,10 @@ extern s32 D_8011397C_3BCB1C_name_5F[10]; /* item icon sprite files, by item id 
 extern s32 D_801139A4_3BCB44_name_5F[5][2]; /* item icon offsets (x, y) */
 extern u16 D_801139CC_3BCB6C_name_5F[4]; /* window buttons, by controller port */
 extern Ovl5FFallInit D_801139D4_3BCB74_name_5F[12]; /* the falling models (5F-B; asm labels A60, AD0 are [5], [9]) */
-extern s32 D_80113B24_3BCCC4_name_5F[5]; /* addiu:1 */
-extern s32 D_80113B38_3BCCD8_name_5F[6]; /* addiu:1 */
-extern s16 D_80113B50_3BCCF0_name_5F[5]; /* addiu:3 */
-extern s16 D_80113B5A_3BCCFA_name_5F[15]; /* sh:1 */
-extern s32 D_80113B78_3BCD18_name_5F[62]; /* addiu:1 */
+extern u16 D_80113B24_3BCCC4_name_5F[3][3]; /* item minigame: last turn of each stage, by game length */
+extern u16 D_80113B38_3BCCD8_name_5F[4][3]; /* item minigame: item set by rank and stage (4: random 0/1) */
+extern u16 D_80113B50_3BCCF0_name_5F[4][5]; /* item minigame: the sets' items (asm label B5A is [1][0]) */
+extern s16 D_80113B78_3BCD18_name_5F[4][5][6]; /* item minigame: each item's chance, by set and character */
 extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
 extern s32 D_80113EC8_3BD068_name_5F[4]; /* lw:2 sw:4 */
 extern u16 D_80113ED8_3BD078_name_5F[6]; /* lhu:1 */
@@ -284,6 +283,8 @@ extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
 
 extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
 extern s16 D_800CAFEE; /* main (3D6A0.c): the minigame variant override, -1 none */
+extern s16 D_800CAFE4[5]; /* main (3D6A0.c): item chances */
+extern s16 D_80102758_103358[9]; /* main bss (0x12 bytes; 30560.c uses [0]-[7]); [8]: the item minigame's set */
 
 /* ---- 5F functions (source order) ---- */
 
