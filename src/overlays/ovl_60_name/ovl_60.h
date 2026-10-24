@@ -634,6 +634,9 @@ typedef struct Ovl60FormPlayer {
 
 void func_8002A15C_2AD5C(s16 model, s16 motion, f32 t); /* MP1 func_80026174: blend two models */
 
+u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2); /* a sprite-model slot (D_800F86D8) from a file */
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+
 /* end 60-C */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
