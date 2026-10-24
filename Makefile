@@ -617,3 +617,14 @@ $(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
 # 32-bit syntax check, as D1A_GFX_UNITS
 O1A_GFX_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(O1A_GFX_UNITS): CFLAGS_CHECK += -m32
+
+# 5F-B: KMC mul fix with the blank-line strip (func_801072C8, func_80108DCC: a nop between
+# back-to-back mul.s; func_80103B78: none after a call)
+OVL5F_BLANKSTRIP_UNITS := build/src/overlays/ovl_5F_name/3AB9D0.c.o
+$(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name

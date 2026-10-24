@@ -67,6 +67,8 @@ typedef struct Ovl5FEsprite {
 } Ovl5FEsprite; /* size = 0x24 */
 
 /* 5F-B */
+#include "game/malloc.h"
+
 /* Initial state of one falling model (D_801139D4): copied into its Ovl5FFallWork. */
 typedef struct Ovl5FFallInit {
     /* 0x00 */ Vec pos;
@@ -328,7 +330,7 @@ s32 func_80105A14_3AEBB4_name_5F(void);
 s32 func_80105A54_3AEBF4_name_5F(void);
 void func_80105AB8_3AEC58_name_5F(void);
 void func_80105B94_3AED34_name_5F(void);
-void func_801072C8_3B0468_name_5F(s16, void*, void*, void*);
+void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha);
 void func_80107C84_3B0E24_name_5F(s32);
 void func_80107F74_3B1114_name_5F(void);
 void func_80107FE0_3B1180_name_5F(void);

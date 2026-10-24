@@ -1563,7 +1563,154 @@ vibrated:
 __asm__(".section .rodata");
 const char D_801147D8_3BD978_name_5F[4] = "\xFF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801072C8_3B0468_name_5F);
+/* Builds the demo picture: decodes the minigame's HVQ image (128x96, alpha from `alpha`) into an
+   RGBA32 texture and gives part "gameimage-grid1" of model `model` a display list drawing each of
+   its faces with the matching tile of that texture. */
+void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha) {
+    HmfData* hmf;
+    HmfPart* part;
+    u16* buf;
+    u16 pix;
+    u8* work;
+    u8* tex;
+    Vtx* vtx;
+    Vtx* faceVtx;
+    Gfx* gfx;
+    s16 partIdx;
+    s16 i;
+    s16 j;
+    s16 w;
+    s16 h;
+    f32 x;
+    f32 y;
+    f32 minX;
+    f32 maxX;
+    f32 minY;
+    f32 maxY;
+    f32 baseX;
+    f32 baseY;
+    f32 rangeX;
+    f32 rangeY;
+    s16 v;
+    s16 uls;
+    s16 lrs;
+    u16 ult;
+    u16 lrt;
+
+    w = 128;
+    h = 96;
+    hmf = D_800FC834_FD434[model].hmf;
+    buf = HuMemMemoryAllocPerm(0x6000);
+    func_80096C10_97810(0xFF);
+    func_80096708_97308(header);
+    work = HuMemMemoryAllocPerm(0xC00);
+    func_80096188_96D88(code, buf, 128, work);
+    HuMemMemoryFreePerm(work);
+    tex = func_80027154_27D54(0xC000, hmf->unk0E);
+    alpha += (alpha[0xA] << 16) + alpha[0xB];
+    for (y = 0.0f, i = 0; y < h; y += 1.0f) {
+        for (x = 0.0f; x < w; x += 1.0f) {
+            pix = buf[i];
+            tex[i * 4 + 0] = (pix >> 8) & 0xF8;
+            tex[i * 4 + 1] = (pix >> 3) & 0xF8;
+            tex[i * 4 + 2] = (pix << 2) & ~7;
+            tex[i * 4 + 3] = alpha[i];
+            i++;
+        }
+    }
+    HuMemMemoryFreePerm(buf);
+
+    partIdx = func_80038398_38F98(hmf, "gameimage-grid1");
+    part = &hmf->unk64[partIdx];
+    vtx = func_80027154_27D54(0x500, hmf->unk0E);
+    hmf->unk3C->unk00[partIdx] = gfx = func_80027154_27D54(0x1000, hmf->unk0E);
+    part->unk50 |= 0x10000;
+    gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetRenderMode(gfx++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);
+    gSPClearGeometryMode(gfx++, G_LIGHTING);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+
+    /* the part's extent */
+    maxX = maxY = -100000.0f;
+    minX = minY = 100000.0f;
+    for (i = 0; i < part->unk04; i++) {
+        for (j = 0; j < part->unk54[i].unk00; j++) {
+            v = part->unk54[i].unk04[j];
+            if (hmf->unk54[v].x < minX) {
+                minX = hmf->unk54[v].x;
+            }
+            if (maxX < hmf->unk54[v].x) {
+                maxX = hmf->unk54[v].x;
+            }
+            if (hmf->unk54[v].y < minY) {
+                minY = hmf->unk54[v].y;
+            }
+            if (maxY < hmf->unk54[v].y) {
+                maxY = hmf->unk54[v].y;
+            }
+        }
+    }
+    rangeX = maxX - minX;
+    rangeY = maxY - minY;
+    baseX = minX;
+    baseY = minY;
+
+    /* each face: its vertices, mapped onto the picture, and its tile */
+    for (i = 0; i < part->unk04; i++) {
+        faceVtx = vtx;
+        maxX = maxY = -100000.0f;
+        minX = minY = 100000.0f;
+        for (j = 0; j < part->unk54[i].unk00; j++) {
+            v = part->unk54[i].unk04[j];
+            vtx->v.ob[0] = hmf->unk54[v].x;
+            x = vtx->v.ob[0];
+            vtx->v.ob[1] = hmf->unk54[v].y;
+            y = vtx->v.ob[1];
+            vtx->v.ob[2] = hmf->unk54[v].z;
+            if (x < minX) {
+                minX = x;
+            }
+            if (maxX < x) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            }
+            if (maxY < y) {
+                maxY = y;
+            }
+            vtx->n.n[0] = vtx->n.n[1] = vtx->n.n[2] = -1;
+            x = w - w * ((-x - baseX) / rangeX);
+            y = h * ((-y - baseY) / rangeY);
+            vtx->v.tc[0] = x * 32.0f;
+            vtx->v.tc[1] = y * 32.0f;
+            vtx->n.a = 0xFF;
+            vtx++;
+        }
+        minX = (minX - baseX) / rangeX * w;
+        maxX = (maxX - baseX) / rangeX * w;
+        minY = h - (minY - baseY) / rangeY * h;
+        if (minY == h) {
+            minY = h - 0.1f;
+        }
+        maxY = h - (maxY - baseY) / rangeY * h;
+        ult = (s32)maxY;
+        lrt = (s32)minY;
+        lrs = maxX;
+        uls = minX;
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        gDPLoadTextureTile(gfx++, tex, G_IM_FMT_RGBA, G_IM_SIZ_32b, w, h, uls, ult, lrs, lrt, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                           G_TX_NOLOD, G_TX_NOLOD);
+        gSPVertex(gfx++, faceVtx, part->unk54[i].unk00, 0);
+        if (part->unk54[i].unk00 == 3) {
+            gSP1Triangle(gfx++, 0, 1, 2, 0);
+        } else {
+            gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+        }
+    }
+    gSPEndDisplayList(gfx++);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107C84_3B0E24_name_5F);
 
