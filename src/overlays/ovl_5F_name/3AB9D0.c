@@ -784,9 +784,7 @@ s32 func_80105008_3AE1A8_name_5F(s32 btn, s32 arg1) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105008_3AE1A8_name_5F);
 #endif
 
-/* NON_MATCHING: code shape differs (branch layout); logic follows the asm */
-#ifdef NON_MATCHING
-s32 func_801050DC_3AE27C_name_5F(s16 minigame) {
+s32 func_801050DC_3AE27C_name_5F(s32 minigame) {
     s32 ret = 0;
 
     switch (minigame) {
@@ -800,9 +798,6 @@ s32 func_801050DC_3AE27C_name_5F(s16 minigame) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801050DC_3AE27C_name_5F);
-#endif
 
 void func_80105110_3AE2B0_name_5F(omObjData* obj) {
     HmfModel* model;

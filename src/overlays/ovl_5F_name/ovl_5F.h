@@ -309,7 +309,7 @@ void func_80104DA8_3ADF48_name_5F(s32, s32, f32, f32, f32);
 void func_80104E98_3AE038_name_5F(s32);
 s32 func_80104F18_3AE0B8_name_5F(u16);
 s32 func_80105008_3AE1A8_name_5F(s32, s32);
-s32 func_801050DC_3AE27C_name_5F(s16);
+s32 func_801050DC_3AE27C_name_5F(s32);
 void func_80105110_3AE2B0_name_5F(omObjData*);
 void func_80105258_3AE3F8_name_5F(void);
 void func_801053F0_3AE590_name_5F(void);
