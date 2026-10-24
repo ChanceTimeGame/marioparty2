@@ -51,6 +51,8 @@ typedef struct Ovl5FHostWork {
     /* 0x1E */ s16 count;
     /* 0x20 */ char unk20[8];
     /* 0x28 */ f32 step;
+    /* 0x2C */ char unk2C[4];
+    /* 0x30 */ s16 mes[3]; /* the pages' messages while flag 0xC is set */
 } Ovl5FHostWork;
 
 /* ---- main-segment API used by 5F ---- */
@@ -280,7 +282,7 @@ void func_8010382C_3AC9CC_name_5F(omObjData*);
 void func_801038D4_3ACA74_name_5F(omObjData*);
 void func_80103994_3ACB34_name_5F(omObjData*);
 void func_80103B78_3ACD18_name_5F(omObjData*);
-void func_80103C84_3ACE24_name_5F(s32, s32);
+void func_80103C84_3ACE24_name_5F(s16, s32);
 void func_801040D0_3AD270_name_5F(omObjData*);
 void func_801041C4_3AD364_name_5F(void);
 void func_80104280_3AD420_name_5F(omObjData*);
