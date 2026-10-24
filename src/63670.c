@@ -57,7 +57,7 @@ s32 func_8004CC7C_4D87C(s32, s32, s32);
 
 extern s16 D_800F9208_F9E08;
 void func_80056068_56C68(s32, s32, s32);
-void func_800563FC_56FFC(s32, s32, char*, s32, s32, s32, s32, s32);
+void func_800563FC_56FFC(s32, s32, char*, char*, char*, char*, char*, s32);
 void func_800564B4_570B4(void);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);

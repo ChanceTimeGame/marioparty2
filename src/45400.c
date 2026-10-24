@@ -4,7 +4,7 @@
 /* func_80044DA4 is MP3 ovl_80_shared_board/F5E80.c's MBItemKoopaRKinokoExec (call item handler 13
    of the table D_800DF4B0 is the 14th entry of); the others have no C reference and stay asm. */
 
-extern void (*D_800DF4B0_E00B0)(void);
+extern s32 (*D_800DF4B0_E00B0)(void); /* the board's CPU item check (callers use its result) */
 /* .data (0xCC880-0xCC890) */
 s16 D_800CBC80_CC880[7] = { 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C }; /* flags tested by node type 2 (MP1 D_800C4C30) */
 extern s16 D_800F8CE4_F98E4[]; /* board work (MP1 GwCommon.boardWork) */
@@ -245,10 +245,10 @@ s16 func_80044800_45400(DecisionTreeNonLeafNode* node) {
 INCLUDE_ASM("asm/nonmatchings/45400", func_80044800_45400);
 #endif
 
-void func_80044D98_45998(void (*fn)(void)) {
+void func_80044D98_45998(s32 (*fn)(void)) {
     D_800DF4B0_E00B0 = fn;
 }
 
-void func_80044DA4_459A4(void) {
-    D_800DF4B0_E00B0();
+s32 func_80044DA4_459A4(void) {
+    return D_800DF4B0_E00B0();
 }

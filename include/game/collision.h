@@ -117,7 +117,9 @@ typedef struct MgWork {
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ f32 unk_60;
     /* 0x64 */ f32 unk_64;  /* attack reach (func_800098D0_A4D0) */
-    /* 0x68 */ char unk_68[0xC];
+    /* 0x68 */ char unk_68[4];
+    /* 0x6C */ f32 unk_6C;  /* attack reach (B6E0) */
+    /* 0x70 */ f32 unk_70;  /* attack radius (B6E0) */
     /* 0x74 */ s32 unk_74[6]; /* packed (x << 16) | (y & 0xFFFF) stick samples (MP1 0x6C) */
     /* 0x8C */ f32 unk_8C;  /* ceiling height, 65536.0f none */
     /* 0x90 */ f32 unk_90;  /* ground velocity (MP1 0x84) */
@@ -147,7 +149,7 @@ typedef struct MgWork {
     /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook; 1 skips the default */
     /* 0xF0 */ u16 unk_F0;
     /* 0xF2 */ char unk_F2[0x12];
-    /* 0x104 */ s32 unk_104[21];
+    /* 0x104 */ s32 (*unk_104[21])(); /* the minigame's override hooks (B6E0, 1130); 1 = handled */
     /* 0x158 */ char unk_158[4];
 } MgWork; /* size = 0x15C */
 

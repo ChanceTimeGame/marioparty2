@@ -11,8 +11,12 @@
 
 #define PAD_COUNT (4)
 
+/* ECE0.c's SndConfig, viewed from here; the fields before outputRate are spelt as there so the
+   two agree where pointers widen. */
 typedef struct AMConfig {
-    /* 0x00 */ char unk_00[0x1C];
+    /* 0x00 */ s32 unk_00[5];
+    /* 0x14 */ u8* heapBase;
+    /* 0x18 */ s32 heapSize;
     /* 0x1C */ s32 outputRate;
     /* 0x20 */ s32 maxVoices;
     /* 0x24 */ s32 maxUpdates;
@@ -29,7 +33,7 @@ typedef struct AMConfig {
     /* 0x5C */ OSPri pri;
     /* 0x60 */ OSId id;
     /* 0x64 */ s32 unk_64;
-    /* 0x68 */ s32 unk_68;
+    /* 0x68 */ OSPiHandle* unk_68;
 } AMConfig;
 
 typedef struct AMTask {
@@ -93,7 +97,7 @@ extern u32 D_800D7BAC_D87AC; /* minFrameSize */
 extern u32 D_800D7BB0_D87B0; /* maxFrameSize */
 extern u32 D_800D7BB4_D87B4; /* frameSize */
 extern s32 D_800D7BB8_D87B8; /* AMConfig.extraSamples */
-extern s32 D_800D8038_D8C38;
+extern OSPiHandle* D_800D8038_D8C38;
 extern OSMesgQueue D_800D7F80_D8B80;
 extern OSIoMesg D_800D7BC0_D87C0[]; /* one PI request per DMA this frame */
 extern OSMesg D_800D7F98_D8B98[];
@@ -356,8 +360,7 @@ s32 func_80016454_17054(s32 addr, s32 len, void* state) {
     mb->dramAddr = foundBuffer;
     mb->devAddr = addr;
     mb->size = D_800D7BA0_D87A0;
-    /* D_800D8038_D8C38 holds an OSPiHandle* in an s32 (AMConfig.unk_68): a host hazard. */
-    osEPiStartDma((OSPiHandle*)D_800D8038_D8C38, mb, OS_READ);
+    osEPiStartDma(D_800D8038_D8C38, mb, OS_READ);
     return osVirtualToPhysical(foundBuffer) + delta;
 }
 

@@ -2159,6 +2159,7 @@ void func_8002C6F4_2D2F4(HmfModel* arg0, u16 arg1) {
 }
 
 void func_8003F57C_4017C(s16, s16);
+void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
 
 void func_8002C810_2D410(HmfModel* arg0) {
     HmfData* hmf = arg0->hmf;
