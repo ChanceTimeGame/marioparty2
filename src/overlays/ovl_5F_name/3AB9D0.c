@@ -1756,9 +1756,46 @@ void func_8010DF10_3B70B0_name_5F(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010E65C_3B77FC_name_5F);
+void func_8010E65C_3B77FC_name_5F(void) {
+    s32 i;
+    s32 ch;
+    Ovl5FPlayer* p;
+    void* data;
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010E844_3B79E4_name_5F);
+    for (i = 0; i < 4; i++) {
+        p = D_800FA640_FB240[i];
+        ch = gPlayers[i].character;
+        p->model = LoadFormFile(D_80113F98_3BD138_name_5F[ch] | 0x230000, 0x2A9);
+        p->scale = 0.8f;
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.8f, 0.8f, 0.8f);
+        data = DataRead(D_800CD438_CE038[ch].dir | 0xDF);
+        func_8003D8F0_3E4F0(D_800FC834_FD434[p->model].hmf, data, 0, D_80113FA4_3BD144_name_5F[ch]);
+        DataClose(data);
+        func_80029A8C_2A68C(p->model);
+        func_80029AFC_2A6FC(p->model);
+        o = omAddObj(0x7918, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk08);
+        o->work[0] = i;
+        o->work[1] = 0;
+        o->work[2] = 0;
+        omAddObj(0x7D00, 0, 0, -1, func_80109FA0_3B3140_name_5F)->work[0] = i;
+    }
+}
+
+void func_8010E844_3B79E4_name_5F(void) {
+    s32 i;
+    s32 j;
+
+    for (i = 0, j = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            func_80104DA8_3ADF48_name_5F(i, 4, 0.0f, -10.0f, -80.0f);
+        } else {
+            func_80104DA8_3ADF48_name_5F(i, 3, j * 60.0f - 100.0f, -10.0f, -80.0f);
+            j++;
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80114C24_3BDDC4_name_5F[] = "c005l_0_DEF";
@@ -1778,7 +1815,118 @@ const char D_80114C54_3BDDF4_name_5F[] = "c001l_0_DEF";
 __asm__(".section .rodata");
 const char D_80114C60_3BDE00_name_5F[16] = "c000l_0_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010E920_3B7AC0_name_5F);
+void func_8010E920_3B7AC0_name_5F(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    Ovl5FDemo* demo = &D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]];
+    omObjData* o;
+
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        o = omAddObj(10, 0, 0, -1, demo->unk0C);
+        o->work[0] = i;
+        o->work[1] = 0;
+        omDelObj(obj);
+    } else {
+        /* the target tilt for the stick's quarter (work[2]) */
+        switch (obj->work[2]) {
+        case 0:
+            p->unk94 = 0.0f;
+            p->unk98 = 0.0f;
+            break;
+        case 1:
+            p->unk94 = 45.0f;
+            p->unk98 = 0.0f;
+            break;
+        case 2:
+            p->unk94 = 0.0f;
+            p->unk98 = 90.0f;
+            break;
+        case 3:
+            p->unk94 = -45.0f;
+            p->unk98 = 0.0f;
+            break;
+        case 4:
+            p->unk94 = 0.0f;
+            p->unk98 = -90.0f;
+            break;
+        }
+        if (p->unk94 == 0.0f) {
+            if (p->rot.x > 0.0f) {
+                p->rot.x -= 10.0f;
+                if (p->rot.x < 0.0f) {
+                    p->rot.x = 0.0f;
+                }
+            }
+            if (p->rot.x < 0.0f) {
+                p->rot.x += 10.0f;
+                if (p->rot.x > 0.0f) {
+                    p->rot.x = 0.0f;
+                }
+            }
+        }
+        if (p->unk98 == 0.0f) {
+            if (p->rot.y > 0.0f) {
+                p->rot.y -= 10.0f;
+                if (p->rot.y < 0.0f) {
+                    p->rot.y = 0.0f;
+                }
+            }
+            if (p->rot.y < 0.0f) {
+                p->rot.y += 10.0f;
+                if (p->rot.y > 0.0f) {
+                    p->rot.y = 0.0f;
+                }
+            }
+        }
+        if (p->unk94 > 0.0f) {
+            p->rot.x += 10.0f;
+            if (p->rot.x > p->unk94) {
+                p->rot.x = p->unk94;
+            }
+        }
+        if (p->unk94 < 0.0f) {
+            p->rot.x -= 10.0f;
+            if (p->rot.x < p->unk94) {
+                p->rot.x = p->unk94;
+            }
+        }
+        if (p->unk98 > 0.0f) {
+            p->rot.y += 10.0f;
+            if (p->rot.y > p->unk98) {
+                p->rot.y = p->unk98;
+            }
+        }
+        if (p->unk98 < 0.0f) {
+            p->rot.y -= 10.0f;
+            if (p->rot.y < p->unk98) {
+                p->rot.y = p->unk98;
+            }
+        }
+        if (OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 0)) > 10.0f
+            || OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 1)) > 10.0f) {
+            p->unk94 = func_800B75A8_B81A8(func_80108C8C_3B1E2C_name_5F(i, 0), -func_80108C8C_3B1E2C_name_5F(i, 1)) + 45.0f;
+            p->unk94 = func_8002D958_2E558(p->unk94);
+            if (p->unk94 < 360.0f) {
+                obj->work[2] = 4;
+            }
+            if (p->unk94 < 270.0f) {
+                obj->work[2] = 3;
+            }
+            if (p->unk94 < 180.0f) {
+                obj->work[2] = 2;
+            }
+            if (p->unk94 < 90.0f) {
+                obj->work[2] = 1;
+            }
+        } else {
+            obj->work[2] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010EEB4_3B8054_name_5F);
 
