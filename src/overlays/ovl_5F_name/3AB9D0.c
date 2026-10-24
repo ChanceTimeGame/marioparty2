@@ -2125,10 +2125,19 @@ void func_80112E68_3BC008_name_5F(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80112FE8_3BC188_name_5F);
+void func_80112FE8_3BC188_name_5F(void) {
+    func_8010A2B0_3B3450_name_5F();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80113004_3BC1A4_name_5F);
+void func_80113004_3BC1A4_name_5F(void) {
+    func_80109988_3B2B28_name_5F();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80113020_3BC1C0_name_5F);
+void func_80113020_3BC1C0_name_5F(void) {
+    func_80109A04_3B2BA4_name_5F();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8011303C_3BC1DC_name_5F);
+void func_8011303C_3BC1DC_name_5F(void) {
+    D_80114F50_3BE0F0_name_5F[0] = D_80114F74_3BE114_name_5F;
+    func_8010A45C_3B35FC_name_5F();
+}
