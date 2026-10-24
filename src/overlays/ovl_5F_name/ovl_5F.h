@@ -198,7 +198,7 @@ extern s16 D_80113B50_3BCCF0_name_5F[5]; /* addiu:3 */
 extern s16 D_80113B5A_3BCCFA_name_5F[15]; /* sh:1 */
 extern s32 D_80113B78_3BCD18_name_5F[62]; /* addiu:1 */
 extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
-extern s32 D_80113EC8_3BD068_name_5F[4]; /* lw:2 sw:4 */
+extern omObjData* D_80113EC8_3BD068_name_5F[4]; /* 5F-D: a demo player's action object (8010F8BC) */
 extern u16 D_80113ED8_3BD078_name_5F[6]; /* lhu:1 */
 extern s32 D_80113EE4_3BD084_name_5F[6]; /* addiu:1 */
 extern s32 D_80113EFC_3BD09C_name_5F[3]; /* addiu:1 */
@@ -209,12 +209,12 @@ extern u16 D_80113F2C_3BD0CC_name_5F[12]; /* lhu:1 */
 extern s32 D_80113F44_3BD0E4_name_5F; /* lw:1 */
 extern s32 D_80113F48_3BD0E8_name_5F; /* lw:1 */
 extern s32 D_80113F4C_3BD0EC_name_5F[16]; /* lw:1 */
-extern s16 D_80113F8C_3BD12C_name_5F[6]; /* lh:1 */
-extern s32 D_80113F98_3BD138_name_5F[3]; /* addiu:1 */
-extern s32 D_80113FA4_3BD144_name_5F[6]; /* lw:1 */
-extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
-extern u8 D_80113FDC_3BD17C_name_5F[4]; /* lb:1 sb:1 */
-extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
+extern s16 D_80113F8C_3BD12C_name_5F[6]; /* 5F-D: per character, 8010CD08 */
+extern s16 D_80113F98_3BD138_name_5F[6]; /* 5F-D: per character, 8010E65C */
+extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF", 8010E65C */
+extern f32 D_80113FBC_3BD15C_name_5F[8]; /* 5F-D: 8010F1A4's speed history (ring) */
+extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: its ring index */
+extern s16 D_80113FE0_3BD180_name_5F[14]; /* 5F-D: per character, 8010FDD8 */
 extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
 extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
 extern s32 D_8011400C_3BD1AC_name_5F[2]; /* lw:1 */
@@ -388,8 +388,8 @@ void func_8010E920_3B7AC0_name_5F(omObjData*);
 void func_8010EEB4_3B8054_name_5F(void);
 void func_8010F0C8_3B8268_name_5F(void);
 void func_8010F1A4_3B8344_name_5F(omObjData*);
-void func_8010F488_3B8628_name_5F(s32);
-void func_8010F578_3B8718_name_5F(s32);
+void func_8010F488_3B8628_name_5F(omObjData*);
+void func_8010F578_3B8718_name_5F(omObjData*);
 void func_8010F668_3B8808_name_5F(void);
 void func_8010F8BC_3B8A5C_name_5F(omObjData*);
 void func_8010FDD8_3B8F78_name_5F(void);
@@ -415,5 +415,55 @@ void func_80113020_3BC1C0_name_5F(void);
 void func_8011303C_3BC1DC_name_5F(void);
 void func_80113070_3BC210_name_5F(s32);
 void func_801136C4_3BC864_name_5F(s32);
+
+/* 5F-D */
+
+/* A demo player's work (main's D_800FA640[player], one per player). Fields named from
+   5F-D's demos (8010C61C-8010FDD8); 5F-A reads bytes 0x35 and 0x6D. */
+typedef struct Ovl5FPlayer {
+    /* 0x00 */ Vec pos;       /* the model's position, saved when the demo ends */
+    /* 0x0C */ f32 unk0C;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;       /* saved rotation (8010E920: tilt angles) */
+    /* 0x20 */ char unk20[0xC];
+    /* 0x2C */ f32 baseY;
+    /* 0x30 */ u16 flags;
+    /* 0x32 */ char unk32[2];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot[8];
+    /* 0x46 */ char unk46[6];
+    /* 0x4C */ s16 model2;    /* a second model (item, vehicle, partner) */
+    /* 0x4E */ char unk4E[0x3E];
+    /* 0x8C */ s16 unk8C;
+    /* 0x8E */ s16 timer;
+    /* 0x90 */ char unk90[4];
+    /* 0x94 */ f32 unk94;
+    /* 0x98 */ f32 unk98;
+    /* 0x9C */ f32 unk9C;
+    /* 0xA0 */ char unkA0[4];
+    /* 0xA4 */ void (*actA)(omObjData*); /* run on A (8010F8BC) */
+    /* 0xA8 */ void (*actB)(omObjData*); /* run on B */
+} Ovl5FPlayer;
+
+/* main's per-character data (objmain.c's CharData) */
+typedef struct Ovl5FCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;   /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ f32 unk_14;
+} Ovl5FCharData;
+extern Ovl5FCharData D_800CD438_CE038[];
+
+/* the object 80108D50 attaches to a hook node (its unk_50) */
+typedef struct Ovl5FHook {
+    /* 0x00 */ s32 model;
+    /* 0x04 */ s32 parent;
+    /* 0x08 */ char* hook;
+} Ovl5FHook;
+
+#define OVL5F_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif

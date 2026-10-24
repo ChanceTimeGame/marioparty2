@@ -1242,13 +1242,260 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010C2A8_3B5448
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010C40C_3B55AC_name_5F);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010C61C_3B57BC_name_5F);
+void func_8010C61C_3B57BC_name_5F(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+    Ovl5FDemo* demo = &D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]];
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010CD08_3B5EA8_name_5F);
+    if (gPlayers[i].group != 0) {
+        func_800298A4_2A4A4(p->model2, 4, 0);
+        func_80029714_2A314(p->model2, HuMathSin(p->pos.y) * 9.0f + model->pos.x, model->pos.y - 24.0f,
+                            func_800B7890_B8490(p->pos.y) * 9.0f + model->pos.z);
+    }
+    if (obj->work[1] == 12) {
+        if (gPlayers[i].group != 0) {
+            func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+            func_80029714_2A314(p->model2, HuMathSin(model->pos.y) * 9.0f + model->pos.x, model->pos.y - 24.0f,
+                                func_800B7890_B8490(model->pos.y) * 9.0f + model->pos.z);
+        }
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        o = omAddObj(10, 0, 0, -1, demo->unk0C);
+        o->work[0] = i;
+        o->work[1] = 0;
+        p->pos.x = model->pos.x;
+        p->pos.y = model->pos.y;
+        p->pos.z = model->pos.z;
+        p->rot.x = model->rot.x;
+        p->rot.y = model->rot.y;
+        p->rot.z = model->rot.z;
+        if (gPlayers[i].group == 0) {
+            omDelObj(obj);
+        }
+    } else {
+        if (OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 0)) > 10.0f
+            || OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 1)) > 10.0f) {
+            p->rot.y = func_800B75A8_B81A8(func_80108C8C_3B1E2C_name_5F(i, 0), -func_80108C8C_3B1E2C_name_5F(i, 1));
+            func_8002979C_2A39C(p->model, 0.0f, p->rot.y, 0.0f);
+        }
+        if (gPlayers[i].group == 0) {
+            switch (obj->work[1]) {
+            case 1:
+                if (OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 0)) > 10.0f
+                    || OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 1)) > 10.0f) {
+                    func_80029BF0_2A7F0(p->model, p->mot[1], 0, 3, 2);
+                    obj->work[1] = 2;
+                }
+                break;
+            case 2:
+                if (OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 0)) <= 10.0f
+                    && OVL5F_ABS(func_80108C8C_3B1E2C_name_5F(i, 1)) <= 10.0f) {
+                    func_80029BF0_2A7F0(p->model, p->mot[0], 0, 3, 2);
+                    obj->work[1] = 1;
+                }
+                break;
+            }
+        } else {
+            switch (obj->work[1]) {
+            case 1:
+                if (func_80108B80_3B1D20_name_5F(i, 0x8000) != 0) {
+                    o = omAddObj(1000, 0, 0, -1, func_8010C2A8_3B5448_name_5F);
+                    o->work[0] = 0;
+                    o->work[2] = i;
+                    p->pos.x = model->pos.x;
+                    p->pos.y = model->pos.y;
+                    p->pos.z = model->pos.z;
+                    obj->work[1] = 2;
+                    obj->work[2] = 30;
+                }
+                break;
+            case 2:
+                if (--obj->work[2] == 255) {
+                    obj->work[1] = 1;
+                }
+                break;
+            }
+            func_8002979C_2A39C(p->model2, 0.0f, p->rot.y, 0.0f);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010CFB8_3B6158_name_5F);
+void func_8010CD08_3B5EA8_name_5F(void) {
+    s32 i;
+    s32 ch;
+    s32 dir;
+    Ovl5FPlayer* p;
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010D098_3B6238_name_5F);
+    for (i = 0; i < 4; i++) {
+        ch = gPlayers[i].character;
+        dir = D_800CD438_CE038[ch].dir;
+        p = D_800FA640_FB240[i];
+        if (gPlayers[i].group == 0) {
+            p->model = func_80018A30_19630(dir | D_800CD438_CE038[ch].unk_08, 0xA9D);
+            func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+            p->scale = 0.6f;
+            func_800297E8_2A3E8(p->model, 0.6f, 0.6f, 0.6f);
+            p->model2 = func_80018A30_19630(0x200000, 0x69D);
+            func_80029714_2A314(p->model2, 0.0f, -1000.0f, 0.0f);
+            func_8002979C_2A39C(p->model2, 0.0f, 50.0f, 0.0f);
+            p->scale = 0.3f;
+            func_800297E8_2A3E8(p->model2, 0.3f, 0.3f, 0.3f);
+            p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x26), 0x1D);
+            p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x27), 0x1D);
+            func_8002C9C0_2D5C0(p->model, p->mot[0]);
+            func_80029E80_2AA80(p->model, 2, 2);
+            p->unk8C = 0;
+            p->unk98 = 300.0f;
+        } else {
+            p->model = func_80018A30_19630(D_80113F8C_3BD12C_name_5F[ch] | 0x200000, 0xA9D);
+            func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+            func_800297E8_2A3E8(p->model, 0.2f, 0.2f, 0.2f);
+            func_80029FE4_2ABE4(p->model, 0.0f);
+            func_80029C74_2A874(p->model, func_80029D0C_2A90C(p->model));
+        }
+        o = omAddObj(0x7D00, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk08);
+        o->work[0] = i;
+        o->work[1] = 0;
+    }
+}
+
+void func_8010CFB8_3B6158_name_5F(void) {
+    s32 i;
+    s32 j;
+
+    for (i = 0, j = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            func_80104DA8_3ADF48_name_5F(i, 4, 0.0f, -50.0f, -80.0f);
+        } else {
+            func_80104DA8_3ADF48_name_5F(i, 3, j * 60.0f - 100.0f, 0.0f, -80.0f);
+            j++;
+        }
+    }
+}
+
+void func_8010D098_3B6238_name_5F(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl5FPlayer* p = D_800FA640_FB240[i];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+    omObjData* o;
+
+    if (gPlayers[i].group == 0) {
+        func_800298A4_2A4A4(p->model2, 4, 0);
+        if (D_800FC8A0_FD4A0 != 0) {
+            func_80029714_2A314(p->model2, model->pos.x, model->pos.y + 504.00003f + p->unk98, model->pos.z);
+        }
+    }
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            p->baseY = model->pos.y;
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        o = omAddObj(10, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk0C);
+        o->work[0] = i;
+        o->work[1] = 0;
+        p->pos.x = model->pos.x;
+        p->pos.y = model->pos.y;
+        p->pos.z = model->pos.z;
+        p->rot.x = model->rot.x;
+        p->rot.y = model->rot.y;
+        p->rot.z = model->rot.z;
+    } else if (gPlayers[i].group == 0) {
+        switch (obj->work[1]) {
+        case 1:
+            p->unk98 -= 10.0f;
+            if (p->unk98 < 0.0f) {
+                p->unk8C = 1;
+                p->unk98 = 0.0f;
+                obj->work[1] = 2;
+            }
+            func_80029714_2A314(p->model2, model->pos.x, model->pos.y + 504.00003f + p->unk98, model->pos.z);
+            break;
+        case 2:
+            model->pos.y += 10.0f;
+            if (model->pos.y > p->baseY + 100.0f) {
+                model->pos.y = p->baseY + 100.0f;
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80108B80_3B1D20_name_5F(i, 0x8000) != 0) {
+                obj->work[1] = 4;
+            }
+            break;
+        case 4:
+            model->pos.y -= 5.0f;
+            if (model->pos.y < p->baseY + 30.0f) {
+                func_80029BF0_2A7F0(p->model, p->mot[1], 0, 2, 0);
+                obj->work[1] = 5;
+            }
+            break;
+        case 5:
+            model->pos.y -= 5.0f;
+            if (model->pos.y < p->baseY) {
+                model->pos.y = p->baseY;
+                p->timer = 20;
+                obj->work[1] = 6;
+            }
+            break;
+        case 6:
+            if (--p->timer == -1) {
+                obj->work[1] = 7;
+            }
+            break;
+        case 7:
+            model->pos.y += 5.0f;
+            if (model->pos.y > p->baseY + 100.0f) {
+                model->pos.y = p->baseY + 100.0f;
+                func_80029BF0_2A7F0(p->model, p->mot[1], 0, 2, 0);
+                p->timer = 20;
+                obj->work[1] = 8;
+            }
+            break;
+        case 8:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 9;
+            }
+            break;
+        case 9:
+            if (func_80029CE4_2A8E4(p->model) >= func_80029D0C_2A90C(p->model)) {
+                obj->work[1] = 10;
+                func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 2);
+            }
+            break;
+        case 10:
+            if (--p->timer == -1) {
+                obj->work[1] = 3;
+            }
+            break;
+        }
+        if (p->unk8C != 0) {
+            func_80029714_2A314(p->model2, model->pos.x, model->pos.y + 504.00003f + p->unk98, model->pos.z);
+        }
+    } else {
+        if (obj->work[1] == 2) {
+            if (func_80029CE4_2A8E4(p->model) >= func_80029D0C_2A90C(p->model)) {
+                obj->work[1] = 1;
+            }
+        }
+        if (func_80108B80_3B1D20_name_5F(i, 0x8000) != 0 && obj->work[1] == 1) {
+            obj->work[1] = 2;
+            func_80029FE4_2ABE4(p->model, 1.0f);
+            func_80029C74_2A874(p->model, 0.0f);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010D640_3B67E0_name_5F);
 
