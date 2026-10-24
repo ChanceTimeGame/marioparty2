@@ -126,19 +126,8 @@ void func_800B6410_B7010(Matrix4f a, Matrix4f b, Matrix4f out); /* MP1 func_800A
 void func_800B3040_B3C40(Matrix4f m, Mtx* mtx); /* MP1 func_800A0A20: float to Mtx */
 /* Views of main's per-part draw records (30560.c's HmfLayerEnt and HmfDrawRec): a part's matrix is
    D_800F8C58[D_800FDC48[hmf->unk00][part->unk2F].unk02].unk44. */
-typedef struct CGLayerEnt {
-    /* 0x00 */ u8 unk00;
-    /* 0x01 */ u8 unk01;
-    /* 0x02 */ s16 unk02;
-    /* 0x04 */ f32 unk04;
-} CGLayerEnt;
-typedef struct CGDrawRec {
-    /* 0x00 */ char unk00[0x44];
-    /* 0x44 */ Mtx* unk44;
-    /* 0x48 */ char unk48[0x10];
-} CGDrawRec; /* size = 0x58 */
-extern CGLayerEnt* D_800FDC48_FE848[8];
-extern CGDrawRec* D_800F8C58_F9858;
+typedef HmfLayerEnt CGLayerEnt;
+typedef HmfDrawRec CGDrawRec;
 u32 osVirtualToPhysical(void*);
 extern Gfx D_8010BCE0_155800_CraneGame[]; /* shadow render setup (MP1 D_800FF870) */
 extern Vtx D_8010BD20_155840_CraneGame[3]; /* the claw's round shadow (MP1 D_800FF8B0) */

@@ -939,26 +939,8 @@ extern s16 D_800FFFD6_100BD6;
 extern Gfx D_800C9F78_CAB78[];
 extern s32 D_800C9E60_CAA60;
 
-/* D_800F8C58_F9858[D_800FDC48_FE848[group][part].unk02].unk44: the matrix a part-following
-   model (HmfModel.unk18 & 0x4000) is drawn with */
-typedef struct {
-    /* 0x00 */ s16 unk00;
-    /* 0x02 */ s16 unk02;
-    /* 0x04 */ char unk04[4];
-} Unk274D0Rec8; /* size 0x8 */
-
-typedef struct {
-    /* 0x00 */ char unk00[0x44];
-    /* 0x44 */ Mtx* unk44;
-    /* 0x48 */ char unk48[0x10];
-} Unk274D0Rec58; /* size 0x58 */
-
-typedef struct {
-    /* 0x00 */ Unk274D0Rec8* unk00;
-} Unk274D0Group;
-
-extern Unk274D0Group D_800FDC48_FE848[];
-extern Unk274D0Rec58* D_800F8C58_F9858;
+/* D_800F8C58_F9858[D_800FDC48_FE848[group][part].unk02].unk44 (hmfman.h): the matrix a
+   part-following model (HmfModel.unk18 & 0x4000) is drawn with */
 
 Gfx* func_80029368_29F68(Gfx* arg0, s16 arg1, u16 arg2);
 u8 func_8001D054_1DC54(void* arg0, u16 arg1, s32 arg2, void* arg3, s32 arg4);
@@ -1156,7 +1138,7 @@ void func_800286FC_292FC(void* arg0, s32 arg1) {
                             hmf->unk90 = hmf->unk94 = hmf->unk98 = NULL;
                         }
                         if (D_800F64C4_F70C4 & 0x4000) {
-                            func_800B30D0_B3CD0(sp18, D_800F8C58_F9858[D_800FDC48_FE848[p->unk68->unk00].unk00[p->unk68->unk64[p->unk0A].unk2F].unk02].unk44);
+                            func_800B30D0_B3CD0(sp18, (Mtx*)D_800F8C58_F9858[D_800FDC48_FE848[p->unk68->unk00][p->unk68->unk64[p->unk0A].unk2F].unk02].unk44);
                         }
                         func_80030A78_31678(hmf, sp18, sp58);
                         hmf->unk0C++;

@@ -351,30 +351,10 @@ extern s16 D_801027FA_1033FA;
 extern s16 D_800FDBC8_FE7C8;
 extern u16 D_800F60A0_F6CA0;
 extern u16 D_8010116E_101D6E;
-/* D_800FDC48_FE848's entries (MP1 unk2C0C0StructF0 is larger) */
-typedef struct HmfLayerEnt {
-    /* 0x00 */ u8 unk00;
-    /* 0x01 */ u8 unk01;
-    /* 0x02 */ s16 unk02; /* its D_800F8C58_F9858 record */
-    /* 0x04 */ f32 unk04; /* depth */
-} HmfLayerEnt; /* size = 0x8; a depth-sorted list: unk00 next, unk01 previous */
 
-/* D_800F8C58_F9858's entries (384, 0x8400 bytes): one sorted draw of a model part */
-typedef struct HmfDrawRec {
-    /* 0x00 */ s16 unk00; /* part */
-    /* 0x02 */ char unk02[0x42];
-    /* 0x44 */ void* unk44; /* the part's Mtx */
-    /* 0x48 */ HmfData* unk48;
-    /* 0x4C */ s32 unk4C; /* the part's flags */
-    /* 0x50 */ u32 unk50; /* D_800F64C4_F70C4 */
-    /* 0x54 */ struct HmfData_UnkD0* unk54;
-} HmfDrawRec; /* size = 0x58 */
-
-extern HmfLayerEnt* D_800FDC48_FE848[8]; /* 8 buffers of D_800CA080_CAC80[i] entries */
 extern s16 D_80102758_103358[8];
 extern s16 D_80101648_102248;
 extern u8 D_800CA080_CAC80[8];
-extern HmfDrawRec* D_800F8C58_F9858;
 extern u8 D_800F842C_F902C;
 extern u8 D_800FD2A4_FDEA4;
 extern f32 D_80101300_101F00;
