@@ -201,7 +201,7 @@ void func_80105CE0_364BD0_name_55(void) {
     s32 i;
     s32 j;
 
-    sign = (Ovl55Sign*)(D_8010C570_36B460_name_55 = (s32)HuMemMemoryAllocPerm(sizeof(Ovl55Sign)));
+    sign = (Ovl55Sign*)(D_8010C570_36B460_name_55 = HuMemMemoryAllocPerm(sizeof(Ovl55Sign)));
     sign->grp = func_8001A2F8_1AEF8(0xA019A);
     sign->grp2 = func_8001A2F8_1AEF8(0xA019B);
     sign->spr = func_8001AAAC_1B6AC(sign->grp, 0, 1);
@@ -322,7 +322,7 @@ void func_80105FC4_364EB4_name_55(void) {
         HuPrcVSleep();
     } while (sign->x >= -80);
     func_8001AC44_1B844(sign->spr);
-    HuMemMemoryFreePerm((void*)D_8010C570_36B460_name_55);
+    HuMemMemoryFreePerm(D_8010C570_36B460_name_55);
     D_8010C570_36B460_name_55 = 0;
 }
 
