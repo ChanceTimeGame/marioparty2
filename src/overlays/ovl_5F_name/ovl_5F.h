@@ -91,7 +91,8 @@ typedef struct Ovl5FPlayer {
     /* 0x90 */ char unk90[4];
     /* 0x94 */ f32 vel;
     /* 0x98 */ f32 floor;
-    /* 0x9C */ char unk9C[8];
+    /* 0x9C */ f32 unk9C;
+    /* 0xA0 */ char unkA0[4];
     /* 0xA4 */ void (*actA)(omObjData*); /* A button action (flag 4) */
     /* 0xA8 */ void (*actB)(omObjData*); /* B button action (flag 0x10) */
 } Ovl5FPlayer;
@@ -270,10 +271,10 @@ extern u16 D_80113F20_3BD0C0_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F2C_3BD0CC_name_5F[6][2]; /* motion files per character */
 extern Ovl5FCharHook D_80113F44_3BD0E4_name_5F[6]; /* asm labels F48, F4C are [0]'s fields */
 extern s16 D_80113F8C_3BD12C_name_5F[6]; /* lh:1 */
-extern s32 D_80113F98_3BD138_name_5F[3]; /* addiu:1 */
-extern s32 D_80113FA4_3BD144_name_5F[6]; /* lw:1 */
+extern u16 D_80113F98_3BD138_name_5F[6]; /* 5F-D: per character, 8010E65C */
+extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF", 8010E65C */
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
-extern u8 D_80113FDC_3BD17C_name_5F[4]; /* lb:1 sb:1 */
+extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: 8010F1A4's ring index (D_80113FBC) */
 extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
 extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
 extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
@@ -448,8 +449,8 @@ void func_8010E920_3B7AC0_name_5F(omObjData*);
 void func_8010EEB4_3B8054_name_5F(void);
 void func_8010F0C8_3B8268_name_5F(void);
 void func_8010F1A4_3B8344_name_5F(omObjData*);
-void func_8010F488_3B8628_name_5F(s32);
-void func_8010F578_3B8718_name_5F(s32);
+void func_8010F488_3B8628_name_5F(omObjData*);
+void func_8010F578_3B8718_name_5F(omObjData*);
 void func_8010F668_3B8808_name_5F(void);
 void func_8010F8BC_3B8A5C_name_5F(omObjData*);
 void func_8010FDD8_3B8F78_name_5F(void);
@@ -476,5 +477,7 @@ void func_8011303C_3BC1DC_name_5F(void);
 void func_80113070_3BC210_name_5F(s32);
 void func_801136C4_3BC864_name_5F(s32);
 
+/* 5F-D: Ovl5FPlayer, Ovl5FCharData and Ovl5FAttach are 5F-C's (above) */
+#define OVL5F_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif
