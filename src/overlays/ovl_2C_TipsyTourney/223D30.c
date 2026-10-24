@@ -282,7 +282,7 @@ void func_801034E8_224A18_TipsyTourney(omObjData* obj) {
     func_800B0EF0_B1AF0(work, 0, 0xB4);
     obj->func_ptr = func_8010643C_22796C_TipsyTourney;
     work->unk_03 = 1;
-    func_8000BF24_CB24(obj, 0x40A00000, -250.0f, -250.0f, 250.0f, 250.0f);
+    func_8000BF24_CB24(obj, 5.0f, -250.0f, -250.0f, 250.0f, 250.0f);
     func_8000C004_CC04(obj);
     func_8000BE8C_CA8C(obj, 0.3f);
     func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);
@@ -312,7 +312,7 @@ void func_801036A8_224BD8_TipsyTourney(omObjData* obj) {
     func_800B0EF0_B1AF0(work, 0, 0xB4);
     obj->func_ptr = func_8010643C_22796C_TipsyTourney;
     work->unk_03 = 1;
-    func_8000BF24_CB24(obj, 0x40A00000, -250.0f, -250.0f, 250.0f, 250.0f);
+    func_8000BF24_CB24(obj, 5.0f, -250.0f, -250.0f, 250.0f, 250.0f);
     func_8000C004_CC04(obj);
     func_8000BE8C_CA8C(obj, 0.3f);
     func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);
@@ -342,7 +342,7 @@ void func_80103864_224D94_TipsyTourney(omObjData* obj) {
     func_800B0EF0_B1AF0(work, 0, 0xB4);
     obj->func_ptr = func_8010643C_22796C_TipsyTourney;
     work->unk_03 = 1;
-    func_8000BF24_CB24(obj, 0x40A00000, -250.0f, -250.0f, 250.0f, 250.0f);
+    func_8000BF24_CB24(obj, 5.0f, -250.0f, -250.0f, 250.0f, 250.0f);
     func_8000C004_CC04(obj);
     func_8000BE8C_CA8C(obj, 0.3f);
     func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);
@@ -372,7 +372,7 @@ void func_80103A24_224F54_TipsyTourney(omObjData* obj) {
     func_800B0EF0_B1AF0(work, 0, 0xB4);
     obj->func_ptr = func_8010643C_22796C_TipsyTourney;
     work->unk_03 = 1;
-    func_8000BF24_CB24(obj, 0x40A00000, -250.0f, -250.0f, 250.0f, 250.0f);
+    func_8000BF24_CB24(obj, 5.0f, -250.0f, -250.0f, 250.0f, 250.0f);
     func_8000C004_CC04(obj);
     func_8000BE8C_CA8C(obj, 0.3f);
     func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);

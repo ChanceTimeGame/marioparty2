@@ -331,8 +331,8 @@ void func_80102ED0_35D7E0_name_53(omObjData* obj) {
                         obj->work[3] = 60;
                         func_8008AD44_8B944(D_80105D70_360680_name_53[obj->work[1]].win);
                         if (D_80105DA2_3606B2_name_53[obj->work[1]] == 0) {
-                            func_80089308_89F08(D_80105D70_360680_name_53[obj->work[1]].win, (s32)D_80105D60_360670_name_53, 0);
-                            func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+                            func_80089308_89F08(D_80105D70_360680_name_53[obj->work[1]].win, D_80105D60_360670_name_53, 0);
+                            func_8008D974_8E574(D_80105D60_360670_name_53, 0);
                         }
                         func_800890CC_89CCC(D_80105D70_360680_name_53[obj->work[1]].win,
                                             D_80105DA2_3606B2_name_53[obj->work[1]] + 0x258, -2, 4);
@@ -658,8 +658,8 @@ void func_80104570_35EE80_name_53(s32 player) {
         if (D_80105DA2_3606B2_name_53[i] == 0) {
             sprintf(D_80105D60_360670_name_53, D_80105D58_360668_name_53,
                     func_80104A40_35F350_name_53(0, D_80105DD2_3606E2_name_53));
-            func_80089308_89F08(box->win, (s32)D_80105D60_360670_name_53, 0);
-            func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+            func_80089308_89F08(box->win, D_80105D60_360670_name_53, 0);
+            func_8008D974_8E574(D_80105D60_360670_name_53, 0);
         }
         func_800890CC_89CCC(box->win, D_80105DA2_3606B2_name_53[i] + 0x258, -2, 4);
         func_80089A48_8A648(box->win, 0);
@@ -719,9 +719,9 @@ void func_80104AEC_35F3FC_name_53(void) {
             mes2 = 0x268;
         }
     }
-    func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+    func_8008D974_8E574(D_80105D60_360670_name_53, 0);
     OVL53_MES_WIN(win, mes1);
-    func_80089308_89F08(win, (s32)D_80105D60_360670_name_53, 0);
+    func_80089308_89F08(win, D_80105D60_360670_name_53, 0);
     func_800890CC_89CCC(win, mes1, -1, -1);
     ShowTextWindow(win);
     func_80057730_58330(win, D_80105DD2_3606E2_name_53);
@@ -773,9 +773,9 @@ void func_80104D6C_35F67C_name_53(void) {
         mes2 = 0x26E;
     }
     sprintf(D_80105D60_360670_name_53, D_80105D58_360668_name_53, coins);
-    func_8008D974_8E574((s32)D_80105D60_360670_name_53, 0);
+    func_8008D974_8E574(D_80105D60_360670_name_53, 0);
     OVL53_MES_WIN(win, mes1);
-    func_80089308_89F08(win, (s32)D_80105D60_360670_name_53, 0);
+    func_80089308_89F08(win, D_80105D60_360670_name_53, 0);
     func_800890CC_89CCC(win, mes1, -1, -1);
     ShowTextWindow(win);
     func_80057730_58330(win, D_80105DD2_3606E2_name_53);

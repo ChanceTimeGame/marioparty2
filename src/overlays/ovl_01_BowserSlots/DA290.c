@@ -632,7 +632,7 @@ void func_80103DEC_DB87C_BowserSlots(omObjData* obj) {
     file = D_800CD438_CE038[chr].unk_10;
     func_8000C6FC_D2FC(obj, dir, file, player, 0x689, 0x689);
     obj->func_ptr = func_80104460_DBEF0_BowserSlots;
-    ((BSPlayerWork*)obj->unk_50)->unk_EC = 0;
+    ((BSPlayerWork*)obj->unk_50)->unk_EC = NULL;
     obj->model[3] = LoadFormFile(7, 0x68D);
     obj->model[4] = LoadFormFile(8, 0x68D);
     obj->model[6] = LoadFormFile(9, 0x68D);

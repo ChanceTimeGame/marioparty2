@@ -3395,7 +3395,7 @@ void func_8010964C_29E91C_name_3E(void) {
             if ((coins != 0) & (coins < 5)) {
                 sprintf(buf, D_801135C8_2A8898_name_3E, coins);
                 sprintf(buf2, D_801135C8_2A8898_name_3E, D_800F8CE4_F98E4[0x1D] + gPlayers[gw->current_player_index].coins);
-                func_80056368_56F68(2, 0x17, (s32)buf, (s32)buf2, 0, 0, 0);
+                func_80056368_56F68(2, 0x17, buf, buf2, 0, 0, 0);
                 MBDlgWinClose();
                 D_800F8CE4_F98E4[0x1D] += gPlayers[gw->current_player_index].coins;
                 func_8010608C_29B35C_name_3E();
@@ -3405,10 +3405,10 @@ void func_8010964C_29E91C_name_3E(void) {
                 func_80056124_56D24();
             } else if (gPlayers[gw->current_player_index].coins == 0) {
                 sprintf(buf, D_801135C8_2A8898_name_3E, D_800F8CE4_F98E4[0x1D]);
-                func_80056368_56F68(2, 0x18, (s32)buf, 0, 0, 0, 0);
+                func_80056368_56F68(2, 0x18, buf, 0, 0, 0, 0);
             } else {
                 sprintf(buf, D_801135C8_2A8898_name_3E, D_800F8CE4_F98E4[0x1D] + 5);
-                func_80056368_56F68(2, 0x16, (s32)buf, 0, 0, 0, 0);
+                func_80056368_56F68(2, 0x16, buf, 0, 0, 0, 0);
                 MBDlgWinClose();
                 D_800F8CE4_F98E4[0x1D] += 5;
                 func_8010608C_29B35C_name_3E();
@@ -3423,7 +3423,7 @@ void func_8010964C_29E91C_name_3E(void) {
             func_8004655C_4715C(gw->current_player_index);
         } else if (D_800F8CE4_F98E4[0x1D] != 0) {
             sprintf(buf, D_801135C8_2A8898_name_3E, D_800F8CE4_F98E4[0x1D]);
-            func_80056368_56F68(2, 0x19, (s32)buf, 0, 0, 0, 0);
+            func_80056368_56F68(2, 0x19, buf, 0, 0, 0, 0);
             MBDlgWinClose();
             func_8004CA34_4D634(gw->current_player_index, D_800F8CE4_F98E4[0x1D]);
             func_800614B4_620B4(gw->current_player_index, D_800F8CE4_F98E4[0x1D]);
@@ -3532,8 +3532,8 @@ void func_80109B30_29EE00_name_3E(void) {
                 }
                 func_8008DAC0_8E6C0(0x28);
                 func_80056524_57124(0x28);
-                func_80056368_56F68(1, D_80112304_2A75D4_name_3E[shop], names[0], (s32)names[1], (s32)names[2],
-                                    (s32)names[3], (s32)names[4]);
+                func_80056368_56F68(1, D_80112304_2A75D4_name_3E[shop], names[0], names[1], names[2],
+                                    names[3], names[4]);
                 func_80056524_57124(0);
                 D_801138B4_2A8B84_name_3E = shop;
                 D_801138B8_2A8B88_name_3E = enabled;
@@ -4057,7 +4057,7 @@ created:
         }
         msgs[1][1] = 0;
         items[2] = items[3] = 1;
-        func_80056368_56F68(7, 0x6B5, (s32)msgs[0], (s32)msgs[1], 0, 0, 0);
+        func_80056368_56F68(7, 0x6B5, msgs[0], msgs[1], 0, 0, 0);
         choice = func_8010537C_29A64C_name_3E(items);
         MBDlgWinClose();
         func_80056168_56D68();
@@ -4090,7 +4090,7 @@ created:
                 k++;
             }
             items[3] = 1;
-            func_80056368_56F68(7, 0x6B8, (s32)msgs[0], (s32)msgs[1], (s32)msgs[2], 0, 0);
+            func_80056368_56F68(7, 0x6B8, msgs[0], msgs[1], msgs[2], 0, 0);
             sel = func_80105630_29A900_name_3E(choice, items);
             MBDlgWinClose();
             func_80056168_56D68();
@@ -4122,7 +4122,7 @@ created:
                 if (amount == -1) {
                     amount = gPlayers[D_80112330_2A7600_name_3E[gw->current_player_index][sel]].coins;
                     sprintf(msgs[0], "%d", amount);
-                    func_80056368_56F68(7, 0x6BF, (s32)msgs[0], 0, 0, 0, 0);
+                    func_80056368_56F68(7, 0x6BF, msgs[0], 0, 0, 0, 0);
                 } else {
                     for (i = 0; i < sizeof(D_801123D4_2A76A4_name_3E) / sizeof(D_801123D4_2A76A4_name_3E[0]); i++) {
                         if (gw->current_turn >= D_801123D4_2A76A4_name_3E[i].turnMin
@@ -4132,7 +4132,7 @@ created:
                         }
                     }
                     sprintf(msgs[0], "%d", amount);
-                    func_80056368_56F68(7, D_8011243E_2A770E_name_3E[D_801123D4_2A76A4_name_3E[i].mess], (s32)msgs[0], 0,
+                    func_80056368_56F68(7, D_8011243E_2A770E_name_3E[D_801123D4_2A76A4_name_3E[i].mess], msgs[0], 0,
                                         0, 0, 0);
                 }
                 MBDlgWinClose();
@@ -4762,7 +4762,7 @@ void func_8010DE58_2A3128_name_3E(void) {
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
     str1[2] = 0;
-    func_80056368_56F68(-1, 0x1E2, (s32)str0, (s32)str1, 0, 0, 0);
+    func_80056368_56F68(-1, 0x1E2, str0, str1, 0, 0, 0);
     MBDlgWinClose();
     func_80056168_56D68();
     func_8010D6C8_2A2998_name_3E();
@@ -5089,7 +5089,7 @@ void func_8010F430_2A4700_name_3E(void) {
             names[0][1] = gPlayers[hit[0]].character;
             names[0][2] = 0;
             func_80056368_56F68(D_8011259C_2A786C_name_3E[gw->current_board_index],
-                                D_80112584_2A7854_name_3E[gw->current_board_index] + 6, (s32)names[0], 0, 0, 0, 0);
+                                D_80112584_2A7854_name_3E[gw->current_board_index] + 6, names[0], 0, 0, 0, 0);
             func_80056458_57058();
             MBDlgWinClose();
             func_80056168_56D68();
@@ -5105,8 +5105,8 @@ void func_8010F430_2A4700_name_3E(void) {
             names[i][2] = 0;
         }
         func_80056368_56F68(D_8011259C_2A786C_name_3E[gw->current_board_index],
-                            (count + 1) + D_80112584_2A7854_name_3E[gw->current_board_index], (s32)names[0],
-                            (s32)names[1], (s32)names[2], (s32)names[3], 0);
+                            (count + 1) + D_80112584_2A7854_name_3E[gw->current_board_index], names[0],
+                            names[1], names[2], names[3], 0);
         func_80056458_57058();
         if (gw->current_board_index == 4) {
             func_80056458_57058();
@@ -5259,7 +5259,7 @@ void func_8010FD84_2A5054_name_3E(void) {
         name[0] = 0x18;
         name[1] = gPlayers[gw->current_player_index].character;
         name[2] = 0;
-        func_80056368_56F68(0x16, 0xEF, (s32)name, 0, 0, 0, 0);
+        func_80056368_56F68(0x16, 0xEF, name, 0, 0, 0, 0);
         choice = func_8010FB50_2A4E20_name_3E();
         MBDlgWinClose();
         func_80056168_56D68();
@@ -5488,7 +5488,7 @@ void func_80110794_2A5A64_name_3E(void) {
         name[0] = 0x18;
         name[1] = gPlayers[gw->current_player_index].character;
         name[2] = 0;
-        func_80056368_56F68(8, 0x675, (s32)name, 0, 0, 0, 0);
+        func_80056368_56F68(8, 0x675, name, 0, 0, 0, 0);
         MBDlgWinClose();
         func_80056168_56D68();
     } else {
@@ -5496,7 +5496,7 @@ void func_80110794_2A5A64_name_3E(void) {
         name[0] = 0x18;
         name[1] = gPlayers[gw->current_player_index].character;
         name[2] = 0;
-        func_80056368_56F68(8, 0x66F, (s32)name, 0, 0, 0, 0);
+        func_80056368_56F68(8, 0x66F, name, 0, 0, 0, 0);
         choice = func_801104E0_2A57B0_name_3E();
         MBDlgWinClose();
         func_80056168_56D68();
@@ -5518,7 +5518,7 @@ void func_80110794_2A5A64_name_3E(void) {
                 HuPrcSleep(20);
                 MBPlayerMotionSet(-1, -1, 2);
                 HuPrcSleep(10);
-                func_80056368_56F68(8, 0x671, (s32)name, 0, 0, 0, 0);
+                func_80056368_56F68(8, 0x671, name, 0, 0, 0, 0);
                 MBDlgWinClose();
                 func_80056168_56D68();
                 func_80061518_62118();
@@ -5606,7 +5606,7 @@ void func_80110794_2A5A64_name_3E(void) {
                 func_80054D3C_5593C(absIdx, &player->next_chain_index, &player->next_space_index);
                 break;
             case 1:
-                func_80056368_56F68(8, 0x670, (s32)name, 0, 0, 0, 0);
+                func_80056368_56F68(8, 0x670, name, 0, 0, 0, 0);
                 MBDlgWinClose();
                 func_80056168_56D68();
                 break;

@@ -45,10 +45,10 @@ void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void MBModelDispOff(MBModel*);
 s32 PlaySound(s32);
-void func_8008D974_8E574(s32, s16); /* message argument: a message id or a string */
+void func_8008D974_8E574(char*, s16); /* message argument: a string */
 void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 s32 func_8005AAC0_5B6C0(s32 x, s32 y, s32 w, s32 h); /* board message window */
-void func_80089308_89F08(s16, s32, s32); /* window message argument */
+void func_80089308_89F08(s16, char*, s32); /* window message argument (a string) */
 void func_800890CC_89CCC(s16, s32, s32, s32);
 void ShowTextWindow(s32 arg0);
 void func_80057730_58330(s32, s32); /* retail passes the window unextended here */
@@ -103,7 +103,7 @@ extern s16 D_800F8D16_F9916; /* D_800F8CE4_F98E4[0x19] (ovl_3E.h) */
                               D_80105DCC_3606DC_name_53[1])
 
 extern s16 D_800CD414_CE014;
-extern s32 D_800CC5F8[]; /* per character: the name message (undefined_syms) */
+extern char* D_800CC5F8[]; /* per character: the name string (undefined_syms) */
 extern u16 D_801011FC_101DFC;
 extern u32 D_800FDC6C_FE86C;
 

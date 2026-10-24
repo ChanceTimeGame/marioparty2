@@ -267,7 +267,7 @@ void func_80106F44_365E34_name_55(void) {
     f32 angle;
     s32 i;
 
-    sign = (Ovl55Sign8*)(D_8010C570_36B460_name_55 = (s32)HuMemMemoryAllocPerm(0x40));
+    sign = (Ovl55Sign8*)(D_8010C570_36B460_name_55 = HuMemMemoryAllocPerm(0x40));
     sign->grp[0] = func_8001A2F8_1AEF8(0xA01AD);
     sign->grp[1] = func_8001A2F8_1AEF8(0xA01AE);
     sign->grp[2] = func_8001A2F8_1AEF8(0xA01AF);
@@ -569,7 +569,7 @@ void func_80107ED0_366DC0_name_55(void) {
     s32 i;
     s32 n;
 
-    sign = (Ovl55Sign3*)(D_8010C570_36B460_name_55 = (s32)HuMemMemoryAllocPerm(sizeof(Ovl55Sign3)));
+    sign = (Ovl55Sign3*)(D_8010C570_36B460_name_55 = HuMemMemoryAllocPerm(sizeof(Ovl55Sign3)));
     sign->grp2 = func_8001A2F8_1AEF8(0xA01B5);
     sign->grp = func_8001A2F8_1AEF8(0xA01B6);
     sign->spr[0] = func_8001AAAC_1B6AC(sign->grp, 0, 2);

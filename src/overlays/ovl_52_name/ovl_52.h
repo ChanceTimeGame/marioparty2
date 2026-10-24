@@ -108,8 +108,8 @@ void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
 void func_800211E8_21DE8(s16 index, u8 arg1);
 void func_8002308C_23C8C(s32 index);
-void func_8008D974_8E574(s32, s16); /* message argument: a message id or a string */
-void func_80089308_89F08(s16, s32, s8); /* window message argument */
+void func_8008D974_8E574(char*, s16); /* message argument: a string */
+void func_80089308_89F08(s16, char*, s8); /* window message argument (a string) */
 void ShowTextWindow(s32 arg0);
 void func_80057DA4_589A4(s32 arg0);
 void func_8005ACD0_5B8D0(GW_PLAYER*, s16);
@@ -127,7 +127,7 @@ void func_80047BB8_487B8(s32);
 s32 func_80047DE8_489E8(s32);
 void func_80047B78_48778(void);
 void func_80059520_5A120(MBModel*, s32, s32);
-extern s32 D_800CC5F8[]; /* per character: the name message */
+extern char* D_800CC5F8[]; /* per character: the name string */
 extern u16 D_801011FC_101DFC;
 extern u8 D_800FD866_FE466;
 

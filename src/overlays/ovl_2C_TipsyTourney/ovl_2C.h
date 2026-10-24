@@ -148,7 +148,7 @@ void espDispOff(u16);
 void func_8000BE8C_CA8C(omObjData*, f32);
 void func_8000BEA4_CAA4(omObjData*, f32);
 void func_8000BEF8_CAF8(omObjData*, s32, f32);
-void func_8000BF24_CB24(omObjData*, s32, f32, f32, f32, f32);
+void func_8000BF24_CB24(omObjData*, f32, f32, f32, f32, f32);
 void func_8000BFF0_CBF0(omObjData*);
 void func_8000C004_CC04(omObjData*);
 void func_8000C37C_CF7C(omObjData*, f32, f32, f32);
