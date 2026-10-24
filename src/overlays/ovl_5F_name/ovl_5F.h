@@ -120,6 +120,11 @@ typedef struct Ovl5FCharData {
 } Ovl5FCharData;
 
 extern Ovl5FCharData D_800CD438_CE038[];
+
+/* |stick axis| of demo player i as a float (func_80108C8C read up to twice, as retail does) */
+#define OVL5F_STICK_ABS(i, axis) \
+    (f32)(func_80108C8C_3B1E2C_name_5F(i, axis) < 0 ? -func_80108C8C_3B1E2C_name_5F(i, axis) \
+                                                     : func_80108C8C_3B1E2C_name_5F(i, axis))
 /* end 5F-C */
 
 /* ---- main-segment API used by 5F ---- */
@@ -257,7 +262,7 @@ extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
 extern omObjData* D_80113EC8_3BD068_name_5F[4]; /* the players' action objects (5F-C) */
 extern u16 D_80113ED8_3BD078_name_5F[6]; /* motion file per character (with flag 0x100) */
 extern char* D_80113EE4_3BD084_name_5F[6]; /* hook node per character */
-extern u16 D_80113EFC_3BD09C_name_5F[6]; /* model file per character */
+extern s16 D_80113EFC_3BD09C_name_5F[6]; /* model file per character */
 extern u16 D_80113F08_3BD0A8_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F14_3BD0B4_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F20_3BD0C0_name_5F[6]; /* lhu:1 */
