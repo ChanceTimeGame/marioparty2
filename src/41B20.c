@@ -430,7 +430,7 @@ unk_8003B8D4Struct* func_800419A4_425A4(s16 arg0, s16* arg1, s32 arg2) {
 }
 
 /* exact c: marioparty3 func_800F25B4_1061D4_shared_board (src/overlays/ovl_80_shared_board/105D50.c) */
-void func_80041A74_42674(s16 arg0, s16 *arg1) {
-    func_800419A4_425A4(arg0, arg1, 0);
+unk_8003B8D4Struct* func_80041A74_42674(s16 arg0, s16 *arg1) {
+    return func_800419A4_425A4(arg0, arg1, 0);
 }
 
