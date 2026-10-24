@@ -3114,9 +3114,81 @@ void func_8010BFA8_3C7708_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C284_3C79E4_name_60);
+/* Demo setup: the standard character models (func_801098FC) at half size with motions 0x29 and
+   0x2A of their own directory. */
+void func_8010C284_3C79E4_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60Player* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C3A8_3C7B08_name_60);
+    func_801098FC_3C505C_name_60();
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x29), 0x1D);
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 0x2A), 0x1D);
+        func_80029E80_2AA80(p->model, 0, 2);
+    }
+}
+
+/* Demo player: stick right plays motion 1 once, then stick left motion 2. */
+void func_8010C3A8_3C7B08_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 t;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108C8C_3C43EC_name_60(i, 0) > 10.0f) {
+                obj->work[1] = 2;
+                func_8002C9C0_2D5C0(p->model, p->mot[1]);
+                func_80029E80_2AA80(p->model, 0, 0);
+            }
+            break;
+        case 2:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80108C8C_3C43EC_name_60(i, 0) < -10.0f) {
+                obj->work[1] = 4;
+                func_8002C9C0_2D5C0(p->model, p->mot[2]);
+                func_80029E80_2AA80(p->model, 0, 0);
+            }
+            break;
+        case 4:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C634_3C7D94_name_60);
 
