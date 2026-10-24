@@ -1,14 +1,5 @@
 #include "common.h"
-#include "game/data.h"
-
-void func_80102A14_3BE174_name_60(void);
-void func_80102AF0_3BE250_name_60(void);
-void func_801085A0_3C3D00_name_60(s32);
-extern s16 D_801148F2_3D0052_name_60;
-extern s16 D_801148F4_3D0054_name_60;
-extern s16 D_80114AC2_3D0222_name_60;
-
-void func_80105B94_3C12F4_name_60(void);
+#include "ovl_60.h"
 
 void func_80102830_3BDF90_name_60(void) {
     s32 temp_s0;
