@@ -115,16 +115,16 @@ void func_8007954C_7A14C(s16);
 void func_80079718_7A318(s32, s32);
 void func_800798F8_7A4F8(s16 arg0, s16 arg1);
 void func_800890CC_89CCC(s16, s32, s32, s32);
-void func_80089308_89F08(s16, s32, s8); /* window message argument (a name message id) */
+void func_80089308_89F08(s16, char*, s8); /* window message argument (a name string) */
 void func_8008CCA8_8D8A8(s16);
-void func_8008D974_8E574(s32, s16);
+void func_8008D974_8E574(char*, s16);
 void func_8008DACC_8E6CC(s32, s16*, s32); /* a message's window size */
 f32 func_800B1830_B2430(f32); /* sqrtf */
 f32 func_800B7890_B8490(f32); /* cos */
 
 /* ---- main data ---- */
 
-extern s32 D_800CC5F8[]; /* per character: the name message */
+extern char* D_800CC5F8[]; /* per character: the name string */
 extern u16 D_800CD526_CE126;
 extern s16 D_800F8CE4_F98E4[]; /* [0] the winner, [3] another player (see D_8011057C) */
 extern s16 D_800FA188_FAD88;

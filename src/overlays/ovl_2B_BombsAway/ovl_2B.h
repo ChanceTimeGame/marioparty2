@@ -460,16 +460,10 @@ extern u16 D_8010DFE4_2243D4_BombsAway;
 extern s16 D_8010DFE6_2243D6_BombsAway;
 extern s16 D_8010DFE8_2243D8_BombsAway;
 extern BaCannon D_8010DFF0_2243E0_BombsAway; /* the cannon (MP1 D_80100790) */
-extern s32 D_8010E004_2243F4_BombsAway[];
-extern s32 D_8010E008_2243F8_BombsAway[];
-extern BaBomb D_8010E010_224400_BombsAway[3]; /* [2] = D_8010E068 */
-extern s32 D_8010E068_224458_BombsAway[];
-extern s32 D_8010E070_224460_BombsAway[];
+extern BaBomb D_8010E010_224400_BombsAway[3]; /* [2] = D_8010E068 (a splat label; no C use) */
 extern BaShell D_8010E098_224488_BombsAway[8];
-extern s32 D_8010E0A4_224494_BombsAway[];
 extern BaEffect D_8010E398_224788_BombsAway[32]; /* effect sprites (MP1 D_80100990) */
 extern s16 D_8010E518_224908_BombsAway[4]; /* sprite animation per effect kind ([1], [3] loaded) */
-extern s32 D_8010E51A_22490A_BombsAway[];
 extern s16 D_8010E520_224910_BombsAway; /* water model */
 extern struct BaVtxMap* D_8010E524_224914_BombsAway; /* water vertex map (func_8010C444) */
 extern s32 D_8010E528_224918_BombsAway[2]; /* water grid spacing x, z */
@@ -633,7 +627,6 @@ void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void omSetStatBit(omObjData* obj, u16 stat);
 void* HuMemAlloc(s32 size);
 s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, retail does not re-extend it here */
-extern void bcopy(const void*, void*, int);
 extern s16 D_800FA1AA_FADAA;
 extern u8 D_800FDBCA_FE7CA; /* frame buffers */
 int abs(int);

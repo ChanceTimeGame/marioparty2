@@ -701,7 +701,7 @@ void func_801049AC_2AAB4C_DesertDuel(void) {
     func_8008DACC_8E6CC(1, size, 0x212);
     win = func_80104844_2AA9E4_DesertDuel(70, 178, size[0], size[1], 0, 0, 200);
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, 0x212, -1, -1);
+    func_800890CC_89CCC(win, (void*)0x212, -1, -1);
     sel = 0;
     count = D_80108C48_2AEDE8_DesertDuel - 1;
     if (D_80108C48_2AEDE8_DesertDuel == 4) {
@@ -840,7 +840,7 @@ void func_80104EF8_2AB098_DesertDuel(omObjData* obj) {
     }                                                                       \
     pad[j] = 0;                                                             \
     sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
-    func_800890CC_89CCC(win, (s32)buf, x, y)
+    func_800890CC_89CCC(win, buf, x, y)
 
 void func_80105054_2AB1F4_DesertDuel(void) {
     char buf[0x200];
@@ -891,7 +891,7 @@ void func_80105054_2AB1F4_DesertDuel(void) {
     win = func_80104844_2AA9E4_DesertDuel(24, 72, size[0], size[1], 0, 0, 200);
     func_80089308_89F08(win, mess, 0);
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, 0x213, -1, -1);
+    func_800890CC_89CCC(win, (void*)0x213, -1, -1);
     HuPrcVSleep();
     func_80089284_89E84(win, 0x10004, 0x10004);
     DUEL_STAKE_SHOW(win, stake);
@@ -968,7 +968,7 @@ void func_801058C8_2ABA68_DesertDuel(void) {
     func_8008DACC_8E6CC(1, size, 0x219);
     win = func_80104844_2AA9E4_DesertDuel(100, 40, size[0], size[1], 0, 0, 200);
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, 0x219, -1, -1);
+    func_800890CC_89CCC(win, (void*)0x219, -1, -1);
     func_80057A78_58678(win, D_80108C18_2AEDB8_DesertDuel, D_80108C1C_2AEDBC_DesertDuel);
     D_800F851A_F911A = 1;
     if ((gPlayers[D_80108C18_2AEDB8_DesertDuel].flags & 1) && (gPlayers[D_80108C1C_2AEDBC_DesertDuel].flags & 1)) {
@@ -1021,7 +1021,7 @@ void func_80105AAC_2ABC4C_DesertDuel(void) {
         func_80089308_89F08(win, name, 2);
     }
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, D_80108C68_2AEE08_DesertDuel, -1, -1);
+    func_800890CC_89CCC(win, (void*)D_80108C68_2AEE08_DesertDuel, -1, -1);
     func_80057A78_58678(win, D_80108C18_2AEDB8_DesertDuel, D_80108C1C_2AEDBC_DesertDuel);
     while (TRUE) {
         switch (D_80108C74_2AEE14_DesertDuel) {

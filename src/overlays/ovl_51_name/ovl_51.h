@@ -50,7 +50,7 @@ void func_8004340C_4400C(void);
 MBModel* func_80043510_44110(s32, void*);
 ModelEmitterWork* func_80049ED4_4AAD4(MBModel*, s16);
 void func_80049F90_4AB90(ModelEmitterWork*);
-UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+UnkMBGuideData* func_80050304_50F04(void*, s32); /* MBGuideCreate */
 void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
 void func_80050AE0_516E0(void);
 void func_8005390C_5450C(s32);
