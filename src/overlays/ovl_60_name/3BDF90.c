@@ -3045,7 +3045,74 @@ const char D_801145E8_3CFD48_name_60[] = "c001_000-atama_2";
 __asm__(".section .rodata");
 const char D_801145FC_3CFD5C_name_60[12] = "atama_2";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BFA8_3C7708_name_60);
+/* Demo player: A plays motion 1 then, once it has ended and A is no
+   longer held, motion 2 and back to the idle motion. */
+void func_8010BFA8_3C7708_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 t;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+                obj->work[1] = 2;
+                func_80029BF0_2A7F0(p->model, p->mot[1], 0, 5, 0);
+            }
+            break;
+        case 2:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                if (!func_80108C24_3C4384_name_60(i, 0x8000)) {
+                    func_80029BF0_2A7F0(p->model, p->mot[2], 0, 5, 0);
+                    obj->work[1] = 4;
+                }
+            }
+            break;
+        case 4:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 5;
+            }
+            break;
+        case 5:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                func_80029BF0_2A7F0(p->model, p->mot[0], 0, 5, 2);
+                obj->work[1] = 6;
+            }
+            break;
+        case 6:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 1;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C284_3C79E4_name_60);
 
