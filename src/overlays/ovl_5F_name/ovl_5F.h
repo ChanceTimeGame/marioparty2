@@ -120,6 +120,7 @@ typedef struct Ovl5FCharData {
 } Ovl5FCharData;
 
 extern Ovl5FCharData D_800CD438_CE038[];
+extern const char D_80114BD0_3BDD70_name_5F[16]; /* "item_hook" (defined in 3AB9D0.c after its user) */
 
 /* |stick axis| of demo player i as a float (func_80108C8C read up to twice, as retail does) */
 #define OVL5F_STICK_ABS(i, axis) \
