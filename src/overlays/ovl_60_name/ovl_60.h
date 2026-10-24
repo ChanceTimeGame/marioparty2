@@ -513,9 +513,10 @@ void func_8010A4F0_3C5C50_name_60(void);
 void func_8010A580_3C5CE0_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010A60C_3C5D6C_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010A834_3C5F94_name_60(omObjData*); /* Ovl60Demo.unk08 */
-void func_8010AB44_3C62A4_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_8010AD2C_3C648C_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
-void func_8010AEF4_3C6654_name_60(void* player, f32); /* player = D_800FA640[i] (8010B4E0 / 80112158); from registers */
+typedef struct Ovl60TeamDemo Ovl60TeamDemo; /* 60-B (defined in its section below) */
+void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: rider 0 */
+void func_8010AD2C_3C648C_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: rider 1 */
+void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick); /* 60-B: the vehicle */
 void func_8010B048_3C67A8_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_8010B488_3C6BE8_name_60(void); /* Ovl60Demo.unk04 */
 void func_8010B4E0_3C6C40_name_60(omObjData*); /* Ovl60Demo.unk08 */
@@ -584,8 +585,8 @@ void func_80113264_3CE9C4_name_60(s16);
    fields (D_80113818 = D_80113810[0].unk08 etc.) are not declared: index D_80113810. */
 
 extern s32 D_80113B9C_3CF2FC_name_60[7]; /* lw (8010F480, 80110DA8, 80112610) */
-extern s32 D_80113BB8_3CF318_name_60[3]; /* 8010B048 */
-extern s32 D_80113BC4_3CF324_name_60[3]; /* 8010B048 */
+extern u16 D_80113BB8_3CF318_name_60[6]; /* 60-B: rider 0's form file, by character (8010B048) */
+extern u16 D_80113BC4_3CF324_name_60[6]; /* 60-B: rider 1's form file, by character */
 extern u16 D_80113BD0_3CF330_name_60[6]; /* lhu (8010B884) */
 extern s32 D_80113BDC_3CF33C_name_60[3]; /* 8010C634 */
 extern s32 D_80113BE8_3CF348_name_60; /* 8010C634 */
@@ -612,6 +613,30 @@ extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */
 extern s32 D_80114A8C_3D01EC_name_60[9]; /* lw/sw (8010CE78, 8010D070) */
 extern u8 D_80114AC3_3D0223_name_60; /* 801105D4 */
+/* 60-B */
+void func_8002CD78_2D978(s16, u8, u8, u8, u8); /* 274D0.c */
+void func_8002CDB4_2D9B4(s16, u8, u8, u8, u8); /* 274D0.c */
+/* D_800FA640[team] in the two-player team demo of 8010B048 / 8010B4E0: a vehicle model with two
+   moving parts (model2, model3) and the two riders' forms. */
+struct Ovl60TeamDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ char unk36[0x16];
+    /* 0x4C */ s16 model2; /* rider 0's part */
+    /* 0x4E */ s16 model3; /* rider 1's part */
+    /* 0x50 */ s16 form[2]; /* the riders */
+    /* 0x54 */ char unk54[0x38];
+    /* 0x8C */ s16 player[2]; /* the riders (players of groups team*2, team*2+1) */
+    /* 0x90 */ char unk90[4];
+    /* 0x94 */ f32 vel; /* rider 0's speed (func_8010AB44) */
+    /* 0x98 */ f32 vel2; /* rider 1's speed (func_8010AD2C) */
+};
+#define TEAM_DEMO(i) ((Ovl60TeamDemo*)D_800FA640_FB240[i])
+/* end 60-B */
 #define OVL60_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif

@@ -2588,17 +2588,269 @@ void func_8010A580_3C5CE0_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010A60C_3C5D6C_name_60);
+/* Demo setup: each character model (motion 0x15 of its directory) with a form model (blue for
+   group 0's players, red for the rest) shrunk under it. */
+void func_8010A60C_3C5D6C_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010A834_3C5F94_name_60);
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(dir | D_800CD438_CE038[gPlayers[i].character].model, 0xA9D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x15), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot[0]);
+        func_80029E80_2AA80(p->model, 0, 1);
+        p->model2 = func_80018A30_19630(gPlayers[i].group != 0 ? 0x2B0003 : 0x2B0004, 0x1088D);
+        HmfModelObjAttrSet(p->model2, 0x600, 0x600);
+        func_8002CD78_2D978(p->model2, 0, 0, 0, 0);
+        func_8002CDB4_2D9B4(p->model2, 0, 0, 0, 0);
+        func_80029A8C_2A68C(p->model2);
+        func_80029AFC_2A6FC(p->model2);
+        func_800297E8_2A3E8(p->model2, 0.5f, 0.5f, 0.5f);
+        func_80029E80_2AA80(p->model2, 0, 1);
+        p->count = 0;
+        p->vel = 0.0f;
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010AB44_3C62A4_name_60);
+/* Demo player: the form model follows the character; A plays the character's motion forward
+   (both models), B or Z back; while it stands still the form blinks. */
+void func_8010A834_3C5F94_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010AD2C_3C648C_name_60);
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y, m->pos.z + 50.0f);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        if (p->vel == 0.0f) {
+            p->count = p->count == 0;
+            if (p->count) {
+                func_8002CD78_2D978(p->model2, 0x40, 0x40, 0x40, 0);
+                func_8002CDB4_2D9B4(p->model2, 0, 0, 0, 0);
+            } else {
+                func_8002CD78_2D978(p->model2, 0, 0, 0, 0);
+                func_8002CDB4_2D9B4(p->model2, 0x10, 0x10, 0x10, 0);
+            }
+        } else {
+            func_8002CD78_2D978(p->model2, 0, 0, 0, 0);
+            func_8002CDB4_2D9B4(p->model2, 0, 0, 0, 0);
+        }
+        if (func_80108C24_3C4384_name_60(i, 0x8000)) {
+            p->vel += 2.0f;
+            if (func_80029D0C_2A90C(p->model) - 2.0f < p->vel) {
+                p->vel = func_80029D0C_2A90C(p->model) - 2.0f;
+            }
+            func_80029C74_2A874(p->model, p->vel);
+            func_80029C74_2A874(p->model2, p->vel);
+        }
+        if (func_80108C24_3C4384_name_60(i, 0x4000) || func_80108C24_3C4384_name_60(i, 0x2000)) {
+            p->vel -= 2.0f;
+            if (p->vel < 0.0f) {
+                p->vel = 0.0f;
+            }
+            func_80029C74_2A874(p->model, p->vel);
+            func_80029C74_2A874(p->model2, p->vel);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010AEF4_3C6654_name_60);
+/* Rider 0 of a team demo: the stick (clamped to +-10) accelerates its speed, which decays by 0.9
+   when the stick is released or overshot; the speed (+-9.5 at most) sets model2's and the form's
+   motion speed and the vehicle's yaw and roll. */
+void func_8010AB44_3C62A4_name_60(Ovl60TeamDemo* p, f32 stick) {
+    f32 t = stick * 10.0f;
+    f32 v;
 
+    if (t > 10.0f) {
+        t = 10.0f;
+    }
+    if (t < -10.0f) {
+        t = -10.0f;
+    }
+    if (t != 0.0f) {
+        p->vel += t * 0.05f;
+        if (p->vel > 0.0f) {
+            if (p->vel > t) {
+                p->vel *= 0.9f;
+            }
+        } else if (p->vel < t) {
+            p->vel *= 0.9f;
+        }
+    } else {
+        p->vel *= 0.9f;
+    }
+    t = p->vel;
+    if (p->vel >= 9.0f) {
+        t = 9.5f;
+    }
+    if (p->vel <= -9.0f) {
+        t = -9.5f;
+    }
+    v = 10.0f - t;
+    func_80029C74_2A874(p->model2, v);
+    func_80029C74_2A874(p->form[0], v);
+    p->rot.y = 20.0f - v * 20.0f / 10.0f;
+    p->rot.z = v * 10.0f / 10.0f + -10.0f;
+}
+
+/* Rider 1 of a team demo: as func_8010AB44 with twice the stick, on vel2, model3 and the
+   vehicle's pitch. */
+void func_8010AD2C_3C648C_name_60(Ovl60TeamDemo* p, f32 stick) {
+    f32 t = stick * 20.0f;
+    f32 v;
+
+    if (t > 10.0f) {
+        t = 10.0f;
+    }
+    if (t < -10.0f) {
+        t = -10.0f;
+    }
+    if (t != 0.0f) {
+        p->vel2 += t * 0.05f;
+        if (p->vel2 > 0.0f) {
+            if (p->vel2 > t) {
+                p->vel2 *= 0.9f;
+            }
+        } else if (p->vel2 < t) {
+            p->vel2 *= 0.9f;
+        }
+    } else {
+        p->vel2 *= 0.9f;
+    }
+    t = p->vel2;
+    if (p->vel2 >= 9.0f) {
+        t = 9.5f;
+    }
+    if (p->vel2 <= -9.0f) {
+        t = -9.5f;
+    }
+    v = 10.0f - t;
+    func_80029C74_2A874(p->model3, v);
+    p->rot.x = 20.0f - v * 20.0f / 10.0f;
+}
+
+/* The vehicle of a team demo: its motion speed follows the stick (clamped to +-1), 0 to 20. */
+void func_8010AEF4_3C6654_name_60(Ovl60TeamDemo* p, f32 stick) {
+    f32 speed;
+    f32 d;
+
+    if (stick > 1.0f) {
+        stick = 1.0f;
+    }
+    if (stick < -1.0f) {
+        stick = -1.0f;
+    }
+    speed = func_80029CE4_2A8E4(p->model);
+    d = (stick + 1.0f) * 10.0f - speed;
+    if (d > 1.0f) {
+        speed += 1.5f;
+    } else if (d < -1.0f) {
+        speed -= 2.0f;
+    }
+    if (speed < 0.0f) {
+        speed = 0.0f;
+    }
+    if (speed > 20.0f) {
+        speed = 20.0f;
+    }
+    func_80029C74_2A874(p->model, speed);
+    func_80029C74_2A874(p->form[1], speed);
+}
+
+/* Team demo setup (two teams of two): per team, the vehicle (model, scale 0.3, yaw 240), its
+   two parts and the two riders' forms (by character), every motion at half speed.
+   NON_MATCHING: retail loads 0x2C0000 into s4 before the riders' loop (here it stays in the
+   loop: masked residue) and keeps the tables in s6/s5. */
+#ifdef NON_MATCHING
+void func_8010B048_3C67A8_name_60(void) {
+    s32 i;
+    s32 j;
+    Ovl60TeamDemo* p;
+    omObjData* obj;
+    s32 file;
+
+    for (i = 0; i < 2; i++) {
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(i != 0 ? 0x2C0001 : 0x2C0000, 0xA9D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->scale = 0.3f;
+        func_800297E8_2A3E8(p->model, 0.3f, 0.3f, 0.3f);
+        p->rot.x = p->rot.z = 0.0f;
+        p->rot.y = 240.0f;
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_80029E80_2AA80(p->model, 0, 1);
+        func_80029C74_2A874(p->model, func_80029D0C_2A90C(p->model) / 2.0f);
+        p->model2 = func_80018A30_19630(i != 0 ? 0x2C0003 : 0x2C0002, 0xA9D);
+        func_8002979C_2A39C(p->model2, p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->model2, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model2, 0, 1);
+        func_80029C74_2A874(p->model2, func_80029D0C_2A90C(p->model2) / 2.0f);
+        p->model3 = func_80018A30_19630(i != 0 ? 0x2C0005 : 0x2C0004, 0xA9D);
+        func_8002979C_2A39C(p->model3, p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->model3, p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->model3, 0, 1);
+        func_80029C74_2A874(p->model3, func_80029D0C_2A90C(p->model3) / 2.0f);
+        for (j = 0; j < 4; j++) {
+            if (gPlayers[j].group == i * 2) {
+                break;
+            }
+        }
+        p->player[0] = j;
+        for (j = 0; j < 4; j++) {
+            if (gPlayers[j].group == i * 2 + 1) {
+                break;
+            }
+        }
+        p->player[1] = j;
+        p->vel = p->vel2 = 0.0f;
+        for (j = 0; j < 2; j++) {
+            if (j == 0) {
+                file = D_80113BB8_3CF318_name_60[gPlayers[p->player[0]].character];
+            } else {
+                file = D_80113BC4_3CF324_name_60[gPlayers[p->player[1]].character];
+            }
+            p->form[j] = LoadFormFile(file | 0x2C0000, 0xA9D);
+            func_8002979C_2A39C(p->form[j], p->rot.x, p->rot.y, p->rot.z);
+            func_800297E8_2A3E8(p->form[j], p->scale, p->scale, p->scale);
+            func_80029E80_2AA80(p->form[j], 0, 1);
+            /* retail: model3's motion length for both forms */
+            func_80029C74_2A874(p->form[j], func_80029D0C_2A90C(p->model3) / 2.0f);
+        }
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B048_3C67A8_name_60);
+#endif
 
 void func_8010B488_3C6BE8_name_60(void) {
     func_80104DA8_3C0508_name_60(0, 3, -70.0f, 0.0f, -80.0f);
