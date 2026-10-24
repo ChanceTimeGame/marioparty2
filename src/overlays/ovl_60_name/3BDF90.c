@@ -2609,7 +2609,17 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B4E0_3C6C40
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010B884_3C6FE4_name_60);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BAF4_3C7254_name_60);
+void func_8010BAF4_3C7254_name_60(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group < 2) {
+            func_80104DA8_3C0508_name_60(i, 3, gPlayers[i].group * 60.0f - 100.0f, -25.0f, -80.0f);
+        } else {
+            func_80104DA8_3C0508_name_60(i, 4, (gPlayers[i].group - 2) * 60.0f + -50.0f, -25.0f, -80.0f);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BBFC_3C735C_name_60);
 
@@ -2646,7 +2656,40 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C634_3C7D94
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C7F4_3C7F54_name_60);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C904_3C8064_name_60);
+void func_8010C904_3C8064_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_800298A4_2A4A4(p->model3, 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->model3, m->pos.x, m->pos.y, m->pos.z);
+    if (obj->work[1] == 12) {
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+    } else {
+        if (func_80108C8C_3C43EC_name_60(i, 0) > 10.0f) {
+            p->rot.y -= 7.0f;
+        }
+        if (func_80108C8C_3C43EC_name_60(i, 0) < -10.0f) {
+            p->rot.y += 7.0f;
+        }
+        func_8002979C_2A39C(p->model, 0.0f, p->rot.y, 0.0f);
+        func_8002979C_2A39C(p->model2, 0.0f, p->rot.y, 0.0f);
+        func_8002979C_2A39C(p->model3, 0.0f, p->rot.y, 0.0f);
+    }
+}
 
 void func_8010CB10_3C8270_name_60(omObjData* obj) {
     Vec dir;
@@ -2806,7 +2849,17 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110700_3CBE60
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110858_3CBFB8_name_60);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110A84_3CC1E4_name_60);
+void func_80110A84_3CC1E4_name_60(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group < 2) {
+            func_80104DA8_3C0508_name_60(i, 3, gPlayers[i].group * 90.0f - 100.0f, -50.0f, -80.0f);
+        } else {
+            func_80104DA8_3C0508_name_60(i, 4, (gPlayers[i].group - 2) * 90.0f + -80.0f, -50.0f, -80.0f);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110B7C_3CC2DC_name_60);
 
