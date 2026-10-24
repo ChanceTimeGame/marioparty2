@@ -223,7 +223,8 @@ extern s32 D_80114DF4_3BDF94_name_5F[2]; /* addiu:1 */
 extern omObjData* D_80114DFC_3BDF9C_name_5F[5]; /* item icons / players' marker objects */
 extern u16 D_80114E10_3BDFB0_name_5F; /* full-screen sprite (fades in) */
 extern u16 D_80114E12_3BDFB2_name_5F; /* sprite shown over a model */
-extern u16 D_80114E14_3BDFB4_name_5F[2];
+extern u16 D_80114E14_3BDFB4_name_5F;
+extern u16 D_80114E16_3BDFB6_name_5F; /* named by 5F-A (a separate variable: retail does not share its address) */
 extern s16 D_80114E18_3BDFB8_name_5F; /* model */
 extern u16 D_80114E1A_3BDFBA_name_5F; /* blinking sprite */
 extern s16 D_80114E1C_3BDFBC_name_5F; /* its process runs while set */
@@ -296,7 +297,7 @@ s32 func_80105A14_3AEBB4_name_5F(void);
 s32 func_80105A54_3AEBF4_name_5F(void);
 void func_80105AB8_3AEC58_name_5F(void);
 void func_80105B94_3AED34_name_5F(void);
-void func_801072C8_3B0468_name_5F(s32, s32, s32, s32);
+void func_801072C8_3B0468_name_5F(s16, void*, void*, void*);
 void func_80107C84_3B0E24_name_5F(s32);
 void func_80107F74_3B1114_name_5F(void);
 void func_80107FE0_3B1180_name_5F(void);
