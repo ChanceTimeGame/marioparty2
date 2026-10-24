@@ -1123,13 +1123,130 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010946C_3B260C
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801094B4_3B2654_name_5F);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801094F4_3B2694_name_5F);
+/* Set up demo player i: its character model, its motions (by the demo's flags) and its
+   control objects. group != 0 picks the demo's second flag set. */
+void func_801094F4_3B2694_name_5F(s32 i, s32 group) {
+    Ovl5FDemo* demo;
+    Ovl5FPlayer* p;
+    s32 chr;
+    s32 dir;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801098FC_3B2A9C_name_5F);
+    func_8000C460_D060();
+    demo = &D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]];
+    p = D_800FA640_FB240[i];
+    if (group == 0) {
+        p->flags = demo->unk10;
+    } else {
+        p->flags = demo->unk12;
+    }
+    chr = gPlayers[i].character;
+    p->model = func_80018A30_19630(D_800CD438_CE038[chr].dir | D_800CD438_CE038[chr].model, 0x69D);
+    dir = D_800CD438_CE038[gPlayers[i].character].dir;
+    if (p->flags & 0x100) {
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 8), 0x1D);
+    } else {
+        p->mot[0] = D_800FC834_FD434[p->model].unk02;
+    }
+    p->mot[9] = func_8002C8B8_2D4B8(DataRead((p->flags & 0x100) ? dir | 0x16 : dir | 0x41), 0x1D);
+    p->mot[10] = func_8002C8B8_2D4B8(DataRead(dir | 0x25), 0x1D);
+    if (p->flags & 1) {
+        if (p->flags & 0x100) {
+            p->mot[1] = func_8002C8B8_2D4B8(DataRead(D_80113ED8_3BD078_name_5F[chr] | 0x460000), 0x1D);
+        } else {
+            p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 1), 0x1D);
+        }
+    }
+    if (p->flags & 2) {
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 2), 0x1D);
+    }
+    if (p->flags & 0x10) {
+        p->mot[3] = func_8002C8B8_2D4B8(DataRead(dir | 3), 0x1D);
+    }
+    if (p->flags & 4) {
+        p->mot[4] = func_8002C8B8_2D4B8(DataRead(dir | 4), 0x1D);
+        p->mot[8] = func_8002C8B8_2D4B8(DataRead(dir | 0x2E), 0x1D);
+        if (p->flags & 8) {
+            p->mot[6] = func_8002C8B8_2D4B8(DataRead(dir | 6), 0x1D);
+            p->mot[7] = func_8002C8B8_2D4B8(DataRead(dir | 0x10), 0x1D);
+        }
+        if (p->flags & 0x20) {
+            p->mot[5] = func_8002C8B8_2D4B8(DataRead(dir | 5), 0x1D);
+        }
+    }
+    func_8002C9C0_2D5C0(p->model, p->mot[9]);
+    func_80029E80_2AA80(p->model, 0, 2);
+    p->unk32 = 1;
+    p->count = i;
+    p->pos.x = p->pos.z = 0.0f;
+    p->pos.y = -1000.0f;
+    p->rot.x = p->rot.y = p->rot.z = 0.0f;
+    p->scale = 0.5f;
+    p->unk2C = 0.0f;
+    func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    func_800297E8_2A3E8(p->model, p->scale, p->scale, p->scale);
+    func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+    /* func_80108E50 is an object function; 5F-B owns its prototype */
+    if (p->flags & 4) {
+        p->actA = (void (*)(omObjData*))func_80108E50_3B1FF0_name_5F;
+    } else {
+        p->actA = NULL;
+    }
+    if (p->flags & 0x10) {
+        p->actB = func_801092B0_3B2450_name_5F;
+    } else {
+        p->actB = NULL;
+    }
+    obj = omAddObj(0x64, 0, 0, -1, demo->unk08);
+    obj->work[0] = i;
+    obj->work[1] = 0;
+    obj->work[2] = 0;
+    omAddObj(0x7D00, 0, 0, -1, func_80109FA0_3B3140_name_5F)->work[0] = i;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80109988_3B2B28_name_5F);
+/* Set up all four demo players (group 0 in a 4P minigame; the real groups otherwise). */
+void func_801098FC_3B2A9C_name_5F(void) {
+    s32 i;
+    s32 type;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80109A04_3B2BA4_name_5F);
+    type = D_80114F72_3BE112_name_5F;
+    for (i = 0; i < 4; i++) {
+        switch (type) {
+        case 0:
+        case 3:
+            func_801094F4_3B2694_name_5F(i, 0);
+            break;
+        default:
+            func_801094F4_3B2694_name_5F(i, gPlayers[i].group);
+            break;
+        }
+    }
+}
+
+/* Every demo player that may idle plays its idle motion. */
+void func_80109988_3B2B28_name_5F(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        Ovl5FPlayer* p = D_800FA640_FB240[i];
+
+        if (p->unk32 & 1) {
+            func_80029BF0_2A7F0(p->model, p->mot[0], 0, 5, 2);
+        }
+    }
+}
+
+void func_80109A04_3B2BA4_name_5F(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        Ovl5FPlayer* p = D_800FA640_FB240[i];
+
+        if (p->unk32 & 1) {
+            func_80029BF0_2A7F0(p->model, p->mot[10], 0, 5, 2);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80109A80_3B2C20_name_5F);
 
