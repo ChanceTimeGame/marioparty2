@@ -3497,7 +3497,54 @@ void func_8010D6C0_3C8E20_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010D74C_3C8EAC_name_60);
+/* Demo player: model2 stays 50 in front of the character; A and B together restart both
+   motions once. */
+void func_8010D74C_3C8EAC_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    Ovl60Demo* demo = &D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 t;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_80029714_2A314(p->model2, HuMathSin(m->rot.y) * 50.0f + m->pos.x, m->pos.y,
+                        func_800B7890_B8490(m->rot.y) * 50.0f + m->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, demo->unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        if (obj->work[1] == 2) {
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                obj->work[1] = 1;
+            }
+        }
+        if (func_80108B80_3C42E0_name_60(i, 0x8000)) {
+            if (func_80108B80_3C42E0_name_60(i, 0x4000)) {
+                if (obj->work[1] == 1) {
+                    obj->work[1] = 2;
+                    func_8002C9C0_2D5C0(p->model, p->mot[0]);
+                    func_8002C9C0_2D5C0(p->model2, p->mot[1]);
+                }
+            }
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80114620_3CFD80_name_60[] = "143tank_kuppa-pipe";
