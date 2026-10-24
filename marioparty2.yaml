@@ -1875,7 +1875,11 @@ segments:
     bss_size: 0x1E0
     subsegments:
       - [0x3BDF60, c]
+      - [0x3BDF90, c]
+      - [0x3CE370, c]
       - [0x3CEA00, data]
+      - [0x3CF980, .rodata, 3BDF90]
+      - [0x3CFFE8, .rodata, 3CE370]
       - {0x3D0050, type: bss, vram: 0x801148F0, name: ovl_60_bss}
   - type: code
     start: 0x3D0050
