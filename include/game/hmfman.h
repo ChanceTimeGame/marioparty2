@@ -226,7 +226,8 @@ typedef struct HmfData {
     /* 0xB4 */ HmfFace* unkB4; /* MP1 0xD0 */
     /* 0xB8 */ void* unkB8; /* 1D0B0's HmfDispData */
     /* 0xBC */ void* unkBC; /* 1D0B0's HmfMtnData: morph animations (unk22) */
-    /* 0xC0 */ char unkC0[8];
+    /* 0xC0 */ void* unkC0; /* 1D0B0's view: one pointer */
+    /* 0xC4 */ void* unkC4; /* 1D0B0's HmfMapData */
     /* 0xC8 */ u8* unkC8; /* texture animation slots (unk28 entries; 3D6A0) */
     /* 0xCC */ Gfx*** unkCC; /* -> per-part second display lists (30560) */
     /* 0xD0 */ struct HmfData_UnkD0* unkD0; /* the drawing model's lights */
