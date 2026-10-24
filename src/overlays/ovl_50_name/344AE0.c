@@ -61,6 +61,195 @@ const char D_80112554_352DB4_name_50[] = "c001_000-migi-te2_2";
 __asm__(".section .rodata");
 const char D_80112568_352DC8_name_50[16] = "migi-te2_4";
 
+/* .data (0x352410-0x352A00) */
+/* board 2, per character: MBPlayerModelCreate lists */
+u32 D_80111BB0_352410_name_50[9] = {
+    8, 0x20001, 0x20002, 0x20091, 0x20047, 0x2007E, 0x200BC, 0x200BD,
+    0x200BE,
+};
+u32 D_80111BD4_352434_name_50[9] = {
+    8, 0x30001, 0x30002, 0x30091, 0x30047, 0x3007E, 0x300BC, 0x300BD,
+    0x300BE,
+};
+u32 D_80111BF8_352458_name_50[9] = {
+    8, 0x70001, 0x70002, 0x70091, 0x70047, 0x7007E, 0x700BC, 0x700BD,
+    0x700BE,
+};
+u32 D_80111C1C_35247C_name_50[9] = {
+    8, 0x40001, 0x40002, 0x40091, 0x40047, 0x4007E, 0x400BC, 0x400BD,
+    0x400BE,
+};
+u32 D_80111C40_3524A0_name_50[9] = {
+    8, 0x50001, 0x50002, 0x50091, 0x50047, 0x5007E, 0x500BC, 0x500BD,
+    0x500BE,
+};
+u32 D_80111C64_3524C4_name_50[9] = {
+    8, 0x60001, 0x60002, 0x60091, 0x60047, 0x6007E, 0x600BC, 0x600BD,
+    0x600BE,
+};
+u32* D_80111C88_3524E8_name_50[6] = {
+    D_80111BB0_352410_name_50, D_80111BD4_352434_name_50, D_80111BF8_352458_name_50, D_80111C1C_35247C_name_50,
+    D_80111C40_3524A0_name_50, D_80111C64_3524C4_name_50,
+};
+u32 D_80111CA0_352500_name_50[3] = {
+    2, 0x80028, 0x80029,
+};
+u32 D_80111CAC_35250C_name_50[14] = {
+    0xD, 0x8008C, 0x8008D, 0x8008E, 0x80090, 0x80094, 0x80098, 0x8008E,
+    0x80092, 0x8009A, 0x8008F, 0x8009F, 0x8009E, 0x8009C,
+};
+u32 D_80111CE4_352544_name_50[7] = {
+    6, 0x8006D, 0x8006E, 0x8006F, 0x80070, 0x80071, 0x80072,
+};
+s32 D_80111D00_352560_name_50 = 0x80039;
+s32 D_80111D04_352564_name_50 = 0x8003A;
+s32 D_80111D08_352568_name_50 = 0x800A4;
+s32 D_80111D0C_35256C_name_50 = 0x8007C;
+s32 D_80111D10_352570_name_50 = 0x8007D;
+s32 D_80111D14_352574_name_50 = 0x8007E;
+s32 D_80111D18_352578_name_50 = 0x8007F;
+s32 D_80111D1C_35257C_name_50 = 0x80080;
+u32 D_80111D20_352580_name_50[3] = {
+    2, 0xA023D, 0xA023C,
+};
+Vec D_80111D2C_35258C_name_50[2] = {
+    { 500.0f, 0.0f, 448.0f },
+    { 80.0f, 0.0f, 438.0f },
+};
+Vec D_80111D44_3525A4_name_50[2] = {
+    { 150.0f, 0.0f, -500.0f },
+    { 125.0f, 0.0f, 275.0f },
+};
+Vec D_80111D5C_3525BC_name_50 = { -1250.0f, 0.0f, 175.0f };
+Vec D_80111D68_3525C8_name_50 = { -265.0f, 0.0f, 402.5f };
+Vec D_80111D74_3525D4_name_50[2] = {
+    { 1025.0f, 0.0f, 1575.0f },
+    { 750.0f, 0.0f, 1575.0f },
+};
+u32 D_80111D8C_3525EC_name_50[2] = {
+    1, 0xA0084,
+};
+Vec D_80111D94_3525F4_name_50 = { 0.0f, 0.0f, 150.0f };
+Vec D_80111DA0_352600_name_50[6] = {
+    { -25.0f, 115.0f, 150.0f },
+    { -27.0f, 130.0f, 150.0f },
+    { 15.0f, 140.0f, 150.0f },
+    { -28.0f, 125.0f, 150.0f },
+    { -45.0f, 117.0f, 150.0f },
+    { -31.0f, 110.0f, 150.0f },
+};
+Vec D_80111DE8_352648_name_50 = { -765.0f, 0.0f, 1502.5f };
+Vec D_80111DF4_352654_name_50[2] = {
+    { 595.0f, 0.0f, 1400.0f },
+    { 320.0f, 0.0f, 422.5f },
+};
+Vec D_80111E0C_35266C_name_50 = { 100.0f, 200.0f, 425.0f };
+Vec D_80111E18_352678_name_50[6] = {
+    { -25.0f, 115.0f, 150.0f },
+    { -11.0f, 138.0f, 150.0f },
+    { -23.0f, 135.0f, 150.0f },
+    { -21.0f, 125.0f, 150.0f },
+    { -25.0f, 115.0f, 150.0f },
+    { -25.0f, 115.0f, 150.0f },
+};
+Vec D_80111E60_3526C0_name_50 = { 0.0f, 0.0f, -900.0f };
+Vec D_80111E6C_3526CC_name_50[6] = {
+    { 0.0f, 85.0f, 150.0f },
+    { -21.0f, 105.0f, 190.0f },
+    { 15.0f, 90.0f, 150.0f },
+    { 0.0f, 90.0f, 150.0f },
+    { 0.0f, 100.0f, 150.0f },
+    { 0.0f, 85.0f, 150.0f },
+};
+Vec D_80111EB4_352714_name_50[6] = {
+    { -45.0f, 85.0f, 150.0f },
+    { -70.0f, 100.0f, 150.0f },
+    { -45.0f, 88.0f, 150.0f },
+    { -45.0f, 88.0f, 150.0f },
+    { -65.0f, 86.0f, 150.0f },
+    { -52.0f, 85.0f, 150.0f },
+};
+s16 D_80111EFC_35275C_name_50 = 1;
+/* board 4, per character: MBPlayerModelCreate lists */
+u32 D_80111F00_352760_name_50[11] = {
+    0xA, 0x2008D, 0x20001, 0x20002, 0x20053, 0x200AC, 0x20047, 0x2007E,
+    0x200BA, 0x200BB, 0x200B9,
+};
+u32 D_80111F2C_35278C_name_50[11] = {
+    0xA, 0x3008D, 0x30001, 0x30002, 0x30053, 0x300AC, 0x30047, 0x3007E,
+    0x300BA, 0x300BB, 0x300B9,
+};
+u32 D_80111F58_3527B8_name_50[11] = {
+    0xA, 0x7008D, 0x70001, 0x70002, 0x70053, 0x700AC, 0x70047, 0x7007E,
+    0x700BA, 0x700BB, 0x700B9,
+};
+u32 D_80111F84_3527E4_name_50[11] = {
+    0xA, 0x4008D, 0x40001, 0x40002, 0x40053, 0x400AC, 0x40047, 0x4007E,
+    0x400BA, 0x400BB, 0x400B9,
+};
+u32 D_80111FB0_352810_name_50[11] = {
+    0xA, 0x5008D, 0x50001, 0x50002, 0x50053, 0x500AC, 0x50047, 0x5007E,
+    0x500BA, 0x500BB, 0x500B9,
+};
+u32 D_80111FDC_35283C_name_50[11] = {
+    0xA, 0x6008D, 0x60001, 0x60002, 0x60053, 0x600AC, 0x60047, 0x6007E,
+    0x600BA, 0x600BB, 0x600B9,
+};
+u32* D_80112008_352868_name_50[6] = {
+    D_80111F00_352760_name_50, D_80111F2C_35278C_name_50, D_80111F58_3527B8_name_50, D_80111F84_3527E4_name_50,
+    D_80111FB0_352810_name_50, D_80111FDC_35283C_name_50,
+};
+u32 D_80112020_352880_name_50[5] = {
+    4, 0x80024, 0x80024, 0x80012, 0x80013,
+};
+u32 D_80112034_352894_name_50[12] = {
+    0xB, 0x8008C, 0x8008D, 0x8008E, 0x80090, 0x8009B, 0x8009C, 0x8009D,
+    0x8008E, 0x80092, 0x8008F, 0x8009C,
+};
+s32 D_80112064_3528C4_name_50 = 0x80039;
+s32 D_80112068_3528C8_name_50 = 0x8003A;
+s32 D_8011206C_3528CC_name_50 = 0x800A4;
+s32 D_80112070_3528D0_name_50[3] = {
+    0x8007C, 0x8007D, 0x8007E,
+};
+u32 D_8011207C_3528DC_name_50[4] = {
+    3, 0x800D7, 0x800D9, 0x800DA,
+};
+Vec D_8011208C_3528EC_name_50 = { -250.0f, 0.0f, -50.0f };
+Vec D_80112098_3528F8_name_50[2] = {
+    { -50.0f, 0.0f, 1050.0f },
+    { -100.0f, 0.0f, 450.0f },
+};
+Vec D_801120B0_352910_name_50 = { 150.0f, 0.0f, 450.0f };
+Vec D_801120BC_35291C_name_50 = { -1500.0f, 0.0f, 175.0f };
+Vec D_801120C8_352928_name_50[2] = {
+    { -265.0f, 0.0f, 402.5f },
+    { -215.0f, 0.0f, 422.5f },
+};
+Vec D_801120E0_352940_name_50 = { 1025.0f, 0.0f, 1575.0f };
+Vec D_801120EC_35294C_name_50 = { 750.0f, 0.0f, 1575.0f };
+u32 D_801120F8_352958_name_50[6] = {
+    5, 0x80058, 0x80061, 0x80062, 0x80063, 0x8003F,
+};
+Vec D_80112110_352970_name_50 = { 0.0f, 0.0f, 150.0f };
+Vec D_8011211C_35297C_name_50 = { 200.0f, 0.0f, 300.0f };
+Vec D_80112128_352988_name_50 = { -1500.0f, 0.0f, 2253.0f };
+Vec D_80112134_352994_name_50 = { 700.0f, 0.0f, 1500.0f };
+char* D_80112140_3529A0_name_50[6] = {
+    D_80112568_352DC8_name_50, D_80112554_352DB4_name_50, D_80112540_352DA0_name_50, D_80112528_352D88_name_50,
+    D_80112514_352D74_name_50, D_80112500_352D60_name_50,
+};
+s32 D_80112158_3529B8_name_50[6] = {
+    0xA025E, 0xA025F, 0xA0260, 0xA0261, 0xA0262, 0xA0263,
+};
+Vec D_80112170_3529D0_name_50 = { 75.0f, 0.0f, 200.0f };
+Vec D_8011217C_3529DC_name_50 = { -250.0f, 150.0f, -50.0f };
+Vec D_80112188_3529E8_name_50[2] = {
+    { -200.0f, 150.0f, -150.0f },
+    { -400.0f, 150.0f, -50.0f },
+};
+
+
 /* Board 2's scene, part 1: the host (D_80112748) walks in and turns, a ghost (0x800C1) fades in
    and floats to the centre, music 0x3C; the partner (D_8011275C) arrives, the host's spell
    (func_80108290/80108448/80108630/80108830) changes it into a new model (0xA022D) which hops
@@ -155,15 +344,15 @@ void func_801044DC_344D3C_name_50(void) {
     PlaySound(0x3E9);
     InitFadeIn(3, 16);
     HuPrcSleep(16);
-    while (func_8005A5E8_5B1E8(D_80112748_352FA8_name_50, &D_80111D38_352598_name_50, 6.0f) == 0) {
+    while (func_8005A5E8_5B1E8(D_80112748_352FA8_name_50, &D_80111D2C_35258C_name_50[1], 6.0f) == 0) {
         HuPrcVSleep();
     }
-    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80111D50_3525B0_name_50, &dir);
+    func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80111D44_3525A4_name_50[1], &dir);
     dir.x = -dir.x;
     dir.z = -dir.z;
     MBMotionShiftSet(D_80112748_352FA8_name_50, -1, 0, 8, 2);
-    dir.x = dir.x * 500.0f + D_80111D50_3525B0_name_50.x;
-    dir.z = dir.z * 500.0f + D_80111D50_3525B0_name_50.z;
+    dir.x = dir.x * 500.0f + D_80111D44_3525A4_name_50[1].x;
+    dir.z = dir.z * 500.0f + D_80111D44_3525A4_name_50[1].z;
     while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &dir, 5.0f) == 0) {
         HuPrcVSleep();
     }
@@ -175,7 +364,7 @@ void func_801044DC_344D3C_name_50(void) {
     PlaySound(0xE7);
     HuPrcSleep(30);
     func_8008CCA8_8D8A8(win2);
-    while (func_8005A5E8_5B1E8(ghost, &D_80111D50_3525B0_name_50, 15.0f) == 0) {
+    while (func_8005A5E8_5B1E8(ghost, &D_80111D44_3525A4_name_50[1], 15.0f) == 0) {
         ghost->jumpY -= 2.4166667f;
         alpha += 11;
         if (alpha >= 256) {
@@ -321,8 +510,8 @@ void func_801044DC_344D3C_name_50(void) {
     PlaySound(0x3D8);
     HuPrcSleep(35);
     func_8008CCA8_8D8A8(i);
-    while (func_8005A5E8_5B1E8(door1, &D_80111D80_3525E0_name_50, 10.0f) == 0) {
-        func_8005A5E8_5B1E8(door2, &D_80111D80_3525E0_name_50, 10.0f);
+    while (func_8005A5E8_5B1E8(door1, &D_80111D74_3525D4_name_50[1], 10.0f) == 0) {
+        func_8005A5E8_5B1E8(door2, &D_80111D74_3525D4_name_50[1], 10.0f);
         HuPrcVSleep();
     }
     HuPrcSleep(20);
@@ -474,9 +663,9 @@ void func_80105E58_3466B8_name_50(void) {
     HmfModelObjAttrSet(*morph->obj->model, 0x22000, 0x20000);
     func_80029A8C_2A68C(*morph->obj->model);
     func_8002A00C_2AC0C(*morph->obj->model);
-    morph->pos.x = D_80111D38_352598_name_50.x;
-    morph->pos.y = D_80111D38_352598_name_50.y;
-    morph->pos.z = D_80111D38_352598_name_50.z;
+    morph->pos.x = D_80111D2C_35258C_name_50[1].x;
+    morph->pos.y = D_80111D2C_35258C_name_50[1].y;
+    morph->pos.z = D_80111D2C_35258C_name_50[1].z;
     func_80056658_57258(&morph->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &morph->rot);
     func_80056658_57258(&D_8011275C_352FBC_name_50->pos, &morph->pos, &D_8011275C_352FBC_name_50->rot);
     MBModelDispOn(D_8011275C_352FBC_name_50);
@@ -543,14 +732,14 @@ void func_80105E58_3466B8_name_50(void) {
     MBModelDispOn(winner);
     while (func_8005A5E8_5B1E8(D_80112748_352FA8_name_50, &D_80111DE8_352648_name_50, 19.0f) == 0) {
         func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 4.0f);
-        if (func_8005A5E8_5B1E8(winner, &D_80111E00_352660_name_50, 16.0f) == 1 && func_8005A7E8_5B3E8(winner, &D_8011275C_352FBC_name_50->pos, 15.0f) == 1) {
+        if (func_8005A5E8_5B1E8(winner, &D_80111DF4_352654_name_50[1], 16.0f) == 1 && func_8005A7E8_5B3E8(winner, &D_8011275C_352FBC_name_50->pos, 15.0f) == 1) {
             turned = 1;
             MBMotionShiftSet(winner, -1, 0, 4, 2);
         }
         HuPrcVSleep();
     }
     func_8008CCA8_8D8A8(win2);
-    while (func_8005A5E8_5B1E8(winner, &D_80111E00_352660_name_50, 16.0f) == 0) {
+    while (func_8005A5E8_5B1E8(winner, &D_80111DF4_352654_name_50[1], 16.0f) == 0) {
         func_8005A7E8_5B3E8(D_8011275C_352FBC_name_50, &winner->pos, 3.0f);
         HuPrcVSleep();
     }
@@ -699,9 +888,9 @@ void func_80106FDC_34783C_name_50(void) {
     func_8005321C_53E1C(80.0f, 8000.0f);
     func_80026E00_27A00(3, -5.0f, 109.0f, 48.0f);
     winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
-    winner->pos.x = D_80111E00_352660_name_50.x;
-    winner->pos.y = D_80111E00_352660_name_50.y;
-    winner->pos.z = D_80111E00_352660_name_50.z;
+    winner->pos.x = D_80111DF4_352654_name_50[1].x;
+    winner->pos.y = D_80111DF4_352654_name_50[1].y;
+    winner->pos.z = D_80111DF4_352654_name_50[1].z;
     D_8011275C_352FBC_name_50->pos.x = D_80111D68_3525C8_name_50.x;
     D_8011275C_352FBC_name_50->pos.y = D_80111D68_3525C8_name_50.y;
     D_8011275C_352FBC_name_50->pos.z = D_80111D68_3525C8_name_50.z;
