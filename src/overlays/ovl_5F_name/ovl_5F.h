@@ -129,6 +129,18 @@ extern const char D_80114BD0_3BDD70_name_5F[16]; /* "item_hook" (defined in 3AB9
                                                      : func_80108C8C_3B1E2C_name_5F(i, axis))
 /* end 5F-C */
 
+/* 5F-E: a Mini-Game Coaster game's setup (D_8011429C / D_80114338 / D_801144A0, by
+   D_800FD8A8.unk04, indexed by D_80114250[minigame]; 3BC210.c). */
+typedef struct Ovl5FQuestGame {
+    /* 0x00 */ s8 group; /* player 1's group */
+    /* 0x01 */ s8 group2; /* player 2's group; -1: player 2 is a CPU */
+    /* 0x02 */ u8 variant; /* D_800FA656 */
+    /* 0x03 */ u8 cpu2; /* player 2's (and the partners') CPU difficulty */
+    /* 0x04 */ u8 cpu; /* everyone's CPU difficulty */
+    /* 0x05 */ char unk05;
+    /* 0x06 */ s16 mes[3]; /* the instruction pages' messages */
+} Ovl5FQuestGame; /* size = 0xC */
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -276,23 +288,16 @@ extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF",
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
 extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: 8010F1A4's ring index (D_80113FBC) */
 extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
-extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
-extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
-extern s32 D_8011400C_3BD1AC_name_5F[2]; /* lw:1 */
-extern s32 D_80114014_3BD1B4_name_5F[2]; /* lw:1 */
-extern s32 D_8011401C_3BD1BC_name_5F[2]; /* lw:1 */
-extern s32 D_80114024_3BD1C4_name_5F[95]; /* lw:1 */
-extern s32 D_801141A0_3BD340_name_5F; /* lw:1 */
-extern s32 D_801141A4_3BD344_name_5F[11]; /* lw:1 */
-extern s32 D_801141D0_3BD370_name_5F; /* lw:1 */
-extern s32 D_801141D4_3BD374_name_5F[12]; /* lw:1 */
-extern s32 D_80114204_3BD3A4_name_5F[11]; /* lw:1 */
+extern s32 D_80113FFC_3BD19C_name_5F[6][9][2]; /* per character: {file, 0} pairs (5F-E: 80110480); splat labels D_80114004-D_80114024 are its fields */
+extern char* D_801141A0_3BD340_name_5F[6][2]; /* per character: the two forms' model part names (5F-E: 80110480; D_801141A4 is [0][1]) */
+extern char* D_801141D0_3BD370_name_5F[6][2]; /* per character: the hook nodes (5F-E; D_801141D4 is [0][1]) */
+extern s32 D_80114204_3BD3A4_name_5F[6][2]; /* per character: CPU model file (5F-E) */
 extern u16 D_80114230_3BD3D0_name_5F[6]; /* lhu:1 */
 extern u16 D_8011423C_3BD3DC_name_5F[10]; /* lhu:1 */
-extern u8 D_80114250_3BD3F0_name_5F[76]; /* lbu:1 */
-extern s32 D_8011429C_3BD43C_name_5F[39]; /* addiu:1 */
-extern s32 D_80114338_3BD4D8_name_5F[90]; /* addiu:1 */
-extern s32 D_801144A0_3BD640_name_5F[584]; /* addiu:1 */
+extern s8 D_80114250_3BD3F0_name_5F[76]; /* 5F-E: per minigame, its Mini-Game Coaster setup (-1: none) */
+extern Ovl5FQuestGame D_8011429C_3BD43C_name_5F[]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
+extern Ovl5FQuestGame D_80114338_3BD4D8_name_5F[]; /* difficulty 1 (30 entries) */
+extern Ovl5FQuestGame D_801144A0_3BD640_name_5F[]; /* difficulty 2 (43 entries) */
 
 /* ---- 5F .bss (asm, ovl_5F_bss.bss.s) ---- */
 
@@ -340,6 +345,101 @@ extern s16 D_80114F60_3BE100_name_5F[8]; /* lh:2 sh:1 */
 extern s16 D_80114F70_3BE110_name_5F;
 extern s16 D_80114F72_3BE112_name_5F; /* sh:1 lh:1 lhu:1 */
 extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
+
+/* 5F-E */
+
+#include "game/malloc.h"
+#include "game/gamework.h"
+
+/* A demo player's work (D_800FA640[player], main's per-player minigame data, as 5F-E's demos
+   use it; 0x35 and 0x6D are read as bytes elsewhere). */
+typedef struct Ovl5FDemoPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36; /* motions */
+    /* 0x38 */ s16 unk38;
+    /* 0x3A */ s16 unk3A;
+    /* 0x3C */ s16 unk3C;
+    /* 0x3E */ s16 unk3E;
+    /* 0x40 */ s16 unk40;
+    /* 0x42 */ char unk42[0xA];
+    /* 0x4C */ s16 unk4C; /* forms */
+    /* 0x4E */ s16 unk4E;
+    /* 0x50 */ s16 unk50;
+    /* 0x52 */ char unk52[0x1A];
+    /* 0x6C */ u16 sprite; /* esprite of the button demo (80112A1C) */
+    /* 0x6E */ char unk6E[0x1E];
+    /* 0x8C */ s16 unk8C;
+    /* 0x8E */ char unk8E[6];
+    /* 0x94 */ f32 unk94;
+} Ovl5FDemoPlayer;
+
+#define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+/* D_800FA640[team] as a two-player team demo uses it (801116B0 / 80111A00): one shared model
+   and two riders. */
+typedef struct Ovl5FPairDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[8];
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ s16 unk3A[2];
+    /* 0x3E */ s16 unk3E[2];
+    /* 0x42 */ s16 unk42[2];
+    /* 0x46 */ char unk46[6];
+    /* 0x4C */ s16 unk4C[2]; /* the riders' forms */
+    /* 0x50 */ s16 unk50[2];
+    /* 0x54 */ char unk54[0x38];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* button presses */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* 0: forms not shown yet */
+} Ovl5FPairDemo;
+
+#define PAIR_DEMO(i) ((Ovl5FPairDemo*)D_800FA640_FB240[i])
+
+/* D_800FA640[team] in the two-rider pump demo (80112080 / 801123E4): a base form and two riders
+   whose motions run in opposite directions. */
+typedef struct Ovl5FPumpDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ char unk3A[0x12];
+    /* 0x4C */ s16 unk4C; /* the base form */
+    /* 0x4E */ char unk4E[4];
+    /* 0x52 */ s16 unk52[2]; /* the riders' forms */
+    /* 0x56 */ char unk56[0x36];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* direction */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* rider 0's motion time */
+    /* 0x98 */ f32 unk98; /* rider 1's (and the base's) motion time */
+    /* 0x9C */ f32 unk9C; /* speed */
+} Ovl5FPumpDemo;
+
+#define PUMP_DEMO(i) ((Ovl5FPumpDemo*)D_800FA640_FB240[i])
+
+/* func_80108D50's work: a form attached to a model's hook node */
+typedef struct Ovl5FHookWork {
+    /* 0x00 */ s32 form;
+    /* 0x04 */ s32 model;
+    /* 0x08 */ const char* hook;
+} Ovl5FHookWork;
+
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
+
+/* 5F-E: Ovl5FCharData is 5F-C's (above) */
 
 /* ---- 5F functions (source order) ---- */
 
@@ -474,8 +574,8 @@ void func_80112FE8_3BC188_name_5F(void);
 void func_80113004_3BC1A4_name_5F(void);
 void func_80113020_3BC1C0_name_5F(void);
 void func_8011303C_3BC1DC_name_5F(void);
-void func_80113070_3BC210_name_5F(s32);
-void func_801136C4_3BC864_name_5F(s32);
+void func_80113070_3BC210_name_5F(s16);
+void func_801136C4_3BC864_name_5F(s16);
 
 /* 5F-D: Ovl5FPlayer, Ovl5FCharData and Ovl5FAttach are 5F-C's (above) */
 #define OVL5F_ABS(x) ((x) < 0 ? -(x) : (x))
