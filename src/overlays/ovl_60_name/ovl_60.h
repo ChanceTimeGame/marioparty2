@@ -325,6 +325,7 @@ extern Process* D_80114A70_3D01D0_name_60[4]; /* [0]: func_80105860's process (t
 extern s32 D_80114A80_3D01E0_name_60[2]; /* the demo (index into D_80113810); [0] only */
 extern s16 D_80114AB0_3D0210_name_60[8]; /* lh:2 sh:1 */
 extern s16 D_80114AC0_3D0220_name_60; /* sh:1 lh:1 lhu:1 */
+extern const char D_80114348_3CFAA8_name_60[]; /* "\xFF": an empty window message (defined in 3BDF90.c after its user) */
 extern s16 D_80114AC2_3D0222_name_60; /* the first player in group 0 (80102830; 5F's D_80114F70) */
 extern s16 D_80114AC4_3D0224_name_60; /* sh:1 lh:1 */
 

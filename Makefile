@@ -621,6 +621,8 @@ $(O1A_GFX_UNITS): CFLAGS_CHECK += -m32
 # 5F-B: KMC mul fix with the blank-line strip (func_801072C8, func_80108DCC: a nop between
 # back-to-back mul.s; func_80103B78: none after a call)
 OVL5F_BLANKSTRIP_UNITS := build/src/overlays/ovl_5F_name/3AB9D0.c.o
+# 60-A: overlay 60's copy of 3AB9D0.c needs the same
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_60_name/3BDF90.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
