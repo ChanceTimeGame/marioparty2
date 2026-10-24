@@ -538,7 +538,7 @@ segments:
     bss_size: 0x1F0
     subsegments:
       - [0xDA290, c]
-      - [0xE3140, data]
+      - [0xE3140, .data, DA290]
       - [0xE3510, .rodata, DA290]
     #  - [0xE3688, .rodata, DA290]
       - {0xE3A40, type: bss, vram: 0x8010BFB0, name: ovl_01_bss}

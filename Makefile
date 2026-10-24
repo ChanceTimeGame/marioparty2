@@ -613,3 +613,7 @@ CARVED_RODATA_UNITS += $(H1R_CARVED)
 $(H1R_CARVED): RODATA_AS_DATA = 1
 H1R_CDATA_UNITS := build/src/4D660.c.o build/src/4F650.c.o build/src/512A0.c.o build/src/74AA0.c.o
 $(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
+# o1-A: overlay units whose .data display lists point at each other (gsSPDisplayList(sym)): a
+# 32-bit syntax check, as D1A_GFX_UNITS
+O1A_GFX_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o
+$(O1A_GFX_UNITS): CFLAGS_CHECK += -m32

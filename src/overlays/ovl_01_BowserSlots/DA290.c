@@ -1,6 +1,161 @@
 #include "common.h"
 #include "ovl_01.h"
 
+/* .data (0xE3140-0xE3510): reel faces and symbols, stop chances, motions, flow and CPU state,
+   camera and block places, the machine's display lists, symbol effects. D_8010B6AC (the face's
+   start angle, D_8010B6B0[-1]) is an undefined_syms.txt alias. */
+f32 D_8010B6B0_E3140_BowserSlots[8] = {
+    45.0f, 90.0f, 135.0f, 180.0f, 225.0f, 270.0f, 315.0f, 360.0f,
+};
+s32 D_8010B6D0_E3160_BowserSlots[3][9] = {
+    { 1, 2, 3, 4, 3, 4, 5, 5, 1 },
+    { 2, 1, 4, 3, 4, 5, 5, 3, 2 },
+    { 5, 3, 1, 3, 2, 4, 4, 5, 5 },
+};
+s32 D_8010B73C_E31CC_BowserSlots[8] = {
+    50, 50, 60, 60, 60, 60, 60, 60,
+};
+s16 D_8010B75C_E31EC_BowserSlots[6] = {
+    9, 8, 7, 6, 4, 0,
+};
+s16 D_8010B768_E31F8_BowserSlots[6] = {
+    7, 5, 4, 3, 0, 0,
+};
+s16 D_8010B774_E3204_BowserSlots[6] = {
+    6, 3, 2, 1, 0, 0,
+};
+s16 D_8010B780_E3210_BowserSlots[6] = {
+    6, 5, 2, 1, 0, 0,
+};
+s32 D_8010B78C_E321C_BowserSlots[6] = {
+    0x200E0, 0x300E0, 0x700E0, 0x400E0, 0x500E0, 0x600E0,
+};
+s32 D_8010B7A4_E3234_BowserSlots[6] = {
+    0x200E1, 0x300E1, 0x700E1, 0x400E1, 0x500E1, 0x600E1,
+};
+s32 D_8010B7BC_E324C_BowserSlots = 0;
+s32 D_8010B7C0_E3250_BowserSlots = 0;
+s32 D_8010B7C4_E3254_BowserSlots = 0;
+s32 D_8010B7C8_E3258_BowserSlots = 0;
+s32 D_8010B7CC_E325C_BowserSlots = 0;
+s32 D_8010B7D0_E3260_BowserSlots = 0;
+s32 D_8010B7D4_E3264_BowserSlots = 0;
+s32 D_8010B7D8_E3268_BowserSlots = 0;
+s32 D_8010B7DC_E326C_BowserSlots = 30;
+s32 D_8010B7E0_E3270_BowserSlots = -1;
+s32 D_8010B7E4_E3274_BowserSlots = 0;
+s32 D_8010B7E8_E3278_BowserSlots = 30;
+f32 D_8010B7EC_E327C_BowserSlots[6] = {
+    150.0f, 150.0f, 150.0f, 150.0f, 150.0f, 170.0f,
+};
+s32 D_8010B804_E3294_BowserSlots = 0;
+/* unreferenced: four s16 lists, 0-ended (D_8010B75C..D_8010B780) */
+s16* D_8010B808_E3298_BowserSlots[4] = {
+    D_8010B75C_E31EC_BowserSlots, D_8010B768_E31F8_BowserSlots,
+    D_8010B774_E3204_BowserSlots, D_8010B780_E3210_BowserSlots,
+};
+char D_8010B818_E32A8_BowserSlots[3][8] = { "r1", "r2", "r3" };
+s32 D_8010B830_E32C0_BowserSlots = 0;
+s32 D_8010B834_E32C4_BowserSlots = 0;
+s32 D_8010B838_E32C8_BowserSlots = 0;
+f32 D_8010B83C_E32CC_BowserSlots = 90.0f;
+f32 D_8010B840_E32D0_BowserSlots = 1.0f;
+f32 D_8010B844_E32D4_BowserSlots = 15.0f;
+s32 D_8010B848_E32D8_BowserSlots[3] = {
+    0x1400, 0x1800, 0x1C00,
+};
+f32 D_8010B854_E32E4_BowserSlots[4] = {
+    -10.0f, -10.0f, -10.0f, -10.0f,
+};
+f32 D_8010B864_E32F4_BowserSlots[4] = {
+    30.0f, 30.0f, 30.0f, 30.0f,
+};
+Vec D_8010B874_E3304_BowserSlots = { 0.0f, 650.0f, -400.0f };
+Vec D_8010B880_E3310_BowserSlots = { 10.0f, 650.0f, 0.0f };
+Vec D_8010B88C_E331C_BowserSlots = { 0.0f, 300.0f, 0.0f };
+f32 D_8010B898_E3328_BowserSlots = 0.0f;
+f32 D_8010B89C_E332C_BowserSlots = 0.0f;
+s32 D_8010B8A0_E3330_BowserSlots = 30;
+s32 D_8010B8A4_E3334_BowserSlots = 30;
+s32 D_8010B8A8_E3338_BowserSlots = 0;
+s32 D_8010B8AC_E333C_BowserSlots = 0;
+s32 D_8010B8B0_E3340_BowserSlots = 0;
+s32 D_8010B8B4_E3344_BowserSlots = -1;
+f32 D_8010B8B8_E3348_BowserSlots[2] = {
+    0.0f, 0.0f,
+};
+f32 D_8010B8C0_E3350_BowserSlots[2] = {
+    300.0f, 550.0f,
+};
+s32 D_8010B8C8_E3358_BowserSlots = 1;
+Gfx D_8010B8D0_E3360_BowserSlots[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B988_E3418_BowserSlots[] = {
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B9A8_E3438_BowserSlots[] = {
+    gsSPDisplayList(D_8010B988_E3418_BowserSlots),
+    gsSPDisplayList(D_8010B8D0_E3360_BowserSlots),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B9C0_E3450_BowserSlots[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010B9A8_E3438_BowserSlots),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+Vec D_8010BA00_E3490_BowserSlots = { -150.0f, 385.0f, -300.0f };
+Vec D_8010BA0C_E349C_BowserSlots = { 0.0f, 385.0f, -300.0f };
+Vec D_8010BA18_E34A8_BowserSlots = { 150.0f, 385.0f, -300.0f };
+BSSymFx D_8010BA24_E34B4_BowserSlots[11] = {
+    { 0x02, 0x02, 0x00, 0x00 }, { 0x02, 0x02, 0x00, 0x01 },
+    { 0x02, 0x03, 0x00, 0x02 }, { 0x02, 0x04, 0x00, 0x03 },
+    { 0x02, 0x03, 0x00, 0x04 }, { 0x03, 0x02, 0x00, 0x05 },
+    { 0x01, 0x01, 0x00, 0x06 }, { 0x01, 0x01, 0x00, 0x07 },
+    { 0x01, 0x01, 0x00, 0x08 }, { 0x01, 0x01, 0x00, 0x09 },
+    { 0x01, 0x01, 0x00, 0x0A },
+};
+BSFxKind D_8010BA50_E34E0_BowserSlots[4] = {
+    { 0x03, 0x00, 0x28, 0x28 }, { 0x06, 0x00, 0x3C, 0x3C },
+    { 0x03, 0x00, 0x00, 0x00 }, { 0x03, 0x00, 0x00, 0x50 },
+};
+s8 D_8010BA60_E34F0_BowserSlots[4][3][2] = {
+    { { -10, -3 }, { 0, -3 }, { 10, -3 } },
+    { { -10, -3 }, { 0, -3 }, { 10, -3 } },
+    { { 127, 0 }, { 0, 0 }, { 0, 0 } },
+    { { 127, 0 }, { 0, 0 }, { 0, 0 } },
+};
+
 /* Scene setup: camera, lights, the reel/sprite work buffers and the flow object. */
 void func_80102800_DA290_BowserSlots(void) {
     u8 cam;

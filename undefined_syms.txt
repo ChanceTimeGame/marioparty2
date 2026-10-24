@@ -60,3 +60,14 @@ D_80112548_2A7818_name_3E = D_80112544_2A7814_name_3E + 0x4;
 D_80112568_2A7838_name_3E = D_80112564_2A7834_name_3E + 0x4;
 /* o1-A: ovl_34, the title alpha's low byte (retail lbu) */
 D_80110105_267205_ChanceTime = D_80110104_267204_ChanceTime + 0x1;
+/* o1-A: ovl_01, the face start angle one f32 before the boundary table */
+D_8010B6AC_E313C_BowserSlots = D_8010B6B0_E3140_BowserSlots - 0x4;
+D_8010B884_E3314_BowserSlots = D_8010B880_E3310_BowserSlots + 0x4;
+D_8010B890_E3320_BowserSlots = D_8010B88C_E331C_BowserSlots + 0x4;
+D_8010B8BC_E334C_BowserSlots = D_8010B8B8_E3348_BowserSlots + 0x4;
+D_8010B8C4_E3354_BowserSlots = D_8010B8C0_E3350_BowserSlots + 0x4;
+D_8010BA25_E34B5_BowserSlots = D_8010BA24_E34B4_BowserSlots + 0x1;
+D_8010BA27_E34B7_BowserSlots = D_8010BA24_E34B4_BowserSlots + 0x3;
+D_8010BA51_E34E1_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x1;
+D_8010BA52_E34E2_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x2;
+D_8010BA53_E34E3_BowserSlots = D_8010BA50_E34E0_BowserSlots + 0x3;
