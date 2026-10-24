@@ -1399,7 +1399,7 @@ segments:
     bss_size: 0x90
     subsegments:
       - [0x2AEDB0, c]
-      - [0x2B0EF0, data]
+      - [0x2B0EF0, .data, 2AEDB0]
       - [0x2B1010, .rodata, 2AEDB0]
       - {0x2B10C0, type: bss, vram: 0x80104B10, name: ovl_40_bss}
   - type: code
