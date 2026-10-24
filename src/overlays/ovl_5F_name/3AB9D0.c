@@ -735,21 +735,23 @@ void func_80104E98_3AE038_name_5F(s32 i) {
     obj->work[3] = 0;
 }
 
-/* NON_MATCHING: code shape differs (branch layout); logic follows the asm */
+/* NON_MATCHING: register allocation and branch-likely layout differ; logic follows the asm */
 #ifdef NON_MATCHING
-s32 func_80104F18_3AE0B8_name_5F(u16 btn) {
+s32 func_80104F18_3AE0B8_name_5F(s32 btn) {
     s32 ret = 0;
     s32 i;
 
-    if (D_80114DC2_3BDF62_name_5F < 6 && D_80114DC2_3BDF62_name_5F >= 4) {
-        if (!(gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1)) {
-            ret = ContBtnTrg[gPlayers[D_80114DC4_3BDF64_name_5F].port] & btn;
-        }
-    } else {
-        for (i = 0; i < 4; i++) {
-            if (!(gPlayers[i].flags & 1) && (ret = btn & ContBtnTrg[gPlayers[i].port]) != 0) {
-                break;
+    if (D_80114DC2_3BDF62_name_5F < 6) {
+        if (D_80114DC2_3BDF62_name_5F >= 4) {
+            if (!(gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1)) {
+                ret = ContBtnTrg[gPlayers[D_80114DC4_3BDF64_name_5F].port] & btn;
             }
+            return ret;
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if (!(gPlayers[i].flags & 1) && (ret = btn & ContBtnTrg[gPlayers[i].port]) != 0) {
+            break;
         }
     }
     return ret;
