@@ -5102,3 +5102,308 @@ void func_80112BE0_3CE340_name_60(void) {
     D_80114A80_3D01E0_name_60[0] = D_80114AC4_3D0224_name_60 - 29;
     func_8010A45C_3C5BBC_name_60();
 }
+
+/* .data (0x3CEA10-0x3CF520, 801132B0-80113DC0). The labels 801132B4/801132B6 (inside
+   D_801132B0) and 80113818 (D_80113810[0].unk08) are undefined_syms.txt aliases for the asm. */
+
+s16 D_801132B0_3CEA10_name_60[77][4] = {
+    { 0x1C0, 0x1C1, -0x1, 0x1C2 },
+    { 0x1C3, 0x1C4, -0x1, 0x1C5 },
+    { 0x1C6, 0x1C7, -0x1, 0x1C8 },
+    { 0x1C9, 0x1CA, -0x1, 0x1CB },
+    { 0x1CC, 0x1CD, -0x1, 0x1CE },
+    { 0x1CF, 0x1D0, -0x1, 0x1D1 },
+    { 0x18E, 0x18F, -0x1, 0x190 },
+    { 0x191, 0x192, -0x1, 0x193 },
+    { 0x194, 0x195, -0x1, 0x196 },
+    { 0x197, 0x198, -0x1, 0x199 },
+    { 0x19A, 0x19B, -0x1, 0x19C },
+    { 0x19D, 0x19E, -0x1, 0x19F },
+    { 0x1A0, 0x1A1, -0x1, 0x1A2 },
+    { 0x1A3, 0x1A4, -0x1, 0x1A5 },
+    { 0xFD, 0xFE, 0xFF, 0x100 },
+    { 0x101, 0x102, 0x103, 0x104 },
+    { 0x105, 0x106, 0x107, 0x108 },
+    { 0x109, 0x10A, -0x1, 0x10B },
+    { 0x10C, 0x10D, 0x10E, 0x10F },
+    { 0x110, 0x111, -0x1, 0x112 },
+    { 0x113, 0x114, 0x115, 0x116 },
+    { 0x117, 0x118, 0x119, 0x11A },
+    { 0x11B, 0x11C, -0x1, 0x11D },
+    { 0x11E, 0x11F, 0x120, 0x121 },
+    { 0x1A9, 0x1AA, 0x1AB, 0x1AC },
+    { 0x122, 0x123, -0x1, 0x124 },
+    { 0x125, 0x126, -0x1, 0x127 },
+    { 0x128, 0x129, -0x1, 0x12A },
+    { 0x12B, 0x12C, -0x1, 0x12D },
+    { 0x12E, 0x12F, -0x1, 0x130 },
+    { 0x131, 0x132, 0x133, 0x134 },
+    { 0x135, 0x136, -0x1, 0x137 },
+    { 0x138, 0x139, -0x1, 0x13A },
+    { 0x13B, 0x13C, -0x1, 0x13D },
+    { 0x13E, 0x13F, -0x1, 0x140 },
+    { 0x1AD, 0x1AE, -0x1, 0x1AF },
+    { 0x14B, 0x14C, -0x1, 0x14D },
+    { 0x14E, 0x14F, -0x1, 0x150 },
+    { 0x151, 0x152, -0x1, 0x153 },
+    { 0x154, 0x155, -0x1, 0x156 },
+    { 0x157, 0x158, -0x1, 0x159 },
+    { 0x15A, 0x15B, -0x1, 0x15C },
+    { 0x15F, 0x160, -0x1, 0x161 },
+    { 0x162, 0x163, -0x1, 0x164 },
+    { 0x165, 0x166, -0x1, 0x167 },
+    { 0x168, 0x169, -0x1, 0x16A },
+    { 0x16D, 0x16E, -0x1, 0x16F },
+    { 0x170, 0x171, -0x1, 0x172 },
+    { 0x173, 0x174, -0x1, 0x175 },
+    { 0x176, 0x177, -0x1, 0x178 },
+    { 0x179, 0x17A, -0x1, 0x17B },
+    { 0x17C, 0x17D, -0x1, 0x17E },
+    { 0x17F, 0x180, -0x1, 0x181 },
+    { 0x182, 0x183, -0x1, 0x184 },
+    { 0x185, 0x186, -0x1, 0x187 },
+    { 0x1B0, 0x1B1, -0x1, 0x1B2 },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1A6, 0x1A7, -0x1, 0x1A8 },
+    { 0x141, 0x142, -0x1, 0x143 },
+    { 0x144, 0x145, 0x146, 0x147 },
+    { 0x148, 0x149, -0x1, 0x14A },
+    { 0x188, 0x189, -0x1, 0x18A },
+    { 0x18B, 0x18C, -0x1, 0x18D },
+    { 0x1B3, 0x1B4, 0x1B5, 0x1B6 },
+    { 0x1B7, 0x1B8, -0x1, 0x1B9 },
+    { 0x15A, 0x15B, -0x1, 0x15E },
+    { 0x15A, 0x15B, -0x1, 0x15D },
+    { 0x168, 0x169, -0x1, 0x16B },
+    { 0x168, 0x169, -0x1, 0x16C },
+    { -0x1, -0x1, -0x1, -0x1 },
+};
+f32 D_80113518_3CEC78_name_60 = 0.0f;
+s32 D_8011351C_3CEC7C_name_60[10] = {
+    0x00140009, 0x0014000A, 0x0014000C, 0x0014000D,
+    0x0014000E, 0x0014000F, 0x00140010, 0x00140011,
+    0x00140012, 0x00140013,
+};
+s32 D_80113544_3CECA4_name_60[5][2] = {
+    { -45, -20 },
+    { -5, -20 },
+    { 35, -20 },
+    { -30, 15 },
+    { 20, 15 },
+};
+u16 D_8011356C_3CECCC_name_60[4] = {
+    0x1, 0x2, 0x4, 0x8,
+};
+Ovl60FallInit D_80113574_3CECD4_name_60[12] = {
+    { { -150.0f, -400.0f, 100.0f }, 300.0f, 2.0f, { 0, 0, 70, 1 } },
+    { { 0.0f, -300.0f, 100.0f }, 300.0f, 1.0f, { 0, 2, 30, 1 } },
+    { { 50.0f, -350.0f, 100.0f }, 300.0f, 1.5f, { 0, 1, 50, 0 } },
+    { { 150.0f, -400.0f, 100.0f }, 300.0f, 2.0f, { 0, 0, 60, 0 } },
+    { { 250.0f, -300.0f, 100.0f }, 300.0f, 1.0f, { 0, 2, 20, 1 } },
+    { { -145.0f, 135.0f, 110.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 110.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 55.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 0.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { -200.0f, -120.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { -120.0f, 20.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 230.0f, 20.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+};
+u16 D_801136C4_3CEE24_name_60[3][3] = {
+    { 0x5, 0xF, 0x14 },
+    { 0xA, 0x14, 0x23 },
+    { 0xF, 0x23, 0x32 },
+};
+u16 D_801136D8_3CEE38_name_60[4][3] = {
+    { 0x3, 0x3, 0x2 },
+    { 0x3, 0x2, 0x2 },
+    { 0x2, 0x4, 0x4 },
+    { 0x2, 0x1, 0x0 },
+};
+u16 D_801136F0_3CEE50_name_60[4][5] = {
+    { 0x4, 0x6, 0x7, 0x8, 0x9 },
+    { 0x2, 0x3, 0x4, 0x5, 0x7 },
+    { 0x0, 0x1, 0x2, 0x3, 0x6 },
+    { 0x0, 0x1, 0x2, 0x5, 0x6 },
+};
+s16 D_80113718_3CEE78_name_60[4][5][6] = {
+    {
+        { 0x5, 0x5, 0x5, 0x0, 0x14, 0x0 },
+        { 0x23, 0x14, 0x0, 0x14, 0x0, 0x0 },
+        { 0x0, 0xA, 0x23, 0x14, 0x0, 0x5 },
+        { 0x0, 0x5, 0x0, 0x0, 0x14, 0x23 },
+        { 0x3C, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C },
+    },
+    {
+        { 0x50, 0x14, 0x0, 0x5, 0x0, 0x0 },
+        { 0x5, 0x14, 0xA, 0x5, 0xA, 0x50 },
+        { 0x5, 0x14, 0x0, 0xA, 0x50, 0x5 },
+        { 0x0, 0x14, 0xA, 0x50, 0x0, 0xA },
+        { 0xA, 0x14, 0x50, 0x0, 0xA, 0x5 },
+    },
+    {
+        { 0xA, 0x0, 0xA, 0xA, 0xA, 0x0 },
+        { 0x5, 0x50, 0x5, 0xA, 0x0, 0x0 },
+        { 0x0, 0x0, 0x50, 0xA, 0x1E, 0xA },
+        { 0x5, 0x5, 0x5, 0xA, 0x1E, 0x50 },
+        { 0x50, 0xF, 0x0, 0x3C, 0x1E, 0xA },
+    },
+    {
+        { 0xA, 0x5, 0x5, 0x5, 0x0, 0x14 },
+        { 0x5, 0x50, 0x5, 0x5, 0xA, 0x14 },
+        { 0x0, 0x0, 0x50, 0x0, 0x28, 0x14 },
+        { 0x5, 0x0, 0x0, 0x50, 0x1E, 0x14 },
+        { 0x50, 0xF, 0xA, 0xA, 0x14, 0x14 },
+    },
+};
+/* unreferenced: the zero words between the chance table and the demo table */
+s32 D_80113808_3CEF68_name_60[2] = { 0, 0 };
+Ovl60Demo D_80113810_3CEF70_name_60[44] = {
+    { func_8010A60C_3C5D6C_name_60, func_8010A1A0_3C5900_name_60, func_8010A834_3C5F94_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010B048_3C67A8_name_60, func_8010B488_3C6BE8_name_60, func_8010B4E0_3C6C40_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010B884_3C6FE4_name_60, func_8010BAF4_3C7254_name_60, func_8010BBFC_3C735C_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010BE6C_3C75CC_name_60, func_8010A1A0_3C5900_name_60, func_8010BFA8_3C7708_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010C284_3C79E4_name_60, func_8010A1A0_3C5900_name_60, func_8010C3A8_3C7B08_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010C634_3C7D94_name_60, func_8010C7F4_3C7F54_name_60, func_8010C904_3C8064_name_60, func_8010CB10_3C8270_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x1F, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x4, 0x0 },
+    { func_8010CE78_3C85D8_name_60, func_8010A038_3C5798_name_60, func_8010D070_3C87D0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x4, 0x0 },
+    { func_8010D3D0_3C8B30_name_60, func_8010D6C0_3C8E20_name_60, func_8010D74C_3C8EAC_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010D994_3C90F4_name_60, func_8010A038_3C5798_name_60, func_8010DC98_3C93F8_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010DF64_3C96C4_name_60, func_8010A4F0_3C5C50_name_60, func_8010E11C_3C987C_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x7, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0xC, 0x0 },
+    { func_8010E454_3C9BB4_name_60, func_8010A580_3C5CE0_name_60, func_8010E6A0_3C9E00_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x7, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x7, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x7, 0x0 },
+    { func_8010EC90_3CA3F0_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x4, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0xF, 0x0 },
+    { func_8010EDD4_3CA534_name_60, func_8010A038_3C5798_name_60, func_8010F01C_3CA77C_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010F480_3CABE0_name_60, func_8010F63C_3CAD9C_name_60, func_8010F6C8_3CAE28_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_8010FA50_3CB1B0_name_60, func_8010FCC8_3CB428_name_60, func_8010FDA8_3CB508_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801100BC_3CB81C_name_60, func_8010A038_3C5798_name_60, func_801102F4_3CBA54_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801105D4_3CBD34_name_60, func_8010A038_3C5798_name_60, func_80110700_3CBE60_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_80111228_3CC988_name_60, func_8010A038_3C5798_name_60, func_80111430_3CCB90_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_80110858_3CBFB8_name_60, func_80110A84_3CC1E4_name_60, func_80110B7C_3CC2DC_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_80111BCC_3CD32C_name_60, func_80112100_3CD860_name_60, func_80112158_3CD8B8_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A1A0_3C5900_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x3F, 0x3F },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x11D, 0x0 },
+    { func_801098FC_3C505C_name_60, func_8010A038_3C5798_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0xF, 0x0 },
+    { func_80110DA8_3CC508_name_60, func_8010A0C4_3C5824_name_60, func_80109A80_3C51E0_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x3 },
+    { func_80112610_3CDD70_name_60, func_8010A580_3C5CE0_name_60, func_80112818_3CDF78_name_60, func_8010A2EC_3C5A4C_name_60, 0x0, 0x0 },
+    { NULL, NULL, NULL, NULL, 0x0, 0x0 },
+};
+omObjData* D_80113B80_3CF2E0_name_60[4] = { NULL, NULL, NULL, NULL };
+u16 D_80113B90_3CF2F0_name_60[6] = {
+    0x5, 0x6, 0x7, 0x8, 0x9, 0xA,
+};
+char* D_80113B9C_3CF2FC_name_60[7] = {
+    (char*)D_801145FC_3CFD5C_name_60, (char*)D_801145E8_3CFD48_name_60, (char*)D_801145D0_3CFD30_name_60,
+    (char*)D_801145C0_3CFD20_name_60, (char*)D_801145B0_3CFD10_name_60, (char*)D_8011459C_3CFCFC_name_60,
+    (char*)D_8011458C_3CFCEC_name_60,
+};
+u16 D_80113BB8_3CF318_name_60[6] = {
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
+};
+u16 D_80113BC4_3CF324_name_60[6] = {
+    0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23,
+};
+u16 D_80113BD0_3CF330_name_60[6] = {
+    0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+};
+u16 D_80113BDC_3CF33C_name_60[6] = {
+    0xD, 0xE, 0xF, 0x10, 0x11, 0x12,
+};
+s16 D_80113BE8_3CF348_name_60[2] = {
+    0xC, 0xB,
+};
+s32 D_80113BEC_3CF34C_name_60[7] = {
+    5, 6, 7, 8, 9, 10, 18,
+};
+char* D_80113C08_3CF368_name_60[7][2] = {
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114658_3CFDB8_name_60, (char*)D_80114648_3CFDA8_name_60 },
+    { (char*)D_80114634_3CFD94_name_60, (char*)D_80114620_3CFD80_name_60 },
+};
+u16 D_80113C40_3CF3A0_name_60[18] = {
+    0x16, 0x1C, 0x10, 0x17, 0x1D, 0x11, 0x18, 0x1E, 0x12,
+    0x19, 0x1F, 0x13, 0x1A, 0x20, 0x14, 0x1B, 0x21, 0x15,
+};
+char* D_80113C64_3CF3C4_name_60[3] = {
+    (char*)D_80114698_3CFDF8_name_60, (char*)D_80114680_3CFDE0_name_60, (char*)D_80114668_3CFDC8_name_60,
+};
+u16 D_80113C70_3CF3D0_name_60[6] = {
+    0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
+};
+char* D_80113C7C_3CF3DC_name_60[6] = {
+    (char*)D_801146FC_3CFE5C_name_60, (char*)D_801146F0_3CFE50_name_60, (char*)D_801146E4_3CFE44_name_60,
+    (char*)D_801146D8_3CFE38_name_60, (char*)D_801146CC_3CFE2C_name_60, (char*)D_801146C0_3CFE20_name_60,
+};
+char* D_80113C94_3CF3F4_name_60[6] = {
+    (char*)D_80114750_3CFEB0_name_60, (char*)D_80114744_3CFEA4_name_60, (char*)D_80114738_3CFE98_name_60,
+    (char*)D_8011472C_3CFE8C_name_60, (char*)D_80114720_3CFE80_name_60, (char*)D_80114714_3CFE74_name_60,
+};
+u16 D_80113CAC_3CF40C_name_60[8] = {
+    0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x13, 0x0,
+};
+s32 D_80113CBC_3CF41C_name_60[6][4] = {
+    { 0, 2, 1, 3 },
+    { 4, 6, 5, 7 },
+    { 8, 10, 9, 11 },
+    { 12, 14, 13, 15 },
+    { 16, 18, 17, 19 },
+    { 20, 22, 21, 23 },
+};
+char* D_80113D1C_3CF47C_name_60[6][2] = {
+    { (char*)D_8011485C_3CFFBC_name_60, (char*)D_8011484C_3CFFAC_name_60 },
+    { (char*)D_80114838_3CFF98_name_60, (char*)D_80114824_3CFF84_name_60 },
+    { (char*)D_80114810_3CFF70_name_60, (char*)D_801147FC_3CFF5C_name_60 },
+    { (char*)D_801147E4_3CFF44_name_60, (char*)D_801147D0_3CFF30_name_60 },
+    { (char*)D_801147BC_3CFF1C_name_60, (char*)D_801147A8_3CFF08_name_60 },
+    { (char*)D_80114794_3CFEF4_name_60, (char*)D_80114780_3CFEE0_name_60 },
+};
+char* D_80113D4C_3CF4AC_name_60[6][2] = {
+    { (char*)D_8011485C_3CFFBC_name_60, (char*)D_8011484C_3CFFAC_name_60 },
+    { (char*)D_80114838_3CFF98_name_60, (char*)D_80114824_3CFF84_name_60 },
+    { (char*)D_80114810_3CFF70_name_60, (char*)D_801147FC_3CFF5C_name_60 },
+    { (char*)D_801147E4_3CFF44_name_60, (char*)D_801147E4_3CFF44_name_60 },
+    { (char*)D_801147BC_3CFF1C_name_60, (char*)D_801147A8_3CFF08_name_60 },
+    { (char*)D_80114794_3CFEF4_name_60, (char*)D_80114780_3CFEE0_name_60 },
+};
+u16 D_80113D7C_3CF4DC_name_60[6] = {
+    0x0, 0x1, 0x2, 0x3, 0x4, 0x5,
+};
+u16 D_80113D88_3CF4E8_name_60[6] = {
+    0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C,
+};
+u16 D_80113D94_3CF4F4_name_60[6] = {
+    0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
+};
+u16 D_80113DA0_3CF500_name_60[6] = {
+    0x24, 0x25, 0x26, 0x27, 0x28, 0x29,
+};
+u16 D_80113DAC_3CF50C_name_60[10] = {
+    0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x0, 0x0,
+    0x0, 0x0,
+};

@@ -266,11 +266,11 @@ extern u16 D_800F9208_F9E08; /* the battle's coin pot */
 extern Ovl60Esprite* D_800F93FC_F9FFC; /* EspriteSlot* (1AE60.c) */
 extern u16 D_800CAFD8[]; /* item ids */
 
-/* ---- 60 .data (asm, 3CEA00.data.s; the same layout as 5F's up to the demo table) ---- */
+/* ---- 60 .data (C: 3BDF60.c, 3BDF90.c, 3CE370.c; the same layout as 5F's up to the demo table) ---- */
 
 extern board_overlay_entrypoint D_801132A0_3CEA00_name_60[];
 
-extern s16 D_801132B0_3CEA10_name_60[][4]; /* per minigame: two instruction messages, the
+extern s16 D_801132B0_3CEA10_name_60[77][4]; /* per minigame: two instruction messages, the
     extra message (-1: none; [2]) and, indexed by D_80114DC6 instead, the variant message ([3]) */
 extern f32 D_80113518_3CEC78_name_60; /* the title face texture scroll */
 extern s32 D_8011351C_3CEC7C_name_60[10]; /* item icon sprite files, by item id */
@@ -285,9 +285,9 @@ extern Ovl60Demo D_80113810_3CEF70_name_60[44]; /* 5F has 30; the asm labels 814
 extern omObjData* D_80113B80_3CF2E0_name_60[4]; /* the players' action objects (5F-C) */
 extern u16 D_80113B90_3CF2F0_name_60[6]; /* motion file per character (with flag 0x100) */
 extern s8 D_80113DC0_3CF520_name_60[76]; /* 5F-E: per minigame, its Mini-Game Coaster setup (-1: none) */
-extern Ovl60QuestGame D_80113E0C_3CF56C_name_60[]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
-extern Ovl60QuestGame D_80113EA8_3CF608_name_60[]; /* difficulty 1 (30 entries) */
-extern Ovl60QuestGame D_80114010_3CF770_name_60[]; /* difficulty 2 (43 entries) */
+extern Ovl60QuestGame D_80113E0C_3CF56C_name_60[13]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
+extern Ovl60QuestGame D_80113EA8_3CF608_name_60[30]; /* difficulty 1 (30 entries) */
+extern Ovl60QuestGame D_80114010_3CF770_name_60[43]; /* difficulty 2 (43 entries) */
 
 /* ---- 60 .bss (asm, ovl_60_bss.bss.s; 5F's layout moved by -0x4D0 up to 80114A70, then 0x20 more) ---- */
 
