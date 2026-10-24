@@ -3190,9 +3190,43 @@ void func_8010C3A8_3C7B08_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C634_3C7D94_name_60);
+/* Demo setup: each player's character model (file by character) with a shared model2 and a
+   model3 by group, all at 0.4. */
+void func_8010C634_3C7D94_name_60(void) {
+    s32 i;
+    Ovl60Player* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010C7F4_3C7F54_name_60);
+    for (i = 0; i < 4; i++) {
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(D_80113BDC_3CF33C_name_60[gPlayers[i].character] | 0x300000, 0x69D);
+        p->model2 = func_80018A30_19630(0x300002, 0x69D);
+        p->model3 = func_80018A30_19630(D_80113BE8_3CF348_name_60[gPlayers[i].group] | 0x300000, 0x69D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
+        func_800297E8_2A3E8(p->model2, 0.4f, 0.4f, 0.4f);
+        func_800297E8_2A3E8(p->model3, 0.4f, 0.4f, 0.4f);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
+
+void func_8010C7F4_3C7F54_name_60(void) {
+    s32 i;
+    s32 n0;
+    s32 n1;
+
+    for (i = 0, n0 = 0, n1 = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            func_80104DA8_3C0508_name_60(i, 4, n0 * 60.0f + -50.0f, -50.0f, -80.0f);
+            n0++;
+        } else {
+            func_80104DA8_3C0508_name_60(i, 3, n1 * 60.0f - 100.0f, -50.0f, -80.0f);
+            n1++;
+        }
+    }
+}
 
 void func_8010C904_3C8064_name_60(omObjData* obj) {
     s32 i = obj->work[0];
