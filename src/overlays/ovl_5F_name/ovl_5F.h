@@ -272,12 +272,7 @@ extern s16 D_80114E4A_3BDFEA_name_5F; /* set: the player skipped to the minigame
 extern void* D_80114E4C_3BDFEC_name_5F; /* the minigame's demo files */
 extern void* D_80114E50_3BDFF0_name_5F;
 extern void* D_80114E54_3BDFF4_name_5F;
-extern s32 D_80114E58_3BDFF8_name_5F[2]; /* addiu:2 */
-extern s32 D_80114E60_3BE000_name_5F[6]; /* addiu:3 */
-extern s32 D_80114E78_3BE018_name_5F[16]; /* addiu:2 */
-extern f32 D_80114EB8_3BE058_name_5F; /* swc1:2 lwc1:2 */
-extern f32 D_80114EBC_3BE05C_name_5F[6]; /* swc1:2 lwc1:1 */
-extern s32 D_80114ED4_3BE074_name_5F[27]; /* addiu:1 */
+extern GAMEMES D_80114E58_3BDFF8_name_5F[2]; /* the minigame's name, one per line (asm labels E60-ED4 are fields) */
 extern Process* D_80114F40_3BE0E0_name_5F[4]; /* [0]: func_80105860's process (type 4) */
 extern s32 D_80114F50_3BE0F0_name_5F[4]; /* lw:38 sw:1 */
 extern s16 D_80114F60_3BE100_name_5F[8]; /* lh:2 sh:1 */

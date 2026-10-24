@@ -1712,11 +1712,85 @@ void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha
     gSPEndDisplayList(gfx++);
 }
 
+/* Sets up the minigame's name (message 0x3D9 + minigame): one GAMEMES per line of the message
+   (control characters split it; at most two lines), placed at (82, 40). */
+/* NON_MATCHING: register allocation only (masked 0: p and line swap s1/s2) */
+#ifdef NON_MATCHING
+void func_80107C84_3B0E24_name_5F(s32 minigame) {
+    u8* mes;
+    u8* start;
+    u8* p;
+    u8* q;
+    GAMEMES* line;
+    s16 n;
+    s16 id;
+    s16 breaks;
+
+    mes = func_80068CD4_698D4((s16)minigame + 0x3D9);
+    start = mes + 1;
+    breaks = 0;
+    for (p = start; *p != 0; p++) {
+        if (*p < 0x20) {
+            breaks++;
+        }
+    }
+    D_80114E58_3BDFF8_name_5F[0].unk08 = D_80114E58_3BDFF8_name_5F[1].unk08 = -1;
+    n = 0;
+    for (p = start; *p != 0; p++) {
+        if (*p < 0x20) {
+            q = p - 1;
+            if (*q == 0x10 || *q == 0x20 || *q == 0x1A) {
+                *q = 0;
+            }
+            *p = 0;
+            line = &D_80114E58_3BDFF8_name_5F[n];
+            id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+            D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
+            D_80114E58_3BDFF8_name_5F[n].unk64 = 40.0f;
+            SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, 40);
+            n++;
+            start = p + 1;
+        }
+    }
+    line = &D_80114E58_3BDFF8_name_5F[n];
+    id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+    D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
+    D_80114E58_3BDFF8_name_5F[n].unk64 = (breaks != 0) ? 60.0f : 50.0f;
+    SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, D_80114E58_3BDFF8_name_5F[n].unk64);
+    func_80068D24_69924(mes);
+    func_80107F74_3B1114_name_5F();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107C84_3B0E24_name_5F);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107F74_3B1114_name_5F);
+/* Hides the name's lines (MP1 func_800F8DD0). */
+void func_80107F74_3B1114_name_5F(void) {
+    SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, 0, -200);
+    if (D_80114E58_3BDFF8_name_5F[1].unk08 != -1) {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[1].strGId[D_80114E58_3BDFF8_name_5F[1].unk08], 0, 0, -200);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107FE0_3B1180_name_5F);
+/* Keeps the name's lines on the title model (D_80114DC8[1]). */
+void func_80107FE0_3B1180_name_5F(void) {
+    HmfModel* model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[1]];
+    Vec pos;
+    Vec2f screen;
+
+    pos.x = model->pos.x;
+    pos.y = model->pos.y;
+    pos.z = model->pos.z;
+    Hu3DCam3DToScreen(0, &pos, &screen);
+    screen.unk_00 += 5.0f;
+    screen.unk_04 -= 8.0f;
+    if (D_80114E58_3BDFF8_name_5F[1].unk08 != -1) {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, screen.unk_00, screen.unk_04);
+        SprPosSet(D_80114E58_3BDFF8_name_5F[1].strGId[D_80114E58_3BDFF8_name_5F[1].unk08], 0, screen.unk_00, screen.unk_04 + 16.0f);
+    } else {
+        SprPosSet(D_80114E58_3BDFF8_name_5F[0].strGId[D_80114E58_3BDFF8_name_5F[0].unk08], 0, screen.unk_00, screen.unk_04 + 10.0f);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108170_3B1310_name_5F);
 
