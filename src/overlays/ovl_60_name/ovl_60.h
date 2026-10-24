@@ -605,8 +605,8 @@ extern char* D_80113D1C_3CF47C_name_60[6][2]; /* 8010FA50: per character, the ho
 extern char* D_80113D4C_3CF4AC_name_60[6][2]; /* 8010FA50: per character, forms 0 and 1's own nodes (asm label D50 is [0][1]) */
 extern u16 D_80113D7C_3CF4DC_name_60[6]; /* per character: the held form's file (| 0x420000; 801100BC) */
 extern u16 D_80113D88_3CF4E8_name_60[6]; /* lhu (801105D4) */
-extern s32 D_80113D94_3CF4F4_name_60[3]; /* 80111BCC */
-extern s32 D_80113DA0_3CF500_name_60[3]; /* 80111BCC */
+extern u16 D_80113D94_3CF4F4_name_60[6]; /* per character: rider 0's form (| 0x4A0000; 80111BCC) */
+extern u16 D_80113DA0_3CF500_name_60[6]; /* per character: rider 1's form (| 0x4A0000; 80111BCC) */
 extern u16 D_80113DAC_3CF50C_name_60[10]; /* lhu (80112610) */
 
 extern s32 D_80114A88_3D01E8_name_60; /* sw (8010CE78) */

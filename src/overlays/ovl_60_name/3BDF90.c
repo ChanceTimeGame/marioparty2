@@ -3711,7 +3711,80 @@ void func_80111A90_3CD1F0_name_60(Ovl60TeamDemo* p) {
     func_80029FE4_2ABE4(p->model, fabsf(p->speed));
 }
 
+/* Two teams (groups 0-1 and 2-3), one machine each: the base, five parts and the two riders'
+   forms (D_80113D94 / D_80113DA0 by character). */
+#ifdef NON_MATCHING
+/* NON_MATCHING: register allocation and the order the two rider tables' addresses are hoisted
+   (retail keeps D_80113D94 in s5, D_80113DA0 in s6, 0x4A0000 set before the rider loop, and splits
+   gPlayers' %hi itself); the logic is the same. */
+void func_80111BCC_3CD32C_name_60(void) {
+    s32 i;
+    s32 j;
+    Ovl60TeamDemo* p;
+    omObjData* obj;
+
+    for (i = 0; i < 2; i++) {
+        p = D_800FA640_FB240[i];
+        p->model = func_80018A30_19630(i != 0 ? 0x4A0005 : 0x4A0000, 0xA9D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->scale = 0.3f;
+        func_800297E8_2A3E8(p->model, 0.3f, 0.3f, 0.3f);
+        p->rot.x = p->rot.z = 0.0f;
+        p->rot.y = 180.0f;
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_80029C74_2A874(p->model, func_80029D0C_2A90C(p->model) / 2.0f);
+        p->form[0] = func_80018A30_19630(i != 0 ? 0x4A0006 : 0x4A0001, 0xA9D);
+        func_8002979C_2A39C(p->form[0], p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->form[0], p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->form[0], 0, 1);
+        func_80029C74_2A874(p->form[0], func_80029D0C_2A90C(p->form[0]) / 2.0f);
+        p->form[1] = func_80018A30_19630(i != 0 ? 0x4A0007 : 0x4A0002, 0xA9D);
+        func_8002979C_2A39C(p->form[1], p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->form[1], p->scale, p->scale, p->scale);
+        func_80029E80_2AA80(p->form[1], 0, 1);
+        func_80029C74_2A874(p->form[1], func_80029D0C_2A90C(p->form[1]) / 2.0f);
+        p->form[2] = func_80018A30_19630(i != 0 ? 0x4A0008 : 0x4A0003, 0xA9D);
+        func_8002979C_2A39C(p->form[2], p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->form[2], p->scale, p->scale, p->scale);
+        p->form[3] = func_80018A30_19630(i != 0 ? 0x4A0009 : 0x4A0004, 0xA9D);
+        func_8002979C_2A39C(p->form[3], p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->form[3], p->scale, p->scale, p->scale);
+        func_80029C74_2A874(p->form[3], func_80029D0C_2A90C(p->form[3]));
+        p->form[4] = func_80018A30_19630(i != 0 ? 0x4A000B : 0x4A000A, 0xA9D);
+        func_8002979C_2A39C(p->form[4], p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->form[4], p->scale, p->scale, p->scale);
+        for (j = 0; j < 4; j++) {
+            if (gPlayers[j].group == i * 2) {
+                break;
+            }
+        }
+        p->player[0] = j;
+        for (j = 0; j < 4; j++) {
+            if (gPlayers[j].group == i * 2 + 1) {
+                break;
+            }
+        }
+        p->player[1] = j;
+        p->state = 0;
+        p->timer = 0;
+        p->arm = p->boom = p->speed = 0.0f;
+        for (j = 0; j < 2; j++) {
+            p->form[5 + j] = LoadFormFile(0x4A0000 | (j == 0 ? D_80113D94_3CF4F4_name_60[gPlayers[p->player[0]].character]
+                                                             : D_80113DA0_3CF500_name_60[gPlayers[p->player[1]].character]), 0xA9D);
+            func_8002979C_2A39C(p->form[5 + j], p->rot.x, p->rot.y, p->rot.z);
+            func_800297E8_2A3E8(p->form[5 + j], p->scale, p->scale, p->scale);
+            func_80029E80_2AA80(p->form[5 + j], 0, 1);
+            /* retail: half of the boom's motion length, not the rider's */
+            func_80029C74_2A874(p->form[5 + j], func_80029D0C_2A90C(p->form[1]) / 2.0f);
+        }
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80111BCC_3CD32C_name_60);
+#endif
 
 void func_80112100_3CD860_name_60(void) {
     func_80104DA8_3C0508_name_60(0, 3, -70.0f, 0.0f, -80.0f);
