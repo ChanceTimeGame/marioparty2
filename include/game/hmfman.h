@@ -194,7 +194,8 @@ typedef struct HmfData {
     /* 0x24 */ char unk24[2];
     /* 0x26 */ s16 unk26;
     /* 0x28 */ s16 unk28; /* texture-animation count (3D6A0); unkC8's entry count (274D0) */
-    /* 0x2A */ char unk2A[6];
+    /* 0x2A */ char unk2A[2];
+    /* 0x2C */ u8* unk2C; /* a pointer in 1D0B0's view (HmfLoadData) */
     /* 0x30 */ u8* unk30; /* chunk end (3D6A0) */
     /* 0x34 */ u8* unk34; /* chunk start (3D6A0) */
     /* 0x38 */ void* unk38; /* the MAP1 chunk */
