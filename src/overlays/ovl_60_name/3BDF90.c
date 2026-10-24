@@ -3004,7 +3004,25 @@ void func_8010BBFC_3C735C_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BE6C_3C75CC_name_60);
+/* Demo setup: the standard character models (func_801098FC) at half size with three motions
+   of their own directory (0x5A, 0x49, 0x4A). */
+void func_8010BE6C_3C75CC_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60Player* p;
+
+    func_801098FC_3C505C_name_60();
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.5f, 0.5f, 0.5f);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x5A), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(dir | 0x49), 0x1D);
+        p->mot[2] = func_8002C8B8_2D4B8(DataRead(dir | 0x4A), 0x1D);
+        func_80029E80_2AA80(p->model, 0, 2);
+    }
+}
 
 __asm__(".section .rodata");
 const char D_8011458C_3CFCEC_name_60[] = "c100_1-atama";
