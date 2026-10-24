@@ -593,9 +593,9 @@ extern u16 D_80113BDC_3CF33C_name_60[6]; /* 60-B: model file, by character (8010
 extern s16 D_80113BE8_3CF348_name_60[2]; /* 60-B: model file, by group (8010C634; groups 0-1 only) */
 extern s32 D_80113BEC_3CF34C_name_60[7]; /* 60-B: model file by character; [6]: flag 14 set, group != 0 (8010CE78) */
 extern char* D_80113C08_3CF368_name_60[7][2]; /* 60-B: the two nodes 8010CE78 looks up, by D_80113BEC index (asm label C0C is [0][1]) */
-extern s32 D_80113C40_3CF3A0_name_60[9]; /* 8010D3D0 */
-extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
-extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
+extern u16 D_80113C40_3CF3A0_name_60[18]; /* 60-B: model2's three texture files per character ([chr * 3 + j], 8010D3D0) */
+extern char* D_80113C64_3CF3C4_name_60[3]; /* 60-B: the textures they replace (8010D3D0) */
+extern u16 D_80113C70_3CF3D0_name_60[6]; /* 60-B: motion file, by character (8010D3D0) */
 extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
 extern s32 D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4 */
 extern u16 D_80113CAC_3CF40C_name_60[8]; /* lhu (8010F480) */

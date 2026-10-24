@@ -3443,7 +3443,51 @@ void func_8010D070_3C87D0_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010D3D0_3C8B30_name_60);
+/* Demo setup: each character model (yaw -30, motion by character) with model2 (0x35000C)
+   retextured by character and playing its own motion. */
+void func_8010D3D0_3C8B30_name_60(void) {
+    s32 i;
+    s32 j;
+    s32 chr;
+    s32 dir;
+    Ovl60Player* p;
+    void* tex;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        p->model = LoadFormFile(dir | D_800CD438_CE038[chr].model, 0x69D);
+        p->scale = 0.5f;
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->rot.x = 0.0f;
+        p->rot.y = -30.0f;
+        p->rot.z = 0.0f;
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        p->scale = 0.5f;
+        func_800297E8_2A3E8(p->model, p->scale, p->scale, p->scale);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(D_80113C70_3CF3D0_name_60[chr] | 0x350000), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot[0]);
+        func_80029E80_2AA80(p->model, 0, 1);
+        p->model2 = LoadFormFile(0x35000C, 0x68D);
+        for (j = 0; j < 3; j++) {
+            tex = DataRead(D_80113C40_3CF3A0_name_60[chr * 3 + j] | 0x350000);
+            func_8003D8F0_3E4F0(D_800FC834_FD434[p->model2].hmf, tex, 0, D_80113C64_3CF3C4_name_60[j]);
+            DataClose(tex);
+        }
+        func_80029A8C_2A68C(p->model2);
+        func_80029AFC_2A6FC(p->model2);
+        func_8002979C_2A39C(p->model2, p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->model2, 0.8f * 0.4f, 0.8f * 0.4f, 0.8f * 0.4f);
+        p->mot[1] = func_8002C8B8_2D4B8(DataRead(0x35000C), 0x1D);
+        func_8002C9C0_2D5C0(p->model2, p->mot[1]);
+        func_80029E80_2AA80(p->model2, 0, 1);
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
 void func_8010D6C0_3C8E20_name_60(void) {
     s32 i;
