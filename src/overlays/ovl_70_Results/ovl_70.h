@@ -29,7 +29,7 @@ typedef struct ResRank {
 #define RES_ROW_STARS 7
 #define RES_ROW_STARS_D 9
 
-/* .data */
+/* .data (C, 40EC60.c) */
 extern s8 D_801076A0_413B00_Results; /* the screen is finished */
 extern s8 D_801076A1_413B01_Results; /* A/Start pressed: skip the waits */
 extern s8 D_801076A2_413B02_Results; /* skipping is not allowed */

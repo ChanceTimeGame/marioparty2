@@ -2074,7 +2074,7 @@ segments:
     bss_size: 0x5A0
     subsegments:
       - [0x40EC60, c]
-      - [0x413B00, data]
+      - [0x413B00, .data, 40EC60]
       - [0x413C60, .rodata, 40EC60]
       - {0x413C90, type: bss, vram: 0x80107830, name: ovl_70_bss}
   - type: code
