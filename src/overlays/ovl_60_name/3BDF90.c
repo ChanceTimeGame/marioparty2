@@ -3664,7 +3664,33 @@ void func_8010DC98_3C93F8_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010DF64_3C96C4_name_60);
+/* Demo setup: each character at 0.4, yaw 250, playing motion 0x8B of its directory. */
+void func_8010DF64_3C96C4_name_60(void) {
+    s32 i;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        dir = D_800CD438_CE038[gPlayers[i].character].dir;
+        p = D_800FA640_FB240[i];
+        p->model = LoadFormFile(dir | D_800CD438_CE038[gPlayers[i].character].model, 0xA9D);
+        func_80029714_2A314(p->model, 0.0f, -1000.0f, 0.0f);
+        p->rot.x = p->rot.z = 0.0f;
+        p->rot.y = 250.0f;
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        p->scale = 0.4f;
+        func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
+        p->mot[0] = func_8002C8B8_2D4B8(DataRead(dir | 0x8B), 0x1D);
+        func_8002C9C0_2D5C0(p->model, p->mot[0]);
+        func_80029E80_2AA80(p->model, 0, 1);
+        p->count = 0;
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+        obj->work[2] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010E11C_3C987C_name_60);
 
