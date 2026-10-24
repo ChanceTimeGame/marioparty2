@@ -537,7 +537,34 @@ void func_80043DAC_449AC(void* ptr) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/43E90", func_80043DF4_449F4);
+/* Gives a board model another id: reloads its model and shadow and takes the new scales. */
+void func_80043DF4_449F4(MBModel* m, u8 id) {
+    s16 model;
+
+    m->id = id;
+    func_8002C9C0_2D5C0(*m->obj->model, -1);
+    func_800283DC_28FDC(*m->obj->model);
+    if (m->baseMot != -1) {
+        func_80043334_43F34(m->baseMot);
+    }
+    model = LoadFormFile(D_800CB160_CBD60[m->id].file, 0x6A9);
+    *m->obj->model = model;
+    func_80029E80_2AA80(model, 2, 2);
+    func_80029EDC_2AADC(model, 1);
+    ((MBModelWork*)m->obj->unk_50)->scale = D_800CB168_CBD68[m->id].scale;
+    if (func_80029E14_2AA14(model) != 0xFF) {
+        m->baseMot = func_800432C0_43EC0(func_80029E14_2AA14(model));
+    } else {
+        m->baseMot = -1;
+    }
+    if (m->shadow != NULL) {
+        func_800283DC_28FDC(*m->shadow->model);
+        model = LoadFormFile(D_800CB160_CBD60[m->id].shadowFile, 0x229);
+        *m->shadow->model = model;
+        func_80029EDC_2AADC(model, 1);
+        ((MBModelWork*)m->shadow->unk_50)->scale = D_800CB168_CBD68[m->id].shadowScale;
+    }
+}
 
 /* near MP1 MBModelParamCreate (src/3E560.c, NON_MATCHING there): copy a board model. */
 MBModel* MBModelParamCreate(MBModel* arg0) {

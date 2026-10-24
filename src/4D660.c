@@ -30,7 +30,7 @@ extern LabelDef D_800CBF30_CCB30[];
 extern LabelDef D_800CBF98_CCB98[];
 extern s16 D_8010002A_100C2A;
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_80089308_89F08(s16 win_id, char* arg1, s8 arg2); /* definition: u32 arg1 (host: a pointer) */
+void func_80089308_89F08(s16 win_id, void* arg1, s8 arg2);
 void func_80089A7C_8A67C(s16, s16);
 void func_80089B2C_8A72C(s16, s16);
 void func_8008D4DC_8E0DC(u8* arg0, u8* arg1);
@@ -106,7 +106,7 @@ void func_800514F0_520F0(void);
 void func_80051500_52100(void);
 u16 MBDCameraPos3DSet(Vec*);
 void func_80063C40_64840(s32, s32);
-void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32);
+void func_80056368_56F68(s16, u32, char*, char*, char*, char*, char*); /* message with up to five strings */
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_8004CDE0_4D9E0(void);
@@ -117,7 +117,7 @@ extern s32 D_800CC04C_CCC4C[]; /* item description messages (MP3 D_801010F8) */
 void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2);
 s32 func_8008E73C_8F33C(s16 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u16 arg5);
 void func_8008D530_8E130(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_8008E978_8F578(s16);
 void func_8008AD44_8B944(s16);
 void func_8008EBE4_8F7E4(s16, s16);
@@ -287,7 +287,7 @@ void func_8004CA60_4D660(LabelWin* w) {
     func_8008D4DC_8E0DC(w->str, def->str);
     func_80089A48_8A648(w->win, 0);
     func_80089284_89E84(w->win, 0, 0x20000);
-    func_800890CC_89CCC(w->win, (s32)w->str, -1, -1); /* host: a pointer in an s32 argument */
+    func_800890CC_89CCC(w->win, w->str, -1, -1);
 }
 
 void func_8004CBDC_4D7DC(LabelWin* w) {
@@ -561,7 +561,7 @@ void func_8004CF94_4DB94(void) {
     str1[0] = 0x18;
     str1[1] = gPlayers[D_800DF712_E0312].character;
     str1[2] = 0;
-    func_80056368_56F68(-1, 0x1E5, (s32)str0, (s32)str1, 0, 0, 0);
+    func_80056368_56F68(-1, 0x1E5, str0, str1, 0, 0, 0);
     MBDlgWinClose();
     func_80056168_56D68();
     func_800636F8_642F8(1);
@@ -590,7 +590,7 @@ s32 func_8004D620_4E220(void) {
     str[0] = 0x18;
     str[1] = gPlayers[GwSystem.current_player_index].character;
     str[2] = 0;
-    func_80056368_56F68(-1, 0x1EB, (s32)str, 0, 0, 0, 0);
+    func_80056368_56F68(-1, 0x1EB, str, 0, 0, 0, 0);
     MBDlgWinClose();
     func_80056168_56D68();
     return 1;
@@ -983,7 +983,7 @@ void func_8004E4FC_4F0FC(void) {
                     str2[0] = 0x18;
                     str2[1] = gPlayers[cur].character;
                     str2[2] = 0;
-                    func_80056368_56F68(-1, 0x1E7, (s32)str0, (s32)str1, (s32)str2, 0, 0);
+                    func_80056368_56F68(-1, 0x1E7, str0, str1, str2, 0, 0);
                     MBDlgWinClose();
                     total += coins;
                     func_80056168_56D68();
@@ -996,7 +996,7 @@ void func_8004E4FC_4F0FC(void) {
                     str0[0] = 0x18;
                     str0[1] = gPlayers[targets[i]].character;
                     str0[2] = 0;
-                    func_80056368_56F68(-1, 0x1E8, (s32)str0, 0, 0, 0, 0);
+                    func_80056368_56F68(-1, 0x1E8, str0, 0, 0, 0, 0);
                     i++;
                     MBDlgWinClose();
                     func_80056168_56D68();

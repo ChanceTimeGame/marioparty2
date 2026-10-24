@@ -38,7 +38,7 @@ s16 func_80029E14_2AA14(s16); /* defined u8 in 274D0.c; retail sign-extends the 
 void* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
 void func_8003B72C_3C32C(s16 arg0, s16 arg1, char* arg2, s16 arg3, s16 arg4);
 s16 func_8008D894_8E494(s32 winId);
-void func_80089308_89F08(s16 win_id, u32 arg1, s8 arg2);
+void func_80089308_89F08(s16 win_id, void* arg1, s8 arg2); /* a message id or a string */
 struct MBGuideData* func_80050304_50F04(void*, s32);
 void func_8005057C_5117C(struct MBGuideData*);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
@@ -187,7 +187,7 @@ void func_8008221C_82E1C(s16, s16, f32);
 void func_8008225C_82E5C(s16, s16, u16);
 void func_80082488_83088(s16, s16, u16);
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_80089764_8A364(s16, f32, f32);
 void func_800898F0_8A4F0(s16, s32, s32);
 void func_800899F4_8A5F4(s16, f32);
@@ -1935,15 +1935,14 @@ s32 func_8005B9A0_5C5A0(s32 arg0) {
             sp18[0] = 8;
         }
         sp18[1] = 0;
-        /* a pointer passed as u32 (32-bit only) */
-        func_80089308_89F08(win, (u32)sp18, 0);
+        func_80089308_89F08(win, sp18, 0);
         if (func_8005B8B0_5C4B0(win) != 0) {
             sp20[0] = 1;
         } else {
             sp20[0] = 8;
         }
         sp20[1] = 0;
-        func_80089308_89F08(win, (u32)sp20, 1);
+        func_80089308_89F08(win, sp20, 1);
         func_800890CC_89CCC(win, MBPauseMesNumGet(0x508), -1, -1);
         func_80089A48_8A648(win, 0);
         while (func_8008BA30_8C630(win) != 0) {
