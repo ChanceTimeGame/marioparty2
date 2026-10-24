@@ -27,7 +27,8 @@ typedef struct Ovl5FDemo {
     /* 0x04 */ void (*unk04)(void);
     /* 0x08 */ void (*unk08)(omObjData*);
     /* 0x0C */ void (*unk0C)(omObjData*);
-    /* 0x10 */ s16 unk10;
+    /* 0x10 */ u16 unk10; /* the players' Ovl5FPlayer.flags (5F-C) */
+    /* 0x12 */ u16 unk12; /* the same for players outside group 0 */
 } Ovl5FDemo; /* size = 0x14 */
 
 /* A model's float work (omObjData.unk_50 of func_80103608 / func_8010352C: a falling,
@@ -67,8 +68,6 @@ typedef struct Ovl5FEsprite {
 } Ovl5FEsprite; /* size = 0x24 */
 
 /* 5F-B */
-#include "game/malloc.h"
-
 /* Initial state of one falling model (D_801139D4): copied into its Ovl5FFallWork. */
 typedef struct Ovl5FFallInit {
     /* 0x00 */ Vec pos;
@@ -77,14 +76,79 @@ typedef struct Ovl5FFallInit {
     /* 0x14 */ s16 work[4]; /* the object's work bytes (read as their low bytes) */
 } Ovl5FFallInit; /* size = 0x1C */
 
-/* omObjData.unk_50 of func_80108D50: a model attached to a parent model's hook after a delay. */
-typedef struct Ovl5FHookWork {
-    /* 0x00 */ s16 unk00;
-    /* 0x02 */ s16 model;
-    /* 0x04 */ s16 unk04;
-    /* 0x06 */ s16 parent;
-    /* 0x08 */ char* name; /* the hook node */
-} Ovl5FHookWork;
+/* 5F-C */
+
+/* What main's D_800FA640 entries point at while a demo runs: one demo player. */
+typedef struct Ovl5FPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 angle;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0xC];
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ u16 flags; /* 1, 2, 4, 8, 0x10, 0x20: which motions; 0x100: the alternative set */
+    /* 0x32 */ u16 unk32; /* bit 0: the idle motion may be set */
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 mot[11];
+    /* 0x4C */ s16 model2;
+    /* 0x4E */ s16 model3;
+    /* 0x50 */ char unk50[0x1C];
+    /* 0x6C */ s16 unk6C; /* item icon sprite (func_8010456C) */
+    /* 0x6E */ char unk6E[0x1E];
+    /* 0x8C */ s16 count;
+    /* 0x8E */ s16 count2;
+    /* 0x90 */ char unk90[4];
+    /* 0x94 */ f32 vel;
+    /* 0x98 */ f32 floor;
+    /* 0x9C */ f32 unk9C;
+    /* 0xA0 */ char unkA0[4];
+    /* 0xA4 */ void (*actA)(omObjData*); /* A button action (flag 4) */
+    /* 0xA8 */ void (*actB)(omObjData*); /* B button action (flag 0x10) */
+} Ovl5FPlayer;
+
+/* omObjData.unk_50 of func_80108D50 (a model attached to another model's hook node). */
+typedef struct Ovl5FAttach {
+    /* 0x00 */ s32 model;
+    /* 0x04 */ s32 parent;
+    /* 0x08 */ char* hook;
+} Ovl5FAttach;
+
+/* D_80113F44: per character, a part model file and the nodes it hangs between. */
+typedef struct Ovl5FCharHook {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ char* node;
+    /* 0x08 */ char* hook;
+} Ovl5FCharHook;
+
+/* A view of main's per-character table D_800CD438 (19BF0.c's ActorCharData). */
+typedef struct Ovl5FCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;   /* the character's file directory */
+    /* 0x08 */ s32 model; /* its model file */
+    /* 0x0C */ char unk_0C[0xC];
+} Ovl5FCharData;
+
+extern Ovl5FCharData D_800CD438_CE038[];
+extern const char D_80114BD0_3BDD70_name_5F[16]; /* "item_hook" (defined in 3AB9D0.c after its user) */
+
+/* |stick axis| of demo player i as a float (func_80108C8C read up to twice, as retail does) */
+#define OVL5F_STICK_ABS(i, axis) \
+    (f32)(func_80108C8C_3B1E2C_name_5F(i, axis) < 0 ? -func_80108C8C_3B1E2C_name_5F(i, axis) \
+                                                     : func_80108C8C_3B1E2C_name_5F(i, axis))
+/* end 5F-C */
+
+/* 5F-E: a Mini-Game Coaster game's setup (D_8011429C / D_80114338 / D_801144A0, by
+   D_800FD8A8.unk04, indexed by D_80114250[minigame]; 3BC210.c). */
+typedef struct Ovl5FQuestGame {
+    /* 0x00 */ s8 group; /* player 1's group */
+    /* 0x01 */ s8 group2; /* player 2's group; -1: player 2 is a CPU */
+    /* 0x02 */ u8 variant; /* D_800FA656 */
+    /* 0x03 */ u8 cpu2; /* player 2's (and the partners') CPU difficulty */
+    /* 0x04 */ u8 cpu; /* everyone's CPU difficulty */
+    /* 0x05 */ char unk05;
+    /* 0x06 */ s16 mes[3]; /* the instruction pages' messages */
+} Ovl5FQuestGame; /* size = 0xC */
 
 /* ---- main-segment API used by 5F ---- */
 
@@ -213,40 +277,31 @@ extern u16 D_80113B38_3BCCD8_name_5F[4][3]; /* item minigame: item set by rank a
 extern u16 D_80113B50_3BCCF0_name_5F[4][5]; /* item minigame: the sets' items (asm label B5A is [1][0]) */
 extern s16 D_80113B78_3BCD18_name_5F[4][5][6]; /* item minigame: each item's chance, by set and character */
 extern Ovl5FDemo D_80113C70_3BCE10_name_5F[30];
-extern s32 D_80113EC8_3BD068_name_5F[4]; /* lw:2 sw:4 */
-extern u16 D_80113ED8_3BD078_name_5F[6]; /* lhu:1 */
-extern s32 D_80113EE4_3BD084_name_5F[6]; /* addiu:1 */
-extern s32 D_80113EFC_3BD09C_name_5F[3]; /* addiu:1 */
+extern omObjData* D_80113EC8_3BD068_name_5F[4]; /* the players' action objects (5F-C) */
+extern u16 D_80113ED8_3BD078_name_5F[6]; /* motion file per character (with flag 0x100) */
+extern char* D_80113EE4_3BD084_name_5F[6]; /* hook node per character */
+extern s16 D_80113EFC_3BD09C_name_5F[6]; /* model file per character */
 extern u16 D_80113F08_3BD0A8_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F14_3BD0B4_name_5F[6]; /* lhu:1 */
 extern u16 D_80113F20_3BD0C0_name_5F[6]; /* lhu:1 */
-extern u16 D_80113F2C_3BD0CC_name_5F[12]; /* lhu:1 */
-extern s32 D_80113F44_3BD0E4_name_5F; /* lw:1 */
-extern s32 D_80113F48_3BD0E8_name_5F; /* lw:1 */
-extern s32 D_80113F4C_3BD0EC_name_5F[16]; /* lw:1 */
+extern u16 D_80113F2C_3BD0CC_name_5F[6][2]; /* motion files per character */
+extern Ovl5FCharHook D_80113F44_3BD0E4_name_5F[6]; /* asm labels F48, F4C are [0]'s fields */
 extern s16 D_80113F8C_3BD12C_name_5F[6]; /* lh:1 */
-extern s32 D_80113F98_3BD138_name_5F[3]; /* addiu:1 */
-extern s32 D_80113FA4_3BD144_name_5F[6]; /* lw:1 */
+extern u16 D_80113F98_3BD138_name_5F[6]; /* 5F-D: per character, 8010E65C */
+extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF", 8010E65C */
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
-extern u8 D_80113FDC_3BD17C_name_5F[4]; /* lb:1 sb:1 */
+extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: 8010F1A4's ring index (D_80113FBC) */
 extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
-extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
-extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
-extern s32 D_8011400C_3BD1AC_name_5F[2]; /* lw:1 */
-extern s32 D_80114014_3BD1B4_name_5F[2]; /* lw:1 */
-extern s32 D_8011401C_3BD1BC_name_5F[2]; /* lw:1 */
-extern s32 D_80114024_3BD1C4_name_5F[95]; /* lw:1 */
-extern s32 D_801141A0_3BD340_name_5F; /* lw:1 */
-extern s32 D_801141A4_3BD344_name_5F[11]; /* lw:1 */
-extern s32 D_801141D0_3BD370_name_5F; /* lw:1 */
-extern s32 D_801141D4_3BD374_name_5F[12]; /* lw:1 */
-extern s32 D_80114204_3BD3A4_name_5F[11]; /* lw:1 */
+extern s32 D_80113FFC_3BD19C_name_5F[6][9][2]; /* per character: {file, 0} pairs (5F-E: 80110480); splat labels D_80114004-D_80114024 are its fields */
+extern char* D_801141A0_3BD340_name_5F[6][2]; /* per character: the two forms' model part names (5F-E: 80110480; D_801141A4 is [0][1]) */
+extern char* D_801141D0_3BD370_name_5F[6][2]; /* per character: the hook nodes (5F-E; D_801141D4 is [0][1]) */
+extern s32 D_80114204_3BD3A4_name_5F[6][2]; /* per character: CPU model file (5F-E) */
 extern u16 D_80114230_3BD3D0_name_5F[6]; /* lhu:1 */
 extern u16 D_8011423C_3BD3DC_name_5F[10]; /* lhu:1 */
-extern u8 D_80114250_3BD3F0_name_5F[76]; /* lbu:1 */
-extern s32 D_8011429C_3BD43C_name_5F[39]; /* addiu:1 */
-extern s32 D_80114338_3BD4D8_name_5F[90]; /* addiu:1 */
-extern s32 D_801144A0_3BD640_name_5F[584]; /* addiu:1 */
+extern s8 D_80114250_3BD3F0_name_5F[76]; /* 5F-E: per minigame, its Mini-Game Coaster setup (-1: none) */
+extern Ovl5FQuestGame D_8011429C_3BD43C_name_5F[]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
+extern Ovl5FQuestGame D_80114338_3BD4D8_name_5F[]; /* difficulty 1 (30 entries) */
+extern Ovl5FQuestGame D_801144A0_3BD640_name_5F[]; /* difficulty 2 (43 entries) */
 
 /* ---- 5F .bss (asm, ovl_5F_bss.bss.s) ---- */
 
@@ -296,6 +351,101 @@ extern f32 D_800BF7A8_C03A8; /* main: swing step (func_80108DCC) */
 extern f32 D_800BF7D4_C03D4; /* main: swing cap (func_80108DCC) */
 extern s16 D_800CAFE4[5]; /* main (3D6A0.c): item chances */
 extern s16 D_80102758_103358[9]; /* main bss (0x12 bytes; 30560.c uses [0]-[7]); [8]: the item minigame's set */
+
+/* 5F-E */
+
+#include "game/malloc.h"
+#include "game/gamework.h"
+
+/* A demo player's work (D_800FA640[player], main's per-player minigame data, as 5F-E's demos
+   use it; 0x35 and 0x6D are read as bytes elsewhere). */
+typedef struct Ovl5FDemoPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36; /* motions */
+    /* 0x38 */ s16 unk38;
+    /* 0x3A */ s16 unk3A;
+    /* 0x3C */ s16 unk3C;
+    /* 0x3E */ s16 unk3E;
+    /* 0x40 */ s16 unk40;
+    /* 0x42 */ char unk42[0xA];
+    /* 0x4C */ s16 unk4C; /* forms */
+    /* 0x4E */ s16 unk4E;
+    /* 0x50 */ s16 unk50;
+    /* 0x52 */ char unk52[0x1A];
+    /* 0x6C */ u16 sprite; /* esprite of the button demo (80112A1C) */
+    /* 0x6E */ char unk6E[0x1E];
+    /* 0x8C */ s16 unk8C;
+    /* 0x8E */ char unk8E[6];
+    /* 0x94 */ f32 unk94;
+} Ovl5FDemoPlayer;
+
+#define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+/* D_800FA640[team] as a two-player team demo uses it (801116B0 / 80111A00): one shared model
+   and two riders. */
+typedef struct Ovl5FPairDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[8];
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ s16 unk3A[2];
+    /* 0x3E */ s16 unk3E[2];
+    /* 0x42 */ s16 unk42[2];
+    /* 0x46 */ char unk46[6];
+    /* 0x4C */ s16 unk4C[2]; /* the riders' forms */
+    /* 0x50 */ s16 unk50[2];
+    /* 0x54 */ char unk54[0x38];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* button presses */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* 0: forms not shown yet */
+} Ovl5FPairDemo;
+
+#define PAIR_DEMO(i) ((Ovl5FPairDemo*)D_800FA640_FB240[i])
+
+/* D_800FA640[team] in the two-rider pump demo (80112080 / 801123E4): a base form and two riders
+   whose motions run in opposite directions. */
+typedef struct Ovl5FPumpDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[4];
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ char unk3A[0x12];
+    /* 0x4C */ s16 unk4C; /* the base form */
+    /* 0x4E */ char unk4E[4];
+    /* 0x52 */ s16 unk52[2]; /* the riders' forms */
+    /* 0x56 */ char unk56[0x36];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* direction */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* rider 0's motion time */
+    /* 0x98 */ f32 unk98; /* rider 1's (and the base's) motion time */
+    /* 0x9C */ f32 unk9C; /* speed */
+} Ovl5FPumpDemo;
+
+#define PUMP_DEMO(i) ((Ovl5FPumpDemo*)D_800FA640_FB240[i])
+
+/* func_80108D50's work: a form attached to a model's hook node */
+typedef struct Ovl5FHookWork {
+    /* 0x00 */ s32 form;
+    /* 0x04 */ s32 model;
+    /* 0x08 */ const char* hook;
+} Ovl5FHookWork;
+
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
+
+/* 5F-E: Ovl5FCharData is 5F-C's (above) */
 
 /* ---- 5F functions (source order) ---- */
 
@@ -405,8 +555,8 @@ void func_8010E920_3B7AC0_name_5F(omObjData*);
 void func_8010EEB4_3B8054_name_5F(void);
 void func_8010F0C8_3B8268_name_5F(void);
 void func_8010F1A4_3B8344_name_5F(omObjData*);
-void func_8010F488_3B8628_name_5F(s32);
-void func_8010F578_3B8718_name_5F(s32);
+void func_8010F488_3B8628_name_5F(omObjData*);
+void func_8010F578_3B8718_name_5F(omObjData*);
 void func_8010F668_3B8808_name_5F(void);
 void func_8010F8BC_3B8A5C_name_5F(omObjData*);
 void func_8010FDD8_3B8F78_name_5F(void);
@@ -430,7 +580,10 @@ void func_80112FE8_3BC188_name_5F(void);
 void func_80113004_3BC1A4_name_5F(void);
 void func_80113020_3BC1C0_name_5F(void);
 void func_8011303C_3BC1DC_name_5F(void);
-void func_80113070_3BC210_name_5F(s32);
-void func_801136C4_3BC864_name_5F(s32);
+void func_80113070_3BC210_name_5F(s16);
+void func_801136C4_3BC864_name_5F(s16);
+
+/* 5F-D: Ovl5FPlayer, Ovl5FCharData and Ovl5FAttach are 5F-C's (above) */
+#define OVL5F_ABS(x) ((x) < 0 ? -(x) : (x))
 
 #endif
