@@ -215,17 +215,10 @@ extern s32 D_80113FA4_3BD144_name_5F[6]; /* lw:1 */
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
 extern u8 D_80113FDC_3BD17C_name_5F[4]; /* lb:1 sb:1 */
 extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
-extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
-extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
-extern s32 D_8011400C_3BD1AC_name_5F[2]; /* lw:1 */
-extern s32 D_80114014_3BD1B4_name_5F[2]; /* lw:1 */
-extern s32 D_8011401C_3BD1BC_name_5F[2]; /* lw:1 */
-extern s32 D_80114024_3BD1C4_name_5F[95]; /* lw:1 */
-extern s32 D_801141A0_3BD340_name_5F; /* lw:1 */
-extern s32 D_801141A4_3BD344_name_5F[11]; /* lw:1 */
-extern s32 D_801141D0_3BD370_name_5F; /* lw:1 */
-extern s32 D_801141D4_3BD374_name_5F[12]; /* lw:1 */
-extern s32 D_80114204_3BD3A4_name_5F[11]; /* lw:1 */
+extern s32 D_80113FFC_3BD19C_name_5F[6][9][2]; /* per character: {file, 0} pairs (5F-E: 80110480); splat labels D_80114004-D_80114024 are its fields */
+extern char* D_801141A0_3BD340_name_5F[6][2]; /* per character: the two forms' model part names (5F-E: 80110480; D_801141A4 is [0][1]) */
+extern char* D_801141D0_3BD370_name_5F[6][2]; /* per character: the hook nodes (5F-E; D_801141D4 is [0][1]) */
+extern s32 D_80114204_3BD3A4_name_5F[6][2]; /* per character: CPU model file (5F-E) */
 extern u16 D_80114230_3BD3D0_name_5F[6]; /* lhu:1 */
 extern u16 D_8011423C_3BD3DC_name_5F[10]; /* lhu:1 */
 extern u8 D_80114250_3BD3F0_name_5F[76]; /* lbu:1 */
@@ -279,6 +272,44 @@ extern s16 D_80114F60_3BE100_name_5F[8]; /* lh:2 sh:1 */
 extern s16 D_80114F70_3BE110_name_5F;
 extern s16 D_80114F72_3BE112_name_5F; /* sh:1 lh:1 lhu:1 */
 extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
+
+/* 5F-E */
+
+/* A demo player's work (D_800FA640[player], main's per-player minigame data, as 5F-E's demos
+   use it; 0x35 and 0x6D are read as bytes elsewhere). */
+typedef struct Ovl5FDemoPlayer {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[8];
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36; /* motions */
+    /* 0x38 */ s16 unk38;
+    /* 0x3A */ s16 unk3A;
+    /* 0x3C */ s16 unk3C;
+    /* 0x3E */ s16 unk3E;
+    /* 0x40 */ s16 unk40;
+    /* 0x42 */ char unk42[0xA];
+    /* 0x4C */ s16 unk4C; /* forms */
+    /* 0x4E */ s16 unk4E;
+    /* 0x50 */ s16 unk50;
+    /* 0x52 */ char unk52[0x3A];
+    /* 0x8C */ s16 unk8C;
+    /* 0x8E */ char unk8E[6];
+    /* 0x94 */ f32 unk94;
+} Ovl5FDemoPlayer;
+
+#define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+
+/* main's per-character data (19BF0.c's ActorCharData, 0x18 bytes each) */
+typedef struct Ovl5FCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08; /* its model file */
+    /* 0x0C */ char unk_0C[0xC];
+} Ovl5FCharData;
+extern Ovl5FCharData D_800CD438_CE038[];
 
 /* ---- 5F functions (source order) ---- */
 
