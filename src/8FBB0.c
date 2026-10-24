@@ -61,14 +61,14 @@ extern u8 D_800F9D20_FA920;    /* fade colour */
 extern u8 D_800FC9E8_FD5E8;
 extern u8 D_800FDEA1_FEAA1;
 extern u8 D_8010116C_101D6C;
-extern u32 D_80101638_102238;  /* 64-byte aligned frame buffer */
+extern u8* D_80101638_102238;  /* 64-byte aligned frame buffer */
 extern unk72D90Struct0* D_800F8FD8_F9BD8;
 extern s16 D_800FFFD6_100BD6;
 extern Mtx D_800FDDA0_FE9A0[];
 extern Mtx D_80101400_102000[];
 extern unk72D90Struct1 D_800FD834_FE434;
 extern Gfx* D_800ED8F0_EE4F0;
-extern u32 D_800ED8F4_EE4F4;
+extern u8* D_800ED8F4_EE4F4;
 extern s8 D_800ED8F8_EE4F8;
 extern Gfx* D_800ED8FC_EE4FC;
 extern s16 D_800ED900_EE500;
@@ -78,15 +78,15 @@ extern void guLookAt(Mtx*, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 extern void guPerspective(Mtx*, u16*, f32, f32, f32, f32, f32);
 u32 osVirtualToPhysical(void*);
 void func_80068DAC_699AC(void); /* MP1 GMesInit */
-void func_8003F710_40310(Gfx**, u32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_8003F710_40310(Gfx**, void*, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 void* HuMemAlloc(s32 size);
 void* func_80027154_27D54(s32 size, s32 tag);
 void func_80027340_27F40(void* data);
 s16 func_8002838C_28F8C(s32, void*, s32);
 void func_800283DC_28FDC(s16);
 void func_8008F7F4_903F4(Gfx** arg0, u8 arg1, s32* arg2);
-void func_8008FB34_90734(Gfx** arg0, u32 arg1);
-void func_8008FD5C_9095C(Gfx** arg0, u32 arg1);
+void func_8008FB34_90734(Gfx** arg0, u8* arg1);
+void func_8008FD5C_9095C(Gfx** arg0, u8* arg1);
 s32 func_8008FA5C_9065C(Gfx** arg0);
 Gfx* func_80090000_90C00(Gfx* arg0, Vtx* arg1);
 void* func_80091024_91C24(s32 arg0);
@@ -398,7 +398,7 @@ s32 func_8008FA5C_9065C(Gfx** arg0) {
 
     if (D_80101054_101C54 == 0.0f) {
         D_800CDC54_CE854 = HuMemMemoryAllocPerm(153664);
-        D_80101638_102238 = (u32)((u8*)D_800CDC54_CE854 + 63) & ~63;
+        D_80101638_102238 = (u8*)((u32)((u8*)D_800CDC54_CE854 + 63) & ~63);
         func_8008FB34_90734(arg0, D_80101638_102238);
         return 1;
     }
@@ -412,7 +412,7 @@ s32 func_8008FA5C_9065C(Gfx** arg0) {
     return 1;
 }
 
-void func_8008FB34_90734(Gfx** arg0, u32 arg1) {
+void func_8008FB34_90734(Gfx** arg0, u8* arg1) {
     s16 i;
     s16 j;
 
@@ -420,7 +420,7 @@ void func_8008FB34_90734(Gfx** arg0, u32 arg1) {
 
     for (i = 0; i < SCREEN_HEIGHT; i += 16) {
         for (j = 0; j < SCREEN_WIDTH; j += 64) {
-            func_8003F710_40310(arg0, ((j + (i * SCREEN_WIDTH)) * 2) + 0x02000000, 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 64, 16, 0, 2, 2, 0, 0, 0, 0);
+            func_8003F710_40310(arg0, (void*)(((j + (i * SCREEN_WIDTH)) * 2) + 0x02000000), 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 64, 16, 0, 2, 2, 0, 0, 0, 0);
             gSPTextureRectangle((*arg0)++, j * 4, i * 4, (j + 64) * 4, (i + 16) * 4, G_TX_RENDERTILE, 0, 0, 0x0400, 0x0400);
         }
     }
@@ -433,7 +433,7 @@ void func_8008FD1C_9091C(Gfx** arg0) {
     func_8008FD5C_9095C(arg0, D_80101638_102238);
 }
 
-void func_8008FD5C_9095C(Gfx** arg0, u32 arg1) {
+void func_8008FD5C_9095C(Gfx** arg0, u8* arg1) {
     s16 i;
     s16 j;
 
@@ -549,7 +549,7 @@ Gfx* func_80090000_90C00(Gfx* arg0, Vtx* arg1) {
 s32 func_80090460_91060(Gfx** arg0) {
     f32 temp_f22;
     f32 temp_f24;
-    u32 var_s8; /* a frame buffer address (host: a pointer kept in 32 bits) */
+    u8* var_s8; /* a frame buffer address */
     s16 i;
     s16 j;
 
@@ -567,7 +567,7 @@ s32 func_80090460_91060(Gfx** arg0) {
     gDPSetTextureFilter((*arg0)++, G_TF_BILERP);
     gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    var_s8 = (u32)D_800F8418_F9018;
+    var_s8 = D_800F8418_F9018;
 
     gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x003D0800);
     gSPDisplayList((*arg0)++, D_800CDCC8_CE8C8);
@@ -585,7 +585,7 @@ s32 func_80090460_91060(Gfx** arg0) {
 
     gDPSetColorImage((*arg0)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, 0x02000000);
 
-    var_s8 = 0x803D0800;
+    var_s8 = (u8*)0x803D0800;
     for (i = 0; i < temp_f22 * (f32)SCREEN_HEIGHT + 15.0f; i += 16) {
         for (j = 0; j < temp_f22 * (f32)SCREEN_WIDTH + 31.0f; j += 32) {
             func_8003F710_40310(arg0, var_s8 + (j + i * SCREEN_WIDTH) * 2, 0, 2, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 32, 16, 0, 2, 2, 0, 0, 0, 0);
@@ -1072,7 +1072,7 @@ void func_80092814_93414(void) {
     D_800ED8F0_EE4F0 = HuMemAlloc(153664);
     sp10 = D_800ED8FC_EE4FC = HuMemAlloc(6400);
 
-    D_800ED8F4_EE4F4 = ((u32)D_800ED8F0_EE4F0 + 63) & ~63;
+    D_800ED8F4_EE4F4 = (u8*)(((u32)D_800ED8F0_EE4F0 + 63) & ~63);
     D_800ED900_EE500 = func_8002838C_28F8C(0, &func_80092A24_93624, 6);
 
     gSPDisplayList(sp10++, D_800CDC58_CE858);

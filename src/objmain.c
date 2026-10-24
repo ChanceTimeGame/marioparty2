@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/board.h"
+s16 DrawDebugText(u16 x, u16 y, char* str); /* MP1 print8 */
 
 /* Object manager. omObj/omPrc helpers, groups and the debug-key setup from MP1 src/objmain.c
    (func_80076BD0_777D0 from MP3 src/objmain.c); the near/unreferenced functions stay in asm. */

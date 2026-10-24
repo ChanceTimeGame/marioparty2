@@ -141,7 +141,7 @@ void func_800512F8_51EF8(void*);
 void func_800514F0_520F0(void);
 OverlayBgEntry* func_800518B8_524B8(u16);
 void func_80051BCC_527CC(Gfx**, void*, s16, s16);
-void func_8003FB9C_4079C(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
+void func_8003FB9C_4079C(Gfx** arg0, void* arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 void func_80053DEC_549EC(void);
 s16 func_8007C058_7CC58(u8, u8, u8);
 void func_8007C094_7CC94(s16);
@@ -659,7 +659,7 @@ void func_80051BCC_527CC(Gfx** arg0, void* arg1, s16 arg2, s16 arg3) {
 
     temp_f20 = ((f32) arg2 + (D_800E18A8_E24A8[0] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[0] / 4.0f);
     temp_f22 = ((f32) arg3 + (D_800E18A8_E24A8[1] / 4.0f)) - (f32) (s32) (D_800E18A8_E24A8[1] / 4.0f);
-    func_8003FB9C_4079C(arg0, (s32)arg1, 0, 2, 0x40, 0x20, 0, 0, 0x40, 0x20, 0, 1, 1, 6, 5, 0, 0);
+    func_8003FB9C_4079C(arg0, arg1, 0, 2, 0x40, 0x20, 0, 0, 0x40, 0x20, 0, 1, 1, 6, 5, 0, 0);
     if (!(D_800DF9C0_E05C0 & 0x10)) {
         gSPScisTextureRectangle_MP((*arg0)++,
             /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),
@@ -685,7 +685,7 @@ void func_80051BCC_527CC(Gfx** arg0, void* arg1, s16 arg2, s16 arg3) {
             /*dtdy*/(s16)(1024.0f / D_800CC210_CCE10)
         );
     }
-    func_8003FB9C_4079C(arg0, (s32)arg1 + 0x1000, 0, 2, 0x40, 0x10, 0, 0, 0x40, 0x10, 0, 1, 1, 6, 4, 0, 0);
+    func_8003FB9C_4079C(arg0, (u8*)arg1 + 0x1000, 0, 2, 0x40, 0x10, 0, 0, 0x40, 0x10, 0, 1, 1, 6, 4, 0, 0);
     if (!(D_800DF9C0_E05C0 & 0x10)) {
         gSPScisTextureRectangle_MP((*arg0)++,
             /*xl*/(temp_f20 * D_800CC210_CCE10 * 4.0f),

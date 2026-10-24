@@ -1263,7 +1263,7 @@ s32 func_8003F6F0_402F0(s16 overlayID) {
 }
 
 /* exact c: marioparty func_8003A060 (src/3AC60.c) */
-void func_8003F710_40310(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003F710_40310(Gfx** arg0, void* timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
 
     gDPSetTextureImage(gfx++, fmt, siz, width, timg);
@@ -1293,9 +1293,9 @@ void func_8003F93C_4053C(Gfx** arg0, s32 timg, s32 fmt, s32 siz, s32 width, s32 
 }
 
 /* exact c: marioparty func_8003A4EC (src/3AC60.c) */
-void func_8003FB9C_4079C(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003FB9C_4079C(Gfx** arg0, void* arg1, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
-    s32 timg = arg1 + ((width * ult) << (siz - 1));
+    u8* timg = (u8*)arg1 + ((width * ult) << (siz - 1));
 
     gDPSetTextureImage(gfx++, fmt, D_800CB010_CBC10[siz], 1, timg);
     gDPSetTile(gfx++, fmt, D_800CB010_CBC10[siz], 0, 0x0000, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);
@@ -1309,9 +1309,9 @@ void func_8003FB9C_4079C(Gfx** arg0, s32 arg1, s32 fmt, s32 siz, s32 width, s32 
 }
 
 /* exact c: marioparty func_8003A828 (src/3AC60.c) */
-void func_8003FED8_40AD8(Gfx** arg0, s32 arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
+void func_8003FED8_40AD8(Gfx** arg0, void* arg1, s32 fmt, u32 width, s32 height, s32 uls, s32 ult, s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt) {
     Gfx* gfx = *arg0;
-    s32 timg = arg1 + ((width * ult) >> 1);
+    u8* timg = (u8*)arg1 + ((width * ult) >> 1);
 
     gDPSetTextureImage(gfx++, fmt, G_IM_SIZ_16b, 1, timg);
     gDPSetTile(gfx++, fmt, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, cmt, maskt, shiftt, cms, masks, shifts);

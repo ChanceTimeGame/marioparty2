@@ -5,6 +5,7 @@
 #include "game/board.h"
 #include "game/object.h"
 #include "game/camera.h"
+s16 SprAnimRead(void* data); /* 1AE60.c */
 
 GW_PLAYER* BoardPlayerGet(s32);
 void func_80056754_57354(MBModel*);

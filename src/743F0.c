@@ -52,7 +52,7 @@ void func_8005B424_5C024(UnkMBGuideData* arg0, s16 arg1);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void func_8008E2DC_8EEDC(s32 winId, s32 sound);
 void func_8008DF9C_8EB9C(s32 winId, u16 btn);
-s32 func_8008BB48_8C748(s16, s16, s32);
+s8 func_8008BB48_8C748(s16, s8, s32); /* 84FF0.c */
 void func_8008AD44_8B944(s16 win);
 void func_800753D4_75FD4(s32 flag);
 void func_8007E070_7EC70(void);

@@ -1,41 +1,9 @@
 #include "common.h"
+#include "game/collision.h"
 
 /* Minigame player actions (MP3 src/overlays/minigame/B63A0.c, asm there): each one first offers
    the minigame an override hook in the player's work block (hook returns 1 = handled), then does
-   the default. The work block is C8E0.c's MgWork; only the fields used here are named. */
-
-typedef s32 (*MgHook)();
-
-/* omObjData::unk_50 work block (C8E0.c MgWork; size 0x15C) */
-typedef struct MgWork {
-    /* 0x000 */ char unk_00[0x34];
-    /* 0x034 */ f32 unk_34;
-    /* 0x038 */ f32 unk_38; /* vertical speed; 1000.0f = on the ground */
-    /* 0x03C */ f32 unk_3C; /* facing angle */
-    /* 0x040 */ f32 unk_40; /* horizontal speed */
-    /* 0x044 */ char unk_44[4];
-    /* 0x048 */ f32 unk_48; /* body radius */
-    /* 0x04C */ f32 unk_4C;
-    /* 0x050 */ u16 unk_50; /* flags */
-    /* 0x052 */ char unk_52[2];
-    /* 0x054 */ s8 unk_54;
-    /* 0x055 */ char unk_55[4];
-    /* 0x059 */ s8 unk_59; /* player */
-    /* 0x05A */ char unk_5A[0x12];
-    /* 0x06C */ f32 unk_6C; /* attack reach */
-    /* 0x070 */ f32 unk_70; /* attack radius */
-    /* 0x074 */ char unk_74[0x18];
-    /* 0x08C */ f32 unk_8C;
-    /* 0x090 */ char unk_90[0x20];
-    /* 0x0B0 */ f32 unk_B0;
-    /* 0x0B4 */ char unk_B4[0xC];
-    /* 0x0C0 */ s16 unk_C0;
-    /* 0x0C2 */ char unk_C2;
-    /* 0x0C3 */ s8 unk_C3;
-    /* 0x0C4 */ char unk_C4[0x40];
-    /* 0x104 */ MgHook hooks[21]; /* C8E0.c: s32 unk_104[21] (host: pointers in 32-bit slots there) */
-    /* 0x158 */ char unk_158[4];
-} MgWork;
+   the default. The work block is MgWork (game/collision.h). */
 
 extern f32 D_800BF7A4_C03A4; /* jump speed */
 extern f32 D_800BF7C0_C03C0;
@@ -77,7 +45,7 @@ void func_8000B164_BD64(omObjData* obj, MgWork* work);
 
 void func_8000AAE0_B6E0(omObjData* obj, MgWork* work) {
     if (work->unk_50 & 0x40) {
-        if (work->unk_38 == 1000.0f && (work->hooks[10] == NULL || work->hooks[10](obj) != 1)) {
+        if (work->unk_38 == 1000.0f && (work->unk_104[10] == NULL || work->unk_104[10](obj) != 1)) {
             func_80019B9C_1A79C(obj, 0x23);
         }
     } else {
@@ -87,7 +55,7 @@ void func_8000AAE0_B6E0(omObjData* obj, MgWork* work) {
 
 void func_8000AB64_B764(omObjData* obj, MgWork* work) {
     if (work->unk_50 & 0x40) {
-        if (work->unk_38 == 1000.0f && (work->hooks[11] == NULL || work->hooks[11](obj) != 1)) {
+        if (work->unk_38 == 1000.0f && (work->unk_104[11] == NULL || work->unk_104[11](obj) != 1)) {
             func_80019B9C_1A79C(obj, 0x24);
         }
     } else {
@@ -97,7 +65,7 @@ void func_8000AB64_B764(omObjData* obj, MgWork* work) {
 
 /* Jump. */
 void func_8000ABE8_B7E8(omObjData* obj, MgWork* work) {
-    if (work->hooks[2] == NULL || work->hooks[2](obj) != 1) {
+    if (work->unk_104[2] == NULL || work->unk_104[2](obj) != 1) {
         if (work->unk_B0 == 1.0f && func_80019B9C_1A79C(obj, 6) == 1) {
             work->unk_38 = -D_800BF7A4_C03A4;
             work->unk_50 &= ~0x80;
@@ -106,8 +74,8 @@ void func_8000ABE8_B7E8(omObjData* obj, MgWork* work) {
     }
 }
 
-void func_8000AC8C_B88C(omObjData* obj, MgWork* work, s32 arg2, s16 x, s16 y) {
-    if (work->hooks[3] == NULL || work->hooks[3](obj, arg2) != 1) {
+void func_8000AC8C_B88C(omObjData* obj, MgWork* work, GroundWork* arg2, s16 x, s16 y) {
+    if (work->unk_104[3] == NULL || work->unk_104[3](obj, arg2) != 1) {
         if (abs(x) < 8 && abs(y) < 8) {
             work->unk_40 = D_800BF7D0_C03D0;
             func_80019B9C_1A79C(obj, 0x15);
@@ -124,7 +92,7 @@ void func_8000AC8C_B88C(omObjData* obj, MgWork* work, s32 arg2, s16 x, s16 y) {
 void func_8000AD78_B978(omObjData* obj, MgWork* work) {
     s32 ret = func_80019B9C_1A79C(obj, 8);
 
-    if (ret == 1 && (work->hooks[5] == NULL || work->hooks[5](obj) != ret)) {
+    if (ret == 1 && (work->unk_104[5] == NULL || work->unk_104[5](obj) != ret)) {
         work->unk_40 = D_800BF7D0_C03D0;
         work->unk_38 = -D_800BF7A4_C03A4 * 0.1f;
         if (work->unk_50 & 0x10) {
@@ -134,8 +102,8 @@ void func_8000AD78_B978(omObjData* obj, MgWork* work) {
     }
 }
 
-void func_8000AE58_BA58(omObjData* obj, MgWork* work, s32 arg2, f32 x, f32 y, f32 z) {
-    if (work->hooks[6] == NULL || work->hooks[6](obj, arg2) != 1) {
+void func_8000AE58_BA58(omObjData* obj, MgWork* work, GroundWork* arg2, f32 x, f32 y, f32 z) {
+    if (work->unk_104[6] == NULL || work->unk_104[6](obj, arg2) != 1) {
         work->unk_38 = -D_800BF7A4_C03A4 * 0.6f;
         func_800191D4_19DD4(obj, 7, x, y, z, 0.0f, 0.0f);
         func_800191D4_19DD4(obj, 8, x, y, z, 0.0f, 0.0f);
@@ -145,8 +113,8 @@ void func_8000AE58_BA58(omObjData* obj, MgWork* work, s32 arg2, f32 x, f32 y, f3
     }
 }
 
-void func_8000AF60_BB60(omObjData* obj, MgWork* work, s32 arg2, f32 x, f32 y, f32 z) {
-    if (work->hooks[7] == NULL || work->hooks[7](obj, arg2) != 1) {
+void func_8000AF60_BB60(omObjData* obj, MgWork* work, GroundWork* arg2, f32 x, f32 y, f32 z) {
+    if (work->unk_104[7] == NULL || work->unk_104[7](obj, arg2) != 1) {
         func_80019B9C_1A79C(obj, 0x12);
         func_800191D4_19DD4(obj, 8, x, y, z, 0.0f, 0.0f);
         work->unk_50 &= ~0x80;
@@ -154,7 +122,7 @@ void func_8000AF60_BB60(omObjData* obj, MgWork* work, s32 arg2, f32 x, f32 y, f3
 }
 
 void func_8000AFFC_BBFC(omObjData* obj, MgWork* work) {
-    if (work->hooks[14] == NULL || work->hooks[14](obj) != 1) {
+    if (work->unk_104[14] == NULL || work->unk_104[14](obj) != 1) {
         if (work->unk_50 & 0x10) {
             if (func_80019B9C_1A79C(obj, 0x14) == 1) {
                 work->unk_38 = -D_800BF7A4_C03A4 * 0.4f;
@@ -171,13 +139,13 @@ void func_8000AFFC_BBFC(omObjData* obj, MgWork* work) {
 void func_8000B0E4_BCE4(omObjData* obj, f32 x, f32 y, f32 z) {
     MgWork* work = obj->unk_50;
 
-    if (work->hooks[15] == NULL || work->hooks[15](obj) != 1) {
+    if (work->unk_104[15] == NULL || work->unk_104[15](obj) != 1) {
         func_800098D0_A4D0(obj, x, y, z);
     }
 }
 
 void func_8000B164_BD64(omObjData* obj, MgWork* work) {
-    if (work->hooks[8] == NULL || work->hooks[8](obj) != 1) {
+    if (work->unk_104[8] == NULL || work->unk_104[8](obj) != 1) {
         if (work->unk_50 & 0x10) {
             if (func_80019B9C_1A79C(obj, 0x14) == 1) {
                 func_8000D9F4_E5F4(obj);
@@ -192,7 +160,7 @@ void func_8000B164_BD64(omObjData* obj, MgWork* work) {
 void func_8000B204_BE04(omObjData* obj, s32 flags, f32 x, f32 y, f32 z) {
     MgWork* work = obj->unk_50;
 
-    if (work->hooks[9] == NULL || work->hooks[9](obj) != 1) {
+    if (work->unk_104[9] == NULL || work->unk_104[9](obj) != 1) {
         if (flags & 0x80) {
             func_800097EC_A3EC(obj);
         } else {
@@ -210,7 +178,7 @@ void func_8000B298_BE98(omObjData* obj, f32 x, f32 y, f32 z) {
     f32 dx, dy, dz;
     s32 i;
 
-    if (work->hooks[12] == NULL || work->hooks[12](obj, &x, &y, &z) != 1) {
+    if (work->unk_104[12] == NULL || work->unk_104[12](obj, &x, &y, &z) != 1) {
         func_8002C570_2D170(obj->model[0]);
         time = func_80029E3C_2AA3C(obj->model[0]);
         if (time == -1.0f) {
@@ -248,7 +216,7 @@ void func_8000B4D8_C0D8(omObjData* obj, f32 x, f32 y, f32 z) {
     f32 dx, dy, dz;
     s32 i;
 
-    if (work->hooks[13] == NULL || work->hooks[13](obj, &x, &y, &z) != 1) {
+    if (work->unk_104[13] == NULL || work->unk_104[13](obj, &x, &y, &z) != 1) {
         func_8002C570_2D170(obj->model[0]);
         time = func_80029E3C_2AA3C(obj->model[0]);
         if (time == -1.0f) {
@@ -280,7 +248,7 @@ void func_8000B4D8_C0D8(omObjData* obj, f32 x, f32 y, f32 z) {
 s32 func_8000B770_C370(omObjData* obj) {
     MgWork* work = obj->unk_50;
 
-    if (work->hooks[16] == NULL || work->hooks[16](obj) != 1) {
+    if (work->unk_104[16] == NULL || work->unk_104[16](obj) != 1) {
         return 1;
     }
     return 0;
@@ -293,7 +261,7 @@ void func_8000B7AC_C3AC(omObjData* obj, omObjData* other, f32 dx, f32 dz, u16 ar
     MgWork* otherWork = other->unk_50;
     f32 side;
 
-    if (work->hooks[17] == NULL || work->hooks[17](obj) != 1) {
+    if (work->unk_104[17] == NULL || work->unk_104[17](obj) != 1) {
         if (!(otherWork->unk_50 & 0x200)) {
             side = func_8000DA2C_E62C(HuMathSin(otherWork->unk_3C), func_800B7890_B8490(otherWork->unk_3C), dx, dz);
             if (otherWork->unk_50 & 0x10) {
@@ -333,7 +301,7 @@ void func_8000B7AC_C3AC(omObjData* obj, omObjData* other, f32 dx, f32 dz, u16 ar
 void func_8000BA38_C638(omObjData* obj, f32 ground) {
     MgWork* work = obj->unk_50;
 
-    if (work->hooks[4] == NULL || work->hooks[4](obj, &ground) != 1) {
+    if (work->unk_104[4] == NULL || work->unk_104[4](obj, &ground) != 1) {
         if (work->unk_38 == 1000.0f) {
             work->unk_B0 = (work->unk_8C - ground) / work->unk_34;
         } else if (work->unk_38 < 0.0f) {
@@ -348,7 +316,7 @@ void func_8000BAF0_C6F0(omObjData* obj, f32 x, f32 y, f32 z, f32 ground, Vec* no
     MgWork* work = obj->unk_50;
     f32 scale;
 
-    if (work->hooks[18] == NULL || work->hooks[18](obj, &x, &y, &z, &ground, normal) != 1) {
+    if (work->unk_104[18] == NULL || work->unk_104[18](obj, &x, &y, &z, &ground, normal) != 1) {
         if (ground != -65536.0f) {
             if (y != ground) {
                 if (D_800BF799_C0399 == 1) {

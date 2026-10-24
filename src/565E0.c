@@ -6,9 +6,9 @@
 
 void func_80055A38_56638(s16, s32);
 void func_800890CC_89CCC(s16, s32, s32, s32);
-void func_80089308_89F08(s16, s32, s32);
+void func_80089308_89F08(s16, char*, s32); /* a string, or a message id below 0x80000000 */
 void func_8008BB18_8C718(s16, s16);
-void func_8008D974_8E574(s32, s16);
+void func_8008D974_8E574(char*, s16);
 void func_8008DACC_8E6CC(s32, char*, s32);
 void func_8008E978_8F578(s16);
 /* .data (0xCD190-0xCD1A0) */
@@ -22,7 +22,7 @@ void func_80089284_89E84(s16, s32, s32);
 void func_8008CCA8_8D8A8(s16);
 s32 func_8008E73C_8F33C(s16 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u16 arg5);
 void func_8008EED8_8FAD8(s16, s16);
-void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s16 arg7);
+void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6, s16 arg7);
 
 typedef struct MbTextWindow {
     /* 0x000 */ u8 unk_00[0x20];
@@ -93,25 +93,25 @@ void MBWinOpen(s32 arg0) {
     func_8008E978_8F578(temp_v0);
 }
 
-void MBWinInsertOpen(s32 arg0, char *arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5) {
+void MBWinInsertOpen(s32 arg0, char *arg1, char* arg2, char* arg3, char* arg4, char* arg5) {
     s16 sp18[2];
     s16 temp_v0;
 
     // if arg isn't a pointer, treat as ID and return pointer to message from dynamic memory
     if (arg1 != NULL) {
-        func_8008D974_8E574((u32)arg1, 0);
+        func_8008D974_8E574(arg1, 0);
     }
     if (arg2 != NULL) {
-        func_8008D974_8E574((u32)arg2, 1);
+        func_8008D974_8E574(arg2, 1);
     }
     if (arg3 != NULL) {
-        func_8008D974_8E574((u32)arg3, 2);
+        func_8008D974_8E574(arg3, 2);
     }
     if (arg4 != NULL) {
-        func_8008D974_8E574((u32)arg4, 3);
+        func_8008D974_8E574(arg4, 3);
     }
     if (arg5 != NULL) {
-        func_8008D974_8E574((u32)arg5, 4);
+        func_8008D974_8E574(arg5, 4);
     }
 
     func_8008DACC_8E6CC(1, sp18, arg0);
@@ -122,19 +122,19 @@ void MBWinInsertOpen(s32 arg0, char *arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg
         func_80089284_89E84(temp_v0, 0x40, 0x40);
     }
     if (arg1 != NULL) {
-        func_80089308_89F08(temp_v0, (u32)arg1, 0);
+        func_80089308_89F08(temp_v0, arg1, 0);
     }
     if (arg2 != 0) {
-        func_80089308_89F08(temp_v0, (u32)arg2, 1);
+        func_80089308_89F08(temp_v0, arg2, 1);
     }
     if (arg3 != 0) {
-        func_80089308_89F08(temp_v0, (u32)arg3, 2);
+        func_80089308_89F08(temp_v0, arg3, 2);
     }
     if (arg4 != 0) {
-        func_80089308_89F08(temp_v0, (u32)arg4, 3);
+        func_80089308_89F08(temp_v0, arg4, 3);
     }
     if (arg5 != 0) {
-        func_80089308_89F08(temp_v0, (u32)arg5, 4);
+        func_80089308_89F08(temp_v0, arg5, 4);
     }
     func_800890CC_89CCC(temp_v0, arg0, -1, -1);
     func_8008E978_8F578(temp_v0);
@@ -221,7 +221,7 @@ void func_80056168_56D68(void) {
     func_8008CCA8_8D8A8(mbDlgWinId);
 }
 
-void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s16 arg7) {
+void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6, s16 arg7) {
     char sp10[8];
     s16 temp_v0;
 
@@ -272,17 +272,17 @@ void MBDlgWinInsertCreateY(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32
     func_80055A38_56638(temp_v0, GwSystem.current_player_index);
 }
 
-void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
+void func_80056368_56F68(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6) {
     MBDlgWinInsertCreateY(arg0, arg1, arg2, arg3, arg4, arg5, arg6, -1);
 }
 
-void func_800563A8_56FA8(s16 arg0, s32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5, u32 arg6) {
+void func_800563A8_56FA8(s16 arg0, s32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6) {
     D_800CC592_CD192 = 1;
     MBDlgWinInsertCreateY(arg0, arg1, arg2, arg3, arg4, arg5, arg6, -1);
     D_800CC592_CD192 = 0;
 }
 
-void func_800563FC_56FFC(s16 arg0, s32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5, u32 arg6, s16 arg7) {
+void func_800563FC_56FFC(s16 arg0, s32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6, s16 arg7) {
     D_800CC592_CD192 = 1;
     MBDlgWinInsertCreateY(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     D_800CC592_CD192 = 0;

@@ -24,7 +24,7 @@ typedef struct {
 
 
 typedef struct {
-    u32 unk0[4];
+    void* unk0[4]; /* the NNScClient func_8007E4D4_7F0D4 links in: three words, room for pointers */
     unkMesg* unkMsg;
 } unkMesgWrapper;
 
