@@ -1,5 +1,53 @@
 #include "ovl_6F.h"
 
+/* .data (0x40EA00-0x40EBB0) */
+s32 D_80105700_40EA00_BattleResults[4] = {
+    32, 48, 72, 96,
+};
+Vec D_80105710_40EA10_BattleResults[4] = {
+    { -158.0f, -275.0f, 800.0f },
+    { -52.0f, -275.0f, 800.0f },
+    { 54.0f, -275.0f, 800.0f },
+    { 160.0f, -275.0f, 800.0f },
+};
+f32 D_80105740_40EA40_BattleResults[4] = {
+    -8.0f, -4.0f, 6.0f, 10.0f,
+};
+s32 D_80105750_40EA50_BattleResults[8][4] = {
+    { 0, 1, 2, 3 },
+    { 0, 0, 2, 3 },
+    { 0, 0, 2, 2 },
+    { 0, 0, 0, 3 },
+    { 0, 1, 1, 3 },
+    { 0, 1, 1, 1 },
+    { 0, 1, 2, 2 },
+    { 0, 0, 0, 0 },
+};
+s32 D_801057D0_40EAD0_BattleResults[8][4] = {
+    { 70, 30, 0, 0 },
+    { 50, 50, 0, 0 },
+    { 50, 0, 0, 0 },
+    { 33, 0, 0, 0 },
+    { 60, 20, 0, 0 },
+    { 70, 10, 0, 0 },
+    { 70, 30, 0, 0 },
+    { 25, 0, 0, 0 },
+};
+s32 D_80105850_40EB50_BattleResults[6] = {
+    0x4E, 0x4E, 0x4E, 0x4E, 0x4E, 0x4E,
+};
+s32 D_80105868_40EB68_BattleResults[6] = {
+    0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+};
+s32 D_80105880_40EB80_BattleResults = 0x80;
+s32 D_80105884_40EB84_BattleResults = 0x80;
+s32 D_80105888_40EB88_BattleResults[4] = {
+    50, 0x6E, 0xAF, 0xF0,
+};
+s32 D_80105898_40EB98_BattleResults[4] = {
+    80, 95, 0x6E, 0x7D,
+};
+
 /* Scene setup: camera, the scene object, the result process. */
 void func_80102800_40BB00_BattleResults(void) {
     u8 cam;

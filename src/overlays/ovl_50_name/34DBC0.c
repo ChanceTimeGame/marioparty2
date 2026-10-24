@@ -1,6 +1,102 @@
 #include "common.h"
 #include "ovl_50.h"
 
+/* .data (0x352A00-0x352D40) */
+/* board 5, per character: MBPlayerModelCreate lists */
+u32 D_801121A0_352A00_name_50[15] = {
+    0xE, 0x20001, 0x20002, 0x20053, 0x20004, 0x20047, 0x2007E, 0x200B2,
+    0x200B3, 0x200B9, 0x200B6, 0x200B7, 0x200B8, 0x20055, 0x20050,
+};
+u32 D_801121DC_352A3C_name_50[15] = {
+    0xE, 0x30001, 0x30002, 0x30053, 0x30004, 0x30047, 0x3007E, 0x300B2,
+    0x300B3, 0x300B9, 0x300B6, 0x300B7, 0x300B8, 0x30055, 0x30050,
+};
+u32 D_80112218_352A78_name_50[15] = {
+    0xE, 0x70001, 0x70002, 0x70053, 0x70004, 0x70047, 0x7007E, 0x700B2,
+    0x700B3, 0x700B9, 0x700B6, 0x700B7, 0x700B8, 0x70055, 0x70050,
+};
+u32 D_80112254_352AB4_name_50[15] = {
+    0xE, 0x40001, 0x40002, 0x40053, 0x40004, 0x40047, 0x4007E, 0x400B2,
+    0x400B3, 0x400B9, 0x400B6, 0x400B7, 0x400B8, 0x40055, 0x40050,
+};
+u32 D_80112290_352AF0_name_50[15] = {
+    0xE, 0x50001, 0x50002, 0x50053, 0x50004, 0x50047, 0x5007E, 0x500B2,
+    0x500B3, 0x500B9, 0x500B6, 0x500B7, 0x500B8, 0x50055, 0x50050,
+};
+u32 D_801122CC_352B2C_name_50[15] = {
+    0xE, 0x60001, 0x60002, 0x60053, 0x60004, 0x60047, 0x6007E, 0x600B2,
+    0x600B3, 0x600B9, 0x600B6, 0x600B7, 0x600B8, 0x60055, 0x60050,
+};
+u32* D_80112308_352B68_name_50[6] = {
+    D_801121A0_352A00_name_50, D_801121DC_352A3C_name_50, D_80112218_352A78_name_50, D_80112254_352AB4_name_50,
+    D_80112290_352AF0_name_50, D_801122CC_352B2C_name_50,
+};
+u32 D_80112320_352B80_name_50[5] = {
+    4, 0x80024, 0x80024, 0x80003, 0x80030,
+};
+u32 D_80112334_352B94_name_50[14] = {
+    0xD, 0x8008C, 0x8008D, 0x8008E, 0x80090, 0x8009B, 0x80098, 0x8008E,
+    0x80092, 0x8009A, 0x80099, 0x8009F, 0x800A2, 0x8009C,
+};
+u32 D_8011236C_352BCC_name_50[11] = {
+    0xA, 0x80058, 0x80064, 0x80065, 0x80066, 0x80067, 0x80068, 0x80069,
+    0x8006A, 0x8006B, 0x8006C,
+};
+s32 D_80112398_352BF8_name_50 = 0x80039;
+s32 D_8011239C_352BFC_name_50 = 0x8003A;
+s32 D_801123A0_352C00_name_50 = 0x800A4;
+s32 D_801123A4_352C04_name_50[2] = {
+    0x8007C, 0x8007D,
+};
+s32 D_801123AC_352C0C_name_50 = 0x8007E;
+s32 D_801123B0_352C10_name_50 = 0x8007F;
+s32 D_801123B4_352C14_name_50 = 0x80080;
+Vec D_801123B8_352C18_name_50[2] = {
+    { 500.0f, 0.0f, 448.0f },
+    { -50.0f, 0.0f, 433.0f },
+};
+Vec D_801123D0_352C30_name_50 = { 80.0f, 0.0f, 438.0f };
+Vec D_801123DC_352C3C_name_50 = { -1500.0f, 0.0f, 175.0f };
+Vec D_801123E8_352C48_name_50[2] = {
+    { -375.0f, 0.0f, 402.5f },
+    { -215.0f, 0.0f, 422.5f },
+};
+Vec D_80112400_352C60_name_50 = { 1025.0f, 0.0f, 1575.0f };
+Vec D_8011240C_352C6C_name_50 = { 725.0f, 0.0f, 1575.0f };
+Vec D_80112418_352C78_name_50 = { 0.0f, 0.0f, 150.0f };
+Vec D_80112424_352C84_name_50[4] = {
+    { 320.0f, 0.0f, 1217.0f },
+    { 370.0f, 0.0f, 595.0f },
+    { -17.0f, 0.0f, 901.0f },
+    { 114.0f, 0.0f, 351.0f },
+};
+Vec D_80112454_352CB4_name_50 = { 0.0f, 0.0f, -300.0f };
+Vec D_80112460_352CC0_name_50 = { 250.0f, 0.0f, 500.0f };
+Vec D_8011246C_352CCC_name_50 = { 100.0f, 0.0f, 500.0f };
+Vec D_80112478_352CD8_name_50 = { 0.0f, 0.0f, -150.0f };
+Vec D_80112484_352CE4_name_50[3] = {
+    { -150.0f, 0.0f, -300.0f },
+    { -50.0f, 0.0f, -400.0f },
+    { 100.0f, 0.0f, -300.0f },
+};
+Vec D_801124A8_352D08_name_50 = { 150.0f, 0.0f, -150.0f };
+/* func_80110F20's state: frames to a hop per point (indexed from point 1), point, step, done, hopping */
+u16 D_801124B4_352D14_name_50[4] = {
+    0, 6, 6, 0,
+};
+s16 D_801124BC_352D1C_name_50 = 1;
+s16 D_801124BE_352D1E_name_50 = 0;
+s16 D_801124C0_352D20_name_50 = 0;
+s16 D_801124C2_352D22_name_50 = 0;
+/* func_801112EC's state: point, step, done, timer, frame count, turn speed */
+s16 D_801124C4_352D24_name_50 = 1;
+s16 D_801124C6_352D26_name_50 = 1;
+s16 D_801124C8_352D28_name_50 = 0;
+s16 D_801124CA_352D2A_name_50 = 8;
+s16 D_801124CC_352D2C_name_50 = 0;
+f32 D_801124D0_352D30_name_50 = 0.8f;
+
+
 void func_8010D360_34DBC0_name_50(void) {
     D_8010105C_101C5C = D_80101300_101F00 = 0.9f;
     func_8005E260_5EE60(D_8011275A_352FBA_name_50);
@@ -272,9 +368,9 @@ void func_8010E164_34E9C4_name_50(void) {
     gPlayers[D_8011275A_352FBA_name_50].flags |= 2;
     func_8002D1EC_2DDEC(*OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50)->obj->model, 1);
     winner = OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50);
-    winner->pos.x = D_80112418_352C78_name_50[0].x;
-    winner->pos.y = D_80112418_352C78_name_50[0].y;
-    winner->pos.z = D_80112418_352C78_name_50[0].z;
+    winner->pos.x = D_80112418_352C78_name_50.x;
+    winner->pos.y = D_80112418_352C78_name_50.y;
+    winner->pos.z = D_80112418_352C78_name_50.z;
     MBModelDispOn(winner);
     func_80026E00_27A00(1, -30.0f, 0.0f, -116.0f);
     func_8002D2B4_2DEB4(*winner->obj->model, 5.0f, -105.0f, 56.0f);
@@ -1021,7 +1117,7 @@ void func_80110F10_351770_name_50(void) {
 }
 
 /* Board 5: one step of the winner's walk round D_80112424's four points (lit by the sparks while
-   they live, a hop where D_801124B2 says); returns 1 when done. State in D_801124BC..C2. */
+   they live, a hop where D_801124B4[point - 1] says); returns 1 when done. State in D_801124BC..C2. */
 s16 func_80110F20_351780_name_50(void) {
     Vec dir;
     Vec v;
@@ -1049,8 +1145,8 @@ s16 func_80110F20_351780_name_50(void) {
             D_801124BE_352D1E_name_50 = 1;
             MBMotionShiftSet(winner, -1, 0, 2, 2);
         }
-        if (D_801124B2_352D12_name_50[D_801124BC_352D1C_name_50] != 0) {
-            if (--D_801124B2_352D12_name_50[D_801124BC_352D1C_name_50] == 0) {
+        if (D_801124B4_352D14_name_50[D_801124BC_352D1C_name_50 - 1] != 0) {
+            if (--D_801124B4_352D14_name_50[D_801124BC_352D1C_name_50 - 1] == 0) {
                 D_80112614_352E74_name_50 = 36.0f;
                 MBMotionSet(winner, 3, 0);
                 D_801124C2_352D22_name_50 = 1;
@@ -1069,7 +1165,7 @@ s16 func_80110F20_351780_name_50(void) {
         break;
     case 1:
         if (D_801124BC_352D1C_name_50 != 3) {
-            if (func_8005A7E8_5B3E8(winner, &D_80112418_352C78_name_50[D_801124BC_352D1C_name_50], 18.0f) == 1) {
+            if (func_8005A7E8_5B3E8(winner, &D_80112424_352C84_name_50[D_801124BC_352D1C_name_50 - 1], 18.0f) == 1) {
                 D_801124BE_352D1E_name_50 = 2;
                 D_80112610_352E70_name_50 = 8;
             }

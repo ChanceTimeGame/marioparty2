@@ -1,6 +1,88 @@
 #include "common.h"
 #include "ovl_50.h"
 
+/* .data (0x3521C0-0x352410) */
+s16 D_80111960_3521C0_name_50 = -1;
+void (*D_80111964_3521C4_name_50[6])(void) = {
+    func_801090FC_34995C_name_50, func_801090FC_34995C_name_50, func_80104324_344B84_name_50, func_801090FC_34995C_name_50,
+    func_801090FC_34995C_name_50, func_8010D3F4_34DC54_name_50,
+};
+void (*D_8011197C_3521DC_name_50[6])(void) = {
+    func_80109070_3498D0_name_50, func_80109070_3498D0_name_50, func_80104280_344AE0_name_50, func_80109070_3498D0_name_50,
+    func_80109070_3498D0_name_50, func_8010D360_34DBC0_name_50,
+};
+/* per board: motions; retail reads the low half of each word (lh at +2) */
+s32 D_80111994_3521F4_name_50[6][5] = {
+    { 0, 8, 9, 2, 3 },
+    { 0, 7, 8, 2, 3 },
+    { -1, 3, 4, 1, 2 },
+    { 0, 7, 8, 2, 3 },
+    { 0, 5, 6, 2, 3 },
+    { -1, 4, 5, 1, 2 },
+};
+s32 D_80111A0C_35226C_name_50[6][2] = {
+    { 0, 1 },
+    { 0, 1 },
+    { 0, 1 },
+    { 0, 1 },
+    { -1, 1 },
+    { -1, 1 },
+};
+s32 D_80111A3C_35229C_name_50[6][3] = {
+    { 0, 2, 10 },
+    { 0, 2, 10 },
+    { 0, 2, 12 },
+    { 0, 2, 10 },
+    { 0, 2, 10 },
+    { 0, 2, 12 },
+};
+s32 D_80111A84_3522E4_name_50[6] = {
+    0x335, 0x335, 0x2F6, 0x335, 0x335, 0x352,
+};
+s32 D_80111A9C_3522FC_name_50[6] = {
+    0x336, 0x336, 0x2F7, 0x336, 0x336, 0x353,
+};
+s32 D_80111AB4_352314_name_50[6] = {
+    -1, -1, 0xE7, -1, 0xE7, 0xE7,
+};
+s32 D_80111ACC_35232C_name_50[6] = {
+    -1, -1, 0x11E, -1, 0x11E, 0x11E,
+};
+Vec D_80111AE4_352344_name_50 = { 0.0f, 0.0f, -250.0f };
+Vec D_80111AF0_352350_name_50[3][2] = {
+    {
+        { -500.0f, 0.0f, -600.0f },
+        { -100.0f, 0.0f, -600.0f },
+    },
+    {
+        { 590.0f, 0.0f, -600.0f },
+        { 110.0f, 0.0f, -600.0f },
+    },
+    {
+        { 500.0f, 0.0f, -725.0f },
+        { 65.0f, 0.0f, -725.0f },
+    },
+};
+Vec D_80111B38_352398_name_50[2] = {
+    { -300.0f, 0.0f, 150.0f },
+    { -170.0f, 0.0f, -350.0f },
+};
+Vec D_80111B50_3523B0_name_50[2] = {
+    { 350.0f, 0.0f, -350.0f },
+    { 140.0f, 0.0f, -350.0f },
+};
+Vec D_80111B68_3523C8_name_50[2] = {
+    { -400.0f, 0.0f, 0.0f },
+    { 0.0f, 500.0f, -350.0f },
+};
+u16 D_80111B80_3523E0_name_50[6] = {
+    0x3D, 0x1D, 0x27, 0x48, 0x2E, 0x22,
+};
+s32 D_80111B8C_3523EC_name_50[6] = {
+    5, 6, 7, 8, 9, 10,
+};
+
+
 void func_80102800_343060_name_50(void) {
     omInitObjMan(30, 0x14);
     func_80079128_79D28();
@@ -143,13 +225,13 @@ void func_80102DDC_34363C_name_50(void) {
     func_8002D1EC_2DDEC(*winner->obj->model, 1);
     func_8002D1EC_2DDEC(*D_80112748_352FA8_name_50->obj->model, 1);
     func_8002D1EC_2DDEC(*D_8011274C_352FAC_name_50->obj->model, 1);
-    MBMotionSet(D_80112748_352FA8_name_50, D_80111A3E_35229E_name_50[D_80112744_352FA4_name_50][2], 2);
+    MBMotionSet(D_80112748_352FA8_name_50, D_80111A3C_35229C_name_50[D_80112744_352FA4_name_50][1], 2);
     D_80112748_352FA8_name_50->pos.x = D_80111B38_352398_name_50[0].x;
     D_80112748_352FA8_name_50->pos.y = D_80111B38_352398_name_50[0].y;
     D_80112748_352FA8_name_50->pos.z = D_80111B38_352398_name_50[0].z;
     func_80056658_57258(&D_80112748_352FA8_name_50->pos, &D_80111B38_352398_name_50[1], &D_80112748_352FA8_name_50->rot);
     MBModelDispOn(D_80112748_352FA8_name_50);
-    MBMotionShiftSet(winner, D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][2], 0, 8, 2);
+    MBMotionShiftSet(winner, D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][1], 0, 8, 2);
     v.x = -300.0f;
     v.y = 0.0f;
     v.z = 150.0f;
@@ -160,8 +242,8 @@ void func_80102DDC_34363C_name_50(void) {
     while (func_8005A7E8_5B3E8(D_80112748_352FA8_name_50, &winner->pos, 8.0f) == 0) {
         HuPrcVSleep();
     }
-    MBMotionShiftSet(D_80112748_352FA8_name_50, D_80111A3E_35229E_name_50[D_80112744_352FA4_name_50][4], 0, 4, 0);
-    func_80059520_5A120(D_80112748_352FA8_name_50, D_80111A3E_35229E_name_50[D_80112744_352FA4_name_50][0], 2);
+    MBMotionShiftSet(D_80112748_352FA8_name_50, D_80111A3C_35229C_name_50[D_80112744_352FA4_name_50][2], 0, 4, 0);
+    func_80059520_5A120(D_80112748_352FA8_name_50, (s16)D_80111A3C_35229C_name_50[D_80112744_352FA4_name_50][0], 2);
     func_8008D974_8E574(D_800CC5F8[gPlayers[D_8011275A_352FBA_name_50].character], 0);
     func_8008DACC_8E6CC(1, D_80112752_352FB2_name_50, D_80111A84_3522E4_name_50[D_80112744_352FA4_name_50]);
     win = func_8005AAC0_5B6C0(0x6E, 0x32, D_80112752_352FB2_name_50[0], D_80112752_352FB2_name_50[1]);
@@ -185,8 +267,8 @@ void func_80102DDC_34363C_name_50(void) {
     if (D_80111ACC_35232C_name_50[D_80112744_352FA4_name_50] != -1) {
         PlaySound((s16)D_80111ACC_35232C_name_50[D_80112744_352FA4_name_50]);
     }
-    MBMotionShiftSet(winner, D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][4], 0, 30, 2);
-    MBMotionSet(D_8011274C_352FAC_name_50, D_80111A0E_35226E_name_50[D_80112744_352FA4_name_50][2], 2);
+    MBMotionShiftSet(winner, D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][2], 0, 30, 2);
+    MBMotionSet(D_8011274C_352FAC_name_50, D_80111A0C_35226C_name_50[D_80112744_352FA4_name_50][1], 2);
     v.x = 300.0f;
     v.y = 0.0f;
     v.z = 150.0f;
@@ -200,10 +282,10 @@ void func_80102DDC_34363C_name_50(void) {
     while (func_8005A7E8_5B3E8(D_8011274C_352FAC_name_50, &v, 4.0f) == 0) {
         HuPrcVSleep();
     }
-    MBMotionShiftSet(D_8011274C_352FAC_name_50, D_80111A0E_35226E_name_50[D_80112744_352FA4_name_50][0], 0, 5, 2);
+    MBMotionShiftSet(D_8011274C_352FAC_name_50, D_80111A0C_35226C_name_50[D_80112744_352FA4_name_50][0], 0, 5, 2);
     HuPrcSleep(60);
     func_8005762C_5822C(win);
-    MBMotionShiftSet(winner, D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][0], 0, 30, 2);
+    MBMotionShiftSet(winner, D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][0], 0, 30, 2);
     v.x = winner->pos.x;
     v.y = winner->pos.y;
     v.z = winner->pos.z + 100.0f;
@@ -246,7 +328,7 @@ void func_80102DDC_34363C_name_50(void) {
                 OVL50_PLAYER_MODEL(i)->pos.y = D_80111AF0_352350_name_50[k][0].y;
                 OVL50_PLAYER_MODEL(i)->pos.z = D_80111AF0_352350_name_50[k][0].z;
                 func_80056658_57258(&OVL50_PLAYER_MODEL(i)->pos, &D_80111AF0_352350_name_50[k][1], &OVL50_PLAYER_MODEL(i)->rot);
-                MBMotionSet(OVL50_PLAYER_MODEL(i), D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][6], 2);
+                MBMotionSet(OVL50_PLAYER_MODEL(i), D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][3], 2);
                 arrived[i] = 0;
             } else {
                 arrived[i] = 1;
@@ -256,7 +338,7 @@ void func_80102DDC_34363C_name_50(void) {
     timer = D_80111B80_3523E0_name_50[gPlayers[D_8011275A_352FBA_name_50].character];
     voiced = 0;
     func_8005ACD0_5B8D0(&gPlayers[D_8011275A_352FBA_name_50], 12);
-    MBMotionSet(OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50), D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][8], 0);
+    MBMotionSet(OVL50_PLAYER_MODEL(D_8011275A_352FBA_name_50), D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][4], 0);
     n = 0;
     if (D_80112744_352FA4_name_50 != 5) {
         while (1) {
@@ -264,7 +346,7 @@ void func_80102DDC_34363C_name_50(void) {
                 if (arrived[i] != 1) {
                     r = func_8005A5E8_5B1E8(OVL50_PLAYER_MODEL(i), &D_80111AF0_352350_name_50[dest[i]][1], 10.0f);
                     if (r == 1) {
-                        MBMotionSet(OVL50_PLAYER_MODEL(i), D_80111996_3521F6_name_50[D_80112744_352FA4_name_50][0], 2);
+                        MBMotionSet(OVL50_PLAYER_MODEL(i), D_80111994_3521F4_name_50[D_80112744_352FA4_name_50][0], 2);
                         v.x = OVL50_PLAYER_MODEL(i)->pos.x;
                         v.y = OVL50_PLAYER_MODEL(i)->pos.y;
                         v.z = OVL50_PLAYER_MODEL(i)->pos.z + 500.0f;

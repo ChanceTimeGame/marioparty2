@@ -4,7 +4,7 @@
 /* Overlay 51 (352E10.c): the end-of-game results scene (MP1 ovl_40_ResultsScene). A scrollable
    stats table (stars, coins, minigame coins, max coins and the space counts, 12 rows, four on
    screen) with each player's icons, then the coin and star totals.
-   The unit's .rodata is carved; .data and .bss stay asm. Sprite and window ids live in s32 slots
+   The unit's .rodata is carved and its .data is C; .bss stays asm. Sprite and window ids live in s32 slots
    read as their low half, (s16)X (splat labels the +2 half separately). */
 
 #include "common.h"

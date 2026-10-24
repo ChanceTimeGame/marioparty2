@@ -12,7 +12,7 @@
 
    Retail's overlay is five files (split at the 16-byte text pads): 3616F0.c (fork A),
    364580.c + 365650.c (fork B), 367540.c + 3693E0.c (fork C). Every function is global.
-   .data and .bss stay asm; 3616F0.c's and 365650.c's .rodata are carved.
+   .data is C (each file its own range); .bss stays asm; 3616F0.c's and 365650.c's .rodata are carved.
    Prototypes for 364580.c-3693E0.c came from the asm's register use only: the fork that owns a
    function fixes its line. */
 
@@ -265,7 +265,7 @@ extern void* D_800FD2A8_FDEA8; /* the camera being drawn (hmfman.h: void*); its 
 extern Ovl55MotionWait D_800FDCD8_FE8D8[16];
 extern u16 D_801011FC_101DFC;
 
-/* ---- overlay data (36A640.data.s) ---- */
+/* ---- overlay .data (C, each unit its own range) ---- */
 
 extern s32 D_8010B750_36A640_name_55; /* turn order decided: main's func_8005FF9C on exit */
 extern s32 D_8010B754_36A644_name_55; /* players arrived */

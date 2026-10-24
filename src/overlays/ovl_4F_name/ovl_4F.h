@@ -14,7 +14,7 @@
    D_80110564 is the winner (gPlayers index), D_8011057C the player D_800F8CE4_F98E4[3] names.
 
    Retail's overlay is two files: 335440.c (80102800-801040E0) and 336DE0.c (801041A0 on).
-   .data and .bss stay asm; both files' .rodata is carved. Every function is global.
+   .data is C (each unit its own range); .bss stays asm; both files' .rodata is carved. Every function is global.
    Prototypes past 80105B4C came from the asm's register use only: the fork that owns a
    function fixes its line. */
 
@@ -130,18 +130,16 @@ extern s16 D_800F8CE4_F98E4[]; /* [0] the winner, [3] another player (see D_8011
 extern s16 D_800FA188_FAD88;
 extern u16 D_801011FC_101DFC; /* set: skip the scene */
 
-/* ---- overlay .data (asm) ---- */
+/* ---- overlay .data (C: 335440.c, 336DE0.c, 33FE50.c) ---- */
 
 extern s16 D_8010F750_342390_name_4F; /* music set by func_80105B4C (0x10); -1 at start */
 extern void (*D_8010F754_342394_name_4F[6])(void); /* per board: scene setup */
 extern void (*D_8010F76C_3423AC_name_4F[6])(void); /* per board: scene */
-/* The next three are s32 tables in the ROM (0x8010F784 [6][5], 0x8010F7FC [6][2], 0x8010F82C
-   [6][3]: motions per board) whose first word has no label; retail reads only the low halves
-   (lh at +2), so they are declared as s16 views from the first label: element [b][2 * k] is the
-   low half of word k. On a host that swaps words this view is wrong: use the s32 words. */
-extern s16 D_8010F786_3423C6_name_4F[6][10]; /* the winner's motions */
-extern s16 D_8010F7FE_34243E_name_4F[6][4];  /* D_80110560's motions */
-extern s16 D_8010F82E_34246E_name_4F[6][6];  /* D_80110568's motions */
+/* Motions per board, s32 words of which retail reads only the low half (lh at +2: the readers
+   narrow to s16). */
+extern s32 D_8010F784_3423C4_name_4F[6][5]; /* the winner's motions */
+extern s32 D_8010F7FC_34243C_name_4F[6][2]; /* D_80110560's motions */
+extern s32 D_8010F82C_34246C_name_4F[6][3]; /* D_80110568's motions */
 extern s32 D_8010F874_3424B4_name_4F[6];     /* per board: the winner's first message */
 extern s32 D_8010F88C_3424CC_name_4F[6];     /* per board: the second message */
 extern s32 D_8010F8A4_3424E4_name_4F[6];     /* per board: a sound with the first message, -1 none */

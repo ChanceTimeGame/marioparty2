@@ -1613,7 +1613,9 @@ segments:
       - [0x335440, c]
       - [0x336DE0, c]
       - [0x33FE50, c]
-      - [0x342390, data]
+      - [0x342390, .data, 335440]
+      - [0x3425E0, .data, 336DE0]
+      - [0x342FD0, .data, 33FE50]
       - [0x342FE0, .rodata, 335440]
       - [0x342FF0, .rodata, 336DE0]
       - [0x343040, .rodata, 33FE50]
@@ -1631,7 +1633,9 @@ segments:
       - [0x343060, c]
       - [0x344AE0, c]
       - [0x34DBC0, c]
-      - [0x3521C0, data]
+      - [0x3521C0, .data, 343060]
+      - [0x352410, .data, 344AE0]
+      - [0x352A00, .data, 34DBC0]
       - [0x352D40, .rodata, 343060]
       - [0x352D50, .rodata, 344AE0]
       - [0x352DF0, .rodata, 34DBC0]
@@ -1647,7 +1651,7 @@ segments:
     bss_size: 0x950
     subsegments:
       - [0x352E10, c]
-      - [0x3589D0, data]
+      - [0x3589D0, .data, 352E10]
       - [0x358D80, .rodata, 352E10]
       - {0x358DE0, type: bss, vram: 0x801087D0, name: ovl_51_bss}
   - type: code
@@ -1661,7 +1665,7 @@ segments:
     bss_size: 0xC0
     subsegments:
       - [0x358DE0, c]
-      - [0x35CDC0, data]
+      - [0x35CDC0, .data, 358DE0]
       - [0x35D080, .rodata, 358DE0]
       - {0x35D110, type: bss, vram: 0x80106B30, name: ovl_52_bss}
   - type: code
@@ -1708,7 +1712,12 @@ segments:
       - [0x367540, c]
       - [0x3693E0, c]
       - [0x36A4B0, c]
-      - [0x36A640, data]
+      - [0x36A640, .data, 3616F0]
+      - [0x36AA90, .data, 364580]
+      - [0x36ABE0, .data, 365650]
+      - [0x36AEA0, .data, 367540]
+      - [0x36B150, .data, 3693E0]
+      - [0x36B2E0, .data, 36A4B0]
       - [0x36B3E0, .rodata, 3616F0]
       - [0x36B410, .rodata, 365650]
       - {0x36B420, type: bss, vram: 0x8010C530, name: ovl_55_bss}
@@ -2051,7 +2060,7 @@ segments:
     bss_size: 0x120
     subsegments:
       - [0x40BB00, c]
-      - [0x40EA00, data]
+      - [0x40EA00, .data, 40BB00]
       - [0x40EBB0, .rodata, 40BB00]
       - {0x40EC60, type: bss, vram: 0x80105960, name: ovl_6F_bss}
   - type: code
@@ -2065,7 +2074,7 @@ segments:
     bss_size: 0x5A0
     subsegments:
       - [0x40EC60, c]
-      - [0x413B00, data]
+      - [0x413B00, .data, 40EC60]
       - [0x413C60, .rodata, 40EC60]
       - {0x413C90, type: bss, vram: 0x80107830, name: ovl_70_bss}
   - type: code

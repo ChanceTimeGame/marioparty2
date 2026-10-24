@@ -13,7 +13,7 @@
 
    Retail's overlay is three files: 343060.c (80102800-801041C8), 344AE0.c (80104280-8010D320) and
    34DBC0.c (8010D360 on: board 5's scene, then the effect-object library 4F keeps in 33FE50.c).
-   .data and .bss stay asm; each file's .rodata is carved. Every function is global.
+   .data is C (each file its own range); .bss stays asm; each file's .rodata is carved. Every function is global.
    Prototypes of 344AE0.c's functions came from the asm's register use only: the fork that owns
    a function fixes its line. */
 
@@ -182,18 +182,16 @@ extern s16 D_800F8CE4_F98E4[]; /* [0] the winner, [3] another player (see D_8011
 extern s16 D_800FA188_FAD88;
 extern u16 D_801011FC_101DFC; /* set: skip the scene */
 
-/* ---- overlay .data (asm); the layout of 4F's 8010F750-8010F988, 0x2210 higher ---- */
+/* ---- overlay .data (C); the layout of 4F's 8010F750-8010F988, 0x2210 higher ---- */
 
 extern s16 D_80111960_3521C0_name_50; /* music; -1 at start */
 extern void (*D_80111964_3521C4_name_50[6])(void); /* per board: scene setup */
 extern void (*D_8011197C_3521DC_name_50[6])(void); /* per board: scene */
-/* The next three are s32 tables in the ROM (0x80111994 [6][5], 0x80111A0C [6][2], 0x80111A3C
-   [6][3]: motions per board) whose first word has no label; retail reads only the low halves
-   (lh at +2), so they are declared as s16 views from the first label: element [b][2 * k] is the
-   low half of word k. On a host that swaps words this view is wrong: use the s32 words. */
-extern s16 D_80111996_3521F6_name_50[6][10]; /* the winner's motions */
-extern s16 D_80111A0E_35226E_name_50[6][4];  /* D_8011274C's motions */
-extern s16 D_80111A3E_35229E_name_50[6][6];  /* D_80112748's motions */
+/* Motions per board, s32 words of which retail reads only the low half (lh at +2: the readers
+   narrow to s16). */
+extern s32 D_80111994_3521F4_name_50[6][5]; /* the winner's motions */
+extern s32 D_80111A0C_35226C_name_50[6][2]; /* D_8011274C's motions */
+extern s32 D_80111A3C_35229C_name_50[6][3]; /* D_80112748's motions */
 extern s32 D_80111A84_3522E4_name_50[6];     /* per board: the winner's first message */
 extern s32 D_80111A9C_3522FC_name_50[6];     /* per board: the second message */
 extern s32 D_80111AB4_352314_name_50[6];     /* per board: a sound with the first message, -1 none */
@@ -222,7 +220,7 @@ extern Vec D_801123DC_352C3C_name_50;
 extern Vec D_801123E8_352C48_name_50[2];
 extern Vec D_80112400_352C60_name_50;    /* the doors' start */
 extern Vec D_8011240C_352C6C_name_50;    /* the doors' end */
-extern Vec D_80112418_352C78_name_50[1];  /* the winner, part 2; func_80110F20 reads [idx] (D_80112424[idx - 1]) */
+extern Vec D_80112418_352C78_name_50;     /* the winner, part 2 */
 extern Vec D_80112424_352C84_name_50[4];
 extern Vec D_80112454_352CB4_name_50;
 extern Vec D_80112460_352CC0_name_50;
@@ -231,7 +229,7 @@ extern Vec D_80112478_352CD8_name_50;    /* the host, part 4 */
 extern Vec D_80112484_352CE4_name_50[3]; /* the other players, part 4 */
 extern Vec D_801124A8_352D08_name_50;
 /* func_80110F20's state: frames to a hop per point, point, step, done, hopping */
-extern u16 D_801124B2_352D12_name_50[4];
+extern u16 D_801124B4_352D14_name_50[4]; /* read [point - 1] */
 extern s16 D_801124BC_352D1C_name_50;
 extern s16 D_801124BE_352D1E_name_50;
 extern s16 D_801124C0_352D20_name_50;
@@ -336,13 +334,10 @@ extern s32 D_80111D0C_35256C_name_50;
 extern s32 D_80111D14_352574_name_50;
 extern u32 D_80111D20_352580_name_50[];   /* the changed partner (0xA022D) */
 extern Vec D_80111D2C_35258C_name_50[2];  /* the host: start, target (D_80111D38) */
-extern Vec D_80111D38_352598_name_50;
 extern Vec D_80111D44_3525A4_name_50[2];  /* the ghost: start, centre (D_80111D50) */
-extern Vec D_80111D50_3525B0_name_50;
 extern Vec D_80111D5C_3525BC_name_50;     /* the partner's start */
 extern Vec D_80111D68_3525C8_name_50;     /* the partner's place */
 extern Vec D_80111D74_3525D4_name_50[2];  /* the doors: start, end (D_80111D80) */
-extern Vec D_80111D80_3525E0_name_50;
 extern u32 D_80111D8C_3525EC_name_50[];   /* the ghost (0x800C1) */
 extern s16 D_801125D2_352E32_name_50;     /* a sound handle (func_80108290..) */
 extern omObjData* D_801125D8_352E38_name_50; /* func_80108448's effect object */
@@ -357,7 +352,6 @@ extern s16 D_80112758_352FB8_name_50;     /* the winner's held-item form (0xA023
 /* board 2, part 3 */
 extern Vec D_80111DE8_352648_name_50;     /* the host's place */
 extern Vec D_80111DF4_352654_name_50[2];  /* the winner: start, end (D_80111E00) */
-extern Vec D_80111E00_352660_name_50;
 extern Vec D_80111E0C_35266C_name_50;     /* the second beam's target */
 extern Vec D_80111E18_352678_name_50[];   /* per character: the second beam's offset */
 /* func_80108A00's work (D_801125E4's unk_50, tag 0x7918): a beam of up to 8 rings. */

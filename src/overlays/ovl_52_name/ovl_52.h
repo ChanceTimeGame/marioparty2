@@ -6,7 +6,7 @@
    and coins are shown, the minigame, coin and happening bonus stars are awarded, the ranking is
    computed (ties broken with a dice block), the winner is shown ("YOU ARE THE WINNER"), then it
    goes on to the results overlays (0x4F/0x50/0x51 by board).
-   The unit's .rodata is carved; .data and .bss stay asm. */
+   The unit's .rodata is carved and its .data is C; .bss stays asm. */
 
 #include "common.h"
 #include "game/board.h"
