@@ -300,6 +300,9 @@ typedef struct Ovl5FDemoPlayer {
 } Ovl5FDemoPlayer;
 
 #define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
 
 /* main's per-character data (19BF0.c's ActorCharData, 0x18 bytes each) */
 typedef struct Ovl5FCharData {

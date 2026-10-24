@@ -1447,7 +1447,150 @@ const char D_80114D00_3BDEA0_name_5F[] = "c001_000-migi-te2_3";
 __asm__(".section .rodata");
 const char D_80114D14_3BDEB4_name_5F[20] = "migi-te3_2_1";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80110784_3B9924_name_5F);
+void func_80110784_3B9924_name_5F(omObjData* obj) {
+    s32 player = obj->work[0];
+    Ovl5FDemoPlayer* p = DEMO_PLAYER(player);
+    Ovl5FDemo* demo = &D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]];
+    HmfModel* model = &D_800FC834_FD434[p->model];
+    HmfModel* other;
+    omObjData* o;
+    f32 t;
+    s32 i;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+        return;
+    }
+    if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        o = omAddObj(10, 0, 0, -1, demo->unk0C);
+        o->work[0] = player;
+        o->work[1] = 0;
+        p->pos.x = model->pos.x;
+        p->pos.y = model->pos.y;
+        p->pos.z = model->pos.z;
+        p->rot.x = model->rot.x;
+        p->rot.y = model->rot.y;
+        p->rot.z = model->rot.z;
+        return;
+    }
+    if (gPlayers[player].group == 0) {
+        switch (obj->work[1]) {
+        case 1:
+            if (func_80108B80_3B1D20_name_5F(player, 0x8000) != 0) {
+                p->unk8C = 0;
+                obj->work[1] = 2;
+                func_80029BF0_2A7F0(p->model, p->unk38, 0, 5, 0);
+            } else if (ABS(func_80108C8C_3B1E2C_name_5F(player, 0)) > 10.0f) {
+                switch (p->unk8C) {
+                case 0:
+                    p->unk8C = 1;
+                    func_80029BF0_2A7F0(p->model, p->unk3C, 0, 7, 1);
+                    break;
+                case 1:
+                    if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                        func_8002C9C0_2D5C0(p->model, p->unk3C);
+                        func_80029C74_2A874(p->model, 0.0f);
+                        if (func_80108C8C_3B1E2C_name_5F(player, 0) > 0) {
+                            func_80029E80_2AA80(p->model, 6, 6);
+                        } else {
+                            func_80029E80_2AA80(p->model, 2, 2);
+                        }
+                        p->unk8C = 2;
+                    }
+                    break;
+                }
+            } else if (p->unk8C != 0) {
+                p->unk8C = 0;
+                func_80029BF0_2A7F0(p->model, p->unk36, 0, 7, 1);
+            }
+            break;
+        case 2:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                func_800298A4_2A4A4(p->unk4C, 4, 0);
+                func_800298A4_2A4A4(p->unk4C, 0x4000, 0x4000);
+                func_8002C628_2D228(p->unk4C, p->model, D_80114BD0_3BDD70_name_5F);
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                obj->work[1] = 4;
+            }
+            break;
+        case 4:
+            if (func_80108B80_3B1D20_name_5F(player, 0x8000) != 0) {
+                p->unk8C = 0;
+                func_80029BF0_2A7F0(p->model, p->unk3A, 0, 5, 0);
+                obj->work[1] = 5;
+            } else if (ABS(func_80108C8C_3B1E2C_name_5F(player, 0)) > 10.0f) {
+                switch (p->unk8C) {
+                case 0:
+                    p->unk8C = 1;
+                    func_80029BF0_2A7F0(p->model, p->unk3E, 0, 7, 1);
+                    break;
+                case 1:
+                    if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                        func_8002C9C0_2D5C0(p->model, p->unk3E);
+                        func_80029C74_2A874(p->model, 0.0f);
+                        if (func_80108C8C_3B1E2C_name_5F(player, 0) > 0) {
+                            func_80029E80_2AA80(p->model, 6, 6);
+                        } else {
+                            func_80029E80_2AA80(p->model, 2, 2);
+                        }
+                        p->unk8C = 2;
+                    }
+                    break;
+                }
+            } else if (p->unk8C != 0) {
+                p->unk8C = 0;
+                func_80029BF0_2A7F0(p->model, p->unk3A, 0, 7, 1);
+            }
+            break;
+        case 5:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                func_800298A4_2A4A4(p->unk4C, 4, 4);
+                func_800298A4_2A4A4(p->unk4C, 0x4000, 0);
+                obj->work[1] = 6;
+            }
+            break;
+        case 6:
+            t = func_80029CE4_2A8E4(p->model);
+            if (func_80029D0C_2A90C(p->model) <= t) {
+                func_80029BF0_2A7F0(p->model, p->unk36, 0, 20, 2);
+                obj->work[1] = 1;
+            }
+            break;
+        }
+    } else if (ABS(func_80108C8C_3B1E2C_name_5F(player, 0)) > 10.0f) {
+        if (func_80108C8C_3B1E2C_name_5F(player, 0) > 0) {
+            p->unk94 = model->pos.x + 3.0f;
+            p->rot.y = 0.0f;
+        } else {
+            p->unk94 = model->pos.x - 3.0f;
+            p->rot.y = 180.0f;
+        }
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        for (i = 0; i < 4; i++) {
+            if (i != player) {
+                other = &D_800FC834_FD434[DEMO_PLAYER(i)->model];
+                if (ABS(p->unk94 - other->pos.x) < 45.0f || p->unk94 < -250.0f || p->unk94 > -100.0f) {
+                    break;
+                }
+            }
+        }
+        if (i >= 4) {
+            model->pos.x = p->unk94;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80110F2C_3BA0CC_name_5F);
 
