@@ -3454,9 +3454,85 @@ const char D_8011484C_3CFFAC_name_60[] = "migi-te3_2_1";
 __asm__(".section .rodata");
 const char D_8011485C_3CFFBC_name_60[] = "migi-te2_4";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110DA8_3CC508_name_60);
+/* Group 0 is a form (0x80081) with the character's head on its "21_kimoti_1b-atama_3" node; the
+   others are ordinary demo players (group 1). */
+void func_80110DA8_3CC508_name_60(void) {
+    s32 i;
+    s32 chr;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80110F7C_3CC6DC_name_60);
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        if (gPlayers[i].group == 0) {
+            p->model = LoadFormFile(0x80081, 0xA9D);
+            p->scale = 0.4f;
+            func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
+            p->model2 = LoadFormFile(dir | D_800CD438_CE038[chr].model, 0xA9D);
+            func_80023DAC_249AC(p->model2, D_80113B9C_3CF2FC_name_60[chr], p->model, "21_kimoti_1b-atama_3");
+            p->mot[0] = func_8002C8B8_2D4B8(DataRead(0x80083), 0x1D);
+            p->mot[1] = func_8002C8B8_2D4B8(DataRead(0x8008A), 0x1D);
+            func_8002C9C0_2D5C0(p->model, p->mot[0]);
+            func_80029E80_2AA80(p->model, 0, 2);
+            obj = omAddObj(0x7D00, 0, 0, -1, func_80110F7C_3CC6DC_name_60);
+            obj->work[0] = i;
+            obj->work[1] = 0;
+        } else {
+            func_801094F4_3C4C54_name_60(i, 1);
+        }
+    }
+}
+
+/* The form: any stick push plays mot[1] once, then mot[0] again. */
+void func_80110F7C_3CC6DC_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else if (OVL60_ABS(func_80108C8C_3C43EC_name_60(i, 0)) > 10 || OVL60_ABS(func_80108C8C_3C43EC_name_60(i, 1)) > 10) {
+        switch (obj->work[1]) {
+        case 1:
+            func_80029BF0_2A7F0(p->model, p->mot[1], 0, 10, 0);
+            obj->work[1] = 2;
+            break;
+        case 2:
+            if (func_80029E3C_2AA3C(p->model) == -1.0f) {
+                obj->work[1] = 3;
+            }
+            break;
+        case 3:
+            if (func_80029CE4_2A8E4(p->model) >= func_80029D0C_2A90C(p->model)) {
+                func_80029BF0_2A7F0(p->model, p->mot[0], 0, 10, 0);
+                obj->work[1] = 1;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80111228_3CC988_name_60);
 
