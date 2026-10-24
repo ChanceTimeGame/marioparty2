@@ -564,7 +564,7 @@ void func_80110F7C_3CC6DC_name_60(omObjData*); /* from registers */
 void func_80111228_3CC988_name_60(void); /* demo setup (Ovl60Demo.setup) */
 void func_80111430_3CCB90_name_60(omObjData*); /* Ovl60Demo.unk08 */
 struct Ovl60TeamDemo; /* 60-C (below) */
-void func_801116F0_3CCE50_name_60(struct Ovl60TeamDemo* p, f32 x); /* 60-C: the arm by stick x */
+void func_801116F0_3CCE50_name_60(struct Ovl60TeamDemo* p, f32 x, s32 unused); /* 60-C: the arm by stick x (80112158 passes player[0] - 2 * team, unused) */
 void func_801118C8_3CD028_name_60(struct Ovl60TeamDemo* p, f32 y); /* 60-C: the boom by stick y */
 void func_80111A90_3CD1F0_name_60(struct Ovl60TeamDemo* p); /* 60-C: A/B drive the model's motion */
 void func_80111BCC_3CD32C_name_60(void); /* demo setup (Ovl60Demo.setup) */

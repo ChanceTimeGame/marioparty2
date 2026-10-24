@@ -3616,7 +3616,7 @@ void func_80111430_3CCB90_name_60(omObjData* obj) {
 
 /* Stick x (scaled by 10) accelerates the arm (form[0]) within +-9.5, damped; the arm's motion
    frame and the machine's rotation follow it. */
-void func_801116F0_3CCE50_name_60(Ovl60TeamDemo* p, f32 x) {
+void func_801116F0_3CCE50_name_60(Ovl60TeamDemo* p, f32 x, s32 unused) {
     f32 v = x * 10.0f;
     f32 t;
     f32 frame;
@@ -3791,7 +3791,90 @@ void func_80112100_3CD860_name_60(void) {
     func_80104DA8_3C0508_name_60(1, 4, -40.0f, 0.0f, -80.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80112158_3CD8B8_name_60);
+/* The machine: its parts follow the base; rider 0 steers (stick: arm and boom, A/B: speed),
+   rider 1's A fires (the pair form[2]/form[3] swap for 30 frames, then form[3] plays). */
+void func_80112158_3CD8B8_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60TeamDemo* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 x;
+    f32 y;
+
+    func_80029714_2A314(p->form[0], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[1], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[2], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[3], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[4], m->pos.x, m->pos.y - p->scale * 122.5f, m->pos.z);
+    func_80029714_2A314(p->form[5], m->pos.x, m->pos.y, m->pos.z);
+    func_80029714_2A314(p->form[6], m->pos.x, m->pos.y, m->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        func_800298A4_2A4A4(p->form[0], 4, 0);
+        func_800298A4_2A4A4(p->form[1], 4, 0);
+        func_800298A4_2A4A4(p->form[2], 4, 4);
+        func_800298A4_2A4A4(p->form[3], 4, 0);
+        func_800298A4_2A4A4(p->form[4], 4, 4);
+        func_800298A4_2A4A4(p->form[5], 4, 0);
+        func_800298A4_2A4A4(p->form[6], 4, 0);
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        x = -func_80108C8C_3C43EC_name_60(p->player[0], 0) / 60.0f;
+        y = func_80108C8C_3C43EC_name_60(p->player[0], 1) / 120.0f;
+        func_801116F0_3CCE50_name_60(p, x, p->player[0] - i * 2);
+        func_801118C8_3CD028_name_60(p, y);
+        func_80111A90_3CD1F0_name_60(p);
+        switch (p->state) {
+        case 0:
+            if (func_80108B80_3C42E0_name_60(p->player[1], 0x8000)) {
+                func_800298A4_2A4A4(p->form[2], 4, 0);
+                func_800298A4_2A4A4(p->form[3], 4, 4);
+                func_80029E80_2AA80(p->form[2], 4, 4);
+                func_80029C74_2A874(p->form[2], func_80029D0C_2A90C(p->form[2]));
+                p->state = 1;
+                p->timer = 30;
+            }
+            break;
+        case 1:
+            if (--p->timer == -1) {
+                func_800298A4_2A4A4(p->form[2], 4, 4);
+                func_800298A4_2A4A4(p->form[3], 4, 0);
+                func_80029C74_2A874(p->form[3], 0.0f);
+                p->state = 2;
+            }
+            break;
+        case 2:
+            if (func_80029CE4_2A8E4(p->form[3]) >= func_80029D0C_2A90C(p->form[3])) {
+                p->state = 0;
+            }
+            break;
+        }
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[0], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[1], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[2], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[3], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[4], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[5], p->rot.x, p->rot.y, p->rot.z);
+        func_8002979C_2A39C(p->form[6], p->rot.x, p->rot.y, p->rot.z);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80112610_3CDD70_name_60);
 
