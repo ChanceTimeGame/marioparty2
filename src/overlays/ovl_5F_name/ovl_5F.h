@@ -214,7 +214,7 @@ extern u16 D_80113F98_3BD138_name_5F[6]; /* 5F-D: per character, 8010E65C */
 extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF", 8010E65C */
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* 5F-D: 8010F1A4's speed history (ring) */
 extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: its ring index */
-extern s16 D_80113FE0_3BD180_name_5F[14]; /* 5F-D: per character, 8010FDD8 */
+extern u16 D_80113FE0_3BD180_name_5F[14]; /* 5F-D: per character, 8010FDD8 */
 extern s32 D_80113FFC_3BD19C_name_5F[2]; /* lw:1 */
 extern s32 D_80114004_3BD1A4_name_5F[2]; /* lw:1 */
 extern s32 D_8011400C_3BD1AC_name_5F[2]; /* lw:1 */
