@@ -301,6 +301,30 @@ typedef struct Ovl5FDemoPlayer {
 } Ovl5FDemoPlayer;
 
 #define DEMO_PLAYER(i) ((Ovl5FDemoPlayer*)D_800FA640_FB240[i])
+/* D_800FA640[team] as a two-player team demo uses it (801116B0 / 80111A00): one shared model
+   and two riders. */
+typedef struct Ovl5FPairDemo {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ char unk0C[8];
+    /* 0x14 */ Vec rot;
+    /* 0x20 */ char unk20[0x14];
+    /* 0x34 */ s16 model;
+    /* 0x36 */ s16 unk36[2]; /* the riders' motions */
+    /* 0x3A */ s16 unk3A[2];
+    /* 0x3E */ s16 unk3E[2];
+    /* 0x42 */ s16 unk42[2];
+    /* 0x46 */ char unk46[6];
+    /* 0x4C */ s16 unk4C[2]; /* the riders' forms */
+    /* 0x50 */ s16 unk50[2];
+    /* 0x54 */ char unk54[0x38];
+    /* 0x8C */ s16 player[2]; /* the riders */
+    /* 0x90 */ s16 unk90; /* button presses */
+    /* 0x92 */ s16 unk92; /* the riders' mean stick x */
+    /* 0x94 */ f32 unk94; /* 0: forms not shown yet */
+} Ovl5FPairDemo;
+
+#define PAIR_DEMO(i) ((Ovl5FPairDemo*)D_800FA640_FB240[i])
+
 /* func_80108D50's work: a form attached to a model's hook node */
 typedef struct Ovl5FHookWork {
     /* 0x00 */ s32 form;

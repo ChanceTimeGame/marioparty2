@@ -1718,9 +1718,52 @@ void func_8011137C_3BA51C_name_5F(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801116B0_3BA850_name_5F);
+void func_801116B0_3BA850_name_5F(void) {
+    s32 members[2];
+    Ovl5FPairDemo* p;
+    omObjData* o;
+    s32 dir;
+    s32 chr;
+    s32 i;
+    s32 n;
+    s32 team;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801119A8_3BAB48_name_5F);
+    for (team = 0; team < 2; team++) {
+        for (i = 0, n = 0; i < 4; i++) {
+            if (gPlayers[i].group == team) {
+                members[n++] = i;
+            }
+        }
+        p = PAIR_DEMO(team);
+        func_80029714_2A314(p->model = func_80018A30_19630(team | 0x290000, 0xA9D), 0.0f, -1000.0f, 0.0f);
+        func_8002979C_2A39C(p->model, 0.0f, -90.0f, 0.0f);
+        func_800297E8_2A3E8(p->model, 0.3f, 0.3f, 0.3f);
+        for (i = 0; i < 2; i++) {
+            chr = gPlayers[members[i]].character;
+            dir = D_800CD438_CE038[chr].unk_04;
+            func_800297E8_2A3E8(p->unk4C[i] = LoadFormFile(dir | D_800CD438_CE038[chr].unk_08, 0xA9D), 0.3f, 0.3f, 0.3f);
+            func_800297E8_2A3E8(p->unk50[i] = LoadFormFile((chr + 0x17) | 0x290000, 0xA9D), 0.3f, 0.3f, 0.3f);
+            p->unk36[i] = func_8002C8B8_2D4B8(DataRead(dir | 0x3B), 0x1D);
+            p->unk3A[i] = func_8002C8B8_2D4B8(DataRead(dir | 0x3C), 0x1D);
+            p->unk3E[i] = func_8002C8B8_2D4B8(DataRead(dir | 0x3A), 0x1D);
+            p->unk42[i] = func_8002C8B8_2D4B8(DataRead(D_80114230_3BD3D0_name_5F[chr] | 0x290000), 0x1D);
+            func_8002C9C0_2D5C0(p->unk4C[i], p->unk36[i]);
+            func_80029E80_2AA80(p->unk4C[i], 0, 2);
+            p->player[0] = members[0];
+            p->player[1] = members[1];
+            p->unk90 = 0;
+            p->unk94 = 0.0f;
+        }
+        o = omAddObj(0x7D00, 0, 0, -1, D_80113C70_3BCE10_name_5F[D_80114F50_3BE0F0_name_5F[0]].unk08);
+        o->work[0] = team;
+        o->work[1] = 0;
+    }
+}
+
+void func_801119A8_3BAB48_name_5F(void) {
+    func_80104DA8_3ADF48_name_5F(0, 3, -80.0f, -50.0f, -80.0f);
+    func_80104DA8_3ADF48_name_5F(1, 4, -50.0f, -50.0f, -80.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80111A00_3BABA0_name_5F);
 
