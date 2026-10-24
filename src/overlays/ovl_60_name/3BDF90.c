@@ -2959,7 +2959,50 @@ void func_8010BAF4_3C7254_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BBFC_3C735C_name_60);
+/* Demo player: stick up/down moves the vehicle forward/back (80 at most from where it started,
+   climbing 3 per step); the form rides 20 above it. */
+void func_8010BBFC_3C735C_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+
+    func_800298A4_2A4A4(p->model2, 4, 0);
+    func_80029714_2A314(p->model2, m->pos.x, m->pos.y + 20.0f, m->pos.z);
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+    } else if (obj->work[1] == 0) {
+        if (D_800FC8A0_FD4A0 != 0) {
+            p->vel = m->pos.z;
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        if (func_80108C8C_3C43EC_name_60(i, 1) > 10) {
+            if (p->vel - 80.0f < m->pos.z) {
+                m->pos.z -= 10.0f;
+                m->pos.y += 3.0f;
+            }
+        }
+        if (func_80108C8C_3C43EC_name_60(i, 1) < -10) {
+            if (m->pos.z < p->vel + 80.0f) {
+                m->pos.z += 10.0f;
+                m->pos.y -= 3.0f;
+            }
+        }
+        func_80029714_2A314(p->model2, m->pos.x, m->pos.y + 20.0f, m->pos.z);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010BE6C_3C75CC_name_60);
 
