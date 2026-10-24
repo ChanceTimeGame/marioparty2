@@ -2966,7 +2966,33 @@ void func_8010F01C_3CA77C_name_60(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010F480_3CABE0_name_60);
+/* Each player is a body form (D_80113CAC) with the character's head model hung from its
+   "head" node. */
+void func_8010F480_3CABE0_name_60(void) {
+    s32 i;
+    s32 chr;
+    s32 dir;
+    Ovl60Player* p;
+    omObjData* obj;
+
+    for (i = 0; i < 4; i++) {
+        chr = gPlayers[i].character;
+        dir = D_800CD438_CE038[chr].dir;
+        p = D_800FA640_FB240[i];
+        p->model = LoadFormFile(D_80113CAC_3CF40C_name_60[chr] | 0x400000, 0xA9D);
+        p->scale = 0.5f;
+        p->rot.x = p->rot.y = p->rot.z = 0.0f;
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        func_800297E8_2A3E8(p->model, p->scale, p->scale, p->scale);
+        p->model2 = func_80018A30_19630(dir | D_800CD438_CE038[chr].unk_0C, 0xA9D);
+        func_80023DAC_249AC(p->model2, D_80113B9C_3CF2FC_name_60[chr], p->model, "head");
+        func_800297E8_2A3E8(p->model2, p->scale, p->scale, p->scale);
+        p->count = 0;
+        obj = omAddObj(0x7D00, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk08);
+        obj->work[0] = i;
+        obj->work[1] = 0;
+    }
+}
 
 void func_8010F63C_3CAD9C_name_60(void) {
     s32 i;
@@ -2976,7 +3002,71 @@ void func_8010F63C_3CAD9C_name_60(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010F6C8_3CAE28_name_60);
+/* The stick sways the player: the tilt (count, up to 30) leans it back and pushes it out along
+   its facing; it turns slowly. */
+void func_8010F6C8_3CAE28_name_60(omObjData* obj) {
+    s32 i = obj->work[0];
+    Ovl60Player* p = D_800FA640_FB240[i];
+    HmfModel* m = &D_800FC834_FD434[p->model];
+    omObjData* end;
+    f32 sx;
+    f32 sy;
+    f32 len;
+    f32 tilt;
+    f32 x;
+    f32 z;
+
+    if (obj->work[1] == 12) {
+        func_80029714_2A314(p->model, p->pos.x, p->pos.y, p->pos.z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        return;
+    }
+    if (obj->work[1] == 0) {
+        p->pos.x = m->pos.x;
+        p->pos.y = p->unk2C = m->pos.y;
+        p->pos.z = m->pos.z;
+        if (D_800FC8A0_FD4A0 != 0) {
+            obj->work[1] = 1;
+        }
+    } else if (D_800FC8A0_FD4A0 == 11) {
+        obj->work[1] = 12;
+        end = omAddObj(10, 0, 0, -1, D_80113810_3CEF70_name_60[D_80114A80_3D01E0_name_60[0]].unk0C);
+        end->work[0] = i;
+        end->work[1] = 0;
+        p->pos.x = m->pos.x;
+        p->pos.y = m->pos.y;
+        p->pos.z = m->pos.z;
+        p->rot.x = m->rot.x;
+        p->rot.y = m->rot.y;
+        p->rot.z = m->rot.z;
+    } else {
+        sx = func_80108C8C_3C43EC_name_60(i, 0) / 10;
+        sy = func_80108C8C_3C43EC_name_60(i, 1) / 10;
+        len = sx * sx + sy * sy;
+        if (len != 0.0f) {
+            p->count = len / 2.0f;
+            if (p->count < 31) {
+                tilt = p->count;
+            } else {
+                tilt = 30.0f;
+            }
+        } else {
+            if (p->count != 0) {
+                p->count /= 2;
+                if (p->count < 0.5f) {
+                    p->count = 0;
+                }
+            }
+            tilt = p->count;
+        }
+        p->rot.x = -tilt;
+        x = HuMathSin(p->rot.y) * p->count / 2.0f + p->pos.x;
+        z = func_800B7890_B8490(p->rot.y) * p->count / 2.0f + p->pos.z;
+        func_80029714_2A314(p->model, x, HuMathSin(tilt) * 20.0f + p->pos.y, z);
+        func_8002979C_2A39C(p->model, p->rot.x, p->rot.y, p->rot.z);
+        p->rot.y = func_8002D958_2E558(p->rot.y + 1.0f);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010FA50_3CB1B0_name_60);
 

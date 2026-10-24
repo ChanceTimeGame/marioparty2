@@ -130,7 +130,8 @@ typedef struct Ovl60CharData {
     /* 0x02 */ s16 unk_02;
     /* 0x04 */ s32 dir;   /* the character's file directory */
     /* 0x08 */ s32 model; /* its model file */
-    /* 0x0C */ char unk_0C[0xC];
+    /* 0x0C */ s32 unk_0C; /* another model file (60-C: 8010F480's head) */
+    /* 0x10 */ char unk_10[8];
 } Ovl60CharData;
 
 extern Ovl60CharData D_800CD438_CE038[];
@@ -583,7 +584,7 @@ void func_80113264_3CE9C4_name_60(s16);
 /* Declared raw from the label sizes and the asm's loads: retype yours. The demo table's
    fields (D_80113818 = D_80113810[0].unk08 etc.) are not declared: index D_80113810. */
 
-extern s32 D_80113B9C_3CF2FC_name_60[7]; /* lw (8010F480, 80110DA8, 80112610) */
+extern char* D_80113B9C_3CF2FC_name_60[7]; /* per character: the node the head model hangs from (8010F480, 80110DA8, 80112610) */
 extern s32 D_80113BB8_3CF318_name_60[3]; /* 8010B048 */
 extern s32 D_80113BC4_3CF324_name_60[3]; /* 8010B048 */
 extern u16 D_80113BD0_3CF330_name_60[6]; /* lhu (8010B884) */
@@ -597,7 +598,7 @@ extern s32 D_80113C64_3CF3C4_name_60[3]; /* 8010D3D0 */
 extern u16 D_80113C70_3CF3D0_name_60[6]; /* lhu (8010D3D0) */
 extern s32 D_80113C7C_3CF3DC_name_60[6]; /* lw (8010E454) */
 extern char* D_80113C94_3CF3F4_name_60[6]; /* 8010EDD4: the ball's texture: [0] the default, [chr] the character's ("152_01a_DEF"...) */
-extern u16 D_80113CAC_3CF40C_name_60[8]; /* lhu (8010F480) */
+extern u16 D_80113CAC_3CF40C_name_60[8]; /* per character: the body form file (| 0x400000; 8010F480) */
 extern s32 D_80113CBC_3CF41C_name_60[24]; /* 8010FA50 */
 extern s32 D_80113D1C_3CF47C_name_60; /* lw (8010FA50) */
 extern s32 D_80113D20_3CF480_name_60[11]; /* lw (8010FA50) */
