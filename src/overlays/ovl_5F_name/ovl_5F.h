@@ -66,6 +66,15 @@ typedef struct Ovl5FEsprite {
     /* 0x0E */ char pad0E[0x16];
 } Ovl5FEsprite; /* size = 0x24 */
 
+/* 5F-B */
+/* Initial state of one falling model (D_801139D4): copied into its Ovl5FFallWork. */
+typedef struct Ovl5FFallInit {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 floor;
+    /* 0x10 */ f32 scale;
+    /* 0x14 */ s16 work[4]; /* the object's work bytes (read as their low bytes) */
+} Ovl5FFallInit; /* size = 0x1C */
+
 /* ---- main-segment API used by 5F ---- */
 
 void func_80089544_8A144(s16, s16); /* remove a window's sprite */
@@ -186,12 +195,8 @@ extern s16 D_80113710_3BC8B0_name_5F[][4]; /* per minigame: two instruction mess
 extern f32 D_80113978_3BCB18_name_5F; /* the title face texture scroll */
 extern s32 D_8011397C_3BCB1C_name_5F[10]; /* item icon sprite files, by item id */
 extern s32 D_801139A4_3BCB44_name_5F[5][2]; /* item icon offsets (x, y) */
-extern u16 D_801139CC_3BCB6C_name_5F[4]; /* lhu:1 addiu:1 */
-extern f32 D_801139D4_3BCB74_name_5F; /* addiu:1 lwc1:1 */
-extern f32 D_801139D8_3BCB78_name_5F; /* lwc1:2 */
-extern f32 D_801139DC_3BCB7C_name_5F[33]; /* lwc1:1 */
-extern s32 D_80113A60_3BCC00_name_5F[28]; /* addiu:1 */
-extern s32 D_80113AD0_3BCC70_name_5F[21]; /* addiu:1 */
+extern u16 D_801139CC_3BCB6C_name_5F[4]; /* window buttons, by controller port */
+extern Ovl5FFallInit D_801139D4_3BCB74_name_5F[12]; /* the falling models (5F-B; asm labels A60, AD0 are [5], [9]) */
 extern s32 D_80113B24_3BCCC4_name_5F[5]; /* addiu:1 */
 extern s32 D_80113B38_3BCCD8_name_5F[6]; /* addiu:1 */
 extern s16 D_80113B50_3BCCF0_name_5F[5]; /* addiu:3 */
@@ -240,10 +245,8 @@ extern s16 D_80114DC2_3BDF62_name_5F; /* its type (D_800CAD90[minigame].unk_04's
 extern s16 D_80114DC4_3BDF64_name_5F; /* the first player in group 0 */
 extern s16 D_80114DC6_3BDF66_name_5F; /* the variant's message row (func_80103C84) */
 extern s16 D_80114DC8_3BDF68_name_5F[6]; /* models: [0] backdrop, [1]-[2] title, [3]-[5] frame */
-extern omObjData* D_80114DD8_3BDF78_name_5F[4]; /* the demo players' objects (asm labels DDC, DE0, DE4 are [1]-[3]) */
-/* 80114DE8-80114DEF: the rest of asm label D_80114DE4 (12 bytes): 5F-B */
-extern s32 D_80114DF0_3BDF90_name_5F; /* addiu:4 sw:1 */
-extern s32 D_80114DF4_3BDF94_name_5F[2]; /* addiu:1 */
+extern omObjData* D_80114DD8_3BDF78_name_5F[6]; /* the falling models' objects (Ovl5FFallWork; asm labels DDC, DE0, DE4 are [1]-[3]) */
+extern omObjData* D_80114DF0_3BDF90_name_5F[8]; /* objects riding a falling model (func_80104D08); DF4, DFC, E0C are [1], [3], [7] */
 extern omObjData* D_80114DFC_3BDF9C_name_5F[5]; /* item icons / players' marker objects */
 extern u16 D_80114E10_3BDFB0_name_5F; /* full-screen sprite (fades in) */
 extern u16 D_80114E12_3BDFB2_name_5F; /* sprite shown over a model */
@@ -273,12 +276,16 @@ extern s32 D_80114E78_3BE018_name_5F[16]; /* addiu:2 */
 extern f32 D_80114EB8_3BE058_name_5F; /* swc1:2 lwc1:2 */
 extern f32 D_80114EBC_3BE05C_name_5F[6]; /* swc1:2 lwc1:1 */
 extern s32 D_80114ED4_3BE074_name_5F[27]; /* addiu:1 */
-extern s32 D_80114F40_3BE0E0_name_5F[4]; /* sw:1 lw:1 */
+extern Process* D_80114F40_3BE0E0_name_5F[4]; /* [0]: func_80105860's process (type 4) */
 extern s32 D_80114F50_3BE0F0_name_5F[4]; /* lw:38 sw:1 */
 extern s16 D_80114F60_3BE100_name_5F[8]; /* lh:2 sh:1 */
 extern s16 D_80114F70_3BE110_name_5F;
 extern s16 D_80114F72_3BE112_name_5F; /* sh:1 lh:1 lhu:1 */
 extern s16 D_80114F74_3BE114_name_5F; /* sh:1 lh:1 */
+
+/* 5F-B */
+
+extern const char D_801147D8_3BD978_name_5F[]; /* "\xFF": an empty window message */
 
 /* ---- 5F functions (source order) ---- */
 
