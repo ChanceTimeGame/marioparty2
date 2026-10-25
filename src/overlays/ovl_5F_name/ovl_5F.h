@@ -263,10 +263,10 @@ extern u16 D_800F9208_F9E08; /* the battle's coin pot */
 extern Ovl5FEsprite* D_800F93FC_F9FFC; /* EspriteSlot* (1AE60.c) */
 extern u16 D_800CAFD8[]; /* item ids */
 
-/* ---- 5F .data (asm, 3BC8A0.data.s) ---- */
+/* ---- 5F .data (C: 3AB9A0.c, 3AB9D0.c, 3BC210.c; the same layout as 60's up to the demo table) ---- */
 
 extern board_overlay_entrypoint D_80113700_3BC8A0_name_5F[];
-extern s16 D_80113710_3BC8B0_name_5F[][4]; /* per minigame: two instruction messages, the
+extern s16 D_80113710_3BC8B0_name_5F[77][4]; /* per minigame: two instruction messages, the
     extra message (-1: none; [2]) and, indexed by D_80114DC6 instead, the variant message ([3]) */
 extern f32 D_80113978_3BCB18_name_5F; /* the title face texture scroll */
 extern s32 D_8011397C_3BCB1C_name_5F[10]; /* item icon sprite files, by item id */
@@ -293,16 +293,20 @@ extern char* D_80113FA4_3BD144_name_5F[6]; /* 5F-D: per character "c00Nl_0_DEF",
 extern f32 D_80113FBC_3BD15C_name_5F[8]; /* swc1:1 addiu:1 */
 extern s8 D_80113FDC_3BD17C_name_5F; /* 5F-D: 8010F1A4's ring index (D_80113FBC) */
 extern u16 D_80113FE0_3BD180_name_5F[14]; /* lhu:1 */
-extern s32 D_80113FFC_3BD19C_name_5F[6][9][2]; /* per character: {file, 0} pairs (5F-E: 80110480); splat labels D_80114004-D_80114024 are its fields */
+extern s32 D_80113FFC_3BD19C_name_5F[][9][2]; /* per character: {file, 0} pairs (5F-E: 80110480); splat labels D_80114004-D_80114024 are its fields.
+    An undefined_syms.txt alias of Ovl5FCharFiles: the last row is 15 words, so no whole [6][9][2] */
+extern s32 Ovl5FCharFiles[105];
 extern char* D_801141A0_3BD340_name_5F[6][2]; /* per character: the two forms' model part names (5F-E: 80110480; D_801141A4 is [0][1]) */
 extern char* D_801141D0_3BD370_name_5F[6][2]; /* per character: the hook nodes (5F-E; D_801141D4 is [0][1]) */
-extern s32 D_80114204_3BD3A4_name_5F[6][2]; /* per character: CPU model file (5F-E) */
+extern s32 D_80114204_3BD3A4_name_5F[][2]; /* per character: CPU model file (5F-E); an undefined_syms.txt alias of
+    Ovl5FCpuModelFiles: 11 words, the last pair has no second word */
+extern s32 Ovl5FCpuModelFiles[11];
 extern u16 D_80114230_3BD3D0_name_5F[6]; /* lhu:1 */
 extern u16 D_8011423C_3BD3DC_name_5F[10]; /* lhu:1 */
 extern s8 D_80114250_3BD3F0_name_5F[76]; /* 5F-E: per minigame, its Mini-Game Coaster setup (-1: none) */
-extern Ovl5FQuestGame D_8011429C_3BD43C_name_5F[]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
-extern Ovl5FQuestGame D_80114338_3BD4D8_name_5F[]; /* difficulty 1 (30 entries) */
-extern Ovl5FQuestGame D_801144A0_3BD640_name_5F[]; /* difficulty 2 (43 entries) */
+extern Ovl5FQuestGame D_8011429C_3BD43C_name_5F[13]; /* 5F-E: Mini-Game Coaster setups, difficulty 0 (13 entries; the index can run into the next table) */
+extern Ovl5FQuestGame D_80114338_3BD4D8_name_5F[30]; /* difficulty 1 (30 entries) */
+extern Ovl5FQuestGame D_801144A0_3BD640_name_5F[43]; /* difficulty 2 (43 entries) */
 
 /* ---- 5F .bss (asm, ovl_5F_bss.bss.s) ---- */
 

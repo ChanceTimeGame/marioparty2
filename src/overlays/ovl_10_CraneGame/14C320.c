@@ -1,5 +1,91 @@
 #include "ovl_10.h"
 
+/* .data (0x155280-0x1554F0, 8010B760-8010B9D0). The labels 8010B99C and 8010B9B4 (inside
+   D_8010B998 and D_8010B9B0) are undefined_syms.txt aliases for the asm. */
+
+s32 D_8010B760_155280_CraneGame = 0;
+CGHang D_8010B764_155284_CraneGame[7] = {
+    { -800.0f, 350.0f, 0.5f },
+    { -500.0f, 450.0f, 0.25f },
+    { -100.0f, 550.0f, 0.3f },
+    { 0.0f, 400.0f, 0.6f },
+    { 300.0f, 450.0f, 0.4f },
+    { 600.0f, 350.0f, 0.5f },
+    { 800.0f, 550.0f, 0.25f },
+};
+s32 D_8010B7B8_1552D8_CraneGame[7] = {
+    0x0020000C, 0x0020000E, 0x0020000C, 0x0020000C, 0x0020000D, 0x0020000C, 0x0020000C,
+};
+/* unreferenced: the zero word before the display lists */
+s32 D_8010B7D4_1552F4_CraneGame = 0;
+
+/* The render setup D_8010B8E8 (MP1 D_800FF870) and the lists it calls; 151A90.c has its own
+   copy at D_8010BBD0-D_8010BCE0. */
+Gfx D_8010B7D8_1552F8_CraneGame[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B890_1553B0_CraneGame[] = {
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPClipRatio(FRUSTRATIO_2),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B8D0_1553F0_CraneGame[] = {
+    gsSPDisplayList(D_8010B890_1553B0_CraneGame),
+    gsSPDisplayList(D_8010B7D8_1552F8_CraneGame),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B8E8_155408_CraneGame[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010B8D0_1553F0_CraneGame),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010B928_155448_CraneGame[] = {
+    gsDPPipeSync(),
+    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, 319, 239),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPClearGeometryMode(G_SHADE | G_CULL_BOTH | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_SHADING_SMOOTH),
+    gsSPSetGeometryMode(G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH),
+    gsDPSetRenderMode(G_RM_AA_ZB_XLU_LINE, G_RM_NOOP2),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetPrimColor(0, 0, 0xFF, 0xFF, 0xFF, 0xFF),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+s16 D_8010B978_155498_CraneGame[4] = { 3, 4, 5, 0 };
+f32 D_8010B980_1554A0_CraneGame[6] = { 0.0f, 30.0f, 40.0f, 50.0f, -50.0f, -60.0f };
+f32 D_8010B998_1554B8_CraneGame[3][2] = { { -1.0f, -1.0f }, { 1.0f, 0.0f }, { -1.0f, 1.0f } };
+f32 D_8010B9B0_1554D0_CraneGame[4][2] = { { -1.0f, -1.0f }, { 1.0f, -1.0f }, { -1.0f, 1.0f }, { 1.0f, 1.0f } };
+
+
 void func_80102800_14C320_CraneGame(void) {
     s16 var_a0;
     u8 temp_s0;

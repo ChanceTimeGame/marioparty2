@@ -748,7 +748,8 @@ segments:
       - [0x14C320, c]
       - [0x151A90, c]
       - [0x153590, c]
-      - [0x155280, data]
+      - [0x155280, .data, 14C320]
+      - [0x1554F0, .data, 151A90]
       - [0x155870, .rodata, 14C320]
       - [0x155BF0, .rodata, 151A90]
       - [0x155C60, .rodata, 153590]
@@ -868,7 +869,7 @@ segments:
     bss_size: 0x250
     subsegments:
       - [0x1913A0, c]
-      - [0x19AB90, data]
+      - [0x19AB90, .data, 1913A0]
       - [0x19B500, .rodata, 1913A0]
       - {0x19B590, type: bss, vram: 0x8010C9F0, name: ovl_19_bss}
   - type: code
@@ -1860,7 +1861,9 @@ segments:
       - [0x3AB9A0, c]
       - [0x3AB9D0, c]
       - [0x3BC210, c]
-      - [0x3BC8A0, data]
+      - [0x3BC8A0, .data, 3AB9A0]
+      - [0x3BC8B0, .data, 3AB9D0]
+      - [0x3BD3F0, .data, 3BC210]
       - [0x3BD850, .rodata, 3AB9D0]
       - [0x3BDEF0, .rodata, 3BC210]
       - {0x3BDF60, type: bss, vram: 0x80114DC0, name: ovl_5F_bss}
