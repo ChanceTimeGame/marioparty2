@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/data.h"
 #include "game/malloc.h"
+#include "game/sprite.h"
 
 /* Esprite slots. Same code as Mario Party 3's src/esprite.c (and MP1 src/engine/esprite.c);
    names follow MP3. */
@@ -79,7 +80,37 @@ s16 func_8001A2F8_1AEF8(s32 arg0) {
     return temp_s0;
 }
 
+extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
+
+/* Scales each RGBA5551 entry of a sprite's palette by (r, g, b); alpha is kept.
+   NON_MATCHING: register allocation and where the entry is reloaded for alpha (masked 21);
+   permuter candidate. */
+#ifdef NON_MATCHING
+void func_8001A340_1AF40(s16 sprite, f32 r, f32 g, f32 b) {
+    HuSprite_Unk84_Struct* anim = D_800F60B0_F6CB0[sprite];
+    u16* pal = anim->unk0C;
+    u16 c;
+    u16 cg;
+    u16 cb;
+    u16 ca;
+    u32 nr;
+    u32 ng;
+    s32 i;
+
+    for (i = 0; i < anim->unk1A; i++) {
+        c = *pal;
+        cg = (c >> 6) & 0x1F;
+        cb = (c >> 1) & 0x1F;
+        ca = *pal & 1;
+        nr = (c >> 11) * r;
+        ng = cg * g;
+        *pal = ca | ((nr << 11) | (ng << 6) | ((u32)(cb * b) << 1));
+        pal++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/1AE60", func_8001A340_1AF40);
+#endif
 
 void func_8001A4C0_1B0C0() {
     func_80083B9C_8479C();
