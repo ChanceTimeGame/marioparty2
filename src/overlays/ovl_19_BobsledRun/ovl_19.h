@@ -150,7 +150,7 @@ extern BRCharData D_800CD438_CE038[];
 #define BR_WORK(obj) ((BRWork*)(obj)->unk_50)
 
 /* ---------------------------------------------------------------------------------------------
-   Data (.data, 19AB90.data.s, asm)
+   Data (.data, C in 1913A0.c)
    --------------------------------------------------------------------------------------------- */
 extern f32 D_8010BFF0_19AB90_BobsledRun; /* camera pitch */
 extern s8 D_8010BFF4_19AB94_BobsledRun; /* winning team, -1 none yet */
@@ -403,10 +403,11 @@ void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite 
 s32 PlaySound(s32);
 /* A gate edge, two ColVtx at 0x8010C15C (inside D_8010C144's splat range); retail addresses it
    from the first one's y (D_8010C15E): [-1..1] = first, [2..4] = second. */
-extern s16 D_8010C15E_19ACFE_BobsledRun[];
-extern Vec3f D_8010C168_19AD08_BobsledRun[6]; /* CPU aim points behind the gate (x 0 = end) */
-extern Vec3f D_8010C1BC_19AD5C_BobsledRun[82]; /* CPU path, BRTeam::path != 0 */
-extern Vec3f D_8010C4F8_19B098_BobsledRun[82]; /* CPU path, BRTeam::path == 0 */
+extern s16 D_8010C15E_19ACFE_BobsledRun[]; /* undefined_syms.txt: D_8010C15C + 2 */
+extern ColVtx D_8010C15C_19ACFC_BobsledRun[2];
+extern Vec3f D_8010C168_19AD08_BobsledRun[7]; /* CPU aim points behind the gate (x 0 = end) */
+extern Vec3f D_8010C1BC_19AD5C_BobsledRun[69]; /* CPU path, BRTeam::path != 0 */
+extern Vec3f D_8010C4F8_19B098_BobsledRun[81]; /* CPU path, BRTeam::path == 0 */
 extern Vec3f D_8010C8C4_19B464_BobsledRun[6]; /* CPU brake zones (top y, bottom y, speed / 80) */
 extern Vec3f D_8010C90C_19B4AC_BobsledRun[6];
 void func_800B8070_B8C70(f32 angle, f32* s, f32* c); /* sin and cos */

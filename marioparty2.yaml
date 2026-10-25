@@ -869,7 +869,7 @@ segments:
     bss_size: 0x250
     subsegments:
       - [0x1913A0, c]
-      - [0x19AB90, data]
+      - [0x19AB90, .data, 1913A0]
       - [0x19B500, .rodata, 1913A0]
       - {0x19B590, type: bss, vram: 0x8010C9F0, name: ovl_19_bss}
   - type: code
