@@ -146,3 +146,6 @@ D_80113716_3BC8B6_name_5F = D_80113710_3BC8B0_name_5F + 0x6;
 D_80113C78_3BCE18_name_5F = D_80113C70_3BCE10_name_5F + 0x8;
 D_80113FFC_3BD19C_name_5F = Ovl5FCharFiles;
 D_80114204_3BD3A4_name_5F = Ovl5FCpuModelFiles;
+/* ovl_10 .data: labels inside C arrays (DM) */
+D_8010B99C_1554BC_CraneGame = D_8010B998_1554B8_CraneGame + 0x4;
+D_8010B9B4_1554D4_CraneGame = D_8010B9B0_1554D0_CraneGame + 0x4;

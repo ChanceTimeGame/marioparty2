@@ -4,7 +4,7 @@
 /* Overlay 10: Crane Game, descended from MP1's ovl_23_CraneGame (1B3E00.c game, 1B9050.c shadows,
    1BAA60.c collision and camera). Retail is three files: 14C320.c (game, claw, prizes), 151A90.c
    from 80107F70 (drop shadows, MP1 1B9050.c) and 153590.c from 80109A70 (collision meshes, MP1
-   1BAA60.c). .data stays asm (155280); .rodata is
+   1BAA60.c). .data is C (14C320.c to 8010B9D0, then 151A90.c); .rodata is
    carved per file. Types from the asm's accesses; MP1 names and offsets in the comments. */
 
 #include "common.h"
@@ -332,13 +332,13 @@ typedef struct CGPair {
     /* 0x04 */ f32 b;
 } CGPair;
 
-/* ---- overlay data (155280.data.s, asm) ---- */
+/* ---- overlay data (C: 14C320.c; D_8010BCE0/D_8010BD20 in 151A90.c) ---- */
 
 extern s32 D_8010B760_155280_CraneGame; /* the hurry-up music started */
 extern CGHang D_8010B764_155284_CraneGame[7];
 extern s32 D_8010B7B8_1552D8_CraneGame[7]; /* their model files */
-extern s16 D_8010B978_155498_CraneGame[]; /* grip strength per grab quality */
-extern f32 D_8010B980_1554A0_CraneGame[]; /* claw depth per character */
+extern s16 D_8010B978_155498_CraneGame[4]; /* grip strength per grab quality */
+extern f32 D_8010B980_1554A0_CraneGame[6]; /* claw depth per character */
 extern Gfx D_8010B8E8_155408_CraneGame[];
 extern f32 D_8010B998_1554B8_CraneGame[3][2]; /* contact points, three-point prizes */
 extern f32 D_8010B9B0_1554D0_CraneGame[4][2]; /* contact points, four-point prizes */

@@ -617,6 +617,10 @@ $(H1R_CDATA_UNITS): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
 # 32-bit syntax check, as D1A_GFX_UNITS
 O1A_GFX_UNITS := build/src/overlays/ovl_01_BowserSlots/DA290.c.o build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(O1A_GFX_UNITS): CFLAGS_CHECK += -m32
+# DM: ovl_10's .data display lists point at each other (gsSPDisplayList(sym)): a 32-bit syntax
+# check, as O1A_GFX_UNITS
+DM_GFX_UNITS := build/src/overlays/ovl_10_CraneGame/14C320.c.o build/src/overlays/ovl_10_CraneGame/151A90.c.o
+$(DM_GFX_UNITS): CFLAGS_CHECK += -m32
 
 # 5F-B: KMC mul fix with the blank-line strip (func_801072C8, func_80108DCC: a nop between
 # back-to-back mul.s; func_80103B78: none after a call)
