@@ -264,7 +264,11 @@ typedef struct CGWork {
     /* 0xD0 */ u16 unkD0; /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ void* unkE8; /* per motion blocks (MP1 0xD8) */
-    /* 0xEC */ char unk_EC[0x70];
+    /* 0xEC */ s32 (*unk_EC)(); /* main MgWork's touch hook, then its override hooks: pointers, */
+    /* 0xF0 */ u16 unk_F0;      /* so the block allocated here is the host MgWork's size */
+    /* 0xF2 */ char unk_F2[0x12];
+    /* 0x104 */ s32 (*unk_104[21])();
+    /* 0x158 */ char unk_158[4];
 } CGWork; /* size = 0x15C */
 
 #define CG_WORK(obj) ((CGWork*)(obj)->unk_50)

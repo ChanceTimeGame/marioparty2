@@ -109,7 +109,11 @@ typedef struct BRWork {
     /* 0xD0 */ u16 unk_D0;    /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ BRMotion* unk_E8; /* [obj->mtncnt] (MP1 0xD8) */
-    /* 0xEC */ char unk_EC[0x70];
+    /* 0xEC */ s32 (*unk_EC)(); /* main MgWork's touch hook, then its override hooks: pointers, */
+    /* 0xF0 */ u16 unk_F0;      /* so the block allocated here is the host MgWork's size */
+    /* 0xF2 */ char unk_F2[0x12];
+    /* 0x104 */ s32 (*unk_104[21])();
+    /* 0x158 */ char unk_158[4];
 } BRWork; /* size = 0x15C */
 
 /* Work of the course object (func_80027154_27D54(0xB4); MP1 BRGround 0x2C, fields 0x04/0x05
