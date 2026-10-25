@@ -258,7 +258,9 @@ typedef struct CGWork {
     /* 0x57 */ s8 unk57; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 unk59; /* player */
-    /* 0x5A */ char unk_5A[0x76];
+    /* 0x5A */ char unk_5A[0x6E];
+    /* 0xC8 */ void* unk_C8; /* main MgWork: held item, an omObjData* (keeps 0xE8 on the 64-bit host) */
+    /* 0xCC */ char unk_CC[4];
     /* 0xD0 */ u16 unkD0; /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ void* unkE8; /* per motion blocks (MP1 0xD8) */

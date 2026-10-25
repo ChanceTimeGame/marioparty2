@@ -104,7 +104,7 @@ typedef struct BRWork {
     /* 0xC4 */ s8 unk_C4;     /* MP1 0xB2 */
     /* 0xC5 */ u8 unk_C5;
     /* 0xC6 */ s16 unk_C6;    /* MP1 0xB4 */
-    /* 0xC8 */ char unk_C8[4];
+    /* 0xC8 */ void* unk_C8; /* main MgWork: held item, an omObjData* (keeps 0xE8 on the 64-bit host) */
     /* 0xCC */ f32 unk_CC;    /* MP1 0xBC */
     /* 0xD0 */ u16 unk_D0;    /* MP1 0xC0 */
     /* 0xD2 */ char unk_D2[0x16];
@@ -458,7 +458,9 @@ typedef struct BRActorWork {
     /* 0xA8 */ u16 unk_A8;
     /* 0xAA */ char unk_AA[0xE];
     /* 0xB8 */ f32 unk_B8;
-    /* 0xBC */ char unk_BC[0x14];
+    /* 0xBC */ char unk_BC[0xC];
+    /* 0xC8 */ void* unk_C8; /* main MgWork: held item, an omObjData* (keeps 0xE8 on the 64-bit host) */
+    /* 0xCC */ char unk_CC[4];
     /* 0xD0 */ u16 cur;
     /* 0xD2 */ u16 count;
     /* 0xD4 */ char unk_D4[2];
