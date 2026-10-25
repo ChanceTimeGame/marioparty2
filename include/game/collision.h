@@ -141,7 +141,7 @@ typedef struct MgWork {
     /* 0xC4 */ s8 unk_C4;   /* MP1 0xB2 */
     /* 0xC5 */ s8 unk_C5;   /* MP1 0xB3 */
     /* 0xC6 */ s16 unk_C6;  /* turn lean, -12..12 (MP1 0xB4) */
-    /* 0xC8 */ char unk_C8[4];
+    /* 0xC8 */ void* unk_C8; /* held item, an omObjData* (C8E0.c) */
     /* 0xCC */ f32 unk_CC;
     /* 0xD0 */ u16 unk_D0;
     /* 0xD2 */ char unk_D2[0x16];

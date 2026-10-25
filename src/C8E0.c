@@ -59,13 +59,15 @@ typedef struct MgWork {
     /* 0xD0 */ u16 unk_D0;
     /* 0xD2 */ char unk_D2[0x16];
     /* 0xE8 */ struct MgMotion* unk_E8;
-    /* 0xEC */ char unk_EC[0x18];
+    /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook (game/collision.h) */
+    /* 0xF0 */ u16 unk_F0;
+    /* 0xF2 */ char unk_F2[0x12];
     /* 0x104 */ union {
-        s32 words[21];
+        s32 (*words[21])(); /* the minigame's override hooks (game/collision.h) */
         struct {
-            s32 unk_00[19];
+            s32 (*unk_00[19])();
             /* 0x150 */ s32 (*drop)(omObjData* obj, omObjData* item); /* may refuse a drop (returns 1) */
-            s32 unk_4C;
+            s32 (*unk_4C)();
         } s;
     } unk_104;
     /* 0x158 */ char unk_158[4];
@@ -531,7 +533,7 @@ void func_8000C6FC_D2FC(omObjData* obj, u32 arg1, s32 arg2, u16 arg3, s32 arg4, 
         obj->motion[i] = -1;
     }
     for (i = 0; i < 21; i++) {
-        work->unk_104.words[i] = 0;
+        work->unk_104.words[i] = NULL;
     }
     for (i = 0; i < obj->mtncnt; i++) {
         work->unk_E8[i].unk_00 = 0;
