@@ -13,11 +13,6 @@ typedef struct OverlayTable {
 /* 0x20 */ u8* bssVramEnd;
 } OverlayTable; //sizeof 0x24
 
-typedef struct UnkUtil {
-    char unk_00[0x48];
-    s16* unk_48;
-} UnkUtil;
-
 /* .data (0xC9470-0xCA5C0) */
 u8 D_800C8870_C9470 = 0;
 
@@ -238,12 +233,13 @@ void ViewportSet(u8 camIndex, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, 
     CameraViewportSet(camIndex, &D_800C98C4_CA4C4[camIndex], &D_800C990C_CA50C[camIndex]);
 }
 
-void func_80018CCC_198CC(UnkUtil* arg0, u16 arg1, s32 arg2) {
+/* Loads motion file `file` into obj->motion[slot]. */
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file) {
     s16 temp_v0;
 
-    temp_v0 = func_80018ACC_196CC(arg2);
+    temp_v0 = func_80018ACC_196CC(file);
     if ((temp_v0 >= 0)) {
-        arg0->unk_48[arg1] = temp_v0;
+        obj->motion[slot] = temp_v0;
     }
 }
 
