@@ -40,7 +40,9 @@ typedef struct BSPlayerWork {
     /* 0x38 */ f32 unk_38; /* vertical speed */
     /* 0x3C */ char unk_3C[0x1B];
     /* 0x57 */ s8 unk_57; /* controller port */
-    /* 0x58 */ char unk_58[0x90];
+    /* 0x58 */ char unk_58[0x70];
+    /* 0xC8 */ void* unk_C8; /* MgWork held item: a pointer, so the host layout agrees */
+    /* 0xCC */ char unk_CC[0x1C];
     /* 0xE8 */ void* unk_E8; /* MgWork motion table */
     /* 0xEC */ void* unk_EC; /* MgWork actor touch hook */
 } BSPlayerWork;

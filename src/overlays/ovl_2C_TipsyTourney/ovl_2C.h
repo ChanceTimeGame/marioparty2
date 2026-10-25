@@ -50,7 +50,9 @@ typedef struct TipsyWork {
     /* 0x59 */ s8 unk_59; /* player */
     /* 0x5A */ char unk_5A[2];
     /* 0x5C */ s32 unk_5C; /* ball: index 0..3 into the per-ball tables */
-    /* 0x60 */ char unk_60[0x88];
+    /* 0x60 */ char unk_60[0x68];
+    /* 0xC8 */ void* unk_C8; /* MgWork held item: a pointer, so the host layout agrees */
+    /* 0xCC */ char unk_CC[0x1C];
     /* 0xE8 */ void* unk_E8; /* MgWork motion table (MgMotion*) */
     /* 0xEC */ void* unk_EC; /* collision callback */
     /* 0xF0 */ char unk_F0[0x6C];
