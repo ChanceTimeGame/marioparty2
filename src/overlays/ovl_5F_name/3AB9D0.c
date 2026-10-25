@@ -5080,3 +5080,289 @@ void func_8011303C_3BC1DC_name_5F(void) {
     D_80114F50_3BE0F0_name_5F[0] = D_80114F74_3BE114_name_5F;
     func_8010A45C_3B35FC_name_5F();
 }
+
+/* .data (0x3BC8B0-0x3BD3F0, 80113710-80114250). The labels 80113714/80113716 (inside
+   D_80113710) and 80113C78 (D_80113C70[0].unk08) are undefined_syms.txt aliases for the asm;
+   D_80113FFC and D_80114204 are aliases of the blocks Ovl5FCharFiles and Ovl5FCpuModelFiles. */
+
+s16 D_80113710_3BC8B0_name_5F[77][4] = {
+    { 0x1C0, 0x1C1, -0x1, 0x1C2 },
+    { 0x1C3, 0x1C4, -0x1, 0x1C5 },
+    { 0x1C6, 0x1C7, -0x1, 0x1C8 },
+    { 0x1C9, 0x1CA, -0x1, 0x1CB },
+    { 0x1CC, 0x1CD, -0x1, 0x1CE },
+    { 0x1CF, 0x1D0, -0x1, 0x1D1 },
+    { 0x18E, 0x18F, -0x1, 0x190 },
+    { 0x191, 0x192, -0x1, 0x193 },
+    { 0x194, 0x195, -0x1, 0x196 },
+    { 0x197, 0x198, -0x1, 0x199 },
+    { 0x19A, 0x19B, -0x1, 0x19C },
+    { 0x19D, 0x19E, -0x1, 0x19F },
+    { 0x1A0, 0x1A1, -0x1, 0x1A2 },
+    { 0x1A3, 0x1A4, -0x1, 0x1A5 },
+    { 0xFD, 0xFE, 0xFF, 0x100 },
+    { 0x101, 0x102, 0x103, 0x104 },
+    { 0x105, 0x106, 0x107, 0x108 },
+    { 0x109, 0x10A, -0x1, 0x10B },
+    { 0x10C, 0x10D, 0x10E, 0x10F },
+    { 0x110, 0x111, -0x1, 0x112 },
+    { 0x113, 0x114, 0x115, 0x116 },
+    { 0x117, 0x118, 0x119, 0x11A },
+    { 0x11B, 0x11C, -0x1, 0x11D },
+    { 0x11E, 0x11F, 0x120, 0x121 },
+    { 0x1A9, 0x1AA, 0x1AB, 0x1AC },
+    { 0x122, 0x123, -0x1, 0x124 },
+    { 0x125, 0x126, -0x1, 0x127 },
+    { 0x128, 0x129, -0x1, 0x12A },
+    { 0x12B, 0x12C, -0x1, 0x12D },
+    { 0x12E, 0x12F, -0x1, 0x130 },
+    { 0x131, 0x132, 0x133, 0x134 },
+    { 0x135, 0x136, -0x1, 0x137 },
+    { 0x138, 0x139, -0x1, 0x13A },
+    { 0x13B, 0x13C, -0x1, 0x13D },
+    { 0x13E, 0x13F, -0x1, 0x140 },
+    { 0x1AD, 0x1AE, -0x1, 0x1AF },
+    { 0x14B, 0x14C, -0x1, 0x14D },
+    { 0x14E, 0x14F, -0x1, 0x150 },
+    { 0x151, 0x152, -0x1, 0x153 },
+    { 0x154, 0x155, -0x1, 0x156 },
+    { 0x157, 0x158, -0x1, 0x159 },
+    { 0x15A, 0x15B, -0x1, 0x15C },
+    { 0x15F, 0x160, -0x1, 0x161 },
+    { 0x162, 0x163, -0x1, 0x164 },
+    { 0x165, 0x166, -0x1, 0x167 },
+    { 0x168, 0x169, -0x1, 0x16A },
+    { 0x16D, 0x16E, -0x1, 0x16F },
+    { 0x170, 0x171, -0x1, 0x172 },
+    { 0x173, 0x174, -0x1, 0x175 },
+    { 0x176, 0x177, -0x1, 0x178 },
+    { 0x179, 0x17A, -0x1, 0x17B },
+    { 0x17C, 0x17D, -0x1, 0x17E },
+    { 0x17F, 0x180, -0x1, 0x181 },
+    { 0x182, 0x183, -0x1, 0x184 },
+    { 0x185, 0x186, -0x1, 0x187 },
+    { 0x1B0, 0x1B1, -0x1, 0x1B2 },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1DC, 0x1DD, -0x1, 0x1DE },
+    { 0x1A6, 0x1A7, -0x1, 0x1A8 },
+    { 0x141, 0x142, -0x1, 0x143 },
+    { 0x144, 0x145, 0x146, 0x147 },
+    { 0x148, 0x149, -0x1, 0x14A },
+    { 0x188, 0x189, -0x1, 0x18A },
+    { 0x18B, 0x18C, -0x1, 0x18D },
+    { 0x1B3, 0x1B4, 0x1B5, 0x1B6 },
+    { 0x1B7, 0x1B8, -0x1, 0x1B9 },
+    { 0x15A, 0x15B, -0x1, 0x15E },
+    { 0x15A, 0x15B, -0x1, 0x15D },
+    { 0x168, 0x169, -0x1, 0x16B },
+    { 0x168, 0x169, -0x1, 0x16C },
+    { -0x1, -0x1, -0x1, -0x1 },
+};
+f32 D_80113978_3BCB18_name_5F = 0.0f;
+s32 D_8011397C_3BCB1C_name_5F[10] = {
+    0x00140009, 0x0014000A, 0x0014000C, 0x0014000D,
+    0x0014000E, 0x0014000F, 0x00140010, 0x00140011,
+    0x00140012, 0x00140013,
+};
+s32 D_801139A4_3BCB44_name_5F[5][2] = {
+    { -45, -20 },
+    { -5, -20 },
+    { 35, -20 },
+    { -30, 15 },
+    { 20, 15 },
+};
+u16 D_801139CC_3BCB6C_name_5F[4] = {
+    0x1, 0x2, 0x4, 0x8,
+};
+Ovl5FFallInit D_801139D4_3BCB74_name_5F[12] = {
+    { { -150.0f, -400.0f, 100.0f }, 300.0f, 2.0f, { 0, 0, 70, 1 } },
+    { { 0.0f, -300.0f, 100.0f }, 300.0f, 1.0f, { 0, 2, 30, 1 } },
+    { { 50.0f, -350.0f, 100.0f }, 300.0f, 1.5f, { 0, 1, 50, 0 } },
+    { { 150.0f, -400.0f, 100.0f }, 300.0f, 2.0f, { 0, 0, 60, 0 } },
+    { { 250.0f, -300.0f, 100.0f }, 300.0f, 1.0f, { 0, 2, 20, 1 } },
+    { { -145.0f, 135.0f, 110.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 110.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 55.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 0.0f, 90.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { -200.0f, -120.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { -120.0f, 20.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+    { { 230.0f, 20.0f, 0.0f }, 0.0f, 0.0f, { 0, 0, 0, 0 } },
+};
+u16 D_80113B24_3BCCC4_name_5F[3][3] = {
+    { 0x5, 0xF, 0x14 },
+    { 0xA, 0x14, 0x23 },
+    { 0xF, 0x23, 0x32 },
+};
+u16 D_80113B38_3BCCD8_name_5F[4][3] = {
+    { 0x3, 0x3, 0x2 },
+    { 0x3, 0x2, 0x2 },
+    { 0x2, 0x4, 0x4 },
+    { 0x2, 0x1, 0x0 },
+};
+u16 D_80113B50_3BCCF0_name_5F[4][5] = {
+    { 0x4, 0x6, 0x7, 0x8, 0x9 },
+    { 0x2, 0x3, 0x4, 0x5, 0x7 },
+    { 0x0, 0x1, 0x2, 0x3, 0x6 },
+    { 0x0, 0x1, 0x2, 0x5, 0x6 },
+};
+s16 D_80113B78_3BCD18_name_5F[4][5][6] = {
+    {
+        { 0x5, 0x5, 0x5, 0x0, 0x14, 0x0 },
+        { 0x23, 0x14, 0x0, 0x14, 0x0, 0x0 },
+        { 0x0, 0xA, 0x23, 0x14, 0x0, 0x5 },
+        { 0x0, 0x5, 0x0, 0x0, 0x14, 0x23 },
+        { 0x3C, 0x3C, 0x3C, 0x3C, 0x3C, 0x3C },
+    },
+    {
+        { 0x50, 0x14, 0x0, 0x5, 0x0, 0x0 },
+        { 0x5, 0x14, 0xA, 0x5, 0xA, 0x50 },
+        { 0x5, 0x14, 0x0, 0xA, 0x50, 0x5 },
+        { 0x0, 0x14, 0xA, 0x50, 0x0, 0xA },
+        { 0xA, 0x14, 0x50, 0x0, 0xA, 0x5 },
+    },
+    {
+        { 0xA, 0x0, 0xA, 0xA, 0xA, 0x0 },
+        { 0x5, 0x50, 0x5, 0xA, 0x0, 0x0 },
+        { 0x0, 0x0, 0x50, 0xA, 0x1E, 0xA },
+        { 0x5, 0x5, 0x5, 0xA, 0x1E, 0x50 },
+        { 0x50, 0xF, 0x0, 0x3C, 0x1E, 0xA },
+    },
+    {
+        { 0xA, 0x5, 0x5, 0x5, 0x0, 0x14 },
+        { 0x5, 0x50, 0x5, 0x5, 0xA, 0x14 },
+        { 0x0, 0x0, 0x50, 0x0, 0x28, 0x14 },
+        { 0x5, 0x0, 0x0, 0x50, 0x1E, 0x14 },
+        { 0x50, 0xF, 0xA, 0xA, 0x14, 0x14 },
+    },
+};
+/* unreferenced: the zero words between the chance table and the demo table */
+s32 D_80113C68_3BCE08_name_5F[2] = { 0, 0 };
+Ovl5FDemo D_80113C70_3BCE10_name_5F[30] = {
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x4, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010A4F0_3B3690_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x17, 0x0 },
+    { func_8010A628_3B37C8_name_5F, func_8010A038_3B31D8_name_5F, func_8010A818_3B39B8_name_5F, func_8010AAA0_3B3C40_name_5F, 0x0, 0x0 },
+    { func_8010AC44_3B3DE4_name_5F, func_8010AEF8_3B4098_name_5F, func_8010AF84_3B4124_name_5F, func_8010B168_3B4308_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010B33C_3B44DC_name_5F, func_8010B460_3B4600_name_5F, func_8010B4F0_3B4690_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_80112A1C_3BBBBC_name_5F, func_8010A000_3B31A0_name_5F, func_80112B20_3BBCC0_name_5F, func_8010B30C_3B44AC_name_5F, 0x0, 0x0 },
+    { func_80112C64_3BBE04_name_5F, func_8010A038_3B31D8_name_5F, func_80112E68_3BC008_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010B624_3B47C4_name_5F, func_8010A038_3B31D8_name_5F, func_8010B798_3B4938_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010BA24_3B4BC4_name_5F, func_8010A0C4_3B3264_name_5F, func_8010BCF0_3B4E90_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010C40C_3B55AC_name_5F, func_8010A0C4_3B3264_name_5F, func_8010C61C_3B57BC_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010CD08_3B5EA8_name_5F, func_8010CFB8_3B6158_name_5F, func_8010D098_3B6238_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010D640_3B67E0_name_5F, func_8010A0C4_3B3264_name_5F, func_8010D798_3B6938_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010DC40_3B6DE0_name_5F, func_8010A0C4_3B3264_name_5F, func_8010DF10_3B70B0_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010E65C_3B77FC_name_5F, func_8010E844_3B79E4_name_5F, func_8010E920_3B7AC0_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_8010EEB4_3B8054_name_5F, func_8010F0C8_3B8268_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x87 },
+    { func_8010F668_3B8808_name_5F, func_8010A0C4_3B3264_name_5F, func_8010F8BC_3B8A5C_name_5F, func_8010A2EC_3B348C_name_5F, 0x3, 0x3 },
+    { func_8010FDD8_3B8F78_name_5F, func_8010A0C4_3B3264_name_5F, func_80110050_3B91F0_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_80110480_3B9620_name_5F, func_8010A0C4_3B3264_name_5F, func_80110784_3B9924_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A0C4_3B3264_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x7, 0x3 },
+    { func_80110F2C_3BA0CC_name_5F, func_8011126C_3BA40C_name_5F, func_8011137C_3BA51C_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801116B0_3BA850_name_5F, func_801119A8_3BAB48_name_5F, func_80111A00_3BABA0_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_80112080_3BB220_name_5F, func_8011238C_3BB52C_name_5F, func_801123E4_3BB584_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { func_801098FC_3B2A9C_name_5F, func_8010A038_3B31D8_name_5F, func_80109A80_3B2C20_name_5F, func_8010A2EC_3B348C_name_5F, 0x0, 0x0 },
+    { NULL, NULL, NULL, NULL, 0x0, 0x0 },
+};
+omObjData* D_80113EC8_3BD068_name_5F[4] = { NULL, NULL, NULL, NULL };
+u16 D_80113ED8_3BD078_name_5F[6] = {
+    0x5, 0x6, 0x7, 0x8, 0x9, 0xA,
+};
+char* D_80113EE4_3BD084_name_5F[6] = {
+    (char*)D_80114A8C_3BDC2C_name_5F, (char*)D_80114A78_3BDC18_name_5F, (char*)D_80114A5C_3BDBFC_name_5F,
+    (char*)D_80114A44_3BDBE4_name_5F, (char*)D_80114A30_3BDBD0_name_5F, (char*)D_80114A1C_3BDBBC_name_5F,
+};
+s16 D_80113EFC_3BD09C_name_5F[6] = {
+    0x0, 0x2, 0x4, 0x6, 0x8, 0xA,
+};
+u16 D_80113F08_3BD0A8_name_5F[6] = {
+    0x0, 0x1, 0x2, 0x3, 0x4, 0x5,
+};
+u16 D_80113F14_3BD0B4_name_5F[6] = {
+    0xD, 0xE, 0xF, 0x10, 0x11, 0x12,
+};
+u16 D_80113F20_3BD0C0_name_5F[6] = {
+    0x6, 0x7, 0x8, 0x9, 0xA, 0xB,
+};
+u16 D_80113F2C_3BD0CC_name_5F[6][2] = {
+    { 0x13, 0x19 }, { 0x14, 0x1A }, { 0x15, 0x1B }, { 0x16, 0x1C }, { 0x17, 0x1D }, { 0x18, 0x1E },
+};
+Ovl5FCharHook D_80113F44_3BD0E4_name_5F[6] = {
+    { 0xB, (char*)D_80114BC8_3BDD68_name_5F, (char*)D_80114BB0_3BDD50_name_5F },
+    { 0xC, (char*)D_80114B9C_3BDD3C_name_5F, (char*)D_80114B84_3BDD24_name_5F },
+    { 0xD, (char*)D_80114B6C_3BDD0C_name_5F, (char*)D_80114B54_3BDCF4_name_5F },
+    { 0xE, (char*)D_80114B44_3BDCE4_name_5F, (char*)D_80114B2C_3BDCCC_name_5F },
+    { 0xF, (char*)D_80114B1C_3BDCBC_name_5F, (char*)D_80114B04_3BDCA4_name_5F },
+    { 0x10, (char*)D_80114AF0_3BDC90_name_5F, (char*)D_80114AD8_3BDC78_name_5F },
+};
+s16 D_80113F8C_3BD12C_name_5F[6] = {
+    0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+};
+u16 D_80113F98_3BD138_name_5F[6] = {
+    0xD, 0xE, 0xF, 0x10, 0x11, 0x12,
+};
+char* D_80113FA4_3BD144_name_5F[6] = {
+    (char*)D_80114C60_3BDE00_name_5F, (char*)D_80114C54_3BDDF4_name_5F, (char*)D_80114C48_3BDDE8_name_5F,
+    (char*)D_80114C3C_3BDDDC_name_5F, (char*)D_80114C30_3BDDD0_name_5F, (char*)D_80114C24_3BDDC4_name_5F,
+};
+f32 D_80113FBC_3BD15C_name_5F[8] = {
+    30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f,
+};
+s8 D_80113FDC_3BD17C_name_5F = 0;
+u16 D_80113FE0_3BD180_name_5F[14] = {
+    0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x0, 0x0,
+    0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+};
+/* D_80113FFC_3BD19C_name_5F (s32[][9][2] in ovl_5F.h: per character, {file, 0} pairs) is an
+   undefined_syms.txt alias of this block: the last character's row stops after its [7][0]
+   (D_801141A0 follows), so the data is no whole [6][9][2]. The code reads [chr][0..5][0]. */
+s32 Ovl5FCharFiles[105] = {
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0xF, 0, 0xE, 0, 0x9C, 0, 0x55, 0, 0, 0,
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0x11, 0, 0x10, 0, 0x9C, 0, 0x57, 0, 0, 0,
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0x13, 0, 0x12, 0, 0x9C, 0, 0x57, 0, 0, 0,
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0x15, 0, 0x14, 0, 0x9C, 0, 0x59, 0, 0, 0,
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0x17, 0, 0x16, 0, 0x9C, 0, 0x59, 0, 0, 0,
+    0x44, 0, 0x45, 0, 0x46, 0, 0x60, 0, 0x19, 0, 0x18, 0, 0x9C, 0, 0x59,
+};
+char* D_801141A0_3BD340_name_5F[6][2] = {
+    { (char*)D_80114A8C_3BDC2C_name_5F, (char*)D_80114D14_3BDEB4_name_5F },
+    { (char*)D_80114A78_3BDC18_name_5F, (char*)D_80114D00_3BDEA0_name_5F },
+    { (char*)D_80114A5C_3BDBFC_name_5F, (char*)D_80114CEC_3BDE8C_name_5F },
+    { (char*)D_80114A44_3BDBE4_name_5F, (char*)D_80114CD8_3BDE78_name_5F },
+    { (char*)D_80114A30_3BDBD0_name_5F, (char*)D_80114CC4_3BDE64_name_5F },
+    { (char*)D_80114A1C_3BDBBC_name_5F, (char*)D_80114CB0_3BDE50_name_5F },
+};
+char* D_801141D0_3BD370_name_5F[6][2] = {
+    { (char*)D_80114A8C_3BDC2C_name_5F, (char*)D_80114D14_3BDEB4_name_5F },
+    { (char*)D_80114A78_3BDC18_name_5F, (char*)D_80114D00_3BDEA0_name_5F },
+    { (char*)D_80114A5C_3BDBFC_name_5F, (char*)D_80114CEC_3BDE8C_name_5F },
+    { (char*)D_80114A44_3BDBE4_name_5F, (char*)D_80114CD8_3BDE78_name_5F },
+    { (char*)D_80114A30_3BDBD0_name_5F, (char*)D_80114CC4_3BDE64_name_5F },
+    { (char*)D_80114A1C_3BDBBC_name_5F, (char*)D_80114CB0_3BDE50_name_5F },
+};
+/* unreferenced: the zero word after the hook-node table */
+s32 D_80114200_3BD3A0_name_5F = 0;
+/* D_80114204_3BD3A4_name_5F (s32[][2] in ovl_5F.h: per character, {CPU model file, 0}) is an
+   undefined_syms.txt alias of this block: the last pair has no second word (D_80114230
+   follows). The code reads [chr][0]. */
+s32 Ovl5FCpuModelFiles[11] = {
+    0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5,
+};
+u16 D_80114230_3BD3D0_name_5F[6] = {
+    0x1D, 0x22, 0x27, 0x2C, 0x31, 0x36,
+};
+u16 D_8011423C_3BD3DC_name_5F[10] = {
+    0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x0, 0x0,
+    0x0, 0x0,
+};

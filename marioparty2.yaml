@@ -1860,7 +1860,9 @@ segments:
       - [0x3AB9A0, c]
       - [0x3AB9D0, c]
       - [0x3BC210, c]
-      - [0x3BC8A0, data]
+      - [0x3BC8A0, .data, 3AB9A0]
+      - [0x3BC8B0, .data, 3AB9D0]
+      - [0x3BD3F0, .data, 3BC210]
       - [0x3BD850, .rodata, 3AB9D0]
       - [0x3BDEF0, .rodata, 3BC210]
       - {0x3BDF60, type: bss, vram: 0x80114DC0, name: ovl_5F_bss}
