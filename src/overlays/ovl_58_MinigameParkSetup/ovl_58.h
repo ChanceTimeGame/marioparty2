@@ -182,6 +182,11 @@ typedef struct Ovl58Esprite {
     /* 0x0E */ char pad0E[0x16];
 } Ovl58Esprite; /* size = 0x24 */
 
+/* Two s16 copied whole into a local (8010A1E8: D_80113900, the bonus panels' models). */
+typedef struct Ovl58Pair {
+    /* 0x00 */ s16 v[2];
+} Ovl58Pair;
+
 /* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
 extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern s16 D_80112B42_37E242_MinigameParkSetup;
@@ -257,8 +262,7 @@ extern Ovl58Story D_80113826_37EF26_MinigameParkSetup; /* 80113826-8011382C */
 extern s8 D_8011382D_37EF2D_MinigameParkSetup; /* where D_80113826 came from: 1 story record, 0 save, -1 none */
 extern s16 D_8011382E_37EF2E_MinigameParkSetup[2];
 extern s16 D_80113832_37EF32_MinigameParkSetup[2];
-extern s16 D_80113836_37EF36_MinigameParkSetup;
-extern s16 D_80113838_37EF38_MinigameParkSetup[3];
+extern s16 D_80113836_37EF36_MinigameParkSetup[2][2]; /* 58-C: bonus panel sprites' screen x, y (8010B6B4) */
 extern s16 D_8011383E_37EF3E_MinigameParkSetup[3];
 extern s16 D_80113844_37EF44_MinigameParkSetup[3];
 extern s16 D_8011384A_37EF4A_MinigameParkSetup[3];
@@ -286,7 +290,7 @@ extern Ovl58Quad D_801138E0_37EFE0_MinigameParkSetup; /* + 4 bytes unreferenced 
 extern s16 D_801138EC_37EFEC_MinigameParkSetup[3];
 extern s16 D_801138F2_37EFF2_MinigameParkSetup[6];
 extern s16 D_801138FE_37EFFE_MinigameParkSetup;
-extern s32 D_80113900_37F000_MinigameParkSetup[2];
+extern Ovl58Pair D_80113900_37F000_MinigameParkSetup; /* 58-C: the two bonus-panel models (+ 4 bytes unreferenced) */
 extern s16 D_80113908_37F008_MinigameParkSetup[3];
 extern s16 D_8011390E_37F00E_MinigameParkSetup[5];
 extern s16 D_80113918_37F018_MinigameParkSetup[7];
@@ -311,7 +315,7 @@ extern s16 D_801139B2_37F0B2_MinigameParkSetup[4];
 extern s16 D_801139BA_37F0BA_MinigameParkSetup;
 extern s16 D_801139BC_37F0BC_MinigameParkSetup;
 extern s16 D_801139BE_37F0BE_MinigameParkSetup;
-extern s32 D_801139C0_37F0C0_MinigameParkSetup;
+extern s16 D_801139C0_37F0C0_MinigameParkSetup[2]; /* 58-C: [0] bonus model motion (panel down) */
 extern s16 D_801139C4_37F0C4_MinigameParkSetup;
 extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
 extern s32 D_801139D8_37F0D8_MinigameParkSetup[135];

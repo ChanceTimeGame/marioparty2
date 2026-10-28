@@ -1380,7 +1380,295 @@ void func_8010A02C_37572C_MinigameParkSetup(s16 dir) {
 __asm__(".section .rodata");
 const char D_801136E8_37EDE8_MinigameParkSetup[] = "bns_panel";
 
+/* Bonus on/off: the two bonus-panel models lift in, the stick picks one, A sends the other
+   away and asks 0x71 (all set?); 0x72 then 0x6E brings the other back (returns 0 with
+   D_80113782 = 1 to ask again), otherwise everything sinks away, the CPU players' icons
+   are cleared and D_80113958.bonus = (choice != 1). B sinks both and returns -1.
+   Returns 1 when the setup is done, 0 to go on, -1 to go back. */
+#ifdef NON_MATCHING
+/* masked 222: D_80113900's copy goes through a stack temporary in retail (lhu/sh, then
+   lwl/lwr, as 80103F38's); from there the allocator differs (result spills, the float
+   temporaries shift by one register, the sel-indexed addresses of the slide loops are
+   hoisted here and recomputed each frame in retail). Logic checked against the asm. */
+s32 func_8010A1E8_3758E8_MinigameParkSetup(void) {
+    Ovl58Pair models;
+    s16 done[2];
+    Vec base[2];
+    Vec pos[2];
+    s16 i;
+    s16 frame;
+    s16 sel;
+    s16 result;
+    s16 other;
+    f32 t;
+    f32 dist;
+
+    models = D_80113900_37F000_MinigameParkSetup;
+    if (D_80113782_37EE82_MinigameParkSetup == 0) {
+        for (i = 0; i < 2; i++) {
+            func_800298A4_2A4A4(models.v[i], 4, 0);
+            func_8002C9C0_2D5C0(models.v[i], D_801139C4_37F0C4_MinigameParkSetup);
+            func_80029C74_2A874(models.v[i], 30.0f);
+            func_80029E80_2AA80(models.v[i], 1, 1);
+            base[i].x = pos[i].x = D_800FC834_FD434[models.v[i]].pos.x;
+            base[i].y = pos[i].y = D_800FC834_FD434[models.v[i]].pos.y;
+            base[i].z = pos[i].z = D_800FC834_FD434[models.v[i]].pos.z;
+            pos[i].z += 1200.0f;
+            func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+            done[i] = 0;
+        }
+        D_8011382E_37EF2E_MinigameParkSetup[0] = func_8001A2F8_1AEF8(0x90089);
+        D_80113832_37EF32_MinigameParkSetup[0] = func_8001AAAC_1B6AC(D_8011382E_37EF2E_MinigameParkSetup[0], 0, 1);
+        func_8001A6BC_1B2BC(D_80113832_37EF32_MinigameParkSetup[0], 0x100);
+        func_8001A788_1B388(D_80113832_37EF32_MinigameParkSetup[0], 100);
+        D_8011382E_37EF2E_MinigameParkSetup[1] = func_8001A2F8_1AEF8(0x9008A);
+        D_80113832_37EF32_MinigameParkSetup[1] = func_8001AAAC_1B6AC(D_8011382E_37EF2E_MinigameParkSetup[1], 0, 1);
+        func_8001A6BC_1B2BC(D_80113832_37EF32_MinigameParkSetup[1], 0x100);
+        func_8001A788_1B388(D_80113832_37EF32_MinigameParkSetup[1], 100);
+        frame = 0;
+        while (1) {
+            for (i = 0; i < 2; i++) {
+                t = frame - (2 - i) * 10;
+                if (t == 0.0f) {
+                    PlaySound(0xAB);
+                }
+                if ((t > 0.0f) & (t <= 20.0f)) {
+                    pos[i].z = (1.0f - HuMathSin(t * 4.5f)) * 1200.0f + base[i].z;
+                    if (t == 10.0f) {
+                        PlaySound(0xB1);
+                        func_80029E80_2AA80(models.v[i], 1, 0);
+                        func_80029FE4_2ABE4(models.v[i], 1.5f);
+                    }
+                    func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                } else if ((done[i] == 0) & (t > 20.0f)) {
+                    if (func_80029E14_2AA14(models.v[i]) != D_801139C0_37F0C0_MinigameParkSetup[0]) {
+                        if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
+                            func_8002C9C0_2D5C0(models.v[i], D_801139C0_37F0C0_MinigameParkSetup[0]);
+                        }
+                    } else if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
+                        func_80029E80_2AA80(models.v[i], 1, 1);
+                        done[i] = 1;
+                    }
+                }
+            }
+            for (i = 0; i < 2; i++) {
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+                func_801105B8_37BCB8_MinigameParkSetup(i, D_80113832_37EF32_MinigameParkSetup[i], 0, 8);
+                func_8010B6B4_376DB4_MinigameParkSetup(D_80113832_37EF32_MinigameParkSetup[i], D_80113836_37EF36_MinigameParkSetup[i]);
+            }
+            if (done[0] != 0 && done[1] != 0) {
+                break;
+            }
+            frame++;
+            HuPrcVSleep();
+        }
+    } else {
+        for (i = 0; i < 2; i++) {
+            func_80029760_2A360(models.v[i], &pos[i]);
+            func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 0x28, models.v[i]);
+            func_80029760_2A360(models.v[i], &base[i]);
+            func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+        }
+    }
+    D_80113782_37EE82_MinigameParkSetup = 0;
+    func_80107604_372D04_MinigameParkSetup();
+    D_8011393C_37F03C_MinigameParkSetup = 0;
+    func_8011170C_37CE0C_MinigameParkSetup(0);
+    D_8011392C_37F02C_MinigameParkSetup = 1;
+    HuPrcSleep(5);
+    espPosSet(D_80113832_37EF32_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup],
+              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][0],
+              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][1] - 3);
+    func_80110350_37BA50_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup + 0x6F);
+    func_801103A4_37BAA4_MinigameParkSetup();
+    while (1) {
+        if ((ContStkX[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkX[D_8011381A_37EF1A_MinigameParkSetup] : ContStkX[D_8011381A_37EF1A_MinigameParkSetup]) >= 31
+            || (ContStkY[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkY[D_8011381A_37EF1A_MinigameParkSetup] : ContStkY[D_8011381A_37EF1A_MinigameParkSetup]) >= 31) {
+            i = func_80110678_37BD78_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup, 2, -ContStkX[D_8011381A_37EF1A_MinigameParkSetup], ContStkY[D_8011381A_37EF1A_MinigameParkSetup]);
+            if (i != -1) {
+                PlaySound(1);
+                func_8011175C_37CE5C_MinigameParkSetup(i);
+                for (frame = 1; frame < 4; frame++) {
+                    espPosSet(D_80113832_37EF32_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup],
+                              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][0],
+                              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][1] + frame);
+                    HuPrcVSleep();
+                }
+                for (frame = 1; frame < 4; frame++) {
+                    espPosSet(D_80113832_37EF32_MinigameParkSetup[i],
+                              D_80113836_37EF36_MinigameParkSetup[i][0],
+                              D_80113836_37EF36_MinigameParkSetup[i][1] - frame);
+                    HuPrcVSleep();
+                }
+                func_80110350_37BA50_MinigameParkSetup(i + 0x6F);
+                func_801103A4_37BAA4_MinigameParkSetup();
+                D_8011393C_37F03C_MinigameParkSetup = i;
+            }
+        }
+        if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x4000) {
+            PlaySound(4);
+            result = 0;
+            sel = -1;
+            break;
+        }
+        if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x8000) {
+            PlaySound(2);
+            func_80088604_89204(D_8011381A_37EF1A_MinigameParkSetup, 2, 3, 10);
+            result = 1;
+            sel = D_8011393C_37F03C_MinigameParkSetup;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    D_8011392C_37F02C_MinigameParkSetup = 0;
+    espPosSet(D_80113832_37EF32_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup],
+              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][0],
+              D_80113836_37EF36_MinigameParkSetup[D_8011393C_37F03C_MinigameParkSetup][1]);
+    if (result != 0) {
+        PlaySound(0xB1);
+        for (i = 0; i < 2; i++) {
+            if (sel != i) {
+                func_80029E80_2AA80(models.v[i], 5, 4);
+            }
+            func_80029FE4_2ABE4(models.v[i], 2.0f);
+        }
+        for (frame = 0; frame < 15; frame++) {
+            for (i = 0; i < 2; i++) {
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+            }
+            HuPrcVSleep();
+        }
+        dist = 1200.0f;
+        if (sel == 0) {
+            dist = -1200.0f;
+        }
+        for (frame = 0; frame < 11; frame++) {
+            t = frame * 9.0f;
+            D_800FC834_FD434[models.v[sel]].pos.z = (1.0f - func_800B7890_B8490(t)) * (-150.0f - base[sel].z) + base[sel].z;
+            func_801104FC_37BBFC_MinigameParkSetup(models.v[sel], D_80113832_37EF32_MinigameParkSetup[sel], D_801136E8_37EDE8_MinigameParkSetup);
+            D_800FC834_FD434[models.v[sel ^ 1]].pos.z = (1.0f - func_800B7890_B8490(t)) * dist + base[sel ^ 1].z;
+            func_801104FC_37BBFC_MinigameParkSetup(models.v[sel ^ 1], D_80113832_37EF32_MinigameParkSetup[sel ^ 1], D_801136E8_37EDE8_MinigameParkSetup);
+            HuPrcVSleep();
+        }
+        func_80110350_37BA50_MinigameParkSetup(0x71);
+        if (func_801103A4_37BAA4_MinigameParkSetup() != 0) {
+            func_80110350_37BA50_MinigameParkSetup(0x72);
+            if (func_801103A4_37BAA4_MinigameParkSetup() == 0) {
+                result = 0;
+            } else {
+                /* Change it: the other panel comes back and the choice is asked again. */
+                func_80110350_37BA50_MinigameParkSetup(0x6E);
+                func_801103A4_37BAA4_MinigameParkSetup();
+                other = models.v[sel ^ 1];
+                if (sel == 0) {
+                    dist = -1200.0f;
+                    func_8002C9C0_2D5C0(other, D_801139C4_37F0C4_MinigameParkSetup);
+                } else {
+                    dist = 1200.0f;
+                    func_8002C9C0_2D5C0(other, D_801139C6_37F0C6_MinigameParkSetup[0]);
+                }
+                func_80029FE4_2ABE4(other, 1.5f);
+                func_80029C74_2A874(other, 30.0f);
+                for (frame = 0; frame < 11; frame++) {
+                    t = frame * 9.0f;
+                    D_800FC834_FD434[models.v[sel]].pos.z = func_800B7890_B8490(t) * (-150.0f - base[sel].z) + base[sel].z;
+                    func_801104FC_37BBFC_MinigameParkSetup(models.v[sel], D_80113832_37EF32_MinigameParkSetup[sel], D_801136E8_37EDE8_MinigameParkSetup);
+                    D_800FC834_FD434[models.v[sel ^ 1]].pos.z = (1.0f - HuMathSin(t)) * dist + base[sel ^ 1].z;
+                    func_801104FC_37BBFC_MinigameParkSetup(models.v[sel ^ 1], D_80113832_37EF32_MinigameParkSetup[sel ^ 1], D_801136E8_37EDE8_MinigameParkSetup);
+                    HuPrcVSleep();
+                }
+                while (func_80029CE4_2A8E4(other) < func_80029D0C_2A90C(other)) {
+                    func_801104FC_37BBFC_MinigameParkSetup(other, D_80113832_37EF32_MinigameParkSetup[sel ^ 1], D_801136E8_37EDE8_MinigameParkSetup);
+                    HuPrcVSleep();
+                }
+                PlaySound(0xB1);
+                func_8002C9C0_2D5C0(other, D_801139C0_37F0C0_MinigameParkSetup[0]);
+                func_80029E80_2AA80(other, 5, 0);
+                for (frame = 0; frame < 15; frame++) {
+                    for (i = 0; i < 2; i++) {
+                        func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+                    }
+                    HuPrcVSleep();
+                }
+                D_80113782_37EE82_MinigameParkSetup = 1;
+                return 0;
+            }
+        } else {
+            PlaySound(GwSystem.current_board_index == 5 ? 0xC4 : 0x125);
+        }
+        func_80029E80_2AA80(models.v[sel], 5, 4);
+        func_80029E80_2AA80(D_801138FE_37EFFE_MinigameParkSetup, 5, 4);
+        func_80029FE4_2ABE4(D_801138FE_37EFFE_MinigameParkSetup, 2.0f);
+        for (frame = 0; frame < 15; frame++) {
+            for (i = 0; i < 2; i++) {
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+            }
+            HuPrcVSleep();
+        }
+        PlaySound(0xB8);
+        for (i = 0; i < 2; i++) {
+            func_8002C9C0_2D5C0(models.v[i], D_801139C4_37F0C4_MinigameParkSetup);
+            func_80029FE4_2ABE4(models.v[i], 1.5f);
+        }
+        for (frame = 1; frame < 11; frame++) {
+            t = frame * 100;
+            D_800FC834_FD434[models.v[sel]].pos.z -= t;
+            func_801104FC_37BBFC_MinigameParkSetup(models.v[sel], D_80113832_37EF32_MinigameParkSetup[sel], D_801136E8_37EDE8_MinigameParkSetup);
+            if (result == 0) {
+                D_800FC834_FD434[models.v[sel ^ 1]].pos.z -= t;
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[sel ^ 1], D_80113832_37EF32_MinigameParkSetup[sel ^ 1], D_801136E8_37EDE8_MinigameParkSetup);
+            }
+            D_800FC834_FD434[D_801138FE_37EFFE_MinigameParkSetup].pos.z -= 100.0f;
+            HuPrcVSleep();
+        }
+        func_800298A4_2A4A4(D_801138FE_37EFFE_MinigameParkSetup, 4, 4);
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, 0x27, D_801138FE_37EFFE_MinigameParkSetup);
+        for (i = D_80113958_37F058_MinigameParkSetup.humans; i < 4; i++) {
+            D_80113804_37EF04_MinigameParkSetup[i] = -1;
+        }
+        D_80113958_37F058_MinigameParkSetup.bonus = sel != 1;
+    } else {
+        PlaySound(0xB1);
+        for (i = 0; i < 2; i++) {
+            func_80029E80_2AA80(models.v[i], 5, 4);
+            func_80029FE4_2ABE4(models.v[i], 2.0f);
+        }
+        for (frame = 0; frame < 15; frame++) {
+            for (i = 0; i < 2; i++) {
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+            }
+            HuPrcVSleep();
+        }
+        PlaySound(0xB8);
+        for (i = 0; i < 2; i++) {
+            func_8002C9C0_2D5C0(models.v[i], D_801139C6_37F0C6_MinigameParkSetup[0]);
+            func_80029FE4_2ABE4(models.v[i], 1.5f);
+        }
+        for (frame = 0; frame < 11; frame++) {
+            for (i = 0; i < 2; i++) {
+                pos[i].z = (1.0f - func_800B7890_B8490(frame * 9.0f)) * 1200.0f + base[i].z;
+                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_80113832_37EF32_MinigameParkSetup[i], D_801136E8_37EDE8_MinigameParkSetup);
+            }
+            HuPrcVSleep();
+        }
+        result = -1;
+    }
+    for (i = 0; i < 2; i++) {
+        func_800298A4_2A4A4(models.v[i], 4, 4);
+    }
+    for (i = 0; i < 2; i++) {
+        func_8001AC44_1B844(D_80113832_37EF32_MinigameParkSetup[i]);
+        SprAnimKill(D_8011382E_37EF2E_MinigameParkSetup[i]);
+    }
+    for (i = 0; i < 2; i++) {
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 0x28, models.v[i]);
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010A1E8_3758E8_MinigameParkSetup);
+#endif
 
 /* The screen position of esprite spr. */
 #ifdef NON_MATCHING
