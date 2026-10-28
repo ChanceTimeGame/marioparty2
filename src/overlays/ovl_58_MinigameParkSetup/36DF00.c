@@ -4518,7 +4518,7 @@ void func_80112950_37E050_MinigameParkSetup(void) {
     for (i = 0; i < 9; i++) {
         D_80113918_37F018_MinigameParkSetup[i] = D_80113878_37EF78_MinigameParkSetup[i] = D_80113940_37F040_MinigameParkSetup[i] = 0;
     }
-    D_80113898_37EF98_MinigameParkSetup = 0;
+    D_80113898_37EF98_MinigameParkSetup[0] = 0;
     D_8011396E_37F06E_MinigameParkSetup = 0;
     for (i = 0; i < 72; i++) {
         cat = D_800CAD90[i].unk_04;
@@ -4526,7 +4526,7 @@ void func_80112950_37E050_MinigameParkSetup(void) {
             if (func_80068040_68C40(i) != 0) {
                 D_80113C08_37F308_MinigameParkSetup[cat][D_80113940_37F040_MinigameParkSetup[cat]] = i;
                 D_80113940_37F040_MinigameParkSetup[cat]++;
-                D_80113898_37EF98_MinigameParkSetup++;
+                D_80113898_37EF98_MinigameParkSetup[0]++;
             } else {
                 D_801139D8_37F0D8_MinigameParkSetup[cat][D_80113918_37F018_MinigameParkSetup[cat]] = i;
                 D_80113918_37F018_MinigameParkSetup[cat]++;
