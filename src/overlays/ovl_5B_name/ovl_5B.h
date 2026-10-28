@@ -358,6 +358,8 @@ void func_80112304_38EFB4_name_5B(void);
 
 /* 5B-C */
 
+#include "game/camera.h"
+
 extern u16 D_801011FC_101DFC; /* main: set while the game resets */
 
 #endif

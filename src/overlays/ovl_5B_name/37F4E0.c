@@ -1062,7 +1062,108 @@ void func_80109408_3860B8_name_5B(omObjData* obj) {
     }
 }
 
+/* Debug camera on controller 2: C-up/C-down zoom (Z faster; retail tests port 1's Z for C-up),
+   the stick turns, L/R-ish buttons 0x800/0x400 move along the view, 0x200/0x100 strafe, C-right
+   and C-left change the field of view, START (trigger) prints the camera. */
+#ifdef NON_MATCHING
+/* Same instruction count; differs in float register allocation (rx/spd swapped) and where the
+   D_8010274C base is loaded in the 0x800/0x400 arms. */
+void func_801094F8_3861A8_name_5B(void) {
+    f32 zoom;
+    f32 spd;
+    f32 rx;
+    f32 ry;
+    f32 b;
+    f32 inv;
+
+    if (ContBtn[1] & 0x20) {
+        if (ContBtn[0] & 0x2000) {
+            zoom = D_800FA610_FB210 + 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 + 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    if ((ContBtn[1] & 0x10) && D_800FA610_FB210 - 10.0f != 0.0f) {
+        if (ContBtn[1] & 0x2000) {
+            zoom = D_800FA610_FB210 - 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 - 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    rx = D_80114744_3913F4_name_5B.x;
+    ry = D_80114744_3913F4_name_5B.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 5.0f;
+    } else {
+        spd = 2.0f;
+    }
+    ry += -ContStkX[1] / 30 * spd;
+    if (ry >= 360.0f) {
+        ry -= 360.0f;
+    } else if (ry < 0.0f) {
+        ry += 360.0f;
+    }
+    D_80114744_3913F4_name_5B.y = ry;
+    rx += (s8)(ContStkY[1] / 30) * spd;
+    if (rx >= 360.0f) {
+        rx -= 360.0f;
+    } else if (rx < 0.0f) {
+        rx += 360.0f;
+    }
+    D_80114744_3913F4_name_5B.x = rx;
+    D_800FD474_FE074.x = (s16)rx;
+    D_800FD474_FE074.y = (s16)D_80114744_3913F4_name_5B.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 10.0f;
+    } else {
+        spd = 2.0f;
+    }
+    if (ContBtn[1] & 0x800) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        spd = -spd;
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x400) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x200) {
+        rx = D_800C9B80_CA780->pos.z - D_8010274C_10334C.z;
+        b = -(D_800C9B80_CA780->pos.x - D_8010274C_10334C.x);
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    } else if (ContBtn[1] & 0x100) {
+        rx = -(D_800C9B80_CA780->pos.z - D_8010274C_10334C.z);
+        b = D_800C9B80_CA780->pos.x - D_8010274C_10334C.x;
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    }
+    if (ContBtn[1] & 2) {
+        D_80112694_38F344_name_5B += 1.0f;
+    }
+    if (ContBtn[1] & 1) {
+        D_80112694_38F344_name_5B -= 1.0f;
+    }
+    Hu3DCamSetPerspective(0, D_80112694_38F344_name_5B, D_8011485C_39150C_name_5B, D_80114858_391508_name_5B);
+    if (ContBtnTrg[1] & 0x4000) {
+        osSyncPrintf("CRot   (%f,%f,%f)\n", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+        osSyncPrintf("Center (%f,%f,%f)\n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+        osSyncPrintf("CZoom  %f CFovy %f\n", D_800FA610_FB210, D_80112694_38F344_name_5B);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801094F8_3861A8_name_5B);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109B1C_3867CC_name_5B);
 
