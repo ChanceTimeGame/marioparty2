@@ -1086,9 +1086,39 @@ __asm__(".section .rodata");
 const char D_8011370C_37EE0C_MinigameParkSetup[] = "%2d";
 
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010E1F0_3798F0_MinigameParkSetup);
+/* Places record panel window i beside the panel (win is unused: retail reloads it). */
+void func_8010E1F0_3798F0_MinigameParkSetup(s16 win, s16 i) {
+    func_800896DC_8A2DC(D_80113850_37EF50_MinigameParkSetup[i],
+                        D_80113554_37EC54_MinigameParkSetup[i].x + D_801137B0_37EEB0_MinigameParkSetup[0] - 68.0f,
+                        D_80113554_37EC54_MinigameParkSetup[i].y + D_801137B0_37EEB0_MinigameParkSetup[1] - 3.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010E2B8_3799B8_MinigameParkSetup);
+/* Commits the setup: game length, bonus flag 0x4E, and per player the CPU flag and level,
+   pad port, character and starting coins. */
+void func_8010E2B8_3799B8_MinigameParkSetup(void) {
+    Ovl58Quad levels = D_80113620_37ED20_MinigameParkSetup;
+    s16 i;
+
+    GwSystem.current_game_length = D_80113958_37F058_MinigameParkSetup.gameLength;
+    if (D_80113958_37F058_MinigameParkSetup.bonus != 0) {
+        _SetFlag(0x4E);
+    } else {
+        _ClearFlag(0x4E);
+    }
+    for (i = 0; i < 4; i++) {
+        if (i < D_80113958_37F058_MinigameParkSetup.humans) {
+            gPlayers[i].cpu_difficulty2 = 1;
+            gPlayers[i].flags = 0;
+        } else {
+            gPlayers[i].cpu_difficulty2 = levels.v[D_80113958_37F058_MinigameParkSetup.cpuLevel[i]];
+            gPlayers[i].flags = 1;
+        }
+        gPlayers[i].port = D_80113958_37F058_MinigameParkSetup.port[i];
+        gPlayers[i].character = D_80113958_37F058_MinigameParkSetup.character[i];
+        gPlayers[i].coins = D_80113958_37F058_MinigameParkSetup.handicap[i];
+    }
+    *(s16*)&D_800FD390_FDF90[6] = 1;
+}
 
 
 __asm__(".section .rodata");
@@ -1096,13 +1126,153 @@ const u32 D_80113710_37EE10_MinigameParkSetup[4] = { 0x0005000A, 0xFFFB0002, 0x0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010E460_379B60_MinigameParkSetup);
 
+#ifdef NON_MATCHING
+/* masked 0: retail keeps `near` in v1, this build in a1 (register allocation only). */
+/* Quit: the camera pulls back past model D_801138BC, then leaves for the main menu (mode 0:
+   overlay 0x5B) or 0x5C (mode 1); modes 2 and 3 keep D_8011381E/D_80113820 as they are. */
+void func_8010ED54_37A454_MinigameParkSetup(void) {
+    s32 played = 0;
+
+    D_80113858_37EF58_MinigameParkSetup = D_8011378C_37EE8C_MinigameParkSetup;
+    D_80113788_37EE88_MinigameParkSetup = 1;
+    D_80113784_37EE84_MinigameParkSetup = 1;
+    HuPrcSleep(10);
+    D_80113BF4_37F2F4_MinigameParkSetup = 13000.0f;
+    Hu3DCamSetPerspective(0, D_801135C0_37ECC0_MinigameParkSetup, D_80113E24_37F524_MinigameParkSetup, 13000.0f);
+    func_80110B98_37C298_MinigameParkSetup(1, 20, 1, func_8010EEF8_37A5F8_MinigameParkSetup);
+    while (1) {
+        s32 near = 1;
+        if (!(D_800FC834_FD434[D_801138BC_37EFBC_MinigameParkSetup].pos.z > -2000.0f)) {
+            near = 0;
+        }
+        if (near & (played ^ 1)) {
+            played = 1;
+            PlaySound(0xBC);
+        }
+        if (D_800FC834_FD434[D_801138BC_37EFBC_MinigameParkSetup].pos.z > -500.0f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    D_8011381C_37EF1C_MinigameParkSetup = 0;
+    if (D_800CD414_CE014 == 0) {
+        D_8011381E_37EF1E_MinigameParkSetup = 0x5B;
+        D_80113820_37EF20_MinigameParkSetup = 0;
+    } else if (D_800CD414_CE014 == 1) {
+        D_8011381E_37EF1E_MinigameParkSetup = 0x5C;
+        D_80113820_37EF20_MinigameParkSetup = 0;
+    }
+    func_800794A8_7A0A8(60);
+    func_8010EF58_37A658_MinigameParkSetup();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010ED54_37A454_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010EEF8_37A5F8_MinigameParkSetup);
+/* Camera tween callback (80110B98): sway amplitude = sin(180 * time[0] / time[1]) * start. */
+void func_8010EEF8_37A5F8_MinigameParkSetup(s16* time) {
+    D_8011378C_37EE8C_MinigameParkSetup = func_800B7890_B8490(180.0f / time[1] * time[0]) * D_80113858_37EF58_MinigameParkSetup;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010EF58_37A658_MinigameParkSetup);
+/* Fades out and stops the human pads' rumble, ends a continued mode 3 save, then sets
+   D_80112B42 (leave: 80110A28) and idles. */
+void func_8010EF58_37A658_MinigameParkSetup(void) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010F0A4_37A7A4_MinigameParkSetup);
+    D_80112B44_37E244_MinigameParkSetup[0] = 1;
+    func_8008F624_90224(0xFF, 0xFF, 0xFF);
+    InitFadeOut(0, 10);
+    for (i = 0; i < D_80113958_37F058_MinigameParkSetup.humans; i++) {
+        func_80088604_89204(D_80113958_37F058_MinigameParkSetup.port[i], 2, 3, 10);
+    }
+    HuPrcSleep(10);
+    for (i = 0; i < D_80113958_37F058_MinigameParkSetup.humans; i++) {
+        func_80088604_89204(D_80113958_37F058_MinigameParkSetup.port[i], 2, 3, 10);
+    }
+    if (D_800CD414_CE014 == 3 && D_8011382D_37EF2D_MinigameParkSetup == 0) {
+        func_8007E150_7ED50();
+        func_800754BC_760BC(4);
+    }
+    D_80112B42_37E242_MinigameParkSetup = 1;
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+
+/* Done: the closing message (none at stage 7), the camera flies in to model D_801138BA, the
+   setup is committed (8010E2B8) and the next overlay chosen: mode 0 board 0x3D, mode 1 0x5D
+   event 3, mode 3 0x63, mode 2 by D_80113816 (0: 0x4E; 1: 0x3D with flag 0xD and board 6;
+   2: 0x4E event 1). */
+void func_8010F0A4_37A7A4_MinigameParkSetup(void) {
+    if (D_80113814_37EF14_MinigameParkSetup != 7) {
+        if (D_800CD414_CE014 == 0) {
+            func_80110350_37BA50_MinigameParkSetup(0x73);
+        } else if (D_800CD414_CE014 == 1) {
+            func_80110350_37BA50_MinigameParkSetup(0x369);
+        } else if (D_800CD414_CE014 == 3) {
+            func_80110350_37BA50_MinigameParkSetup(0x594);
+        } else if (D_80113816_37EF16_MinigameParkSetup == 0) {
+            func_80110350_37BA50_MinigameParkSetup(0x69C);
+        } else if (D_80113816_37EF16_MinigameParkSetup == 1) {
+            func_80110350_37BA50_MinigameParkSetup(0x69D);
+        } else if (D_80113816_37EF16_MinigameParkSetup == 2) {
+            func_80110350_37BA50_MinigameParkSetup(0x69E);
+        }
+        func_801103A4_37BAA4_MinigameParkSetup();
+        HuPrcSleep(30);
+    }
+    D_80113858_37EF58_MinigameParkSetup = D_8011378C_37EE8C_MinigameParkSetup;
+    D_80113788_37EE88_MinigameParkSetup = 1;
+    HuPrcSleep(10);
+    while (1) {
+        if (D_800FC834_FD434[D_801138BA_37EFBA_MinigameParkSetup].pos.z < 8000.0f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    PlaySound(0xAD);
+    func_800794A8_7A0A8(120);
+    func_80110B98_37C298_MinigameParkSetup(2, 30, 1, (void*)-1);
+    HuPrcSleep(10);
+    D_80113786_37EE86_MinigameParkSetup = 1;
+    func_80110B98_37C298_MinigameParkSetup(3, 20, 2, (void*)-1);
+    while (1) {
+        if (D_800FC834_FD434[D_801138BA_37EFBA_MinigameParkSetup].pos.z < 500.0f) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    func_8010E2B8_3799B8_MinigameParkSetup();
+    D_8011381C_37EF1C_MinigameParkSetup = 1;
+    if (D_800CD414_CE014 == 0) {
+        D_8011381E_37EF1E_MinigameParkSetup = 0x3D;
+        D_80113820_37EF20_MinigameParkSetup = 0;
+    } else if (D_800CD414_CE014 == 1) {
+        D_8011381E_37EF1E_MinigameParkSetup = 0x5D;
+        D_80113820_37EF20_MinigameParkSetup = 3;
+    } else if (D_800CD414_CE014 == 3) {
+        D_8011381E_37EF1E_MinigameParkSetup = 0x63;
+        D_80113820_37EF20_MinigameParkSetup = 0;
+    } else {
+        switch (D_80113816_37EF16_MinigameParkSetup) {
+        case 0:
+            D_8011381E_37EF1E_MinigameParkSetup = 0x4E;
+            D_80113820_37EF20_MinigameParkSetup = 0;
+            break;
+        case 1:
+            D_8011381E_37EF1E_MinigameParkSetup = 0x3D;
+            D_80113820_37EF20_MinigameParkSetup = 0;
+            _SetFlag(0xD);
+            GwSystem.current_board_index = 6;
+            break;
+        case 2:
+            D_8011381E_37EF1E_MinigameParkSetup = 0x4E;
+            D_80113820_37EF20_MinigameParkSetup = 1;
+            break;
+        }
+    }
+    func_8010EF58_37A658_MinigameParkSetup();
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010F358_37AA58_MinigameParkSetup);
 

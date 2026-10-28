@@ -54,6 +54,16 @@ typedef struct Ovl58Story {
     /* 0x06 */ u8 step;         /* unk11 */
 } Ovl58Story; /* size = 7 */
 
+/* 58-D */
+/* A text window of the mode 3 record panel (D_80113554[4], 8010D260): place and message. */
+typedef struct Ovl58InfoBox {
+    /* 0x00 */ s16 x;
+    /* 0x02 */ s16 y;
+    /* 0x04 */ s16 w;
+    /* 0x06 */ s16 h;
+    /* 0x08 */ s32 mess;
+} Ovl58InfoBox; /* size = 0xC */
+
 /* ---- main-segment API used by 58 (not declared by the headers above) ---- */
 
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
@@ -201,11 +211,7 @@ extern s32 D_801134B8_37EBB8_MinigameParkSetup[30];
 extern s16 D_80113530_37EC30_MinigameParkSetup[2];
 extern s32 D_80113534_37EC34_MinigameParkSetup[6];
 extern u8 D_8011354C_37EC4C_MinigameParkSetup[8];
-extern s16 D_80113554_37EC54_MinigameParkSetup;
-extern s16 D_80113556_37EC56_MinigameParkSetup;
-extern s16 D_80113558_37EC58_MinigameParkSetup;
-extern s16 D_8011355A_37EC5A_MinigameParkSetup;
-extern s32 D_8011355C_37EC5C_MinigameParkSetup[10];
+extern Ovl58InfoBox D_80113554_37EC54_MinigameParkSetup[4]; /* 58-D: the record panel's windows */
 extern s32 D_80113584_37EC84_MinigameParkSetup[6];
 extern s32 D_8011359C_37EC9C_MinigameParkSetup[9];
 extern f32 D_801135C0_37ECC0_MinigameParkSetup; /* camera fov */
@@ -222,7 +228,7 @@ extern s16 D_80113782_37EE82_MinigameParkSetup; /* 1: the step was entered backw
 extern s16 D_80113784_37EE84_MinigameParkSetup;
 extern s16 D_80113786_37EE86_MinigameParkSetup;
 extern s16 D_80113788_37EE88_MinigameParkSetup;
-extern s32 D_8011378C_37EE8C_MinigameParkSetup;
+extern f32 D_8011378C_37EE8C_MinigameParkSetup; /* 58-D: camera sway amplitude (8010EEF8) */
 extern s16 D_80113790_37EE90_MinigameParkSetup; /* set by 8010FB00 when its intro is done */
 extern s16 D_80113798_37EE98_MinigameParkSetup;
 extern s16 D_8011379A_37EE9A_MinigameParkSetup[11];
@@ -253,8 +259,8 @@ extern s16 D_80113838_37EF38_MinigameParkSetup[3];
 extern s16 D_8011383E_37EF3E_MinigameParkSetup[3];
 extern s16 D_80113844_37EF44_MinigameParkSetup[3];
 extern s16 D_8011384A_37EF4A_MinigameParkSetup[3];
-extern s32 D_80113850_37EF50_MinigameParkSetup[2];
-extern s32 D_80113858_37EF58_MinigameParkSetup[2];
+extern s16 D_80113850_37EF50_MinigameParkSetup[4]; /* 58-D: record panel window ids */
+extern f32 D_80113858_37EF58_MinigameParkSetup; /* 58-D: sway amplitude at the start of the exit */
 extern s32 D_80113860_37EF60_MinigameParkSetup;
 extern s16 D_80113864_37EF64_MinigameParkSetup;
 extern s16 D_80113866_37EF66_MinigameParkSetup;
@@ -270,7 +276,7 @@ extern s16 D_801138B2_37EFB2_MinigameParkSetup;
 extern s32 D_801138B4_37EFB4_MinigameParkSetup;
 extern s16 D_801138B8_37EFB8_MinigameParkSetup;
 extern s16 D_801138BA_37EFBA_MinigameParkSetup;
-extern s32 D_801138BC_37EFBC_MinigameParkSetup;
+extern s16 D_801138BC_37EFBC_MinigameParkSetup; /* 58-D: model the quit path waits on */
 extern s32 D_801138C0_37EFC0_MinigameParkSetup[2];
 extern s32 D_801138C8_37EFC8_MinigameParkSetup[6];
 extern Ovl58Quad D_801138E0_37EFE0_MinigameParkSetup; /* + 4 bytes unreferenced */
@@ -352,11 +358,11 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void);
 void func_8010C4B4_377BB4_MinigameParkSetup(s32);
 s32 func_8010C6C8_377DC8_MinigameParkSetup(void);
 s32 func_8010D260_378960_MinigameParkSetup(void);
-void func_8010E1F0_3798F0_MinigameParkSetup(s16);
+void func_8010E1F0_3798F0_MinigameParkSetup(s16 win, s16 i);
 void func_8010E2B8_3799B8_MinigameParkSetup(void);
 void func_8010E460_379B60_MinigameParkSetup(void);
 void func_8010ED54_37A454_MinigameParkSetup(void);
-void func_8010EEF8_37A5F8_MinigameParkSetup(void*);
+void func_8010EEF8_37A5F8_MinigameParkSetup(s16* time);
 void func_8010EF58_37A658_MinigameParkSetup(void);
 void func_8010F0A4_37A7A4_MinigameParkSetup(void);
 void func_8010F358_37AA58_MinigameParkSetup(void);
