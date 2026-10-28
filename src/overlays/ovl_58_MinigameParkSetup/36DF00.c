@@ -1372,17 +1372,102 @@ void func_80110AF0_37C1F0_MinigameParkSetup(s16 i) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110B98_37C298_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111328_37CA28_MinigameParkSetup);
+/* The pointing-hand cursor (sprite D_8011392A): it glides over D_80113868 frames to slot
+   D_8011386A of the position table D_80113860 whenever the slot changes while it is shown
+   (D_8011392C). */
+void func_80111328_37CA28_MinigameParkSetup(void) {
+    s16 last = -1;
+    s16 i;
+    s16 x0;
+    s16 dx;
+    s16 y0;
+    s16 dy;
+    f32 s;
+    s16* to;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801115BC_37CCBC_MinigameParkSetup);
+    D_8011392C_37F02C_MinigameParkSetup = 0;
+    D_8011392A_37F02A_MinigameParkSetup = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x900F8), 0, 1);
+    func_8001A788_1B388(D_8011392A_37F02A_MinigameParkSetup, 1);
+    espPosSet(D_8011392A_37F02A_MinigameParkSetup, 160, 120);
+    espDispOff(D_8011392A_37F02A_MinigameParkSetup);
+    D_80113864_37EF64_MinigameParkSetup = 160;
+    D_80113866_37EF66_MinigameParkSetup = 120;
+    D_80113868_37EF68_MinigameParkSetup = 10;
+    omAddPrcObj(func_801115BC_37CCBC_MinigameParkSetup, 0x3F00, 0x100, 0);
+    while (1) {
+        HuPrcVSleep();
+        if (D_8011392C_37F02C_MinigameParkSetup != 0) {
+            if (last != D_8011386A_37EF6A_MinigameParkSetup[0] && D_8011386A_37EF6A_MinigameParkSetup[0] != -1) {
+                x0 = D_80113864_37EF64_MinigameParkSetup;
+                y0 = D_80113866_37EF66_MinigameParkSetup;
+                to = D_80113860_37EF60_MinigameParkSetup[D_8011386A_37EF6A_MinigameParkSetup[0]];
+                dx = to[0] - x0;
+                dy = to[1] - y0;
+                for (i = 1; i <= D_80113868_37EF68_MinigameParkSetup; i++) {
+                    s = HuMathSin(90.0f / D_80113868_37EF68_MinigameParkSetup * i);
+                    D_80113864_37EF64_MinigameParkSetup = x0 + dx * s;
+                    D_80113866_37EF66_MinigameParkSetup = y0 + dy * s;
+                    espPosSet(D_8011392A_37F02A_MinigameParkSetup, D_80113864_37EF64_MinigameParkSetup,
+                              D_80113866_37EF66_MinigameParkSetup);
+                    HuPrcVSleep();
+                }
+                last = D_8011386A_37EF6A_MinigameParkSetup[0];
+            }
+        } else {
+            last = D_8011386A_37EF6A_MinigameParkSetup[0];
+        }
+        espPosSet(D_8011392A_37F02A_MinigameParkSetup, D_80113864_37EF64_MinigameParkSetup, D_80113866_37EF66_MinigameParkSetup);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011170C_37CE0C_MinigameParkSetup);
+/* Fades the cursor in (4 frames) when D_8011392C turns on, out when it turns off. */
+void func_801115BC_37CCBC_MinigameParkSetup(void) {
+    s16 shown = 0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111744_37CE44_MinigameParkSetup);
+    while (1) {
+        HuPrcVSleep();
+        if (shown == D_8011392C_37F02C_MinigameParkSetup) {
+            continue;
+        }
+        if (D_8011392C_37F02C_MinigameParkSetup != 0) {
+            espDispOn(D_8011392A_37F02A_MinigameParkSetup);
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_8011392A_37F02A_MinigameParkSetup, i * 63.75f);
+                HuPrcVSleep();
+            }
+        } else {
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_8011392A_37F02A_MinigameParkSetup, 255.0f - i * 63.75f);
+                HuPrcVSleep();
+            }
+            espDispOff(D_8011392A_37F02A_MinigameParkSetup);
+        }
+        shown = D_8011392C_37F02C_MinigameParkSetup;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111750_37CE50_MinigameParkSetup);
+/* Moves the cursor to slot i. */
+void func_8011170C_37CE0C_MinigameParkSetup(s16 i) {
+    D_80113864_37EF64_MinigameParkSetup = D_80113860_37EF60_MinigameParkSetup[i][0];
+    D_80113866_37EF66_MinigameParkSetup = D_80113860_37EF60_MinigameParkSetup[i][1];
+    D_8011386A_37EF6A_MinigameParkSetup[0] = i;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011175C_37CE5C_MinigameParkSetup);
+/* Sets the cursor's slot positions. */
+void func_80111744_37CE44_MinigameParkSetup(s16 (*slots)[2]) {
+    D_80113860_37EF60_MinigameParkSetup = slots;
+}
+
+/* Sets the cursor's glide time in frames. */
+void func_80111750_37CE50_MinigameParkSetup(s16 frames) {
+    D_80113868_37EF68_MinigameParkSetup = frames;
+}
+
+/* Sets the cursor's slot (glides there). */
+void func_8011175C_37CE5C_MinigameParkSetup(s16 i) {
+    D_8011386A_37EF6A_MinigameParkSetup[0] = i;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111768_37CE68_MinigameParkSetup);
 

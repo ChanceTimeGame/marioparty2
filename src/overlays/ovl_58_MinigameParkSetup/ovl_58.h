@@ -255,11 +255,11 @@ extern s16 D_80113844_37EF44_MinigameParkSetup[3];
 extern s16 D_8011384A_37EF4A_MinigameParkSetup[3];
 extern s32 D_80113850_37EF50_MinigameParkSetup[2];
 extern s32 D_80113858_37EF58_MinigameParkSetup[2];
-extern s32 D_80113860_37EF60_MinigameParkSetup;
-extern s16 D_80113864_37EF64_MinigameParkSetup;
-extern s16 D_80113866_37EF66_MinigameParkSetup;
-extern s16 D_80113868_37EF68_MinigameParkSetup;
-extern s16 D_8011386A_37EF6A_MinigameParkSetup[3];
+extern s16 (*D_80113860_37EF60_MinigameParkSetup)[2]; /* 58-E: cursor slot positions (80111744) */
+extern s16 D_80113864_37EF64_MinigameParkSetup; /* 58-E: cursor x */
+extern s16 D_80113866_37EF66_MinigameParkSetup; /* 58-E: cursor y */
+extern s16 D_80113868_37EF68_MinigameParkSetup; /* 58-E: cursor glide frames */
+extern s16 D_8011386A_37EF6A_MinigameParkSetup[3]; /* 58-E: [0] cursor slot (-1 none) */
 extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s32 D_80113878_37EF78_MinigameParkSetup[5];
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
@@ -377,7 +377,7 @@ void func_80110B98_37C298_MinigameParkSetup(s16, s16, s16, void*);
 void func_80111328_37CA28_MinigameParkSetup(void);
 void func_801115BC_37CCBC_MinigameParkSetup(void);
 void func_8011170C_37CE0C_MinigameParkSetup(s16);
-void func_80111744_37CE44_MinigameParkSetup(s16*);
+void func_80111744_37CE44_MinigameParkSetup(s16 (*slots)[2]);
 void func_80111750_37CE50_MinigameParkSetup(s16);
 void func_8011175C_37CE5C_MinigameParkSetup(s16);
 void func_80111768_37CE68_MinigameParkSetup(void);
