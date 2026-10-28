@@ -223,7 +223,7 @@ extern s32 D_80113838_3904E8_name_5B; /* 8010DCAC 8010DF24 80110AF8 80112094 */
 extern s16 D_8011383C_3904EC_name_5B[6]; /* 8010E618 8010ED80 */
 extern s32 D_80113848_3904F8_name_5B[7]; /* 8010E618 8010ED80 */
 extern s16 D_80113864_390514_name_5B[13]; /* 8010ED80 */
-extern s16 D_8011387E_39052E_name_5B[13]; /* 8010F734 */
+/* D_8011387E: see D_8011387C (5B-E section) */
 extern s16 D_80113898_390548_name_5B[4]; /* 80110908 80110AF8 80112094 */
 
 /* ---- 5B .bss (asm, ovl_5B_bss.bss.s) ---- */
@@ -354,5 +354,12 @@ void func_80110908_38D5B8_name_5B(void);
 void func_80110AF8_38D7A8_name_5B(void);
 void func_80112094_38ED44_name_5B(s32 arg0);
 void func_80112304_38EFB4_name_5B(void);
+
+/* 5B-E */
+
+/* 8010F734's minigame per record window (s32 words 0x1A, 0x1B, 0x1E, 0x28, 0x34 x3; read as
+   (s16) low halves, retail lh +2). The symbol is an undefined_syms.txt alias: splat's label is
+   the +2 one, D_8011387E, and the word's first half ends D_80113864's block. */
+extern s32 D_8011387C_39052C_name_5B[7];
 
 #endif

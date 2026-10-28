@@ -53,7 +53,182 @@ const char D_801139C8_390678_name_5B[] = "\x05%d\x05";
 __asm__(".section .rodata");
 const char D_801139D0_390680_name_5B[] = "\x05%02d\x05";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010F734_38C3E4_name_5B);
+s32 func_8010F734_38C3E4_name_5B(void) {
+    s16 win[7];
+    char buf[21][32];
+    u16 grp;
+    s16 spr;
+    s16 i;
+    s16 j;
+    s16 t;
+    s16 hi;
+    s16 rest;
+    s16 mid;
+    s32 w;
+    f32 val;
+    s16 win1;
+    s16 win2;
+    s16 btn;
+    f32 fade;
+
+    grp = func_8001A2F8_1AEF8(0x90052);
+    spr = func_8001AAAC_1B6AC(grp, 0, 1);
+    espPosSet(spr, 160, 38);
+    func_8001A6BC_1B2BC(spr, 0);
+    for (i = 0; i < 7; i++) {
+        win[i] = w = func_800888A8_894A8(54, i * 17 + 58, 260, 22, 0, 8);
+        func_80089284_89E84(w, 0x10020, 0x10020);
+        func_80089A7C_8A67C(w, 5);
+        func_80089B2C_8A72C(w, 0);
+        func_80089BBC_8A7BC(w, 0);
+        func_80089A48_8A648(w, 0);
+        func_80089C78_8A878(w, 1);
+        func_80089CAC_8A8AC(w, 4, 0, 160, 0);
+        func_80089DA0_8A9A0(w, 192, 192, 192);
+        if (func_80067F4C_68B4C((s16)D_8011387C_39052C_name_5B[i]) == 0) {
+            func_800890CC_89CCC(w, 0x3A2, -1, -1);
+        } else {
+            switch (i) {
+            case 0:
+                t = func_800680D4_68CD4(1);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 3600);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 3600;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 60);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 60;
+                rest = rest * (1.0f / 60.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            case 1:
+                t = func_800680D4_68CD4(2);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 3600);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 3600;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 60);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 60;
+                rest = rest * (1.0f / 60.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            case 2:
+                t = func_800680D4_68CD4(3);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 3600);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 3600;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 60);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 60;
+                rest = rest * (1.0f / 60.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            case 3:
+                t = func_800680D4_68CD4(4);
+                if (t == 0) {
+                    t = 0x1400;
+                }
+                hi = t >> 8;
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, t & 0xFF);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                break;
+            case 4:
+                t = func_800680D4_68CD4(5);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 1800);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 1800;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 30);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 30;
+                rest = rest * (1.0f / 30.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            case 5:
+                t = func_800680D4_68CD4(6);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 1800);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 1800;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 30);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 30;
+                rest = rest * (1.0f / 30.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            case 6:
+                t = func_800680D4_68CD4(7);
+                sprintf(buf[i * 3], D_801139C8_390678_name_5B, hi = t / 1800);
+                func_80089308_89F08(w, buf[i * 3], 0);
+                rest = t - hi * 1800;
+                sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, mid = rest / 30);
+                func_80089308_89F08(w, buf[i * 3 + 1], 1);
+                rest = rest - mid * 30;
+                rest = rest * (1.0f / 30.0f) * 100.0f;
+                sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, rest);
+                func_80089308_89F08(w, buf[i * 3 + 2], 2);
+                break;
+            }
+            func_800890CC_89CCC(w, i + 0x3A3, -1, -1);
+        }
+    }
+    win1 = func_80110770_38D420_name_5B(60, 184);
+    win2 = func_8011083C_38D4EC_name_5B(60, 196);
+    HuPrcVSleep();
+    func_8008D6F0_8E2F0(win1);
+    func_8008D6F0_8E2F0(win2);
+    for (i = 0; i < 6; i++) {
+        fade = i * 51.0f;
+        func_8001A6BC_1B2BC(spr, fade);
+        for (j = 0; j < 7; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)fade);
+        }
+        func_80089BBC_8A7BC(win1, (s16)fade);
+        func_80089BBC_8A7BC(win2, (s16)fade);
+        HuPrcVSleep();
+    }
+    while (1) {
+        btn = ContBtnTrg[D_80114862_391512_name_5B] & 0x4003;
+        if (btn == 0) {
+            if (ContStkX[D_80114862_391512_name_5B] < -30) {
+                btn = 2;
+            } else if (ContStkX[D_80114862_391512_name_5B] > 30) {
+                btn = 1;
+            } else {
+                HuPrcVSleep();
+                continue;
+            }
+        }
+        break;
+    }
+    if (btn & 0x4000) {
+        PlaySound(4);
+    } else {
+        PlaySound(1);
+    }
+    for (i = 1; i < 6; i++) {
+        fade = i * -50.0f;
+        func_8001A6BC_1B2BC(spr, fade);
+        for (j = 0; j < 7; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)fade);
+        }
+        func_80089BBC_8A7BC(win1, (s16)fade);
+        func_80089BBC_8A7BC(win2, (s16)fade);
+        HuPrcVSleep();
+    }
+    func_8001AC44_1B844(spr);
+    SprAnimKill(grp);
+    for (i = 0; i < 7; i++) {
+        func_8008CCA8_8D8A8(win[i]);
+    }
+    func_8008CCA8_8D8A8(win1);
+    func_8008CCA8_8D8A8(win2);
+    return btn;
+}
 
 #ifdef NON_MATCHING
 /* Register allocation (the window, the string pointers) and the input loop's copy of the
@@ -113,18 +288,17 @@ s32 func_801101E8_38CE98_name_5B(void) {
     }
     while (1) {
         btn = ContBtnTrg[D_80114862_391512_name_5B] & 0x4003;
-        if (btn != 0) {
-            break;
+        if (btn == 0) {
+            if (ContStkX[D_80114862_391512_name_5B] < -30) {
+                btn = 2;
+            } else if (ContStkX[D_80114862_391512_name_5B] > 30) {
+                btn = 1;
+            } else {
+                HuPrcVSleep();
+                continue;
+            }
         }
-        if (ContStkX[D_80114862_391512_name_5B] < -30) {
-            btn = 2;
-            break;
-        }
-        if (ContStkX[D_80114862_391512_name_5B] > 30) {
-            btn = 1;
-            break;
-        }
-        HuPrcVSleep();
+        break;
     }
     if (btn & 0x4000) {
         PlaySound(4);
