@@ -618,7 +618,137 @@ void func_8010DF24_38ABD4_name_5B(void) {
 __asm__(".section .rodata");
 const char D_801139C0_390670_name_5B[] = "%d";
 
+/* Records page 0: the six boards (D_8011383C order; their names D_80113848) with each board's
+   record GwCommon.boardRecord[b][0] (capped at 999, right-aligned in 3 with 0x1A); the last board
+   only when D_80114740 is set. Fades in, waits for B or C-left/C-right (or the stick past 30),
+   fades out (the alpha goes negative: retail's (s16)(i * -50) wraps to 206..6) and returns the
+   button (0x4000, 2, 1). */
+#ifdef NON_MATCHING
+/* NON_MATCHING: register allocation in the first two loops (retail keeps the sprite and window
+   ids in fewer callee-saved registers); masked 17. */
+s32 func_8010E618_38B2C8_name_5B(void) {
+    s16 win[6];
+    char text[6][8];
+    char buf[8];
+    s16 anim[6];
+    u16 spr[6];
+    s16 titleAnim;
+    u16 sp;
+    s32 w;
+    u16 title;
+    s16 i;
+    s16 j;
+    s16 k;
+    s16 c;
+    s16 len;
+    s16 n;
+    s16 left;
+    s16 right;
+    s32 btn;
+    f32 alpha;
+
+    titleAnim = func_8001A2F8_1AEF8(0x9004E);
+    title = func_8001AAAC_1B6AC(titleAnim, 0, 1);
+    espPosSet(title, 160, 38);
+    func_8001A6BC_1B2BC(title, 0);
+    for (i = 0; i < 6; i++) {
+        anim[i] = func_8001A2F8_1AEF8(D_80113848_3904F8_name_5B[i]);
+        spr[i] = func_8001AAAC_1B6AC(anim[i], 0, 1);
+        sp = spr[i];
+        espPosSet(sp, 54, i * 23 + 59);
+        func_8001A6BC_1B2BC(sp, 0);
+    }
+    for (i = 0; i < 6; i++) {
+        w = win[i] = func_800888A8_894A8(84, i * 23 + 49, 220, 20, 0, 8);
+        func_80089A7C_8A67C(w, 5);
+        func_80089284_89E84(w, 0x10020, 0x10020);
+        func_80089B2C_8A72C(w, 0);
+        func_80089BBC_8A7BC(w, 0);
+        func_80089A48_8A648(w, 0);
+        func_80089C78_8A878(w, 1);
+        func_80089DA0_8A9A0(w, 0xC0, 0xC0, 0xC0);
+        n = D_800F8C60.boardRecord[D_8011383C_3904EC_name_5B[i]][0];
+        if ((s16)D_800F8C60.boardRecord[D_8011383C_3904EC_name_5B[i]][0] >= 1000) {
+            n = 999;
+        }
+        sprintf(buf, D_801139C0_390670_name_5B, n);
+        len = func_800A5610_A6210(buf);
+        k = 0;
+        for (c = 0; c < 3 - len; c++) {
+            text[i][k++] = 0x1A;
+        }
+        for (c = 0; c < len; c++) {
+            text[i][k++] = buf[c];
+        }
+        text[i][k] = 0;
+        func_80089308_89F08(w, text[i], 0);
+        func_800890CC_89CCC(w, i + 0x52E, -1, -1);
+    }
+    if (D_80114740_3913F0_name_5B == 0) {
+        espDispOff(spr[5]);
+        func_8008D5D8_8E1D8(win[5]);
+    }
+    left = func_80110770_38D420_name_5B(60, 184);
+    right = func_8011083C_38D4EC_name_5B(60, 196);
+    HuPrcVSleep();
+    func_8008D6F0_8E2F0(left);
+    func_8008D6F0_8E2F0(right);
+    for (i = 0; i < 6; i++) {
+        alpha = i * 51.0f;
+        func_8001A6BC_1B2BC(title, alpha);
+        for (j = 0; j < 6; j++) {
+            func_8001A6BC_1B2BC(spr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)alpha);
+        }
+        func_80089BBC_8A7BC(left, (s16)alpha);
+        func_80089BBC_8A7BC(right, (s16)alpha);
+        HuPrcVSleep();
+    }
+    while (1) {
+        btn = ContBtnTrg[D_80114862_391512_name_5B] & 0x4003;
+        if (btn != 0) {
+            break;
+        }
+        if (ContStkX[D_80114862_391512_name_5B] < -30) {
+            btn = 2;
+            break;
+        }
+        if (ContStkX[D_80114862_391512_name_5B] > 30) {
+            btn = 1;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    PlaySound((btn & 0x4000) ? 4 : 1);
+    for (i = 1; i < 6; i++) {
+        alpha = i * -50.0f;
+        func_8001A6BC_1B2BC(title, alpha);
+        for (j = 0; j < 6; j++) {
+            func_8001A6BC_1B2BC(spr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)alpha);
+        }
+        func_80089BBC_8A7BC(left, (s16)alpha);
+        func_80089BBC_8A7BC(right, (s16)alpha);
+        HuPrcVSleep();
+    }
+    func_8001AC44_1B844(title);
+    SprAnimKill(titleAnim);
+    for (i = 0; i < 6; i++) {
+        func_8008CCA8_8D8A8(win[i]);
+        func_8001AC44_1B844(spr[i]);
+        SprAnimKill(anim[i]);
+    }
+    func_8008CCA8_8D8A8(left);
+    func_8008CCA8_8D8A8(right);
+    return btn;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010E618_38B2C8_name_5B);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010ED80_38BA30_name_5B);
 

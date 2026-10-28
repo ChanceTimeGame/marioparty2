@@ -355,6 +355,8 @@ void func_80112304_38EFB4_name_5B(void);
 
 /* 5B-D */
 
+#include "game/gamework.h"
+
 /* main 3D6A0's texture-animation slot (src/21920.c's TexAnimSlot; D_800FD7F8 points at them). */
 typedef struct TexAnimSlot {
     /* 0x00 */ s16 unk_00; /* frame */
