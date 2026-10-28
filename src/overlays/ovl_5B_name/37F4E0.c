@@ -1133,7 +1133,153 @@ void func_801068C4_383574_name_5B(void) {
     }
 }
 
+/* The decoration sprites (D_80113354, file 0 ends; entry 8 shows the cursor's choice's picture
+   from D_8011341C, whose [9], the continue choice, is the saved game's board). D_80113A12: 0
+   makes them and pops them in, 1 grows and fades them out and frees them, 2 keeps them wobbling
+   and swaps entry 8's picture when the cursor moves. */
+#ifdef NON_MATCHING
+/* Logic and registers otherwise match; the KMC assembler puts a nop before each mul.s that
+   follows the two HuMathSin calls in the pop-in loop (retail has none there), and `state` takes
+   s5 instead of s4. */
+void func_80106D2C_3839DC_name_5B(void) {
+    s16 grp[16];
+    s16 spr[16];
+    s16 phase[16];
+    f32 pos[16][2];
+    f32 scale[16][2];
+    Ovl5BSprDef* def;
+    f32 sx;
+    f32 sy;
+    f32 a;
+    s16 count;
+    s16 prev;
+    s16 state;
+    s16 i;
+    s16 j;
+    s16 k;
+
+    count = 0;
+    prev = -1;
+    D_80113A12_3906C2_name_5B = -1;
+    state = -1;
+    if (_CheckFlag(0x40)) {
+        D_8011341C_3900CC_name_5B[9] = D_8011341C_3900CC_name_5B[func_80106868_383518_name_5B(GwSystem.current_board_index)];
+    }
+    while (1) {
+        HuPrcVSleep();
+        switch (D_80113A12_3906C2_name_5B) {
+        case 0:
+            if (state == -1) {
+                prev = D_801148A4_391554_name_5B;
+                for (i = 0, def = D_80113354_390004_name_5B; def->file != 0; i++, def = &D_80113354_390004_name_5B[i]) {
+                    if (i == 8) {
+                        grp[8] = func_8001A2F8_1AEF8(D_8011341C_3900CC_name_5B[D_801148A4_391554_name_5B]);
+                    } else {
+                        grp[i] = func_8001A2F8_1AEF8(def->file);
+                    }
+                    spr[i] = func_8001AAAC_1B6AC(grp[i], 0, 1);
+                    func_8001A6BC_1B2BC(spr[i], 0x100);
+                    espDispOff(spr[i]);
+                    pos[i][0] = def->x;
+                    pos[i][1] = def->y;
+                    scale[i][0] = def->sx;
+                    scale[i][1] = def->sy;
+                    func_8001A91C_1B51C(spr[i], scale[i][0], scale[i][1]);
+                    espPosSet(spr[i], pos[i][0], pos[i][1]);
+                    func_8001A96C_1B56C(spr[i], 0xFF, 0xFF, 0xFF);
+                    phase[i] = i * 90 + i * 5;
+                }
+                count = i;
+                for (i = 0; i < 3; i++) {
+                    def = &D_80113354_390004_name_5B[i];
+                    espDispOn(spr[i]);
+                    sx = def->sx;
+                    sy = def->sy;
+                    for (j = 0; j < 3; j++) {
+                        scale[i][0] = sx * HuMathSin(j * 45.0f);
+                        scale[i][1] = sy * HuMathSin(j * 45.0f);
+                        func_8001A91C_1B51C(spr[i], scale[i][0], scale[i][1]);
+                        for (k = 0; k < i; k++) {
+                            espPosSet(spr[k], pos[k][0] + HuMathSin(phase[k]) * 2.0f,
+                                      func_800B7890_B8490(phase[k] * 2) * 2.0f + pos[k][1]);
+                            phase[k] += 10;
+                            if (phase[k] > 360) {
+                                phase[k] -= 360;
+                            }
+                        }
+                        HuPrcVSleep();
+                    }
+                }
+                for (j = 0; j < 6; j++) {
+                    for (i = 3; i < count; i++) {
+                        def = &D_80113354_390004_name_5B[i];
+                        espDispOn(spr[i]);
+                        a = j;
+                        a *= 18.0f;
+                        scale[i][0] = HuMathSin(a) * def->sx;
+                        scale[i][1] = HuMathSin(a) * def->sy;
+                        func_8001A91C_1B51C(spr[i], scale[i][0], scale[i][1]);
+                    }
+                    for (k = 0; k < count; k++) {
+                        espPosSet(spr[k], pos[k][0] + HuMathSin(phase[k]) * 2.0f,
+                                  func_800B7890_B8490(phase[k] * 2) * 2.0f + pos[k][1]);
+                        phase[k] += 10;
+                        if (phase[k] > 360) {
+                            phase[k] -= 360;
+                        }
+                    }
+                    HuPrcVSleep();
+                }
+            }
+            D_80113A12_3906C2_name_5B = 2;
+            state = 2;
+            break;
+        case 1:
+            if (state != -1) {
+                for (i = 0; i < 6; i++) {
+                    for (j = 0; j < count; j++) {
+                        def = &D_80113354_390004_name_5B[j];
+                        func_8001A6BC_1B2BC(spr[j], (5 - i) * 51);
+                        scale[j][0] = i * 0.2f + def->sx;
+                        scale[j][1] = i * 0.2f + def->sy;
+                        func_8001A91C_1B51C(spr[j], scale[j][0], scale[j][1]);
+                    }
+                    HuPrcVSleep();
+                }
+                for (j = 0; j < count; j++) {
+                    func_8001AC44_1B844(spr[j]);
+                    SprAnimKill(grp[j]);
+                }
+            }
+            D_80113A12_3906C2_name_5B = -1;
+            state = -1;
+            break;
+        case 2:
+            if (prev != D_801148A4_391554_name_5B && D_8011341C_3900CC_name_5B[D_801148A4_391554_name_5B] != 0) {
+                func_8001AC44_1B844(spr[8]);
+                SprAnimKill(grp[8]);
+                grp[8] = func_8001A2F8_1AEF8(D_8011341C_3900CC_name_5B[D_801148A4_391554_name_5B]);
+                spr[8] = func_8001AAAC_1B6AC(grp[8], 0, 1);
+                func_8001A6BC_1B2BC(spr[8], 0x100);
+                func_8001A91C_1B51C(spr[8], scale[8][0], scale[8][1]);
+                espPosSet(spr[8], pos[8][0], pos[8][1]);
+            }
+            for (k = 0; k < count; k++) {
+                espPosSet(spr[k], pos[k][0] + HuMathSin(phase[k]) * 2.0f,
+                          func_800B7890_B8490(phase[k] * 2) * 2.0f + pos[k][1]);
+                phase[k] += 10;
+                if (phase[k] > 360) {
+                    phase[k] -= 360;
+                }
+            }
+            prev = D_801148A4_391554_name_5B;
+            break;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80106D2C_3839DC_name_5B);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80107748_3843F8_name_5B);
 
