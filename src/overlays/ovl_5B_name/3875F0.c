@@ -493,7 +493,126 @@ void func_8010DCAC_38A95C_name_5B(void) {
 __asm__(".section .rodata");
 const char D_801139B4_390664_name_5B[] = "item_hook";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010DF24_38ABD4_name_5B);
+/* The records screen: the host (model [23]) pulls out the record board (model [41], hung on its
+   "item_hook"; [21], [22] stop) while the title sprite D_801144A6 grows from the board to
+   (160, 28). Pages 0-3 (8010E618, 8010ED80, 8010F734, 801101E8; page 3 only once
+   func_80068040(0x38)) turn with C-left/C-right (2/1) and wrap; B (0x4000) puts the board away
+   and restores the host's motion. D_80113838 is 0 meanwhile (the idle process 8010DCAC waits). */
+void func_8010DF24_38ABD4_name_5B(void) {
+    u16 model = D_80114758_391408_name_5B[23];
+    s32 btn = 0;
+    s16 motion;
+    s16 frame;
+    s16 n;
+    s16 page;
+    f32 scale;
+    Vec2f scr;
+    Vec2f pos;
+    f32 mtx[4][4];
+
+    D_80113838_3904E8_name_5B = 0;
+    motion = func_80029E14_2AA14(model);
+    func_8002C628_2D228(D_80114758_391408_name_5B[41], model, D_801139B4_390664_name_5B);
+    func_80029E80_2AA80(D_80114758_391408_name_5B[21], 1, 1);
+    func_80029E80_2AA80(D_80114758_391408_name_5B[22], 1, 1);
+    func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[27]);
+    scale = 1.0f;
+    n = 0;
+    while (func_80029CE4_2A8E4(model) < func_80029D0C_2A90C(model)) {
+        frame = func_80029CE4_2A8E4(model);
+        if (frame == 40) {
+            PlaySound(0x9F);
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 4, 0);
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 0x4000, 0x4000);
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[22], 4, 4);
+        }
+        if (frame > 50 && frame < 90) {
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 0x4000, 0);
+            espDispOn(D_801144A6_391156_name_5B);
+            func_80023554_24154(model, func_80029CE4_2A8E4(model), D_801139B4_390664_name_5B, mtx);
+            func_8010A8F4_3875A4_name_5B(model, &scr, mtx);
+            espPosSet(D_801144A6_391156_name_5B, scr.unk_00, scr.unk_04);
+            func_8001A91C_1B51C(D_801144A6_391156_name_5B, scale, scale);
+            scale += 0.34f;
+        }
+        if (frame >= 90) {
+            pos.unk_00 = (160.0f - scr.unk_00) / 5.0f * n + scr.unk_00;
+            pos.unk_04 = (28.0f - scr.unk_04) / 5.0f * n + scr.unk_04;
+            espPosSet(D_801144A6_391156_name_5B, pos.unk_00, pos.unk_04);
+            n++;
+            func_8001A91C_1B51C(D_801144A6_391156_name_5B, scale, scale);
+            scale += 0.34f;
+        }
+        HuPrcVSleep();
+    }
+    espPosSet(D_801144A6_391156_name_5B, 160, 28);
+    func_8001A91C_1B51C(D_801144A6_391156_name_5B, 8.5f, 8.5f);
+    HuPrcVSleep();
+    page = 0;
+    while (1) {
+        switch (page) {
+            case 0:
+                btn = func_8010E618_38B2C8_name_5B();
+                break;
+            case 1:
+                btn = func_8010ED80_38BA30_name_5B();
+                break;
+            case 2:
+                btn = func_8010F734_38C3E4_name_5B();
+                break;
+            case 3:
+                btn = func_801101E8_38CE98_name_5B();
+                break;
+        }
+        HuPrcSleep(4);
+        if (btn & 0x4000) {
+            break;
+        }
+        if (btn & 2) {
+            page--;
+            if (page < 0) {
+                page = func_80068040_68C40(0x38) ? 3 : 2;
+            }
+        } else if (btn & 1) {
+            page++;
+            if (func_80068040_68C40(0x38)) {
+                page = (page < 4) ? page : 0;
+            } else {
+                page = (page < 3) ? page : 0;
+            }
+        }
+    }
+    func_80029C74_2A874(model, func_80029D0C_2A90C(model));
+    func_80029E80_2AA80(model, 4, 4);
+    while (func_80029CE4_2A8E4(model) != 0.0f) {
+        if (func_80029CE4_2A8E4(model) == 40.0f) {
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 0x4000, 0);
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 4, 4);
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[22], 4, 0);
+        }
+        if (func_80029CE4_2A8E4(model) == 50.0f) {
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 0x4000, 0x4000);
+            espDispOff(D_801144A6_391156_name_5B);
+        }
+        if (func_80029CE4_2A8E4(model) > 50.0f) {
+            func_800298A4_2A4A4(D_80114758_391408_name_5B[41], 0x4000, 0);
+            espDispOn(D_801144A6_391156_name_5B);
+            func_80023554_24154(model, func_80029CE4_2A8E4(model), D_801139B4_390664_name_5B, mtx);
+            func_8010A8F4_3875A4_name_5B(model, &scr, mtx);
+            espPosSet(D_801144A6_391156_name_5B, scr.unk_00, scr.unk_04);
+            func_8001A91C_1B51C(D_801144A6_391156_name_5B, scale, scale);
+            scale -= 0.34f;
+        }
+        HuPrcVSleep();
+    }
+    if (motion == D_801147D0_391480_name_5B[25] || motion == D_801147D0_391480_name_5B[26]) {
+        motion = D_801147D0_391480_name_5B[23];
+    }
+    func_80029BF0_2A7F0(model, motion, 0, 10, 2);
+    func_80029E80_2AA80(D_80114758_391408_name_5B[21], 1, 0);
+    func_80029E80_2AA80(D_80114758_391408_name_5B[22], 1, 0);
+    D_80113838_3904E8_name_5B = 1;
+}
 
 
 __asm__(".section .rodata");
