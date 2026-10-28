@@ -1285,8 +1285,74 @@ void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A1E4_386E94_name_5B);
 #endif
 
+/* The world point `depth` in front of camera view `view` that shows at screen position `scr`
+   (320x240). Retail flips y twice (240 - (240 - y)). No caller in the overlay. */
+#ifdef NON_MATCHING
+/* masked 0: float register allocation of the screen-ratio temporaries differs. */
+void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out) {
+    f32 mtx[4][4];
+    Vec pos;
+    Vec at;
+    Vec up;
+    Ovl5BCamView* v;
+    f32 rx;
+    f32 ry;
+    f32 zoom;
+    f32 h;
+    f32 w;
+    f32 x;
+    f32 y;
+
+    v = &D_80114734_3913E4_name_5B[view];
+    rx = v->rot.x;
+    ry = v->rot.y;
+    zoom = v->zoom;
+    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * zoom + v->at.x;
+    pos.y = -HuMathSin(rx) * zoom + v->at.y;
+    pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * zoom + v->at.z;
+    at = v->at;
+    up.x = HuMathSin(ry) * HuMathSin(rx);
+    up.y = func_800B7890_B8490(rx);
+    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+    depth = -depth;
+    func_800B1960_B2560(mtx, pos.x, pos.y, pos.z, at.x, at.y, at.z, up.x, up.y, up.z);
+    h = HuMathSin(D_80112694_38F344_name_5B / 2.0f) / func_800B7890_B8490(D_80112694_38F344_name_5B / 2.0f) * depth;
+    w = h * 1.3333334f;
+    x = 320.0f - scr->unk_00;
+    y = 240.0f - scr->unk_04;
+    x = x / 320.0f;
+    y = (240.0f - y) / 240.0f;
+    x = (w + w) * x - w;
+    y = (h + h) * y - h;
+    out->x = x * mtx[0][0] + y * mtx[0][1] + depth * mtx[0][2] + pos.x;
+    out->y = x * mtx[1][0] + y * mtx[1][1] + depth * mtx[1][2] + pos.y;
+    out->z = x * mtx[2][0] + y * mtx[2][1] + depth * mtx[2][2] + pos.z;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A53C_3871EC_name_5B);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A7F4_3874A4_name_5B);
+/* A point of model `model` in world space: its translation, rotation and scale applied under
+   `mtx`, then the rows of the product summed (retail sums all four rows). */
+void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]) {
+    f32 local[4][4];
+    f32 world[4][4];
+    HmfModel* m;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A8F4_3875A4_name_5B);
+    m = &D_800FC834_FD434[model];
+    func_800B1F50_B2B50(local, m->pos.x, m->pos.y, m->pos.z);
+    func_80025884_26484(local, m->rot.x, m->rot.y, m->rot.z);
+    func_80025830_26430(local, m->scale.x, m->scale.y, m->scale.z);
+    func_80025BA4_267A4(mtx, local, world);
+    out->x = world[0][0] + world[1][0] + world[2][0] + world[3][0];
+    out->y = world[0][1] + world[1][1] + world[2][1] + world[3][1];
+    out->z = world[0][2] + world[1][2] + world[2][2] + world[3][2];
+}
+
+/* The same point on screen (camera 0). */
+void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]) {
+    Vec pos;
+
+    func_8010A7F4_3874A4_name_5B(model, &pos, mtx);
+    Hu3DCam3DToScreen(0, &pos, out);
+}

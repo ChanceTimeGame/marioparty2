@@ -330,7 +330,7 @@ void func_801094F8_3861A8_name_5B(void);
 void func_80109B1C_3867CC_name_5B(void);
 void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs);
 void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model);
-void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, void *arg2, void *arg3);
+void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out); /* screen point to world */
 void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a point of the model in world space */
 void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */
 void func_8010A940_3875F0_name_5B(void);
