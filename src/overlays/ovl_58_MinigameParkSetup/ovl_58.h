@@ -86,6 +86,27 @@ typedef struct Ovl58Esprite {
     /* 0x0E */ char pad0E[0x16];
 } Ovl58Esprite; /* size = 0x24 */
 
+/* Level model positions copied whole from rodata (80107644): D_80113638 for three models,
+   D_8011365C for four. */
+typedef struct Ovl58Pos3 {
+    /* 0x00 */ Vec v[3];
+} Ovl58Pos3;
+typedef struct Ovl58Pos4 {
+    /* 0x00 */ Vec v[4];
+} Ovl58Pos4;
+
+/* A message argument list for func_801104B4 (D_8011368C: {0x18, character, 0}). */
+typedef struct Ovl58MsgArg {
+    /* 0x00 */ s8 v[3];
+} Ovl58MsgArg;
+
+/* An entry of the model table D_80112BBC (func_80112454 builds model `index` from it). */
+typedef struct Ovl58ModelEntry {
+    /* 0x00 */ char pad00[0x10];
+    /* 0x10 */ Vec pos;
+    /* 0x1C */ char pad1C[0xC];
+} Ovl58ModelEntry; /* size = 0x28 */
+
 /* D_801138C8 is s16 [6][2] (per character: model, ?), declared s32[6] above. */
 #define OVL58_CHAR_MODEL(c) (((s16(*)[2])D_801138C8_37EFC8_MinigameParkSetup)[c][0])
 
@@ -399,7 +420,7 @@ void func_80110278_37B978_MinigameParkSetup(void);
 void func_80110350_37BA50_MinigameParkSetup(s32);
 s32 func_801103A4_37BAA4_MinigameParkSetup(void);
 s32 func_8011042C_37BB2C_MinigameParkSetup(void);
-void func_801104B4_37BBB4_MinigameParkSetup(s32);
+void func_801104B4_37BBB4_MinigameParkSetup(s8* args); /* 58-B: message arguments (80107644 passes a second 0) */
 void func_801104DC_37BBDC_MinigameParkSetup(void);
 void func_801104FC_37BBFC_MinigameParkSetup(s16 model, s16 sprite, const char* hook); /* sprite to a model hook */
 void func_801105B8_37BCB8_MinigameParkSetup(s16, s16, s32, s32);

@@ -1656,7 +1656,335 @@ const char D_801136B4_37EDB4_MinigameParkSetup[] = "time35";
 __asm__(".section .rodata");
 const char D_801136BC_37EDBC_MinigameParkSetup[] = "time20";
 
+#ifdef NON_MATCHING
+/* masked ~230 of 1596 lines: register allocation and spill slots (frame 0x180 vs 0x178),
+   the model-table address arithmetic, the order of the two motion-time calls, and the
+   choice loop's exit test. Logic checked against the asm. */
+/* CPU level: `n` level models (3, or 4 in modes 1-3) lift their "cl_panel" signs in; the
+   host asks whether all CPUs share one level (func_801103A4: 0 all, 1 each, -1 B; mode 2
+   does not ask). The controlling pad picks a level with the stick and A (B steps back one
+   CPU). The levels go to D_80113804[player] and then D_80113958.cpuLevel. Returns 1 when
+   done, 0 on B. */
+s32 func_80107644_372D44_MinigameParkSetup(s16 n) {
+    Ovl58Quad models;
+    s16 done[4];
+    Ovl58Pos3 pos3;
+    Ovl58Pos4 pos4;
+    s16 grpPanel[4];
+    s16 sprPanel[4];
+    s16 sprIcon[4];
+    s16 grpIcon[4];
+    Vec base[4];
+    Vec pos[4];
+    Ovl58MsgArg msg;
+    s16 all;
+    s16 level;
+    s16 maxPlayers;
+    s16 result;
+    s16 cur;
+    s16 i;
+    s16 frame;
+    s16 sel;
+    f32 dir;
+    f32 t;
+    f32 angle;
+    f32 s;
+
+    models = *(Ovl58Quad*)D_801138F2_37EFF2_MinigameParkSetup;
+    pos3 = *(Ovl58Pos3*)D_80113638_37ED38_MinigameParkSetup;
+    pos4 = *(Ovl58Pos4*)D_8011365C_37ED5C_MinigameParkSetup;
+    all = 1;
+    level = -1;
+    msg = *(Ovl58MsgArg*)D_8011368C_37ED8C_MinigameParkSetup;
+    maxPlayers = 2;
+    if (D_80113816_37EF16_MinigameParkSetup != 2) {
+        maxPlayers = 4;
+    }
+    if (n == 3) {
+        for (i = 0; i < 3; i++) {
+            ((Ovl58ModelEntry*)D_80112BBC_37E2BC_MinigameParkSetup)[i + 33].pos = pos3.v[i];
+            func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 33, models.v[i]);
+        }
+    } else {
+        for (i = 0; i < 4; i++) {
+            ((Ovl58ModelEntry*)D_80112BBC_37E2BC_MinigameParkSetup)[i + 33].pos = pos4.v[i];
+            func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 33, models.v[i]);
+        }
+    }
+    for (i = 0; i < n; i++) {
+        func_800298A4_2A4A4(models.v[i], 4, 0);
+        if (D_80113782_37EE82_MinigameParkSetup == 0) {
+            func_8002C9C0_2D5C0(models.v[i], D_801139BA_37F0BA_MinigameParkSetup);
+        } else {
+            func_8002C9C0_2D5C0(models.v[i], D_801139BC_37F0BC_MinigameParkSetup);
+        }
+        func_80029C74_2A874(models.v[i], 30.0f);
+        func_80029E80_2AA80(models.v[i], 1, 1);
+        func_80029760_2A360(models.v[i], &base[i]);
+        pos[i] = base[i];
+        pos[i].z += 1250.0f;
+        func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+        done[i] = 0;
+    }
+    for (i = 0; i < n; i++) {
+        grpPanel[i] = func_8001A2F8_1AEF8(0x90088);
+        sprPanel[i] = func_8001AAAC_1B6AC(grpPanel[i], 0, 1);
+        func_8001A6BC_1B2BC(sprPanel[i], 0x100);
+        espPosSet(sprPanel[i], -200, -100);
+        grpIcon[i] = func_8001A2F8_1AEF8(D_80113468_37EB68_MinigameParkSetup[i]);
+        sprIcon[i] = func_8001AAAC_1B6AC(grpIcon[i], 0, 1);
+        func_8001A6BC_1B2BC(sprIcon[i], 0x100);
+        espPosSet(sprIcon[i], -200, -100);
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 4; i++) {
+        D_80113804_37EF04_MinigameParkSetup[i] = -1;
+    }
+    if (D_80113816_37EF16_MinigameParkSetup != 2) {
+        func_80110350_37BA50_MinigameParkSetup(0x67);
+    } else {
+        func_801104DC_37BBDC_MinigameParkSetup();
+    }
+    /* Lift the models in (or back from below after B on the next step). */
+    dir = -1.0f;
+    if (D_80113782_37EE82_MinigameParkSetup == 0) {
+        dir = 1.0f;
+    }
+    frame = 0;
+    while (1) {
+        for (i = 0; i < n; i++) {
+            if (dir > 0.0f) {
+                t = frame - (n - (i + 1)) * 10;
+            } else {
+                t = frame - i * 10;
+            }
+            if (t == 0.0f) {
+                PlaySound(0xAB);
+            }
+            if ((t > 0.0f) & (t <= 20.0f)) {
+                pos[i].z = (1.0f - HuMathSin(t * 4.5f)) * 1250.0f * dir + base[i].z;
+                if (t == 10.0f) {
+                    func_80029E80_2AA80(models.v[i], 1, 0);
+                    func_80029FE4_2ABE4(models.v[i], 1.5f);
+                }
+                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+            } else if ((done[i] == 0) & (t > 25.0f)) {
+                if (func_80029E14_2AA14(models.v[i]) != D_801139B2_37F0B2_MinigameParkSetup[0]) {
+                    if (func_80029D0C_2A90C(models.v[i]) <= func_80029CE4_2A8E4(models.v[i])) {
+                        PlaySound(0xB1);
+                        func_8002C9C0_2D5C0(models.v[i], D_801139B2_37F0B2_MinigameParkSetup[0]);
+                    }
+                } else if (func_80029D0C_2A90C(models.v[i]) <= func_80029CE4_2A8E4(models.v[i])) {
+                    func_80029E80_2AA80(models.v[i], 1, 1);
+                    done[i] = 1;
+                }
+            }
+        }
+        for (i = 0; i < n; i++) {
+            func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+            func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+            func_801105B8_37BCB8_MinigameParkSetup(i, sprPanel[i], 10, 20);
+        }
+        for (i = 0; i < n; i++) {
+            if (done[i] == 0) {
+                break;
+            }
+        }
+        if (i == n) {
+            break;
+        }
+        frame++;
+        HuPrcVSleep();
+    }
+    /* Choose. */
+    do {
+        result = 0;
+        if (D_80113816_37EF16_MinigameParkSetup != 2) {
+            result = func_801103A4_37BAA4_MinigameParkSetup();
+        }
+        if (result == -1) {
+            for (i = D_80113958_37F058_MinigameParkSetup.humans; i < 4; i++) {
+                D_80113804_37EF04_MinigameParkSetup[i] = -1;
+            }
+            result = 0;
+            break;
+        }
+        func_80107604_372D04_MinigameParkSetup();
+        D_8011393C_37F03C_MinigameParkSetup = 1;
+        func_8011170C_37CE0C_MinigameParkSetup(1);
+        D_8011392C_37F02C_MinigameParkSetup = 1;
+        HuPrcSleep(5);
+        cur = D_80113958_37F058_MinigameParkSetup.humans;
+        if (result != 0) {
+            /* One level per CPU: "<character>'s level?" */
+            all = 0;
+            msg.v[1] = D_80113958_37F058_MinigameParkSetup.character[cur];
+            func_801104B4_37BBB4_MinigameParkSetup(msg.v);
+            sel = 0x66;
+        } else {
+            all = 1;
+            sel = 0x68;
+        }
+        func_80110350_37BA50_MinigameParkSetup(sel);
+        func_801103A4_37BAA4_MinigameParkSetup();
+        angle = 0.0f;
+        while (1) {
+            if ((ContStkX[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkX[D_8011381A_37EF1A_MinigameParkSetup] : ContStkX[D_8011381A_37EF1A_MinigameParkSetup]) >= 31
+                || (ContStkY[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkY[D_8011381A_37EF1A_MinigameParkSetup] : ContStkY[D_8011381A_37EF1A_MinigameParkSetup]) >= 31) {
+                sel = func_80110678_37BD78_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup, n, -ContStkX[D_8011381A_37EF1A_MinigameParkSetup], ContStkY[D_8011381A_37EF1A_MinigameParkSetup]);
+                if (sel != -1) {
+                    PlaySound(1);
+                    func_8011175C_37CE5C_MinigameParkSetup(sel);
+                    angle = 0.0f;
+                    func_8001A91C_1B51C(sprIcon[D_8011393C_37F03C_MinigameParkSetup], 1.0f, 1.0f);
+                    HuPrcSleep(6);
+                    D_8011393C_37F03C_MinigameParkSetup = sel;
+                }
+            }
+            if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x4000) {
+                PlaySound(4);
+                cur--;
+                D_80113804_37EF04_MinigameParkSetup[cur] = -1;
+                if (cur < D_80113958_37F058_MinigameParkSetup.humans || all != 0) {
+                    if (all != 0) {
+                        for (i = D_80113958_37F058_MinigameParkSetup.humans; i < 4; i++) {
+                            D_80113804_37EF04_MinigameParkSetup[i] = -1;
+                        }
+                    }
+                    level = -1;
+                    if (D_80113816_37EF16_MinigameParkSetup != 2) {
+                        func_80110350_37BA50_MinigameParkSetup(0x67);
+                    }
+                    break;
+                }
+                if (all == 0) {
+                    msg.v[1] = D_80113958_37F058_MinigameParkSetup.character[cur];
+                    func_801104B4_37BBB4_MinigameParkSetup(msg.v);
+                    func_80110350_37BA50_MinigameParkSetup(0x66);
+                    func_801103A4_37BAA4_MinigameParkSetup();
+                }
+            }
+            if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x8000) {
+                PlaySound(2);
+                level = D_8011393C_37F03C_MinigameParkSetup;
+                if (all == 0) {
+                    D_80113804_37EF04_MinigameParkSetup[cur] = level;
+                } else {
+                    for (i = D_80113958_37F058_MinigameParkSetup.humans; i < maxPlayers; i++) {
+                        D_80113804_37EF04_MinigameParkSetup[i] = level;
+                    }
+                }
+                cur++;
+                if (cur >= 4 || all != 0) {
+                    result = 1;
+                    break;
+                }
+                msg.v[1] = D_80113958_37F058_MinigameParkSetup.character[cur];
+                func_801104B4_37BBB4_MinigameParkSetup(msg.v);
+                func_80110350_37BA50_MinigameParkSetup(0x66);
+                func_801103A4_37BAA4_MinigameParkSetup();
+            }
+            /* The chosen level's icon pulses. */
+            s = func_800B7890_B8490(angle) * 0.1f + 0.9f;
+            func_8001A91C_1B51C(sprIcon[D_8011393C_37F03C_MinigameParkSetup], s, s);
+            angle += 20.0f;
+            if (angle > 360.0f) {
+                angle -= 360.0f;
+            }
+            HuPrcVSleep();
+        }
+        func_8001A91C_1B51C(sprIcon[D_8011393C_37F03C_MinigameParkSetup], 1.0f, 1.0f);
+        D_8011392C_37F02C_MinigameParkSetup = 0;
+        HuPrcSleep(5);
+    } while (!((D_80113816_37EF16_MinigameParkSetup == 2) & (level == -1)) && result != 1);
+    PlaySound(0xB1);
+    for (i = 0; i < n; i++) {
+        func_80029E80_2AA80(models.v[i], 5, 4);
+        func_80029FE4_2ABE4(models.v[i], 2.0f);
+    }
+    if (result != 0) {
+        if (all != 0) {
+            /* One level for all: its model jumps. */
+            func_80029E80_2AA80(models.v[level], 1, 1);
+            for (frame = 0; frame < 30; frame++) {
+                if (frame == 15) {
+                    func_80029E80_2AA80(models.v[level], 5, 4);
+                    PlaySound(0xB1);
+                }
+                for (i = 0; i < n; i++) {
+                    func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+                    func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+                }
+                HuPrcVSleep();
+            }
+        } else {
+            for (frame = 0; frame < 15; frame++) {
+                for (i = 0; i < n; i++) {
+                    func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+                    func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+                }
+                HuPrcVSleep();
+            }
+        }
+        for (i = 0; i < n; i++) {
+            func_8002C9C0_2D5C0(models.v[i], D_801139BA_37F0BA_MinigameParkSetup);
+            func_80029FE4_2ABE4(models.v[i], 1.5f);
+        }
+        for (frame = 0; frame < 10; frame++) {
+            for (i = 0; i < n; i++) {
+                pos[i].z = base[i].z - frame * 100;
+                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+                func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+            }
+            HuPrcVSleep();
+        }
+        for (i = 0; i < maxPlayers; i++) {
+            D_80113958_37F058_MinigameParkSetup.cpuLevel[i] = D_80113804_37EF04_MinigameParkSetup[i];
+        }
+    } else {
+        for (i = D_80113958_37F058_MinigameParkSetup.humans; i < maxPlayers; i++) {
+            D_80113804_37EF04_MinigameParkSetup[i] = -1;
+        }
+        PlaySound(0xB1);
+        for (frame = 0; frame < 15; frame++) {
+            for (i = 0; i < n; i++) {
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+                func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+            }
+            HuPrcVSleep();
+        }
+        for (i = 0; i < n; i++) {
+            func_8002C9C0_2D5C0(models.v[i], D_801139BC_37F0BC_MinigameParkSetup);
+            func_80029FE4_2ABE4(models.v[i], 1.5f);
+        }
+        for (frame = 0; frame < 11; frame++) {
+            for (i = 0; i < n; i++) {
+                pos[i].z = (1.0f - func_800B7890_B8490(frame * 9.0f)) * 1250.0f + base[i].z;
+                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], sprPanel[i], D_80113690_37ED90_MinigameParkSetup);
+                func_80108BA8_3742A8_MinigameParkSetup(sprIcon[i]);
+            }
+            HuPrcVSleep();
+        }
+    }
+    for (i = 0; i < n; i++) {
+        func_800298A4_2A4A4(models.v[i], 4, 4);
+    }
+    for (i = 0; i < n; i++) {
+        func_8001AC44_1B844(sprPanel[i]);
+        SprAnimKill(grpPanel[i]);
+        func_8001AC44_1B844(sprIcon[i]);
+        SprAnimKill(grpIcon[i]);
+    }
+    for (i = 0; i < n; i++) {
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 33, models.v[i]);
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107644_372D44_MinigameParkSetup);
+#endif
 
 /* Place sprite `sprite` 24 below the panel origin D_801137B0. */
 void func_80108BA8_3742A8_MinigameParkSetup(s16 sprite) {
