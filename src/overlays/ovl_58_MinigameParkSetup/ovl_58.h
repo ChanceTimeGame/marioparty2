@@ -34,7 +34,7 @@ typedef struct Ovl58Setup {
     /* 0x13 */ u8 bonus;        /* flag 0x4E */
     /* 0x14 */ u8 padCount;     /* controllers inserted at start */
     /* 0x15 */ u8 unk15;
-    /* 0x16 */ s16 unk16;
+    /* 0x16 */ s16 unk16; /* 58-E: also D_8011396E, a separate scalar in 80112950 */
 } Ovl58Setup; /* size = 0x18 */
 
 /* Four s16 copied whole into a local (80103F38, 8010E2B8): D_801138E0 (the four player
@@ -261,9 +261,9 @@ extern s16 D_80113866_37EF66_MinigameParkSetup; /* 58-E: cursor y */
 extern s16 D_80113868_37EF68_MinigameParkSetup; /* 58-E: cursor glide frames */
 extern s16 D_8011386A_37EF6A_MinigameParkSetup[3]; /* 58-E: [0] cursor slot (-1 none) */
 extern f32* D_80113870_37EF70_MinigameParkSetup;
-extern s32 D_80113878_37EF78_MinigameParkSetup[5];
+extern s16 D_80113878_37EF78_MinigameParkSetup[9]; /* 58-E: minigames per category (80112950) */
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
-extern s32 D_80113898_37EF98_MinigameParkSetup[2];
+extern s16 D_80113898_37EF98_MinigameParkSetup; /* 58-E: count of D_80113C08's minigames */
 extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-E: byte per cursor slot; -1 = free (80110678 skips taken slots) */
 extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
 extern s16 D_801138B2_37EFB2_MinigameParkSetup;
@@ -280,15 +280,16 @@ extern s16 D_801138FE_37EFFE_MinigameParkSetup;
 extern s32 D_80113900_37F000_MinigameParkSetup[2];
 extern s16 D_80113908_37F008_MinigameParkSetup[3];
 extern s16 D_8011390E_37F00E_MinigameParkSetup[5];
-extern s16 D_80113918_37F018_MinigameParkSetup[7];
+extern s16 D_80113918_37F018_MinigameParkSetup[9]; /* 58-E: D_801139D8 count per category (D_80113926 = [7]) */
 extern s16 D_80113926_37F026_MinigameParkSetup[2];
 extern s16 D_8011392A_37F02A_MinigameParkSetup;
 extern s16 D_8011392C_37F02C_MinigameParkSetup; /* 1 while 80103F38 takes the player count */
 extern s32 D_80113930_37F030_MinigameParkSetup[3];
 extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel (player count - 1) */
-extern s16 D_80113940_37F040_MinigameParkSetup[7];
+extern s16 D_80113940_37F040_MinigameParkSetup[9]; /* 58-E: D_80113C08 count per category (D_8011394E = [7]) */
 extern s16 D_8011394E_37F04E_MinigameParkSetup[5];
 extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396F */
+extern s16 D_8011396E_37F06E_MinigameParkSetup; /* 58-E: = D_80113958.unk16; count of D_801139D8's minigames */
 extern s16 D_80113970_37F070_MinigameParkSetup[24]; /* 58-E: their first motions (D_80113986 = [11]) */
 extern s16 D_80113986_37F086_MinigameParkSetup[2];
 extern s16 D_8011398A_37F08A_MinigameParkSetup[11];
@@ -305,10 +306,10 @@ extern s16 D_801139BE_37F0BE_MinigameParkSetup;
 extern s32 D_801139C0_37F0C0_MinigameParkSetup;
 extern s16 D_801139C4_37F0C4_MinigameParkSetup;
 extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
-extern s32 D_801139D8_37F0D8_MinigameParkSetup[135];
+extern s16 D_801139D8_37F0D8_MinigameParkSetup[9][30]; /* 58-E: per category, the minigames func_80068040 rejects */
 extern f32 D_80113BF4_37F2F4_MinigameParkSetup; /* camera far */
 extern Vec D_80113BF8_37F2F8_MinigameParkSetup; /* 58-E: camera rotation copy (D_800FD474); + 4 bytes */
-extern s32 D_80113C08_37F308_MinigameParkSetup[135];
+extern s16 D_80113C08_37F308_MinigameParkSetup[9][30]; /* 58-E: per category, the minigames func_80068040 accepts */
 extern f32 D_80113E24_37F524_MinigameParkSetup; /* camera near */
 
 /* ---- 58 functions (source order) ---- */
