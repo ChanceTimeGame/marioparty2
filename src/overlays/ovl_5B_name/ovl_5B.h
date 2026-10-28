@@ -233,15 +233,12 @@ extern Ovl5BMusicCat D_801137BC_39046C_name_5B; /* the page added once D_80113F8
 extern Ovl5BMusicCat D_801137C8_390478_name_5B; /* the page added with flags 0xF, 0x10, 0x11 */
 extern Ovl5BMusicCat D_801137D4_390484_name_5B[2]; /* [0]: the page added with flag 0xB */
 extern s16 D_801137EC_39049C_name_5B; /* the music room's page (2 bytes follow) */
-extern s16 D_801137F0_3904A0_name_5B[1]; /* 8010CB88 */
-extern s16 D_801137F2_3904A2_name_5B[1]; /* 8010CB88 */
-extern s16 D_801137F4_3904A4_name_5B[28]; /* 8010CB88 */
-extern s32 D_8011382C_3904DC_name_5B[2]; /* 8010CB88 */
-extern s16 D_80113834_3904E4_name_5B[2]; /* 8010CB88 */
+extern s16 D_801137F0_3904A0_name_5B[17][2]; /* 8010CB88: the sound test pages (message, sound count), -1 ends; splat labels 37F2/37F4/382C are [0][1], [1], [15] */
+extern s16 D_80113834_3904E4_name_5B; /* 8010CB88: the sound test page */
 extern s32 D_80113838_3904E8_name_5B; /* 8010DCAC 8010DF24 80110AF8 80112094 */
 extern s16 D_8011383C_3904EC_name_5B[6]; /* 8010E618 8010ED80 */
 extern s32 D_80113848_3904F8_name_5B[7]; /* 8010E618 8010ED80 */
-extern s16 D_80113864_390514_name_5B[13]; /* 8010ED80 */
+extern s32 D_80113864_390514_name_5B[6]; /* 8010ED80: the character icons (sprite files) */
 /* D_8011387E: see D_8011387C (5B-E section) */
 extern s16 D_80113898_390548_name_5B[4]; /* 80110908 80110AF8 80112094 */
 
@@ -385,5 +382,39 @@ extern u16 D_801011FC_101DFC; /* main: set while the game resets */
 extern f32 D_800FA5BC_FB1BC[]; /* main: camera state (omOutView; [-1] is CRot.y) */
 extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
+
+/* 5B-D */
+
+#include "game/gamework.h"
+
+/* main 3D6A0's texture-animation slot (src/21920.c's TexAnimSlot; D_800FD7F8 points at them). */
+typedef struct TexAnimSlot {
+    /* 0x00 */ s16 unk_00; /* frame */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ char unk_08[2];
+    /* 0x0A */ u8 unk_0A;
+    /* 0x0B */ u8 unk_0B;
+} TexAnimSlot; /* size = 0xC */
+
+extern TexAnimSlot* D_800FD7F8_FE3F8;
+void func_8003EE44_3FA44(HmfData*); /* 3D6A0.c */
+void func_8003EEA4_3FAA4(HmfData*);
+
+/* What 80108788 passes its per-frame callback (8010D6E8 reads it). */
+typedef struct Ovl5BCamStep {
+    /* 0x00 */ s16 frame;
+    /* 0x02 */ s16 len;
+    /* 0x04 */ Vec from;
+    /* 0x10 */ Vec to;
+} Ovl5BCamStep;
+
+/* GwCommon.boardRecord[b] as 5B reads it (8 bytes per board; gamework.h declares u16[8][4]):
+   8010E618 shows the record, 8010ED80 the wins per character. */
+typedef struct Ovl5BBoardRecord {
+    /* 0x00 */ u16 record;
+    /* 0x02 */ u8 wins[6];
+} Ovl5BBoardRecord;
 
 #endif
