@@ -176,16 +176,14 @@ extern Ovl5BModelDef D_801129B0_38F660_name_5B[55]; /* the menu's models, file -
 extern f32 D_80112A3C_38F6EC_name_5B; /* = D_801129B0[3].pos.y (80107748) */
 extern f32 D_80112A40_38F6F0_name_5B; /* = D_801129B0[3].pos.z */
 extern s16 D_80113248_38FEF8_name_5B[10][2]; /* the menu choices' sprite offsets from the panel (x, y; 80105530); labels 324A, 325C are [0][1], [5] */
-extern s32 D_80113270_38FF20_name_5B[11]; /* 8010607C */
-extern u8 D_8011329C_38FF4C_name_5B; /* 8010607C */
-extern u8 D_8011329D_38FF4D_name_5B; /* 8010607C */
-extern u8 D_8011329E_38FF4E_name_5B[16]; /* 8010607C */
+extern u32 D_80113270_38FF20_name_5B[11]; /* each choice's sprite group (8010607C; 0 or -1: none) */
+extern u8 D_8011329C_38FF4C_name_5B[6][3]; /* the choice sprites' colour cycle (r, g, b; 8010607C reads [6] too, past the end) */
 extern s16 D_801132AE_38FF5E_name_5B; /* the panel's state (80105530: 0 coming in, 1 leaving, 2 shown) */
 extern s16 D_801132B0_38FF60_name_5B; /* the continue choice's sprite group (80105530) */
 extern u16 D_801132B2_38FF62_name_5B; /* its sprite */
-extern s32 D_801132B4_38FF64_name_5B; /* 801068C4 */
+extern s32 D_801132B4_38FF64_name_5B[10][2]; /* each choice's description message, [1] 80107748 (801068C4) */
 extern s32 D_801132B8_38FF68_name_5B[19]; /* 80107748 */
-extern s32 D_80113304_38FFB4_name_5B[20]; /* 801068C4 */
+extern s32 D_80113304_38FFB4_name_5B[10][2]; /* the same with a Koopa Kid host */
 extern s32 D_80113354_390004_name_5B[50]; /* 80106D2C */
 extern s32 D_8011341C_3900CC_name_5B[9]; /* 80106D2C */
 extern s32 D_80113440_3900F0_name_5B; /* 80106D2C */

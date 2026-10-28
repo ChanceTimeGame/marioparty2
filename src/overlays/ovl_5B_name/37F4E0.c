@@ -904,11 +904,234 @@ void func_80105530_3821E0_name_5B(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010607C_382D2C_name_5B);
+/* The menu choices' sprites (D_80113270, one sprite group per choice; 0 or -1: none, choice 5
+   only with a Koopa Kid host). D_801132AE: 0 makes them and places them at D_80114878, 1 frees
+   them, 2 animates them: the cursor's choice is shown, pulsing in size, alpha and a colour
+   cycling through D_8011329C; the continue sprite (choice 9) wobbles while it is chosen. */
+void func_8010607C_382D2C_name_5B(void) {
+    s16 spr[10];
+    s16 grp[10];
+    u16 sprite;
+    f32 wobble;
+    f32 amp;
+    f32 angle;
+    f32 scale;
+    u8 alpha;
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 t;
+    u8 k;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80106868_383518_name_5B);
+    angle = 0.0f;
+    wobble = 0.0f;
+    amp = wobble;
+    t = 0;
+    D_801132AE_38FF5E_name_5B = -1;
+    while (1) {
+        HuPrcVSleep();
+        switch (D_801132AE_38FF5E_name_5B) {
+        case 0:
+            for (i = 0; i < 10; i++) {
+                if (D_80113270_38FF20_name_5B[i] == -1 || D_80113270_38FF20_name_5B[i] == 0 ||
+                    (i == 5 && D_80114740_3913F0_name_5B == 0)) {
+                    spr[i] = -1;
+                } else {
+                    grp[i] = func_8001A2F8_1AEF8(D_80113270_38FF20_name_5B[i]);
+                    sprite = func_8001AAAC_1B6AC(grp[i], 0, 1);
+                    spr[i] = sprite;
+                    func_8001A6BC_1B2BC(sprite, 0x100);
+                    func_8001A788_1B388(sprite, 19000);
+                    espDispOff(sprite);
+                }
+            }
+            for (i = 0; i < 10; i++) {
+                if (spr[i] != -1) {
+                    espPosSet(spr[i], D_80114878_391528_name_5B[i][0], D_80114878_391528_name_5B[i][1]);
+                }
+            }
+            D_801132AE_38FF5E_name_5B = -1;
+            break;
+        case 1:
+            for (i = 0; i < 10; i++) {
+                if (spr[i] != -1) {
+                    func_8001AC44_1B844(spr[i]);
+                    SprAnimKill(grp[i]);
+                }
+            }
+            D_801132AE_38FF5E_name_5B = -1;
+            break;
+        case 2:
+            scale = HuMathSin(angle) * 0.2f + 1.0;
+            alpha = HuMathSin(angle + angle) * 255.0f;
+            angle += 5.0f;
+            if (angle > 90.0f) {
+                angle = 0.0f;
+            }
+            k = t / 20;
+            i = t - k * 20;
+            r = D_8011329C_38FF4C_name_5B[k][0] * 0.05f * i + D_8011329C_38FF4C_name_5B[k + 1][0] * 0.05f * (20 - i);
+            g = D_8011329C_38FF4C_name_5B[k][1] * 0.05f * i + D_8011329C_38FF4C_name_5B[k + 1][1] * 0.05f * (20 - i);
+            b = D_8011329C_38FF4C_name_5B[k][2] * 0.05f * i + D_8011329C_38FF4C_name_5B[k + 1][2] * 0.05f * (20 - i);
+            for (i = 0; i < 10; i++) {
+                if (i == 9) {
+                    if (D_801148A4_391554_name_5B != i) {
+                        amp -= 2.0f;
+                        if (amp < 0.0f) {
+                            amp = 0.0f;
+                        }
+                    } else {
+                        amp += 2.0f;
+                        if (amp > 20.0f) {
+                            amp = 20.0f;
+                        }
+                    }
+                    func_8001A9C0_1B5C0(D_801132B2_38FF62_name_5B, HuMathSin(wobble) * amp);
+                    wobble += 10.0f;
+                    if (wobble > 360.0f) {
+                        wobble -= 360.0f;
+                    }
+                } else if (spr[i] != -1) {
+                    if (i == D_801148A4_391554_name_5B) {
+                        espDispOn(spr[i]);
+                    } else {
+                        espDispOff(spr[i]);
+                    }
+                    func_8001A91C_1B51C(spr[i], scale, scale);
+                    func_8001A96C_1B56C(spr[i], r, g, b);
+                    func_8001A6BC_1B2BC(spr[i], alpha);
+                }
+            }
+            t++;
+            if (t > 100) {
+                t = 0;
+            }
+            break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801068C4_383574_name_5B);
+/* The board of a menu choice (0 for choice 0 and past 5). */
+s32 func_80106868_383518_name_5B(s16 arg0) {
+    switch (arg0) {
+    case 1:
+        return 1;
+    case 2:
+        return 2;
+    case 3:
+        return 3;
+    case 4:
+        return 4;
+    case 5:
+        return 5;
+    case 0:
+    default:
+        return 0;
+    }
+}
+
+/* The message window under the menu (D_80113A18). D_80113A10: 0 opens it (the saved game's
+   board, length and turn when flag 0x40 is set, and the continue question; D_8011269E becomes
+   the saved board when the player takes it), 1 closes it, 2 shows the cursor's choice's
+   description (D_801132B4, D_80113304 with a Koopa Kid host) whenever the cursor moves. */
+void func_801068C4_383574_name_5B(void) {
+    char buf[16];
+    s16 id;
+    s16 win = 0;
+    s16 prev = -1;
+
+    D_80113A10_3906C0_name_5B = -1;
+    while (1) {
+        HuPrcVSleep();
+        switch (D_80113A10_3906C0_name_5B) {
+        case 0:
+            id = func_8008DFC4_8EBC4(0x40, 0xC8, 3);
+            D_80113A18_3906C8_name_5B = id;
+            win = D_80113A18_3906C8_name_5B;
+            func_8008D59C_8E19C(id, 1 << D_80114862_391512_name_5B);
+            func_80089284_89E84(id, 0x20, 0x20);
+            func_8008E644_8F244(id, 0xF0);
+            func_8008E6CC_8F2CC(id, 10000);
+            func_8008E2DC_8EEDC(id, 1);
+            if (!_CheckFlag(0x40)) {
+                if (D_80114740_3913F0_name_5B == 0 || D_80114870_391520_name_5B != 0) {
+                    if (D_8011473E_3913EE_name_5B != 0) {
+                        func_800890CC_89CCC(win, 0xB9, -1, -1);
+                    } else {
+                        func_800890CC_89CCC(win, 0xC4, -1, -1);
+                    }
+                } else {
+                    PlaySound(0xBF);
+                    if (D_8011473E_3913EE_name_5B != 0) {
+                        func_800890CC_89CCC(win, 0xD9, -1, -1);
+                    } else {
+                        func_800890CC_89CCC(win, 0xD9, -1, -1);
+                    }
+                }
+            } else {
+                func_80089308_89F08(win, (char*)(GwSystem.current_board_index + 0xBE), 0);
+                func_80089308_89F08(win, (char*)(GwSystem.current_game_length + 0xBB), 1);
+                sprintf(buf, "%d", GwSystem.current_turn);
+                func_80089308_89F08(win, buf, 2);
+                if (D_80114740_3913F0_name_5B == 0 || D_80114870_391520_name_5B != 0) {
+                    func_800890CC_89CCC(win, 0xBA, -1, -1);
+                    while (func_8008BA30_8C630(win)) {
+                        HuPrcVSleep();
+                    }
+                    if (func_8008BB48_8C748(win, 0, 0) != 0) {
+                        func_800890CC_89CCC(win, 0xC4, -1, -1);
+                        func_80029BF0_2A7F0(D_80114758_391408_name_5B[0x2B], D_801147D0_391480_name_5B[0x2E], 0, 5, 0);
+                        D_80113A12_3906C2_name_5B = 0;
+                    } else {
+                        D_8011269E_38F34E_name_5B = GwSystem.current_board_index;
+                    }
+                } else {
+                    PlaySound(0xBF);
+                    if (D_801148A2_391552_name_5B != 0) {
+                        func_800890CC_89CCC(win, 0xD9, -1, -1);
+                    } else {
+                        func_800890CC_89CCC(win, 0xDA, -1, -1);
+                    }
+                    while (func_8008BA30_8C630(win)) {
+                        HuPrcVSleep();
+                    }
+                    if (func_8008BB48_8C748(win, 0, 0) != 0) {
+                        func_800890CC_89CCC(win, 0xDB, -1, -1);
+                    } else {
+                        D_8011269E_38F34E_name_5B = GwSystem.current_board_index;
+                    }
+                }
+            }
+            while (func_8008BA30_8C630(win)) {
+                HuPrcVSleep();
+            }
+            D_8011473E_3913EE_name_5B = 0;
+            D_80113A10_3906C0_name_5B = 2;
+            break;
+        case 1:
+            func_8008E4D0_8F0D0(win, 1);
+            func_8008E6AC_8F2AC(win);
+            D_80113A10_3906C0_name_5B = -1;
+            break;
+        case 2:
+            if (D_8011269E_38F34E_name_5B == -1) {
+                if (prev != D_801148A4_391554_name_5B) {
+                    if (D_80114740_3913F0_name_5B == 0 || D_80114870_391520_name_5B != 0) {
+                        func_800890CC_89CCC(win, D_801132B4_38FF64_name_5B[D_801148A4_391554_name_5B][0], -1, -1);
+                    } else {
+                        func_800890CC_89CCC(win, D_80113304_38FFB4_name_5B[D_801148A4_391554_name_5B][0], -1, -1);
+                    }
+                    while (func_8008BA30_8C630(win)) {
+                        HuPrcVSleep();
+                    }
+                }
+                prev = D_801148A4_391554_name_5B;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80106D2C_3839DC_name_5B);
 
