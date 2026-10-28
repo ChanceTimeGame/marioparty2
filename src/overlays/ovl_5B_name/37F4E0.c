@@ -920,21 +920,147 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801086E0_385390
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80108788_385438_name_5B);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80108F18_385BC8_name_5B);
+/* The menu's pointer sprite (D_801148A0): while D_8011473C is set it slides to the position
+   D_80113A14[D_80113A22] over D_80113A20 frames whenever D_80113A22 changes. Never returns. */
+void func_80108F18_385BC8_name_5B(void) {
+    s16 prev;
+    s16 i;
+    s16 x0;
+    s16 dx;
+    s16 y0;
+    s16 dy;
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801091EC_385E9C_name_5B);
+    prev = -1;
+    D_8011473C_3913EC_name_5B = 0;
+    D_801148A0_391550_name_5B = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x900F8), 0, 1);
+    func_8001A788_1B388(D_801148A0_391550_name_5B, 1);
+    espPosSet(D_801148A0_391550_name_5B, 160, 120);
+    espDispOff(D_801148A0_391550_name_5B);
+    D_80113A1C_3906CC_name_5B = 160;
+    D_80113A1E_3906CE_name_5B = 120;
+    D_80113A20_3906D0_name_5B = 10;
+    omAddPrcObj(func_801091EC_385E9C_name_5B, 0x3F00, 0x100, 0);
+    while (1) {
+        HuPrcVSleep();
+        if (D_8011473C_3913EC_name_5B != 0) {
+            if (prev != D_80113A22_3906D2_name_5B && D_80113A22_3906D2_name_5B != -1) {
+                if (D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][0] != D_80113A1C_3906CC_name_5B
+                    || D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][1] != D_80113A1E_3906CE_name_5B) {
+                    x0 = D_80113A1C_3906CC_name_5B;
+                    y0 = D_80113A1E_3906CE_name_5B;
+                    dx = D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][0] - x0;
+                    dy = D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][1] - y0;
+                    for (i = 1; i <= D_80113A20_3906D0_name_5B; i++) {
+                        s = HuMathSin(90.0f / D_80113A20_3906D0_name_5B * i);
+                        D_80113A1C_3906CC_name_5B = x0 + dx * s;
+                        D_80113A1E_3906CE_name_5B = y0 + dy * s;
+                        espPosSet(D_801148A0_391550_name_5B, D_80113A1C_3906CC_name_5B, D_80113A1E_3906CE_name_5B);
+                        HuPrcVSleep();
+                    }
+                }
+                prev = D_80113A22_3906D2_name_5B;
+            }
+        } else {
+            prev = D_80113A22_3906D2_name_5B;
+        }
+        espPosSet(D_801148A0_391550_name_5B, D_80113A1C_3906CC_name_5B, D_80113A1E_3906CE_name_5B);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010933C_385FEC_name_5B);
+/* Fades the pointer sprite in or out over five frames whenever D_8011473C changes. */
+void func_801091EC_385E9C_name_5B(void) {
+    s16 shown;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109374_386024_name_5B);
+    shown = 0;
+    while (1) {
+        HuPrcVSleep();
+        if (shown == D_8011473C_3913EC_name_5B) {
+            continue;
+        }
+        if (D_8011473C_3913EC_name_5B != 0) {
+            espDispOn(D_801148A0_391550_name_5B);
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_801148A0_391550_name_5B, i * 63.75f);
+                HuPrcVSleep();
+            }
+        } else {
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_801148A0_391550_name_5B, 255.0f - i * 63.75f);
+                HuPrcVSleep();
+            }
+            espDispOff(D_801148A0_391550_name_5B);
+        }
+        shown = D_8011473C_3913EC_name_5B;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109380_386030_name_5B);
+/* Points the pointer at choice n of the current position table. */
+void func_8010933C_385FEC_name_5B(s16 n) {
+    D_80113A1C_3906CC_name_5B = D_80113A14_3906C4_name_5B[n][0];
+    D_80113A1E_3906CE_name_5B = D_80113A14_3906C4_name_5B[n][1];
+    D_80113A22_3906D2_name_5B = n;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010938C_38603C_name_5B);
+void func_80109374_386024_name_5B(s16 (*pos)[2]) {
+    D_80113A14_3906C4_name_5B = pos;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109398_386048_name_5B);
+/* The pointer's slide length in frames. */
+void func_80109380_386030_name_5B(s16 frames) {
+    D_80113A20_3906D0_name_5B = frames;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109408_3860B8_name_5B);
+/* Moves the pointer to choice n (slides). */
+void func_8010938C_38603C_name_5B(s16 n) {
+    D_80113A22_3906D2_name_5B = n;
+}
+
+/* The menu's leaving object: once the menu is leaving (or the game is resetting), fades out
+   (unless D_8011269A) and hands over to 80109408. */
+void func_80109398_386048_name_5B(omObjData* obj) {
+    if (D_80112690_38F340_name_5B != 0 || D_801011FC_101DFC != 0) {
+        if (D_8011269A_38F34A_name_5B == 0) {
+            InitFadeOut(D_80113A1A_3906CA_name_5B, 8);
+            func_800794A8_7A0A8(15);
+        }
+        obj->func_ptr = func_80109408_3860B8_name_5B;
+    }
+}
+
+/* After the fade: goes to (D_80114850 1), calls (2) or returns to (otherwise) overlay
+   D_8011473A. */
+void func_80109408_3860B8_name_5B(omObjData* obj) {
+    u16 stat;
+
+    if (func_8008F618_90218() != 0) {
+        return;
+    }
+    if (D_801148A2_391552_name_5B != 0 && _CheckFlag(1)) {
+        func_8007DF5C_7EB5C();
+    }
+    func_8001AC44_1B844(D_801148A0_391550_name_5B);
+    func_8008CE5C_8DA5C();
+    stat = 0x14;
+    if (D_8011473A_3913EA_name_5B == 0x61) {
+        stat = 0x12;
+    }
+    if (D_8011473A_3913EA_name_5B == 0x58) {
+        stat |= 0x1000;
+    }
+    switch (D_80114850_391500_name_5B) {
+        case 2:
+            omOvlCallEx(D_8011473A_3913EA_name_5B, D_80114852_391502_name_5B, stat);
+            break;
+        case 1:
+            omOvlGotoEx(D_8011473A_3913EA_name_5B, D_80114852_391502_name_5B, stat);
+            break;
+        default:
+            omOvlReturnEx(1);
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801094F8_3861A8_name_5B);
 

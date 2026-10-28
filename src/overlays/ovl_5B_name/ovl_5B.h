@@ -230,13 +230,13 @@ extern s16 D_80113898_390548_name_5B[4]; /* 80110908 80110AF8 80112094 */
 
 extern s16 D_80113A10_3906C0_name_5B; /* 80105530 801068C4 */
 extern s16 D_80113A12_3906C2_name_5B;
-extern s32 D_80113A14_3906C4_name_5B; /* 80108F18 8010933C 80109374 */
+extern s16 (*D_80113A14_3906C4_name_5B)[2]; /* the pointer's position table (x, y per choice; 80109374) */
 extern s16 D_80113A18_3906C8_name_5B; /* the message window */
 extern s16 D_80113A1A_3906CA_name_5B; /* 80102830 80109398 */
-extern s16 D_80113A1C_3906CC_name_5B; /* 80108F18 8010933C */
-extern s16 D_80113A1E_3906CE_name_5B; /* 80108F18 8010933C */
-extern s16 D_80113A20_3906D0_name_5B; /* 80108F18 80109380 */
-extern s16 D_80113A22_3906D2_name_5B[7]; /* 80108F18 8010933C 8010938C */
+extern s16 D_80113A1C_3906CC_name_5B; /* the pointer sprite's x */
+extern s16 D_80113A1E_3906CE_name_5B; /* its y */
+extern s16 D_80113A20_3906D0_name_5B; /* its slide length in frames */
+extern s16 D_80113A22_3906D2_name_5B; /* the choice it points at (-1: none) */
 extern s32 D_80113A30_3906E0_name_5B[324]; /* 80112304 */
 extern s32 D_80113F40_390BF0_name_5B[6]; /* 80112304 */
 extern s32 D_80113F58_390C08_name_5B[1]; /* 80112304 */
@@ -271,7 +271,7 @@ extern s16 D_80114730_3913E0_name_5B[2]; /* 8010A940 8010ACBC 8010DCAC 80110908 
 extern Ovl5BCamView* D_80114734_3913E4_name_5B; /* the camera view table */
 extern s16 D_80114738_3913E8_name_5B; /* the current screen */
 extern s16 D_8011473A_3913EA_name_5B; /* the overlay to go to */
-extern s16 D_8011473C_3913EC_name_5B; /* 80105530 80108F18 801091EC 8010ACBC */
+extern s16 D_8011473C_3913EC_name_5B; /* the pointer sprite is shown (80108F18) */
 extern s16 D_8011473E_3913EE_name_5B; /* 80102C88 80105530 801068C4 */
 extern s16 D_80114740_3913F0_name_5B; /* 80102830 80102C88 80103B54 80103EB4 80105530 8010607C 801068C4 80107748 8010E618 8010ED80 */
 extern s16 D_80114742_3913F2_name_5B; /* 80102830 80102C88 8010ACBC */
@@ -291,7 +291,7 @@ extern Vec D_80114864_391514_name_5B;
 extern s16 D_80114870_391520_name_5B; /* 80102830 80102C88 80103B54 80103EB4 801068C4 80107748 */
 extern s16 D_80114872_391522_name_5B; /* the cursor's first choice (5 or 8) */
 extern s16 D_80114878_391528_name_5B[10][2]; /* menu choices' screen positions (x, y); label 87A is [0][1] */
-extern u16 D_801148A0_391550_name_5B; /* 80108F18 801091EC 80109408 */
+extern u16 D_801148A0_391550_name_5B; /* the pointer sprite */
 extern s16 D_801148A2_391552_name_5B; /* 80102830 80102C88 80103EB4 801068C4 80109408 */
 extern s16 D_801148A4_391554_name_5B; /* the menu cursor (choice 0-9) */
 
@@ -325,7 +325,7 @@ void func_80109374_386024_name_5B(s16 (*pos)[2]); /* stores D_80113A14 */
 void func_80109380_386030_name_5B(s16 arg0);
 void func_8010938C_38603C_name_5B(s16 arg0);
 void func_80109398_386048_name_5B(omObjData* obj);
-void func_80109408_3860B8_name_5B(void);
+void func_80109408_3860B8_name_5B(omObjData* obj);
 void func_801094F8_3861A8_name_5B(void);
 void func_80109B1C_3867CC_name_5B(void);
 void func_8010A0F0_386DA0_name_5B(s32 *arg0);
@@ -355,5 +355,9 @@ void func_80110908_38D5B8_name_5B(void);
 void func_80110AF8_38D7A8_name_5B(void);
 void func_80112094_38ED44_name_5B(s32 arg0);
 void func_80112304_38EFB4_name_5B(void);
+
+/* 5B-C */
+
+extern u16 D_801011FC_101DFC; /* main: set while the game resets */
 
 #endif
