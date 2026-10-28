@@ -1473,12 +1473,85 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111D8C_37D48C_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112360_37DA60_MinigameParkSetup);
+/* Loads the scene's models from table defs (ends at file -1) into D_801138B0, places them
+   (80112454) and starts each one's first motion. */
+void func_80112360_37DA60_MinigameParkSetup(s32* table) {
+    Ovl58ModelDef* def = (Ovl58ModelDef*)table;
+    Ovl58ModelDef* defs = def;
+    s16 i = 0;
+    s16 model;
 
+    while (def->file != -1) {
+        model = D_801138B0_37EFB0_MinigameParkSetup[i] = LoadFormFile(def->file, def->attr | 0x288);
+        func_80112454_37DB54_MinigameParkSetup((s32*)defs, i, model);
+        if ((D_80113970_37F070_MinigameParkSetup[i] = func_80029E14_2AA14(model)) != -1) {
+            func_80029E80_2AA80(model, -1, def->motionMode);
+        }
+        def++;
+        i++;
+    }
+}
+
+/* Places model as entry index of table: kind 1 as given (x5); kinds 3 and 2 rotated by
+   -/+119.289 degrees about two pivots. */
+#ifdef NON_MATCHING
+/* masked 0: retail negates sin's register in place (neg.s $f20,$f20). */
+void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model) {
+    Ovl58ModelDef* def = &((Ovl58ModelDef*)table)[index];
+    f32 t;
+    f32 x;
+    f32 z;
+
+    switch (def->kind) {
+        case 1:
+            func_80029714_2A314(model, def->pos.x * 5.0f, def->pos.y * 5.0f, def->pos.z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y, def->rot.z);
+            break;
+        case 3:
+            t = func_800B7890_B8490(-119.289f);
+            x = t * def->pos.x + HuMathSin(-119.289f) * def->pos.z;
+            t = HuMathSin(-119.289f);
+            z = -t * def->pos.x + func_800B7890_B8490(-119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(-119.289f) * 136.8f + 259.0f) * 5.0f + x * 5.0f, def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(-119.289f) * 136.8f + 147.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + -119.289f, def->rot.z);
+            break;
+        case 2:
+            t = func_800B7890_B8490(119.289f);
+            x = t * def->pos.x + HuMathSin(119.289f) * def->pos.z;
+            t = HuMathSin(119.289f);
+            z = -t * def->pos.x + func_800B7890_B8490(119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(119.289f) * 136.8f - 259.0f) * 5.0f + x * 5.0f, def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(119.289f) * 136.8f + 150.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + 119.289f, def->rot.z);
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112454_37DB54_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112810_37DF10_MinigameParkSetup);
+/* out = mtx * (model's transform) applied to (1, 1, 1): the sum of each row of the product. */
+void func_80112810_37DF10_MinigameParkSetup(s16 model, Vec* out, Matrix4f mtx) {
+    Matrix4f m;
+    Matrix4f r;
+    HmfModel* obj = &D_800FC834_FD434[model];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112910_37E010_MinigameParkSetup);
+    func_800B1F50_B2B50(m, obj->pos.x, obj->pos.y, obj->pos.z);
+    func_80025884_26484(m, obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80025830_26430(m, obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80025BA4_267A4(mtx, m, r);
+    out->x = r[0][0] + r[1][0] + r[2][0] + r[3][0];
+    out->y = r[0][1] + r[1][1] + r[2][1] + r[3][1];
+    out->z = r[0][2] + r[1][2] + r[2][2] + r[3][2];
+}
+
+/* Screen position of model under mtx (camera 0). */
+void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx) {
+    Vec pos;
+
+    func_80112810_37DF10_MinigameParkSetup(model, &pos, mtx);
+    Hu3DCam3DToScreen(0, &pos, (Vec2f*)out);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112950_37E050_MinigameParkSetup);

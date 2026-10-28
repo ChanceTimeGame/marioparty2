@@ -405,4 +405,16 @@ typedef struct Ovl58CamView {
     /* 0x18 */ f32 zoom; /* -> D_800FA610 */
 } Ovl58CamView; /* size = 0x1C */
 
+/* One scene model (D_80112BBC tables, ended by file -1; 80112360 loads, 80112454 places);
+   the same layout as 5B's Ovl5BModelDef. */
+typedef struct Ovl58ModelDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 attr;       /* | 0x288 */
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 motionMode; /* func_80029E80's third argument */
+    /* 0x0C */ u32 kind;       /* 1 placed as given; 2, 3 rotated about a pivot */
+    /* 0x10 */ Vec pos;        /* x5 */
+    /* 0x1C */ Vec rot;
+} Ovl58ModelDef; /* size = 0x28 */
+
 #endif /* _OVL_58_H */

@@ -229,6 +229,8 @@ build/src/274D0.c.o: export VR4300MUL := ON
 build/src/C8E0.c.o: export VR4300MUL := ON
 # 5B-A: retail built 37F4E0.c with the KMC mul fix on (a nop between mul.s pairs, 80103B54)
 build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
+# 58-E: retail built 36DF00.c with the KMC mul fix on (a nop between mul.s pairs: 80112454 and 12 others)
+build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 
 # b2-B: per-file flags as MP1 builds the reference files
 # 2E0D0 (MP1 29C90.c), 3D6A0 (nop before a mult, as MP1 3AC60.c): KMC as keeps the vr4300 mul fix on
