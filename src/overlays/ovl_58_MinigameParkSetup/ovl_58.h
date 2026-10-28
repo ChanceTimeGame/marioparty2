@@ -37,6 +37,17 @@ typedef struct Ovl58Setup {
     /* 0x16 */ s16 unk16;
 } Ovl58Setup; /* size = 0x18 */
 
+/* Mode 3's record to continue (D_80113826): from the story record D_800FD8A8 (source 1) or
+   the saved copy D_800FD420 (source 0, in D_8011382D); field names are D_800FD8A8's. */
+typedef struct Ovl58Story {
+    /* 0x00 */ u8 chapter;      /* unk10 */
+    /* 0x01 */ u8 character[2]; /* unk00, unk01 */
+    /* 0x03 */ u8 unk3;         /* byte 0x03 */
+    /* 0x04 */ u8 unk4;         /* byte 0x0D */
+    /* 0x05 */ u8 unk5;         /* unk04 */
+    /* 0x06 */ u8 step;         /* unk11 */
+} Ovl58Story; /* size = 7 */
+
 /* ---- main-segment API used by 58 (not declared by the headers above) ---- */
 
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
@@ -221,12 +232,9 @@ extern s16 D_8011381C_37EF1C_MinigameParkSetup;
 extern s16 D_8011381E_37EF1E_MinigameParkSetup;
 extern s16 D_80113820_37EF20_MinigameParkSetup;
 extern s16 D_80113822_37EF22_MinigameParkSetup;
-extern s16 D_80113824_37EF24_MinigameParkSetup;
-extern u8 D_80113826_37EF26_MinigameParkSetup;
-extern u8 D_80113827_37EF27_MinigameParkSetup;
-extern u8 D_80113828_37EF28_MinigameParkSetup[3];
-extern u8 D_8011382B_37EF2B_MinigameParkSetup[2];
-extern u8 D_8011382D_37EF2D_MinigameParkSetup;
+extern s16 D_80113824_37EF24_MinigameParkSetup; /* mode 3: the step B returns to */
+extern Ovl58Story D_80113826_37EF26_MinigameParkSetup; /* 80113826-8011382C */
+extern s8 D_8011382D_37EF2D_MinigameParkSetup; /* where D_80113826 came from: 1 story record, 0 save, -1 none */
 extern s16 D_8011382E_37EF2E_MinigameParkSetup[2];
 extern s16 D_80113832_37EF32_MinigameParkSetup[2];
 extern s16 D_80113836_37EF36_MinigameParkSetup;
@@ -305,7 +313,7 @@ void func_8010395C_36F05C_MinigameParkSetup(void);
 void func_80103A88_36F188_MinigameParkSetup(void);
 void func_80103ABC_36F1BC_MinigameParkSetup(void);
 s32 func_80103F38_36F638_MinigameParkSetup(void);
-void func_801051BC_3708BC_MinigameParkSetup(s32, s32, s16);
+void func_801051BC_3708BC_MinigameParkSetup(s16 sprite, s16 slot, s16 mode);
 s32 func_801052B4_3709B4_MinigameParkSetup(void);
 void func_80106A00_372100_MinigameParkSetup(s32, s32);
 void func_80106AB4_3721B4_MinigameParkSetup(s32, s16);
@@ -329,10 +337,10 @@ s32 func_80109478_374B78_MinigameParkSetup(void);
 void func_8010A02C_37572C_MinigameParkSetup(s32);
 s32 func_8010A1E8_3758E8_MinigameParkSetup(void);
 void func_8010B6B4_376DB4_MinigameParkSetup(s16, void*);
-s16 func_8010B6E8_376DE8_MinigameParkSetup(void);
+s32 func_8010B6E8_376DE8_MinigameParkSetup(void);
 void func_8010C4B4_377BB4_MinigameParkSetup(s32);
 s32 func_8010C6C8_377DC8_MinigameParkSetup(void);
-s16 func_8010D260_378960_MinigameParkSetup(void);
+s32 func_8010D260_378960_MinigameParkSetup(void);
 void func_8010E1F0_3798F0_MinigameParkSetup(s16);
 void func_8010E2B8_3799B8_MinigameParkSetup(void);
 void func_8010E460_379B60_MinigameParkSetup(void);
