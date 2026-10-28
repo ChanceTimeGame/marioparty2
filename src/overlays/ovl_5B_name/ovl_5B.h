@@ -33,7 +33,7 @@ typedef struct Ovl5BModelDef {
     /* 0x04 */ s32 attr; /* | 0x288 */
     /* 0x08 */ s16 unk08;
     /* 0x0A */ s16 unk0A; /* motion mode */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ u32 place; /* 1 as given, 2/3 turned into another part of the scene (8010A1E4) */
     /* 0x10 */ Vec pos;
     /* 0x1C */ Vec rot;
 } Ovl5BModelDef; /* size = 0x28 */
@@ -47,6 +47,20 @@ typedef struct Ovl5BSprDef {
     /* 0x0C */ f32 sx;
     /* 0x10 */ f32 sy;
 } Ovl5BSprDef; /* size = 0x14 */
+
+/* 5B-C: the music room (8010B654). One song: its music number and sound bank. */
+typedef struct Ovl5BSong {
+    /* 0x00 */ s16 song; /* PlayMusic; a negative entry ends a list */
+    /* 0x02 */ u8 bank;  /* D_800CD52C needed */
+    /* 0x03 */ u8 unk03;
+} Ovl5BSong; /* size = 0x4 */
+
+/* 5B-C: one music room page. */
+typedef struct Ovl5BMusicCat {
+    /* 0x00 */ s32 msg;          /* the page's message (lists its songs); -1 ends the table */
+    /* 0x04 */ Ovl5BSong* songs; /* host: a pointer in a 32-bit slot of retail .data */
+    /* 0x08 */ u8 count;         /* songs on the page (8010B654 counts them) */
+} Ovl5BMusicCat; /* size = 0xC */
 
 /* ---- main-segment API used by 5B ---- */
 
@@ -153,7 +167,7 @@ void func_8008E4D0_8F0D0(s32 winId, s32 sound);
 void func_8008E644_8F244(s32 arg0, u8 arg1);
 void func_8008E6AC_8F2AC(s16 arg0);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
-s32 func_8008E73C_8F33C(s16 portrait, s16 x, s16 y, s32 w, s32 h, u16 flags);
+s32 func_8008E73C_8F33C(s16 portrait, s32 x, s32 y, s32 w, s32 h, u16 flags); /* main 4D660.c: x, y s32 */
 void func_8008E978_8F578(s16 winId);
 void func_8008EED8_8FAD8(s16 arg0, s16 arg1);
 void func_8008F624_90224(s32, s32, s32); /* wipe colour */
@@ -177,7 +191,7 @@ extern s16 D_800FD80C_FE40C; /* main: a controller port (80102830 finds the firs
 extern board_overlay_entrypoint D_80112670_38F320_name_5B[]; /* the three entry points (0: from the title, 1, 2), -1 */
 extern u16 D_80112690_38F340_name_5B; /* set: the menu is leaving (80102C88 stops) */
 extern f32 D_80112694_38F344_name_5B; /* camera field of view */
-extern s8 D_80112698_38F348_name_5B[2]; /* 80109B1C */
+extern s8 D_80112698_38F348_name_5B[2]; /* [0] set: camera 0 uses the fixed eye/at (80109B1C) */
 extern s16 D_8011269A_38F34A_name_5B;
 extern s16 D_8011269C_38F34C_name_5B; /* the entry point used (0, 1, 2) */
 extern s16 D_8011269E_38F34E_name_5B; /* board to go to directly (-1: none) */
@@ -199,10 +213,10 @@ extern s32 D_80113444_3900F4_name_5B[9]; /* each board's character model file (8
 extern s32 D_80113468_390118_name_5B[10]; /* its motion file */
 extern s16 D_80113490_390140_name_5B; /* 8010ACBC 8010DCAC */
 extern s16 D_80113492_390142_name_5B; /* 8010ACBC 80110908 */
-extern s32 D_80113494_390144_name_5B[7]; /* 8010ACBC */
-extern s16 D_801134B0_390160_name_5B[8]; /* 8010ACBC */
-extern s16 D_801134C0_390170_name_5B[7]; /* 8010ACBC */
-extern s16 D_801134CE_39017E_name_5B; /* 8010ACBC */
+extern s16 D_80113494_390144_name_5B[7][2]; /* the submenu choices' pointer positions (8010ACBC) */
+extern s16 D_801134B0_390160_name_5B[8]; /* each submenu choice's description message (8010ACBC) */
+extern s16 D_801134C0_390170_name_5B[7]; /* each submenu choice's camera view (8010ACBC) */
+extern s16 D_801134CE_39017E_name_5B; /* set once the submenu was entered from entry point 2 (8010ACBC) */
 extern s16 D_801134D0_390180_name_5B[2]; /* 8010ACBC 8010DA34 */
 extern s32 D_801134D4_390184_name_5B[8]; /* unused by code */
 extern s32 D_801134F4_3901A4_name_5B[7]; /* unused by code */
@@ -214,12 +228,11 @@ extern s32 D_8011359C_39024C_name_5B[4]; /* unused by code */
 extern s32 D_801135AC_39025C_name_5B[9]; /* unused by code */
 extern s32 D_801135D0_390280_name_5B[4]; /* unused by code */
 extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88 */
-extern s32 D_80113774_390424_name_5B[1]; /* 8010B654 */
-extern s32 D_80113778_390428_name_5B[17]; /* 8010B654 */
-extern s32 D_801137BC_39046C_name_5B[3]; /* 8010B654 */
-extern s32 D_801137C8_390478_name_5B[3]; /* 8010B654 */
-extern s32 D_801137D4_390484_name_5B[6]; /* 8010B654 */
-extern s16 D_801137EC_39049C_name_5B[2]; /* 8010B654 */
+extern Ovl5BMusicCat D_80113774_390424_name_5B[6]; /* the music room's pages (8010B654); label 3778 is [0].songs */
+extern Ovl5BMusicCat D_801137BC_39046C_name_5B; /* the page added once D_80113F84 >= 20 */
+extern Ovl5BMusicCat D_801137C8_390478_name_5B; /* the page added with flags 0xF, 0x10, 0x11 */
+extern Ovl5BMusicCat D_801137D4_390484_name_5B[2]; /* [0]: the page added with flag 0xB */
+extern s16 D_801137EC_39049C_name_5B; /* the music room's page (2 bytes follow) */
 extern s16 D_801137F0_3904A0_name_5B[1]; /* 8010CB88 */
 extern s16 D_801137F2_3904A2_name_5B[1]; /* 8010CB88 */
 extern s16 D_801137F4_3904A4_name_5B[28]; /* 8010CB88 */
@@ -236,13 +249,13 @@ extern s16 D_80113898_390548_name_5B[4]; /* 80110908 80110AF8 80112094 */
 
 extern s16 D_80113A10_3906C0_name_5B; /* 80105530 801068C4 */
 extern s16 D_80113A12_3906C2_name_5B;
-extern s32 D_80113A14_3906C4_name_5B; /* 80108F18 8010933C 80109374 */
+extern s16 (*D_80113A14_3906C4_name_5B)[2]; /* the pointer's position table (x, y per choice; 80109374) */
 extern s16 D_80113A18_3906C8_name_5B; /* the message window */
 extern s16 D_80113A1A_3906CA_name_5B; /* 80102830 80109398 */
-extern s16 D_80113A1C_3906CC_name_5B; /* 80108F18 8010933C */
-extern s16 D_80113A1E_3906CE_name_5B; /* 80108F18 8010933C */
-extern s16 D_80113A20_3906D0_name_5B; /* 80108F18 80109380 */
-extern s16 D_80113A22_3906D2_name_5B[7]; /* 80108F18 8010933C 8010938C */
+extern s16 D_80113A1C_3906CC_name_5B; /* the pointer sprite's x */
+extern s16 D_80113A1E_3906CE_name_5B; /* its y */
+extern s16 D_80113A20_3906D0_name_5B; /* its slide length in frames */
+extern s16 D_80113A22_3906D2_name_5B; /* the choice it points at (-1: none) */
 extern s16 D_80113A30_3906E0_name_5B[9][72]; /* 80112304: the minigames of each category not yet played (cleared?), by index */
 extern s16 D_80113F40_390BF0_name_5B[9]; /* 80112304: count in D_80113A30 per category */
 extern s16 D_80113F58_390C08_name_5B[9]; /* 80112304: minigames per category */
@@ -255,7 +268,7 @@ extern u16 D_80113F86_390C36_name_5B; /* 80112304: minigames counted (all catego
 extern s16 D_80113F90_390C40_name_5B[9][72]; /* 80112304: the minigames of each category for which func_80068040 is set; D_80114020/D_801140B0 are [1], [2] */
 /* D_80114020, D_801140B0 are D_80113F90[1], [2] */
 extern u16 D_801144A0_391150_name_5B; /* 80112304 */
-extern s16 D_801144A2_391152_name_5B; /* 8010ACBC 80110AF8 */
+extern s16 D_801144A2_391152_name_5B; /* the submenu's window (8010ACBC) */
 extern s16 D_801144A4_391154_name_5B; /* 8010A940 */
 extern u16 D_801144A6_391156_name_5B; /* 8010A940 8010DF24 */
 extern s16 D_801144A8_391158_name_5B; /* 8010A940 8010C828 */
@@ -263,20 +276,16 @@ extern u16 D_801144AA_39115A_name_5B; /* 8010A940 8010C828 */
 extern s16 D_801144AC_39115C_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144AE_39115E_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144B0_391160_name_5B[2]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144B4_391164_name_5B[3]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144C0_391170_name_5B[4]; /* 8010B654 8010CB88 */
-extern s32 D_801144D0_391180_name_5B[1]; /* 8010B654 */
-extern s32 D_801144D4_391184_name_5B; /* 8010B654 */
-extern u8 D_801144D8_391188_name_5B[64]; /* 8010B654 */
-extern s32 D_80114518_3911C8_name_5B[28]; /* 8010B654 */
-extern s16 D_80114588_391238_name_5B[1]; /* 8010B654 */
-extern u8 D_8011458A_39123A_name_5B[398]; /* 8010B654 */
+extern Vec D_801144B4_391164_name_5B; /* 8010B654: the record player's position (8010CB88 8010D6E8) */
+extern Vec D_801144C0_391170_name_5B; /* 8010B654: its rotation (8010CB88); 4 bytes follow */
+extern Ovl5BMusicCat D_801144D0_391180_name_5B[15]; /* the music room's pages in use, msg -1 ends (8010B654); labels 44D4, 44D8, 4518 are fields/elements; 4 bytes follow */
+extern Ovl5BSong D_80114588_391238_name_5B[100]; /* their songs in page order (8010B654); label 458A is [0].bank */
 extern Vec D_80114718_3913C8_name_5B[2]; /* 80110AF8 80112094 */
 extern s16 D_80114730_3913E0_name_5B[2]; /* 8010A940 8010ACBC 8010DCAC 80110908 */
 extern Ovl5BCamView* D_80114734_3913E4_name_5B; /* the camera view table */
 extern s16 D_80114738_3913E8_name_5B; /* the current screen */
 extern s16 D_8011473A_3913EA_name_5B; /* the overlay to go to */
-extern s16 D_8011473C_3913EC_name_5B; /* 80105530 80108F18 801091EC 8010ACBC */
+extern s16 D_8011473C_3913EC_name_5B; /* the pointer sprite is shown (80108F18) */
 extern s16 D_8011473E_3913EE_name_5B; /* 80102C88 80105530 801068C4 */
 extern s16 D_80114740_3913F0_name_5B; /* 80102830 80102C88 80103B54 80103EB4 80105530 8010607C 801068C4 80107748 8010E618 8010ED80 */
 extern s16 D_80114742_3913F2_name_5B; /* 80102830 80102C88 8010ACBC */
@@ -284,7 +293,7 @@ extern Vec D_80114744_3913F4_name_5B; /* camera position (801086E0) */
 extern s16 D_80114750_391400_name_5B; /* handshake between the menu processes (0, 1, -1) */
 extern s16 D_80114758_391408_name_5B[60]; /* model per D_801129B0 entry (8010A0F0); splat labels 75A-7BE are elements; [0x2B] is the host */
 extern s16 D_801147D0_391480_name_5B[58]; /* each model's motion (8010A0F0); labels 7E0-838 are elements */
-extern Vec D_80114844_3914F4_name_5B;
+extern Vec D_80114844_3914F4_name_5B; /* fixed camera eye (80109B1C) */
 extern s16 D_80114850_391500_name_5B; /* 80102830 80102C88 80107748 80109408 8010DA34 80110AF8 */
 extern s16 D_80114852_391502_name_5B; /* 80102830 80107748 80109408 */
 extern s16 D_80114854_391504_name_5B; /* 80102830 8010ACBC */
@@ -292,11 +301,11 @@ extern f32 D_80114858_391508_name_5B; /* camera far */
 extern f32 D_8011485C_39150C_name_5B; /* camera near */
 extern s16 D_80114860_391510_name_5B; /* 80102830 8010A940 8010ACBC 8010D8B0 */
 extern s16 D_80114862_391512_name_5B; /* the controller port that drives the menu (-1: none) */
-extern Vec D_80114864_391514_name_5B;
+extern Vec D_80114864_391514_name_5B; /* fixed camera target (80109B1C) */
 extern s16 D_80114870_391520_name_5B; /* 80102830 80102C88 80103B54 80103EB4 801068C4 80107748 */
 extern s16 D_80114872_391522_name_5B; /* the cursor's first choice (5 or 8) */
 extern s16 D_80114878_391528_name_5B[10][2]; /* menu choices' screen positions (x, y); label 87A is [0][1] */
-extern u16 D_801148A0_391550_name_5B; /* 80108F18 801091EC 80109408 */
+extern u16 D_801148A0_391550_name_5B; /* the pointer sprite */
 extern s16 D_801148A2_391552_name_5B; /* 80102830 80102C88 80103EB4 801068C4 80109408 */
 extern s16 D_801148A4_391554_name_5B; /* the menu cursor (choice 0-9) */
 
@@ -330,20 +339,20 @@ void func_80109374_386024_name_5B(s16 (*pos)[2]); /* stores D_80113A14 */
 void func_80109380_386030_name_5B(s16 arg0);
 void func_8010938C_38603C_name_5B(s16 arg0);
 void func_80109398_386048_name_5B(omObjData* obj);
-void func_80109408_3860B8_name_5B(void);
+void func_80109408_3860B8_name_5B(omObjData* obj);
 void func_801094F8_3861A8_name_5B(void);
 void func_80109B1C_3867CC_name_5B(void);
-void func_8010A0F0_386DA0_name_5B(s32 *arg0);
-void func_8010A1E4_386E94_name_5B(s32 arg0, s16 arg1, s16 arg2);
-void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, void *arg2, void *arg3);
+void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs);
+void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model);
+void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out); /* screen point to world */
 void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a point of the model in world space */
 void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */
 void func_8010A940_3875F0_name_5B(void);
 void func_8010ACBC_38796C_name_5B(void);
-s16 func_8010B5A8_388258_name_5B(s16 arg0, s32, s16 arg2);
+s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def); /* message, wait, choice */
 void func_8010B654_388304_name_5B(void);
 void func_8010C5D4_389284_name_5B(void);
-void func_8010C828_3894D8_name_5B(s16 arg0);
+void func_8010C828_3894D8_name_5B(s16 arg0); /* 8010B654 passes song & 1 */
 void func_8010CB88_389838_name_5B(void);
 void func_8010D6E8_38A398_name_5B(s16 *arg0);
 void func_8010D8B0_38A560_name_5B(void);
@@ -367,5 +376,14 @@ void func_80112304_38EFB4_name_5B(void);
    (s16) low halves, retail lh +2). The symbol is an undefined_syms.txt alias: splat's label is
    the +2 one, D_8011387E, and the word's first half ends D_80113864's block. */
 extern s32 D_8011387C_39052C_name_5B[7];
+
+/* 5B-C */
+
+#include "game/camera.h"
+
+extern u16 D_801011FC_101DFC; /* main: set while the game resets */
+extern f32 D_800FA5BC_FB1BC[]; /* main: camera state (omOutView; [-1] is CRot.y) */
+extern f32 D_80101078_101C78;
+extern f32 D_800F8410_F9010;
 
 #endif

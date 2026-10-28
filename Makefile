@@ -233,6 +233,15 @@ build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 # 5B-E: 3875F0.c too (8010F734: a nop between mul.s pairs)
 build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
+# 5B-C: 37F4E0.c is assembled from GCC's assembly with blank lines removed, as 1130.c is (the mul
+# fix puts no nop before a mul.s after a call: func_80109B1C)
+B5C_BLANKSTRIP_UNITS := build/src/overlays/ovl_5B_name/37F4E0.c.o
+$(B5C_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
 
 # b2-B: per-file flags as MP1 builds the reference files
 # 2E0D0 (MP1 29C90.c), 3D6A0 (nop before a mult, as MP1 3AC60.c): KMC as keeps the vr4300 mul fix on

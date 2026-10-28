@@ -1654,32 +1654,439 @@ void func_80108788_385438_name_5B(s16 view, s16 frames, s16 mode, void (*cb)(s16
     func_801086E0_385390_name_5B(view);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80108F18_385BC8_name_5B);
+/* The menu's pointer sprite (D_801148A0): while D_8011473C is set it slides to the position
+   D_80113A14[D_80113A22] over D_80113A20 frames whenever D_80113A22 changes. Never returns. */
+void func_80108F18_385BC8_name_5B(void) {
+    s16 prev;
+    s16 i;
+    s16 x0;
+    s16 dx;
+    s16 y0;
+    s16 dy;
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801091EC_385E9C_name_5B);
+    prev = -1;
+    D_8011473C_3913EC_name_5B = 0;
+    D_801148A0_391550_name_5B = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x900F8), 0, 1);
+    func_8001A788_1B388(D_801148A0_391550_name_5B, 1);
+    espPosSet(D_801148A0_391550_name_5B, 160, 120);
+    espDispOff(D_801148A0_391550_name_5B);
+    D_80113A1C_3906CC_name_5B = 160;
+    D_80113A1E_3906CE_name_5B = 120;
+    D_80113A20_3906D0_name_5B = 10;
+    omAddPrcObj(func_801091EC_385E9C_name_5B, 0x3F00, 0x100, 0);
+    while (1) {
+        HuPrcVSleep();
+        if (D_8011473C_3913EC_name_5B != 0) {
+            if (prev != D_80113A22_3906D2_name_5B && D_80113A22_3906D2_name_5B != -1) {
+                if (D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][0] != D_80113A1C_3906CC_name_5B
+                    || D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][1] != D_80113A1E_3906CE_name_5B) {
+                    x0 = D_80113A1C_3906CC_name_5B;
+                    y0 = D_80113A1E_3906CE_name_5B;
+                    dx = D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][0] - x0;
+                    dy = D_80113A14_3906C4_name_5B[D_80113A22_3906D2_name_5B][1] - y0;
+                    for (i = 1; i <= D_80113A20_3906D0_name_5B; i++) {
+                        s = HuMathSin(90.0f / D_80113A20_3906D0_name_5B * i);
+                        D_80113A1C_3906CC_name_5B = x0 + dx * s;
+                        D_80113A1E_3906CE_name_5B = y0 + dy * s;
+                        espPosSet(D_801148A0_391550_name_5B, D_80113A1C_3906CC_name_5B, D_80113A1E_3906CE_name_5B);
+                        HuPrcVSleep();
+                    }
+                }
+                prev = D_80113A22_3906D2_name_5B;
+            }
+        } else {
+            prev = D_80113A22_3906D2_name_5B;
+        }
+        espPosSet(D_801148A0_391550_name_5B, D_80113A1C_3906CC_name_5B, D_80113A1E_3906CE_name_5B);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010933C_385FEC_name_5B);
+/* Fades the pointer sprite in or out over five frames whenever D_8011473C changes. */
+void func_801091EC_385E9C_name_5B(void) {
+    s16 shown;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109374_386024_name_5B);
+    shown = 0;
+    while (1) {
+        HuPrcVSleep();
+        if (shown == D_8011473C_3913EC_name_5B) {
+            continue;
+        }
+        if (D_8011473C_3913EC_name_5B != 0) {
+            espDispOn(D_801148A0_391550_name_5B);
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_801148A0_391550_name_5B, i * 63.75f);
+                HuPrcVSleep();
+            }
+        } else {
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_801148A0_391550_name_5B, 255.0f - i * 63.75f);
+                HuPrcVSleep();
+            }
+            espDispOff(D_801148A0_391550_name_5B);
+        }
+        shown = D_8011473C_3913EC_name_5B;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109380_386030_name_5B);
+/* Points the pointer at choice n of the current position table. */
+void func_8010933C_385FEC_name_5B(s16 n) {
+    D_80113A1C_3906CC_name_5B = D_80113A14_3906C4_name_5B[n][0];
+    D_80113A1E_3906CE_name_5B = D_80113A14_3906C4_name_5B[n][1];
+    D_80113A22_3906D2_name_5B = n;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010938C_38603C_name_5B);
+void func_80109374_386024_name_5B(s16 (*pos)[2]) {
+    D_80113A14_3906C4_name_5B = pos;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109398_386048_name_5B);
+/* The pointer's slide length in frames. */
+void func_80109380_386030_name_5B(s16 frames) {
+    D_80113A20_3906D0_name_5B = frames;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109408_3860B8_name_5B);
+/* Moves the pointer to choice n (slides). */
+void func_8010938C_38603C_name_5B(s16 n) {
+    D_80113A22_3906D2_name_5B = n;
+}
 
+/* The menu's leaving object: once the menu is leaving (or the game is resetting), fades out
+   (unless D_8011269A) and hands over to 80109408. */
+void func_80109398_386048_name_5B(omObjData* obj) {
+    if (D_80112690_38F340_name_5B != 0 || D_801011FC_101DFC != 0) {
+        if (D_8011269A_38F34A_name_5B == 0) {
+            InitFadeOut(D_80113A1A_3906CA_name_5B, 8);
+            func_800794A8_7A0A8(15);
+        }
+        obj->func_ptr = func_80109408_3860B8_name_5B;
+    }
+}
+
+/* After the fade: goes to (D_80114850 1), calls (2) or returns to (otherwise) overlay
+   D_8011473A. */
+void func_80109408_3860B8_name_5B(omObjData* obj) {
+    u16 stat;
+
+    if (func_8008F618_90218() != 0) {
+        return;
+    }
+    if (D_801148A2_391552_name_5B != 0 && _CheckFlag(1)) {
+        func_8007DF5C_7EB5C();
+    }
+    func_8001AC44_1B844(D_801148A0_391550_name_5B);
+    func_8008CE5C_8DA5C();
+    stat = 0x14;
+    if (D_8011473A_3913EA_name_5B == 0x61) {
+        stat = 0x12;
+    }
+    if (D_8011473A_3913EA_name_5B == 0x58) {
+        stat |= 0x1000;
+    }
+    switch (D_80114850_391500_name_5B) {
+        case 2:
+            omOvlCallEx(D_8011473A_3913EA_name_5B, D_80114852_391502_name_5B, stat);
+            break;
+        case 1:
+            omOvlGotoEx(D_8011473A_3913EA_name_5B, D_80114852_391502_name_5B, stat);
+            break;
+        default:
+            omOvlReturnEx(1);
+            break;
+    }
+}
+
+/* Debug camera on controller 2: C-up/C-down zoom (Z faster; retail tests port 1's Z for C-up),
+   the stick turns, L/R-ish buttons 0x800/0x400 move along the view, 0x200/0x100 strafe, C-right
+   and C-left change the field of view, START (trigger) prints the camera. */
+#ifdef NON_MATCHING
+/* Same instruction count; differs in float register allocation (rx/spd swapped) and where the
+   D_8010274C base is loaded in the 0x800/0x400 arms. */
+void func_801094F8_3861A8_name_5B(void) {
+    f32 zoom;
+    f32 spd;
+    f32 rx;
+    f32 ry;
+    f32 b;
+    f32 inv;
+
+    if (ContBtn[1] & 0x20) {
+        if (ContBtn[0] & 0x2000) {
+            zoom = D_800FA610_FB210 + 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 + 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    if ((ContBtn[1] & 0x10) && D_800FA610_FB210 - 10.0f != 0.0f) {
+        if (ContBtn[1] & 0x2000) {
+            zoom = D_800FA610_FB210 - 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 - 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    rx = D_80114744_3913F4_name_5B.x;
+    ry = D_80114744_3913F4_name_5B.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 5.0f;
+    } else {
+        spd = 2.0f;
+    }
+    ry += -ContStkX[1] / 30 * spd;
+    if (ry >= 360.0f) {
+        ry -= 360.0f;
+    } else if (ry < 0.0f) {
+        ry += 360.0f;
+    }
+    D_80114744_3913F4_name_5B.y = ry;
+    rx += (s8)(ContStkY[1] / 30) * spd;
+    if (rx >= 360.0f) {
+        rx -= 360.0f;
+    } else if (rx < 0.0f) {
+        rx += 360.0f;
+    }
+    D_80114744_3913F4_name_5B.x = rx;
+    D_800FD474_FE074.x = (s16)rx;
+    D_800FD474_FE074.y = (s16)D_80114744_3913F4_name_5B.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 10.0f;
+    } else {
+        spd = 2.0f;
+    }
+    if (ContBtn[1] & 0x800) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        spd = -spd;
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x400) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x200) {
+        rx = D_800C9B80_CA780->pos.z - D_8010274C_10334C.z;
+        b = -(D_800C9B80_CA780->pos.x - D_8010274C_10334C.x);
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    } else if (ContBtn[1] & 0x100) {
+        rx = -(D_800C9B80_CA780->pos.z - D_8010274C_10334C.z);
+        b = D_800C9B80_CA780->pos.x - D_8010274C_10334C.x;
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    }
+    if (ContBtn[1] & 2) {
+        D_80112694_38F344_name_5B += 1.0f;
+    }
+    if (ContBtn[1] & 1) {
+        D_80112694_38F344_name_5B -= 1.0f;
+    }
+    Hu3DCamSetPerspective(0, D_80112694_38F344_name_5B, D_8011485C_39150C_name_5B, D_80114858_391508_name_5B);
+    if (ContBtnTrg[1] & 0x4000) {
+        osSyncPrintf("CRot   (%f,%f,%f)\n", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+        osSyncPrintf("Center (%f,%f,%f)\n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+        osSyncPrintf("CZoom  %f CFovy %f\n", D_800FA610_FB210, D_80112694_38F344_name_5B);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801094F8_3861A8_name_5B);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80109B1C_3867CC_name_5B);
+/* Camera 0 every frame: from CRot/CZoom/Center (as omOutView, with CRot.z rolling the up vector
+   about the view axis), or from the fixed eye/at D_80114844/D_80114864 while D_80112698[0] is
+   set. Never returns. */
+void func_80109B1C_3867CC_name_5B(void) {
+    Vec pos;
+    Vec at;
+    Vec up;
+    f32 rx;
+    f32 ry;
+    f32 rz;
+    f32 ux;
+    f32 uy;
+    f32 uz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A0F0_386DA0_name_5B);
+    while (1) {
+        if (D_80112698_38F348_name_5B[0] == 0) {
+            rx = D_800FD474_FE074.x;
+            ry = D_800FD474_FE074.y;
+            rz = D_800FD474_FE074.z;
+            pos.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
+            pos.y = D_8010274C_10334C.y + -HuMathSin(rx) * D_800FA610_FB210;
+            pos.z = D_8010274C_10334C.z + func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
+            at.x = D_8010274C_10334C.x;
+            at.y = D_8010274C_10334C.y;
+            at.z = D_8010274C_10334C.z;
+            ux = HuMathSin(ry) * HuMathSin(rx);
+            uy = func_800B7890_B8490(rx);
+            uz = func_800B7890_B8490(ry) * HuMathSin(rx);
+            dx = at.x - pos.x;
+            dy = at.y - pos.y;
+            dz = at.z - pos.z;
+            dist = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            dx /= dist;
+            dy /= dist;
+            dz /= dist;
+            up.x = ux * (dx * dx + (1.0f - dx * dx) * func_800B7890_B8490(rz))
+                 + uy * (dx * dy * (1.0f - func_800B7890_B8490(rz)) - dz * HuMathSin(rz))
+                 + uz * (dx * dz * (1.0f - func_800B7890_B8490(rz)) + dy * HuMathSin(rz));
+            up.y = ux * (dx * dy * (1.0f - func_800B7890_B8490(rz)) + dz * HuMathSin(rz))
+                 + uy * (dy * dy + (1.0f - dy * dy) * func_800B7890_B8490(rz))
+                 + uz * (dy * dz * (1.0f - func_800B7890_B8490(rz)) - dx * HuMathSin(rz));
+            up.z = ux * (dx * dz * (1.0f - func_800B7890_B8490(rz)) - dy * HuMathSin(rz))
+                 + uy * (dy * dz * (1.0f - func_800B7890_B8490(rz)) + dx * HuMathSin(rz))
+                 + uz * (dz * dz + (1.0f - dz * dz) * func_800B7890_B8490(rz));
+        } else {
+            pos = D_80114844_3914F4_name_5B;
+            at = D_80114864_391514_name_5B;
+            up.x = 0.0f;
+            up.y = 1.0f;
+            up.z = 0.0f;
+        }
+        D_800FA5BC_FB1BC[0] = pos.x;
+        D_800FA5BC_FB1BC[1] = pos.z;
+        D_800FA5BC_FB1BC[-1] = D_800FD474_FE074.y;
+        D_800FA5BC_FB1BC[2] = D_800C9B80_CA780->fov[0];
+        D_800FA5BC_FB1BC[3] = D_80101078_101C78;
+        D_800FA5BC_FB1BC[4] = D_800F8410_F9010;
+        Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+        Hu3DCamUpdateMtx(0);
+        HuPrcVSleep();
+    }
+}
 
+/* Loads the models of a definition table (file -1 ends it) into D_80114758, places each, and
+   starts its motion (D_801147D0) when it has one. */
+void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs) {
+    Ovl5BModelDef* def;
+    s16 i;
+    s16 model;
+
+    def = defs;
+    for (i = 0; def->file != -1; def++, i++) {
+        model = LoadFormFile(def->file, def->attr | 0x288);
+        D_80114758_391408_name_5B[i] = model;
+        func_8010A1E4_386E94_name_5B(defs, i, model);
+        D_801147D0_391480_name_5B[i] = func_80029E14_2AA14(model);
+        if (D_801147D0_391480_name_5B[i] != -1) {
+            func_80029E80_2AA80(model, -1, def->unk0A);
+        }
+    }
+}
+
+/* Places model `model` from defs[i] (positions in fifths of world units): 1 as given, 2 and 3
+   turned by +-119.289 degrees about y into two other parts of the scene. */
+#ifdef NON_MATCHING
+/* masked 0: retail negates sin into $f20 before the multiply (here into $f26). */
+void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
+    Ovl5BModelDef* def = &defs[i];
+    f32 x;
+    f32 z;
+
+    switch (def->place) {
+        case 1:
+            func_80029714_2A314(model, def->pos.x * 5.0f, def->pos.y * 5.0f, def->pos.z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y, def->rot.z);
+            break;
+        case 3:
+            x = func_800B7890_B8490(-119.289f) * def->pos.x + HuMathSin(-119.289f) * def->pos.z;
+            z = -HuMathSin(-119.289f) * def->pos.x + func_800B7890_B8490(-119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(-119.289f) * 136.8f + 259.0f) * 5.0f + x * 5.0f,
+                                def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(-119.289f) * 136.8f + 147.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + -119.289f, def->rot.z);
+            break;
+        case 2:
+            x = func_800B7890_B8490(119.289f) * def->pos.x + HuMathSin(119.289f) * def->pos.z;
+            z = -HuMathSin(119.289f) * def->pos.x + func_800B7890_B8490(119.289f) * def->pos.z;
+            func_80029714_2A314(model, x * 5.0f + -1295.0f, def->pos.y * 5.0f, z * 5.0f + 755.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + 119.289f, def->rot.z);
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A1E4_386E94_name_5B);
+#endif
 
+/* The world point `depth` in front of camera view `view` that shows at screen position `scr`
+   (320x240). Retail flips y twice (240 - (240 - y)). No caller in the overlay. */
+#ifdef NON_MATCHING
+/* masked 0: float register allocation of the screen-ratio temporaries differs. */
+void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out) {
+    f32 mtx[4][4];
+    Vec pos;
+    Vec at;
+    Vec up;
+    Ovl5BCamView* v;
+    f32 rx;
+    f32 ry;
+    f32 zoom;
+    f32 h;
+    f32 w;
+    f32 x;
+    f32 y;
+
+    v = &D_80114734_3913E4_name_5B[view];
+    rx = v->rot.x;
+    ry = v->rot.y;
+    zoom = v->zoom;
+    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * zoom + v->at.x;
+    pos.y = -HuMathSin(rx) * zoom + v->at.y;
+    pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * zoom + v->at.z;
+    at = v->at;
+    up.x = HuMathSin(ry) * HuMathSin(rx);
+    up.y = func_800B7890_B8490(rx);
+    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+    depth = -depth;
+    func_800B1960_B2560(mtx, pos.x, pos.y, pos.z, at.x, at.y, at.z, up.x, up.y, up.z);
+    h = HuMathSin(D_80112694_38F344_name_5B / 2.0f) / func_800B7890_B8490(D_80112694_38F344_name_5B / 2.0f) * depth;
+    w = h * 1.3333334f;
+    x = 320.0f - scr->unk_00;
+    y = 240.0f - scr->unk_04;
+    x = x / 320.0f;
+    y = (240.0f - y) / 240.0f;
+    x = (w + w) * x - w;
+    y = (h + h) * y - h;
+    out->x = x * mtx[0][0] + y * mtx[0][1] + depth * mtx[0][2] + pos.x;
+    out->y = x * mtx[1][0] + y * mtx[1][1] + depth * mtx[1][2] + pos.y;
+    out->z = x * mtx[2][0] + y * mtx[2][1] + depth * mtx[2][2] + pos.z;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A53C_3871EC_name_5B);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A7F4_3874A4_name_5B);
+/* A point of model `model` in world space: its translation, rotation and scale applied under
+   `mtx`, then the rows of the product summed (retail sums all four rows). */
+void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]) {
+    f32 local[4][4];
+    f32 world[4][4];
+    HmfModel* m;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A8F4_3875A4_name_5B);
+    m = &D_800FC834_FD434[model];
+    func_800B1F50_B2B50(local, m->pos.x, m->pos.y, m->pos.z);
+    func_80025884_26484(local, m->rot.x, m->rot.y, m->rot.z);
+    func_80025830_26430(local, m->scale.x, m->scale.y, m->scale.z);
+    func_80025BA4_267A4(mtx, local, world);
+    out->x = world[0][0] + world[1][0] + world[2][0] + world[3][0];
+    out->y = world[0][1] + world[1][1] + world[2][1] + world[3][1];
+    out->z = world[0][2] + world[1][2] + world[2][2] + world[3][2];
+}
+
+/* The same point on screen (camera 0). */
+void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]) {
+    Vec pos;
+
+    func_8010A7F4_3874A4_name_5B(model, &pos, mtx);
+    Hu3DCam3DToScreen(0, &pos, out);
+}
