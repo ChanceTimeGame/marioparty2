@@ -219,7 +219,7 @@ extern s16 D_80113834_3904E4_name_5B; /* 8010CB88: the sound test page */
 extern s32 D_80113838_3904E8_name_5B; /* 8010DCAC 8010DF24 80110AF8 80112094 */
 extern s16 D_8011383C_3904EC_name_5B[6]; /* 8010E618 8010ED80 */
 extern s32 D_80113848_3904F8_name_5B[7]; /* 8010E618 8010ED80 */
-extern s16 D_80113864_390514_name_5B[13]; /* 8010ED80 */
+extern s32 D_80113864_390514_name_5B[6]; /* 8010ED80: the character icons (sprite files) */
 extern s16 D_8011387E_39052E_name_5B[13]; /* 8010F734 */
 extern s16 D_80113898_390548_name_5B[4]; /* 80110908 80110AF8 80112094 */
 
@@ -379,5 +379,12 @@ typedef struct Ovl5BCamStep {
     /* 0x04 */ Vec from;
     /* 0x10 */ Vec to;
 } Ovl5BCamStep;
+
+/* GwCommon.boardRecord[b] as 5B reads it (8 bytes per board; gamework.h declares u16[8][4]):
+   8010E618 shows the record, 8010ED80 the wins per character. */
+typedef struct Ovl5BBoardRecord {
+    /* 0x00 */ u16 record;
+    /* 0x02 */ u8 wins[6];
+} Ovl5BBoardRecord;
 
 #endif

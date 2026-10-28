@@ -750,7 +750,175 @@ s32 func_8010E618_38B2C8_name_5B(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010E618_38B2C8_name_5B);
 #endif
 
+/* Records page 1: wins per character (rows, D_80113864 icons) and board (columns, D_80113848
+   names in D_8011383C order; the last board only when D_80114740 is set), each capped at 99,
+   with each row's total. Fades in, waits for B or C-left/C-right (or the stick past 30), fades
+   out and returns the button (0x4000, 2, 1), as 8010E618. */
+#ifdef NON_MATCHING
+/* NON_MATCHING: register allocation (retail's func_8001A2F8/func_8001AAAC results are not
+   re-extended: s32 returns here) and the wins table address form; masked 44. The asm path
+   carries D_801139C4 ("  ") in its own .s. */
+__asm__(".section .rodata");
+const char D_801139C4_390674_name_5B[] = "  ";
+
+s32 func_8010ED80_38BA30_name_5B(void) {
+    s16 win[6];
+    s16 boardAnim[7];
+    s16 charAnim[6];
+    s16 boardSpr[7];
+    s16 charSpr[6];
+    char text[8][32];
+    char buf[8];
+    s16 titleAnim;
+    s16 title;
+    s32 sp;
+    s32 w;
+    s16 i;
+    s16 j;
+    s16 k;
+    s16 c;
+    s16 len;
+    s16 sum;
+    s32 n;
+    s16 left;
+    s16 right;
+    s32 btn;
+    f32 alpha;
+
+    titleAnim = func_8001A2F8_1AEF8(0x9004F);
+    title = func_8001AAAC_1B6AC(titleAnim, 0, 1);
+    espPosSet(title, 160, 38);
+    func_8001A6BC_1B2BC(title, 0);
+    for (i = 0; i < 7; i++) {
+        sp = func_8001AAAC_1B6AC(boardAnim[i] = func_8001A2F8_1AEF8(D_80113848_3904F8_name_5B[i]), 0, 1);
+        boardSpr[i] = sp;
+        espPosSet(sp, i * 30 + 82, 58);
+        func_8001A6BC_1B2BC(sp, 0);
+    }
+    espPosSet(sp, 272, 58);
+    for (i = 0; i < 6; i++) {
+        sp = func_8001AAAC_1B6AC(charAnim[i] = func_8001A2F8_1AEF8(D_80113864_390514_name_5B[i]), 0, 1);
+        charSpr[i] = sp;
+        espPosSet(sp, 47, i * 20 + 76);
+        func_8001A6BC_1B2BC(sp, 0);
+    }
+    for (i = 0; i < 6; i++) {
+        w = func_800888A8_894A8(62, i * 20 + 66, 230, 22, 0, 8);
+        win[i] = w;
+        func_80089A7C_8A67C(w, 5);
+        func_80089284_89E84(w, 0x10020, 0x10020);
+        func_80089B2C_8A72C(w, 0);
+        func_80089BBC_8A7BC(w, 0);
+        func_80089A48_8A648(w, 0);
+        func_80089C78_8A878(w, 1);
+        func_80089CAC_8A8AC(w, 4, 0, 0xA0, 0);
+        func_80089DA0_8A9A0(w, 0xC0, 0xC0, 0xC0);
+        sum = 0;
+        k = 0;
+        for (j = 0; j < 7; j++) {
+            if (j != 6) {
+                if (j == 5 && D_80114740_3913F0_name_5B == 0) {
+                    sprintf(buf, D_801139C4_390674_name_5B);
+                } else {
+                    text[i][k++] = (j & 1) ? 4 : 2;
+                    /* the wins: boardRecord[b] bytes 2-7 (Ovl5BBoardRecord.wins) */
+                    n = ((u8*)&D_800F8C60.boardRecord[D_8011383C_3904EC_name_5B[j]][1])[i];
+                    if (n >= 100) {
+                        n = 99;
+                    }
+                    sum += n;
+                    sprintf(buf, D_801139C0_390670_name_5B, n);
+                }
+            } else {
+                text[i][k++] = 0x1A;
+                text[i][k++] = 5;
+                sprintf(buf, D_801139C0_390670_name_5B, sum);
+            }
+            len = func_800A5610_A6210(buf);
+            for (c = 0; c < 3 - len; c++) {
+                text[i][k++] = 0x1A;
+            }
+            for (c = 0; c < len; c++) {
+                text[i][k++] = buf[c];
+            }
+        }
+        text[i][k] = 0;
+        func_800890CC_89CCC(w, (s32)text[i], -1, -1); /* a string pointer in an s32 */
+    }
+    left = func_80110770_38D420_name_5B(60, 184);
+    right = func_8011083C_38D4EC_name_5B(60, 196);
+    if (D_80114740_3913F0_name_5B == 0) {
+        espDispOff(boardSpr[5]);
+    }
+    HuPrcVSleep();
+    func_8008D6F0_8E2F0(left);
+    func_8008D6F0_8E2F0(right);
+    for (i = 0; i < 6; i++) {
+        alpha = i * 51.0f;
+        func_8001A6BC_1B2BC(title, alpha);
+        for (j = 0; j < 7; j++) {
+            func_8001A6BC_1B2BC(boardSpr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_8001A6BC_1B2BC(charSpr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)alpha);
+        }
+        func_80089BBC_8A7BC(left, (s16)alpha);
+        func_80089BBC_8A7BC(right, (s16)alpha);
+        HuPrcVSleep();
+    }
+    while (1) {
+        btn = ContBtnTrg[D_80114862_391512_name_5B] & 0x4003;
+        if (btn != 0) {
+            break;
+        }
+        if (ContStkX[D_80114862_391512_name_5B] < -30) {
+            btn = 2;
+            break;
+        }
+        if (ContStkX[D_80114862_391512_name_5B] > 30) {
+            btn = 1;
+            break;
+        }
+        HuPrcVSleep();
+    }
+    PlaySound((btn & 0x4000) ? 4 : 1);
+    for (i = 1; i < 6; i++) {
+        alpha = i * -50.0f;
+        func_8001A6BC_1B2BC(title, alpha);
+        for (j = 0; j < 7; j++) {
+            func_8001A6BC_1B2BC(boardSpr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_8001A6BC_1B2BC(charSpr[j], alpha);
+        }
+        for (j = 0; j < 6; j++) {
+            func_80089BBC_8A7BC(win[j], (s16)alpha);
+        }
+        func_80089BBC_8A7BC(left, (s16)alpha);
+        func_80089BBC_8A7BC(right, (s16)alpha);
+        HuPrcVSleep();
+    }
+    func_8001AC44_1B844(title);
+    SprAnimKill(titleAnim);
+    for (i = 0; i < 6; i++) {
+        func_8008CCA8_8D8A8(win[i]);
+        func_8001AC44_1B844(charSpr[i]);
+        SprAnimKill(charAnim[i]);
+    }
+    for (i = 0; i < 7; i++) {
+        func_8001AC44_1B844(boardSpr[i]);
+        SprAnimKill(boardAnim[i]);
+    }
+    func_8008CCA8_8D8A8(left);
+    func_8008CCA8_8D8A8(right);
+    return btn;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010ED80_38BA30_name_5B);
+#endif
 
 
 
