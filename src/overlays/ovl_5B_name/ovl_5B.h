@@ -33,7 +33,7 @@ typedef struct Ovl5BModelDef {
     /* 0x04 */ s32 attr; /* | 0x288 */
     /* 0x08 */ s16 unk08;
     /* 0x0A */ s16 unk0A; /* motion mode */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ u32 place; /* 1 as given, 2/3 turned into another part of the scene (8010A1E4) */
     /* 0x10 */ Vec pos;
     /* 0x1C */ Vec rot;
 } Ovl5BModelDef; /* size = 0x28 */
@@ -328,8 +328,8 @@ void func_80109398_386048_name_5B(omObjData* obj);
 void func_80109408_3860B8_name_5B(omObjData* obj);
 void func_801094F8_3861A8_name_5B(void);
 void func_80109B1C_3867CC_name_5B(void);
-void func_8010A0F0_386DA0_name_5B(s32 *arg0);
-void func_8010A1E4_386E94_name_5B(s32 arg0, s16 arg1, s16 arg2);
+void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs);
+void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model);
 void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, void *arg2, void *arg3);
 void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a point of the model in world space */
 void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */

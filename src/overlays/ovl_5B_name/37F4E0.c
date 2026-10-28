@@ -1232,9 +1232,58 @@ void func_80109B1C_3867CC_name_5B(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A0F0_386DA0_name_5B);
+/* Loads the models of a definition table (file -1 ends it) into D_80114758, places each, and
+   starts its motion (D_801147D0) when it has one. */
+void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs) {
+    Ovl5BModelDef* def;
+    s16 i;
+    s16 model;
 
+    def = defs;
+    for (i = 0; def->file != -1; def++, i++) {
+        model = LoadFormFile(def->file, def->attr | 0x288);
+        D_80114758_391408_name_5B[i] = model;
+        func_8010A1E4_386E94_name_5B(defs, i, model);
+        D_801147D0_391480_name_5B[i] = func_80029E14_2AA14(model);
+        if (D_801147D0_391480_name_5B[i] != -1) {
+            func_80029E80_2AA80(model, -1, def->unk0A);
+        }
+    }
+}
+
+/* Places model `model` from defs[i] (positions in fifths of world units): 1 as given, 2 and 3
+   turned by +-119.289 degrees about y into two other parts of the scene. */
+#ifdef NON_MATCHING
+/* masked 0: retail negates sin into $f20 before the multiply (here into $f26). */
+void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
+    Ovl5BModelDef* def = &defs[i];
+    f32 x;
+    f32 z;
+
+    switch (def->place) {
+        case 1:
+            func_80029714_2A314(model, def->pos.x * 5.0f, def->pos.y * 5.0f, def->pos.z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y, def->rot.z);
+            break;
+        case 3:
+            x = func_800B7890_B8490(-119.289f) * def->pos.x + HuMathSin(-119.289f) * def->pos.z;
+            z = -HuMathSin(-119.289f) * def->pos.x + func_800B7890_B8490(-119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(-119.289f) * 136.8f + 259.0f) * 5.0f + x * 5.0f,
+                                def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(-119.289f) * 136.8f + 147.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + -119.289f, def->rot.z);
+            break;
+        case 2:
+            x = func_800B7890_B8490(119.289f) * def->pos.x + HuMathSin(119.289f) * def->pos.z;
+            z = -HuMathSin(119.289f) * def->pos.x + func_800B7890_B8490(119.289f) * def->pos.z;
+            func_80029714_2A314(model, x * 5.0f + -1295.0f, def->pos.y * 5.0f, z * 5.0f + 755.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + 119.289f, def->rot.z);
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A1E4_386E94_name_5B);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A53C_3871EC_name_5B);
 
