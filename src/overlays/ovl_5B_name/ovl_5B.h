@@ -38,6 +38,20 @@ typedef struct Ovl5BModelDef {
     /* 0x1C */ Vec rot;
 } Ovl5BModelDef; /* size = 0x28 */
 
+/* 5B-C: the music room (8010B654). One song: its music number and sound bank. */
+typedef struct Ovl5BSong {
+    /* 0x00 */ s16 song; /* PlayMusic; a negative entry ends a list */
+    /* 0x02 */ u8 bank;  /* D_800CD52C needed */
+    /* 0x03 */ u8 unk03;
+} Ovl5BSong; /* size = 0x4 */
+
+/* 5B-C: one music room page. */
+typedef struct Ovl5BMusicCat {
+    /* 0x00 */ s32 msg;          /* the page's message (lists its songs); -1 ends the table */
+    /* 0x04 */ Ovl5BSong* songs; /* host: a pointer in a 32-bit slot of retail .data */
+    /* 0x08 */ u8 count;         /* songs on the page (8010B654 counts them) */
+} Ovl5BMusicCat; /* size = 0xC */
+
 /* ---- main-segment API used by 5B ---- */
 
 void ExecBoardScene(void*, s16);
@@ -208,12 +222,11 @@ extern s32 D_8011359C_39024C_name_5B[4]; /* unused by code */
 extern s32 D_801135AC_39025C_name_5B[9]; /* unused by code */
 extern s32 D_801135D0_390280_name_5B[4]; /* unused by code */
 extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88 */
-extern s32 D_80113774_390424_name_5B[1]; /* 8010B654 */
-extern s32 D_80113778_390428_name_5B[17]; /* 8010B654 */
-extern s32 D_801137BC_39046C_name_5B[3]; /* 8010B654 */
-extern s32 D_801137C8_390478_name_5B[3]; /* 8010B654 */
-extern s32 D_801137D4_390484_name_5B[6]; /* 8010B654 */
-extern s16 D_801137EC_39049C_name_5B[2]; /* 8010B654 */
+extern Ovl5BMusicCat D_80113774_390424_name_5B[6]; /* the music room's pages (8010B654); label 3778 is [0].songs */
+extern Ovl5BMusicCat D_801137BC_39046C_name_5B; /* the page added once D_80113F84 >= 20 */
+extern Ovl5BMusicCat D_801137C8_390478_name_5B; /* the page added with flags 0xF, 0x10, 0x11 */
+extern Ovl5BMusicCat D_801137D4_390484_name_5B[2]; /* [0]: the page added with flag 0xB */
+extern s16 D_801137EC_39049C_name_5B; /* the music room's page (2 bytes follow) */
 extern s16 D_801137F0_3904A0_name_5B[1]; /* 8010CB88 */
 extern s16 D_801137F2_3904A2_name_5B[1]; /* 8010CB88 */
 extern s16 D_801137F4_3904A4_name_5B[28]; /* 8010CB88 */
@@ -258,14 +271,10 @@ extern u16 D_801144AA_39115A_name_5B; /* 8010A940 8010C828 */
 extern s16 D_801144AC_39115C_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144AE_39115E_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144B0_391160_name_5B[2]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144B4_391164_name_5B[3]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144C0_391170_name_5B[4]; /* 8010B654 8010CB88 */
-extern s32 D_801144D0_391180_name_5B[1]; /* 8010B654 */
-extern s32 D_801144D4_391184_name_5B; /* 8010B654 */
-extern u8 D_801144D8_391188_name_5B[64]; /* 8010B654 */
-extern s32 D_80114518_3911C8_name_5B[28]; /* 8010B654 */
-extern s16 D_80114588_391238_name_5B[1]; /* 8010B654 */
-extern u8 D_8011458A_39123A_name_5B[398]; /* 8010B654 */
+extern Vec D_801144B4_391164_name_5B; /* 8010B654: the record player's position (8010CB88 8010D6E8) */
+extern Vec D_801144C0_391170_name_5B; /* 8010B654: its rotation (8010CB88); 4 bytes follow */
+extern Ovl5BMusicCat D_801144D0_391180_name_5B[15]; /* the music room's pages in use, msg -1 ends (8010B654); labels 44D4, 44D8, 4518 are fields/elements; 4 bytes follow */
+extern Ovl5BSong D_80114588_391238_name_5B[100]; /* their songs in page order (8010B654); label 458A is [0].bank */
 extern s32 D_80114718_3913C8_name_5B[6]; /* 80110AF8 80112094 */
 extern s16 D_80114730_3913E0_name_5B[2]; /* 8010A940 8010ACBC 8010DCAC 80110908 */
 extern Ovl5BCamView* D_80114734_3913E4_name_5B; /* the camera view table */
@@ -338,7 +347,7 @@ void func_8010ACBC_38796C_name_5B(void);
 s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def); /* message, wait, choice */
 void func_8010B654_388304_name_5B(void);
 void func_8010C5D4_389284_name_5B(void);
-void func_8010C828_3894D8_name_5B(s16 arg0);
+void func_8010C828_3894D8_name_5B(s16 arg0); /* 8010B654 passes song & 1 */
 void func_8010CB88_389838_name_5B(void);
 void func_8010D6E8_38A398_name_5B(s16 *arg0);
 void func_8010D8B0_38A560_name_5B(void);
