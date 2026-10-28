@@ -513,7 +513,214 @@ void func_80103EB4_380B64_name_5B(void) {
     }
 }
 
+/* The scene when every board is cleared (D_801148A2): Bowser and three Koopa Kids march in,
+   chase the host off screen, and a Koopa Kid (kid[0]) takes his place as the menu's host. */
+#ifdef NON_MATCHING
+/* masked 152: register allocation (retail spills bowser, bowserShadow and hostShadow to the stack,
+   frame 0xF8) and the scheduling that follows from it; the logic is complete. */
+void func_80104300_380FB0_name_5B(void) {
+    s16 kid[3];
+    s16 kidShadow[3];
+    s16 kidMdl[3];
+    s16 bowserMdl[2];
+    s16 kidMot[4];
+    s16 bowserMot[3];
+    Vec kidPos[3];
+    Vec hostPos;
+    Vec bowserPos;
+    f32 x;
+    f32 y;
+    f32 d;
+    s16 i;
+    s16 j;
+    s16 shadowSrc;
+    u16 bowser;
+    u16 bowserShadow;
+    u16 host = D_80114758_391408_name_5B[0x2B];
+    u16 hostShadow = D_80114758_391408_name_5B[0x32];
+
+    for (i = 0; i < 11; i++) {
+        D_80112694_38F344_name_5B = i / 10.0f * -20.0f + 58.0f;
+        Hu3DCamSetPerspective(0, D_80112694_38F344_name_5B, D_8011485C_39150C_name_5B, D_80114858_391508_name_5B);
+        HuPrcVSleep();
+    }
+    PlaySound(0xBF);
+    shadowSrc = LoadFormFile(0xD, 0x22B9);
+    bowser = LoadFormFile(0x8003C, 0x26B9);
+    bowserShadow = func_80027D3C_2893C(shadowSrc);
+    bowserMot[0] = func_80029E14_2AA14(bowser);
+    bowserMdl[0] = LoadFormFile(0x80043, 0x288);
+    bowserMot[1] = func_80029E14_2AA14(bowserMdl[0]);
+    bowserMdl[1] = LoadFormFile(0x8003F, 0x288);
+    bowserMot[2] = func_80029E14_2AA14(bowserMdl[1]);
+    func_80029714_2A314(bowser, 1500.0f, 22.0f, 50.0f);
+    func_8002979C_2A39C(bowser, 0.0f, -90.0f, 0.0f);
+    func_8002C9C0_2D5C0(bowser, bowserMot[1]);
+    func_80029E80_2AA80(bowser, 2, 2);
+    func_80029714_2A314(bowserShadow, 1500.0f, 22.0f, 50.0f);
+    func_800297E8_2A3E8(bowserShadow, 3.0f, 3.0f, 3.0f);
+    kidMdl[0] = LoadFormFile(0x800B3, 0x288);
+    kidMot[1] = func_80029E14_2AA14(kidMdl[0]);
+    kidMdl[1] = LoadFormFile(0x800B8, 0x288);
+    kidMot[2] = func_80029E14_2AA14(kidMdl[1]);
+    kidMdl[2] = LoadFormFile(0x800B9, 0x288);
+    kidMot[3] = func_80029E14_2AA14(kidMdl[2]);
+    for (i = 0; i < 3; i++) {
+        if (i == 0) {
+            kid[0] = LoadFormFile(0x800B0, 0x22B9);
+            kidMot[0] = func_80029E14_2AA14(kid[0]);
+        } else {
+            kid[i] = func_80027D3C_2893C(kid[0]);
+        }
+        x = i * 150 + 900;
+        func_80029714_2A314(kid[i], x, 22.0f, 80.0f);
+        func_8002979C_2A39C(kid[i], 0.0f, -90.0f, 0.0f);
+        func_8002C9C0_2D5C0(kid[i], kidMot[1]);
+        func_80029E80_2AA80(kid[i], 2, 2);
+        kidShadow[i] = func_80027D3C_2893C(shadowSrc);
+        func_80029714_2A314(kidShadow[i], x, 22.0f, 80.0f);
+    }
+    func_8002C9C0_2D5C0(host, D_801147D0_391480_name_5B[0x2C]);
+    for (i = 0; i < 10; i++) {
+        D_800FC834_FD434[(s16)host].rot.y = i * 9.0f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 35; i++) {
+        x = 900.0f - HuMathSin(i * 2.5714285f) * 1050.0f;
+        for (j = 0; j < 3; j++) {
+            D_800FC834_FD434[kidShadow[j]].pos.x = D_800FC834_FD434[kid[j]].pos.x = x + j * 150;
+        }
+        D_800FC834_FD434[(s16)bowserShadow].pos.x = D_800FC834_FD434[(s16)bowser].pos.x = x + 600.0f;
+        HuPrcVSleep();
+    }
+    func_80029BF0_2A7F0(bowser, bowserMot[0], 0, 5, 2);
+    for (i = 0; i < 11; i++) {
+        for (j = 0; j < 3; j++) {
+            D_800FC834_FD434[kid[j]].rot.y = -90.0f - i * 9.0f;
+            if (i == 5) {
+                func_80029BF0_2A7F0(kid[j], kidMot[0], 0, 5, 2);
+            }
+        }
+        HuPrcVSleep();
+    }
+    func_80029BF0_2A7F0(kid[0], kidMot[1], 0, 3, 2);
+    func_80029760_2A360(kid[0], &kidPos[0]);
+    func_80029BF0_2A7F0(kid[2], kidMot[1], 0, 3, 2);
+    func_80029760_2A360(kid[2], &kidPos[2]);
+    for (i = 0; i < 10; i++) {
+        x = kidPos[0].z - kidPos[0].z / 10.0f * i;
+        D_800FC834_FD434[kid[0]].pos.z = x;
+        D_800FC834_FD434[kid[2]].pos.z = x;
+        D_800FC834_FD434[kidShadow[0]].pos.z = x;
+        D_800FC834_FD434[kidShadow[2]].pos.z = x;
+        d = i * 7.0f;
+        x = d + kidPos[0].x;
+        D_800FC834_FD434[kid[0]].pos.x = x;
+        D_800FC834_FD434[kidShadow[0]].pos.x = x;
+        x = kidPos[2].x - d;
+        D_800FC834_FD434[kid[2]].pos.x = x;
+        D_800FC834_FD434[kidShadow[2]].pos.x = x;
+        d = i * 9.0f;
+        D_800FC834_FD434[kid[0]].rot.y = -180.0f - d;
+        D_800FC834_FD434[kid[2]].rot.y = d + -180.0f;
+        if (i == 5) {
+            func_80029BF0_2A7F0(kid[0], kidMot[0], 0, 5, 2);
+            func_80029BF0_2A7F0(kid[2], kidMot[0], 0, 5, 2);
+        }
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 3; i++) {
+        func_8002C9C0_2D5C0(kid[i], kidMot[2]);
+        func_80029FE4_2ABE4(kid[i], 1.5f);
+    }
+    func_80029760_2A360(host, &hostPos);
+    func_8002C9C0_2D5C0(host, D_801147D0_391480_name_5B[0x34]);
+    func_80029E80_2AA80(host, 2, 2);
+    func_80029FE4_2ABE4(host, 4.0f);
+    func_8002C9C0_2D5C0(bowser, bowserMot[2]);
+    PlaySound(0x124);
+    for (i = 0; i < 20; i++) {
+        y = HuMathSin(i * 9.0f) * 350.0f;
+        if (i >= 16 && y + hostPos.y < 170.0f) {
+            y = 170.0f - hostPos.x; /* retail: x, not y */
+        }
+        if (i == 5) {
+            PlaySound(0x126);
+        }
+        D_800FC834_FD434[(s16)host].pos.y = y + hostPos.y;
+        d = i * 2.5f;
+        D_800FC834_FD434[(s16)host].pos.x = hostPos.x - d;
+        D_800FC834_FD434[(s16)hostShadow].pos.x = hostPos.x - d;
+        D_800FC834_FD434[(s16)host].rot.x = i * -4.5f;
+        D_800FC834_FD434[(s16)host].rot.y = i * -22.5f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 11; i++) {
+        D_800FC834_FD434[kid[0]].rot.y = i * 18.0f + -270.0f;
+        D_800FC834_FD434[kid[1]].rot.y = i * 9.0f + -180.0f;
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 3; i++) {
+        func_80029BF0_2A7F0(kid[i], kidMot[3], 0, 5, 2);
+        func_80029760_2A360(kid[i], &kidPos[i]);
+    }
+    func_80029BF0_2A7F0(bowser, bowserMot[1], 0, 5, 2);
+    func_80029760_2A360(host, &hostPos);
+    func_80029760_2A360(bowser, &bowserPos);
+    for (i = 0; i < 60; i++) {
+        x = (HuMathSin(i * 1.5f + 270.0f) + 1.0f) * 1500.0f;
+        for (j = 0; j < 3; j++) {
+            D_800FC834_FD434[kid[j]].pos.x = kidPos[j].x - x;
+            D_800FC834_FD434[kidShadow[j]].pos.x = kidPos[j].x - x;
+        }
+        D_800FC834_FD434[(s16)host].pos.x = hostPos.x - x;
+        D_800FC834_FD434[(s16)host].pos.y = HuMathSin(i * 40) * (x / 50.0f) + hostPos.y;
+        D_800FC834_FD434[(s16)hostShadow].pos.x = hostPos.x - x;
+        D_800FC834_FD434[(s16)bowser].pos.x = bowserPos.x - x;
+        D_800FC834_FD434[(s16)bowserShadow].pos.x = bowserPos.x - x;
+        func_80029FE4_2ABE4(bowser, i * 0.03f + 1.0f);
+        HuPrcVSleep();
+    }
+    func_800283DC_28FDC(bowser);
+    func_800283DC_28FDC(bowserShadow);
+    func_800283DC_28FDC(bowserMdl[0]);
+    func_800283DC_28FDC(bowserMdl[1]);
+    for (i = 1; i < 3; i++) {
+        func_800283DC_28FDC(kid[i]);
+        func_800283DC_28FDC(kidShadow[i]);
+    }
+    func_800283DC_28FDC(host);
+    func_800283DC_28FDC(hostShadow);
+    D_80114758_391408_name_5B[0x2B] = kid[0];
+    D_80114758_391408_name_5B[0x32] = hostShadow = kidShadow[0];
+    D_801147D0_391480_name_5B[0x2C] = kidMot[0];
+    D_801147D0_391480_name_5B[0x2D] = kidMot[0];
+    D_801147D0_391480_name_5B[0x2E] = kidMot[0];
+    D_801147D0_391480_name_5B[0x30] = kidMot[0];
+    D_801147D0_391480_name_5B[0x34] = kidMot[1];
+    func_8002C9C0_2D5C0(kid[0], kidMot[1]);
+    func_80029E80_2AA80(kid[0], 2, 2);
+    func_80029760_2A360(kid[0], &hostPos);
+    D_800FC834_FD434[kid[0]].rot.y = 90.0f;
+    for (i = 0; i < 31; i++) {
+        func_80029714_2A314(kid[0], (-223.0f - hostPos.x) / 30.0f * i + hostPos.x, (6.0f - hostPos.y) / 30.0f * i + hostPos.y,
+                            (80.0f - hostPos.z) / 30.0f * i + hostPos.z);
+        func_80029714_2A314(hostShadow, (-223.0f - hostPos.x) / 30.0f * i + hostPos.x, (6.0f - hostPos.y) / 30.0f * i + hostPos.y,
+                            (80.0f - hostPos.z) / 30.0f * i + hostPos.z);
+        HuPrcVSleep();
+    }
+    for (i = 0; i < 11; i++) {
+        D_800FC834_FD434[kid[0]].rot.y = i * -7.0f + 90.0f;
+        if (i == 5) {
+            func_80029BF0_2A7F0(kid[0], kidMot[0], 0, 5, 2);
+        }
+        HuPrcVSleep();
+    }
+    func_80108788_385438_name_5B(1, 10, 1, (void*)-1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80104300_380FB0_name_5B);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80105410_3820C0_name_5B);
 
