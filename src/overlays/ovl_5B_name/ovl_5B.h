@@ -175,16 +175,14 @@ extern Ovl5BCamView D_801126A0_38F350_name_5B[28]; /* camera views (D_80114734) 
 extern Ovl5BModelDef D_801129B0_38F660_name_5B[55]; /* the menu's models, file -1 ends (54 entries) */
 extern f32 D_80112A3C_38F6EC_name_5B; /* = D_801129B0[3].pos.y (80107748) */
 extern f32 D_80112A40_38F6F0_name_5B; /* = D_801129B0[3].pos.z */
-extern s16 D_80113248_38FEF8_name_5B; /* 80105530 */
-extern s16 D_8011324A_38FEFA_name_5B[9]; /* 80105530 */
-extern s32 D_8011325C_38FF0C_name_5B[5]; /* 80105530 */
+extern s16 D_80113248_38FEF8_name_5B[10][2]; /* the menu choices' sprite offsets from the panel (x, y; 80105530); labels 324A, 325C are [0][1], [5] */
 extern s32 D_80113270_38FF20_name_5B[11]; /* 8010607C */
 extern u8 D_8011329C_38FF4C_name_5B; /* 8010607C */
 extern u8 D_8011329D_38FF4D_name_5B; /* 8010607C */
 extern u8 D_8011329E_38FF4E_name_5B[16]; /* 8010607C */
-extern s16 D_801132AE_38FF5E_name_5B; /* 80105530 8010607C */
-extern s16 D_801132B0_38FF60_name_5B; /* 80105530 */
-extern u16 D_801132B2_38FF62_name_5B; /* 80105530 8010607C */
+extern s16 D_801132AE_38FF5E_name_5B; /* the panel's state (80105530: 0 coming in, 1 leaving, 2 shown) */
+extern s16 D_801132B0_38FF60_name_5B; /* the continue choice's sprite group (80105530) */
+extern u16 D_801132B2_38FF62_name_5B; /* its sprite */
 extern s32 D_801132B4_38FF64_name_5B; /* 801068C4 */
 extern s32 D_801132B8_38FF68_name_5B[19]; /* 80107748 */
 extern s32 D_80113304_38FFB4_name_5B[20]; /* 801068C4 */
@@ -323,7 +321,7 @@ void func_80108788_385438_name_5B(s16 view, s16 frames, s16 mode, void (*cb)(s16
 void func_80108F18_385BC8_name_5B(void);
 void func_801091EC_385E9C_name_5B(void);
 void func_8010933C_385FEC_name_5B(s16 arg0);
-void func_80109374_386024_name_5B(s32 arg0);
+void func_80109374_386024_name_5B(s16 (*pos)[2]); /* stores D_80113A14 */
 void func_80109380_386030_name_5B(s16 arg0);
 void func_8010938C_38603C_name_5B(s16 arg0);
 void func_80109398_386048_name_5B(omObjData* obj);
@@ -333,8 +331,8 @@ void func_80109B1C_3867CC_name_5B(void);
 void func_8010A0F0_386DA0_name_5B(s32 *arg0);
 void func_8010A1E4_386E94_name_5B(s32 arg0, s16 arg1, s16 arg2);
 void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, void *arg2, void *arg3);
-void func_8010A7F4_3874A4_name_5B(s16 arg0, void *arg1, s32);
-void func_8010A8F4_3875A4_name_5B(s16 arg0, s32);
+void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a point of the model in world space */
+void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */
 void func_8010A940_3875F0_name_5B(void);
 void func_8010ACBC_38796C_name_5B(void);
 s16 func_8010B5A8_388258_name_5B(s16 arg0, s32, s16 arg2);
