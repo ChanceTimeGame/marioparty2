@@ -437,7 +437,81 @@ s16 func_80103B54_380804_name_5B(s16 x, s16 y) {
     return sel;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80103EB4_380B64_name_5B);
+/* Starts the menu's processes and brings the host in (he jumps in from the left, unless the
+   menu was entered from 58 or the ending); returns once the menu is ready (D_80114750). */
+void func_80103EB4_380B64_name_5B(void) {
+    Vec start;
+    Vec pos;
+    s16 i;
+    u16 model = D_80114758_391408_name_5B[0x2B];
+    u16 shadow = D_80114758_391408_name_5B[0x32];
+
+    omAddPrcObj(func_80105530_3821E0_name_5B, 0x3F00, 0x800, 0);
+    omAddPrcObj(func_801068C4_383574_name_5B, 0x3F00, 0x800, 0);
+    omAddPrcObj(func_80106D2C_3839DC_name_5B, 0x3F00, 0x800, 0);
+    omAddPrcObj(func_8010607C_382D2C_name_5B, 0x3F00, 0x800, 0);
+    if (D_8011269C_38F34C_name_5B == 0) {
+        if (D_801148A2_391552_name_5B != 0) {
+            i = 0;
+            func_80104300_380FB0_name_5B();
+            _SetFlag(1);
+            D_80114740_3913F0_name_5B = 1;
+            D_80114750_391400_name_5B = 0;
+            do {
+                if (i == 10) {
+                    PlaySound(0xBF);
+                }
+                i++;
+                HuPrcVSleep();
+            } while (D_80114750_391400_name_5B == 0);
+            return;
+        }
+        if (D_80114740_3913F0_name_5B != 0 && D_80114870_391520_name_5B == 0) {
+            func_80029E80_2AA80(model, 2, 2);
+            HuPrcVSleep();
+            D_80114750_391400_name_5B = 0;
+            do {
+                HuPrcVSleep();
+            } while (D_80114750_391400_name_5B == 0);
+            return;
+        }
+        while (func_80029CE4_2A8E4(model) < 60.0f) {
+            HuPrcVSleep();
+        }
+        func_80029E80_2AA80(model, 1, 1);
+        PlaySound(0x122);
+        start.x = D_800FC834_FD434[(s16)model].pos.x;
+        start.y = D_800FC834_FD434[(s16)model].pos.y;
+        start.z = D_800FC834_FD434[(s16)model].pos.z;
+        for (i = 0; i < 16; i++) {
+            pos.x = (-223.0f - start.x) / 15.0f * i + start.x;
+            pos.y = (6.0f - start.y) / 15.0f * i + start.y;
+            pos.y += HuMathSin(i * 12.0f) * 200.0f;
+            pos.z = (80.0f - start.z) / 15.0f * i + start.z;
+            D_800FC834_FD434[(s16)model].rot.y = i * 1.3333334f;
+            func_80029714_2A314(model, pos.x, pos.y, pos.z);
+            if (pos.y < start.y) {
+                func_80029714_2A314(shadow, pos.x, 6.0f, pos.z);
+            } else {
+                func_80029714_2A314(shadow, pos.x, 15.0f, pos.z);
+            }
+            HuPrcVSleep();
+        }
+        func_80029E80_2AA80(model, 1, 0);
+        D_80114750_391400_name_5B = 0;
+        while (func_80029CE4_2A8E4(model) < func_80029D0C_2A90C(model)) {
+            HuPrcVSleep();
+        }
+    } else {
+        HuPrcVSleep();
+        D_80114750_391400_name_5B = 0;
+    }
+    func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[0x2D]);
+    func_80029E80_2AA80(model, 2, 2);
+    while (D_80114750_391400_name_5B == 0) {
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80104300_380FB0_name_5B);
 
