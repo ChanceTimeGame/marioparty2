@@ -1528,11 +1528,131 @@ void func_80107748_3843F8_name_5B(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80107748_3843F8_name_5B);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801085A8_385258_name_5B);
+/* The roof scroll: the "lay" (model [0]) and "a002_010-belt" (model [7]) textures scroll for ever. */
+void func_801085A8_385258_name_5B(void) {
+    f32 belt = 0.0f;
+    f32 lay = belt;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801086E0_385390_name_5B);
+    while (1) {
+        func_8002BED4_2CAD4(D_80114758_391408_name_5B[0], lay, 0.0f, 32, 32, "lay", 0);
+        lay += 0.5f;
+        if (lay > 32.0f) {
+            lay = 0.0f;
+        }
+        func_8002BED4_2CAD4(D_80114758_391408_name_5B[7], belt, 0.0f, 16, 16, "a002_010-belt", 0);
+        belt += 3.2f;
+        if (belt >= 16.0f) {
+            belt = 0.0f;
+        }
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80108788_385438_name_5B);
+/* Sets the camera to view `view` of D_80114734 at once. */
+void func_801086E0_385390_name_5B(s16 view) {
+    D_800FD474_FE074 = D_80114734_3913E4_name_5B[view].rot;
+    D_80114744_3913F4_name_5B = D_800FD474_FE074;
+    D_8010274C_10334C = D_80114734_3913E4_name_5B[view].at;
+    D_800FA610_FB210 = D_80114734_3913E4_name_5B[view].zoom;
+}
+
+/* Moves the camera to view `view` of D_80114734 over `frames` frames: mode 1 eases out (sine),
+   2 eases in and out (cosine), anything else is linear (frames + 1 steps). The rotation takes the
+   short way round. cb (unless -1) is called every frame with {frame, frames}. */
+void func_80108788_385438_name_5B(s16 view, s16 frames, s16 mode, void (*cb)(s16*)) {
+    Vec drot;
+    Vec dat;
+    Vec rot0;
+    Vec at0;
+    s16 arg[2];
+    Vec pad[3]; /* unused; retail's frame has it */
+    void (*fn)(s16*);
+    f32 d;
+    f32 t;
+    f32 dzoom;
+    f32 zoom0;
+    s16 i;
+
+    fn = cb;
+    d = D_80114734_3913E4_name_5B[view].rot.x - D_800FD474_FE074.x;
+    if (ABS(d) > 180.0f) {
+        if (D_80114734_3913E4_name_5B[view].rot.x < D_800FD474_FE074.x) {
+            drot.x = d + 360.0f;
+        } else {
+            drot.x = d - 360.0f;
+        }
+    } else {
+        drot.x = d;
+    }
+    d = D_80114734_3913E4_name_5B[view].rot.y - D_800FD474_FE074.y;
+    if (ABS(d) > 180.0f) {
+        if (D_80114734_3913E4_name_5B[view].rot.y < D_800FD474_FE074.y) {
+            drot.y = d + 360.0f;
+        } else {
+            drot.y = d - 360.0f;
+        }
+    } else {
+        drot.y = d;
+    }
+    d = D_80114734_3913E4_name_5B[view].rot.z - D_800FD474_FE074.z;
+    if (ABS(d) > 180.0f) {
+        if (D_80114734_3913E4_name_5B[view].rot.z < D_800FD474_FE074.z) {
+            drot.z = d + 360.0f;
+        } else {
+            drot.z = d - 360.0f;
+        }
+    } else {
+        drot.z = d;
+    }
+    dat.x = D_80114734_3913E4_name_5B[view].at.x - D_8010274C_10334C.x;
+    dat.y = D_80114734_3913E4_name_5B[view].at.y - D_8010274C_10334C.y;
+    dat.z = D_80114734_3913E4_name_5B[view].at.z - D_8010274C_10334C.z;
+    dzoom = D_80114734_3913E4_name_5B[view].zoom - D_800FA610_FB210;
+    at0 = D_8010274C_10334C;
+    rot0 = D_800FD474_FE074;
+    zoom0 = D_800FA610_FB210;
+    arg[1] = frames;
+    if (mode == 1 || mode == 2) {
+        for (i = 0; i < frames; i++) {
+            if (mode != 2) {
+                t = HuMathSin(i * 90.0f / frames);
+            } else if (i <= frames / 2) {
+                t = (1.0f - func_800B7890_B8490(i * 180.0f / frames)) * 0.5f;
+            } else {
+                t = -func_800B7890_B8490(i * 180.0f / frames) * 0.5f + 0.5f;
+            }
+            D_80114744_3913F4_name_5B.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80114744_3913F4_name_5B.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80114744_3913F4_name_5B.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    } else {
+        for (i = 0; i <= frames; i++) {
+            t = 1.0f / frames * i;
+            D_80114744_3913F4_name_5B.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80114744_3913F4_name_5B.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80114744_3913F4_name_5B.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_801086E0_385390_name_5B(view);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80108F18_385BC8_name_5B);
 
