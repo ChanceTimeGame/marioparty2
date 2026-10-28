@@ -266,7 +266,7 @@ extern u8 D_801144D8_391188_name_5B[64]; /* 8010B654 */
 extern s32 D_80114518_3911C8_name_5B[28]; /* 8010B654 */
 extern s16 D_80114588_391238_name_5B[1]; /* 8010B654 */
 extern u8 D_8011458A_39123A_name_5B[398]; /* 8010B654 */
-extern s32 D_80114718_3913C8_name_5B[6]; /* 80110AF8 80112094 */
+extern Vec D_80114718_3913C8_name_5B[2]; /* 80110AF8 80112094 */
 extern s16 D_80114730_3913E0_name_5B[2]; /* 8010A940 8010ACBC 8010DCAC 80110908 */
 extern Ovl5BCamView* D_80114734_3913E4_name_5B; /* the camera view table */
 extern s16 D_80114738_3913E8_name_5B; /* the current screen */
