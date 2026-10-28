@@ -230,10 +230,6 @@ s32 func_8010F734_38C3E4_name_5B(void) {
     return btn;
 }
 
-#ifdef NON_MATCHING
-/* Register allocation (the window, the string pointers) and the input loop's copy of the
-   button mask into btn differ; the logic is retail's. Shows the five minigame records
-   (func_800680D4(8..12), BCD seconds/hundredths) and returns the button that closed it. */
 s32 func_801101E8_38CE98_name_5B(void) {
     s16 win[5];
     char buf[15][32];
@@ -245,7 +241,8 @@ s32 func_801101E8_38CE98_name_5B(void) {
     s16 w;
     s16 win1;
     s16 win2;
-    s32 btn;
+    s16 btn;
+    s16 n;
     f32 fade;
 
     grp = func_8001A2F8_1AEF8(0x90053);
@@ -263,11 +260,14 @@ s32 func_801101E8_38CE98_name_5B(void) {
         func_80089CAC_8A8AC(w, 4, 0, 160, 0);
         func_80089DA0_8A9A0(w, 192, 192, 192);
         t = func_800680D4_68CD4((s16)(i + 8));
-        sprintf(buf[i * 3], D_801139C8_390678_name_5B, t == 0);
+        n = t == 0;
+        sprintf(buf[i * 3], D_801139C8_390678_name_5B, n);
         func_80089308_89F08(w, buf[i * 3], 0);
-        sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, (t >> 12) * 10 + ((t & 0xF00) >> 8));
+        n = (t >> 12) * 10 + ((t & 0xF00) >> 8);
+        sprintf(buf[i * 3 + 1], D_801139D0_390680_name_5B, n);
         func_80089308_89F08(w, buf[i * 3 + 1], 1);
-        sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, ((t & 0xF0) >> 4) * 10 + (t & 0xF));
+        n = ((t & 0xF0) >> 4) * 10 + (t & 0xF);
+        sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, n);
         func_80089308_89F08(w, buf[i * 3 + 2], 2);
         func_800890CC_89CCC(w, i + 0x3AA, -1, -1);
     }
@@ -324,9 +324,6 @@ s32 func_801101E8_38CE98_name_5B(void) {
     func_8008CCA8_8D8A8(win2);
     return btn;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_801101E8_38CE98_name_5B);
-#endif
 
 s16 func_80110770_38D420_name_5B(s16 x, s16 y) {
     s16 win = func_800888A8_894A8(x, y, 200, 32, 0, 8);
