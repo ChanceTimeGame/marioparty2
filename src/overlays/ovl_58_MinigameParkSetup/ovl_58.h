@@ -161,15 +161,15 @@ extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern s16 D_80112B42_37E242_MinigameParkSetup;
 extern s16 D_80112B44_37E244_MinigameParkSetup[2];
 extern s32 D_80112B48_37E248_MinigameParkSetup;
-extern s32 D_80112B4C_37E24C_MinigameParkSetup[28];
-extern s32 D_80112BBC_37E2BC_MinigameParkSetup[4];
+extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
+extern s32 D_80112BBC_37E2BC_MinigameParkSetup[]; /* a table func_80112360 reads; 80102CAC sets words 0x50 and 0x6E (D_80112CFC is word 0x50) */
 extern s32 D_80112BCC_37E2CC_MinigameParkSetup[10];
 extern s32 D_80112BF4_37E2F4_MinigameParkSetup[66];
 extern s32 D_80112CFC_37E3FC_MinigameParkSetup[410];
-extern s32 D_80113364_37EA64_MinigameParkSetup[8];
-extern s32 D_80113384_37EA84_MinigameParkSetup[8];
+extern s32 D_80113364_37EA64_MinigameParkSetup[8]; /* per D_80113814 (stage): D_80112BBC[0x50] */
+extern s32 D_80113384_37EA84_MinigameParkSetup[8]; /* per D_80113814: D_80112BBC[0x6E] */
 extern u8 D_801133A4_37EAA4_MinigameParkSetup[16];
-extern s16 D_801133B4_37EAB4_MinigameParkSetup;
+extern s16 D_801133B4_37EAB4_MinigameParkSetup[][2]; /* icon offsets x, y per player slot (801051BC) */
 extern s16 D_801133B6_37EAB6_MinigameParkSetup[47];
 extern s32 D_80113414_37EB14_MinigameParkSetup[6];
 extern s32 D_8011342C_37EB2C_MinigameParkSetup[8];
@@ -191,31 +191,31 @@ extern s16 D_8011355A_37EC5A_MinigameParkSetup;
 extern s32 D_8011355C_37EC5C_MinigameParkSetup[10];
 extern s32 D_80113584_37EC84_MinigameParkSetup[6];
 extern s32 D_8011359C_37EC9C_MinigameParkSetup[9];
-extern f32 D_801135C0_37ECC0_MinigameParkSetup;
+extern f32 D_801135C0_37ECC0_MinigameParkSetup; /* camera fov */
 extern u8 D_801135C4_37ECC4_MinigameParkSetup[12];
 
 /* ---- 58 .bss (asm, ovl_58_bss.bss.s; raw types unless noted) ---- */
-extern s16 D_80113780_37EE80_MinigameParkSetup;
-extern s16 D_80113782_37EE82_MinigameParkSetup;
+extern s16 D_80113780_37EE80_MinigameParkSetup; /* setup step (the mode loops switch on it) */
+extern s16 D_80113782_37EE82_MinigameParkSetup; /* 1: the step was entered backwards (B) */
 extern s16 D_80113784_37EE84_MinigameParkSetup;
 extern s16 D_80113786_37EE86_MinigameParkSetup;
-extern s32 D_80113788_37EE88_MinigameParkSetup;
+extern s16 D_80113788_37EE88_MinigameParkSetup;
 extern s32 D_8011378C_37EE8C_MinigameParkSetup;
-extern s32 D_80113790_37EE90_MinigameParkSetup[2];
+extern s16 D_80113790_37EE90_MinigameParkSetup; /* set by 8010FB00 when its intro is done */
 extern s16 D_80113798_37EE98_MinigameParkSetup;
 extern s16 D_8011379A_37EE9A_MinigameParkSetup[11];
-extern s32 D_801137B0_37EEB0_MinigameParkSetup[2];
-extern s32 D_801137B8_37EEB8_MinigameParkSetup[6];
+extern f32 D_801137B0_37EEB0_MinigameParkSetup[2]; /* panel origin x, y (801051BC) */
+extern Process* D_801137B8_37EEB8_MinigameParkSetup[6]; /* 5 used: 80106AF8 processes */
 extern s32 D_801137D0_37EED0_MinigameParkSetup[6];
 extern s32 D_801137E8_37EEE8_MinigameParkSetup[6];
 extern s16 D_80113800_37EF00_MinigameParkSetup;
 extern s16 D_80113802_37EF02_MinigameParkSetup;
-extern s32 D_80113804_37EF04_MinigameParkSetup[2];
-extern s32 D_8011380C_37EF0C_MinigameParkSetup[2];
-extern s16 D_80113814_37EF14_MinigameParkSetup;
-extern s16 D_80113816_37EF16_MinigameParkSetup;
+extern s16 D_80113804_37EF04_MinigameParkSetup[4]; /* per player; -1 for CPU players */
+extern s16 D_8011380C_37EF0C_MinigameParkSetup[4];
+extern s16 D_80113814_37EF14_MinigameParkSetup; /* stage (board index; 6 in modes 1-3) */
+extern s16 D_80113816_37EF16_MinigameParkSetup; /* -1, or the 8010B6E8 choice (2 in mode 3) */
 extern s16 D_80113818_37EF18_MinigameParkSetup;
-extern u8 D_8011381A_37EF1A_MinigameParkSetup;
+extern s16 D_8011381A_37EF1A_MinigameParkSetup; /* the controlling pad */
 extern u8 D_8011381B_37EF1B_MinigameParkSetup;
 extern s16 D_8011381C_37EF1C_MinigameParkSetup;
 extern s16 D_8011381E_37EF1E_MinigameParkSetup;
@@ -241,7 +241,7 @@ extern s16 D_80113864_37EF64_MinigameParkSetup;
 extern s16 D_80113866_37EF66_MinigameParkSetup;
 extern s16 D_80113868_37EF68_MinigameParkSetup;
 extern s16 D_8011386A_37EF6A_MinigameParkSetup[3];
-extern s32 D_80113870_37EF70_MinigameParkSetup[2];
+extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s32 D_80113878_37EF78_MinigameParkSetup[5];
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
 extern s32 D_80113898_37EF98_MinigameParkSetup[2];
@@ -287,11 +287,11 @@ extern s32 D_801139C0_37F0C0_MinigameParkSetup;
 extern s16 D_801139C4_37F0C4_MinigameParkSetup;
 extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
 extern s32 D_801139D8_37F0D8_MinigameParkSetup[135];
-extern s32 D_80113BF4_37F2F4_MinigameParkSetup;
+extern f32 D_80113BF4_37F2F4_MinigameParkSetup; /* camera far */
 extern s32 D_80113BF8_37F2F8_MinigameParkSetup;
 extern s32 D_80113BFC_37F2FC_MinigameParkSetup[3];
 extern s32 D_80113C08_37F308_MinigameParkSetup[135];
-extern s32 D_80113E24_37F524_MinigameParkSetup[3];
+extern f32 D_80113E24_37F524_MinigameParkSetup; /* camera near */
 
 /* ---- 58 functions (source order) ---- */
 
@@ -304,9 +304,9 @@ void func_801033E0_36EAE0_MinigameParkSetup(void);
 void func_8010395C_36F05C_MinigameParkSetup(void);
 void func_80103A88_36F188_MinigameParkSetup(void);
 void func_80103ABC_36F1BC_MinigameParkSetup(void);
-u16 func_80103F38_36F638_MinigameParkSetup(void);
+s32 func_80103F38_36F638_MinigameParkSetup(void);
 void func_801051BC_3708BC_MinigameParkSetup(s32, s32, s16);
-s16 func_801052B4_3709B4_MinigameParkSetup(void);
+s32 func_801052B4_3709B4_MinigameParkSetup(void);
 void func_80106A00_372100_MinigameParkSetup(s32, s32);
 void func_80106AB4_3721B4_MinigameParkSetup(s32, s16);
 void func_80106AF8_3721F8_MinigameParkSetup(void);
@@ -321,13 +321,13 @@ void func_80107180_372880_MinigameParkSetup(void);
 void func_801074CC_372BCC_MinigameParkSetup(s32, f32, f32, f32);
 void func_801075C8_372CC8_MinigameParkSetup(s32, f32, f32, f32);
 void func_80107604_372D04_MinigameParkSetup(void);
-s16 func_80107644_372D44_MinigameParkSetup(s16);
+s32 func_80107644_372D44_MinigameParkSetup(s16);
 void func_80108BA8_3742A8_MinigameParkSetup(s32);
 void func_80108C0C_37430C_MinigameParkSetup(void);
 void func_8010903C_37473C_MinigameParkSetup(void);
 s32 func_80109478_374B78_MinigameParkSetup(void);
 void func_8010A02C_37572C_MinigameParkSetup(s32);
-s16 func_8010A1E8_3758E8_MinigameParkSetup(void);
+s32 func_8010A1E8_3758E8_MinigameParkSetup(void);
 void func_8010B6B4_376DB4_MinigameParkSetup(s16, void*);
 s16 func_8010B6E8_376DE8_MinigameParkSetup(void);
 void func_8010C4B4_377BB4_MinigameParkSetup(s32);
