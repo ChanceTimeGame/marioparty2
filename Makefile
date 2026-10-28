@@ -229,8 +229,6 @@ build/src/274D0.c.o: export VR4300MUL := ON
 build/src/C8E0.c.o: export VR4300MUL := ON
 # 5B-A: retail built 37F4E0.c with the KMC mul fix on (a nop between mul.s pairs, 80103B54)
 build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
-# 58-E: retail built 36DF00.c with the KMC mul fix on (a nop between mul.s pairs: 80112454 and 12 others)
-build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 
 # b2-B: per-file flags as MP1 builds the reference files
 # 2E0D0 (MP1 29C90.c), 3D6A0 (nop before a mult, as MP1 3AC60.c): KMC as keeps the vr4300 mul fix on
@@ -631,6 +629,8 @@ $(DM_GFX_UNITS): CFLAGS_CHECK += -m32
 OVL5F_BLANKSTRIP_UNITS := build/src/overlays/ovl_5F_name/3AB9D0.c.o
 # 60-A: overlay 60's copy of 3AB9D0.c needs the same
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_60_name/3BDF90.c.o
+# 58-E: 36DF00.c needs the same (nops between mul.s pairs in 13 functions; none after a call in 80111D8C)
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

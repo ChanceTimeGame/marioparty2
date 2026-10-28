@@ -17,6 +17,7 @@
 #include "game/gamemes.h"
 #include "game/gamework.h"
 #include "game/pad.h"
+#include "game/camera.h" /* 58-E: D_800C9B80 */
 
 /* ---- types ---- */
 
@@ -209,7 +210,7 @@ extern s32 D_8011355C_37EC5C_MinigameParkSetup[10];
 extern s32 D_80113584_37EC84_MinigameParkSetup[6];
 extern s32 D_8011359C_37EC9C_MinigameParkSetup[9];
 extern f32 D_801135C0_37ECC0_MinigameParkSetup; /* camera fov */
-extern u8 D_801135C4_37ECC4_MinigameParkSetup[12];
+extern s8 D_801135C4_37ECC4_MinigameParkSetup[12]; /* 58-E: [0] nonzero: 80111D8C uses the fixed camera D_8011388C/D_80113930 */
 
 /* ---- 58 .rodata (C, 36DF00.c) ---- */
 extern const Ovl58Quad D_80113618_37ED18_MinigameParkSetup; /* {2, 0, 3, 1}: 80103F38 panel lift-in delays (x10 frames) */
@@ -262,7 +263,7 @@ extern s16 D_80113868_37EF68_MinigameParkSetup; /* 58-E: cursor glide frames */
 extern s16 D_8011386A_37EF6A_MinigameParkSetup[3]; /* 58-E: [0] cursor slot (-1 none) */
 extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s16 D_80113878_37EF78_MinigameParkSetup[9]; /* 58-E: minigames per category (80112950) */
-extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
+extern Vec D_8011388C_37EF8C_MinigameParkSetup; /* 58-E: fixed camera eye */
 extern s16 D_80113898_37EF98_MinigameParkSetup; /* 58-E: count of D_80113C08's minigames */
 extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-E: byte per cursor slot; -1 = free (80110678 skips taken slots) */
 extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
@@ -284,7 +285,7 @@ extern s16 D_80113918_37F018_MinigameParkSetup[9]; /* 58-E: D_801139D8 count per
 extern s16 D_80113926_37F026_MinigameParkSetup[2];
 extern s16 D_8011392A_37F02A_MinigameParkSetup;
 extern s16 D_8011392C_37F02C_MinigameParkSetup; /* 1 while 80103F38 takes the player count */
-extern s32 D_80113930_37F030_MinigameParkSetup[3];
+extern Vec D_80113930_37F030_MinigameParkSetup; /* 58-E: fixed camera target */
 extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel (player count - 1) */
 extern s16 D_80113940_37F040_MinigameParkSetup[9]; /* 58-E: D_80113C08 count per category (D_8011394E = [7]) */
 extern s16 D_8011394E_37F04E_MinigameParkSetup[5];

@@ -1522,7 +1522,73 @@ void func_8011175C_37CE5C_MinigameParkSetup(s16 i) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111768_37CE68_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111D8C_37D48C_MinigameParkSetup);
+/* The camera process (MP2 main's func_80079E60, MP3 omOutView, plus a roll): the eye orbits
+   D_8010274C at distance D_800FA610 with rotation D_800FD474, the up vector turned by
+   D_800FD474.z about the line of sight; or, while D_801135C4[0] is set, the fixed eye and
+   target D_8011388C/D_80113930 with up +y. */
+void func_80111D8C_37D48C_MinigameParkSetup(void) {
+    Vec pos;
+    Vec at;
+    Vec up;
+    f32 rx;
+    f32 ry;
+    f32 rz;
+    f32 ux;
+    f32 uy;
+    f32 uz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 len;
+
+    while (1) {
+        if (D_801135C4_37ECC4_MinigameParkSetup[0] == 0) {
+            rx = D_800FD474_FE074.x;
+            ry = D_800FD474_FE074.y;
+            rz = D_800FD474_FE074.z;
+            pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+            pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
+            pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
+            at.x = D_8010274C_10334C.x;
+            at.y = D_8010274C_10334C.y;
+            at.z = D_8010274C_10334C.z;
+            ux = HuMathSin(ry) * HuMathSin(rx);
+            uy = func_800B7890_B8490(rx);
+            uz = func_800B7890_B8490(ry) * HuMathSin(rx);
+            dx = at.x - pos.x;
+            dy = at.y - pos.y;
+            dz = at.z - pos.z;
+            len = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            dx /= len;
+            dy /= len;
+            dz /= len;
+            up.x = ux * (dx * dx + (1.0f - dx * dx) * func_800B7890_B8490(rz))
+                 + uy * (dx * dy * (1.0f - func_800B7890_B8490(rz)) - dz * HuMathSin(rz))
+                 + uz * (dx * dz * (1.0f - func_800B7890_B8490(rz)) + dy * HuMathSin(rz));
+            up.y = ux * (dx * dy * (1.0f - func_800B7890_B8490(rz)) + dz * HuMathSin(rz))
+                 + uy * (dy * dy + (1.0f - dy * dy) * func_800B7890_B8490(rz))
+                 + uz * (dy * dz * (1.0f - func_800B7890_B8490(rz)) - dx * HuMathSin(rz));
+            up.z = ux * (dx * dz * (1.0f - func_800B7890_B8490(rz)) - dy * HuMathSin(rz))
+                 + uy * (dy * dz * (1.0f - func_800B7890_B8490(rz)) + dx * HuMathSin(rz))
+                 + uz * (dz * dz + (1.0f - dz * dz) * func_800B7890_B8490(rz));
+        } else {
+            pos = D_8011388C_37EF8C_MinigameParkSetup;
+            at = D_80113930_37F030_MinigameParkSetup;
+            up.x = 0.0f;
+            up.y = 1.0f;
+            up.z = 0.0f;
+        }
+        D_800FA5BC_FB1BC[0] = pos.x;
+        D_800FA5BC_FB1BC[1] = pos.z;
+        D_800FA5BC_FB1BC[-1] = D_800FD474_FE074.y;
+        D_800FA5BC_FB1BC[2] = D_800C9B80_CA780->fov[0];
+        D_800FA5BC_FB1BC[3] = D_80101078_101C78;
+        D_800FA5BC_FB1BC[4] = D_800F8410_F9010;
+        Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+        Hu3DCamUpdateMtx(0);
+        HuPrcVSleep();
+    }
+}
 
 /* Loads the scene's models from table defs (ends at file -1) into D_801138B0, places them
    (80112454) and starts each one's first motion. */
