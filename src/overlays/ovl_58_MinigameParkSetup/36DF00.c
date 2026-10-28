@@ -1520,7 +1520,111 @@ void func_8011175C_37CE5C_MinigameParkSetup(s16 i) {
     D_8011386A_37EF6A_MinigameParkSetup[0] = i;
 }
 
+/* Debug camera on controller 2 (MP3 sldebug's): C-up/C-down zoom (Z: faster; zoom-in reads
+   controller 1's Z, a retail slip), the stick turns the view (D_80113BF8 keeps the angles,
+   D_800FD474 gets them rounded), L/R move along the view (Z: faster), D-left/right strafe,
+   C-right/left change the fov; START prints the camera. */
+#ifdef NON_MATCHING
+/* masked 21: register choice (rx/speed, the zoom sums) and retail loading &D_8010274C
+   before t's product in both move arms. */
+void func_80111768_37CE68_MinigameParkSetup(void) {
+    f32 zoom;
+    f32 rx;
+    f32 ry;
+    f32 speed;
+    f32 t;
+    f32 dx;
+    f32 dz;
+    f32 n;
+
+    if (ContBtn[1] & 0x20) {
+        if (ContBtn[0] & 0x2000) {
+            zoom = D_800FA610_FB210 + 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 + 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    if ((ContBtn[1] & 0x10) && D_800FA610_FB210 - 10.0f != 0.0f) {
+        if (ContBtn[1] & 0x2000) {
+            zoom = D_800FA610_FB210 - 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 - 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    rx = D_80113BF8_37F2F8_MinigameParkSetup.x;
+    ry = D_80113BF8_37F2F8_MinigameParkSetup.y;
+    if (ContBtn[1] & 0x2000) {
+        speed = 5.0f;
+    } else {
+        speed = 2.0f;
+    }
+    ry += (-ContStkX[1] / 30) * speed;
+    if (ry >= 360.0f) {
+        ry -= 360.0f;
+    } else if (ry < 0.0f) {
+        ry += 360.0f;
+    }
+    D_80113BF8_37F2F8_MinigameParkSetup.y = ry;
+    rx += (s8)(ContStkY[1] / 30) * speed;
+    if (rx >= 360.0f) {
+        rx -= 360.0f;
+    } else if (rx < 0.0f) {
+        rx += 360.0f;
+    }
+    D_80113BF8_37F2F8_MinigameParkSetup.x = rx;
+    D_800FD474_FE074.x = (s16)rx;
+    D_800FD474_FE074.y = (s16)D_80113BF8_37F2F8_MinigameParkSetup.y;
+    speed = 2.0f;
+    if (ContBtn[1] & 0x2000) {
+        speed = 10.0f;
+    }
+    if (ContBtn[1] & 0x800) {
+        t = HuMathSin(ry);
+        t *= HuMathSin(rx);
+        speed = -speed;
+        D_8010274C_10334C.x += t * speed;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * speed;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * speed;
+    } else if (ContBtn[1] & 0x400) {
+        t = HuMathSin(ry);
+        t *= HuMathSin(rx);
+        D_8010274C_10334C.x += t * speed;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * speed;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * speed;
+    } else if (ContBtn[1] & 0x200) {
+        dz = D_800C9B80_CA780->pos.z - D_8010274C_10334C.z;
+        dx = -(D_800C9B80_CA780->pos.x - D_8010274C_10334C.x);
+        n = 1.0f / func_800B1830_B2430(dz * dz + dx * dx);
+        D_8010274C_10334C.x += dz * n * speed;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += dx * n * speed;
+    } else if (ContBtn[1] & 0x100) {
+        dz = -(D_800C9B80_CA780->pos.z - D_8010274C_10334C.z);
+        dx = D_800C9B80_CA780->pos.x - D_8010274C_10334C.x;
+        n = 1.0f / func_800B1830_B2430(dz * dz + dx * dx);
+        D_8010274C_10334C.x += dz * n * speed;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += dx * n * speed;
+    }
+    if (ContBtn[1] & 2) {
+        D_801135C0_37ECC0_MinigameParkSetup += 1.0f;
+    }
+    if (ContBtn[1] & 1) {
+        D_801135C0_37ECC0_MinigameParkSetup -= 1.0f;
+    }
+    Hu3DCamSetPerspective(0, D_801135C0_37ECC0_MinigameParkSetup, D_80113E24_37F524_MinigameParkSetup,
+                          D_80113BF4_37F2F4_MinigameParkSetup);
+    if (ContBtnTrg[1] & 0x4000) {
+        osSyncPrintf("CRot   (%f,%f,%f)\n", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+        osSyncPrintf("Center (%f,%f,%f)\n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+        osSyncPrintf("CZoom  %f CFovy %f\n", D_800FA610_FB210, D_801135C0_37ECC0_MinigameParkSetup);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111768_37CE68_MinigameParkSetup);
+#endif
 
 /* The camera process (MP2 main's func_80079E60, MP3 omOutView, plus a roll): the eye orbits
    D_8010274C at distance D_800FA610 with rotation D_800FD474, the up vector turned by
