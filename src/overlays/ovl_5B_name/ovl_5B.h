@@ -207,18 +207,15 @@ extern s32 D_8011357C_39022C_name_5B[8]; /* unused by code */
 extern s32 D_8011359C_39024C_name_5B[4]; /* unused by code */
 extern s32 D_801135AC_39025C_name_5B[9]; /* unused by code */
 extern s32 D_801135D0_390280_name_5B[4]; /* unused by code */
-extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88 */
+extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88: the sound test sounds, page by page */
 extern s32 D_80113774_390424_name_5B[1]; /* 8010B654 */
 extern s32 D_80113778_390428_name_5B[17]; /* 8010B654 */
 extern s32 D_801137BC_39046C_name_5B[3]; /* 8010B654 */
 extern s32 D_801137C8_390478_name_5B[3]; /* 8010B654 */
 extern s32 D_801137D4_390484_name_5B[6]; /* 8010B654 */
 extern s16 D_801137EC_39049C_name_5B[2]; /* 8010B654 */
-extern s16 D_801137F0_3904A0_name_5B[1]; /* 8010CB88 */
-extern s16 D_801137F2_3904A2_name_5B[1]; /* 8010CB88 */
-extern s16 D_801137F4_3904A4_name_5B[28]; /* 8010CB88 */
-extern s32 D_8011382C_3904DC_name_5B[2]; /* 8010CB88 */
-extern s16 D_80113834_3904E4_name_5B[2]; /* 8010CB88 */
+extern s16 D_801137F0_3904A0_name_5B[17][2]; /* 8010CB88: the sound test pages (message, sound count), -1 ends; splat labels 37F2/37F4/382C are [0][1], [1], [15] */
+extern s16 D_80113834_3904E4_name_5B; /* 8010CB88: the sound test page */
 extern s32 D_80113838_3904E8_name_5B; /* 8010DCAC 8010DF24 80110AF8 80112094 */
 extern s16 D_8011383C_3904EC_name_5B[6]; /* 8010E618 8010ED80 */
 extern s32 D_80113848_3904F8_name_5B[7]; /* 8010E618 8010ED80 */
@@ -258,8 +255,8 @@ extern u16 D_801144AA_39115A_name_5B; /* 8010A940 8010C828 */
 extern s16 D_801144AC_39115C_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144AE_39115E_name_5B; /* 8010B654 8010CB88 8010D6E8 */
 extern s16 D_801144B0_391160_name_5B[2]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144B4_391164_name_5B[3]; /* 8010B654 8010CB88 8010D6E8 */
-extern s32 D_801144C0_391170_name_5B[4]; /* 8010B654 8010CB88 */
+extern Vec D_801144B4_391164_name_5B; /* 8010B654 8010CB88 8010D6E8: the book's position */
+extern Vec D_801144C0_391170_name_5B; /* 8010B654 8010CB88: the book's rotation */
 extern s32 D_801144D0_391180_name_5B[1]; /* 8010B654 */
 extern s32 D_801144D4_391184_name_5B; /* 8010B654 */
 extern u8 D_801144D8_391188_name_5B[64]; /* 8010B654 */
