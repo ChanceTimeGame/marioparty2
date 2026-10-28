@@ -175,7 +175,7 @@ extern s16 D_800CAD94; /* raw guess */
 
 /* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
 extern s16 D_80112B40_37E240_MinigameParkSetup;
-extern s16 D_80112B42_37E242_MinigameParkSetup;
+extern u16 D_80112B42_37E242_MinigameParkSetup; /* 58-E: nonzero = leave (801109C8) */
 extern s16 D_80112B44_37E244_MinigameParkSetup[2];
 extern s32 D_80112B48_37E248_MinigameParkSetup;
 extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
@@ -224,7 +224,7 @@ extern s16 D_80113786_37EE86_MinigameParkSetup;
 extern s16 D_80113788_37EE88_MinigameParkSetup;
 extern s32 D_8011378C_37EE8C_MinigameParkSetup;
 extern s16 D_80113790_37EE90_MinigameParkSetup; /* set by 8010FB00 when its intro is done */
-extern s16 D_80113798_37EE98_MinigameParkSetup;
+extern s16 D_80113798_37EE98_MinigameParkSetup[6][2]; /* 58-E: cursor slot positions x, y (80110678 moves between them) */
 extern s16 D_8011379A_37EE9A_MinigameParkSetup[11];
 extern f32 D_801137B0_37EEB0_MinigameParkSetup[2]; /* panel origin x, y (801051BC) */
 extern Process* D_801137B8_37EEB8_MinigameParkSetup[6]; /* 5 used: 80106AF8 processes */
@@ -307,8 +307,7 @@ extern s16 D_801139C4_37F0C4_MinigameParkSetup;
 extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
 extern s32 D_801139D8_37F0D8_MinigameParkSetup[135];
 extern f32 D_80113BF4_37F2F4_MinigameParkSetup; /* camera far */
-extern s32 D_80113BF8_37F2F8_MinigameParkSetup;
-extern s32 D_80113BFC_37F2FC_MinigameParkSetup[3];
+extern Vec D_80113BF8_37F2F8_MinigameParkSetup; /* 58-E: camera rotation copy (D_800FD474); + 4 bytes */
 extern s32 D_80113C08_37F308_MinigameParkSetup[135];
 extern f32 D_80113E24_37F524_MinigameParkSetup; /* camera near */
 
@@ -365,14 +364,14 @@ void func_80110278_37B978_MinigameParkSetup(void);
 void func_80110350_37BA50_MinigameParkSetup(s32);
 s32 func_801103A4_37BAA4_MinigameParkSetup(void);
 s32 func_8011042C_37BB2C_MinigameParkSetup(void);
-void func_801104B4_37BBB4_MinigameParkSetup(s32);
+void func_801104B4_37BBB4_MinigameParkSetup(char* str);
 void func_801104DC_37BBDC_MinigameParkSetup(void);
 void func_801104FC_37BBFC_MinigameParkSetup(s16 model, s16 sprite, const char* hook); /* sprite to a model hook */
-void func_801105B8_37BCB8_MinigameParkSetup(s16, s16, s32, s32);
-void func_8011060C_37BD0C_MinigameParkSetup(s32, void*, s16, s16);
+void func_801105B8_37BCB8_MinigameParkSetup(s16 i, s16 spr, s32 dx, s32 dy);
+void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy);
 s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stickY); /* -1: no move */
-void func_801109C8_37C0C8_MinigameParkSetup(void*);
-void func_80110A28_37C128_MinigameParkSetup(void);
+void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj);
+void func_80110A28_37C128_MinigameParkSetup(omObjData* obj);
 void func_80110AF0_37C1F0_MinigameParkSetup(s16);
 void func_80110B98_37C298_MinigameParkSetup(s16, s16, s16, void*);
 void func_80111328_37CA28_MinigameParkSetup(void);
@@ -385,8 +384,25 @@ void func_80111768_37CE68_MinigameParkSetup(void);
 void func_80111D8C_37D48C_MinigameParkSetup(void);
 void func_80112360_37DA60_MinigameParkSetup(s32 *arg0);
 void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model);
-void func_80112810_37DF10_MinigameParkSetup(s16, void*, s32);
-void func_80112910_37E010_MinigameParkSetup(s16, s32);
+void func_80112810_37DF10_MinigameParkSetup(s16 model, Vec* out, Matrix4f mtx);
+void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx);
 void func_80112950_37E050_MinigameParkSetup(void);
+
+/* 58-E */
+
+/* main's sprite slots (D_800F93FC, 1AE60.c EspriteSlot): only the center is read here. */
+typedef struct Ovl58EspriteSlot {
+    /* 0x00 */ s16 unk00[5];
+    /* 0x0A */ s16 x; /* center */
+    /* 0x0C */ s16 y;
+    /* 0x0E */ char unk0E[0x16];
+} Ovl58EspriteSlot; /* size = 0x24 */
+
+/* One camera view (D_80112B4C through D_80113870); the same layout as 5B's Ovl5BCamView. */
+typedef struct Ovl58CamView {
+    /* 0x00 */ Vec rot;  /* -> D_800FD474 */
+    /* 0x0C */ Vec at;   /* -> D_8010274C */
+    /* 0x18 */ f32 zoom; /* -> D_800FA610 */
+} Ovl58CamView; /* size = 0x1C */
 
 #endif /* _OVL_58_H */

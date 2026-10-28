@@ -1116,31 +1116,134 @@ const char D_80113730_37EE30_MinigameParkSetup[] = "c162_000-atama";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010FB00_37B200_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110278_37B978_MinigameParkSetup);
+/* The message window of the setup screens: opened at the bottom, wiped in once the intro is
+   done (D_80113790), kept until D_80113788 asks it closed. */
+void func_80110278_37B978_MinigameParkSetup(void) {
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110350_37BA50_MinigameParkSetup);
+    D_80113818_37EF18_MinigameParkSetup = win = func_8008DFC4_8EBC4(0x40, 0xCC, 2);
+    func_80089284_89E84(win, 0x20, 0x20);
+    func_8008D59C_8E19C(win, 1 << D_8011381A_37EF1A_MinigameParkSetup);
+    func_8008E644_8F244((s16)win, 0xC0);
+    func_8008E2DC_8EEDC((s16)win, 1);
+    D_80113790_37EE90_MinigameParkSetup = 1;
+    while (1) {
+        if (D_80113788_37EE88_MinigameParkSetup != 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    func_8008E4D0_8F0D0((s16)win, 1);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801103A4_37BAA4_MinigameParkSetup);
+/* Shows message mess in the setup window (Mini-Game Park's variant on board 5 in mode 0). */
+void func_80110350_37BA50_MinigameParkSetup(s32 mess) {
+    if (mess >= 0 && GwSystem.current_board_index == 5 && D_800CD414_CE014 == 0) {
+        mess += 0x22;
+    }
+    func_800890CC_89CCC(D_80113818_37EF18_MinigameParkSetup, mess, -1, -1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011042C_37BB2C_MinigameParkSetup);
+/* Waits for the message, then returns the choice (0 when the window has no choice). */
+s32 func_801103A4_37BAA4_MinigameParkSetup(void) {
+    while (1) {
+        if (func_8008BA30_8C630(D_80113818_37EF18_MinigameParkSetup) == 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_80113818_37EF18_MinigameParkSetup].unk_30 != 0) {
+        return func_8008BB48_8C748(D_80113818_37EF18_MinigameParkSetup, 0, 0);
+    } else {
+        return 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104B4_37BBB4_MinigameParkSetup);
+/* As 801103A4 with the cursor starting on choice 1. */
+s32 func_8011042C_37BB2C_MinigameParkSetup(void) {
+    while (1) {
+        if (func_8008BA30_8C630(D_80113818_37EF18_MinigameParkSetup) == 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_80113818_37EF18_MinigameParkSetup].unk_30 != 0) {
+        return func_8008BB48_8C748(D_80113818_37EF18_MinigameParkSetup, 1, 0);
+    } else {
+        return 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104DC_37BBDC_MinigameParkSetup);
+void func_801104B4_37BBB4_MinigameParkSetup(char* str) {
+    func_80089308_89F08(D_80113818_37EF18_MinigameParkSetup, str, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104FC_37BBFC_MinigameParkSetup);
+void func_801104DC_37BBDC_MinigameParkSetup(void) {
+    func_8008AD44_8B944(D_80113818_37EF18_MinigameParkSetup);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801105B8_37BCB8_MinigameParkSetup);
+void func_801104FC_37BBFC_MinigameParkSetup(s16 model, s16 sprite, const char* hook) {
+    Matrix4f mtx;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011060C_37BD0C_MinigameParkSetup);
+    func_80023554_24154(model, func_80029CE4_2A8E4(model), (char*)hook, mtx);
+    func_80112910_37E010_MinigameParkSetup(model, D_801137B0_37EEB0_MinigameParkSetup, mtx);
+    espPosSet(sprite, D_801137B0_37EEB0_MinigameParkSetup[0], D_801137B0_37EEB0_MinigameParkSetup[1]);
+}
+
+/* Cursor slot i's position: sprite spr's center plus (dx, dy). */
+void func_801105B8_37BCB8_MinigameParkSetup(s16 i, s16 spr, s32 dx, s32 dy) {
+    D_80113798_37EE98_MinigameParkSetup[i][0] = ((Ovl58EspriteSlot*)D_800F93FC_F9FFC)[spr].x + dx;
+    D_80113798_37EE98_MinigameParkSetup[i][1] = ((Ovl58EspriteSlot*)D_800F93FC_F9FFC)[spr].y + dy;
+}
+
+/* Cursor slot i's position: pos plus (dx, dy). */
+void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy) {
+    D_80113798_37EE98_MinigameParkSetup[i][0] = dx + pos[0];
+    D_80113798_37EE98_MinigameParkSetup[i][1] = dy + pos[1];
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110678_37BD78_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801109C8_37C0C8_MinigameParkSetup);
+void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj) {
+    if (D_80112B42_37E242_MinigameParkSetup != 0 || D_801011FC_101DFC != 0) {
+        if (D_80112B44_37E244_MinigameParkSetup[0] == 0) {
+            InitFadeOut(0, 8);
+        }
+        obj->func_ptr = func_80110A28_37C128_MinigameParkSetup;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110A28_37C128_MinigameParkSetup);
+/* Leaves once the fade is done: back to the caller (0), or to overlay D_8011381E by goto (1) or
+   call (otherwise). */
+void func_80110A28_37C128_MinigameParkSetup(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        if (D_80112B48_37E248_MinigameParkSetup != 0) {
+            func_80023D74_24974((void*)D_80112B48_37E248_MinigameParkSetup);
+        }
+        func_8001AC44_1B844(D_8011392A_37F02A_MinigameParkSetup);
+        func_8008CE5C_8DA5C();
+        if (D_8011381C_37EF1C_MinigameParkSetup == 0) {
+            omOvlReturnEx(1);
+        } else if (D_8011381C_37EF1C_MinigameParkSetup == 1) {
+            omOvlGotoEx(D_8011381E_37EF1E_MinigameParkSetup, D_80113820_37EF20_MinigameParkSetup,
+                        D_80113822_37EF22_MinigameParkSetup | 0x11);
+        } else {
+            omOvlCallEx(D_8011381E_37EF1E_MinigameParkSetup, D_80113820_37EF20_MinigameParkSetup,
+                        D_80113822_37EF22_MinigameParkSetup | 0x11);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110AF0_37C1F0_MinigameParkSetup);
+/* Applies camera view i of the current table (D_80113870). */
+void func_80110AF0_37C1F0_MinigameParkSetup(s16 i) {
+    D_800FD474_FE074 = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].rot;
+    D_80113BF8_37F2F8_MinigameParkSetup = D_800FD474_FE074;
+    D_8010274C_10334C = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].at;
+    D_800FA610_FB210 = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].zoom;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110B98_37C298_MinigameParkSetup);
 
