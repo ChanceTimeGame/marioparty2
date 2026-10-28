@@ -174,3 +174,5 @@ D_8010C0C0_19AC60_BobsledRun = D_8010C048_19ABE8_BobsledRun + 0x78;
 D_8010C0E2_19AC82_BobsledRun = D_8010C0E0_19AC80_BobsledRun + 0x2;
 D_8010C0E6_19AC86_BobsledRun = D_8010C0E4_19AC84_BobsledRun + 0x2;
 D_8010C15E_19ACFE_BobsledRun = D_8010C15C_19ACFC_BobsledRun + 0x2;
+/* ovl_5B .rodata: "%d", now a string literal in 80102C88 (37F4E0.c); 801068C4 (asm) still names it. Remove once 801068C4 is C (5B-A) */
+D_801138AC_39055C_name_5B = 0x801138AC;

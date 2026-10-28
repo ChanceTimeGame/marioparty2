@@ -165,7 +165,7 @@ extern s16 D_800FD80C_FE40C; /* main: a controller port (80102830 finds the firs
 /* ---- 5B .data (asm, 38F320.data.s) ---- */
 
 extern board_overlay_entrypoint D_80112670_38F320_name_5B[]; /* the three entry points (0: from the title, 1, 2), -1 */
-extern s16 D_80112690_38F340_name_5B; /* set: the menu is leaving (80102C88 stops) */
+extern u16 D_80112690_38F340_name_5B; /* set: the menu is leaving (80102C88 stops) */
 extern f32 D_80112694_38F344_name_5B; /* camera field of view */
 extern s8 D_80112698_38F348_name_5B[2]; /* 80109B1C */
 extern s16 D_8011269A_38F34A_name_5B;
@@ -291,7 +291,7 @@ extern s16 D_80114860_391510_name_5B; /* 80102830 8010A940 8010ACBC 8010D8B0 */
 extern s16 D_80114862_391512_name_5B; /* the controller port that drives the menu (-1: none) */
 extern Vec D_80114864_391514_name_5B;
 extern s16 D_80114870_391520_name_5B; /* 80102830 80102C88 80103B54 80103EB4 801068C4 80107748 */
-extern s16 D_80114872_391522_name_5B[3]; /* 80102C88 80105530 */
+extern s16 D_80114872_391522_name_5B; /* the cursor's first choice (5 or 8) */
 extern s16 D_80114878_391528_name_5B[10][2]; /* menu choices' screen positions (x, y); label 87A is [0][1] */
 extern u16 D_801148A0_391550_name_5B; /* 80108F18 801091EC 80109408 */
 extern s16 D_801148A2_391552_name_5B; /* 80102830 80102C88 80103EB4 801068C4 80109408 */
@@ -307,7 +307,7 @@ void func_80102C88_37F938_name_5B(void);
 void func_80103984_380634_name_5B(s16* arg0);
 void func_801039BC_38066C_name_5B(void);
 void func_80103A94_380744_name_5B(s16* arg0);
-s16 func_80103B54_380804_name_5B(s32 arg0, s16 arg1);
+s16 func_80103B54_380804_name_5B(s16 x, s16 y);
 void func_80103EB4_380B64_name_5B(void);
 void func_80104300_380FB0_name_5B(void);
 void func_80105410_3820C0_name_5B(void);
