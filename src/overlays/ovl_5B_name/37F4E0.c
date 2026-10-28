@@ -347,13 +347,95 @@ void func_80102C88_37F938_name_5B(void) {
 }
 
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80103984_380634_name_5B);
+/* Camera move callback: the controller rumbles every eighth frame. */
+void func_80103984_380634_name_5B(s16* arg0) {
+    if ((arg0[0] & 7) == 0) {
+        func_80088604_89204(D_80114862_391512_name_5B, 5, 0, 5);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_801039BC_38066C_name_5B);
+/* Go straight to the board D_8011269E (its setup). Does not return. */
+void func_801039BC_38066C_name_5B(void) {
+    u16 model = D_80114758_391408_name_5B[0x2B];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80103A94_380744_name_5B);
+    D_80114750_391400_name_5B = 1;
+    _SetFlag(0x17);
+    func_80029BF0_2A7F0(model, D_801147D0_391480_name_5B[0x30], 0, 5, 2);
+    while (D_80114750_391400_name_5B != -1) {
+        HuPrcVSleep();
+    }
+    func_80108788_385438_name_5B(4, 20, 1, (void*)-1);
+    func_800298A4_2A4A4(D_80114758_391408_name_5B[3], 4, 0);
+    D_801148A4_391554_name_5B = func_80106868_383518_name_5B(D_8011269E_38F34E_name_5B);
+    func_80107748_3843F8_name_5B();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80103B54_380804_name_5B);
+/* Camera move callback: zoom the field of view out and back (58 -> 38 -> 58). */
+void func_80103A94_380744_name_5B(s16* arg0) {
+    D_80112694_38F344_name_5B = HuMathSin(arg0[0] * 90.0f / arg0[1]) * -20.0f + 58.0f;
+    Hu3DCamSetPerspective(0, D_80112694_38F344_name_5B, D_8011485C_39150C_name_5B, D_80114858_391508_name_5B);
+    if (arg0[0] == 20) {
+        func_8002C9C0_2D5C0(D_80114758_391408_name_5B[0x2B], D_801147D0_391480_name_5B[0x2C]);
+    }
+}
+
+/* The choice the stick (x, y) points at from the cursor's choice, or -1. */
+s16 func_80103B54_380804_name_5B(s16 x, s16 y) {
+    f32 dir[10][2];
+    f32 dist[10];
+    f32 dx;
+    f32 dy;
+    f32 sx;
+    f32 sy;
+    f32 len;
+    f32 best;
+    s16 i;
+    s16 sel;
+
+    for (i = 0; i < 10; i++) {
+        if (i == D_801148A4_391554_name_5B) {
+            dist[i] = -1.0f;
+        } else {
+            dx = D_80114878_391528_name_5B[D_801148A4_391554_name_5B][0] - D_80114878_391528_name_5B[i][0];
+            dy = D_80114878_391528_name_5B[D_801148A4_391554_name_5B][1] - D_80114878_391528_name_5B[i][1];
+            len = dist[i] = func_800B1830_B2430(dx * dx + dy * dy);
+            dir[i][0] = dx / len;
+            dir[i][1] = dy / len;
+        }
+    }
+    if (!_CheckFlag(0x40)) {
+        dist[9] = -1.0f;
+    }
+    if (D_80114740_3913F0_name_5B == 0) {
+        dist[5] = -1.0f;
+    } else if (D_80114870_391520_name_5B == 0) {
+        dist[0] = dist[1] = dist[2] = dist[3] = dist[8] = dist[4] = -1.0f;
+    }
+    len = func_800B1830_B2430(x * x + y * y);
+    sx = x / len;
+    sy = y / len;
+    for (i = 0; i < 10; i++) {
+        if (!(dist[i] < 0.0f)) {
+            dx = sx - dir[i][0];
+            dy = sy - dir[i][1];
+            if (func_800B1830_B2430(dx * dx + dy * dy) > 0.5f) {
+                dist[i] = -1.0f;
+            }
+        }
+    }
+    best = 100000.0f;
+    sel = -1;
+    for (i = 0; i < 10; i++) {
+        if (!(dist[i] < 0.0f) && dist[i] < best) {
+            best = dist[i];
+            sel = i;
+        }
+    }
+    return sel;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80103EB4_380B64_name_5B);
 
