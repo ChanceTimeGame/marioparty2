@@ -986,33 +986,259 @@ const char D_80113630_37ED30_MinigameParkSetup[] = "c_panel";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801052B4_3709B4_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80106A00_372100_MinigameParkSetup);
+/* Place sprite `sprite` at icon slot `slot` (D_8011344C, around D_801137B0). */
+void func_80106A00_372100_MinigameParkSetup(s16 sprite, s16 slot) {
+    espPosSet(sprite, D_8011344C_37EB4C_MinigameParkSetup[slot][0] + D_801137B0_37EEB0_MinigameParkSetup[0] - 68.0f,
+              D_8011344C_37EB4C_MinigameParkSetup[slot][1] + D_801137B0_37EEB0_MinigameParkSetup[1] - 3.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80106AB4_3721B4_MinigameParkSetup);
+/* Place sprite `sprite` where esprite slot `slot` is. */
+void func_80106AB4_3721B4_MinigameParkSetup(s16 sprite, s16 slot) {
+    Ovl58Esprite* esp = &((Ovl58Esprite*)D_800F93FC_F9FFC)[slot];
 
+    espPosSet(sprite, esp->x, esp->y);
+}
+
+#ifdef NON_MATCHING
+/* raw 9: the two hoisted fade constants trade places (retail keeps 127.5
+   in s5 and 255.0 in f30). */
+/* Process: one selection cursor (D_801137D0[n]). While active it fades in, moves between
+   its slots with its pad's stick (D_801138A0 records which cursor is on each slot), and
+   sets `done` on A; when deactivated it fades out. */
+void func_80106AF8_3721F8_MinigameParkSetup(void) {
+    Ovl58Cursor* c;
+    s16 n;
+    s16 id;
+    s16 spr;
+    s16 shown;
+    s16 i;
+    s16 sel;
+    f32 x0;
+    f32 y0;
+    f32 dx;
+    f32 dy;
+    f32 s;
+
+    D_801137D0_37EED0_MinigameParkSetup[n = D_80113800_37EF00_MinigameParkSetup] = func_80027154_27D54(0x18, 0x7918);
+    c = D_801137D0_37EED0_MinigameParkSetup[n];
+    c->id = id = D_80113800_37EF00_MinigameParkSetup++;
+    if (n < D_80113958_37F058_MinigameParkSetup.padCount) {
+        c->port = D_80113958_37F058_MinigameParkSetup.port[n];
+    } else {
+        c->port = D_8011381B_37EF1B_MinigameParkSetup;
+    }
+    shown = 0;
+    c->active = 0;
+    spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x900F9), c->id, 1);
+    func_8001A788_1B388(spr, 1);
+    espPosSet(spr, 160, 120);
+    espDispOff(spr);
+    c->x = 160.0f;
+    c->y = 120.0f;
+    c->done = 0;
+    c->sel = 0;
+    c->prevSel = 0;
+    while (1) {
+        HuPrcVSleep();
+        espPosSet(spr, c->x, c->y);
+        if (shown != 0 && c->active == 0) {
+            c->prevSel = c->sel;
+            for (i = 0; i < 3; i++) {
+                func_8001A6BC_1B2BC(spr, 255.0f - i * 127.5f);
+                HuPrcVSleep();
+            }
+            espDispOff(spr);
+            shown = 0;
+        }
+        if (c->active != 0) {
+            if (shown == 0 && c->active != 0) {
+                c->done = 0;
+                espDispOn(spr);
+                for (i = 0; i < 5; i++) {
+                    func_8001A6BC_1B2BC(spr, i * 63.75f);
+                    HuPrcVSleep();
+                }
+                shown = 1;
+                continue;
+            }
+            if (ContBtnTrg[c->port] & 0x8000) {
+                c->done = 1;
+                continue;
+            }
+            if (c->done != 1) {
+                if ((ContStkX[c->port] < 0 ? -ContStkX[c->port] : ContStkX[c->port]) >= 31
+                    || (ContStkY[c->port] < 0 ? -ContStkY[c->port] : ContStkY[c->port]) >= 31) {
+                    sel = func_80110678_37BD78_MinigameParkSetup(c->sel, c->count, -ContStkX[c->port], ContStkY[c->port]);
+                    if (sel != -1) {
+                        PlaySound(1);
+                        c->sel = sel;
+                    }
+                }
+            }
+            if (c->prevSel == c->sel) {
+                continue;
+            }
+            if (D_801138A0_37EFA0_MinigameParkSetup[c->prevSel] != 16) {
+                D_801138A0_37EFA0_MinigameParkSetup[c->prevSel] = -1;
+            }
+            D_801138A0_37EFA0_MinigameParkSetup[c->sel] = id;
+            x0 = c->x;
+            y0 = c->y;
+            dx = c->slots[c->sel][0] - x0;
+            dy = c->slots[c->sel][1] - y0;
+            for (i = 1; i < 6; i++) {
+                s = HuMathSin(i * 18.0f);
+                c->x = x0 + dx * s;
+                c->y = y0 + dy * s;
+                espPosSet(spr, c->x, c->y);
+                HuPrcVSleep();
+            }
+        }
+        c->prevSel = c->sel;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80106AF8_3721F8_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107014_372714_MinigameParkSetup);
+void func_80107014_372714_MinigameParkSetup(s16 cursor, s8 active) {
+    D_801137D0_37EED0_MinigameParkSetup[cursor]->active = active;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107030_372730_MinigameParkSetup);
+/* Put cursor `cursor` on slot `slot` at once. */
+void func_80107030_372730_MinigameParkSetup(s16 cursor, s16 slot) {
+    Ovl58Cursor* c = D_801137D0_37EED0_MinigameParkSetup[cursor];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801070B0_3727B0_MinigameParkSetup);
+    c->x = c->slots[slot][0];
+    c->y = c->slots[slot][1];
+    c->prevSel = slot;
+    c->sel = slot;
+    D_801137D0_37EED0_MinigameParkSetup[cursor]->done = 0;
+    D_801138A0_37EFA0_MinigameParkSetup[slot] = cursor;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801070E0_3727E0_MinigameParkSetup);
+/* Move cursor `cursor` to slot `slot` (it slides there). */
+void func_801070B0_3727B0_MinigameParkSetup(s16 cursor, s16 slot) {
+    D_801137D0_37EED0_MinigameParkSetup[cursor]->sel = slot;
+    D_801138A0_37EFA0_MinigameParkSetup[slot] = cursor;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801070FC_3727FC_MinigameParkSetup);
+s16 func_801070E0_3727E0_MinigameParkSetup(s16 cursor) {
+    return D_801137D0_37EED0_MinigameParkSetup[cursor]->done;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107118_372818_MinigameParkSetup);
+void func_801070FC_3727FC_MinigameParkSetup(s16 cursor, s16 done) {
+    D_801137D0_37EED0_MinigameParkSetup[cursor]->done = done;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107134_372834_MinigameParkSetup);
+s16 func_80107118_372818_MinigameParkSetup(s16 cursor) {
+    return D_801137D0_37EED0_MinigameParkSetup[cursor]->sel;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107180_372880_MinigameParkSetup);
+/* Give all five cursors the slot table `slots` of `count` slots. */
+void func_80107134_372834_MinigameParkSetup(s16 (*slots)[2], s8 count) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801074CC_372BCC_MinigameParkSetup);
+    for (i = 0; i < 5; i++) {
+        D_801137D0_37EED0_MinigameParkSetup[i]->slots = slots;
+        D_801137D0_37EED0_MinigameParkSetup[i]->count = count;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801075C8_372CC8_MinigameParkSetup);
+/* Process: one model mover (D_801137E8[n]) for the character models D_801138C8: slides the
+   model towards its target, accelerating; it is hidden while far out in depth. */
+void func_80107180_372880_MinigameParkSetup(void) {
+    Ovl58Mover* m;
+    Vec* pos;
+    Vec* target;
+    s16 id;
+    s16 model;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dist;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107604_372D04_MinigameParkSetup);
+    D_801137E8_37EEE8_MinigameParkSetup[id = D_80113802_37EF02_MinigameParkSetup] = func_80027154_27D54(0x20, 0x7918);
+    m = D_801137E8_37EEE8_MinigameParkSetup[id];
+    D_80113802_37EF02_MinigameParkSetup = id + 1;
+    m->id = id;
+    pos = &m->pos;
+    target = &m->target;
+    model = OVL58_CHAR_MODEL(id);
+    D_80101300_101F00 = 0.1f;
+    D_8010105C_101C5C = 0.3f;
+    func_80029A8C_2A68C(model);
+    func_80029AFC_2A6FC(model);
+    func_8002D1EC_2DDEC(model, 1);
+    func_8002D274_2DE74(model, 0xFF, 0xFF, 0xC0);
+    func_8002D2B4_2DEB4(model, 0.0f, 100.0f, 0.0f);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    func_8002C9C0_2D5C0(model, D_8011398A_37F08A_MinigameParkSetup[id * 2]);
+    func_80029E80_2AA80(model, 2, 2);
+    func_800298A4_2A4A4(model, 4, 4);
+    func_80029714_2A314(model, 0.0f, 0.0f, -600.0f);
+    func_80029760_2A360(model, pos);
+    m->target = m->pos;
+    while (1) {
+        if (pos->z < 500.0f && pos->z > -500.0f) {
+            func_800298A4_2A4A4(model, 4, 0);
+        } else {
+            func_800298A4_2A4A4(model, 4, 4);
+        }
+        if (pos->x != target->x || pos->y != target->y || pos->z != target->z) {
+            dx = target->x - pos->x;
+            dy = target->y - pos->y;
+            dz = target->z - pos->z;
+            dist = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            if (dist < m->speed) {
+                m->pos = m->target;
+            } else {
+                pos->x += dx / dist * m->speed;
+                pos->y += dy / dist * m->speed;
+                pos->z += dz / dist * m->speed;
+            }
+            m->speed += 1.0f;
+        }
+        func_80029714_2A314(model, pos->x, pos->y, pos->z);
+        HuPrcVSleep();
+    }
+}
+
+/* Send mover `mover` to (x, y, z); a new depth above -400 plays its sound. */
+void func_801074CC_372BCC_MinigameParkSetup(s16 mover, f32 x, f32 y, f32 z) {
+    if (z > -400.0f) {
+        if (D_801137E8_37EEE8_MinigameParkSetup[mover]->target.z != z) {
+            func_8007975C_7A35C(mover + 0x107, D_80113464_37EB64_MinigameParkSetup);
+            D_80113464_37EB64_MinigameParkSetup = (D_80113464_37EB64_MinigameParkSetup + 1) & 3;
+        }
+    }
+    D_801137E8_37EEE8_MinigameParkSetup[mover]->target.x = x;
+    D_801137E8_37EEE8_MinigameParkSetup[mover]->target.y = y;
+    D_801137E8_37EEE8_MinigameParkSetup[mover]->target.z = z;
+    D_801137E8_37EEE8_MinigameParkSetup[mover]->speed = 10.0f;
+}
+
+/* Put mover `mover` at (x, y, z) at once. */
+void func_801075C8_372CC8_MinigameParkSetup(s16 mover, f32 x, f32 y, f32 z) {
+    Ovl58Mover* m = D_801137E8_37EEE8_MinigameParkSetup[mover];
+
+    m->target.x = x;
+    m->pos.x = x;
+    m->target.y = y;
+    m->pos.y = y;
+    m->target.z = z;
+    m->pos.z = z;
+}
+
+/* No cursor on any slot. */
+void func_80107604_372D04_MinigameParkSetup(void) {
+    s16 i;
+
+    for (i = 0; i < 16; i++) {
+        D_801138A0_37EFA0_MinigameParkSetup[i] = -1;
+    }
+}
 
 
 
