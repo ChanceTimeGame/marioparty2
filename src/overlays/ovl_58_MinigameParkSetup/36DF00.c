@@ -1076,7 +1076,36 @@ const char D_801136F4_37EDF4_MinigameParkSetup[] = "mode_panel";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010B6E8_376DE8_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010C4B4_377BB4_MinigameParkSetup);
+/* Slides the chosen mode panel (D_80113816) out along z, away (dir 0) or towards the camera,
+   then hides it and its two sprites. */
+void func_8010C4B4_377BB4_MinigameParkSetup(s16 dir) {
+    s16 models[3] = { D_80113908_37F008_MinigameParkSetup[0], D_80113908_37F008_MinigameParkSetup[1],
+                         D_80113908_37F008_MinigameParkSetup[2] };
+    Vec start;
+    Vec pos;
+    f32 sign;
+    s16 i;
+
+    func_80029760_2A360(models[D_80113816_37EF16_MinigameParkSetup], &pos);
+    start = pos;
+    if (dir != 0) {
+        sign = -1.0f;
+    } else {
+        sign = 1.0f;
+    }
+    for (i = 0; i < 16; i++) {
+        pos.z = (1.0f - func_800B7890_B8490(i * 6.0f)) * (sign * 1200.0f - start.z) + start.z;
+        func_80029714_2A314(models[D_80113816_37EF16_MinigameParkSetup], pos.x, pos.y, pos.z);
+        func_801104FC_37BBFC_MinigameParkSetup(models[D_80113816_37EF16_MinigameParkSetup],
+                                               D_8011383E_37EF3E_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup],
+                                               D_801136F4_37EDF4_MinigameParkSetup);
+        func_80108BA8_3742A8_MinigameParkSetup(D_8011384A_37EF4A_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup]);
+        HuPrcVSleep();
+    }
+    func_800298A4_2A4A4(models[D_80113816_37EF16_MinigameParkSetup], 4, 4);
+    espDispOff(D_8011383E_37EF3E_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup]);
+    espDispOff(D_8011384A_37EF4A_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup]);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010C6C8_377DC8_MinigameParkSetup);
 

@@ -221,6 +221,7 @@ extern u8 D_801135C4_37ECC4_MinigameParkSetup[12];
 extern const Ovl58Quad D_80113618_37ED18_MinigameParkSetup; /* {2, 0, 3, 1}: 80103F38 panel lift-in delays (x10 frames) */
 extern const Ovl58Quad D_80113620_37ED20_MinigameParkSetup; /* {0, 1, 2, 3}: lift-out delays; 8010E2B8 CPU levels */
 extern const char D_80113628_37ED28_MinigameParkSetup[]; /* "p_panel" */
+extern const char D_801136F4_37EDF4_MinigameParkSetup[]; /* 58-D: "mode_panel" */
 
 /* ---- 58 .bss (asm, ovl_58_bss.bss.s; raw types unless noted) ---- */
 extern s16 D_80113780_37EE80_MinigameParkSetup; /* setup step (the mode loops switch on it) */
@@ -355,7 +356,7 @@ void func_8010A02C_37572C_MinigameParkSetup(s32);
 s32 func_8010A1E8_3758E8_MinigameParkSetup(void);
 void func_8010B6B4_376DB4_MinigameParkSetup(s16, void*);
 s32 func_8010B6E8_376DE8_MinigameParkSetup(void);
-void func_8010C4B4_377BB4_MinigameParkSetup(s32);
+void func_8010C4B4_377BB4_MinigameParkSetup(s16 dir);
 s32 func_8010C6C8_377DC8_MinigameParkSetup(void);
 s32 func_8010D260_378960_MinigameParkSetup(void);
 void func_8010E1F0_3798F0_MinigameParkSetup(s16 win, s16 i);
