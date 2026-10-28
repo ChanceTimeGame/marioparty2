@@ -205,7 +205,7 @@ extern s32 D_80113464_37EB64_MinigameParkSetup;
 extern s32 D_80113468_37EB68_MinigameParkSetup[4];
 extern s32 D_80113478_37EB78_MinigameParkSetup[4];
 extern s32 D_80113488_37EB88_MinigameParkSetup[6];
-extern void* D_801134A0_37EBA0_MinigameParkSetup[6];
+extern char* D_801134A0_37EBA0_MinigameParkSetup[6]; /* 58-C: game-length clock part names, 3 per mode */
 extern s32 D_801134B8_37EBB8_MinigameParkSetup[30];
 extern s16 D_80113530_37EC30_MinigameParkSetup[2];
 extern s32 D_80113534_37EC34_MinigameParkSetup[6];

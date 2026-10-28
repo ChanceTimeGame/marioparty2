@@ -1138,7 +1138,209 @@ void func_8010903C_37473C_MinigameParkSetup(void) {
     }
 }
 
+/* Game length: the clock model lifts in, the stick picks one of its three parts (lite,
+   standard, full), A spins the clock hands to the choice and stores it in
+   D_80113958.gameLength, B sinks the clock away. Returns 1 on A, 0 on B. */
+#ifdef NON_MATCHING
+/* masked 27: retail keeps result in s7 and tests it through a copy to v0 ("move v0,s7;
+   beqz v0") before the A path; this C tests it in place (one instruction short) and the
+   allocator then picks s5 for it. Everything else matches. */
+s32 func_80109478_374B78_MinigameParkSetup(void) {
+    Vec base;
+    Vec pos;
+    Matrix4f mtx;
+    Vec2f scr;
+    HmfMotionObj* part[3];
+    HmfMotionObj* hand1;
+    HmfMotionObj* hand2;
+    HmfMotionObj* hand3;
+    s16 motion;
+    s16 model;
+    s16 i;
+    s16 j;
+    s16 sel;
+    s32 result;
+    s16 names;
+    f32 angle;
+    f32 target;
+    f32 d;
+    f32 total;
+
+    motion = D_801139BE_37F0BE_MinigameParkSetup;
+    if (D_800CD414_CE014 != 2) {
+        model = D_801138FE_37EFFE_MinigameParkSetup;
+    } else {
+        model = D_8011390E_37F00E_MinigameParkSetup[0];
+    }
+    if (D_80113782_37EE82_MinigameParkSetup == 0) {
+        func_800298A4_2A4A4(model, 4, 0);
+        func_8002C9C0_2D5C0(model, motion);
+        func_80029E80_2AA80(model, 1, 1);
+        func_80029760_2A360(model, &base);
+        pos = base;
+        pos.z += 1200.0f;
+        PlaySound(0xAC);
+        func_80029714_2A314(model, pos.x, pos.y, pos.z);
+        for (i = 0; i < 21; i++) {
+            pos.z = (1.0f - HuMathSin(i * 4.5f)) * 1200.0f + base.z;
+            func_80029714_2A314(model, pos.x, pos.y, pos.z);
+            HuPrcVSleep();
+        }
+        func_80029E80_2AA80(model, 1, 0);
+        PlaySound(0xB8);
+        while (func_80029CE4_2A8E4(model) < func_80029D0C_2A90C(model)) {
+            HuPrcVSleep();
+        }
+        func_80029E80_2AA80(model, 1, 1);
+    } else {
+        if (D_800CD414_CE014 != 2) {
+            func_80029760_2A360(model, &base);
+            for (i = 0; i < 21; i++) {
+                func_80029714_2A314(model, base.x, base.y, base.z - HuMathSin(i * 4.5f) * 300.0f);
+                HuPrcVSleep();
+            }
+        }
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, 0x27, model);
+        func_80029760_2A360(model, &base);
+        pos = base;
+    }
+    names = D_800CD414_CE014 == 2 ? 3 : 0;
+    for (j = 0; j < 3; j++) {
+        func_80023554_24154(model, func_80029CE4_2A8E4(model), D_801134A0_37EBA0_MinigameParkSetup[names + j], mtx);
+        /* 80112910 is (s16 model, Vec2f* out, Matrix4f mtx) */
+        ((void (*)(s16, Vec2f*, Matrix4f))func_80112910_37E010_MinigameParkSetup)(model, &scr, mtx);
+        func_8011060C_37BD0C_MinigameParkSetup(j, &scr, 5, 0);
+        part[j] = func_8002A9F4_2B5F4(model, D_801134A0_37EBA0_MinigameParkSetup[names + j]);
+    }
+    func_80107604_372D04_MinigameParkSetup();
+    D_8011393C_37F03C_MinigameParkSetup = 0;
+    func_8011170C_37CE0C_MinigameParkSetup(0);
+    D_8011392C_37F02C_MinigameParkSetup = 1;
+    HuPrcSleep(5);
+    if (D_800CD414_CE014 != 2) {
+        func_80110350_37BA50_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup + 0x6A);
+    } else {
+        func_80110350_37BA50_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup + 0x6A1);
+    }
+    func_801103A4_37BAA4_MinigameParkSetup();
+    angle = 0.0f;
+    while (1) {
+        if ((ContStkX[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkX[D_8011381A_37EF1A_MinigameParkSetup] : ContStkX[D_8011381A_37EF1A_MinigameParkSetup]) >= 31
+            || (ContStkY[D_8011381A_37EF1A_MinigameParkSetup] < 0 ? -ContStkY[D_8011381A_37EF1A_MinigameParkSetup] : ContStkY[D_8011381A_37EF1A_MinigameParkSetup]) >= 31) {
+            j = func_80110678_37BD78_MinigameParkSetup(D_8011393C_37F03C_MinigameParkSetup, 3, -ContStkX[D_8011381A_37EF1A_MinigameParkSetup], ContStkY[D_8011381A_37EF1A_MinigameParkSetup]);
+            if (j != -1) {
+                PlaySound(1);
+                part[D_8011393C_37F03C_MinigameParkSetup]->unk40.x = part[D_8011393C_37F03C_MinigameParkSetup]->unk40.y = 1.0f;
+                func_8011175C_37CE5C_MinigameParkSetup(j);
+                HuPrcSleep(5);
+                if (D_800CD414_CE014 != 2) {
+                    func_80110350_37BA50_MinigameParkSetup(j + 0x6A);
+                } else {
+                    func_80110350_37BA50_MinigameParkSetup(j + 0x6A1);
+                }
+                func_801103A4_37BAA4_MinigameParkSetup();
+                D_8011393C_37F03C_MinigameParkSetup = j;
+                angle = 0.0f;
+            }
+        }
+        if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x4000) {
+            PlaySound(4);
+            result = 0;
+            sel = -1;
+            break;
+        }
+        if (ContBtnTrg[D_8011381A_37EF1A_MinigameParkSetup] & 0x8000) {
+            func_80088604_89204(D_8011381A_37EF1A_MinigameParkSetup, 2, 3, 10);
+            sel = D_8011393C_37F03C_MinigameParkSetup;
+            result = 1;
+            break;
+        }
+        angle += 30.0f;
+        if (angle > 360.0f) {
+            angle -= 360.0f;
+        }
+        part[D_8011393C_37F03C_MinigameParkSetup]->unk40.x = func_800B7890_B8490(angle) * 0.2f + 1.0f;
+        part[D_8011393C_37F03C_MinigameParkSetup]->unk40.y = func_800B7890_B8490(angle) * 0.2f + 1.0f;
+        HuPrcVSleep();
+    }
+    D_8011392C_37F02C_MinigameParkSetup = 0;
+    part[D_8011393C_37F03C_MinigameParkSetup]->unk40.x = part[D_8011393C_37F03C_MinigameParkSetup]->unk40.y = 1.0f;
+    if (result != 0) {
+        PlaySound(0xB2);
+        hand1 = func_8002A9F4_2B5F4(model, "tokei_hari");
+        hand2 = func_8002A9F4_2B5F4(model, "tokei_hari2");
+        hand3 = func_8002A9F4_2B5F4(model, "tokei_hari3");
+        if (sel == 0) {
+            target = 0.0f;
+        } else if (sel == 1) {
+            target = 240.0f;
+        } else {
+            target = 120.0f;
+        }
+        d = hand1->unk34.z - target;
+        if ((d < 0.0f ? -d : d) > 120.0f) {
+            d = -(d / 2.0f);
+        }
+        if (d < 0.0f) {
+            d = 240.0f;
+        }
+        total = d + 360.0f;
+        for (i = 0; i < 21; i++) {
+            hand1->unk34.z -= total / 20.0f;
+            if (hand1->unk34.z < 0.0f) {
+                hand1->unk34.z += 360.0f;
+            }
+            hand2->unk34.z -= total / 40.0f;
+            if (hand2->unk34.z < 0.0f) {
+                hand2->unk34.z += 360.0f;
+            }
+            hand3->unk34.z -= total / 10.0f;
+            if (hand3->unk34.z < 0.0f) {
+                hand3->unk34.z += 360.0f;
+            }
+            HuPrcVSleep();
+        }
+        hand1->unk34.z = target;
+        PlaySound(0xB3);
+        for (i = 0; i < 11; i++) {
+            hand1->unk40.x = hand1->unk40.y = hand1->unk40.z = HuMathSin(i * 18.0f) * 0.5f + 1.0f;
+            HuPrcVSleep();
+        }
+        hand1->unk40.x = hand1->unk40.y = hand1->unk40.z = 1.0f;
+        if (D_800CD414_CE014 != 2) {
+            for (i = 0; i < 11; i++) {
+                pos.z = HuMathSin(i * 9.0f) * 300.0f + base.z;
+                func_80029714_2A314(model, pos.x, pos.y, pos.z);
+                HuPrcVSleep();
+            }
+        }
+        if (sel == 0) {
+            D_80113958_37F058_MinigameParkSetup.gameLength = 0;
+        } else if (sel == 1) {
+            D_80113958_37F058_MinigameParkSetup.gameLength = 1;
+        } else {
+            D_80113958_37F058_MinigameParkSetup.gameLength = 2;
+        }
+    } else {
+        PlaySound(0xB8);
+        func_80029E80_2AA80(model, 5, 4);
+        func_80029FE4_2ABE4(model, 2.0f);
+        while (func_80029CE4_2A8E4(model) > 0.0f) {
+            HuPrcVSleep();
+        }
+        for (i = 0; i < 11; i++) {
+            pos.z = (1.0f - func_800B7890_B8490(i * 9.0f)) * 1200.0f + base.z;
+            func_80029714_2A314(model, pos.x, pos.y, pos.z);
+            HuPrcVSleep();
+        }
+        func_800298A4_2A4A4(model, 4, 4);
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, 0x27, model);
+    }
+    return result;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80109478_374B78_MinigameParkSetup);
+#endif
 
 /* Slides the mode's panel model out (dir 0: to z = 1200, else to z = -1200) over 16 frames
    after its motion has run, then parks its motion. */
