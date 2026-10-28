@@ -175,3 +175,5 @@ D_8010C0E2_19AC82_BobsledRun = D_8010C0E0_19AC80_BobsledRun + 0x2;
 D_8010C0E6_19AC86_BobsledRun = D_8010C0E4_19AC84_BobsledRun + 0x2;
 D_8010C15E_19ACFE_BobsledRun = D_8010C15C_19ACFC_BobsledRun + 0x2;
 /* ovl_5B .rodata: "%d", now a string literal in 80102C88 (37F4E0.c); 801068C4 (asm) still names it. Remove once 801068C4 is C (5B-A) */
+/* 5B-E: ovl_5B .data: the s32 minigame table 8010F734 reads as low halves (splat labels its +2, D_8011387E) */
+D_8011387C_39052C_name_5B = D_8011387E_39052E_name_5B - 0x2;
