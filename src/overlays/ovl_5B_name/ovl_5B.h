@@ -356,4 +356,21 @@ void func_80110AF8_38D7A8_name_5B(void);
 void func_80112094_38ED44_name_5B(s32 arg0);
 void func_80112304_38EFB4_name_5B(void);
 
+/* 5B-D */
+
+/* main 3D6A0's texture-animation slot (src/21920.c's TexAnimSlot; D_800FD7F8 points at them). */
+typedef struct TexAnimSlot {
+    /* 0x00 */ s16 unk_00; /* frame */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ char unk_08[2];
+    /* 0x0A */ u8 unk_0A;
+    /* 0x0B */ u8 unk_0B;
+} TexAnimSlot; /* size = 0xC */
+
+extern TexAnimSlot* D_800FD7F8_FE3F8;
+void func_8003EE44_3FA44(HmfData*); /* 3D6A0.c */
+void func_8003EEA4_3FAA4(HmfData*);
+
 #endif
