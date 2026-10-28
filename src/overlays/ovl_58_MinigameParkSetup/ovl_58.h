@@ -173,6 +173,15 @@ extern u8 D_800FD390_FDF90[]; /* raw */
 extern Vec D_800FD478_FE078; /* raw guess */
 extern s16 D_800CAD94; /* raw guess */
 
+/* 58-C */
+/* A view of main's esprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
+typedef struct Ovl58Esprite {
+    /* 0x00 */ char pad00[0xA];
+    /* 0x0A */ s16 x;
+    /* 0x0C */ s16 y;
+    /* 0x0E */ char pad0E[0x16];
+} Ovl58Esprite; /* size = 0x24 */
+
 /* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
 extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern s16 D_80112B42_37E242_MinigameParkSetup;
@@ -345,9 +354,9 @@ void func_80108BA8_3742A8_MinigameParkSetup(s32);
 void func_80108C0C_37430C_MinigameParkSetup(void);
 void func_8010903C_37473C_MinigameParkSetup(void);
 s32 func_80109478_374B78_MinigameParkSetup(void);
-void func_8010A02C_37572C_MinigameParkSetup(s32);
+void func_8010A02C_37572C_MinigameParkSetup(s16 dir); /* panel slides out: 0 forward, 1 back */
 s32 func_8010A1E8_3758E8_MinigameParkSetup(void);
-void func_8010B6B4_376DB4_MinigameParkSetup(s16, void*);
+void func_8010B6B4_376DB4_MinigameParkSetup(s16 spr, s16* out); /* esprite x, y */
 s32 func_8010B6E8_376DE8_MinigameParkSetup(void);
 void func_8010C4B4_377BB4_MinigameParkSetup(s32);
 s32 func_8010C6C8_377DC8_MinigameParkSetup(void);

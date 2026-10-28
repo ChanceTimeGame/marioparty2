@@ -1056,11 +1056,123 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80108C0C_37430C_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010903C_37473C_MinigameParkSetup);
+/* The character-icon process: for each player, pops in the icon of the character
+   D_8011380C[i] (> 0) above the player's model, bobs it, and shrinks it away when
+   D_8011380C[i] goes back to -1. */
+void func_8010903C_37473C_MinigameParkSetup(void) {
+    s16 bank[6];
+    s16 spr[4];
+    s16 cur[4];
+    Vec pos;
+    Vec2f scr;
+    s16 ang[4];
+    s16 mode[4];
+    s16 timer[4];
+    s16 i;
+    f32 s;
+
+    for (i = 0; i < 6; i++) {
+        bank[i] = func_8001A2F8_1AEF8(D_80113488_37EB88_MinigameParkSetup[i]);
+    }
+    for (i = 0; i < 4; i++) {
+        spr[i] = -1;
+        D_8011380C_37EF0C_MinigameParkSetup[i] = cur[i] = -1;
+        ang[i] = i * 45;
+        mode[i] = -1;
+    }
+    while (1) {
+        HuPrcVSleep();
+        for (i = 0; i < 4; i++) {
+            if (D_8011380C_37EF0C_MinigameParkSetup[i] > 0 && cur[i] == -1) {
+                if (spr[i] != -1) {
+                    func_8001AC44_1B844(spr[i]);
+                }
+                spr[i] = func_8001AAAC_1B6AC(bank[D_8011380C_37EF0C_MinigameParkSetup[i]], 0, 1);
+                func_8001A6BC_1B2BC(spr[i], 0x100);
+                func_8001A788_1B388(spr[i], 5);
+                cur[i] = D_8011380C_37EF0C_MinigameParkSetup[i];
+                timer[i] = 0;
+                mode[i] = 0;
+            }
+            if (D_8011380C_37EF0C_MinigameParkSetup[i] == -1 && cur[i] > 0) {
+                cur[i] = D_8011380C_37EF0C_MinigameParkSetup[i];
+                mode[i] = 1;
+                timer[i] = 0;
+            }
+            switch (mode[i]) {
+            case 0:
+                if (timer[i] >= 10) {
+                    mode[i] = -1;
+                }
+                s = HuMathSin(timer[i] * 9.0f);
+                func_8001A91C_1B51C(spr[i], s, s);
+                timer[i]++;
+                break;
+            case 1:
+                if (timer[i] >= 10) {
+                    mode[i] = -1;
+                    func_8001AC44_1B844(spr[i]);
+                    spr[i] = -1;
+                } else {
+                    s = HuMathSin(timer[i] * 9.0f + 90.0f);
+                    func_8001A91C_1B51C(spr[i], s, s);
+                    timer[i]++;
+                }
+                break;
+            }
+            if (D_8011380C_37EF0C_MinigameParkSetup[i] > 0) {
+                /* D_801138C8 is s16 pairs (lh of word i): retype it s16 [6][2] */
+                func_80029760_2A360(((s16(*)[2])D_801138C8_37EFC8_MinigameParkSetup)[D_80113958_37F058_MinigameParkSetup.character[i]][0], &pos);
+                pos.z -= 40.0f;
+                pos.y += 150.0f;
+                Hu3DCam3DToScreen(0, &pos, &scr);
+                scr.unk_00 += HuMathSin(ang[i]) * 2.0f;
+                scr.unk_04 += HuMathSin(ang[i]) * 2.0f;
+                ang[i] += 30;
+                if (ang[i] > 360) {
+                    ang[i] -= 360;
+                }
+                espPosSet(spr[i], scr.unk_00, scr.unk_04);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80109478_374B78_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010A02C_37572C_MinigameParkSetup);
+/* Slides the mode's panel model out (dir 0: to z = 1200, else to z = -1200) over 16 frames
+   after its motion has run, then parks its motion. */
+void func_8010A02C_37572C_MinigameParkSetup(s16 dir) {
+    s16 model;
+    Vec start;
+    Vec pos;
+    f32 side;
+    s16 i;
+
+    if (D_800CD414_CE014 != 2) {
+        model = D_801138FE_37EFFE_MinigameParkSetup;
+    } else {
+        model = D_8011390E_37F00E_MinigameParkSetup[0];
+    }
+    func_80029E80_2AA80(model, 5, 4);
+    func_80029FE4_2ABE4(model, 2.0f);
+    while (func_80029CE4_2A8E4(model) > 0.0f) {
+        HuPrcVSleep();
+    }
+    func_80029760_2A360(model, &pos);
+    start = pos;
+    if (dir != 0) {
+        side = -1.0f;
+    } else {
+        side = 1.0f;
+    }
+    for (i = 0; i < 16; i++) {
+        pos.z = (1.0f - func_800B7890_B8490(i * 6.0f)) * (side * 1200.0f - start.z) + start.z;
+        func_80029714_2A314(model, pos.x, pos.y, pos.z);
+        HuPrcVSleep();
+    }
+    func_800298A4_2A4A4(model, 4, 4);
+}
 
 
 __asm__(".section .rodata");
@@ -1068,7 +1180,20 @@ const char D_801136E8_37EDE8_MinigameParkSetup[] = "bns_panel";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010A1E8_3758E8_MinigameParkSetup);
 
+/* The screen position of esprite spr. */
+#ifdef NON_MATCHING
+/* masked 4: retail loads D_800F93FC after sign-extending spr and before the index
+   arithmetic; every C spelling tried schedules one or the other differently. */
+void func_8010B6B4_376DB4_MinigameParkSetup(s16 spr, s16* out) {
+    Ovl58Esprite* e;
+
+    e = (Ovl58Esprite*)D_800F93FC_F9FFC;
+    out[0] = e[spr].x;
+    out[1] = e[spr].y;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010B6B4_376DB4_MinigameParkSetup);
+#endif
 
 
 __asm__(".section .rodata");
