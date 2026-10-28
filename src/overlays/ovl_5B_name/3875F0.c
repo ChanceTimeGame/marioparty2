@@ -429,7 +429,65 @@ void func_8010DA34_38A6E4_name_5B(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010DCAC_38A95C_name_5B);
+/* The host's idle process (model [23], its parts [21] and [22]): every 30-120 frames picks the
+   next idle motion; on screen 6 with D_80113490 set it alternates motions 25 (played to its end)
+   and 26 (looping) instead. Restarts when D_80114730[0] is set or D_80113490 changes. */
+void func_8010DCAC_38A95C_name_5B(void) {
+    u16 model = D_80114758_391408_name_5B[23];
+    s16 timer = 0;
+    s16 state = 0;
+    s16 prev;
+    s16 next;
+    f32 stop;
+
+    D_80113490_390140_name_5B = 0;
+    while (1) {
+        prev = D_80113490_390140_name_5B;
+        HuPrcVSleep();
+        if (D_80113838_3904E8_name_5B == 0) {
+            continue;
+        }
+        if (D_80114730_3913E0_name_5B[0] != 0 || prev != D_80113490_390140_name_5B) {
+            state = 0;
+            timer = 0;
+        }
+        if (timer == 0) {
+            timer = (rand8() & 3) * 30 + 30;
+            next = state + 1;
+            state = (next < 2) ? next : 0;
+            if (D_80113490_390140_name_5B != 0 && D_80114738_3913E8_name_5B == 6) {
+                if (state == 0) {
+                    func_80029BF0_2A7F0(model, D_801147D0_391480_name_5B[25], 0, 10, 0);
+                    timer = func_8002CA14_2D614(D_801147D0_391480_name_5B[25]);
+                } else {
+                    func_80029BF0_2A7F0(model, D_801147D0_391480_name_5B[26], 0, 10, 2);
+                    timer = -1;
+                }
+                func_80029FE4_2ABE4(D_80114758_391408_name_5B[21], stop = 0.0f);
+                func_80029FE4_2ABE4(D_80114758_391408_name_5B[22], stop);
+            } else {
+                if (state == 1 && (rand8() & 3) != 0) {
+                    state = 0;
+                }
+                switch (state) {
+                    case 0:
+                        func_80029BF0_2A7F0(model, D_801147D0_391480_name_5B[23], 0, 10, 2);
+                        func_80029FE4_2ABE4(D_80114758_391408_name_5B[21], 1.0f);
+                        func_80029FE4_2ABE4(D_80114758_391408_name_5B[22], 1.0f);
+                        break;
+                    case 1:
+                        func_80029BF0_2A7F0(model, D_801147D0_391480_name_5B[24], 0, 10, 2);
+                        func_80029FE4_2ABE4(D_80114758_391408_name_5B[21], 3.0f);
+                        func_80029FE4_2ABE4(D_80114758_391408_name_5B[22], 3.0f);
+                        break;
+                }
+            }
+        }
+        if (timer >= 0) {
+            timer--;
+        }
+    }
+}
 
 
 __asm__(".section .rodata");
