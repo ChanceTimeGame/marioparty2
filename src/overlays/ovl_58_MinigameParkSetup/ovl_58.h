@@ -187,6 +187,18 @@ typedef struct Ovl58Pair {
     /* 0x00 */ s16 v[2];
 } Ovl58Pair;
 
+/* Three s16 copied whole into a local (8010B6E8: D_80113908, the mode panels' models). */
+typedef struct Ovl58Triple {
+    /* 0x00 */ s16 v[3];
+} Ovl58Triple;
+
+/* D_801134B8: the mode panels' sprite files and their positions by panel count
+   (pos[count - 1][panel]). */
+typedef struct Ovl58ModeTable {
+    /* 0x00 */ s32 sprite[3];
+    /* 0x0C */ Vec pos[3][3];
+} Ovl58ModeTable; /* size = 0x78 */
+
 /* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
 extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern s16 D_80112B42_37E242_MinigameParkSetup;
@@ -211,7 +223,7 @@ extern s32 D_80113468_37EB68_MinigameParkSetup[4];
 extern s32 D_80113478_37EB78_MinigameParkSetup[4];
 extern s32 D_80113488_37EB88_MinigameParkSetup[6];
 extern char* D_801134A0_37EBA0_MinigameParkSetup[6]; /* 58-C: game-length clock part names, 3 per mode */
-extern s32 D_801134B8_37EBB8_MinigameParkSetup[30];
+extern Ovl58ModeTable D_801134B8_37EBB8_MinigameParkSetup; /* 58-C: mode panels (8010B6E8) */
 extern s16 D_80113530_37EC30_MinigameParkSetup[2];
 extern s32 D_80113534_37EC34_MinigameParkSetup[6];
 extern u8 D_8011354C_37EC4C_MinigameParkSetup[8];
@@ -276,7 +288,7 @@ extern s16 D_8011386A_37EF6A_MinigameParkSetup[3];
 extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s32 D_80113878_37EF78_MinigameParkSetup[5];
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
-extern s32 D_80113898_37EF98_MinigameParkSetup[2];
+extern s16 D_80113898_37EF98_MinigameParkSetup[4]; /* 58-C: [0] a count read as s16 (8010B6E8: >= 20 two mode panels, >= 30 three) */
 extern s32 D_801138A0_37EFA0_MinigameParkSetup[4];
 extern s16 D_801138B0_37EFB0_MinigameParkSetup;
 extern s16 D_801138B2_37EFB2_MinigameParkSetup;
