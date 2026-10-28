@@ -264,7 +264,7 @@ extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s32 D_80113878_37EF78_MinigameParkSetup[5];
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
 extern s32 D_80113898_37EF98_MinigameParkSetup[2];
-extern s32 D_801138A0_37EFA0_MinigameParkSetup[4];
+extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-E: byte per cursor slot; -1 = free (80110678 skips taken slots) */
 extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
 extern s16 D_801138B2_37EFB2_MinigameParkSetup;
 extern s32 D_801138B4_37EFB4_MinigameParkSetup;
