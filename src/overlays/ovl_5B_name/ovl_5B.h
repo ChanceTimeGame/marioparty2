@@ -167,7 +167,7 @@ extern s16 D_800FD80C_FE40C; /* main: a controller port (80102830 finds the firs
 extern board_overlay_entrypoint D_80112670_38F320_name_5B[]; /* the three entry points (0: from the title, 1, 2), -1 */
 extern u16 D_80112690_38F340_name_5B; /* set: the menu is leaving (80102C88 stops) */
 extern f32 D_80112694_38F344_name_5B; /* camera field of view */
-extern s8 D_80112698_38F348_name_5B[2]; /* 80109B1C */
+extern s8 D_80112698_38F348_name_5B[2]; /* [0] set: camera 0 uses the fixed eye/at (80109B1C) */
 extern s16 D_8011269A_38F34A_name_5B;
 extern s16 D_8011269C_38F34C_name_5B; /* the entry point used (0, 1, 2) */
 extern s16 D_8011269E_38F34E_name_5B; /* board to go to directly (-1: none) */
@@ -279,7 +279,7 @@ extern Vec D_80114744_3913F4_name_5B; /* camera position (801086E0) */
 extern s16 D_80114750_391400_name_5B; /* handshake between the menu processes (0, 1, -1) */
 extern s16 D_80114758_391408_name_5B[60]; /* model per D_801129B0 entry (8010A0F0); splat labels 75A-7BE are elements; [0x2B] is the host */
 extern s16 D_801147D0_391480_name_5B[58]; /* each model's motion (8010A0F0); labels 7E0-838 are elements */
-extern Vec D_80114844_3914F4_name_5B;
+extern Vec D_80114844_3914F4_name_5B; /* fixed camera eye (80109B1C) */
 extern s16 D_80114850_391500_name_5B; /* 80102830 80102C88 80107748 80109408 8010DA34 80110AF8 */
 extern s16 D_80114852_391502_name_5B; /* 80102830 80107748 80109408 */
 extern s16 D_80114854_391504_name_5B; /* 80102830 8010ACBC */
@@ -287,7 +287,7 @@ extern f32 D_80114858_391508_name_5B; /* camera far */
 extern f32 D_8011485C_39150C_name_5B; /* camera near */
 extern s16 D_80114860_391510_name_5B; /* 80102830 8010A940 8010ACBC 8010D8B0 */
 extern s16 D_80114862_391512_name_5B; /* the controller port that drives the menu (-1: none) */
-extern Vec D_80114864_391514_name_5B;
+extern Vec D_80114864_391514_name_5B; /* fixed camera target (80109B1C) */
 extern s16 D_80114870_391520_name_5B; /* 80102830 80102C88 80103B54 80103EB4 801068C4 80107748 */
 extern s16 D_80114872_391522_name_5B; /* the cursor's first choice (5 or 8) */
 extern s16 D_80114878_391528_name_5B[10][2]; /* menu choices' screen positions (x, y); label 87A is [0][1] */
@@ -361,5 +361,8 @@ void func_80112304_38EFB4_name_5B(void);
 #include "game/camera.h"
 
 extern u16 D_801011FC_101DFC; /* main: set while the game resets */
+extern f32 D_800FA5BC_FB1BC[]; /* main: camera state (omOutView; [-1] is CRot.y) */
+extern f32 D_80101078_101C78;
+extern f32 D_800F8410_F9010;
 
 #endif
