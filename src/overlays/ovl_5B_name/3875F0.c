@@ -375,7 +375,59 @@ void func_8010D8B0_38A560_name_5B(void) {
     func_80029E80_2AA80(model, 2, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010DA34_38A6E4_name_5B);
+/* Leaves the menu for overlay 0x61 through models [7] and [8]: [8] plays its motion, then both
+   shake for 100 frames (rumble every 8) while the music fades and a white wipe closes at frame
+   60. Sets flag 0x1A; returns to 5B's entry 2 afterwards (history). Does not return. */
+void func_8010DA34_38A6E4_name_5B(void) {
+    s16 model = D_80114758_391408_name_5B[8];
+    f32 shake = 1.0f;
+    f32 x, y, z;
+    f32 sx, sz;
+    s16 i;
+
+    func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[8]);
+    func_80029FE4_2ABE4(D_80114758_391408_name_5B[7], shake);
+    PlaySound(0xB9);
+    while (func_80029CE4_2A8E4(model) < func_80029D0C_2A90C(model)) {
+        HuPrcVSleep();
+    }
+    PlaySound(0xBA);
+    func_80029FE4_2ABE4(D_80114758_391408_name_5B[7], 3.0f);
+    x = D_800FC834_FD434[model].pos.x;
+    y = D_800FC834_FD434[model].pos.y;
+    z = D_800FC834_FD434[model].pos.z;
+    for (i = 0; i < 100; i++) {
+        if ((i & 7) == 0) {
+            func_80088604_89204(D_80114862_391512_name_5B, 5, 0, 5);
+        }
+        sx = x + shake;
+        sz = z + shake;
+        func_80029714_2A314(D_80114758_391408_name_5B[7], sx, y, sz);
+        func_80029714_2A314(model, sx, y, sz);
+        shake = -shake;
+        if (i == 60) {
+            func_80079614_7A214(70);
+            func_800794A8_7A0A8(80);
+            func_8008F624_90224(0xFF, 0xFF, 0xFF);
+            InitFadeOut(0, 40);
+        }
+        HuPrcVSleep();
+    }
+    _SetFlag(0x1A);
+    func_80088604_89204(D_80114862_391512_name_5B, 5, 0, 5);
+    D_8011269A_38F34A_name_5B = 1;
+    HuPrcSleep(3);
+    if (D_801134D0_390180_name_5B[0] != 0) {
+        func_8007DF5C_7EB5C();
+    }
+    omOvlHisChg(0, 0x5B, 2, 0x1014);
+    D_80114850_391500_name_5B = 2;
+    D_8011473A_3913EA_name_5B = 0x61;
+    D_80112690_38F340_name_5B = 1;
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010DCAC_38A95C_name_5B);
 
