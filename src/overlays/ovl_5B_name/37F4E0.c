@@ -722,7 +722,30 @@ void func_80104300_380FB0_name_5B(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80104300_380FB0_name_5B);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_80105410_3820C0_name_5B);
+/* A Koopa Kid is the menu's host (D_80114740 set, D_80114870 clear): he replaces the host
+   model and its motions. */
+void func_80105410_3820C0_name_5B(void) {
+    s16 mdl[2];
+    s16 mot[2];
+    s16 kid;
+    u16 host = D_80114758_391408_name_5B[0x2B];
+    u16 shadow = D_80114758_391408_name_5B[0x32];
+
+    kid = LoadFormFile(0x800B0, 0x22B9);
+    mot[0] = func_80029E14_2AA14(kid);
+    mdl[0] = LoadFormFile(0x800B3, 0x288);
+    mot[1] = func_80029E14_2AA14(mdl[0]);
+    func_80029714_2A314(kid, -223.0f, 6.0f, 80.0f);
+    D_800FC834_FD434[kid].rot.y = 20.0f;
+    func_80029714_2A314(shadow, -223.0f, 6.0f, 80.0f);
+    D_80114758_391408_name_5B[0x2B] = kid;
+    D_801147D0_391480_name_5B[0x2C] = mot[0];
+    D_801147D0_391480_name_5B[0x2D] = mot[0];
+    D_801147D0_391480_name_5B[0x2E] = mot[0];
+    D_801147D0_391480_name_5B[0x30] = mot[0];
+    D_801147D0_391480_name_5B[0x34] = mot[1];
+    func_800283DC_28FDC(host);
+}
 
 
 __asm__(".section .rodata");
