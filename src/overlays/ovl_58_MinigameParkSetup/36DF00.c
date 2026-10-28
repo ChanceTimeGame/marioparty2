@@ -1421,7 +1421,103 @@ void func_80110AF0_37C1F0_MinigameParkSetup(s16 i) {
     D_800FA610_FB210 = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].zoom;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110B98_37C298_MinigameParkSetup);
+/* Moves the camera to view `view` of the current table (D_80113870) over `frames` frames: mode 1 eases out (sine),
+   2 eases in and out (cosine), anything else is linear (frames + 1 steps). The rotation takes the
+   short way round. cb (unless -1) is called every frame with {frame, frames}. */
+void func_80110B98_37C298_MinigameParkSetup(s16 view, s16 frames, s16 mode, void (*cb)(s16*)) {
+    Vec drot;
+    Vec dat;
+    Vec rot0;
+    Vec at0;
+    s16 arg[2];
+    Vec pad[3]; /* unused; retail's frame has it */
+    void (*fn)(s16*);
+    f32 d;
+    f32 t;
+    f32 dzoom;
+    f32 zoom0;
+    s16 i;
+
+    fn = cb;
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.x - D_800FD474_FE074.x;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.x < D_800FD474_FE074.x) {
+            drot.x = d + 360.0f;
+        } else {
+            drot.x = d - 360.0f;
+        }
+    } else {
+        drot.x = d;
+    }
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.y - D_800FD474_FE074.y;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.y < D_800FD474_FE074.y) {
+            drot.y = d + 360.0f;
+        } else {
+            drot.y = d - 360.0f;
+        }
+    } else {
+        drot.y = d;
+    }
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.z - D_800FD474_FE074.z;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.z < D_800FD474_FE074.z) {
+            drot.z = d + 360.0f;
+        } else {
+            drot.z = d - 360.0f;
+        }
+    } else {
+        drot.z = d;
+    }
+    dat.x = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.x - D_8010274C_10334C.x;
+    dat.y = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.y - D_8010274C_10334C.y;
+    dat.z = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.z - D_8010274C_10334C.z;
+    dzoom = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].zoom - D_800FA610_FB210;
+    at0 = D_8010274C_10334C;
+    rot0 = D_800FD474_FE074;
+    zoom0 = D_800FA610_FB210;
+    arg[1] = frames;
+    if (mode == 1 || mode == 2) {
+        for (i = 0; i < frames; i++) {
+            if (mode != 2) {
+                t = HuMathSin(i * 90.0f / frames);
+            } else if (i <= frames / 2) {
+                t = (1.0f - func_800B7890_B8490(i * 180.0f / frames)) * 0.5f;
+            } else {
+                t = -func_800B7890_B8490(i * 180.0f / frames) * 0.5f + 0.5f;
+            }
+            D_80113BF8_37F2F8_MinigameParkSetup.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80113BF8_37F2F8_MinigameParkSetup.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80113BF8_37F2F8_MinigameParkSetup.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    } else {
+        for (i = 0; i <= frames; i++) {
+            t = 1.0f / frames * i;
+            D_80113BF8_37F2F8_MinigameParkSetup.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80113BF8_37F2F8_MinigameParkSetup.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80113BF8_37F2F8_MinigameParkSetup.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_80110AF0_37C1F0_MinigameParkSetup(view);
+}
 
 /* The pointing-hand cursor (sprite D_8011392A): it glides over D_80113868 frames to slot
    D_8011386A of the position table D_80113860 whenever the slot changes while it is shown

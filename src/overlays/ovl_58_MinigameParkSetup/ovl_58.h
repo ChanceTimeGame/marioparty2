@@ -375,7 +375,7 @@ s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stick
 void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj);
 void func_80110A28_37C128_MinigameParkSetup(omObjData* obj);
 void func_80110AF0_37C1F0_MinigameParkSetup(s16);
-void func_80110B98_37C298_MinigameParkSetup(s16, s16, s16, void*);
+void func_80110B98_37C298_MinigameParkSetup(s16 view, s16 frames, s16 mode, void (*cb)(s16*));
 void func_80111328_37CA28_MinigameParkSetup(void);
 void func_801115BC_37CCBC_MinigameParkSetup(void);
 void func_8011170C_37CE0C_MinigameParkSetup(s16);
@@ -391,6 +391,10 @@ void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx);
 void func_80112950_37E050_MinigameParkSetup(void);
 
 /* 58-E */
+
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
 
 /* main's sprite slots (D_800F93FC, 1AE60.c EspriteSlot): only the center is read here. */
 typedef struct Ovl58EspriteSlot {
