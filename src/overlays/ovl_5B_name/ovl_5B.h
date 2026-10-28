@@ -335,7 +335,7 @@ void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a poin
 void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */
 void func_8010A940_3875F0_name_5B(void);
 void func_8010ACBC_38796C_name_5B(void);
-s16 func_8010B5A8_388258_name_5B(s16 arg0, s32, s16 arg2);
+s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def); /* message, wait, choice */
 void func_8010B654_388304_name_5B(void);
 void func_8010C5D4_389284_name_5B(void);
 void func_8010C828_3894D8_name_5B(s16 arg0);

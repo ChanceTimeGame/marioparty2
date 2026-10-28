@@ -55,7 +55,16 @@ void func_8010A940_3875F0_name_5B(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010ACBC_38796C_name_5B);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010B5A8_388258_name_5B);
+/* Shows message `mes` in window `win`, waits for it to finish and returns the choice (default
+   `def`). */
+s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def) {
+    func_8008AD44_8B944(win);
+    func_800890CC_89CCC(win, mes, -1, -1);
+    while (func_8008BA30_8C630(win) != 0) {
+        HuPrcVSleep();
+    }
+    return func_8008BB48_8C748(win, def, 0);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010B654_388304_name_5B);
 
