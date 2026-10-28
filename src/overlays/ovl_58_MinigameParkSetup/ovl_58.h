@@ -191,7 +191,7 @@ extern s32 D_80112B48_37E248_MinigameParkSetup;
 extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
 extern s32 D_80112BBC_37E2BC_MinigameParkSetup[]; /* a table func_80112360 reads; 80102CAC sets words 0x50 and 0x6E (D_80112CFC is word 0x50) */
 extern s32 D_80112BCC_37E2CC_MinigameParkSetup[10];
-extern s32 D_80112BF4_37E2F4_MinigameParkSetup[66];
+extern f32 D_80112BF4_37E2F4_MinigameParkSetup[][10]; /* 58-D: D_80112BBC's model records from the second on, seen at their f32 x, y, z (0x28 each): 8010F358 */
 extern s32 D_80112CFC_37E3FC_MinigameParkSetup[410];
 extern s32 D_80113364_37EA64_MinigameParkSetup[8]; /* per D_80113814 (stage): D_80112BBC[0x50] */
 extern s32 D_80113384_37EA84_MinigameParkSetup[8]; /* per D_80113814: D_80112BBC[0x6E] */
@@ -273,12 +273,9 @@ extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
 extern s32 D_80113898_37EF98_MinigameParkSetup[2];
 extern s32 D_801138A0_37EFA0_MinigameParkSetup[4];
 extern s16 D_801138B0_37EFB0_MinigameParkSetup;
-extern s16 D_801138B2_37EFB2_MinigameParkSetup;
-extern s32 D_801138B4_37EFB4_MinigameParkSetup;
-extern s16 D_801138B8_37EFB8_MinigameParkSetup;
-extern s16 D_801138BA_37EFBA_MinigameParkSetup;
-extern s16 D_801138BC_37EFBC_MinigameParkSetup; /* 58-D: model the quit path waits on */
-extern s32 D_801138C0_37EFC0_MinigameParkSetup[2];
+extern s16 D_801138B2_37EFB2_MinigameParkSetup[7]; /* 58-D: the tunnel's seven models (8010F358; [4] done and [5] quit wait on them) */
+extern s16 D_801138BE_37EFBE_MinigameParkSetup;
+extern u16 D_801138C0_37EFC0_MinigameParkSetup[4]; /* 58-D: [0] the model 8010F358 fades */
 extern s32 D_801138C8_37EFC8_MinigameParkSetup[6];
 extern Ovl58Quad D_801138E0_37EFE0_MinigameParkSetup; /* + 4 bytes unreferenced */
 extern s16 D_801138EC_37EFEC_MinigameParkSetup[3];

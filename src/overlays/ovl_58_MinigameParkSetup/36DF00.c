@@ -1171,14 +1171,14 @@ void func_8010ED54_37A454_MinigameParkSetup(void) {
     func_80110B98_37C298_MinigameParkSetup(1, 20, 1, func_8010EEF8_37A5F8_MinigameParkSetup);
     while (1) {
         s32 near = 1;
-        if (!(D_800FC834_FD434[D_801138BC_37EFBC_MinigameParkSetup].pos.z > -2000.0f)) {
+        if (!(D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -2000.0f)) {
             near = 0;
         }
         if (near & (played ^ 1)) {
             played = 1;
             PlaySound(0xBC);
         }
-        if (D_800FC834_FD434[D_801138BC_37EFBC_MinigameParkSetup].pos.z > -500.0f) {
+        if (D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -500.0f) {
             break;
         }
         HuPrcVSleep();
@@ -1254,7 +1254,7 @@ void func_8010F0A4_37A7A4_MinigameParkSetup(void) {
     D_80113788_37EE88_MinigameParkSetup = 1;
     HuPrcSleep(10);
     while (1) {
-        if (D_800FC834_FD434[D_801138BA_37EFBA_MinigameParkSetup].pos.z < 8000.0f) {
+        if (D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[4]].pos.z < 8000.0f) {
             break;
         }
         HuPrcVSleep();
@@ -1266,7 +1266,7 @@ void func_8010F0A4_37A7A4_MinigameParkSetup(void) {
     D_80113786_37EE86_MinigameParkSetup = 1;
     func_80110B98_37C298_MinigameParkSetup(3, 20, 2, (void*)-1);
     while (1) {
-        if (D_800FC834_FD434[D_801138BA_37EFBA_MinigameParkSetup].pos.z < 500.0f) {
+        if (D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[4]].pos.z < 500.0f) {
             break;
         }
         HuPrcVSleep();
@@ -1303,7 +1303,123 @@ void func_8010F0A4_37A7A4_MinigameParkSetup(void) {
     func_8010EF58_37A658_MinigameParkSetup();
 }
 
+#ifdef NON_MATCHING
+/* masked 9: in the fade loop retail loads D_801138C0[i] twice (lhu for the call, lh for the
+   index); this build loads it once. Logic checked against the asm. */
+/* The tunnel process: seven segment models scroll along z by D_8011378C a frame, wrapping
+   between -3000 and 5000; once quit (D_80113784, when the scroll has stopped) or done
+   (D_80113786) is set they snap into place on a 2000 grid, once. Model D_801138C0[0] fades
+   with its distance to the segment seams. */
+void func_8010F358_37AA58_MinigameParkSetup(void) {
+    f32 z[8];
+    s32 snapped = 0;
+    s32 hit1, hit2, hit3, hit4;
+    f32 d;
+    s16 i;
+
+    z[0] = -3000.0f;
+    z[1] = -1000.0f;
+    z[2] = 1000.0f;
+    z[3] = 3000.0f;
+    z[4] = 3000.0f;
+    z[5] = 0.0f;
+    z[6] = 0.0f;
+    func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[4], 4, 4);
+    func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[5], 4, 4);
+    D_8011378C_37EE8C_MinigameParkSetup = 120.0f;
+    while (1) {
+        for (i = 0; i < 7; i++) {
+            u16 model = D_801138B2_37EFB2_MinigameParkSetup[i];
+            f32* pos = D_80112BF4_37E2F4_MinigameParkSetup[i];
+
+            z[i] -= D_8011378C_37EE8C_MinigameParkSetup;
+            hit1 = 1;
+            if (!(z[i] < -3000.0f)) {
+                hit1 = 0;
+            }
+            if (hit1 & (snapped ^ 1)) {
+                z[i] += 8000.0f;
+            }
+            hit2 = 1;
+            if (!(z[i] > 5000.0f)) {
+                hit2 = 0;
+            }
+            if (hit2 & (snapped ^ 1)) {
+                z[i] -= 8000.0f;
+            }
+            func_80029714_2A314(model, pos[0], pos[1], z[i]);
+        }
+        if (D_80113784_37EE84_MinigameParkSetup != 0) {
+            hit3 = 1;
+            if (!(D_8011378C_37EE8C_MinigameParkSetup <= 0.0f)) {
+                hit3 = 0;
+            }
+            if (hit3 & (snapped ^ 1)) {
+                snapped = 1;
+                D_80112B40_37E240_MinigameParkSetup = snapped;
+                z[0] -= (s16)(z[0] / 2000.0f) * 2000.0f;
+                D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[0]].pos.z = z[0];
+                if (z[0] <= 0.0f) {
+                    z[3] = z[0] + 2000.0f;
+                    D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[3]].pos.z = z[3];
+                } else {
+                    func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[3], 4, 4);
+                }
+                z[1] = z[0] - 2000.0f;
+                D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[1]].pos.z = z[1];
+                z[2] = z[1] - 2000.0f;
+                D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[2]].pos.z = z[2];
+                z[5] = z[2] - 2000.0f;
+                D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z = z[5];
+                func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[5], 4, 0);
+            }
+        }
+        hit4 = D_80113786_37EE86_MinigameParkSetup != 0;
+        if (hit4 & (snapped ^ 1)) {
+            z[0] -= (s16)(z[0] / 2000.0f) * 2000.0f;
+            D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[0]].pos.z = z[0];
+            snapped = 1;
+            if (z[0] >= 0.0f) {
+                z[3] = z[0] - 2000.0f;
+                D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[3]].pos.z = z[3];
+            } else {
+                func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[3], 4, 4);
+            }
+            z[1] = z[0] + 2000.0f;
+            D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[1]].pos.z = z[1];
+            z[2] = z[1] + 2000.0f;
+            D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[2]].pos.z = z[2];
+            z[4] = z[2] + 2000.0f;
+            D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[4]].pos.z = z[4];
+            func_800298A4_2A4A4(D_801138B2_37EFB2_MinigameParkSetup[4], 4, 0);
+        }
+        for (i = 0; i < 1; i++) {
+            u16 model = D_801138C0_37EFC0_MinigameParkSetup[i];
+
+            d = z[0] + 3000.0f + 500.0f;
+            d = 1000.0f - (d - (s16)(d / 1000.0f) * 1000 + D_800FC834_FD434[(s16)D_801138C0_37EFC0_MinigameParkSetup[i]].pos.z);
+            if (d > 500.0f) {
+                d = 1000.0f - d;
+            }
+            d = (d < 0.0f) ? -d : d;
+            if (i == 1) {
+                d = 500.0f - d;
+            }
+            d = (d - 200.0f) / 300.0f;
+            if (d > 1.0f) {
+                d = 1.0f;
+            }
+            if (d < 0.0f) {
+                d = 0.0f;
+            }
+            func_8002D274_2DE74(model, d * 255.0f, d * 255.0f, d * 192.0f);
+        }
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010F358_37AA58_MinigameParkSetup);
+#endif
 
 
 
