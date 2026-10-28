@@ -1278,10 +1278,98 @@ const char D_801136BC_37EDBC_MinigameParkSetup[] = "time20";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80107644_372D44_MinigameParkSetup);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80108BA8_3742A8_MinigameParkSetup);
+/* Place sprite `sprite` 24 below the panel origin D_801137B0. */
+void func_80108BA8_3742A8_MinigameParkSetup(s16 sprite) {
+    espPosSet(sprite, D_801137B0_37EEB0_MinigameParkSetup[0], D_801137B0_37EEB0_MinigameParkSetup[1] + 24.0f);
+}
 
+#ifdef NON_MATCHING
+/* raw 5, masked 2: the first init loop stores owner[i] before the D_80113804 address add
+   (retail: after it); scheduling only. */
+/* Process: a marker over each player's character model. D_80113804[i] picks player i's
+   marker (sprite D_80113478[n]; -1 none): it pops in (state 0), bobs in a small circle
+   above the model's head, and shrinks away (state 1) when cleared. */
+void func_80108C0C_37430C_MinigameParkSetup(void) {
+    s16 group[4];
+    s16 spr[4];
+    s16 owner[4];
+    Vec pos;
+    Vec2f scr;
+    s16 angle[4];
+    s16 state[4];
+    s16 timer[4];
+    s16 i;
+    f32 s;
+
+    for (i = 0; i < 4; i++) {
+        group[i] = func_8001A2F8_1AEF8(D_80113478_37EB78_MinigameParkSetup[i]);
+    }
+    for (i = 0; i < 4; i++) {
+        spr[i] = -1;
+        owner[i] = -1;
+        D_80113804_37EF04_MinigameParkSetup[i] = -1;
+        angle[i] = i * 45;
+        state[i] = -1;
+    }
+    while (1) {
+        HuPrcVSleep();
+        for (i = 0; i < 4; i++) {
+            if (D_80113804_37EF04_MinigameParkSetup[i] != -1 && owner[i] == -1) {
+                if (spr[i] != -1) {
+                    func_8001AC44_1B844(spr[i]);
+                }
+                spr[i] = func_8001AAAC_1B6AC(group[D_80113804_37EF04_MinigameParkSetup[i]], 0, 1);
+                func_8001A6BC_1B2BC(spr[i], 0x100);
+                func_8001A788_1B388(spr[i], 5);
+                owner[i] = D_80113804_37EF04_MinigameParkSetup[i];
+                timer[i] = 0;
+                state[i] = 0;
+            }
+            if (D_80113804_37EF04_MinigameParkSetup[i] == -1 && owner[i] != -1) {
+                owner[i] = D_80113804_37EF04_MinigameParkSetup[i];
+                state[i] = 1;
+                timer[i] = 0;
+            }
+            switch (state[i]) {
+            case 0:
+                if (timer[i] >= 10) {
+                    state[i] = -1;
+                }
+                s = HuMathSin(timer[i] * 9.0f);
+                func_8001A91C_1B51C(spr[i], s, s);
+                timer[i]++;
+                break;
+            case 1:
+                if (timer[i] >= 10) {
+                    state[i] = -1;
+                    func_8001AC44_1B844(spr[i]);
+                    spr[i] = -1;
+                } else {
+                    s = HuMathSin(timer[i] * 9.0f + 90.0f);
+                    func_8001A91C_1B51C(spr[i], s, s);
+                    timer[i]++;
+                }
+                break;
+            }
+            if (D_80113804_37EF04_MinigameParkSetup[i] != -1) {
+                func_80029760_2A360(OVL58_CHAR_MODEL(D_80113958_37F058_MinigameParkSetup.character[i]), &pos);
+                pos.y += 130.0f;
+                Hu3DCam3DToScreen(0, &pos, &scr);
+                scr.unk_00 += 2.0f * HuMathSin(angle[i]);
+                scr.unk_04 += 2.0f * HuMathSin(angle[i]);
+                angle[i] += 20;
+                if (angle[i] > 360) {
+                    angle[i] -= 360;
+                }
+                espPosSet(spr[i], scr.unk_00, scr.unk_04);
+            }
+        }
+    }
+}
+
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80108C0C_37430C_MinigameParkSetup);
-
+#endif
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010903C_37473C_MinigameParkSetup);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80109478_374B78_MinigameParkSetup);
