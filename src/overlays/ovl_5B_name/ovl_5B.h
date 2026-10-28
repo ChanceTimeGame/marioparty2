@@ -192,12 +192,11 @@ extern s16 D_801132AE_38FF5E_name_5B; /* the panel's state (80105530: 0 coming i
 extern s16 D_801132B0_38FF60_name_5B; /* the continue choice's sprite group (80105530) */
 extern u16 D_801132B2_38FF62_name_5B; /* its sprite */
 extern s32 D_801132B4_38FF64_name_5B[10][2]; /* each choice's description message, [1] 80107748 (801068C4) */
-extern s32 D_801132B8_38FF68_name_5B[19]; /* 80107748 */
 extern s32 D_80113304_38FFB4_name_5B[10][2]; /* the same with a Koopa Kid host */
 extern Ovl5BSprDef D_80113354_390004_name_5B[10]; /* the decoration sprites (80106D2C), file 0 ends */
 extern s32 D_8011341C_3900CC_name_5B[10]; /* each choice's picture (80106D2C); [9] (label 3440) is set to the saved game's board's */
-extern s32 D_80113444_3900F4_name_5B[9]; /* 80107748 */
-extern s32 D_80113468_390118_name_5B[10]; /* 80107748 */
+extern s32 D_80113444_3900F4_name_5B[9]; /* each board's character model file (80107748) */
+extern s32 D_80113468_390118_name_5B[10]; /* its motion file */
 extern s16 D_80113490_390140_name_5B; /* 8010ACBC 8010DCAC */
 extern s16 D_80113492_390142_name_5B; /* 8010ACBC 80110908 */
 extern s32 D_80113494_390144_name_5B[7]; /* 8010ACBC */
