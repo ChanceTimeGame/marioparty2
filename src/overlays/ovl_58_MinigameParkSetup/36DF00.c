@@ -1114,7 +1114,132 @@ const char D_80113720_37EE20_MinigameParkSetup[] = "c100_1-atama";
 __asm__(".section .rodata");
 const char D_80113730_37EE30_MinigameParkSetup[] = "c162_000-atama";
 
+/* The host's entrance (model D_801138B0[8]): drops in from above, swings its head to the
+   screen, sometimes (1 in 8) bobs; then opens the message window (80110278) and nods while it
+   talks; once D_80113784 is set it spins away and shrinks. Board 5 uses the Koopa Kid head
+   ("c162_000-atama") and a slower swing. */
+#ifdef NON_MATCHING
+/* masked 0: only one/speed's registers (f28/f26) are swapped. */
+void func_8010FB00_37B200_MinigameParkSetup(void) {
+    s32 unused[38];
+    u16 model;
+    f32 z;
+    f32 y;
+    f32 one;
+    f32 speed;
+    f32 x;
+    f32 pos;
+    s32 snd;
+    HmfMotionObj* head;
+    s16 i;
+
+    model = D_801138B0_37EFB0_MinigameParkSetup[8];
+    D_80101300_101F00 = 0.1f;
+    D_8010105C_101C5C = 0.3f;
+    func_80029A8C_2A68C(model);
+    func_80029AFC_2A6FC(model);
+    func_8002D1EC_2DDEC(model, 1);
+    func_8002D274_2DE74(model, 0xFF, 0xFF, 0xC0);
+    func_8002D2B4_2DEB4(model, 0.0f, 100.0f, 0.0f);
+    func_8002C9C0_2D5C0(model, D_80113970_37F070_MinigameParkSetup[11]);
+    func_80029E80_2AA80(model, 2, 2);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    func_800298A4_2A4A4(model, 4, 0);
+    x = D_800FC834_FD434[(s16)model].pos.x;
+    y = D_800FC834_FD434[(s16)model].pos.y;
+    z = D_800FC834_FD434[(s16)model].pos.z;
+    if (GwSystem.current_board_index != 5) {
+        speed = one = 1.0f;
+        if (GwSystem.current_board_index == 2 || GwSystem.current_board_index == 3) {
+            speed = 0.0f;
+        }
+    } else {
+        one = 1.0f;
+        speed = 0.5f;
+    }
+    func_80029FE4_2ABE4(model, one + speed * 3.0f);
+    snd = 0xC4;
+    if (GwSystem.current_board_index != 5) {
+        snd = 0x123;
+    }
+    PlaySound(snd);
+    for (i = 0; i < 41; i++) {
+        pos = z - (1.0f - HuMathSin(i * 2.25f)) * 1000.0f;
+        func_80029714_2A314(model, x, y, pos);
+        HuPrcVSleep();
+    }
+    if (GwSystem.current_board_index != 5) {
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x45);
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x46);
+        head = func_8002A9F4_2B5F4(model, (char*)D_80113720_37EE20_MinigameParkSetup);
+    } else {
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x45);
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x46);
+        head = func_8002A9F4_2B5F4(model, (char*)D_80113730_37EE30_MinigameParkSetup);
+    }
+    head->unk10.y = 80.0f;
+    head->unk10.x = -10.0f;
+    func_80029FE4_2ABE4(model, one + speed);
+    if (!(rand8() & 7) && speed != 0.0f) {
+        for (i = 0; i < 21; i++) {
+            pos -= 10.0f;
+            func_80029714_2A314(model, x, y, pos);
+            HuPrcVSleep();
+        }
+        head->unk10.y = 0.0f;
+        head->unk10.x = 0.0f;
+        pos = z - pos;
+        func_80029FE4_2ABE4(model, one + speed);
+        HuPrcSleep(10);
+        for (i = 0; i < 21; i++) {
+            f32 t = z - pos / 20.0f * (20.0f - i);
+
+            func_80029714_2A314(model, x, y, t);
+            HuPrcVSleep();
+        }
+        func_80029FE4_2ABE4(model, one);
+        head->unk10.y = 90.0f;
+        head->unk10.x = -10.0f;
+    }
+    omAddPrcObj(func_80110278_37B978_MinigameParkSetup, 0x3F00, 0x800, 0);
+    HuPrcVSleep();
+    while (1) {
+        if (D_80113788_37EE88_MinigameParkSetup != 0) {
+            if (GwSystem.current_board_index != 5) {
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x45);
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x46);
+            } else {
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x45);
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x46);
+            }
+            HuPrcSleep(10);
+            if (D_80113784_37EE84_MinigameParkSetup != 0) {
+                speed = one + speed;
+                func_80029FE4_2ABE4(model, speed);
+                x = D_800FC834_FD434[(s16)model].pos.x;
+                for (i = 0; i < 11; i++) {
+                    func_8002979C_2A39C(model, 0.0f, i * -18.0f, -func_800B7890_B8490(i * 9.0f) * 10.0f);
+                    D_800FC834_FD434[(s16)model].pos.x = x / 20.0f * (10 - i);
+                    HuPrcVSleep();
+                }
+                pos = D_800FC834_FD434[(s16)model].pos.z;
+                for (i = 0; i < 21; i++) {
+                    D_800FC834_FD434[(s16)model].pos.z = func_800B7890_B8490(i * 4.5f) * pos;
+                    HuPrcVSleep();
+                }
+            }
+            break;
+        }
+        HuPrcVSleep();
+    }
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010FB00_37B200_MinigameParkSetup);
+#endif
 
 /* The message window of the setup screens: opened at the bottom, wiped in once the intro is
    done (D_80113790), kept until D_80113788 asks it closed. */

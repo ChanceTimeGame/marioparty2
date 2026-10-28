@@ -265,7 +265,7 @@ extern s32 D_80113878_37EF78_MinigameParkSetup[5];
 extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
 extern s32 D_80113898_37EF98_MinigameParkSetup[2];
 extern s32 D_801138A0_37EFA0_MinigameParkSetup[4];
-extern s16 D_801138B0_37EFB0_MinigameParkSetup;
+extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
 extern s16 D_801138B2_37EFB2_MinigameParkSetup;
 extern s32 D_801138B4_37EFB4_MinigameParkSetup;
 extern s16 D_801138B8_37EFB8_MinigameParkSetup;
@@ -289,7 +289,7 @@ extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel 
 extern s16 D_80113940_37F040_MinigameParkSetup[7];
 extern s16 D_8011394E_37F04E_MinigameParkSetup[5];
 extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396F */
-extern s16 D_80113970_37F070_MinigameParkSetup[11];
+extern s16 D_80113970_37F070_MinigameParkSetup[24]; /* 58-E: their first motions (D_80113986 = [11]) */
 extern s16 D_80113986_37F086_MinigameParkSetup[2];
 extern s16 D_8011398A_37F08A_MinigameParkSetup[11];
 extern s16 D_801139A0_37F0A0_MinigameParkSetup; /* model motion: the panel is down */
