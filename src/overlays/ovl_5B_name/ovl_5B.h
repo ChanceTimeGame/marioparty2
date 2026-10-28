@@ -237,18 +237,17 @@ extern s16 D_80113A1C_3906CC_name_5B; /* 80108F18 8010933C */
 extern s16 D_80113A1E_3906CE_name_5B; /* 80108F18 8010933C */
 extern s16 D_80113A20_3906D0_name_5B; /* 80108F18 80109380 */
 extern s16 D_80113A22_3906D2_name_5B[7]; /* 80108F18 8010933C 8010938C */
-extern s32 D_80113A30_3906E0_name_5B[324]; /* 80112304 */
-extern s32 D_80113F40_390BF0_name_5B[6]; /* 80112304 */
-extern s32 D_80113F58_390C08_name_5B[1]; /* 80112304 */
-extern s32 D_80113F5C_390C0C_name_5B[5]; /* 80112304 */
-extern s32 D_80113F70_390C20_name_5B[1]; /* 80112304 */
-extern s16 D_80113F74_390C24_name_5B[7]; /* 80112304 */
+extern s16 D_80113A30_3906E0_name_5B[9][72]; /* 80112304: the minigames of each category not yet played (cleared?), by index */
+extern s16 D_80113F40_390BF0_name_5B[9]; /* 80112304: count in D_80113A30 per category */
+extern s16 D_80113F58_390C08_name_5B[9]; /* 80112304: minigames per category */
+/* D_80113F5C is D_80113F58[2] */
+extern s16 D_80113F70_390C20_name_5B[9]; /* 80112304: count in D_80113F90 per category */
+/* D_80113F74 is D_80113F70[2] */
 extern u16 D_80113F82_390C32_name_5B; /* 80112304 */
 extern s16 D_80113F84_390C34_name_5B; /* 8010B654 80112304 */
-extern u16 D_80113F86_390C36_name_5B[5]; /* 80112304 */
-extern s32 D_80113F90_390C40_name_5B[36]; /* 80112304 */
-extern s16 D_80114020_390CD0_name_5B[72]; /* 80112304 */
-extern s16 D_801140B0_390D60_name_5B[504]; /* 80112304 */
+extern u16 D_80113F86_390C36_name_5B; /* 80112304: minigames counted (all categories) */
+extern s16 D_80113F90_390C40_name_5B[9][72]; /* 80112304: the minigames of each category for which func_80068040 is set; D_80114020/D_801140B0 are [1], [2] */
+/* D_80114020, D_801140B0 are D_80113F90[1], [2] */
 extern u16 D_801144A0_391150_name_5B; /* 80112304 */
 extern s16 D_801144A2_391152_name_5B; /* 8010ACBC 80110AF8 */
 extern s16 D_801144A4_391154_name_5B; /* 8010A940 */

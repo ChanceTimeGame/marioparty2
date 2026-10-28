@@ -164,4 +164,54 @@ void func_80112094_38ED44_name_5B(s32 jump) {
     func_80029E80_2AA80(D_80114758_391408_name_5B[0x16], 1, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_80112304_38EFB4_name_5B);
+void func_80112304_38EFB4_name_5B(void) {
+    s16 cat;
+    s16 i;
+
+    for (i = 0; i < 9; i++) {
+        D_80113F40_390BF0_name_5B[i] = D_80113F58_390C08_name_5B[i] = D_80113F70_390C20_name_5B[i] = 0;
+    }
+    D_801144A0_391150_name_5B = 0;
+    D_80113F86_390C36_name_5B = 0;
+    D_80113F84_390C34_name_5B = 0;
+    D_80113F82_390C32_name_5B = 0;
+    for (i = 0; i < 72; i++) {
+        if (D_800CAD90[i].unk_00 == 0 || i == 15) {
+            continue;
+        }
+        if (i == 0x22) {
+            continue;
+        }
+        cat = D_800CAD90[i].unk_04;
+        if (func_80067F4C_68B4C(i) != 0) {
+            if (func_80068040_68C40(i) != 0) {
+                D_80113F90_390C40_name_5B[cat][D_80113F70_390C20_name_5B[cat]] = i;
+                D_80113F70_390C20_name_5B[cat]++;
+                D_80113F84_390C34_name_5B++;
+            } else {
+                D_80113A30_3906E0_name_5B[cat][D_80113F40_390BF0_name_5B[cat]] = i;
+                D_80113F40_390BF0_name_5B[cat]++;
+                D_80113F82_390C32_name_5B++;
+            }
+            D_801144A0_391150_name_5B++;
+        }
+        D_80113F86_390C36_name_5B++;
+        D_80113F58_390C08_name_5B[cat]++;
+    }
+    if (func_80068040_68C40(15) != 0) {
+        D_80113F90_390C40_name_5B[1][D_80113F70_390C20_name_5B[1]] = 15;
+        D_80113F70_390C20_name_5B[1]++;
+        D_80113F84_390C34_name_5B++;
+        D_801144A0_391150_name_5B++;
+        D_80113F86_390C36_name_5B++;
+        D_80113F58_390C08_name_5B[1]++;
+    }
+    if (func_80068040_68C40(0x22) != 0) {
+        D_80113F90_390C40_name_5B[2][D_80113F70_390C20_name_5B[2]] = 0x22;
+        D_80113F70_390C20_name_5B[2]++;
+        D_80113F84_390C34_name_5B++;
+        D_801144A0_391150_name_5B++;
+        D_80113F86_390C36_name_5B++;
+        D_80113F58_390C08_name_5B[2]++;
+    }
+}
