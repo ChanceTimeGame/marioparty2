@@ -143,7 +143,7 @@ void func_8008E4D0_8F0D0(s32 winId, s32 sound);
 void func_8008E644_8F244(s32 arg0, u8 arg1);
 void func_8008E6AC_8F2AC(s16 arg0);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
-s32 func_8008E73C_8F33C(s16 portrait, s16 x, s16 y, s32 w, s32 h, u16 flags);
+s32 func_8008E73C_8F33C(s16 portrait, s32 x, s32 y, s32 w, s32 h, u16 flags); /* main 4D660.c: x, y s32 */
 void func_8008E978_8F578(s16 winId);
 void func_8008EED8_8FAD8(s16 arg0, s16 arg1);
 void func_8008F624_90224(s32, s32, s32); /* wipe colour */
@@ -193,10 +193,10 @@ extern s32 D_80113444_3900F4_name_5B[9]; /* 80107748 */
 extern s32 D_80113468_390118_name_5B[10]; /* 80107748 */
 extern s16 D_80113490_390140_name_5B; /* 8010ACBC 8010DCAC */
 extern s16 D_80113492_390142_name_5B; /* 8010ACBC 80110908 */
-extern s32 D_80113494_390144_name_5B[7]; /* 8010ACBC */
-extern s16 D_801134B0_390160_name_5B[8]; /* 8010ACBC */
-extern s16 D_801134C0_390170_name_5B[7]; /* 8010ACBC */
-extern s16 D_801134CE_39017E_name_5B; /* 8010ACBC */
+extern s16 D_80113494_390144_name_5B[7][2]; /* the submenu choices' pointer positions (8010ACBC) */
+extern s16 D_801134B0_390160_name_5B[8]; /* each submenu choice's description message (8010ACBC) */
+extern s16 D_801134C0_390170_name_5B[7]; /* each submenu choice's camera view (8010ACBC) */
+extern s16 D_801134CE_39017E_name_5B; /* set once the submenu was entered from entry point 2 (8010ACBC) */
 extern s16 D_801134D0_390180_name_5B[2]; /* 8010ACBC 8010DA34 */
 extern s32 D_801134D4_390184_name_5B[8]; /* unused by code */
 extern s32 D_801134F4_3901A4_name_5B[7]; /* unused by code */
@@ -250,7 +250,7 @@ extern s32 D_80113F90_390C40_name_5B[36]; /* 80112304 */
 extern s16 D_80114020_390CD0_name_5B[72]; /* 80112304 */
 extern s16 D_801140B0_390D60_name_5B[504]; /* 80112304 */
 extern u16 D_801144A0_391150_name_5B; /* 80112304 */
-extern s16 D_801144A2_391152_name_5B; /* 8010ACBC 80110AF8 */
+extern s16 D_801144A2_391152_name_5B; /* the submenu's window (8010ACBC) */
 extern s16 D_801144A4_391154_name_5B; /* 8010A940 */
 extern u16 D_801144A6_391156_name_5B; /* 8010A940 8010DF24 */
 extern s16 D_801144A8_391158_name_5B; /* 8010A940 8010C828 */
