@@ -314,9 +314,66 @@ void func_8010CB88_389838_name_5B(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010CB88_389838_name_5B);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010D6E8_38A398_name_5B);
+/* 80108788's per-frame callback while the camera moves to the record book: moves the book (and
+   its shadow) between its place and a point 145 in front of the camera at screen (316, 208);
+   towards the camera when D_801144AC is 0 (the book then faces the camera), back otherwise. */
+void func_8010D6E8_38A398_name_5B(s16* arg0) {
+    Ovl5BCamStep* step = (Ovl5BCamStep*)arg0;
+    f32 screen[2];
+    f32 t;
+    f32 x, y, z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010D8B0_38A560_name_5B);
+    if (step->frame == 0) {
+        screen[0] = 316.0f;
+        screen[1] = 208.0f;
+        if (D_801144AC_39115C_name_5B == 0) {
+            func_8010A53C_3871EC_name_5B(15, 145.0f, screen, &step->to);
+            step->from.x = D_800FC834_FD434[D_801144AE_39115E_name_5B].pos.x;
+            step->from.y = D_800FC834_FD434[D_801144AE_39115E_name_5B].pos.y;
+            step->from.z = D_800FC834_FD434[D_801144AE_39115E_name_5B].pos.z;
+        } else {
+            func_8010A53C_3871EC_name_5B(15, 145.0f, screen, &step->from);
+            step->to = D_801144B4_391164_name_5B;
+        }
+    }
+    t = HuMathSin(step->frame * 90.0f / step->len);
+    x = t * (step->to.x - step->from.x) + step->from.x;
+    y = t * (step->to.y - step->from.y) + step->from.y;
+    z = t * (step->to.z - step->from.z) + step->from.z;
+    func_80029714_2A314(D_801144AE_39115E_name_5B, x, y, z);
+    func_80029714_2A314(D_801144B0_391160_name_5B[0], x, 104.0f, z);
+    if (D_801144AC_39115C_name_5B == 0) {
+        func_8002979C_2A39C(D_801144AE_39115E_name_5B, D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+    }
+}
+
+/* Toggles the record book's mono/stereo switch (D_80114860; flag 2 set = stereo): plays the
+   switch motion forwards (mono) or backwards (stereo), then its idle motion for the new state. */
+void func_8010D8B0_38A560_name_5B(void) {
+    u16 model = D_80114758_391408_name_5B[12];
+
+    D_80114860_391510_name_5B ^= 1;
+    func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[14]);
+    func_80088604_89204(D_80114862_391512_name_5B, 5, 0, 5);
+    if (D_80114860_391510_name_5B != 0) {
+        _ClearFlag(2);
+        func_8000EA88_F688(1);
+        while (func_80029CE4_2A8E4(model) != func_80029D0C_2A90C(model)) {
+            HuPrcVSleep();
+        }
+        func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[13]);
+    } else {
+        _SetFlag(2);
+        func_8000EA88_F688(0);
+        func_80029C74_2A874(model, func_80029D0C_2A90C(model));
+        func_80029E80_2AA80(model, 4, 4);
+        while (func_80029CE4_2A8E4(model) != 0.0f) {
+            HuPrcVSleep();
+        }
+        func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[12]);
+    }
+    func_80029E80_2AA80(model, 2, 2);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010DA34_38A6E4_name_5B);
 

@@ -327,7 +327,7 @@ void func_801094F8_3861A8_name_5B(void);
 void func_80109B1C_3867CC_name_5B(void);
 void func_8010A0F0_386DA0_name_5B(s32 *arg0);
 void func_8010A1E4_386E94_name_5B(s32 arg0, s16 arg1, s16 arg2);
-void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, void *arg2, void *arg3);
+void func_8010A53C_3871EC_name_5B(s16 arg0, f32 arg1, f32* screen, Vec* out); /* 5B-D: screen point to world at a depth */
 void func_8010A7F4_3874A4_name_5B(s16 model, Vec* out, f32 mtx[4][4]); /* a point of the model in world space */
 void func_8010A8F4_3875A4_name_5B(s16 model, Vec2f* out, f32 mtx[4][4]); /* the same on screen */
 void func_8010A940_3875F0_name_5B(void);
@@ -369,5 +369,13 @@ typedef struct TexAnimSlot {
 extern TexAnimSlot* D_800FD7F8_FE3F8;
 void func_8003EE44_3FA44(HmfData*); /* 3D6A0.c */
 void func_8003EEA4_3FAA4(HmfData*);
+
+/* What 80108788 passes its per-frame callback (8010D6E8 reads it). */
+typedef struct Ovl5BCamStep {
+    /* 0x00 */ s16 frame;
+    /* 0x02 */ s16 len;
+    /* 0x04 */ Vec from;
+    /* 0x10 */ Vec to;
+} Ovl5BCamStep;
 
 #endif
