@@ -229,6 +229,8 @@ build/src/274D0.c.o: export VR4300MUL := ON
 build/src/C8E0.c.o: export VR4300MUL := ON
 # 5B-A: retail built 37F4E0.c with the KMC mul fix on (a nop between mul.s pairs, 80103B54)
 build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
+# 58-B: ovl_58 36DF00.c has a nop between back-to-back mul.s (80106AF8, 80107180): KMC mul fix on
+build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 # 5B-E: 3875F0.c too (8010F734: a nop between mul.s pairs)
 build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
 
