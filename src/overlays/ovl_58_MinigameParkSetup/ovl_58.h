@@ -17,6 +17,7 @@
 #include "game/gamemes.h"
 #include "game/gamework.h"
 #include "game/pad.h"
+#include "game/camera.h" /* 58-E: D_800C9B80 */
 
 /* ---- types ---- */
 
@@ -34,7 +35,7 @@ typedef struct Ovl58Setup {
     /* 0x13 */ u8 bonus;        /* flag 0x4E */
     /* 0x14 */ u8 padCount;     /* controllers inserted at start */
     /* 0x15 */ u8 unk15;
-    /* 0x16 */ s16 unk16;
+    /* 0x16 */ s16 unk16; /* 58-E: also D_8011396E, a separate scalar in 80112950 */
 } Ovl58Setup; /* size = 0x18 */
 
 /* Four s16 copied whole into a local (80103F38, 8010E2B8): D_801138E0 (the four player
@@ -259,7 +260,7 @@ typedef struct Ovl58ModeTable {
 
 /* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
 extern s16 D_80112B40_37E240_MinigameParkSetup;
-extern s16 D_80112B42_37E242_MinigameParkSetup;
+extern u16 D_80112B42_37E242_MinigameParkSetup; /* 58-E: nonzero = leave (801109C8) */
 extern s16 D_80112B44_37E244_MinigameParkSetup[2];
 extern s32 D_80112B48_37E248_MinigameParkSetup;
 extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
@@ -288,7 +289,7 @@ extern Ovl58InfoBox D_80113554_37EC54_MinigameParkSetup[4]; /* 58-D: the record 
 extern s32 D_80113584_37EC84_MinigameParkSetup[6];
 extern s32 D_8011359C_37EC9C_MinigameParkSetup[9];
 extern f32 D_801135C0_37ECC0_MinigameParkSetup; /* camera fov */
-extern u8 D_801135C4_37ECC4_MinigameParkSetup[12];
+extern s8 D_801135C4_37ECC4_MinigameParkSetup[12]; /* 58-E: [0] nonzero: 80111D8C uses the fixed camera D_8011388C/D_80113930 */
 
 /* ---- 58 .rodata (C, 36DF00.c) ---- */
 extern const Ovl58Quad D_80113618_37ED18_MinigameParkSetup; /* {2, 0, 3, 1}: 80103F38 panel lift-in delays (x10 frames) */
@@ -304,7 +305,7 @@ extern s16 D_80113786_37EE86_MinigameParkSetup;
 extern s16 D_80113788_37EE88_MinigameParkSetup;
 extern f32 D_8011378C_37EE8C_MinigameParkSetup; /* 58-D: camera sway amplitude (8010EEF8) */
 extern s16 D_80113790_37EE90_MinigameParkSetup; /* set by 8010FB00 when its intro is done */
-extern s16 D_80113798_37EE98_MinigameParkSetup;
+extern s16 D_80113798_37EE98_MinigameParkSetup[6][2]; /* 58-E: cursor slot positions x, y (80110678 moves between them) */
 extern s16 D_8011379A_37EE9A_MinigameParkSetup[11];
 extern f32 D_801137B0_37EEB0_MinigameParkSetup[2]; /* panel origin x, y (801051BC) */
 extern Process* D_801137B8_37EEB8_MinigameParkSetup[6]; /* 5 used: 80106AF8 processes */
@@ -334,17 +335,17 @@ extern s16 D_80113844_37EF44_MinigameParkSetup[3];
 extern s16 D_8011384A_37EF4A_MinigameParkSetup[3];
 extern s16 D_80113850_37EF50_MinigameParkSetup[4]; /* 58-D: record panel window ids */
 extern f32 D_80113858_37EF58_MinigameParkSetup; /* 58-D: sway amplitude at the start of the exit */
-extern s32 D_80113860_37EF60_MinigameParkSetup;
-extern s16 D_80113864_37EF64_MinigameParkSetup;
-extern s16 D_80113866_37EF66_MinigameParkSetup;
-extern s16 D_80113868_37EF68_MinigameParkSetup;
-extern s16 D_8011386A_37EF6A_MinigameParkSetup[3];
+extern s16 (*D_80113860_37EF60_MinigameParkSetup)[2]; /* 58-E: cursor slot positions (80111744) */
+extern s16 D_80113864_37EF64_MinigameParkSetup; /* 58-E: cursor x */
+extern s16 D_80113866_37EF66_MinigameParkSetup; /* 58-E: cursor y */
+extern s16 D_80113868_37EF68_MinigameParkSetup; /* 58-E: cursor glide frames */
+extern s16 D_8011386A_37EF6A_MinigameParkSetup[3]; /* 58-E: [0] cursor slot (-1 none) */
 extern f32* D_80113870_37EF70_MinigameParkSetup;
-extern s32 D_80113878_37EF78_MinigameParkSetup[5];
-extern s32 D_8011388C_37EF8C_MinigameParkSetup[3];
+extern s16 D_80113878_37EF78_MinigameParkSetup[9]; /* 58-E: minigames per category (80112950) */
+extern Vec D_8011388C_37EF8C_MinigameParkSetup; /* 58-E: fixed camera eye */
 extern s16 D_80113898_37EF98_MinigameParkSetup[4]; /* 58-C: [0] a count read as s16 (8010B6E8: >= 20 two mode panels, >= 30 three) */
 extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-B: cursor on each slot, -1 none */
-extern s16 D_801138B0_37EFB0_MinigameParkSetup;
+extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
 extern s16 D_801138B2_37EFB2_MinigameParkSetup[7]; /* 58-D: the tunnel's seven models (8010F358; [4] done and [5] quit wait on them) */
 extern s16 D_801138BE_37EFBE_MinigameParkSetup;
 extern u16 D_801138C0_37EFC0_MinigameParkSetup[4]; /* 58-D: [0] the model 8010F358 fades */
@@ -356,16 +357,17 @@ extern s16 D_801138FE_37EFFE_MinigameParkSetup;
 extern Ovl58Pair D_80113900_37F000_MinigameParkSetup; /* 58-C: the two bonus-panel models (+ 4 bytes unreferenced) */
 extern s16 D_80113908_37F008_MinigameParkSetup[3];
 extern s16 D_8011390E_37F00E_MinigameParkSetup[5];
-extern s16 D_80113918_37F018_MinigameParkSetup[7];
+extern s16 D_80113918_37F018_MinigameParkSetup[9]; /* 58-E: D_801139D8 count per category (D_80113926 = [7]) */
 extern s16 D_80113926_37F026_MinigameParkSetup[2];
 extern s16 D_8011392A_37F02A_MinigameParkSetup;
 extern s16 D_8011392C_37F02C_MinigameParkSetup; /* 1 while 80103F38 takes the player count */
-extern s32 D_80113930_37F030_MinigameParkSetup[3];
+extern Vec D_80113930_37F030_MinigameParkSetup; /* 58-E: fixed camera target */
 extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel (player count - 1) */
-extern s16 D_80113940_37F040_MinigameParkSetup[7];
+extern s16 D_80113940_37F040_MinigameParkSetup[9]; /* 58-E: D_80113C08 count per category (D_8011394E = [7]) */
 extern s16 D_8011394E_37F04E_MinigameParkSetup[5];
 extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396F */
-extern s16 D_80113970_37F070_MinigameParkSetup[11];
+extern s16 D_8011396E_37F06E_MinigameParkSetup; /* 58-E: = D_80113958.unk16; count of D_801139D8's minigames */
+extern s16 D_80113970_37F070_MinigameParkSetup[24]; /* 58-E: their first motions (D_80113986 = [11]) */
 extern s16 D_80113986_37F086_MinigameParkSetup[2];
 extern s16 D_8011398A_37F08A_MinigameParkSetup[11];
 extern s16 D_801139A0_37F0A0_MinigameParkSetup; /* model motion: the panel is down */
@@ -381,11 +383,10 @@ extern s16 D_801139BE_37F0BE_MinigameParkSetup;
 extern s16 D_801139C0_37F0C0_MinigameParkSetup[2]; /* 58-C: [0] bonus model motion (panel down) */
 extern s16 D_801139C4_37F0C4_MinigameParkSetup;
 extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
-extern s32 D_801139D8_37F0D8_MinigameParkSetup[135];
+extern s16 D_801139D8_37F0D8_MinigameParkSetup[9][30]; /* 58-E: per category, the minigames func_80068040 rejects */
 extern f32 D_80113BF4_37F2F4_MinigameParkSetup; /* camera far */
-extern s32 D_80113BF8_37F2F8_MinigameParkSetup;
-extern s32 D_80113BFC_37F2FC_MinigameParkSetup[3];
-extern s32 D_80113C08_37F308_MinigameParkSetup[135];
+extern Vec D_80113BF8_37F2F8_MinigameParkSetup; /* 58-E: camera rotation copy (D_800FD474); + 4 bytes */
+extern s16 D_80113C08_37F308_MinigameParkSetup[9][30]; /* 58-E: per category, the minigames func_80068040 accepts */
 extern f32 D_80113E24_37F524_MinigameParkSetup; /* camera near */
 
 /* ---- 58 functions (source order) ---- */
@@ -441,28 +442,61 @@ void func_80110278_37B978_MinigameParkSetup(void);
 void func_80110350_37BA50_MinigameParkSetup(s32);
 s32 func_801103A4_37BAA4_MinigameParkSetup(void);
 s32 func_8011042C_37BB2C_MinigameParkSetup(void);
-void func_801104B4_37BBB4_MinigameParkSetup(s8* args); /* 58-B: message arguments (80107644 passes a second 0) */
+void func_801104B4_37BBB4_MinigameParkSetup(char* str);
 void func_801104DC_37BBDC_MinigameParkSetup(void);
 void func_801104FC_37BBFC_MinigameParkSetup(s16 model, s16 sprite, const char* hook); /* sprite to a model hook */
-void func_801105B8_37BCB8_MinigameParkSetup(s16, s16, s32, s32);
-void func_8011060C_37BD0C_MinigameParkSetup(s32, void*, s16, s16);
+void func_801105B8_37BCB8_MinigameParkSetup(s16 i, s16 spr, s32 dx, s32 dy);
+void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy);
 s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stickY); /* -1: no move */
-void func_801109C8_37C0C8_MinigameParkSetup(void*);
-void func_80110A28_37C128_MinigameParkSetup(void);
+void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj);
+void func_80110A28_37C128_MinigameParkSetup(omObjData* obj);
 void func_80110AF0_37C1F0_MinigameParkSetup(s16);
-void func_80110B98_37C298_MinigameParkSetup(s16, s16, s16, void*);
+void func_80110B98_37C298_MinigameParkSetup(s16 view, s16 frames, s16 mode, void (*cb)(s16*));
 void func_80111328_37CA28_MinigameParkSetup(void);
 void func_801115BC_37CCBC_MinigameParkSetup(void);
 void func_8011170C_37CE0C_MinigameParkSetup(s16);
-void func_80111744_37CE44_MinigameParkSetup(s16*);
+void func_80111744_37CE44_MinigameParkSetup(s16 (*slots)[2]);
 void func_80111750_37CE50_MinigameParkSetup(s16);
 void func_8011175C_37CE5C_MinigameParkSetup(s16);
 void func_80111768_37CE68_MinigameParkSetup(void);
 void func_80111D8C_37D48C_MinigameParkSetup(void);
 void func_80112360_37DA60_MinigameParkSetup(s32 *arg0);
 void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model);
-void func_80112810_37DF10_MinigameParkSetup(s16, void*, s32);
-void func_80112910_37E010_MinigameParkSetup(s16, s32);
+void func_80112810_37DF10_MinigameParkSetup(s16 model, Vec* out, Matrix4f mtx);
+void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx);
 void func_80112950_37E050_MinigameParkSetup(void);
+
+/* 58-E */
+
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
+
+/* main's sprite slots (D_800F93FC, 1AE60.c EspriteSlot): only the center is read here. */
+typedef struct Ovl58EspriteSlot {
+    /* 0x00 */ s16 unk00[5];
+    /* 0x0A */ s16 x; /* center */
+    /* 0x0C */ s16 y;
+    /* 0x0E */ char unk0E[0x16];
+} Ovl58EspriteSlot; /* size = 0x24 */
+
+/* One camera view (D_80112B4C through D_80113870); the same layout as 5B's Ovl5BCamView. */
+typedef struct Ovl58CamView {
+    /* 0x00 */ Vec rot;  /* -> D_800FD474 */
+    /* 0x0C */ Vec at;   /* -> D_8010274C */
+    /* 0x18 */ f32 zoom; /* -> D_800FA610 */
+} Ovl58CamView; /* size = 0x1C */
+
+/* One scene model (D_80112BBC tables, ended by file -1; 80112360 loads, 80112454 places);
+   the same layout as 5B's Ovl5BModelDef. */
+typedef struct Ovl58ModelDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 attr;       /* | 0x288 */
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 motionMode; /* func_80029E80's third argument */
+    /* 0x0C */ u32 kind;       /* 1 placed as given; 2, 3 rotated about a pivot */
+    /* 0x10 */ Vec pos;        /* x5 */
+    /* 0x1C */ Vec rot;
+} Ovl58ModelDef; /* size = 0x28 */
 
 #endif /* _OVL_58_H */

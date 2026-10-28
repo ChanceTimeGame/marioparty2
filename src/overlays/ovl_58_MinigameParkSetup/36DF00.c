@@ -3749,58 +3749,793 @@ const char D_80113720_37EE20_MinigameParkSetup[] = "c100_1-atama";
 __asm__(".section .rodata");
 const char D_80113730_37EE30_MinigameParkSetup[] = "c162_000-atama";
 
+/* The host's entrance (model D_801138B0[8]): drops in from above, swings its head to the
+   screen, sometimes (1 in 8) bobs; then opens the message window (80110278) and nods while it
+   talks; once D_80113784 is set it spins away and shrinks. Board 5 uses the Koopa Kid head
+   ("c162_000-atama") and a slower swing. */
+#ifdef NON_MATCHING
+/* masked 0: only one/speed's registers (f28/f26) are swapped. */
+void func_8010FB00_37B200_MinigameParkSetup(void) {
+    s32 unused[38];
+    u16 model;
+    f32 z;
+    f32 y;
+    f32 one;
+    f32 speed;
+    f32 x;
+    f32 pos;
+    s32 snd;
+    HmfMotionObj* head;
+    s16 i;
+
+    model = D_801138B0_37EFB0_MinigameParkSetup[8];
+    D_80101300_101F00 = 0.1f;
+    D_8010105C_101C5C = 0.3f;
+    func_80029A8C_2A68C(model);
+    func_80029AFC_2A6FC(model);
+    func_8002D1EC_2DDEC(model, 1);
+    func_8002D274_2DE74(model, 0xFF, 0xFF, 0xC0);
+    func_8002D2B4_2DEB4(model, 0.0f, 100.0f, 0.0f);
+    func_8002C9C0_2D5C0(model, D_80113970_37F070_MinigameParkSetup[11]);
+    func_80029E80_2AA80(model, 2, 2);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    func_800298A4_2A4A4(model, 4, 0);
+    x = D_800FC834_FD434[(s16)model].pos.x;
+    y = D_800FC834_FD434[(s16)model].pos.y;
+    z = D_800FC834_FD434[(s16)model].pos.z;
+    if (GwSystem.current_board_index != 5) {
+        speed = one = 1.0f;
+        if (GwSystem.current_board_index == 2 || GwSystem.current_board_index == 3) {
+            speed = 0.0f;
+        }
+    } else {
+        one = 1.0f;
+        speed = 0.5f;
+    }
+    func_80029FE4_2ABE4(model, one + speed * 3.0f);
+    snd = 0xC4;
+    if (GwSystem.current_board_index != 5) {
+        snd = 0x123;
+    }
+    PlaySound(snd);
+    for (i = 0; i < 41; i++) {
+        pos = z - (1.0f - HuMathSin(i * 2.25f)) * 1000.0f;
+        func_80029714_2A314(model, x, y, pos);
+        HuPrcVSleep();
+    }
+    if (GwSystem.current_board_index != 5) {
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x45);
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x46);
+        head = func_8002A9F4_2B5F4(model, (char*)D_80113720_37EE20_MinigameParkSetup);
+    } else {
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x45);
+        func_8003B72C_3C32C(model, func_80029E14_2AA14(model), (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x46);
+        head = func_8002A9F4_2B5F4(model, (char*)D_80113730_37EE30_MinigameParkSetup);
+    }
+    head->unk10.y = 80.0f;
+    head->unk10.x = -10.0f;
+    func_80029FE4_2ABE4(model, one + speed);
+    if (!(rand8() & 7) && speed != 0.0f) {
+        for (i = 0; i < 21; i++) {
+            pos -= 10.0f;
+            func_80029714_2A314(model, x, y, pos);
+            HuPrcVSleep();
+        }
+        head->unk10.y = 0.0f;
+        head->unk10.x = 0.0f;
+        pos = z - pos;
+        func_80029FE4_2ABE4(model, one + speed);
+        HuPrcSleep(10);
+        for (i = 0; i < 21; i++) {
+            f32 t = z - pos / 20.0f * (20.0f - i);
+
+            func_80029714_2A314(model, x, y, t);
+            HuPrcVSleep();
+        }
+        func_80029FE4_2ABE4(model, one);
+        head->unk10.y = 90.0f;
+        head->unk10.x = -10.0f;
+    }
+    omAddPrcObj(func_80110278_37B978_MinigameParkSetup, 0x3F00, 0x800, 0);
+    HuPrcVSleep();
+    while (1) {
+        if (D_80113788_37EE88_MinigameParkSetup != 0) {
+            if (GwSystem.current_board_index != 5) {
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x45);
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113720_37EE20_MinigameParkSetup, 0x4C, 0x46);
+            } else {
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x45);
+                func_8003B76C_3C36C(model, D_80113970_37F070_MinigameParkSetup[11], (char*)D_80113730_37EE30_MinigameParkSetup, 0x4C, 0x46);
+            }
+            HuPrcSleep(10);
+            if (D_80113784_37EE84_MinigameParkSetup != 0) {
+                speed = one + speed;
+                func_80029FE4_2ABE4(model, speed);
+                x = D_800FC834_FD434[(s16)model].pos.x;
+                for (i = 0; i < 11; i++) {
+                    func_8002979C_2A39C(model, 0.0f, i * -18.0f, -func_800B7890_B8490(i * 9.0f) * 10.0f);
+                    D_800FC834_FD434[(s16)model].pos.x = x / 20.0f * (10 - i);
+                    HuPrcVSleep();
+                }
+                pos = D_800FC834_FD434[(s16)model].pos.z;
+                for (i = 0; i < 21; i++) {
+                    D_800FC834_FD434[(s16)model].pos.z = func_800B7890_B8490(i * 4.5f) * pos;
+                    HuPrcVSleep();
+                }
+            }
+            break;
+        }
+        HuPrcVSleep();
+    }
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010FB00_37B200_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110278_37B978_MinigameParkSetup);
+/* The message window of the setup screens: opened at the bottom, wiped in once the intro is
+   done (D_80113790), kept until D_80113788 asks it closed. */
+void func_80110278_37B978_MinigameParkSetup(void) {
+    s16 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110350_37BA50_MinigameParkSetup);
+    D_80113818_37EF18_MinigameParkSetup = win = func_8008DFC4_8EBC4(0x40, 0xCC, 2);
+    func_80089284_89E84(win, 0x20, 0x20);
+    func_8008D59C_8E19C(win, 1 << D_8011381A_37EF1A_MinigameParkSetup);
+    func_8008E644_8F244((s16)win, 0xC0);
+    func_8008E2DC_8EEDC((s16)win, 1);
+    D_80113790_37EE90_MinigameParkSetup = 1;
+    while (1) {
+        if (D_80113788_37EE88_MinigameParkSetup != 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    func_8008E4D0_8F0D0((s16)win, 1);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801103A4_37BAA4_MinigameParkSetup);
+/* Shows message mess in the setup window (Mini-Game Park's variant on board 5 in mode 0). */
+void func_80110350_37BA50_MinigameParkSetup(s32 mess) {
+    if (mess >= 0 && GwSystem.current_board_index == 5 && D_800CD414_CE014 == 0) {
+        mess += 0x22;
+    }
+    func_800890CC_89CCC(D_80113818_37EF18_MinigameParkSetup, mess, -1, -1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011042C_37BB2C_MinigameParkSetup);
+/* Waits for the message, then returns the choice (0 when the window has no choice). */
+s32 func_801103A4_37BAA4_MinigameParkSetup(void) {
+    while (1) {
+        if (func_8008BA30_8C630(D_80113818_37EF18_MinigameParkSetup) == 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_80113818_37EF18_MinigameParkSetup].unk_30 != 0) {
+        return func_8008BB48_8C748(D_80113818_37EF18_MinigameParkSetup, 0, 0);
+    } else {
+        return 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104B4_37BBB4_MinigameParkSetup);
+/* As 801103A4 with the cursor starting on choice 1. */
+s32 func_8011042C_37BB2C_MinigameParkSetup(void) {
+    while (1) {
+        if (func_8008BA30_8C630(D_80113818_37EF18_MinigameParkSetup) == 0) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    if (D_800F920C_F9E0C[D_80113818_37EF18_MinigameParkSetup].unk_30 != 0) {
+        return func_8008BB48_8C748(D_80113818_37EF18_MinigameParkSetup, 1, 0);
+    } else {
+        return 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104DC_37BBDC_MinigameParkSetup);
+void func_801104B4_37BBB4_MinigameParkSetup(char* str) {
+    func_80089308_89F08(D_80113818_37EF18_MinigameParkSetup, str, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801104FC_37BBFC_MinigameParkSetup);
+void func_801104DC_37BBDC_MinigameParkSetup(void) {
+    func_8008AD44_8B944(D_80113818_37EF18_MinigameParkSetup);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801105B8_37BCB8_MinigameParkSetup);
+void func_801104FC_37BBFC_MinigameParkSetup(s16 model, s16 sprite, const char* hook) {
+    Matrix4f mtx;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011060C_37BD0C_MinigameParkSetup);
+    func_80023554_24154(model, func_80029CE4_2A8E4(model), (char*)hook, mtx);
+    func_80112910_37E010_MinigameParkSetup(model, D_801137B0_37EEB0_MinigameParkSetup, mtx);
+    espPosSet(sprite, D_801137B0_37EEB0_MinigameParkSetup[0], D_801137B0_37EEB0_MinigameParkSetup[1]);
+}
 
+/* Cursor slot i's position: sprite spr's center plus (dx, dy). */
+void func_801105B8_37BCB8_MinigameParkSetup(s16 i, s16 spr, s32 dx, s32 dy) {
+    D_80113798_37EE98_MinigameParkSetup[i][0] = ((Ovl58EspriteSlot*)D_800F93FC_F9FFC)[spr].x + dx;
+    D_80113798_37EE98_MinigameParkSetup[i][1] = ((Ovl58EspriteSlot*)D_800F93FC_F9FFC)[spr].y + dy;
+}
+
+/* Cursor slot i's position: pos plus (dx, dy). */
+void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy) {
+    D_80113798_37EE98_MinigameParkSetup[i][0] = dx + pos[0];
+    D_80113798_37EE98_MinigameParkSetup[i][1] = dy + pos[1];
+}
+
+/* The free slot (D_801138A0[i] == -1) nearest to slot cur in the stick's direction: only
+   slots within 0.5 of the stick's unit vector count. -1 when there is none. */
+#ifdef NON_MATCHING
+/* masked 2: retail stores dist[i] before copying the root to $f2 (an order swap). */
+s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stickY) {
+    f32 dir[16][2];
+    f32 dist[16];
+    f32 dx;
+    f32 dy;
+    f32 d;
+    f32 sx;
+    f32 sy;
+    f32 best;
+    s16 found;
+    s16 i;
+
+    for (i = 0; i < n; i++) {
+        if (i == cur || D_801138A0_37EFA0_MinigameParkSetup[i] != -1) {
+            dist[i] = -1.0f;
+        } else {
+            dx = D_80113798_37EE98_MinigameParkSetup[cur][0] - D_80113798_37EE98_MinigameParkSetup[i][0];
+            dy = D_80113798_37EE98_MinigameParkSetup[cur][1] - D_80113798_37EE98_MinigameParkSetup[i][1];
+            dist[i] = d = func_800B1830_B2430(dx * dx + dy * dy);
+            dir[i][0] = dx / d;
+            dir[i][1] = dy / d;
+        }
+    }
+    d = func_800B1830_B2430(stickX * stickX + stickY * stickY);
+    sx = stickX / d;
+    sy = stickY / d;
+    for (i = 0; i < n; i++) {
+        if (!(dist[i] < 0.0f)) {
+            dx = sx - dir[i][0];
+            dy = sy - dir[i][1];
+            if (func_800B1830_B2430(dx * dx + dy * dy) > 0.5f) {
+                dist[i] = -1.0f;
+            }
+        }
+    }
+    best = 100000.0f;
+    found = -1;
+    for (i = 0; i < n; i++) {
+        if (!(dist[i] < 0.0f) && dist[i] < best) {
+            best = dist[i];
+            found = i;
+        }
+    }
+    return found;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110678_37BD78_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801109C8_37C0C8_MinigameParkSetup);
+void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj) {
+    if (D_80112B42_37E242_MinigameParkSetup != 0 || D_801011FC_101DFC != 0) {
+        if (D_80112B44_37E244_MinigameParkSetup[0] == 0) {
+            InitFadeOut(0, 8);
+        }
+        obj->func_ptr = func_80110A28_37C128_MinigameParkSetup;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110A28_37C128_MinigameParkSetup);
+/* Leaves once the fade is done: back to the caller (0), or to overlay D_8011381E by goto (1) or
+   call (otherwise). */
+void func_80110A28_37C128_MinigameParkSetup(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        if (D_80112B48_37E248_MinigameParkSetup != 0) {
+            func_80023D74_24974((void*)D_80112B48_37E248_MinigameParkSetup);
+        }
+        func_8001AC44_1B844(D_8011392A_37F02A_MinigameParkSetup);
+        func_8008CE5C_8DA5C();
+        if (D_8011381C_37EF1C_MinigameParkSetup == 0) {
+            omOvlReturnEx(1);
+        } else if (D_8011381C_37EF1C_MinigameParkSetup == 1) {
+            omOvlGotoEx(D_8011381E_37EF1E_MinigameParkSetup, D_80113820_37EF20_MinigameParkSetup,
+                        D_80113822_37EF22_MinigameParkSetup | 0x11);
+        } else {
+            omOvlCallEx(D_8011381E_37EF1E_MinigameParkSetup, D_80113820_37EF20_MinigameParkSetup,
+                        D_80113822_37EF22_MinigameParkSetup | 0x11);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110AF0_37C1F0_MinigameParkSetup);
+/* Applies camera view i of the current table (D_80113870). */
+void func_80110AF0_37C1F0_MinigameParkSetup(s16 i) {
+    D_800FD474_FE074 = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].rot;
+    D_80113BF8_37F2F8_MinigameParkSetup = D_800FD474_FE074;
+    D_8010274C_10334C = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].at;
+    D_800FA610_FB210 = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[i].zoom;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110B98_37C298_MinigameParkSetup);
+/* Moves the camera to view `view` of the current table (D_80113870) over `frames` frames: mode 1 eases out (sine),
+   2 eases in and out (cosine), anything else is linear (frames + 1 steps). The rotation takes the
+   short way round. cb (unless -1) is called every frame with {frame, frames}. */
+void func_80110B98_37C298_MinigameParkSetup(s16 view, s16 frames, s16 mode, void (*cb)(s16*)) {
+    Vec drot;
+    Vec dat;
+    Vec rot0;
+    Vec at0;
+    s16 arg[2];
+    Vec pad[3]; /* unused; retail's frame has it */
+    void (*fn)(s16*);
+    f32 d;
+    f32 t;
+    f32 dzoom;
+    f32 zoom0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111328_37CA28_MinigameParkSetup);
+    fn = cb;
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.x - D_800FD474_FE074.x;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.x < D_800FD474_FE074.x) {
+            drot.x = d + 360.0f;
+        } else {
+            drot.x = d - 360.0f;
+        }
+    } else {
+        drot.x = d;
+    }
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.y - D_800FD474_FE074.y;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.y < D_800FD474_FE074.y) {
+            drot.y = d + 360.0f;
+        } else {
+            drot.y = d - 360.0f;
+        }
+    } else {
+        drot.y = d;
+    }
+    d = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.z - D_800FD474_FE074.z;
+    if (ABS(d) > 180.0f) {
+        if (((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].rot.z < D_800FD474_FE074.z) {
+            drot.z = d + 360.0f;
+        } else {
+            drot.z = d - 360.0f;
+        }
+    } else {
+        drot.z = d;
+    }
+    dat.x = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.x - D_8010274C_10334C.x;
+    dat.y = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.y - D_8010274C_10334C.y;
+    dat.z = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].at.z - D_8010274C_10334C.z;
+    dzoom = ((Ovl58CamView*)D_80113870_37EF70_MinigameParkSetup)[view].zoom - D_800FA610_FB210;
+    at0 = D_8010274C_10334C;
+    rot0 = D_800FD474_FE074;
+    zoom0 = D_800FA610_FB210;
+    arg[1] = frames;
+    if (mode == 1 || mode == 2) {
+        for (i = 0; i < frames; i++) {
+            if (mode != 2) {
+                t = HuMathSin(i * 90.0f / frames);
+            } else if (i <= frames / 2) {
+                t = (1.0f - func_800B7890_B8490(i * 180.0f / frames)) * 0.5f;
+            } else {
+                t = -func_800B7890_B8490(i * 180.0f / frames) * 0.5f + 0.5f;
+            }
+            D_80113BF8_37F2F8_MinigameParkSetup.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80113BF8_37F2F8_MinigameParkSetup.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80113BF8_37F2F8_MinigameParkSetup.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    } else {
+        for (i = 0; i <= frames; i++) {
+            t = 1.0f / frames * i;
+            D_80113BF8_37F2F8_MinigameParkSetup.x = D_800FD474_FE074.x = t * drot.x + rot0.x;
+            D_80113BF8_37F2F8_MinigameParkSetup.y = D_800FD474_FE074.y = t * drot.y + rot0.y;
+            D_80113BF8_37F2F8_MinigameParkSetup.z = D_800FD474_FE074.z = t * drot.z + rot0.z;
+            D_8010274C_10334C.x = t * dat.x + at0.x;
+            D_8010274C_10334C.y = t * dat.y + at0.y;
+            D_8010274C_10334C.z = t * dat.z + at0.z;
+            D_800FA610_FB210 = t * dzoom + zoom0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_80110AF0_37C1F0_MinigameParkSetup(view);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_801115BC_37CCBC_MinigameParkSetup);
+/* The pointing-hand cursor (sprite D_8011392A): it glides over D_80113868 frames to slot
+   D_8011386A of the position table D_80113860 whenever the slot changes while it is shown
+   (D_8011392C). */
+void func_80111328_37CA28_MinigameParkSetup(void) {
+    s16 last = -1;
+    s16 i;
+    s16 x0;
+    s16 dx;
+    s16 y0;
+    s16 dy;
+    f32 s;
+    s16* to;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011170C_37CE0C_MinigameParkSetup);
+    D_8011392C_37F02C_MinigameParkSetup = 0;
+    D_8011392A_37F02A_MinigameParkSetup = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x900F8), 0, 1);
+    func_8001A788_1B388(D_8011392A_37F02A_MinigameParkSetup, 1);
+    espPosSet(D_8011392A_37F02A_MinigameParkSetup, 160, 120);
+    espDispOff(D_8011392A_37F02A_MinigameParkSetup);
+    D_80113864_37EF64_MinigameParkSetup = 160;
+    D_80113866_37EF66_MinigameParkSetup = 120;
+    D_80113868_37EF68_MinigameParkSetup = 10;
+    omAddPrcObj(func_801115BC_37CCBC_MinigameParkSetup, 0x3F00, 0x100, 0);
+    while (1) {
+        HuPrcVSleep();
+        if (D_8011392C_37F02C_MinigameParkSetup != 0) {
+            if (last != D_8011386A_37EF6A_MinigameParkSetup[0] && D_8011386A_37EF6A_MinigameParkSetup[0] != -1) {
+                x0 = D_80113864_37EF64_MinigameParkSetup;
+                y0 = D_80113866_37EF66_MinigameParkSetup;
+                to = D_80113860_37EF60_MinigameParkSetup[D_8011386A_37EF6A_MinigameParkSetup[0]];
+                dx = to[0] - x0;
+                dy = to[1] - y0;
+                for (i = 1; i <= D_80113868_37EF68_MinigameParkSetup; i++) {
+                    s = HuMathSin(90.0f / D_80113868_37EF68_MinigameParkSetup * i);
+                    D_80113864_37EF64_MinigameParkSetup = x0 + dx * s;
+                    D_80113866_37EF66_MinigameParkSetup = y0 + dy * s;
+                    espPosSet(D_8011392A_37F02A_MinigameParkSetup, D_80113864_37EF64_MinigameParkSetup,
+                              D_80113866_37EF66_MinigameParkSetup);
+                    HuPrcVSleep();
+                }
+                last = D_8011386A_37EF6A_MinigameParkSetup[0];
+            }
+        } else {
+            last = D_8011386A_37EF6A_MinigameParkSetup[0];
+        }
+        espPosSet(D_8011392A_37F02A_MinigameParkSetup, D_80113864_37EF64_MinigameParkSetup, D_80113866_37EF66_MinigameParkSetup);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111744_37CE44_MinigameParkSetup);
+/* Fades the cursor in (4 frames) when D_8011392C turns on, out when it turns off. */
+void func_801115BC_37CCBC_MinigameParkSetup(void) {
+    s16 shown = 0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111750_37CE50_MinigameParkSetup);
+    while (1) {
+        HuPrcVSleep();
+        if (shown == D_8011392C_37F02C_MinigameParkSetup) {
+            continue;
+        }
+        if (D_8011392C_37F02C_MinigameParkSetup != 0) {
+            espDispOn(D_8011392A_37F02A_MinigameParkSetup);
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_8011392A_37F02A_MinigameParkSetup, i * 63.75f);
+                HuPrcVSleep();
+            }
+        } else {
+            for (i = 0; i < 5; i++) {
+                func_8001A6BC_1B2BC(D_8011392A_37F02A_MinigameParkSetup, 255.0f - i * 63.75f);
+                HuPrcVSleep();
+            }
+            espDispOff(D_8011392A_37F02A_MinigameParkSetup);
+        }
+        shown = D_8011392C_37F02C_MinigameParkSetup;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8011175C_37CE5C_MinigameParkSetup);
+/* Moves the cursor to slot i. */
+void func_8011170C_37CE0C_MinigameParkSetup(s16 i) {
+    D_80113864_37EF64_MinigameParkSetup = D_80113860_37EF60_MinigameParkSetup[i][0];
+    D_80113866_37EF66_MinigameParkSetup = D_80113860_37EF60_MinigameParkSetup[i][1];
+    D_8011386A_37EF6A_MinigameParkSetup[0] = i;
+}
 
+/* Sets the cursor's slot positions. */
+void func_80111744_37CE44_MinigameParkSetup(s16 (*slots)[2]) {
+    D_80113860_37EF60_MinigameParkSetup = slots;
+}
+
+/* Sets the cursor's glide time in frames. */
+void func_80111750_37CE50_MinigameParkSetup(s16 frames) {
+    D_80113868_37EF68_MinigameParkSetup = frames;
+}
+
+/* Sets the cursor's slot (glides there). */
+void func_8011175C_37CE5C_MinigameParkSetup(s16 i) {
+    D_8011386A_37EF6A_MinigameParkSetup[0] = i;
+}
+
+/* Debug camera on controller 2 (MP3 sldebug's): C-up/C-down zoom (Z: faster; zoom-in reads
+   controller 1's Z, a retail slip), the stick turns the view (D_80113BF8 keeps the angles,
+   D_800FD474 gets them rounded), L/R move along the view (Z: faster), D-left/right strafe,
+   C-right/left change the fov; START prints the camera. */
+#ifdef NON_MATCHING
+/* masked 21: register choice (rx/speed, the zoom sums) and retail loading &D_8010274C
+   before t's product in both move arms. */
+void func_80111768_37CE68_MinigameParkSetup(void) {
+    f32 zoom;
+    f32 rx;
+    f32 ry;
+    f32 speed;
+    f32 t;
+    f32 dx;
+    f32 dz;
+    f32 n;
+
+    if (ContBtn[1] & 0x20) {
+        if (ContBtn[0] & 0x2000) {
+            zoom = D_800FA610_FB210 + 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 + 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    if ((ContBtn[1] & 0x10) && D_800FA610_FB210 - 10.0f != 0.0f) {
+        if (ContBtn[1] & 0x2000) {
+            zoom = D_800FA610_FB210 - 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 - 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    rx = D_80113BF8_37F2F8_MinigameParkSetup.x;
+    ry = D_80113BF8_37F2F8_MinigameParkSetup.y;
+    if (ContBtn[1] & 0x2000) {
+        speed = 5.0f;
+    } else {
+        speed = 2.0f;
+    }
+    ry += (-ContStkX[1] / 30) * speed;
+    if (ry >= 360.0f) {
+        ry -= 360.0f;
+    } else if (ry < 0.0f) {
+        ry += 360.0f;
+    }
+    D_80113BF8_37F2F8_MinigameParkSetup.y = ry;
+    rx += (s8)(ContStkY[1] / 30) * speed;
+    if (rx >= 360.0f) {
+        rx -= 360.0f;
+    } else if (rx < 0.0f) {
+        rx += 360.0f;
+    }
+    D_80113BF8_37F2F8_MinigameParkSetup.x = rx;
+    D_800FD474_FE074.x = (s16)rx;
+    D_800FD474_FE074.y = (s16)D_80113BF8_37F2F8_MinigameParkSetup.y;
+    speed = 2.0f;
+    if (ContBtn[1] & 0x2000) {
+        speed = 10.0f;
+    }
+    if (ContBtn[1] & 0x800) {
+        t = HuMathSin(ry);
+        t *= HuMathSin(rx);
+        speed = -speed;
+        D_8010274C_10334C.x += t * speed;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * speed;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * speed;
+    } else if (ContBtn[1] & 0x400) {
+        t = HuMathSin(ry);
+        t *= HuMathSin(rx);
+        D_8010274C_10334C.x += t * speed;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * speed;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * speed;
+    } else if (ContBtn[1] & 0x200) {
+        dz = D_800C9B80_CA780->pos.z - D_8010274C_10334C.z;
+        dx = -(D_800C9B80_CA780->pos.x - D_8010274C_10334C.x);
+        n = 1.0f / func_800B1830_B2430(dz * dz + dx * dx);
+        D_8010274C_10334C.x += dz * n * speed;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += dx * n * speed;
+    } else if (ContBtn[1] & 0x100) {
+        dz = -(D_800C9B80_CA780->pos.z - D_8010274C_10334C.z);
+        dx = D_800C9B80_CA780->pos.x - D_8010274C_10334C.x;
+        n = 1.0f / func_800B1830_B2430(dz * dz + dx * dx);
+        D_8010274C_10334C.x += dz * n * speed;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += dx * n * speed;
+    }
+    if (ContBtn[1] & 2) {
+        D_801135C0_37ECC0_MinigameParkSetup += 1.0f;
+    }
+    if (ContBtn[1] & 1) {
+        D_801135C0_37ECC0_MinigameParkSetup -= 1.0f;
+    }
+    Hu3DCamSetPerspective(0, D_801135C0_37ECC0_MinigameParkSetup, D_80113E24_37F524_MinigameParkSetup,
+                          D_80113BF4_37F2F4_MinigameParkSetup);
+    if (ContBtnTrg[1] & 0x4000) {
+        osSyncPrintf("CRot   (%f,%f,%f)\n", D_800FD474_FE074.x, D_800FD474_FE074.y, D_800FD474_FE074.z);
+        osSyncPrintf("Center (%f,%f,%f)\n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+        osSyncPrintf("CZoom  %f CFovy %f\n", D_800FA610_FB210, D_801135C0_37ECC0_MinigameParkSetup);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111768_37CE68_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80111D8C_37D48C_MinigameParkSetup);
+/* The camera process (MP2 main's func_80079E60, MP3 omOutView, plus a roll): the eye orbits
+   D_8010274C at distance D_800FA610 with rotation D_800FD474, the up vector turned by
+   D_800FD474.z about the line of sight; or, while D_801135C4[0] is set, the fixed eye and
+   target D_8011388C/D_80113930 with up +y. */
+void func_80111D8C_37D48C_MinigameParkSetup(void) {
+    Vec pos;
+    Vec at;
+    Vec up;
+    f32 rx;
+    f32 ry;
+    f32 rz;
+    f32 ux;
+    f32 uy;
+    f32 uz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 len;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112360_37DA60_MinigameParkSetup);
+    while (1) {
+        if (D_801135C4_37ECC4_MinigameParkSetup[0] == 0) {
+            rx = D_800FD474_FE074.x;
+            ry = D_800FD474_FE074.y;
+            rz = D_800FD474_FE074.z;
+            pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+            pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
+            pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
+            at.x = D_8010274C_10334C.x;
+            at.y = D_8010274C_10334C.y;
+            at.z = D_8010274C_10334C.z;
+            ux = HuMathSin(ry) * HuMathSin(rx);
+            uy = func_800B7890_B8490(rx);
+            uz = func_800B7890_B8490(ry) * HuMathSin(rx);
+            dx = at.x - pos.x;
+            dy = at.y - pos.y;
+            dz = at.z - pos.z;
+            len = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            dx /= len;
+            dy /= len;
+            dz /= len;
+            up.x = ux * (dx * dx + (1.0f - dx * dx) * func_800B7890_B8490(rz))
+                 + uy * (dx * dy * (1.0f - func_800B7890_B8490(rz)) - dz * HuMathSin(rz))
+                 + uz * (dx * dz * (1.0f - func_800B7890_B8490(rz)) + dy * HuMathSin(rz));
+            up.y = ux * (dx * dy * (1.0f - func_800B7890_B8490(rz)) + dz * HuMathSin(rz))
+                 + uy * (dy * dy + (1.0f - dy * dy) * func_800B7890_B8490(rz))
+                 + uz * (dy * dz * (1.0f - func_800B7890_B8490(rz)) - dx * HuMathSin(rz));
+            up.z = ux * (dx * dz * (1.0f - func_800B7890_B8490(rz)) - dy * HuMathSin(rz))
+                 + uy * (dy * dz * (1.0f - func_800B7890_B8490(rz)) + dx * HuMathSin(rz))
+                 + uz * (dz * dz + (1.0f - dz * dz) * func_800B7890_B8490(rz));
+        } else {
+            pos = D_8011388C_37EF8C_MinigameParkSetup;
+            at = D_80113930_37F030_MinigameParkSetup;
+            up.x = 0.0f;
+            up.y = 1.0f;
+            up.z = 0.0f;
+        }
+        D_800FA5BC_FB1BC[0] = pos.x;
+        D_800FA5BC_FB1BC[1] = pos.z;
+        D_800FA5BC_FB1BC[-1] = D_800FD474_FE074.y;
+        D_800FA5BC_FB1BC[2] = D_800C9B80_CA780->fov[0];
+        D_800FA5BC_FB1BC[3] = D_80101078_101C78;
+        D_800FA5BC_FB1BC[4] = D_800F8410_F9010;
+        Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+        Hu3DCamUpdateMtx(0);
+        HuPrcVSleep();
+    }
+}
 
+/* Loads the scene's models from table defs (ends at file -1) into D_801138B0, places them
+   (80112454) and starts each one's first motion. */
+void func_80112360_37DA60_MinigameParkSetup(s32* table) {
+    Ovl58ModelDef* def = (Ovl58ModelDef*)table;
+    Ovl58ModelDef* defs = def;
+    s16 i = 0;
+    s16 model;
+
+    while (def->file != -1) {
+        model = D_801138B0_37EFB0_MinigameParkSetup[i] = LoadFormFile(def->file, def->attr | 0x288);
+        func_80112454_37DB54_MinigameParkSetup((s32*)defs, i, model);
+        if ((D_80113970_37F070_MinigameParkSetup[i] = func_80029E14_2AA14(model)) != -1) {
+            func_80029E80_2AA80(model, -1, def->motionMode);
+        }
+        def++;
+        i++;
+    }
+}
+
+/* Places model as entry index of table: kind 1 as given (x5); kinds 3 and 2 rotated by
+   -/+119.289 degrees about two pivots. */
+#ifdef NON_MATCHING
+/* masked 0: retail negates sin's register in place (neg.s $f20,$f20). */
+void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model) {
+    Ovl58ModelDef* def = &((Ovl58ModelDef*)table)[index];
+    f32 t;
+    f32 x;
+    f32 z;
+
+    switch (def->kind) {
+        case 1:
+            func_80029714_2A314(model, def->pos.x * 5.0f, def->pos.y * 5.0f, def->pos.z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y, def->rot.z);
+            break;
+        case 3:
+            t = func_800B7890_B8490(-119.289f);
+            x = t * def->pos.x + HuMathSin(-119.289f) * def->pos.z;
+            t = HuMathSin(-119.289f);
+            z = -t * def->pos.x + func_800B7890_B8490(-119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(-119.289f) * 136.8f + 259.0f) * 5.0f + x * 5.0f, def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(-119.289f) * 136.8f + 147.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + -119.289f, def->rot.z);
+            break;
+        case 2:
+            t = func_800B7890_B8490(119.289f);
+            x = t * def->pos.x + HuMathSin(119.289f) * def->pos.z;
+            t = HuMathSin(119.289f);
+            z = -t * def->pos.x + func_800B7890_B8490(119.289f) * def->pos.z;
+            func_80029714_2A314(model, (-HuMathSin(119.289f) * 136.8f - 259.0f) * 5.0f + x * 5.0f, def->pos.y * 5.0f,
+                                (-func_800B7890_B8490(119.289f) * 136.8f + 150.0f) * 5.0f + z * 5.0f);
+            func_8002979C_2A39C(model, def->rot.x, def->rot.y + 119.289f, def->rot.z);
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112454_37DB54_MinigameParkSetup);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112810_37DF10_MinigameParkSetup);
+/* out = mtx * (model's transform) applied to (1, 1, 1): the sum of each row of the product. */
+void func_80112810_37DF10_MinigameParkSetup(s16 model, Vec* out, Matrix4f mtx) {
+    Matrix4f m;
+    Matrix4f r;
+    HmfModel* obj = &D_800FC834_FD434[model];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112910_37E010_MinigameParkSetup);
+    func_800B1F50_B2B50(m, obj->pos.x, obj->pos.y, obj->pos.z);
+    func_80025884_26484(m, obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80025830_26430(m, obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80025BA4_267A4(mtx, m, r);
+    out->x = r[0][0] + r[1][0] + r[2][0] + r[3][0];
+    out->y = r[0][1] + r[1][1] + r[2][1] + r[3][1];
+    out->z = r[0][2] + r[1][2] + r[2][2] + r[3][2];
+}
 
+/* Screen position of model under mtx (camera 0). */
+void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx) {
+    Vec pos;
+
+    func_80112810_37DF10_MinigameParkSetup(model, &pos, mtx);
+    Hu3DCam3DToScreen(0, &pos, (Vec2f*)out);
+}
+
+/* Sorts the 72 minigames by category (D_800CAD90[i].unk_04): those func_80067F4C passes go to
+   D_80113C08 when func_80068040 accepts them, otherwise to D_801139D8; D_80113878 counts every
+   minigame of the category. */
+#ifdef NON_MATCHING
+/* masked 1: retail copies cat (move) where this masks it (andi 0xFF). */
+void func_80112950_37E050_MinigameParkSetup(void) {
+    s16 i;
+    u8 cat;
+
+    for (i = 0; i < 9; i++) {
+        D_80113918_37F018_MinigameParkSetup[i] = D_80113878_37EF78_MinigameParkSetup[i] = D_80113940_37F040_MinigameParkSetup[i] = 0;
+    }
+    D_80113898_37EF98_MinigameParkSetup = 0;
+    D_8011396E_37F06E_MinigameParkSetup = 0;
+    for (i = 0; i < 72; i++) {
+        cat = D_800CAD90[i].unk_04;
+        if (func_80067F4C_68B4C(i) != 0) {
+            if (func_80068040_68C40(i) != 0) {
+                D_80113C08_37F308_MinigameParkSetup[cat][D_80113940_37F040_MinigameParkSetup[cat]] = i;
+                D_80113940_37F040_MinigameParkSetup[cat]++;
+                D_80113898_37EF98_MinigameParkSetup++;
+            } else {
+                D_801139D8_37F0D8_MinigameParkSetup[cat][D_80113918_37F018_MinigameParkSetup[cat]] = i;
+                D_80113918_37F018_MinigameParkSetup[cat]++;
+                D_8011396E_37F06E_MinigameParkSetup++;
+            }
+        }
+        D_80113878_37EF78_MinigameParkSetup[cat]++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112950_37E050_MinigameParkSetup);
+#endif
