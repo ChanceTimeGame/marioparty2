@@ -38,6 +38,16 @@ typedef struct Ovl5BModelDef {
     /* 0x1C */ Vec rot;
 } Ovl5BModelDef; /* size = 0x28 */
 
+/* 5B-B */
+/* One decoration sprite of the menu (D_80113354; 80106D2C). */
+typedef struct Ovl5BSprDef {
+    /* 0x00 */ s32 file; /* sprite group; 0 ends the table */
+    /* 0x04 */ f32 x;
+    /* 0x08 */ f32 y;
+    /* 0x0C */ f32 sx;
+    /* 0x10 */ f32 sy;
+} Ovl5BSprDef; /* size = 0x14 */
+
 /* ---- main-segment API used by 5B ---- */
 
 void ExecBoardScene(void*, s16);
@@ -176,21 +186,17 @@ extern Ovl5BModelDef D_801129B0_38F660_name_5B[55]; /* the menu's models, file -
 extern f32 D_80112A3C_38F6EC_name_5B; /* = D_801129B0[3].pos.y (80107748) */
 extern f32 D_80112A40_38F6F0_name_5B; /* = D_801129B0[3].pos.z */
 extern s16 D_80113248_38FEF8_name_5B[10][2]; /* the menu choices' sprite offsets from the panel (x, y; 80105530); labels 324A, 325C are [0][1], [5] */
-extern s32 D_80113270_38FF20_name_5B[11]; /* 8010607C */
-extern u8 D_8011329C_38FF4C_name_5B; /* 8010607C */
-extern u8 D_8011329D_38FF4D_name_5B; /* 8010607C */
-extern u8 D_8011329E_38FF4E_name_5B[16]; /* 8010607C */
+extern u32 D_80113270_38FF20_name_5B[11]; /* each choice's sprite group (8010607C; 0 or -1: none) */
+extern u8 D_8011329C_38FF4C_name_5B[6][3]; /* the choice sprites' colour cycle (r, g, b; 8010607C reads [6] too, past the end) */
 extern s16 D_801132AE_38FF5E_name_5B; /* the panel's state (80105530: 0 coming in, 1 leaving, 2 shown) */
 extern s16 D_801132B0_38FF60_name_5B; /* the continue choice's sprite group (80105530) */
 extern u16 D_801132B2_38FF62_name_5B; /* its sprite */
-extern s32 D_801132B4_38FF64_name_5B; /* 801068C4 */
-extern s32 D_801132B8_38FF68_name_5B[19]; /* 80107748 */
-extern s32 D_80113304_38FFB4_name_5B[20]; /* 801068C4 */
-extern s32 D_80113354_390004_name_5B[50]; /* 80106D2C */
-extern s32 D_8011341C_3900CC_name_5B[9]; /* 80106D2C */
-extern s32 D_80113440_3900F0_name_5B; /* 80106D2C */
-extern s32 D_80113444_3900F4_name_5B[9]; /* 80107748 */
-extern s32 D_80113468_390118_name_5B[10]; /* 80107748 */
+extern s32 D_801132B4_38FF64_name_5B[10][2]; /* each choice's description message, [1] 80107748 (801068C4) */
+extern s32 D_80113304_38FFB4_name_5B[10][2]; /* the same with a Koopa Kid host */
+extern Ovl5BSprDef D_80113354_390004_name_5B[10]; /* the decoration sprites (80106D2C), file 0 ends */
+extern s32 D_8011341C_3900CC_name_5B[10]; /* each choice's picture (80106D2C); [9] (label 3440) is set to the saved game's board's */
+extern s32 D_80113444_3900F4_name_5B[9]; /* each board's character model file (80107748) */
+extern s32 D_80113468_390118_name_5B[10]; /* its motion file */
 extern s16 D_80113490_390140_name_5B; /* 8010ACBC 8010DCAC */
 extern s16 D_80113492_390142_name_5B; /* 8010ACBC 80110908 */
 extern s32 D_80113494_390144_name_5B[7]; /* 8010ACBC */
