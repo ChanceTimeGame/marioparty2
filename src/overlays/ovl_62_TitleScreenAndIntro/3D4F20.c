@@ -756,39 +756,151 @@ void func_80104778_3D6C98_TitleScreenAndIntro(Gfx** gfx) {
                             0x400);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105204_3D7724_TitleScreenAndIntro);
+s16 func_80105204_3D7724_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_80104778_3D6C98_TitleScreenAndIntro, 6);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105234_3D7754_TitleScreenAndIntro);
+void func_80105234_3D7754_TitleScreenAndIntro(void) {
+    if (D_801110E0_3E3600_TitleScreenAndIntro != NULL) {
+        func_80027340_27F40(D_801110E0_3E3600_TitleScreenAndIntro);
+        func_80027340_27F40(D_80112144_3E4664_TitleScreenAndIntro);
+        func_800283DC_28FDC(D_80111D6C_3E428C_TitleScreenAndIntro);
+        D_801110E0_3E3600_TitleScreenAndIntro = NULL;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105280_3D77A0_TitleScreenAndIntro);
+/* load the RGBA32 image (file 0xE001B) and an I8 image (file 0x1B; big-endian headers) */
+void func_80105280_3D77A0_TitleScreenAndIntro(void) {
+    u8* file;
+    u8* hdr;
+    u8* pix;
+    s32 w;
+    s32 h;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801053D8_3D78F8_TitleScreenAndIntro);
+    file = DataRead(0xE001B);
+    hdr = file + (file[2] << 8) + file[3];
+    w = (hdr[4] << 8) + hdr[5];
+    D_80111D64_3E4284_TitleScreenAndIntro = w;
+    h = (hdr[6] << 8) + hdr[7];
+    D_80111D68_3E4288_TitleScreenAndIntro = h;
+    pix = file + (hdr[2] << 8) + hdr[3];
+    w = w * h * 4;
+    D_801110E0_3E3600_TitleScreenAndIntro = func_80027154_27D54(w, 0x7918);
+    bcopy(pix, D_801110E0_3E3600_TitleScreenAndIntro, w);
+    DataClose(file);
+    file = DataRead(0x1B);
+    hdr = file + (file[2] << 8) + file[3];
+    w = (hdr[4] << 8) + hdr[5];
+    h = (hdr[6] << 8) + hdr[7];
+    pix = file + (hdr[2] << 8) + hdr[3];
+    w = w * h;
+    D_80112144_3E4664_TitleScreenAndIntro = func_80027154_27D54(w, 0x7918);
+    bcopy(pix, D_80112144_3E4664_TitleScreenAndIntro, w);
+    DataClose(file);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105460_3D7980_TitleScreenAndIntro);
+/* start drawing the image, made opaque */
+void func_801053D8_3D78F8_TitleScreenAndIntro(void) {
+    u8* p;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105504_3D7A24_TitleScreenAndIntro);
+    D_80111D6C_3E428C_TitleScreenAndIntro = func_80105204_3D7724_TitleScreenAndIntro();
+    p = D_801110E0_3E3600_TitleScreenAndIntro;
+    for (i = 0; i < D_80111D64_3E4284_TitleScreenAndIntro * D_80111D68_3E4288_TitleScreenAndIntro; i++) {
+        p[3] = 0xFF;
+        p += 4;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055A0_3D7AC0_TitleScreenAndIntro);
+/* a model from a form file at (x, y, z), uniform scale */
+u16 func_80105460_3D7980_TitleScreenAndIntro(s32 file, f32 x, f32 y, f32 z, f32 scale, s32 attr) {
+    u16 model = LoadFormFile(file, attr);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055C8_3D7AE8_TitleScreenAndIntro);
+    func_80029AFC_2A6FC(model);
+    func_80029714_2A314(model, x, y, z);
+    func_800297E8_2A3E8(model, scale, scale, scale);
+    return model;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055F0_3D7B10_TitleScreenAndIntro);
+u16 func_80105504_3D7A24_TitleScreenAndIntro(s32 file, f32 x, f32 y, f32 z, f32 scale, s32 attr) {
+    u16 model = LoadFormFile(file, attr);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105658_3D7B78_TitleScreenAndIntro);
+    func_80029714_2A314(model, x, y, z);
+    func_800297E8_2A3E8(model, scale, scale, scale);
+    return model;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105668_3D7B88_TitleScreenAndIntro);
+void func_801055A0_3D7AC0_TitleScreenAndIntro(s16 model) {
+    func_800298A4_2A4A4(model, 4, 4);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105684_3D7BA4_TitleScreenAndIntro);
+void func_801055C8_3D7AE8_TitleScreenAndIntro(s16 model) {
+    func_800298A4_2A4A4(model, 4, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801056CC_3D7BEC_TitleScreenAndIntro);
+/* face the angle (degrees) */
+void func_801055F0_3D7B10_TitleScreenAndIntro(MBModel* model, f32 angle) {
+    f32 s = HuMathSin(angle);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010571C_3D7C3C_TitleScreenAndIntro);
+    HuVecCopyXYZ(&model->rot, -s, 0.0f, func_800B7890_B8490(angle));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105758_3D7C78_TitleScreenAndIntro);
+void func_80105658_3D7B78_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z) {
+    model->pos.x = x;
+    model->pos.y = y;
+    model->pos.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801057D4_3D7CF4_TitleScreenAndIntro);
+void func_80105668_3D7B88_TitleScreenAndIntro(MBModel* model, Vec* pos) {
+    model->pos.x = pos->x;
+    model->pos.y = pos->y;
+    model->pos.z = pos->z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105818_3D7D38_TitleScreenAndIntro);
+/* walk to (x, y, z) in time frames */
+void func_80105684_3D7BA4_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z, s32 time) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    func_8005845C_5905C(0, &pos, time, model);
+}
+
+/* turn to face (x, y, z) over time frames */
+void func_801056CC_3D7BEC_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z, f32 time) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    func_80058F18_59B18(0, &pos, time, model);
+}
+
+/* face (x, z) at once */
+void func_8010571C_3D7C3C_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    pos.y = 0.0f;
+    func_80056658_57258(&model->pos, &pos, &model->rot);
+}
+
+/* face its position plus (dx, dz) at once */
+void func_80105758_3D7C78_TitleScreenAndIntro(MBModel* model, f32 dx, f32 dy, f32 dz) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, dx + model->pos.x, dy + model->pos.y, dz + model->pos.z);
+    pos.y = 0.0f;
+    func_80056658_57258(&model->pos, &pos, &model->rot);
+}
+
+/* the direction of an angle (degrees) */
+void func_801057D4_3D7CF4_TitleScreenAndIntro(f32 angle, Vec* out) {
+    out->x = HuMathSin(angle);
+    out->y = 0.0f;
+    out->z = func_800B7890_B8490(angle);
+}
+
+void func_80105818_3D7D38_TitleScreenAndIntro(void) {
+    D_80112678_3E4B98_TitleScreenAndIntro = 0;
+}
 
 void func_80105824_3D7D44_TitleScreenAndIntro(void) {
 }
@@ -796,15 +908,84 @@ void func_80105824_3D7D44_TitleScreenAndIntro(void) {
 void func_8010582C_3D7D4C_TitleScreenAndIntro(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105834_3D7D54_TitleScreenAndIntro);
+void func_80105834_3D7D54_TitleScreenAndIntro(void) {
+    D_80112678_3E4B98_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105840_3D7D60_TitleScreenAndIntro);
+/* debug: wait for A */
+void func_80105840_3D7D60_TitleScreenAndIntro(void) {
+    while (1) {
+        if (ContBtnTrg[0] & 0x8000) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    HuPrcVSleep();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105880_3D7DA0_TitleScreenAndIntro);
+/* debug: move the board camera with the stick, zoom with C-up/C-down... until A */
+void func_80105880_3D7DA0_TitleScreenAndIntro(void) {
+    Vec pos;
+    char buf[256];
+    f32 zoom;
+    f32 dx;
+    f32 dy;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801059F0_3D7F10_TitleScreenAndIntro);
+    zoom = func_80052E5C_53A5C();
+    pos.x = D_80111128_3E3648_TitleScreenAndIntro.x;
+    pos.y = D_80111128_3E3648_TitleScreenAndIntro.y;
+    pos.z = D_80111128_3E3648_TitleScreenAndIntro.z;
+    while (1) {
+        if (ContBtnTrg[0] & 0x8000) {
+            break;
+        }
+        dx = ContStkX[0];
+        dy = -ContStkY[0];
+        pos.x += dx * 0.05f;
+        pos.y += dy * 0.05f;
+        if (ContBtn[0] & 0x800) {
+            zoom += 0.01f;
+        } else if (ContBtn[0] & 0x400) {
+            zoom -= 0.01f;
+        }
+        func_80052E68_53A68(zoom);
+        MBDCameraPos3DSet(&pos);
+        sprintf(buf, "POS(%4.2f,%4.2f) SCALE%4.2f", pos.x, pos.y, zoom);
+        DrawDebugText(64, 80, buf);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105A1C_3D7F3C_TitleScreenAndIntro);
+/* three empty strings after 80105880's, referenced by nothing (retail's rodata) */
+__asm__(".section .rodata");
+const char D_80111BE4_3E4104_TitleScreenAndIntro[] = "";
+__asm__(".section .rodata");
+const char D_80111BE8_3E4108_TitleScreenAndIntro[] = "";
+__asm__(".section .rodata");
+const char D_80111BEC_3E410C_TitleScreenAndIntro[] = "";
+
+Process* func_801059F0_3D7F10_TitleScreenAndIntro(void) {
+    return omAddPrcObj(func_80105A1C_3D7F3C_TitleScreenAndIntro, 0x5000, 0x2000, 0);
+}
+
+/* the opening's process: run the script (fork B), then fade out to the boot logos' second entry */
+void func_80105A1C_3D7F3C_TitleScreenAndIntro(void) {
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        D_80111E38_3E4358_TitleScreenAndIntro[i][0] = 0;
+    }
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+    D_80111D70_3E4290_TitleScreenAndIntro = func_8010DF5C_3E047C_TitleScreenAndIntro();
+    func_80105AB8_3D7FD8_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80103054_3D5574_TitleScreenAndIntro(0x57, 1, 0x92);
+    func_80102BD0_3D50F0_TitleScreenAndIntro();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80111BF0_3E4110_TitleScreenAndIntro[] = "17";
