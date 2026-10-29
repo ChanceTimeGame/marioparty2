@@ -229,7 +229,7 @@ void func_8010364C_3D5B6C_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_80103730_3D5C50_TitleScreenAndIntro(s32 time);
 void func_801037D0_3D5CF0_TitleScreenAndIntro(Gfx** gfx);
 s16 func_801038A0_3D5DC0_TitleScreenAndIntro(void);
-u8 func_801038D0_3D5DF0_TitleScreenAndIntro(void);
+s32 func_801038D0_3D5DF0_TitleScreenAndIntro(void); /* the frame buffer being drawn */
 void func_801038DC_3D5DFC_TitleScreenAndIntro(void);
 void func_80103A54_3D5F74_TitleScreenAndIntro(void);
 void func_80103AC0_3D5FE0_TitleScreenAndIntro(u8 r, u8 g, u8 b, u8 a);

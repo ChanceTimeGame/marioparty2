@@ -411,7 +411,7 @@ s16 func_801038A0_3D5DC0_TitleScreenAndIntro(void) {
     return func_8002838C_28F8C(0, func_801037D0_3D5CF0_TitleScreenAndIntro, 2);
 }
 
-u8 func_801038D0_3D5DF0_TitleScreenAndIntro(void) {
+s32 func_801038D0_3D5DF0_TitleScreenAndIntro(void) {
     return D_800FDBE0_FE7E0;
 }
 
@@ -489,13 +489,129 @@ void func_80103BD4_3D60F4_TitleScreenAndIntro(s32 i) {
     D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
 }
 
+/* draw the light mask: rebuild this frame buffer's mask from the active stamps, then draw it in
+   32x32 tiles scaled to the screen (1.33 x 2).
+   NON_MATCHING: retail has one more nop at the head of the inner loop (before the mult); the
+   rest is identical. */
+#ifdef NON_MATCHING
+void func_80103BF0_3D6110_TitleScreenAndIntro(Gfx** gfx) {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+    u8* mask;
+    u8* tex;
+    s32 i;
+    s32 x;
+    s32 y;
+
+    r = D_80112060_3E4580_TitleScreenAndIntro[0].color[0];
+    g = D_80112060_3E4580_TitleScreenAndIntro[0].color[1];
+    b = D_80112060_3E4580_TitleScreenAndIntro[0].color[2];
+    a = D_80112060_3E4580_TitleScreenAndIntro[0].color[3];
+    if (a == 0.0f) {
+        return;
+    }
+    mask = D_801138A0_3E5DC0_TitleScreenAndIntro =
+        D_80112148_3E4668_TitleScreenAndIntro + D_80111D58_3E4278_TitleScreenAndIntro * D_80111D54_3E4274_TitleScreenAndIntro * func_801038D0_3D5DF0_TitleScreenAndIntro();
+    func_8010415C_3D667C_TitleScreenAndIntro(255);
+    for (i = 0; i < 8; i++) {
+        if (D_80112060_3E4580_TitleScreenAndIntro[i].data != NULL) {
+            func_8010421C_3D673C_TitleScreenAndIntro(&D_80112060_3E4580_TitleScreenAndIntro[i], D_80112060_3E4580_TitleScreenAndIntro[i].x,
+                                                     D_80112060_3E4580_TitleScreenAndIntro[i].y);
+        }
+    }
+    gSPDisplayList((*gfx)++, D_80111090_3E35B0_TitleScreenAndIntro);
+    gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
+    gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    gDPSetTextureFilter((*gfx)++, G_TF_BILERP);
+    gDPSetRenderMode((*gfx)++, 0x504240, 0);
+    gDPSetCombineLERP((*gfx)++, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0);
+    gDPSetPrimColor((*gfx)++, 0, 0, r, g, b, a);
+    for (y = 0; y < D_80111D58_3E4278_TitleScreenAndIntro; y += 32) {
+        for (x = 0; x < D_80111D54_3E4274_TitleScreenAndIntro; x += 32) {
+            tex = &mask[x + y * D_80111D54_3E4274_TitleScreenAndIntro];
+            gDPLoadTextureTile((*gfx)++, tex, G_IM_FMT_I, G_IM_SIZ_8b,
+                               D_80111D54_3E4274_TitleScreenAndIntro, D_80111D58_3E4278_TitleScreenAndIntro, 0, 0, 32, 32, 0,
+                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gSPScisTextureRectangle((*gfx)++, x * 8 * 1.33f, y * 8 * 1.33f, (x + 32) * 8 * 1.33f, (y + 32) * 8 * 1.33f,
+                                    G_TX_RENDERTILE, 0, 0, 0x180, 0x180);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BF0_3D6110_TitleScreenAndIntro);
+#endif
 
+/* fill the current mask with value.
+   NON_MATCHING: retail loads D_801138A0 after the size's operands (scheduling only, masked 0). */
+#ifdef NON_MATCHING
+void func_8010415C_3D667C_TitleScreenAndIntro(u8 value) {
+    u32* p = (u32*)D_801138A0_3E5DC0_TitleScreenAndIntro;
+    u32 n = D_80111D54_3E4274_TitleScreenAndIntro * D_80111D58_3E4278_TitleScreenAndIntro * 0.25;
+    u32 i;
+
+    for (i = 0; i < n; i++) {
+        *p++ = (value << 24) | (value << 16) | (value << 8) | value;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010415C_3D667C_TitleScreenAndIntro);
+#endif
 
+/* darken the current mask with a stamp's image at (x, y): each texel on the mask takes the stamp's
+   value where that is darker (lower).
+   NON_MATCHING: retail keeps the off-mask default (0xFF) in the texel's register from the first
+   test and masks the stamp value instead (masked 7). */
+#ifdef NON_MATCHING
+void func_8010421C_3D673C_TitleScreenAndIntro(Ovl62Stamp* stamp, s32 x, s32 y) {
+    u8* mask = D_801138A0_3E5DC0_TitleScreenAndIntro;
+    u8* data = stamp->data;
+    s32 i;
+    s32 j;
+    s32 px;
+    s32 py;
+    u8 v;
+    u8 cur;
+
+    for (j = 0; j < stamp->h; j++) {
+        for (i = 0; i < stamp->w; i++) {
+            py = y + j;
+            px = x + i;
+            if (px < 0) {
+                continue;
+            }
+            if (px >= D_80111D54_3E4274_TitleScreenAndIntro) {
+                continue;
+            }
+            if (py < 0) {
+                continue;
+            }
+            if (py >= D_80111D58_3E4278_TitleScreenAndIntro) {
+                continue;
+            }
+            v = data[i + j * stamp->w];
+            if (px < 0 || px >= D_80111D54_3E4274_TitleScreenAndIntro) {
+                cur = 0xFF;
+            } else if (py < 0 || py >= D_80111D58_3E4278_TitleScreenAndIntro) {
+                cur = 0xFF;
+            } else {
+                cur = mask[px + py * D_80111D54_3E4274_TitleScreenAndIntro];
+            }
+            if (cur >= v) {
+                mask[px + py * D_80111D54_3E4274_TitleScreenAndIntro] = v;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010421C_3D673C_TitleScreenAndIntro);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010433C_3D685C_TitleScreenAndIntro);
+s16 func_8010433C_3D685C_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_80103BF0_3D6110_TitleScreenAndIntro, 2);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010436C_3D688C_TitleScreenAndIntro);
 
