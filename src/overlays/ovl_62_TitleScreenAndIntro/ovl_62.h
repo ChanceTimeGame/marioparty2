@@ -433,7 +433,7 @@ void func_80029E80_2AA80(s16, s32, s32);
 s32 PlaySound(s32);
 
 /* 62 .data (asm) */
-extern s32 D_8011186C_3E3D8C_TitleScreenAndIntro[2]; /* {file, 0} */
+#define D_8011186C_3E3D8C_TitleScreenAndIntro (&D_80111864_3E3D84_TitleScreenAndIntro[1].file) /* {file, 0} */
 extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* title camera position */
 extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* target */
 extern Vec D_80111AE4_3E4004_TitleScreenAndIntro; /* up */

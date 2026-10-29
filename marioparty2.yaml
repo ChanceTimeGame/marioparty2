@@ -1920,7 +1920,8 @@ segments:
       - [0x3D4D20, c, ovl_62_entrypoint]
       - [0x3D4D50, c]
       - [0x3D4F20, c]
-      - [0x3E3530, data]
+      - [0x3E3530, .data, ovl_62_entrypoint]
+      - [0x3E3550, .data, 3D4F20]
       - [0x3E4060, .rodata, 3D4F20]
       - {0x3E4250, type: bss, vram: 0x80111D30, name: ovl_62_bss}
   - type: code

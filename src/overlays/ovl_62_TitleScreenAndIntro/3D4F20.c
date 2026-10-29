@@ -4046,3 +4046,258 @@ s16 func_80110FBC_3E34DC_TitleScreenAndIntro(s16 sound) {
     }
     return -1;
 }
+
+/* .data (0x3E3550-0x3E4060), in address order */
+/* 80111030 size 0x10 */ Ovl62WinDef D_80111030_3E3550_TitleScreenAndIntro = { 28, 208, 24, 2 };
+Gfx D_80111040_3E3560_TitleScreenAndIntro[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetRenderMode(G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xC0),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_POINT),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+Gfx D_80111090_3E35B0_TitleScreenAndIntro[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetRenderMode(G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xC0),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_POINT),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+u8* D_801110E0_3E3600_TitleScreenAndIntro = NULL;
+Gfx D_801110E8_3E3608_TitleScreenAndIntro[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsDPSetAlphaCompare(G_AC_THRESHOLD),
+    gsSPEndDisplayList(),
+};
+/* 80111128 size 0xC */ Vec D_80111128_3E3648_TitleScreenAndIntro = { 0.0f, 0.0f, 0.0f };
+Vec D_80111134_3E3654_TitleScreenAndIntro = { 0.0f, 0.0f, 0.0f }; /* unused, beside the debug camera start */
+/* 80111140 size 0xD8 */ Ovl62Motion D_80111140_3E3660_TitleScreenAndIntro[18] = {
+    { 0x20000, 0, D_80111C34_3E4154_TitleScreenAndIntro },
+    { 0x20001, 0, D_80111C30_3E4150_TitleScreenAndIntro },
+    { 0xE001D, 0, D_80111C2C_3E414C_TitleScreenAndIntro },
+    { 0xE001E, 0, D_80111C28_3E4148_TitleScreenAndIntro },
+    { 0xE001F, 0, D_80111C24_3E4144_TitleScreenAndIntro },
+    { 0xE0020, 0, D_80111C20_3E4140_TitleScreenAndIntro },
+    { 0x20012, 0, D_80111C1C_3E413C_TitleScreenAndIntro },
+    { 0x20011, 0, D_80111C18_3E4138_TitleScreenAndIntro },
+    { 0xE0021, 0, D_80111C14_3E4134_TitleScreenAndIntro },
+    { 0x20056, 0, D_80111C10_3E4130_TitleScreenAndIntro },
+    { 0xE0027, 0, D_80111C0C_3E412C_TitleScreenAndIntro },
+    { 0xE0022, 0, D_80111C08_3E4128_TitleScreenAndIntro },
+    { 0xE0023, 0, D_80111C04_3E4124_TitleScreenAndIntro },
+    { 0xE0028, 0, D_80111C00_3E4120_TitleScreenAndIntro },
+    { 0xE0024, 0, D_80111BFC_3E411C_TitleScreenAndIntro },
+    { 0xE0025, 0, D_80111BF8_3E4118_TitleScreenAndIntro },
+    { 0xE0026, 0, D_80111BF4_3E4114_TitleScreenAndIntro },
+    { 0x20002, 0, D_80111BF0_3E4110_TitleScreenAndIntro },
+};
+/* 80111218 size 0x28 */ Ovl62File D_80111218_3E3738_TitleScreenAndIntro[5] = {
+    { 0xE0029, 0 }, { 0xE002A, 0 }, { 0xE002B, 0 }, { 0xE002C, 0 }, { 0xE002B, 0 },
+};
+/* 80111240 size 0xC0 */ Ovl62Motion D_80111240_3E3760_TitleScreenAndIntro[16] = {
+    { 0x30000, 0, D_80111C30_3E4150_TitleScreenAndIntro },
+    { 0x30001, 0, D_80111C2C_3E414C_TitleScreenAndIntro },
+    { 0xE002E, 0, D_80111C28_3E4148_TitleScreenAndIntro },
+    { 0xE002F, 0, D_80111C24_3E4144_TitleScreenAndIntro },
+    { 0xE0030, 0, D_80111C20_3E4140_TitleScreenAndIntro },
+    { 0x30007, 0, D_80111C1C_3E413C_TitleScreenAndIntro },
+    { 0x30010, 0, D_80111C18_3E4138_TitleScreenAndIntro },
+    { 0xE0031, 0, D_80111C14_3E4134_TitleScreenAndIntro },
+    { 0xE0038, 0, D_80111C10_3E4130_TitleScreenAndIntro },
+    { 0xE0032, 0, D_80111C0C_3E412C_TitleScreenAndIntro },
+    { 0xE0033, 0, D_80111C08_3E4128_TitleScreenAndIntro },
+    { 0xE0037, 0, D_80111C04_3E4124_TitleScreenAndIntro },
+    { 0xE0034, 0, D_80111C00_3E4120_TitleScreenAndIntro },
+    { 0xE0035, 0, D_80111BFC_3E411C_TitleScreenAndIntro },
+    { 0xE0036, 0, D_80111BF8_3E4118_TitleScreenAndIntro },
+    { 0x30002, 0, D_80111BF4_3E4114_TitleScreenAndIntro },
+};
+/* 80111300 size 0x20 */ Ovl62File D_80111300_3E3820_TitleScreenAndIntro[4] = {
+    { 0xE0039, 0 }, { 0xE003A, 0 }, { 0xE003B, 0 }, { 0x300E8, 0 },
+};
+/* 80111320 size 0xC0 */ Ovl62Motion D_80111320_3E3840_TitleScreenAndIntro[16] = {
+    { 0x70000, 0, D_80111C34_3E4154_TitleScreenAndIntro },
+    { 0x70001, 0, D_80111C30_3E4150_TitleScreenAndIntro },
+    { 0xE003C, 0, D_80111C2C_3E414C_TitleScreenAndIntro },
+    { 0xE0045, 0, D_80111C28_3E4148_TitleScreenAndIntro },
+    { 0xE003D, 0, D_80111C24_3E4144_TitleScreenAndIntro },
+    { 0xE003E, 0, D_80111C20_3E4140_TitleScreenAndIntro },
+    { 0xE003F, 0, D_80111C1C_3E413C_TitleScreenAndIntro },
+    { 0x7004F, 0, D_80111C18_3E4138_TitleScreenAndIntro },
+    { 0xE0044, 0, D_80111C14_3E4134_TitleScreenAndIntro },
+    { 0xE0040, 0, D_80111C10_3E4130_TitleScreenAndIntro },
+    { 0xE0041, 0, D_80111C0C_3E412C_TitleScreenAndIntro },
+    { 0xE0043, 0, D_80111C08_3E4128_TitleScreenAndIntro },
+    { 0xE0042, 0, D_80111C04_3E4124_TitleScreenAndIntro },
+    { 0xE0046, 0, D_80111C00_3E4120_TitleScreenAndIntro },
+    { 0xE0047, 0, D_80111BFC_3E411C_TitleScreenAndIntro },
+    { 0x70002, 0, D_80111BF8_3E4118_TitleScreenAndIntro },
+};
+/* 801113E0 size 0x20 */ Ovl62File D_801113E0_3E3900_TitleScreenAndIntro[4] = {
+    { 0xE0048, 0 }, { 0xE0049, 0 }, { 0xE004A, 0 }, { 0xE004B, 0 },
+};
+/* 80111400 size 0xCC */ Ovl62Motion D_80111400_3E3920_TitleScreenAndIntro[17] = {
+    { 0x40000, 0, D_80111C34_3E4154_TitleScreenAndIntro },
+    { 0x40001, 0, D_80111C30_3E4150_TitleScreenAndIntro },
+    { 0xE004C, 0, D_80111C2C_3E414C_TitleScreenAndIntro },
+    { 0x40007, 0, D_80111C28_3E4148_TitleScreenAndIntro },
+    { 0x40010, 0, D_80111C24_3E4144_TitleScreenAndIntro },
+    { 0xE004D, 0, D_80111C20_3E4140_TitleScreenAndIntro },
+    { 0xE004E, 0, D_80111C1C_3E413C_TitleScreenAndIntro },
+    { 0xE004F, 0, D_80111C18_3E4138_TitleScreenAndIntro },
+    { 0xE0050, 0, D_80111C14_3E4134_TitleScreenAndIntro },
+    { 0xE0051, 0, D_80111C10_3E4130_TitleScreenAndIntro },
+    { 0xE0052, 0, D_80111C0C_3E412C_TitleScreenAndIntro },
+    { 0xE0053, 0, D_80111C08_3E4128_TitleScreenAndIntro },
+    { 0xE0054, 0, D_80111C04_3E4124_TitleScreenAndIntro },
+    { 0xE0055, 0, D_80111C00_3E4120_TitleScreenAndIntro },
+    { 0xE0056, 0, D_80111BFC_3E411C_TitleScreenAndIntro },
+    { 0xE0057, 0, D_80111BF8_3E4118_TitleScreenAndIntro },
+    { 0x40002, 0, D_80111BF4_3E4114_TitleScreenAndIntro },
+};
+/* 801114CC size 0x10 */ Ovl62File D_801114CC_3E39EC_TitleScreenAndIntro[2] = {
+    { 0xE0058, 0 }, { 0xE0059, 0 },
+};
+/* 801114DC size 0x144 */ Ovl62Motion D_801114DC_3E39FC_TitleScreenAndIntro[27] = {
+    { 0x50000, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x50001, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005A, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005B, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005C, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005D, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005E, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE005F, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0060, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0062, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0063, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0064, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0065, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0066, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0067, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006E, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0068, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0069, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006D, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006A, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006B, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006C, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0061, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE006F, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0070, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0071, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x50002, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+};
+/* 80111620 size 0x28 */ Ovl62File D_80111620_3E3B40_TitleScreenAndIntro[5] = {
+    { 0xE0072, 0 }, { 0xE0073, 0 }, { 0xE0074, 0 }, { 0xE0075, 0 }, { 0xE0076, 0 },
+};
+/* 80111648 size 0xA8 */ Ovl62Motion D_80111648_3E3B68_TitleScreenAndIntro[14] = {
+    { 0x60000, 0, D_80111C34_3E4154_TitleScreenAndIntro },
+    { 0x60001, 0, D_80111C30_3E4150_TitleScreenAndIntro },
+    { 0xE0077, 0, D_80111C2C_3E414C_TitleScreenAndIntro },
+    { 0xE0078, 0, D_80111C28_3E4148_TitleScreenAndIntro },
+    { 0xE0079, 0, D_80111C24_3E4144_TitleScreenAndIntro },
+    { 0xE007A, 0, D_80111C20_3E4140_TitleScreenAndIntro },
+    { 0xE007B, 0, D_80111C1C_3E413C_TitleScreenAndIntro },
+    { 0xE007C, 0, D_80111C18_3E4138_TitleScreenAndIntro },
+    { 0xE007D, 0, D_80111C14_3E4134_TitleScreenAndIntro },
+    { 0xE007E, 0, D_80111C10_3E4130_TitleScreenAndIntro },
+    { 0xE007F, 0, D_80111C0C_3E412C_TitleScreenAndIntro },
+    { 0xE0080, 0, D_80111C08_3E4128_TitleScreenAndIntro },
+    { 0xE0081, 0, D_80111C04_3E4124_TitleScreenAndIntro },
+    { 0x60002, 0, D_80111C00_3E4120_TitleScreenAndIntro },
+};
+/* 801116F0 size 0x90 */ Ovl62Motion D_801116F0_3E3C10_TitleScreenAndIntro[12] = {
+    { 0x80001, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80002, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0082, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0083, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0084, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0085, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0087, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80014, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0088, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0089, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008A, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008B, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+};
+/* 80111780 size 0x8 */ Ovl62File D_80111780_3E3CA0_TitleScreenAndIntro[1] = {
+    { 0x8003A, 0 },
+};
+/* 80111788 size 0x84 */ Ovl62Motion D_80111788_3E3CA8_TitleScreenAndIntro[11] = {
+    { 0x8008C, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8008D, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8008E, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80090, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80092, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008C, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008D, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008E, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE008F, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0xE0090, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8008F, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+};
+/* 8011180C size 0x10 */ Ovl62File D_8011180C_3E3D2C_TitleScreenAndIntro[2] = {
+    { 0x800A4, 0 }, { 0xE0091, 0 },
+};
+/* 8011181C size 0x48 */ Ovl62Motion D_8011181C_3E3D3C_TitleScreenAndIntro[6] = {
+    { 0x8003D, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80069, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8006B, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8006C, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x80079, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+    { 0x8007A, 0, D_80111C38_3E4158_TitleScreenAndIntro },
+};
+/* 80111864 size 0x10 */ Ovl62File D_80111864_3E3D84_TitleScreenAndIntro[2] = {
+    { 0x8007E, 0 }, { 0x8007C, 0 },
+};
+/* 80111874 size 0xD8 */ Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9] = {
+    { 0x200D2, 13, 180.0f, 1.0f, 1.0f, D_80111140_3E3660_TitleScreenAndIntro },
+    { 0x300D2, 13, 180.0f, 1.0f, 1.0f, D_80111240_3E3760_TitleScreenAndIntro },
+    { 0x700D2, 13, 180.0f, 1.0f, 1.0f, D_80111320_3E3840_TitleScreenAndIntro },
+    { 0x400D2, 13, 180.0f, 1.0f, 1.0f, D_80111400_3E3920_TitleScreenAndIntro },
+    { 0x500D2, 13, 180.0f, 1.0f, 1.0f, D_801114DC_3E39FC_TitleScreenAndIntro },
+    { 0x600D2, 13, 180.0f, 1.0f, 1.0f, D_80111648_3E3B68_TitleScreenAndIntro },
+    { 0x80000, 13, 180.0f, 0.7f, 0.7f, D_801116F0_3E3C10_TitleScreenAndIntro },
+    { 0x800A3, 13, 180.0f, 1.0f, 1.0f, D_80111788_3E3CA8_TitleScreenAndIntro },
+    { 0x80049, 13, 180.0f, 1.0f, 1.0f, D_8011181C_3E3D3C_TitleScreenAndIntro },
+};
+/* 8011194C size 0x180 */ Ovl62ModelPlace D_8011194C_3E3E6C_TitleScreenAndIntro[16] = {
+    { 0xE0000, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0001, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0002, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE000D, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0003, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0004, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0005, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0006, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0007, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0008, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE0009, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE000A, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE000B, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0xE000C, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0x800CA, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+    { 0x800CA, { 0.0f, 0.0f, -0.0f }, 180.0f, 1.0f },
+};
+/* 80111ACC size 0xC */ Vec D_80111ACC_3E3FEC_TitleScreenAndIntro = { 0.0f, 100.0f, 2530.0f };
+/* 80111AD8 size 0xC */ Vec D_80111AD8_3E3FF8_TitleScreenAndIntro = { 0.0f, 260.0f, -3000.0f };
+/* 80111AE4 size 0xC */ Vec D_80111AE4_3E4004_TitleScreenAndIntro = { 0.0f, 1.0f, 0.0f };
+/* 80111AF0 size 0x48 */ Ovl62MotCount D_80111AF0_3E4010_TitleScreenAndIntro[9] = {
+    { 0, 18 }, { 1, 16 }, { 2, 16 }, { 3, 17 }, { 4, 27 }, { 5, 14 }, { 6, 12 }, { 7, 11 },
+    { 8, 6 },
+};
