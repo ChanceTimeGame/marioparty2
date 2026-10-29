@@ -141,7 +141,9 @@ typedef struct Unk3EWindowSlide {
     /* 0x0C */ char unk_0C[4];
 } Unk3EWindowSlide; /* size 0x10 */
 
-/* RunDecisionTree's node (MP1 common_structs.h) */
+/* RunDecisionTree's node (MP1 common_structs.h). node_data2 holds a child node list's address or
+   packed chances; board data writes the address as (DtData)list. */
+typedef s32 DtData;
 typedef struct DecisionTreeNonLeafNode {
     u32 type;
     union {
@@ -149,7 +151,7 @@ typedef struct DecisionTreeNonLeafNode {
         s32 data;
     } node_data1;
     union {
-        s32 data;
+        DtData data;
         s32* node_data;
     } node_data2;
 } DecisionTreeNonLeafNode;

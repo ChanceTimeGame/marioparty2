@@ -146,7 +146,8 @@ extern s16 D_80110B68_2BF428_name_41[2]; /* bank spaces */
 extern Vec D_80110B6C_2BF42C_name_41[5]; /* bank coin offsets */
 extern Vec D_80110BA8_2BF468_name_41[5]; /* bank coin rotations (x, z used) */
 extern s16 D_80110BE4_2BF4A4_name_41[2]; /* signpost spaces */
-extern u8 D_80110BE9_2BF4A9_name_41[]; /* signpost model per board, at [board * 2] */
+extern u8 D_80110BE8_2BF4A8_name_41[6][2];
+extern u8 D_80110BE9_2BF4A9_name_41[]; /* signpost model per board, at [board * 2] (D_80110BE8 + 1) */
 extern s32 D_80110BF4_2BF4B4_name_41[9]; /* per board: sound, -1 none (played as s16) */
 extern s32 D_80110C18_2BF4D8_name_41[9]; /* per board: sound, -1 none (played as s16) */
 extern s32 D_80110C3C_2BF4FC_name_41[9]; /* per board: delay */
@@ -566,7 +567,8 @@ extern u8* D_80111F80_2C0840_name_41;
 extern MBModel* D_80111F84_2C0844_name_41;
 extern u8 D_80110E84_2BF744_name_41[4][3]; /* per player: the other players */
 extern Unk3EStealRange D_80110F28_2BF7E8_name_41[24]; /* turn and coin range -> message */
-extern s16 D_80110F92_2BF852_name_41[];
+extern s16 D_80110FA0_2BF860_name_41[4];
+extern s16 D_80110F92_2BF852_name_41[]; /* D_80110FA0 - 0xE */
 
 extern u8 D_80110DF8_2BF6B8_name_41[]; /* by rank */
 extern u8 D_80110E1C_2BF6DC_name_41[][4]; /* shop by turn band, rank */
@@ -580,19 +582,19 @@ extern Vec2f3E D_801110B0_2BF970_name_41[4];
 extern s32 D_801110D0_2BF990_name_41[6]; /* per board: message */
 extern s16 D_801110E8_2BF9A8_name_41[6]; /* per board: message window */
 extern f32 D_80111468_2BFD28_name_41[4]; /* scissor box {0, 0, 320, 240} */
-extern s32 D_80111868_2C0128_name_41[]; /* decision trees (CPU item use) */
-extern s32 D_801118C8_2C0188_name_41[];
-extern s32 D_80111A48_2C0308_name_41[];
-extern s32 D_80111B80_2C0440_name_41[];
-extern s32 D_80111BE0_2C04A0_name_41[]; /* decision trees (CPU shop) */
-extern s32 D_80111BF8_2C04B8_name_41[];
-extern s32 D_80111C64_2C0524_name_41[]; /* decision tree (CPU yes/no) */
+extern DecisionTreeNonLeafNode D_80111868_2C0128_name_41[]; /* decision trees (CPU item use) */
+extern DecisionTreeNonLeafNode D_801118C8_2C0188_name_41[];
+extern DecisionTreeNonLeafNode D_80111A48_2C0308_name_41[];
+extern DecisionTreeNonLeafNode D_80111B80_2C0440_name_41[];
+extern DecisionTreeNonLeafNode D_80111BE0_2C04A0_name_41[]; /* decision trees (CPU shop) */
+extern DecisionTreeNonLeafNode D_80111BF8_2C04B8_name_41[];
+extern DecisionTreeNonLeafNode D_80111C64_2C0524_name_41[]; /* decision tree (CPU yes/no) */
 extern s32 D_80111C88_2C0548_name_41; /* set: the CPU's next answer is option 2 */
 extern u8* D_80111CD4_2C0594_name_41[]; /* per character: items the CPU tries to buy */
 extern s8* D_80111D34_2C05F4_name_41[]; /* per character: their percent chances */
 extern u8 D_80111D4C_2C060C_name_41[]; /* per character: list length */
-extern s32 D_80111190_2BFA50_name_41[]; /* decision trees (CPU) */
-extern s32 D_80111268_2BFB28_name_41[];
+extern DecisionTreeNonLeafNode D_80111190_2BFA50_name_41[]; /* decision trees (CPU) */
+extern DecisionTreeNonLeafNode D_80111268_2BFB28_name_41[];
 s32 BoardSpaceGet(s32 index, s32 count);
 void func_8008D974_8E574(char* str, s16 slot); /* window string argument */
 void func_8008AD44_8B944(s16 win);

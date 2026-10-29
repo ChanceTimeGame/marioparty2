@@ -1,0 +1,2 @@
+# mp2boarddata.py overrides for ovl_42 .data
+!type PdStatusLayout {{{hhhh}{hhhh}{hhhh}{hhhh}}hh}
