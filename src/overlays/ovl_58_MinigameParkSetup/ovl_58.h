@@ -315,7 +315,7 @@ extern s16 D_80113788_37EE88_MinigameParkSetup;
 extern f32 D_8011378C_37EE8C_MinigameParkSetup; /* 58-D: camera sway amplitude (8010EEF8) */
 extern s16 D_80113790_37EE90_MinigameParkSetup; /* set by 8010FB00 when its intro is done */
 extern s16 D_80113798_37EE98_MinigameParkSetup[6][2]; /* 58-E: cursor slot positions x, y (80110678 moves between them) */
-extern s16 D_8011379A_37EE9A_MinigameParkSetup[11];
+#define D_8011379A_37EE9A_MinigameParkSetup (&D_80113798_37EE98_MinigameParkSetup[0][1]) /* splat label inside D_80113798 */
 extern f32 D_801137B0_37EEB0_MinigameParkSetup[2]; /* panel origin x, y (801051BC) */
 extern Process* D_801137B8_37EEB8_MinigameParkSetup[6]; /* 5 used: 80106AF8 processes */
 extern Ovl58Cursor* D_801137D0_37EED0_MinigameParkSetup[6]; /* 58-B: 5 used */
@@ -328,7 +328,8 @@ extern s16 D_80113814_37EF14_MinigameParkSetup; /* stage (board index; 6 in mode
 extern s16 D_80113816_37EF16_MinigameParkSetup; /* -1, or the 8010B6E8 choice (2 in mode 3) */
 extern s16 D_80113818_37EF18_MinigameParkSetup;
 extern s16 D_8011381A_37EF1A_MinigameParkSetup; /* the controlling pad */
-extern u8 D_8011381B_37EF1B_MinigameParkSetup;
+/* retail reads the pad's low byte (lbu at +1, big-endian): the value, as u8 */
+#define D_8011381B_37EF1B_MinigameParkSetup ((u8)D_8011381A_37EF1A_MinigameParkSetup)
 extern s16 D_8011381C_37EF1C_MinigameParkSetup;
 extern s16 D_8011381E_37EF1E_MinigameParkSetup;
 extern s16 D_80113820_37EF20_MinigameParkSetup;
@@ -354,44 +355,48 @@ extern s16 D_80113878_37EF78_MinigameParkSetup[9]; /* 58-E: minigames per catego
 extern Vec D_8011388C_37EF8C_MinigameParkSetup; /* 58-E: fixed camera eye */
 extern s16 D_80113898_37EF98_MinigameParkSetup[4]; /* 58-C: [0] a count read as s16 (8010B6E8: >= 20 two mode panels, >= 30 three) */
 extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-B: cursor on each slot, -1 none */
-extern s16 D_801138B0_37EFB0_MinigameParkSetup[24]; /* 58-E: the scene models (80112360 loads them; D_801138C0 = [8], the host) */
-extern s16 D_801138B2_37EFB2_MinigameParkSetup[7]; /* 58-D: the tunnel's seven models (8010F358; [4] done and [5] quit wait on them) */
-extern s16 D_801138BE_37EFBE_MinigameParkSetup;
-extern u16 D_801138C0_37EFC0_MinigameParkSetup[4]; /* 58-D: [0] the model 8010F358 fades */
-extern s32 D_801138C8_37EFC8_MinigameParkSetup[6];
-extern Ovl58Quad D_801138E0_37EFE0_MinigameParkSetup; /* + 4 bytes unreferenced */
-extern s16 D_801138EC_37EFEC_MinigameParkSetup[3];
-extern s16 D_801138F2_37EFF2_MinigameParkSetup[6];
-extern s16 D_801138FE_37EFFE_MinigameParkSetup;
-extern Ovl58Pair D_80113900_37F000_MinigameParkSetup; /* 58-C: the two bonus-panel models (+ 4 bytes unreferenced) */
-extern s16 D_80113908_37F008_MinigameParkSetup[3];
-extern s16 D_8011390E_37F00E_MinigameParkSetup[5];
+/* The scene's model ids, one per D_80112BBC entry (80112360 loads them; [8] is the host), and
+   D_80113970 their first motions. Retail names some elements with their own labels (splat's
+   labels below); they are views of these two arrays. */
+extern s16 D_801138B0_37EFB0_MinigameParkSetup[52];
+#define D_801138B2_37EFB2_MinigameParkSetup (&D_801138B0_37EFB0_MinigameParkSetup[1]) /* 58-D: the tunnel's seven models (8010F358; [4] done and [5] quit wait on them) */ /* [1] */
+#define D_801138BE_37EFBE_MinigameParkSetup (D_801138B0_37EFB0_MinigameParkSetup[7]) /* [7] */
+#define D_801138C0_37EFC0_MinigameParkSetup ((u16*)&D_801138B0_37EFB0_MinigameParkSetup[8]) /* 58-D: [0] the model 8010F358 fades */ /* [8] */
+#define D_801138C8_37EFC8_MinigameParkSetup ((s32*)&D_801138B0_37EFB0_MinigameParkSetup[12]) /* [12] */
+#define D_801138E0_37EFE0_MinigameParkSetup (*(Ovl58Quad*)&D_801138B0_37EFB0_MinigameParkSetup[24]) /* + 4 bytes unreferenced */ /* [24] */
+#define D_801138EC_37EFEC_MinigameParkSetup (&D_801138B0_37EFB0_MinigameParkSetup[30]) /* [30] */
+#define D_801138F2_37EFF2_MinigameParkSetup (&D_801138B0_37EFB0_MinigameParkSetup[33]) /* [33] */
+#define D_801138FE_37EFFE_MinigameParkSetup (D_801138B0_37EFB0_MinigameParkSetup[39]) /* [39] */
+#define D_80113900_37F000_MinigameParkSetup (*(Ovl58Pair*)&D_801138B0_37EFB0_MinigameParkSetup[40]) /* 58-C: the two bonus-panel models (+ 4 bytes unreferenced) */ /* [40] */
+#define D_80113908_37F008_MinigameParkSetup (&D_801138B0_37EFB0_MinigameParkSetup[44]) /* [44] */
+#define D_8011390E_37F00E_MinigameParkSetup (&D_801138B0_37EFB0_MinigameParkSetup[47]) /* [47] */
 extern s16 D_80113918_37F018_MinigameParkSetup[9]; /* 58-E: D_801139D8 count per category (D_80113926 = [7]) */
-extern s16 D_80113926_37F026_MinigameParkSetup[2];
+#define D_80113926_37F026_MinigameParkSetup (&D_80113918_37F018_MinigameParkSetup[7])
 extern s16 D_8011392A_37F02A_MinigameParkSetup;
 extern s16 D_8011392C_37F02C_MinigameParkSetup; /* 1 while 80103F38 takes the player count */
 extern Vec D_80113930_37F030_MinigameParkSetup; /* 58-E: fixed camera target */
 extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel (player count - 1) */
 extern s16 D_80113940_37F040_MinigameParkSetup[9]; /* 58-E: D_80113C08 count per category (D_8011394E = [7]) */
-extern s16 D_8011394E_37F04E_MinigameParkSetup[5];
+#define D_8011394E_37F04E_MinigameParkSetup (&D_80113940_37F040_MinigameParkSetup[7])
 extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396F */
-extern s16 D_8011396E_37F06E_MinigameParkSetup; /* 58-E: = D_80113958.unk16; count of D_801139D8's minigames */
-extern s16 D_80113970_37F070_MinigameParkSetup[24]; /* 58-E: their first motions (D_80113986 = [11]) */
-extern s16 D_80113986_37F086_MinigameParkSetup[2];
-extern s16 D_8011398A_37F08A_MinigameParkSetup[11];
-extern s16 D_801139A0_37F0A0_MinigameParkSetup; /* model motion: the panel is down */
-extern s16 D_801139A8_37F0A8_MinigameParkSetup;
-extern s16 D_801139AA_37F0AA_MinigameParkSetup;
-extern s16 D_801139AC_37F0AC_MinigameParkSetup;
-extern s16 D_801139AE_37F0AE_MinigameParkSetup;
-extern s16 D_801139B0_37F0B0_MinigameParkSetup;
-extern s16 D_801139B2_37F0B2_MinigameParkSetup[4];
-extern s16 D_801139BA_37F0BA_MinigameParkSetup;
-extern s16 D_801139BC_37F0BC_MinigameParkSetup;
-extern s16 D_801139BE_37F0BE_MinigameParkSetup;
-extern s16 D_801139C0_37F0C0_MinigameParkSetup[2]; /* 58-C: [0] bonus model motion (panel down) */
-extern s16 D_801139C4_37F0C4_MinigameParkSetup;
-extern s16 D_801139C6_37F0C6_MinigameParkSetup[9];
+/* 58-E: count of D_801139D8's minigames */
+#define D_8011396E_37F06E_MinigameParkSetup (D_80113958_37F058_MinigameParkSetup.unk16)
+extern s16 D_80113970_37F070_MinigameParkSetup[52];
+#define D_80113986_37F086_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[11]) /* [11] */
+#define D_8011398A_37F08A_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[13]) /* [13] */
+#define D_801139A0_37F0A0_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[24]) /* model motion: the panel is down */ /* [24] */
+#define D_801139A8_37F0A8_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[28]) /* [28] */
+#define D_801139AA_37F0AA_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[29]) /* [29] */
+#define D_801139AC_37F0AC_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[30]) /* [30] */
+#define D_801139AE_37F0AE_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[31]) /* [31] */
+#define D_801139B0_37F0B0_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[32]) /* [32] */
+#define D_801139B2_37F0B2_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[33]) /* [33] */
+#define D_801139BA_37F0BA_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[37]) /* [37] */
+#define D_801139BC_37F0BC_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[38]) /* [38] */
+#define D_801139BE_37F0BE_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[39]) /* [39] */
+#define D_801139C0_37F0C0_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[40]) /* 58-C: [0] bonus model motion (panel down) */ /* [40] */
+#define D_801139C4_37F0C4_MinigameParkSetup (D_80113970_37F070_MinigameParkSetup[42]) /* [42] */
+#define D_801139C6_37F0C6_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[43]) /* [43] */
 extern s16 D_801139D8_37F0D8_MinigameParkSetup[9][30]; /* 58-E: per category, the minigames func_80068040 rejects */
 extern f32 D_80113BF4_37F2F4_MinigameParkSetup; /* camera far */
 extern Vec D_80113BF8_37F2F8_MinigameParkSetup; /* 58-E: camera rotation copy (D_800FD474); + 4 bytes */
