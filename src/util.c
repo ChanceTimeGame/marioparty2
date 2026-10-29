@@ -167,7 +167,7 @@ void HuMemMemoryFreePerm(void*);
 s32 func_80020EBC_21ABC(void*, s32, u8);
 /* really s16 (HmfData*, void*, s16, char*) (hmfman.h, 3D6A0); declared returning s32 because
    func_80018DC0_199C0 only matches when it sign-extends the result itself */
-s32 func_8003D8F0_3E4F0(s32, void*, s32, s32);
+s32 func_8003D8F0_3E4F0(void*, void*, s32, char*); /* hmfman.h: s16 (HmfData*, void*, s16, char*) */
 
 u16 func_80018A30_19630(s32 arg0, s32 arg1) {
     return Hu3DModelCreate(DataRead(arg0), arg1);
@@ -264,7 +264,7 @@ u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2) {
     return temp_s0;
 }
 
-s16 func_80018DC0_199C0(s32 arg0, s32 arg1, s32 arg2) {
+s16 func_80018DC0_199C0(void* arg0, s32 arg1, char* arg2) {
     s32 temp_s0;
     void* temp_v0;
 
