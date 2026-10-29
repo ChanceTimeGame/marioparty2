@@ -1050,37 +1050,255 @@ const u32 D_80111C3C_3E415C_TitleScreenAndIntro[1] = { 0x80000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105AB8_3D7FD8_TitleScreenAndIntro);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D3C0_3DF8E0_TitleScreenAndIntro);
+/* the title's process: the title scene (8010D490), then the title state takes over */
+Process* func_8010D3C0_3DF8E0_TitleScreenAndIntro(void) {
+    return omAddPrcObj(func_8010D3EC_3DF90C_TitleScreenAndIntro, 0x5000, 0x2000, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D3EC_3DF90C_TitleScreenAndIntro);
+void func_8010D3EC_3DF90C_TitleScreenAndIntro(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D478_3DF998_TitleScreenAndIntro);
+    for (i = 0; i < 16; i++) {
+        D_80111E38_3E4358_TitleScreenAndIntro[i][0] = 0;
+    }
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+    D_80111D70_3E4290_TitleScreenAndIntro = func_8010DF5C_3E047C_TitleScreenAndIntro();
+    func_8010D490_3DF9B0_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80102BD0_3D50F0_TitleScreenAndIntro();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D484_3DF9A4_TitleScreenAndIntro);
+void func_8010D478_3DF998_TitleScreenAndIntro(void) {
+    D_80112660_3E4B80_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D490_3DF9B0_TitleScreenAndIntro);
+s32 func_8010D484_3DF9A4_TitleScreenAndIntro(void) {
+    return D_80112660_3E4B80_TitleScreenAndIntro;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D684_3DFBA4_TitleScreenAndIntro);
+/* the title scene: logo reveal (8010D7C8), then "PRESS START" blinking (pad inserted) or the
+   no-controller message, until the title music ends */
+void func_8010D490_3DF9B0_TitleScreenAndIntro(void) {
+    s32 i;
+    s32 up;
+    s32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D778_3DFC98_TitleScreenAndIntro);
+    func_8010D778_3DFC98_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80050E00_51A00(0x3E);
+    i = 0;
+    func_800531AC_53DAC();
+    func_8010D7C8_3DFCE8_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    do {
+        i++;
+        HuPrcVSleep();
+    } while (i < 54);
+    D_80112660_3E4B80_TitleScreenAndIntro = 1;
+    if (func_80103028_3D5548_TitleScreenAndIntro() != 0) {
+        func_80104448_3D6968_TitleScreenAndIntro(0xE0014, 0x9F, 0xA9, OVL62_SPRITE2(0));
+        i = 0;
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_801045A4_3D6AC4_TitleScreenAndIntro(OVL62_SPRITE2(0), 0xF);
+        up = 1;
+        func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE2(0), 0x1008);
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+    loop:
+        {
+            if (up != 0) {
+                i += 24;
+                if (i >= 0x2E0) {
+                    i = 0xFF;
+                    up = 0;
+                }
+            } else {
+                i -= 24;
+                if (i < 50) {
+                    i = 50;
+                    up = 1;
+                }
+            }
+            a = i < 50 ? 50 : i > 0xFF ? 0xFF : i;
+            func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE2(0), a);
+            if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) != 0) {
+                HuPrcVSleep();
+                goto loop;
+            }
+        }
+    } else {
+        func_80104448_3D6968_TitleScreenAndIntro(0xE0017, 0xA0, 0xA1, OVL62_SPRITE2(0));
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE2(0), 8);
+        SprPrioSet(OVL62_SPRITE2(0)->grp, 0, 0x26AC);
+        while (1) {
+            if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) == 0) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_80104564_3D6A84_TitleScreenAndIntro(OVL62_SPRITE2(0));
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE2(0), 0xFF);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D7C8_3DFCE8_TitleScreenAndIntro);
+/* light the picture (262x82 RGBA32, D_801110E0) through the 64x64 spot image at (x, y), scaled */
+void func_8010D684_3DFBA4_TitleScreenAndIntro(s32 x, s32 y, f32 scale) {
+    u8* dst = D_801110E0_3E3600_TitleScreenAndIntro;
+    u8* src = D_80112144_3E4664_TitleScreenAndIntro;
+    f32 inv = 1.0f / scale;
+    s32 i;
+    s32 j;
+    s32 u;
+    s32 v;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D95C_3DFE7C_TitleScreenAndIntro);
+    for (i = 0; i < 262; i++) {
+        for (j = 0; j < 82; j++) {
+            u = (i - x) * inv + 32.0f;
+            v = (j - y) * inv + 32.0f;
+            if (u >= 0 && u < 64 && v >= 0 && v < 64) {
+                dst[(j * 262 + i) * 4 + 3] = src[v * 64 + u];
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DA5C_3DFF7C_TitleScreenAndIntro);
+void func_8010D778_3DFC98_TitleScreenAndIntro(void) {
+    func_80105280_3D77A0_TitleScreenAndIntro();
+    func_80104448_3D6968_TitleScreenAndIntro(0xE001C, 0xA0, 0xCA, OVL62_SPRITE(0));
+    func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE(0));
+    func_80104564_3D6A84_TitleScreenAndIntro(OVL62_SPRITE(0));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DB5C_3E007C_TitleScreenAndIntro);
+/* the logo: a spot light grows over the picture, then the title music and a fade */
+void func_8010D7C8_3DFCE8_TitleScreenAndIntro(void) {
+    s32 i;
+    u8* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DCA4_3E01C4_TitleScreenAndIntro);
+    i = 0;
+    func_801053D8_3D78F8_TitleScreenAndIntro();
+    func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE(0));
+    func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE(0), 0x1008);
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 0xFF);
+    HuPrcSleep(30);
+    do {
+        func_8010D684_3DFBA4_TitleScreenAndIntro(0x83, 0x29, i * 0.025f * 9.0f + 0.1f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 20);
+    p = D_801110E0_3E3600_TitleScreenAndIntro;
+    i = 0;
+    do {
+        p[3] = 0;
+        i++;
+        p += 4;
+    } while (i < 262 * 82);
+    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(2);
+    HuPrcSleep(16);
+    i = 0;
+    do {
+        func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 255.0f - i * (1.0f / 30.0f) * 255.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 31);
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 0);
+    HuPrcSleep(3);
+    func_80104638_3D6B58_TitleScreenAndIntro(OVL62_SPRITE(0));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DE00_3E0320_TitleScreenAndIntro);
+/* fade the light mask's alpha in to `alpha` over `time` frames */
+void func_8010D95C_3DFE7C_TitleScreenAndIntro(u16 alpha, s32 time) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DEA0_3E03C0_TitleScreenAndIntro);
+    for (i = 0; i <= time; i++) {
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, (f32)(alpha / time) * i);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DF30_3E0450_TitleScreenAndIntro);
+/* and out from `alpha` */
+void func_8010DA5C_3DFF7C_TitleScreenAndIntro(u16 alpha, s32 time) {
+    f32 t;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DF5C_3E047C_TitleScreenAndIntro);
+    for (i = 0; i <= time; i++) {
+        t = 1.0f - (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        HuPrcVSleep();
+    }
+}
+
+/* fade the mask in while stamp 0 follows a world position */
+void func_8010DB5C_3E007C_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time) {
+    Vec2f scr;
+    f32 t;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        t = (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+void func_8010DCA4_3E01C4_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time) {
+    Vec2f scr;
+    f32 t;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        t = 1.0f - (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+/* stamp 0 follows a world position for `time` frames */
+void func_8010DE00_3E0320_TitleScreenAndIntro(Vec* pos, s32 time) {
+    Vec2f scr;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+/* camera 0 from D_80111ACC (pos, at, up) */
+void func_8010DEA0_3E03C0_TitleScreenAndIntro(void) {
+    Vec pos;
+    Vec at;
+    Vec up;
+
+    func_800B3170_B3D70(&pos, &D_80111ACC_3E3FEC_TitleScreenAndIntro);
+    func_800B3170_B3D70(&at, &D_80111AD8_3E3FF8_TitleScreenAndIntro);
+    func_800B3170_B3D70(&up, &D_80111AE4_3E4004_TitleScreenAndIntro);
+    Hu3DCamSetPerspective(0, 17.0f, 500.0f, 6000.0f);
+    Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+    Hu3DCamUpdateMtx(0);
+}
+
+void func_8010DF30_3E0450_TitleScreenAndIntro(void) {
+    while (1) {
+        func_8010DEA0_3E03C0_TitleScreenAndIntro();
+        HuPrcVSleep();
+    }
+}
+
+Process* func_8010DF5C_3E047C_TitleScreenAndIntro(void) {
+    func_8010DEA0_3E03C0_TitleScreenAndIntro();
+    return omAddPrcObj(func_8010DF30_3E0450_TitleScreenAndIntro, 0x1001, 0, 0);
+}
 
 void func_8010DF90_3E04B0_TitleScreenAndIntro(void) {
 }

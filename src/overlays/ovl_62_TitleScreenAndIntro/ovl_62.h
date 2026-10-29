@@ -187,7 +187,7 @@ extern s16 D_80111D62_3E4282_TitleScreenAndIntro; /* mask draw callback */
 extern s32 D_80111D64_3E4284_TitleScreenAndIntro; /* 80105280's image width */
 extern s32 D_80111D68_3E4288_TitleScreenAndIntro; /* its height */
 extern s16 D_80111D6C_3E428C_TitleScreenAndIntro; /* its draw callback */
-extern s32 D_80111D70_3E4290_TitleScreenAndIntro;
+extern Process* D_80111D70_3E4290_TitleScreenAndIntro; /* the title camera process (8010DF5C) */
 extern s32 D_80111E38_3E4358_TitleScreenAndIntro[16][7]; /* 0x1C each; 80105A1C clears word 0 */
 extern Ovl62Stamp D_80112060_3E4580_TitleScreenAndIntro[8];
 extern u8* D_80112144_3E4664_TitleScreenAndIntro; /* I8 alpha image (file 0x1B) */
@@ -293,24 +293,109 @@ void func_80105A1C_3D7F3C_TitleScreenAndIntro(void);
 
 void func_80105AB8_3D7FD8_TitleScreenAndIntro(void); /* the intro script */
 
-/* ---- 62-C (inferred from registers only) ---- */
+/* ---- 62-C ---- */
+
+/* one motion of an opening model: file, loaded motion (-1 none; read as s16 through its low
+   half), and a name the overlay never reads */
+typedef struct Ovl62Motion {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 mot;
+    /* 0x08 */ char* name;
+} Ovl62Motion; /* size = 0xC */
+
+/* an opening model (D_80111874[9]): 80110CAC's arguments and its motions */
+typedef struct Ovl62ModelDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 attr;
+    /* 0x08 */ f32 unk08;
+    /* 0x0C */ f32 unk0C;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ Ovl62Motion* mots;
+} Ovl62ModelDef; /* size = 0x18 */
+
+/* how many motions of which model 80110CCC marks unloaded (D_80111AF0[9]) */
+typedef struct Ovl62MotCount {
+    /* 0x00 */ s32 def;
+    /* 0x04 */ s32 count;
+} Ovl62MotCount;
+
+/* the 0x1C slots of D_80111E38 start with a sprite group. Retail has two arrays here,
+   D_80111E38 (2 slots) and D_80111E70 (14): the opening's clear loops run 16 slots from
+   D_80111E38 into D_80111E70. */
+#define OVL62_SPRITE(i) ((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[i])
+#define OVL62_SPRITE2(i) ((Ovl62Sprite*)D_80111E70_3E4390_TitleScreenAndIntro[i])
+
+/* main */
+s32 func_80011018_11C18(s16); /* the music is playing */
+void func_800531AC_53DAC(void);
+void func_80050E00_51A00(s32);
+void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
+void Hu3DCamSetPerspective(s16, f32, f32, f32);
+void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
+void Hu3DCamUpdateMtx(s16);
+void func_800B3170_B3D70(Vec*, Vec*); /* HuVecCopy3F */
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void func_800B33E0_B3FE0(Vec*);       /* normalise */
+void omSetTra(omObjData*, f32, f32, f32);
+void omDelObj(omObjData*);
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_80029A8C_2A68C(s16);
+void func_8002AC10_2B810(s16, f32, f32, s32);
+void HmfModelObjAttrSet(s16, s32, s32);
+extern f32 D_800CA02C_CAC2C;
+u16 func_8002109C_21C9C(s16 index, s32 arg1);
+u16 func_80020EBC_21ABC(void*, s32, u8);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_8002308C_23C8C(s32 index);
+void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
+MBModel* MBModelFileCreate(s32 arg0, s32 arg1, f32 arg2, f32 arg3, u32* arg4);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+s32 func_80025718_26318(s16 arg0, s16 arg1, s16 arg2);
+void func_8003E888_3F488(s16);
+extern u8 D_800FDCA0_FE8A0[13][3];
+extern u8 D_80101658_102258[13][3];
+s32 func_8002C8B8_2D4B8(void*, s16);
+void func_80039018_39C18(s16);
+void func_80029BF0_2A7F0(s16, s16, s16, s16, s16);
+void func_8002C9C0_2D5C0(s16, s16);
+void func_80029E80_2AA80(s16, s32, s32);
+s32 PlaySound(s32);
+
+/* 62 .data (asm) */
+extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
+extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* title camera position */
+extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* target */
+extern Vec D_80111AE4_3E4004_TitleScreenAndIntro; /* up */
+extern Ovl62MotCount D_80111AF0_3E4010_TitleScreenAndIntro[9];
+
+/* 62 .bss (asm) */
+extern MBModel* D_80111D78_3E4298_TitleScreenAndIntro[9]; /* the opening's models, by def */
+extern s16 D_80111DF8_3E4318_TitleScreenAndIntro[32];     /* model ids */
+extern s32 D_80111E70_3E4390_TitleScreenAndIntro[14][7];
+extern s16 D_80111FF8_3E4518_TitleScreenAndIntro;         /* the title music */
+extern Ovl62Blend D_80112000_3E4520_TitleScreenAndIntro;  /* the curtain */
+extern Ovl62Blend D_80112010_3E4530_TitleScreenAndIntro;  /* stage lights */
+extern Ovl62Blend D_80112020_3E4540_TitleScreenAndIntro;
+extern Vec D_80112030_3E4550_TitleScreenAndIntro;
+extern s32 D_80112660_3E4B80_TitleScreenAndIntro;         /* the title is up (START accepted) */
 
 Process* func_8010D3C0_3DF8E0_TitleScreenAndIntro(void);
 void func_8010D3EC_3DF90C_TitleScreenAndIntro(void);
 void func_8010D478_3DF998_TitleScreenAndIntro(void);
 s32 func_8010D484_3DF9A4_TitleScreenAndIntro(void); /* the intro is done */
 void func_8010D490_3DF9B0_TitleScreenAndIntro(void);
-void func_8010D684_3DFBA4_TitleScreenAndIntro(s32 arg0, s32 arg1, f32 arg2);
+void func_8010D684_3DFBA4_TitleScreenAndIntro(s32 x, s32 y, f32 scale);
 void func_8010D778_3DFC98_TitleScreenAndIntro(void);
 void func_8010D7C8_3DFCE8_TitleScreenAndIntro(void);
-void func_8010D95C_3DFE7C_TitleScreenAndIntro(s32 arg0, s32 arg1);
-void func_8010DA5C_3DFF7C_TitleScreenAndIntro(s32 arg0, s32 arg1);
-void func_8010DB5C_3E007C_TitleScreenAndIntro(s32 arg0, s32 arg1, s32 arg2);
-void func_8010DCA4_3E01C4_TitleScreenAndIntro(s32 arg0, s32 arg1, s32 arg2);
-void func_8010DE00_3E0320_TitleScreenAndIntro(s32 arg0, s32 arg1);
+void func_8010D95C_3DFE7C_TitleScreenAndIntro(u16 alpha, s32 time);
+void func_8010DA5C_3DFF7C_TitleScreenAndIntro(u16 alpha, s32 time);
+void func_8010DB5C_3E007C_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time);
+void func_8010DCA4_3E01C4_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time);
+void func_8010DE00_3E0320_TitleScreenAndIntro(Vec* pos, s32 time);
 void func_8010DEA0_3E03C0_TitleScreenAndIntro(void);
 void func_8010DF30_3E0450_TitleScreenAndIntro(void);
-s32 func_8010DF5C_3E047C_TitleScreenAndIntro(void);
+Process* func_8010DF5C_3E047C_TitleScreenAndIntro(void); /* the title camera process */
 void func_8010DF90_3E04B0_TitleScreenAndIntro(void);
 void func_8010DF98_3E04B8_TitleScreenAndIntro(omObjData* obj);
 void func_8010E008_3E0528_TitleScreenAndIntro(omObjData* obj);
