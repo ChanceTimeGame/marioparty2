@@ -441,7 +441,7 @@ extern Ovl62MotCount D_80111AF0_3E4010_TitleScreenAndIntro[9];
 
 /* 62 .bss (asm) */
 extern s16 D_80111DF8_3E4318_TitleScreenAndIntro[32];     /* model ids */
-extern s32 D_80111E70_3E4390_TitleScreenAndIntro[14][7];
+#define D_80111E70_3E4390_TitleScreenAndIntro (&D_80111E38_3E4358_TitleScreenAndIntro[2]) /* slots 2-15 of one array: the clear loops run all 16 */
 extern s16 D_80111FF8_3E4518_TitleScreenAndIntro;         /* the title music */
 extern Ovl62Blend D_80112000_3E4520_TitleScreenAndIntro;  /* the curtain */
 extern Ovl62Blend D_80112010_3E4530_TitleScreenAndIntro;  /* stage lights */
