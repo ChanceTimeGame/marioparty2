@@ -1050,44 +1050,290 @@ const u32 D_80111C3C_3E415C_TitleScreenAndIntro[1] = { 0x80000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105AB8_3D7FD8_TitleScreenAndIntro);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D3C0_3DF8E0_TitleScreenAndIntro);
+/* the title's process: the title scene (8010D490), then the title state takes over */
+Process* func_8010D3C0_3DF8E0_TitleScreenAndIntro(void) {
+    return omAddPrcObj(func_8010D3EC_3DF90C_TitleScreenAndIntro, 0x5000, 0x2000, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D3EC_3DF90C_TitleScreenAndIntro);
+void func_8010D3EC_3DF90C_TitleScreenAndIntro(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D478_3DF998_TitleScreenAndIntro);
+    for (i = 0; i < 16; i++) {
+        D_80111E38_3E4358_TitleScreenAndIntro[i][0] = 0;
+    }
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+    D_80111D70_3E4290_TitleScreenAndIntro = func_8010DF5C_3E047C_TitleScreenAndIntro();
+    func_8010D490_3DF9B0_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80102BD0_3D50F0_TitleScreenAndIntro();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D484_3DF9A4_TitleScreenAndIntro);
+void func_8010D478_3DF998_TitleScreenAndIntro(void) {
+    D_80112660_3E4B80_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D490_3DF9B0_TitleScreenAndIntro);
+s32 func_8010D484_3DF9A4_TitleScreenAndIntro(void) {
+    return D_80112660_3E4B80_TitleScreenAndIntro;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D684_3DFBA4_TitleScreenAndIntro);
+/* the title scene: logo reveal (8010D7C8), then "PRESS START" blinking (pad inserted) or the
+   no-controller message, until the title music ends */
+void func_8010D490_3DF9B0_TitleScreenAndIntro(void) {
+    s32 i;
+    s32 up;
+    s32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D778_3DFC98_TitleScreenAndIntro);
+    func_8010D778_3DFC98_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80050E00_51A00(0x3E);
+    i = 0;
+    func_800531AC_53DAC();
+    func_8010D7C8_3DFCE8_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    do {
+        i++;
+        HuPrcVSleep();
+    } while (i < 54);
+    D_80112660_3E4B80_TitleScreenAndIntro = 1;
+    if (func_80103028_3D5548_TitleScreenAndIntro() != 0) {
+        func_80104448_3D6968_TitleScreenAndIntro(0xE0014, 0x9F, 0xA9, OVL62_SPRITE2(0));
+        i = 0;
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_801045A4_3D6AC4_TitleScreenAndIntro(OVL62_SPRITE2(0), 0xF);
+        up = 1;
+        func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE2(0), 0x1008);
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+    loop:
+        {
+            if (up != 0) {
+                i += 24;
+                if (i >= 0x2E0) {
+                    i = 0xFF;
+                    up = 0;
+                }
+            } else {
+                i -= 24;
+                if (i < 50) {
+                    i = 50;
+                    up = 1;
+                }
+            }
+            a = i < 50 ? 50 : i > 0xFF ? 0xFF : i;
+            func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE2(0), a);
+            if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) != 0) {
+                HuPrcVSleep();
+                goto loop;
+            }
+        }
+    } else {
+        func_80104448_3D6968_TitleScreenAndIntro(0xE0017, 0xA0, 0xA1, OVL62_SPRITE2(0));
+        func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE2(0));
+        func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE2(0), 8);
+        SprPrioSet(OVL62_SPRITE2(0)->grp, 0, 0x26AC);
+        while (1) {
+            if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) == 0) {
+                break;
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_80104564_3D6A84_TitleScreenAndIntro(OVL62_SPRITE2(0));
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE2(0), 0xFF);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D7C8_3DFCE8_TitleScreenAndIntro);
+/* light the picture (262x82 RGBA32, D_801110E0) through the 64x64 spot image at (x, y), scaled */
+void func_8010D684_3DFBA4_TitleScreenAndIntro(s32 x, s32 y, f32 scale) {
+    u8* dst = D_801110E0_3E3600_TitleScreenAndIntro;
+    u8* src = D_80112144_3E4664_TitleScreenAndIntro;
+    f32 inv = 1.0f / scale;
+    s32 i;
+    s32 j;
+    s32 u;
+    s32 v;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D95C_3DFE7C_TitleScreenAndIntro);
+    for (i = 0; i < 262; i++) {
+        for (j = 0; j < 82; j++) {
+            u = (i - x) * inv + 32.0f;
+            v = (j - y) * inv + 32.0f;
+            if (u >= 0 && u < 64 && v >= 0 && v < 64) {
+                dst[(j * 262 + i) * 4 + 3] = src[v * 64 + u];
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DA5C_3DFF7C_TitleScreenAndIntro);
+void func_8010D778_3DFC98_TitleScreenAndIntro(void) {
+    func_80105280_3D77A0_TitleScreenAndIntro();
+    func_80104448_3D6968_TitleScreenAndIntro(0xE001C, 0xA0, 0xCA, OVL62_SPRITE(0));
+    func_801045F0_3D6B10_TitleScreenAndIntro(OVL62_SPRITE(0));
+    func_80104564_3D6A84_TitleScreenAndIntro(OVL62_SPRITE(0));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DB5C_3E007C_TitleScreenAndIntro);
+/* the logo: a spot light grows over the picture, then the title music and a fade */
+void func_8010D7C8_3DFCE8_TitleScreenAndIntro(void) {
+    s32 i;
+    u8* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DCA4_3E01C4_TitleScreenAndIntro);
+    i = 0;
+    func_801053D8_3D78F8_TitleScreenAndIntro();
+    func_80104524_3D6A44_TitleScreenAndIntro(OVL62_SPRITE(0));
+    func_80104614_3D6B34_TitleScreenAndIntro(OVL62_SPRITE(0), 0x1008);
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 0xFF);
+    HuPrcSleep(30);
+    do {
+        func_8010D684_3DFBA4_TitleScreenAndIntro(0x83, 0x29, i * 0.025f * 9.0f + 0.1f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 20);
+    p = D_801110E0_3E3600_TitleScreenAndIntro;
+    i = 0;
+    do {
+        p[3] = 0;
+        i++;
+        p += 4;
+    } while (i < 262 * 82);
+    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(2);
+    HuPrcSleep(16);
+    i = 0;
+    do {
+        func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 255.0f - i * (1.0f / 30.0f) * 255.0f);
+        i++;
+        HuPrcVSleep();
+    } while (i < 31);
+    func_801045CC_3D6AEC_TitleScreenAndIntro(OVL62_SPRITE(0), 0);
+    HuPrcSleep(3);
+    func_80104638_3D6B58_TitleScreenAndIntro(OVL62_SPRITE(0));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DE00_3E0320_TitleScreenAndIntro);
+/* fade the light mask's alpha in to `alpha` over `time` frames */
+void func_8010D95C_3DFE7C_TitleScreenAndIntro(u16 alpha, s32 time) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DEA0_3E03C0_TitleScreenAndIntro);
+    for (i = 0; i <= time; i++) {
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, (f32)(alpha / time) * i);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DF30_3E0450_TitleScreenAndIntro);
+/* and out from `alpha` */
+void func_8010DA5C_3DFF7C_TitleScreenAndIntro(u16 alpha, s32 time) {
+    f32 t;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DF5C_3E047C_TitleScreenAndIntro);
+    for (i = 0; i <= time; i++) {
+        t = 1.0f - (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        HuPrcVSleep();
+    }
+}
+
+/* fade the mask in while stamp 0 follows a world position */
+void func_8010DB5C_3E007C_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time) {
+    Vec2f scr;
+    f32 t;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        t = (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+void func_8010DCA4_3E01C4_TitleScreenAndIntro(Vec* pos, u16 alpha, s32 time) {
+    Vec2f scr;
+    f32 t;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        t = 1.0f - (f32)i / time;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, alpha * t);
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+/* stamp 0 follows a world position for `time` frames */
+void func_8010DE00_3E0320_TitleScreenAndIntro(Vec* pos, s32 time) {
+    Vec2f scr;
+    s32 i;
+
+    for (i = 1; i <= time; i++) {
+        Hu3DCam3DToScreen(0, pos, &scr);
+        func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+        HuPrcVSleep();
+    }
+}
+
+/* camera 0 from D_80111ACC (pos, at, up) */
+void func_8010DEA0_3E03C0_TitleScreenAndIntro(void) {
+    Vec pos;
+    Vec at;
+    Vec up;
+
+    func_800B3170_B3D70(&pos, &D_80111ACC_3E3FEC_TitleScreenAndIntro);
+    func_800B3170_B3D70(&at, &D_80111AD8_3E3FF8_TitleScreenAndIntro);
+    func_800B3170_B3D70(&up, &D_80111AE4_3E4004_TitleScreenAndIntro);
+    Hu3DCamSetPerspective(0, 17.0f, 500.0f, 6000.0f);
+    Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+    Hu3DCamUpdateMtx(0);
+}
+
+void func_8010DF30_3E0450_TitleScreenAndIntro(void) {
+    while (1) {
+        func_8010DEA0_3E03C0_TitleScreenAndIntro();
+        HuPrcVSleep();
+    }
+}
+
+Process* func_8010DF5C_3E047C_TitleScreenAndIntro(void) {
+    func_8010DEA0_3E03C0_TitleScreenAndIntro();
+    return omAddPrcObj(func_8010DF30_3E0450_TitleScreenAndIntro, 0x1001, 0, 0);
+}
 
 void func_8010DF90_3E04B0_TitleScreenAndIntro(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010DF98_3E04B8_TitleScreenAndIntro);
+/* the curtain: hold `t`, then delete after 3 frames */
+void func_8010DF98_3E04B8_TitleScreenAndIntro(omObjData* obj) {
+    obj->rot.y += 1.0f;
+    func_8010440C_3D692C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, obj->rot.z);
+    if (obj->rot.y > 3.0f) {
+        omDelObj(obj);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E008_3E0528_TitleScreenAndIntro);
+/* the curtain opens over rot.z frames */
+void func_8010E008_3E0528_TitleScreenAndIntro(omObjData* obj) {
+    f32 y;
+    f32 z;
+    f32 t;
+
+    y = obj->rot.y;
+    z = obj->rot.z;
+    if (z <= y) {
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, 0.0f);
+        obj->func_ptr = func_8010DF98_3E04B8_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+        obj->rot.z = 0.0f;
+    } else {
+        t = 1.0f - y / z;
+        if (t < 0.0f) {
+            t = 0.0f;
+        }
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, t);
+        obj->rot.y += 1.0f;
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80111C58_3E4178_TitleScreenAndIntro[] = "C161_000-donchou";
@@ -1095,20 +1341,90 @@ const char D_80111C58_3E4178_TitleScreenAndIntro[] = "C161_000-donchou";
 __asm__(".section .rodata");
 const char D_80111C6C_3E418C_TitleScreenAndIntro[] = "C161_000-donchou2";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E0C4_3E05E4_TitleScreenAndIntro);
+void func_8010E0C4_3E05E4_TitleScreenAndIntro(s32 time) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E154_3E0674_TitleScreenAndIntro);
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[5],
+                                             D_80111C58_3E4178_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[6],
+                                             D_80111C6C_3E418C_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_8010E008_3E0528_TitleScreenAndIntro);
+    obj->rot.x = obj->rot.y = 0.0f;
+    obj->rot.z = time;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E210_3E0730_TitleScreenAndIntro);
+/* the curtain closes over rot.z frames */
+void func_8010E154_3E0674_TitleScreenAndIntro(omObjData* obj) {
+    f32 y;
+    f32 z;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E2A0_3E07C0_TitleScreenAndIntro);
+    y = obj->rot.y;
+    z = obj->rot.z;
+    if (z <= y) {
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, 1.0f);
+        obj->func_ptr = func_8010DF98_3E04B8_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+        obj->rot.z = 1.0f;
+    } else {
+        t = y / z;
+        if (t > 1.0f) {
+            t = 1.0f;
+        }
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, t);
+        obj->rot.y += 1.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E320_3E0840_TitleScreenAndIntro);
+void func_8010E210_3E0730_TitleScreenAndIntro(s32 time) {
+    omObjData* obj;
+
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112000_3E4520_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[5],
+                                             D_80111C58_3E4178_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[6],
+                                             D_80111C6C_3E418C_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_8010E154_3E0674_TitleScreenAndIntro);
+    obj->rot.x = obj->rot.y = 0.0f;
+    obj->rot.z = time;
+}
+
+/* the stage lights: hold, then delete after 6 frames */
+void func_8010E2A0_3E07C0_TitleScreenAndIntro(omObjData* obj) {
+    obj->rot.y += 1.0f;
+    func_8010440C_3D692C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, obj->rot.z);
+    func_8010440C_3D692C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, obj->rot.z);
+    if (obj->rot.y > 6.0f) {
+        omDelObj(obj);
+    }
+}
+
+void func_8010E320_3E0840_TitleScreenAndIntro(omObjData* obj) {
+    f32 y;
+    f32 z;
+    f32 t;
+
+    y = obj->rot.y;
+    z = obj->rot.z;
+    if (z < y) {
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, 0.0f);
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, 0.0f);
+        obj->func_ptr = func_8010E2A0_3E07C0_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+        obj->rot.z = 0.0f;
+    } else {
+        t = 1.0f - y / z;
+        if (t < 0.0f) {
+            t = 0.0f;
+        }
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, t);
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, t);
+        obj->rot.y += 1.0f;
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80111C80_3E41A0_TitleScreenAndIntro[] = "okstage1-right_c";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E408_3E0928_TitleScreenAndIntro);
+__asm__(".section .rodata");
+const char D_80111C94_3E41B4_TitleScreenAndIntro[] = "okstage2-right_c";
 
 __asm__(".section .rodata");
 const char D_80111CA8_3E41C8_TitleScreenAndIntro[] = "okstage1-light_c1";
@@ -1116,110 +1432,898 @@ const char D_80111CA8_3E41C8_TitleScreenAndIntro[] = "okstage1-light_c1";
 __asm__(".section .rodata");
 const char D_80111CBC_3E41DC_TitleScreenAndIntro[] = "okstage2-light_c1";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E4C8_3E09E8_TitleScreenAndIntro);
+void func_8010E408_3E0928_TitleScreenAndIntro(s32 time) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E5B0_3E0AD0_TitleScreenAndIntro);
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[2],
+                                             D_80111C80_3E41A0_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[3],
+                                             D_80111C94_3E41B4_TitleScreenAndIntro);
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[2],
+                                             D_80111CA8_3E41C8_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[3],
+                                             D_80111CBC_3E41DC_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_8010E320_3E0840_TitleScreenAndIntro);
+    obj->rot.x = obj->rot.y = 0.0f;
+    obj->rot.z = time;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E670_3E0B90_TitleScreenAndIntro);
+void func_8010E4C8_3E09E8_TitleScreenAndIntro(omObjData* obj) {
+    f32 y;
+    f32 z;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010E8C0_3E0DE0_TitleScreenAndIntro);
+    y = obj->rot.y;
+    z = obj->rot.z;
+    if (z < y) {
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, 1.0f);
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, 1.0f);
+        obj->func_ptr = func_8010E2A0_3E07C0_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+        obj->rot.z = 1.0f;
+    } else {
+        t = y / z;
+        if (t > 1.0f) {
+            t = 1.0f;
+        }
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, t);
+        func_8010440C_3D692C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, t);
+        obj->rot.y += 1.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010EB08_3E1028_TitleScreenAndIntro);
+void func_8010E5B0_3E0AD0_TitleScreenAndIntro(s32 time) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010EB88_3E10A8_TitleScreenAndIntro);
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112010_3E4530_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[2],
+                                             D_80111C80_3E41A0_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[4],
+                                             "okstage-right_c");
+    func_8010436C_3D688C_TitleScreenAndIntro(&D_80112020_3E4540_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[2],
+                                             D_80111CA8_3E41C8_TitleScreenAndIntro, D_80111DF8_3E4318_TitleScreenAndIntro[4],
+                                             "okstage-light_c1");
+    obj = omAddObj(6, 0, 0, -1, func_8010E4C8_3E09E8_TitleScreenAndIntro);
+    obj->rot.x = obj->rot.y = 0.0f;
+    obj->rot.z = time;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010ED80_3E12A0_TitleScreenAndIntro);
+/* the two hands (models 14, 15) slide apart and turn away, then vanish */
+void func_8010E670_3E0B90_TitleScreenAndIntro(omObjData* obj) {
+    Vec to;
+    Vec pos;
+    Vec cur;
+    Vec d;
+    f32 a;
+    f32 t;
+    f32 s;
+    f32 w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010EFBC_3E14DC_TitleScreenAndIntro);
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800B3170_B3D70(&to, &pos);
+    to.y += 200.0f;
+    to.z += 800.0f;
+    a = obj->rot.x;
+    t = obj->rot.y;
+    s = t * (1.0f / 30.0f);
+    a += 7.0f;
+    if (a > 360.0f) {
+        a -= 360.0f;
+    }
+    w = HuMathSin(a) * 20.0f;
+    HuVecSubtract(&d, &pos, &to);
+    cur.x = d.x + to.x;
+    cur.y = d.y + to.y + w;
+    cur.z = d.z + to.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[15], cur.x - 250.0f - s * 400.0f, cur.y - 50.0f, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[14], cur.x + 250.0f + s * 400.0f, cur.y - 50.0f, cur.z);
+    func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[15], 0.0f, 90.0f - s * 180.0f, 0.0f);
+    t += 1.0f;
+    obj->rot.x = a;
+    obj->rot.y = t;
+    if (t > 30.0f) {
+        omDelObj(obj);
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[14]);
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[15]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F074_3E1594_TitleScreenAndIntro);
+/* model 9 jumps in an arc from its position towards (0, +200, +800), the hands following */
+void func_8010E8C0_3E0DE0_TitleScreenAndIntro(omObjData* obj) {
+    Vec to;
+    Vec pos;
+    Vec cur;
+    Vec d;
+    f32 a;
+    f32 t;
+    f32 s;
+    f32 w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F1D0_3E16F0_TitleScreenAndIntro);
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800B3170_B3D70(&to, &pos);
+    to.y += 200.0f;
+    to.z += 800.0f;
+    a = obj->rot.x;
+    t = obj->rot.y;
+    a += 7.0f;
+    if (a > 360.0f) {
+        a -= 360.0f;
+    }
+    w = HuMathSin(a) * 20.0f;
+    s = t * 0.0125f;
+    HuVecSubtract(&d, &pos, &to);
+    cur.x = s * d.x + to.x;
+    cur.y = s * d.y + ((2.0f * s - 1.0f) * (2.0f * s - 1.0f) - 1.0f) * 200.0 + w + to.y;
+    cur.z = s * d.z + to.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[9], cur.x, cur.y, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[15], cur.x - 250.0f, cur.y - 50.0f, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[14], cur.x + 250.0f, cur.y - 50.0f, cur.z);
+    t += 1.0f;
+    obj->rot.x = a;
+    obj->rot.y = t;
+    if (t > 80.0f) {
+        obj->func_ptr = func_8010E670_3E0B90_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F328_3E1848_TitleScreenAndIntro);
+omObjData* func_8010EB08_3E1028_TitleScreenAndIntro(void) {
+    omObjData* obj;
+    Vec pos;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F3F4_3E1914_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_8010E8C0_3E0DE0_TitleScreenAndIntro);
+    HuVecCopyXYZ(&pos, 0.0f, 370.0f, 230.0f);
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    obj->rot.z = obj->rot.x = obj->rot.y = 0.0f;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F540_3E1A60_TitleScreenAndIntro);
+/* the hands rise from their position, then vanish */
+void func_8010EB88_3E10A8_TitleScreenAndIntro(omObjData* obj) {
+    Vec pos;
+    Vec to;
+    Vec cur;
+    Vec d;
+    f32 a;
+    f32 t;
+    f32 s;
+    f32 w;
 
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    to.x = pos.x;
+    to.y = pos.y + 200.0f;
+    to.z = pos.z - -200.0f;
+    a = obj->rot.x;
+    t = obj->rot.y;
+    s = t * 0.05f;
+    a += 7.0f;
+    if (a > 360.0f) {
+        a -= 360.0f;
+    }
+    w = HuMathSin(a) * 20.0f;
+    HuVecSubtract(&d, &to, &pos);
+    cur.x = s * d.x + pos.x;
+    cur.y = s * d.y * s + pos.y + w;
+    cur.z = s * d.z + pos.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[15], cur.x - 250.0f, cur.y - 50.0f, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[14], cur.x + 250.0f, cur.y - 50.0f, cur.z);
+    t += 1.0f;
+    obj->rot.x = a;
+    obj->rot.y = t;
+    if (t > 20.0f) {
+        omDelObj(obj);
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[14]);
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[15]);
+    }
+}
+
+/* model 10 drops in from above (600 up, 300 back), the hands following */
+void func_8010ED80_3E12A0_TitleScreenAndIntro(omObjData* obj) {
+    Vec from;
+    Vec pos;
+    Vec cur;
+    Vec d;
+    f32 a;
+    f32 t;
+    f32 s;
+    f32 w;
+    f32 u;
+
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    from.x = pos.x;
+    from.y = pos.y - 600.0f;
+    from.z = pos.z - -300.0f;
+    a = obj->rot.x;
+    t = obj->rot.y;
+    a += 7.0f;
+    if (a > 360.0f) {
+        a -= 360.0f;
+    }
+    w = HuMathSin(a) * 20.0f;
+    s = t * 0.025f;
+    HuVecSubtract(&d, &pos, &from);
+    cur.x = s * d.x + from.x;
+    u = 1.0f - s;
+    cur.y = d.y - u * u * d.y + w + from.y;
+    cur.z = s * d.z + from.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[10], cur.x, cur.y, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[15], cur.x - 250.0f, cur.y - 50.0f, cur.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[14], cur.x + 250.0f, cur.y - 50.0f, cur.z);
+    t += 1.0f;
+    obj->rot.x = a;
+    obj->rot.y = t;
+    if (t > 40.0f) {
+        omSetTra(obj, cur.x, cur.y - w, cur.z);
+        obj->func_ptr = func_8010EB88_3E10A8_TitleScreenAndIntro;
+        obj->rot.y = 0.0f;
+    }
+}
+
+omObjData* func_8010EFBC_3E14DC_TitleScreenAndIntro(void) {
+    omObjData* obj;
+    Vec pos;
+
+    obj = omAddObj(6, 0, 0, -1, func_8010ED80_3E12A0_TitleScreenAndIntro);
+    HuVecCopyXYZ(&pos, 0.0f, 370.0f, 230.0f);
+    D_80111DF8_3E4318_TitleScreenAndIntro[10] =
+        func_80105460_3D7980_TitleScreenAndIntro(D_8011194C_3E3E6C_TitleScreenAndIntro[10].file, pos.x, pos.y, pos.z, 1.0f, 0x6A9);
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    obj->rot.z = obj->rot.x = obj->rot.y = 0.0f;
+    return obj;
+}
+
+/* model 11 bobs for 60 frames, then its place is kept in D_80112030 */
+void func_8010F074_3E1594_TitleScreenAndIntro(omObjData* obj) {
+    Vec pos;
+    Vec cur;
+    f32 a;
+    f32 t;
+    f32 s;
+
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    a = obj->rot.x;
+    t = obj->rot.y;
+    a += 19.0f;
+    if (a > 360.0f) {
+        a -= 360.0f;
+    }
+    s = t * (1.0f / 60.0f);
+    s = (1.0f - s) * -15.0f * func_800B7890_B8490(a);
+    cur.x = pos.x;
+    cur.y = s + pos.y;
+    cur.z = pos.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[11], cur.x, cur.y, cur.z + 50.0f);
+    t += 1.0f;
+    obj->rot.x = a;
+    obj->rot.y = t;
+    if (t > 60.0f) {
+        HuVecCopyXYZ(&D_80112030_3E4550_TitleScreenAndIntro, cur.x, cur.y, cur.z);
+        omDelObj(obj);
+    }
+}
+
+/* model 11 drops 300 into place over 20 frames */
+void func_8010F1D0_3E16F0_TitleScreenAndIntro(omObjData* obj) {
+    Vec from;
+    Vec pos;
+    Vec cur;
+    Vec d;
+    f32 t;
+    f32 s;
+
+    t = obj->rot.y;
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    HuVecCopyXYZ(&from, pos.x, pos.y + 300.0f, pos.z);
+    HuVecSubtract(&d, &pos, &from);
+    s = t * 0.05f;
+    cur.x = s * d.x + from.x;
+    cur.y = s * d.y + from.y;
+    cur.z = s * d.z + from.z;
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[11], cur.x, cur.y, cur.z + 50.0);
+    t += 1.0f;
+    obj->rot.y = t;
+    if (t > 20.0f) {
+        omSetTra(obj, cur.x, cur.y, cur.z);
+        obj->func_ptr = func_8010F074_3E1594_TitleScreenAndIntro;
+        obj->rot.x = 0.0f;
+        obj->rot.y = 0.0f;
+    }
+}
+
+omObjData* func_8010F328_3E1848_TitleScreenAndIntro(void) {
+    omObjData* obj;
+    Vec pos;
+
+    obj = omAddObj(6, 0, 0, -1, func_8010F1D0_3E16F0_TitleScreenAndIntro);
+    HuVecCopyXYZ(&pos, 0.0f, 320.0f, 260.0f);
+    D_80111DF8_3E4318_TitleScreenAndIntro[11] =
+        func_80105460_3D7980_TitleScreenAndIntro(D_8011194C_3E3E6C_TitleScreenAndIntro[11].file, pos.x, pos.y, pos.z + 50.0f, 1.0f, 0x6A9);
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    obj->rot.z = obj->rot.x = obj->rot.y = 0.0f;
+    return obj;
+}
+
+/* model 9 spins away and grows for 40 frames, then is killed */
+void func_8010F3F4_3E1914_TitleScreenAndIntro(void) {
+    f32 x;
+    f32 ang;
+    f32 y;
+    s32 i;
+
+    x = 0.0f;
+    ang = 0.0f;
+    y = 1.0f;
+    func_80110FBC_3E34DC_TitleScreenAndIntro(0xC9);
+    for (i = 0; i < 40; i++) {
+        D_800CA02C_CAC2C = ang;
+        func_8002AC10_2B810(D_80111DF8_3E4318_TitleScreenAndIntro[9], x, y, 2);
+        ang += 39.0f;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        x += 0.035f;
+        y += (10.0f - y) / 30.0f;
+        HuPrcVSleep();
+    }
+    func_800298A4_2A4A4(D_80111DF8_3E4318_TitleScreenAndIntro[9], 4, 4);
+    func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[9]);
+    HuPrcEnd();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+
+void func_8010F540_3E1A60_TitleScreenAndIntro(void) {
+    HmfModelObjAttrSet(D_80111DF8_3E4318_TitleScreenAndIntro[9], 0x22000, 0x20000);
+    func_80029A8C_2A68C(D_80111DF8_3E4318_TitleScreenAndIntro[9]);
+    func_8002A00C_2AC0C(D_80111DF8_3E4318_TitleScreenAndIntro[9]);
+    func_80029AFC_2A6FC(D_80111DF8_3E4318_TitleScreenAndIntro[9]);
+    omAddPrcObj(func_8010F3F4_3E1914_TitleScreenAndIntro, 0x3E8, 0, 0);
+}
+
+/* model 10 (dropped in by 8010ED80) swings forward, sinks to the floor, then hops away. NON_MATCHING: the
+   instructions are retail's, but retail's cos calls in the second and third loops leave their delay
+   slot to the assembler, so the KMC mul fix adds no nop before the following mul.s; here GCC fills it
+   and the assembler adds two nops. */
+#ifdef NON_MATCHING
+void func_8010F5AC_3E1ACC_TitleScreenAndIntro(void) {
+    Vec tmp;
+    Vec unused;
+    Vec pos;
+    f32 ang;
+    f32 vy;
+    f32 s;
+    s32 i;
+
+    HuVecCopyXYZ(&pos, 0.0f, 320.0f, 230.0f);
+    ang = 0.0f;
+    for (i = 0; i < 40; i++) {
+        ang += 39.0f;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        s = func_800B7890_B8490(ang) * 10.0f;
+        pos.z -= -5.0f;
+        func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[10], 0.0f, 0.0f, s);
+        func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[10], pos.x, pos.y, pos.z);
+        HuPrcVSleep();
+    }
+    func_800B3170_B3D70(&tmp, &pos);
+    HuVecCopyXYZ(&unused, tmp.x, 0.0f, tmp.z);
+    for (i = 0; i < 40; i++) {
+        s = i * 0.025f;
+        ang += 9.0f;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        pos.y -= 20.0f;
+        pos.z -= -5.0f;
+        func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[10], 0.0f, 0.0f,
+                            (s * 15.0f + 15.0f) * func_800B7890_B8490(ang));
+        if (pos.y < 100.0f) {
+            func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[10], pos.x, 100.0f, pos.z);
+            HuPrcVSleep();
+            break;
+        }
+        func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[10], pos.x, pos.y, pos.z);
+        HuPrcVSleep();
+    }
+    func_80110FBC_3E34DC_TitleScreenAndIntro(0xCA);
+    vy = 20.0f;
+    for (i = 0; i < 40; i++) {
+        s = i * 0.025f;
+        ang += 9.0f;
+        if (ang > 360.0f) {
+            ang -= 360.0f;
+        }
+        func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[10], pos.x, pos.y, pos.z);
+        pos.y += vy;
+        pos.z += -5.0f;
+        s = (s * 15.0f + 15.0f) * func_800B7890_B8490(ang);
+        vy -= 4.0000005f;
+        func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[10], 0.0f, 0.0f, s);
+        HuPrcVSleep();
+    }
+    func_800298A4_2A4A4(D_80111DF8_3E4318_TitleScreenAndIntro[10], 4, 4);
+    func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[10]);
+    HuPrcEnd();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F5AC_3E1ACC_TitleScreenAndIntro);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F95C_3E1E7C_TitleScreenAndIntro);
+void func_8010F95C_3E1E7C_TitleScreenAndIntro(void) {
+    omAddPrcObj(func_8010F5AC_3E1ACC_TitleScreenAndIntro, 0x3E8, 0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010F988_3E1EA8_TitleScreenAndIntro);
+/* model 11 rises 300 from where 8010F074 left it */
+void func_8010F988_3E1EA8_TitleScreenAndIntro(void) {
+    Vec from;
+    Vec to;
+    Vec d;
+    Vec cur;
+    f32 s;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FAB4_3E1FD4_TitleScreenAndIntro);
+    func_800B3170_B3D70(&from, &D_80112030_3E4550_TitleScreenAndIntro);
+    func_800B3170_B3D70(&to, &from);
+    to.y += 300.0f;
+    HuVecSubtract(&d, &to, &from);
+    for (i = 0; i < 60; i++) {
+        s = i * (1.0f / 60.0f);
+        cur.x = s * d.x + from.x;
+        cur.y = s * d.y + from.y;
+        cur.z = s * d.z + from.z;
+        func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[11], cur.x, cur.y, cur.z + 50.0f);
+        HuPrcVSleep();
+    }
+    func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[11]);
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FAE0_3E2000_TitleScreenAndIntro);
+void func_8010FAB4_3E1FD4_TitleScreenAndIntro(void) {
+    omAddPrcObj(func_8010F988_3E1EA8_TitleScreenAndIntro, 0x3E8, 0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FB2C_3E204C_TitleScreenAndIntro);
+/* model 7 stays 600 above model 4 */
+void func_8010FAE0_3E2000_TitleScreenAndIntro(void) {
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[7], D_80111D78_3E4298_TitleScreenAndIntro[4]->pos.x,
+                        D_80111D78_3E4298_TitleScreenAndIntro[4]->pos.y + 600.0,
+                        D_80111D78_3E4298_TitleScreenAndIntro[4]->pos.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FBD4_3E20F4_TitleScreenAndIntro);
+void func_8010FB2C_3E204C_TitleScreenAndIntro(void) {
+    Vec pos;
+    s32 file;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FC98_3E21B8_TitleScreenAndIntro);
+    func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
+    file = D_8011194C_3E3E6C_TitleScreenAndIntro[7].file;
+    D_80111DF8_3E4318_TitleScreenAndIntro[7] = func_80105460_3D7980_TitleScreenAndIntro(file, pos.x, pos.y + 600.0f, pos.z, 1.0f, 0x6A9);
+    func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[7], 0.0f, 90.0f, 0.0f);
+    omAddObj(6, 0, 0, -1, func_8010FAE0_3E2000_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FD28_3E2248_TitleScreenAndIntro);
+/* model 7 rises 300 from the object's position over 30 frames, then is killed */
+void func_8010FBD4_3E20F4_TitleScreenAndIntro(omObjData* obj) {
+    f32 s = obj->rot.x * (1.0f / 30.0f);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FE44_3E2364_TitleScreenAndIntro);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[7], obj->trans.x, obj->trans.y + s * 300.0, obj->trans.z);
+    if (obj->rot.x > 30.0f) {
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[7]);
+        omDelObj(obj);
+    }
+    obj->rot.x += 1.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010FE7C_3E239C_TitleScreenAndIntro);
+omObjData* func_8010FC98_3E21B8_TitleScreenAndIntro(f32 x, f32 y, f32 z) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801100B0_3E25D0_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_8010FBD4_3E20F4_TitleScreenAndIntro);
+    obj->rot.x = 0.0f;
+    omSetTra(obj, x, y + 600.0f, z);
+    return obj;
+}
+
+/* model 8 rises 600 from the object's position over 15 frames, then is killed */
+void func_8010FD28_3E2248_TitleScreenAndIntro(omObjData* obj) {
+    Vec cur;
+    Vec pos;
+    Vec to;
+    f32 s;
+
+    s = obj->rot.x * (1.0f / 15.0f);
+    func_800B3170_B3D70(&cur, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
+    HuVecCopyXYZ(&pos, obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800B3170_B3D70(&to, &pos);
+    to.y = pos.y + 600.0f;
+    HuVecCopyXYZ(&cur, pos.x, (to.y - pos.y) * s + pos.y, pos.z);
+    func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[8], cur.x, cur.y, cur.z);
+    if (obj->rot.x >= 15.0f) {
+        func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[8]);
+        omDelObj(obj);
+    }
+    obj->rot.x += 1.0f;
+}
+
+void func_8010FE44_3E2364_TitleScreenAndIntro(void) {
+    omAddObj(6, 0, 0, -1, func_8010FD28_3E2248_TitleScreenAndIntro)->rot.x = 0.0f;
+}
+
+/* a smoke puff: a particle model (from sprite `sprite`, or the default puff file when -1) at
+   (x, y, z), drifting by rot and growing from `scale` (801100B0). work[0..1] = model, work[2..3] =
+   particle (big-endian halves). */
+omObjData* func_8010FE7C_3E239C_TitleScreenAndIntro(s16 sprite, f32 x, f32 y, f32 z, f32 scale) {
+    omObjData* obj;
+    omObjData* o;
+    void* data;
+    s32 unused[2];
+    s16 idx;
+    u16 model;
+    s16 m;
+
+    obj = omAddObj(6, 0, 0, -1, func_801100B0_3E25D0_TitleScreenAndIntro);
+    o = obj;
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    obj->scale.x = 0.0f;
+    obj->scale.y = 0.0f;
+    obj->scale.z = scale;
+    if (sprite != -1) {
+        idx = func_8002109C_21C9C(sprite, 8);
+        func_80021250_21E50(idx, 0xF0, 0x40, 8);
+        func_800211E8_21DE8(idx, 0xA0);
+        model = D_800F86D8_F92D8[idx].unk00;
+    } else {
+        data = DataRead(0xA0226);
+        idx = func_80020EBC_21ABC(data, 0xA89, 8);
+        func_80021250_21E50(idx, 0xF0, 0x40, 8);
+        func_800211E8_21DE8(idx, 0x80);
+        model = D_800F86D8_F92D8[idx].unk00;
+        DataClose(data);
+    }
+    m = model;
+    o->work[0] = m >> 8;
+    o->work[1] = model;
+    o->work[2] = idx >> 8;
+    o->work[3] = idx;
+    func_80029714_2A314(m, x, y, z);
+    func_8002979C_2A39C(m, 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(m, scale, scale, scale);
+    HmfModelObjAttrSet(m, 0x70000000, 0x70000000);
+    func_800298A4_2A4A4(m, 4, 0);
+    func_80029E80_2AA80(m, 2, 2);
+    return obj;
+}
+
+void func_801100B0_3E25D0_TitleScreenAndIntro(omObjData* obj) {
+    omObjData* o = obj;
+    s16 model = (obj->work[0] << 8) | obj->work[1];
+    s16 idx = (obj->work[2] << 8) | obj->work[3];
+
+    func_800298A4_2A4A4(model, 4, 0);
+    o->trans.x += o->rot.x;
+    o->trans.y += o->rot.y;
+    o->trans.z += o->rot.z;
+    o->scale.z += (rand8() & 0xFF) * 0.0003921569f + 0.15f;
+    if (o->trans.y < 40.0f) {
+        o->trans.y = 40.0f;
+    }
+    func_80029714_2A314(model, o->trans.x, o->trans.y, o->trans.z);
+    func_800297E8_2A3E8(model, o->scale.z, o->scale.z, o->scale.z);
+    o->scale.x += 1.0f;
+    if (o->scale.x > 12.0f) {
+        func_8002308C_23C8C(idx);
+        omDelObj(obj);
+    }
+}
 
 __asm__(".section .rodata");
-const u32 D_80111D18_3E4238_TitleScreenAndIntro[3] = { 0x00000000, 0xC1A770A4, 0x42406666 };
+const Vec D_80111D18_3E4238_TitleScreenAndIntro = { 0.0f, -20.93f, 48.1f };
 
 __asm__(".section .rodata");
-const u32 D_80111D24_3E4244_TitleScreenAndIntro[3] = { 0x00000000, 0x432F0000, 0x42C80000 };
+const Vec D_80111D24_3E4244_TitleScreenAndIntro = { 0.0f, 175.0f, 100.0f };
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110238_3E2758_TitleScreenAndIntro);
+/* a smoke puff behind `pos`, along the flat direction `dir`; returns its object */
+omObjData* func_80110238_3E2758_TitleScreenAndIntro(s16 sprite, Vec* pos, Vec* dir, f32 scale) {
+    Vec d;
+    Vec vel;
+    Vec ofs;
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110354_3E2874_TitleScreenAndIntro);
+    vel = D_80111D18_3E4238_TitleScreenAndIntro;
+    ofs = D_80111D24_3E4244_TitleScreenAndIntro;
+    func_800B3170_B3D70(&d, dir);
+    d.y = 0.0f;
+    func_800B33E0_B3FE0(&d);
+    ofs.x = d.x * ofs.z + pos->x;
+    ofs.y = ofs.y + pos->y;
+    ofs.z = d.z * ofs.z + pos->z;
+    d.x *= vel.z;
+    d.y = vel.y;
+    d.z *= vel.z;
+    obj = func_8010FE7C_3E239C_TitleScreenAndIntro(sprite, ofs.x, ofs.y, ofs.z, scale);
+    obj->rot.x = d.x;
+    obj->rot.y = d.y;
+    obj->rot.z = d.z;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801103FC_3E291C_TitleScreenAndIntro);
+/* model 8 waits 20 frames, then its motion and texture animation change */
+void func_80110354_3E2874_TitleScreenAndIntro(omObjData* obj) {
+    f32 t = obj->rot.x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8011058C_3E2AAC_TitleScreenAndIntro);
+    if (t >= 20.0f) {
+        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 1, 8, 16, 2);
+        func_80110C20_3E3140_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8]->obj->model[0], 9,
+                                                 D_8011186C_3E3D8C_TitleScreenAndIntro[0]);
+        omDelObj(obj);
+    } else {
+        t += 1.0f;
+        obj->rot.x = t;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110708_3E2C28_TitleScreenAndIntro);
+/* model 8 puffs smoke every 16 frames for 75 frames, then turns towards the camera */
+void func_801103FC_3E291C_TitleScreenAndIntro(omObjData* obj) {
+    Vec ofs;
+    Vec dir;
+    omObjData* puff;
+    f32 t = obj->rot.x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110888_3E2DA8_TitleScreenAndIntro);
+    HuVecCopyXYZ(&ofs, 0.0f, 0.0f, -190.0f);
+    func_800B3170_B3D70(&dir, &D_80111D78_3E4298_TitleScreenAndIntro[8]->rot);
+    if (!(obj->work[0] & 0x11)) {
+        puff = func_80110238_3E2758_TitleScreenAndIntro((obj->work[2] << 8) | obj->work[3], &ofs, &dir, 1.0f);
+        obj->work[2] = puff->work[2];
+        obj->work[3] = puff->work[3];
+    }
+    obj->work[0] = (obj->work[0] + 1) & 0xF;
+    if (t >= 75.0f) {
+        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 1, 8, 16, 2);
+        dir.x = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.x - 0.5f;
+        dir.y = 0.0f;
+        dir.z = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.z + 1.0f;
+        /* retail overwrites the target just computed with the camera's position */
+        func_800B3170_B3D70(&dir, &D_800C9B80_CA780->pos);
+        func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8], dir.x, dir.y, dir.z, 20.0f);
+        obj->func_ptr = func_80110354_3E2874_TitleScreenAndIntro;
+        obj->rot.x = 0.0f;
+    } else {
+        t += 1.0f;
+        obj->rot.x = t;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110964_3E2E84_TitleScreenAndIntro);
+void func_8011058C_3E2AAC_TitleScreenAndIntro(omObjData* obj) {
+    Vec ofs;
+    Vec dir;
+    omObjData* puff;
+    f32 t = obj->rot.x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801109F4_3E2F14_TitleScreenAndIntro);
+    HuVecCopyXYZ(&ofs, 0.0f, 0.0f, -190.0f);
+    func_800B3170_B3D70(&dir, &D_80111D78_3E4298_TitleScreenAndIntro[8]->rot);
+    if (!(obj->work[0] & 0x11)) {
+        puff = func_80110238_3E2758_TitleScreenAndIntro((obj->work[2] << 8) | obj->work[3], &ofs, &dir, 1.0f);
+        obj->work[2] = puff->work[2];
+        obj->work[3] = puff->work[3];
+    }
+    obj->work[0] = (obj->work[0] + 1) & 0xF;
+    if (t >= 35.0f) {
+        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 4, 8, 8, 2);
+        dir.x = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.x + 0.5f;
+        dir.y = 0.0f;
+        dir.z = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.z + 1.0f;
+        func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8], dir.x, dir.y, dir.z, 70.0f);
+        obj->func_ptr = func_801103FC_3E291C_TitleScreenAndIntro;
+        obj->rot.x = 0.0f;
+    } else {
+        t += 1.0f;
+        obj->rot.x = t;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110A58_3E2F78_TitleScreenAndIntro);
+void func_80110708_3E2C28_TitleScreenAndIntro(omObjData* obj) {
+    Vec ofs;
+    Vec dir;
+    omObjData* puff;
+    f32 t = obj->rot.x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110A7C_3E2F9C_TitleScreenAndIntro);
+    HuVecCopyXYZ(&ofs, 0.0f, 0.0f, -190.0f);
+    HuVecCopyXYZ(&dir, 0.0f, 0.0f, 1.0f);
+    if (!(obj->work[0] & 0x11)) {
+        puff = func_80110238_3E2758_TitleScreenAndIntro((obj->work[2] << 8) | obj->work[3], &ofs, &dir, 1.0f);
+        obj->work[2] = puff->work[2];
+        obj->work[3] = puff->work[3];
+    }
+    obj->work[0] = (obj->work[0] + 1) & 0xF;
+    if (t >= 20.0f) {
+        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 4, 8, 8, 2);
+        dir.x = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.x - 0.5f;
+        dir.y = 0.0f;
+        dir.z = D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.z + 1.0f;
+        func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8], dir.x, dir.y, dir.z, 35.0f);
+        obj->func_ptr = func_8011058C_3E2AAC_TitleScreenAndIntro;
+        obj->rot.x = 0.0f;
+    } else {
+        obj->work[0] = 0;
+        t += 1.0f;
+        obj->rot.x = t;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110AE4_3E3004_TitleScreenAndIntro);
+omObjData* func_80110888_3E2DA8_TitleScreenAndIntro(void) {
+    omObjData* obj;
+    omObjData* puff;
+    Vec ofs;
+    Vec dir;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110B18_3E3038_TitleScreenAndIntro);
+    obj = omAddObj(6, 0, 0, -1, func_80110708_3E2C28_TitleScreenAndIntro);
+    HuVecCopyXYZ(&ofs, 0.0f, 0.0f, -190.0f);
+    HuVecCopyXYZ(&dir, 0.0f, 0.0f, 1.0f);
+    dir.x += (rand8() & 0xFF) * 0.000078431374f;
+    puff = func_80110238_3E2758_TitleScreenAndIntro(-1, &ofs, &dir, 1.0f);
+    obj->work[2] = puff->work[2];
+    obj->work[3] = puff->work[3];
+    obj->work[0] = 0;
+    obj->rot.x = 0.0f;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110B84_3E30A4_TitleScreenAndIntro);
+/* close the message window after rot.y frames; work[0]: then model 6 returns to motion 0 */
+void func_80110964_3E2E84_TitleScreenAndIntro(omObjData* obj) {
+    u8 idle = obj->work[0];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110BF0_3E3110_TitleScreenAndIntro);
+    if (obj->rot.x >= obj->rot.y) {
+        func_80103478_3D5998_TitleScreenAndIntro();
+        omDelObj(obj);
+        if (idle != 0) {
+            MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
+        }
+    }
+    obj->rot.x += 1.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110C20_3E3140_TitleScreenAndIntro);
+/* show message `mess` (801033F8, kept) and close it after `time` frames */
+omObjData* func_801109F4_3E2F14_TitleScreenAndIntro(s32 mess, s32 time) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110C50_3E3170_TitleScreenAndIntro);
+    func_801033F8_3D5918_TitleScreenAndIntro(mess, 0, 1);
+    obj = omAddObj(6, 0, 0, -1, func_80110964_3E2E84_TitleScreenAndIntro);
+    obj->rot.x = 0.0f;
+    obj->rot.y = time;
+    obj->work[0] = 0;
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110CAC_3E31CC_TitleScreenAndIntro);
+/* the same, then model 6 returns to its idle motion */
+void func_80110A58_3E2F78_TitleScreenAndIntro(s32 mess, s32 time) {
+    func_801109F4_3E2F14_TitleScreenAndIntro(mess, time)->work[0] = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110CCC_3E31EC_TitleScreenAndIntro);
+/* light-mask stamp 0 follows model 4 */
+void func_80110A7C_3E2F9C_TitleScreenAndIntro(omObjData* obj) {
+    Vec2f scr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110D64_3E3284_TitleScreenAndIntro);
+    Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, &scr);
+    func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110D8C_3E32AC_TitleScreenAndIntro);
+void func_80110AE4_3E3004_TitleScreenAndIntro(void) {
+    omAddObj(6, 0, 0, -1, func_80110A7C_3E2F9C_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110DDC_3E32FC_TitleScreenAndIntro);
+/* free character `chr`'s texture animation of set 1 (func_80025384's) */
+void func_80110B18_3E3038_TitleScreenAndIntro(s32 chr) {
+    if (D_800FDCA0_FE8A0[chr][1] != 0xFF) {
+        func_8003E888_3F488(D_800FDCA0_FE8A0[chr][1]);
+        func_8003E888_3F488(D_80101658_102258[chr][1]);
+        D_800FDCA0_FE8A0[chr][1] = 0xFF;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110E30_3E3350_TitleScreenAndIntro);
+/* and of set 2 */
+void func_80110B84_3E30A4_TitleScreenAndIntro(s32 chr) {
+    if (D_800FDCA0_FE8A0[chr][2] != 0xFF) {
+        func_8003E888_3F488(D_800FDCA0_FE8A0[chr][2]);
+        func_8003E888_3F488(D_80101658_102258[chr][2]);
+        D_800FDCA0_FE8A0[chr][2] = 0xFF;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110E60_3E3380_TitleScreenAndIntro);
+/* texture animation `chr` of set 1 on model `model` from file `file` */
+void func_80110BF0_3E3110_TitleScreenAndIntro(s16 model, s16 chr, s32 file) {
+    func_80025384_25F84(model, 1, chr, file);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110EEC_3E340C_TitleScreenAndIntro);
+/* of set 2 */
+void func_80110C20_3E3140_TitleScreenAndIntro(s16 model, s16 chr, s32 file) {
+    func_80025384_25F84(model, 2, chr, file);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110F68_3E3488_TitleScreenAndIntro);
+/* set 1 from main's table (func_80025718) */
+void func_80110C50_3E3170_TitleScreenAndIntro(s16 model, s16 chr, s16 idx) {
+    func_80025384_25F84(model, 1, chr, func_80025718_26318(chr, 1, idx));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80110FBC_3E34DC_TitleScreenAndIntro);
+MBModel* func_80110CAC_3E31CC_TitleScreenAndIntro(s32 file, s32 attr, f32 arg2, f32 arg3, u32* out) {
+    return MBModelFileCreate(file, attr, arg2, arg3, out);
+}
+
+/* every listed motion unloaded */
+void func_80110CCC_3E31EC_TitleScreenAndIntro(void) {
+    u32 i;
+    s32 j;
+    Ovl62Motion* mots;
+
+    for (i = 0; i < 9; i++) {
+        mots = D_80111874_3E3D94_TitleScreenAndIntro[D_80111AF0_3E4010_TitleScreenAndIntro[i].def].mots;
+        for (j = 0; j < D_80111AF0_3E4010_TitleScreenAndIntro[i].count; j++) {
+            mots[j].mot = -1;
+        }
+    }
+}
+
+s32 func_80110D64_3E3284_TitleScreenAndIntro(s32 file) {
+    return func_8002C8B8_2D4B8(DataRead(file), 0x6AD);
+}
+
+/* load motion `j` of model `i` */
+void func_80110D8C_3E32AC_TitleScreenAndIntro(s32 i, s32 j) {
+    Ovl62Motion* m = D_80111874_3E3D94_TitleScreenAndIntro[i].mots;
+
+    m[j].mot = func_80110D64_3E3284_TitleScreenAndIntro(m[j].file);
+}
+
+void func_80110DDC_3E32FC_TitleScreenAndIntro(s32 i, s32 j) {
+    Ovl62Motion* m = D_80111874_3E3D94_TitleScreenAndIntro[i].mots;
+
+    func_80039018_39C18(m[j].mot);
+    m[j].mot = -1;
+}
+
+s32 func_80110E30_3E3350_TitleScreenAndIntro(s32 i, s32 j) {
+    return D_80111874_3E3D94_TitleScreenAndIntro[i].mots[j].mot;
+}
+
+/* blend model `i` to its motion `j` (func_80029BF0) */
+void func_80110E60_3E3380_TitleScreenAndIntro(s32 i, s32 j, s16 arg2, s16 arg3, s16 arg4) {
+    s32 mot = func_80110E30_3E3350_TitleScreenAndIntro(i, j);
+
+    func_80029BF0_2A7F0(D_80111D78_3E4298_TitleScreenAndIntro[i]->obj->model[0], mot, arg2, arg3, arg4);
+}
+
+/* set model `i` to its motion `j` */
+void func_80110EEC_3E340C_TitleScreenAndIntro(s32 i, s32 j, s16 arg2) {
+    s32 mot = func_80110E30_3E3350_TitleScreenAndIntro(i, j);
+
+    func_8002C9C0_2D5C0(D_80111D78_3E4298_TitleScreenAndIntro[i]->obj->model[0], mot);
+    func_80029E80_2AA80(D_80111D78_3E4298_TitleScreenAndIntro[i]->obj->model[0], -1, arg2);
+}
+
+/* play music / a sound unless the scene is ending (state 5 and above) */
+s16 func_80110F68_3E3488_TitleScreenAndIntro(s16 music) {
+    s32 state = func_80103048_3D5568_TitleScreenAndIntro();
+
+    if (state < 5) {
+        if (state >= 0) {
+            return PlayMusic(music);
+        }
+    }
+    return -1;
+}
+
+s16 func_80110FBC_3E34DC_TitleScreenAndIntro(s16 sound) {
+    s32 state = func_80103048_3D5568_TitleScreenAndIntro();
+
+    if (state < 5) {
+        if (state >= 0) {
+            return PlaySound(sound);
+        }
+    }
+    return -1;
+}
