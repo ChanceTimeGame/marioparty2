@@ -16,6 +16,7 @@
 
 #include "common.h"
 #include "process.h"
+#include "game/data.h"
 #include "game/object.h"
 #include "game/board.h"
 #include "game/window.h"

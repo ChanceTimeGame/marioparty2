@@ -415,17 +415,79 @@ u8 func_801038D0_3D5DF0_TitleScreenAndIntro(void) {
     return D_800FDBE0_FE7E0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038DC_3D5DFC_TitleScreenAndIntro);
+/* set up the light mask: the default stamp image (file 0xE000F, big-endian header), three
+   160x128 masks, all stamps off, black at 0x60 alpha */
+void func_801038DC_3D5DFC_TitleScreenAndIntro(void) {
+    Ovl62Stamp* stamp;
+    u8* file;
+    u8* img;
+    s32 size;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103A54_3D5F74_TitleScreenAndIntro);
+    file = DataRead(0xE000F);
+    img = file + (file[2] << 8) + file[3];
+    D_8011268C_3E4BAC_TitleScreenAndIntro.w = (img[4] << 8) + img[5];
+    D_8011268C_3E4BAC_TitleScreenAndIntro.h = (img[6] << 8) + img[7];
+    img = file + (img[2] << 8) + img[3];
+    size = D_8011268C_3E4BAC_TitleScreenAndIntro.w * D_8011268C_3E4BAC_TitleScreenAndIntro.h;
+    D_8011268C_3E4BAC_TitleScreenAndIntro.data = func_80027154_27D54(size, 0x7918);
+    bcopy(img, D_8011268C_3E4BAC_TitleScreenAndIntro.data, size);
+    DataClose(file);
+    D_80111D54_3E4274_TitleScreenAndIntro = 160;
+    D_80111D58_3E4278_TitleScreenAndIntro = 128;
+    D_801138A0_3E5DC0_TitleScreenAndIntro = D_80112148_3E4668_TitleScreenAndIntro = func_80027154_27D54(160 * 128 * 3, 0x7918);
+    func_8010415C_3D667C_TitleScreenAndIntro(255);
+    for (i = 0; i < 8; i++) {
+        stamp = &D_80112060_3E4580_TitleScreenAndIntro[i];
+        stamp->y = 0;
+        D_80112060_3E4580_TitleScreenAndIntro[i].x = 0;
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+    }
+    func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 0x60);
+    D_80111D62_3E4282_TitleScreenAndIntro = func_8010433C_3D685C_TitleScreenAndIntro();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103AC0_3D5FE0_TitleScreenAndIntro);
+void func_80103A54_3D5F74_TitleScreenAndIntro(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103ADC_3D5FFC_TitleScreenAndIntro);
+    func_800283DC_28FDC(D_80111D62_3E4282_TitleScreenAndIntro);
+    for (i = 0; i < 8; i++) {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+    }
+    func_80027340_27F40(D_8011268C_3E4BAC_TitleScreenAndIntro.data);
+    func_80027340_27F40(D_80112148_3E4668_TitleScreenAndIntro);
+    D_80112148_3E4668_TitleScreenAndIntro = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103B04_3D6024_TitleScreenAndIntro);
+void func_80103AC0_3D5FE0_TitleScreenAndIntro(u8 r, u8 g, u8 b, u8 a) {
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[0] = r;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[1] = g;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[2] = b;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[3] = a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BD4_3D60F4_TitleScreenAndIntro);
+void func_80103ADC_3D5FFC_TitleScreenAndIntro(s32 i, s32 x, s32 y) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].x = x;
+    D_80112060_3E4580_TitleScreenAndIntro[i].y = y;
+}
+
+/* place stamp i over screen point (x, y) (320x240 to the 160x128 mask, centred on a 32x32
+   image); data NULL: the default image */
+void func_80103B04_3D6024_TitleScreenAndIntro(s32 i, s32 x, s32 y, u8* data) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].w = D_8011268C_3E4BAC_TitleScreenAndIntro.w;
+    D_80112060_3E4580_TitleScreenAndIntro[i].h = D_8011268C_3E4BAC_TitleScreenAndIntro.h;
+    D_80112060_3E4580_TitleScreenAndIntro[i].x = x * (1.0 / 1.33f) - 16.0;
+    D_80112060_3E4580_TitleScreenAndIntro[i].y = y * (1.0 / 1.33f) - 16.0 - 8.0;
+    if (data == NULL) {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = D_8011268C_3E4BAC_TitleScreenAndIntro.data;
+    } else {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = data;
+    }
+}
+
+void func_80103BD4_3D60F4_TitleScreenAndIntro(s32 i) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BF0_3D6110_TitleScreenAndIntro);
 
