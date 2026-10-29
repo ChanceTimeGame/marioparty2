@@ -381,7 +381,10 @@ extern s32 D_8011387C_39052C_name_5B[7];
 #include "game/camera.h"
 
 extern u16 D_801011FC_101DFC; /* main: set while the game resets */
-extern f32 D_800FA5BC_FB1BC[]; /* main: camera state (omOutView; [-1] is CRot.y) */
+/* main: the model draw callbacks' view fan (2E0D0 HitViewFan); D_800FA5BC is its x field, [-1]
+   the angle at D_800FA5B8. One object: written through D_800FA5B8. */
+extern f32 D_800FA5B8_FB1B8[];
+#define D_800FA5BC_FB1BC (D_800FA5B8_FB1B8 + 1)
 extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
 

@@ -230,7 +230,10 @@ extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern f32 D_800F8410_F9010;
 extern void* D_800F93FC_F9FFC;
-extern f32 D_800FA5BC_FB1BC[];
+/* main: the model draw callbacks' view fan (2E0D0 HitViewFan); D_800FA5BC is its x field, [-1]
+   the angle at D_800FA5B8. One object: written through D_800FA5B8. */
+extern f32 D_800FA5B8_FB1B8[];
+#define D_800FA5BC_FB1BC (D_800FA5B8_FB1B8 + 1)
 extern u8 D_800FD420_FE020[0x12];
 extern u8 D_800FD425_FE025[];
 extern s16 D_800FD80C_FE40C;
