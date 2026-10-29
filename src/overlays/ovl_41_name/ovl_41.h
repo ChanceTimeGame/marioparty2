@@ -19,7 +19,7 @@
 
 #include "game/window.h" /* D_800F920C_F9E0C */
 extern s32 D_800CCC18_CD818;
-extern s32 D_800CC6A8_CD2A8[]; /* per board: the guide's model */
+extern s32* D_800CC6A8_CD2A8[]; /* per board: the guide's model */
 extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */
 extern s16 D_800F8D12_F9912;
 extern s16 D_800CD414_CE014;
@@ -43,7 +43,7 @@ void MBModelKill(void*);
 void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void func_8005B338_5BF38(void*);
-UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+UnkMBGuideData* func_80050304_50F04(void*, s32); /* MBGuideCreate */
 void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
@@ -252,7 +252,7 @@ void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
-void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+void func_80056368_56F68(s16, u32, char*, char*, char*, char*, char*); /* message with up to five strings */
 s32 MBRand(f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800629F0_635F0(s32 player, s16); /* status window */
@@ -306,7 +306,7 @@ void func_80062A28_63628(s16 player, f32 arg1); /* status window shake */
 
 f32 __sinf(f32);
 extern u16 ContDStkTrg[4];
-void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void MBWinInsertOpen(s32 arg0, char* arg1, char* arg2, char* arg3, char* arg4, char* arg5);
 void func_80055E3C_56A3C(s32 arg0);
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
    layout-dependent label, keep the data in place on the host. */
@@ -316,7 +316,7 @@ omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 Process* MBDCameraZoomMotStart(f32 arg0);
 void MBDlgWinExec(s32 arg0, s32 arg1);
-void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void func_80056368_56F68(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6); /* message window: up to five strings */
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_80078EC8_79AC8(void);

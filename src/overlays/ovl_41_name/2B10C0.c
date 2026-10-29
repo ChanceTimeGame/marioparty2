@@ -299,8 +299,8 @@ s16 D_801110E8_2BF9A8_name_41[6] = {
     26, 27, 36, 30, 35, 37,
 };
 DecisionTreeNonLeafNode D_801110F4_2BF9B4_name_41[3] = {
-    { 0x06000000, { func_8010E4B4_2BCD74_name_41 }, { 0x5A3C } },
-    { 0x06000000, { func_8010E4D4_2BCD94_name_41 }, { 0x1E3C } },
+    { 0x06000000, { (void (*)())func_8010E4B4_2BCD74_name_41 }, { 0x5A3C } },
+    { 0x06000000, { (void (*)())func_8010E4D4_2BCD94_name_41 }, { 0x1E3C } },
     { 0x00000000, { (void*)0 }, { 0x1E } },
 };
 DecisionTreeNonLeafNode D_80111118_2BF9D8_name_41[3] = {
@@ -309,7 +309,7 @@ DecisionTreeNonLeafNode D_80111118_2BF9D8_name_41[3] = {
     { 0x00000000, { (void*)0 }, { 0x5A3C } },
 };
 DecisionTreeNonLeafNode D_8011113C_2BF9FC_name_41[2] = {
-    { 0x06000000, { func_8010E4F4_2BCDB4_name_41 }, { 0x5A3C } },
+    { 0x06000000, { (void (*)())func_8010E4F4_2BCDB4_name_41 }, { 0x5A3C } },
     { 0x00000000, { (void*)0 }, { 0x3232 } },
 };
 DecisionTreeNonLeafNode D_80111154_2BFA14_name_41[3] = {
@@ -328,8 +328,8 @@ DecisionTreeNonLeafNode D_80111190_2BFA50_name_41[4] = {
     { 0x00000000, { (void*)0 }, { 0x16464 } },
 };
 DecisionTreeNonLeafNode D_801111C0_2BFA80_name_41[3] = {
-    { 0x06000000, { func_8010E534_2BCDF4_name_41 }, { 0x5A3C } },
-    { 0x06000000, { func_8010E554_2BCE14_name_41 }, { 0x1E3C } },
+    { 0x06000000, { (void (*)())func_8010E534_2BCDF4_name_41 }, { 0x5A3C } },
+    { 0x06000000, { (void (*)())func_8010E554_2BCE14_name_41 }, { 0x1E3C } },
     { 0x00000000, { (void*)0 }, { 0x1E } },
 };
 DecisionTreeNonLeafNode D_801111E4_2BFAA4_name_41[2] = {
@@ -496,11 +496,11 @@ DecisionTreeNonLeafNode D_80111610_2BFED0_name_41[6] = {
     { 0x00000000, { (void*)0 }, { 0xA1E } },
 };
 DecisionTreeNonLeafNode D_80111658_2BFF18_name_41[2] = {
-    { 0x06000000, { func_8010E4B4_2BCD74_name_41 }, { 0x5A3C } },
+    { 0x06000000, { (void (*)())func_8010E4B4_2BCD74_name_41 }, { 0x5A3C } },
     { 0x00000000, { (void*)0 }, { 0xA1E } },
 };
 DecisionTreeNonLeafNode D_80111670_2BFF30_name_41[2] = {
-    { 0x06000000, { func_8010E514_2BCDD4_name_41 }, { 0x5A3C } },
+    { 0x06000000, { (void (*)())func_8010E514_2BCDD4_name_41 }, { 0x5A3C } },
     { 0x00000000, { (void*)0 }, { 0xA1E } },
 };
 DecisionTreeNonLeafNode D_80111688_2BFF48_name_41[5] = {
@@ -2602,7 +2602,7 @@ void func_80107DB4_2B6674_name_41(void) {
             if ((coins != 0) & (coins < 5)) {
                 sprintf(buf, D_80111D88_2C0648_name_41, coins);
                 sprintf(buf2, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[0x1D] + gPlayers[gw->current_player_index].coins);
-                func_80056368_56F68(2, 0x17, (s32)buf, (s32)buf2, 0, 0, 0);
+                func_80056368_56F68(2, 0x17, buf, buf2, 0, 0, 0);
                 MBDlgWinClose();
                 D_800F8CE4_F98E4[0x1D] += gPlayers[gw->current_player_index].coins;
                 func_801060D4_2B4994_name_41();
@@ -2612,10 +2612,10 @@ void func_80107DB4_2B6674_name_41(void) {
                 func_80056124_56D24();
             } else if (gPlayers[gw->current_player_index].coins == 0) {
                 sprintf(buf, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[0x1D]);
-                func_80056368_56F68(2, 0x18, (s32)buf, 0, 0, 0, 0);
+                func_80056368_56F68(2, 0x18, buf, 0, 0, 0, 0);
             } else {
                 sprintf(buf, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[0x1D] + 5);
-                func_80056368_56F68(2, 0x16, (s32)buf, 0, 0, 0, 0);
+                func_80056368_56F68(2, 0x16, buf, 0, 0, 0, 0);
                 MBDlgWinClose();
                 D_800F8CE4_F98E4[0x1D] += 5;
                 func_801060D4_2B4994_name_41();
@@ -2630,7 +2630,7 @@ void func_80107DB4_2B6674_name_41(void) {
             func_8004655C_4715C(gw->current_player_index);
         } else if (D_800F8CE4_F98E4[0x1D] != 0) {
             sprintf(buf, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[0x1D]);
-            func_80056368_56F68(2, 0x19, (s32)buf, 0, 0, 0, 0);
+            func_80056368_56F68(2, 0x19, buf, 0, 0, 0, 0);
             MBDlgWinClose();
             func_8004CA34_4D634(gw->current_player_index, D_800F8CE4_F98E4[0x1D]);
             func_800614B4_620B4(gw->current_player_index, D_800F8CE4_F98E4[0x1D]);
@@ -2742,8 +2742,8 @@ void func_80108298_2B6B58_name_41(void) {
                 }
                 func_8008DAC0_8E6C0(0x28);
                 func_80056524_57124(0x28);
-                func_80056368_56F68(1, D_80110E58_2BF718_name_41[shop], names[0], (s32)names[1], (s32)names[2],
-                                    (s32)names[3], (s32)names[4]);
+                func_80056368_56F68(1, D_80110E58_2BF718_name_41[shop], names[0], names[1], names[2],
+                                    names[3], names[4]);
                 func_80056524_57124(0);
                 D_80111F7C_2C083C_name_41 = shop;
                 D_80111F80_2C0840_name_41 = enabled;
@@ -3266,7 +3266,7 @@ created:
         }
         msgs[1][1] = 0;
         items[2] = items[3] = 1;
-        func_80056368_56F68(7, 0x6B5, (s32)msgs[0], (s32)msgs[1], 0, 0, 0);
+        func_80056368_56F68(7, 0x6B5, msgs[0], msgs[1], 0, 0, 0);
         choice = func_8010537C_2B3C3C_name_41(items);
         MBDlgWinClose();
         func_80056168_56D68();
@@ -3299,7 +3299,7 @@ created:
                 k++;
             }
             items[3] = 1;
-            func_80056368_56F68(7, 0x6B8, (s32)msgs[0], (s32)msgs[1], (s32)msgs[2], 0, 0);
+            func_80056368_56F68(7, 0x6B8, msgs[0], msgs[1], msgs[2], 0, 0);
             sel = func_80105630_2B3EF0_name_41(choice, items);
             MBDlgWinClose();
             func_80056168_56D68();
@@ -3331,7 +3331,7 @@ created:
                 if (amount == -1) {
                     amount = gPlayers[D_80110E84_2BF744_name_41[gw->current_player_index][sel]].coins;
                     sprintf(msgs[0], "%d", amount);
-                    func_80056368_56F68(7, 0x6BF, (s32)msgs[0], 0, 0, 0, 0);
+                    func_80056368_56F68(7, 0x6BF, msgs[0], 0, 0, 0, 0);
                 } else {
                     for (i = 0; i < sizeof(D_80110F28_2BF7E8_name_41) / sizeof(D_80110F28_2BF7E8_name_41[0]); i++) {
                         if (gw->current_turn >= D_80110F28_2BF7E8_name_41[i].turnMin
@@ -3341,7 +3341,7 @@ created:
                         }
                     }
                     sprintf(msgs[0], "%d", amount);
-                    func_80056368_56F68(7, D_80110F92_2BF852_name_41[D_80110F28_2BF7E8_name_41[i].mess], (s32)msgs[0], 0,
+                    func_80056368_56F68(7, D_80110F92_2BF852_name_41[D_80110F28_2BF7E8_name_41[i].mess], msgs[0], 0,
                                         0, 0, 0);
                 }
                 MBDlgWinClose();
@@ -3972,7 +3972,7 @@ void func_8010C598_2BAE58_name_41(void) {
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
     str1[2] = 0;
-    func_80056368_56F68(-1, 0x1E2, (s32)str0, (s32)str1, 0, 0, 0);
+    func_80056368_56F68(-1, 0x1E2, str0, str1, 0, 0, 0);
     MBDlgWinClose();
     func_80056168_56D68();
     func_8010BE08_2BA6C8_name_41();
@@ -4303,7 +4303,7 @@ void func_8010DB70_2BC430_name_41(void) {
             names[0][1] = gPlayers[hit[0]].character;
             names[0][2] = 0;
             func_80056368_56F68(D_801110E8_2BF9A8_name_41[gw->current_board_index],
-                                D_801110D0_2BF990_name_41[gw->current_board_index] + 6, (s32)names[0], 0, 0, 0, 0);
+                                D_801110D0_2BF990_name_41[gw->current_board_index] + 6, names[0], 0, 0, 0, 0);
             func_80056458_57058();
             MBDlgWinClose();
             func_80056168_56D68();
@@ -4319,8 +4319,8 @@ void func_8010DB70_2BC430_name_41(void) {
             names[i][2] = 0;
         }
         func_80056368_56F68(D_801110E8_2BF9A8_name_41[gw->current_board_index],
-                            (count + 1) + D_801110D0_2BF990_name_41[gw->current_board_index], (s32)names[0],
-                            (s32)names[1], (s32)names[2], (s32)names[3], 0);
+                            (count + 1) + D_801110D0_2BF990_name_41[gw->current_board_index], names[0],
+                            names[1], names[2], names[3], 0);
         func_80056458_57058();
         if (gw->current_board_index == 4) {
             func_80056458_57058();
@@ -4654,7 +4654,7 @@ void func_8010EADC_2BD39C_name_41(void) {
             }
         } else if (D_800F8CE4_F98E4[idx] >= gPlayers[gw->current_player_index].coins) {
             sprintf(buf, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[idx] + 1);
-            func_80056368_56F68(0x18, 0x9B, (s32)buf, 0, 0, 0, 0);
+            func_80056368_56F68(0x18, 0x9B, buf, 0, 0, 0, 0);
             MBDlgWinClose();
             func_80056168_56D68();
             if (idx == 1) {
@@ -4665,7 +4665,7 @@ void func_8010EADC_2BD39C_name_41(void) {
         } else {
         retry:
             sprintf(buf, D_80111D88_2C0648_name_41, D_800F8CE4_F98E4[idx] + 1);
-            func_80056368_56F68(0x18, 0x9A, (s32)buf, 0, 0, 0, 0);
+            func_80056368_56F68(0x18, 0x9A, buf, 0, 0, 0, 0);
             choice = func_8010E5B8_2BCE78_name_41(idx);
             MBDlgWinClose();
             func_80056168_56D68();
@@ -4681,7 +4681,7 @@ void func_8010EADC_2BD39C_name_41(void) {
                 }
                 cpuWait = 0;
                 sprintf(buf, D_80111E58_2C0718_name_41, amount);
-                func_80056368_56F68(0x18, 0x9E, (s32)buf, 0, 0, 0, 0);
+                func_80056368_56F68(0x18, 0x9E, buf, 0, 0, 0, 0);
                 while (1) {
                     if (prev != amount) {
                         sprintf(buf, D_80111E58_2C0718_name_41, amount);
@@ -4898,7 +4898,7 @@ void func_8010F448_2BDD08_name_41(void) {
         HuPrcSleep(30);
     } else if (gPlayers[gw->current_player_index].coins != 0) {
         sprintf(buf, D_80111D88_2C0648_name_41, gPlayers[gw->current_player_index].coins);
-        func_80056368_56F68(0x17, 0xFB, (s32)buf, 0, 0, 0, 0);
+        func_80056368_56F68(0x17, 0xFB, buf, 0, 0, 0, 0);
         func_80056458_57058();
         func_80056458_57058();
         MBDlgWinClose();

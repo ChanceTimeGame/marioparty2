@@ -657,7 +657,7 @@ void func_80104B88_2C2B08_PirateDuel(void) {
         func_80089308_89F08(win, name, 2);
     }
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, D_80109D84_2C7D04_PirateDuel, -1, -1);
+    func_800890CC_89CCC(win, (void*)D_80109D84_2C7D04_PirateDuel, -1, -1);
     func_80057A78_58678((s16)win, D_80109D90_2C7D10_PirateDuel, D_80109D94_2C7D14_PirateDuel);
     if (D_80109D80_2C7D00_PirateDuel == 1 && (gPlayers[D_80109D90_2C7D10_PirateDuel].flags & 1) && (gPlayers[D_80109D94_2C7D14_PirateDuel].flags & 1)) {
         func_801070F4_2C5074_PirateDuel(0, 0, 0);
@@ -877,7 +877,7 @@ void func_801057B4_2C3734_PirateDuel(void) {
     func_8008DACC_8E6CC(1, size, 0x212);
     win = func_80104FB4_2C2F34_PirateDuel(70, 178, size[0], size[1], 0, 0, 200);
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, 0x212, -1, -1);
+    func_800890CC_89CCC(win, (void*)0x212, -1, -1);
     sel = 0;
     count = D_80109DA8_2C7D28_PirateDuel - 1;
     if (D_80109DA8_2C7D28_PirateDuel == 4) {
@@ -938,7 +938,7 @@ void func_801057B4_2C3734_PirateDuel(void) {
     }                                                                       \
     pad[j] = 0;                                                             \
     sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
-    func_800890CC_89CCC(win, (s32)buf, x, y)
+    func_800890CC_89CCC(win, buf, x, y)
 
 void func_80105A80_2C3A00_PirateDuel(void) {
     s32 stakes[6] = { 1, 5, 10, 20, 30, 50 };
@@ -989,7 +989,7 @@ void func_80105A80_2C3A00_PirateDuel(void) {
     win = func_80104FB4_2C2F34_PirateDuel(24, 72, size[0], size[1], 0, 0, 200);
     func_80089308_89F08(win, mess, 0);
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, 0x213, -1, -1);
+    func_800890CC_89CCC(win, (void*)0x213, -1, -1);
     HuPrcVSleep();
     func_80089284_89E84(win, 0x10004, 0x10004);
     PD_STAKE_SHOW(win, stake);
