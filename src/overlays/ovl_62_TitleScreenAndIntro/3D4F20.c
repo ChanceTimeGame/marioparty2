@@ -251,31 +251,169 @@ void func_80103100_3D5620_TitleScreenAndIntro(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010312C_3D564C_TitleScreenAndIntro);
+/* open a message window (MP1 OpeningScene func_800FC528) */
+s32 func_8010312C_3D564C_TitleScreenAndIntro(s32 x, s32 y, s32 cols, s32 rows) {
+    s16 temp_v0;
+    s32 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801031D0_3D56F0_TitleScreenAndIntro);
+    temp_v0 = func_800888A8_894A8(x, y, cols * 10 + 16, rows * 14 + 6, 0, 8);
+    win = temp_v0;
+    func_80089A48_8A648(win, 0);
+    func_80089B2C_8A72C(win, 0);
+    func_8008D88C_8E48C(temp_v0);
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801033F8_3D5918_TitleScreenAndIntro);
+/* show message mess in the scene's window (created on first use); wait -1: until it is closed,
+   > 0: that many frames */
+void func_801031D0_3D56F0_TitleScreenAndIntro(s32 mess, s32 wait) {
+    TextWindow* window;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103478_3D5998_TitleScreenAndIntro);
+    if (D_80111D50_3E4270_TitleScreenAndIntro == -1) {
+        D_80111D50_3E4270_TitleScreenAndIntro = func_8010312C_3D564C_TitleScreenAndIntro(
+            D_80111030_3E3550_TitleScreenAndIntro.x, D_80111030_3E3550_TitleScreenAndIntro.y,
+            D_80111030_3E3550_TitleScreenAndIntro.cols, D_80111030_3E3550_TitleScreenAndIntro.rows);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 2, 255, 0, 0);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 4, 0, 144, 0);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 5, 0, 176, 192);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 6, 255, 173, 0);
+        func_80089DA0_8A9A0((s16)D_80111D50_3E4270_TitleScreenAndIntro, 192, 192, 192);
+        func_8008D530_8E130((s16)D_80111D50_3E4270_TitleScreenAndIntro, 240, 240, 224);
+        func_80089B2C_8A72C((s16)D_80111D50_3E4270_TitleScreenAndIntro, 255);
+        func_80089C78_8A878((s16)D_80111D50_3E4270_TitleScreenAndIntro, 1);
+        window = &D_800F920C_F9E0C[D_80111D50_3E4270_TitleScreenAndIntro];
+        SprPrioSet(window->unk_6C, func_80089404_8A004((s16)D_80111D50_3E4270_TitleScreenAndIntro, 0xE0015, 131, 16, 0), 15000);
+    }
+    func_8008AD44_8B944((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+    func_80089DA0_8A9A0((s16)D_80111D50_3E4270_TitleScreenAndIntro, 192, 192, 192);
+    func_8008D530_8E130((s16)D_80111D50_3E4270_TitleScreenAndIntro, 240, 240, 224);
+    func_80089C78_8A878((s16)D_80111D50_3E4270_TitleScreenAndIntro, 1);
+    func_80089B2C_8A72C((s16)D_80111D50_3E4270_TitleScreenAndIntro, 255);
+    func_800890CC_89CCC((s16)D_80111D50_3E4270_TitleScreenAndIntro, mess, -1, -1);
+    func_8008D6F0_8E2F0((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+    if (wait == -1) {
+        while (func_8008BA30_8C630((s16)D_80111D50_3E4270_TitleScreenAndIntro) != 0) {
+            HuPrcVSleep();
+        }
+    } else if (wait > 0) {
+        HuPrcSleep(wait);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103498_3D59B8_TitleScreenAndIntro);
+/* show a message and close it after wait frames (0: when the player closes it); keep: leave it
+   open and return at once (MP1 func_800FC6BC) */
+void func_801033F8_3D5918_TitleScreenAndIntro(s32 mess, s32 wait, s32 keep) {
+    if (keep != 0) {
+        func_801031D0_3D56F0_TitleScreenAndIntro(mess, wait);
+        return;
+    }
+    func_801031D0_3D56F0_TitleScreenAndIntro(mess, 0);
+    if (wait == 0) {
+        while (func_8008BA30_8C630((s16)D_80111D50_3E4270_TitleScreenAndIntro) != 0) {
+            HuPrcVSleep();
+        }
+    } else {
+        HuPrcSleep(wait);
+    }
+    func_8008D5D8_8E1D8((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801034A4_3D59C4_TitleScreenAndIntro);
+void func_80103478_3D5998_TitleScreenAndIntro(void) {
+    func_8008D5D8_8E1D8((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801034C0_3D59E0_TitleScreenAndIntro);
+void func_80103498_3D59B8_TitleScreenAndIntro(void) {
+    D_80111D60_3E4280_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801035AC_3D5ACC_TitleScreenAndIntro);
+/* the full-screen fill (MP1 OpeningScene func_800FCAB0..func_800FCECC) */
+void func_801034A4_3D59C4_TitleScreenAndIntro(u8 r, u8 g, u8 b, u8 a) {
+    D_80111D5C_3E427C_TitleScreenAndIntro[0] = r;
+    D_80111D5C_3E427C_TitleScreenAndIntro[1] = g;
+    D_80111D5C_3E427C_TitleScreenAndIntro[2] = b;
+    D_80111D5C_3E427C_TitleScreenAndIntro[3] = a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010364C_3D5B6C_TitleScreenAndIntro);
+/* fade in from black: rot.x counts down from rot.y */
+void func_801034C0_3D59E0_TitleScreenAndIntro(omObjData* obj) {
+    f32 temp_f20;
+    f32 var_f2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103730_3D5C50_TitleScreenAndIntro);
+    temp_f20 = obj->rot.x;
+    var_f2 = temp_f20 / obj->rot.y;
+    if (var_f2 < 0.0f) {
+        var_f2 = 0.0f;
+    }
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, (u32)(var_f2 * 255.0f));
+    temp_f20 -= 1.0f;
+    if (temp_f20 < 0.0f) {
+        temp_f20 = 0.0f;
+    }
+    obj->rot.x = temp_f20;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801037D0_3D5CF0_TitleScreenAndIntro);
+omObjData* func_801035AC_3D5ACC_TitleScreenAndIntro(s32 time) {
+    f32 temp_f0;
+    omObjData* temp_v0;
+    s16 temp_s2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038A0_3D5DC0_TitleScreenAndIntro);
+    temp_s2 = func_801038A0_3D5DC0_TitleScreenAndIntro();
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, 255);
+    temp_v0 = omAddObj(0x1000, 0, 0, -1, func_801034C0_3D59E0_TitleScreenAndIntro);
+    temp_f0 = time;
+    omSetRot(temp_v0, temp_f0, temp_f0, 0.0f);
+    D_80111D60_3E4280_TitleScreenAndIntro = temp_s2;
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038D0_3D5DF0_TitleScreenAndIntro);
+/* fade out to black: rot.x counts up to rot.y */
+void func_8010364C_3D5B6C_TitleScreenAndIntro(omObjData* obj) {
+    f32 temp_f20;
+    f32 temp_f22;
+    f32 var_f2;
+
+    temp_f20 = obj->rot.x;
+    temp_f22 = obj->rot.y;
+    var_f2 = temp_f20 / temp_f22;
+    if (temp_f22 < var_f2) {
+        var_f2 = temp_f22;
+    }
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, (u32)(var_f2 * 255.0f));
+    temp_f20 += 1.0f;
+    if (temp_f22 < temp_f20) {
+        temp_f20 = temp_f22;
+    }
+    obj->rot.x = temp_f20;
+}
+
+omObjData* func_80103730_3D5C50_TitleScreenAndIntro(s32 time) {
+    omObjData* temp_v0;
+    s16 temp_s2;
+
+    temp_s2 = func_801038A0_3D5DC0_TitleScreenAndIntro();
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, 255);
+    temp_v0 = omAddObj(0x1000, 0, 0, -1, func_8010364C_3D5B6C_TitleScreenAndIntro);
+    omSetRot(temp_v0, 0.0f, (f32)time, 0.0f);
+    D_80111D60_3E4280_TitleScreenAndIntro = temp_s2;
+    return temp_v0;
+}
+
+void func_801037D0_3D5CF0_TitleScreenAndIntro(Gfx** gfx) {
+    gSPDisplayList((*gfx)++, D_80111040_3E3560_TitleScreenAndIntro);
+    gDPSetRenderMode((*gfx)++, 0x5041C8, 0);
+    gDPSetCombineMode((*gfx)++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetPrimColor((*gfx)++, 0, 0, D_80111D5C_3E427C_TitleScreenAndIntro[0], D_80111D5C_3E427C_TitleScreenAndIntro[1],
+                    D_80111D5C_3E427C_TitleScreenAndIntro[2], D_80111D5C_3E427C_TitleScreenAndIntro[3]);
+    gDPFillRectangle((*gfx)++, 0, 0, 320, 240);
+}
+
+s16 func_801038A0_3D5DC0_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_801037D0_3D5CF0_TitleScreenAndIntro, 2);
+}
+
+u8 func_801038D0_3D5DF0_TitleScreenAndIntro(void) {
+    return D_800FDBE0_FE7E0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038DC_3D5DFC_TitleScreenAndIntro);
 

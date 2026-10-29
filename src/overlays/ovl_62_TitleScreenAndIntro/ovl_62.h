@@ -216,7 +216,7 @@ void func_80103070_3D5590_TitleScreenAndIntro(void);
 void func_801030A0_3D55C0_TitleScreenAndIntro(void);
 void func_801030D0_3D55F0_TitleScreenAndIntro(void);
 void func_80103100_3D5620_TitleScreenAndIntro(void);
-s16 func_8010312C_3D564C_TitleScreenAndIntro(s16 x, s16 y, s32 cols, s32 rows);
+s32 func_8010312C_3D564C_TitleScreenAndIntro(s32 x, s32 y, s32 cols, s32 rows);
 void func_801031D0_3D56F0_TitleScreenAndIntro(s32 mess, s32 wait);
 void func_801033F8_3D5918_TitleScreenAndIntro(s32 mess, s32 wait, s32 keep);
 void func_80103478_3D5998_TitleScreenAndIntro(void);
