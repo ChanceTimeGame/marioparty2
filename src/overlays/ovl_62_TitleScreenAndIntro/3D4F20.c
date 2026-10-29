@@ -1067,7 +1067,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     omObjData* obj2;
     Process* prc;
     Ovl62ModelDef* def;
-    Ovl62PropDef* prop;
+    Ovl62ModelPlace* prop;
     f32 t;
     s32 i;
     s32 dir;
@@ -1085,8 +1085,8 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[0];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 4);
@@ -1094,52 +1094,52 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 6);
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 7);
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 8);
-    D_80111D78_3E4298_TitleScreenAndIntro[0] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[0] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[0]->pos, -500.0f, 0.0f, -160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], -90.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[1];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 4);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 5);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 6);
-    D_80111D78_3E4298_TitleScreenAndIntro[1] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[1] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[1]->pos, 590.0f, 0.0f, -160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 90.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[2];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(2, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(2, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(2, 4);
-    D_80111D78_3E4298_TitleScreenAndIntro[2] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[2] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, -700.0f, 0.0f, -160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -90.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[3];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 4);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 5);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 6);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 7);
-    D_80111D78_3E4298_TitleScreenAndIntro[3] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[3] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[3]->pos, 800.0f, 0.0f, -160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 90.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[4];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 4);
@@ -1156,33 +1156,33 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 23);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 24);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 25);
-    D_80111D78_3E4298_TitleScreenAndIntro[4] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[4] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 0.0f, 560.0f, 280.0f);
     D_80111D78_3E4298_TitleScreenAndIntro[4]->attr |= 1;
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[5];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 2);
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 4);
-    D_80111D78_3E4298_TitleScreenAndIntro[5] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[5] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[5]->pos, -950.0f, 0.0f, -160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -90.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[5]->obj->model, 5, 0);
     func_80029AFC_2A6FC(*D_80111D78_3E4298_TitleScreenAndIntro[5]->obj->model);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[6];
     mot[0] = 4;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    mot[3] = def->mot[2].file;
-    mot[4] = def->mot[3].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    mot[3] = def->mots[2].file;
+    mot[4] = def->mots[3].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 4);
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 9);
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 5);
-    D_80111D78_3E4298_TitleScreenAndIntro[6] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[6] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     func_80105658_3D7B78_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 430.00003f, 0.0f, 209.99998f);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[6]->obj->model, 8, D_80111780_3E3CA0_TitleScreenAndIntro[0].file);
     func_80029AFC_2A6FC(*D_80111D78_3E4298_TitleScreenAndIntro[6]->obj->model);
@@ -1209,7 +1209,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 2);
     func_80105758_3D7C78_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], -1.0f, 0.0f, 0.0f);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 20);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 20);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 20);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 10.0f);
     HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
@@ -1307,11 +1307,11 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110E60_3E3380_TitleScreenAndIntro(5, 2, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0); /* retail: slot 3 again after slot 5's motion */
     HuPrcSleep(11);
-    obj = OVL62_8010FB2C();
+    obj = func_8010FB2C_3E204C_TitleScreenAndIntro();
     MBModelDispOn(D_80111D78_3E4298_TitleScreenAndIntro[4]);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 2, 8, 8, 2);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 180.0f, 280.0f, 40);
-    obj2 = OVL62_80110AE4();
+    obj2 = func_80110AE4_3E3004_TitleScreenAndIntro();
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 60.000004f, 0.0f, -110.0f, 16);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, -80.0f, 16);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -140.0f, 0.0f, -90.0f, 16);
@@ -1403,7 +1403,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_8010FC98_3E21B8_TitleScreenAndIntro(objPos.x, objPos.y, objPos.z);
     omDelObj(obj2);
     HuPrcSleep(3);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 160, 30);
+    func_8010DCA4_3E01C4_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 160, 30);
     func_80103BD4_3D60F4_TitleScreenAndIntro(0);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 2);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 2);
@@ -1708,7 +1708,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(44);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
     HuPrcSleep(30);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, 160, 20);
+    func_8010DCA4_3E01C4_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, 160, 20);
     HuPrcSleep(8);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, 0.0f, pos.z, 8.0f);
@@ -1765,7 +1765,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
     func_8010F328_3E1848_TitleScreenAndIntro();
     HuPrcSleep(20);
-    omSetTra(OVL62_8010FE44(), cur.x, cur.y, cur.z);
+    omSetTra(func_8010FE44_3E2364_TitleScreenAndIntro(), cur.x, cur.y, cur.z);
     HuPrcSleep(30);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 7, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, D_801113E0_3E3900_TitleScreenAndIntro[3].file);
@@ -1809,7 +1809,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
-    prc = OVL62_8010FAB4();
+    prc = func_8010FAB4_3E1FD4_TitleScreenAndIntro();
     for (i = 0; i < 6; i++) {
         if (i != 5) {
             MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 1, 8, 8, 2);
@@ -1853,14 +1853,14 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     D_80111DF8_3E4318_TitleScreenAndIntro[3] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
     func_8010E5B0_3E0AD0_TitleScreenAndIntro(120);
     HuPrcSleep(80);
-    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
+    func_8010DB5C_3E007C_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 209.99998f, 16.0f);
     HuPrcSleep(16);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 209.99998f, 32);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
     func_801109F4_3E2F14_TitleScreenAndIntro(0x4CD, 120);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 10);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, 0.0f, pos.z, 8.0f);
     HuPrcSleep(8);
@@ -1879,26 +1879,26 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(3);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[8];
     mot[0] = 6;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    mot[3] = def->mot[2].file;
-    mot[4] = def->mot[3].file;
-    mot[5] = def->mot[4].file;
-    mot[6] = def->mot[5].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[8] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    mot[3] = def->mots[2].file;
+    mot[4] = def->mots[3].file;
+    mot[5] = def->mots[4].file;
+    mot[6] = def->mots[5].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[8] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[8]->pos, 0.0f, -300.0f, -190.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8], 0.0f);
     HuPrcSleep(3);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[7];
     mot[0] = 3;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    mot[3] = def->mot[2].file;
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    mot[3] = def->mots[2].file;
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 4);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 5);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 6);
-    D_80111D78_3E4298_TitleScreenAndIntro[7] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    D_80111D78_3E4298_TitleScreenAndIntro[7] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, -650.0f, 0.0f, 160.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -90.0f);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[7]->obj->model, 6, D_8011180C_3E3D2C_TitleScreenAndIntro[0].file);
@@ -1915,7 +1915,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 16.0f);
     HuPrcSleep(16);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 32);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 32);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 32);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, 0.0f, pos.z, 16.0f);
@@ -2023,7 +2023,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
     HuPrcSleep(16);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], 230.0f, 0.0f, 160.0f, 60);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 60);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 60);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.z += 4.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
@@ -2061,9 +2061,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[0];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[0] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[0] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[0]->pos, 130.0f, 0.0f, -170.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 0.0f);
     HuPrcSleep(1);
@@ -2080,9 +2080,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[1];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[1] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[1] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[1]->pos, 270.0f, 0.0f, -10.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 60.0f);
     HuPrcSleep(1);
@@ -2098,9 +2098,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[2];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[2] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[2] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, -130.0f, 0.0f, -120.00001f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -62.0f);
     HuPrcSleep(1);
@@ -2116,9 +2116,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[3];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[3] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[3] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[3]->pos, 209.99998f, 0.0f, -150.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 24.0f);
     HuPrcSleep(1);
@@ -2133,9 +2133,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 16);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[4];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[4] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[4] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 40.0f, 0.0f, -40.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], -43.0f);
     HuPrcSleep(1);
@@ -2150,9 +2150,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[5];
     mot[0] = 2;
-    mot[1] = def->mot[0].file;
-    mot[2] = def->mot[1].file;
-    D_80111D78_3E4298_TitleScreenAndIntro[5] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
+    mot[1] = def->mots[0].file;
+    mot[2] = def->mots[1].file;
+    D_80111D78_3E4298_TitleScreenAndIntro[5] = func_80110CAC_3E31CC_TitleScreenAndIntro(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[5]->pos, -40.0f, 0.0f, -170.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], 0.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[5]->obj->model, 5, 0);
@@ -2181,8 +2181,8 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(16);
     func_8010E408_3E0928_TitleScreenAndIntro(60);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -350.0f, 0.0f, 160.0f, 40);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 10);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 160, 30);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 10);
+    func_8010DCA4_3E01C4_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 160, 30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.z += 4.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
@@ -2605,15 +2605,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[6];
     D_80111DF8_3E4318_TitleScreenAndIntro[6] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
     func_8010E210_3E0730_TitleScreenAndIntro(180);
-    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 15);
+    func_8010DB5C_3E007C_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 15);
     HuPrcSleep(15);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 7, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z, 8.0f);
     HuPrcSleep(8);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z, 30);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
     func_801109F4_3E2F14_TitleScreenAndIntro(0x4D7, 90);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 8);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 8);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
@@ -2683,8 +2683,8 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 90);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 60);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
+    func_8010DE00_3E0320_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 60);
+    func_8010DCA4_3E01C4_TitleScreenAndIntro(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
     func_80103A54_3D5F74_TitleScreenAndIntro();
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 7);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 8);
@@ -3598,8 +3598,8 @@ void func_8010F988_3E1EA8_TitleScreenAndIntro(void) {
     }
 }
 
-void func_8010FAB4_3E1FD4_TitleScreenAndIntro(void) {
-    omAddPrcObj(func_8010F988_3E1EA8_TitleScreenAndIntro, 0x3E8, 0, 0);
+Process* func_8010FAB4_3E1FD4_TitleScreenAndIntro(void) {
+    return omAddPrcObj(func_8010F988_3E1EA8_TitleScreenAndIntro, 0x3E8, 0, 0);
 }
 
 /* model 7 stays 600 above model 4 */
@@ -3609,7 +3609,7 @@ void func_8010FAE0_3E2000_TitleScreenAndIntro(void) {
                         D_80111D78_3E4298_TitleScreenAndIntro[4]->pos.z);
 }
 
-void func_8010FB2C_3E204C_TitleScreenAndIntro(void) {
+omObjData* func_8010FB2C_3E204C_TitleScreenAndIntro(void) {
     Vec pos;
     s32 file;
 
@@ -3617,7 +3617,7 @@ void func_8010FB2C_3E204C_TitleScreenAndIntro(void) {
     file = D_8011194C_3E3E6C_TitleScreenAndIntro[7].file;
     D_80111DF8_3E4318_TitleScreenAndIntro[7] = func_80105460_3D7980_TitleScreenAndIntro(file, pos.x, pos.y + 600.0f, pos.z, 1.0f, 0x6A9);
     func_8002979C_2A39C(D_80111DF8_3E4318_TitleScreenAndIntro[7], 0.0f, 90.0f, 0.0f);
-    omAddObj(6, 0, 0, -1, func_8010FAE0_3E2000_TitleScreenAndIntro);
+    return omAddObj(6, 0, 0, -1, func_8010FAE0_3E2000_TitleScreenAndIntro);
 }
 
 /* model 7 rises 300 from the object's position over 30 frames, then is killed */
@@ -3662,8 +3662,11 @@ void func_8010FD28_3E2248_TitleScreenAndIntro(omObjData* obj) {
     obj->rot.x += 1.0f;
 }
 
-void func_8010FE44_3E2364_TitleScreenAndIntro(void) {
-    omAddObj(6, 0, 0, -1, func_8010FD28_3E2248_TitleScreenAndIntro)->rot.x = 0.0f;
+omObjData* func_8010FE44_3E2364_TitleScreenAndIntro(void) {
+    omObjData* obj = omAddObj(6, 0, 0, -1, func_8010FD28_3E2248_TitleScreenAndIntro);
+
+    obj->rot.x = 0.0f;
+    return obj;
 }
 
 /* a smoke puff: a particle model (from sprite `sprite`, or the default puff file when -1) at
@@ -3929,8 +3932,8 @@ void func_80110A7C_3E2F9C_TitleScreenAndIntro(omObjData* obj) {
     func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
 }
 
-void func_80110AE4_3E3004_TitleScreenAndIntro(void) {
-    omAddObj(6, 0, 0, -1, func_80110A7C_3E2F9C_TitleScreenAndIntro);
+omObjData* func_80110AE4_3E3004_TitleScreenAndIntro(void) {
+    return omAddObj(6, 0, 0, -1, func_80110A7C_3E2F9C_TitleScreenAndIntro);
 }
 
 /* free character `chr`'s texture animation of set 1 (func_80025384's) */

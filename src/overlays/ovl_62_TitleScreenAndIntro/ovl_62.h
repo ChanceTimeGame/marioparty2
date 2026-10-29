@@ -289,40 +289,47 @@ void func_80105880_3D7DA0_TitleScreenAndIntro(void);
 Process* func_801059F0_3D7F10_TitleScreenAndIntro(void);
 void func_80105A1C_3D7F3C_TitleScreenAndIntro(void);
 
-/* ---- 62-B ---- */
+/* ---- the opening's cast (62-B and 62-C) ---- */
 
-/* The opening's cast. Model slot i (D_80111D78[i]) is made from D_80111874[i]: 0-5 the six
-   characters, 6 the host, 7 and 8 the two models of the second scene. A slot's motions are its
-   table D_80111874[i].mot; 80110D8C(i, m) loads motion m (its id goes in .id), 80110DDC(i, m)
-   frees it, 80110E60(i, m, ...) plays it. */
+/* one motion of an opening model: file, loaded motion (-1 none; read as s16 through its low
+   half), and a name the overlay never reads */
 typedef struct Ovl62Motion {
     /* 0x00 */ s32 file;
-    /* 0x04 */ s32 id;     /* the loaded motion, -1 when not loaded */
-    /* 0x08 */ char* name; /* "0".."17", or "" */
+    /* 0x04 */ s32 mot;
+    /* 0x08 */ char* name;
 } Ovl62Motion; /* size = 0xC */
 
+/* an opening model (D_80111874[9]): 80110CAC's arguments and its motions */
 typedef struct Ovl62ModelDef {
     /* 0x00 */ s32 file;
-    /* 0x04 */ s32 attr;  /* MBModelFileCreate's second argument (13) */
-    /* 0x08 */ f32 unk08; /* 180, unused here */
+    /* 0x04 */ s32 attr;
+    /* 0x08 */ f32 unk08;
     /* 0x0C */ f32 sx;    /* MBModelFileCreate's scales */
     /* 0x10 */ f32 sy;
-    /* 0x14 */ Ovl62Motion* mot;
+    /* 0x14 */ Ovl62Motion* mots;
 } Ovl62ModelDef; /* size = 0x18 */
+
+/* how many motions of which model 80110CCC marks unloaded (D_80111AF0[9]) */
+typedef struct Ovl62MotCount {
+    /* 0x00 */ s32 def;
+    /* 0x04 */ s32 count;
+} Ovl62MotCount;
+
+/* a model placement (D_8011194C[16]): file, position, rotation, scale */
+typedef struct Ovl62ModelPlace {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ Vec pos;
+    /* 0x10 */ f32 rot;
+    /* 0x14 */ f32 scale;
+} Ovl62ModelPlace; /* size = 0x18 */
+
+/* ---- 62-B ---- */
 
 /* A texture file swapped onto a model (80110BF0's third argument). */
 typedef struct Ovl62File {
     /* 0x00 */ s32 file;
     /* 0x04 */ s32 unk04;
 } Ovl62File; /* size = 0x8 */
-
-/* A prop (80105460/80105504); only the file is read here. */
-typedef struct Ovl62PropDef {
-    /* 0x00 */ s32 file;
-    /* 0x04 */ Vec pos;   /* {0, 0, -0} */
-    /* 0x10 */ f32 rotY;  /* 180 */
-    /* 0x14 */ f32 scale; /* 1 */
-} Ovl62PropDef; /* size = 0x18 */
 
 #include "game/hmfman.h" /* D_800F92B4: motion lengths */
 
@@ -345,9 +352,7 @@ extern Ovl62File D_8011180C_3E3D2C_TitleScreenAndIntro[2];
 extern Ovl62Motion D_8011181C_3E3D3C_TitleScreenAndIntro[6]; /* slot 8 */
 extern Ovl62File D_80111864_3E3D84_TitleScreenAndIntro[2];
 extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
-extern Ovl62PropDef D_8011194C_3E3E6C_TitleScreenAndIntro[16];
-extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* {0, 100, 2530}: the script moves z (fork C's data) */
-extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* {0, 260, -3000}: likewise */
+extern Ovl62ModelPlace D_8011194C_3E3E6C_TitleScreenAndIntro[16];
 
 /* .bss, asm */
 extern MBModel* D_80111D78_3E4298_TitleScreenAndIntro[32]; /* the cast (slots 0-8 used) */
@@ -378,50 +383,11 @@ void omSetTra(omObjData*, f32, f32, f32);
 /* Fork C's helpers called with the types their registers show (62-B, reported to the
    coordinator): these return what the script keeps, take a Vec*, or (80110CAC) pass
    MBModelFileCreate's float scales. Drop the casts once the 62-C prototypes agree. */
-#define OVL62_MODEL_CREATE ((MBModel* (*)(s32, s32, f32, f32, u32*))func_80110CAC_3E31CC_TitleScreenAndIntro)
-#define OVL62_8010FAB4 ((Process* (*)(void))func_8010FAB4_3E1FD4_TitleScreenAndIntro)
-#define OVL62_8010FB2C ((omObjData* (*)(void))func_8010FB2C_3E204C_TitleScreenAndIntro)
-#define OVL62_8010FE44 ((omObjData* (*)(void))func_8010FE44_3E2364_TitleScreenAndIntro)
-#define OVL62_80110AE4 ((omObjData* (*)(void))func_80110AE4_3E3004_TitleScreenAndIntro)
-#define OVL62_8010DB5C ((void (*)(Vec*, s32, s32))func_8010DB5C_3E007C_TitleScreenAndIntro)
-#define OVL62_8010DCA4 ((void (*)(Vec*, s32, s32))func_8010DCA4_3E01C4_TitleScreenAndIntro)
-#define OVL62_8010DE00 ((void (*)(Vec*, s32))func_8010DE00_3E0320_TitleScreenAndIntro)
 
 void func_80105AB8_3D7FD8_TitleScreenAndIntro(void); /* the intro script */
 
 /* ---- 62-C ---- */
 
-/* one motion of an opening model: file, loaded motion (-1 none; read as s16 through its low
-   half), and a name the overlay never reads */
-typedef struct Ovl62Motion {
-    /* 0x00 */ s32 file;
-    /* 0x04 */ s32 mot;
-    /* 0x08 */ char* name;
-} Ovl62Motion; /* size = 0xC */
-
-/* an opening model (D_80111874[9]): 80110CAC's arguments and its motions */
-typedef struct Ovl62ModelDef {
-    /* 0x00 */ s32 file;
-    /* 0x04 */ s32 attr;
-    /* 0x08 */ f32 unk08;
-    /* 0x0C */ f32 unk0C;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ Ovl62Motion* mots;
-} Ovl62ModelDef; /* size = 0x18 */
-
-/* how many motions of which model 80110CCC marks unloaded (D_80111AF0[9]) */
-typedef struct Ovl62MotCount {
-    /* 0x00 */ s32 def;
-    /* 0x04 */ s32 count;
-} Ovl62MotCount;
-
-/* a model placement (D_8011194C[16]): file, position, rotation, scale */
-typedef struct Ovl62ModelPlace {
-    /* 0x00 */ s32 file;
-    /* 0x04 */ Vec pos;
-    /* 0x10 */ f32 rot;
-    /* 0x14 */ f32 scale;
-} Ovl62ModelPlace; /* size = 0x18 */
 
 /* the 0x1C slots of D_80111E38 start with a sprite group. Retail has two arrays here,
    D_80111E38 (2 slots) and D_80111E70 (14): the opening's clear loops run 16 slots from
@@ -468,15 +434,12 @@ s32 PlaySound(s32);
 
 /* 62 .data (asm) */
 extern s32 D_8011186C_3E3D8C_TitleScreenAndIntro[2]; /* {file, 0} */
-extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
-extern Ovl62ModelPlace D_8011194C_3E3E6C_TitleScreenAndIntro[16];
 extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* title camera position */
 extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* target */
 extern Vec D_80111AE4_3E4004_TitleScreenAndIntro; /* up */
 extern Ovl62MotCount D_80111AF0_3E4010_TitleScreenAndIntro[9];
 
 /* 62 .bss (asm) */
-extern MBModel* D_80111D78_3E4298_TitleScreenAndIntro[9]; /* the opening's models, by def */
 extern s16 D_80111DF8_3E4318_TitleScreenAndIntro[32];     /* model ids */
 extern s32 D_80111E70_3E4390_TitleScreenAndIntro[14][7];
 extern s16 D_80111FF8_3E4518_TitleScreenAndIntro;         /* the title music */
@@ -527,13 +490,13 @@ void func_8010F540_3E1A60_TitleScreenAndIntro(void);
 void func_8010F5AC_3E1ACC_TitleScreenAndIntro(void);
 void func_8010F95C_3E1E7C_TitleScreenAndIntro(void);
 void func_8010F988_3E1EA8_TitleScreenAndIntro(void);
-void func_8010FAB4_3E1FD4_TitleScreenAndIntro(void);
+Process* func_8010FAB4_3E1FD4_TitleScreenAndIntro(void);
 void func_8010FAE0_3E2000_TitleScreenAndIntro(void);
-void func_8010FB2C_3E204C_TitleScreenAndIntro(void);
+omObjData* func_8010FB2C_3E204C_TitleScreenAndIntro(void);
 void func_8010FBD4_3E20F4_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_8010FC98_3E21B8_TitleScreenAndIntro(f32 x, f32 y, f32 z);
 void func_8010FD28_3E2248_TitleScreenAndIntro(omObjData* obj);
-void func_8010FE44_3E2364_TitleScreenAndIntro(void);
+omObjData* func_8010FE44_3E2364_TitleScreenAndIntro(void);
 omObjData* func_8010FE7C_3E239C_TitleScreenAndIntro(s16 sprite, f32 x, f32 y, f32 z, f32 scale); /* smoke puff */
 void func_801100B0_3E25D0_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_80110238_3E2758_TitleScreenAndIntro(s16 sprite, Vec* pos, Vec* dir, f32 scale);
@@ -546,7 +509,7 @@ void func_80110964_3E2E84_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_801109F4_3E2F14_TitleScreenAndIntro(s32 mess, s32 time); /* 801033F8(mess, 0, 1) */
 void func_80110A58_3E2F78_TitleScreenAndIntro(s32 mess, s32 time);
 void func_80110A7C_3E2F9C_TitleScreenAndIntro(omObjData* obj);
-void func_80110AE4_3E3004_TitleScreenAndIntro(void);
+omObjData* func_80110AE4_3E3004_TitleScreenAndIntro(void);
 void func_80110B18_3E3038_TitleScreenAndIntro(s32 chr); /* free texture animation set 1 */
 void func_80110B84_3E30A4_TitleScreenAndIntro(s32 chr); /* set 2 */
 void func_80110BF0_3E3110_TitleScreenAndIntro(s16 model, s16 chr, s32 file); /* texture animation set 1 */
