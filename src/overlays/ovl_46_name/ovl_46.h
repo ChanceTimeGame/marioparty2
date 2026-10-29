@@ -293,15 +293,15 @@ typedef struct Ovl46Bob {
 } Ovl46Bob; /* size 0x0C */
 
 extern s32 D_80108228_2F7158_name_46[2]; /* each side's CPU press frame (D_8010822C is [1]) */
-extern s32 D_8010822C_2F715C_name_46; /* the opponent's CPU press frame */
+#define D_8010822C_2F715C_name_46 (D_80108228_2F7158_name_46[1]) /* one object: the host gives each extern its own storage */
 extern s32 D_80108230_2F7160_name_46; /* the outcome: 1 draw, 2 challenger wins, 3 opponent wins */
 extern s32 D_80108238_2F7168_name_46[2]; /* each side's press frame, -1 until pressed */
 extern s32 D_8010824C_2F717C_name_46; /* a model (stored as s32, read as s16) */
 extern MBModel* D_80108250_2F7180_name_46[2];
 extern MBModel* D_80108258_2F7188_name_46[2]; /* each side's stand (D_8010825C is [1]) */
-extern MBModel* D_8010825C_2F718C_name_46;
+#define D_8010825C_2F718C_name_46 (D_80108258_2F7188_name_46[1]) /* one object: the host gives each extern its own storage */
 extern MBModel* D_80108260_2F7190_name_46[2]; /* each side's button (D_80108264 is [1]) */
-extern MBModel* D_80108264_2F7194_name_46;
+#define D_80108264_2F7194_name_46 (D_80108260_2F7190_name_46[1]) /* one object: the host gives each extern its own storage */
 extern s16 D_80108268_2F7198_name_46[2]; /* each side's time display */
 extern s16 D_80108270_2F71A0_name_46;
 extern MBModel* D_80108274_2F71A4_name_46; /* the referee */

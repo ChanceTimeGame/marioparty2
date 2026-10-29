@@ -293,7 +293,7 @@ extern s32 D_8010A060_2C7FE0_PirateDuel; /* no referee (flag 0x17 clear) */
 extern s16 D_8010A064_2C7FE4_PirateDuel[3]; /* the three sword sprite files */
 /* the five moves' sprites, the challenger's then the opponent's (D_8010A070[5] is D_8010A07A[0]) */
 extern s16 D_8010A070_2C7FF0_PirateDuel[10];
-extern s16 D_8010A07A_2C7FFA_PirateDuel[5];
+#define D_8010A07A_2C7FFA_PirateDuel (&D_8010A070_2C7FF0_PirateDuel[5]) /* one object */
 extern s16 D_8010A084_2C8004_PirateDuel;
 extern s16 D_8010A086_2C8006_PirateDuel;
 extern s16 D_8010A088_2C8008_PirateDuel[2];
