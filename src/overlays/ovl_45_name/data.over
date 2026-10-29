@@ -1,0 +1,5 @@
+# mp2boarddata.py overrides for ovl_45 .data (3E's twins of 41's two)
+D_80110E9C_2EF5CC_name_45 u8[6][2]   # signpost model ids: the label at +1 is C's and asm's
+D_8011177C_2EFEAC_name_45 s16[4]     # steal messages: the label at -0xE is C's (indexed by message 7-10)
+D_801114E4 BoardEventListEntry[4]   # two event lists, the second unlabelled
+D_80111AB4 Vec[4]                   # per rider slot (the extern has no bound)

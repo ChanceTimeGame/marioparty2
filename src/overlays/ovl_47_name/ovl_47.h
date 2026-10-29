@@ -19,7 +19,7 @@
 
 #include "game/window.h" /* D_800F920C_F9E0C */
 extern s32 D_800CCC18_CD818;
-extern s32 D_800CC6A8_CD2A8[]; /* per board: the guide's model */
+extern s32* D_800CC6A8_CD2A8[]; /* per board: the guide's model */
 extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */
 extern s16 D_800F8D12_F9912;
 extern s16 D_800CD414_CE014;
@@ -43,7 +43,7 @@ void MBModelKill(void*);
 void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void func_8005B338_5BF38(void*);
-UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+UnkMBGuideData* func_80050304_50F04(void*, s32); /* MBGuideCreate */
 void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
@@ -130,7 +130,7 @@ extern f32 D_801109DC_3052DC_name_47[9]; /* per board */
 extern s32 D_80110A00_305300_name_47;
 extern u8 D_80110A04_305304_name_47[3][4]; /* steal-a-star chance by turn band, coin band */
 extern s16 D_80110A2C_30532C_name_47[7][2]; /* star space marker offsets */
-extern s16 D_80110A48_305348_name_47[2][2];
+extern s16 D_80110A48_305348_name_47[3][2];
 extern s16 D_80110A4C_30534C_name_47[2][2];
 extern s16 D_80110A54_305354_name_47[2];
 extern s16 D_80110A58_305358_name_47[2][2]; /* signpost marker offsets */
@@ -216,7 +216,7 @@ void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void SprAnimKill(s16 animIdx);
 void SprKill(s16 idx);
 s16 func_80044800_45400(void* tree); /* MBComTreeExec: the CPU's choice */
-extern s32 D_80111200_305B00_name_47[]; /* decision tree */
+extern DecisionTreeNonLeafNode D_80111200_305B00_name_47[]; /* decision tree */
 void MBPlayerForwardSet(s16 playerNo);
 void func_80061518_62118(void);
 void func_80061584_62184(void);
@@ -231,16 +231,16 @@ s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 void func_80063734_64334(Vec* arg0);
 void CameraScissorSet(s16, void*);
 extern f32 D_80111850_306150_name_47[4]; /* scissor box {0, 0, 320, 240} */
-extern s32 D_80111C50_306550_name_47[]; /* decision trees (CPU item use) */
-extern s32 D_80111CB0_3065B0_name_47[];
-extern s32 D_80111E18_306718_name_47[];
-extern s32 D_80111F50_306850_name_47[];
+extern DecisionTreeNonLeafNode D_80111C50_306550_name_47[]; /* decision trees (CPU item use) */
+extern DecisionTreeNonLeafNode D_80111CB0_3065B0_name_47[];
+extern DecisionTreeNonLeafNode D_80111E18_306718_name_47[];
+extern DecisionTreeNonLeafNode D_80111F50_306850_name_47[];
 s16 GetCurrentPlayerIndex(void);
 s16 RNGPercentChance(s8 arg0);
 extern u8 D_800CC000[]; /* item prices */
-extern s32 D_80111FB0_3068B0_name_47[]; /* decision trees (CPU shop) */
-extern s32 D_80111FC8_3068C8_name_47[];
-extern s32 D_80112070_306970_name_47[]; /* decision tree (CPU yes/no) */
+extern DecisionTreeNonLeafNode D_80111FB0_3068B0_name_47[]; /* decision trees (CPU shop) */
+extern DecisionTreeNonLeafNode D_80111FC8_3068C8_name_47[];
+extern DecisionTreeNonLeafNode D_80112070_306970_name_47[]; /* decision tree (CPU yes/no) */
 extern s32 D_801120A0_3069A0_name_47; /* set: the CPU's next answer is option 2 */
 extern u8* D_801120EC_3069EC_name_47[]; /* per character: items the CPU tries to buy */
 extern s8* D_8011214C_306A4C_name_47[]; /* per character: their percent chances */
@@ -258,7 +258,7 @@ void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
-void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+void func_80056368_56F68(s16, u32, char*, char*, char*, char*, char*); /* message with up to five strings */
 s32 MBRand(f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800629F0_635F0(s32 player, s16); /* status window */
@@ -318,7 +318,7 @@ f32 __sinf(f32);
 extern Unk3ERange D_80110EA0_3057A0_name_47[6]; /* turn range -> star price */
 extern Unk3ERange D_80110EB4_3057B4_name_47[14]; /* press count range -> discount */
 extern u16 ContDStkTrg[4];
-void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void MBWinInsertOpen(s32 arg0, char* arg1, char* arg2, char* arg3, char* arg4, char* arg5);
 void func_80055E3C_56A3C(s32 arg0);
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
    layout-dependent label, keep the data in place on the host. */
@@ -328,7 +328,7 @@ omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 Process* MBDCameraZoomMotStart(f32 arg0);
 void MBDlgWinExec(s32 arg0, s32 arg1);
-void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void func_80056368_56F68(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6); /* message window: up to five strings */
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_80078EC8_79AC8(void);
@@ -597,5 +597,8 @@ void func_8005660C_5720C(s16 arg0, s16 arg1); /* MBPlayerPosMasuSet */
 extern s16 D_8011170C_30600C_name_47[2]; /* the launcher's facing: from space [1] toward [0] */
 extern s16 D_80111710_306010_name_47[2]; /* per side: launch space */
 extern s16 D_80111714_306014_name_47[2]; /* per side: landing chain space */
+
+extern u8 D_80110B10_305410_name_47[6][2]; /* data.over: signpost model ids */
+extern s16 D_80110F58_305858_name_47[4]; /* data.over: steal messages */
 
 #endif

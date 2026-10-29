@@ -19,7 +19,7 @@
 
 #include "game/window.h" /* D_800F920C_F9E0C */
 extern s32 D_800CCC18_CD818;
-extern s32 D_800CC6A8_CD2A8[]; /* per board: the guide's model */
+extern s32* D_800CC6A8_CD2A8[]; /* per board: the guide's model */
 extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */
 extern s16 D_800F8D12_F9912;
 extern s16 D_800CD414_CE014;
@@ -43,7 +43,7 @@ void MBModelKill(void*);
 void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void func_8005B338_5BF38(void*);
-UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+UnkMBGuideData* func_80050304_50F04(void*, s32); /* MBGuideCreate */
 void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
@@ -223,16 +223,16 @@ s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 void func_80063734_64334(Vec* arg0);
 void CameraScissorSet(s16, void*);
 extern f32 D_80113D80_31E230_name_49[4]; /* scissor box {0, 0, 320, 240} */
-extern s32 D_801142B8_31E768_name_49[]; /* decision trees (CPU item use) */
-extern s32 D_80114318_31E7C8_name_49[];
-extern s32 D_801144C8_31E978_name_49[];
-extern s32 D_80114630_31EAE0_name_49[];
+extern DecisionTreeNonLeafNode D_801142B8_31E768_name_49[]; /* decision trees (CPU item use) */
+extern DecisionTreeNonLeafNode D_80114318_31E7C8_name_49[];
+extern DecisionTreeNonLeafNode D_801144C8_31E978_name_49[];
+extern DecisionTreeNonLeafNode D_80114630_31EAE0_name_49[];
 s16 GetCurrentPlayerIndex(void);
 s16 RNGPercentChance(s8 arg0);
 extern u8 D_800CC000[]; /* item prices */
-extern s32 D_80114690_31EB40_name_49[]; /* decision trees (CPU shop) */
-extern s32 D_801146A8_31EB58_name_49[];
-extern s32 D_801146C0_31EB70_name_49[]; /* decision tree (CPU yes/no) */
+extern DecisionTreeNonLeafNode D_80114690_31EB40_name_49[]; /* decision trees (CPU shop) */
+extern DecisionTreeNonLeafNode D_801146A8_31EB58_name_49[];
+extern DecisionTreeNonLeafNode D_801146C0_31EB70_name_49[]; /* decision tree (CPU yes/no) */
 extern s32 D_801146D8_31EB88_name_49; /* set: the CPU's next answer is option 2 */
 extern u8* D_80114724_31EBD4_name_49[]; /* per character: items the CPU tries to buy */
 extern s8* D_80114784_31EC34_name_49[]; /* per character: their percent chances */
@@ -250,7 +250,7 @@ void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
-void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+void func_80056368_56F68(s16, u32, char*, char*, char*, char*, char*); /* message with up to five strings */
 s32 MBRand(f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800629F0_635F0(s32 player, s16); /* status window */
@@ -310,7 +310,7 @@ f32 __sinf(f32);
 extern Unk3ERange D_801135AC_31DA5C_name_49[6]; /* turn range -> star price */
 extern Unk3ERange D_801135C0_31DA70_name_49[14]; /* press count range -> discount */
 extern u16 ContDStkTrg[4];
-void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void MBWinInsertOpen(s32 arg0, char* arg1, char* arg2, char* arg3, char* arg4, char* arg5);
 void func_80055E3C_56A3C(s32 arg0);
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
    layout-dependent label, keep the data in place on the host. */
@@ -320,7 +320,7 @@ omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 Process* MBDCameraZoomMotStart(f32 arg0);
 void MBDlgWinExec(s32 arg0, s32 arg1);
-void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void func_80056368_56F68(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6); /* message window: up to five strings */
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_80078EC8_79AC8(void);
@@ -671,7 +671,7 @@ typedef struct Ovl49RunWork {
     /* 0x0C */ s32 slot;
     /* 0x10 */ s16* path; /* space pairs walked from path[0] while path[1] != -1 */
 } Ovl49RunWork;
-extern u8 D_801139CC_31DE7C_name_49[6]; /* parade float models, picked through a shuffle */
+extern u8 D_801139CC_31DE7C_name_49[16]; /* parade float models, picked through a shuffle */
 extern u8 D_801139D2_31DE82_name_49[6]; /* parade models by slot (layout 2) */
 extern u8 D_801139D7_31DE87_name_49[]; /* D_801139D2 + 5: retail indexes the next table from 1 */
 extern s32 D_80113A14_31DEC4_name_49[]; /* Bowser's float: motion list for func_80043510 */
@@ -693,5 +693,13 @@ extern u8 D_80113C1C_31E0CC_name_49[4]; /* Bowser's shop (turn_status set): item
 extern s16 D_80113C20_31E0D0_name_49[4]; /* Bowser's shop (turn_status set): cumulative odds */
 extern s32 D_80113C28_31E0D8_name_49[4]; /* Bowser's shop (turn_status set): item name message */
 extern s16 D_800F8D1A_F991A[]; /* board state halfwords (D_800F8CE4 + 0x36); [2] is the Bowser bank debt */
+
+/* main functions the overlay calls (host: prototyped) */
+s32 func_80062D44_63944(void);
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029A8C_2A68C(s16);
+
+extern u8 D_80112DA0_31D250_name_49[6][2]; /* data.over: signpost model ids */
+extern s16 D_80113664_31DB14_name_49[4]; /* data.over: steal messages */
 
 #endif

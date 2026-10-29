@@ -1,0 +1,3 @@
+# mp2boarddata.py overrides for ovl_43 .data (3E's twins of 41's two)
+D_80113C74_2D9164_name_43 u8[6][2]   # signpost model ids: the label at +1 is C's and asm's
+D_801142B4_2D97A4_name_43 s16[4]     # steal messages: the label at -0xE is C's (indexed by message 7-10)

@@ -1446,7 +1446,8 @@ segments:
     subsegments:
       - [0x2C7CF0, c, ovl_43_entrypoint]
       - [0x2C7D20, c, 2C7CF0]
-      - [0x2D8F90, data]
+      - [0x2D8F90, .data, ovl_43_entrypoint]
+      - [0x2D8FC0, .data, 2C7CF0]
       - [0x2DA770, .rodata, 2C7CF0]
       - {0x2DA8B0, type: bss, vram: 0x801153C0, name: ovl_43_bss}
   - type: code
@@ -1460,7 +1461,7 @@ segments:
     bss_size: 0x1E0
     subsegments:
       - [0x2DA8B0, c]
-      - [0x2E09D0, data]
+      - [0x2E09D0, .data, 2DA8B0]
       - [0x2E0C80, .rodata, 2DA8B0]
       - {0x2E0F30, type: bss, vram: 0x80108E80, name: ovl_44_bss}
   - type: code
@@ -1475,7 +1476,8 @@ segments:
     subsegments:
       - [0x2E0F30, c, ovl_45_entrypoint]
       - [0x2E0F60, c, 2E0F30]
-      - [0x2EF400, data]
+      - [0x2EF400, .data, ovl_45_entrypoint]
+      - [0x2EF430, .data, 2E0F30]
       - [0x2F15F0, .rodata, 2E0F30]
       - {0x2F1730, type: bss, vram: 0x80113000, name: ovl_45_bss}
   - type: code
@@ -1489,7 +1491,7 @@ segments:
     bss_size: 0xD0
     subsegments:
       - [0x2F1730, c]
-      - [0x2F6D00, data]
+      - [0x2F6D00, .data, 2F1730]
       - [0x2F6FB0, .rodata, 2F1730]
       - {0x2F7100, type: bss, vram: 0x801081D0, name: ovl_46_bss}
   - type: code
@@ -1504,7 +1506,8 @@ segments:
     subsegments:
       - [0x2F7100, c, ovl_47_entrypoint]
       - [0x2F7130, c, 2F7100]
-      - [0x305250, data]
+      - [0x305250, .data, ovl_47_entrypoint]
+      - [0x305280, .data, 2F7100]
       - [0x306A70, .rodata, 2F7100]
       - {0x306BA0, type: bss, vram: 0x801122A0, name: ovl_47_bss}
   - type: code
@@ -1518,7 +1521,7 @@ segments:
     bss_size: 0x350
     subsegments:
       - [0x306BA0, c]
-      - [0x30C870, data]
+      - [0x30C870, .data, 306BA0]
       - [0x30CB30, .rodata, 306BA0]
       - {0x30CCB0, type: bss, vram: 0x80108910, name: ovl_48_bss}
   - type: code
@@ -1533,7 +1536,8 @@ segments:
     subsegments:
       - [0x30CCB0, c, ovl_49_entrypoint]
       - [0x30CCE0, c, 30CCB0]
-      - [0x31D0A0, data]
+      - [0x31D0A0, .data, ovl_49_entrypoint]
+      - [0x31D0D0, .data, 30CCB0]
       - [0x31EC60, .rodata, 30CCB0]
       - {0x31EE40, type: bss, vram: 0x80114990, name: ovl_49_bss}
   - type: code
@@ -1547,7 +1551,7 @@ segments:
     bss_size: 0x360
     subsegments:
       - [0x31EE40, c]
-      - [0x324E80, data]
+      - [0x324E80, .data, 31EE40]
       - [0x325130, .rodata, 31EE40]
       - {0x3252C0, type: bss, vram: 0x80108C80, name: ovl_4A_bss}
   - type: code

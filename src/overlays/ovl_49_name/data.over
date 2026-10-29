@@ -1,0 +1,6 @@
+# mp2boarddata.py overrides for ovl_49 .data (3E's twins of 41's two)
+D_80112DA0_31D250_name_49 u8[6][2]   # signpost model ids: the label at +1 is C's and asm's
+D_80113664_31DB14_name_49 s16[4]     # steal messages: the label at -0xE is C's (indexed by message 7-10)
+D_80113A24 Vec[5]                   # offset by slot (the extern has no bound)
+D_80112D20_31D1D0_name_49 s16[2]    # unnamed by the code, after the bank spaces
+D_801139CC u8[16]                   # parade model tables in one object: C names D_801139D2 (+6) and D_801139D7 (+11)

@@ -131,7 +131,7 @@ void func_800799A4_7A5A4(s16, s32);
 void func_80088640_89240(void);
 /* s16 in 58080.c; retail re-extends the result here, as if it were an int. */
 s32 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_80089284_89E84(s16, s32, s32);
 void func_80089308_89F08(s16, char*, s32); /* window message argument */
 void func_80089A48_8A648(s16, s16);
@@ -259,7 +259,7 @@ typedef struct D44AnswerWork {
 
 extern PdStatusLayout D_80108920_2E09D0_name_44[8];
 extern u32* D_80108AD0_2E0B80_name_44[6]; /* per character: motion list (count, files) */
-extern s32 D_80108AE8_2E0B98_name_44[16]; /* frames between the beats ([0] is 0) */
+extern s32 D_80108AE8_2E0B98_name_44[17]; /* frames between the beats ([0] is 0) */
 extern Vec D_80108B2C_2E0BDC_name_44; /* the referee's spot */
 extern Vec D_80108B38_2E0BE8_name_44[1]; /* the referee's paths: back, to the middle */
 extern Vec D_80108B44_2E0BF4_name_44[3];

@@ -19,7 +19,7 @@
 
 #include "game/window.h" /* D_800F920C_F9E0C */
 extern s32 D_800CCC18_CD818;
-extern s32 D_800CC6A8_CD2A8[]; /* per board: the guide's model */
+extern s32* D_800CC6A8_CD2A8[]; /* per board: the guide's model */
 extern f32 D_800CC6C4_CD2C4[]; /* per board: the guide's facing angle */
 extern s16 D_800F8D12_F9912;
 extern s16 D_800CD414_CE014;
@@ -43,7 +43,7 @@ void MBModelKill(void*);
 void MBMotionSet(MBModel*, s16, s32);
 void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
 void func_8005B338_5BF38(void*);
-UnkMBGuideData* func_80050304_50F04(s32, s32); /* MBGuideCreate */
+UnkMBGuideData* func_80050304_50F04(void*, s32); /* MBGuideCreate */
 void func_8005057C_5117C(UnkMBGuideData*); /* MBGuideKill */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
@@ -227,16 +227,16 @@ s32 func_80054D3C_5593C(s16 arg0, s16* arg1, s16* arg2);
 void func_80063734_64334(Vec* arg0);
 void CameraScissorSet(s16, void*);
 extern f32 D_801147E4_2D9CD4_name_43[4]; /* scissor box {0, 0, 320, 240} */
-extern s32 D_80114CA4_2DA194_name_43[]; /* decision trees (CPU item use) */
-extern s32 D_80114D04_2DA1F4_name_43[];
-extern s32 D_80114F44_2DA434_name_43[];
-extern s32 D_801150B8_2DA5A8_name_43[];
+extern DecisionTreeNonLeafNode D_80114CA4_2DA194_name_43[]; /* decision trees (CPU item use) */
+extern DecisionTreeNonLeafNode D_80114D04_2DA1F4_name_43[];
+extern DecisionTreeNonLeafNode D_80114F44_2DA434_name_43[];
+extern DecisionTreeNonLeafNode D_801150B8_2DA5A8_name_43[];
 s16 GetCurrentPlayerIndex(void);
 s16 RNGPercentChance(s8 arg0);
 extern u8 D_800CC000[]; /* item prices */
-extern s32 D_80115118_2DA608_name_43[]; /* decision trees (CPU shop) */
-extern s32 D_80115124_2DA614_name_43[];
-extern s32 D_80115190_2DA680_name_43[]; /* decision tree (CPU yes/no) */
+extern DecisionTreeNonLeafNode D_80115118_2DA608_name_43[]; /* decision trees (CPU shop) */
+extern DecisionTreeNonLeafNode D_80115124_2DA614_name_43[];
+extern DecisionTreeNonLeafNode D_80115190_2DA680_name_43[]; /* decision tree (CPU yes/no) */
 extern s32 D_801151B4_2DA6A4_name_43; /* set: the CPU's next answer is option 2 */
 extern u8* D_80115200_2DA6F0_name_43[]; /* per character: items the CPU tries to buy */
 extern s8* D_80115260_2DA750_name_43[]; /* per character: their percent chances */
@@ -254,7 +254,7 @@ void func_8005DDEC_5E9EC(s32 playerNo, s16 arg1, s16 arg2, s16 arg3, u16 arg4);
 void MBDlgResultWinExec(s32);
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
-void func_80056368_56F68(s16, u32, s32, s32, s32, s32, s32); /* message with two string args */
+void func_80056368_56F68(s16, u32, char*, char*, char*, char*, char*); /* message with up to five strings */
 s32 MBRand(f32);
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800629F0_635F0(s32 player, s16); /* status window */
@@ -314,7 +314,7 @@ f32 __sinf(f32);
 extern Unk3ERange D_801141FC_2D96EC_name_43[6]; /* turn range -> star price */
 extern Unk3ERange D_80114210_2D9700_name_43[14]; /* press count range -> discount */
 extern u16 ContDStkTrg[4];
-void MBWinInsertOpen(s32 arg0, char* arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
+void MBWinInsertOpen(s32 arg0, char* arg1, char* arg2, char* arg3, char* arg4, char* arg5);
 void func_80055E3C_56A3C(s32 arg0);
 /* Messages; indexed from 7, so the label is 14 bytes before the table (0x8011244C): a
    layout-dependent label, keep the data in place on the host. */
@@ -324,7 +324,7 @@ omObjData* func_800446B4_452B4(MBModel* arg0, Vec* arg1, s32 arg2);
 void func_80056C30_57830(s16 playerNo, s32 arg1, s16 masuAbsIndex);
 Process* MBDCameraZoomMotStart(f32 arg0);
 void MBDlgWinExec(s32 arg0, s32 arg1);
-void func_80056368_56F68(s16 arg0, u32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* message window; the s32s are strings */
+void func_80056368_56F68(s16 arg0, u32 arg1, char* arg2, char* arg3, char* arg4, char* arg5, char* arg6); /* message window: up to five strings */
 void MBDlgWinClose(void);
 void func_80056168_56D68(void);
 void func_80078EC8_79AC8(void);
@@ -649,5 +649,8 @@ extern MBModel* D_80115490_2DA980_name_43[4]; /* the whirl's four models */
 extern f32 D_801145B4_2D9AA4_name_43[4]; /* the centre Boos' angles as they appear */
 extern u8 D_801145D8_2D9AC8_name_43[4]; /* the centre Boos' models (8 or 0xA0) */
 extern void* D_801145DC_2D9ACC_name_43[4]; /* their create parameters */
+
+extern u8 D_80113C74_2D9164_name_43[6][2]; /* data.over: signpost model ids */
+extern s16 D_801142B4_2D97A4_name_43[4]; /* data.over: steal messages */
 
 #endif

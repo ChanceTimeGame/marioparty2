@@ -131,7 +131,7 @@ void func_800799A4_7A5A4(s16, s32);
 void func_80088640_89240(void);
 /* s16 in 58080.c; retail re-extends the result here, as if it were an int. */
 s32 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_80089284_89E84(s16, s32, s32);
 void func_80089308_89F08(s16, char*, s32); /* window message argument */
 void func_80089A48_8A648(s16, s16);
