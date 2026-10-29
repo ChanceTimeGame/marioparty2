@@ -101,12 +101,17 @@ typedef struct Ovl58MsgArg {
     /* 0x00 */ s8 v[3];
 } Ovl58MsgArg;
 
-/* An entry of the model table D_80112BBC (func_80112454 builds model `index` from it). */
-typedef struct Ovl58ModelEntry {
-    /* 0x00 */ char pad00[0x10];
-    /* 0x10 */ Vec pos;
-    /* 0x1C */ char pad1C[0xC];
-} Ovl58ModelEntry; /* size = 0x28 */
+/* One scene model (D_80112BBC tables, ended by file -1; 80112360 loads, 80112454 places);
+   the same layout as 5B's Ovl5BModelDef. */
+typedef struct Ovl58ModelDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 attr;       /* | 0x288 */
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 motionMode; /* func_80029E80's third argument */
+    /* 0x0C */ u32 kind;       /* 1 placed as given; 2, 3 rotated about a pivot */
+    /* 0x10 */ Vec pos;        /* x5 */
+    /* 0x1C */ Vec rot;
+} Ovl58ModelDef; /* size = 0x28 */
 
 /* D_801138C8 is s16 [6][2] (per character: model, ?), declared s32[6] above. */
 #define OVL58_CHAR_MODEL(c) (((s16(*)[2])D_801138C8_37EFC8_MinigameParkSetup)[c][0])
@@ -258,21 +263,25 @@ typedef struct Ovl58ModeTable {
     /* 0x0C */ Vec pos[3][3];
 } Ovl58ModeTable; /* size = 0x78 */
 
-/* ---- 58 .data (asm, 37E240.data.s; raw types unless noted) ---- */
+/* ---- 58 .data (in 36DF00.c since wave B, 2026-10-28) ---- */
+/* the game-length clock part names (D_801134A0), defined with the rodata */
+extern const char D_8011369C_37ED9C_MinigameParkSetup[];
+extern const char D_801136A4_37EDA4_MinigameParkSetup[];
+extern const char D_801136AC_37EDAC_MinigameParkSetup[];
+extern const char D_801136B4_37EDB4_MinigameParkSetup[];
+extern const char D_801136BC_37EDBC_MinigameParkSetup[];
 extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern u16 D_80112B42_37E242_MinigameParkSetup; /* 58-E: nonzero = leave (801109C8) */
 extern s16 D_80112B44_37E244_MinigameParkSetup[2];
 extern s32 D_80112B48_37E248_MinigameParkSetup;
 extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
-extern s32 D_80112BBC_37E2BC_MinigameParkSetup[]; /* a table func_80112360 reads; 80102CAC sets words 0x50 and 0x6E (D_80112CFC is word 0x50) */
-extern s32 D_80112BCC_37E2CC_MinigameParkSetup[10];
-extern f32 D_80112BF4_37E2F4_MinigameParkSetup[][10]; /* 58-D: D_80112BBC's model records from the second on, seen at their f32 x, y, z (0x28 each): 8010F358 */
-extern s32 D_80112CFC_37E3FC_MinigameParkSetup[410];
-extern s32 D_80113364_37EA64_MinigameParkSetup[8]; /* per D_80113814 (stage): D_80112BBC[0x50] */
-extern s32 D_80113384_37EA84_MinigameParkSetup[8]; /* per D_80113814: D_80112BBC[0x6E] */
+extern Ovl58ModelDef D_80112BBC_37E2BC_MinigameParkSetup[49]; /* the scene's models (func_80112360); 80102CAC sets [8] and [11]'s file per stage */
+/* 58-D: splat label D_80112BF4, D_80112BBC's records from [1] seen at their pos (0x28 = 10 words each): 8010F358 */
+#define D_80112BF4_37E2F4_MinigameParkSetup ((f32(*)[10])&D_80112BBC_37E2BC_MinigameParkSetup[1].pos)
+extern s32 D_80113364_37EA64_MinigameParkSetup[8]; /* per D_80113814 (stage): D_80112BBC[8].file */
+extern s32 D_80113384_37EA84_MinigameParkSetup[8]; /* per D_80113814: D_80112BBC[11].file */
 extern u8 D_801133A4_37EAA4_MinigameParkSetup[16];
-extern s16 D_801133B4_37EAB4_MinigameParkSetup[][2]; /* icon offsets x, y per player slot (801051BC) */
-extern s16 D_801133B6_37EAB6_MinigameParkSetup[47];
+extern s16 D_801133B4_37EAB4_MinigameParkSetup[24][2]; /* icon offsets x, y per player slot (801051BC) */
 extern s32 D_80113414_37EB14_MinigameParkSetup[6];
 extern s32 D_8011342C_37EB2C_MinigameParkSetup[8];
 extern s16 D_8011344C_37EB4C_MinigameParkSetup[6][2]; /* 58-B: 80106A00 icon offsets x, y */
@@ -460,8 +469,8 @@ void func_80111750_37CE50_MinigameParkSetup(s16);
 void func_8011175C_37CE5C_MinigameParkSetup(s16);
 void func_80111768_37CE68_MinigameParkSetup(void);
 void func_80111D8C_37D48C_MinigameParkSetup(void);
-void func_80112360_37DA60_MinigameParkSetup(s32 *arg0);
-void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model);
+void func_80112360_37DA60_MinigameParkSetup(Ovl58ModelDef* table);
+void func_80112454_37DB54_MinigameParkSetup(Ovl58ModelDef* table, s16 index, s16 model);
 void func_80112810_37DF10_MinigameParkSetup(s16 model, Vec* out, Matrix4f mtx);
 void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx);
 void func_80112950_37E050_MinigameParkSetup(void);
@@ -486,17 +495,5 @@ typedef struct Ovl58CamView {
     /* 0x0C */ Vec at;   /* -> D_8010274C */
     /* 0x18 */ f32 zoom; /* -> D_800FA610 */
 } Ovl58CamView; /* size = 0x1C */
-
-/* One scene model (D_80112BBC tables, ended by file -1; 80112360 loads, 80112454 places);
-   the same layout as 5B's Ovl5BModelDef. */
-typedef struct Ovl58ModelDef {
-    /* 0x00 */ s32 file;
-    /* 0x04 */ s32 attr;       /* | 0x288 */
-    /* 0x08 */ s16 unk08;
-    /* 0x0A */ s16 motionMode; /* func_80029E80's third argument */
-    /* 0x0C */ u32 kind;       /* 1 placed as given; 2, 3 rotated about a pivot */
-    /* 0x10 */ Vec pos;        /* x5 */
-    /* 0x1C */ Vec rot;
-} Ovl58ModelDef; /* size = 0x28 */
 
 #endif /* _OVL_58_H */

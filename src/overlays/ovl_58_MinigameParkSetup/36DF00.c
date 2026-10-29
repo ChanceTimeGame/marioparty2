@@ -1,5 +1,132 @@
 #include "ovl_58.h"
 
+/* .data (0x37E240-0x37ECD0) */
+
+/* 80112B40 size 0x2 */ s16 D_80112B40_37E240_MinigameParkSetup = 0;
+/* 80112B42 size 0x2 */ u16 D_80112B42_37E242_MinigameParkSetup = 0x0;
+/* 80112B44 size 0x4 */ s16 D_80112B44_37E244_MinigameParkSetup[2] = {
+    0, 0,
+};
+/* 80112B48 size 0x4 */ s32 D_80112B48_37E248_MinigameParkSetup = 0;
+/* 80112B4C size 0x70 */ f32 D_80112B4C_37E24C_MinigameParkSetup[28] = {
+    348.0f, 90.0f, 0.0f, 0.0f, 218.0f, 0.0f, 750.0f, 0.0f, 0.0f, 0.0f, 0.0f, 218.0f, 0.0f, 500.0f,
+    354.0f, 56.0f, 0.0f, -30.0f, 182.0f, 66.0f, 750.0f, 0.0f, 176.0f, 0.0f, -30.0f, 182.0f, 66.0f,
+    750.0f,
+};
+/* 80112BBC size 0x7A8 */ Ovl58ModelDef D_80112BBC_37E2BC_MinigameParkSetup[49] = {
+    { 0x9006F, 0x2235, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9006E, 0x2231, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9006E, 0x2231, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9006E, 0x2231, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9007A, 0x2231, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9006F, 0x2231, 0, 2, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9007E, 0x2231, 0, 2, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x200D3, 0x2235, 0, 2, 0x1, { -160.0f, 0.0f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x80000, 0x2225, 0, 0, 0x1, { 31.0f, 0.0f, 53.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x80000, 0x2225, 0, 0, 0x1, { 10.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x80000, 0x2225, 0, 0, 0x1, { 10.0f, 0.0f, -46.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x80015, 0x11, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x200D3, 0x2244, 0, 0, 0x1, { 31.0f, 0.0f, 13.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x20002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x300D3, 0x2244, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x30002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x700D3, 0x2244, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x70002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x400D3, 0x2244, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x40002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x500D3, 0x2244, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x50002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x600D3, 0x2244, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x60002, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90071, 0x2235, 0, 2, 0x1, { -60.0f, 97.5f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90071, 0x2235, 0, 2, 0x1, { -60.0f, 97.5f, -60.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90071, 0x2235, 0, 2, 0x1, { -60.0f, 57.5f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90071, 0x2235, 0, 2, 0x1, { -60.0f, 57.5f, -60.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90072, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90073, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90074, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90075, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90076, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90077, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, 30.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90077, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -20.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90077, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -70.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90077, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -70.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90078, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90079, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90070, 0x2235, 0, 2, 0x1, { -60.0f, 97.5f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x9007B, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -6.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x9007B, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -70.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x9007C, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x9007D, 0x14, 0, 0, 0x1, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 0x90080, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, 30.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90080, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -20.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x90080, 0x2215, 0, 2, 0x1, { -60.0f, 97.5f, -70.0f }, { 0.0f, 90.0f, 0.0f } },
+    { 0x9007F, 0x2235, 0, 2, 0x1, { -60.0f, 97.5f, 0.0f }, { 0.0f, 90.0f, 0.0f } },
+    { -1, 0x0, 0, 0, 0x0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+};
+/* 80113364 size 0x20 */ s32 D_80113364_37EA64_MinigameParkSetup[8] = {
+    0x8000E, 0x80016, 0x80028, 0x8001C, 0x80023, 0x800B0, 0x80035, 0x800CD,
+};
+/* 80113384 size 0x20 */ s32 D_80113384_37EA84_MinigameParkSetup[8] = {
+    0x80015, 0x80018, 0x80029, 0x80022, 0x80025, 0x800B3, 0x80014, 0x800D3,
+};
+/* 801133A4 size 0x10 */ u8 D_801133A4_37EAA4_MinigameParkSetup[16] = {
+    0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0,
+};
+/* 801133B4 size 0x60 */ s16 D_801133B4_37EAB4_MinigameParkSetup[24][2] = {
+    { 16, 26 }, { 32, 18 }, { 32, 36 }, { 48, 26 }, { 16, 26 }, { 32, 18 }, { 32, 36 }, { 48, 26 },
+    { 16, 26 }, { 32, 18 }, { 32, 36 }, { 48, 26 }, { 16, 26 }, { 32, 18 }, { 32, 36 }, { 48, 26 },
+    { 20, 26 }, { 44, 26 }, { 32, 36 }, { 48, 26 }, { 20, 26 }, { 44, 26 }, { 32, 36 }, { 48, 26 },
+};
+/* 80113414 size 0x18 */ s32 D_80113414_37EB14_MinigameParkSetup[6] = {
+    0x90094, 0x90095, 0x90096, 0x90097, 0x90098, 0x90099,
+};
+/* 8011342C size 0x20 */ s32 D_8011342C_37EB2C_MinigameParkSetup[8] = {
+    0x9008E, 0x9008F, 0x90090, 0x90091, 0x90092, 0x90092, 0x90092, 0x90092,
+};
+/* 8011344C size 0x18 */ s16 D_8011344C_37EB4C_MinigameParkSetup[6][2] = {
+    { 28, 28 }, { 68, 28 }, { 108, 28 }, { 28, 68 }, { 68, 68 }, { 108, 68 },
+};
+/* 80113464 size 0x2 */ s16 D_80113464_37EB64_MinigameParkSetup = 0;
+/* 80113468 size 0x10 */ s32 D_80113468_37EB68_MinigameParkSetup[4] = {
+    0x90087, 0x90086, 0x90085, 0x9009A,
+};
+/* 80113478 size 0x10 */ s32 D_80113478_37EB78_MinigameParkSetup[4] = {
+    0x9008D, 0x9008C, 0x9008B, 0x9009B,
+};
+/* 80113488 size 0x18 */ s32 D_80113488_37EB88_MinigameParkSetup[6] = {
+    0x900A5, 0x900A5, 0x900A6, 0x900A7, 0x900A8, 0x900A9,
+};
+/* 801134A0 size 0x18 */ char* D_801134A0_37EBA0_MinigameParkSetup[6] = {
+    D_801136BC_37EDBC_MinigameParkSetup, D_801136B4_37EDB4_MinigameParkSetup,
+    D_801136AC_37EDAC_MinigameParkSetup, D_801136A4_37EDA4_MinigameParkSetup,
+    D_801136BC_37EDBC_MinigameParkSetup, D_8011369C_37ED9C_MinigameParkSetup,
+};
+/* 801134B8 size 0x78 */ Ovl58ModeTable D_801134B8_37EBB8_MinigameParkSetup = { { 0x9009C, 0x9009D, 0x9009E }, { { { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, 0.0f } }, { { -300.0f, 400.0f, 200.0f }, { -300.0f, 400.0f, -200.0f }, { -300.0f, 487.5f, -350.0f } }, { { -300.0f, 400.0f, 300.0f }, { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, -300.0f } } } };
+/* 80113530 size 0x4 */ s16 D_80113530_37EC30_MinigameParkSetup[2] = {
+    -1, 0,
+};
+/* 80113534 size 0x18 */ s32 D_80113534_37EC34_MinigameParkSetup[6] = {
+    0x9009F, 0x900A0, 0x900A1, 0x900A2, 0x900A3, 0x900A4,
+};
+/* 8011354C size 0x8 */ u8 D_8011354C_37EC4C_MinigameParkSetup[8] = {
+    0, 10, 20, 30, 40, 50, 0, 0,
+};
+/* 80113554 size 0x30 */ Ovl58InfoBox D_80113554_37EC54_MinigameParkSetup[4] = {
+    { -100, 10, 90, 22, 0x668 }, { -100, 30, 90, 22, 0x669 }, { -100, 50, 90, 22, 0x66C },
+    { -100, 70, 90, 22, 0x66C },
+};
+/* 80113584 size 0x18 */ s32 D_80113584_37EC84_MinigameParkSetup[6] = {
+    0xA01CA, 0xA01CB, 0xA01CC, 0xA01CD, 0xA01CE, 0xA01CF,
+};
+/* 8011359C size 0x24 */ s32 D_8011359C_37EC9C_MinigameParkSetup[9] = {
+    0xA010F, 0xA0110, 0xA0111, 0xA0112, 0xA0113, 0xA0114, 0x0, 0x0, 0x0,
+};
+/* 801135C0 size 0x4 */ f32 D_801135C0_37ECC0_MinigameParkSetup = 58.0f;
+/* 801135C4 size 0xC */ s8 D_801135C4_37ECC4_MinigameParkSetup[12] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 /* Entry: camera, lights, the setup and its processes; the stage from the board index or the
    mode (D_800CD414: 0 free play, 3 uses the saved record). */
 void func_80102800_36DF00_MinigameParkSetup(void) {
@@ -108,8 +235,8 @@ void func_80102CAC_36E3AC_MinigameParkSetup(void) {
     s16 i;
 
     func_80102A60_36E160_MinigameParkSetup();
-    D_80112BBC_37E2BC_MinigameParkSetup[0x50] = D_80113364_37EA64_MinigameParkSetup[D_80113814_37EF14_MinigameParkSetup];
-    D_80112BBC_37E2BC_MinigameParkSetup[0x6E] = D_80113384_37EA84_MinigameParkSetup[D_80113814_37EF14_MinigameParkSetup];
+    D_80112BBC_37E2BC_MinigameParkSetup[8].file = D_80113364_37EA64_MinigameParkSetup[D_80113814_37EF14_MinigameParkSetup];
+    D_80112BBC_37E2BC_MinigameParkSetup[11].file = D_80113384_37EA84_MinigameParkSetup[D_80113814_37EF14_MinigameParkSetup];
     func_80112360_37DA60_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup);
     func_80110AF0_37C1F0_MinigameParkSetup(0);
     omAddPrcObj(func_80111328_37CA28_MinigameParkSetup, 0x3F00, 0x800, 0);
@@ -1702,12 +1829,12 @@ s32 func_80107644_372D44_MinigameParkSetup(s16 n) {
     }
     if (n == 3) {
         for (i = 0; i < 3; i++) {
-            ((Ovl58ModelEntry*)D_80112BBC_37E2BC_MinigameParkSetup)[i + 33].pos = pos3.v[i];
+            D_80112BBC_37E2BC_MinigameParkSetup[i + 33].pos = pos3.v[i];
             func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 33, models.v[i]);
         }
     } else {
         for (i = 0; i < 4; i++) {
-            ((Ovl58ModelEntry*)D_80112BBC_37E2BC_MinigameParkSetup)[i + 33].pos = pos4.v[i];
+            D_80112BBC_37E2BC_MinigameParkSetup[i + 33].pos = pos4.v[i];
             func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 33, models.v[i]);
         }
     }
@@ -4427,15 +4554,15 @@ void func_80111D8C_37D48C_MinigameParkSetup(void) {
 
 /* Loads the scene's models from table defs (ends at file -1) into D_801138B0, places them
    (80112454) and starts each one's first motion. */
-void func_80112360_37DA60_MinigameParkSetup(s32* table) {
-    Ovl58ModelDef* def = (Ovl58ModelDef*)table;
+void func_80112360_37DA60_MinigameParkSetup(Ovl58ModelDef* table) {
+    Ovl58ModelDef* def = table;
     Ovl58ModelDef* defs = def;
     s16 i = 0;
     s16 model;
 
     while (def->file != -1) {
         model = D_801138B0_37EFB0_MinigameParkSetup[i] = LoadFormFile(def->file, def->attr | 0x288);
-        func_80112454_37DB54_MinigameParkSetup((s32*)defs, i, model);
+        func_80112454_37DB54_MinigameParkSetup(defs, i, model);
         if ((D_80113970_37F070_MinigameParkSetup[i] = func_80029E14_2AA14(model)) != -1) {
             func_80029E80_2AA80(model, -1, def->motionMode);
         }
@@ -4448,8 +4575,8 @@ void func_80112360_37DA60_MinigameParkSetup(s32* table) {
    -/+119.289 degrees about two pivots. */
 #ifdef NON_MATCHING
 /* masked 0: retail negates sin's register in place (neg.s $f20,$f20). */
-void func_80112454_37DB54_MinigameParkSetup(s32* table, s16 index, s16 model) {
-    Ovl58ModelDef* def = &((Ovl58ModelDef*)table)[index];
+void func_80112454_37DB54_MinigameParkSetup(Ovl58ModelDef* table, s16 index, s16 model) {
+    Ovl58ModelDef* def = &table[index];
     f32 t;
     f32 x;
     f32 z;
