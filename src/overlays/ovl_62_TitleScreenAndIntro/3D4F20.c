@@ -69,8 +69,9 @@ void func_80102BFC_3D511C_TitleScreenAndIntro(s32 state) {
     }
 }
 
-/* the opening's object: 3 waits for the script's end (5: back to the title) and START (4 -> 8:
-   to the main menu) */
+/* the opening's state object: in 3, START (or 80102BD0 when the script returns) -> 5: fade, then
+   the overlay set by 80103054 (the title, or the boot logos once the script has ended); in 4 (set
+   by the script near its end), START -> 8: fade, then the main menu */
 void func_80102C28_3D5148_TitleScreenAndIntro(omObjData* obj) {
     func_80102B88_3D50A8_TitleScreenAndIntro();
     switch (D_80111D40_3E4260_TitleScreenAndIntro) {
@@ -129,8 +130,8 @@ void func_80102C28_3D5148_TitleScreenAndIntro(omObjData* obj) {
     }
 }
 
-/* the title screen's object: 3 waits for START once the title is up (8010D484) -> 8 -> the main
-   menu; 5 (80102BD0, the title timing out) fades to the boot logos' second entry */
+/* the title's state object: in 3, START once the title is up (8010D484) -> 8: fade, then the main
+   menu; 5 (80102BD0, the title process timing out) fades to the boot logos' entry 1 */
 void func_80102DC0_3D52E0_TitleScreenAndIntro(omObjData* obj) {
     func_80102B88_3D50A8_TitleScreenAndIntro();
     switch (D_80111D40_3E4260_TitleScreenAndIntro) {
@@ -923,7 +924,7 @@ void func_80105840_3D7D60_TitleScreenAndIntro(void) {
     HuPrcVSleep();
 }
 
-/* debug: move the board camera with the stick, zoom with C-up/C-down... until A */
+/* debug: move the board camera with the stick and zoom with D-pad up/down until A, printing them */
 void func_80105880_3D7DA0_TitleScreenAndIntro(void) {
     Vec pos;
     char buf[256];

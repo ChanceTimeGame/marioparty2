@@ -1,16 +1,27 @@
 #ifndef _OVL_62_H
 #define _OVL_62_H
 
-/* Overlay 62: the title screen and the opening (intro) movie. Entry 0 (80102998, from the boot
-   logos) is the title: a "PRESS START" screen whose state machine (80102DC0) leaves for the main
-   menu (5B) on START, or for the boot logos (57, event 1) once the intro script (C's range) says
-   it is done. Entry 1 (801029C0) plays the intro: a process (80105A1C) runs the scripted scene
-   (80105AB8, fork B); START skips it to the main menu, and at its end it goes back to the title
-   (57, event 1, 0x92). Leaving through 5B pushes "62, event 0, 0x192" on the overlay history so
-   the menu's B returns here (80102C28 / 80102DC0, state 10).
+/* Overlay 62: the title screen and the opening (intro) movie, entered through ExecBoardScene with
+   main's D_800CD414 as the entry:
+   - entry 0 (80102998): the title. A process (8010D3C0, fork C) runs the title scene; the state
+     object (80102DC0) fades in, then START (80102FD8, pad 1) once the title is up (8010D484) leaves
+     for the main menu: omOvlCallEx(0x5B, 0, 0x1081) and omOvlHisChg(1, 0x62, 0, 0x192), so the
+     menu returns here. When the title process times out (80102BD0, state 5) it fades to the boot
+     logos' entry 1 (omOvlGotoEx(0x57, 1, 0x92)).
+   - entry 1 (801029C0): the opening. A process (801059F0 -> 80105A1C) runs the script (80105AB8,
+     fork B). START during it (state 3) fades to the title (62, entry 0); near its end the script
+     sets state 4 (80102BFC), where START goes to the main menu as above; when the script returns,
+     80105A1C fades to the boot logos' entry 1 (0x57, 1, 0x92).
+   Main's D_801011FC == 1 (START seen elsewhere) also ends states 3/4 (80102B88).
+   Scene tools here: a message window (801031D0/801033F8), a full-screen fade (801035AC in,
+   80103730 out), a light mask with up to 8 stamps (801038DC..8010433C), the curtain blend
+   (8010436C), sprite groups (80104448..80104668), an RGBA32 picture (80105280, 80104778) and
+   model helpers for the script (80105460..801057D4).
    Retail's overlay is three files: ovl_62_entrypoint.c (80102800), 3D4D50.c (80102830-801029EC)
-   and 3D4F20.c (80102A00-end). Every function is global. .data stays asm (declared here);
-   .rodata is carved (3D4F20).
+   and 3D4F20.c (80102A00-end; built with the KMC mul fix). Every function is global. .data stays
+   asm (declared here); .rodata is carved (3D4F20). Data and bss are big-endian only through the
+   two s32 fields read as s16 low halves (D_80111D50, Ovl62Sprite), and the image headers, which
+   are read byte by byte.
    Prototypes past 80105A1C come from register use only: the fork owning a function fixes its line
    and retypes its data. */
 
@@ -156,7 +167,7 @@ extern board_overlay_entrypoint D_80111010_3E3530_TitleScreenAndIntro[]; /* 0 ti
 extern Ovl62WinDef D_80111030_3E3550_TitleScreenAndIntro;                 /* {28, 208, 24, 2} */
 extern Gfx D_80111040_3E3560_TitleScreenAndIntro[];                       /* fill set-up (801037D0) */
 extern Gfx D_80111090_3E35B0_TitleScreenAndIntro[];                       /* mask set-up (80103BF0) */
-extern u8* D_801110E0_3E3600_TitleScreenAndIntro;                         /* RGBA16x? image, 80105280 */
+extern u8* D_801110E0_3E3600_TitleScreenAndIntro;                         /* RGBA32 picture (80105280), NULL when none */
 extern Gfx D_801110E8_3E3608_TitleScreenAndIntro[];                       /* 80104778's set-up */
 extern Vec D_80111128_3E3648_TitleScreenAndIntro;                         /* debug camera start */
 
