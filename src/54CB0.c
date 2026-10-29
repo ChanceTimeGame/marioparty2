@@ -793,7 +793,9 @@ s32 func_800556F4_562F4(s16 arg0, s16 arg1) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/54CB0", func_800558DC_564DC);
+void func_800558DC_564DC(s32 arg0) {
+    D_800E193C_E253C = arg0;
+}
 
 void func_800558E8_564E8(s16 arg0) {
     GwSystem.curPlayerAbsSpaceIndex = arg0;

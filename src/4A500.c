@@ -162,4 +162,6 @@ void func_80049F90_4AB90(ModelEmitterWork* work) {
     work->flags |= 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/4A500", func_80049FA0_4ABA0);
+void func_80049FA0_4ABA0(void) {
+    D_800DF650_E0250 = 0;
+}
