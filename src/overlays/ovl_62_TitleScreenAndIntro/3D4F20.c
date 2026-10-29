@@ -1,152 +1,907 @@
-#include "common.h"
+#include "ovl_62.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102A00_3D4F20_TitleScreenAndIntro);
+s32 func_80102A00_3D4F20_TitleScreenAndIntro(void) {
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102A08_3D4F28_TitleScreenAndIntro);
+void func_80102A08_3D4F28_TitleScreenAndIntro(void) {
+    D_8011265C_3E4B7C_TitleScreenAndIntro = func_801059F0_3D7F10_TitleScreenAndIntro();
+    D_80112668_3E4B88_TitleScreenAndIntro = func_80102A68_3D4F88_TitleScreenAndIntro();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102A38_3D4F58_TitleScreenAndIntro);
+void func_80102A38_3D4F58_TitleScreenAndIntro(void) {
+    D_80112668_3E4B88_TitleScreenAndIntro = func_80102AF8_3D5018_TitleScreenAndIntro();
+    D_8011265C_3E4B7C_TitleScreenAndIntro = func_8010D3C0_3DF8E0_TitleScreenAndIntro();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102A68_3D4F88_TitleScreenAndIntro);
+omObjData* func_80102A68_3D4F88_TitleScreenAndIntro(void) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102AB4_3D4FD4_TitleScreenAndIntro);
+    obj = omAddObj(0x1001, 16, 0, -1, func_80102AB4_3D4FD4_TitleScreenAndIntro);
+    func_80102AB4_3D4FD4_TitleScreenAndIntro(obj);
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102AF8_3D5018_TitleScreenAndIntro);
+void func_80102AB4_3D4FD4_TitleScreenAndIntro(omObjData* obj) {
+    func_80103054_3D5574_TitleScreenAndIntro(0x62, 0, 0x192);
+    D_80111D40_3E4260_TitleScreenAndIntro = 0;
+    obj->func_ptr = func_80102C28_3D5148_TitleScreenAndIntro;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102B44_3D5064_TitleScreenAndIntro);
+omObjData* func_80102AF8_3D5018_TitleScreenAndIntro(void) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102B88_3D50A8_TitleScreenAndIntro);
+    obj = omAddObj(0x1000, 16, 0, -1, func_80102B44_3D5064_TitleScreenAndIntro);
+    func_80102B44_3D5064_TitleScreenAndIntro(obj);
+    return obj;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102BD0_3D50F0_TitleScreenAndIntro);
+void func_80102B44_3D5064_TitleScreenAndIntro(omObjData* obj) {
+    func_80103054_3D5574_TitleScreenAndIntro(0x62, 1, 0x192);
+    D_80111D40_3E4260_TitleScreenAndIntro = 0;
+    obj->func_ptr = func_80102DC0_3D52E0_TitleScreenAndIntro;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102BFC_3D511C_TitleScreenAndIntro);
+/* START (main's flag) ends a scene that is waiting in state 3 or 4 */
+void func_80102B88_3D50A8_TitleScreenAndIntro(void) {
+    if (D_80111D40_3E4260_TitleScreenAndIntro < 5) {
+        if (D_80111D40_3E4260_TitleScreenAndIntro >= 3) {
+            if (D_801011FC_101DFC == 1) {
+                func_80102BD0_3D50F0_TitleScreenAndIntro();
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102C28_3D5148_TitleScreenAndIntro);
+void func_80102BD0_3D50F0_TitleScreenAndIntro(void) {
+    if (D_80111D40_3E4260_TitleScreenAndIntro < 5) {
+        if (D_80111D40_3E4260_TitleScreenAndIntro >= 3) {
+            D_80111D40_3E4260_TitleScreenAndIntro = 5;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102DC0_3D52E0_TitleScreenAndIntro);
+void func_80102BFC_3D511C_TitleScreenAndIntro(s32 state) {
+    if (D_80111D40_3E4260_TitleScreenAndIntro < 5) {
+        if (D_80111D40_3E4260_TitleScreenAndIntro >= 3) {
+            D_80111D40_3E4260_TitleScreenAndIntro = state;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102F64_3D5484_TitleScreenAndIntro);
+/* the opening's state object: in 3, START (or 80102BD0 when the script returns) -> 5: fade, then
+   the overlay set by 80103054 (the title, or the boot logos once the script has ended); in 4 (set
+   by the script near its end), START -> 8: fade, then the main menu */
+void func_80102C28_3D5148_TitleScreenAndIntro(omObjData* obj) {
+    func_80102B88_3D50A8_TitleScreenAndIntro();
+    switch (D_80111D40_3E4260_TitleScreenAndIntro) {
+        case 0:
+            D_80111D40_3E4260_TitleScreenAndIntro = 1;
+            break;
+        case 1:
+            InitFadeIn(0, 16);
+            D_80111D40_3E4260_TitleScreenAndIntro = 2;
+            break;
+        case 2:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 3;
+            }
+            break;
+        case 3:
+            if (func_80102FD8_3D54F8_TitleScreenAndIntro() != 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 5;
+            }
+            break;
+        case 5:
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(20);
+            D_80111D40_3E4260_TitleScreenAndIntro = 6;
+            break;
+        case 6:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 7;
+            }
+            break;
+        case 7:
+            func_80102F64_3D5484_TitleScreenAndIntro(obj);
+            func_80103070_3D5590_TitleScreenAndIntro();
+            break;
+        case 4:
+            if (func_80102FD8_3D54F8_TitleScreenAndIntro() != 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 8;
+            }
+            break;
+        case 8:
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(20);
+            D_80111D40_3E4260_TitleScreenAndIntro = 9;
+            break;
+        case 9:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 10;
+            }
+            break;
+        case 10:
+            func_80102F64_3D5484_TitleScreenAndIntro(obj);
+            func_80103054_3D5574_TitleScreenAndIntro(0x5B, 0, 0x1081);
+            func_801030A0_3D55C0_TitleScreenAndIntro();
+            omOvlHisChg(1, 0x62, 0, 0x192);
+            break;
+    }
+}
 
+/* the title's state object: in 3, START once the title is up (8010D484) -> 8: fade, then the main
+   menu; 5 (80102BD0, the title process timing out) fades to the boot logos' entry 1 */
+void func_80102DC0_3D52E0_TitleScreenAndIntro(omObjData* obj) {
+    func_80102B88_3D50A8_TitleScreenAndIntro();
+    switch (D_80111D40_3E4260_TitleScreenAndIntro) {
+        case 0:
+            D_80111D40_3E4260_TitleScreenAndIntro = 1;
+            func_8010D478_3DF998_TitleScreenAndIntro();
+            break;
+        case 1:
+            InitFadeIn(0, 16);
+            D_80111D40_3E4260_TitleScreenAndIntro = 2;
+            break;
+        case 2:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 3;
+            }
+            break;
+        case 3:
+            if (func_80102FD8_3D54F8_TitleScreenAndIntro() != 0 && func_8010D484_3DF9A4_TitleScreenAndIntro() != 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 8;
+            }
+            break;
+        case 5:
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(20);
+            D_80111D40_3E4260_TitleScreenAndIntro = 6;
+            break;
+        case 6:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 7;
+            }
+            break;
+        case 7:
+            func_80102F64_3D5484_TitleScreenAndIntro(obj);
+            func_80103054_3D5574_TitleScreenAndIntro(0x57, 1, 0x92);
+            func_80103070_3D5590_TitleScreenAndIntro();
+            break;
+        case 8:
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(20);
+            D_80111D40_3E4260_TitleScreenAndIntro = 9;
+            break;
+        case 9:
+            if (func_8008F618_90218() == 0) {
+                D_80111D40_3E4260_TitleScreenAndIntro = 10;
+            }
+            break;
+        case 10:
+            func_80102F64_3D5484_TitleScreenAndIntro(obj);
+            func_80103054_3D5574_TitleScreenAndIntro(0x5B, 0, 0x1081);
+            func_801030A0_3D55C0_TitleScreenAndIntro();
+            omOvlHisChg(1, 0x62, 0, 0x192);
+            break;
+    }
+}
+
+/* tear the scene down before leaving */
+void func_80102F64_3D5484_TitleScreenAndIntro(omObjData* obj) {
+    s32 i;
+
+    func_8010DF90_3E04B0_TitleScreenAndIntro();
+    func_80105234_3D7754_TitleScreenAndIntro();
+    MBDBackKill();
+    func_80050AE0_516E0();
+    func_80047B78_48778();
+    func_80059400_5A000();
+    for (i = 0; i < 4; i++) {
+        func_8005E260_5EE60(i);
+    }
+    func_8008CE5C_8DA5C();
+    func_80079868_7A468();
+}
+
+/* START on controller 1 (once main allows input).
+   NON_MATCHING: retail clears the result after the pad call (v0 in a delay slot); this keeps it in
+   s0 across the call (masked 6). */
+#ifdef NON_MATCHING
+s32 func_80102FD8_3D54F8_TitleScreenAndIntro(void) {
+    if (func_80068448_69048() == 0) {
+        return 0;
+    }
+    return HuGetPadInserted(0) != 0 && (ContBtnTrg[0] & 0x1000) != 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80102FD8_3D54F8_TitleScreenAndIntro);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103028_3D5548_TitleScreenAndIntro);
+s32 func_80103028_3D5548_TitleScreenAndIntro(void) {
+    return func_80068448_69048() != 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103048_3D5568_TitleScreenAndIntro);
+s32 func_80103048_3D5568_TitleScreenAndIntro(void) {
+    return D_80111D40_3E4260_TitleScreenAndIntro;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103054_3D5574_TitleScreenAndIntro);
+void func_80103054_3D5574_TitleScreenAndIntro(s32 ovl, s16 event, u16 stat) {
+    D_80111D44_3E4264_TitleScreenAndIntro = ovl;
+    D_80111D48_3E4268_TitleScreenAndIntro = event;
+    D_80111D4A_3E426A_TitleScreenAndIntro = stat;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103070_3D5590_TitleScreenAndIntro);
+void func_80103070_3D5590_TitleScreenAndIntro(void) {
+    omOvlGotoEx(D_80111D44_3E4264_TitleScreenAndIntro, D_80111D48_3E4268_TitleScreenAndIntro, D_80111D4A_3E426A_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801030A0_3D55C0_TitleScreenAndIntro);
+void func_801030A0_3D55C0_TitleScreenAndIntro(void) {
+    omOvlCallEx(D_80111D44_3E4264_TitleScreenAndIntro, D_80111D48_3E4268_TitleScreenAndIntro, D_80111D4A_3E426A_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801030D0_3D55F0_TitleScreenAndIntro);
+void func_801030D0_3D55F0_TitleScreenAndIntro(void) {
+    func_80103498_3D59B8_TitleScreenAndIntro();
+    func_801038DC_3D5DFC_TitleScreenAndIntro();
+    D_80111D50_3E4270_TitleScreenAndIntro = -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103100_3D5620_TitleScreenAndIntro);
+void func_80103100_3D5620_TitleScreenAndIntro(void) {
+    if (D_80112148_3E4668_TitleScreenAndIntro != NULL) {
+        HuMemFree(D_80112148_3E4668_TitleScreenAndIntro);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010312C_3D564C_TitleScreenAndIntro);
+/* open a message window (MP1 OpeningScene func_800FC528) */
+s32 func_8010312C_3D564C_TitleScreenAndIntro(s32 x, s32 y, s32 cols, s32 rows) {
+    s16 temp_v0;
+    s32 win;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801031D0_3D56F0_TitleScreenAndIntro);
+    temp_v0 = func_800888A8_894A8(x, y, cols * 10 + 16, rows * 14 + 6, 0, 8);
+    win = temp_v0;
+    func_80089A48_8A648(win, 0);
+    func_80089B2C_8A72C(win, 0);
+    func_8008D88C_8E48C(temp_v0);
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801033F8_3D5918_TitleScreenAndIntro);
+/* show message mess in the scene's window (created on first use); wait -1: until it is closed,
+   > 0: that many frames */
+void func_801031D0_3D56F0_TitleScreenAndIntro(s32 mess, s32 wait) {
+    TextWindow* window;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103478_3D5998_TitleScreenAndIntro);
+    if (D_80111D50_3E4270_TitleScreenAndIntro == -1) {
+        D_80111D50_3E4270_TitleScreenAndIntro = func_8010312C_3D564C_TitleScreenAndIntro(
+            D_80111030_3E3550_TitleScreenAndIntro.x, D_80111030_3E3550_TitleScreenAndIntro.y,
+            D_80111030_3E3550_TitleScreenAndIntro.cols, D_80111030_3E3550_TitleScreenAndIntro.rows);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 2, 255, 0, 0);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 4, 0, 144, 0);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 5, 0, 176, 192);
+        func_80089CAC_8A8AC((s16)D_80111D50_3E4270_TitleScreenAndIntro, 6, 255, 173, 0);
+        func_80089DA0_8A9A0((s16)D_80111D50_3E4270_TitleScreenAndIntro, 192, 192, 192);
+        func_8008D530_8E130((s16)D_80111D50_3E4270_TitleScreenAndIntro, 240, 240, 224);
+        func_80089B2C_8A72C((s16)D_80111D50_3E4270_TitleScreenAndIntro, 255);
+        func_80089C78_8A878((s16)D_80111D50_3E4270_TitleScreenAndIntro, 1);
+        window = &D_800F920C_F9E0C[D_80111D50_3E4270_TitleScreenAndIntro];
+        SprPrioSet(window->unk_6C, func_80089404_8A004((s16)D_80111D50_3E4270_TitleScreenAndIntro, 0xE0015, 131, 16, 0), 15000);
+    }
+    func_8008AD44_8B944((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+    func_80089DA0_8A9A0((s16)D_80111D50_3E4270_TitleScreenAndIntro, 192, 192, 192);
+    func_8008D530_8E130((s16)D_80111D50_3E4270_TitleScreenAndIntro, 240, 240, 224);
+    func_80089C78_8A878((s16)D_80111D50_3E4270_TitleScreenAndIntro, 1);
+    func_80089B2C_8A72C((s16)D_80111D50_3E4270_TitleScreenAndIntro, 255);
+    func_800890CC_89CCC((s16)D_80111D50_3E4270_TitleScreenAndIntro, mess, -1, -1);
+    func_8008D6F0_8E2F0((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+    if (wait == -1) {
+        while (func_8008BA30_8C630((s16)D_80111D50_3E4270_TitleScreenAndIntro) != 0) {
+            HuPrcVSleep();
+        }
+    } else if (wait > 0) {
+        HuPrcSleep(wait);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103498_3D59B8_TitleScreenAndIntro);
+/* show a message and close it after wait frames (0: when the player closes it); keep: leave it
+   open and return at once (MP1 func_800FC6BC) */
+void func_801033F8_3D5918_TitleScreenAndIntro(s32 mess, s32 wait, s32 keep) {
+    if (keep != 0) {
+        func_801031D0_3D56F0_TitleScreenAndIntro(mess, wait);
+        return;
+    }
+    func_801031D0_3D56F0_TitleScreenAndIntro(mess, 0);
+    if (wait == 0) {
+        while (func_8008BA30_8C630((s16)D_80111D50_3E4270_TitleScreenAndIntro) != 0) {
+            HuPrcVSleep();
+        }
+    } else {
+        HuPrcSleep(wait);
+    }
+    func_8008D5D8_8E1D8((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801034A4_3D59C4_TitleScreenAndIntro);
+void func_80103478_3D5998_TitleScreenAndIntro(void) {
+    func_8008D5D8_8E1D8((s16)D_80111D50_3E4270_TitleScreenAndIntro);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801034C0_3D59E0_TitleScreenAndIntro);
+void func_80103498_3D59B8_TitleScreenAndIntro(void) {
+    D_80111D60_3E4280_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801035AC_3D5ACC_TitleScreenAndIntro);
+/* the full-screen fill (MP1 OpeningScene func_800FCAB0..func_800FCECC) */
+void func_801034A4_3D59C4_TitleScreenAndIntro(u8 r, u8 g, u8 b, u8 a) {
+    D_80111D5C_3E427C_TitleScreenAndIntro[0] = r;
+    D_80111D5C_3E427C_TitleScreenAndIntro[1] = g;
+    D_80111D5C_3E427C_TitleScreenAndIntro[2] = b;
+    D_80111D5C_3E427C_TitleScreenAndIntro[3] = a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010364C_3D5B6C_TitleScreenAndIntro);
+/* fade in from black: rot.x counts down from rot.y */
+void func_801034C0_3D59E0_TitleScreenAndIntro(omObjData* obj) {
+    f32 temp_f20;
+    f32 var_f2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103730_3D5C50_TitleScreenAndIntro);
+    temp_f20 = obj->rot.x;
+    var_f2 = temp_f20 / obj->rot.y;
+    if (var_f2 < 0.0f) {
+        var_f2 = 0.0f;
+    }
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, (u32)(var_f2 * 255.0f));
+    temp_f20 -= 1.0f;
+    if (temp_f20 < 0.0f) {
+        temp_f20 = 0.0f;
+    }
+    obj->rot.x = temp_f20;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801037D0_3D5CF0_TitleScreenAndIntro);
+omObjData* func_801035AC_3D5ACC_TitleScreenAndIntro(s32 time) {
+    f32 temp_f0;
+    omObjData* temp_v0;
+    s16 temp_s2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038A0_3D5DC0_TitleScreenAndIntro);
+    temp_s2 = func_801038A0_3D5DC0_TitleScreenAndIntro();
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, 255);
+    temp_v0 = omAddObj(0x1000, 0, 0, -1, func_801034C0_3D59E0_TitleScreenAndIntro);
+    temp_f0 = time;
+    omSetRot(temp_v0, temp_f0, temp_f0, 0.0f);
+    D_80111D60_3E4280_TitleScreenAndIntro = temp_s2;
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038D0_3D5DF0_TitleScreenAndIntro);
+/* fade out to black: rot.x counts up to rot.y */
+void func_8010364C_3D5B6C_TitleScreenAndIntro(omObjData* obj) {
+    f32 temp_f20;
+    f32 temp_f22;
+    f32 var_f2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801038DC_3D5DFC_TitleScreenAndIntro);
+    temp_f20 = obj->rot.x;
+    temp_f22 = obj->rot.y;
+    var_f2 = temp_f20 / temp_f22;
+    if (temp_f22 < var_f2) {
+        var_f2 = temp_f22;
+    }
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, (u32)(var_f2 * 255.0f));
+    temp_f20 += 1.0f;
+    if (temp_f22 < temp_f20) {
+        temp_f20 = temp_f22;
+    }
+    obj->rot.x = temp_f20;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103A54_3D5F74_TitleScreenAndIntro);
+omObjData* func_80103730_3D5C50_TitleScreenAndIntro(s32 time) {
+    omObjData* temp_v0;
+    s16 temp_s2;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103AC0_3D5FE0_TitleScreenAndIntro);
+    temp_s2 = func_801038A0_3D5DC0_TitleScreenAndIntro();
+    func_801034A4_3D59C4_TitleScreenAndIntro(0, 0, 0, 255);
+    temp_v0 = omAddObj(0x1000, 0, 0, -1, func_8010364C_3D5B6C_TitleScreenAndIntro);
+    omSetRot(temp_v0, 0.0f, (f32)time, 0.0f);
+    D_80111D60_3E4280_TitleScreenAndIntro = temp_s2;
+    return temp_v0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103ADC_3D5FFC_TitleScreenAndIntro);
+void func_801037D0_3D5CF0_TitleScreenAndIntro(Gfx** gfx) {
+    gSPDisplayList((*gfx)++, D_80111040_3E3560_TitleScreenAndIntro);
+    gDPSetRenderMode((*gfx)++, 0x5041C8, 0);
+    gDPSetCombineMode((*gfx)++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetPrimColor((*gfx)++, 0, 0, D_80111D5C_3E427C_TitleScreenAndIntro[0], D_80111D5C_3E427C_TitleScreenAndIntro[1],
+                    D_80111D5C_3E427C_TitleScreenAndIntro[2], D_80111D5C_3E427C_TitleScreenAndIntro[3]);
+    gDPFillRectangle((*gfx)++, 0, 0, 320, 240);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103B04_3D6024_TitleScreenAndIntro);
+s16 func_801038A0_3D5DC0_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_801037D0_3D5CF0_TitleScreenAndIntro, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BD4_3D60F4_TitleScreenAndIntro);
+s32 func_801038D0_3D5DF0_TitleScreenAndIntro(void) {
+    return D_800FDBE0_FE7E0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BF0_3D6110_TitleScreenAndIntro);
+/* set up the light mask: the default stamp image (file 0xE000F, big-endian header), three
+   160x128 masks, all stamps off, black at 0x60 alpha */
+void func_801038DC_3D5DFC_TitleScreenAndIntro(void) {
+    Ovl62Stamp* stamp;
+    u8* file;
+    u8* img;
+    s32 size;
+    s32 i;
 
+    file = DataRead(0xE000F);
+    img = file + (file[2] << 8) + file[3];
+    D_8011268C_3E4BAC_TitleScreenAndIntro.w = (img[4] << 8) + img[5];
+    D_8011268C_3E4BAC_TitleScreenAndIntro.h = (img[6] << 8) + img[7];
+    img = file + (img[2] << 8) + img[3];
+    size = D_8011268C_3E4BAC_TitleScreenAndIntro.w * D_8011268C_3E4BAC_TitleScreenAndIntro.h;
+    D_8011268C_3E4BAC_TitleScreenAndIntro.data = func_80027154_27D54(size, 0x7918);
+    bcopy(img, D_8011268C_3E4BAC_TitleScreenAndIntro.data, size);
+    DataClose(file);
+    D_80111D54_3E4274_TitleScreenAndIntro = 160;
+    D_80111D58_3E4278_TitleScreenAndIntro = 128;
+    D_801138A0_3E5DC0_TitleScreenAndIntro = D_80112148_3E4668_TitleScreenAndIntro = func_80027154_27D54(160 * 128 * 3, 0x7918);
+    func_8010415C_3D667C_TitleScreenAndIntro(255);
+    for (i = 0; i < 8; i++) {
+        stamp = &D_80112060_3E4580_TitleScreenAndIntro[i];
+        stamp->y = 0;
+        D_80112060_3E4580_TitleScreenAndIntro[i].x = 0;
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+    }
+    func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 0x60);
+    D_80111D62_3E4282_TitleScreenAndIntro = func_8010433C_3D685C_TitleScreenAndIntro();
+}
+
+void func_80103A54_3D5F74_TitleScreenAndIntro(void) {
+    s32 i;
+
+    func_800283DC_28FDC(D_80111D62_3E4282_TitleScreenAndIntro);
+    for (i = 0; i < 8; i++) {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+    }
+    func_80027340_27F40(D_8011268C_3E4BAC_TitleScreenAndIntro.data);
+    func_80027340_27F40(D_80112148_3E4668_TitleScreenAndIntro);
+    D_80112148_3E4668_TitleScreenAndIntro = NULL;
+}
+
+void func_80103AC0_3D5FE0_TitleScreenAndIntro(u8 r, u8 g, u8 b, u8 a) {
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[0] = r;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[1] = g;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[2] = b;
+    D_80112060_3E4580_TitleScreenAndIntro[0].color[3] = a;
+}
+
+void func_80103ADC_3D5FFC_TitleScreenAndIntro(s32 i, s32 x, s32 y) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].x = x;
+    D_80112060_3E4580_TitleScreenAndIntro[i].y = y;
+}
+
+/* place stamp i over screen point (x, y) (320x240 to the 160x128 mask, centred on a 32x32
+   image); data NULL: the default image */
+void func_80103B04_3D6024_TitleScreenAndIntro(s32 i, s32 x, s32 y, u8* data) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].w = D_8011268C_3E4BAC_TitleScreenAndIntro.w;
+    D_80112060_3E4580_TitleScreenAndIntro[i].h = D_8011268C_3E4BAC_TitleScreenAndIntro.h;
+    D_80112060_3E4580_TitleScreenAndIntro[i].x = x * (1.0 / 1.33f) - 16.0;
+    D_80112060_3E4580_TitleScreenAndIntro[i].y = y * (1.0 / 1.33f) - 16.0 - 8.0;
+    if (data == NULL) {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = D_8011268C_3E4BAC_TitleScreenAndIntro.data;
+    } else {
+        D_80112060_3E4580_TitleScreenAndIntro[i].data = data;
+    }
+}
+
+void func_80103BD4_3D60F4_TitleScreenAndIntro(s32 i) {
+    D_80112060_3E4580_TitleScreenAndIntro[i].data = NULL;
+}
+
+/* draw the light mask: rebuild this frame buffer's mask from the active stamps, then draw it in
+   32x32 tiles scaled to the screen (1.33 x 2) */
+void func_80103BF0_3D6110_TitleScreenAndIntro(Gfx** gfx) {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+    u8* mask;
+    u8* tex;
+    s32 i;
+    s32 x;
+    s32 y;
+
+    r = D_80112060_3E4580_TitleScreenAndIntro[0].color[0];
+    g = D_80112060_3E4580_TitleScreenAndIntro[0].color[1];
+    b = D_80112060_3E4580_TitleScreenAndIntro[0].color[2];
+    a = D_80112060_3E4580_TitleScreenAndIntro[0].color[3];
+    if (a == 0.0f) {
+        return;
+    }
+    mask = D_801138A0_3E5DC0_TitleScreenAndIntro =
+        D_80112148_3E4668_TitleScreenAndIntro + D_80111D58_3E4278_TitleScreenAndIntro * D_80111D54_3E4274_TitleScreenAndIntro * func_801038D0_3D5DF0_TitleScreenAndIntro();
+    func_8010415C_3D667C_TitleScreenAndIntro(255);
+    for (i = 0; i < 8; i++) {
+        if (D_80112060_3E4580_TitleScreenAndIntro[i].data != NULL) {
+            func_8010421C_3D673C_TitleScreenAndIntro(&D_80112060_3E4580_TitleScreenAndIntro[i], D_80112060_3E4580_TitleScreenAndIntro[i].x,
+                                                     D_80112060_3E4580_TitleScreenAndIntro[i].y);
+        }
+    }
+    gSPDisplayList((*gfx)++, D_80111090_3E35B0_TitleScreenAndIntro);
+    gDPSetAlphaCompare((*gfx)++, G_AC_THRESHOLD);
+    gDPSetBlendColor((*gfx)++, 0, 0, 0, 1);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    gDPSetTextureFilter((*gfx)++, G_TF_BILERP);
+    gDPSetRenderMode((*gfx)++, 0x504240, 0);
+    gDPSetCombineLERP((*gfx)++, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0);
+    gDPSetPrimColor((*gfx)++, 0, 0, r, g, b, a);
+    for (y = 0; y < D_80111D58_3E4278_TitleScreenAndIntro; y += 32) {
+        for (x = 0; x < D_80111D54_3E4274_TitleScreenAndIntro; x += 32) {
+            tex = &mask[x + y * D_80111D54_3E4274_TitleScreenAndIntro];
+            gDPLoadTextureTile((*gfx)++, tex, G_IM_FMT_I, G_IM_SIZ_8b,
+                               D_80111D54_3E4274_TitleScreenAndIntro, D_80111D58_3E4278_TitleScreenAndIntro, 0, 0, 32, 32, 0,
+                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gSPScisTextureRectangle((*gfx)++, x * 8 * 1.33f, y * 8 * 1.33f, (x + 32) * 8 * 1.33f, (y + 32) * 8 * 1.33f,
+                                    G_TX_RENDERTILE, 0, 0, 0x180, 0x180);
+        }
+    }
+}
+
+/* fill the current mask with value.
+   NON_MATCHING: retail loads D_801138A0 after the size's operands (scheduling only, masked 0). */
+#ifdef NON_MATCHING
+void func_8010415C_3D667C_TitleScreenAndIntro(u8 value) {
+    u32* p = (u32*)D_801138A0_3E5DC0_TitleScreenAndIntro;
+    u32 n = D_80111D54_3E4274_TitleScreenAndIntro * D_80111D58_3E4278_TitleScreenAndIntro * 0.25;
+    u32 i;
+
+    for (i = 0; i < n; i++) {
+        *p++ = (value << 24) | (value << 16) | (value << 8) | value;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010415C_3D667C_TitleScreenAndIntro);
+#endif
 
+/* darken the current mask with a stamp's image at (x, y): each texel on the mask takes the stamp's
+   value where that is darker (lower).
+   NON_MATCHING: retail keeps the off-mask default (0xFF) in the texel's register from the first
+   test and masks the stamp value instead (masked 7). */
+#ifdef NON_MATCHING
+void func_8010421C_3D673C_TitleScreenAndIntro(Ovl62Stamp* stamp, s32 x, s32 y) {
+    u8* mask = D_801138A0_3E5DC0_TitleScreenAndIntro;
+    u8* data = stamp->data;
+    s32 i;
+    s32 j;
+    s32 px;
+    s32 py;
+    u8 v;
+    u8 cur;
+
+    for (j = 0; j < stamp->h; j++) {
+        for (i = 0; i < stamp->w; i++) {
+            py = y + j;
+            px = x + i;
+            if (px < 0) {
+                continue;
+            }
+            if (px >= D_80111D54_3E4274_TitleScreenAndIntro) {
+                continue;
+            }
+            if (py < 0) {
+                continue;
+            }
+            if (py >= D_80111D58_3E4278_TitleScreenAndIntro) {
+                continue;
+            }
+            v = data[i + j * stamp->w];
+            if (px < 0 || px >= D_80111D54_3E4274_TitleScreenAndIntro) {
+                cur = 0xFF;
+            } else if (py < 0 || py >= D_80111D58_3E4278_TitleScreenAndIntro) {
+                cur = 0xFF;
+            } else {
+                cur = mask[px + py * D_80111D54_3E4274_TitleScreenAndIntro];
+            }
+            if (cur >= v) {
+                mask[px + py * D_80111D54_3E4274_TitleScreenAndIntro] = v;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010421C_3D673C_TitleScreenAndIntro);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010433C_3D685C_TitleScreenAndIntro);
+s16 func_8010433C_3D685C_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_80103BF0_3D6110_TitleScreenAndIntro, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010436C_3D688C_TitleScreenAndIntro);
+/* the curtain: model drawn blended between two named parts by t (0 at the start) */
+void func_8010436C_3D688C_TitleScreenAndIntro(Ovl62Blend* blend, s16 model, char* part, s16 model2, char* part2) {
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010440C_3D692C_TitleScreenAndIntro);
+    blend->model = model;
+    blend->model2 = model2;
+    blend->part = part;
+    blend->part2 = part2;
+    func_8002A00C_2AC0C(model);
+    t = 0.0f;
+    blend->t = t;
+    func_8002A4E0_2B0E0(model, model2, t, part, part2, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104448_3D6968_TitleScreenAndIntro);
+void func_8010440C_3D692C_TitleScreenAndIntro(Ovl62Blend* blend, f32 t) {
+    blend->t = t;
+    func_8002A4E0_2B0E0(blend->model, blend->model2, blend->t, blend->part, blend->part2, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104524_3D6A44_TitleScreenAndIntro);
+/* a one-member sprite group from an animation file, at (x, y), hidden priority 0x47F4 */
+void func_80104448_3D6968_TitleScreenAndIntro(s32 file, s16 x, s16 y, Ovl62Sprite* spr) {
+    void* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104564_3D6A84_TitleScreenAndIntro);
+    spr->active = 1;
+    spr->grp = SprCreate(5, 0);
+    data = DataRead(file);
+    spr->anim = SprAnimRead(data);
+    DataClose(data);
+    SprAnimSet(spr->grp, 0, spr->anim, 0);
+    SprPrioSet(spr->grp, 0, 0x47F4);
+    SprAttrSet(spr->grp, 0, 0xD000);
+    SprPosSet(spr->grp, 0, x, y);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045A4_3D6AC4_TitleScreenAndIntro);
+/* show */
+void func_80104524_3D6A44_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0x8000);
+    SprAttrSet(spr->grp, 0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045CC_3D6AEC_TitleScreenAndIntro);
+/* hide */
+void func_80104564_3D6A84_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0);
+    SprAttrSet(spr->grp, 0, 0x8000);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045F0_3D6B10_TitleScreenAndIntro);
+void func_801045A4_3D6AC4_TitleScreenAndIntro(Ovl62Sprite* spr, s32 prio) {
+    SprPrioSet(spr->grp, 0, prio + 0x47F4);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104614_3D6B34_TitleScreenAndIntro);
+void func_801045CC_3D6AEC_TitleScreenAndIntro(Ovl62Sprite* spr, s32 alpha) {
+    func_80082488_83088(spr->grp, 0, alpha);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104638_3D6B58_TitleScreenAndIntro);
+void func_801045F0_3D6B10_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0xFFFF);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104668_3D6B88_TitleScreenAndIntro);
+void func_80104614_3D6B34_TitleScreenAndIntro(Ovl62Sprite* spr, s32 attr) {
+    SprAttrSet(spr->grp, 0, attr);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104690_3D6BB0_TitleScreenAndIntro);
+void func_80104638_3D6B58_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprKill(spr->grp);
+    SprAnimKill(spr->anim);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104778_3D6C98_TitleScreenAndIntro);
+void func_80104668_3D6B88_TitleScreenAndIntro(Ovl62Sprite* dst, Ovl62Sprite* mask) {
+    func_80104690_3D6BB0_TitleScreenAndIntro(dst->grp, 0, mask->grp, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105204_3D7724_TitleScreenAndIntro);
+/* copy a sprite's I8 image into another's RGBA32 alpha bytes (MP1 PressStartScreen
+   func_800F7844) */
+void func_80104690_3D6BB0_TitleScreenAndIntro(s16 grp, s16 idx, s16 maskGrp, s16 maskIdx) {
+    HuSprite* a = func_80082550_83150(grp, idx);
+    HuSprite* b = func_80082550_83150(maskGrp, maskIdx);
+    HuSprite_Unk84_Unk00_Struct* frame = a->unk_84->unk00;
+    u16 w = frame->unk04;
+    u16 h = frame->unk06;
+    u8* dst = frame->unk00;
+    u8* src = b->unk_84->unk00->unk00;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105234_3D7754_TitleScreenAndIntro);
+    for (i = 0; i < (s16)w * (s16)h; i++) {
+        dst[3] = *src;
+        dst += 4;
+        src++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105280_3D77A0_TitleScreenAndIntro);
+/* draw the RGBA32 image D_801110E0 (80105280) at (28, 29) in 32x16 tiles; the last column and
+   row take what is left */
+void func_80104778_3D6C98_TitleScreenAndIntro(Gfx** gfx) {
+    s32 x;
+    s32 y;
+    s32 w;
+    s32 h;
+    s32 x0;
+    s32 y0;
+    u8* tex;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801053D8_3D78F8_TitleScreenAndIntro);
+    x0 = 28;
+    y0 = 29;
+    gSPDisplayList((*gfx)++, D_801110E8_3E3608_TitleScreenAndIntro);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    gDPSetCombineMode((*gfx)++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetRenderMode((*gfx)++, 0x504240, 0);
+    gDPSetPrimColor((*gfx)++, 0, 0, 255, 255, 255, 255);
+    gDPSetCycleType((*gfx)++, G_CYC_1CYCLE);
+    gSPSegment((*gfx)++, 0, 0);
+    for (y = 0; y < D_80111D68_3E4288_TitleScreenAndIntro - 16; y += 16) {
+        for (x = 0; x < D_80111D64_3E4284_TitleScreenAndIntro - 32; x += 32) {
+            tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+            gDPLoadTextureTile((*gfx)++, tex,
+                               G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro,
+                               0, 0, 32, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+            gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + 32) * 4, (y + y0 + 16) * 4, G_TX_RENDERTILE, 0, 0,
+                                    0x400, 0x400);
+        }
+        tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+        w = D_80111D64_3E4284_TitleScreenAndIntro - x;
+        gDPLoadTextureTile((*gfx)++, tex,
+                           G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0,
+                           0, w, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                           G_TX_NOLOD);
+        gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + w) * 4, (y + y0 + 16) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                                0x400);
+    }
+    h = D_80111D68_3E4288_TitleScreenAndIntro - y;
+    for (x = 0; x < D_80111D64_3E4284_TitleScreenAndIntro - 32; x += 32) {
+        tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+        gDPLoadTextureTile((*gfx)++, tex,
+                           G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0,
+                           0, 32, h, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                           G_TX_NOLOD);
+        gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + 32) * 4, (y + y0 + h) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                                0x400);
+    }
+    tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+    w = D_80111D64_3E4284_TitleScreenAndIntro - x;
+    gDPLoadTextureTile((*gfx)++, tex,
+                       G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0, 0,
+                       w, h, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                       G_TX_NOLOD);
+    gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + w) * 4, (y + y0 + h) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                            0x400);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105460_3D7980_TitleScreenAndIntro);
+s16 func_80105204_3D7724_TitleScreenAndIntro(void) {
+    return func_8002838C_28F8C(0, func_80104778_3D6C98_TitleScreenAndIntro, 6);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105504_3D7A24_TitleScreenAndIntro);
+void func_80105234_3D7754_TitleScreenAndIntro(void) {
+    if (D_801110E0_3E3600_TitleScreenAndIntro != NULL) {
+        func_80027340_27F40(D_801110E0_3E3600_TitleScreenAndIntro);
+        func_80027340_27F40(D_80112144_3E4664_TitleScreenAndIntro);
+        func_800283DC_28FDC(D_80111D6C_3E428C_TitleScreenAndIntro);
+        D_801110E0_3E3600_TitleScreenAndIntro = NULL;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055A0_3D7AC0_TitleScreenAndIntro);
+/* load the RGBA32 image (file 0xE001B) and an I8 image (file 0x1B; big-endian headers) */
+void func_80105280_3D77A0_TitleScreenAndIntro(void) {
+    u8* file;
+    u8* hdr;
+    u8* pix;
+    s32 w;
+    s32 h;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055C8_3D7AE8_TitleScreenAndIntro);
+    file = DataRead(0xE001B);
+    hdr = file + (file[2] << 8) + file[3];
+    w = (hdr[4] << 8) + hdr[5];
+    D_80111D64_3E4284_TitleScreenAndIntro = w;
+    h = (hdr[6] << 8) + hdr[7];
+    D_80111D68_3E4288_TitleScreenAndIntro = h;
+    pix = file + (hdr[2] << 8) + hdr[3];
+    w = w * h * 4;
+    D_801110E0_3E3600_TitleScreenAndIntro = func_80027154_27D54(w, 0x7918);
+    bcopy(pix, D_801110E0_3E3600_TitleScreenAndIntro, w);
+    DataClose(file);
+    file = DataRead(0x1B);
+    hdr = file + (file[2] << 8) + file[3];
+    w = (hdr[4] << 8) + hdr[5];
+    h = (hdr[6] << 8) + hdr[7];
+    pix = file + (hdr[2] << 8) + hdr[3];
+    w = w * h;
+    D_80112144_3E4664_TitleScreenAndIntro = func_80027154_27D54(w, 0x7918);
+    bcopy(pix, D_80112144_3E4664_TitleScreenAndIntro, w);
+    DataClose(file);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801055F0_3D7B10_TitleScreenAndIntro);
+/* start drawing the image, made opaque */
+void func_801053D8_3D78F8_TitleScreenAndIntro(void) {
+    u8* p;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105658_3D7B78_TitleScreenAndIntro);
+    D_80111D6C_3E428C_TitleScreenAndIntro = func_80105204_3D7724_TitleScreenAndIntro();
+    p = D_801110E0_3E3600_TitleScreenAndIntro;
+    for (i = 0; i < D_80111D64_3E4284_TitleScreenAndIntro * D_80111D68_3E4288_TitleScreenAndIntro; i++) {
+        p[3] = 0xFF;
+        p += 4;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105668_3D7B88_TitleScreenAndIntro);
+/* a model from a form file at (x, y, z), uniform scale */
+u16 func_80105460_3D7980_TitleScreenAndIntro(s32 file, f32 x, f32 y, f32 z, f32 scale, s32 attr) {
+    u16 model = LoadFormFile(file, attr);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105684_3D7BA4_TitleScreenAndIntro);
+    func_80029AFC_2A6FC(model);
+    func_80029714_2A314(model, x, y, z);
+    func_800297E8_2A3E8(model, scale, scale, scale);
+    return model;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801056CC_3D7BEC_TitleScreenAndIntro);
+u16 func_80105504_3D7A24_TitleScreenAndIntro(s32 file, f32 x, f32 y, f32 z, f32 scale, s32 attr) {
+    u16 model = LoadFormFile(file, attr);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010571C_3D7C3C_TitleScreenAndIntro);
+    func_80029714_2A314(model, x, y, z);
+    func_800297E8_2A3E8(model, scale, scale, scale);
+    return model;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105758_3D7C78_TitleScreenAndIntro);
+void func_801055A0_3D7AC0_TitleScreenAndIntro(s16 model) {
+    func_800298A4_2A4A4(model, 4, 4);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801057D4_3D7CF4_TitleScreenAndIntro);
+void func_801055C8_3D7AE8_TitleScreenAndIntro(s16 model) {
+    func_800298A4_2A4A4(model, 4, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105818_3D7D38_TitleScreenAndIntro);
+/* face the angle (degrees) */
+void func_801055F0_3D7B10_TitleScreenAndIntro(MBModel* model, f32 angle) {
+    f32 s = HuMathSin(angle);
+
+    HuVecCopyXYZ(&model->rot, -s, 0.0f, func_800B7890_B8490(angle));
+}
+
+void func_80105658_3D7B78_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z) {
+    model->pos.x = x;
+    model->pos.y = y;
+    model->pos.z = z;
+}
+
+void func_80105668_3D7B88_TitleScreenAndIntro(MBModel* model, Vec* pos) {
+    model->pos.x = pos->x;
+    model->pos.y = pos->y;
+    model->pos.z = pos->z;
+}
+
+/* walk to (x, y, z) in time frames */
+void func_80105684_3D7BA4_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z, s32 time) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    func_8005845C_5905C(0, &pos, time, model);
+}
+
+/* turn to face (x, y, z) over time frames */
+void func_801056CC_3D7BEC_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z, f32 time) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    func_80058F18_59B18(0, &pos, time, model);
+}
+
+/* face (x, z) at once */
+void func_8010571C_3D7C3C_TitleScreenAndIntro(MBModel* model, f32 x, f32 y, f32 z) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, x, y, z);
+    pos.y = 0.0f;
+    func_80056658_57258(&model->pos, &pos, &model->rot);
+}
+
+/* face its position plus (dx, dz) at once */
+void func_80105758_3D7C78_TitleScreenAndIntro(MBModel* model, f32 dx, f32 dy, f32 dz) {
+    Vec pos;
+
+    HuVecCopyXYZ(&pos, dx + model->pos.x, dy + model->pos.y, dz + model->pos.z);
+    pos.y = 0.0f;
+    func_80056658_57258(&model->pos, &pos, &model->rot);
+}
+
+/* the direction of an angle (degrees) */
+void func_801057D4_3D7CF4_TitleScreenAndIntro(f32 angle, Vec* out) {
+    out->x = HuMathSin(angle);
+    out->y = 0.0f;
+    out->z = func_800B7890_B8490(angle);
+}
+
+void func_80105818_3D7D38_TitleScreenAndIntro(void) {
+    D_80112678_3E4B98_TitleScreenAndIntro = 0;
+}
 
 void func_80105824_3D7D44_TitleScreenAndIntro(void) {
 }
@@ -154,15 +909,84 @@ void func_80105824_3D7D44_TitleScreenAndIntro(void) {
 void func_8010582C_3D7D4C_TitleScreenAndIntro(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105834_3D7D54_TitleScreenAndIntro);
+void func_80105834_3D7D54_TitleScreenAndIntro(void) {
+    D_80112678_3E4B98_TitleScreenAndIntro = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105840_3D7D60_TitleScreenAndIntro);
+/* debug: wait for A */
+void func_80105840_3D7D60_TitleScreenAndIntro(void) {
+    while (1) {
+        if (ContBtnTrg[0] & 0x8000) {
+            break;
+        }
+        HuPrcVSleep();
+    }
+    HuPrcVSleep();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105880_3D7DA0_TitleScreenAndIntro);
+/* debug: move the board camera with the stick and zoom with D-pad up/down until A, printing them */
+void func_80105880_3D7DA0_TitleScreenAndIntro(void) {
+    Vec pos;
+    char buf[256];
+    f32 zoom;
+    f32 dx;
+    f32 dy;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801059F0_3D7F10_TitleScreenAndIntro);
+    zoom = func_80052E5C_53A5C();
+    pos.x = D_80111128_3E3648_TitleScreenAndIntro.x;
+    pos.y = D_80111128_3E3648_TitleScreenAndIntro.y;
+    pos.z = D_80111128_3E3648_TitleScreenAndIntro.z;
+    while (1) {
+        if (ContBtnTrg[0] & 0x8000) {
+            break;
+        }
+        dx = ContStkX[0];
+        dy = -ContStkY[0];
+        pos.x += dx * 0.05f;
+        pos.y += dy * 0.05f;
+        if (ContBtn[0] & 0x800) {
+            zoom += 0.01f;
+        } else if (ContBtn[0] & 0x400) {
+            zoom -= 0.01f;
+        }
+        func_80052E68_53A68(zoom);
+        MBDCameraPos3DSet(&pos);
+        sprintf(buf, "POS(%4.2f,%4.2f) SCALE%4.2f", pos.x, pos.y, zoom);
+        DrawDebugText(64, 80, buf);
+        HuPrcVSleep();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105A1C_3D7F3C_TitleScreenAndIntro);
+/* three empty strings after 80105880's, referenced by nothing (retail's rodata) */
+__asm__(".section .rodata");
+const char D_80111BE4_3E4104_TitleScreenAndIntro[] = "";
+__asm__(".section .rodata");
+const char D_80111BE8_3E4108_TitleScreenAndIntro[] = "";
+__asm__(".section .rodata");
+const char D_80111BEC_3E410C_TitleScreenAndIntro[] = "";
+
+Process* func_801059F0_3D7F10_TitleScreenAndIntro(void) {
+    return omAddPrcObj(func_80105A1C_3D7F3C_TitleScreenAndIntro, 0x5000, 0x2000, 0);
+}
+
+/* the opening's process: run the script (fork B), then fade out to the boot logos' second entry */
+void func_80105A1C_3D7F3C_TitleScreenAndIntro(void) {
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        D_80111E38_3E4358_TitleScreenAndIntro[i][0] = 0;
+    }
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+    D_80111D70_3E4290_TitleScreenAndIntro = func_8010DF5C_3E047C_TitleScreenAndIntro();
+    func_80105AB8_3D7FD8_TitleScreenAndIntro();
+    HuPrcSleep(3);
+    func_80103054_3D5574_TitleScreenAndIntro(0x57, 1, 0x92);
+    func_80102BD0_3D50F0_TitleScreenAndIntro();
+    while (1) {
+        HuPrcVSleep();
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80111BF0_3E4110_TitleScreenAndIntro[] = "17";
