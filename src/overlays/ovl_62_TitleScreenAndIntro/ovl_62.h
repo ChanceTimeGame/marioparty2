@@ -291,6 +291,102 @@ void func_80105A1C_3D7F3C_TitleScreenAndIntro(void);
 
 /* ---- 62-B ---- */
 
+/* The opening's cast. Model slot i (D_80111D78[i]) is made from D_80111874[i]: 0-5 the six
+   characters, 6 the host, 7 and 8 the two models of the second scene. A slot's motions are its
+   table D_80111874[i].mot; 80110D8C(i, m) loads motion m (its id goes in .id), 80110DDC(i, m)
+   frees it, 80110E60(i, m, ...) plays it. */
+typedef struct Ovl62Motion {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 id;     /* the loaded motion, -1 when not loaded */
+    /* 0x08 */ char* name; /* "0".."17", or "" */
+} Ovl62Motion; /* size = 0xC */
+
+typedef struct Ovl62ModelDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 attr;  /* MBModelFileCreate's second argument (13) */
+    /* 0x08 */ f32 unk08; /* 180, unused here */
+    /* 0x0C */ f32 sx;    /* MBModelFileCreate's scales */
+    /* 0x10 */ f32 sy;
+    /* 0x14 */ Ovl62Motion* mot;
+} Ovl62ModelDef; /* size = 0x18 */
+
+/* A texture file swapped onto a model (80110BF0's third argument). */
+typedef struct Ovl62File {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 unk04;
+} Ovl62File; /* size = 0x8 */
+
+/* A prop (80105460/80105504); only the file is read here. */
+typedef struct Ovl62PropDef {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ Vec pos;   /* {0, 0, -0} */
+    /* 0x10 */ f32 rotY;  /* 180 */
+    /* 0x14 */ f32 scale; /* 1 */
+} Ovl62PropDef; /* size = 0x18 */
+
+#include "game/hmfman.h" /* D_800F92B4: motion lengths */
+
+/* .data, asm (3E3530.data.s): the motion and texture tables, in address order */
+extern Ovl62Motion D_80111140_3E3660_TitleScreenAndIntro[18]; /* slot 0 */
+extern Ovl62File D_80111218_3E3738_TitleScreenAndIntro[5];
+extern Ovl62Motion D_80111240_3E3760_TitleScreenAndIntro[16]; /* slot 1 */
+extern Ovl62File D_80111300_3E3820_TitleScreenAndIntro[4];
+extern Ovl62Motion D_80111320_3E3840_TitleScreenAndIntro[16]; /* slot 2 */
+extern Ovl62File D_801113E0_3E3900_TitleScreenAndIntro[4];
+extern Ovl62Motion D_80111400_3E3920_TitleScreenAndIntro[17]; /* slot 3 */
+extern Ovl62File D_801114CC_3E39EC_TitleScreenAndIntro[2];
+extern Ovl62Motion D_801114DC_3E39FC_TitleScreenAndIntro[27]; /* slot 4 */
+extern Ovl62File D_80111620_3E3B40_TitleScreenAndIntro[5];
+extern Ovl62Motion D_80111648_3E3B68_TitleScreenAndIntro[14]; /* slot 5 */
+extern Ovl62Motion D_801116F0_3E3C10_TitleScreenAndIntro[12]; /* slot 6 */
+extern Ovl62File D_80111780_3E3CA0_TitleScreenAndIntro[1];
+extern Ovl62Motion D_80111788_3E3CA8_TitleScreenAndIntro[11]; /* slot 7 */
+extern Ovl62File D_8011180C_3E3D2C_TitleScreenAndIntro[2];
+extern Ovl62Motion D_8011181C_3E3D3C_TitleScreenAndIntro[6]; /* slot 8 */
+extern Ovl62File D_80111864_3E3D84_TitleScreenAndIntro[2];
+extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
+extern Ovl62PropDef D_8011194C_3E3E6C_TitleScreenAndIntro[16];
+extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* {0, 100, 2530}: the script moves z (fork C's data) */
+extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* {0, 260, -3000}: likewise */
+
+/* .bss, asm */
+extern MBModel* D_80111D78_3E4298_TitleScreenAndIntro[32]; /* the cast (slots 0-8 used) */
+extern s16 D_80111DF8_3E4318_TitleScreenAndIntro[32];      /* props (80105460's ids) */
+extern s16 D_80111FF8_3E4518_TitleScreenAndIntro;          /* the music (80110F68) */
+
+void HuPrcSleep(s32 time);
+void MBModelDispOn(MBModel*);
+void MBModelDispOff(MBModel*);
+void MBModelKill(void*);
+void MBMotionSet(MBModel*, s16, s32);
+void MBMotionShiftSet(void* arg0, s16 arg1, s32 arg2, s32 arg3, u16 arg4);
+void func_80059618_5A218(void*); /* wait for a model's motion to end */
+void func_800B3170_B3D70(Vec*, Vec*); /* copy */
+void HuVecSubtract(Vec*, Vec*, Vec*);
+void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_80029B80_2A780(s16 arg0, s16 arg1);
+void func_80029E80_2AA80(s16, s32, s32);
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+s32 func_80011018_11C18(s16); /* the music is playing */
+void func_80050E00_51A00(s32);
+void func_800531AC_53DAC(void);
+void omDelObj(omObjData*);
+void omSetTra(omObjData*, f32, f32, f32);
+
+/* Fork C's helpers called with the types their registers show (62-B, reported to the
+   coordinator): these return what the script keeps, take a Vec*, or (80110CAC) pass
+   MBModelFileCreate's float scales. Drop the casts once the 62-C prototypes agree. */
+#define OVL62_MODEL_CREATE ((MBModel* (*)(s32, s32, f32, f32, u32*))func_80110CAC_3E31CC_TitleScreenAndIntro)
+#define OVL62_8010FAB4 ((Process* (*)(void))func_8010FAB4_3E1FD4_TitleScreenAndIntro)
+#define OVL62_8010FB2C ((omObjData* (*)(void))func_8010FB2C_3E204C_TitleScreenAndIntro)
+#define OVL62_8010FE44 ((omObjData* (*)(void))func_8010FE44_3E2364_TitleScreenAndIntro)
+#define OVL62_80110AE4 ((omObjData* (*)(void))func_80110AE4_3E3004_TitleScreenAndIntro)
+#define OVL62_8010DB5C ((void (*)(Vec*, s32, s32))func_8010DB5C_3E007C_TitleScreenAndIntro)
+#define OVL62_8010DCA4 ((void (*)(Vec*, s32, s32))func_8010DCA4_3E01C4_TitleScreenAndIntro)
+#define OVL62_8010DE00 ((void (*)(Vec*, s32))func_8010DE00_3E0320_TitleScreenAndIntro)
+
 void func_80105AB8_3D7FD8_TitleScreenAndIntro(void); /* the intro script */
 
 /* ---- 62-C ---- */
