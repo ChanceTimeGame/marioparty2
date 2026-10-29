@@ -490,10 +490,7 @@ void func_80103BD4_3D60F4_TitleScreenAndIntro(s32 i) {
 }
 
 /* draw the light mask: rebuild this frame buffer's mask from the active stamps, then draw it in
-   32x32 tiles scaled to the screen (1.33 x 2).
-   NON_MATCHING: retail has one more nop at the head of the inner loop (before the mult); the
-   rest is identical. */
-#ifdef NON_MATCHING
+   32x32 tiles scaled to the screen (1.33 x 2) */
 void func_80103BF0_3D6110_TitleScreenAndIntro(Gfx** gfx) {
     u8 r;
     u8 g;
@@ -540,9 +537,6 @@ void func_80103BF0_3D6110_TitleScreenAndIntro(Gfx** gfx) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80103BF0_3D6110_TitleScreenAndIntro);
-#endif
 
 /* fill the current mask with value.
    NON_MATCHING: retail loads D_801138A0 after the size's operands (scheduling only, masked 0). */
@@ -703,7 +697,64 @@ void func_80104690_3D6BB0_TitleScreenAndIntro(s16 grp, s16 idx, s16 maskGrp, s16
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104778_3D6C98_TitleScreenAndIntro);
+/* draw the RGBA32 image D_801110E0 (80105280) at (28, 29) in 32x16 tiles; the last column and
+   row take what is left */
+void func_80104778_3D6C98_TitleScreenAndIntro(Gfx** gfx) {
+    s32 x;
+    s32 y;
+    s32 w;
+    s32 h;
+    s32 x0;
+    s32 y0;
+    u8* tex;
+
+    x0 = 28;
+    y0 = 29;
+    gSPDisplayList((*gfx)++, D_801110E8_3E3608_TitleScreenAndIntro);
+    gDPSetScissor((*gfx)++, G_SC_NON_INTERLACE, 0, 0, 320, 240);
+    gDPSetCombineMode((*gfx)++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetRenderMode((*gfx)++, 0x504240, 0);
+    gDPSetPrimColor((*gfx)++, 0, 0, 255, 255, 255, 255);
+    gDPSetCycleType((*gfx)++, G_CYC_1CYCLE);
+    gSPSegment((*gfx)++, 0, 0);
+    for (y = 0; y < D_80111D68_3E4288_TitleScreenAndIntro - 16; y += 16) {
+        for (x = 0; x < D_80111D64_3E4284_TitleScreenAndIntro - 32; x += 32) {
+            tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+            gDPLoadTextureTile((*gfx)++, tex,
+                               G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro,
+                               0, 0, 32, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+            gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + 32) * 4, (y + y0 + 16) * 4, G_TX_RENDERTILE, 0, 0,
+                                    0x400, 0x400);
+        }
+        tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+        w = D_80111D64_3E4284_TitleScreenAndIntro - x;
+        gDPLoadTextureTile((*gfx)++, tex,
+                           G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0,
+                           0, w, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                           G_TX_NOLOD);
+        gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + w) * 4, (y + y0 + 16) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                                0x400);
+    }
+    h = D_80111D68_3E4288_TitleScreenAndIntro - y;
+    for (x = 0; x < D_80111D64_3E4284_TitleScreenAndIntro - 32; x += 32) {
+        tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+        gDPLoadTextureTile((*gfx)++, tex,
+                           G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0,
+                           0, 32, h, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                           G_TX_NOLOD);
+        gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + 32) * 4, (y + y0 + h) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                                0x400);
+    }
+    tex = D_801110E0_3E3600_TitleScreenAndIntro + (x + y * D_80111D64_3E4284_TitleScreenAndIntro) * 4;
+    w = D_80111D64_3E4284_TitleScreenAndIntro - x;
+    gDPLoadTextureTile((*gfx)++, tex,
+                       G_IM_FMT_RGBA, G_IM_SIZ_32b, D_80111D64_3E4284_TitleScreenAndIntro, D_80111D68_3E4288_TitleScreenAndIntro, 0, 0,
+                       w, h, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                       G_TX_NOLOD);
+    gSPScisTextureRectangle((*gfx)++, (x + x0) * 4, (y + y0) * 4, (x + x0 + w) * 4, (y + y0 + h) * 4, G_TX_RENDERTILE, 0, 0, 0x400,
+                            0x400);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105204_3D7724_TitleScreenAndIntro);
 

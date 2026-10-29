@@ -233,6 +233,8 @@ build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 # 5B-E: 3875F0.c too (8010F734: a nop between mul.s pairs)
 build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
+# 62-A: the KMC mul fix (a nop before mult at a loop head, 80103BF0 / 80104778)
+build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o: export VR4300MUL := ON
 # 5B-C: 37F4E0.c is assembled from GCC's assembly with blank lines removed, as 1130.c is (the mul
 # fix puts no nop before a mul.s after a call: func_80109B1C)
 B5C_BLANKSTRIP_UNITS := build/src/overlays/ovl_5B_name/37F4E0.c.o
