@@ -2053,7 +2053,7 @@ omObjData* func_80110238_3E2758_TitleScreenAndIntro(s16 sprite, Vec* pos, Vec* d
     return obj;
 }
 
-/* model 8 (the train?) waits 20 frames, then its motion and texture change */
+/* model 8 waits 20 frames, then its motion and texture animation change */
 void func_80110354_3E2874_TitleScreenAndIntro(omObjData* obj) {
     f32 t = obj->rot.x;
 
