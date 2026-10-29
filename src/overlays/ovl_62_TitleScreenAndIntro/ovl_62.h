@@ -319,6 +319,14 @@ typedef struct Ovl62MotCount {
     /* 0x04 */ s32 count;
 } Ovl62MotCount;
 
+/* a model placement (D_8011194C[16]): file, position, rotation, scale */
+typedef struct Ovl62ModelPlace {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ Vec pos;
+    /* 0x10 */ f32 rot;
+    /* 0x14 */ f32 scale;
+} Ovl62ModelPlace; /* size = 0x18 */
+
 /* the 0x1C slots of D_80111E38 start with a sprite group. Retail has two arrays here,
    D_80111E38 (2 slots) and D_80111E70 (14): the opening's clear loops run 16 slots from
    D_80111E38 into D_80111E70. */
@@ -364,6 +372,7 @@ s32 PlaySound(s32);
 
 /* 62 .data (asm) */
 extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
+extern Ovl62ModelPlace D_8011194C_3E3E6C_TitleScreenAndIntro[16];
 extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* title camera position */
 extern Vec D_80111AD8_3E3FF8_TitleScreenAndIntro; /* target */
 extern Vec D_80111AE4_3E4004_TitleScreenAndIntro; /* up */
@@ -399,14 +408,14 @@ Process* func_8010DF5C_3E047C_TitleScreenAndIntro(void); /* the title camera pro
 void func_8010DF90_3E04B0_TitleScreenAndIntro(void);
 void func_8010DF98_3E04B8_TitleScreenAndIntro(omObjData* obj);
 void func_8010E008_3E0528_TitleScreenAndIntro(omObjData* obj);
-void func_8010E0C4_3E05E4_TitleScreenAndIntro(s32 arg0);
+void func_8010E0C4_3E05E4_TitleScreenAndIntro(s32 time); /* open the curtain */
 void func_8010E154_3E0674_TitleScreenAndIntro(omObjData* obj);
-void func_8010E210_3E0730_TitleScreenAndIntro(s32 arg0);
+void func_8010E210_3E0730_TitleScreenAndIntro(s32 time); /* close the curtain */
 void func_8010E2A0_3E07C0_TitleScreenAndIntro(omObjData* obj);
 void func_8010E320_3E0840_TitleScreenAndIntro(omObjData* obj);
-void func_8010E408_3E0928_TitleScreenAndIntro(s32 arg0);
+void func_8010E408_3E0928_TitleScreenAndIntro(s32 time); /* stage lights off */
 void func_8010E4C8_3E09E8_TitleScreenAndIntro(omObjData* obj);
-void func_8010E5B0_3E0AD0_TitleScreenAndIntro(s32 arg0);
+void func_8010E5B0_3E0AD0_TitleScreenAndIntro(s32 time); /* stage lights on */
 void func_8010E670_3E0B90_TitleScreenAndIntro(omObjData* obj);
 void func_8010E8C0_3E0DE0_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_8010EB08_3E1028_TitleScreenAndIntro(void);
