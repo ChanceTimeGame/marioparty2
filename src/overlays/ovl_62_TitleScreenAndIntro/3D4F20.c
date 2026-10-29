@@ -1045,10 +1045,11 @@ const u32 D_80111C34_3E4154_TitleScreenAndIntro[1] = { 0x30000000 };
 __asm__(".section .rodata");
 const char D_80111C38_3E4158_TitleScreenAndIntro[] = "";
 
-#ifdef NON_MATCHING
-/* The opening (entry 1, run by 80105A1C): the host greets the six characters, who arrive and
-   react to what the props do; then the second scene (slots 7 and 8); then the cast walks off, the
-   title is shown (80102BFC(4): START now goes to the main menu) and blinks while the music plays. */
+/* The opening's script (entry 1, run by 80105A1C). Part 1: the six characters (slots 0-5) and the
+   host (slot 6) with messages 0x4C2-0x4CD, then slots 0-5 are freed. Part 2: slots 8 and 7
+   (messages 0x4CE-0x4D3), then slots 0-5 again (0x4D4-0x4D7), which walk off. Part 3: the title
+   (80102BFC(4): START now leads to the main menu), whose logo blinks while the music
+   (D_80111FF8) plays. Messages go through 801033F8 (kept up) or 80110A58/801109F4 (timed). */
 void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     u32 mot[32];
     Vec2f scr;
@@ -1073,14 +1074,14 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     s32 alpha;
 
     if (func_80103028_3D5548_TitleScreenAndIntro() == 0) {
-        func_80104448_3D6968_TitleScreenAndIntro(0xE0017, 0xA0, 0xA1, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
+        func_80104448_3D6968_TitleScreenAndIntro(0xE0017, 160, 161, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
         func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
         func_801045F0_3D6B10_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
         func_80104614_3D6B34_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], 8);
         SprPrioSet(((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2])->grp, 0, 0x26AC);
     }
     func_80110CCC_3E31EC_TitleScreenAndIntro();
-    func_80104448_3D6968_TitleScreenAndIntro(0xE0010, 0xA0, 0x64, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
+    func_80104448_3D6968_TitleScreenAndIntro(0xE0010, 160, 100, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[0];
     mot[0] = 2;
@@ -1147,17 +1148,17 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 7);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 8);
     func_80110D8C_3E32AC_TitleScreenAndIntro(4, 9);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xA);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xB);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xC);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xD);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x16);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x17);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x18);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x19);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 10);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 11);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 12);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 13);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 22);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 23);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 24);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 25);
     D_80111D78_3E4298_TitleScreenAndIntro[4] = OVL62_MODEL_CREATE(def->file, def->attr, def->sx, def->sy, mot);
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 0.0f, 560.0f, 280.0f);
-    D_80111D78_3E4298_TitleScreenAndIntro[4]->attr = (D_80111D78_3E4298_TitleScreenAndIntro[4]->attr | 1);
+    D_80111D78_3E4298_TitleScreenAndIntro[4]->attr |= 1;
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[5];
@@ -1196,7 +1197,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[6];
     D_80111DF8_3E4318_TitleScreenAndIntro[6] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
     func_801030D0_3D55F0_TitleScreenAndIntro();
-    func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 0x80);
+    func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 128);
     Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, &scr);
     func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
     MBModelDispOff(D_80111D78_3E4298_TitleScreenAndIntro[0]);
@@ -1207,30 +1208,30 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBModelDispOff(D_80111D78_3E4298_TitleScreenAndIntro[5]);
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 2);
     func_80105758_3D7C78_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], -1.0f, 0.0f, 0.0f);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 0x14);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0x14);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 20);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 20);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 10.0f);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 2, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    HuPrcSleep(0x14);
+    HuPrcSleep(20);
     D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(1);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
     func_801033F8_3D5918_TitleScreenAndIntro(0x4C2, 0, 1);
-    HuPrcSleep(0x14);
-    func_80110FBC_3E34DC_TitleScreenAndIntro(0xCE);
-    func_8010E0C4_3E05E4_TitleScreenAndIntro(0xB4);
-    HuPrcSleep(0x64);
+    HuPrcSleep(20);
+    func_80110FBC_3E34DC_TitleScreenAndIntro(206);
+    func_8010E0C4_3E05E4_TitleScreenAndIntro(180);
+    HuPrcSleep(100);
     func_80103478_3D5998_TitleScreenAndIntro();
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    func_8010DA5C_3DFF7C_TitleScreenAndIntro(0x80, 0x1E);
-    HuPrcSleep(0x32);
+    func_8010DA5C_3DFF7C_TitleScreenAndIntro(128, 30);
+    HuPrcSleep(50);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C3, 0x5A);
-    HuPrcSleep(0x3C);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C3, 90);
+    HuPrcSleep(60);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[5]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[6]);
     MBModelDispOn(D_80111D78_3E4298_TitleScreenAndIntro[0]);
@@ -1243,21 +1244,21 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 2);
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 2);
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 0.0f, 0.0f, -0.0f, 0x50);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 100.0f, 0.0f, -0.0f, 0x50);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -100.0f, 0.0f, -0.0f, 0x50);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 200.0f, 0.0f, -0.0f, 0x50);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -220.0f, 0.0f, -0.0f, 0x50);
-    HuPrcSleep(0x28);
-    HuPrcSleep(0x28);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 0.0f, 0.0f, -0.0f, 80);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 100.0f, 0.0f, -0.0f, 80);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -100.0f, 0.0f, -0.0f, 80);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 200.0f, 0.0f, -0.0f, 80);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -220.0f, 0.0f, -0.0f, 80);
+    HuPrcSleep(40);
+    HuPrcSleep(40);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y, D_800C9B80_CA780->pos.z, 16.0f);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C4, 0x78);
-    HuPrcSleep(0xA);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C4, 120);
+    HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 0, 8, 8, 2);
@@ -1265,7 +1266,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[14];
     D_80111DF8_3E4318_TitleScreenAndIntro[14] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, -150.0f, 950.0f, -0.0f, 1.0f, 0x6A9);
-    prop++;
+    prop++; /* unused: retail derives the next prop address from it */
     D_80111DF8_3E4318_TitleScreenAndIntro[15] = func_80027D3C_2893C(D_80111DF8_3E4318_TitleScreenAndIntro[14]);
     func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[15], 150.0f, 950.0f, -0.0f);
     func_80029E80_2AA80(D_80111DF8_3E4318_TitleScreenAndIntro[15], -1, 2);
@@ -1278,13 +1279,13 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&tmp, 0.0f, 370.0f, 230.0f);
     D_80111DF8_3E4318_TitleScreenAndIntro[9] = func_80105504_3D7A24_TitleScreenAndIntro(prop->file, tmp.x, tmp.y, tmp.z, 1.0f, 0x6A9);
     func_8010EB08_3E1028_TitleScreenAndIntro();
-    HuPrcSleep(0x6E);
-    HuPrcSleep(0x14);
+    HuPrcSleep(110);
+    HuPrcSleep(20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C5, 0x5A);
-    HuPrcSleep(0x28);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C5, 90);
+    HuPrcSleep(40);
     func_80103BD4_3D60F4_TitleScreenAndIntro(0);
-    func_8010D95C_3DFE7C_TitleScreenAndIntro(0xA0, 5);
+    func_8010D95C_3DFE7C_TitleScreenAndIntro(160, 5);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, 0.0f, pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], pos.x, 0.0f, pos.z, 16.0f);
@@ -1304,18 +1305,18 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
     HuPrcSleep(1);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 2, 8, 8, 2);
-    func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
-    HuPrcSleep(0xB);
+    func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0); /* retail: slot 3 again after slot 5's motion */
+    HuPrcSleep(11);
     obj = OVL62_8010FB2C();
     MBModelDispOn(D_80111D78_3E4298_TitleScreenAndIntro[4]);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 2, 8, 8, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 180.0f, 280.0f, 0x28);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 180.0f, 280.0f, 40);
     obj2 = OVL62_80110AE4();
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 60.000004f, 0.0f, -110.0f, 0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, -80.0f, 0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -140.0f, 0.0f, -90.0f, 0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 260.0f, 0.0f, -20.0f, 0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -220.0f, 0.0f, -40.0f, 0x10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 60.000004f, 0.0f, -110.0f, 16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, -80.0f, 16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -140.0f, 0.0f, -90.0f, 16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 260.0f, 0.0f, -20.0f, 16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -220.0f, 0.0f, -40.0f, 16);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 1, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, 0);
     HuPrcSleep(1);
@@ -1328,7 +1329,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
     HuPrcSleep(1);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
-    for (i = 0; i < 0xB; i++) {
+    for (i = 0; i < 11; i++) {
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
         func_8010571C_3D7C3C_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z);
         func_8010571C_3D7C3C_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], pos.x, pos.y, pos.z);
@@ -1349,30 +1350,30 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110E60_3E3380_TitleScreenAndIntro(3, 2, 8, 8, 2);
     HuPrcSleep(1);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 2, 8, 8, 2);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     HuPrcSleep(5);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C6, 0x5A);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 250.0f, 280.0f, 0xC);
-    HuPrcSleep(0xC);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C6, 90);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 250.0f, 280.0f, 12);
+    HuPrcSleep(12);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 3, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[0].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 2, 8, 8, 2);
-    HuPrcSleep(0x14);
+    HuPrcSleep(20);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 4, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[1].file);
-    HuPrcSleep(0x30);
+    HuPrcSleep(48);
     func_8010F540_3E1A60_TitleScreenAndIntro();
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C7, 0x5A);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C7, 90);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 2, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[0].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 200.0f, 280.0f, 0x10);
-    HuPrcSleep(0xC);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 200.0f, 280.0f, 16);
+    HuPrcSleep(12);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 0, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, 0);
     HuPrcSleep(1);
@@ -1392,17 +1393,17 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110E60_3E3380_TitleScreenAndIntro(4, 5, 8, 8, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x17, 8, 8, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 0.0f, 240.00002f, 0xF);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 23, 8, 8, 2);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 0.0f, 240.00002f, 15);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
-    HuPrcSleep(0xF);
+    HuPrcSleep(15);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 6, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 7, 8, 8, 2);
     func_8010FC98_3E21B8_TitleScreenAndIntro(objPos.x, objPos.y, objPos.z);
     omDelObj(obj2);
     HuPrcSleep(3);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 0xA0, 0x1E);
+    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 160, 30);
     func_80103BD4_3D60F4_TitleScreenAndIntro(0);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 2);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 2);
@@ -1425,23 +1426,23 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_800297E8_2A3E8(D_80111DF8_3E4318_TitleScreenAndIntro[15], 0.7f, 0.7f, 0.7f);
     func_800297E8_2A3E8(D_80111DF8_3E4318_TitleScreenAndIntro[14], 0.7f, 0.7f, 0.7f);
     func_8010EFBC_3E14DC_TitleScreenAndIntro();
-    HuPrcSleep(0x28);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x16, 8, 8, 0);
+    HuPrcSleep(40);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 22, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[4].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x19, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 25, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 110.0f, 0.0f, 190.0f, 0x10);
-    HuPrcSleep(0x10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 110.0f, 0.0f, 190.0f, 16);
+    HuPrcSleep(16);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 3, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, D_80111218_3E3738_TitleScreenAndIntro[1].file);
     HuPrcSleep(8);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x18, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 24, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[2].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[0]);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 4, 8, 8, 2);
@@ -1455,33 +1456,33 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 3, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, D_80111300_3E3820_TitleScreenAndIntro[1].file);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 1, 8, 8, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, 150.0f, 0x10);
-    HuPrcSleep(0x10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, 150.0f, 16);
+    HuPrcSleep(16);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 4, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, D_80111300_3E3820_TitleScreenAndIntro[2].file);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[1]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 5, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, 0);
-    HuPrcSleep(0x30);
+    HuPrcSleep(48);
     HuPrcSleep(3);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 1, 8, 8, 6);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x - 50.0f, pos.y, pos.z, 0x14);
-    HuPrcSleep(0x14);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x - 50.0f, pos.y, pos.z, 20);
+    HuPrcSleep(20);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 10.0f);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 8, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 100.0f, 0.0f, -70.0f, 0x12);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 100.0f, 0.0f, -70.0f, 18);
     func_80110E60_3E3380_TitleScreenAndIntro(4, 9, 8, 8, 2);
     HuPrcSleep(2);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 6, 8, 8, 0);
@@ -1493,9 +1494,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110E60_3E3380_TitleScreenAndIntro(3, 3, 8, 8, 0);
     func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 300.0f, 0.0f, -150.0f, 8);
     HuPrcSleep(3);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xA, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 10, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xB, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 11, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos);
     func_8010571C_3D7C3C_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[3]);
@@ -1520,33 +1521,33 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 150.0f, 0.0f, -200.00002f, 0x1E);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 300.0f, 0.0f, -70.0f, 0x1E);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 209.99998f, 0.0f, -120.00001f, 0x3C);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 150.0f, 0.0f, -200.00002f, 30);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 300.0f, 0.0f, -70.0f, 30);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 209.99998f, 0.0f, -120.00001f, 60);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z, 15.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], pos.x, pos.y, pos.z, 15.0f);
-    HuPrcSleep(0xF);
+    HuPrcSleep(15);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
     pos.z += -50.0f;
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 0xF);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 15);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 8, 8, 8, 2);
-    func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0xB);
+    func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 11);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 3, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, D_80111300_3E3820_TitleScreenAndIntro[1].file);
-    HuPrcSleep(0xF);
+    HuPrcSleep(15);
     func_80110E60_3E3380_TitleScreenAndIntro(3, 6, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, D_801114CC_3E39EC_TitleScreenAndIntro[0].file);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xC, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 12, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, D_80111620_3E3B40_TitleScreenAndIntro[0].file);
     HuVecCopyXYZ(&pos, -209.99998f, 0.0f, -40.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -50.0f, 0.0f, -40.0f, 0x1E);
-    HuPrcSleep(0x1E);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -50.0f, 0.0f, -40.0f, 30);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos);
     pos.x = (f32) ((f64) pos.x + 50.0);
     pos.z = (f32) ((f64) pos.z + 50.0);
@@ -1560,14 +1561,13 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     pos.x = (f32) ((f64) pos.x + -50.0);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 0x14);
-    HuPrcSleep(0x14);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 20);
+    HuPrcSleep(20);
     HuVecCopyXYZ(&pos, -390.0f, 0.0f, 200.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x + 150.0f, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    i = 0;
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x + 150.0f, pos.y, pos.z, 0x1E);
-    HuPrcSleep(0x1E);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x + 150.0f, pos.y, pos.z, 30);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
@@ -1583,10 +1583,10 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 209.99998f, 0.0f, -120.00001f, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 70.0f, 0.0f, -250.0f, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], 10.0f, 0.0f, -130.0f, 10.0f);
-    HuPrcSleep(0xA);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -170.0f, 0x14);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 209.99998f, 0.0f, -120.00001f, 0x14);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 70.0f, 0.0f, -250.0f, 0x14);
+    HuPrcSleep(10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -170.0f, 20);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 209.99998f, 0.0f, -120.00001f, 20);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 70.0f, 0.0f, -250.0f, 20);
     func_801057D4_3D7CF4_TitleScreenAndIntro(0.0f, &pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, 0.0f, pos.z, 16.0f);
     func_801057D4_3D7CF4_TitleScreenAndIntro(130.0f, &pos);
@@ -1595,17 +1595,17 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, 0.0f, pos.z, 16.0f);
     func_801057D4_3D7CF4_TitleScreenAndIntro(-45.0f, &pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    HuPrcSleep(0x2C);
+    HuPrcSleep(16);
+    HuPrcSleep(44);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 8, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, D_80111218_3E3738_TitleScreenAndIntro[4].file);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 3, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(3, 7, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xD, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 13, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 4, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C8, 0x5A);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C8, 90);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 3);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 4);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 5);
@@ -1623,21 +1623,21 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110DDC_3E32FC_TitleScreenAndIntro(3, 6);
     HuPrcSleep(3);
     func_80110DDC_3E32FC_TitleScreenAndIntro(4, 7);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x16);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xB);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 22);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 11);
     func_80110DDC_3E32FC_TitleScreenAndIntro(4, 8);
     func_80110DDC_3E32FC_TitleScreenAndIntro(4, 9);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x17);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x18);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x19);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 23);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 24);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 25);
     HuPrcSleep(3);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 3);
     HuPrcSleep(8);
     func_80110D8C_3E32AC_TitleScreenAndIntro(0, 9);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xA);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 10);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 11);
     HuPrcSleep(3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 7);
     func_80110D8C_3E32AC_TitleScreenAndIntro(1, 8);
@@ -1651,11 +1651,11 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuPrcSleep(3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 8);
     func_80110D8C_3E32AC_TitleScreenAndIntro(3, 9);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xA);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 10);
     HuPrcSleep(3);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xE);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0xF);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x10);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 14);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 15);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 16);
     HuPrcSleep(3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 5);
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 6);
@@ -1665,28 +1665,28 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&pos, -350.0f, 0.0f, 200.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 0x14);
-    HuPrcSleep(0x14);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 20);
+    HuPrcSleep(20);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, 0.0f, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
-    HuPrcSleep(0x10);
-    func_8010D95C_3DFE7C_TitleScreenAndIntro(0xA0, 0x10);
+    HuPrcSleep(16);
+    func_8010D95C_3DFE7C_TitleScreenAndIntro(160, 16);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, 0.0f, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
-    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(0x40);
+    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(64);
     Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, &scr);
     func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
-    HuPrcSleep(0x16);
+    HuPrcSleep(22);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 5, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C9, 0x5A);
-    HuPrcSleep(0x1E);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4C9, 90);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
     for (i = 0; i < 6; i++) {
         if (i != 2) {
@@ -1699,34 +1699,34 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     for (i = 0; i < 6; i++) {
         if (i != 2) {
             MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 0, 8, 8, 2);
         }
     }
-    HuPrcSleep(0x2C);
+    HuPrcSleep(44);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
-    HuPrcSleep(0x1E);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, 0xA0, 0x14);
+    HuPrcSleep(30);
+    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, 160, 20);
     HuPrcSleep(8);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, 0.0f, pos.z, 8.0f);
-    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 0x10, 2);
+    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 16, 2);
     HuPrcSleep(8);
-    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 0x10, 2);
+    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 16, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
     func_801033F8_3D5918_TitleScreenAndIntro(0x4CA, 0, 1);
-    HuPrcSleep(0x5A);
+    HuPrcSleep(90);
     func_80103478_3D5998_TitleScreenAndIntro();
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -270.0f, 0.0f, 209.99998f, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -270.0f, 0.0f, 209.99998f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -270.0f, 0.0f, 209.99998f, 20);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z + 1.0f, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
     to.x = pos.x + 40.0f;
@@ -1736,25 +1736,25 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     from.y = to.y + 600.0f;
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[8];
     D_80111DF8_3E4318_TitleScreenAndIntro[8] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, from.x, from.y, from.z, 1.0f, 0x6A9);
-    for (i = 0; i < 0x1E; i++) {
+    for (i = 0; i < 30; i++) {
         t = i * 0.033333335f;
         HuVecCopyXYZ(&cur, from.x, (to.y - from.y) * t + from.y, from.z);
         func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[8], cur.x, cur.y, cur.z);
         HuPrcVSleep();
     }
-    HuPrcSleep(0x28);
+    HuPrcSleep(40);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
     func_801033F8_3D5918_TitleScreenAndIntro(0x4CB, 0, 1);
-    HuPrcSleep(0x3C);
+    HuPrcSleep(60);
     func_80103478_3D5998_TitleScreenAndIntro();
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 6, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, D_801113E0_3E3900_TitleScreenAndIntro[2].file);
-    HuPrcSleep(D_800F92B4_F9EB4[func_80110E30_3E3350_TitleScreenAndIntro(2, 6)].unk02 - 0x4C);
+    HuPrcSleep(D_800F92B4_F9EB4[func_80110E30_3E3350_TitleScreenAndIntro(2, 6)].unk02 - 76);
     func_800B3170_B3D70(&from, &cur);
     func_800B3170_B3D70(&to, &from);
     to.y -= 40.0f;
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         t = i * 0.1f;
         HuVecCopyXYZ(&cur, (to.x - from.x) * t + from.x, (to.y - from.y) * t + from.y, (to.z - from.z) * t + from.z);
         func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[8], cur.x, cur.y, cur.z);
@@ -1764,12 +1764,12 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[2]);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 0, 8, 8, 2);
     func_8010F328_3E1848_TitleScreenAndIntro();
-    HuPrcSleep(0x14);
+    HuPrcSleep(20);
     omSetTra(OVL62_8010FE44(), cur.x, cur.y, cur.z);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 7, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, D_801113E0_3E3900_TitleScreenAndIntro[3].file);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[2]);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 8, 8, 8, 2);
     HuPrcSleep(3);
@@ -1780,25 +1780,25 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110E60_3E3380_TitleScreenAndIntro(3, 8, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, D_801114CC_3E39EC_TitleScreenAndIntro[1].file);
     HuPrcSleep(3);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xE, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 14, 8, 8, 0);
     HuPrcSleep(3);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 5, 8, 8, 0);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 4, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0xA, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 10, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 8, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(3, 9, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xF, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 15, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 6, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 9, 8, 8, 2);
-    HuPrcSleep(0x3C);
+    HuPrcSleep(60);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 5, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0xB, 0, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 11, 0, 8, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, 0);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 9, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0xA, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 10, 8, 8, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[3]->obj->model, 3, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x10, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 16, 8, 8, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 7, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
@@ -1822,28 +1822,28 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&pos, 170.0f, 0.0f, -10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 16.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -170.0f, 0xA);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, -10.0f, 0xA);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -190.0f, 0.0f, -70.0f, 0xA);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -170.0f, 10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 170.0f, 0.0f, -10.0f, 10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -190.0f, 0.0f, -70.0f, 10);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], pos.x + 10.0f, pos.y, -120.00001f, 0xA);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], pos.x + 10.0f, pos.y, -120.00001f, 10);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], (f32) ((f64) pos.x - 20.0), pos.y, pos.z, 0xA);
-    HuPrcSleep(0xA);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], (f32) ((f64) pos.x - 20.0), pos.y, pos.z, 10);
+    HuPrcSleep(10);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 8, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 3, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 9, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(3, 7, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xD, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 13, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 4, 8, 8, 2);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CC, 0x5A);
-    HuPrcSleep(0x14);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CC, 90);
+    HuPrcSleep(20);
     HuPrcKill(prc);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[2];
     D_80111DF8_3E4318_TitleScreenAndIntro[2] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6A9);
@@ -1851,21 +1851,21 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     D_80111DF8_3E4318_TitleScreenAndIntro[4] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[3];
     D_80111DF8_3E4318_TitleScreenAndIntro[3] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
-    func_8010E5B0_3E0AD0_TitleScreenAndIntro(0x78);
-    HuPrcSleep(0x50);
-    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0xA0, 0x1E);
+    func_8010E5B0_3E0AD0_TitleScreenAndIntro(120);
+    HuPrcSleep(80);
+    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 209.99998f, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 209.99998f, 0x20);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0x16);
-    func_801109F4_3E2F14_TitleScreenAndIntro(0x4CD, 0x78);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0xA);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 209.99998f, 32);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
+    func_801109F4_3E2F14_TitleScreenAndIntro(0x4CD, 120);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, 0.0f, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    HuPrcSleep(0x16);
+    HuPrcSleep(22);
     HuPrcSleep(6);
     for (i = 0; i < 6; i++) {
         MBModelKill(D_80111D78_3E4298_TitleScreenAndIntro[i]);
@@ -1904,32 +1904,33 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[7]->obj->model, 6, D_8011180C_3E3D2C_TitleScreenAndIntro[0].file);
     func_80104638_3D6B58_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     HuPrcSleep(8);
-    func_80104448_3D6968_TitleScreenAndIntro(0xE0011, 0xA0, 0x64, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
+    func_80104448_3D6968_TitleScreenAndIntro(0xE0011, 160, 100, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[13];
     D_80111DF8_3E4318_TitleScreenAndIntro[13] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6A9);
     func_8002D0A0_2DCA0(D_80111DF8_3E4318_TitleScreenAndIntro[13], 0);
     func_800298A4_2A4A4(D_80111DF8_3E4318_TitleScreenAndIntro[13], 4, 4);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(6, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(6, 11);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 0x20);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0x20);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 32);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 32);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    func_8010DA5C_3DFF7C_TitleScreenAndIntro(0xA0, 0x1E);
+    func_8010DA5C_3DFF7C_TitleScreenAndIntro(160, 30);
     func_80103BD4_3D60F4_TitleScreenAndIntro(0);
     for (i = 0; i < 8; i++) {
-        func_80103AC0_3D5FE0_TitleScreenAndIntro(0xFF, 0, 0, i * 4.0f);
+        t = i * 4.0f;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(255, 0, 0, t);
         HuPrcVSleep();
     }
     func_80029714_2A314(D_80111DF8_3E4318_TitleScreenAndIntro[1], 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[8]->pos.y, 0.0f);
-    func_8010E408_3E0928_TitleScreenAndIntro(0x50);
-    HuPrcSleep(0x5A);
+    func_8010E408_3E0928_TitleScreenAndIntro(80);
+    HuPrcSleep(90);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[2]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[4]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[3]);
@@ -1941,7 +1942,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_800B3170_B3D70(&end, &start);
     end.y = 0;
     HuVecSubtract(&delta, &end, &start);
-    for (i = 0; i < 0x50; i++) {
+    for (i = 0; i < 80; i++) {
         t = i * 0.0125f;
         HuVecCopyXYZ(&step, t * delta.x + start.x, t * delta.y + start.y, t * delta.z + start.z);
         func_80105658_3D7B78_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[8], step.x, step.y, step.z);
@@ -1949,87 +1950,89 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
         func_800297E8_2A3E8(D_80111DF8_3E4318_TitleScreenAndIntro[13], 1.0f, t * 0.9f + 0.1f, 1.0f);
         HuPrcVSleep();
     }
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CE, 0x69);
-    func_80110E60_3E3380_TitleScreenAndIntro(6, 0xB, 8, 8, 0);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CE, 105);
+    func_80110E60_3E3380_TitleScreenAndIntro(6, 11, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[8]);
     MBMotionSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 0, 2);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    for (i = 0; i < 0x1E; i++) {
+    for (i = 0; i < 30; i++) {
         t = i * 0.033333335f;
         func_800297E8_2A3E8(D_80111DF8_3E4318_TitleScreenAndIntro[13], 1.0f, (1.0f - t) * 0.9f + 0.1f, 1.0f);
         HuPrcVSleep();
     }
     func_800298A4_2A4A4(D_80111DF8_3E4318_TitleScreenAndIntro[13], 4, 4);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[13]);
-    HuPrcSleep(0x1E);
-    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 2, 8, 0x10, 0);
+    HuPrcSleep(30);
+    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 2, 8, 16, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[8]);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -350.0f, 0.0f, 160.0f, 0x24);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -350.0f, 0.0f, 160.0f, 36);
     HuPrcSleep(4);
-    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 3, 8, 0x10, 2);
+    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[8], 3, 8, 16, 2);
     func_80110C20_3E3140_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[8]->obj->model, 9, D_80111864_3E3D84_TitleScreenAndIntro[0].file);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     func_80110888_3E2DA8_TitleScreenAndIntro();
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[8]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
     HuPrcSleep(6);
-    func_80110E60_3E3380_TitleScreenAndIntro(7, 3, 8, 0x10, 2);
-    HuPrcSleep(0x23);
-    HuPrcSleep(0x4B);
-    HuPrcSleep(0x14);
+    func_80110E60_3E3380_TitleScreenAndIntro(7, 3, 8, 16, 2);
+    HuPrcSleep(35);
+    HuPrcSleep(75);
+    HuPrcSleep(20);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[2];
     D_80111DF8_3E4318_TitleScreenAndIntro[2] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6A9);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[4];
     D_80111DF8_3E4318_TitleScreenAndIntro[4] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[3];
     D_80111DF8_3E4318_TitleScreenAndIntro[3] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
-    func_8010E5B0_3E0AD0_TitleScreenAndIntro(0x3C);
-    HuPrcSleep(0xA);
+    func_8010E5B0_3E0AD0_TitleScreenAndIntro(60);
+    HuPrcSleep(10);
     for (i = 0; i < 33; i++) {
-        func_80103AC0_3D5FE0_TitleScreenAndIntro(0xFF, 0, 0, (f32)(32 - i));
+        t = 32 - i;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(255, 0, 0, t);
         HuPrcVSleep();
     }
-    for (i = 0; i < 0x1E; i++) {
-        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, i * 5.3333335f);
+    for (i = 0; i < 30; i++) {
+        t = i * 5.3333335f;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, t);
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
     }
-    HuPrcSleep(0x14);
-    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(0x41);
+    HuPrcSleep(20);
+    D_80111FF8_3E4518_TitleScreenAndIntro = func_80110F68_3E3488_TitleScreenAndIntro(65);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    HuPrcSleep(0x14);
+    HuPrcSleep(20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 2, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CF, 0x78);
-    HuPrcSleep(0x1E);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4CF, 120);
+    HuPrcSleep(30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.x += 500.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], 230.0f, 0.0f, 160.0f, 0x3C);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 0x3C);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], 230.0f, 0.0f, 160.0f, 60);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 60);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.z += 4.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     MBModelKill(D_80111D78_3E4298_TitleScreenAndIntro[8]);
     func_80110B84_3E30A4_TitleScreenAndIntro(9);
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 9);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xB);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 11);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 7);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 8);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 9);
@@ -2040,21 +2043,21 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110DDC_3E32FC_TitleScreenAndIntro(2, 3);
     func_80110DDC_3E32FC_TitleScreenAndIntro(3, 8);
     func_80110DDC_3E32FC_TitleScreenAndIntro(3, 9);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xE);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xF);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 14);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 15);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 16);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 5);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 6);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 7);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(6, 0xB);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(6, 11);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 4);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 9);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 5);
     HuPrcSleep(3);
     func_80104638_3D6B58_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     HuPrcSleep(3);
-    func_80104448_3D6968_TitleScreenAndIntro(0xE0010, 0xA0, 0x64, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
+    func_80104448_3D6968_TitleScreenAndIntro(0xE0010, 160, 100, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[0];
     mot[0] = 2;
@@ -2064,16 +2067,16 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[0]->pos, 130.0f, 0.0f, -170.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 0.0f);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xC);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 12);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xD);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 13);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xE);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 14);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0xF);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 15);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0x10);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 0x11);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 16);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(0, 17);
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[1];
     mot[0] = 2;
@@ -2083,15 +2086,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[1]->pos, 270.0f, 0.0f, -10.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 60.0f);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xA);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 10);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 11);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xC);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xD);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 12);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 13);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xE);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 0xF);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 14);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(1, 15);
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[2];
     mot[0] = 2;
@@ -2101,15 +2104,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, -130.0f, 0.0f, -120.00001f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -62.0f);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xA);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 10);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 11);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xC);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xD);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 12);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 13);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xE);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 0xF);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 14);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(2, 15);
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[3];
     mot[0] = 2;
@@ -2119,15 +2122,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[3]->pos, 209.99998f, 0.0f, -150.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 24.0f);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 11);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xC);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 12);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xD);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xE);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 13);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 14);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0xF);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 0x10);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 15);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(3, 16);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[4];
     mot[0] = 2;
     mot[1] = def->mot[0].file;
@@ -2136,14 +2139,14 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, 40.0f, 0.0f, -40.0f);
     func_801055F0_3D7B10_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], -43.0f);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x11);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x12);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 17);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 18);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x13);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x14);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 19);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 20);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x15);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 0x1A);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 21);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(4, 26);
     HuPrcSleep(1);
     def = &D_80111874_3E3D94_TitleScreenAndIntro[5];
     mot[0] = 2;
@@ -2158,90 +2161,91 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 8);
     func_80110D8C_3E32AC_TitleScreenAndIntro(5, 9);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 0xA);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 10);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 0xB);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 11);
     HuPrcSleep(1);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 0xC);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 0xD);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 12);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(5, 13);
     HuPrcSleep(1);
     func_80110EEC_3E340C_TitleScreenAndIntro(0, 8, 2);
     func_80110EEC_3E340C_TitleScreenAndIntro(1, 3, 2);
     func_80110EEC_3E340C_TitleScreenAndIntro(2, 9, 2);
     func_80110EEC_3E340C_TitleScreenAndIntro(3, 7, 2);
-    func_80110EEC_3E340C_TitleScreenAndIntro(4, 0xD, 2);
+    func_80110EEC_3E340C_TitleScreenAndIntro(4, 13, 2);
     func_80110EEC_3E340C_TitleScreenAndIntro(5, 4, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.x -= 500.0f;
     pos.z += 1.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_8010E408_3E0928_TitleScreenAndIntro(0x3C);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -350.0f, 0.0f, 160.0f, 0x28);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 0xA);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 0xA0, 0x1E);
+    HuPrcSleep(16);
+    func_8010E408_3E0928_TitleScreenAndIntro(60);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], -350.0f, 0.0f, 160.0f, 40);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 10);
+    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[7]->pos, 160, 30);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.z += 4.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    HuPrcSleep(0xE);
+    HuPrcSleep(16);
+    HuPrcSleep(14);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[2]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[4]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[3]);
     HuPrcSleep(3);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D1, 0x96);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D1, 150);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, 0.0f, pos.z, 16.0f);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     func_80110E60_3E3380_TitleScreenAndIntro(7, 4, 8, 8, 2);
-    HuPrcSleep(0x18);
+    HuPrcSleep(24);
     func_80110E60_3E3380_TitleScreenAndIntro(7, 5, 8, 8, 2);
-    HuPrcSleep(0x24);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0xC, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(1, 0xA, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(2, 0xA, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0xB, 8, 8, 0);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x11, 8, 8, 0);
+    HuPrcSleep(36);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 12, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(1, 10, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(2, 10, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 11, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 17, 8, 8, 0);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 8, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, D_80111300_3E3820_TitleScreenAndIntro[2].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[0]);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0xD, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(1, 0xB, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(2, 0xB, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0xC, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x12, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 13, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(1, 11, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(2, 11, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 12, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 18, 8, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 9, 8, 8, 2);
-    HuPrcSleep(0x1D);
+    HuPrcSleep(29);
     func_80110E60_3E3380_TitleScreenAndIntro(7, 6, 8, 8, 2);
-    HuPrcSleep(0xF);
-    HuPrcSleep(0xE);
+    HuPrcSleep(15);
+    HuPrcSleep(14);
     func_80110E60_3E3380_TitleScreenAndIntro(0, 8, 0, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(1, 3, 0, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(2, 9, 0, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(3, 7, 0, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0xD, 0, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 13, 0, 8, 2);
     func_80110E60_3E3380_TitleScreenAndIntro(5, 4, 0, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[1]->obj->model, 1, 0);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     func_80110DDC_3E32FC_TitleScreenAndIntro(7, 3);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 7);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 8);
     func_80110D8C_3E32AC_TitleScreenAndIntro(7, 9);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D2, 0x4B);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D2, 75);
     func_80110E60_3E3380_TitleScreenAndIntro(7, 7, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[7]->obj->model, 6, D_8011180C_3E3D2C_TitleScreenAndIntro[1].file);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[7]);
     func_80110E60_3E3380_TitleScreenAndIntro(7, 8, 8, 8, 2);
-    HuPrcSleep(0x4B);
-    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 0xF, 2);
-    func_801109F4_3E2F14_TitleScreenAndIntro(0x4D3, 0x4B);
-    HuPrcSleep(0xF);
+    HuPrcSleep(75);
+    MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 15, 2);
+    func_801109F4_3E2F14_TitleScreenAndIntro(0x4D3, 75);
+    HuPrcSleep(15);
     for (i = 0; i < 30; i++) {
-        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 160.0f - (30 - i) * 5.3333335f);
+        t = 160.0f - (30 - i) * 5.3333335f;
+        func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, t);
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
@@ -2250,7 +2254,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 6);
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 7);
     func_80110D8C_3E32AC_TitleScreenAndIntro(6, 8);
-    func_80110D8C_3E32AC_TitleScreenAndIntro(6, 0xA);
+    func_80110D8C_3E32AC_TitleScreenAndIntro(6, 10);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 6, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 7, 8, 8, 2);
@@ -2258,8 +2262,8 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     pos.x += -500.0f;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 260.0f, 0x28);
-    for (i = 0; i < 0x28; i++) {
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, 260.0f, 40);
+    for (i = 0; i < 40; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
@@ -2270,18 +2274,18 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     pos.z = -pos.z;
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80110E60_3E3380_TitleScreenAndIntro(6, 0xA, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(6, 10, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[6]->pos);
     for (i = 0; i < 6; i++) {
-        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 1, 8, 0x10, 2);
+        MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 1, 8, 16, 2);
         func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[i], pos.x, pos.y, pos.z, 16.0f);
     }
     func_80110E60_3E3380_TitleScreenAndIntro(7, 9, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[7]->obj->model, 6, D_8011180C_3E3D2C_TitleScreenAndIntro[0].file);
-    HuPrcSleep(0x10);
+    HuPrcSleep(16);
     for (i = 0; i < 6; i++) {
         MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 0, 8, 8, 2);
     }
@@ -2296,15 +2300,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z + 1.0f, 8.0f);
     HuPrcSleep(8);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 3, 8, 8, 2);
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D4, 0x96);
-    HuPrcSleep(0x96);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D4, 150);
+    HuPrcSleep(150);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 6);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(6, 0xA);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(6, 10);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 7, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 10.0f);
-    HuPrcSleep(0xA);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 0x1E);
-    for (i = 0; i < 0x1E; i++) {
+    HuPrcSleep(10);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 350.0f, 0.0f, 209.99998f, 30);
+    for (i = 0; i < 30; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
@@ -2312,13 +2316,13 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 10.0f);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 0, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[0], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[0], 130.0f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
@@ -2332,12 +2336,12 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 10.0f);
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(0, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[0]->pos);
@@ -2355,16 +2359,16 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0xF, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 15, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[0]);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0x10, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 16, 8, 8, 2);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[0]->obj->model, 0, D_80111218_3E3738_TitleScreenAndIntro[1].file);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[1], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 209.99998f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[1], 209.99998f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
@@ -2376,12 +2380,12 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 10.0f);
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[1]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(1, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[1]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(1, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[1]->pos);
@@ -2397,15 +2401,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(1, 0xD, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(1, 13, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[1]);
-    func_80110E60_3E3380_TitleScreenAndIntro(1, 0xE, 8, 8, 2);
-    HuPrcSleep(0xA);
+    func_80110E60_3E3380_TitleScreenAndIntro(1, 14, 8, 8, 2);
+    HuPrcSleep(10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[2], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -260.0f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[2], -260.0f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 1, 8, 8, 2);
@@ -2423,15 +2427,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 5.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 5.0f);
-    if (i < 0xA) {
+    if (i < 10) {
         do {
             Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, &scr);
             func_80103B04_3D6024_TitleScreenAndIntro(2, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
             i += 1;
             HuPrcVSleep();
-        } while (i < 0xA);
+        } while (i < 10);
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(2, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[2]->pos);
@@ -2445,17 +2449,17 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(2, 0xD, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(2, 13, 8, 8, 0);
     func_80110BF0_3E3110_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, D_801113E0_3E3900_TitleScreenAndIntro[3].file);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[2]->obj->model, 2, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[2]);
-    func_80110E60_3E3380_TitleScreenAndIntro(2, 0xE, 8, 8, 2);
-    HuPrcSleep(0xA);
+    func_80110E60_3E3380_TitleScreenAndIntro(2, 14, 8, 8, 2);
+    HuPrcSleep(10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[3], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 290.0f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[3], 290.0f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
@@ -2470,15 +2474,15 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     }
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 5.0f);
-    if (i < 0xA) {
+    if (i < 10) {
         do {
             Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos, &scr);
             func_80103B04_3D6024_TitleScreenAndIntro(3, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
             i += 1;
             HuPrcVSleep();
-        } while (i < 0xA);
+        } while (i < 10);
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(3, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[3]->pos);
@@ -2490,35 +2494,35 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0xE, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 14, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[3]);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0xF, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 15, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 10.0f);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[4], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[4], 0.0f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 10.0f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 10.0f);
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(4, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(4, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[4]->pos);
@@ -2528,25 +2532,25 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     }
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 0, 8, 8, 2);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x14, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 20, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[4]);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x15, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 21, 8, 8, 2);
     func_80110C50_3E3170_TitleScreenAndIntro(*D_80111D78_3E4298_TitleScreenAndIntro[4]->obj->model, 4, 0);
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[5], 1, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], pos.x, pos.y, pos.z, 16.0f);
-    HuPrcSleep(0x10);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -140.0f, 0.0f, -40.0f, 0x14);
+    HuPrcSleep(16);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[5], -140.0f, 0.0f, -40.0f, 20);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 10.0f);
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(5, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         HuPrcVSleep();
     }
-    for (i = 0; i < 0xA; i++) {
+    for (i = 0; i < 10; i++) {
         Hu3DCam3DToScreen(0, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos, &scr);
         func_80103B04_3D6024_TitleScreenAndIntro(5, scr.unk_00 / 2.0f, scr.unk_04 / 2.0f, NULL);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[5]->pos);
@@ -2554,39 +2558,39 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
         HuPrcVSleep();
     }
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 0, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(5, 0xB, 8, 8, 0);
+    func_80110E60_3E3380_TitleScreenAndIntro(5, 11, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[5]);
-    func_80110E60_3E3380_TitleScreenAndIntro(5, 0xC, 8, 8, 2);
-    HuPrcSleep(0xA);
+    func_80110E60_3E3380_TitleScreenAndIntro(5, 12, 8, 8, 2);
+    HuPrcSleep(10);
     HuPrcSleep(3);
     func_801033F8_3D5918_TitleScreenAndIntro(0x4D5, 0, 1);
-    HuPrcSleep(0x28);
+    HuPrcSleep(40);
     for (i = 0; i < 6; i++) {
         MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[i], 1, 8, 8, 2);
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[i]->pos);
         pos.x += -500.0f;
         func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[i], pos.x, pos.y, pos.z, 8.0f);
     }
-    HuPrcSleep(0x10);
-    func_80110E60_3E3380_TitleScreenAndIntro(0, 0x11, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(1, 0xF, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(2, 0xF, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(3, 0x10, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(4, 0x1A, 8, 8, 2);
-    func_80110E60_3E3380_TitleScreenAndIntro(5, 0xD, 8, 8, 2);
+    HuPrcSleep(16);
+    func_80110E60_3E3380_TitleScreenAndIntro(0, 17, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(1, 15, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(2, 15, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(3, 16, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(4, 26, 8, 8, 2);
+    func_80110E60_3E3380_TitleScreenAndIntro(5, 13, 8, 8, 2);
     for (i = 0; i < 6; i++) {
         func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[i]->pos);
         pos.x += -900.0f;
-        func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[i], pos.x, pos.y, pos.z, 0x5A);
+        func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[i], pos.x, pos.y, pos.z, 90);
     }
     func_80103478_3D5998_TitleScreenAndIntro();
-    func_8010DA5C_3DFF7C_TitleScreenAndIntro(0xA0, 0x1E);
+    func_8010DA5C_3DFF7C_TitleScreenAndIntro(160, 30);
     func_80103AC0_3D5FE0_TitleScreenAndIntro(0, 0, 0, 0);
     for (i = 0; i < 8; i++) {
         func_80103BD4_3D60F4_TitleScreenAndIntro(i);
     }
-    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D6, 0x5A);
-    HuPrcSleep(0x1E);
+    func_80110A58_3E2F78_TitleScreenAndIntro(0x4D6, 90);
+    HuPrcSleep(30);
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 1, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.x += -500.0f;
@@ -2594,21 +2598,21 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[7], 2, 8, 8, 2);
     func_800B3170_B3D70(&pos, &D_80111D78_3E4298_TitleScreenAndIntro[7]->pos);
     pos.x += -400.0f;
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 0x28);
-    HuPrcSleep(0x3C);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[7], pos.x, pos.y, pos.z, 40);
+    HuPrcSleep(60);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[5];
     D_80111DF8_3E4318_TitleScreenAndIntro[5] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6A9);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[6];
     D_80111DF8_3E4318_TitleScreenAndIntro[6] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
-    func_8010E210_3E0730_TitleScreenAndIntro(0xB4);
-    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0xA0, 0xF);
-    HuPrcSleep(0xF);
+    func_8010E210_3E0730_TitleScreenAndIntro(180);
+    OVL62_8010DB5C(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 15);
+    HuPrcSleep(15);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 7, 8, 8, 2);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z, 0x1E);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0x16);
-    func_801109F4_3E2F14_TitleScreenAndIntro(0x4D7, 0x5A);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], 0.0f, 0.0f, D_80111D78_3E4298_TitleScreenAndIntro[6]->pos.z, 30);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 22);
+    func_801109F4_3E2F14_TitleScreenAndIntro(0x4D7, 90);
     OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 8);
     func_800B3170_B3D70(&pos, &D_800C9B80_CA780->pos);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
@@ -2618,58 +2622,58 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
         MBModelKill(D_80111D78_3E4298_TitleScreenAndIntro[i]);
     }
     func_80110DDC_3E32FC_TitleScreenAndIntro(0, 8);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xD);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xE);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0xF);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0x10);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 0x11);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 13);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 14);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 15);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 16);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(0, 17);
     func_80110DDC_3E32FC_TitleScreenAndIntro(1, 3);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xB);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xD);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xE);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 0xF);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 11);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 13);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 14);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(1, 15);
     func_80110DDC_3E32FC_TitleScreenAndIntro(2, 9);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xB);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xD);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xE);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 0xF);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 11);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 13);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 14);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(2, 15);
     func_80110DDC_3E32FC_TitleScreenAndIntro(3, 7);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xB);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xD);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xE);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0xF);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 0x10);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0xD);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x11);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x12);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x13);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x14);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x15);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 0x1A);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 11);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 13);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 14);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 15);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(3, 16);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 13);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 17);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 18);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 19);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 20);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 21);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(4, 26);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 4);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 8);
     func_80110DDC_3E32FC_TitleScreenAndIntro(5, 9);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 0xA);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 0xB);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 0xC);
-    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 0xD);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 10);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 11);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 12);
+    func_80110DDC_3E32FC_TitleScreenAndIntro(5, 13);
     func_80110DDC_3E32FC_TitleScreenAndIntro(7, 4);
     func_80110DDC_3E32FC_TitleScreenAndIntro(7, 5);
     func_80110DDC_3E32FC_TitleScreenAndIntro(7, 6);
     MBModelKill(D_80111D78_3E4298_TitleScreenAndIntro[7]);
-    HuPrcSleep(0x14);
-    func_80110FBC_3E34DC_TitleScreenAndIntro(0xCF);
-    HuPrcSleep(0x43);
-    HuPrcSleep(0x1E);
+    HuPrcSleep(20);
+    func_80110FBC_3E34DC_TitleScreenAndIntro(207);
+    HuPrcSleep(67);
+    HuPrcSleep(30);
     func_80110E60_3E3380_TitleScreenAndIntro(6, 8, 8, 8, 2);
     func_801033F8_3D5918_TitleScreenAndIntro(0x4D8, 0, 1);
-    HuPrcSleep(0x5A);
+    HuPrcSleep(90);
     func_80103478_3D5998_TitleScreenAndIntro();
     MBMotionShiftSet(D_80111D78_3E4298_TitleScreenAndIntro[6], 2, 8, 8, 0);
     func_80059618_5A218(D_80111D78_3E4298_TitleScreenAndIntro[6]);
@@ -2678,9 +2682,9 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     HuVecCopyXYZ(&pos, 900.0f, 0.0f, 209.99998f);
     func_801056CC_3D7BEC_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 8.0f);
     HuPrcSleep(8);
-    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 0x5A);
-    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0x3C);
-    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 0xA0, 0x1E);
+    func_80105684_3D7BA4_TitleScreenAndIntro(D_80111D78_3E4298_TitleScreenAndIntro[6], pos.x, pos.y, pos.z, 90);
+    OVL62_8010DE00(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 60);
+    OVL62_8010DCA4(&D_80111D78_3E4298_TitleScreenAndIntro[6]->pos, 160, 30);
     func_80103A54_3D5F74_TitleScreenAndIntro();
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 7);
     func_80110DDC_3E32FC_TitleScreenAndIntro(6, 8);
@@ -2698,61 +2702,62 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[6]);
     func_80104638_3D6B58_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro);
     HuPrcSleep(3);
-    func_80050E00_51A00(0x3F);
+    func_80050E00_51A00(63);
     func_800531AC_53DAC();
     HuPrcSleep(3);
-    func_80104448_3D6968_TitleScreenAndIntro(0xE0014, 0x9F, 0xA9, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
+    func_80104448_3D6968_TitleScreenAndIntro(0xE0014, 159, 169, (Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
     HuPrcSleep(3);
     prop = &D_8011194C_3E3E6C_TitleScreenAndIntro[6];
     D_80111DF8_3E4318_TitleScreenAndIntro[6] = func_80105460_3D7980_TitleScreenAndIntro(prop->file, 0.0f, 0.0f, 0.0f, 1.0f, 0x6AD);
-    func_8010E0C4_3E05E4_TitleScreenAndIntro(0xB4);
-    HuPrcSleep(0x5A);
-    for (i = 0; i < 0x5A; i++) {
+    func_8010E0C4_3E05E4_TitleScreenAndIntro(180);
+    HuPrcSleep(90);
+    for (i = 0; i < 90; i++) {
         D_80111ACC_3E3FEC_TitleScreenAndIntro.z -= 40.0f;
         D_80111AD8_3E3FF8_TitleScreenAndIntro.z -= 40.0f;
         HuPrcVSleep();
     }
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     dir = 1;
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[5]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[6]);
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[0]);
-    alpha = 0;
     func_800283DC_28FDC(D_80111DF8_3E4318_TitleScreenAndIntro[1]);
+    alpha = 0;
     func_80102BFC_3D511C_TitleScreenAndIntro(4);
     HuPrcSleep(3);
     func_80079868_7A468();
     func_8010D778_3DFC98_TitleScreenAndIntro();
-    HuPrcSleep(0xA);
+    HuPrcSleep(10);
     MBDBackKill();
-    func_80050E00_51A00(0x3E);
+    func_80050E00_51A00(62);
     func_800531AC_53DAC();
     func_8010D7C8_3DFCE8_TitleScreenAndIntro();
     HuPrcSleep(3);
     func_80104524_3D6A44_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
-    func_801045A4_3D6AC4_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], 0xF);
+    func_801045A4_3D6AC4_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], 15);
     func_801045F0_3D6B10_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2]);
     func_80104614_3D6B34_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], 0x1008);
     if (func_80103028_3D5548_TitleScreenAndIntro() != 0) {
+        /* a goto, not a while: retail reloads the sprite address every frame */
     blink:
-            if (dir != 0) {
-                alpha += 24;
-                if (alpha >= 0x2E0) {
-                    alpha = 255;
-                    dir = 0;
-                }
-            } else {
-                alpha -= 24;
-                if (alpha < 50) {
-                    alpha = 50;
-                    dir = 1;
-                }
+        if (dir != 0) {
+            alpha += 24;
+            if (alpha >= 0x2E0) {
+                alpha = 255;
+                dir = 0;
             }
-            func_801045CC_3D6AEC_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], alpha < 50 ? 50 : alpha > 255 ? 255 : alpha);
-            if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) != 0) {
-                HuPrcVSleep();
-                goto blink;
+        } else {
+            alpha -= 24;
+            if (alpha < 50) {
+                alpha = 50;
+                dir = 1;
             }
+        }
+        func_801045CC_3D6AEC_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], alpha < 50 ? 50 : alpha > 255 ? 255 : alpha);
+        if (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) != 0) {
+            HuPrcVSleep();
+            goto blink;
+        }
         func_801045CC_3D6AEC_TitleScreenAndIntro((Ovl62Sprite*)D_80111E38_3E4358_TitleScreenAndIntro[2], 255);
     } else {
         while (func_80011018_11C18(D_80111FF8_3E4518_TitleScreenAndIntro) != 0) {
@@ -2760,12 +2765,6 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void) {
         }
     }
 }
-#else
-__asm__(".section .rodata");
-const u32 D_80111C3C_3E415C_TitleScreenAndIntro[1] = { 0x80000000 }; /* -0.0f, the script's first literal */
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80105AB8_3D7FD8_TitleScreenAndIntro);
-#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010D3C0_3DF8E0_TitleScreenAndIntro);
 
