@@ -259,8 +259,8 @@ void func_80020D20_21920(s16 arg0) {
 
     D_800FA18C_FAD8C = arg0;
     for (i = 0; i < D_800FDBCA_FE7CA; i++) {
-        *(&D_800F8C20_F9820 + i) = func_80027154_27D54(arg0 << 7, 0x7530);
-        *(&D_800FD448_FE048 + i) = func_80027154_27D54(arg0 << 8, 0x7530);
+        *(&D_800F8C20_F9820 + i) = func_80027154_27D54(arg0 * (8 * sizeof(Vtx)), 0x7530);
+        *(&D_800FD448_FE048 + i) = func_80027154_27D54(arg0 * (32 * sizeof(Gfx)), 0x7530);
     }
     D_800F86D8_F92D8 = func_80027154_27D54(arg0 * sizeof(*D_800F86D8_F92D8), 0x7530);
     for (i = 0; i < arg0; i++) {
