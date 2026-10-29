@@ -1181,7 +1181,7 @@ void func_801062B8_3D3B08_name_61(void) {
         for (j = 0; j < 320 * 240 / 4; j++) {
             *p++ = -1;
         }
-        D_80107518_3D4D68_name_61[i] = func_80027154_27D54(0x1000, 0x7918);
+        D_80107518_3D4D68_name_61[i] = func_80027154_27D54(512 * sizeof(Gfx), 0x7918);
         func_801066B8_3D3F08_name_61(i, 1);
     }
     iris = D_80107544_3D4D94_name_61 = func_80027154_27D54(sizeof(Ovl61Iris), 0x7918);
