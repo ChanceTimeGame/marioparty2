@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_62.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4D50", func_80102830_3D4D50_TitleScreenAndIntro);
 
