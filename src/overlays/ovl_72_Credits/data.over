@@ -1,0 +1,5 @@
+# mp2boarddata.py overrides for ovl_72 .data
+!type CreditsModelEntry {wwwh.2ff{fff}fh.2}
+!type CreditsRole {h.2p:s16}
+!type CreditsSection {h.2p:CreditsRole}
+!type CreditsLine {Hh.0fhhh.2}

@@ -1909,7 +1909,7 @@ segments:
     bss_size: 0x80
     subsegments:
       - [0x3D0050, c]
-      - [0x3D48D0, data]
+      - [0x3D48D0, .data, 3D0050]
       - [0x3D4CC0, .rodata, 3D0050]
       - {0x3D4D20, type: bss, vram: 0x801074D0, name: ovl_61_bss}
   - type: code
@@ -2133,7 +2133,7 @@ segments:
     bss_size: 0x780
     subsegments:
       - [0x415790, c]
-      - [0x417E10, data]
+      - [0x417E10, .data, 415790]
       - {0x418A50, type: bss, vram: 0x80105AC0, name: ovl_72_bss}
   - [0x418A50, bin] #has code?
   - [0x2000000]
