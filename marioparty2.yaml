@@ -1810,7 +1810,9 @@ segments:
       - [0x37F4B0, c]
       - [0x37F4E0, c]
       - [0x3875F0, c]
-      - [0x38F320, data]
+      - [0x38F320, .data, 37F4B0]
+      - [0x38F340, .data, 37F4E0]
+      - [0x390140, .data, 3875F0]
       - [0x390550, .rodata, 37F4E0]
       - [0x390610, .rodata, 3875F0]
       - {0x3906C0, type: bss, vram: 0x80113A10, name: ovl_5B_bss}

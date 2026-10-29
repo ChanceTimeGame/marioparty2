@@ -4,7 +4,8 @@
 /* Overlay 5B: the main menu (Mario Party 2's lobby: board select, Mini-Game Park and the other
    modes; 58 is the setup screen it goes on to). Retail's overlay is three files: 37F4B0.c (the
    entry point), 37F4E0.c (80102830-8010A8F4) and 3875F0.c (8010A940-end). Every function is
-   global. .data and .bss stay asm (declared here); each file's .rodata is carved.
+   global. Each file's .data is in C (wave B, 2026-10-28) and its .rodata carved; .bss stays asm
+   (declared here).
    Prototypes past 80105530 came from m2c's register use only: the fork that owns a function fixes
    its line, and retypes its data (declared from the access width only). */
 
@@ -197,8 +198,9 @@ extern s16 D_8011269C_38F34C_name_5B; /* the entry point used (0, 1, 2) */
 extern s16 D_8011269E_38F34E_name_5B; /* board to go to directly (-1: none) */
 extern Ovl5BCamView D_801126A0_38F350_name_5B[28]; /* camera views (D_80114734) */
 extern Ovl5BModelDef D_801129B0_38F660_name_5B[55]; /* the menu's models, file -1 ends (54 entries) */
-extern f32 D_80112A3C_38F6EC_name_5B; /* = D_801129B0[3].pos.y (80107748) */
-extern f32 D_80112A40_38F6F0_name_5B; /* = D_801129B0[3].pos.z */
+/* splat labels inside D_801129B0 (80107748): [3].pos.y and .z */
+#define D_80112A3C_38F6EC_name_5B (D_801129B0_38F660_name_5B[3].pos.y)
+#define D_80112A40_38F6F0_name_5B (D_801129B0_38F660_name_5B[3].pos.z)
 extern s16 D_80113248_38FEF8_name_5B[10][2]; /* the menu choices' sprite offsets from the panel (x, y; 80105530); labels 324A, 325C are [0][1], [5] */
 extern u32 D_80113270_38FF20_name_5B[11]; /* each choice's sprite group (8010607C; 0 or -1: none) */
 extern u8 D_8011329C_38FF4C_name_5B[6][3]; /* the choice sprites' colour cycle (r, g, b; 8010607C reads [6] too, past the end) */
@@ -218,15 +220,15 @@ extern s16 D_801134B0_390160_name_5B[8]; /* each submenu choice's description me
 extern s16 D_801134C0_390170_name_5B[7]; /* each submenu choice's camera view (8010ACBC) */
 extern s16 D_801134CE_39017E_name_5B; /* set once the submenu was entered from entry point 2 (8010ACBC) */
 extern s16 D_801134D0_390180_name_5B[2]; /* 8010ACBC 8010DA34 */
-extern s32 D_801134D4_390184_name_5B[8]; /* unused by code */
-extern s32 D_801134F4_3901A4_name_5B[7]; /* unused by code */
-extern s32 D_80113510_3901C0_name_5B[7]; /* unused by code */
-extern s32 D_8011352C_3901DC_name_5B[10]; /* unused by code */
-extern s32 D_80113554_390204_name_5B[10]; /* unused by code */
-extern s32 D_8011357C_39022C_name_5B[8]; /* unused by code */
-extern s32 D_8011359C_39024C_name_5B[4]; /* unused by code */
-extern s32 D_801135AC_39025C_name_5B[9]; /* unused by code */
-extern s32 D_801135D0_390280_name_5B[4]; /* unused by code */
+extern Ovl5BSong D_801134D4_390184_name_5B[8]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_801134F4_3901A4_name_5B[7]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_80113510_3901C0_name_5B[7]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_8011352C_3901DC_name_5B[10]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_80113554_390204_name_5B[10]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_8011357C_39022C_name_5B[8]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_8011359C_39024C_name_5B[4]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_801135AC_39025C_name_5B[9]; /* a music room page's songs (D_80113774) */
+extern Ovl5BSong D_801135D0_390280_name_5B[4]; /* a music room page's songs (D_80113774) */
 extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88 */
 extern Ovl5BMusicCat D_80113774_390424_name_5B[6]; /* the music room's pages (8010B654); label 3778 is [0].songs */
 extern Ovl5BMusicCat D_801137BC_39046C_name_5B; /* the page added once D_80113F84 >= 20 */
