@@ -613,29 +613,95 @@ s16 func_8010433C_3D685C_TitleScreenAndIntro(void) {
     return func_8002838C_28F8C(0, func_80103BF0_3D6110_TitleScreenAndIntro, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010436C_3D688C_TitleScreenAndIntro);
+/* the curtain: model drawn blended between two named parts by t (0 at the start) */
+void func_8010436C_3D688C_TitleScreenAndIntro(Ovl62Blend* blend, s16 model, char* part, s16 model2, char* part2) {
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010440C_3D692C_TitleScreenAndIntro);
+    blend->model = model;
+    blend->model2 = model2;
+    blend->part = part;
+    blend->part2 = part2;
+    func_8002A00C_2AC0C(model);
+    t = 0.0f;
+    blend->t = t;
+    func_8002A4E0_2B0E0(model, model2, t, part, part2, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104448_3D6968_TitleScreenAndIntro);
+void func_8010440C_3D692C_TitleScreenAndIntro(Ovl62Blend* blend, f32 t) {
+    blend->t = t;
+    func_8002A4E0_2B0E0(blend->model, blend->model2, blend->t, blend->part, blend->part2, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104524_3D6A44_TitleScreenAndIntro);
+/* a one-member sprite group from an animation file, at (x, y), hidden priority 0x47F4 */
+void func_80104448_3D6968_TitleScreenAndIntro(s32 file, s16 x, s16 y, Ovl62Sprite* spr) {
+    void* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104564_3D6A84_TitleScreenAndIntro);
+    spr->active = 1;
+    spr->grp = SprCreate(5, 0);
+    data = DataRead(file);
+    spr->anim = SprAnimRead(data);
+    DataClose(data);
+    SprAnimSet(spr->grp, 0, spr->anim, 0);
+    SprPrioSet(spr->grp, 0, 0x47F4);
+    SprAttrSet(spr->grp, 0, 0xD000);
+    SprPosSet(spr->grp, 0, x, y);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045A4_3D6AC4_TitleScreenAndIntro);
+/* show */
+void func_80104524_3D6A44_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0x8000);
+    SprAttrSet(spr->grp, 0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045CC_3D6AEC_TitleScreenAndIntro);
+/* hide */
+void func_80104564_3D6A84_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0);
+    SprAttrSet(spr->grp, 0, 0x8000);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_801045F0_3D6B10_TitleScreenAndIntro);
+void func_801045A4_3D6AC4_TitleScreenAndIntro(Ovl62Sprite* spr, s32 prio) {
+    SprPrioSet(spr->grp, 0, prio + 0x47F4);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104614_3D6B34_TitleScreenAndIntro);
+void func_801045CC_3D6AEC_TitleScreenAndIntro(Ovl62Sprite* spr, s32 alpha) {
+    func_80082488_83088(spr->grp, 0, alpha);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104638_3D6B58_TitleScreenAndIntro);
+void func_801045F0_3D6B10_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprAttrReset(spr->grp, 0, 0xFFFF);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104668_3D6B88_TitleScreenAndIntro);
+void func_80104614_3D6B34_TitleScreenAndIntro(Ovl62Sprite* spr, s32 attr) {
+    SprAttrSet(spr->grp, 0, attr);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104690_3D6BB0_TitleScreenAndIntro);
+void func_80104638_3D6B58_TitleScreenAndIntro(Ovl62Sprite* spr) {
+    SprKill(spr->grp);
+    SprAnimKill(spr->anim);
+}
+
+void func_80104668_3D6B88_TitleScreenAndIntro(Ovl62Sprite* dst, Ovl62Sprite* mask) {
+    func_80104690_3D6BB0_TitleScreenAndIntro(dst->grp, 0, mask->grp, 0);
+}
+
+/* copy a sprite's I8 image into another's RGBA32 alpha bytes (MP1 PressStartScreen
+   func_800F7844) */
+void func_80104690_3D6BB0_TitleScreenAndIntro(s16 grp, s16 idx, s16 maskGrp, s16 maskIdx) {
+    HuSprite* a = func_80082550_83150(grp, idx);
+    HuSprite* b = func_80082550_83150(maskGrp, maskIdx);
+    HuSprite_Unk84_Unk00_Struct* frame = a->unk_84->unk00;
+    u16 w = frame->unk04;
+    u16 h = frame->unk06;
+    u8* dst = frame->unk00;
+    u8* src = b->unk_84->unk00->unk00;
+    s16 i;
+
+    for (i = 0; i < (s16)w * (s16)h; i++) {
+        dst[3] = *src;
+        dst += 4;
+        src++;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_80104778_3D6C98_TitleScreenAndIntro);
 
