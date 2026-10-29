@@ -1526,7 +1526,7 @@ void func_80106AF8_3721F8_MinigameParkSetup(void) {
     f32 dy;
     f32 s;
 
-    D_801137D0_37EED0_MinigameParkSetup[n = D_80113800_37EF00_MinigameParkSetup] = func_80027154_27D54(0x18, 0x7918);
+    D_801137D0_37EED0_MinigameParkSetup[n = D_80113800_37EF00_MinigameParkSetup] = func_80027154_27D54(sizeof(Ovl58Cursor), 0x7918);
     c = D_801137D0_37EED0_MinigameParkSetup[n];
     c->id = id = D_80113800_37EF00_MinigameParkSetup++;
     if (n < D_80113958_37F058_MinigameParkSetup.padCount) {
@@ -1665,7 +1665,7 @@ void func_80107180_372880_MinigameParkSetup(void) {
     f32 dz;
     f32 dist;
 
-    D_801137E8_37EEE8_MinigameParkSetup[id = D_80113802_37EF02_MinigameParkSetup] = func_80027154_27D54(0x20, 0x7918);
+    D_801137E8_37EEE8_MinigameParkSetup[id = D_80113802_37EF02_MinigameParkSetup] = func_80027154_27D54(sizeof(Ovl58Mover), 0x7918);
     m = D_801137E8_37EEE8_MinigameParkSetup[id];
     D_80113802_37EF02_MinigameParkSetup = id + 1;
     m->id = id;
