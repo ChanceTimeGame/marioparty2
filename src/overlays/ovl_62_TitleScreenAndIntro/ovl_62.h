@@ -371,6 +371,7 @@ void func_80029E80_2AA80(s16, s32, s32);
 s32 PlaySound(s32);
 
 /* 62 .data (asm) */
+extern s32 D_8011186C_3E3D8C_TitleScreenAndIntro[2]; /* {file, 0} */
 extern Ovl62ModelDef D_80111874_3E3D94_TitleScreenAndIntro[9];
 extern Ovl62ModelPlace D_8011194C_3E3E6C_TitleScreenAndIntro[16];
 extern Vec D_80111ACC_3E3FEC_TitleScreenAndIntro; /* title camera position */
@@ -437,9 +438,9 @@ void func_8010FBD4_3E20F4_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_8010FC98_3E21B8_TitleScreenAndIntro(f32 x, f32 y, f32 z);
 void func_8010FD28_3E2248_TitleScreenAndIntro(omObjData* obj);
 void func_8010FE44_3E2364_TitleScreenAndIntro(void);
-omObjData* func_8010FE7C_3E239C_TitleScreenAndIntro(s16 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
+omObjData* func_8010FE7C_3E239C_TitleScreenAndIntro(s16 sprite, f32 x, f32 y, f32 z, f32 scale); /* smoke puff */
 void func_801100B0_3E25D0_TitleScreenAndIntro(omObjData* obj);
-void func_80110238_3E2758_TitleScreenAndIntro(s16 arg0, void* arg1, s32 arg2, f32 arg3);
+omObjData* func_80110238_3E2758_TitleScreenAndIntro(s16 sprite, Vec* pos, Vec* dir, f32 scale);
 void func_80110354_3E2874_TitleScreenAndIntro(omObjData* obj);
 void func_801103FC_3E291C_TitleScreenAndIntro(omObjData* obj);
 void func_8011058C_3E2AAC_TitleScreenAndIntro(omObjData* obj);
@@ -448,22 +449,22 @@ omObjData* func_80110888_3E2DA8_TitleScreenAndIntro(void);
 void func_80110964_3E2E84_TitleScreenAndIntro(omObjData* obj);
 omObjData* func_801109F4_3E2F14_TitleScreenAndIntro(s32 mess, s32 time); /* 801033F8(mess, 0, 1) */
 void func_80110A58_3E2F78_TitleScreenAndIntro(s32 mess, s32 time);
-void func_80110A7C_3E2F9C_TitleScreenAndIntro(void);
+void func_80110A7C_3E2F9C_TitleScreenAndIntro(omObjData* obj);
 void func_80110AE4_3E3004_TitleScreenAndIntro(void);
-void func_80110B18_3E3038_TitleScreenAndIntro(s32 i);
-void func_80110B84_3E30A4_TitleScreenAndIntro(s32 i);
-s16 func_80110BF0_3E3110_TitleScreenAndIntro(s16 arg0, s16 arg1, s32 arg2);
-s16 func_80110C20_3E3140_TitleScreenAndIntro(s16 arg0, s16 arg1, s32 arg2);
-s16 func_80110C50_3E3170_TitleScreenAndIntro(s16 arg0, s16 arg1, s16 arg2);
-MBModel* func_80110CAC_3E31CC_TitleScreenAndIntro(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+void func_80110B18_3E3038_TitleScreenAndIntro(s32 chr); /* free texture animation set 1 */
+void func_80110B84_3E30A4_TitleScreenAndIntro(s32 chr); /* set 2 */
+void func_80110BF0_3E3110_TitleScreenAndIntro(s16 model, s16 chr, s32 file); /* texture animation set 1 */
+void func_80110C20_3E3140_TitleScreenAndIntro(s16 model, s16 chr, s32 file); /* set 2 */
+void func_80110C50_3E3170_TitleScreenAndIntro(s16 model, s16 chr, s16 idx);  /* set 1, main's file table */
+MBModel* func_80110CAC_3E31CC_TitleScreenAndIntro(s32 file, s32 attr, f32 arg2, f32 arg3, u32* out); /* MBModelFileCreate */
 void func_80110CCC_3E31EC_TitleScreenAndIntro(void);
-s32 func_80110D64_3E3284_TitleScreenAndIntro(s32 arg0);
-void func_80110D8C_3E32AC_TitleScreenAndIntro(s32 obj, s32 mot);
-void func_80110DDC_3E32FC_TitleScreenAndIntro(s32 obj, s32 mot);
-s32 func_80110E30_3E3350_TitleScreenAndIntro(s32 obj, s32 mot);
-void func_80110E60_3E3380_TitleScreenAndIntro(s32 obj, s32 mot, s16 arg2, s16 arg3, s16 arg4);
-void func_80110EEC_3E340C_TitleScreenAndIntro(s32 obj, s32 mot, s16 arg2);
+s32 func_80110D64_3E3284_TitleScreenAndIntro(s32 file); /* load a motion */
+void func_80110D8C_3E32AC_TitleScreenAndIntro(s32 i, s32 j); /* load motion j of model i */
+void func_80110DDC_3E32FC_TitleScreenAndIntro(s32 i, s32 j); /* free it */
+s32 func_80110E30_3E3350_TitleScreenAndIntro(s32 i, s32 j);
+void func_80110E60_3E3380_TitleScreenAndIntro(s32 i, s32 j, s16 arg2, s16 arg3, s16 arg4); /* blend to it */
+void func_80110EEC_3E340C_TitleScreenAndIntro(s32 i, s32 j, s16 arg2); /* set it */
 s16 func_80110F68_3E3488_TitleScreenAndIntro(s16 music);
-s16 func_80110FBC_3E34DC_TitleScreenAndIntro(s16 arg0);
+s16 func_80110FBC_3E34DC_TitleScreenAndIntro(s16 sound);
 
 #endif
