@@ -183,7 +183,7 @@ void func_8010ACBC_38796C_name_5B(void) {
     if (D_80114854_391504_name_5B != 0) {
         func_8008E978_8F578(win);
         D_80114854_391504_name_5B = 0;
-        func_800890CC_89CCC(win, 0x4EB, -1, -1);
+        func_800890CC_89CCC(win, (void*)0x4EB, -1, -1);
         while (func_8008BA30_8C630(win) != 0) {
             HuPrcVSleep();
         }
@@ -192,7 +192,7 @@ void func_8010ACBC_38796C_name_5B(void) {
         HuPrcSleep(40);
         func_80108788_385438_name_5B(7, 20, 1, (void (*)(s16*))-1);
         func_8008D6F0_8E2F0(win);
-        func_800890CC_89CCC(win, 0x4EC, -1, -1);
+        func_800890CC_89CCC(win, (void*)0x4EC, -1, -1);
         while (func_8008BA30_8C630(win) != 0) {
             HuPrcVSleep();
         }
@@ -205,7 +205,7 @@ void func_8010ACBC_38796C_name_5B(void) {
         D_801134CE_39017E_name_5B = redraw;
     } else {
         func_8008E978_8F578(win);
-        func_800890CC_89CCC(win, 0x4EA, -1, -1);
+        func_800890CC_89CCC(win, (void*)0x4EA, -1, -1);
         while (func_8008BA30_8C630(win) != 0) {
             HuPrcVSleep();
         }
@@ -359,7 +359,7 @@ void func_8010ACBC_38796C_name_5B(void) {
             if (func_800892D8_89ED8(win) & 8) {
                 func_8008E978_8F578(win);
             }
-            func_800890CC_89CCC(win, D_801134B0_390160_name_5B[D_801148A4_391554_name_5B], -1, -1);
+            func_800890CC_89CCC(win, (void*)D_801134B0_390160_name_5B[D_801148A4_391554_name_5B], -1, -1);
             while (func_8008BA30_8C630(win) != 0) {
                 HuPrcVSleep();
             }
@@ -375,7 +375,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010ACBC_38796C
    `def`). */
 s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def) {
     func_8008AD44_8B944(win);
-    func_800890CC_89CCC(win, mes, -1, -1);
+    func_800890CC_89CCC(win, (void*)mes, -1, -1);
     while (func_8008BA30_8C630(win) != 0) {
         HuPrcVSleep();
     }
@@ -491,8 +491,8 @@ void func_8010B654_388304_name_5B(void) {
     cur = -1;
     prev = -2;
     while (1) {
-        func_800890CC_89CCC(win1, D_801144D0_391180_name_5B[D_801137EC_39049C_name_5B].msg, -1, -1);
-        func_800890CC_89CCC(win2, 0x42E, -1, 0x90);
+        func_800890CC_89CCC(win1, (void*)D_801144D0_391180_name_5B[D_801137EC_39049C_name_5B].msg, -1, -1);
+        func_800890CC_89CCC(win2, (void*)0x42E, -1, 0x90);
         while (func_8008BA30_8C630(win2) != 0) {
             HuPrcVSleep();
         }
@@ -803,7 +803,7 @@ void func_8010CB88_389838_name_5B(void) {
     }
     choice = 0;
     step = 0;
-    func_800890CC_89CCC(win, D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][0], -1, -1);
+    func_800890CC_89CCC(win, (void*)D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][0], -1, -1);
     func_800794A8_7A0A8(20);
     func_8010C5D4_389284_name_5B();
     D_800CD52C_CE12C = 0;
@@ -817,8 +817,8 @@ void func_8010CB88_389838_name_5B(void) {
     func_80079DB4_7A9B4();
     func_8010C828_3894D8_name_5B(2);
     while (1) {
-        func_800890CC_89CCC(win, D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][0], -1, -1);
-        func_800890CC_89CCC(win2, 0x676, -1, 0x90);
+        func_800890CC_89CCC(win, (void*)D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][0], -1, -1);
+        func_800890CC_89CCC(win2, (void*)0x676, -1, 0x90);
         while (func_8008BA30_8C630(win)) {
             HuPrcVSleep();
         }
@@ -1297,7 +1297,7 @@ s32 func_8010E618_38B2C8_name_5B(void) {
         }
         text[i][k] = 0;
         func_80089308_89F08(w, text[i], 0);
-        func_800890CC_89CCC(w, i + 0x52E, -1, -1);
+        func_800890CC_89CCC(w, (void*)i + 0x52E, -1, -1);
     }
     if (D_80114740_3913F0_name_5B == 0) {
         espDispOff(spr[5]);
@@ -1458,7 +1458,7 @@ s32 func_8010ED80_38BA30_name_5B(void) {
             }
         }
         text[i][k] = 0;
-        func_800890CC_89CCC(w, (s32)text[i], -1, -1); /* a string pointer in an s32 */
+        func_800890CC_89CCC(w, text[i], -1, -1); /* a string pointer in an s32 */
     }
     left = func_80110770_38D420_name_5B(60, 184);
     right = func_8011083C_38D4EC_name_5B(60, 196);
@@ -1576,7 +1576,7 @@ s32 func_8010F734_38C3E4_name_5B(void) {
         func_80089CAC_8A8AC(w, 4, 0, 160, 0);
         func_80089DA0_8A9A0(w, 192, 192, 192);
         if (func_80067F4C_68B4C((s16)D_8011387C_39052C_name_5B[i]) == 0) {
-            func_800890CC_89CCC(w, 0x3A2, -1, -1);
+            func_800890CC_89CCC(w, (void*)0x3A2, -1, -1);
         } else {
             switch (i) {
             case 0:
@@ -1663,7 +1663,7 @@ s32 func_8010F734_38C3E4_name_5B(void) {
                 func_80089308_89F08(w, buf[i * 3 + 2], 2);
                 break;
             }
-            func_800890CC_89CCC(w, i + 0x3A3, -1, -1);
+            func_800890CC_89CCC(w, (void*)i + 0x3A3, -1, -1);
         }
     }
     win1 = func_80110770_38D420_name_5B(60, 184);
@@ -1759,7 +1759,7 @@ s32 func_801101E8_38CE98_name_5B(void) {
         n = ((t & 0xF0) >> 4) * 10 + (t & 0xF);
         sprintf(buf[i * 3 + 2], D_801139D0_390680_name_5B, n);
         func_80089308_89F08(w, buf[i * 3 + 2], 2);
-        func_800890CC_89CCC(w, i + 0x3AA, -1, -1);
+        func_800890CC_89CCC(w, (void*)i + 0x3AA, -1, -1);
     }
     win1 = func_80110770_38D420_name_5B(60, 184);
     win2 = func_8011083C_38D4EC_name_5B(60, 196);
@@ -1826,7 +1826,7 @@ s16 func_80110770_38D420_name_5B(s16 x, s16 y) {
     func_80089A48_8A648(win, 0);
     func_80089C78_8A878(win, 1);
     func_80089DA0_8A9A0(win, 192, 192, 192);
-    func_800890CC_89CCC(win, 0x534, -2, -1);
+    func_800890CC_89CCC(win, (void*)0x534, -2, -1);
     return win;
 }
 
@@ -1841,7 +1841,7 @@ s16 func_8011083C_38D4EC_name_5B(s16 x, s16 y) {
     func_80089A48_8A648(win, 0);
     func_80089C78_8A878(win, 1);
     func_80089DA0_8A9A0(win, 192, 192, 192);
-    func_800890CC_89CCC(win, 0x535, -2, -1);
+    func_800890CC_89CCC(win, (void*)0x535, -2, -1);
     return win;
 }
 
@@ -1971,7 +1971,7 @@ void func_80110AF8_38D7A8_name_5B(void) {
         func_80029E80_2AA80(host, 1, 1);
         func_8008AD44_8B944(D_801144A2_391152_name_5B);
         func_8008E978_8F578(D_801144A2_391152_name_5B);
-        func_800890CC_89CCC(D_801144A2_391152_name_5B, 0x4F9, -1, -1);
+        func_800890CC_89CCC(D_801144A2_391152_name_5B, (void*)0x4F9, -1, -1);
         D_800FC834_FD434[(s16)player].unk50 = 1.0f;
         func_80029BF0_2A7F0(player, D_801147D0_391480_name_5B[0x20], 0, 10, 2);
         while (func_8008BA30_8C630(D_801144A2_391152_name_5B) != 0) {
@@ -2040,12 +2040,12 @@ void func_80110AF8_38D7A8_name_5B(void) {
     func_80029FE4_2ABE4(D_80114758_391408_name_5B[0xA], 2.0f);
     func_8008AD44_8B944(D_801144A2_391152_name_5B);
     func_8008E978_8F578(D_801144A2_391152_name_5B);
-    func_800890CC_89CCC(D_801144A2_391152_name_5B, 0x4FA, -1, -1);
+    func_800890CC_89CCC(D_801144A2_391152_name_5B, (void*)0x4FA, -1, -1);
     while (1) {
         if (ContBtnTrg[D_80114862_391512_name_5B] & 0x4000) {
             func_80029BF0_2A7F0(player, D_801147D0_391480_name_5B[0x24], 0, 5, 0);
             HuPrcSleep(10);
-            func_800890CC_89CCC(D_801144A2_391152_name_5B, 0x4FB, -1, -1);
+            func_800890CC_89CCC(D_801144A2_391152_name_5B, (void*)0x4FB, -1, -1);
             while (func_8008BA30_8C630(D_801144A2_391152_name_5B) != 0) {
                 HuPrcVSleep();
             }
@@ -2053,7 +2053,7 @@ void func_80110AF8_38D7A8_name_5B(void) {
             func_80029BF0_2A7F0(host, D_801147D0_391480_name_5B[0x1A], 0, 20, 2);
             func_8008AD44_8B944(D_801144A2_391152_name_5B);
             func_8008E978_8F578(D_801144A2_391152_name_5B);
-            func_800890CC_89CCC(D_801144A2_391152_name_5B, 0x4FC, -1, -1);
+            func_800890CC_89CCC(D_801144A2_391152_name_5B, (void*)0x4FC, -1, -1);
             while (func_8008BA30_8C630(D_801144A2_391152_name_5B) != 0) {
                 HuPrcVSleep();
             }
@@ -2062,7 +2062,7 @@ void func_80110AF8_38D7A8_name_5B(void) {
             func_800298A4_2A4A4(D_80114758_391408_name_5B[0x29], 0x4004, 0x4000);
             HuPrcSleep(50);
             func_80029E80_2AA80(host, 1, 1);
-            func_800890CC_89CCC(D_801144A2_391152_name_5B, 0x4FD, -1, -1);
+            func_800890CC_89CCC(D_801144A2_391152_name_5B, (void*)0x4FD, -1, -1);
             while (func_8008BA30_8C630(D_801144A2_391152_name_5B) != 0) {
                 HuPrcVSleep();
             }

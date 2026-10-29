@@ -143,7 +143,7 @@ s32 func_8007DD68_7E968(void);
 void func_8007DF5C_7EB5C(void);
 void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
 s32 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_80089284_89E84(s16, s32, s32);
 u32 func_800892D8_89ED8(s16 winId);
 void func_80089308_89F08(s16, char*, s32); /* window message argument */

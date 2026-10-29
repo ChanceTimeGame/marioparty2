@@ -7,7 +7,7 @@
 /* 80112B44 size 0x4 */ s16 D_80112B44_37E244_MinigameParkSetup[2] = {
     0, 0,
 };
-/* 80112B48 size 0x4 */ s32 D_80112B48_37E248_MinigameParkSetup = 0;
+/* 80112B48 size 0x4 */ void* D_80112B48_37E248_MinigameParkSetup = NULL;
 /* 80112B4C size 0x70 */ f32 D_80112B4C_37E24C_MinigameParkSetup[28] = {
     348.0f, 90.0f, 0.0f, 0.0f, 218.0f, 0.0f, 750.0f, 0.0f, 0.0f, 0.0f, 0.0f, 218.0f, 0.0f, 500.0f,
     354.0f, 56.0f, 0.0f, -30.0f, 182.0f, 66.0f, 750.0f, 0.0f, 176.0f, 0.0f, -30.0f, 182.0f, 66.0f,
@@ -3328,11 +3328,11 @@ s32 func_8010D260_378960_MinigameParkSetup(void) {
     func_8008D974_8E574(buf, 0);
     func_8008DACC_8E6CC(1, &w, D_80113554_37EC54_MinigameParkSetup[0].mess);
     D_80113554_37EC54_MinigameParkSetup[0].x = (136 - w) / 2;
-    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[0], D_80113554_37EC54_MinigameParkSetup[0].mess, -1, -1);
+    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[0], (void*)D_80113554_37EC54_MinigameParkSetup[0].mess, -1, -1);
     func_8008DACC_8E6CC(1, &w, D_80113554_37EC54_MinigameParkSetup[1].mess - (D_80113826_37EF26_MinigameParkSetup.unk5 - 2));
     D_80113554_37EC54_MinigameParkSetup[1].x = (136 - w) / 2;
     func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[1],
-                        D_80113554_37EC54_MinigameParkSetup[1].mess - (D_80113826_37EF26_MinigameParkSetup.unk5 - 2), -1, -1);
+                        (void*)(D_80113554_37EC54_MinigameParkSetup[1].mess - (D_80113826_37EF26_MinigameParkSetup.unk5 - 2)), -1, -1);
     sprIcon[0] = func_80089404_8A004(D_80113850_37EF50_MinigameParkSetup[2],
                                      D_80113584_37EC84_MinigameParkSetup[D_80113826_37EF26_MinigameParkSetup.character[0]], -9, 10, 0);
     sprintf(num, D_8011370C_37EE0C_MinigameParkSetup, D_80113826_37EF26_MinigameParkSetup.unk3);
@@ -3340,7 +3340,7 @@ s32 func_8010D260_378960_MinigameParkSetup(void) {
     func_8008D974_8E574(num, 0);
     func_8008DACC_8E6CC(1, &w, D_80113554_37EC54_MinigameParkSetup[2].mess);
     D_80113554_37EC54_MinigameParkSetup[2].x = 80;
-    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[2], D_80113554_37EC54_MinigameParkSetup[2].mess, -1, -1);
+    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[2], (void*)D_80113554_37EC54_MinigameParkSetup[2].mess, -1, -1);
     sprIcon[1] = func_80089404_8A004(D_80113850_37EF50_MinigameParkSetup[3], 0xA0172, -9, 10, 0);
     func_8008225C_82E5C(D_800F920C_F9E0C[D_80113850_37EF50_MinigameParkSetup[3]].unk_6C, sprIcon[1], 0);
     /* Retail formats into pos (its x and y are not used again). */
@@ -3349,7 +3349,7 @@ s32 func_8010D260_378960_MinigameParkSetup(void) {
     func_8008DACC_8E6CC(1, &w, D_80113554_37EC54_MinigameParkSetup[3].mess);
     D_80113554_37EC54_MinigameParkSetup[3].x = 80;
     func_80089308_89F08(D_80113850_37EF50_MinigameParkSetup[3], (char*)&pos, 0);
-    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[3], D_80113554_37EC54_MinigameParkSetup[3].mess, -1, -1);
+    func_800890CC_89CCC(D_80113850_37EF50_MinigameParkSetup[3], (void*)D_80113554_37EC54_MinigameParkSetup[3].mess, -1, -1);
     func_800298A4_2A4A4(model, 4, 0);
     PlaySound(0xAC);
     if (D_80113782_37EE82_MinigameParkSetup == 0) {
@@ -4031,7 +4031,7 @@ void func_80110350_37BA50_MinigameParkSetup(s32 mess) {
     if (mess >= 0 && GwSystem.current_board_index == 5 && D_800CD414_CE014 == 0) {
         mess += 0x22;
     }
-    func_800890CC_89CCC(D_80113818_37EF18_MinigameParkSetup, mess, -1, -1);
+    func_800890CC_89CCC(D_80113818_37EF18_MinigameParkSetup, (void*)mess, -1, -1);
 }
 
 /* Waits for the message, then returns the choice (0 when the window has no choice). */
@@ -4159,7 +4159,7 @@ void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj) {
 void func_80110A28_37C128_MinigameParkSetup(omObjData* obj) {
     if (func_8008F618_90218() == 0) {
         if (D_80112B48_37E248_MinigameParkSetup != 0) {
-            func_80023D74_24974((void*)D_80112B48_37E248_MinigameParkSetup);
+            func_80023D74_24974(D_80112B48_37E248_MinigameParkSetup);
         }
         func_8001AC44_1B844(D_8011392A_37F02A_MinigameParkSetup);
         func_8008CE5C_8DA5C();

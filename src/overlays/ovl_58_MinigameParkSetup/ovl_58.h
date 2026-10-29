@@ -189,7 +189,7 @@ void func_8007E128_7ED28(void);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80088604_89204(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
 s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
-void func_800890CC_89CCC(s16, s32, s32, s32);
+void func_800890CC_89CCC(s16, void*, s32, s32); /* a message id or a string */
 void func_80089284_89E84(s16, s32, s32);
 void func_80089308_89F08(s16, char*, s32);
 s16 func_80089404_8A004(s16 win_id, u32 spriteMainFsPair, s16 arg2, s16 arg3, u16 arg4);
@@ -273,7 +273,7 @@ extern const char D_801136BC_37EDBC_MinigameParkSetup[];
 extern s16 D_80112B40_37E240_MinigameParkSetup;
 extern u16 D_80112B42_37E242_MinigameParkSetup; /* 58-E: nonzero = leave (801109C8) */
 extern s16 D_80112B44_37E244_MinigameParkSetup[2];
-extern s32 D_80112B48_37E248_MinigameParkSetup;
+extern void* D_80112B48_37E248_MinigameParkSetup; /* a block 80110A28 frees (set by no C) */
 extern f32 D_80112B4C_37E24C_MinigameParkSetup[28]; /* camera positions (D_80113870 points here) */
 extern Ovl58ModelDef D_80112BBC_37E2BC_MinigameParkSetup[49]; /* the scene's models (func_80112360); 80102CAC sets [8] and [11]'s file per stage */
 /* 58-D: splat label D_80112BF4, D_80112BBC's records from [1] seen at their pos (0x28 = 10 words each): 8010F358 */
