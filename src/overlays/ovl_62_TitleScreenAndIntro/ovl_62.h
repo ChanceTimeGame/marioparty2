@@ -166,8 +166,7 @@ extern s32 D_80111D40_3E4260_TitleScreenAndIntro; /* title/intro state (80102C28
 extern s32 D_80111D44_3E4264_TitleScreenAndIntro; /* next overlay */
 extern s16 D_80111D48_3E4268_TitleScreenAndIntro; /* its event */
 extern u16 D_80111D4A_3E426A_TitleScreenAndIntro; /* its stat */
-extern s16 D_80111D50_3E4270_TitleScreenAndIntro; /* message window, -1 none */
-extern s16 D_80111D52_3E4272_TitleScreenAndIntro;
+extern s32 D_80111D50_3E4270_TitleScreenAndIntro; /* message window, -1 none (read as s16: D_80111D52 is its low half) */
 extern s32 D_80111D54_3E4274_TitleScreenAndIntro; /* mask width (160) */
 extern s32 D_80111D58_3E4278_TitleScreenAndIntro; /* mask height (128) */
 extern u8 D_80111D5C_3E427C_TitleScreenAndIntro[4]; /* full-screen fill color */
@@ -181,8 +180,8 @@ extern s32 D_80111E38_3E4358_TitleScreenAndIntro[16][7]; /* 0x1C each; 80105A1C 
 extern Ovl62Stamp D_80112060_3E4580_TitleScreenAndIntro[8];
 extern u8* D_80112144_3E4664_TitleScreenAndIntro; /* I8 alpha image (file 0x1B) */
 extern u8* D_80112148_3E4668_TitleScreenAndIntro; /* the three masks */
-extern s32 D_8011265C_3E4B7C_TitleScreenAndIntro;
-extern s32 D_80112668_3E4B88_TitleScreenAndIntro;
+extern Process* D_8011265C_3E4B7C_TitleScreenAndIntro; /* the scene process */
+extern omObjData* D_80112668_3E4B88_TitleScreenAndIntro; /* the state object */
 extern s32 D_80112678_3E4B98_TitleScreenAndIntro;
 extern Ovl62Image D_8011268C_3E4BAC_TitleScreenAndIntro; /* the default stamp image */
 extern u8* D_801138A0_3E5DC0_TitleScreenAndIntro;        /* the mask being drawn */
@@ -275,7 +274,7 @@ void func_8010582C_3D7D4C_TitleScreenAndIntro(void);
 void func_80105834_3D7D54_TitleScreenAndIntro(void);
 void func_80105840_3D7D60_TitleScreenAndIntro(void);
 void func_80105880_3D7DA0_TitleScreenAndIntro(void);
-void func_801059F0_3D7F10_TitleScreenAndIntro(void);
+Process* func_801059F0_3D7F10_TitleScreenAndIntro(void);
 void func_80105A1C_3D7F3C_TitleScreenAndIntro(void);
 
 /* ---- 62-B ---- */
@@ -284,7 +283,7 @@ void func_80105AB8_3D7FD8_TitleScreenAndIntro(void); /* the intro script */
 
 /* ---- 62-C (inferred from registers only) ---- */
 
-void func_8010D3C0_3DF8E0_TitleScreenAndIntro(void);
+Process* func_8010D3C0_3DF8E0_TitleScreenAndIntro(void);
 void func_8010D3EC_3DF90C_TitleScreenAndIntro(void);
 void func_8010D478_3DF998_TitleScreenAndIntro(void);
 s32 func_8010D484_3DF9A4_TitleScreenAndIntro(void); /* the intro is done */
