@@ -189,6 +189,7 @@ void func_800796F0_7A2F0(s16 sound, s16 pitch);
 void func_80079848_7A448(s16 arg0);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
+void func_800B2060_B2C60(f32* m, f32 x, f32 y, f32 z); /* rotate matrix (MP1 func_8009ECB0) */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 u8 rand8(void);
 s32 _CheckFlag(s32);

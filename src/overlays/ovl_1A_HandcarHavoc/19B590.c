@@ -718,7 +718,48 @@ u16 func_80104C00_19D990_HandcarHavoc(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80104C00_19D990_HandcarHavoc);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80104DE0_19DB70_HandcarHavoc);
+void func_80104DE0_19DB70_HandcarHavoc(omObjData* obj) {
+    Vec seat;
+    HHCar* w;
+    f32 tx;
+    f32 tz;
+    f32 lx;
+    f32 lz;
+
+    w = obj->unk_50;
+    tx = HuMathSin(w->rot.y) * w->tilt;
+    tz = func_800B7890_B8490(w->rot.y) * w->tilt;
+    lx = HuMathSin(w->rot.y) * w->lean + tx;
+    lz = func_800B7890_B8490(w->rot.y) * w->lean + tz;
+    omSetTra(obj, obj->trans.x, (f32)(fabs(HuMathSin(w->tilt)) * 75.0) + obj->trans.y, obj->trans.z);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, w->rot.y, 0.0f);
+    omSetRot(obj, tx + w->rot.x, 0.0f, tz + w->rot.z);
+    if (w->brake == 0) {
+        func_800298A4_2A4A4(obj->model[2], 4, 4);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+        func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, w->rot.y, 0.0f);
+        func_8002979C_2A39C(obj->model[1], lx + w->rot.x, 0.0f, lz + w->rot.z);
+    } else {
+        func_800298A4_2A4A4(obj->model[2], 4, 0);
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+        func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y, obj->trans.z);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[2]].mtx, 0.0f, w->rot.y, 0.0f);
+        func_8002979C_2A39C(obj->model[2], lx + w->rot.x, 0.0f, lz + w->rot.z);
+    }
+    func_80108730_1A14C0_HandcarHavoc(obj, 0, &seat);
+    func_80029714_2A314(obj->model[3], seat.x, seat.y, seat.z);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[3]].mtx, 0.0f, w->rot.y + 180.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[3], lx + w->rot.x, 0.0f, lz + w->rot.z);
+    func_80029714_2A314(obj->model[5], seat.x, seat.y, seat.z);
+    func_8002979C_2A39C(obj->model[5], lx + w->rot.x, 0.0f, lz + w->rot.z);
+    func_80108730_1A14C0_HandcarHavoc(obj, 1, &seat);
+    func_80029714_2A314(obj->model[4], seat.x, seat.y, seat.z);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[4]].mtx, 0.0f, w->rot.y, 0.0f);
+    func_8002979C_2A39C(obj->model[4], lx + w->rot.x, 0.0f, lz + w->rot.z);
+    func_80029714_2A314(obj->model[6], seat.x, seat.y, seat.z);
+    func_8002979C_2A39C(obj->model[6], lx + w->rot.x, 0.0f, lz + w->rot.z);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801051E8_19DF78_HandcarHavoc);
 
