@@ -26,7 +26,7 @@ typedef struct CCCharData { /* D_800CD438, one per character (= ovl_34's CTCharD
 
 extern CCCharData D_800CD438_CE038[];
 extern u16 D_800CAFD8[];        /* item ids (main 3D6A0.c) */
-extern s16 D_800CAFE4[];        /* item chances, percent */
+extern u16 D_800CAFE4[];        /* item chances, percent (main defines s16[5]) */
 extern void* D_800F93FC_F9FFC;  /* esprite slots (0x24 each) */
 extern s32 D_800F9D30_FA930[];
 extern u16 D_800F8FE0_F9BE0;    /* ground object count */
@@ -172,13 +172,12 @@ typedef struct CCCpuTarget {
 
 /* MgWork::unk_158 of the player (0x14 bytes): the CPU's plan. */
 typedef struct CCCpu {
-    /* 0x00 */ s16 unk_00;      /* CPU action, index into D_80106BE8 */
+    /* 0x00 */ u16 unk_00;      /* CPU action, index into D_80106BE8 */
     /* 0x02 */ u16 unk_02;      /* flags: 1 target reached */
     /* 0x04 */ CCCpuTarget* unk_04;
     /* 0x08 */ s8 unk_08;       /* wait timer */
     /* 0x09 */ s8 unk_09;       /* character */
-    /* 0x0A */ u8 unk_0A;       /* difficulty */
-    /* 0x0B */ char unk_0B;
+    /* 0x0A */ s16 unk_0A;      /* difficulty */
     /* 0x0C */ s16 unk_0C;      /* state */
     /* 0x0E */ s16 unk_0E;
     /* 0x10 */ s16 unk_10;
@@ -217,6 +216,8 @@ typedef struct CCScene {
     /* 0x02 */ s16 prev;
     /* 0x04 */ s32 idx;         /* last coffin slot filled */
     /* 0x08 */ CCProp* slot[6]; /* the coffin in each slot (D_80106DC0) */
+    /* 0x20 */ f32 stickX;      /* knock-back stick x (D_80106DD8) */
+    /* 0x24 */ s16 touched;     /* room object the player bumped (D_80106DDC) */
 } CCScene;
 
 /* Saved controller state, one per port (D_80106E04[4]). */
@@ -251,7 +252,7 @@ extern CCCpuTarget D_80106AC8_F81D8_CoffinCongestion;
 extern u8 D_80106ADC_F81EC_CoffinCongestion[4][4];
 extern CCMotionDef D_80106AEC_F81FC_CoffinCongestion[15];
 extern CCFile D_80106BA0_F82B0_CoffinCongestion[9];
-extern void (*D_80106BE8_F82F8_CoffinCongestion[4])(MgWork*, CCCpu*);
+extern void (*D_80106BE8_F82F8_CoffinCongestion[4])(omObjData*, MgWork*, CCCpu*);
 extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*);
 
 /* ---------------------------------------------------------------------------------------------
@@ -261,8 +262,6 @@ extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*)
 extern omObjData** D_80106DB0_F84C0_CoffinCongestion; /* room objects [27] */
 extern omObjData** D_80106DB4_F84C4_CoffinCongestion; /* smoke puffs [6], 0 before created */
 extern CCScene D_80106DB8_F84C8_CoffinCongestion;
-extern f32 D_80106DD8_F84E8_CoffinCongestion;         /* knock-back stick x */
-extern s16 D_80106DDC_F84EC_CoffinCongestion;         /* coffin touched */
 extern omObjData** D_80106DE0_F84F0_CoffinCongestion; /* player object */
 extern CCGame D_80106DF0_F8500_CoffinCongestion;
 extern CCPad D_80106E04_F8514_CoffinCongestion[4];
@@ -308,15 +307,15 @@ void func_80104600_F5D10_CoffinCongestion(void);
 void func_80104650_F5D60_CoffinCongestion(void);
 s32 func_80104684_F5D94_CoffinCongestion(s32 item);
 s32 func_801046C8_F5DD8_CoffinCongestion(s32 player);
-void func_80104878_F5F88_CoffinCongestion(omObjData* obj, omObjData* ground);
+void func_80104878_F5F88_CoffinCongestion(omObjData* obj, omObjData* other);
 s32 func_8010499C_F60AC_CoffinCongestion(omObjData* obj, CCGround* ground);
 s32 func_801049FC_F610C_CoffinCongestion(omObjData* obj, CCGround* ground);
 s32 func_80104A7C_F618C_CoffinCongestion(omObjData* obj);
 s32 func_80104AD4_F61E4_CoffinCongestion(omObjData* obj);
-void func_80104B60_F6270_CoffinCongestion(MgWork* work, CCCpu* cpu);
-void func_80104BA8_F62B8_CoffinCongestion(MgWork* work, CCCpu* cpu);
+void func_80104B60_F6270_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
+void func_80104BA8_F62B8_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
 void func_80104C30_F6340_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
-void func_80104DD8_F64E8_CoffinCongestion(MgWork* work, CCCpu* cpu);
+void func_80104DD8_F64E8_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
 void func_80104E20_F6530_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
 void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);
 void func_80105074_F6784_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu);

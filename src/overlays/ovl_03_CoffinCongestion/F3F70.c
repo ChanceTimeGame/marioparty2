@@ -638,33 +638,275 @@ s32 func_80104684_F5D94_CoffinCongestion(s32 item) {
     return -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801046C8_F5DD8_CoffinCongestion);
+/* The slot a CPU player opens: the boo's (item 10) by difficulty (30/20/10/5%), else an item
+   drawn by main's chances (D_800CAFE4). */
+s32 func_801046C8_F5DD8_CoffinCongestion(s32 player) {
+    s32 r;
+    s32 slot;
+    s32 i;
+    s32 sum;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104878_F5F88_CoffinCongestion);
+    r = (u8)(rand8() % 100);
+    slot = func_80104684_F5D94_CoffinCongestion(10);
+    if (slot < 0) {
+        while (1) {}
+    }
+    switch (gPlayers[player].cpu_difficulty) {
+        case 0:
+            if (r < 30) {
+                return slot;
+            }
+            break;
+        case 1:
+            if (r < 20) {
+                return slot;
+            }
+            break;
+        case 2:
+            if (r < 10) {
+                return slot;
+            }
+            break;
+        case 3:
+            if (r < 5) {
+                return slot;
+            }
+            break;
+    }
+    r = (u8)(rand8() % 100);
+    sum = 0;
+    for (i = 0; i < 5; i++) {
+        sum += D_800CAFE4[i];
+        if (r < sum) {
+            break;
+        }
+    }
+    slot = func_80104684_F5D94_CoffinCongestion(D_800CAFD8[i]);
+    if (slot < 0) {
+        while (1) {}
+    }
+    return slot;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010499C_F60AC_CoffinCongestion);
+/* Bumped into room object `other`: the player bounces back. */
+void func_80104878_F5F88_CoffinCongestion(omObjData* obj, omObjData* other) {
+    MgWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801049FC_F610C_CoffinCongestion);
+    func_80019B9C_1A79C(obj, 6);
+    if (other->trans.x < obj->trans.x) {
+        D_80106DB8_F84C8_CoffinCongestion.stickX = 60.0f;
+        work->unk_3C = 90.0f;
+    } else {
+        D_80106DB8_F84C8_CoffinCongestion.stickX = -60.0f;
+        work->unk_3C = -90.0f;
+    }
+    ((MgWork*)obj->unk_50)->unk_38 = -D_800BF7A4_C03A4 * 0.4f;
+    func_800191D4_19DD4(obj, 5, obj->trans.x, obj->trans.y + 15.0f, obj->trans.z, 90.0f, 0.0f);
+    func_80106534_F7C44_CoffinCongestion(((MgWork*)obj->unk_50)->unk_57, 0, 0, 0, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104A7C_F618C_CoffinCongestion);
+/* Player touch hook 3 (a room object): bounce off anything but the floor. */
+s32 func_8010499C_F60AC_CoffinCongestion(omObjData* obj, CCGround* ground) {
+    if (ground->unk_04 != 0) {
+        func_80104878_F5F88_CoffinCongestion(obj, D_80106DB0_F84C0_CoffinCongestion[ground->unk_04]);
+        D_80106DB8_F84C8_CoffinCongestion.touched = ground->unk_04;
+        return 1;
+    }
+    D_80106DB8_F84C8_CoffinCongestion.touched = 0;
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104AD4_F61E4_CoffinCongestion);
+/* Player touch hook 6: in the pick mode, touching a coffin opens it. */
+s32 func_801049FC_F610C_CoffinCongestion(omObjData* obj, CCGround* ground) {
+    CCProp* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104B60_F6270_CoffinCongestion);
+    func_8010499C_F60AC_CoffinCongestion(obj, ground);
+    if (func_80106570_F7C80_CoffinCongestion() == 4 && ground->unk_04 != 0) {
+        p = ground->unk_B0;
+        D_80106DB8_F84C8_CoffinCongestion.slot[p->unk_0C - 6]->unk_1E = p->unk_1E = 1;
+        p->unk_14 = obj;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104BA8_F62B8_CoffinCongestion);
+/* Player hook 0: keeps the knock-back stick while bouncing. */
+s32 func_80104A7C_F618C_CoffinCongestion(omObjData* obj) {
+    if (D_80106DB8_F84C8_CoffinCongestion.touched > 0) {
+        func_80106534_F7C44_CoffinCongestion(((MgWork*)obj->unk_50)->unk_57, D_80106DB8_F84C8_CoffinCongestion.stickX, 0, 0, 0);
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104C30_F6340_CoffinCongestion);
+/* Player hook 1: in the pick mode, landing on a coffin opens it. */
+s32 func_80104AD4_F61E4_CoffinCongestion(omObjData* obj) {
+    MgWork* work = obj->unk_50;
+    CCProp* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104DD8_F64E8_CoffinCongestion);
+    if (func_80106570_F7C80_CoffinCongestion() == 4) {
+        if ((s8)work->unk_55 > 0) {
+            p = ((CCGround*)D_80106DB0_F84C0_CoffinCongestion[(s8)work->unk_55]->unk_50)->unk_B0;
+            D_80106DB8_F84C8_CoffinCongestion.slot[p->unk_0C - 6]->unk_1E = p->unk_1E = 1;
+            p->unk_14 = obj;
+        }
+        return 0;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104E20_F6530_CoffinCongestion);
+/* CPU action 0: wait. */
+void func_80104B60_F6270_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    if (cpu->unk_08-- < 0) {
+        cpu->unk_00 = 1;
+    }
+    func_80106534_F7C44_CoffinCongestion(work->unk_57, 0, 0, 0, 0);
+}
 
+/* CPU action 1: choose a coffin (or stop once there). */
+void func_80104BA8_F62B8_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    if (cpu->unk_02 & 1) {
+        cpu->unk_00 = 3;
+    } else {
+        cpu->unk_04 = &D_80106A3C_F814C_CoffinCongestion[func_801046C8_F5DD8_CoffinCongestion(work->unk_59)];
+        cpu->unk_00 = 2;
+    }
+    func_80106534_F7C44_CoffinCongestion(work->unk_57, 0, 0, 0, 0);
+}
+
+/* CPU action 2: walk to the target. */
+void func_80104C30_F6340_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    Vec stick;
+    Vec pos;
+    Vec d;
+    f32 len;
+    f32 speed;
+
+    HuVecCopyXYZ(&pos, obj->trans.x, cpu->unk_04->pos.y, obj->trans.z);
+    HuVecSubtract(&d, &cpu->unk_04->pos, &pos);
+    len = HuVecGetLength3F(&d);
+    if (len < 55.0f) {
+        if (cpu->unk_08-- < -cpu->unk_04->unk_10) {
+            cpu->unk_02 |= 1;
+            cpu->unk_00 = 0;
+            cpu->unk_08 = D_80106ADC_F81EC_CoffinCongestion[cpu->unk_0A][0];
+        }
+        HuVecCopyXYZ(&stick, 0.0f, 0.0f, cpu->unk_04->unk_0C);
+    } else {
+        speed = (len < 110.0f) ? 35.0f : 55.0f;
+        d.z = -d.z;
+        func_8010609C_F77AC_CoffinCongestion(&d);
+        HuVecMulScalar(&stick, speed, &d);
+    }
+    func_80106534_F7C44_CoffinCongestion(work->unk_57, stick.x, stick.z, 0, 0);
+}
+
+/* CPU action 3: press A. */
+void func_80104DD8_F64E8_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    cpu->unk_00 = 0;
+    cpu->unk_08 = D_80106ADC_F81EC_CoffinCongestion[cpu->unk_0A][0];
+    func_80106534_F7C44_CoffinCongestion(work->unk_57, 0, 0, 0x4000, 0);
+}
+
+void func_80104E20_F6530_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    if (gPlayers[work->unk_59].flags & 1) {
+        D_80106BE8_F82F8_CoffinCongestion[cpu->unk_00](obj, work, cpu);
+    }
+}
+
+/* The player in the pick mode (CPU plan in the 10-13 states). */
+#ifdef NON_MATCHING
+/* Retail shares one jal between case 10's two HuVecCopyXYZ calls (cross-jumped); this
+   compiles them as two calls. Logic equal. */
+void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    switch (cpu->unk_0C) {
+        case 0:
+            if (work->unk_53 != 0) {
+                break;
+            }
+            goto next;
+        case 1:
+            if (func_801065EC_F7CFC_CoffinCongestion() < 0) {
+                goto next;
+            }
+            if (obj->trans.z > -70.0f && obj->trans.z < 70.0f) {
+                cpu->unk_0C = 12;
+            } else {
+                cpu->unk_0C = 10;
+            }
+            break;
+        case 2:
+            if (cpu->unk_0E++ >= 6) {
+                func_8010657C_F7C8C_CoffinCongestion(6);
+            }
+            func_80106534_F7C44_CoffinCongestion(work->unk_57, 0, -50, 0, 0);
+            break;
+        case 10:
+            cpu->unk_00 = 2;
+            cpu->unk_08 = 0;
+            cpu->unk_04 = &D_80106AC8_F81D8_CoffinCongestion;
+            if (obj->trans.z < 0.0f) {
+                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, -70.0f);
+            } else {
+                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, 70.0f);
+            }
+            goto next;
+        case 11:
+            func_80104C30_F6340_CoffinCongestion(obj, work, cpu);
+            if (cpu->unk_00 != 0) {
+                break;
+            }
+            goto next;
+        case 12:
+            cpu->unk_00 = 2;
+            cpu->unk_08 = 0;
+            cpu->unk_04 = &D_80106AB4_F81C4_CoffinCongestion;
+        next:
+            cpu->unk_0C++;
+            break;
+        case 13:
+            func_80104C30_F6340_CoffinCongestion(obj, work, cpu);
+            if (cpu->unk_00 == 0) {
+                func_8010657C_F7C8C_CoffinCongestion(6);
+            }
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104E80_F6590_CoffinCongestion);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105074_F6784_CoffinCongestion);
+/* The player in the result mode: waits, then cheers or slumps. */
+void func_80105074_F6784_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
+    switch (cpu->unk_10) {
+        case 0:
+            if (cpu->unk_12++ >= 121) {
+                cpu->unk_10++;
+            }
+            break;
+        case 1:
+            if (func_801065EC_F7CFC_CoffinCongestion() == 3) {
+                func_80019B9C_1A79C(obj, 15);
+                func_800732B0_73EB0(D_800CD438_CE038[cpu->unk_09].unk_04 | 0x57);
+            } else if (func_801065EC_F7CFC_CoffinCongestion() < 0 || func_801065EC_F7CFC_CoffinCongestion() == 10) {
+                func_80019B9C_1A79C(obj, 14);
+                func_800732B0_73EB0(D_800CD438_CE038[cpu->unk_09].unk_04 | 0x55);
+            } else {
+                func_80019B9C_1A79C(obj, 13);
+                func_800732B0_73EB0(D_800CD438_CE038[cpu->unk_09].unk_04 | 0x54);
+            }
+            cpu->unk_10++;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801051C0_F68D0_CoffinCongestion);
+/* Player object update. */
+void func_801051C0_F68D0_CoffinCongestion(omObjData* obj) {
+    MgWork* work = obj->unk_50;
+
+    if (D_80106BF8_F8308_CoffinCongestion[func_80106570_F7C80_CoffinCongestion()] != NULL) {
+        D_80106BF8_F8308_CoffinCongestion[func_80106570_F7C80_CoffinCongestion()](obj, work, work->unk_158);
+    }
+    func_80007790_8390(obj);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010524C_F695C_CoffinCongestion);
 
