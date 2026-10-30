@@ -4,7 +4,93 @@
 __asm__(".section .rodata");
 const char D_80106F90_16FED0_ShockDropOrRoll[] = "\202r\202s\202`\202q\202s";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_80102800_16B740_ShockDropOrRoll);
+/* The entry: picks the solo player (the one in group 0) and the order of the others, shuffles
+   the CPU level rows, sets up the scene and adds the objects. */
+void func_80102800_16B740_ShockDropOrRoll(void) {
+    s16 i;
+    s16 k;
+    s8 a;
+    s8 b;
+    s8 tmp;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+    case 1:
+        D_801072B8_1701F8_ShockDropOrRoll[0] = 1;
+        break;
+    case 2:
+        D_801072B8_1701F8_ShockDropOrRoll[0] = 2;
+        break;
+    case 3:
+        D_801072B8_1701F8_ShockDropOrRoll[0] = 3;
+        break;
+    case 0:
+    default:
+        D_801072B8_1701F8_ShockDropOrRoll[0] = 0;
+        break;
+    }
+    for (i = 1, k = 0; i < 4; i++, k++) {
+        if (D_801072B8_1701F8_ShockDropOrRoll[0] == k) {
+            k++;
+        }
+        D_801072B8_1701F8_ShockDropOrRoll[i] = k;
+    }
+    for (i = 0; i < 10; i++) {
+        a = guRandom() % 3 + 1;
+        b = guRandom() % 3 + 1;
+        tmp = D_801072B8_1701F8_ShockDropOrRoll[a];
+        D_801072B8_1701F8_ShockDropOrRoll[a] = D_801072B8_1701F8_ShockDropOrRoll[b];
+        D_801072B8_1701F8_ShockDropOrRoll[b] = tmp;
+    }
+    func_8002D4D0_2E0D0(0xA);
+    func_8002F290_2FE90(D_800F9D30_FA930, 0x40);
+    func_80020D20_21920(0x40);
+    omInitObjMan(0x1E, 0);
+    func_80079128_79D28();
+    func_8000C460_D060();
+    func_8000C578_D178(1);
+    func_80020070_20C70(1);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, func_80079E60_7AA60), 0xA0);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 30.0f, 80.0f, 8000.0f);
+    func_8002C59C_2D19C(0x800, 0x990, 0x40, 0x40, 0x40);
+    func_80105E90_16EDD0_ShockDropOrRoll(1000.0f, 329.0f, -50.0f, 0.0f, -777.0f, 570.0f, 847.0f);
+    func_80026DAC_279AC(1, 0x60, 0x40, 0x40);
+    func_80026E00_27A00(1, 0.0f, 93.0f, 74.0f);
+    func_8000C38C_CF8C();
+    func_8000C3C8_CFC8();
+    func_8007273C_7333C((u8*)D_80106F90_16FED0_ShockDropOrRoll, 1);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    for (i = 0; i < 5; i++) {
+        D_801072BC_1701FC_ShockDropOrRoll[i] = i;
+    }
+    for (i = 0; i < 10; i++) {
+        a = guRandom() % 5;
+        b = guRandom() % 5;
+        tmp = D_801072BC_1701FC_ShockDropOrRoll[a];
+        D_801072BC_1701FC_ShockDropOrRoll[a] = D_801072BC_1701FC_ShockDropOrRoll[b];
+        D_801072BC_1701FC_ShockDropOrRoll[b] = tmp;
+    }
+    D_801072B4_1701F4_ShockDropOrRoll = omAddObj(2, 0xC, 0x2D, -1, func_80102EC8_16BE08_ShockDropOrRoll);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(5, 0xC, 0x2D, -1, func_80102F54_16BE94_ShockDropOrRoll);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(5, 0xC, 0x2D, -1, func_80102FE4_16BF24_ShockDropOrRoll);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(5, 0xC, 0x2D, -1, func_8010306C_16BFAC_ShockDropOrRoll);
+    D_800F8FE0_F9BE0 = 0;
+    func_8000C018_CC18(0);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(3, 6, 0, -1, func_80106394_16F2D4_ShockDropOrRoll);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(3, 6, 0, -1, func_801064B0_16F3F0_ShockDropOrRoll);
+    D_801072C8_170208_ShockDropOrRoll = omAddObj(3, 0x16, 0, -1, func_80106790_16F6D0_ShockDropOrRoll);
+    omAddObj(0, 0, 0, -1, func_80105ED0_16EE10_ShockDropOrRoll);
+    omAddObj(0x14, 0, 0, -1, func_80104E24_16DD64_ShockDropOrRoll);
+    omAddObj(0x32, 0, 0, -1, func_80105920_16E860_ShockDropOrRoll);
+    InitFadeIn(0, 0x10);
+}
 
 /* The solo player's object. */
 void func_80102EC8_16BE08_ShockDropOrRoll(omObjData* obj) {
