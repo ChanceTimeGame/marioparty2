@@ -1,5 +1,41 @@
 #include "ovl_39.h"
 
+/* .data (0x2847C0-0x284840, 80107AD0-80107B50) */
+u8 D_80107AD0_2847C0_BowsersBigBlast = 1;
+u8 D_80107AD1_2847C1_BowsersBigBlast = 0;
+f32 D_80107AD4_2847C4_BowsersBigBlast[5] = { 200.0f, 100.0f, 0.0f, -100.0f, -200.0f };
+u8 D_80107AE8_2847D8_BowsersBigBlast = 0;
+u8 D_80107AE9_2847D9_BowsersBigBlast = 4;
+u8 D_80107AEA_2847DA_BowsersBigBlast = 0;
+f32 D_80107AEC_2847DC_BowsersBigBlast[4] = { 370.0f, 210.0f, 60.0f, -90.0f };
+u8 D_80107AFC_2847EC_BowsersBigBlast = 0;
+f32 D_80107B00_2847F0_BowsersBigBlast[3] = { 2.0f, 3.0f, 4.0f };
+u8 D_80107B0C_2847FC_BowsersBigBlast = 1;
+u8 D_80107B0D_2847FD_BowsersBigBlast = 0;
+f32 D_80107B10_284800_BowsersBigBlast = 0.0f;
+f32 D_80107B14_284804_BowsersBigBlast = 0.0f;
+u8 D_80107B18_284808_BowsersBigBlast = 0;
+u8 D_80107B19_284809_BowsersBigBlast = 0;
+u8 D_80107B1A_28480A_BowsersBigBlast = 0;
+u8 D_80107B1B_28480B_BowsersBigBlast = 1;
+u8 D_80107B1C_28480C_BowsersBigBlast = 0;
+u8 D_80107B1D_28480D_BowsersBigBlast = 0;
+u8 D_80107B1E_28480E_BowsersBigBlast = 0;
+u8 D_80107B1F_28480F_BowsersBigBlast = 0;
+u8 D_80107B20_284810_BowsersBigBlast = 0xFF;
+u8 D_80107B24_284814_BowsersBigBlast[4] = { 1, 1, 1, 1 };
+u8 D_80107B28_284818_BowsersBigBlast = 0;
+u8 D_80107B29_284819_BowsersBigBlast = 0;
+u8 D_80107B2A_28481A_BowsersBigBlast = 0;
+u8 D_80107B2B_28481B_BowsersBigBlast = 0;
+s32 D_80107B2C_28481C_BowsersBigBlast = -1;
+u8 D_80107B30_284820_BowsersBigBlast = 0;
+u8 D_80107B31_284821_BowsersBigBlast = 0;
+u8 D_80107B32_284822_BowsersBigBlast = 0;
+s8 D_80107B34_284824_BowsersBigBlast[12] = { 5, -5, 10, -10, 8, -8, 6, -6, 2, -2, 0, 0 };
+f32 D_80107B40_284830_BowsersBigBlast = 0.0f;
+f32 D_80107B44_284834_BowsersBigBlast = 0.0f;
+
 void func_80102800_27F4F0_BowsersBigBlast(void) {
     func_80107840_284530_BowsersBigBlast();
 }

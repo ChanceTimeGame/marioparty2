@@ -213,7 +213,7 @@ typedef struct BBCamKey {
     /* 0x14 */ f32 rx, ry, rz;
 } BBCamKey;
 
-/* ---- .data (0x2847C0, asm) ---- */
+/* ---- .data (27F4F0.c, 0x2847C0-0x284840) ---- */
 
 extern u8 D_80107AD0_2847C0_BowsersBigBlast;  /* the first turn's "go" message shown */
 extern u8 D_80107AD1_2847C1_BowsersBigBlast;  /* next ground id */
