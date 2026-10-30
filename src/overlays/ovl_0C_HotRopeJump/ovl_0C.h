@@ -89,8 +89,8 @@ typedef struct HRJLight {
     /* 0x08 */ s32 radius;
     /* 0x0C */ f32 aspect;
     /* 0x10 */ s32 radiusSq;
-    /* 0x14 */ s32 fadeTime; /* func_801089EC: frames of the fade, */
-    /* 0x18 */ s32 fade;     /* and frames left (0 none) */
+    /* 0x14 */ s32 fade;     /* func_801089EC: frames left of the fade (0 none) */
+    /* 0x18 */ s32 fadeTime; /* and its length */
     /* 0x1C */ f32 fadeFrom; /* the radius it fades from */
 } HRJLight; /* size = 0x20 */
 
@@ -208,9 +208,9 @@ extern Gfx D_8010C348_137F38_HotRopeJump[];
 extern Gfx D_8010C360_137F50_HotRopeJump[]; /* MP1 D_800FE610: the floor's setup list */
 extern u8 D_8010C3A0_137F90_HotRopeJump[4][4]; /* light colours: [0]->[1] ambient, [2]->[3] light 3, rgb + pad;
                                                     retail names each byte's label (3A1..3AE) */
-extern s16 D_8010C3B0_137FA0_HotRopeJump[4];
-extern s16 D_8010C3B8_137FA8_HotRopeJump[4];
-extern s32 D_8010C3C0_137FB0_HotRopeJump;
+extern u16 D_8010C3B0_137FA0_HotRopeJump[4]; /* floor light colour at blend 0 (rgb + pad) */
+extern u16 D_8010C3B8_137FA8_HotRopeJump[4]; /* at blend 1 */
+extern f32 D_8010C3C0_137FB0_HotRopeJump; /* the blend D_80111416 was made for */
 extern Vtx_t D_8010C3C4_137FB4_HotRopeJump[9]; /* torch flame (MP1 D_800FE650) */
 extern s32 D_8010C454_138044_HotRopeJump; /* MP1 D_800FE6E0: two s16 (state, timer) */
 extern s16 D_8010C458_138048_HotRopeJump[8];
@@ -265,16 +265,16 @@ extern f32 D_80111408_13CFF8_HotRopeJump;
 extern s16 D_8011140C_13CFFC_HotRopeJump;
 extern s16 D_8011140E_13CFFE_HotRopeJump;
 extern u8 D_80111410_13D000_HotRopeJump[6]; /* light colours now: ambient rgb, then light 3 rgb (S4-0CC) */
-extern s16 D_80111416_13D006_HotRopeJump;
-extern s16 D_80111418_13D008_HotRopeJump;
-extern s16 D_8011141A_13D00A_HotRopeJump;
+extern u16 D_80111416_13D006_HotRopeJump[3]; /* the floor lights' colour (rgb) */
+extern u16 D_80111418_13D008_HotRopeJump; /* its labels [1], [2] */
+extern u16 D_8011141A_13D00A_HotRopeJump;
 extern s32 D_8011141C_13D00C_HotRopeJump;
 extern HRJLight D_80111420_13D010_HotRopeJump[32]; /* floor lights (MP1 D_80100538); retail also
                                                        names their fields' labels 422..43C */
 extern s16 D_80111820_13D410_HotRopeJump;
-extern s16 D_80111822_13D412_HotRopeJump;
+extern s16 D_80111822_13D412_HotRopeJump; /* the floor model */
 extern s16 D_80111824_13D414_HotRopeJump; /* floor sprite */
-extern s32 D_80111828_13D418_HotRopeJump;
+extern Gfx* D_80111828_13D418_HotRopeJump; /* the floor's display list */
 extern s16 D_8011182C_13D41C_HotRopeJump;
 extern f32 D_80111830_13D420_HotRopeJump;
 extern s16 D_80111834_13D424_HotRopeJump;
@@ -303,11 +303,15 @@ extern s16 D_8011192A_13D51A_HotRopeJump;
 /* S4-0CA */
 
 /* S4-0CC */
+#define HRJ_ABS(x) ((x) < 0 ? -(x) : (x))
 extern s16 D_800FFFD6_100BD6; /* current viewport */
 void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
 f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
+f32 sqrtf(f32);
+extern u8 D_800FDBE0_FE7E0; /* the frame's vertex buffer */
+void func_800204C0_210C0(s32, Gfx**);
 /* Labels inside D_8010C3A0_137F90_HotRopeJump[4][4]: retail addresses each byte by its own label
    (GCC folds a base register for the array). */
 extern u8 D_8010C3A1_137F91_HotRopeJump;

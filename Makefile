@@ -673,8 +673,9 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_60_name/3BDF90.c.o
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o
 # S4-3CA: ovl_3C 291870.c too (nops between mul.s pairs in func_80106518, func_80106CC4)
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_3C_DeepSeaSalvage/291870.c.o
-# S4-0CC: ovl_0C 12E3F0.c too (no nop after the __sinf call before a mul.s in func_80107CA4)
-OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o
+# S4-0CC: ovl_0C 12E3F0.c and 133BA0.c too (12E3F0: no nop after the __sinf call before a mul.s in
+# func_80107CA4; 133BA0: nops between mul.s pairs in func_8010A0F0, func_8010A4E4)
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o build/src/overlays/ovl_0C_HotRopeJump/133BA0.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

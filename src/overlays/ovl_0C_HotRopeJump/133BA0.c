@@ -12,7 +12,7 @@ void func_80107FB0_133BA0_HotRopeJump(void) {
         l->y = 0;
         l->x = 0;
         l->radius = l->aspect = l->radiusSq = 0;
-        l->fadeFrom = l->fadeTime = l->fade = 0;
+        l->fadeFrom = l->fade = l->fadeTime = 0;
     }
     D_8011182C_13D41C_HotRopeJump = 0;
     D_80111830_13D420_HotRopeJump = 1.0f;
@@ -142,14 +142,120 @@ void func_801089D4_1345C4_HotRopeJump(s16 id) {
 
 /* Starts a light's fade over `time` frames (func_80108A44 shrinks it), unless one is running. */
 void func_801089EC_1345DC_HotRopeJump(s16 id, s32 time) {
-    if (D_80111420_13D010_HotRopeJump[id].fade == 0) {
-        D_80111420_13D010_HotRopeJump[id].fadeTime = time;
+    if (D_80111420_13D010_HotRopeJump[id].fadeTime == 0) {
         D_80111420_13D010_HotRopeJump[id].fade = time;
+        D_80111420_13D010_HotRopeJump[id].fadeTime = time;
         D_80111420_13D010_HotRopeJump[id].fadeFrom = D_80111420_13D010_HotRopeJump[id].radius;
     }
 }
 
+/* The floor's draw callback (MP1 func_800FB6B4): blends the light colour, runs the lights'
+   fades, lights each flagged vertex by the lights over it, then draws the floor.
+   Retail quirk kept: a fade sets the radius to (fade / fadeTime) * fadeFrom in integer division,
+   so the light drops to radius 0 on its first faded frame.
+   NON_MATCHING: masked 49; retail keeps the abs values apart from their differences (bgez/move),
+   holds 0x300 in a register and m in $s7 */
+#ifdef NON_MATCHING
+void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
+    HRJLight* list[33];
+    HmfData* m;
+    HmfVtx* v;
+    HRJLight* l;
+    HRJLight** lp;
+    s32 n;
+    s32 i;
+    s32 r;
+    s32 dx;
+    s32 dz;
+    s32 d2;
+    s32 t;
+    f32 sum;
+    f32 f;
+    f32 inner;
+
+    if (D_8010C3C0_137FB0_HotRopeJump != D_8010C260_137E50_HotRopeJump) {
+        for (i = 0; i < 3; i++) {
+            D_80111416_13D006_HotRopeJump[i] = (u8)func_8010BF04_137AF4_HotRopeJump(D_8010C3B0_137FA0_HotRopeJump[i], D_8010C3B8_137FA8_HotRopeJump[i], D_8010C260_137E50_HotRopeJump);
+        }
+        D_8010C3C0_137FB0_HotRopeJump = D_8010C260_137E50_HotRopeJump;
+    }
+    l = D_80111420_13D010_HotRopeJump;
+    for (i = 0; i < 32; i++, l++) {
+        if (l->used != 0 && l->fade != 0) {
+            if (--l->fade <= 0) {
+                l->fade = 0;
+                l->fadeTime = 0;
+                l->used = 0;
+            } else {
+                l->radius = (f32)(l->fade / l->fadeTime) * l->fadeFrom;
+            }
+        }
+    }
+    n = 0;
+    for (i = 0; i < 32; i++) {
+        l = &D_80111420_13D010_HotRopeJump[i];
+        if (l->used != 0 && l->radius > 10.0) {
+            list[n++] = l;
+        }
+    }
+    list[n] = NULL;
+    m = D_800FC834_FD434[D_80111822_13D412_HotRopeJump].hmf;
+    v = m->unk44[D_800FDBE0_FE7E0];
+    for (i = 0; i < 0x300; i++, v++) {
+        sum = 0.0f;
+        if (*(u16*)v->unk06 != 0) {
+            l = list[0];
+            lp = &list[1];
+            if (l != NULL) {
+                do {
+                    dx = l->y + 50;
+                    if (dx < 0) {
+                        dx = -dx;
+                    }
+                    r = dx * 0.75 + l->radius;
+                    t = v->unk00 - l->x;
+                    dx = t;
+                    if (t < 0) {
+                        dx = -dx;
+                    }
+                    if (dx < r) {
+                        t = (f32)(v->unk04 - l->z) * l->aspect;
+                        dz = t;
+                        if (t < 0) {
+                            dz = -dz;
+                        }
+                        if (dz < r) {
+                            d2 = dx * dx + dz * dz;
+                            if (d2 < r * r) {
+                                inner = l->radius - r * 2;
+                                f = 1.0f;
+                                if (inner <= 0.0f || inner * inner < (f32)d2) {
+                                    f -= (sqrtf(d2) - inner) / ((f32)r - inner);
+                                }
+                                sum += f;
+                            }
+                        }
+                    }
+                    l = *lp++;
+                } while (l != NULL);
+            }
+        }
+        if (sum > 1.0) {
+            sum = 1.0f;
+        }
+        v->unk0C[0] = D_80111416_13D006_HotRopeJump[0] * sum;
+        v->unk0C[1] = D_80111418_13D008_HotRopeJump * sum;
+        v->unk0C[2] = D_8011141A_13D00A_HotRopeJump * sum;
+    }
+    gSPDisplayList((*gfxp)++, osVirtualToPhysical(D_8010C360_137F50_HotRopeJump));
+    func_800204C0_210C0(0, gfxp);
+    gSPSegment((*gfxp)++, 1, osVirtualToPhysical(m->unk44[D_800FDBE0_FE7E0]));
+    gSPDisplayList((*gfxp)++, osVirtualToPhysical(D_80111828_13D418_HotRopeJump));
+    gDPPipeSync((*gfxp)++);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80108A44_134634_HotRopeJump);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80109078_134C68_HotRopeJump);
 
