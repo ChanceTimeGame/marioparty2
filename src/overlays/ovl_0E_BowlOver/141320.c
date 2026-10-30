@@ -227,9 +227,192 @@ void func_8010782C_141BBC_BowlOver(omObjData* obj, f32 dx, f32 dz) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_8010782C_141BBC_BowlOver);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801079EC_141D7C_BowlOver);
+/* A falling pin knocks down the standing pins its top (130 up the tilted pin) passes within 75 of. */
+// register allocation only (masked 0): the pin table entry and its object swap a0/a1
+#ifdef NON_MATCHING
+void func_801079EC_141D7C_BowlOver(omObjData* obj) {
+    omObjData* other;
+    BOPin* pin;
+    BOPin* hit;
+    Vec3f v;
+    Vec3f top;
+    Vec3f d;
+    f32 dir;
+    f32 a;
+    f32 t;
+    s16 i;
+    s16 snd;
 
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    if (pin->unk_17 != 1) {
+        return;
+    }
+    a = pin->unk_00;
+    dir = 360.0f - pin->unk_04;
+    t = a * 0.017453289f;
+    v.x = 0.0f;
+    v.y = __cosf(t) * 130.0f;
+    v.z = __sinf(t) * 130.0f;
+    t = dir * 0.017453289f;
+    top.x = __sinf(t) * v.z;
+    top.y = v.y;
+    top.z = __cosf(t) * v.z;
+    top.x += obj->trans.x;
+    top.y += obj->trans.y;
+    top.z += obj->trans.z;
+    for (i = 0; i < 6; i++) {
+        if (obj->work[3] == i) {
+            continue;
+        }
+        other = D_8010A0B8_144448_BowlOver[i];
+        hit = &D_80109E50_1441E0_BowlOver[other->work[3]];
+        if (hit->unk_17 == 1) {
+            continue;
+        }
+        d.x = other->trans.x - top.x;
+        d.y = D_8010A0B8_144448_BowlOver[i]->trans.y - top.y;
+        d.z = D_8010A0B8_144448_BowlOver[i]->trans.z - top.z;
+        if (sqrtf(d.x * d.x + d.y * d.y + d.z * d.z) < 75.0f) {
+            hit->unk_04 = pin->unk_04;
+            hit->unk_00 = 40.0f;
+            D_8010A0B8_144448_BowlOver[i]->trans.y += 30.0;
+            func_80029EDC_2AADC(D_8010A0B8_144448_BowlOver[i]->model[1], 0);
+            hit->unk_17 = 1;
+            hit->unk_18 = 0;
+            hit->unk_08 = 90.0f;
+            pin->unk_08 = 90.0f;
+            snd = 0x182;
+            if (D_80109A50_143DE0_BowlOver != 0) {
+                snd = 0x183;
+                if (D_80109A50_143DE0_BowlOver != 1) {
+                    snd = 0x184;
+                }
+            }
+            PlaySound(snd);
+            D_80109A50_143DE0_BowlOver++;
+            if (D_8010A0B8_144448_BowlOver[0] == obj) {
+                omVibrate(D_8010A0AE_14443E_BowlOver[1], 2, 2, 20);
+            }
+            if (D_8010A0B8_144448_BowlOver[1] == obj) {
+                omVibrate(D_8010A0AE_14443E_BowlOver[2], 2, 2, 20);
+            }
+            if (D_8010A0B8_144448_BowlOver[2] == obj) {
+                omVibrate(D_8010A0AE_14443E_BowlOver[3], 2, 2, 20);
+            }
+            func_80029C74_2A874(obj->model[5], 0.0f);
+            func_80029714_2A314(obj->model[5], obj->trans.x, obj->trans.y, obj->trans.z);
+            func_800297E8_2A3E8(obj->model[5], 5.0f, 5.0f, 5.0f);
+            func_80029C74_2A874(obj->model[6], 0.0f);
+            func_80029714_2A314(obj->model[6], obj->trans.x, obj->trans.y, obj->trans.z);
+        }
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801079EC_141D7C_BowlOver);
+#endif
+
+/* A pin: the shell knocks it down when it passes within 88; a falling pin tilts to 90 degrees about
+   its fall direction, knocks down the pins its top reaches, then blinks for 31 frames and vanishes. */
+// float register allocation and load order (masked 20): the sqrt and angle temporaries and the
+// shrink factor's registers differ (MP1's twin is NON_MATCHING too)
+#ifdef NON_MATCHING
+void func_80107DB4_142144_BowlOver(omObjData* obj) {
+    BOPin* pin;
+    HmfModel* mdl;
+    Vec3f pos;
+    Vec3f axis;
+    f32 dx;
+    f32 dz;
+    f32 a;
+    f32 b;
+    f32 s;
+    f32 dist;
+    s16 snd;
+
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    if (D_800F8FD0_F9BD0 != 1) {
+        return;
+    }
+    mdl = &D_800FC834_FD434[obj->model[0]];
+    if (pin->unk_17 == 0) {
+        if (obj->trans.y <= 43.0f) {
+            dx = D_8010A0A8_144438_BowlOver->trans.x - obj->trans.x;
+            dz = D_8010A0A8_144438_BowlOver->trans.z - obj->trans.z;
+            dist = sqrtf(dx * dx + dz * dz);
+            if (dist < 88.0f) {
+                pin->unk_04 = func_800B75A8_B81A8(dx, dz);
+                pin->unk_00 = 30.0f;
+                obj->trans.y += 30.0;
+                func_80029EDC_2AADC(obj->model[1], 0);
+                pin->unk_17 = 1;
+                pin->unk_18 = 0;
+                pin->unk_08 = 90.0f;
+                if (D_80109A50_143DE0_BowlOver != 0) {
+                    snd = 0x183;
+                    if (D_80109A50_143DE0_BowlOver != 1) {
+                        snd = 0x184;
+                    }
+                } else {
+                    snd = 0x182;
+                }
+                PlaySound(snd);
+                D_80109A50_143DE0_BowlOver++;
+                if (D_8010A0B8_144448_BowlOver[0] == obj) {
+                    omVibrate(D_8010A0AE_14443E_BowlOver[1], 2, 2, 20);
+                }
+                if (D_8010A0B8_144448_BowlOver[1] == obj) {
+                    omVibrate(D_8010A0AE_14443E_BowlOver[2], 2, 2, 20);
+                }
+                if (D_8010A0B8_144448_BowlOver[2] == obj) {
+                    omVibrate(D_8010A0AE_14443E_BowlOver[3], 2, 2, 20);
+                }
+            }
+        }
+    } else {
+        b = pin->unk_04;
+        a = b + obj->rot.y;
+        a = 360.0f - (f32)(a - (s32)(a / 360.0f) * 360.0);
+        pos.x = 0.0f;
+        pos.y = 30.0f;
+        pos.z = 0.0f;
+        a *= 0.017453289f;
+        axis.x = __cosf(a);
+        axis.y = 0.0f;
+        axis.z = -__sinf(a);
+        if (pin->unk_00 < pin->unk_08) {
+            func_8002979C_2A39C(obj->model[1], 0.0f, -b, 0.0f);
+            s = 1.0000000149011612 / (pin->unk_00 / 45.0f + 1.0f);
+            func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, s);
+            func_80029714_2A314(obj->model[1], obj->trans.x, 3.0f, obj->trans.z);
+            pin->unk_00 += 8.0f;
+        } else {
+            pin->unk_00 = D_80109E50_1441E0_BowlOver[obj->work[3]].unk_08;
+            s = 1.0000000149011612 / (pin->unk_00 / 45.0f + 1.0f);
+            func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, s);
+            func_80029714_2A314(obj->model[1], obj->trans.x, 3.0f, obj->trans.z);
+            if (pin->unk_18 != 1) {
+                if (pin->unk_16++ >= 31) {
+                    pin->unk_18 = 1;
+                    func_80029EDC_2AADC(obj->model[0], 0);
+                    func_80029EDC_2AADC(obj->model[1], 0);
+                } else if (pin->unk_16 & 1) {
+                    func_80029EDC_2AADC(obj->model[0], 0);
+                    func_80029EDC_2AADC(obj->model[1], 0);
+                } else {
+                    func_80029EDC_2AADC(obj->model[0], 3);
+                    func_80029EDC_2AADC(obj->model[1], 3);
+                }
+            }
+        }
+        func_80106C94_141024_BowlOver(&pos, &axis, pin->unk_00, (f32(*)[4])mdl->mtx);
+        if (pin->unk_18 != 1 && pin->unk_16 == 0) {
+            func_801079EC_141D7C_BowlOver(obj);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80107DB4_142144_BowlOver);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801082B8_142648_BowlOver);
 

@@ -55,7 +55,7 @@ typedef struct BOPin {
     /* 0x0C */ f32 unk_0C;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ s16 unk_14;
-    /* 0x16 */ u8 unk_16;
+    /* 0x16 */ s8 unk_16; /* frames since it fell (blinks) */
     /* 0x17 */ u8 unk_17; /* knocked down */
     /* 0x18 */ u8 unk_18; /* fall finished */
     /* 0x19 */ char unk_19[3];
@@ -192,7 +192,7 @@ extern s8 D_80109A41_143DD1_BowlOver; /* shells left */
 extern s8 D_80109A42_143DD2_BowlOver; /* shells left last frame */
 extern s8 D_80109A43_143DD3_BowlOver; /* shell icons faded so far */
 extern s8 D_80109A44_143DD4_BowlOver[12]; /* shell icon fading ([0..1] used) */
-extern s16 D_80109A50_143DE0_BowlOver[2]; /* pins knocked (sound pitch) */
+extern s16 D_80109A50_143DE0_BowlOver; /* pins knocked (sound pitch); an unreferenced s16 follows */
 extern Vec3f D_80109A54_143DE4_BowlOver[6]; /* pin slot positions; then two unreferenced words (-300.0f, 0.0f) */
 extern f32 D_80109AA4_143E34_BowlOver[6]; /* [0]: pin deck back (z) */
 extern f32 D_80109ABC_143E4C_BowlOver;    /* pin deck front (z) */
@@ -307,6 +307,9 @@ u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
 f32 sqrtf(f32);
+f32 __sinf(f32);
+f32 __cosf(f32);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 f32 HuMathSin(f32);
