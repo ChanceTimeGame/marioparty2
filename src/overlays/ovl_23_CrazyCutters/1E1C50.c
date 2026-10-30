@@ -1,5 +1,11 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const u32 D_801093F0_1E8840_CrazyCutters[24] = { 0x0038005A, 0x00D8005A, 0x003800D2, 0x00D800D2, 0x0000029E, 0x0000029E, 0x0000023A, 0x00000000, 0x000FFFFF, 0xFFFFF000, 0x00FFFFFF, 0xFFFFFF00, 0x0FFFFFFF, 0xFFFFFFF0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x0FFFFFFF, 0xFFFFFFF0, 0x00FFFFFF, 0xFFFFFF00, 0x000FFFFF, 0xFFFFF000 };
+
+__asm__(".section .rodata");
+const u32 D_80109450_1E88A0_CrazyCutters[3] = { 0x00000002, 0x00000000, 0x00000001 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102800_1E1C50_CrazyCutters);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102A44_1E1E94_CrazyCutters);
@@ -10,11 +16,32 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102B6
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102C18_1E2068_CrazyCutters);
 
+__asm__(".section .rodata");
+const u32 D_8010945C_1E88AC_CrazyCutters[3] = { 0x00000003, 0x00000004, 0x00000005 };
+
+__asm__(".section .rodata");
+const u32 D_80109468_1E88B8_CrazyCutters[3] = { 0x00000019, 0x0000001A, 0x0000001B };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102D30_1E2180_CrazyCutters);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801030B4_1E2504_CrazyCutters);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010332C_1E277C_CrazyCutters);
+
+__asm__(".section .rodata");
+const u32 D_80109474_1E88C4_CrazyCutters[6] = { 0x00000023, 0x00000023, 0x00000023, 0x00000023, 0x00000023, 0x00000023 };
+
+__asm__(".section .rodata");
+const u32 D_8010948C_1E88DC_CrazyCutters[4] = { 0x00000010, 0x00000008, 0x00000004, 0x00000002 };
+
+__asm__(".section .rodata");
+const u32 D_8010949C_1E88EC_CrazyCutters[4] = { 0x00000018, 0x00000012, 0x0000000C, 0x00000006 };
+
+__asm__(".section .rodata");
+const u32 D_801094AC_1E88FC_CrazyCutters[3] = { 0x00000009, 0x0000000A, 0x0000000B };
+
+__asm__(".section .rodata");
+const char D_801094B8_1E8908_CrazyCutters[] = "16mt000_DEF";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80103508_1E2958_CrazyCutters);
 
@@ -27,6 +54,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80104FF
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105098_1E44E8_CrazyCutters);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801050FC_1E454C_CrazyCutters);
+
+__asm__(".section .rodata");
+const u32 D_801094C4_1E8914_CrazyCutters[3] = { 0x0000000C, 0x0000000D, 0x0000000E };
+
+__asm__(".section .rodata");
+const u32 D_801094D0_1E8920_CrazyCutters[3] = { 0x0000000F, 0x00000010, 0x00000011 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105254_1E46A4_CrazyCutters);
 
@@ -52,7 +85,25 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010597
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105A74_1E4EC4_CrazyCutters);
 
+__asm__(".section .rodata");
+const u32 D_801094DC_1E892C_CrazyCutters[4] = { 0xC3C80000, 0x43C80000, 0xC3C80000, 0x43C80000 };
+
+__asm__(".section .rodata");
+const u32 D_801094EC_1E893C_CrazyCutters[4] = { 0xC37A0000, 0xC37A0000, 0x43AF0000, 0x43AF0000 };
+
+__asm__(".section .rodata");
+const u32 D_801094FC_1E894C_CrazyCutters[3] = { 0x40866666, 0x40900000, 0x40800000 };
+
+__asm__(".section .rodata");
+const u32 D_80109508_1E8958_CrazyCutters[3] = { 0xC1F00000, 0x00000000, 0xC2C80000 };
+
+__asm__(".section .rodata");
+const u32 D_80109514_1E8964_CrazyCutters[3] = { 0x00330015, 0x00330016, 0x00330017 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105B40_1E4F90_CrazyCutters);
+
+__asm__(".section .rodata");
+const u32 D_80109520_1E8970_CrazyCutters[4] = { 0x00000012, 0x00000013, 0x00000014, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105FE4_1E5434_CrazyCutters);
 
@@ -111,21 +162,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801086B
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010874C_1E7B9C_CrazyCutters);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010882C_1E7C7C_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108870_1E7CC0_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108A8C_1E7EDC_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108C40_1E8090_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108D18_1E8168_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108D74_1E81C4_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108DA0_1E81F0_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108E2C_1E827C_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108FE4_1E8434_CrazyCutters);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80109048_1E8498_CrazyCutters);
