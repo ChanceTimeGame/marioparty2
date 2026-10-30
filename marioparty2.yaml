@@ -566,7 +566,9 @@ segments:
     bss_size: 0x70
     subsegments:
       - [0xF3F10, c]
+      - [0xF3F70, c]
       - [0xF7D10, data]
+      - [0xF8410, .rodata, F3F70]
       - {0xF84C0, type: bss, vram: 0x80106DB0, name: ovl_03_bss}
   - type: code
     start: 0x0F84C0
