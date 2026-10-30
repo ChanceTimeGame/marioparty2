@@ -235,35 +235,250 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801082B8_14
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801087A0_142B30_BowlOver);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80108DCC_14315C_BowlOver);
+/* A pin player back on its slot. */
+void func_80108DCC_14315C_BowlOver(omObjData* obj) {
+    BOPin* pin;
+    u16* slot;
 
-__asm__(".section .rodata");
-const u32 D_80109C30_143FC0_BowlOver[1] = { 0x00000002 };
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    slot = BO_WORK(obj)->unk_158;
+    obj->trans.x = D_80109A54_143DE4_BowlOver[*slot].x;
+    obj->trans.y = D_80109A54_143DE4_BowlOver[*slot].y;
+    obj->trans.z = D_80109A54_143DE4_BowlOver[*slot].z;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    func_801064C8_140858_BowlOver(obj);
+    if (pin->unk_17 == 1) {
+        obj->func_ptr = NULL;
+        func_800298A4_2A4A4(obj->model[3], 4, 4);
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_80109C34_143FC4_BowlOver[1] = { 0x0000000B };
+const BOHead D_80109C30_143FC0_BowlOver[6] = {
+    { 2, 11, "atama_2", "114_Bowring0-kaodamy_4" },
+    { 3, 12, "c001_000-atama_2", "114_Bowring1-kaodamy_2" },
+    { 4, 14, "c003_000-head_1", "114_Bowring1-kaodamy_5" },
+    { 5, 15, "Luigi1-atama_1", "114_Bowring1-kaodamy_1" },
+    { 6, 16, "c005_000-bmerge1", "114_Bowring1-kaodamy_3" },
+    { 7, 13, "C002_000b-bmerge10_1", "114_Bowring1-kaodamy" },
+};
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80108ECC_14325C_BowlOver);
+/* The pin player's pin body per character. */
+const s32 D_80109DE0_144170_BowlOver[6] = { 0x1E0012, 0x1E0013, 0x1E0015, 0x1E0016, 0x1E0017, 0x1E0014 };
 
-__asm__(".section .rodata");
-const u32 D_80109DE0_144170_BowlOver[8] = { 0x001E0012, 0x001E0013, 0x001E0015, 0x001E0016, 0x001E0017, 0x001E0014, 0x00000000, 0x00000000 };
+/* A pin player: work, slot, models (the character with the bowling-pin head on). */
+void func_80108ECC_14325C_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin) {
+    BOPlayerWork* w;
+    u16* s;
+    s16 i;
+    u32 chr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80109148_1434D8_BowlOver);
+    obj->unk_50 = func_80027154_27D54(sizeof(BOPlayerWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(BOPlayerWork));
+    w = obj->unk_50;
+    w->unk_E8 = func_80027154_27D54(obj->mtncnt * 12, 0x7918);
+    w->unk_158 = s = func_80027154_27D54(sizeof(u16), 0x7918);
+    func_800B0EF0_B1AF0(s, 0, sizeof(u16));
+    *s = slot;
+    w->unk_57 = gPlayers[player].port;
+    w->unk_59 = player;
+    chr = (u32)dir >> 16;
+    for (i = 0; i < 6; i++) {
+        if ((u32)D_80109C30_143FC0_BowlOver[i].unk_00 == chr) {
+            break;
+        }
+    }
+    obj->model[0] = LoadFormFile(D_80109C30_143FC0_BowlOver[i].unk_04 | 0x1E0000, 0x206B9);
+    obj->model[1] = func_80018A64_19664(0x1E0001, 0x6B9);
+    obj->model[2] = LoadFormFile(dir | file, 0xA99);
+    func_80023DAC_249AC(obj->model[2], (char*)D_80109C30_143FC0_BowlOver[i].unk_08, obj->model[0],
+                        (char*)D_80109C30_143FC0_BowlOver[i].unk_28);
+    obj->model[3] = LoadFormFile(D_80109DE0_144170_BowlOver[i], 0xA99);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0xA4, 0x1B);
+    func_8002D2B4_2DEB4(obj->model[0], 42.0f, 90.0f, 51.0f);
+    func_80029EDC_2AADC(obj->model[2], 0);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[3], 2);
+    obj->work[3] = pin;
+    func_80108DCC_14315C_BowlOver(obj);
+    obj->func_ptr = func_801087A0_142B30_BowlOver;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80109354_1436E4_BowlOver);
+/* An empty pin slot's pin: it falls like the others; once down its ring bounces and fades. */
+void func_80109148_1434D8_BowlOver(omObjData* obj) {
+    BOPin* pin;
+    HmfModel* m;
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_8010947C_14380C_BowlOver);
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    func_80107DB4_142144_BowlOver(obj);
+    if (pin->unk_17 == 1) {
+        func_800298A4_2A4A4(obj->model[7], 4, 0);
+        func_800298A4_2A4A4(obj->model[8], 4, 0);
+        if ((pin->unk_0C += pin->unk_10) < 0.0f) {
+            pin->unk_10 = -(pin->unk_0C * 0.8f);
+            pin->unk_0C = 0.0f;
+        } else {
+            pin->unk_10 -= 2.0f;
+        }
+        func_80029714_2A314(obj->model[7], obj->trans.x, pin->unk_0C + 10.0f, obj->trans.z);
+        func_80029714_2A314(obj->model[8], obj->trans.x, 0.0f, obj->trans.z);
+        s = pin->unk_0C / 200.0f;
+        func_800297E8_2A3E8(obj->model[8], 1.0f - s, 1.0f - s, 0.5f - s);
+    }
+    if (pin->unk_17 == 0) {
+        func_801064C8_140858_BowlOver(obj);
+    }
+    m = &D_800FC834_FD434[obj->model[0]];
+    if (m->hmf != NULL) {
+        if (m->unk18 & 4) {
+            func_800298A4_2A4A4(obj->model[3], 4, 4);
+        } else {
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
+        }
+    }
+    func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801096A0_143A30_BowlOver);
+/* An empty pin slot's pin back on its slot. */
+void func_80109354_1436E4_BowlOver(omObjData* obj) {
+    BOPin* pin;
+    u16* slot;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_8010977C_143B0C_BowlOver);
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    slot = ((BOGround*)obj->unk_50)->unk_B0;
+    obj->trans.x = D_80109A54_143DE4_BowlOver[*slot].x;
+    obj->trans.y = D_80109A54_143DE4_BowlOver[*slot].y;
+    obj->trans.z = D_80109A54_143DE4_BowlOver[*slot].z;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->rot.x = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->rot.z = 0.0f;
+    func_800298A4_2A4A4(obj->model[7], 4, 4);
+    func_800298A4_2A4A4(obj->model[8], 4, 4);
+    func_801064C8_140858_BowlOver(obj);
+    if (pin->unk_17 == 1) {
+        obj->func_ptr = NULL;
+        func_800298A4_2A4A4(obj->model[3], 4, 4);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801097F4_143B84_BowlOver);
+/* An empty pin slot: a plain pin, with a ring and a shadow. */
+void func_8010947C_14380C_BowlOver(omObjData* obj, u16 slot, s8 pin) {
+    BOGround* w;
+    u16* s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80109870_143C00_BowlOver);
+    obj->model[0] = LoadFormFile(0x1E0011, 0x206B9);
+    obj->model[1] = func_80018A64_19664(0x1E0001, 0x6B9);
+    obj->model[2] = -1;
+    obj->model[3] = LoadFormFile(0x1E0018, 0xA99);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[3], 2);
+    obj->model[7] = D_800F86D8_F92D8[func_80018D64_19964(0xE, 0x289, 8)].unk00;
+    HmfModelObjAttrSet(obj->model[7], 0x70000000, 0x70000000);
+    func_800297E8_2A3E8(obj->model[7], 2.0f, 2.0f, 2.0f);
+    func_800298A4_2A4A4(obj->model[7], 4, 4);
+    obj->model[8] = func_80027D3C_2893C(obj->model[1]);
+    func_800297E8_2A3E8(obj->model[8], 1.0f, 1.0f, 0.5f);
+    func_800298A4_2A4A4(obj->model[8], 4, 4);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0xA4, 0x1B);
+    func_8002D2B4_2DEB4(obj->model[0], 42.0f, 90.0f, 51.0f);
+    obj->unk_50 = w = func_80027154_27D54(sizeof(BOGround), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(BOGround));
+    w->unk_03 = 1;
+    w->unk_B0 = s = func_80027154_27D54(sizeof(u16), 0x7918);
+    func_800B0EF0_B1AF0(s, 0, sizeof(u16));
+    *s = slot;
+    obj->work[3] = pin;
+    func_80109354_1436E4_BowlOver(obj);
+    obj->func_ptr = func_80109148_1434D8_BowlOver;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801098EC_143C7C_BowlOver);
+/* Shuffles the pin slots. */
+void func_801096A0_143A30_BowlOver(void) {
+    s16 i;
+    u32 r;
+    u32 a;
+    u32 b;
+    u16 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80109910_143CA0_BowlOver);
+    for (i = 0; i < 6; i++) {
+        D_80109E40_1441D0_BowlOver[i] = i;
+    }
+    for (i = 0; i < 10; i++) {
+        r = guRandom();
+        a = r & 7;
+        if (a >= 6) {
+            a = (r >> 3) & 3;
+        }
+        b = (r >> 5) & 7;
+        if (b >= 6) {
+            b = (r >> 8) & 3;
+        }
+        t = D_80109E40_1441D0_BowlOver[a];
+        D_80109E40_1441D0_BowlOver[a] = D_80109E40_1441D0_BowlOver[b];
+        D_80109E40_1441D0_BowlOver[b] = t;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80109934_143CC4_BowlOver);
+/* Pin player 1. */
+void func_8010977C_143B0C_BowlOver(omObjData* obj) {
+    s8 p;
+    u8 chr;
+    s32 dir;
+    s32 file;
+
+    p = D_8010A0AE_14443E_BowlOver[1];
+    chr = gPlayers[p].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_08;
+    func_80108ECC_14325C_BowlOver(obj, dir, file, p, D_80109E40_1441D0_BowlOver[0], 0);
+}
+
+/* Pin player 2. */
+void func_801097F4_143B84_BowlOver(omObjData* obj) {
+    s8 p;
+    u8 chr;
+    s32 dir;
+    s32 file;
+
+    p = D_8010A0AE_14443E_BowlOver[2];
+    chr = gPlayers[p].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_08;
+    func_80108ECC_14325C_BowlOver(obj, dir, file, p, D_80109E40_1441D0_BowlOver[1], 1);
+}
+
+/* Pin player 3. */
+void func_80109870_143C00_BowlOver(omObjData* obj) {
+    s8 p;
+    u8 chr;
+    s32 dir;
+    s32 file;
+
+    p = D_8010A0AE_14443E_BowlOver[3];
+    chr = gPlayers[p].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_08;
+    func_80108ECC_14325C_BowlOver(obj, dir, file, p, D_80109E40_1441D0_BowlOver[2], 2);
+}
+
+void func_801098EC_143C7C_BowlOver(omObjData* obj) {
+    func_8010947C_14380C_BowlOver(obj, D_80109E40_1441D0_BowlOver[3], 3);
+}
+
+void func_80109910_143CA0_BowlOver(omObjData* obj) {
+    func_8010947C_14380C_BowlOver(obj, D_80109E40_1441D0_BowlOver[4], 4);
+}
+
+void func_80109934_143CC4_BowlOver(omObjData* obj) {
+    func_8010947C_14380C_BowlOver(obj, D_80109E40_1441D0_BowlOver[5], 5);
+}
+
+/* retail pads the file's .rodata to 16 */
+__asm__(".section .rodata\n\t.balign 16\n\t.text");

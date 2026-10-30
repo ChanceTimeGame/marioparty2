@@ -90,8 +90,18 @@ typedef struct BOGround {
     /* 0x00 */ char unk_00[3];
     /* 0x03 */ u8 unk_03;
     /* 0x04 */ u8 unk_04; /* ground id */
-    /* 0x05 */ char unk_05[0xAF];
+    /* 0x05 */ char unk_05[0xAB];
+    /* 0xB0 */ u16* unk_B0; /* an empty pin slot's slot index (func_8010947C_14380C_BowlOver) */
 } BOGround; /* size = 0xB4 */
+
+/* Pin-player model table (D_80109C30_143FC0_BowlOver[6], .rodata; MP1 BowlHead): the character's
+   directory, its head file in directory 0x1E, and the two node names func_80023DAC_249AC joins. */
+typedef struct BOHead {
+    /* 0x00 */ s32 unk_00;
+    /* 0x04 */ s32 unk_04;
+    /* 0x08 */ char unk_08[0x20];
+    /* 0x28 */ char unk_28[0x20];
+} BOHead; /* size = 0x48 */
 
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BOCharData {
@@ -183,6 +193,7 @@ extern s8 D_80109A42_143DD2_BowlOver; /* shells left last frame */
 extern s8 D_80109A43_143DD3_BowlOver; /* shell icons faded so far */
 extern s8 D_80109A44_143DD4_BowlOver[12]; /* shell icon fading ([0..1] used) */
 extern s16 D_80109A50_143DE0_BowlOver[2]; /* pins knocked (sound pitch) */
+extern Vec3f D_80109A54_143DE4_BowlOver[6]; /* pin slot positions; then two unreferenced words (-300.0f, 0.0f) */
 extern f32 D_80109AA4_143E34_BowlOver[6]; /* [0]: pin deck back (z) */
 extern f32 D_80109ABC_143E4C_BowlOver;    /* pin deck front (z) */
 
@@ -197,6 +208,7 @@ extern s16 D_80109E1A_1441AA_BowlOver;
 extern f32 D_80109E1C_1441AC_BowlOver; /* CPU aim offset by difficulty */
 extern s16 D_80109E20_1441B0_BowlOver[]; /* rolling sound handles */
 extern s16 D_80109E30_1441C0_BowlOver[8]; /* shell icon alpha */
+extern u16 D_80109E40_1441D0_BowlOver[6]; /* pin slot of each pin object (shuffled) */
 extern BOPin D_80109E50_1441E0_BowlOver[6];
 extern s16 D_80109EF8_144288_BowlOver[40];
 extern BOJump D_80109F48_1442D8_BowlOver[6];
@@ -290,6 +302,9 @@ s32 PlaySound(s32);
 u16 func_80018A64_19664(s32 arg0, s32 arg1);
 u16 func_80018A30_19630(s32 arg0, s32 arg1); /* model from a file */
 void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite fade */
+void func_80023DAC_249AC(s16 model, char* part, s16 target, char* targetPart); /* attach a part */
+u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
 f32 sqrtf(f32);
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
@@ -356,10 +371,10 @@ void func_80107DB4_142144_BowlOver(omObjData* obj);
 void func_801082B8_142648_BowlOver(omObjData* obj, void* jump, u8* sx, u8* sy);
 void func_801087A0_142B30_BowlOver(omObjData* obj);
 void func_80108DCC_14315C_BowlOver(omObjData* obj);
-void func_80108ECC_14325C_BowlOver(omObjData* obj, s32 dir, s32 file, s8 player, u16 slot, u16 pin);
+void func_80108ECC_14325C_BowlOver(omObjData* obj, s32 dir, s32 file, u16 player, u16 slot, u16 pin);
 void func_80109148_1434D8_BowlOver(omObjData* obj);
 void func_80109354_1436E4_BowlOver(omObjData* obj);
-void func_8010947C_14380C_BowlOver(omObjData* obj, s16 slot, s8 pin);
+void func_8010947C_14380C_BowlOver(omObjData* obj, u16 slot, s8 pin);
 void func_801096A0_143A30_BowlOver(void);
 void func_8010977C_143B0C_BowlOver(omObjData* obj);
 void func_801097F4_143B84_BowlOver(omObjData* obj);
