@@ -5,7 +5,7 @@
    (1250D0.c, 12AFE0.c, CrazyCutter.h). Each player traces the dotted outline of one of three shapes
    (D_80109918, from the minigame variant D_800FA656) in a quarter of the screen with a cutter; the
    score is the share of the outline cut. Two retail files: 1E1C50.c (game) and 1E7CC0.c (from
-   80108870: image pixel helpers, MP1 12AFE0.c). .data stays asm; .rodata is carved
+   80108870: image pixel helpers, MP1 12AFE0.c). .data is C in 1E1C50.c; .rodata is carved
    ([0x1E8840, .rodata, 1E1C50]; 1E7CC0.c has none). */
 
 #include "common.h"
@@ -191,7 +191,7 @@ typedef struct CCRing {
 } CCRing;
 
 /* ---------------------------------------------------------------------------------------------
-   .data (asm, 0x80109070-0x801093F0)
+   .data (C in 1E1C50.c, 0x80109070-0x801093F0; the splat label D_80109082 inside D_80109080 has no users)
    --------------------------------------------------------------------------------------------- */
 
 /* .rodata defined in 1E1C50.c that a later function copies by name (S4-23B) */
@@ -200,7 +200,7 @@ typedef struct CCInt3 {
 } CCInt3;
 extern const s32 D_801094AC_1E88FC_CrazyCutters[3]; /* {9, 10, 11}: func_801065F4's sprites */
 
-extern s32 D_80109070_1E84C0_CrazyCutters[4]; /* per screen quarter: shape sprite x (read as s16) */
+extern s32 D_80109070_1E84C0_CrazyCutters[4]; /* per screen quarter: shape sprite x (passed to espPosSet as s16) */
 extern s32 D_80109080_1E84D0_CrazyCutters[4]; /* ... and y */
 extern f32 D_80109090_1E84E0_CrazyCutters[4]; /* per screen quarter: world x offset */
 extern f32 D_801090A0_1E84F0_CrazyCutters[4]; /* ... and z */

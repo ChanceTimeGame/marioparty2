@@ -1018,7 +1018,7 @@ segments:
     subsegments:
       - [0x1E1C50, c]
       - [0x1E7CC0, c]
-      - [0x1E84C0, data]
+      - [0x1E84C0, .data, 1E1C50]
       - [0x1E8840, .rodata, 1E1C50]
       - {0x1E89B0, type: bss, vram: 0x80109560, name: ovl_23_bss}
   - type: code
