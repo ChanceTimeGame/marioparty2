@@ -1,10 +1,13 @@
 #ifndef _OVL_37_H
 #define _OVL_37_H
 
-/* Overlay 37: Tile Driver (4P free-for-all). Each player has a 3x3 board of three-coloured
-   tiles; punching one (the player's tile below him, MgWork flag 0x80) drives it down and it pops
-   up turned to the next colour. A sample board at the back (slot 14) shows the target colour of
-   each tile; the first player whose nine tiles all show D_80107C10_27A340_TileDriver[4][4]'s colour wins.
+/* Overlay 37: Tile Driver (4P free-for-all). Each player has a 3x3 board of three-sided tiles and
+   a screen quarter; a sample board (slot 14, shown in the fifth camera) spins through its faces
+   during the intro and settles on the target pattern D_80107C10_27A340_TileDriver[4]. Jumping (A) and ground
+   pounding (Z) on a tile flips it to its next face; the first player whose nine tiles all show the
+   target's centre face D_80107C10_27A340_TileDriver[4][4] wins. All players are CPU-capable (func_8010350C_275C3C_TileDriver).
+   30 s timer (D_80107C08_27A338_TileDriver = 1801 in state 2). The winner gets 10 in gPlayers[].coins_mg_bonus; a
+   timeout gives everybody 0. _CheckFlag(0xC) keeps the wide camera and skips the win pose.
    Retail is two files: 274F30.c (80102800-80107890) and 279FC0.c (the two table clears; 2-nop
    text pad). .rodata is carved from 0x27A2E0 (274F30.c only).
    N64 offsets are in the comments; structs with pointer fields change size on the host. */
@@ -19,8 +22,9 @@
 #include "game/collision.h"
 #include "game/malloc.h"
 
-/* One entry of D_80107CF0_27A420_TileDriver[100]. Entries 0-3 are the players, 4 the stage, 10-13 the player boards
-   (player + 10), 14 the sample board, 20 the sky, the backdrop replaces it. */
+/* One entry of D_80107CF0_27A420_TileDriver[100] (cleared by func_80107890_279FC0_TileDriver). Entries 0-3 are the players, 4 the
+   stage, 10-13 the player boards (player + 10), 14 the sample board, 20 the backdrop (both
+   backdrop objects store here, the second wins). */
 typedef struct TDObj {
     /* 0x00 */ omObjData* obj;
     /* 0x04 */ s16 spr;
@@ -31,11 +35,11 @@ typedef struct TDObj {
     /* 0x14 */ s32 unk_14;
     /* 0x18 */ s32 unk_18;
     /* 0x1C */ s32 unk_1C;
-    /* 0x20 */ u16 punched;   /* player: a punch landed; a board's flip clears it */
+    /* 0x20 */ u16 punched;   /* player: a pound landed; the board clears it when the flip ends */
     /* 0x22 */ u16 posed;     /* player: result motion started */
-    /* 0x24 */ u16 chance;    /* CPU: x/20 per frame to punch a wrong tile */
-    /* 0x26 */ u16 jump;      /* CPU: x/10 per frame to jump */
-    /* 0x28 */ u16 miss;      /* CPU: x/500 per frame to punch a right tile */
+    /* 0x24 */ u16 chance;    /* CPU: x/20 per frame to jump on a wrong tile */
+    /* 0x26 */ u16 jump;      /* CPU: x/10 per frame to pound while falling */
+    /* 0x28 */ u16 miss;      /* CPU: x/500 per frame to jump on a right tile */
     /* 0x2A */ u16 walking;   /* CPU: 1 while it walks to a tile */
     /* 0x2C */ s16 unk_2C;
     /* 0x2E */ s16 unk_2E;
@@ -43,7 +47,7 @@ typedef struct TDObj {
     /* 0x32 */ s16 stickY;
     /* 0x34 */ s16 speed;     /* CPU stick strength */
     /* 0x36 */ s16 unk_36;
-    /* 0x38 */ f32 unk_38;    /* board: flip angle (360 to 0); CPU: jump height */
+    /* 0x38 */ f32 unk_38;    /* board: flip phase (360 to 0); player (CPU): jump height to hold A to */
     /* 0x3C */ f32 unk_3C;    /* board: the flipping tile's height */
     /* 0x40 */ f32 unk_40;    /* board: the flipping tile's angle */
     /* 0x44 */ f32 unk_44;
@@ -59,16 +63,18 @@ typedef struct TDCharData {
     /* 0x14 */ char unk_14[4];
 } TDCharData; /* size = 0x18 */
 
+#define TD_WRAP(a) ((a) >= 360.0f ? (a) - 360.0f : (a) < 0.0f ? (a) + 360.0f : (a))
+
 /* ---- .data (0x27A070-0x27A2E0, asm) ---- */
 extern f32 D_80107940_27A070_TileDriver[6][4];  /* screen rectangles x0, y0, x1, y1: four quarters, whole, whole */
 extern f32 D_801079A0_27A0D0_TileDriver[6][6];  /* viewports */
-extern Vec D_80107A30[9];     /* tile start positions (labels: D_80107A34_27A164_TileDriver = [0].y) */
+extern Vec D_80107A30_27A160_TileDriver[9];     /* tile start positions (labels: D_80107A34_27A164_TileDriver = [0].y) */
 extern Vec D_80107A9C_27A1CC_TileDriver[9];     /* tile offsets from a board's centre at scale 1 */
 extern Vec D_80107B08_27A238_TileDriver[9];     /* tiles of a player's board */
-extern s16 D_80107B74[9];     /* tile model files (label D_80107B72_27A2A2_TileDriver = D_80107B74 - 1) */
-extern u32 D_80107B88_27A2B8_TileDriver[6];     /* result sound directory by character */
-extern u16 D_80107BA0_27A2D0_TileDriver[4];     /* result sound by D_80107C00_27A330_TileDriver (voice 0/1, 2/3) */
-extern u32 D_80107BA8_27A2D8_TileDriver[2];     /* music started */
+extern u16 D_80107B74_27A2A4_TileDriver[9];     /* tile model files (label D_80107B72_27A2A2_TileDriver = D_80107B74_27A2A4_TileDriver - 1) */
+extern u32 D_80107B88_27A2B8_TileDriver[6];     /* result voice directory by character */
+extern u16 D_80107BA0_27A2D0_TileDriver[4];     /* result voice file by D_80107C00_27A330_TileDriver */
+extern u8 D_80107BA8_27A2D8_TileDriver;          /* music started */
 
 /* ---- .bss ---- */
 extern u8 D_80107C00_27A330_TileDriver[4][2];   /* the win and lose voice picked for each player */
@@ -77,7 +83,7 @@ extern s16 D_80107C0A_27A33A_TileDriver;        /* camera zoom timer */
 extern u8 D_80107C0C_27A33C_TileDriver;         /* game state: 0 intro, 1 ready, 2 play, 3 stop, 4 result, 5 fade */
 extern u8 D_80107C0D_27A33D_TileDriver;         /* state step request */
 extern s16 D_80107C0E_27A33E_TileDriver;        /* backdrop alpha (retail reads the low byte by D_80107C0F_27A33F_TileDriver) */
-extern u8 D_80107C10_27A340_TileDriver[5][9];   /* colours of the boards; [4] the target (D_80107C34_27A364_TileDriver) */
+extern u8 D_80107C10_27A340_TileDriver[5][9];   /* faces of the boards; [4] the target (D_80107C34_27A364_TileDriver = [4][0], D_80107C38_27A368_TileDriver = [4][4]) */
 extern u8 D_80107C3D_27A36D_TileDriver[9];      /* target tile has settled (D_80107C41_27A371_TileDriver = [4]: the centre) */
 extern u8 D_80107C46_27A376_TileDriver;         /* someone won */
 extern u8 D_80107C47_27A377_TileDriver[4];      /* player finished */
@@ -87,6 +93,7 @@ extern u8 D_80107C7C_27A3AC_TileDriver;         /* the winner */
 extern u8 D_80107C7D_27A3AD_TileDriver;         /* last CPU difficulty seen */
 extern s16 D_80107C80_27A3B0_TileDriver[50];    /* sprite animations */
 extern TDObj D_80107CF0_27A420_TileDriver[100];
+extern s16 D_80107E14_27A544_TileDriver;        /* = D_80107CF0_27A420_TileDriver[4].spr */
 
 /* ---- main ---- */
 extern u8 D_800FA656;  /* the game's tile colour: the target board's start */
@@ -152,7 +159,7 @@ void func_80029B80_2A780(s16 arg0, s16 arg1); /* model motion */
 void func_80029C74_2A874(s16, f32);
 f32 func_80029CE4_2A8E4(s16);                 /* model motion time */
 f32 func_80029D0C_2A90C(s16);                 /* motion length */
-void func_80029EDC_2AADC(s16 arg0, u8 arg1);
+void func_80029EDC_2AADC(s16 arg0, s16 arg1); /* main: (s16, u8); retail passes an s16 here */
 void func_8002D4D0_2E0D0(s16 n);
 void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
 void func_8003E560_3F160(s16, u8); /* defined (s16, s32) in 3D6A0.c; retail passes a u8 here */
@@ -198,34 +205,34 @@ void func_8010350C_275C3C_TileDriver(omObjData* obj);
 void func_80103988_2760B8_TileDriver(omObjData* obj);
 void func_80103E24_276554_TileDriver(omObjData* obj);
 void func_801043A4_276AD4_TileDriver(void);
-void func_801044C8_276BF8_TileDriver(void);
-void func_801049A0_2770D0_TileDriver(void);
+void func_801044C8_276BF8_TileDriver(omObjData* obj);
+void func_801049A0_2770D0_TileDriver(omObjData* obj);
 void func_80104E08_277538_TileDriver(void);
-void func_80104EA8_2775D8_TileDriver(void);
-void func_801053A4_277AD4_TileDriver(void);
-void func_801059B4_2780E4_TileDriver(void);
-void func_80105C78_2783A8_TileDriver(void);
-void func_80105DB0_2784E0_TileDriver(void);
+void func_80104EA8_2775D8_TileDriver(omObjData* obj);
+void func_801053A4_277AD4_TileDriver(omObjData* obj);
+void func_801059B4_2780E4_TileDriver(omObjData* obj);
+void func_80105C78_2783A8_TileDriver(omObjData* obj);
+void func_80105DB0_2784E0_TileDriver(omObjData* obj);
 void func_801065EC_278D1C_TileDriver(void);
 void func_80106630_278D60_TileDriver(void);
-void func_801066F8_278E28_TileDriver(void);
-void func_801067B4_278EE4_TileDriver(void);
-void func_80106844_278F74_TileDriver(void);
-void func_80106984_2790B4_TileDriver(void);
-void func_80106A74_2791A4_TileDriver(void);
-void func_80106AC0_2791F0_TileDriver(void);
-void func_80106B08_279238_TileDriver(void);
+void func_801066F8_278E28_TileDriver(omObjData* obj);
+void func_801067B4_278EE4_TileDriver(omObjData* obj);
+void func_80106844_278F74_TileDriver(omObjData* obj);
+void func_80106984_2790B4_TileDriver(omObjData* obj);
+void func_80106A74_2791A4_TileDriver(omObjData* obj);
+void func_80106AC0_2791F0_TileDriver(omObjData* obj);
+void func_80106B08_279238_TileDriver(omObjData* obj);
 void func_80106B7C_2792AC_TileDriver(void);
-void func_80106BA0_2792D0_TileDriver(void);
-void func_80106BD8_279308_TileDriver(void);
+void func_80106BA0_2792D0_TileDriver(omObjData* obj);
+void func_80106BD8_279308_TileDriver(omObjData* obj);
 void func_80106C30_279360_TileDriver(void);
 void func_80106C58_279388_TileDriver(void);
-void func_80106E20_279550_TileDriver(void);
+void func_80106E20_279550_TileDriver(omObjData* obj);
 void func_80106ED8_279608_TileDriver(void);
-void func_801070A4_2797D4_TileDriver(void);
+void func_801070A4_2797D4_TileDriver(omObjData* obj);
 void func_80107168_279898_TileDriver(void);
-void func_801073BC_279AEC_TileDriver(void);
-void func_8010750C_279C3C_TileDriver(void);
+f32 func_801073BC_279AEC_TileDriver(f32 x);
+void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out);
 void func_80107890_279FC0_TileDriver(void);
 void func_80107914_27A044_TileDriver(void);
 
