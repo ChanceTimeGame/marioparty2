@@ -860,14 +860,96 @@ void func_80105D00_231670_HexagonHeat(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105D00_231670_HexagonHeat);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105D7C_2316EC_HexagonHeat);
+/* The centre stomper (ground surface 1): the hexagon model and the stomper model above it. */
+void func_80105D7C_2316EC_HexagonHeat(omObjData* obj) {
+    GroundWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105EF0_231860_HexagonHeat);
+    D_801067A4_232114_HexagonHeat = obj->model[0] = func_80018A30_19630(0x3E0002, 0x1D);
+    obj->model[1] = func_80018A30_19630(0x3E0009, 0x889);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    obj->trans.x = 0.0f;
+    obj->trans.y = 550.0f;
+    obj->trans.z = 0.0f;
+    w = obj->unk_50 = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    obj->func_ptr = func_80106204_231B74_HexagonHeat;
+    w->unk_03 = 1;
+    func_8000BFF0_CBF0(obj);
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8000BE8C_CA8C(obj, 0.4f);
+    func_8000C37C_CF7C(obj, 1.0f, 1.0f, 1.0f);
+    w->unk_04 = 1;
+    HmfModelObjAttrSet(obj->model[1], 0x20000, 0x20000);
+    func_8002D3C0_2DFC0(obj->model[1]);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_8002A00C_2AC0C(obj->model[1]);
+    omSetStatBit(obj, 0xA0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80106058_2319C8_HexagonHeat);
+/* An outer stomper (surfaces 2-7, in D_801067A8's order): a copy of the centre hexagon. */
+void func_80105EF0_231860_HexagonHeat(omObjData* obj) {
+    GroundWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80106174_231AE4_HexagonHeat);
+    obj->model[0] = func_80027D3C_2893C((s16)D_801067A4_232114_HexagonHeat);
+    obj->model[1] = func_80018A30_19630(0x3E0009, 0x889);
+    obj->trans.x = D_8010664C_231FBC_HexagonHeat[D_801067A8_232118_HexagonHeat][0];
+    obj->trans.y = 550.0f;
+    obj->trans.z = D_8010664C_231FBC_HexagonHeat[D_801067A8_232118_HexagonHeat][1];
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    w = obj->unk_50 = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    obj->func_ptr = func_80106204_231B74_HexagonHeat;
+    w->unk_03 = 1;
+    func_8000BFF0_CBF0(obj);
+    func_8000BE8C_CA8C(obj, 0.4f);
+    w->unk_04 = D_801067A8_232118_HexagonHeat + 2;
+    D_801067A8_232118_HexagonHeat++;
+    HmfModelObjAttrSet(obj->model[1], 0x20000, 0x20000);
+    func_8002D3C0_2DFC0(obj->model[1]);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_8002A00C_2AC0C(obj->model[1]);
+    omSetStatBit(obj, 0xA0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801061B0_231B20_HexagonHeat);
+/* The flag (a cylinder the players can stand on). */
+void func_80106058_2319C8_HexagonHeat(omObjData* obj) {
+    GroundWork* w;
+
+    obj->model[0] = func_80018A30_19630(0x3E000A, 0xA99);
+    obj->model[1] = func_80018A30_19630(0x8000B, 0xA89);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    obj->trans.x = 550.0f;
+    obj->trans.y = 550.0f;
+    obj->trans.z = -350.0f;
+    func_80029714_2A314(obj->model[1], 550.0f, 550.0f, -350.0f);
+    w = obj->unk_50 = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    obj->func_ptr = func_801032F8_22EC68_HexagonHeat;
+    func_8000BFA8_CBA8(obj, 500.0f, 650.0f, 100.0f);
+    w->unk_03 = 1;
+    func_8000BE8C_CA8C(obj, 0.3f);
+    w->unk_04 = 8;
+}
+
+/* Unused: a stomper follows the height. */
+void func_80106174_231AE4_HexagonHeat(omObjData* obj) {
+    obj->trans.y = D_80106524_231E94_HexagonHeat;
+    func_80029714_2A314(obj->model[1], obj->trans.x, D_80106524_231E94_HexagonHeat, obj->trans.z);
+}
+
+/* 1 if every vertex of the face lies at height 0 (the top of a hexagon, recoloured by the caller). */
+s32 func_801061B0_231B20_HexagonHeat(HmfData* hmf, HmfFace* face) {
+    s32 unused; /* retail's frame */
+    s32 i;
+
+    for (i = 0; i < face->unk00; i++) {
+        if (hmf->unk40[face->unk02[i]].unk02 != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80106204_231B74_HexagonHeat);
