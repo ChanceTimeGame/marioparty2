@@ -83,7 +83,7 @@ typedef struct ARCoin {
 } ARCoin; /* size = 0x10 */
 
 /* ---- .data (181420.c, 0x185FB0-0x186260) ---- */
-extern ARPos D_80107390_185FB0_Archerival[6]; /* target start positions */
+extern ARPos D_80107390_185FB0_Archerival[5]; /* target start positions */
 extern f32 D_801073B0_185FD0_Archerival[6];   /* arrow offset in x, by character */
 extern u8 D_801073C8_185FE8_Archerival[4];  /* CPU: % chance to prefer targets 1-3, by difficulty */
 extern u8 D_801073CC_185FEC_Archerival[4];  /* CPU: % chance to prefer an unclaimed target */
@@ -93,7 +93,16 @@ extern s32 D_801073DC_185FFC_Archerival;  /* camera set up */
 extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
 extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
-extern ARFile D_801073EC_18600C_Archerival[6][9]; /* [0-4] motions, [5-6] bow and arrow models, [7-8] win and lose motions */
+extern ARFile D_801073EC_18600C_Archerival[][9]; /* rows 0-4; row 5 is D_80107554 (host: not contiguous) */
+extern ARFile D_80107554_186174_Archerival[8];
+extern s32 D_80107594_1861B4_Archerival;
+extern f32 D_801073E8_186008_Archerival;
+extern const char D_80107660_186280_Archerival[], D_80107674_186294_Archerival[], D_80107688_1862A8_Archerival[],
+    D_8010769C_1862BC_Archerival[], D_801076B0_1862D0_Archerival[], D_801076C4_1862E4_Archerival[],
+    D_801076DC_1862FC_Archerival[], D_801076F0_186310_Archerival[], D_8010770C_18632C_Archerival[],
+    D_80107720_186340_Archerival[], D_80107734_186354_Archerival[], D_80107744_186364_Archerival[],
+    D_80107754_186374_Archerival[], D_80107760_186380_Archerival[], D_8010776C_18638C_Archerival[],
+    D_80107778_186398_Archerival[], D_80107784_1863A4_Archerival[], D_80107790_1863B0_Archerival[]; /* [0-4] motions, [5-6] bow and arrow models, [7-8] win and lose motions */
 extern ARHook D_80107598_1861B8_Archerival[6];   /* bow and arrow: the model's node */
 extern ARHook D_801075C8_1861E8_Archerival[6];   /* the node they hook to */
 extern s16 D_801075F8_186218_Archerival[6];      /* character directory */
