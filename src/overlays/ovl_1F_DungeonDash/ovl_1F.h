@@ -208,6 +208,7 @@ extern u8 D_80102720_103320; /* board.h */
 u16 func_80078EA8_79AA8(void);
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
 void func_80029EDC_2AADC(s16 arg0, u8 arg1);
+void func_800795D8_7A1D8(s16 sound, s8 volume);
 s16 LoadFormFile(s32, s32);
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */

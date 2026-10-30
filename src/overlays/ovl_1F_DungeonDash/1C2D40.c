@@ -386,7 +386,112 @@ void func_801083B0_1C3F30_DungeonDash(u16 n) {
     D_8010B2A6_1C6E26_DungeonDash = 1;
 }
 
+/* Moves the obstacles up and down; plays the slam sound for the teams that see one land. */
+// MP1 func_800FAFD4's residue: loop-head branch layout (bnez/j where retail has beqzl) and FP constant registers
+#ifdef NON_MATCHING
+void func_80108574_1C40F4_DungeonDash(void) {
+    DDObstacle* o;
+    u16 i;
+    u16 j;
+    f32 v;
+    s32 vol;
+    s16 h;
+    f32 s;
+    s16 bit;
+
+    i = 0;
+    if (D_8010B2A6_1C6E26_DungeonDash == 0) {
+        return;
+    }
+    o = D_8010B2E4_1C6E64_DungeonDash;
+    do {
+        if (o->unk0 == 0) {
+            i++;
+        } else {
+        switch (o->unk4) {
+            case 2:
+                o->y = 0.0f;
+                if (o->unk14 <= 0.0f) {
+                    o->unk14 = 180.0f;
+                    o->unk4 = 0;
+                }
+                break;
+            case 0:
+                o->y = 440.0f - o->unk14 / 180.0f * 440.0f;
+                if (o->unk14 <= 0.0f) {
+                    o->unk14 = 30.0f;
+                    o->unk4 = 3;
+                }
+                break;
+            case 3:
+                o->y = 440.0f;
+                if (o->unk14 <= 0.0f) {
+                    o->unk14 = 5.0f;
+                    o->unk4 = 1;
+                }
+                if (o->unk2 == 0 && D_8010B2BA_1C6E3A_DungeonDash != 0) {
+                    o->unk14 -= 1.0f;
+                }
+                goto place;
+            case 1:
+                o->y = o->unk14 / 5.0f * 440.0f;
+                if (o->unk14 <= 0.0f) {
+                    o->y = 0.0f;
+                    o->unk14 = 30.0f;
+                    o->unk4 = 2;
+                    for (j = 0; j < 2; j++) {
+                        if (!(i & 1)) {
+                            bit = 1 << j;
+                            if (bit & D_800FC834_FD434[o->unk6].unk01) {
+                                v = 1.0 - (f32)fabs(D_8010B2C0_1C6E40_DungeonDash[j] + 200.0 - o->z) / 2300.0;
+                                if (v > 1.0) {
+                                    v = 1.0f;
+                                } else if (v < 0.0) {
+                                    v = 0.0f;
+                                }
+                                vol = v * 57.0 + 70.0;
+                                if (j == 0) {
+                                    h = func_80079798_7A398(0x237, 6);
+                                } else {
+                                    h = func_80079798_7A398(0x237, 7);
+                                }
+                                if (h != -1) {
+                                    func_800795D8_7A1D8(h, vol);
+                                    func_801075A8_1C3128_DungeonDash(h, D_8010A7F4_1C6374_DungeonDash[j & 1]);
+                                }
+                            }
+                        }
+                    }
+                    func_80108B54_1C46D4_DungeonDash(o->unkA);
+                }
+                break;
+            default:
+                goto place;
+        }
+        if (o->unk2 == 0) {
+            o->unk14 -= 1.0f;
+        }
+    place:
+        func_80029714_2A314(o->unk6, o->x, o->y, o->z);
+        func_800297E8_2A3E8(o->unk6, 2.0f, 2.0f, 1.0f);
+        if (D_8010B2D0_1C6E50_DungeonDash < 2) {
+            func_80029714_2A314(o->unk8, o->x, 20.0f, o->z);
+            s = 1.0 - o->y / 440.0f / 3.0;
+            func_800297E8_2A3E8(o->unk8, 2.0 * s, 1.0f, s);
+        } else {
+            func_800298A4_2A4A4(o->unk8, 4, 4);
+        }
+        func_80029714_2A314(o->unkA, o->x, 2.0f, o->z);
+        i++;
+        func_800297E8_2A3E8(o->unkA, 3.0f, 3.0f, 3.0f);
+        func_80108BFC_1C477C_DungeonDash(o->unkA);
+        }
+        o++;
+    } while (i < 5);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574_1C40F4_DungeonDash);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108A14_1C4594_DungeonDash);
 
