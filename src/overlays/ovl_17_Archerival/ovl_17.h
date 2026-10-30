@@ -97,7 +97,7 @@ extern ARFile D_801073EC_18600C_Archerival[6][9]; /* motions 0-4, 5-6 win/lose; 
 extern ARHook D_80107598_1861B8_Archerival[6];   /* bow and arrow: the model's node */
 extern ARHook D_801075C8_1861E8_Archerival[6];   /* the node they hook to */
 extern s16 D_801075F8_186218_Archerival[6];      /* character directory */
-extern s16 D_80107604_186224_Archerival[4];      /* the three shared motion files */
+extern u16 D_80107604_186224_Archerival[4];      /* the three shared motion files */
 extern char* D_8010760C_18622C_Archerival[6]; /* "c00Nl_0_DEF" by character */
 extern s16 D_80107624_186244_Archerival;      /* footstep sound, -1 none */
 extern s16 D_80107626_186246_Archerival;      /* walk motion state (func_80103D7C) */
@@ -262,7 +262,7 @@ void func_801040B0_182CD0_Archerival(omObjData* obj);
 void func_80104AEC_18370C_Archerival(omObjData* obj);
 void func_8010506C_183C8C_Archerival(void);
 void func_80105180_183DA0_Archerival(f32 x, f32 y, f32 z, u8 n);
-void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p);
+void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx);
 s16 func_8010549C_1840BC_Archerival(omObjData* obj, ARObj* p, s16 dx);
 void func_80105878_184498_Archerival(omObjData* obj, ARObj* p);
 void func_80105C84_1848A4_Archerival(omObjData* obj, ARObj* p);

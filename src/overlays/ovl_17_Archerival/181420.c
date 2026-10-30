@@ -819,7 +819,79 @@ __asm__(".section .rodata");
 const u32 jtbl_801077D0_1863F0_Archerival[6] = { 0x80104990, 0x80104998, 0x801049A0, 0x801049A8, 0x801049B0, 0x801049B8 };
 #endif
 
+// NON_MATCHING: retail computes the character's table offsets earlier (masked 5, scheduling and registers)
+#ifdef NON_MATCHING
+void func_80104AEC_18370C_Archerival(omObjData* obj) {
+    MgWork* w;
+    s32 dir;
+    s32 file;
+    s16 i;
+    s8 chr;
+
+    D_8010794C_18656C_Archerival = gPlayers[obj->work[0]].flags & 1;
+    chr = gPlayers[obj->work[0]].character;
+    D_801078F0_186510_Archerival = chr == 5;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_0C;
+    D_801078EC_18650C_Archerival = D_801073B0_185FD0_Archerival[chr];
+    obj->unk_50 = func_80027154_27D54(0x15C, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x15C);
+    w = obj->unk_50;
+    w->unk_E8 = func_80027154_27D54(obj->mtncnt * 0xC, 0x7918);
+    w->unk_57 = gPlayers[obj->work[0]].port;
+    obj->model[0] = LoadFormFile(dir | file, 0x6A9);
+    for (i = 0; i < 3; i++) {
+        dir = D_801075F8_186218_Archerival[chr] << 16;
+        D_801078F8_186518_Archerival[i] = DataRead(dir | D_80107604_186224_Archerival[i]);
+    }
+    D_80107904_186524_Archerival = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_801078F8_186518_Archerival[0], 0,
+                                                       D_8010760C_18622C_Archerival[chr]);
+    func_80029A8C_2A68C(obj->model[0]);
+    func_80029AFC_2A6FC(obj->model[0]);
+    obj->model[1] = func_80018A30_19630(1, 0xA9);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 15.0f, 0.0f);
+    func_800298A4_2A4A4(obj->model[1], 0x60, 0x20);
+    func_800298A4_2A4A4(obj->model[1], 0x180, 0);
+    func_80018CCC_198CC(obj, 0, dir | D_801073EC_18600C_Archerival[chr][0].file);
+    func_80018CCC_198CC(obj, 1, dir | D_801073EC_18600C_Archerival[chr][1].file);
+    func_80018CCC_198CC(obj, 2, dir | D_801073EC_18600C_Archerival[chr][2].file);
+    func_80018CCC_198CC(obj, 3, dir | D_801073EC_18600C_Archerival[chr][3].file);
+    func_80018CCC_198CC(obj, 4, dir | D_801073EC_18600C_Archerival[chr][4].file);
+    func_80018CCC_198CC(obj, 5, dir | D_801073EC_18600C_Archerival[chr][7].file);
+    func_80018CCC_198CC(obj, 6, dir | D_801073EC_18600C_Archerival[chr][8].file);
+    w->unk_52 = 0;
+    w->unk_B4 = 1.0f;
+    w->unk_D0 = 0xFFFF;
+    w->unk_38 = 1000.0f;
+    w->unk_50 = 0;
+    func_80029B80_2A780(obj->model[0], obj->motion[0]);
+    func_80029C74_2A874(obj->model[0], 0.0f);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    func_8000C024_CC24(obj, 0, 2);
+    obj->model[9] = LoadFormFile(0x270000 | D_801073EC_18600C_Archerival[chr][5].file, 0xAAD);
+    func_80023DAC_249AC(obj->model[9], D_80107598_1861B8_Archerival[chr].node[0], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[0]);
+    func_80029A8C_2A68C(obj->model[9]);
+    obj->model[10] = LoadFormFile(0x270000 | D_801073EC_18600C_Archerival[chr][6].file, 0xAAD);
+    func_80023DAC_249AC(obj->model[10], D_80107598_1861B8_Archerival[chr].node[1], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[1]);
+    func_80029A8C_2A68C(obj->model[10]);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 225.0f;
+    obj->rot.y = 180.0f;
+    D_80107958_186578_Archerival = obj->trans.y;
+    func_8010281C_18143C_Archerival(obj->work[0]);
+    func_80029EDC_2AADC(obj->model[0], 2);
+    func_80029EDC_2AADC(obj->model[1], 2);
+    func_80029EDC_2AADC(obj->model[9], 2);
+    func_80029EDC_2AADC(obj->model[10], 2);
+    obj->func_ptr = func_801040B0_182CD0_Archerival;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80104AEC_18370C_Archerival);
+#endif
 
 void func_8010506C_183C8C_Archerival(void) {
     ARObj* tbl = D_80107920_186540_Archerival;
@@ -873,17 +945,239 @@ void func_80105180_183DA0_Archerival(f32 x, f32 y, f32 z, u8 n) {
     }
 }
 
+// NON_MATCHING: masked 0: retail keeps the z bounds' registers the other way round
+#ifdef NON_MATCHING
+void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx) {
+    s16 hit[3] = { 0x1DB, 0x1DD, 0x1DA };
+    omObjData* arrow;
+    s32 l;
+    s32 r;
+    s32 z;
+    s32 ax;
+    s32 zl;
+    s32 zh;
+    f32 az;
+    u8 n;
+
+    arrow = D_80107C38_186858_Archerival;
+    l = obj->trans.x - 27.0f;
+    r = obj->trans.x + 27.0f;
+    z = obj->trans.z;
+    ax = arrow->trans.x;
+    az = arrow->trans.z - 84.0f;
+    zh = az + 11.75f + 1.0f;
+    zl = az;
+    if (D_80107C58_186878_Archerival == 2 && ((s16)z < (s16)zh) & ((s16)zl < (s16)z)
+        && ((s16)ax >= (s16)l) & ((s16)r >= (s16)ax)) {
+        D_80107C58_186878_Archerival = 0;
+        func_800298A4_2A4A4(arrow->model[0], 4, 4);
+        PlaySound(0x1D9);
+        if (D_801078DE_1864FE_Archerival == 2) {
+            if (obj->work[0] < 4) {
+                D_801078E8_186508_Archerival++;
+                func_800797DC_7A3DC(0x1DF, obj->work[0]);
+                p->unk_26 = 1;
+                if (p->com == 0) {
+                    omVibrate(obj->work[0], 20, 0, 20);
+                }
+            } else {
+                n = D_801073D4_185FF4_Archerival[obj->work[0]];
+                PlaySound(hit[obj->work[0] - 4]);
+                p->unk_26 = 1;
+                func_80105180_183DA0_Archerival(obj->trans.x, obj->trans.y + 50.0f, obj->trans.z + 30.0f, n);
+                D_801078EA_18650A_Archerival += n;
+            }
+        }
+        func_80029714_2A314(obj->model[1], arrow->trans.x, arrow->trans.y, obj->trans.z + 30.0f);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+    }
+}
+#else
 __asm__(".section .rodata");
 const u32 D_801077E8_186408_Archerival[2] = { 0x01DB01DD, 0x01DA0000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010520C_183E2C_Archerival);
+#endif
 
+/* Moves a target by dx unless the walls, another target or the arrow in flight stop it; returns the
+   step taken (0 when blocked). */
+// NON_MATCHING: correct logic; retail schedules the comparison temporaries and the shared hit tail differently (delay slots, registers)
+#ifdef NON_MATCHING
+s16 func_8010549C_1840BC_Archerival(omObjData* obj, ARObj* p, s16 dx) {
+    ARObj* q;
+    omObjData* arrow;
+    s32 l;
+    s32 r;
+    s32 ol;
+    s32 or;
+    s32 zl;
+    s32 zh;
+    s32 pos;
+    f32 az;
+    f32 ox;
+    s16 ret;
+    s16 face;
+    s16 i;
+
+    l = (dx + obj->trans.x) - 27.0f;
+    r = (dx + obj->trans.x) + 27.0f;
+    face = 0;
+    ret = dx;
+    if (dx > 0 && obj->trans.x >= 200.0f) {
+        obj->trans.x = 200.0f;
+        face = dx;
+        dx = 0;
+        ret = 0;
+    } else if (dx < 0 && obj->trans.x <= -200.0f) {
+        obj->trans.x = -200.0f;
+        face = dx;
+        dx = 0;
+        ret = 0;
+    } else {
+        if (dx != 0) {
+            for (i = 1; i < 6; i++) {
+                q = &D_80107920_186540_Archerival[i];
+                if (q->player != obj->work[0] && q->unk_26 == 0) {
+                    ox = q->obj->trans.x;
+                    ol = ox - 27.0f;
+                    or = ox + 27.0f;
+                    if (dx > 0) {
+                        pos = (s16)ol - 27;
+                        if (((s16)r >= (s16)ol) & ((s16)l < (s16)or)) {
+                        hit:
+                            obj->trans.x = pos;
+                            face = dx;
+                            dx = 0;
+                            break;
+                        }
+                    } else {
+                        pos = (s16)or + 27;
+                        if (((s16)or >= (s16)l) & ((s16)ol < (s16)r)) {
+                            goto hit;
+                        }
+                    }
+                }
+            }
+            arrow = D_80107C38_186858_Archerival;
+            az = arrow->trans.z - 84.0f;
+            zh = az + 11.75f + 1.0f;
+            zl = az;
+            if (dx != 0) {
+                if (D_80107C58_186878_Archerival == 2 && !(obj->trans.z < (s16)zh && (s16)zl < obj->trans.z)
+                    && (s16)zl <= obj->trans.z && obj->trans.z < arrow->trans.z + 10.0f
+                    && (s16)l <= arrow->trans.x && arrow->trans.x <= (s16)r) {
+                    if (dx > 0 ? obj->trans.x < arrow->trans.x : arrow->trans.x < obj->trans.x) {
+                        dx = 0;
+                    }
+                }
+                if (dx != 0) {
+                    obj->trans.x += dx;
+                    if (dx > 0) {
+                        obj->rot.y = 0.0f;
+                    } else {
+                        obj->rot.y = 180.0f;
+                    }
+                }
+            }
+        }
+    }
+    if (face != 0) {
+        if (face > 0) {
+            obj->rot.y = 0.0f;
+        } else {
+            obj->rot.y = 180.0f;
+        }
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010549C_1840BC_Archerival);
+#endif
 
+/* A target's walk: p->unk_24 1 dodges the arrow, 2 ignores it. */
+// NON_MATCHING: correct logic; retail keeps more values in saved registers and joins the stick and CPU paths at the final call
+#ifdef NON_MATCHING
+void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
+    s16 steps[3] = { 1, 2, 3 };
+    ARObj* a = &D_80107920_186540_Archerival[11];
+    omObjData* arrow;
+    s32 reach;
+    s32 d;
+    s16 step;
+    s8 dx;
+    u16 dodging;
+    u8 diff;
+
+    arrow = a->obj;
+    reach = (arrow->trans.z - 84.0f) + 11.75f + 1.0f;
+    if (obj->work[0] < 4) {
+        diff = gPlayers[obj->work[0]].cpu_difficulty;
+    } else {
+        diff = 3;
+    }
+    if (a->state == 0) {
+        p->unk_24 = 0;
+    } else if (p->unk_24 == 0) {
+        if ((u8)(rand8() % 100) < D_801073D4_185FF4_Archerival[diff]) {
+            p->unk_24 = 1;
+        } else {
+            p->unk_24 = 2;
+        }
+    }
+    dx = 0;
+    dodging = 0;
+    if (D_801078DE_1864FE_Archerival == 2) {
+        if (p->com == 0) {
+            dx = ContStkX[gPlayers[obj->work[0]].port];
+            if (dx != 0) {
+                step = (dx > 0) ? 2 : -2;
+                func_8010549C_1840BC_Archerival(obj, p, step);
+                func_8010520C_183E2C_Archerival(obj, p, step);
+                return;
+            }
+        } else {
+            if ((p->unk_24 & 1) && obj->trans.z <= (s16)reach && (s16)(s32)(obj->trans.x - 27.0f) <= arrow->trans.x
+                && arrow->trans.x <= (s16)(s32)(obj->trans.x + 27.0f)) {
+                if (arrow->trans.x - 27.0f <= -196.0f) {
+                    d = 1;
+                } else if (arrow->trans.x + 27.0f >= 196.0f) {
+                    d = -1;
+                } else {
+                    d = obj->trans.x - arrow->trans.x;
+                }
+                dx = steps[p->timer];
+                dodging = 1;
+                if (d & 0x8000) {
+                    dx = -dx;
+                }
+            }
+            if (dodging == 0) {
+                if (--p->unk_2A != 0) {
+                    dx = p->unk_30;
+                } else {
+                    dx = steps[p->timer];
+                    if (rand8() & 1) {
+                        dx = -dx;
+                    }
+                    p->unk_2A = ((u8)(rand8() % 5) + 1) * 15;
+                }
+            }
+            if (func_8010549C_1840BC_Archerival(obj, p, dx) == 0) {
+                dx = -dx;
+            }
+            if (dx != 0) {
+                p->unk_30 = dx;
+            }
+        }
+    }
+    func_8010520C_183E2C_Archerival(obj, p, dx);
+}
+#else
 __asm__(".section .rodata");
 const u32 D_801077F0_186410_Archerival[2] = { 0x00010002, 0x00030000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105878_184498_Archerival);
+#endif
 
 void func_80105C84_1848A4_Archerival(omObjData* obj, ARObj* p) {
     switch (p->unk_26) {
