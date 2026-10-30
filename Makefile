@@ -567,7 +567,8 @@ $(S40F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # with the KMC VR4300 mul fix on, as the other minigame overlays are
 # none before a mul.s after a call)
-MG0EA_BLANKSTRIP_UNITS := build/src/overlays/ovl_0E_BowlOver/13CB90.c.o build/src/overlays/ovl_0E_BowlOver/140760.c.o
+MG0EA_BLANKSTRIP_UNITS := build/src/overlays/ovl_0E_BowlOver/13CB90.c.o build/src/overlays/ovl_0E_BowlOver/140760.c.o \
+	build/src/overlays/ovl_0E_BowlOver/141320.c.o # S4-0E: 141320.c too (nop between mul.s)
 $(MG0EA_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(MG0EA_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

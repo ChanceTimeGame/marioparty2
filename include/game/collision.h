@@ -152,7 +152,7 @@ typedef struct MgWork {
     /* 0xF0 */ u16 unk_F0;
     /* 0xF2 */ char unk_F2[0x12];
     /* 0x104 */ s32 (*unk_104[21])(); /* the minigame's override hooks (B6E0, 1130); 1 = handled */
-    /* 0x158 */ char unk_158[4];
+    /* 0x158 */ void* unk_158; /* the minigame's own per-player state (0E: the pin slot, a u16*) */
 } MgWork; /* size = 0x15C */
 
 extern omObjData* D_800FC7B0_FD3B0[]; /* ground objects (MP1 D_800F2AF8) */
