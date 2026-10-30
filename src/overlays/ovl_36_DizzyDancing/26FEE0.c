@@ -1,8 +1,6 @@
 #include "ovl_36.h"
 
 #define ACTOR D_80107870_274F50_DizzyDancing
-#define TABLE (ACTOR[6])
-#define BALL (ACTOR[7])
 #define MODEL(i) (&D_800FC834_FD434[i])
 
 
@@ -44,6 +42,7 @@ u8 func_801028A0_26FF80_DizzyDancing(u8 n, u64* used) {
     return i;
 }
 
+/* NON_MATCHING: register allocation only (masked 0): retail keeps base in $f0 and the quotient in $f2. */
 #ifdef NON_MATCHING
 f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
     f32 a;
@@ -96,6 +95,7 @@ f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_801029F0_2700D0_DizzyDancing);
 #endif
 
+/* NON_MATCHING: the 180.0f load is scheduled before the near-zero test (same residue as ovl_0A, ovl_23). */
 #ifdef NON_MATCHING
 void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -290,6 +290,7 @@ void func_80103760_270E40_DizzyDancing(void) {
     D_80107990_275070_DizzyDancing = omAddObj(10, 0, 0, -1, func_80103504_270BE4_DizzyDancing);
 }
 
+/* NON_MATCHING: masked 20: retail copies hit to $v0 before two tests and its $s4 is reused for the actor base. */
 #ifdef NON_MATCHING
 void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
     Vec from;
@@ -536,6 +537,7 @@ s16 func_80104320_271A00_DizzyDancing(omObjData* obj, Vec* hit) {
     return func_8001B434_1C034(tri, &ball, 50.0f, hit);
 }
 
+/* NON_MATCHING: masked 2: f32 d is converted once, scheduled differently; $f4/$f6 swapped. */
 #ifdef NON_MATCHING
 void func_8010449C_271B7C_DizzyDancing(omObjData* obj) {
     Vec hit;
@@ -704,6 +706,7 @@ const u32 D_80107740_274E20_DizzyDancing[3] = { 0x00000000, 0x000A0064, 0x009C01
 const u32 D_8010774C_274E2C_DizzyDancing[3] = { 0x00000000, 0x00320089, 0x00E00100 };
 __asm__(".section .text");
 #endif
+/* NON_MATCHING: register allocation only (masked 0): c and t swap $s0/$s1. */
 #ifdef NON_MATCHING
 u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     u16* t;
@@ -792,6 +795,7 @@ u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80104C5C_27233C_DizzyDancing);
 #endif
 
+/* NON_MATCHING: masked 29: $s2/$s3 swapped; v0/v1 swapped in the 0x4000 press; a delay-slot li. */
 #ifdef NON_MATCHING
 void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
     Vec polar;
@@ -1115,6 +1119,7 @@ __asm__(".section .rodata");
 const u32 D_801077C0_274EA0_DizzyDancing[12] = { 0xC3EB0000, 0x00000000, 0xC3910000, 0x43EB0000, 0x00000000, 0xC3910000, 0xC3EB0000, 0x00000000, 0x43910000, 0x43EB0000, 0x00000000, 0x43910000 };
 __asm__(".section .text");
 #endif
+/* NON_MATCHING: masked 26: one register copy before the flag test. */
 #ifdef NON_MATCHING
 void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
@@ -1305,6 +1310,7 @@ __asm__(".section .rodata");
 const u32 D_80107814_274EF4_DizzyDancing[7] = { 0x00000005, 0x00000006, 0x00000007, 0x00000008, 0x00000009, 0x0000000A, 0x00000000 };
 __asm__(".section .text");
 #endif
+/* NON_MATCHING: masked 2: the table pointer load is scheduled after the rodata address. */
 #ifdef NON_MATCHING
 void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
@@ -1386,6 +1392,7 @@ void func_80106650_273D30_DizzyDancing(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80106650_273D30_DizzyDancing);
 #endif
 
+/* NON_MATCHING: masked 2: branch-likely in the switch tree. */
 #ifdef NON_MATCHING
 void func_80106BEC_2742CC_DizzyDancing(void) {
     u64 used;

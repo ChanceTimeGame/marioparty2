@@ -1,13 +1,14 @@
 #ifndef _OVL_36_H
 #define _OVL_36_H
 
-/* Overlay 36: Dizzy Dancing (4P). The players stand around a spinning disc (a sprite backdrop, the
-   turntable object D_80107870[6] with its two arms) and are thrown outwards while it spins, then
-   stumble dizzy with a random stick remap (D_8010785C, 0 none, 1 mirrored, 2-5 rotated). When the
-   disc stops, a ball (D_80107870[7]) drops onto the centre; the first player to touch it wins 10
-   coins (D_8010785A). 30 seconds, then nobody wins. No MP1 ancestor.
-   Retail is one file, 26FEE0.c (KMC mul fix); .data (0x274CB0) is still asm; .rodata is carved
-   from 0x274D30. */
+/* Overlay 36: Dizzy Dancing (4P). The players ride a spinning turntable (D_80107870[6], spin
+   direction D_8010785B) that carries them outwards; when they reach the rim they are all thrown
+   to the corners (MgWork positions from a local table), landing dizzy with a stick remap
+   (D_8010785C: 0 none, 1 mirrored, 2-5 rotated/flipped) until a CPU plan or their own recovery
+   sets DDCpu.flags & 1. A ball (D_80107870[7]) then descends to the centre; the first player to
+   touch it (D_8010785A) wins 10 coins. 30 seconds (901 frames), then nobody wins. No MP1 ancestor.
+   Retail is two files: 26FEE0.c (KMC mul fix, blank lines stripped) and 274C00.c (the two table
+   clears). .data (0x274CB0) is still asm; .rodata is carved from 0x274D30. */
 
 #include "common.h"
 #include "game/object.h"
