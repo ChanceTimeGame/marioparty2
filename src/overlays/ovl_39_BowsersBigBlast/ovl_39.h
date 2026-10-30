@@ -275,7 +275,7 @@ extern u8 D_80107D66_284A56_BowsersBigBlast;
 extern u8 D_80107D67_284A57_BowsersBigBlast;
 extern u8 D_80107D68_284A58_BowsersBigBlast;  /* added to the CPU's chance of the right pick */
 extern u8 D_80107D69_284A59_BowsersBigBlast;  /* presser, vibrated */
-extern u8 D_80107D6A_284A5A_BowsersBigBlast;  /* next coins_mg_bonus */
+extern s8 D_80107D6A_284A5A_BowsersBigBlast;  /* next coins_mg_bonus */
 extern u8 D_80107D6B_284A5B_BowsersBigBlast[3]; /* blast models */
 
 /* ---- functions ---- */
@@ -313,7 +313,7 @@ void func_8010500C_281CFC_BowsersBigBlast(omObjData* obj, BBPlayer* pl, u8 port,
 void func_80105248_281F38_BowsersBigBlast(omObjData* obj);
 void func_801053E0_2820D0_BowsersBigBlast(omObjData* obj);
 void func_80105470_282160_BowsersBigBlast(omObjData* obj);
-s32 func_801054A0_282190_BowsersBigBlast(omObjData* obj);
+u8 func_801054A0_282190_BowsersBigBlast(omObjData* obj);
 void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl);
 void func_80105C50_282940_BowsersBigBlast(omObjData* obj, u8 order, u8 port);
 void func_80106400_2830F0_BowsersBigBlast(omObjData* obj);

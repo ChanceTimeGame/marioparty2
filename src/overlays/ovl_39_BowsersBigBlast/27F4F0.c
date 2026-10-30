@@ -684,7 +684,7 @@ void func_80105470_282160_BowsersBigBlast(omObjData* obj) {
     D_80107D50_284A40_BowsersBigBlast[4] = obj->rot.x;
 }
 
-s32 func_801054A0_282190_BowsersBigBlast(omObjData* obj) {
+u8 func_801054A0_282190_BowsersBigBlast(omObjData* obj) {
     f32 t;
     f32 s;
     f32 ten;
@@ -834,6 +834,8 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
 void func_80105C50_282940_BowsersBigBlast(omObjData* obj, u8 order, u8 port) {
     f32 z = 0.0f;
     BBPlayer* pl = &D_80107D48_284A38_BowsersBigBlast[obj->work[0]];
+    do {
+    } while (0);
     if (gPlayers[obj->work[0]].character == 5) {
         z = 30.0f;
     }
@@ -920,7 +922,7 @@ void func_80105C50_282940_BowsersBigBlast(omObjData* obj, u8 order, u8 port) {
                 D_80107D20_284A10_BowsersBigBlast->control = 3;
             }
             if (D_80107AD0_2847C0_BowsersBigBlast == 0) {
-                func_800691FC_69DFC(0xA, 0xA0, 0x1C);
+                func_800691FC_69DFC(0xA, D_80107D20_284A10_BowsersBigBlast->timer / 30.0f, 0xA0, 0x1C);
                 D_80107D20_284A10_BowsersBigBlast->flow = 2;
                 D_80107AD0_2847C0_BowsersBigBlast = 1;
             }
@@ -1007,7 +1009,7 @@ void func_80106400_2830F0_BowsersBigBlast(omObjData* obj) {
         func_80104F04_281BF4_BowsersBigBlast(port);
         if (func_80069538_6A138() == 2) {
             D_80107D20_284A10_BowsersBigBlast->control = 2;
-            func_800691FC_69DFC(0xA, 0xA0, 0x1C);
+            func_800691FC_69DFC(0xA, D_80107D20_284A10_BowsersBigBlast->timer / 30.0f, 0xA0, 0x1C);
             D_80107D20_284A10_BowsersBigBlast->flow = 2;
         }
         break;
@@ -1021,6 +1023,7 @@ void func_80106400_2830F0_BowsersBigBlast(omObjData* obj) {
 }
 
 void func_801065CC_2832BC_BowsersBigBlast(omObjData* obj) {
+    s32 attr = 0x699;
     u8 ids[4] = { 2, 3, 4, 5 };
     u32 dir;
     s32 file;
@@ -1029,7 +1032,7 @@ void func_801065CC_2832BC_BowsersBigBlast(omObjData* obj) {
     u8 i;
     dir = D_800CD438_CE038[gPlayers[D_800FC87A_FD47A].character].unk_04;
     file = D_800CD438_CE038[gPlayers[D_800FC87A_FD47A].character].unk_08;
-    func_8000C6FC_D2FC(obj, dir, file, D_800FC87A_FD47A, 0x699, 0x699);
+    func_8000C6FC_D2FC(obj, dir, file, D_800FC87A_FD47A, attr, attr);
     func_80019E84_1AA84(obj, 0, dir, 1, 0);
     func_80019E84_1AA84(obj, 1, dir | 1, 1, 0);
     func_80019E84_1AA84(obj, 2, dir | 2, 1, 0);
@@ -1075,10 +1078,8 @@ void func_801065CC_2832BC_BowsersBigBlast(omObjData* obj) {
     ContBtn[w->unk_57] = 0;
     ContBtnTrg[w->unk_57] = 0;
     func_80007790_8390(obj);
-    if (D_800F8FE0_F9BE0 != 0) {
-        for (i = 0; i < D_800F8FE0_F9BE0; i++) {
-            func_8000C024_CC24(obj, i, 2);
-        }
+    for (i = 0; i < D_800F8FE0_F9BE0; i++) {
+        func_8000C024_CC24(obj, i, 2);
     }
     for (i = 0; i < 4; i++) {
         if (obj->work[1] != ids[i]) {
@@ -1099,7 +1100,7 @@ void func_801069C8_2836B8_BowsersBigBlast(void) {
 
 void func_80106A50_283740_BowsersBigBlast(void) {
     u8 rnd[4];
-    u8 i;
+    u8 i = 0;
     u8 j;
     s8 place;
     D_80107D20_284A10_BowsersBigBlast = func_80027154_27D54(0x10, 0x7918);
@@ -1125,7 +1126,7 @@ void func_80106A50_283740_BowsersBigBlast(void) {
     D_80107D67_284A57_BowsersBigBlast = 0;
     D_80107D6A_284A5A_BowsersBigBlast = 3;
     D_80107D69_284A59_BowsersBigBlast = 0;
-    for (i = 0; i < 4; i++) {
+    for (; i < 4; i++) {
         rnd[i] = ((rand8() << 8) | rand8()) % 256;
         for (j = 0; j < 4;) {
             if (i != j && rnd[i] == rnd[j]) {
@@ -1136,8 +1137,7 @@ void func_80106A50_283740_BowsersBigBlast(void) {
             }
         }
     }
-    place = 0;
-    for (i = 0; i < 4; i++) {
+    for (i = 0, place = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
             if (i != j) {
                 if (func_80059FD0_5ABD0(i) > func_80059FD0_5ABD0(j)) {
@@ -1232,15 +1232,15 @@ void func_80106EC4_283BB4_BowsersBigBlast(void) {
 }
 
 void func_80107104_283DF4_BowsersBigBlast(void) {
-    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
-        if (D_80107B32_284822_BowsersBigBlast == 1) {
-            func_800116B4_122B4(D_80107B2C_28481C_BowsersBigBlast, 0);
-            D_80107B32_284822_BowsersBigBlast = 0;
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        if (D_80107B2C_28481C_BowsersBigBlast >= 0 && D_80107B32_284822_BowsersBigBlast == 0) {
+            func_800115B4_121B4(D_80107B2C_28481C_BowsersBigBlast);
+            D_80107B32_284822_BowsersBigBlast = 1;
+            osSyncPrintf("CRESS STOP > %d \n", D_80107B2C_28481C_BowsersBigBlast);
         }
-    } else if (D_80107B2C_28481C_BowsersBigBlast >= 0 && D_80107B32_284822_BowsersBigBlast == 0) {
-        func_800115B4_121B4(D_80107B2C_28481C_BowsersBigBlast);
-        D_80107B32_284822_BowsersBigBlast = 1;
-        osSyncPrintf("CRESS STOP > %d \n", D_80107B2C_28481C_BowsersBigBlast);
+    } else if (D_80107B32_284822_BowsersBigBlast == 1) {
+        func_800116B4_122B4(D_80107B2C_28481C_BowsersBigBlast, 0);
+        D_80107B32_284822_BowsersBigBlast = 0;
     }
 }
 
@@ -1400,7 +1400,8 @@ void func_80107840_284530_BowsersBigBlast(void) {
 }
 
 u8 func_80107A08_2846F8_BowsersBigBlast(f32* out, u8* timer, f32 start, f32 end, f32 duration) {
-    *out = start + (end - start) * (*timer / duration);
+    f32 t = *timer / duration;
+    *out = start + (end - start) * t;
     if (++*timer > duration) {
         *timer = 0;
         *out = end;
@@ -1411,5 +1412,9 @@ u8 func_80107A08_2846F8_BowsersBigBlast(f32* out, u8* timer, f32 start, f32 end,
 
 f32 func_80107A80_284770_BowsersBigBlast(f32 t, f32 p0, f32 p1, f32 p2) {
     f32 u = 1.0f - t;
-    return u * u * p0 + 2.0f * u * t * p1 + u * u * p2;
+    f32 ret;
+    ret = u * u * p0;
+    ret += 2.0f * u * t * p1;
+    ret += u * u * p2; /* retail: t * t * p2 was meant */
+    return ret;
 }
