@@ -1,5 +1,80 @@
 #include "ovl_2E.h"
 
+/* .data (0x231E90-0x232120, 80106520-801067B0). The splat labels inside objects have no users of
+   their own in C: D_8010654A_231EBA and D_801067A6_232116 (retail reads those s32s' low halves
+   by them; C casts), D_801067AB_23211B (D_801067A8's low byte), D_80106554/58, 801065A8/AC,
+   801065FC/600, 80106650, 80106680 (columns of the colour and position tables) and
+   D_8010670C_23207C (D_80106708[1]). */
+
+s32 D_80106520_231E90_HexagonHeat = -1;
+f32 D_80106524_231E94_HexagonHeat = 550.0f;
+s32 D_80106528_231E98_HexagonHeat = 0;
+s32 D_8010652C_231E9C_HexagonHeat = 0;
+s32 D_80106530_231EA0_HexagonHeat = 4;
+s32 D_80106534_231EA4_HexagonHeat = 0;
+f32 D_80106538_231EA8_HexagonHeat = 0.0f;
+s32 D_8010653C_231EAC_HexagonHeat = 0;
+s16 D_80106540_231EB0_HexagonHeat = 0;
+s32 D_80106544_231EB4_HexagonHeat = 0;
+s32 D_80106548_231EB8_HexagonHeat = -1;
+u8 D_8010654C_231EBC_HexagonHeat[4] = { 0, 0, 0, 0 };
+f32 D_80106550_231EC0_HexagonHeat[7][3] = {
+    { 224.0f, 224.0f, 224.0f }, { 248.0f, 153.0f, 188.0f }, { 90.0f, 176.0f, 90.0f }, { 254.0f, 64.0f, 64.0f },
+    { 237.0f, 210.0f, 101.0f }, { 102.0f, 212.0f, 217.0f }, { 95.0f, 105.0f, 210.0f },
+};
+f32 D_801065A4_231F14_HexagonHeat[7][3] = {
+    { 224.0f, 224.0f, 224.0f }, { 248.0f, 153.0f, 188.0f }, { 90.0f, 176.0f, 90.0f }, { 254.0f, 64.0f, 64.0f },
+    { 237.0f, 210.0f, 101.0f }, { 102.0f, 212.0f, 217.0f }, { 95.0f, 105.0f, 210.0f },
+};
+f32 D_801065F8_231F68_HexagonHeat[7][3] = {
+    { 224.0f, 224.0f, 224.0f }, { 248.0f, 153.0f, 188.0f }, { 90.0f, 176.0f, 90.0f }, { 254.0f, 64.0f, 64.0f },
+    { 237.0f, 210.0f, 101.0f }, { 102.0f, 212.0f, 217.0f }, { 95.0f, 105.0f, 210.0f },
+};
+f32 D_8010664C_231FBC_HexagonHeat[6][2] = {
+    { 167.0f, 298.0f }, { 335.0f, 0.0f }, { 167.0f, -298.0f }, { -167.0f, -298.0f }, { -335.0f, 0.0f }, { -167.0f, 298.0f },
+};
+f32 D_8010667C_231FEC_HexagonHeat[7][2] = {
+    { 0.0f, 0.0f }, { 168.5f, 300.0f }, { 336.0f, 0.0f }, { 168.5f, -300.0f },
+    { -168.5f, -300.0f }, { -336.0f, 0.0f }, { -168.5f, 300.0f },
+};
+Vec D_801066B4_232024_HexagonHeat = { 128.0f, 128.0f, 128.0f };
+f32 D_801066C0_232030_HexagonHeat = 2.0f;
+s32 D_801066C4_232034_HexagonHeat = 0;
+s32 D_801066C8_232038_HexagonHeat = 0;
+f32 D_801066CC_23203C_HexagonHeat = 0.0f;
+f32 D_801066D0_232040_HexagonHeat = 1.0f;
+f32 D_801066D4_232044_HexagonHeat = 0.02f;
+s32 D_801066D8_232048_HexagonHeat = 30; /* no users */
+s32 D_801066DC_23204C_HexagonHeat = 0;
+f32 D_801066E0_232050_HexagonHeat = 90.0f;
+f32 D_801066E4_232054_HexagonHeat = 1800.0f;
+s32 D_801066E8_232058_HexagonHeat = 0;
+s32 D_801066EC_23205C_HexagonHeat = 1860;
+s32 D_801066F0_232060_HexagonHeat = 0;
+s32 D_801066F4_232064_HexagonHeat = 0;
+u8 D_801066F8_232068_HexagonHeat = 25;
+u8 D_801066F9_232069_HexagonHeat = 30;
+u8 D_801066FA_23206A_HexagonHeat = 40;
+s32 D_801066FC_23206C_HexagonHeat = 0;
+s32 D_80106700_232070_HexagonHeat = 3;
+s32 D_80106704_232074_HexagonHeat = 2;
+f32 D_80106708_232078_HexagonHeat[2] = { 650.0f, 0.0f };
+s16 D_80106710_232080_HexagonHeat = 140;
+s16 D_80106712_232082_HexagonHeat = 1;
+s16 D_80106714_232084_HexagonHeat = 7;
+f32 D_80106718_232088_HexagonHeat = 0.0f;
+f32 D_8010671C_23208C_HexagonHeat = 0.0f;
+f32 D_80106720_232090_HexagonHeat[4] = { 0.75f, 0.85f, 0.95f, 1.0f };
+s32 D_80106730_2320A0_HexagonHeat[4] = { 5, 10, 15, 20 };
+f32 D_80106740_2320B0_HexagonHeat[4] = { 0.0f, 0.0f, 150.0f, 50.0f };
+s32 D_80106750_2320C0_HexagonHeat[4][4] = {
+    { 0, -2, -4, -6 }, { 0, -2, -4, -6 }, { 0, -2, -4, -6 }, { 0, -2, -4, -6 },
+};
+f32 D_80106790_232100_HexagonHeat[4] = { 0.5f, 1.0f, 1.5f, 2.0f };
+s16 D_801067A0_232110_HexagonHeat = -1;
+s32 D_801067A4_232114_HexagonHeat = -1;
+s32 D_801067A8_232118_HexagonHeat = 0;
+
 void func_80102800_22E170_HexagonHeat(void) {
     u8 cam;
 
@@ -492,7 +567,7 @@ void func_801047B8_230128_HexagonHeat(omObjData* obj) {
 
     a = 45.0f;
     obj->model[0] = func_80018A30_19630(0x3E0000, 0xA89);
-    func_8003EAF0_3F6F0(D_801067CC_23213C_HexagonHeat, D_801067E4_232154_HexagonHeat);
+    func_8003EAF0_3F6F0((char*)D_801067CC_23213C_HexagonHeat, D_801067E4_232154_HexagonHeat);
     obj->trans.x = obj->trans.y = 0.0f;
     obj->trans.z = -200.0f;
     w = obj->unk_50 = func_80027154_27D54(0xB4, 0x7918);

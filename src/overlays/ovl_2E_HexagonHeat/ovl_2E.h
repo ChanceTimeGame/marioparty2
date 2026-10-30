@@ -7,8 +7,8 @@
    there (or in the lava, ground index 0) is out. Each round the stompers rise (state 1), wait,
    fall faster (state 2) and the colour changes. No MP1 ancestor (MP3 has a twin of
    func_8010537C in treadmill_grill).
-   Retail is one file, 22E170.c; .rodata is carved from 0x232120. .data stays asm (231E90.data.s),
-   declared here. */
+   Retail is one file, 22E170.c (built with the KMC mul fix, blank lines stripped); its .data
+   (0x231E90) is C at the top of 22E170.c; .rodata is carved from 0x232120. */
 
 #include "common.h"
 #include "game/object.h"
@@ -130,7 +130,7 @@ s32 func_80019B9C_1A79C(omObjData* obj, u16 motion); /* player motion */
 s32 func_80019CA4_1A8A4(omObjData* obj, u16 motion);
 void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
 
-/* ---- .data (231E90; asm) ---- */
+/* ---- .data (231E90; defined in 22E170.c) ---- */
 
 extern s32 D_80106520_231E90_HexagonHeat; /* the flag's colour (0-6), -1 before the first */
 extern f32 D_80106524_231E94_HexagonHeat; /* the stompers' height (50-550) */
@@ -156,6 +156,7 @@ extern s32 D_801066C8_232038_HexagonHeat;
 extern f32 D_801066CC_23203C_HexagonHeat; /* flag motion frame */
 extern f32 D_801066D0_232040_HexagonHeat;
 extern f32 D_801066D4_232044_HexagonHeat;
+extern s32 D_801066D8_232048_HexagonHeat; /* no users */
 extern s32 D_801066DC_23204C_HexagonHeat; /* the flag is moving */
 extern f32 D_801066E0_232050_HexagonHeat; /* intro angle */
 extern f32 D_801066E4_232054_HexagonHeat; /* intro radius */
@@ -163,8 +164,7 @@ extern s32 D_801066E8_232058_HexagonHeat;
 extern s32 D_801066EC_23205C_HexagonHeat;
 extern s32 D_801066F0_232060_HexagonHeat;
 extern s32 D_801066F4_232064_HexagonHeat;
-/* background actor hop timers: three bytes retail addresses by their own labels (D_801066F9/FA
-   are undefined_syms.txt aliases), then a pad byte */
+/* background actor hop timers: three bytes retail addresses by their own labels */
 extern u8 D_801066F8_232068_HexagonHeat;
 extern u8 D_801066F9_232069_HexagonHeat;
 extern u8 D_801066FA_23206A_HexagonHeat;
@@ -172,7 +172,7 @@ extern s32 D_801066FC_23206C_HexagonHeat;
 extern s32 D_80106700_232070_HexagonHeat;
 extern s32 D_80106704_232074_HexagonHeat;
 extern f32 D_80106708_232078_HexagonHeat[2]; /* lava bubble x, z */
-extern f32 D_8010670C_23207C_HexagonHeat;
+/* D_8010670C_23207C is D_80106708[1] (retail addresses it by that label) */
 extern s16 D_80106710_232080_HexagonHeat;
 extern s16 D_80106712_232082_HexagonHeat;
 extern s16 D_80106714_232084_HexagonHeat;
