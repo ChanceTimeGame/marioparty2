@@ -213,9 +213,89 @@ void func_8010322C_138F5C_HotBobOmb(void) {
     D_80106ED4_13CC04_HotBobOmb = omAddObj(2, 0xC, 0xA, -1, func_80105124_13AE54_HotBobOmb);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801032EC_13901C_HotBobOmb);
+void func_801032EC_13901C_HotBobOmb(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_8010349C_1391CC_HotBobOmb);
+    for (i = 0; i < 4; i++) {
+        D_80106E70_13CBA0_HotBobOmb[i] = gPlayers[i].port;
+        D_80106FA8_13CCD8_HotBobOmb[i] = 0;
+        D_80106FE8_13CD18_HotBobOmb[i] = 1;
+        D_80106F28_13CC58_HotBobOmb[i] = 0;
+        D_80106FE8_13CD18_HotBobOmb[i] = 1;
+        D_80106EC0_13CBF0_HotBobOmb[i] = 0;
+        D_80106EF0_13CC20_HotBobOmb[i] = 1;
+        D_80106F7C_13CCAC_HotBobOmb = D_80106BE0_13C910_HotBobOmb[i][D_80107028_13CD58_HotBobOmb];
+        D_80106F80_13CCB0_HotBobOmb[i] = 0;
+        if (!(gPlayers[i].flags & 1)) {
+            D_80107010_13CD40_HotBobOmb[i] = 1;
+        } else {
+            D_80107010_13CD40_HotBobOmb[i] = 0;
+        }
+    }
+    D_8010700C_13CD3C_HotBobOmb = 0;
+    D_80106FB8_13CCE8_HotBobOmb = 2;
+    D_80106EE4_13CC14_HotBobOmb = 0;
+    D_80106E80_13CBB0_HotBobOmb = 0;
+    D_80107028_13CD58_HotBobOmb = 0;
+    D_80106FFC_13CD2C_HotBobOmb = -1;
+    D_80106F78_13CCA8_HotBobOmb = 0;
+    D_80106F90_13CCC0_HotBobOmb = 0;
+    D_80106FE8_13CD18_HotBobOmb[0] = 1;
+    D_80106F28_13CC58_HotBobOmb[0] = 3;
+    if (_CheckFlag(0xC) != 0) {
+        D_80106E84_13CBB4_HotBobOmb = 1;
+    } else {
+        D_80106E84_13CBB4_HotBobOmb = 0;
+    }
+}
+
+/* A player object: the character's model and motions, placed at its seat. */
+void func_8010349C_1391CC_HotBobOmb(omObjData* obj) {
+    s32 dir;
+    s32 mot;
+
+    dir = D_800CD438_CE038[(s8)gPlayers[D_80106B10_13C840_HotBobOmb[D_80106C30_13C960_HotBobOmb]].character].unk_04;
+    obj->model[0] = LoadFormFile(dir | D_800CD438_CE038[(s8)gPlayers[D_80106B10_13C840_HotBobOmb[D_80106C30_13C960_HotBobOmb]].character].unk_08, 0x2D9);
+    obj->model[1] = func_80018A64_19664(0xD, 0x2D9);
+    obj->work[0] = 0;
+    func_80018CCC_198CC(obj, 4, dir);
+    func_80018CCC_198CC(obj, 0, dir | 0x16);
+    func_80018CCC_198CC(obj, 6, dir | 0x48);
+    func_80018CCC_198CC(obj, 7, dir | 0x47);
+    if (!(rand8() & 1)) {
+        D_80106F08_13CC38_HotBobOmb[D_80106C30_13C960_HotBobOmb] = mot = dir | 0x4E;
+    } else {
+        D_80106F08_13CC38_HotBobOmb[D_80106C30_13C960_HotBobOmb] = mot = dir | 0x4F;
+    }
+    func_80018CCC_198CC(obj, 8, mot);
+    func_80018CCC_198CC(obj, 0xA, dir | 0x55);
+    func_80018CCC_198CC(obj, 0xB, dir | 0x61);
+    func_80018CCC_198CC(obj, 0xC, dir | 0x62);
+    func_80018CCC_198CC(obj, 0xD, dir | 0x63);
+    func_80018CCC_198CC(obj, 0xE, dir | 0x64);
+    func_80018CCC_198CC(obj, 0xF, dir | 0x65);
+    func_80018CCC_198CC(obj, 0x10, dir | 0x66);
+    func_80018CCC_198CC(obj, 0x11, dir | 0x67);
+    func_80018CCC_198CC(obj, 0x12, dir | 0x68);
+    func_80018CCC_198CC(obj, 0x13, dir | 0x69);
+    obj->scale.x = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].scale;
+    obj->scale.y = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].scale;
+    obj->scale.z = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].scale;
+    obj->trans.x = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].pos.x;
+    obj->trans.y = 0.0f;
+    obj->trans.z = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].pos.z;
+    obj->rot.y = D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb].rot;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 1.0f, obj->trans.z);
+    func_8002979C_2A39C(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80029B80_2A780(obj->model[0], obj->motion[4]);
+    obj->unk_50 = &D_80106B20_13C850_HotBobOmb[D_80106C30_13C960_HotBobOmb];
+    D_80106C30_13C960_HotBobOmb++;
+    obj->func_ptr = func_801037D0_139500_HotBobOmb;
+}
 
 __asm__(".section .rodata");
 const u32 D_80106C90_13C9C0_HotBobOmb[3] = { 0x00000010, 0x0000000E, 0x0000000C };
@@ -225,32 +305,352 @@ const char D_80106C9C_13C9CC_HotBobOmb[] = "item_hook";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801037D0_139500_HotBobOmb);
 
+/* The stick's direction as a 3x3 grid index (4 = centre); from MP1 func_800F99F4 (dead zone 8).
+   NON_MATCHING: retail reuses x/y's registers for dx/dy and fills the branch delay slots
+   differently (beql dy = 0; bgtz with dy = 1 in the slot); masked 16-24 in three shapes. MP1's
+   copy is NON_MATCHING too. */
+#ifdef NON_MATCHING
+s32 func_801045B0_13A2E0_HotBobOmb(s8 arg0, s8 arg1) {
+    s32 x;
+    s32 y;
+    s32 ax;
+    s32 ay;
+    s32 dx;
+    s32 dy;
+
+    x = arg0;
+    y = arg1;
+    ax = x;
+    if (ax < 0) {
+        ax = -ax;
+    }
+    ay = y;
+    if (ay < 0) {
+        ay = -ay;
+    }
+    if (ay < ax) {
+        if (ax / 2 < ay) {
+            dy = 1;
+            if (y <= 0) {
+                dy = -1;
+            }
+        } else {
+            dy = 0;
+        }
+        if (x > 8) {
+            dx = 1;
+        } else {
+            dx = -(x < -8);
+        }
+    } else {
+        if (ay / 2 < ax) {
+            dx = 1;
+            if (x <= 0) {
+                dx = -1;
+            }
+        } else {
+            dx = 0;
+        }
+        if (y > 8) {
+            dy = 1;
+        } else {
+            dy = -(y < -8);
+        }
+    }
+    return (dy + 1) * 3 + 1 + dx;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801045B0_13A2E0_HotBobOmb);
+#endif
 
+/* GCC does not see INCLUDE_ASM switch to .text: its local tables must land in .rodata */
 __asm__(".section .rodata");
-const u32 D_80106CE0_13CA10_HotBobOmb[36] = { 0x00000003, 0x00000003, 0x00000002, 0x00000003, 0x00000002, 0x00000001, 0x00000003, 0x00000001, 0x00000001, 0x00000003, 0x00000003, 0x00000002, 0x00000000, 0x00000003, 0x00000002, 0x00000000, 0x00000000, 0x00000002, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000000, 0x00000001, 0x00000000, 0x00000001, 0x00000001, 0x00000002, 0x00000002, 0x00000002, 0x00000000, 0x00000001, 0x00000002, 0x00000000, 0x00000000, 0x00000001 };
 
-__asm__(".section .rodata");
-const u32 D_80106D70_13CAA0_HotBobOmb[16] = { 0x00000001, 0x00000002, 0x00000003, 0x00000000, 0x00000002, 0x00000003, 0x00000000, 0x00000001, 0x00000003, 0x00000000, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000002, 0x00000003 };
+/* The player a throw in stick direction dir reaches; an eliminated target passes to the next
+   player round the table, and with none left the thrower keeps it. */
+s32 func_80104674_13A3A4_HotBobOmb(s32 player, u32 dir) {
+    s32 tbl[4][9] = {
+        { 3, 3, 2, 3, 2, 1, 3, 1, 1 },
+        { 3, 3, 2, 0, 3, 2, 0, 0, 2 },
+        { 3, 3, 3, 3, 0, 1, 0, 1, 1 },
+        { 2, 2, 2, 0, 1, 2, 0, 0, 1 },
+    };
+    s32 next[4][4] = {
+        { 1, 2, 3, 0 },
+        { 2, 3, 0, 1 },
+        { 3, 0, 1, 2 },
+        { 0, 1, 2, 3 },
+    };
+    s32 ret;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104674_13A3A4_HotBobOmb);
+    if (dir >= 10) {
+        dir = 4;
+    }
+    ret = tbl[player][dir];
+    i = 0;
+    while (D_80106F28_13CC58_HotBobOmb[ret] == 1) {
+        if (i >= 3) {
+            ret = player;
+            break;
+        }
+        ret = next[player][i++];
+    }
+    return ret;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104790_13A4C0_HotBobOmb);
+/* A player's input for the frame (pad, or the CPU), and A (throw) / B (dodge). */
+void func_80104790_13A4C0_HotBobOmb(s32 player) {
+    s32 r;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104A50_13A780_HotBobOmb);
+    D_80106F00_13CC30_HotBobOmb[player] = 0;
+    D_80106F88_13CCB8_HotBobOmb[player] = 0;
+    D_80106F20_13CC50_HotBobOmb[D_80106E70_13CBA0_HotBobOmb[player]] = 0;
+    D_80107014_13CD44_HotBobOmb[D_80106E70_13CBA0_HotBobOmb[player]] = 0;
+    func_80104674_13A3A4_HotBobOmb(player, func_801045B0_13A2E0_HotBobOmb(D_80106F20_13CC50_HotBobOmb[player],
+                                                                        D_80107014_13CD44_HotBobOmb[player]));
+    if (D_80107010_13CD40_HotBobOmb[player] == 1) {
+        D_80106F00_13CC30_HotBobOmb[player] = ContBtn[D_80106E70_13CBA0_HotBobOmb[player]];
+        D_80106F88_13CCB8_HotBobOmb[player] = ContBtnTrg[D_80106E70_13CBA0_HotBobOmb[player]];
+        D_80106F20_13CC50_HotBobOmb[player] = ContStkX[D_80106E70_13CBA0_HotBobOmb[player]];
+        D_80107014_13CD44_HotBobOmb[player] = ContStkY[D_80106E70_13CBA0_HotBobOmb[player]];
+    } else {
+        func_80104A50_13A780_HotBobOmb(player);
+    }
+    if ((D_80106F88_13CCB8_HotBobOmb[player] & 0x8000) && D_80106F28_13CC58_HotBobOmb[player] == 9) {
+        r = func_80104674_13A3A4_HotBobOmb(player, func_801045B0_13A2E0_HotBobOmb(D_80106F20_13CC50_HotBobOmb[player],
+                                                                                D_80107014_13CD44_HotBobOmb[player]));
+        D_80107028_13CD58_HotBobOmb = r;
+        D_80106FA8_13CCD8_HotBobOmb[player] = 0;
+        D_80106FB8_13CCE8_HotBobOmb = D_80106BE0_13C910_HotBobOmb[player][r];
+        D_80106FE8_13CD18_HotBobOmb[player] = 1;
+        func_80029E80_2AA80(D_800FFFD8_100BD8[player]->model[0], 6, 0);
+        D_80106F28_13CC58_HotBobOmb[player] = 6;
+    }
+    if (D_80106F88_13CCB8_HotBobOmb[player] & 0x4000) {
+        if (D_80106EC0_13CBF0_HotBobOmb[player] == 0 && D_80106F28_13CC58_HotBobOmb[player] == 3 &&
+            D_80106EF0_13CC20_HotBobOmb[player] != 0) {
+            D_80106FA8_13CCD8_HotBobOmb[player] = 0xF;
+            D_80106FE8_13CD18_HotBobOmb[player] = 1;
+            if (D_80106FD0_13CD00_HotBobOmb >= 7) {
+                D_80106EC0_13CBF0_HotBobOmb[player]++;
+            }
+            D_80106F28_13CC58_HotBobOmb[player] = 4;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104CD4_13AA04_HotBobOmb);
+/* A CPU player: dodges an incoming bomb at a difficulty-scaled chance, and throws after a random
+   hold. */
+void func_80104A50_13A780_HotBobOmb(s32 player) {
+    s32 chance;
+    s32 r;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104D80_13AAB0_HotBobOmb);
+    chance = gPlayers[player].cpu_difficulty;
+    switch (gPlayers[player].cpu_difficulty) {
+    case 0:
+        chance = 10;
+        break;
+    case 1:
+        chance = 20;
+        break;
+    case 2:
+        chance = 30;
+        break;
+    case 3:
+        chance = 40;
+        break;
+    }
+    if (D_80106F28_13CC58_HotBobOmb[player] == 3) {
+        if (D_80106FD0_13CD00_HotBobOmb < (rand8() & 3) + 5 && rand8() % (chance + 1) != 0) {
+            D_80106FA8_13CCD8_HotBobOmb[player] = 0xF;
+            D_80106FE8_13CD18_HotBobOmb[player] = 1;
+            D_80106F28_13CC58_HotBobOmb[player] = 4;
+        }
+        D_80107018_13CD48_HotBobOmb[player] = rand8() % (D_80106E88_13CBB8_HotBobOmb + 9) + 10;
+    }
+    if (D_80106F28_13CC58_HotBobOmb[player] == 9) {
+        D_80106FF8_13CD28_HotBobOmb = player;
+        if (D_80106E88_13CBB8_HotBobOmb != 0 && D_80107018_13CD48_HotBobOmb[player] == 0) {
+            r = func_80104674_13A3A4_HotBobOmb(player, rand8() & 7);
+            D_80107028_13CD58_HotBobOmb = r;
+            D_80106FB8_13CCE8_HotBobOmb = D_80106BE0_13C910_HotBobOmb[player][r];
+            D_80106FA8_13CCD8_HotBobOmb[player] = 0;
+            D_80106FE8_13CD18_HotBobOmb[player] = 1;
+            func_80029E80_2AA80(D_800FFFD8_100BD8[player]->model[0], 6, 0);
+            D_80106F28_13CC58_HotBobOmb[player] = 6;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104E34_13AB64_HotBobOmb);
+/* Unused: creates the three explosion models. */
+void func_80104CD4_13AA04_HotBobOmb(void) {
+    HmfModel* m;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80104F7C_13ACAC_HotBobOmb);
+    for (i = 0; i < 3; i++) {
+        D_80106EB4_13CBE4_HotBobOmb[i] = func_80018A30_19630(0x3B000E, 0x99);
+        func_800298A4_2A4A4(D_80106EB4_13CBE4_HotBobOmb[i], 4, 4);
+        m = &D_800FC834_FD434[D_80106EB4_13CBE4_HotBobOmb[i]];
+        m->unk40 = 0.0f;
+        m->unk44 = 0.0f;
+        if (m->hmf->unk9C != NULL) {
+            m->hmf->unk9C->unk08 = 0.0f;
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const char D_80106DC8_13CAF8_HotBobOmb[] = "c104_n0_DEF";
+/* Hides each explosion model whose animation has ended. */
+void func_80104D80_13AAB0_HotBobOmb(void) {
+    HmfModel* m;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80105124_13AE54_HotBobOmb);
+    for (i = 0; i < 3; i++) {
+        m = &D_800FC834_FD434[D_80106EB4_13CBE4_HotBobOmb[i]];
+        if (func_80029D0C_2A90C(D_80106EB4_13CBE4_HotBobOmb[i]) <= m->unk40) {
+            func_800298A4_2A4A4(D_80106EB4_13CBE4_HotBobOmb[i], 4, 4);
+            m->unk40 = 0.0f;
+            m->unk44 = 0.0f;
+            if (m->hmf->unk9C != NULL) {
+                m->hmf->unk9C->unk08 = 0.0f;
+            }
+        }
+    }
+}
+
+/* Starts the explosion at (x, y, z), larger nearer the camera. */
+void func_80104E34_13AB64_HotBobOmb(f32 x, f32 y, f32 z, f32 scale) {
+    HmfModel* m;
+    s32 i;
+
+    i = 0;
+    m = &D_800FC834_FD434[D_80106EB4_13CBE4_HotBobOmb[0]];
+    if (y < 0.0) {
+        y = 0.0f;
+    }
+    scale = scale * ((z + 600.0) / 600.0);
+    func_800298A4_2A4A4(D_80106EB4_13CBE4_HotBobOmb[i], 4, 0);
+    func_80029714_2A314(D_80106EB4_13CBE4_HotBobOmb[i], x, y + 8.0 + 100.0, z + 100.0f);
+    func_800297E8_2A3E8(D_80106EB4_13CBE4_HotBobOmb[i], scale, scale, scale);
+    m->unk44 = 1.0f;
+}
+
+/* The bomb's models follow the object; the fuse spark animates at half speed. From MP1
+   func_800F77B8. */
+void func_80104F7C_13ACAC_HotBobOmb(omObjData* obj, s32 unused) {
+    HmfModel* m;
+    s32 i;
+
+    if (obj->scale.x > 2.0f) {
+        obj->scale.x = 2.0f;
+        obj->scale.y = 2.0f;
+        obj->scale.z = 2.0f;
+    }
+    for (i = 0; i < 4; i++) {
+        m = &D_800FC834_FD434[obj->model[i]];
+        if (++D_80106C6C_13C99C_HotBobOmb >= D_800F92B4_F9EB4[m->unk02].unk02 * 2) {
+            D_80106C6C_13C99C_HotBobOmb = 0;
+        }
+        m->unk40 = D_80106C6C_13C99C_HotBobOmb / 2;
+        func_800297E8_2A3E8(obj->model[i], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_8002979C_2A39C(obj->model[i], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_80029714_2A314(obj->model[i], obj->trans.x, obj->trans.y, obj->trans.z);
+    }
+    func_800297E8_2A3E8(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_8002979C_2A39C(obj->model[4], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
+}
+
+/* The bomb object: five bomb models (each with its texture animation), three explosion models and
+   a shadow, above the table. */
+void func_80105124_13AE54_HotBobOmb(omObjData* obj) {
+    u16 mdl;
+    void* data;
+    HmfModel* m;
+    s16 fx;
+    s32 attr;
+    s32 i;
+
+    attr = 0x99;
+    D_80106EA6_13CBD6_HotBobOmb[0] = obj->model[0] = LoadFormFile(0x1C0000, 0x68D);
+    D_80106EA6_13CBD6_HotBobOmb[1] = obj->model[1] = LoadFormFile(0x1C0000, 0x68D);
+    D_80106EA6_13CBD6_HotBobOmb[2] = obj->model[2] = LoadFormFile(0x1C0000, 0x68D);
+    D_80106EA6_13CBD6_HotBobOmb[3] = obj->model[3] = LoadFormFile(0x1C0000, 0x68D);
+    D_80106EA6_13CBD6_HotBobOmb[4] = obj->model[4] = LoadFormFile(0x1C0000, 0x28D);
+    mdl = obj->model[0];
+    data = DataRead(0x1C0005);
+    D_80106EDA_13CC0A_HotBobOmb[0] = func_8003D8F0_3E4F0(D_800FC834_FD434[mdl].hmf, data, 0, "c104_n0_DEF");
+    func_8003E4F4_3F0F4(D_80106EDA_13CC0A_HotBobOmb[0], 1, 1);
+    HuMemMemoryFreePerm(data);
+    func_80029A8C_2A68C(mdl);
+    mdl = obj->model[1];
+    data = DataRead(0x1C0006);
+    D_80106EDA_13CC0A_HotBobOmb[1] = func_8003D8F0_3E4F0(D_800FC834_FD434[mdl].hmf, data, 0, "c104_n0_DEF");
+    func_8003E4F4_3F0F4(D_80106EDA_13CC0A_HotBobOmb[1], 1, 1);
+    HuMemMemoryFreePerm(data);
+    func_80029A8C_2A68C(mdl);
+    mdl = obj->model[2];
+    data = DataRead(0x1C0007);
+    D_80106EDA_13CC0A_HotBobOmb[2] = func_8003D8F0_3E4F0(D_800FC834_FD434[mdl].hmf, data, 0, "c104_n0_DEF");
+    func_8003E4F4_3F0F4(D_80106EDA_13CC0A_HotBobOmb[2], 1, 1);
+    HuMemMemoryFreePerm(data);
+    func_80029A8C_2A68C(mdl);
+    mdl = obj->model[3];
+    data = DataRead(0x1C0008);
+    D_80106EDA_13CC0A_HotBobOmb[3] = func_8003D8F0_3E4F0(D_800FC834_FD434[mdl].hmf, data, 0, "c104_n0_DEF");
+    func_8003E4F4_3F0F4(D_80106EDA_13CC0A_HotBobOmb[3], 1, 1);
+    HuMemMemoryFreePerm(data);
+    func_80029A8C_2A68C(mdl);
+    mdl = obj->model[4];
+    data = DataRead(0x1C0009);
+    D_80106EDA_13CC0A_HotBobOmb[4] = func_8003D8F0_3E4F0(D_800FC834_FD434[mdl].hmf, data, 0, "c104_n0_DEF");
+    func_8003E4F4_3F0F4(D_80106EDA_13CC0A_HotBobOmb[4], 1, 1);
+    HuMemMemoryFreePerm(data);
+    func_80029A8C_2A68C(mdl);
+    for (i = 0; i < 3; i++) {
+        fx = func_80018A30_19630(0x3B000E, attr);
+        D_80106EB4_13CBE4_HotBobOmb[i] = obj->model[i + 6] = fx;
+        func_800298A4_2A4A4(fx, 4, 4);
+        func_800298A4_2A4A4(D_80106EB4_13CBE4_HotBobOmb[i], 0x70000000, 0x70000000);
+        m = &D_800FC834_FD434[D_80106EB4_13CBE4_HotBobOmb[i]];
+        m->unk40 = 0.0f;
+        m->unk44 = 0.0f;
+        if (m->hmf->unk9C != NULL) {
+            m->hmf->unk9C->unk08 = 0.0f;
+        }
+    }
+    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[0], 4, 0);
+    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[1], 4, 4);
+    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[2], 4, 4);
+    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[3], 4, 4);
+    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[4], 4, 4);
+    obj->model[5] = func_80018A64_19664(0xD, 0x2D9);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 500.0f;
+    obj->trans.z = 700.0f;
+    obj->scale.x = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.z = 1.0f;
+    obj->rot.y = 0.0f;
+    func_80018CCC_198CC(obj, 8, 0x1C0002);
+    for (i = 0; i < 5; i++) {
+        func_80029714_2A314(obj->model[i], obj->trans.x, obj->trans.y, obj->trans.z);
+        func_8002979C_2A39C(obj->model[i], obj->rot.x, obj->rot.y, obj->rot.z);
+        func_800297E8_2A3E8(obj->model[i], obj->scale.x, obj->scale.y, obj->scale.z);
+        func_80029B80_2A780(obj->model[i], obj->motion[8]);
+        func_80029E80_2AA80(obj->model[i], 2, 2);
+    }
+    func_80029714_2A314(obj->model[5], obj->trans.x, 1.0f, obj->trans.z);
+    func_8002979C_2A39C(obj->model[5], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[5], obj->scale.x, obj->scale.y, obj->scale.z);
+    D_80106EE8_13CC18_HotBobOmb = 0;
+    D_80106FD0_13CD00_HotBobOmb = 0x1A;
+    D_80106F1C_13CC4C_HotBobOmb = 0;
+    D_80106FD4_13CD04_HotBobOmb = 0x1A;
+    D_80106FD0_13CD00_HotBobOmb = 0x1A;
+    D_80106F94_13CCC4_HotBobOmb = 0;
+    obj->func_ptr = func_801056C8_13B3F8_HotBobOmb;
+}
 
 __asm__(".section .rodata");
 const u32 D_80106DD4_13CB04_HotBobOmb[13] = { 0x43AA0000, 0x43FA0000, 0x442F0000, 0xC3AA0000, 0x43FA0000, 0x442F0000, 0xC3AA0000, 0x43FA0000, 0xC42F0000, 0x43AA0000, 0x43FA0000, 0xC42F0000, 0x00000000 };
