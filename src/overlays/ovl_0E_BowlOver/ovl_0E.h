@@ -131,7 +131,8 @@ typedef struct BOProbe {
 
 extern s16 D_80109960_143CF0_BowlOver; /* the shell is out (1) */
 extern s32 D_80109964_143CF4_BowlOver;
-extern u16 D_80109968_143CF8_BowlOver;
+extern u16 D_80109968_143CF8_BowlOver; /* the shell reached the pins */
+extern u16 D_8010996A_143CFA_BowlOver; /* the view went full screen for it */
 extern u16 D_8010996C_143CFC_BowlOver;
 extern s16 D_8010996E_143CFE_BowlOver;
 extern s8 D_80109970_143D00_BowlOver;
@@ -144,10 +145,10 @@ extern s8 D_80109976_143D06_BowlOver;
 extern s8 D_80109977_143D07_BowlOver;
 extern s8 D_80109978_143D08_BowlOver;
 extern s8 D_80109979_143D09_BowlOver;
-extern s8 D_8010997A_143D0A_BowlOver;
+extern s8 D_8010997A_143D0A_BowlOver; /* game state (func_80102E04_13D194_BowlOver) */
 extern s32 D_8010997C_143D0C_BowlOver;
 extern s32 D_80109980_143D10_BowlOver;
-extern s32 D_80109984_143D14_BowlOver;
+extern u32 D_80109984_143D14_BowlOver; /* intro frames */
 extern s32 D_80109988_143D18_BowlOver; /* throw timer (MP1 D_800FD300) */
 extern s32 D_8010998C_143D1C_BowlOver; /* bowler state (MP1 D_800FD304) */
 extern u16 D_80109990_143D20_BowlOver;
@@ -203,7 +204,7 @@ extern f32 D_80109ABC_143E4C_BowlOver;    /* pin deck front (z) */
 
 extern Vec3f D_80109E00_144190_BowlOver;
 extern Vec3f D_80109E0C_14419C_BowlOver;
-extern u16 D_80109E18_1441A8_BowlOver;
+extern u16 D_80109E18_1441A8_BowlOver; /* wait before the results (demo play) */
 extern s16 D_80109E1A_1441AA_BowlOver;
 extern f32 D_80109E1C_1441AC_BowlOver; /* CPU aim offset by difficulty */
 extern s16 D_80109E20_1441B0_BowlOver[]; /* rolling sound handles */
@@ -329,6 +330,12 @@ extern Vec3f D_801013B0_101FB0[]; /* CenterM */
 extern Vec3f D_80102770_103370[]; /* CRotM */
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 u8 rand8(void);
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+omObjData* func_800732B0_73EB0(u32 arg0);
+void func_80079868_7A468(void);
+s16 PlayMusic(s16);
+s32 _CheckFlag(s32);
 
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (13CB90.c)

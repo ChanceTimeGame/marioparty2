@@ -89,7 +89,308 @@ void func_80102800_13CB90_BowlOver(void) {
     }
 }
 
+/* The game flow (states in D_8010997A_143D0A_BowlOver): 0-2 the intro (the alley camera sweeps in,
+   the screen splits, the instructions), 3 a shell is rolling until it and the pins settle, then the
+   next shell (5 -> 11, a fade and a reset) or the results: 4/6 the bowler's close-up, 7 coins (all
+   three pin players standing: they win 10 each; all three down: the bowler wins 10; otherwise the
+   pin players win; +1 coin to the bowler per empty slot's pin down), 8-9 the winners' message and
+   jingle, 10/13 fade out and return; 12 a pause in demo play. */
+// block layout and register allocation (masked ~80 of 1191): retail places the pin scan's found++ block
+// before case 3, fills a different delay slot there, and does not hoist gPlayers in the coin loop
+#ifdef NON_MATCHING
+void func_80102E04_13D194_BowlOver(omObjData* obj) {
+    s16 i;
+    s16 h;
+    u16 found;
+    f32 y;
+
+    func_8000C3C8_CFC8();
+    switch (D_8010997A_143D0A_BowlOver) {
+    case 0:
+        func_8000C38C_CF8C();
+        D_80109970_143D00_BowlOver++;
+        PlayMusic(0x1B);
+        D_8010997A_143D0A_BowlOver += 2;
+        break;
+    case 1:
+        if (func_8008F618_90218() != 0) {
+            break;
+        }
+        ScissorSet(0, 0.0f, 0.0f, 319.0f, 119.0f);
+        ScissorSet(1, 0.0f, 121.0f, 319.0f, 239.0f);
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_800691FC_69DFC(10, 30, 160, 24);
+            func_8006D4D0_6E0D0(30);
+            func_8000C3B8_CFB8();
+            D_80109976_143D06_BowlOver = 0;
+            D_80109977_143D07_BowlOver = 0;
+        }
+        D_80109970_143D00_BowlOver++;
+        D_8010997A_143D0A_BowlOver += 2;
+        break;
+    case 2:
+        if (D_80109984_143D14_BowlOver < 30) {
+            func_801063D0_140760_BowlOver(1, 1900.0f, 360.5f, 0.0f, 0.0f, 0.0f,
+                                          1240.0 - (f32)D_80109984_143D14_BowlOver * (890.0 / 30.0),
+                                          (f32)D_80109984_143D14_BowlOver * 150.0 + -5360.0);
+        }
+        if (D_80109984_143D14_BowlOver == 30) {
+            func_801063D0_140760_BowlOver(1, 1900.0f, 360.5f, 0.0f, 0.0f, 0.0f, 350.0f, -860.0f);
+        }
+        if (D_80109984_143D14_BowlOver == 43) {
+            func_800691FC_69DFC(0);
+        }
+        if (D_80109984_143D14_BowlOver - 30 < 60) {
+            h = (D_80109984_143D14_BowlOver - 30) * 2.0;
+            ScissorSet(0, 0.0f, 0.0f, 319.0f, h);
+            ScissorSet(1, 0.0f, h + 1, 319.0f, 239.0f);
+            for (i = 0; i < 40; i++) {
+                espPosSet(D_80109EF8_144288_BowlOver[i], i * 8, h + 1);
+            }
+            y = h + 1;
+            if (y < 32.0f) {
+                y = 0.0f;
+            } else {
+                y -= 32.0f;
+            }
+            for (i = 0; i < 2; i++) {
+                espPosSet(D_8010A098_144428_BowlOver[i], 270 - (1 - i) * 24, y + 16.0f + 32.0f);
+            }
+        }
+        if (D_80109984_143D14_BowlOver >= 90) {
+            ScissorSet(0, 0.0f, 0.0f, 319.0f, 119.0f);
+            ScissorSet(1, 0.0f, 121.0f, 319.0f, 239.0f);
+            for (i = 0; i < 40; i++) {
+                espPosSet(D_80109EF8_144288_BowlOver[i], i * 8, 119);
+            }
+            for (i = 0; i < 2; i++) {
+                espPosSet(D_8010A098_144428_BowlOver[i], 270 - (1 - i) * 24, 135);
+            }
+            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+                func_800691FC_69DFC(10, 30, 160, 24);
+                func_8006D4D0_6E0D0(30);
+                func_8000C3B8_CFB8();
+                D_8010997A_143D0A_BowlOver++;
+                D_80109976_143D06_BowlOver = 0;
+                D_80109977_143D07_BowlOver = 0;
+            }
+        }
+        D_80109984_143D14_BowlOver++;
+        break;
+    case 3:
+        if (D_80109968_143CF8_BowlOver == 1 && D_8010996A_143CFA_BowlOver == 0) {
+            ScissorSet(0, 0.0f, 0.0f, 319.0f, 239.0f);
+            ScissorSet(1, 0.0f, 0.0f, 0.0f, 0.0f);
+            for (i = 0; i < 40; i++) {
+                espDispOff(D_80109EF8_144288_BowlOver[i]);
+            }
+            for (i = 0; i < 2; i++) {
+                espDispOff(D_8010A098_144428_BowlOver[i]);
+            }
+            D_8010996A_143CFA_BowlOver = 1;
+        }
+        found = 0;
+        if (D_80109960_143CF0_BowlOver != 1) {
+            break;
+        }
+        for (i = 0; i < 6; i++) {
+            if ((D_80109E50_1441E0_BowlOver[i].unk_17 == 1 && D_80109E50_1441E0_BowlOver[i].unk_18 == 0) ||
+                D_80109F48_1442D8_BowlOver[i].unk_1A != 0 || D_80109F48_1442D8_BowlOver[i].unk_14 != 0) {
+                found++;
+                break;
+            }
+        }
+        if (found != 0) {
+            break;
+        }
+        D_80109975_143D05_BowlOver = 0;
+        for (i = 0; i < 3; i++) {
+            if (D_80109E50_1441E0_BowlOver[i].unk_17 == 1) {
+                D_80109975_143D05_BowlOver++;
+            }
+        }
+        if (D_80109970_143D00_BowlOver >= 2 || D_80109975_143D05_BowlOver >= 3) {
+            func_800691FC_69DFC(3);
+            func_800794A8_7A0A8(45);
+            D_8010997A_143D0A_BowlOver++;
+        } else {
+            D_8010997A_143D0A_BowlOver = 5;
+        }
+        break;
+    case 4:
+        if (func_80069538_6A138() != 0) {
+            break;
+        }
+        func_80079868_7A468();
+        func_8000C398_CF98();
+        D_8010997A_143D0A_BowlOver = 6;
+        break;
+    case 5:
+        InitFadeOut(0, 20);
+        func_8000C398_CF98();
+        D_8010997A_143D0A_BowlOver = 11;
+        break;
+    case 6:
+        func_801063D0_140760_BowlOver(0, 1900.0f, 350.5f, 0.0f, 0.0f, D_800FFFD8_100BD8[0]->trans.x, 20.0f, -830.0f);
+        D_8010A0AC_14443C_BowlOver = 0;
+        func_80029EDC_2AADC(D_800FFFD8_100BD8[0]->model[0], 0);
+        func_80029EDC_2AADC(D_800FFFD8_100BD8[0]->model[1], D_8010A0AC_14443C_BowlOver);
+        ScissorSet(0, 0.0f, 0.0f, 319.0f, 239.0f);
+        ScissorSet(1, 0.0f, 0.0f, 0.0f, 0.0f);
+        for (i = 0; i < 40; i++) {
+            espDispOff(D_80109EF8_144288_BowlOver[i]);
+        }
+        for (i = 0; i < 2; i++) {
+            espDispOff(D_8010A098_144428_BowlOver[i]);
+        }
+        Hu3DCamSetPerspective(0, 20.0f, 80.0f, 8000.0f);
+        D_800FFFD8_100BD8[0]->rot.y = 0.0f;
+        D_80109977_143D07_BowlOver = 1;
+        func_80029EDC_2AADC(D_800FFFD8_100BD8[0]->model[0], 0);
+        func_80029EDC_2AADC(D_800FFFD8_100BD8[0]->model[2], 1);
+        func_80029EDC_2AADC(D_800FFFD8_100BD8[0]->model[3], 1);
+        func_80029714_2A314(D_800FFFD8_100BD8[0]->model[2], D_800FFFD8_100BD8[0]->trans.x,
+                            D_800FFFD8_100BD8[0]->trans.y, D_800FFFD8_100BD8[0]->trans.z);
+        func_80029714_2A314(D_800FFFD8_100BD8[0]->model[3], D_800FFFD8_100BD8[0]->trans.x,
+                            D_800FFFD8_100BD8[0]->trans.y, D_800FFFD8_100BD8[0]->trans.z);
+        func_80029B80_2A780(D_800FFFD8_100BD8[0]->model[2], D_800FFFD8_100BD8[0]->motion[4]);
+        D_8010997A_143D0A_BowlOver++;
+        break;
+    case 7:
+        if (D_8010996C_143CFC_BowlOver == 1 || D_80109975_143D05_BowlOver == 0) {
+            D_80109979_143D09_BowlOver = 0;
+            for (i = 0; i < 3; i++) {
+                gPlayers[D_8010A0AE_14443E_BowlOver[i + 1]].coins_mg_bonus += 10;
+            }
+        } else if (D_80109975_143D05_BowlOver >= 3) {
+            D_80109979_143D09_BowlOver = 1;
+            gPlayers[D_8010A0AE_14443E_BowlOver[0]].coins_mg_bonus += 10;
+        } else {
+            D_80109979_143D09_BowlOver = 2;
+            for (i = 0; i < 3; i++) {
+                gPlayers[D_8010A0AE_14443E_BowlOver[i + 1]].coins_mg_bonus += 10;
+            }
+        }
+        for (i = 0; i < 3; i++) {
+            if (D_80109E50_1441E0_BowlOver[i + 3].unk_17 == 1) {
+                gPlayers[D_8010A0AE_14443E_BowlOver[0]].coins_mg++;
+            }
+        }
+        if (_CheckFlag(0xC) != 0) {
+            D_8010997A_143D0A_BowlOver = 12;
+            D_80109E18_1441A8_BowlOver = 60;
+            break;
+        }
+        D_8010997A_143D0A_BowlOver++;
+        break;
+    case 8:
+        if (func_80069538_6A138() != 0 && !(func_80069538_6A138() & 2)) {
+            break;
+        }
+        switch (D_80109979_143D09_BowlOver) {
+        case 1:
+            func_80029B80_2A780(D_800FFFD8_100BD8[0]->model[2], D_800FFFD8_100BD8[0]->motion[1]);
+            func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_8010A0AE_14443E_BowlOver[0]].character].unk_04 | 0x4E);
+            D_8010997C_143D0C_BowlOver = 120;
+            func_800691FC_69DFC(6, gPlayers[D_8010A0AE_14443E_BowlOver[0]].character);
+            PlayMusic(0x51);
+            break;
+        case 0:
+        case 2:
+            func_80029B80_2A780(D_800FFFD8_100BD8[0]->model[2], D_800FFFD8_100BD8[0]->motion[0]);
+            func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_8010A0AE_14443E_BowlOver[0]].character].unk_04 | 0x55);
+            D_8010997C_143D0C_BowlOver = 168;
+            func_800691FC_69DFC(21, gPlayers[D_8010A0AE_14443E_BowlOver[1]].character,
+                                gPlayers[D_8010A0AE_14443E_BowlOver[2]].character,
+                                gPlayers[D_8010A0AE_14443E_BowlOver[3]].character);
+            PlayMusic(0x52);
+            break;
+        }
+        D_80109980_143D10_BowlOver = 0;
+        D_8010997A_143D0A_BowlOver++;
+        break;
+    case 9:
+        if (D_8010997C_143D0C_BowlOver < D_80109980_143D10_BowlOver++) {
+            func_8000C3A8_CFA8();
+            D_8010997A_143D0A_BowlOver++;
+        }
+        break;
+    case 10:
+        if (D_80109978_143D08_BowlOver == 0) {
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(40);
+            D_80109978_143D08_BowlOver = 1;
+        } else if (func_8008F618_90218() == 0) {
+            func_80069770_6A370();
+            omOvlReturnEx(1);
+        }
+        break;
+    case 11:
+        if (func_8008F618_90218() != 0) {
+            break;
+        }
+        D_80109964_143CF4_BowlOver = 0;
+        D_8010A0AC_14443C_BowlOver = 2;
+        D_80109968_143CF8_BowlOver = 0;
+        D_8010996A_143CFA_BowlOver = 0;
+        D_8010996C_143CFC_BowlOver = 0;
+        D_8010996E_143CFE_BowlOver = 0;
+        D_80109A50_143DE0_BowlOver = 0;
+        D_80109974_143D04_BowlOver = 0;
+        D_80109975_143D05_BowlOver = 0;
+        D_80109976_143D06_BowlOver = 0;
+        D_80109977_143D07_BowlOver = 0;
+        D_80109978_143D08_BowlOver = 0;
+        D_80109979_143D09_BowlOver = 0;
+        D_8010997A_143D0A_BowlOver = 0;
+        D_8010997C_143D0C_BowlOver = 0;
+        D_80109980_143D10_BowlOver = 0;
+        D_80109984_143D14_BowlOver = 0;
+        func_80107570_141900_BowlOver();
+        for (i = 0; i < 3; i++) {
+            func_80108DCC_14315C_BowlOver(D_8010A0B8_144448_BowlOver[i]);
+        }
+        for (i = 3; i < 6; i++) {
+            func_80109354_1436E4_BowlOver(D_8010A0B8_144448_BowlOver[i]);
+        }
+        D_80109971_143D01_BowlOver = 1;
+        D_80109972_143D02_BowlOver = 1;
+        D_80109973_143D03_BowlOver = 1;
+        D_80109960_143CF0_BowlOver = 0;
+        func_801063D0_140760_BowlOver(0, 939.0f, 326.0f, 0.0f, 0.0f, 0.0f, -86.8f, -4828.6f);
+        func_801063D0_140760_BowlOver(1, 1900.0f, 360.5f, 0.0f, 0.0f, 0.0f, 350.0f, -860.0f);
+        ScissorSet(0, 0.0f, 0.0f, 319.0f, 119.0f);
+        ScissorSet(1, 0.0f, 121.0f, 319.0f, 239.0f);
+        for (i = 0; i < 40; i++) {
+            espDispOn(D_80109EF8_144288_BowlOver[i]);
+        }
+        for (i = 0; i < 2; i++) {
+            espDispOn(D_8010A098_144428_BowlOver[i]);
+        }
+        InitFadeIn(0, 16);
+        func_8000C38C_CF8C();
+        D_8010997A_143D0A_BowlOver = 1;
+        break;
+    case 12:
+        if ((s16)D_80109E18_1441A8_BowlOver-- < 0) {
+            D_8010997A_143D0A_BowlOver++;
+        }
+        break;
+    case 13:
+        if (D_80109978_143D08_BowlOver == 0) {
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(40);
+            D_80109978_143D08_BowlOver = 1;
+        } else if (func_8008F618_90218() == 0) {
+            func_80069770_6A370();
+            omOvlReturnEx(1);
+        }
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/13CB90", func_80102E04_13D194_BowlOver);
+#endif
 
 void func_801040A0_13E430_BowlOver(omObjData* obj) {
     f32 x;

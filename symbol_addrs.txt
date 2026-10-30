@@ -872,6 +872,9 @@ D_8010A78E_14C11E_RainbowRun = 0x8010A78E; // rom:0x14C11E size:0x2 segment:Rain
 // MG0E-A: ovl_0E .data u16 retail addresses as D_80109998 + 2 (CPU bowler set up)
 D_80109998_143D28_BowlOver = 0x80109998; // size:0x1 segment:BowlOver
 D_8010999A_143D2A_BowlOver = 0x8010999A; // size:0x2 segment:BowlOver
+// S4-0E: ovl_0E .data: two u16 flags retail addresses by their own labels (shell at the pins, full view set)
+D_80109968_143CF8_BowlOver = 0x80109968; // size:0x2 segment:BowlOver
+D_8010996A_143CFA_BowlOver = 0x8010996A; // size:0x2 segment:BowlOver
 // h1-E: 7E850 scheduler threads (OSThread) and their stacks (MP1 nnsched.c layout)
 D_800EB9C0_EC5C0 = 0x800EB9C0; // size:0x1B0
 D_800EBB70_EC770 = 0x800EBB70; // size:0x400
