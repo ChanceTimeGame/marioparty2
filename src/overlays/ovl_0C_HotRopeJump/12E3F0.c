@@ -1443,6 +1443,54 @@ void func_80107B4C_13373C_HotRopeJump(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107CA4_133894_HotRopeJump);
+/* World position -> screen position (x, y) and depth (z), through camera cam's view matrix (MP1
+   func_800FAB34).
+   NON_MATCHING: register allocation only (masked 0; retail swaps $f22/$f24 and $s3/$s4) */
+#ifdef NON_MATCHING
+void func_80107CA4_133894_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
+    Mtx mtx;
+    HuCamera* c = &D_800C9B80_CA780[cam];
+    Mtx* view = &((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 0x80))->mtxs[0].lookAtMtx;
+    Mtx* m = &mtx;
+    HuCamera* vp;
+    f32 sx;
+    f32 sy;
+    f32 sz;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107F54_133B44_HotRopeJump);
+    func_800B1FA0_B2BA0(m, pos->x, pos->y, pos->z);
+    guMtxCatL(m, view, m);
+    sx = (s32)((((u16*)&mtx)[12] << 16) | ((u16*)&mtx)[28]) >> 16;
+    sy = (s32)((((u16*)&mtx)[13] << 16) | ((u16*)&mtx)[29]) >> 16;
+    sz = (s32)((((u16*)&mtx)[14] << 16) | ((u16*)&mtx)[30]) >> 16;
+    sz *= __sinf(D_800C9B80_CA780[cam].fov[0] * 0.017444444444444446 / 2.0);
+    sz = fabsf(sz / __cosf(D_800C9B80_CA780[cam].fov[0] * 0.017444444444444446 / 2.0));
+    if (sz != 0.0) {
+        ((f32*)out)[0] =
+            (s16)(((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vscale[0] / 4.0 * sx / sz / 1.3333334f) +
+            ((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vtrans[0] / 4.0;
+        vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16);
+        ((f32*)out)[1] = (s16)(vp->viewports[0].vp.vscale[1] / 4.0 * -sy / sz) + vp->viewports[0].vp.vtrans[1] / 4.0;
+        ((f32*)out)[2] = sz;
+    }
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107CA4_133894_HotRopeJump);
+#endif
+
+/* Steps `to` toward `from` by rate, without passing it. */
+f32 func_80107F54_133B44_HotRopeJump(f32 from, f32 to, f32 rate) {
+    if (from != to) {
+        if (to < from) {
+            to += rate;
+            if (from < to) {
+                to = from;
+            }
+        } else {
+            to -= rate;
+            if (to < from) {
+                to = from;
+            }
+        }
+    }
+    return to;
+}

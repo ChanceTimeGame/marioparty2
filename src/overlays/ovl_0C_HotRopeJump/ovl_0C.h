@@ -75,9 +75,19 @@ typedef struct HRJPhase {
 typedef struct HRJSeg {
     /* 0x00 */ Vec pos;
     /* 0x0C */ Vec dir;   /* rope: the segment to the next one */
-    /* 0x18 */ char unk_18[0x1C];
+    /* 0x18 */ Vec vel;
+    /* 0x24 */ Vec base;
+    /* 0x30 */ f32 unk_30;
     /* 0x34 */ f32 angle; /* rope turn angle */
-    /* 0x38 */ char unk_38[0xD8];
+    /* 0x38 */ f32 size;
+    /* 0x3C */ s16 light; /* fields from here: S4-0CC, from MP1 +4 */
+    /* 0x3E */ s16 model;
+    /* 0x40 */ u16 anim;
+    /* 0x42 */ s16 state;
+    /* 0x44 */ s16 timer;
+    /* 0x46 */ s16 delay;
+    /* 0x48 */ char unk_48[8];
+    /* 0x50 */ Mtx mtx[3];
 } HRJSeg; /* size = 0x110 */
 
 /* S4-0CB */
@@ -135,6 +145,24 @@ extern s16 D_800FFFD6_100BD6; /* current viewport */
 extern u8 D_800FDBE0_FE7E0;   /* the frame buffer being drawn */
 extern u8 D_800FD2A4_FDEA4;   /* the default texture filter (MP1 D_800F329C) */
 extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
+/* A floor light (D_80111420_13D010_HotRopeJump[32]; MP1 HRJLight 0x14 plus three fields). */
+typedef struct HRJLight {
+    /* 0x00 */ s16 used;
+    /* 0x02 */ s16 x;
+    /* 0x04 */ s16 y;
+    /* 0x06 */ s16 z;
+    /* 0x08 */ s32 radius;
+    /* 0x0C */ f32 aspect;
+    /* 0x10 */ s32 radiusSq;
+    /* 0x14 */ s32 fade;     /* func_801089EC: frames left of the fade (0 none) */
+    /* 0x18 */ s32 fadeTime; /* and its length */
+    /* 0x1C */ f32 fadeFrom; /* the radius it fades from */
+} HRJLight; /* size = 0x20 */
+
+/* The flame palette's 12 colours, copied as one block (func_8010BB48). */
+typedef struct HRJPal {
+    /* 0x00 */ u16 c[12];
+} HRJPal; /* size = 0x18 */
 
 /* ---- overlay functions ---- */
 
@@ -191,16 +219,16 @@ s16 func_80108850_134440_HotRopeJump(f32 x, f32 y, f32 z, f32 radius);
 void func_80108918_134508_HotRopeJump(s16 id, f32 x, f32 y, f32 z);
 void func_80108978_134568_HotRopeJump(s16 id, f32 radius, f32 h);
 void func_801089D4_1345C4_HotRopeJump(s16 id);
-void func_801089EC_1345DC_HotRopeJump(s32 arg0, s32 arg1);
+void func_801089EC_1345DC_HotRopeJump(s16 id, s32 time);
 void func_80108A44_134634_HotRopeJump(Gfx** gfx);
 s16 func_80109078_134C68_HotRopeJump(void);
 void func_801096E4_1352D4_HotRopeJump(omObjData* obj);
 void func_80109A58_135648_HotRopeJump(omObjData* obj);
 void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj);
 void func_8010A4E4_1360D4_HotRopeJump(omObjData* obj);
-s32 func_8010B0A0_136C90_HotRopeJump(void* arg0, void* arg1);
-void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, void* anim);
-void func_8010BB48_137738_HotRopeJump(u16 arg0, u16 arg1);
+s32 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* tex, HuSprite_Unk84_Struct* anim); /* a model (s16); anim unused */
+void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, HuSprite_Unk84_Struct* anim);
+void func_8010BB48_137738_HotRopeJump(f32 t);
 f32 func_8010BF04_137AF4_HotRopeJump(f32 arg0, f32 arg1, f32 arg2);
 void func_8010BF70_137B60_HotRopeJump(void);
 void func_8010BF80_137B70_HotRopeJump(void);
@@ -240,28 +268,30 @@ extern s16 D_8010C23C_137E2C_HotRopeJump[6]; /* per character: jump voice */
 extern s16 D_8010C248_137E38_HotRopeJump[6]; /* per character: arrival voice */
 extern u16 D_8010C254_137E44_HotRopeJump; /* players in place (bits) */
 extern s16 D_8010C258_137E48_HotRopeJump[4];
-extern s32 D_8010C260_137E50_HotRopeJump;
-extern s32 D_8010C264_137E54_HotRopeJump;
-extern s32 D_8010C268_137E58_HotRopeJump;
-extern s32 D_8010C26C_137E5C_HotRopeJump;
+extern f32 D_8010C260_137E50_HotRopeJump; /* the lights' blend 0..1 */
+extern f32 D_8010C264_137E54_HotRopeJump; /* its target */
+extern f32 D_8010C268_137E58_HotRopeJump; /* its last value */
+extern f32 D_8010C26C_137E5C_HotRopeJump; /* 0.9 - 0.4 * blend */
 extern Gfx D_8010C270_137E60_HotRopeJump[]; /* MP1 D_800FE500: reset lists */
 extern Gfx D_8010C328_137F18_HotRopeJump[];
 extern Gfx D_8010C348_137F38_HotRopeJump[];
 extern Gfx D_8010C360_137F50_HotRopeJump[]; /* MP1 D_800FE610: the floor's setup list */
-extern u8 D_8010C3A0_137F90_HotRopeJump[4][4]; /* colours (byte labels 3A0..3AE: S4-0CB/0CC) */
-extern s16 D_8010C3B0_137FA0_HotRopeJump[4];
-extern s16 D_8010C3B8_137FA8_HotRopeJump[4];
-extern s32 D_8010C3C0_137FB0_HotRopeJump;
+extern u8 D_8010C3A0_137F90_HotRopeJump[4][4]; /* light colours: [0]->[1] ambient, [2]->[3] light 3, rgb + pad;
+                                                    retail names each byte's label (3A1..3AE) */
+extern u16 D_8010C3B0_137FA0_HotRopeJump[4]; /* floor light colour at blend 0 (rgb + pad) */
+extern u16 D_8010C3B8_137FA8_HotRopeJump[4]; /* at blend 1 */
+extern f32 D_8010C3C0_137FB0_HotRopeJump; /* the blend D_80111416 was made for */
 extern Vtx_t D_8010C3C4_137FB4_HotRopeJump[9]; /* torch flame (MP1 D_800FE650) */
-extern s32 D_8010C454_138044_HotRopeJump; /* MP1 D_800FE6E0: two s16 (state, timer) */
-extern s16 D_8010C458_138048_HotRopeJump[8];
+extern s16 D_8010C454_138044_HotRopeJump; /* torch/camera intro state (MP1 D_800FE6E0.state) */
+extern s16 D_8010C456_138046_HotRopeJump; /* and its timer */
+extern s16 D_8010C458_138048_HotRopeJump[8]; /* its state durations, 0 = the last */
 extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4) */
-extern s16 D_8010C4F8_1380E8_HotRopeJump; /* MP1 D_800FE784 */
+extern s16 D_8010C4F8_1380E8_HotRopeJump; /* the rope's timer and state (MP1 D_800FE784) */
 extern s16 D_8010C4FA_1380EA_HotRopeJump;
-extern s16 D_8010C4FC_1380EC_HotRopeJump[6];
-extern u8 D_8010C508_1380F8_HotRopeJump[0x30]; /* byte tables (labels 508..50B: S4-0CC) */
-extern u8 D_8010C538_138128_HotRopeJump[0x30]; /* byte tables (labels 538..53B: S4-0CC) */
-extern s32 D_8010C568_138158_HotRopeJump[6];
+extern s16 D_8010C4FC_1380EC_HotRopeJump[6]; /* its state durations, 0 = the last */
+extern u8 D_8010C508_1380F8_HotRopeJump[12][4]; /* flame palette rgba at blend 0 */
+extern u8 D_8010C538_138128_HotRopeJump[12][4]; /* at blend 1 */
+extern u16 D_8010C568_138158_HotRopeJump[12]; /* the blended palette (RGBA5551) */
 
 /* ---- .bss ---- */
 
@@ -305,56 +335,85 @@ extern f32 D_80111404_13CFF4_HotRopeJump;
 extern f32 D_80111408_13CFF8_HotRopeJump;
 extern s16 D_8011140C_13CFFC_HotRopeJump;
 extern s16 D_8011140E_13CFFE_HotRopeJump;
-extern u8 D_80111410_13D000_HotRopeJump; /* 80111410-80111415: bytes (S4-0CC) */
-extern u8 D_80111411_13D001_HotRopeJump;
-extern u8 D_80111412_13D002_HotRopeJump;
-extern u8 D_80111413_13D003_HotRopeJump;
-extern u8 D_80111414_13D004_HotRopeJump;
-extern u8 D_80111415_13D005_HotRopeJump;
-extern s16 D_80111416_13D006_HotRopeJump;
-extern s16 D_80111418_13D008_HotRopeJump;
-extern s16 D_8011141A_13D00A_HotRopeJump;
-extern s32 D_8011141C_13D00C_HotRopeJump;
-extern s16 D_80111420_13D010_HotRopeJump;
-extern s16 D_80111422_13D012_HotRopeJump;
-extern s16 D_80111424_13D014_HotRopeJump;
-extern s16 D_80111426_13D016_HotRopeJump;
-extern s32 D_80111428_13D018_HotRopeJump;
-extern s32 D_8011142C_13D01C_HotRopeJump;
-extern s32 D_80111430_13D020_HotRopeJump;
-extern s32 D_80111434_13D024_HotRopeJump;
-extern s32 D_80111438_13D028_HotRopeJump;
-extern s32 D_8011143C_13D02C_HotRopeJump[0xF9]; /* MP1 D_80100538 HRJLight[32]? (S4-0CC) */
+extern u8 D_80111410_13D000_HotRopeJump[6]; /* light colours now: ambient rgb, then light 3 rgb (S4-0CC) */
+extern u16 D_80111416_13D006_HotRopeJump[3]; /* the floor lights' colour (rgb) */
+extern u16 D_80111418_13D008_HotRopeJump; /* its labels [1], [2] */
+extern u16 D_8011141A_13D00A_HotRopeJump;
+extern s16 D_8011141C_13D00C_HotRopeJump; /* the centre light */
+extern HRJLight D_80111420_13D010_HotRopeJump[32]; /* floor lights (MP1 D_80100538); retail also
+                                                       names their fields' labels 422..43C */
 extern s16 D_80111820_13D410_HotRopeJump;
-extern s16 D_80111822_13D412_HotRopeJump;
-extern s32 D_80111824_13D414_HotRopeJump;
-extern s32 D_80111828_13D418_HotRopeJump;
-extern s32 D_8011182C_13D41C_HotRopeJump;
+extern s16 D_80111822_13D412_HotRopeJump; /* the floor model */
+extern s16 D_80111824_13D414_HotRopeJump; /* floor sprite */
+extern Gfx* D_80111828_13D418_HotRopeJump; /* the floor's display list */
+extern s16 D_8011182C_13D41C_HotRopeJump;
 extern f32 D_80111830_13D420_HotRopeJump;
-extern s16 D_80111834_13D424_HotRopeJump;
+extern s16 D_80111834_13D424_HotRopeJump; /* torch sprites (flame texture, animation) */
 extern s16 D_80111836_13D426_HotRopeJump;
-extern s16 D_80111838_13D428_HotRopeJump;
+extern s16 D_80111838_13D428_HotRopeJump; /* rope sprites (flame texture, animation) */
 extern s16 D_8011183A_13D42A_HotRopeJump;
 extern Matrix4f D_80111840_13D430_HotRopeJump;
-extern Vec D_80111880_13D470_HotRopeJump;
+extern Vec D_80111880_13D470_HotRopeJump; /* intro camera: start centre, end centre, start rot, end rot, start zoom, end zoom (MP1 D_80100818..) */
 extern Vec D_8011188C_13D47C_HotRopeJump;
 extern Vec D_80111898_13D488_HotRopeJump;
 extern Vec D_801118A4_13D494_HotRopeJump;
 extern f32 D_801118B0_13D4A0_HotRopeJump;
 extern f32 D_801118B4_13D4A4_HotRopeJump;
-extern s32 D_801118B8_13D4A8_HotRopeJump;
-extern s32 D_801118BC_13D4AC_HotRopeJump;
-extern s32 D_801118C0_13D4B0_HotRopeJump;
-extern s32 D_801118C4_13D4B4_HotRopeJump;
-extern s32 D_801118C8_13D4B8_HotRopeJump;
-extern s32 D_801118CC_13D4BC_HotRopeJump[0x13];
-extern s32 D_80111918_13D508_HotRopeJump[2];
+extern u16 D_801118B8_13D4A8_HotRopeJump[3][16]; /* the flames' palette, one per frame buffer (segment 15) */
+extern s16* D_80111918_13D508_HotRopeJump[2]; /* func_80105570's motion (main: unk1EA70StructC*) */
 extern HRJSeg* D_80111920_13D510_HotRopeJump; /* rope */
 extern HRJSeg* D_80111924_13D514_HotRopeJump; /* torches */
 extern s32 D_80111928_13D518_HotRopeJump; /* the place-3 player's model (lit), -1 none; read as s16 (D_8011192A, the low half) */
 extern s16 D_8011192A_13D51A_HotRopeJump;
 
 /* S4-0CA */
+
+/* S4-0CC */
+#define HRJ_ABS(x) ((x) < 0 ? -(x) : (x))
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
+f32 __sinf(f32);
+f32 __cosf(f32);
+f32 fabsf(f32);
+f32 sqrtf(f32);
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* guTranslateF */
+void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
+void func_800B3040_B3C40(Matrix4f m, Mtx* mtx); /* guMtxF2L */
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, the caller here does not re-extend it */
+extern s16 D_800FA1AA_FADAA; /* heap tag for func_80027154 */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
+u8 rand8(void);
+s32 PlaySound(s32);
+void omSetRot(omObjData* obj, f32 x, f32 y, f32 z);
+void omSetSca(omObjData* obj, f32 x, f32 y, f32 z);
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void* HuMemAlloc(s32 size);
+void* SprAnimGet(s16 animIdx);
+void* func_80027154_27D54(s32 size, s16 tag); /* HuMemAllocTag */
+s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**), u8 arg2); /* add a draw callback */
+extern u8 D_800FDBCA_FE7CA; /* vertex buffer count */
+extern u8 D_800FDBE0_FE7E0; /* the frame's vertex buffer */
+void func_800204C0_210C0(s32, Gfx**);
+/* Labels inside D_8010C3A0_137F90_HotRopeJump[4][4]: retail addresses each byte by its own label
+   (GCC folds a base register for the array). */
+extern u8 D_8010C3A1_137F91_HotRopeJump;
+extern u8 D_8010C3A2_137F92_HotRopeJump;
+extern u8 D_8010C3A4_137F94_HotRopeJump;
+extern u8 D_8010C3A5_137F95_HotRopeJump;
+extern u8 D_8010C3A6_137F96_HotRopeJump;
+extern u8 D_8010C3A8_137F98_HotRopeJump;
+extern u8 D_8010C3A9_137F99_HotRopeJump;
+extern u8 D_8010C3AA_137F9A_HotRopeJump;
+extern u8 D_8010C3AC_137F9C_HotRopeJump;
+extern u8 D_8010C3AD_137F9D_HotRopeJump;
+extern u8 D_8010C3AE_137F9E_HotRopeJump;
+void HuMemFree(void* ptr);
+void func_80026D28_27928(s32);
+void func_80026DAC_279AC(s32, s32, s32, s32); /* light colour */
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* light direction */
+void func_800B1960_B2560(Matrix4f m, f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz); /* guLookAtF */
+s16 func_8001A2F8_1AEF8(s32 arg0);
 
 /* ---- main-segment API used by 0C (missing from include/) ---- */
 
