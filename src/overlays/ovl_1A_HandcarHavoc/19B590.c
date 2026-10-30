@@ -1,5 +1,19 @@
 #include "ovl_1A.h"
 
+/* .data (0x1A3EB0-0x1A3F10, 8010B120-8010B180) */
+
+s16 D_8010B120_1A3EB0_HandcarHavoc = 0;
+s32 D_8010B124_1A3EB4_HandcarHavoc[6] = {
+    0x002A000B, 0x002A000C, 0x002A000D, 0x002A000E, 0x002A000F, 0x002A0010,
+};
+f32 D_8010B13C_1A3ECC_HandcarHavoc[2] = { 200.0f, -200.0f };
+u16 D_8010B144_1A3ED4_HandcarHavoc[2][2] = { { 4, 2 }, { 4, 2 } };
+f32 D_8010B14C_1A3EDC_HandcarHavoc[6] = { 155.0f, 150.0f, 150.0f, 158.0f, 175.0f, 202.0f };
+s32 D_8010B164_1A3EF4_HandcarHavoc[2] = { 2, 2 };
+u16 D_8010B16C_1A3EFC_HandcarHavoc = 0;
+f32 D_8010B170_1A3F00_HandcarHavoc = 0.0f;
+u16 D_8010B174_1A3F04_HandcarHavoc = 4;
+
 __asm__(".section .rodata");
 const char D_8010B1F0_1A3F80_HandcarHavoc[] = "\202`\202a\202b";
 

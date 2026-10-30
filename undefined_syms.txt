@@ -284,3 +284,7 @@ D_80108ADC_32511C_name_4A = D_80108AD8_325118_name_4A + 0x4;
 D_80108ADE_32511E_name_4A = D_80108AD8_325118_name_4A + 0x6;
 D_801073DC_3D4C2C_name_61 = D_801073D8_3D4C28_name_61 + 0x4;
 D_801073E0_3D4C30_name_61 = D_801073D8_3D4C28_name_61 + 0x8;
+/* ovl_1A .data: labels inside C arrays (S4-DA) */
+D_8010B188_1A3F18_HandcarHavoc = D_8010B184_1A3F14_HandcarHavoc + 0x4;
+D_8010B18C_1A3F1C_HandcarHavoc = D_8010B184_1A3F14_HandcarHavoc + 0x8;
+D_8010B1DE_1A3F6E_HandcarHavoc = D_8010B1DC_1A3F6C_HandcarHavoc + 0x2;
