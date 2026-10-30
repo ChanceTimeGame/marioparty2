@@ -93,7 +93,7 @@ extern s8 D_80106F08_16FE48_ShockDropOrRoll;   /* D_80106EDC index */
 extern s8 D_80106F09_16FE49_ShockDropOrRoll;   /* crank sound state: 1 slow, 2 fast */
 extern f32 D_80106F0C_16FE4C_ShockDropOrRoll;  /* the crank's motion speed */
 extern s8 D_80106F10_16FE50_ShockDropOrRoll;   /* the solo CPU is set up */
-extern s32 D_80106F14_16FE54_ShockDropOrRoll;  /* play time left, frames (929) */
+extern u32 D_80106F14_16FE54_ShockDropOrRoll;  /* play time left, frames (929) */
 extern f32 D_80106F18_16FE58_ShockDropOrRoll[16]; /* the players' mean z, last 16 frames */
 extern u8 D_80106F58_16FE98_ShockDropOrRoll;   /* D_80106F18 index */
 extern s16 D_80106F5A_16FE9A_ShockDropOrRoll;  /* result camera frames */
@@ -227,7 +227,7 @@ s16 func_80079798_7A398(s16, s16);
 void func_800797DC_7A3DC(s32, s16);
 void func_80079868_7A468(void);
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
-void func_800B2060_B2C60(f32 (*)[4], f32, f32, f32);
+void func_800B2060_B2C60(f32* m, f32 x, f32 y, f32 z); /* rotate matrix */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
 /* ---- 16B740.c ---- */

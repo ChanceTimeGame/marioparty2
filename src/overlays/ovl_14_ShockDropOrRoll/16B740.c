@@ -613,7 +613,222 @@ void func_80104B98_16DAD8_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16
     obj->func_ptr = func_80104784_16D6C4_ShockDropOrRoll;
 }
 
+/* The game flow (D_80106ED7): 0-1 the intro (music at frame 10, the roller starts at 31),
+   2 until the intro spin ends, 3 the players drift back to the middle and "START", 4 the timer
+   (30) once the message closes, 5 play (929 frames; time up: the three win; all three fallen:
+   the solo player wins; 1P: a human falling ends it, survivors paid), 6 the result camera,
+   7-8 the result message, motions and coins, 9-11 fade out and return; 12-13 the 1P result. */
+// float register allocation around the two func_800B75A8_B81A8 (atan2) calls (8 lines)
+#ifdef NON_MATCHING
+void func_80104E24_16DD64_ShockDropOrRoll(omObjData* obj) {
+    SDWorkPair wk;
+    MgWork* w;
+    s8 i;
+    s8 n;
+
+    func_8000C3C8_CFC8();
+    w = D_801072B4_1701F4_ShockDropOrRoll->unk_50;
+    for (i = 0; i < 3; i++) {
+        wk.w[i] = D_800FFFD8_100BD8[i]->unk_50;
+        wk.p[i] = wk.w[i]->unk_158;
+    }
+    switch ((s8)D_80106ED7_16FE17_ShockDropOrRoll) {
+    case 0:
+        func_8000C38C_CF8C();
+        D_80107258_170198_ShockDropOrRoll = 0;
+        D_80106ED7_16FE17_ShockDropOrRoll++;
+        break;
+    case 1:
+        if (D_80107258_170198_ShockDropOrRoll == 10) {
+            PlayMusic(0x1D);
+        }
+        if (D_80107258_170198_ShockDropOrRoll++ >= 31) {
+            D_80106ED1_16FE11_ShockDropOrRoll = 1;
+            func_8000C3B8_CFB8();
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+        }
+        break;
+    case 2:
+        if (D_80106ED2_16FE12_ShockDropOrRoll == 1) {
+            D_80107258_170198_ShockDropOrRoll = 0;
+            D_80106F70_16FEB0_ShockDropOrRoll = 0.0f;
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+        }
+        break;
+    case 3:
+        if (D_80107258_170198_ShockDropOrRoll++ >= 31) {
+            func_800691FC_69DFC(0);
+            D_80106ED3_16FE13_ShockDropOrRoll = 1;
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+            break;
+        }
+        for (i = 0; i < 3; i++) {
+            if (D_800FFFD8_100BD8[i]->trans.z != 0.0f) {
+                if (D_800FFFD8_100BD8[i]->trans.z < 0.0f) {
+                    D_800FFFD8_100BD8[i]->trans.z += 5.0f;
+                    if (D_800FFFD8_100BD8[i]->trans.z > 0.0f) {
+                        D_800FFFD8_100BD8[i]->trans.z = 0.0f;
+                    }
+                } else {
+                    D_800FFFD8_100BD8[i]->trans.z -= 5.0f;
+                    if (D_800FFFD8_100BD8[i]->trans.z < 0.0f) {
+                        D_800FFFD8_100BD8[i]->trans.z = 0.0f;
+                    }
+                }
+            }
+        }
+        break;
+    case 4:
+        for (i = 0; i < 3; i++) {
+            wk.w[i]->unk_3C = 0.0f;
+        }
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_800691FC_69DFC(10, 30, 160, 24);
+            func_8006D4D0_6E0D0(30);
+            PlayMusic(0x1D);
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+        }
+        break;
+    case 5:
+        if (D_80106ED0_16FE10_ShockDropOrRoll == 1) {
+            func_800794A8_7A0A8(0x3C);
+            func_8000C398_CF98();
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+            break;
+        }
+        func_8006D4D0_6E0D0(D_80106F14_16FE54_ShockDropOrRoll / 30);
+        if (D_80106F14_16FE54_ShockDropOrRoll == 0) {
+            D_80106ED0_16FE10_ShockDropOrRoll = 1;
+            D_80106ED5_16FE15_ShockDropOrRoll = 0;
+            func_8006D518_6E118();
+        } else {
+            D_80106F14_16FE54_ShockDropOrRoll--;
+        }
+        if (_CheckFlag(0xC) != 0) {
+            for (i = 0; i < 3; i++) {
+                if (!(gPlayers[wk.w[i]->unk_59].flags & 1) && wk.p[i]->fell == 1) {
+                    D_80106ED0_16FE10_ShockDropOrRoll = 1;
+                    D_80106ED5_16FE15_ShockDropOrRoll = 1;
+                    func_8006D518_6E118();
+                }
+            }
+        } else {
+            n = 0;
+            for (i = 0; i < 3; i++) {
+                if (wk.p[i]->fell == 1) {
+                    n++;
+                }
+            }
+            if (n >= 3) {
+                D_80106ED0_16FE10_ShockDropOrRoll = 1;
+                D_80106ED5_16FE15_ShockDropOrRoll = 1;
+                func_8006D518_6E118();
+            }
+        }
+        break;
+    case 6:
+        D_80106ED8_16FE18_ShockDropOrRoll = 1;
+        if (D_80106ED9_16FE19_ShockDropOrRoll == 1) {
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+        }
+        break;
+    case 7:
+        func_800691FC_69DFC(3);
+        D_80106ED7_16FE17_ShockDropOrRoll = (_CheckFlag(0xC) != 0) ? 12 : D_80106ED7_16FE17_ShockDropOrRoll + 1;
+        break;
+    case 8:
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_8000C3A8_CFA8();
+            D_80106EDA_16FE1A_ShockDropOrRoll = 1;
+            switch (D_80106ED5_16FE15_ShockDropOrRoll) {
+            case 0:
+                PlayMusic(0x52);
+                func_800691FC_69DFC(0x15, gPlayers[D_801072B8_1701F8_ShockDropOrRoll[1]].character,
+                                    gPlayers[D_801072B8_1701F8_ShockDropOrRoll[2]].character,
+                                    gPlayers[D_801072B8_1701F8_ShockDropOrRoll[3]].character);
+                func_80029B80_2A780(D_801072B4_1701F4_ShockDropOrRoll->model[0], D_801072B4_1701F4_ShockDropOrRoll->motion[0xE]);
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_801072B8_1701F8_ShockDropOrRoll[0]].character].unk_04 | 0x56);
+                gPlayers[D_801072B8_1701F8_ShockDropOrRoll[1]].coins_mg_bonus += 10;
+                gPlayers[D_801072B8_1701F8_ShockDropOrRoll[2]].coins_mg_bonus += 10;
+                gPlayers[D_801072B8_1701F8_ShockDropOrRoll[3]].coins_mg_bonus += 10;
+                D_80107260_1701A0_ShockDropOrRoll = 168;
+                break;
+            case 1:
+                PlayMusic(0x51);
+                func_800691FC_69DFC(6, gPlayers[D_801072B8_1701F8_ShockDropOrRoll[0]].character);
+                func_80029B80_2A780(D_801072B4_1701F4_ShockDropOrRoll->model[0], D_801072B4_1701F4_ShockDropOrRoll->motion[0xD]);
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_801072B8_1701F8_ShockDropOrRoll[0]].character].unk_04 | 0x4F);
+                gPlayers[D_801072B8_1701F8_ShockDropOrRoll[0]].coins_mg_bonus += 10;
+                w->unk_3C = -func_800B75A8_B81A8(D_801072B4_1701F4_ShockDropOrRoll->trans.x - D_8010274C_10334C.x,
+                                                -(D_801072B4_1701F4_ShockDropOrRoll->trans.z - D_8010274C_10334C.z));
+                D_801072B4_1701F4_ShockDropOrRoll->rot.y = w->unk_3C;
+                D_80107260_1701A0_ShockDropOrRoll = 120;
+                break;
+            }
+            D_8010725E_17019E_ShockDropOrRoll = 0;
+            D_80106ED7_16FE17_ShockDropOrRoll++;
+        }
+        break;
+    case 9:
+        if (D_8010725E_17019E_ShockDropOrRoll++ > D_80107260_1701A0_ShockDropOrRoll) {
+            func_800794A8_7A0A8(0x28);
+            InitFadeOut(0, 0x14);
+            func_80079868_7A468();
+            func_8000C398_CF98();
+            D_80106ED7_16FE17_ShockDropOrRoll = 11;
+        }
+        break;
+    case 10:
+        func_800794A8_7A0A8(0x28);
+        InitFadeOut(0, 0x14);
+        func_80079868_7A468();
+        func_8000C398_CF98();
+        D_80106ED7_16FE17_ShockDropOrRoll++;
+        break;
+    case 11:
+        if (func_8008F618_90218() == 0) {
+            func_80069770_6A370();
+            omOvlReturnEx(1);
+        }
+        break;
+    case 12:
+        func_8000C3A8_CFA8();
+        D_80106EDA_16FE1A_ShockDropOrRoll = 1;
+        switch (D_80106ED5_16FE15_ShockDropOrRoll) {
+        case 0:
+            func_80029B80_2A780(D_801072B4_1701F4_ShockDropOrRoll->model[0], D_801072B4_1701F4_ShockDropOrRoll->motion[0]);
+            for (i = 0; i < 3; i++) {
+                if (wk.p[i]->fell == 0) {
+                    gPlayers[D_801072B8_1701F8_ShockDropOrRoll[i + 1]].coins_mg_bonus += 10;
+                }
+            }
+            break;
+        case 1:
+            func_80029B80_2A780(D_801072B4_1701F4_ShockDropOrRoll->model[0], D_801072B4_1701F4_ShockDropOrRoll->motion[0]);
+            gPlayers[D_801072B8_1701F8_ShockDropOrRoll[0]].coins_mg_bonus += 10;
+            for (i = 0; i < 3; i++) {
+                if (wk.p[i]->fell == 0) {
+                    gPlayers[D_801072B8_1701F8_ShockDropOrRoll[i + 1]].coins_mg_bonus += 10;
+                }
+            }
+            w->unk_3C = -func_800B75A8_B81A8(D_801072B4_1701F4_ShockDropOrRoll->trans.x - D_8010274C_10334C.x,
+                                            -(D_801072B4_1701F4_ShockDropOrRoll->trans.z - D_8010274C_10334C.z));
+            D_801072B4_1701F4_ShockDropOrRoll->rot.y = w->unk_3C;
+            break;
+        }
+        D_8010725C_17019C_ShockDropOrRoll = 60;
+        D_80106ED7_16FE17_ShockDropOrRoll++;
+        break;
+    case 13:
+        if (D_8010725C_17019C_ShockDropOrRoll-- < 0) {
+            D_80106ED7_16FE17_ShockDropOrRoll = 10;
+        }
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_80104E24_16DD64_ShockDropOrRoll);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_80107078_16FFB8_ShockDropOrRoll[21] = { 0x447A0000, 0x447A0000, 0x447A0000, 0x43A48000, 0x43A48000, 0x43A48000, 0xC30D0000, 0xC2B40000, 0xC2480000, 0x00000000, 0x00000000, 0x00000000, 0xC4148000, 0xC4584000, 0xC4424000, 0x440E8000, 0x440E8000, 0x440E8000, 0xC4124000, 0x43700000, 0x4453C000 };
