@@ -296,6 +296,7 @@ extern f64 D_8010B2C0_1C6E40_DungeonDash[2]; /* each team's z */
 extern s16 D_8010B2D0_1C6E50_DungeonDash;
 extern s16 D_8010B2D2_1C6E52_DungeonDash;
 extern DDObstacle* D_8010B2E4_1C6E64_DungeonDash;
+extern s32 D_8010A6FC_1C627C_DungeonDash; /* obstacle count */
 
 extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
 void func_80026DAC_279AC(s32, s32, s32, s32);
