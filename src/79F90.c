@@ -22,6 +22,7 @@ s16 D_800CD52C_CE12C = 1;
 s16 D_800CD52E_CE12E = 1;
 s16 D_800CD530_CE130 = 0x40;
 extern s16 D_800FA188_FAD88;
+s32 func_80011430_12030(s32);
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern s8 D_801026F8_1032F8[4];
@@ -127,7 +128,10 @@ void func_8007954C_7A14C(s16 bpm) {
     func_8001138C_11F8C(D_800FA188_FAD88, bpm);
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079574_7A174);
+/* MP3 func_8004AA60_4B660: the current music's tempo */
+s16 func_80079574_7A174(void) {
+    return func_80011430_12030(D_800FA188_FAD88);
+}
 
 s32 PlaySound(s32 id) {
     if (D_800CD522_CE122 == 0) {
