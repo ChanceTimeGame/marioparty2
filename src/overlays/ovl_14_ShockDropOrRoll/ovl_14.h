@@ -121,6 +121,13 @@ extern const s8 D_801070CC_17000C_ShockDropOrRoll[8];
 extern const f32 D_801070D4_170014_ShockDropOrRoll[6];
 extern const SDCamera D_801070EC_17002C_ShockDropOrRoll[2];
 
+/* ---- .rodata (16EF10.c) ---- */
+extern const u32 D_80107138_170078_ShockDropOrRoll[24]; /* spark texture script, 24 frames */
+extern const Vec D_80107198_1700D8_ShockDropOrRoll[4];
+extern const Vec D_801071C8_170108_ShockDropOrRoll[8];
+extern const char D_80107228_170168_ShockDropOrRoll[];
+extern const char D_80107238_170178_ShockDropOrRoll[24];
+
 /* ---- .bss ---- */
 extern s8 D_80107250_170190_ShockDropOrRoll;   /* solo CPU: turn direction (1, -1) */
 extern s16 D_80107252_170192_ShockDropOrRoll;  /* solo CPU: flips toward a player near the middle */
@@ -134,7 +141,7 @@ extern f32 D_80107268_1701A8_ShockDropOrRoll[4]; /* camera spline keys */
 extern f32 D_80107278_1701B8_ShockDropOrRoll[7]; /* the camera this frame (an SDCamera) */
 extern s16 D_801072A0_1701E0_ShockDropOrRoll;  /* the roller sound */
 extern s8 D_801072B0_1701F0_ShockDropOrRoll;   /* the solo stick (-45..45) */
-extern s8 D_801072B1_1701F1_ShockDropOrRoll[3]; /* marker texture animations */
+extern u8 D_801072B1_1701F1_ShockDropOrRoll[3]; /* marker texture animations */
 extern omObjData* D_801072B4_1701F4_ShockDropOrRoll; /* the solo player */
 extern s8 D_801072B8_1701F8_ShockDropOrRoll[4]; /* player by slot (0 = solo) */
 extern s8 D_801072B9_1701F9_ShockDropOrRoll[3]; /* = D_801072B8[1] */
@@ -143,7 +150,7 @@ extern s8 D_801072BB_1701FB_ShockDropOrRoll;    /* = D_801072B8[3] */
 extern s8 D_801072BC_1701FC_ShockDropOrRoll[5]; /* CPU level rows 0-4, shuffled */
 extern f32 D_801072C4_170204_ShockDropOrRoll;   /* the roller's surface speed (z per frame) */
 extern omObjData* D_801072C8_170208_ShockDropOrRoll; /* the stage */
-extern s8 D_801072CC_17020C_ShockDropOrRoll[4]; /* spark texture animations */
+extern u8 D_801072CC_17020C_ShockDropOrRoll[4]; /* spark texture animations */
 
 /* ---- main ---- */
 extern s8 ContStkX[4];
@@ -173,8 +180,7 @@ void func_8000BEA4_CAA4(omObjData*, f32);
 void func_8000BEB0_CAB0(omObjData*, f32);
 void func_8000BEBC_CABC(omObjData*, f32);
 void func_8000BEC8_CAC8(omObjData*, f32);
-/* its second argument is a float that retail passes in a1 (as 0F) */
-void func_8000BF24_CB24(omObjData*, s32, f32, f32, f32, f32);
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
 void func_8000C004_CC04(omObjData*);
 void func_8000C018_CC18(u16);
 void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
@@ -216,6 +222,8 @@ void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light
 void func_8002D4D0_2E0D0(s16 n);
 void func_8002F290_2FE90(s32* arg0, s32 n);
 void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
+#include "game/data.h"
+#include "game/malloc.h"
 void func_8003E52C_3F12C(s16, u8);
 void func_8003E560_3F160(s16, s32);
 s16 func_800691FC_69DFC(s16 mesNo, ...);
