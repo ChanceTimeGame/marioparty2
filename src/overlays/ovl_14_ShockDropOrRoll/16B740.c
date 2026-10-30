@@ -251,16 +251,123 @@ void func_80103100_16C040_ShockDropOrRoll(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_801038C4_16C804_ShockDropOrRoll);
+/* A roller player's CPU input: runs against the roller (aiming at a random offset scaled by the
+   roller speed), dashes when the roller speeds up, jumps near the edges; the input goes through
+   a delay ring (2-8 frames by difficulty). Then func_80103100. */
+void func_801038C4_16C804_ShockDropOrRoll(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    SDPlayer* p = w->unk_158;
+    u8 lv = p->level;
+    s32 delay = 0;
+    s16 stk;
+    s16 btn;
+    u16 trg;
+    s16 i;
+    f32 aim;
+    f32 jumpZ;
+
+    if (D_80106ED3_16FE13_ShockDropOrRoll == 1 && D_80106ED0_16FE10_ShockDropOrRoll == 0) {
+        btn = 0;
+        if (gPlayers[w->unk_59].flags & 1) {
+            stk = 0;
+            ContStkY[w->unk_57] = 0;
+            trg = 0;
+            if (p->aimWait++ >= 11) {
+                p->aim = guRandom() % D_80106FD8_16FF18_ShockDropOrRoll[gPlayers[w->unk_59].cpu_difficulty];
+                p->aim -= D_80106FD8_16FF18_ShockDropOrRoll[gPlayers[w->unk_59].cpu_difficulty];
+                p->aimWait = 0;
+            }
+            aim = p->aim;
+            aim *= D_801072C4_170204_ShockDropOrRoll / 89.0f;
+            if ((obj->trans.z > 0.0f ? obj->trans.z : -obj->trans.z) >= 30.0f) {
+                if ((obj->trans.z > 0.0f ? aim + obj->trans.z : -obj->trans.z + aim) >= D_80106F9C_16FEDC_ShockDropOrRoll[lv].aimNear) {
+                    if (aim + obj->trans.z < 0.0f) {
+                        stk = (s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkFar;
+                    } else {
+                        stk = -(s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkFar;
+                    }
+                } else if (aim + obj->trans.z < 0.0f) {
+                    stk = (s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkNear;
+                } else {
+                    stk = -(s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkNear;
+                }
+                if (p->dash == 0 && guRandom() % 100 < D_80106FE8_16FF28_ShockDropOrRoll[gPlayers[w->unk_59].cpu_difficulty]) {
+                    if (p->spin < 0.0f && p->spin < D_80106F70_16FEB0_ShockDropOrRoll) {
+                        p->dash = 1;
+                    }
+                    if (p->spin > 0.0f && D_80106F70_16FEB0_ShockDropOrRoll < p->spin) {
+                        p->dash = 1;
+                    }
+                }
+            }
+            if (p->dash == 1) {
+                if (p->aimWait++ < 10) {
+                    if (obj->trans.z < 0.0f) {
+                        stk = -(s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkFar;
+                    } else {
+                        stk = (s8)D_80106F9C_16FEDC_ShockDropOrRoll[lv].stkFar;
+                    }
+                } else {
+                    p->aimWait = 0;
+                    p->dash = 0;
+                }
+            }
+            jumpZ = D_80106F9C_16FEDC_ShockDropOrRoll[lv].jumpZ;
+            if (jumpZ <= (obj->trans.z > 0.0f ? obj->trans.z : -obj->trans.z)) {
+                if (p->jumpWait >= D_80106F9C_16FEDC_ShockDropOrRoll[lv].jumpWait) {
+                    btn = 0x7FFF;
+                    trg = 0x8000;
+                    p->jumpWait = 0;
+                }
+            }
+            p->jumpWait++;
+            if (p->spinWait++ >= 11) {
+                p->spin = D_80106F70_16FEB0_ShockDropOrRoll;
+                p->spinWait = 0;
+            }
+            p->stk[p->hist] = stk;
+            p->btn[p->hist] = btn;
+            p->trg[p->hist] = trg;
+            switch (gPlayers[w->unk_59].cpu_difficulty) {
+            case 0:
+                delay = 8;
+                break;
+            case 1:
+                delay = 5;
+                break;
+            case 2:
+                delay = 3;
+                break;
+            case 3:
+                delay = 2;
+                break;
+            }
+            i = p->hist - delay;
+            if (i < 0) {
+                i += 32;
+            }
+            ContStkX[w->unk_57] = p->stk[i];
+            ContBtn[w->unk_57] = p->btn[i];
+            ContBtnTrg[w->unk_57] = p->trg[i];
+            p->hist++;
+            if (p->hist >= 32) {
+                p->hist = 0;
+            }
+        }
+    }
+    func_80103100_16C040_ShockDropOrRoll(obj);
+}
 
 __asm__(".section .rodata");
-const u32 D_80106FA4_16FEE4_ShockDropOrRoll[13] = { 0x001E3223, 0x42F00000, 0x42FA0000, 0x001E321E, 0x42C80000, 0x43A28000, 0x001E3223, 0x43160000, 0x432F0000, 0x001E3223, 0x42C80000, 0x42480000, 0x001E3C28 };
-
-__asm__(".section .rodata");
-const u32 D_80106FD8_16FF18_ShockDropOrRoll[4] = { 0x00000064, 0x00000032, 0x00000019, 0x0000000A };
-
-__asm__(".section .rodata");
-const u32 D_80106FE8_16FF28_ShockDropOrRoll[2] = { 0x000A0008, 0x00060004 };
+const SDLevel D_80106F9C_16FEDC_ShockDropOrRoll[5] = {
+    { 100.0f, 175.0f, 30, 50, 35 },
+    { 120.0f, 125.0f, 30, 50, 30 },
+    { 100.0f, 325.0f, 30, 50, 35 },
+    { 150.0f, 175.0f, 30, 50, 35 },
+    { 100.0f, 50.0f, 30, 60, 40 },
+};
+const s32 D_80106FD8_16FF18_ShockDropOrRoll[4] = { 100, 50, 25, 10 }; /* aim range by difficulty */
+const s16 D_80106FE8_16FF28_ShockDropOrRoll[4] = { 10, 8, 6, 4 };     /* dash chance (%) by difficulty */
 
 /* A roller player's setup: its SDPlayer, marker, sounds, models and motions. */
 void func_80103FE8_16CF28_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 slot) {
@@ -284,7 +391,7 @@ void func_80103FE8_16CF28_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16
     p->aim = 0.0f;
     p->spinWait = 0;
     p->spin = 0.0f;
-    p->jump = 0;
+    p->dash = 0;
     p->voiced = 0;
     for (i = 0; i < 3; i++) {
         p->pos[i] = 0.0f;

@@ -29,13 +29,13 @@ typedef struct SDPlayer {
     /* 0x00 */ s8 fell;       /* 1: fell off (y <= 0) */
     /* 0x01 */ s8 dropped;    /* 1: the fall has been set up (the drop and spin) */
     /* 0x02 */ s8 cheered;    /* the win/lose motion has been played */
-    /* 0x03 */ s8 jump;       /* CPU: a jump forced by the roller speed */
+    /* 0x03 */ s8 dash;       /* CPU: runs at full stick for 10 frames (the roller sped up) */
     /* 0x04 */ s8 voiced;     /* the fall voice has been played */
     /* 0x05 */ u8 level;      /* CPU level row in D_80106F9C (D_801072BC[slot - 1]) */
     /* 0x06 */ s16 mark;      /* the marker model (stage model 0x24000A copies) */
     /* 0x08 */ s16 jumpWait;  /* frames since the last jump */
-    /* 0x0A */ u16 aimWait;   /* CPU: frames since the aim offset was rerolled */
-    /* 0x0C */ u16 spinWait;  /* CPU: frames since the roller speed was sampled */
+    /* 0x0A */ s16 aimWait;   /* CPU: frames since the aim offset was rerolled */
+    /* 0x0C */ s16 spinWait;  /* CPU: frames since the roller speed was sampled */
     /* 0x0E */ char unk_0E[2];
     /* 0x10 */ f32 spin;      /* CPU: the sampled roller speed */
     /* 0x14 */ f32 aim;       /* CPU: aim offset */
@@ -55,8 +55,8 @@ typedef struct SDLevel {
     /* 0x00 */ f32 aimNear;   /* |z| + aim at which the CPU runs at full stick */
     /* 0x04 */ f32 jumpZ;     /* |z| from which it jumps */
     /* 0x08 */ s16 jumpWait;  /* frames between jumps */
-    /* 0x0A */ s8 stkFar;     /* stick when past aimNear */
-    /* 0x0B */ s8 stkNear;    /* stick otherwise */
+    /* 0x0A */ u8 stkFar;     /* stick when past aimNear (read as s8) */
+    /* 0x0B */ u8 stkNear;    /* stick otherwise (read as s8) */
 } SDLevel; /* size = 0xC */
 
 /* The camera key of one stage of the roller camera (D_80107078: [7][3] values; D_801070EC: [2]
@@ -110,6 +110,9 @@ extern u8 D_80106F8C_16FECC_ShockDropOrRoll[4];  /* the four sparks' frames (0-2
 
 /* ---- .rodata (16B740.c) ---- */
 extern const char D_80106F90_16FED0_ShockDropOrRoll[];
+extern const SDLevel D_80106F9C_16FEDC_ShockDropOrRoll[5];
+extern const s32 D_80106FD8_16FF18_ShockDropOrRoll[4];
+extern const s16 D_80106FE8_16FF28_ShockDropOrRoll[4];
 
 /* ---- .bss ---- */
 extern s8 D_80107250_170190_ShockDropOrRoll;   /* solo CPU: turn direction (1, -1) */
