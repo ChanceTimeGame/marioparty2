@@ -292,3 +292,24 @@ D_8010B1DE_1A3F6E_HandcarHavoc = D_8010B1DC_1A3F6C_HandcarHavoc + 0x2;
 D_8010A75C_14C0EC_RainbowRun = D_8010A758_14C0E8_RainbowRun + 0x4;
 D_8010A808_14C198_RainbowRun = D_8010A804_14C194_RainbowRun + 0x4;
 D_8010A87C_14C20C_RainbowRun = D_8010A878_14C208_RainbowRun + 0x4;
+/* ovl_3C .data: labels inside C arrays (S4-DB) */
+D_80108430_2974A0_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x4;
+D_80108434_2974A4_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x8;
+D_80108438_2974A8_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0xC;
+D_8010843C_2974AC_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x10;
+D_80108440_2974B0_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x14;
+D_801084D6_297546_DeepSeaSalvage = D_801084D4_297544_DeepSeaSalvage + 0x2;
+/* ovl_0C .data: s32 low halves and the light-colour bytes, labels inside C objects (S4-DB) */
+D_8010C146_137D36_HotRopeJump = D_8010C144_137D34_HotRopeJump + 0x2;
+D_8010C226_137E16_HotRopeJump = D_8010C224_137E14_HotRopeJump + 0x2;
+D_8010C3A1_137F91_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x1;
+D_8010C3A2_137F92_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x2;
+D_8010C3A4_137F94_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x4;
+D_8010C3A5_137F95_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x5;
+D_8010C3A6_137F96_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x6;
+D_8010C3A8_137F98_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x8;
+D_8010C3A9_137F99_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0x9;
+D_8010C3AA_137F9A_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xA;
+D_8010C3AC_137F9C_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xC;
+D_8010C3AD_137F9D_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xD;
+D_8010C3AE_137F9E_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xE;

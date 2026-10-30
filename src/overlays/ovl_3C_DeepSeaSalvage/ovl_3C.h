@@ -7,7 +7,7 @@
    treasure up by touching it, and is stunned by the hazard. Two fish swim across. Retail is three
    files: 291870.c (game, divers, boat, treasure, HUD), 294F20.c from 80105EB0 (camera, work
    blocks, random numbers, sea-floor collision, effects) and 296550.c from 801074E0 (fish, MP1
-   func_800FEA00 onwards). .data stays asm (one blob for all three files); .rodata is carved per
+   func_800FEA00 onwards). .data is C in each file (0x297490, 0x2975A0, 0x2976B0); .rodata is carved per
    file ([0x2976D0, .rodata, 291870], [0x2977E0, .rodata, 294F20], [0x297820, .rodata, 296550]). */
 
 #include "common.h"
@@ -246,7 +246,8 @@ typedef struct DSSFish {
 } DSSFish; /* size = 0x40 */
 
 /* ---------------------------------------------------------------------------------------------
-   .data (asm, 0x297490-0x2976D0: 291870.c to 80108640, then 296550.c)
+   .data (C per file: 291870.c 0x297490-0x2975A0, 294F20.c to 0x2976B0, 296550.c to 0x2976D0;
+   D_80108430-440 and D_801084D6 are undefined_syms.txt aliases inside D_8010842C / D_801084D4)
    --------------------------------------------------------------------------------------------- */
 
 extern s32 D_80108420_297490_DeepSeaSalvage;     /* the music has started */
@@ -263,6 +264,7 @@ extern f32 D_801084BC_29752C_DeepSeaSalvage[3];  /* per kind: sinking speed limi
 extern f32 D_801084C8_297538_DeepSeaSalvage[3];  /* per kind: scale */
 extern u16 D_801084D4_297544_DeepSeaSalvage[16][2]; /* HUD sprite positions (x, y) */
 extern s32 D_80108514_297584_DeepSeaSalvage[7];  /* per character: the HUD face file */
+/* 294F20.c */
 extern Vec D_80108530_2975A0_DeepSeaSalvage[10]; /* the sea floor's left outline */
 extern Vec D_801085A8_297618_DeepSeaSalvage[11]; /* the right outline */
 extern Vec* D_8010862C_29769C_DeepSeaSalvage[2];

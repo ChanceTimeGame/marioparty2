@@ -8,7 +8,7 @@
    and the round ends when one player is left (or, in the 1P-vs-CPU variant, _CheckFlag(0xC), after
    50 jumps or when the human player is hit).
    Retail is two files: 12E3F0.c (80102800-80107FAC) and 133BA0.c from 80107FB0 (MP1's
-   func_800FB260 onward). .data stays asm (137D00); .rodata is carved per file (0x138170, 0x138310).
+   func_800FB260 onward). .data is C per file (12E3F0.c from 137D00, 133BA0.c from 137E50); .rodata is carved per file (0x138170, 0x138310).
    Prototypes past 80105570 are inferred from register use and MP1 (S4-0CB, S4-0CC: check yours).
    N64 offsets are in the comments; the structs with pointer fields change size on the host. */
 
@@ -236,7 +236,8 @@ void func_8010BF8C_137B7C_HotRopeJump(f32 speed);
 void func_8010BF98_137B88_HotRopeJump(f32 arg0);
 void func_8010C074_137C64_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out);
 
-/* ---- .data (asm, 137D00) ---- */
+/* ---- .data (C: 12E3F0.c 137D00-137E50, 133BA0.c to 138170; D_8010C146, D_8010C226 and
+   D_8010C3A1-3AE are undefined_syms.txt aliases) ---- */
 
 extern s32 D_8010C110_137D00_HotRopeJump; /* jumps to win in the 1P variant (99; 50 with the flag) */
 extern s32 D_8010C114_137D04_HotRopeJump; /* game state: 0 wait, 1 intro, 2 start message, 3 play,
@@ -281,11 +282,11 @@ extern u8 D_8010C3A0_137F90_HotRopeJump[4][4]; /* light colours: [0]->[1] ambien
 extern u16 D_8010C3B0_137FA0_HotRopeJump[4]; /* floor light colour at blend 0 (rgb + pad) */
 extern u16 D_8010C3B8_137FA8_HotRopeJump[4]; /* at blend 1 */
 extern f32 D_8010C3C0_137FB0_HotRopeJump; /* the blend D_80111416 was made for */
-extern Vtx_t D_8010C3C4_137FB4_HotRopeJump[9]; /* torch flame (MP1 D_800FE650) */
+extern Vtx_t D_8010C3C4_137FB4_HotRopeJump[9]; /* torch flame (MP1 D_800FE650); func_8010B0A0 copies 10 */
 extern s16 D_8010C454_138044_HotRopeJump; /* torch/camera intro state (MP1 D_800FE6E0.state) */
 extern s16 D_8010C456_138046_HotRopeJump; /* and its timer */
 extern s16 D_8010C458_138048_HotRopeJump[8]; /* its state durations, 0 = the last */
-extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4) */
+extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4); func_8010B0A0 copies 10 */
 extern s16 D_8010C4F8_1380E8_HotRopeJump; /* the rope's timer and state (MP1 D_800FE784) */
 extern s16 D_8010C4FA_1380EA_HotRopeJump;
 extern s16 D_8010C4FC_1380EC_HotRopeJump[6]; /* its state durations, 0 = the last */

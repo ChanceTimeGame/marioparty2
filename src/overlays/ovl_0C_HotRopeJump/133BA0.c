@@ -1,5 +1,107 @@
 #include "ovl_0C.h"
 
+/* .data (0x137E50-0x138170, 8010C260-8010C580). D_8010C3A1-D_8010C3AE (bytes of D_8010C3A0) are
+   undefined_syms.txt aliases; the splat labels inside the flame palettes (D_8010C509-50B,
+   D_8010C539-53B) have no users. func_8010B0A0 copies 10 vertices from each 9-vertex flame table
+   (D_8010C3C4, D_8010C468): the tenth is the 16 bytes after it (D_8010C454-D_8010C460,
+   D_8010C4F8-D_8010C504), as in retail. */
+
+f32 D_8010C260_137E50_HotRopeJump = 1.0f;
+f32 D_8010C264_137E54_HotRopeJump = 1.0f;
+f32 D_8010C268_137E58_HotRopeJump = -1.0f;
+f32 D_8010C26C_137E5C_HotRopeJump = 1.0f;
+Gfx D_8010C270_137E60_HotRopeJump[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010C328_137F18_HotRopeJump[] = {
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010C348_137F38_HotRopeJump[] = {
+    gsSPDisplayList(D_8010C328_137F18_HotRopeJump),
+    gsSPDisplayList(D_8010C270_137E60_HotRopeJump),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010C360_137F50_HotRopeJump[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010C348_137F38_HotRopeJump),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+u8 D_8010C3A0_137F90_HotRopeJump[4][4] = {
+    { 0x60, 0x50, 0x40, 0 }, { 0x40, 0x70, 0x60, 0 }, { 0xFF, 0xA0, 0x40, 0 }, { 0x40, 0xFF, 0xFF, 0 },
+};
+u16 D_8010C3B0_137FA0_HotRopeJump[4] = { 0xFF, 0xC8, 0xA0, 0 };
+u16 D_8010C3B8_137FA8_HotRopeJump[4] = { 0xFF, 0xFF, 0xFF, 0 };
+f32 D_8010C3C0_137FB0_HotRopeJump = -1.0f;
+Vtx_t D_8010C3C4_137FB4_HotRopeJump[9] = {
+    { { -120, 300, 0 }, 0, { 0, 0 }, { 0xFF, 0xFF, 0xFF, 0x00 } },
+    { { 120, 300, 0 }, 0, { 0x800, 0 }, { 0xFF, 0xFF, 0xFF, 0x00 } },
+    { { 100, -100, 0 }, 0, { 0x800, 0x1000 }, { 0xFF, 0xFF, 0xFF, 0x10 } },
+    { { -100, -100, 0 }, 0, { 0, 0x1000 }, { 0xFF, 0xFF, 0xFF, 0x10 } },
+    { { 0, 0, 0 }, 0, { 0x400, 0xC00 }, { 0xFF, 0xFF, 0xFF, 0xF0 } },
+    { { -100, 50, 50 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 100, 50, 50 }, 0, { 0x1000, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 100, -50, 50 }, 0, { 0x1000, 0x800 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { -100, -50, 50 }, 0, { 0, 0x800 }, { 0x00, 0x00, 0x00, 0xFF } },
+};
+s16 D_8010C454_138044_HotRopeJump = 0;
+s16 D_8010C456_138046_HotRopeJump = 0;
+s16 D_8010C458_138048_HotRopeJump[8] = { 60, 30, 0x7800, 0x7800, 30, 0, 0, 0 };
+Vtx_t D_8010C468_138058_HotRopeJump[9] = {
+    { { -70, 150, 0 }, 0, { 0, 0 }, { 0xFF, 0xFF, 0xFF, 0x00 } },
+    { { 70, 150, 0 }, 0, { 0x800, 0 }, { 0xFF, 0xFF, 0xFF, 0x00 } },
+    { { 50, -50, 0 }, 0, { 0x800, 0x1000 }, { 0xFF, 0xFF, 0xFF, 0x10 } },
+    { { -50, -50, 0 }, 0, { 0, 0x1000 }, { 0xFF, 0xFF, 0xFF, 0x10 } },
+    { { 0, 0, 0 }, 0, { 0x400, 0xC00 }, { 0xFF, 0xFF, 0xFF, 0xF0 } },
+    { { -50, 25, 25 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 50, 25, 25 }, 0, { 0x1000, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 50, -25, 25 }, 0, { 0x1000, 0x800 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { -50, -25, 25 }, 0, { 0, 0x800 }, { 0x00, 0x00, 0x00, 0xFF } },
+};
+s16 D_8010C4F8_1380E8_HotRopeJump = 0;
+s16 D_8010C4FA_1380EA_HotRopeJump = 0;
+s16 D_8010C4FC_1380EC_HotRopeJump[6] = { 90, 30, 128, 128, 0, 0 };
+u8 D_8010C508_1380F8_HotRopeJump[12][4] = {
+    { 0x00, 0x00, 0x00, 0x00 }, { 0x58, 0x00, 0x00, 0x01 }, { 0x88, 0x00, 0x00, 0x01 }, { 0xD0, 0x00, 0x00, 0x01 },
+    { 0xA8, 0x00, 0x00, 0x01 }, { 0xF8, 0x00, 0x00, 0x01 }, { 0xF8, 0x40, 0x00, 0x01 }, { 0xF8, 0x70, 0x00, 0x01 },
+    { 0xF8, 0x98, 0x00, 0x01 }, { 0xF8, 0xC8, 0x00, 0x01 }, { 0xF8, 0xE8, 0x00, 0x01 }, { 0xF8, 0xF8, 0x58, 0x01 },
+};
+u8 D_8010C538_138128_HotRopeJump[12][4] = {
+    { 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x40, 0x50, 0x01 }, { 0x00, 0x80, 0xA8, 0x01 }, { 0x00, 0x80, 0xD0, 0x01 },
+    { 0x00, 0x80, 0xD0, 0x01 }, { 0x00, 0x88, 0xF8, 0x01 }, { 0x00, 0xA0, 0xF8, 0x01 }, { 0x00, 0xB0, 0xF8, 0x01 },
+    { 0x00, 0xC8, 0xF8, 0x01 }, { 0x78, 0xE0, 0xF8, 0x01 }, { 0x80, 0xF8, 0xF8, 0x01 }, { 0xC0, 0xF8, 0xF8, 0x01 },
+};
+u16 D_8010C568_138158_HotRopeJump[12] = { 0 };
+
 /* Sets up the lights and the floor and torch objects (MP1 func_800FB260). */
 void func_80107FB0_133BA0_HotRopeJump(void) {
     HRJLight* l;

@@ -1,5 +1,10 @@
 #include "ovl_3C.h"
 
+/* .data (0x2976B0-0x2976D0, 80108640-80108660) */
+
+s32 D_80108640_2976B0_DeepSeaSalvage[3] = { 0, 100, 220 };
+s32 D_8010864C_2976BC_DeepSeaSalvage[5] = { 30, 30, 30, 0, 0 };
+
 /* The fish object's models: five copies of the fish, two of them drawn with attribute 4 (MP1
    func_800FEA00). */
 void func_801074E0_296550_DeepSeaSalvage(omObjData* obj) {

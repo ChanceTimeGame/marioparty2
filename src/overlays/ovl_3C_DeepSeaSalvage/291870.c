@@ -1,5 +1,38 @@
 #include "ovl_3C.h"
 
+/* .data (0x297490-0x2975A0, 80108420-80108530). D_80108430-D_80108440 (inside D_8010842C) and
+   D_801084D6 (inside D_801084D4) are undefined_syms.txt aliases for the asm; the splat labels
+   D_80108492, D_801084A9 and D_801084AA have no users. */
+
+s32 D_80108420_297490_DeepSeaSalvage = 0;
+s32 D_80108424_297494_DeepSeaSalvage[2] = { 0x4C000B, 0x4C000A };
+f32 D_8010842C_29749C_DeepSeaSalvage[2][6] = {
+    { 0.0f, -460.0f, 0.0f, 1.6f, 1.6f, 1.6f },
+    { 0.0f, -152.0f, -250.0f, 1.0f, 1.0f, 1.0f },
+};
+char* D_8010845C_2974CC_DeepSeaSalvage[6] = {
+    (char*)D_801086D8_297748_DeepSeaSalvage, (char*)D_801086C4_297734_DeepSeaSalvage,
+    (char*)D_801086AC_29771C_DeepSeaSalvage, (char*)D_8010869C_29770C_DeepSeaSalvage,
+    (char*)D_8010868C_2976FC_DeepSeaSalvage, (char*)D_80108678_2976E8_DeepSeaSalvage,
+};
+u16 D_80108474_2974E4_DeepSeaSalvage[6] = { 3, 4, 5, 6, 7, 8 };
+f32 D_80108480_2974F0_DeepSeaSalvage[4] = { -500.0f, -170.0f, 170.0f, 500.0f };
+s32 D_80108490_297500_DeepSeaSalvage = 1;
+s32 D_80108494_297504_DeepSeaSalvage = 0;
+u8 D_80108498_297508_DeepSeaSalvage[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 0, 0, 0 };
+u8 D_801084A8_297518_DeepSeaSalvage[6][3] = {
+    { 0, 1, 2 }, { 0, 2, 1 }, { 1, 0, 2 }, { 1, 2, 0 }, { 2, 0, 1 }, { 2, 1, 0 },
+};
+f32 D_801084BC_29752C_DeepSeaSalvage[3] = { -6.0f, -9.6f, -14.4f };
+f32 D_801084C8_297538_DeepSeaSalvage[3] = { 2.5f, 2.5f, 3.0f };
+u16 D_801084D4_297544_DeepSeaSalvage[16][2] = {
+    { 0x3C, 0x18 }, { 0x104, 0x18 }, { 0x3C, 0xCC }, { 0x104, 0xCC },
+    { 0x28, 0x24 }, { 0xF0, 0x24 },  { 0x28, 0xD8 }, { 0xF0, 0xD8 },
+    { 0x34, 0x24 }, { 0xFC, 0x24 },  { 0x34, 0xD8 }, { 0xFC, 0xD8 },
+    { 0x40, 0x24 }, { 0x108, 0x24 }, { 0x40, 0xD8 }, { 0x108, 0xD8 },
+};
+s32 D_80108514_297584_DeepSeaSalvage[7] = { 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0 };
+
 #define DSS_ABS(x) ((x) < 0 ? -(x) : (x))
 
 
