@@ -268,8 +268,8 @@ extern Vec D_801085A8_297618_DeepSeaSalvage[11]; /* the right outline */
 extern Vec* D_8010862C_29769C_DeepSeaSalvage[2];
 extern s16 D_80108634_2976A4_DeepSeaSalvage[6];
 /* 296550.c */
-extern s32 D_80108640_2976B0_DeepSeaSalvage[3];
-extern s32 D_8010864C_2976BC_DeepSeaSalvage[5];
+extern s32 D_80108640_2976B0_DeepSeaSalvage[3];  /* per fish: swim angle, degrees (0-360); [2] pads */
+extern s32 D_8010864C_2976BC_DeepSeaSalvage[5];  /* per fish: speed, chasing vx by 1 a frame; [2..4] pad */
 
 /* .rodata strings the .data names (291870.c) */
 extern const char D_80108678_2976E8_DeepSeaSalvage[];
