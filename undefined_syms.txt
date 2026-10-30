@@ -292,3 +292,10 @@ D_8010B1DE_1A3F6E_HandcarHavoc = D_8010B1DC_1A3F6C_HandcarHavoc + 0x2;
 D_8010A75C_14C0EC_RainbowRun = D_8010A758_14C0E8_RainbowRun + 0x4;
 D_8010A808_14C198_RainbowRun = D_8010A804_14C194_RainbowRun + 0x4;
 D_8010A87C_14C20C_RainbowRun = D_8010A878_14C208_RainbowRun + 0x4;
+/* ovl_3C .data: labels inside C arrays (S4-DB) */
+D_80108430_2974A0_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x4;
+D_80108434_2974A4_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x8;
+D_80108438_2974A8_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0xC;
+D_8010843C_2974AC_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x10;
+D_80108440_2974B0_DeepSeaSalvage = D_8010842C_29749C_DeepSeaSalvage + 0x14;
+D_801084D6_297546_DeepSeaSalvage = D_801084D4_297544_DeepSeaSalvage + 0x2;
