@@ -1133,7 +1133,58 @@ void func_80106124_131D14_HotRopeJump(s16 id) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801061B0_131DA0_HotRopeJump);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107424_133014_HotRopeJump);
+/* Draws the billboards into the billboard model's list for this frame (the frame buffer index
+   advances first): each one's matrix, facing the camera unless unk_08, and its display list
+   (MP1 func_800FA2F4). Host: the list ends with a matrix load from `view` on this stack frame
+   (MP1's port makes it static). */
+void func_80107424_133014_HotRopeJump(void) {
+    Mtx view;
+    Matrix4f m;
+    Matrix4f m2;
+    Matrix4f bb;
+    Gfx* gfx;
+    Mtx* mtx;
+    HRJFx* fx;
+    s32 i;
+
+    D_80111154_13CD44_HotRopeJump = (D_80111154_13CD44_HotRopeJump + 1) % 3;
+    func_801061B0_131DA0_HotRopeJump();
+    *(Gfx**)D_800FC834_FD434[D_801113B8_13CFA8_HotRopeJump].hmf->unk3C = D_801113AC_13CF9C_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    gfx = D_801113AC_13CF9C_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    mtx = D_8010C940_138530_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    view = D_800C9B80_CA780->mtxs[D_800FFFD6_100BD6].lookAtMtx;
+    gSPClearGeometryMode(gfx++, G_CULL_BACK | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER);
+    for (i = 0; i < D_801113A8_13CF98_HotRopeJump; i++) {
+        fx = &D_80111394_13CF84_HotRopeJump[i];
+        if (fx->dl == (Gfx*)-1) {
+            continue;
+        }
+        if (fx->flags & 0x10) {
+            continue;
+        }
+        guMtxL2F(m, &view);
+        func_80025770_26370(m, fx->pos.x, fx->pos.y, fx->pos.z);
+        func_80025830_26430(m, fx->scale.x, fx->scale.y, fx->scale.z);
+        if (fx->unk_08 == 0) {
+            bb[0][0] = fx->scale.x;
+            bb[1][1] = fx->scale.y;
+            bb[2][2] = fx->scale.z;
+            bb[3][3] = 1.0f;
+            bb[0][1] = bb[0][2] = bb[0][3] = bb[1][0] = bb[1][2] = bb[1][3] = bb[2][0] = bb[2][1] = bb[2][3] =
+                bb[3][0] = bb[3][1] = bb[3][2] = 0.0f;
+            func_800260A4_26CA4(m, m2);
+            func_80025BA4_267A4(bb, m2, m);
+        } else {
+            gSPSegment(gfx++, 1, osVirtualToPhysical(fx->unk_04->seg[D_800FDBE0_FE7E0]));
+        }
+        func_800B3040_B3C40(m, mtx);
+        gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(gfx++, fx->dl);
+    }
+    gSPMatrix(gfx++, osVirtualToPhysical(&view), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPEndDisplayList(gfx++);
+}
 
 /* Frees the billboards and their buffers (MP1 func_800FA60C). */
 void func_8010777C_13336C_HotRopeJump(void) {

@@ -92,10 +92,16 @@ typedef struct HRJMotion {
     /* 0x08 */ Matrix4f* mtx;
 } HRJMotion; /* size = 0xC */
 
+/* What HRJFx::unk_04 points to: a segment per frame buffer at 0x44 (retail's addressing). */
+typedef struct HRJFxSegs {
+    /* 0x00 */ char unk_00[0x44];
+    /* 0x44 */ void* seg[3];
+} HRJFxSegs;
+
 /* A billboard (D_80111394_13CF84_HotRopeJump[D_801113A8]; MP1 HRJFx, same layout). */
 typedef struct HRJFx {
     /* 0x00 */ Gfx* dl;       /* (Gfx*)-1 = free, NULL = nothing this frame */
-    /* 0x04 */ void** unk_04; /* used when unk_08 != 0 ([2 + frame] is a segment); nothing sets it */
+    /* 0x04 */ HRJFxSegs* unk_04; /* used when unk_08 != 0; nothing sets it */
     /* 0x08 */ s8 unk_08;
     /* 0x09 */ char unk_09;
     /* 0x0A */ u16 sprite;    /* sprite bank index */
@@ -123,6 +129,10 @@ void func_80025884_26484(Matrix4f, f32, f32, f32); /* MP1 MtxRotate */
 void func_80025830_26430(Matrix4f, f32, f32, f32); /* MP1 MtxScale */
 void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* MP1 MtxMult */
 s32 func_80027FA4_28BA4(u32, void*, u8); /* main defines it s16; retail keeps the word here */
+void func_800260A4_26CA4(Matrix4f, Matrix4f); /* MP1 MtxReset */
+void func_800B3040_B3C40(Matrix4f, Mtx*);      /* guMtxF2L */
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+extern u8 D_800FDBE0_FE7E0;   /* the frame buffer being drawn */
 
 /* ---- overlay functions ---- */
 
