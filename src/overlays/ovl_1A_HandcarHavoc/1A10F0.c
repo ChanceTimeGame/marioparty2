@@ -1,5 +1,22 @@
 #include "ovl_1A.h"
 
+/* .data (0x1A3F10-0x1A3F80, 8010B180-8010B1F0): this file's tables and the flags and sign
+   tables 1A2950.c reads (one object owns one 16-aligned range). The labels 8010B188, 8010B18C
+   (inside D_8010B184) and 8010B1DE (inside D_8010B1DC) are undefined_syms.txt aliases. */
+
+u16 D_8010B180_1A3F10_HandcarHavoc = 0;
+Vec D_8010B184_1A3F14_HandcarHavoc[4] = {
+    { -110.0f, 10.0f, -160.0f },
+    { -90.0f, 10.0f, 30.0f },
+    { 110.0f, 10.0f, -160.0f },
+    { 90.0f, 10.0f, 30.0f },
+};
+/* 80109484 reads 8 lengths; retail has 4 and 4 zeros (kept) */
+f32 D_8010B1B4_1A3F44_HandcarHavoc[8] = { 260.0f, 200.0f, 120.0f, 200.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+u16 D_8010B1D4_1A3F64_HandcarHavoc = 0;
+s16 D_8010B1D8_1A3F68_HandcarHavoc[2] = { 24, 184 };
+u16 D_8010B1DC_1A3F6C_HandcarHavoc[3][2] = { { 80, 48 }, { 80, 110 }, { 80, 110 } };
+
 void func_80108360_1A10F0_HandcarHavoc(omObjData* obj) {
     s32 i = 0;
 

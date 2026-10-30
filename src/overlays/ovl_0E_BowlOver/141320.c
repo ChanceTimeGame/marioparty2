@@ -1,5 +1,28 @@
 #include "ovl_0E.h"
 
+/* .data (0x143DD0-0x143E50, 80109A40-80109AC0) */
+
+u8 D_80109A40_143DD0_BowlOver = 0;
+s8 D_80109A41_143DD1_BowlOver = 2;
+s8 D_80109A42_143DD2_BowlOver = 2;
+s8 D_80109A43_143DD3_BowlOver = 0;
+s8 D_80109A44_143DD4_BowlOver[12] = { 0 };
+s16 D_80109A50_143DE0_BowlOver = 0;
+/* unreferenced */
+s16 D_80109A52_143DE2_BowlOver = 0;
+Vec3f D_80109A54_143DE4_BowlOver[6] = {
+    { 0.0f, 0.0f, -4750.0f },
+    { -100.0f, 0.0f, -4950.0f },
+    { 100.0f, 0.0f, -4950.0f },
+    { -200.0f, 0.0f, -5150.0f },
+    { 0.0f, 0.0f, -5150.0f },
+    { 200.0f, 0.0f, -5150.0f },
+};
+/* unreferenced */
+f32 D_80109A9C_143E2C_BowlOver[2] = { -300.0f, 0.0f };
+f32 D_80109AA4_143E34_BowlOver[6] = { -5200.0f, 300.0f, 0.0f, -5200.0f, 0.0f, 0.0f };
+f32 D_80109ABC_143E4C_BowlOver = -4700.0f;
+
 /* Fades out the shell icon of each shell thrown. */
 void func_80106F90_141320_BowlOver(omObjData* obj) {
     s8 i;

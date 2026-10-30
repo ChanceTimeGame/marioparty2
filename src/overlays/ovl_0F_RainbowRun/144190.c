@@ -1,6 +1,48 @@
 #include "common.h"
 #include "ovl_0F.h"
 
+/* .data (0x14C080-0x14C0E0, 8010A6F0-8010A750) */
+
+s16 D_8010A6F0_14C080_RainbowRun = 0;
+s8 D_8010A6F2_14C082_RainbowRun = 0;
+s8 D_8010A6F3_14C083_RainbowRun = 0;
+s8 D_8010A6F4_14C084_RainbowRun = 0;
+s8 D_8010A6F5_14C085_RainbowRun = 1;
+s8 D_8010A6F6_14C086_RainbowRun = 0;
+s8 D_8010A6F7_14C087_RainbowRun = 0;
+s8 D_8010A6F8_14C088_RainbowRun = 0;
+f32 D_8010A6FC_14C08C_RainbowRun = 0.0f;
+s8 D_8010A700_14C090_RainbowRun = 0;
+s8 D_8010A701_14C091_RainbowRun = 0;
+s8 D_8010A702_14C092_RainbowRun = 0;
+s8 D_8010A703_14C093_RainbowRun = 0;
+s32 D_8010A704_14C094_RainbowRun[2] = { 0, 0 };
+s8 D_8010A70C_14C09C_RainbowRun = 0;
+s8 D_8010A70D_14C09D_RainbowRun = 0;
+s8 D_8010A70E_14C09E_RainbowRun = 0;
+s8 D_8010A70F_14C09F_RainbowRun = 0;
+s8 D_8010A710_14C0A0_RainbowRun = 0;
+s8 D_8010A711_14C0A1_RainbowRun = 0;
+s8 D_8010A712_14C0A2_RainbowRun = 0;
+s8 D_8010A713_14C0A3_RainbowRun = 0;
+s8 D_8010A714_14C0A4_RainbowRun = 0;
+s8 D_8010A715_14C0A5_RainbowRun = 0;
+f32 D_8010A718_14C0A8_RainbowRun = 950.0f;
+s32 D_8010A71C_14C0AC_RainbowRun = 0;
+f32 D_8010A720_14C0B0_RainbowRun = 5.0f;
+s16 D_8010A724_14C0B4_RainbowRun = 0;
+u32 D_8010A728_14C0B8_RainbowRun = 0;
+s8 D_8010A72C_14C0BC_RainbowRun = 0;
+s8 D_8010A72D_14C0BD_RainbowRun = 0;
+s32 D_8010A730_14C0C0_RainbowRun = 1829;
+s32 D_8010A734_14C0C4_RainbowRun = 0;
+s8 D_8010A738_14C0C8_RainbowRun = 0;
+s32 D_8010A73C_14C0CC_RainbowRun = 0;
+s32 D_8010A740_14C0D0_RainbowRun = 0;
+s16 D_8010A744_14C0D4_RainbowRun = 0;
+s8 D_8010A746_14C0D6_RainbowRun = 0;
+s8 D_8010A747_14C0D7_RainbowRun = 0;
+
 __asm__(".section .rodata");
 const char D_8010A8C0_14C250_RainbowRun[16] = "\202r\202s\202`\202q\202s";
 
