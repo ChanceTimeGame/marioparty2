@@ -297,13 +297,264 @@ void func_8010349C_1391CC_HotBobOmb(omObjData* obj) {
     obj->func_ptr = func_801037D0_139500_HotBobOmb;
 }
 
-__asm__(".section .rodata");
-const u32 D_80106C90_13C9C0_HotBobOmb[3] = { 0x00000010, 0x0000000E, 0x0000000C };
+/* A player object's frame: the player state machine (D_80106F28_13CC58_HotBobOmb[player]):
+   0 idle, 1 blown up, 2 back to idle, 3 bomb incoming (B dodges), 4 dodging, 5 catch, 6 throw,
+   7 dodge recovered (the bomb drops at the seat), 8 dodged, 9 holding. */
+void func_801037D0_139500_HotBobOmb(omObjData* obj) {
+    s32 dur[3] = { 16, 14, 12 };
+    HBSeat* seat;
+    s32 player;
+    s32 i;
+    f32 frame;
+    f32 end;
+    s32 n;
 
-__asm__(".section .rodata");
-const char D_80106C9C_13C9CC_HotBobOmb[] = "item_hook";
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801037D0_139500_HotBobOmb);
+    seat = obj->unk_50;
+    player = seat->player;
+    D_80106F7C_13CCAC_HotBobOmb = D_80106BE0_13C910_HotBobOmb[player][D_80107028_13CD58_HotBobOmb];
+    if (D_8010700C_13CD3C_HotBobOmb == 1) {
+        func_80104790_13A4C0_HotBobOmb(player);
+    }
+    switch (D_80106F28_13CC58_HotBobOmb[player]) {
+    case 0:
+        if (D_80106FE8_13CD18_HotBobOmb[player] != 0 && player != D_80107028_13CD58_HotBobOmb) {
+            D_80106FE8_13CD18_HotBobOmb[player] = 0;
+            func_80029E80_2AA80(obj->model[0], 6, 2);
+            if (D_80106F7C_13CCAC_HotBobOmb == 1) {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[7]), 0,
+                                    (s16)D_80106FD4_13CD04_HotBobOmb + 8, 2);
+            } else if (D_80106F7C_13CCAC_HotBobOmb == 0) {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[6]), 0,
+                                    (s16)D_80106FD4_13CD04_HotBobOmb + 8, 2);
+            } else {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[4]), 0,
+                                    (s16)D_80106FD4_13CD04_HotBobOmb + 8, 2);
+            }
+        }
+        break;
+    case 2:
+        if (D_80106FE8_13CD18_HotBobOmb[player] == 0) {
+            D_80106EC0_13CBF0_HotBobOmb[player] = 0;
+            D_80106FE8_13CD18_HotBobOmb[player] = 1;
+            D_80106F28_13CC58_HotBobOmb[player] = 0;
+        }
+        break;
+    case 3:
+        if (D_80106FE8_13CD18_HotBobOmb[player] != 0) {
+            D_80106FE8_13CD18_HotBobOmb[player] = 0;
+            func_80029E80_2AA80(obj->model[0], 2, 0);
+            if (D_80106FB8_13CCE8_HotBobOmb == 0) {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[12]), 0, 8, 0);
+            } else if (D_80106FB8_13CCE8_HotBobOmb == 1) {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[13]), 0, 8, 0);
+            } else {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[11]), 0, 8, 0);
+            }
+            D_80106EA4_13CBD4_HotBobOmb = 2;
+        }
+        if (D_80106FD0_13CD00_HotBobOmb == 0 && D_80106F94_13CCC4_HotBobOmb == 0) {
+            if (D_80106EE8_13CC18_HotBobOmb == 0 || D_80106EE8_13CC18_HotBobOmb == 9) {
+                for (i = 0; i < 4; i++) {
+                    if (D_80106F28_13CC58_HotBobOmb[i] == 0) {
+                        D_80106EF0_13CC20_HotBobOmb[i] = 1;
+                    }
+                }
+                D_80106FE8_13CD18_HotBobOmb[player] = 1;
+                D_80106F28_13CC58_HotBobOmb[player] = 5;
+            } else if (D_80106EA4_13CBD4_HotBobOmb == 0) {
+                if (D_80106FB8_13CCE8_HotBobOmb == 0) {
+                    func_80029B80_2A780(obj->model[0], obj->motion[18]);
+                } else if (D_80106FB8_13CCE8_HotBobOmb == 1) {
+                    func_80029B80_2A780(obj->model[0], obj->motion[19]);
+                } else {
+                    func_80029B80_2A780(obj->model[0], obj->motion[17]);
+                }
+                func_80029E80_2AA80(obj->model[0], 4, 0);
+                func_80029E80_2AA80(obj->model[0], 2, 0);
+                D_80106FF8_13CD28_HotBobOmb = player;
+                D_80106FA8_13CCD8_HotBobOmb[player] = 0x2D;
+                D_80106F28_13CC58_HotBobOmb[player] = 7;
+                D_80106FD0_13CD00_HotBobOmb = 4;
+                D_80106EE8_13CC18_HotBobOmb = 3;
+                func_80015710_16310((s16)PlaySound(0x17B), D_80106C34_13C964_HotBobOmb[player]);
+            }
+            if (D_80106EA4_13CBD4_HotBobOmb != 0) {
+                D_80106EA4_13CBD4_HotBobOmb--;
+            }
+        }
+        break;
+    case 4:
+        if (D_80106FD0_13CD00_HotBobOmb < 8) {
+            if (D_80106FD0_13CD00_HotBobOmb > 0) {
+                D_80106F28_13CC58_HotBobOmb[player] = 8;
+            } else if (D_80106F94_13CCC4_HotBobOmb != 0) {
+                D_80106FE8_13CD18_HotBobOmb[player] = 1;
+                D_80106F28_13CC58_HotBobOmb[player] = 5;
+            }
+        } else {
+            D_80106FE8_13CD18_HotBobOmb[player] = 0;
+            D_80106EA4_13CBD4_HotBobOmb = 0;
+            D_80106F28_13CC58_HotBobOmb[player] = 3;
+        }
+        break;
+    case 5:
+        D_80106EF0_13CC20_HotBobOmb[player] = 1;
+        D_80106FF8_13CD28_HotBobOmb = player;
+        if (D_80106FE8_13CD18_HotBobOmb[player] != 0) {
+            D_80106FE8_13CD18_HotBobOmb[player] = 0;
+            func_80029E80_2AA80(obj->model[0], 4, 4);
+            func_80029E80_2AA80(obj->model[0], 2, 0);
+            if (D_80106FB8_13CCE8_HotBobOmb == 0) {
+                func_80029B80_2A780(obj->model[0], obj->motion[15]);
+            } else if (D_80106FB8_13CCE8_HotBobOmb == 1) {
+                func_80029B80_2A780(obj->model[0], obj->motion[16]);
+            } else {
+                func_80029B80_2A780(obj->model[0], obj->motion[14]);
+            }
+            func_80015710_16310((s16)PlaySound(0x17A), D_80106C34_13C964_HotBobOmb[player]);
+        }
+        frame = func_80029CE4_2A8E4(obj->model[0]);
+        func_80029D0C_2A90C(obj->model[0]);
+        if (frame == 6.0f) {
+            for (i = 0; i < 5; i++) {
+                func_8002C628_2D228(D_80106EA6_13CBD6_HotBobOmb[i], obj->model[0], "item_hook");
+                func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0x4000);
+            }
+        }
+        if (frame == 14.0f) {
+            func_80029E80_2AA80(obj->model[0], 8, 8);
+            if (D_80106EE8_13CC18_HotBobOmb != 0 && D_80106EE8_13CC18_HotBobOmb != 9) {
+                D_80106FA8_13CCD8_HotBobOmb[player] = 0x1E;
+            }
+            D_80106EE8_13CC18_HotBobOmb = 1;
+            D_80106F28_13CC58_HotBobOmb[player] = 9;
+        }
+        break;
+    case 7:
+        D_80106EF0_13CC20_HotBobOmb[player] = 0;
+        D_80106FE8_13CD18_HotBobOmb[player] = 0;
+        frame = func_80029CE4_2A8E4(obj->model[0]);
+        end = func_80029D0C_2A90C(obj->model[0]);
+        if (frame == 0.0f) {
+            for (i = 0; i < 5; i++) {
+                func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0);
+            }
+        }
+        if (frame == 48.0f) {
+            for (i = 0; i < 5; i++) {
+                func_8002C628_2D228(D_80106EA6_13CBD6_HotBobOmb[i], obj->model[0], "item_hook");
+                func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0x4000);
+            }
+        }
+        if (frame == end) {
+            for (i = 0; i < 5; i++) {
+                func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0);
+            }
+            D_80106ED4_13CC04_HotBobOmb->trans.x = D_80106B20_13C850_HotBobOmb[D_80106FF8_13CD28_HotBobOmb].bomb.x;
+            D_80106ED4_13CC04_HotBobOmb->trans.y = D_80106B20_13C850_HotBobOmb[D_80106FF8_13CD28_HotBobOmb].bomb.y;
+            D_80106EE8_13CC18_HotBobOmb = 1;
+            D_80106EF0_13CC20_HotBobOmb[player] = 1;
+            D_80106F28_13CC58_HotBobOmb[player] = 9;
+        }
+        break;
+    case 6:
+        if (D_80106FF8_13CD28_HotBobOmb + D_80107028_13CD58_HotBobOmb == 3) {
+            D_80106F78_13CCA8_HotBobOmb = 1;
+        } else {
+            D_80106F78_13CCA8_HotBobOmb = 0;
+        }
+        if (player == D_80106FF8_13CD28_HotBobOmb) {
+            if (D_80106FE8_13CD18_HotBobOmb[player] != 0) {
+                D_80106FE8_13CD18_HotBobOmb[player] = 0;
+                func_80029E80_2AA80(obj->model[0], 8, 0);
+                if (D_80106FB8_13CCE8_HotBobOmb == 0) {
+                    func_80029B80_2A780(obj->model[0], obj->motion[16]);
+                } else if (D_80106FB8_13CCE8_HotBobOmb == 1) {
+                    func_80029B80_2A780(obj->model[0], obj->motion[15]);
+                } else {
+                    func_80029B80_2A780(obj->model[0], obj->motion[14]);
+                }
+                func_80029E80_2AA80(obj->model[0], 6, 0);
+                func_8002C6F4_2D2F4(&D_800FC834_FD434[obj->model[0]], 2);
+                if (D_80106FA8_13CCD8_HotBobOmb[player] == 0) {
+                    func_8002C6F4_2D2F4(&D_800FC834_FD434[obj->model[0]], 0xE);
+                }
+                for (i = 0; i < 5; i++) {
+                    func_8002C628_2D228(D_80106EA6_13CBD6_HotBobOmb[i], obj->model[0], "item_hook");
+                    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0x4000);
+                }
+                for (i = 0; i < 4; i++) {
+                    if (D_80106F28_13CC58_HotBobOmb[i] == 0) {
+                        D_80106FE8_13CD18_HotBobOmb[i] = 1;
+                    }
+                }
+                func_80015710_16310((s16)PlaySound(0x179), D_80106C34_13C964_HotBobOmb[player]);
+            }
+            if (func_80029CE4_2A8E4(obj->model[0]) == func_80029D0C_2A90C(obj->model[0])) {
+                for (i = 0; i < 5; i++) {
+                    func_800298A4_2A4A4(D_80106EA6_13CBD6_HotBobOmb[i], 0x4000, 0);
+                }
+                D_80106FA8_13CCD8_HotBobOmb[player] = 0xF;
+                D_80106F28_13CC58_HotBobOmb[player] = 2;
+                D_80106FE8_13CD18_HotBobOmb[D_80107028_13CD58_HotBobOmb] = 1;
+                D_80106FA8_13CCD8_HotBobOmb[D_80107028_13CD58_HotBobOmb] = 0;
+                D_80106F28_13CC58_HotBobOmb[D_80107028_13CD58_HotBobOmb] = 3;
+                D_80106EE8_13CC18_HotBobOmb = 2;
+                n = dur[D_80106E80_13CBB0_HotBobOmb] -
+                    (dur[D_80106E80_13CBB0_HotBobOmb] - D_80106E88_13CBB8_HotBobOmb) * 0.2;
+                D_80106FD4_13CD04_HotBobOmb = n;
+                D_80106EB0_13CBE0_HotBobOmb = (f32)D_80106FD4_13CD04_HotBobOmb - (f32)D_80106FD0_13CD00_HotBobOmb;
+                D_80106FD0_13CD00_HotBobOmb = n;
+                D_80106F94_13CCC4_HotBobOmb = 0;
+            }
+        }
+        break;
+    case 8:
+        D_80106EF0_13CC20_HotBobOmb[player] = 0;
+        if (D_80106FD0_13CD00_HotBobOmb == 0) {
+            D_80106FE8_13CD18_HotBobOmb[player] = 1;
+            D_80106EF0_13CC20_HotBobOmb[player] = 1;
+            D_80106F28_13CC58_HotBobOmb[player] = 5;
+        }
+        break;
+    case 9:
+        D_80106FF8_13CD28_HotBobOmb = player;
+        if (D_80106FA8_13CCD8_HotBobOmb[player] == 0) {
+            D_80106ED4_13CC04_HotBobOmb->trans.x = D_80106B20_13C850_HotBobOmb[player].bomb.x;
+            func_80029E80_2AA80(obj->model[0], 8, 0);
+        }
+        break;
+    case 1:
+        D_80106EF0_13CC20_HotBobOmb[player] = 0;
+        if (D_80106FE8_13CD18_HotBobOmb[player] != 0) {
+            func_80029E80_2AA80(obj->model[0], 8, 0);
+            for (i = 0; i < 5; i++) {
+                func_800298A4_2A4A4(D_80106ED4_13CC04_HotBobOmb->model[i], 0x4000, 0);
+            }
+            D_80106FE8_13CD18_HotBobOmb[player] = 0;
+            D_80107028_13CD58_HotBobOmb = func_80104674_13A3A4_HotBobOmb(player, 0);
+            func_80029B80_2A780(obj->model[0], obj->motion[0]);
+            func_80029E80_2AA80(obj->model[0], 2, 2);
+        }
+        break;
+    case 10:
+        break;
+    }
+    if (seat->t > 1.0f) {
+        seat->t = 0.0f;
+    } else {
+        seat->t += 0.033333335f;
+    }
+    if (D_80106FA8_13CCD8_HotBobOmb[player] != 0) {
+        D_80106FA8_13CCD8_HotBobOmb[player]--;
+    }
+    if (D_80107018_13CD48_HotBobOmb[player] != 0) {
+        D_80107018_13CD48_HotBobOmb[player]--;
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, 1.0f, obj->trans.z);
+    func_8002979C_2A39C(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+}
 
 /* The stick's direction as a 3x3 grid index (4 = centre); from MP1 func_800F99F4 (dead zone 8).
    NON_MATCHING: retail reuses x/y's registers for dx/dy and fills the branch delay slots

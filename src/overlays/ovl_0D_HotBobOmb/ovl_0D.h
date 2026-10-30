@@ -136,7 +136,7 @@ extern s32 D_80106E90_13CBC0_HotBobOmb[4];      /* [0..2] each round's fuse; [3]
                                                    sprite's bob period (splat label D_80106E9C) */
 extern u16 D_80106EA0_13CBD0_HotBobOmb;
 extern u16 D_80106EA2_13CBD2_HotBobOmb;         /* frames to the next fuse second */
-extern s16 D_80106EA4_13CBD4_HotBobOmb;
+extern u16 D_80106EA4_13CBD4_HotBobOmb;
 extern s16 D_80106EA6_13CBD6_HotBobOmb[5];      /* bomb models (= the bomb object's model[0..4]) */
 extern f32 D_80106EB0_13CBE0_HotBobOmb;
 extern s16 D_80106EB4_13CBE4_HotBobOmb[3];      /* explosion models */
