@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "game/object.h"
+#include "game/sprite.h" /* S4-1FB: HuSprite_Unk84_Struct in the prototypes */
 
 /* ---------------------------------------------------------------------------------------------
    Structs
@@ -155,9 +156,9 @@ void func_80108C8C_1C480C_DungeonDash(void);
 void func_80108F9C_1C4B1C_DungeonDash(void);
 void func_80109884_1C5404_DungeonDash(s32 arg0, f32 arg1);
 s16 func_80109958_1C54D8_DungeonDash(void* arg0, void* arg1, s32 arg2);
-void func_8010A340_1C5EC0_DungeonDash(s16 arg0, s32* arg1, s16 arg2);
-s32 func_8010A430_1C5FB0_DungeonDash(s32 arg0, s32 arg1);
-s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
+void func_8010A340_1C5EC0_DungeonDash(s16 model, HuSprite_Unk84_Struct* anim, s16 frame);
+s32 func_8010A430_1C5FB0_DungeonDash(s32 model, s32 src);
+s32 func_8010A4DC_1C605C_DungeonDash(s32 model, s32 src, HuSprite_Unk84_Struct* anim, s32 frame);
 
 /* S4-1FB */
 #include "game/data.h"
@@ -212,6 +213,9 @@ extern s16 D_8010A93C_1C64BC_DungeonDash[]; /* .data */
 extern s16 D_8010A7FC_1C637C_DungeonDash[]; /* .data */
 extern s16 D_8010A9DC_1C655C_DungeonDash[]; /* .data */
 f32 func_800B7890_B8490(f32); /* cos */
+extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c */
+void HuMemFree(void*);
 extern s16 D_800FA1AA_FADAA; /* main's heap tag */
 extern f32 D_8010A7F4_1C6374_DungeonDash[2]; /* .data: obstacle x by parity {-280, 280} */
 extern u8 D_80102720_103320; /* board.h */

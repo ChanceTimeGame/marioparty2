@@ -606,8 +606,66 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80109884
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80109958_1C54D8_DungeonDash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_8010A340_1C5EC0_DungeonDash);
+/* Points a sprite model's display list at frame `frame` of `anim`. */
+void func_8010A340_1C5EC0_DungeonDash(s16 model, HuSprite_Unk84_Struct* anim, s16 frame) {
+    HmfModel* m = &D_800FC834_FD434[model];
+    HmfData* hmf = m->hmf;
+    Gfx* gfx = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_8010A430_1C5FB0_DungeonDash);
+    hmf->unk3C->unk00[0] = gfx;
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 0x04, osVirtualToPhysical(anim->unk00[frame].unk00));
+    gSPSegment(&gfx[2], 0x01, osVirtualToPhysical(hmf->unk44[0]));
+    gSPDisplayList(&gfx[3], osVirtualToPhysical(hmf->unk3C->unk10));
+    gDPPipeSync(&gfx[4]);
+    gSPEndDisplayList(&gfx[5]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_8010A4DC_1C605C_DungeonDash);
+/* A copy of sprite model src (a new one when model is -1) sharing its current frame. */
+s32 func_8010A430_1C5FB0_DungeonDash(s32 model, s32 src) {
+    HmfModel* m;
+    HmfData* dst;
+    HmfData* from;
+
+    if (model == -1) {
+        m = &D_800FC834_FD434[src];
+        model = func_80027FA4_28BA4(m->unk18, NULL, 4);
+    }
+    dst = D_800FC834_FD434[model].hmf;
+    from = D_800FC834_FD434[src].hmf;
+    dst->unk64->unk50 = from->unk64->unk50;
+    dst->unk3C->unk00[0] = from->unk3C->unk00[0];
+    return model;
+}
+
+/* A copy of sprite model src (a new one with its own display-list buffers when model is -1) showing
+   frame `frame` of `anim`. */
+s32 func_8010A4DC_1C605C_DungeonDash(s32 model, s32 src, HuSprite_Unk84_Struct* anim, s32 frame) {
+    HmfModel* m;
+    HmfData* dst;
+    HmfData* from;
+    Gfx* gfx;
+    s32 i;
+
+    if (model == -1) {
+        m = &D_800FC834_FD434[src];
+        model = func_80027FA4_28BA4(m->unk18, NULL, 4);
+        dst = D_800FC834_FD434[model].hmf;
+        HuMemFree(dst->unk3C);
+        dst->unk3C = func_80027154_27D54(0x10, D_800FA1AA_FADAA);
+        for (i = 0; i < 3; i++) {
+            dst->unk3C->unk00[i + 1] = func_80027154_27D54(0x100, dst->unk0E);
+        }
+    }
+    dst = D_800FC834_FD434[model].hmf;
+    from = D_800FC834_FD434[src].hmf;
+    dst->unk64->unk50 = from->unk64->unk50;
+    dst->unk3C->unk00[0] = gfx = dst->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
+    gDPPipeSync(gfx++);
+    gSPSegment(gfx++, 0x04, osVirtualToPhysical(anim->unk00[frame].unk00));
+    gSPSegment(gfx++, 0x01, osVirtualToPhysical(from->unk44[0]));
+    gSPDisplayList(gfx++, osVirtualToPhysical(from->unk3C->unk10));
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    return model;
+}
