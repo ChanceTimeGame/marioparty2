@@ -207,6 +207,8 @@ void func_80025884_26484(HHMtx m, f32 x, f32 y, f32 z); /* rotate (MP1 MtxRotate
 s16 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list */
 extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+f64 func_800B0750_B1350(f64 x); /* acos */
+f64 func_800B0D98_B1998(f64 x, f64 y); /* fmod */
 extern Vec3f D_80102774_103374[]; /* = &CRotM[0].y: retail addresses the split labels */
 extern Vec3f D_801013B4_101FB4[]; /* = &CenterM[0].y */
 extern Vec3f D_801013B8_101FB8[]; /* = &CenterM[0].z */
