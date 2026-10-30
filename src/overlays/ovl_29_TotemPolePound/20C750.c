@@ -171,8 +171,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_80106
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_801068B0_210800_TotemPolePound);
 
+__asm__(".section .rodata");
+const char D_80107244_211194_TotemPolePound[12] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_801069A0_2108F0_TotemPolePound);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_80106BC0_210B10_TotemPolePound);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_80106C44_210B94_TotemPolePound);
