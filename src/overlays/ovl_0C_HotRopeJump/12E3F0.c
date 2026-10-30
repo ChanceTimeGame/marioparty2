@@ -1131,7 +1131,151 @@ void func_80106124_131D14_HotRopeJump(s16 id) {
     fx->speed = 1.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801061B0_131DA0_HotRopeJump);
+/* gDPSetTile's mask for a texture dimension. */
+#define HRJ_TEX_MASK(x) \
+    ((x) < 3 ? 1 : (x) < 5 ? 2 : (x) < 9 ? 3 : (x) < 17 ? 4 : (x) < 33 ? 5 : (x) < 65 ? 6 : (x) < 129 ? 7 : (x) < 257 ? 8 : 9)
+
+/* Builds this frame's display list and quad of every visible billboard, then advances its
+   animation, two steps a frame (MP1 func_800F9080). */
+void func_801061B0_131DA0_HotRopeJump(void) {
+    Vtx* v;
+    Gfx* gfx;
+    HRJFx* fx;
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    u16 w;
+    u16 h;
+    s16 x;
+    s16 y;
+    s16 nh;
+    s32 len;
+    s32 count;
+    s32 hold;
+    s16 k;
+    u16 i;
+
+    v = D_801113C8_13CFB8_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    gfx = D_801113BC_13CFAC_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    for (i = 0; (s16)i < D_801113A8_13CF98_HotRopeJump; i++) {
+        fx = &D_80111394_13CF84_HotRopeJump[(s16)i];
+        if (fx->dl == (Gfx*)-1 || fx->unk_08 != 0) {
+            continue;
+        }
+        if (fx->flags & 0x10) {
+            fx->dl = NULL;
+            continue;
+        }
+        fx->dl = gfx;
+        gDPPipeSync(gfx++);
+        anim = D_800F60B0_F6CB0[fx->sprite];
+        if (anim->unk18 & 0x8000) {
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetRenderMode(gfx++, 0x5049D8, 0);
+            gDPSetBlendColor(gfx++, 0, 0, 0, 1);
+            gDPSetPrimColor(gfx++, 0, 0, fx->r, fx->g, fx->b, fx->a);
+        } else if (fx->a == 0xFF) {
+            gDPSetRenderMode(gfx++, 0x553078, 0);
+            gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
+        } else {
+            gDPSetBlendColor(gfx++, 0, 0, 0, 0);
+            gDPSetPrimColor(gfx++, 0, 0, fx->r, fx->g, fx->b, fx->a);
+            gDPSetRenderMode(gfx++, 0x5049D8, 0);
+            gDPSetCombine(gfx++, 0x143228, 0xFF65FEFF);
+        }
+        gDPSetTextureFilter(gfx++, D_8010C258_137E48_HotRopeJump[(fx->flags & 0x18) >> 3]);
+        frame = &anim->unk00[fx->frame];
+        w = frame->unk04;
+        h = frame->unk06;
+        if (anim->unk18 & 0x8000) {
+            gDPSetTextureLUT(gfx++, G_TT_NONE);
+            gDPLoadTextureBlock_4b(gfx++, frame->unk00, G_IM_FMT_I, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                                   HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+        } else {
+            gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+            if (anim->unk18 < 0x11) {
+                gDPLoadTLUT_pal16(gfx++, 0, anim->unk0C);
+                gDPLoadTextureBlock_4b(gfx++, frame->unk00, G_IM_FMT_CI, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                                       HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+            } else {
+                gDPLoadTLUT_pal256(gfx++, anim->unk0C);
+                gDPLoadTextureBlock(gfx++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, (s16)w, (s16)h, 0, G_TX_CLAMP,
+                                    G_TX_CLAMP, HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+            }
+        }
+        gSPVertex(gfx++, osVirtualToPhysical(v), 4, 0);
+        gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+        nh = -h;
+        x = -frame->unk08;
+        y = frame->unk0A;
+        v->v.ob[0] = x;
+        v->v.ob[1] = y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = 0;
+        v->v.tc[1] = 0;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = x;
+        v->v.ob[1] = nh + y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = 0;
+        v->v.tc[1] = (-nh - 1) << 5;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = (s16)w + x;
+        v->v.ob[1] = nh + y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = ((s16)w - 1) << 5;
+        v->v.tc[1] = (-nh - 1) << 5;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = (s16)w + x;
+        v->v.ob[1] = y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = ((s16)w - 1) << 5;
+        v->v.tc[1] = 0;
+        v->n.a = 0xFF;
+        v++;
+        gDPSetTextureFilter(gfx++, D_8010C258_137E48_HotRopeJump[(u8)D_800FD2A4_FDEA4]);
+        gSPEndDisplayList(gfx++);
+        if (fx->flags & 1) {
+            continue;
+        }
+        if (anim->unk04 != NULL) {
+            len = (s16)anim->unk04[0]->unk04[fx->frame].unk02;
+            count = anim->unk04[0]->unk00;
+        } else {
+            len = 8;
+            count = anim->unk10;
+        }
+        for (k = 0; k < 2; k++) {
+            fx->timer += fx->speed;
+            if (len < fx->timer) {
+                fx->frame++;
+                fx->timer -= len;
+                if (fx->frame + 1 >= count) {
+                    if (fx->flags & 4) {
+                        func_801060BC_131CAC_HotRopeJump(i, 0x10);
+                        break;
+                    }
+                    if (fx->flags & 0x20) {
+                        func_80106124_131D14_HotRopeJump(i);
+                        break;
+                    }
+                    hold = len != -1; /* hold the last frame unless the step length is -1 */
+                    if (((fx->flags >> 1) & 1) | hold) {
+                        fx->frame--;
+                        break;
+                    }
+                    fx->frame = 0;
+                }
+            }
+        }
+    }
+}
 
 /* Draws the billboards into the billboard model's list for this frame (the frame buffer index
    advances first): each one's matrix, facing the camera unless unk_08, and its display list
