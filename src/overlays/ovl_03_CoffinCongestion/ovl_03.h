@@ -11,6 +11,7 @@
 #include "game/object.h"
 #include "game/pad.h"
 #include "game/collision.h"
+#include "game/data.h"
 
 /* ---------------------------------------------------------------------------------------------
    Main API not declared in include/
