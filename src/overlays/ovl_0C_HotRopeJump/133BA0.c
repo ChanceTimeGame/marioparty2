@@ -819,7 +819,7 @@ s32 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* te
     HuMemFree(m->unk3C);
     m->unk3C = func_80027154_27D54(8 * sizeof(Gfx*), D_800FA1AA_FADAA);
     for (i = 0; i < D_800FDBCA_FE7CA; i++) {
-        dst = m->unk44[i] = func_80027154_27D54(10 * sizeof(Vtx), m->unk0E);
+        dst = (Vtx_t*)(m->unk44[i] = func_80027154_27D54(10 * sizeof(Vtx), m->unk0E));
         src = vtx;
         for (j = 0; j < 10; j++) {
             *dst++ = *src++;
