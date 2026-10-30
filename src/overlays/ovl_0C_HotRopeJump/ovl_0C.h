@@ -80,6 +80,50 @@ typedef struct HRJSeg {
     /* 0x38 */ char unk_38[0xD8];
 } HRJSeg; /* size = 0x110 */
 
+/* S4-0CB */
+
+#include "game/malloc.h"
+
+/* A motion baked into matrices (func_80105570; main's unk1EA70StructC, MP1 func_800202E8's). */
+typedef struct HRJMotion {
+    /* 0x00 */ s16 frames;
+    /* 0x02 */ s16 step;   /* frames between baked sets */
+    /* 0x04 */ s16* parts; /* motion object -> matrix index */
+    /* 0x08 */ Matrix4f* mtx;
+} HRJMotion; /* size = 0xC */
+
+/* A billboard (D_80111394_13CF84_HotRopeJump[D_801113A8]; MP1 HRJFx, same layout). */
+typedef struct HRJFx {
+    /* 0x00 */ Gfx* dl;       /* (Gfx*)-1 = free, NULL = nothing this frame */
+    /* 0x04 */ void** unk_04; /* used when unk_08 != 0 ([2 + frame] is a segment); nothing sets it */
+    /* 0x08 */ s8 unk_08;
+    /* 0x09 */ char unk_09;
+    /* 0x0A */ u16 sprite;    /* sprite bank index */
+    /* 0x0C */ s16 frame;
+    /* 0x0E */ s16 unk_0E;
+    /* 0x10 */ u8 flags;      /* 1 no animation, 2 hold, 4 hide at end, 0x10 hidden, 0x18 filter,
+                                 0x20 free at end */
+    /* 0x11 */ u8 a;
+    /* 0x12 */ u8 r;
+    /* 0x13 */ u8 g;
+    /* 0x14 */ u8 b;
+    /* 0x15 */ char unk_15[3];
+    /* 0x18 */ f32 timer;
+    /* 0x1C */ f32 speed;
+    /* 0x20 */ Vec pos;
+    /* 0x2C */ Vec scale;
+} HRJFx; /* size = 0x38 (N64; the pointers make it larger on the host) */
+
+extern s16 D_800FD470_FE070;          /* main: matrix stack depth */
+extern Matrix4f D_801016D0_1022D0[]; /* main: matrix stack */
+void func_80039B54_3A754(HmfData*, f32, HmfMotionSlot*, s32);
+void func_800B37C0_B43C0(Matrix4f);
+void func_80025770_26370(Matrix4f, f32, f32, f32); /* MP1 MtxTranslate */
+void func_80025884_26484(Matrix4f, f32, f32, f32); /* MP1 MtxRotate */
+void func_80025830_26430(Matrix4f, f32, f32, f32); /* MP1 MtxScale */
+void func_80025BA4_267A4(Matrix4f, Matrix4f, Matrix4f); /* MP1 MtxMult */
+s32 func_80027FA4_28BA4(u32, void*, u8); /* main defines it s16; retail keeps the word here */
+
 /* ---- overlay functions ---- */
 
 /* 12E3F0.c */
@@ -98,9 +142,9 @@ void func_80105214_130E04_HotRopeJump(omObjData* obj, s32 motion);
 void func_8010530C_130EFC_HotRopeJump(omObjData* obj, HRJPlayer* p);
 void func_80105410_131000_HotRopeJump(HmfData* hmf, Vec* src, s16 idx); /* unused */
 s16 func_801054E4_1310D4_HotRopeJump(omObjData* obj, s32 motion);
-void* func_80105570_131160_HotRopeJump(s16 arg0, s16 arg1);
-void func_80105694_131284_HotRopeJump(s16 arg0, s32 arg1, void* arg2, s16 arg3);
-void func_801057B4_1313A4_HotRopeJump(void* arg0, s16 arg1, s16 arg2);
+struct HRJMotion* func_80105570_131160_HotRopeJump(s16 model, s16 step);
+void func_80105694_131284_HotRopeJump(s16 model, s16 step, struct HRJMotion* out, s16 part);
+void func_801057B4_1313A4_HotRopeJump(HmfData* hmf, s16 node, s16 part);
 s32 func_80105AB8_1316A8_HotRopeJump(omObjData* obj);
 void func_80105CD4_1318C4_HotRopeJump(void);
 void func_80105D74_131964_HotRopeJump(omObjData* obj, HRJPlayer* p);
@@ -231,14 +275,14 @@ extern s32 D_80111340_13CF30_HotRopeJump; /* 1P variant: won */
 extern s32 D_80111344_13CF34_HotRopeJump; /* music tempo */
 extern s32 D_80111348_13CF38_HotRopeJump; /* music tempo at the start */
 extern s32 D_80111350_13CF40_HotRopeJump[4][4]; /* per player: [0] win motion, [1] lose motion */
-extern s32 D_80111394_13CF84_HotRopeJump; /* billboard slots */
+extern struct HRJFx* D_80111394_13CF84_HotRopeJump; /* billboard slots (D_801113A8 of them) */
 extern f32 D_80111398_13CF88_HotRopeJump; /* rope swing */
-extern s32 D_8011139C_13CF8C_HotRopeJump;
-extern s32 D_801113A0_13CF90_HotRopeJump;
-extern s32 D_801113A4_13CF94_HotRopeJump;
-extern s32 D_801113A8_13CF98_HotRopeJump; /* billboard model */
+extern s16 D_8011139C_13CF8C_HotRopeJump; /* func_801057B4: matrices written */
+extern s16* D_801113A0_13CF90_HotRopeJump; /* func_801057B4: part -> matrix index */
+extern Matrix4f* D_801113A4_13CF94_HotRopeJump; /* func_801057B4: matrix table */
+extern s32 D_801113A8_13CF98_HotRopeJump; /* billboard slot count */
 extern Gfx* D_801113AC_13CF9C_HotRopeJump[3];
-extern s32 D_801113B8_13CFA8_HotRopeJump;
+extern s32 D_801113B8_13CFA8_HotRopeJump; /* the billboard model (func_80027FA4_28BA4) */
 extern Gfx* D_801113BC_13CFAC_HotRopeJump[3];
 extern Vtx* D_801113C8_13CFB8_HotRopeJump[3];
 extern Vec D_801113D4_13CFC4_HotRopeJump; /* camera (MP1 D_801004F0..D_8010052A) */
@@ -332,11 +376,11 @@ s32 func_80019000_19C00(omObjData* obj); /* MP1 func_80017A60 */
 void func_80019114_19D14(u8 mdl);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
 void func_80019378_19F78(omObjData* obj); /* MP1 func_80017DB0 */
-s32 func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
+s32 func_80019B9C_1A79C(omObjData* obj, u16 motion); /* player motion */
 void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
 s16* func_800231D8_23DD8(s16 arg0, s16 arg1); /* main: unk1EA70StructC* */
 void func_80023A08_24608(s16 arg0, s16* arg1, s16 arg2); /* main: unk1EA70StructC* */
-void func_80023D74_24974(s32);
+void func_80023D74_24974(void*); /* main: unk1EA70StructC* */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_800298A4_2A4A4(s16, s32, s32);      /* model attribute */
