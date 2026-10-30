@@ -494,29 +494,27 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574
 #endif
 
 /* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
-// register allocation and where (u16)bit is taken (MP1 func_800FB4F8's residue)
+// register allocation: retail hoists 1 << team into t0 and copies it per branch (MP1 func_800FB4F8's residue)
 #ifdef NON_MATCHING
 void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
     DDObstacle* o;
     u16 i;
     s32 bit;
-    HmfModel* m;
 
     o = D_8010B2E4_1C6E64_DungeonDash;
     if (D_8010B2A6_1C6E26_DungeonDash == 0) {
         return;
     }
-    i = 0;
-    bit = 1 << team;
-    for (; i < 5; i++, o++) {
+    for (i = 0; i < 5; i++, o++) {
         if (o->unk0 != 0 && D_8010B2BC_1C6E3C_DungeonDash == 0) {
             if (o->z > z + 200.0) {
-                m = &D_800FC834_FD434[o->unk6];
-                if (m->unk01 & (u16)bit) {
-                    m->unk01 ^= bit;
+                bit = 1 << team;
+                if (D_800FC834_FD434[o->unk6].unk01 & (u16)bit) {
+                    D_800FC834_FD434[o->unk6].unk01 ^= bit;
                     D_800FC834_FD434[o->unk8].unk01 ^= bit;
                 }
             } else {
+                bit = 1 << team;
                 D_800FC834_FD434[o->unk6].unk01 |= bit;
                 D_800FC834_FD434[o->unk8].unk01 |= bit;
             }
@@ -602,7 +600,25 @@ void func_80108C8C_1C480C_DungeonDash(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108F9C_1C4B1C_DungeonDash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80109884_1C5404_DungeonDash);
+/* Hides the blades behind team t's camera, shows those ahead. */
+void func_80109884_1C5404_DungeonDash(s32 team, f32 z) {
+    DDBlock* b;
+    u16 i;
+
+    b = D_8010B2E0_1C6E60_DungeonDash;
+    if (D_8010B2A8_1C6E28_DungeonDash == 0) {
+        return;
+    }
+    for (i = 0; i < 2; i++, b++) {
+        if (b->unk0 != 0 && D_8010B2BC_1C6E3C_DungeonDash == 0) {
+            if (b->unk1C > z + 400.0) {
+                D_800FC834_FD434[b->unk6].unk01 ^= 1 << team;
+            } else {
+                D_800FC834_FD434[b->unk6].unk01 |= 1 << team;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80109958_1C54D8_DungeonDash);
 

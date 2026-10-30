@@ -154,7 +154,7 @@ void func_80108B54_1C46D4_DungeonDash(s16 mdl);
 void func_80108BFC_1C477C_DungeonDash(s16 mdl);
 void func_80108C8C_1C480C_DungeonDash(void);
 void func_80108F9C_1C4B1C_DungeonDash(void);
-void func_80109884_1C5404_DungeonDash(s32 arg0, f32 arg1);
+void func_80109884_1C5404_DungeonDash(s32 team, f32 z);
 s16 func_80109958_1C54D8_DungeonDash(void* arg0, void* arg1, s32 arg2);
 void func_8010A340_1C5EC0_DungeonDash(s16 model, HuSprite_Unk84_Struct* anim, s16 frame);
 s32 func_8010A430_1C5FB0_DungeonDash(s32 model, s32 src);
