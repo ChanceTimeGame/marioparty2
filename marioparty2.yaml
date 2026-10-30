@@ -857,7 +857,9 @@ segments:
     bss_size: 0xF30
     subsegments:
       - [0x181420, c]
+      - [0x185F00, c]
       - [0x185FB0, data]
+      - [0x186260, .rodata, 181420]
       - {0x186490, type: bss, vram: 0x80107870, name: ovl_17_bss}
   - type: code
     start: 0x186490
