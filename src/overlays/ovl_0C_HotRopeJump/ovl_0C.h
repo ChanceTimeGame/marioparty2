@@ -104,6 +104,11 @@ typedef struct HRJLight {
     /* 0x1C */ f32 fadeFrom; /* the radius it fades from */
 } HRJLight; /* size = 0x20 */
 
+/* The flame palette's 12 colours, copied as one block (func_8010BB48). */
+typedef struct HRJPal {
+    /* 0x00 */ u16 c[12];
+} HRJPal; /* size = 0x18 */
+
 /* ---- overlay functions ---- */
 
 /* 12E3F0.c */
@@ -229,9 +234,9 @@ extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4) */
 extern s16 D_8010C4F8_1380E8_HotRopeJump; /* the rope's timer and state (MP1 D_800FE784) */
 extern s16 D_8010C4FA_1380EA_HotRopeJump;
 extern s16 D_8010C4FC_1380EC_HotRopeJump[6]; /* its state durations, 0 = the last */
-extern u8 D_8010C508_1380F8_HotRopeJump[0x30]; /* byte tables (labels 508..50B: S4-0CC) */
-extern u8 D_8010C538_138128_HotRopeJump[0x30]; /* byte tables (labels 538..53B: S4-0CC) */
-extern s32 D_8010C568_138158_HotRopeJump[6];
+extern u8 D_8010C508_1380F8_HotRopeJump[12][4]; /* flame palette rgba at blend 0 */
+extern u8 D_8010C538_138128_HotRopeJump[12][4]; /* at blend 1 */
+extern u16 D_8010C568_138158_HotRopeJump[12]; /* the blended palette (RGBA5551) */
 
 /* ---- .bss ---- */
 

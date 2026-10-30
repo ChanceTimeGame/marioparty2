@@ -930,7 +930,28 @@ void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, HuSprite_Un
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B754_137344_HotRopeJump);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BB48_137738_HotRopeJump);
+/* The flames' palette: while the light blend changes, each of the 12 colours moves between its
+   two RGBA values and is packed to RGBA5551 (D_8010C568); then it is copied to this frame's
+   segment-15 palette. Retail's red mask is ~0x17FF (it also clears bit 12). */
+void func_8010BB48_137738_HotRopeJump(f32 t) {
+    u16 c[4];
+    u16 i;
+
+    if (D_8010C268_137E58_HotRopeJump != D_8010C260_137E50_HotRopeJump) {
+        for (i = 0; i < 12; i++) {
+            c[0] = func_8010BF04_137AF4_HotRopeJump(D_8010C508_1380F8_HotRopeJump[i][0], D_8010C538_138128_HotRopeJump[i][0], t);
+            c[1] = func_8010BF04_137AF4_HotRopeJump(D_8010C508_1380F8_HotRopeJump[i][1], D_8010C538_138128_HotRopeJump[i][1], t);
+            c[2] = func_8010BF04_137AF4_HotRopeJump(D_8010C508_1380F8_HotRopeJump[i][2], D_8010C538_138128_HotRopeJump[i][2], t);
+            c[3] = func_8010BF04_137AF4_HotRopeJump(D_8010C508_1380F8_HotRopeJump[i][3], D_8010C538_138128_HotRopeJump[i][3], t);
+            c[0] = (c[0] << 8) & ~0x17FF;
+            c[1] = (c[1] << 3) & 0x7C0;
+            c[2] = (c[2] >> 2) & 0x3E;
+            c[3] = c[3] & 1;
+            D_8010C568_138158_HotRopeJump[i] = c[0] | c[1] | c[2] | c[3];
+        }
+    }
+    *(HRJPal*)D_801118B8_13D4A8_HotRopeJump[D_800FDBE0_FE7E0] = *(HRJPal*)D_8010C568_138158_HotRopeJump;
+}
 
 /* a + t * (b - a), t clamped to 0..1. */
 f32 func_8010BF04_137AF4_HotRopeJump(f32 a, f32 b, f32 t) {
