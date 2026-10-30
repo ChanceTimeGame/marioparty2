@@ -681,7 +681,36 @@ void func_801051D0_230B40_HexagonHeat(omObjData* obj) {
     }
 }
 
+/* A fallen player's lava splash: four drops (models 10-13), each restarting every 9 frames at
+   the player's position, scaled by D_80106790 as it grows (staggered by D_80106750's -2/-4/-6). */
+/* NON_MATCHING: scheduling only (masked 3): retail sets i = 0 before computing the row pointer */
+#ifdef NON_MATCHING
+void func_8010537C_230CEC_HexagonHeat(omObjData* obj, f32 x, f32 y, f32 z) {
+    s32* t;
+    f32 s;
+    s32 i;
+
+    t = D_80106750_2320C0_HexagonHeat[((MgWork*)obj->unk_50)->unk_59];
+    for (i = 0; i < 4; i++) {
+        if (t[i] >= 0) {
+            if (t[i] == 0) {
+                func_80029714_2A314(obj->model[i + 10], x, y + 30.0f, z);
+                func_800298A4_2A4A4(obj->model[i + 10], 4, 0);
+            }
+            if (t[i] < 8) {
+                s = D_80106790_232100_HexagonHeat[t[i] / 2];
+                func_800297E8_2A3E8(obj->model[i + 10], s, s, 1.0f);
+            }
+            if (t[i] >= 8) {
+                t[i] = -1;
+            }
+        }
+        t[i]++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_8010537C_230CEC_HexagonHeat);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801054F8_230E68_HexagonHeat);
 
