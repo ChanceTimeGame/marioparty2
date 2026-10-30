@@ -118,6 +118,14 @@ typedef struct HHLightDir {
     s16 z;
 } HHLightDir;
 
+/* S4-1AB: the race timer's work (D_8010D804, func_80027154(0x20)): two rows of 7 digit sprites. */
+typedef struct HHTimer {
+    /* 0x00 */ u16 digit[7]; /* this race: m'ss"cc */
+    /* 0x0E */ u16 best[7];  /* the record */
+    /* 0x1C */ u16 time;     /* frames, +2 a frame */
+    /* 0x1E */ u16 record;
+} HHTimer; /* size = 0x20 */
+
 /* obj->work[0..3] tested as one big-endian word (retail: lw + and 0x06000000 = work[0] & 6).
    Host hazard: on a little-endian host this is work[3]; the port wants (obj)->work[0] & 6. */
 #define HH_DONE(obj) (*(u32*)(obj)->work & 0x06000000)
@@ -194,6 +202,9 @@ s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
 s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
 void func_8006961C_6A21C(s16 mesId, f32 x, f32 y);
 omObjData* func_800732B0_73EB0(u32 arg0); /* plays a voice file */
+u16 func_800680D4_68CD4(s16 index);      /* a minigame record (time) */
+void func_8001A7C8_1B3C8(u16, f32);
+void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 f32 func_800B1830_B2430(f32);            /* sqrtf */
 f32 func_800B75A8_B81A8(f32 y, f32 x);   /* atan2, degrees */
 f64 fabs(f64);
@@ -259,7 +270,7 @@ void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj);                /* FDBC8 
 u16 func_80108E80_1A1C10_HandcarHavoc(s16 mdl, u16 dir, f32 step);     /* FDCEC */
 void func_80108FBC_1A1D4C_HandcarHavoc(s32 team);                      /* FE8D4 */
 void func_8010929C_1A202C_HandcarHavoc(s32 team, s32 i, s32 buf, s32 arg3); /* FEB4C */
-s16 func_80109484_1A2214_HandcarHavoc(s32 team, s16 side, s16 wheel, s16 arg3); /* FECF4 */
+s32 func_80109484_1A2214_HandcarHavoc(s32 team, u16 side, u16 wheel, s32 arg3); /* FECF4; S4-1AB: types from 801074A8's call (u16 side/wheel; the result is re-extended) */
 void func_8010986C_1A25FC_HandcarHavoc(HHCar* w);                      /* FF0AC */
 void func_80109B88_1A2918_HandcarHavoc(omObjData* obj);                /* FAF64 */
 void func_80109BA4_1A2934_HandcarHavoc(omObjData* obj);                /* FAF80 */

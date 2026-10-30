@@ -1321,17 +1321,214 @@ void func_80106CA8_19FA38_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos) {
     rot->z = a * d.x;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106E70_19FC00_HandcarHavoc);
+/* Moves both axles along the track by the car's speed; 1 when the front reaches the goal. A slow
+   car entering segment 115 is moved onto the second track (the lowered section) and moved again. */
+u16 func_80106E70_19FC00_HandcarHavoc(omObjData* obj) {
+    Vec d;
+    Vec p;
+    f32 savedDist[2];
+    u16 savedSeg[2];
+    HHCar* w;
+    f32 speed;
+    f32 progress;
+    f32 len;
+    u16 goal;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801074A8_1A0238_HandcarHavoc);
+    w = obj->unk_50;
+    speed = w->speed;
+    goal = 0;
+    if (speed == 0.0f) {
+        return 0;
+    }
+retry:
+    progress = w->progress;
+    w->progress = progress - speed;
+    for (i = 0; i < 2; i++) {
+        savedSeg[i] = w->seg[i];
+        savedDist[i] = w->dist[i];
+        w->dist[i] -= speed;
+        func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+        HHGetPoint(w->team, w->seg[i], &p);
+        d.x = d.x * w->dist[i] + p.x;
+        d.y = d.y * w->dist[i] + p.y;
+        d.z = d.z * w->dist[i] + p.z;
+        if (speed < 0.0f) {
+            len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+            while (len < w->dist[i]) {
+                w->seg[i]++;
+                w->dist[i] -= len;
+                len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+                func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+                HHGetPoint(w->team, w->seg[i], &p);
+                d.x = d.x * w->dist[i] + p.x;
+                d.y = d.y * w->dist[i] + p.y;
+                d.z = d.z * w->dist[i] + p.z;
+            }
+        } else {
+            len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i] - 1);
+            while (w->dist[i] < 0.0f) {
+                w->seg[i]--;
+                w->dist[i] = len + w->dist[i];
+                len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+                func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+                HHGetPoint(w->team, w->seg[i], &p);
+                d.x = d.x * w->dist[i] + p.x;
+                d.y = d.y * w->dist[i] + p.y;
+                d.z = d.z * w->dist[i] + p.z;
+            }
+        }
+    }
+    if (w->seg[0] >= 115) {
+        if (w->unkEA == 0) {
+            w->unkEA = 1;
+            w->unk9A = 0x1A7;
+            if (-w->speed < w->maxSpeed - 4.6296296f) {
+                D_8010B376_1A4106_HandcarHavoc[w->team] = D_8010B37C_1A410C_HandcarHavoc;
+                D_8010B380_1A4110_HandcarHavoc[w->team] = D_8010B38C_1A411C_HandcarHavoc;
+                D_8010B390_1A4120_HandcarHavoc[w->team] = D_8010B396_1A4126_HandcarHavoc;
+                D_8010B398_1A4128_HandcarHavoc[w->team] = D_8010B3A4_1A4134_HandcarHavoc;
+                w->unk9A = 0x18C;
+                w->progress = progress;
+                for (i = 0; i < 2; i++) {
+                    w->seg[i] = savedSeg[i];
+                    w->dist[i] = savedDist[i];
+                }
+                goto retry;
+            }
+        }
+    } else {
+        w->unkEA = 0;
+    }
+    if (w->seg[0] >= (s16)D_8010B390_1A4120_HandcarHavoc[w->team] - 2) {
+        D_8010D804_1A6594_HandcarHavoc->work[0] = 0;
+        D_8010D804_1A6594_HandcarHavoc->work[1] = 0;
+        goal = 1;
+    } else if (D_8010B376_1A4106_HandcarHavoc[w->team] == D_8010B37A_1A410A_HandcarHavoc) {
+        if (w->seg[0] >= 424) {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 0);
+        } else {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 4);
+        }
+    } else {
+        if (w->seg[0] >= 397) {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 0);
+        } else {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 4);
+        }
+    }
+    return goal;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107634_1A03C4_HandcarHavoc);
+/* Sparks from one side's wheels (more of them once the car tilts 12.5 degrees). */
+void func_801074A8_1A0238_HandcarHavoc(omObjData* obj, u16 side) {
+    Vec spot[2];
+    HHCar* w;
+    s16 mdl;
+    s32 k;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107740_1A04D0_HandcarHavoc);
+    w = obj->unk_50;
+    func_80108A1C_1A17AC_HandcarHavoc(obj, side, spot);
+    for (k = 0; k < 2; k++) {
+        if (w->chips[side][k] < D_8010B144_1A3ED4_HandcarHavoc[side][k]) {
+            if (fabs(w->tilt) >= 12.5) {
+                mdl = func_80109484_1A2214_HandcarHavoc(w->team, side, k, 1);
+            } else {
+                mdl = func_80109484_1A2214_HandcarHavoc(w->team, side, k, 0);
+            }
+            w->chips[side][k]++;
+            if (mdl != -1) {
+                func_80029714_2A314(mdl, (k + spot)->x, (k + spot)->y, (k + spot)->z);
+                func_800B2060_B2C60(D_800FC834_FD434[mdl].mtx, 0.0f, w->rot.y, 0.0f);
+                func_8002979C_2A39C(mdl, w->rot.x, 0.0f, w->rot.z);
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801078B8_1A0648_HandcarHavoc);
+/* The car's marker and the riders' faces on the map. */
+void func_80107634_1A03C4_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s16 x;
+    u32 y;
 
+    w = obj->unk_50;
+    x = 168;
+    if (w->team == 0) {
+        x = 152;
+    }
+    y = 176.0f - w->progress / D_8010B398_1A4128_HandcarHavoc[w->team] * 144.0f;
+    espPosSet(w->marker, x, y + 8);
+    espPosSet(w->face[0], x, y + 18);
+    espPosSet(w->face[1], x, y - 2);
+}
+
+/* The race timer and the record (two rows of digits). */
+void func_80107740_1A04D0_HandcarHavoc(omObjData* obj) {
+    HHTimer* t;
+    s32 x;
+    s32 i;
+
+    t = obj->unk_50 = func_80027154_27D54(sizeof(HHTimer), 0x7918);
+    t->record = func_800680D4_68CD4(2);
+    t->time = 0;
+    obj->work[1] = 0;
+    obj->work[0] = 0;
+    x = 127;
+    for (i = 0; i < 7; i++) {
+        t->digit[i] = func_8001AAAC_1B6AC(D_8010D85C_1A65EC_HandcarHavoc, 0, 1);
+        espPosSet(t->digit[i], x, 220);
+        func_8001A7C8_1B3C8(t->digit[i], 0.0f);
+        t->best[i] = func_8001AAAC_1B6AC(D_8010D7E4_1A6574_HandcarHavoc, 0, 1);
+        espPosSet(t->best[i], x, 208);
+        func_8001A7C8_1B3C8(t->best[i], 0.0f);
+        if (i == 0) {
+            x += 8;
+        } else {
+            x += 12;
+        }
+    }
+    func_8001A854_1B454(t->digit[1], 10, 0);
+    func_8001A854_1B454(t->digit[4], 11, 0);
+    func_8001A854_1B454(t->best[1], 10, 0);
+    func_8001A854_1B454(t->best[4], 11, 0);
+    func_80107900_1A0690_HandcarHavoc(t->record, t->best);
+    obj->func_ptr = func_801078B8_1A0648_HandcarHavoc;
+}
+
+void func_801078B8_1A0648_HandcarHavoc(omObjData* obj) {
+    HHTimer* t;
+
+    t = obj->unk_50;
+    if (obj->work[0] == 1 || obj->work[1] == 1) {
+        t->time += 2;
+        func_80107900_1A0690_HandcarHavoc(t->time, t->digit);
+    }
+}
+
+/* m'ss"cc (digits 0, 2, 3, 5, 6; 1 and 4 are the marks). */
+/* NON_MATCHING: register allocation (the minutes' remainder and the seconds' quotient swap s1/s3). */
+#ifdef NON_MATCHING
+void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
+    u16 rest;
+    u16 sec;
+    u16 cs;
+
+    func_8001A854_1B454(*digit, time / 3600, 0);
+    digit += 2;
+    rest = time % 3600;
+    sec = rest / 60;
+    func_8001A854_1B454(*digit, sec / 10, 0);
+    digit++;
+    func_8001A854_1B454(*digit, sec % 10, 0);
+    digit += 2;
+    cs = (u16)(rest % 60) * 1.6666666f;
+    func_8001A854_1B454(digit[0], cs / 10, 0);
+    func_8001A854_1B454(digit[1], cs % 10, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107900_1A0690_HandcarHavoc);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107AB0_1A0840_HandcarHavoc);
 
