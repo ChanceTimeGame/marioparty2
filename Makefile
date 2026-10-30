@@ -677,3 +677,8 @@ $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+
+# S4-1AA: ovl_1A 19B590.c and 1A10F0.c have the KMC VR4300 mul fix (func_80105940, func_8010AA30: a nop
+# between back-to-back mul.s)
+S41AA_MULFIX_UNITS := build/src/overlays/ovl_1A_HandcarHavoc/19B590.c.o build/src/overlays/ovl_1A_HandcarHavoc/1A10F0.c.o
+$(S41AA_MULFIX_UNITS): export VR4300MUL := ON
