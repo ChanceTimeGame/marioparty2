@@ -978,8 +978,12 @@ void func_8010580C_16A5AC_LookAway(omObjData* obj) {
     obj->func_ptr = func_801046E4_169484_LookAway;
 }
 
+/* NON_MATCHING: the second loop hoists the constant 3 where retail hoists D_80106CD0_16BA70_LookAway
+   (register choice and a copy of the switch value; masked 33). */
+#ifdef NON_MATCHING
 void func_80105B4C_16A8EC_LookAway(void) {
     LAObj* base = D_80106CD0_16BA70_LookAway;
+    omObjData* o0;
     omObjData* o;
     LAObj* p;
     s16 i;
@@ -1006,11 +1010,11 @@ void func_80105B4C_16A8EC_LookAway(void) {
         player = 0;
         break;
     }
-    o = omAddObj(200, 1, 0, -1, func_8010580C_16A5AC_LookAway);
+    o0 = omAddObj(200, 1, 0, -1, func_8010580C_16A5AC_LookAway);
     base->player = player;
-    o->work[0] = player;
-    o->work[1] = slot;
-    base->obj = o;
+    o0->work[0] = player;
+    o0->work[1] = slot;
+    base->obj = o0;
     slot++;
     for (i = 0; i < 4; i++) {
         if (base->player == i) {
@@ -1040,6 +1044,9 @@ void func_80105B4C_16A8EC_LookAway(void) {
         slot++;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80105B4C_16A8EC_LookAway);
+#endif
 
 void func_80105D3C_16AADC_LookAway(omObjData* obj) {
     if (D_801069A4_16B744_LookAway != 0) {
@@ -1122,6 +1129,9 @@ void func_80106008_16ADA8_LookAway(omObjData* obj) {
     }
 }
 
+/* NON_MATCHING: retail reuses the zeroed counter register as func_800691FC's third argument and
+   tests the case 4 counter as s16 (masked 12). */
+#ifdef NON_MATCHING
 void func_80106060_16AE00_LookAway(omObjData* obj) {
     LAObj* tbl;
     u8 chars[4];
@@ -1193,6 +1203,9 @@ void func_80106060_16AE00_LookAway(omObjData* obj) {
     }
     func_801029F0_167790_LookAway();
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80106060_16AE00_LookAway);
+#endif
 
 void func_80106328_16B0C8_LookAway(omObjData* obj) {
     func_80106640_16B3E0_LookAway();
@@ -1245,6 +1258,6 @@ void func_8010640C_16B1AC_LookAway(void) {
     D_800F8FE0_F9BE0 = 0;
     omAddObj(1000, 0, 0, -1, func_80106328_16B0C8_LookAway);
     omAddObj(1000, 0, 0, -1, func_80106008_16ADA8_LookAway);
-    func_8007273C_7333C(D_80106990_16B730_LookAway, 0);
-    func_8007273C_7333C(D_80106990_16B730_LookAway, 1);
+    func_8007273C_7333C((u8*)D_80106990_16B730_LookAway, 0);
+    func_8007273C_7333C((u8*)D_80106990_16B730_LookAway, 1);
 }

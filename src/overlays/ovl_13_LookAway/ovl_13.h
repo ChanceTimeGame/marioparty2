@@ -1,15 +1,22 @@
 #ifndef _OVL_13_H
 #define _OVL_13_H
 
-/* Overlay 13: Look Away (1 vs 3). One player (slot 0, D_80106CD0_16BA70_LookAway[0]) holds the
-   camera and points it in one of five directions; the other three turn their heads each round and
-   are caught when they look the same way. Five rounds (D_801069A6_16B746_LookAway); the camera
-   player wins with three catches (D_801069AA_16B74A_LookAway >= 3, flag 0x40), else the three win
-   (flag 0x80). The winners get coins_mg_bonus = 10.
-   Retail is two files: 1675A0.c (80102800-80106638) and 16B3E0.c from 80106640 (a 1-pad file
-   holding the two table clears). .data is one asm blob (1675A0.c's); .rodata is carved from
-   0x16B560. N64 offsets are in the comments; the structs with pointer fields change size on the
-   host. */
+/* Overlay 13: Look Away (1 vs 3). The camera player (slot 0: the player whose group is 0, in
+   D_80106CD0_16BA70_LookAway[0]) and three others turn their heads in one of five directions
+   (LADir: 0 front, 1 up, 2 right, 3 down, 4 left; the stick, or func_801045FC's CPU timer). Each
+   round a 150-frame countdown (D_801069AC_16B74C_LookAway) runs with the stage lights on; at 0
+   everybody's last direction is compared with the camera's: a match is caught (shrinks one step,
+   D_801069AA_16B74A_LookAway++). Five rounds (D_801069A6_16B746_LookAway, one light pair goes out
+   per round); the camera player wins with three catches (D_801069AE flag 0x40), else the three win
+   (0x80). func_80105E30_16ABD0_LookAway gives each winner gPlayers[].coins_mg_bonus = 10.
+   _CheckFlag(0xC) skips the result message and win animations.
+   Retail is two files: 1675A0.c (80102800-80106638) and 16B3E0.c from 80106640 (the two table
+   clears; 2-nop text pad). .data is one asm blob (1675A0.c's, 0x16B490-0x16B560: nothing of
+   16B3E0.c); .rodata is carved from 0x16B560 (1675A0.c only).
+   Split labels the code reads by their own address (retail addresses them by label, so the C
+   does too): D_80106DF4/E28/E2C (D_80106CD0[4].spr/unk_38/unk_3C), D_80106ECC (D_80106CD0[7].spr).
+   D_8010677C_16B51C_LookAway has no splat label: undefined_syms.txt aliases it.
+   N64 offsets are in the comments; the structs with pointer fields change size on the host. */
 
 #include "common.h"
 #include "game/object.h"
@@ -92,7 +99,7 @@ typedef struct LADir {
 /* ---- .data (asm, 0x16B490-0x16B560) ---- */
 extern f32 D_801066F0_16B490_LookAway[4][3];  /* player start positions by slot */
 extern u16 D_80106720_16B4C0_LookAway[9][2];  /* marker sprite x, y */
-extern s16 D_80106722_16B4C2_LookAway[];      /* = D_80106720[0][1] (its y column) */
+extern u16 D_80106722_16B4C2_LookAway[];      /* = D_80106720[0][1] (its y column; no C user) */
 extern s32 D_80106744_16B4E4_LookAway;        /* camera set up */
 extern u16 D_80106748_16B4E8_LookAway[6];     /* player model file by character */
 extern s16 D_80106754_16B4F4_LookAway[6];     /* player motion directory by character */
