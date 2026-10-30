@@ -241,6 +241,8 @@ void func_8010332C_1E277C_CrazyCutters(omObjData* obj) {
 
 // CPU character model file loaded before the directory, and table loads in v1 (masked 2)
 #ifdef NON_MATCHING
+/* {9, 10, 11}: a local initialiser here (unused) and in func_801065F4, which names it */
+const s32 D_801094AC_1E88FC_CrazyCutters[3] = { 9, 10, 11 };
 void func_80103508_1E2958_CrazyCutters(omObjData* obj, s32 player) {
     s32 px[30];
     s32 py[30];
@@ -436,7 +438,7 @@ void func_80103508_1E2958_CrazyCutters(omObjData* obj, s32 player) {
     }
     route -= 2;
     px[i] = route[0];
-    py[i] = route[0];
+    py[i] = route[0]; /* retail (and MP1): both from the x word */
     D_80109584_1E89D4_CrazyCutters = i - 1;
     if (rand8() & 1) {
         for (j = 0; j < i; j++) {
