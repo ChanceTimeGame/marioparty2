@@ -18,6 +18,24 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103180_2921F0_DeepSeaSalvage);
 
+__asm__(".section .rodata");
+const char D_80108678_2976E8_DeepSeaSalvage[] = "c005_000-bmerge1";
+
+__asm__(".section .rodata");
+const char D_8010868C_2976FC_DeepSeaSalvage[] = "Luigi1-atama_1";
+
+__asm__(".section .rodata");
+const char D_8010869C_29770C_DeepSeaSalvage[] = "c003_000-head_1";
+
+__asm__(".section .rodata");
+const char D_801086AC_29771C_DeepSeaSalvage[] = "C002_000b-bmerge10_1";
+
+__asm__(".section .rodata");
+const char D_801086C4_297734_DeepSeaSalvage[] = "c001_000-atama_2";
+
+__asm__(".section .rodata");
+const char D_801086D8_297748_DeepSeaSalvage[] = "atama_2";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801031CC_29223C_DeepSeaSalvage);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103480_2924F0_DeepSeaSalvage);
@@ -29,6 +47,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80104070_2930E0_DeepSeaSalvage);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801043A4_293414_DeepSeaSalvage);
+
+__asm__(".section .rodata");
+const u32 D_80108730_2977A0_DeepSeaSalvage[2] = { 0x03050609, 0x0A0C0000 };
+
+__asm__(".section .rodata");
+const u32 D_80108738_2977A8_DeepSeaSalvage[2] = { 0x01020408, 0x01020408 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801044A8_293518_DeepSeaSalvage);
 
@@ -85,15 +109,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80107
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801072C0_296330_DeepSeaSalvage);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80107318_296388_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801074E0_296550_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801075A4_296614_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80107864_2968D4_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80107A10_296A80_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_8010819C_29720C_DeepSeaSalvage);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801081EC_29725C_DeepSeaSalvage);

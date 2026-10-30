@@ -1346,7 +1346,10 @@ segments:
     bss_size: 0x2410
     subsegments:
       - [0x291870, c]
+      - [0x296550, c]
       - [0x297490, data]
+      - [0x2976D0, .rodata, 291870]
+      - [0x297820, .rodata, 296550]
       - {0x297890, type: bss, vram: 0x80108820, name: ovl_3C_bss}
   - type: code
     start: 0x297890
