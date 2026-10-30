@@ -233,14 +233,12 @@ typedef struct DSSPlace {
 } DSSPlace;
 
 /* A fish (D_801088F8[2], stride 0x40) and its recorded positions (D_80108978[2][10]); MP1
-   DSDFish. Fork B: check the fields. */
+   DSDFish. */
 typedef struct DSSFish {
     /* 0x00 */ Vec pos;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ f32 unk14;
+    /* 0x0C */ Vec rot;
     /* 0x18 */ char pad18[0x18];
-    /* 0x30 */ f32 vx;
+    /* 0x30 */ f32 vx; /* speed: 8-12 plus 10 x the scale, signed by direction */
     /* 0x34 */ char pad34[0xC];
 } DSSFish; /* size = 0x40 */
 
@@ -305,8 +303,8 @@ extern Vec D_801088D4_297944_DeepSeaSalvage;
 extern s16 D_801088E0_297950_DeepSeaSalvage[5];   /* sprite-model slots: coin, 5 coins, hazard, sparkle, shine */
 extern DSSFish D_801088F8_297968_DeepSeaSalvage[2];
 extern DSSFish D_80108978_2979E8_DeepSeaSalvage[2][10];
-extern s16 D_80108E70_297EE0_DeepSeaSalvage;
-extern f32 D_80108E74_297EE4_DeepSeaSalvage[2];
+extern s16 D_80108E70_297EE0_DeepSeaSalvage;      /* the fish history's write slot, 0-9 */
+extern f32 D_80108E74_297EE4_DeepSeaSalvage[2];   /* per fish: scale (0.75-1.05) */
 extern s32 D_80108E7C_297EEC_DeepSeaSalvage;
 extern s32 D_80108E80_297EF0_DeepSeaSalvage;
 extern f32 D_80108E84_297EF4_DeepSeaSalvage;
