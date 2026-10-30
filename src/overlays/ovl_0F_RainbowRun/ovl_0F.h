@@ -28,15 +28,23 @@ typedef struct RRPlayerWork {
     /* 0x40 */ f32 speed;
     /* 0x44 */ char unk_44[4];
     /* 0x48 */ f32 radius;
-    /* 0x4C */ char unk_4C[4];
+    /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50; /* flags */
-    /* 0x52 */ char unk_52[5];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53[4];
     /* 0x57 */ s8 port; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 player; /* player index */
-    /* 0x5A */ char unk_5A[0x64];
+    /* 0x5A */ char unk_5A[6];
+    /* 0x60 */ f32 unk_60;
+    /* 0x64 */ char unk_64[0x50];
+    /* 0xB4 */ f32 unk_B4; /* MP1 0xA4 */
+    /* 0xB8 */ char unk_B8[6];
     /* 0xBE */ u16 unk_BE; /* stun timer after a hit (MP1 0xAE) */
-    /* 0xC0 */ char unk_C0[0x2C];
+    /* 0xC0 */ char unk_C0[0xC];
+    /* 0xCC */ f32 unk_CC; /* MP1 0xBC */
+    /* 0xD0 */ u16 unk_D0; /* MP1 0xC0 */
+    /* 0xD2 */ char unk_D2[0x1A];
     /* 0xEC */ s32 (*unk_EC)(omObjData*, omObjData*); /* collision callback (MP1 0xDC) */
     /* 0xF0 */ char unk_F0[0x68];
     /* 0x158 */ struct RRTeamWork* team; /* a follower's state (D_8010AA18_14C3A8_RainbowRun[]; MP1 0xE4) */

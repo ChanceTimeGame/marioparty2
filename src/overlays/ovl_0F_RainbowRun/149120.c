@@ -357,10 +357,172 @@ Vec func_80109240_14ABD0_RainbowRun(s8 path, s16 seg, f32 t) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80109534_14AEC4_RainbowRun);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80109CC4_14B654_RainbowRun);
+/* A follower (main's player work; its own state in D_8010AA18_14C3A8_RainbowRun[idx]; MP1
+   func_800FDCE8_TightropeTreachery). A CPU follower gets an aim error and a throw interval by
+   difficulty. */
+void func_80109CC4_14B654_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 idx) {
+    void* mem;
+    RRPlayerWork* w;
+    RRTeamWork* t;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_8010A42C_14BDBC_RainbowRun);
+    mem = func_80027154_27D54(sizeof(RRPlayerWork), 0x7918);
+    obj->unk_50 = mem;
+    func_800B0EF0_B1AF0(mem, 0, sizeof(RRPlayerWork));
+    w = obj->unk_50;
+    t = w->team = &D_8010AA18_14C3A8_RainbowRun[idx];
+    w->unk_52 = 0;
+    w->unk_B4 = 1.0f;
+    w->unk_D0 = 0xFFFF;
+    w->unk_4C = 0.5f;
+    w->unk_CC = 1.0f;
+    w->unk_60 = 0.0f;
+    func_8000BEB0_CAB0(obj, 70.0f);
+    func_8000BEBC_CABC(obj, 150.0f);
+    func_8000BEC8_CAC8(obj, 20.0f);
+    func_8000BE74_CA74(obj, 1000.0f);
+    t->port = gPlayers[player].port;
+    t->player = player;
+    t->push[0] = t->push[1] = 0.0f;
+    t->idx = idx;
+    t->sway = guRandom() % 8;
+    t->swayDir = 1;
+    t->noCtrl = 0;
+    t->hasSpot = 0;
+    t->spot = 0;
+    t->timer = 0;
+    t->aimed = 0;
+    t->unk_70 = 0;
+    t->done = 0;
+    t->turn = 0.0f;
+    t->seg = 0.0f;
+    t->t = 0.0f;
+    t->pos.x = 0.0f;
+    t->pos.y = 0.0f;
+    t->pos.z = 0.0f;
+    t->aim = 0.0f;
+    t->aimTimer = 0;
+    t->aimWait = guRandom() % 30;
+    if (gPlayers[t->player].flags & 1) {
+        switch (gPlayers[t->player].cpu_difficulty) {
+        case 0:
+            t->aim = guRandom() % 52 - 26;
+            break;
+        case 1:
+            t->aim = guRandom() % 44 - 22;
+            break;
+        case 2:
+            t->aim = guRandom() % 36 - 18;
+            break;
+        case 3:
+            t->aim = guRandom() % 30 - 15;
+            break;
+        }
+        switch (gPlayers[t->player].cpu_difficulty) {
+        case 0:
+            t->throwWait = guRandom() % 180 + 200;
+            break;
+        case 1:
+            t->throwWait = guRandom() % 160 + 180;
+            break;
+        case 2:
+            t->throwWait = guRandom() % 120 + 160;
+            break;
+        case 3:
+            t->throwWait = guRandom() % 100 + 140;
+            break;
+        }
+    }
+    t->hasSpot = 1;
+    t->spot = D_8010AC08_14C598_RainbowRun[idx];
+    D_8010A87C_14C20C_RainbowRun[t->spot][0] = 1;
+    obj->model[0] = LoadFormFile(dir | file, 0x2B9);
+    if (D_8010AA00_14C390_RainbowRun[0] < 0) {
+        obj->model[1] = LoadFormFile(0x1F0001, 0x2B9);
+        D_8010AA00_14C390_RainbowRun[0] = obj->model[1];
+    } else {
+        obj->model[1] = func_80027D3C_2893C(D_8010AA00_14C390_RainbowRun[0]);
+    }
+    func_80018CCC_198CC(obj, 0, dir | 0x5E);
+    func_80018CCC_198CC(obj, 3, dir | 0x5F);
+    func_80018CCC_198CC(obj, 2, dir | 0x51);
+    switch ((u32)dir) {
+    case 0x20000:
+        func_80018CCC_198CC(obj, 1, dir | 0x56);
+        break;
+    case 0x30000:
+        func_80018CCC_198CC(obj, 1, dir | 0x57);
+        break;
+    case 0x40000:
+        func_80018CCC_198CC(obj, 1, dir | 0x56);
+        break;
+    case 0x50000:
+        func_80018CCC_198CC(obj, 1, dir | 0x59);
+        break;
+    case 0x60000:
+        func_80018CCC_198CC(obj, 1, dir | 0x57);
+        break;
+    default:
+        func_80018CCC_198CC(obj, 1, dir | 0x55);
+        break;
+    }
+    func_80029B80_2A780(obj->model[0], obj->motion[0]);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    t->angle = 0.0f;
+    t->unk_92 = 0;
+    for (i = 0; i < 8; i++) {
+        t->unk_80[i] = 0;
+        t->unk_88[i] = 0;
+    }
+    t->target = -1.0f;
+    t->btn = 0;
+    t->prevBtn = 0;
+    t->flash = 0;
+    t->pos.x = x;
+    t->pos.y = y;
+    t->pos.z = z;
+    t->ofs.x = 0.0f;
+    t->ofs.y = 0.0f;
+    t->ofs.z = 0.0f;
+    t->wait = 0;
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, z);
+    func_80029714_2A314(obj->model[1], x, y + 80.0f, z + 30.0f);
+    obj->func_ptr = func_80109534_14AEC4_RainbowRun;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_8010A514_14BEA4_RainbowRun);
+/* The followers: player D_8010ACC0[1..3] starts at its path's first point. */
+void func_8010A42C_14BDBC_RainbowRun(omObjData* obj) {
+    u8 chr = gPlayers[D_8010ACC0_14C650_RainbowRun[1]].character;
+    s32 dir = D_800CD438_CE038[chr].unk_04;
+    s32 file = D_800CD438_CE038[chr].unk_08;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_8010A600_14BF90_RainbowRun);
+    func_80109CC4_14B654_RainbowRun(obj, dir, file, D_8010ACC0_14C650_RainbowRun[1],
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[0] + D_8010ABF0_14C580_RainbowRun].x,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[0] + D_8010ABF0_14C580_RainbowRun].y,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[0] + D_8010ABF0_14C580_RainbowRun].z, 0);
+}
+
+void func_8010A514_14BEA4_RainbowRun(omObjData* obj) {
+    u8 chr = gPlayers[D_8010ACC0_14C650_RainbowRun[2]].character;
+    s32 dir = D_800CD438_CE038[chr].unk_04;
+    s32 file = D_800CD438_CE038[chr].unk_08;
+
+    func_80109CC4_14B654_RainbowRun(obj, dir, file, D_8010ACC0_14C650_RainbowRun[2],
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[1] + D_8010ABF0_14C580_RainbowRun].x,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[1] + D_8010ABF0_14C580_RainbowRun].y,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[1] + D_8010ABF0_14C580_RainbowRun].z, 1);
+}
+
+void func_8010A600_14BF90_RainbowRun(omObjData* obj) {
+    u8 chr = gPlayers[D_8010ACC0_14C650_RainbowRun[3]].character;
+    s32 dir = D_800CD438_CE038[chr].unk_04;
+    s32 file = D_800CD438_CE038[chr].unk_08;
+
+    func_80109CC4_14B654_RainbowRun(obj, dir, file, D_8010ACC0_14C650_RainbowRun[3],
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[2] + D_8010ABF0_14C580_RainbowRun].x,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[2] + D_8010ABF0_14C580_RainbowRun].y,
+                                    D_8010A830_14C1C0_RainbowRun[D_8010AC08_14C598_RainbowRun[2] + D_8010ABF0_14C580_RainbowRun].z, 2);
+}
