@@ -181,7 +181,7 @@ void func_801042F0_13E680_BowlOver(omObjData* obj) {
         func_80029EDC_2AADC(obj->model[0], 0);
         func_80029EDC_2AADC(obj->model[1], 0);
     }
-    port = BO_WORK(obj)->port;
+    port = BO_WORK(obj)->unk_57;
     switch (D_8010998C_143D1C_BowlOver) {
     case 0:
         func_8006D4D0_6E0D0(D_80109988_143D18_BowlOver / 30);
@@ -260,7 +260,7 @@ void func_8010487C_13EC0C_BowlOver(omObjData* obj) {
     f32 n;
 
     w = BO_WORK(obj);
-    port = w->port;
+    port = w->unk_57;
     if (D_80109972_143D02_BowlOver == 1) {
         D_8010999A_143D2A_BowlOver = 0;
         D_8010999C_143D2C_BowlOver = 0;
@@ -269,9 +269,9 @@ void func_8010487C_13EC0C_BowlOver(omObjData* obj) {
         D_80109E1C_1441AC_BowlOver = 0.0f;
         D_80109972_143D02_BowlOver = 0;
     }
-    if (gPlayers[w->player].flags & 1) {
+    if (gPlayers[w->unk_59].flags & 1) {
         if (D_8010999A_143D2A_BowlOver == 0) {
-            switch (gPlayers[w->player].cpu_difficulty) {
+            switch (gPlayers[w->unk_59].cpu_difficulty) {
             case 0:
                 D_80109E1C_1441AC_BowlOver = 0.0f;
                 break;
@@ -378,7 +378,7 @@ void func_80104D78_13F108_BowlOver(omObjData* obj, s32 dir, s32 file, s32 file2,
     func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(BOPlayerWork));
     w = BO_WORK(obj);
     w->unk_E8 = func_80027154_27D54(obj->mtncnt * 0xC, 0x7918);
-    w->port = gPlayers[player].port;
+    w->unk_57 = gPlayers[player].port;
     obj->model[0] = LoadFormFile(dir | file, 0x6B9);
     obj->model[1] = LoadFormFile(1, 0x6B9);
     obj->model[2] = LoadFormFile(dir | file2, 0x6B9);
@@ -431,7 +431,7 @@ void func_80104D78_13F108_BowlOver(omObjData* obj, s32 dir, s32 file, s32 file2,
         w->unk_AC = 1.0f;
         break;
     }
-    w->player = player;
+    w->unk_59 = player;
     func_80029B80_2A780(obj->model[0], obj->motion[2]);
     func_80029E80_2AA80(obj->model[0], 1, 1);
     func_80029B80_2A780(obj->model[2], obj->motion[2]);
@@ -502,7 +502,7 @@ void func_801051B4_13F544_BowlOver(omObjData* obj) {
         } else {
             D_801099B8_143D48_BowlOver = 0.0f;
         }
-        D_801099B0_143D40_BowlOver = ContStkX[(s8)BO_WORK(D_800FFFD8_100BD8[0])->port] * 1.6;
+        D_801099B0_143D40_BowlOver = ContStkX[(s8)BO_WORK(D_800FFFD8_100BD8[0])->unk_57] * 1.6;
         D_801099BC_143D4C_BowlOver -= D_801099B0_143D40_BowlOver;
         turn = D_801099BC_143D4C_BowlOver / 9.0f;
         if (!(BO_ABS(turn) < 263.0f)) {

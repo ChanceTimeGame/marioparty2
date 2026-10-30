@@ -12,6 +12,7 @@
 #include "game/hmfman.h"
 #include "game/pad.h"
 #include "game/sprite.h"
+#include "game/collision.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -19,28 +20,10 @@ typedef f32 Matrix4f[4][4];
    Structs
    --------------------------------------------------------------------------------------------- */
 
-/* A player's work (obj->unk_50, 0x15C, MP2's minigame player work; MP1 BowlPlayerWork 0xE8:
-   MP1 fields from 0x56 on are +1, from 0x90 on +0x10). */
-typedef struct BOPlayerWork {
-    /* 0x000 */ char unk_00[0x38];
-    /* 0x038 */ f32 unk_38;
-    /* 0x03C */ char unk_3C[0x14];
-    /* 0x050 */ u16 unk_50;
-    /* 0x052 */ u8 unk_52;
-    /* 0x053 */ char unk_53[4];
-    /* 0x057 */ u8 port;
-    /* 0x058 */ char unk_58;
-    /* 0x059 */ s8 player;
-    /* 0x05A */ char unk_5A[0x52];
-    /* 0x0AC */ f32 unk_AC;
-    /* 0x0B0 */ char unk_B0[4];
-    /* 0x0B4 */ f32 unk_B4;
-    /* 0x0B8 */ char unk_B8[0x18];
-    /* 0x0D0 */ u16 unk_D0;
-    /* 0x0D2 */ char unk_D2[0x16];
-    /* 0x0E8 */ void* unk_E8; /* motion table */
-    /* 0x0EC */ char unk_EC[0x70];
-} BOPlayerWork; /* size = 0x15C */
+/* A player's work (obj->unk_50, 0x15C): main's minigame player work, collision.h's MgWork (MP1
+   BowlPlayerWork 0xE8: MP1 fields from 0x56 on are +1, from 0x90 on +0x10; the held shell is
+   unk_C8, the motion table unk_E8). */
+typedef MgWork BOPlayerWork;
 
 /* The shell's work (func_80105974, 0xAC; MP1 BowlBallWork 0x6C, fields from 0x58 on +0x1C). */
 typedef struct BOBallWork {
@@ -81,6 +64,12 @@ typedef struct BOCharData {
     /* 0x14 */ char unk_14[4];
 } BOCharData; /* size = 0x18 */
 extern BOCharData D_800CD438_CE038[];
+
+/* Collision probe for func_8002F2C4_2FEC4 (position and a result word). */
+typedef struct BOProbe {
+    /* 0x00 */ Vec3f pos;
+    /* 0x0C */ s32 hit;
+} BOProbe;
 
 #define BO_WORK(obj) ((BOPlayerWork*)(obj)->unk_50)
 #define BO_BALL_WORK(obj) ((BOBallWork*)(obj)->unk_50)
@@ -134,6 +123,17 @@ extern Vec D_801099DC_143D6C_BowlOver[2]; /* camera viewport translate */
 extern RectF D_801099F4_143D84_BowlOver[2]; /* camera scissor */
 
 /* ---------------------------------------------------------------------------------------------
+   Data (.data, 140760.c: 80109A20-80109A40)
+   --------------------------------------------------------------------------------------------- */
+
+extern s8 D_80109A20_143DB0_BowlOver;    /* end fade started */
+extern f32 D_80109A24_143DB4_BowlOver;   /* shell throw speed (1.47) */
+extern s8 D_80109A28_143DB8_BowlOver[8]; /* stick x history */
+extern s8 D_80109A30_143DC0_BowlOver[8]; /* stick y history */
+extern s8 D_80109A38_143DC8_BowlOver;    /* history index */
+extern u32 D_80109A3C_143DCC_BowlOver;   /* random seed */
+
+/* ---------------------------------------------------------------------------------------------
    Data (.data, 141320.c: 80109A40-80109AC0)
    --------------------------------------------------------------------------------------------- */
 
@@ -163,6 +163,12 @@ extern omObjData* D_8010A0B8_144448_BowlOver[6]; /* the six pins */
    Main code
    --------------------------------------------------------------------------------------------- */
 
+extern u16 D_801011FC_101DFC; /* minigame over */
+s32 func_80005110_5D10(s32, u16*, ColVtx*, void*); /* face filter */
+void func_8002C570_2D170(s16);
+void func_80069770_6A370(void);
+void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2); /* attach to a model's hook node */
+void func_800B8070_B8C70(f32 angle, f32* s, f32* c); /* sin and cos */
 extern omObjData* D_800FC7B0_FD3B0[];
 extern u16 D_800F8FE0_F9BE0;
 extern omObjData* D_800FFFD8_100BD8[];
