@@ -103,7 +103,7 @@ void func_8002A00C_2AC0C(s16 model);
 void func_8002BED4_2CAD4(s16 model, f32 s, f32 t, u16 w, u16 h, char* part, u8 arg6); /* texture scroll */
 void func_8002C20C_2CE0C(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5); /* part colour */
 void func_8002D1EC_2DDEC(s16, u8);
-void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3); /* model light colour */
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour (2DE74.c: s8; retail passes 255) */
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
 void func_8002D3C0_2DFC0(s16 arg0);
 void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */

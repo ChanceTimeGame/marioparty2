@@ -743,15 +743,117 @@ void func_801054F8_230E68_HexagonHeat(omObjData* obj, f32* x, f32* y, f32* z) {
     func_8010537C_230CEC_HexagonHeat(obj, *x, *y, *z);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801056C4_231034_HexagonHeat);
+/* A player object: character model and motions (the win motion 0x4E or 0x4F at random, kept in
+   D_80106858), four lava splash drops (models 10-13, copies of one model), the hooks. */
+void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 arg2, s32 file, u16 player, f32 x, f32 y, f32 z) {
+    MgWork* w;
+    s32 mot;
+    s32 win;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105B78_2314E8_HexagonHeat);
+    D_8010105C_101C5C = 0.5f;
+    D_80101300_101F00 = 0.5f;
+    func_8000C6FC_D2FC(obj, dir, file, player, 0xA89, 0xA89);
+    func_8000BDC4_C9C4(obj, 9, dir | file, 0xA89, 750.0f);
+    func_8000CC74_D874(obj, obj->model[9], 1);
+    D_8010105C_101C5C = 1.0f;
+    D_80101300_101F00 = 1.0f;
+    w = obj->unk_50;
+    w->unk_48 = 55.0f;
+    mot = rand8() < 128 ? 0x4F : 0x4E;
+    obj->model[3] = LoadFormFile(7, 0x88D);
+    obj->model[4] = LoadFormFile(8, 0x88D);
+    obj->model[7] = LoadFormFile(0xC, 0x88D);
+    obj->model[8] = LoadFormFile(0xB, 0x88D);
+    D_800BF7E4_C03E4[w->unk_59][4] = 0x2D2;
+    for (i = 10; i < 14; i++) {
+        if (D_801067A0_232110_HexagonHeat < 0) {
+            obj->model[i] = D_801067A0_232110_HexagonHeat = LoadFormFile(0x10014, 0x88D);
+        } else {
+            obj->model[i] = func_80027D3C_2893C(D_801067A0_232110_HexagonHeat);
+        }
+    }
+    func_80019F0C_1AB0C(obj, 0, dir, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 1, 1, 0);
+    func_80019F0C_1AB0C(obj, 2, dir | 2, 1, 0);
+    func_80019F0C_1AB0C(obj, 6, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 8, dir | 6, 1, 0x1B);
+    func_80019F0C_1AB0C(obj, 0x12, dir | 0x10, 2, 0);
+    func_80019F0C_1AB0C(obj, 0x15, dir | 0x2E, 0, 0);
+    func_80019F0C_1AB0C(obj, 3, dir | 0x2C, 1, 0);
+    func_80019F0C_1AB0C(obj, 4, dir | 0x2D, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x1E, dir | 0x2F, 2, 0);
+    func_80019F0C_1AB0C(obj, 0x1F, dir | 0x30, 2, 0);
+    func_80019F0C_1AB0C(obj, 0x11, dir | 0xF, 1, 0xF);
+    func_80019F0C_1AB0C(obj, 0x20, dir | 0x31, 0, 0);
+    func_80019F0C_1AB0C(obj, 0x26, dir | 0x1C, 1, 0);
+    win = dir | mot;
+    func_80019F0C_1AB0C(obj, 0xD, win, 1, 0x78);
+    D_80106858_2321C8_HexagonHeat[player] = win;
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, z);
+    func_8000C024_CC24(obj, 0, 2);
+    func_8000C024_CC24(obj, 1, 2);
+    func_8000C024_CC24(obj, 2, 2);
+    func_8000C024_CC24(obj, 3, 2);
+    func_8000C024_CC24(obj, 4, 2);
+    func_8000C024_CC24(obj, 5, 2);
+    func_8000C024_CC24(obj, 6, 2);
+    func_8000C024_CC24(obj, 7, 2);
+    func_8000C024_CC24(obj, 8, 2);
+    func_8002D1EC_2DDEC(obj->model[0], 1);
+    func_8002D274_2DE74(obj->model[0], 0xFF, 0, 0);
+    func_8002D2B4_2DEB4(obj->model[0], -96.0f, -17.0f, 69.0f);
+    func_8000E0C0_ECC0(w, 0, func_80104D38_2306A8_HexagonHeat);
+    func_8000E0C0_ECC0(w, 1, func_801051D0_230B40_HexagonHeat);
+    func_8000E0C0_ECC0(w, 20, func_801054F8_230E68_HexagonHeat);
+}
 
+void func_80105B78_2314E8_HexagonHeat(omObjData* obj) {
+    func_801056C4_231034_HexagonHeat(obj, D_800CD438_CE038[gPlayers[0].character].unk_04, D_800CD438_CE038[gPlayers[0].character].unk_08,
+                                     D_800CD438_CE038[gPlayers[0].character].unk_10, 0, -85.0f, 500.0f, -85.0f);
+}
+
+/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
+   stack ones (func_80105B78, whose player argument is 0, matches) */
+#ifdef NON_MATCHING
+void func_80105BF0_231560_HexagonHeat(omObjData* obj) {
+    u8 c = gPlayers[1].character;
+
+    func_801056C4_231034_HexagonHeat(obj, D_800CD438_CE038[c].unk_04, D_800CD438_CE038[c].unk_08,
+                                     D_800CD438_CE038[c].unk_10, 1, -85.0f, 500.0f, 85.0f);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105BF0_231560_HexagonHeat);
+#endif
 
+/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
+   stack ones (func_80105B78, whose player argument is 0, matches) */
+#ifdef NON_MATCHING
+void func_80105C78_2315E8_HexagonHeat(omObjData* obj) {
+    u8 c = gPlayers[2].character;
+
+    func_801056C4_231034_HexagonHeat(obj, D_800CD438_CE038[c].unk_04, D_800CD438_CE038[c].unk_08,
+                                     D_800CD438_CE038[c].unk_10, 2, 85.0f, 500.0f, -85.0f);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105C78_2315E8_HexagonHeat);
+#endif
 
+/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
+   stack ones (func_80105B78, whose player argument is 0, matches) */
+#ifdef NON_MATCHING
+void func_80105D00_231670_HexagonHeat(omObjData* obj) {
+    u8 c = gPlayers[3].character;
+
+    func_801056C4_231034_HexagonHeat(obj, D_800CD438_CE038[c].unk_04, D_800CD438_CE038[c].unk_08,
+                                     D_800CD438_CE038[c].unk_10, 3, 85.0f, 500.0f, 85.0f);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105D00_231670_HexagonHeat);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105D7C_2316EC_HexagonHeat);
 
