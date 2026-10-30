@@ -342,3 +342,4 @@ D_80106AE3_1B8C33_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x3;
    jump table of func_801040B0) */
 D_801077B8_1863D8_Archerival = D_80107878_186498_Archerival - 0xC0;
 D_8010762B_18624B_Archerival = D_8010762A_18624A_Archerival + 0x1;
+D_801073C4_22DE94_HoneycombHavoc = D_801073C0_22DE90_HoneycombHavoc + 0x4;

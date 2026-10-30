@@ -1,5 +1,58 @@
 #include "ovl_2D.h"
 
+/* .data (0x22DE20-0x22DFC0, 80107350-801074F0); 22DD10.c has none. */
+
+s16 D_80107350_22DE20_HoneycombHavoc = -1;
+s16 D_80107352_22DE22_HoneycombHavoc = -1;
+s8 D_80107354_22DE24_HoneycombHavoc = 4;
+f32 D_80107358_22DE28_HoneycombHavoc[6] = { 90.0f, 140.0f, 90.0f, 90.0f, 90.0f, 90.0f };
+f32 D_80107370_22DE40_HoneycombHavoc[6] = { 20.0f, 0.0f, 20.0f, 20.0f, 20.0f, 20.0f };
+f32 D_80107388_22DE58_HoneycombHavoc[4] = { 750.0f, 900.0f, 1050.0f, 1200.0f };
+f32 D_80107398_22DE68_HoneycombHavoc[4] = { 0.0f, 150.0f, 300.0f, 450.0f };
+u16 D_801073A8_22DE78_HoneycombHavoc[4] = { 0, 0, 0, 0 };
+u16 D_801073B0_22DE80_HoneycombHavoc[8] = { 1, 5, 3, 4, 2, 6, 7, 0 };
+f32 D_801073C0_22DE90_HoneycombHavoc[33][2] = {
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-420.0f, 680.0f},
+    {-266.0f, 712.0f},
+    {-163.0f, 681.0f},
+    {-83.0f, 644.0f},
+    {3.0f, 616.0f},
+    {91.0f, 575.0f},
+    {182.0f, 547.0f},
+    {285.0f, 524.0f},
+    {194.0f, 485.0f},
+    {119.0f, 443.0f},
+    {30.0f, 411.0f},
+    {-60.0f, 370.0f},
+    {-150.0f, 340.0f},
+    {-233.0f, 307.0f},
+};
+u32 D_801074C8_22DF98_HoneycombHavoc = 0;
+u32 D_801074CC_22DF9C_HoneycombHavoc = 0;
+u16 D_801074D0_22DFA0_HoneycombHavoc = 0x10;
+u16 D_801074D2_22DFA2_HoneycombHavoc = 0; /* zero tail of the word (gcc aligns an array to 4) */
+u32 D_801074D4_22DFA4_HoneycombHavoc[3] = { 0, 0, 0 };
+u16 D_801074E0_22DFB0_HoneycombHavoc[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
 
 void func_80102800_2292D0_HoneycombHavoc(void) {
     Vec eye;
