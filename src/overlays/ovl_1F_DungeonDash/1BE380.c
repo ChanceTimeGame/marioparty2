@@ -410,9 +410,315 @@ void func_801036B0_1BF230_DungeonDash(omObjData* obj) {
     D_8010A704_1C6284_DungeonDash = func_80106F80_1C2B00_DungeonDash(obj, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80104190_1BFD10_DungeonDash);
+s16 func_80104190_1BFD10_DungeonDash(s32 sfx, s16 player, s32 arg2) {
+    return func_80079798_7A398(gPlayers[player].character + sfx, player + arg2);
+}
 
+// register allocation only (masked: retail spills the hoisted &D_8010B030 and rematerialises it
+// at each use, and keeps &D_8010B10A in s1 across case 7's two calls; the logic is instruction-equal)
+#ifdef NON_MATCHING
+/* Per-frame driver of both teams' sleds, cameras and sprites (MP1 func_800F7C6C). */
+void func_801041F0_1BFD70_DungeonDash(omObjData* obj) {
+    s32 i;
+    s32 prev;
+    f32 z;
+    f32 d;
+    f32 v;
+    f32 t;
+    f32 tx;
+    f32 ty;
+    f32 tz;
+    DDTeam* team;
+    HuSprite* spr;
+
+    if (D_8010A6E0_1C6260_DungeonDash < 3) {
+        return;
+    }
+    for (i = 0; i < 2; i++) {
+        team = &D_8010B068_1C6BE8_DungeonDash[i];
+        prev = team->unk14;
+        z = (team->obj[0]->trans.z + team->obj[1]->trans.z) * 0.5;
+        team->unk28 = z;
+        switch (team->unk14) {
+            case 0:
+                team->unk14 = 1;
+                SprAttrReset(DD_SPR_A, (s16)i, 0x8000);
+                SprBankSet(DD_SPR_A, (s16)i, 0);
+                D_8010B030_1C6BB0_DungeonDash[i] = 80;
+                func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x236, i), team->obj[0]->trans.x);
+                break;
+            case 1:
+                if (team->unk8 == 3) {
+                    func_80106144_1C1CC4_DungeonDash(team->obj[0], 1, 3.0f);
+                    func_80106144_1C1CC4_DungeonDash(team->obj[1], 1, 3.0f);
+                    team->unk14 = 3;
+                    D_8010B038_1C6BB8_DungeonDash[i] = func_80079798_7A398(0x238, i);
+                    func_801075A8_1C3128_DungeonDash((s16)D_8010B038_1C6BB8_DungeonDash[i], team->obj[0]->trans.x);
+                } else if (team->unk1C >= 9) {
+                    team->unk14 = 7;
+                } else if (team->unk8 != 0) {
+                    team->unk1C++;
+                }
+                break;
+            case 3:
+                DD_MDL(team->unkE).pos.z = z + (0.14 - team->unk1A * 0.03) * 100.0;
+                DD_MDL(team->unk10).pos.z = z + (team->unk1A * 0.03 + -0.14) * 100.0;
+                if (team->unk1C == 0) {
+                    if (team->unk8 == 3) {
+                        team->unk14 = 4;
+                        SprBankSet(DD_SPR_A, (s16)i, 1);
+                        D_8010B030_1C6BB0_DungeonDash[i] = -80;
+                        func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x236, i), team->obj[0]->trans.x);
+                    }
+                } else {
+                    team->unk14 = 7;
+                    func_80079848_7A448((s16)D_8010B038_1C6BB8_DungeonDash[i]);
+                }
+                break;
+            case 4:
+                if (team->unk8 == 3) {
+                    func_80106144_1C1CC4_DungeonDash(team->obj[0], 2, 3.0f);
+                    func_80106144_1C1CC4_DungeonDash(team->obj[1], 2, 3.0f);
+                    team->unk14 = 6;
+                    D_8010B038_1C6BB8_DungeonDash[i] = func_80079798_7A398(0x239, i);
+                    func_801075A8_1C3128_DungeonDash((s16)D_8010B038_1C6BB8_DungeonDash[i], team->obj[0]->trans.x);
+                } else if (team->unk1C >= 9) {
+                    team->unk14 = 7;
+                } else if (team->unk8 != 0) {
+                    team->unk1C++;
+                }
+                break;
+            case 6:
+                DD_MDL(team->unkE).pos.z = z + (team->unk1A * 0.03 + -0.14) * 100.0;
+                DD_MDL(team->unk10).pos.z = z + (0.14 - team->unk1A * 0.03) * 100.0;
+                if (team->unk1C != 0) {
+                    team->unk14 = 7;
+                    func_80079848_7A448((s16)D_8010B038_1C6BB8_DungeonDash[i]);
+                } else if (team->unk8 == 3) {
+                    team->unk14 = 1;
+                    SprBankSet(DD_SPR_A, (s16)i, 0);
+                    D_8010B030_1C6BB0_DungeonDash[i] = 80;
+                    func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x236, i), team->obj[0]->trans.x);
+                }
+                break;
+            case 7:
+                if (team->unk1A == 0) {
+                    func_80106144_1C1CC4_DungeonDash(team->obj[0], 6, 2.0f);
+                    func_80106144_1C1CC4_DungeonDash(team->obj[1], 6, 2.0f);
+                    SprAttrReset(DD_SPR_B, (s16)i, 0x8000);
+                    func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x23C, i), team->obj[0]->trans.x);
+                    DD_MDL(team->unkE).pos.z = DD_MDL(team->unk10).pos.z = z;
+                    D_8010B040_1C6BC0_DungeonDash[0] = func_80104190_1BFD10_DungeonDash(0x111, team->player[0], 2);
+                    D_8010B040_1C6BC0_DungeonDash[1] = func_80104190_1BFD10_DungeonDash(0x111, team->player[1], 2);
+                    func_801075A8_1C3128_DungeonDash(D_8010B042_1C6BC2_DungeonDash, team->obj[0]->trans.x);
+                    func_801075A8_1C3128_DungeonDash((s16)D_8010B040_1C6BC0_DungeonDash[1], team->obj[0]->trans.x);
+                    omVibrate(team->player[0], 2, 2, 20);
+                    omVibrate(team->player[1], 2, 2, 20);
+                }
+                if (team->unk1A < 8) {
+                    SprBankSet(DD_SPR_B, (s16)i, team->unk1A);
+                }
+                if (team->unk8 == 3) {
+                    SprAttrSet(DD_SPR_A, (s16)i, 0x8000);
+                    SprAttrSet(DD_SPR_B, (s16)i, 0x8000);
+                    SprBankSet(DD_SPR_B, (s16)i, 0);
+                    team->unk14 = 8;
+                }
+                break;
+            case 8:
+                if (team->unk8 == 3) {
+                    team->unk14 = 0;
+                }
+                break;
+            case 9:
+                DD_MDL(team->unkE).pos.z = z;
+                DD_MDL(team->unk10).pos.z = z;
+                if (team->unk1A == 0) {
+                    func_80019B9C_1A79C(team->obj[0], 0);
+                    func_80019B9C_1A79C(team->obj[1], 0);
+                    SprAttrSet(DD_SPR_A, (s16)i, 0x8000);
+                    SprAttrSet(DD_SPR_B, (s16)i, 0x8000);
+                    omVibrate(team->player[0], 20, 0, 20);
+                    omVibrate(team->player[1], 20, 0, 20);
+                    D_8010B040_1C6BC0_DungeonDash[0] = func_80104190_1BFD10_DungeonDash(0x111, team->player[0], 2);
+                    D_8010B040_1C6BC0_DungeonDash[1] = func_80104190_1BFD10_DungeonDash(0x111, team->player[1], 2);
+                    func_801075A8_1C3128_DungeonDash(D_8010B042_1C6BC2_DungeonDash, team->obj[0]->trans.x);
+                    func_801075A8_1C3128_DungeonDash((s16)D_8010B040_1C6BC0_DungeonDash[1], team->obj[0]->trans.x);
+                } else if (team->unk1A >= 67) {
+                    team->unk14 = 10;
+                    func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x23D, i), team->obj[0]->trans.x);
+                }
+                DD_MDL(team->obj[0]->model[0]).unk44 = 0.0f;
+                DD_MDL(team->obj[1]->model[0]).unk44 = 0.0f;
+                break;
+            case 10:
+                team->unk1C += 2;
+                if (team->unk8 == 3) {
+                    DD_MDL(team->obj[0]->model[0]).unk44 = 1.0f;
+                    DD_MDL(team->obj[1]->model[0]).unk44 = 1.0f;
+                    team->unk14 = 0;
+                }
+                break;
+            case 11:
+                DD_MDL(team->unkE).pos.z = z;
+                DD_MDL(team->unk10).pos.z = z;
+                if (team->unk1A == 0) {
+                    func_801075A8_1C3128_DungeonDash(func_80079798_7A398(0x241, i), team->obj[0]->trans.x);
+                    func_80019B9C_1A79C(team->obj[0], 0x26);
+                    func_80019B9C_1A79C(team->obj[1], 0x26);
+                    DD_MDL(team->obj[0]->model[0]).unk44 = 1.0f;
+                    DD_MDL(team->obj[1]->model[0]).unk44 = 1.0f;
+                    SprAttrSet(DD_SPR_A, (s16)i, 0x8000);
+                    SprAttrSet(DD_SPR_B, (s16)i, 0x8000);
+                    D_8010B040_1C6BC0_DungeonDash[0] = func_80104190_1BFD10_DungeonDash(0x111, team->player[0], 2);
+                    D_8010B040_1C6BC0_DungeonDash[1] = func_80104190_1BFD10_DungeonDash(0x111, team->player[1], 2);
+                    func_801075A8_1C3128_DungeonDash(D_8010B042_1C6BC2_DungeonDash, team->obj[0]->trans.x);
+                    func_801075A8_1C3128_DungeonDash((s16)D_8010B040_1C6BC0_DungeonDash[1], team->obj[0]->trans.x);
+                    omVibrate(team->player[0], 20, 0, 20);
+                    omVibrate(team->player[1], 20, 0, 20);
+                } else if (team->unk1A == 30) {
+                    func_80019B9C_1A79C(team->obj[0], 8);
+                    func_80019B9C_1A79C(team->obj[1], 8);
+                    DD_MDL(team->obj[0]->model[0]).unk44 = 2.0f;
+                    DD_MDL(team->obj[1]->model[0]).unk44 = 2.0f;
+                    team->unk14 = 8;
+                    team->unk18 = 90;
+                }
+                break;
+            case 12:
+                if (team->unk1A >= 16) {
+                    DD_MDL(team->obj[0]->model[0]).unk44 = 1.0f;
+                    DD_MDL(team->obj[1]->model[0]).unk44 = 1.0f;
+                    team->unk18 = 30;
+                    team->unk14 = 0;
+                }
+                break;
+            case 13:
+                switch (D_8010A6E0_1C6260_DungeonDash) {
+                    case 6:
+                        if (func_801061A0_1C1D20_DungeonDash(i, 3) != 0 && D_8010B138_1C6CB8_DungeonDash == 0) {
+                            func_80106144_1C1CC4_DungeonDash(team->obj[0], 3, 1.0f);
+                            func_80106144_1C1CC4_DungeonDash(team->obj[1], 3, 1.0f);
+                            func_800732B0_73EB0(D_8010B148_1C6CC8_DungeonDash[team->player[0]][0]);
+                            func_800732B0_73EB0(D_8010B148_1C6CC8_DungeonDash[team->player[1]][0]);
+                            func_80025384_25F84(team->obj[0]->model[0], 1, team->unkB[0],
+                                                D_8010A6E4_1C6264_DungeonDash[team->unkB[0]]);
+                            func_80025384_25F84(team->obj[1]->model[0], 1, team->unkB[1],
+                                                D_8010A6E4_1C6264_DungeonDash[team->unkB[1]]);
+                            D_8010A6E0_1C6260_DungeonDash = 7;
+                            team->unk1A = 0;
+                            PlayMusic(0x52);
+                        }
+                        func_80106D2C_1C28AC_DungeonDash(i, D_8010A720_1C62A0_DungeonDash.zoom, D_8010A720_1C62A0_DungeonDash.cx, D_8010A720_1C62A0_DungeonDash.cy, D_8010A720_1C62A0_DungeonDash.cz, D_8010A720_1C62A0_DungeonDash.rx, D_8010A720_1C62A0_DungeonDash.ry,
+                                                         D_8010A720_1C62A0_DungeonDash.rz, 1);
+                        break;
+                    case 7:
+                        if (++team->unk1A >= 31) {
+                            team->unk1A = 30;
+                            if (D_8010B130_1C6CB0_DungeonDash == 0) {
+                                D_8010B130_1C6CB0_DungeonDash = 1;
+                            }
+                        }
+                        t = team->unk1A / 30.0f;
+                        if (t > 1.0) {
+                            t = 1.0f;
+                        }
+                        tx = -130.0f;
+                        ty = team->unk24 + 150.0;
+                        tz = team->unk28 - 100.0;
+                        func_80106D2C_1C28AC_DungeonDash(i, D_8010A720_1C62A0_DungeonDash.zoom + t * 100.0,
+                                                         D_8010A720_1C62A0_DungeonDash.cx + t * (tx - D_8010A720_1C62A0_DungeonDash.cx),
+                                                         D_8010A720_1C62A0_DungeonDash.cy + t * (ty - D_8010A720_1C62A0_DungeonDash.cy),
+                                                         D_8010A720_1C62A0_DungeonDash.cz + t * (tz - D_8010A720_1C62A0_DungeonDash.cz),
+                                                         D_8010A720_1C62A0_DungeonDash.rx, D_8010A720_1C62A0_DungeonDash.ry + t * 40.0, D_8010A720_1C62A0_DungeonDash.rz, 1);
+                        team->obj[0]->rot.y = team->obj[1]->rot.y = 240.0f;
+                        break;
+                }
+            case 14:
+                SprAttrSet(DD_SPR_A, (s16)i, 0x8000);
+                SprAttrSet(DD_SPR_B, (s16)i, 0x8000);
+                break;
+        }
+        if (D_8010A6E0_1C6260_DungeonDash >= 5) {
+            if (((team->unk14 != 13) & (team->unk14 != 9)) && team->unk14 != 10 && team->unk14 != 11 &&
+                team->unk14 != 12) {
+                team->unk14 = 14;
+            }
+        }
+        if (D_8010A6E0_1C6260_DungeonDash == 4) {
+            team->unk14 = 14;
+        }
+        if (team->unk14 == 14) {
+            if (team->obj[0]->trans.y > 0.0 || team->obj[1]->trans.y > 0.0) {
+                team->unk14 = 11;
+            }
+        }
+        if (D_8010A6E0_1C6260_DungeonDash == 3) {
+            team->unk1A++;
+            if (func_80108308_1C3E88_DungeonDash(i, team->obj[0]->trans.z) != 0) {
+                team->unk14 = 13;
+                D_8010A744_1C62C4_DungeonDash |= 1 << i;
+            }
+            team->unk16 = func_80105464_1C0FE4_DungeonDash(team->obj[0]->trans.z);
+            if (team->unk16 == 3) {
+                team->unk14 = 9;
+            }
+            func_80029714_2A314(team->unk12, team->obj[0]->trans.x, 16.0f, team->obj[0]->trans.z);
+            if (func_80106810_1C2390_DungeonDash(i) != 0) {
+                if (team->unk14 != 7 && team->unk14 != 8) {
+                    team->unk14 = 11;
+                }
+            }
+            if (prev != team->unk14) {
+                team->unk8 = 0;
+                team->unk1C = 0;
+                team->unk1A = 0;
+                team->unk1E = (rand8() & 7) + 4;
+            }
+            func_80106D2C_1C28AC_DungeonDash(i, 539.5f, (i * 2 - 1) * 280.0, 280.0f, team->obj[0]->trans.z, -17.25f,
+                                             0.0f, 0.0f, 1);
+            SprPos3DSet(DD_SPR_A, (s16)i, (s16)i, D_8010B030_1C6BB0_DungeonDash[i] + team->obj[0]->trans.x,
+                        team->obj[0]->trans.y + 160.0, team->obj[0]->trans.z);
+            spr = func_80082550_83150(DD_SPR_A, (s16)i);
+            SprPosSet(DD_SPR_B, (s16)i, spr->unk_04, spr->unk_08);
+        }
+    }
+    v = D_8010B068_1C6BE8_DungeonDash[0].unk28 - D_8010B068_1C6BE8_DungeonDash[1].unk28;
+    d = fabsf(v);
+    if (d < 300.0) {
+        D_8010B068_1C6BE8_DungeonDash[0].unk34 = 1.0f;
+        D_8010B068_1C6BE8_DungeonDash[1].unk34 = 1.0f;
+    } else if (d < 800.0) {
+        if (D_8010B068_1C6BE8_DungeonDash[0].unk28 - D_8010B068_1C6BE8_DungeonDash[1].unk28 > 0.0f) {
+            D_8010B068_1C6BE8_DungeonDash[0].unk34 = d / 100.0 * 0.1 + 0.8;
+            D_8010B068_1C6BE8_DungeonDash[1].unk34 = 1.0f;
+        } else {
+            D_8010B068_1C6BE8_DungeonDash[0].unk34 = 1.0f;
+            D_8010B068_1C6BE8_DungeonDash[1].unk34 = d / 100.0 * 0.1 + 0.8;
+        }
+    } else if (D_8010B068_1C6BE8_DungeonDash[0].unk28 - D_8010B068_1C6BE8_DungeonDash[1].unk28 > 0.0f) {
+        D_8010B068_1C6BE8_DungeonDash[0].unk34 = 1.6f;
+        D_8010B068_1C6BE8_DungeonDash[1].unk34 = 1.0f;
+    } else {
+        D_8010B068_1C6BE8_DungeonDash[0].unk34 = 1.0f;
+        D_8010B068_1C6BE8_DungeonDash[1].unk34 = 1.6f;
+    }
+    if (D_8010B138_1C6CB8_DungeonDash > 0) {
+        D_8010B138_1C6CB8_DungeonDash--;
+    } else if (D_8010B138_1C6CB8_DungeonDash < 0) {
+        D_8010B138_1C6CB8_DungeonDash = 0;
+    }
+    if (D_8010A744_1C62C4_DungeonDash != 0) {
+        if (D_8010A744_1C62C4_DungeonDash == 3) {
+            D_8010B068_1C6BE8_DungeonDash[rand8() & 1].unk14 = 14;
+        }
+        D_8010A6E0_1C6260_DungeonDash = 5;
+        D_8010A744_1C62C4_DungeonDash = 0;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801041F0_1BFD70_DungeonDash);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105464_1C0FE4_DungeonDash);
 

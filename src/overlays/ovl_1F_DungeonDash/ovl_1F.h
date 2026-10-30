@@ -25,10 +25,12 @@ typedef struct DDTeam {
     /* 0x12 */ s16 unk12;         /* shadow model */
     /* 0x14 */ u16 unk14;         /* state */
     /* 0x16 */ u16 unk16;         /* obstacle ahead (func_80105464) */
-    /* 0x18 */ s16 unk18;         /* state timer */
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ char unk1E[0xA];
+    /* 0x18 */ s16 unk18;         /* set to 90/30 when a slam/stun ends (S4-1FA) */
+    /* 0x1A */ s16 unk1A;         /* state timer (MP1 unk18) */
+    /* 0x1C */ s16 unk1C;         /* pulls missed (MP1 unk1A) */
+    /* 0x1E */ s16 unk1E;         /* (rand8() & 7) + 4 on each state change (MP1 unk1C) */
+    /* 0x20 */ char unk20[4];
+    /* 0x24 */ f32 unk24;         /* sled y, read by the goal camera (S4-1FA) */
     /* 0x28 */ f32 unk28;         /* sled z: the members' mean */
     /* 0x2C */ char unk2C[8];
     /* 0x34 */ f32 unk34;         /* speed factor */
@@ -115,7 +117,7 @@ void func_801060DC_1C1C5C_DungeonDash(void);
 void func_801060F8_1C1C78_DungeonDash(omObjData* obj, DDTeam* team);
 DDTeam* func_80106118_1C1C98_DungeonDash(omObjData* obj);
 void func_80106144_1C1CC4_DungeonDash(omObjData* obj, s32 motion, f32 speed);
-s32 func_801061A0_1C1D20_DungeonDash(s16 arg0, s32 arg1);
+s32 func_801061A0_1C1D20_DungeonDash(s32 team, s32 arg1);
 void func_8010676C_1C22EC_DungeonDash(void);
 s32 func_80106810_1C2390_DungeonDash(s32 team);
 void func_801068E8_1C2468_DungeonDash(void);
@@ -144,7 +146,7 @@ void func_801077C8_1C3348_DungeonDash(omObjData* obj);
 void func_801078BC_1C343C_DungeonDash(omObjData* obj);
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj);
 void func_80108054_1C3BD4_DungeonDash(omObjData* obj);
-s32 func_80108308_1C3E88_DungeonDash(s32 arg0, f32 arg1);
+s16 func_80108308_1C3E88_DungeonDash(u16 team, f32 z); /* S4-1FA: u16 team, s16 result (callers mask and re-extend) */
 void func_801083B0_1C3F30_DungeonDash(s32 arg0);
 void func_80108574_1C40F4_DungeonDash(void);
 void func_80108A14_1C4594_DungeonDash(s32 arg0, f32 arg1);
@@ -162,6 +164,7 @@ s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
 #include "game/hmfman.h"
 #include "game/data.h"
 #include "game/collision.h"
+#include "game/sprite.h"
 extern s32 D_8010B104_1C6C84_DungeonDash; /* sprite group; read as s16 (D_8010B106) */
 extern s32 D_8010B108_1C6C88_DungeonDash; /* sprite group; read as s16 (D_8010B10A) */
 extern s32 D_8010B128_1C6CA8_DungeonDash[2];
@@ -220,4 +223,41 @@ void func_800794A8_7A0A8(s32);
 void func_80079614_7A214(s16 time); /* music fade-out */
 void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
 
+/* the goal camera's start pose (D_8010A720, .data) */
+typedef struct DDCamPose {
+    /* 0x00 */ f32 zoom;
+    /* 0x04 */ f32 unk04;
+    /* 0x08 */ f32 unk08;
+    /* 0x0C */ f32 cx;
+    /* 0x10 */ f32 cy;
+    /* 0x14 */ f32 cz;
+    /* 0x18 */ f32 rx;
+    /* 0x1C */ f32 ry;
+    /* 0x20 */ f32 rz;
+} DDCamPose; /* size = 0x24 */
+extern DDCamPose D_8010A720_1C62A0_DungeonDash;
+extern s32 D_8010A6E4_1C6264_DungeonDash[6]; /* per character: func_80025384's last argument */
+extern u8 D_8010A744_1C62C4_DungeonDash; /* bit per team at the goal (a .data word, read by byte) */
+extern s32 D_8010B030_1C6BB0_DungeonDash[2]; /* team marker x offset, +-80 */
+extern s32 D_8010B038_1C6BB8_DungeonDash[2]; /* the pull sound; read as s16 (+2) */
+extern s32 D_8010B040_1C6BC0_DungeonDash[2]; /* the members' voices; read as s16 (D_8010B042, +6) */
+void SprAttrReset(s16 group, s16 member, s32 flag);
+void SprBankSet(s16 group, s16 member, s16 bank); /* u16 bank in main; retail passes an s16 */
+void func_80079848_7A448(s16 id); /* stop a sound */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+omObjData* func_800732B0_73EB0(u32 arg0);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+void SprPos3DSet(s16 group, s16 member, s16 camera, f32 x, f32 y, f32 z);
+HuSprite* func_80082550_83150(s16 group, s16 member);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+
+/* model data; the two sprite groups (s32 globals read by their low halves) */
+#define DD_MDL(m) D_800FC834_FD434[m]
+#define DD_SPR_A D_8010B106_1C6C86_DungeonDash
+#define DD_SPR_B D_8010B10A_1C6C8A_DungeonDash
+extern s16 D_8010B106_1C6C86_DungeonDash; /* low half of D_8010B104: retail 801041F0 reads it by this label */
+extern s16 D_8010B10A_1C6C8A_DungeonDash; /* low half of D_8010B108 */
+extern s16 D_8010B042_1C6BC2_DungeonDash; /* low half of D_8010B040[0]: read by this label */
+
+f32 fabsf(f32);
 #endif
