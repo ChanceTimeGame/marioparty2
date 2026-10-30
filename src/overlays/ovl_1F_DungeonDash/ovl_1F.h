@@ -180,11 +180,12 @@ typedef struct DDFx {
 typedef struct DDBlock {
     /* 0x00 */ s16 unk0;  /* active */
     /* 0x02 */ s16 unk2;  /* 60 */
-    /* 0x04 */ s16 unk4;  /* phase: 0 or 2 */
+    /* 0x04 */ s16 unk4;  /* phase: 0 swing down, 1 rest, 2 swing back, 3 rest, 0xFF hidden */
     /* 0x06 */ s16 unk6;  /* blade model */
-    /* 0x08 */ s16 unk8;  /* shadow model */
-    /* 0x0A */ s16 unkA;  /* pivot model */
-    /* 0x0C */ char unkC[4];
+    /* 0x08 */ s16 unk8;  /* dust model */
+    /* 0x0A */ s16 unkA;  /* glint model */
+    /* 0x0C */ s16 unkC;  /* phase frames */
+    /* 0x0E */ char unkE[2];
     /* 0x10 */ f32 unk10; /* swing angle */
     /* 0x14 */ f32 x;
     /* 0x18 */ f32 y;
@@ -216,6 +217,7 @@ f32 func_800B7890_B8490(f32); /* cos */
 extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
 s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c */
 void HuMemFree(void*);
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
 extern s16 D_800FA1AA_FADAA; /* main's heap tag */
 extern f32 D_8010A7F4_1C6374_DungeonDash[2]; /* .data: obstacle x by parity {-280, 280} */
 extern u8 D_80102720_103320; /* board.h */
@@ -274,6 +276,7 @@ typedef struct DDTorch {
     /* 0x14 */ f32 z;
 } DDTorch; /* size = 0x18 */
 extern DDTorch* D_8010B29C_1C6E1C_DungeonDash;
+extern s16 D_8010B280_1C6E00_DungeonDash; /* blade animation frame (0..15) */
 extern s16 D_8010B2A0_1C6E20_DungeonDash; /* blade sprite animations */
 extern s16 D_8010B2A2_1C6E22_DungeonDash;
 extern s16 D_8010B2A4_1C6E24_DungeonDash;

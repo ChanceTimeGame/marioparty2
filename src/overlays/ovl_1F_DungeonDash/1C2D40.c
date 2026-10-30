@@ -598,7 +598,166 @@ void func_80108C8C_1C480C_DungeonDash(void) {
     D_8010B2A8_1C6E28_DungeonDash = 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108F9C_1C4B1C_DungeonDash);
+/* Swings the two blades: down (0), rest (1, slam sound), back (2), rest (3, slam sound). */
+void func_80108F9C_1C4B1C_DungeonDash(void) {
+    DDBlock* b;
+    u16 i;
+    s16 frame;
+    f32 scale;
+    HuSprite_Unk84_Struct* anim1;
+    HuSprite_Unk84_Struct* anim2;
+    HuSprite_Unk84_Struct* anim0;
+    f32 d[4];
+    s32 h;
+    f32 v;
+    f32 t;
+    f32 sc;
+
+    b = D_8010B2E0_1C6E60_DungeonDash;
+    scale = 4.8f;
+    frame = 0;
+    if (D_8010B2A8_1C6E28_DungeonDash == 0) {
+        return;
+    }
+    if (D_8010B280_1C6E00_DungeonDash++ >= 15) {
+        D_8010B280_1C6E00_DungeonDash = 0;
+    }
+    anim0 = SprAnimGet(D_8010B2A0_1C6E20_DungeonDash);
+    anim1 = SprAnimGet(D_8010B2A2_1C6E22_DungeonDash);
+    anim2 = SprAnimGet(D_8010B2A4_1C6E24_DungeonDash);
+    for (i = 0; i < 2; i++, b++) {
+        if (b->unk0 == 0) {
+            continue;
+        }
+        if (i == 0) {
+            func_8010A340_1C5EC0_DungeonDash(b->unk6, anim0, D_8010B280_1C6E00_DungeonDash);
+            func_8010A340_1C5EC0_DungeonDash(b->unkA, anim1, 0);
+        } else {
+            func_8010A430_1C5FB0_DungeonDash(b->unk6, D_8010B2E0_1C6E60_DungeonDash->unk6);
+            func_8010A430_1C5FB0_DungeonDash(b->unkA, D_8010B2E0_1C6E60_DungeonDash->unkA);
+        }
+        if (b->unkC < 16) {
+            frame = b->unkC;
+        }
+        func_8010A340_1C5EC0_DungeonDash(b->unk8, anim2, frame);
+        if (b->unk2 > 0) {
+            b->unk2--;
+            continue;
+        }
+        d[0] = func_800B7890_B8490(b->unk10) * (2.2 * 100.0);
+        d[1] = HuMathSin(b->unk10) * 350.0;
+        func_80029714_2A314(b->unk6, b->x + d[0], b->y + d[1], b->unk1C);
+        d[2] = b->unk10;
+        if (b->unk4 == 0) {
+            d[2] = d[2] + 180.0;
+        }
+        func_8002979C_2A39C(b->unk6, 0.0f, 0.0f, d[2]);
+        switch (b->unk4) {
+            case 0:
+                if (++b->unkC >= 16) {
+                    func_800298A4_2A4A4(b->unk8, 4, 4);
+                }
+                b->unk10 += 6.0;
+                if (b->unk10 >= 180.0) {
+                    if (D_8010B2D0_1C6E50_DungeonDash == 0) {
+                        func_800298A4_2A4A4(b->unk8, 4, 0);
+                        func_80029714_2A314(b->unk8, b->x + d[0], b->y + 10.0, b->unk1C);
+                    }
+                    b->unk10 = 180.0f;
+                    b->unkC = 0;
+                    b->unk4++;
+                }
+                break;
+            case 1:
+                if (++b->unkC < 60 && D_8010B2D0_1C6E50_DungeonDash == 0) {
+                    func_800298A4_2A4A4(b->unk6, 4, 4);
+                    if (b->unkC >= 16) {
+                        func_800298A4_2A4A4(b->unk8, 4, 4);
+                    }
+                } else {
+                    func_800298A4_2A4A4(b->unk6, 4, 0);
+                    b->unk4++;
+                    b->unkC = 0;
+                    func_800298A4_2A4A4(b->unk8, 4, 0);
+                    func_80029714_2A314(b->unk8, b->x + d[0], b->y + 10.0, b->unk1C);
+                    if (D_8010B2BA_1C6E3A_DungeonDash != 0) {
+                        h = PlaySound(0x23E);
+                        if ((s16)h >= 0) {
+                            func_801075A8_1C3128_DungeonDash(h, b->x);
+                            v = 1.0 - (f32)fabs(D_8010B2C0_1C6E40_DungeonDash[i & 1] - b->unk1C) / 2300.0;
+                            if (v < 0.0) {
+                                v = 0.0f;
+                            } else if (v > 1.0) {
+                                v = 1.0f;
+                            }
+                            func_800795D8_7A1D8(h, v * 20.0f + 107.0f);
+                        }
+                    }
+                }
+                break;
+            case 2:
+                if (++b->unkC >= 16) {
+                    func_800298A4_2A4A4(b->unk8, 4, 4);
+                }
+                b->unk10 -= 6.0;
+                if (b->unk10 <= 0.0) {
+                    if (D_8010B2D0_1C6E50_DungeonDash == 0) {
+                        func_800298A4_2A4A4(b->unk8, 4, 0);
+                        func_80029714_2A314(b->unk8, b->x + d[0], b->y + 10.0, b->unk1C);
+                    }
+                    b->unk10 = 0.0f;
+                    b->unkC = 0;
+                    b->unk4++;
+                }
+                break;
+            case 3:
+                if (++b->unkC < 60 && D_8010B2D0_1C6E50_DungeonDash == 0) {
+                    func_800298A4_2A4A4(b->unk6, 4, 4);
+                    if (b->unkC >= 16) {
+                        func_800298A4_2A4A4(b->unk8, 4, 4);
+                    }
+                } else {
+                    func_800298A4_2A4A4(b->unk6, 4, 0);
+                    b->unk4 = 0;
+                    b->unkC = 0;
+                    func_800298A4_2A4A4(b->unk8, 4, 0);
+                    func_80029714_2A314(b->unk8, b->x + d[0], b->y + 10.0, b->unk1C);
+                    if (D_8010B2BA_1C6E3A_DungeonDash != 0) {
+                        h = PlaySound(0x23E);
+                        if ((s16)h >= 0) {
+                            func_801075A8_1C3128_DungeonDash(h, b->x);
+                            v = 1.0 - (f32)fabs(D_8010B2C0_1C6E40_DungeonDash[i & 1] - b->unk1C) / 2300.0;
+                            if (v < 0.0) {
+                                v = 0.0f;
+                            } else if (v > 1.0) {
+                                v = 1.0f;
+                            }
+                            func_800795D8_7A1D8(h, v * 20.0f + 107.0f);
+                        }
+                    }
+                }
+                break;
+            case 0xFF:
+                func_800298A4_2A4A4(b->unk6, 4, 4);
+                break;
+        }
+        func_80029714_2A314(b->unkA, b->x + d[0], 6.0f, b->unk1C);
+        if (b->unk10 > 27.0 && b->unk10 < 153.0 && D_8010B2D0_1C6E50_DungeonDash == 0) {
+            if (b->unk10 > 27.0 && b->unk10 < 37.0) {
+                scale = scale * ((b->unk10 - 27.0) / 10.0);
+            } else if (b->unk10 < 153.0 && b->unk10 > 143.0) {
+                scale = scale * (1.0 - (b->unk10 - 143.0) / 10.0);
+            }
+            func_800298A4_2A4A4(b->unkA, 4, 0);
+        } else {
+            func_800298A4_2A4A4(b->unkA, 4, 4);
+        }
+        t = func_800B0D98_B1998(b->unk10, 16.0);
+        t = t / 16.0;
+        sc = scale + (f32)(HuMathSin(t * 180.0) * 0.5);
+        func_800297E8_2A3E8(b->unkA, sc, sc, 0.5f);
+    }
+}
 
 /* Hides the blades behind team t's camera, shows those ahead. */
 void func_80109884_1C5404_DungeonDash(s32 team, f32 z) {
