@@ -12,7 +12,7 @@ typedef struct MgWork {
     /* 0x05 */ char unk_05;
     /* 0x06 */ u16 unk_06; /* flags (MP1 u8 0x01) */
     /* 0x08 */ f32 unk_08;
-    /* 0x0C */ char unk_0C[4];
+    /* 0x0C */ f32 unk_0C;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 unk_14; /* also an s32 (func_8000BF24_CB24) */
     /* 0x18 */ char unk_18[0x1C];
@@ -41,7 +41,8 @@ typedef struct MgWork {
     /* 0x70 */ f32 unk_70;
     /* 0x74 */ s32 unk_74[6]; /* packed (x << 16) | (y & 0xFFFF) stick samples (MP1 0x6C) */
     /* 0x8C */ f32 unk_8C;
-    /* 0x90 */ char unk_90[0xC];
+    /* 0x90 */ char unk_90[8];
+    /* 0x98 */ f32 unk_98;
     /* 0x9C */ f32 unk_9C;
     /* 0xA0 */ f32 unk_A0;
     /* 0xA4 */ f32 unk_A4;
@@ -257,7 +258,9 @@ void func_8000BE8C_CA8C(omObjData* obj, f32 arg1) {
     MG_WORK(obj)->unk_08 = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE98_CA98);
+void func_8000BE98_CA98(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_0C = arg1;
+}
 
 void func_8000BEA4_CAA4(omObjData* obj, f32 arg1) {
     MG_WORK(obj)->unk_10 = arg1;
@@ -312,7 +315,15 @@ INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF54_CB54);
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF8C_CB8C);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFA8_CBA8);
+/* Cylinder hit shape: top, depth below it, radius. */
+void func_8000BFA8_CBA8(omObjData* obj, f32 top, f32 depth, f32 radius) {
+    MgWork* work = MG_WORK(obj);
+
+    work->unk_06 |= 0x40;
+    work->unk_14 = top;
+    work->unk_98 = depth;
+    work->unk_9C = radius;
+}
 
 INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFC8_CBC8);
 
@@ -716,7 +727,24 @@ s16 func_8000CF84_DB84(s16 player, s16 limit, s8 x, s8 y) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000D2F8_DEF8);
+/* Builds the two matrices func_8000D434_E034 uses with flag 0x80 from obj's translation and rotation. */
+void func_8000D2F8_DEF8(omObjData* obj) {
+    s32 mdl = obj->model[0];
+    MgWork* work = MG_WORK(obj);
+
+    if (obj->trans.x != 0.0f || obj->trans.y != 0.0f || obj->trans.z != 0.0f) {
+        func_800B1F50_B2B50(MG_MTX(work, 0x18), obj->trans.x, obj->trans.y, obj->trans.z);
+    } else {
+        func_800B37C0_B43C0(MG_MTX(work, 0x18));
+    }
+    if (obj->rot.x != 0.0f || obj->rot.y != 0.0f || obj->rot.z != 0.0f) {
+        func_80025884_26484(MG_MTX(work, 0x18), obj->rot.x, obj->rot.y, obj->rot.z);
+    }
+    if (work->unk_06 & 0x100) {
+        guMtxCatF((f32(*)[4])D_800FC834_FD434[mdl].mtx, MG_MTX(work, 0x18), MG_MTX(work, 0x18));
+    }
+    func_8001B170_1BD70(MG_MTX(work, 0x18), MG_MTX(work, 0x58));
+}
 
 /* Transforms p by obj's translation and rotation (or by the matrices stored in its work when
    flag 0x80 is set); m is scratch, out receives the matrix. MP1 func_8000A1C0 grown. */
