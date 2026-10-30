@@ -666,7 +666,57 @@ void func_8010484C_19D5DC_HandcarHavoc(omObjData* obj) {
     }
 }
 
+/* 0: straight, 1: too fast into a bend (tipping); sets the lean side flags (MP1 F917C). */
+// NON_MATCHING: float register allocation (lean/ad/d; masked 0)
+#ifdef NON_MATCHING
+u16 func_80104C00_19D990_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    f32 lean;
+    f32 ad;
+    f32 d;
+
+    w = obj->unk_50;
+    if (w->speed == 0.0f) {
+        return 0;
+    }
+    if (w->prevRot.y == w->rot.y) {
+        return 0;
+    }
+    d = w->prevRot.y - w->rot.y;
+    if (fabs(d) > 180.0) {
+        if (d < 0.0f) {
+            d += 360.0f;
+        } else {
+            d -= 360.0f;
+        }
+    }
+    if (w->speed > 0.0f) {
+        d = -d;
+    }
+    ad = fabsf(d);
+    if (ad < 0.7f) {
+        return 0;
+    }
+    if (d > 0.0f) {
+        lean = w->lean;
+    } else {
+        lean = -w->lean;
+    }
+    if ((ad + lean * 0.55f) * 10.0f + fabs(w->speed) < 101.85184478759766) {
+        return 0;
+    }
+    if (d > 0.0f) {
+        func_801074A8_1A0238_HandcarHavoc(obj, 0);
+        obj->work[0] = (obj->work[0] | 0x20) & ~0x40;
+    } else {
+        func_801074A8_1A0238_HandcarHavoc(obj, 1);
+        obj->work[0] = (obj->work[0] | 0x40) & ~0x20;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80104C00_19D990_HandcarHavoc);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80104DE0_19DB70_HandcarHavoc);
 
