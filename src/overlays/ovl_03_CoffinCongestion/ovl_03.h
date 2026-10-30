@@ -197,6 +197,25 @@ typedef struct CCFile {
     /* 0x04 */ s32 attr;
 } CCFile;
 
+/* The camera (D_80106C20, .data; no splat label: inside D_80106BF8's range). */
+typedef struct CCCamera {
+    /* 0x00 */ Vec eye;
+    /* 0x0C */ Vec at;
+    /* 0x18 */ f32 fov;
+    /* 0x1C */ s16 vp[4];       /* viewport */
+    /* 0x24 */ s16 sc[4];       /* scissor */
+    /* 0x2C */ s32 file;        /* sprite file */
+    /* 0x30 */ s16 spr;         /* its sprite slot */
+    /* 0x32 */ char unk_32[2];
+} CCCamera; /* size = 0x34 */
+
+/* A light (D_80106C54[2], .data). */
+typedef struct CCLight {
+    /* 0x00 */ s8 dir[3];
+    /* 0x03 */ char unk_03;
+    /* 0x04 */ f32 col[3];
+} CCLight; /* size = 0x10 */
+
 /* Minigame flow (D_80106DF0, bss). */
 typedef struct CCGame {
     /* 0x00 */ u16 mode;        /* index into D_80106CD8 */
@@ -254,6 +273,8 @@ extern CCMotionDef D_80106AEC_F81FC_CoffinCongestion[15];
 extern CCFile D_80106BA0_F82B0_CoffinCongestion[9];
 extern void (*D_80106BE8_F82F8_CoffinCongestion[4])(omObjData*, MgWork*, CCCpu*);
 extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*);
+extern CCCamera D_80106C20_F8330_CoffinCongestion[1]; /* undefined_syms.txt: D_80106BF8 + 0x28 */
+extern CCLight D_80106C54_F8364_CoffinCongestion[2];
 
 /* ---------------------------------------------------------------------------------------------
    Bss (ovl_03_bss)
@@ -262,7 +283,7 @@ extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*)
 extern omObjData** D_80106DB0_F84C0_CoffinCongestion; /* room objects [27] */
 extern omObjData** D_80106DB4_F84C4_CoffinCongestion; /* smoke puffs [6], 0 before created */
 extern CCScene D_80106DB8_F84C8_CoffinCongestion;
-extern omObjData** D_80106DE0_F84F0_CoffinCongestion; /* player object */
+extern omObjData** D_80106DE0_F84F0_CoffinCongestion[4]; /* [0]: the player object list (0x10 bss) */
 extern CCGame D_80106DF0_F8500_CoffinCongestion;
 extern CCPad D_80106E04_F8514_CoffinCongestion[4];
 
@@ -325,7 +346,7 @@ void func_801054C4_F6BD4_CoffinCongestion(void);
 void func_801055C4_F6CD4_CoffinCongestion(void);
 f32 func_801055EC_F6CFC_CoffinCongestion(void);
 void func_80105600_F6D10_CoffinCongestion(void);
-u16 func_80105638_F6D48_CoffinCongestion(s32 idx, s32 arg1);
+u16 func_80105638_F6D48_CoffinCongestion(s32 file, u32 idx);
 void func_80105710_F6E20_CoffinCongestion(void);
 void func_801057A0_F6EB0_CoffinCongestion(void);
 void func_80105830_F6F40_CoffinCongestion(void);

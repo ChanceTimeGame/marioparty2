@@ -314,3 +314,4 @@ D_8010C3AC_137F9C_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xC;
 D_8010C3AD_137F9D_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xD;
 D_8010C3AE_137F9E_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xE;
 D_80106DA8_F84B8_CoffinCongestion = D_80106DC0_F84D0_CoffinCongestion - 0x18;
+D_80106C20_F8330_CoffinCongestion = D_80106BF8_F8308_CoffinCongestion + 0x28;

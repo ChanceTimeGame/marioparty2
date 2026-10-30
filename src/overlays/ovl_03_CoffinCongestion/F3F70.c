@@ -908,23 +908,141 @@ void func_801051C0_F68D0_CoffinCongestion(omObjData* obj) {
     func_80007790_8390(obj);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010524C_F695C_CoffinCongestion);
+/* Sets up the player object for `player`. */
+void func_8010524C_F695C_CoffinCongestion(omObjData* obj, s32 player) {
+    s8 chr;
+    s32 dir;
+    s32 file;
+    s32 i;
+    MgWork* work;
+    CCCpu* cpu;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801054C4_F6BD4_CoffinCongestion);
+    chr = gPlayers[player].character;
+    dir = D_800CD438_CE038[chr].unk_04;
+    file = D_800CD438_CE038[chr].unk_08;
+    func_8000C578_D178(1);
+    func_8000C6FC_D2FC(obj, dir, file, player, 0x299, 0x299);
+    for (i = 2; i < 9; i++) {
+        if (D_80106BA0_F82B0_CoffinCongestion[i].file != 0) {
+            obj->model[i] = LoadFormFile(D_80106BA0_F82B0_CoffinCongestion[i].file, D_80106BA0_F82B0_CoffinCongestion[i].attr);
+        }
+    }
+    for (i = 0; i < 15; i++) {
+        func_80019F0C_1AB0C(obj, D_80106AEC_F81FC_CoffinCongestion[i].slot, dir | D_80106AEC_F81FC_CoffinCongestion[i].file,
+                            D_80106AEC_F81FC_CoffinCongestion[i].unk_08, D_80106AEC_F81FC_CoffinCongestion[i].unk_0A);
+    }
+    func_80104570_F5C80_CoffinCongestion(obj);
+    omSetTra(obj, D_80106A30_F8140_CoffinCongestion.x, D_80106A30_F8140_CoffinCongestion.y, D_80106A30_F8140_CoffinCongestion.z);
+    work = obj->unk_50;
+    func_8000E0C0_ECC0(work, 6, func_801049FC_F610C_CoffinCongestion);
+    func_8000E0C0_ECC0(work, 1, func_80104AD4_F61E4_CoffinCongestion);
+    func_8000E0C0_ECC0(work, 3, func_8010499C_F60AC_CoffinCongestion);
+    func_8000E0C0_ECC0(work, 0, func_80104A7C_F618C_CoffinCongestion);
+    cpu = func_80027154_27D54(sizeof(CCCpu), 0x7918);
+    if (cpu == NULL) {
+        while (1) {}
+    }
+    func_800B0EF0_B1AF0(cpu, 0, sizeof(CCCpu));
+    work->unk_158 = cpu;
+    switch (gPlayers[player].cpu_difficulty) {
+        case 0:
+            cpu->unk_0A = 0;
+            break;
+        case 1:
+            cpu->unk_0A = 1;
+            break;
+        case 2:
+            cpu->unk_0A = 2;
+            break;
+        case 3:
+            cpu->unk_0A = 3;
+            break;
+    }
+    cpu->unk_09 = chr;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801055C4_F6CD4_CoffinCongestion);
+/* Creates the player object for the first player in group 0. */
+void func_801054C4_F6BD4_CoffinCongestion(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801055EC_F6CFC_CoffinCongestion);
+    func_8000C460_D060();
+    func_80076BD0_777D0(0, 1);
+    D_80106DE0_F84F0_CoffinCongestion[0] = func_80076D80_77980(0);
+    D_800FC87A_FD47A = 0;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    D_80106DE0_F84F0_CoffinCongestion[0][0] = omAddObj(2, 9, 0x26, 0, NULL);
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = D_80106DE0_F84F0_CoffinCongestion[0][0];
+    func_8010524C_F695C_CoffinCongestion(D_80106DE0_F84F0_CoffinCongestion[0][0], i);
+    D_80106DE0_F84F0_CoffinCongestion[0][0]->func_ptr = func_801051C0_F68D0_CoffinCongestion;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105600_F6D10_CoffinCongestion);
+void func_801055C4_F6CD4_CoffinCongestion(void) {
+    omDelObj(func_80076D98_77998(0, 0));
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105638_F6D48_CoffinCongestion);
+f32 func_801055EC_F6CFC_CoffinCongestion(void) {
+    return D_80106DE0_F84F0_CoffinCongestion[0][0]->trans.x;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105710_F6E20_CoffinCongestion);
+void func_80105600_F6D10_CoffinCongestion(void) {
+    D_80106DF0_F8500_CoffinCongestion.mode = 0;
+    D_80106DF0_F8500_CoffinCongestion.next = 0;
+    D_80106DF0_F8500_CoffinCongestion.step = 0;
+    D_80106DF0_F8500_CoffinCongestion.timer = 0;
+    func_8000C3B8_CFB8();
+    func_8000C3C8_CFC8();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801057A0_F6EB0_CoffinCongestion);
+/* Creates camera `idx`'s sprite from its file; returns the sprite's slot field 4. */
+u16 func_80105638_F6D48_CoffinCongestion(s32 file, u32 idx) {
+    if (idx >= 2) {
+        while (1) {}
+    }
+    D_80106C20_F8330_CoffinCongestion[idx].spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(file), 0, 0);
+    if (D_80106C20_F8330_CoffinCongestion[idx].spr == -1) {
+        while (1) {}
+    }
+    espDispOff(D_80106C20_F8330_CoffinCongestion[idx].spr);
+    return ((u16*)((u8*)D_800F93FC_F9FFC + D_80106C20_F8330_CoffinCongestion[idx].spr * 0x24))[2];
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105830_F6F40_CoffinCongestion);
+/* Saves the controller state. */
+void func_80105710_F6E20_CoffinCongestion(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        D_80106E04_F8514_CoffinCongestion[i].stkX = ContStkX[i];
+        D_80106E04_F8514_CoffinCongestion[i].stkY = ContStkY[i];
+        D_80106E04_F8514_CoffinCongestion[i].btn = ContBtn[i];
+        D_80106E04_F8514_CoffinCongestion[i].trg = ContBtnTrg[i];
+    }
+}
+
+/* Restores it. */
+void func_801057A0_F6EB0_CoffinCongestion(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        ContStkX[i] = D_80106E04_F8514_CoffinCongestion[i].stkX;
+        ContStkY[i] = D_80106E04_F8514_CoffinCongestion[i].stkY;
+        ContBtn[i] = D_80106E04_F8514_CoffinCongestion[i].btn;
+        ContBtnTrg[i] = D_80106E04_F8514_CoffinCongestion[i].trg;
+    }
+}
+
+/* Clears it (the players move only through func_80106534). */
+void func_80105830_F6F40_CoffinCongestion(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        ContStkX[i] = ContStkY[i] = 0;
+        ContBtnTrg[i] = ContBtn[i] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105884_F6F94_CoffinCongestion);
 
