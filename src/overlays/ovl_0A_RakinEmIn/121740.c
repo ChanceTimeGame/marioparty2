@@ -48,8 +48,8 @@ f32 func_801029F0_121930_RakinEmIn(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
     f64 frac;
+    f64 base;
     s32 sign;
     s32 i;
 
@@ -74,8 +74,8 @@ f32 func_801029F0_121930_RakinEmIn(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            base = 1.5707963267948966;
             frac = x / (sum + 1.0f);
+            base = 1.5707963267948966;
             goto done;
         }
         if (sign < 0) {
@@ -147,7 +147,8 @@ void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     if (nearPositive & nearNegative) {
         pitch = 0.0f;
     }
-    out->x = func_800B1820_B2420(delta.y * delta.y + horizontal * horizontal);
+    horizontal = func_800B1820_B2420(delta.y * delta.y + horizontal * horizontal);
+    out->x = horizontal;
     out->y = pitch;
     out->z = yaw;
 }
@@ -961,15 +962,95 @@ void func_80106258_125198_RakinEmIn(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801062CC_12520C_RakinEmIn);
+/* Sets each player's bonus rank from the scores. */
+void func_801062CC_12520C_RakinEmIn(void) {
+    u16 scores[4];
+    s16 i;
+    s16 j;
+    u16 mask;
+    RIScore* s;
+    u16 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801064C8_125408_RakinEmIn);
+    for (s = D_801071B0_1260F0_RakinEmIn, j = 0; j < 4; j++, s++) {
+        scores[j] = s->score;
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = i + 1; j < 4; j++) {
+            if (scores[i] == scores[j]) {
+                scores[j] = 0;
+            }
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = 3; i < j; j--) {
+            if (scores[j] > scores[j - 1]) {
+                t = scores[j];
+                scores[j] = scores[j - 1];
+                scores[j - 1] = t;
+            }
+        }
+    }
+    for (i = 0, mask = 0; i < 4; i++) {
+        for (s = D_801071B0_1260F0_RakinEmIn, j = 0; j < 4; j++, s++) {
+            if (!((mask >> j) & 1) && s->score == scores[i]) {
+                gPlayers[j].coins_mg_bonus = i;
+                mask |= 1 << j;
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801065BC_1254FC_RakinEmIn);
+/* 1 when no rake, item or score display is busy. */
+u8 func_801064C8_125408_RakinEmIn(void) {
+    u8 busy = 0;
+    u8 i;
+    RIObj* o;
+    RIScore* s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801065E0_125520_RakinEmIn);
+    for (i = 0, o = D_801073B8_1262F8_RakinEmIn; i < 4; i++) {
+        if (o[i].state != 0) {
+            busy = 1;
+            break;
+        }
+    }
+    if (busy == 0) {
+        for (i = 0, o = D_80107520_126460_RakinEmIn; i < 20; i++) {
+            if (o[i].com & 3) {
+                busy = 1;
+                break;
+            }
+        }
+    }
+    if (busy == 0) {
+        for (i = 0, s = D_801071B0_1260F0_RakinEmIn; i < 4; i++) {
+            if (s[i].state != 0) {
+                busy = 1;
+                break;
+            }
+        }
+    }
+    return busy ^ 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106618_125558_RakinEmIn);
+void func_801065BC_1254FC_RakinEmIn(omObjData* obj) {
+    osViBlack(0);
+    omOvlReturnEx(1);
+}
+
+void func_801065E0_125520_RakinEmIn(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        obj->func_ptr = func_801065BC_1254FC_RakinEmIn;
+    }
+}
+
+void func_80106618_125558_RakinEmIn(omObjData* obj) {
+    if (D_801011FC_101DFC == 1) {
+        InitFadeOut(0, 20);
+        func_800794A8_7A0A8(40);
+        func_80079614_7A214(40);
+        obj->func_ptr = func_801065E0_125520_RakinEmIn;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106670_1255B0_RakinEmIn);
 
