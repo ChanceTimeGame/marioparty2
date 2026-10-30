@@ -177,7 +177,7 @@ void func_80106CB8_148648_RainbowRun(omObjData* obj);
 void func_80106D60_1486F0_RainbowRun(omObjData* obj);
 void func_80106E70_148800_RainbowRun(omObjData* obj);
 void func_80106E8C_14881C_RainbowRun(omObjData* obj);
-void func_80107018_1489A8_RainbowRun(omObjData* obj, s32 arg1);
+void func_80107018_1489A8_RainbowRun(omObjData* obj);
 void func_801075FC_148F8C_RainbowRun(omObjData* obj);
 
 /* 149120.c */
@@ -446,6 +446,7 @@ void func_8000BEA4_CAA4(omObjData*, f32);
 f32 func_8002662C_2722C(f32* keys, f32* times, f32 t); /* spline through four keys */
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
 void func_80029B80_2A780(s16 arg0, s16 arg1); /* model motion */
 void func_80029E80_2AA80(s16, s32, s32);

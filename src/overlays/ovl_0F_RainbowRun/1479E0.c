@@ -249,6 +249,84 @@ void func_80106E8C_14881C_RainbowRun(omObjData* obj) {
     obj->func_ptr = func_80106E70_148800_RainbowRun;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_80107018_1489A8_RainbowRun);
+/* The wind's clouds (four models, new in MP2): while a gust blows they appear upwind of the
+   course in a spread group and drift with it, as opaque as the wind is strong. */
+void func_80107018_1489A8_RainbowRun(omObjData* obj) {
+    s16 i;
+    f32 a;
+    u8 alpha;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/1479E0", func_801075FC_148F8C_RainbowRun);
+    if (D_8010A7C8_14C158_RainbowRun == 6) {
+        if (D_8010A824_14C1B4_RainbowRun == 1) {
+            for (i = 0; i < 4; i++) {
+                func_800298A4_2A4A4(obj->model[i], 4, 4);
+            }
+            D_8010A824_14C1B4_RainbowRun = 0;
+        }
+        for (i = 0; i < 4; i++) {
+            D_8010A804_14C194_RainbowRun[i][0] = D_8010A804_14C194_RainbowRun[i][1] = 0.0f;
+        }
+        return;
+    }
+    if (D_8010A824_14C1B4_RainbowRun == 0) {
+        for (i = 0; i < 4; i++) {
+            func_800298A4_2A4A4(obj->model[i], 4, 0);
+        }
+        D_8010A804_14C194_RainbowRun[0][0] = HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * -1200.0f;
+        D_8010A804_14C194_RainbowRun[0][1] = func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * -1200.0f;
+        for (i = 1; i < 4; i++) {
+            D_8010A804_14C194_RainbowRun[i][0] =
+                i * 800.0f * HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) + guRandom() % 600 - 300.0f;
+            D_8010A804_14C194_RainbowRun[i][1] =
+                i * 800.0f * func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) + guRandom() % 600 - 300.0f;
+        }
+        D_8010A824_14C1B4_RainbowRun = 1;
+    }
+    D_8010A804_14C194_RainbowRun[0][0] = HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * 50.0f + D_8010A804_14C194_RainbowRun[0][0];
+    D_8010A804_14C194_RainbowRun[0][1] = func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * 50.0f + D_8010A804_14C194_RainbowRun[0][1];
+    a = (RR_ABS(D_8010ABFC_14C58C_RainbowRun[0]) + RR_ABS(D_8010AC00_14C590_RainbowRun)) * 255.0f;
+    a = (a >= 255.0f) ? 255.0f : a;
+    alpha = a;
+    for (i = 0; i < 4; i++) {
+        func_8002D0A0_2DCA0(obj->model[i], alpha);
+    }
+    obj->trans.x = D_8010A804_14C194_RainbowRun[0][0];
+    obj->trans.y = 200.0f;
+    obj->trans.z = (D_8010AC04_14C594_RainbowRun + D_800FFFD8_100BD8[0]->trans.z) / 2.0f + D_8010A804_14C194_RainbowRun[0][1] + 100.0f;
+    obj->rot.y = D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun];
+    for (i = 1; i < 4; i++) {
+        func_80029714_2A314(obj->model[i], D_8010A804_14C194_RainbowRun[0][0] + D_8010A804_14C194_RainbowRun[i][0], 200.0f,
+                            D_8010A804_14C194_RainbowRun[0][1] + D_8010A804_14C194_RainbowRun[i][1] +
+                                (D_8010AC04_14C594_RainbowRun + D_800FFFD8_100BD8[0]->trans.z) / 2.0f + 100.0f);
+        func_8002979C_2A39C(obj->model[i], obj->rot.x, obj->rot.y, obj->rot.z);
+    }
+}
+
+/* The clouds' object: four copies of one model, hidden and transparent until a gust. */
+void func_801075FC_148F8C_RainbowRun(omObjData* obj) {
+    void* w = func_80027154_27D54(sizeof(RRItemWork), 0x7918);
+
+    obj->unk_50 = w;
+    func_800B0EF0_B1AF0(w, 0, sizeof(RRItemWork));
+    obj->model[0] = func_80018A64_19664(0x1F0002, 0x1AA9);
+    obj->model[1] = func_80027D3C_2893C(obj->model[0]);
+    obj->model[2] = func_80027D3C_2893C(obj->model[0]);
+    obj->model[3] = func_80027D3C_2893C(obj->model[0]);
+    func_800298A4_2A4A4(obj->model[0], 4, 4);
+    func_800298A4_2A4A4(obj->model[1], 4, 4);
+    func_800298A4_2A4A4(obj->model[2], 4, 4);
+    func_800298A4_2A4A4(obj->model[3], 4, 4);
+    func_8002D124_2DD24(obj->model[0]);
+    func_8002D124_2DD24(obj->model[1]);
+    func_8002D124_2DD24(obj->model[2]);
+    func_8002D124_2DD24(obj->model[3]);
+    func_8002D0A0_2DCA0(obj->model[0], 0);
+    func_8002D0A0_2DCA0(obj->model[1], 0);
+    func_8002D0A0_2DCA0(obj->model[2], 0);
+    func_8002D0A0_2DCA0(obj->model[3], 0);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 200.0f;
+    obj->trans.z = 0.0f;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, 400.0f);
+    obj->func_ptr = func_80107018_1489A8_RainbowRun;
+}
