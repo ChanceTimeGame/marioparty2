@@ -1611,7 +1611,40 @@ void func_801079E0_1E6E30_CrazyCutters(omObjData* obj) {
     ring->frame++;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107BBC_1E700C_CrazyCutters);
+/* With flag 0x8000: nonzero if the cutter's next step (0..D_801099E8 along its heading) crosses
+   the outline. [FB944] */
+s32 func_80107BBC_1E700C_CrazyCutters(CCPlayer* st) {
+    Vec pos;
+    s16 cur[2];
+    f32 d;
+    f32 fx;
+    f32 fz;
+    s32 q;
+    s32 cx;
+
+    if (func_80106D28_1E6178_CrazyCutters(st->player, 0x8000) == 0) {
+        return 0;
+    }
+    D_80109578_1E89C8_CrazyCutters = 0;
+    d = 0.0f;
+    q = func_8010882C_1E7C7C_CrazyCutters(st->player);
+    for (; d <= D_801099E8_1E8E38_CrazyCutters; d += 0.5f) {
+        fx = d * HuMathSin(st->angle);
+        fz = d * func_800B7890_B8490(st->angle);
+        fx += st->prevX;
+        fz += st->prevZ;
+        pos.x = fx + D_80109090_1E84E0_CrazyCutters[q] - 8.0f;
+        pos.y = st->y + 10.0f;
+        pos.z = fz + D_801090A0_1E84F0_CrazyCutters[q] - 8.0f;
+        func_8010585C_1E4CAC_CrazyCutters(&pos, cur, q);
+        cx = cur[0];
+        if ((D_80109938_1E8D88_CrazyCutters[q] + cur[1] * D_80109930_1E8D80_CrazyCutters)[cx] != 0) {
+            D_80109578_1E89C8_CrazyCutters = 1;
+            break;
+        }
+    }
+    return D_80109578_1E89C8_CrazyCutters;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107D74_1E71C4_CrazyCutters);
 
