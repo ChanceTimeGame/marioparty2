@@ -80,8 +80,7 @@ typedef struct SHPlayer {
     /* 0x0E */ s16 cpuLevel; /* gPlayers[].cpu_difficulty */
     /* 0x10 */ f32 cpuTarget; /* z the CPU paddle heads for */
     /* 0x14 */ f32 cpuRange;
-    /* 0x18 */ s16 motion;   /* current motion slot */
-    /* 0x1A */ char unk1A[2];
+    /* 0x18 */ s32 motion;   /* current motion slot */
     /* 0x1C */ struct {
         s16 len;
         s16 speed;
