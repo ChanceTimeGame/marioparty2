@@ -467,9 +467,9 @@ void func_80103FF4_27BB24_QuicksandCache(omObjData* obj, s32 dir, s32 file, u16 
 
     func_8000C6FC_D2FC(obj, dir, file, player, 0x20AB9, 0x63D);
     w = obj->unk_50;
-    p = func_80027154_27D54(0x5C, 0x7918);
+    p = func_80027154_27D54(sizeof(QCWork), 0x7918);
     w->unk_158 = p;
-    func_800B0EF0_B1AF0(p, 0, 0x5C);
+    func_800B0EF0_B1AF0(p, 0, sizeof(QCWork));
     q = w->unk_158;
     q->unk_00 = 0;
     q->unk_01 = 0;

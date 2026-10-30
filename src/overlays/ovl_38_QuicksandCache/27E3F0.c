@@ -62,8 +62,8 @@ void func_80106CC0_27E7F0_QuicksandCache(omObjData* obj) {
     s8 i;
     QCSand* s;
 
-    obj->unk_50 = s = func_80027154_27D54(0x28, 0x7918);
-    func_800B0EF0_B1AF0(s, 0, 0x28);
+    obj->unk_50 = s = func_80027154_27D54(sizeof(QCSand), 0x7918);
+    func_800B0EF0_B1AF0(s, 0, sizeof(QCSand));
     for (i = 0; i < 3; i++) {
         s->unk_00[i] = 0.0f;
         s->unk_0C[i] = 0.0f;

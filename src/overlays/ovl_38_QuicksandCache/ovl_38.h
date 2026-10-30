@@ -1,6 +1,20 @@
 #ifndef _OVL_38_H
 #define _OVL_38_H
 
+/* Overlay 38: Quicksand Cache (1 vs 3). The player of group 0 is the solo (D_80108024[0], object
+   D_80108020, func_80104B90): a figure in the middle whose stick (func_80104498) turns three
+   rings of quicksand (D_80108034, QCSand). The three others (func_80103FF4) walk on the rings; the
+   rings carry them and pull them to the centre, slowing their sticks; within 210 of it a player
+   is swallowed (func_80103240). Coins fall (func_801060F8; a 5-coin actor every 0x71 frames, at
+   most four times, func_80106440); one that reaches 190 of the centre pays the solo +1 / +5
+   (func_80104498). Actor physics and touches are func_80000530_1130's (not traced here).
+   Flow, func_80104EA8: intro object func_801057BC drops the first coin, message, then 929 frames
+   (timer shows D_80107778 / 30) or, with _CheckFlag(0xC), a human swallowed. Coins go to
+   gPlayers[].coins_mg; the result music and motions read them.
+   Retail is four files: 27A330.c, 27D810.c (from 80105CE0), 27E2B0.c (80106780) and 27E3F0.c
+   (801068C0, 1-nop pad); .data is one asm blob (per file from 801077C0, 801077E0, 801077F0);
+   .rodata carved at 0x27F330 (27A330) and 0x27F440 (27E3F0). */
+
 #include "common.h"
 #include "game/object.h"
 #include "game/hmfman.h"
@@ -23,7 +37,7 @@ extern QCCharData D_800CD438_CE038[];
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern f32 D_800BF7A4_C03A4;
-extern u16 D_800BF7EC_C03EC[][14]; /* per player sound ids, index 0 of ... */
+extern u16 D_800BF7EC_C03EC[][14]; /* per player sound ids from entry 4: D_800BF7E4_C03E4[][4] */
 extern omObjData* D_800F9CE0_FA8E0[];
 extern u16 D_800FA606_FB206;
 extern u16 D_801011FC_101DFC;
@@ -158,7 +172,8 @@ typedef struct QCSand {
     /* 0x24 */ f32 unk_24;      /* the solo player's stick */
 } QCSand; /* size = 0x28 */
 
-/* Coin / item actor: ColActorWork, whose unk_55 here is the effect's model slot and unk_56 a serial. */
+/* Coin actor: ColActorWork's layout (func_80000530_1130 reads it as that); unk_55 here is the coin's
+   sprite-model slot, unk_56 a serial, unk_52 the value kind (3: 1 coin, 6: 5 coins). */
 typedef struct QCActor {
     /* 0x00 */ char unk_00[0x24];
     /* 0x24 */ u8 unk_24;
@@ -167,7 +182,7 @@ typedef struct QCActor {
     /* 0x38 */ char unk_38[4];
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ s32 unk_44;
+    /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ char unk_4C[4];
     /* 0x50 */ u16 unk_50;
@@ -181,8 +196,8 @@ typedef struct QCActor {
     /* 0x78 */ s32 unk_78;
     /* 0x7C */ s32 unk_7C;
     /* 0x80 */ char unk_80[4];
-    /* 0x84 */ s32 unk_84[9];
-    /* 0xA8 */ char unk_A8[4];
+    /* 0x84 */ s32 (*unk_84[9])();
+    /* 0xA8 */ void* unk_A8;
 } QCActor; /* size = 0xAC */
 
 /* 0x48 bytes each, 20 of them; only entry 0's unk_04 (the sprite group) is used. */
@@ -286,6 +301,7 @@ void func_80105BC4_27D6F4_QuicksandCache(omObjData* obj);
 void func_80105CA8_27D7D8_QuicksandCache(omObjData* obj);
 void func_80105CE0_27D810_QuicksandCache(omObjData* obj, s32 file, f32 a2);
 void func_80105F9C_27DACC_QuicksandCache(omObjData* obj);
+void func_80106038_27DB68_QuicksandCache(void);
 void func_80106040_27DB70_QuicksandCache(omObjData* obj);
 void func_8010609C_27DBCC_QuicksandCache(omObjData* obj);
 void func_801060F8_27DC28_QuicksandCache(void);

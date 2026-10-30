@@ -9,9 +9,9 @@ void func_80105CE0_27D810_QuicksandCache(omObjData* obj, s32 file, f32 a2) {
     s32* slot;
     s16 m;
 
-    p = func_80027154_27D54(0xAC, 0x7918);
+    p = func_80027154_27D54(sizeof(QCActor), 0x7918);
     obj->unk_50 = p;
-    func_800B0EF0_B1AF0(p, 0, 0xAC);
+    func_800B0EF0_B1AF0(p, 0, sizeof(QCActor));
     a = obj->unk_50;
     if (file != 0xE) {
         i = 1;
@@ -35,10 +35,10 @@ have:
         m = func_80018A64_19664(0xD, 0x63D);
         obj->model[1] = m;
         D_801077D4_27F304_QuicksandCache = m;
-        a->unk_44 = 0;
+        a->unk_44 = 0.0f;
     } else {
         obj->model[1] = func_80027D3C_2893C((s16)D_801077D4_27F304_QuicksandCache);
-        a->unk_44 = 0;
+        a->unk_44 = 0.0f;
     }
     a->unk_48 = 20.0f;
     a->unk_34 = 50.0f;
@@ -61,7 +61,7 @@ have:
         s16 j;
 
         for (j = 0; j < 9; j++) {
-            a->unk_84[j] = 0;
+            a->unk_84[j] = NULL;
         }
     }
     func_800298A4_2A4A4(obj->model[0], 4, 4);
