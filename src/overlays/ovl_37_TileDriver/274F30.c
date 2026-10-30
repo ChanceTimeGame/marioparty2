@@ -46,6 +46,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801059B4_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80105C78_2783A8_TileDriver);
 
+__asm__(".section .rodata");
+const u32 D_80107BC8_27A2F8_TileDriver[2] = { 0x000D000E, 0x000F0000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80105DB0_2784E0_TileDriver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801065EC_278D1C_TileDriver);
@@ -82,12 +85,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80106ED8_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801070A4_2797D4_TileDriver);
 
+__asm__(".section .rodata");
+const char D_80107BD0_27A300_TileDriver[] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80107168_279898_TileDriver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801073BC_279AEC_TileDriver);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_8010750C_279C3C_TileDriver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80107890_279FC0_TileDriver);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80107914_27A044_TileDriver);
