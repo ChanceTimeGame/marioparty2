@@ -96,7 +96,7 @@ void func_80104518_130108_HotRopeJump(omObjData* obj);
 void func_8010515C_130D4C_HotRopeJump(f32 x, f32 y, f32 z);
 void func_80105214_130E04_HotRopeJump(omObjData* obj, s32 motion);
 void func_8010530C_130EFC_HotRopeJump(omObjData* obj, HRJPlayer* p);
-void func_80105410_131000_HotRopeJump(void* arg0, s32 arg1, s16 arg2);
+void func_80105410_131000_HotRopeJump(HmfData* hmf, Vec* src, s16 idx); /* unused */
 s16 func_801054E4_1310D4_HotRopeJump(omObjData* obj, s32 motion);
 void* func_80105570_131160_HotRopeJump(s16 arg0, s16 arg1);
 void func_80105694_131284_HotRopeJump(s16 arg0, s32 arg1, void* arg2, s16 arg3);

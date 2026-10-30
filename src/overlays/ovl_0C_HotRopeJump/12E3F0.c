@@ -253,13 +253,73 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80103620
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80104518_130108_HotRopeJump);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010515C_130D4C_HotRopeJump);
+/* A burst of smoke where a hit player lands (MP1 func_800F8968). */
+void func_8010515C_130D4C_HotRopeJump(f32 x, f32 y, f32 z) {
+    s16 id;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105214_130E04_HotRopeJump);
+    id = func_80105F80_131B70_HotRopeJump((s16)D_8011131C_13CF0C_HotRopeJump, 0x28);
+    if (id != -1) {
+        func_8010605C_131C4C_HotRopeJump(id, x, y, z);
+        func_8010608C_131C7C_HotRopeJump(id, 3.0f, 3.0f, 1.0f);
+        func_801060EC_131CDC_HotRopeJump(id, 0xC0, 0xC0, 0xC0, 0xFF);
+        func_80106034_131C24_HotRopeJump(id, 4.0f);
+    }
+}
 
+/* Starts motion slot `motion` of the player's model as a separate model motion (unk_6C), with the
+   model's frame count borrowed from that motion's model. */
+void func_80105214_130E04_HotRopeJump(omObjData* obj, s32 motion) {
+    HRJPlayer* p;
+    u8 save;
+
+    p = func_80105D94_131984_HotRopeJump(obj);
+    save = D_800FC834_FD434[obj->model[0]].unk02;
+    D_800FC834_FD434[obj->model[0]].unk02 = D_800FC834_FD434[obj->motion[motion]].unk02;
+    p->unk_6C = func_800231D8_23DD8(obj->model[0], 2);
+    D_800FC834_FD434[obj->model[0]].unk02 = save;
+    p->unk_68 = 0;
+    p->unk_66 = D_800FC834_FD434[obj->motion[motion]].unk02;
+}
+
+/* Advances the separate motion two frames, holding its last frame.
+   NON_MATCHING: retail converts the frame to unsigned through a double and loads obj->model[0]
+   after the conversion (masked 10 with an f64 temporary) */
+#ifdef NON_MATCHING
+void func_8010530C_130EFC_HotRopeJump(omObjData* obj, HRJPlayer* p) {
+    HmfModel* m;
+
+    m = &D_800FC834_FD434[obj->model[0]];
+    if (p->unk_68 == 1 && p->unk_6C != NULL) {
+        m->unk40 += 2.0;
+        if (p->unk_6C[0] <= m->unk40) {
+            m->unk40 = p->unk_6C[0] - 1;
+        }
+        func_80023A08_24608(obj->model[0], p->unk_6C, (u16)m->unk40);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010530C_130EFC_HotRopeJump);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105410_131000_HotRopeJump);
+/* Copies consecutive matrices from src into the motion objects under hmf->unk84[idx] (nothing
+   calls it). Retail passes the same src to a child tree as the parent's next part. */
+void func_80105410_131000_HotRopeJump(HmfData* hmf, Vec* src, s16 idx) {
+    HmfMotionObj* node;
+    s32 i;
+    s16 c;
+
+    node = &hmf->unk84[idx];
+    for (i = 0; i < node->unk00; i++) {
+        c = node->unk50[i];
+        if (c & 0x8000) {
+            if (c != -1) {
+                func_80105410_131000_HotRopeJump(hmf, src, c & 0x7FFF);
+            }
+        } else {
+            func_80030CD4_318D4(node->unk58, (f32 (*)[4])src++);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801054E4_1310D4_HotRopeJump);
 
