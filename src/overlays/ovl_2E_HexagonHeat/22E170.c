@@ -952,4 +952,72 @@ s32 func_801061B0_231B20_HexagonHeat(HmfData* hmf, HmfFace* face) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80106204_231B74_HexagonHeat);
+/* A stomper/hexagon (colour k = surface - 1): its top face takes the hexagon's colour (centre
+   vertex and edge shades from 8010370C), its sides the lit colour (grey on the flag's colour);
+   while the round runs, every stomper of another colour moves to the current height. */
+void func_80106204_231B74_HexagonHeat(omObjData* obj) {
+    HmfData* hmf;
+    HmfFace* face;
+    HmfVtx* vtx;
+    HmfVtx* vb;
+    s32 er, eg, eb;
+    s32 cr, cg, cb;
+    s32 lr, lg, lb;
+    s32 idx;
+    s32 k;
+    s32 i;
+    s32 j;
+
+    k = ((GroundWork*)obj->unk_50)->unk_04 - 1;
+    er = D_801065A4_231F14_HexagonHeat[k][0];
+    eg = D_801065A4_231F14_HexagonHeat[k][1];
+    eb = D_801065A4_231F14_HexagonHeat[k][2];
+    cr = D_801065F8_231F68_HexagonHeat[k][0];
+    cg = D_801065F8_231F68_HexagonHeat[k][1];
+    cb = D_801065F8_231F68_HexagonHeat[k][2];
+    if (D_80106520_231E90_HexagonHeat == k) {
+        lr = 0x80;
+        lg = 0x80;
+        lb = 0x80;
+    } else {
+        lr = D_801066B4_232024_HexagonHeat.x;
+        lg = D_801066B4_232024_HexagonHeat.y;
+        lb = D_801066B4_232024_HexagonHeat.z;
+    }
+    hmf = D_800FC834_FD434[obj->model[1]].hmf;
+    for (i = 0; i < hmf->unk1A; i++) {
+        face = &hmf->unkB4[i];
+        if (func_801061B0_231B20_HexagonHeat(hmf, face) == 0) {
+            for (j = 0; j < face->unk00; j++) {
+                idx = face->unk02[j];
+                vb = &hmf->unk44[D_800FDBE0_FE7E0][idx];
+                vb->unk0C[0] = lr;
+                vb->unk0C[1] = lg;
+                vb->unk0C[2] = lb;
+            }
+        } else {
+            for (j = 0; j < face->unk00; j++) {
+                idx = face->unk02[j];
+                vtx = &hmf->unk40[idx];
+                vb = &hmf->unk44[D_800FDBE0_FE7E0][idx];
+                if (vtx->unk00 == 0 && vtx->unk04 == 0) {
+                    vb->unk0C[0] = cr;
+                    vb->unk0C[1] = cg;
+                    vb->unk0C[2] = cb;
+                } else {
+                    vb->unk0C[0] = er;
+                    vb->unk0C[1] = eg;
+                    vb->unk0C[2] = eb;
+                }
+            }
+        }
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0 && D_80106520_231E90_HexagonHeat != k) {
+        if (D_800F8FD0_F9BD0 == 1) {
+            obj->trans.y = D_80106524_231E94_HexagonHeat;
+            func_80029714_2A314(obj->model[1], D_8010667C_231FEC_HexagonHeat[k][0], D_80106524_231E94_HexagonHeat,
+                                D_8010667C_231FEC_HexagonHeat[k][1]);
+            func_8000D2F8_DEF8(obj);
+        }
+    }
+}
