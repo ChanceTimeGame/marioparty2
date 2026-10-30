@@ -773,7 +773,59 @@ const u32 D_8010AD38_1C68B8_DungeonDash[4] = { 0 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105618_1C1198_DungeonDash);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105E50_1C19D0_DungeonDash);
+/* CPU input: push the stick when the partner does (human) or at random (CPU partner). */
+void func_80105E50_1C19D0_DungeonDash(omObjData* obj, s16* stkX, s16* stkY) {
+    u16 x;
+    s32 m;
+    u16 push;
+    DDTeam* team;
+    s32 diff;
+
+    x = 0;
+    m = 0;
+    push = 0;
+    team = func_80106118_1C1C98_DungeonDash(obj);
+    if (team->obj[0] == obj) {
+        m = 0;
+    } else if (team->obj[1] == obj) {
+        m = 1;
+    }
+    diff = gPlayers[team->player[m]].cpu_difficulty;
+    func_80019000_19C00(obj);
+    if (team->unk14 == 1) {
+        push = 60;
+    } else if (team->unk14 == 4) {
+        push = -60;
+    }
+    switch (team->unk16) {
+        case 0:
+            if (!(gPlayers[team->player[m ^ 1]].flags & 1)) {
+                goto human;
+            }
+            if ((rand8() % (6 - diff)) == 0) {
+                x = push;
+            }
+            break;
+        case 1:
+            if (!(gPlayers[team->player[m ^ 1]].flags & 1)) {
+                goto human;
+            }
+            if ((team->unk1A & 1) && (rand8() % (4 - diff)) == 0) {
+                x = push;
+            }
+            break;
+        case 2:
+            if (!(gPlayers[team->player[m ^ 1]].flags & 1)) {
+            human:
+                if (team->unk8 != 0) {
+                    x = push;
+                }
+            }
+            break;
+    }
+    *stkX = x;
+    *stkY = 0;
+}
 
 void func_801060DC_1C1C5C_DungeonDash(void) {
     func_80107350_1C2ED0_DungeonDash();

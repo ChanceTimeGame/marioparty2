@@ -272,4 +272,11 @@ typedef struct DDBlock {
 extern s32 D_8010A6FC_1C627C_DungeonDash; /* obstacle count */
 extern DDBlock* D_8010B2E4_1C6E64_DungeonDash; /* the obstacles (heap) */
 
+u16 func_80018FF0_19BF0(omObjData* obj);
+s32 func_80019000_19C00(omObjData* obj);
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_800298A4_2A4A4(s16, s32, s32);
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+
 #endif
