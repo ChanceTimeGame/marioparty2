@@ -4,10 +4,11 @@
 /* Overlay 3C: Deep Sea Salvage (four players, each diving for itself), descended from MP1's ovl_30_DeepSeaDivers (218510.c, DeepSeaDivers.h) and
    ovl_04_TreasureDivers. A boat at the surface drops treasure (1- and 5-coin pieces, and a
    hazard) down four lanes; each player's diver swims left/right and kicks up with A, picks a
-   treasure up by touching it, and is stunned by the hazard. Two fish swim across. Retail is two
-   files: 291870.c (game, divers, boat, treasure, HUD, effects) and 296550.c from 801074E0 (fish,
-   MP1 func_800FEA00 onwards). .data stays asm (one blob for both files); .rodata is carved per
-   file ([0x2976D0, .rodata, 291870], [0x297820, .rodata, 296550]). */
+   treasure up by touching it, and is stunned by the hazard. Two fish swim across. Retail is three
+   files: 291870.c (game, divers, boat, treasure, HUD), 294F20.c from 80105EB0 (camera, work
+   blocks, random numbers, sea-floor collision, effects) and 296550.c from 801074E0 (fish, MP1
+   func_800FEA00 onwards). .data stays asm (one blob for all three files); .rodata is carved per
+   file ([0x2976D0, .rodata, 291870], [0x2977E0, .rodata, 294F20], [0x297820, .rodata, 296550]). */
 
 #include "common.h"
 #include "game/object.h"
@@ -69,6 +70,12 @@ void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 u8 func_80082314_82F14(s16 grpIdx, s16 idx); /* sprite animation status; 2: ended */
 s16 SprAnimRead(void*);
+void func_8002BED4_2CAD4(s16 model, f32 s, f32 t, u16 w, u16 h, char* part, u8 arg6); /* texture scroll */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
+extern u8 D_800FDBE0_FE7E0; /* the vertex buffer being drawn */
+void* func_80082550_83150(s16 grpIdx, s16 idx); /* the sprite (HuSprite*); unused here */
+void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 s16 func_80079798_7A398(s16 sfx, s16 player); /* play a sound effect for a player */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s32 PlaySound(s32);
@@ -212,6 +219,16 @@ typedef struct DSSHud {
     /* 0x006 */ char unk6[0xE0A];
 } DSSHud; /* size = 0xE10 */
 
+/* A 2D point (func_80106518's crossings; MP1 Vec2f with x, y). */
+typedef struct DSSPoint {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+} DSSPoint; /* size = 0x8 */
+
+/* func_80079E60_7AA60 is MP3 omOutView(omObjData*) (src/7AA60.c); functions.h declares it void,
+   and retail calls it with NULL here. */
+#define DSS_OUT_VIEW() (((void (*)(omObjData*))func_80079E60_7AA60)(NULL))
+
 /* A model's placement (D_8010842C[2], .data). */
 typedef struct DSSPlace {
     /* 0x00 */ Vec pos;
@@ -219,14 +236,12 @@ typedef struct DSSPlace {
 } DSSPlace;
 
 /* A fish (D_801088F8[2], stride 0x40) and its recorded positions (D_80108978[2][10]); MP1
-   DSDFish. Fork B: check the fields. */
+   DSDFish. */
 typedef struct DSSFish {
     /* 0x00 */ Vec pos;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ f32 unk14;
+    /* 0x0C */ Vec rot;
     /* 0x18 */ char pad18[0x18];
-    /* 0x30 */ f32 vx;
+    /* 0x30 */ f32 vx; /* speed: 8-12 plus 10 x the scale, signed by direction */
     /* 0x34 */ char pad34[0xC];
 } DSSFish; /* size = 0x40 */
 
@@ -253,8 +268,8 @@ extern Vec D_801085A8_297618_DeepSeaSalvage[11]; /* the right outline */
 extern Vec* D_8010862C_29769C_DeepSeaSalvage[2];
 extern s16 D_80108634_2976A4_DeepSeaSalvage[6];
 /* 296550.c */
-extern s32 D_80108640_2976B0_DeepSeaSalvage[3];
-extern s32 D_8010864C_2976BC_DeepSeaSalvage[5];
+extern s32 D_80108640_2976B0_DeepSeaSalvage[3];  /* per fish: swim angle, degrees (0-360); [2] pads */
+extern s32 D_8010864C_2976BC_DeepSeaSalvage[5];  /* per fish: speed, chasing vx by 1 a frame; [2..4] pad */
 
 /* .rodata strings the .data names (291870.c) */
 extern const char D_80108678_2976E8_DeepSeaSalvage[];
@@ -291,15 +306,15 @@ extern Vec D_801088D4_297944_DeepSeaSalvage;
 extern s16 D_801088E0_297950_DeepSeaSalvage[5];   /* sprite-model slots: coin, 5 coins, hazard, sparkle, shine */
 extern DSSFish D_801088F8_297968_DeepSeaSalvage[2];
 extern DSSFish D_80108978_2979E8_DeepSeaSalvage[2][10];
-extern s16 D_80108E70_297EE0_DeepSeaSalvage;
-extern f32 D_80108E74_297EE4_DeepSeaSalvage[2];
-extern s32 D_80108E7C_297EEC_DeepSeaSalvage;
-extern s32 D_80108E80_297EF0_DeepSeaSalvage;
-extern f32 D_80108E84_297EF4_DeepSeaSalvage;
+extern s16 D_80108E70_297EE0_DeepSeaSalvage;      /* the fish history's write slot, 0-9 */
+extern f32 D_80108E74_297EE4_DeepSeaSalvage[2];   /* per fish: scale (0.75-1.05) */
+extern f32 D_80108E7C_297EEC_DeepSeaSalvage;      /* the sea surface's wave angle, degrees */
+extern u16 D_80108E80_297EF0_DeepSeaSalvage[2];   /* texture "dmy_I8"'s size (func_8003EAF0) */
+extern f32 D_80108E84_297EF4_DeepSeaSalvage;      /* the surface texture's scroll */
 extern f32 D_80108E88_297EF8_DeepSeaSalvage;
 extern s16 D_80108E90_297F00_DeepSeaSalvage;      /* DSSWork blocks made */
-extern s16 D_80108E98_297F08_DeepSeaSalvage[4];   /* effect sprite anims: [0] splash (0x4C000F), [3] 0x4C000D (fork B: check) */
-extern s16 D_80108EA0_297F10_DeepSeaSalvage;      /* the bubble sprite file */
+extern s16 D_80108E98_297F08_DeepSeaSalvage[5];   /* sprite anims (func_80106F08): [0] splash 0x4C000F, [3] 0x4C000D,
+                                                     [4] bubble 0x4C0010 (splat's D_80108EA0); [1], [2] unused */
 extern omObjData* D_80108EB8_297F28_DeepSeaSalvage; /* the treasure object */
 extern DSSHud D_80108EC0_297F30_DeepSeaSalvage;
 extern omObjData* D_80109CD0_298D40_DeepSeaSalvage; /* the boat */
@@ -337,7 +352,12 @@ void func_801056FC_29476C_DeepSeaSalvage(s16 idx);
 void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, u16 anim, u16 x, s32 y);
 void func_801058A0_294910_DeepSeaSalvage(omObjData* obj);
 void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj);
-void func_80105E84_294EF4_DeepSeaSalvage(s16 player, s16 coins);
+void func_80105E84_294EF4_DeepSeaSalvage(s32 player, s16 coins);
+
+/* ---------------------------------------------------------------------------------------------
+   294F20.c
+   --------------------------------------------------------------------------------------------- */
+
 void func_80105EB0_294F20_DeepSeaSalvage(void);
 void func_80105F14_294F84_DeepSeaSalvage(void);
 DSSWork* func_80105F5C_294FCC_DeepSeaSalvage(omObjData* obj);
@@ -345,8 +365,8 @@ void func_80106048_2950B8_DeepSeaSalvage(void);
 u32 func_801060C8_295138_DeepSeaSalvage(void); /* 16 random bits */
 u16 func_80106100_295170_DeepSeaSalvage(u16 n); /* random 0..n-1 */
 void func_80106134_2951A4_DeepSeaSalvage(f32* x, f32* y, f32* z);
-void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, Vec* pts, s16 n, u16 flag, f32* outx, f32* outy);
-s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32* outy);
+void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, DSSPoint* pts, s16 n, s16 flag, f32* outx, f32* outy);
+s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, s16 flag, f32* outx, f32* outy);
 f32 func_801069E4_295A54_DeepSeaSalvage(f32 x, f32 y); /* the sea floor's height */
 s16 func_80106CC4_295D34_DeepSeaSalvage(f32 x, f32 y); /* the treasure at (x, y), -1 none */
 void func_80106D5C_295DCC_DeepSeaSalvage(omObjData* obj, f32 vx, f32 vy);

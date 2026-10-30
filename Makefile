@@ -673,6 +673,8 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_60_name/3BDF90.c.o
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o
 # S4-3CA: ovl_3C 291870.c too (nops between mul.s pairs in func_80106518, func_80106CC4)
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_3C_DeepSeaSalvage/291870.c.o
+# S4-3CB: ovl_3C's retail file 294F20.c (from 80105EB0, 1-nop pad) holds those two functions
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_3C_DeepSeaSalvage/294F20.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
