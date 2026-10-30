@@ -3,8 +3,8 @@
 
 /* Overlay 0F: Rainbow Run. Its game code descends from MP1's ovl_1F_TightropeTreachery (197E20.c,
    19A360.c, 19ACC0.c, 19D510.c). Retail is four files: 144190.c, 147180.c from 801057F0 (MP1's
-   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790. .data stays asm (14C080); .rodata is carved per file. Prototypes past
-   801060D8 are inferred from register use (MG0F-B: check them). */
+   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790 (MP1's 19D510.c). .data stays asm
+   (14C080); .rodata is carved per file. Every prototype is checked against its definition. */
 
 #include "common.h"
 #include "game/object.h"
@@ -455,10 +455,11 @@ void func_8000BE74_CA74(omObjData*, f32);
 void func_8000BEB0_CAB0(omObjData*, f32);
 void func_8000BEBC_CABC(omObjData*, f32);
 void func_8000BEC8_CAC8(omObjData*, f32);
+void func_80020070_20C70(s32); /* camera setup */
 extern f32 D_8010A804_14C194_RainbowRun[4][2]; /* the clouds' x, z: [0] the group, [1..3] offsets */
 extern f32 D_8010A808_14C198_RainbowRun[]; /* D_8010A804 + 4, retail's own label */
 extern s8 D_8010A824_14C1B4_RainbowRun; /* the clouds are shown */
-extern Vec D_8010A830_14C1C0_RainbowRun[6]; /* the followers' path points */
+extern Vec D_8010A830_14C1C0_RainbowRun[6]; /* the followers' path points (retail's own labels D_8010A834/838: .y, .z) */
 /* the four spots' used flags: retail's spots are { f32 angle; s8 used; } [4] from 0x8010A878 (angles
    20, 50, 310, 340), addressed by the +4 label */
 extern s8 D_8010A87C_14C20C_RainbowRun[][8];
@@ -466,13 +467,15 @@ extern s8 D_8010A898_14C228_RainbowRun[]; /* a bomb's fuse sound is playing */
 extern s8 D_8010A89C_14C22C_RainbowRun[6][4]; /* the paths: four of D_8010A830's points each */
 extern f32 D_8010A9D0_14C360_RainbowRun[4]; /* func_80109240's spline keys */
 extern f32 D_8010A9E0_14C370_RainbowRun[4]; /* func_80109240's spline times */
-extern s16 D_8010A9F0_14C380_RainbowRun[8]; /* the bombs' shared models and sprites */
+/* the bombs' shared models and sprites: [0] bomb, [1] shadow, [2..4] fuse/splash/explosion sprite ids
+   (retail's own labels D_8010A9F4/9F6/9F8); -1 until loaded */
+extern s16 D_8010A9F0_14C380_RainbowRun[8];
 extern s16 D_8010AA00_14C390_RainbowRun[3]; /* the followers' shared shadow model */
 extern RRTeamWork D_8010AA18_14C3A8_RainbowRun[3];
 extern s8 D_8010ABF0_14C580_RainbowRun; /* path set: 0 or 3 */
 extern f32 D_8010AC00_14C590_RainbowRun; /* D_8010ABFC[1] by retail's own label */
-extern s8 D_8010AC08_14C598_RainbowRun[3]; /* the followers' paths, shuffled */
-extern RRBomb D_8010AC20_14C5B0_RainbowRun[3];
+extern s8 D_8010AC08_14C598_RainbowRun[3]; /* the followers' paths, shuffled (+ D_8010ABF0) */
+extern RRBomb D_8010AC20_14C5B0_RainbowRun[3]; /* splat labels its fields (D_8010AC21..AC4C) */
 void HmfModelObjAttrSet(s16, s32, s32);
 void func_8000C2A0_CEA0(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, s32 arg4); /* MP1 func_80009340 */
 u16 func_80018A64_19664(s32 arg0, s32 arg1);
