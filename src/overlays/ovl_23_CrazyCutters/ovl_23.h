@@ -186,7 +186,7 @@ typedef struct CCRing {
     /* 0x08 */ f32 step;
     /* 0x0C */ f32 end;
     /* 0x10 */ s32 width;
-    /* 0x14 */ u8* mask;
+    /* 0x14 */ s8* mask;
     /* 0x18 */ s32 frame;
 } CCRing;
 
