@@ -70,6 +70,9 @@ void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 u8 func_80082314_82F14(s16 grpIdx, s16 idx); /* sprite animation status; 2: ended */
 s16 SprAnimRead(void*);
+void* func_80082550_83150(s16 grpIdx, s16 idx); /* the sprite (HuSprite*); unused here */
+void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 s16 func_80079798_7A398(s16 sfx, s16 player); /* play a sound effect for a player */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s32 PlaySound(s32);
@@ -219,6 +222,10 @@ typedef struct DSSPoint {
     /* 0x04 */ f32 y;
 } DSSPoint; /* size = 0x8 */
 
+/* func_80079E60_7AA60 is MP3 omOutView(omObjData*) (src/7AA60.c); functions.h declares it void,
+   and retail calls it with NULL here. */
+#define DSS_OUT_VIEW() (((void (*)(omObjData*))func_80079E60_7AA60)(NULL))
+
 /* A model's placement (D_8010842C[2], .data). */
 typedef struct DSSPlace {
     /* 0x00 */ Vec pos;
@@ -305,8 +312,8 @@ extern s32 D_80108E80_297EF0_DeepSeaSalvage;
 extern f32 D_80108E84_297EF4_DeepSeaSalvage;
 extern f32 D_80108E88_297EF8_DeepSeaSalvage;
 extern s16 D_80108E90_297F00_DeepSeaSalvage;      /* DSSWork blocks made */
-extern s16 D_80108E98_297F08_DeepSeaSalvage[4];   /* effect sprite anims: [0] splash (0x4C000F), [3] 0x4C000D (fork B: check) */
-extern s16 D_80108EA0_297F10_DeepSeaSalvage;      /* the bubble sprite file */
+extern s16 D_80108E98_297F08_DeepSeaSalvage[5];   /* sprite anims (func_80106F08): [0] splash 0x4C000F, [3] 0x4C000D,
+                                                     [4] bubble 0x4C0010 (splat's D_80108EA0); [1], [2] unused */
 extern omObjData* D_80108EB8_297F28_DeepSeaSalvage; /* the treasure object */
 extern DSSHud D_80108EC0_297F30_DeepSeaSalvage;
 extern omObjData* D_80109CD0_298D40_DeepSeaSalvage; /* the boat */

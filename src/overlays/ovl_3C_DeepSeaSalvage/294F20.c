@@ -325,10 +325,100 @@ s16 func_80106EC4_295F34_DeepSeaSalvage(s32 file) {
     return anim & 0xFF;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106F08_295F78_DeepSeaSalvage);
+/* The effect sprites: their animations and 64 slots (MP1 func_800FD494). */
+void func_80106F08_295F78_DeepSeaSalvage(void) {
+    s16 spr;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_801070D0_296140_DeepSeaSalvage);
+    D_80108E98_297F08_DeepSeaSalvage[0] = func_80106EC4_295F34_DeepSeaSalvage(0x4C000F);
+    D_80108E98_297F08_DeepSeaSalvage[4] = func_80106EC4_295F34_DeepSeaSalvage(0x4C0010);
+    D_80108E98_297F08_DeepSeaSalvage[3] = func_80106EC4_295F34_DeepSeaSalvage(0x4C000D);
+    spr = SprCreate(1, 0);
+    SprAnimSet(spr, 0, D_80108E98_297F08_DeepSeaSalvage[3], 0);
+    SprAttrSet(spr, 0, 0x4000);
+    SprPosSet(spr, 0, 160, 120);
+    SprScaleSet(spr, 0, 1.0f, 1.0f);
+    for (i = 0; i < 64; i++) {
+        D_80109CE0_298D50_DeepSeaSalvage[i].flags = 0;
+        D_80109CE0_298D50_DeepSeaSalvage[i].type = 0;
+        D_80109CE0_298D50_DeepSeaSalvage[i].sprite = SprCreate(1, 0);
+        SprAttrReset(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, -1);
+        SprAttrSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0xC000);
+        D_80109CE0_298D50_DeepSeaSalvage[i].target = 0;
+        D_80109CE0_298D50_DeepSeaSalvage[i].x = 0.0f;
+        D_80109CE0_298D50_DeepSeaSalvage[i].y = 0.0f;
+        D_80109CE0_298D50_DeepSeaSalvage[i].z = 0.0f;
+        D_80109CE0_298D50_DeepSeaSalvage[i].timer = D_80109CE0_298D50_DeepSeaSalvage[i].fade = D_80109CE0_298D50_DeepSeaSalvage[i].life = D_80109CE0_298D50_DeepSeaSalvage[i].unk22 = 0;
+        D_80109CE0_298D50_DeepSeaSalvage[i].unk24 = D_80109CE0_298D50_DeepSeaSalvage[i].unk26 = D_80109CE0_298D50_DeepSeaSalvage[i].unk28 = D_80109CE0_298D50_DeepSeaSalvage[i].unk2A = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_801072C0_296330_DeepSeaSalvage);
+/* Start an effect (0 bubble, 1 splash) at (x, y, z); its slot, -1 if all 64 are busy (MP1
+   func_800FD680). */
+s16 func_801070D0_296140_DeepSeaSalvage(s16 type, f32 x, f32 y, f32 z, s16 target) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80107318_296388_DeepSeaSalvage);
+    for (i = 0; i < 64; i++) {
+        if (D_80109CE0_298D50_DeepSeaSalvage[i].flags == 0) {
+            D_80109CE0_298D50_DeepSeaSalvage[i].flags = 1;
+            D_80109CE0_298D50_DeepSeaSalvage[i].type = type;
+            D_80109CE0_298D50_DeepSeaSalvage[i].target = target;
+            D_80109CE0_298D50_DeepSeaSalvage[i].x = x;
+            D_80109CE0_298D50_DeepSeaSalvage[i].y = y;
+            D_80109CE0_298D50_DeepSeaSalvage[i].z = z;
+            D_80109CE0_298D50_DeepSeaSalvage[i].sx = 1.0f;
+            D_80109CE0_298D50_DeepSeaSalvage[i].sy = 1.0f;
+            if (D_80109CE0_298D50_DeepSeaSalvage[i].sprite >= 0) {
+                func_80082488_83088(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0x100);
+                SprAttrReset(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0xFFFF);
+                SprAttrSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0x1000);
+                SprScaleSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 1.0f, 1.0f);
+                func_8008225C_82E5C(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 1);
+                SprPrioSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0x8000);
+            }
+            D_80109CE0_298D50_DeepSeaSalvage[i].timer = D_80109CE0_298D50_DeepSeaSalvage[i].fade = D_80109CE0_298D50_DeepSeaSalvage[i].life = D_80109CE0_298D50_DeepSeaSalvage[i].unk22 = 0;
+            D_80109CE0_298D50_DeepSeaSalvage[i].unk24 = D_80109CE0_298D50_DeepSeaSalvage[i].unk26 = D_80109CE0_298D50_DeepSeaSalvage[i].unk28 = D_80109CE0_298D50_DeepSeaSalvage[i].unk2A = 0;
+            return i;
+        }
+    }
+    return -1;
+}
+
+void func_801072C0_296330_DeepSeaSalvage(s16 idx) {
+    D_80109CE0_298D50_DeepSeaSalvage[idx].flags = 0;
+    if (D_80109CE0_298D50_DeepSeaSalvage[idx].sprite >= 0) {
+        SprAttrSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, 0x8000);
+    }
+}
+
+/* Run the effects and place their sprites: in 3D when the flags' low byte has 0x80, else in
+   perspective (MP1 func_800FD8C8). */
+void func_80107318_296388_DeepSeaSalvage(void) {
+    s16 i;
+
+    DSS_OUT_VIEW();
+    for (i = 0; i < 64; i++) {
+        if (D_80109CE0_298D50_DeepSeaSalvage[i].flags == 0) {
+            continue;
+        }
+        switch (D_80109CE0_298D50_DeepSeaSalvage[i].type) {
+        case 0:
+            func_8010536C_2943DC_DeepSeaSalvage(i);
+            break;
+        case 1:
+            func_801056FC_29476C_DeepSeaSalvage(i);
+            break;
+        }
+        if (D_80109CE0_298D50_DeepSeaSalvage[i].flags != 0 && D_80109CE0_298D50_DeepSeaSalvage[i].sprite >= 0) {
+            func_80082550_83150(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0);
+            /* Host: retail reads the flags' low byte at offset 1 (big-endian). */
+            if (((s8*)&D_80109CE0_298D50_DeepSeaSalvage[i].flags)[1] < 0) {
+                SprPos3DSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0, D_80109CE0_298D50_DeepSeaSalvage[i].x,
+                            D_80109CE0_298D50_DeepSeaSalvage[i].y, D_80109CE0_298D50_DeepSeaSalvage[i].z);
+            } else {
+                SprPosPerspectiveSet(D_80109CE0_298D50_DeepSeaSalvage[i].sprite, 0, 0, D_80109CE0_298D50_DeepSeaSalvage[i].x,
+                                     D_80109CE0_298D50_DeepSeaSalvage[i].y, D_80109CE0_298D50_DeepSeaSalvage[i].z);
+            }
+        }
+    }
+}

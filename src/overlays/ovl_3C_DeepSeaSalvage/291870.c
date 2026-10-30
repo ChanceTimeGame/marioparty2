@@ -842,7 +842,7 @@ void func_8010536C_2943DC_DeepSeaSalvage(s16 idx) {
     if (D_80109CE0_298D50_DeepSeaSalvage[idx].flags >= 0) {
         D_80109CE0_298D50_DeepSeaSalvage[idx].flags |= 0x8000;
         SprAttrSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, func_801060C8_295138_DeepSeaSalvage() & 1);
-        SprAnimSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, D_80108EA0_297F10_DeepSeaSalvage, 0);
+        SprAnimSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, D_80108E98_297F08_DeepSeaSalvage[4], 0);
         func_8008225C_82E5C(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, 0);
         SprBankSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, func_801060C8_295138_DeepSeaSalvage() & 3);
         D_80109CE0_298D50_DeepSeaSalvage[idx].life = 32;
