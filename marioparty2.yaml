@@ -1314,6 +1314,7 @@ segments:
     subsegments:
       - [0x26FEE0, c]
       - [0x274CB0, data]
+      - [0x274D30, .rodata, 26FEE0]
       - {0x274F30, type: bss, vram: 0x80107850, name: ovl_36_bss}
   - type: code
     start: 0x274F30
