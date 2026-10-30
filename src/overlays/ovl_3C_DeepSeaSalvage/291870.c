@@ -803,19 +803,178 @@ void func_80104A70_293AE0_DeepSeaSalvage(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80105258_2942C8_DeepSeaSalvage);
+/* The treasures a CPU may aim at: placed, untouched, still in the water. */
+void func_80105258_2942C8_DeepSeaSalvage(void) {
+    DSSTreasure* t;
+    s16 i;
+
+    t = DSS_OBJ_WORK(D_80108EB8_297F28_DeepSeaSalvage);
+    D_801088B8_297928_DeepSeaSalvage = 0;
+    for (i = 0; i < 20; i++, t++) {
+        if (t->flags < 0 && t->taken == 0 && t->state < 2) {
+            D_80108890_297900_DeepSeaSalvage[D_801088B8_297928_DeepSeaSalvage++] = i;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801052E8_294358_DeepSeaSalvage);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_8010536C_2943DC_DeepSeaSalvage);
+/* Effect 0: a bubble rising and wobbling (MP1 func_800FA62C). */
+void func_8010536C_2943DC_DeepSeaSalvage(s16 idx) {
+    if (D_80109CE0_298D50_DeepSeaSalvage[idx].flags >= 0) {
+        D_80109CE0_298D50_DeepSeaSalvage[idx].flags |= 0x8000;
+        SprAttrSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, func_801060C8_295138_DeepSeaSalvage() & 1);
+        SprAnimSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, D_80108EA0_297F10_DeepSeaSalvage, 0);
+        func_8008225C_82E5C(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, 0);
+        SprBankSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, func_801060C8_295138_DeepSeaSalvage() & 3);
+        D_80109CE0_298D50_DeepSeaSalvage[idx].life = 32;
+        SprScaleSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, 4.0f, 4.0f);
+    }
+    D_80109CE0_298D50_DeepSeaSalvage[idx].x += HuMathSin((D_80109CE0_298D50_DeepSeaSalvage[idx].timer * 4) % 360) * 5.0;
+    D_80109CE0_298D50_DeepSeaSalvage[idx].y += 5.0;
+    D_80109CE0_298D50_DeepSeaSalvage[idx].sy = HuMathSin((D_80109CE0_298D50_DeepSeaSalvage[idx].timer << 5) % 360) * 0.125 + 0.875;
+    D_80109CE0_298D50_DeepSeaSalvage[idx].timer++;
+    if (D_80109CE0_298D50_DeepSeaSalvage[idx].fade != 0) {
+        if (--D_80109CE0_298D50_DeepSeaSalvage[idx].fade == 0) {
+            func_801072C0_296330_DeepSeaSalvage(idx);
+        }
+        func_80082488_83088(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, D_80109CE0_298D50_DeepSeaSalvage[idx].fade << 5);
+    } else if (--D_80109CE0_298D50_DeepSeaSalvage[idx].life == 0 || D_80109CE0_298D50_DeepSeaSalvage[idx].y >= 370.0) {
+        D_80109CE0_298D50_DeepSeaSalvage[idx].fade = 8;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801056FC_29476C_DeepSeaSalvage);
+/* Effect 1: a splash on the surface (MP1 TreasureDivers func_800F9580). */
+void func_801056FC_29476C_DeepSeaSalvage(s16 idx) {
+    if (D_80109CE0_298D50_DeepSeaSalvage[idx].flags >= 0) {
+        D_80109CE0_298D50_DeepSeaSalvage[idx].flags |= 0x8000;
+        D_80109CE0_298D50_DeepSeaSalvage[idx].y = 538.0f;
+        SprAnimSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, D_80108E98_297F08_DeepSeaSalvage[0], 0);
+        SprScaleSet(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0, 3.0f, 2.0f);
+        PlaySound(0x88);
+        return;
+    }
+    if (func_80082314_82F14(D_80109CE0_298D50_DeepSeaSalvage[idx].sprite, 0) & 2) {
+        func_801072C0_296330_DeepSeaSalvage(idx);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80105804_294874_DeepSeaSalvage);
+void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, u16 anim, u16 x, s32 y) {
+    SprAnimSet(hud->group, member, anim, 0);
+    SprAttrSet(hud->group, member, 0x1000);
+    SprPosSet(hud->group, member, x, y);
+    SprPrioSet(hud->group, member, 0xFFF4);
+}
 
+/* The HUD: four faces, four coin icons, four "x" signs and three digits per player. */
+/* NON_MATCHING: retail stores the group by its address (%hi/%lo of D_80108EC0+4) although
+   hud holds &D_80108EC0; GCC stores through hud (masked 11, addressing and registers only). */
+#ifdef NON_MATCHING
+void func_801058A0_294910_DeepSeaSalvage(omObjData* obj) {
+    s16 i;
+    s16 j;
+    u16 anim;
+    DSSHud* hud;
+
+    hud = &D_80108EC0_297F30_DeepSeaSalvage;
+    func_800B0EF0_B1AF0(hud, 0, sizeof(DSSHud));
+    func_800B0EF0_B1AF0(D_8010ABF8_299C68_DeepSeaSalvage, 0, 0x30);
+    D_80108EC0_297F30_DeepSeaSalvage.group = SprCreate(24, 0);
+    for (i = 0; i < 4; i++) {
+        func_80105804_294874_DeepSeaSalvage(hud, i,
+                                            func_8001A2F8_1AEF8(D_80108514_297584_DeepSeaSalvage[gPlayers[i].character]),
+                                            D_801084D4_297544_DeepSeaSalvage[i][0], D_801084D4_297544_DeepSeaSalvage[i][1]);
+    }
+    anim = func_8001A2F8_1AEF8(0x480006);
+    for (; i < 8; i++) {
+        func_80105804_294874_DeepSeaSalvage(hud, i, anim, D_801084D4_297544_DeepSeaSalvage[i][0],
+                                            D_801084D4_297544_DeepSeaSalvage[i][1]);
+    }
+    anim = func_8001A2F8_1AEF8(0x170010);
+    for (; i < 12; i++) {
+        func_80105804_294874_DeepSeaSalvage(hud, i, anim, D_801084D4_297544_DeepSeaSalvage[i][0],
+                                            D_801084D4_297544_DeepSeaSalvage[i][1]);
+    }
+    anim = func_8001A2F8_1AEF8(0x43);
+    for (j = i; j < 16; j++) {
+        func_80105804_294874_DeepSeaSalvage(hud, i++, anim, D_801084D4_297544_DeepSeaSalvage[j][0],
+                                            D_801084D4_297544_DeepSeaSalvage[j][1]);
+        func_80105804_294874_DeepSeaSalvage(hud, i, anim, D_801084D4_297544_DeepSeaSalvage[j][0] + 12,
+                                            D_801084D4_297544_DeepSeaSalvage[j][1]);
+        SprAttrSet(hud->group, i++, 0x8000);
+        func_80105804_294874_DeepSeaSalvage(hud, i, anim, D_801084D4_297544_DeepSeaSalvage[j][0] + 24,
+                                            D_801084D4_297544_DeepSeaSalvage[j][1]);
+        SprAttrSet(hud->group, i++, 0x8000);
+    }
+    obj->func_ptr = func_80105BB8_294C28_DeepSeaSalvage;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801058A0_294910_DeepSeaSalvage);
+#endif
 
+/* The scores: count the shown number one step towards the score (left-aligned digits), then
+   pop it. */
+/* NON_MATCHING: retail tests d and lead with two branches; GCC folds the || into flag
+   arithmetic (masked 23, that test's shape only). */
+#ifdef NON_MATCHING
+void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj) {
+    DSSHud* hud;
+    DSSScore* sc;
+    f32 s;
+    s16 i;
+    s16 m;
+    s16 lead;
+    u16 n;
+    u16 d;
+
+    hud = &D_80108EC0_297F30_DeepSeaSalvage;
+    for (i = 0; i < 4; i++) {
+        sc = &D_8010ABF8_299C68_DeepSeaSalvage[i];
+        switch (sc->state) {
+        case 0:
+            if (sc->shown != sc->coins) {
+                if (sc->shown < sc->coins) {
+                    n = sc->shown + 1;
+                } else {
+                    n = sc->shown - 1;
+                }
+                lead = 0;
+                m = i * 3 + 12;
+                d = n / 100;
+                if (d != 0) {
+                    SprBankSet(hud->group, m++, d);
+                    lead = 1;
+                } else {
+                    SprAttrSet(hud->group, m + 2, 0x8000);
+                }
+                d = (u16)(n % 100) / 10;
+                if (d != 0 || lead != 0) {
+                    SprBankSet(hud->group, m++, d);
+                } else {
+                    SprAttrSet(hud->group, m + 1, 0x8000);
+                }
+                SprBankSet(hud->group, m, n % 10);
+                SprAttrReset(hud->group, m, 0x8000);
+                sc->shown = n;
+                sc->state = 1;
+            }
+            break;
+        case 1:
+            m = i + 4;
+            sc->angle += 40.0f;
+            if (sc->angle > 180.0f) {
+                sc->angle = 0.0f;
+                sc->state = 0;
+            }
+            s = func_800B80D0_B8CD0(sc->angle) + 1.0;
+            SprScaleSet(hud->group, m, s, s);
+            break;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80105BB8_294C28_DeepSeaSalvage);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80105E84_294EF4_DeepSeaSalvage);
 

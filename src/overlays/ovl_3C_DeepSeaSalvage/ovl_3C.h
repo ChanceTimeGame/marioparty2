@@ -56,14 +56,14 @@ void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4)
 void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
 void func_80019378_19F78(omObjData* obj);
 void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */
-s16 func_8001A2F8_1AEF8(s32 arg0);
+u16 func_8001A2F8_1AEF8(s32 arg0); /* s16 in main; retail callers here zero-extend the result */
 s16 SprCreate(s32 num, s32 attr);
 void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
 void SprAttrSet(s16 group, s16 member, s32 flag);
 void SprAttrReset(s16 group, s16 member, s32 flag);
 void SprPosSet(s16 group, s16 member, s16 x, s16 y);
 void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
-void SprBankSet(s16 group, s16 member, u16 bank);
+void SprBankSet(s16 group, s16 member, s16 bank); /* u16 bank in main; retail here sign-extends it */
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
@@ -246,7 +246,7 @@ extern u8 D_80108498_297508_DeepSeaSalvage[16];  /* a lane's 13 drops: kinds */
 extern u8 D_801084A8_297518_DeepSeaSalvage[6][3]; /* drop triples (lane patterns) */
 extern f32 D_801084BC_29752C_DeepSeaSalvage[3];  /* per kind: sinking speed limit */
 extern f32 D_801084C8_297538_DeepSeaSalvage[3];  /* per kind: scale */
-extern s16 D_801084D4_297544_DeepSeaSalvage[16][2]; /* HUD sprite positions (x, y) */
+extern u16 D_801084D4_297544_DeepSeaSalvage[16][2]; /* HUD sprite positions (x, y) */
 extern s32 D_80108514_297584_DeepSeaSalvage[7];  /* per character: the HUD face file */
 extern Vec D_80108530_2975A0_DeepSeaSalvage[10]; /* the sea floor's left outline */
 extern Vec D_801085A8_297618_DeepSeaSalvage[11]; /* the right outline */
@@ -334,7 +334,7 @@ void func_80105258_2942C8_DeepSeaSalvage(void);
 s16 func_801052E8_294358_DeepSeaSalvage(omObjData* boat, s16 kind, s16 lane);
 void func_8010536C_2943DC_DeepSeaSalvage(s16 idx);
 void func_801056FC_29476C_DeepSeaSalvage(s16 idx);
-void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, s16 anim, s16 x, s16 y);
+void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, u16 anim, u16 x, s32 y);
 void func_801058A0_294910_DeepSeaSalvage(omObjData* obj);
 void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj);
 void func_80105E84_294EF4_DeepSeaSalvage(s16 player, s16 coins);
