@@ -440,23 +440,182 @@ void func_80102FB4_229A84_HoneycombHavoc(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104180_22AC50_HoneycombHavoc);
+/* Everyone still in moves up one queue slot; the front player goes to the back. */
+void func_80104180_22AC50_HoneycombHavoc(void) {
+    HCPlayer* work;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104280_22AD50_HoneycombHavoc);
+    for (i = 0; i < 4; i++) {
+        work = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+        if (work->out == 1) {
+            continue;
+        }
+        if (--work->slot < 0) {
+            work->slot = D_80107354_22DE24_HoneycombHavoc - 1;
+        }
+        func_80029BF0_2A7F0(D_801076D8_22E1A8_HoneycombHavoc[i]->model[0],
+                            func_80029E14_2AA14(D_801076D8_22E1A8_HoneycombHavoc[i]->motion[2]), 0, 2, 2);
+        work->state = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_801043A0_22AE70_HoneycombHavoc);
+/* The players still queued turn to face the bees (state 12). */
+void func_80104280_22AD50_HoneycombHavoc(void) {
+    HCPlayer* works[4];
+    omObjData* obj;
+    f32 rot;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_801044AC_22AF7C_HoneycombHavoc);
+    for (i = 0; i < 4; i++) {
+        obj = D_801076D8_22E1A8_HoneycombHavoc[i];
+        works[i] = obj->unk_50;
+        if (works[i]->out == 1) {
+            continue;
+        }
+        if (works[i]->slot != 0) {
+            continue;
+        }
+        works[i]->state = 0xC;
+        rot = obj->rot.y;
+        rot += 360.0f;
+        if (rot >= 360.0f) {
+            rot -= 360.0f;
+        }
+        works[i]->turnCnt = 8;
+        works[i]->turnStep = (270.0f - rot) / 8.0f;
+        func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 2, 2);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104684_22B154_HoneycombHavoc);
+/* After a round: the players still in go back to their queue slots; the stung one is hidden. */
+void func_801043A0_22AE70_HoneycombHavoc(void) {
+    omObjData* obj;
+    HCPlayer* work;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104708_22B1D8_HoneycombHavoc);
+    for (i = 0; i < 4; i++) {
+        obj = D_801076D8_22E1A8_HoneycombHavoc[i];
+        work = obj->unk_50;
+        if (work->out == 1) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+        } else {
+            work->wait = 0x1E;
+            work->state = 0xA;
+            omSetTra(D_801076D8_22E1A8_HoneycombHavoc[i], D_80107388_22DE58_HoneycombHavoc[work->slot], 0.0f, 0.0f);
+            func_8002C524_2D124(obj->model[0], func_80029E14_2AA14(obj->motion[6]), 2);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_8010479C_22B26C_HoneycombHavoc);
+/* A CPU's dial target: one or two at random, two by difficulty to reach a coin or to leave a
+   honeycomb to the next player, never two onto a honeycomb. */
+void func_801044AC_22AF7C_HoneycombHavoc(omObjData* obj) {
+    HCPlayer* work = obj->unk_50;
+    u16 diff;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_801047EC_22B2BC_HoneycombHavoc);
+    work->cpuPick = (rand8() & 1) + 1;
+    diff = gPlayers[work->player].cpu_difficulty;
+    if (D_801076B0_22E180_HoneycombHavoc > 0) {
+        if (*(u16*)D_801076DC_22E1AC_HoneycombHavoc[D_801076B0_22E180_HoneycombHavoc - 1]->unk_50 == 5) {
+            switch (diff) {
+            case 1:
+                if (!(rand8() & 3)) {
+                    work->cpuPick = 2;
+                }
+                break;
+            case 2:
+                if (rand8() & 1) {
+                    work->cpuPick = 2;
+                }
+                break;
+            case 3:
+                work->cpuPick = 2;
+                break;
+            }
+        }
+    }
+    if (D_801076B0_22E180_HoneycombHavoc >= 2) {
+        if (*(u16*)D_801076DC_22E1AC_HoneycombHavoc[D_801076B0_22E180_HoneycombHavoc - 2]->unk_50 == 6) {
+            switch (diff) {
+            case 1:
+                if (!(rand8() & 3)) {
+                    work->cpuPick = 2;
+                }
+                break;
+            case 2:
+                if (rand8() & 1) {
+                    work->cpuPick = 2;
+                }
+                break;
+            case 3:
+                work->cpuPick = 2;
+                break;
+            }
+        }
+    }
+    if (D_801076B0_22E180_HoneycombHavoc > 0 &&
+        *(u16*)D_801076DC_22E1AC_HoneycombHavoc[D_801076B0_22E180_HoneycombHavoc - 1]->unk_50 == 6) {
+        work->cpuPick = 1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_8010488C_22B35C_HoneycombHavoc);
+/* A CPU's A press: 0x8000 when the dial, ten frames ahead, shows its target. */
+u16 func_80104684_22B154_HoneycombHavoc(omObjData* obj) {
+    HCPlayer* work = obj->unk_50;
+    s32 quarter;
+    f32 angle;
+
+    angle = D_801076E4_22E1B4_HoneycombHavoc->rot.x;
+    angle += D_801076D0_22E1A0_HoneycombHavoc * 10.0f;
+    if (angle >= 360.0f) {
+        angle -= 360.0f;
+    }
+    return (func_8010488C_22B35C_HoneycombHavoc(angle, &quarter) == work->cpuPick) << 15;
+}
+
+/* The dial. */
+void func_80104708_22B1D8_HoneycombHavoc(void) {
+    D_801076E4_22E1B4_HoneycombHavoc = omAddObj(0xA, 1, 0, -1, func_8010479C_22B26C_HoneycombHavoc);
+    D_801076E4_22E1B4_HoneycombHavoc->model[0] = LoadFormFile(0x3D0008, 0x206B9);
+    omSetTra(D_801076E4_22E1B4_HoneycombHavoc, 0.0f, 250.0f, 0.0f);
+    D_801076E4_22E1B4_HoneycombHavoc->work[0] = 0;
+    D_801076D0_22E1A0_HoneycombHavoc = 3.0f;
+}
+
+void func_8010479C_22B26C_HoneycombHavoc(omObjData* obj) {
+    if (obj->work[0] == 1) {
+        obj->rot.x += D_801076D0_22E1A0_HoneycombHavoc;
+        if (obj->rot.x >= 360.0f) {
+            obj->rot.x -= 360.0f;
+        }
+    }
+}
+
+/* Stops the dial on the nearest quarter; returns its value (1 or 2; 1 for the last item). */
+u8 func_801047EC_22B2BC_HoneycombHavoc(void) {
+    s32 quarter;
+
+    D_801076E4_22E1B4_HoneycombHavoc->work[0] = 0;
+    D_801076E4_22E1B4_HoneycombHavoc->work[1] = func_8010488C_22B35C_HoneycombHavoc(D_801076E4_22E1B4_HoneycombHavoc->rot.x, &quarter);
+    quarter *= 90;
+    if (quarter >= 360) {
+        quarter -= 360;
+    }
+    D_801076E4_22E1B4_HoneycombHavoc->rot.x = quarter;
+    if (D_801076B0_22E180_HoneycombHavoc == 0) {
+        D_801076E4_22E1B4_HoneycombHavoc->work[1] = 1;
+    }
+    return D_801076E4_22E1B4_HoneycombHavoc->work[1];
+}
+
+/* The dial value at an angle: the nearest quarter, odd quarters 2, even 1. */
+u8 func_8010488C_22B35C_HoneycombHavoc(f32 angle, s32* quarter) {
+    *quarter = (s32)angle / 90;
+    if ((f32)func_800B0D98_B1998(angle, 90.0) >= 45.0f) {
+        (*quarter)++;
+    }
+    return (*quarter & 1) + 1;
+}
 
 __asm__(".section .rodata");
 const u32 D_80107558_22E028_HoneycombHavoc[26] = { 0x00000000, 0x00000100, 0x00010102, 0x03000000, 0x00010000, 0x01000100, 0x02030000, 0x00010001, 0x01000000, 0x02030300, 0x00010001, 0x01000000, 0x02030303, 0x00000000, 0x00000001, 0x01000002, 0x03000000, 0x00000100, 0x00000100, 0x02030000, 0x00010000, 0x00000001, 0x00020300, 0x00000100, 0x00000100, 0x00020303 };
