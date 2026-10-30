@@ -342,7 +342,7 @@ void func_80105EB0_294F20_DeepSeaSalvage(void);
 void func_80105F14_294F84_DeepSeaSalvage(void);
 DSSWork* func_80105F5C_294FCC_DeepSeaSalvage(omObjData* obj);
 void func_80106048_2950B8_DeepSeaSalvage(void);
-u16 func_801060C8_295138_DeepSeaSalvage(void); /* 16 random bits */
+u32 func_801060C8_295138_DeepSeaSalvage(void); /* 16 random bits */
 u16 func_80106100_295170_DeepSeaSalvage(u16 n); /* random 0..n-1 */
 void func_80106134_2951A4_DeepSeaSalvage(f32* x, f32* y, f32* z);
 void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, Vec* pts, s16 n, u16 flag, f32* outx, f32* outy);
