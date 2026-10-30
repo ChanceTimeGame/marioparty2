@@ -199,6 +199,11 @@ u8 rand8(void);
 s32 _CheckFlag(s32);
 void InitFadeIn(s32, s32);
 
+/* S4-1AC */
+typedef f32 HHMtx[4][4];
+void guMtxIdentF(float mf[4][4]);
+void func_80025884_26484(HHMtx m, f32 x, f32 y, f32 z); /* rotate (MP1 MtxRotate) */
+
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (all 65; MP1 ancestor in the comment). Those after 80105940 are inferred
    from registers and callers: forks B and C check their own.
@@ -292,6 +297,8 @@ extern u16 D_8010B174_1A3F04_HandcarHavoc;     /* MP1 D_800FF3E8 (4); the file's
 /* 1A10F0.c */
 extern u16 D_8010B180_1A3F10_HandcarHavoc;     /* 1: leave (MP1 D_800FF400) */
 extern Vec D_8010B184_1A3F14_HandcarHavoc[4];  /* wheel spots per side; split labels B188, B18C */
+extern Vec D_8010B188_1A3F18_HandcarHavoc[];   /* S4-1AC: = &B184[0].y (retail addresses each label) */
+extern Vec D_8010B18C_1A3F1C_HandcarHavoc[];   /* S4-1AC: = &B184[0].z */
 extern f32 D_8010B1B4_1A3F44_HandcarHavoc[8];  /* spark lengths */
 extern u16 D_8010B1D4_1A3F64_HandcarHavoc;
 extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];
