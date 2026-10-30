@@ -1318,9 +1318,112 @@ void func_80106D44_1E6194_CrazyCutters(s32 player, s32 flag, s32 on) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D84_1E61D4_CrazyCutters);
+/* Arctangent in radians (continued fraction, |x| > 1 folded through 1/x). [FAB0C] */
+// f32/f64 register allocation and the shared tail (masked 8; MP1 masked 4)
+#ifdef NON_MATCHING
+f32 func_80106D84_1E61D4_CrazyCutters(f32 x) {
+    f32 a;
+    f32 b;
+    f32 sum;
+    f64 base;
+    f64 frac;
+    s32 sign;
+    s32 i;
 
+    sign = 1;
+    if (x > 1.0f) {
+        x = 1.0f / x;
+    } else {
+        sign = -1;
+        if (x < -1.0f) {
+            x = 1.0f / x;
+        } else {
+            sign = 0;
+        }
+    }
+    sum = 0.0f;
+    i = 6;
+    do {
+        a = (f32)(i * i) * x * x;
+        b = (f32)(i * 2 + 1) + sum;
+        i--;
+        sum = a / b;
+    } while (i > 0);
+    if (sign > 0) {
+        base = 1.5707963267948966;
+        frac = x / (sum + 1.0f);
+        goto done;
+    }
+    if (sign >= 0) {
+        return x / (sum + 1.0f);
+    }
+    frac = x / (sum + 1.0f);
+    base = -1.5707963267948966;
+done:
+    return base - frac;
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D84_1E61D4_CrazyCutters);
+#endif
+
+/* Direction (mode 0: yaw in degrees) or distance (else) from one 2D grid point to another, taken
+   as (x, 0, z). [FAC38] */
+// the 180.0f load is scheduled before the near-zero test, not into its delay slots (masked 21)
+#ifdef NON_MATCHING
+f32 func_80106EB0_1E6300_CrazyCutters(s16* from, s16* to, s32 mode) {
+    Vec delta;
+    Vec fromV;
+    Vec toV;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromV.x = from[0];
+    fromV.y = 0.0f;
+    fromV.z = from[1];
+    toV.x = to[0];
+    toV.y = 0.0f;
+    toV.z = to[1];
+    delta.x = toV.x - fromV.x;
+    delta.y = fromV.y;
+    delta.z = toV.z - fromV.z;
+    horizontal = sqrtf(delta.x * delta.x + delta.z * delta.z);
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        yaw = horizontal;
+        pitch = 180.0f;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = horizontal;
+        }
+    } else {
+        yaw = func_80106D84_1E61D4_CrazyCutters(delta.x / delta.z) * 57.29577951308232;
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        pitch = func_80106D84_1E61D4_CrazyCutters(delta.y / horizontal) * 57.29577951308232;
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    horizontal = sqrtf(delta.y * delta.y + horizontal * horizontal);
+    if (mode == 0) {
+        D_80109570_1E89C0_CrazyCutters = yaw;
+    } else {
+        D_80109570_1E89C0_CrazyCutters = horizontal;
+    }
+    return D_80109570_1E89C0_CrazyCutters;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106EB0_1E6300_CrazyCutters);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107204_1E6654_CrazyCutters);
 
