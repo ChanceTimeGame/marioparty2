@@ -560,8 +560,10 @@ void func_80104D64_281A54_BowsersBigBlast(omObjData* obj) {
 }
 
 void func_80104E98_281B88_BowsersBigBlast(omObjData* obj, BBPlayer* pl, u8 port) {
-    if (pl->slot != D_80107B24_284814_BowsersBigBlast[obj->work[0]]) {
-        if (pl->slot > D_80107B24_284814_BowsersBigBlast[obj->work[0]]) {
+    u8 slot = pl->slot;
+    u8 pick = D_80107B24_284814_BowsersBigBlast[obj->work[0]];
+    if (slot != pick) {
+        if (slot > pick) {
             ContStkX[port] = 0x46;
         } else {
             ContStkX[port] = -0x46;
@@ -580,12 +582,10 @@ void func_80104F04_281BF4_BowsersBigBlast(u8 port) {
 
 void func_80104F40_281C30_BowsersBigBlast(void) {
     u8 i;
-    u8 k;
     D_80107AE8_2847D8_BowsersBigBlast = 4;
     D_80107AE9_2847D9_BowsersBigBlast = 0;
     for (i = 0; i < 5; i++) {
-        k = i;
-        if (*(&D_80107D3F_284A2F_BowsersBigBlast - k) != 0 && 4 - k < D_80107AE8_2847D8_BowsersBigBlast) {
+        if (*(&D_80107D3F_284A2F_BowsersBigBlast - i) != 0 && D_80107AE8_2847D8_BowsersBigBlast > 4 - i) {
             D_80107AE8_2847D8_BowsersBigBlast = 4 - i;
         }
         if (D_80107D3B_284A2B_BowsersBigBlast[i] != 0 && i > D_80107AE9_2847D9_BowsersBigBlast) {
@@ -595,10 +595,12 @@ void func_80104F40_281C30_BowsersBigBlast(void) {
 }
 
 u8 func_80104FE4_281CD4_BowsersBigBlast(BBPlayer* pl, s32 step) {
-    u8 slot = pl->slot;
+    s32 slot = pl->slot;
+    s32 next;
     do {
-        slot = step + slot;
-    } while (D_80107D3B_284A2B_BowsersBigBlast[slot] == 0);
+        next = step + slot;
+        slot = next;
+    } while (D_80107D3B_284A2B_BowsersBigBlast[(u8)slot] == 0);
     return slot;
 }
 
@@ -724,7 +726,6 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
     f32 angles[5] = { -135.0f, -150.0f, 180.0f, 150.0f, 135.0f };
     f32 frames[6] = { 5.0f, 4.0f, 5.0f, 4.0f, 0.0f, 0.0f };
     MgWork* w;
-    HmfModel* m;
     D_80107B29_284819_BowsersBigBlast++;
     switch (D_80107B28_284818_BowsersBigBlast) {
     case 0:
@@ -748,16 +749,14 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
         }
         break;
     case 2:
-        m = BB_MODEL(obj->model[0]);
-        if (m->unk40 >= 16.0f) {
-            m->unk44 = -1.0f;
+        if (BB_MODEL(obj->model[0])->unk40 >= 16.0f) {
+            BB_MODEL(obj->model[0])->unk44 = -1.0f;
             D_80107B28_284818_BowsersBigBlast = 3;
         }
         break;
     case 3:
-        m = BB_MODEL(obj->model[0]);
-        if (m->unk40 < 1.0f) {
-            m->unk44 = 1.0f;
+        if (BB_MODEL(obj->model[0])->unk40 < 1.0f) {
+            BB_MODEL(obj->model[0])->unk44 = 1.0f;
             D_80107B28_284818_BowsersBigBlast = 4;
             D_80107B29_284819_BowsersBigBlast = 0x15;
         }
@@ -767,8 +766,7 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
             func_80019B9C_1A79C(obj, 0x26);
             if (gPlayers[obj->work[0]].character == 5) {
                 if (obj->trans.z < 0.0f) {
-                    w = obj->unk_50;
-                    ContStkY[w->unk_57] = 0x46;
+                    ContStkY[((MgWork*)obj->unk_50)->unk_57] = 0x46;
                 } else {
                     obj->trans.z = 0.0f;
                 }
@@ -782,15 +780,15 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
         break;
     case 5:
         if (D_80107B29_284819_BowsersBigBlast > 51.0f) {
-            if (pl->slot != D_80107D3A_284A2A_BowsersBigBlast) {
-                D_80107D20_284A10_BowsersBigBlast->music = 4;
-                func_80103060_27FD50_BowsersBigBlast();
-                D_80107D20_284A10_BowsersBigBlast->bowser = 1;
-            } else {
+            if (pl->slot == D_80107D3A_284A2A_BowsersBigBlast) {
                 pl->hit = 1;
                 func_800298A4_2A4A4(D_80107D28_284A18_BowsersBigBlast->model[0], 4, 0);
                 func_800298A4_2A4A4(D_80107D28_284A18_BowsersBigBlast->model[1], 4, 4);
                 D_80107D20_284A10_BowsersBigBlast->bowser = 2;
+            } else {
+                D_80107D20_284A10_BowsersBigBlast->music = 4;
+                func_80103060_27FD50_BowsersBigBlast();
+                D_80107D20_284A10_BowsersBigBlast->bowser = 1;
             }
             D_80107B28_284818_BowsersBigBlast = 7;
         }
@@ -1137,7 +1135,8 @@ void func_80106A50_283740_BowsersBigBlast(void) {
             }
         }
     }
-    for (i = 0, place = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
+        place = 0;
         for (j = 0; j < 4; j++) {
             if (i != j) {
                 if (func_80059FD0_5ABD0(i) > func_80059FD0_5ABD0(j)) {
@@ -1148,7 +1147,6 @@ void func_80106A50_283740_BowsersBigBlast(void) {
             }
         }
         D_80107D43_284A33_BowsersBigBlast[i] = place;
-        place = 0;
     }
 }
 
@@ -1337,7 +1335,8 @@ void func_801074A8_284198_BowsersBigBlast(void) {
     case 1:
         D_80107B40_284830_BowsersBigBlast = D_80107B44_284834_BowsersBigBlast / D_80107D24_284A14_BowsersBigBlast[0].time;
         func_801073E4_2840D4_BowsersBigBlast(&D_80107D24_284A14_BowsersBigBlast[0], HuMathSin(D_80107B40_284830_BowsersBigBlast * 90.0f));
-        if (D_80107D24_284A14_BowsersBigBlast[0].time <= (D_80107B44_284834_BowsersBigBlast += 1.0f)) {
+        D_80107B44_284834_BowsersBigBlast += 1.0f;
+        if (D_80107D24_284A14_BowsersBigBlast[0].time <= D_80107B44_284834_BowsersBigBlast) {
             D_80107B40_284830_BowsersBigBlast = 0.0f;
             D_80107B44_284834_BowsersBigBlast = 0.0f;
             D_80107D20_284A10_BowsersBigBlast->camera = 2;
@@ -1348,7 +1347,8 @@ void func_801074A8_284198_BowsersBigBlast(void) {
     case 3:
         D_80107B40_284830_BowsersBigBlast = D_80107B44_284834_BowsersBigBlast / D_80107D24_284A14_BowsersBigBlast[1].time;
         func_801073E4_2840D4_BowsersBigBlast(&D_80107D24_284A14_BowsersBigBlast[1], HuMathSin(D_80107B40_284830_BowsersBigBlast * 90.0f));
-        if (D_80107D24_284A14_BowsersBigBlast[1].time <= (D_80107B44_284834_BowsersBigBlast += 1.0f)) {
+        D_80107B44_284834_BowsersBigBlast += 1.0f;
+        if (D_80107D24_284A14_BowsersBigBlast[1].time <= D_80107B44_284834_BowsersBigBlast) {
             D_80107B40_284830_BowsersBigBlast = 0.0f;
             D_80107B44_284834_BowsersBigBlast = 0.0f;
             D_80107D20_284A10_BowsersBigBlast->camera = 4;
@@ -1356,8 +1356,8 @@ void func_801074A8_284198_BowsersBigBlast(void) {
         break;
     case 2:
         if (D_80107D20_284A10_BowsersBigBlast->shake != 0) {
-            if (D_80107B44_284834_BowsersBigBlast < 10.0f) {
-                D_801013B4_101FB4[0].x = D_80107B34_284824_BowsersBigBlast[(s32)D_80107B44_284834_BowsersBigBlast++] + 207.0f;
+            if (D_80107B44_284834_BowsersBigBlast++ < 10.0f) {
+                D_801013B4_101FB4[0].x = D_80107B34_284824_BowsersBigBlast[(s32)D_80107B44_284834_BowsersBigBlast] + 207.0f;
             } else {
                 D_80107B44_284834_BowsersBigBlast = 0.0f;
                 D_80107D20_284A10_BowsersBigBlast->shake = 0;
