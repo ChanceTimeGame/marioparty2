@@ -161,6 +161,7 @@ s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
 /* S4-1FA */
 #include "game/hmfman.h"
 #include "game/data.h"
+#include "game/collision.h"
 extern s32 D_8010B104_1C6C84_DungeonDash; /* sprite group; read as s16 (D_8010B106) */
 extern s32 D_8010B108_1C6C88_DungeonDash; /* sprite group; read as s16 (D_8010B10A) */
 extern s32 D_8010B128_1C6CA8_DungeonDash[2];
@@ -170,7 +171,8 @@ typedef struct DDCharData {
     /* 0x04 */ s32 dir;
     /* 0x08 */ s32 model;
     /* 0x0C */ s32 unk_0C;
-    /* 0x10 */ char unk_10[8];
+    /* 0x10 */ s32 unk_10; /* model file */
+    /* 0x14 */ char unk_14[4];
 } DDCharData; /* size = 0x18 (main D_800CD438_CE038) */
 extern DDCharData D_800CD438_CE038[];
 s16 SprAnimRead(void*);
@@ -188,5 +190,34 @@ void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
 void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
 void func_80107350_1C2ED0_DungeonDash(void);
+
+s16 LoadFormFile(s32, s32);
+void func_80029EDC_2AADC(s16, s32);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+extern s32 D_8010B148_1C6CC8_DungeonDash[4][4]; /* per player: [0] idle motion file, [1] win voice/motion file; D_8010B14C is [p][1] */
+
+/* .data (1C6260.data.s), S4-1FA's */
+extern s32 D_8010A6E0_1C6260_DungeonDash; /* game state (MP1 D_800FC000) */
+extern s32 D_8010A700_1C6280_DungeonDash; /* state timer (MP1 D_800FC008) */
+extern s32 D_8010A704_1C6284_DungeonDash; /* func_80106F80's result (MP1 D_800FC00C) */
+extern s32 D_8010A708_1C6288_DungeonDash; /* the seconds counter is shown */
+extern s32 D_8010A710_1C6290_DungeonDash; /* MP1 D_800FC014 */
+extern s32 D_8010A714_1C6294_DungeonDash; /* time left (9000) */
+extern s32 D_8010A718_1C6298_DungeonDash; /* START fade-out countdown; read as s16 (D_8010A71A) */
+extern s32 D_8010A71C_1C629C_DungeonDash; /* the result message is up */
+extern s32 D_8010B050_1C6BD0_DungeonDash; /* frame counter mod 3 (MP1 D_800FC300) */
+extern u16 D_801011FC_101DFC;
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+s32 PlaySound(s32);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+s32 func_80069538_6A138(void);
+void func_8006D4D0_6E0D0(s16); /* the seconds counter */
+void func_8006D518_6E118(void);
+void InitFadeOut(s32, s32);
+void func_800794A8_7A0A8(s32);
+void func_80079614_7A214(s16 time); /* music fade-out */
+void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
 
 #endif

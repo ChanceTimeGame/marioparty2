@@ -175,12 +175,240 @@ void func_801031D0_1BED50_DungeonDash(omObjData* obj, s32 player) {
     }
 }
 
-__asm__(".section .rodata");
-const u32 D_8010ABE0_1C6760_DungeonDash[4] = { 0x00000055, 0x00000056, 0x00000057, 0x00000000 };
+void func_80103354_1BEED4_DungeonDash(omObjData* obj, s32 player) {
+    s32 idle[2] = { 0x4E, 0x4F };
+    s32 win[3] = { 0x55, 0x56, 0x57 };
+    s32 dir;
+    s32 r;
+    MgWork* work;
+    u8 chr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80103354_1BEED4_DungeonDash);
+    chr = gPlayers[player].character;
+    dir = D_800CD438_CE038[chr].dir;
+    obj->model[0] = LoadFormFile(dir | D_800CD438_CE038[chr].unk_10, 0x2C9);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    obj->func_ptr = func_80105618_1C1198_DungeonDash;
+    obj->rot.x = 0.0f;
+    obj->rot.y = 180.0f;
+    obj->rot.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->unk_50 = func_80027154_27D54(sizeof(MgWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(MgWork));
+    work = obj->unk_50;
+    work->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(MgWork), 0x7918);
+    func_800B0EF0_B1AF0(work->unk_E8, 0, obj->mtncnt * sizeof(MgWork));
+    work->unk_57 = gPlayers[player].port;
+    work->unk_59 = player;
+    work->unk_D0 = 0xFFFF;
+    obj->model[8] = LoadFormFile(0xB, 0x68D);
+    func_800297E8_2A3E8(obj->model[8], 1.0f, 1.0f, 2.0f);
+    func_80019E84_1AA84(obj, 0, dir, 1, 0);
+    func_80019E84_1AA84(obj, 1, dir | 0x29, 0, 0);
+    func_80019E84_1AA84(obj, 2, dir | 0x2A, 0, 0);
+    func_80019E84_1AA84(obj, 6, dir | 0x12, 1, 0x27);
+    func_80019E84_1AA84(obj, 8, dir | 0x33, 2, 0);
+    r = rand8() & 1;
+    func_80019E84_1AA84(obj, 3, dir | idle[r], 1, 999);
+    D_8010B148_1C6CC8_DungeonDash[player][0] = dir | idle[r];
+    r = rand8() & 1;
+    func_80019E84_1AA84(obj, 4, dir | win[0], 1, 999);
+    D_8010B148_1C6CC8_DungeonDash[player][1] = dir | win[r];
+    func_80019E84_1AA84(obj, 0x26, dir | 0x1C, 1, 0);
+    func_80019B9C_1A79C(obj, 0);
+    obj->model[1] = LoadFormFile(0xD, 0x6DD);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801036B0_1BF230_DungeonDash);
+/* The game flow: intro camera, the split-screen wipe, start message, the race against the clock,
+   the results (coins_mg_bonus +10 for the winners, -10 for the losers) and the fade-out. */
+void func_801036B0_1BF230_DungeonDash(omObjData* obj) {
+    s32 i;
+    s32 w;
+    f32 fw;
+    DDTeam* team;
+
+    D_8010B050_1C6BD0_DungeonDash = (D_8010B050_1C6BD0_DungeonDash + 1) % 3;
+    if (D_8010A718_1C6298_DungeonDash != 0) {
+        if (D_8010A718_1C6298_DungeonDash == 1) {
+            obj->func_ptr = func_801030CC_1BEC4C_DungeonDash;
+        }
+        D_8010A718_1C6298_DungeonDash--;
+    } else if (D_801011FC_101DFC == 1 && func_8008F618_90218() == 0) {
+        D_8010A718_1C6298_DungeonDash = 20;
+        InitFadeOut(0, (s16)D_8010A718_1C6298_DungeonDash);
+        func_800794A8_7A0A8((s16)D_8010A718_1C6298_DungeonDash);
+        func_80079614_7A214((s16)D_8010A718_1C6298_DungeonDash);
+    }
+    switch (D_8010A6E0_1C6260_DungeonDash) {
+        case 0:
+            func_80108308_1C3E88_DungeonDash(0, D_801013B0_101FB0[0].z);
+            func_80108308_1C3E88_DungeonDash(1, D_801013B0_101FB0[1].z);
+            func_80107358_1C2ED8_DungeonDash(320);
+            if (func_8008F618_90218() != 0) {
+                return;
+            }
+            if (D_8010A700_1C6280_DungeonDash == 0) {
+                func_80106D2C_1C28AC_DungeonDash(0, 269.75f, 0.0f, 300.0f, -2012.5f, 0.0f, 0.0f, 0.0f, 60);
+                func_80106D2C_1C28AC_DungeonDash(1, 269.75f, 0.0f, 300.0f, -2012.5f, 0.0f, 0.0f, 0.0f, 60);
+                PlaySound(0x242);
+            } else if (D_8010A700_1C6280_DungeonDash == 59) {
+                func_80106D2C_1C28AC_DungeonDash(0, 539.5f, -280.0f, 280.0f, -700.0f, -17.25f, 0.0f, 0.0f, 20);
+                func_80106D2C_1C28AC_DungeonDash(1, 539.5f, 280.0f, 280.0f, -700.0f, -17.25f, 0.0f, 0.0f, 20);
+                D_8010A6E0_1C6260_DungeonDash = 1;
+                D_8010A700_1C6280_DungeonDash = 19;
+                for (i = 0; i < D_800FC87A_FD47A; i++) {
+                    func_80029EDC_2AADC(D_800FFFD8_100BD8[i]->model[0], 3);
+                }
+            }
+            D_8010A700_1C6280_DungeonDash++;
+            break;
+        case 1:
+            func_80108308_1C3E88_DungeonDash(0, D_801013B0_101FB0[0].z);
+            func_80108308_1C3E88_DungeonDash(1, D_801013B0_101FB0[1].z);
+            if (D_8010A700_1C6280_DungeonDash == 0) {
+                PlayMusic(0x26);
+                D_8010A6E0_1C6260_DungeonDash = 2;
+                break;
+            }
+            w = (D_8010A700_1C6280_DungeonDash - 1) * 160.0 / 20.0 + 160.0;
+            fw = w;
+            ScissorSet(0, 0.0f, 0.0f, fw, 240.0f);
+            ViewportSet(0, 640.0f, 480.0f, 511.0f, w * 2, 480.0f, 511.0f);
+            ScissorSet(1, fw, 0.0f, 320.0f, 240.0f);
+            func_80107358_1C2ED8_DungeonDash(w);
+            D_8010A700_1C6280_DungeonDash--;
+            break;
+        case 2:
+            if (D_8010A700_1C6280_DungeonDash == 0) {
+                func_800691FC_69DFC(0);
+                D_8010A700_1C6280_DungeonDash = -1;
+            } else if (func_80069538_6A138() == 0) {
+                D_8010A6E0_1C6260_DungeonDash = 3;
+            }
+            break;
+        case 3:
+            if (--D_8010A714_1C6294_DungeonDash == 900) {
+                func_800691FC_69DFC(10, 31, 160, 32);
+                D_8010A708_1C6288_DungeonDash = 1;
+            } else if (D_8010A714_1C6294_DungeonDash < 900 && D_8010A714_1C6294_DungeonDash != 0) {
+                func_8006D4D0_6E0D0(D_8010A714_1C6294_DungeonDash / 30 + 1);
+            } else if (D_8010A714_1C6294_DungeonDash == 0) {
+                func_8006D4D0_6E0D0(0);
+                func_8006D518_6E118();
+                D_8010A708_1C6288_DungeonDash = 0;
+                D_8010B144_1C6CC4_DungeonDash = 1;
+                D_8010A6E0_1C6260_DungeonDash = 4;
+            }
+            break;
+        case 4:
+            switch (D_8010B120_1C6CA0_DungeonDash) {
+                case 0:
+                    func_800794A8_7A0A8(40);
+                    func_800691FC_69DFC(0x12);
+                    D_8010B120_1C6CA0_DungeonDash++;
+                    break;
+                case 1:
+                    if (func_80069538_6A138() == 0) {
+                        func_800691FC_69DFC(0x13);
+                        PlayMusic(0x57);
+                        D_8010B134_1C6CB4_DungeonDash = 120;
+                        D_8010B130_1C6CB0_DungeonDash = 1;
+                        D_8010A6E0_1C6260_DungeonDash = 7;
+                    }
+                    break;
+            }
+            break;
+        case 5:
+            if (D_8010A708_1C6288_DungeonDash != 0) {
+                func_8006D518_6E118();
+                D_8010A708_1C6288_DungeonDash = 0;
+            }
+            if (D_8010B120_1C6CA0_DungeonDash == 0) {
+                for (i = 0; i < 2; i++) {
+                    team = &D_8010B068_1C6BE8_DungeonDash[i];
+                    if (team->unk14 == 13) {
+                        gPlayers[team->player[0]].coins_mg_bonus += 10;
+                        gPlayers[team->player[1]].coins_mg_bonus += 10;
+                    } else {
+                        if (gPlayers[team->player[0]].coins_mg_bonus >= 10) {
+                            gPlayers[team->player[0]].coins_mg_bonus -= 10;
+                        } else {
+                            gPlayers[team->player[0]].coins_mg_bonus = 0;
+                        }
+                        if (gPlayers[team->player[1]].coins_mg_bonus >= 10) {
+                            gPlayers[team->player[1]].coins_mg_bonus -= 10;
+                        } else {
+                            gPlayers[team->player[1]].coins_mg_bonus = 0;
+                        }
+                    }
+                }
+                D_8010B120_1C6CA0_DungeonDash++;
+                D_8010A710_1C6290_DungeonDash = 120;
+            } else if (func_80107484_1C3004_DungeonDash() != 0) {
+                func_800691FC_69DFC(3);
+                func_800794A8_7A0A8(40);
+                D_8010B138_1C6CB8_DungeonDash = 40;
+                func_801074BC_1C303C_DungeonDash();
+                if (D_8010B124_1C6CA4_DungeonDash == 0) {
+                    D_8010A6E0_1C6260_DungeonDash = 6;
+                }
+                func_8010676C_1C22EC_DungeonDash();
+            }
+            if (D_8010B124_1C6CA4_DungeonDash != 0) {
+                if (++D_8010B120_1C6CA0_DungeonDash >= 60) {
+                    D_8010A6E0_1C6260_DungeonDash = 8;
+                }
+            }
+            break;
+        case 6:
+            if (D_8010B068_1C6BE8_DungeonDash[0].unk14 == 13) {
+                ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+                ScissorSet(1, 320.0f, 240.0f, 320.0f, 240.0f);
+                ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+            } else if (D_8010B068_1C6BE8_DungeonDash[1].unk14 == 13) {
+                ScissorSet(0, 320.0f, 240.0f, 320.0f, 240.0f);
+                ScissorSet(1, 0.0f, 0.0f, 320.0f, 240.0f);
+                ViewportSet(1, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+            }
+            Hu3DCamSetPerspective(0, 45.0f, 40.0f, 8000.0f);
+            Hu3DCamSetPerspective(1, 45.0f, 40.0f, 8000.0f);
+            func_8002C59C_2D19C(2000, 2500, 255, 255, 255);
+            func_80107494_1C3014_DungeonDash();
+            if (D_8010A71C_1C629C_DungeonDash != 0) {
+                D_8010A71C_1C629C_DungeonDash = 0;
+            }
+            break;
+        case 7:
+            if (D_8010A71C_1C629C_DungeonDash == 0) {
+                for (i = 0; i < 2; i++) {
+                    team = &D_8010B068_1C6BE8_DungeonDash[i];
+                    if (team->unk14 == 13) {
+                        func_800691FC_69DFC(0x11, team->unkB[0], team->unkB[1]);
+                        break;
+                    }
+                }
+                D_8010A71C_1C629C_DungeonDash = 1;
+                D_8010B134_1C6CB4_DungeonDash = 168;
+            }
+            if (D_8010B134_1C6CB4_DungeonDash <= 0) {
+                if (D_8010B130_1C6CB0_DungeonDash != 0 && D_8010A71C_1C629C_DungeonDash != 0) {
+                    D_8010A6E0_1C6260_DungeonDash = 8;
+                }
+            } else {
+                D_8010B134_1C6CB4_DungeonDash--;
+            }
+            break;
+        case 8:
+            InitFadeOut(0, 20);
+            func_80079614_7A214(D_8010B124_1C6CA4_DungeonDash != 0 ? 40 : 90);
+            D_8010B100_1C6C80_DungeonDash = -1;
+            obj->func_ptr = func_801030CC_1BEC4C_DungeonDash;
+            break;
+    }
+    func_80106A28_1C25A8_DungeonDash();
+    D_8010A704_1C6284_DungeonDash = func_80106F80_1C2B00_DungeonDash(obj, 2);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80104190_1BFD10_DungeonDash);
 
