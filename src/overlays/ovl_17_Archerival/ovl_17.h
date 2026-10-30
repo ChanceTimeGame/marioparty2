@@ -93,7 +93,7 @@ extern s32 D_801073DC_185FFC_Archerival;  /* camera set up */
 extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
 extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
-extern ARFile D_801073EC_18600C_Archerival[6][9]; /* motions 0-4, 5-6 win/lose; [5-6] of the table: bow, arrow */
+extern ARFile D_801073EC_18600C_Archerival[6][9]; /* [0-4] motions, [5-6] bow and arrow models, [7-8] win and lose motions */
 extern ARHook D_80107598_1861B8_Archerival[6];   /* bow and arrow: the model's node */
 extern ARHook D_801075C8_1861E8_Archerival[6];   /* the node they hook to */
 extern s16 D_801075F8_186218_Archerival[6];      /* character directory */

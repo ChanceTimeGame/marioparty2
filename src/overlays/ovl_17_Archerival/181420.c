@@ -416,7 +416,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801038B4_
    to walk in *dx; with no target yet, picks one (func_801038B4_1824D4_Archerival). */
 // NON_MATCHING: register allocation only (masked 0): retail keeps the distance in $v0
 #ifdef NON_MATCHING
-s32 func_80103C1C_18283C_Archerival(omObjData* obj, s32 unused, s16* dx, u8* target) {
+s32 func_80103C1C_18283C_Archerival(omObjData* obj, ARObj* tbl, s16* dx, u8* target) {
     s32 d;
     ARObj* p;
     s32 ret = 0;
