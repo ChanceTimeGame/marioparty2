@@ -143,6 +143,7 @@ extern u16 D_80106D28_210C78_TotemPolePound[4][2];     /* [1]: slot by player */
 extern s32 D_80106D38_210C88_TotemPolePound[6][8];     /* motion files by character */
 extern f32 D_80106DF8_210D48_TotemPolePound[4][3];     /* player positions */
 extern f32 D_80106E28_210D78_TotemPolePound[6][3];     /* jump: vel, grav, grav2 by character */
+extern f32 D_80106E70_210DC0_TotemPolePound[6][3];     /* power thresholds {0, 45, 95} by character */
 extern f32 D_80106E74_210DC4_TotemPolePound[];         /* = D_80106E70[0][1] ({0, 45, 95}[6]): power 1 from */
 extern f32 D_80106E78_210DC8_TotemPolePound[];         /* = D_80106E70[0][2]: power 2 from */
 extern f32 D_80106EB8_210E08_TotemPolePound[3];        /* pole sink per power */
