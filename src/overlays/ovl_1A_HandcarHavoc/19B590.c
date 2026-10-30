@@ -82,18 +82,111 @@ void func_80102800_19B590_HandcarHavoc(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80102E40_19BBD0_HandcarHavoc);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80102EAC_19BC3C_HandcarHavoc);
+void func_80102EAC_19BC3C_HandcarHavoc(omObjData* obj) {
+    omObjData* car;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801030F4_19BE84_HandcarHavoc);
+    switch (D_8010D800_1A6590_HandcarHavoc) {
+        case 0:
+            if (D_8010B3AC_1A413C_HandcarHavoc == NULL) {
+                D_8010B3AC_1A413C_HandcarHavoc = omAddObj(40, 0, 0, -1, func_80106164_19EEF4_HandcarHavoc);
+            }
+            break;
+        case 1:
+            for (i = 0; i < 2; i++) {
+                if (((HHCar*)D_8010D820_1A65B0_HandcarHavoc[i]->unk_50)->goal == 1) {
+                    break;
+                }
+            }
+            if (i != 2) {
+                D_8010D800_1A6590_HandcarHavoc = 2;
+                D_8010D824_1A65B4_HandcarHavoc = 0;
+                D_8010D862_1A65F2_HandcarHavoc = func_80107AB0_1A0840_HandcarHavoc();
+                func_801052B8_19E048_HandcarHavoc(D_8010D820_1A65B0_HandcarHavoc[0]);
+                func_801052B8_19E048_HandcarHavoc(D_8010D820_1A65B0_HandcarHavoc[1]);
+                func_8010A408_1A3198_HandcarHavoc(D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]);
+            }
+            if (--D_8010B364_1A40F4_HandcarHavoc == 0) {
+                if (--D_8010B366_1A40F6_HandcarHavoc == 0 && D_8010D800_1A6590_HandcarHavoc == 1) {
+                    D_8010D800_1A6590_HandcarHavoc = 2;
+                    D_8010D824_1A65B4_HandcarHavoc = 8;
+                    func_8006D518_6E118();
+                    D_8010B120_1A3EB0_HandcarHavoc = 1;
+                    for (i = 0; i < 2; i++) {
+                        car = D_8010D820_1A65B0_HandcarHavoc[i];
+                        if (!HH_DONE(car)) {
+                            func_801052B8_19E048_HandcarHavoc(car);
+                        }
+                    }
+                }
+                D_8010B364_1A40F4_HandcarHavoc = 30;
+            }
+            func_8006D4D0_6E0D0(D_8010B366_1A40F6_HandcarHavoc);
+            break;
+        case 2:
+            if (D_8010B3B0_1A4140_HandcarHavoc == NULL) {
+                D_8010B3B0_1A4140_HandcarHavoc = omAddObj(40, 0, 0, -1, func_8010625C_19EFEC_HandcarHavoc);
+            }
+            break;
+    }
+}
+
+void func_801030F4_19BE84_HandcarHavoc(omObjData* obj) {
+    s32 i;
+
+    obj->model[0] = LoadFormFile(0x2A0000, 0x689);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    obj->model[1] = func_80027D3C_2893C(obj->model[0]);
+    func_80029EDC_2AADC(obj->model[1], 2);
+    obj->model[2] = LoadFormFile(0x2A0006, 0x68D);
+    func_80029EDC_2AADC(obj->model[2], 1);
+    obj->model[3] = func_80027D3C_2893C(obj->model[2]);
+    func_80029EDC_2AADC(obj->model[3], 2);
+    D_8010B37A_1A410A_HandcarHavoc = LoadFormFile(0x2A0004, 0x80D);
+    D_8010B37C_1A410C_HandcarHavoc = LoadFormFile(0x2A0005, 0x80D);
+    D_8010B388_1A4118_HandcarHavoc = D_800FC834_FD434[D_8010B37A_1A410A_HandcarHavoc].hmf->unk54;
+    D_8010B38C_1A411C_HandcarHavoc = D_800FC834_FD434[D_8010B37C_1A410C_HandcarHavoc].hmf->unk54;
+    D_8010B394_1A4124_HandcarHavoc = D_800FC834_FD434[D_8010B37A_1A410A_HandcarHavoc].hmf->unk14;
+    D_8010B396_1A4126_HandcarHavoc = D_800FC834_FD434[D_8010B37C_1A410C_HandcarHavoc].hmf->unk14;
+    func_801067A0_19F530_HandcarHavoc();
+    for (i = 0; i < 2; i++) {
+        D_8010B376_1A4106_HandcarHavoc[i] = D_8010B37A_1A410A_HandcarHavoc;
+        D_8010B380_1A4110_HandcarHavoc[i] = D_8010B388_1A4118_HandcarHavoc;
+        D_8010B390_1A4120_HandcarHavoc[i] = D_8010B394_1A4124_HandcarHavoc;
+        D_8010B398_1A4128_HandcarHavoc[i] = D_8010B3A0_1A4130_HandcarHavoc;
+    }
+    func_801032FC_19C08C_HandcarHavoc();
+    D_8010B370_1A4100_HandcarHavoc = 0;
+    omSetObjPrio(obj, 400);
+    obj->func_ptr = func_801032F4_19C084_HandcarHavoc;
+}
 
 void func_801032F4_19C084_HandcarHavoc(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801032FC_19C08C_HandcarHavoc);
+void func_801032FC_19C08C_HandcarHavoc(void) {
+    u16 spr;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801033B0_19C140_HandcarHavoc);
+    for (i = 0; i < 16; i++) {
+        spr = func_8001AAAC_1B6AC(D_8010D82A_1A65BA_HandcarHavoc, 0, 1);
+        func_8001A708_1B308(spr, 8);
+        espPosSet(spr, 160, i * 16);
+        espDispOn(spr);
+    }
+    spr = func_8001AAAC_1B6AC(D_8010D876_1A6606_HandcarHavoc, 0, 1);
+    func_8001A708_1B308(spr, 8);
+    espPosSet(spr, 160, 24);
+    espDispOn(spr);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801033EC_19C17C_HandcarHavoc);
+void func_801033B0_19C140_HandcarHavoc(omObjData* obj) {
+    func_80103428_19C1B8_HandcarHavoc(obj, 0, 9870.0f, 0, 12375.0f);
+}
+
+void func_801033EC_19C17C_HandcarHavoc(omObjData* obj) {
+    func_80103428_19C1B8_HandcarHavoc(obj, 1, 9870.0f, 0, 12375.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80103428_19C1B8_HandcarHavoc);
 

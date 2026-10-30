@@ -109,6 +109,10 @@ typedef struct HHLightDir {
     s16 z;
 } HHLightDir;
 
+/* obj->work[0..3] tested as one big-endian word (retail: lw + and 0x06000000 = work[0] & 6).
+   Host hazard: on a little-endian host this is work[3]; the port wants (obj)->work[0] & 6. */
+#define HH_DONE(obj) (*(u32*)(obj)->work & 0x06000000)
+
 /* ---------------------------------------------------------------------------------------------
    Main code used here and missing from include/
    --------------------------------------------------------------------------------------------- */
@@ -194,7 +198,7 @@ void func_801032F4_19C084_HandcarHavoc(void);                          /* empty 
 void func_801032FC_19C08C_HandcarHavoc(void);                          /* F7DD8: map */
 void func_801033B0_19C140_HandcarHavoc(omObjData* obj);                /* F7E8C */
 void func_801033EC_19C17C_HandcarHavoc(omObjData* obj);                /* F7EC8 */
-void func_80103428_19C1B8_HandcarHavoc(omObjData* obj, u16 team);      /* F7F04: car init */
+void func_80103428_19C1B8_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z); /* F7F04: car init */
 void func_80103DE4_19CB74_HandcarHavoc(omObjData* obj);                /* F8730: car */
 void func_8010484C_19D5DC_HandcarHavoc(omObjData* obj);                /* F8E00: tilt */
 u16 func_80104C00_19D990_HandcarHavoc(omObjData* obj);                 /* F917C */
@@ -219,7 +223,7 @@ void func_80107634_1A03C4_HandcarHavoc(omObjData* obj);                /* FCBA4 
 void func_80107740_1A04D0_HandcarHavoc(omObjData* obj);                /* FCE3C: timer */
 void func_801078B8_1A0648_HandcarHavoc(omObjData* obj);                /* FCFB4 */
 void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit);          /* FCFFC */
-s16 func_80107AB0_1A0840_HandcarHavoc(s32 arg0);                       /* FC85C */
+s16 func_80107AB0_1A0840_HandcarHavoc(void);                           /* FC85C */
 void func_80107C64_1A09F4_HandcarHavoc(omObjData* obj, HHPad* pad, u16 seat); /* F6BBC: COM */
 
 /* 1A10F0.c */
