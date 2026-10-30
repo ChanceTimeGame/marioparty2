@@ -745,16 +745,18 @@ void func_801054F8_230E68_HexagonHeat(omObjData* obj, f32* x, f32* y, f32* z) {
 
 /* A player object: character model and motions (the win motion 0x4E or 0x4F at random, kept in
    D_80106858), four lava splash drops (models 10-13, copies of one model), the hooks. */
-void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 arg2, s32 file, u16 player, f32 x, f32 y, f32 z) {
+void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 file, s32 arg3, u16 player, f32 x, f32 y, f32 z) {
     MgWork* w;
+    s32 attr;
     s32 mot;
     s32 win;
     s32 i;
 
+    attr = 0xA89;
     D_8010105C_101C5C = 0.5f;
     D_80101300_101F00 = 0.5f;
-    func_8000C6FC_D2FC(obj, dir, file, player, 0xA89, 0xA89);
-    func_8000BDC4_C9C4(obj, 9, dir | file, 0xA89, 750.0f);
+    func_8000C6FC_D2FC(obj, dir, file, player, attr, attr);
+    func_8000BDC4_C9C4(obj, 9, dir | arg3, 0xA89, 750.0f);
     func_8000CC74_D874(obj, obj->model[9], 1);
     D_8010105C_101C5C = 1.0f;
     D_80101300_101F00 = 1.0f;
@@ -811,13 +813,18 @@ void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 arg2, s32 fil
     func_8000E0C0_ECC0(w, 20, func_801054F8_230E68_HexagonHeat);
 }
 
+/* NON_MATCHING (all four player wrappers): scheduling only: retail loads the three register
+   arguments (a3, a2, a1) before storing the stack ones; GCC here loads them last */
+#ifdef NON_MATCHING
 void func_80105B78_2314E8_HexagonHeat(omObjData* obj) {
     func_801056C4_231034_HexagonHeat(obj, D_800CD438_CE038[gPlayers[0].character].unk_04, D_800CD438_CE038[gPlayers[0].character].unk_08,
                                      D_800CD438_CE038[gPlayers[0].character].unk_10, 0, -85.0f, 500.0f, -85.0f);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105B78_2314E8_HexagonHeat);
+#endif
 
-/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
-   stack ones (func_80105B78, whose player argument is 0, matches) */
+/* NON_MATCHING: as func_80105B78 */
 #ifdef NON_MATCHING
 void func_80105BF0_231560_HexagonHeat(omObjData* obj) {
     u8 c = gPlayers[1].character;
@@ -829,8 +836,7 @@ void func_80105BF0_231560_HexagonHeat(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105BF0_231560_HexagonHeat);
 #endif
 
-/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
-   stack ones (func_80105B78, whose player argument is 0, matches) */
+/* NON_MATCHING: as func_80105B78 */
 #ifdef NON_MATCHING
 void func_80105C78_2315E8_HexagonHeat(omObjData* obj) {
     u8 c = gPlayers[2].character;
@@ -842,8 +848,7 @@ void func_80105C78_2315E8_HexagonHeat(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80105C78_2315E8_HexagonHeat);
 #endif
 
-/* NON_MATCHING: scheduling only: retail loads the three register arguments before storing the
-   stack ones (func_80105B78, whose player argument is 0, matches) */
+/* NON_MATCHING: as func_80105B78 */
 #ifdef NON_MATCHING
 void func_80105D00_231670_HexagonHeat(omObjData* obj) {
     u8 c = gPlayers[3].character;

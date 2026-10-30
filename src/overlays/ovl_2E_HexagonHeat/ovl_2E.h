@@ -216,7 +216,7 @@ void func_80104D38_2306A8_HexagonHeat(omObjData* obj);
 void func_801051D0_230B40_HexagonHeat(omObjData* obj);
 void func_8010537C_230CEC_HexagonHeat(omObjData* obj, f32 x, f32 y, f32 z);
 void func_801054F8_230E68_HexagonHeat(omObjData* obj, f32* x, f32* y, f32* z);
-void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 arg2, s32 file, u16 player, f32 x, f32 y, f32 z);
+void func_801056C4_231034_HexagonHeat(omObjData* obj, s32 dir, s32 file, s32 arg3, u16 player, f32 x, f32 y, f32 z);
 void func_80105B78_2314E8_HexagonHeat(omObjData* obj);
 void func_80105BF0_231560_HexagonHeat(omObjData* obj);
 void func_80105C78_2315E8_HexagonHeat(omObjData* obj);
