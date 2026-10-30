@@ -713,10 +713,126 @@ u8 func_80104A6C_1239AC_RakinEmIn(f32 center, f32 angle, f32 range) {
     return in;
 }
 
-__asm__(".section .rodata");
-const u32 D_80107008_125F48_RakinEmIn[2] = { 0x00200060, 0x00300050 };
+/* A rake (obj->work[0] = player + 5): A (or the CPU) swings it; while it sweeps (state 2) the
+   head moves in from the reach and catches every item near it inside the angle window. At the
+   end the winners' rakes play the win motion. */
+/* NON_MATCHING: the item loop keeps i and a sign-extended copy in s5/s1 and hoists 10000.0f (registers only) */
+#ifdef NON_MATCHING
+void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
+    Vec a;
+    Vec b;
+    Vec d;
+    RIObj* r = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    u16 pan[4] = { 32, 96, 48, 80 };
+    s16 player = obj->work[0] - 5;
+    RIStation* head = &D_80106CF0_125C30_RakinEmIn[player];
+    RIItem* it;
+    omObjData* io;
+    f32 len;
+    f32 dx;
+    f32 dz;
+    s32 n;
+    s16 swing;
+    s16 i;
 
+    swing = 0;
+    switch (r->state) {
+    case 0:
+        if (D_801070A0_125FE0_RakinEmIn == 2) {
+            if (r->com != 0) {
+                swing = func_8010468C_1235CC_RakinEmIn(r, player);
+            } else if (ContBtnTrg[gPlayers[player].port] & 0x8000) {
+                swing = 1;
+            }
+            if (swing != 0) {
+                func_80029E80_2AA80(obj->model[0], 1, 0);
+                func_80029C74_2A874(obj->model[0], 0.0f);
+                r->unk_3C = (func_80029D0C_2A90C(obj->model[0]) - 10.0f) / 2.0f;
+                r->state = 1;
+                func_80079798_7A398(0x159, player);
+            }
+        } else if (D_801070A0_125FE0_RakinEmIn == 4) {
+            r->state = _CheckFlag(0xC) ? 4 : 3;
+        }
+        break;
+    case 1:
+        if (r->unk_3C <= func_80029CE4_2A8E4(obj->model[0])) {
+            r->unk_3C = func_80029D0C_2A90C(obj->model[0]);
+            r->state = 2;
+            r->unk_38 = D_801070A8_125FE8_RakinEmIn + 600.0f;
+        }
+        break;
+    case 2:
+        if (r->unk_3C <= func_80029CE4_2A8E4(obj->model[0])) {
+            func_80029E80_2AA80(obj->model[0], 0, 1);
+            r->state = 0;
+            func_80104474_1233B4_RakinEmIn(r);
+        }
+        break;
+    case 3:
+        if (D_801071B0_1260F0_RakinEmIn[player].score == D_801071AC_1260EC_RakinEmIn) {
+            func_80029B80_2A780(obj->model[0], obj->motion[1]);
+            func_80029E80_2AA80(obj->model[0], 1, 0);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            r->unk_24 = 1;
+            if (D_801071AB_1260EB_RakinEmIn >= 2) {
+                func_800798F8_7A4F8(func_800797DC_7A3DC(0x103, player), pan[player]);
+            } else if (D_801071AB_1260EB_RakinEmIn == 1) {
+                func_800797DC_7A3DC(0x103, player);
+            }
+        } else {
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            func_80029E80_2AA80(obj->model[0], 1, 0);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+        }
+        r->state = 4;
+        break;
+    case 4:
+        break;
+    }
+    if (r->state == 2) {
+        head->pos.x = obj->trans.x + func_800B80D0_B8CD0(obj->rot.y) * r->unk_38;
+        head->pos.z = obj->trans.z + func_800B75D0_B81D0(obj->rot.y) * r->unk_38;
+        r->unk_38 -= 12.5f;
+        len = 100.0f;
+        for (i = 0; i < 20; i++) {
+            it = &D_801070B8_125FF8_RakinEmIn[i];
+            if (it->flags & 4) {
+                continue;
+            }
+            io = D_80107520_126460_RakinEmIn[i].obj;
+            n = io->trans.x - head->pos.x;
+            if (n < 0) {
+                n = -n;
+            }
+            dx = n;
+            n = io->trans.z - head->pos.z;
+            if (n < 0) {
+                n = -n;
+            }
+            dz = n;
+            if (dx * dx + dz * dz <= 10000.0f) {
+                a.x = head->pos.x;
+                a.y = head->pos.y;
+                a.z = head->pos.z;
+                b.x = io->trans.x;
+                b.y = io->trans.y;
+                b.z = io->trans.z;
+                func_80102B40_121A80_RakinEmIn(&a, &b, &d);
+                if (func_80104A6C_1239AC_RakinEmIn(func_80102EB4_121DF4_RakinEmIn(obj->rot.y, 180.0f), d.z,
+                                                   D_801070AC_125FEC_RakinEmIn)) {
+                    io->trans.x = head->pos.x + len * func_800B80D0_B8CD0(d.z);
+                    io->trans.z = head->pos.z + len * func_800B75D0_B81D0(d.z);
+                    it->flags |= 2;
+                    func_80104950_123890_RakinEmIn(io, i);
+                }
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104BCC_123B0C_RakinEmIn);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801051D8_124118_RakinEmIn);
 
