@@ -567,18 +567,87 @@ void func_8010411C_1B626C_SpeedHockey(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010411C_1B626C_SpeedHockey);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010443C_1B658C_SpeedHockey);
+/* Create the score sprites (D_80106688). */
+void func_8010443C_1B658C_SpeedHockey(void) {
+    s32 i;
+    s16 id;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80104540_1B6690_SpeedHockey);
+    for (i = 0; i < 9; i++) {
+        id = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_80106688_1B87D8_SpeedHockey[i].file), 0, 0);
+        if (id == -1) {
+            while (1) {
+            }
+        }
+        espPosSet(id, D_80106688_1B87D8_SpeedHockey[i].x, D_80106688_1B87D8_SpeedHockey[i].y);
+        if (D_80106688_1B87D8_SpeedHockey[i].visible == 0) {
+            espDispOff(id);
+        }
+        D_80106CA4_1B8DF4_SpeedHockey[i] = id;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80104584_1B66D4_SpeedHockey);
+void func_80104540_1B6690_SpeedHockey(void) {
+    func_8002D4D0_2E0D0(0x11);
+    func_8010411C_1B626C_SpeedHockey();
+    func_8010443C_1B658C_SpeedHockey();
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010461C_1B676C_SpeedHockey);
+void func_80104584_1B66D4_SpeedHockey(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010463C_1B678C_SpeedHockey);
+    for (i = 0; i < 7; i++) {
+        omDelObj(func_80076D98_77998(1, i));
+    }
+    for (i = 0; i < 9; i++) {
+        func_8001AC44_1B844(D_80106CA4_1B8DF4_SpeedHockey[i]);
+    }
+    func_8002F1A4_2FDA4();
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_801046A0_1B67F0_SpeedHockey);
+void func_8010461C_1B676C_SpeedHockey(s32 paddle, omObjData* player) {
+    SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[paddle])->target = player;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_801046EC_1B683C_SpeedHockey);
+/* The puck's direction, position and previous position. */
+void func_8010463C_1B678C_SpeedHockey(Vec* dir, Vec* pos, Vec* prev) {
+    SHObjWork* w = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[4]);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010472C_1B687C_SpeedHockey);
+    func_800B3170_B3D70(dir, &w->dir);
+    func_800B3170_B3D70(pos, &w->pos);
+    func_800B3170_B3D70(prev, &w->prev);
+}
+
+/* Whether the paddle player drives hit the puck this step. */
+s32 func_801046A0_1B67F0_SpeedHockey(omObjData* player) {
+    s32 i;
+    SHObjWork* pw;
+
+    for (i = 0; i < 4; i++) {
+        pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[i]);
+        if (pw->target == player) {
+            return pw->hit;
+        }
+    }
+    return 0;
+}
+
+/* The leading team: 1 if team 1 leads, 0 if team 0 does, -1 on a draw. */
+s32 func_801046EC_1B683C_SpeedHockey(void) {
+    SHObjWork* w = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[4]);
+
+    if (w->score[0] < w->score[1]) {
+        return 1;
+    }
+    return -(w->score[0] <= w->score[1]);
+}
+
+void func_8010472C_1B687C_SpeedHockey(u32 i, s16 x, s16 y, f32 scale) {
+    if (i < 9) {
+        espPosSet(D_80106CA4_1B8DF4_SpeedHockey[i], x, y);
+        func_8001A91C_1B51C(D_80106CA4_1B8DF4_SpeedHockey[i], scale, scale);
+    }
+}
