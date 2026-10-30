@@ -1,5 +1,14 @@
 #include "ovl_0E.h"
 
+/* .data (0x143DB0-0x143DD0, 80109A20-80109A40) */
+
+s8 D_80109A20_143DB0_BowlOver = 0;
+f32 D_80109A24_143DB4_BowlOver = 1.47f;
+s8 D_80109A28_143DB8_BowlOver[8] = { 0 };
+s8 D_80109A30_143DC0_BowlOver[8] = { 0 };
+s8 D_80109A38_143DC8_BowlOver = 0;
+u32 D_80109A3C_143DCC_BowlOver = 0;
+
 void func_801063D0_140760_BowlOver(s16 cam, f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     D_800F94A8_FA0A8[cam] = zoom;
     D_80102770_103370[cam].x = rx;
