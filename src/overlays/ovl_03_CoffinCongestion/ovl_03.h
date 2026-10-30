@@ -211,17 +211,13 @@ typedef struct CCGame {
     /* 0x10 */ s32 frames;
 } CCGame; /* size = 0x14 */
 
-/* Scene phase (D_80106DB8, bss): 1 lid down, 2 shake, 3 lid up. */
-typedef struct CCPhase {
-    /* 0x00 */ s16 cur;
+/* Scene state (D_80106DB8, bss). */
+typedef struct CCScene {
+    /* 0x00 */ s16 cur;         /* phase: 1 lids down, 2 shake, 3 lids up */
     /* 0x02 */ s16 prev;
-} CCPhase;
-
-/* The coffins by slot (D_80106DBC, bss). */
-typedef struct CCSlots {
-    /* 0x00 */ s32 idx;         /* last slot filled */
-    /* 0x04 */ CCProp* slot[6];
-} CCSlots;
+    /* 0x04 */ s32 idx;         /* last coffin slot filled */
+    /* 0x08 */ CCProp* slot[6]; /* the coffin in each slot (D_80106DC0) */
+} CCScene;
 
 /* Saved controller state, one per port (D_80106E04[4]). */
 typedef struct CCPad {
@@ -264,8 +260,7 @@ extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*)
 
 extern omObjData** D_80106DB0_F84C0_CoffinCongestion; /* room objects [27] */
 extern omObjData** D_80106DB4_F84C4_CoffinCongestion; /* smoke puffs [6], 0 before created */
-extern CCPhase D_80106DB8_F84C8_CoffinCongestion;     /* scene phase (D_80106DBA: previous) */
-extern CCSlots D_80106DBC_F84CC_CoffinCongestion;     /* coffin slots (D_80106DC0 = .slot) */
+extern CCScene D_80106DB8_F84C8_CoffinCongestion;
 extern f32 D_80106DD8_F84E8_CoffinCongestion;         /* knock-back stick x */
 extern s16 D_80106DDC_F84EC_CoffinCongestion;         /* coffin touched */
 extern omObjData** D_80106DE0_F84F0_CoffinCongestion; /* player object */
@@ -294,7 +289,7 @@ void func_801031AC_F48BC_CoffinCongestion(omObjData* obj);
 void func_801032B8_F49C8_CoffinCongestion(omObjData* obj, CCProp* p);
 void func_801032D8_F49E8_CoffinCongestion(omObjData* obj, CCProp* p);
 void func_80103350_F4A60_CoffinCongestion(omObjData* obj);
-void func_80103398_F4AA8_CoffinCongestion(s16 item);
+void func_80103398_F4AA8_CoffinCongestion(s32 item);
 omObjData* func_801034B0_F4BC0_CoffinCongestion(void);
 void func_801034F8_F4C08_CoffinCongestion(f32 x, f32 y, f32 z);
 void func_80103578_F4C88_CoffinCongestion(omObjData* obj, CCProp* p);
