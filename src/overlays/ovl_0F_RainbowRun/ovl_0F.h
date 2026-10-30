@@ -12,6 +12,8 @@
 #include "game/camera.h"
 #include "game/pad.h"
 #include "game/sprite.h"
+#include "game/data.h"
+#include "game/malloc.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -100,9 +102,23 @@ typedef struct RRBomb {
 
 /* A thrown object's work: main's minigame work view, the state pointer at 0xA8 (MP1 0x68). */
 typedef struct RRItemWork {
-    /* 0x00 */ char unk_00[0xA8];
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ char unk_38[4];
+    /* 0x3C */ s32 unk_3C;
+    /* 0x40 */ char unk_40[4];
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ char unk_4C[6];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[0x23];
+    /* 0x78 */ s32 unk_78;
+    /* 0x7C */ s32 unk_7C;
+    /* 0x80 */ char unk_80[0x28];
     /* 0xA8 */ RRBomb* bomb;
-} RRItemWork;
+} RRItemWork; /* size = 0xAC on the N64 */
 
 #define RR_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
@@ -448,5 +464,11 @@ extern s8 D_8010ABF0_14C580_RainbowRun; /* path set: 0 or 3 */
 extern f32 D_8010AC00_14C590_RainbowRun; /* D_8010ABFC[1] by retail's own label */
 extern s8 D_8010AC08_14C598_RainbowRun[3]; /* the followers' paths, shuffled */
 extern RRBomb D_8010AC20_14C5B0_RainbowRun[3];
+void HmfModelObjAttrSet(s16, s32, s32);
+void func_8000C2A0_CEA0(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, s32 arg4); /* MP1 func_80009340 */
+u16 func_80018A64_19664(s32 arg0, s32 arg1);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2); /* 3D sprite (MP1 func_8001E00C) */
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void func_800211E8_21DE8(s16 index, u8 arg1);
 
 #endif
