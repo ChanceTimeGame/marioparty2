@@ -1,6 +1,9 @@
 #include "common.h"
 #include "ovl_14.h"
 
+/* .data (0x16FEA0-0x16FEB0, 80106F60-80106F70). */
+s8 D_80106F60_16FEA0_ShockDropOrRoll = 0;
+
 void func_80105E90_16EDD0_ShockDropOrRoll(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     D_800FA610_FB210 = zoom;
     D_800FD474_FE074.x = rx;

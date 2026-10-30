@@ -1,6 +1,31 @@
 #include "common.h"
 #include "ovl_14.h"
 
+/* .data (0x16FE10-0x16FEA0, 80106ED0-80106F60). */
+s8 D_80106ED0_16FE10_ShockDropOrRoll = 0;
+s8 D_80106ED1_16FE11_ShockDropOrRoll = 0;
+s8 D_80106ED2_16FE12_ShockDropOrRoll = 0;
+s8 D_80106ED3_16FE13_ShockDropOrRoll = 0;
+s8 D_80106ED4_16FE14_ShockDropOrRoll = 1; /* no C user */
+s8 D_80106ED5_16FE15_ShockDropOrRoll = -1;
+s8 D_80106ED6_16FE16_ShockDropOrRoll = 0; /* no C user */
+u8 D_80106ED7_16FE17_ShockDropOrRoll = 0;
+s8 D_80106ED8_16FE18_ShockDropOrRoll = 0;
+s8 D_80106ED9_16FE19_ShockDropOrRoll = 0;
+s8 D_80106EDA_16FE1A_ShockDropOrRoll = 0;
+f32 D_80106EDC_16FE1C_ShockDropOrRoll[8] = { 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f, 30.0f };
+u32 D_80106EFC_16FE3C_ShockDropOrRoll = 0;
+u32 D_80106F00_16FE40_ShockDropOrRoll = 0;
+u32 D_80106F04_16FE44_ShockDropOrRoll = 0;
+s8 D_80106F08_16FE48_ShockDropOrRoll = 0;
+s8 D_80106F09_16FE49_ShockDropOrRoll = 0;
+f32 D_80106F0C_16FE4C_ShockDropOrRoll = 30.0f;
+s8 D_80106F10_16FE50_ShockDropOrRoll = 0;
+u32 D_80106F14_16FE54_ShockDropOrRoll = 929;
+f32 D_80106F18_16FE58_ShockDropOrRoll[16] = { 0.0f };
+s8 D_80106F58_16FE98_ShockDropOrRoll = 0;
+s16 D_80106F5A_16FE9A_ShockDropOrRoll = 0;
+
 __asm__(".section .rodata");
 const char D_80106F90_16FED0_ShockDropOrRoll[] = "\202r\202s\202`\202q\202s";
 
