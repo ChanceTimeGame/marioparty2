@@ -579,7 +579,92 @@ void func_80103DE4_19CB74_HandcarHavoc(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_8010484C_19D5DC_HandcarHavoc);
+void func_8010484C_19D5DC_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    f32 d;
+
+    w = obj->unk_50;
+    if (w->tilt != 0.0f) {
+        d = w->leanIn * 0.021f;
+        if (w->tilt < 0.0f) {
+            if (d > 0.0f) {
+                w->tilt = d + w->tilt;
+                if (w->tilt > 0.0f) {
+                    w->tilt = 0.0f;
+                }
+            }
+        } else if (d < 0.0f) {
+            w->tilt = d + w->tilt;
+            if (w->tilt < 0.0f) {
+                w->tilt = 0.0f;
+            }
+        }
+    }
+    switch (func_80104C00_19D990_HandcarHavoc(obj)) {
+        case 0:
+            obj->work[0] &= 0x87;
+            if (w->tilt > 0.0f) {
+                w->tilt -= 2.0f;
+                if (w->tilt < 0.0f) {
+                    w->tilt = 0.0f;
+                }
+            } else {
+                w->tilt += 2.0f;
+                if (w->tilt > 0.0f) {
+                    w->tilt = 0.0f;
+                }
+            }
+            if (w->tipTimer != 0.0f) {
+                w->tipTimer -= 1.0f;
+            }
+            if (w->skidTimer != 0.0f) {
+                w->skidTimer -= 1.0f;
+            }
+            w->unk98 = 0;
+            break;
+        case 1:
+            obj->work[0] |= 8;
+            if (fabs(w->tilt) >= 21.0) {
+                w->tipTimer += 1.0f;
+                w->speed *= 0.5f;
+            } else {
+                w->tipTimer = 0;
+            }
+            if (w->unk98 == 0) {
+                omVibrate(w->player[0], 3, 4, 7);
+                omVibrate(w->player[1], 3, 4, 7);
+                w->unk98++;
+            } else {
+                w->unk98++;
+                if (w->unk98 >= 7) {
+                    w->unk98 = 0;
+                }
+            }
+            if (obj->work[0] & 0x20) {
+                w->tilt += 1.25f;
+                if (w->tilt >= 25.0f) {
+                    w->tilt = 25.0f;
+                }
+            } else {
+                w->tilt -= 1.25f;
+                if (w->tilt <= -25.0f) {
+                    w->tilt = -25.0f;
+                }
+            }
+            if (w->tipTimer >= 15.0f) {
+                w->tipTimer = 15.0f;
+            }
+            break;
+        case 2:
+            w->unk98 = 0;
+            obj->work[0] |= 0x10;
+            w->skidTimer += 1.0f;
+            if (w->skidTimer >= 15.0f) {
+                w->skidTimer = 0.0f;
+            }
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80104C00_19D990_HandcarHavoc);
 
