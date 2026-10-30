@@ -743,3 +743,17 @@ build/src/overlays/ovl_17_Archerival/181420.c.o: export VR4300MUL := ON
 # S4-0A: ovl_0A 121740.c has the KMC VR4300 mul fix (func_801029F0: a nop between back-to-back mul.s)
 S40A_MULFIX_UNITS := build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
 $(S40A_MULFIX_UNITS): export VR4300MUL := ON
+
+# S4-38: ovl_38 27A330.c is assembled from GCC's assembly with blank lines removed and the KMC
+# VR4300 mul fix on (func_80103328: a nop between back-to-back mul.s; func_80102800: none before a
+# mult after a call)
+S438_BLANKSTRIP_UNITS := build/src/overlays/ovl_38_QuicksandCache/27A330.c.o \
+	build/src/overlays/ovl_38_QuicksandCache/27D810.c.o
+$(S438_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(S438_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
