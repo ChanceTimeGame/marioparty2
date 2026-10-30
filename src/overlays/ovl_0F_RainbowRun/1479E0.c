@@ -1,6 +1,39 @@
 #include "common.h"
 #include "ovl_0F.h"
 
+/* .data (0x14C130-0x14C1C0, 8010A7A0-8010A830). D_8010A808 (inside D_8010A804) is an
+   undefined_syms.txt alias. */
+
+/* unreferenced: the word that starts this file's .data */
+s32 D_8010A7A0_14C130_RainbowRun = 0;
+s8 D_8010A7A4_14C134_RainbowRun = 0;
+s16 D_8010A7A6_14C136_RainbowRun = 0;
+s8 D_8010A7A8_14C138_RainbowRun = 1;
+f32 D_8010A7AC_14C13C_RainbowRun[7] = { 45.0f, 90.0f, 135.0f, 225.0f, 270.0f, 315.0f, 0.0f };
+s8 D_8010A7C8_14C158_RainbowRun = 6;
+f32 D_8010A7CC_14C15C_RainbowRun = 0.0f;
+f32 D_8010A7D0_14C160_RainbowRun = 0.0f;
+f32 D_8010A7D4_14C164_RainbowRun = 0.0f;
+f32 D_8010A7D8_14C168_RainbowRun = 0.0f;
+f32 D_8010A7DC_14C16C_RainbowRun = 0.0f;
+f32 D_8010A7E0_14C170_RainbowRun = 0.0f;
+f32 D_8010A7E4_14C174_RainbowRun = 0.0f;
+s8 D_8010A7E8_14C178_RainbowRun = 1;
+s8 D_8010A7E9_14C179_RainbowRun = 0;
+s8 D_8010A7EA_14C17A_RainbowRun = 0;
+s8 D_8010A7EB_14C17B_RainbowRun = 0x7F;
+s8 D_8010A7EC_14C17C_RainbowRun = 0;
+s8 D_8010A7ED_14C17D_RainbowRun = 1;
+s8 D_8010A7EE_14C17E_RainbowRun = 6;
+s8 D_8010A7EF_14C17F_RainbowRun = 6;
+s8 D_8010A7F0_14C180_RainbowRun = 0;
+s32 D_8010A7F4_14C184_RainbowRun = 0;
+s32 D_8010A7F8_14C188_RainbowRun = 0;
+s32 D_8010A7FC_14C18C_RainbowRun = 0;
+s32 D_8010A800_14C190_RainbowRun = 0;
+f32 D_8010A804_14C194_RainbowRun[4][2] = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
+s8 D_8010A824_14C1B4_RainbowRun = 0;
+
 /* Keeps a copy of a model's collision vertices (the rainbow's base shape). */
 void func_80106050_1479E0_RainbowRun(s16 model) {
     HmfData* m;

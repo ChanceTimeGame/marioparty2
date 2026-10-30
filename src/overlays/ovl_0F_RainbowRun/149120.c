@@ -1,6 +1,23 @@
 #include "common.h"
 #include "ovl_0F.h"
 
+/* .data (0x14C1C0-0x14C250, 8010A830-8010A8C0). D_8010A87C (the used flag of spot 0) is an
+   undefined_syms.txt alias; the splat labels D_8010A834/838 inside D_8010A830 have no users. */
+
+Vec D_8010A830_14C1C0_RainbowRun[6] = {
+    { -400.0f, -605.0f, 650.0f },
+    { -400.0f, -605.0f, 150.0f },
+    { 400.0f, -605.0f, 350.0f },
+    { 400.0f, -605.0f, 650.0f },
+    { 400.0f, -605.0f, 150.0f },
+    { -400.0f, -605.0f, 350.0f },
+};
+RRSpot D_8010A878_14C208_RainbowRun[4] = { { 20.0f, 0 }, { 50.0f, 0 }, { 310.0f, 0 }, { 340.0f, 0 } };
+s8 D_8010A898_14C228_RainbowRun[4] = { 0 };
+s8 D_8010A89C_14C22C_RainbowRun[6][4] = {
+    { 0, 1, 4, 3 }, { 1, 2, 5, 4 }, { 2, 0, 3, 5 }, { 3, 0, 1, 4 }, { 4, 1, 2, 5 }, { 5, 2, 0, 3 },
+};
+
 /* A bomb that reaches a follower stuns it (D_8010AC14 entries other than `obj`; MP1
    func_800FBCD0_TightropeTreachery). */
 s8 func_80107790_149120_RainbowRun(omObjData* obj) {

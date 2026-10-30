@@ -1,6 +1,21 @@
 #include "common.h"
 #include "ovl_0F.h"
 
+/* .data (0x14C0E0-0x14C130, 8010A750-8010A7A0). D_8010A75C (inside D_8010A758) is an
+   undefined_syms.txt alias. */
+
+s8 D_8010A750_14C0E0_RainbowRun = 0;
+s8 D_8010A751_14C0E1_RainbowRun = 0;
+s16 D_8010A752_14C0E2_RainbowRun = 0;
+f32 D_8010A754_14C0E4_RainbowRun = 0.0f;
+f32 D_8010A758_14C0E8_RainbowRun[8] = { 10.0f, 10.0f, -10.0f, 10.0f, 10.0f, -10.0f, -10.0f, -10.0f };
+s8 D_8010A778_14C108_RainbowRun = 0;
+s8 D_8010A77C_14C10C_RainbowRun[8] = { 0 };
+s8 D_8010A784_14C114_RainbowRun[8] = { 0 };
+s8 D_8010A78C_14C11C_RainbowRun = 0;
+u16 D_8010A78E_14C11E_RainbowRun = 0;
+u32 D_8010A790_14C120_RainbowRun = 0;
+
 void func_801057F0_147180_RainbowRun(f32 zoom, f32 rx, f32 ry, f32 rz, f32 cx, f32 cy, f32 cz) {
     D_800FA610_FB210 = D_8010AA10_14C3A0_RainbowRun = zoom;
     D_800FD474_FE074.x = D_8010AC10_14C5A0_RainbowRun = rx;

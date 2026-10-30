@@ -3,8 +3,8 @@
 
 /* Overlay 0F: Rainbow Run. Its game code descends from MP1's ovl_1F_TightropeTreachery (197E20.c,
    19A360.c, 19ACC0.c, 19D510.c). Retail is four files: 144190.c, 147180.c from 801057F0 (MP1's
-   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790 (MP1's 19D510.c). .data stays asm
-   (14C080); .rodata is carved per file. Every prototype is checked against its definition. */
+   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790 (MP1's 19D510.c). .data is C in each
+   file (14C080); .rodata is carved per file. Every prototype is checked against its definition. */
 
 #include "common.h"
 #include "game/object.h"
@@ -312,7 +312,7 @@ void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 
-/* ---- .data (14C080) ---- */
+/* ---- .data (14C080; in C per file: 144190 to A750, 147180 to A7A0, 1479E0 to A830, 149120) ---- */
 
 extern s16 D_8010A6F0_14C080_RainbowRun; /* the game is over */
 extern s8 D_8010A6F2_14C082_RainbowRun;
@@ -460,10 +460,15 @@ extern f32 D_8010A804_14C194_RainbowRun[4][2]; /* the clouds' x, z: [0] the grou
 extern f32 D_8010A808_14C198_RainbowRun[]; /* D_8010A804 + 4, retail's own label */
 extern s8 D_8010A824_14C1B4_RainbowRun; /* the clouds are shown */
 extern Vec D_8010A830_14C1C0_RainbowRun[6]; /* the followers' path points (retail's own labels D_8010A834/838: .y, .z) */
-/* the four spots' used flags: retail's spots are { f32 angle; s8 used; } [4] from 0x8010A878 (angles
-   20, 50, 310, 340), addressed by the +4 label */
+/* the four spots (angles 20, 50, 310, 340); the code addresses the used flags by the +4 label
+   D_8010A87C (an undefined_syms.txt alias) */
+typedef struct RRSpot {
+    /* 0x00 */ f32 angle;
+    /* 0x04 */ s8 used;
+} RRSpot;
+extern RRSpot D_8010A878_14C208_RainbowRun[4];
 extern s8 D_8010A87C_14C20C_RainbowRun[][8];
-extern s8 D_8010A898_14C228_RainbowRun[]; /* a bomb's fuse sound is playing */
+extern s8 D_8010A898_14C228_RainbowRun[4]; /* a bomb's fuse sound is playing */
 extern s8 D_8010A89C_14C22C_RainbowRun[6][4]; /* the paths: four of D_8010A830's points each */
 extern f32 D_8010A9D0_14C360_RainbowRun[4]; /* func_80109240's spline keys */
 extern f32 D_8010A9E0_14C370_RainbowRun[4]; /* func_80109240's spline times */
