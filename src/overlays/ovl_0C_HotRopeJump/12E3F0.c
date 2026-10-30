@@ -849,55 +849,599 @@ void func_80105410_131000_HotRopeJump(HmfData* hmf, Vec* src, s16 idx) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801054E4_1310D4_HotRopeJump);
+/* Starts player motion `motion`, ending the separate motion (func_80105214) first if one plays. */
+s16 func_801054E4_1310D4_HotRopeJump(omObjData* obj, s32 motion) {
+    HRJPlayer* p;
+    HmfModel* m;
+    MgWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105570_131160_HotRopeJump);
+    p = func_80105D94_131984_HotRopeJump(obj);
+    m = &D_800FC834_FD434[obj->model[0]];
+    w = obj->unk_50;
+    if (p->unk_68 != 0) {
+        p->unk_68 = 0;
+        m->unk02 = p->unk_66;
+        w->unk_D0 = 0xFFFF;
+    }
+    return func_80019B9C_1A79C(obj, motion);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105694_131284_HotRopeJump);
+/* Bakes model `model`'s motion into matrices, one set every `step` frames (main's
+   func_800231D8_23DD8 with the overlay's own walker). */
+HRJMotion* func_80105570_131160_HotRopeJump(s16 model, s16 step) {
+    HmfData* hmf;
+    HmfMotionSlot* anim;
+    HRJMotion* ret;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801057B4_1313A4_HotRopeJump);
+    hmf = D_800FC834_FD434[model].hmf;
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[model].unk02];
+    ret = HuMemMemoryAllocPerm(sizeof(HRJMotion));
+    ret->mtx = HuMemMemoryAllocPerm(((anim->unk02 + step) / step) * (hmf->unk16 << 6));
+    ret->parts = HuMemMemoryAllocPerm(hmf->unk16 * 2);
+    ret->frames = anim->unk02;
+    ret->step = step;
+    func_80105694_131284_HotRopeJump(model, step, ret, -1);
+    return ret;
+}
 
+/* main's func_80023434_24034 (MP1 func_80020544) writing to the overlay's tables. */
+void func_80105694_131284_HotRopeJump(s16 model, s16 step, HRJMotion* out, s16 part) {
+    HmfData* hmf;
+    HmfMotionSlot* anim;
+    s16 i;
+
+    hmf = D_800FC834_FD434[model].hmf;
+    anim = &D_800F92B4_F9EB4[D_800FC834_FD434[model].unk02];
+    D_801113A4_13CF94_HotRopeJump = out->mtx;
+    D_801113A0_13CF90_HotRopeJump = out->parts;
+    D_8011139C_13CF8C_HotRopeJump = 0;
+    guMtxIdentF(D_801016D0_1022D0[0]);
+    for (i = 0; i < anim->unk02; i += step) {
+        func_80039B54_3A754(hmf, i, anim, 1);
+        D_800FD470_FE070 = 0;
+        func_801057B4_1313A4_HotRopeJump(hmf, 0, part);
+    }
+}
+
+/* MP1 func_80020654: walks the motion-object tree from `node`, storing each part's matrix (every
+   part when `part` is -1). */
+void func_801057B4_1313A4_HotRopeJump(HmfData* hmf, s16 node, s16 part) {
+    Matrix4f sp10;
+    HmfMotionObj* obj;
+    s16 pushed;
+    s16 i;
+    s16 child;
+
+    obj = &hmf->unk84[node];
+    pushed = 0;
+    func_800B37C0_B43C0(sp10);
+    if (obj->unk28.x != 0.0f || obj->unk28.y != 0.0f || obj->unk28.z != 0.0f) {
+        func_80025770_26370(sp10, obj->unk28.x, obj->unk28.y, obj->unk28.z);
+        pushed = 1;
+    }
+    if (obj->unk34.x != 0.0f || obj->unk34.y != 0.0f || obj->unk34.z != 0.0f) {
+        func_80025884_26484(sp10, obj->unk34.x, obj->unk34.y, obj->unk34.z);
+        pushed = 1;
+    }
+    if (obj->unk40.x != 1.0f || obj->unk40.y != 1.0f || obj->unk40.z != 1.0f) {
+        func_80025830_26430(sp10, obj->unk40.x, obj->unk40.y, obj->unk40.z);
+        pushed = 1;
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070++;
+        func_80025BA4_267A4(sp10, D_801016D0_1022D0[D_800FD470_FE070 - 1], D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+    if (D_8011139C_13CF8C_HotRopeJump < hmf->unk16) {
+        D_801113A0_13CF90_HotRopeJump[node] = D_8011139C_13CF8C_HotRopeJump;
+    }
+    if ((part == -1) | (part == node)) {
+        func_80030CD4_318D4(D_801113A4_13CF94_HotRopeJump[D_8011139C_13CF8C_HotRopeJump++],
+                            D_801016D0_1022D0[D_800FD470_FE070]);
+    }
+    for (i = 0; i < obj->unk00; i++) {
+        child = obj->unk50[i];
+        if (child & 0x8000) {
+            if (child != -1) {
+                func_801057B4_1313A4_HotRopeJump(hmf, child & 0x7FFF, part);
+            }
+        }
+    }
+    if (pushed != 0) {
+        D_800FD470_FE070--;
+    }
+}
+
+/* The rope's hit test against the player (MP1 func_800F8A14): 1 when the rope is within reach of
+   the player's body (50 above the feet; reach 50, or 40 while D_80111398 swings), 2 when the
+   closest segment is in the arc where a jump clears it, else 0.
+   NON_MATCHING: retail keeps t in $f4 and does not thread the reach ternary into two compares
+   (masked 23; MP1's is NON_MATCHING too) */
+#ifdef NON_MATCHING
+s32 func_80105AB8_1316A8_HotRopeJump(omObjData* obj) {
+    HRJSeg* seg;
+    f32 t;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    s32 i;
+    s32 ret;
+
+    seg = D_80111920_13D510_HotRopeJump;
+    for (i = 0; i < 12; i++, seg++) {
+        t = -((seg->pos.x - obj->trans.x) * seg->dir.x + seg->dir.y * (seg->pos.y - (obj->trans.y + 50.0)) +
+              (seg->pos.z - obj->trans.z) * seg->dir.z) /
+            (seg->dir.x * seg->dir.x + seg->dir.y * seg->dir.y + seg->dir.z * seg->dir.z);
+        if (t < 1.0 && t >= 0.0) {
+            break;
+        }
+    }
+    ret = 0;
+    if (i != 12) {
+        dx = t * seg->dir.x + seg->pos.x;
+        dy = t * seg->dir.y + seg->pos.y;
+        dz = t * seg->dir.z + seg->pos.z;
+        dx -= obj->trans.x;
+        dy -= obj->trans.y + 50.0;
+        dz -= obj->trans.z;
+        if (dx * dx + dy * dy + dz * dz <= (D_80111398_13CF88_HotRopeJump == 0.0 ? 2500.0 : 1600.0)) {
+            return 1;
+        }
+        ret = 0;
+        if (225.0 - D_80111324_13CF14_HotRopeJump * 7.5 <= seg->angle && seg->angle <= 270.0f) {
+            ret = 2;
+        }
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105AB8_1316A8_HotRopeJump);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105CD4_1318C4_HotRopeJump);
+/* The game's teardown: the motion constants back, the players' baked motions freed, the
+   billboards freed (MP1 func_800F8C08). */
+void func_80105CD4_1318C4_HotRopeJump(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105D74_131964_HotRopeJump);
+    func_801080A0_133C90_HotRopeJump();
+    D_800BF7C0_C03C0 = D_80111140_13CD30_HotRopeJump;
+    D_800BF7A4_C03A4 = D_80111144_13CD34_HotRopeJump;
+    D_800BF7A8_C03A8 = D_80111148_13CD38_HotRopeJump;
+    D_800BF7D4_C03D4 = D_8011114C_13CD3C_HotRopeJump;
+    for (i = 0; i < 4; i++) {
+        if (D_80111158_13CD48_HotRopeJump[i].unk_6C != NULL) {
+            func_80023D74_24974(D_80111158_13CD48_HotRopeJump[i].unk_6C);
+        }
+    }
+    func_8010777C_13336C_HotRopeJump();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105D94_131984_HotRopeJump);
+/* Keeps the player's HRJPlayer in omObjData::work as a big-endian word (host: a pointer does not
+   fit in work[0..3]; keep an index into D_80111158_13CD48_HotRopeJump instead). */
+void func_80105D74_131964_HotRopeJump(omObjData* obj, HRJPlayer* p) {
+    obj->work[0] = (u32)p >> 24;
+    obj->work[1] = (u32)p >> 16;
+    obj->work[2] = (u32)p >> 8;
+    obj->work[3] = (u32)p;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105DC0_1319B0_HotRopeJump);
+HRJPlayer* func_80105D94_131984_HotRopeJump(omObjData* obj) {
+    return (HRJPlayer*)((obj->work[0] << 24) | (obj->work[1] << 16) | (obj->work[2] << 8) | obj->work[3]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80105F80_131B70_HotRopeJump);
+/* Allocates `count` billboards and their per-frame vertex and display-list buffers (MP1
+   func_800F8CB4). */
+void func_80105DC0_1319B0_HotRopeJump(u8 count) {
+    HRJFx* fx;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80106034_131C24_HotRopeJump);
+    D_801113A8_13CF98_HotRopeJump = count;
+    for (i = 0; i < 3; i++) {
+        D_801113C8_13CFB8_HotRopeJump[i] = HuMemMemoryAllocPerm(D_801113A8_13CF98_HotRopeJump * (8 * sizeof(Vtx)));
+        D_801113BC_13CFAC_HotRopeJump[i] = HuMemMemoryAllocPerm(D_801113A8_13CF98_HotRopeJump * (32 * sizeof(Gfx)));
+        D_801113AC_13CF9C_HotRopeJump[i] = HuMemMemoryAllocPerm(D_801113A8_13CF98_HotRopeJump * (20 * sizeof(Gfx)));
+    }
+    D_801113B8_13CFA8_HotRopeJump = func_80027FA4_28BA4(0x419, D_801113AC_13CF9C_HotRopeJump[0], 4);
+    D_80111394_13CF84_HotRopeJump = HuMemMemoryAllocPerm(D_801113A8_13CF98_HotRopeJump * sizeof(HRJFx));
+    for (i = 0; i < D_801113A8_13CF98_HotRopeJump; i++) {
+        fx = &D_80111394_13CF84_HotRopeJump[i];
+        fx->dl = (Gfx*)-1;
+        fx->unk_08 = 0;
+        fx->flags = 0;
+        fx->sprite = 0;
+        fx->a = fx->r = fx->g = fx->b = 0xFF;
+        fx->timer = 0;
+        fx->frame = 0;
+        fx->unk_0E = 0;
+        fx->speed = 1.0f;
+        fx->pos.x = fx->pos.y = fx->pos.z = 0.0f;
+        fx->scale.x = fx->scale.y = 0.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010605C_131C4C_HotRopeJump);
+/* Takes a free billboard for sprite `sprite`: its index, or -1 when none is free. */
+s16 func_80105F80_131B70_HotRopeJump(s16 sprite, u8 flags) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010608C_131C7C_HotRopeJump);
+    for (i = 0; i < D_801113A8_13CF98_HotRopeJump; i++) {
+        if (D_80111394_13CF84_HotRopeJump[i].dl == (Gfx*)-1) {
+            break;
+        }
+    }
+    if (i < D_801113A8_13CF98_HotRopeJump) {
+        D_80111394_13CF84_HotRopeJump[i].dl = NULL;
+        D_80111394_13CF84_HotRopeJump[i].sprite = sprite;
+        D_80111394_13CF84_HotRopeJump[i].flags = flags;
+        return i;
+    }
+    return -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801060BC_131CAC_HotRopeJump);
+void func_80106034_131C24_HotRopeJump(s16 id, f32 speed) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801060EC_131CDC_HotRopeJump);
+    fx->speed = speed;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80106124_131D14_HotRopeJump);
+void func_8010605C_131C4C_HotRopeJump(s16 id, f32 x, f32 y, f32 z) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801061B0_131DA0_HotRopeJump);
+    fx->pos.x = x;
+    fx->pos.y = y;
+    fx->pos.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107424_133014_HotRopeJump);
+void func_8010608C_131C7C_HotRopeJump(s16 id, f32 x, f32 y, f32 z) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010777C_13336C_HotRopeJump);
+    fx->scale.x = x;
+    fx->scale.y = y;
+    fx->scale.z = z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_8010781C_13340C_HotRopeJump);
+void func_801060BC_131CAC_HotRopeJump(s16 id, u8 flags) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_801078A4_133494_HotRopeJump);
+    fx->flags |= flags;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107928_133518_HotRopeJump);
+void func_801060EC_131CDC_HotRopeJump(s16 id, u8 r, u8 g, u8 b, s32 a) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107A84_133674_HotRopeJump);
+    fx->r = r;
+    fx->g = g;
+    fx->b = b;
+    fx->a = a;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107AE8_1336D8_HotRopeJump);
+/* Frees billboard `id`. */
+void func_80106124_131D14_HotRopeJump(s16 id) {
+    HRJFx* fx = &D_80111394_13CF84_HotRopeJump[id];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107B4C_13373C_HotRopeJump);
+    fx->dl = (Gfx*)-1;
+    fx->unk_04 = NULL;
+    fx->unk_08 = 0;
+    fx->flags = 0;
+    fx->sprite = 0;
+    fx->a = fx->r = fx->g = fx->b = 0xFF;
+    fx->timer = 0;
+    fx->frame = 0;
+    fx->unk_0E = 0;
+    fx->pos.x = fx->pos.y = fx->pos.z = 0.0f;
+    fx->scale.x = fx->scale.y = fx->scale.z = 0.0f;
+    fx->speed = 1.0f;
+}
+
+/* gDPSetTile's mask for a texture dimension. */
+#define HRJ_TEX_MASK(x) \
+    ((x) < 3 ? 1 : (x) < 5 ? 2 : (x) < 9 ? 3 : (x) < 17 ? 4 : (x) < 33 ? 5 : (x) < 65 ? 6 : (x) < 129 ? 7 : (x) < 257 ? 8 : 9)
+
+/* Builds this frame's display list and quad of every visible billboard, then advances its
+   animation, two steps a frame (MP1 func_800F9080). */
+void func_801061B0_131DA0_HotRopeJump(void) {
+    Vtx* v;
+    Gfx* gfx;
+    HRJFx* fx;
+    HuSprite_Unk84_Struct* anim;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    u16 w;
+    u16 h;
+    s16 x;
+    s16 y;
+    s16 nh;
+    s32 len;
+    s32 count;
+    s32 hold;
+    s16 k;
+    u16 i;
+
+    v = D_801113C8_13CFB8_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    gfx = D_801113BC_13CFAC_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    for (i = 0; (s16)i < D_801113A8_13CF98_HotRopeJump; i++) {
+        fx = &D_80111394_13CF84_HotRopeJump[(s16)i];
+        if (fx->dl == (Gfx*)-1 || fx->unk_08 != 0) {
+            continue;
+        }
+        if (fx->flags & 0x10) {
+            fx->dl = NULL;
+            continue;
+        }
+        fx->dl = gfx;
+        gDPPipeSync(gfx++);
+        anim = D_800F60B0_F6CB0[fx->sprite];
+        if (anim->unk18 & 0x8000) {
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetRenderMode(gfx++, 0x5049D8, 0);
+            gDPSetBlendColor(gfx++, 0, 0, 0, 1);
+            gDPSetPrimColor(gfx++, 0, 0, fx->r, fx->g, fx->b, fx->a);
+        } else if (fx->a == 0xFF) {
+            gDPSetRenderMode(gfx++, 0x553078, 0);
+            gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
+        } else {
+            gDPSetBlendColor(gfx++, 0, 0, 0, 0);
+            gDPSetPrimColor(gfx++, 0, 0, fx->r, fx->g, fx->b, fx->a);
+            gDPSetRenderMode(gfx++, 0x5049D8, 0);
+            gDPSetCombine(gfx++, 0x143228, 0xFF65FEFF);
+        }
+        gDPSetTextureFilter(gfx++, D_8010C258_137E48_HotRopeJump[(fx->flags & 0x18) >> 3]);
+        frame = &anim->unk00[fx->frame];
+        w = frame->unk04;
+        h = frame->unk06;
+        if (anim->unk18 & 0x8000) {
+            gDPSetTextureLUT(gfx++, G_TT_NONE);
+            gDPLoadTextureBlock_4b(gfx++, frame->unk00, G_IM_FMT_I, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                                   HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+        } else {
+            gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+            if (anim->unk18 < 0x11) {
+                gDPLoadTLUT_pal16(gfx++, 0, anim->unk0C);
+                gDPLoadTextureBlock_4b(gfx++, frame->unk00, G_IM_FMT_CI, (s16)w, (s16)h, 0, G_TX_CLAMP, G_TX_CLAMP,
+                                       HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+            } else {
+                gDPLoadTLUT_pal256(gfx++, anim->unk0C);
+                gDPLoadTextureBlock(gfx++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, (s16)w, (s16)h, 0, G_TX_CLAMP,
+                                    G_TX_CLAMP, HRJ_TEX_MASK((s16)w), HRJ_TEX_MASK((s16)h), G_TX_NOLOD, G_TX_NOLOD);
+            }
+        }
+        gSPVertex(gfx++, osVirtualToPhysical(v), 4, 0);
+        gSP1Quadrangle(gfx++, 0, 1, 2, 3, 0);
+        nh = -h;
+        x = -frame->unk08;
+        y = frame->unk0A;
+        v->v.ob[0] = x;
+        v->v.ob[1] = y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = 0;
+        v->v.tc[1] = 0;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = x;
+        v->v.ob[1] = nh + y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = 0;
+        v->v.tc[1] = (-nh - 1) << 5;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = (s16)w + x;
+        v->v.ob[1] = nh + y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = ((s16)w - 1) << 5;
+        v->v.tc[1] = (-nh - 1) << 5;
+        v->n.a = 0xFF;
+        v++;
+        v->v.ob[0] = (s16)w + x;
+        v->v.ob[1] = y;
+        v->v.ob[2] = 0;
+        v->n.n[0] = v->n.n[1] = v->n.n[2] = -1;
+        v->v.tc[0] = ((s16)w - 1) << 5;
+        v->v.tc[1] = 0;
+        v->n.a = 0xFF;
+        v++;
+        gDPSetTextureFilter(gfx++, D_8010C258_137E48_HotRopeJump[(u8)D_800FD2A4_FDEA4]);
+        gSPEndDisplayList(gfx++);
+        if (fx->flags & 1) {
+            continue;
+        }
+        if (anim->unk04 != NULL) {
+            len = (s16)anim->unk04[0]->unk04[fx->frame].unk02;
+            count = anim->unk04[0]->unk00;
+        } else {
+            len = 8;
+            count = anim->unk10;
+        }
+        for (k = 0; k < 2; k++) {
+            fx->timer += fx->speed;
+            if (len < fx->timer) {
+                fx->frame++;
+                fx->timer -= len;
+                if (fx->frame + 1 >= count) {
+                    if (fx->flags & 4) {
+                        func_801060BC_131CAC_HotRopeJump(i, 0x10);
+                        break;
+                    }
+                    if (fx->flags & 0x20) {
+                        func_80106124_131D14_HotRopeJump(i);
+                        break;
+                    }
+                    hold = len != -1; /* hold the last frame unless the step length is -1 */
+                    if (((fx->flags >> 1) & 1) | hold) {
+                        fx->frame--;
+                        break;
+                    }
+                    fx->frame = 0;
+                }
+            }
+        }
+    }
+}
+
+/* Draws the billboards into the billboard model's list for this frame (the frame buffer index
+   advances first): each one's matrix, facing the camera unless unk_08, and its display list
+   (MP1 func_800FA2F4). Host: the list ends with a matrix load from `view` on this stack frame
+   (MP1's port makes it static). */
+void func_80107424_133014_HotRopeJump(void) {
+    Mtx view;
+    Matrix4f m;
+    Matrix4f m2;
+    Matrix4f bb;
+    Gfx* gfx;
+    Mtx* mtx;
+    HRJFx* fx;
+    s32 i;
+
+    D_80111154_13CD44_HotRopeJump = (D_80111154_13CD44_HotRopeJump + 1) % 3;
+    func_801061B0_131DA0_HotRopeJump();
+    *(Gfx**)D_800FC834_FD434[D_801113B8_13CFA8_HotRopeJump].hmf->unk3C = D_801113AC_13CF9C_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    gfx = D_801113AC_13CF9C_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    mtx = D_8010C940_138530_HotRopeJump[D_80111154_13CD44_HotRopeJump];
+    view = D_800C9B80_CA780->mtxs[D_800FFFD6_100BD6].lookAtMtx;
+    gSPClearGeometryMode(gfx++, G_CULL_BACK | G_LIGHTING);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER);
+    for (i = 0; i < D_801113A8_13CF98_HotRopeJump; i++) {
+        fx = &D_80111394_13CF84_HotRopeJump[i];
+        if (fx->dl == (Gfx*)-1) {
+            continue;
+        }
+        if (fx->flags & 0x10) {
+            continue;
+        }
+        guMtxL2F(m, &view);
+        func_80025770_26370(m, fx->pos.x, fx->pos.y, fx->pos.z);
+        func_80025830_26430(m, fx->scale.x, fx->scale.y, fx->scale.z);
+        if (fx->unk_08 == 0) {
+            bb[0][0] = fx->scale.x;
+            bb[1][1] = fx->scale.y;
+            bb[2][2] = fx->scale.z;
+            bb[3][3] = 1.0f;
+            bb[0][1] = bb[0][2] = bb[0][3] = bb[1][0] = bb[1][2] = bb[1][3] = bb[2][0] = bb[2][1] = bb[2][3] =
+                bb[3][0] = bb[3][1] = bb[3][2] = 0.0f;
+            func_800260A4_26CA4(m, m2);
+            func_80025BA4_267A4(bb, m2, m);
+        } else {
+            gSPSegment(gfx++, 1, osVirtualToPhysical(fx->unk_04->seg[D_800FDBE0_FE7E0]));
+        }
+        func_800B3040_B3C40(m, mtx);
+        gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(gfx++, fx->dl);
+    }
+    gSPMatrix(gfx++, osVirtualToPhysical(&view), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPEndDisplayList(gfx++);
+}
+
+/* Frees the billboards and their buffers (MP1 func_800FA60C). */
+void func_8010777C_13336C_HotRopeJump(void) {
+    s32 i;
+
+    HuMemMemoryFreePerm(D_80111394_13CF84_HotRopeJump);
+    for (i = 0; i < 3; i++) {
+        HuMemMemoryFreePerm(D_801113BC_13CFAC_HotRopeJump[i]);
+        HuMemMemoryFreePerm(D_801113C8_13CFB8_HotRopeJump[i]);
+        HuMemMemoryFreePerm(D_801113AC_13CF9C_HotRopeJump[i]);
+    }
+}
+
+/* Sets the camera (zoom, centre, rotation) at once and stops any glide (MP1 func_800FA6AC). */
+void func_8010781C_13340C_HotRopeJump(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz) {
+    D_8011140E_13CFFE_HotRopeJump = 0;
+    D_8011140C_13CFFC_HotRopeJump = 0;
+    D_800FA610_FB210 = zoom;
+    D_800FD474_FE074.x = rx;
+    D_800FD474_FE074.y = ry;
+    D_800FD474_FE074.z = rz;
+    D_8010274C_10334C.x = cx;
+    D_8010274C_10334C.y = cy;
+    D_8010274C_10334C.z = cz;
+    D_80111404_13CFF4_HotRopeJump = zoom;
+    D_801113EC_13CFDC_HotRopeJump.x = rx;
+    D_801113EC_13CFDC_HotRopeJump.y = ry;
+    D_801113EC_13CFDC_HotRopeJump.z = rz;
+    D_801113D4_13CFC4_HotRopeJump.x = cx;
+    D_801113D4_13CFC4_HotRopeJump.y = cy;
+    D_801113D4_13CFC4_HotRopeJump.z = cz;
+}
+
+/* Glides the camera to a new setting over `frames` frames (MP1 func_800FA734). */
+void func_801078A4_133494_HotRopeJump(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, u16 frames) {
+    D_80111408_13CFF8_HotRopeJump = zoom;
+    D_801113E0_13CFD0_HotRopeJump.x = cx;
+    D_801113E0_13CFD0_HotRopeJump.y = cy;
+    D_801113E0_13CFD0_HotRopeJump.z = cz;
+    D_801113F8_13CFE8_HotRopeJump.x = rx;
+    D_801113F8_13CFE8_HotRopeJump.y = ry;
+    D_801113F8_13CFE8_HotRopeJump.z = rz;
+    if (D_8011140C_13CFFC_HotRopeJump != 0) {
+        func_80107AE8_1336D8_HotRopeJump();
+    }
+    D_8011140C_13CFFC_HotRopeJump = D_8011140E_13CFFE_HotRopeJump = frames;
+}
+
+/* Moves the camera, its glide's start and its target by the given amounts (MP1 func_800FA7B8). */
+void func_80107928_133518_HotRopeJump(f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz) {
+    D_800FA610_FB210 += zoom;
+    D_80111404_13CFF4_HotRopeJump += zoom;
+    D_80111408_13CFF8_HotRopeJump += zoom;
+    D_800FD474_FE074.x += rx;
+    D_800FD474_FE074.y += ry;
+    D_800FD474_FE074.z += rz;
+    D_801113EC_13CFDC_HotRopeJump.x += rx;
+    D_801113EC_13CFDC_HotRopeJump.y += ry;
+    D_801113EC_13CFDC_HotRopeJump.z += rz;
+    D_801113F8_13CFE8_HotRopeJump.x += rx;
+    D_801113F8_13CFE8_HotRopeJump.y += ry;
+    D_801113F8_13CFE8_HotRopeJump.z += rz;
+    D_8010274C_10334C.x += cx;
+    D_8010274C_10334C.y += cy;
+    D_8010274C_10334C.z += cz;
+    D_801113D4_13CFC4_HotRopeJump.x += cx;
+    D_801113D4_13CFC4_HotRopeJump.y += cy;
+    D_801113D4_13CFC4_HotRopeJump.z += cz;
+    D_801113E0_13CFD0_HotRopeJump.x += cx;
+    D_801113E0_13CFD0_HotRopeJump.y += cy;
+    D_801113E0_13CFD0_HotRopeJump.z += cz;
+}
+
+/* The glide's start := its target (MP1 func_800FA914). */
+void func_80107A84_133674_HotRopeJump(void) {
+    D_80111404_13CFF4_HotRopeJump = D_80111408_13CFF8_HotRopeJump;
+    D_801113EC_13CFDC_HotRopeJump.x = D_801113F8_13CFE8_HotRopeJump.x;
+    D_801113EC_13CFDC_HotRopeJump.y = D_801113F8_13CFE8_HotRopeJump.y;
+    D_801113EC_13CFDC_HotRopeJump.z = D_801113F8_13CFE8_HotRopeJump.z;
+    D_801113D4_13CFC4_HotRopeJump.x = D_801113E0_13CFD0_HotRopeJump.x;
+    D_801113D4_13CFC4_HotRopeJump.y = D_801113E0_13CFD0_HotRopeJump.y;
+    D_801113D4_13CFC4_HotRopeJump.z = D_801113E0_13CFD0_HotRopeJump.z;
+}
+
+/* The glide's start := the camera now (MP1 func_800FA978). */
+void func_80107AE8_1336D8_HotRopeJump(void) {
+    D_80111404_13CFF4_HotRopeJump = D_800FA610_FB210;
+    D_801113EC_13CFDC_HotRopeJump.x = D_800FD474_FE074.x;
+    D_801113EC_13CFDC_HotRopeJump.y = D_800FD474_FE074.y;
+    D_801113EC_13CFDC_HotRopeJump.z = D_800FD474_FE074.z;
+    D_801113D4_13CFC4_HotRopeJump.x = D_8010274C_10334C.x;
+    D_801113D4_13CFC4_HotRopeJump.y = D_8010274C_10334C.y;
+    D_801113D4_13CFC4_HotRopeJump.z = D_8010274C_10334C.z;
+}
+
+/* The camera glide's per-frame step (MP1 func_800FA9DC). */
+void func_80107B4C_13373C_HotRopeJump(omObjData* obj) {
+    f32 t;
+
+    if (D_8011140C_13CFFC_HotRopeJump != 0) {
+        if (--D_8011140C_13CFFC_HotRopeJump == 0) {
+            func_80107A84_133674_HotRopeJump();
+        }
+        t = (f32)(D_8011140E_13CFFE_HotRopeJump - D_8011140C_13CFFC_HotRopeJump) / D_8011140E_13CFFE_HotRopeJump;
+        D_800FA610_FB210 = (D_80111408_13CFF8_HotRopeJump - D_80111404_13CFF4_HotRopeJump) * t + D_80111404_13CFF4_HotRopeJump;
+        D_800FD474_FE074.x = D_801113EC_13CFDC_HotRopeJump.x + (D_801113F8_13CFE8_HotRopeJump.x - D_801113EC_13CFDC_HotRopeJump.x) * t;
+        D_800FD474_FE074.y = D_801113EC_13CFDC_HotRopeJump.y + (D_801113F8_13CFE8_HotRopeJump.y - D_801113EC_13CFDC_HotRopeJump.y) * t;
+        D_800FD474_FE074.z = D_801113EC_13CFDC_HotRopeJump.z + (D_801113F8_13CFE8_HotRopeJump.z - D_801113EC_13CFDC_HotRopeJump.z) * t;
+        D_8010274C_10334C.x = D_801113D4_13CFC4_HotRopeJump.x + (D_801113E0_13CFD0_HotRopeJump.x - D_801113D4_13CFC4_HotRopeJump.x) * t;
+        D_8010274C_10334C.y = D_801113D4_13CFC4_HotRopeJump.y + (D_801113E0_13CFD0_HotRopeJump.y - D_801113D4_13CFC4_HotRopeJump.y) * t;
+        D_8010274C_10334C.z = D_801113D4_13CFC4_HotRopeJump.z + (D_801113E0_13CFD0_HotRopeJump.z - D_801113D4_13CFC4_HotRopeJump.z) * t;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80107CA4_133894_HotRopeJump);
 
