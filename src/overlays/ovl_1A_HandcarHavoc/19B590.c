@@ -188,7 +188,206 @@ void func_801033EC_19C17C_HandcarHavoc(omObjData* obj) {
     func_80103428_19C1B8_HandcarHavoc(obj, 1, 9870.0f, 0, 12375.0f);
 }
 
+/* Builds a team's car and its two riders (MP1 func_800F7F04). */
+// NON_MATCHING: one addu operand order (w->front[seat] in the second seat's branch)
+#ifdef NON_MATCHING
+void func_80103428_19C1B8_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f32 z) {
+    Vec pos;
+    Vec rot;
+    HHCar* w;
+    u16 seat;
+    u16 layer;
+    u16 coms;
+    s32 dir;
+    s32 file;
+    u8 chr;
+    s32 i;
+
+    seat = 0;
+    if (team == 0) {
+        layer = 1;
+    } else {
+        layer = 2;
+    }
+    w = obj->unk_50 = func_80027154_27D54(sizeof(HHCar), 0x7918);
+    w->unk9A = 0x1A7;
+    w->team = team;
+    w->leanIn = 0;
+    w->lean = 0;
+    w->tilt = 0;
+    w->unk00 = 0;
+    w->pump = 0;
+    w->seg[1] = 0;
+    w->seg[0] = 0;
+    w->progress = 0;
+    w->goal = 0;
+    w->sndOn = 0;
+    w->sparkSndOn = 0;
+    w->chips[0][0] = 0;
+    w->chips[0][1] = 0;
+    w->chips[1][0] = 0;
+    w->chips[1][1] = 0;
+    w->brake = 0;
+    w->unk80 = w->tipTimer = w->skidTimer = 0.0f;
+    w->cpuStickTime[1] = 0;
+    w->cpuStickTime[0] = 0;
+    w->cpuStick[1] = 0;
+    w->cpuStick[0] = 0;
+    w->cpuBrakeTime[1] = 0;
+    w->cpuBrakeTime[0] = 0;
+    w->cpuDelay[1] = 0;
+    w->cpuDelay[0] = 0;
+    w->unk9E = 0;
+    w->unkEA = 0;
+    w->unkEC = 0;
+    w->unkEB = 0;
+    w->unk98 = 0;
+    obj->work[0] = 1;
+    obj->work[1] = 0;
+    w->unkED = 0;
+    w->unkEE = 0;
+    w->marker = func_8001AAAC_1B6AC(team == 0 ? D_8010D802_1A6592_HandcarHavoc : D_8010D826_1A65B6_HandcarHavoc, 0, 1);
+    func_8001A708_1B308(w->marker, 8);
+    espDispOn(w->marker);
+    D_80101300_101F00 = 1.3f;
+    if (team == 0) {
+        obj->model[0] = LoadFormFile(0x2A0002, 0xA99);
+        obj->model[1] = LoadFormFile(0x2A0001, 0x20A99);
+        obj->model[5] = func_80018A64_19664(0xD, 0xA89);
+        obj->model[6] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[5]);
+        func_80029E80_2AA80(obj->model[0], 1, 1);
+        func_80029E80_2AA80(obj->model[1], 1, 1);
+        LoadFormFile(0x2A0003, 0x2068D);
+        obj->model[2] = LoadFormFile(0x2A0001, 0x20A8D);
+        func_8002BB4C_2C74C(obj->model[2], "130mt00_DEF", "130mt04_DEF");
+        func_80029A8C_2A68C(obj->model[2]);
+        func_80029AFC_2A6FC(obj->model[2]);
+    } else {
+        obj->model[0] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[0]);
+        obj->model[1] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[1]);
+        obj->model[5] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[5]);
+        obj->model[6] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[5]);
+        func_80029E80_2AA80(obj->model[0], 1, 1);
+        func_80029E80_2AA80(obj->model[1], 1, 1);
+        obj->model[2] = func_80027D3C_2893C(D_8010D820_1A65B0_HandcarHavoc[0]->model[2]);
+    }
+    func_80029E80_2AA80(obj->model[2], 1, 1);
+    func_80029EDC_2AADC(obj->model[0], layer);
+    func_80029EDC_2AADC(obj->model[1], layer);
+    func_80029EDC_2AADC(obj->model[2], layer);
+    func_80029EDC_2AADC(obj->model[5], layer);
+    func_80029EDC_2AADC(obj->model[6], layer);
+    w->speed = 0;
+    w->maxSpeed = 203.70369f;
+    w->lever1Dir = 0;
+    w->leverDir = 0;
+    coms = 0;
+    if (D_8010B362_1A40F2_HandcarHavoc != 0) {
+        for (i = 0; i < 4; i++) {
+            if (gPlayers[i].flags & 1) {
+                if (gPlayers[i].group == team) {
+                    gPlayers[i].cpu_difficulty = 1;
+                } else {
+                    gPlayers[i].cpu_difficulty = D_800FD8AC[0];
+                }
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == team) {
+            if (gPlayers[i].flags & 1) {
+                switch (gPlayers[i].cpu_difficulty) {
+                    case 0:
+                        w->maxSpeed -= 3.7037037037037037;
+                        break;
+                    case 1:
+                        w->maxSpeed -= 2.7777777777777777;
+                        break;
+                    case 2:
+                        w->maxSpeed -= 1.8518518518518519;
+                        break;
+                    case 3:
+                        w->maxSpeed -= 0.9259259259259259;
+                        break;
+                }
+                coms++;
+            }
+            w->player[seat] = i;
+            chr = gPlayers[i].character;
+            dir = D_800CD438_CE038[chr].dir;
+            obj->model[3 + seat] = LoadFormFile(dir | D_800CD438_CE038[chr].model, 0xA99);
+            func_80018CCC_198CC(obj, seat + 1, dir | 0x15);
+            func_80018CCC_198CC(obj, seat + 5, dir);
+            func_80018CCC_198CC(obj, seat + 9, dir | 1);
+            func_80018CCC_198CC(obj, seat + 7, dir | 4);
+            if (rand8() & 1) {
+                func_80018CCC_198CC(obj, seat + 11, file = dir | 0x4E);
+                w->cheerMot[seat] = file;
+            } else {
+                func_80018CCC_198CC(obj, seat + 11, file = dir | 0x4F);
+                w->cheerMot[seat] = file;
+            }
+            if (rand8() & 1) {
+                func_80018CCC_198CC(obj, seat + 13, file = dir | 0x55);
+                w->loseMot[seat] = file;
+            } else {
+                func_80018CCC_198CC(obj, seat + 13, file = dir | 0x56);
+                w->loseMot[seat] = file;
+            }
+            func_80029B80_2A780(obj->model[3 + seat], obj->motion[1 + seat]);
+            func_80029E80_2AA80(obj->model[3 + seat], 1, 1);
+            w->face[seat] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_8010B124_1A3EB4_HandcarHavoc[chr]), 0, 1);
+            espDispOn(w->face[seat]);
+            w->seat[seat] = D_8010B14C_1A3EDC_HandcarHavoc[gPlayers[i].character];
+            if (seat == 0) {
+                w->front[0] = 1;
+                func_8001A708_1B308(w->face[0], 8);
+            } else {
+                w->front[seat] = 0;
+                func_8001A708_1B308(w->face[seat], 8);
+                w->seat[seat] = -w->seat[seat];
+            }
+            func_80029EDC_2AADC(obj->model[3 + seat], layer);
+            seat++;
+        }
+    }
+    if (coms < 2) {
+        w->maxSpeed = 203.70369f;
+        w->cpu = 0;
+    } else {
+        w->cpu = 1;
+    }
+    func_801068CC_19F65C_HandcarHavoc(w->team, w->seg[1], &pos);
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    rot.x = 0;
+    rot.y = 90.0f;
+    rot.z = 0;
+    for (i = 0; i < 2; i++) {
+        w->dist[i] = func_80106AD0_19F860_HandcarHavoc(w->team,
+                                                       HuMathSin(rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[i] + obj->trans.x,
+                                                       obj->trans.y,
+                                                       func_800B7890_B8490(rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[i] + obj->trans.z,
+                                                       w->seg[i]);
+    }
+    D_8010B398_1A4128_HandcarHavoc[w->team] -= w->dist[0];
+    func_80106CA8_19FA38_HandcarHavoc(obj, &rot, &pos);
+    w->prevRot.x = w->rot.x = rot.x;
+    w->prevRot.y = w->rot.y = rot.y;
+    w->prevRot.z = w->rot.z = rot.z;
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    func_80104DE0_19DB70_HandcarHavoc(obj);
+    w->prevSlope.x = w->slope.x;
+    w->prevSlope.y = w->slope.y;
+    w->prevSlope.z = w->slope.z;
+    func_80108D5C_1A1AEC_HandcarHavoc(obj);
+    func_80107634_1A03C4_HandcarHavoc(obj);
+    func_80108FBC_1A1D4C_HandcarHavoc(team);
+    D_80101300_101F00 = 1.0f;
+    obj->func_ptr = func_80103DE4_19CB74_HandcarHavoc;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80103428_19C1B8_HandcarHavoc);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80103DE4_19CB74_HandcarHavoc);
 

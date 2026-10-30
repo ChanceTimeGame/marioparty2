@@ -102,6 +102,15 @@ typedef struct HHPad {
     /* 0x04 */ u16 btn;
 } HHPad; /* size = 6 */
 
+/* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
+typedef struct HHCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;   /* the character's file directory */
+    /* 0x08 */ s32 model; /* its model file */
+    /* 0x0C */ char unk_0C[0xC];
+} HHCharData; /* size = 0x18 */
+
 /* The sun light's direction (D_8010B368). */
 typedef struct HHLightDir {
     s16 x;
@@ -122,7 +131,8 @@ extern Vec3f D_80102770_103370[]; /* CRotM */
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern s32 D_800F9D30_FA930[];
 extern f32 D_80101300_101F00;     /* model load scale */
-extern u8 D_800FD8AC;             /* COM difficulty for the whole minigame (_CheckFlag(0xC)) */
+extern HHCharData D_800CD438_CE038[];
+extern u8 D_800FD8AC[];            /* COM difficulty for the whole minigame (_CheckFlag(0xC)) */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 
@@ -162,7 +172,7 @@ void func_80029B80_2A780(s16 arg0, s16 arg1);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
 void func_80029E80_2AA80(s16, s32, s32);
-void func_80029EDC_2AADC(s16, s32);
+void func_80029EDC_2AADC(s16, s16);
 void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2);
 void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
 void func_8002CA48_2D648(u8 arg0, u8 arg1, u8 arg2);
