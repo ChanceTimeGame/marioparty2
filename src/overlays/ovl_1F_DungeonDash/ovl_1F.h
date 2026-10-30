@@ -145,8 +145,8 @@ void func_801077C8_1C3348_DungeonDash(omObjData* obj);
 void func_801078BC_1C343C_DungeonDash(omObjData* obj);
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj);
 void func_80108054_1C3BD4_DungeonDash(omObjData* obj);
-s32 func_80108308_1C3E88_DungeonDash(s32 arg0, f32 arg1);
-void func_801083B0_1C3F30_DungeonDash(s32 arg0);
+s32 func_80108308_1C3E88_DungeonDash(u16 team, f32 z);
+void func_801083B0_1C3F30_DungeonDash(u16 n);
 void func_80108574_1C40F4_DungeonDash(void);
 void func_80108A14_1C4594_DungeonDash(s32 arg0, f32 arg1);
 void func_80108B54_1C46D4_DungeonDash(s16 mdl);
@@ -162,6 +162,7 @@ s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
 /* S4-1FB */
 #include "game/data.h"
 #include "game/sprite.h"
+#include "game/hmfman.h"
 f64 fabs(f64); /* GCC builtin (abs.d) */
 /* A dust puff (D_8010B13C, 10 of them, func_80027154_27D54(0x168)). No pointers. */
 typedef struct DDFx {
@@ -202,6 +203,11 @@ extern s16 D_8010A750_1C62D0_DungeonDash[]; /* .data */
 extern s16 D_8010A89C_1C641C_DungeonDash[]; /* .data */
 extern s16 D_8010A93C_1C64BC_DungeonDash[]; /* .data */
 extern s16 D_800FA1AA_FADAA; /* main's heap tag */
+extern f32 D_8010A7F4_1C6374_DungeonDash[2]; /* .data: obstacle x by parity {-280, 280} */
+extern u8 D_80102720_103320; /* board.h */
+u16 func_80078EA8_79AA8(void);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80029EDC_2AADC(s16 arg0, u8 arg1);
 s16 LoadFormFile(s32, s32);
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
@@ -217,9 +223,14 @@ typedef struct DDObstacle {
     /* 0x00 */ s16 unk0;  /* active */
     /* 0x02 */ s16 unk2;  /* held up (cleared once the race runs) */
     /* 0x04 */ s16 unk4;  /* phase */
-    /* 0x06 */ char unk6[0xE];
+    /* 0x06 */ s16 unk6;  /* model */
+    /* 0x08 */ s16 unk8;  /* shadow model */
+    /* 0x0A */ s16 unkA;  /* dust model */
+    /* 0x0C */ char unkC[8];
     /* 0x14 */ f32 unk14; /* phase timer (MP1 0x0C) */
-    /* 0x18 */ char unk18[0xC];
+    /* 0x18 */ f32 x;
+    /* 0x1C */ f32 y;
+    /* 0x20 */ f32 z;
 } DDObstacle; /* size = 0x24 */
 
 /* .data (1C2D40.c's part) */

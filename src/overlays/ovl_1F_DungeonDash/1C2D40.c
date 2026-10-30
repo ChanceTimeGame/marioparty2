@@ -290,14 +290,101 @@ loop:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80107C6C_1C37EC_DungeonDash);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108054_1C3BD4_DungeonDash);
+void func_80108054_1C3BD4_DungeonDash(omObjData* obj) {
+    DDTorch* e;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108308_1C3E88_DungeonDash);
+    e = D_8010B29C_1C6E1C_DungeonDash;
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        return;
+    }
+    if (D_8010B2BA_1C6E3A_DungeonDash == 0 && D_8010B2BC_1C6E3C_DungeonDash == 0 && D_8010B2D0_1C6E50_DungeonDash != 0) {
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+        func_800298A4_2A4A4(obj->model[2], 4, 0);
+        func_800298A4_2A4A4(obj->model[3], 4, 4);
+        func_800298A4_2A4A4(obj->model[4], 4, 4);
+        func_800298A4_2A4A4(obj->model[5], 4, 4);
+        for (i = 0; i < 6; i++, e++) {
+            func_800298A4_2A4A4(e->model, 4, 4);
+        }
+        if (D_8010B2D2_1C6E52_DungeonDash == 1) {
+            if ((D_800FC834_FD434[obj->model[2]].pos.y -= 12.5) < -30.0) {
+                D_800FC834_FD434[obj->model[2]].pos.y = -30.0f;
+                D_8010B2D2_1C6E52_DungeonDash = 2;
+                PlaySound(0x240);
+            }
+        }
+    } else {
+        func_8010A340_1C5EC0_DungeonDash(obj->model[4], SprAnimGet(D_8010B2AA_1C6E2A_DungeonDash[0]), 0);
+        for (i = 0; i < 6; i++, e++) {
+            e->unk2 += 30;
+            if (e->unk2 >= 360) {
+                e->unk2 -= 360;
+            }
+            e->unk8 = HuMathSin(e->unk2) * 0.3 + 5.0;
+            func_800297E8_2A3E8(e->model, e->unk8, e->unk8, 1.0f);
+            if (i == 0) {
+                func_8010A340_1C5EC0_DungeonDash(e->model, SprAnimGet(D_8010B2AA_1C6E2A_DungeonDash[3]), 0);
+            } else {
+                func_8010A430_1C5FB0_DungeonDash(e->model, D_8010B29C_1C6E1C_DungeonDash->model);
+            }
+        }
+    }
+}
+
+/* Records team t's z; 1 when it reached the goal. */
+s32 func_80108308_1C3E88_DungeonDash(u16 team, f32 z) {
+    if (team >= 2) {
+        return 0;
+    }
+    D_8010B2C0_1C6E40_DungeonDash[team] = z;
+    func_80108A14_1C4594_DungeonDash(team, z);
+    func_80109884_1C5404_DungeonDash(team, z);
+    if (z <= -4600.0) {
+        D_8010B2BA_1C6E3A_DungeonDash = 0;
+        return 1;
+    }
+    return 0;
+}
 
 void func_801083A8_1C3F28_DungeonDash(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801083B0_1C3F30_DungeonDash);
+void func_801083B0_1C3F30_DungeonDash(u16 n) {
+    DDObstacle* o;
+    u16 i;
+
+    o = D_8010B2E4_1C6E64_DungeonDash = func_80027154_27D54(0xB4, D_800FA1AA_FADAA);
+    func_800B0EF0_B1AF0(o, 0, 0xB4);
+    if (n >= 6) {
+        n = 5;
+    }
+    for (i = 0; i < 5; i++, o++) {
+        o->unk0 = 0;
+        if (i < n) {
+            o->unk0 = 1;
+            func_80107584_1C3104_DungeonDash(o);
+            o->unk2 = 1;
+            o->x = D_8010A7F4_1C6374_DungeonDash[i & 1];
+            o->y = 0.0f;
+            o->z = -3250.0f;
+            if (i == 0) {
+                o->unk6 = LoadFormFile(0x800BD, 0x99);
+                o->unk8 = LoadFormFile(0x2F0005, 0x499);
+            } else {
+                o->unk6 = func_80027D3C_2893C(D_8010B2E4_1C6E64_DungeonDash->unk6);
+                o->unk8 = func_80027D3C_2893C(D_8010B2E4_1C6E64_DungeonDash->unk8);
+            }
+            o->unkA = LoadFormFile(0xB, 0x499);
+            func_800298A4_2A4A4(o->unkA, 4, 4);
+            func_80029EDC_2AADC(o->unk6, 3);
+            func_80029EDC_2AADC(o->unk8, 3);
+            D_800FC834_FD434[o->unkA].unk44 = 1.0f;
+        }
+    }
+    D_8010B2A6_1C6E26_DungeonDash = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574_1C40F4_DungeonDash);
 
