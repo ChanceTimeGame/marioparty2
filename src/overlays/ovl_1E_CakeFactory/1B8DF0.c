@@ -1,4 +1,29 @@
 #include "ovl_1E.h"
+f32 D_80107A30_1BE020_CakeFactory[3][7] = { { 0, 0, 0, 0, 0, 0, 3400.0f }, { 0, 0, 0, 0, 0, 0, 3400.0f }, { 0, 0, 0, 0, 0, 0, 3400.0f } };
+CFPlayer D_80107A84_1BE074_CakeFactory[4] = {
+    { -120.0f, 0.0f, -220.0f, 0.0f, 1.0f, 0.0f, 0, 2, 0 },
+    { 120.0f, 0.0f, -220.0f, 180.0f, 1.0f, 0.0f, 1, 2, 0 },
+    { -120.0f, 0.0f, 220.0f, 0.0f, 1.0f, 0.0f, 2, 2, 0 },
+    { 120.0f, 0.0f, 220.0f, 180.0f, 1.0f, 0.0f, 3, 2, 0 },
+};
+f32 D_80107B14_1BE104_CakeFactory[2] = { 45.0f, 95.0f };
+f32 D_80107B1C_1BE10C_CakeFactory[2] = { 4.0f, 6.0f };
+f32 D_80107B24_1BE114_CakeFactory[6] = { 1.5f, 1.0f, 1.5f, 2.0f, 3.0f, 0.0f };
+f32 D_80107B3C_1BE12C_CakeFactory[2] = { 35.0f, 35.0f };
+CFBeltInit D_80107B44_1BE134_CakeFactory[4] = {
+    { 4.0f, -1.0f, 540.0f, -100.0f, 0.0f, 0xB4, 8 },
+    { 4.0f, 1.0f, -540.0f, -340.0f, 0.0f, 0xB4, 8 },
+    { 4.0f, -1.0f, 540.0f, 340.0f, 0.0f, 0xB4, 8 },
+    { 4.0f, 1.0f, -540.0f, 100.0f, 0.0f, 0xB4, 8 },
+};
+s32 D_80107BA4_1BE194_CakeFactory[4] = { 0x46, 0x50, 0x46, 0x50 };
+s32 D_80107BB4_1BE1A4_CakeFactory[2] = { 0x3C, 0x3C };
+s32 D_80107BBC_1BE1AC_CakeFactory[2] = { 0x54, 0xB0 };
+s32 D_80107BC4_1BE1B4_CakeFactory[2] = { 0x28, 0x28 };
+s32 D_80107BCC_1BE1BC_CakeFactory[4] = { 0x54, 0x54, 0xB0, 0xB0 };
+s32 D_80107BDC_1BE1CC_CakeFactory[7] = { 0, 1, 2, 3, 0, 0, 0 };
+s32 D_80107BF8_1BE1E8_CakeFactory = 0;
+s32 D_80107BFC_1BE1EC_CakeFactory = 0;
 
 void func_80102800_1B8DF0_CakeFactory(void) {
     func_8002D4D0_2E0D0(4);
