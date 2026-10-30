@@ -198,13 +198,104 @@ f32 func_8010A75C_1A34EC_HandcarHavoc(f32 x) {
     return (f32)func_800B0750_B1350(x) / 3.141592653589793 * 180.0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010A7D8_1A3568_HandcarHavoc);
+/* Leaves the minigame when asked to (D_8010B180, or main's D_801011FC): fade out once, then
+   end when the fade is done (MP1 func_800FBF5C). */
+void func_8010A7D8_1A3568_HandcarHavoc(omObjData* obj) {
+    if (D_8010B180_1A3F10_HandcarHavoc != 0 || D_801011FC_101DFC != 0) {
+        if (D_8010B1D4_1A3F64_HandcarHavoc == 0) {
+            D_8010B1D4_1A3F64_HandcarHavoc = 1;
+            D_8010D800_1A6590_HandcarHavoc = 2;
+            D_8010D824_1A65B4_HandcarHavoc = 6;
+            InitFadeOut(0, 20);
+            func_800794A8_7A0A8(20);
+        } else if (func_8008F618_90218() == 0) {
+            func_80108398_1A1128_HandcarHavoc(0);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010A870_1A3600_HandcarHavoc);
+/* Creates the two speed meters. */
+void func_8010A870_1A3600_HandcarHavoc(omObjData* obj) {
+    HHMeter* m;
+    s32 t;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010AA30_1A37C0_HandcarHavoc);
+    m = obj->unk_50 = func_80027154_27D54(sizeof(HHMeter), 0x7918);
+    m->unk0 = m->unk2 = 0;
+    m->unk4 = m->unk6 = 0;
+    for (t = 0; t < 2; t++) {
+        for (j = 0; j < 3; j++) {
+            m->spr[t][j] = func_8001AAAC_1B6AC(D_8010D85C_1A65EC_HandcarHavoc, 0, 1);
+            espPosSet(m->spr[t][j], D_8010B1D8_1A3F68_HandcarHavoc[t] + j * 12, 24);
+            func_8001A7C8_1B3C8(m->spr[t][j], 0);
+        }
+        m->spr[t][3] = func_8001AAAC_1B6AC(D_8010D872_1A6602_HandcarHavoc, 0, 1);
+        espPosSet(m->spr[t][3], D_8010B1D8_1A3F68_HandcarHavoc[t] + 24, 24);
+        m->spr[t][4] = func_8001AAAC_1B6AC(D_8010D874_1A6604_HandcarHavoc, 0, 1);
+        espPosSet(m->spr[t][4], D_8010B1D8_1A3F68_HandcarHavoc[t] + 42, 24);
+        func_8010ABC8_1A3958_HandcarHavoc(0.0f, 220.0f, m->spr[t]);
+    }
+    obj->func_ptr = func_8010AA30_1A37C0_HandcarHavoc;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010ABC8_1A3958_HandcarHavoc);
+/* Shows each car's speed in mph (hidden while obj->work[0] is 1). */
+void func_8010AA30_1A37C0_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    HHMeter* m;
+    f32 speed;
+    s32 t;
+    s32 j;
+
+    for (t = 0; t < 2; t++) {
+        w = D_8010D820_1A65B0_HandcarHavoc[t]->unk_50;
+        m = D_8010D830_1A65C0_HandcarHavoc->unk_50;
+        if (obj->work[0] == 1) {
+            for (j = 0; j < 5; j++) {
+                espDispOff(m->spr[t][j]);
+            }
+        } else {
+            speed = fabs(func_800B0E70_B1A70(w->speed * 30.0f * 60.0f * 60.0f / 1000.0f / 100.0f / 1.6093f));
+            func_8010ABC8_1A3958_HandcarHavoc(
+                speed, func_800B0E70_B1A70(w->maxSpeed * 30.0f * 60.0f * 60.0f / 1000.0f / 100.0f / 1.6093f),
+                m->spr[t]);
+        }
+    }
+}
+
+/* Shows a speed's three digits and "mph" while x < y, else the dash. */
+void func_8010ABC8_1A3958_HandcarHavoc(f32 x, f32 y, u16* spr) {
+    s32 n;
+    s32 d;
+    s32 i;
+
+    n = x;
+    if (x < y) {
+        d = n / 100;
+        if (d != 0) {
+            n -= d * 100;
+        }
+        espDispOn(*spr);
+        func_8001A854_1B454(*spr, (u16)d, 0);
+        spr++;
+        d = n / 10;
+        n -= d * 10;
+        espDispOn(*spr);
+        func_8001A854_1B454(*spr, (u16)d, 0);
+        spr++;
+        d = n;
+        espDispOn(*spr);
+        func_8001A854_1B454(*spr, (u16)d, 0);
+        spr++;
+        espDispOff(spr[0]);
+        espDispOn(spr[1]);
+    } else {
+        for (i = 0; i < 3; i++) {
+            espDispOff(*spr++);
+        }
+        espDispOn(*spr++);
+        espDispOff(*spr);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010AD1C_1A3AAC_HandcarHavoc);
 

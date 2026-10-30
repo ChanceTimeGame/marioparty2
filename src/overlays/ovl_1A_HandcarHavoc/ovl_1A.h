@@ -222,6 +222,25 @@ typedef struct HHCam {
     /* 0x0C */ char unkC[4];
 } HHCam; /* size = 0x10 */
 
+/* The speed meters (D_8010D830->unk_50, 0x1C): per team three digits, "mph" and a dash shown
+   instead while the car is slower than its best. */
+typedef struct HHMeter {
+    /* 0x00 */ u16 unk0;
+    /* 0x02 */ u16 unk2;
+    /* 0x04 */ u16 unk4;
+    /* 0x06 */ u16 unk6;
+    /* 0x08 */ u16 spr[2][5]; /* digits [0..2] (sprite D_8010D85C), [3] D_8010D872, [4] D_8010D874 */
+} HHMeter; /* size = 0x1C */
+
+void InitFadeOut(s32, s32);
+void func_800794A8_7A0A8(s32);
+s32 func_8008F618_90218(void);
+extern u16 D_801011FC_101DFC;
+void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2); /* sprite frame */
+void func_8001A7C8_1B3C8(u16 spriteId, f32 arg1);
+void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
+f64 func_800B0E70_B1A70(f64 x); /* floor */
+
 /* One spark of a burst: two triangle tips (MP1 HHChip). */
 typedef struct HHChip {
     /* 0x00 */ f32 unk00[3];
@@ -341,8 +360,8 @@ extern Vec D_8010B184_1A3F14_HandcarHavoc[4];  /* wheel spots per side; split la
 extern Vec D_8010B188_1A3F18_HandcarHavoc[];   /* S4-1AC: = &B184[0].y (retail addresses each label) */
 extern Vec D_8010B18C_1A3F1C_HandcarHavoc[];   /* S4-1AC: = &B184[0].z */
 extern f32 D_8010B1B4_1A3F44_HandcarHavoc[8];  /* spark lengths */
-extern u16 D_8010B1D4_1A3F64_HandcarHavoc;
-extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];
+extern u16 D_8010B1D4_1A3F64_HandcarHavoc;     /* 1: leaving (fade started) */
+extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];  /* speed meter x per team */
 extern u16 D_8010B1DC_1A3F6C_HandcarHavoc;
 extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[5];
 
