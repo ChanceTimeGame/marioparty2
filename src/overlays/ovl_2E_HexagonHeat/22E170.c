@@ -20,6 +20,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801041BC
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104384_22FCF4_HexagonHeat);
 
+__asm__(".section .rodata");
+const char D_801067CC_23213C_HexagonHeat[20] = "\203}\203O\203}7_bmp";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801047B8_230128_HexagonHeat);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104C80_2305F0_HexagonHeat);
