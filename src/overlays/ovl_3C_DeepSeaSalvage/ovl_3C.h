@@ -70,6 +70,9 @@ void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 u8 func_80082314_82F14(s16 grpIdx, s16 idx); /* sprite animation status; 2: ended */
 s16 SprAnimRead(void*);
+void func_8002BED4_2CAD4(s16 model, f32 s, f32 t, u16 w, u16 h, char* part, u8 arg6); /* texture scroll */
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
+extern u8 D_800FDBE0_FE7E0; /* the vertex buffer being drawn */
 void* func_80082550_83150(s16 grpIdx, s16 idx); /* the sprite (HuSprite*); unused here */
 void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
 void SprPosPerspectiveSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
@@ -305,9 +308,9 @@ extern DSSFish D_801088F8_297968_DeepSeaSalvage[2];
 extern DSSFish D_80108978_2979E8_DeepSeaSalvage[2][10];
 extern s16 D_80108E70_297EE0_DeepSeaSalvage;      /* the fish history's write slot, 0-9 */
 extern f32 D_80108E74_297EE4_DeepSeaSalvage[2];   /* per fish: scale (0.75-1.05) */
-extern s32 D_80108E7C_297EEC_DeepSeaSalvage;
-extern s32 D_80108E80_297EF0_DeepSeaSalvage;
-extern f32 D_80108E84_297EF4_DeepSeaSalvage;
+extern f32 D_80108E7C_297EEC_DeepSeaSalvage;      /* the sea surface's wave angle, degrees */
+extern u16 D_80108E80_297EF0_DeepSeaSalvage[2];   /* texture "dmy_I8"'s size (func_8003EAF0) */
+extern f32 D_80108E84_297EF4_DeepSeaSalvage;      /* the surface texture's scroll */
 extern f32 D_80108E88_297EF8_DeepSeaSalvage;
 extern s16 D_80108E90_297F00_DeepSeaSalvage;      /* DSSWork blocks made */
 extern s16 D_80108E98_297F08_DeepSeaSalvage[5];   /* sprite anims (func_80106F08): [0] splash 0x4C000F, [3] 0x4C000D,

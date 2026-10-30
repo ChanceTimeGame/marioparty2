@@ -59,6 +59,49 @@ void func_80107864_2968D4_DeepSeaSalvage(omObjData* obj, s16 idx) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/296550", func_80107A10_296A80_DeepSeaSalvage);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/296550", func_8010819C_29720C_DeepSeaSalvage);
+/* The sea surface (model 0 of the backdrop): its vertices and the scrolling texture (MP1
+   func_800FF6E0). */
+void func_8010819C_29720C_DeepSeaSalvage(omObjData* obj) {
+    func_8002A00C_2AC0C(obj->model[0]);
+    D_80108E7C_297EEC_DeepSeaSalvage = 0.0f;
+    func_8003EAF0_3F6F0("dmy_I8", D_80108E80_297EF0_DeepSeaSalvage);
+    D_80108E84_297EF4_DeepSeaSalvage = D_80108E88_297EF8_DeepSeaSalvage = 0.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/296550", func_801081EC_29725C_DeepSeaSalvage);
+/* Scroll the surface texture and ripple its vertices: x moves by +-40 sin(angle) in alternating
+   groups of four, the pattern flipping every 40 vertices (MP1 func_800FF730). */
+void func_801081EC_29725C_DeepSeaSalvage(omObjData* obj) {
+    HmfData* hmf;
+    HmfVtx* src;
+    HmfVtx* dst;
+    s16 flip = 0;
+    s16 row = 0;
+    s16 i;
+
+    hmf = D_800FC834_FD434[obj->model[0]].hmf;
+    D_80108E84_297EF4_DeepSeaSalvage -= 0.1f;
+    func_8002BED4_2CAD4(obj->model[0], D_80108E84_297EF4_DeepSeaSalvage, D_80108E88_297EF8_DeepSeaSalvage,
+                        D_80108E80_297EF0_DeepSeaSalvage[0], D_80108E80_297EF0_DeepSeaSalvage[1], "yura", 1);
+    src = hmf->unk40;
+    dst = hmf->unk44[D_800FDBE0_FE7E0];
+    for (i = 0; i < hmf->unk18; i++) {
+        if (!(i & 3)) {
+            flip = row ^ 1;
+            if (!(i & 4)) {
+                flip = row;
+            }
+        }
+        if (flip == 0) {
+            dst->unk00 = src->unk00 + HuMathSin(D_80108E7C_297EEC_DeepSeaSalvage) * 40.0;
+        } else {
+            dst->unk00 = src->unk00 - HuMathSin(D_80108E7C_297EEC_DeepSeaSalvage) * 40.0;
+        }
+        flip ^= 1;
+        if ((i + 1) % 40 == 0) {
+            row ^= 1;
+        }
+        src++;
+        dst++;
+    }
+    D_80108E7C_297EEC_DeepSeaSalvage = func_800B0D98_B1998(D_80108E7C_297EEC_DeepSeaSalvage + 4.0, 360.0);
+}
