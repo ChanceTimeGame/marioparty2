@@ -260,11 +260,79 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801040F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010454C_1E399C_CrazyCutters);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80104FF4_1E4444_CrazyCutters);
+/* Whether cur is one of the cutter's last positions (crossing its own fresh cut): 20 for a CPU,
+   else 10, or 60 when wide. */
+s32 func_80104FF4_1E4444_CrazyCutters(CCPlayer* st, s16* cur, s32 wide) {
+    s32 i;
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105098_1E44E8_CrazyCutters);
+    D_80109560_1E89B0_CrazyCutters = 0;
+    if (gPlayers[st->player].flags & 1) {
+        n = 20;
+    } else {
+        n = 10;
+        if (wide != 0) {
+            n = 60;
+        }
+    }
+    for (i = 1; i < n; i++) {
+        if (cur[0] == st->trailX[i] && cur[1] == st->trailY[i]) {
+            D_80109560_1E89B0_CrazyCutters = 1;
+            break;
+        }
+    }
+    return D_80109560_1E89B0_CrazyCutters;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801050FC_1E454C_CrazyCutters);
+/* Whether the cutter has stood on cur for the last 10 frames. */
+s32 func_80105098_1E44E8_CrazyCutters(CCPlayer* st, s16* cur) {
+    s32 i;
+
+    D_80109564_1E89B4_CrazyCutters = 0;
+    for (i = 0; i < 10; i++) {
+        if (cur[0] != st->lastX[i] || cur[1] != st->lastY[i]) {
+            break;
+        }
+    }
+    if (i == 10) {
+        D_80109564_1E89B4_CrazyCutters = 1;
+    }
+    return D_80109564_1E89B4_CrazyCutters;
+}
+
+void func_801050FC_1E454C_CrazyCutters(CCPlayer* st, s16* cur) {
+    s32 i;
+    s32 found;
+
+    if (st->trailX[0] != cur[0] || st->trailY[0] != cur[1]) {
+        for (i = 1; i < 60; i++) {
+            st->trailX[60 - i] = st->trailX[59 - i];
+            st->trailY[60 - i] = st->trailY[59 - i];
+        }
+        st->trailX[0] = cur[0];
+        st->trailY[0] = cur[1];
+    }
+    found = 0;
+    if (st->visitedCount < 30) {
+        for (i = 0; i < 30; i++) {
+            if (st->visitedX[i] == cur[0] && st->visitedY[i] == cur[1]) {
+                found++;
+                break;
+            }
+        }
+        if (found == 0) {
+            st->visitedX[st->visitedCount] = cur[0];
+            st->visitedY[st->visitedCount] = cur[1];
+            st->visitedCount++;
+        }
+    }
+    for (i = 1; i < 10; i++) {
+        st->lastX[10 - i] = st->lastX[9 - i];
+        st->lastY[10 - i] = st->lastY[9 - i];
+    }
+    st->lastX[0] = cur[0];
+    st->lastY[0] = cur[1];
+}
 
 __asm__(".section .rodata");
 const u32 D_801094C4_1E8914_CrazyCutters[3] = { 0x0000000C, 0x0000000D, 0x0000000E };
