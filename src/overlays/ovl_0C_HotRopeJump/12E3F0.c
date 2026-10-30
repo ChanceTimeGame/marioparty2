@@ -251,7 +251,232 @@ void func_801032F0_12EEE0_HotRopeJump(omObjData* obj, s32 player) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80103620_12F210_HotRopeJump);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80104518_130108_HotRopeJump);
+/* A player: the intro walk to its place, jumping (A) while the rope turns (a CPU jumps until its
+   allowance, unk_0C, runs out), getting hit and bouncing off the stage, and the win pose. */
+void func_80104518_130108_HotRopeJump(omObjData* obj) {
+    Vec pos;
+    MgWork* w;
+    HRJPlayer* p;
+    u16 trg;
+    u16 btn;
+    u16 cnt;
+    u8 port;
+    s32 motEnd;
+    s32 r;
+    f32 a;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 v2;
+    f32 sc;
+
+    trg = 0;
+    w = obj->unk_50;
+    btn = 0;
+    p = func_80105D94_131984_HotRopeJump(obj);
+    a = obj->rot.y;
+    port = w->unk_57;
+    cnt = D_8010C228_137E18_HotRopeJump[w->unk_59];
+    motEnd = func_80019000_19C00(obj);
+    pos.x = x = obj->trans.x;
+    pos.y = y = obj->trans.y;
+    pos.z = z = obj->trans.z;
+    if (!(gPlayers[w->unk_59].flags & 1) && D_8010C114_137D04_HotRopeJump == 3) {
+        trg = ContBtnTrg[(s8)port];
+        btn = ContBtn[(s8)port];
+    }
+    switch (D_8010C114_137D04_HotRopeJump) {
+        case 0:
+            p->intro = p->unk_46 = p->unk_48 = p->unk_4A = 0;
+            p->unk_00 = 0;
+            if (gPlayers[w->unk_59].flags & 1) {
+                if (D_80111334_13CF24_HotRopeJump != 0) {
+                    p->unk_0C = (u8)(rand8() % 10) + 5 + gPlayers[w->unk_59].cpu_difficulty * 10;
+                } else {
+                    p->unk_0C = (u8)(rand8() % 7) + 3;
+                    if (w->unk_59 == 3) {
+                        D_80111334_13CF24_HotRopeJump = -1;
+                    }
+                }
+            }
+            p->state = 0x100;
+            a = func_800B75A8_B81A8(p->home.x - obj->trans.x, p->home.z - obj->trans.z);
+            break;
+        case 1:
+            switch (p->intro) {
+                case 0:
+                    if ((x - p->home.x) * (x - p->home.x) + (z - p->home.z) * (z - p->home.z) <= 22500.0) {
+                        p->speed = 10;
+                        p->intro = 1;
+                        func_80019B9C_1A79C(obj, 0x11);
+                        p->unk_38 = HuMathSin(a) * 0.7 * 100.0;
+                        p->unk_40 = func_800B7890_B8490(a) * 0.7 * 100.0;
+                        func_80079798_7A398(D_8010C248_137E38_HotRopeJump[gPlayers[w->unk_59].character], w->unk_57);
+                    }
+                    break;
+                case 1:
+                    func_800191D4_19DD4(obj, 4, x + p->unk_38, y, z + p->unk_40, 0.0f, a + 180.0f);
+                    if ((x - p->home.x) * (x - p->home.x) + (z - p->home.z) * (z - p->home.z) <= 100.0) {
+                        p->speed = 0;
+                        p->intro = 2;
+                        x = p->home.x;
+                        y = p->home.y;
+                        z = p->home.z;
+                        p->state = 1;
+                        func_801054E4_1310D4_HotRopeJump(obj, 0);
+                    }
+                    break;
+                case 2:
+                    func_80019114_19D14(obj->model[4]);
+                    if (fabs(a) <= 2.0) {
+                        D_8010C254_137E44_HotRopeJump |= 1 << w->unk_59;
+                        a = 0.0f;
+                    } else {
+                        a = a - 2.0;
+                    }
+                    break;
+            }
+            x += HuMathSin(a) * p->speed;
+            z += func_800B7890_B8490(a) * p->speed;
+            if (D_8010C254_137E44_HotRopeJump == 0xF) {
+                D_8010C118_137D08_HotRopeJump = 1;
+            }
+            break;
+        case 3:
+            if ((gPlayers[w->unk_59].flags & 1) && p->unk_0C < D_8010C144_137D34_HotRopeJump) {
+                p->unk_0A = 1;
+            }
+            r = func_80105AB8_1316A8_HotRopeJump(obj);
+            if (r == 1 && p->unk_00 == 0) {
+                w->unk_38 = 60.0f;
+                p->unk_00 = 1;
+                p->unk_46 = 1;
+                p->hit.x = x;
+                p->hit.y = 0.0f;
+                p->hit.z = z;
+                p->state = 8;
+                func_801054E4_1310D4_HotRopeJump(obj, 0x26);
+                if (--D_80111338_13CF28_HotRopeJump < 2 && D_8010C140_137D30_HotRopeJump == 0) {
+                    D_8010C118_137D08_HotRopeJump = 1;
+                } else {
+                    if (D_80111344_13CF34_HotRopeJump != 0 && D_80111338_13CF28_HotRopeJump >= 2) {
+                        D_80111344_13CF34_HotRopeJump += 5;
+                        if (D_80111344_13CF34_HotRopeJump >= 131) {
+                            D_80111344_13CF34_HotRopeJump = 130;
+                        }
+                    }
+                    if (!(gPlayers[w->unk_59].flags & 1)) {
+                        D_80111334_13CF24_HotRopeJump--;
+                    }
+                    if (D_8011133C_13CF2C_HotRopeJump == w->unk_59 && D_8010C140_137D30_HotRopeJump != 0) {
+                        D_8010C118_137D08_HotRopeJump = 1;
+                    }
+                }
+                func_80079798_7A398(0x16D, w->unk_59);
+                omVibrate(w->unk_59, 30, 0, 30);
+                func_80079718_7A318(0x111, gPlayers[w->unk_59].character);
+                break;
+            }
+            if (r != 0 && (gPlayers[w->unk_59].flags & 1)) {
+                if ((D_8010C11A_137D0A_HotRopeJump != 0xF || (rand8() & 3)) && p->unk_0A == 0) {
+                    trg |= 0x8000;
+                }
+                btn |= 0x8000;
+            }
+            if (btn & 0x8000) {
+                if ((trg & 0x8000) && (p->state & 1)) {
+                    if (func_801054E4_1310D4_HotRopeJump(obj, 6) != 0) {
+                        w->unk_38 = -D_800BF7A4_C03A4 * 0.55;
+                        p->state = 2;
+                        cnt++;
+                        func_80079798_7A398(D_8010C23C_137E2C_HotRopeJump[gPlayers[w->unk_59].character], w->unk_57);
+                    }
+                } else if (cnt != 0) {
+                    if (cnt < 8) {
+                        cnt++;
+                        w->unk_38 = w->unk_38 - D_800BF7A4_C03A4 * 0.075;
+                    } else {
+                        cnt = 0;
+                    }
+                }
+            } else {
+                if (cnt != 0) {
+                    cnt = 0;
+                }
+            }
+            D_8010C228_137E18_HotRopeJump[w->unk_59] = cnt;
+            break;
+        case 9:
+        case 11:
+            if ((func_80069538_6A138() & 2) && p->unk_00 == 0 && (p->state & 1)) {
+                a = D_800FD478_FE078;
+                w->unk_3C = a;
+                func_801054E4_1310D4_HotRopeJump(obj, 0xD);
+                p->state = 0x10;
+                func_800732B0_73EB0(D_80111350_13CF40_HotRopeJump[w->unk_59][0]);
+            }
+            break;
+    }
+    switch (p->state & 0xF) {
+        case 2:
+            v2 = w->unk_38 * w->unk_38;
+            if (w->unk_38 >= 0.0f) {
+                y += v2 * -35.0f;
+            } else {
+                y += v2 * 35.0f;
+            }
+            w->unk_38 += D_800BF7A8_C03A8;
+            if (y <= 0.0) {
+                w->unk_38 = 1000.0f;
+                func_801054E4_1310D4_HotRopeJump(obj, 0x15);
+                p->state = 4;
+                y = 0.0f;
+            }
+            break;
+        case 4:
+            if (motEnd & 1) {
+                func_801054E4_1310D4_HotRopeJump(obj, 0);
+                p->state = 1;
+            }
+            break;
+        case 8:
+            y += w->unk_38;
+            w->unk_38 = w->unk_38 - 5.0;
+            if (p->state & 0x20) {
+                x = pos.x + 30.0;
+                a = func_800B75A8_B81A8(x - pos.x, z - pos.z);
+                w->unk_3C = a;
+            }
+            if (y <= 0.0) {
+                y = 0.0f;
+                w->unk_38 = 40.0f;
+                p->state |= 0x20;
+                func_80079798_7A398(D_8010C230_137E20_HotRopeJump[p->unk_64], w->unk_57);
+                if (p->unk_64 < 4) {
+                    p->unk_64++;
+                }
+                if (x > 2000.0 || x < -1500.0) {
+                    func_800298A4_2A4A4(obj->model[0], 4, 4);
+                    func_800298A4_2A4A4(obj->model[1], 4, 4);
+                    p->state = 0x400;
+                }
+            }
+            if (!(p->unk_46 & 3)) {
+                func_8010515C_130D4C_HotRopeJump(x, y, z);
+            }
+            p->unk_46 = (s16)(p->unk_46 + 1) % 240;
+            break;
+    }
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    obj->rot.y = a;
+    sc = 1.0 - y / 2000.0;
+    func_80029714_2A314(obj->model[1], x, 0.0f, z);
+    func_800297E8_2A3E8(obj->model[1], sc, sc, sc);
+    func_8010530C_130EFC_HotRopeJump(obj, p);
+    func_80019378_19F78(obj);
+}
 
 /* A burst of smoke where a hit player lands (MP1 func_800F8968). */
 void func_8010515C_130D4C_HotRopeJump(f32 x, f32 y, f32 z) {

@@ -665,3 +665,6 @@ $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
+# S4-0CA: ovl_0C 12E3F0.c has the KMC VR4300 mul fix (func_80104518: a nop between back-to-back mul.d)
+S40CA_MULFIX_UNITS := build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o
+$(S40CA_MULFIX_UNITS): export VR4300MUL := ON

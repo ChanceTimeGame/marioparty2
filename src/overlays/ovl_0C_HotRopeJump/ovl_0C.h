@@ -158,13 +158,12 @@ extern s32 D_8010C110_137D00_HotRopeJump; /* jumps to win in the 1P variant (99;
 extern s32 D_8010C114_137D04_HotRopeJump; /* game state: 0 wait, 1 intro, 2 start message, 3 play,
                                              9/10 result, 11 end */
 extern s16 D_8010C118_137D08_HotRopeJump; /* all in place / the round is over */
-extern s16 D_8010C11A_137D0A_HotRopeJump; /* CPU players (bits) */
+extern u16 D_8010C11A_137D0A_HotRopeJump; /* CPU players (bits) */
 extern s32 D_8010C11C_137D0C_HotRopeJump[4]; /* each player's place (0-3) */
 extern s32 D_8010C12C_137D1C_HotRopeJump[4]; /* {0,1,2,3}, drawn from */
 extern f32 D_8010C13C_137D2C_HotRopeJump; /* camera pan this frame */
 extern s32 D_8010C140_137D30_HotRopeJump; /* _CheckFlag(0xC): the 1P variant */
-extern s16 D_8010C144_137D34_HotRopeJump; /* jumps (max 255) */
-extern s16 D_8010C146_137D36_HotRopeJump; /* CPU jump allowance base */
+extern s32 D_8010C144_137D34_HotRopeJump; /* jumps (max 255); retail reads its low half by the label D_8010C146 */
 extern HRJPhase D_8010C148_137D38_HotRopeJump[5];
 extern HRJPhase* D_8010C1C0_137DB0_HotRopeJump[5];
 extern s32 D_8010C1D4_137DC4_HotRopeJump[4][2]; /* sprite positions (read as s16: retail's labels
@@ -368,5 +367,6 @@ void func_80082488_83088(s16 group, s16 member, u16 a); /* sprite alpha */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
+f64 fabs(f64);
 
 #endif
