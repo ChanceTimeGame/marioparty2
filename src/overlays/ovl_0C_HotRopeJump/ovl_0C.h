@@ -300,6 +300,13 @@ extern s16 D_8011192A_13D51A_HotRopeJump;
 
 /* S4-0CA */
 
+/* S4-0CC */
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
+f32 __sinf(f32);
+f32 __cosf(f32);
+f32 fabsf(f32);
+
 /* ---- main-segment API used by 0C (missing from include/) ---- */
 
 extern f32 D_800BF7A4_C03A4; /* the player motion constants (MP1 D_800B8964..D_800B8994) */
