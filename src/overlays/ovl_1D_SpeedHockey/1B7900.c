@@ -252,18 +252,60 @@ void func_801060F8_1B8248_SpeedHockey(void) {
     Hu3DCamSetPerspective(0, D_80106BD0_1B8D20_SpeedHockey[0].fov, 2000.0f, 5000.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_801062EC_1B843C_SpeedHockey);
+/* The two lights (D_80106C04). */
+void func_801062EC_1B843C_SpeedHockey(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_801064A0_1B85F0_SpeedHockey);
+    func_80026D28_27928(2);
+    for (i = 0; i < 2; i++) {
+        func_80026E00_27A00(i, D_80106C04_1B8D54_SpeedHockey[i].dir[0], D_80106C04_1B8D54_SpeedHockey[i].dir[1],
+                            D_80106C04_1B8D54_SpeedHockey[i].dir[2]);
+        func_80026DAC_279AC(i, D_80106C04_1B8D54_SpeedHockey[i].color[0], D_80106C04_1B8D54_SpeedHockey[i].color[1],
+                            D_80106C04_1B8D54_SpeedHockey[i].color[2]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_8010650C_1B865C_SpeedHockey);
+/* The game object and the pad-restore object. */
+void func_801064A0_1B85F0_SpeedHockey(void) {
+    omSetStatBit(omAddObj(0, 0, 0, -1, func_80105F90_1B80E0_SpeedHockey), 0xA0);
+    omSetStatBit(omAddObj(6, 0, 0, -1, func_80106044_1B8194_SpeedHockey), 0xA0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106548_1B8698_SpeedHockey);
+/* Set port's pad state (CPU input). */
+void func_8010650C_1B865C_SpeedHockey(s32 port, s8 stkX, s8 stkY, u16 trg, u16 btn) {
+    ContStkX[port] = stkX;
+    ContStkY[port] = stkY;
+    ContBtn[port] = btn;
+    ContBtnTrg[port] = trg;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106554_1B86A4_SpeedHockey);
+u8 func_80106548_1B8698_SpeedHockey(void) {
+    return D_80106EB0_1B9000_SpeedHockey.state;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106580_1B86D0_SpeedHockey);
+void func_80106554_1B86A4_SpeedHockey(u8 state) {
+    if (state >= 5) {
+        while (1) {
+        }
+    }
+    D_80106EB0_1B9000_SpeedHockey.sub = 0;
+    D_80106EB0_1B9000_SpeedHockey.next = state;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_8010658C_1B86DC_SpeedHockey);
+void func_80106580_1B86D0_SpeedHockey(s16 team) {
+    D_80106EB0_1B9000_SpeedHockey.winTeam = team;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106598_1B86E8_SpeedHockey);
+s16 func_8010658C_1B86DC_SpeedHockey(void) {
+    return D_80106EB0_1B9000_SpeedHockey.winTeam;
+}
+
+/* Record a player of the winning team (at most two). */
+void func_80106598_1B86E8_SpeedHockey(s16 player) {
+    s16 n = D_80106EB0_1B9000_SpeedHockey.winnerCount;
+
+    if (n < 2) {
+        D_80106EB0_1B9000_SpeedHockey.winnerCount = n + 1;
+        D_80106EB0_1B9000_SpeedHockey.winner[n] = player;
+    }
+}

@@ -114,10 +114,10 @@ typedef struct SHCamera {
     /* 0x30 */ s16 sprite;
 } SHCamera; /* size = 0x34 */
 
-/* A light (D_80106C04). */
+/* A light (D_80106C04): direction for func_80026E00, colour for func_80026DAC. */
 typedef struct SHLight {
-    /* 0x0 */ u8 color[3];
-    /* 0x4 */ f32 dir[3];
+    /* 0x0 */ u8 dir[3];
+    /* 0x4 */ f32 color[3];
 } SHLight; /* size = 0x10 */
 
 /* Saved pad state per port (D_80106EC6). */
@@ -234,7 +234,7 @@ void func_8001AC44_1B844(u16);
 void func_80020D20_21920(s16);
 void func_80023124_23D24(void);
 void func_80026D28_27928(s32);
-void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
 void func_8002864C_2924C(void);
