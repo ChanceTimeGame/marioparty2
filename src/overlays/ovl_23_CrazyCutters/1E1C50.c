@@ -1041,10 +1041,98 @@ void func_80105B40_1E4F90_CrazyCutters(omObjData* parent, s32 player) {
     D_80109980_1E8DD0_CrazyCutters[st->player].unk8 = 2.0f;
 }
 
-__asm__(".section .rodata");
-const u32 D_80109520_1E8970_CrazyCutters[4] = { 0x00000012, 0x00000013, 0x00000014, 0x00000000 };
+/* The falling piece: fades, flies up (state 1) with its shadow growing, then falls back
+   (state 2) and is removed. [F9D98] */
+void func_80105FE4_1E5434_CrazyCutters(omObjData* obj) {
+    Vec from;
+    Vec to;
+    s16 a[2];
+    s16 b[2];
+    s32 sprites[3] = { 0x12, 0x13, 0x14 };
+    CCPiece* st = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105FE4_1E5434_CrazyCutters);
+    if (D_80109920_1E8D70_CrazyCutters[st->player] == 0) {
+        return;
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        func_8002AC10_2B810(D_80109980_1E8DD0_CrazyCutters[st->player].model, D_80109980_1E8DD0_CrazyCutters[st->player].scale,
+                            D_80109980_1E8DD0_CrazyCutters[st->player].unk8, 1);
+        return;
+    }
+    func_8002D0A0_2DCA0(*obj->model, (u8)st->alpha);
+    st->unk44 += 0.1f;
+    st->alpha -= 4;
+    st->unk3C++;
+    if (st->alpha < 0) {
+        st->alpha = 0;
+    }
+    switch (st->state) {
+        case 1:
+            if (D_80109920_1E8D70_CrazyCutters[st->player] == st->player * 2 + 2) {
+                func_80107530_1E6980_CrazyCutters(sprites[D_80109918_1E8D68_CrazyCutters], st->player);
+            }
+            D_80109920_1E8D70_CrazyCutters[st->player]++;
+            omSetTra(obj, st->x, st->y, st->z);
+            omSetRot(obj, st->rotX, st->rotY, st->rotZ);
+            func_800298A4_2A4A4(D_80109980_1E8DD0_CrazyCutters[st->player].model, 4, 0);
+            func_800298A4_2A4A4(*obj->model, 4, 0);
+            st->y += st->velY;
+            st->velY += -2.0f;
+            if (st->velY <= 0.0f) {
+                st->state = 2;
+                a[0] = D_80109A18_1E8E68_CrazyCutters[st->player];
+                a[1] = D_80109A38_1E8E88_CrazyCutters[st->player];
+                b[0] = st->x;
+                b[1] = st->z;
+                st->angle = func_80106EB0_1E6300_CrazyCutters(a, b, 1);
+                from.x = D_80109A18_1E8E68_CrazyCutters[st->player];
+                from.y = D_80109A28_1E8E78_CrazyCutters[st->player];
+                from.z = D_80109A38_1E8E88_CrazyCutters[st->player];
+                to.x = st->x;
+                to.y = st->y;
+                to.z = st->z;
+                st->dist = func_80107204_1E6654_CrazyCutters(&from, &to, 0);
+                from.y = to.y;
+                st->angle = func_80107204_1E6654_CrazyCutters(&from, &to, 1);
+                func_800283DC_28FDC(D_80109980_1E8DD0_CrazyCutters[st->player].model);
+            }
+            func_8002AC10_2B810(D_80109980_1E8DD0_CrazyCutters[st->player].model, D_80109980_1E8DD0_CrazyCutters[st->player].scale,
+                                D_80109980_1E8DD0_CrazyCutters[st->player].unk8, 1);
+            if (D_80109980_1E8DD0_CrazyCutters[st->player].scale < 1.0f) {
+                D_80109980_1E8DD0_CrazyCutters[st->player].scale += 0.02f;
+            }
+            D_80109980_1E8DD0_CrazyCutters[st->player].unk8 += 0.4f;
+            break;
+        case 2:
+            omSetTra(obj, st->x, st->y, st->z);
+            st->y += st->velY;
+            st->velY += -2.0f;
+            if (st->y < 0.0f) {
+                func_800283DC_28FDC(*obj->model);
+                st->state = 0;
+                func_80106D44_1E6194_CrazyCutters(st->player, 0x80, 0);
+                omDelObj(obj);
+            }
+            break;
+    }
+    if (st->velY <= 0.0f) {
+        st->state = 2;
+        a[0] = D_80109A18_1E8E68_CrazyCutters[st->player];
+        a[1] = D_80109A38_1E8E88_CrazyCutters[st->player];
+        b[0] = st->x;
+        b[1] = st->z;
+        st->angle = func_80106EB0_1E6300_CrazyCutters(a, b, 1);
+        from.x = D_80109A18_1E8E68_CrazyCutters[st->player];
+        from.y = D_80109A28_1E8E78_CrazyCutters[st->player];
+        from.z = D_80109A38_1E8E88_CrazyCutters[st->player];
+        to.x = st->x;
+        to.y = st->y;
+        to.z = st->z;
+        st->dist = func_80107204_1E6654_CrazyCutters(&from, &to, 0);
+        from.y = to.y;
+        st->angle = func_80107204_1E6654_CrazyCutters(&from, &to, 1);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801065F4_1E5A44_CrazyCutters);
 

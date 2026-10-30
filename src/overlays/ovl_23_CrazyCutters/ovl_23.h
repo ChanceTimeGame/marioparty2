@@ -84,6 +84,7 @@ HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 /* 73BA0.c defines arg3 s16; retail passes a full word here (lw) */
 omObjData* func_80073328_73F28(u32 arg0, s16 arg1, s16 arg2, s32 arg3);
 u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320; /* board.h */
 
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
@@ -157,8 +158,9 @@ typedef struct CCPiece {
     /* 0x34 */ f32 angle;
     /* 0x38 */ f32 dist;
     /* 0x3C */ s32 unk3C;
-    /* 0x40 */ u16 alpha;
-    /* 0x44 */ s32 unk44;
+    /* 0x40 */ s16 alpha;
+    /* 0x42 */ s16 pad42;
+    /* 0x44 */ f32 unk44;
 } CCPiece; /* size = 0x48 */
 
 /* S4-23B: the shadow under a falling piece (D_80109980[4]; MP1 D_800FD4E8). */
