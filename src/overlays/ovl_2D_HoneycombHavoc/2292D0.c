@@ -1219,12 +1219,12 @@ void func_801062A8_22CD78_HoneycombHavoc(f32 x, f32 y) {
 
 /* The buzz volume follows the bees' x. */
 void func_80106324_22CDF4_HoneycombHavoc(void) {
-    omObjData* cam;
+    omObjData* bees;
     f32 vol;
 
-    cam = D_801076EC_22E1BC_HoneycombHavoc;
+    bees = D_801076EC_22E1BC_HoneycombHavoc;
     if (D_80107350_22DE20_HoneycombHavoc != -1) {
-        vol = ((cam->trans.x + 600.0f) / 1200.0f) * 64.0f + 32.0f;
+        vol = ((bees->trans.x + 600.0f) / 1200.0f) * 64.0f + 32.0f;
         if (vol < 32.0f) {
             vol = 32.0f;
         }
