@@ -393,7 +393,36 @@ void func_80103DEC_22F75C_HexagonHeat(omObjData* obj) {
     func_801041BC_22FB2C_HexagonHeat(obj);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801041BC_22FB2C_HexagonHeat);
+/* Three background actors (models 1-3) hop between four spots each; retail places the third at
+   the second actor's z table ([1] instead of [2]). */
+void func_801041BC_22FB2C_HexagonHeat(omObjData* obj) {
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        if (D_801066F8_232068_HexagonHeat == 0) {
+            D_801066F8_232068_HexagonHeat = 20;
+            D_801066FC_23206C_HexagonHeat = rand8() & 3;
+            func_800298A4_2A4A4(obj->model[1], 4, 0);
+        }
+        if (D_801066F9_232069_HexagonHeat == 0) {
+            D_801066F9_232069_HexagonHeat = 30;
+            D_80106700_232070_HexagonHeat = rand8() & 3;
+            func_800298A4_2A4A4(obj->model[2], 4, 0);
+        }
+        if (D_801066FA_23206A_HexagonHeat == 0) {
+            D_801066FA_23206A_HexagonHeat = 40;
+            D_80106704_232074_HexagonHeat = rand8() & 3;
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
+        }
+        D_801066F8_232068_HexagonHeat--;
+        D_801066F9_232069_HexagonHeat--;
+        D_801066FA_23206A_HexagonHeat--;
+        func_80029714_2A314(obj->model[1], D_801067F8_232168_HexagonHeat[0][D_801066FC_23206C_HexagonHeat][0], 50.0f,
+                            D_801067F8_232168_HexagonHeat[0][D_801066FC_23206C_HexagonHeat][1]);
+        func_80029714_2A314(obj->model[2], D_801067F8_232168_HexagonHeat[1][D_80106700_232070_HexagonHeat][0], 50.0f,
+                            D_801067F8_232168_HexagonHeat[1][D_80106700_232070_HexagonHeat][1]);
+        func_80029714_2A314(obj->model[3], D_801067F8_232168_HexagonHeat[2][D_80106704_232074_HexagonHeat][0], 50.0f,
+                            D_801067F8_232168_HexagonHeat[1][D_80106704_232074_HexagonHeat][1]);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104384_22FCF4_HexagonHeat);
 

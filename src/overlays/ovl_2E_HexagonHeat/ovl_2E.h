@@ -163,7 +163,11 @@ extern s32 D_801066E8_232058_HexagonHeat;
 extern s32 D_801066EC_23205C_HexagonHeat;
 extern s32 D_801066F0_232060_HexagonHeat;
 extern s32 D_801066F4_232064_HexagonHeat;
-extern u8 D_801066F8_232068_HexagonHeat[4]; /* background actor timers */
+/* background actor hop timers: three bytes retail addresses by their own labels (D_801066F9/FA
+   are undefined_syms.txt aliases), then a pad byte */
+extern u8 D_801066F8_232068_HexagonHeat;
+extern u8 D_801066F9_232069_HexagonHeat;
+extern u8 D_801066FA_23206A_HexagonHeat;
 extern s32 D_801066FC_23206C_HexagonHeat;
 extern s32 D_80106700_232070_HexagonHeat;
 extern s32 D_80106704_232074_HexagonHeat;
