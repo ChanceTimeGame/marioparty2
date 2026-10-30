@@ -118,6 +118,9 @@ typedef struct HHLightDir {
     s16 z;
 } HHLightDir;
 
+/* S4-1AB */
+typedef f32 Matrix4f[4][4];
+
 /* S4-1AB: the race timer's work (D_8010D804, func_80027154(0x20)): two rows of 7 digit sprites. */
 typedef struct HHTimer {
     /* 0x00 */ u16 digit[7]; /* this race: m'ss"cc */
@@ -208,6 +211,12 @@ void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
 void GWMgRecordSet(s32, u16);            /* main: (s16, s16); retail passes the u16 record unextended (as ovl_19) */
 f32 func_800B1830_B2430(f32);            /* sqrtf */
 f32 func_800B75A8_B81A8(f32 y, f32 x);   /* atan2, degrees */
+extern s16 gNumOfControllers;
+extern f32 D_800FC8F8_FD4F8[][6]; /* per camera: rot, x, z, fov, far, near (7AA60.c) */
+void Hu3DCamSetPositionOrientation(s16, Vec3f*, Vec3f*, Vec3f*);
+void Hu3DCamUpdateMtx(s16 camIndex);
+void func_8002DA3C_2E63C(ColVtx* a, ColVtx* b, ColVtx* c, Vec3f* n); /* face normal (collision.h) */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z);           /* rotate (MP1 MtxRotate) */
 f64 fabs(f64);
 f32 fabsf(f32);
 f32 HuMathSin(f32);
@@ -264,7 +273,7 @@ void func_80107C64_1A09F4_HandcarHavoc(omObjData* obj, HHPad* pad, u16 seat); /*
 void func_80108360_1A10F0_HandcarHavoc(omObjData* obj);                /* FD1B0 */
 void func_80108398_1A1128_HandcarHavoc(s32 arg0);                      /* FD1E8 */
 void func_801083B4_1A1144_HandcarHavoc(omObjData* obj);                /* FD204: cameras */
-f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* face); /* FD464 */
+f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* face); /* FD464: face plane height (unused); face[1..3] are its vertices */
 void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out); /* FD59C */
 void func_80108A1C_1A17AC_HandcarHavoc(omObjData* obj, u16 side, Vec* out); /* FD888 */
 void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj);                /* FDBC8 */
