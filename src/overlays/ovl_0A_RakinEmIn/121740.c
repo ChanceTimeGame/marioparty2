@@ -507,28 +507,211 @@ void func_8010428C_1231CC_RakinEmIn(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104340_123280_RakinEmIn);
+/* CPU: whether `player` lets item `item` pass. */
+s16 func_80104340_123280_RakinEmIn(s16 player, s16 item) {
+    RIStation* st = &D_80106CC0_125C00_RakinEmIn[player];
+    s16 found = 0;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801043B0_1232F0_RakinEmIn);
+    for (i = 0; i < 4; i++) {
+        if (st->target[i] == item) {
+            found = 1;
+            break;
+        }
+    }
+    return found;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104418_123358_RakinEmIn);
+void func_801043B0_1232F0_RakinEmIn(s16 player, s16 item) {
+    RIStation* st = &D_80106CC0_125C00_RakinEmIn[player];
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_80106FF0_125F30_RakinEmIn[2] = { 0x000F001E, 0x00320046 };
+    for (i = 0; i < 4; i++) {
+        if (st->target[i] == -1) {
+            st->target[i] = item;
+            return;
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_80106FF8_125F38_RakinEmIn[2] = { 0x003C0028, 0x0014000A };
+void func_80104418_123358_RakinEmIn(s16 player) {
+    RIStation* st = &D_80106CC0_125C00_RakinEmIn[player];
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_80107000_125F40_RakinEmIn[2] = { 0x00020001, 0x00010001 };
+    for (i = 0; i < 4; i++) {
+        st->target[i] = -1;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104474_1233B4_RakinEmIn);
+/* CPU: by difficulty, a random reach error and the number of items it lets pass. */
+void func_80104474_1233B4_RakinEmIn(RIObj* o) {
+    u16 miss[4] = { 15, 30, 50, 70 };
+    u16 pass[4] = { 60, 40, 20, 10 };
+    u16 most[4] = { 2, 1, 1, 1 };
+    f32 err;
+    s16 n;
 
+    err = 0.0f;
+    o->unk_26 = 0;
+    if ((u8)(rand8() % 100) > miss[o->unk_28]) {
+        err = (u8)(rand8() % 10) + 10;
+        if (rand8() & 1) {
+            err = -err;
+        }
+    }
+    if ((u8)(rand8() % 100) < pass[o->unk_28]) {
+        n = most[o->unk_28];
+        if (n != 0) {
+            o->unk_26 = rand8() % n + 1;
+        } else {
+            o->unk_26 = n;
+        }
+    }
+    o->unk_40 = err;
+}
+
+/* CPU: whether to swing now (an item in its quarter has turned into reach). */
+/* NON_MATCHING: retail copies hit into v0 at the switch's join and keeps it->angle in a register (delay slots) */
+#ifdef NON_MATCHING
+s16 func_8010468C_1235CC_RakinEmIn(RIObj* o, s16 player) {
+    RIItem* it;
+    RIObj* o2;
+    omObjData* io;
+    f32 reach;
+    s32 hit;
+    s16 i;
+
+    hit = 0;
+    for (i = 0; i < 20; i++) {
+        it = &D_801070B8_125FF8_RakinEmIn[i];
+        if (it->flags & 4) {
+            continue;
+        }
+        if (D_801071AA_1260EA_RakinEmIn >= 5 && func_80104340_123280_RakinEmIn(player, i) != 0) {
+            continue;
+        }
+        o2 = &D_80107520_126460_RakinEmIn[i];
+        if (o2->unk_28 == 1) {
+            continue;
+        }
+        io = o2->obj;
+        hit = 0;
+        switch (player) {
+        case 0:
+            if (io->trans.x < 0.0f && io->trans.z < 0.0f) {
+                hit = 1;
+            }
+            break;
+        case 1:
+            if (io->trans.x > 0.0f && io->trans.z < 0.0f) {
+                hit = 1;
+            }
+            break;
+        case 2:
+            if (io->trans.x < 0.0f && io->trans.z > 0.0f) {
+                hit = 1;
+            }
+            break;
+        default:
+            if (io->trans.x > 0.0f && io->trans.z > 0.0f) {
+                hit = 1;
+            }
+            break;
+        }
+        if (!hit) {
+            continue;
+        }
+        reach = (450.0f - it->dist) / 18.75f + o->unk_40;
+        if (reach < 0.0f) {
+            reach = 0.0f;
+        }
+        if (reach <= it->angle && it->angle <= reach + 0.75f) {
+            break;
+        }
+        hit = 0;
+    }
+    if (D_801071AA_1260EA_RakinEmIn >= 5 && hit) {
+        if (o->unk_26 != 0) {
+            func_801043B0_1232F0_RakinEmIn(player, i);
+            o->unk_26--;
+            hit = 0;
+        } else {
+            func_80104418_123358_RakinEmIn(player);
+        }
+    }
+    return hit;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_8010468C_1235CC_RakinEmIn);
+#endif
 
+/* Items within 75 of `obj` (item `item`) are pushed by it. */
+/* NON_MATCHING: 5625.0f hoisted to the top, v0/v1 swap in the abs */
+#ifdef NON_MATCHING
+void func_80104950_123890_RakinEmIn(omObjData* obj, s16 item) {
+    RIItem* it;
+    omObjData* io;
+    f32 dx;
+    f32 dz;
+    s32 d;
+    s16 i;
+    u8 fl;
+
+    for (i = 0; i < 20; i++) {
+        if (i == item) {
+            continue;
+        }
+        it = &D_801070B8_125FF8_RakinEmIn[i];
+        fl = it->flags;
+        if (fl & 4) {
+            continue;
+        }
+        io = (D_80107520_126460_RakinEmIn + i)->obj;
+        if (it->flags == 0) {
+            d = io->trans.x - obj->trans.x;
+            if (d < 0) {
+                d = -d;
+            }
+            dx = d;
+            d = io->trans.z - obj->trans.z;
+            if (d < 0) {
+                d = -d;
+            }
+            dz = d;
+            if (dx * dx + dz * dz <= 5625.0f) {
+                it->flags = fl | 1;
+                it->by = item;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104950_123890_RakinEmIn);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104A6C_1239AC_RakinEmIn);
+/* Whether `angle` lies within `range` of `center` (degrees, wrapping at 360). */
+u8 func_80104A6C_1239AC_RakinEmIn(f32 center, f32 angle, f32 range) {
+    f32 lo = center - range;
+    f32 hi = center + range;
+    s32 in = 0;
+
+    if (lo < 0.0f) {
+        if ((angle >= 0.0f) & (angle <= hi)) {
+            in = 1;
+        } else if (lo + 360.0f <= angle) {
+            in = 1;
+        }
+    } else if (hi > 360.0f) {
+        if ((lo <= angle) & (angle <= 360.0f)) {
+            in = 1;
+        } else if (angle <= hi - 360.0f) {
+            in = 1;
+        }
+    } else if ((lo <= angle) & (angle <= hi)) {
+        in = 1;
+    }
+    return in;
+}
 
 __asm__(".section .rodata");
 const u32 D_80107008_125F48_RakinEmIn[2] = { 0x00200060, 0x00300050 };
