@@ -166,7 +166,7 @@ void func_801096E4_1352D4_HotRopeJump(omObjData* obj);
 void func_80109A58_135648_HotRopeJump(omObjData* obj);
 void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj);
 void func_8010A4E4_1360D4_HotRopeJump(omObjData* obj);
-s16 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* tex, HuSprite_Unk84_Struct* anim);
+s32 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* tex, HuSprite_Unk84_Struct* anim); /* a model (s16); anim unused */
 void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, HuSprite_Unk84_Struct* anim);
 void func_8010BB48_137738_HotRopeJump(f32 t);
 f32 func_8010BF04_137AF4_HotRopeJump(f32 arg0, f32 arg1, f32 arg2);
@@ -321,6 +321,8 @@ f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
 f32 sqrtf(f32);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, the caller here does not re-extend it */
+extern s16 D_800FA1AA_FADAA; /* heap tag for func_80027154 */
 f64 func_800B0D98_B1998(f64, f64); /* fmod */
 u8 rand8(void);
 s32 PlaySound(s32);

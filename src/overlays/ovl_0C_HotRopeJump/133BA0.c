@@ -796,7 +796,80 @@ void func_8010A4E4_1360D4_HotRopeJump(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B0A0_136C90_HotRopeJump);
+/* A flame model (MP1 func_800FD90C): a five-vertex base quad (segment 2's texture, palette in
+   segment 15) and a four-vertex top (tex), with per-frame display lists (func_8010B754). Returns
+   the model. Retail copies 10 vertices from a 9-vertex table (the 10th is the next .data; the lists
+   use 9): the host must not read past vtx[8]. */
+s32 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* tex, HuSprite_Unk84_Struct* anim) {
+    Gfx* buf;
+    Gfx* gfx;
+    HmfData* m;
+    Vtx_t* dst;
+    const Vtx_t* src;
+    s32 model;
+    s32 size;
+    s32 i;
+    s32 j;
+
+    buf = gfx = HuMemAlloc(0x2000 * sizeof(Gfx));
+    model = func_80027FA4_28BA4(0x480, buf, 4);
+    m = D_800FC834_FD434[model].hmf;
+    m->unk64->unk50 |= 0x71010000;
+    m->unk64->unk50 &= ~0x2000;
+    HuMemFree(m->unk3C);
+    m->unk3C = func_80027154_27D54(8 * sizeof(Gfx*), D_800FA1AA_FADAA);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        dst = m->unk44[i] = func_80027154_27D54(10 * sizeof(Vtx), m->unk0E);
+        src = vtx;
+        for (j = 0; j < 10; j++) {
+            *dst++ = *src++;
+        }
+    }
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, 0x20600);
+    gSPSetGeometryMode(gfx++, 0x280205);
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
+    gDPSetBlendColor(gfx++, 1, 1, 1, 1);
+    gSPTexture(gfx++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+    gDPSetCombine(gfx++, 0xFF99FF, 0xFF30FE7F);
+    gDPSetRenderMode(gfx++, 0x404A50, 0);
+    gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+    gDPLoadTLUT_pal16(gfx++, 0, 0x0F000000);
+    gDPLoadTextureBlock_4b(gfx++, 0x02000000, G_IM_FMT_CI, 32, 64, 0, G_TX_CLAMP, G_TX_CLAMP, 5, 6, G_TX_NOLOD,
+                           G_TX_NOLOD);
+    gSPVertex(gfx++, 0x01000000, 5, 0);
+    gSP2Triangles(gfx++, 0, 1, 4, 0, 1, 2, 4, 0);
+    gSP2Triangles(gfx++, 0, 4, 3, 0, 4, 2, 3, 0);
+    gSPEndDisplayList(gfx++);
+    size = (u8*)gfx - (u8*)buf;
+    m->unk3C->unk00[0] = m->unk3C->unk10 = func_80027154_27D54(size, m->unk0E);
+    bcopy(buf, m->unk3C->unk10, size);
+    gfx = buf;
+    gDPPipeSync(gfx++);
+    gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
+    gDPSetRenderMode(gfx++, 0x443078, 0);
+    gDPLoadTLUT_pal16(gfx++, 0, tex->unk0C);
+    gDPLoadTextureBlock_4b(gfx++, tex->unk08, G_IM_FMT_CI, 32, 32, 0, G_TX_MIRROR, G_TX_CLAMP, 5, 5, G_TX_NOLOD,
+                           G_TX_NOLOD);
+    gSPVertex(gfx++, 0x01000000 + 5 * sizeof(Vtx), 4, 5);
+    gSP2Triangles(gfx++, 5, 6, 7, 0, 5, 7, 8, 0);
+    gSPEndDisplayList(gfx++);
+    size = (u8*)gfx - (u8*)buf;
+    m->unk3C->unk14 = func_80027154_27D54(size, m->unk0E);
+    bcopy(buf, m->unk3C->unk14, size);
+    HuMemFree(buf);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        m->unk3C->unk00[i + 1] = func_80027154_27D54(32 * sizeof(Gfx), m->unk0E);
+    }
+    return model;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B754_137344_HotRopeJump);
 
