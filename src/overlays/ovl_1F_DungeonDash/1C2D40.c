@@ -551,7 +551,54 @@ void func_80108BFC_1C477C_DungeonDash(s16 mdl) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108C8C_1C480C_DungeonDash);
+/* The two swinging blades (D_8010B2E0). */
+void func_80108C8C_1C480C_DungeonDash(void) {
+    DDBlock* b;
+    u16 i;
+    u16 anim0;
+    u16 anim1;
+    u16 anim2;
+    f32 d[2];
+
+    D_8010B2A0_1C6E20_DungeonDash = anim0 = func_80107608_1C3188_DungeonDash(0x2F0011);
+    D_8010B2A2_1C6E22_DungeonDash = anim1 = func_80107608_1C3188_DungeonDash(0x2F0009);
+    D_8010B2A4_1C6E24_DungeonDash = anim2 = func_80107608_1C3188_DungeonDash(0x2F0012);
+    b = D_8010B2E0_1C6E60_DungeonDash = func_80027154_27D54(0x40, D_800FA1AA_FADAA);
+    func_800B0EF0_B1AF0(b, 0, 0x40);
+    for (i = 0; i < 2; i++, b++) {
+        b->unk0 = 1;
+        b->unk2 = 60;
+        if (i & 1) {
+            b->unk4 = 0;
+            b->unk10 = 0.0f;
+            b->x = 280.0f;
+        } else {
+            b->unk4 = 2;
+            b->unk10 = 180.0f;
+            b->x = -280.0f;
+        }
+        b->y = -200.0f;
+        b->unk1C = -2100.0f;
+        if (i == 0) {
+            b->unk6 = func_80109958_1C54D8_DungeonDash(D_8010A7FC_1C637C_DungeonDash, SprAnimGet(anim0), 0);
+            b->unkA = func_80109958_1C54D8_DungeonDash(D_8010A93C_1C64BC_DungeonDash, SprAnimGet(anim1), 4);
+        } else {
+            b->unk6 = func_8010A430_1C5FB0_DungeonDash(-1, D_8010B2E0_1C6E60_DungeonDash->unk6);
+            b->unkA = func_8010A430_1C5FB0_DungeonDash(-1, D_8010B2E0_1C6E60_DungeonDash->unkA);
+        }
+        func_800297E8_2A3E8(b->unk6, 2.8f, 2.8f, 1.0f);
+        func_800297E8_2A3E8(b->unkA, 4.8f, 4.8f, 1.0f);
+        func_8002979C_2A39C(b->unkA, 270.0f, 0.0f, 0.0f);
+        b->unk8 = func_80109958_1C54D8_DungeonDash(D_8010A9DC_1C655C_DungeonDash, SprAnimGet(anim2), 5);
+        func_800298A4_2A4A4(b->unk8, 4, 4);
+        func_800297E8_2A3E8(b->unk8, 7.28f, 7.28f, 1.0f);
+        d[0] = func_800B7890_B8490(b->unk10) * (2.2 * 100.0);
+        d[1] = HuMathSin(b->unk10) * 350.0;
+        func_80029714_2A314(b->unk6, b->x + d[0], b->y + d[1], b->unk1C);
+        func_8002979C_2A39C(b->unk6, 90.0f, 0.0f, 0.0f);
+    }
+    D_8010B2A8_1C6E28_DungeonDash = 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108F9C_1C4B1C_DungeonDash);
 

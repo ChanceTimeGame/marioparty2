@@ -175,11 +175,18 @@ typedef struct DDFx {
     /* 0x18 */ Vec vel;
 } DDFx; /* size = 0x24 */
 
-/* A falling block (D_8010B2E0, stride 0x20). */
+/* A swinging axe blade (D_8010B2E0, 2 of them, func_80027154_27D54(0x40)). No pointers. */
 typedef struct DDBlock {
-    /* 0x00 */ char unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ char unk14[8];
+    /* 0x00 */ s16 unk0;  /* active */
+    /* 0x02 */ s16 unk2;  /* 60 */
+    /* 0x04 */ s16 unk4;  /* phase: 0 or 2 */
+    /* 0x06 */ s16 unk6;  /* blade model */
+    /* 0x08 */ s16 unk8;  /* shadow model */
+    /* 0x0A */ s16 unkA;  /* pivot model */
+    /* 0x0C */ char unkC[4];
+    /* 0x10 */ f32 unk10; /* swing angle */
+    /* 0x14 */ f32 x;
+    /* 0x18 */ f32 y;
     /* 0x1C */ f32 unk1C; /* z */
 } DDBlock; /* size = 0x20 */
 
@@ -202,6 +209,9 @@ extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern s16 D_8010A750_1C62D0_DungeonDash[]; /* .data */
 extern s16 D_8010A89C_1C641C_DungeonDash[]; /* .data */
 extern s16 D_8010A93C_1C64BC_DungeonDash[]; /* .data */
+extern s16 D_8010A7FC_1C637C_DungeonDash[]; /* .data */
+extern s16 D_8010A9DC_1C655C_DungeonDash[]; /* .data */
+f32 func_800B7890_B8490(f32); /* cos */
 extern s16 D_800FA1AA_FADAA; /* main's heap tag */
 extern f32 D_8010A7F4_1C6374_DungeonDash[2]; /* .data: obstacle x by parity {-280, 280} */
 extern u8 D_80102720_103320; /* board.h */
@@ -260,6 +270,9 @@ typedef struct DDTorch {
     /* 0x14 */ f32 z;
 } DDTorch; /* size = 0x18 */
 extern DDTorch* D_8010B29C_1C6E1C_DungeonDash;
+extern s16 D_8010B2A0_1C6E20_DungeonDash; /* blade sprite animations */
+extern s16 D_8010B2A2_1C6E22_DungeonDash;
+extern s16 D_8010B2A4_1C6E24_DungeonDash;
 extern s16 D_8010B2A6_1C6E26_DungeonDash;
 extern s16 D_8010B2A8_1C6E28_DungeonDash;
 extern s16 D_8010B2AA_1C6E2A_DungeonDash[4]; /* sprite animations (2F000E, 2F000A, 2F000F, 2F0010) */
