@@ -1,24 +1,138 @@
-#include "common.h"
+#include "ovl_03.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102860_F3F70_CoffinCongestion);
+/* Starts host motion `mot` on the object (looping when its speed is negative); 1 if it changed. */
+s32 func_80102860_F3F70_CoffinCongestion(omObjData* obj, s32 mot) {
+    CCProp* p = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102944_F4054_CoffinCongestion);
+    if (p->unk_1C != mot) {
+        p->unk_1C = mot;
+        if (D_8010691C_F802C_CoffinCongestion[mot].speed < 0) {
+            func_80029BF0_2A7F0(obj->model[0], obj->motion[mot], 0, 5, 0);
+            return 1;
+        }
+        func_80029BF0_2A7F0(obj->model[0], obj->motion[mot], 0, 5, 2);
+        func_80029FBC_2ABBC(obj->model[0], D_8010691C_F802C_CoffinCongestion[mot].speed);
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801029C0_F40D0_CoffinCongestion);
+/* Puts coffin `p` in the next slot and moves `pos` there. */
+void func_80102944_F4054_CoffinCongestion(CCProp* p, Vec* pos) {
+    CCSlots* s = &D_80106DBC_F84CC_CoffinCongestion;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102A20_F4130_CoffinCongestion);
+    if (++s->idx >= 6) {
+        s->idx -= 6;
+    }
+    D_80106DBC_F84CC_CoffinCongestion.slot[D_80106DBC_F84CC_CoffinCongestion.idx] = p;
+    func_800B3170_B3D70(pos, &D_80106944_F8054_CoffinCongestion[D_80106DBC_F84CC_CoffinCongestion.idx]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102B28_F4238_CoffinCongestion);
+void func_801029C0_F40D0_CoffinCongestion(omObjData* obj, CCProp* p) {
+    if (p->unk_18++ >= 46) {
+        if (p->unk_0E < 6) {
+            PlaySound(0x134);
+        }
+        p->unk_0E += 6;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102B90_F42A0_CoffinCongestion);
+void func_80102A20_F4130_CoffinCongestion(omObjData* obj, CCProp* p) {
+    f32 x;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102C44_F4354_CoffinCongestion);
+    if (D_80106DB8_F84C8_CoffinCongestion.cur == 2) {
+        x = (f32)((u8)(rand8() % 10) - 5) + p->pos.x;
+        omSetTra(obj, x, p->pos.y, (f32)((u8)(rand8() % 10) - 5) + p->pos.z);
+    } else {
+        omSetTra(obj, p->pos.x, p->pos.y, p->pos.z);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102C74_F4384_CoffinCongestion);
+void func_80102B28_F4238_CoffinCongestion(omObjData* obj, CCProp* p) {
+    if (p->unk_10 == 0) {
+        if (p->unk_1A++ >= 61) {
+            p->unk_1A = 0;
+            p->unk_10++;
+            PlaySound(0x138);
+        }
+    } else {
+        p->unk_0E -= 6;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102E64_F4574_CoffinCongestion);
+/* Room object update: the per-mode hook of D_8010698C, then the alpha. */
+void func_80102B90_F42A0_CoffinCongestion(omObjData* obj) {
+    CCProp* p = ((CCGround*)obj->unk_50)->unk_B0;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102EE0_F45F0_CoffinCongestion);
+    if (D_8010698C_F809C_CoffinCongestion[func_80106570_F7C80_CoffinCongestion()] != NULL) {
+        D_8010698C_F809C_CoffinCongestion[func_80106570_F7C80_CoffinCongestion()](obj, p);
+    }
+    if (p->unk_0E < 0) {
+        p->unk_0E = 0;
+    }
+    if (p->unk_0E >= 256) {
+        p->unk_0E = 255;
+    }
+    func_8002D0A0_2DCA0(obj->model[0], p->unk_0E);
+}
+
+void func_80102C44_F4354_CoffinCongestion(omObjData* obj, CCProp* p) {
+    if (p->unk_18++ >= 46) {
+        p->unk_0E += 6;
+    }
+}
+
+/* A coffin lid: down (1), shaking (2), up (3). */
+void func_80102C74_F4384_CoffinCongestion(omObjData* obj, CCProp* p) {
+    f32 x;
+
+    switch (D_80106DB8_F84C8_CoffinCongestion.cur) {
+        case 1:
+            if (D_80106DB8_F84C8_CoffinCongestion.cur != D_80106DB8_F84C8_CoffinCongestion.prev) {
+                PlaySound(0x135);
+            }
+            obj->trans.x -= 15.0f;
+            if (obj->trans.x < p->pos.x - 150.0f) {
+                obj->trans.x = p->pos.x - 150.0f;
+            }
+            break;
+        case 2:
+            if (D_80106DB8_F84C8_CoffinCongestion.cur != D_80106DB8_F84C8_CoffinCongestion.prev) {
+                PlaySound(0x137);
+            }
+            x = (f32)((u8)(rand8() % 10) - 5) + p->pos.x;
+            omSetTra(obj, x, p->pos.y, (f32)((u8)(rand8() % 10) - 5) + p->pos.z);
+            break;
+        case 3:
+            if (D_80106DB8_F84C8_CoffinCongestion.cur != D_80106DB8_F84C8_CoffinCongestion.prev) {
+                PlaySound(0x136);
+            }
+            obj->trans.x += 30.0f;
+            if (p->pos.x < obj->trans.x) {
+                obj->trans.x = p->pos.x;
+            }
+            break;
+    }
+}
+
+/* The opened coffin: the player gets its item. */
+void func_80102E64_F4574_CoffinCongestion(omObjData* obj, CCProp* p) {
+    if (p->unk_1E == 1) {
+        PlaySound(0x135);
+        omVibrate(((MgWork*)p->unk_14->unk_50)->unk_59, 10, 0, 10);
+        func_801065C0_F7CD0_CoffinCongestion(((MgWork*)p->unk_14->unk_50)->unk_59,
+                                             D_80106DBC_F84CC_CoffinCongestion.slot[p->unk_0C - 6]->unk_12);
+    }
+}
+
+void func_80102EE0_F45F0_CoffinCongestion(omObjData* obj, CCProp* p) {
+    if (p->unk_1E == 1) {
+        p->unk_0E -= 6;
+        if (p->unk_0E < 0) {
+            p->unk_0E = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80102F10_F4620_CoffinCongestion);
 
