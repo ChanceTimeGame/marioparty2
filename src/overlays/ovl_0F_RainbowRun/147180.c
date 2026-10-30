@@ -73,7 +73,7 @@ void func_801059F0_147380_RainbowRun(omObjData* obj) {
 
 /* The stick direction of player 0's port, averaged over 8 frames (-1 near the centre). */
 f32 func_80105A74_147404_RainbowRun(void) {
-    s8 port = RR_WORK(D_800FFFD8_100BD8[0])->port;
+    s8 port = RR_WORK(D_800FFFD8_100BD8[0])->unk_57;
     s8 y = ContStkY[port];
     s8 x = ContStkX[port];
     f32 sumX;
@@ -174,14 +174,14 @@ void func_80105C40_1475D0_RainbowRun(Vec* pos, Vec* axis, f32 angle, Matrix4f m)
 void func_80105E38_1477C8_RainbowRun(RRPlayerWork* work) {
     u16 btn = 0;
 
-    if (ContBtn[work->port] & 0x1000) {
+    if (ContBtn[work->unk_57] & 0x1000) {
         btn |= 0x1000;
     }
-    ContBtnTrg[work->port] = ContBtn[work->port] = btn;
-    ContBtnTrg[work->port] = btn & (btn ^ D_8010A78E_14C11E_RainbowRun);
+    ContBtnTrg[work->unk_57] = ContBtn[work->unk_57] = btn;
+    ContBtnTrg[work->unk_57] = btn & (btn ^ D_8010A78E_14C11E_RainbowRun);
     D_8010A78E_14C11E_RainbowRun = btn;
-    ContStkX[work->port] = 0;
-    ContStkY[work->port] = 0;
+    ContStkX[work->unk_57] = 0;
+    ContStkY[work->unk_57] = 0;
 }
 
 void func_80105ED4_147864_RainbowRun(omObjData* obj, f32 dist) {

@@ -77,7 +77,7 @@ void func_801060D8_147A68_RainbowRun(omObjData* obj) {
             D_8010A7E8_14C178_RainbowRun = 1;
         }
     }
-    if (w->speed > 0.0f) {
+    if (w->unk_40 > 0.0f) {
         amp = func_800B7890_B8490(D_8010A7E4_14C174_RainbowRun * 18.0) * 5.0f + 35.0f;
         if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
             D_8010A7E4_14C174_RainbowRun += 1.0f;

@@ -40,7 +40,7 @@ s8 func_80107790_149120_RainbowRun(omObjData* obj) {
         dy = obj->trans.y - o->trans.y;
         dz = obj->trans.z - o->trans.z;
         if (dx * dx + dy * dy + dz * dz < 12100.0f) {
-            RRTeamWork* t = RR_WORK(o)->team;
+            RRTeamWork* t = RR_TEAM(RR_WORK(o));
 
             t->flash = 50;
             omVibrate(t->player, 30, 0, 30);
@@ -191,7 +191,7 @@ void func_80107C5C_1495EC_RainbowRun(omObjData* obj) {
         func_80029714_2A314(obj->model[5], obj->trans.x, obj->trans.y, obj->trans.z);
         if (rope == 1) {
             if (D_8010A701_14C091_RainbowRun == 0) {
-                omVibrate(w->player, 2, 2, 20);
+                omVibrate(w->unk_59, 2, 2, 20);
             }
             D_8010A751_14C0E1_RainbowRun = 1;
             D_8010A752_14C0E2_RainbowRun = 0;
@@ -346,7 +346,7 @@ void func_801087F0_14A180_RainbowRun(omObjData* obj) {
 // float register allocation: retail keeps the stick angle in f20 (its zero initialisation survives) and shares the last angle store (masked ~40, all registers)
 #ifdef NON_MATCHING
 void func_80108814_14A1A4_RainbowRun(omObjData* obj) {
-    RRTeamWork* t = RR_WORK(obj)->team;
+    RRTeamWork* t = RR_TEAM(RR_WORK(obj));
     f32 sx;
     f32 sy;
     f32 dir;
@@ -567,7 +567,7 @@ Vec func_80109240_14ABD0_RainbowRun(s8 path, s16 seg, f32 t) {
 // the off-centre flag: retail reloads trans.x for the second compare and builds the flag in v0 (2 instructions)
 #ifdef NON_MATCHING
 void func_80109534_14AEC4_RainbowRun(omObjData* obj) {
-    RRTeamWork* t = RR_WORK(obj)->team;
+    RRTeamWork* t = RR_TEAM(RR_WORK(obj));
     Vec p;
     f32 dx;
     f32 dz;
@@ -687,7 +687,7 @@ void func_80109CC4_14B654_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 play
     obj->unk_50 = mem;
     func_800B0EF0_B1AF0(mem, 0, sizeof(RRPlayerWork));
     w = obj->unk_50;
-    t = w->team = &D_8010AA18_14C3A8_RainbowRun[idx];
+    t = w->unk_158 = &D_8010AA18_14C3A8_RainbowRun[idx];
     w->unk_52 = 0;
     w->unk_B4 = 1.0f;
     w->unk_D0 = 0xFFFF;

@@ -221,28 +221,28 @@ s32 func_801036CC_14505C_RainbowRun(omObjData* obj, omObjData* other) {
         return 1;
     }
     {
-        f32 s = HuMathSin(w->angle);
+        f32 s = HuMathSin(w->unk_3C);
 
-        if (func_8000DA2C_E62C(s, func_800B7890_B8490(w->angle), other->trans.x - obj->trans.x,
+        if (func_8000DA2C_E62C(s, func_800B7890_B8490(w->unk_3C), other->trans.x - obj->trans.x,
                                other->trans.z - obj->trans.z) > 0.0f) {
-            w->angle = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
+            w->unk_3C = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
             func_80019B9C_1A79C(obj, 9);
             if (D_8010A6F8_14C088_RainbowRun == 1) {
-                w->speed = 0.0f;
+                w->unk_40 = 0.0f;
             } else {
-                w->speed = -4.55f;
+                w->unk_40 = -4.55f;
             }
         } else {
-            w->angle = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
+            w->unk_3C = func_800B75A8_B81A8(other->trans.x - obj->trans.x, other->trans.z - obj->trans.z);
             func_80019B9C_1A79C(obj, 10);
             if (D_8010A6F8_14C088_RainbowRun == 1) {
-                w->speed = 0.0f;
+                w->unk_40 = 0.0f;
             } else {
-                w->speed = 4.55f;
+                w->unk_40 = 4.55f;
             }
         }
     }
-    omVibrate(w->player, 30, 0, 30);
+    omVibrate(w->unk_59, 30, 0, 30);
     func_80079798_7A398(0x18B, bomb->sound);
     PlaySound(0x18D);
     bomb->active = 0;
@@ -264,22 +264,22 @@ void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 play
 
     func_8000C6FC_D2FC(obj, dir, file, player, 0x2A9, 0x2A9);
     w = obj->unk_50;
-    w->angle = 180.0f;
-    w->radius = 60.0f;
-    D_800BF7E4_C03E4[w->player][0] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][1] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][2] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][3] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][4] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][5] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][6] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][7] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][8] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][9] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][10] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][11] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][12] = 0x2D2;
-    D_800BF7E4_C03E4[w->player][13] = 0x2D2;
+    w->unk_3C = 180.0f;
+    w->unk_48 = 60.0f;
+    D_800BF7E4_C03E4[w->unk_59][0] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][1] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][2] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][3] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][4] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][5] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][6] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][7] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][8] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][9] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][10] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][11] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][12] = 0x2D2;
+    D_800BF7E4_C03E4[w->unk_59][13] = 0x2D2;
     obj->func_ptr = func_801041E4_145B74_RainbowRun;
     w->unk_EC = func_801036CC_14505C_RainbowRun;
     func_80019E84_1AA84(obj, 0, dir, 1, 0);
@@ -325,8 +325,8 @@ void func_80103E1C_1457AC_RainbowRun(omObjData* obj) {
     s16 i;
     f32 rope;
 
-    ContStkX[w->port] = 0;
-    ContStkY[w->port] = 0;
+    ContStkX[w->unk_57] = 0;
+    ContStkY[w->unk_57] = 0;
     pace = 0;
     rope = D_8010A7D0_14C160_RainbowRun;
     if (rope + 40.0f <= obj->trans.x) {
@@ -375,36 +375,36 @@ void func_80103E1C_1457AC_RainbowRun(omObjData* obj) {
     }
     switch (side) {
     case 1:
-        ContStkX[w->port] = -80;
+        ContStkX[w->unk_57] = -80;
         break;
     case 2:
-        ContStkX[w->port] = -40;
+        ContStkX[w->unk_57] = -40;
         break;
     case 3:
-        ContStkX[w->port] = 80;
+        ContStkX[w->unk_57] = 80;
         break;
     case 4:
-        ContStkX[w->port] = 40;
+        ContStkX[w->unk_57] = 40;
         break;
     default:
-        ContStkX[w->port] = 0;
+        ContStkX[w->unk_57] = 0;
         break;
     }
     switch (pace) {
     case 1:
-        ContStkY[w->port] = 80;
+        ContStkY[w->unk_57] = 80;
         break;
     case 2:
-        ContStkY[w->port] = 40;
+        ContStkY[w->unk_57] = 40;
         break;
     case 3:
-        ContStkY[w->port] = -80;
+        ContStkY[w->unk_57] = -80;
         break;
     case 4:
-        ContStkY[w->port] = -40;
+        ContStkY[w->unk_57] = -40;
         break;
     default:
-        ContStkY[w->port] = 0;
+        ContStkY[w->unk_57] = 0;
         break;
     }
 }
@@ -420,9 +420,9 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
 
     D_8010A6FC_14C08C_RainbowRun = 0.0f;
     w = obj->unk_50;
-    ContBtn[w->port] &= 0x7FFF;
-    ContBtnTrg[w->port] &= 0x7FFF;
-    D_800FD410_FE010[w->port] &= 0x7FFF;
+    ContBtn[w->unk_57] &= 0x7FFF;
+    ContBtnTrg[w->unk_57] &= 0x7FFF;
+    D_800FD410_FE010[w->unk_57] &= 0x7FFF;
     if (D_8010A70E_14C09E_RainbowRun == 1) {
         D_8010A6F0_14C080_RainbowRun = 1;
         D_8010A6F6_14C086_RainbowRun = 1;
@@ -432,10 +432,10 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
         if (D_8010A6F0_14C080_RainbowRun != 1 && w->unk_BE == 0 &&
             obj->trans.y >= D_8010A7D4_14C164_RainbowRun + -50.0) {
             D_8010A70C_14C09C_RainbowRun = 0;
-            if (obj->trans.x < D_8010A7D0_14C160_RainbowRun + -12.0f && w->angle < -45.0 && w->angle > -135.0f) {
+            if (obj->trans.x < D_8010A7D0_14C160_RainbowRun + -12.0f && w->unk_3C < -45.0 && w->unk_3C > -135.0f) {
                 D_8010A70C_14C09C_RainbowRun = 1;
             }
-            if (D_8010A7D0_14C160_RainbowRun + 12.0f < obj->trans.x && w->angle > 45.0f && w->angle < 135.0f) {
+            if (D_8010A7D0_14C160_RainbowRun + 12.0f < obj->trans.x && w->unk_3C > 45.0f && w->unk_3C < 135.0f) {
                 D_8010A70C_14C09C_RainbowRun = 1;
             }
             if (D_8010A70D_14C09D_RainbowRun != D_8010A70C_14C09C_RainbowRun) {
@@ -472,14 +472,14 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
                 D_8010A720_14C0B0_RainbowRun -= 0.22222f;
                 for (i = 0; i < 3; i++) {
                     if (D_8010AC14_14C5A4_RainbowRun[i] != NULL) {
-                        RR_WORK(D_8010AC14_14C5A4_RainbowRun[i])->team->ofs.z -= D_8010A720_14C0B0_RainbowRun + 20.0f;
+                        RR_TEAM(RR_WORK(D_8010AC14_14C5A4_RainbowRun[i]))->ofs.z -= D_8010A720_14C0B0_RainbowRun + 20.0f;
                     }
                 }
             } else {
                 D_8010A750_14C0E0_RainbowRun = 0;
             }
         }
-        if (gPlayers[w->player].flags & 1) {
+        if (gPlayers[w->unk_59].flags & 1) {
             func_80103E1C_1457AC_RainbowRun(obj);
         }
         if (D_8010A70E_14C09E_RainbowRun == 1) {
@@ -488,14 +488,14 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
     } else {
         if (obj->trans.z < 1100.0f) {
             D_8010A6F4_14C084_RainbowRun = 1;
-            ContStkY[w->port] = 0;
+            ContStkY[w->unk_57] = 0;
             func_8000C024_CC24(obj, 0, 2);
         } else {
             if (D_8010A714_14C0A4_RainbowRun == 0) {
                 if (obj->trans.z <= 1310.0f && D_8010A715_14C0A5_RainbowRun < 10) {
-                    ContBtn[w->port] |= 0x8000;
-                    ContBtnTrg[w->port] |= 0x8000;
-                    D_800FD410_FE010[w->port] |= 0x8000;
+                    ContBtn[w->unk_57] |= 0x8000;
+                    ContBtnTrg[w->unk_57] |= 0x8000;
+                    D_800FD410_FE010[w->unk_57] |= 0x8000;
                     D_8010A715_14C0A5_RainbowRun++;
                 }
                 if (obj->trans.z <= 1180.0f) {
@@ -518,10 +518,10 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
                 }
             }
             D_8010A6F5_14C085_RainbowRun = 1;
-            ContStkY[w->port] = 50;
+            ContStkY[w->unk_57] = 50;
             func_8000C024_CC24(obj, 0, 1);
         }
-        ContStkX[w->port] = 0;
+        ContStkX[w->unk_57] = 0;
     }
     if (D_8010A6F6_14C086_RainbowRun != 2 &&
         ((obj->trans.z <= -1100.0f && obj->trans.y >= D_8010A7D4_14C164_RainbowRun + -20.0 &&
@@ -542,19 +542,19 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
             func_8000C024_CC24(obj, 0, 1);
             func_8000C024_CC24(obj, 1, 2);
             D_800FC834_FD434[D_800FFFD8_100BD8[0]->model[1]].pos.x = D_8010A7D0_14C160_RainbowRun;
-            ContStkX[w->port] = 0;
-            ContStkY[w->port] = 0;
+            ContStkX[w->unk_57] = 0;
+            ContStkY[w->unk_57] = 0;
             D_8010A7A8_14C138_RainbowRun = 1;
         } else if (obj->trans.z > -1400.0f) {
-            ContStkX[w->port] = 0;
-            ContStkY[w->port] = 40;
+            ContStkX[w->unk_57] = 0;
+            ContStkY[w->unk_57] = 40;
             D_8010A6F7_14C087_RainbowRun = 1;
             D_8010A6F4_14C084_RainbowRun = 0;
         } else {
-            ContStkX[w->port] = 0;
-            ContStkY[w->port] = 0;
-            w->angle = 0.0f;
-            w->speed = 0.0f;
+            ContStkX[w->unk_57] = 0;
+            ContStkY[w->unk_57] = 0;
+            w->unk_3C = 0.0f;
+            w->unk_40 = 0.0f;
             D_8010A6F0_14C080_RainbowRun = 1;
             D_8010A6F6_14C086_RainbowRun = 3;
             if (D_8010A700_14C090_RainbowRun == 1) {
@@ -576,18 +576,18 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
                     func_80019B9C_1A79C(D_800FFFD8_100BD8[0], 0xD);
                     func_80019378_19F78(D_800FFFD8_100BD8[0]);
                     func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_8010ACC0_14C650_RainbowRun[0]].character].unk_04 | 0x4F);
-                    w->angle = 0.0f;
-                    w->speed = 0.0f;
+                    w->unk_3C = 0.0f;
+                    w->unk_40 = 0.0f;
                 }
             }
         }
     }
     if (w->unk_BE == 0) {
-        if (w->speed >= D_800BF7C0_C03C0) {
-            w->speed = D_800BF7C0_C03C0;
+        if (w->unk_40 >= D_800BF7C0_C03C0) {
+            w->unk_40 = D_800BF7C0_C03C0;
         }
     } else if (D_8010A702_14C092_RainbowRun != 1) {
-        ContStkX[w->port] = 0;
+        ContStkX[w->unk_57] = 0;
     }
     func_80007790_8390(obj);
     func_800298A4_2A4A4(obj->model[1], 4, 4);
@@ -606,9 +606,9 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
             D_800BF7AC_C03AC = 7.0f;
         }
         if (obj->trans.x > 0.0f) {
-            ContStkX[w->port] = 60;
+            ContStkX[w->unk_57] = 60;
         } else {
-            ContStkX[w->port] = -60;
+            ContStkX[w->unk_57] = -60;
         }
     }
     if (D_8010A70F_14C09F_RainbowRun == 0 && obj->trans.y <= -600.0f) {
@@ -726,8 +726,8 @@ void func_80104FB4_146944_RainbowRun(omObjData* obj) {
                     func_80019CA4_1A8A4(D_800FFFD8_100BD8[0], 0xE);
                     func_80019378_19F78(D_800FFFD8_100BD8[0]);
                     func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_8010ACC0_14C650_RainbowRun[0]].character].unk_04 | 0x56);
-                    w->angle = 0.0f;
-                    w->speed = 0.0f;
+                    w->unk_3C = 0.0f;
+                    w->unk_40 = 0.0f;
                     break;
                 case 3:
                     func_800691FC_69DFC(6, gPlayers[D_8010ACC0_14C650_RainbowRun[0]].character);
