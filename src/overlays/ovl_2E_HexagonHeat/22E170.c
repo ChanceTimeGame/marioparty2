@@ -646,7 +646,40 @@ void func_80104D38_2306A8_HexagonHeat(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801051D0_230B40_HexagonHeat);
+/* Player hook 1: a player in the lava (ground 0), or on a hexagon of another colour when the
+   stompers come down, is out (bounced up, model hidden); a COM player's real pad is restored. */
+void func_801051D0_230B40_HexagonHeat(omObjData* obj) {
+    MgWork* w;
+    s32 ground;
+    s32 player;
+
+    w = obj->unk_50;
+    ground = w->unk_53;
+    player = w->unk_59;
+    if (D_8010654C_231EBC_HexagonHeat[player] != 1) {
+        if (ground == 0) {
+            D_8010654C_231EBC_HexagonHeat[player] = 1;
+            func_80019CA4_1A8A4(obj, 0x26);
+            goto out;
+        }
+        if (D_80106528_231E98_HexagonHeat == 3 && (u32)(ground - 1) < 7 && ground != D_80106520_231E90_HexagonHeat + 1) {
+            D_8010654C_231EBC_HexagonHeat[w->unk_59] = 1;
+            func_80019CA4_1A8A4(obj, 0x26);
+            w->unk_50 |= 0x400;
+        out:
+            w->unk_38 = -D_800BF7A4_C03A4;
+            func_800298A4_2A4A4(obj->model[1], 4, 4);
+            func_800797DC_7A3DC(0x111, w->unk_59);
+            omVibrate(w->unk_59, 20, 0, 20);
+        }
+        if (gPlayers[w->unk_59].flags & 1) {
+            ContBtnTrg[w->unk_57] = (u16)D_801067EC_23215C_HexagonHeat;
+            ContBtn[w->unk_57] = (u16)D_801067E8_232158_HexagonHeat;
+            ContStkX[w->unk_57] = (u8)D_801067F0_232160_HexagonHeat;
+            ContStkY[w->unk_57] = (u8)D_801067F4_232164_HexagonHeat;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_8010537C_230CEC_HexagonHeat);
 
