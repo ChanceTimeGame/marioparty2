@@ -1425,7 +1425,63 @@ f32 func_80106EB0_1E6300_CrazyCutters(s16* from, s16* to, s32 mode) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106EB0_1E6300_CrazyCutters);
 #endif
 
+/* As func_80106EB0_1E6300_CrazyCutters for two 3D points: yaw (mode 0) or distance. [FAF8C] */
+// as func_80106EB0: the 180.0f load's scheduling (masked 21)
+#ifdef NON_MATCHING
+f32 func_80107204_1E6654_CrazyCutters(Vec* from, Vec* to, s32 mode) {
+    Vec delta;
+    Vec fromV;
+    Vec toV;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromV.x = from->x;
+    fromV.y = from->y;
+    fromV.z = from->z;
+    toV.x = to->x;
+    toV.y = to->y;
+    toV.z = to->z;
+    delta.x = toV.x - fromV.x;
+    delta.y = toV.y - fromV.y;
+    delta.z = toV.z - fromV.z;
+    horizontal = sqrtf(delta.x * delta.x + delta.z * delta.z);
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        yaw = horizontal;
+        pitch = 180.0f;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = horizontal;
+        }
+    } else {
+        yaw = func_80106D84_1E61D4_CrazyCutters(delta.x / delta.z) * 57.29577951308232;
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        pitch = func_80106D84_1E61D4_CrazyCutters(delta.y / horizontal) * 57.29577951308232;
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    horizontal = sqrtf(delta.y * delta.y + horizontal * horizontal);
+    if (mode == 0) {
+        D_80109574_1E89C4_CrazyCutters = yaw;
+    } else {
+        D_80109574_1E89C4_CrazyCutters = horizontal;
+    }
+    return D_80109574_1E89C4_CrazyCutters;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107204_1E6654_CrazyCutters);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107530_1E6980_CrazyCutters);
 
