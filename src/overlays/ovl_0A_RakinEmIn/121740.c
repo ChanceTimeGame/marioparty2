@@ -297,19 +297,215 @@ void func_801036B8_1225F8_RakinEmIn(void) {
     D_80107AC0_126A00_RakinEmIn.obj = omAddObj(600, 0, 0, -1, func_801033B0_1222F0_RakinEmIn);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801036F4_122634_RakinEmIn);
+/* The rakes' angle window: the yaw of (62.5, 0, 0) seen from the centre (then fixed at 90). */
+void func_801036F4_122634_RakinEmIn(void) {
+    Vec a;
+    Vec b;
+    Vec out;
+    f32 zero;
 
+    D_801070A8_125FE8_RakinEmIn = 0.0f;
+    zero = 0.0f;
+    D_801070A8_125FE8_RakinEmIn = func_800B1820_B2420(zero);
+    a.x = zero;
+    a.y = zero;
+    a.z = zero;
+    b.x = 62.5f;
+    b.y = zero;
+    b.z = D_801070A8_125FE8_RakinEmIn;
+    func_80102B40_121A80_RakinEmIn(&a, &b, &out);
+    D_801070AC_125FEC_RakinEmIn = out.z;
+    D_801070A8_125FE8_RakinEmIn = zero;
+    D_801070AC_125FEC_RakinEmIn = 90.0f;
+}
+
+/* The table: turn it and every item on it by 0.75 degrees; an item 450 or more from the centre
+   falls off. */
+/* NON_MATCHING: `it` and `o` take each other's saved registers (s1/s2; masked 0, raw 29). */
+#ifdef NON_MATCHING
+void func_8010378C_1226CC_RakinEmIn(omObjData* obj) {
+    Vec c;
+    Vec p;
+    Vec d;
+    RIItem* it;
+    RIObj* o;
+    omObjData* io;
+    u16 frame;
+    s16 i;
+
+    it = D_801070B8_125FF8_RakinEmIn;
+    for (i = 0; i < 20; i++, it++) {
+        it->flags ^= 2;
+    }
+    obj->rot.y = func_80102EB4_121DF4_RakinEmIn(obj->rot.y, 0.75f);
+    c.x = obj->trans.x;
+    c.y = obj->trans.y;
+    c.z = obj->trans.z;
+    for (i = 0; i < 20; i++) {
+        it = &D_801070B8_125FF8_RakinEmIn[i];
+        if (!(it->flags & 4)) {
+            o = &D_80107520_126460_RakinEmIn[i];
+            io = o->obj;
+            p.x = io->trans.x;
+            p.y = io->trans.y;
+            p.z = io->trans.z;
+            func_80102B40_121A80_RakinEmIn(&c, &p, &d);
+            it->dist = d.x;
+            d.z = func_80102EB4_121DF4_RakinEmIn(d.z, 0.75f);
+            io->trans.x = it->dist * func_800B80D0_B8CD0(d.z);
+            io->trans.z = it->dist * func_800B75D0_B81D0(d.z);
+            it->angle = d.z < 90.0f ? d.z : d.z < 180.0f ? d.z - 90.0f : d.z < 270.0f ? d.z - 180.0f : d.z - 270.0f;
+            io->rot.y = func_80102EB4_121DF4_RakinEmIn(io->rot.y, 0.75f);
+            if (io->rot.y >= 240.0f) {
+                frame = io->rot.y - 240.0f;
+            } else if (io->rot.y >= 120.0f) {
+                frame = io->rot.y - 120.0f;
+            } else {
+                frame = io->rot.y;
+            }
+            o->unk_22 = frame / 3.75;
+            func_8003E560_3F160(o->unk_20, o->unk_22);
+            if (d.x >= 450.0f) {
+                o->unk_40 = (io->trans.x > 0.0f) ? 6.5f : -6.5f;
+                o->unk_44 = (io->trans.z > 0.0f) ? 6.5f : -6.5f;
+                o->unk_38 = -1.0f;
+                o->unk_3C = 0.0f;
+                o->com = 1;
+                it->flags |= 4;
+            } else {
+                o->unk_40 = io->trans.x;
+                o->unk_44 = io->trans.z;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_8010378C_1226CC_RakinEmIn);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80103BB0_122AF0_RakinEmIn);
+void func_80103BB0_122AF0_RakinEmIn(omObjData* obj) {
+    GroundWork* gw;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80103E04_122D44_RakinEmIn);
+    func_800B0EF0_B1AF0(D_801070B8_125FF8_RakinEmIn, 0, sizeof(D_801070B8_125FF8_RakinEmIn));
+    func_801036F4_122634_RakinEmIn();
+    D_801071A8_1260E8_RakinEmIn = 3;
+    D_801071A9_1260E9_RakinEmIn = 2;
+    D_801071AA_1260EA_RakinEmIn = 18;
+    D_801071AC_1260EC_RakinEmIn = 0;
+    D_801071AB_1260EB_RakinEmIn = 0;
+    D_801071E0_126120_RakinEmIn[0] = func_8001A2F8_1AEF8(0x1A0000);
+    D_80107374_1262B4_RakinEmIn = SprCreate(1, 0);
+    SprAttrReset(D_80107374_1262B4_RakinEmIn, 0, -1);
+    SprScaleSet(D_80107374_1262B4_RakinEmIn, 0, 1.0f, 1.0f);
+    SprAnimSet(D_80107374_1262B4_RakinEmIn, 0, D_801071E0_126120_RakinEmIn[0], 0);
+    SprBankSet(D_80107374_1262B4_RakinEmIn, 0, 0);
+    SprAttrSet(D_80107374_1262B4_RakinEmIn, 0, 0x5000);
+    SprPosSet(D_80107374_1262B4_RakinEmIn, 0, 160, 120);
+    func_8008225C_82E5C(D_80107374_1262B4_RakinEmIn, 0, 0);
+    SprPrioSet(D_80107374_1262B4_RakinEmIn, 0, 0xFFF0);
+    obj->model[0] = LoadFormFile(0x1A0001, 0x6B9);
+    obj->model[1] = LoadFormFile(0x1A0002, 0x6B9);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = obj;
+    obj->unk_50 = gw = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(gw, 0, 0xB4);
+    gw->unk_03 = 1;
+    gw->unk_04 = 0;
+    func_8000BEA4_CAA4(obj, 20.0f);
+    func_8000BE8C_CA8C(obj, 1.0f);
+    func_8000BF24_CB24(D_800FC7B0_FD3B0[0], 0.0f, -550.0f, -500.0f, 550.0f, 500.0f);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    obj->func_ptr = func_8010378C_1226CC_RakinEmIn;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80103E4C_122D8C_RakinEmIn);
+void func_80103E04_122D44_RakinEmIn(void) {
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_80107370_1262B0_RakinEmIn = omAddObj(10, 2, 0, -1, func_80103BB0_122AF0_RakinEmIn);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80103F9C_122EDC_RakinEmIn);
+/* A player: swing with its rake (state 1), or the result motion. */
+void func_80103E4C_122D8C_RakinEmIn(omObjData* obj) {
+    RIObj* p = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    RIObj* r = &D_80107250_126190_RakinEmIn[obj->work[0] + 5];
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_8010428C_1231CC_RakinEmIn);
+    switch (p->state) {
+    case 0:
+        if (r->state != 0 && r->state < 3) {
+            func_80029E80_2AA80(obj->model[0], 1, 0);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            p->state = 1;
+        } else if (r->unk_24 != 0) {
+            func_80029B80_2A780(obj->model[0], obj->motion[r->unk_24]);
+            func_80029E80_2AA80(obj->model[0], 1, 0);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            p->state = 2;
+        }
+        break;
+    case 1:
+        t = func_80029CE4_2A8E4(obj->model[0]);
+        if (func_80029D0C_2A90C(obj->model[0]) <= t) {
+            func_80029E80_2AA80(obj->model[0], 0, 1);
+            p->state = 0;
+        }
+        break;
+    case 2:
+        break;
+    }
+}
+
+void func_80103F9C_122EDC_RakinEmIn(omObjData* obj) {
+    RIObj* p = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    s8 chr = gPlayers[obj->work[0]].character;
+    s32 dir = D_800CD438_CE038[chr].unk_04;
+    s32 ovl = 0x1A0000;
+    s32 mdl = D_800CD438_CE038[chr].unk_08;
+    RIStation* st;
+    MgWork* w;
+
+    obj->unk_50 = func_80027154_27D54(0x15C, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x15C);
+    w = obj->unk_50;
+    w->unk_E8 = func_80027154_27D54(obj->mtncnt * 0xC, 0x7918);
+    w->unk_57 = gPlayers[obj->work[0]].port;
+    obj->model[0] = LoadFormFile(dir | mdl, 0x6B9);
+    func_80018CCC_198CC(obj, 0, D_80106F78_125EB8_RakinEmIn[chr][0] | ovl);
+    func_80018CCC_198CC(obj, 1, D_80106F7A_125EBA_RakinEmIn[chr * 2] | ovl);
+    w->unk_52 = 0;
+    w->unk_B4 = 1.0f;
+    w->unk_D0 = 0xFFFF;
+    w->unk_38 = 1000.0f;
+    w->unk_50 = 0;
+    func_80029B80_2A780(obj->model[0], obj->motion[0]);
+    func_80029E80_2AA80(obj->model[0], 1, 1);
+    func_8000C024_CC24(obj, 0, 2);
+    st = &D_80106CC0_125C00_RakinEmIn[obj->work[0]];
+    obj->rot.y = st->angle;
+    obj->trans.x = st->pos.x + func_800B80D0_B8CD0(obj->rot.y) * -3.0 * 5.0;
+    obj->trans.y = st->pos.y + 37.5;
+    obj->trans.z = st->pos.z + func_800B75D0_B81D0(obj->rot.y) * -3.0 * 5.0;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.1f;
+    func_8010281C_12175C_RakinEmIn(obj->work[0]);
+    p->com = gPlayers[obj->work[0]].flags & 1;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    obj->func_ptr = func_80103E4C_122D8C_RakinEmIn;
+}
+
+void func_8010428C_1231CC_RakinEmIn(void) {
+    RIObj* p = D_80107250_126190_RakinEmIn;
+    omObjData* o;
+    s16 i;
+
+    for (i = 0; i < 4; i++) {
+        o = omAddObj(200, 1, 3, -1, func_80103F9C_122EDC_RakinEmIn);
+        /* retail never advances p: entry 0 ends up holding player 3 (the rakes and items use [i]) */
+        p->player = i;
+        o->work[0] = i;
+        p->obj = o;
+        D_800FFFD8_100BD8[i] = o;
+        D_800FC87A_FD47A++;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104340_123280_RakinEmIn);
 

@@ -82,6 +82,15 @@ typedef struct RIScore {
     /* 0x08 */ f32 angle;
 } RIScore; /* size = 0xC */
 
+/* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
+typedef struct RICharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08; /* its model file */
+    /* 0x0C */ char unk_0C[0xC];
+} RICharData; /* size = 0x18 */
+
 /* ---- .data (0x125C00-0x125EE0) ---- */
 extern RIStation D_80106CC0_125C00_RakinEmIn[4];
 extern RIStation D_80106CF0_125C30_RakinEmIn[]; /* = &D_80106CC0[0].rake: only .pos is used */
@@ -93,8 +102,8 @@ extern u16 D_80106F1C_125E5C_RakinEmIn[16][2];  /* HUD sprite x, y */
 extern u16 D_80106F1E_125E5E_RakinEmIn[][2];    /* = &D_80106F1C[0][1] */
 extern s32 D_80106F5C_125E9C_RakinEmIn[6];      /* face sprite file by character */
 extern s32 D_80106F74_125EB4_RakinEmIn;         /* camera set up */
-extern s16 D_80106F78_125EB8_RakinEmIn[6][2];   /* player motion files by character */
-extern s16 D_80106F7A_125EBA_RakinEmIn[];       /* = &D_80106F78[0][1] */
+extern u16 D_80106F78_125EB8_RakinEmIn[6][2];   /* player motion files by character */
+extern u16 D_80106F7A_125EBA_RakinEmIn[];       /* = &D_80106F78[0][1] */
 extern s16 D_80106F90_125ED0_RakinEmIn;         /* result wait */
 
 /* ---- .bss ---- */
@@ -109,7 +118,7 @@ extern u8 D_801071A8_1260E8_RakinEmIn;  /* kind 2 items left to place */
 extern u8 D_801071A9_1260E9_RakinEmIn;  /* kind 1 items left to place */
 extern u8 D_801071AA_1260EA_RakinEmIn;  /* items left on the table */
 extern u8 D_801071AB_1260EB_RakinEmIn;  /* winners */
-extern u16 D_801071AC_1260EC_RakinEmIn; /* best score */
+extern u8 D_801071AC_1260EC_RakinEmIn;  /* best score */
 extern RIScore D_801071B0_1260F0_RakinEmIn[4];
 extern s16 D_801071E0_126120_RakinEmIn[50]; /* sprite animations */
 extern RIObj D_80107250_126190_RakinEmIn[50];
@@ -128,6 +137,7 @@ extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern Vec3f D_80102770_103370[]; /* CRotM */
 extern Vec3f D_801013B0_101FB0[]; /* CenterM */
 extern s16 D_800FA606_FB206;
+extern RICharData D_800CD438_CE038[];
 extern u16 D_801011FC_101DFC;
 s16 LoadFormFile(s32, s32);
 s32 PlaySound(s32);
@@ -146,6 +156,7 @@ void func_8000C018_CC18(u16);
 void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
 void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* loads obj->motion[slot] */
 void func_80018E30_19A30(s32);
+u16 func_80018A30_19630(s32 file, s32 attr); /* model from a file */
 void func_80018F58_19B58(s32);
 s16 func_8001A2F8_1AEF8(s32 arg0);
 void func_80020D20_21920(s16 arg0);
