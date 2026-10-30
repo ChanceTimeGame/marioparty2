@@ -361,3 +361,11 @@ D_80107424_186044_Archerival = D_801073EC_18600C_Archerival + 0x38;
 D_8010742C_18604C_Archerival = D_801073EC_18600C_Archerival + 0x40;
 D_8010759C_1861BC_Archerival = D_80107598_1861B8_Archerival + 0x4;
 D_801075CC_1861EC_Archerival = D_801075C8_1861E8_Archerival + 0x4;
+/* S4-39: bytes of ovl_39's .data that retail addresses by their own address */
+D_80107B0D_2847FD_BowsersBigBlast = 0x80107B0D;
+D_80107B1B_28480B_BowsersBigBlast = 0x80107B1B;
+D_80107B1D_28480D_BowsersBigBlast = 0x80107B1D;
+D_80107B1E_28480E_BowsersBigBlast = 0x80107B1E;
+D_80107B1F_28480F_BowsersBigBlast = 0x80107B1F;
+D_80107B31_284821_BowsersBigBlast = 0x80107B31;
+D_80107B32_284822_BowsersBigBlast = 0x80107B32;
