@@ -389,7 +389,195 @@ void func_80103428_19C1B8_HandcarHavoc(omObjData* obj, u16 team, f32 x, s32 y, f
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80103428_19C1B8_HandcarHavoc);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80103DE4_19CB74_HandcarHavoc);
+void func_80103DE4_19CB74_HandcarHavoc(omObjData* obj) {
+    Vec rot;
+    Vec pos;
+    HHPad pad[2];
+    HHCar* w;
+    u8* sign;
+    f32 wait;
+    f32 decel;
+    u16 team;
+    u16 seg;
+    u16 port;
+    u16 mode;
+    s16 i;
+
+    w = obj->unk_50;
+    team = w->team;
+    mode = 0;
+    if (D_8010D800_1A6590_HandcarHavoc == 0) {
+        return;
+    }
+    if (D_8010D800_1A6590_HandcarHavoc == 1) {
+        seg = w->seg[0];
+        if (D_8010B376_1A4106_HandcarHavoc[w->team] == D_8010B37A_1A410A_HandcarHavoc) {
+            if (seg >= 0x74 && seg < 0x83) {
+                mode = 1;
+            } else if (seg >= 0xC1 && seg < 0xD0) {
+                mode = 2;
+            }
+        }
+        for (i = 0; i < 2; i++) {
+            port = gPlayers[w->player[i]].port;
+            if (!(gPlayers[w->player[i]].flags & 1)) {
+                pad[i].stkX = ContStkX[port];
+                pad[i].stkY = ContStkY[port];
+                pad[i].trg = ContBtnTrg[port];
+                pad[i].btn = ContBtn[port];
+            } else {
+                func_80107C64_1A09F4_HandcarHavoc(obj, &pad[i], i);
+            }
+        }
+        w->leanIn = 0.0f;
+        for (i = 0; i < 2; i++) {
+            if ((pad[i].trg & 0x8000) && mode == 0) {
+                w->pump += 0.3f;
+                if (w->pump > 5.0f) {
+                    w->pump = 5.0f;
+                }
+                w->speed -= 3.7f;
+            }
+            w->leanIn += func_801051E8_19DF78_HandcarHavoc(pad[i].stkX);
+        }
+        if (mode == 0) {
+            w->speed = -w->slope.y * 5.0f + w->speed;
+            decel = 0.2f;
+            if (w->speed < 0.0f) {
+                w->speed += decel;
+                if (w->speed > 0.0f) {
+                    w->speed = 0.0f;
+                }
+            } else {
+                w->speed -= decel;
+                if (w->speed < 0.0f) {
+                    w->speed = 0.0f;
+                }
+            }
+        } else if (mode == 2) {
+            w->speed -= D_8010B164_1A3EF4_HandcarHavoc[w->team];
+            D_8010B164_1A3EF4_HandcarHavoc[w->team] *= D_8010B164_1A3EF4_HandcarHavoc[w->team];
+        }
+        w->brake = 0;
+        for (i = 0; i < 2; i++) {
+            if (pad[i].btn & 0x4000) {
+                if (mode == 0 && w->seg[0] != 0x73) {
+                    w->speed *= 0.97f;
+                }
+                w->brake = 1;
+            }
+        }
+    }
+    if (w->speed > w->maxSpeed) {
+        w->speed = w->maxSpeed;
+    }
+    if (w->speed < -w->maxSpeed) {
+        w->speed = -w->maxSpeed;
+    }
+    if (w->speed != 0.0f && w->sndOn == 0) {
+        w->snd = func_80079798_7A398(team + 0x204, team);
+        w->sndOn = 1;
+    }
+    if (w->sndOn == 1) {
+        func_800796F0_7A2F0(w->snd, fabs(w->speed) * 1.9636365175247192);
+        if (fabs(w->speed) <= 0.5) {
+            func_800796F0_7A2F0(w->snd, 0);
+            func_80079848_7A448(w->snd);
+            w->sndOn = 0;
+        }
+    }
+    if (func_80106E70_19FC00_HandcarHavoc(obj) == 1 && D_8010D800_1A6590_HandcarHavoc != 2) {
+        w->goal = 1;
+    }
+    func_80106CA8_19FA38_HandcarHavoc(obj, &rot, &pos);
+    w->rot.x = rot.x;
+    w->rot.y = rot.y;
+    w->rot.z = rot.z;
+    if (w->rot.x < 0.0f) {
+        w->rot.x += 360.0f;
+    }
+    if (w->rot.x >= 360.0f) {
+        w->rot.x -= 360.0f;
+    }
+    if (w->rot.y < 0.0f) {
+        w->rot.y += 360.0f;
+    }
+    if (w->rot.y >= 360.0f) {
+        w->rot.y -= 360.0f;
+    }
+    if (w->rot.z < 0.0f) {
+        w->rot.z += 360.0f;
+    }
+    if (w->rot.z >= 360.0f) {
+        w->rot.z -= 360.0f;
+    }
+    if (D_8010B376_1A4106_HandcarHavoc[w->team] == D_8010B37A_1A410A_HandcarHavoc) {
+        seg = w->seg[0];
+        if (seg >= 0x83 && w->unkEB == 0) {
+            func_801074A8_1A0238_HandcarHavoc(obj, 0);
+            func_801074A8_1A0238_HandcarHavoc(obj, 1);
+            PlaySound(w->team + 0x208);
+            func_8010B024_1A3DB4_HandcarHavoc(D_8010D818_1A65A8_HandcarHavoc[w->team], 1, 0x2D, 1, 6);
+            w->unkEB = 1;
+        } else if (seg >= 0xD0 && w->unkEC == 0) {
+            func_801074A8_1A0238_HandcarHavoc(obj, 0);
+            func_801074A8_1A0238_HandcarHavoc(obj, 1);
+            PlaySound(w->team + 0x208);
+            w->unkEC = 1;
+        }
+    }
+    if (w->lean > w->leanIn) {
+        w->lean -= 2.0f;
+        if (w->lean < w->leanIn) {
+            w->lean = w->leanIn;
+        }
+    } else if (w->lean < w->leanIn) {
+        w->lean += 2.0f;
+        if (w->leanIn < w->lean) {
+            w->lean = w->leanIn;
+        }
+    }
+    func_8010484C_19D5DC_HandcarHavoc(obj);
+    omSetTra(obj, pos.x, pos.y, pos.z);
+    func_80104DE0_19DB70_HandcarHavoc(obj);
+    func_80107634_1A03C4_HandcarHavoc(obj);
+    func_80108D5C_1A1AEC_HandcarHavoc(obj);
+    if (w->pump >= 0.1f) {
+        w->pump -= 0.06f;
+    } else {
+        w->pump = 0.0f;
+    }
+    for (i = 0; i < 3; i++) {
+        (&w->prevSlope.x)[i] = (&w->slope.x)[i];
+        (&w->prevRot.x)[i] = (&w->rot.x)[i];
+    }
+    func_8010986C_1A25FC_HandcarHavoc(w);
+    if (w->seg[0] >= 0x6E && w->seg[0] < 0x74) {
+        if (func_8010B0FC_1A3E8C_HandcarHavoc(D_8010D818_1A65A8_HandcarHavoc[w->team])) {
+            func_8010B024_1A3DB4_HandcarHavoc(D_8010D818_1A65A8_HandcarHavoc[w->team], 0, 2, 6, 6);
+        } else {
+            func_8010B108_1A3E98_HandcarHavoc(D_8010D818_1A65A8_HandcarHavoc[w->team], 2);
+            wait = func_80106AD0_19F860_HandcarHavoc(w->team, obj->trans.x, obj->trans.y, obj->trans.z, 0x73) / 400.0f;
+            if (wait < 4.0f) {
+                wait = 4.0f;
+            }
+            if (wait <= ++w->unkEE) {
+                w->unkEE = 0;
+                w->unkED ^= 1;
+                sign = D_8010D818_1A65A8_HandcarHavoc[w->team]->unk_50;
+                if (w->unkED == 1) {
+                    espDispOff((sign + sign[0])[1]);
+                } else {
+                    espDispOn((sign + sign[0])[1]);
+                }
+            }
+        }
+    }
+    if (D_8010B376_1A4106_HandcarHavoc[w->team] == D_8010B37C_1A410C_HandcarHavoc && w->seg[0] >= 0x78 && obj->work[1] == 0) {
+        obj->work[1] = 1;
+        func_8010B024_1A3DB4_HandcarHavoc(D_8010D818_1A65A8_HandcarHavoc[w->team], 2, 0x2D, 1, 1);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_8010484C_19D5DC_HandcarHavoc);
 

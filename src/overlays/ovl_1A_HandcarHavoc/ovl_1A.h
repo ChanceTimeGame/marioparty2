@@ -142,7 +142,7 @@ void omSetTra(omObjData*, f32, f32, f32);
 void omSetRot(omObjData*, f32, f32, f32);
 void omSetObjPrio(omObjData*, s16);
 s16 LoadFormFile(s32, s32);
-s32 PlaySound(s32);
+s32 PlaySound(s16);
 void espDispOn(u16);
 void espDispOff(u16);
 void espPosSet(u16 spriteId, s16 x, s16 y);
@@ -315,7 +315,7 @@ extern s16 D_8010B366_1A40F6_HandcarHavoc;     /* seconds left (300) */
 extern HHLightDir D_8010B368_1A40F8_HandcarHavoc; /* sun light direction */
 extern s32 D_8010B370_1A4100_HandcarHavoc;
 extern s16 D_8010B374_1A4104_HandcarHavoc;     /* sun light level (215) */
-extern u16 D_8010B376_1A4106_HandcarHavoc[2];  /* per team: the track model it runs on */
+extern s16 D_8010B376_1A4106_HandcarHavoc[2];  /* per team: the track model it runs on */
 extern s16 D_8010B37A_1A410A_HandcarHavoc;     /* track model 1 (0x2A0004) */
 extern s16 D_8010B37C_1A410C_HandcarHavoc;     /* track model 2 (0x2A0005) */
 extern ColVtx* D_8010B380_1A4110_HandcarHavoc[2]; /* per team: its track's points */
