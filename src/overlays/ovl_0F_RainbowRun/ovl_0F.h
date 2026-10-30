@@ -66,7 +66,7 @@ typedef struct RRTeamWork {
     /* 0x60 */ f32 aim;       /* CPU aim error (degrees) */
     /* 0x64 */ s32 timer;     /* CPU frames since the last throw */
     /* 0x68 */ s32 aimWait;   /* CPU frames before a new aim error */
-    /* 0x6C */ s16 throwWait; /* CPU frames between throws */
+    /* 0x6C */ u16 throwWait; /* CPU frames between throws */
     /* 0x6E */ char unk_6E[2];
     /* 0x70 */ s32 unk_70;
     /* 0x74 */ u16 btn;       /* CPU buttons */
@@ -74,7 +74,7 @@ typedef struct RRTeamWork {
     /* 0x78 */ u16 idx;       /* 0..2 */
     /* 0x7A */ s16 flash;     /* stunned (hit by a bomb) */
     /* 0x7C */ s16 wait;      /* frames before the follower moves on */
-    /* 0x7E */ u16 aimTimer;
+    /* 0x7E */ s16 aimTimer;
     /* 0x80 */ u8 unk_80[8];
     /* 0x88 */ u8 unk_88[8];
     /* 0x90 */ s8 port;

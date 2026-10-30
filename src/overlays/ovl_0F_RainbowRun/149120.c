@@ -355,7 +355,118 @@ Vec func_80109240_14ABD0_RainbowRun(s8 path, s16 seg, f32 t) {
     return v;
 }
 
+/* A follower's path and CPU control (MP1 func_800FD70C_TightropeTreachery, rebuilt): it moves
+   along its path while the runner runs; a CPU faces the runner (plus an aim error renewed every
+   few frames) and throws when the runner strays more than 50 from the middle. */
+// the off-centre flag: retail reloads trans.x for the second compare and builds the flag in v0 (2 instructions)
+#ifdef NON_MATCHING
+void func_80109534_14AEC4_RainbowRun(omObjData* obj) {
+    RRTeamWork* t = RR_WORK(obj)->team;
+    Vec p;
+    f32 dx;
+    f32 dz;
+    f32 a;
+    f32 d;
+    s32 off;
+
+    p = func_80109240_14ABD0_RainbowRun(D_8010AC08_14C598_RainbowRun[t->idx] + D_8010ABF0_14C580_RainbowRun, t->seg, t->t);
+    t->pos.x = p.x;
+    t->pos.y = p.y;
+    t->pos.z = p.z;
+    if (D_8010A702_14C092_RainbowRun == 0 && D_800FFFD8_100BD8[0]->trans.y > -600.0f && D_8010A6F4_14C084_RainbowRun == 1 &&
+        D_8010A750_14C0E0_RainbowRun == 0) {
+        if (t->wait >= 46) {
+            t->t += 1.5f;
+        } else {
+            t->wait++;
+        }
+        if (t->t > 240.0f) {
+            t->t = 0.0f;
+            t->wait = 0;
+            t->seg += 1.0f;
+            if (t->seg >= 4.0f) {
+                t->seg = 0.0f;
+            }
+        }
+    }
+    *(s32*)&t->turn = 0; /* retail stores an integer zero, then copies the float: GCC must not know it */
+    t->turn = t->turn;
+    if (gPlayers[t->player].flags & 1) {
+        t->btn = 0;
+        dx = D_800FFFD8_100BD8[0]->trans.x - obj->trans.x;
+        dz = D_800FFFD8_100BD8[0]->trans.z - obj->trans.z;
+        a = func_800B75A8_B81A8(dz, dx);
+        a = a - (s32)(a / 360.0f) * 360.0f;
+        if (a < 0.0f) {
+            a += 360.0f;
+        }
+        if (t->aimWait < t->aimTimer++) {
+            t->aimWait = guRandom() % 30;
+            switch (gPlayers[t->player].cpu_difficulty) {
+            case 0:
+                t->aim = guRandom() % 52 - 26;
+                break;
+            case 1:
+                t->aim = guRandom() % 44 - 22;
+                break;
+            case 2:
+                t->aim = guRandom() % 36 - 18;
+                break;
+            case 3:
+                t->aim = guRandom() % 30 - 15;
+                break;
+            }
+            t->aimTimer = 0;
+        }
+        if (D_8010A702_14C092_RainbowRun == 0) {
+            d = a + t->turn + t->aim;
+            d = d - (s32)(d / 360.0f) * 360.0f;
+            if (d < 0.0f) {
+                d += 360.0f;
+            }
+            t->target = d;
+        } else {
+            t->target = 0.0f;
+        }
+        off = obj->trans.x > 50.0f || obj->trans.x < -50.0f;
+        if (off == 1 && t->throwWait < t->timer) {
+            t->btn |= 0x8000;
+            t->timer = 0;
+            switch (gPlayers[t->player].cpu_difficulty) {
+            case 0:
+                t->throwWait = guRandom() % 160 + 160;
+                break;
+            case 1:
+                t->throwWait = guRandom() % 120 + 120;
+                break;
+            case 2:
+                t->throwWait = guRandom() % 100 + 100;
+                break;
+            case 3:
+                t->throwWait = guRandom() % 60 + 60;
+                break;
+            }
+        }
+        t->timer++;
+        if (ContBtn[t->port] & 0x1000) {
+            t->btn |= 0x1000;
+        }
+        ContBtn[t->port] = t->btn;
+        ContBtnTrg[t->port] = t->btn & (t->btn ^ t->prevBtn);
+        t->prevBtn = t->btn;
+        if (t->target < 0.0f) {
+            ContStkX[t->port] = 0;
+            ContStkY[t->port] = 0;
+        } else {
+            ContStkX[t->port] = func_800B7890_B8490(t->target) * 80.0f;
+            ContStkY[t->port] = -HuMathSin(t->target) * 80.0f;
+        }
+    }
+    func_80108814_14A1A4_RainbowRun(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80109534_14AEC4_RainbowRun);
+#endif
 
 /* A follower (main's player work; its own state in D_8010AA18_14C3A8_RainbowRun[idx]; MP1
    func_800FDCE8_TightropeTreachery). A CPU follower gets an aim error and a throw interval by
