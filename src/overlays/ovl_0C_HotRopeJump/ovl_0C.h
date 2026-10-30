@@ -310,6 +310,11 @@ f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
 f32 sqrtf(f32);
+void* HuMemAlloc(s32 size);
+void* SprAnimGet(s16 animIdx);
+void* func_80027154_27D54(s32 size, s16 tag); /* HuMemAllocTag */
+s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**), u8 arg2); /* add a draw callback */
+extern u8 D_800FDBCA_FE7CA; /* vertex buffer count */
 extern u8 D_800FDBE0_FE7E0; /* the frame's vertex buffer */
 void func_800204C0_210C0(s32, Gfx**);
 /* Labels inside D_8010C3A0_137F90_HotRopeJump[4][4]: retail addresses each byte by its own label

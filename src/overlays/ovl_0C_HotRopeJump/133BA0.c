@@ -257,7 +257,128 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80108A44_134634_HotRopeJump);
 #endif
 
+/* Builds the floor (MP1 func_800FBABC): a 2 x 32 x 12 vertex grid (per-frame copies, lit by
+   func_80108A44; the vertices off the stage's edge are flagged unlit) and its display list.
+   Returns the model.
+   NON_MATCHING: masked 27, all in the vertex grid: retail hoists the whole (s32)(step * -16.0)
+   out of the loops (into $s5) and allocates the loop counters differently */
+#ifdef NON_MATCHING
+s16 func_80109078_134C68_HotRopeJump(void) {
+    HuSprite_Unk84_Struct* tex;
+    Gfx* buf;
+    Gfx* gfx;
+    HmfData* m;
+    HmfVtx* v;
+    HmfVtx* src;
+    s32 model;
+    s32 y;
+    s32 step;
+    s32 x0;
+    s32 s0;
+    s32 x;
+    s32 z;
+    s32 s;
+    s32 t;
+    s32 half;
+    s32 row;
+    s32 col;
+    s32 i;
+    s32 size;
+    s32 vtx;
+    s32 cur;
+    s32 prev;
+
+    step = 60;
+    tex = SprAnimGet(D_80111824_13D414_HotRopeJump);
+    gfx = buf = HuMemAlloc(0x2000 * sizeof(Gfx));
+    model = D_80111822_13D412_HotRopeJump = func_8002838C_28F8C(0x80, func_80108A44_134634_HotRopeJump, 0);
+    m = D_800FC834_FD434[model].hmf;
+    v = m->unk44[0] = m->unk40 = func_80027154_27D54(0x364 * sizeof(Vtx), m->unk0E);
+    y = 0;
+    x0 = -step * 12;
+    s0 = 0;
+    for (half = 0; half < 2; half++) {
+        z = step * -16.0;
+        t = 0;
+        for (row = 0; row < 32; row++) {
+            x = x0;
+            s = s0;
+            for (col = 0; col < 12; col++) {
+                v->unk00 = x;
+                v->unk02 = y;
+                v->unk04 = z;
+                v->unk08 = s;
+                v->unk0A = t;
+                v->unk0C[0] = v->unk0C[1] = v->unk0C[2] = 0xFF;
+                v->unk0F = 0xFF;
+                x += step;
+                s += 0x200;
+                if (row == 0 || row == 31) {
+                    *(u16*)v->unk06 = 0;
+                } else if (row == 1 || row == 30) {
+                    *(u16*)v->unk06 = 0;
+                } else if (half == 0 && (col == 0 || col == 1)) {
+                    *(u16*)v->unk06 = 0;
+                } else if (half == 1 && col == 11) {
+                    *(u16*)v->unk06 = 0;
+                } else {
+                    *(u16*)v->unk06 = 1;
+                }
+                v++;
+            }
+            z += step;
+            t += 0x200;
+        }
+        x0 += step * 11;
+        s0 += 0x1600;
+    }
+    for (i = 1; i < D_800FDBCA_FE7CA; i++) {
+        v = m->unk44[i] = func_80027154_27D54(0x364 * sizeof(Vtx), m->unk0E);
+        src = m->unk44[0];
+        for (row = 0; row < 0x300; row++) {
+            *v++ = *src++;
+        }
+    }
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gSPClearGeometryMode(gfx++, 0x60600);
+    gSPSetGeometryMode(gfx++, 0x280004);
+    gDPSetRenderMode(gfx++, 0xC084000, 0);
+    gDPSetCombine(gfx++, 0x127E24, 0xFFFFF9FC);
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_PERSP);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+    gDPLoadTLUT_pal16(gfx++, 0, tex->unk0C);
+    gDPLoadTextureBlock_4b(gfx++, tex->unk08, G_IM_FMT_CI, 32, 32, 0, G_TX_WRAP, G_TX_WRAP, 5, 5, G_TX_NOLOD,
+                           G_TX_NOLOD);
+    gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+    vtx = 0;
+    for (half = 0; half < 2; half++) {
+        gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, 0);
+        vtx += 12;
+        for (row = 1; row < 32; row++) {
+            cur = (row & 1) * 16;
+            prev = ((row - 1) & 1) * 16;
+            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur);
+            vtx += 12;
+            for (col = 1; col < 12; col++) {
+                gSP2Triangles(gfx++, cur + col, prev + col - 1, cur + col - 1, 0, prev + col, prev + col - 1,
+                              cur + col, 0);
+            }
+        }
+    }
+    gSPEndDisplayList(gfx++);
+    size = (u8*)gfx - (u8*)buf;
+    D_80111828_13D418_HotRopeJump = func_80027154_27D54(size, m->unk0E);
+    bcopy(buf, D_80111828_13D418_HotRopeJump, size);
+    HuMemFree(buf);
+    return model;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80109078_134C68_HotRopeJump);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_8010C770_138360_HotRopeJump[4] = { 0x00000096, 0xFDA80000, 0x00000096, 0x025800B4 };
