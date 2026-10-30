@@ -155,7 +155,7 @@ void func_80108BFC_1C477C_DungeonDash(s16 mdl);
 void func_80108C8C_1C480C_DungeonDash(void);
 void func_80108F9C_1C4B1C_DungeonDash(void);
 void func_80109884_1C5404_DungeonDash(s32 team, f32 z);
-s16 func_80109958_1C54D8_DungeonDash(void* arg0, void* arg1, s32 arg2);
+s16 func_80109958_1C54D8_DungeonDash(Vtx_t* vtx, HuSprite_Unk84_Struct* spr, s32 type);
 void func_8010A340_1C5EC0_DungeonDash(s16 model, HuSprite_Unk84_Struct* anim, s16 frame);
 s32 func_8010A430_1C5FB0_DungeonDash(s32 model, s32 src);
 s32 func_8010A4DC_1C605C_DungeonDash(s32 model, s32 src, HuSprite_Unk84_Struct* anim, s32 frame);
@@ -208,15 +208,18 @@ extern s16 D_8010B270_1C6DF0_DungeonDash[8];   /* frames total */
 extern Vec3f D_801013B0_101FB0[]; /* CenterM */
 extern Vec3f D_80102770_103370[]; /* CRotM */
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
-extern s16 D_8010A750_1C62D0_DungeonDash[]; /* .data */
-extern s16 D_8010A89C_1C641C_DungeonDash[]; /* .data */
-extern s16 D_8010A93C_1C64BC_DungeonDash[]; /* .data */
-extern s16 D_8010A7FC_1C637C_DungeonDash[]; /* .data */
-extern s16 D_8010A9DC_1C655C_DungeonDash[]; /* .data */
+extern Vtx_t D_8010A750_1C62D0_DungeonDash[10]; /* .data: sprite-model quads (4 used + 1, then 5 spare) */
+extern Vtx_t D_8010A89C_1C641C_DungeonDash[10]; /* .data */
+extern Vtx_t D_8010A93C_1C64BC_DungeonDash[10]; /* .data */
+extern Vtx_t D_8010A7FC_1C637C_DungeonDash[10]; /* .data */
+extern Vtx_t D_8010A9DC_1C655C_DungeonDash[10]; /* .data */
 f32 func_800B7890_B8490(f32); /* cos */
 extern u8 D_800FDBE0_FE7E0; /* the frame's buffer index */
 s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c */
 void HuMemFree(void*);
+void* HuMemAlloc(s32 size);
+extern u8 D_800FDBCA_FE7CA; /* vertex buffer count */
+extern Gfx D_8010AB70_1C66F0_DungeonDash[]; /* .data: the sprite models' shared setup list */
 f64 func_800B0D98_B1998(f64, f64); /* fmod */
 extern s16 D_800FA1AA_FADAA; /* main's heap tag */
 extern f32 D_8010A7F4_1C6374_DungeonDash[2]; /* .data: obstacle x by parity {-280, 280} */

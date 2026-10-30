@@ -779,7 +779,119 @@ void func_80109884_1C5404_DungeonDash(s32 team, f32 z) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80109958_1C54D8_DungeonDash);
+/* Builds a sprite model: a textured quad from vtx (10 vertices copied per frame buffer) showing
+   sprite animation spr; type picks the render and combine modes (2-5 tinted, translucent). */
+s16 func_80109958_1C54D8_DungeonDash(Vtx_t* vtx, HuSprite_Unk84_Struct* spr, s32 type) {
+    HmfData* hmf;
+    Gfx* buf;
+    Gfx* gfx;
+    Vtx_t* dst;
+    Vtx_t* src;
+    s32 idx;
+    s32 size;
+    s32 i;
+    s32 j;
+
+    buf = gfx = HuMemAlloc(0x200);
+    if (type == 1) {
+        idx = func_80027FA4_28BA4(0, buf, 4);
+    } else {
+        idx = func_80027FA4_28BA4(0x8C0, buf, 4);
+    }
+    hmf = D_800FC834_FD434[idx].hmf;
+    if (type == 1) {
+        hmf->unk64->unk50 |= 0x70010000;
+    } else if (type > 0) {
+        if (type < 4) {
+            hmf->unk64->unk50 |= 0x71010000;
+        } else {
+            hmf->unk64->unk50 |= 0x01010000;
+        }
+    } else {
+        hmf->unk64->unk50 |= 0x01010000;
+    }
+    HuMemFree(hmf->unk3C);
+    hmf->unk3C = func_80027154_27D54(0x14, D_800FA1AA_FADAA);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        dst = (Vtx_t*)(hmf->unk44[i] = func_80027154_27D54(0xA0, hmf->unk0E));
+        for (src = vtx, j = 0; j < 10; j++) {
+            *dst++ = *src++;
+        }
+    }
+    gSPDisplayList(gfx++, osVirtualToPhysical(D_8010AB70_1C66F0_DungeonDash));
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPPipeSync(gfx++);
+    gSPClearGeometryMode(gfx++, G_CULL_BOTH | G_LIGHTING);
+    if (type != 0) {
+        gSPSetGeometryMode(gfx++, G_ZBUFFER | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR);
+    } else {
+        gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_FRONT | G_TEXTURE_GEN_LINEAR | G_SHADING_SMOOTH);
+    }
+    gDPSetColorDither(gfx++, G_CD_NOISE);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetTextureFilter(gfx++, G_TF_BILERP);
+    gDPSetTextureConvert(gfx++, G_TC_FILT);
+    gDPSetAlphaDither(gfx++, G_AD_PATTERN);
+    gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
+    gDPSetBlendColor(gfx++, 0x01, 0x01, 0x01, 0x01);
+    gDPPipeSync(gfx++);
+    switch (type) {
+        case 2:
+            gDPSetRenderMode(gfx++, 0x004049D8, 0);
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, 0x40);
+            break;
+        case 3:
+            gDPSetRenderMode(gfx++, 0x004049D8, 0);
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetPrimColor(gfx++, 0, 0, 0x00, 0x00, 0x00, 0x80);
+            break;
+        case 4:
+            gDPSetRenderMode(gfx++, 0x004049D8, 0);
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0x64, 0x00, 0x80);
+            break;
+        case 5:
+            gDPSetRenderMode(gfx++, 0x004049D8, 0);
+            gDPSetCombine(gfx++, 0xFF97FF, 0xFF2DFEFF);
+            gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0x64, 0x00, 0xFF);
+            break;
+        default:
+            gDPSetCombine(gfx++, 0xFF99FF, 0xFF30FE7F);
+            gDPSetRenderMode(gfx++, 0x00404A50, 0);
+            break;
+    }
+    if (spr->unk1A >= 2) {
+        gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+        gDPLoadTLUT_pal16(gfx++, 0, spr->unk0C);
+        gDPLoadTextureBlock_4b(gfx++, 0x04000000, G_IM_FMT_CI, spr->unk00->unk04, spr->unk00->unk06, 0,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+        gDPPipeSync(gfx++);
+    } else {
+        gDPSetTexturePersp(gfx++, G_TP_NONE);
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        gDPLoadTextureBlock_4b(gfx++, 0x04000000, G_IM_FMT_I, spr->unk00->unk04, spr->unk00->unk06, 0,
+                               G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+        gDPPipeSync(gfx++);
+    }
+    gSPVertex(gfx++, 0x01000000, 4, 0);
+    gSP2Triangles(gfx++, 0, 1, 2, 0, 1, 3, 2, 0);
+    gSPClearGeometryMode(gfx++, 0xFFFFFFFF);
+    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_TEXTURE_GEN_LINEAR);
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+    size = (u32)gfx - (u32)buf;
+    hmf->unk3C->unk00[0] = hmf->unk3C->unk10 = func_80027154_27D54(size, hmf->unk0E);
+    bcopy(buf, hmf->unk3C->unk00[0], size);
+    HuMemFree(buf);
+    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
+        hmf->unk3C->unk00[i + 1] = func_80027154_27D54(0x100, hmf->unk0E);
+    }
+    return idx;
+}
 
 /* Points a sprite model's display list at frame `frame` of `anim`. */
 void func_8010A340_1C5EC0_DungeonDash(s16 model, HuSprite_Unk84_Struct* anim, s16 frame) {
