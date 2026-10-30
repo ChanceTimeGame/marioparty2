@@ -712,7 +712,36 @@ void func_8010537C_230CEC_HexagonHeat(omObjData* obj, f32 x, f32 y, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_8010537C_230CEC_HexagonHeat);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801054F8_230E68_HexagonHeat);
+/* Player hook 20 (an out player's motion; x, y, z its position): far out it is hidden, else it
+   bobs in the lava facing outward and splashes. */
+void func_801054F8_230E68_HexagonHeat(omObjData* obj, f32* x, f32* y, f32* z) {
+    Vec3f unused; /* retail's frame has room for one */
+    MgWork* w;
+    f32 v;
+
+    w = obj->unk_50;
+    if (func_800B1830_B2430(*x * *x + *z * *z) > 2000.0f) {
+        func_800298A4_2A4A4(obj->model[0], 4, 4);
+        func_800298A4_2A4A4(obj->model[10], 4, 4);
+        func_800298A4_2A4A4(obj->model[11], 4, 4);
+        func_800298A4_2A4A4(obj->model[12], 4, 4);
+        func_800298A4_2A4A4(obj->model[13], 4, 4);
+        return;
+    }
+    w->unk_3C = func_800B75A8_B81A8(*x, *z);
+    w->unk_40 = 25.0f;
+    v = w->unk_38;
+    if (v > D_800BF7D4_C03D4) {
+        v = D_800BF7D4_C03D4;
+    }
+    *y += v * v * (w->unk_38 >= 0.0f ? -35.0f : 35.0f);
+    if (*y <= 0.0f) {
+        w->unk_38 = -D_800BF7A4_C03A4;
+        *y = 0.0f;
+    }
+    w->unk_38 += D_800BF7A8_C03A8;
+    func_8010537C_230CEC_HexagonHeat(obj, *x, *y, *z);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801056C4_231034_HexagonHeat);
 
