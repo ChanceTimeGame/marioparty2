@@ -11,11 +11,10 @@
    (0x80). func_80105E30_16ABD0_LookAway gives each winner gPlayers[].coins_mg_bonus = 10.
    _CheckFlag(0xC) skips the result message and win animations.
    Retail is two files: 1675A0.c (80102800-80106638) and 16B3E0.c from 80106640 (the two table
-   clears; 2-nop text pad). .data is one asm blob (1675A0.c's, 0x16B490-0x16B560: nothing of
-   16B3E0.c); .rodata is carved from 0x16B560 (1675A0.c only).
+   clears; 2-nop text pad). .data is C in 1675A0.c (0x16B490-0x16B560: nothing of 16B3E0.c);
+   .rodata is carved from 0x16B560 (1675A0.c only).
    Split labels the code reads by their own address (retail addresses them by label, so the C
    does too): D_80106DF4/E28/E2C (D_80106CD0[4].spr/unk_38/unk_3C), D_80106ECC (D_80106CD0[7].spr).
-   D_8010677C_16B51C_LookAway has no splat label: undefined_syms.txt aliases it.
    N64 offsets are in the comments; the structs with pointer fields change size on the host. */
 
 #include "common.h"
@@ -96,16 +95,21 @@ typedef struct LADir {
     /* 0x04 */ LAAxis axis[2];
 } LADir; /* size = 0x1C */
 
-/* ---- .data (asm, 0x16B490-0x16B560) ---- */
+/* ---- .data (1675A0.c, 0x16B490-0x16B560) ---- */
 extern f32 D_801066F0_16B490_LookAway[4][3];  /* player start positions by slot */
 extern u16 D_80106720_16B4C0_LookAway[9][2];  /* marker sprite x, y */
-extern u16 D_80106722_16B4C2_LookAway[];      /* = D_80106720[0][1] (its y column; no C user) */
 extern s32 D_80106744_16B4E4_LookAway;        /* camera set up */
 extern u16 D_80106748_16B4E8_LookAway[6];     /* player model file by character */
 extern s16 D_80106754_16B4F4_LookAway[6];     /* player motion directory by character */
-extern u16 D_80106760_16B500_LookAway[13];    /* common motion files (in D_80106754's directory) */
-extern u16 D_8010677C_16B51C_LookAway[3 * 6];  /* per-character motions [3][6] (no splat label: undefined_syms) */
-extern char* D_801067A0_16B540_LookAway[8];   /* "c00Nl_0_DEF" by character (6) */
+extern u16 D_80106760_16B500_LookAway[32];    /* motion files: 13 common ones (in D_80106754's
+                                                 directory), a pad, then [3][6] by character */
+extern char* D_801067A0_16B540_LookAway[6];   /* "c00Nl_0_DEF" by character */
+extern const char D_80106858_16B5F8_LookAway[];
+extern const char D_80106864_16B604_LookAway[];
+extern const char D_80106870_16B610_LookAway[];
+extern const char D_8010687C_16B61C_LookAway[];
+extern const char D_80106888_16B628_LookAway[];
+extern const char D_80106894_16B634_LookAway[];
 
 /* ---- .bss ---- */
 extern u16 D_801069A0_16B740_LookAway; /* game state */

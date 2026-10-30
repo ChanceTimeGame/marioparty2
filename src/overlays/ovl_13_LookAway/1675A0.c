@@ -1,6 +1,28 @@
 #include "common.h"
 #include "ovl_13.h"
 
+/* .data (0x16B490-0x16B560, 801066F0-801067C0); 16B3E0.c has none. */
+
+f32 D_801066F0_16B490_LookAway[4][3] = {
+    { 0.0f, 75.0f, 0.0f }, { -125.0f, -100.0f, 0.0f }, { 0.0f, -100.0f, 0.0f }, { 125.0f, -100.0f, 0.0f },
+};
+u16 D_80106720_16B4C0_LookAway[9][2] = {
+    { 45, 51 }, { 80, 53 }, { 105, 55 }, { 215, 55 }, { 240, 53 }, { 275, 51 }, { 75, 140 }, { 160, 140 }, { 245, 140 },
+};
+s32 D_80106744_16B4E4_LookAway = 0;
+u16 D_80106748_16B4E8_LookAway[6] = { 13, 14, 15, 16, 17, 18 };
+s16 D_80106754_16B4F4_LookAway[6] = { 2, 3, 7, 4, 5, 6 };
+u16 D_80106760_16B500_LookAway[32] = {
+    0xDF, 0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0,
+    0x13, 0x16, 0x19, 0x1C, 0x1F, 0x22,
+    0x14, 0x17, 0x1A, 0x1D, 0x20, 0x23,
+    0x15, 0x18, 0x1B, 0x1E, 0x21, 0x24,
+};
+char* D_801067A0_16B540_LookAway[6] = {
+    (char*)D_80106894_16B634_LookAway, (char*)D_80106888_16B628_LookAway, (char*)D_8010687C_16B61C_LookAway,
+    (char*)D_80106870_16B610_LookAway, (char*)D_80106864_16B604_LookAway, (char*)D_80106858_16B5F8_LookAway,
+};
+
 void func_80102800_1675A0_LookAway(void) {
     func_8010640C_16B1AC_LookAway();
 }
@@ -953,7 +975,7 @@ void func_8010580C_16A5AC_LookAway(omObjData* obj) {
             D_80106AE0_16B880_LookAway[obj->work[1]][i] = DataRead(dir | D_80106760_16B500_LookAway[i]);
         } else {
             dir = 0x230000;
-            D_80106AE0_16B880_LookAway[obj->work[1]][i] = DataRead(D_8010677C_16B51C_LookAway[(i - 13) * 6 + chr] | dir);
+            D_80106AE0_16B880_LookAway[obj->work[1]][i] = DataRead(D_80106760_16B500_LookAway[14 + (i - 13) * 6 + chr] | dir);
         }
     }
     D_80106BE0_16B980_LookAway[obj->work[1]] =
