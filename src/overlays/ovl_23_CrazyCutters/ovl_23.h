@@ -80,7 +80,8 @@ void func_800822A8_82EA8(s16 group, s16 member, u16 arg2, s32 arg3);
 void func_80082488_83088(s16 grpIdx, s16 idx, u16 a); /* sprite alpha */
 void func_800824F4_830F4(s16 group, s16 member, s16 arg2);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
-omObjData* func_80073328_73F28(u32 arg0, s16 arg1, s16 arg2, s16 arg3);
+/* 73BA0.c defines arg3 s16; retail passes a full word here (lw) */
+omObjData* func_80073328_73F28(u32 arg0, s16 arg1, s16 arg2, s32 arg3);
 u16 func_80078EA8_79AA8(void);
 
 extern s8 ContStkX[4];
