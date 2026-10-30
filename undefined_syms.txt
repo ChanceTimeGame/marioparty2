@@ -324,3 +324,17 @@ D_801068BC_F7FCC_CoffinCongestion = D_80106600_F7D10_CoffinCongestion + 0x2BC;
 D_801068C0_F7FD0_CoffinCongestion = D_80106600_F7D10_CoffinCongestion + 0x2C0;
 D_801068C4_F7FD4_CoffinCongestion = D_80106600_F7D10_CoffinCongestion + 0x2C4;
 D_801068C8_F7FD8_CoffinCongestion = D_80106600_F7D10_CoffinCongestion + 0x2C8;
+/* S4-1D: ovl_1D labels inside .data tables, named by the NON_MATCHING functions' asm */
+D_801065E4_1B8734_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x4;
+D_801065E8_1B8738_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x8;
+D_801065EC_1B873C_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0xC;
+D_801065F0_1B8740_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x10;
+D_801065F4_1B8744_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x14;
+D_80106640_1B8790_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x60;
+D_80106644_1B8794_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x64;
+D_80106648_1B8798_SpeedHockey = D_801065E0_1B8730_SpeedHockey + 0x68;
+D_80106780_1B88D0_SpeedHockey = D_80106774_1B88C4_SpeedHockey + 0xC;
+D_8010678C_1B88DC_SpeedHockey = D_80106774_1B88C4_SpeedHockey + 0x18;
+D_80106AE1_1B8C31_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x1;
+D_80106AE2_1B8C32_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x2;
+D_80106AE3_1B8C33_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x3;
