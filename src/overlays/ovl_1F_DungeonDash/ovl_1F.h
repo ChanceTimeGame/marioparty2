@@ -199,6 +199,11 @@ extern Vec3f D_801013B0_101FB0[]; /* CenterM */
 extern Vec3f D_80102770_103370[]; /* CRotM */
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern s16 D_8010A750_1C62D0_DungeonDash[]; /* .data */
+extern s16 D_8010A89C_1C641C_DungeonDash[]; /* .data */
+extern s16 D_8010A93C_1C64BC_DungeonDash[]; /* .data */
+extern s16 D_800FA1AA_FADAA; /* main's heap tag */
+s16 LoadFormFile(s32, s32);
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
@@ -229,9 +234,20 @@ extern f32 D_8010ABC0_1C6740_DungeonDash[2][2]; /* per team: [0] curtain alpha, 
 extern s32 D_8010ABD0_1C6750_DungeonDash;       /* frames both curtains are open */
 /* .bss (1C2D40.c's part) */
 extern omObjData* D_8010B288_1C6E08_DungeonDash[3]; /* the two track objects and the scenery object */
+/* A wall torch (D_8010B29C, 6 of them, func_80027154_27D54(0x90)). No pointers. */
+typedef struct DDTorch {
+    /* 0x00 */ s16 model;
+    /* 0x02 */ s16 unk2; /* animation phase 0..359 */
+    /* 0x04 */ f32 unk4; /* y rotation */
+    /* 0x08 */ f32 unk8; /* scale */
+    /* 0x0C */ f32 x;
+    /* 0x10 */ f32 y;
+    /* 0x14 */ f32 z;
+} DDTorch; /* size = 0x18 */
+extern DDTorch* D_8010B29C_1C6E1C_DungeonDash;
 extern s16 D_8010B2A6_1C6E26_DungeonDash;
 extern s16 D_8010B2A8_1C6E28_DungeonDash;
-extern s16 D_8010B2AC_1C6E2C_DungeonDash[2]; /* sprite animations */
+extern s16 D_8010B2AA_1C6E2A_DungeonDash[4]; /* sprite animations (2F000E, 2F000A, 2F000F, 2F0010) */
 extern s16 D_8010B2B2_1C6E32_DungeonDash[3]; /* per-team curtain sprite groups; [2] the start banner (D_8010B2B6) */
 extern s16 D_8010B2BA_1C6E3A_DungeonDash; /* MP1 D_800FC650 */
 extern s16 D_8010B2BC_1C6E3C_DungeonDash; /* MP1 D_800FC652 */

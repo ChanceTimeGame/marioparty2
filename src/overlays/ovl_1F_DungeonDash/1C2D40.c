@@ -145,9 +145,9 @@ void func_8010764C_1C31CC_DungeonDash(void) {
     D_8010B288_1C6E08_DungeonDash[1]->work[1] = 1;
     D_8010B288_1C6E08_DungeonDash[2] = D_800FC7B0_FD3B0[2] = omAddObj(4, 6, 0, -1, func_80107C6C_1C37EC_DungeonDash);
     omSetStatBit(D_8010B288_1C6E08_DungeonDash[2], 0xA0);
-    D_8010B2AC_1C6E2C_DungeonDash[0] = func_80107608_1C3188_DungeonDash(0x2F000A);
-    D_8010B2AC_1C6E2C_DungeonDash[1] = func_80107608_1C3188_DungeonDash(0x2F000F);
-    frame = D_800F60B0_F6CB0[D_8010B2AC_1C6E2C_DungeonDash[1]]->unk00;
+    D_8010B2AA_1C6E2A_DungeonDash[1] = func_80107608_1C3188_DungeonDash(0x2F000A);
+    D_8010B2AA_1C6E2A_DungeonDash[2] = func_80107608_1C3188_DungeonDash(0x2F000F);
+    frame = D_800F60B0_F6CB0[D_8010B2AA_1C6E2A_DungeonDash[2]]->unk00;
     frame->unk0A = 0;
     frame->unk08 = 0;
     frame->unk06 = frame->unk04;
@@ -162,7 +162,7 @@ void func_801077C8_1C3348_DungeonDash(omObjData* obj) {
     obj->trans.x = obj->trans.y = 0.0f;
     w = obj->work[1];
     D_8010B2B2_1C6E32_DungeonDash[(u16)w] = SprCreate(1, 0);
-    SprAnimSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, D_8010B2AC_1C6E2C_DungeonDash[1], 0);
+    SprAnimSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, D_8010B2AA_1C6E2A_DungeonDash[2], 0);
     SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, 0x103C);
     SprPrioSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, w - 16);
     SprPosSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, (u16)w * 160, 0);
@@ -222,7 +222,73 @@ void func_801078BC_1C343C_DungeonDash(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801078BC_1C343C_DungeonDash);
 #endif
 
+/* The dungeon scenery: walls, gate, the far glow, six torches, the obstacles and the start banner. */
+// FPR allocation only (torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f arguments
+#ifdef NON_MATCHING
+void func_80107C6C_1C37EC_DungeonDash(omObjData* obj) {
+    DDTorch* e;
+    u16 i;
+    s32 r;
+
+    obj->func_ptr = func_80108054_1C3BD4_DungeonDash;
+    obj->model[0] = LoadFormFile(0x2F0000, 0x99);
+    obj->model[1] = LoadFormFile(0x2F0001, 0x9D);
+    obj->model[2] = LoadFormFile(0x2F0002, 0xBD);
+    func_80029714_2A314(obj->model[2], 0.0f, 400.0f, 50.0f);
+    obj->model[3] = LoadFormFile(0x2F0003, 0xB9);
+    D_8010B2AA_1C6E2A_DungeonDash[0] = func_80107608_1C3188_DungeonDash(0x2F000E);
+    obj->model[4] = func_80109958_1C54D8_DungeonDash(D_8010A89C_1C641C_DungeonDash,
+                                                     SprAnimGet(D_8010B2AA_1C6E2A_DungeonDash[0]), 1);
+    func_80029714_2A314(obj->model[4], 0.0f, -20.0f, -4600.0f);
+    func_800297E8_2A3E8(obj->model[4], 20.0f, 20.0f, 1.0f);
+    obj->model[5] = LoadFormFile(0x2F0008, 0x99);
+    func_80029714_2A314(obj->model[5], 0.0f, 3.0f, -700.0f);
+    func_800297E8_2A3E8(obj->model[5], 1.0f, 1.0f, 0.4f);
+    e = D_8010B29C_1C6E1C_DungeonDash = func_80027154_27D54(0x90, D_800FA1AA_FADAA);
+    func_800B0EF0_B1AF0(e, 0, 0x90);
+    D_8010B2AA_1C6E2A_DungeonDash[3] = func_80107608_1C3188_DungeonDash(0x2F0010);
+    i = 0;
+loop:
+    {
+        if (i == 0) {
+            e->model = func_80109958_1C54D8_DungeonDash(D_8010A93C_1C64BC_DungeonDash,
+                                                        SprAnimGet(D_8010B2AA_1C6E2A_DungeonDash[3]), 2);
+        } else {
+            e->model = func_8010A430_1C5FB0_DungeonDash(-1, D_8010B29C_1C6E1C_DungeonDash->model);
+        }
+        e->unk2 = (rand8() + rand8()) % 360;
+        e->unk8 = 5.0f;
+        if (i & 1) {
+            e->unk4 = -45.0f;
+            e->x = 525.0f;
+        } else {
+            e->unk4 = 45.0f;
+            e->x = -525.0f;
+        }
+        e->y = 425.0f;
+        e->z = -550.0 - 1000.0 * ((i + 2) >> 1);
+        func_80029714_2A314(e->model, e->x, e->y, e->z);
+        i++;
+        func_8002979C_2A39C(e->model, 0.0f, e->unk4, 0.0f);
+        func_800297E8_2A3E8(e->model, e->unk8, e->unk8, 1.0f);
+        e++;
+        if (i < 6) {
+            goto loop;
+        }
+    }
+    func_801083B0_1C3F30_DungeonDash(2);
+    func_80108C8C_1C480C_DungeonDash();
+    D_8010B2B2_1C6E32_DungeonDash[2] = SprCreate(1, 0);
+    SprAnimSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, D_8010B2AA_1C6E2A_DungeonDash[1], 0);
+    SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 0x1000);
+    SprScaleSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 1.0f, 1.0f);
+    SprPosSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 160, 120);
+    SprPrioSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 0x7FF0);
+    D_8010B2BE_1C6E3E_DungeonDash = 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80107C6C_1C37EC_DungeonDash);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108054_1C3BD4_DungeonDash);
 
