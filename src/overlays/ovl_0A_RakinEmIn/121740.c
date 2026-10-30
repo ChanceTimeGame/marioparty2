@@ -831,6 +831,9 @@ void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
     }
 }
 #else
+__asm__(".section .rodata");
+const u32 D_80107008_125F48_RakinEmIn[2] = { 0x00200060, 0x00300050 }; /* pan[4] */
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104BCC_123B0C_RakinEmIn);
 #endif
 
