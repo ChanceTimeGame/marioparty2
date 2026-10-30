@@ -7,10 +7,11 @@
    and throws its riders. MP2 adds a second track model (a lowered section and a jump), a 0x100
    work block with MP1's fields rearranged, and new sprite/marker objects (8010A870, 8010AD1C).
 
-   Retail is two files: 19B590.c (game flow, cars, track helpers, timer, CPU) and 1A10F0.c from
-   80108360 (MP1 216140.c's camera, seat/wheel helpers and sparks, then MP1 20F570.c's result
-   flow and the marker objects). .data stays asm (1A3EB0; 19B590.c's .data is 8010B120-8010B176,
-   1A10F0.c's from 8010B180); .rodata is carved per file (1A3F80, 1A4070).
+   Retail is three files: 19B590.c (game flow, cars, track helpers, timer, CPU), 1A10F0.c from
+   80108360 (MP1 216140.c's camera, seat/wheel helpers and sparks; no KMC mul fix) and 1A2950.c
+   from 80109BC0 (MP1 20F570.c's result flow and the marker objects; mul fix; S4-1AC found it from
+   the mul nops and the 16-aligned start). .data stays asm (1A3EB0; 19B590.c's .data is
+   8010B120-8010B176, the rest from 8010B180); .rodata is carved per file (1A3F80, 1A4070, 1A4078).
 
    Types from the asm's accesses; MP1 names and offsets in the comments. */
 
@@ -227,6 +228,84 @@ u8 rand8(void);
 s32 _CheckFlag(s32);
 void InitFadeIn(s32, s32);
 
+/* S4-1AC */
+typedef f32 HHMtx[4][4];
+void guMtxIdentF(float mf[4][4]);
+void func_80025884_26484(HHMtx m, f32 x, f32 y, f32 z); /* rotate (MP1 MtxRotate) */
+s16 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list */
+extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
+extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+f64 func_800B0750_B1350(f64 x); /* acos */
+f64 func_800B0D98_B1998(f64 x, f64 y); /* fmod */
+extern Vec3f D_80102774_103374[]; /* = &CRotM[0].y: retail addresses the split labels */
+extern Vec3f D_801013B4_101FB4[]; /* = &CenterM[0].y */
+extern Vec3f D_801013B8_101FB8[]; /* = &CenterM[0].z */
+
+/* A team's camera work (func_80027154_27D54(0x10); MP1 HHCam). */
+typedef struct HHCam {
+    /* 0x00 */ u16 cam;
+    /* 0x02 */ u16 timer;
+    /* 0x04 */ f32 rx;
+    /* 0x08 */ f32 ry;
+    /* 0x0C */ char unkC[4];
+} HHCam; /* size = 0x10 */
+
+/* The speed meters (D_8010D830->unk_50, 0x1C): per team three digits, "mph" and a dash shown
+   instead while the car is slower than its best. */
+typedef struct HHMeter {
+    /* 0x00 */ u16 unk0;
+    /* 0x02 */ u16 unk2;
+    /* 0x04 */ u16 unk4;
+    /* 0x06 */ u16 unk6;
+    /* 0x08 */ u16 spr[2][5]; /* digits [0..2] (sprite D_8010D85C), [3] D_8010D872, [4] D_8010D874 */
+} HHMeter; /* size = 0x1C */
+
+/* A team's sign (D_8010D818[team]->unk_50, 0x14): one of three sprites grows in while spinning,
+   waits, then grows on and spins back out (8010B024 starts one). */
+typedef struct HHSign {
+    /* 0x00 */ u8 cur;     /* sprite shown, 0xFF none */
+    /* 0x01 */ u8 spr[3];  /* sprites D_8010D814, D_8010D878, D_8010D82C */
+    /* 0x04 */ u8 state;   /* 0 in, 1 wait, 2 out */
+    /* 0x05 */ char unk5;
+    /* 0x06 */ u16 wait;
+    /* 0x08 */ f32 scale;
+    /* 0x0C */ s16 angle;
+    /* 0x0E */ u16 timer;
+    /* 0x10 */ u16 inTime;
+    /* 0x12 */ u16 outTime;
+} HHSign; /* size = 0x14 */
+
+void InitFadeOut(s32, s32);
+void func_800794A8_7A0A8(s32);
+s32 func_8008F618_90218(void);
+extern u16 D_801011FC_101DFC;
+void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2); /* sprite frame */
+void func_8001A7C8_1B3C8(u16 spriteId, f32 arg1);
+void func_8001A6BC_1B2BC(u16 spriteId, s16 arg1);
+f64 func_800B0E70_B1A70(f64 x); /* floor */
+
+/* One spark of a burst: two triangle tips (MP1 HHChip). */
+typedef struct HHChip {
+    /* 0x00 */ f32 unk00[3];
+    /* 0x0C */ Vec a;
+    /* 0x18 */ Vec b;
+} HHChip; /* size = 0x24 */
+
+/* A spark burst (D_8010B8A0[team][6]): eight triangles, model D_8010D7C0. MP1 HHSparks had 12
+   per team and 4 triangles; MP2 adds a second vertex colour set (set: 0 yellow, 1 blue). */
+typedef struct HHSparks {
+    /* 0x000 */ u16 active;
+    /* 0x002 */ u16 timer;
+    /* 0x004 */ u16 unk4;
+    /* 0x006 */ u16 side;
+    /* 0x008 */ u16 wheel;
+    /* 0x00A */ char unkA[2];
+    /* 0x00C */ HHChip chip[18]; /* 8 used */
+    /* 0x294 */ u16 set;         /* vertex set: D_8010B420 (0) or D_8010B5A0 (1) */
+    /* 0x296 */ char unk296[2];
+} HHSparks; /* size = 0x298 */
+
+
 /* ---------------------------------------------------------------------------------------------
    Overlay functions (all 65; MP1 ancestor in the comment). Those after 80105940 are inferred
    from registers and callers: forks B and C check their own.
@@ -278,13 +357,14 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out); /* F
 void func_80108A1C_1A17AC_HandcarHavoc(omObjData* obj, u16 side, Vec* out); /* FD888 */
 void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj);                /* FDBC8 */
 u16 func_80108E80_1A1C10_HandcarHavoc(s16 mdl, u16 dir, f32 step);     /* FDCEC */
-void func_80108FBC_1A1D4C_HandcarHavoc(s32 team);                      /* FE8D4 */
-void func_8010929C_1A202C_HandcarHavoc(s32 team, s32 i, s32 buf, s32 arg3); /* FEB4C */
-s32 func_80109484_1A2214_HandcarHavoc(s32 team, u16 side, u16 wheel, s32 arg3); /* FECF4; S4-1AB: types from 801074A8's call (u16 side/wheel; the result is re-extended) */
+void func_80108FBC_1A1D4C_HandcarHavoc(s32 team);                      /* FE8D4: spark setup */
+void func_8010929C_1A202C_HandcarHavoc(s32 team, s32 i, s32 buf, s32 set); /* FEB4C */
+s16 func_80109484_1A2214_HandcarHavoc(s32 team, u16 side, u16 wheel, s32 set); /* FECF4 */
 void func_8010986C_1A25FC_HandcarHavoc(HHCar* w);                      /* FF0AC */
 void func_80109B88_1A2918_HandcarHavoc(omObjData* obj);                /* FAF64 */
 void func_80109BA4_1A2934_HandcarHavoc(omObjData* obj);                /* FAF80 */
-void func_80109BC0_1A2950_HandcarHavoc(omObjData* obj, s16 team);      /* FAF9C */
+/* 1A2950.c */
+void func_80109BC0_1A2950_HandcarHavoc(omObjData* obj, u16 team);      /* FAF9C */
 void func_80109D10_1A2AA0_HandcarHavoc(omObjData* obj);                /* FB0EC */
 void func_8010A200_1A2F90_HandcarHavoc(omObjData* obj);                /* FB5DC */
 void func_8010A400_1A3190_HandcarHavoc(void);                          /* FB7DC: empty */
@@ -299,9 +379,9 @@ void func_8010AA30_1A37C0_HandcarHavoc(omObjData* obj);
 void func_8010ABC8_1A3958_HandcarHavoc(f32 x, f32 y, u16* arg2);
 void func_8010AD1C_1A3AAC_HandcarHavoc(omObjData* obj);
 void func_8010AE30_1A3BC0_HandcarHavoc(omObjData* obj);
-void func_8010B024_1A3DB4_HandcarHavoc(omObjData* obj, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
+void func_8010B024_1A3DB4_HandcarHavoc(omObjData* obj, u8 idx, s16 wait, s16 inTime, u16 outTime);
 u8 func_8010B0FC_1A3E8C_HandcarHavoc(omObjData* obj);
-void func_8010B108_1A3E98_HandcarHavoc(omObjData* obj, s16 arg1);
+void func_8010B108_1A3E98_HandcarHavoc(omObjData* obj, s16 wait);
 
 /* ---------------------------------------------------------------------------------------------
    .data (asm, 1A3EB0)
@@ -320,11 +400,13 @@ extern u16 D_8010B174_1A3F04_HandcarHavoc;     /* MP1 D_800FF3E8 (4); the file's
 /* 1A10F0.c */
 extern u16 D_8010B180_1A3F10_HandcarHavoc;     /* 1: leave (MP1 D_800FF400) */
 extern Vec D_8010B184_1A3F14_HandcarHavoc[4];  /* wheel spots per side; split labels B188, B18C */
+extern Vec D_8010B188_1A3F18_HandcarHavoc[];   /* S4-1AC: = &B184[0].y (retail addresses each label) */
+extern Vec D_8010B18C_1A3F1C_HandcarHavoc[];   /* S4-1AC: = &B184[0].z */
 extern f32 D_8010B1B4_1A3F44_HandcarHavoc[8];  /* spark lengths */
-extern u16 D_8010B1D4_1A3F64_HandcarHavoc;
-extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];
-extern u16 D_8010B1DC_1A3F6C_HandcarHavoc;
-extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[5];
+extern u16 D_8010B1D4_1A3F64_HandcarHavoc;     /* 1: leaving (fade started) */
+extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];  /* speed meter x per team */
+extern u16 D_8010B1DC_1A3F6C_HandcarHavoc[][2]; /* sign sprite x, y per sprite (split label B1DE = y) */
+extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[][2]; /* = &B1DC[0][1] */
 
 /* ---------------------------------------------------------------------------------------------
    .bss (8010B310-8010D880)
@@ -360,11 +442,11 @@ extern f32 D_8010B3A4_1A4134_HandcarHavoc;     /* track 2's length */
 extern omObjData* D_8010B3A8_1A4138_HandcarHavoc; /* scenery */
 extern omObjData* D_8010B3AC_1A413C_HandcarHavoc; /* intro */
 extern omObjData* D_8010B3B0_1A4140_HandcarHavoc; /* result */
-extern u8 D_8010B420_1A41B0_HandcarHavoc[0x180];
-extern u8 D_8010B5A0_1A4330_HandcarHavoc[0x180];
-extern u8 D_8010B720_1A44B0_HandcarHavoc[0x180];
-extern u8 D_8010B8A0_1A4630_HandcarHavoc[0x1F20]; /* sparks (MP1 D_800FFCC0) */
-extern s16 D_8010D7C0_1A6550_HandcarHavoc[2][8];
+extern Vtx* D_8010B420_1A41B0_HandcarHavoc[2][6][8]; /* spark vertices, set 0, per frame buffer */
+extern Vtx* D_8010B5A0_1A4330_HandcarHavoc[2][6][8]; /* set 1 */
+extern Gfx* D_8010B720_1A44B0_HandcarHavoc[2][6][8]; /* spark display lists */
+extern HHSparks D_8010B8A0_1A4630_HandcarHavoc[2][6]; /* sparks (MP1 D_800FFCC0) */
+extern s16 D_8010D7C0_1A6550_HandcarHavoc[2][6]; /* spark models (MP1 D_80101C40) */
 extern omObjData** D_8010D7E0_1A6570_HandcarHavoc; /* the two cameras */
 extern s16 D_8010D7E4_1A6574_HandcarHavoc;     /* sprite 0x43 */
 extern u16 D_8010D800_1A6590_HandcarHavoc;     /* race state: 0 intro, 1 race, 2 over */
