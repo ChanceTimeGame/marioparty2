@@ -553,6 +553,8 @@ build/src/overlays/ovl_4E_name/32A1C0.c.o: export VR4300MUL := ON
 # between back-to-back mul.s)
 MG0FA_MULFIX_UNITS := build/src/overlays/ovl_0F_RainbowRun/147180.c.o build/src/overlays/ovl_0F_RainbowRun/1479E0.c.o
 $(MG0FA_MULFIX_UNITS): export VR4300MUL := ON
+# S4-0F: ovl_0F 149120.c too (func_80107790: a nop between back-to-back mul.s)
+build/src/overlays/ovl_0F_RainbowRun/149120.c.o: export VR4300MUL := ON
 # with the KMC VR4300 mul fix on, as the other minigame overlays are
 # none before a mul.s after a call)
 MG0EA_BLANKSTRIP_UNITS := build/src/overlays/ovl_0E_BowlOver/13CB90.c.o build/src/overlays/ovl_0E_BowlOver/140760.c.o

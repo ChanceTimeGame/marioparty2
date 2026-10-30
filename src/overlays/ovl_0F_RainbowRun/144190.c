@@ -208,7 +208,7 @@ s32 func_801036CC_14505C_RainbowRun(omObjData* obj, omObjData* other) {
     for (i = 0; i < 6; i++) {
         func_800298A4_2A4A4(other->model[i], 4, 4);
     }
-    func_80021198_21D98(bomb->mdl, 0);
+    func_80021198_21D98(bomb->mdl[2], 0);
     func_800298A4_2A4A4(other->model[5], 4, 0);
     func_80029714_2A314(other->model[5], other->trans.x, other->trans.y - 50.0f, other->trans.z);
     other->trans.x = other->trans.y = other->trans.z = 1000.0f;
@@ -430,7 +430,7 @@ void func_801041E4_145B74_RainbowRun(omObjData* obj) {
                 D_8010A720_14C0B0_RainbowRun -= 0.22222f;
                 for (i = 0; i < 3; i++) {
                     if (D_8010AC14_14C5A4_RainbowRun[i] != NULL) {
-                        RR_WORK(D_8010AC14_14C5A4_RainbowRun[i])->team->unk_38 -= D_8010A720_14C0B0_RainbowRun + 20.0f;
+                        RR_WORK(D_8010AC14_14C5A4_RainbowRun[i])->team->ofs.z -= D_8010A720_14C0B0_RainbowRun + 20.0f;
                     }
                 }
             } else {
