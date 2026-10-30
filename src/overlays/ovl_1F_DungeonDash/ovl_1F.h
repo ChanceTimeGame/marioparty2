@@ -130,13 +130,14 @@ s32 func_80106F80_1C2B00_DungeonDash(omObjData* obj, s32 count);
 /* 1C2D40.c */
 void func_801071C0_1C2D40_DungeonDash(omObjData* obj);
 void func_80107290_1C2E10_DungeonDash(void);
-void func_80107358_1C2ED8_DungeonDash(s16 arg0);
+void func_80107358_1C2ED8_DungeonDash(s16 x);
 s32 func_80107484_1C3004_DungeonDash(void);
 s32 func_80107494_1C3014_DungeonDash(void);
 void func_801074BC_1C303C_DungeonDash(void);
 u16 func_801074F0_1C3070_DungeonDash(u16 range);
 void func_80107560_1C30E0_DungeonDash(u8 seed);
-void func_80107584_1C3104_DungeonDash(void* arg0);
+struct DDObstacle;
+void func_80107584_1C3104_DungeonDash(struct DDObstacle* o);
 void func_801075A8_1C3128_DungeonDash(s16 arg0, f32 arg1);
 u16 func_80107608_1C3188_DungeonDash(s32 file);
 void func_8010764C_1C31CC_DungeonDash(void);
@@ -160,6 +161,7 @@ s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
 
 /* S4-1FB */
 #include "game/data.h"
+#include "game/sprite.h"
 f64 fabs(f64); /* GCC builtin (abs.d) */
 /* A dust puff (D_8010B13C, 10 of them, func_80027154_27D54(0x168)). No pointers. */
 typedef struct DDFx {
@@ -204,5 +206,47 @@ void* func_80027154_27D54(s32 size, s16 tag);
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
 s16 SprAnimRead(void*);
 void* SprAnimGet(s16 animIdx);
+
+/* An obstacle on the course (D_8010B2E4, 5 of them, stride 0x24; MP1 DDObstacle 0x18). */
+typedef struct DDObstacle {
+    /* 0x00 */ s16 unk0;  /* active */
+    /* 0x02 */ s16 unk2;  /* held up (cleared once the race runs) */
+    /* 0x04 */ s16 unk4;  /* phase */
+    /* 0x06 */ char unk6[0xE];
+    /* 0x14 */ f32 unk14; /* phase timer (MP1 0x0C) */
+    /* 0x18 */ char unk18[0xC];
+} DDObstacle; /* size = 0x24 */
+
+/* .data (1C2D40.c's part) */
+extern u32 D_8010A7F0_1C6370_DungeonDash; /* random seed 0x19971204; 801074F0 reads its low half */
+extern u32 D_8010ABB0_1C6730_DungeonDash; /* frames since start (to 80) */
+extern u32 D_8010ABB4_1C6734_DungeonDash; /* race frames (to 120) */
+extern s16 D_8010ABB8_1C6738_DungeonDash; /* 60 */
+extern s16 D_8010ABBA_1C673A_DungeonDash; /* 20 */
+extern s16 D_8010ABBC_1C673C_DungeonDash;
+extern s16 D_8010ABBE_1C673E_DungeonDash;
+/* .bss (1C2D40.c's part) */
+extern omObjData* D_8010B288_1C6E08_DungeonDash[3]; /* the two track objects and the scenery object */
+extern s16 D_8010B2A6_1C6E26_DungeonDash;
+extern s16 D_8010B2A8_1C6E28_DungeonDash;
+extern s16 D_8010B2AC_1C6E2C_DungeonDash[2]; /* sprite animations */
+extern s16 D_8010B2B6_1C6E36_DungeonDash; /* the start banner's sprite group */
+extern s16 D_8010B2BA_1C6E3A_DungeonDash; /* MP1 D_800FC650 */
+extern s16 D_8010B2BC_1C6E3C_DungeonDash; /* MP1 D_800FC652 */
+extern s16 D_8010B2BE_1C6E3E_DungeonDash; /* MP1 D_800FC654 */
+extern f64 D_8010B2C0_1C6E40_DungeonDash[2]; /* each team's z */
+extern s16 D_8010B2D0_1C6E50_DungeonDash;
+extern s16 D_8010B2D2_1C6E52_DungeonDash;
+extern DDObstacle* D_8010B2E4_1C6E64_DungeonDash;
+
+extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
+void func_800798F8_7A4F8(s16 sound, s16 pan);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+s32 PlaySound(s32);
 
 #endif
