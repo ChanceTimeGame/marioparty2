@@ -59,9 +59,9 @@ void func_8000C3B8_CFB8(void);
 void func_8000C3C8_CFC8(void);
 void func_8000C460_D060(void);
 void func_8000C56C_D16C(s32);
-void func_8000C578_D178(u8);
+void func_8000C578_D178(s32);
 void func_8000C018_CC18(u16);
-void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_80079E60_7AA60(void);
 u16 func_80078EA8_79AA8(void);
@@ -69,25 +69,26 @@ u8 rand8(void);
 s32 PlaySound(s32);
 s16 func_80079574_7A174(void); /* music tempo */
 void func_8007954C_7A14C(s16);
-void func_800795D8_7A1D8(s16 sound, s16 volume);
+void func_800795D8_7A1D8(s16 sound, s8 volume);
 void func_800796F0_7A2F0(s16 sound, s16 pitch);
 void func_80079614_7A214(s16 time); /* music fade-out */
-void func_800797DC_7A3DC(s32, s16);
+s16 func_800797DC_7A3DC(s32 id, s16 player);
 void func_80079848_7A448(s16 arg0); /* stop a sound */
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
 s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
 omObjData* func_800732B0_73EB0(u32 arg0);
 f32 func_800B1830_B2430(f32); /* sqrtf */
+f64 fabs(f64); /* GCC builtin (abs.d) */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_8002D958_2E558(f32); /* wraps an angle */
-void* func_80027154_27D54(s32 size, s32 tag); /* HuMemAllocTag */
-void func_800B0EF0_B1AF0(void*, s32, s32); /* memset */
+void* func_80027154_27D54(s32 size, s16 tag); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
 u16 func_80018A30_19630(s32 arg0, s32 arg1); /* model from a file */
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
-s16 LoadFormFile(s32, s32);
+u16 LoadFormFile(s32, s32);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
@@ -102,7 +103,7 @@ void func_8002A00C_2AC0C(s16 model);
 void func_8002BED4_2CAD4(s16 model, f32 s, f32 t, u16 w, u16 h, char* part, u8 arg6); /* texture scroll */
 void func_8002C20C_2CE0C(s16 arg0, char* arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5); /* part colour */
 void func_8002D1EC_2DDEC(s16, u8);
-void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3); /* model light colour */
+void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3); /* model light colour */
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3); /* model light direction */
 void func_8002D3C0_2DFC0(s16 arg0);
 void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */
@@ -120,13 +121,13 @@ void func_8000C37C_CF7C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->scale */
 void func_8000D2F8_DEF8(omObjData*);
 /* players */
 void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5); /* player object setup */
-void func_8000BDC4_C9C4(omObjData* obj, s32 slot, s32 file, s32 attr, f32 arg4);
-void func_8000CC74_D874(omObjData* obj, s16 model, s32 arg2);
-void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+void func_8000BDC4_C9C4(omObjData* obj, u16 idx, s32 dir, s32 file, f32 arg4);
+void func_8000CC74_D874(omObjData* obj, s16 model, s16 motion);
+void func_8000C024_CC24(omObjData* obj, u8 idx, u8 val);
 void func_8000E0C0_ECC0(MgWork* w, s32 slot, void* hook); /* w->unk_104[slot] = hook (slot < 21) */
 s32 func_80019000_19C00(omObjData* obj);
-void func_80019B9C_1A79C(omObjData* obj, s32 motion); /* player motion */
-void func_80019CA4_1A8A4(omObjData* obj, s32 arg1);
+s32 func_80019B9C_1A79C(omObjData* obj, u16 motion); /* player motion */
+s32 func_80019CA4_1A8A4(omObjData* obj, u16 motion);
 void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
 
 /* ---- .data (231E90; asm) ---- */
