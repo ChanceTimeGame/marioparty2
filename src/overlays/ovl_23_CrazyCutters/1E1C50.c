@@ -548,7 +548,182 @@ void func_801040F0_1E3540_CrazyCutters(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010454C_1E399C_CrazyCutters);
+void func_8010454C_1E399C_CrazyCutters(omObjData* obj) {
+    CCPlayer* st = obj->unk_50;
+    Vec pos;
+    s16 cur[2];
+    Vec2f screen;
+    Vec2f to;
+    s32 q;
+    s32 sx;
+    s32 hits;
+    s32 lim;
+    s32 total;
+    s32 i;
+    s32 gx;
+    s32 gy;
+    s8 port;
+    s8 stickX;
+    s8 stickY;
+    f32 dist;
+    f32 fx;
+    f32 fy;
+    f32 angle;
+    f32 mag;
+    f32 dx;
+    f32 dz;
+
+    q = func_8010882C_1E7C7C_CrazyCutters(st->player);
+    omSetTra(obj, D_80109090_1E84E0_CrazyCutters[q] + st->x, st->y, D_801090A0_1E84F0_CrazyCutters[q] + st->z + st->unk2C + -4.0f);
+    omSetRot(obj, st->rotX, st->rotY, st->rotZ);
+    func_80029714_2A314(obj->model[1], D_80109090_1E84E0_CrazyCutters[q] + st->x, st->y + 30.0f, D_801090A0_1E84F0_CrazyCutters[q] + st->z + st->unk2C - 10.0f);
+    func_8002979C_2A39C(obj->model[1], st->rotX, st->rotY, st->rotZ);
+    func_80029714_2A314(obj->model[2], D_80109090_1E84E0_CrazyCutters[q] + st->x, st->y + 20.0f, D_801090A0_1E84F0_CrazyCutters[q] + st->z + st->unk2C - 12.0f);
+    func_8002979C_2A39C(obj->model[2], st->rotX, st->rotY, st->rotZ);
+    pos.x = D_80109090_1E84E0_CrazyCutters[q] + st->x - 8.0f;
+    pos.y = st->y + 10.0f;
+    pos.z = D_801090A0_1E84F0_CrazyCutters[q] + st->z - 8.0f;
+    Hu3DCam3DToScreen(0, &pos, &screen);
+    sx = screen.unk_00;
+    cur[0] = sx;
+    cur[1] = screen.unk_04;
+    if (q & 1) {
+        cur[0] = sx - 160;
+    }
+    if (q / 2) {
+        cur[1] -= 120;
+    }
+    hits = func_80108A8C_1E7EDC_CrazyCutters(func_80107D74_1E71C4_CrazyCutters(D_801095B0_1E8A00_CrazyCutters[st->player]), 0, cur[0], cur[1], 3, 3, D_801090B0_1E8500_CrazyCutters);
+    /* D_801099D8: frames the cutter has moved off the outline */
+    if (st->moving != 0 && func_80104FF4_1E4444_CrazyCutters(st, cur, 0) == 0) {
+        if (hits == 0) {
+            D_801099D8_1E8E28_CrazyCutters[st->player]++;
+        } else {
+            D_801099D8_1E8E28_CrazyCutters[st->player] = 0;
+        }
+    }
+    /* Off the outline, on fresh ground and moving: back near the start closes the loop (flag 1
+       finished, with time short; 0x800 closed). */
+    if (st->moving != 0 && hits == 0 && func_80104FF4_1E4444_CrazyCutters(st, cur, 0) == 0
+        && func_80105098_1E44E8_CrazyCutters(st, cur) == 0) {
+        screen.unk_00 = cur[0];
+        screen.unk_04 = cur[1];
+        to.unk_00 = st->startGX;
+        to.unk_04 = st->startGY;
+        dist = func_800B1830_B2430((to.unk_00 - screen.unk_00) * (to.unk_00 - screen.unk_00)
+                                   + (to.unk_04 - screen.unk_04) * (to.unk_04 - screen.unk_04));
+        lim = 5;
+        if (dist < 5.0f) {
+            lim = 3;
+        }
+        total = D_80109950_1E8DA0_CrazyCutters[st->player] + D_80109960_1E8DB0_CrazyCutters[st->player];
+        if (D_8010957E_1E89CE_CrazyCutters < D_801093E4_1E8834_CrazyCutters[D_80109918_1E8D68_CrazyCutters]) {
+            if (D_801099D8_1E8E28_CrazyCutters[st->player] >= lim) {
+                if (dist < 30.0f) {
+                    func_80106D44_1E6194_CrazyCutters(st->player, 1, 1);
+                } else {
+                    func_80106D44_1E6194_CrazyCutters(st->player, 0x800, 1);
+                }
+            }
+        } else if (dist < 20.0f && total >= 11) {
+            if (D_801099D8_1E8E28_CrazyCutters[st->player] >= lim) {
+                func_80106D44_1E6194_CrazyCutters(st->player, 0x800, 1);
+            }
+        }
+    }
+    gx = cur[0] * 1.0f;
+    gy = cur[1] * 1.0f;
+    func_80106D44_1E6194_CrazyCutters(st->player, 0x40, 0);
+    if (func_80106D28_1E6178_CrazyCutters(st->player, 0x8000) != 0) {
+        if (func_80107BBC_1E700C_CrazyCutters(st) != 0 && func_80104FF4_1E4444_CrazyCutters(st, cur, 1) == 0) {
+            D_80109950_1E8DA0_CrazyCutters[st->player]++;
+            func_80106D44_1E6194_CrazyCutters(st->player, 0x40, 1);
+        } else {
+            D_80109960_1E8DB0_CrazyCutters[st->player]++;
+        }
+    }
+    screen.unk_00 = cur[0];
+    screen.unk_04 = cur[1];
+    to.unk_00 = st->pathX[D_80109A5A_1E8EAA_CrazyCutters];
+    to.unk_04 = st->pathY[D_80109A5A_1E8EAA_CrazyCutters];
+    if (func_800B1830_B2430((to.unk_00 - screen.unk_00) * (to.unk_00 - screen.unk_00)
+                            + (to.unk_04 - screen.unk_04) * (to.unk_04 - screen.unk_04)) < 30.0f) {
+        func_80106D44_1E6194_CrazyCutters(st->player, 0x1000, 1);
+    }
+    if (gx >= st->pathX[D_801099FC_1E8E4C_CrazyCutters] - 3 && st->pathX[D_801099FC_1E8E4C_CrazyCutters] + 3 >= gx
+        && gy >= st->pathY[D_801099FC_1E8E4C_CrazyCutters] - 3 && st->pathY[D_801099FC_1E8E4C_CrazyCutters] + 3 >= gy) {
+        func_80106D44_1E6194_CrazyCutters(st->player, 0x2000, 1);
+    }
+    func_801050FC_1E454C_CrazyCutters(st, cur);
+    /* D_80109588: bit i set once the cutter passed route point i */
+    for (i = 0; i < D_80109584_1E89D4_CrazyCutters; i++) {
+        if (gx >= st->pathX[i] - 1 && st->pathX[i] + 1 >= gx && gy >= st->pathY[i] - 1 && st->pathY[i] + 1 >= gy) {
+            D_80109588_1E89D8_CrazyCutters[st->player] |= 1 << i;
+        }
+    }
+    if (func_80106D28_1E6178_CrazyCutters(st->player, 1) != 0 || func_80106D28_1E6178_CrazyCutters(st->player, 0x800) != 0
+        || D_8010957E_1E89CE_CrazyCutters == 0) {
+        func_800283DC_28FDC(obj->model[1]);
+        func_800298A4_2A4A4(obj->model[2], 4, 4);
+        func_80029B80_2A780(obj->model[0], obj->motion[0]);
+        func_80029E80_2AA80(obj->model[0], 2, 2);
+        obj->func_ptr = func_80105254_1E46A4_CrazyCutters;
+    }
+    st->prevX = st->x;
+    st->prevZ = st->z;
+    port = gPlayers[st->player].port;
+    stickX = 0;
+    stickY = 0;
+    if (!(gPlayers[st->player].flags & 1)) {
+        if (D_80109948_1E8D98_CrazyCutters != 0) {
+            stickX = ContStkX[port];
+            stickY = ContStkY[port];
+        }
+        fx = stickX;
+        fy = stickY;
+        angle = func_800B75A8_B81A8(fy, fx) + 90.0f;
+        if (angle < 0.0f) {
+            angle += 360.0f;
+        }
+        mag = fabsf(fx * HuMathSin(angle));
+        mag += fabsf(fy * func_800B7890_B8490(angle));
+    } else if (D_80109948_1E8D98_CrazyCutters != 0) {
+        angle = func_801056B8_1E4B08_CrazyCutters(st);
+        mag = 40.0f;
+    } else {
+        angle = 0.0f;
+        mag = 0.0f;
+    }
+    if (mag < 40.0f) {
+        angle = st->angle;
+    } else {
+        func_80106D44_1E6194_CrazyCutters(st->player, 0x8000, 1);
+        st->moving = 1;
+        st->angle = angle;
+    }
+    if (--st->unk568 == 0) {
+        omVibrate(st->player, 2, 3, 10);
+        st->unk568 = 10;
+    }
+    dx = 0.0f;
+    dz = 0.0f;
+    if (st->moving != 0) {
+        dx = HuMathSin(angle) * D_801099E8_1E8E38_CrazyCutters;
+        dz = func_800B7890_B8490(angle) * D_801099E8_1E8E38_CrazyCutters;
+    }
+    st->x += dx;
+    st->z += dz;
+    pos.x = D_80109090_1E84E0_CrazyCutters[q] + st->x;
+    pos.y = st->y;
+    pos.z = D_801090A0_1E84F0_CrazyCutters[q] + st->z;
+    Hu3DCam3DToScreen(0, &pos, &screen);
+    if (st->x > 550.0f || st->x < 0.0f) {
+        st->x -= dx;
+    }
+    if (st->z > 490.0f || st->z < 25.0f) {
+        st->z -= dz;
+    }
+}
 
 /* Whether cur is one of the cutter's last positions (crossing its own fresh cut): 20 for a CPU,
    else 10, or 60 when wide. */

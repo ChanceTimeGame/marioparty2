@@ -58,6 +58,7 @@ void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void HmfModelObjAttrSet(s16, s32, s32);
 f32 HuMathSin(f32);
+f32 fabsf(f32);
 f32 func_800B7890_B8490(f32);          /* cos */
 f32 func_800B1830_B2430(f32);          /* sqrtf */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
