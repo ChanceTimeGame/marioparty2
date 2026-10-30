@@ -256,7 +256,97 @@ s32 func_8010308C_1B51DC_SpeedHockey(SHObjWork* w, s32 n) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010308C_1B51DC_SpeedHockey);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103488_1B55D8_SpeedHockey);
+/* Rebuild walls 10.. from the paddle faces the puck can reach (by which of the nine cells
+   around each paddle box its previous position is in), then bounce it until it crosses no
+   wall (at most 21 bounces). Returns 1 when it is free, 0 when it gave up. */
+s32 func_80103488_1B55D8_SpeedHockey(SHObjWork* w) {
+    s32 tries = 0;
+    s32 n;
+    s32 i;
+    s32 j;
+    s32 r;
+    SHObjWork* pw;
+
+    while (1) {
+        n = 10;
+        for (i = 0, j = 0; i < 4; i++, j++) {
+            pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[j]);
+            D_80106CB8_1B8E08_SpeedHockey[i].xMin = D_80106764_1B88B4_SpeedHockey.xMin + pw->pos.x;
+            D_80106CB8_1B8E08_SpeedHockey[i].xMax = D_80106764_1B88B4_SpeedHockey.xMax + pw->pos.x;
+            D_80106CB8_1B8E08_SpeedHockey[i].zMin = D_80106764_1B88B4_SpeedHockey.zMin + pw->pos.z;
+            D_80106CB8_1B8E08_SpeedHockey[i].zMax = D_80106764_1B88B4_SpeedHockey.zMax + pw->pos.z;
+            switch (func_80102A88_1B4BD8_SpeedHockey(&w->prev, &D_80106CB8_1B8E08_SpeedHockey[i])) {
+                case 0:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 1:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 2:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[0].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 3:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 6:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[2].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 7:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                case 8:
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[1].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[0], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[0]);
+                    HuVecAdd(&D_80106774_1B88C4_SpeedHockey[n].p[1], &pw->pos, &D_801066F4_1B8844_SpeedHockey[3].p[1]);
+                    D_80106774_1B88C4_SpeedHockey[n++].paddle = j;
+                    break;
+                default:
+                    while (1) {
+                    }
+            }
+        }
+        r = func_8010308C_1B51DC_SpeedHockey(w, n);
+        if (r == 1) {
+            tries++;
+            if (tries >= 21) {
+                return 0;
+            }
+        }
+        if (r == 0) {
+            return 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010389C_1B59EC_SpeedHockey);
 
