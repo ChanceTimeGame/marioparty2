@@ -518,7 +518,147 @@ void func_801082B8_142648_BowlOver(omObjData* obj, BOJump* jump, u8* sx, u8* sy)
     }
 }
 
+/* A pin player: A (or the CPU) jumps and spins; on the ground the stick (averaged over 8 frames)
+   turns and walks it; then its pin. */
+// one instruction short (masked 23): GCC compares jump->unk_18 with a constant 1 where retail keeps
+// the loaded value in a0 for the two later tests (as MP1's twin)
+#ifdef NON_MATCHING
+void func_801087A0_142B30_BowlOver(omObjData* obj) {
+    BOPlayerWork* w;
+    BOPin* pin;
+    BOJump* jump;
+    HmfModel* m;
+    u8 sx;
+    u8 sy;
+    s32 keep;
+    s16 slot;
+    s16 i;
+    f32 ax;
+    f32 ay;
+
+    w = BO_WORK(obj);
+    pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
+    if (pin->unk_17 == 0) {
+        func_801064C8_140858_BowlOver(obj);
+    }
+    jump = &D_80109F48_1442D8_BowlOver[obj->work[3]];
+    if (jump->unk_14 == 0) {
+        if (D_800F8FD0_F9BD0 > 0 && D_80109960_143CF0_BowlOver != 1 && pin->unk_17 != 1) {
+            if (!(gPlayers[w->unk_59].flags & 1)) {
+                if (ContBtnTrg[w->unk_57] & 0x8000) {
+                    jump->unk_00 = 40.0f;
+                    jump->unk_14 = 1;
+                    jump->unk_18 = 0;
+                    jump->unk_16 = 0;
+                    jump->unk_04 = 2.5f;
+                    jump->unk_1C = -1;
+                    func_80079798_7A398(0x185, w->unk_59);
+                }
+            } else if (jump->unk_31 == 1) {
+                jump->unk_00 = 40.0f;
+                jump->unk_14 = 1;
+                jump->unk_18 = 0;
+                jump->unk_16 = 0;
+                jump->unk_04 = 2.5f;
+                jump->unk_1C = -1;
+                jump->unk_31 = 0;
+                func_80079798_7A398(0x185, w->unk_59);
+            }
+        }
+    } else if (jump->unk_18 == 1) {
+        if (jump->unk_16 > 20) {
+            jump->unk_1A = 0;
+            jump->unk_14 = 0;
+            obj->rot.x = 0.0f;
+        } else {
+            jump->unk_1A = 1;
+            if (jump->unk_1C < 0) {
+                if (obj->rot.x > 8.0f) {
+                    jump->unk_04 = -4.1f;
+                    jump->unk_1C = ~jump->unk_1C;
+                }
+            } else if (obj->rot.x < -8.0f) {
+                jump->unk_04 = 4.1f;
+                jump->unk_1C = ~jump->unk_1C;
+            }
+            obj->rot.x = obj->rot.x + jump->unk_04 / ((f32)jump->unk_16 / 5.0f + 1.0);
+        }
+        jump->unk_16++;
+    }
+    obj->trans.y += jump->unk_00;
+    jump->unk_00 -= 9.8f;
+    if (obj->trans.y < 0.0f) {
+        jump->unk_18 = 1;
+        jump->unk_00 = 0.0f;
+        obj->trans.y = 0.0f;
+    }
+    if (jump->unk_1A == 0) {
+        slot = jump->unk_20;
+        sy = 0;
+        sx = 0;
+        keep = 1;
+        if (D_800F8FD0_F9BD0 > 0 && jump->unk_18 == 1 && D_80109960_143CF0_BowlOver != jump->unk_18 &&
+            pin->unk_17 != jump->unk_18) {
+            if (!(gPlayers[w->unk_59].flags & 1)) {
+                jump->unk_33 = sx = ContStkX[w->unk_57];
+                jump->unk_34 = sy = ContStkY[w->unk_57];
+            } else {
+                func_801082B8_142648_BowlOver(obj, jump, &sx, &sy);
+            }
+            keep = 0;
+        }
+        if (keep == 1) {
+            sx = jump->unk_33;
+            sy = jump->unk_34;
+        }
+        if ((s8)sx > 60) {
+            sx = 60;
+        }
+        if ((s8)sy > 60) {
+            sy = 60;
+        }
+        if ((s8)sx < -60) {
+            sx = -60;
+        }
+        if ((s8)sy < -60) {
+            sy = -60;
+        }
+        jump->unk_21[slot] = sx;
+        jump->unk_29[slot] = sy;
+        ax = 0.0f;
+        ay = 0.0f;
+        for (i = 0; i < 8; i++) {
+            ax += jump->unk_21[i];
+            ay += jump->unk_29[i];
+        }
+        ax /= 8.0f;
+        ay /= 8.0f;
+        jump->unk_20 = (jump->unk_20 + 1) & 7;
+        if (ax * ax + ay * ay > 100.0f) {
+            obj->rot.y = jump->unk_08 = func_800B75A8_B81A8(ax, -ay);
+        }
+        if (jump->unk_14 == 1) {
+            func_8010782C_141BBC_BowlOver(obj, ax / 40.0f, -ay / 40.0f);
+        }
+    }
+    if (pin->unk_17 == 1) {
+        obj->rot.y = jump->unk_08 = 180.0f;
+    }
+    m = &D_800FC834_FD434[obj->model[0]];
+    if (m->hmf != NULL) {
+        if (m->unk18 & 4) {
+            func_800298A4_2A4A4(obj->model[3], 4, 4);
+        } else {
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
+        }
+    }
+    func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80107DB4_142144_BowlOver(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801087A0_142B30_BowlOver);
+#endif
 
 /* A pin player back on its slot. */
 void func_80108DCC_14315C_BowlOver(omObjData* obj) {

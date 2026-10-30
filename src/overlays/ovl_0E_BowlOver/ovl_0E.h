@@ -74,7 +74,7 @@ typedef struct BOJump {
     /* 0x1A */ s16 unk_1A; /* spinning */
     /* 0x1C */ s16 unk_1C; /* spin direction */
     /* 0x1E */ char unk_1E[2];
-    /* 0x20 */ u8 unk_20;    /* stick history slot */
+    /* 0x20 */ s8 unk_20;    /* stick history slot */
     /* 0x21 */ s8 unk_21[8]; /* stick x history */
     /* 0x29 */ s8 unk_29[8]; /* stick y history */
     /* 0x31 */ s8 unk_31;    /* CPU: jump now */
@@ -129,7 +129,7 @@ typedef struct BOProbe {
    Data (.data, 13CB90.c: 80109960-80109A40)
    --------------------------------------------------------------------------------------------- */
 
-extern s16 D_80109960_143CF0_BowlOver;
+extern s16 D_80109960_143CF0_BowlOver; /* the shell is out (1) */
 extern s32 D_80109964_143CF4_BowlOver;
 extern u16 D_80109968_143CF8_BowlOver;
 extern u16 D_8010996C_143CFC_BowlOver;
