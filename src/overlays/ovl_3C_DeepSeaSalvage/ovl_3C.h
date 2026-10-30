@@ -213,6 +213,12 @@ typedef struct DSSHud {
     /* 0x006 */ char unk6[0xE0A];
 } DSSHud; /* size = 0xE10 */
 
+/* A 2D point (func_80106518's crossings; MP1 Vec2f with x, y). */
+typedef struct DSSPoint {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+} DSSPoint; /* size = 0x8 */
+
 /* A model's placement (D_8010842C[2], .data). */
 typedef struct DSSPlace {
     /* 0x00 */ Vec pos;
@@ -351,8 +357,8 @@ void func_80106048_2950B8_DeepSeaSalvage(void);
 u32 func_801060C8_295138_DeepSeaSalvage(void); /* 16 random bits */
 u16 func_80106100_295170_DeepSeaSalvage(u16 n); /* random 0..n-1 */
 void func_80106134_2951A4_DeepSeaSalvage(f32* x, f32* y, f32* z);
-void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, Vec* pts, s16 n, u16 flag, f32* outx, f32* outy);
-s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, u16 flag, f32* outx, f32* outy);
+void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, DSSPoint* pts, s16 n, s16 flag, f32* outx, f32* outy);
+s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, s16 flag, f32* outx, f32* outy);
 f32 func_801069E4_295A54_DeepSeaSalvage(f32 x, f32 y); /* the sea floor's height */
 s16 func_80106CC4_295D34_DeepSeaSalvage(f32 x, f32 y); /* the treasure at (x, y), -1 none */
 void func_80106D5C_295DCC_DeepSeaSalvage(omObjData* obj, f32 vx, f32 vy);

@@ -81,11 +81,180 @@ void func_80106134_2951A4_DeepSeaSalvage(f32* x, f32* y, f32* z) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_801061CC_29523C_DeepSeaSalvage);
+/* Push (x, y) out of the sea floor: the normal of the polyline pts (the points where a circle of
+   radius dist crosses an outline), dist from the points' centre (MP1 func_800FC2F8). */
+void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, DSSPoint* pts, s16 n, s16 flag, f32* outx, f32* outy) {
+    f32 cx;
+    f32 cy;
+    f32 px;
+    f32 py;
+    f32 a;
+    f32 b;
+    f32 dy;
+    f32 len;
+    f32 nx;
+    f32 ny;
+    s16 i;
 
+    if (n >= 2) {
+        cy = 0.0f;
+        cx = 0.0f;
+        for (i = 0; i < n; i++) {
+            cx += pts[i].x;
+            cy += pts[i].y;
+        }
+        cx /= (f32)n;
+        cy /= (f32)n;
+        px = pts[0].x;
+        py = pts[0].y;
+        ny = 0.0f;
+        nx = 0.0f;
+        for (i = 0; i < n - 1; i++) {
+            dy = pts[i + 1].y - py;
+            a = -dy;
+            b = pts[i + 1].x - px;
+            if (a * (*x - cx) + b * (*y - cy) < 0.0) {
+                a = dy;
+                b = -b;
+            }
+            len = sqrtf(a * a + b * b);
+            if (len != 0.0) {
+                a /= len;
+                b /= len;
+                nx += a;
+                ny += b;
+            }
+            px = pts[i + 1].x;
+            py = pts[i + 1].y;
+        }
+        if (flag != 0 && ny < 0.0) {
+            nx = 2.0 * nx;
+            len = sqrtf(nx * nx + ny * ny);
+            nx = nx / len;
+            ny /= len;
+        }
+        *outx = nx;
+        *outy = ny;
+        len = sqrtf(nx * nx + ny * ny);
+        if (len != 0.0) {
+            nx /= len;
+            ny /= len;
+            *x = cx + nx * dist;
+            *y = cy + ny * dist;
+        }
+    }
+}
+
+/* Where a circle of radius r around (x, y) crosses the sea floor's two outlines (D_8010862C, in
+   units of 5, 180 down), push (x, y) out along the normal; the number of crossings (MP1
+   func_800FC644). */
+/* NON_MATCHING: one register copy (retail starts i from total's register, `move s5,s3`;
+   GCC loads zero); masked 0. */
+#ifdef NON_MATCHING
+s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, s16 flag, f32* outx, f32* outy) {
+    DSSPoint pts[256];
+    Vec* line;
+    f32 px;
+    f32 py;
+    f32 dx;
+    f32 dy;
+    f32 ox;
+    f32 oy;
+    f32 a;
+    f32 b;
+    f32 c;
+    f32 disc;
+    f32 t0;
+    f32 t1;
+    s16 n = 0;
+    s16 total = 0;
+    s16 i;
+    s16 m;
+    s8 j;
+    s8 k;
+
+    px = *x;
+    py = *y;
+    for (i = 0; i < 2; i++) {
+        line = D_8010862C_29769C_DeepSeaSalvage[i];
+        for (m = 0; m < D_80108634_2976A4_DeepSeaSalvage[i]; m++) {
+            j = m;
+            k = j + 1;
+            k = (k < D_80108634_2976A4_DeepSeaSalvage[i]) ? k : 0;
+            dx = (line[k].x - line[j].x) * 5.0;
+            dy = (line[k].y - line[j].y) * 5.0;
+            ox = line[j].x * 5.0 - px;
+            oy = line[j].y * 5.0 + -180.0 - py;
+            a = dx * dx + dy * dy;
+            b = 2.0f * (dx * ox + dy * oy);
+            c = (f32)-(r * r) + ox * ox + oy * oy;
+            disc = b * b - a * 4.0 * c;
+            if (disc > 0.0f) {
+                disc = sqrtf(disc);
+                t0 = (-b - disc) / (2.0f * a);
+                t1 = (-b + disc) / (2.0f * a);
+                if (t0 >= 0.0 && t0 <= 1.0) {
+                    pts[n].x = line[j].x * 5.0 + t0 * dx;
+                    pts[n].y = line[j].y * 5.0 + -180.0 + t0 * dy;
+                    n++;
+                    total++;
+                }
+                if (t1 >= 0.0 && t1 <= 1.0) {
+                    pts[n].x = line[j].x * 5.0 + t1 * dx;
+                    pts[n].y = line[j].y * 5.0 + -180.0 + t1 * dy;
+                    n++;
+                    total++;
+                }
+            }
+        }
+        if (n >= 2) {
+            func_801061CC_29523C_DeepSeaSalvage(x, y, r, pts, n, flag, outx, outy);
+            n -= 2;
+        }
+    }
+    return total;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106518_295588_DeepSeaSalvage);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_801069E4_295A54_DeepSeaSalvage);
+/* The height of the sea floor's highest edge under (x, y), -372 if none (MP1 func_800FCAE8). */
+f32 func_801069E4_295A54_DeepSeaSalvage(f32 x, f32 y) {
+    Vec* pts;
+    s16 found = 0;
+    f32 best = -9999.0f;
+    f32 h;
+    f32 t;
+    f32 d;
+    s16 i;
+    s16 m;
+    s8 j;
+    s8 k;
+
+    for (i = 0; i < 2; i++) {
+        pts = D_8010862C_29769C_DeepSeaSalvage[i];
+        for (m = 0; m < D_80108634_2976A4_DeepSeaSalvage[i]; m++) {
+            j = m;
+            k = j + 1;
+            k = (k < D_80108634_2976A4_DeepSeaSalvage[i]) ? k : 0;
+            if ((pts[j].x * 5.0 <= x && x < pts[k].x * 5.0) || (x < pts[j].x * 5.0 && pts[k].x * 5.0 <= x)) {
+                d = pts[k].x - pts[j].x;
+                if (d != 0.0) {
+                    t = (x - pts[j].x * 5.0) / (d * 5.0);
+                    h = pts[j].y * 5.0 + -180.0 + t * (pts[k].y - pts[j].y) * 5.0;
+                    if (((d >= 0.0f) & (h <= y)) && best < h) {
+                        best = h;
+                        found = 1;
+                    }
+                }
+            }
+        }
+    }
+    if (found != 0) {
+        return best;
+    }
+    return -372.0f;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106CC4_295D34_DeepSeaSalvage);
 
