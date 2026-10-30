@@ -239,22 +239,240 @@ void func_8010332C_1E277C_CrazyCutters(omObjData* obj) {
     }
 }
 
+// CPU character model file loaded before the directory, and table loads in v1 (masked 2)
+#ifdef NON_MATCHING
+void func_80103508_1E2958_CrazyCutters(omObjData* obj, s32 player) {
+    s32 px[30];
+    s32 py[30];
+    s32 motions[6] = { 0x23, 0x23, 0x23, 0x23, 0x23, 0x23 };
+    Vec pos;
+    s32 skip[4] = { 0x10, 8, 4, 2 };
+    s32 chance[4] = { 0x18, 0x12, 0xC, 6 };
+    s16 cur[2];
+    s32 unused2[3] = { 9, 10, 11 };
+    CCPlayer* st;
+    s32* route;
+    s32 i;
+    s32 j;
+    s32 q;
+    s32 dir;
+    s32 motion;
+    s16 model;
+    void* data;
+
+    route = NULL;
+    if (D_801098FC_1E8D4C_CrazyCutters == 0) {
+        return;
+    }
+    D_80109A70_1E8EC0_CrazyCutters[player] = obj;
+    obj->unk_50 = func_80027154_27D54(sizeof(CCPlayer), 0x7918);
+    for (i = 0; i < 4; i++) {
+        obj->work[i] = 0;
+    }
+    st = obj->unk_50;
+    st->x = 620.0f;
+    st->y = 0.0f;
+    st->z = 180.0f;
+    if ((u32)player >= 2) {
+        st->z = 160.0f;
+    }
+    st->rotX = 290.0f;
+    st->rotY = 0.0f;
+    st->rotZ = 0.0f;
+    st->velX = 0;
+    st->angle = 0;
+    st->unk28 = 0;
+    st->unk448 = -1;
+    st->unk44C = -1;
+    st->player = player;
+    st->unk2C = 0;
+    st->unk568 = 1;
+    for (i = 0; i < 60; i++) {
+        st->trailX[i] = 0;
+        st->trailY[i] = 0;
+        st->visitedX[i] = 0;
+        st->visitedY[i] = 0;
+    }
+    for (i = 0; i < 10; i++) {
+        st->lastX[i] = 0;
+        st->lastY[i] = 0;
+    }
+    st->visitedCount = 0;
+    D_80109970_1E8DC0_CrazyCutters[player] = 0;
+    D_80109950_1E8DA0_CrazyCutters[player] = 0;
+    D_80109960_1E8DB0_CrazyCutters[player] = 0;
+    st->state = 0;
+    if (!(gPlayers[player].flags & 1)) {
+        st->difficulty = 1;
+    } else {
+        switch (gPlayers[player].cpu_difficulty) {
+            case 0:
+                st->difficulty = 0;
+                break;
+            case 1:
+                st->difficulty = 1;
+                break;
+            case 2:
+                st->difficulty = 2;
+                break;
+            case 3:
+                st->difficulty = 3;
+                break;
+        }
+    }
+    st->prevX = 0;
+    st->prevZ = 0;
+    st->unk450 = 0;
+    q = func_8010882C_1E7C7C_CrazyCutters(player);
+    D_80109908_1E8D58_CrazyCutters[q] = func_801065F4_1E5A44_CrazyCutters(q);
+    st->startX = st->x;
+    st->startZ = st->z;
+    do {
+        st->startX -= 1.0f;
+        pos.x = D_80109090_1E84E0_CrazyCutters[q] + st->startX - 8.0f;
+        pos.y = st->y + 10.0f;
+        pos.z = D_801090A0_1E84F0_CrazyCutters[q] + st->z - 8.0f;
+        func_8010585C_1E4CAC_CrazyCutters(&pos, cur, q);
+    } while (D_80109938_1E8D88_CrazyCutters[q][cur[0] + cur[1] * D_80109930_1E8D80_CrazyCutters] == 0);
+    st->startX -= 15.0f;
+    if (D_80109918_1E8D68_CrazyCutters == 1) {
+        st->startX -= 15.0f;
+    }
+    dir = D_801090C0_1E8510_CrazyCutters[(s8)gPlayers[player].character] << 16;
+    obj->model[0] = LoadFormFile(dir | D_801090D8_1E8528_CrazyCutters[(s8)gPlayers[player].character], 0x699);
+    omSetTra(obj, D_80109090_1E84E0_CrazyCutters[q] + st->x, st->y, D_801090A0_1E84F0_CrazyCutters[q] + st->z + -4.0f);
+    omSetRot(obj, st->rotX, st->rotY, st->rotZ);
+    func_80029714_2A314(obj->model[0], st->x, st->y, st->z);
+    func_80018CCC_198CC(obj, 1, dir | motions[player]);
+    func_80018CCC_198CC(obj, 0, dir | D_801090F0_1E8540_CrazyCutters[player]);
+    if (rand8() & 1) {
+        motion = dir | D_80109108_1E8558_CrazyCutters[player];
+    } else {
+        motion = dir | D_80109120_1E8570_CrazyCutters[player];
+    }
+    func_80018CCC_198CC(obj, 2, motion);
+    D_80109A60_1E8EB0_CrazyCutters[player] = motion;
+    if (rand8() & 1) {
+        func_80018CCC_198CC(obj, 3, dir | D_80109138_1E8588_CrazyCutters[player]);
+    } else {
+        func_80018CCC_198CC(obj, 3, dir | D_80109150_1E85A0_CrazyCutters[player]);
+    }
+    func_80018CCC_198CC(obj, 4, dir | D_80109168_1E85B8_CrazyCutters[player]);
+    func_80018CCC_198CC(obj, 5, dir | D_80109180_1E85D0_CrazyCutters[player]);
+    func_80029B80_2A780(obj->model[0], obj->motion[0]);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+
+    obj->model[1] = LoadFormFile(0x33001E, 0x689);
+    model = obj->model[1];
+    func_80029714_2A314(model, D_80109090_1E84E0_CrazyCutters[q] + st->startX, st->y + 30.0f, D_801090A0_1E84F0_CrazyCutters[q] + st->startZ - 10.0f);
+    func_8002979C_2A39C(obj->model[1], st->rotX, st->rotY, st->rotZ);
+    func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, 1.0f);
+    data = DataRead(0x330002);
+    st->unk468 = func_8003D8F0_3E4F0(D_800FC834_FD434[(u16)model].hmf, data, 0, "16mt000_DEF");
+    func_80029A8C_2A68C(model);
+    func_80029AFC_2A6FC(model);
+    HuMemMemoryFreePerm(data);
+    func_8003E4F4_3F0F4(st->unk468, 1, 1);
+
+    obj->model[2] = LoadFormFile(0x33001E, 0x68D);
+    model = obj->model[2];
+    func_80029714_2A314(model, D_80109090_1E84E0_CrazyCutters[q] + st->startX, st->y + 20.0f, D_801090A0_1E84F0_CrazyCutters[q] + st->startZ + 10.0f);
+    func_8002979C_2A39C(obj->model[2], st->rotX, st->rotY, st->rotZ);
+    func_800297E8_2A3E8(obj->model[2], 1.5f, 1.0f, 1.5f);
+    data = DataRead(0x330001);
+    st->unk46A = func_8003D8F0_3E4F0(D_800FC834_FD434[(u16)model].hmf, data, 0, "16mt000_DEF");
+    func_80029A8C_2A68C(model);
+    func_80029AFC_2A6FC(model);
+    HuMemMemoryFreePerm(data);
+    func_8003E4F4_3F0F4(st->unk46A, 1, 1);
+
+    st->moving = 0;
+    st->target = 0;
+    i = 0;
+    switch (D_80109918_1E8D68_CrazyCutters) {
+        case 0:
+            route = D_80109198_1E85E8_CrazyCutters;
+            D_80109A5A_1E8EAA_CrazyCutters = 6;
+            break;
+        case 1:
+            route = D_80109254_1E86A4_CrazyCutters;
+            D_80109A5A_1E8EAA_CrazyCutters = 6;
+            break;
+        case 2:
+            route = D_80109318_1E8768_CrazyCutters;
+            D_80109A5A_1E8EAA_CrazyCutters = 8;
+            break;
+    }
+    /* CPU route: copy the shape's points, jittering each by up to 5 at a per-difficulty chance
+       and skipping the next one at another; the marker pairs (<= 0) are copied unchanged. */
+    while (*route != -1) {
+        px[i] = *route++;
+        py[i] = *route++;
+        if (*route > 0) {
+            if ((rand8() & 0x1F) < chance[st->difficulty]) {
+                /* Retail quirk: the two x ranges cannot both hold, so this always jitters. */
+                if ((px[i] < 89 || px[i] > 114) || (px[i] < 28 || px[i] > 55)) {
+                    px[i] = px[i] - (5 - (u8)(rand8() % 11));
+                    if (px[i] < 24) {
+                        px[i] = 24;
+                    }
+                    if (px[i] > 132) {
+                        px[i] = 132;
+                    }
+                    py[i] = py[i] - (5 - (u8)(rand8() % 11));
+                    if (py[i] < 22) {
+                        py[i] = 22;
+                    }
+                    if (py[i] > 112) {
+                        py[i] = 112;
+                    }
+                }
+            }
+            if ((rand8() & 0x1F) < skip[st->difficulty]) {
+                route += 2;
+            }
+        }
+        i++;
+    }
+    route -= 2;
+    px[i] = route[0];
+    py[i] = route[0];
+    D_80109584_1E89D4_CrazyCutters = i - 1;
+    if (rand8() & 1) {
+        for (j = 0; j < i; j++) {
+            st->pathX[j] = px[j];
+            st->pathY[j] = py[j];
+        }
+    } else {
+        for (j = 0; j < i - 2; j++) {
+            st->pathX[j] = px[i - j - 3];
+            st->pathY[j] = py[i - j - 3];
+        }
+        st->pathX[i - 2] = px[i - 2];
+        st->pathY[i - 2] = py[i - 2];
+        st->pathX[i - 1] = px[i - 1];
+        st->pathY[i - 1] = py[i - 1];
+    }
+    func_80106D44_1E6194_CrazyCutters(st->player, 0x400, 1);
+    st->timer = 1;
+    func_80105B40_1E4F90_CrazyCutters(obj, player);
+    D_80109588_1E89D8_CrazyCutters[st->player] = 0;
+    D_801099D8_1E8E28_CrazyCutters[st->player] = 0;
+    obj->func_ptr = func_801040F0_1E3540_CrazyCutters;
+}
+#else
 __asm__(".section .rodata");
 const u32 D_80109474_1E88C4_CrazyCutters[6] = { 0x00000023, 0x00000023, 0x00000023, 0x00000023, 0x00000023, 0x00000023 };
-
 __asm__(".section .rodata");
 const u32 D_8010948C_1E88DC_CrazyCutters[4] = { 0x00000010, 0x00000008, 0x00000004, 0x00000002 };
-
 __asm__(".section .rodata");
 const u32 D_8010949C_1E88EC_CrazyCutters[4] = { 0x00000018, 0x00000012, 0x0000000C, 0x00000006 };
-
 __asm__(".section .rodata");
 const u32 D_801094AC_1E88FC_CrazyCutters[3] = { 0x00000009, 0x0000000A, 0x0000000B };
-
 __asm__(".section .rodata");
 const char D_801094B8_1E8908_CrazyCutters[] = "16mt000_DEF";
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80103508_1E2958_CrazyCutters);
+#endif
 
 void func_801040F0_1E3540_CrazyCutters(omObjData* obj) {
     CCPlayer* st = obj->unk_50;
