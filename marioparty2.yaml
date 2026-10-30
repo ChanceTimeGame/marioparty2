@@ -822,7 +822,9 @@ segments:
       - [0x16B740, c]
       - [0x16EDD0, c]
       - [0x16EF10, c]
-      - [0x16FE10, data]
+      - [0x16FE10, .data, 16B740]
+      - [0x16FEA0, .data, 16EDD0]
+      - [0x16FEB0, .data, 16EF10]
       - [0x16FED0, .rodata, 16B740]
       - [0x170070, .rodata, 16EF10]
       - {0x170190, type: bss, vram: 0x80107250, name: ovl_14_bss}

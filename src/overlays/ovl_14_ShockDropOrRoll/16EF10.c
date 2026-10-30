@@ -1,6 +1,13 @@
 #include "common.h"
 #include "ovl_14.h"
 
+/* .data (0x16FEB0-0x16FED0, 80106F70-80106F90). */
+f32 D_80106F70_16FEB0_ShockDropOrRoll = 0.0f;
+f32 D_80106F74_16FEB4_ShockDropOrRoll = 0.0f;
+s8 D_80106F78_16FEB8_ShockDropOrRoll = 0;
+f32 D_80106F7C_16FEBC_ShockDropOrRoll[4] = { 24.0f, 120.0f, 70.0f, 190.0f };
+u8 D_80106F8C_16FECC_ShockDropOrRoll[4] = { 6, 0, 18, 12 };
+
 /* The roller: its spin follows the solo player's input (damped, at most 8.49 degrees a frame);
    the surface speed D_801072C4 carries the players; the roller sound's pitch and volume follow
    it; the crank arm turns with it. */

@@ -13,7 +13,7 @@
    1P variant (_CheckFlag(0xC)) ends as soon as a human falls and pays every survivor.
    Retail is three files: 16B740.c (80102800-80105E90), 16EDD0.c (80105E90-80105FD0, the camera,
    end and shadow helpers shared with 0F's 147180.c), 16EF10.c (80105FD0-end, the roller and the
-   stage; 1-nop text pad before it). .data stays asm (0x16FE10-0x16FED0); .rodata is carved per
+   stage; 1-nop text pad before it). .data is C in each file (0x16FE10-0x16FED0); .rodata is carved per
    file (0x16FED0 16B740.c, 0x170070 16EF10.c). */
 
 #include "common.h"
@@ -73,7 +73,7 @@ typedef struct SDWorkPair {
     /* 0x10 */ SDPlayer* p[4];
 } SDWorkPair;
 
-/* ---- .data (asm, 0x16FE10-0x16FED0) ---- */
+/* ---- .data (C, 0x16FE10-0x16FED0) ---- */
 
 /* 16B740.c: 80106ED0-80106F60 */
 extern s8 D_80106ED0_16FE10_ShockDropOrRoll;   /* the game is over */
