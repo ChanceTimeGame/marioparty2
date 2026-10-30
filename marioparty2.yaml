@@ -1112,7 +1112,9 @@ segments:
     bss_size: 0x1180
     subsegments:
       - [0x20C750, c]
+      - [0x210B10, c]
       - [0x210BC0, data]
+      - [0x210F90, .rodata, 20C750]
       - {0x2111A0, type: bss, vram: 0x80107250, name: ovl_29_bss}
   - type: code
     start: 0x2111A0
