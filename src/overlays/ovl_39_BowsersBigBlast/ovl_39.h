@@ -141,12 +141,13 @@ void func_8002D124_2DD24(s16 index);
 s32 func_80059FD0_5ABD0(s32); /* the player's rank */
 void func_8006D4D0_6E0D0(s16); /* the seconds counter */
 void func_8006D518_6E118(void);
-void func_8007273C_7333C(u8* arg0, u8 arg1);
-void func_80079428_7A028(s32);
+void func_8007273C_7333C(char* arg0, u8 arg1);
+s16 func_80079428_7A028(s32);
 void func_800794F0_7A0F0(s8);
 void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
 void func_80079FF4_7ABF4(omObjData* object);
+void func_80079718_7A318(s16, s16);
 extern f32 D_800CA02C_CAC2C;
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern Vec3f D_801013B0_101FB0[]; /* CenterM */
@@ -214,15 +215,6 @@ typedef struct BBCamKey {
     /* 0x14 */ f32 rx, ry, rz;
 } BBCamKey;
 
-/* The flight of a blown-up player, D_80107D50. */
-typedef struct BBFly {
-    /* 0x00 */ f32 t;
-    /* 0x04 */ f32 z; /* unused */
-    /* 0x08 */ f32 y;
-    /* 0x0C */ f32 z0;
-    /* 0x10 */ f32 rot;
-} BBFly;
-
 /* ---- .data (0x2847C0, asm) ---- */
 
 extern u8 D_80107AD0_2847C0_BowsersBigBlast;  /* the first turn's "go" message shown */
@@ -268,14 +260,15 @@ extern omObjData* D_80107D28_284A18_BowsersBigBlast;
 extern BBFlash* D_80107D2C_284A1C_BowsersBigBlast;
 extern u16 D_80107D30_284A20_BowsersBigBlast[5]; /* the five 3D sprites */
 extern u8 D_80107D3A_284A2A_BowsersBigBlast;  /* the live detonator */
-extern u8 D_80107D3B_284A2B_BowsersBigBlast[5]; /* detonator still up */
+extern u8 D_80107D3B_284A2B_BowsersBigBlast[4]; /* detonator still up; [4] is D_80107D3F */
+extern u8 D_80107D3F_284A2F_BowsersBigBlast;
 extern u8 D_80107D40_284A30_BowsersBigBlast;  /* detonators up */
 extern u8 D_80107D41_284A31_BowsersBigBlast;  /* detonator being pressed */
 extern u8 D_80107D42_284A32_BowsersBigBlast;  /* presser's character */
 extern u8 D_80107D43_284A33_BowsersBigBlast[4]; /* each player's queue place */
 extern BBPlayer* D_80107D48_284A38_BowsersBigBlast;
 extern u8 D_80107D4C_284A3C_BowsersBigBlast;
-extern BBFly D_80107D50_284A40_BowsersBigBlast;
+extern f32 D_80107D50_284A40_BowsersBigBlast[5]; /* a blown-up player's flight: t, x, y, z, rot.x */
 extern u8 D_80107D64_284A54_BowsersBigBlast;  /* players blown up */
 extern u8 D_80107D65_284A55_BowsersBigBlast;  /* winner */
 extern u8 D_80107D66_284A56_BowsersBigBlast;
