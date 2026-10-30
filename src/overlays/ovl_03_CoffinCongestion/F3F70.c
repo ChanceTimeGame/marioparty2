@@ -1,5 +1,159 @@
 #include "ovl_03.h"
 
+/* .data (0xF7D10-0xF8410, 80106600-80106D00), all owned by this file. */
+
+/* The room objects: 0-5 coffin bases, 6-11 lids, 12-17 lid fronts, 18-19 lamps, 20-24 item models
+   (file set from the item at setup), 25 the host, 26 the sparkles. */
+CCObjDef D_80106600_F7D10_CoffinCongestion[27] = {
+    { { -400.0f, 0.0f, -250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { 0.0f, 0.0f, -250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { 400.0f, 0.0f, -250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { -400.0f, 0.0f, 250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { 0.0f, 0.0f, 250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { 400.0f, 0.0f, 250.0f }, 1.0f, 0x130000, 0x2A9, 0x1, 1, 0 },
+    { { -400.0f, 0.0f, -250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { 0.0f, 0.0f, -250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { 400.0f, 0.0f, -250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { -400.0f, 0.0f, 250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { 0.0f, 0.0f, 250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { 400.0f, 0.0f, 250.0f }, 1.0f, 0x130001, 0xAA9, 0x2, 1, 0 },
+    { { -400.0f, 0.0f, -250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { 0.0f, 0.0f, -250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { 400.0f, 0.0f, -250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { -400.0f, 0.0f, 250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { 0.0f, 0.0f, 250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { 400.0f, 0.0f, 250.0f }, 1.0f, 0x130002, 0x2A9, 0x3, 1, 0 },
+    { { 314.993f, 239.367f, -471.552f }, 1.0f, 0x130003, 0x2A9, 0x4, 1, 0 },
+    { { -314.993f, 239.367f, -471.552f }, 1.0f, 0x130003, 0x2A9, 0x4, 1, 0 },
+    { { -400.0f, 0.0f, -250.0f }, 1.0f, 0x0, 0x6A9, 0x5, 1, 0 },
+    { { 0.0f, 0.0f, -250.0f }, 1.0f, 0x0, 0x6A9, 0x5, 1, 0 },
+    { { 400.0f, 0.0f, -250.0f }, 1.0f, 0x0, 0x6A9, 0x5, 1, 0 },
+    { { -400.0f, 0.0f, 250.0f }, 1.0f, 0x0, 0x6A9, 0x5, 1, 0 },
+    { { 0.0f, 0.0f, 250.0f }, 1.0f, 0x0, 0x6A9, 0x5, 1, 0 },
+    { { 600.0f, 0.0f, 650.0f }, 0.9f, 0x13000F, 0x2B9, 0x6, 2, 5 },
+    { { 0.0f, 1000.0f, 0.0f }, 1.0f, 0x1001F, 0x2B9, 0x7, 6, 0 },
+};
+
+/* Item model files, by item id. */
+s32 D_801068F4_F8004_CoffinCongestion[10] = {
+    0x130005, 0x130006, 0x130007, 0x130008, 0x130009, 0x13000A, 0x13000B, 0x13000C, 0x13000D,
+    0x13000E,
+};
+
+CCMotion D_8010691C_F802C_CoffinCongestion[5] = {
+    { 0x130010, 0, 0 }, { 0x130013, 0, 0 }, { 0x130011, 0, -1 }, { 0x130014, 0, -1 },
+    { 0x130012, 0, 0 },
+};
+
+/* The six coffin slots. */
+Vec D_80106944_F8054_CoffinCongestion[6] = {
+    { -400.0f, 0.0f, -240.0f }, { 0.0f, 0.0f, -240.0f }, { 400.0f, 0.0f, -240.0f },
+    { -400.0f, 0.0f, 260.0f }, { 0.0f, 0.0f, 260.0f }, { 400.0f, 0.0f, 260.0f },
+};
+
+/* Per-mode updates of the room objects, by kind (D_80106A0C). */
+void (*D_8010698C_F809C_CoffinCongestion[8])(omObjData*, CCProp*) = {
+    func_801029C0_F40D0_CoffinCongestion, NULL, NULL, func_80102A20_F4130_CoffinCongestion, NULL,
+    NULL, func_80102B28_F4238_CoffinCongestion, NULL,
+};
+
+void (*D_801069AC_F80BC_CoffinCongestion[8])(omObjData*, CCProp*) = {
+    func_80102C44_F4354_CoffinCongestion, func_80102C74_F4384_CoffinCongestion, NULL,
+    func_80102C74_F4384_CoffinCongestion, func_80102E64_F4574_CoffinCongestion,
+    func_80102EE0_F45F0_CoffinCongestion, func_80102F10_F4620_CoffinCongestion, NULL,
+};
+
+void (*D_801069CC_F80DC_CoffinCongestion[8])(omObjData*, CCProp*) = {
+    NULL, func_801032B8_F49C8_CoffinCongestion, NULL, func_801032D8_F49E8_CoffinCongestion, NULL,
+    NULL, func_80103578_F4C88_CoffinCongestion, NULL,
+};
+
+void (*D_801069EC_F80FC_CoffinCongestion[8])(omObjData*, CCProp*) = {
+    NULL, func_80103938_F5048_CoffinCongestion, NULL, func_80103AB8_F51C8_CoffinCongestion, NULL,
+    NULL, func_80103BD8_F52E8_CoffinCongestion, NULL,
+};
+
+void (*D_80106A0C_F811C_CoffinCongestion[9])(omObjData*) = {
+    NULL, func_80102B90_F42A0_CoffinCongestion, func_80103080_F4790_CoffinCongestion,
+    func_80103134_F4844_CoffinCongestion, func_801031AC_F48BC_CoffinCongestion,
+    func_80103884_F4F94_CoffinCongestion, func_80103D50_F5460_CoffinCongestion,
+    func_80103DE0_F54F0_CoffinCongestion, NULL,
+};
+
+Vec D_80106A30_F8140_CoffinCongestion = { 0.0f, 10.0f, 0.0f };
+
+/* CPU walk targets: in front of each coffin slot, [6] the middle, [7] set at run time. */
+CCCpuTarget D_80106A3C_F814C_CoffinCongestion[8] = {
+    { { -400.0f, 0.0f, -70.0f }, 55.0f, 5 }, { { 0.0f, 0.0f, -70.0f }, 55.0f, 5 },
+    { { 400.0f, 0.0f, -70.0f }, 55.0f, 5 }, { { -400.0f, 0.0f, 70.0f }, -55.0f, 5 },
+    { { 0.0f, 0.0f, 70.0f }, -55.0f, 5 }, { { 400.0f, 0.0f, 70.0f }, -55.0f, 5 },
+    { { 0.0f, 0.0f, 0.0f }, -55.0f, 10 }, { { 0.0f, 0.0f, 0.0f }, -55.0f, 0 },
+};
+
+/* By difficulty; [0] is the CPU wait. */
+u8 D_80106ADC_F81EC_CoffinCongestion[4][4] = {
+    { 12, 25, 6, 5 }, { 8, 30, 9, 8 }, { 6, 35, 5, 6 }, { 6, 40, 5, 6 },
+};
+
+CCMotionDef D_80106AEC_F81FC_CoffinCongestion[15] = {
+    { 0x0, 0x0, 0x1, 0x0 }, { 0x1, 0x1, 0x1, 0x0 }, { 0x2, 0x2, 0x1, 0x0 }, { 0x3, 0x2C, 0x1, 0x0 },
+    { 0x4, 0x2D, 0x1, 0x0 }, { 0x11, 0xF, 0x0, 0x0 }, { 0x20, 0x31, 0x0, 0x0 },
+    { 0x5, 0x3, 0x0, 0x0 }, { 0x8, 0x6, 0x1, 0x1B }, { 0x6, 0x4, 0x1, 0x13 },
+    { 0x15, 0x2E, 0x0, 0x0 }, { 0x12, 0x10, 0x0, 0x0 }, { 0xD, 0x54, 0x1, 0x78 },
+    { 0xE, 0x55, 0x1, 0x78 }, { 0xF, 0x57, 0x1, 0x78 },
+};
+
+CCFile D_80106BA0_F82B0_CoffinCongestion[9] = {
+    { 0x0, 0x0 }, { 0x0, 0x0 }, { 0x0, 0x0 }, { 0x7, 0x28D }, { 0x8, 0x28D }, { 0x9, 0x68D },
+    { 0x9, 0x28D }, { 0xB, 0x28D }, { 0xC, 0x28D },
+};
+
+void (*D_80106BE8_F82F8_CoffinCongestion[4])(omObjData*, MgWork*, CCCpu*) = {
+    func_80104B60_F6270_CoffinCongestion, func_80104BA8_F62B8_CoffinCongestion,
+    func_80104C30_F6340_CoffinCongestion, func_80104DD8_F64E8_CoffinCongestion,
+};
+
+void (*D_80106BF8_F8308_CoffinCongestion[10])(omObjData*, MgWork*, CCCpu*) = {
+    NULL, NULL, NULL, NULL, func_80104E20_F6530_CoffinCongestion,
+    func_80104E80_F6590_CoffinCongestion, func_80105074_F6784_CoffinCongestion, NULL, NULL, NULL,
+};
+
+CCCamera D_80106C20_F8330_CoffinCongestion[1] = {
+    { { 0.0f, 3786.71509f, 2783.55493f }, { 0.0f, 312.5f, 100.0f }, 14.3330002f, { 640, 480, 640, 480 },
+      { 0, 0, 320, 240 }, 0x130004, -1 },
+};
+
+CCLight D_80106C54_F8364_CoffinCongestion[2] = {
+    { { 255, 255, 255 }, 0, { 100.0f, 100.0f, 50.0f } },
+    { { 128, 255, 128 }, 0, { 100.0f, 100.0f, 50.0f } },
+};
+
+s16 D_80106C74_F8384_CoffinCongestion[6] = {
+    10, 5, 10, 50, 5, 20,
+};
+
+s16 D_80106C80_F8390_CoffinCongestion[6] = {
+    1, 0, 0, 0, 3, 0,
+};
+
+s32 D_80106C8C_F839C_CoffinCongestion = 0;
+
+s16 D_80106C90_F83A0_CoffinCongestion[5][6] = {
+    { 3, 8, 3, 8, 15, 4 }, { 2, 6, 2, 8, 10, 4 }, { 2, 4, 2, 8, 5, 4 }, { 1, 2, 1, 8, 2, 4 },
+    { 1, 1, 1, 8, 1, 4 },
+};
+
+s16 D_80106CCC_F83DC_CoffinCongestion[6] = {
+    0, 2, 0, 1, 0, 3,
+};
+
+void (*D_80106CD8_F83E8_CoffinCongestion[10])(omObjData*) = {
+    func_80105884_F6F94_CoffinCongestion, func_801059A8_F70B8_CoffinCongestion,
+    func_80105A98_F71A8_CoffinCongestion, func_80105AB4_F71C4_CoffinCongestion,
+    func_80105C6C_F737C_CoffinCongestion, func_80105CF0_F7400_CoffinCongestion,
+    func_80105D44_F7454_CoffinCongestion, func_80105EE0_F75F0_CoffinCongestion, NULL, NULL,
+};
+
 /* Starts host motion `mot` on the object (looping when its speed is negative); 1 if it changed. */
 s32 func_80102860_F3F70_CoffinCongestion(omObjData* obj, s32 mot) {
     CCProp* p = obj->unk_50;
@@ -842,7 +996,7 @@ void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
         case 10:
             cpu->unk_00 = 2;
             cpu->unk_08 = 0;
-            cpu->unk_04 = &D_80106AC8_F81D8_CoffinCongestion;
+            cpu->unk_04 = &D_80106A3C_F814C_CoffinCongestion[7];
             if (obj->trans.z < 0.0f) {
                 HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, -70.0f);
             } else {
@@ -858,7 +1012,7 @@ void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
         case 12:
             cpu->unk_00 = 2;
             cpu->unk_08 = 0;
-            cpu->unk_04 = &D_80106AB4_F81C4_CoffinCongestion;
+            cpu->unk_04 = &D_80106A3C_F814C_CoffinCongestion[6];
         next:
             cpu->unk_0C++;
             break;

@@ -4,8 +4,8 @@
 /* Overlay 03: Coffin Congestion (item minigame). One player walks a room with six coffins; the
    coffins (items inside, D_800CAFD8) close and shuffle in five rounds, then the player opens one
    and wins its item (gPlayers[].coins_mg_bonus). Two retail files: F3F10.c (the entry,
-   80102800) and F3F70.c (the rest, from 80102860 after a 2-nop pad). .data stays asm
-   (F7D10.data.s); .rodata is carved ([0xF8410, .rodata, F3F70]). */
+   80102800) and F3F70.c (the rest, from 80102860 after a 2-nop pad). F3F70.c owns all the .data
+   ([0xF7D10, .data, F3F70]) and the .rodata ([0xF8410, .rodata, F3F70]); the bss stays asm. */
 
 #include "common.h"
 #include "game/object.h"
@@ -249,10 +249,11 @@ typedef struct CCPad {
 } CCPad; /* size = 6 */
 
 /* ---------------------------------------------------------------------------------------------
-   Data (.data, F7D10.data.s, asm)
+   Data (.data, defined in F3F70.c)
    --------------------------------------------------------------------------------------------- */
 
 extern CCObjDef D_80106600_F7D10_CoffinCongestion[27];
+/* The host's (D_80106600[25]) pos and scale, read by their own labels (undefined_syms.txt). */
 extern f32 D_801068BC_F7FCC_CoffinCongestion;
 extern f32 D_801068C0_F7FD0_CoffinCongestion;
 extern f32 D_801068C4_F7FD4_CoffinCongestion;
@@ -264,24 +265,22 @@ extern void (*D_8010698C_F809C_CoffinCongestion[8])(omObjData*, CCProp*);
 extern void (*D_801069AC_F80BC_CoffinCongestion[8])(omObjData*, CCProp*);
 extern void (*D_801069CC_F80DC_CoffinCongestion[8])(omObjData*, CCProp*);
 extern void (*D_801069EC_F80FC_CoffinCongestion[8])(omObjData*, CCProp*);
-extern void (*D_80106A0C_F811C_CoffinCongestion[])(omObjData*);
+extern void (*D_80106A0C_F811C_CoffinCongestion[9])(omObjData*);
 extern Vec D_80106A30_F8140_CoffinCongestion;
-extern CCCpuTarget D_80106A3C_F814C_CoffinCongestion[6];
-extern CCCpuTarget D_80106AB4_F81C4_CoffinCongestion;
-extern CCCpuTarget D_80106AC8_F81D8_CoffinCongestion;
+extern CCCpuTarget D_80106A3C_F814C_CoffinCongestion[8]; /* [6] middle, [7] run time */
 extern u8 D_80106ADC_F81EC_CoffinCongestion[4][4];
 extern CCMotionDef D_80106AEC_F81FC_CoffinCongestion[15];
 extern CCFile D_80106BA0_F82B0_CoffinCongestion[9];
 extern void (*D_80106BE8_F82F8_CoffinCongestion[4])(omObjData*, MgWork*, CCCpu*);
-extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*);
-extern CCCamera D_80106C20_F8330_CoffinCongestion[1]; /* undefined_syms.txt: D_80106BF8 + 0x28 */
+extern void (*D_80106BF8_F8308_CoffinCongestion[10])(omObjData*, MgWork*, CCCpu*);
+extern CCCamera D_80106C20_F8330_CoffinCongestion[1];
 extern CCLight D_80106C54_F8364_CoffinCongestion[2];
 extern s16 D_80106C74_F8384_CoffinCongestion[6];   /* intro step lengths */
 extern s16 D_80106C80_F8390_CoffinCongestion[6];   /* intro step phases */
 extern s32 D_80106C8C_F839C_CoffinCongestion;      /* shuffle round */
 extern s16 D_80106C90_F83A0_CoffinCongestion[5][6]; /* shuffle step lengths per round */
 extern s16 D_80106CCC_F83DC_CoffinCongestion[6];   /* shuffle step phases */
-extern void (*D_80106CD8_F83E8_CoffinCongestion[8])(omObjData*); /* mode functions */
+extern void (*D_80106CD8_F83E8_CoffinCongestion[10])(omObjData*); /* mode functions */
 
 /* ---------------------------------------------------------------------------------------------
    Bss (ovl_03_bss)
