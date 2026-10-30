@@ -338,3 +338,7 @@ D_8010678C_1B88DC_SpeedHockey = D_80106774_1B88C4_SpeedHockey + 0x18;
 D_80106AE1_1B8C31_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x1;
 D_80106AE2_1B8C32_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x2;
 D_80106AE3_1B8C33_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x3;
+/* S4-17: ovl_17 labels used only as offsets (D_801077B8 = D_80107878 - 12 * 0x10, inside the
+   jump table of func_801040B0) */
+D_801077B8_1863D8_Archerival = D_80107878_186498_Archerival - 0xC0;
+D_8010762B_18624B_Archerival = D_8010762A_18624A_Archerival + 0x1;
