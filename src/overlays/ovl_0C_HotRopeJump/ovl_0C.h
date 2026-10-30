@@ -83,7 +83,7 @@ typedef struct HRJSeg {
     /* 0x3C */ s16 light; /* fields from here: S4-0CC, from MP1 +4 */
     /* 0x3E */ s16 model;
     /* 0x40 */ u16 anim;
-    /* 0x42 */ u16 state;
+    /* 0x42 */ s16 state;
     /* 0x44 */ s16 timer;
     /* 0x46 */ s16 delay;
     /* 0x48 */ char unk_48[8];
@@ -226,9 +226,9 @@ extern s16 D_8010C454_138044_HotRopeJump; /* torch/camera intro state (MP1 D_800
 extern s16 D_8010C456_138046_HotRopeJump; /* and its timer */
 extern s16 D_8010C458_138048_HotRopeJump[8]; /* its state durations, 0 = the last */
 extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4) */
-extern s16 D_8010C4F8_1380E8_HotRopeJump; /* MP1 D_800FE784 */
+extern s16 D_8010C4F8_1380E8_HotRopeJump; /* the rope's timer and state (MP1 D_800FE784) */
 extern s16 D_8010C4FA_1380EA_HotRopeJump;
-extern s16 D_8010C4FC_1380EC_HotRopeJump[6];
+extern s16 D_8010C4FC_1380EC_HotRopeJump[6]; /* its state durations, 0 = the last */
 extern u8 D_8010C508_1380F8_HotRopeJump[0x30]; /* byte tables (labels 508..50B: S4-0CC) */
 extern u8 D_8010C538_138128_HotRopeJump[0x30]; /* byte tables (labels 538..53B: S4-0CC) */
 extern s32 D_8010C568_138158_HotRopeJump[6];

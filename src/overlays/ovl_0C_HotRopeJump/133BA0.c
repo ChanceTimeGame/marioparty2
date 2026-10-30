@@ -581,85 +581,220 @@ void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010A0F0_135CE0_HotRopeJump);
 #endif
 
-__asm__(".section .rodata");
-const char D_8010C810_138400_HotRopeJump[] = "@Y";
+/* The rope (MP1 func_800FCE98): each flame circles the centre (state 0) until its delay runs
+   out, hops to its place (1, 2), settles into the rope (3), turns with it (4) until the round
+   ends, then is put out (5). */
+void func_8010A4E4_1360D4_HotRopeJump(omObjData* obj) {
+    Matrix4f m;
+    HRJSeg* seg;
+    HmfModel* mdl;
+    HuSprite_Unk84_Struct* anim;
+    HuCamera* c;
+    s32 i;
+    f32 t;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 a;
 
-__asm__(".section .rodata");
-const char D_8010C814_138404_HotRopeJump[] = "";
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010A4E4_1360D4_HotRopeJump);
-
-__asm__(".section .rodata");
-const u32 D_8010C828_138418_HotRopeJump[1] = { 0x3FA99999 };
-
-__asm__(".section .rodata");
-const u32 D_8010C82C_13841C_HotRopeJump[1] = { 0x9999999A };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C830_138420_HotRopeJump[2] = { 0x3FC99999, 0x9999999A };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C838_138428_HotRopeJump[2] = { 0x3FECCCCC, 0xCCCCCCCD };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C840_138430_HotRopeJump[2] = { 0x3FF00000, 0x00000000 };
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C848_138438_HotRopeJump[8] = "@i";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C850_138440_HotRopeJump[2] = { 0x4062C000, 0x00000000 };
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C858_138448_HotRopeJump[8] = "@I";
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C860_138450_HotRopeJump[8] = "@T";
-
-__asm__(".section .rodata");
-const u32 jtbl_8010C868_138458_HotRopeJump[6] = { 0x8010A764, 0x8010A8F4, 0x8010A960, 0x8010AA30, 0x8010AC04, 0x8010ACF8 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C880_138470_HotRopeJump[2] = { 0x40000000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C888_138478_HotRopeJump[2] = { 0x40668000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C890_138480_HotRopeJump[2] = { 0x400C0000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C898_138488_HotRopeJump[2] = { 0x400C0000, 0x00000000 };
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C8A0_138490_HotRopeJump[8] = "@I";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8A8_138498_HotRopeJump[2] = { 0x40000000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8B0_1384A0_HotRopeJump[2] = { 0x40140000, 0x00000000 };
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C8B8_1384A8_HotRopeJump[8] = "@>";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8C0_1384B0_HotRopeJump[2] = { 0x4070E000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8C8_1384B8_HotRopeJump[2] = { 0xC0668000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8D0_1384C0_HotRopeJump[2] = { 0x40668000, 0x00000000 };
-
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_8010C8D8_1384C8_HotRopeJump[8] = "@$";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8E0_1384D0_HotRopeJump[2] = { 0x3FC33333, 0x33333333 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_8010C8E8_1384D8_HotRopeJump[2] = { 0x3FE00000, 0x00000000 };
+    c = D_800C9B80_CA780;
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_8010C4F8_1380E8_HotRopeJump++;
+        if (D_8010C4FC_1380EC_HotRopeJump[D_8010C4FA_1380EA_HotRopeJump] != 0 &&
+            D_8010C4F8_1380E8_HotRopeJump >= D_8010C4FC_1380EC_HotRopeJump[D_8010C4FA_1380EA_HotRopeJump]) {
+            D_8010C4F8_1380E8_HotRopeJump = 0;
+            D_8010C4FA_1380EA_HotRopeJump++;
+        }
+    }
+    func_800B1960_B2560(m, c->pos.x, c->pos.y, c->pos.z, c->at.x, c->at.y, c->at.z, c->up.x, c->up.y, c->up.z);
+    anim = SprAnimGet(D_80111836_13D426_HotRopeJump); /* the torches' animation, not D_8011183A */
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        seg = D_80111920_13D510_HotRopeJump;
+        for (i = 0; i < 13; seg++, i++) {
+            mdl = &D_800FC834_FD434[seg->model];
+            t = (f32)(i - 6) / 6.0f;
+            t = (1.0 - t * t) * 200.0 + 100.0;
+            x = func_800B7890_B8490(seg->angle) * t;
+            y = HuMathSin(seg->angle) * t + 150.0;
+            if (y < 50.0) {
+                y = 50.0f;
+            }
+            z = (i - 6) * 80.0;
+            switch (seg->state) {
+                case 0:
+                    if (i != 0) {
+                        seg->unk_30 += 2.0;
+                        if (seg->unk_30 >= 360.0) {
+                            seg->unk_30 -= 360.0;
+                        }
+                        mdl->rot.y = seg->unk_30 + 180.0;
+                        seg->pos.x = seg->base.x = HuMathSin(seg->unk_30) * 100.0 * 3.5;
+                        seg->pos.z = seg->base.z = func_800B7890_B8490(seg->unk_30) * 100.0 * 3.5;
+                        seg->pos.y += seg->vel.y;
+                        if (seg->pos.y <= 50.0) {
+                            seg->pos.y = 50.0f;
+                            seg->vel.y = 7.5f;
+                        } else {
+                            seg->vel.y = seg->vel.y - 2.0;
+                        }
+                    }
+                    mdl->scale.z = mdl->scale.x = D_8010C26C_137E5C_HotRopeJump;
+                    mdl->scale.y = mdl->scale.x * 1.4;
+                    func_80108978_134568_HotRopeJump(seg->light, seg->size * mdl->scale.x, seg->size * mdl->scale.x);
+                    if (seg->delay != 0) {
+                        seg->delay--;
+                    } else {
+                        seg->pos.y = 50.0f;
+                        seg->delay = 2;
+                        seg->state++;
+                    }
+                    break;
+                case 1:
+                    seg->state = 2;
+                    seg->timer = 0;
+                    seg->vel.x = (x - seg->pos.x) * 0.05;
+                    seg->vel.z = (z - seg->pos.z) * 0.05;
+                    seg->vel.y = 50.0f;
+                    if (seg->delay >= 2) {
+                        seg->delay--;
+                    }
+                    break;
+                case 2:
+                    mdl->scale.z = mdl->scale.x = D_8010C26C_137E5C_HotRopeJump;
+                    mdl->scale.y = mdl->scale.x * 1.4;
+                    if (seg->delay != 0) {
+                        if (--seg->delay != 0) {
+                            break;
+                        }
+                        seg->timer = 0;
+                        if (i == 0) {
+                            func_80079798_7A398(0x170, 3);
+                        }
+                        break;
+                    }
+                    seg->pos.x += seg->vel.x;
+                    seg->pos.y += seg->vel.y;
+                    seg->pos.z += seg->vel.z;
+                    seg->vel.y = seg->vel.y - 5.0;
+                    if (seg->timer < 21) {
+                        break;
+                    }
+                    seg->pos.y = 50.0f;
+                    seg->state = 3;
+                    seg->timer = 0;
+                    break;
+                case 3:
+                    mdl->scale.z = mdl->scale.x = D_8010C26C_137E5C_HotRopeJump;
+                    mdl->scale.y = mdl->scale.x * 1.4;
+                    if (seg->timer < 31) {
+                        t = (f32)seg->timer / 30.0;
+                    } else {
+                        t = 1.0f;
+                    }
+                    seg->pos.x = seg->pos.x + (x - seg->pos.x) * t * 0.2;
+                    seg->pos.y = seg->pos.y + (y - seg->pos.y) * t * 0.2;
+                    seg->pos.z = seg->pos.z + (z - seg->pos.z) * t * 0.2;
+                    a = 270.0 - mdl->rot.y;
+                    if (a <= -180.0) {
+                        a = a + 360.0;
+                    } else if (a > 180.0) {
+                        a = a - 360.0;
+                    }
+                    mdl->rot.y = mdl->rot.y + a * t * 0.2;
+                    if (mdl->rot.y >= 360.0) {
+                        mdl->rot.y = mdl->rot.y - 360.0;
+                    } else if (mdl->rot.y < 0.0) {
+                        mdl->rot.y = mdl->rot.y + 360.0;
+                    }
+                    if (seg->light >= 0 && !(i & 1) && seg->timer == 1) {
+                        func_801089EC_1345DC_HotRopeJump(seg->light, 30);
+                    }
+                    if (D_8011182C_13D41C_HotRopeJump != 0) {
+                        seg->state = 4;
+                    }
+                    break;
+                case 4:
+                    mdl->scale.z = mdl->scale.x = D_8010C26C_137E5C_HotRopeJump;
+                    mdl->scale.y = mdl->scale.x * 1.4;
+                    seg->angle = seg->angle + D_80111830_13D420_HotRopeJump * 10.0;
+                    if (seg->angle >= 360.0) {
+                        seg->angle = seg->angle - 360.0;
+                    }
+                    if (seg->angle < 0.0) {
+                        seg->angle = seg->angle + 360.0;
+                    }
+                    seg->vel.x = x - seg->pos.x;
+                    seg->vel.y = y - seg->pos.y;
+                    seg->vel.z = z - seg->pos.z;
+                    seg->pos.x = x;
+                    seg->pos.y = y;
+                    seg->pos.z = z;
+                    if (D_8011182C_13D41C_HotRopeJump != 0) {
+                        continue;
+                    }
+                    seg->state = 5;
+                    seg->delay = 4;
+                    break;
+                case 5:
+                    if (i == 0 && seg->delay != 0 && --seg->delay == 0) {
+                        PlaySound(0x171);
+                    }
+                    if (!(mdl->scale.x > 0.0)) {
+                        continue;
+                    }
+                    seg->pos.x += seg->vel.x *= 0.9;
+                    seg->pos.y += seg->vel.y *= 0.9;
+                    seg->pos.z += seg->vel.z *= 0.9;
+                    mdl->scale.z = mdl->scale.y = mdl->scale.x = mdl->scale.x - 0.15;
+                    if (mdl->scale.x > 0.05) {
+                        if (seg->light >= 0) {
+                            func_80108978_134568_HotRopeJump(seg->light, seg->size * mdl->scale.x, seg->size * mdl->scale.x);
+                        }
+                        continue;
+                    }
+                    if (seg->light >= 0) {
+                        func_801089D4_1345C4_HotRopeJump(seg->light);
+                        seg->light = -1;
+                    }
+                    func_800298A4_2A4A4(seg->model, 4, 4);
+                    break;
+            }
+        }
+    }
+    seg = D_80111920_13D510_HotRopeJump;
+    for (i = 0; i < 13; i++, seg++) {
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            seg->base.x = seg->base.x - (seg->base.x - seg->pos.x) * 0.5;
+            seg->base.y = seg->base.y - (seg->base.y - seg->pos.y) * 0.5;
+            seg->base.z = seg->base.z - (seg->base.z - seg->pos.z) * 0.5;
+            seg->anim = (seg->anim + 4) & 0x3F;
+            if (++seg->timer >= 0x7800) {
+                seg->timer -= 0x800;
+            }
+        }
+        func_8010B754_137344_HotRopeJump(seg, D_8010C468_138058_HotRopeJump, anim);
+        func_80029714_2A314(seg->model, seg->pos.x, seg->pos.y, seg->pos.z);
+        if (i == 0) {
+            mdl = &D_800FC834_FD434[seg->model];
+            omSetTra(obj, seg->pos.x, seg->pos.y, seg->pos.z);
+            omSetRot(obj, mdl->rot.x, mdl->rot.y, mdl->rot.z);
+            omSetSca(obj, mdl->scale.x, mdl->scale.y, mdl->scale.z);
+        }
+        if (seg->light >= 0) {
+            if (seg->state < 5) {
+                func_80108918_134508_HotRopeJump(seg->light, seg->pos.x, seg->pos.y, seg->pos.z);
+            } else {
+                func_80108918_134508_HotRopeJump(seg->light, seg->pos.x, 50.0f, seg->pos.z);
+            }
+        }
+    }
+    seg = D_80111920_13D510_HotRopeJump;
+    for (i = 0; i < 12; i++, seg++) {
+        seg->dir.x = seg[1].pos.x - seg->pos.x;
+        seg->dir.y = seg[1].pos.y - seg->pos.y;
+        seg->dir.z = seg[1].pos.z - seg->pos.z;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B0A0_136C90_HotRopeJump);
 
