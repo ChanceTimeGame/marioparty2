@@ -189,6 +189,8 @@ void func_80079128_79D28(void);
 s16 func_80079798_7A398(s16 sfx, s16 player);
 void func_800796F0_7A2F0(s16 sound, s16 pitch);
 void func_80079848_7A448(s16 arg0);
+f64 fabs(f64);
+f32 fabsf(f32);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 void func_800B2060_B2C60(f32* m, f32 x, f32 y, f32 z); /* rotate matrix (MP1 func_8009ECB0) */
