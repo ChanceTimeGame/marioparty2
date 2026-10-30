@@ -55,7 +55,7 @@ void func_80102A74_1387A4_HotBobOmb(omObjData* obj) {
             func_800691FC_69DFC(0);
         }
     }
-    if (func_80069538_6A138() == 2) {
+    if ((s16)func_80069538_6A138() == 2) {
         D_8010700C_13CD3C_HotBobOmb = 1;
         obj->func_ptr = func_80102A28_138758_HotBobOmb;
     }
@@ -657,4 +657,72 @@ const u32 D_80106DD4_13CB04_HotBobOmb[13] = { 0x43AA0000, 0x43FA0000, 0x442F0000
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801056C8_13B3F8_HotBobOmb);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_80106750_13C480_HotBobOmb);
+/* The end: the loser's motion and the others' win motions, coins to gPlayers[].coins_mg_bonus,
+   then fade out and return. */
+void func_80106750_13C480_HotBobOmb(omObjData* obj) {
+    omObjData* p;
+
+    switch (D_80106FC8_13CCF8_HotBobOmb) {
+    case 0:
+        func_800794A8_7A0A8(0x28);
+        D_80106F98_13CCC8_HotBobOmb = 0x1E;
+        D_80106FC8_13CCF8_HotBobOmb++;
+        break;
+    case 1:
+        if (--D_80106F98_13CCC8_HotBobOmb < 0) {
+            func_800691FC_69DFC(3);
+            func_80079614_7A214(4);
+            if (D_80106E84_13CBB4_HotBobOmb == 1) {
+                D_80106FC8_13CCF8_HotBobOmb += 2;
+                D_80106F98_13CCC8_HotBobOmb = 0x3C;
+            } else {
+                D_80106FC8_13CCF8_HotBobOmb++;
+            }
+        }
+        break;
+    case 2:
+        if (func_80069538_6A138() == 2) {
+            p = D_800FFFD8_100BD8[D_80106FFC_13CD2C_HotBobOmb];
+            func_80029B80_2A780(p->model[0], p->motion[8]);
+            func_80029B80_2A780(D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 1) % 4]->model[0],
+                                D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 1) % 4]->motion[10]);
+            func_80029B80_2A780(D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 2) % 4]->model[0],
+                                D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 2) % 4]->motion[10]);
+            func_80029B80_2A780(D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 3) % 4]->model[0],
+                                D_800FFFD8_100BD8[(D_80106FFC_13CD2C_HotBobOmb + 3) % 4]->motion[10]);
+            func_800732B0_73EB0(D_80106F08_13CC38_HotBobOmb[D_80106FFC_13CD2C_HotBobOmb]);
+            gPlayers[0].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[0];
+            gPlayers[1].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[1];
+            gPlayers[2].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[2];
+            gPlayers[3].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[3];
+            D_800FFFD8_100BD8[D_80106FFC_13CD2C_HotBobOmb]->rot.y = 0.0f;
+            PlayMusic(0x51);
+            D_80106F98_13CCC8_HotBobOmb = 0x78;
+            D_80106FC8_13CCF8_HotBobOmb += 2;
+        }
+        break;
+    case 3:
+        if (func_80069538_6A138() == 2) {
+            gPlayers[0].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[0];
+            gPlayers[1].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[1];
+            gPlayers[2].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[2];
+            gPlayers[3].coins_mg_bonus = D_80106F80_13CCB0_HotBobOmb[3];
+            D_80106FC8_13CCF8_HotBobOmb++;
+        }
+        break;
+    case 4:
+        if (--D_80106F98_13CCC8_HotBobOmb == 0x54) {
+            func_80079684_7A284(0x7F);
+        }
+        if (D_80106F98_13CCC8_HotBobOmb < 0) {
+            InitFadeOut(0, 0x14);
+            D_80106FC8_13CCF8_HotBobOmb++;
+        }
+        break;
+    case 5:
+        if (func_8008F618_90218() == 0) {
+            omOvlReturnEx(1);
+        }
+        break;
+    }
+}

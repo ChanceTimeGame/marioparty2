@@ -81,7 +81,7 @@ void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2);
 void func_8002C6F4_2D2F4(HmfModel*, u16);
 void func_8003E4F4_3F0F4(s16, u8, u8);
 void func_80015710_16310(s32 slot, s32 pan);
-s16 func_80069538_6A138(void); /* MP1 GMesStatAllGet; s32 in main's other views, retail re-extends here */
+s32 func_80069538_6A138(void); /* MP1 GMesStatAllGet */
 s16 func_800691FC_69DFC(s16 mesNo, ...);
 void func_800799A4_7A5A4(s16 sound, s32 frames);
 void func_80079614_7A214(s16 time);
