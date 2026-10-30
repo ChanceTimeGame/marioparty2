@@ -443,17 +443,137 @@ void func_80103FE8_16CF28_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16
 }
 
 __asm__(".section .rodata");
-const u32 D_80106FF0_16FF30_ShockDropOrRoll[2] = { 0x14282828, 0x28282828 };
+const s8 D_80106FF0_16FF30_ShockDropOrRoll[8] = { 20, 40, 40, 40, 40, 40, 40, 40 };     /* intro spin step lengths */
+const s8 D_80106FF8_16FF38_ShockDropOrRoll[8] = { -45, 45, -45, 45, -45, 45, -45, 45 }; /* intro spin steps */
+
+/* The solo player's crank: the stick X (clamped to -45..45) is the roller input D_801072B0;
+   during the intro it rocks the roller back and forth. The crank motion speed follows the input
+   averaged over 8 frames. */
+void func_801044BC_16D3FC_ShockDropOrRoll(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    s32 unused[1];
+    s8 stk;
+    s8 i;
+    f32 speed;
+
+    if (D_80106ED1_16FE11_ShockDropOrRoll == 1 && D_80106ED2_16FE12_ShockDropOrRoll == 0) {
+        if (D_80106F00_16FE40_ShockDropOrRoll++ > D_80106FF0_16FF30_ShockDropOrRoll[D_80106F04_16FE44_ShockDropOrRoll]) {
+            D_80106F00_16FE40_ShockDropOrRoll = 0;
+            D_80106F04_16FE44_ShockDropOrRoll++;
+        }
+        D_801072B0_1701F0_ShockDropOrRoll = D_80106FF8_16FF38_ShockDropOrRoll[D_80106F04_16FE44_ShockDropOrRoll];
+        if (++D_80106EFC_16FE3C_ShockDropOrRoll >= 0x60) {
+            D_80106ED2_16FE12_ShockDropOrRoll = 1;
+        }
+    }
+    if (D_80106ED7_16FE17_ShockDropOrRoll >= 5 && D_80106ED7_16FE17_ShockDropOrRoll < 9) {
+        stk = ContStkX[w->unk_57];
+        if (stk < -45) {
+            stk = -45;
+        } else if (stk >= 46) {
+            stk = 45;
+        }
+        D_801072B0_1701F0_ShockDropOrRoll = stk;
+    } else if (D_80106ED2_16FE12_ShockDropOrRoll == 1) {
+        D_801072B0_1701F0_ShockDropOrRoll = 0;
+    }
+    speed = (D_801072B0_1701F0_ShockDropOrRoll + 45) / 90.0f * 60.0f;
+    D_80106EDC_16FE1C_ShockDropOrRoll[D_80106F08_16FE48_ShockDropOrRoll] = speed;
+    D_80106F08_16FE48_ShockDropOrRoll = (D_80106F08_16FE48_ShockDropOrRoll + 1) & 7;
+    speed = 0.0f;
+    for (i = 0; i < 8; i++) {
+        speed += D_80106EDC_16FE1C_ShockDropOrRoll[i];
+    }
+    speed /= 8.0f;
+    if (speed < 30.0f && D_80106F09_16FE49_ShockDropOrRoll != 1) {
+        PlaySound(0x1C8);
+        D_80106F09_16FE49_ShockDropOrRoll = 1;
+    }
+    if (speed > 30.0f && D_80106F09_16FE49_ShockDropOrRoll != 2) {
+        PlaySound(0x1C8);
+        D_80106F09_16FE49_ShockDropOrRoll = 2;
+    }
+    D_80106F0C_16FE4C_ShockDropOrRoll = speed;
+    if ((u32)(D_80106ED7_16FE17_ShockDropOrRoll - 1) < 8) {
+        func_80029C74_2A874(obj->model[0], speed);
+        func_80029C74_2A874(obj->model[2], speed);
+    }
+}
 
 __asm__(".section .rodata");
-const u32 D_80106FF8_16FF38_ShockDropOrRoll[2] = { 0xD32DD32D, 0xD32DD32D };
+/* solo CPU: frames between turns by difficulty */
+const s16 D_80107000_16FF40_ShockDropOrRoll[4][8] = {
+    { 50, 100, 150, 50, 120, 50, 100, 50 },
+    { 50, 150, 40, 150, 40, 30, 150, 50 },
+    { 40, 150, 40, 30, 40, 30, 150, 40 },
+    { 30, 200, 20, 100, 20, 20, 30, 200 },
+};
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_801044BC_16D3FC_ShockDropOrRoll);
+/* The solo player's update: a CPU turns the crank one way at full stick and flips the direction
+   at random intervals (the first player still on the roller is the one it checks; the "near the
+   middle" test can never reach its far-edge case, so it always flips). Then func_801044BC. */
+void func_80104784_16D6C4_ShockDropOrRoll(omObjData* obj) {
+    SDWorkPair wk;
+    MgWork* w = obj->unk_50;
+    s8 i;
 
-__asm__(".section .rodata");
-const u32 D_80107000_16FF40_ShockDropOrRoll[16] = { 0x00320064, 0x00960032, 0x00780032, 0x00640032, 0x00320096, 0x00280096, 0x0028001E, 0x00960032, 0x00280096, 0x0028001E, 0x0028001E, 0x00960028, 0x001E00C8, 0x00140064, 0x00140014, 0x001E00C8 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_80104784_16D6C4_ShockDropOrRoll);
+    for (i = 0; i < 3; i++) {
+        wk.w[i] = D_800FFFD8_100BD8[i]->unk_50;
+        wk.p[i] = wk.w[i]->unk_158;
+    }
+    if (D_80106F10_16FE50_ShockDropOrRoll == 0) {
+        if (guRandom() & 1) {
+            D_80107250_170190_ShockDropOrRoll = 1;
+        } else {
+            D_80107250_170190_ShockDropOrRoll = -1;
+        }
+        D_80107252_170192_ShockDropOrRoll = 0;
+        D_80107254_170194_ShockDropOrRoll = 0;
+        D_80107256_170196_ShockDropOrRoll = D_80107000_16FF40_ShockDropOrRoll[gPlayers[w->unk_59].cpu_difficulty][0];
+        D_80106F10_16FE50_ShockDropOrRoll = 1;
+    }
+    if (D_80106ED3_16FE13_ShockDropOrRoll == 1 && D_80106ED0_16FE10_ShockDropOrRoll == 0) {
+        if (gPlayers[w->unk_59].flags & 1) {
+            ContBtn[w->unk_57] = 0;
+            ContStkX[w->unk_57] = 0;
+            ContStkY[w->unk_57] = 0;
+            ContBtnTrg[w->unk_57] = 0;
+            for (i = 0; i < 3; i++) {
+                if (wk.p[i]->fell != 1) {
+                    if (D_80107254_170194_ShockDropOrRoll++ > D_80107256_170196_ShockDropOrRoll) {
+                        if ((D_800FFFD8_100BD8[i]->trans.z > 0.0f ? D_800FFFD8_100BD8[i]->trans.z : -D_800FFFD8_100BD8[i]->trans.z) < 25.0f) {
+                            if (D_80107252_170192_ShockDropOrRoll++ < 3) {
+                                if ((D_800FFFD8_100BD8[i]->trans.z > 0.0f ? D_800FFFD8_100BD8[i]->trans.z : -D_800FFFD8_100BD8[i]->trans.z) > 175.0f) {
+                                    if (D_800FFFD8_100BD8[i]->trans.z < 0.0f) {
+                                        D_80107250_170190_ShockDropOrRoll = -1;
+                                    } else {
+                                        D_80107250_170190_ShockDropOrRoll = 1;
+                                    }
+                                } else {
+                                    D_80107250_170190_ShockDropOrRoll *= -1;
+                                }
+                            } else {
+                                D_80107250_170190_ShockDropOrRoll *= -1;
+                            }
+                        } else {
+                            D_80107250_170190_ShockDropOrRoll *= -1;
+                            D_80107252_170192_ShockDropOrRoll = 0;
+                        }
+                        D_80107256_170196_ShockDropOrRoll = D_80107000_16FF40_ShockDropOrRoll[gPlayers[w->unk_59].cpu_difficulty][guRandom() & 7];
+                        D_80107254_170194_ShockDropOrRoll = 0;
+                        break;
+                    }
+                }
+            }
+            if (D_80107250_170190_ShockDropOrRoll < 0) {
+                ContStkX[w->unk_57] = -60;
+            } else {
+                ContStkX[w->unk_57] = 60;
+            }
+        }
+    }
+    func_801044BC_16D3FC_ShockDropOrRoll(obj);
+}
 
 /* The solo player's setup: it stands at the crank (model 0x240006 beside it). */
 void func_80104B98_16DAD8_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z) {

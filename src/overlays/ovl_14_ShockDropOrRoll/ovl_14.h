@@ -89,7 +89,7 @@ extern f32 D_80106EDC_16FE1C_ShockDropOrRoll[8]; /* the solo stick, last 8 frame
 extern u32 D_80106EFC_16FE3C_ShockDropOrRoll;  /* intro spin frames */
 extern u32 D_80106F00_16FE40_ShockDropOrRoll;  /* intro spin step frames */
 extern u32 D_80106F04_16FE44_ShockDropOrRoll;  /* intro spin step */
-extern u8 D_80106F08_16FE48_ShockDropOrRoll;   /* D_80106EDC index */
+extern s8 D_80106F08_16FE48_ShockDropOrRoll;   /* D_80106EDC index */
 extern s8 D_80106F09_16FE49_ShockDropOrRoll;   /* crank sound state: 1 slow, 2 fast */
 extern f32 D_80106F0C_16FE4C_ShockDropOrRoll;  /* the crank's motion speed */
 extern s8 D_80106F10_16FE50_ShockDropOrRoll;   /* the solo CPU is set up */
@@ -113,6 +113,9 @@ extern const char D_80106F90_16FED0_ShockDropOrRoll[];
 extern const SDLevel D_80106F9C_16FEDC_ShockDropOrRoll[5];
 extern const s32 D_80106FD8_16FF18_ShockDropOrRoll[4];
 extern const s16 D_80106FE8_16FF28_ShockDropOrRoll[4];
+extern const s8 D_80106FF0_16FF30_ShockDropOrRoll[8];
+extern const s8 D_80106FF8_16FF38_ShockDropOrRoll[8];
+extern const s16 D_80107000_16FF40_ShockDropOrRoll[4][8];
 
 /* ---- .bss ---- */
 extern s8 D_80107250_170190_ShockDropOrRoll;   /* solo CPU: turn direction (1, -1) */
