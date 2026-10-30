@@ -548,9 +548,103 @@ void func_801047B8_230128_HexagonHeat(omObjData* obj) {
     PlaySound(0x4AF);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104C80_2305F0_HexagonHeat);
+/* The distance from obj to the nearest other player (10000 if none is nearer). */
+f32 func_80104C80_2305F0_HexagonHeat(omObjData* obj) {
+    omObjData* other;
+    f32 dx;
+    f32 dz;
+    f32 dist;
+    f32 min;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104D38_2306A8_HexagonHeat);
+    min = 10000.0f;
+    for (i = 0; i < 4; i++) {
+        other = D_800FFFD8_100BD8[i];
+        if (other != obj) {
+            dx = obj->trans.x - other->trans.x;
+            dz = obj->trans.z - other->trans.z;
+            dist = func_800B1830_B2430(dx * dx + dz * dz);
+            if (dist <= min) {
+                min = dist;
+            }
+        }
+    }
+    return min;
+}
+
+/* Player hook 0 (before the pad is read): a COM player's pad is saved (func_801051D0 restores it)
+   and replaced: while the stompers rise, a COM of difficulty 2+ heads for the centre once they are
+   high enough; otherwise, near the end of the wait, it walks to the flag's colour, holds A in the
+   air (difficulty 3 also presses 0x2000 near nobody) and jumps when near enough. */
+void func_80104D38_2306A8_HexagonHeat(omObjData* obj) {
+    MgWork* w;
+    omObjData* target;
+    Vec3f v;
+    f32 x, y, z;
+    f32 dist;
+    s32 player;
+    s32 ground;
+    s32 safe;
+    s32 port;
+    s32 diff;
+
+    w = obj->unk_50;
+    player = w->unk_59;
+    ground = w->unk_53;
+    safe = D_80106520_231E90_HexagonHeat + 1;
+    port = w->unk_57;
+    if (D_80106544_231EB4_HexagonHeat == player && D_800F8FD0_F9BD0 == 2) {
+        w->unk_3C *= 0.8f;
+    }
+    if (gPlayers[w->unk_59].flags & 1) {
+        D_801067EC_23215C_HexagonHeat = ContBtnTrg[port];
+        D_801067E8_232158_HexagonHeat = ContBtn[port];
+        D_801067F0_232160_HexagonHeat = ContStkX[port];
+        D_801067F4_232164_HexagonHeat = ContStkY[port];
+        ContStkY[port] = 0;
+        ContStkX[port] = 0;
+        ContBtnTrg[port] = 0;
+        ContBtn[port] = 0;
+        if (D_8010654C_231EBC_HexagonHeat[player] != 1 && D_80106520_231E90_HexagonHeat >= 0) {
+            diff = gPlayers[w->unk_59].cpu_difficulty;
+            x = obj->trans.x;
+            y = obj->trans.y;
+            z = obj->trans.z;
+            target = D_800FC7B0_FD3B0[D_80106520_231E90_HexagonHeat + 1];
+            if ((D_80106528_231E98_HexagonHeat == 1) & (diff >= 2)) {
+                if (!(D_80106524_231E94_HexagonHeat < D_80106740_2320B0_HexagonHeat[diff]) && ground != 1) {
+                    v.x = -x;
+                    v.y = 0.0f;
+                    v.z = z;
+                    func_800B1830_B2430(v.x * v.x + v.z * v.z);
+                    func_8002D9AC_2E5AC(&v);
+                    ContStkX[port] = v.x * 60.0f * D_80106720_232090_HexagonHeat[diff];
+                    ContStkY[port] = v.z * 60.0f * D_80106720_232090_HexagonHeat[diff];
+                }
+            } else if (D_8010652C_231E9C_HexagonHeat >= 65 - D_80106730_2320A0_HexagonHeat[diff]) {
+                if (ground == safe) {
+                    return;
+                }
+                v.x = -(x - target->trans.x);
+                v.y = y - target->trans.y;
+                v.z = z - target->trans.z;
+                dist = func_800B1830_B2430(v.x * v.x + v.z * v.z);
+                func_8002D9AC_2E5AC(&v);
+                ContStkX[port] = v.x * 60.0f * D_80106720_232090_HexagonHeat[diff];
+                ContStkY[port] = v.z * 60.0f * D_80106720_232090_HexagonHeat[diff];
+                if (w->unk_38 != 1000.0f) {
+                    ContBtn[port] = 0x8000;
+                    if ((dist < 150.0f) & (diff == 3) && func_80104C80_2305F0_HexagonHeat(obj) > 120.0f) {
+                        ContBtnTrg[port] |= 0x2000;
+                    }
+                } else if (dist < D_80106720_232090_HexagonHeat[diff] * 450.0f && v.y != 0.0f &&
+                           w->unk_40 > D_800BF7C8_C03C8) {
+                    ContBtnTrg[port] = 0x8000;
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801051D0_230B40_HexagonHeat);
 
