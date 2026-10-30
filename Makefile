@@ -722,3 +722,6 @@ S41FA_MULFIX_UNITS := build/src/overlays/ovl_1F_DungeonDash/1BE380.c.o
 $(S41FA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-1FB: 1C2D40.c has nops between back-to-back mul.s (func_801078BC)
 build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o: export VR4300MUL := ON
+
+# S4-2E: ovl_2E 22E170.c has nops between back-to-back mul.s (func_8010370C): KMC mul fix on
+build/src/overlays/ovl_2E_HexagonHeat/22E170.c.o: export VR4300MUL := ON
