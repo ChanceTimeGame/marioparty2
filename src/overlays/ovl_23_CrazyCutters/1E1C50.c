@@ -101,13 +101,50 @@ void func_80102C18_1E2068_CrazyCutters(omObjData* obj) {
     }
 }
 
-__asm__(".section .rodata");
-const u32 D_8010945C_1E88AC_CrazyCutters[3] = { 0x00000003, 0x00000004, 0x00000005 };
+void func_80102D30_1E2180_CrazyCutters(omObjData* obj) {
+    s32 shapes[3] = { 3, 4, 5 };
+    s32 tiles[3] = { 0x19, 0x1A, 0x1B };
+    s32 i;
+    s32 x;
+    s32 y;
+    s16 sprite;
 
-__asm__(".section .rodata");
-const u32 D_80109468_1E88B8_CrazyCutters[3] = { 0x00000019, 0x0000001A, 0x0000001B };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80102D30_1E2180_CrazyCutters);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    sprite = func_8001A2F8_1AEF8(tiles[D_80109918_1E8D68_CrazyCutters] | 0x330000);
+    i = 0;
+    for (y = 0; y < 8; y++) {
+        for (x = 0; x < 10; x++) {
+            D_801095C8_1E8A18_CrazyCutters[i] = func_8001AAAC_1B6AC(sprite, 0, 1);
+            func_8001A708_1B308(D_801095C8_1E8A18_CrazyCutters[i], 0x4008);
+            D_80109670_1E8AC0_CrazyCutters[i] = x * 32 + 16;
+            D_801097B0_1E8C00_CrazyCutters[i] = y * 32 + 16;
+            espPosSet(D_801095C8_1E8A18_CrazyCutters[i], D_80109670_1E8AC0_CrazyCutters[i], D_801097B0_1E8C00_CrazyCutters[i]);
+            espDispOn(D_801095C8_1E8A18_CrazyCutters[i]);
+            func_8001A91C_1B51C(D_801095C8_1E8A18_CrazyCutters[i], 1.0f, 1.0f);
+            i++;
+        }
+    }
+    for (y = 0; y < 2; y++) {
+        for (x = 0; x < 2; x++) {
+            D_80109598_1E89E8_CrazyCutters[y * 2 + x] = func_8001A2F8_1AEF8(shapes[D_80109918_1E8D68_CrazyCutters] | 0x330000);
+            D_801095B0_1E8A00_CrazyCutters[y * 2 + x] = func_8001AAAC_1B6AC(D_80109598_1E89E8_CrazyCutters[y * 2 + x], 0, 1);
+            func_8001A708_1B308(D_801095B0_1E8A00_CrazyCutters[y * 2 + x], 0x4008);
+            i = func_8010882C_1E7C7C_CrazyCutters(y * 2 + x);
+            espPosSet(D_801095B0_1E8A00_CrazyCutters[y * 2 + x], D_80109070_1E84C0_CrazyCutters[i], D_80109080_1E84D0_CrazyCutters[i]);
+            espDispOn(D_801095B0_1E8A00_CrazyCutters[y * 2 + x]);
+            func_8001A91C_1B51C(D_801095B0_1E8A00_CrazyCutters[y * 2 + x], 1.0f, 1.0f);
+        }
+    }
+    D_80109668_1E8AB8_CrazyCutters = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x330018), 0, 1);
+    func_8001A708_1B308(D_80109668_1E8AB8_CrazyCutters, 0x4008);
+    D_801098F0_1E8D40_CrazyCutters = 160;
+    D_801098F4_1E8D44_CrazyCutters = 120;
+    espPosSet(D_80109668_1E8AB8_CrazyCutters, D_801098F0_1E8D40_CrazyCutters, D_801098F4_1E8D44_CrazyCutters);
+    espDispOn(D_80109668_1E8AB8_CrazyCutters);
+    func_8001A91C_1B51C(D_80109668_1E8AB8_CrazyCutters, 1.0f, 1.0f);
+    obj->func_ptr = func_801030B4_1E2504_CrazyCutters;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801030B4_1E2504_CrazyCutters);
 
