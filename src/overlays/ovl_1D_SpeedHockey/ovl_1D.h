@@ -322,7 +322,7 @@ void func_801056D0_1B7820_SpeedHockey(void);
 void func_80105768_1B78B8_SpeedHockey(void);
 /* 1B7900.c */
 void func_801057B0_1B7900_SpeedHockey(void);
-u16 func_801057CC_1B791C_SpeedHockey(u32 cam, s32 file);
+u16 func_801057CC_1B791C_SpeedHockey(s32 file, u32 cam);
 void func_801058A4_1B79F4_SpeedHockey(void);
 void func_80105934_1B7A84_SpeedHockey(void);
 void func_801059C4_1B7B14_SpeedHockey(void);

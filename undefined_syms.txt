@@ -313,3 +313,5 @@ D_8010C3AA_137F9A_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xA;
 D_8010C3AC_137F9C_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xC;
 D_8010C3AD_137F9D_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xD;
 D_8010C3AE_137F9E_HotRopeJump = D_8010C3A0_137F90_HotRopeJump + 0xE;
+/* S4-1D: ovl_1D camera table (no splat label at its start) */
+D_80106BD0_1B8D20_SpeedHockey = D_80106BEC_1B8D3C_SpeedHockey - 0x1C;
