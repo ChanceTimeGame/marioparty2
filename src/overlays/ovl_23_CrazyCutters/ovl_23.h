@@ -84,6 +84,7 @@ HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 /* 73BA0.c defines arg3 s16; retail passes a full word here (lw) */
 omObjData* func_80073328_73F28(u32 arg0, s16 arg1, s16 arg2, s32 arg3);
 u16 func_80078EA8_79AA8(void);
+void func_800794A8_7A0A8(s32);
 extern u8 D_80102720_103320; /* board.h */
 
 extern s8 ContStkX[4];

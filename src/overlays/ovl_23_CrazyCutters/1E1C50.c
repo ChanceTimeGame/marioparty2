@@ -1164,19 +1164,159 @@ s32 func_801065F4_1E5A44_CrazyCutters(s32 quarter) {
     return D_8010956C_1E89BC_CrazyCutters;
 }
 
+/* Time is up: the score is the share of the outline cut (hits over hits + misses, at least 500
+   counted), CPUs scaled, 0..100; a player who did not finish the shape scores 0. */
+// loop-invariant motion: retail keeps 0.5f in $f30 across the loop (masked 13)
+#ifdef NON_MATCHING
+void func_801067D4_1E5C24_CrazyCutters(omObjData* obj) {
+    s32 i;
+    s32 n;
+    s32 total;
+    f32 ratio;
+    f32 rate;
+    f32 lo;
+
+    func_800691FC_69DFC(3);
+    func_800794A8_7A0A8(0x2D);
+    D_80109948_1E8D98_CrazyCutters = 0;
+    for (i = 0; i < 4; i++) {
+        n = D_80109588_1E89D8_CrazyCutters[i];
+        while (n != 0) {
+            n >>= 1;
+        }
+        total = D_80109950_1E8DA0_CrazyCutters[i] + D_80109960_1E8DB0_CrazyCutters[i];
+        ratio = total / 500.0f;
+        if (ratio > 1.0f) {
+            ratio = 1.0f;
+        }
+        if (total != 0) {
+            rate = D_80109950_1E8DA0_CrazyCutters[i] * ratio * 100.0f / total + 0.5f;
+        } else {
+            rate = 0.0f;
+        }
+        if (!(gPlayers[i].flags & 1)) {
+            if (rate < 95.0f) {
+                lo = rate;
+                if (rate < 80.0f) {
+                    lo = 80.0f;
+                }
+                rate *= (95.0f - lo) / 150.0f + 1.0f;
+            }
+        } else {
+            rate *= 0.95f;
+        }
+        if (rate > 100.0f) {
+            rate = 100.0f;
+        }
+        if (rate < 0.0f) {
+            rate = 0.0f;
+        }
+        D_80109A52_1E8EA2_CrazyCutters[i] = rate;
+        if (func_80106D28_1E6178_CrazyCutters(i, 1) == 0 || func_80106D28_1E6178_CrazyCutters(i, 0x1000) == 0) {
+            D_80109A52_1E8EA2_CrazyCutters[i] = 0;
+        }
+    }
+    obj->func_ptr = func_80106A5C_1E5EAC_CrazyCutters;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801067D4_1E5C24_CrazyCutters);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106A5C_1E5EAC_CrazyCutters);
+/* Waits for the result message, then starts the end-of-game tile movement once. [FA808] */
+void func_80106A5C_1E5EAC_CrazyCutters(omObjData* obj) {
+    if (func_80069538_6A138() == 0 || func_80069538_6A138() & 2) {
+        if (D_80109A50_1E8EA0_CrazyCutters == 0) {
+            func_80107DA4_1E71F4_CrazyCutters();
+            D_80109A50_1E8EA0_CrazyCutters += 1;
+        }
+        obj->func_ptr = func_80106AD4_1E5F24_CrazyCutters;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106AD4_1E5F24_CrazyCutters);
+/* Runs the screen shake to its end (MP1's "every player done" check is gone: the count is
+   computed and dropped). [FA880] */
+void func_80106AD4_1E5F24_CrazyCutters(omObjData* obj) {
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106B54_1E5FA4_CrazyCutters);
+    j = 0;
+    for (i = 0; i < 4; i++) {
+        j += func_80106D28_1E6178_CrazyCutters(i, 0x20);
+    }
+    if (D_801099F4_1E8E44_CrazyCutters > 0 && D_801099F4_1E8E44_CrazyCutters < 3) {
+        if (--D_801099F8_1E8E48_CrazyCutters == 0 && D_801099F4_1E8E44_CrazyCutters == 2) {
+            D_801099F4_1E8E44_CrazyCutters = 3;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106B94_1E5FE4_CrazyCutters);
+/* Waits for the message to close, then fades out. [FA9D8] */
+void func_80106B54_1E5FA4_CrazyCutters(omObjData* obj) {
+    if (func_800696E4_6A2E4() == 0) {
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_80106B94_1E5FE4_CrazyCutters;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D28_1E6178_CrazyCutters);
+/* After the fade: ranks the players by score into gPlayers[].coins_mg_bonus (ties share a place;
+   a score of 0 is last), then returns from the overlay. */
+void func_80106B94_1E5FE4_CrazyCutters(omObjData* obj) {
+    s32 done[4];
+    s32 i;
+    s32 rank;
+    s32 best;
+    s32 bestIdx;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D44_1E6194_CrazyCutters);
+    if (func_8008F618_90218() != 0) {
+        return;
+    }
+    for (i = 0; i < 4; i++) {
+        done[i] = 0;
+    }
+    rank = 0;
+    do {
+        bestIdx = 0;
+        best = -1;
+        for (i = 0; i < 4; i++) {
+            if (done[i] == 0 && best < D_80109A52_1E8EA2_CrazyCutters[i]) {
+                best = D_80109A52_1E8EA2_CrazyCutters[i];
+                bestIdx = i;
+            }
+        }
+        if (best == 0) {
+            rank = 3;
+        }
+        gPlayers[bestIdx].coins_mg_bonus = rank;
+        done[bestIdx] = 1;
+        for (i = 0; i < 4; i++) {
+            if (done[i] == 0 && D_80109A52_1E8EA2_CrazyCutters[i] == best) {
+                gPlayers[i].coins_mg_bonus = rank;
+                done[i] = 1;
+            }
+        }
+        rank = 0;
+        for (i = 0; i < 4; i++) {
+            rank += done[i] == 1;
+        }
+    } while (rank < 4);
+    func_800794A8_7A0A8(0x28);
+    omOvlReturnEx(1);
+    omDelObj(obj);
+}
+
+/* [FAAB0] */
+s32 func_80106D28_1E6178_CrazyCutters(s32 player, s32 flag) {
+    return (flag & D_80109970_1E8DC0_CrazyCutters[player]) != 0;
+}
+
+/* [FAACC] */
+void func_80106D44_1E6194_CrazyCutters(s32 player, s32 flag, s32 on) {
+    if (on) {
+        D_80109970_1E8DC0_CrazyCutters[player] |= flag;
+    } else {
+        D_80109970_1E8DC0_CrazyCutters[player] &= ~flag;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D84_1E61D4_CrazyCutters);
 
