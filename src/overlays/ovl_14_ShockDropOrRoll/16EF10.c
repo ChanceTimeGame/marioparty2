@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_14.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16EF10", func_80105FD0_16EF10_ShockDropOrRoll);
 
