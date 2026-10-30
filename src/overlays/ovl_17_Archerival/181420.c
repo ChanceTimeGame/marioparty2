@@ -217,17 +217,200 @@ void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801030F0_181D10_Archerival);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103458_182078_Archerival);
+/* The arrow on the title banner: flies up out of the bow and falls away (state D_80107C58). */
+void func_80103458_182078_Archerival(omObjData* obj) {
+    ARObj* o = &D_80107920_186540_Archerival[11];
+    Vec from;
+    Vec to;
+    Vec dir;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103660_182280_Archerival);
+    switch (D_80107C58_186878_Archerival) {
+    case 1:
+        obj->rot.x = 270.0f;
+        obj->rot.z = 180.0f;
+        o->state = 2;
+        D_801073E0_186000_Archerival = 11.75f;
+        D_801073E4_186004_Archerival = 8.0f;
+        break;
+    case 2:
+        from.x = obj->trans.x;
+        from.y = obj->trans.y;
+        from.z = obj->trans.z;
+        to.x = obj->trans.x = obj->trans.x + D_801073E0_186000_Archerival * func_800B80D0_B8CD0(obj->rot.y);
+        to.z = obj->trans.z = obj->trans.z + D_801073E0_186000_Archerival * func_800B75D0_B81D0(obj->rot.y);
+        to.y = obj->trans.y = obj->trans.y + D_801073E4_186004_Archerival;
+        func_801030F0_181D10_Archerival(&from, &to, &dir);
+        obj->rot.x = dir.y + 180.0f;
+        D_801073E4_186004_Archerival -= 0.53f;
+        func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+        func_80029714_2A314(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+        if (D_801073E4_186004_Archerival < 0.0f) {
+            func_80029EDC_2AADC(obj->model[0], 1);
+            if (obj->trans.y < -50.0f) {
+                o->state = 0;
+            }
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801036C8_1822E8_Archerival);
+void func_80103660_182280_Archerival(omObjData* obj) {
+    obj->model[0] = LoadFormFile(0x27000A, 0x2B9);
+    func_800298A4_2A4A4(obj->model[0], 4, 4);
+    func_80029EDC_2AADC(obj->model[0], 2);
+    obj->func_ptr = func_80103458_182078_Archerival;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103704_182324_Archerival);
+void func_801036C8_1822E8_Archerival(void) {
+    D_80107C38_186858_Archerival = omAddObj(200, 1, 0, -1, func_80103660_182280_Archerival);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801037C4_1823E4_Archerival);
+/* Plays motion D_801078F8[motion] on the player model with the character's skeleton name. */
+void func_80103704_182324_Archerival(omObjData* obj, u8 motion) {
+    s8 chr = gPlayers[obj->work[0]].character;
 
+    func_8003E888_3F488(D_80107904_186524_Archerival);
+    D_80107904_186524_Archerival =
+        func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_801078F8_186518_Archerival[motion], 0,
+                            D_8010760C_18622C_Archerival[chr]);
+}
+
+/* Picks one of n slots not yet set in *used at random, sets it and returns it (Look Away's
+   func_801028A0_167640_LookAway with a u8 mask). */
+u8 func_801037C4_1823E4_Archerival(u8 n, u8* used) {
+    u8 m;
+    u8 k;
+    u8 i;
+
+    m = *used;
+    i = n;
+    while (m != 0) {
+        if (m & 1) {
+            i--;
+        }
+        m >>= 1;
+    }
+    k = rand8() % i;
+    m = *used;
+    for (i = 0; i < n; i++) {
+        if (m & 1) {
+        } else if (k-- == 0) {
+            break;
+        }
+        m >>= 1;
+    }
+    i = (i < n) ? i : 0;
+    *used |= 1 << i;
+    return i;
+}
+
+/* A CPU archer's target: the nearest target in x (entries 1-5 of D_80107920; 1-3 are the
+   players' targets, 4-5 extra ones) that is not yet hit, preferring by difficulty rolls a
+   target nobody aims at (D_801073CC) unless D_801073D0 rolls, or one of 1-3 (D_801073C8).
+   Also ranks the candidates by distance in D_801078C8. Returns the index, 0 if none. */
+// NON_MATCHING: register allocation only (masked 0)
+#ifdef NON_MATCHING
+u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
+    u8 diff;
+    u8 rollA;
+    u8 rollB;
+    u8 rollC;
+    u8 nNear;
+    u8 nFree;
+    u8 nLeft;
+    u16 best;
+    u8 bestIdx;
+    u16 i;
+    u16 j;
+    u16 d;
+    u16 sd;
+    u16 si;
+    u16 td;
+    u16 ti;
+    s32 t;
+    ARRank* r;
+    ARObj* tbl;
+    ARObj* p;
+
+    diff = gPlayers[obj->work[0]].cpu_difficulty;
+    rollA = (u8)(rand8() % 100) < D_801073C8_185FE8_Archerival[diff];
+    rollB = (u8)(rand8() % 100) < D_801073CC_185FEC_Archerival[diff];
+    rollC = (u8)(rand8() % 100) < D_801073D0_185FF0_Archerival[diff];
+    nNear = 0;
+    nFree = 0;
+    nLeft = 0;
+    best = 0xFFFF;
+    bestIdx = 0;
+    r = D_801078C8_1864E8_Archerival;
+    for (i = 0; i < 5; i++, r++) {
+        r->dist = best;
+        r->idx = bestIdx;
+    }
+    for (i = 1, tbl = D_80107920_186540_Archerival; i < 6; i++) {
+        p = i + tbl;
+        if (p->unk_26 == 0) {
+            if (i < 4) {
+                if (p->com == 0) {
+                    nFree++;
+                }
+                nNear++;
+            }
+            nLeft++;
+        }
+    }
+    if (nLeft == 0) {
+        return 0;
+    }
+    rollB = nFree ? rollB : 0;
+    rollA = nNear ? rollA : 0;
+    rollB = !rollC ? rollB : 0;
+    for (i = 1, tbl = D_80107920_186540_Archerival; i < 6; i++) {
+        p = i + tbl;
+        if (p->unk_26 != 0) {
+            continue;
+        }
+        if (rollB) {
+            if (p->com != 0) {
+                continue;
+            }
+        } else if (rollA) {
+            if (i >= 4) {
+                continue;
+            }
+        }
+        d = t = obj->trans.x + D_801078EC_18650C_Archerival - p->obj->trans.x;
+        if (t < 0) {
+            d = -d;
+        }
+        if (d < best) {
+            best = d;
+            bestIdx = i;
+        }
+        r = D_801078C8_1864E8_Archerival;
+        for (j = 0; j < 5; r++) {
+            j++;
+            if (d < r->dist) {
+                sd = r->dist;
+                si = r->idx;
+                r->dist = d;
+                r->idx = i;
+                for (r++; j < 5; j++, r++) {
+                    td = r->dist;
+                    ti = r->idx;
+                    r->dist = sd;
+                    r->idx = si;
+                    sd = td;
+                    si = ti;
+                }
+                break;
+            }
+        }
+    }
+    return bestIdx;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801038B4_1824D4_Archerival);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103C1C_18283C_Archerival);
 

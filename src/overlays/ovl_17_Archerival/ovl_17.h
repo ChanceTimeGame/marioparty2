@@ -48,13 +48,28 @@ typedef struct ARObj {
     /* 0x44 */ f32 unk_44;
 } ARObj; /* size = 0x48 (N64) */
 
+/* A CPU target candidate (D_801078C8_1864E8_Archerival[5], nearest first). */
+typedef struct ARRank {
+    /* 0x00 */ u16 dist;
+    /* 0x02 */ u16 idx;
+} ARRank; /* size = 0x4 */
+
 /* ---- .data (181420.c, 0x185FB0-0x186260) ---- */
+extern u8 D_801073C8_185FE8_Archerival[4];  /* CPU: % chance to prefer targets 1-3, by difficulty */
+extern u8 D_801073CC_185FEC_Archerival[4];  /* CPU: % chance to prefer an unclaimed target */
+extern u8 D_801073D0_185FF0_Archerival[4];  /* CPU: % chance to cancel that preference */
 extern s32 D_801073DC_185FFC_Archerival;  /* camera set up */
 extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
 extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
+extern char* D_8010760C_18622C_Archerival[6]; /* "c00Nl_0_DEF" by character */
+
 /* ---- .bss ---- */
+extern ARRank D_801078C8_1864E8_Archerival[5];
+extern f32 D_801078EC_18650C_Archerival;      /* CPU aim offset in x */
 extern HuSprite_Unk84_Struct* D_801078F4_186514_Archerival; /* the banner image */
+extern void* D_801078F8_186518_Archerival[3]; /* motion data */
+extern s16 D_80107904_186524_Archerival;      /* the player model's current motion */
 extern ARObj D_80107920_186540_Archerival[50];
 extern omObjData* D_80107BA8_1867C8_Archerival;  /* = D_80107920[9].obj */
 extern s16 D_80107BAC_1867CC_Archerival;         /* = D_80107920[9].spr */
@@ -140,12 +155,12 @@ void func_80102EEC_181B0C_Archerival(omObjData* obj);
 void func_80102F64_181B84_Archerival(void);
 f32 func_80102FA0_181BC0_Archerival(f32 x);
 void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out);
-void func_80103458_182078_Archerival(void* arg0);
-void func_80103660_182280_Archerival(void* arg0);
+void func_80103458_182078_Archerival(omObjData* obj);
+void func_80103660_182280_Archerival(omObjData* obj);
 void func_801036C8_1822E8_Archerival(void);
-void func_80103704_182324_Archerival(void* arg0, s32 arg1);
-void func_801037C4_1823E4_Archerival(s32 arg0, u8 *arg1);
-s32 func_801038B4_1824D4_Archerival(void* arg0);
+void func_80103704_182324_Archerival(omObjData* obj, u8 motion);
+u8 func_801037C4_1823E4_Archerival(u8 n, u8* used);
+u8 func_801038B4_1824D4_Archerival(omObjData* obj);
 s32 func_80103C1C_18283C_Archerival(void* arg0, s16 *arg2, u8 *arg3);
 void func_80103CF0_182910_Archerival(void* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4);
 void func_80103D7C_18299C_Archerival(void* arg0, s32 arg1, s16 *arg2);
