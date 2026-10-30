@@ -298,7 +298,7 @@ extern s32 D_80108E80_297EF0_DeepSeaSalvage;
 extern f32 D_80108E84_297EF4_DeepSeaSalvage;
 extern f32 D_80108E88_297EF8_DeepSeaSalvage;
 extern s16 D_80108E90_297F00_DeepSeaSalvage;      /* DSSWork blocks made */
-extern s16 D_80108E98_297F08_DeepSeaSalvage[4];   /* effect sprite files: [0] splash, [3] coin */
+extern s16 D_80108E98_297F08_DeepSeaSalvage[4];   /* effect sprite anims: [0] splash (0x4C000F), [3] 0x4C000D (fork B: check) */
 extern s16 D_80108EA0_297F10_DeepSeaSalvage;      /* the bubble sprite file */
 extern omObjData* D_80108EB8_297F28_DeepSeaSalvage; /* the treasure object */
 extern DSSHud D_80108EC0_297F30_DeepSeaSalvage;
