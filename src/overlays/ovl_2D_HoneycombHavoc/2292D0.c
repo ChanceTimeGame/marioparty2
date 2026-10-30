@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_2D.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102800_2292D0_HoneycombHavoc);
 
