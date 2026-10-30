@@ -235,7 +235,7 @@ typedef struct DSSFish {
 
 extern s32 D_80108420_297490_DeepSeaSalvage;     /* the music has started */
 extern s32 D_80108424_297494_DeepSeaSalvage[2];  /* the backdrop models' files */
-extern DSSPlace D_8010842C_29749C_DeepSeaSalvage[2];
+extern f32 D_8010842C_29749C_DeepSeaSalvage[2][6]; /* pos x, y, z, scale x, y, z */
 extern char* D_8010845C_2974CC_DeepSeaSalvage[6]; /* per character: the diving mask's part */
 extern s16 D_80108474_2974E4_DeepSeaSalvage[6];  /* per character: the diver model's file */
 extern f32 D_80108480_2974F0_DeepSeaSalvage[4];  /* per diver: start x */
