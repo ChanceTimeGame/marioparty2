@@ -585,7 +585,7 @@ void func_80104F40_281C30_BowsersBigBlast(void) {
     D_80107AE8_2847D8_BowsersBigBlast = 4;
     D_80107AE9_2847D9_BowsersBigBlast = 0;
     for (i = 0; i < 5; i++) {
-        if (*(&D_80107D3F_284A2F_BowsersBigBlast - i) != 0 && D_80107AE8_2847D8_BowsersBigBlast > 4 - i) {
+        if (D_80107D3B_284A2B_BowsersBigBlast[4 - i] != 0 && D_80107AE8_2847D8_BowsersBigBlast > 4 - i) {
             D_80107AE8_2847D8_BowsersBigBlast = 4 - i;
         }
         if (D_80107D3B_284A2B_BowsersBigBlast[i] != 0 && i > D_80107AE9_2847D9_BowsersBigBlast) {
@@ -832,7 +832,7 @@ void func_801056A8_282398_BowsersBigBlast(omObjData* obj, BBPlayer* pl) {
 void func_80105C50_282940_BowsersBigBlast(omObjData* obj, u8 order, u8 port) {
     f32 z = 0.0f;
     BBPlayer* pl = &D_80107D48_284A38_BowsersBigBlast[obj->work[0]];
-    do {
+    do { /* a block boundary: retail reloads work[0] below */
     } while (0);
     if (gPlayers[obj->work[0]].character == 5) {
         z = 30.0f;
@@ -1101,7 +1101,7 @@ void func_80106A50_283740_BowsersBigBlast(void) {
     u8 i = 0;
     u8 j;
     s8 place;
-    D_80107D20_284A10_BowsersBigBlast = func_80027154_27D54(0x10, 0x7918);
+    D_80107D20_284A10_BowsersBigBlast = func_80027154_27D54(sizeof(BBState), 0x7918);
     D_80107D20_284A10_BowsersBigBlast->timer = -1.0f;
     D_80107D20_284A10_BowsersBigBlast->shake = 0;
     D_80107D20_284A10_BowsersBigBlast->flow = 0;
@@ -1112,12 +1112,12 @@ void func_80106A50_283740_BowsersBigBlast(void) {
     D_80107D20_284A10_BowsersBigBlast->fade = 0;
     D_80107D20_284A10_BowsersBigBlast->hatch = 1;
     D_80107D20_284A10_BowsersBigBlast->control = 0;
-    D_80107D2C_284A1C_BowsersBigBlast = func_80027154_27D54(8, 0x7918);
-    func_800B0EF0_B1AF0(D_80107D2C_284A1C_BowsersBigBlast, 0, 8);
-    D_80107D24_284A14_BowsersBigBlast = func_80027154_27D54(0x60, 0x7918);
-    func_800B0EF0_B1AF0(D_80107D24_284A14_BowsersBigBlast, 0, 0x60);
-    D_80107D48_284A38_BowsersBigBlast = func_80027154_27D54(0x30, 0x7918);
-    func_800B0EF0_B1AF0(D_80107D48_284A38_BowsersBigBlast, 0, 0x30);
+    D_80107D2C_284A1C_BowsersBigBlast = func_80027154_27D54(2 * sizeof(BBFlash), 0x7918);
+    func_800B0EF0_B1AF0(D_80107D2C_284A1C_BowsersBigBlast, 0, 2 * sizeof(BBFlash));
+    D_80107D24_284A14_BowsersBigBlast = func_80027154_27D54(3 * sizeof(BBCamKey), 0x7918);
+    func_800B0EF0_B1AF0(D_80107D24_284A14_BowsersBigBlast, 0, 3 * sizeof(BBCamKey));
+    D_80107D48_284A38_BowsersBigBlast = func_80027154_27D54(4 * sizeof(BBPlayer), 0x7918);
+    func_800B0EF0_B1AF0(D_80107D48_284A38_BowsersBigBlast, 0, 4 * sizeof(BBPlayer));
     D_80107D4C_284A3C_BowsersBigBlast = 0;
     D_80107D64_284A54_BowsersBigBlast = 0;
     D_80107D66_284A56_BowsersBigBlast = 1;
@@ -1315,10 +1315,10 @@ void func_801074A8_284198_BowsersBigBlast(void) {
     } else if (D_80102770_103370[0].x < 0.0f) {
         D_80102770_103370[0].x += 360.0f;
     }
-    if (D_80102774_103374[0].x > 360.0f) {
-        D_80102774_103374[0].x -= 360.0f;
-    } else if (D_80102774_103374[0].x < 0.0f) {
-        D_80102774_103374[0].x += 360.0f;
+    if (D_80102770_103370[0].y > 360.0f) {
+        D_80102770_103370[0].y -= 360.0f;
+    } else if (D_80102770_103370[0].y < 0.0f) {
+        D_80102770_103370[0].y += 360.0f;
     }
     switch (D_80107D20_284A10_BowsersBigBlast->camera) {
     case 0:
@@ -1357,13 +1357,13 @@ void func_801074A8_284198_BowsersBigBlast(void) {
     case 2:
         if (D_80107D20_284A10_BowsersBigBlast->shake != 0) {
             if (D_80107B44_284834_BowsersBigBlast++ < 10.0f) {
-                D_801013B4_101FB4[0].x = D_80107B34_284824_BowsersBigBlast[(s32)D_80107B44_284834_BowsersBigBlast] + 207.0f;
+                D_801013B0_101FB0[0].y = D_80107B34_284824_BowsersBigBlast[(s32)D_80107B44_284834_BowsersBigBlast] + 207.0f;
             } else {
                 D_80107B44_284834_BowsersBigBlast = 0.0f;
                 D_80107D20_284A10_BowsersBigBlast->shake = 0;
             }
         } else {
-            D_801013B4_101FB4[0].x = 207.0f;
+            D_801013B0_101FB0[0].y = 207.0f;
         }
         break;
     }

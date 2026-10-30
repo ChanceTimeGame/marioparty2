@@ -142,18 +142,16 @@ s32 func_80059FD0_5ABD0(s32); /* the player's rank */
 void func_8006D4D0_6E0D0(s16); /* the seconds counter */
 void func_8006D518_6E118(void);
 void func_8007273C_7333C(char* arg0, u8 arg1);
-s16 func_80079428_7A028(s32);
+s16 func_80079428_7A028(s16 id);
 void func_800794F0_7A0F0(s8);
 void func_8008221C_82E1C(s16 group, s16 member, f32 arg2);
 s32 func_800824B4_830B4(s16, s32, s32, s32, s32, s32);
 void func_80079FF4_7ABF4(omObjData* object);
-void func_80079718_7A318(s16, s16);
+s16 func_80079718_7A318(s16 id, u8 offset);
 extern f32 D_800CA02C_CAC2C;
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
 extern Vec3f D_801013B0_101FB0[]; /* CenterM */
-extern Vec3f D_801013B4_101FB4[]; /* = &CenterM[0].y */
 extern Vec3f D_80102770_103370[]; /* CRotM */
-extern Vec3f D_80102774_103374[]; /* = &CRotM[0].y */
 void func_8000BF54_CB54(omObjData*, f32, f32, f32, f32, f32, f32); /* box */
 void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
 void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
@@ -207,7 +205,7 @@ typedef struct BBFlash {
     /* 0x3 */ s8 timer;
 } BBFlash;
 
-/* A camera key (0x20; two pairs of from/to allocated, 0x60 bytes), D_80107D24. */
+/* A camera key (0x20; three allocated), D_80107D24. */
 typedef struct BBCamKey {
     /* 0x00 */ f32 time;
     /* 0x04 */ f32 zoom;
@@ -227,7 +225,7 @@ extern f32 D_80107AEC_2847DC_BowsersBigBlast[4]; /* queue x */
 extern u8 D_80107AFC_2847EC_BowsersBigBlast;
 extern f32 D_80107B00_2847F0_BowsersBigBlast[3];
 extern u8 D_80107B0C_2847FC_BowsersBigBlast;
-extern u8 D_80107B0D_2847FD_BowsersBigBlast; /* undefined_syms.txt */
+extern u8 D_80107B0D_2847FD_BowsersBigBlast; 
 extern f32 D_80107B10_284800_BowsersBigBlast;
 extern f32 D_80107B14_284804_BowsersBigBlast;
 extern u8 D_80107B18_284808_BowsersBigBlast;
@@ -260,8 +258,7 @@ extern omObjData* D_80107D28_284A18_BowsersBigBlast;
 extern BBFlash* D_80107D2C_284A1C_BowsersBigBlast;
 extern u16 D_80107D30_284A20_BowsersBigBlast[5]; /* the five 3D sprites */
 extern u8 D_80107D3A_284A2A_BowsersBigBlast;  /* the live detonator */
-extern u8 D_80107D3B_284A2B_BowsersBigBlast[4]; /* detonator still up; [4] is D_80107D3F */
-extern u8 D_80107D3F_284A2F_BowsersBigBlast;
+extern u8 D_80107D3B_284A2B_BowsersBigBlast[5]; /* detonator still up */
 extern u8 D_80107D40_284A30_BowsersBigBlast;  /* detonators up */
 extern u8 D_80107D41_284A31_BowsersBigBlast;  /* detonator being pressed */
 extern u8 D_80107D42_284A32_BowsersBigBlast;  /* presser's character */
