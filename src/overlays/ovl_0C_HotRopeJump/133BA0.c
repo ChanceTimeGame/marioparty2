@@ -380,12 +380,141 @@ s16 func_80109078_134C68_HotRopeJump(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80109078_134C68_HotRopeJump);
 #endif
 
-__asm__(".section .rodata");
-const u32 D_8010C770_138360_HotRopeJump[4] = { 0x00000096, 0xFDA80000, 0x00000096, 0x025800B4 };
+/* The two torches (MP1 func_800FC0B4): flame models at the ends of the floor, each with a light;
+   the intro camera's start and end. */
+void func_801096E4_1352D4_HotRopeJump(omObjData* obj) {
+    s16 pos[2][4] = { { 0, 150, -600, 0 }, { 0, 150, 600, 180 } };
+    HRJSeg* seg;
+    HmfModel* mdl;
+    HuSprite_Unk84_Struct* tex;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_801096E4_1352D4_HotRopeJump);
+    omSetStatBit(obj, 0xA0);
+    obj->func_ptr = func_80109A58_135648_HotRopeJump;
+    D_80111834_13D424_HotRopeJump = func_8001A2F8_1AEF8(0x1D0003);
+    D_80111836_13D426_HotRopeJump = func_8001A2F8_1AEF8(0x1D0004);
+    seg = func_80027154_27D54(13 * sizeof(HRJSeg), 0x7918);
+    obj->unk_50 = seg;
+    D_80111924_13D514_HotRopeJump = seg;
+    func_800B0EF0_B1AF0(seg, 0, 13 * sizeof(HRJSeg));
+    for (i = 0; i < 2; i++, seg++) {
+        tex = SprAnimGet(D_80111834_13D424_HotRopeJump);
+        obj->model[i] = seg->model = func_8010B0A0_136C90_HotRopeJump(D_8010C3C4_137FB4_HotRopeJump, tex, SprAnimGet(D_80111836_13D426_HotRopeJump));
+        mdl = &D_800FC834_FD434[seg->model];
+        seg->pos.x = seg->base.x = pos[i][0];
+        seg->pos.y = seg->base.y = pos[i][1];
+        seg->pos.z = seg->base.z = pos[i][2];
+        mdl->rot.y = pos[i][3];
+        mdl->scale.x = mdl->scale.y = mdl->scale.z = 0.0f;
+        seg->anim = ((rand8() << 8) | rand8()) / 1024 & 0x3C;
+        func_80029714_2A314(seg->model, seg->pos.x, seg->pos.y, seg->pos.z);
+        if (i == 0) {
+            omSetTra(obj, seg->pos.x, seg->pos.y, seg->pos.z);
+            omSetRot(obj, mdl->rot.x, mdl->rot.y, mdl->rot.z);
+            omSetSca(obj, mdl->scale.x, mdl->scale.y, mdl->scale.z);
+        }
+        seg->light = func_80108850_134440_HotRopeJump(seg->pos.x, seg->pos.y - 50.0, seg->pos.z, 10.0f);
+    }
+    D_8011188C_13D47C_HotRopeJump.x = D_8010274C_10334C.x;
+    D_8011188C_13D47C_HotRopeJump.y = D_8010274C_10334C.y;
+    D_8011188C_13D47C_HotRopeJump.z = D_8010274C_10334C.z;
+    D_801118A4_13D494_HotRopeJump.x = D_800FD474_FE074.x;
+    D_801118A4_13D494_HotRopeJump.y = D_800FD474_FE074.y;
+    D_801118A4_13D494_HotRopeJump.z = D_800FD474_FE074.z;
+    D_801118B4_13D4A4_HotRopeJump = D_800FA610_FB210;
+    D_80111880_13D470_HotRopeJump.x = D_8010274C_10334C.x = 0.0f;
+    D_80111880_13D470_HotRopeJump.y = D_8010274C_10334C.y = 100.0f;
+    D_80111880_13D470_HotRopeJump.z = D_8010274C_10334C.z = 0.0f;
+    D_80111898_13D488_HotRopeJump.x = D_800FD474_FE074.x = -15.0f;
+    D_80111898_13D488_HotRopeJump.y = D_800FD474_FE074.y = 0.0f;
+    D_80111898_13D488_HotRopeJump.z = D_800FD474_FE074.z = 0.0f;
+    D_801118B0_13D4A0_HotRopeJump = D_800FA610_FB210 = 1000.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80109A58_135648_HotRopeJump);
+/* The torches (MP1 func_800FC428): the intro camera move and the centre light, then each flame's
+   light and list. */
+void func_80109A58_135648_HotRopeJump(omObjData* obj) {
+    HRJSeg* seg;
+    HmfModel* mdl;
+    HuSprite_Unk84_Struct* anim;
+    s32 i;
+    f32 t;
+    f32 r;
+
+    func_800B1960_B2560(D_80111840_13D430_HotRopeJump, D_800C9B80_CA780->pos.x, D_800C9B80_CA780->pos.y,
+                        D_800C9B80_CA780->pos.z, D_800C9B80_CA780->at.x, D_800C9B80_CA780->at.y,
+                        D_800C9B80_CA780->at.z, D_800C9B80_CA780->up.x, D_800C9B80_CA780->up.y,
+                        D_800C9B80_CA780->up.z);
+    anim = SprAnimGet(D_80111836_13D426_HotRopeJump);
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0 && D_8010C458_138048_HotRopeJump[D_8010C454_138044_HotRopeJump] != 0) {
+        switch (D_8010C454_138044_HotRopeJump) {
+            case 0:
+                t = (f32)(D_8010C456_138046_HotRopeJump - 40) * 0.05;
+                if (t > 0.0) {
+                    D_8010274C_10334C.x = (D_8011188C_13D47C_HotRopeJump.x - D_80111880_13D470_HotRopeJump.x) * t + D_80111880_13D470_HotRopeJump.x;
+                    D_8010274C_10334C.y = (D_8011188C_13D47C_HotRopeJump.y - D_80111880_13D470_HotRopeJump.y) * t + D_80111880_13D470_HotRopeJump.y;
+                    D_8010274C_10334C.z = (D_8011188C_13D47C_HotRopeJump.z - D_80111880_13D470_HotRopeJump.z) * t + D_80111880_13D470_HotRopeJump.z;
+                    D_800FD474_FE074.x = (D_801118A4_13D494_HotRopeJump.x - D_80111898_13D488_HotRopeJump.x) * t + D_80111898_13D488_HotRopeJump.x;
+                    D_800FD474_FE074.y = (D_801118A4_13D494_HotRopeJump.y - D_80111898_13D488_HotRopeJump.y) * t + D_80111898_13D488_HotRopeJump.y;
+                    D_800FD474_FE074.z = (D_801118A4_13D494_HotRopeJump.z - D_80111898_13D488_HotRopeJump.z) * t + D_80111898_13D488_HotRopeJump.z;
+                    D_800FA610_FB210 = (D_801118B4_13D4A4_HotRopeJump - D_801118B0_13D4A0_HotRopeJump) * t + D_801118B0_13D4A0_HotRopeJump;
+                }
+                break;
+            case 2:
+                if (D_8011182C_13D41C_HotRopeJump != 0) {
+                    D_8010C454_138044_HotRopeJump++;
+                    D_8010C456_138046_HotRopeJump = 0;
+                }
+                break;
+            case 3:
+                if (D_8011182C_13D41C_HotRopeJump == 0) {
+                    D_8010C454_138044_HotRopeJump++;
+                    D_8010C456_138046_HotRopeJump = 0;
+                    D_8011141C_13D00C_HotRopeJump = func_80108850_134440_HotRopeJump(0.0f, 100.0f, 0.0f, 10.0f);
+                }
+                break;
+            case 4:
+                t = (f32)D_8010C456_138046_HotRopeJump * (1.0 / 30.0);
+                func_80108978_134568_HotRopeJump(D_8011141C_13D00C_HotRopeJump, t * 400.0, t * 500.0);
+                func_80026D28_27928(3);
+                func_80026DAC_279AC(4, (u8)(t * 255.0f), (u8)(t * 160.0f), (u8)(t * 64.0f));
+                func_80026E00_27A00(4, 0.0f, 100.0f, 0.0f);
+                break;
+        }
+        if (++D_8010C456_138046_HotRopeJump >= D_8010C458_138048_HotRopeJump[D_8010C454_138044_HotRopeJump]) {
+            D_8010C456_138046_HotRopeJump = 0;
+            if (++D_8010C454_138044_HotRopeJump == 1) {
+                PlaySound(0x16F);
+            }
+        }
+    }
+    seg = obj->unk_50;
+    for (i = 0; i < 2; i++, seg++) {
+        mdl = &D_800FC834_FD434[seg->model];
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            if (D_8010C454_138044_HotRopeJump == 1) {
+                if (mdl->scale.x < 1.0) {
+                    mdl->scale.z = mdl->scale.x = mdl->scale.x + 0.1;
+                    mdl->scale.y = mdl->scale.x * 1.4;
+                } else if (mdl->scale.y > 1.0) {
+                    mdl->scale.y = mdl->scale.y - 0.1;
+                }
+            }
+            if (D_8010C454_138044_HotRopeJump > 0) {
+                r = (HuMathSin((seg->anim & 0xF) * 11.25) * 0.4 * 100.0 + 180.0) * mdl->scale.x;
+                func_80108978_134568_HotRopeJump(seg->light, r, r);
+                seg->anim = (seg->anim + 2) & 0x3F;
+                if (++seg->timer >= 0x7800) {
+                    seg->timer -= 0x800;
+                }
+            }
+        }
+        if (i == 0) {
+            omSetSca(obj, mdl->scale.x, mdl->scale.y, mdl->scale.z);
+        }
+        func_8010B754_137344_HotRopeJump(seg, D_8010C3C4_137FB4_HotRopeJump, anim);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010A0F0_135CE0_HotRopeJump);
 

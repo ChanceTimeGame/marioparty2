@@ -907,3 +907,6 @@ D_801139A4_3BCB44_name_5F = 0x801139A4; // type:s32 size:0x28 rom:0x3BCB44 segme
 D_80113544_3CECA4_name_60 = 0x80113544; // type:s32 size:0x28 rom:0x3CECA4 segment:name_60
 // S4-0CA: ovl_0C .data sprite positions (s32 [4][2], MP1 D_800FE48C), retail reads the low halves by their own labels
 D_8010C1D4_137DC4_HotRopeJump = 0x8010C1D4; // size:0x20 segment:HotRopeJump
+// S4-0CC: ovl_0C .data: the intro state and timer (MP1 HRJSeq), two scalars in retail's code (not one struct)
+D_8010C454_138044_HotRopeJump = 0x8010C454; // size:0x2 segment:HotRopeJump
+D_8010C456_138046_HotRopeJump = 0x8010C456; // size:0x2 segment:HotRopeJump

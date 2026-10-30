@@ -75,9 +75,19 @@ typedef struct HRJPhase {
 typedef struct HRJSeg {
     /* 0x00 */ Vec pos;
     /* 0x0C */ Vec dir;   /* rope: the segment to the next one */
-    /* 0x18 */ char unk_18[0x1C];
+    /* 0x18 */ Vec vel;
+    /* 0x24 */ Vec base;
+    /* 0x30 */ f32 unk_30;
     /* 0x34 */ f32 angle; /* rope turn angle */
-    /* 0x38 */ char unk_38[0xD8];
+    /* 0x38 */ f32 size;
+    /* 0x3C */ s16 light; /* fields from here: S4-0CC, from MP1 +4 */
+    /* 0x3E */ s16 model;
+    /* 0x40 */ u16 anim;
+    /* 0x42 */ u16 state;
+    /* 0x44 */ s16 timer;
+    /* 0x46 */ s16 delay;
+    /* 0x48 */ char unk_48[8];
+    /* 0x50 */ Mtx mtx[3];
 } HRJSeg; /* size = 0x110 */
 
 /* A floor light (D_80111420_13D010_HotRopeJump[32]; MP1 HRJLight 0x14 plus three fields). */
@@ -156,8 +166,8 @@ void func_801096E4_1352D4_HotRopeJump(omObjData* obj);
 void func_80109A58_135648_HotRopeJump(omObjData* obj);
 void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj);
 void func_8010A4E4_1360D4_HotRopeJump(omObjData* obj);
-s32 func_8010B0A0_136C90_HotRopeJump(void* arg0, void* arg1);
-void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, void* anim);
+s16 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* tex, HuSprite_Unk84_Struct* anim);
+void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, HuSprite_Unk84_Struct* anim);
 void func_8010BB48_137738_HotRopeJump(f32 t);
 f32 func_8010BF04_137AF4_HotRopeJump(f32 arg0, f32 arg1, f32 arg2);
 void func_8010BF70_137B60_HotRopeJump(void);
@@ -212,8 +222,9 @@ extern u16 D_8010C3B0_137FA0_HotRopeJump[4]; /* floor light colour at blend 0 (r
 extern u16 D_8010C3B8_137FA8_HotRopeJump[4]; /* at blend 1 */
 extern f32 D_8010C3C0_137FB0_HotRopeJump; /* the blend D_80111416 was made for */
 extern Vtx_t D_8010C3C4_137FB4_HotRopeJump[9]; /* torch flame (MP1 D_800FE650) */
-extern s32 D_8010C454_138044_HotRopeJump; /* MP1 D_800FE6E0: two s16 (state, timer) */
-extern s16 D_8010C458_138048_HotRopeJump[8];
+extern s16 D_8010C454_138044_HotRopeJump; /* torch/camera intro state (MP1 D_800FE6E0.state) */
+extern s16 D_8010C456_138046_HotRopeJump; /* and its timer */
+extern s16 D_8010C458_138048_HotRopeJump[8]; /* its state durations, 0 = the last */
 extern Vtx_t D_8010C468_138058_HotRopeJump[9]; /* rope flame (MP1 D_800FE6F4) */
 extern s16 D_8010C4F8_1380E8_HotRopeJump; /* MP1 D_800FE784 */
 extern s16 D_8010C4FA_1380EA_HotRopeJump;
@@ -268,7 +279,7 @@ extern u8 D_80111410_13D000_HotRopeJump[6]; /* light colours now: ambient rgb, t
 extern u16 D_80111416_13D006_HotRopeJump[3]; /* the floor lights' colour (rgb) */
 extern u16 D_80111418_13D008_HotRopeJump; /* its labels [1], [2] */
 extern u16 D_8011141A_13D00A_HotRopeJump;
-extern s32 D_8011141C_13D00C_HotRopeJump;
+extern s16 D_8011141C_13D00C_HotRopeJump; /* the centre light */
 extern HRJLight D_80111420_13D010_HotRopeJump[32]; /* floor lights (MP1 D_80100538); retail also
                                                        names their fields' labels 422..43C */
 extern s16 D_80111820_13D410_HotRopeJump;
@@ -277,12 +288,12 @@ extern s16 D_80111824_13D414_HotRopeJump; /* floor sprite */
 extern Gfx* D_80111828_13D418_HotRopeJump; /* the floor's display list */
 extern s16 D_8011182C_13D41C_HotRopeJump;
 extern f32 D_80111830_13D420_HotRopeJump;
-extern s16 D_80111834_13D424_HotRopeJump;
+extern s16 D_80111834_13D424_HotRopeJump; /* torch sprites (flame texture, animation) */
 extern s16 D_80111836_13D426_HotRopeJump;
-extern s16 D_80111838_13D428_HotRopeJump;
+extern s16 D_80111838_13D428_HotRopeJump; /* rope sprites (flame texture, animation) */
 extern s16 D_8011183A_13D42A_HotRopeJump;
 extern Matrix4f D_80111840_13D430_HotRopeJump;
-extern Vec D_80111880_13D470_HotRopeJump;
+extern Vec D_80111880_13D470_HotRopeJump; /* intro camera: start centre, end centre, start rot, end rot, start zoom, end zoom (MP1 D_80100818..) */
 extern Vec D_8011188C_13D47C_HotRopeJump;
 extern Vec D_80111898_13D488_HotRopeJump;
 extern Vec D_801118A4_13D494_HotRopeJump;
@@ -310,6 +321,11 @@ f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
 f32 sqrtf(f32);
+u8 rand8(void);
+s32 PlaySound(s32);
+void omSetRot(omObjData* obj, f32 x, f32 y, f32 z);
+void omSetSca(omObjData* obj, f32 x, f32 y, f32 z);
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
 void* HuMemAlloc(s32 size);
 void* SprAnimGet(s16 animIdx);
 void* func_80027154_27D54(s32 size, s16 tag); /* HuMemAllocTag */
