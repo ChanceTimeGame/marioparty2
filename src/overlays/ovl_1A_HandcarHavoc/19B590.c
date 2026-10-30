@@ -1216,17 +1216,110 @@ void func_8010625C_19EFEC_HandcarHavoc(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801067A0_19F530_HandcarHavoc);
+/* A team's track point i (MP1 func_800FC0C8, inlined in MP2). */
+static inline void HHGetPoint(u16 team, u16 i, Vec* out) {
+    ColVtx* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801068CC_19F65C_HandcarHavoc);
+    p = &D_8010B380_1A4110_HandcarHavoc[team][i];
+    out->x = p->x;
+    out->y = p->y;
+    out->z = p->z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801069D8_19F768_HandcarHavoc);
+/* Both tracks' lengths (team 0's slot borrowed for each). */
+void func_801067A0_19F530_HandcarHavoc(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106AD0_19F860_HandcarHavoc);
+    D_8010B3A0_1A4130_HandcarHavoc = 0.0f;
+    D_8010B3A4_1A4134_HandcarHavoc = 0.0f;
+    D_8010B376_1A4106_HandcarHavoc[0] = D_8010B37A_1A410A_HandcarHavoc;
+    D_8010B380_1A4110_HandcarHavoc[0] = D_8010B388_1A4118_HandcarHavoc;
+    D_8010B390_1A4120_HandcarHavoc[0] = D_8010B394_1A4124_HandcarHavoc;
+    for (i = 0; i < D_8010B394_1A4124_HandcarHavoc - 1; i++) {
+        D_8010B3A0_1A4130_HandcarHavoc += func_801069D8_19F768_HandcarHavoc(0, i);
+    }
+    D_8010B376_1A4106_HandcarHavoc[0] = D_8010B37C_1A410C_HandcarHavoc;
+    D_8010B380_1A4110_HandcarHavoc[0] = D_8010B38C_1A411C_HandcarHavoc;
+    D_8010B390_1A4120_HandcarHavoc[0] = D_8010B396_1A4126_HandcarHavoc;
+    for (i = 0; i < D_8010B396_1A4126_HandcarHavoc - 1; i++) {
+        D_8010B3A4_1A4134_HandcarHavoc += func_801069D8_19F768_HandcarHavoc(0, i);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106B84_19F914_HandcarHavoc);
+/* Midpoint of a team's track segment i. */
+void func_801068CC_19F65C_HandcarHavoc(u16 team, u16 i, Vec* out) {
+    Vec a;
+    Vec b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106CA8_19FA38_HandcarHavoc);
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    out->x = (a.x + b.x) * 0.5f;
+    out->y = (a.y + b.y) * 0.5f;
+    out->z = (a.z + b.z) * 0.5f;
+}
+
+/* Length of a team's track segment i. */
+f32 func_801069D8_19F768_HandcarHavoc(u16 team, u16 i) {
+    Vec a;
+    Vec b;
+
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    return func_800B1830_B2430((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z));
+}
+
+/* Distance from (x, y, z) to a team's track point i. */
+f32 func_80106AD0_19F860_HandcarHavoc(u16 team, f32 x, f32 y, f32 z, u16 i) {
+    Vec a;
+
+    HHGetPoint(team, i, &a);
+    return func_800B1830_B2430((a.x - x) * (a.x - x) + (a.y - y) * (a.y - y) + (a.z - z) * (a.z - z));
+}
+
+/* Direction of a team's track segment i. */
+void func_80106B84_19F914_HandcarHavoc(u16 team, u16 i, Vec* out) {
+    Vec a;
+    Vec b;
+    f32 len;
+
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    len = func_801069D8_19F768_HandcarHavoc(team, i);
+    out->x = (b.x - a.x) / len;
+    out->y = (b.y - a.y) / len;
+    out->z = (b.z - a.z) / len;
+}
+
+/* The car's position (between its axles) and rotation (from the axle line). */
+void func_80106CA8_19FA38_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos) {
+    Vec axle[2];
+    Vec d;
+    Vec p;
+    HHCar* w;
+    f32 dist;
+    f32 a;
+    u16 seg;
+    s32 i;
+
+    w = obj->unk_50;
+    for (i = 0; i < 2; i++) {
+        seg = w->seg[i];
+        HHGetPoint(w->team, seg, &p);
+        func_80106B84_19F914_HandcarHavoc(w->team, seg, &axle[i]);
+        dist = w->dist[i];
+        axle[i].x = dist * axle[i].x + p.x;
+        axle[i].y = dist * axle[i].y + p.y;
+        axle[i].z = dist * axle[i].z + p.z;
+    }
+    for (i = 0; i < 3; i++) {
+        (&w->slope.x)[i] = (&d.x)[i] = ((&axle[1].x)[i] - (&axle[0].x)[i]) / 400.0f;
+        (&pos->x)[i] = ((&axle[1].x)[i] + (&axle[0].x)[i]) / 2.0f;
+    }
+    rot->y = func_800B75A8_B81A8(d.x, d.z);
+    a = func_8010A75C_1A34EC_HandcarHavoc(d.y);
+    rot->x = a * -d.z;
+    rot->z = a * d.x;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106E70_19FC00_HandcarHavoc);
 

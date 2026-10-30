@@ -194,6 +194,8 @@ s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
 s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
 void func_8006961C_6A21C(s16 mesId, f32 x, f32 y);
 omObjData* func_800732B0_73EB0(u32 arg0); /* plays a voice file */
+f32 func_800B1830_B2430(f32);            /* sqrtf */
+f32 func_800B75A8_B81A8(f32 y, f32 x);   /* atan2, degrees */
 f64 fabs(f64);
 f32 fabsf(f32);
 f32 HuMathSin(f32);
@@ -231,11 +233,11 @@ void func_80105FEC_19ED7C_HandcarHavoc(omObjData* obj);
 void func_801060A4_19EE34_HandcarHavoc(omObjData* obj);
 void func_80106164_19EEF4_HandcarHavoc(omObjData* obj);                /* FBA80: intro */
 void func_8010625C_19EFEC_HandcarHavoc(omObjData* obj);                /* FBB78: result */
-void func_801067A0_19F530_HandcarHavoc(void);                          /* FC058 */
-void func_801068CC_19F65C_HandcarHavoc(u16 team, u16 i, Vec* out);     /* FC124 */
-void func_801069D8_19F768_HandcarHavoc(u16 team, u16 i, Vec* out);     /* FC2A0? */
-f32 func_80106AD0_19F860_HandcarHavoc(u16 team, f32 x, f32 y, f32 z, u16 i); /* FC22C */
-void func_80106B84_19F914_HandcarHavoc(u16 team, u16 i, Vec* out);
+void func_801067A0_19F530_HandcarHavoc(void);                          /* FC058: track lengths */
+void func_801068CC_19F65C_HandcarHavoc(u16 team, u16 i, Vec* out);     /* FC124: segment midpoint */
+f32 func_801069D8_19F768_HandcarHavoc(u16 team, u16 i);               /* FC1B4: segment length */
+f32 func_80106AD0_19F860_HandcarHavoc(u16 team, f32 x, f32 y, f32 z, u16 i); /* FC22C: distance to a point */
+void func_80106B84_19F914_HandcarHavoc(u16 team, u16 i, Vec* out);     /* FC2A0: segment direction */
 void func_80106CA8_19FA38_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos); /* FC338 */
 u16 func_80106E70_19FC00_HandcarHavoc(omObjData* obj);                 /* FC4B0 */
 void func_801074A8_1A0238_HandcarHavoc(omObjData* obj, u16 side);      /* FCA58 */
