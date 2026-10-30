@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_2E.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80102800_22E170_HexagonHeat);
 
