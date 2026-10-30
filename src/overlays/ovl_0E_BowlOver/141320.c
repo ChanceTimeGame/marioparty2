@@ -414,7 +414,109 @@ void func_80107DB4_142144_BowlOver(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80107DB4_142144_BowlOver);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801082B8_142648_BowlOver);
+/* CPU pin player: picks a stick direction after landing. Usually keeps the last one while the shell is
+   far (a square range by difficulty); otherwise a mode (re-rolled when it has not moved 30) steers
+   away from the shell, by the alley's centre, at random or straight away; 1 in 4 jumps next. */
+void func_801082B8_142648_BowlOver(omObjData* obj, BOJump* jump, u8* sx, u8* sy) {
+    BOPlayerWork* w;
+    f32 dx;
+    f32 dz;
+    f32 dist;
+    f32 d;
+    u32 r;
+    s32 range;
+
+    w = BO_WORK(obj);
+    range = 0;
+    if (jump->unk_18 != 1) {
+        return;
+    }
+    dx = D_8010A0A8_144438_BowlOver->trans.x - obj->trans.x;
+    dz = D_8010A0A8_144438_BowlOver->trans.z - obj->trans.z;
+    dist = dx * dx + dz * dz;
+    r = guRandom() & 3;
+    switch (gPlayers[w->unk_59].cpu_difficulty) {
+        case 1:
+            range = 0x1324;
+            break;
+        case 0:
+            range = 0x1900;
+            break;
+        case 2:
+            range = 0xE10;
+            break;
+        case 3:
+            range = 0x9C4;
+            break;
+    }
+    if (r == 0 || dist <= range) {
+        if (obj->trans.x < jump->unk_0C + 30.0f && jump->unk_0C - 30.0f < obj->trans.x &&
+            obj->trans.z < jump->unk_10 + 30.0f && jump->unk_10 - 30.0f < obj->trans.z) {
+            jump->unk_35 = guRandom() & 3;
+        }
+        r = guRandom();
+        switch (jump->unk_35) {
+            case 0:
+                if (D_8010A0A8_144438_BowlOver->trans.z < obj->trans.z) {
+                    *sy = (u8)jump->unk_34 - (r & 7);
+                } else {
+                    *sy = (u8)jump->unk_34 + ((r >> 3) & 7);
+                }
+                if (D_8010A0A8_144438_BowlOver->trans.x + 1000.0f < obj->trans.x + 1000.0f) {
+                    *sx = (u8)jump->unk_33 - ((r >> 6) & 7);
+                } else {
+                    *sx = (u8)jump->unk_33 + ((r >> 9) & 7);
+                }
+                break;
+            case 1:
+                if (D_8010A0A8_144438_BowlOver->trans.z < obj->trans.z) {
+                    *sy = (u8)jump->unk_34 - (r & 7);
+                } else {
+                    *sy = (u8)jump->unk_34 + ((r >> 3) & 7);
+                }
+                if (D_8010A0A8_144438_BowlOver->trans.x > 0.0f) {
+                    *sx = (u8)jump->unk_33 - ((r >> 6) & 7);
+                } else {
+                    *sx = (u8)jump->unk_33 + ((r >> 9) & 7);
+                }
+                break;
+            case 2:
+                if (D_8010A0A8_144438_BowlOver->trans.z < obj->trans.z) {
+                    *sy = -((r & 0x1F) + 0x14);
+                } else {
+                    *sy = ((r >> 5) & 0x1F) + 0x14;
+                }
+                if (D_8010A0A8_144438_BowlOver->trans.x + 1000.0f < obj->trans.x + 1000.0f) {
+                    *sx = -(((r >> 10) & 0x1F) + 0x14);
+                } else {
+                    *sx = ((r >> 15) & 0x1F) + 0x14;
+                }
+                break;
+            case 3:
+                dx = obj->trans.x - D_8010A0A8_144438_BowlOver->trans.x;
+                dz = -(obj->trans.z - D_8010A0A8_144438_BowlOver->trans.z);
+                d = sqrtf(dx * dx + dz * dz);
+                if (d != 0.0f) {
+                    *sx = (s32)((dx / d) * 50.0f);
+                    *sy = (s32)((dz / d) * -50.0f);
+                } else {
+                    *sx = r & 0x3F;
+                    *sy = -((r >> 6) & 0x3F);
+                }
+                break;
+        }
+        jump->unk_0C = obj->trans.x;
+        jump->unk_10 = obj->trans.z;
+        jump->unk_33 = *sx;
+        jump->unk_34 = *sy;
+        if (!((r >> 20) & 3)) {
+            jump->unk_31 = 1;
+        }
+    } else {
+        *sx = (u8)jump->unk_33;
+        *sy = (u8)jump->unk_34;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801087A0_142B30_BowlOver);
 
