@@ -1331,7 +1331,7 @@ segments:
     subsegments:
       - [0x274F30, c]
       - [0x279FC0, c]
-      - [0x27A070, data]
+      - [0x27A070, .data, 274F30]
       - [0x27A2E0, .rodata, 274F30]
       - {0x27A330, type: bss, vram: 0x80107C00, name: ovl_37_bss}
   - type: code
