@@ -1646,7 +1646,15 @@ s32 func_80107BBC_1E700C_CrazyCutters(CCPlayer* st) {
     return D_80109578_1E89C8_CrazyCutters;
 }
 
+/* [FBAFC] */
+// retail computes the index before loading D_800F93FC (masked 6; MP1 the same)
+#ifdef NON_MATCHING
+s16 func_80107D74_1E71C4_CrazyCutters(s32 idx) {
+    return D_8010957C_1E89CC_CrazyCutters = D_800F93FC_F9FFC[idx].unk_04;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107D74_1E71C4_CrazyCutters);
+#endif
 
 /* Starts the score roulette. [FBB2C] */
 void func_80107DA4_1E71F4_CrazyCutters(void) {
@@ -1720,18 +1728,146 @@ void func_80107DFC_1E724C_CrazyCutters(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108108_1E7558_CrazyCutters);
+/* Nonzero if the 3x3 squares 3 pixels left, right, above and below (x, y) are all still set:
+   (x, y) lies inside the remaining shape. [FBEA8] */
+s32 func_80108108_1E7558_CrazyCutters(s16 grpIdx, s32 idx, s32 x, s32 y) {
+    s32 a;
+    s32 b;
+    s32 c;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108214_1E7664_CrazyCutters);
+    a = func_80108E2C_1E827C_CrazyCutters(grpIdx, 0, x + 3, y, 3, 3, D_801090B0_1E8500_CrazyCutters);
+    b = func_80108E2C_1E827C_CrazyCutters(grpIdx, 0, x - 3, y, 3, 3, D_801090B0_1E8500_CrazyCutters);
+    c = func_80108E2C_1E827C_CrazyCutters(grpIdx, 0, x, y + 3, 3, 3, D_801090B0_1E8500_CrazyCutters);
+    return a + b + c + func_80108E2C_1E827C_CrazyCutters(grpIdx, 0, x, y - 3, 3, 3, D_801090B0_1E8500_CrazyCutters) >= 18;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108284_1E76D4_CrazyCutters);
+/* Loads the score digit and percent sign animations. [FBFB4] */
+void func_80108214_1E7664_CrazyCutters(void) {
+    void* data;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801084A0_1E78F0_CrazyCutters);
+    data = DataRead(0x3A);
+    D_80109A80_1E8ED0_CrazyCutters = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x10017);
+    D_80109A8C_1E8EDC_CrazyCutters = SprAnimRead(data);
+    DataClose(data);
+    D_80109A8A_1E8EDA_CrazyCutters = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801084FC_1E794C_CrazyCutters);
+/* A score display at (x, y): three digits and a percent sign, hidden. [FC024] */
+s16 func_80108284_1E76D4_CrazyCutters(s16 x, s16 y) {
+    s16 grp;
+    s16 i;
+    s16 px;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801086BC_1E7B0C_CrazyCutters);
+    grp = D_80109A82_1E8ED2_CrazyCutters[D_80109A8A_1E8EDA_CrazyCutters] = SprCreate(4, 5);
+    SprAnimSet(grp, 0, D_80109A80_1E8ED0_CrazyCutters, 0);
+    SprAttrReset(grp, 0, 0xFFFF);
+    SprAttrSet(grp, 0, 0x8000);
+    SprPosSet(grp, 0, x - 16, y);
+    px = 24;
+    for (i = 1; i < 3; i++) {
+        SprAnimSet(grp, i, D_80109A80_1E8ED0_CrazyCutters, 0);
+        SprPosSet(grp, i, px, 0);
+        SprAttrReset(grp, i, 0xFFFF);
+        SprAttrSet(grp, i, 0x8000);
+        px += 24;
+    }
+    SprAnimSet(grp, i, D_80109A8C_1E8EDC_CrazyCutters, 0);
+    SprPosSet(grp, i, px - 4, 6);
+    SprAttrReset(grp, i, 0xFFFF);
+    SprAttrSet(grp, i, 0x8000);
+    func_800824F4_830F4(grp, 1, 0);
+    func_800824F4_830F4(grp, 2, 0);
+    func_800824F4_830F4(grp, 3, 0);
+    SprAttrReset(grp, 2, 0x8000);
+    SprAttrReset(grp, 3, 0x8000);
+    D_80109A8A_1E8EDA_CrazyCutters++;
+    return grp;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010874C_1E7B9C_CrazyCutters);
+/* Hides a score display. [FC240] */
+void func_801084A0_1E78F0_CrazyCutters(s16 grp) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_8010882C_1E7C7C_CrazyCutters);
+    for (i = 0; i < 4; i++) {
+        SprAttrSet(grp, i, 0x8000);
+    }
+}
+
+/* Shows value (0-100) on a score display, without leading zeros. [FC29C] */
+void func_801084FC_1E794C_CrazyCutters(s16 grp, s16 value) {
+    s16 hundreds;
+    s16 tens;
+
+    hundreds = 0;
+    if (value >= 100) {
+        SprAttrReset(grp, 0, 0x8000);
+        func_800822A8_82EA8(grp, 0, 1, 0);
+        func_8008225C_82E5C(grp, 0, 1);
+        value -= 100;
+        hundreds = 1;
+    } else {
+        SprAttrSet(grp, 0, 0x8000);
+    }
+    if (hundreds != 0 || (s16)(value / 10) != 0) {
+        SprAttrReset(grp, 1, 0x8000);
+        tens = value / 10;
+        func_800822A8_82EA8(grp, 1, tens, 0);
+        func_8008225C_82E5C(grp, 1, 1);
+        value -= tens * 10;
+    } else {
+        SprAttrSet(grp, 1, 0x8000);
+    }
+    SprAttrReset(grp, 2, 0x8000);
+    func_800822A8_82EA8(grp, 2, value, 0);
+    func_8008225C_82E5C(grp, 2, 1);
+    SprAttrReset(grp, 3, 0x8000);
+}
+
+/* Scales a score display by scale / 10. [FC45C] */
+void func_801086BC_1E7B0C_CrazyCutters(s16 grp, s16 scale) {
+    s16 i = 0;
+
+    for (i = 0; i < 4; i++) {
+        SprScaleSet(grp, i, scale / 10.0f, scale / 10.0f);
+    }
+}
+
+/* Orders the screen quarters by team (gPlayers[].coins_mg_bonus holds the team here), then
+   player: D_80109A08[quarter] = player. */
+void func_8010874C_1E7B9C_CrazyCutters(void) {
+    s32 key[4];
+    s32 i;
+    s32 j;
+    s32 t;
+
+    for (i = 0; i < 4; i++) {
+        key[i] = gPlayers[i].coins_mg_bonus * 4 + i;
+        D_80109A08_1E8E58_CrazyCutters[i] = i;
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = i; j < 4; j++) {
+            if (key[i] > key[j]) {
+                t = key[j];
+                key[j] = key[i];
+                key[i] = t;
+                t = D_80109A08_1E8E58_CrazyCutters[j];
+                D_80109A08_1E8E58_CrazyCutters[j] = D_80109A08_1E8E58_CrazyCutters[i];
+                D_80109A08_1E8E58_CrazyCutters[i] = t;
+            }
+        }
+    }
+}
+
+/* The screen quarter of a player. */
+s32 func_8010882C_1E7C7C_CrazyCutters(s32 player) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (player == D_80109A08_1E8E58_CrazyCutters[i]) {
+            break;
+        }
+    }
+    return i;
+}
