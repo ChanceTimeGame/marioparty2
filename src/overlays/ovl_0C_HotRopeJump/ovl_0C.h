@@ -321,6 +321,7 @@ f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
 f32 sqrtf(f32);
+f64 func_800B0D98_B1998(f64, f64); /* fmod */
 u8 rand8(void);
 s32 PlaySound(s32);
 void omSetRot(omObjData* obj, f32 x, f32 y, f32 z);

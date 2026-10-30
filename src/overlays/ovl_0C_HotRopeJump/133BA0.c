@@ -516,7 +516,70 @@ void func_80109A58_135648_HotRopeJump(omObjData* obj) {
     }
 }
 
+/* The rope (MP1 func_800FCAC0): 13 flame models with lights, set out on a circle, that then
+   gather into the turning rope (func_8010A4E4).
+   NON_MATCHING: masked 0; retail swaps $f0/$f2 around the two int-to-float conversions */
+#ifdef NON_MATCHING
+void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj) {
+    Vec unused[2]; /* retail's frame has 0x18 bytes of locals nothing uses */
+    HRJSeg* seg;
+    HmfModel* mdl;
+    HuSprite_Unk84_Struct* tex;
+    s32 i;
+    f32 t;
+    s32 r;
+
+    omSetStatBit(obj, 0xA0);
+    obj->func_ptr = func_8010A4E4_1360D4_HotRopeJump;
+    D_80111920_13D510_HotRopeJump = func_80027154_27D54(13 * sizeof(HRJSeg), 0x7918);
+    func_800B0EF0_B1AF0(D_80111920_13D510_HotRopeJump, 0, 13 * sizeof(HRJSeg));
+    D_80111838_13D428_HotRopeJump = func_8001A2F8_1AEF8(0x1D0003);
+    D_8011183A_13D42A_HotRopeJump = func_8001A2F8_1AEF8(0x1D0004);
+    seg = D_80111920_13D510_HotRopeJump;
+    for (i = 0; i < 13;) {
+        tex = SprAnimGet(D_80111838_13D428_HotRopeJump);
+        obj->model[i] = seg->model = func_8010B0A0_136C90_HotRopeJump(D_8010C468_138058_HotRopeJump, tex, SprAnimGet(D_8011183A_13D42A_HotRopeJump));
+        mdl = &D_800FC834_FD434[seg->model];
+        mdl->hmf->unk64->unk50 |= 0x71010000;
+        mdl->hmf->unk64->unk50 &= ~0x2000;
+        seg->unk_30 = (f32)(360.0 - i * 30.0) + 210.0;
+        seg->unk_30 = func_800B0D98_B1998(seg->unk_30, 360.0);
+        seg->pos.x = seg->base.x = HuMathSin(seg->unk_30) * 100.0 * 3.5;
+        seg->pos.z = seg->base.z = func_800B7890_B8490(seg->unk_30) * 100.0 * 3.5;
+        seg->pos.y = seg->base.y = 50.0f;
+        seg->size = 150.0f;
+        seg->anim = ((rand8() << 8) | rand8()) / 2048 & 0x3C;
+        t = (f32)(i - 6) / 6.0f;
+        seg->angle = t * t * 30.0 - 15.0;
+        seg->state = 0;
+        seg->delay = i * 4 + 75;
+        mdl->scale.x = mdl->scale.y = mdl->scale.z = 0.0f;
+        r = ((rand8() << 8) | rand8()) * 160;
+        mdl->rot.y = (f32)(r / 65536 - 80) + 270.0f;
+        if (i == 0) {
+            seg->pos.x = seg->pos.z = 0.0f;
+            mdl->rot.y = 0.0f;
+        } else {
+            seg->vel.y = 7.5f;
+        }
+        func_80029714_2A314(seg->model, seg->pos.x, seg->pos.y, seg->pos.z);
+        if (i == 0) {
+            mdl = &D_800FC834_FD434[seg->model];
+            omSetTra(obj, seg->pos.x, seg->pos.y, seg->pos.z);
+            omSetRot(obj, mdl->rot.x, mdl->rot.y, mdl->rot.z);
+            omSetSca(obj, mdl->scale.x, mdl->scale.y, mdl->scale.z);
+        }
+        i++;
+        seg->light = func_80108850_134440_HotRopeJump(seg->pos.x, seg->pos.y, seg->pos.z, 10.0f);
+        rand8();
+        seg++;
+        rand8();
+    }
+    PlaySound(0x174);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010A0F0_135CE0_HotRopeJump);
+#endif
 
 __asm__(".section .rodata");
 const char D_8010C810_138400_HotRopeJump[] = "@Y";
