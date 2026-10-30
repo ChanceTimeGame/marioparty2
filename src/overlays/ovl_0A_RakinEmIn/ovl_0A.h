@@ -91,7 +91,7 @@ typedef struct RICharData {
     /* 0x0C */ char unk_0C[0xC];
 } RICharData; /* size = 0x18 */
 
-/* ---- .data (0x125C00-0x125EE0) ---- */
+/* ---- .data (121740.c, 0x125C00-0x125EE0) ---- */
 extern RIStation D_80106CC0_125C00_RakinEmIn[4];
 extern RIStation D_80106CF0_125C30_RakinEmIn[]; /* = &D_80106CC0[0].rake: only .pos is used */
 extern u16 D_80106DE0_125D20_RakinEmIn[6];      /* rake texture file by character */
