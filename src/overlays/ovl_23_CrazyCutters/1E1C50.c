@@ -1648,9 +1648,77 @@ s32 func_80107BBC_1E700C_CrazyCutters(CCPlayer* st) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107D74_1E71C4_CrazyCutters);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107DA4_1E71F4_CrazyCutters);
+/* Starts the score roulette. [FBB2C] */
+void func_80107DA4_1E71F4_CrazyCutters(void) {
+    omObjData* obj;
+    s32* counter;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107DFC_1E724C_CrazyCutters);
+    obj = omAddObj(12, 0, 0, -1, func_80107DFC_1E724C_CrazyCutters);
+    counter = func_80027154_27D54(sizeof(s32), 0x7918);
+    obj->unk_50 = counter;
+    *counter = 90;
+}
+
+/* The score roulette: random scores until frame 60, then the real ones; at the end the best
+   score(s) win (flags 8, 0x80, 0x10000), the rest lose (0x4000 cleared). [FBB94] */
+void func_80107DFC_1E724C_CrazyCutters(omObjData* obj) {
+    s32* counter = obj->unk_50;
+    s32 i;
+    s16 r;
+    s16 best;
+
+    if (--*counter == 88) {
+        D_80109A94_1E8EE4_CrazyCutters = PlaySound(0x260);
+    }
+    if (*counter == 60) {
+        func_80079848_7A448(D_80109A94_1E8EE4_CrazyCutters);
+        PlaySound(0x261);
+    }
+    if (*counter > 60) {
+        r = (rand8() * 101) >> 8;
+        for (i = 0; i < 4; i++) {
+            func_801084FC_1E794C_CrazyCutters(D_80109A48_1E8E98_CrazyCutters[i], r);
+        }
+    } else if (*counter < 10) {
+        for (i = 0; i < 4; i++) {
+            func_801086BC_1E7B0C_CrazyCutters(D_80109A48_1E8E98_CrazyCutters[i], (s16)*counter);
+        }
+    } else if (*counter > 0) {
+        for (i = 0; i < 4; i++) {
+            func_801084FC_1E794C_CrazyCutters(D_80109A48_1E8E98_CrazyCutters[i], D_80109A52_1E8EA2_CrazyCutters[i]);
+        }
+    }
+    if (*counter == 0) {
+        D_801099F0_1E8E40_CrazyCutters = 0;
+        best = 1;
+        for (i = 0; i < 4; i++) {
+            if (D_80109A52_1E8EA2_CrazyCutters[i] >= best) {
+                best = D_80109A52_1E8EA2_CrazyCutters[i];
+            }
+        }
+        for (i = 0; i < 4; i++) {
+            if (D_80109A52_1E8EA2_CrazyCutters[i] == best) {
+                func_80106D44_1E6194_CrazyCutters(i, 8, 1);
+                func_80106D44_1E6194_CrazyCutters(i, 0x80, 1);
+                func_80106D44_1E6194_CrazyCutters(i, 0x10000, 1);
+                D_801099F0_1E8E40_CrazyCutters++;
+            } else {
+                func_80106D44_1E6194_CrazyCutters(i, 0x4000, 0);
+            }
+        }
+        if (D_801099F0_1E8E40_CrazyCutters == 0) {
+            omAddObj(12, 0, 0, -1, func_8010332C_1E277C_CrazyCutters);
+        } else if (D_801099F4_1E8E44_CrazyCutters <= 0) {
+            D_801099F4_1E8E44_CrazyCutters = 1;
+            D_801099F8_1E8E48_CrazyCutters = 30;
+            D_80109A90_1E8EE0_CrazyCutters = PlaySound(0x25C);
+            for (i = 0; i < 4; i++) {
+                ((CCPlayer*)D_80109A70_1E8EC0_CrazyCutters[i]->unk_50)->unk568 = 1;
+            }
+        }
+        omDelObj(obj);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80108108_1E7558_CrazyCutters);
 
