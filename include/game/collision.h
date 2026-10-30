@@ -144,7 +144,9 @@ typedef struct MgWork {
     /* 0xC8 */ void* unk_C8; /* held item, an omObjData* (C8E0.c) */
     /* 0xCC */ f32 unk_CC;
     /* 0xD0 */ u16 unk_D0;
-    /* 0xD2 */ char unk_D2[0x16];
+    /* 0xD2 */ char unk_D2[8];
+    /* 0xDA */ u16 unk_DA;  /* motion state: 2 once a one-shot motion has ended (S4-3CA) */
+    /* 0xDC */ char unk_DC[0xC];
     /* 0xE8 */ void* unk_E8; /* C8E0.c's MgMotion* */
     /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook; 1 skips the default */
     /* 0xF0 */ u16 unk_F0;

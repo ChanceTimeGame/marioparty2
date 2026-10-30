@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_3C.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/296550", func_801074E0_296550_DeepSeaSalvage);
 
