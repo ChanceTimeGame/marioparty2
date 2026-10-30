@@ -106,7 +106,7 @@ void func_80102B04_1B4C54_SpeedHockey(SHObjWork* w, SHWall* wall, Vec* hit) {
 /* masked 0; raw: retail keeps the box centre x in f10 and xMin in f8 (swapped) */
 /* The puck crossed no wall: if it is off the table or inside a paddle, push it back out and
    reverse it. Returns 0. */
-s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w) {
+s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w, s32 n) {
     f32 unused[8];
     s32 hit = -1;
     s32 outside = 0;
@@ -180,7 +180,81 @@ s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80102CD4_1B4E24_SpeedHockey);
 #endif
 
+#ifdef NON_MATCHING
+/* masked 2: retail tests the second loop's guard as blez cnt and sets cnt before i; GCC here compares against best's zero register */
+/* Move the puck against the walls 0..n-1: bounce off the nearest one it crossed (a paddle face
+   adds the paddle's z motion as english and speed). Returns 1 on a bounce, else
+   func_80102CD4's result. */
+s32 func_8010308C_1B51DC_SpeedHockey(SHObjWork* w, s32 n) {
+    f32 unused[2];
+    s32 cnt;
+    s32 i;
+    s32 best;
+    s32 idx;
+    f32 min;
+    f32 dx;
+    f32 dz;
+    f32 d;
+    f32 move;
+    f32 s;
+    SHObjWork* pw;
+
+    cnt = 0;
+    for (i = 0; i < n; i++) {
+        if (func_801028B8_1B4A08_SpeedHockey(&w->pos, D_80106774_1B88C4_SpeedHockey[i].p, &D_80106CF8_1B8E48_SpeedHockey[i]) != 0) {
+            D_80106E30_1B8F80_SpeedHockey[cnt++] = i;
+        }
+    }
+    if (cnt == 0) {
+        return func_80102CD4_1B4E24_SpeedHockey(w, n);
+    }
+    best = 0;
+    if (cnt >= 2) {
+        min = 1e9f;
+        for (i = 0; i < cnt; i++) {
+            dx = w->prev.x - D_80106CF8_1B8E48_SpeedHockey[D_80106E30_1B8F80_SpeedHockey[i]].x;
+            dz = w->prev.z - D_80106CF8_1B8E48_SpeedHockey[D_80106E30_1B8F80_SpeedHockey[i]].z;
+            d = dx * dx + dz * dz;
+            if (d < min) {
+                min = d;
+                best = i;
+            }
+        }
+    }
+    idx = D_80106E30_1B8F80_SpeedHockey[best];
+    func_80102B04_1B4C54_SpeedHockey(w, &D_80106774_1B88C4_SpeedHockey[idx], &D_80106CF8_1B8E48_SpeedHockey[idx]);
+    if (idx >= 10) {
+        pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[D_80106774_1B88C4_SpeedHockey[idx].paddle]);
+        move = pw->pos.z - pw->prev.z;
+        d = D_80106774_1B88C4_SpeedHockey[idx].p[0].x - D_80106774_1B88C4_SpeedHockey[idx].p[1].x;
+        if ((d < 0.0f ? -d : d) < 1.0f) {
+            if ((w->dir.x < 0.0f ? -w->dir.x : w->dir.x) > 0.75f) {
+                w->dir.z = move * 0.3f + w->dir.z;
+                func_80106074_1B81C4_SpeedHockey(&w->dir);
+            }
+        }
+        s = move * 0.12f + 1.0f;
+        if (s < 1.025f) {
+            s = 1.025f;
+        }
+        w->speed = s * w->speed;
+        if (w->speed > 8.0f) {
+            w->speed = 8.0f;
+        }
+        w->spin = move + w->spin;
+        if (w->spin > 25.0f) {
+            w->spin = 25.0f;
+        } else if (w->spin < -25.0f) {
+            w->spin = -25.0f;
+        }
+        pw->hit = 1;
+    }
+    w->spin *= -0.93f;
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010308C_1B51DC_SpeedHockey);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103488_1B55D8_SpeedHockey);
 

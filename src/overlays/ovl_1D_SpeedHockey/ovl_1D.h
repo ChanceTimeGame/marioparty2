@@ -279,7 +279,7 @@ s32 func_80102850_1B49A0_SpeedHockey(Vec* p, SHBox* box);
 s32 func_801028B8_1B4A08_SpeedHockey(Vec* a, Vec* b, Vec* out);
 s32 func_80102A88_1B4BD8_SpeedHockey(Vec* p, SHBox* box);
 void func_80102B04_1B4C54_SpeedHockey(SHObjWork* w, SHWall* wall, Vec* hit);
-s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w);
+s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w, s32 n);
 s32 func_8010308C_1B51DC_SpeedHockey(SHObjWork* w, s32 n);
 s32 func_80103488_1B55D8_SpeedHockey(SHObjWork* w);
 s32 func_8010389C_1B59EC_SpeedHockey(Vec* p);
