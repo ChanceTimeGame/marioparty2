@@ -148,7 +148,7 @@ typedef struct CCPlayer {
 } CCPlayer; /* size = 0x574 */
 
 /* One falling piece (omObjData::unk_50 of the func_80105B40 objects; MP1 CrazyCutterPiece 0x44).
-   S4-23B: from MP1 only, check against the asm (MP2 allocates 0x48). */
+   Checked against func_80105B40/func_80105FE4 (S4-23B). */
 typedef struct CCPiece {
     /* 0x00 */ f32 x;
     /* 0x04 */ f32 y;
@@ -303,7 +303,8 @@ extern s16 D_80109A98_1E8EE8_CrazyCutters;
 extern s16 D_80109A9A_1E8EEA_CrazyCutters; /* music handle */
 
 /* ---------------------------------------------------------------------------------------------
-   Functions (MP1 equivalent in brackets). Past 80105A00 (S4-23B) inferred from MP1 and the asm.
+   Functions (MP1 equivalent in brackets). Past 80105A00 checked by S4-23B against
+   their definitions.
    --------------------------------------------------------------------------------------------- */
 
 /* 1E1C50.c */
