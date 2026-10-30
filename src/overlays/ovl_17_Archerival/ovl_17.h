@@ -64,15 +64,25 @@ extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
 extern char* D_8010760C_18622C_Archerival[6]; /* "c00Nl_0_DEF" by character */
 extern s16 D_80107624_186244_Archerival;      /* footstep sound, -1 none */
+extern s16 D_80107626_186246_Archerival;      /* walk motion state (func_80103D7C) */
+extern u8 D_80107628_186248_Archerival;       /* CPU target (D_80107920 index), 0 none */
+extern u8 D_80107629_186249_Archerival;       /* CPU feints left */
+extern u8 D_8010762A_18624A_Archerival;       /* CPU feint: candidates (2-3 nearest) */
+extern u8 D_8010762B_18624B_Archerival;       /* CPU feint: func_801037C4 used mask */
 
 /* ---- .bss ---- */
 extern s16 D_80107870_186490_Archerival;      /* footstep timer */
 extern ARRank D_801078C8_1864E8_Archerival[5];
-extern u8 D_801078E6_186506_Archerival;       /* aiming (bow drawn) */
+extern u16 D_801078CA_1864EA_Archerival[];    /* = &D_801078C8[0].idx, read as [n * 2] */
+extern u16 D_801078DE_1864FE_Archerival;      /* game state: 2 play, 3 over */
+extern u16 D_801078E0_186500_Archerival;      /* result: 1 won, 2 lost */
+extern u8 D_801078E6_186506_Archerival;       /* archer state (func_801040B0); 0-2 bow down */
 extern f32 D_801078EC_18650C_Archerival;      /* CPU aim offset in x */
+extern u8 D_801078F0_186510_Archerival;
 extern HuSprite_Unk84_Struct* D_801078F4_186514_Archerival; /* the banner image */
 extern void* D_801078F8_186518_Archerival[3]; /* motion data */
 extern s16 D_80107904_186524_Archerival;      /* the player model's current motion */
+extern s16 D_80107906_186526_Archerival;      /* win voice delay */
 extern ARObj D_80107920_186540_Archerival[50];
 extern omObjData* D_80107BA8_1867C8_Archerival;  /* = D_80107920[9].obj */
 extern s16 D_80107BAC_1867CC_Archerival;         /* = D_80107920[9].spr */
@@ -85,6 +95,7 @@ extern s16 D_80108732_187352_Archerival;         /* = D_80108730[1] */
 
 /* ---- main ---- */
 void func_80029B80_2A780(s16 mdl, s16 mot);
+void func_8002C628_2D228(s16 mdl, s16 parent, char* hook);
 void func_80029BF0_2A7F0(s16 mdl, s16 mot, s16 start, s16 speed, s16 flags);
 void func_80029C74_2A874(s16 mdl, f32 time);
 f32 func_80029CE4_2A8E4(s16 mdl);
@@ -174,10 +185,10 @@ void func_801036C8_1822E8_Archerival(void);
 void func_80103704_182324_Archerival(omObjData* obj, u8 motion);
 u8 func_801037C4_1823E4_Archerival(u8 n, u8* used);
 u8 func_801038B4_1824D4_Archerival(omObjData* obj);
-s32 func_80103C1C_18283C_Archerival(omObjData* obj, s32 unused, s16* dx, u8* target);
+s32 func_80103C1C_18283C_Archerival(omObjData* obj, ARObj* tbl /* unused */, s16* dx, u8* target);
 void func_80103CF0_182910_Archerival(omObjData* obj, u16 mot, s16 start, s16 speed, s16 flags);
 void func_80103D7C_18299C_Archerival(omObjData* obj, s16 dir, s16* state);
-void func_801040B0_182CD0_Archerival(void* arg0);
+void func_801040B0_182CD0_Archerival(omObjData* obj);
 void func_80104AEC_18370C_Archerival(void* arg0);
 void func_8010506C_183C8C_Archerival(void);
 void func_80105180_183DA0_Archerival(f32 arg0, f32 arg1, f32 arg2, s32 arg3);

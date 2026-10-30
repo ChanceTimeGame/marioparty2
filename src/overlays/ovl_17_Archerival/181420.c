@@ -577,13 +577,247 @@ const char D_80107784_1863A4_Archerival[] = "c001l_0_DEF";
 __asm__(".section .rodata");
 const char D_80107790_1863B0_Archerival[] = "c000l_0_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801040B0_182CD0_Archerival);
+/* The archer (D_80107920[0]): state D_801078E6. 0 walk (stick or func_80103C1C's CPU walk) until
+   A (or the CPU in range) draws the bow; 1 draw, the arrow hooked to the hand; 2 aim (the CPU
+   picks its next target, at difficulty 0 sometimes feinting D_80107629 times among the ranked
+   ones); 3 aim and walk until A (or the CPU in range) fires; 4 fire: the arrow flies from the
+   bow (D_80107920[11].state = 1); 5-6 back to the walk pose. When the game ends (D_801078DE 3):
+   7 turn to the camera, 8 win/lose motion, voice and jingle (D_801078E0 1 won, 2 lost), 9 the
+   win voice after a per-character delay. Places the shadow / stand (model[1]). */
+// NON_MATCHING: correct logic; retail reloads across three branches (case 3 and case 7 fire = 1 sit out of line), register and scheduling residue
+#ifdef NON_MATCHING
+void func_801040B0_182CD0_Archerival(omObjData* obj) {
+    ARObj* tbl;
+    ARObj* arrow;
+    omObjData* arrowObj;
+    s16 dir;
+    s16 fire;
+    s16 n;
+    u8 used;
+    f32 t;
+    f32 h;
 
+    tbl = D_80107920_186540_Archerival;
+    arrow = &tbl[11];
+    arrowObj = tbl[11].obj;
+    dir = 0;
+    fire = 0;
+    switch (D_801078E6_186506_Archerival) {
+    case 0:
+        if (D_801078DE_1864FE_Archerival == 2) {
+            if (tbl[0].com == 0) {
+                if (arrow->state == 0 && (ContBtnTrg[gPlayers[obj->work[0]].port] & 0x8000)) {
+                    fire = 1;
+                } else {
+                    dir = ContStkX[gPlayers[obj->work[0]].port];
+                }
+            } else if (arrow->state == 0) {
+                fire = func_80103C1C_18283C_Archerival(obj, tbl, &dir, &D_80107628_186248_Archerival);
+            }
+            if (fire) {
+                func_80103CF0_182910_Archerival(obj, 2, 0, 5, 1);
+                D_801078E6_186506_Archerival = 1;
+            } else {
+                func_80103D7C_18299C_Archerival(obj, dir, &D_80107626_186246_Archerival);
+            }
+        } else if (D_801078DE_1864FE_Archerival == 3) {
+            func_80103CF0_182910_Archerival(obj, 0, 0, 5, 1);
+            if (_CheckFlag(0xC) == 0) {
+                D_801078E6_186506_Archerival = 7;
+                tbl[0].unk_30 = (obj->trans.x <= 0.0f) ? -20 : 20;
+            } else {
+                D_801078E6_186506_Archerival = 9;
+            }
+        }
+        break;
+    case 1:
+        if (func_80029E3C_2AA3C(obj->model[0]) == -1.0f) {
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            D_801078E6_186506_Archerival = 2;
+            if (arrowObj != NULL) {
+                func_80029EDC_2AADC(arrowObj->model[0], 2);
+                func_800298A4_2A4A4(arrowObj->model[0], 4, 0);
+                func_800298A4_2A4A4(arrowObj->model[0], 0x4000, 0x4000);
+                func_8002C628_2D228(arrowObj->model[0], obj->model[0], "item_hook");
+            }
+        }
+        break;
+    case 2:
+        if (func_80029CE4_2A8E4(obj->model[0]) == 56.0f) {
+            PlaySound(0x1D7);
+        }
+        t = func_80029CE4_2A8E4(obj->model[0]);
+        if (func_80029D0C_2A90C(obj->model[0]) <= t) {
+            D_801078E6_186506_Archerival = 3;
+            D_80107626_186246_Archerival = 0;
+            D_80107629_186249_Archerival = 0;
+            if (tbl[0].com != 0) {
+                if ((u8)(rand8() % 100) < 50) {
+                    D_80107628_186248_Archerival = 0;
+                }
+                n = 0;
+                if (gPlayers[obj->work[0]].cpu_difficulty == 0) {
+                loop:
+                    if (D_801078CA_1864EA_Archerival[n * 2] != 0) {
+                        if (++n < 5) {
+                            goto loop;
+                        }
+                    }
+                    if (n >= 2) {
+                        if (n < 3) {
+                            D_8010762A_18624A_Archerival = n;
+                        } else {
+                            D_8010762A_18624A_Archerival = 3;
+                        }
+                        D_8010762B_18624B_Archerival = 0;
+                        D_80107628_186248_Archerival = D_801078C8_1864E8_Archerival[func_801037C4_1823E4_Archerival(
+                            D_8010762A_18624A_Archerival, &D_8010762B_18624B_Archerival)].idx;
+                        D_80107629_186249_Archerival = rand8() % 3;
+                    }
+                }
+            }
+        }
+        break;
+    case 3:
+        if (D_801078DE_1864FE_Archerival == 3) {
+            fire = 1;
+        } else if (tbl[0].com == 0) {
+            if (ContBtnTrg[gPlayers[obj->work[0]].port] & 0x8000) {
+                fire = 1;
+            } else {
+                dir = ContStkX[gPlayers[obj->work[0]].port];
+            }
+        } else {
+            fire = func_80103C1C_18283C_Archerival(obj, tbl, &dir, &D_80107628_186248_Archerival);
+            if (fire != 0 && D_80107629_186249_Archerival != 0) {
+                used = D_8010762B_18624B_Archerival;
+                n = func_801037C4_1823E4_Archerival(D_8010762A_18624A_Archerival, &D_8010762B_18624B_Archerival);
+                D_8010762B_18624B_Archerival = used ^ D_8010762B_18624B_Archerival;
+                D_80107628_186248_Archerival = D_801078C8_1864E8_Archerival[(u8)n].idx;
+                D_80107629_186249_Archerival--;
+                fire = 0;
+            }
+        }
+        if (fire) {
+            func_80103CF0_182910_Archerival(obj, 3, 0, 1, 1);
+            D_801078E6_186506_Archerival = 4;
+        } else {
+            func_80103D7C_18299C_Archerival(obj, dir, &D_80107626_186246_Archerival);
+        }
+        break;
+    case 4:
+        if (func_80029E3C_2AA3C(obj->model[0]) == -1.0f) {
+            func_80029B80_2A780(obj->model[0], obj->motion[3]);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            func_80079798_7A398(0x1D8, obj->work[0]);
+            if (tbl[0].com == 0) {
+                omVibrate(obj->work[0], 20, 0, 20);
+            }
+            D_801078E6_186506_Archerival = 5;
+            if (arrowObj != NULL) {
+                func_800298A4_2A4A4(arrowObj->model[0], 0x4000, 0);
+                arrow->state = 1;
+                arrowObj->trans.x = obj->trans.x + D_801078EC_18650C_Archerival;
+                arrowObj->trans.y = obj->trans.y + 100.0f;
+                arrowObj->trans.z = obj->trans.z;
+                arrowObj->rot.y = obj->rot.y;
+            }
+        }
+        break;
+    case 5:
+        t = func_80029CE4_2A8E4(obj->model[0]);
+        if (func_80029D0C_2A90C(obj->model[0]) <= t) {
+            func_80103CF0_182910_Archerival(obj, 0, 0, 20, 1);
+            D_801078E6_186506_Archerival = 6;
+        }
+        break;
+    case 6:
+        if (func_80029E3C_2AA3C(obj->model[0]) == -1.0f) {
+            func_80029B80_2A780(obj->model[0], obj->motion[0]);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            func_80029E80_2AA80(obj->model[0], 2, 2);
+            D_801078E6_186506_Archerival = 0;
+            D_80107626_186246_Archerival = 0;
+            D_80107628_186248_Archerival = 0;
+        }
+        break;
+    case 7:
+        if (obj->rot.y != 0.0f) {
+            obj->rot.y += tbl[0].unk_30;
+            if (obj->rot.y >= 360.0f || obj->rot.y <= 0.0f) {
+                obj->rot.y = 0.0f;
+                fire = 1;
+            }
+        } else {
+            fire = 1;
+        }
+        if (fire && func_80029E3C_2AA3C(obj->model[0]) == -1.0f) {
+            D_801078E6_186506_Archerival = 8;
+        }
+        break;
+    case 8:
+        if (D_801078E0_186500_Archerival == 1) {
+            func_80029B80_2A780(obj->model[0], obj->motion[5]);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            func_80103704_182324_Archerival(obj, 1);
+            switch (gPlayers[obj->work[0]].character) {
+            case 0:
+                D_80107906_186526_Archerival = 49;
+                break;
+            case 1:
+                D_80107906_186526_Archerival = 58;
+                break;
+            case 2:
+                D_80107906_186526_Archerival = 53;
+                break;
+            case 3:
+                D_80107906_186526_Archerival = 38;
+                break;
+            case 4:
+                D_80107906_186526_Archerival = 45;
+                break;
+            case 5:
+                D_80107906_186526_Archerival = 27;
+                break;
+            }
+            PlayMusic(0x51);
+            D_801078E6_186506_Archerival = 9;
+        } else if (D_801078E0_186500_Archerival == 2) {
+            func_80029B80_2A780(obj->model[0], obj->motion[6]);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            func_80103704_182324_Archerival(obj, 2);
+            PlayMusic(0x52);
+            D_801078E6_186506_Archerival = 9;
+        }
+        break;
+    case 9:
+        if (D_801078E0_186500_Archerival == 1 && D_80107906_186526_Archerival > 0) {
+            if (--D_80107906_186526_Archerival == 0) {
+                func_800797DC_7A3DC(0x103, obj->work[0]);
+            }
+        }
+        break;
+    }
+    if (D_801078F0_186510_Archerival != 0) {
+        if (D_801078E6_186506_Archerival < 7) {
+            h = 50.0f;
+        } else {
+            h = 0.0f;
+        }
+    } else {
+        h = 15.0f;
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, tbl[0].unk_38, h + obj->trans.z);
+}
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801040B0_182CD0_Archerival);
 __asm__(".section .rodata");
-const u32 D_801077B8_1863D8_Archerival[6] = { 0x80104690, 0x80104774, 0x801047CC, 0x80104848, 0x80104908, 0x80104A20 };
+const u32 jtbl_801077B8_1863D8_Archerival[6] = { 0x80104690, 0x80104774, 0x801047CC, 0x80104848, 0x80104908, 0x80104A20 };
 
 __asm__(".section .rodata");
 const u32 jtbl_801077D0_1863F0_Archerival[6] = { 0x80104990, 0x80104998, 0x801049A0, 0x801049A8, 0x801049B0, 0x801049B8 };
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80104AEC_18370C_Archerival);
 
