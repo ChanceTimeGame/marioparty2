@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_38.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27D810", func_80105CE0_27D810_QuicksandCache);
 
