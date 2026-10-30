@@ -184,7 +184,7 @@ extern u16 D_801073B0_22DE80_HoneycombHavoc[8]; /* item model file per type */
 extern f32 D_801073C0_22DE90_HoneycombHavoc[33][2]; /* branch positions (x, y) */
 extern u32 D_801074C8_22DF98_HoneycombHavoc;
 extern u32 D_801074CC_22DF9C_HoneycombHavoc;
-extern u16 D_801074D0_22DFA0_HoneycombHavoc; /* intro countdown (16); the word is followed by 14 zero bytes */
+extern u16 D_801074D0_22DFA0_HoneycombHavoc; /* intro countdown (16); 14 zero bytes follow (D_801074D2/D4, defined with it) */
 extern u16 D_801074E0_22DFB0_HoneycombHavoc[8]; /* [0] quit request */
 
 /* ---- .rodata ---- */
