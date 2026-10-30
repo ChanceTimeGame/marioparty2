@@ -311,9 +311,26 @@ void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 minX, f32 minZ, f32 maxX, 
     work->unk_AC = maxZ;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF54_CB54);
+/* Hit box with its own radius. */
+void func_8000BF54_CB54(omObjData* obj, f32 arg1, f32 arg2, f32 minX, f32 minZ, f32 maxX, f32 maxZ) {
+    MgWork* work = MG_WORK(obj);
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BF8C_CB8C);
+    work->unk_06 |= 0x10;
+    work->unk_14 = arg1;
+    work->unk_98 = arg2;
+    work->unk_A0 = minX;
+    work->unk_A4 = minZ;
+    work->unk_A8 = maxX;
+    work->unk_AC = maxZ;
+}
+
+void func_8000BF8C_CB8C(omObjData* obj, f32 arg1, f32 arg2) {
+    MgWork* work = MG_WORK(obj);
+
+    work->unk_06 |= 0x20;
+    work->unk_14 = arg1;
+    work->unk_9C = arg2;
+}
 
 /* Cylinder hit shape: top, depth below it, radius. */
 void func_8000BFA8_CBA8(omObjData* obj, f32 top, f32 depth, f32 radius) {
