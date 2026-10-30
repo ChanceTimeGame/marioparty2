@@ -553,6 +553,18 @@ build/src/overlays/ovl_4E_name/32A1C0.c.o: export VR4300MUL := ON
 # between back-to-back mul.s)
 MG0FA_MULFIX_UNITS := build/src/overlays/ovl_0F_RainbowRun/147180.c.o build/src/overlays/ovl_0F_RainbowRun/1479E0.c.o
 $(MG0FA_MULFIX_UNITS): export VR4300MUL := ON
+# S4-0F: ovl_0F 149120.c too (func_80107790: a nop between back-to-back mul.s)
+build/src/overlays/ovl_0F_RainbowRun/149120.c.o: export VR4300MUL := ON
+# S4-0F: 1479E0.c is assembled from GCC's assembly with blank lines removed (func_80107018: no nop
+# before a mul.s after a call)
+S40F_BLANKSTRIP_UNITS := build/src/overlays/ovl_0F_RainbowRun/1479E0.c.o
+$(S40F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # with the KMC VR4300 mul fix on, as the other minigame overlays are
 # none before a mul.s after a call)
 MG0EA_BLANKSTRIP_UNITS := build/src/overlays/ovl_0E_BowlOver/13CB90.c.o build/src/overlays/ovl_0E_BowlOver/140760.c.o

@@ -3,8 +3,8 @@
 
 /* Overlay 0F: Rainbow Run. Its game code descends from MP1's ovl_1F_TightropeTreachery (197E20.c,
    19A360.c, 19ACC0.c, 19D510.c). Retail is four files: 144190.c, 147180.c from 801057F0 (MP1's
-   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790. .data stays asm (14C080); .rodata is carved per file. Prototypes past
-   801060D8 are inferred from register use (MG0F-B: check them). */
+   19A360.c), 1479E0.c from 80106050 and 149120.c from 80107790 (MP1's 19D510.c). .data stays asm
+   (14C080); .rodata is carved per file. Every prototype is checked against its definition. */
 
 #include "common.h"
 #include "game/object.h"
@@ -12,6 +12,8 @@
 #include "game/camera.h"
 #include "game/pad.h"
 #include "game/sprite.h"
+#include "game/data.h"
+#include "game/malloc.h"
 
 typedef f32 Matrix4f[4][4];
 
@@ -26,44 +28,105 @@ typedef struct RRPlayerWork {
     /* 0x40 */ f32 speed;
     /* 0x44 */ char unk_44[4];
     /* 0x48 */ f32 radius;
-    /* 0x4C */ char unk_4C[4];
+    /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50; /* flags */
-    /* 0x52 */ char unk_52[5];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53[4];
     /* 0x57 */ s8 port; /* controller port */
     /* 0x58 */ char unk_58[1];
     /* 0x59 */ s8 player; /* player index */
-    /* 0x5A */ char unk_5A[0x64];
+    /* 0x5A */ char unk_5A[6];
+    /* 0x60 */ f32 unk_60;
+    /* 0x64 */ char unk_64[0x50];
+    /* 0xB4 */ f32 unk_B4; /* MP1 0xA4 */
+    /* 0xB8 */ char unk_B8[6];
     /* 0xBE */ u16 unk_BE; /* stun timer after a hit (MP1 0xAE) */
-    /* 0xC0 */ char unk_C0[0x2C];
+    /* 0xC0 */ char unk_C0[0xC];
+    /* 0xCC */ f32 unk_CC; /* MP1 0xBC */
+    /* 0xD0 */ u16 unk_D0; /* MP1 0xC0 */
+    /* 0xD2 */ char unk_D2[0x1A];
     /* 0xEC */ s32 (*unk_EC)(omObjData*, omObjData*); /* collision callback (MP1 0xDC) */
     /* 0xF0 */ char unk_F0[0x68];
     /* 0x158 */ struct RRTeamWork* team; /* a follower's state (D_8010AA18_14C3A8_RainbowRun[]; MP1 0xE4) */
 } RRPlayerWork; /* size = 0x15C */
 
-/* A follower's state (D_8010AA18_14C3A8_RainbowRun[], RRPlayerWork::team; MP1 TTTeamWork). */
+/* A follower's state (D_8010AA18_14C3A8_RainbowRun[], RRPlayerWork::team; MP1 TTTeamWork, rebuilt:
+   followers run along a looping path (func_80109240) instead of standing on the shore). No pointers. */
 typedef struct RRTeamWork {
-    /* 0x00 */ char unk_00[0x38];
-    /* 0x38 */ f32 unk_38; /* z */
-    /* 0x3C */ char unk_3C[0x60];
+    /* 0x00 */ char unk_00[0x20];
+    /* 0x20 */ f32 push[2];   /* zeroed only */
+    /* 0x28 */ f32 angle;     /* facing (degrees) */
+    /* 0x2C */ f32 turn;      /* added to the facing each frame */
+    /* 0x30 */ Vec ofs;       /* offset from the path (z: pulled back when the course is pulled) */
+    /* 0x3C */ Vec pos;       /* point on the path */
+    /* 0x48 */ f32 target;    /* CPU stick angle, < 0: none */
+    /* 0x4C */ char unk_4C[0xC];
+    /* 0x58 */ f32 seg;       /* path segment 0..3 */
+    /* 0x5C */ f32 t;         /* position in the segment, 0..240 */
+    /* 0x60 */ f32 aim;       /* CPU aim error (degrees) */
+    /* 0x64 */ s32 timer;     /* CPU frames since the last throw */
+    /* 0x68 */ s32 aimWait;   /* CPU frames before a new aim error */
+    /* 0x6C */ u16 throwWait; /* CPU frames between throws */
+    /* 0x6E */ char unk_6E[2];
+    /* 0x70 */ s32 unk_70;
+    /* 0x74 */ u16 btn;       /* CPU buttons */
+    /* 0x76 */ u16 prevBtn;
+    /* 0x78 */ u16 idx;       /* 0..2 */
+    /* 0x7A */ s16 flash;     /* stunned (hit by a bomb) */
+    /* 0x7C */ s16 wait;      /* frames before the follower moves on */
+    /* 0x7E */ s16 aimTimer;
+    /* 0x80 */ u8 unk_80[8];
+    /* 0x88 */ u8 unk_88[8];
+    /* 0x90 */ s8 port;
+    /* 0x91 */ s8 player;
+    /* 0x92 */ s8 unk_92;
+    /* 0x93 */ char unk_93;
+    /* 0x94 */ s8 sway;
+    /* 0x95 */ s8 swayDir;
+    /* 0x96 */ s8 noCtrl;
+    /* 0x97 */ s8 hasSpot;
+    /* 0x98 */ s8 spot;      /* D_8010A87C_14C20C_RainbowRun index */
+    /* 0x99 */ s8 aimed;
+    /* 0x9A */ s8 done;
+    /* 0x9B */ char unk_9B;
 } RRTeamWork; /* size = 0x9C */
 
 #define RR_WORK(obj) ((RRPlayerWork*)(obj)->unk_50)
 
-/* A thrown object's state (RRItemWork::bomb; MP1 TTBomb). No pointers. */
+/* A bomb's state (D_8010AC20_14C5B0_RainbowRun[3], RRItemWork::bomb; MP1 TTBomb). No pointers. */
 typedef struct RRBomb {
-    /* 0x00 */ s8 active;
-    /* 0x01 */ s8 lit;
-    /* 0x02 */ char unk_02[2];
+    /* 0x00 */ s8 active; /* the follower pressed A */
+    /* 0x01 */ s8 lit;    /* thrown */
+    /* 0x02 */ u16 idx;   /* the follower (D_8010AC14 index) */
     /* 0x04 */ s16 sound; /* the fuse sound's owner (func_80079798_7A398's second argument) */
-    /* 0x06 */ char unk_06[4];
-    /* 0x0A */ s16 mdl; /* 3D sprite (func_80021198_21D98) */
-} RRBomb;
+    /* 0x06 */ s16 mdl[3]; /* 3D sprites (func_80021198_21D98): fuse, splash, explosion */
+    /* 0x0C */ f32 ang;
+    /* 0x10 */ f32 dir[3];
+    /* 0x1C */ f32 pos[3];
+    /* 0x28 */ f32 vy;
+    /* 0x2C */ s32 timer;
+    /* 0x30 */ f32 speed;
+} RRBomb; /* size = 0x34 */
 
 /* A thrown object's work: main's minigame work view, the state pointer at 0xA8 (MP1 0x68). */
 typedef struct RRItemWork {
-    /* 0x00 */ char unk_00[0xA8];
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ char unk_38[4];
+    /* 0x3C */ s32 unk_3C;
+    /* 0x40 */ char unk_40[4];
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ char unk_4C[6];
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53;
+    /* 0x54 */ u8 unk_54;
+    /* 0x55 */ char unk_55[0x23];
+    /* 0x78 */ s32 unk_78;
+    /* 0x7C */ s32 unk_7C;
+    /* 0x80 */ char unk_80[0x28];
     /* 0xA8 */ RRBomb* bomb;
-} RRItemWork;
+} RRItemWork; /* size = 0xAC on the N64 */
 
 #define RR_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
@@ -114,7 +177,7 @@ void func_80106CB8_148648_RainbowRun(omObjData* obj);
 void func_80106D60_1486F0_RainbowRun(omObjData* obj);
 void func_80106E70_148800_RainbowRun(omObjData* obj);
 void func_80106E8C_14881C_RainbowRun(omObjData* obj);
-void func_80107018_1489A8_RainbowRun(omObjData* obj, s32 arg1);
+void func_80107018_1489A8_RainbowRun(omObjData* obj);
 void func_801075FC_148F8C_RainbowRun(omObjData* obj);
 
 /* 149120.c */
@@ -128,7 +191,7 @@ void func_801087A8_14A138_RainbowRun(omObjData* obj);
 void func_801087CC_14A15C_RainbowRun(omObjData* obj);
 void func_801087F0_14A180_RainbowRun(omObjData* obj);
 void func_80108814_14A1A4_RainbowRun(omObjData* obj);
-void* func_80109240_14ABD0_RainbowRun(omObjData* obj, s32 arg1, s16 arg2, f32 arg3);
+Vec func_80109240_14ABD0_RainbowRun(s8 path, s16 seg, f32 t);
 void func_80109534_14AEC4_RainbowRun(omObjData* obj);
 void func_80109CC4_14B654_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 player, f32 x, f32 y, f32 z, u16 idx);
 void func_8010A42C_14BDBC_RainbowRun(omObjData* obj);
@@ -377,5 +440,47 @@ s16 LoadFormFile(s32, s32);
 u16 func_80018A30_19630(s32, s32); /* model load */
 void func_8000BE8C_CA8C(omObjData*, f32);
 void func_8000BEA4_CAA4(omObjData*, f32);
+
+/* S4-0F */
+
+f32 func_8002662C_2722C(f32* keys, f32* times, f32 t); /* spline through four keys */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_8002D0A0_2DCA0(s16, u8); /* model alpha */
+void func_8002D124_2DD24(s16 index);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80029B80_2A780(s16 arg0, s16 arg1); /* model motion */
+void func_80029E80_2AA80(s16, s32, s32);
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* loads obj->motion[slot] */
+void func_8000BE74_CA74(omObjData*, f32);
+void func_8000BEB0_CAB0(omObjData*, f32);
+void func_8000BEBC_CABC(omObjData*, f32);
+void func_8000BEC8_CAC8(omObjData*, f32);
+void func_80020070_20C70(s32); /* camera setup */
+extern f32 D_8010A804_14C194_RainbowRun[4][2]; /* the clouds' x, z: [0] the group, [1..3] offsets */
+extern f32 D_8010A808_14C198_RainbowRun[]; /* D_8010A804 + 4, retail's own label */
+extern s8 D_8010A824_14C1B4_RainbowRun; /* the clouds are shown */
+extern Vec D_8010A830_14C1C0_RainbowRun[6]; /* the followers' path points (retail's own labels D_8010A834/838: .y, .z) */
+/* the four spots' used flags: retail's spots are { f32 angle; s8 used; } [4] from 0x8010A878 (angles
+   20, 50, 310, 340), addressed by the +4 label */
+extern s8 D_8010A87C_14C20C_RainbowRun[][8];
+extern s8 D_8010A898_14C228_RainbowRun[]; /* a bomb's fuse sound is playing */
+extern s8 D_8010A89C_14C22C_RainbowRun[6][4]; /* the paths: four of D_8010A830's points each */
+extern f32 D_8010A9D0_14C360_RainbowRun[4]; /* func_80109240's spline keys */
+extern f32 D_8010A9E0_14C370_RainbowRun[4]; /* func_80109240's spline times */
+/* the bombs' shared models and sprites: [0] bomb, [1] shadow, [2..4] fuse/splash/explosion sprite ids
+   (retail's own labels D_8010A9F4/9F6/9F8); -1 until loaded */
+extern s16 D_8010A9F0_14C380_RainbowRun[8];
+extern s16 D_8010AA00_14C390_RainbowRun[3]; /* the followers' shared shadow model */
+extern RRTeamWork D_8010AA18_14C3A8_RainbowRun[3];
+extern s8 D_8010ABF0_14C580_RainbowRun; /* path set: 0 or 3 */
+extern f32 D_8010AC00_14C590_RainbowRun; /* D_8010ABFC[1] by retail's own label */
+extern s8 D_8010AC08_14C598_RainbowRun[3]; /* the followers' paths, shuffled (+ D_8010ABF0) */
+extern RRBomb D_8010AC20_14C5B0_RainbowRun[3]; /* splat labels its fields (D_8010AC21..AC4C) */
+void HmfModelObjAttrSet(s16, s32, s32);
+void func_8000C2A0_CEA0(omObjData* obj, s32 arg1, s32 arg2, s32 arg3, s32 arg4); /* MP1 func_80009340 */
+u16 func_80018A64_19664(s32 arg0, s32 arg1);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2); /* 3D sprite (MP1 func_8001E00C) */
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void func_800211E8_21DE8(s16 index, u8 arg1);
 
 #endif
