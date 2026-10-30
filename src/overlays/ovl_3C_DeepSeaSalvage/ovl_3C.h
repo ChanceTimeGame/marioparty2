@@ -4,10 +4,11 @@
 /* Overlay 3C: Deep Sea Salvage (four players, each diving for itself), descended from MP1's ovl_30_DeepSeaDivers (218510.c, DeepSeaDivers.h) and
    ovl_04_TreasureDivers. A boat at the surface drops treasure (1- and 5-coin pieces, and a
    hazard) down four lanes; each player's diver swims left/right and kicks up with A, picks a
-   treasure up by touching it, and is stunned by the hazard. Two fish swim across. Retail is two
-   files: 291870.c (game, divers, boat, treasure, HUD, effects) and 296550.c from 801074E0 (fish,
-   MP1 func_800FEA00 onwards). .data stays asm (one blob for both files); .rodata is carved per
-   file ([0x2976D0, .rodata, 291870], [0x297820, .rodata, 296550]). */
+   treasure up by touching it, and is stunned by the hazard. Two fish swim across. Retail is three
+   files: 291870.c (game, divers, boat, treasure, HUD), 294F20.c from 80105EB0 (camera, work
+   blocks, random numbers, sea-floor collision, effects) and 296550.c from 801074E0 (fish, MP1
+   func_800FEA00 onwards). .data stays asm (one blob for all three files); .rodata is carved per
+   file ([0x2976D0, .rodata, 291870], [0x2977E0, .rodata, 294F20], [0x297820, .rodata, 296550]). */
 
 #include "common.h"
 #include "game/object.h"
@@ -337,7 +338,12 @@ void func_801056FC_29476C_DeepSeaSalvage(s16 idx);
 void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, u16 anim, u16 x, s32 y);
 void func_801058A0_294910_DeepSeaSalvage(omObjData* obj);
 void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj);
-void func_80105E84_294EF4_DeepSeaSalvage(s16 player, s16 coins);
+void func_80105E84_294EF4_DeepSeaSalvage(s32 player, s16 coins);
+
+/* ---------------------------------------------------------------------------------------------
+   294F20.c
+   --------------------------------------------------------------------------------------------- */
+
 void func_80105EB0_294F20_DeepSeaSalvage(void);
 void func_80105F14_294F84_DeepSeaSalvage(void);
 DSSWork* func_80105F5C_294FCC_DeepSeaSalvage(omObjData* obj);
