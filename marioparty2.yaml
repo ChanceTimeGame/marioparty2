@@ -1339,7 +1339,11 @@ segments:
     bss_size: 0x680
     subsegments:
       - [0x27A330, c]
+      - [0x27D810, c]
+      - [0x27E2B0, c]
       - [0x27F2A0, data]
+      - [0x27F330, .rodata, 27A330]
+      - [0x27F440, .rodata, 27E2B0]
       - {0x27F4F0, type: bss, vram: 0x801079C0, name: ovl_38_bss}
   - type: code
     start: 0x27F4F0

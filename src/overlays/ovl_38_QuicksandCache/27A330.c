@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_80107800_27F330_QuicksandCache[16] = "\202r\202s\202`\202q\202s";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80102800_27A330_QuicksandCache);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80102EB4_27A9E4_QuicksandCache);
@@ -20,6 +23,33 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80103
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80104498_27BFC8_QuicksandCache);
 
+__asm__(".section .rodata");
+const u32 D_80107818_27F348_QuicksandCache[12] = { 0x001E0019, 0x001E0019, 0x0023001E, 0x00140019, 0x00140019, 0x0014001E, 0x000A0019, 0x0014000F, 0x000A0014, 0x000A0014, 0x000F000A, 0x000A000F };
+
+__asm__(".section .rodata");
+const u32 D_80107848_27F378_QuicksandCache[6] = { 0x01000002, 0x01000102, 0x01000200, 0x02010201, 0x02000102, 0x01010202 };
+
+__asm__(".section .rodata");
+const char D_80107860_27F390_QuicksandCache[] = "C002_000b-bmerge10_1";
+
+__asm__(".section .rodata");
+const char D_80107878_27F3A8_QuicksandCache[] = "c005_000-bmerge1";
+
+__asm__(".section .rodata");
+const char D_8010788C_27F3BC_QuicksandCache[] = "Luigi1-atama_1";
+
+__asm__(".section .rodata");
+const char D_8010789C_27F3CC_QuicksandCache[] = "c003_000-head_1";
+
+__asm__(".section .rodata");
+const char D_801078AC_27F3DC_QuicksandCache[] = "c001_000-atama_2";
+
+__asm__(".section .rodata");
+const char D_801078C0_27F3F0_QuicksandCache[] = "atama_2";
+
+__asm__(".section .rodata");
+const char D_801078C8_27F3F8_QuicksandCache[] = "21_kimoti_1b-atama_3";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80104848_27C378_QuicksandCache);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80104B90_27C6C0_QuicksandCache);
@@ -33,48 +63,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80105
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80105BC4_27D6F4_QuicksandCache);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80105CA8_27D7D8_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80105CE0_27D810_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80105F9C_27DACC_QuicksandCache);
-
-void func_80106038_27DB68_QuicksandCache(void) {
-}
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106040_27DB70_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_8010609C_27DBCC_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_801060F8_27DC28_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_801062F0_27DE20_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106440_27DF70_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106648_27E178_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106780_27E2B0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_801067C0_27E2F0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106838_27E368_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_801068C0_27E3F0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106CC0_27E7F0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106E68_27E998_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106F14_27EA44_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80106FC4_27EAF4_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80107048_27EB78_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80107074_27EBA4_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_8010712C_27EC5C_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_80107410_27EF40_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27A330", func_8010773C_27F26C_QuicksandCache);
