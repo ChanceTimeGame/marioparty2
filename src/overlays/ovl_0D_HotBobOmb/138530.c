@@ -1,5 +1,34 @@
 #include "ovl_0D.h"
 
+/* ---- .data (80106B10-80106C90) ---- */
+s32 D_80106B10_13C840_HotBobOmb[4] = { 0, 1, 2, 3 };
+HBSeat D_80106B20_13C850_HotBobOmb[4] = {
+    { { -200.0f, 0.0f, -200.0f }, 45.0f, 1.0f, { -160.0f, 75.0f, -160.0f }, 225.0f, 0.0f, 0 },
+    { { 200.0f, 0.0f, -200.0f }, 315.0f, 1.0f, { 160.0f, 75.0f, -160.0f }, 135.0f, 0.0f, 1 },
+    { { 200.0f, 0.0f, 200.0f }, 225.0f, 1.0f, { 160.0f, 75.0f, 160.0f }, 45.0f, 0.0f, 2 },
+    { { -200.0f, 0.0f, 200.0f }, 135.0f, 1.0f, { -160.0f, 75.0f, 160.0f }, 315.0f, 0.0f, 3 },
+};
+s32 D_80106BE0_13C910_HotBobOmb[4][5] = {
+    { -1, 0, 2, 1, 2 },
+    { 1, -1, 0, 2, 2 },
+    { 2, 1, -1, 0, 2 },
+    { 0, 2, 1, -1, 2 },
+};
+s32 D_80106C30_13C960_HotBobOmb = 0;
+s32 D_80106C34_13C964_HotBobOmb[4] = { 0x28, 0x58, 0x60, 0x20 };
+f32 D_80106C44_13C974_HotBobOmb = 240.0f;
+s32 D_80106C48_13C978_HotBobOmb = 0;
+f32 D_80106C4C_13C97C_HotBobOmb[2] = { 0.0f, 50.0f }; /* unreferenced */
+s32 D_80106C54_13C984_HotBobOmb = 0;
+f32 D_80106C58_13C988_HotBobOmb[5] = { 0.0f, 1.5f, 1.5f, 2.5f, 6.0f }; /* unreferenced */
+s32 D_80106C6C_13C99C_HotBobOmb = 0;
+f32 D_80106C70_13C9A0_HotBobOmb = 0.0f;
+f32 D_80106C74_13C9A4_HotBobOmb = -1.0f;
+f32 D_80106C78_13C9A8_HotBobOmb = 0.0f;
+s32 D_80106C7C_13C9AC_HotBobOmb = 0;
+s32 D_80106C80_13C9B0_HotBobOmb = 0;
+s32 D_80106C84_13C9B4_HotBobOmb = -1;
+
 void func_80102800_138530_HotBobOmb(void) {
     func_8002D4D0_2E0D0(4);
     func_80020D20_21920(0x50);

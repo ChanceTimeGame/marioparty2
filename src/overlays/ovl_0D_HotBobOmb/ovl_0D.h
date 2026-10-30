@@ -7,7 +7,8 @@
    other with the stick and A; the fuse (D_80106E88_13CBB8_HotBobOmb, seconds) runs down; the
    holder when it reaches 0 is blown up. Three rounds (D_80106E80_13CBB0_HotBobOmb 0..2), each
    with its own random fuse (D_80106E90_13CBC0_HotBobOmb).
-   One retail file, 138530.c (80102800-80106B10). .data is asm (13C840.data.s); .rodata is
+   One retail file, 138530.c (80102800-80106B10). .data is C (from 0x13C840; labels inside
+   D_80106B20 are undefined_syms.txt aliases for the asm path of func_801056C8); .rodata is
    carved (0x13C9C0). N64 offsets are in the comments. */
 
 #include "common.h"
@@ -105,16 +106,15 @@ void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
 void Hu3DCamUpdateMtx(s16 camIndex);
 
-/* ---- .data (13C840.data.s, asm) ---- */
+/* ---- .data (138530.c) ---- */
 extern s32 D_80106B10_13C840_HotBobOmb[4];      /* seat -> player ({0,1,2,3}) */
 extern HBSeat D_80106B20_13C850_HotBobOmb[4];
 extern s32 D_80106BE0_13C910_HotBobOmb[4][5];   /* [from][to]: throw kind 0/1/2 (-1 self) */
 extern s32 D_80106C30_13C960_HotBobOmb;         /* seats set up so far */
 extern s32 D_80106C34_13C964_HotBobOmb[4];      /* sound pan per seat */
 extern f32 D_80106C44_13C974_HotBobOmb;         /* fuse sprite's resting y */
-extern s32 D_80106C48_13C978_HotBobOmb;         /* followed by two unreferenced words (0, 50.0f) */
-extern s32 D_80106C54_13C984_HotBobOmb;         /* music started; followed by five unreferenced
-                                                   words (0, 1.5f, 1.5f, 2.5f, 6.0f) */
+extern s32 D_80106C48_13C978_HotBobOmb;         /* bomb-model update argument (unused there) */
+extern s32 D_80106C54_13C984_HotBobOmb;         /* music started */
 extern s32 D_80106C6C_13C99C_HotBobOmb;         /* bomb fuse-model frame counter */
 extern f32 D_80106C70_13C9A0_HotBobOmb;
 extern f32 D_80106C74_13C9A4_HotBobOmb;
