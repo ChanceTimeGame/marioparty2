@@ -81,7 +81,7 @@ void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2);
 void func_8002C6F4_2D2F4(HmfModel*, u16);
 void func_8003E4F4_3F0F4(s16, u8, u8);
 void func_80015710_16310(s32 slot, s32 pan);
-s32 func_80069538_6A138(void);
+s16 func_80069538_6A138(void); /* MP1 GMesStatAllGet; s32 in main's other views, retail re-extends here */
 s16 func_800691FC_69DFC(s16 mesNo, ...);
 void func_800799A4_7A5A4(s16 sound, s32 frames);
 void func_80079614_7A214(s16 time);
@@ -90,6 +90,17 @@ void func_80079684_7A284(s8);
 s16 func_800797DC_7A3DC(s32 sfx, s16 player);
 omObjData* func_800732B0_73EB0(u32 arg0);
 s32 func_8008F618_90218(void);
+s32 PlaySound(s32);
+f32 HuMathSin(f32);
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
+void Hu3DCamUpdateMtx(s16 camIndex);
 
 /* ---- .data (13C840.data.s, asm) ---- */
 extern s32 D_80106B10_13C840_HotBobOmb[4];      /* seat -> player ({0,1,2,3}) */
@@ -119,10 +130,10 @@ extern s16 D_80106E84_13CBB4_HotBobOmb;         /* _CheckFlag(0xC) */
 extern s16 D_80106E86_13CBB6_HotBobOmb;         /* sound handle */
 extern s32 D_80106E88_13CBB8_HotBobOmb;         /* fuse left (seconds) */
 extern s32 D_80106E8C_13CBBC_HotBobOmb;         /* fuse sprite bob counter */
-extern s32 D_80106E90_13CBC0_HotBobOmb[4];      /* [0..2] each round's fuse; [3] bob period
-                                                   (read as D_80106E9C) */
-extern s16 D_80106EA0_13CBD0_HotBobOmb;
-extern s16 D_80106EA2_13CBD2_HotBobOmb;         /* frames to the next fuse second */
+extern s32 D_80106E90_13CBC0_HotBobOmb[4];      /* [0..2] each round's fuse; [3] the fuse
+                                                   sprite's bob period (splat label D_80106E9C) */
+extern u16 D_80106EA0_13CBD0_HotBobOmb;
+extern u16 D_80106EA2_13CBD2_HotBobOmb;         /* frames to the next fuse second */
 extern s16 D_80106EA4_13CBD4_HotBobOmb;
 extern s16 D_80106EA6_13CBD6_HotBobOmb[5];      /* bomb models (= the bomb object's model[0..4]) */
 extern f32 D_80106EB0_13CBE0_HotBobOmb;
