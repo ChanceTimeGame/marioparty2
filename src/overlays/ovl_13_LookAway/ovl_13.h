@@ -40,7 +40,7 @@ typedef struct LAObj {
     /* 0x26 */ u16 unk_26;    /* CPU: frames until it changes direction */
     /* 0x28 */ u16 timer;
     /* 0x2A */ u16 unk_2A;
-    /* 0x2C */ s16 com;       /* gPlayers[].flags & 1 */
+    /* 0x2C */ u16 com;       /* gPlayers[].flags & 1 */
     /* 0x2E */ u16 player;
     /* 0x30 */ s16 unk_30;
     /* 0x32 */ s16 unk_32;

@@ -560,25 +560,382 @@ u16 func_801045FC_16939C_LookAway(omObjData* obj) {
     return rand8() % range[d] + base[d];
 }
 
-__asm__(".section .rodata");
-const u32 D_801068E8_16B688_LookAway[2] = { 0x00200040, 0x00600000 };
 
-__asm__(".section .rodata");
-const u32 D_801068F0_16B690_LookAway[1] = { 0x000E0F00 };
 
-__asm__(".section .rodata");
-const u32 D_801068F4_16B694_LookAway[2] = { 0x04040404, 0x04000000 };
 
-__asm__(".section .rodata");
-const u32 D_801068FC_16B69C_LookAway[2] = { 0x01010101, 0x01000000 };
 
-__asm__(".section .rodata");
-const u32 D_80106904_16B6A4_LookAway[5] = { 0x3F4CCCCD, 0x3F19999A, 0x3ECCCCCD, 0x3E4CCCCD, 0x3DCCCCCD };
 
-__asm__(".section .rodata");
-const u32 D_80106918_16B6B8_LookAway[2] = { 0x000A1414, 0x00000000 };
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801046E4_169484_LookAway);
+void func_801046E4_169484_LookAway(omObjData* obj) {
+    s16 pan[3] = { 32, 64, 96 };
+    LAObj* p = &D_80106CD0_16BA70_LookAway[obj->work[1]];
+    LADir* d = &D_80106BE8_16B988_LookAway[obj->work[1]];
+    s8 idle[3] = { 0, 14, 15 };
+    s8 missMot[5] = { 4, 4, 4, 4, 4 };
+    s8 safeMot[5] = { 1, 1, 1, 1, 1 };
+    f32 shrink[5] = { 0.8f, 0.6f, 0.4f, 0.2f, 0.1f };
+    u8 chance[4] = { 0, 10, 20, 20 };
+    u64 used;
+    LAObj* q;
+    omObjData* qo;
+    LAMark* mk;
+    s8 n = 0; /* catches this round, or "a choice was made" */
+    u8 camDir;
+    u8 mot;
+    u8 k;
+    u8 port;
+    f32 s;
+
+    switch (p->state) {
+    case 0:
+        if (D_801069A0_16B740_LookAway == 2) {
+            if (obj->work[1] == 0) {
+                D_801069AC_16B74C_LookAway = 150;
+                D_801069AE_16B74E_LookAway = 0;
+                PlayMusic(0x31);
+                func_80079518_7A118(0x7F);
+                D_801069AE_16B74E_LookAway |= 0x10;
+            }
+            p->state = 1;
+        }
+        break;
+    case 1:
+        func_80104318_1690B8_LookAway(obj);
+        if (D_801069AC_16B74C_LookAway < 46) {
+            p->state = 2;
+            p->unk_24 = 0;
+            p->unk_26 = func_801045FC_16939C_LookAway(obj);
+            p->timer = 10;
+        }
+        break;
+    case 2:
+        if (obj->work[1] == 0 && D_801069AC_16B74C_LookAway == 0 && (D_801069AE_16B74E_LookAway & 0x10)) {
+            D_801069AE_16B74E_LookAway = (D_801069AE_16B74E_LookAway ^ 0x10) | 0x20;
+        }
+        if (func_801043E0_169180_LookAway(obj)) {
+            d->prev = d->dir;
+            if (p->com != 0) {
+                if (D_801069AA_16B74A_LookAway < 2 && D_801069AC_16B74C_LookAway == 0 && p->timer == 0 &&
+                    (u8)(rand8() % 100) < chance[gPlayers[obj->work[0]].cpu_difficulty]) {
+                    n = 1;
+                    if (obj->work[1] != 0) {
+                        if (D_80106BE8_16B988_LookAway[0].dir == d->dir) {
+                            used = 1 << D_80106BE8_16B988_LookAway[0].dir;
+                            d->dir = func_801028A0_167640_LookAway(5, &used);
+                        }
+                    } else {
+                        mk = D_80106A40_16B7E0_LookAway;
+                        used = 0;
+                        for (k = 0; k < 3; k++, mk++) {
+                            if (mk->flags & 1) {
+                                used |= 1 << k;
+                            }
+                        }
+                        if (used != 7) {
+                            d->dir = D_80106C04_16B9A4_LookAway[func_801028A0_167640_LookAway(3, &used)].dir;
+                        }
+                    }
+                }
+                if (!n) {
+                    if (p->unk_26 != 0) {
+                        p->unk_26--;
+                    } else {
+                        p->unk_26 = func_801045FC_16939C_LookAway(obj);
+                        d->dir = rand8() % 5;
+                    }
+                }
+            } else {
+                port = gPlayers[obj->work[0]].port;
+                d->dir = func_80103FEC_168D8C_LookAway(ContStkX[port], ContStkY[port]);
+            }
+            func_80104238_168FD8_LookAway(obj, d);
+            if (D_801069AC_16B74C_LookAway == 0) {
+                if (p->timer == 0) {
+                    p->state = 3;
+                    if (obj->work[1] == 0) {
+                        func_800794A8_7A0A8(40);
+                    }
+                } else {
+                    p->timer--;
+                }
+            }
+        }
+        break;
+    case 3:
+        d->prev = d->dir;
+        func_80104238_168FD8_LookAway(obj, d);
+        if (!func_801044E0_169280_LookAway()) {
+            if (++p->timer > 20) {
+                d->shown = d->dir;
+                p->state = 4;
+                p->timer = 0;
+                d->dir = 0;
+            }
+        }
+        break;
+    case 4:
+        func_80104238_168FD8_LookAway(obj, d);
+        d->prev = d->dir;
+        if (!func_801044E0_169280_LookAway() && obj->work[1] == 0) {
+            if (++p->timer > 10) {
+                camDir = D_80106BE8_16B988_LookAway[0].shown;
+                for (k = 1; k < 4; k++) {
+                    q = &D_80106CD0_16BA70_LookAway[k];
+                    qo = q->obj;
+                    mk = &D_80106A34_16B7D4_LookAway[qo->work[1]];
+                    if (camDir == D_80106BE8_16B988_LookAway[k].shown) {
+                        q->state = 6;
+                        q->timer = 0;
+                        if (mk->flags & 1) {
+                            func_80104514_1692B4_LookAway(qo, 5);
+                        } else {
+                            q->timer = (n != 0) ? n * 30 : 1;
+                            D_801069AA_16B74A_LookAway++;
+                            n++;
+                        }
+                    } else {
+                        q->state = 5;
+                        q->timer = 0;
+                    }
+                }
+                if (n != 0) {
+                    func_80104514_1692B4_LookAway(obj, 1);
+                    D_801069A8_16B748_LookAway = 0;
+                } else {
+                    func_80104514_1692B4_LookAway(obj, missMot[D_801069A8_16B748_LookAway]);
+                    for (k = 1; k < 4; k++) {
+                        q = &D_80106CD0_16BA70_LookAway[k];
+                        qo = q->obj;
+                        mk = &D_80106A34_16B7D4_LookAway[qo->work[1]];
+                        if (mk->flags & 1) {
+                            func_80104514_1692B4_LookAway(qo, 2);
+                        } else {
+                            func_80104514_1692B4_LookAway(qo, safeMot[D_801069A8_16B748_LookAway]);
+                            func_800798F8_7A4F8(func_800797DC_7A3DC(0x103, qo->work[0]), pan[qo->work[1] - 1]);
+                        }
+                    }
+                    D_801069A8_16B748_LookAway++;
+                    if (p->com == 0) {
+                        omVibrate(obj->work[0], 10, 0, 10);
+                    }
+                }
+                p->state = 5;
+                p->timer = 30;
+            }
+        }
+        break;
+    case 5:
+        if (obj->work[1] != 0) {
+            p->state = D_80106CD0_16BA70_LookAway[0].state;
+            if (p->unk_24 == 0 && (D_801069AE_16B74E_LookAway & 0x100)) {
+                func_80104514_1692B4_LookAway(obj, (D_80106A34_16B7D4_LookAway[obj->work[1]].flags & 1) ? 5 : 2);
+                p->unk_24 = 1;
+            }
+        } else {
+            for (k = 1; k < 4; k++) {
+                q = &D_80106CD0_16BA70_LookAway[k];
+                if (q->state == 6) {
+                    n = 1;
+                }
+            }
+            if (n == 0) {
+                if (p->timer == 0) {
+                    D_801069A6_16B746_LookAway--;
+                    if (D_801069AA_16B74A_LookAway >= 3 || D_801069A6_16B746_LookAway == 0) {
+                        p->state = 8;
+                        D_801069A6_16B746_LookAway = 0;
+                    } else {
+                        p->state = 7;
+                    }
+                } else {
+                    p->timer--;
+                }
+            }
+        }
+        break;
+    case 6:
+        if (p->timer != 0) {
+            if (--p->timer == 0) {
+                func_80104514_1692B4_LookAway(obj, 5);
+                func_800798F8_7A4F8(func_800797DC_7A3DC(0x111, obj->work[0]), pan[obj->work[1] - 1]);
+                PlaySound(0x1B4);
+                D_801069AE_16B74E_LookAway |= 0x100;
+            } else if (p->unk_24 == 0 && (D_801069AE_16B74E_LookAway & 0x100)) {
+                func_80104514_1692B4_LookAway(obj, 2);
+                p->unk_24 = 1;
+            }
+        } else {
+            mk = &D_80106A34_16B7D4_LookAway[obj->work[1]];
+            s = shrink[mk->count];
+            obj->scale.x -= 0.1f;
+            obj->scale.y -= 0.1f;
+            obj->scale.z -= 0.1f;
+            if (obj->scale.x <= s) {
+                mk->flags |= 1;
+                obj->scale.x = obj->scale.y = obj->scale.z = s;
+                p->state = 5;
+                mk->count++;
+                if (p->com == 0) {
+                    omVibrate(obj->work[0], 10, 0, 10);
+                }
+            }
+        }
+        break;
+    case 7:
+        if (p->timer++ > 60) {
+            p->state = 0;
+            p->unk_22 = 0;
+            p->timer = 0;
+            if (obj->work[1] != 0) {
+                if (D_80106A34_16B7D4_LookAway[obj->work[1]].flags & 1) {
+                    func_80104514_1692B4_LookAway(obj, 13);
+                    break;
+                }
+                used = 0;
+                mot = 0;
+                for (k = 1; k < 4; k++) {
+                    mk = &D_80106A34_16B7D4_LookAway[k];
+                    if (mk->flags & 1) {
+                        used |= 1 << (k - 1);
+                    }
+                }
+                if (used != 0) {
+                    switch (obj->work[1]) {
+                    case 1:
+                        if (used & 2) {
+                            mot = 14;
+                            n = 1;
+                        }
+                        break;
+                    case 3:
+                        if (used & 2) {
+                            mot = 15;
+                            n = 1;
+                        }
+                        break;
+                    case 2:
+                        n = 1;
+                        if (used == 1) {
+                            mot = 15;
+                        } else if (used == 4) {
+                            mot = 14;
+                        } else {
+                            mot = (rand8() & 1) ? 15 : 14;
+                        }
+                        break;
+                    }
+                }
+                if (!n) {
+                    mot = idle[(u8)(rand8() % 3)];
+                }
+                func_80104514_1692B4_LookAway(obj, mot);
+            } else {
+                func_80104514_1692B4_LookAway(obj, idle[(u8)(rand8() % 3)]);
+            }
+        }
+        break;
+    case 8:
+        if (_CheckFlag(0xC) == 0 && (D_801069AE_16B74E_LookAway & 0xC0)) {
+            s32 lost = (obj->work[1] != 0) ? (D_801069AE_16B74E_LookAway & 0x40) : (D_801069AE_16B74E_LookAway & 0x80);
+
+            mot = 12;
+            if (lost) {
+                mot = 7;
+            }
+            if (mot == 7) {
+                p->state = 10;
+                p->unk_38 = (rand8() & 1) ? 15.0f : -15.0f;
+                p->unk_3C = obj->scale.x;
+                if (p->com == 0) {
+                    omVibrate(obj->work[0], 10, 0, 10);
+                }
+            } else {
+                p->state = 9;
+                p->unk_22 = 0;
+                p->timer = 0;
+                p->unk_38 = obj->trans.y;
+                p->unk_3C = 0.0f;
+                p->unk_40 = obj->trans.x;
+                p->unk_44 = 0.0f;
+                if (obj->work[1] == 0) {
+                    func_800797DC_7A3DC(0x103, obj->work[0]);
+                } else {
+                    func_800798F8_7A4F8(func_800797DC_7A3DC(0x103, obj->work[0]), pan[obj->work[1] - 1]);
+                }
+            }
+            func_80104514_1692B4_LookAway(obj, mot);
+        }
+        break;
+    case 9:
+        if (p->timer != 0) {
+            p->timer--;
+            break;
+        }
+        switch (p->unk_22) {
+        case 0:
+            obj->rot.z += 3.5f;
+            if (obj->rot.z >= 22.5f) {
+                obj->rot.z = 22.5f;
+            }
+            p->unk_44 -= 10.0f;
+            if (p->unk_44 <= -90.0f) {
+                p->unk_44 = -90.0f;
+            }
+            break;
+        case 1:
+            obj->rot.z -= 3.5f;
+            if (obj->rot.z <= 0.0f) {
+                obj->rot.z = 0.0f;
+            }
+            p->unk_44 += 10.0f;
+            if (p->unk_44 >= 0.0f) {
+                p->unk_44 = 0.0f;
+            }
+            break;
+        case 2:
+            obj->rot.z -= 3.5f;
+            if (obj->rot.z <= -22.5f) {
+                obj->rot.z = -22.5f;
+            }
+            p->unk_44 += 10.0f;
+            if (p->unk_44 >= 90.0f) {
+                p->unk_44 = 90.0f;
+            }
+            break;
+        case 3:
+            obj->rot.z += 3.5f;
+            if (obj->rot.z >= 0.0f) {
+                obj->rot.z = 0.0f;
+            }
+            p->unk_44 -= 10.0f;
+            if (p->unk_44 <= 0.0f) {
+                p->unk_44 = 0.0f;
+            }
+            break;
+        }
+        obj->trans.x = p->unk_40 + func_800B80D0_B8CD0(p->unk_44) * 5.0;
+        p->unk_3C += 20.0f;
+        if (p->unk_3C > 180.0f) {
+            p->unk_3C = 0.0f;
+            p->timer = 1;
+            p->unk_22 = (p->unk_22 + 1) & 3;
+        }
+        obj->trans.y = p->unk_38 + func_800B80D0_B8CD0(p->unk_3C) * 5.0;
+        break;
+    case 10:
+        obj->rot.z += p->unk_38;
+        p->unk_3C -= 0.0125f;
+        if (p->unk_3C < 0.0f) {
+            p->unk_3C = 0.0f;
+            p->state = 11;
+        }
+        obj->scale.x = obj->scale.y = obj->scale.z = p->unk_3C;
+        obj->trans.y += 0.3f;
+        break;
+    case 11:
+        break;
+    }
+}
 
 
 void func_8010580C_16A5AC_LookAway(omObjData* obj) {
