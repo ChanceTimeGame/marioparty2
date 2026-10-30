@@ -207,6 +207,18 @@ void func_80025884_26484(HHMtx m, f32 x, f32 y, f32 z); /* rotate (MP1 MtxRotate
 s16 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list */
 extern u8 D_800FDBCA_FE7CA; /* number of frame buffers */
 extern u8 D_800FDBE0_FE7E0; /* the frame buffer being drawn */
+extern Vec3f D_80102774_103374[]; /* = &CRotM[0].y: retail addresses the split labels */
+extern Vec3f D_801013B4_101FB4[]; /* = &CenterM[0].y */
+extern Vec3f D_801013B8_101FB8[]; /* = &CenterM[0].z */
+
+/* A team's camera work (func_80027154_27D54(0x10); MP1 HHCam). */
+typedef struct HHCam {
+    /* 0x00 */ u16 cam;
+    /* 0x02 */ u16 timer;
+    /* 0x04 */ f32 rx;
+    /* 0x08 */ f32 ry;
+    /* 0x0C */ char unkC[4];
+} HHCam; /* size = 0x10 */
 
 /* One spark of a burst: two triangle tips (MP1 HHChip). */
 typedef struct HHChip {
@@ -288,7 +300,7 @@ void func_8010986C_1A25FC_HandcarHavoc(HHCar* w);                      /* FF0AC 
 void func_80109B88_1A2918_HandcarHavoc(omObjData* obj);                /* FAF64 */
 void func_80109BA4_1A2934_HandcarHavoc(omObjData* obj);                /* FAF80 */
 /* 1A2950.c */
-void func_80109BC0_1A2950_HandcarHavoc(omObjData* obj, s16 team);      /* FAF9C */
+void func_80109BC0_1A2950_HandcarHavoc(omObjData* obj, u16 team);      /* FAF9C */
 void func_80109D10_1A2AA0_HandcarHavoc(omObjData* obj);                /* FB0EC */
 void func_8010A200_1A2F90_HandcarHavoc(omObjData* obj);                /* FB5DC */
 void func_8010A400_1A3190_HandcarHavoc(void);                          /* FB7DC: empty */

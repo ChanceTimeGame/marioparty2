@@ -343,6 +343,10 @@ void func_8010986C_1A25FC_HandcarHavoc(HHCar* w) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_8010986C_1A25FC_HandcarHavoc);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80109B88_1A2918_HandcarHavoc);
+void func_80109B88_1A2918_HandcarHavoc(omObjData* obj) {
+    func_80109BC0_1A2950_HandcarHavoc(obj, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80109BA4_1A2934_HandcarHavoc);
+void func_80109BA4_1A2934_HandcarHavoc(omObjData* obj) {
+    func_80109BC0_1A2950_HandcarHavoc(obj, 1);
+}
