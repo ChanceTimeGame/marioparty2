@@ -177,8 +177,7 @@ extern f32 D_8010C214_137E04_HotRopeJump; /* 1: the rope is over the top */
 extern s32 D_8010C218_137E08_HotRopeJump; /* result timer */
 extern s32 D_8010C21C_137E0C_HotRopeJump; /* turns in this phase */
 extern s32 D_8010C220_137E10_HotRopeJump; /* phase */
-extern s16 D_8010C224_137E14_HotRopeJump; /* fade-out countdown */
-extern s16 D_8010C226_137E16_HotRopeJump; /* fade-out time */
+extern s32 D_8010C224_137E14_HotRopeJump; /* fade-out countdown; retail reads its low half (D_8010C226) as the fade time */
 extern u16 D_8010C228_137E18_HotRopeJump[4]; /* jump hold frames */
 extern s16 D_8010C230_137E20_HotRopeJump[6]; /* bounce sounds */
 extern s16 D_8010C23C_137E2C_HotRopeJump[6]; /* per character: jump voice */
@@ -310,6 +309,7 @@ extern f32 D_800BF7D4_C03D4;
 extern s32 D_800F8FD0_F9BD0; /* scene state */
 extern s16 D_800FA606_FB206;
 extern u16 D_801011FC_101DFC;
+extern u8 D_80102720_103320; /* board.h: cleared by objmain */
 extern f32 D_800FD478_FE078; /* MP1 CRot.y */
 
 typedef struct HRJCharData {
@@ -361,7 +361,7 @@ void SprAnimSet(s16 group, s16 member, s16 anim, u16 arg3);
 void SprPosSet(s16 group, s16 member, s16 x, s16 y);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 void SprAttrSet(s16 group, s16 member, s32 flag);
-void SprBankSet(s16 group, s16 member, u16 bank);
+void SprBankSet(s16 group, s16 member, s16 bank);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 void func_80082488_83088(s16 group, s16 member, u16 a); /* sprite alpha */
 f32 HuMathSin(f32);

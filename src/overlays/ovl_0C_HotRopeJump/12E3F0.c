@@ -249,7 +249,310 @@ void func_801032F0_12EEE0_HotRopeJump(omObjData* obj, s32 player) {
     func_8000C024_CC24(obj, 0, 2);
 }
 
+/* The game's control object: intro, the rope's speed script and the music tempo, the jump count,
+   the result (coins to the players left standing) and the camera follow. */
+/* NON_MATCHING: retail reloads D_8010C220 for the phase increment; GCC reuses the value it indexed
+   D_8010C1C0 with (one register, everything else matches) */
+#ifdef NON_MATCHING
+void func_80103620_12F210_HotRopeJump(omObjData* obj) {
+    Vec v;
+    Vec out;
+    s32 chars[4];
+    HRJPhase* ph;
+    f32 a;
+    f32 d;
+    s32 i;
+    s32 n;
+    s16 mes;
+
+    n = 0;
+    if (D_8010C224_137E14_HotRopeJump != 0) {
+        if (D_8010C224_137E14_HotRopeJump == 1) {
+            obj->func_ptr = func_80102D84_12E974_HotRopeJump;
+        }
+        D_8010C224_137E14_HotRopeJump--;
+    } else if (D_801011FC_101DFC == 1 && D_8010C114_137D04_HotRopeJump != 11) {
+        D_80111318_13CF08_HotRopeJump = -1;
+        D_8010C224_137E14_HotRopeJump = 20;
+        InitFadeOut(0, (s16)D_8010C224_137E14_HotRopeJump);
+        func_800794A8_7A0A8((s16)D_8010C224_137E14_HotRopeJump);
+        func_80079614_7A214((s16)D_8010C224_137E14_HotRopeJump);
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        return;
+    }
+    switch (D_8010C114_137D04_HotRopeJump) {
+        case 0:
+            if (func_8008F618_90218() == 0) {
+                if (D_8010C208_137DF8_HotRopeJump != 0) {
+                    if (D_8010C208_137DF8_HotRopeJump >= 50) {
+                        D_8010C114_137D04_HotRopeJump = 1;
+                        D_8010C208_137DF8_HotRopeJump = 0;
+                    }
+                }
+                D_8010C208_137DF8_HotRopeJump++;
+            }
+            break;
+        case 1:
+            D_8010C208_137DF8_HotRopeJump++;
+            if (D_8010C118_137D08_HotRopeJump != 0) {
+                D_8010C114_137D04_HotRopeJump = 2;
+                D_8010C118_137D08_HotRopeJump = 0;
+                D_8010C208_137DF8_HotRopeJump = 0;
+            }
+            break;
+        case 2:
+            if (D_8010C208_137DF8_HotRopeJump == 0) {
+                func_800691FC_69DFC(0);
+                PlayMusic(0x26);
+                D_8010C208_137DF8_HotRopeJump++;
+            } else if (func_80069538_6A138() == 0) {
+                D_8010C114_137D04_HotRopeJump = 3;
+                D_8010C208_137DF8_HotRopeJump = 30;
+                func_8010BF70_137B60_HotRopeJump();
+                D_80111328_13CF18_HotRopeJump = D_8011132C_13CF1C_HotRopeJump = D_80111324_13CF14_HotRopeJump =
+                    D_8010C1C0_137DB0_HotRopeJump[0]->speed[0];
+                D_80111330_13CF20_HotRopeJump = D_8010C1C0_137DB0_HotRopeJump[0]->unk_08;
+                func_8010BF98_137B88_HotRopeJump(D_8010C1C0_137DB0_HotRopeJump[0]->unk_08);
+                D_80111398_13CF88_HotRopeJump = D_8010C1C0_137DB0_HotRopeJump[0]->unk_08;
+                func_8010BF8C_137B7C_HotRopeJump(D_80111324_13CF14_HotRopeJump);
+            }
+            break;
+        case 3:
+            if (D_80111344_13CF34_HotRopeJump == 0) {
+                D_80111344_13CF34_HotRopeJump = D_80111348_13CF38_HotRopeJump = func_80079574_7A174();
+            }
+            a = D_80111920_13D510_HotRopeJump[6].angle;
+            if (a >= 270.0f) {
+                if (D_8010C214_137E04_HotRopeJump == 0.0f) {
+                    if (D_8010C144_137D34_HotRopeJump < 255) {
+                        D_8010C144_137D34_HotRopeJump++;
+                    }
+                    ph = D_8010C1C0_137DB0_HotRopeJump[D_8010C220_137E10_HotRopeJump];
+                    if (ph->count != -1) {
+                        if (++D_8010C21C_137E0C_HotRopeJump >= ph->count) {
+                            D_8010C220_137E10_HotRopeJump++;
+                            ph++;
+                            D_8010C21C_137E0C_HotRopeJump = 0;
+                        }
+                    } else {
+                        D_8010C21C_137E0C_HotRopeJump = 0;
+                    }
+                    switch (ph->mode) {
+                        case 0:
+                            D_80111328_13CF18_HotRopeJump = ph->speed[0];
+                            break;
+                        case 1:
+                            D_80111328_13CF18_HotRopeJump = ph->speed[(u8)(rand8() % 3)];
+                            break;
+                        case 2:
+                            D_80111328_13CF18_HotRopeJump = D_80111328_13CF18_HotRopeJump + ph->speed[0];
+                            break;
+                        default:
+                            if ((u8)(rand8() % 100) < 75) {
+                                D_80111328_13CF18_HotRopeJump = ph->speed[0];
+                            } else {
+                                D_80111328_13CF18_HotRopeJump = ph->speed[(rand8() & 1) + 1];
+                            }
+                            break;
+                    }
+                    if (D_80111328_13CF18_HotRopeJump < 0.48) {
+                        D_80111328_13CF18_HotRopeJump = 0.48f;
+                    } else if (D_80111328_13CF18_HotRopeJump > 1.7) {
+                        D_80111328_13CF18_HotRopeJump = 1.7f;
+                    }
+                    if (D_80111344_13CF34_HotRopeJump != 0) {
+                        if (D_80111330_13CF20_HotRopeJump < ph->unk_08) {
+                            D_80111344_13CF34_HotRopeJump += 5;
+                            if (D_80111344_13CF34_HotRopeJump >= 131) {
+                                D_80111344_13CF34_HotRopeJump = 130;
+                            }
+                        } else if (D_8011132C_13CF1C_HotRopeJump < D_80111328_13CF18_HotRopeJump) {
+                            D_80111344_13CF34_HotRopeJump += 10;
+                            if (D_80111344_13CF34_HotRopeJump >= 131) {
+                                D_80111344_13CF34_HotRopeJump = 130;
+                            }
+                        } else if (D_8011132C_13CF1C_HotRopeJump < D_80111328_13CF18_HotRopeJump) {
+                            /* retail tests the same condition again: the slow-down never runs */
+                            D_80111344_13CF34_HotRopeJump -= 10;
+                            if (D_80111344_13CF34_HotRopeJump < 105) {
+                                D_80111344_13CF34_HotRopeJump = 105;
+                            }
+                        }
+                        D_8011132C_13CF1C_HotRopeJump = D_80111328_13CF18_HotRopeJump;
+                        D_80111330_13CF20_HotRopeJump = ph->unk_08;
+                    }
+                    func_8010BF98_137B88_HotRopeJump(ph->unk_08);
+                    D_80111398_13CF88_HotRopeJump = ph->unk_08;
+                    if (D_80111334_13CF24_HotRopeJump == 0) {
+                        for (i = 0; i < 4; i++) {
+                            D_80111158_13CD48_HotRopeJump[i].unk_0C = (rand8() & 3) + (u16)D_8010C144_137D34_HotRopeJump;
+                        }
+                        D_80111334_13CF24_HotRopeJump = -1;
+                    }
+                }
+                D_80111324_13CF14_HotRopeJump = func_80107F54_133B44_HotRopeJump(D_80111324_13CF14_HotRopeJump, D_80111328_13CF18_HotRopeJump, 0.2f);
+                D_8010C214_137E04_HotRopeJump = 1.0f;
+            } else if (a < D_8010C210_137E00_HotRopeJump) {
+                D_80111324_13CF14_HotRopeJump = func_80107F54_133B44_HotRopeJump(D_80111324_13CF14_HotRopeJump, D_80111328_13CF18_HotRopeJump, 0.2f);
+                func_8010BF8C_137B7C_HotRopeJump(D_80111324_13CF14_HotRopeJump);
+                D_8010C214_137E04_HotRopeJump = 0.0f;
+                if (D_8010C118_137D08_HotRopeJump == 0 && D_8010C144_137D34_HotRopeJump < 100) {
+                    SprBankSet((s16)D_80111320_13CF10_HotRopeJump, 0, D_8010C144_137D34_HotRopeJump / 10);
+                    SprBankSet((s16)D_80111320_13CF10_HotRopeJump, 1, D_8010C144_137D34_HotRopeJump % 10);
+                }
+                if (D_8010C144_137D34_HotRopeJump >= D_8010C110_137D00_HotRopeJump && D_8010C140_137D30_HotRopeJump != 0 &&
+                    D_8010C118_137D08_HotRopeJump == 0) {
+                    D_80111340_13CF30_HotRopeJump = 1;
+                    D_8010C118_137D08_HotRopeJump = 1;
+                }
+                if (D_8010C118_137D08_HotRopeJump != 0) {
+                    func_800691FC_69DFC(3);
+                    func_800794A8_7A0A8(40);
+                    if (D_8010C140_137D30_HotRopeJump != 0) {
+                        D_8010C114_137D04_HotRopeJump = 10;
+                    } else {
+                        D_8010C114_137D04_HotRopeJump = 9;
+                    }
+                    func_8010BF80_137B70_HotRopeJump();
+                    D_8010C208_137DF8_HotRopeJump = 30;
+                    if (D_8010C204_137DF4_HotRopeJump != NULL) {
+                        func_801078A4_133494_HotRopeJump(800.0f, D_8010C204_137DF4_HotRopeJump->trans.x, 200.0f,
+                                                          D_8010C204_137DF4_HotRopeJump->trans.z, -30.0f, -50.0f, 0.0f, 30);
+                    }
+                }
+            }
+            D_8010C210_137E00_HotRopeJump = a;
+            break;
+        case 9:
+            if (D_8010C204_137DF4_HotRopeJump != NULL && D_8010C204_137DF4_HotRopeJump->trans.y <= 180.0) {
+                func_801078A4_133494_HotRopeJump(1800.0f, 0.0f, 100.0f, 0.0f, -30.0f, -90.0f, 0.0f, 45);
+                D_8010C204_137DF4_HotRopeJump = NULL;
+            }
+            func_80107928_133518_HotRopeJump(D_8010C13C_137D2C_HotRopeJump, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+            D_8010C13C_137D2C_HotRopeJump = 0.0f;
+            if (D_8010C218_137E08_HotRopeJump == 0) {
+                if (!(func_80069538_6A138() & 2)) {
+                    break;
+                }
+                if (D_80111338_13CF28_HotRopeJump > 0) {
+                    for (i = 0; i < 4; i++) {
+                        if (func_80105D94_131984_HotRopeJump(D_800FFFD8_100BD8[i])->unk_00 == 0) {
+                            gPlayers[i].coins_mg_bonus += 10;
+                        }
+                    }
+                    mes = 0x51;
+                } else {
+                    mes = 0x57;
+                }
+                PlayMusic(mes);
+                for (i = 0; i < 2; i++) {
+                    SprAttrSet((s16)D_80111320_13CF10_HotRopeJump, i, 0x8000);
+                }
+                for (i = 0; i < 4; i++) {
+                    if (func_80105D94_131984_HotRopeJump(D_800FFFD8_100BD8[i])->unk_00 == 0) {
+                        chars[n++] = gPlayers[i].character;
+                    }
+                }
+                switch (D_80111338_13CF28_HotRopeJump) {
+                    case 4:
+                        mes = 0xB;
+                        goto show;
+                    case 3:
+                        func_800691FC_69DFC(0x15, chars[0], chars[1], chars[2]);
+                        break;
+                    case 2:
+                        func_800691FC_69DFC(0x11, chars[0], chars[1]);
+                        break;
+                    case 1:
+                        func_800691FC_69DFC(6, chars[0]);
+                        break;
+                    default:
+                        mes = 0x13;
+                    show:
+                        func_800691FC_69DFC(mes);
+                        break;
+                }
+            } else if (D_8010C218_137E08_HotRopeJump >= 120.0) {
+                func_80079614_7A214(40);
+                D_8010C114_137D04_HotRopeJump = 11;
+            }
+            D_8010C218_137E08_HotRopeJump++;
+            break;
+        case 10:
+            if (D_8010C204_137DF4_HotRopeJump != NULL) {
+                if (D_8010C204_137DF4_HotRopeJump->trans.y <= 180.0) {
+                    func_801078A4_133494_HotRopeJump(1800.0f, 0.0f, 100.0f, 0.0f, -30.0f, -90.0f, 0.0f, 45);
+                    D_8010C204_137DF4_HotRopeJump = NULL;
+                }
+                func_80107928_133518_HotRopeJump(D_8010C13C_137D2C_HotRopeJump, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                D_8010C13C_137D2C_HotRopeJump = 0.0f;
+            }
+            if (D_8010C218_137E08_HotRopeJump == 0) {
+                for (i = 0; i < 4; i++) {
+                    if (func_80105D94_131984_HotRopeJump(D_800FFFD8_100BD8[i])->unk_00 == 0) {
+                        gPlayers[i].coins_mg_bonus += 10;
+                    }
+                }
+                for (i = 0; i < 2; i++) {
+                    SprAttrSet((s16)D_80111320_13CF10_HotRopeJump, i, 0x8000);
+                }
+            } else if (D_8010C218_137E08_HotRopeJump >= 60.0) {
+                D_8010C114_137D04_HotRopeJump = 11;
+            }
+            D_8010C218_137E08_HotRopeJump++;
+            break;
+        case 11:
+            if (D_8010C140_137D30_HotRopeJump == 0) {
+                func_80107928_133518_HotRopeJump(D_8010C13C_137D2C_HotRopeJump, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+            }
+            D_8010C13C_137D2C_HotRopeJump = 0.0f;
+            D_80111318_13CF08_HotRopeJump = -1;
+            func_800794A8_7A0A8(40);
+            if (D_8010C140_137D30_HotRopeJump != 0) {
+                func_80079614_7A214(40);
+            }
+            InitFadeOut(0, 20);
+            obj->func_ptr = func_80102D84_12E974_HotRopeJump;
+            break;
+    }
+    if (D_8010C204_137DF4_HotRopeJump != NULL) {
+        v.x = D_8010C204_137DF4_HotRopeJump->trans.x;
+        if (D_8010C204_137DF4_HotRopeJump->trans.y > 180.0) {
+            v.y = D_8010C204_137DF4_HotRopeJump->trans.y + 180.0;
+        } else {
+            v.y = 180.0f;
+        }
+        v.z = D_8010C204_137DF4_HotRopeJump->trans.z;
+        func_80107CA4_133894_HotRopeJump(0, &v, &out);
+        if (out.y < 48.0f) {
+            d = out.y - 48.0f;
+        } else if (out.y > 184.0f) {
+            d = out.y - 184.0f;
+        } else {
+            goto pan;
+        }
+        d = -d / 24.0f;
+        func_80107928_133518_HotRopeJump(0.0f, 0.0f, d * 10.0f, 0.0f, d * 1.25, 0.0f, 0.0f);
+    pan:
+        if (out.x < 56.0f) {
+            d = out.x - 56.0f;
+        } else if (out.x > 272.0f) {
+            d = out.x - 264.0f;
+        } else {
+            goto end;
+        }
+        func_80107928_133518_HotRopeJump(0.0f, 0.0f, 0.0f, d / 28.0f, 0.0f, 0.0f, 0.0f);
+    }
+end:
+    func_80107424_133014_HotRopeJump();
+    if (D_8010C114_137D04_HotRopeJump >= 3) {
+        func_80107B4C_13373C_HotRopeJump(obj);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80103620_12F210_HotRopeJump);
+#endif
 
 /* A player: the intro walk to its place, jumping (A) while the rope turns (a CPU jumps until its
    allowance, unk_0C, runs out), getting hit and bouncing off the stage, and the win pose. */
