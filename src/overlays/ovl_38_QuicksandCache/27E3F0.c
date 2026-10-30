@@ -1,5 +1,8 @@
 #include "ovl_38.h"
 
+/* .data (0x27F320, 801077F0): one flag, 16-byte slot */
+s8 D_801077F0_27F320_QuicksandCache = 0;
+
 __asm__(".section .rodata");
 const f32 D_80107910_27F440_QuicksandCache[3] = { 0.5f, 0.7f, 0.8f };
 

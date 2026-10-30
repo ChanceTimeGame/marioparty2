@@ -1,5 +1,8 @@
 #include "ovl_38.h"
 
+/* .data (0x27F310, 801077E0): one flag, 16-byte slot */
+s8 D_801077E0_27F310_QuicksandCache = 0;
+
 void func_80106780_27E2B0_QuicksandCache(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g) {
     D_800FA610_FB210 = a;
     D_800FD474_FE074.x = b;

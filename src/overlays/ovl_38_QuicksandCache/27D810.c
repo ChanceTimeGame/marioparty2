@@ -1,5 +1,18 @@
 #include "ovl_38.h"
 
+/* .data (0x27F2F0-0x27F310, 801077C0-801077E0) */
+u8 D_801077C0_27F2F0_QuicksandCache = 0;
+u8 D_801077C1_27F2F1_QuicksandCache = 0;
+u8 D_801077C2_27F2F2_QuicksandCache = 0;
+u8 D_801077C3_27F2F3_QuicksandCache = 0;
+u32 D_801077C4_27F2F4_QuicksandCache = 0x70;
+s32 D_801077C8_27F2F8_QuicksandCache = 0;
+s32 D_801077CC_27F2FC_QuicksandCache[2] = { -1, -1 };
+s32 D_801077D4_27F304_QuicksandCache = -1;
+f32 D_801077D8_27F308_QuicksandCache = 0.0f;
+f32 D_801077DC_27F30C_QuicksandCache = 0.0f;
+
+
 #ifdef NON_MATCHING
 /* Logic complete; retail keeps the 0/1 index as a branch where GCC here folds it to a store-flag. */
 void func_80105CE0_27D810_QuicksandCache(omObjData* obj, s32 file, f32 a2) {
