@@ -46,6 +46,8 @@ void func_80029C74_2A874(s16 arg0, f32 arg1);
 s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
 void func_80029E80_2AA80(s16, s32, s32);
 HmfMotionObj* func_8002A9F4_2B5F4(s16 arg0, char* arg1);
+f32 func_80029CE4_2A8E4(s16); /* model motion time */
+f32 func_80029D0C_2A90C(s16); /* model motion length */
 void func_8002C524_2D124(s16, s16, s16);
 void func_8002C570_2D170(s16);
 void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2); /* attach to a model's hook node */
@@ -136,7 +138,7 @@ typedef struct HCItem {
 typedef struct HCSparkles {
     /* 0x00 */ char unk_00[0xC];
     /* 0x0C */ s16 model[6];
-    /* 0x18 */ s16 active[6];
+    /* 0x18 */ u16 active[6];
     /* 0x24 */ Vec pos[6];
 } HCSparkles; /* size = 0x6C */
 
@@ -182,7 +184,7 @@ extern u16 D_801073B0_22DE80_HoneycombHavoc[8]; /* item model file per type */
 extern f32 D_801073C0_22DE90_HoneycombHavoc[33][2]; /* branch positions (x, y) */
 extern u32 D_801074C8_22DF98_HoneycombHavoc;
 extern u32 D_801074CC_22DF9C_HoneycombHavoc;
-extern u16 D_801074D0_22DFA0_HoneycombHavoc[8]; /* [0] intro countdown (16) */
+extern u16 D_801074D0_22DFA0_HoneycombHavoc; /* intro countdown (16); the word is followed by 14 zero bytes */
 extern u16 D_801074E0_22DFB0_HoneycombHavoc[8]; /* [0] quit request */
 
 /* ---- .rodata ---- */
@@ -192,8 +194,8 @@ extern const char D_801074F0_22DFC0_HoneycombHavoc[]; /* "item_hook" */
 extern u16 D_801076A0_22E170_HoneycombHavoc;
 extern f32 D_801076A4_22E174_HoneycombHavoc;
 extern u16 D_801076A8_22E178_HoneycombHavoc; /* game state: 0 intro, 1 play, 2 end */
-extern s16 D_801076AA_22E17A_HoneycombHavoc; /* intro state */
-extern s16 D_801076AC_22E17C_HoneycombHavoc; /* end state */
+extern u16 D_801076AA_22E17A_HoneycombHavoc; /* intro state */
+extern u16 D_801076AC_22E17C_HoneycombHavoc; /* end state */
 extern s16 D_801076AE_22E17E_HoneycombHavoc; /* winner, -1 none */
 extern s16 D_801076B0_22E180_HoneycombHavoc; /* index of the lowest item left */
 extern s16 D_801076B2_22E182_HoneycombHavoc; /* leaf model */
