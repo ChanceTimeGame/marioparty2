@@ -1,5 +1,8 @@
 #include "ovl_3C.h"
 
+#define DSS_ABS(x) ((x) < 0 ? -(x) : (x))
+
+
 void func_80102800_291870_DeepSeaSalvage(void) {
     omObjData* obj;
     s16 i;
@@ -273,7 +276,183 @@ s16 func_80103480_2924F0_DeepSeaSalvage(s16 sfx, u8 player) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103508_292578_DeepSeaSalvage);
+/* A diver: input (pad, or the CPU swimming to a treasure), swimming, picking treasure up. */
+void func_80103508_292578_DeepSeaSalvage(omObjData* obj) {
+    f32 ox;
+    f32 oy;
+    DSSDiver* d;
+    MgWork* w;
+    DSSTreasure* t;
+    u16 btn;
+    s16 stk;
+    s16 idx;
+
+    btn = 0;
+    d = DSS_OBJ_WORK(obj);
+    w = obj->unk_50;
+    stk = 0;
+    switch (d->state) {
+    case 0:
+        if (--d->timer == 0) {
+            d->state++;
+            d->timer = 40;
+        }
+        break;
+    case 1:
+        if (--d->timer == 0) {
+            d->state++;
+        }
+        if (d->timer & 1) {
+            btn |= 0x8000;
+        }
+        break;
+    case 2:
+        if (D_80108824_297894_DeepSeaSalvage != 0) {
+            break;
+        }
+    default:
+        if (d->stun != 0) {
+            break;
+        }
+        if (!(gPlayers[d->player].flags & 1)) {
+            stk = ContStkX[w->unk_57];
+            btn = ContBtnTrg[w->unk_57];
+            break;
+        }
+        if (d->target < 0) {
+            if (D_801088B8_297928_DeepSeaSalvage != 0) {
+                d->target = D_80108890_297900_DeepSeaSalvage[func_80106100_295170_DeepSeaSalvage(D_801088B8_297928_DeepSeaSalvage)];
+            }
+            if (d->target < 0) {
+                break;
+            }
+        }
+        t = (DSSTreasure*)DSS_OBJ_WORK(D_80108EB8_297F28_DeepSeaSalvage) + d->target;
+        if (t->taken != 0 || t->flags == 0) {
+            d->target = -1;
+            break;
+        }
+        if (fabs(t->x - d->x) > 30.0f - gPlayers[d->player].cpu_difficulty * 5.0f) {
+            stk = 5;
+            if (t->x < d->x) {
+                stk = -5;
+            }
+        }
+        if (d->y < t->y) {
+            if ((gPlayers[d->player].cpu_difficulty + 1) * 4 > func_80106100_295170_DeepSeaSalvage(6)) {
+                btn |= 0x8000;
+            }
+        }
+        break;
+    }
+    if (DSS_ABS(stk) >= 5) {
+        if (stk < 0) {
+            d->vx -= 1.0f;
+            if (d->vx < -8.0f) {
+                d->vx = -8.0f;
+            }
+        } else {
+            d->vx += 1.0f;
+            if (d->vx > 8.0f) {
+                d->vx = 8.0f;
+            }
+        }
+    }
+    if (btn & 0x8000) {
+        d->vy += 8.0f;
+        d->kick += 0.5f;
+        d->kickWait = 8;
+    } else if (d->kickWait != 0) {
+        d->kickWait--;
+    } else {
+        d->idle++;
+    }
+    if (D_80108826_297896_DeepSeaSalvage == 0) {
+        d->vy -= 0.5f;
+    }
+    if (d->vy > 10.0f) {
+        d->vy = 10.0f;
+    }
+    if (d->vy < -10.0f) {
+        d->vy = -10.0f;
+    }
+    if (D_80108826_297896_DeepSeaSalvage == 0) {
+        d->x += d->vx;
+        d->y += d->vy;
+    }
+    func_80106D5C_295DCC_DeepSeaSalvage(obj, d->vx, d->vy);
+    ox = oy = 0.0f;
+    func_80106518_295588_DeepSeaSalvage(&d->x, &d->y, 90, 0, &ox, &oy);
+    func_80106134_2951A4_DeepSeaSalvage(&d->x, &d->y, &d->z);
+    if (d->stun == 0) {
+        if (d->blink == 0) {
+            idx = func_80106CC4_295D34_DeepSeaSalvage(d->x, d->y);
+            if (idx >= 0) {
+                t = (DSSTreasure*)DSS_OBJ_WORK(D_80108EB8_297F28_DeepSeaSalvage) + idx;
+                t->taken = 1;
+                switch (t->kind) {
+                case 0:
+                    PlaySound(9);
+                    gPlayers[d->player].coins_mg++;
+                    func_80105E84_294EF4_DeepSeaSalvage(d->player, 1);
+                    D_801088BE_29792E_DeepSeaSalvage[d->player]++;
+                    break;
+                case 1:
+                    PlaySound(0x15);
+                    gPlayers[d->player].coins_mg += 5;
+                    func_80105E84_294EF4_DeepSeaSalvage(d->player, 5);
+                    D_801088BE_29792E_DeepSeaSalvage[d->player]++;
+                    break;
+                case 2:
+                    omVibrate(d->player, 20, 0, 20);
+                    func_80103480_2924F0_DeepSeaSalvage(0x111, d->player);
+                    d->vx = d->vy = d->unk14 = 0.0f;
+                    d->stun = 32;
+                    break;
+                }
+            }
+        }
+        if (d->vx < 0.0f) {
+            obj->rot.y -= 11.25f;
+            if (obj->rot.y < -90.0f) {
+                obj->rot.y = -90.0f;
+            }
+        } else {
+            obj->rot.y += 11.25f;
+            if (obj->rot.y > 90.0f) {
+                obj->rot.y = 90.0f;
+            }
+        }
+        d->kick -= 0.05f;
+        if (d->kick > 2.0f) {
+            d->kick = 2.0f;
+        } else if (d->kick < 0.0f) {
+            d->kick = 0.0f;
+        }
+        func_80029FE4_2ABE4(obj->model[0], d->kick);
+    }
+    if ((d->kickWait == 0) & ((d->idle & 7) == 0)) {
+        func_801070D0_296140_DeepSeaSalvage(0, HuMathSin(obj->rot.y) * -70.0f + obj->trans.x, obj->trans.y,
+                                            obj->trans.z, 0);
+    }
+    if (d->blink != 0) {
+        D_800FC834_FD434[obj->model[0]].unk18 ^= 4;
+        if (--d->blink == 0) {
+            D_800FC834_FD434[obj->model[0]].unk18 &= ~4;
+        }
+    }
+    if (d->stun != 0) {
+        obj->trans.x = (f32)(d->stun & 1) * 40.0f - 20.0f + d->x;
+        obj->rot.x += 11.25;
+        if (--d->stun == 0) {
+            d->blink = 45;
+        }
+    } else {
+        obj->trans.x = d->x;
+    }
+    obj->trans.y = d->y;
+    obj->trans.z = d->z;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103DCC_292E3C_DeepSeaSalvage);
 

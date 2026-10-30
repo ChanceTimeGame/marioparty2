@@ -34,6 +34,7 @@ void func_8006D4D0_6E0D0(s16); /* the seconds counter (MP1 func_80079078) */
 void func_8006D518_6E118(void);
 f32 HuMathSin(f32);
 f32 fabsf(f32);
+f64 fabs(f64); /* GCC builtin (abs.d) */
 f64 func_800B80D0_B8CD0(f64); /* sin of degrees, in double */
 u16 func_80018A30_19630(s32, s32); /* model load */
 s16 LoadFormFile(s32, s32);
