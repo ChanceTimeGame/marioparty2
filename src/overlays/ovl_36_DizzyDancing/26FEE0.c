@@ -3,6 +3,26 @@
 #define ACTOR D_80107870_274F50_DizzyDancing
 #define MODEL(i) (&D_800FC834_FD434[i])
 
+/* .data (0x274CB0) */
+s32 D_801075D0_274CB0_DizzyDancing[6] = { 0x00020000, 0x00030000, 0x00070000, 0x00040000, 0x00050000, 0x00060000 };
+u16 D_801075E8_274CC8_DizzyDancing[4] = { 0x4E, 0x4F, 0x55, 0x56 };
+s32 D_801075F0_274CD0_DizzyDancing = 0;
+f32 D_801075F4_274CD4_DizzyDancing = 0.0f;
+f32 D_801075F8_274CD8_DizzyDancing = 0.0f;
+f32 D_801075FC_274CDC_DizzyDancing = 70.0f;
+f32 D_80107600_274CE0_DizzyDancing = 70.0f;
+f32 D_80107604_274CE4_DizzyDancing = 0.0f;
+f32 D_80107608_274CE8_DizzyDancing = 0.0f;
+f32 D_8010760C_274CEC_DizzyDancing[4][3] = {
+    { -106.0f, 62.5f, -106.0f },
+    { 106.0f, 62.5f, -106.0f },
+    { -106.0f, 62.5f, 106.0f },
+    { 106.0f, 62.5f, 106.0f },
+};
+s16 D_8010763C_274D1C_DizzyDancing = 15;
+u8 D_8010763E_274D1E_DizzyDancing = 0;
+s16 D_80107640_274D20_DizzyDancing = 300;
+
 
 void func_80102800_26FEE0_DizzyDancing(void) {
     func_801072F0_2749D0_DizzyDancing();

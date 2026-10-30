@@ -176,7 +176,7 @@ typedef struct DDImage {
     /* 0x0C */ void* palette;
 } DDImage;
 
-/* .data (274CB0, still asm) */
+/* .data (274CB0, in 26FEE0.c) */
 extern s32 D_801075D0_274CB0_DizzyDancing[6];  /* win motions' directory, by character */
 extern u16 D_801075E8_274CC8_DizzyDancing[4];  /* win voice file */
 extern s32 D_801075F0_274CD0_DizzyDancing;     /* camera set */
