@@ -297,7 +297,7 @@ extern s32 D_801118CC_13D4BC_HotRopeJump[0x13];
 extern s32 D_80111918_13D508_HotRopeJump[2];
 extern HRJSeg* D_80111920_13D510_HotRopeJump; /* rope */
 extern HRJSeg* D_80111924_13D514_HotRopeJump; /* torches */
-extern s16 D_80111928_13D518_HotRopeJump; /* the place-3 player's model (lit), -1 none */
+extern s32 D_80111928_13D518_HotRopeJump; /* the place-3 player's model (lit), -1 none; read as s16 (D_8011192A, the low half) */
 extern s16 D_8011192A_13D51A_HotRopeJump;
 
 /* S4-0CA */
