@@ -903,7 +903,46 @@ void func_80105550_124490_RakinEmIn(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801055F4_124534_RakinEmIn);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80105E98_124DD8_RakinEmIn);
+__asm__(".section .rodata");
+const char D_80107070_125FB0_RakinEmIn[] = "kin0_001_DEF";
+
+/* An item: its kind (the kind 2 and kind 1 quotas first, then kind 0), its model and texture, and
+   a free start position. */
+void func_80105E98_124DD8_RakinEmIn(omObjData* obj) {
+    RIObj* r = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    Vec* pos;
+    void* data;
+    s32 dir;
+    u8 kind = 2;
+
+    if (D_801071A8_1260E8_RakinEmIn != 0) {
+        D_801071A8_1260E8_RakinEmIn--;
+    } else {
+        kind = 1;
+        if (D_801071A9_1260E9_RakinEmIn != 0) {
+            D_801071A9_1260E9_RakinEmIn--;
+        } else {
+            kind = 0;
+        }
+    }
+    dir = 0x1A0000;
+    obj->model[0] = func_80018A30_19630(0x1A000C, 0x6A9);
+    data = DataRead(D_80106F14_125E54_RakinEmIn[kind] | dir);
+    r->unk_20 = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, data, 0, D_80107070_125FB0_RakinEmIn);
+    DataClose(data);
+    func_80029A8C_2A68C(obj->model[0]);
+    func_80029AFC_2A6FC(obj->model[0]);
+    func_8003E4F4_3F0F4(r->unk_20, 1, 1);
+    func_8003E560_3F160(r->unk_20, r->unk_22);
+    pos = D_80106DEC_125D2C_RakinEmIn;
+    pos = &pos[func_801028A0_1217E0_RakinEmIn(24, &D_801070B0_125FF0_RakinEmIn)];
+    obj->trans.x = pos->x;
+    obj->trans.y = pos->y;
+    obj->trans.z = pos->z;
+    r->unk_28 = kind;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    obj->func_ptr = func_801055F4_124534_RakinEmIn;
+}
 
 void func_80106060_124FA0_RakinEmIn(void) {
     RIObj* r;
@@ -1052,11 +1091,114 @@ void func_80106618_125558_RakinEmIn(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106670_1255B0_RakinEmIn);
+/* The game's states: 0 the wait before the start, 1 the start banner, 2 play, 3 the end banner
+   and the wait for everything to settle (best score and winners counted here), 4 the result
+   wait, 5 fade out. */
+void func_80106670_1255B0_RakinEmIn(omObjData* obj) {
+    s16 i;
+    RIScore* s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106920_125860_RakinEmIn);
+    switch (D_801070A0_125FE0_RakinEmIn) {
+    case 0:
+        if (D_801070A2_125FE2_RakinEmIn == 0) {
+            PlaySound(0x4A1);
+        }
+        if (D_801070A2_125FE2_RakinEmIn++ >= 31) {
+            D_801070A0_125FE0_RakinEmIn = 1;
+            PlayMusic(0x2B);
+            D_801070A2_125FE2_RakinEmIn = 0;
+        }
+        break;
+    case 1:
+        if (func_80069538_6A138() == 0) {
+            D_801070A0_125FE0_RakinEmIn = 2;
+            D_801070A2_125FE2_RakinEmIn = 901;
+        }
+        break;
+    case 2:
+        if (D_801070A2_125FE2_RakinEmIn == 0 || D_801071AA_1260EA_RakinEmIn == 0) {
+            D_801070A0_125FE0_RakinEmIn = 3;
+        }
+        break;
+    case 3:
+        if (func_80069538_6A138() == 0 && func_801064C8_125408_RakinEmIn()
+            && (D_801070A2_125FE2_RakinEmIn >= 20 || ++D_801070A2_125FE2_RakinEmIn >= 20)) {
+            for (i = 0; i < 4; i++) {
+                s = &D_801071B0_1260F0_RakinEmIn[i];
+                if (s->score == D_801071AC_1260EC_RakinEmIn) {
+                    D_801071AB_1260EB_RakinEmIn++;
+                } else if (s->score > D_801071AC_1260EC_RakinEmIn) {
+                    D_801071AC_1260EC_RakinEmIn = s->score;
+                    D_801071AB_1260EB_RakinEmIn = 1;
+                }
+            }
+            D_801070A0_125FE0_RakinEmIn = 4;
+            if (_CheckFlag(0xC) == 0) {
+                D_801070A2_125FE2_RakinEmIn = D_801071AB_1260EB_RakinEmIn == 1 ? 120 : 168;
+                PlayMusic(D_801071AB_1260EB_RakinEmIn >= 2 ? 0x52 : 0x51);
+            }
+            func_801062CC_12520C_RakinEmIn();
+        }
+        break;
+    case 4:
+        if ((_CheckFlag(0xC) != 0 ? D_801070A4_125FE4_RakinEmIn : --D_801070A2_125FE2_RakinEmIn) == 0) {
+            D_801070A0_125FE0_RakinEmIn = 5;
+        }
+        break;
+    case 5:
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_801065E0_125520_RakinEmIn;
+        break;
+    }
+    func_80102F0C_121E4C_RakinEmIn();
+}
+
+void func_80106920_125860_RakinEmIn(omObjData* obj) {
+    func_80106C10_125B50_RakinEmIn();
+    func_80106C94_125BD4_RakinEmIn();
+    D_801070B0_125FF0_RakinEmIn = 0;
+    func_80103E04_122D44_RakinEmIn();
+    func_8010428C_1231CC_RakinEmIn();
+    func_80105550_124490_RakinEmIn();
+    func_80106060_124FA0_RakinEmIn();
+    func_801036B8_1225F8_RakinEmIn();
+    InitFadeIn(0, 16);
+    obj->func_ptr = func_80106670_1255B0_RakinEmIn;
+    D_801070A0_125FE0_RakinEmIn = 0;
+    D_801070A2_125FE2_RakinEmIn = 0;
+    D_801070A4_125FE4_RakinEmIn = 0;
+    omAddObj(900, 0, 0, -1, func_80106258_125198_RakinEmIn);
+}
 
 __asm__(".section .rodata");
 const char D_80107098_125FD8_RakinEmIn[] = "\202`\202a\202b";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801069D8_125918_RakinEmIn);
+void func_801069D8_125918_RakinEmIn(void) {
+    omObjData* o;
+
+    func_8002D4D0_2E0D0(50);
+    func_80020D20_21920(32);
+    omInitObjMan(50, 0);
+    func_80079128_79D28();
+    func_80026DAC_279AC(0, 0, 0, 0);
+    func_80026DAC_279AC(1, 0x40, 0x40, 0x60);
+    func_80026E00_27A00(1, 0.0f, 20.0f, 100.0f);
+    o = omAddObj(0x7FDA, 0, 0, -1, func_80079FF4_7ABF4);
+    o->work[0] = 2;
+    omSetStatBit(o, 0xA0);
+    func_80018E30_19A30(2);
+    func_80018F58_19B58(2);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 26.2f, 80.0f, 8000.0f);
+    ScissorSet(1, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(1, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(1, 26.2f, 80.0f, 8000.0f);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    omAddObj(0x3E8, 0, 0, -1, func_80106920_125860_RakinEmIn);
+    omAddObj(0x3E8, 0, 0, -1, func_80106618_125558_RakinEmIn);
+    func_8007273C_7333C(D_80107098_125FD8_RakinEmIn, 0);
+    func_8007273C_7333C(D_80107098_125FD8_RakinEmIn, 1);
+}
