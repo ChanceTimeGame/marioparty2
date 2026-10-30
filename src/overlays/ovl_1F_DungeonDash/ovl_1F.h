@@ -260,4 +260,16 @@ extern s16 D_8010B10A_1C6C8A_DungeonDash; /* low half of D_8010B108 */
 extern s16 D_8010B042_1C6BC2_DungeonDash; /* low half of D_8010B040[0]: read by this label */
 
 f32 fabsf(f32);
+/* An obstacle block (D_8010B2E4[D_8010A6FC], 0x24 each; MP1 DDObstacle 0x18). Only the fields
+   S4-1FA reads; the allocation and the rest belong to 1C2D40.c (S4-1FB). */
+typedef struct DDBlock {
+    /* 0x00 */ char unk00[4];
+    /* 0x04 */ s16 unk4;  /* phase: 0 rising, 1 falling, 2 down, 3 up */
+    /* 0x06 */ char unk06[0x16];
+    /* 0x1C */ f32 unk1C; /* height */
+    /* 0x20 */ f32 unk20; /* z */
+} DDBlock; /* size = 0x24 */
+extern s32 D_8010A6FC_1C627C_DungeonDash; /* obstacle count */
+extern DDBlock* D_8010B2E4_1C6E64_DungeonDash; /* the obstacles (heap) */
+
 #endif

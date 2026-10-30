@@ -720,7 +720,53 @@ void func_801041F0_1BFD70_DungeonDash(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801041F0_1BFD70_DungeonDash);
 #endif
 
+// branch layout only (case 0: retail bc1tl to the return; GCC gives bc1f/j, as MP1's twin)
+#ifdef NON_MATCHING
+/* What lies ahead of z: 0 nothing, 1 an obstacle to wait for, 2 jump now, 3 hit; -1 unknown. */
+u16 func_80105464_1C0FE4_DungeonDash(f32 z) {
+    s32 i;
+    DDBlock* o;
+
+    i = 0;
+    o = NULL;
+    for (; i < D_8010A6FC_1C627C_DungeonDash; i++) {
+        o = &D_8010B2E4_1C6E64_DungeonDash[i];
+        if (o->unk20 - z >= -290.0 && o->unk20 - z <= 200.0) {
+            break;
+        }
+    }
+    if (i == D_8010A6FC_1C627C_DungeonDash) {
+        return 0;
+    }
+    switch (o->unk4) {
+        case 0:
+            if (o->unk1C >= 150.0) {
+                return 1;
+            }
+            break;
+        case 1:
+            if (!(o->unk20 - z >= -114.99999999999999)) {
+                return 1;
+            }
+            if (o->unk1C >= 150.0) {
+                return 1;
+            }
+            return 3;
+        case 2:
+            break;
+        case 3:
+            return 1;
+        default:
+            return -1;
+    }
+    if (o->unk20 - z >= -135.0 && o->unk20 - z <= 0.0) {
+        return 2;
+    }
+    return 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105464_1C0FE4_DungeonDash);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_8010AD38_1C68B8_DungeonDash[4] = { 0 };
