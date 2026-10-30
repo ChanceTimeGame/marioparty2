@@ -158,4 +158,35 @@ void func_8010A340_1C5EC0_DungeonDash(s16 arg0, s32* arg1, s16 arg2);
 s32 func_8010A430_1C5FB0_DungeonDash(s32 arg0, s32 arg1);
 s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
 
+/* S4-1FA */
+#include "game/hmfman.h"
+#include "game/data.h"
+extern s32 D_8010B104_1C6C84_DungeonDash; /* sprite group; read as s16 (D_8010B106) */
+extern s32 D_8010B108_1C6C88_DungeonDash; /* sprite group; read as s16 (D_8010B10A) */
+extern s32 D_8010B128_1C6CA8_DungeonDash[2];
+typedef struct DDCharData {
+    /* 0x00 */ s16 unk_00; /* retail reads its low byte */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;
+    /* 0x08 */ s32 model;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ char unk_10[8];
+} DDCharData; /* size = 0x18 (main D_800CD438_CE038) */
+extern DDCharData D_800CD438_CE038[];
+s16 SprAnimRead(void*);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void func_800824B4_830B4(s16 group, s16 member, s32, s32, s32, s32);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+u16 func_80018A30_19630(s32 file, s32 attr);
+s16 func_80027D3C_2893C(s16 linkMdlId);
+u16 func_80018A64_19664(s32 file, s32 attr);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+void func_80107350_1C2ED0_DungeonDash(void);
+
 #endif
