@@ -831,15 +831,114 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_8010
 #endif
 
 __asm__(".section .rodata");
-const u32 D_80107078_16FFB8_ShockDropOrRoll[21] = { 0x447A0000, 0x447A0000, 0x447A0000, 0x43A48000, 0x43A48000, 0x43A48000, 0xC30D0000, 0xC2B40000, 0xC2480000, 0x00000000, 0x00000000, 0x00000000, 0xC4148000, 0xC4584000, 0xC4424000, 0x440E8000, 0x440E8000, 0x440E8000, 0xC4124000, 0x43700000, 0x4453C000 };
+/* The roller camera's keys: [zoom, rot x/y/z, center x/y/z][3], picked by D_801070CC. */
+const f32 D_80107078_16FFB8_ShockDropOrRoll[7][3] = {
+    { 1000.0f, 1000.0f, 1000.0f }, { 329.0f, 329.0f, 329.0f }, { -141.0f, -90.0f, -50.0f },
+    { 0.0f, 0.0f, 0.0f },          { -594.0f, -865.0f, -777.0f }, { 570.0f, 570.0f, 570.0f },
+    { -585.0f, 240.0f, 847.0f },
+};
+const s8 D_801070CC_17000C_ShockDropOrRoll[8] = { 2, 0, 1, 2, 0, 1, 0, 0 }; /* key -> column */
+const f32 D_801070D4_170014_ShockDropOrRoll[6] = { 0.0f, 60.0f, 90.0f, 120.0f, 180.0f, 210.0f }; /* key times */
 
-__asm__(".section .rodata");
-const u32 D_801070CC_17000C_ShockDropOrRoll[2] = { 0x02000102, 0x00010000 };
+/* The camera: during play it follows the mean z of the players still on the roller (averaged over
+   16 frames) along a spline through D_80107078's keys; at the end it moves to the winner's shot in
+   60 frames. */
+#ifdef NON_MATCHING
+/* The result camera: [0] the solo player won, [1] the three won. */
+const SDCamera D_801070EC_17002C_ShockDropOrRoll[2] = {
+    { 174.0f, { 326.0f, -142.0f, 0.0f }, { -557.0f, 790.0f, -33.0f } },
+    { 174.0f, { 321.0f, -93.0f, 0.0f }, { -1317.0f, 1060.0f, -53.0f } },
+};
+#endif
 
-__asm__(".section .rodata");
-const u32 D_801070D4_170014_ShockDropOrRoll[6] = { 0x00000000, 0x42700000, 0x42B40000, 0x42F00000, 0x43340000, 0x43520000 };
+// float register allocation of the spline time, the loop-invariant t - 60.0f and the result camera
+// switch (GCC folds it to xori/sltu); logic checked against the asm
+#ifdef NON_MATCHING
+void func_80105920_16E860_ShockDropOrRoll(omObjData* obj) {
+    SDWorkPair wk;
+    s8 i;
+    s8 k;
+    s8 a;
+    s32 c = 0;
+    f32 sum;
+    f32 n;
+    f32 mean;
+    f32 total;
+    f32 t;
 
+    for (i = 0; i < 3; i++) {
+        wk.w[i] = D_800FFFD8_100BD8[i]->unk_50;
+        wk.p[i] = wk.w[i]->unk_158;
+    }
+    if (D_80106ED8_16FE18_ShockDropOrRoll == 0) {
+        sum = 0.0f;
+        n = 0.0f;
+        for (i = 0; i < 3; i++) {
+            if (wk.p[i]->fell == 0) {
+                if (D_800FFFD8_100BD8[i]->trans.z < -225.0f) {
+                    sum -= 225.0f;
+                } else if (D_800FFFD8_100BD8[i]->trans.z > 225.0f) {
+                    sum += 225.0f;
+                } else {
+                    sum += D_800FFFD8_100BD8[i]->trans.z;
+                }
+                n += 1.0f;
+            }
+        }
+        if (n != 0.0f) {
+            sum = sum / n;
+        } else {
+            sum = 0.0f;
+        }
+        D_80106F18_16FE58_ShockDropOrRoll[D_80106F58_16FE98_ShockDropOrRoll++] = sum;
+        D_80106F58_16FE98_ShockDropOrRoll &= 0xF;
+        sum = 0.0f;
+        for (i = 0; i < 16; i++) {
+            sum += D_80106F18_16FE58_ShockDropOrRoll[i];
+        }
+        sum /= 16.0f;
+        t = (sum + 225.0f) / 450.0f * 60.0f + 60.0f;
+        for (i = 0; i < 6; i++) {
+            k = i;
+            if (t - 60.0f < D_801070D4_170014_ShockDropOrRoll[i]) {
+                break;
+            }
+        }
+        for (i = 0; i < 7; i++) {
+            for (a = 0; a < 4; a++) {
+                D_80107268_1701A8_ShockDropOrRoll[a] = D_80107078_16FFB8_ShockDropOrRoll[i][D_801070CC_17000C_ShockDropOrRoll[a + k]];
+            }
+            D_80107278_1701B8_ShockDropOrRoll[i] = func_8002662C_2722C(D_80107268_1701A8_ShockDropOrRoll, (f32*)&D_801070D4_170014_ShockDropOrRoll[k], t);
+        }
+        D_800FA610_FB210 = D_80107278_1701B8_ShockDropOrRoll[0];
+        D_800FD474_FE074.x = D_80107278_1701B8_ShockDropOrRoll[1];
+        D_800FD474_FE074.y = D_80107278_1701B8_ShockDropOrRoll[2];
+        D_800FD474_FE074.z = D_80107278_1701B8_ShockDropOrRoll[3];
+        D_8010274C_10334C.x = D_80107278_1701B8_ShockDropOrRoll[4];
+        D_8010274C_10334C.y = D_80107278_1701B8_ShockDropOrRoll[5];
+        D_8010274C_10334C.z = D_80107278_1701B8_ShockDropOrRoll[6];
+    } else if (++D_80106F5A_16FE9A_ShockDropOrRoll < 60) {
+        switch (D_80106ED5_16FE15_ShockDropOrRoll) {
+        case 1:
+            c = 0;
+            break;
+        case 0:
+            c = 1;
+            break;
+        }
+        D_800FA610_FB210 += (D_801070EC_17002C_ShockDropOrRoll[c].zoom - D_80107278_1701B8_ShockDropOrRoll[0]) / 60.0f;
+        D_800FD474_FE074.x += (D_801070EC_17002C_ShockDropOrRoll[c].rot.x - D_80107278_1701B8_ShockDropOrRoll[1]) / 60.0f;
+        D_800FD474_FE074.y += (D_801070EC_17002C_ShockDropOrRoll[c].rot.y - D_80107278_1701B8_ShockDropOrRoll[2]) / 60.0f;
+        D_800FD474_FE074.z += (D_801070EC_17002C_ShockDropOrRoll[c].rot.z - D_80107278_1701B8_ShockDropOrRoll[3]) / 60.0f;
+        D_8010274C_10334C.x += (D_801070EC_17002C_ShockDropOrRoll[c].center.x - D_80107278_1701B8_ShockDropOrRoll[4]) / 60.0f;
+        D_8010274C_10334C.y += (D_801070EC_17002C_ShockDropOrRoll[c].center.y - D_80107278_1701B8_ShockDropOrRoll[5]) / 60.0f;
+        D_8010274C_10334C.z += (D_801070EC_17002C_ShockDropOrRoll[c].center.z - D_80107278_1701B8_ShockDropOrRoll[6]) / 60.0f;
+        D_80106ED9_16FE19_ShockDropOrRoll = 1;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_80105920_16E860_ShockDropOrRoll);
-
+/* the asm defines D_801070EC_17002C up to its [0].center.z; the rest (and the file's rodata pad) */
 __asm__(".section .rodata");
 const u32 D_80107104_170044_ShockDropOrRoll[11] = { 0xC2040000, 0x432E0000, 0x43A08000, 0xC2BA0000, 0x00000000, 0xC4A4A000, 0x44848000, 0xC2540000, 0x00000000, 0x00000000, 0x00000000 };
+#endif

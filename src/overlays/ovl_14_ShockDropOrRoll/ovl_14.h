@@ -95,7 +95,7 @@ extern f32 D_80106F0C_16FE4C_ShockDropOrRoll;  /* the crank's motion speed */
 extern s8 D_80106F10_16FE50_ShockDropOrRoll;   /* the solo CPU is set up */
 extern u32 D_80106F14_16FE54_ShockDropOrRoll;  /* play time left, frames (929) */
 extern f32 D_80106F18_16FE58_ShockDropOrRoll[16]; /* the players' mean z, last 16 frames */
-extern u8 D_80106F58_16FE98_ShockDropOrRoll;   /* D_80106F18 index */
+extern s8 D_80106F58_16FE98_ShockDropOrRoll;   /* D_80106F18 index */
 extern s16 D_80106F5A_16FE9A_ShockDropOrRoll;  /* result camera frames */
 
 /* 16EDD0.c: 80106F60-80106F70 */
@@ -116,6 +116,10 @@ extern const s16 D_80106FE8_16FF28_ShockDropOrRoll[4];
 extern const s8 D_80106FF0_16FF30_ShockDropOrRoll[8];
 extern const s8 D_80106FF8_16FF38_ShockDropOrRoll[8];
 extern const s16 D_80107000_16FF40_ShockDropOrRoll[4][8];
+extern const f32 D_80107078_16FFB8_ShockDropOrRoll[7][3];
+extern const s8 D_801070CC_17000C_ShockDropOrRoll[8];
+extern const f32 D_801070D4_170014_ShockDropOrRoll[6];
+extern const SDCamera D_801070EC_17002C_ShockDropOrRoll[2];
 
 /* ---- .bss ---- */
 extern s8 D_80107250_170190_ShockDropOrRoll;   /* solo CPU: turn direction (1, -1) */
@@ -127,7 +131,7 @@ extern s16 D_8010725C_17019C_ShockDropOrRoll;  /* 1P result wait */
 extern s16 D_8010725E_17019E_ShockDropOrRoll;  /* result frames */
 extern s16 D_80107260_1701A0_ShockDropOrRoll;  /* result length */
 extern f32 D_80107268_1701A8_ShockDropOrRoll[4]; /* camera spline keys */
-extern SDCamera D_80107278_1701B8_ShockDropOrRoll; /* the camera this frame */
+extern f32 D_80107278_1701B8_ShockDropOrRoll[7]; /* the camera this frame (an SDCamera) */
 extern s16 D_801072A0_1701E0_ShockDropOrRoll;  /* the roller sound */
 extern s8 D_801072B0_1701F0_ShockDropOrRoll;   /* the solo stick (-45..45) */
 extern s8 D_801072B1_1701F1_ShockDropOrRoll[3]; /* marker texture animations */
