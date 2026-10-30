@@ -98,8 +98,8 @@ extern HCCharData D_800CD438_CE038[];
 /* A player's work (func_80102CDC, 0x24 bytes). */
 typedef struct HCPlayer {
     /* 0x00 */ u16 state;
-    /* 0x02 */ u16 slot;   /* turn order position, 0 = next to the branch */
-    /* 0x04 */ s16 player;
+    /* 0x02 */ s16 slot;   /* turn order position, 0 = next to the branch */
+    /* 0x04 */ u16 player;
     /* 0x06 */ u16 picked; /* the dial was read this turn */
     /* 0x08 */ u16 wait;
     /* 0x0A */ s16 cpuPick; /* CPU's wanted dial value (1 or 2), -1 none */
@@ -109,8 +109,8 @@ typedef struct HCPlayer {
     /* 0x16 */ u16 turnCnt;
     /* 0x18 */ f32 turnStep;
     /* 0x1C */ s32 limit; /* turn time limit, frames */
-    /* 0x20 */ u8 limitOn;
-    /* 0x21 */ u8 out;
+    /* 0x20 */ s8 limitOn;
+    /* 0x21 */ s8 out;
 } HCPlayer; /* size = 0x24 */
 
 /* An item on the branch (func_80104924, 0x2C bytes). type: 0-4 fruit, 5 coin, 6 honeycomb,

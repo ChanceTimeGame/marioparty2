@@ -160,7 +160,285 @@ void func_80102CDC_2297AC_HoneycombHavoc(s32 player, omObjData* obj) {
     obj->func_ptr = func_80102FB4_229A84_HoneycombHavoc;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102FB4_229A84_HoneycombHavoc);
+/* A player: walk to the branch, spin the dial, catch what falls, and run from the bees. */
+void func_80102FB4_229A84_HoneycombHavoc(omObjData* obj) {
+    HCPlayer* work = obj->unk_50;
+    omObjData* item;
+    HCItem* itemWork;
+    HCPlayer* other;
+    u16 btn;
+    s32 i;
+    s32 n;
+    u8 r;
+    f32 dx;
+    f32 ang;
+
+    if (work->out == 1) {
+        return;
+    }
+    switch (work->state) {
+    case 0:
+        dx = -15.6f;
+        obj->trans.x += dx;
+        obj->rot.y = -90.0f;
+        if (obj->trans.x < D_80107398_22DE68_HoneycombHavoc[work->slot]) {
+            obj->trans.x = D_80107398_22DE68_HoneycombHavoc[work->slot];
+            if (work->slot != 0) {
+                work->state = 2;
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 8, 2);
+            } else {
+                work->state = 1;
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[1]), 0, 2, 2);
+            }
+        }
+        break;
+    case 1:
+        obj->rot.y += 10.0f;
+        if (obj->rot.y > 0.0f) {
+            obj->rot.y = 0.0f;
+            work->state = 4;
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 2, 2);
+            work->picked = 0;
+            D_801076C8_22E198_HoneycombHavoc = D_80107358_22DE28_HoneycombHavoc[gPlayers[work->player].character];
+            D_801076CC_22E19C_HoneycombHavoc = D_80107370_22DE40_HoneycombHavoc[gPlayers[work->player].character];
+            if (D_801076A8_22E178_HoneycombHavoc == 1) {
+                D_801076E4_22E1B4_HoneycombHavoc->work[0] = 1;
+            } else if (D_801076A8_22E178_HoneycombHavoc == 0) {
+                D_801076AA_22E17A_HoneycombHavoc = 1;
+                work->state = 3;
+            }
+            if (D_801076A8_22E178_HoneycombHavoc != 0) {
+                func_800691FC_69DFC(0xA, 0x3C, 0xA0, 0x18);
+                func_8006D4D0_6E0D0(0xA);
+                work->limit = 0x149;
+            }
+        }
+        break;
+    case 3:
+        if (D_801076A8_22E178_HoneycombHavoc == 1) {
+            func_800691FC_69DFC(0xA, 0x3C, 0xA0, 0x18);
+            func_8006D4D0_6E0D0(0xA);
+            work->limit = 0x149;
+            work->state = 4;
+        }
+        break;
+    case 4:
+        if (work->limit > 0) {
+            if (gPlayers[work->player].flags & 1) {
+                if (work->cpuPick == -1) {
+                    func_801044AC_22AF7C_HoneycombHavoc(obj);
+                }
+                btn = func_80104684_22B154_HoneycombHavoc(obj);
+            } else {
+                btn = ContBtnTrg[gPlayers[work->player].port];
+            }
+            if (D_801076A8_22E178_HoneycombHavoc != 1) {
+                break;
+            }
+            work->limitOn = 1;
+            if (!(btn & 0x8000)) {
+                break;
+            }
+        }
+        func_8002C570_2D170(obj->model[0]);
+        func_80029B80_2A780(obj->model[0], obj->motion[3]);
+        work->time = 0.0f;
+        work->state = 5;
+        work->cpuPick = -1;
+        func_8006D518_6E118();
+        work->limitOn = 0;
+        break;
+    case 5:
+        work->time += 1.0f;
+        if (work->time >= 10.0f && work->picked == 0) {
+            PlaySound(0x297);
+            func_80079798_7A398(0xBA, work->player);
+            work->picked = 1;
+            if (func_801047EC_22B2BC_HoneycombHavoc() == 1) {
+                func_80105BD4_22C6A4_HoneycombHavoc(8, 8);
+                n = (u8)(rand8() % 3) + 1;
+                for (i = 0; i < n; i++) {
+                    func_801065BC_22D08C_HoneycombHavoc((u8)(rand8() % 81) + -390.0f,
+                                                        705.0f - (i * 10) + (rand8() % (i * 20 + 1)));
+                }
+                n = (u8)(rand8() % 3) + 1;
+                for (i = 0; i < n; i++) {
+                    func_801065BC_22D08C_HoneycombHavoc((u8)(rand8() % 81) + 345.0f,
+                                                        510.0f - (i * 10) + (rand8() % (i * 20 + 1)));
+                }
+            } else {
+                func_80105BD4_22C6A4_HoneycombHavoc(0xC, 0xA);
+                n = (u8)(rand8() % 3) + 2;
+                for (i = 0; i < n; i++) {
+                    func_801065BC_22D08C_HoneycombHavoc((u8)(rand8() % 81) + -390.0f,
+                                                        705.0f - (i * 10) + (rand8() % (i * 20 + 1)));
+                }
+                n = (u8)(rand8() % 3) + 2;
+                for (i = 0; i < n; i++) {
+                    func_801065BC_22D08C_HoneycombHavoc((u8)(rand8() % 81) + 345.0f,
+                                                        510.0f - (i * 10) + (rand8() % (i * 20 + 1)));
+                }
+            }
+        }
+        if (work->time >= 20.0f) {
+            obj->trans.y = 0.0f;
+            work->state = 6;
+            func_8002C524_2D124(obj->model[0], func_80029E14_2AA14(obj->motion[6]), 2);
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 2, 2);
+        }
+        break;
+    case 6:
+        if (!func_80105BEC_22C6BC_HoneycombHavoc()) {
+            r = rand8();
+            ang = (u8)(r % 40) + 90.0f;
+            func_801053BC_22BE8C_HoneycombHavoc(ang + 30.0f, 40.0f);
+            work->state = 7;
+            work->walking = 1;
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 2, 2);
+        }
+        break;
+    case 7:
+        item = D_801076E0_22E1B0_HoneycombHavoc;
+        itemWork = item->unk_50;
+        if (item->trans.y < D_801076C8_22E198_HoneycombHavoc) {
+            if (itemWork->type == 6) {
+                omVibrate(work->player, 0x14, 0, 0x14);
+                for (i = 0; i < 4; i++) {
+                    other = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+                    other->state = 0xB;
+                    other->walking = 0;
+                    func_80029BF0_2A7F0(D_801076D8_22E1A8_HoneycombHavoc[i]->model[0],
+                                        func_80029E14_2AA14(D_801076D8_22E1A8_HoneycombHavoc[i]->motion[0]), 0, 2, 2);
+                }
+            } else {
+                omVibrate(work->player, 2, 3, 0xA);
+                if (itemWork->type == 5) {
+                    gPlayers[work->player].coins_mg++;
+                    func_800298A4_2A4A4(D_80107704_22E1D4_HoneycombHavoc->model[0], 4, 0);
+                    func_80029C74_2A874(D_80107704_22E1D4_HoneycombHavoc->model[0], 0.0f);
+                    D_800F86D8_F92D8[*(s16*)D_80107704_22E1D4_HoneycombHavoc->unk_50].unk06 = 0;
+                    D_800F86D8_F92D8[*(s16*)D_80107704_22E1D4_HoneycombHavoc->unk_50].unk04 = 0;
+                    D_800F86D8_F92D8[*(s16*)D_80107704_22E1D4_HoneycombHavoc->unk_50].unk08 = 0;
+                    func_80021198_21D98(*(s16*)D_80107704_22E1D4_HoneycombHavoc->unk_50, 0);
+                    D_80107704_22E1D4_HoneycombHavoc->trans.x = HuMathSin(obj->rot.y) * 80.0f + obj->trans.x;
+                    D_80107704_22E1D4_HoneycombHavoc->trans.y = obj->trans.y + 160.0f;
+                    D_80107704_22E1D4_HoneycombHavoc->trans.z = func_800B7890_B8490(obj->rot.y) * 80.0f + obj->trans.z;
+                    D_80107704_22E1D4_HoneycombHavoc->scale.x = D_80107704_22E1D4_HoneycombHavoc->scale.y = D_80107704_22E1D4_HoneycombHavoc->scale.z = 6.0f;
+                    PlaySound(9);
+                } else {
+                    PlaySound(0x296);
+                }
+                if (D_801076E4_22E1B4_HoneycombHavoc->work[1] == 2) {
+                    if (!func_801057AC_22C27C_HoneycombHavoc()) {
+                        r = rand8();
+                        ang = (u8)(r % 30) + 90.0f;
+                        func_801053BC_22BE8C_HoneycombHavoc(ang + 40.0f, 45.0f);
+                        work->state = 7;
+                        work->walking = 1;
+                        func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 2, 2);
+                        D_801076E4_22E1B4_HoneycombHavoc->work[1]--;
+                    } else {
+                        work->state = 8;
+                        func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 2, 2);
+                    }
+                } else {
+                    work->state = 9;
+                    work->walking = 0;
+                }
+            }
+        } else {
+            dx = (item->trans.x - (HuMathSin(obj->rot.y) * D_801076CC_22E19C_HoneycombHavoc + obj->trans.x)) * 0.15f;
+            if (fabs(dx) < 2.0) {
+                dx = 0.0f;
+            }
+            if (dx > 22.0f) {
+                dx = 22.0f;
+            }
+            if (dx < -22.0f) {
+                dx = -22.0f;
+            }
+            obj->trans.x += dx;
+            if (dx != 0.0f) {
+                if (dx < 0.0f) {
+                    obj->rot.y = -90.0f;
+                } else {
+                    obj->rot.y = 90.0f;
+                }
+                if (work->walking == 0) {
+                    func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 2, 2);
+                    work->walking = 1;
+                }
+            } else if (work->walking == 1) {
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 2, 2);
+                work->walking = 0;
+            }
+        }
+        break;
+    case 8:
+        if (!func_801057AC_22C27C_HoneycombHavoc()) {
+            r = rand8();
+            ang = (u8)(r % 30) + 90.0f;
+                        func_801053BC_22BE8C_HoneycombHavoc(ang + 40.0f, 45.0f);
+            work->state = 7;
+            work->walking = 1;
+            func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 2, 2);
+            D_801076E4_22E1B4_HoneycombHavoc->work[1]--;
+        }
+        break;
+    case 9:
+        dx = -15.6f;
+        obj->trans.x += dx;
+        obj->rot.y = -90.0f;
+        if (obj->trans.x < -750.0f) {
+            work->state = 0;
+            omSetTra(obj, D_80107388_22DE58_HoneycombHavoc[0], 0.0f, 0.0f);
+            func_80104180_22AC50_HoneycombHavoc();
+        }
+        break;
+    case 10:
+        if (--work->wait == 0) {
+            work->state = 0;
+        }
+        break;
+    case 11:
+        obj->rot.y = func_800B75A8_B81A8(D_801076EC_22E1BC_HoneycombHavoc->trans.y - obj->trans.y,
+                                         D_801076EC_22E1BC_HoneycombHavoc->trans.x - obj->trans.x) + 90.0f;
+        break;
+    case 12:
+        obj->rot.y += work->turnStep;
+        if (--work->turnCnt == 0) {
+            D_80107352_22DE22_HoneycombHavoc = func_800797DC_7A3DC(0x111, work->player);
+            work->state = 0xD;
+            func_8002C524_2D124(obj->model[0], func_80029E14_2AA14(obj->motion[7]), 2);
+        }
+        break;
+    case 13:
+        obj->trans.x -= 24.0f;
+        obj->rot.y = -90.0f;
+        break;
+    case 16:
+        obj->rot.y += work->turnStep;
+        if (--work->turnCnt == 0) {
+            work->state = 0x11;
+            func_8002C524_2D124(obj->model[0], func_80029E14_2AA14(obj->motion[7]), 2);
+        }
+        break;
+    case 17:
+        obj->trans.x -= 24.0f;
+        if (obj->trans.x < -800.0f) {
+            func_801043A0_22AE70_HoneycombHavoc();
+            obj->rot.y = -90.0f;
+        }
+        break;
+    }
+    func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+    if (work->limitOn == 1) {
+        func_8006D4D0_6E0D0(work->limit / 30);
+        if (--work->limit < 0) {
+            work->limit = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104180_22AC50_HoneycombHavoc);
 
