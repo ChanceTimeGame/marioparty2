@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_23.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E7CC0", func_80108870_1E7CC0_CrazyCutters);
 
