@@ -1567,4 +1567,117 @@ u16 func_80107AB0_1A0840_HandcarHavoc(void) {
     return win;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107C64_1A09F4_HandcarHavoc);
+/* A COM rider's input for this frame, by difficulty: pumps at random (not while braking), leans
+   against a bend when tipping or skidding, brakes before marked bends. */
+void func_80107C64_1A09F4_HandcarHavoc(omObjData* obj, HHPad* pad, u16 seat) {
+    HHCar* w;
+    u8 diff;
+    u8 chance;
+    u8 lean;
+    s16 stickTime;
+    u8 brake;
+    u8 delay;
+
+    pad->stkX = 0;
+    pad->stkY = 0;
+    pad->trg = 0;
+    pad->btn = 0;
+    if (D_8010D800_1A6590_HandcarHavoc == 1) {
+        w = obj->unk_50;
+        diff = gPlayers[w->player[seat]].cpu_difficulty;
+        switch (diff) {
+            case 0:
+                chance = 30;
+                lean = (rand8() & 7) + 12;
+                stickTime = (u8)(rand8() % 20) + 20;
+                brake = 10;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() % 3 + 1;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 1:
+                chance = 45;
+                lean = rand8() % 7 + 10;
+                stickTime = (u8)(rand8() % 15) + 15;
+                brake = 15;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() % 3;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 2:
+                chance = 70;
+                lean = rand8() % 5 + 5;
+                stickTime = (u8)(rand8() % 10) + 10;
+                brake = 40;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() & 1;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 3:
+                chance = 92;
+                lean = rand8() % 5 + 1;
+                stickTime = (u8)(rand8() % 5) + 5;
+                brake = 90;
+                delay = 0;
+                break;
+        }
+        if ((obj->work[0] & 8) && (u8)(rand8() % 100) < (u8)brake) {
+            if (fabs(w->lean) != 18.0) {
+                if (obj->work[0] & 0x20) {
+                    if (lean < w->skidTimer || fabs(w->tilt) > lean) {
+                        w->cpuStickTime[seat] = stickTime;
+                        w->cpuStick[seat] = 80;
+                    }
+                } else if (obj->work[0] & 0x40) {
+                    if (lean < w->skidTimer || fabs(w->tilt) > lean) {
+                        w->cpuStickTime[seat] = stickTime;
+                        w->cpuStick[seat] = -80;
+                    }
+                }
+            }
+            switch (diff) {
+                case 0:
+                    w->cpuBrakeTime[seat] = (u8)(rand8() % 5) + 3;
+                    break;
+                case 1:
+                    if (fabs(w->lean) >= 9.0) {
+                        w->cpuBrakeTime[seat] = (u8)(rand8() & 3) + 2;
+                    }
+                    break;
+                case 2:
+                    if (fabs(w->lean) >= 9.0) {
+                        w->cpuBrakeTime[seat] = (rand8() & 1) + 1;
+                    }
+                    break;
+                case 3:
+                    w->cpuBrakeTime[seat] = 0;
+                    break;
+            }
+            if (w->cpu == 0) {
+                w->cpuBrakeTime[seat] = (u16)w->cpuBrakeTime[seat] >> 1;
+            }
+        }
+        if (w->cpuStickTime[seat] != 0) {
+            w->cpuStickTime[seat]--;
+            pad->stkX = w->cpuStick[seat];
+        }
+        if (w->cpuBrakeTime[seat] != 0) {
+            w->cpuBrakeTime[seat]--;
+            pad->btn |= 0x4000;
+        }
+        if (w->cpuDelay[seat] == 0) {
+            if ((u8)(rand8() % 100) < (u8)chance && !(pad->btn & 0x4000)) {
+                pad->trg |= 0x8000;
+            }
+            w->cpuDelay[seat] = delay;
+        } else {
+            w->cpuDelay[seat]--;
+        }
+    }
+}
