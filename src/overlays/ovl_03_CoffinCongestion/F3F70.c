@@ -1044,48 +1044,311 @@ void func_80105830_F6F40_CoffinCongestion(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105884_F6F94_CoffinCongestion);
+/* Mode 0: fade in, music. */
+void func_80105884_F6F94_CoffinCongestion(omObjData* obj) {
+    switch (D_80106DF0_F8500_CoffinCongestion.step) {
+        case 0:
+            D_80106DF0_F8500_CoffinCongestion.unk_08 = 0;
+            D_80106DF0_F8500_CoffinCongestion.time = 300;
+            D_80106DF0_F8500_CoffinCongestion.frames = 0;
+            D_80106DF0_F8500_CoffinCongestion.step = 1;
+            D_80106DF0_F8500_CoffinCongestion.item = -1;
+            D_80106DF0_F8500_CoffinCongestion.player = -1;
+            gPlayers[0].coins_mg_bonus = -1;
+            gPlayers[1].coins_mg_bonus = -1;
+            gPlayers[2].coins_mg_bonus = -1;
+            gPlayers[3].coins_mg_bonus = -1;
+            InitFadeIn(0, 16);
+            PlayMusic(0x28);
+            break;
+        case 1:
+            if (func_8008F618_90218() == 0) {
+                D_80106DF0_F8500_CoffinCongestion.timer = 76;
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 2:
+            if (D_80106DF0_F8500_CoffinCongestion.timer-- < 0) {
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 3:
+            func_8000C38C_CF8C();
+            func_8010657C_F7C8C_CoffinCongestion(1);
+            D_80106DF0_F8500_CoffinCongestion.timer = 0;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801059A8_F70B8_CoffinCongestion);
+/* Mode 1: the items show, hop into the coffins, the host comes in. */
+void func_801059A8_F70B8_CoffinCongestion(omObjData* obj) {
+    switch (D_80106DF0_F8500_CoffinCongestion.step) {
+        case 0 ... 6:
+            func_801045E8_F5CF8_CoffinCongestion(D_80106C80_F8390_CoffinCongestion[D_80106DF0_F8500_CoffinCongestion.step]);
+            if (D_80106DF0_F8500_CoffinCongestion.step == 2) {
+                func_80104600_F5D10_CoffinCongestion();
+            } else if (D_80106DF0_F8500_CoffinCongestion.step == 3) {
+                func_80104650_F5D60_CoffinCongestion();
+            }
+            if (D_80106DF0_F8500_CoffinCongestion.timer++ > D_80106C74_F8384_CoffinCongestion[D_80106DF0_F8500_CoffinCongestion.step]) {
+                D_80106DF0_F8500_CoffinCongestion.timer = 0;
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 7:
+            func_8010657C_F7C8C_CoffinCongestion(2);
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105A98_F71A8_CoffinCongestion);
+void func_80105A98_F71A8_CoffinCongestion(omObjData* obj) {
+    func_8010657C_F7C8C_CoffinCongestion(3);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105AB4_F71C4_CoffinCongestion);
+/* Mode 3: five rounds of lids down, shake (the coffins swap slots), lids up. */
+void func_80105AB4_F71C4_CoffinCongestion(omObjData* obj) {
+    switch (D_80106DF0_F8500_CoffinCongestion.step) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            func_801045E8_F5CF8_CoffinCongestion(D_80106CCC_F83DC_CoffinCongestion[D_80106DF0_F8500_CoffinCongestion.step]);
+            if (D_80106DF0_F8500_CoffinCongestion.timer++
+                > D_80106C90_F83A0_CoffinCongestion[D_80106C8C_F839C_CoffinCongestion][D_80106DF0_F8500_CoffinCongestion.step]) {
+                D_80106DF0_F8500_CoffinCongestion.timer = 0;
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 5:
+            func_801045E8_F5CF8_CoffinCongestion(D_80106CCC_F83DC_CoffinCongestion[D_80106DF0_F8500_CoffinCongestion.step]);
+            if (D_80106DF0_F8500_CoffinCongestion.timer++
+                > D_80106C90_F83A0_CoffinCongestion[D_80106C8C_F839C_CoffinCongestion][D_80106DF0_F8500_CoffinCongestion.step]) {
+                D_80106DF0_F8500_CoffinCongestion.timer = 0;
+                D_80106C8C_F839C_CoffinCongestion++;
+                if (D_80106C8C_F839C_CoffinCongestion < 5) {
+                    D_80106DF0_F8500_CoffinCongestion.step = 0;
+                    break;
+                }
+                func_80079868_7A468();
+                goto next;
+            }
+            break;
+        case 6:
+            func_800691FC_69DFC(0);
+            goto next;
+        case 7:
+            if (func_80069538_6A138() != 0) {
+                break;
+            }
+        next:
+            D_80106DF0_F8500_CoffinCongestion.step++;
+            break;
+        case 8:
+            func_800691FC_69DFC(10, 10, 160, 32);
+            func_8010657C_F7C8C_CoffinCongestion(4);
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105C6C_F737C_CoffinCongestion);
+/* Mode 4: the pick, against the clock. */
+void func_80105C6C_F737C_CoffinCongestion(omObjData* obj) {
+    D_80106DF0_F8500_CoffinCongestion.time--;
+    func_8006D4D0_6E0D0(D_80106DF0_F8500_CoffinCongestion.time / 30 + 1);
+    if (D_80106DF0_F8500_CoffinCongestion.time < 0) {
+        func_8006D4D0_6E0D0(0);
+        func_8010657C_F7C8C_CoffinCongestion(5);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105CF0_F7400_CoffinCongestion);
+/* Mode 5: time up / picked. */
+void func_80105CF0_F7400_CoffinCongestion(omObjData* obj) {
+    if (D_80106DF0_F8500_CoffinCongestion.step == 0) {
+        func_800691FC_69DFC(3);
+        func_8006D518_6E118();
+        D_80106DF0_F8500_CoffinCongestion.step++;
+        func_800794A8_7A0A8(60);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105D44_F7454_CoffinCongestion);
+/* Mode 6: result message and music; writes gPlayers[].coins_mg_bonus (the item, -1 none). */
+void func_80105D44_F7454_CoffinCongestion(omObjData* obj) {
+    switch (D_80106DF0_F8500_CoffinCongestion.step) {
+        case 0:
+            D_80106DF0_F8500_CoffinCongestion.timer = 120;
+            D_80106DF0_F8500_CoffinCongestion.step++;
+            break;
+        case 2:
+            if (D_80106DF0_F8500_CoffinCongestion.item < 0 || D_80106DF0_F8500_CoffinCongestion.item == 10) {
+                PlayMusic(0x56);
+                func_800691FC_69DFC(0x10);
+                D_80106DF0_F8500_CoffinCongestion.timer = 0x84;
+            } else if (D_80106DF0_F8500_CoffinCongestion.item != 3) {
+                PlayMusic(0x53);
+                func_800691FC_69DFC(0x17, D_80106DF0_F8500_CoffinCongestion.item);
+                D_80106DF0_F8500_CoffinCongestion.timer = 0x87;
+            } else {
+                PlayMusic(0x54);
+                func_800691FC_69DFC(0x18, D_80106DF0_F8500_CoffinCongestion.item);
+                D_80106DF0_F8500_CoffinCongestion.timer = 0x90;
+            }
+            D_80106DF0_F8500_CoffinCongestion.step++;
+            break;
+        case 1:
+        case 3:
+            if (--D_80106DF0_F8500_CoffinCongestion.timer == -1) {
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 4:
+            if (D_80106DF0_F8500_CoffinCongestion.item >= 0) {
+                if (D_80106DF0_F8500_CoffinCongestion.item == 10) {
+                    D_80106DF0_F8500_CoffinCongestion.item = -1;
+                }
+                gPlayers[D_80106DF0_F8500_CoffinCongestion.player].coins_mg_bonus = D_80106DF0_F8500_CoffinCongestion.item;
+            }
+            func_8010657C_F7C8C_CoffinCongestion(7);
+            D_80106DF0_F8500_CoffinCongestion.step = 0;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105EE0_F75F0_CoffinCongestion);
+/* Mode 7: fade out and leave. */
+void func_80105EE0_F75F0_CoffinCongestion(omObjData* obj) {
+    switch (D_80106DF0_F8500_CoffinCongestion.step) {
+        case 0:
+            func_800794A8_7A0A8(40);
+            InitFadeOut(0, 20);
+            D_80106DF0_F8500_CoffinCongestion.step++;
+            break;
+        case 1:
+            if (func_8008F618_90218() == 0) {
+                D_80106DF0_F8500_CoffinCongestion.step++;
+            }
+            break;
+        case 2:
+            func_801055C4_F6CD4_CoffinCongestion();
+            func_801044CC_F5BDC_CoffinCongestion();
+            func_8002864C_2924C();
+            func_80023124_23D24();
+            omOvlReturnEx(1);
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80105F9C_F76AC_CoffinCongestion);
+/* Flow object: runs the current mode. */
+void func_80105F9C_F76AC_CoffinCongestion(omObjData* obj) {
+    if (D_801011FC_101DFC == 1 && D_80106DF0_F8500_CoffinCongestion.mode != 7) {
+        func_8010657C_F7C8C_CoffinCongestion(7);
+    }
+    D_80106DF0_F8500_CoffinCongestion.mode = D_80106DF0_F8500_CoffinCongestion.next;
+    if (D_80106DF0_F8500_CoffinCongestion.mode != 4) {
+        func_80105710_F6E20_CoffinCongestion();
+        func_80105830_F6F40_CoffinCongestion();
+    }
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_80106CD8_F83E8_CoffinCongestion[D_80106DF0_F8500_CoffinCongestion.mode](obj);
+    }
+    D_80106DF0_F8500_CoffinCongestion.frames++;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010606C_F777C_CoffinCongestion);
+/* Late object: gives the players their pads back. */
+void func_8010606C_F777C_CoffinCongestion(omObjData* obj) {
+    if (D_80106DF0_F8500_CoffinCongestion.mode != 4) {
+        func_801057A0_F6EB0_CoffinCongestion();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010609C_F77AC_CoffinCongestion);
+void func_8010609C_F77AC_CoffinCongestion(Vec* v) {
+    if (!(HuVecGetLength3F(v) < 0.1f)) {
+        func_800B33E0_B3FE0(v);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801060E8_F77F8_CoffinCongestion);
+void func_801060E8_F77F8_CoffinCongestion(void) {
+    omInitObjMan(50, 0);
+    func_80079128_79D28();
+    func_80105600_F6D10_CoffinCongestion();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80106118_F7828_CoffinCongestion);
+/* The camera: viewport, scissor, perspective and its sprite. */
+void func_80106118_F7828_CoffinCongestion(void) {
+    s32 pad[2];
+    s32 i;
+    u8 cam;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80106314_F7A24_CoffinCongestion);
+    func_80018E30_19A30(1);
+    for (i = 0; i <= 0; i++) {
+        cam = func_80018E78_19A78();
+        ScissorSet(cam, D_80106C20_F8330_CoffinCongestion[i].sc[0], D_80106C20_F8330_CoffinCongestion[i].sc[1],
+                   D_80106C20_F8330_CoffinCongestion[i].sc[2], D_80106C20_F8330_CoffinCongestion[i].sc[3]);
+        ViewportSet(cam, D_80106C20_F8330_CoffinCongestion[i].vp[0], D_80106C20_F8330_CoffinCongestion[i].vp[1], 511.0f,
+                    D_80106C20_F8330_CoffinCongestion[i].vp[2], D_80106C20_F8330_CoffinCongestion[i].vp[3], 511.0f);
+    }
+    D_80101078_101C78 = 6000.0f;
+    D_800F8410_F9010 = 1500.0f;
+    func_8007A27C_7AE7C(0x7FDA, (s16)func_80105638_F6D48_CoffinCongestion(D_80106C20_F8330_CoffinCongestion[0].file, 0),
+                        func_8007A7FC_7B3FC, D_80106C20_F8330_CoffinCongestion[0].fov, &D_80106C20_F8330_CoffinCongestion[0].eye,
+                        &D_80106C20_F8330_CoffinCongestion[0].at);
+    Hu3DCamSetPerspective(0, D_80106C20_F8330_CoffinCongestion[0].fov, 3500.0f, 5000.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801064C8_F7BD8_CoffinCongestion);
+void func_80106314_F7A24_CoffinCongestion(void) {
+    s32 i;
+    s16 l;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80106534_F7C44_CoffinCongestion);
+    func_80026D28_27928(2);
+    for (i = 0; i < 2; i++) {
+        l = i;
+        func_80026E00_27A00(l, D_80106C54_F8364_CoffinCongestion[i].dir[0], D_80106C54_F8364_CoffinCongestion[i].dir[1],
+                            D_80106C54_F8364_CoffinCongestion[i].dir[2]);
+        func_80026DAC_279AC(l, (u8)D_80106C54_F8364_CoffinCongestion[i].col[0], (u8)D_80106C54_F8364_CoffinCongestion[i].col[1],
+                            (u8)D_80106C54_F8364_CoffinCongestion[i].col[2]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80106570_F7C80_CoffinCongestion);
+void func_801064C8_F7BD8_CoffinCongestion(void) {
+    omSetStatBit(omAddObj(0, 0, 0, -1, func_80105F9C_F76AC_CoffinCongestion), 0xA0);
+    omSetStatBit(omAddObj(5, 0, 0, -1, func_8010606C_F777C_CoffinCongestion), 0xA0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010657C_F7C8C_CoffinCongestion);
+/* Drives port `port` as if from its controller. */
+void func_80106534_F7C44_CoffinCongestion(s32 port, s8 stkX, s8 stkY, u16 trg, u16 btn) {
+    ContStkX[port] = stkX;
+    ContStkY[port] = stkY;
+    ContBtn[port] = btn;
+    ContBtnTrg[port] = trg;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801065A8_F7CB8_CoffinCongestion);
+u16 func_80106570_F7C80_CoffinCongestion(void) {
+    return D_80106DF0_F8500_CoffinCongestion.mode;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801065B4_F7CC4_CoffinCongestion);
+void func_8010657C_F7C8C_CoffinCongestion(u16 mode) {
+    if (mode >= 8) {
+        while (1) {}
+    }
+    D_80106DF0_F8500_CoffinCongestion.next = mode;
+    D_80106DF0_F8500_CoffinCongestion.step = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801065C0_F7CD0_CoffinCongestion);
+s32 func_801065A8_F7CB8_CoffinCongestion(void) {
+    return D_80106DF0_F8500_CoffinCongestion.frames;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801065EC_F7CFC_CoffinCongestion);
+s16 func_801065B4_F7CC4_CoffinCongestion(void) {
+    return D_80106DF0_F8500_CoffinCongestion.unk_08;
+}
+
+/* Ends the pick: `player` won `item`. */
+void func_801065C0_F7CD0_CoffinCongestion(s16 player, s16 item) {
+    D_80106DF0_F8500_CoffinCongestion.item = item;
+    D_80106DF0_F8500_CoffinCongestion.player = player;
+    func_8010657C_F7C8C_CoffinCongestion(5);
+}
+
+s16 func_801065EC_F7CFC_CoffinCongestion(void) {
+    return D_80106DF0_F8500_CoffinCongestion.item;
+}
 
 __asm__(".section .rodata\n\t.balign 16\n\t.text");

@@ -211,7 +211,7 @@ typedef struct CCCamera {
 
 /* A light (D_80106C54[2], .data). */
 typedef struct CCLight {
-    /* 0x00 */ s8 dir[3];
+    /* 0x00 */ u8 dir[3];
     /* 0x03 */ char unk_03;
     /* 0x04 */ f32 col[3];
 } CCLight; /* size = 0x10 */
@@ -275,6 +275,12 @@ extern void (*D_80106BE8_F82F8_CoffinCongestion[4])(omObjData*, MgWork*, CCCpu*)
 extern void (*D_80106BF8_F8308_CoffinCongestion[8])(omObjData*, MgWork*, CCCpu*);
 extern CCCamera D_80106C20_F8330_CoffinCongestion[1]; /* undefined_syms.txt: D_80106BF8 + 0x28 */
 extern CCLight D_80106C54_F8364_CoffinCongestion[2];
+extern s16 D_80106C74_F8384_CoffinCongestion[6];   /* intro step lengths */
+extern s16 D_80106C80_F8390_CoffinCongestion[6];   /* intro step phases */
+extern s32 D_80106C8C_F839C_CoffinCongestion;      /* shuffle round */
+extern s16 D_80106C90_F83A0_CoffinCongestion[5][6]; /* shuffle step lengths per round */
+extern s16 D_80106CCC_F83DC_CoffinCongestion[6];   /* shuffle step phases */
+extern void (*D_80106CD8_F83E8_CoffinCongestion[8])(omObjData*); /* mode functions */
 
 /* ---------------------------------------------------------------------------------------------
    Bss (ovl_03_bss)
@@ -350,14 +356,14 @@ u16 func_80105638_F6D48_CoffinCongestion(s32 file, u32 idx);
 void func_80105710_F6E20_CoffinCongestion(void);
 void func_801057A0_F6EB0_CoffinCongestion(void);
 void func_80105830_F6F40_CoffinCongestion(void);
-void func_80105884_F6F94_CoffinCongestion(void);
-void func_801059A8_F70B8_CoffinCongestion(void);
-void func_80105A98_F71A8_CoffinCongestion(void);
-void func_80105AB4_F71C4_CoffinCongestion(void);
-void func_80105C6C_F737C_CoffinCongestion(void);
-void func_80105CF0_F7400_CoffinCongestion(void);
-void func_80105D44_F7454_CoffinCongestion(void);
-void func_80105EE0_F75F0_CoffinCongestion(void);
+void func_80105884_F6F94_CoffinCongestion(omObjData* obj);
+void func_801059A8_F70B8_CoffinCongestion(omObjData* obj);
+void func_80105A98_F71A8_CoffinCongestion(omObjData* obj);
+void func_80105AB4_F71C4_CoffinCongestion(omObjData* obj);
+void func_80105C6C_F737C_CoffinCongestion(omObjData* obj);
+void func_80105CF0_F7400_CoffinCongestion(omObjData* obj);
+void func_80105D44_F7454_CoffinCongestion(omObjData* obj);
+void func_80105EE0_F75F0_CoffinCongestion(omObjData* obj);
 void func_80105F9C_F76AC_CoffinCongestion(omObjData* obj);
 void func_8010606C_F777C_CoffinCongestion(omObjData* obj);
 void func_8010609C_F77AC_CoffinCongestion(Vec* v);
