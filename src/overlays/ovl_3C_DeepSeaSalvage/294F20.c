@@ -256,11 +256,74 @@ f32 func_801069E4_295A54_DeepSeaSalvage(f32 x, f32 y) {
     return -372.0f;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106CC4_295D34_DeepSeaSalvage);
+s16 func_80106CC4_295D34_DeepSeaSalvage(f32 x, f32 y) {
+    DSSTreasure* t;
+    f32 dx;
+    f32 dy;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106D5C_295DCC_DeepSeaSalvage);
+    t = DSS_OBJ_WORK(D_80108EB8_297F28_DeepSeaSalvage);
+    for (i = 0; i < 20; i++, t++) {
+        if (t->flags < 0 && t->taken == 0) {
+            dx = t->x - x;
+            dy = t->y - y;
+            if (dx * dx + dy * dy < 7400.0f) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106EC4_295F34_DeepSeaSalvage);
+/* Push a diver out of the others (radius 90 each); vx and vy are unused. */
+void func_80106D5C_295DCC_DeepSeaSalvage(omObjData* obj, f32 vx, f32 vy) {
+    DSSDiver* d;
+    DSSDiver* o;
+    omObjData* other;
+    f32 dx;
+    f32 dy;
+    f32 dist;
+    f32 r0;
+    f32 r1;
+    f32 push;
+    f32 nx;
+    f32 ny;
+    s16 i;
+
+    d = DSS_OBJ_WORK(obj);
+    r0 = 90.0f;
+    for (i = 0; i < 4; i++) {
+        other = D_800FFFD8_100BD8[i];
+        o = DSS_OBJ_WORK(other);
+        if (obj == other) {
+            continue;
+        }
+        dx = o->x - d->x;
+        dy = o->y - d->y;
+        r1 = 90.0f;
+        dist = sqrtf(dx * dx + dy * dy);
+        if (dist < r0 + r1) {
+            if (dist != 0.0) {
+                dx /= dist;
+                dy /= dist;
+            }
+            push = r0 + r1 - dist;
+            nx = d->x - dx * push;
+            ny = d->y - dy * push;
+            d->x = nx;
+            d->y = ny;
+        }
+    }
+}
+
+/* A sprite file's first animation number (MP1 TreasureDivers func_800FBAC8). */
+s16 func_80106EC4_295F34_DeepSeaSalvage(s32 file) {
+    void* data = DataRead(file);
+    s16 anim = SprAnimRead(data);
+
+    DataClose(data);
+    return anim & 0xFF;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/294F20", func_80106F08_295F78_DeepSeaSalvage);
 
