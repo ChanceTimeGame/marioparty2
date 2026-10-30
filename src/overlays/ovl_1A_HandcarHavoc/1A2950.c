@@ -297,12 +297,90 @@ void func_8010ABC8_1A3958_HandcarHavoc(f32 x, f32 y, u16* spr) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010AD1C_1A3AAC_HandcarHavoc);
+/* Creates a team's sign object: three hidden sprites (right half when obj->work[0] is 1). */
+void func_8010AD1C_1A3AAC_HandcarHavoc(omObjData* obj) {
+    HHSign* s;
+    s32 xoff;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010AE30_1A3BC0_HandcarHavoc);
+    s = obj->unk_50 = func_80027154_27D54(sizeof(HHSign), 0x7918);
+    xoff = (obj->work[0] == 1) ? 160 : 0;
+    s->cur = 0xFF;
+    s->spr[1] = func_8001AAAC_1B6AC(D_8010D814_1A65A4_HandcarHavoc, 0, 1);
+    s->spr[0] = func_8001AAAC_1B6AC(D_8010D878_1A6608_HandcarHavoc, 0, 1);
+    s->spr[2] = func_8001AAAC_1B6AC(D_8010D82C_1A65BC_HandcarHavoc, 0, 1);
+    for (i = 0; i < 3; i++) {
+        espDispOff(s->spr[i]);
+        espPosSet(s->spr[i], xoff + D_8010B1DC_1A3F6C_HandcarHavoc[i][0], D_8010B1DE_1A3F6E_HandcarHavoc[i][0]);
+    }
+    obj->func_ptr = func_8010AE30_1A3BC0_HandcarHavoc;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010B024_1A3DB4_HandcarHavoc);
+/* Animates the sign: grow in spinning, wait, grow on spinning back, hide. */
+void func_8010AE30_1A3BC0_HandcarHavoc(omObjData* obj) {
+    HHSign* s;
+    u16 spr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010B0FC_1A3E8C_HandcarHavoc);
+    s = obj->unk_50;
+    if (s->cur == 0xFF) {
+        return;
+    }
+    spr = s->spr[s->cur];
+    switch (s->state) {
+        case 0:
+            s->scale += 0.9f / s->inTime;
+            s->angle += 254 / s->inTime;
+            func_8001A91C_1B51C(spr, s->scale, s->scale);
+            func_8001A6BC_1B2BC(spr, s->angle);
+            if (--s->timer == 0) {
+                s->state = 1;
+            }
+            break;
+        case 1:
+            if (s->wait-- == 0) {
+                s->timer = s->outTime;
+                s->state = 2;
+            }
+            break;
+        case 2:
+            s->scale += 2.0f / s->outTime;
+            s->angle -= 254 / s->outTime;
+            func_8001A91C_1B51C(spr, s->scale, s->scale);
+            func_8001A6BC_1B2BC(spr, s->angle);
+            if (--s->timer == 0) {
+                espDispOff(spr);
+                s->cur = 0xFF;
+            }
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010B108_1A3E98_HandcarHavoc);
+/* Shows sign sprite idx: wait frames before it leaves, inTime/outTime frames to grow in/out. */
+void func_8010B024_1A3DB4_HandcarHavoc(omObjData* obj, u8 idx, s16 wait, s16 inTime, u16 outTime) {
+    HHSign* s;
+
+    s = obj->unk_50;
+    if (s->cur != 0xFF) {
+        espDispOff(s->spr[s->cur]);
+    }
+    s->cur = idx;
+    s->wait = wait;
+    espDispOn(s->spr[idx]);
+    s->scale = 0.1f;
+    s->angle = 1;
+    s->timer = inTime;
+    s->state = 0;
+    s->inTime = inTime;
+    s->outTime = outTime;
+    func_8001A91C_1B51C(s->spr[s->cur], s->scale, s->scale);
+    func_8001A6BC_1B2BC(s->spr[s->cur], s->angle);
+}
+
+/* The sign sprite shown (0xFF none). */
+u8 func_8010B0FC_1A3E8C_HandcarHavoc(omObjData* obj) {
+    return ((HHSign*)obj->unk_50)->cur;
+}
+
+void func_8010B108_1A3E98_HandcarHavoc(omObjData* obj, s16 wait) {
+    ((HHSign*)obj->unk_50)->wait = wait;
+}

@@ -232,6 +232,21 @@ typedef struct HHMeter {
     /* 0x08 */ u16 spr[2][5]; /* digits [0..2] (sprite D_8010D85C), [3] D_8010D872, [4] D_8010D874 */
 } HHMeter; /* size = 0x1C */
 
+/* A team's sign (D_8010D818[team]->unk_50, 0x14): one of three sprites grows in while spinning,
+   waits, then grows on and spins back out (8010B024 starts one). */
+typedef struct HHSign {
+    /* 0x00 */ u8 cur;     /* sprite shown, 0xFF none */
+    /* 0x01 */ u8 spr[3];  /* sprites D_8010D814, D_8010D878, D_8010D82C */
+    /* 0x04 */ u8 state;   /* 0 in, 1 wait, 2 out */
+    /* 0x05 */ char unk5;
+    /* 0x06 */ u16 wait;
+    /* 0x08 */ f32 scale;
+    /* 0x0C */ s16 angle;
+    /* 0x0E */ u16 timer;
+    /* 0x10 */ u16 inTime;
+    /* 0x12 */ u16 outTime;
+} HHSign; /* size = 0x14 */
+
 void InitFadeOut(s32, s32);
 void func_800794A8_7A0A8(s32);
 s32 func_8008F618_90218(void);
@@ -336,9 +351,9 @@ void func_8010AA30_1A37C0_HandcarHavoc(omObjData* obj);
 void func_8010ABC8_1A3958_HandcarHavoc(f32 x, f32 y, u16* arg2);
 void func_8010AD1C_1A3AAC_HandcarHavoc(omObjData* obj);
 void func_8010AE30_1A3BC0_HandcarHavoc(omObjData* obj);
-void func_8010B024_1A3DB4_HandcarHavoc(omObjData* obj, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
+void func_8010B024_1A3DB4_HandcarHavoc(omObjData* obj, u8 idx, s16 wait, s16 inTime, u16 outTime);
 u8 func_8010B0FC_1A3E8C_HandcarHavoc(omObjData* obj);
-void func_8010B108_1A3E98_HandcarHavoc(omObjData* obj, s16 arg1);
+void func_8010B108_1A3E98_HandcarHavoc(omObjData* obj, s16 wait);
 
 /* ---------------------------------------------------------------------------------------------
    .data (asm, 1A3EB0)
@@ -362,8 +377,8 @@ extern Vec D_8010B18C_1A3F1C_HandcarHavoc[];   /* S4-1AC: = &B184[0].z */
 extern f32 D_8010B1B4_1A3F44_HandcarHavoc[8];  /* spark lengths */
 extern u16 D_8010B1D4_1A3F64_HandcarHavoc;     /* 1: leaving (fade started) */
 extern s16 D_8010B1D8_1A3F68_HandcarHavoc[2];  /* speed meter x per team */
-extern u16 D_8010B1DC_1A3F6C_HandcarHavoc;
-extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[5];
+extern u16 D_8010B1DC_1A3F6C_HandcarHavoc[][2]; /* sign sprite x, y per sprite (split label B1DE = y) */
+extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[][2]; /* = &B1DC[0][1] */
 
 /* ---------------------------------------------------------------------------------------------
    .bss (8010B310-8010D880)
