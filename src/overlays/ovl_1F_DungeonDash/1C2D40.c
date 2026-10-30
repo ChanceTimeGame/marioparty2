@@ -1,6 +1,115 @@
 #include "common.h"
 #include "ovl_1F.h"
 
+/* .data (0x1C6370-0x1C6760, 8010A7F0-8010ABE0). D_8010A7F2 (the seed's low half, which
+   func_801074F0's (u16) cast reads) has no users of its own. D_8010A9DC's vertices end 4 bytes
+   short of the display lists' 8-byte alignment. */
+
+u32 D_8010A7F0_1C6370_DungeonDash = 0x19971204;
+f32 D_8010A7F4_1C6374_DungeonDash[2] = { -280.0f, 280.0f };
+Vtx_t D_8010A7FC_1C637C_DungeonDash[10] = {
+    { { 20, 40, 0 }, 0, { 0, 0 }, { 0, 0, 0, 255 } },
+    { { 20, -40, 0 }, 0, { 0, 4096 }, { 0, 0, 0, 255 } },
+    { { -20, 40, 0 }, 0, { 2048, 0 }, { 0, 0, 0, 255 } },
+    { { -20, -40, 0 }, 0, { 2048, 4096 }, { 0, 0, 0, 255 } },
+    { { 0, 0, 0 }, 0, { 1024, 2048 }, { 0, 0, 0, 255 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+};
+Vtx_t D_8010A89C_1C641C_DungeonDash[10] = {
+    { { 20, 40, 0 }, 0, { 0, 0 }, { 0, 0, 0, 255 } },
+    { { 20, 0, 0 }, 0, { 0, 1984 }, { 0, 0, 0, 255 } },
+    { { -20, 40, 0 }, 0, { 1984, 0 }, { 0, 0, 0, 255 } },
+    { { -20, 0, 0 }, 0, { 1984, 1984 }, { 0, 0, 0, 255 } },
+    { { 0, 0, 0 }, 0, { 1024, 1024 }, { 0, 0, 0, 255 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+};
+Vtx_t D_8010A93C_1C64BC_DungeonDash[10] = {
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 255 } },
+    { { 20, -20, 0 }, 0, { 0, 1984 }, { 0, 0, 0, 255 } },
+    { { -20, 20, 0 }, 0, { 1984, 0 }, { 0, 0, 0, 255 } },
+    { { -20, -20, 0 }, 0, { 1984, 1984 }, { 0, 0, 0, 255 } },
+    { { 0, 0, 0 }, 0, { 1024, 1024 }, { 0, 0, 0, 255 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+};
+Vtx_t D_8010A9DC_1C655C_DungeonDash[10] = {
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 255 } },
+    { { 20, -20, 0 }, 0, { 0, 4032 }, { 0, 0, 0, 255 } },
+    { { -20, 20, 0 }, 0, { 4032, 0 }, { 0, 0, 0, 255 } },
+    { { -20, -20, 0 }, 0, { 4032, 4032 }, { 0, 0, 0, 255 } },
+    { { 0, 0, 0 }, 0, { 2048, 2048 }, { 0, 0, 0, 255 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+};
+Gfx D_8010AA80_1C6600_DungeonDash[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010AB38_1C66B8_DungeonDash[] = {
+    gsSPClearGeometryMode(0xFFFFFFFF),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010AB58_1C66D8_DungeonDash[] = {
+    gsSPDisplayList(D_8010AB38_1C66B8_DungeonDash),
+    gsSPDisplayList(D_8010AA80_1C6600_DungeonDash),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010AB70_1C66F0_DungeonDash[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010AB58_1C66D8_DungeonDash),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+u32 D_8010ABB0_1C6730_DungeonDash = 0;
+u32 D_8010ABB4_1C6734_DungeonDash = 0;
+s16 D_8010ABB8_1C6738_DungeonDash = 60;
+s16 D_8010ABBA_1C673A_DungeonDash = 20;
+s16 D_8010ABBC_1C673C_DungeonDash = 0;
+s16 D_8010ABBE_1C673E_DungeonDash = 0;
+f32 D_8010ABC0_1C6740_DungeonDash[2][2] = { { 0.0f, 0.0f }, { 0.0f, 0.0f } };
+s32 D_8010ABD0_1C6750_DungeonDash = 0;
+
 void func_801071C0_1C2D40_DungeonDash(omObjData* obj) {
     obj->func_ptr = func_80107290_1C2E10_DungeonDash;
     func_80026DAC_279AC(0, 0x50, 0x50, 0x50);
