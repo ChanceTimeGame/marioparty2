@@ -348,25 +348,184 @@ s32 func_80103488_1B55D8_SpeedHockey(SHObjWork* w) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010389C_1B59EC_SpeedHockey);
+/* 2 or 3 once the puck is past a goal line (the goal it entered), else 0. */
+s32 func_8010389C_1B59EC_SpeedHockey(Vec* p) {
+    if (p->x < D_80106A7C_1B8BCC_SpeedHockey) {
+        return 3;
+    }
+    if (p->x > D_80106A80_1B8BD0_SpeedHockey) {
+        return 2;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_801038E8_1B5A38_SpeedHockey);
+/* Puck state 0: wobble at the centre spot for 30 frames, then serve it at a random angle. */
+void func_801038E8_1B5A38_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    f32 x;
+    s32 z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103B94_1B5CE4_SpeedHockey);
+    if ((s16)w->timer++ < 30) {
+        func_800B3170_B3D70(&w->prev, &w->pos);
+        x = (f32)((u8)(rand8() % 20) - 10) * 0.1f;
+        HuVecCopyXYZ(&w->pos, x, 0.0f, (f32)((u8)(rand8() % 20) - 10) * 0.1f + 0.0f);
+        omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
+        w->spin = (u8)(rand8() % 20) - 10;
+        obj->rot.y += w->spin;
+        if (obj->rot.y > 360.0f) {
+            obj->rot.y -= 360.0f;
+        }
+        if (obj->rot.y < -360.0f) {
+            obj->rot.y += 360.0f;
+        }
+    } else {
+        w->state = 1;
+        w->timer = 0;
+        HuVecCopyXYZ(&w->pos, 0.0f, 0.0f, 0.0f);
+        func_800B3170_B3D70(&w->prev, &w->pos);
+        w->speed = 4.0f;
+        z = (u8)(rand8() % 10) - 5;
+        if (z == 0) {
+            z = 1;
+        }
+        if (rand8() & 1) {
+            HuVecCopyXYZ(&w->dir, -3.0f, 0.0f, z);
+        } else {
+            HuVecCopyXYZ(&w->dir, 3.0f, 0.0f, z);
+        }
+        func_80106074_1B81C4_SpeedHockey(&w->dir);
+    }
+}
 
+/* Puck state 1: move, spin, score or bounce. */
+void func_80103B94_1B5CE4_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    Vec v;
+
+    func_800B3170_B3D70(&w->prev, &w->pos);
+    HuVecMulScalar(&v, w->speed, &w->dir);
+    HuVecAdd(&w->pos, &w->prev, &v);
+    obj->rot.y += w->spin;
+    if (obj->rot.y > 360.0f) {
+        obj->rot.y -= 360.0f;
+    }
+    if (obj->rot.y < -360.0f) {
+        obj->rot.y += 360.0f;
+    }
+    if ((w->goal = func_8010389C_1B59EC_SpeedHockey(&w->pos)) != 0) {
+        w->state = 2;
+        return;
+    }
+    if (func_80103488_1B55D8_SpeedHockey(w) == 0) {
+        w->state = 3;
+    }
+    omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
+}
+
+#ifdef NON_MATCHING
+/* masked 6: retail computes the sprite index team * 3 - 1 + score + 3 unfolded before scaling; GCC here folds -1 + 3 into the load offset */
+/* Puck state 2: a goal for team goal - 2; the third ends the game. */
+void func_80103CB0_1B5E00_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    s32 team = w->goal - 2;
+
+    if (++w->score[team] >= 3) {
+        func_80106580_1B86D0_SpeedHockey(team);
+        func_80106554_1B86A4_SpeedHockey(3);
+    } else {
+        w->state = 3;
+    }
+    func_800B3170_B3D70(&w->pos, &w->prev);
+    w->speed = 0.0f;
+    if (team == 0) {
+        func_800798F8_7A4F8(PlaySound(0x21D), 0x20);
+    } else {
+        func_800798F8_7A4F8(PlaySound(0x21D), 0x60);
+    }
+    espDispOn(D_80106CA4_1B8DF4_SpeedHockey[team * 3 - 1 + w->score[team] + 3]);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103CB0_1B5E00_SpeedHockey);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103D9C_1B5EEC_SpeedHockey);
+/* Puck state 3: back to the centre spot after 31 frames. */
+void func_80103D9C_1B5EEC_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    if ((s16)w->timer++ >= 31) {
+        PlaySound(0x21F);
+        HuVecCopyXYZ(&w->pos, 0.0f, 0.0f, 0.0f);
+        w->timer = 0;
+        w->state = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103DFC_1B5F4C_SpeedHockey);
+void func_80103DFC_1B5F4C_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    if (D_80106A84_1B8BD4_SpeedHockey[w->state] != NULL) {
+        D_80106A84_1B8BD4_SpeedHockey[w->state](obj, w);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103E34_1B5F84_SpeedHockey);
+/* After the game: the puck coasts to a stop. */
+void func_80103E34_1B5F84_SpeedHockey(omObjData* obj, SHObjWork* w) {
+    Vec v;
+    Vec* pos;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103F78_1B60C8_SpeedHockey);
+    func_800B3170_B3D70(&w->prev, &w->pos);
+    HuVecMulScalar(&v, w->speed, &w->dir);
+    HuVecAdd(&w->pos, &w->prev, &v);
+    obj->rot.y += w->spin;
+    if (obj->rot.y > 360.0f) {
+        obj->rot.y -= 360.0f;
+    }
+    pos = &w->pos;
+    if (obj->rot.y < -360.0f) {
+        obj->rot.y += 360.0f;
+    }
+    if ((w->goal = func_8010389C_1B59EC_SpeedHockey(pos)) != 0) {
+        func_800B3170_B3D70(pos, &w->prev);
+        w->speed = 0.0f;
+    } else {
+        func_80103488_1B55D8_SpeedHockey(w);
+        omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
+    }
+    w->speed *= 0.9f;
+    w->spin *= 0.9f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80104020_1B6170_SpeedHockey);
+/* The puck object: clear the paddles' hit flags, then run the game state's handler. */
+void func_80103F78_1B60C8_SpeedHockey(omObjData* obj) {
+    s32 i;
+    s32* hit;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_801040B0_1B6200_SpeedHockey);
+    for (i = 0; i < 4; i++) {
+        hit = &SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[i])->hit;
+        *hit = 0;
+    }
+    if (D_80106A94_1B8BE4_SpeedHockey[func_80106548_1B8698_SpeedHockey()] != NULL) {
+        D_80106A94_1B8BE4_SpeedHockey[func_80106548_1B8698_SpeedHockey()](obj, obj->unk_50);
+    }
+}
+
+/* A shadow: trail one step behind its target. */
+void func_80104020_1B6170_SpeedHockey(omObjData* obj) {
+    SHObjWork* w = obj->unk_50;
+    SHObjWork* tw;
+
+    if (w->target != NULL) {
+        tw = w->target->unk_50;
+        func_800B3170_B3D70(&w->prev, &w->pos);
+        func_800B3170_B3D70(&w->pos, &tw->prev);
+        omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
+        omSetRot(obj, 0.0f, w->target->rot.y, 0.0f);
+    }
+}
+
+/* A paddle: follow its player's x and z. */
+void func_801040B0_1B6200_SpeedHockey(omObjData* obj) {
+    SHObjWork* w = obj->unk_50;
+
+    if (w->target != NULL) {
+        omSetTra(obj, w->target->trans.x, 0.0f, w->target->trans.z);
+        func_800B3170_B3D70(&w->prev, &w->pos);
+        HuVecCopyXYZ(&w->pos, w->target->trans.x, 0.0f, w->target->trans.z);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010411C_1B626C_SpeedHockey);
 
