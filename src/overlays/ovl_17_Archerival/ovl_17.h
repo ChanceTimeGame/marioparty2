@@ -63,9 +63,12 @@ extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
 extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
 extern char* D_8010760C_18622C_Archerival[6]; /* "c00Nl_0_DEF" by character */
+extern s16 D_80107624_186244_Archerival;      /* footstep sound, -1 none */
 
 /* ---- .bss ---- */
+extern s16 D_80107870_186490_Archerival;      /* footstep timer */
 extern ARRank D_801078C8_1864E8_Archerival[5];
+extern u8 D_801078E6_186506_Archerival;       /* aiming (bow drawn) */
 extern f32 D_801078EC_18650C_Archerival;      /* CPU aim offset in x */
 extern HuSprite_Unk84_Struct* D_801078F4_186514_Archerival; /* the banner image */
 extern void* D_801078F8_186518_Archerival[3]; /* motion data */
@@ -81,6 +84,16 @@ extern s16 D_80108730_187350_Archerival[50];     /* sprite animations */
 extern s16 D_80108732_187352_Archerival;         /* = D_80108730[1] */
 
 /* ---- main ---- */
+void func_80029B80_2A780(s16 mdl, s16 mot);
+void func_80029BF0_2A7F0(s16 mdl, s16 mot, s16 start, s16 speed, s16 flags);
+void func_80029C74_2A874(s16 mdl, f32 time);
+f32 func_80029CE4_2A8E4(s16 mdl);
+f32 func_80029D0C_2A90C(s16 mdl);
+s32 func_80029E14_2AA14(s16 mot);
+f32 func_80029E3C_2AA3C(s16 mdl);
+s16 func_80079798_7A398(s16 sfx, s16 player);
+void func_80079848_7A448(s16 sound);
+void func_8003E888_3F488(s16);
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
@@ -161,9 +174,9 @@ void func_801036C8_1822E8_Archerival(void);
 void func_80103704_182324_Archerival(omObjData* obj, u8 motion);
 u8 func_801037C4_1823E4_Archerival(u8 n, u8* used);
 u8 func_801038B4_1824D4_Archerival(omObjData* obj);
-s32 func_80103C1C_18283C_Archerival(void* arg0, s16 *arg2, u8 *arg3);
-void func_80103CF0_182910_Archerival(void* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4);
-void func_80103D7C_18299C_Archerival(void* arg0, s32 arg1, s16 *arg2);
+s32 func_80103C1C_18283C_Archerival(omObjData* obj, s32 unused, s16* dx, u8* target);
+void func_80103CF0_182910_Archerival(omObjData* obj, u16 mot, s16 start, s16 speed, s16 flags);
+void func_80103D7C_18299C_Archerival(omObjData* obj, s16 dir, s16* state);
 void func_801040B0_182CD0_Archerival(void* arg0);
 void func_80104AEC_18370C_Archerival(void* arg0);
 void func_8010506C_183C8C_Archerival(void);

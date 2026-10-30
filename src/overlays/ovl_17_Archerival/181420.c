@@ -412,11 +412,116 @@ u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801038B4_1824D4_Archerival);
 #endif
 
+/* A CPU archer's walk towards its target: returns 1 when within 8 of it, else the x distance
+   to walk in *dx; with no target yet, picks one (func_801038B4_1824D4_Archerival). */
+// NON_MATCHING: register allocation only (masked 0): retail keeps the distance in $v0
+#ifdef NON_MATCHING
+s32 func_80103C1C_18283C_Archerival(omObjData* obj, s32 unused, s16* dx, u8* target) {
+    s32 d;
+    ARObj* p;
+    s32 ret = 0;
+
+    if (*target != 0) {
+        p = &D_80107920_186540_Archerival[*target];
+        d = obj->trans.x + D_801078EC_18650C_Archerival - p->obj->trans.x;
+        if (d < 0) {
+            d = -d;
+        }
+        if ((u16)d < 8) {
+            ret = 1;
+        } else {
+            *dx = p->obj->trans.x - (obj->trans.x + D_801078EC_18650C_Archerival);
+        }
+    } else {
+        *target = func_801038B4_1824D4_Archerival(obj);
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103C1C_18283C_Archerival);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103CF0_182910_Archerival);
+/* Starts motion obj->motion[mot] (Mecha Marathon's func_80103CA8_1F29E8_MechaMarathon). */
+void func_80103CF0_182910_Archerival(omObjData* obj, u16 mot, s16 start, s16 speed, s16 flags) {
+    func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[mot]), start, speed, flags);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103D7C_18299C_Archerival);
+/* Walks the player along x by 4 a frame in the stick's direction (dir < 0 left, > 0 right),
+   clamped to +-200 around the aim offset, with the walk motion and a footstep sound every
+   21 frames; dir 0 goes back to the idle motion. *state: 0 idle, 1 walk starting, 2 walking.
+   The aiming pose (D_801078E6) has its own walk (4) and idle (3) motions. */
+void func_80103D7C_18299C_Archerival(omObjData* obj, s16 dir, s16* state) {
+    u16 walk;
+    u16 idle;
+    f32 t;
+    f32 lim;
+
+    walk = 4;
+    if (D_801078E6_186506_Archerival == 0) {
+        walk = 1;
+    }
+    idle = D_801078E6_186506_Archerival ? 3 : 0;
+    if (dir != 0) {
+        switch (*state) {
+        case 0:
+            func_80103CF0_182910_Archerival(obj, walk, 0, 7, 1);
+            *state = 1;
+            goto step;
+        case 1:
+            if (func_80029E3C_2AA3C(obj->model[0]) == -1.0f) {
+                func_80029B80_2A780(obj->model[0], obj->motion[walk]);
+                func_80029C74_2A874(obj->model[0], 0.0f);
+                if (dir > 0) {
+                    func_80029E80_2AA80(obj->model[0], 2, 2);
+                } else {
+                    func_80029E80_2AA80(obj->model[0], 6, 6);
+                }
+                *state = 2;
+            }
+            goto tick;
+        case 2:
+            t = func_80029CE4_2A8E4(obj->model[0]);
+            if (func_80029D0C_2A90C(obj->model[0]) <= t) {
+                func_80029B80_2A780(obj->model[0], obj->motion[walk]);
+                func_80029C74_2A874(obj->model[0], 0.0f);
+                if (dir > 0) {
+                    func_80029E80_2AA80(obj->model[0], 2, 2);
+                } else {
+                    func_80029E80_2AA80(obj->model[0], 6, 6);
+                }
+            }
+        tick:
+            if (--D_80107870_186490_Archerival == 0) {
+            step:
+                if (D_80107624_186244_Archerival >= 0) {
+                    func_80079848_7A448(D_80107624_186244_Archerival);
+                }
+                D_80107624_186244_Archerival = func_80079798_7A398(0x34, obj->work[0]);
+                D_80107870_186490_Archerival = 21;
+            }
+            break;
+        }
+        obj->trans.x += (dir > 0) ? 4.0f : -4.0f;
+        if (dir > 0) {
+            lim = 200.0f - D_801078EC_18650C_Archerival;
+            if (obj->trans.x > lim) {
+                obj->trans.x = lim;
+                return;
+            }
+        }
+        if (dir < 0) {
+            if (obj->trans.x < -(D_801078EC_18650C_Archerival + 200.0f)) {
+                obj->trans.x = -(D_801078EC_18650C_Archerival + 200.0f);
+            }
+        }
+    } else if (*state != 0) {
+        func_80103CF0_182910_Archerival(obj, idle, 0, 7, 1);
+        *state = 0;
+        if (D_80107624_186244_Archerival >= 0) {
+            func_80079848_7A448(D_80107624_186244_Archerival);
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const char D_80107660_186280_Archerival[] = "c005_000-bmerge6";
