@@ -712,3 +712,7 @@ $(S423B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
+# S4-1FA: retail has a nop between back-to-back mul.d (80105618)
+S41FA_MULFIX_UNITS := build/src/overlays/ovl_1F_DungeonDash/1BE380.c.o
+$(S41FA_MULFIX_UNITS): export VR4300MUL := ON

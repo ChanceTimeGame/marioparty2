@@ -25,10 +25,12 @@ typedef struct DDTeam {
     /* 0x12 */ s16 unk12;         /* shadow model */
     /* 0x14 */ u16 unk14;         /* state */
     /* 0x16 */ u16 unk16;         /* obstacle ahead (func_80105464) */
-    /* 0x18 */ s16 unk18;         /* state timer */
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ char unk1E[0xA];
+    /* 0x18 */ s16 unk18;         /* set to 90/30 when a slam/stun ends (S4-1FA) */
+    /* 0x1A */ s16 unk1A;         /* state timer (MP1 unk18) */
+    /* 0x1C */ s16 unk1C;         /* pulls missed (MP1 unk1A) */
+    /* 0x1E */ s16 unk1E;         /* (rand8() & 7) + 4 on each state change (MP1 unk1C) */
+    /* 0x20 */ char unk20[4];
+    /* 0x24 */ f32 unk24;         /* sled y, read by the goal camera (S4-1FA) */
     /* 0x28 */ f32 unk28;         /* sled z: the members' mean */
     /* 0x2C */ char unk2C[8];
     /* 0x34 */ f32 unk34;         /* speed factor */
@@ -115,7 +117,7 @@ void func_801060DC_1C1C5C_DungeonDash(void);
 void func_801060F8_1C1C78_DungeonDash(omObjData* obj, DDTeam* team);
 DDTeam* func_80106118_1C1C98_DungeonDash(omObjData* obj);
 void func_80106144_1C1CC4_DungeonDash(omObjData* obj, s32 motion, f32 speed);
-s32 func_801061A0_1C1D20_DungeonDash(s16 arg0, s32 arg1);
+s32 func_801061A0_1C1D20_DungeonDash(s32 team, s32 arg1);
 void func_8010676C_1C22EC_DungeonDash(void);
 s32 func_80106810_1C2390_DungeonDash(s32 team);
 void func_801068E8_1C2468_DungeonDash(void);
@@ -144,7 +146,7 @@ void func_801077C8_1C3348_DungeonDash(omObjData* obj);
 void func_801078BC_1C343C_DungeonDash(omObjData* obj);
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj);
 void func_80108054_1C3BD4_DungeonDash(omObjData* obj);
-s32 func_80108308_1C3E88_DungeonDash(s32 arg0, f32 arg1);
+s16 func_80108308_1C3E88_DungeonDash(u16 team, f32 z); /* S4-1FA: u16 team, s16 result (callers mask and re-extend) */
 void func_801083B0_1C3F30_DungeonDash(s32 arg0);
 void func_80108574_1C40F4_DungeonDash(void);
 void func_80108A14_1C4594_DungeonDash(s32 arg0, f32 arg1);
@@ -157,5 +159,131 @@ s16 func_80109958_1C54D8_DungeonDash(void* arg0, void* arg1, s32 arg2);
 void func_8010A340_1C5EC0_DungeonDash(s16 arg0, s32* arg1, s16 arg2);
 s32 func_8010A430_1C5FB0_DungeonDash(s32 arg0, s32 arg1);
 s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
+
+/* S4-1FA */
+#include "game/hmfman.h"
+#include "game/data.h"
+#include "game/collision.h"
+#include "game/sprite.h"
+extern s32 D_8010B104_1C6C84_DungeonDash; /* sprite group; read as s16 (D_8010B106) */
+extern s32 D_8010B108_1C6C88_DungeonDash; /* sprite group; read as s16 (D_8010B10A) */
+extern s32 D_8010B128_1C6CA8_DungeonDash[2];
+typedef struct DDCharData {
+    /* 0x00 */ s16 unk_00; /* retail reads its low byte */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;
+    /* 0x08 */ s32 model;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10; /* model file */
+    /* 0x14 */ char unk_14[4];
+} DDCharData; /* size = 0x18 (main D_800CD438_CE038) */
+extern DDCharData D_800CD438_CE038[];
+s16 SprAnimRead(void*);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void SprAttrSet(s16 group, s16 member, s32 flag);
+void func_800824B4_830B4(s16 group, s16 member, s32, s32, s32, s32);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+u16 func_80018A30_19630(s32 file, s32 attr);
+s16 func_80027D3C_2893C(s16 linkMdlId);
+u16 func_80018A64_19664(s32 file, s32 attr);
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z); /* obj->trans */
+void func_80107350_1C2ED0_DungeonDash(void);
+
+s16 LoadFormFile(s32, s32);
+void func_80029EDC_2AADC(s16, s32);
+void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+extern s32 D_8010B148_1C6CC8_DungeonDash[4][4]; /* per player: [0] idle motion file, [1] win voice/motion file; D_8010B14C is [p][1] */
+
+/* .data (1C6260.data.s), S4-1FA's */
+extern s32 D_8010A6E0_1C6260_DungeonDash; /* game state (MP1 D_800FC000) */
+extern s32 D_8010A700_1C6280_DungeonDash; /* state timer (MP1 D_800FC008) */
+extern s32 D_8010A704_1C6284_DungeonDash; /* func_80106F80's result (MP1 D_800FC00C) */
+extern s32 D_8010A708_1C6288_DungeonDash; /* the seconds counter is shown */
+extern s32 D_8010A710_1C6290_DungeonDash; /* MP1 D_800FC014 */
+extern s32 D_8010A714_1C6294_DungeonDash; /* time left (9000) */
+extern s32 D_8010A718_1C6298_DungeonDash; /* START fade-out countdown; read as s16 (D_8010A71A) */
+extern s32 D_8010A71C_1C629C_DungeonDash; /* the result message is up */
+extern s32 D_8010B050_1C6BD0_DungeonDash; /* frame counter mod 3 (MP1 D_800FC300) */
+extern u16 D_801011FC_101DFC;
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+s32 PlaySound(s32);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+s32 func_80069538_6A138(void);
+void func_8006D4D0_6E0D0(s16); /* the seconds counter */
+void func_8006D518_6E118(void);
+void InitFadeOut(s32, s32);
+void func_800794A8_7A0A8(s32);
+void func_80079614_7A214(s16 time); /* music fade-out */
+void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
+
+/* the goal camera's start pose (D_8010A720, .data) */
+typedef struct DDCamPose {
+    /* 0x00 */ f32 zoom;
+    /* 0x04 */ f32 unk04;
+    /* 0x08 */ f32 unk08;
+    /* 0x0C */ f32 cx;
+    /* 0x10 */ f32 cy;
+    /* 0x14 */ f32 cz;
+    /* 0x18 */ f32 rx;
+    /* 0x1C */ f32 ry;
+    /* 0x20 */ f32 rz;
+} DDCamPose; /* size = 0x24 */
+extern DDCamPose D_8010A720_1C62A0_DungeonDash;
+extern s32 D_8010A6E4_1C6264_DungeonDash[6]; /* per character: func_80025384's last argument */
+extern u8 D_8010A744_1C62C4_DungeonDash; /* bit per team at the goal (a .data word, read by byte) */
+extern s32 D_8010B030_1C6BB0_DungeonDash[2]; /* team marker x offset, +-80 */
+extern s32 D_8010B038_1C6BB8_DungeonDash[2]; /* the pull sound; read as s16 (+2) */
+extern s32 D_8010B040_1C6BC0_DungeonDash[2]; /* the members' voices; read as s16 (D_8010B042, +6) */
+void SprAttrReset(s16 group, s16 member, s32 flag);
+void SprBankSet(s16 group, s16 member, s16 bank); /* u16 bank in main; retail passes an s16 */
+void func_80079848_7A448(s16 id); /* stop a sound */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+omObjData* func_800732B0_73EB0(u32 arg0);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+void SprPos3DSet(s16 group, s16 member, s16 camera, f32 x, f32 y, f32 z);
+HuSprite* func_80082550_83150(s16 group, s16 member);
+void SprPosSet(s16 group, s16 member, s16 x, s16 y);
+
+/* model data; the two sprite groups (s32 globals read by their low halves) */
+#define DD_MDL(m) D_800FC834_FD434[m]
+#define DD_SPR_A D_8010B106_1C6C86_DungeonDash
+#define DD_SPR_B D_8010B10A_1C6C8A_DungeonDash
+extern s16 D_8010B106_1C6C86_DungeonDash; /* low half of D_8010B104: retail 801041F0 reads it by this label */
+extern s16 D_8010B10A_1C6C8A_DungeonDash; /* low half of D_8010B108 */
+extern s16 D_8010B042_1C6BC2_DungeonDash; /* low half of D_8010B040[0]: read by this label */
+
+f32 fabsf(f32);
+/* An obstacle block (D_8010B2E4[D_8010A6FC], 0x24 each; MP1 DDObstacle 0x18). Only the fields
+   S4-1FA reads; the allocation and the rest belong to 1C2D40.c (S4-1FB). */
+typedef struct DDBlock {
+    /* 0x00 */ char unk00[4];
+    /* 0x04 */ s16 unk4;  /* phase: 0 rising, 1 falling, 2 down, 3 up */
+    /* 0x06 */ char unk06[0x16];
+    /* 0x1C */ f32 unk1C; /* height */
+    /* 0x20 */ f32 unk20; /* z */
+} DDBlock; /* size = 0x24 */
+extern s32 D_8010A6FC_1C627C_DungeonDash; /* obstacle count */
+extern DDBlock* D_8010B2E4_1C6E64_DungeonDash; /* the obstacles (heap) */
+
+u16 func_80018FF0_19BF0(omObjData* obj);
+s32 func_80019000_19C00(omObjData* obj);
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_800298A4_2A4A4(s16, s32, s32);
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+
+void func_80019378_19F78(omObjData* obj);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+
+extern s32 D_8010A748_1C62C8_DungeonDash; /* goal run-out: pulls done */
+extern s32 D_8010A74C_1C62CC_DungeonDash; /* goal run-out: step */
 
 #endif
