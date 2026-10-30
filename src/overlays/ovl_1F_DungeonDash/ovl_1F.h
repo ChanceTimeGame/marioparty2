@@ -279,4 +279,8 @@ void func_800298A4_2A4A4(s16, s32, s32);
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 
+void func_80019378_19F78(omObjData* obj);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cos */
+
 #endif

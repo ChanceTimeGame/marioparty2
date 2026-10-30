@@ -769,9 +769,190 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105464
 #endif
 
 __asm__(".section .rodata");
-const u32 D_8010AD38_1C68B8_DungeonDash[4] = { 0 };
+const Vec D_8010AD38_1C68B8_DungeonDash = { 0.0f, 0.0f, 0.0f };
 
+// register allocation only (obj and team swap s0/s1; masked 0, as MP1's twin)
+#ifdef NON_MATCHING
+/* A player's per-frame update: pull input (stick pushes and shakes), the knock-back hop after a
+   slam (state 11), squash-and-stretch and the end-of-game motions (MP1 func_800F8C34). */
+void func_80105618_1C1198_DungeonDash(omObjData* obj) {
+    DDTeam* team;
+    Vec pos; /* written, never read */
+    Vec p = D_8010AD38_1C68B8_DungeonDash;
+    Vec v = D_8010AD38_1C68B8_DungeonDash;
+    s16 stkX;
+    s16 stkY;
+    f32 x;
+    f32 y;
+    f32 z;
+    s32 m;
+    MgWork* work;
+    s8 port;
+    f32 f;
+    f32 t;
+    f32 a;
+    s32 sy;
+
+    stkX = 0;
+    stkY = 0;
+    m = 0;
+    work = obj->unk_50;
+    team = func_80106118_1C1C98_DungeonDash(obj);
+    if (team->obj[0] != obj) {
+        m = team->obj[1] == obj;
+    }
+    port = work->unk_57;
+    if (D_8010A6E0_1C6260_DungeonDash == 3) {
+        stkX = ContStkX[port];
+        stkY = ContStkY[port];
+        if (gPlayers[work->unk_59].flags & 1) {
+            func_80105E50_1C19D0_DungeonDash(obj, &stkX, &stkY);
+        }
+    } else {
+        stkX = 0;
+        stkY = 0;
+    }
+    func_80018FF0_19BF0(obj);
+    x = obj->trans.x;
+    pos.x = x;
+    y = obj->trans.y;
+    pos.y = y;
+    z = obj->trans.z;
+    pos.z = z;
+    switch (team->unk14) {
+        case 0:
+            break;
+        case 1:
+            if (stkX >= 30) {
+                goto push;
+            }
+            goto shake;
+        case 4:
+            if (stkX < -29) {
+                goto push;
+            }
+        shake:
+            sy = stkY;
+            if (sy < 0) {
+                sy = -sy;
+            }
+            if (sy >= 50) {
+                team->unk1C += 9;
+            }
+            break;
+        case 3:
+        case 6:
+            if (team->unk16 != 2 && D_8010A6E0_1C6260_DungeonDash == 3) {
+                z -= team->unk34 * 8.0;
+            }
+            if (work->unk_D0 != 0xFFFF) {
+                break;
+            }
+            goto push;
+        case 7:
+            if (team->unk1A == 10) {
+                if (m == 0) {
+                    func_800191D4_19DD4(obj, 8, x, y, z + 75.0, 0.0f, 0.0f);
+                }
+                break;
+            }
+            if (team->unk1A < 30) {
+                break;
+            }
+            func_800298A4_2A4A4(obj->model[8], 4, 4);
+            func_80106144_1C1CC4_DungeonDash(obj, 8, 2.0f);
+            goto push;
+        case 8:
+            if (work->unk_D0 != 0xFFFF) {
+                break;
+            }
+            func_80106144_1C1CC4_DungeonDash(obj, 0, 1.0f);
+            goto push;
+        case 9:
+            if (team->unk16 != 0) {
+                z -= 5.0;
+            }
+            obj->scale.y = 0.2f;
+            obj->scale.x = obj->scale.z = 1.6f;
+            break;
+        case 11:
+            if (team->unk1A == 0) {
+                work->unk_38 = 100.0f;
+            }
+            y += work->unk_38;
+            work->unk_38 = work->unk_38 - 18.0;
+            if (y < 0.0) {
+                y = 0.0f;
+                work->unk_38 = y;
+            }
+            t = 1.0 - (f32)team->unk1A / 120.0;
+            if (t > 1.0) {
+                t = 1.0f;
+            } else if (t < 0.1) {
+                t = 0.1f;
+            }
+            if (team->unk1A & 3) {
+                p.x = x;
+                p.y = y + 10.0;
+                p.z = z + 10.0;
+                if (y == 0.0) {
+                    a = (u8)(rand8() % 180) - 90;
+                    v.x = HuMathSin(a) * 100.0 * 0.09;
+                    v.y = func_800B7890_B8490(a) * 100.0 * 0.09;
+                    v.z = 0.0f;
+                }
+                func_80106B6C_1C26EC_DungeonDash(&p, &v, t * 5.0, 8);
+            }
+            break;
+        case 10:
+            if (team->unk1C < 11) {
+                f = team->unk1C;
+                obj->scale.y = f * 0.05f + 0.2;
+                obj->scale.z = obj->scale.x = 1.8 - f * 0.08f;
+            } else if (team->unk1C < 21) {
+                f = team->unk1C - 10;
+                obj->scale.y = 0.9 - f * 0.05f;
+                obj->scale.z = obj->scale.x = f * 0.05f + 1.0;
+            } else if (team->unk1C < 31) {
+                f = team->unk1C - 20;
+                obj->scale.y = f * 0.05f + 0.7;
+                obj->scale.z = obj->scale.x = 1.4 - f * 0.04f;
+            } else if (team->unk1C < 39) {
+                f = team->unk1C - 30;
+                obj->scale.y = 1.3 - f * 0.1f;
+                obj->scale.z = obj->scale.x = f * 0.02f + 1.0;
+            } else if (team->unk1C < 47) {
+                f = team->unk1C - 38;
+                obj->scale.y = f * 0.1f + 0.3;
+                obj->scale.z = obj->scale.x = 1.1 - f * 0.01f;
+            } else {
+                func_80106144_1C1CC4_DungeonDash(obj, 0, 1.0f);
+            push:
+                team->unk8 |= 1 << m;
+            }
+            break;
+        case 14:
+            if (D_8010A6E0_1C6260_DungeonDash == 6) {
+                func_800298A4_2A4A4(obj->model[0], 4, 4);
+                break;
+            }
+            if (D_8010B144_1C6CC4_DungeonDash != 0) {
+                func_80106144_1C1CC4_DungeonDash(obj, 4, 1.0f);
+                if (D_8010B148_1C6CC8_DungeonDash[work->unk_59][1] != -1) {
+                    func_800732B0_73EB0(D_8010B148_1C6CC8_DungeonDash[work->unk_59][1]);
+                    D_8010B148_1C6CC8_DungeonDash[work->unk_59][1] = -1;
+                }
+            }
+            break;
+    }
+    obj->trans.x = x;
+    obj->trans.y = y;
+    obj->trans.z = z;
+    func_80019378_19F78(obj);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105618_1C1198_DungeonDash);
+#endif
 
 /* CPU input: push the stick when the partner does (human) or at random (CPU partner). */
 void func_80105E50_1C19D0_DungeonDash(omObjData* obj, s16* stkX, s16* stkY) {
