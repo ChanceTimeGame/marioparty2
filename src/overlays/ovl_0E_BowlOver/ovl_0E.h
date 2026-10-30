@@ -46,12 +46,52 @@ typedef struct BOBallWork {
     /* 0x80 */ char unk_80[0x2C];
 } BOBallWork; /* size = 0xAC */
 
-/* Per-pin state (D_80109E50_1441E0[6], indexed by the pin object's work[3]; MP1 BowlPin 0xA4). */
+/* Per-pin state (D_80109E50_1441E0_BowlOver[6], indexed by the pin object's work[3]; MP1 BowlPin
+   0xA4, without its coins). */
 typedef struct BOPin {
-    /* 0x00 */ char unk_00[0x17];
+    /* 0x00 */ f32 unk_00; /* tilt */
+    /* 0x04 */ f32 unk_04; /* fall direction */
+    /* 0x08 */ f32 unk_08; /* tilt target */
+    /* 0x0C */ f32 unk_0C;
+    /* 0x10 */ f32 unk_10;
+    /* 0x14 */ s16 unk_14;
+    /* 0x16 */ u8 unk_16;
     /* 0x17 */ u8 unk_17; /* knocked down */
-    /* 0x18 */ char unk_18[4];
+    /* 0x18 */ u8 unk_18; /* fall finished */
+    /* 0x19 */ char unk_19[3];
 } BOPin; /* size = 0x1C */
+
+/* A pin player's jump and stick state (D_80109F48_1442D8_BowlOver[6]; MP1 BowlJump, same layout). */
+typedef struct BOJump {
+    /* 0x00 */ f32 unk_00; /* y speed */
+    /* 0x04 */ f32 unk_04; /* spin speed */
+    /* 0x08 */ f32 unk_08; /* facing */
+    /* 0x0C */ f32 unk_0C; /* CPU: last x */
+    /* 0x10 */ f32 unk_10; /* CPU: last z */
+    /* 0x14 */ s16 unk_14; /* jumping */
+    /* 0x16 */ s16 unk_16; /* spin frames */
+    /* 0x18 */ s16 unk_18; /* landed */
+    /* 0x1A */ s16 unk_1A; /* spinning */
+    /* 0x1C */ s16 unk_1C; /* spin direction */
+    /* 0x1E */ char unk_1E[2];
+    /* 0x20 */ u8 unk_20;    /* stick history slot */
+    /* 0x21 */ s8 unk_21[8]; /* stick x history */
+    /* 0x29 */ s8 unk_29[8]; /* stick y history */
+    /* 0x31 */ s8 unk_31;    /* CPU: jump now */
+    /* 0x32 */ char unk_32;
+    /* 0x33 */ s8 unk_33; /* stick x */
+    /* 0x34 */ s8 unk_34; /* stick y */
+    /* 0x35 */ u8 unk_35; /* CPU mode */
+    /* 0x36 */ char unk_36[2];
+} BOJump; /* size = 0x38 */
+
+/* Alley and pin-deck collision work (0xB4; main's ground work, collision.h GroundWork). */
+typedef struct BOGround {
+    /* 0x00 */ char unk_00[3];
+    /* 0x03 */ u8 unk_03;
+    /* 0x04 */ u8 unk_04; /* ground id */
+    /* 0x05 */ char unk_05[0xAF];
+} BOGround; /* size = 0xB4 */
 
 /* Per-character data (main D_800CD438_CE038, 0x18 bytes each). */
 typedef struct BOCharData {
@@ -138,8 +178,13 @@ extern u32 D_80109A3C_143DCC_BowlOver;   /* random seed */
    --------------------------------------------------------------------------------------------- */
 
 extern u8 D_80109A40_143DD0_BowlOver; /* alley (0-2; main's D_800FA656) */
-extern u8 D_80109A41_143DD1_BowlOver; /* shells left */
-extern s16 D_80109A50_143DE0_BowlOver;
+extern s8 D_80109A41_143DD1_BowlOver; /* shells left */
+extern s8 D_80109A42_143DD2_BowlOver; /* shells left last frame */
+extern s8 D_80109A43_143DD3_BowlOver; /* shell icons faded so far */
+extern s8 D_80109A44_143DD4_BowlOver[12]; /* shell icon fading ([0..1] used) */
+extern s16 D_80109A50_143DE0_BowlOver[2]; /* pins knocked (sound pitch) */
+extern f32 D_80109AA4_143E34_BowlOver[6]; /* [0]: pin deck back (z) */
+extern f32 D_80109ABC_143E4C_BowlOver;    /* pin deck front (z) */
 
 /* ---------------------------------------------------------------------------------------------
    Bss (asm)
@@ -151,8 +196,11 @@ extern u16 D_80109E18_1441A8_BowlOver;
 extern s16 D_80109E1A_1441AA_BowlOver;
 extern f32 D_80109E1C_1441AC_BowlOver; /* CPU aim offset by difficulty */
 extern s16 D_80109E20_1441B0_BowlOver[]; /* rolling sound handles */
+extern s16 D_80109E30_1441C0_BowlOver[8]; /* shell icon alpha */
 extern BOPin D_80109E50_1441E0_BowlOver[6];
 extern s16 D_80109EF8_144288_BowlOver[40];
+extern BOJump D_80109F48_1442D8_BowlOver[6];
+extern u16 D_8010A098_144428_BowlOver[2]; /* shell icon sprites */
 extern Vec3f D_8010A09C_14442C_BowlOver; /* bowler start position */
 extern omObjData* D_8010A0A8_144438_BowlOver; /* the shell */
 extern s16 D_8010A0AC_14443C_BowlOver;
@@ -240,6 +288,10 @@ void func_8006D4D0_6E0D0(s16);
 void func_8006D518_6E118(void);
 s32 PlaySound(s32);
 u16 func_80018A64_19664(s32 arg0, s32 arg1);
+u16 func_80018A30_19630(s32 arg0, s32 arg1); /* model from a file */
+void func_8001AA08_1B608(u16 spriteId, s16 arg1, s16 arg2, s16 arg3); /* sprite fade */
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1); /* hit box */
+f32 sqrtf(f32);
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 f32 HuMathSin(f32);
@@ -292,7 +344,7 @@ u32 func_80106F60_1412F0_BowlOver(void);
    Overlay functions (141320.c; inferred from registers and MP1 142EA0.c: check them)
    --------------------------------------------------------------------------------------------- */
 
-void func_80106F90_141320_BowlOver(void);
+void func_80106F90_141320_BowlOver(omObjData* obj);
 void func_801070DC_14146C_BowlOver(omObjData* obj);
 void func_801072F0_141680_BowlOver(omObjData* obj);
 void func_80107390_141720_BowlOver(void);
