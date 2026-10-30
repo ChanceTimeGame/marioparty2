@@ -1,5 +1,44 @@
 #include "ovl_38.h"
 
+/* .data (0x27F2A0-0x27F2F0, 80107770-801077C0); the rodata strings it points at are defined below. */
+s8 D_80107770_27F2A0_QuicksandCache = 0;
+s8 D_80107771_27F2A1_QuicksandCache = 0;
+s8 D_80107772_27F2A2_QuicksandCache = 0;
+s8 D_80107773_27F2A3_QuicksandCache = 1;
+s8 D_80107774_27F2A4_QuicksandCache = -1;
+s8 D_80107775_27F2A5_QuicksandCache = 0;
+s8 D_80107776_27F2A6_QuicksandCache = 0;
+s8 D_80107777_27F2A7_QuicksandCache = 0;
+u32 D_80107778_27F2A8_QuicksandCache = 0x3A1;
+s8 D_8010777C_27F2AC_QuicksandCache = 0;
+s8 D_8010777D_27F2AD_QuicksandCache = 0;
+s8 D_8010777E_27F2AE_QuicksandCache = 0;
+s8 D_8010777F_27F2AF_QuicksandCache = 0;
+s8 D_80107780_27F2B0_QuicksandCache = 0;
+s8 D_80107781_27F2B1_QuicksandCache = 0;
+s8 D_80107782_27F2B2_QuicksandCache = 0;
+s8 D_80107783_27F2B3_QuicksandCache = 0;
+s32 D_80107784_27F2B4_QuicksandCache = 0;
+u32 D_80107788_27F2B8_QuicksandCache = 0;
+u32 D_8010778C_27F2BC_QuicksandCache = 0;
+char* D_80107790_27F2C0_QuicksandCache[6] = {
+    (char*)D_801078C0_27F3F0_QuicksandCache, (char*)D_801078AC_27F3DC_QuicksandCache,
+    (char*)D_8010789C_27F3CC_QuicksandCache, (char*)D_8010788C_27F3BC_QuicksandCache,
+    (char*)D_80107878_27F3A8_QuicksandCache, (char*)D_80107860_27F390_QuicksandCache,
+};
+char* D_801077A8_27F2D8_QuicksandCache = (char*)D_801078C8_27F3F8_QuicksandCache;
+s8 D_801077AC_27F2DC_QuicksandCache = 0;
+s8 D_801077AD_27F2DD_QuicksandCache = 0;
+s8 D_801077AE_27F2DE_QuicksandCache = 0;
+s8 D_801077AF_27F2DF_QuicksandCache = 0;
+s16 D_801077B0_27F2E0_QuicksandCache = 0;
+s8 D_801077B2_27F2E2_QuicksandCache = 0;
+s8 D_801077B3_27F2E3_QuicksandCache = 0;
+s16 D_801077B4_27F2E4_QuicksandCache = 0;
+s16 D_801077B6_27F2E6_QuicksandCache = 0;
+s32 D_801077B8_27F2E8_QuicksandCache = 0;
+s32 D_801077BC_27F2EC_QuicksandCache = 0;
+
 __asm__(".section .rodata");
 const char D_80107800_27F330_QuicksandCache[16] = "\202r\202s\202`\202q\202s";
 

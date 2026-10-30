@@ -225,6 +225,7 @@ extern s8 D_80107771_27F2A1_QuicksandCache;
 extern s8 D_80107772_27F2A2_QuicksandCache;
 extern s8 D_80107773_27F2A3_QuicksandCache;
 extern s8 D_80107774_27F2A4_QuicksandCache;
+extern s8 D_80107775_27F2A5_QuicksandCache;
 extern s8 D_80107776_27F2A6_QuicksandCache;
 extern s8 D_80107777_27F2A7_QuicksandCache;
 extern u32 D_80107778_27F2A8_QuicksandCache;
@@ -233,6 +234,9 @@ extern s8 D_8010777D_27F2AD_QuicksandCache;
 extern s8 D_8010777E_27F2AE_QuicksandCache;
 extern s8 D_8010777F_27F2AF_QuicksandCache;
 extern s8 D_80107780_27F2B0_QuicksandCache;
+extern s8 D_80107781_27F2B1_QuicksandCache;
+extern s8 D_80107782_27F2B2_QuicksandCache;
+extern s8 D_80107783_27F2B3_QuicksandCache;
 extern s32 D_80107784_27F2B4_QuicksandCache;
 extern u32 D_80107788_27F2B8_QuicksandCache;
 extern u32 D_8010778C_27F2BC_QuicksandCache;
@@ -255,6 +259,10 @@ extern s16 D_801077B0_27F2E0_QuicksandCache;
 extern s8 D_801077B2_27F2E2_QuicksandCache;
 extern s16 D_801077B4_27F2E4_QuicksandCache;
 extern s32 D_801077B8_27F2E8_QuicksandCache;
+extern s32 D_801077BC_27F2EC_QuicksandCache;
+extern const char D_80107860_27F390_QuicksandCache[], D_80107878_27F3A8_QuicksandCache[], D_8010788C_27F3BC_QuicksandCache[],
+    D_8010789C_27F3CC_QuicksandCache[], D_801078AC_27F3DC_QuicksandCache[], D_801078C0_27F3F0_QuicksandCache[],
+    D_801078C8_27F3F8_QuicksandCache[];
 /* .data, 27D810.c */
 extern u8 D_801077C0_27F2F0_QuicksandCache;
 extern u32 D_801077C4_27F2F4_QuicksandCache;
