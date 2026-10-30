@@ -342,3 +342,8 @@ D_80106AE3_1B8C33_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x3;
    jump table of func_801040B0) */
 D_801077B8_1863D8_Archerival = D_80107878_186498_Archerival - 0xC0;
 D_8010762B_18624B_Archerival = D_8010762A_18624A_Archerival + 0x1;
+D_80106E74_210DC4_TotemPolePound = D_80106E70_210DC0_TotemPolePound + 0x4;
+D_80106E78_210DC8_TotemPolePound = D_80106E70_210DC0_TotemPolePound + 0x8;
+D_80106EC8_210E18_TotemPolePound = D_80106EC4_210E14_TotemPolePound + 0x4;
+D_80106EF8_210E48_TotemPolePound = D_80106EF4_210E44_TotemPolePound + 0x4;
+D_80106F28_210E78_TotemPolePound = D_80106F24_210E74_TotemPolePound + 0x4;
