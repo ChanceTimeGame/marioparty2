@@ -92,7 +92,13 @@ extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern u8 D_800FA656;          /* minigame variant: the shape */
 extern u16 D_801011FC_101DFC;  /* nonzero once the minigame is told to end */
-extern void* D_800F93FC_F9FFC; /* 1AE60.c: EspriteSlot* */
+/* An esprite slot (D_800F93FC_F9FFC[], 0x24 bytes; 1AE60.c's EspriteSlot). */
+typedef struct CCEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04; /* sprite group */
+    /* 0x06 */ char unk_06[0x1E];
+} CCEspSlot;
+extern CCEspSlot* D_800F93FC_F9FFC;
 
 /* ---------------------------------------------------------------------------------------------
    Structs
@@ -256,15 +262,16 @@ extern s32 D_80109970_1E8DC0_CrazyCutters[4]; /* per player flags, func_80106D28
 /* S4-23B: per player, the falling piece's shadow model ([D_800FD4E8]); retail stores the model
    as a word and reads it as s16 at +2 (label D_80109982). */
 extern CCShadow D_80109980_1E8DD0_CrazyCutters[4];
-extern s32 D_801099B0_1E8E00_CrazyCutters;
-extern s32 D_801099B4_1E8E04_CrazyCutters;
-extern s32 D_801099B8_1E8E08_CrazyCutters;
-extern s32 D_801099BC_1E8E0C_CrazyCutters;
-extern s32 D_801099C0_1E8E10_CrazyCutters;
-extern s32 D_801099C4_1E8E14_CrazyCutters;
-extern s32 D_801099C8_1E8E18_CrazyCutters; /* [D_800FD530] */
-extern s32 D_801099CC_1E8E1C_CrazyCutters; /* [D_800FD534] */
-extern s32 D_801099D0_1E8E20_CrazyCutters; /* [D_800FD538] */
+/* S4-23B: the cut-out and ring pixel masks (func_80108870 images) with their sizes */
+extern s8* D_801099B0_1E8E00_CrazyCutters; /* cut-out mask [D_800FD518] */
+extern s8* D_801099B4_1E8E04_CrazyCutters; /* second ring mask [D_800FD51C] */
+extern s32 D_801099B8_1E8E08_CrazyCutters; /* ... width [D_800FD520] */
+extern s32 D_801099BC_1E8E0C_CrazyCutters; /* ... height [D_800FD524] */
+extern s32 D_801099C0_1E8E10_CrazyCutters; /* second mask width [D_800FD528] */
+extern s32 D_801099C4_1E8E14_CrazyCutters; /* ... height [D_800FD52C] */
+extern s32 D_801099C8_1E8E18_CrazyCutters; /* sprite of D_801099B0 [D_800FD530] */
+extern s32 D_801099CC_1E8E1C_CrazyCutters; /* piece model file [D_800FD534] */
+extern s32 D_801099D0_1E8E20_CrazyCutters; /* sprite of D_801099B4 [D_800FD538] */
 extern s32 D_801099D8_1E8E28_CrazyCutters[4];
 extern f32 D_801099E8_1E8E38_CrazyCutters; /* cutter speed [D_800FD53C] */
 extern s16 D_801099EC_1E8E3C_CrazyCutters;

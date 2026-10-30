@@ -1483,11 +1483,69 @@ f32 func_80107204_1E6654_CrazyCutters(Vec* from, Vec* to, s32 mode) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107204_1E6654_CrazyCutters);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107530_1E6980_CrazyCutters);
+/* Cuts the piece out of the player's shape sprite: the whole mask at once for the shapes 9-11,
+   else pixel by pixel. [FB2B8] */
+void func_80107530_1E6980_CrazyCutters(s32 sprite, s32 player) {
+    s32 x;
+    s32 y;
+    s32 px;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801076B8_1E6B08_CrazyCutters);
+    func_801076B8_1E6B08_CrazyCutters(sprite);
+    if ((sprite < 9 || sprite > 10) & (sprite != 11)) {
+        func_80108A8C_1E7EDC_CrazyCutters(func_80107D74_1E71C4_CrazyCutters(D_801095B0_1E8A00_CrazyCutters[player]), 0, 0, 0,
+                                          D_801099B8_1E8E08_CrazyCutters, D_801099BC_1E8E0C_CrazyCutters, D_801099B0_1E8E00_CrazyCutters);
+        return;
+    }
+    for (y = 0; y < 120; y++) {
+        for (x = 0; x < 160; x++) {
+            px = (s32)(f32)x;
+            if ((D_801099B0_1E8E00_CrazyCutters + (s32)(f32)y * D_801099B8_1E8E08_CrazyCutters)[px] != 0) {
+                func_80108A8C_1E7EDC_CrazyCutters(func_80107D74_1E71C4_CrazyCutters(D_801095B0_1E8A00_CrazyCutters[player]), 0, x, y, 1, 1,
+                                                  D_801090BC_1E850C_CrazyCutters);
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801077B0_1E6C00_CrazyCutters);
+/* Loads sprite's pixel mask into D_801099B0 (once per sprite). [FB450] */
+void func_801076B8_1E6B08_CrazyCutters(s32 sprite) {
+    s8 spr;
+    s8 grp;
+
+    if (sprite != D_801099C8_1E8E18_CrazyCutters) {
+        D_801099C8_1E8E18_CrazyCutters = sprite;
+        spr = func_8001A2F8_1AEF8(sprite | 0x330000);
+        grp = SprCreate(1, 0);
+        func_80082488_83088(grp, 0, 0xFF);
+        SprAttrReset(grp, 0, 0xFFFF);
+        SprAttrSet(grp, 0, 0x9000);
+        SprScaleSet(grp, 0, 1.0f, 1.0f);
+        func_8008225C_82E5C(grp, 0, 1);
+        SprAnimSet(grp, 0, spr, 0);
+        D_801099B0_1E8E00_CrazyCutters = (s8*)func_80108870_1E7CC0_CrazyCutters(grp, 0, &D_801099B8_1E8E08_CrazyCutters, &D_801099BC_1E8E0C_CrazyCutters);
+        SprKill(grp);
+    }
+}
+
+/* As func_801076B8_1E6B08_CrazyCutters, into D_801099B4. [FB548] */
+void func_801077B0_1E6C00_CrazyCutters(s32 sprite) {
+    s8 spr;
+    s8 grp;
+
+    if (sprite != D_801099D0_1E8E20_CrazyCutters) {
+        D_801099D0_1E8E20_CrazyCutters = sprite;
+        spr = func_8001A2F8_1AEF8(sprite | 0x330000);
+        grp = SprCreate(1, 0);
+        func_80082488_83088(grp, 0, 0xFF);
+        SprAttrReset(grp, 0, 0xFFFF);
+        SprAttrSet(grp, 0, 0x9000);
+        SprScaleSet(grp, 0, 1.0f, 1.0f);
+        func_8008225C_82E5C(grp, 0, 1);
+        SprAnimSet(grp, 0, spr, 0);
+        D_801099B4_1E8E04_CrazyCutters = (s8*)func_80108870_1E7CC0_CrazyCutters(grp, 0, &D_801099C0_1E8E10_CrazyCutters, &D_801099C4_1E8E14_CrazyCutters);
+        SprKill(grp);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801078A8_1E6CF8_CrazyCutters);
 
