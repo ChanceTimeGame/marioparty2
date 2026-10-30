@@ -120,7 +120,7 @@ void func_8010676C_1C22EC_DungeonDash(void);
 s32 func_80106810_1C2390_DungeonDash(s32 team);
 void func_801068E8_1C2468_DungeonDash(void);
 void func_80106A28_1C25A8_DungeonDash(void);
-void func_80106B6C_1C26EC_DungeonDash(void* arg0, void* arg1, f32 arg2, s16 arg3);
+void func_80106B6C_1C26EC_DungeonDash(Vec* pos, Vec* vel, f32 scale, s16 time);
 void func_80106C3C_1C27BC_DungeonDash(s32 cam, f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz);
 void func_80106D2C_1C28AC_DungeonDash(s32 cam, f32 zoom, f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz,
                                       u16 frames);
@@ -157,5 +157,52 @@ s16 func_80109958_1C54D8_DungeonDash(void* arg0, void* arg1, s32 arg2);
 void func_8010A340_1C5EC0_DungeonDash(s16 arg0, s32* arg1, s16 arg2);
 s32 func_8010A430_1C5FB0_DungeonDash(s32 arg0, s32 arg1);
 s32 func_8010A4DC_1C605C_DungeonDash(s32 arg0, s32 arg1, s32* arg2, s32 arg3);
+
+/* S4-1FB */
+#include "game/data.h"
+f64 fabs(f64); /* GCC builtin (abs.d) */
+/* A dust puff (D_8010B13C, 10 of them, func_80027154_27D54(0x168)). No pointers. */
+typedef struct DDFx {
+    /* 0x00 */ s16 unk0; /* active */
+    /* 0x02 */ s16 unk2; /* sprite model */
+    /* 0x04 */ s16 unk4; /* frames left */
+    /* 0x06 */ s16 unk6; /* animation frame */
+    /* 0x08 */ f32 unk8; /* scale */
+    /* 0x0C */ Vec pos;
+    /* 0x18 */ Vec vel;
+} DDFx; /* size = 0x24 */
+
+/* A falling block (D_8010B2E0, stride 0x20). */
+typedef struct DDBlock {
+    /* 0x00 */ char unk0[0x10];
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ char unk14[8];
+    /* 0x1C */ f32 unk1C; /* z */
+} DDBlock; /* size = 0x20 */
+
+extern DDFx* D_8010B13C_1C6CBC_DungeonDash;
+extern s32 D_8010B140_1C6CC0_DungeonDash; /* sprite animation; read as s16 (D_8010B142) */
+extern DDBlock* D_8010B2E0_1C6E60_DungeonDash;
+/* Camera tweening (80106C3C .. 80106F80), per screen (MP1 D_800FC3D8 ..). */
+extern Vec3f D_8010B188_1C6D08_DungeonDash[4]; /* start CenterM */
+extern Vec3f D_8010B1B8_1C6D38_DungeonDash[4]; /* target CenterM */
+extern Vec3f D_8010B1E8_1C6D68_DungeonDash[4]; /* start CRotM */
+extern Vec3f D_8010B218_1C6D98_DungeonDash[4]; /* target CRotM */
+extern f32 D_8010B248_1C6DC8_DungeonDash[4];   /* start CZoomM */
+extern f32 D_8010B258_1C6DD8_DungeonDash[4];   /* target CZoomM */
+extern s16 D_8010B268_1C6DE8_DungeonDash[4];   /* frames left */
+extern s16 D_8010B270_1C6DF0_DungeonDash[8];   /* frames total */
+
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+extern Vec3f D_80102770_103370[]; /* CRotM */
+extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
+extern s16 D_8010A750_1C62D0_DungeonDash[]; /* .data */
+void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void* func_80027154_27D54(s32 size, s16 tag);
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+s16 SprAnimRead(void*);
+void* SprAnimGet(s16 animIdx);
 
 #endif
