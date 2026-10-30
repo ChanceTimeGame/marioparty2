@@ -171,6 +171,8 @@ void func_80029AFC_2A6FC(s16);
 void func_80029B80_2A780(s16 arg0, s16 arg1);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
+void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4); /* model motion blend */
+s32 func_80029E14_2AA14(s16 arg0); /* 2AA14.c: u8; retail callers re-extend the result */
 void func_80029E80_2AA80(s16, s32, s32);
 void func_80029EDC_2AADC(s16, s16);
 void func_8002BB4C_2C74C(s16 arg0, char* arg1, char* arg2);
