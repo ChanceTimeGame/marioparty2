@@ -1,5 +1,40 @@
 #include "ovl_1D.h"
 
+/* .data (0x1B8C10-0x1B8D20, 80106AC0-80106BD0); the zero words after D_80106BB8 are the
+   object's 16-byte alignment. */
+
+f32 D_80106AC0_1B8C10_SpeedHockey[4] = { -34.0f, -70.0f, 34.0f, 70.0f };
+f32 D_80106AD0_1B8C20_SpeedHockey[4] = { 90.0f, 90.0f, -90.0f, -90.0f };
+SHCpuDef D_80106AE0_1B8C30_SpeedHockey[4] = {
+    { 25, 40, 15, 7 },
+    { 20, 50, 20, 5 },
+    { 15, 60, 25, 3 },
+    { 10, 60, 30, 1 },
+};
+s32 D_80106AF0_1B8C40_SpeedHockey[6] = { 0x002D001B, 0x002D001C, 0x002D001D, 0x002D001E, 0x002D001F, 0x002D0020 };
+SHMotDef D_80106B08_1B8C58_SpeedHockey[6][3] = {
+    { { 0x002D0009, 0xFFFF }, { 0x002D000A, 0x0 }, { 0x002D000B, 0xFFFF } },
+    { { 0x002D000C, 0xFFFF }, { 0x002D000D, 0x0 }, { 0x002D000E, 0xFFFF } },
+    { { 0x002D000F, 0xFFFF }, { 0x002D0010, 0x0 }, { 0x002D0011, 0xFFFF } },
+    { { 0x002D0012, 0xFFFF }, { 0x002D0013, 0x0 }, { 0x002D0014, 0xFFFF } },
+    { { 0x002D0015, 0xFFFF }, { 0x002D0016, 0x0 }, { 0x002D0017, 0xFFFF } },
+    { { 0x002D0018, 0xFFFF }, { 0x002D0019, 0x0 }, { 0x002D001A, 0xFFFF } },
+};
+void (*D_80106B98_1B8CE8_SpeedHockey[3])(omObjData*, SHPlayer*) = {
+    func_801048D4_1B6A24_SpeedHockey,
+    func_8010491C_1B6A6C_SpeedHockey,
+    func_80104A90_1B6BE0_SpeedHockey,
+};
+void (*D_80106BA4_1B8CF4_SpeedHockey[5])(omObjData*) = {
+    NULL, NULL, func_80104C00_1B6D50_SpeedHockey, func_80104C64_1B6DB4_SpeedHockey, NULL,
+};
+void (*D_80106BB8_1B8D08_SpeedHockey[4])(omObjData*) = {
+    func_801053F0_1B7540_SpeedHockey,
+    func_801054A8_1B75F8_SpeedHockey,
+    func_80105560_1B76B0_SpeedHockey,
+    func_80105618_1B7768_SpeedHockey,
+};
+
 #define SH_ABS(x) ((x) < 0.0f ? -(x) : (x))
 
 

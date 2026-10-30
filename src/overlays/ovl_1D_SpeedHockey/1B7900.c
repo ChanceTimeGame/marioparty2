@@ -1,5 +1,23 @@
 #include "ovl_1D.h"
 
+/* .data (0x1B8D20-0x1B8D90, 80106BD0-80106C40); the zero words after D_80106C24 are the
+   object's 16-byte alignment. */
+
+SHCamera D_80106BD0_1B8D20_SpeedHockey[1] = {
+    { { 0.0f, 3281.565f, 1296.135f }, { 0.0f, 19.395002f, -10.7485f }, 2.865f, { 640, 480, 640, 480 }, { 0, 0, 320, 240 }, 0x002D0003, -1 },
+};
+SHLight D_80106C04_1B8D54_SpeedHockey[2] = {
+    { { 255, 255, 255 }, { 100.0f, 100.0f, 50.0f } },
+    { { 128, 255, 128 }, { 100.0f, 100.0f, 50.0f } },
+};
+void (*D_80106C24_1B8D74_SpeedHockey[5])(omObjData*) = {
+    func_80105A18_1B7B68_SpeedHockey,
+    func_80105B00_1B7C50_SpeedHockey,
+    func_80105B6C_1B7CBC_SpeedHockey,
+    func_80105C28_1B7D78_SpeedHockey,
+    func_80105ED4_1B8024_SpeedHockey,
+};
+
 void func_801057B0_1B7900_SpeedHockey(void) {
     D_80106EB0_1B9000_SpeedHockey.state = 0;
     D_80106EB0_1B9000_SpeedHockey.next = 0;
