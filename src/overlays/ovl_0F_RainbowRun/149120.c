@@ -323,7 +323,196 @@ void func_801087F0_14A180_RainbowRun(omObjData* obj) {
     func_8010815C_149AEC_RainbowRun(obj, 2, D_8010ACC0_14C650_RainbowRun[3]);
 }
 
+/* A follower's update (MP1 func_800FCEDC_TightropeTreachery, rebuilt): flashes while stunned,
+   sways, turns towards the stick at most 10 degrees a frame, plays its result motion and voice
+   when the game ends, follows its path and throws its bomb with A. */
+// float register allocation: retail keeps the stick angle in f20 (its zero initialisation survives) and shares the last angle store (masked ~40, all registers)
+#ifdef NON_MATCHING
+void func_80108814_14A1A4_RainbowRun(omObjData* obj) {
+    RRTeamWork* t = RR_WORK(obj)->team;
+    f32 sx;
+    f32 sy;
+    f32 dir;
+    f32 mag;
+    f32 d;
+    f32 r;
+    f32 s;
+    f32 c;
+    s32 file;
+
+    dir = sy = sx = 0.0f;
+    t->noCtrl = 0;
+    if (t->flash != 0) {
+        if (t->flash & 1) {
+            func_800298A4_2A4A4(obj->model[0], 4, 0);
+            func_800298A4_2A4A4(obj->model[1], 4, 0);
+        } else {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            func_800298A4_2A4A4(obj->model[1], 4, 4);
+        }
+        t->flash--;
+        t->noCtrl = 1;
+    } else {
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+    }
+    if (t->swayDir == 1) {
+        if (++t->sway >= 9) {
+            t->swayDir = 0;
+        }
+    } else {
+        if (--t->sway < -8) {
+            t->swayDir = 1;
+        }
+    }
+    if (D_800F8FD0_F9BD0 != 1) {
+        t->noCtrl = 1;
+    }
+    if (D_8010A6F5_14C085_RainbowRun == 1) {
+        t->noCtrl = 1;
+    }
+    if (t->noCtrl == 0) {
+        sx = ContStkX[t->port];
+        sy = ContStkY[t->port];
+    }
+    if (D_8010A702_14C092_RainbowRun == 0) {
+        mag = sx * sx + sy * sy;
+        if (mag > 100.0f) {
+            dir = func_800B75A8_B81A8(sx, -sy);
+            if (t->angle < 0.0f) {
+                t->angle += 360.0f;
+            } else if (t->angle >= 360.0f) {
+                t->angle -= 360.0f;
+            }
+            if (dir < 0.0f) {
+                dir += 360.0f;
+            } else if (dir >= 360.0f) {
+                dir -= 360.0f;
+            }
+            if (t->angle <= dir) {
+                if (dir < t->angle + 180.0f) {
+                    d = dir - t->angle;
+                    if (d < 10.0f) {
+                        t->angle = d + t->angle;
+                    } else {
+                        t->angle = t->angle + 10.0f;
+                    }
+                } else {
+                    d = t->angle + 360.0f - dir;
+                    if (d < 10.0f) {
+                        t->angle = t->angle - d;
+                    } else {
+                        t->angle = t->angle - 10.0f;
+                    }
+                }
+            } else if (t->angle - 180.0f < dir) {
+                d = t->angle - dir;
+                if (d < 10.0f) {
+                    t->angle = t->angle - d;
+                } else {
+                    t->angle = t->angle - 10.0f;
+                }
+            } else {
+                d = dir + 360.0f - t->angle;
+                if (d < 10.0f) {
+                    t->angle = d + t->angle;
+                } else {
+                    t->angle = t->angle + 10.0f;
+                }
+            }
+        }
+        if (t->angle < 0.0f) {
+            t->angle += 360.0f;
+        } else if (t->angle >= 360.0f) {
+            t->angle -= 360.0f;
+        }
+    } else {
+        t->angle = 0.0f;
+    }
+    obj->rot.y = t->angle;
+    if (t->done != 1 && D_8010A6F2_14C082_RainbowRun == 1) {
+        switch (D_8010A6F6_14C086_RainbowRun) {
+        case 1:
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x51);
+            ContStkX[t->port] = 0;
+            ContStkY[t->port] = 0;
+            t->angle = 0.0f;
+            t->turn = 0.0f;
+            t->done = 1;
+            obj->rot.y = 0.0f;
+            break;
+        case 2:
+            func_80029B80_2A780(obj->model[0], obj->motion[2]);
+            func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x51);
+            ContStkX[t->port] = 0;
+            ContStkY[t->port] = 0;
+            t->angle = 0.0f;
+            t->turn = 0.0f;
+            t->done = 1;
+            obj->rot.y = 0.0f;
+            break;
+        case 3:
+            func_80029B80_2A780(obj->model[0], obj->motion[1]);
+            switch ((u32)D_800CD438_CE038[gPlayers[t->player].character].unk_04) {
+            case 0x20000:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x56);
+                break;
+            case 0x30000:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x57);
+                break;
+            case 0x40000:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x56);
+                break;
+            case 0x50000:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x59);
+                break;
+            case 0x60000:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x57);
+                break;
+            default:
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[t->player].character].unk_04 | 0x55);
+                break;
+            }
+            ContStkX[t->port] = 0;
+            ContStkY[t->port] = 0;
+            t->angle = 0.0f;
+            t->turn = 0.0f;
+            t->done = 1;
+            obj->rot.y = 0.0f;
+            break;
+        }
+    }
+    if (D_8010A702_14C092_RainbowRun == 1 || D_800FFFD8_100BD8[0]->trans.y <= -600.0f) {
+        ContStkX[t->port] = 0;
+        ContStkY[t->port] = 0;
+        t->angle = 0.0f;
+        t->turn = 0.0f;
+        obj->rot.y = 0.0f;
+    }
+    r = obj->rot.y + t->turn;
+    obj->rot.y = r - (s32)(r / 360.0f) * 360.0f;
+    if (obj->rot.y < 0.0f) {
+        obj->rot.y += 360.0f;
+    }
+    s = HuMathSin(obj->rot.y) * 30.0f;
+    c = func_800B7890_B8490(obj->rot.y) * 30.0f;
+    obj->trans.x = t->ofs.x + t->pos.x;
+    obj->trans.y = t->ofs.y + t->pos.y + t->sway / 2.0f;
+    obj->trans.z = t->ofs.z + t->pos.z;
+    func_80029714_2A314(obj->model[1], s + obj->trans.x, obj->trans.y - 80.0f + t->sway / 2.0f, c + obj->trans.z);
+    func_8002979C_2A39C(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_8002979C_2A39C(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    if (t->noCtrl == 0 && (ContBtnTrg[t->port] & 0x8000)) {
+        if (D_8010AC20_14C5B0_RainbowRun[t->idx].active == 0) {
+            D_8010AC20_14C5B0_RainbowRun[t->idx].active = 1;
+            func_80029B80_2A780(obj->model[0], obj->motion[3]);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80108814_14A1A4_RainbowRun);
+#endif
 
 /* A point on follower path `path` (D_8010A89C's four points, a closed spline): segment `seg`,
    `t` 0..240 into it. */
