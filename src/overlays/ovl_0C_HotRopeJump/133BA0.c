@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_0C.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80107FB0_133BA0_HotRopeJump);
 

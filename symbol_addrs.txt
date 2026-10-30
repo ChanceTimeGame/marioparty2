@@ -902,3 +902,5 @@ D_80114946_3D00A6_name_60 = 0x80114946; // type:u16 rom:0x3D00A6 segment:name_60
 D_801139A4_3BCB44_name_5F = 0x801139A4; // type:s32 size:0x28 rom:0x3BCB44 segment:name_5F
 // 60-A: 60's twin of 5F's D_801139A4 (splat labelled only its low bytes, 547/54B)
 D_80113544_3CECA4_name_60 = 0x80113544; // type:s32 size:0x28 rom:0x3CECA4 segment:name_60
+// S4-0CA: ovl_0C .data sprite positions (s32 [4][2], MP1 D_800FE48C), retail reads the low halves by their own labels
+D_8010C1D4_137DC4_HotRopeJump = 0x8010C1D4; // size:0x20 segment:HotRopeJump
