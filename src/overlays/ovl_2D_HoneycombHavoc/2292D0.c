@@ -1,5 +1,6 @@
 #include "ovl_2D.h"
 
+
 void func_80102800_2292D0_HoneycombHavoc(void) {
     Vec eye;
     Vec at;
@@ -617,16 +618,213 @@ u8 func_8010488C_22B35C_HoneycombHavoc(f32 angle, s32* quarter) {
     return (*quarter & 1) + 1;
 }
 
-__asm__(".section .rodata");
-const u32 D_80107558_22E028_HoneycombHavoc[26] = { 0x00000000, 0x00000100, 0x00010102, 0x03000000, 0x00010000, 0x01000100, 0x02030000, 0x00010001, 0x01000000, 0x02030300, 0x00010001, 0x01000000, 0x02030303, 0x00000000, 0x00000001, 0x01000002, 0x03000000, 0x00000100, 0x00000100, 0x02030000, 0x00010000, 0x00000001, 0x00020300, 0x00000100, 0x00000100, 0x00020303 };
 
-__asm__(".section .rodata");
-const u32 D_801075C0_22E090_HoneycombHavoc[18] = { 0x00000000, 0x00000101, 0x00020303, 0x00000100, 0x00000001, 0x00020303, 0x00000000, 0x01000000, 0x01000203, 0x00000000, 0x00010000, 0x00020303, 0x00000100, 0x00000000, 0x00020303, 0x00000000, 0x00010000, 0x00000203 };
 
-__asm__(".section .rodata");
-const u32 D_80107608_22E0D8_HoneycombHavoc[18] = { 0x00000000, 0x01000000, 0x02030000, 0x00000000, 0x01000002, 0x03000000, 0x01000000, 0x00000002, 0x03000000, 0x00000000, 0x01000203, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
 
+const s8 D_80107558_22E028_HoneycombHavoc[8][13] = {
+    { 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 2, 3 },
+    { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 2, 3 },
+    { 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 2, 3, 3 },
+    { 0, 0, 1, 0, 1, 1, 0, 0, 0, 2, 3, 3, 3 },
+    { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 2, 3 },
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3 },
+    { 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 2, 3 },
+    { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 3, 3 },
+};
+
+const s8 D_801075C0_22E090_HoneycombHavoc[6][12] = {
+    { 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 3, 3 },
+    { 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 3, 3 },
+    { 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3 },
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 3, 3 },
+    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3, 3 },
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 3 },
+};
+
+const s8 D_80107608_22E0D8_HoneycombHavoc[6][11] = {
+    { 0, 0, 0, 0, 1, 0, 0, 0, 2, 3, 0 },
+    { 0, 0, 0, 0, 0, 1, 0, 0, 2, 3, 0 },
+    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
+    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 3 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+};
+
+/* Picks a random branch layout (three pattern tables: 0 a random fruit, not the same as the one
+   below it; 1 a coin; 2 a honeycomb; 3 the end), reverses it, and creates the items. */
+#ifdef NON_MATCHING
+/* masked residue: loop 1 hoists the item list address instead of the pattern table, the reverse
+   loop computes cnt - (i + 1) differently, and mfhi lands in t2 instead of t3. Logic checked. */
+void func_80104924_22B3F4_HoneycombHavoc(void) {
+    s8 base[2];
+    u32 r;
+    s32 i;
+    s32 end;
+    s8 type;
+    s32 rnd;
+    u16 t;
+    omObjData* obj;
+    HCItem* work;
+    s16 model;
+
+    type = 0;
+    for (i = 0; i < 33; i++) {
+        D_80107710_22E1E0_HoneycombHavoc[i] = 0;
+    }
+    r = guRandom();
+    if (r & 1) {
+        base[0] = 0;
+        base[1] = 0;
+    } else {
+        base[0] = 4;
+        base[1] = 3;
+    }
+    r >>= 1;
+    i = 0;
+    D_80107770_22E240_HoneycombHavoc = 0;
+    end = 0;
+    for (;;) {
+        switch (D_80107558_22E028_HoneycombHavoc[(r & 3) + base[0]][i]) {
+        case 0:
+            rnd = guRandom() % 5;
+            type = rnd;
+            if (D_80107770_22E240_HoneycombHavoc > 0 &&
+                D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc - 1] == type) {
+                type = (s8)(rnd + 1 + guRandom() % 4) % 5;
+            }
+            break;
+        case 1:
+            type = 5;
+            break;
+        case 2:
+            type = 6;
+            break;
+        case 3:
+            end = 1;
+            break;
+        }
+        if (end == 1) {
+            break;
+        }
+        D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc] = type;
+        D_80107770_22E240_HoneycombHavoc++;
+        i++;
+    }
+    r >>= 2;
+    i = 0;
+    end = 0;
+    for (;;) {
+        switch (D_801075C0_22E090_HoneycombHavoc[(s8)(r % 3) + base[1]][i]) {
+        case 0:
+            rnd = guRandom() % 5;
+            type = rnd;
+            if (D_80107770_22E240_HoneycombHavoc > 0 &&
+                D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc - 1] == type) {
+                type = (s8)(rnd + 1 + guRandom() % 4) % 5;
+            }
+            break;
+        case 1:
+            type = 5;
+            break;
+        case 2:
+            type = 6;
+            break;
+        case 3:
+            end = 1;
+            break;
+        }
+        if (end == 1) {
+            break;
+        }
+        D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc] = type;
+        D_80107770_22E240_HoneycombHavoc++;
+        i++;
+    }
+    r >>= 3;
+    i = 0;
+    end = 0;
+    for (;;) {
+        switch (D_80107608_22E0D8_HoneycombHavoc[r & 3][i]) {
+        case 0:
+            rnd = guRandom() % 5;
+            type = rnd;
+            if (D_80107770_22E240_HoneycombHavoc > 0 &&
+                D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc - 1] == type) {
+                type = (s8)(rnd + 1 + guRandom() % 4) % 5;
+            }
+            break;
+        case 1:
+            type = 5;
+            break;
+        case 2:
+            type = 6;
+            break;
+        case 3:
+            end = 1;
+            break;
+        }
+        if (end == 1) {
+            break;
+        }
+        D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc] = type;
+        D_80107770_22E240_HoneycombHavoc++;
+        i++;
+    }
+    for (i = 0; i < D_80107770_22E240_HoneycombHavoc / 2; i++) {
+        t = D_80107710_22E1E0_HoneycombHavoc[i];
+        D_80107710_22E1E0_HoneycombHavoc[i] = D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc - (i + 1)];
+        D_80107710_22E1E0_HoneycombHavoc[D_80107770_22E240_HoneycombHavoc - (i + 1)] = t;
+    }
+    for (i = 0; i < 5; i++) {
+        D_80107758_22E228_HoneycombHavoc[i] = LoadFormFile(D_801073B0_22DE80_HoneycombHavoc[i] | 0x3D0000, 0x6B9);
+    }
+    D_80107758_22E228_HoneycombHavoc[5] = 0xFFFF;
+    for (i = 5; i < 7; i++) {
+        D_80107758_22E228_HoneycombHavoc[i + 1] = LoadFormFile(D_801073B0_22DE80_HoneycombHavoc[i] | 0x3D0000, 0x6B9);
+    }
+    for (i = 0; i < 8; i++) {
+        if (D_80107758_22E228_HoneycombHavoc[i] != 0xFFFF) {
+            func_800298A4_2A4A4(D_80107758_22E228_HoneycombHavoc[i], 4, 4);
+        }
+    }
+    for (i = 0; i < D_80107770_22E240_HoneycombHavoc; i++) {
+        obj = omAddObj(0x1E, 1, 0, 1, func_80105230_22BD00_HoneycombHavoc);
+        obj->unk_50 = work = func_80027154_27D54(sizeof(HCItem), 0x7918);
+        work->type = D_80107710_22E1E0_HoneycombHavoc[i];
+        work->slot = i - (D_80107770_22E240_HoneycombHavoc - 33);
+        obj->work[0] = 0;
+        if (D_80107758_22E228_HoneycombHavoc[D_80107710_22E1E0_HoneycombHavoc[i]] != 0xFFFF) {
+            model = func_80027D3C_2893C(D_80107758_22E228_HoneycombHavoc[D_80107710_22E1E0_HoneycombHavoc[i]]);
+        } else {
+            model = D_800F86D8_F92D8[func_80018D64_19964(0xE, 0x289, 8)].unk00;
+            HmfModelObjAttrSet(model, 0x70000000, 0x70000000);
+        }
+        obj->model[0] = model;
+        if (D_80107758_22E228_HoneycombHavoc[D_80107710_22E1E0_HoneycombHavoc[i]] == 0xFFFF) {
+            obj->scale.x = obj->scale.y = obj->scale.z = 2.5f;
+            omSetTra(obj, D_801073C0_22DE90_HoneycombHavoc[i + 33 - D_80107770_22E240_HoneycombHavoc][0],
+                     D_801073C0_22DE90_HoneycombHavoc[i + 33 - D_80107770_22E240_HoneycombHavoc][1] - 40.0f, -8.0f);
+        } else {
+            omSetTra(obj, D_801073C0_22DE90_HoneycombHavoc[i + 33 - D_80107770_22E240_HoneycombHavoc][0],
+                     D_801073C0_22DE90_HoneycombHavoc[i + 33 - D_80107770_22E240_HoneycombHavoc][1], -8.0f);
+        }
+        if (D_80107710_22E1E0_HoneycombHavoc[i] == 6) {
+            obj->scale.x = obj->scale.y = obj->scale.z = 1.2f;
+        }
+        func_800298A4_2A4A4(model, 4, 0);
+        if (D_80107710_22E1E0_HoneycombHavoc[i] == 7) {
+            work->sparkleMdl = LoadFormFile(0x3D000D, 0x6B9);
+            func_80029E80_2AA80(work->sparkleMdl, 2, 2);
+            func_80029E80_2AA80(obj->model[0], 2, 2);
+            func_80029714_2A314(work->sparkleMdl, obj->trans.x, obj->trans.y, obj->trans.z);
+        }
+        obj->func_ptr = func_80105230_22BD00_HoneycombHavoc;
+    }
+    D_801076B0_22E180_HoneycombHavoc = D_80107770_22E240_HoneycombHavoc - 1;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80104924_22B3F4_HoneycombHavoc);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80105230_22BD00_HoneycombHavoc);
 

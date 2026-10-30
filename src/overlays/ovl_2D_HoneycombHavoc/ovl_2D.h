@@ -114,7 +114,7 @@ typedef struct HCPlayer {
 } HCPlayer; /* size = 0x24 */
 
 /* An item on the branch (func_80104924, 0x2C bytes). type: 0-4 fruit, 5 coin, 6 honeycomb,
-   7 fruit with a sparkle trail. */
+   7 fruit with a sparkle trail. A coin is a sprite model (0x289 file 0xE). */
 typedef struct HCItem {
     /* 0x00 */ u16 type;
     /* 0x02 */ u16 slot; /* position on the branch (D_801073C0) */
@@ -178,7 +178,7 @@ extern f32 D_80107370_22DE40_HoneycombHavoc[6]; /* per character: reach */
 extern f32 D_80107388_22DE58_HoneycombHavoc[4]; /* per slot: queue x */
 extern f32 D_80107398_22DE68_HoneycombHavoc[4]; /* per slot: stop x */
 extern u16 D_801073A8_22DE78_HoneycombHavoc[4]; /* slot taken */
-extern s16 D_801073B0_22DE80_HoneycombHavoc[8]; /* item model file per type */
+extern u16 D_801073B0_22DE80_HoneycombHavoc[8]; /* item model file per type */
 extern f32 D_801073C0_22DE90_HoneycombHavoc[33][2]; /* branch positions (x, y) */
 extern u32 D_801074C8_22DF98_HoneycombHavoc;
 extern u32 D_801074CC_22DF9C_HoneycombHavoc;
@@ -215,8 +215,8 @@ extern omObjData* D_801076FC_22E1CC_HoneycombHavoc; /* intro */
 extern omObjData* D_80107700_22E1D0_HoneycombHavoc; /* ending */
 extern omObjData* D_80107704_22E1D4_HoneycombHavoc; /* coin sprite */
 extern s16 D_80107708_22E1D8_HoneycombHavoc; /* coin sprite slot */
-extern s16 D_80107710_22E1E0_HoneycombHavoc[36]; /* item types, bottom first after the reverse */
-extern s16 D_80107758_22E228_HoneycombHavoc[8]; /* item model per type, -1 honeycomb (sprite) */
+extern u16 D_80107710_22E1E0_HoneycombHavoc[36]; /* item types, bottom first after the reverse */
+extern u16 D_80107758_22E228_HoneycombHavoc[8]; /* item model per type, 0xFFFF for the coin (a sprite) */
 extern s8 D_80107770_22E240_HoneycombHavoc; /* item count */
 
 /* ---- functions ---- */
