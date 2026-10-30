@@ -75,7 +75,7 @@ typedef struct SHPlayer {
     /* 0x04 */ s16 team;     /* 0 or 1 */
     /* 0x06 */ s16 state;    /* result: 0 wait, 1 win/lose motion, 2 done */
     /* 0x08 */ char unk08[2];
-    /* 0x0A */ s16 cpuState; /* D_80106B98 index */
+    /* 0x0A */ u16 cpuState; /* D_80106B98 index */
     /* 0x0C */ s16 cpuTimer;
     /* 0x0E */ s16 cpuLevel; /* gPlayers[].cpu_difficulty */
     /* 0x10 */ f32 cpuTarget; /* z the CPU paddle heads for */
@@ -168,7 +168,7 @@ extern f32 D_80106AD0_1B8C20_SpeedHockey[4]; /* rot.y per paddle slot */
 extern SHCpuDef D_80106AE0_1B8C30_SpeedHockey[4];
 extern s32 D_80106AF0_1B8C40_SpeedHockey[6];        /* model per character */
 extern SHMotDef D_80106B08_1B8C58_SpeedHockey[6][3]; /* motions per character */
-extern void (*D_80106B98_1B8CE8_SpeedHockey[3])(SHPlayer*);
+extern void (*D_80106B98_1B8CE8_SpeedHockey[3])(omObjData*, SHPlayer*);
 extern void (*D_80106BA4_1B8CF4_SpeedHockey[5])(omObjData*);
 extern void (*D_80106BB8_1B8D08_SpeedHockey[4])(omObjData*);
 
@@ -313,7 +313,7 @@ void func_80104A90_1B6BE0_SpeedHockey(omObjData* obj, SHPlayer* w);
 void func_80104C00_1B6D50_SpeedHockey(omObjData* obj);
 void func_80104C64_1B6DB4_SpeedHockey(omObjData* obj);
 void func_80104D4C_1B6E9C_SpeedHockey(omObjData* obj);
-void func_801050F0_1B7240_SpeedHockey(omObjData* obj, s16 player, s32 team, s32 paddle);
+void func_801050F0_1B7240_SpeedHockey(omObjData* obj, s32 player, s32 team, s32 paddle);
 void func_801053F0_1B7540_SpeedHockey(omObjData* obj);
 void func_801054A8_1B75F8_SpeedHockey(omObjData* obj);
 void func_80105560_1B76B0_SpeedHockey(omObjData* obj);
