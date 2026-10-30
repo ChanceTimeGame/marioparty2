@@ -219,7 +219,7 @@ void func_80103A98_168838_LookAway(omObjData* obj);
 void func_80103D04_168AA4_LookAway(omObjData* obj);
 void func_80103FB0_168D50_LookAway(void);
 u8 func_80103FEC_168D8C_LookAway(s8 x, s8 y);
-u8 func_80104060_168E00_LookAway(LADir* d, u8 axis, f32* val, f32 target);
+void func_80104060_168E00_LookAway(LADir* d, u8 axis, f32* val, f32 target);
 void func_80104238_168FD8_LookAway(omObjData* obj, LADir* d);
 void func_80104318_1690B8_LookAway(omObjData* obj);
 u8 func_801043E0_169180_LookAway(omObjData* obj);

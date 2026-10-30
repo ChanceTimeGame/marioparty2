@@ -290,10 +290,91 @@ void func_80103A48_1687E8_LookAway(void) {
     D_80106CD0_16BA70_LookAway[7].obj = omAddObj(150, 0, 0, -1, func_801037B0_168550_LookAway);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103A98_168838_LookAway);
+void func_80103A98_168838_LookAway(omObjData* obj) {
+    LALight* l = D_80106A68_16B808_LookAway;
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_801067E0_16B580_LookAway[30] = { 0xC28C0000, 0x41200000, 0x43960000, 0xC20C0000, 0x41700000, 0x43960000, 0x00000000, 0x41800000, 0x43960000, 0x420C0000, 0x41700000, 0x43960000, 0x428C0000, 0x41200000, 0x43960000, 0xC28C0000, 0x41200000, 0x43910000, 0xC20C0000, 0x41700000, 0x43910000, 0x00000000, 0x41800000, 0x43910000, 0x420C0000, 0x41700000, 0x43910000, 0x428C0000, 0x41200000, 0x43910000 };
+    for (i = 0; i < 10; i++, l++) {
+        switch (l->state) {
+        case 0:
+            if (D_801069AE_16B74E_LookAway & 0x10) {
+                func_80021160_21D60(l->id, 1, 0);
+                func_80021160_21D60(l->id, 2, 0);
+                func_800212A4_21EA4(l->id);
+                l->state = 1;
+            }
+            if (D_801069A6_16B746_LookAway != 5) {
+                if (D_801069A6_16B746_LookAway == 0 || D_801069A6_16B746_LookAway == i ||
+                    D_801069A6_16B746_LookAway + 5 == i) {
+                    l->alpha = 250.0f;
+                    l->state = 2;
+                    PlaySound(0x1B7);
+                }
+            }
+            break;
+        case 1:
+            if (D_801069AE_16B74E_LookAway & 0x20) {
+                func_80021160_21D60(l->id, 2, 2);
+                l->state = 0;
+            }
+            break;
+        case 2:
+            l->alpha -= 25.0f;
+            l->scale -= 0.1f;
+            func_800297E8_2A3E8(D_800F86D8_F92D8[l->id].unk00, 1.0f, l->scale, 1.0f);
+            func_800211E8_21DE8(l->id, l->alpha);
+            if (l->scale <= 0.0f) {
+                l->state = 3;
+                func_800298A4_2A4A4(D_800F86D8_F92D8[l->id].unk00, 4, 4);
+            }
+            break;
+        }
+    }
+}
+
+
+void func_80103D04_168AA4_LookAway(omObjData* obj) {
+    Vec pos[10] = {
+        { -70.0f, 10.0f, 300.0f }, { -35.0f, 15.0f, 300.0f }, { 0.0f, 16.0f, 300.0f },
+        { 35.0f, 15.0f, 300.0f },  { 70.0f, 10.0f, 300.0f },  { -70.0f, 10.0f, 290.0f },
+        { -35.0f, 15.0f, 290.0f }, { 0.0f, 16.0f, 290.0f },   { 35.0f, 15.0f, 290.0f },
+        { 70.0f, 10.0f, 290.0f },
+    };
+    LALight* l = D_80106A68_16B808_LookAway;
+    void* data;
+    s16 black;
+    s16 white;
+    s16 i;
+    s16 id;
+
+    func_800B0EF0_B1AF0(D_80106A68_16B808_LookAway, 0, sizeof(D_80106A68_16B808_LookAway));
+    data = DataRead(0x23000B);
+    black = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    data = DataRead(0x23000C);
+    white = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    for (i = 0; i < 10; i++, l++) {
+        if (i < 5) {
+            id = func_80020EBC_21ABC((void*)-1, 0x2A4, 0x10);
+            func_80021250_21E50(id, 0xFF, 0xFF, 0xFF);
+            D_800F86D8_F92D8[id].unk02 = white;
+        } else {
+            id = func_80020EBC_21ABC((void*)-1, 0x2A4, 0x10);
+            func_80021250_21E50(id, 0, 0, 0);
+            D_800F86D8_F92D8[id].unk02 = black;
+        }
+        func_800298A4_2A4A4(D_800F86D8_F92D8[id].unk00, 4, 0);
+        func_80029714_2A314(D_800F86D8_F92D8[id].unk00, pos[i].x, pos[i].y, pos[i].z);
+        func_80029EDC_2AADC(D_800F86D8_F92D8[id].unk00, 2);
+        l->scale = 1.0f;
+        l->alpha = 1.0f;
+        func_800297E8_2A3E8(D_800F86D8_F92D8[id].unk00, 1.0f, 1.0f, 1.0f);
+        func_80021160_21D60(id, 1, 1);
+        l->id = id;
+    }
+    obj->func_ptr = func_80103A98_168838_LookAway;
+}
 
 __asm__(".section .rodata");
 const char D_80106858_16B5F8_LookAway[] = "c005l_0_DEF";
@@ -313,34 +394,171 @@ const char D_80106888_16B628_LookAway[] = "c001l_0_DEF";
 __asm__(".section .rodata");
 const char D_80106894_16B634_LookAway[] = "c000l_0_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103D04_168AA4_LookAway);
+void func_80103FB0_168D50_LookAway(void) {
+    D_80106CD0_16BA70_LookAway[8].obj = omAddObj(110, 0, 0, -1, func_80103D04_168AA4_LookAway);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103FB0_168D50_LookAway);
+u8 func_80103FEC_168D8C_LookAway(s8 x, s8 y) {
+    s32 dir;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103FEC_168D8C_LookAway);
+    if ((x != 0) | (y != 0)) {
+        if (abs(x) >= abs(y)) {
+            dir = (x > 0) ? 2 : 4;
+        } else {
+            dir = (y > 0) ? 1 : 3;
+        }
+    } else {
+        dir = 0;
+    }
+    return dir;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80104060_168E00_LookAway);
+void func_80104060_168E00_LookAway(LADir* d, u8 axis, f32* val, f32 target) {
+    LAAxis* a = &d->axis[axis];
+    u8 done = 0;
 
+    d->done = 0;
+    if (*val == target) {
+        goto set;
+    }
+    if (d->dir != d->prev) {
+        goto turn;
+    }
+    *val += a->vel;
+    a->vel += a->acc;
+    if (a->vel > 0.0f) {
+        if (a->vel > 25.0f) {
+            a->vel = 25.0f;
+            a->acc = a->jerk = 0.0f;
+        }
+    } else if (a->vel < -25.0f) {
+        a->vel = -25.0f;
+        a->acc = a->jerk = 0.0f;
+    }
+    a->acc += a->jerk;
+    if (a->vel > 0.0f) {
+        if (!(target <= *val)) {
+            goto check;
+        }
+        goto set;
+    } else {
+        if (!(*val <= target)) {
+            goto check;
+        }
+        goto set;
+    }
+turn:
+    if (target < *val) {
+        a->vel = -6.0f;
+        a->acc = 0.0f;
+        a->jerk = -4.0f;
+    } else {
+        a->vel = 6.0f;
+        a->acc = 0.0f;
+        a->jerk = 4.0f;
+    }
+    goto check;
+set:
+    done = 1;
+check:
+    if (done) {
+        *val = target;
+        a->vel = a->acc = a->jerk = 0.0f;
+        d->done = 1;
+    }
+}
+
+
+/* NON_MATCHING: register allocation only (v0/v1 swapped in the table address). */
+#ifdef NON_MATCHING
+void func_80104238_168FD8_LookAway(omObjData* obj, LADir* d) {
+    f32 rot[5][2] = { { 0.0f, 0.0f }, { 0.0f, -45.0f }, { 90.0f, 0.0f }, { 0.0f, 45.0f }, { -90.0f, 0.0f } };
+    f32* r = rot[d->dir];
+    f32 y = r[0];
+    f32 x = r[1];
+
+    if (obj->work[1] == 0) {
+        x += 10.0f;
+    }
+    func_80104060_168E00_LookAway(d, 0, &obj->rot.y, y);
+    func_80104060_168E00_LookAway(d, 1, &obj->rot.x, x);
+}
+#else
 __asm__(".section .rodata");
-const u32 D_801068A0_16B640_LookAway[10] = { 0x00000000, 0x00000000, 0x00000000, 0xC2340000, 0x42B40000, 0x00000000, 0x00000000, 0x42340000, 0xC2B40000, 0x00000000 };
-
+const f32 D_801068A0_16B640_LookAway[5][2] = { { 0.0f, 0.0f }, { 0.0f, -45.0f }, { 90.0f, 0.0f }, { 0.0f, 45.0f }, { -90.0f, 0.0f } };
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80104238_168FD8_LookAway);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80104318_1690B8_LookAway);
+void func_80104318_1690B8_LookAway(omObjData* obj) {
+    LAObj* p = &D_80106CD0_16BA70_LookAway[obj->work[1]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801043E0_169180_LookAway);
+    if (p->unk_22 != 0) {
+        obj->rot.z += 3.5f;
+        if (obj->rot.z >= 22.5) {
+            obj->rot.z = 22.5f;
+            p->unk_22 ^= 1;
+        }
+    } else {
+        obj->rot.z -= 3.5f;
+        if (obj->rot.z <= -22.5) {
+            obj->rot.z = -22.5f;
+            p->unk_22 ^= 1;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801044E0_169280_LookAway);
+u8 func_801043E0_169180_LookAway(omObjData* obj) {
+    f32 prev;
+    f32 cur;
+    u8 done = 0;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80104514_1692B4_LookAway);
+    if (obj->rot.z != 0.0f) {
+        prev = obj->rot.z;
+        func_80104318_1690B8_LookAway(obj);
+        cur = obj->rot.z;
+        if ((prev > 0.0f) & (cur < 0.0f)) {
+            obj->rot.z = 0.0f;
+            done = 1;
+        } else if ((prev < 0.0f) & (cur > 0.0f)) {
+            obj->rot.z = 0.0f;
+            done = 1;
+        }
+    } else {
+        done = 1;
+    }
+    return done;
+}
 
-__asm__(".section .rodata");
-const u32 D_801068D8_16B678_LookAway[2] = { 0x0014000B, 0x00070004 };
+u8 func_801044E0_169280_LookAway(void) {
+    u8 busy = 0;
+    u8 i;
 
-__asm__(".section .rodata");
-const u32 D_801068E0_16B680_LookAway[2] = { 0x000A0008, 0x00050004 };
+    for (i = 0; i < 4; i++) {
+        if (D_80106BE8_16B988_LookAway[0].done == 0) {
+            busy = 1;
+        }
+    }
+    return busy;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801045FC_16939C_LookAway);
+void func_80104514_1692B4_LookAway(omObjData* obj, u8 motion) {
+    s8 chr = gPlayers[obj->work[0]].character;
+
+    func_8003E888_3F488(D_80106BE0_16B980_LookAway[obj->work[1]]);
+    D_80106BE0_16B980_LookAway[obj->work[1]] =
+        func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_80106AE0_16B880_LookAway[obj->work[1]][motion], 0,
+                            D_801067A0_16B540_LookAway[chr]);
+}
+
+
+
+u16 func_801045FC_16939C_LookAway(omObjData* obj) {
+    u16 base[4] = { 20, 11, 7, 4 };
+    u16 range[4] = { 10, 8, 5, 4 };
+    u8 d = gPlayers[obj->work[0]].cpu_difficulty;
+
+    return rand8() % range[d] + base[d];
+}
 
 __asm__(".section .rodata");
 const u32 D_801068E8_16B688_LookAway[2] = { 0x00200040, 0x00600000 };
