@@ -1174,7 +1174,8 @@ segments:
     bss_size: 0x90
     subsegments:
       - [0x22E170, c]
-      - [0x231E90, data]
+      - [0x231E90, .data, 22E170]
+      - [0x232120, .rodata, 22E170]
       - {0x232150, type: bss, vram: 0x801067E0, name: ovl_2E_bss}
   - type: code
     start: 0x232150
