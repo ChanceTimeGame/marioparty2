@@ -470,7 +470,7 @@ const u32 D_8010948C_1E88DC_CrazyCutters[4] = { 0x00000010, 0x00000008, 0x000000
 __asm__(".section .rodata");
 const u32 D_8010949C_1E88EC_CrazyCutters[4] = { 0x00000018, 0x00000012, 0x0000000C, 0x00000006 };
 __asm__(".section .rodata");
-const u32 D_801094AC_1E88FC_CrazyCutters[3] = { 0x00000009, 0x0000000A, 0x0000000B };
+const s32 D_801094AC_1E88FC_CrazyCutters[3] = { 9, 10, 11 };
 __asm__(".section .rodata");
 const char D_801094B8_1E8908_CrazyCutters[] = "16mt000_DEF";
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80103508_1E2958_CrazyCutters);
@@ -1134,7 +1134,35 @@ void func_80105FE4_1E5434_CrazyCutters(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801065F4_1E5A44_CrazyCutters);
+/* Loads the shape's outline sprite for a screen quarter, keeps its pixel mask in
+   D_80109938[quarter] and returns the number of outline pixels. [FA38C] */
+s32 func_801065F4_1E5A44_CrazyCutters(s32 quarter) {
+    CCInt3 sprites = *(CCInt3*)D_801094AC_1E88FC_CrazyCutters;
+    s8 sprite;
+    s8 grp;
+    u32 x;
+    u32 y;
+
+    sprite = func_8001A2F8_1AEF8(sprites.v[D_80109918_1E8D68_CrazyCutters] | 0x330000);
+    grp = SprCreate(1, 0);
+    func_80082488_83088(grp, 0, 0xFF);
+    SprAttrReset(grp, 0, 0xFFFF);
+    SprAttrSet(grp, 0, 0x9000);
+    SprScaleSet(grp, 0, 1.0f, 1.0f);
+    func_8008225C_82E5C(grp, 0, 1);
+    SprAnimSet(grp, 0, sprite, 0);
+    D_80109938_1E8D88_CrazyCutters[quarter] = func_80108870_1E7CC0_CrazyCutters(grp, 0, &D_80109930_1E8D80_CrazyCutters, &D_80109934_1E8D84_CrazyCutters);
+    D_8010956C_1E89BC_CrazyCutters = 0;
+    for (y = 0; y < D_80109934_1E8D84_CrazyCutters; y++) {
+        for (x = 0; x < D_80109930_1E8D80_CrazyCutters; x++) {
+            if (*(D_80109938_1E8D88_CrazyCutters[quarter] + y * D_80109930_1E8D80_CrazyCutters + x) != 0) {
+                D_8010956C_1E89BC_CrazyCutters++;
+            }
+        }
+    }
+    SprKill(grp);
+    return D_8010956C_1E89BC_CrazyCutters;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801067D4_1E5C24_CrazyCutters);
 

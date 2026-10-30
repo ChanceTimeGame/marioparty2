@@ -186,6 +186,12 @@ typedef struct CCRing {
    .data (asm, 0x80109070-0x801093F0)
    --------------------------------------------------------------------------------------------- */
 
+/* .rodata defined in 1E1C50.c that a later function copies by name (S4-23B) */
+typedef struct CCInt3 {
+    s32 v[3];
+} CCInt3;
+extern const s32 D_801094AC_1E88FC_CrazyCutters[3]; /* {9, 10, 11}: func_801065F4's sprites */
+
 extern s32 D_80109070_1E84C0_CrazyCutters[4]; /* per screen quarter: shape sprite x (read as s16) */
 extern s32 D_80109080_1E84D0_CrazyCutters[4]; /* ... and y */
 extern f32 D_80109090_1E84E0_CrazyCutters[4]; /* per screen quarter: world x offset */
