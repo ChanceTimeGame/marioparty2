@@ -183,7 +183,12 @@ extern void (*D_80106C24_1B8D74_SpeedHockey[5])(omObjData*);
    --------------------------------------------------------------------------------------------- */
 
 /* 1B49A0.c */
-extern omObjData** D_80106CA0_1B8DF0_SpeedHockey; /* object group 1: paddles, puck, shadows */
+/* Object group 1: paddles, puck, shadows. Retail reloads the pointer after every store through
+   an object, as GCC does for a struct member (not for a scalar global). */
+typedef struct SHObjList {
+    omObjData** objs;
+} SHObjList;
+extern SHObjList D_80106CA0_1B8DF0_SpeedHockey;
 extern u16 D_80106CA4_1B8DF4_SpeedHockey[9];      /* score sprites */
 extern SHBox D_80106CB8_1B8E08_SpeedHockey[4];    /* paddle boxes this step */
 extern Vec D_80106CF8_1B8E48_SpeedHockey[26];     /* hit point per wall */

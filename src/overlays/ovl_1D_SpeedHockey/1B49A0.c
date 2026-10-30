@@ -224,7 +224,7 @@ s32 func_8010308C_1B51DC_SpeedHockey(SHObjWork* w, s32 n) {
     idx = D_80106E30_1B8F80_SpeedHockey[best];
     func_80102B04_1B4C54_SpeedHockey(w, &D_80106774_1B88C4_SpeedHockey[idx], &D_80106CF8_1B8E48_SpeedHockey[idx]);
     if (idx >= 10) {
-        pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[D_80106774_1B88C4_SpeedHockey[idx].paddle]);
+        pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[D_80106774_1B88C4_SpeedHockey[idx].paddle]);
         move = pw->pos.z - pw->prev.z;
         d = D_80106774_1B88C4_SpeedHockey[idx].p[0].x - D_80106774_1B88C4_SpeedHockey[idx].p[1].x;
         if ((d < 0.0f ? -d : d) < 1.0f) {
@@ -270,7 +270,7 @@ s32 func_80103488_1B55D8_SpeedHockey(SHObjWork* w) {
     while (1) {
         n = 10;
         for (i = 0, j = 0; i < 4; i++, j++) {
-            pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[j]);
+            pw = SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[j]);
             D_80106CB8_1B8E08_SpeedHockey[i].xMin = D_80106764_1B88B4_SpeedHockey.xMin + pw->pos.x;
             D_80106CB8_1B8E08_SpeedHockey[i].xMax = D_80106764_1B88B4_SpeedHockey.xMax + pw->pos.x;
             D_80106CB8_1B8E08_SpeedHockey[i].zMin = D_80106764_1B88B4_SpeedHockey.zMin + pw->pos.z;
@@ -491,11 +491,9 @@ void func_80103E34_1B5F84_SpeedHockey(omObjData* obj, SHObjWork* w) {
 /* The puck object: clear the paddles' hit flags, then run the game state's handler. */
 void func_80103F78_1B60C8_SpeedHockey(omObjData* obj) {
     s32 i;
-    s32* hit;
 
     for (i = 0; i < 4; i++) {
-        hit = &SH_WORK(D_80106CA0_1B8DF0_SpeedHockey[i])->hit;
-        *hit = 0;
+        SH_WORK(D_80106CA0_1B8DF0_SpeedHockey.objs[i])->hit = 0;
     }
     if (D_80106A94_1B8BE4_SpeedHockey[func_80106548_1B8698_SpeedHockey()] != NULL) {
         D_80106A94_1B8BE4_SpeedHockey[func_80106548_1B8698_SpeedHockey()](obj, obj->unk_50);
@@ -527,7 +525,47 @@ void func_801040B0_1B6200_SpeedHockey(omObjData* obj) {
     }
 }
 
+#ifdef NON_MATCHING
+/* masked 36: GCC here keeps &D_801065E0[4] in s4 for the puck's start position (loop-invariant related address); retail loads each of x/y/z by its own lui */
+/* Create object group 1: four paddles, the puck and its two shadows (D_801065E0). */
+void func_8010411C_1B626C_SpeedHockey(void) {
+    s32 i;
+    SHObjWork* w;
+
+    func_80076BD0_777D0(1, 7);
+    D_80106CA0_1B8DF0_SpeedHockey.objs = func_80076D80_77980(1);
+    for (i = 0; i < 7; i++) {
+        D_80106CA0_1B8DF0_SpeedHockey.objs[i] = omAddObj(3, 1, 0, 1, D_80106AA8_1B8BF8_SpeedHockey[D_801065E0_1B8730_SpeedHockey[i].kind]);
+        D_80106CA0_1B8DF0_SpeedHockey.objs[i]->model[0] = func_80018A30_19630(D_801065E0_1B8730_SpeedHockey[i].file, D_801065E0_1B8730_SpeedHockey[i].attr);
+        omSetTra(D_80106CA0_1B8DF0_SpeedHockey.objs[i], D_801065E0_1B8730_SpeedHockey[i].x, D_801065E0_1B8730_SpeedHockey[i].y, D_801065E0_1B8730_SpeedHockey[i].z);
+        omSetSca(D_80106CA0_1B8DF0_SpeedHockey.objs[i], 0.1f, 0.1f, 0.1f);
+        w = func_80027154_27D54(sizeof(SHObjWork), 0x7918);
+        func_800B0EF0_B1AF0(w, 0, sizeof(SHObjWork));
+        D_80106CA0_1B8DF0_SpeedHockey.objs[i]->unk_50 = w;
+        if (i < 4) {
+            omSetSca(D_80106CA0_1B8DF0_SpeedHockey.objs[i], 0.09f, 0.1f, 0.12f);
+        }
+        if (i == 4) {
+            HuVecCopyXYZ(&w->pos, D_801065E0_1B8730_SpeedHockey[4].x, D_801065E0_1B8730_SpeedHockey[4].y, D_801065E0_1B8730_SpeedHockey[4].z);
+            HuVecCopyXYZ(&w->prev, D_801065E0_1B8730_SpeedHockey[4].x, D_801065E0_1B8730_SpeedHockey[4].y, D_801065E0_1B8730_SpeedHockey[4].z);
+        }
+        if (D_801065E0_1B8730_SpeedHockey[i].attr == 0x689) {
+            func_8002D124_2DD24(D_80106CA0_1B8DF0_SpeedHockey.objs[i]->model[0]);
+            if (i == 5) {
+                w->target = D_80106CA0_1B8DF0_SpeedHockey.objs[4];
+                func_8002D0A0_2DCA0(D_80106CA0_1B8DF0_SpeedHockey.objs[5]->model[0], 0x80);
+            } else {
+                w->target = D_80106CA0_1B8DF0_SpeedHockey.objs[5];
+                func_8002D0A0_2DCA0(D_80106CA0_1B8DF0_SpeedHockey.objs[i]->model[0], 0x40);
+            }
+            HuVecCopyXYZ(&w->pos, D_801065E0_1B8730_SpeedHockey[i].x, D_801065E0_1B8730_SpeedHockey[i].y, D_801065E0_1B8730_SpeedHockey[i].z);
+            HuVecCopyXYZ(&w->prev, D_801065E0_1B8730_SpeedHockey[i].x, D_801065E0_1B8730_SpeedHockey[i].y, D_801065E0_1B8730_SpeedHockey[i].z);
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010411C_1B626C_SpeedHockey);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_8010443C_1B658C_SpeedHockey);
 
