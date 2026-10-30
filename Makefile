@@ -732,3 +732,6 @@ build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o: export VR4300MUL := ON
 S40D_MULFIX_UNITS := build/src/overlays/ovl_0D_HotBobOmb/138530.c.o
 $(S40D_MULFIX_UNITS): export VR4300MUL := ON
 
+# S4-0A: ovl_0A 121740.c has the KMC VR4300 mul fix (func_801029F0: a nop between back-to-back mul.s)
+S40A_MULFIX_UNITS := build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
+$(S40A_MULFIX_UNITS): export VR4300MUL := ON
