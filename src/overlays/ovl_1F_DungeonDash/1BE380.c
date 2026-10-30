@@ -1033,7 +1033,101 @@ void func_80106144_1C1CC4_DungeonDash(omObjData* obj, s32 motion, f32 speed) {
     m->unk44 = speed;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_801061A0_1C1D20_DungeonDash);
+/* The winning team's run-out past the goal: the pair keeps pulling (two strokes per pull) until n
+   pulls are done (D_8010A748), then returns 1. */
+s32 func_801061A0_1C1D20_DungeonDash(s32 team, s32 n) {
+    DDTeam* t;
+    DDTeam* other;
+    MgWork* w0;
+    MgWork* w1;
+    omObjData* o0;
+    omObjData* o1;
+    f32 z;
+
+    t = &D_8010B068_1C6BE8_DungeonDash[team];
+    other = &D_8010B068_1C6BE8_DungeonDash[team ^ 1];
+    w0 = t->obj[0]->unk_50;
+    w1 = t->obj[1]->unk_50;
+    z = (t->obj[0]->trans.z + t->obj[1]->trans.z) * 0.5;
+    t->unk28 = z;
+    if (D_8010A748_1C62C8_DungeonDash >= n) {
+        return 1;
+    }
+    switch (D_8010A74C_1C62CC_DungeonDash) {
+        case 0:
+            func_80079798_7A398(0x238, team);
+            if (D_8010A748_1C62C8_DungeonDash == 0) {
+                DD_MDL(t->unkE).pos.z = z;
+                DD_MDL(t->unk10).pos.z = z - t->unk34 * 8.0 * 5.0;
+                t->obj[0]->trans.x = t->obj[1]->trans.x = 0.0f;
+                DD_MDL(t->unkE).pos.x = 30.0f;
+                DD_MDL(t->unk10).pos.x = -30.0f;
+                DD_MDL(t->unk12).pos.x = 0.0f;
+                DD_MDL(other->unk12).pos.x = 0.0f;
+            }
+            func_80106144_1C1CC4_DungeonDash(t->obj[0], 1, 3.0f);
+            func_80106144_1C1CC4_DungeonDash(t->obj[1], 1, 3.0f);
+            t->unk1A = 0;
+            t->unk8 = 0;
+            D_8010A74C_1C62CC_DungeonDash++;
+        case 1:
+            t->obj[0]->trans.z -= t->unk34 * 8.0;
+            t->obj[1]->trans.z -= t->unk34 * 8.0;
+            DD_MDL(t->unkE).pos.z -= t->unk34 * 16.0 * 0.75;
+            DD_MDL(t->unk10).pos.z -= t->unk34 * 16.0 * 0.25;
+            if (w0->unk_D0 == 0xFFFF) {
+                t->unk8 |= 1;
+            }
+            if (w1->unk_D0 == 0xFFFF) {
+                t->unk8 |= 2;
+            }
+            if (t->unk8 == 3) {
+                D_8010A74C_1C62CC_DungeonDash = 2;
+            } else {
+                t->unk1A++;
+            }
+            break;
+        case 2:
+            func_80079798_7A398(0x239, team);
+            func_80106144_1C1CC4_DungeonDash(t->obj[0], 2, 3.0f);
+            func_80106144_1C1CC4_DungeonDash(t->obj[1], 2, 3.0f);
+            t->unk1A = 0;
+            t->unk8 = 0;
+            D_8010A74C_1C62CC_DungeonDash++;
+        case 3:
+            t->obj[0]->trans.z -= t->unk34 * 8.0;
+            t->obj[1]->trans.z -= t->unk34 * 8.0;
+            DD_MDL(t->unkE).pos.z -= t->unk34 * 16.0 * 0.25;
+            DD_MDL(t->unk10).pos.z -= t->unk34 * 16.0 * 0.75;
+            if (w0->unk_D0 == 0xFFFF) {
+                t->unk8 |= 1;
+            }
+            if (w1->unk_D0 == 0xFFFF) {
+                t->unk8 |= 2;
+            }
+            if (t->unk8 == 3) {
+                D_8010A74C_1C62CC_DungeonDash = 0;
+                D_8010A748_1C62C8_DungeonDash++;
+            } else {
+                t->unk1A++;
+            }
+            break;
+        case 4:
+            func_80106144_1C1CC4_DungeonDash(t->obj[0], 0, 1.0f);
+            func_80106144_1C1CC4_DungeonDash(t->obj[1], 0, 1.0f);
+            break;
+    }
+    func_800298A4_2A4A4(t->unk12, 4, 4);
+    func_800298A4_2A4A4(other->unk12, 4, 4);
+    o0 = t->obj[0];
+    o1 = t->obj[1];
+    func_800298A4_2A4A4(o0->model[1], 4, 0);
+    func_800298A4_2A4A4(o1->model[1], 4, 0);
+    func_80029714_2A314(o0->model[1], 0.0f, 6.0f, o0->trans.z);
+    func_80029714_2A314(o1->model[1], 0.0f, 6.0f, o1->trans.z);
+    t->obj[0]->trans.y = 5.0f;
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_8010676C_1C22EC_DungeonDash);
 

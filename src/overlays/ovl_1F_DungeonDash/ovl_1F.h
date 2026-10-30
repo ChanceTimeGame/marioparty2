@@ -283,4 +283,7 @@ void func_80019378_19F78(omObjData* obj);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 
+extern s32 D_8010A748_1C62C8_DungeonDash; /* goal run-out: pulls done */
+extern s32 D_8010A74C_1C62CC_DungeonDash; /* goal run-out: step */
+
 #endif
