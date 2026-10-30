@@ -36,9 +36,9 @@ void omSetTra(omObjData*, f32, f32, f32);
 void omSetRot(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3); /* MP1 func_80060F04 */
-s16 LoadFormFile(s32, s32);
+u16 LoadFormFile(s32, s32); /* util.c */
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
-s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+s32 func_80027D3C_2893C(s16 linkMdlId); /* model copy; s16 in main: 80105B40 stores the result unextended */
 void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* loads obj->motion[slot] */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
@@ -59,6 +59,7 @@ void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void HmfModelObjAttrSet(s16, s32, s32);
 f32 HuMathSin(f32);
 f32 fabsf(f32);
+f32 sqrtf(f32);
 f32 func_800B7890_B8490(f32);          /* cos */
 f32 func_800B1830_B2430(f32);          /* sqrtf */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
@@ -84,12 +85,20 @@ HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 /* 73BA0.c defines arg3 s16; retail passes a full word here (lw) */
 omObjData* func_80073328_73F28(u32 arg0, s16 arg1, s16 arg2, s32 arg3);
 u16 func_80078EA8_79AA8(void);
+void func_800794A8_7A0A8(s32);
+extern u8 D_80102720_103320; /* board.h */
 
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern u8 D_800FA656;          /* minigame variant: the shape */
 extern u16 D_801011FC_101DFC;  /* nonzero once the minigame is told to end */
-extern void* D_800F93FC_F9FFC; /* 1AE60.c: EspriteSlot* */
+/* An esprite slot (D_800F93FC_F9FFC[], 0x24 bytes; 1AE60.c's EspriteSlot). */
+typedef struct CCEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04; /* sprite group */
+    /* 0x06 */ char unk_06[0x1E];
+} CCEspSlot;
+extern CCEspSlot* D_800F93FC_F9FFC;
 
 /* ---------------------------------------------------------------------------------------------
    Structs
@@ -139,7 +148,7 @@ typedef struct CCPlayer {
 } CCPlayer; /* size = 0x574 */
 
 /* One falling piece (omObjData::unk_50 of the func_80105B40 objects; MP1 CrazyCutterPiece 0x44).
-   S4-23B: from MP1 only, check against the asm (MP2 allocates 0x48). */
+   Checked against func_80105B40/func_80105FE4 (S4-23B). */
 typedef struct CCPiece {
     /* 0x00 */ f32 x;
     /* 0x04 */ f32 y;
@@ -157,9 +166,17 @@ typedef struct CCPiece {
     /* 0x34 */ f32 angle;
     /* 0x38 */ f32 dist;
     /* 0x3C */ s32 unk3C;
-    /* 0x40 */ u16 alpha;
-    /* 0x44 */ s32 unk44;
+    /* 0x40 */ s16 alpha;
+    /* 0x42 */ s16 pad42;
+    /* 0x44 */ f32 unk44;
 } CCPiece; /* size = 0x48 */
+
+/* S4-23B: the shadow under a falling piece (D_80109980[4]; MP1 D_800FD4E8). */
+typedef struct CCShadow {
+    /* 0x00 */ s32 model; /* read as s16 */
+    /* 0x04 */ f32 scale;
+    /* 0x08 */ f32 unk8;
+} CCShadow; /* size = 0xC */
 
 /* An expanding/shrinking cut ring (omObjData::unk_50 of the func_801079E0 objects; MP1
    CrazyCutterRing). The N64 allocation is 0x1C bytes; size it by sizeof on the host. */
@@ -169,13 +186,19 @@ typedef struct CCRing {
     /* 0x08 */ f32 step;
     /* 0x0C */ f32 end;
     /* 0x10 */ s32 width;
-    /* 0x14 */ u8* mask;
+    /* 0x14 */ s8* mask;
     /* 0x18 */ s32 frame;
 } CCRing;
 
 /* ---------------------------------------------------------------------------------------------
    .data (asm, 0x80109070-0x801093F0)
    --------------------------------------------------------------------------------------------- */
+
+/* .rodata defined in 1E1C50.c that a later function copies by name (S4-23B) */
+typedef struct CCInt3 {
+    s32 v[3];
+} CCInt3;
+extern const s32 D_801094AC_1E88FC_CrazyCutters[3]; /* {9, 10, 11}: func_801065F4's sprites */
 
 extern s32 D_80109070_1E84C0_CrazyCutters[4]; /* per screen quarter: shape sprite x (read as s16) */
 extern s32 D_80109080_1E84D0_CrazyCutters[4]; /* ... and y */
@@ -236,18 +259,19 @@ extern s32 D_80109948_1E8D98_CrazyCutters; /* input enabled [D_800FD4B0] */
 extern s32 D_80109950_1E8DA0_CrazyCutters[4]; /* cut hits [D_800FD4B8] */
 extern s32 D_80109960_1E8DB0_CrazyCutters[4]; /* cut misses [D_800FD4C8] */
 extern s32 D_80109970_1E8DC0_CrazyCutters[4]; /* per player flags, func_80106D28/D44 [D_800FD4D8] */
-extern s32 D_80109980_1E8DD0_CrazyCutters; /* S4-23B: stored as s32, read as s16 at +2 */
-extern s32 D_80109984_1E8DD4_CrazyCutters;
-extern s32 D_80109988_1E8DD8_CrazyCutters[10];
-extern s32 D_801099B0_1E8E00_CrazyCutters;
-extern s32 D_801099B4_1E8E04_CrazyCutters;
-extern s32 D_801099B8_1E8E08_CrazyCutters;
-extern s32 D_801099BC_1E8E0C_CrazyCutters;
-extern s32 D_801099C0_1E8E10_CrazyCutters;
-extern s32 D_801099C4_1E8E14_CrazyCutters;
-extern s32 D_801099C8_1E8E18_CrazyCutters; /* [D_800FD530] */
-extern s32 D_801099CC_1E8E1C_CrazyCutters; /* [D_800FD534] */
-extern s32 D_801099D0_1E8E20_CrazyCutters; /* [D_800FD538] */
+/* S4-23B: per player, the falling piece's shadow model ([D_800FD4E8]); retail stores the model
+   as a word and reads it as s16 at +2 (label D_80109982). */
+extern CCShadow D_80109980_1E8DD0_CrazyCutters[4];
+/* S4-23B: the cut-out and ring pixel masks (func_80108870 images) with their sizes */
+extern s8* D_801099B0_1E8E00_CrazyCutters; /* cut-out mask [D_800FD518] */
+extern s8* D_801099B4_1E8E04_CrazyCutters; /* second ring mask [D_800FD51C] */
+extern s32 D_801099B8_1E8E08_CrazyCutters; /* ... width [D_800FD520] */
+extern s32 D_801099BC_1E8E0C_CrazyCutters; /* ... height [D_800FD524] */
+extern s32 D_801099C0_1E8E10_CrazyCutters; /* second mask width [D_800FD528] */
+extern s32 D_801099C4_1E8E14_CrazyCutters; /* ... height [D_800FD52C] */
+extern s32 D_801099C8_1E8E18_CrazyCutters; /* sprite of D_801099B0 [D_800FD530] */
+extern s32 D_801099CC_1E8E1C_CrazyCutters; /* piece model file [D_800FD534] */
+extern s32 D_801099D0_1E8E20_CrazyCutters; /* sprite of D_801099B4 [D_800FD538] */
 extern s32 D_801099D8_1E8E28_CrazyCutters[4];
 extern f32 D_801099E8_1E8E38_CrazyCutters; /* cutter speed [D_800FD53C] */
 extern s16 D_801099EC_1E8E3C_CrazyCutters;
@@ -279,7 +303,8 @@ extern s16 D_80109A98_1E8EE8_CrazyCutters;
 extern s16 D_80109A9A_1E8EEA_CrazyCutters; /* music handle */
 
 /* ---------------------------------------------------------------------------------------------
-   Functions (MP1 equivalent in brackets). Past 80105A00 (S4-23B) inferred from MP1 and the asm.
+   Functions (MP1 equivalent in brackets). Past 80105A00 checked by S4-23B against
+   their definitions.
    --------------------------------------------------------------------------------------------- */
 
 /* 1E1C50.c */
@@ -350,5 +375,7 @@ s32 func_80108DA0_1E81F0_CrazyCutters(u8* pal, u16 fmt); /* [FCA20] */
 s32 func_80108E2C_1E827C_CrazyCutters(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask); /* [FCAAC] */
 s32 func_80108FE4_1E8434_CrazyCutters(u32 arg0, s32 arg1, u32 arg2, u8* arg3, s32 arg4); /* [FCC64] */
 s32 func_80109048_1E8498_CrazyCutters(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4); /* [FCCC8] */
+/* The nop between func_80108FE4 and func_80109048: func_80108E2C's 8-bit pixel test. */
+extern s32 D_80109044_1E8494_CrazyCutters(s32, s32, s32, u8*, u8);
 
 #endif

@@ -691,3 +691,17 @@ $(S41AA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-0CA: ovl_0C 12E3F0.c has the KMC VR4300 mul fix (func_80104518: a nop between back-to-back mul.d)
 S40CA_MULFIX_UNITS := build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o
 $(S40CA_MULFIX_UNITS): export VR4300MUL := ON
+# S4-23B: ovl_23 1E1C50.c and 1E7CC0.c have the KMC VR4300 mul fix (a nop before mult at a loop head:
+# func_801065F4, func_80108870)
+S423B_MULFIX_UNITS := build/src/overlays/ovl_23_CrazyCutters/1E1C50.c.o build/src/overlays/ovl_23_CrazyCutters/1E7CC0.c.o
+$(S423B_MULFIX_UNITS): export VR4300MUL := ON
+# S4-23B: 1E1C50.c is assembled from GCC's assembly with blank lines removed (func_8010454C: no nop
+# before a mul.s after a call)
+S423B_BLANKSTRIP_UNITS := build/src/overlays/ovl_23_CrazyCutters/1E1C50.c.o
+$(S423B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
