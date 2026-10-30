@@ -454,11 +454,107 @@ void func_80103508_292578_DeepSeaSalvage(omObjData* obj) {
     obj->trans.z = d->z;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80103DCC_292E3C_DeepSeaSalvage);
+/* The boat: the thrower at the surface (work[0] throw countdown, [1] wait, [2] throws made,
+   [3] sway phase). */
+void func_80103DCC_292E3C_DeepSeaSalvage(omObjData* obj) {
+    MgWork* w;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80104070_2930E0_DeepSeaSalvage);
+    w = obj->unk_50 = func_80027154_27D54(sizeof(MgWork), 0x7918);
+    func_800B0EF0_B1AF0(w, 0, sizeof(MgWork));
+    w->unk_50 = 0;
+    w->unk_52 = 0;
+    w->unk_D0 = 0xFFFF;
+    obj->model[0] = LoadFormFile(0x4C0000, 0x2B9);
+    obj->model[1] = LoadFormFile(0x4C0009, 0x2B9);
+    w->unk_E8 = func_80027154_27D54(obj->mtncnt * sizeof(MgWork), 0x7918);
+    func_800B0EF0_B1AF0(w->unk_E8, 0, obj->mtncnt * sizeof(MgWork));
+    func_80019E84_1AA84(obj, 0, 0x4C0000, 1, 0);
+    func_80019E84_1AA84(obj, 1, 0x4C0001, 1, 0);
+    func_80019E84_1AA84(obj, 2, 0x4C0002, 0, 0);
+    func_80019B9C_1A79C(obj, 0);
+    func_80029E80_2AA80(obj->model[1], 2, 2);
+    obj->trans.x = 0.0f;
+    obj->trans.y = 570.0f;
+    obj->trans.z = -300.0f;
+    obj->rot.y = obj->rot.x = obj->rot.z = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x + 50.0, obj->trans.y + 6.0, obj->trans.z + 100.0);
+    func_8002979C_2A39C(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_800297E8_2A3E8(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
+    obj->func_ptr = func_80104070_2930E0_DeepSeaSalvage;
+    obj->work[0] = 0;
+    obj->work[1] = 1;
+    obj->work[2] = 0;
+    obj->work[3] = 0x40;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801043A4_293414_DeepSeaSalvage);
+void func_80104070_2930E0_DeepSeaSalvage(omObjData* obj) {
+    f64 phase;
+    f32 sway;
+    MgWork* w;
+    s16 i;
+
+    sway = 0.0f;
+    if (D_80108824_297894_DeepSeaSalvage == 0) {
+        w = obj->unk_50;
+        phase = (f32)obj->work[3] * 1.40625;
+        obj->work[3]++;
+        sway = HuMathSin(phase) * 16.0f;
+        if (sway > 8.0f) {
+            sway = 8.0f;
+        } else if (sway < -8.0f) {
+            sway = -8.0f;
+        }
+        obj->trans.x += sway;
+        if (--obj->work[1] == 0) {
+            if (obj->work[2] < 23) {
+                obj->work[0] = 16;
+                func_80019B9C_1A79C(obj, 2);
+                func_80029FE4_2ABE4(obj->model[0], 2.0f);
+            }
+            obj->work[1] = 47 - obj->work[2];
+        }
+        if (obj->work[0] != 0) {
+            if (--obj->work[0] == 0) {
+                for (i = 0; i < 4; i++) {
+                    if ((D_80108870_2978E0_DeepSeaSalvage[obj->work[2]] >> i) & 1) {
+                        func_801052E8_294358_DeepSeaSalvage(
+                            obj, D_80108838_2978A8_DeepSeaSalvage[i][D_80108888_2978F8_DeepSeaSalvage[i]++], i);
+                    }
+                }
+                obj->work[2]++;
+            }
+        }
+        if (w->unk_DA == 2 && w->unk_D0 == 0xFFFF) {
+            func_80019B9C_1A79C(obj, 0);
+            func_80029FE4_2ABE4(obj->model[0], 1.0f);
+        }
+    }
+    func_80029FE4_2ABE4(obj->model[1], fabsf(sway / 2.0f));
+    obj->trans.y += -HuMathSin((D_80108494_297504_DeepSeaSalvage & 0x3F) * 5.625) * 0.5f;
+    D_80108494_297504_DeepSeaSalvage++;
+    func_80029714_2A314(obj->model[1], obj->trans.x + 50.0, obj->trans.y + 6.0, obj->trans.z + 100.0);
+    func_80019378_19F78(obj);
+}
+
+void func_801043A4_293414_DeepSeaSalvage(void) {
+    D_801088E0_297950_DeepSeaSalvage[0] = func_80018D64_19964(0xE, 0x28D, 8);
+    D_801088E0_297950_DeepSeaSalvage[1] = func_80018D64_19964(0x25, 0x28D, 8);
+    D_801088E0_297950_DeepSeaSalvage[2] = func_80018D64_19964(0x4C000E, 0x28D, 8);
+    D_801088E0_297950_DeepSeaSalvage[3] = func_80018D64_19964(0x14, 0x28D, 8);
+    D_801088E0_297950_DeepSeaSalvage[4] = func_80018D64_19964(0x3B0011, 0x28D, 8);
+    D_80108EB8_297F28_DeepSeaSalvage = omAddObj(4, 20, 0, -1, func_80104944_2939B4_DeepSeaSalvage);
+    func_801044A8_293518_DeepSeaSalvage();
+    D_80108888_2978F8_DeepSeaSalvage[0] = D_80108888_2978F8_DeepSeaSalvage[1] = D_80108888_2978F8_DeepSeaSalvage[2] =
+        D_80108888_2978F8_DeepSeaSalvage[3] = 0;
+    D_801088B8_297928_DeepSeaSalvage = 0;
+    D_801088BA_29792A_DeepSeaSalvage[0] = D_801088BA_29792A_DeepSeaSalvage[1] = 0;
+    D_801088BE_29792E_DeepSeaSalvage[0] = D_801088BE_29792E_DeepSeaSalvage[1] = D_801088BE_29792E_DeepSeaSalvage[2] =
+        D_801088BE_29792E_DeepSeaSalvage[3] = 0;
+}
 
 __asm__(".section .rodata");
 const u32 D_80108730_2977A0_DeepSeaSalvage[2] = { 0x03050609, 0x0A0C0000 };
@@ -468,7 +564,27 @@ const u32 D_80108738_2977A8_DeepSeaSalvage[2] = { 0x01020408, 0x01020408 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801044A8_293518_DeepSeaSalvage);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80104944_2939B4_DeepSeaSalvage);
+/* The treasure object: 20 treasures, each a sprite model (obj->model[i]). */
+void func_80104944_2939B4_DeepSeaSalvage(omObjData* obj) {
+    void* w;
+    DSSTreasure* t;
+    s16 i;
+
+    w = obj->unk_50 = func_80027154_27D54(0xAC, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xAC);
+    t = func_80027154_27D54(20 * sizeof(DSSTreasure), 0x7918);
+    DSS_OBJ_WORK(obj) = t;
+    obj->func_ptr = func_80104A70_293AE0_DeepSeaSalvage;
+    for (i = 0; i < 20; i++, t++) {
+        t->sprite = func_8002109C_21C9C(D_801088E0_297950_DeepSeaSalvage[0], 0);
+        obj->model[i] = D_800F86D8_F92D8[t->sprite].unk00;
+        if (i == 0) {
+            obj->scale.x = obj->scale.y = obj->scale.z = 2.5f;
+        }
+        func_800297E8_2A3E8(obj->model[i], 2.5f, 2.5f, 2.5f);
+        t->flags = 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80104A70_293AE0_DeepSeaSalvage);
 
