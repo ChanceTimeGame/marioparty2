@@ -712,6 +712,9 @@ $(S40CA_MULFIX_UNITS): export VR4300MUL := ON
 # func_801065F4, func_80108870)
 S423B_MULFIX_UNITS := build/src/overlays/ovl_23_CrazyCutters/1E1C50.c.o build/src/overlays/ovl_23_CrazyCutters/1E7CC0.c.o
 $(S423B_MULFIX_UNITS): export VR4300MUL := ON
+# S4-2D: ovl_2D 2292D0.c has the KMC VR4300 mul fix (func_801055EC: a nop between back-to-back mul.s)
+S42D_MULFIX_UNITS := build/src/overlays/ovl_2D_HoneycombHavoc/2292D0.c.o
+$(S42D_MULFIX_UNITS): export VR4300MUL := ON
 # S4-23B: 1E1C50.c is assembled from GCC's assembly with blank lines removed (func_8010454C: no nop
 # before a mul.s after a call)
 S423B_BLANKSTRIP_UNITS := build/src/overlays/ovl_23_CrazyCutters/1E1C50.c.o
