@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_1A.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108360_1A10F0_HandcarHavoc);
 
