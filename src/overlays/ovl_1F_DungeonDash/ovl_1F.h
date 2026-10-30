@@ -225,12 +225,14 @@ extern s16 D_8010ABB8_1C6738_DungeonDash; /* 60 */
 extern s16 D_8010ABBA_1C673A_DungeonDash; /* 20 */
 extern s16 D_8010ABBC_1C673C_DungeonDash;
 extern s16 D_8010ABBE_1C673E_DungeonDash;
+extern f32 D_8010ABC0_1C6740_DungeonDash[2][2]; /* per team: [0] curtain alpha, [1] its step */
+extern s32 D_8010ABD0_1C6750_DungeonDash;       /* frames both curtains are open */
 /* .bss (1C2D40.c's part) */
 extern omObjData* D_8010B288_1C6E08_DungeonDash[3]; /* the two track objects and the scenery object */
 extern s16 D_8010B2A6_1C6E26_DungeonDash;
 extern s16 D_8010B2A8_1C6E28_DungeonDash;
 extern s16 D_8010B2AC_1C6E2C_DungeonDash[2]; /* sprite animations */
-extern s16 D_8010B2B6_1C6E36_DungeonDash; /* the start banner's sprite group */
+extern s16 D_8010B2B2_1C6E32_DungeonDash[3]; /* per-team curtain sprite groups; [2] the start banner (D_8010B2B6) */
 extern s16 D_8010B2BA_1C6E3A_DungeonDash; /* MP1 D_800FC650 */
 extern s16 D_8010B2BC_1C6E3C_DungeonDash; /* MP1 D_800FC652 */
 extern s16 D_8010B2BE_1C6E3E_DungeonDash; /* MP1 D_800FC654 */
@@ -248,5 +250,11 @@ void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
 void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
 s32 PlaySound(s32);
+s16 SprCreate(s32 num, s32 attr);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void func_80082488_83088(s16, s16, u16); /* sprite alpha */
+f32 HuMathSin(f32);
 
 #endif

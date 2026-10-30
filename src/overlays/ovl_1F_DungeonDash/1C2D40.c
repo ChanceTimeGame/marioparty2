@@ -59,13 +59,13 @@ void func_80107358_1C2ED8_DungeonDash(s16 x) {
         } else if (D_8010ABBA_1C673A_DungeonDash > 0) {
             D_8010ABBA_1C673A_DungeonDash--;
         }
-        grp = &D_8010B2B6_1C6E36_DungeonDash;
+        grp = &D_8010B2B2_1C6E32_DungeonDash[2];
         SprPosSet(*grp, 0, x, 120);
         if (x == 320 && D_8010ABBC_1C673C_DungeonDash == 0) {
             SprAttrSet(*grp, 0, 0x9000);
             D_8010ABBC_1C673C_DungeonDash = 1;
         } else if (x < 320 && D_8010ABBE_1C673E_DungeonDash == 0) {
-            SprAttrReset(D_8010B2B6_1C6E36_DungeonDash, 0, 0x8000);
+            SprAttrReset(D_8010B2B2_1C6E32_DungeonDash[2], 0, 0x8000);
             D_8010ABBE_1C673E_DungeonDash = 1;
         }
     }
@@ -154,9 +154,73 @@ void func_8010764C_1C31CC_DungeonDash(void) {
     D_8010B2C0_1C6E40_DungeonDash[0] = D_8010B2C0_1C6E40_DungeonDash[1] = 0.0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801077C8_1C3348_DungeonDash);
+/* A team's curtain sprite (work[0] = camera group, work[1] = team). */
+void func_801077C8_1C3348_DungeonDash(omObjData* obj) {
+    s32 w;
 
+    obj->func_ptr = func_801078BC_1C343C_DungeonDash;
+    obj->trans.x = obj->trans.y = 0.0f;
+    w = obj->work[1];
+    D_8010B2B2_1C6E32_DungeonDash[(u16)w] = SprCreate(1, 0);
+    SprAnimSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, D_8010B2AC_1C6E2C_DungeonDash[1], 0);
+    SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, 0x103C);
+    SprPrioSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, w - 16);
+    SprPosSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, (u16)w * 160, 0);
+    SprScaleSet(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, 5.0f, 7.5f);
+    func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[(u16)w], 0, 0x20);
+}
+
+/* Fades a team's curtain: closing as its team nears the goal, open for the start, gone at the end. */
+// KMC mul fix: retail has no nop between the HuMathSin call's delay slot and the first mul.s
+#ifdef NON_MATCHING
+void func_801078BC_1C343C_DungeonDash(omObjData* obj) {
+    f32* a;
+    f32* step;
+    s32 t;
+    f32 d;
+    f32 s;
+
+    t = obj->work[1];
+    a = &D_8010ABC0_1C6740_DungeonDash[0][t];
+    step = &D_8010ABC0_1C6740_DungeonDash[1][t];
+    if (D_8010B2BC_1C6E3C_DungeonDash == 0 && D_8010B2BA_1C6E3A_DungeonDash != 0) {
+        d = fabs(D_8010B2C0_1C6E40_DungeonDash[t]) - 3450.0;
+        if (d > 0.0) {
+            s = HuMathSin(d / 1150.0 * 90.0);
+            *a = s * s * s * 128.0f;
+            func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[t], 0, (s32)*a);
+        }
+    } else if (D_8010B2BA_1C6E3A_DungeonDash == 0 && D_8010B2D0_1C6E50_DungeonDash == 0) {
+        if (*step == 0.0) {
+            *step = 256.0 - *a;
+        }
+        *a = *a + *step * 0.15;
+        if (*a > 256.0) {
+            *a = 256.0f;
+        }
+        if (D_8010ABC0_1C6740_DungeonDash[0][0] >= 256.0 && D_8010ABC0_1C6740_DungeonDash[0][1] >= 256.0) {
+            if (++D_8010ABD0_1C6750_DungeonDash >= 31) {
+                D_8010B2D0_1C6E50_DungeonDash = 1;
+            }
+        }
+        func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[t], 0, (s32)*a);
+        func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[2], 0, 256.0 - (s32)*a);
+    } else if (D_8010B2D0_1C6E50_DungeonDash == 2 && *a > 0.0) {
+        *a = *a - 38.4;
+        if (*a < 0.0) {
+            *a = 0.0f;
+        }
+        func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[0], 0, (s32)*a);
+        func_80082488_83088(D_8010B2B2_1C6E32_DungeonDash[1], 0, (s32)*a);
+    } else if (D_8010B2D0_1C6E50_DungeonDash == 2) {
+        SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[0], 0, 0x8000);
+        SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[1], 0, 0x8000);
+        SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 0x8000);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801078BC_1C343C_DungeonDash);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80107C6C_1C37EC_DungeonDash);
 
