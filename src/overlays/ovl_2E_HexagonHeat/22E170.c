@@ -424,7 +424,59 @@ void func_801041BC_22FB2C_HexagonHeat(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104384_22FCF4_HexagonHeat);
+/* The lava: its texture scrolls, and a glow (D_80106712, pulsing up to D_80106710) lights the
+   vertices within 800 of a point that moves to a new random spot each time the glow dies out. */
+void func_80104384_22FCF4_HexagonHeat(omObjData* obj) {
+    HmfData* hmf;
+    HmfFace* face;
+    HmfVtx* vb;
+    HmfVtx* vtx;
+    f32 dx;
+    f32 dz;
+    f32 dist;
+    f32 t;
+    s32 idx;
+    s32 i;
+    s32 j;
+
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_80106712_232082_HexagonHeat += D_80106714_232084_HexagonHeat;
+        if (D_80106710_232080_HexagonHeat < D_80106712_232082_HexagonHeat) {
+            D_80106714_232084_HexagonHeat = -D_80106714_232084_HexagonHeat;
+        } else if (D_80106712_232082_HexagonHeat <= 0) {
+            D_80106714_232084_HexagonHeat = -D_80106714_232084_HexagonHeat;
+            D_80106708_232078_HexagonHeat[0] = HuMathSin(D_80106718_232088_HexagonHeat) * 500.0f;
+            D_80106708_232078_HexagonHeat[1] = func_800B7890_B8490(D_80106718_232088_HexagonHeat) * 500.0f - 200.0f;
+            D_80106718_232088_HexagonHeat = func_8002D958_2E558(rand8() + D_80106718_232088_HexagonHeat);
+        }
+        D_80106708_232078_HexagonHeat[1] += 2.0f;
+        D_8010671C_23208C_HexagonHeat += 0.1f;
+    }
+    hmf = D_800FC834_FD434[obj->model[0]].hmf;
+    func_8002BED4_2CAD4(obj->model[0], 0.0f, D_8010671C_23208C_HexagonHeat, D_801067E4_232154_HexagonHeat[0],
+                        D_801067E4_232154_HexagonHeat[1], "m158_00_lwo", 1);
+    for (i = 0; i < hmf->unk1A; i++) {
+        face = &hmf->unkB4[i];
+        for (j = 0; j < face->unk00; j++) {
+            idx = face->unk02[j];
+            vb = &hmf->unk44[D_800FDBE0_FE7E0][idx];
+            vtx = &hmf->unk40[idx];
+            dx = vtx->unk00 - D_80106708_232078_HexagonHeat[0];
+            dz = vtx->unk04 - D_80106708_232078_HexagonHeat[1];
+            dist = func_800B1830_B2430(dz * dz + dx * dx);
+            if (dist < 800.0f) {
+                t = (800.0f - dist) / 800.0f;
+                vb->unk0C[0] = D_80106712_232082_HexagonHeat * t + 100.0f;
+                vb->unk0C[1] = D_80106712_232082_HexagonHeat * t + 90.0f;
+                vb->unk0C[2] = D_80106712_232082_HexagonHeat * t + 90.0f;
+            } else {
+                vb->unk0C[0] = 100;
+                vb->unk0C[1] = 90;
+                vb->unk0C[2] = 90;
+            }
+        }
+    }
+}
 
 __asm__(".section .rodata");
 const char D_801067CC_23213C_HexagonHeat[20] = "\203}\203O\203}7_bmp";
