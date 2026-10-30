@@ -350,5 +350,7 @@ s32 func_80108DA0_1E81F0_CrazyCutters(u8* pal, u16 fmt); /* [FCA20] */
 s32 func_80108E2C_1E827C_CrazyCutters(s16 grpIdx, s16 idx, s32 x0, s32 y0, s32 w, s32 h, s8* mask); /* [FCAAC] */
 s32 func_80108FE4_1E8434_CrazyCutters(u32 arg0, s32 arg1, u32 arg2, u8* arg3, s32 arg4); /* [FCC64] */
 s32 func_80109048_1E8498_CrazyCutters(s32 arg0, s32 arg1, s32 arg2, u8* arg3, u8 arg4); /* [FCCC8] */
+/* The nop between func_80108FE4 and func_80109048: func_80108E2C's 8-bit pixel test. */
+extern s32 D_80109044_1E8494_CrazyCutters(s32, s32, s32, u8*, u8);
 
 #endif
