@@ -41,7 +41,7 @@ typedef struct LAObj {
     /* 0x28 */ u16 timer;
     /* 0x2A */ u16 unk_2A;
     /* 0x2C */ s16 com;       /* gPlayers[].flags & 1 */
-    /* 0x2E */ s16 player;
+    /* 0x2E */ u16 player;
     /* 0x30 */ s16 unk_30;
     /* 0x32 */ s16 unk_32;
     /* 0x34 */ s16 unk_34;
@@ -94,9 +94,10 @@ extern f32 D_801066F0_16B490_LookAway[4][3];  /* player start positions by slot 
 extern u16 D_80106720_16B4C0_LookAway[9][2];  /* marker sprite x, y */
 extern s16 D_80106722_16B4C2_LookAway[];      /* = D_80106720[0][1] (its y column) */
 extern s32 D_80106744_16B4E4_LookAway;        /* camera set up */
-extern s16 D_80106748_16B4E8_LookAway[6];     /* player model file by character */
+extern u16 D_80106748_16B4E8_LookAway[6];     /* player model file by character */
 extern s16 D_80106754_16B4F4_LookAway[6];     /* player motion directory by character */
-extern s16 D_80106760_16B500_LookAway[32];    /* motion files: 13 common ones, then [3][6] */
+extern u16 D_80106760_16B500_LookAway[13];    /* common motion files (in D_80106754's directory) */
+extern u16 D_8010677C_16B51C_LookAway[3 * 6];  /* per-character motions [3][6] (no splat label: undefined_syms) */
 extern char* D_801067A0_16B540_LookAway[8];   /* "c00Nl_0_DEF" by character (6) */
 
 /* ---- .bss ---- */
