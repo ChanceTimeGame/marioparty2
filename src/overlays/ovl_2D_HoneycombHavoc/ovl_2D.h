@@ -177,7 +177,7 @@ extern f32 D_80107358_22DE28_HoneycombHavoc[6]; /* per character: catch height *
 extern f32 D_80107370_22DE40_HoneycombHavoc[6]; /* per character: reach */
 extern f32 D_80107388_22DE58_HoneycombHavoc[4]; /* per slot: queue x */
 extern f32 D_80107398_22DE68_HoneycombHavoc[4]; /* per slot: stop x */
-extern s16 D_801073A8_22DE78_HoneycombHavoc[4]; /* slot taken */
+extern u16 D_801073A8_22DE78_HoneycombHavoc[4]; /* slot taken */
 extern s16 D_801073B0_22DE80_HoneycombHavoc[8]; /* item model file per type */
 extern f32 D_801073C0_22DE90_HoneycombHavoc[33][2]; /* branch positions (x, y) */
 extern u32 D_801074C8_22DF98_HoneycombHavoc;
@@ -229,7 +229,7 @@ void func_80102C5C_22972C_HoneycombHavoc(omObjData* obj);
 void func_80102C7C_22974C_HoneycombHavoc(omObjData* obj);
 void func_80102C9C_22976C_HoneycombHavoc(omObjData* obj);
 void func_80102CBC_22978C_HoneycombHavoc(omObjData* obj);
-void func_80102CDC_2297AC_HoneycombHavoc(s16 player, omObjData* obj);
+void func_80102CDC_2297AC_HoneycombHavoc(s32 player, omObjData* obj);
 void func_80102FB4_229A84_HoneycombHavoc(omObjData* obj);
 void func_80104180_22AC50_HoneycombHavoc(void);
 void func_80104280_22AD50_HoneycombHavoc(void);

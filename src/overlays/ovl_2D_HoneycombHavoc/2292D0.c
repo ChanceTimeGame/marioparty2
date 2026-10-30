@@ -1,25 +1,164 @@
 #include "ovl_2D.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102800_2292D0_HoneycombHavoc);
+void func_80102800_2292D0_HoneycombHavoc(void) {
+    Vec eye;
+    Vec at;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102A7C_22954C_HoneycombHavoc);
+    omInitObjMan(0x3C, 0);
+    func_80079128_79D28();
+    func_80020D20_21920(0x14);
+    D_801076D4_22E1A4_HoneycombHavoc = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x3D0000), 0, 1);
+    espDispOff(D_801076D4_22E1A4_HoneycombHavoc);
+    eye.x = 0.0f;
+    eye.y = 410.0f;
+    eye.z = 1200.0f;
+    at.x = 0.0f;
+    at.y = 400.0f;
+    at.z = -100.0f;
+    D_8010270C_10330C.x = 0.0f;
+    D_8010270C_10330C.y = 0.0f;
+    D_8010270C_10330C.z = 1.0f;
+    func_8007A2CC_7AECC(0x7FDA, D_800F93FC_F9FFC[(s16)D_801076D4_22E1A4_HoneycombHavoc].unk_04, func_8007A7FC_7B3FC, 45.0f, &eye, &at);
+    func_80076BD0_777D0(0, 4);
+    D_801076D8_22E1A8_HoneycombHavoc = func_80076D80_77980(0);
+    func_80076BD0_777D0(1, 0x21);
+    D_801076DC_22E1AC_HoneycombHavoc = func_80076D80_77980(1);
+    omAddObj(0, 0, 0, -1, func_80102B34_229604_HoneycombHavoc);
+    omAddObj(0x14, 3, 8, 0, func_80102C5C_22972C_HoneycombHavoc);
+    omAddObj(0x14, 3, 8, 0, func_80102C7C_22974C_HoneycombHavoc);
+    omAddObj(0x14, 3, 8, 0, func_80102C9C_22976C_HoneycombHavoc);
+    omAddObj(0x14, 3, 8, 0, func_80102CBC_22978C_HoneycombHavoc);
+    func_80104924_22B3F4_HoneycombHavoc();
+    func_80105844_22C314_HoneycombHavoc();
+    D_80107704_22E1D4_HoneycombHavoc = omAddObj(0x14, 2, 2, -1, func_80102A7C_22954C_HoneycombHavoc);
+    func_80104708_22B1D8_HoneycombHavoc();
+    func_80105ACC_22C59C_HoneycombHavoc();
+    func_80105C04_22C6D4_HoneycombHavoc();
+    D_801076B2_22E182_HoneycombHavoc = LoadFormFile(0x3D000A, 0x6BD);
+    func_801064A0_22CF70_HoneycombHavoc();
+    omAddObj(0x2710, 0, 0, -1, func_801071E0_22DCB0_HoneycombHavoc);
+    InitFadeIn(0, 0x10);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102B34_229604_HoneycombHavoc);
+/* The coin sprite shown over a player who takes a coin. */
+void func_80102A7C_22954C_HoneycombHavoc(omObjData* obj) {
+    s16 model;
+    s16 mdl;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102B70_229640_HoneycombHavoc);
+    model = D_800F86D8_F92D8[(s16)(D_80107708_22E1D8_HoneycombHavoc = func_80018D64_19964(0x14, 0x289, 8))].unk00;
+    mdl = model;
+    HmfModelObjAttrSet(model, 0x70000000, 0x70000000);
+    func_800298A4_2A4A4(model, 4, 4);
+    func_80029E80_2AA80(model, 2, 0);
+    obj->model[0] = mdl;
+    obj->unk_50 = &D_80107708_22E1D8_HoneycombHavoc;
+    obj->func_ptr = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102C5C_22972C_HoneycombHavoc);
+void func_80102B34_229604_HoneycombHavoc(omObjData* obj) {
+    D_801076A8_22E178_HoneycombHavoc = 0;
+    D_80107700_22E1D0_HoneycombHavoc = NULL;
+    D_801076FC_22E1CC_HoneycombHavoc = NULL;
+    D_801074E0_22DFB0_HoneycombHavoc[0] = 0;
+    D_801076AE_22E17E_HoneycombHavoc = -1;
+    obj->func_ptr = func_80102B70_229640_HoneycombHavoc;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102C7C_22974C_HoneycombHavoc);
+/* The game state: intro, play until a winner is set, then the ending. */
+void func_80102B70_229640_HoneycombHavoc(omObjData* obj) {
+    switch (D_801076A8_22E178_HoneycombHavoc) {
+    case 0:
+        if (D_801076FC_22E1CC_HoneycombHavoc == NULL) {
+            D_801076AA_22E17A_HoneycombHavoc = 0;
+            D_801076FC_22E1CC_HoneycombHavoc = omAddObj(4, 0, 0, -1, func_801069C8_22D498_HoneycombHavoc);
+        }
+        break;
+    case 1:
+        if (D_801076AE_22E17E_HoneycombHavoc != -1) {
+            D_801076A8_22E178_HoneycombHavoc = 2;
+        }
+        break;
+    case 2:
+        if (D_80107700_22E1D0_HoneycombHavoc == NULL) {
+            D_80107700_22E1D0_HoneycombHavoc = omAddObj(4, 0, 0, -1, func_80106AC4_22D594_HoneycombHavoc);
+            D_801076AC_22E17C_HoneycombHavoc = 0;
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102C9C_22976C_HoneycombHavoc);
+void func_80102C5C_22972C_HoneycombHavoc(omObjData* obj) {
+    func_80102CDC_2297AC_HoneycombHavoc(0, obj);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102CBC_22978C_HoneycombHavoc);
+void func_80102C7C_22974C_HoneycombHavoc(omObjData* obj) {
+    func_80102CDC_2297AC_HoneycombHavoc(1, obj);
+}
+
+void func_80102C9C_22976C_HoneycombHavoc(omObjData* obj) {
+    func_80102CDC_2297AC_HoneycombHavoc(2, obj);
+}
+
+void func_80102CBC_22978C_HoneycombHavoc(omObjData* obj) {
+    func_80102CDC_2297AC_HoneycombHavoc(3, obj);
+}
 
 __asm__(".section .rodata");
 const char D_801074F0_22DFC0_HoneycombHavoc[16] = "item_hook";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102CDC_2297AC_HoneycombHavoc);
+/* A player's setup: model, motions, a free queue slot. */
+void func_80102CDC_2297AC_HoneycombHavoc(s32 player, omObjData* obj) {
+    HCPlayer* work;
+    s32 dir;
+    s32 mot;
+    s32 slot;
+
+    work = obj->unk_50 = func_80027154_27D54(sizeof(HCPlayer), 0x7918);
+    dir = D_800CD438_CE038[(s8)gPlayers[player].character].unk_04;
+    obj->model[0] = LoadFormFile(dir | D_800CD438_CE038[(s8)gPlayers[player].character].unk_10, 0x206B9);
+    obj->model[1] = func_80018A64_19664(0xD, 0x689);
+    obj->model[2] = func_80018A64_19664(0x3D000C, 0x699);
+    func_800297E8_2A3E8(obj->model[1], 1.2f, 1.0f, 1.2f);
+    func_80018CCC_198CC(obj, 0, dir);
+    func_80018CCC_198CC(obj, 1, dir | 1);
+    func_80018CCC_198CC(obj, 2, dir | 2);
+    func_80018CCC_198CC(obj, 3, dir | 0xA5);
+    if (rand8() & 1) {
+        mot = dir | 0x4E;
+    } else {
+        mot = dir | 0x4F;
+    }
+    func_80018CCC_198CC(obj, 4, mot);
+    D_801076B8_22E188_HoneycombHavoc[player] = mot;
+    if (rand8() & 1) {
+        func_80018CCC_198CC(obj, 5, dir | 0x55);
+    } else {
+        func_80018CCC_198CC(obj, 5, dir | 0x56);
+    }
+    func_80018CCC_198CC(obj, 6, dir | 0x13);
+    func_80018CCC_198CC(obj, 7, dir | 0x6A);
+    func_8002C628_2D228(obj->model[2], obj->model[0], D_801074F0_22DFC0_HoneycombHavoc);
+    func_800298A4_2A4A4(obj->model[2], 0x4000, 0x4000);
+    mot = func_80029E14_2AA14(obj->motion[6]);
+    func_8002C524_2D124(obj->model[0], mot, 2);
+    work->state = 0;
+    do {
+        slot = rand8() & 3;
+    } while (D_801073A8_22DE78_HoneycombHavoc[slot] != 0);
+    D_801073A8_22DE78_HoneycombHavoc[slot] = 1;
+    work->slot = slot;
+    work->player = player;
+    work->cpuPick = -1;
+    work->walking = 0;
+    work->out = 0;
+    work->limitOn = 0;
+    work->limit = 0;
+    omSetTra(obj, D_80107388_22DE58_HoneycombHavoc[slot], 0.0f, 0.0f);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+    func_80029B80_2A780(obj->model[0], obj->motion[2]);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    obj->func_ptr = func_80102FB4_229A84_HoneycombHavoc;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80102FB4_229A84_HoneycombHavoc);
 
