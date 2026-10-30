@@ -691,6 +691,8 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o build
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_2E_HexagonHeat/22E170.c.o
 # S4-36: ovl_36 26FEE0.c has the KMC mul fix (nops between mul.s pairs) and strips blank lines
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_36_DizzyDancing/26FEE0.c.o
+# S4-37: ovl_37 274F30.c too
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_37_TileDriver/274F30.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
