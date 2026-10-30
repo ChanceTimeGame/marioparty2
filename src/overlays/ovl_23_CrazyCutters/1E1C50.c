@@ -967,24 +967,79 @@ void func_80105978_1E4DC8_CrazyCutters(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105A74_1E4EC4_CrazyCutters);
+/* Marks the player's cut finished and records where the cutter stopped. [F98B4] */
+void func_80105A74_1E4EC4_CrazyCutters(CCPlayer* st) {
+    s32 q = func_8010882C_1E7C7C_CrazyCutters(st->player);
 
-__asm__(".section .rodata");
-const u32 D_801094DC_1E892C_CrazyCutters[4] = { 0xC3C80000, 0x43C80000, 0xC3C80000, 0x43C80000 };
+    D_80109920_1E8D70_CrazyCutters[st->player] = 1;
+    D_80109A18_1E8E68_CrazyCutters[st->player] = D_80109090_1E84E0_CrazyCutters[q] + st->x;
+    D_80109A28_1E8E78_CrazyCutters[st->player] = st->y;
+    D_80109A38_1E8E88_CrazyCutters[st->player] = D_801090A0_1E84F0_CrazyCutters[q] + st->z + -4.0f;
+    D_80109A96_1E8EE6_CrazyCutters = PlaySound(0x25E);
+}
 
-__asm__(".section .rodata");
-const u32 D_801094EC_1E893C_CrazyCutters[4] = { 0xC37A0000, 0xC37A0000, 0x43AF0000, 0x43AF0000 };
+/* Drops the cut-out piece onto the player's quarter, with its shadow. [F9968] */
+void func_80105B40_1E4F90_CrazyCutters(omObjData* parent, s32 player) {
+    f32 xs[4] = { -400.0f, 400.0f, -400.0f, 400.0f };
+    f32 zs[4] = { -250.0f, -250.0f, 350.0f, 350.0f };
+    f32 sx[3] = { 4.2f, 4.5f, 4.0f };
+    f32 sy[3] = { 4.2f, 4.5f, 4.0f };
+    f32 sz[3] = { 4.2f, 4.5f, 4.0f };
+    f32 zoff[3] = { -30.0f, 0.0f, -100.0f };
+    s32 files[3] = { 0x330015, 0x330016, 0x330017 };
+    omObjData* obj;
+    CCPiece* st;
+    s32 i;
+    s32 q;
 
-__asm__(".section .rodata");
-const u32 D_801094FC_1E894C_CrazyCutters[3] = { 0x40866666, 0x40900000, 0x40800000 };
-
-__asm__(".section .rodata");
-const u32 D_80109508_1E8958_CrazyCutters[3] = { 0xC1F00000, 0x00000000, 0xC2C80000 };
-
-__asm__(".section .rodata");
-const u32 D_80109514_1E8964_CrazyCutters[3] = { 0x00330015, 0x00330016, 0x00330017 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80105B40_1E4F90_CrazyCutters);
+    obj = omAddObj(12, 5, 2, -1, func_80105FE4_1E5434_CrazyCutters);
+    omSetStatBit(obj, 0xA0);
+    obj->unk_50 = func_80027154_27D54(sizeof(CCPiece), 0x7918);
+    for (i = 0; i < 4; i++) {
+        obj->work[i] = 0;
+    }
+    q = func_8010882C_1E7C7C_CrazyCutters(player);
+    st = obj->unk_50;
+    st->x = xs[q];
+    st->y = 0.0f;
+    st->z = zs[q] + zoff[D_80109918_1E8D68_CrazyCutters];
+    st->rotX = 270.0f;
+    st->rotY = 0.0f;
+    st->rotZ = 0.0f;
+    st->scaleX = sx[D_80109918_1E8D68_CrazyCutters];
+    st->scaleY = sy[D_80109918_1E8D68_CrazyCutters];
+    st->scaleZ = sz[D_80109918_1E8D68_CrazyCutters];
+    st->player = player;
+    st->timer = 60;
+    st->velY = 200.0f;
+    st->state = 1;
+    st->unk3C = 0;
+    st->alpha = 0xFF;
+    st->unk44 = 0;
+    D_80109920_1E8D70_CrazyCutters[player] = 0;
+    if (D_801099CC_1E8E1C_CrazyCutters != files[D_80109918_1E8D68_CrazyCutters]) {
+        *obj->model = LoadFormFile(files[D_80109918_1E8D68_CrazyCutters], 0x68D);
+        D_801099EC_1E8E3C_CrazyCutters = *obj->model;
+        D_80109980_1E8DD0_CrazyCutters[st->player].model = LoadFormFile(0x33001D, 0x68D);
+        D_801099EE_1E8E3E_CrazyCutters = (s16)D_80109980_1E8DD0_CrazyCutters[st->player].model;
+        D_801099CC_1E8E1C_CrazyCutters = files[D_80109918_1E8D68_CrazyCutters];
+    } else {
+        *obj->model = func_80027D3C_2893C(D_801099EC_1E8E3C_CrazyCutters);
+        D_80109980_1E8DD0_CrazyCutters[st->player].model = func_80027D3C_2893C(D_801099EE_1E8E3E_CrazyCutters);
+    }
+    func_8002D124_2DD24(*obj->model);
+    omSetTra(obj, st->x, st->y, st->z);
+    omSetRot(obj, st->rotX, st->rotY, st->rotZ);
+    omSetSca(obj, st->scaleX, st->scaleY, st->scaleZ);
+    HmfModelObjAttrSet(D_80109980_1E8DD0_CrazyCutters[st->player].model, 0x22000, 0x20000);
+    func_80029A8C_2A68C(D_80109980_1E8DD0_CrazyCutters[st->player].model);
+    func_8002A00C_2AC0C(D_80109980_1E8DD0_CrazyCutters[st->player].model);
+    func_80029714_2A314(D_80109980_1E8DD0_CrazyCutters[st->player].model, st->x, st->y + 500.0f, st->z);
+    func_8002979C_2A39C(D_80109980_1E8DD0_CrazyCutters[st->player].model, 270.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(D_80109980_1E8DD0_CrazyCutters[st->player].model, 5.0f, 5.0f, 5.0f);
+    D_80109980_1E8DD0_CrazyCutters[st->player].scale = 0.1f;
+    D_80109980_1E8DD0_CrazyCutters[st->player].unk8 = 2.0f;
+}
 
 __asm__(".section .rodata");
 const u32 D_80109520_1E8970_CrazyCutters[4] = { 0x00000012, 0x00000013, 0x00000014, 0x00000000 };

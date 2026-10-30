@@ -36,9 +36,9 @@ void omSetTra(omObjData*, f32, f32, f32);
 void omSetRot(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3); /* MP1 func_80060F04 */
-s16 LoadFormFile(s32, s32);
+u16 LoadFormFile(s32, s32); /* util.c */
 void* func_80027154_27D54(s32, s32); /* HuMemAllocTag */
-s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+s32 func_80027D3C_2893C(s16 linkMdlId); /* model copy; s16 in main: 80105B40 stores the result unextended */
 void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file); /* loads obj->motion[slot] */
 void func_80029714_2A314(s16, f32, f32, f32); /* model position */
 void func_8002979C_2A39C(s16, f32, f32, f32); /* model rotation */
@@ -161,6 +161,13 @@ typedef struct CCPiece {
     /* 0x44 */ s32 unk44;
 } CCPiece; /* size = 0x48 */
 
+/* S4-23B: the shadow under a falling piece (D_80109980[4]; MP1 D_800FD4E8). */
+typedef struct CCShadow {
+    /* 0x00 */ s32 model; /* read as s16 */
+    /* 0x04 */ f32 scale;
+    /* 0x08 */ f32 unk8;
+} CCShadow; /* size = 0xC */
+
 /* An expanding/shrinking cut ring (omObjData::unk_50 of the func_801079E0 objects; MP1
    CrazyCutterRing). The N64 allocation is 0x1C bytes; size it by sizeof on the host. */
 typedef struct CCRing {
@@ -236,9 +243,9 @@ extern s32 D_80109948_1E8D98_CrazyCutters; /* input enabled [D_800FD4B0] */
 extern s32 D_80109950_1E8DA0_CrazyCutters[4]; /* cut hits [D_800FD4B8] */
 extern s32 D_80109960_1E8DB0_CrazyCutters[4]; /* cut misses [D_800FD4C8] */
 extern s32 D_80109970_1E8DC0_CrazyCutters[4]; /* per player flags, func_80106D28/D44 [D_800FD4D8] */
-extern s32 D_80109980_1E8DD0_CrazyCutters; /* S4-23B: stored as s32, read as s16 at +2 */
-extern s32 D_80109984_1E8DD4_CrazyCutters;
-extern s32 D_80109988_1E8DD8_CrazyCutters[10];
+/* S4-23B: per player, the falling piece's shadow model ([D_800FD4E8]); retail stores the model
+   as a word and reads it as s16 at +2 (label D_80109982). */
+extern CCShadow D_80109980_1E8DD0_CrazyCutters[4];
 extern s32 D_801099B0_1E8E00_CrazyCutters;
 extern s32 D_801099B4_1E8E04_CrazyCutters;
 extern s32 D_801099B8_1E8E08_CrazyCutters;
