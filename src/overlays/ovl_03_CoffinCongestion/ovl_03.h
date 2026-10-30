@@ -151,7 +151,7 @@ typedef struct CCObjDef {
     /* 0x0C */ f32 scale;
     /* 0x10 */ s32 file;
     /* 0x14 */ s32 attr;
-    /* 0x18 */ s16 func;        /* index into D_80106A0C */
+    /* 0x18 */ u16 func;        /* index into D_80106A0C */
     /* 0x1A */ u8 unk_1A;       /* omAddObj mdlcnt */
     /* 0x1B */ u8 unk_1B;       /* omAddObj mtncnt */
 } CCObjDef; /* size = 0x1C */

@@ -483,21 +483,160 @@ void func_80103DE0_F54F0_CoffinCongestion(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80103F88_F5698_CoffinCongestion);
+/* Creates the 27 room objects (D_80106600); 20-24 are the coffins' item models, 25 the host,
+   26 the sparkles. */
+void func_80103F88_F5698_CoffinCongestion(void) {
+    omObjData* obj;
+    CCGround* ground;
+    CCProp* p;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104478_F5B88_CoffinCongestion);
+    func_80076BD0_777D0(1, 27);
+    D_80106DB0_F84C0_CoffinCongestion = func_80076D80_77980(1);
+    D_800F8FE0_F9BE0 = 0;
+    for (i = 0; i < 27; i++) {
+        obj = omAddObj(3, D_80106600_F7D10_CoffinCongestion[i].unk_1A, D_80106600_F7D10_CoffinCongestion[i].unk_1B, 1,
+                       D_80106A0C_F811C_CoffinCongestion[D_80106600_F7D10_CoffinCongestion[i].func]);
+        D_80106DB0_F84C0_CoffinCongestion[i] = obj;
+        ground = func_80027154_27D54(sizeof(CCGround), 0x7918);
+        func_800B0EF0_B1AF0(ground, 0, sizeof(CCGround));
+        ground->unk_03 = 1;
+        ground->unk_08 = 0.5f;
+        ground->unk_10 = 20.0f;
+        ground->unk_04 = i;
+        obj->unk_50 = ground;
+        D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = obj;
+        p = func_80027154_27D54(sizeof(CCProp), 0x7918);
+        func_800B0EF0_B1AF0(p, 0, sizeof(CCProp));
+        ground->unk_B0 = p;
+        if (i >= 20 && i < 25) {
+            p->unk_12 = D_800CAFD8[i - 20];
+            D_80106600_F7D10_CoffinCongestion[i].file = D_801068F4_F8004_CoffinCongestion[p->unk_12];
+        } else {
+            p->unk_12 = -1;
+        }
+        obj->model[0] = func_80018A30_19630(D_80106600_F7D10_CoffinCongestion[i].file, D_80106600_F7D10_CoffinCongestion[i].attr);
+        if (D_80106600_F7D10_CoffinCongestion[i].attr == 0x2A9 || D_80106600_F7D10_CoffinCongestion[i].attr == 0x6A9
+            || D_80106600_F7D10_CoffinCongestion[i].attr == 0xAA9) {
+            func_8002D124_2DD24(obj->model[0]);
+            func_8002D0A0_2DCA0(obj->model[0], 0);
+        }
+        omSetTra(obj, D_80106600_F7D10_CoffinCongestion[i].pos.x, D_80106600_F7D10_CoffinCongestion[i].pos.y,
+                 D_80106600_F7D10_CoffinCongestion[i].pos.z);
+        omSetSca(obj, D_80106600_F7D10_CoffinCongestion[i].scale, D_80106600_F7D10_CoffinCongestion[i].scale,
+                 D_80106600_F7D10_CoffinCongestion[i].scale);
+        func_800B3170_B3D70(&p->pos, &D_80106600_F7D10_CoffinCongestion[i].pos);
+        p->unk_0C = i;
+        if (i == 26) {
+            omSetSca(obj, 1.2f, 1.2f, 0.0f);
+            for (j = 1; j < 6; j++) {
+                obj->model[j] = func_80018A30_19630(D_80106600_F7D10_CoffinCongestion[i].file, D_80106600_F7D10_CoffinCongestion[i].attr);
+                func_800297E8_2A3E8(obj->model[j], 1.2f, 1.2f, 0.0f);
+            }
+            for (j = 0; j < 6; j++) {
+                func_80029FE4_2ABE4(obj->model[j], 0.0f);
+                func_80029E80_2AA80(obj->model[j], 2, 2);
+                func_800298A4_2A4A4(obj->model[j], 4, 4);
+            }
+        }
+        if (i == 25) {
+            obj->model[1] = func_80018A64_19664(13, 0x2B9);
+            func_80029714_2A314(obj->model[1], D_801068BC_F7FCC_CoffinCongestion, D_801068C0_F7FD0_CoffinCongestion,
+                                D_801068C4_F7FD4_CoffinCongestion);
+            func_800297E8_2A3E8(obj->model[1], D_801068C8_F7FD8_CoffinCongestion, D_801068C8_F7FD8_CoffinCongestion,
+                                D_801068C8_F7FD8_CoffinCongestion);
+            for (j = 0; j < 5; j++) {
+                obj->motion[j] = func_8002C8B8_2D4B8(DataRead(D_8010691C_F802C_CoffinCongestion[j].file), 0x18);
+                if (obj->motion[j] < 0) {
+                    while (1) {}
+                }
+                D_8010691C_F802C_CoffinCongestion[j].len = func_8002CA14_2D614(obj->motion[j]);
+            }
+            func_80102860_F3F70_CoffinCongestion(obj, 0);
+            p->unk_12 = 10;
+        }
+    }
+    func_8000C018_CC18(0);
+    func_8000BF24_CB24(D_80106DB0_F84C0_CoffinCongestion[0], 3.0f, -650.0f, -450.0f, 650.0f, 450.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801044CC_F5BDC_CoffinCongestion);
+void func_80104478_F5B88_CoffinCongestion(void) {
+    func_8002D4D0_2E0D0(0x25);
+    func_8002F290_2FE90(D_800F9D30_FA930, 0xC0);
+    func_80103F88_F5698_CoffinCongestion();
+    D_80106DB4_F84C4_CoffinCongestion = NULL;
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104570_F5C80_CoffinCongestion);
+void func_801044CC_F5BDC_CoffinCongestion(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801045E8_F5CF8_CoffinCongestion);
+    for (i = 0; i < 27; i++) {
+        omDelObj(func_80076D98_77998(1, i));
+    }
+    if (D_80106DB4_F84C4_CoffinCongestion != NULL) {
+        for (i = 0; i < 6; i++) {
+            omDelObj(func_80076D98_77998(2, i));
+        }
+        D_80106DB4_F84C4_CoffinCongestion = NULL;
+    }
+    func_8002F1A4_2FDA4();
+    func_8002CA48_2D648(0, 0, 0);
+    func_80029708_2A308(1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104600_F5D10_CoffinCongestion);
+void func_80104570_F5C80_CoffinCongestion(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104650_F5D60_CoffinCongestion);
+    for (i = 0; i < 27; i++) {
+        func_8000C024_CC24(obj, i, 1);
+    }
+    for (i = 6; i < 12; i++) {
+        func_8000C024_CC24(obj, i, 2);
+    }
+    func_8000C024_CC24(obj, 0, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104684_F5D94_CoffinCongestion);
+void func_801045E8_F5CF8_CoffinCongestion(s16 phase) {
+    D_80106DB8_F84C8_CoffinCongestion.prev = D_80106DB8_F84C8_CoffinCongestion.cur;
+    D_80106DB8_F84C8_CoffinCongestion.cur = phase;
+}
+
+/* Starts the item models' hops (objects 20-24). */
+void func_80104600_F5D10_CoffinCongestion(void) {
+    s32 i;
+
+    for (i = 20; i < 25; i++) {
+        s16* state = &((CCGround*)D_80106DB0_F84C0_CoffinCongestion[i]->unk_50)->unk_B0->unk_10;
+
+        if (*state == 0) {
+            (*state)++;
+        }
+    }
+}
+
+/* Starts the host's entrance (object 25). */
+void func_80104650_F5D60_CoffinCongestion(void) {
+    CCProp* p = ((CCGround*)D_80106DB0_F84C0_CoffinCongestion[25]->unk_50)->unk_B0;
+
+    if (p->unk_10 == 0) {
+        p->unk_10++;
+    }
+}
+
+/* The slot holding `item`, or -1. */
+s32 func_80104684_F5D94_CoffinCongestion(s32 item) {
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        if (D_80106DB8_F84C8_CoffinCongestion.slot[i]->unk_12 == item) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801046C8_F5DD8_CoffinCongestion);
 
