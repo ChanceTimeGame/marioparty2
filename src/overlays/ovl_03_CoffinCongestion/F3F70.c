@@ -160,5 +160,4 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_8010
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_801065EC_F7CFC_CoffinCongestion);
 
-__asm__(".section .rodata");
-const u32 D_80106DA8_F84B8_CoffinCongestion[2] = { 0 };
+__asm__(".section .rodata\n\t.balign 16\n\t.text");
