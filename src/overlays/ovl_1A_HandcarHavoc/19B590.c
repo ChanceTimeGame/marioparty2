@@ -80,7 +80,19 @@ void func_80102800_19B590_HandcarHavoc(void) {
     InitFadeIn(0, 16);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80102E40_19BBD0_HandcarHavoc);
+void func_80102E40_19BBD0_HandcarHavoc(omObjData* obj) {
+    D_8010D800_1A6590_HandcarHavoc = 0;
+    D_8010B3B0_1A4140_HandcarHavoc = NULL;
+    D_8010B3AC_1A413C_HandcarHavoc = NULL;
+    D_8010D870_1A6600_HandcarHavoc = 0;
+    D_8010B180_1A3F10_HandcarHavoc = 0;
+    D_8010D862_1A65F2_HandcarHavoc = -1;
+    D_8010D860_1A65F0_HandcarHavoc = 0;
+    D_8010D85E_1A65EE_HandcarHavoc = 0;
+    D_8010B364_1A40F4_HandcarHavoc = 30;
+    D_8010B366_1A40F6_HandcarHavoc = 300;
+    obj->func_ptr = func_80102EAC_19BC3C_HandcarHavoc;
+}
 
 void func_80102EAC_19BC3C_HandcarHavoc(omObjData* obj) {
     omObjData* car;
@@ -761,7 +773,26 @@ void func_80104DE0_19DB70_HandcarHavoc(omObjData* obj) {
     func_8002979C_2A39C(obj->model[6], lx + w->rot.x, 0.0f, lz + w->rot.z);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801051E8_19DF78_HandcarHavoc);
+/* A rider's stick to a lean input: none, 4.5 or 9 (at 70 and more), against the stick. */
+f32 func_801051E8_19DF78_HandcarHavoc(s8 stk) {
+    s8 mag = stk;
+    f32 dir;
+
+    if (stk < 0.0f) {
+        dir = 1.0f;
+    } else {
+        dir = -1.0f;
+    }
+    mag = fabs(mag);
+    if (mag == 0.0f) {
+        dir = dir * 0.0f;
+    } else if (mag >= 70) {
+        dir = dir * 9.0f;
+    } else {
+        dir = dir * 4.5f;
+    }
+    return dir;
+}
 
 void func_801052B8_19E048_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -901,15 +932,289 @@ void func_80105394_19E124_HandcarHavoc(omObjData* obj) {
     }
 }
 
+/* The winners turn round and jump off the car (their shadows stay on the ground). */
+/* NON_MATCHING: the KMC mul fix adds a nop after four calls whose delay slot GCC filled with a
+   float op (retail's has none), and case 1 loads seat .y before the model (retail after it). */
+#ifdef NON_MATCHING
+void func_80105940_19E6D0_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    f32 a;
+    s32 i;
+
+    w = obj->unk_50;
+    func_8010986C_1A25FC_HandcarHavoc(w);
+    switch (D_8010B16C_1A3EFC_HandcarHavoc) {
+        case 0:
+            a = D_8010B170_1A3F00_HandcarHavoc;
+            for (i = 0; i < 2; i++) {
+                if (i == 0) {
+                    a = -a;
+                }
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[3 + i]].mtx, 0.0f, w->rot.y - a, 0.0f);
+                if (D_8010B170_1A3F00_HandcarHavoc >= 90.0f) {
+                    D_8010B16C_1A3EFC_HandcarHavoc = 1;
+                    func_80029B80_2A780(obj->model[3 + i], obj->motion[7 + i]);
+                    func_80108730_1A14C0_HandcarHavoc(obj, i, &D_8010B328_1A40B8_HandcarHavoc[i]);
+                    D_8010B35C_1A40EC_HandcarHavoc = D_8010B328_1A40B8_HandcarHavoc[0].y;
+                    D_8010B310_1A40A0_HandcarHavoc[i].x =
+                        HuMathSin(w->rot.y - D_8010B170_1A3F00_HandcarHavoc) * 300.0f +
+                        D_8010B328_1A40B8_HandcarHavoc[i].x;
+                    D_8010B310_1A40A0_HandcarHavoc[i].y = obj->trans.y;
+                    D_8010B310_1A40A0_HandcarHavoc[i].z =
+                        func_800B7890_B8490(w->rot.y - D_8010B170_1A3F00_HandcarHavoc) * 300.0f +
+                        D_8010B328_1A40B8_HandcarHavoc[i].z;
+                    D_8010B350_1A40E0_HandcarHavoc[i] =
+                        (D_8010B310_1A40A0_HandcarHavoc[i].y - D_8010B328_1A40B8_HandcarHavoc[i].y + 562.5f) /
+                        (HuMathSin(70.0f) * 15.0f);
+                    D_8010B340_1A40D0_HandcarHavoc[i] = HuMathSin(w->rot.y + 90.0f) * 300.0f / 15.0f;
+                    D_8010B348_1A40D8_HandcarHavoc[i] = func_800B7890_B8490(w->rot.y + 90.0f) * 300.0f / 15.0f;
+                    D_8010B358_1A40E8_HandcarHavoc = 0.0f;
+                    D_8010D7E0_1A6570_HandcarHavoc[w->team]->func_ptr = func_8010A5B8_1A3348_HandcarHavoc;
+                }
+            }
+            D_8010B170_1A3F00_HandcarHavoc += 9.0f;
+            break;
+        case 1:
+            D_8010B358_1A40E8_HandcarHavoc += 1.0f;
+            for (i = 0; i < 2; i++) {
+                func_80029714_2A314(obj->model[3 + i],
+                                    D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                    HuMathSin(70.0f) * D_8010B350_1A40E0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc -
+                                        D_8010B358_1A40E8_HandcarHavoc * 2.5f * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].y,
+                                    D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].z);
+                if (D_8010B358_1A40E8_HandcarHavoc > 3.0f) {
+                    func_80029714_2A314(obj->model[5 + i],
+                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        obj->trans.y,
+                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                } else {
+                    func_80029714_2A314(obj->model[5 + i],
+                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        D_8010B35C_1A40EC_HandcarHavoc,
+                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                }
+            }
+            if (D_8010B358_1A40E8_HandcarHavoc >= 15.0f) {
+                for (i = 0; i < 2; i++) {
+                    func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[9 + i]), 0, 20, 0);
+                    func_80029E80_2AA80(obj->model[3 + i], 3, 2);
+                }
+                D_8010B16C_1A3EFC_HandcarHavoc = 2;
+                D_8010B170_1A3F00_HandcarHavoc = 90.0f;
+            }
+            break;
+        case 2:
+            a = D_8010B170_1A3F00_HandcarHavoc;
+            for (i = 0; i < 2; i++) {
+                if (i == 0) {
+                    a = -a;
+                }
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[3 + i]].mtx, 0.0f, w->rot.y - a, 0.0f);
+                if (D_8010B170_1A3F00_HandcarHavoc >= 180.0f) {
+                    func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[5 + i]), 0, 20, 0);
+                    func_80029E80_2AA80(obj->model[3 + i], 3, 2);
+                    D_8010D824_1A65B4_HandcarHavoc = 2;
+                    obj->func_ptr = NULL;
+                }
+            }
+            D_8010B170_1A3F00_HandcarHavoc += 18.0f;
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80105940_19E6D0_HandcarHavoc);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80105FEC_19ED7C_HandcarHavoc);
+/* The winning team cheers. */
+void func_80105FEC_19ED7C_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801060A4_19EE34_HandcarHavoc);
+    w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+    for (i = 0; i < 2; i++) {
+        func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[11 + i]), 0, 20, 0);
+        func_800732B0_73EB0(w->cheerMot[i]);
+    }
+    obj->func_ptr = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106164_19EEF4_HandcarHavoc);
+/* The losing team despairs. */
+void func_801060A4_19EE34_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_8010625C_19EFEC_HandcarHavoc);
+    w = D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->unk_50;
+    for (i = 0; i < 2; i++) {
+        func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[13 + i]), 0, 20, 0);
+        func_800732B0_73EB0(w->loseMot[i]);
+    }
+    obj->func_ptr = NULL;
+}
+
+/* Intro: the instructions, then the race starts. */
+void func_80106164_19EEF4_HandcarHavoc(omObjData* obj) {
+    s32 i;
+
+    switch (D_8010D870_1A6600_HandcarHavoc) {
+        case 0:
+            if (func_8008F618_90218() == 0) {
+                D_8010D870_1A6600_HandcarHavoc = 1;
+                func_800691FC_69DFC(15);
+            }
+            break;
+        case 1:
+            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+                D_8010D800_1A6590_HandcarHavoc = 1;
+                omDelObj(obj);
+                D_8010B3AC_1A413C_HandcarHavoc = NULL;
+                for (i = 0; i < 2; i++) {
+                    D_8010D804_1A6594_HandcarHavoc->work[i] = 1;
+                }
+            }
+            break;
+    }
+    if (D_8010B174_1A3F04_HandcarHavoc == 0) {
+        PlayMusic(0x22);
+    }
+    D_8010B174_1A3F04_HandcarHavoc--;
+}
+
+/* The end: messages, coins, the teams' reactions, leaving. */
+void func_8010625C_19EFEC_HandcarHavoc(omObjData* obj) {
+    s32 pl[2];
+    HHCar* w;
+    s32 i;
+    s32 j;
+
+    switch (D_8010D824_1A65B4_HandcarHavoc) {
+        case 0:
+            D_8010D824_1A65B4_HandcarHavoc = 1;
+            func_800794A8_7A0A8(180);
+            PlaySound(15);
+            func_800691FC_69DFC(D_8010B362_1A40F2_HandcarHavoc == 0 ? 20 : 3);
+            D_8010D830_1A65C0_HandcarHavoc->work[0] = 1;
+            break;
+        case 2:
+            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+                w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+                for (i = 0; i < 2; i++) {
+                    pl[i] = w->player[i];
+                }
+                if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                    func_8006961C_6A21C(func_800691FC_69DFC(14), 160.0f, 176.0f);
+                    if (D_8010B362_1A40F2_HandcarHavoc == 1) {
+                        D_8010B360_1A40F0_HandcarHavoc = 60;
+                    } else {
+                        D_8010B360_1A40F0_HandcarHavoc = 75;
+                    }
+                } else {
+                    D_8010B360_1A40F0_HandcarHavoc = 1;
+                }
+                D_8010D824_1A65B4_HandcarHavoc = 5;
+            }
+            break;
+        case 5:
+            if (--D_8010B360_1A40F0_HandcarHavoc == 0) {
+                w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+                for (i = 0; i < 2; i++) {
+                    pl[i] = w->player[i];
+                }
+                gPlayers[pl[0]].coins_mg_bonus += 10;
+                gPlayers[pl[1]].coins_mg_bonus += 10;
+                w = D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->unk_50;
+                D_8010B360_1A40F0_HandcarHavoc = 135;
+                if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                    D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->func_ptr =
+                        func_80105FEC_19ED7C_HandcarHavoc;
+                    D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->func_ptr =
+                        func_801060A4_19EE34_HandcarHavoc;
+                    func_800691FC_69DFC(17, gPlayers[pl[0]].character, gPlayers[pl[1]].character);
+                    if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                        PlayMusic(0x55);
+                    } else {
+                        PlayMusic(0x52);
+                    }
+                    D_8010D824_1A65B4_HandcarHavoc = 4;
+                } else {
+                    if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                        D_8010B360_1A40F0_HandcarHavoc = 1;
+                    } else {
+                        D_8010B360_1A40F0_HandcarHavoc = 60;
+                    }
+                    D_8010D824_1A65B4_HandcarHavoc = 11;
+                }
+            }
+            break;
+        case 3:
+            if (func_80069538_6A138() & 2) {
+                PlayMusic(0x57);
+                D_8010D824_1A65B4_HandcarHavoc = 4;
+            }
+            break;
+        case 9:
+            if (func_80069538_6A138() & 2) {
+                D_8010D824_1A65B4_HandcarHavoc = 7;
+            }
+            break;
+        case 6:
+            if (func_8008F618_90218() == 0) {
+                D_8010B180_1A3F10_HandcarHavoc = 1;
+            }
+            break;
+        case 7:
+            if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                func_800691FC_69DFC(19);
+                PlayMusic(0x57);
+                D_8010B360_1A40F0_HandcarHavoc = 120;
+                D_8010D824_1A65B4_HandcarHavoc = 3;
+                for (i = 0; i < 2; i++) {
+                    w = D_8010D820_1A65B0_HandcarHavoc[i]->unk_50;
+                    for (j = 0; j < 2; j++) {
+                        func_80029BF0_2A7F0(D_8010D820_1A65B0_HandcarHavoc[i]->model[3 + j],
+                                            func_80029E14_2AA14(D_8010D820_1A65B0_HandcarHavoc[i]->motion[13 + j]), 0,
+                                            20, 0);
+                        func_800732B0_73EB0(w->loseMot[j]);
+                    }
+                    D_8010D820_1A65B0_HandcarHavoc[i]->func_ptr = NULL;
+                }
+            } else {
+                func_800691FC_69DFC(3);
+                D_8010B360_1A40F0_HandcarHavoc = 60;
+                D_8010D824_1A65B4_HandcarHavoc = 11;
+            }
+            break;
+        case 8:
+            func_800794A8_7A0A8(180);
+            if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                func_800691FC_69DFC(18);
+                D_8010B360_1A40F0_HandcarHavoc = 90;
+                D_8010D824_1A65B4_HandcarHavoc = 9;
+            } else {
+                func_800691FC_69DFC(3);
+                D_8010B360_1A40F0_HandcarHavoc = 60;
+                D_8010D824_1A65B4_HandcarHavoc = 11;
+            }
+            break;
+        case 10:
+            func_800691FC_69DFC(3);
+            D_8010B360_1A40F0_HandcarHavoc = 105;
+            D_8010D824_1A65B4_HandcarHavoc = 11;
+            break;
+        case 4:
+        case 11:
+            if (--D_8010B360_1A40F0_HandcarHavoc == 0) {
+                D_8010B180_1A3F10_HandcarHavoc = 1;
+            }
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801067A0_19F530_HandcarHavoc);
 

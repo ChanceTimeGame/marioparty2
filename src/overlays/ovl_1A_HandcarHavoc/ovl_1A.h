@@ -90,8 +90,8 @@ typedef struct HHCar {
     /* 0xED */ u8 unkED;      /* blinking marker: shown/hidden */
     /* 0xEE */ u8 unkEE;      /* its blink counter */
     /* 0xEF */ char unkEF;
-    /* 0xF0 */ s32 cheerMot[2]; /* a rider's cheer motion file (random of two per seat) */
-    /* 0xF8 */ s32 loseMot[2];
+    /* 0xF0 */ s32 cheerMot[2]; /* a rider's cheer voice file (random of two per seat; func_800732B0) */
+    /* 0xF8 */ s32 loseMot[2];  /* a rider's losing voice file */
 } HHCar; /* size = 0x100 */
 
 /* One frame's input for a rider (stick x/y, pressed, held). */
@@ -189,6 +189,11 @@ void func_80079128_79D28(void);
 s16 func_80079798_7A398(s16 sfx, s16 player);
 void func_800796F0_7A2F0(s16 sound, s16 pitch);
 void func_80079848_7A448(s16 arg0);
+/* S4-1AB */
+s16 func_800691FC_69DFC(s16 mesNo, ...); /* MP1 GMesCreate */
+s32 func_80069538_6A138(void);          /* MP1 GMesStatAllGet */
+void func_8006961C_6A21C(s16 mesId, f32 x, f32 y);
+omObjData* func_800732B0_73EB0(u32 arg0); /* plays a voice file */
 f64 fabs(f64);
 f32 fabsf(f32);
 f32 HuMathSin(f32);
@@ -286,8 +291,8 @@ extern f32 D_8010B13C_1A3ECC_HandcarHavoc[2];  /* axle offsets (-200, 200 in MP1
 extern u16 D_8010B144_1A3ED4_HandcarHavoc[2][2]; /* sparks allowed per side and wheel */
 extern f32 D_8010B14C_1A3EDC_HandcarHavoc[6];  /* seat offset per character */
 extern s32 D_8010B164_1A3EF4_HandcarHavoc[2];
-extern u16 D_8010B16C_1A3EFC_HandcarHavoc;     /* MP1 D_800FF3E0 */
-extern f32 D_8010B170_1A3F00_HandcarHavoc;     /* MP1 D_800FF3E4 */
+extern u16 D_8010B16C_1A3EFC_HandcarHavoc;     /* winners' jump state (MP1 D_800FF3E0) */
+extern f32 D_8010B170_1A3F00_HandcarHavoc;     /* the riders' turn angle (MP1 D_800FF3E4) */
 extern u16 D_8010B174_1A3F04_HandcarHavoc;     /* MP1 D_800FF3E8 (4); the file's .data ends here */
 /* 1A10F0.c */
 extern u16 D_8010B180_1A3F10_HandcarHavoc;     /* 1: leave (MP1 D_800FF400) */
@@ -302,17 +307,14 @@ extern s16 D_8010B1DE_1A3F6E_HandcarHavoc[5];
    .bss (8010B310-8010D880)
    --------------------------------------------------------------------------------------------- */
 
-extern f32 D_8010B310_1A40A0_HandcarHavoc;
-extern f32 D_8010B314_1A40A4_HandcarHavoc;
-extern f32 D_8010B318_1A40A8_HandcarHavoc[4];
-extern f32 D_8010B328_1A40B8_HandcarHavoc;
-extern f32 D_8010B32C_1A40BC_HandcarHavoc;
-extern f32 D_8010B330_1A40C0_HandcarHavoc[4];
-extern f32 D_8010B340_1A40D0_HandcarHavoc[2];
-extern f32 D_8010B348_1A40D8_HandcarHavoc[2];
-extern f32 D_8010B350_1A40E0_HandcarHavoc[2];
-extern f32 D_8010B358_1A40E8_HandcarHavoc;
-extern s32 D_8010B35C_1A40EC_HandcarHavoc;
+/* S4-1AB: the winners' jump off the car (80105940; MP1 D_800FF580-D_800FF5C8) */
+extern Vec D_8010B310_1A40A0_HandcarHavoc[2];  /* per seat: where the rider lands */
+extern Vec D_8010B328_1A40B8_HandcarHavoc[2];  /* per seat: where the rider jumps from */
+extern f32 D_8010B340_1A40D0_HandcarHavoc[2];  /* per seat: x speed */
+extern f32 D_8010B348_1A40D8_HandcarHavoc[2];  /* per seat: z speed */
+extern f32 D_8010B350_1A40E0_HandcarHavoc[2];  /* per seat: launch speed */
+extern f32 D_8010B358_1A40E8_HandcarHavoc;     /* jump time */
+extern f32 D_8010B35C_1A40EC_HandcarHavoc;     /* seat 0's jump height: the shadows stay there */
 extern u16 D_8010B360_1A40F0_HandcarHavoc;
 extern s16 D_8010B362_1A40F2_HandcarHavoc;     /* _CheckFlag(0xC): COM difficulty preset */
 extern s16 D_8010B364_1A40F4_HandcarHavoc;     /* frames to the next second */
