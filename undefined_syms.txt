@@ -342,3 +342,13 @@ D_80106AE3_1B8C33_SpeedHockey = D_80106AE0_1B8C30_SpeedHockey + 0x3;
    jump table of func_801040B0) */
 D_801077B8_1863D8_Archerival = D_80107878_186498_Archerival - 0xC0;
 D_8010762B_18624B_Archerival = D_8010762A_18624A_Archerival + 0x1;
+D_801073F4_186014_Archerival = D_801073EC_18600C_Archerival + 0x8;
+D_801073FC_18601C_Archerival = D_801073EC_18600C_Archerival + 0x10;
+D_80107404_186024_Archerival = D_801073EC_18600C_Archerival + 0x18;
+D_8010740C_18602C_Archerival = D_801073EC_18600C_Archerival + 0x20;
+D_80107414_186034_Archerival = D_801073EC_18600C_Archerival + 0x28;
+D_8010741C_18603C_Archerival = D_801073EC_18600C_Archerival + 0x30;
+D_80107424_186044_Archerival = D_801073EC_18600C_Archerival + 0x38;
+D_8010742C_18604C_Archerival = D_801073EC_18600C_Archerival + 0x40;
+D_8010759C_1861BC_Archerival = D_80107598_1861B8_Archerival + 0x4;
+D_801075CC_1861EC_Archerival = D_801075C8_1861E8_Archerival + 0x4;

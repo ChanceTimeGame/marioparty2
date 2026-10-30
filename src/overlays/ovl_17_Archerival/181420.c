@@ -1,6 +1,62 @@
 #include "common.h"
 #include "ovl_17.h"
 
+/* .data (0x185FB0-0x186260, 80107390-80107640); 185F00.c has none. */
+
+ARPos D_80107390_185FB0_Archerival[5] = {
+    { -136, 85, -100 }, { -68, 85, -100 }, { 0, 85, -100 }, { 68, 85, -100 }, { 136, 85, -100 },
+};
+f32 D_801073B0_185FD0_Archerival[6] = { 19.573999f, 27.114f, 12.898001f, 42.5695f, 41.7425f, 38.308f };
+u8 D_801073C8_185FE8_Archerival[4] = { 10, 40, 80, 80 };
+u8 D_801073CC_185FEC_Archerival[4] = { 10, 40, 60, 70 };
+u8 D_801073D0_185FF0_Archerival[4] = { 0, 0, 50, 70 };
+u8 D_801073D4_185FF4_Archerival[8] = { 10, 40, 60, 70, 1, 2, 3, 0 };
+s32 D_801073DC_185FFC_Archerival = 0;
+f32 D_801073E0_186000_Archerival = 0.0f;
+f32 D_801073E4_186004_Archerival = 0.0f;
+f32 D_801073E8_186008_Archerival = 0.0f;
+/* Rows 0-4; row 5 follows as D_80107554 (its last entry has no pad word: the hooks start there). */
+ARFile D_801073EC_18600C_Archerival[5][9] = {
+    { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0xF, 0 }, { 0xE, 0 }, { 0x9C, 0 }, { 0x55, 0 } },
+    { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0x11, 0 }, { 0x10, 0 }, { 0x9C, 0 }, { 0x57, 0 } },
+    { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0x13, 0 }, { 0x12, 0 }, { 0x9C, 0 }, { 0x57, 0 } },
+    { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0x15, 0 }, { 0x14, 0 }, { 0x9C, 0 }, { 0x59, 0 } },
+    { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0x17, 0 }, { 0x16, 0 }, { 0x9C, 0 }, { 0x59, 0 } }
+};
+ARFile D_80107554_186174_Archerival[8] = { { 0x0, 0 }, { 0x44, 0 }, { 0x45, 0 }, { 0x46, 0 }, { 0x60, 0 }, { 0x19, 0 }, { 0x18, 0 }, { 0x9C, 0 } };
+s32 D_80107594_1861B4_Archerival = 0x59;
+ARHook D_80107598_1861B8_Archerival[6] = {
+    { (char*)D_80107744_186364_Archerival, (char*)D_80107734_186354_Archerival },
+    { (char*)D_80107720_186340_Archerival, (char*)D_8010770C_18632C_Archerival },
+    { (char*)D_801076F0_186310_Archerival, (char*)D_801076DC_1862FC_Archerival },
+    { (char*)D_801076C4_1862E4_Archerival, (char*)D_801076B0_1862D0_Archerival },
+    { (char*)D_8010769C_1862BC_Archerival, (char*)D_80107688_1862A8_Archerival },
+    { (char*)D_80107674_186294_Archerival, (char*)D_80107660_186280_Archerival }
+};
+ARHook D_801075C8_1861E8_Archerival[6] = {
+    { (char*)D_80107744_186364_Archerival, (char*)D_80107734_186354_Archerival },
+    { (char*)D_80107720_186340_Archerival, (char*)D_8010770C_18632C_Archerival },
+    { (char*)D_801076F0_186310_Archerival, (char*)D_801076DC_1862FC_Archerival },
+    { (char*)D_801076C4_1862E4_Archerival, (char*)D_801076B0_1862D0_Archerival },
+    { (char*)D_8010769C_1862BC_Archerival, (char*)D_80107688_1862A8_Archerival },
+    { (char*)D_80107674_186294_Archerival, (char*)D_80107660_186280_Archerival }
+};
+s16 D_801075F8_186218_Archerival[6] = { 2, 3, 7, 4, 5, 6 };
+u16 D_80107604_186224_Archerival[4] = { 0xDF, 0xE0, 0xE1, 0 };
+char* D_8010760C_18622C_Archerival[6] = {
+    (char*)D_80107790_1863B0_Archerival, (char*)D_80107784_1863A4_Archerival, (char*)D_80107778_186398_Archerival,
+    (char*)D_8010776C_18638C_Archerival, (char*)D_80107760_186380_Archerival, (char*)D_80107754_186374_Archerival,
+};
+s16 D_80107624_186244_Archerival = -1;
+s16 D_80107626_186246_Archerival = 0;
+u8 D_80107628_186248_Archerival = 0;
+u8 D_80107629_186249_Archerival = 0;
+u8 D_8010762A_18624A_Archerival = 0;
+u8 D_8010762B_18624B_Archerival = 0;
+s32 D_8010762C_18624C_Archerival = 0;
+s16 D_80107630_186250_Archerival = 15;
+
+
 void func_80102800_181420_Archerival(void) {
     func_801070A8_185CC8_Archerival();
 }
