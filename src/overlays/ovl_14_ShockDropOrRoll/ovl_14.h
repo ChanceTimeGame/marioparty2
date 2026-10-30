@@ -157,7 +157,7 @@ s32 PlaySound(s32);
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
-void func_80007790_8390(omObjData* obj, s32 arg1); /* player object update */
+void func_80007790_8390(omObjData* obj); /* player object update */
 void func_8000BE8C_CA8C(omObjData*, f32);
 void func_8000BEA4_CAA4(omObjData*, f32);
 void func_8000BEB0_CAB0(omObjData*, f32);

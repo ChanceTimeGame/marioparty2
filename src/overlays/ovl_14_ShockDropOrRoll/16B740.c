@@ -131,7 +131,125 @@ void func_8010306C_16BFAC_ShockDropOrRoll(omObjData* obj) {
                                          450.0f, 0.0f, 2);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_80103100_16C040_ShockDropOrRoll);
+/* A roller player's update (after func_801038C4's CPU input): the stick X runs it along the
+   roller (stick Y), the roller carries it, the intro runs it on its own; a player whose y reaches
+   0 has fallen: it drops through, bounces on the floor and leaves under a spinning marker. At the
+   end the survivors cheer or sulk and face the camera. */
+void func_80103100_16C040_ShockDropOrRoll(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    SDPlayer* p = w->unk_158;
+
+    if (D_80106ED7_16FE17_ShockDropOrRoll >= 5 && D_80106ED7_16FE17_ShockDropOrRoll < 9) {
+        ContStkY[w->unk_57] = -ContStkX[w->unk_57];
+    } else {
+        ContStkY[w->unk_57] = 0;
+        ContBtn[w->unk_57] = 0;
+    }
+    ContStkX[w->unk_57] = 0;
+    if (p->fell == 0 && obj->trans.y <= 0.0f) {
+        p->fell = 1;
+    }
+    if (p->fell == 1) {
+        ContStkY[w->unk_57] = 0;
+        ContBtnTrg[w->unk_57] = 0;
+        ContBtn[w->unk_57] = 0;
+    }
+    if (D_80106ED0_16FE10_ShockDropOrRoll == 0 && w->unk_38 == 1000.0f && p->fell == 0) {
+        obj->trans.z += D_801072C4_170204_ShockDropOrRoll;
+    }
+    p->pos[0] = obj->trans.x;
+    p->pos[1] = obj->trans.y;
+    p->pos[2] = obj->trans.z;
+    if (D_80106ED1_16FE11_ShockDropOrRoll == 1 && D_80106ED3_16FE13_ShockDropOrRoll == 0) {
+        ContBtn[w->unk_57] = 0xFFFF;
+        ContBtnTrg[w->unk_57] = 0;
+        if ((obj->trans.z > 0.0f ? obj->trans.z : -obj->trans.z) >= 100.0f) {
+            if (obj->trans.z < 0.0f) {
+                ContStkY[w->unk_57] = -60;
+            } else {
+                ContStkY[w->unk_57] = 60;
+            }
+        } else if (obj->trans.z < 0.0f) {
+            ContStkY[w->unk_57] = -45;
+        } else {
+            ContStkY[w->unk_57] = 45;
+        }
+        if ((obj->trans.z > 0.0f ? obj->trans.z : -obj->trans.z) >= 175.0f) {
+            if (p->jumpWait >= 30) {
+                ContBtn[w->unk_57] = 0x7FFF;
+                ContBtnTrg[w->unk_57] = 0x8000;
+                p->jumpWait = 0;
+            }
+        }
+        p->jumpWait++;
+    }
+    if (p->dropped == 0) {
+        func_80007790_8390(obj);
+    } else {
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+    }
+    if (p->fell == 1 && (D_80106ED5_16FE15_ShockDropOrRoll != 0 || p->dropped == 1)) {
+        if (p->dropped == 0) {
+            func_8000C024_CC24(obj, 0, 1);
+            func_8000C024_CC24(obj, 1, 1);
+            if (p->voiced == 0) {
+                func_800797DC_7A3DC(0x111, w->unk_59);
+                p->voiced = 1;
+            }
+            func_80029B80_2A780(obj->model[0], obj->motion[0x26]);
+            func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, 0.0f, 0.0f);
+            obj->rot.y = -90.0f;
+            p->dropped = 1;
+        } else if (obj->trans.x > -1000.0f) {
+            if (obj->trans.y < -250.0f) {
+                obj->trans.y = -250.0f;
+                p->fallVel = 50.0f;
+                func_80079798_7A398(0x1C9, w->unk_59);
+                omVibrate(w->unk_59, 20, 0, 20);
+            }
+            obj->trans.y += p->fallVel;
+            p->fallVel -= 3.5f;
+            obj->trans.x -= 20.0f;
+        } else {
+            obj->trans.x = -2300.0f;
+            obj->trans.y = 500.0f;
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+        }
+        if (obj->trans.z < 0.0f) {
+            if (obj->trans.z > -325.0f) {
+                obj->trans.z -= 10.0f;
+                if (obj->trans.z < -325.0f) {
+                    obj->trans.z = -325.0f;
+                }
+            }
+        } else if (obj->trans.z < 325.0f) {
+            obj->trans.z += 10.0f;
+            if (obj->trans.z > 325.0f) {
+                obj->trans.z = 325.0f;
+            }
+        }
+        func_800298A4_2A4A4(p->mark, 4, 0);
+        func_80029714_2A314(p->mark, obj->trans.x, obj->trans.y + 75.0f, obj->trans.z);
+        func_8002979C_2A39C(p->mark, p->rot[0], p->rot[1], p->rot[2]);
+        p->rot[0] += 23.0f;
+        p->rot[1] += 33.0f;
+    }
+    if (D_80106ED0_16FE10_ShockDropOrRoll == 1 && p->dropped == 0) {
+        if (w->unk_38 == 1000.0f && D_80106EDA_16FE1A_ShockDropOrRoll == 1 && p->cheered == 0) {
+            if (_CheckFlag(0xC) == 0) {
+                if (D_80106ED5_16FE15_ShockDropOrRoll == 0) {
+                    func_80019B9C_1A79C(obj, 0xD);
+                    func_800732B0_73EB0(D_800CD438_CE038[gPlayers[w->unk_59].character].unk_04 | 0x4F);
+                } else {
+                    func_80019B9C_1A79C(obj, 0xE);
+                    func_800732B0_73EB0(D_800CD438_CE038[gPlayers[w->unk_59].character].unk_04 | 0x56);
+                }
+            }
+            p->cheered = 1;
+        }
+        w->unk_3C = -func_800B75A8_B81A8(obj->trans.x - D_8010274C_10334C.x, -(obj->trans.z - D_8010274C_10334C.z));
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_14_ShockDropOrRoll/16B740", func_801038C4_16C804_ShockDropOrRoll);
 
