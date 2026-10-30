@@ -184,7 +184,7 @@ void func_80102F0C_121E4C_RakinEmIn(void) {
     }
 }
 
-void func_8010302C_121F6C_RakinEmIn(RIObj* o, s16 member, u16 anim, s32 x, s32 y) {
+void func_8010302C_121F6C_RakinEmIn(RIObj* o, s16 member, u16 anim, u16 x, s32 y) {
     D_801071E0_126120_RakinEmIn[(u16)(member + 10)] = anim;
     SprAnimSet(o->spr, member, anim, 0);
     SprAttrSet(o->spr, member, 0x1000);
@@ -192,11 +192,110 @@ void func_8010302C_121F6C_RakinEmIn(RIObj* o, s16 member, u16 anim, s32 x, s32 y
     SprPrioSet(o->spr, member, 0xFFF4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801030E4_122024_RakinEmIn);
+/* The scores: count the shown number one step towards the score (left-aligned digits), then
+   pop it. */
+void func_801030E4_122024_RakinEmIn(omObjData* obj) {
+    RIObj* hud;
+    RIScore* sc;
+    f32 s;
+    s16 i;
+    s16 m;
+    s16 lead;
+    u16 n;
+    u16 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801033B0_1222F0_RakinEmIn);
+    hud = &D_80107AC0_126A00_RakinEmIn;
+    for (i = 0; i < 4; i++) {
+        sc = &D_801071B0_1260F0_RakinEmIn[i];
+        switch (sc->state) {
+        case 0:
+            if (sc->shown != sc->score) {
+                if (sc->shown < sc->score) {
+                    n = sc->shown + 1;
+                } else {
+                    n = sc->shown - 1;
+                }
+                lead = 0;
+                m = i * 3 + 12;
+                d = n / 100;
+                if (d != 0) {
+                    SprBankSet(hud->spr, m++, d);
+                    lead = 1;
+                } else {
+                    SprAttrSet(hud->spr, m + 2, 0x8000);
+                }
+                if ((d = (u16)(n % 100) / 10) != 0) {
+                    goto show;
+                }
+                if (lead != 0) {
+                show:
+                    SprBankSet(hud->spr, m++, d);
+                } else {
+                    SprAttrSet(hud->spr, m + 1, 0x8000);
+                }
+                d = n % 10;
+                SprBankSet(hud->spr, m, d);
+                SprAttrReset(hud->spr, m, 0x8000);
+                sc->shown = n;
+                sc->state = 1;
+            }
+            break;
+        case 1:
+            m = i + 4;
+            sc->angle += 40.0f;
+            if (sc->angle > 180.0f) {
+                sc->angle = 0.0f;
+                sc->state = 0;
+            }
+            s = func_800B80D0_B8CD0(sc->angle) + 1.0;
+            SprScaleSet(hud->spr, m, s, s);
+            break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801036B8_1225F8_RakinEmIn);
+/* The HUD: four faces, four basket icons, four "x" signs and three digits per player. */
+void func_801033B0_1222F0_RakinEmIn(omObjData* obj) {
+    s16 i;
+    s16 j;
+    u16 anim;
+    RIObj* hud;
+
+    hud = &D_80107AC0_126A00_RakinEmIn;
+    func_800B0EF0_B1AF0(D_801071B0_1260F0_RakinEmIn, 0, 0x30);
+    D_80107AC4_126A04_RakinEmIn = SprCreate(24, 0);
+    for (i = 0; i < 4; i++) {
+        func_8010302C_121F6C_RakinEmIn(hud, i,
+                                       func_8001A2F8_1AEF8(D_80106F5C_125E9C_RakinEmIn[gPlayers[i].character]),
+                                       D_80106F1C_125E5C_RakinEmIn[i][0], D_80106F1E_125E5E_RakinEmIn[i][0]);
+    }
+    anim = func_8001A2F8_1AEF8(0x17000F);
+    for (; i < 8; i++) {
+        func_8010302C_121F6C_RakinEmIn(hud, i, anim, D_80106F1C_125E5C_RakinEmIn[i][0],
+                                       D_80106F1E_125E5E_RakinEmIn[i][0]);
+    }
+    anim = func_8001A2F8_1AEF8(0x170010);
+    for (; i < 12; i++) {
+        func_8010302C_121F6C_RakinEmIn(hud, i, anim, D_80106F1C_125E5C_RakinEmIn[i][0],
+                                       D_80106F1E_125E5E_RakinEmIn[i][0]);
+    }
+    anim = func_8001A2F8_1AEF8(0x43);
+    for (j = i; j < 16; j++) {
+        func_8010302C_121F6C_RakinEmIn(hud, i++, anim, D_80106F1C_125E5C_RakinEmIn[j][0],
+                                       D_80106F1E_125E5E_RakinEmIn[j][0]);
+        func_8010302C_121F6C_RakinEmIn(hud, i, anim, D_80106F1C_125E5C_RakinEmIn[j][0] + 12,
+                                       D_80106F1E_125E5E_RakinEmIn[j][0]);
+        SprAttrSet(hud->spr, i++, 0x8000);
+        func_8010302C_121F6C_RakinEmIn(hud, i, anim, D_80106F1C_125E5C_RakinEmIn[j][0] + 24,
+                                       D_80106F1E_125E5E_RakinEmIn[j][0]);
+        SprAttrSet(hud->spr, i++, 0x8000);
+    }
+    obj->func_ptr = func_801030E4_122024_RakinEmIn;
+}
+
+void func_801036B8_1225F8_RakinEmIn(void) {
+    D_80107AC0_126A00_RakinEmIn.obj = omAddObj(600, 0, 0, -1, func_801033B0_1222F0_RakinEmIn);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801036F4_122634_RakinEmIn);
 

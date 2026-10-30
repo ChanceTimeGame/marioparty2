@@ -89,8 +89,8 @@ extern u16 D_80106DE0_125D20_RakinEmIn[6];      /* rake texture file by characte
 extern Vec D_80106DEC_125D2C_RakinEmIn[24];     /* item start positions */
 extern s16 D_80106F0C_125E4C_RakinEmIn[4];      /* points by item kind */
 extern u16 D_80106F14_125E54_RakinEmIn[4];      /* texture file by item kind */
-extern u16 D_80106F1C_125E5C_RakinEmIn[32];     /* HUD sprite x, y */
-extern u16 D_80106F1E_125E5E_RakinEmIn[];       /* = &D_80106F1C[1] */
+extern u16 D_80106F1C_125E5C_RakinEmIn[16][2];  /* HUD sprite x, y */
+extern u16 D_80106F1E_125E5E_RakinEmIn[][2];    /* = &D_80106F1C[0][1] */
 extern s32 D_80106F5C_125E9C_RakinEmIn[6];      /* face sprite file by character */
 extern s32 D_80106F74_125EB4_RakinEmIn;         /* camera set up */
 extern s16 D_80106F78_125EB8_RakinEmIn[6][2];   /* player motion files by character */
@@ -196,7 +196,7 @@ f32 func_801029F0_121930_RakinEmIn(f32 x);
 void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out);
 f32 func_80102EB4_121DF4_RakinEmIn(f32 angle, f32 add);
 void func_80102F0C_121E4C_RakinEmIn(void);
-void func_8010302C_121F6C_RakinEmIn(RIObj* o, s16 member, u16 anim, s32 x, s32 y);
+void func_8010302C_121F6C_RakinEmIn(RIObj* o, s16 member, u16 anim, u16 x, s32 y);
 void func_801030E4_122024_RakinEmIn(omObjData* obj);
 void func_801033B0_1222F0_RakinEmIn(omObjData* obj);
 void func_801036B8_1225F8_RakinEmIn(void);
