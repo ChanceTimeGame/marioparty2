@@ -556,13 +556,94 @@ void func_801043A4_293414_DeepSeaSalvage(void) {
         D_801088BE_29792E_DeepSeaSalvage[3] = 0;
 }
 
-__asm__(".section .rodata");
-const u32 D_80108730_2977A0_DeepSeaSalvage[2] = { 0x03050609, 0x0A0C0000 };
+/* The throw plan: each lane's 13 drops shuffled (D_80108838), then 23 throws (D_80108870, lane
+   bits): pattern 0 throws in all four lanes, 1 in two lanes (a pair from a[]), 2 in one lane. */
+void func_801044A8_293518_DeepSeaSalvage(void) {
+    u8 pairs[8] = { 3, 5, 6, 9, 10, 12, 0, 0 };
+    u8 ones[8] = { 1, 2, 4, 8, 1, 2, 4, 8 };
+    u8 pat[23];
+    s16 i;
+    s16 j;
+    s16 k;
+    s16 k2;
+    s16 oi;
+    u8 tmp;
 
-__asm__(".section .rodata");
-const u32 D_80108738_2977A8_DeepSeaSalvage[2] = { 0x01020408, 0x01020408 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_801044A8_293518_DeepSeaSalvage);
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 13; j++) {
+            D_80108838_2978A8_DeepSeaSalvage[i][j] = D_80108498_297508_DeepSeaSalvage[j];
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 100; j++) {
+            k = func_80106100_295170_DeepSeaSalvage(13);
+            k2 = func_80106100_295170_DeepSeaSalvage(13);
+            tmp = D_80108838_2978A8_DeepSeaSalvage[i][k];
+            D_80108838_2978A8_DeepSeaSalvage[i][k] = D_80108838_2978A8_DeepSeaSalvage[i][k2];
+            D_80108838_2978A8_DeepSeaSalvage[i][k2] = tmp;
+        }
+    }
+    for (j = 0; j < 21; j += 3) {
+        if (j == 0) {
+            k = func_80106100_295170_DeepSeaSalvage(2);
+        } else {
+            k = func_80106100_295170_DeepSeaSalvage(6);
+        }
+        pat[j] = D_801084A8_297518_DeepSeaSalvage[k][0];
+        pat[j + 1] = D_801084A8_297518_DeepSeaSalvage[k][1];
+        pat[j + 2] = D_801084A8_297518_DeepSeaSalvage[k][2];
+    }
+    if (func_80106100_295170_DeepSeaSalvage(2)) {
+        pat[j] = 1;
+        pat[j + 1] = 2;
+    } else {
+        pat[j] = 2;
+        pat[j + 1] = 1;
+    }
+    switch (func_80106100_295170_DeepSeaSalvage(3)) {
+    case 0:
+        pairs[6] = 3;
+        pairs[7] = 12;
+        break;
+    case 1:
+        pairs[6] = 5;
+        pairs[7] = 10;
+        break;
+    case 2:
+        pairs[6] = 6;
+        pairs[7] = 9;
+        break;
+    }
+    for (j = 0; j < 100; j++) {
+        k = func_80106100_295170_DeepSeaSalvage(8);
+        k2 = func_80106100_295170_DeepSeaSalvage(8);
+        tmp = pairs[k];
+        pairs[k] = pairs[k2];
+        pairs[k2] = tmp;
+    }
+    for (j = 0; j < 100; j++) {
+        k = func_80106100_295170_DeepSeaSalvage(8);
+        k2 = func_80106100_295170_DeepSeaSalvage(8);
+        tmp = ones[k];
+        ones[k] = ones[k2];
+        ones[k2] = tmp;
+    }
+    oi = 0;
+    k = 0;
+    for (j = 0; j < 23; j++) {
+        switch (pat[j]) {
+        case 0:
+            D_80108870_2978E0_DeepSeaSalvage[j] = 15;
+            break;
+        case 1:
+            D_80108870_2978E0_DeepSeaSalvage[j] = pairs[k++];
+            break;
+        case 2:
+            D_80108870_2978E0_DeepSeaSalvage[j] = ones[oi++];
+            break;
+        }
+    }
+}
 
 /* The treasure object: 20 treasures, each a sprite model (obj->model[i]). */
 void func_80104944_2939B4_DeepSeaSalvage(omObjData* obj) {
