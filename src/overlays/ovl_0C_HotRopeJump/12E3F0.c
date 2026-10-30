@@ -1,5 +1,48 @@
 #include "ovl_0C.h"
 
+/* .data (0x137D00-0x137E50, 8010C110-8010C260). D_8010C146 (inside D_8010C144) and D_8010C226
+   (inside D_8010C224) are undefined_syms.txt aliases: retail's asm reads each s32's low half by
+   them. The splat labels D_8010C120/124/128 (D_8010C11C[1..3]) and D_8010C160-1A8
+   (D_8010C148[1..4]) have no users of their own. */
+
+s32 D_8010C110_137D00_HotRopeJump = 99;
+s32 D_8010C114_137D04_HotRopeJump = 0;
+s16 D_8010C118_137D08_HotRopeJump = 0;
+u16 D_8010C11A_137D0A_HotRopeJump = 0;
+s32 D_8010C11C_137D0C_HotRopeJump[4] = { 0, 0, 0, 0 };
+s32 D_8010C12C_137D1C_HotRopeJump[4] = { 0, 1, 2, 3 };
+f32 D_8010C13C_137D2C_HotRopeJump = 0.0f;
+s32 D_8010C140_137D30_HotRopeJump = 0;
+s32 D_8010C144_137D34_HotRopeJump = 0;
+HRJPhase D_8010C148_137D38_HotRopeJump[5] = {
+    { 5, 0, 0.0f, { 0.6f, 0.6f, 0.6f } },
+    { 5, 0, 1.0f, { 0.6f, 0.6f, 0.6f } },
+    { 10, 1, 1.0f, { 0.48f, 0.8f, 1.2f } },
+    { 5, 2, 1.0f, { 0.1f, 0.1f, 0.1f } },
+    { -1, 3, 1.0f, { 1.7f, 1.2f, 0.8f } },
+};
+HRJPhase* D_8010C1C0_137DB0_HotRopeJump[5] = {
+    &D_8010C148_137D38_HotRopeJump[0], &D_8010C148_137D38_HotRopeJump[1], &D_8010C148_137D38_HotRopeJump[2],
+    &D_8010C148_137D38_HotRopeJump[3], &D_8010C148_137D38_HotRopeJump[4],
+};
+s32 D_8010C1D4_137DC4_HotRopeJump[4][2] = { { 0xF0, 0x18 }, { 0x100, 0x18 }, { 0x110, 0x28 }, { 0x120, 0x28 } };
+f32 D_8010C1F4_137DE4_HotRopeJump[4] = { -2.4f, -0.8f, 0.8f, 2.4f };
+omObjData* D_8010C204_137DF4_HotRopeJump = NULL;
+s32 D_8010C208_137DF8_HotRopeJump = 0;
+s32 D_8010C20C_137DFC_HotRopeJump = 0;
+f32 D_8010C210_137E00_HotRopeJump = -360.0f;
+f32 D_8010C214_137E04_HotRopeJump = 1.0f;
+s32 D_8010C218_137E08_HotRopeJump = 0;
+s32 D_8010C21C_137E0C_HotRopeJump = 0;
+s32 D_8010C220_137E10_HotRopeJump = 0;
+s32 D_8010C224_137E14_HotRopeJump = 0;
+u16 D_8010C228_137E18_HotRopeJump[4] = { 0, 0, 0, 0 };
+s16 D_8010C230_137E20_HotRopeJump[6] = { 0x172, 0x175, 0x176, 0x177, 0x178, 0 };
+s16 D_8010C23C_137E2C_HotRopeJump[6] = { 0x42, 0x43, 0x44, 0x45, 0x46, 0x47 };
+s16 D_8010C248_137E38_HotRopeJump[6] = { 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E };
+u16 D_8010C254_137E44_HotRopeJump = 0;
+s16 D_8010C258_137E48_HotRopeJump[4] = { 0, 0x3000, 0x2000, 0 };
+
 /* The game's setup: objects, camera, each player's place drawn at random, the motion constants.
    NON_MATCHING: retail hoists only the source table and -1 out of the place-drawing loop and keeps
    D_8010C11C by %lo (GCC hoists its address too; masked 17) */
