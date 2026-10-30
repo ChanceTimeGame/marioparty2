@@ -821,9 +821,57 @@ const u32 jtbl_801077D0_1863F0_Archerival[6] = { 0x80104990, 0x80104998, 0x80104
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80104AEC_18370C_Archerival);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010506C_183C8C_Archerival);
+void func_8010506C_183C8C_Archerival(void) {
+    ARObj* tbl = D_80107920_186540_Archerival;
+    omObjData* o;
+    s16 i;
+    s16 player;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105180_183DA0_Archerival);
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+    case 1:
+        player = 1;
+        break;
+    case 2:
+        player = 2;
+        break;
+    case 3:
+        player = 3;
+        break;
+    case 0:
+    default:
+        player = 0;
+        break;
+    }
+    o = omAddObj(100, 11, 60, -1, func_80104AEC_18370C_Archerival);
+    tbl->player = player;
+    o->work[0] = player;
+    tbl->obj = o;
+    D_800FFFD8_100BD8[D_800FC87A_FD47A] = o;
+    D_800FC87A_FD47A++;
+}
+
+/* Drops n coins at a broken target, one every 5 frames, if the five slots are not used up. */
+void func_80105180_183DA0_Archerival(f32 x, f32 y, f32 z, u8 n) {
+    ARCoin* c;
+    u16 i;
+
+    for (i = 0; i < n; i++) {
+        if (D_801078EB_18650B_Archerival >= 5) {
+            break;
+        }
+        c = &D_80107878_186498_Archerival[D_801078EB_18650B_Archerival++];
+        c->x = x;
+        c->y = y;
+        c->z = z;
+        c->active = 1;
+        c->delay = i * 5;
+    }
+}
 
 __asm__(".section .rodata");
 const u32 D_801077E8_186408_Archerival[2] = { 0x01DB01DD, 0x01DA0000 };
@@ -837,53 +885,502 @@ const u32 D_801077F0_186410_Archerival[2] = { 0x00010002, 0x00030000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105878_184498_Archerival);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105C84_1848A4_Archerival);
+void func_80105C84_1848A4_Archerival(omObjData* obj, ARObj* p) {
+    switch (p->unk_26) {
+    case 0:
+        func_80105878_184498_Archerival(obj, p);
+        break;
+    case 1:
+        if (obj->rot.y != 0.0f) {
+            obj->rot.x += 4.0f;
+            if (obj->rot.x >= 120.0f) {
+                obj->rot.x = 120.0f;
+            }
+        } else {
+            if (obj->rot.x == 0.0f) {
+                obj->rot.x = 360.0f;
+            }
+            obj->rot.x -= 4.0f;
+            if (obj->rot.x <= 240.0f) {
+                obj->rot.x = 240.0f;
+            }
+        }
+        obj->trans.y -= 1.3f;
+        obj->trans.z += 0.4f;
+        if (obj->trans.y < 0.0f) {
+            p->unk_26 = 2;
+        }
+        break;
+    case 2:
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105DD0_1849F0_Archerival);
+void func_80105DD0_1849F0_Archerival(omObjData* obj) {
+    ARObj* p;
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_801077F8_186418_Archerival[12] = { 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000002, 0x00000000, 0x00000003, 0x00000000, 0x00000004, 0x00000000, 0x00000005 };
+    for (i = 1; i < 4; i++) {
+        p = &D_80107920_186540_Archerival[i];
+        if (p->player == obj->work[0]) {
+            break;
+        }
+    }
+    func_80105C84_1848A4_Archerival(obj, p);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105E38_184A58_Archerival);
+void func_80105E38_184A58_Archerival(omObjData* obj) {
+    ARFile files[6] = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 0, 3 }, { 0, 4 }, { 0, 5 } };
+    ARObj* p;
+    s16 i;
+    u8 chr;
+    u8 n;
 
+    for (i = 1; i < 4; i++) {
+        p = &D_80107920_186540_Archerival[i];
+        if (p->player == obj->work[0]) {
+            break;
+        }
+    }
+    chr = gPlayers[obj->work[0]].character;
+    n = func_801037C4_1823E4_Archerival(5, &D_801078DC_1864FC_Archerival);
+    obj->trans.x = D_80107390_185FB0_Archerival[n].x;
+    obj->trans.y = D_80107390_185FB0_Archerival[n].y;
+    obj->trans.z = D_80107390_185FB0_Archerival[n].z;
+    obj->model[0] = LoadFormFile(files[chr].unk_04 | 0x270000, 0x2B9);
+    obj->model[1] = LoadFormFile(10, 0x28D);
+    func_800297E8_2A3E8(obj->model[1], 0.4f, 0.4f, 0.4f);
+    if (gPlayers[obj->work[0]].flags & 1) {
+        p->com = 1;
+    } else {
+        p->com = 0;
+        func_8010281C_18143C_Archerival(obj->work[0]);
+    }
+    p->unk_30 = 0;
+    p->unk_2A = 1;
+    p->timer = 1;
+    p->unk_26 = 0;
+    p->unk_24 = 0;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    obj->func_ptr = func_80105DD0_1849F0_Archerival;
+}
+
+// NON_MATCHING: retail copies the switch value first (Look Away's 80105B4C does the same), registers only
+#ifdef NON_MATCHING
+void func_80106064_184C84_Archerival(void) {
+    ARObj* p;
+    omObjData* o;
+    s32 slot;
+    s16 i;
+    s16 k;
+    s16 player;
+
+    D_801078DC_1864FC_Archerival = 4;
+    slot = 1;
+    for (i = 0; i < 4; i++) {
+        if (D_8010794E_18656E_Archerival != i) {
+            p = &D_80107920_186540_Archerival[slot];
+            o = omAddObj(300, 2, 1, -1, func_80105E38_184A58_Archerival);
+            k = i;
+            switch (k) {
+            case 1:
+                player = 1;
+                break;
+            case 2:
+                player = 2;
+                break;
+            case 3:
+                player = 3;
+                break;
+            case 0:
+            default:
+                player = 0;
+                break;
+            }
+            p->player = player;
+            o->work[0] = player;
+            p->obj = o;
+            slot++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106064_184C84_Archerival);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010618C_184DAC_Archerival);
+void func_8010618C_184DAC_Archerival(omObjData* obj) {
+    ARObj* p;
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_80107828_186448_Archerival[6] = { 0x00000000, 0x00000006, 0x00000000, 0x00000007, 0x00000000, 0x00000008 };
+    for (i = 4; i < 6; i++) {
+        p = &D_80107920_186540_Archerival[i];
+        if (p->player == obj->work[0]) {
+            break;
+        }
+    }
+    func_80105C84_1848A4_Archerival(obj, p);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801061F4_184E14_Archerival);
+void func_801061F4_184E14_Archerival(omObjData* obj) {
+    ARFile files[3] = { { 0, 6 }, { 0, 7 }, { 0, 8 } };
+    ARObj* p;
+    s16 i;
+    u8 kind;
+    u8 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801063FC_18501C_Archerival);
+    for (i = 4; i < 6; i++) {
+        p = &D_80107920_186540_Archerival[i];
+        if (p->player == obj->work[0]) {
+            break;
+        }
+    }
+    kind = p->player - 4;
+    if (++D_8010762C_18624C_Archerival == 1) {
+        D_801078DC_1864FC_Archerival ^= 4;
+    }
+    n = func_801037C4_1823E4_Archerival(5, &D_801078DC_1864FC_Archerival);
+    obj->trans.x = D_80107390_185FB0_Archerival[n].x;
+    obj->trans.y = D_80107390_185FB0_Archerival[n].y;
+    obj->trans.z = D_80107390_185FB0_Archerival[n].z;
+    obj->model[0] = LoadFormFile(files[kind].unk_04 | 0x270000, 0x2B9);
+    obj->model[1] = LoadFormFile(10, 0x28D);
+    func_800297E8_2A3E8(obj->model[1], 0.4f, 0.4f, 0.4f);
+    p->com = 1;
+    p->unk_30 = 0;
+    p->unk_2A = 1;
+    p->timer = p->player - 4;
+    p->unk_26 = 0;
+    p->unk_24 = 0;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    obj->func_ptr = func_8010618C_184DAC_Archerival;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801064BC_1850DC_Archerival);
+void func_801063FC_18501C_Archerival(void) {
+    ARObj* p;
+    omObjData* o;
+    s16 i;
+    s16 n;
+    u8 used;
 
+    i = 0;
+    used = 0;
+    for (; i < 2; i++) {
+        p = &D_80107A40_186660_Archerival[i];
+        o = omAddObj(400, 2, 1, -1, func_801061F4_184E14_Archerival);
+        n = func_801037C4_1823E4_Archerival(3, &used) + 4;
+        p->player = n;
+        o->work[0] = n;
+        p->obj = o;
+    }
+}
+
+void func_801064BC_1850DC_Archerival(omObjData* obj) {
+    ARObj* p;
+    ARCoin* c;
+    s16 i;
+
+    for (i = 12; i < 17; i++) {
+        p = &D_80107920_186540_Archerival[i];
+        if (p->player == obj->work[0]) {
+            break;
+        }
+    }
+    c = &D_801077B8_1863D8_Archerival[i];
+    switch (p->state) {
+    case 0:
+        if (c->active != 0) {
+            if (c->delay == 0) {
+                obj->trans.x = c->x;
+                obj->trans.y = c->y;
+                obj->trans.z = c->z;
+                func_800298A4_2A4A4(obj->model[0], 4, 0);
+                p->state = 1;
+                p->unk_38 = 15.0f;
+                PlaySound(9);
+            } else {
+                c->delay--;
+            }
+        }
+        break;
+    case 1:
+        obj->trans.y += p->unk_38;
+        p->unk_38 += -1.5f;
+        if (p->unk_38 <= 0.0f) {
+            p->unk_22 = 8;
+            p->state = 2;
+        }
+        break;
+    case 2:
+        if (p->unk_22-- == 0) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y + 10.0f, obj->trans.z + 20.0f);
+            func_800298A4_2A4A4(obj->model[1], 4, 0);
+            p->state = 3;
+        }
+        break;
+    }
+}
+
+// NON_MATCHING: retail keeps the entry's byte offset in s0 across the calls, register and scheduling residue
+#ifdef NON_MATCHING
+void func_801066C0_1852E0_Archerival(omObjData* obj) {
+    u16 idx;
+
+    obj->model[0] = LoadFormFile(7, 0x68D);
+    idx = func_80018D64_19964(0xE, 0xA89, 8);
+    obj->model[0] = D_800F86D8_F92D8[idx].unk00;
+    HmfModelObjAttrSet(obj->model[0], 0x70000000, 0x70000000);
+    func_8003E808_3F408(D_800F86D8_F92D8[idx].unk02, (u32)(((u32)guRandom() >> 4) % 300) / 100);
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
+    func_800298A4_2A4A4(obj->model[0], 4, 4);
+    obj->model[1] = LoadFormFile(8, 0x68D);
+    func_800297E8_2A3E8(obj->model[1], 0.6f, 0.6f, 0.6f);
+    func_8002CDF0_2D9F0(obj->model[1], 0x3F, 0x1F, 0, 0x3F);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    obj->func_ptr = func_801064BC_1850DC_Archerival;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801066C0_1852E0_Archerival);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010687C_18549C_Archerival);
+void func_8010687C_18549C_Archerival(void) {
+    ARObj* p;
+    omObjData* o;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010691C_18553C_Archerival);
+    for (i = 0; i < 5; i++) {
+        p = &((ARObj*)&D_80107C80_1868A0_Archerival)[i];
+        o = omAddObj(600, 2, 2, -1, func_801066C0_1852E0_Archerival);
+        p->player = i;
+        o->work[0] = i;
+        p->obj = o;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010697C_18559C_Archerival);
+void func_8010691C_18553C_Archerival(omObjData* obj) {
+    if (D_80107630_186250_Archerival != 0) {
+        if (--D_80107630_186250_Archerival == 0) {
+            func_8006D518_6E118();
+        }
+    }
+    if (D_801078E4_186504_Archerival != 0) {
+        D_801078E4_186504_Archerival--;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106A30_185650_Archerival);
+void func_8010697C_18559C_Archerival(omObjData* obj) {
+    if (D_801078E2_186502_Archerival != 0) {
+        D_801078E2_186502_Archerival--;
+    }
+    func_8006D4D0_6E0D0((D_801078E2_186502_Archerival + 29) / 30);
+    if (D_801078DE_1864FE_Archerival == 3) {
+        D_801078E4_186504_Archerival = 60;
+        func_800691FC_69DFC(3);
+        func_800794A8_7A0A8(40);
+        obj->func_ptr = func_8010691C_18553C_Archerival;
+        D_801078E2_186502_Archerival = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106A70_185690_Archerival);
+void func_80106A30_185650_Archerival(omObjData* obj) {
+    func_800691FC_69DFC(10, 30, 160, 28);
+    obj->func_ptr = func_8010697C_18559C_Archerival;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106AE4_185704_Archerival);
+void func_80106A70_185690_Archerival(omObjData* obj) {
+    switch (D_801078DE_1864FE_Archerival) {
+    case 1:
+        if (D_801078E2_186502_Archerival == 0) {
+            func_800691FC_69DFC(0);
+            D_801078E2_186502_Archerival++;
+        }
+        break;
+    case 2:
+        obj->func_ptr = func_80106A30_185650_Archerival;
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106BDC_1857FC_Archerival);
+void func_80106AE4_185704_Archerival(void) {
+    ARObj* tbl;
+    omObjData* o;
+    s16 win;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106C00_185820_Archerival);
+    i = 0;
+    tbl = D_80107920_186540_Archerival;
+    for (; i < 4; i++) {
+        o = tbl[i].obj;
+        if (o != NULL) {
+            win = 0;
+            if (D_801078E0_186500_Archerival == 1) {
+                win = gPlayers[o->work[0]].group == 0;
+            } else if (gPlayers[o->work[0]].group != 0) {
+                win = 1;
+            }
+            if (win) {
+                gPlayers[o->work[0]].coins_mg_bonus = 10;
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106C80_1858A0_Archerival);
+void func_80106BDC_1857FC_Archerival(omObjData* obj) {
+    osViBlack(0);
+    omOvlReturnEx(1);
+}
 
+void func_80106C00_185820_Archerival(omObjData* obj) {
+    s16 i;
+
+    if (func_8008F618_90218() == 0) {
+        for (i = 0; i < 3; i++) {
+            DataClose(D_801078F8_186518_Archerival[i]);
+        }
+        obj->func_ptr = func_80106BDC_1857FC_Archerival;
+    }
+}
+
+void func_80106C80_1858A0_Archerival(omObjData* obj) {
+    if (D_801011FC_101DFC == 1) {
+        InitFadeOut(0, 20);
+        func_800794A8_7A0A8(40);
+        func_80079614_7A214(40);
+        obj->func_ptr = func_80106C00_185820_Archerival;
+    }
+}
+
+// NON_MATCHING: retail keeps k in a2 for func_800691FC's third argument (one instruction fewer), as Look Away's 80106060
+#ifdef NON_MATCHING
+void func_80106CD8_1858F8_Archerival(omObjData* obj) {
+    ARObj* tbl;
+    u8 chars[4];
+    s16 i;
+    s16 k;
+    s32 t;
+
+    switch (D_801078DE_1864FE_Archerival) {
+    case 0:
+        if (D_801078E2_186502_Archerival == 0) {
+            PlayMusic(0x20);
+        }
+        if (D_801078E2_186502_Archerival++ >= 31) {
+            D_801078DE_1864FE_Archerival = 1;
+            D_801078E2_186502_Archerival = 0;
+        }
+        break;
+    case 1:
+        if (func_80069538_6A138() == 0) {
+            D_801078DE_1864FE_Archerival = 2;
+            D_801078E2_186502_Archerival = 901;
+        }
+        break;
+    case 2:
+        if (D_801078E2_186502_Archerival == 0 || D_801078E8_186508_Archerival >= 3) {
+            D_801078DE_1864FE_Archerival = 3;
+        }
+        break;
+    case 3:
+        if (func_80069538_6A138() == 0 && D_801078E6_186506_Archerival >= 7) {
+            D_801078E0_186500_Archerival = (D_801078E8_186508_Archerival == 3) ? 1 : 2;
+            D_801078DE_1864FE_Archerival = 4;
+            D_801078E2_186502_Archerival = 0;
+            if (_CheckFlag(0xC) == 0) {
+                k = 0;
+                if (D_801078E0_186500_Archerival == 1) {
+                    chars[0] = gPlayers[D_80107920_186540_Archerival[0].obj->work[0]].character;
+                    func_800691FC_69DFC(6, chars[0], k);
+                    D_801078E2_186502_Archerival = 120;
+                } else {
+                    i = 1;
+                    tbl = D_80107920_186540_Archerival;
+                    for (; i < 4; i++, k++) {
+                        chars[k] = gPlayers[tbl[i].obj->work[0]].character;
+                    }
+                    func_800691FC_69DFC(0x15, chars[0], chars[1], chars[2]);
+                    D_801078E2_186502_Archerival = 168;
+                }
+            }
+            func_80106AE4_185704_Archerival();
+            gPlayers[D_80107920_186540_Archerival[0].obj->work[0]].coins_mg = D_801078EA_18650A_Archerival;
+        }
+        break;
+    case 4:
+        if (_CheckFlag(0xC) != 0) {
+            t = D_801078E4_186504_Archerival;
+        } else {
+            t = --D_801078E2_186502_Archerival;
+        }
+        if (t == 0) {
+            D_801078DE_1864FE_Archerival = 5;
+        }
+        break;
+    case 5:
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_80106C00_185820_Archerival;
+        break;
+    }
+    func_801028A0_1814C0_Archerival();
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106CD8_1858F8_Archerival);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106FCC_185BEC_Archerival);
+void func_80106FCC_185BEC_Archerival(omObjData* obj) {
+    func_801072E0_185F00_Archerival();
+    func_80107364_185F84_Archerival();
+    func_80102B78_181798_Archerival();
+    func_80102F64_181B84_Archerival();
+    func_801036C8_1822E8_Archerival();
+    func_8010506C_183C8C_Archerival();
+    func_80106064_184C84_Archerival();
+    func_801063FC_18501C_Archerival();
+    func_8010687C_18549C_Archerival();
+    InitFadeIn(0, 16);
+    obj->func_ptr = func_80106CD8_1858F8_Archerival;
+    D_801078DE_1864FE_Archerival = 0;
+    D_801078E2_186502_Archerival = 0;
+    D_801078E4_186504_Archerival = 0;
+    D_801078E8_186508_Archerival = 0;
+    D_801078EA_18650A_Archerival = 0;
+    D_801078E0_186500_Archerival = 0;
+    D_801078EB_18650B_Archerival = 0;
+    D_801078E6_186506_Archerival = 0;
+    omAddObj(900, 0, 0, -1, func_80106A70_185690_Archerival);
+}
 
 __asm__(".section .rodata");
 const char D_80107860_186480_Archerival[16] = "\202`\202a\202b";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801070A8_185CC8_Archerival);
+void func_801070A8_185CC8_Archerival(void) {
+    omObjData* o;
+
+    func_8002D4D0_2E0D0(50);
+    func_80020D20_21920(32);
+    omInitObjMan(50, 0);
+    func_80079128_79D28();
+    func_80026DAC_279AC(0, 0x40, 0x40, 0x40);
+    func_80026DAC_279AC(1, 0x40, 0x40, 0x60);
+    func_80026E00_27A00(1, 0.0f, 100.0f, 100.0f);
+    o = omAddObj(0x7FDA, 0, 0, -1, func_80079FF4_7ABF4);
+    o->work[0] = 2;
+    omSetStatBit(o, 0xA0);
+    func_80018E30_19A30(2);
+    func_80018F58_19B58(2);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 26.2f, 80.0f, 8000.0f);
+    ScissorSet(1, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(1, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(1, 26.2f, 80.0f, 8000.0f);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    omAddObj(1000, 0, 0, -1, func_80106FCC_185BEC_Archerival);
+    omAddObj(1000, 0, 0, -1, func_80106C80_1858A0_Archerival);
+    func_8007273C_7333C((u8*)D_80107860_186480_Archerival, 0);
+    func_8007273C_7333C((u8*)D_80107860_186480_Archerival, 1);
+}

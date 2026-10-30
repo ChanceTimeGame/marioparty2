@@ -54,14 +54,50 @@ typedef struct ARRank {
     /* 0x02 */ u16 idx;
 } ARRank; /* size = 0x4 */
 
+/* A target's start position (D_80107390_185FB0_Archerival[6]). */
+typedef struct ARPos {
+    /* 0x00 */ s16 x;
+    /* 0x02 */ s16 y;
+    /* 0x04 */ s16 z;
+} ARPos; /* size = 0x6 */
+
+/* One file of a character's table (D_801073EC_18600C_Archerival[6][9]); the second word is 0. */
+typedef struct ARFile {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ s32 unk_04;
+} ARFile; /* size = 0x8 */
+
+/* The node names of a character's bow and arrow (D_80107598_1861B8_Archerival[6]). */
+typedef struct ARHook {
+    /* 0x00 */ char* node[2];
+} ARHook; /* size = 0x8 on N64 */
+
+/* A coin dropped from a broken target (D_80107878_186498_Archerival[5]). */
+typedef struct ARCoin {
+    /* 0x00 */ f32 x;
+    /* 0x04 */ f32 y;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ u16 delay;
+    /* 0x0E */ u8 active;
+    /* 0x0F */ char unk_0F;
+} ARCoin; /* size = 0x10 */
+
 /* ---- .data (181420.c, 0x185FB0-0x186260) ---- */
+extern ARPos D_80107390_185FB0_Archerival[6]; /* target start positions */
+extern f32 D_801073B0_185FD0_Archerival[6];   /* arrow offset in x, by character */
 extern u8 D_801073C8_185FE8_Archerival[4];  /* CPU: % chance to prefer targets 1-3, by difficulty */
 extern u8 D_801073CC_185FEC_Archerival[4];  /* CPU: % chance to prefer an unclaimed target */
 extern u8 D_801073D0_185FF0_Archerival[4];  /* CPU: % chance to cancel that preference */
+extern u8 D_801073D4_185FF4_Archerival[8];  /* 4 CPU % chance to dodge, by difficulty; 4 coins by target kind */
 extern s32 D_801073DC_185FFC_Archerival;  /* camera set up */
 extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
 extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
 
+extern ARFile D_801073EC_18600C_Archerival[6][9]; /* motions 0-4, 5-6 win/lose; [5-6] of the table: bow, arrow */
+extern ARHook D_80107598_1861B8_Archerival[6];   /* bow and arrow: the model's node */
+extern ARHook D_801075C8_1861E8_Archerival[6];   /* the node they hook to */
+extern s16 D_801075F8_186218_Archerival[6];      /* character directory */
+extern s16 D_80107604_186224_Archerival[4];      /* the three shared motion files */
 extern char* D_8010760C_18622C_Archerival[6]; /* "c00Nl_0_DEF" by character */
 extern s16 D_80107624_186244_Archerival;      /* footstep sound, -1 none */
 extern s16 D_80107626_186246_Archerival;      /* walk motion state (func_80103D7C) */
@@ -69,14 +105,24 @@ extern u8 D_80107628_186248_Archerival;       /* CPU target (D_80107920 index), 
 extern u8 D_80107629_186249_Archerival;       /* CPU feints left */
 extern u8 D_8010762A_18624A_Archerival;       /* CPU feint: candidates (2-3 nearest) */
 extern u8 D_8010762B_18624B_Archerival;       /* CPU feint: func_801037C4 used mask */
+extern s32 D_8010762C_18624C_Archerival;      /* targets placed by func_801061F4 */
+extern s16 D_80107630_186250_Archerival;      /* frames until the timer shows */
 
 /* ---- .bss ---- */
 extern s16 D_80107870_186490_Archerival;      /* footstep timer */
+extern ARCoin D_80107878_186498_Archerival[5];
+extern ARCoin D_801077B8_1863D8_Archerival[];    /* = &D_80107878[-12], indexed by slot */
 extern ARRank D_801078C8_1864E8_Archerival[5];
 extern u16 D_801078CA_1864EA_Archerival[];    /* = &D_801078C8[0].idx, read as [n * 2] */
+extern u8 D_801078DC_1864FC_Archerival;       /* func_801037C4 used mask of the start positions */
 extern u16 D_801078DE_1864FE_Archerival;      /* game state: 2 play, 3 over */
 extern u16 D_801078E0_186500_Archerival;      /* result: 1 won, 2 lost */
+extern s16 D_801078E2_186502_Archerival;      /* state timer; game time left */
+extern s16 D_801078E4_186504_Archerival;      /* end delay */
 extern u8 D_801078E6_186506_Archerival;       /* archer state (func_801040B0); 0-2 bow down */
+extern u16 D_801078E8_186508_Archerival;      /* targets hit by the archer */
+extern u8 D_801078EA_18650A_Archerival;       /* coins won */
+extern u8 D_801078EB_18650B_Archerival;       /* coins dropped */
 extern f32 D_801078EC_18650C_Archerival;      /* CPU aim offset in x */
 extern u8 D_801078F0_186510_Archerival;
 extern HuSprite_Unk84_Struct* D_801078F4_186514_Archerival; /* the banner image */
@@ -84,17 +130,41 @@ extern void* D_801078F8_186518_Archerival[3]; /* motion data */
 extern s16 D_80107904_186524_Archerival;      /* the player model's current motion */
 extern s16 D_80107906_186526_Archerival;      /* win voice delay */
 extern ARObj D_80107920_186540_Archerival[50];
+extern u16 D_8010794C_18656C_Archerival;         /* = D_80107920[0].com */
+extern u16 D_8010794E_18656E_Archerival;         /* = D_80107920[0].player */
+extern f32 D_80107958_186578_Archerival;         /* = D_80107920[0].unk_38 */
+extern ARObj D_80107A40_186660_Archerival[];     /* = &D_80107920[4] */
 extern omObjData* D_80107BA8_1867C8_Archerival;  /* = D_80107920[9].obj */
 extern s16 D_80107BAC_1867CC_Archerival;         /* = D_80107920[9].spr */
 extern omObjData* D_80107BF0_186810_Archerival;  /* = D_80107920[10].obj */
 extern omObjData* D_80107C38_186858_Archerival;  /* = D_80107920[11].obj */
 extern u16 D_80107C58_186878_Archerival;         /* = D_80107920[11].state */
-extern omObjData* D_80107C80_1868A0_Archerival;  /* = D_80107920[12].obj */
+extern omObjData* D_80107C80_1868A0_Archerival;  /* = D_80107920[12].obj: the coins, [12-16] */
 extern s16 D_80108730_187350_Archerival[50];     /* sprite animations */
 extern s16 D_80108732_187352_Archerival;         /* = D_80108730[1] */
 
 /* ---- main ---- */
 void func_80029B80_2A780(s16 mdl, s16 mot);
+typedef struct ARCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 unk_04; /* the character's file directory */
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C; /* its model file */
+    /* 0x10 */ char unk_10[8];
+} ARCharData; /* size = 0x18 */
+extern ARCharData D_800CD438_CE038[];
+u16 func_80018A30_19630(s32 file, s32 attr);
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file);
+u16 func_80018D64_19964(s32 arg0, s32 arg1, s32 arg2);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+void func_80023DAC_249AC(s16 model, char* part, s16 target, char* targetPart);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+void func_800B1F50_B2B50(f32* m, f32 x, f32 y, f32 z);
+void func_8003E808_3F408(s16 anim, f32 time);
+void func_8002CDF0_2D9F0(s16 mdl, s32 r, s32 g, s32 b, s32 a);
+void func_8006D4D0_6E0D0(s16);
+void func_8006D518_6E118(void);
 void func_8002C628_2D228(s16 mdl, s16 parent, char* hook);
 void func_80029BF0_2A7F0(s16 mdl, s16 mot, s16 start, s16 speed, s16 flags);
 void func_80029C74_2A874(s16 mdl, f32 time);
@@ -189,32 +259,32 @@ s32 func_80103C1C_18283C_Archerival(omObjData* obj, ARObj* tbl /* unused */, s16
 void func_80103CF0_182910_Archerival(omObjData* obj, u16 mot, s16 start, s16 speed, s16 flags);
 void func_80103D7C_18299C_Archerival(omObjData* obj, s16 dir, s16* state);
 void func_801040B0_182CD0_Archerival(omObjData* obj);
-void func_80104AEC_18370C_Archerival(void* arg0);
+void func_80104AEC_18370C_Archerival(omObjData* obj);
 void func_8010506C_183C8C_Archerival(void);
-void func_80105180_183DA0_Archerival(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
-void func_8010520C_183E2C_Archerival(void* arg0, void* arg1);
-s16 func_8010549C_1840BC_Archerival(void* arg0, s16 arg2);
-void func_80105878_184498_Archerival(void* arg0, void* arg1, u32 arg3);
-void func_80105C84_1848A4_Archerival(void* arg0, void* arg1);
-void func_80105DD0_1849F0_Archerival(void* arg0);
-void func_80105E38_184A58_Archerival(void* arg0);
+void func_80105180_183DA0_Archerival(f32 x, f32 y, f32 z, u8 n);
+void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p);
+s16 func_8010549C_1840BC_Archerival(omObjData* obj, ARObj* p, s16 dx);
+void func_80105878_184498_Archerival(omObjData* obj, ARObj* p);
+void func_80105C84_1848A4_Archerival(omObjData* obj, ARObj* p);
+void func_80105DD0_1849F0_Archerival(omObjData* obj);
+void func_80105E38_184A58_Archerival(omObjData* obj);
 void func_80106064_184C84_Archerival(void);
-void func_8010618C_184DAC_Archerival(void* arg0);
-void func_801061F4_184E14_Archerival(void* arg0);
+void func_8010618C_184DAC_Archerival(omObjData* obj);
+void func_801061F4_184E14_Archerival(omObjData* obj);
 void func_801063FC_18501C_Archerival(void);
-void func_801064BC_1850DC_Archerival(void* arg0);
-void func_801066C0_1852E0_Archerival(void* arg0);
+void func_801064BC_1850DC_Archerival(omObjData* obj);
+void func_801066C0_1852E0_Archerival(omObjData* obj);
 void func_8010687C_18549C_Archerival(void);
-void func_8010691C_18553C_Archerival(void);
-void func_8010697C_18559C_Archerival(void* arg0);
-void func_80106A30_185650_Archerival(void* arg0);
-void func_80106A70_185690_Archerival(void* arg0);
+void func_8010691C_18553C_Archerival(omObjData* obj);
+void func_8010697C_18559C_Archerival(omObjData* obj);
+void func_80106A30_185650_Archerival(omObjData* obj);
+void func_80106A70_185690_Archerival(omObjData* obj);
 void func_80106AE4_185704_Archerival(void);
-void func_80106BDC_1857FC_Archerival(void);
-void func_80106C00_185820_Archerival(void* arg0);
-void func_80106C80_1858A0_Archerival(void* arg0);
-void func_80106CD8_1858F8_Archerival(void* arg0);
-void func_80106FCC_185BEC_Archerival(void* arg0);
+void func_80106BDC_1857FC_Archerival(omObjData* obj);
+void func_80106C00_185820_Archerival(omObjData* obj);
+void func_80106C80_1858A0_Archerival(omObjData* obj);
+void func_80106CD8_1858F8_Archerival(omObjData* obj);
+void func_80106FCC_185BEC_Archerival(omObjData* obj);
 void func_801070A8_185CC8_Archerival(void);
 
 /* 185F00.c */
