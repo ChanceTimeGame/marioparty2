@@ -262,11 +262,136 @@ void func_8010370C_22F07C_HexagonHeat(void) {
     D_801066B4_232024_HexagonHeat.z = len * v.z + 128.0f + D_80106534_231EA4_HexagonHeat;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80103ACC_22F43C_HexagonHeat);
+void func_80103ACC_22F43C_HexagonHeat(void) {
+    if (func_8008F618_90218() == 0) {
+        omOvlReturnEx(1);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80103AF8_22F468_HexagonHeat);
+void func_80103AF8_22F468_HexagonHeat(omObjData* obj) {
+    omObjData* stomper;
+    Vec3f v;
+    f32 x;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80103DEC_22F75C_HexagonHeat);
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        for (i = 0; i < 6; i++) {
+            stomper = D_800FC7B0_FD3B0[i + 2];
+            v.x = D_8010664C_231FBC_HexagonHeat[i][0];
+            v.y = 0.0f;
+            v.z = D_8010664C_231FBC_HexagonHeat[i][1];
+            func_8002D9AC_2E5AC(&v);
+            stomper->trans.x = HuMathSin(D_801066E0_232050_HexagonHeat) * v.x * D_801066E4_232054_HexagonHeat + D_8010664C_231FBC_HexagonHeat[i][0];
+            stomper->trans.y = 550.0f;
+            stomper->trans.z = func_800B7890_B8490(D_801066E0_232050_HexagonHeat) * v.z * D_801066E4_232054_HexagonHeat + D_8010664C_231FBC_HexagonHeat[i][1];
+            v.x = D_8010667C_231FEC_HexagonHeat[i + 1][0];
+            v.y = 0.0f;
+            v.z = D_8010667C_231FEC_HexagonHeat[i + 1][1];
+            func_8002D9AC_2E5AC(&v);
+            x = HuMathSin(D_801066E0_232050_HexagonHeat) * v.x * D_801066E4_232054_HexagonHeat + D_8010667C_231FEC_HexagonHeat[i + 1][0];
+            func_80029714_2A314(stomper->model[1], x, 550.0f,
+                                func_800B7890_B8490(D_801066E0_232050_HexagonHeat) * v.z * D_801066E4_232054_HexagonHeat + D_8010667C_231FEC_HexagonHeat[i + 1][1]);
+            func_8002979C_2A39C(stomper->model[1], 0.0f, D_801066E0_232050_HexagonHeat, 0.0f);
+        }
+        if (D_801066E4_232054_HexagonHeat == 0.0f) {
+            obj->func_ptr = func_80103DEC_22F75C_HexagonHeat;
+            for (i = 0; i < 4; i++) {
+                D_800BF7E4_C03E4[i][4] = gPlayers[i].character + 0x50;
+            }
+        }
+        D_801066E4_232054_HexagonHeat -= 40.0f;
+        D_801066E0_232050_HexagonHeat -= 2.0f;
+        if (D_801066E0_232050_HexagonHeat == 80.0f) {
+            PlayMusic(0x1B);
+        }
+    }
+    func_80104384_22FCF4_HexagonHeat(obj);
+    func_801041BC_22FB2C_HexagonHeat(obj);
+}
+
+void func_80103DEC_22F75C_HexagonHeat(omObjData* obj) {
+    s16 music;
+
+    func_8000C3C8_CFC8();
+    switch (D_800F8FD0_F9BD0) {
+    case 0:
+        if (D_801066E8_232058_HexagonHeat == 0) {
+            func_800691FC_69DFC(0);
+        }
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_8000C3B8_CFB8();
+        }
+        D_801066E8_232058_HexagonHeat += 2;
+        break;
+    case 1:
+        D_801066EC_23205C_HexagonHeat -= 2;
+        func_80102D30_22E6A0_HexagonHeat();
+        if (D_8010653C_231EAC_HexagonHeat != 0) {
+            func_8000C398_CF98();
+        }
+        if (_CheckFlag(0xC) != 0 && D_8010654C_231EBC_HexagonHeat[0] == 1) {
+            func_8000C398_CF98();
+        }
+        break;
+    case 2:
+        if (D_801066F0_232060_HexagonHeat == 0) {
+            if (D_80106548_231EB8_HexagonHeat != -1) {
+                func_80079848_7A448((s16)D_80106548_231EB8_HexagonHeat);
+            }
+            func_800691FC_69DFC(3);
+            func_800794A8_7A0A8(40);
+        }
+        if ((func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) && D_80106540_231EB0_HexagonHeat == 0) {
+            if (_CheckFlag(0xC) == 0) {
+                if (D_8010653C_231EAC_HexagonHeat == 1) {
+                    func_800691FC_69DFC(6, gPlayers[D_80106544_231EB4_HexagonHeat].character);
+                    func_80019B9C_1A79C(D_800FFFD8_100BD8[D_80106544_231EB4_HexagonHeat], 0xD);
+                    func_800732B0_73EB0(D_80106858_2321C8_HexagonHeat[D_80106544_231EB4_HexagonHeat]);
+                    gPlayers[D_80106544_231EB4_HexagonHeat].coins_mg_bonus += 10;
+                    music = 0x51;
+                } else {
+                    func_800691FC_69DFC(0x13);
+                    music = 0x57;
+                }
+                PlayMusic(music);
+            }
+            D_80106540_231EB0_HexagonHeat++;
+        }
+        D_801066F0_232060_HexagonHeat += 2;
+        if (D_80106540_231EB0_HexagonHeat != 0) {
+            if (_CheckFlag(0xC) != 0) {
+                if (D_80106540_231EB0_HexagonHeat == 30) {
+                    if (D_80106544_231EB4_HexagonHeat == 0) {
+                        gPlayers[D_80106544_231EB4_HexagonHeat].coins_mg_bonus += 10;
+                    }
+                    func_8000C3A8_CFA8();
+                }
+            } else if (D_80106540_231EB0_HexagonHeat == 120) {
+                func_8000C3A8_CFA8();
+            }
+            D_80106540_231EB0_HexagonHeat++;
+        }
+        D_801066F0_232060_HexagonHeat += 2;
+        break;
+    case 3:
+        if (D_801066F4_232064_HexagonHeat == 0) {
+            func_800794A8_7A0A8(40);
+        }
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_80103ACC_22F43C_HexagonHeat;
+        D_801066F4_232064_HexagonHeat += 2;
+        break;
+    }
+    if (D_801011FC_101DFC == 1) {
+        InitFadeOut(0, 20);
+        func_80079614_7A214(40);
+        func_800794A8_7A0A8(60);
+        obj->func_ptr = func_80103ACC_22F43C_HexagonHeat;
+    }
+    func_801035D8_22EF48_HexagonHeat();
+    func_80104384_22FCF4_HexagonHeat(obj);
+    func_801041BC_22FB2C_HexagonHeat(obj);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801041BC_22FB2C_HexagonHeat);
 
