@@ -91,6 +91,7 @@ s16 func_800797DC_7A3DC(s32 sfx, s16 player);
 omObjData* func_800732B0_73EB0(u32 arg0);
 s32 func_8008F618_90218(void);
 s32 PlaySound(s32);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s16 LoadFormFile(s32, s32);
 void HuMemMemoryFreePerm(void* ptr);
 f32 HuMathSin(f32);
