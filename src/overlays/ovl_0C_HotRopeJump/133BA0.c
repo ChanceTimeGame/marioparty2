@@ -802,14 +802,53 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B754
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BB48_137738_HotRopeJump);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BF04_137AF4_HotRopeJump);
+/* a + t * (b - a), t clamped to 0..1. */
+f32 func_8010BF04_137AF4_HotRopeJump(f32 a, f32 b, f32 t) {
+    if (t < 0.0) {
+        t = 0.0f;
+    } else if (t > 1.0) {
+        t = 1.0f;
+    }
+    return a + t * (b - a);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BF70_137B60_HotRopeJump);
+/* The rope turns (func_8010A4E4 state 4). */
+void func_8010BF70_137B60_HotRopeJump(void) {
+    D_8011182C_13D41C_HotRopeJump = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BF80_137B70_HotRopeJump);
+void func_8010BF80_137B70_HotRopeJump(void) {
+    D_8011182C_13D41C_HotRopeJump = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BF8C_137B7C_HotRopeJump);
+void func_8010BF8C_137B7C_HotRopeJump(f32 speed) {
+    D_80111830_13D420_HotRopeJump = speed;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BF98_137B88_HotRopeJump);
+/* Sets the light blend's target to 1 - a (a clamped to 0..1); a sound when a is 1 while the
+   target is still 1. */
+void func_8010BF98_137B88_HotRopeJump(f32 a) {
+    if (D_8010C264_137E54_HotRopeJump == 1.0 && a == 1.0) {
+        PlaySound(0x173);
+    }
+    if (a > 1.0) {
+        a = 1.0f;
+    } else if (a < 0.0) {
+        a = 0.0f;
+    }
+    D_8010C264_137E54_HotRopeJump = 1.0 - a;
+}
 
+/* out = (x, y, z, 1) * m (MP1 func_800FE3B4; MP1 SlotMachine func_800FCBFC).
+   NON_MATCHING: masked 3, as MP1's: retail keeps out + 4 in a register */
+#ifdef NON_MATCHING
+void func_8010C074_137C64_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
+    f32* o = (f32*)out;
+
+    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010C074_137C64_HotRopeJump);
+#endif
