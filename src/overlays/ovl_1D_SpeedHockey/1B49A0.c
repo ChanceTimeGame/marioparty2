@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_1D.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80102850_1B49A0_SpeedHockey);
 
