@@ -667,6 +667,10 @@ $(DM_GFX_UNITS): CFLAGS_CHECK += -m32
 # check, as DM_GFX_UNITS
 S4DB_GFX_UNITS := build/src/overlays/ovl_0C_HotRopeJump/133BA0.c.o
 $(S4DB_GFX_UNITS): CFLAGS_CHECK += -m32
+# S4-1FD: ovl_1F's .data display lists point at each other (gsSPDisplayList(sym)): a 32-bit syntax
+# check, as S4DB_GFX_UNITS
+S41FD_GFX_UNITS := build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o
+$(S41FD_GFX_UNITS): CFLAGS_CHECK += -m32
 
 # 5F-B: KMC mul fix with the blank-line strip (func_801072C8, func_80108DCC: a nop between
 # back-to-back mul.s; func_80103B78: none after a call)

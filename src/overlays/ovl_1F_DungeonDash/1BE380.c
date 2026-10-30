@@ -1,6 +1,38 @@
 #include "common.h"
 #include "ovl_1F.h"
 
+/* .data (0x1C6260-0x1C6370, 8010A6E0-8010A7F0). D_8010A70C has no splat label or users (the
+   word after D_8010A708). D_8010A71A (the low half of D_8010A718) and the bytes after
+   D_8010A744's first have no users of their own. */
+
+s32 D_8010A6E0_1C6260_DungeonDash = 0;
+s32 D_8010A6E4_1C6264_DungeonDash[6] = { 0x000200E0, 0x000300E0, 0x000700E0, 0x000400E0, 0x000500E0, 0x000600E0 };
+s32 D_8010A6FC_1C627C_DungeonDash = 1;
+s32 D_8010A700_1C6280_DungeonDash = 0;
+s32 D_8010A704_1C6284_DungeonDash = 1;
+s32 D_8010A708_1C6288_DungeonDash = 0;
+s32 D_8010A70C_1C628C_DungeonDash = 0;
+s32 D_8010A710_1C6290_DungeonDash = 210;
+s32 D_8010A714_1C6294_DungeonDash = 9000;
+s32 D_8010A718_1C6298_DungeonDash = 0;
+s32 D_8010A71C_1C629C_DungeonDash = -1;
+DDCamPose D_8010A720_1C62A0_DungeonDash = { 209.5f, 0.0f, 0.0f, -450.0f, 560.0f, -5530.0f, -23.25f, 204.125f, 0.0f };
+u8 D_8010A744_1C62C4_DungeonDash = 0;
+s32 D_8010A748_1C62C8_DungeonDash = 0;
+s32 D_8010A74C_1C62CC_DungeonDash = 0;
+Vtx_t D_8010A750_1C62D0_DungeonDash[10] = {
+    { { 20, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 255 } },
+    { { 20, -20, 0 }, 0, { 0, 4032 }, { 0, 0, 0, 255 } },
+    { { -20, 20, 0 }, 0, { 4032, 0 }, { 0, 0, 0, 255 } },
+    { { -20, -20, 0 }, 0, { 4032, 4032 }, { 0, 0, 0, 255 } },
+    { { 0, 0, 0 }, 0, { 1024, 1024 }, { 0, 0, 0, 255 } },
+    { { 100, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 100, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 100, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 100, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+    { { 100, 20, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0 } },
+};
+
 void func_80102800_1BE380_DungeonDash(void) {
     s16 i;
     s16 j;
