@@ -1,47 +1,294 @@
 #include "common.h"
+#include "ovl_13.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80102800_1675A0_LookAway);
+void func_80102800_1675A0_LookAway(void) {
+    func_8010640C_16B1AC_LookAway();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_8010281C_1675BC_LookAway);
+void func_8010281C_1675BC_LookAway(u8 player) {
+    ContBtn[gPlayers[player].port] = 0;
+    ContBtnTrg[gPlayers[player].port] = 0;
+    ContStkX[gPlayers[player].port] = 0;
+    ContStkY[gPlayers[player].port] = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801028A0_167640_LookAway);
+u8 func_801028A0_167640_LookAway(u8 n, u64* used) {
+    u64 m;
+    u8 k;
+    u8 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801029F0_167790_LookAway);
+    m = *used;
+    i = n;
+    while (m != 0) {
+        if (m & 1) {
+            i--;
+        }
+        m >>= 1;
+    }
+    k = rand8() % i;
+    m = *used;
+    for (i = 0; i < n; i++) {
+        if (m & 1) {
+        } else if (k-- == 0) {
+            break;
+        }
+        m >>= 1;
+    }
+    i = (i < n) ? i : 0;
+    *used |= 1 << i;
+    return i;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80102AE0_167880_LookAway);
+void func_801029F0_167790_LookAway(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80102CE8_167A88_LookAway);
+    if (D_80106744_16B4E4_LookAway == 0) {
+        D_80106744_16B4E4_LookAway = 1;
+        for (i = 0; i < 2; i++) {
+            Hu3DCamSetPerspective(i, 20.0f, 80.0f, 8000.0f);
+            D_800F94A8_FA0A8[i] = 1000.0f;
+            D_80102770_103370[i].x = 360.0f;
+            D_80102770_103370[i].y = 0.0f;
+            D_80102770_103370[i].z = 0.0f;
+            D_801013B0_101FB0[i].x = 0.0f;
+            D_801013B0_101FB0[i].y = 0.0f;
+            D_801013B0_101FB0[i].z = 0.0f;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80102F90_167D30_LookAway);
+void func_80102AE0_167880_LookAway(omObjData* obj) {
+    LAObj* st = &D_80106CD0_16BA70_LookAway[4];
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80102FD8_167D78_LookAway);
+    if (D_801069A0_16B740_LookAway >= 3) {
+        if (D_80106E28_16BBC8_LookAway <= 4.2f) {
+            if (D_80106E2C_16BBCC_LookAway <= 0.14f) {
+                D_80106E2C_16BBCC_LookAway += 0.02f;
+            }
+            st->unk_38 += st->unk_3C;
+            s = st->unk_38 + 0.8f;
+            func_800297E8_2A3E8(obj->model[1], s, s, s);
+        }
+    } else if (D_801069AE_16B74E_LookAway & 0x10) {
+        func_80029E80_2AA80(obj->model[1], 1, 0);
+        D_800FC834_FD434[obj->model[1]].rot.z += 1.0f;
+        if (st->state != 0) {
+            st->unk_38 -= 0.01f;
+            if (st->unk_38 <= 0.0f) {
+                st->unk_38 = 0.0f;
+                st->state ^= 1;
+            }
+        } else {
+            st->unk_38 += 0.01f;
+            if (st->unk_38 >= 0.4f) {
+                st->unk_38 = 0.4f;
+                st->state ^= 1;
+            }
+        }
+        s = st->unk_38 + 0.8f;
+        func_800297E8_2A3E8(obj->model[1], s, s, s);
+    } else if (D_801069AE_16B74E_LookAway & 0x20) {
+        func_80029E80_2AA80(obj->model[1], 1, 1);
+    }
+}
+
+void func_80102CE8_167A88_LookAway(omObjData* obj) {
+    GroundWork* gw;
+
+    D_80106C68_16BA08_LookAway[0] = func_8001A2F8_1AEF8(0x230000);
+    D_80106DF4_16BB94_LookAway = SprCreate(1, 0);
+    SprAttrReset(D_80106DF4_16BB94_LookAway, 0, -1);
+    SprScaleSet(D_80106DF4_16BB94_LookAway, 0, 1.0f, 1.0f);
+    SprAnimSet(D_80106DF4_16BB94_LookAway, 0, D_80106C68_16BA08_LookAway[0], 0);
+    SprBankSet(D_80106DF4_16BB94_LookAway, 0, 0);
+    SprAttrSet(D_80106DF4_16BB94_LookAway, 0, 0x5000);
+    SprPosSet(D_80106DF4_16BB94_LookAway, 0, 160, 120);
+    func_8008225C_82E5C(D_80106DF4_16BB94_LookAway, 0, 0);
+    SprPrioSet(D_80106DF4_16BB94_LookAway, 0, 0xFFF0);
+    obj->model[0] = LoadFormFile(0x230002, 0x2B9);
+    obj->model[1] = LoadFormFile(0x230003, 0x2B9);
+    func_80029E80_2AA80(obj->model[0], 2, 2);
+    func_80029E80_2AA80(obj->model[1], 2, 2);
+    func_80029E80_2AA80(obj->model[1], 1, 1);
+    func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, 1.0f);
+    func_80029714_2A314(obj->model[1], 0.0f, 0.0f, 0.0f);
+    obj->trans.y = -10.0f;
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = obj;
+    obj->unk_50 = gw = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(gw, 0, 0xB4);
+    gw->unk_03 = 1;
+    gw->unk_04 = 0;
+    func_8000BEA4_CAA4(obj, 20.0f);
+    func_8000BE8C_CA8C(obj, 1.0f);
+    func_8000BF24_CB24(D_800FC7B0_FD3B0[0], 0.0f, -550.0f, -500.0f, 550.0f, 500.0f);
+    func_80029EDC_2AADC(obj->model[0], 2);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    D_80106E28_16BBC8_LookAway = 0.2f;
+    D_80106E2C_16BBCC_LookAway = -0.1f;
+    obj->func_ptr = func_80102AE0_167880_LookAway;
+}
+
+void func_80102F90_167D30_LookAway(void) {
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_80106CD0_16BA70_LookAway[4].obj = omAddObj(10, 2, 2, -1, func_80102CE8_167A88_LookAway);
+}
+
+void func_80102FD8_167D78_LookAway(Gfx** gfxp) {
+    Gfx* gfx = *gfxp;
+    s32 y;
+
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gSPClearGeometryMode(gfx++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR |
+                                    G_CULL_BOTH | G_FOG | G_LOD);
+    gSPSetGeometryMode(gfx++, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
+    gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
+    gDPSetRenderMode(gfx++, G_RM_AA_TEX_EDGE, G_RM_AA_TEX_EDGE2);
+    gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(gfx++, D_80106A64_16B804_LookAway->unk0C);
+    for (y = 0; y < 48; y += 4) {
+        gDPLoadTextureTile(gfx++, D_80106A64_16B804_LookAway->unk08, G_IM_FMT_RGBA, G_IM_SIZ_8b, 320, 48, 0, y, 319,
+                           y + 4, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 320 << 2, 4 << 2);
+        gSPTextureRectangle(gfx++, 0, (y + 96) << 2, 320 << 2, (y + 100) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+                            1 << 10);
+    }
+    *gfxp = gfx;
+}
 
 void func_801032FC_16809C_LookAway(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103304_1680A4_LookAway);
+void func_80103304_1680A4_LookAway(omObjData* obj) {
+    D_80106C68_16BA08_LookAway[1] = func_8001A2F8_1AEF8(0x230001);
+    D_80106A64_16B804_LookAway = SprAnimGet(D_80106C68_16BA08_LookAway[1]);
+    func_80029EDC_2AADC(func_8002838C_28F8C(0, func_80102FD8_167D78_LookAway, 2), 1);
+    obj->func_ptr = func_801032FC_16809C_LookAway;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_8010337C_16811C_LookAway);
+void func_8010337C_16811C_LookAway(void) {
+    D_80106CD0_16BA70_LookAway[5].obj = omAddObj(10, 0, 0, -1, func_80103304_1680A4_LookAway);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801033B8_168158_LookAway);
+void func_801033B8_168158_LookAway(omObjData* obj) {
+    if (D_801069A0_16B740_LookAway == 2 && D_801069AC_16B74C_LookAway != 0) {
+        D_801069AC_16B74C_LookAway--;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801033F8_168198_LookAway);
+void func_801033F8_168198_LookAway(omObjData* obj) {
+    D_801069AC_16B74C_LookAway = 150;
+    obj->func_ptr = func_801033B8_168158_LookAway;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103414_1681B4_LookAway);
+void func_80103414_1681B4_LookAway(void) {
+    D_80106CD0_16BA70_LookAway[6].obj = omAddObj(100, 0, 0, -1, func_801033F8_168198_LookAway);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103450_1681F0_LookAway);
+void func_80103450_1681F0_LookAway(LAObj* o, s16 member, u16 anim, s32 x, s32 y) {
+    D_80106C68_16BA08_LookAway[(u16)(member + 5)] = anim;
+    SprAnimSet(o->spr, member, anim, 0);
+    SprAttrSet(o->spr, member, 0x100C);
+    SprPosSet(o->spr, member, x, y);
+    SprPrioSet(o->spr, member, 0xFFF4);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103508_1682A8_LookAway);
+void func_80103508_1682A8_LookAway(omObjData* obj) {
+    LAObj* o = &D_80106CD0_16BA70_LookAway[7];
+    s16 i;
 
-__asm__(".section .rodata");
-const u32 D_801067C8_16B568_LookAway[3] = { 0x00040005, 0x00060007, 0x00080009 };
+    for (i = 0; i < 15; i++) {
+        LAMark* m = &D_801069B0_16B750_LookAway[i];
+        s16 show = 0;
+        f32 s;
 
-__asm__(".section .rodata");
-const u32 D_801067D4_16B574_LookAway[3] = { 0x00020404, 0x02000103, 0x05050301 };
+        switch (m->state) {
+        case 0:
+            if (D_801069AC_16B74C_LookAway < 41 && !(D_801069AE_16B74E_LookAway & 1)) {
+                if (i == 8 || i == 9) {
+                    show = 1;
+                    if (i == 9) {
+                        D_801069AE_16B74E_LookAway |= 1;
+                    }
+                }
+            } else if (D_801069AC_16B74C_LookAway < 26 && !(D_801069AE_16B74E_LookAway & 2)) {
+                if (i == 7 || i == 10) {
+                    show = 1;
+                    if (i == 10) {
+                        D_801069AE_16B74E_LookAway |= 2;
+                    }
+                }
+            } else if (D_801069AC_16B74C_LookAway < 11 && !(D_801069AE_16B74E_LookAway & 4)) {
+                if (i == 6 || i == 11) {
+                    show = 1;
+                    if (i == 11) {
+                        D_801069AE_16B74E_LookAway |= 4;
+                    }
+                }
+            }
+            if (show) {
+                SprAttrReset(o->spr, i, 0x8000);
+                m->state = 1;
+            }
+            break;
+        case 1:
+            m->t += 20.0f;
+            if (m->t > 180.0f) {
+                m->t = 0.0f;
+                m->state = 0;
+                SprAttrSet(o->spr, i, 0x8000);
+            }
+            s = m->scale + func_800B80D0_B8CD0(m->t) / 2.0;
+            SprScaleSet(o->spr, i, s, s);
+            break;
+        case 2:
+            if (m->flags & 1) {
+                SprAttrReset(o->spr, i, 0x8000);
+                m->state = 3;
+            }
+            break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_801037B0_168550_LookAway);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103A48_1687E8_LookAway);
+
+void func_801037B0_168550_LookAway(omObjData* obj) {
+    LAObj* o = &D_80106CD0_16BA70_LookAway[7];
+    LAMark* m = D_801069B0_16B750_LookAway;
+    u16 files[6] = { 4, 5, 6, 7, 8, 9 };
+    u8 order[12] = { 0, 2, 4, 4, 2, 0, 1, 3, 5, 5, 3, 1 };
+    s16 i;
+    s16 anim;
+
+    D_80106ECC_16BC6C_LookAway = SprCreate(15, 0);
+    for (i = 0; i < 12; i++, m++) {
+        func_80103450_1681F0_LookAway(o, i, func_8001A2F8_1AEF8(files[order[i]] | 0x230000),
+                                      D_80106720_16B4C0_LookAway[i % 6][0], D_80106720_16B4C0_LookAway[i % 6][1]);
+        m->scale = 1.0f;
+        SprScaleSet(o->spr, i, 1.0f, 1.0f);
+        if (i >= 6) {
+            SprAttrSet(o->spr, i, 0x8000);
+        }
+    }
+    anim = func_8001A2F8_1AEF8(0x23000A);
+    for (; i < 15; i++, m++) {
+        func_80103450_1681F0_LookAway(o, i, anim, D_80106720_16B4C0_LookAway[i - 6][0], D_80106720_16B4C0_LookAway[i - 6][1]);
+        m->scale = 1.0f;
+        SprScaleSet(o->spr, i, 1.0f, 1.0f);
+        SprAttrSet(o->spr, i, 0x8000);
+        m->state = 2;
+    }
+    obj->func_ptr = func_80103508_1682A8_LookAway;
+}
+
+void func_80103A48_1687E8_LookAway(void) {
+    func_800B0EF0_B1AF0(D_801069B0_16B750_LookAway, 0, sizeof(D_801069B0_16B750_LookAway));
+    D_80106CD0_16BA70_LookAway[7].obj = omAddObj(150, 0, 0, -1, func_801037B0_168550_LookAway);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80103A98_168838_LookAway);
 
