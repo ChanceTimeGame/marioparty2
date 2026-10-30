@@ -481,7 +481,72 @@ void func_80104384_22FCF4_HexagonHeat(omObjData* obj) {
 __asm__(".section .rodata");
 const char D_801067CC_23213C_HexagonHeat[20] = "\203}\203O\203}7_bmp";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_801047B8_230128_HexagonHeat);
+/* The stage object: the lava model (model 0) and three background actors (3D sprites, models
+   1-3) with four spots each on a circle of 700 around (0, -200); the camera; the intro. */
+void func_801047B8_230128_HexagonHeat(omObjData* obj) {
+    GroundWork* w;
+    void* data;
+    f32 a;
+    u16 id;
+    s32 i;
+
+    a = 45.0f;
+    obj->model[0] = func_80018A30_19630(0x3E0000, 0xA89);
+    func_8003EAF0_3F6F0(D_801067CC_23213C_HexagonHeat, D_801067E4_232154_HexagonHeat);
+    obj->trans.x = obj->trans.y = 0.0f;
+    obj->trans.z = -200.0f;
+    w = obj->unk_50 = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    obj->func_ptr = func_80103AF8_22F468_HexagonHeat;
+    w->unk_03 = 1;
+    D_8010274C_10334C.x = 50.0f;
+    D_8010274C_10334C.y = 300.0f;
+    D_8010274C_10334C.z = -100.0f;
+    D_800FD474_FE074.x = 312.7f;
+    D_800FD474_FE074.y = 0.0f;
+    D_800FD474_FE074.z = 0.0f;
+    D_800FA610_FB210 = 2100.0f;
+    func_8000BEF8_CAF8(obj, 2, 0.0f);
+    func_8000BE8C_CA8C(obj, 0.2f);
+    func_8000BE98_CA98(obj, D_800BF79C_C039C);
+    func_8000BEA4_CAA4(obj, 25.0f);
+    w->unk_04 = 0;
+    HmfModelObjAttrSet(obj->model[0], 0x20000, 0x20000);
+    func_8002D3C0_2DFC0(obj->model[0]);
+    func_80029A8C_2A68C(obj->model[0]);
+    func_8002A00C_2AC0C(obj->model[0]);
+    data = DataRead(0x3E000B);
+    id = func_80020EBC_21ABC(data, 0xA89, 8);
+    HuMemMemoryFreePerm(data);
+    obj->model[1] = D_800F86D8_F92D8[id].unk00;
+    func_80021160_21D60(id, 4, 4);
+    id = func_8002109C_21C9C(id, 8);
+    obj->model[2] = D_800F86D8_F92D8[id].unk00;
+    func_80021160_21D60(id, 4, 4);
+    id = func_8002109C_21C9C(id, 8);
+    obj->model[3] = D_800F86D8_F92D8[id].unk00;
+    func_80021160_21D60(id, 4, 4);
+    HmfModelObjAttrSet(obj->model[1], 0x70000000, 0x70000000);
+    HmfModelObjAttrSet(obj->model[2], 0x70000000, 0x70000000);
+    HmfModelObjAttrSet(obj->model[3], 0x70000000, 0x70000000);
+    func_80029714_2A314(obj->model[1], 650.0f, 50.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[1], 6.0f, 6.0f, 6.0f);
+    func_80029714_2A314(obj->model[2], -650.0f, 50.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[2], 8.0f, 8.0f, 8.0f);
+    func_80029714_2A314(obj->model[3], -650.0f, 50.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[3], 9.0f, 9.0f, 9.0f);
+    for (i = 0; i < 4; i++) {
+        D_801067F8_232168_HexagonHeat[0][i][0] = HuMathSin(a) * 700.0f;
+        D_801067F8_232168_HexagonHeat[0][i][1] = func_800B7890_B8490(a) * 700.0f - 200.0f;
+        D_801067F8_232168_HexagonHeat[1][i][0] = HuMathSin(a + 15.0f) * 700.0f;
+        D_801067F8_232168_HexagonHeat[1][i][1] = func_800B7890_B8490(a + 15.0f) * 700.0f - 200.0f;
+        D_801067F8_232168_HexagonHeat[2][i][0] = HuMathSin(a + 45.0f) * 700.0f;
+        D_801067F8_232168_HexagonHeat[2][i][1] = func_800B7890_B8490(a + 45.0f) * 700.0f - 200.0f;
+        a += 70.0f;
+    }
+    omSetStatBit(obj, 0xA0);
+    PlaySound(0x4AF);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2E_HexagonHeat/22E170", func_80104C80_2305F0_HexagonHeat);
 

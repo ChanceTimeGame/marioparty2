@@ -686,6 +686,9 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_3C_DeepSeaSalvage/294F20.c.o
 # S4-0CC: ovl_0C 12E3F0.c and 133BA0.c too (12E3F0: no nop after the __sinf call before a mul.s in
 # func_80107CA4; 133BA0: nops between mul.s pairs in func_8010A0F0, func_8010A4E4)
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_0C_HotRopeJump/12E3F0.c.o build/src/overlays/ovl_0C_HotRopeJump/133BA0.c.o
+# S4-2E: ovl_2E 22E170.c too (nops between mul.s pairs in func_8010370C; none after a call in
+# func_801047B8)
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_2E_HexagonHeat/22E170.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -723,5 +726,3 @@ $(S41FA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-1FB: 1C2D40.c has nops between back-to-back mul.s (func_801078BC)
 build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o: export VR4300MUL := ON
 
-# S4-2E: ovl_2E 22E170.c has nops between back-to-back mul.s (func_8010370C): KMC mul fix on
-build/src/overlays/ovl_2E_HexagonHeat/22E170.c.o: export VR4300MUL := ON
