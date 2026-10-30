@@ -119,19 +119,138 @@ void func_80105B6C_1B7CBC_SpeedHockey(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80105C28_1B7D78_SpeedHockey);
+/* Game state 3: the result: message, winners' cheer, +10 coins each to the winning pair. */
+void func_80105C28_1B7D78_SpeedHockey(omObjData* obj) {
+    switch (D_80106EB0_1B9000_SpeedHockey.sub) {
+        case 0:
+            func_800794A8_7A0A8(60);
+            func_800691FC_69DFC(3);
+            func_8006D518_6E118();
+            D_80106EB0_1B9000_SpeedHockey.timer = 60;
+            D_80106EB0_1B9000_SpeedHockey.sub++;
+            break;
+        case 1:
+            if (_CheckFlag(0xC)) {
+                if (--D_80106EB0_1B9000_SpeedHockey.timer == -1) {
+                    if (D_80106EB0_1B9000_SpeedHockey.winTeam >= 0) {
+                        gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[0]].coins_mg_bonus += 10;
+                        gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[1]].coins_mg_bonus += 10;
+                    }
+                    func_80106554_1B86A4_SpeedHockey(4);
+                }
+            } else if (func_80069538_6A138() == 0) {
+                D_80106EB0_1B9000_SpeedHockey.timer = 15;
+                D_80106EB0_1B9000_SpeedHockey.sub++;
+            }
+            break;
+        case 3:
+            if (D_80106EB0_1B9000_SpeedHockey.winTeam < 0) {
+                PlayMusic(0x57);
+                func_800691FC_69DFC(0x13);
+                D_80106EB0_1B9000_SpeedHockey.timer = 120;
+            } else {
+                PlayMusic(0x52);
+                func_800691FC_69DFC(0x11, gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[0]].character,
+                                    gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[1]].character);
+                D_80106EB0_1B9000_SpeedHockey.timer = 168;
+            }
+            D_80106EB0_1B9000_SpeedHockey.sub++;
+            break;
+        case 2:
+        case 4:
+            if (--D_80106EB0_1B9000_SpeedHockey.timer == -1) {
+                D_80106EB0_1B9000_SpeedHockey.sub++;
+            }
+            break;
+        case 5:
+            if (D_80106EB0_1B9000_SpeedHockey.winTeam >= 0) {
+                gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[0]].coins_mg_bonus += 10;
+                gPlayers[D_80106EB0_1B9000_SpeedHockey.winner[1]].coins_mg_bonus += 10;
+            }
+            func_80106554_1B86A4_SpeedHockey(4);
+            D_80106EB0_1B9000_SpeedHockey.sub = 0;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80105ED4_1B8024_SpeedHockey);
+/* Game state 4: fade out and leave. */
+void func_80105ED4_1B8024_SpeedHockey(omObjData* obj) {
+    switch (D_80106EB0_1B9000_SpeedHockey.sub) {
+        case 0:
+            func_800794A8_7A0A8(40);
+            InitFadeOut(0, 20);
+            D_80106EB0_1B9000_SpeedHockey.sub++;
+            break;
+        case 1:
+            if (func_8008F618_90218() == 0) {
+                D_80106EB0_1B9000_SpeedHockey.sub++;
+            }
+            break;
+        case 2:
+            func_80105768_1B78B8_SpeedHockey();
+            func_80104584_1B66D4_SpeedHockey();
+            func_8002864C_2924C();
+            func_80023124_23D24();
+            omOvlReturnEx(1);
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80105F90_1B80E0_SpeedHockey);
+/* The game object (before the players): run the state; outside play the pads are saved and
+   cleared, so the objects see no input. */
+void func_80105F90_1B80E0_SpeedHockey(omObjData* obj) {
+    if (D_801011FC_101DFC == 1 && D_80106EB0_1B9000_SpeedHockey.state != 4) {
+        func_80106554_1B86A4_SpeedHockey(4);
+    }
+    D_80106EB0_1B9000_SpeedHockey.state = D_80106EB0_1B9000_SpeedHockey.next;
+    if (D_80106EB0_1B9000_SpeedHockey.state != 2) {
+        func_801058A4_1B79F4_SpeedHockey();
+        func_801059C4_1B7B14_SpeedHockey();
+    }
+    D_80106C24_1B8D74_SpeedHockey[D_80106EB0_1B9000_SpeedHockey.state](obj);
+    D_80106EB0_1B9000_SpeedHockey.frame++;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106044_1B8194_SpeedHockey);
+/* After the objects: give the pads back. */
+void func_80106044_1B8194_SpeedHockey(omObjData* obj) {
+    if (D_80106EB0_1B9000_SpeedHockey.state != 2) {
+        func_80105934_1B7A84_SpeedHockey();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_80106074_1B81C4_SpeedHockey);
+void func_80106074_1B81C4_SpeedHockey(Vec* v) {
+    if (!(HuVecGetLength3F(v) < 0.001f)) {
+        func_800B33E0_B3FE0(v);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_801060C0_1B8210_SpeedHockey);
+void func_801060C0_1B8210_SpeedHockey(void) {
+    omInitObjMan(0x32, 0);
+    func_80079128_79D28();
+    func_801057B0_1B7900_SpeedHockey();
+    func_80020D20_21920(0x1E);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_801060F8_1B8248_SpeedHockey);
+/* The camera: viewport, scissor, sprite camera and perspective. */
+void func_801060F8_1B8248_SpeedHockey(void) {
+    s32 i;
+    u8 id;
+
+    func_80018E30_19A30(1);
+    for (i = 0; i < 1; i++) {
+        id = func_80018E78_19A78();
+        ScissorSet(id, D_80106BD0_1B8D20_SpeedHockey[i].scissor[0], D_80106BD0_1B8D20_SpeedHockey[i].scissor[1],
+                   D_80106BD0_1B8D20_SpeedHockey[i].scissor[2], D_80106BD0_1B8D20_SpeedHockey[i].scissor[3]);
+        ViewportSet(id, D_80106BD0_1B8D20_SpeedHockey[i].vp[0], D_80106BD0_1B8D20_SpeedHockey[i].vp[1], 511.0f,
+                    D_80106BD0_1B8D20_SpeedHockey[i].vp[2], D_80106BD0_1B8D20_SpeedHockey[i].vp[3], 511.0f);
+    }
+    D_80101078_101C78 = 5000.0f;
+    D_800F8410_F9010 = 1000.0f;
+    func_8007A27C_7AE7C(0x7FDA, (s16)func_801057CC_1B791C_SpeedHockey(D_80106BD0_1B8D20_SpeedHockey[0].file, 0),
+                        func_8007A7FC_7B3FC, D_80106BD0_1B8D20_SpeedHockey[0].fov, &D_80106BD0_1B8D20_SpeedHockey[0].eye,
+                        &D_80106BD0_1B8D20_SpeedHockey[0].at);
+    Hu3DCamSetPerspective(0, D_80106BD0_1B8D20_SpeedHockey[0].fov, 2000.0f, 5000.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B7900", func_801062EC_1B843C_SpeedHockey);
 
