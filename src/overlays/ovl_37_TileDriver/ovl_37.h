@@ -65,7 +65,7 @@ typedef struct TDCharData {
 
 #define TD_WRAP(a) ((a) >= 360.0f ? (a) - 360.0f : (a) < 0.0f ? (a) + 360.0f : (a))
 
-/* ---- .data (0x27A070-0x27A2E0, asm) ---- */
+/* ---- .data (0x27A070-0x27A2E0, defined in 274F30.c) ---- */
 extern f32 D_80107940_27A070_TileDriver[6][4];  /* screen rectangles x0, y0, x1, y1: four quarters, whole, whole */
 extern f32 D_801079A0_27A0D0_TileDriver[6][6];  /* viewports */
 extern Vec D_80107A30_27A160_TileDriver[9];     /* tile start positions (labels: D_80107A34_27A164_TileDriver = [0].y) */

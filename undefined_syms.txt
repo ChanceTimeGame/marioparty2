@@ -374,3 +374,4 @@ D_80107B1E_28480E_BowsersBigBlast = D_80107B1C_28480C_BowsersBigBlast + 0x2;
 D_80107B1F_28480F_BowsersBigBlast = D_80107B1C_28480C_BowsersBigBlast + 0x3;
 D_80107B31_284821_BowsersBigBlast = D_80107B30_284820_BowsersBigBlast + 0x1;
 D_80107B32_284822_BowsersBigBlast = D_80107B30_284820_BowsersBigBlast + 0x2;
+D_80107B10_27A240_TileDriver = D_80107B08_27A238_TileDriver + 0x8;
