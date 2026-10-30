@@ -299,12 +299,7 @@ extern Vec D_80111898_13D488_HotRopeJump;
 extern Vec D_801118A4_13D494_HotRopeJump;
 extern f32 D_801118B0_13D4A0_HotRopeJump;
 extern f32 D_801118B4_13D4A4_HotRopeJump;
-extern s32 D_801118B8_13D4A8_HotRopeJump;
-extern s32 D_801118BC_13D4AC_HotRopeJump;
-extern s32 D_801118C0_13D4B0_HotRopeJump;
-extern s32 D_801118C4_13D4B4_HotRopeJump;
-extern s32 D_801118C8_13D4B8_HotRopeJump;
-extern s32 D_801118CC_13D4BC_HotRopeJump[0x13];
+extern u16 D_801118B8_13D4A8_HotRopeJump[3][16]; /* the flames' palette, one per frame buffer (segment 15) */
 extern s16* D_80111918_13D508_HotRopeJump[2]; /* func_80105570's motion (main: unk1EA70StructC*) */
 extern HRJSeg* D_80111920_13D510_HotRopeJump; /* rope */
 extern HRJSeg* D_80111924_13D514_HotRopeJump; /* torches */
@@ -321,6 +316,10 @@ f32 __sinf(f32);
 f32 __cosf(f32);
 f32 fabsf(f32);
 f32 sqrtf(f32);
+void func_800B1F50_B2B50(Matrix4f m, f32 x, f32 y, f32 z); /* guTranslateF */
+void func_80025830_26430(Matrix4f m, f32 x, f32 y, f32 z); /* scale */
+void func_80025884_26484(Matrix4f m, f32 x, f32 y, f32 z); /* rotate */
+void func_800B3040_B3C40(Matrix4f m, Mtx* mtx); /* guMtxF2L */
 s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2); /* model from a display list; s16 in 274D0.c, the caller here does not re-extend it */
 extern s16 D_800FA1AA_FADAA; /* heap tag for func_80027154 */
 f64 func_800B0D98_B1998(f64, f64); /* fmod */

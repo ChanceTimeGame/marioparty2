@@ -871,7 +871,64 @@ s32 func_8010B0A0_136C90_HotRopeJump(const Vtx_t* vtx, HuSprite_Unk84_Struct* te
     return model;
 }
 
+/* A flame's per-frame list (MP1 func_800FDFC4): its palette, matrix (facing the camera,
+   D_80111840) and animated texture; the top two vertices sway with seg->anim.
+   NON_MATCHING: masked 7; retail reloads D_800FDBE0 for the palette segment (GCC reuses it) */
+#ifdef NON_MATCHING
+void func_8010B754_137344_HotRopeJump(HRJSeg* seg, const Vtx_t* vtx, HuSprite_Unk84_Struct* anim) {
+    Matrix4f m;
+    Vec d;
+    HmfModel* mdl;
+    HmfData* md;
+    Gfx* gfx;
+    HmfVtx* v;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 a;
+    f32 r;
+    s32 i;
+
+    mdl = &D_800FC834_FD434[seg->model];
+    md = mdl->hmf;
+    dx = seg->base.x - seg->pos.x;
+    dy = seg->base.y - seg->pos.y;
+    dz = seg->base.z - seg->pos.z;
+    d.x = dx * D_80111840_13D430_HotRopeJump[0][0] + dy * D_80111840_13D430_HotRopeJump[1][0] + dz * D_80111840_13D430_HotRopeJump[2][0];
+    d.y = dx * D_80111840_13D430_HotRopeJump[0][1] + dy * D_80111840_13D430_HotRopeJump[1][1] + dz * D_80111840_13D430_HotRopeJump[2][1];
+    d.z = dx * D_80111840_13D430_HotRopeJump[0][2] + dy * D_80111840_13D430_HotRopeJump[1][2] + dz * D_80111840_13D430_HotRopeJump[2][2];
+    func_800B1F50_B2B50(m, seg->pos.x, seg->pos.y, seg->pos.z);
+    func_80025884_26484(m, mdl->rot.x, mdl->rot.y, mdl->rot.z);
+    func_80025830_26430(m, mdl->scale.x, mdl->scale.y, mdl->scale.z);
+    guMtxCatF(m, D_80111840_13D430_HotRopeJump, m);
+    func_800B3040_B3C40(m, &seg->mtx[D_800FDBE0_FE7E0]);
+    gfx = md->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
+    md->unk3C->unk00[0] = gfx;
+    gDPPipeSync(&gfx[0]);
+    gSPSegment(&gfx[1], 15, osVirtualToPhysical(D_801118B8_13D4A8_HotRopeJump[D_800FDBE0_FE7E0]));
+    gSPSegment(&gfx[2], 2, osVirtualToPhysical(anim->unk00[(s16)seg->anim >> 2].unk00));
+    gSPDisplayList(&gfx[3], osVirtualToPhysical(md->unk3C->unk10));
+    gSPMatrix(&gfx[4], osVirtualToPhysical(&seg->mtx[D_800FDBE0_FE7E0]), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(&gfx[5], osVirtualToPhysical(md->unk3C->unk14));
+    gDPPipeSync(&gfx[6]);
+    gSPEndDisplayList(&gfx[7]);
+    v = md->unk44[D_800FDBE0_FE7E0];
+    a = (f32)((seg->anim & 0x3F) * 360) * 0.015625 + 90.0;
+    r = HRJ_ABS(vtx->ob[0] * 0.4);
+    for (i = 0; i < 2; i++) {
+        v->unk00 = vtx->ob[0] + func_800B7890_B8490(a) * r + d.x;
+        v->unk02 = vtx->ob[1] + HuMathSin(a) * r + d.y;
+        a += 180.0;
+        if (a >= 360.0) {
+            a -= 360.0;
+        }
+        v++;
+        vtx++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010B754_137344_HotRopeJump);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010BB48_137738_HotRopeJump);
 
