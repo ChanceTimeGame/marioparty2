@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_37.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80102800_274F30_TileDriver);
 
