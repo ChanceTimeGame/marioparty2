@@ -27,10 +27,11 @@ extern u16 D_800BF7EC_C03EC[][14]; /* per player sound ids, index 0 of ... */
 extern omObjData* D_800F9CE0_FA8E0[];
 extern u16 D_800FA606_FB206;
 extern u16 D_801011FC_101DFC;
+extern u8 D_80102720_103320;
 void func_80000530_1130(omObjData* obj);
 void func_8000BF8C_CB8C(omObjData*, s32, f32);
-void func_800B3E20_B4A20(f32 (*)[4], Vec3f*);
-void func_800B6340_B6F40(f32 (*)[4], Vec3f*, f32 (*)[4]);
+void func_800B3E20_B4A20(void*, Vec3f*);
+void func_800B6340_B6F40(void*, Vec3f*, void*);
 void HmfModelObjAttrSet(s16, s32, s32);
 f32 HuMathSin(f32);
 s16 LoadFormFile(s32, s32);
@@ -198,8 +199,8 @@ typedef struct QCSpr {
 typedef struct QCScore {
     /* 0x00 */ u16 unk_00;      /* target */
     /* 0x02 */ u16 unk_02;      /* shown */
-    /* 0x04 */ u8 unk_04;       /* pop state */
-    /* 0x05 */ char unk_05[3];
+    /* 0x04 */ u16 unk_04;      /* pop state */
+    /* 0x06 */ char unk_06[2];
     /* 0x08 */ f32 unk_08;      /* pop angle */
 } QCScore; /* size = 0xC */
 
@@ -220,6 +221,14 @@ extern s8 D_80107780_27F2B0_QuicksandCache;
 extern s32 D_80107784_27F2B4_QuicksandCache;
 extern u32 D_80107788_27F2B8_QuicksandCache;
 extern u32 D_8010778C_27F2BC_QuicksandCache;
+extern const f32 D_80107910_27F440_QuicksandCache[3];
+extern const f32 D_8010791C_27F44C_QuicksandCache[3];
+extern const s32 D_80107960_27F490_QuicksandCache[6];
+extern const u16 D_80107978_27F4A8_QuicksandCache[4][2];
+extern const u16 D_80107988_27F4B8_QuicksandCache[4][2];
+extern const u16 D_80107998_27F4C8_QuicksandCache[4][2];
+extern const u16 D_801079A8_27F4D8_QuicksandCache[4][2];
+extern const s8 D_801079B8_27F4E8_QuicksandCache[8];
 extern const s16 D_80107818_27F348_QuicksandCache[4][6];
 extern const s8 D_80107848_27F378_QuicksandCache[4][6];
 extern char* D_80107790_27F2C0_QuicksandCache[6];
@@ -292,8 +301,8 @@ void func_80106E68_27E998_QuicksandCache(omObjData* obj);
 void func_80106F14_27EA44_QuicksandCache(omObjData* obj);
 void func_80106FC4_27EAF4_QuicksandCache(void);
 void func_80107048_27EB78_QuicksandCache(void);
-void func_80107074_27EBA4_QuicksandCache(void* spr, s32 idx, s32 anim, s32 x, s32 y);
-void func_8010712C_27EC5C_QuicksandCache(void);
+void func_80107074_27EBA4_QuicksandCache(QCSpr* spr, s16 idx, u16 anim, u16 x, u16 y);
+void func_8010712C_27EC5C_QuicksandCache(omObjData* obj);
 void func_80107410_27EF40_QuicksandCache(omObjData* obj);
 void func_8010773C_27F26C_QuicksandCache(void);
 

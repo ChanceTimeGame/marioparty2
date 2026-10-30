@@ -745,7 +745,8 @@ $(S40A_MULFIX_UNITS): export VR4300MUL := ON
 # S4-38: ovl_38 27A330.c is assembled from GCC's assembly with blank lines removed and the KMC
 # VR4300 mul fix on (func_80103328: a nop between back-to-back mul.s; func_80102800: none before a
 # mult after a call)
-S438_BLANKSTRIP_UNITS := build/src/overlays/ovl_38_QuicksandCache/27A330.c.o
+S438_BLANKSTRIP_UNITS := build/src/overlays/ovl_38_QuicksandCache/27A330.c.o \
+	build/src/overlays/ovl_38_QuicksandCache/27D810.c.o
 $(S438_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S438_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

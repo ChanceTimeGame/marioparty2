@@ -1,51 +1,31 @@
 #include "ovl_38.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106780_27E2B0_QuicksandCache);
+void func_80106780_27E2B0_QuicksandCache(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g) {
+    D_800FA610_FB210 = a;
+    D_800FD474_FE074.x = b;
+    D_800FD474_FE074.y = c;
+    D_800FD474_FE074.z = d;
+    D_8010274C_10334C.x = e;
+    D_8010274C_10334C.y = f;
+    D_8010274C_10334C.z = g;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_801067C0_27E2F0_QuicksandCache);
+void func_801067C0_27E2F0_QuicksandCache(omObjData* obj) {
+    if (D_801011FC_101DFC == 1) {
+        if (D_801077E0_27F310_QuicksandCache == 0) {
+            InitFadeOut(0, 0x14);
+            D_801077E0_27F310_QuicksandCache = 1;
+        } else if (func_8008F618_90218() == 0) {
+            func_800794A8_7A0A8(0x28);
+            func_80069770_6A370();
+            omOvlReturnEx(1);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106838_27E368_QuicksandCache);
+void func_80106838_27E368_QuicksandCache(omObjData* obj) {
+    f32 s = 0.4f - obj->trans.y * 0.0015f;
 
-__asm__(".section .rodata");
-const u32 D_80107910_27F440_QuicksandCache[3] = { 0x3F000000, 0x3F333333, 0x3F4CCCCD };
-
-__asm__(".section .rodata");
-const u32 D_8010791C_27F44C_QuicksandCache[2] = { 0x40000000, 0x40800000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_801068C0_27E3F0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106CC0_27E7F0_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106E68_27E998_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106F14_27EA44_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80106FC4_27EAF4_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80107048_27EB78_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80107074_27EBA4_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_8010712C_27EC5C_QuicksandCache);
-
-__asm__(".section .rodata");
-const u32 D_80107960_27F490_QuicksandCache[6] = { 0x00000028, 0x00000029, 0x0000002A, 0x0000002B, 0x0000002C, 0x0000002D };
-
-__asm__(".section .rodata");
-const u32 D_80107978_27F4A8_QuicksandCache[4] = { 0x003C0018, 0x01040018, 0x003C00CC, 0x010400CC };
-
-__asm__(".section .rodata");
-const u32 D_80107988_27F4B8_QuicksandCache[4] = { 0x00280024, 0x00F00024, 0x002800D8, 0x00F000D8 };
-
-__asm__(".section .rodata");
-const u32 D_80107998_27F4C8_QuicksandCache[4] = { 0x00340024, 0x00FC0024, 0x003400D8, 0x00FC00D8 };
-
-__asm__(".section .rodata");
-const u32 D_801079A8_27F4D8_QuicksandCache[4] = { 0x00400024, 0x01080024, 0x004000D8, 0x010800D8 };
-
-__asm__(".section .rodata");
-const u32 D_801079B8_27F4E8_QuicksandCache[2] = { 0x00010203, 0x00000000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_80107410_27EF40_QuicksandCache);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E2B0", func_8010773C_27F26C_QuicksandCache);
+    func_800297E8_2A3E8(obj->model[1], s, 0.0f, s);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 2.4f, obj->trans.z);
+}
