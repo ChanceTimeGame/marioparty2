@@ -80,7 +80,19 @@ void func_80102800_19B590_HandcarHavoc(void) {
     InitFadeIn(0, 16);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80102E40_19BBD0_HandcarHavoc);
+void func_80102E40_19BBD0_HandcarHavoc(omObjData* obj) {
+    D_8010D800_1A6590_HandcarHavoc = 0;
+    D_8010B3B0_1A4140_HandcarHavoc = NULL;
+    D_8010B3AC_1A413C_HandcarHavoc = NULL;
+    D_8010D870_1A6600_HandcarHavoc = 0;
+    D_8010B180_1A3F10_HandcarHavoc = 0;
+    D_8010D862_1A65F2_HandcarHavoc = -1;
+    D_8010D860_1A65F0_HandcarHavoc = 0;
+    D_8010D85E_1A65EE_HandcarHavoc = 0;
+    D_8010B364_1A40F4_HandcarHavoc = 30;
+    D_8010B366_1A40F6_HandcarHavoc = 300;
+    obj->func_ptr = func_80102EAC_19BC3C_HandcarHavoc;
+}
 
 void func_80102EAC_19BC3C_HandcarHavoc(omObjData* obj) {
     omObjData* car;
@@ -761,7 +773,26 @@ void func_80104DE0_19DB70_HandcarHavoc(omObjData* obj) {
     func_8002979C_2A39C(obj->model[6], lx + w->rot.x, 0.0f, lz + w->rot.z);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801051E8_19DF78_HandcarHavoc);
+/* A rider's stick to a lean input: none, 4.5 or 9 (at 70 and more), against the stick. */
+f32 func_801051E8_19DF78_HandcarHavoc(s8 stk) {
+    s8 mag = stk;
+    f32 dir;
+
+    if (stk < 0.0f) {
+        dir = 1.0f;
+    } else {
+        dir = -1.0f;
+    }
+    mag = fabs(mag);
+    if (mag == 0.0f) {
+        dir = dir * 0.0f;
+    } else if (mag >= 70) {
+        dir = dir * 9.0f;
+    } else {
+        dir = dir * 4.5f;
+    }
+    return dir;
+}
 
 void func_801052B8_19E048_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -901,40 +932,752 @@ void func_80105394_19E124_HandcarHavoc(omObjData* obj) {
     }
 }
 
+/* The winners turn round and jump off the car (their shadows stay on the ground). */
+/* NON_MATCHING: the KMC mul fix adds a nop after four calls whose delay slot GCC filled with a
+   float op (retail's has none), and case 1 loads seat .y before the model (retail after it). */
+#ifdef NON_MATCHING
+void func_80105940_19E6D0_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    f32 a;
+    s32 i;
+
+    w = obj->unk_50;
+    func_8010986C_1A25FC_HandcarHavoc(w);
+    switch (D_8010B16C_1A3EFC_HandcarHavoc) {
+        case 0:
+            a = D_8010B170_1A3F00_HandcarHavoc;
+            for (i = 0; i < 2; i++) {
+                if (i == 0) {
+                    a = -a;
+                }
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[3 + i]].mtx, 0.0f, w->rot.y - a, 0.0f);
+                if (D_8010B170_1A3F00_HandcarHavoc >= 90.0f) {
+                    D_8010B16C_1A3EFC_HandcarHavoc = 1;
+                    func_80029B80_2A780(obj->model[3 + i], obj->motion[7 + i]);
+                    func_80108730_1A14C0_HandcarHavoc(obj, i, &D_8010B328_1A40B8_HandcarHavoc[i]);
+                    D_8010B35C_1A40EC_HandcarHavoc = D_8010B328_1A40B8_HandcarHavoc[0].y;
+                    D_8010B310_1A40A0_HandcarHavoc[i].x =
+                        HuMathSin(w->rot.y - D_8010B170_1A3F00_HandcarHavoc) * 300.0f +
+                        D_8010B328_1A40B8_HandcarHavoc[i].x;
+                    D_8010B310_1A40A0_HandcarHavoc[i].y = obj->trans.y;
+                    D_8010B310_1A40A0_HandcarHavoc[i].z =
+                        func_800B7890_B8490(w->rot.y - D_8010B170_1A3F00_HandcarHavoc) * 300.0f +
+                        D_8010B328_1A40B8_HandcarHavoc[i].z;
+                    D_8010B350_1A40E0_HandcarHavoc[i] =
+                        (D_8010B310_1A40A0_HandcarHavoc[i].y - D_8010B328_1A40B8_HandcarHavoc[i].y + 562.5f) /
+                        (HuMathSin(70.0f) * 15.0f);
+                    D_8010B340_1A40D0_HandcarHavoc[i] = HuMathSin(w->rot.y + 90.0f) * 300.0f / 15.0f;
+                    D_8010B348_1A40D8_HandcarHavoc[i] = func_800B7890_B8490(w->rot.y + 90.0f) * 300.0f / 15.0f;
+                    D_8010B358_1A40E8_HandcarHavoc = 0.0f;
+                    D_8010D7E0_1A6570_HandcarHavoc[w->team]->func_ptr = func_8010A5B8_1A3348_HandcarHavoc;
+                }
+            }
+            D_8010B170_1A3F00_HandcarHavoc += 9.0f;
+            break;
+        case 1:
+            D_8010B358_1A40E8_HandcarHavoc += 1.0f;
+            for (i = 0; i < 2; i++) {
+                func_80029714_2A314(obj->model[3 + i],
+                                    D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                    HuMathSin(70.0f) * D_8010B350_1A40E0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc -
+                                        D_8010B358_1A40E8_HandcarHavoc * 2.5f * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].y,
+                                    D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                        D_8010B328_1A40B8_HandcarHavoc[i].z);
+                if (D_8010B358_1A40E8_HandcarHavoc > 3.0f) {
+                    func_80029714_2A314(obj->model[5 + i],
+                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        obj->trans.y,
+                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                } else {
+                    func_80029714_2A314(obj->model[5 + i],
+                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        D_8010B35C_1A40EC_HandcarHavoc,
+                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
+                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                }
+            }
+            if (D_8010B358_1A40E8_HandcarHavoc >= 15.0f) {
+                for (i = 0; i < 2; i++) {
+                    func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[9 + i]), 0, 20, 0);
+                    func_80029E80_2AA80(obj->model[3 + i], 3, 2);
+                }
+                D_8010B16C_1A3EFC_HandcarHavoc = 2;
+                D_8010B170_1A3F00_HandcarHavoc = 90.0f;
+            }
+            break;
+        case 2:
+            a = D_8010B170_1A3F00_HandcarHavoc;
+            for (i = 0; i < 2; i++) {
+                if (i == 0) {
+                    a = -a;
+                }
+                func_800B2060_B2C60(D_800FC834_FD434[obj->model[3 + i]].mtx, 0.0f, w->rot.y - a, 0.0f);
+                if (D_8010B170_1A3F00_HandcarHavoc >= 180.0f) {
+                    func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[5 + i]), 0, 20, 0);
+                    func_80029E80_2AA80(obj->model[3 + i], 3, 2);
+                    D_8010D824_1A65B4_HandcarHavoc = 2;
+                    obj->func_ptr = NULL;
+                }
+            }
+            D_8010B170_1A3F00_HandcarHavoc += 18.0f;
+            break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80105940_19E6D0_HandcarHavoc);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80105FEC_19ED7C_HandcarHavoc);
+/* The winning team cheers. */
+void func_80105FEC_19ED7C_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801060A4_19EE34_HandcarHavoc);
+    w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+    for (i = 0; i < 2; i++) {
+        func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[11 + i]), 0, 20, 0);
+        func_800732B0_73EB0(w->cheerMot[i]);
+    }
+    obj->func_ptr = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106164_19EEF4_HandcarHavoc);
+/* The losing team despairs. */
+void func_801060A4_19EE34_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_8010625C_19EFEC_HandcarHavoc);
+    w = D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->unk_50;
+    for (i = 0; i < 2; i++) {
+        func_80029BF0_2A7F0(obj->model[3 + i], func_80029E14_2AA14(obj->motion[13 + i]), 0, 20, 0);
+        func_800732B0_73EB0(w->loseMot[i]);
+    }
+    obj->func_ptr = NULL;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801067A0_19F530_HandcarHavoc);
+/* Intro: the instructions, then the race starts. */
+void func_80106164_19EEF4_HandcarHavoc(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801068CC_19F65C_HandcarHavoc);
+    switch (D_8010D870_1A6600_HandcarHavoc) {
+        case 0:
+            if (func_8008F618_90218() == 0) {
+                D_8010D870_1A6600_HandcarHavoc = 1;
+                func_800691FC_69DFC(15);
+            }
+            break;
+        case 1:
+            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+                D_8010D800_1A6590_HandcarHavoc = 1;
+                omDelObj(obj);
+                D_8010B3AC_1A413C_HandcarHavoc = NULL;
+                for (i = 0; i < 2; i++) {
+                    D_8010D804_1A6594_HandcarHavoc->work[i] = 1;
+                }
+            }
+            break;
+    }
+    if (D_8010B174_1A3F04_HandcarHavoc == 0) {
+        PlayMusic(0x22);
+    }
+    D_8010B174_1A3F04_HandcarHavoc--;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801069D8_19F768_HandcarHavoc);
+/* The end: messages, coins, the teams' reactions, leaving. */
+void func_8010625C_19EFEC_HandcarHavoc(omObjData* obj) {
+    s32 pl[2];
+    HHCar* w;
+    s32 i;
+    s32 j;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106AD0_19F860_HandcarHavoc);
+    switch (D_8010D824_1A65B4_HandcarHavoc) {
+        case 0:
+            D_8010D824_1A65B4_HandcarHavoc = 1;
+            func_800794A8_7A0A8(180);
+            PlaySound(15);
+            func_800691FC_69DFC(D_8010B362_1A40F2_HandcarHavoc == 0 ? 20 : 3);
+            D_8010D830_1A65C0_HandcarHavoc->work[0] = 1;
+            break;
+        case 2:
+            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+                w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+                for (i = 0; i < 2; i++) {
+                    pl[i] = w->player[i];
+                }
+                if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                    func_8006961C_6A21C(func_800691FC_69DFC(14), 160.0f, 176.0f);
+                    if (D_8010B362_1A40F2_HandcarHavoc == 1) {
+                        D_8010B360_1A40F0_HandcarHavoc = 60;
+                    } else {
+                        D_8010B360_1A40F0_HandcarHavoc = 75;
+                    }
+                } else {
+                    D_8010B360_1A40F0_HandcarHavoc = 1;
+                }
+                D_8010D824_1A65B4_HandcarHavoc = 5;
+            }
+            break;
+        case 5:
+            if (--D_8010B360_1A40F0_HandcarHavoc == 0) {
+                w = D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->unk_50;
+                for (i = 0; i < 2; i++) {
+                    pl[i] = w->player[i];
+                }
+                gPlayers[pl[0]].coins_mg_bonus += 10;
+                gPlayers[pl[1]].coins_mg_bonus += 10;
+                w = D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->unk_50;
+                D_8010B360_1A40F0_HandcarHavoc = 135;
+                if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                    D_8010D820_1A65B0_HandcarHavoc[D_8010D862_1A65F2_HandcarHavoc]->func_ptr =
+                        func_80105FEC_19ED7C_HandcarHavoc;
+                    D_8010D820_1A65B0_HandcarHavoc[(s16)((u16)D_8010D862_1A65F2_HandcarHavoc ^ 1)]->func_ptr =
+                        func_801060A4_19EE34_HandcarHavoc;
+                    func_800691FC_69DFC(17, gPlayers[pl[0]].character, gPlayers[pl[1]].character);
+                    if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                        PlayMusic(0x55);
+                    } else {
+                        PlayMusic(0x52);
+                    }
+                    D_8010D824_1A65B4_HandcarHavoc = 4;
+                } else {
+                    if (D_8010D85E_1A65EE_HandcarHavoc == 1) {
+                        D_8010B360_1A40F0_HandcarHavoc = 1;
+                    } else {
+                        D_8010B360_1A40F0_HandcarHavoc = 60;
+                    }
+                    D_8010D824_1A65B4_HandcarHavoc = 11;
+                }
+            }
+            break;
+        case 3:
+            if (func_80069538_6A138() & 2) {
+                PlayMusic(0x57);
+                D_8010D824_1A65B4_HandcarHavoc = 4;
+            }
+            break;
+        case 9:
+            if (func_80069538_6A138() & 2) {
+                D_8010D824_1A65B4_HandcarHavoc = 7;
+            }
+            break;
+        case 6:
+            if (func_8008F618_90218() == 0) {
+                D_8010B180_1A3F10_HandcarHavoc = 1;
+            }
+            break;
+        case 7:
+            if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                func_800691FC_69DFC(19);
+                PlayMusic(0x57);
+                D_8010B360_1A40F0_HandcarHavoc = 120;
+                D_8010D824_1A65B4_HandcarHavoc = 3;
+                for (i = 0; i < 2; i++) {
+                    w = D_8010D820_1A65B0_HandcarHavoc[i]->unk_50;
+                    for (j = 0; j < 2; j++) {
+                        func_80029BF0_2A7F0(D_8010D820_1A65B0_HandcarHavoc[i]->model[3 + j],
+                                            func_80029E14_2AA14(D_8010D820_1A65B0_HandcarHavoc[i]->motion[13 + j]), 0,
+                                            20, 0);
+                        func_800732B0_73EB0(w->loseMot[j]);
+                    }
+                    D_8010D820_1A65B0_HandcarHavoc[i]->func_ptr = NULL;
+                }
+            } else {
+                func_800691FC_69DFC(3);
+                D_8010B360_1A40F0_HandcarHavoc = 60;
+                D_8010D824_1A65B4_HandcarHavoc = 11;
+            }
+            break;
+        case 8:
+            func_800794A8_7A0A8(180);
+            if (D_8010B362_1A40F2_HandcarHavoc == 0) {
+                func_800691FC_69DFC(18);
+                D_8010B360_1A40F0_HandcarHavoc = 90;
+                D_8010D824_1A65B4_HandcarHavoc = 9;
+            } else {
+                func_800691FC_69DFC(3);
+                D_8010B360_1A40F0_HandcarHavoc = 60;
+                D_8010D824_1A65B4_HandcarHavoc = 11;
+            }
+            break;
+        case 10:
+            func_800691FC_69DFC(3);
+            D_8010B360_1A40F0_HandcarHavoc = 105;
+            D_8010D824_1A65B4_HandcarHavoc = 11;
+            break;
+        case 4:
+        case 11:
+            if (--D_8010B360_1A40F0_HandcarHavoc == 0) {
+                D_8010B180_1A3F10_HandcarHavoc = 1;
+            }
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106B84_19F914_HandcarHavoc);
+/* A team's track point i (MP1 func_800FC0C8, inlined in MP2). */
+static inline void HHGetPoint(u16 team, u16 i, Vec* out) {
+    ColVtx* p;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106CA8_19FA38_HandcarHavoc);
+    p = &D_8010B380_1A4110_HandcarHavoc[team][i];
+    out->x = p->x;
+    out->y = p->y;
+    out->z = p->z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80106E70_19FC00_HandcarHavoc);
+/* Both tracks' lengths (team 0's slot borrowed for each). */
+void func_801067A0_19F530_HandcarHavoc(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801074A8_1A0238_HandcarHavoc);
+    D_8010B3A0_1A4130_HandcarHavoc = 0.0f;
+    D_8010B3A4_1A4134_HandcarHavoc = 0.0f;
+    D_8010B376_1A4106_HandcarHavoc[0] = D_8010B37A_1A410A_HandcarHavoc;
+    D_8010B380_1A4110_HandcarHavoc[0] = D_8010B388_1A4118_HandcarHavoc;
+    D_8010B390_1A4120_HandcarHavoc[0] = D_8010B394_1A4124_HandcarHavoc;
+    for (i = 0; i < D_8010B394_1A4124_HandcarHavoc - 1; i++) {
+        D_8010B3A0_1A4130_HandcarHavoc += func_801069D8_19F768_HandcarHavoc(0, i);
+    }
+    D_8010B376_1A4106_HandcarHavoc[0] = D_8010B37C_1A410C_HandcarHavoc;
+    D_8010B380_1A4110_HandcarHavoc[0] = D_8010B38C_1A411C_HandcarHavoc;
+    D_8010B390_1A4120_HandcarHavoc[0] = D_8010B396_1A4126_HandcarHavoc;
+    for (i = 0; i < D_8010B396_1A4126_HandcarHavoc - 1; i++) {
+        D_8010B3A4_1A4134_HandcarHavoc += func_801069D8_19F768_HandcarHavoc(0, i);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107634_1A03C4_HandcarHavoc);
+/* Midpoint of a team's track segment i. */
+void func_801068CC_19F65C_HandcarHavoc(u16 team, u16 i, Vec* out) {
+    Vec a;
+    Vec b;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107740_1A04D0_HandcarHavoc);
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    out->x = (a.x + b.x) * 0.5f;
+    out->y = (a.y + b.y) * 0.5f;
+    out->z = (a.z + b.z) * 0.5f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_801078B8_1A0648_HandcarHavoc);
+/* Length of a team's track segment i. */
+f32 func_801069D8_19F768_HandcarHavoc(u16 team, u16 i) {
+    Vec a;
+    Vec b;
 
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    return func_800B1830_B2430((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z));
+}
+
+/* Distance from (x, y, z) to a team's track point i. */
+f32 func_80106AD0_19F860_HandcarHavoc(u16 team, f32 x, f32 y, f32 z, u16 i) {
+    Vec a;
+
+    HHGetPoint(team, i, &a);
+    return func_800B1830_B2430((a.x - x) * (a.x - x) + (a.y - y) * (a.y - y) + (a.z - z) * (a.z - z));
+}
+
+/* Direction of a team's track segment i. */
+void func_80106B84_19F914_HandcarHavoc(u16 team, u16 i, Vec* out) {
+    Vec a;
+    Vec b;
+    f32 len;
+
+    HHGetPoint(team, i, &a);
+    HHGetPoint(team, i + 1, &b);
+    len = func_801069D8_19F768_HandcarHavoc(team, i);
+    out->x = (b.x - a.x) / len;
+    out->y = (b.y - a.y) / len;
+    out->z = (b.z - a.z) / len;
+}
+
+/* The car's position (between its axles) and rotation (from the axle line). */
+void func_80106CA8_19FA38_HandcarHavoc(omObjData* obj, Vec* rot, Vec* pos) {
+    Vec axle[2];
+    Vec d;
+    Vec p;
+    HHCar* w;
+    f32 dist;
+    f32 a;
+    u16 seg;
+    s32 i;
+
+    w = obj->unk_50;
+    for (i = 0; i < 2; i++) {
+        seg = w->seg[i];
+        HHGetPoint(w->team, seg, &p);
+        func_80106B84_19F914_HandcarHavoc(w->team, seg, &axle[i]);
+        dist = w->dist[i];
+        axle[i].x = dist * axle[i].x + p.x;
+        axle[i].y = dist * axle[i].y + p.y;
+        axle[i].z = dist * axle[i].z + p.z;
+    }
+    for (i = 0; i < 3; i++) {
+        (&w->slope.x)[i] = (&d.x)[i] = ((&axle[1].x)[i] - (&axle[0].x)[i]) / 400.0f;
+        (&pos->x)[i] = ((&axle[1].x)[i] + (&axle[0].x)[i]) / 2.0f;
+    }
+    rot->y = func_800B75A8_B81A8(d.x, d.z);
+    a = func_8010A75C_1A34EC_HandcarHavoc(d.y);
+    rot->x = a * -d.z;
+    rot->z = a * d.x;
+}
+
+/* Moves both axles along the track by the car's speed; 1 when the front reaches the goal. A slow
+   car entering segment 115 is moved onto the second track (the lowered section) and moved again. */
+u16 func_80106E70_19FC00_HandcarHavoc(omObjData* obj) {
+    Vec d;
+    Vec p;
+    f32 savedDist[2];
+    u16 savedSeg[2];
+    HHCar* w;
+    f32 speed;
+    f32 progress;
+    f32 len;
+    u16 goal;
+    s32 i;
+
+    w = obj->unk_50;
+    speed = w->speed;
+    goal = 0;
+    if (speed == 0.0f) {
+        return 0;
+    }
+retry:
+    progress = w->progress;
+    w->progress = progress - speed;
+    for (i = 0; i < 2; i++) {
+        savedSeg[i] = w->seg[i];
+        savedDist[i] = w->dist[i];
+        w->dist[i] -= speed;
+        func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+        HHGetPoint(w->team, w->seg[i], &p);
+        d.x = d.x * w->dist[i] + p.x;
+        d.y = d.y * w->dist[i] + p.y;
+        d.z = d.z * w->dist[i] + p.z;
+        if (speed < 0.0f) {
+            len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+            while (len < w->dist[i]) {
+                w->seg[i]++;
+                w->dist[i] -= len;
+                len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+                func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+                HHGetPoint(w->team, w->seg[i], &p);
+                d.x = d.x * w->dist[i] + p.x;
+                d.y = d.y * w->dist[i] + p.y;
+                d.z = d.z * w->dist[i] + p.z;
+            }
+        } else {
+            len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i] - 1);
+            while (w->dist[i] < 0.0f) {
+                w->seg[i]--;
+                w->dist[i] = len + w->dist[i];
+                len = func_801069D8_19F768_HandcarHavoc(w->team, w->seg[i]);
+                func_80106B84_19F914_HandcarHavoc(w->team, w->seg[i], &d);
+                HHGetPoint(w->team, w->seg[i], &p);
+                d.x = d.x * w->dist[i] + p.x;
+                d.y = d.y * w->dist[i] + p.y;
+                d.z = d.z * w->dist[i] + p.z;
+            }
+        }
+    }
+    if (w->seg[0] >= 115) {
+        if (w->unkEA == 0) {
+            w->unkEA = 1;
+            w->unk9A = 0x1A7;
+            if (-w->speed < w->maxSpeed - 4.6296296f) {
+                D_8010B376_1A4106_HandcarHavoc[w->team] = D_8010B37C_1A410C_HandcarHavoc;
+                D_8010B380_1A4110_HandcarHavoc[w->team] = D_8010B38C_1A411C_HandcarHavoc;
+                D_8010B390_1A4120_HandcarHavoc[w->team] = D_8010B396_1A4126_HandcarHavoc;
+                D_8010B398_1A4128_HandcarHavoc[w->team] = D_8010B3A4_1A4134_HandcarHavoc;
+                w->unk9A = 0x18C;
+                w->progress = progress;
+                for (i = 0; i < 2; i++) {
+                    w->seg[i] = savedSeg[i];
+                    w->dist[i] = savedDist[i];
+                }
+                goto retry;
+            }
+        }
+    } else {
+        w->unkEA = 0;
+    }
+    if (w->seg[0] >= (s16)D_8010B390_1A4120_HandcarHavoc[w->team] - 2) {
+        D_8010D804_1A6594_HandcarHavoc->work[0] = 0;
+        D_8010D804_1A6594_HandcarHavoc->work[1] = 0;
+        goal = 1;
+    } else if (D_8010B376_1A4106_HandcarHavoc[w->team] == D_8010B37A_1A410A_HandcarHavoc) {
+        if (w->seg[0] >= 424) {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 0);
+        } else {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 4);
+        }
+    } else {
+        if (w->seg[0] >= 397) {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 0);
+        } else {
+            func_800298A4_2A4A4(D_8010B3A8_1A4138_HandcarHavoc->model[2 + w->team], 4, 4);
+        }
+    }
+    return goal;
+}
+
+/* Sparks from one side's wheels (more of them once the car tilts 12.5 degrees). */
+void func_801074A8_1A0238_HandcarHavoc(omObjData* obj, u16 side) {
+    Vec spot[2];
+    HHCar* w;
+    s16 mdl;
+    s32 k;
+
+    w = obj->unk_50;
+    func_80108A1C_1A17AC_HandcarHavoc(obj, side, spot);
+    for (k = 0; k < 2; k++) {
+        if (w->chips[side][k] < D_8010B144_1A3ED4_HandcarHavoc[side][k]) {
+            if (fabs(w->tilt) >= 12.5) {
+                mdl = func_80109484_1A2214_HandcarHavoc(w->team, side, k, 1);
+            } else {
+                mdl = func_80109484_1A2214_HandcarHavoc(w->team, side, k, 0);
+            }
+            w->chips[side][k]++;
+            if (mdl != -1) {
+                func_80029714_2A314(mdl, (k + spot)->x, (k + spot)->y, (k + spot)->z);
+                func_800B2060_B2C60(D_800FC834_FD434[mdl].mtx, 0.0f, w->rot.y, 0.0f);
+                func_8002979C_2A39C(mdl, w->rot.x, 0.0f, w->rot.z);
+            }
+        }
+    }
+}
+
+/* The car's marker and the riders' faces on the map. */
+void func_80107634_1A03C4_HandcarHavoc(omObjData* obj) {
+    HHCar* w;
+    s16 x;
+    u32 y;
+
+    w = obj->unk_50;
+    x = 168;
+    if (w->team == 0) {
+        x = 152;
+    }
+    y = 176.0f - w->progress / D_8010B398_1A4128_HandcarHavoc[w->team] * 144.0f;
+    espPosSet(w->marker, x, y + 8);
+    espPosSet(w->face[0], x, y + 18);
+    espPosSet(w->face[1], x, y - 2);
+}
+
+/* The race timer and the record (two rows of digits). */
+void func_80107740_1A04D0_HandcarHavoc(omObjData* obj) {
+    HHTimer* t;
+    s32 x;
+    s32 i;
+
+    t = obj->unk_50 = func_80027154_27D54(sizeof(HHTimer), 0x7918);
+    t->record = func_800680D4_68CD4(2);
+    t->time = 0;
+    obj->work[1] = 0;
+    obj->work[0] = 0;
+    x = 127;
+    for (i = 0; i < 7; i++) {
+        t->digit[i] = func_8001AAAC_1B6AC(D_8010D85C_1A65EC_HandcarHavoc, 0, 1);
+        espPosSet(t->digit[i], x, 220);
+        func_8001A7C8_1B3C8(t->digit[i], 0.0f);
+        t->best[i] = func_8001AAAC_1B6AC(D_8010D7E4_1A6574_HandcarHavoc, 0, 1);
+        espPosSet(t->best[i], x, 208);
+        func_8001A7C8_1B3C8(t->best[i], 0.0f);
+        if (i == 0) {
+            x += 8;
+        } else {
+            x += 12;
+        }
+    }
+    func_8001A854_1B454(t->digit[1], 10, 0);
+    func_8001A854_1B454(t->digit[4], 11, 0);
+    func_8001A854_1B454(t->best[1], 10, 0);
+    func_8001A854_1B454(t->best[4], 11, 0);
+    func_80107900_1A0690_HandcarHavoc(t->record, t->best);
+    obj->func_ptr = func_801078B8_1A0648_HandcarHavoc;
+}
+
+void func_801078B8_1A0648_HandcarHavoc(omObjData* obj) {
+    HHTimer* t;
+
+    t = obj->unk_50;
+    if (obj->work[0] == 1 || obj->work[1] == 1) {
+        t->time += 2;
+        func_80107900_1A0690_HandcarHavoc(t->time, t->digit);
+    }
+}
+
+/* m'ss"cc (digits 0, 2, 3, 5, 6; 1 and 4 are the marks). */
+/* NON_MATCHING: register allocation (the minutes' remainder and the seconds' quotient swap s1/s3). */
+#ifdef NON_MATCHING
+void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
+    u16 rest;
+    u16 sec;
+    u16 cs;
+
+    func_8001A854_1B454(*digit, time / 3600, 0);
+    digit += 2;
+    rest = time % 3600;
+    sec = rest / 60;
+    func_8001A854_1B454(*digit, sec / 10, 0);
+    digit++;
+    func_8001A854_1B454(*digit, sec % 10, 0);
+    digit += 2;
+    cs = (u16)(rest % 60) * 1.6666666f;
+    func_8001A854_1B454(digit[0], cs / 10, 0);
+    func_8001A854_1B454(digit[1], cs % 10, 0);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107900_1A0690_HandcarHavoc);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107AB0_1A0840_HandcarHavoc);
+/* The race's winner: the car nearer the goal (a car short of it counts negative); saves a new
+   record. */
+u16 func_80107AB0_1A0840_HandcarHavoc(void) {
+    f32 dist[2];
+    HHCar* w;
+    HHTimer* t;
+    u16 win;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107C64_1A09F4_HandcarHavoc);
+    for (i = 0; i < 2; i++) {
+        w = D_8010D820_1A65B0_HandcarHavoc[i]->unk_50;
+        dist[i] = func_80106AD0_19F860_HandcarHavoc(
+            i, D_8010D820_1A65B0_HandcarHavoc[i]->trans.x + HuMathSin(w->rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[0],
+            D_8010D820_1A65B0_HandcarHavoc[i]->trans.y,
+            D_8010D820_1A65B0_HandcarHavoc[i]->trans.z + func_800B7890_B8490(w->rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[0],
+            D_8010B390_1A4120_HandcarHavoc[i] - 2);
+        if (w->seg[0] < (s16)D_8010B390_1A4120_HandcarHavoc[i] - 2) {
+            dist[i] = -dist[i];
+        }
+    }
+    if (dist[0] > dist[1]) {
+        win = 0;
+    } else {
+        win = 0;
+        if (dist[0] < dist[1]) {
+            win = 1;
+        }
+    }
+    t = D_8010D804_1A6594_HandcarHavoc->unk_50;
+    if (t->record > t->time) {
+        t->record = t->time;
+        GWMgRecordSet(2, t->record);
+        D_8010D85E_1A65EE_HandcarHavoc = 1;
+    }
+    return win;
+}
+
+/* A COM rider's input for this frame, by difficulty: pumps at random (not while braking), leans
+   against a bend when tipping or skidding, brakes before marked bends. */
+void func_80107C64_1A09F4_HandcarHavoc(omObjData* obj, HHPad* pad, u16 seat) {
+    HHCar* w;
+    u8 diff;
+    u8 chance;
+    u8 lean;
+    s16 stickTime;
+    u8 brake;
+    u8 delay;
+
+    pad->stkX = 0;
+    pad->stkY = 0;
+    pad->trg = 0;
+    pad->btn = 0;
+    if (D_8010D800_1A6590_HandcarHavoc == 1) {
+        w = obj->unk_50;
+        diff = gPlayers[w->player[seat]].cpu_difficulty;
+        switch (diff) {
+            case 0:
+                chance = 30;
+                lean = (rand8() & 7) + 12;
+                stickTime = (u8)(rand8() % 20) + 20;
+                brake = 10;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() % 3 + 1;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 1:
+                chance = 45;
+                lean = rand8() % 7 + 10;
+                stickTime = (u8)(rand8() % 15) + 15;
+                brake = 15;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() % 3;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 2:
+                chance = 70;
+                lean = rand8() % 5 + 5;
+                stickTime = (u8)(rand8() % 10) + 10;
+                brake = 40;
+                if (w->speed >= -5.0f) {
+                    delay = rand8() & 1;
+                } else {
+                    delay = 0;
+                }
+                break;
+            case 3:
+                chance = 92;
+                lean = rand8() % 5 + 1;
+                stickTime = (u8)(rand8() % 5) + 5;
+                brake = 90;
+                delay = 0;
+                break;
+        }
+        if ((obj->work[0] & 8) && (u8)(rand8() % 100) < (u8)brake) {
+            if (fabs(w->lean) != 18.0) {
+                if (obj->work[0] & 0x20) {
+                    if (lean < w->skidTimer || fabs(w->tilt) > lean) {
+                        w->cpuStickTime[seat] = stickTime;
+                        w->cpuStick[seat] = 80;
+                    }
+                } else if (obj->work[0] & 0x40) {
+                    if (lean < w->skidTimer || fabs(w->tilt) > lean) {
+                        w->cpuStickTime[seat] = stickTime;
+                        w->cpuStick[seat] = -80;
+                    }
+                }
+            }
+            switch (diff) {
+                case 0:
+                    w->cpuBrakeTime[seat] = (u8)(rand8() % 5) + 3;
+                    break;
+                case 1:
+                    if (fabs(w->lean) >= 9.0) {
+                        w->cpuBrakeTime[seat] = (u8)(rand8() & 3) + 2;
+                    }
+                    break;
+                case 2:
+                    if (fabs(w->lean) >= 9.0) {
+                        w->cpuBrakeTime[seat] = (rand8() & 1) + 1;
+                    }
+                    break;
+                case 3:
+                    w->cpuBrakeTime[seat] = 0;
+                    break;
+            }
+            if (w->cpu == 0) {
+                w->cpuBrakeTime[seat] = (u16)w->cpuBrakeTime[seat] >> 1;
+            }
+        }
+        if (w->cpuStickTime[seat] != 0) {
+            w->cpuStickTime[seat]--;
+            pad->stkX = w->cpuStick[seat];
+        }
+        if (w->cpuBrakeTime[seat] != 0) {
+            w->cpuBrakeTime[seat]--;
+            pad->btn |= 0x4000;
+        }
+        if (w->cpuDelay[seat] == 0) {
+            if ((u8)(rand8() % 100) < (u8)chance && !(pad->btn & 0x4000)) {
+                pad->trg |= 0x8000;
+            }
+            w->cpuDelay[seat] = delay;
+        } else {
+            w->cpuDelay[seat]--;
+        }
+    }
+}
