@@ -148,9 +148,9 @@ void func_80108054_1C3BD4_DungeonDash(omObjData* obj);
 s32 func_80108308_1C3E88_DungeonDash(u16 team, f32 z);
 void func_801083B0_1C3F30_DungeonDash(u16 n);
 void func_80108574_1C40F4_DungeonDash(void);
-void func_80108A14_1C4594_DungeonDash(s32 arg0, f32 arg1);
+void func_80108A14_1C4594_DungeonDash(s32 team, f32 z);
 void func_80108B54_1C46D4_DungeonDash(s16 mdl);
-void func_80108BFC_1C477C_DungeonDash(s16 arg0);
+void func_80108BFC_1C477C_DungeonDash(s16 mdl);
 void func_80108C8C_1C480C_DungeonDash(void);
 void func_80108F9C_1C4B1C_DungeonDash(void);
 void func_80109884_1C5404_DungeonDash(s32 arg0, f32 arg1);
@@ -209,6 +209,9 @@ u16 func_80078EA8_79AA8(void);
 s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
 void func_80029EDC_2AADC(s16 arg0, u8 arg1);
 void func_800795D8_7A1D8(s16 sound, s8 volume);
+void func_80029C74_2A874(s16, f32);
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16); /* motion length */
 s16 LoadFormFile(s32, s32);
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
 void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */

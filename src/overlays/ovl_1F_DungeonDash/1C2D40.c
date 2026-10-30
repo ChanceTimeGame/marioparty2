@@ -493,11 +493,63 @@ void func_80108574_1C40F4_DungeonDash(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574_1C40F4_DungeonDash);
 #endif
 
+/* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
+// register allocation and where (u16)bit is taken (MP1 func_800FB4F8's residue)
+#ifdef NON_MATCHING
+void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
+    DDObstacle* o;
+    u16 i;
+    s32 bit;
+    HmfModel* m;
+
+    o = D_8010B2E4_1C6E64_DungeonDash;
+    if (D_8010B2A6_1C6E26_DungeonDash == 0) {
+        return;
+    }
+    i = 0;
+    bit = 1 << team;
+    for (; i < 5; i++, o++) {
+        if (o->unk0 != 0 && D_8010B2BC_1C6E3C_DungeonDash == 0) {
+            if (o->z > z + 200.0) {
+                m = &D_800FC834_FD434[o->unk6];
+                if (m->unk01 & (u16)bit) {
+                    m->unk01 ^= bit;
+                    D_800FC834_FD434[o->unk8].unk01 ^= bit;
+                }
+            } else {
+                D_800FC834_FD434[o->unk6].unk01 |= bit;
+                D_800FC834_FD434[o->unk8].unk01 |= bit;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108A14_1C4594_DungeonDash);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108B54_1C46D4_DungeonDash);
+void func_80108B54_1C46D4_DungeonDash(s16 mdl) {
+    f32 end;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108BFC_1C477C_DungeonDash);
+    end = func_80029CE4_2A8E4(mdl);
+    if (func_80029D0C_2A90C(mdl) <= end) {
+        if (D_800FC834_FD434[mdl].hmf->unk9C != NULL) {
+            D_800FC834_FD434[mdl].hmf->unk9C->unk08 = 0.0f;
+        }
+        func_80029C74_2A874(mdl, 0.0f);
+    }
+    func_800298A4_2A4A4(mdl, 4, 0);
+}
+
+void func_80108BFC_1C477C_DungeonDash(s16 mdl) {
+    f32 end;
+
+    if (mdl != -1 && !(D_800FC834_FD434[mdl].unk18 & 4)) {
+        end = func_80029CE4_2A8E4(mdl);
+        if (func_80029D0C_2A90C(mdl) <= end) {
+            func_800298A4_2A4A4(mdl, 4, 4);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108C8C_1C480C_DungeonDash);
 
