@@ -716,3 +716,5 @@ $(S423B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # S4-1FA: retail has a nop between back-to-back mul.d (80105618)
 S41FA_MULFIX_UNITS := build/src/overlays/ovl_1F_DungeonDash/1BE380.c.o
 $(S41FA_MULFIX_UNITS): export VR4300MUL := ON
+# S4-1FB: 1C2D40.c has nops between back-to-back mul.s (func_801078BC)
+build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o: export VR4300MUL := ON
