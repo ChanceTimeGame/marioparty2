@@ -901,7 +901,218 @@ void func_80105550_124490_RakinEmIn(void) {
     }
 }
 
+/* An item: 0 on the table (when pushed by another item, it is moved 75 units clear of it and may
+   push others in turn), 1 raked off: it flies, and as it falls past a basket's rim either drops
+   in (0x10) or bounces off (0x20), 2 landed: it scores if it fell in or lies within 150 of a
+   basket, 3 adds the score, 4 done. */
+/* NON_MATCHING: the assembler's mul-fix nop after the two *7.0 calls (retail has none; unfixable), v0/v1 in the abs, item in s5 */
+#ifdef NON_MATCHING
+void func_801055F4_124534_RakinEmIn(omObjData* obj) {
+    Vec a;
+    Vec b;
+    Vec out;
+    s32 d;
+    RIObj* r = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    s16 item = obj->work[0];
+    RIItem* it;
+    omObjData* other;
+    RIStation* st;
+    RIScore* s;
+    Vec* edge;
+    f32 dx;
+    f32 dz;
+    f32 add;
+    f32 len;
+    f32 lim;
+    f32 ox;
+    f32 near;
+    f32 far;
+    s16 q;
+    s16 i;
+    s16 sum;
+    u8 fl;
+
+    item -= 10;
+    it = &D_801070B8_125FF8_RakinEmIn[item];
+    switch (r->com) {
+    case 0:
+        fl = it->flags;
+        if (fl & 1) {
+            it->flags = fl ^ 1;
+            len = 75.0f;
+            lim = len * len;
+            other = D_80107520_126460_RakinEmIn[it->by].obj;
+            dx = obj->trans.x;
+            ox = other->trans.x;
+            d = dx - ox;
+            if (d < 0) {
+                d = -d;
+            }
+            dx = d;
+            d = obj->trans.z - other->trans.z;
+            if (d < 0) {
+                d = -d;
+            }
+            dz = d;
+            if (dx * dx + dz * dz <= lim) {
+                a.x = ox;
+                a.y = other->trans.y;
+                a.z = other->trans.z;
+                b.x = obj->trans.x;
+                b.y = obj->trans.y;
+                b.z = obj->trans.z;
+                func_80102B40_121A80_RakinEmIn(&a, &b, &out);
+                obj->trans.x = other->trans.x + func_800B80D0_B8CD0(out.z) * (f64)len;
+                obj->trans.z = other->trans.z + func_800B75D0_B81D0(out.z) * (f64)len;
+                it->flags |= 2;
+                func_80104950_123890_RakinEmIn(obj, item);
+            }
+        }
+        break;
+    case 1:
+        obj->trans.x += r->unk_40;
+        obj->trans.z += r->unk_44;
+        obj->trans.y += r->unk_38;
+        r->unk_38 -= r->unk_3C;
+        if (r->unk_3C < 6.0f) {
+            r->unk_3C += 2.0f;
+        }
+        if (obj->trans.y < -5.0f) {
+            if (obj->trans.x < 0.0f && obj->trans.z < 0.0f) {
+                q = 0;
+            } else if (obj->trans.x > 0.0f && obj->trans.z < 0.0f) {
+                q = 1;
+            } else if (obj->trans.x < 0.0f && obj->trans.z > 0.0f) {
+                q = 2;
+            } else {
+                q = 3;
+            }
+            st = &D_80106CC0_125C00_RakinEmIn[q];
+            for (i = 0; i < 2; i++) {
+                if (it->flags & 0x30) {
+                    break;
+                }
+                edge = &st->right;
+                if (i == 0) {
+                    edge = &st->left;
+                }
+                add = 90.0f;
+                if (i != 0) {
+                    add = -90.0f;
+                }
+                a.x = edge->x;
+                a.y = edge->y;
+                a.z = edge->z;
+                b.x = obj->trans.x;
+                b.y = obj->trans.y;
+                b.z = obj->trans.z;
+                func_80102B40_121A80_RakinEmIn(&a, &b, &out);
+                add = func_80102EB4_121DF4_RakinEmIn(st->angle, add);
+                far = 100.0f;
+                near = 62.5f;
+                if (func_80104A6C_1239AC_RakinEmIn(add, out.z, 90.0f)) {
+                    if (out.x > near && out.x < far) {
+                        a.x = obj->trans.x;
+                        a.y = obj->trans.y;
+                        a.z = obj->trans.z;
+                        b.x = st->base.x;
+                        b.y = st->base.y;
+                        b.z = st->base.z;
+                        func_80102B40_121A80_RakinEmIn(&a, &b, &out);
+                        r->unk_38 = 14.0f;
+                        r->unk_3C = 0.0f;
+                        r->unk_40 = func_800B80D0_B8CD0(out.z) * 7.0;
+                        r->unk_44 = func_800B75D0_B81D0(out.z) * 7.0;
+                        r->state = q;
+                        it->flags |= 0x10;
+                    } else if (out.x >= far && out.x < far + 37.5f) {
+                        a.x = st->base.x;
+                        a.y = st->base.y;
+                        a.z = st->base.z;
+                        b.x = obj->trans.x;
+                        b.y = obj->trans.y;
+                        b.z = obj->trans.z;
+                        func_80102B40_121A80_RakinEmIn(&a, &b, &out);
+                        r->unk_3C = 0.0f;
+                        r->unk_40 = 2.0 * func_800B80D0_B8CD0(out.z);
+                        r->unk_44 = 2.0 * func_800B75D0_B81D0(out.z);
+                        it->flags |= 0x20;
+                    }
+                }
+            }
+        }
+        if (obj->trans.y < -175.0f) {
+            obj->trans.y = -175.0f;
+            r->com = 2;
+        }
+        break;
+    case 2:
+        if (it->flags & 0x10) {
+            r->unk_30 = D_80106F0C_125E4C_RakinEmIn[r->unk_28];
+        } else if (!(it->flags & 0x20)) {
+            if (obj->trans.x < 0.0f && obj->trans.z < 0.0f) {
+                q = 0;
+            } else if (obj->trans.x > 0.0f && obj->trans.z < 0.0f) {
+                q = 1;
+            } else if (obj->trans.x < 0.0f && obj->trans.z > 0.0f) {
+                q = 2;
+            } else {
+                q = 3;
+            }
+            st = &D_80106CC0_125C00_RakinEmIn[q];
+            lim = 22500.0f;
+            d = obj->trans.x - st->base.x;
+            if (d < 0) {
+                d = -d;
+            }
+            dx = d;
+            d = obj->trans.z - st->base.z;
+            if (d < 0) {
+                d = -d;
+            }
+            dz = d;
+            if (dx * dx + dz * dz <= lim) {
+                r->unk_30 = D_80106F0C_125E4C_RakinEmIn[r->unk_28];
+                r->state = q;
+            }
+        } else {
+            r->unk_30 = 0;
+        }
+        r->com = 3;
+        break;
+    case 3:
+        if (r->unk_30 != 0) {
+            s = &D_801071B0_1260F0_RakinEmIn[r->state];
+            sum = s->score + r->unk_30;
+            if (sum < 0) {
+                sum = 0;
+            } else if (sum >= 1000) {
+                sum = 999;
+            }
+            s->score = sum;
+            if (r->unk_30 >= 2) {
+                PlaySound(0x15B);
+            } else if (r->unk_30 < 0) {
+                PlaySound(0x15C);
+            } else {
+                PlaySound(0x15A);
+            }
+            if (D_801073B8_1262F8_RakinEmIn[r->state].com == 0) {
+                omVibrate(r->state, 10, 0, 10);
+            }
+        }
+        r->com = 4;
+        if (r->unk_28 != 1) {
+            D_801071AA_1260EA_RakinEmIn--;
+        }
+        break;
+    case 4:
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801055F4_124534_RakinEmIn);
+#endif
 
 __asm__(".section .rodata");
 const char D_80107070_125FB0_RakinEmIn[] = "kin0_001_DEF";
