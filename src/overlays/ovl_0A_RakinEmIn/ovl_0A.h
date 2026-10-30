@@ -108,8 +108,8 @@ extern s16 D_80106F90_125ED0_RakinEmIn;         /* result wait */
 
 /* ---- .bss ---- */
 extern u16 D_801070A0_125FE0_RakinEmIn; /* game state */
-extern u16 D_801070A2_125FE2_RakinEmIn; /* game state timer */
-extern s32 D_801070A4_125FE4_RakinEmIn; /* 1P-flag result wait */
+extern s16 D_801070A2_125FE2_RakinEmIn; /* game state timer */
+extern s16 D_801070A4_125FE4_RakinEmIn; /* 1P-flag result wait */
 extern f32 D_801070A8_125FE8_RakinEmIn; /* table radius offset */
 extern f32 D_801070AC_125FEC_RakinEmIn; /* rake angle window */
 extern u64 D_801070B0_125FF0_RakinEmIn; /* start positions taken */
@@ -175,7 +175,7 @@ void func_8003E4F4_3F0F4(s16 arg0, u8 arg1, u8 arg2);
 void func_8003E560_3F160(s16, u8); /* defined (s16, s32) in 3D6A0.c; retail passes a u8 here */
 s16 func_800691FC_69DFC(s16 mesNo, ...);
 s32 func_80069538_6A138(void);
-void func_8006D4D0_6E0D0(s16, s16);
+void func_8006D4D0_6E0D0(s16 seconds); /* timer display */
 void func_8006D518_6E118(void);
 void func_8007273C_7333C(u8* arg0, u8 arg1);
 void func_80079128_79D28(void);

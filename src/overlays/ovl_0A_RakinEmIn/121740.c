@@ -837,23 +837,129 @@ const u32 D_80107008_125F48_RakinEmIn[2] = { 0x00200060, 0x00300050 }; /* pan[4]
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80104BCC_123B0C_RakinEmIn);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801051D8_124118_RakinEmIn);
+__asm__(".section .rodata");
+const char D_80107024_125F64_RakinEmIn[] = "arm_tex_00_DEF";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80105550_124490_RakinEmIn);
+void func_801051D8_124118_RakinEmIn(omObjData* obj) {
+    RIObj* r = &D_80107250_126190_RakinEmIn[obj->work[0]];
+    s16 player = obj->work[0];
+    s32 dir = 0x1A0000;
+    RIStation* st;
+    void* data;
+    f64 a;
+    f64 b;
+    s8 chr;
+
+    player -= 5;
+    r->com = gPlayers[player].flags & 1;
+    if (r->com != 0) {
+        r->unk_28 = gPlayers[player].cpu_difficulty;
+        func_80104474_1233B4_RakinEmIn(r);
+    }
+    chr = gPlayers[player].character;
+    obj->model[0] = LoadFormFile(dir | 3, 0x6A9);
+    data = DataRead(dir | D_80106DE0_125D20_RakinEmIn[chr]);
+    func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, data, 0, D_80107024_125F64_RakinEmIn);
+    DataClose(data);
+    func_80029A8C_2A68C(obj->model[0]);
+    func_80029AFC_2A6FC(obj->model[0]);
+    st = &D_80106CC0_125C00_RakinEmIn[player];
+    obj->trans.x = st->pos.x;
+    obj->trans.y = st->pos.y;
+    obj->trans.z = st->pos.z;
+    obj->rot.y = st->angle;
+    func_80018CCC_198CC(obj, 1, dir | 4);
+    func_80018CCC_198CC(obj, 2, dir | 5);
+    func_80029E80_2AA80(obj->model[0], 1, 1);
+    st->base.x = obj->trans.x + func_800B80D0_B8CD0(obj->rot.y) * 30.0 * 5.0;
+    st->base.y = obj->trans.y;
+    st->base.z = obj->trans.z + func_800B75D0_B81D0(obj->rot.y) * 30.0 * 5.0;
+    a = func_80102EB4_121DF4_RakinEmIn(obj->rot.y, 90.0f);
+    st->left.x = st->base.x + func_800B80D0_B8CD0(a) * 15.0 * 5.0;
+    st->left.y = st->base.y;
+    st->left.z = st->base.z + func_800B75D0_B81D0(a) * 15.0 * 5.0;
+    b = func_80102EB4_121DF4_RakinEmIn(obj->rot.y, -90.0f);
+    st->right.x = st->base.x + func_800B80D0_B8CD0(b) * 15.0 * 5.0;
+    st->right.y = st->base.y;
+    st->right.z = st->base.z + func_800B75D0_B81D0(b) * 15.0 * 5.0;
+    r->unk_38 = D_801070A8_125FE8_RakinEmIn + 225.0f;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    obj->func_ptr = func_80104BCC_123B0C_RakinEmIn;
+}
+
+void func_80105550_124490_RakinEmIn(void) {
+    RIObj* r;
+    omObjData* o;
+    s16 i;
+
+    for (i = 0; i < 4; i++) {
+        r = &D_801073B8_1262F8_RakinEmIn[i];
+        o = omAddObj(100, 1, 3, -1, func_801051D8_124118_RakinEmIn);
+        o->work[0] = r->player = i + 5;
+        r->obj = o;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801055F4_124534_RakinEmIn);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80105E98_124DD8_RakinEmIn);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106060_124FA0_RakinEmIn);
+void func_80106060_124FA0_RakinEmIn(void) {
+    RIObj* r;
+    omObjData* o;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106104_125044_RakinEmIn);
+    for (i = 0; i < 20; i++) {
+        r = &D_80107520_126460_RakinEmIn[i];
+        o = omAddObj(300, 1, 0, -1, func_80105E98_124DD8_RakinEmIn);
+        o->work[0] = r->player = i + 10;
+        r->obj = o;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106164_1250A4_RakinEmIn);
+void func_80106104_125044_RakinEmIn(omObjData* obj) {
+    if (D_80106F90_125ED0_RakinEmIn != 0) {
+        if (--D_80106F90_125ED0_RakinEmIn == 0) {
+            func_8006D518_6E118();
+        }
+    }
+    if (D_801070A4_125FE4_RakinEmIn != 0) {
+        D_801070A4_125FE4_RakinEmIn--;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106218_125158_RakinEmIn);
+void func_80106164_1250A4_RakinEmIn(omObjData* obj) {
+    if (D_801070A2_125FE2_RakinEmIn != 0) {
+        D_801070A2_125FE2_RakinEmIn--;
+    }
+    func_8006D4D0_6E0D0((D_801070A2_125FE2_RakinEmIn + 29) / 30);
+    if (D_801070A0_125FE0_RakinEmIn == 3) {
+        D_801070A4_125FE4_RakinEmIn = 60;
+        func_800691FC_69DFC(3);
+        func_800794A8_7A0A8(40);
+        obj->func_ptr = func_80106104_125044_RakinEmIn;
+        D_801070A2_125FE2_RakinEmIn = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80106258_125198_RakinEmIn);
+void func_80106218_125158_RakinEmIn(omObjData* obj) {
+    func_800691FC_69DFC(10, 30, 160, 28);
+    obj->func_ptr = func_80106164_1250A4_RakinEmIn;
+}
+
+void func_80106258_125198_RakinEmIn(omObjData* obj) {
+    switch (D_801070A0_125FE0_RakinEmIn) {
+    case 1:
+        if (D_801070A2_125FE2_RakinEmIn == 0) {
+            func_800691FC_69DFC(0);
+            D_801070A2_125FE2_RakinEmIn++;
+        }
+        break;
+    case 2:
+        obj->func_ptr = func_80106218_125158_RakinEmIn;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801062CC_12520C_RakinEmIn);
 
