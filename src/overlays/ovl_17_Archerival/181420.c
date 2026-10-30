@@ -1,30 +1,221 @@
 #include "common.h"
+#include "ovl_17.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102800_181420_Archerival);
+void func_80102800_181420_Archerival(void) {
+    func_801070A8_185CC8_Archerival();
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010281C_18143C_Archerival);
+void func_8010281C_18143C_Archerival(u8 player) {
+    ContBtn[gPlayers[player].port] = 0;
+    ContBtnTrg[gPlayers[player].port] = 0;
+    ContStkX[gPlayers[player].port] = 0;
+    ContStkY[gPlayers[player].port] = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801028A0_1814C0_Archerival);
+void func_801028A0_1814C0_Archerival(void) {
+    s32 i;
+
+    if (D_801073DC_185FFC_Archerival == 0) {
+        D_801073DC_185FFC_Archerival = 1;
+        for (i = 0; i < 2; i++) {
+            Hu3DCamSetPerspective(i, 30.0f, 80.0f, 8000.0f);
+            D_800F94A8_FA0A8[i] = 950.0f;
+            D_80102770_103370[i].x = 339.0f;
+            D_80102770_103370[i].y = 0.0f;
+            D_80102770_103370[i].z = 0.0f;
+            D_801013B0_101FB0[i].x = 0.0f;
+            D_801013B0_101FB0[i].y = 160.0f;
+            D_801013B0_101FB0[i].z = 133.0f;
+        }
+    }
+}
 
 void func_801029B8_1815D8_Archerival(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801029C0_1815E0_Archerival);
+void func_801029C0_1815E0_Archerival(omObjData* obj) {
+    GroundWork* gw;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102B78_181798_Archerival);
+    D_80108730_187350_Archerival[0] = func_8001A2F8_1AEF8(0x27000C);
+    D_80107BAC_1867CC_Archerival = SprCreate(1, 0);
+    SprAttrReset(D_80107BAC_1867CC_Archerival, 0, -1);
+    SprScaleSet(D_80107BAC_1867CC_Archerival, 0, 1.0f, 1.0f);
+    SprAnimSet(D_80107BAC_1867CC_Archerival, 0, D_80108730_187350_Archerival[0], 0);
+    SprBankSet(D_80107BAC_1867CC_Archerival, 0, 0);
+    SprAttrSet(D_80107BAC_1867CC_Archerival, 0, 0x5000);
+    SprPosSet(D_80107BAC_1867CC_Archerival, 0, 160, 120);
+    func_8008225C_82E5C(D_80107BAC_1867CC_Archerival, 0, 0);
+    SprPrioSet(D_80107BAC_1867CC_Archerival, 0, 0xFFF0);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = obj;
+    obj->unk_50 = gw = func_80027154_27D54(0xB4, 0x7918);
+    func_800B0EF0_B1AF0(gw, 0, 0xB4);
+    gw->unk_03 = 1;
+    gw->unk_04 = 0;
+    func_8000BEA4_CAA4(obj, 20.0f);
+    func_8000BE8C_CA8C(obj, 1.0f);
+    func_8000BF24_CB24(D_800FC7B0_FD3B0[0], 0.0f, -550.0f, -500.0f, 550.0f, 500.0f);
+    obj->func_ptr = func_801029B8_1815D8_Archerival;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102BC0_1817E0_Archerival);
+void func_80102B78_181798_Archerival(void) {
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_80107BA8_1867C8_Archerival = omAddObj(10, 0, 0, -1, func_801029C0_1815E0_Archerival);
+}
+
+void func_80102BC0_1817E0_Archerival(Gfx** gfxp) {
+    Gfx* gfx = *gfxp;
+    s32 y;
+
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gSPClearGeometryMode(gfx++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR |
+                                    G_CULL_BOTH | G_FOG | G_LOD);
+    gSPSetGeometryMode(gfx++, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
+    gDPSetCombineMode(gfx++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetTexturePersp(gfx++, G_TP_NONE);
+    gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, 255);
+    gDPSetRenderMode(gfx++, G_RM_AA_TEX_EDGE, G_RM_AA_TEX_EDGE2);
+    gDPSetTextureLUT(gfx++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(gfx++, D_801078F4_186514_Archerival->unk0C);
+    for (y = 0; y < 40; y += 8) {
+        gDPLoadTextureTile(gfx++, D_801078F4_186514_Archerival->unk08, G_IM_FMT_RGBA, G_IM_SIZ_8b, 192, 40, 0, y, 191,
+                           y + 7, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 192 << 2, 8 << 2);
+        gSPTextureRectangle(gfx++, 64 << 2, (y + 114) << 2, 256 << 2, (y + 122) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
+                            1 << 10);
+    }
+    *gfxp = gfx;
+}
 
 void func_80102EE4_181B04_Archerival(void) {
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102EEC_181B0C_Archerival);
+void func_80102EEC_181B0C_Archerival(omObjData* obj) {
+    D_80108732_187352_Archerival = func_8001A2F8_1AEF8(0x27000D);
+    D_801078F4_186514_Archerival = SprAnimGet(D_80108732_187352_Archerival);
+    func_80029EDC_2AADC(func_8002838C_28F8C(0, func_80102BC0_1817E0_Archerival, 2), 1);
+    obj->func_ptr = func_80102EE4_181B04_Archerival;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102F64_181B84_Archerival);
+void func_80102F64_181B84_Archerival(void) {
+    D_80107BF0_186810_Archerival = omAddObj(10, 0, 0, -1, func_80102EEC_181B0C_Archerival);
+}
 
+/* atan(x) in radians (a continued fraction; Crazy Cutters' func_80106D84_1E61D4_CrazyCutters). */
+// NON_MATCHING: register allocation only: retail builds x / (sum + 1) in $f2 and the base in $f0
+// (masked 8)
+#ifdef NON_MATCHING
+f32 func_80102FA0_181BC0_Archerival(f32 x) {
+    f32 a;
+    f32 b;
+    f32 sum;
+    f64 base;
+    f64 frac;
+    s32 sign;
+    s32 i;
+
+    sign = 1;
+    if (x > 1.0f) {
+        x = 1.0f / x;
+    } else {
+        sign = -1;
+        if (x < -1.0f) {
+            x = 1.0f / x;
+        } else {
+            sign = 0;
+        }
+    }
+    sum = 0.0f;
+    i = 6;
+    do {
+        a = (f32)(i * i) * x * x;
+        b = (f32)(i * 2 + 1) + sum;
+        i--;
+        sum = a / b;
+    } while (i > 0);
+    if (sum != -1.0f) {
+        if (sign > 0) {
+            base = 1.5707963267948966;
+            frac = x / (sum + 1.0f);
+            goto done;
+        }
+        if (sign < 0) {
+            frac = x / (sum + 1.0f);
+            base = -1.5707963267948966;
+        done:
+            return base - frac;
+        }
+        return x / (sum + 1.0f);
+    }
+    return 0.0f;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102FA0_181BC0_Archerival);
+#endif
 
+/* The direction from one point to another: out->x = distance, out->y = pitch (0 up, 90 level,
+   180 down), out->z = yaw, in degrees. */
+// NON_MATCHING: retail schedules the 180.0f load after the delta.y compare (as Crazy Cutters'
+// func_80107204_1E6654_CrazyCutters; masked 25, all from that one shift)
+#ifdef NON_MATCHING
+void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
+    Vec fromV;
+    Vec toV;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromV.x = from->x;
+    fromV.y = from->y;
+    fromV.z = from->z;
+    toV.x = to->x;
+    toV.y = to->y;
+    toV.z = to->z;
+    delta.x = toV.x - fromV.x;
+    delta.y = toV.y - fromV.y;
+    delta.z = toV.z - fromV.z;
+    horizontal = func_800B1820_B2420(delta.x * delta.x + delta.z * delta.z);
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        yaw = 0.0f;
+        pitch = 180.0f;
+        horizontal = 0.0f;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = 0.0f;
+        }
+    } else {
+        if (delta.x != 0.0f && delta.z != 0.0f) {
+            yaw = func_80102FA0_181BC0_Archerival(delta.x / delta.z) * 57.29577951308232;
+        } else {
+            yaw = 0.0f;
+        }
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        if (horizontal != 0.0f && delta.y != 0.0f) {
+            pitch = func_80102FA0_181BC0_Archerival(delta.y / horizontal) * 57.29577951308232;
+        } else {
+            pitch = 0.0f;
+        }
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    out->x = func_800B1820_B2420(delta.y * delta.y + horizontal * horizontal);
+    out->y = pitch;
+    out->z = yaw;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801030F0_181D10_Archerival);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80103458_182078_Archerival);
 

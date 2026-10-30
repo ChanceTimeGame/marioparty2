@@ -1,0 +1,185 @@
+#ifndef _OVL_17_H
+#define _OVL_17_H
+
+/* Overlay 17: Archerival. Written by the team that wrote Look Away (ovl_13): its object table,
+   sprite table, entry and exit flow are the same code.
+   Retail is two files: 181420.c (80102800-801072D8) and 185F00.c from 801072E0 (the two table
+   clears; 2-nop text pad). .data (0x185FB0-0x186260) is 181420.c's; .rodata is carved from
+   0x186260 (181420.c only).
+   N64 offsets are in the comments; the structs with pointer fields change size on the host. */
+
+#include "common.h"
+#include "game/object.h"
+#include "game/hmfman.h"
+#include "game/camera.h"
+#include "game/pad.h"
+#include "game/sprite.h"
+#include "game/data.h"
+#include "game/collision.h"
+#include "game/malloc.h"
+
+/* One entry of D_80107920_186540_Archerival[50] (cleared by func_801072E0_185F00_Archerival);
+   Look Away's LAObj. */
+typedef struct ARObj {
+    /* 0x00 */ omObjData* obj;
+    /* 0x04 */ s16 spr;       /* sprite group */
+    /* 0x06 */ char unk_06[2];
+    /* 0x08 */ s32 unk_08;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ s32 unk_14;
+    /* 0x18 */ s32 unk_18;
+    /* 0x1C */ s32 unk_1C;
+    /* 0x20 */ u16 state;
+    /* 0x22 */ u16 unk_22;
+    /* 0x24 */ u16 unk_24;
+    /* 0x26 */ u16 unk_26;
+    /* 0x28 */ u16 timer;
+    /* 0x2A */ u16 unk_2A;
+    /* 0x2C */ u16 com;
+    /* 0x2E */ u16 player;
+    /* 0x30 */ s16 unk_30;
+    /* 0x32 */ s16 unk_32;
+    /* 0x34 */ s16 unk_34;
+    /* 0x36 */ s16 unk_36;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ f32 unk_40;
+    /* 0x44 */ f32 unk_44;
+} ARObj; /* size = 0x48 (N64) */
+
+/* ---- .data (181420.c, 0x185FB0-0x186260) ---- */
+extern s32 D_801073DC_185FFC_Archerival;  /* camera set up */
+extern f32 D_801073E0_186000_Archerival;  /* arrow (title prop) speed */
+extern f32 D_801073E4_186004_Archerival;  /* its vertical speed */
+
+/* ---- .bss ---- */
+extern HuSprite_Unk84_Struct* D_801078F4_186514_Archerival; /* the banner image */
+extern ARObj D_80107920_186540_Archerival[50];
+extern omObjData* D_80107BA8_1867C8_Archerival;  /* = D_80107920[9].obj */
+extern s16 D_80107BAC_1867CC_Archerival;         /* = D_80107920[9].spr */
+extern omObjData* D_80107BF0_186810_Archerival;  /* = D_80107920[10].obj */
+extern omObjData* D_80107C38_186858_Archerival;  /* = D_80107920[11].obj */
+extern u16 D_80107C58_186878_Archerival;         /* = D_80107920[11].state */
+extern omObjData* D_80107C80_1868A0_Archerival;  /* = D_80107920[12].obj */
+extern s16 D_80108730_187350_Archerival[50];     /* sprite animations */
+extern s16 D_80108732_187352_Archerival;         /* = D_80108730[1] */
+
+/* ---- main ---- */
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+extern f32 D_800F94A8_FA0A8[];    /* CZoomM */
+extern Vec3f D_80102770_103370[]; /* CRotM */
+extern Vec3f D_801013B0_101FB0[]; /* CenterM */
+extern s16 D_800FA606_FB206;
+extern u16 D_801011FC_101DFC;
+s16 LoadFormFile(s32, s32);
+s32 PlaySound(s32);
+void* SprAnimGet(s16 animIdx);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprBankSet(s16 group, s16 member, s16 bank);
+s16 SprCreate(s32 num, s32 attr);
+void SprPosSet(s16, s16, s16, s16);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+void func_8000BE8C_CA8C(omObjData*, f32);
+void func_8000BEA4_CAA4(omObjData*, f32);
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1);
+void func_8000C018_CC18(u16);
+void func_80018F58_19B58(s32);
+s16 func_8001A2F8_1AEF8(s32 arg0);
+void func_80020D20_21920(s16 arg0);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2);
+void func_80021160_21D60(s16 index, s32 arg1, s32 arg2);
+void func_800211E8_21DE8(s16 index, u8 arg1);
+void func_80021250_21E50(s16 index, u8 arg1, u8 arg2, u8 arg3);
+void func_800212A4_21EA4(s16 index);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16, f32, f32, f32);
+void* func_80027154_27D54(s32 size, s16 tag);
+s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**), u8 arg2);
+void func_80029714_2A314(s16, f32, f32, f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32);
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029A8C_2A68C(s16);
+void func_80029AFC_2A6FC(s16);
+void func_80029EDC_2AADC(s16 arg0, u8 arg1);
+void func_8002D4D0_2E0D0(s16 n);
+s16 func_8003DF08_3EB08(void*);
+void func_8003E888_3F488(s16);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+s32 func_80069538_6A138(void);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+void func_80079518_7A118(s8 arg0);
+void func_80079614_7A214(s16 time);
+s16 func_800797DC_7A3DC(s32 sfx, s16 player);
+void func_800798F8_7A4F8(s16 sound, s16 pan);
+void func_80079FF4_7ABF4(omObjData* object);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size);
+f64 func_800B80D0_B8CD0(f64); /* sin of degrees, in double */
+f64 func_800B75D0_B81D0(f64); /* cos of degrees, in double */
+f64 func_800B1820_B2420(f64); /* sqrt, in double */
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void osViBlack(u8 active);
+
+/* ---- overlay functions ---- */
+
+/* 181420.c */
+void func_80102800_181420_Archerival(void);
+void func_8010281C_18143C_Archerival(u8 player);
+void func_801028A0_1814C0_Archerival(void);
+void func_801029B8_1815D8_Archerival(void);
+void func_801029C0_1815E0_Archerival(omObjData* obj);
+void func_80102B78_181798_Archerival(void);
+void func_80102BC0_1817E0_Archerival(Gfx** gfxp);
+void func_80102EE4_181B04_Archerival(void);
+void func_80102EEC_181B0C_Archerival(omObjData* obj);
+void func_80102F64_181B84_Archerival(void);
+f32 func_80102FA0_181BC0_Archerival(f32 x);
+void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out);
+void func_80103458_182078_Archerival(void* arg0);
+void func_80103660_182280_Archerival(void* arg0);
+void func_801036C8_1822E8_Archerival(void);
+void func_80103704_182324_Archerival(void* arg0, s32 arg1);
+void func_801037C4_1823E4_Archerival(s32 arg0, u8 *arg1);
+s32 func_801038B4_1824D4_Archerival(void* arg0);
+s32 func_80103C1C_18283C_Archerival(void* arg0, s16 *arg2, u8 *arg3);
+void func_80103CF0_182910_Archerival(void* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4);
+void func_80103D7C_18299C_Archerival(void* arg0, s32 arg1, s16 *arg2);
+void func_801040B0_182CD0_Archerival(void* arg0);
+void func_80104AEC_18370C_Archerival(void* arg0);
+void func_8010506C_183C8C_Archerival(void);
+void func_80105180_183DA0_Archerival(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8010520C_183E2C_Archerival(void* arg0, void* arg1);
+s16 func_8010549C_1840BC_Archerival(void* arg0, s16 arg2);
+void func_80105878_184498_Archerival(void* arg0, void* arg1, u32 arg3);
+void func_80105C84_1848A4_Archerival(void* arg0, void* arg1);
+void func_80105DD0_1849F0_Archerival(void* arg0);
+void func_80105E38_184A58_Archerival(void* arg0);
+void func_80106064_184C84_Archerival(void);
+void func_8010618C_184DAC_Archerival(void* arg0);
+void func_801061F4_184E14_Archerival(void* arg0);
+void func_801063FC_18501C_Archerival(void);
+void func_801064BC_1850DC_Archerival(void* arg0);
+void func_801066C0_1852E0_Archerival(void* arg0);
+void func_8010687C_18549C_Archerival(void);
+void func_8010691C_18553C_Archerival(void);
+void func_8010697C_18559C_Archerival(void* arg0);
+void func_80106A30_185650_Archerival(void* arg0);
+void func_80106A70_185690_Archerival(void* arg0);
+void func_80106AE4_185704_Archerival(void);
+void func_80106BDC_1857FC_Archerival(void);
+void func_80106C00_185820_Archerival(void* arg0);
+void func_80106C80_1858A0_Archerival(void* arg0);
+void func_80106CD8_1858F8_Archerival(void* arg0);
+void func_80106FCC_185BEC_Archerival(void* arg0);
+void func_801070A8_185CC8_Archerival(void);
+
+/* 185F00.c */
+void func_801072E0_185F00_Archerival(void);
+void func_80107364_185F84_Archerival(void);
+
+#endif
