@@ -1530,6 +1530,41 @@ void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107900_1A0690_HandcarHavoc);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107AB0_1A0840_HandcarHavoc);
+/* The race's winner: the car nearer the goal (a car short of it counts negative); saves a new
+   record. */
+u16 func_80107AB0_1A0840_HandcarHavoc(void) {
+    f32 dist[2];
+    HHCar* w;
+    HHTimer* t;
+    u16 win;
+    s32 i;
+
+    for (i = 0; i < 2; i++) {
+        w = D_8010D820_1A65B0_HandcarHavoc[i]->unk_50;
+        dist[i] = func_80106AD0_19F860_HandcarHavoc(
+            i, D_8010D820_1A65B0_HandcarHavoc[i]->trans.x + HuMathSin(w->rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[0],
+            D_8010D820_1A65B0_HandcarHavoc[i]->trans.y,
+            D_8010D820_1A65B0_HandcarHavoc[i]->trans.z + func_800B7890_B8490(w->rot.y) * D_8010B13C_1A3ECC_HandcarHavoc[0],
+            D_8010B390_1A4120_HandcarHavoc[i] - 2);
+        if (w->seg[0] < (s16)D_8010B390_1A4120_HandcarHavoc[i] - 2) {
+            dist[i] = -dist[i];
+        }
+    }
+    if (dist[0] > dist[1]) {
+        win = 0;
+    } else {
+        win = 0;
+        if (dist[0] < dist[1]) {
+            win = 1;
+        }
+    }
+    t = D_8010D804_1A6594_HandcarHavoc->unk_50;
+    if (t->record > t->time) {
+        t->record = t->time;
+        GWMgRecordSet(2, t->record);
+        D_8010D85E_1A65EE_HandcarHavoc = 1;
+    }
+    return win;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107C64_1A09F4_HandcarHavoc);

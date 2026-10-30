@@ -205,6 +205,7 @@ omObjData* func_800732B0_73EB0(u32 arg0); /* plays a voice file */
 u16 func_800680D4_68CD4(s16 index);      /* a minigame record (time) */
 void func_8001A7C8_1B3C8(u16, f32);
 void func_8001A854_1B454(u16 spriteId, s32 arg1, s32 arg2);
+void GWMgRecordSet(s32, u16);            /* main: (s16, s16); retail passes the u16 record unextended (as ovl_19) */
 f32 func_800B1830_B2430(f32);            /* sqrtf */
 f32 func_800B75A8_B81A8(f32 y, f32 x);   /* atan2, degrees */
 f64 fabs(f64);
@@ -256,7 +257,7 @@ void func_80107634_1A03C4_HandcarHavoc(omObjData* obj);                /* FCBA4 
 void func_80107740_1A04D0_HandcarHavoc(omObjData* obj);                /* FCE3C: timer */
 void func_801078B8_1A0648_HandcarHavoc(omObjData* obj);                /* FCFB4 */
 void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit);          /* FCFFC */
-s16 func_80107AB0_1A0840_HandcarHavoc(void);                           /* FC85C */
+u16 func_80107AB0_1A0840_HandcarHavoc(void);                           /* FC85C: the winner */
 void func_80107C64_1A09F4_HandcarHavoc(omObjData* obj, HHPad* pad, u16 seat); /* F6BBC: COM */
 
 /* 1A10F0.c */
