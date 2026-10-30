@@ -284,7 +284,7 @@ void func_80107018_1489A8_RainbowRun(omObjData* obj) {
     }
     D_8010A804_14C194_RainbowRun[0][0] = HuMathSin(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * 50.0f + D_8010A804_14C194_RainbowRun[0][0];
     D_8010A804_14C194_RainbowRun[0][1] = func_800B7890_B8490(D_8010A7AC_14C13C_RainbowRun[D_8010A7C8_14C158_RainbowRun]) * 50.0f + D_8010A804_14C194_RainbowRun[0][1];
-    a = (RR_ABS(D_8010ABFC_14C58C_RainbowRun[0]) + RR_ABS(D_8010AC00_14C590_RainbowRun)) * 255.0f;
+    a = (RR_ABS(D_8010ABFC_14C58C_RainbowRun[0]) + RR_ABS(D_8010ABFC_14C58C_RainbowRun[1])) * 255.0f;
     a = (a >= 255.0f) ? 255.0f : a;
     alpha = a;
     for (i = 0; i < 4; i++) {
