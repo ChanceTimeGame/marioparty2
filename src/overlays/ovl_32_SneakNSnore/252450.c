@@ -1,5 +1,54 @@
 #include "ovl_32.h"
 
+/* .data (0x253920-0x253A40, 801082B0-801083D0) */
+s32 D_801082B0_253920_SneakNSnore = 61;
+s8 D_801082B4_253924_SneakNSnore = 0;
+s32 D_801082B8_253928_SneakNSnore = 0;
+s32 D_801082BC_25392C_SneakNSnore = 0;
+s32 D_801082C0_253930_SneakNSnore = 0;
+s32 D_801082C4_253934_SneakNSnore = 0;
+s32 D_801082C8_253938_SneakNSnore = 0;
+s32 D_801082CC_25393C_SneakNSnore = 0;
+s8 D_801082D0_253940_SneakNSnore = 0;
+s8 D_801082D1_253941_SneakNSnore = 0;
+s8 D_801082D2_253942_SneakNSnore = -1;
+s8 D_801082D3_253943_SneakNSnore = 0;
+s8 D_801082D4_253944_SneakNSnore = 0;
+s8 D_801082D5_253945_SneakNSnore = 0;
+s32 D_801082D8_253948_SneakNSnore = 75;
+s8 D_801082DC_25394C_SneakNSnore = 0;
+s8 D_801082DD_25394D_SneakNSnore = 0;
+s8 D_801082E0_253950_SneakNSnore[4] = { -1, -1, -1, -1 };
+f32 D_801082E4_253954_SneakNSnore = 0.0f;
+f32 D_801082E8_253958_SneakNSnore = 0.0f;
+f32 D_801082EC_25395C_SneakNSnore = 0.0f;
+s8 D_801082F0_253960_SneakNSnore[4] = { 0, 0, 0, 0 };
+f32 D_801082F4_253964_SneakNSnore = 0.3f;
+f32 D_801082F8_253968_SneakNSnore[4] = { 200.0f, 200.0f, 200.0f, 200.0f };
+f32 D_80108308_253978_SneakNSnore[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+f32 D_80108318_253988_SneakNSnore[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+u32 D_80108328_253998_SneakNSnore = 0;
+u32 D_8010832C_25399C_SneakNSnore = 0;
+s8 D_80108330_2539A0_SneakNSnore[16] = { 0 };
+s16 D_80108340_2539B0_SneakNSnore = 0;
+s32 D_80108344_2539B4_SneakNSnore[4] = { 0, 1, 2, 3 };
+Vec D_80108354_2539C4_SneakNSnore[4] = {
+    { -225.0f, 350.0f, -430.0f }, { -75.0f, 350.0f, -430.0f },
+    { 75.0f, 350.0f, -430.0f },   { 225.0f, 350.0f, -430.0f },
+};
+u8 D_80108384_2539F4_SneakNSnore[16] = { 0, 1, 2, 3, 1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2 };
+s8 D_80108394_253A04_SneakNSnore[4] = { 0 };
+s16 D_80108398_253A08_SneakNSnore[4] = { 0, 0, 0, 0 };
+s8 D_801083A0_253A10_SneakNSnore[4] = { 0 };
+s8 D_801083A4_253A14_SneakNSnore[4] = { 0 };
+u8 D_801083A8_253A18_SneakNSnore[4] = { 0 };
+s8 D_801083AC_253A1C_SneakNSnore[4] = { 0 };
+f32 D_801083B0_253A20_SneakNSnore[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+s8 D_801083C0_253A30_SneakNSnore[4] = { 0 };
+s8 D_801083C4_253A34_SneakNSnore[4] = { 0 };
+s8 D_801083C8_253A38_SneakNSnore[4] = { 0 };
+u8 D_801083CC_253A3C_SneakNSnore[4] = { 0 };
+
 void func_80106DE0_252450_SneakNSnore(void) {
     s32 i;
 

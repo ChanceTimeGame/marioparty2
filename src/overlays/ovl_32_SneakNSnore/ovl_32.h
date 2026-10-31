@@ -184,7 +184,7 @@ void func_80106EA4_252514_SneakNSnore(omObjData* obj);
 void func_801072E8_252958_SneakNSnore(omObjData* obj);
 void func_8010807C_2536EC_SneakNSnore(omObjData* obj);
 
-/* ---- .data (asm, 253920.data.s) ---- */
+/* ---- .data (252450.c, 0x253920-0x253A40; 82E8/82EC are unreferenced floats after 82E4) ---- */
 
 extern s32 D_801082B0_253920_SneakNSnore; /* time limit, seconds: 61 */
 extern s8 D_801082B4_253924_SneakNSnore;  /* 1 while the Chomp is awake */
