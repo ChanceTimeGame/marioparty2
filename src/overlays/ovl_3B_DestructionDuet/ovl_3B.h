@@ -53,15 +53,15 @@ void func_8000C3C8_CFC8(void);
 void func_8000C460_D060(void);
 void func_8000C578_D178(s32);
 void func_8000C018_CC18(u16);
-void func_80026D28_27928(s32);
+void func_80026D28_27928(s16);
 void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 u16 func_80078EA8_79AA8(void);
 s32 PlaySound(s32);
-void func_80079518_7A118(s32);
+void func_80079518_7A118(s8);
 void func_80079614_7A214(s16 time);
 void func_80079848_7A448(s16 arg0);
-void func_800798F8_7A4F8(s16 sound, s32 arg1);
+void func_800798F8_7A4F8(s16 sound, s16 arg1);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s16 func_800691FC_69DFC(s16 mesNo, ...);
 void func_8006D4D0_6E0D0(s16);
@@ -82,8 +82,8 @@ void func_800297E8_2A3E8(s16, f32, f32, f32);
 void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029AFC_2A6FC(s16);
 void func_80029C74_2A874(s16, f32);
-void func_8002CD78_2D978(s16, s32, s32, s32, s32);
-void func_8002CDF0_2D9F0(s16, s32, s32, s32, s32);
+void func_8002CD78_2D978(s16, u8, u8, u8, u8);
+void func_8002CDF0_2D9F0(s16, u8, u8, u8, u8);
 void func_8002D1EC_2DDEC(s16, u8);
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -153,7 +153,7 @@ extern u8 D_80108AEC_29190C_DestructionDuet;
 extern u8 D_80108AED_29190D_DestructionDuet; /* next spark model, 0-7 */
 extern omObjData* D_80108AF0_291910_DestructionDuet;
 extern omObjData* D_80108AFC_29191C_DestructionDuet; /* the stage and effect models */
-extern f32 D_80108B00_291920_DestructionDuet; /* fov; [1 + team] are the hit points */
+extern f32 D_80108B00_291920_DestructionDuet; /* camera fov */
 extern f32 D_80108B04_291924_DestructionDuet[2]; /* hit points */
 extern u8 D_80108B0C_29192C_DestructionDuet; /* difficulty, 0-2 (D_800FA656) */
 extern u8 D_80108B0D_29192D_DestructionDuet[4]; /* slot -> player */

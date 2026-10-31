@@ -463,7 +463,7 @@ void func_80104A2C_28D84C_DestructionDuet(omObjData* obj) {
     obj->func_ptr = func_80104A3C_28D85C_DestructionDuet;
 }
 
-/* NON_MATCHING: same logic; hoisting of the 50.0 literal and float register choice differ. */
+/* NON_MATCHING: same logic; retail hoists the 50.0 literal out of the tier loop (masked 109). */
 #ifdef NON_MATCHING
 void func_80104A3C_28D85C_DestructionDuet(void) {
     s16 i;
@@ -752,7 +752,9 @@ void func_801062C0_28F0E0_DestructionDuet(omObjData* obj, s32 player) {
 
 #define DD_HITBY(w) (*(s8*)&(w)->unk_55)
 
-/* NON_MATCHING: same logic; register allocation and one stack slot differ. */
+/* NON_MATCHING: same logic (masked 83): frame 8 bytes larger, delay-slot and s0/s2 residue; retail reads
+   the hit points as D_80108B00[1 + team]. The tables are structs because retail keeps every block-scope
+   copy in its own stack slot. */
 #ifdef NON_MATCHING
 __asm__(".section .rodata");
 const DDVoice D_80108840_291660_DestructionDuet = { { 2, 3, 7, 4, 5, 6 } };
@@ -1011,7 +1013,7 @@ void func_801063CC_28F1EC_DestructionDuet(omObjData* obj) {
                 base = D_8010886C_29168C_DestructionDuet;
                 s = rand8() & 3;
                 if (D_80108B92_2919B2_DestructionDuet == 1) {
-                    hp = &(&D_80108B00_291920_DestructionDuet)[DD_HITBY(w)];
+                    hp = &D_80108B04_291924_DestructionDuet[DD_HITBY(w) - 1];
                     old = *hp;
                     *hp = old - ((func_80019000_19C00(obj) & 0x100) ? 2.0f : 1.0f);
                 }
