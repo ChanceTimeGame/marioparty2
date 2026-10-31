@@ -964,7 +964,7 @@ void func_801058A8_256B28_DriversEd(void) {
     }
 }
 
-/* NON_MATCHING: block order of the two sensor loops and two reloads of the next-sign byte; the logic is complete. */
+/* NON_MATCHING: GCC moves the first sensor loop tail out of the loop and folds one reload of the next-sign byte, retail keeps both (logic complete, masked 129 is layout). */
 #ifdef NON_MATCHING
 void func_80105BE0_256E60_DriversEd(void) {
     DECar* c;

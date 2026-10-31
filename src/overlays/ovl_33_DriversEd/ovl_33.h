@@ -1,8 +1,16 @@
 #ifndef _OVL_33_H
 #define _OVL_33_H
 
-/* Overlay 33: Driver's Ed. One player drives a car through a slalom of 20 signs (one of five
-   courses, D_800FA656 picks it) against the clock, with the course's best time on screen.
+/* Overlay 33: Driver's Ed. 1P (the player with group 0, func_80105634_2568B4_DriversEd) drives a car through the 20
+   signs of one of five courses (D_800FA656 -> D_801086BC_25993C_DriversEd) in order, with a timer and the course's
+   best time on screen. Phases D_80108680_259900_DriversEd: 0 intro camera + signal (START skips), 1 "ready", 2
+   race (60 s, 30 frames per s, func_80104344_2555C4_DriversEd), 3 stopping, 4 result, 5 fade out and
+   omOvlReturnEx(1). Up/down on the stick drive forward/back, left/right steer, R toggles the
+   driver's view. Hitting a sign the wrong way or skipping one sets D_801086BD_25993D_DriversEd (failed); passing
+   sign 20 and reaching z > 2160 sets D_801086DB_25995B_DriversEd; the time goes to GWMgRecordSet(course + 8, BCD)
+   when it beats the record. Nothing is written to gPlayers[] (coins or otherwise).
+   Retail is two files: 253A80.c (80102800-80107C50, 1-nop text pad) and 258ED0.c (the two table
+   clears). .rodata is carved from 0x259840 (253A80.c only); .data stays asm.
    N64 offsets are in the comments; structs with pointer fields change size on the host. */
 
 #include "common.h"
