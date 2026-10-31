@@ -1262,7 +1262,7 @@ segments:
       - [0x24DE70, c]
       - [0x251680, c]
       - [0x252450, c]
-      - [0x253920, data]
+      - [0x253920, .data, 252450]
       - [0x253A40, .rodata, 24DE70]
       - [0x253A50, .rodata, 252450]
       - {0x253A80, type: bss, vram: 0x80108410, name: ovl_32_bss}
