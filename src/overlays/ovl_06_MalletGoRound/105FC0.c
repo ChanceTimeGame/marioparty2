@@ -248,7 +248,102 @@ void func_80102CAC_10646C_MalletGoRound(omObjData* obj) {
     func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z + D_8010845C_10BC1C_MalletGoRound);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801037B0_106F70_MalletGoRound);
+/* The player's main: a CPU picks a slot by its difficulty and presses A when the wheel lines up. */
+void func_801037B0_106F70_MalletGoRound(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    f32 angle;
+    s8 t;
+    s8 i;
+
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        if (D_80108468_10BC28_MalletGoRound == 0) {
+            D_8010867D_10BE3D_MalletGoRound = 1;
+            D_80108676_10BE36_MalletGoRound = 0;
+            D_80108678_10BE38_MalletGoRound = guRandom() % 101;
+            for (i = 0; i < 5; i++) {
+                D_80108676_10BE36_MalletGoRound += D_800CAFE4[i];
+                if (D_80108676_10BE36_MalletGoRound >= D_80108678_10BE38_MalletGoRound) {
+                    D_8010867D_10BE3D_MalletGoRound = i + 1;
+                    break;
+                }
+            }
+            D_80108674_10BE34_MalletGoRound = guRandom() % 100;
+            D_80108468_10BC28_MalletGoRound = 1;
+        }
+        if (D_80108469_10BC29_MalletGoRound == 0) {
+            switch (gPlayers[w->unk_59].cpu_difficulty) {
+            case 0:
+                if (D_80108674_10BE34_MalletGoRound >= 30) {
+                    D_8010867C_10BE3C_MalletGoRound = t = (s8)(D_8010867D_10BE3D_MalletGoRound + guRandom() % 3 - 2) % 5;
+                    if (t == 0) {
+                        D_8010867C_10BE3C_MalletGoRound = guRandom() % 3 + 1;
+                    }
+                } else {
+                    D_8010867C_10BE3C_MalletGoRound = 0;
+                }
+                break;
+            case 1:
+                if (D_80108674_10BE34_MalletGoRound >= 20) {
+                    D_8010867C_10BE3C_MalletGoRound = t = (s8)(D_8010867D_10BE3D_MalletGoRound + guRandom() % 2 - 1) % 5;
+                    if (t == 0) {
+                        D_8010867C_10BE3C_MalletGoRound = guRandom() % 3 + 1;
+                    }
+                } else {
+                    D_8010867C_10BE3C_MalletGoRound = 0;
+                }
+                break;
+            case 2:
+                if (D_80108674_10BE34_MalletGoRound >= 10) {
+                    D_8010867C_10BE3C_MalletGoRound = t = (s8)(D_8010867D_10BE3D_MalletGoRound + guRandom() % 1) % 5;
+                    if (t == 0) {
+                        D_8010867C_10BE3C_MalletGoRound = guRandom() % 3 + 1;
+                    }
+                } else {
+                    D_8010867C_10BE3C_MalletGoRound = 0;
+                }
+                break;
+            case 3:
+                if (D_80108674_10BE34_MalletGoRound >= 5) {
+                    D_8010867C_10BE3C_MalletGoRound = D_8010867D_10BE3D_MalletGoRound;
+                } else {
+                    D_8010867C_10BE3C_MalletGoRound = 0;
+                }
+                break;
+            }
+            D_80108469_10BC29_MalletGoRound = 1;
+        }
+        if (D_80108454_10BC14_MalletGoRound == 5 && (gPlayers[w->unk_59].flags & 1)) {
+            D_80108680_10BE40_MalletGoRound = D_801084B0_10BC70_MalletGoRound;
+            angle = D_80108680_10BE40_MalletGoRound;
+            if (angle < 0.0f) {
+                angle += 360.0f;
+            }
+            D_80108680_10BE40_MalletGoRound = angle;
+            if (D_80108457_10BC17_MalletGoRound == 0) {
+                D_80108680_10BE40_MalletGoRound += 60.0f;
+                if (D_80108680_10BE40_MalletGoRound >= 360.0f) {
+                    D_80108680_10BE40_MalletGoRound -= 360.0f;
+                }
+            } else if (D_80108680_10BE40_MalletGoRound < 0.0f) {
+                D_80108680_10BE40_MalletGoRound += 360.0f;
+            }
+            t = (s8)(D_80108680_10BE40_MalletGoRound / 60.0f) % 6;
+            if (D_8010846C_10BC2C_MalletGoRound++ > 20) {
+                if (D_8010867C_10BE3C_MalletGoRound == t) {
+                    ContBtnTrg[w->unk_57] = 0x8000;
+                    D_80108469_10BC29_MalletGoRound = 0;
+                    D_8010846C_10BC2C_MalletGoRound = 0;
+                } else {
+                    ContBtnTrg[w->unk_57] = 0;
+                }
+            }
+            ContBtn[w->unk_57] = 0;
+            ContStkX[w->unk_57] = 0;
+            ContStkY[w->unk_57] = 0;
+        }
+    }
+    func_80102CAC_10646C_MalletGoRound(obj);
+}
 
 void func_80103DB4_107574_MalletGoRound(omObjData* obj) {
     if (D_80108458_10BC18_MalletGoRound == 1) {

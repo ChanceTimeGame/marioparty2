@@ -28,16 +28,6 @@ typedef struct MGRSlot {
     /* 0x1C */ f32 bob;
 } MGRSlot;
 
-typedef struct MGRPlan {
-    /* 0x0 */ u16 roll;
-    /* 0x2 */ u16 sum;
-} MGRPlan;
-
-typedef struct MGRTimer {
-    /* 0x0 */ s8 unk_00;
-    /* 0x2 */ u16 unk_02;
-} MGRTimer;
-
 /* ---- main-segment API missing from include/ ---- */
 typedef struct MGRCharData {
     /* 0x00 */ char unk_00[4];
@@ -53,7 +43,7 @@ typedef struct MGREspSlot {
 } MGREspSlot; /* size = 0x24 */
 extern MGREspSlot* D_800F93FC_F9FFC;
 extern u16 D_800CAFD8[]; /* item ids; the low byte is the item */
-extern u8 D_800CAFE4[];  /* item odds */
+extern u16 D_800CAFE4[]; /* item odds, percent */
 extern u16 D_800FA606_FB206;
 extern u16 D_801011FC_101DFC;
 extern u8 D_80102720_103320;
@@ -199,12 +189,14 @@ extern Vec D_8010865C_10BE1C_MalletGoRound; /* its target */
 extern f32 D_80108668_10BE28_MalletGoRound;
 extern f32 D_8010866C_10BE2C_MalletGoRound; /* hit effect time */
 extern f32 D_80108670_10BE30_MalletGoRound; /* hit effect scale */
-extern MGRPlan D_80108674_10BE34_MalletGoRound; /* CPU plan */
+extern u16 D_80108674_10BE34_MalletGoRound; /* CPU plan: roll */
+extern u16 D_80108676_10BE36_MalletGoRound; /* its running sum (undefined_syms.txt label) */
 extern u32 D_80108678_10BE38_MalletGoRound;
-extern u8 D_8010867C_10BE3C_MalletGoRound; /* CPU target slot */
-extern u8 D_8010867D_10BE3D_MalletGoRound; /* best slot, 1-5 */
+extern s8 D_8010867C_10BE3C_MalletGoRound; /* CPU target slot */
+extern s8 D_8010867D_10BE3D_MalletGoRound; /* best slot, 1-5 */
 extern f32 D_80108680_10BE40_MalletGoRound;
-extern MGRTimer D_80108684_10BE44_MalletGoRound;
+extern s8 D_80108684_10BE44_MalletGoRound; /* walk-in frames */
+extern u16 D_80108686_10BE46_MalletGoRound; /* ending frames (undefined_syms.txt label) */
 extern s16 D_80108688_10BE48_MalletGoRound; /* ending length */
 extern Vec D_80108690_10BE50_MalletGoRound;
 extern Vec D_8010869C_10BE5C_MalletGoRound;
