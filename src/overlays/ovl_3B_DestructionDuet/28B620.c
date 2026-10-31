@@ -1,6 +1,9 @@
 #include "common.h"
 #include "ovl_3B.h"
 
+/* .data (0x291240-0x291250, 80108420-80108430) */
+f32 D_80108420_291240_DestructionDuet[4] = { -447.5f, -117.5f, 117.5f, 447.5f };
+
 #define DD_CLAMP(x, lo, hi) x = (x < lo) ? lo##f : ((x > hi) ? hi##f : x)
 #define DD_TEAMX(s) ((s) / 2 != 0 ? 282.5f : -282.5f)
 #define DD_RUN_MODE(p, v)                                                      \
