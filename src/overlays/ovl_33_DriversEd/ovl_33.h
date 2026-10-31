@@ -10,7 +10,7 @@
    sign 20 and reaching z > 2160 sets D_801086DB_25995B_DriversEd; the time goes to GWMgRecordSet(course + 8, BCD)
    when it beats the record. Nothing is written to gPlayers[] (coins or otherwise).
    Retail is two files: 253A80.c (80102800-80107C50, 1-nop text pad) and 258ED0.c (the two table
-   clears). .rodata is carved from 0x259840 (253A80.c only); .data stays asm.
+   clears). .rodata is carved from 0x259840 (253A80.c only); .data is in 253A80.c.
    N64 offsets are in the comments; structs with pointer fields change size on the host. */
 
 #include "common.h"
@@ -114,14 +114,14 @@ typedef struct DECamKey {
     /* 0x0C */ f32 time;
 } DECamKey;
 
-/* .data (asm for now) */
+/* .data (253A80.c, 0x258FF0-0x259840) */
 extern u16 D_80107D70_258FF0_DriversEd[6];           /* car file per character (dir 0x43) */
 extern u16 D_80107D7C_258FFC_DriversEd[6];           /* driver file per character (dir 0x19) */
 extern DEPoint D_80107D88_259008_DriversEd[5][20];   /* the signs of each course */
 extern DEPoint D_801083C8_259648_DriversEd[5];       /* the car's start on each course */
 extern DECamKey D_80108418_259698_DriversEd[5][4];   /* the intro path of each course */
 extern u16 D_80108558_2597D8_DriversEd[20];          /* sign texture files (dir 0x43) */
-extern u16 D_80108580_259800_DriversEd[3];           /* signal lamp textures */
+extern u16 D_80108580_259800_DriversEd[4];           /* signal lamp textures */
 extern char* D_80108588_259808_DriversEd[3];         /* their names */
 extern s16 D_80108594_259814_DriversEd[7];           /* timer digit x positions */
 extern s16 D_801085A4_259824_DriversEd[7];           /* the best time's digits */
