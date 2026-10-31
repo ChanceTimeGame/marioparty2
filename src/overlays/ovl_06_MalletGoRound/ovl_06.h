@@ -57,6 +57,32 @@ extern u16 ContBtn[4];
 extern u16 ContBtnTrg[4];
 extern Gfx* D_800FDBCC_FE7CC;
 
+void* func_80027154_27D54(s32 size, s16 tag); /* HuMemAllocTag */
+void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size); /* memset */
+u16 func_80018A64_19664(s32 file, s32 attr);
+void func_80018CCC_198CC(omObjData* obj, u16 slot, s32 file);
+u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2); /* 3D sprite */
+void* DataRead(s32 dirAndFile);
+void HuMemMemoryFreePerm(void* ptr);
+u16 LoadFormFile(s32, s32);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+s16 func_80027D3C_2893C(s16 linkMdlId); /* model copy */
+void func_80029714_2A314(s16, f32, f32, f32); /* model position */
+void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z); /* model rotation */
+void func_800297E8_2A3E8(s16, f32, f32, f32); /* model scale */
+void func_800298A4_2A4A4(s16, s32, s32); /* model attribute */
+void func_80029A8C_2A68C(s16);
+void func_80029B80_2A780(s16 arg0, s16 arg1);
+void func_80029C74_2A874(s16, f32); /* motion frame */
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16);
+s32 func_80029E14_2AA14(s16 arg0);
+void func_80029E80_2AA80(s16, s32, s32);
+void func_8002A00C_2AC0C(s16 model);
+void espDispOff(u16);
+s16 func_8001A2F8_1AEF8(s32);
+s16 func_8001AAAC_1B6AC(s16, s32, s32);
+extern int guRandom(void);
 void func_8000BEB0_CAB0(omObjData* obj, f32 arg1);
 void func_8000BEBC_CABC(omObjData* obj, f32 arg1);
 void func_8000BEC8_CAC8(omObjData* obj, f32 arg1);
