@@ -789,34 +789,36 @@ const char D_80108384_1F70C4_MechaMarathon[] = "heiho_mario_body_DEF";
 #ifdef NON_MATCHING
 void func_801052C0_1F4000_MechaMarathon(omObjData* obj) {
     MMActor* base;
+    MMActor* base2;
     omObjData* player;
     omObjData* robot;
     u16 chr;
     s32 dir;
-    u16 i;
-    s16 k;
+    s32 i;
+    s32 k;
     f32 x;
     f32 near;
     f32 lim;
 
     base = &D_801085F0_1F7330_MechaMarathon[4];
+    base2 = &D_801085F0_1F7330_MechaMarathon[4];
     player = (base + obj->work[0] - 4)->obj;
-    robot = (base + obj->work[0] + 5)->obj;
+    robot = (base2 + obj->work[0] + 5)->obj;
     chr = gPlayers[obj->work[0]].character;
     dir = D_800CD438_CE038[chr].unk_04;
     obj->model[0] = LoadFormFile(dir | D_800CD438_CE038[chr].unk_0C, 0x26A9);
-    for (i = 0; i < 2; i++) {
+    for (i = 0; (u16)i < 2; i++) {
         dir = D_80108190_1F6ED0_MechaMarathon[chr] << 16;
-        D_80108578_1F72B8_MechaMarathon[i] = DataRead(dir | D_8010819C_1F6EDC_MechaMarathon[i]);
+        D_80108578_1F72B8_MechaMarathon[(u16)i] = DataRead(dir | D_8010819C_1F6EDC_MechaMarathon[(u16)i]);
     }
-    D_80108580_1F72C0_MechaMarathon = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_80108578_1F72B8_MechaMarathon[0], 0, D_801081A0_1F6EE0_MechaMarathon[chr]);
+    D_80108580_1F72C0_MechaMarathon = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_80108578_1F72B8_MechaMarathon[0], 0, D_801081A0_1F6EE0_MechaMarathon[i = (u16)chr]);
     func_80029A8C_2A68C(obj->model[0]);
     func_80029AFC_2A6FC(obj->model[0]);
-    func_80018CCC_198CC(obj, 0, dir | D_80108068_1F6DA8_MechaMarathon[chr][0]);
-    func_80018CCC_198CC(obj, 1, dir | D_80108068_1F6DA8_MechaMarathon[chr][2]);
-    func_80018CCC_198CC(obj, 2, dir | D_80108068_1F6DA8_MechaMarathon[chr][3]);
+    func_80018CCC_198CC(obj, 0, dir | D_80108068_1F6DA8_MechaMarathon[i][0]);
+    func_80018CCC_198CC(obj, 1, dir | D_80108068_1F6DA8_MechaMarathon[i][2]);
+    func_80018CCC_198CC(obj, 2, dir | D_80108068_1F6DA8_MechaMarathon[i][3]);
     k = (rand8() & 1) + 4;
-    func_80018CCC_198CC(obj, 3, dir | D_80108068_1F6DA8_MechaMarathon[chr][k]);
+    func_80018CCC_198CC(obj, 3, dir | D_80108068_1F6DA8_MechaMarathon[i][k]);
     D_801084A0_1F71E0_MechaMarathon[obj->work[0]][0] = k - 4;
     obj->model[1] = func_80018A30_19630(1, 0x14C9);
     HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
@@ -831,7 +833,7 @@ void func_801052C0_1F4000_MechaMarathon(omObjData* obj) {
         near = player->trans.x;
     }
     D_80108748_1F7488_MechaMarathon = near;
-    obj->trans.x = D_80108748_1F7488_MechaMarathon;
+    obj->trans.x = D_801085F0_1F7330_MechaMarathon[4].unk_38;
     obj->trans.y = player->trans.y;
     obj->trans.z = player->trans.z;
     obj->rot.y = player->rot.y;
@@ -1216,7 +1218,6 @@ const u32 D_8010839C_1F70DC_MechaMarathon[5] = { 0x44BB8000, 0x43160000, 0x41700
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_801057B0_1F44F0_MechaMarathon);
 #endif
 
-#ifdef NON_MATCHING
 void func_801068A8_1F55E8_MechaMarathon(omObjData* obj) {
     MMActor* a;
     omObjData* player;
@@ -1230,8 +1231,8 @@ void func_801068A8_1F55E8_MechaMarathon(omObjData* obj) {
     for (i = 0; i < 4; i++) {
         D_80108498_1F71D8_MechaMarathon[i] = -1;
     }
-    obj->model[0] = LoadFormFile(0x35000C, 0x34A9);
     dir = 0x350000;
+    obj->model[0] = LoadFormFile(0x35000C, 0x34A9);
     for (i = 0; i < 3; i++) {
         data = DataRead(dir | D_801081CC_1F6F0C_MechaMarathon[obj->work[1] * 3 + i]);
         func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, data, 0, D_80108214_1F6F54_MechaMarathon[i]);
@@ -1273,9 +1274,6 @@ void func_801068A8_1F55E8_MechaMarathon(omObjData* obj) {
     a->unk_26 = rand8() & 0x3C;
     obj->func_ptr = func_801057B0_1F44F0_MechaMarathon;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_801068A8_1F55E8_MechaMarathon);
-#endif
 
 void func_80106CF4_1F5A34_MechaMarathon(void) {
     omObjData* o;
@@ -1292,10 +1290,9 @@ void func_80106CF4_1F5A34_MechaMarathon(void) {
 }
 
 /* The score: shows the digits, then the record's fanfare. */
-#ifdef NON_MATCHING
 void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
     MMActor* a = &D_801085F0_1F7330_MechaMarathon[8];
-    s32 unused[2];
+    s32 unused[1];
     s16 t;
     s16 i;
 
@@ -1316,7 +1313,7 @@ void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
                     SprAttrReset(a->unk_32, i, 0x8000);
                 }
             }
-            if (D_80108494_1F71D4_MechaMarathon < D_80108496_1F71D6_MechaMarathon) {
+            if (D_80108496_1F71D6_MechaMarathon > D_80108494_1F71D4_MechaMarathon) {
                 D_80108226_1F6F66_MechaMarathon = 10;
                 D_80108224_1F6F64_MechaMarathon = 2;
             } else {
@@ -1346,7 +1343,7 @@ void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
             } else {
                 t -= 16;
                 D_80108462_1F71A2_MechaMarathon = t;
-                if (t & 0x8000) {
+                if (t < 0) {
                     D_80108462_1F71A2_MechaMarathon = 0;
                 }
             }
@@ -1366,7 +1363,7 @@ void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
             if (t != 0) {
                 t -= 16;
                 D_80108462_1F71A2_MechaMarathon = t;
-                if (t & 0x8000) {
+                if (t < 0) {
                     D_80108462_1F71A2_MechaMarathon = 0;
                 }
             } else {
@@ -1387,9 +1384,6 @@ void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_80106DC0_1F5B00_MechaMarathon);
-#endif
 
 #ifdef NON_MATCHING
 void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
