@@ -1394,6 +1394,7 @@ segments:
     subsegments:
       - [0x28B620, c]
       - [0x291240, data]
+      - [0x291250, .rodata, 28B620]
       - {0x291870, type: bss, vram: 0x80108A50, name: ovl_3B_bss}
   - type: code
     start: 0x291870
