@@ -220,6 +220,7 @@ extern s8 D_801087A5_10BF65_MalletGoRound; /* the player index */
 extern omObjData* D_801087A8_10BF68_MalletGoRound; /* the wheel */
 
 /* .rodata */
+extern const f32 D_801085DC_10BD9C_MalletGoRound[2][6]; /* stop angle per slot, per direction */
 extern const u32 D_80108510_10BCD0_MalletGoRound[18];
 extern const u8 D_80108558_10BD18_MalletGoRound[16]; /* item -> gPlayers[].coins_mg_bonus */
 
