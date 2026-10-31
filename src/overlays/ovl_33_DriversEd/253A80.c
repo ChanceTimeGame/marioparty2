@@ -892,8 +892,6 @@ void func_80105880_256B00_DriversEd(void) {
     D_80108681_259901_DriversEd = 0;
 }
 
-/* NON_MATCHING: two FP temporaries differ (masked 8). */
-#ifdef NON_MATCHING
 void func_801058A8_256B28_DriversEd(void) {
     DECar* c;
     DEObj* p;
@@ -905,9 +903,9 @@ void func_801058A8_256B28_DriversEd(void) {
     f32 a;
 
     p = &D_80108720_2599A0_DriversEd[0];
-    c = &D_80108690_259910_DriversEd;
     if (p->obj != NULL) {
         car = p->obj;
+        c = &D_80108690_259910_DriversEd;
         D_801086AC_25992C_DriversEd = 0;
         D_801086AE_25992E_DriversEd = 0;
         if (car->trans.x > 2440.0f || car->trans.x < -2440.0f) {
@@ -934,8 +932,8 @@ void func_801058A8_256B28_DriversEd(void) {
                 }
                 to.z = 2160.0f;
                 func_801078D0_258B50_DriversEd(&from, &to, &out);
+                b = out.z;
                 if (out.x < 140.0f) {
-                    b = out.z;
                     a = 180.0f;
                     a = b + a;
                     car->trans.x = HuMathSin(a) * 140.0f + to.x;
@@ -965,9 +963,6 @@ void func_801058A8_256B28_DriversEd(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_801058A8_256B28_DriversEd);
-#endif
 
 /* NON_MATCHING: block order of the two sensor loops and two reloads of the next-sign byte; the logic is complete. */
 #ifdef NON_MATCHING
@@ -1182,8 +1177,6 @@ void func_801068F4_257B74_DriversEd(s16 course, s16 key) {
     }
 }
 
-/* NON_MATCHING: scheduling of the time load (masked 4). */
-#ifdef NON_MATCHING
 void func_80106B58_257DD8_DriversEd(s16 course) {
     Vec from;
     Vec to;
@@ -1208,25 +1201,26 @@ void func_80106B58_257DD8_DriversEd(s16 course) {
     from.z = -82.55f;
     func_801078D0_258B50_DriversEd(&from, &to, &out);
     Hu3DCamSetPerspective(0, 21.176f, 80.0f, 8000.0f);
-    span = D_80108418_259698_DriversEd[course][3].time - (a = D_80108418_259698_DriversEd[course][2].time);
+    span = D_80108418_259698_DriversEd[course][3].time;
+    a = D_80108418_259698_DriversEd[course][2].time;
+    span -= a;
+    d = out.x;
     z0 = D_80108418_259698_DriversEd[course][3].zoom;
-    d = (out.x - z0) / span;
+    d = (d - z0) / span;
     e = (360.0f - out.z - 325.0672187805176) / span;
     t = D_80108684_259904_DriversEd;
     D_800FA610_FB210 = d * (t - a) + z0;
     D_800FD474_FE074.x = e * (t - D_80108418_259698_DriversEd[course][2].time) + 325.0672187805176;
     D_800FD474_FE074.y = 0.0f;
     D_800FD474_FE074.z = 0.0f;
+    dx = car->trans.x;
     x0 = D_80108418_259698_DriversEd[course][3].x;
-    dx = (car->trans.x - x0) / span;
+    dx = (dx - x0) / span;
     dz = (car->trans.z - D_80108418_259698_DriversEd[course][3].z) / span;
     D_8010274C_10334C.x = dx * (t - D_80108418_259698_DriversEd[course][2].time) + x0;
     D_8010274C_10334C.y = 0.0f;
     D_8010274C_10334C.z = dz * (t - D_80108418_259698_DriversEd[course][2].time) + D_80108418_259698_DriversEd[course][3].z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80106B58_257DD8_DriversEd);
-#endif
 
 void func_80106D4C_257FCC_DriversEd(s16 course, s16 key) {
     Hu3DCamSetPerspective(0, 21.176f, 80.0f, 32000.0f);
