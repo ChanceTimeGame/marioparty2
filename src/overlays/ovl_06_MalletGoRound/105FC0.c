@@ -627,7 +627,53 @@ void func_801042D4_107A94_MalletGoRound(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80104BC8_108388_MalletGoRound);
+/* Draws the background image in strips (0F's func_80102F3C without the scroll). */
+void func_80104BC8_108388_MalletGoRound(s16* arg0) {
+    HuSprite* spr;
+    u16 w, h, rows;
+    s16 left, top, right, bottom;
+    f32 x0, y0, x1, y1;
+    f32 step, next;
+    s32 s;
+
+    spr = func_80082550_83150(*arg0, 0);
+    w = spr->unk_84->unk14;
+    h = spr->unk_84->unk16;
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
+    left = 0;
+    top = 0;
+    right = 319;
+    bottom = 239;
+    gDPSetScissor(D_800FDBCC_FE7CC++, G_SC_NON_INTERLACE, left, top, right, bottom);
+    x0 = 0.0f;
+    y0 = 0.0f;
+    rows = 0x800 / w - 1;
+    x1 = 318.0f;
+    y1 = 238.0f;
+    step = y1 / (u16)(h / rows);
+    do {
+    } while (0);
+    for (s = 0; s < h - 1; s += rows) {
+        next = y0 + step;
+        if (s + rows >= h - 1) {
+            rows = h - s - 1;
+        }
+        if (top <= next) {
+            if (y1 < next) {
+                step = y1 - y0;
+            }
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, spr->unk_84->unk08, G_IM_FMT_CI, G_IM_SIZ_8b, w, h, 0, s, w,
+                               s + rows, 0, 0, 0, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)(x0 * 4.0f), (s32)(y0 * 4.0f), (s32)(x1 * 4.0f),
+                                    (s32)((y0 + step) * 4.0f), G_TX_RENDERTILE, 0, s << 5, 1024, 1024);
+        }
+        y0 += step;
+        if (bottom <= y0) {
+            break;
+        }
+    }
+}
 
 void func_801050B0_108870_MalletGoRound(f32 fov, f32 x, f32 y, f32 z, f32 rx, f32 ry, f32 rz) {
     D_800FA610_FB210 = fov;
@@ -652,6 +698,8 @@ void func_801050F0_1088B0_MalletGoRound(void) {
         }
     }
 }
+
+__asm__(".section .rodata\n\t.balign 8\n\t.text"); /* "item_hook" sits 8-aligned after the jump table */
 
 /* Puts the item in the player's hand. */
 s32 func_80105168_108928_MalletGoRound(omObjData* obj, omObjData* item) {
