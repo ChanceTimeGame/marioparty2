@@ -2,6 +2,15 @@
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80102800_253A80_DriversEd);
 
+__asm__(".section .rodata");
+const char D_801085C0_259840_DriversEd[] = "signl_3x_DEF";
+
+__asm__(".section .rodata");
+const char D_801085D0_259850_DriversEd[] = "signl_2x_DEF";
+
+__asm__(".section .rodata");
+const char D_801085E0_259860_DriversEd[] = "signl_1x_DEF";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_8010281C_253A9C_DriversEd);
 
 void func_80102914_253B94_DriversEd(void) {
@@ -94,12 +103,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_801073EC_2
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80107530_2587B0_DriversEd);
 
+__asm__(".section .rodata");
+const char D_80108650_2598D0_DriversEd[] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_801075F0_258870_DriversEd);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80107780_258A00_DriversEd);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_801078D0_258B50_DriversEd);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80107C50_258ED0_DriversEd);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_80107D44_258FC4_DriversEd);

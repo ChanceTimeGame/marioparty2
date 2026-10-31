@@ -1268,7 +1268,9 @@ segments:
     bss_size: 0x1EC0
     subsegments:
       - [0x253A80, c]
+      - [0x258ED0, c]
       - [0x258FF0, data]
+      - [0x259840, .rodata, 253A80]
       - {0x259900, type: bss, vram: 0x80108680, name: ovl_33_bss}
   - type: code
     start: 0x259900
