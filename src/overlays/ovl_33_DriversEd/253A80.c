@@ -1453,7 +1453,7 @@ f32 func_80107780_258A00_DriversEd(f32 x) {
     return 0.0f;
 }
 
-/* NON_MATCHING: FP compare nops and one mov.s register (the twin of ovl_0A/ovl_23/ovl_37). */
+/* NON_MATCHING: the 180.0f load sits before the FP compare where retail has it after (two nops, masked 3). */
 #ifdef NON_MATCHING
 void func_801078D0_258B50_DriversEd(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -1516,8 +1516,9 @@ void func_801078D0_258B50_DriversEd(Vec* from, Vec* to, Vec* out) {
     if (nearPositive & nearNegative) {
         pitch = 0.0f;
     }
-    out->x = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
+    horizontal = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
     out->z = yaw;
+    out->x = horizontal;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_33_DriversEd/253A80", func_801078D0_258B50_DriversEd);
