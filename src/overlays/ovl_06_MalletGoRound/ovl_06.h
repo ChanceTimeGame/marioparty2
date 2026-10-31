@@ -135,7 +135,7 @@ f32 func_800B75A8_B81A8(f32 y, f32 x); /* atan2, degrees */
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 
-/* ---- .data and .bss, in address order (asm) ---- */
+/* ---- .data (105FC0.c to 0x801084BF, 108DF0.c from 0x801084C0) and .bss, in address order ---- */
 extern s8 D_80108450_10BC10_MalletGoRound; /* 1: the game is over */
 extern s8 D_80108451_10BC11_MalletGoRound; /* 1: the players may start */
 extern s8 D_80108452_10BC12_MalletGoRound; /* 1: the slots are in place */
@@ -159,7 +159,7 @@ extern s32 D_8010846C_10BC2C_MalletGoRound; /* CPU wait */
 extern f32 D_80108470_10BC30_MalletGoRound; /* thrown mallet speed */
 extern u32 D_80108474_10BC34_MalletGoRound; /* time left, frames */
 extern f32 D_80108478_10BC38_MalletGoRound; /* bob angle */
-extern MGRText D_8010847C_10BC3C_MalletGoRound; 
+extern MGRText D_8010847C_10BC3C_MalletGoRound;
 extern s8 D_80108490_10BC50_MalletGoRound;
 extern s8 D_80108494_10BC54_MalletGoRound[8]; /* stick history */
 extern s8 D_8010849C_10BC5C_MalletGoRound[8];
