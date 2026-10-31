@@ -28,6 +28,13 @@ typedef struct MGRSlot {
     /* 0x1C */ f32 bob;
 } MGRSlot;
 
+typedef struct MGRText {
+    /* 0x00 */ s8 flag;
+    /* 0x04 */ char* unk_04;
+    /* 0x08 */ char* unk_08;
+    /* 0x0C */ s32 unk_0C[2];
+} MGRText;
+
 /* ---- main-segment API missing from include/ ---- */
 typedef struct MGRCharData {
     /* 0x00 */ char unk_00[4];
@@ -150,7 +157,7 @@ extern s32 D_8010846C_10BC2C_MalletGoRound; /* CPU wait */
 extern f32 D_80108470_10BC30_MalletGoRound; /* thrown mallet speed */
 extern u32 D_80108474_10BC34_MalletGoRound; /* time left, frames */
 extern f32 D_80108478_10BC38_MalletGoRound; /* bob angle */
-extern u8 D_8010847C_10BC3C_MalletGoRound[0x14]; /* debug text; holds pointers to the strings at 80108530/80108544 */
+extern MGRText D_8010847C_10BC3C_MalletGoRound; /* debug text; holds pointers to the strings at 80108530/80108544 */
 extern s8 D_80108490_10BC50_MalletGoRound;
 extern s8 D_80108494_10BC54_MalletGoRound[8]; /* stick history */
 extern s8 D_8010849C_10BC5C_MalletGoRound[8];
@@ -214,6 +221,7 @@ extern omObjData* D_801087A8_10BF68_MalletGoRound; /* the wheel */
 
 /* .rodata */
 extern const u32 D_80108510_10BCD0_MalletGoRound[18];
+extern const u8 D_80108558_10BD18_MalletGoRound[16]; /* item -> gPlayers[].coins_mg_bonus */
 
 void func_80102800_105FC0_MalletGoRound(void);
 void func_80102C14_1063D4_MalletGoRound(omObjData* obj);

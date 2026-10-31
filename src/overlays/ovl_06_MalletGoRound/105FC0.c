@@ -436,9 +436,196 @@ void func_80103F78_107738_MalletGoRound(omObjData* obj, s32 dir, s32 file, u16 p
 }
 
 __asm__(".section .rodata");
-const u32 D_80108558_10BD18_MalletGoRound[4] = { 0xFF000102, 0x03040506, 0x07080900, 0x00000000 };
+const u8 D_80108558_10BD18_MalletGoRound[16] = { 0xFF, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0 };
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801042D4_107A94_MalletGoRound);
+/* The scene's state machine. */
+void func_801042D4_107A94_MalletGoRound(void) {
+    s32 k;
+    s8 b;
+
+    func_8000C3C8_CFC8();
+    switch (D_80108454_10BC14_MalletGoRound) {
+    case 0:
+        func_8000C38C_CF8C();
+        D_80108684_10BE44_MalletGoRound = 0;
+        PlayMusic(0x28);
+        D_80108454_10BC14_MalletGoRound++;
+        break;
+    case 1:
+        D_801087A0_10BF60_MalletGoRound->trans.z += 4.7777777f;
+        if (D_801087A0_10BF60_MalletGoRound->trans.z < -550.0f) {
+            D_801087A0_10BF60_MalletGoRound->trans.y += 1.0f;
+        }
+        if (D_80108684_10BE44_MalletGoRound++ > 90) {
+            func_80029B80_2A780(D_801087A0_10BF60_MalletGoRound->model[0], D_801087A0_10BF60_MalletGoRound->motion[0]);
+            func_80029E80_2AA80(D_801087A0_10BF60_MalletGoRound->model[0], 2, 0);
+            func_8002C570_2D170(D_801087A0_10BF60_MalletGoRound->model[0]);
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 2:
+        D_8010845C_10BC1C_MalletGoRound -= 5.0f;
+        if (D_8010845C_10BC1C_MalletGoRound <= -25.0f) {
+            D_80108451_10BC11_MalletGoRound = 1;
+            func_8000C3B8_CFB8();
+            D_8010845C_10BC1C_MalletGoRound = -25.0f;
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 3:
+        if (D_80108452_10BC12_MalletGoRound == 1) {
+            func_800691FC_69DFC(0);
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 4:
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_800691FC_69DFC(0xA, 0x1E, 0xA0, 0x18);
+            func_8006D4D0_6E0D0(0xA);
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 5:
+        if (D_80108450_10BC10_MalletGoRound == 1) {
+            if (D_80108453_10BC13_MalletGoRound != 0 && D_80108455_10BC15_MalletGoRound != 0) {
+                D_801084B6_10BC76_MalletGoRound = 1;
+            }
+            func_8000C398_CF98();
+            D_80108454_10BC14_MalletGoRound++;
+        } else {
+            func_8006D4D0_6E0D0(D_80108474_10BC34_MalletGoRound / 30);
+            if (D_8010845A_10BC1A_MalletGoRound == 0) {
+                if (D_80108474_10BC34_MalletGoRound == 0) {
+                    if (D_80108453_10BC13_MalletGoRound == -1) {
+                        D_80108450_10BC10_MalletGoRound = 1;
+                        D_80108453_10BC13_MalletGoRound = 0;
+                    }
+                    func_8006D518_6E118();
+                } else {
+                    D_80108474_10BC34_MalletGoRound--;
+                }
+            }
+        }
+        break;
+    case 6:
+        func_800691FC_69DFC(3);
+        if (D_80108474_10BC34_MalletGoRound != 0) {
+            func_8006D518_6E118();
+        }
+        if (D_8010845B_10BC1B_MalletGoRound == 0) {
+            func_800794A8_7A0A8(0x2D);
+            D_8010845B_10BC1B_MalletGoRound = 1;
+        }
+        if (D_80108453_10BC13_MalletGoRound == 0) {
+            if (D_80108455_10BC15_MalletGoRound != 0) {
+                D_80108454_10BC14_MalletGoRound += 2;
+            } else {
+                D_80108454_10BC14_MalletGoRound++;
+            }
+        } else {
+            D_80108454_10BC14_MalletGoRound++;
+            if (D_80108455_10BC15_MalletGoRound != 0) {
+                func_801083D8_10BB98_MalletGoRound();
+                PlaySound(0x12E);
+            }
+        }
+        break;
+    case 7:
+        if (D_80108455_10BC15_MalletGoRound != 0) {
+            do {
+                D_8010847C_10BC3C_MalletGoRound.flag = 1;
+            } while (0);
+            k = D_801087A4_10BF64_MalletGoRound;
+            D_801086D0_10BE90_MalletGoRound[k].lift += 10.0f;
+            D_801086D0_10BE90_MalletGoRound[k].z -= 9.0f;
+            if (D_801086D0_10BE90_MalletGoRound[k].lift >= 220.0f) {
+                D_80108459_10BC19_MalletGoRound = 1;
+                D_801086D0_10BE90_MalletGoRound[k].lift = 220.0f;
+                D_80108454_10BC14_MalletGoRound++;
+            }
+        } else {
+            func_80029B80_2A780(D_8010879C_10BF5C_MalletGoRound->model[1], D_8010879C_10BF5C_MalletGoRound->motion[2]);
+            func_80029E80_2AA80(D_8010879C_10BF5C_MalletGoRound->model[1], 2, 2);
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 8:
+        if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
+            func_8000C3A8_CFA8();
+            switch (D_80108453_10BC13_MalletGoRound) {
+            case 2:
+                PlayMusic(0x53);
+                func_800691FC_69DFC(0x17);
+                func_8002C570_2D170(D_801087A0_10BF60_MalletGoRound->model[0]);
+                func_80105224_1089E4_MalletGoRound(D_801087A0_10BF60_MalletGoRound, D_80108794_10BF54_MalletGoRound);
+                D_80108794_10BF54_MalletGoRound->trans.x = D_801087A0_10BF60_MalletGoRound->trans.x - 50.0f;
+                D_80108794_10BF54_MalletGoRound->trans.y = D_801087A0_10BF60_MalletGoRound->trans.y + 10.0f;
+                D_80108794_10BF54_MalletGoRound->trans.z = D_801087A0_10BF60_MalletGoRound->trans.z;
+                D_80108458_10BC18_MalletGoRound = 1;
+                func_80029B80_2A780(D_801087A0_10BF60_MalletGoRound->model[0], D_801087A0_10BF60_MalletGoRound->motion[13]);
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_801087A5_10BF65_MalletGoRound].character].unk_04 | 0x54);
+                D_801087A0_10BF60_MalletGoRound->rot.y = 228.0f;
+                D_80108688_10BE48_MalletGoRound = 0x87;
+                break;
+            case 0:
+                PlayMusic(0x56);
+                func_800691FC_69DFC(0x10);
+                func_8002C570_2D170(D_801087A0_10BF60_MalletGoRound->model[0]);
+                func_80105224_1089E4_MalletGoRound(D_801087A0_10BF60_MalletGoRound, D_80108794_10BF54_MalletGoRound);
+                D_80108794_10BF54_MalletGoRound->trans.x = D_801087A0_10BF60_MalletGoRound->trans.x - 50.0f;
+                D_80108794_10BF54_MalletGoRound->trans.y = D_801087A0_10BF60_MalletGoRound->trans.y + 10.0f;
+                D_80108794_10BF54_MalletGoRound->trans.z = D_801087A0_10BF60_MalletGoRound->trans.z;
+                D_80108458_10BC18_MalletGoRound = 1;
+                func_80029B80_2A780(D_801087A0_10BF60_MalletGoRound->model[0], D_801087A0_10BF60_MalletGoRound->motion[14]);
+                D_80108688_10BE48_MalletGoRound = 0x85;
+                break;
+            case 1:
+                PlayMusic(0x54);
+                func_800691FC_69DFC(0x18);
+                func_8002C570_2D170(D_801087A0_10BF60_MalletGoRound->model[0]);
+                func_80105224_1089E4_MalletGoRound(D_801087A0_10BF60_MalletGoRound, D_80108794_10BF54_MalletGoRound);
+                D_80108794_10BF54_MalletGoRound->trans.x = D_801087A0_10BF60_MalletGoRound->trans.x - 50.0f;
+                D_80108794_10BF54_MalletGoRound->trans.y = D_801087A0_10BF60_MalletGoRound->trans.y + 10.0f;
+                D_80108794_10BF54_MalletGoRound->trans.z = D_801087A0_10BF60_MalletGoRound->trans.z;
+                D_80108458_10BC18_MalletGoRound = 1;
+                func_80029B80_2A780(D_801087A0_10BF60_MalletGoRound->model[0], D_801087A0_10BF60_MalletGoRound->motion[41]);
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[D_801087A5_10BF65_MalletGoRound].character].unk_04 | 0x56);
+                D_80108688_10BE48_MalletGoRound = 0x85;
+                break;
+            }
+            D_80108686_10BE46_MalletGoRound = 0;
+            b = -1;
+            if (D_80108455_10BC15_MalletGoRound >= 0) {
+                b = D_80108558_10BD18_MalletGoRound[D_80108455_10BC15_MalletGoRound];
+            }
+            gPlayers[D_801087A5_10BF65_MalletGoRound].coins_mg_bonus = b;
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 9:
+        if ((s16)D_80108686_10BE46_MalletGoRound++ > D_80108688_10BE48_MalletGoRound) {
+            func_800794A8_7A0A8(0x28);
+            InitFadeOut(0, 0x14);
+            func_80079868_7A468();
+            func_8000C398_CF98();
+            D_80108454_10BC14_MalletGoRound++;
+        }
+        break;
+    case 10:
+        if (func_8008F618_90218() == 0) {
+            func_80069770_6A370();
+            omOvlReturnEx(1);
+        }
+        break;
+    }
+    if (D_80108459_10BC19_MalletGoRound == 1) {
+        D_801086D0_10BE90_MalletGoRound[D_801087A4_10BF64_MalletGoRound].bob = HuMathSin(D_80108478_10BC38_MalletGoRound) * 20.0f;
+        D_80108478_10BC38_MalletGoRound += 5.0f;
+        if (D_80108478_10BC38_MalletGoRound >= 360.0f) {
+            D_80108478_10BC38_MalletGoRound -= 360.0f;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80104BC8_108388_MalletGoRound);
 
