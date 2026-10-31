@@ -607,7 +607,10 @@ segments:
     bss_size: 0x160
     subsegments:
       - [0x105FC0, c]
+      - [0x108DF0, c]
       - [0x10BC10, data]
+      - [0x10BCD0, .rodata, 105FC0]
+      - [0x10BD70, .rodata, 108DF0]
       - {0x10BE10, type: bss, vram: 0x80108650, name: ovl_06_bss}
   - type: code
     start: 0x10BE10
