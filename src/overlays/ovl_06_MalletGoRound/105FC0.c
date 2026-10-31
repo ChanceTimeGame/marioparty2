@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const u32 D_80108510_10BCD0_MalletGoRound[18] = { 0x82728273, 0x82608271, 0x82738268, 0x82738264, 0x826C8266, 0x82648273, 0x81498148, 0x00000000, 0x82688273, 0x8264826C, 0x81408266, 0x82648273, 0x81480000, 0x82688273, 0x8264826C, 0x81408266, 0x82648273, 0x81490000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80102800_105FC0_MalletGoRound);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80102C14_1063D4_MalletGoRound);
@@ -13,6 +16,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80103D
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80103E7C_10763C_MalletGoRound);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80103F78_107738_MalletGoRound);
+
+__asm__(".section .rodata");
+const u32 D_80108558_10BD18_MalletGoRound[4] = { 0xFF000102, 0x03040506, 0x07080900, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801042D4_107A94_MalletGoRound);
 
@@ -35,6 +41,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801054
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801055A8_108D68_MalletGoRound);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_801055D0_108D90_MalletGoRound);
+
+__asm__(".section .rodata");
+const u32 D_801085B0_10BD70_MalletGoRound[11] = { 0x00140008, 0x00140009, 0x0014000A, 0x0014000C, 0x0014000D, 0x0014000E, 0x0014000F, 0x00140010, 0x00140011, 0x00140012, 0x00140013 };
+
+__asm__(".section .rodata");
+const u32 D_801085DC_10BD9C_MalletGoRound[13] = { 0x00000000, 0x42700000, 0x42F00000, 0x43340000, 0x43700000, 0x43960000, 0x00000000, 0x42700000, 0x42F00000, 0x43340000, 0x43700000, 0x43960000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/105FC0", func_80105630_108DF0_MalletGoRound);
 
