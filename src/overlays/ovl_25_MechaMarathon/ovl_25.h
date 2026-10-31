@@ -162,7 +162,7 @@ typedef struct MMRobot {
 
 extern const char D_80108290_1F6FD0_MechaMarathon[];
 
-/* ---- .data (asm) ---- */
+/* ---- .data (1F1540.c, 0x1F6D50-0x1F6F70) ---- */
 
 extern s16 D_80108010_1F6D50_MechaMarathon[6];  /* record sprite x */
 extern s16 D_8010801C_1F6D5C_MechaMarathon[10]; /* score sprite x */
@@ -179,11 +179,11 @@ extern u16 D_80108184_1F6EC4_MechaMarathon[4];
 extern s16 D_8010818C_1F6ECC_MechaMarathon;
 extern s16 D_80108190_1F6ED0_MechaMarathon[6];
 extern u16 D_8010819C_1F6EDC_MechaMarathon[2];
-extern char* D_801081A0_1F6EE0_MechaMarathon[6];
+extern const char* D_801081A0_1F6EE0_MechaMarathon[6];
 extern s16 D_801081B8_1F6EF8_MechaMarathon;
 extern s32 D_801081BC_1F6EFC_MechaMarathon[4];
 extern s32 D_801081CC_1F6F0C_MechaMarathon[18];
-extern char* D_80108214_1F6F54_MechaMarathon[3];
+extern const char* D_80108214_1F6F54_MechaMarathon[3];
 extern s16 D_80108220_1F6F60_MechaMarathon;
 extern u16 D_80108222_1F6F62_MechaMarathon;
 extern s16 D_80108224_1F6F64_MechaMarathon;

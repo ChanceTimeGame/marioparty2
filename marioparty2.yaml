@@ -1075,7 +1075,7 @@ segments:
     subsegments:
       - [0x1F1540, c]
       - [0x1F6CA0, c]
-      - [0x1F6D50, data]
+      - [0x1F6D50, .data, 1F1540]
       - [0x1F6F70, .rodata, 1F1540]
       - {0x1F71A0, type: bss, vram: 0x80108460, name: ovl_25_bss}
   - type: code

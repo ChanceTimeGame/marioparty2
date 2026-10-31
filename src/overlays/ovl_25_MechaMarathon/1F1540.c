@@ -1,5 +1,65 @@
 #include "ovl_25.h"
 
+extern const char D_801082E8_1F7028_MechaMarathon[];
+extern const char D_801082F4_1F7034_MechaMarathon[];
+extern const char D_80108300_1F7040_MechaMarathon[];
+extern const char D_8010830C_1F704C_MechaMarathon[];
+extern const char D_80108318_1F7058_MechaMarathon[];
+extern const char D_80108324_1F7064_MechaMarathon[];
+extern const char D_80108354_1F7094_MechaMarathon[];
+extern const char D_8010836C_1F70AC_MechaMarathon[];
+extern const char D_80108384_1F70C4_MechaMarathon[];
+
+/* .data (0x1F6D50-0x1F6F70, 80108010-80108230) */
+s16 D_80108010_1F6D50_MechaMarathon[6] = { 0x00, 0x0C, 0x1C, 0x28, 0x14, 0x3E };
+s16 D_8010801C_1F6D5C_MechaMarathon[10] = { 0x00, 0x10, 0x2C, 0x3C, 0x20, 0x4C, 0x58, 0x64, 0x70, 0x7C };
+s16 D_80108030_1F6D70_MechaMarathon[6] = { 2, 0, 0, 0, 0xC, 0xD };
+s32 D_8010803C_1F6D7C_MechaMarathon[6] = { 0x20000, 0x30000, 0x70000, 0x40000, 0x50000, 0x60000 };
+u16 D_80108054_1F6D94_MechaMarathon[4] = { 0x4E, 0x4F, 0x55, 0x56 };
+s32 D_8010805C_1F6D9C_MechaMarathon = 1;
+u8 D_80108060_1F6DA0_MechaMarathon = 2;
+s32 D_80108064_1F6DA4_MechaMarathon = 0;
+s32 D_80108068_1F6DA8_MechaMarathon[6][8] = {
+    { 0, 0x22, 2, 0xF, 0x4E, 0x4F, 0x56, 1 },
+    { 0, 0x23, 2, 0xF, 0x4E, 0x4F, 0x56, 1 },
+    { 0, 0x24, 2, 0xF, 0x4E, 0x4F, 0x55, 1 },
+    { 0, 0x25, 2, 0xF, 0x4E, 0x4F, 0x55, 1 },
+    { 0, 0x26, 2, 0xF, 0x4E, 0x4F, 0x56, 1 },
+    { 0, 0x27, 2, 0xF, 0x4E, 0x4F, 0x56, 1 },
+};
+Vec D_80108128_1F6E68_MechaMarathon[4] = {
+    { 90.0f, 10.0f, 277.5f },
+    { 90.0f, 10.0f, 107.5f },
+    { 90.0f, 10.0f, -62.5f },
+    { 90.0f, 10.0f, -232.5f },
+};
+f32 D_80108158_1F6E98_MechaMarathon[11] = { 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f, 2.0f };
+u16 D_80108184_1F6EC4_MechaMarathon[4] = { 0x3C, 0x5A, 0x64, 0x64 };
+s16 D_8010818C_1F6ECC_MechaMarathon = 0;
+s16 D_8010818E_1F6ECE_MechaMarathon = 0; /* pad */
+s16 D_80108190_1F6ED0_MechaMarathon[6] = { 2, 3, 7, 4, 5, 6 };
+u16 D_8010819C_1F6EDC_MechaMarathon[2] = { 0xDF, 0xE0 };
+const char* D_801081A0_1F6EE0_MechaMarathon[6] = {
+    D_80108324_1F7064_MechaMarathon, D_80108318_1F7058_MechaMarathon, D_8010830C_1F704C_MechaMarathon,
+    D_80108300_1F7040_MechaMarathon, D_801082F4_1F7034_MechaMarathon, D_801082E8_1F7028_MechaMarathon,
+};
+s16 D_801081B8_1F6EF8_MechaMarathon = 0;
+s16 D_801081BA_1F6EFA_MechaMarathon = 0; /* pad */
+s32 D_801081BC_1F6EFC_MechaMarathon[4] = { 0xC, 0xD, 0xE, 0xF };
+s32 D_801081CC_1F6F0C_MechaMarathon[18] = { 0x16, 0x1C, 0x10, 0x17, 0x1D, 0x11, 0x18, 0x1E, 0x12,
+                                            0x19, 0x1F, 0x13, 0x1A, 0x20, 0x14, 0x1B, 0x21, 0x15 };
+const char* D_80108214_1F6F54_MechaMarathon[3] = {
+    D_80108384_1F70C4_MechaMarathon, D_8010836C_1F70AC_MechaMarathon, D_80108354_1F7094_MechaMarathon,
+};
+s16 D_80108220_1F6F60_MechaMarathon = 0;
+u16 D_80108222_1F6F62_MechaMarathon = 0;
+s16 D_80108224_1F6F64_MechaMarathon = 0;
+s16 D_80108226_1F6F66_MechaMarathon = 0;
+s16 D_80108228_1F6F68_MechaMarathon = 0xF;
+s16 D_8010822A_1F6F6A_MechaMarathon = 0; /* pad */
+s16 D_8010822C_1F6F6C_MechaMarathon = 0; /* pad */
+s16 D_8010822E_1F6F6E_MechaMarathon = 0; /* pad */
+
 void func_80102800_1F1540_MechaMarathon(void) {
     func_80107D0C_1F6A4C_MechaMarathon();
 }
