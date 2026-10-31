@@ -86,6 +86,8 @@ void espDispOff(u16);
 s16 func_8001A2F8_1AEF8(s32);
 s16 func_8001AAAC_1B6AC(s16, s32, s32);
 extern int guRandom(void);
+void omSetTra(omObjData*, f32, f32, f32);
+void omSetSca(omObjData*, f32, f32, f32);
 void func_8000BEB0_CAB0(omObjData* obj, f32 arg1);
 void func_8000BEBC_CABC(omObjData* obj, f32 arg1);
 void func_8000BEC8_CAC8(omObjData* obj, f32 arg1);
@@ -167,7 +169,7 @@ extern f32 D_801084B0_10BC70_MalletGoRound; /* wheel angle */
 extern s8 D_801084B4_10BC74_MalletGoRound; /* 1: the wheel is stopped */
 extern s8 D_801084B5_10BC75_MalletGoRound; /* 1: stopped for good */
 extern s8 D_801084B6_10BC76_MalletGoRound; /* 1: start the ending */
-extern s32 D_801084B8_10BC78_MalletGoRound;
+extern u32 D_801084B8_10BC78_MalletGoRound;
 extern s8 D_801084BC_10BC7C_MalletGoRound; /* 1: the sparkles run */
 extern u16 D_801084BE_10BC7E_MalletGoRound; /* wheel stop time */
 extern f32 D_801084C0_10BC80_MalletGoRound;
@@ -220,6 +222,7 @@ extern s8 D_801087A5_10BF65_MalletGoRound; /* the player index */
 extern omObjData* D_801087A8_10BF68_MalletGoRound; /* the wheel */
 
 /* .rodata */
+extern const s32 D_801085B0_10BD70_MalletGoRound[11]; /* item display files */
 extern const f32 D_801085DC_10BD9C_MalletGoRound[2][6]; /* stop angle per slot, per direction */
 extern const u32 D_80108510_10BCD0_MalletGoRound[18];
 extern const u8 D_80108558_10BD18_MalletGoRound[16]; /* item -> gPlayers[].coins_mg_bonus */
