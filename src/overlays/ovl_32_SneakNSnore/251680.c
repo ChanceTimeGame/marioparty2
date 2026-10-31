@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_32.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/251680", func_80106010_251680_SneakNSnore);
 
