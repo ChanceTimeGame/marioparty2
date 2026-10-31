@@ -388,3 +388,6 @@ D_80107BCC_1BE1BC_CakeFactory = 0x80107BCC;
 D_80108469_253AD9_SneakNSnore = 0x80108469;
 D_80108676_10BE36_MalletGoRound = 0x80108676;
 D_80108686_10BE46_MalletGoRound = 0x80108686;
+/* S4-25D: offsets into ovl_25's per-character motion table that the NON_MATCHING asm path names */
+D_80108070_1F6DB0_MechaMarathon = D_80108068_1F6DA8_MechaMarathon + 0x8;
+D_80108074_1F6DB4_MechaMarathon = D_80108068_1F6DA8_MechaMarathon + 0xC;
