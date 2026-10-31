@@ -429,14 +429,530 @@ void func_80103B98_24F208_SneakNSnore(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_80104218_24F888_SneakNSnore);
+void func_80104218_24F888_SneakNSnore(omObjData* obj) {
+    s16 minWait;
+    s32 maxWait;
+    s8 n;
+    s32 i;
+    s32 k;
+    s32 t;
+    f32 best;
+    f32 d;
+    f32 z;
+    f32 z2;
+    f32 y2;
+    f32 target;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_80105574_250BE4_SneakNSnore);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 30.0f, obj->trans.z);
+    n = func_80105574_250BE4_SneakNSnore();
+    switch (n) {
+    case 0:
+        minWait = 60;
+        maxWait = 150;
+        break;
+    case 1:
+    case 2:
+        minWait = 50;
+        maxWait = 120;
+        break;
+    default:
+        minWait = 30;
+        maxWait = 90;
+        break;
+    }
+    if (D_80108418_253A88_SneakNSnore == 0.0f) {
+        if (D_80108420_253A90_SneakNSnore >= minWait - 180) {
+            D_8010841C_253A8C_SneakNSnore = 5.0f;
+        } else {
+            D_8010841C_253A8C_SneakNSnore = ((rand8() * 5) >> 8) + 1;
+        }
+    }
+    if (D_800F8FD0_F9BD0 == 1 && D_801082DD_25394D_SneakNSnore == 0) {
+        if (D_80108420_253A90_SneakNSnore >= D_801082D8_253948_SneakNSnore && D_80108418_253A88_SneakNSnore == 90.0f && D_8010841C_253A8C_SneakNSnore == 5.0f) {
+            D_801082DD_25394D_SneakNSnore = 1;
+            D_8010843B_253AAB_SneakNSnore = rand8() >> 7;
+        }
+    }
+    if (D_801082DD_25394D_SneakNSnore != 0) {
+        func_800297E8_2A3E8(obj->model[2], 0.0f, 0.0f, 0.0f);
+        t = func_80029D0C_2A90C(obj->model[3]);
+        if (D_80108424_253A94_SneakNSnore == 0) {
+            D_801082B4_253924_SneakNSnore = 1;
+            func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y + 20.0f, obj->trans.z);
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
+            func_80029E80_2AA80(obj->model[3], 1, 2);
+            PlaySound(0x2D1);
+            func_80079428_7A028(0x5A);
+            D_800CD526_CE126 |= 4;
+        } else if (D_80108424_253A94_SneakNSnore == t / 2) {
+            func_800298A4_2A4A4(obj->model[3], 4, 4);
+            func_80029E80_2AA80(obj->model[3], 1, 1);
+            func_80029C74_2A874(obj->model[0], 0.0f);
+            func_80103AC8_24F138_SneakNSnore(obj->model[0], D_8010846A_253ADA_SneakNSnore);
+        } else if (D_80108424_253A94_SneakNSnore == 30) {
+            D_800CD526_CE126 &= ~4;
+        } else if (D_80108424_253A94_SneakNSnore >= 36) {
+            obj->work[0] |= 1;
+            D_80108424_253A94_SneakNSnore = 0;
+            D_80108420_253A90_SneakNSnore = 0;
+            D_80108418_253A88_SneakNSnore = 0.0f;
+            D_801082D8_253948_SneakNSnore = (maxWait * rand8()) >> 8;
+            if (D_801082D8_253948_SneakNSnore < minWait) {
+                D_801082D8_253948_SneakNSnore = minWait;
+            }
+            D_801082DD_25394D_SneakNSnore = 0;
+            D_801082B4_253924_SneakNSnore = 0;
+        }
+        if (D_801082DD_25394D_SneakNSnore != 0) {
+            D_80108424_253A94_SneakNSnore++;
+        }
+    } else {
+        if (obj->work[0] == 0 && (u32)D_800F8FD0_F9BD0 < 2) {
+            if (D_80108418_253A88_SneakNSnore == 0.0f) {
+                PlaySound(0x2BA);
+            } else if (D_80108418_253A88_SneakNSnore == 90.0f) {
+                PlaySound(0x2BB);
+            }
+        }
+        D_80108414_253A84_SneakNSnore = HuMathSin(D_80108418_253A88_SneakNSnore) * D_8010841C_253A8C_SneakNSnore / 5.0f + 0.5f;
+        D_80108414_253A84_SneakNSnore *= obj->scale.x;
+        func_800297E8_2A3E8(obj->model[2], D_80108414_253A84_SneakNSnore, D_80108414_253A84_SneakNSnore, D_80108414_253A84_SneakNSnore);
+        func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y + 20.0f, obj->trans.z);
+    }
+    if (obj->work[0] == 0) {
+        if (D_800F8FD0_F9BD0 == 1) {
+            D_80108420_253A90_SneakNSnore++;
+        }
+        if (D_80108418_253A88_SneakNSnore == 0.0f) {
+            D_80108439_253AA9_SneakNSnore = (rand8() * 3) >> 8;
+            if (D_80108439_253AA9_SneakNSnore == D_8010843A_253AAA_SneakNSnore) {
+                if (D_80108439_253AA9_SneakNSnore == 0) {
+                    D_80108439_253AA9_SneakNSnore = 1;
+                } else if (D_80108439_253AA9_SneakNSnore == 1) {
+                    D_80108439_253AA9_SneakNSnore = 2;
+                } else {
+                    D_80108439_253AA9_SneakNSnore = 0;
+                }
+            }
+        }
+        switch (D_80108439_253AA9_SneakNSnore) {
+        case 0:
+            D_80108418_253A88_SneakNSnore += 2.0f;
+            D_8010843A_253AAA_SneakNSnore = 0;
+            break;
+        case 1:
+            D_80108418_253A88_SneakNSnore += 3.0f;
+            D_8010843A_253AAA_SneakNSnore = 1;
+            break;
+        case 2:
+            D_80108418_253A88_SneakNSnore += 5.0f;
+            D_8010843A_253AAA_SneakNSnore = 2;
+            break;
+        }
+        if (D_80108418_253A88_SneakNSnore >= 180.0f) {
+            D_80108418_253A88_SneakNSnore = 0.0f;
+        }
+    }
+    if (D_800F8FD0_F9BD0 != 1 && D_801082E0_253950_SneakNSnore[0] == -1 && D_801082E0_253950_SneakNSnore[1] == D_801082E0_253950_SneakNSnore[0] && D_801082E0_253950_SneakNSnore[2] == D_801082E0_253950_SneakNSnore[1]
+        && D_801082E0_253950_SneakNSnore[3] == D_801082E0_253950_SneakNSnore[2]) {
+        obj->work[0] = 0;
+    }
+    if (obj->work[0] == 1) {
+        for (i = 0; i < 4; i++) {
+            if (D_800FFFD8_100BD8[i]->work[0] == 0) {
+                if (D_80108394_253A04_SneakNSnore[i] == 0 || func_80019000_19C00(D_800FFFD8_100BD8[i]) != 2) {
+                    D_801082E0_253950_SneakNSnore[i] = ((MgWork*)D_800FFFD8_100BD8[i]->unk_50)->unk_59;
+                } else if (func_80029CE4_2A8E4(D_800FFFD8_100BD8[i]->model[0]) <= 36.0f) {
+                    D_801082E0_253950_SneakNSnore[i] = ((MgWork*)D_800FFFD8_100BD8[i]->unk_50)->unk_59;
+                }
+                if (D_800FFFD8_100BD8[i]->trans.z <= -450.0f) {
+                    D_801082E0_253950_SneakNSnore[i] = -1;
+                }
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        if (D_801082E0_253950_SneakNSnore[i] != -1) {
+            if (func_80029CE4_2A8E4(D_800FFFD8_100BD8[i]->model[0]) >= 36.0f) {
+                func_80029C74_2A874(D_800FFFD8_100BD8[i]->model[0], 36.0f);
+            }
+        }
+    }
+    if (D_801082E0_253950_SneakNSnore[0] == -1 && D_801082E0_253950_SneakNSnore[1] == D_801082E0_253950_SneakNSnore[0] && D_801082E0_253950_SneakNSnore[2] == D_801082E0_253950_SneakNSnore[1]
+        && D_801082E0_253950_SneakNSnore[3] == D_801082E0_253950_SneakNSnore[2]) {
+        obj->rot.y = func_80105D78_2513E8_SneakNSnore(obj->rot.y);
+        if (ABSDIFF(350.0f - obj->rot.y) > 20.0f) {
+            obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, 350.0f, 20.0f);
+        } else {
+            obj->rot.y = 350.0f;
+        }
+        if (D_80108428_253A98_SneakNSnore >= 61) {
+            obj->work[0] = 0;
+            func_80103AC8_24F138_SneakNSnore(obj->model[0], D_8010846C_253ADC_SneakNSnore);
+            D_80108428_253A98_SneakNSnore = 0;
+        } else {
+            D_80108428_253A98_SneakNSnore++;
+        }
+        if (obj->work[0] != 0) {
+            func_800297E8_2A3E8(obj->model[2], 0.0f, 0.0f, 0.0f);
+            func_80103AC8_24F138_SneakNSnore(obj->model[0], D_8010846A_253ADA_SneakNSnore);
+        }
+        if (_CheckFlag(0xC) != 0) {
+            for (k = 0; k < 4; k++) {
+                if (D_800F8FD0_F9BD0 == 1 && !(gPlayers[k].flags & 1) && (D_800FFFD8_100BD8[k]->work[0] & 4)) {
+                    func_8000C398_CF98();
+                    break;
+                }
+            }
+        }
+        if (D_800F8FD0_F9BD0 == 1 && (D_800FFFD8_100BD8[0]->work[0] & 4) && (D_800FFFD8_100BD8[1]->work[0] & 4)
+            && (D_800FFFD8_100BD8[2]->work[0] & 4) && (D_800FFFD8_100BD8[3]->work[0] & 4)) {
+            func_8000C398_CF98();
+        }
+        if ((D_800FFFD8_100BD8[0]->work[0] & 4) || (D_800FFFD8_100BD8[1]->work[0] & 4) || (D_800FFFD8_100BD8[2]->work[0] & 4)
+            || (D_800FFFD8_100BD8[3]->work[0] & 4)) {
+            func_801055AC_250C1C_SneakNSnore(obj);
+        }
+    } else {
+        if (obj->work[0] != 0) {
+            func_800297E8_2A3E8(obj->model[2], 0.0f, 0.0f, 0.0f);
+            func_80103AC8_24F138_SneakNSnore(obj->model[0], D_8010846A_253ADA_SneakNSnore);
+        }
+        best = 1500000.0f;
+        for (i = 0; i < 4; i++) {
+            if (D_801082E0_253950_SneakNSnore[i] != -1) {
+                f32 x2;
+                f32 z3;
 
+                x2 = D_800FFFD8_100BD8[i]->trans.x - obj->trans.x;
+                x2 *= x2;
+                z3 = D_800FFFD8_100BD8[i]->trans.z - obj->trans.z;
+                z3 *= z3;
+                d = x2 + z3;
+                if (d < best) {
+                    best = d;
+                    D_80108438_253AA8_SneakNSnore = i;
+                }
+            }
+        }
+        if (obj->work[0] == 1) {
+            if (D_801082DC_25394C_SneakNSnore == 0) {
+                D_8010842C_253A9C_SneakNSnore.x = D_800FFFD8_100BD8[D_80108438_253AA8_SneakNSnore]->trans.x;
+                D_8010842C_253A9C_SneakNSnore.z = D_800FFFD8_100BD8[D_80108438_253AA8_SneakNSnore]->trans.z;
+                D_801082DC_25394C_SneakNSnore = 1;
+            }
+            target = func_80105D78_2513E8_SneakNSnore(func_800B75A8_B81A8(D_8010842C_253A9C_SneakNSnore.x - obj->trans.x, D_8010842C_253A9C_SneakNSnore.z - obj->trans.z));
+            obj->rot.y = func_80105D78_2513E8_SneakNSnore(obj->rot.y);
+            if (ABSDIFF(target - obj->rot.y) > 10.0f) {
+                if (D_8010843B_253AAB_SneakNSnore == 0) {
+                    obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, target, 10.0f);
+                } else {
+                    obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, target, 20.0f);
+                }
+            } else {
+                f32 zb;
+
+                d = D_8010842C_253A9C_SneakNSnore.x - obj->trans.x;
+                d *= d;
+                zb = D_8010842C_253A9C_SneakNSnore.z - obj->trans.z;
+                zb *= zb;
+                d += zb;
+                if (d <= 900.0f) {
+                    D_800FFFD8_100BD8[D_80108438_253AA8_SneakNSnore]->work[0] |= 2;
+                    obj->work[0] |= 2;
+                    PlaySound(0x2C0);
+                } else {
+                    obj->trans.x += HuMathSin(obj->rot.y) * 30.0f;
+                    obj->trans.z += func_800B7890_B8490(obj->rot.y) * 30.0f;
+                }
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[2]), 0, 0x32, 2);
+            }
+        } else if (obj->work[0] & 2) {
+            D_8010842C_253A9C_SneakNSnore.x = 250.0f;
+            D_8010842C_253A9C_SneakNSnore.y = 150.0f;
+            D_8010842C_253A9C_SneakNSnore.z = 450.0f;
+            target = func_80105D78_2513E8_SneakNSnore(func_800B75A8_B81A8(250.0f - obj->trans.x, 450.0f - obj->trans.z));
+            obj->rot.y = func_80105D78_2513E8_SneakNSnore(obj->rot.y);
+            if (ABSDIFF(target - obj->rot.y) > 20.0f && obj->trans.z < 450.0f) {
+                obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, target, 20.0f);
+            } else {
+                d = D_8010842C_253A9C_SneakNSnore.x - obj->trans.x;
+                d *= d;
+                z2 = D_8010842C_253A9C_SneakNSnore.z - obj->trans.z;
+                z2 *= z2;
+                y2 = D_8010842C_253A9C_SneakNSnore.y - obj->trans.y;
+                y2 *= y2;
+                obj->rot.x = func_800B75A8_B81A8(y2, d + z2);
+                if (obj->trans.z >= 450.0f) {
+                    obj->rot.y = 0.0f;
+                    obj->work[0] = (obj->work[0] | 4) & 0xFD;
+                } else {
+                    obj->trans.x += HuMathSin(obj->rot.y) * 30.0f;
+                    if (obj->trans.x > 250.0f) {
+                        obj->trans.x = 250.0f;
+                    }
+                    obj->trans.y += HuMathSin(obj->rot.x) * 30.0f;
+                    if (obj->trans.y > 150.0f) {
+                        obj->trans.y = 150.0f;
+                    }
+                    obj->trans.z += func_800B7890_B8490(obj->rot.y) * 30.0f;
+                }
+            }
+        } else if (obj->work[0] & 4) {
+            D_800FFFD8_100BD8[D_80108438_253AA8_SneakNSnore]->work[0] |= 4;
+            if (D_800FFFD8_100BD8[D_80108438_253AA8_SneakNSnore]->trans.y <= 0.0f) {
+                obj->work[0] = (obj->work[0] | 8) & 0xFB;
+                func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[0]), 0, 0x31, 2);
+            }
+        } else if (obj->work[0] & 8) {
+            D_8010842C_253A9C_SneakNSnore.x = 100.0f;
+            D_8010842C_253A9C_SneakNSnore.y = 30.0f;
+            D_8010842C_253A9C_SneakNSnore.z = 550.0f;
+            d = D_8010842C_253A9C_SneakNSnore.x - obj->trans.x;
+            d *= d;
+            z = D_8010842C_253A9C_SneakNSnore.z - obj->trans.z;
+            z *= z;
+            d += z;
+            if (d <= D_8010842C_253A9C_SneakNSnore.x) {
+                obj->rot.x = func_80105E18_251488_SneakNSnore(obj->rot.x, 0.0f, 10.0f);
+                if (obj->rot.x == 0.0f && obj->rot.z == 20.0f) {
+                    D_801082E0_253950_SneakNSnore[D_80108438_253AA8_SneakNSnore] = -1;
+                    D_801082DC_25394C_SneakNSnore = 0;
+                    if (!(D_801082E0_253950_SneakNSnore[0] == -1 && D_801082E0_253950_SneakNSnore[1] == D_801082E0_253950_SneakNSnore[0] && D_801082E0_253950_SneakNSnore[2] == D_801082E0_253950_SneakNSnore[1]
+                          && D_801082E0_253950_SneakNSnore[3] == D_801082E0_253950_SneakNSnore[2])) {
+                        obj->work[0] = 1;
+                    }
+                }
+                if (D_801082E0_253950_SneakNSnore[0] == -1 && D_801082E0_253950_SneakNSnore[1] == D_801082E0_253950_SneakNSnore[0] && D_801082E0_253950_SneakNSnore[2] == D_801082E0_253950_SneakNSnore[1]
+                    && D_801082E0_253950_SneakNSnore[3] == D_801082E0_253950_SneakNSnore[2]) {
+                    obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, 350.0f, 20.0f);
+                    func_80029BF0_2A7F0(obj->model[0], func_80029E14_2AA14(obj->motion[1]), 0, 0x50, 2);
+                }
+            } else {
+                target = func_80105D78_2513E8_SneakNSnore(func_800B75A8_B81A8(D_8010842C_253A9C_SneakNSnore.x - obj->trans.x, D_8010842C_253A9C_SneakNSnore.z - obj->trans.z));
+                obj->rot.y = func_80105D78_2513E8_SneakNSnore(obj->rot.y);
+                obj->rot.y = func_80105E18_251488_SneakNSnore(obj->rot.y, target, 20.0f);
+                {
+                    f32 y3;
+
+                    y3 = D_8010842C_253A9C_SneakNSnore.y - obj->trans.y;
+                    y3 *= y3;
+                    obj->rot.x = func_800B75A8_B81A8(y3, d);
+                }
+                obj->trans.x += HuMathSin(obj->rot.y) * 10.0f;
+                obj->trans.y -= HuMathSin(obj->rot.x) * 10.0f;
+                obj->trans.z += func_800B7890_B8490(obj->rot.y) * 10.0f;
+            }
+        }
+        func_801055AC_250C1C_SneakNSnore(obj);
+    }
+}
+
+s8 func_80105574_250BE4_SneakNSnore(void) {
+    s8 n;
+    s32 i;
+
+    n = 0;
+    for (i = 0; i < 4; i++) {
+        if (D_801082F0_253960_SneakNSnore[i] == 2) {
+            n++;
+        }
+    }
+    return n;
+}
+
+#ifdef NON_MATCHING /* the one shift retail recomputes (sll before D_80108440_253AB0_SneakNSnore[i]), s5/s6 labels and f2/f4 in one square: masked 23 */
+void func_801055AC_250C1C_SneakNSnore(omObjData* obj) {
+    SSLink* a;
+    SSLink* b;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 y1;
+    f32 z1;
+    f32 x3;
+    f32 y3;
+    f32 z3;
+    f32 step;
+    f32 r;
+    f32 t;
+    f32 angle;
+    Vec from;
+    Vec to;
+    Vec dir;
+    s32 i;
+
+    step = D_80108440_253AB0_SneakNSnore[0]->prev.x - D_80108440_253AB0_SneakNSnore[0]->pos.x;
+    step *= step;
+    y1 = D_80108440_253AB0_SneakNSnore[0]->prev.y - D_80108440_253AB0_SneakNSnore[0]->pos.y;
+    y1 *= y1;
+    step += y1;
+    z1 = D_80108440_253AB0_SneakNSnore[0]->prev.z - D_80108440_253AB0_SneakNSnore[0]->pos.z;
+    z1 *= z1;
+    step = func_800B1830_B2430(step + z1);
+    D_801082E4_253954_SneakNSnore += step;
+    for (i = 0; i < 10; i++) {
+        dx = 0.0f - D_80108440_253AB0_SneakNSnore[i]->pos.x;
+        dx *= dx;
+        dy = 20.0f - D_80108440_253AB0_SneakNSnore[i]->pos.y;
+        dy *= dy;
+        dx += dy;
+        dz = 500.0f - D_80108440_253AB0_SneakNSnore[i]->pos.z;
+        dz *= dz;
+        r = func_800B1830_B2430(dx + dz);
+        if (i == 0) {
+            if (D_801082E4_253954_SneakNSnore >= 80.0f) {
+                D_80108440_253AB0_SneakNSnore[0]->prev.x = D_80108440_253AB0_SneakNSnore[0]->pos.x;
+                D_80108440_253AB0_SneakNSnore[0]->prev.y = D_80108440_253AB0_SneakNSnore[0]->pos.y;
+                D_80108440_253AB0_SneakNSnore[0]->prev.z = D_80108440_253AB0_SneakNSnore[0]->pos.z;
+            }
+            D_80108440_253AB0_SneakNSnore[0]->rot.x = obj->rot.x;
+            D_80108440_253AB0_SneakNSnore[0]->rot.y = obj->rot.y;
+            D_80108440_253AB0_SneakNSnore[0]->pos.x = obj->trans.x - HuMathSin(obj->rot.y) * 10.0f;
+            D_80108440_253AB0_SneakNSnore[0]->pos.y = obj->trans.y - HuMathSin(obj->rot.x) * 10.0f;
+            {
+                SSLink* l = D_80108440_253AB0_SneakNSnore[i];
+                f32 y = l->pos.y;
+
+                if (y < 30.0f) {
+                    l->pos.y = 30.0f;
+                }
+            }
+            D_80108440_253AB0_SneakNSnore[0]->pos.z = obj->trans.z - func_800B7890_B8490(obj->rot.y) * 10.0f;
+        } else {
+            if (D_801082E4_253954_SneakNSnore >= 80.0f) {
+                D_80108440_253AB0_SneakNSnore[i]->prev.x = D_80108440_253AB0_SneakNSnore[i]->pos.x;
+                D_80108440_253AB0_SneakNSnore[i]->prev.y = D_80108440_253AB0_SneakNSnore[i]->pos.y;
+                D_80108440_253AB0_SneakNSnore[i]->prev.z = D_80108440_253AB0_SneakNSnore[i]->pos.z;
+                if (i == 9 && D_801082E4_253954_SneakNSnore >= 80.0f) {
+                    D_801082E4_253954_SneakNSnore -= 80.0f;
+                }
+            }
+            a = D_80108440_253AB0_SneakNSnore[i - 1];
+            if (D_80108440_253AB0_SneakNSnore[i]->reach <= r) {
+                from.x = D_80108440_253AB0_SneakNSnore[i]->pos.x;
+                from.y = D_80108440_253AB0_SneakNSnore[i]->pos.y;
+                from.z = D_80108440_253AB0_SneakNSnore[i]->pos.z;
+                x3 = a->prev.x - D_80108440_253AB0_SneakNSnore[i]->pos.x;
+                x3 *= x3;
+                y3 = a->prev.y - D_80108440_253AB0_SneakNSnore[i]->pos.y;
+                y3 *= y3;
+                x3 += y3;
+                z3 = a->prev.z - D_80108440_253AB0_SneakNSnore[i]->pos.z;
+                z3 *= z3;
+                if (func_800B1830_B2430(x3 + z3) > 80.0f) {
+                    angle = func_800B75A8_B81A8(a->prev.x - 0.0f, a->prev.z - 500.0f);
+                    to.x = HuMathSin(angle) * D_80108440_253AB0_SneakNSnore[i]->reach + 0.0f;
+                    to.y = a->pos.y;
+                    to.z = func_800B7890_B8490(angle) * D_80108440_253AB0_SneakNSnore[i]->reach + 500.0f;
+                } else {
+                    to.x = (0.0f - obj->trans.x) * (t = i) / 10.0f + obj->trans.x;
+                    to.y = (20.0f - obj->trans.y) * t / 10.0f + obj->trans.y;
+                    to.z = (500.0f - obj->trans.z) * t / 10.0f + obj->trans.z;
+                }
+            } else {
+                from.x = D_80108440_253AB0_SneakNSnore[i]->pos.x;
+                from.y = D_80108440_253AB0_SneakNSnore[i]->pos.y;
+                from.z = D_80108440_253AB0_SneakNSnore[i]->pos.z;
+                to.x = a->prev.x;
+                to.y = a->prev.y;
+                to.z = a->prev.z;
+            }
+            func_80105F58_2515C8_SneakNSnore(&dir, &from, &to);
+            D_80108440_253AB0_SneakNSnore[i]->pos.x += step * dir.x;
+            D_80108440_253AB0_SneakNSnore[i]->pos.z += step * dir.z;
+            if (dir.x > 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.x > to.x) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.x = to.x;
+            } else if (dir.x < 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.x < to.x) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.x = to.x;
+            }
+            if (dir.y > 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.y > to.y) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.y = to.y;
+            } else if (dir.y < 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.y < to.y) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.y = to.y;
+            }
+            if (dir.z > 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.z > to.z) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.z = to.z;
+            } else if (dir.z < 0.0f && D_80108440_253AB0_SneakNSnore[i]->pos.z < to.z) {
+                D_80108440_253AB0_SneakNSnore[i]->pos.z = to.z;
+            }
+            D_80108440_253AB0_SneakNSnore[i]->pos.y += step * dir.y;
+        }
+        func_80029714_2A314(obj->model[i + 4], D_80108440_253AB0_SneakNSnore[i]->pos.x, D_80108440_253AB0_SneakNSnore[i]->pos.y, D_80108440_253AB0_SneakNSnore[i]->pos.z);
+        func_80029714_2A314(obj->model[i + 14], D_80108440_253AB0_SneakNSnore[i]->pos.x, 20.0f, D_80108440_253AB0_SneakNSnore[i]->pos.z);
+    }
+    for (i = 1; i < 9; i++) {
+        a = D_80108440_253AB0_SneakNSnore[i - 1];
+        b = D_80108440_253AB0_SneakNSnore[i + 1];
+        if (obj->work[0] != 0) {
+            D_80108440_253AB0_SneakNSnore[i]->pos.x = (a->prev.x + b->pos.x) / 2.0f;
+            D_80108440_253AB0_SneakNSnore[i]->pos.y = (a->prev.y + b->pos.y) / 2.0f;
+            D_80108440_253AB0_SneakNSnore[i]->pos.z = (a->prev.z + b->pos.z) / 2.0f;
+        }
+        if ((obj->work[0] & 8) || obj->work[0] == 0) {
+            D_80108440_253AB0_SneakNSnore[i]->pos.y -= 8.0f;
+        }
+        if (D_80108440_253AB0_SneakNSnore[i]->pos.y < 30.0f) {
+            D_80108440_253AB0_SneakNSnore[i]->pos.y = 30.0f;
+        }
+        func_80029714_2A314(obj->model[i + 4], D_80108440_253AB0_SneakNSnore[i]->pos.x, D_80108440_253AB0_SneakNSnore[i]->pos.y, D_80108440_253AB0_SneakNSnore[i]->pos.z);
+        func_80029714_2A314(obj->model[i + 14], D_80108440_253AB0_SneakNSnore[i]->pos.x, 20.0f, D_80108440_253AB0_SneakNSnore[i]->pos.z);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_801055AC_250C1C_SneakNSnore);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_80105D78_2513E8_SneakNSnore);
+f32 func_80105D78_2513E8_SneakNSnore(f32 a) {
+    if (a < 0.0f) {
+        while (a < 0.0f) {
+            a += 360.0f;
+        }
+    } else if (a >= 360.0f) {
+        while (a >= 360.0f) {
+            a -= 360.0f;
+        }
+    }
+    return a;
+}
 
+#ifdef NON_MATCHING /* retail keeps a in f4 and step in f12; last return shape differs: masked 11 */
+f32 func_80105E18_251488_SneakNSnore(f32 a, f32 target, f32 step) {
+    f32 d = target - a;
+    f32 s = step;
+
+    if ((-s < d) & (d < s)) {
+        return target;
+    }
+    if (d <= -180.0f) {
+        return a + s;
+    }
+    if ((d <= 180.0f) & (d >= 0.0f)) {
+        return a + s;
+    }
+    if (d > 180.0f) {
+        return a - s;
+    }
+    if (!((d > -180.0f) & (d < 0.0f))) {
+        return target;
+    }
+    return a - s;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_80105E18_251488_SneakNSnore);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_32_SneakNSnore/24DE70", func_80105F58_2515C8_SneakNSnore);
+void func_80105F58_2515C8_SneakNSnore(Vec* out, Vec* from, Vec* to) {
+    f32 len;
+
+    out->x = to->x - from->x;
+    out->y = to->y - from->y;
+    out->z = to->z - from->z;
+    len = out->x * out->x + out->y * out->y + out->z * out->z;
+    len = func_800B1830_B2430(len);
+    if (len != 0.0f) {
+        out->x /= len;
+        out->y /= len;
+        out->z /= len;
+    }
+}
