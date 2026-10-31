@@ -2,7 +2,11 @@
 #include "ovl_06.h"
 
 __asm__(".section .rodata");
-const u32 D_80108510_10BCD0_MalletGoRound[18] = { 0x82728273, 0x82608271, 0x82738268, 0x82738264, 0x826C8266, 0x82648273, 0x81498148, 0x00000000, 0x82688273, 0x8264826C, 0x81408266, 0x82648273, 0x81480000, 0x82688273, 0x8264826C, 0x81408266, 0x82648273, 0x81490000 };
+/* Shift-JIS: "START ITEM GET!?" (no spaces), the minigame's name; "ITEM GET?"; "ITEM GET!". The two
+   last are pointed at by D_8010847C (.data). */
+const u8 D_80108510_10BCD0_MalletGoRound[32] = { 0x82, 0x72, 0x82, 0x73, 0x82, 0x60, 0x82, 0x71, 0x82, 0x73, 0x82, 0x68, 0x82, 0x73, 0x82, 0x64, 0x82, 0x6C, 0x82, 0x66, 0x82, 0x64, 0x82, 0x73, 0x81, 0x49, 0x81, 0x48, 0x00, 0x00, 0x00, 0x00 };
+const u8 D_80108530_10BCF0_MalletGoRound[20] = { 0x82, 0x68, 0x82, 0x73, 0x82, 0x64, 0x82, 0x6C, 0x81, 0x40, 0x82, 0x66, 0x82, 0x64, 0x82, 0x73, 0x81, 0x48, 0x00, 0x00 };
+const u8 D_80108544_10BD04_MalletGoRound[20] = { 0x82, 0x68, 0x82, 0x73, 0x82, 0x64, 0x82, 0x6C, 0x81, 0x40, 0x82, 0x66, 0x82, 0x64, 0x82, 0x73, 0x81, 0x49, 0x00, 0x00 };
 
 void func_80102800_105FC0_MalletGoRound(void) {
     s16 i;
@@ -53,7 +57,7 @@ void func_80102800_105FC0_MalletGoRound(void) {
                         &D_80108650_10BE10_MalletGoRound, &D_8010865C_10BE1C_MalletGoRound);
     func_8000C38C_CF8C();
     func_8000C3C8_CFC8();
-    func_8007273C_7333C((u8*)D_80108510_10BCD0_MalletGoRound, 1);
+    func_8007273C_7333C(D_80108510_10BCD0_MalletGoRound, 1);
     D_800FA606_FB206 = 0;
     D_800FC87A_FD47A = 0;
     D_801087A0_10BF60_MalletGoRound = obj = omAddObj(6, 5, 0x2E, -1, func_80102C14_1063D4_MalletGoRound);
@@ -532,7 +536,7 @@ void func_801042D4_107A94_MalletGoRound(void) {
         break;
     case 7:
         if (D_80108455_10BC15_MalletGoRound != 0) {
-            do {
+            do { /* a CSE barrier: retail reloads here, perhaps a macro */
                 D_8010847C_10BC3C_MalletGoRound.flag = 1;
             } while (0);
             k = D_801087A4_10BF64_MalletGoRound;
@@ -652,7 +656,7 @@ void func_80104BC8_108388_MalletGoRound(s16* arg0) {
     x1 = 318.0f;
     y1 = 238.0f;
     step = y1 / (u16)(h / rows);
-    do {
+    do { /* a CSE barrier, see 0F: retail had the scroll loops here */
     } while (0);
     for (s = 0; s < h - 1; s += rows) {
         next = y0 + step;

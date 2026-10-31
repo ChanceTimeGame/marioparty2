@@ -11,14 +11,14 @@ const f32 D_801085DC_10BD9C_MalletGoRound[2][6] = {
 };
 
 #ifdef NON_MATCHING
-/* FP register allocation in the stop-angle test: retail keeps the wrap in $f0 and full in $f6. */
+/* FP register allocation only, in the stop-angle test: retail keeps wrap in $f0, full in $f6. */
 /* The wheel's main: spins the six posts, stops them on a hit. */
 void func_80105630_108DF0_MalletGoRound(omObjData* obj) {
     f32 target = 0.0f;
     f32 angle = D_801084B0_10BC70_MalletGoRound;
     f32 a, x, z;
     f32 limit;
-    f32 wrap, full, cur, val;
+    f32 wrap, wrap2, full, cur, val;
     s8 i;
 
     for (i = 0; i < 6; i++) {
@@ -101,15 +101,15 @@ void func_80105630_108DF0_MalletGoRound(omObjData* obj) {
         if (D_80108456_10BC16_MalletGoRound == 1 && D_801084B4_10BC74_MalletGoRound == 0) {
             if (D_80108457_10BC17_MalletGoRound == 0) {
                 if (D_801085DC_10BD9C_MalletGoRound[D_80108457_10BC17_MalletGoRound][D_801087A4_10BF64_MalletGoRound] == 0.0f) {
-                    wrap = 0.0f;
+                    wrap2 = 0.0f;
                     if (angle > 300.0f) {
-                        wrap = 360.0f;
+                        wrap2 = 360.0f;
                     }
                 } else {
-                    wrap = 0.0f;
+                    wrap2 = 0.0f;
                 }
                 val = D_801085DC_10BD9C_MalletGoRound[D_80108457_10BC17_MalletGoRound][D_801087A4_10BF64_MalletGoRound];
-                if (wrap + val < angle) {
+                if (wrap2 + val < angle) {
                     angle = val;
                     D_801084C8_10BC88_MalletGoRound = 0.0f;
                     D_80108457_10BC17_MalletGoRound = 1;
@@ -125,11 +125,11 @@ void func_80105630_108DF0_MalletGoRound(omObjData* obj) {
                         wrap = 360.0f;
                     }
                     full = 360.0f;
-                    cur = angle + wrap;
                 } else {
-                    wrap = full = 0.0f;
-                    cur = angle + wrap;
+                    full = 0.0f;
+                    wrap = full;
                 }
+                cur = angle + wrap;
                 limit = D_801085DC_10BD9C_MalletGoRound[D_80108457_10BC17_MalletGoRound][D_801087A4_10BF64_MalletGoRound];
                 if (cur < full + limit) {
                     angle = limit;
@@ -621,7 +621,7 @@ void func_80107F50_10B710_MalletGoRound(omObjData* obj) {
             } else {
                 func_80029714_2A314(obj->model[D_801086B4_10BE74_MalletGoRound], x + -120.0f, y + 70.0f, z + -210.0f);
             }
-            do {
+            do { /* a CSE barrier: retail reloads here, perhaps a macro */
                 D_801086B4_10BE74_MalletGoRound++;
             } while (0);
             D_801086B4_10BE74_MalletGoRound &= 7;

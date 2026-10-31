@@ -10,15 +10,15 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Mallet-Go-Round, an item minigame for one player: a wheel of six slots turns and the player
-   swings a mallet to knock items out of it. No MP1 ancestor; one retail file. .data is asm,
-   .rodata carved from 0x10BCD0. */
+/* Mallet-Go-Round, an item minigame for one player: six stacked pedestals turn on a wheel and the
+   player swings a mallet at them, two hits per item. Retail files 105FC0.c and 108DF0.c (from
+   80105630, 1-nop pad); .data is asm, .rodata per file from 0x10BCD0 and 0x10BD70. */
 
 /* One wheel slot, 0x20 bytes. */
 typedef struct MGRSlot {
     /* 0x00 */ s8 item;
-    /* 0x01 */ s8 hits;  /* blocks left, 0-2 */
-    /* 0x02 */ s8 falling;
+    /* 0x01 */ s8 hits;  /* blocks left: the hit at 1 or less wins the item */
+    /* 0x02 */ s8 falling; /* 1: a block is going, for timer frames */
     /* 0x04 */ u16 timer;
     /* 0x08 */ f32 y;
     /* 0x0C */ f32 yBase;
@@ -113,7 +113,7 @@ void func_80069770_6A370(void);
 void func_80079868_7A468(void);
 void func_80079128_79D28(void);
 void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
-void func_8007273C_7333C(u8* arg0, u8 arg1);
+void func_8007273C_7333C(const u8* arg0, u8 arg1);
 void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 void func_800794A8_7A0A8(s32);
@@ -139,7 +139,7 @@ f32 func_800B7890_B8490(f32); /* cos */
 extern s8 D_80108450_10BC10_MalletGoRound; /* 1: the game is over */
 extern s8 D_80108451_10BC11_MalletGoRound; /* 1: the players may start */
 extern s8 D_80108452_10BC12_MalletGoRound; /* 1: the slots are in place */
-extern s8 D_80108453_10BC13_MalletGoRound; /* result: -1 none yet, 0 item lost, 1/2 won */
+extern s8 D_80108453_10BC13_MalletGoRound; /* result: -1 none yet, 0 nothing, 1 item 4, 2 another item */
 extern s8 D_80108454_10BC14_MalletGoRound; /* scene state, 0-10 (func_801042D4) */
 extern s8 D_80108455_10BC15_MalletGoRound; /* item in the broken slot, -1 none */
 extern s8 D_80108456_10BC16_MalletGoRound; /* 1: a hit is stopping the wheel */
@@ -159,7 +159,7 @@ extern s32 D_8010846C_10BC2C_MalletGoRound; /* CPU wait */
 extern f32 D_80108470_10BC30_MalletGoRound; /* thrown mallet speed */
 extern u32 D_80108474_10BC34_MalletGoRound; /* time left, frames */
 extern f32 D_80108478_10BC38_MalletGoRound; /* bob angle */
-extern MGRText D_8010847C_10BC3C_MalletGoRound; /* debug text; holds pointers to the strings at 80108530/80108544 */
+extern MGRText D_8010847C_10BC3C_MalletGoRound; 
 extern s8 D_80108490_10BC50_MalletGoRound;
 extern s8 D_80108494_10BC54_MalletGoRound[8]; /* stick history */
 extern s8 D_8010849C_10BC5C_MalletGoRound[8];
@@ -212,7 +212,7 @@ extern Vec D_8010869C_10BE5C_MalletGoRound;
 extern Vec D_801086A8_10BE68_MalletGoRound;
 extern u8 D_801086B4_10BE74_MalletGoRound; /* next sparkle */
 extern Vec D_801086B8_10BE78_MalletGoRound;
-extern MGRSlot D_801086D0_10BE90_MalletGoRound[6]; /* the wheel, slot 0 = the bomb/empty */
+extern MGRSlot D_801086D0_10BE90_MalletGoRound[6]; /* the wheel: slot 0 is the empty one (dir 8), 1-5 hold items */
 extern omObjData* D_80108794_10BF54_MalletGoRound; /* the mallet */
 extern omObjData* D_80108798_10BF58_MalletGoRound; /* the sparkles */
 extern omObjData* D_8010879C_10BF5C_MalletGoRound; /* the slots */
@@ -224,7 +224,9 @@ extern omObjData* D_801087A8_10BF68_MalletGoRound; /* the wheel */
 /* .rodata */
 extern const s32 D_801085B0_10BD70_MalletGoRound[11]; /* item display files */
 extern const f32 D_801085DC_10BD9C_MalletGoRound[2][6]; /* stop angle per slot, per direction */
-extern const u32 D_80108510_10BCD0_MalletGoRound[18];
+extern const u8 D_80108510_10BCD0_MalletGoRound[32];
+extern const u8 D_80108530_10BCF0_MalletGoRound[20];
+extern const u8 D_80108544_10BD04_MalletGoRound[20];
 extern const u8 D_80108558_10BD18_MalletGoRound[16]; /* item -> gPlayers[].coins_mg_bonus */
 
 void func_80102800_105FC0_MalletGoRound(void);
