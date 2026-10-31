@@ -697,6 +697,8 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_37_TileDriver/274F30.c.o
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_39_BowsersBigBlast/27F4F0.c.o
 # S4-33: ovl_33 253A80.c too (nops between mul.s/mul.d pairs)
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_33_DriversEd/253A80.c.o
+# S4-25: ovl_25 1F1540.c too (a nop between mul.d in func_801029E8)
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_25_MechaMarathon/1F1540.c.o
 $(OVL5F_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
