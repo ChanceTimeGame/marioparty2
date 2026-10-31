@@ -46,6 +46,12 @@ typedef struct MGRCharData {
     /* 0x0C */ char unk_0C[0xC];
 } MGRCharData;
 extern MGRCharData D_800CD438_CE038[];
+typedef struct MGREspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ u16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} MGREspSlot; /* size = 0x24 */
+extern MGREspSlot* D_800F93FC_F9FFC;
 extern u16 D_800CAFD8[]; /* item ids; the low byte is the item */
 extern u8 D_800CAFE4[];  /* item odds */
 extern u16 D_800FA606_FB206;
