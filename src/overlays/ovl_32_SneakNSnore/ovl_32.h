@@ -27,6 +27,11 @@
 
 /* ---- structs ---- */
 
+/* MgWork 0x44 is padding in collision.h: the ground friction factor here. */
+#define SS_FRICTION(w) (*(f32*)(w)->unk_44)
+/* Retail tests obj->work[0] by reading work[0..3] as one word (bits 24.. are work[0]): big-endian. */
+#define SS_WORD(obj) (*(s32*)(obj)->work)
+
 /* One link of the Chomp's chain, allocated 0x28 bytes (func_80103B98_24F208_SneakNSnore). No pointers. */
 typedef struct SSLink {
     /* 0x00 */ Vec pos;
@@ -211,7 +216,7 @@ extern s8 D_80108330_2539A0_SneakNSnore[16]; /* per gate: 0 shut, 1 opening, 2 o
 extern s16 D_80108340_2539B0_SneakNSnore;    /* players created */
 extern s32 D_80108344_2539B4_SneakNSnore[4]; /* the port of each player; retail reads the low half by D_80108346_2539B6_SneakNSnore */
 extern Vec D_80108354_2539C4_SneakNSnore[4]; /* lane starts; labels D_80108358_2539C8_SneakNSnore, D_8010835C_2539CC_SneakNSnore are its y, z */
-extern u8 D_80108384_2539F4_SneakNSnore[4][4]; /* lane of each player per D_801084A8_253B18_SneakNSnore */
+extern u8 D_80108384_2539F4_SneakNSnore[16]; /* [D_801084A8_253B18_SneakNSnore * 4 + player]: the lane of each player */
 extern s8 D_80108394_253A04_SneakNSnore[4];    /* per player: 1 moved at all */
 extern s16 D_80108398_253A08_SneakNSnore[4];   /* per port: stick held, frames */
 extern s8 D_801083A0_253A10_SneakNSnore[4];
