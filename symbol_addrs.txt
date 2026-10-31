@@ -910,3 +910,4 @@ D_8010C1D4_137DC4_HotRopeJump = 0x8010C1D4; // size:0x20 segment:HotRopeJump
 // S4-0CC: ovl_0C .data: the intro state and timer (MP1 HRJSeq), two scalars in retail's code (not one struct)
 D_8010C454_138044_HotRopeJump = 0x8010C454; // size:0x2 segment:HotRopeJump
 D_8010C456_138046_HotRopeJump = 0x8010C456; // size:0x2 segment:HotRopeJump
+D_80108558_2597D8_DriversEd = 0x80108558; // size:0x28 segment:DriversEd
