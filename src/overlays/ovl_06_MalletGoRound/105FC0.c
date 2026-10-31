@@ -1,6 +1,45 @@
 #include "common.h"
 #include "ovl_06.h"
 
+/* .data (0x10BC10-0x10BCC0 here; the rest is in 108DF0.c) */
+s8 D_80108450_10BC10_MalletGoRound = 0;
+s8 D_80108451_10BC11_MalletGoRound = 0;
+s8 D_80108452_10BC12_MalletGoRound = 0;
+s8 D_80108453_10BC13_MalletGoRound = -1;
+s8 D_80108454_10BC14_MalletGoRound = 0;
+s8 D_80108455_10BC15_MalletGoRound = -1;
+s8 D_80108456_10BC16_MalletGoRound = 0;
+s8 D_80108457_10BC17_MalletGoRound = 0;
+s8 D_80108458_10BC18_MalletGoRound = 0;
+s8 D_80108459_10BC19_MalletGoRound = 0;
+s8 D_8010845A_10BC1A_MalletGoRound = 0;
+s8 D_8010845B_10BC1B_MalletGoRound = 0;
+f32 D_8010845C_10BC1C_MalletGoRound = 0.0f;
+s8 D_80108460_10BC20_MalletGoRound = 0;
+s8 D_80108461_10BC21_MalletGoRound = 0;
+s8 D_80108462_10BC22_MalletGoRound = 0;
+s32 D_80108464_10BC24_MalletGoRound = 0;
+s8 D_80108468_10BC28_MalletGoRound = 0;
+s8 D_80108469_10BC29_MalletGoRound = 0;
+s32 D_8010846C_10BC2C_MalletGoRound = 0;
+f32 D_80108470_10BC30_MalletGoRound = 40.0f;
+u32 D_80108474_10BC34_MalletGoRound = 0x149;
+f32 D_80108478_10BC38_MalletGoRound = 0.0f;
+MGRText D_8010847C_10BC3C_MalletGoRound = { 0, (char*)D_80108544_10BD04_MalletGoRound, (char*)D_80108530_10BCF0_MalletGoRound, { 0, 0 } };
+s8 D_80108490_10BC50_MalletGoRound = 0;
+s8 D_80108494_10BC54_MalletGoRound[8] = { 0 };
+s8 D_8010849C_10BC5C_MalletGoRound[8] = { 0 };
+s8 D_801084A4_10BC64_MalletGoRound = 0;
+u32 D_801084A8_10BC68_MalletGoRound = 0;
+u32 D_801084AC_10BC6C_MalletGoRound = 0;
+f32 D_801084B0_10BC70_MalletGoRound = 0.0f;
+s8 D_801084B4_10BC74_MalletGoRound = 0;
+s8 D_801084B5_10BC75_MalletGoRound = 0;
+s8 D_801084B6_10BC76_MalletGoRound = 0;
+u32 D_801084B8_10BC78_MalletGoRound = 0;
+s8 D_801084BC_10BC7C_MalletGoRound = 0;
+u16 D_801084BE_10BC7E_MalletGoRound = 0;
+
 __asm__(".section .rodata");
 /* Shift-JIS: "START ITEM GET!?" (no spaces), the minigame's name; "ITEM GET?"; "ITEM GET!". The two
    last are pointed at by D_8010847C (.data). */

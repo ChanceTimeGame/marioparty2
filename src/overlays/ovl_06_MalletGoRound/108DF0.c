@@ -1,6 +1,29 @@
 #include "common.h"
 #include "ovl_06.h"
 
+/* .data (0x10BCC0-0x10BCD0 here; the rest is in 105FC0.c) */
+f32 D_801084C0_10BC80_MalletGoRound = -80.0f;
+f32 D_801084C4_10BC84_MalletGoRound = 30.0f;
+f32 D_801084C8_10BC88_MalletGoRound = 0.0f;
+f32 D_801084CC_10BC8C_MalletGoRound = 75.0f;
+s8 D_801084D0_10BC90_MalletGoRound = 0;
+s8 D_801084D1_10BC91_MalletGoRound = 0;
+f32 D_801084D4_10BC94_MalletGoRound = -80.0f;
+f32 D_801084D8_10BC98_MalletGoRound = 30.0f;
+u32 D_801084DC_10BC9C_MalletGoRound = 0;
+u32 D_801084E0_10BCA0_MalletGoRound = 0;
+f32 D_801084E4_10BCA4_MalletGoRound = 0.0f;
+f32 D_801084E8_10BCA8_MalletGoRound = 40.0f;
+s8 D_801084EC_10BCAC_MalletGoRound = 0;
+s8 D_801084ED_10BCAD_MalletGoRound = 0;
+s8 D_801084EE_10BCAE_MalletGoRound = 0;
+f32 D_801084F0_10BCB0_MalletGoRound = -80.0f;
+f32 D_801084F4_10BCB4_MalletGoRound = 30.0f;
+Vec D_801084F8_10BCB8_MalletGoRound = { -1200.0f, 0.0f, -800.0f };
+f32 D_80108504_10BCC4_MalletGoRound = 0.0f;
+f32 D_80108508_10BCC8_MalletGoRound = 40.0f;
+u16 D_8010850C_10BCCC_MalletGoRound = 0;
+
 __asm__(".section .rodata");
 const s32 D_801085B0_10BD70_MalletGoRound[11] = { 0x00140008, 0x00140009, 0x0014000A, 0x0014000C, 0x0014000D, 0x0014000E, 0x0014000F, 0x00140010, 0x00140011, 0x00140012, 0x00140013 };
 
