@@ -235,6 +235,8 @@ void func_801062EC_109AAC_MalletGoRound(omObjData* obj) {
     f32 angle;
     f32 a, x, z;
     f32 t;
+    f32 scale;
+    s16* mdl;
     s8 i;
 
     if (D_801084D0_10BC90_MalletGoRound == 0) {
@@ -335,8 +337,10 @@ void func_801062EC_109AAC_MalletGoRound(omObjData* obj) {
                 if (t < 0.0f) {
                     t = 0.0f;
                 }
-                t = (150.0f - t) / 150.0f * 1.5f;
-                func_800297E8_2A3E8(obj->model[7], t, t, t);
+                t = (150.0f - t) / 150.0f;
+                mdl = obj->model;
+                scale = t * 1.5f;
+                func_800297E8_2A3E8(mdl[7], scale, scale, scale);
                 func_80029714_2A314(obj->model[7], D_80108690_10BE50_MalletGoRound.x, D_80108690_10BE50_MalletGoRound.y, D_80108690_10BE50_MalletGoRound.z);
                 func_800298A4_2A4A4(obj->model[7], 4, 0);
             }
@@ -347,7 +351,179 @@ void func_801062EC_109AAC_MalletGoRound(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/108DF0", func_80106C7C_10A43C_MalletGoRound);
+void func_80106C7C_10A43C_MalletGoRound(omObjData* obj) {
+    f32 target = 0.0f;
+    f32 angle;
+    f32 a, x, z;
+    f32 t;
+    f32 scale;
+    s16* mdl;
+    s8 i;
+
+    if (D_801084ED_10BCAD_MalletGoRound == 0) {
+        for (i = 0; i < 3; i++) {
+            ((f32*)&D_801086A8_10BE68_MalletGoRound)[i] = (((f32*)&D_801086B8_10BE78_MalletGoRound)[i] - ((f32*)&D_801084F8_10BCB8_MalletGoRound)[i]) / 80.0f;
+        }
+        D_801084ED_10BCAD_MalletGoRound = 1;
+    }
+    angle = D_801084B0_10BC70_MalletGoRound;
+    if (D_80108451_10BC11_MalletGoRound == 1) {
+        if (D_80108452_10BC12_MalletGoRound == 0) {
+            angle -= 60.0f;
+            if (angle < 0.0f) {
+                angle += 360.0f;
+            }
+            for (i = 1; i < 6; i++) {
+                D_801086D0_10BE90_MalletGoRound[i].y -= 12.0f;
+                switch (D_801086D0_10BE90_MalletGoRound[i].hits) {
+                case 0:
+                    target = 100.0f;
+                    break;
+                case 1:
+                    target = 200.0f;
+                    break;
+                case 2:
+                    target = 300.0f;
+                    break;
+                }
+                if (D_801086D0_10BE90_MalletGoRound[i].y <= target) {
+                    D_801086D0_10BE90_MalletGoRound[i].y = target;
+                    D_801084EE_10BCAE_MalletGoRound = 1;
+                }
+                a = 220.0f;
+                a = angle + a;
+                x = func_800B7890_B8490(a) * 210.0f - HuMathSin(a) * 210.0f;
+                z = HuMathSin(a) * 210.0f + func_800B7890_B8490(a) * 210.0f;
+                func_80029714_2A314(obj->model[i + 1], x + D_801084F0_10BCB0_MalletGoRound,
+                                    D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].lift + D_801086D0_10BE90_MalletGoRound[i].unk_18 + D_801086D0_10BE90_MalletGoRound[i].bob,
+                                    z + D_801084F4_10BCB4_MalletGoRound + D_801086D0_10BE90_MalletGoRound[i].z);
+                if (i == 0) {
+                    func_8002979C_2A39C(obj->model[1], 0.0f, -angle + 180.0f, 0.0f);
+                }
+                if (D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].lift + D_801086D0_10BE90_MalletGoRound[i].unk_18 - target > 150.0f) {
+                    func_800298A4_2A4A4(obj->model[i + 7], 4, 4);
+                } else {
+                    t = D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].lift + D_801086D0_10BE90_MalletGoRound[i].unk_18 - target;
+                    if (t < 0.0f) {
+                        t = 0.0f;
+                    }
+                    t = (150.0f - t) / 150.0f;
+                    if (i == 0) {
+                        t *= 1.5f;
+                    }
+                    func_800297E8_2A3E8(obj->model[i + 7], t, t, t);
+                    func_80029714_2A314(obj->model[i + 7], x + D_801084F0_10BCB0_MalletGoRound, target + -75.0f, z + D_801084F4_10BCB4_MalletGoRound + D_801086D0_10BE90_MalletGoRound[i].z);
+                    func_800298A4_2A4A4(obj->model[i + 7], 4, 0);
+                }
+                angle -= 60.0f;
+                if (angle < 0.0f) {
+                    angle += 360.0f;
+                }
+            }
+            if (D_801084EE_10BCAE_MalletGoRound == 1) {
+                if (D_8010850C_10BCCC_MalletGoRound < 80) {
+                    for (i = 0; i < 3; i++) {
+                        ((f32*)&D_801084F8_10BCB8_MalletGoRound)[i] += ((f32*)&D_801086A8_10BE68_MalletGoRound)[i];
+                    }
+                    D_80108504_10BCC4_MalletGoRound += D_80108508_10BCC8_MalletGoRound;
+                    D_80108508_10BCC8_MalletGoRound -= 3.0f;
+                    if (D_80108504_10BCC4_MalletGoRound < 0.0f) {
+                        D_80108504_10BCC4_MalletGoRound = 0.0f;
+                        D_80108508_10BCC8_MalletGoRound *= -0.8565f;
+                        func_80029B80_2A780(obj->model[1], obj->motion[1]);
+                        func_800798F8_7A4F8(PlaySound(0x145), 96.0f - (D_8010850C_10BCCC_MalletGoRound / 60.0f) * 32.0f);
+                    }
+                    D_8010850C_10BCCC_MalletGoRound++;
+                } else {
+                    D_80108452_10BC12_MalletGoRound = 1;
+                    D_801084EE_10BCAE_MalletGoRound = 1;
+                }
+                func_80029714_2A314(obj->model[1], D_801084F8_10BCB8_MalletGoRound.x, D_801084F8_10BCB8_MalletGoRound.y + D_80108504_10BCC4_MalletGoRound, D_801084F8_10BCB8_MalletGoRound.z);
+                t = D_80108504_10BCC4_MalletGoRound;
+                if (t > 150.0f) {
+                    func_800298A4_2A4A4(obj->model[7], 4, 4);
+                } else {
+                    if (t < 0.0f) {
+                        t = 0.0f;
+                    }
+                    t = (150.0f - t) / 150.0f;
+                    mdl = obj->model;
+                    scale = t * 1.5f;
+                    func_800297E8_2A3E8(mdl[7], scale, scale, scale);
+                    if (D_8010850C_10BCCC_MalletGoRound >= 70) {
+                        mdl = obj->model;
+                        func_80029714_2A314(mdl[7], D_800FC834_FD434[D_801087A8_10BF68_MalletGoRound->model[1]].pos.x, 100.0f, D_800FC834_FD434[D_801087A8_10BF68_MalletGoRound->model[1]].pos.z);
+                    } else {
+                        func_80029714_2A314(obj->model[7], D_801084F8_10BCB8_MalletGoRound.x, D_801084F8_10BCB8_MalletGoRound.y, D_801084F8_10BCB8_MalletGoRound.z);
+                    }
+                    func_800298A4_2A4A4(obj->model[7], 4, 0);
+                }
+                D_800FC834_FD434[obj->model[1]].rot.y = func_800B75A8_B81A8(D_801086A8_10BE68_MalletGoRound.x, -D_801086A8_10BE68_MalletGoRound.y);
+            }
+        } else {
+            for (i = 0; i < 6; i++) {
+                D_801086D0_10BE90_MalletGoRound[i].y -= 18.0f;
+                switch (D_801086D0_10BE90_MalletGoRound[i].hits) {
+                case 0:
+                    target = 100.0f;
+                    break;
+                case 1:
+                    target = 200.0f;
+                    break;
+                case 2:
+                    target = 300.0f;
+                    break;
+                }
+                if (D_801086D0_10BE90_MalletGoRound[i].y <= target) {
+                    D_801086D0_10BE90_MalletGoRound[i].y = target;
+                    if (D_801086D0_10BE90_MalletGoRound[i].hits <= 0) {
+                        D_80108450_10BC10_MalletGoRound = 1;
+                    }
+                }
+                a = 220.0f;
+                a = angle + a;
+                x = func_800B7890_B8490(a) * 210.0f - HuMathSin(a) * 210.0f;
+                z = HuMathSin(a) * 210.0f + func_800B7890_B8490(a) * 210.0f;
+                func_80029714_2A314(obj->model[i + 1], x + D_801084F0_10BCB0_MalletGoRound,
+                                    D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].unk_18 + D_801086D0_10BE90_MalletGoRound[i].bob,
+                                    z + D_801084F4_10BCB4_MalletGoRound);
+                if (i == 0) {
+                    func_8002979C_2A39C(obj->model[1], 0.0f, -angle + 180.0f, 0.0f);
+                }
+                if (D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].lift + D_801086D0_10BE90_MalletGoRound[i].unk_18 - target > 150.0f) {
+                    func_800298A4_2A4A4(obj->model[i + 7], 4, 4);
+                } else {
+                    t = D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].lift + D_801086D0_10BE90_MalletGoRound[i].unk_18 - target;
+                    if (t < 0.0f) {
+                        t = 0.0f;
+                    }
+                    t = (150.0f - t) / 150.0f;
+                    if (i == 0) {
+                        t *= 1.5f;
+                    }
+                    func_800297E8_2A3E8(obj->model[i + 7], t, t, t);
+                    func_800298A4_2A4A4(obj->model[i + 7], 4, 0);
+                    if (i != 0) {
+                        if (D_801086D0_10BE90_MalletGoRound[i].hits > 0) {
+                            func_80029714_2A314(obj->model[i + 7], x + D_801084F0_10BCB0_MalletGoRound, D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].unk_18 + -75.0f, z + D_801084F4_10BCB4_MalletGoRound + D_801086D0_10BE90_MalletGoRound[i].z);
+                        } else {
+                            func_80029714_2A314(obj->model[i + 7], x + D_801084F0_10BCB0_MalletGoRound, D_801086D0_10BE90_MalletGoRound[i].y + D_801086D0_10BE90_MalletGoRound[i].unk_18 + -75.0f, z + D_801084F4_10BCB4_MalletGoRound + D_801086D0_10BE90_MalletGoRound[i].z);
+                        }
+                    } else {
+                        func_80029714_2A314(obj->model[i + 7], x + D_801084F0_10BCB0_MalletGoRound, target + -75.0f, z + D_801084F4_10BCB4_MalletGoRound + D_801086D0_10BE90_MalletGoRound[i].z);
+                    }
+                }
+                angle -= 60.0f;
+                if (angle < 0.0f) {
+                    angle += 360.0f;
+                }
+            }
+        }
+    }
+    if (D_801084B6_10BC76_MalletGoRound == 1) {
+        obj->func_ptr = func_801062EC_109AAC_MalletGoRound;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_06_MalletGoRound/108DF0", func_801079EC_10B1AC_MalletGoRound);
 
