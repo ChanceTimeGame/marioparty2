@@ -1,5 +1,31 @@
 #include "ovl_07.h"
 
+/* .data (0x1139E0-0x113A80, 8010A3D0-8010A470) */
+Gfx D_8010A3D0_1139E0_GrabBag[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x00552048),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, 320, 240),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010A418_113A28_GrabBag[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 0x00553078),
+    gsDPSetBlendColor(0, 0, 0, 1),
+    gsDPSetAlphaCompare(G_AC_THRESHOLD),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, 320, 240),
+    gsSPEndDisplayList(),
+};
+u32 D_8010A468_pad[2] = { 0, 0 };
+
 void func_80104B20_10E130_GrabBag(void) {
     omObjData* obj;
 
