@@ -136,6 +136,17 @@ void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80029708_2A308(s32);
+extern f32 D_800BF7C8_C03C8;
+void func_80079848_7A448(s16 arg0);
+void func_8000BEF8_CAF8(omObjData*, s32, f32);
+void func_8000BF54_CB54(omObjData* obj, f32 arg1, f32 arg2, f32 minX, f32 minZ, f32 maxX, f32 maxZ);
+void func_8000C018_CC18(u16);
+u16 func_80018A30_19630(s32 arg0, s32 arg1); /* model from a file */
+void func_8002BED4_2CAD4(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6); /* texture scroll */
+void func_8002D1EC_2DDEC(s16 arg0, u8 arg1);
+void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
+void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */
 
 /* ---- .data and .bss, in address order ---- */
 extern s32 D_8010A1B0_11B630_LavaTileIsle; /* seconds */
@@ -146,16 +157,16 @@ extern s32 D_8010A1C0_11B640_LavaTileIsle;
 extern s32 D_8010A1C4_11B644_LavaTileIsle; /* players still standing */
 extern s16 D_8010A1C8_11B648_LavaTileIsle;
 extern s8 D_8010A1CA_11B64A_LavaTileIsle; /* quit state */
-extern s32 D_8010A1D0_11B650_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1D1_11B651_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1D4_11B654_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1D8_11B658_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1DC_11B65C_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1E0_11B660_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1E8_11B668_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1E9_11B669_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1F0_11B670_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A1F4_11B674_LavaTileIsle;   /* unused by code */
+extern u8 D_8010A1D0_11B650_LavaTileIsle[4]; /* platform 3 model states by step */
+
+extern u16 D_8010A1D4_11B654_LavaTileIsle; /* step timer */
+extern f32 D_8010A1D8_11B658_LavaTileIsle; /* bob angle */
+extern s16 D_8010A1DC_11B65C_LavaTileIsle; /* 1: the loops are stopped */
+extern s8 D_8010A1E0_11B660_LavaTileIsle[8]; /* the tile that moves, by step */
+extern u8 D_8010A1E8_11B668_LavaTileIsle[8];
+
+extern u16 D_8010A1F0_11B670_LavaTileIsle;
+extern f32 D_8010A1F4_11B674_LavaTileIsle;
 extern s32 D_8010A200_11B680_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A202_11B682_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A210_11B690_LavaTileIsle;   /* unused by code */
@@ -176,21 +187,21 @@ extern s32 D_8010A31C_11B79C_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A490_11B910_LavaTileIsle;   /* unused by code */
 extern s16 D_8010A494_11B914_LavaTileIsle;
 extern s16 D_8010A496_11B916_LavaTileIsle;
-extern s32 D_8010A4A0_11B920_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4A4_11B924_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4A8_11B928_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4AC_11B92C_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4AE_11B92E_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4B0_11B930_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4B4_11B934_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4B8_11B938_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4BC_11B93C_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4C0_11B940_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4C2_11B942_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4C4_11B944_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4C8_11B948_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4CC_11B94C_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4D0_11B950_LavaTileIsle;   /* unused by code */
+extern f32 D_8010A4A0_11B920_LavaTileIsle; /* moving tile's start x */
+extern f32 D_8010A4A4_11B924_LavaTileIsle; /* start z */
+extern f32 D_8010A4A8_11B928_LavaTileIsle; /* speed */
+extern s16 D_8010A4AC_11B92C_LavaTileIsle; /* sound */
+extern s16 D_8010A4AE_11B92E_LavaTileIsle;
+extern s16 D_8010A4B0_11B930_LavaTileIsle;
+extern f32 D_8010A4B4_11B934_LavaTileIsle;
+extern f32 D_8010A4B8_11B938_LavaTileIsle;
+extern f32 D_8010A4BC_11B93C_LavaTileIsle;
+extern s16 D_8010A4C0_11B940_LavaTileIsle; /* tile model */
+extern s16 D_8010A4C2_11B942_LavaTileIsle; /* second tile model */
+extern u16 D_8010A4C4_11B944_LavaTileIsle[2]; /* texture size */
+extern u16 D_8010A4C8_11B948_LavaTileIsle[2];
+extern f32 D_8010A4CC_11B94C_LavaTileIsle; /* lava scroll */
+extern s16 D_8010A4D0_11B950_LavaTileIsle; /* lava model */
 extern s32 D_8010A4E0_11B960_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A4E2_11B962_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A4E3_11B963_LavaTileIsle;   /* unused by code */
@@ -205,8 +216,8 @@ extern Vec D_8010A580_11BA00_LavaTileIsle[3];
 extern LTRect D_8010A5A8_11BA28_LavaTileIsle[5];
 
 extern s8 D_8010A60C_11BA8C_LavaTileIsle;
-extern s32 D_8010A610_11BA90_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A614_11BA94_LavaTileIsle;   /* unused by code */
+extern omObjData* D_8010A610_11BA90_LavaTileIsle;
+extern omObjData* D_8010A614_11BA94_LavaTileIsle;
 extern s8 D_8010A618_11BA98_LavaTileIsle;
 extern s8 D_8010A619_11BA99_LavaTileIsle; /* result: -1 none yet, 0 a winner, 1 a draw */
 
@@ -217,13 +228,13 @@ void func_801029A8_113E28_LavaTileIsle(void);
 void func_80102AB0_113F30_LavaTileIsle(void);
 void func_80102BD0_114050_LavaTileIsle(void);
 void func_801031C0_114640_LavaTileIsle(void);
-void func_80103300_114780_LavaTileIsle(void);
-void func_801036B4_114B34_LavaTileIsle(void);
-void func_80103790_114C10_LavaTileIsle(void);
-void func_8010385C_114CDC_LavaTileIsle(void);
-void func_801039A4_114E24_LavaTileIsle(void);
-void func_80103B04_114F84_LavaTileIsle(void);
-void func_80104154_1155D4_LavaTileIsle(void);
+void func_80103300_114780_LavaTileIsle(omObjData* obj);
+void func_801036B4_114B34_LavaTileIsle(omObjData* obj);
+void func_80103790_114C10_LavaTileIsle(omObjData* obj);
+void func_8010385C_114CDC_LavaTileIsle(omObjData* obj);
+void func_801039A4_114E24_LavaTileIsle(omObjData* obj);
+void func_80103B04_114F84_LavaTileIsle(omObjData* obj);
+void func_80104154_1155D4_LavaTileIsle(omObjData* obj);
 void func_801046E0_115B60_LavaTileIsle(void);
 void func_8010479C_115C1C_LavaTileIsle(void);
 void func_80104C94_116114_LavaTileIsle(void);
