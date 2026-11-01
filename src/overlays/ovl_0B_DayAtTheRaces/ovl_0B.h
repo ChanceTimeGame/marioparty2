@@ -122,6 +122,72 @@ typedef struct DRSprMdl {
     /* 0x38 */ struct DRSprMdl* prev;
 } DRSprMdl; /* size = 0x3C */
 
+#define DRF_ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+/* A racer's work, omObjData::unk_50, 0x68 bytes (D_8010AC6C keeps a copy for the replay). */
+typedef struct DRPlayer {
+    /* 0x00 */ s16 mode;  /* index in D_8010A908 */
+    /* 0x02 */ s16 index; /* index in D_8010A538 and D_8010A638 */
+    /* 0x04 */ s8 port;
+    /* 0x05 */ s8 gear;   /* -1 none yet, else 0-2 */
+    /* 0x08 */ f32 x;
+    /* 0x0C */ f32 speed;
+    /* 0x10 */ f32 boost;
+    /* 0x14 */ f32 accel;
+    /* 0x18 */ char unk_18[4];
+    /* 0x1C */ f32 anim;
+    /* 0x20 */ s16 alpha;
+    /* 0x22 */ s16 motion;
+    /* 0x24 */ s32 timer;
+    /* 0x28 */ s32 timer2;
+    /* 0x2C */ char unk_2C[8];
+    /* 0x34 */ f32 baseX;
+    /* 0x38 */ f32 phase;
+    /* 0x3C */ f32 baseRot;
+    /* 0x40 */ f32 last;
+    /* 0x44 */ s8 busy; /* no movement */
+    /* 0x45 */ s8 lock; /* no motion change */
+    /* 0x46 */ s16 state;
+    /* 0x48 */ s32 sub;
+    /* 0x4C */ s32 wait;
+    /* 0x50 */ s32 unk_50;
+    /* 0x54 */ s32 unk_54;
+    /* 0x58 */ char unk_58[0x10];
+} DRPlayer; /* size = 0x68 */
+
+/* A racer's motion. */
+typedef struct DRMotion {
+    /* 0x00 */ s32 file;
+    /* 0x04 */ void (*func)(omObjData*, DRPlayer*);
+    /* 0x08 */ s16 end;
+    /* 0x0A */ s16 start; /* < 0: play once */
+    /* 0x0C */ s16 loop;
+    /* 0x10 */ f32 speed;
+} DRMotion; /* size = 0x14 */
+
+/* A racer. */
+typedef struct DRChar {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ f32 scale;
+    /* 0x10 */ Vec shadow;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ s32 file;
+    /* 0x24 */ s32 unk_24;
+    /* 0x28 */ s32 attr;
+} DRChar; /* size = 0x2C */
+
+typedef struct DRSave {
+    /* 0x0 */ u16 flag;
+    /* 0x2 */ u16 frame;
+    /* 0x4 */ char unk_04[0xA];
+    /* 0xE */ s16 seed;
+} DRSave; /* size = 0x10 */
+
+typedef struct DRMark {
+    /* 0x0 */ char unk_00[0xE];
+    /* 0xE */ s16 value;
+} DRMark;
+
 void HuVecAdd(Vec*, Vec*, Vec*);
 void HuVecAddScaled(Vec*, Vec*, f32, Vec*);
 void HuVecCopyXYZ(Vec*, f32, f32, f32);
@@ -184,6 +250,21 @@ typedef struct DRObjs {
     omObjData** objs;
 } DRObjs;
 extern DRObjs D_8010AC10_12E3F0_DayAtTheRaces; /* the thirty level objects */
+extern DRObjs D_8010AC20_12E400_DayAtTheRaces; /* the four racers */
+extern DRObjs D_8010AC24_12E404_DayAtTheRaces;
+extern u8 D_8010AC35_12E415_DayAtTheRaces;
+extern s16 D_8010AC3A_12E41A_DayAtTheRaces; /* 1: paused */
+extern u8 D_8010AC3C_12E41C_DayAtTheRaces[4];
+extern u8 D_8010AC40_12E420_DayAtTheRaces[4];
+extern DRSave D_8010AC50_12E430_DayAtTheRaces;
+extern s16 D_8010AC60_12E440_DayAtTheRaces[4];
+extern u8 D_8010AC68_12E448_DayAtTheRaces[4];
+extern DRPlayer D_8010AC6C_12E44C_DayAtTheRaces[4];
+extern f32 D_8010AE0C_12E5EC_DayAtTheRaces[4];
+extern f32 D_8010AE1C_12E5FC_DayAtTheRaces[4];
+extern s16 D_8010AE30_12E610_DayAtTheRaces[9];
+extern s32 D_8010AE48_12E628_DayAtTheRaces[4]; /* racers by gear */
+extern s32 D_8010AE58_12E638_DayAtTheRaces[4]; /* racers by distance */
 extern DRGame D_8010AE70_12E650_DayAtTheRaces;
 extern omObjData* D_8010AEB4_12E694_DayAtTheRaces[2]; /* cameras */
 extern omObjData* D_8010AEBC_12E69C_DayAtTheRaces;    /* the sprite model object */
@@ -191,6 +272,14 @@ extern s32 D_8010AEC0_12E6A0_DayAtTheRaces;           /* the game's own random s
 extern DRSprMdl D_8010AEC8_12E6A8_DayAtTheRaces;      /* the list's head */
 extern DRSprMdl* D_8010AF04_12E6E4_DayAtTheRaces;     /* its tail */
 
+extern u8 D_8010A4E0_12DCC0_DayAtTheRaces[4][8];
+extern f32 D_8010A500_12DCE0_DayAtTheRaces[9]; /* lap marks */
+extern s16 D_8010A524_12DD04_DayAtTheRaces[10];
+extern DRChar D_8010A538_12DD18_DayAtTheRaces[4];
+extern f32 D_8010A5E8_12DDC8_DayAtTheRaces[4][5];
+extern DRMotion D_8010A638_12DE18_DayAtTheRaces[4][9];
+extern void (*D_8010A908_12E0E8_DayAtTheRaces[4])(omObjData*, DRPlayer*);
+extern void (*D_8010A918_12E0F8_DayAtTheRaces[6])(omObjData*, DRPlayer*);
 extern DRCamDef D_8010AA60_12E240_DayAtTheRaces[2];
 extern DRLight D_8010AAB0_12E290_DayAtTheRaces[2];
 extern void (*D_8010AAD0_12E2B0_DayAtTheRaces[3])(DRCam*);
@@ -198,6 +287,8 @@ extern void (*D_8010AADC_12E2BC_DayAtTheRaces[9])(omObjData*);
 
 /* main functions without a header */
 void func_8002864C_2924C(void);
+void func_80029FBC_2ABBC(s16, f32);
+f32 func_80029E3C_2AA3C(s16);
 void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void func_80026DAC_279AC(s16, u8, u8, u8);
@@ -227,6 +318,14 @@ s32 func_8003DF08_3EB08(void*);
 /* overlay functions used across files */
 void func_801036C4_126EA4_DayAtTheRaces(void);
 void func_80103688_126E68_DayAtTheRaces(void);
+void func_80103EC4_1276A4_DayAtTheRaces(s32 stop);
+void func_80103FF0_1277D0_DayAtTheRaces(omObjData* obj, s32 idx, f32 y, f32 rot, f32 scale, f32 speed);
+void func_80104128_127908_DayAtTheRaces(omObjData* obj);
+void func_80104364_127B44_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+s32 func_801053D0_128BB0_DayAtTheRaces(omObjData* obj, s32 mot);
+void func_801055E4_128DC4_DayAtTheRaces(omObjData* obj, s32 mot, f32 t);
+s32 func_801057AC_128F8C_DayAtTheRaces(omObjData* obj);
+void func_80105894_129074_DayAtTheRaces(omObjData* obj, f32 speed);
 void func_80108374_12BB54_DayAtTheRaces(void);
 void func_80108414_12BBF4_DayAtTheRaces(void);
 void func_80108458_12BC38_DayAtTheRaces(void);
