@@ -19,8 +19,8 @@ typedef struct MgMotion {
 /* Torpedo Targets, 2 vs 2: each team crews one submarine, split screen. The pilot (group 0, 2)
    steers with the stick and A/B set the throttle; the gunner (group 1, 3) fires a torpedo with A and
    guides it with the stick. A target (model D_8010949C_28B6AC) surfaces on one of four paths; a hit scores one
-   point. A torpedo hitting the other sub knocks it about. 1825 frames, the higher score wins (10
-   coins each); a draw plays both losing endings. Retail files 284A10.c (setup, flow, camera, the subs),
+   point. A torpedo hitting the other sub knocks it about. The clock starts at 60 s (3650, 2 per
+   game frame); the higher score wins, 10 coins each; a draw gives no coins. Retail files 284A10.c (setup, flow, camera, the subs),
    289BC0.c (from 801079B0, end poses and the CPUs), 28AB10.c (from 80108900, the target);
    .data is asm, .rodata per file from 0x28B5E0 and 0x28B614. */
 
@@ -173,7 +173,7 @@ void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 extern s8 D_80109260_28B470_TorpedoTargets;  /* -2 on a draw */
 extern omObjData* D_80109264_28B474_TorpedoTargets[2]; /* the subs */
 extern Vec D_8010926C_28B47C_TorpedoTargets[2]; /* torpedo positions */
-extern Vec D_80109284_28B494_TorpedoTargets[4]; /* rocks; the target rests on them in path 3 */
+extern Vec D_80109284_28B494_TorpedoTargets[4]; /* obstacles; the target sits above one in path 3 */
 extern s8 D_801092B4_28B4C4_TorpedoTargets;   /* target: 0 appearing, 1 on its path, else counting up to 0 */
 extern s8 D_801092B8_28B4C8_TorpedoTargets[2]; /* torpedo: 0 loaded, 1 running, <0 reloading */
 extern u8 D_801092BC_28B4CC_TorpedoTargets[2]; /* scores */
@@ -186,7 +186,7 @@ extern u32 D_801092F8_28B508_TorpedoTargets;  /* time left, 2 per frame */
 extern s32 D_801092FC_28B50C_TorpedoTargets;  /* result frames */
 extern s32 D_80109300_28B510_TorpedoTargets;
 extern f32 D_8010930C_28B51C_TorpedoTargets;  /* wave scroll */
-extern f32 D_80109310_28B520_TorpedoTargets;  /* mine angle */
+extern f32 D_80109310_28B520_TorpedoTargets;  /* angle of the model circling overhead */
 extern s16 D_80109314_28B524_TorpedoTargets;
 extern s32 D_80109318_28B528_TorpedoTargets[6]; /* pilot file, by character */
 extern s32 D_80109330_28B540_TorpedoTargets[6];
@@ -197,7 +197,7 @@ extern s32 D_80109390_28B5A0_TorpedoTargets;
 extern f32 D_80109394_28B5A4_TorpedoTargets;
 extern s32 D_80109398_28B5A8_TorpedoTargets;
 extern f32 D_8010939C_28B5AC_TorpedoTargets;
-extern u8 D_801093A0_28B5B0_TorpedoTargets[2]; /* gunner CPU aim: 0 target, 1 other sub */
+extern s8 D_801093A0_28B5B0_TorpedoTargets[2]; /* gunner CPU aim: 0 target, 1 other sub */
 extern s32 D_801093B0_28B5C0_TorpedoTargets;  /* target alpha */
 extern u8 D_801093B3_28B5C3_TorpedoTargets;   /* its low byte, by retail's own label */
 extern f32 D_801093B4_28B5C4_TorpedoTargets;  /* target bob speed */

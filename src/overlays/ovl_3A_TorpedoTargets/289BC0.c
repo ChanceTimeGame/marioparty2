@@ -215,6 +215,7 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
     Vec3f dir;
     Vec3f* pd;
     Vec aim = D_80109404_28B614_TorpedoTargets;
+    s32 other;
     f32 reach;
     f32 cone;
     f32 stick;
@@ -269,7 +270,8 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
         a = w->yaw - 90.0f;
         sn = HuMathSin(a);
         c = func_8000DA2C_E62C(dx, dz, sn, func_800B7890_B8490(a));
-        sub = D_80109264_28B474_TorpedoTargets[w->team == 0];
+        other = w->team == 0;
+        sub = D_80109264_28B474_TorpedoTargets[other];
         dir.x = dx = sub->trans.x - obj->trans.x;
         dir.y = dy = sub->trans.y - (obj->trans.y - k);
         dir.z = dz = sub->trans.z - obj->trans.z;
