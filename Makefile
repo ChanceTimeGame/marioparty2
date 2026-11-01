@@ -770,7 +770,8 @@ $(S438_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # S4-09: ovl_09 11B910.c is GCC's assembly with blank lines removed, assembled with the KMC VR4300
 # mul fix on (func_80104244: a nop between back-to-back mul.s)
-S409_BLANKSTRIP_UNITS := build/src/overlays/ovl_09_BumperBalloonCars/11B910.c.o
+S409_BLANKSTRIP_UNITS := build/src/overlays/ovl_09_BumperBalloonCars/11B910.c.o \
+	build/src/overlays/ovl_09_BumperBalloonCars/121510.c.o
 $(S409_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S409_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

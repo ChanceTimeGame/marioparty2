@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ovl_09.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80102800_11B910_BumperBalloonCars);
 
@@ -108,7 +109,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80107F34_121044_BumperBalloonCars);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80108084_121194_BumperBalloonCars);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80108400_121510_BumperBalloonCars);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_801084F4_121604_BumperBalloonCars);
