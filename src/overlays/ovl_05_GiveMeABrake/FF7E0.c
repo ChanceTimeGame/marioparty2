@@ -225,7 +225,7 @@ void func_80102D88_FFD68_GiveMeABrake(omObjData* obj) {
     }
 }
 
-/* The hand sprite and the items on the panels. */
+/* The backdrop sprite and the item sprites on the panels. */
 void func_801032D4_1002B4_GiveMeABrake(omObjData* obj) {
     s16 anim[10];
     s16 i;
@@ -245,7 +245,7 @@ void func_801032D4_1002B4_GiveMeABrake(omObjData* obj) {
     obj->func_ptr = func_801034C8_1004A8_GiveMeABrake;
 }
 
-/* The shake: alternates sign each frame, and decays. */
+/* Draws the backdrop; its shake alternates sign each frame and decays. */
 void func_801034C8_1004A8_GiveMeABrake(omObjData* obj) {
     func_80107608_1045E8_GiveMeABrake(D_80109090_106070_GiveMeABrake, 0.0f, D_801090B4_106094_GiveMeABrake * D_8010903B_10601B_GiveMeABrake, 1.0f);
     D_801090B4_106094_GiveMeABrake = -D_801090B4_106094_GiveMeABrake;
@@ -657,7 +657,7 @@ void func_80103BE8_100BC8_GiveMeABrake(omObjData* obj) {
                 }
                 {
                 s32 unused[6] = { 18, 1, 1, 1, 1, 1 };
-                s32 pad[1][6];
+                s32 pad[1][6]; /* unused: fixes the stack layout */
                 s32 face[6] = { 8, 5, 5, 2, 5, 5 };
 
                 if (0) pad[0][0] = 0;
@@ -723,7 +723,7 @@ void func_80103BE8_100BC8_GiveMeABrake(omObjData* obj) {
             func_8002979C_2A39C(obj->model[11], 0.0f, rot0[D_80108FE0_105FC0_GiveMeABrake.result != 3 ? D_80108FE0_105FC0_GiveMeABrake.result : 6] * (1.0 - D_8010900C_105FEC_GiveMeABrake / 18.0) + rot1[D_80108FE0_105FC0_GiveMeABrake.result != 3 ? D_80108FE0_105FC0_GiveMeABrake.result : 6] * (D_8010900C_105FEC_GiveMeABrake / 18.0), 0.0f);
             func_80029714_2A314(obj->model[11], HuMathSin(rot1[D_80108FE0_105FC0_GiveMeABrake.result != 3 ? D_80108FE0_105FC0_GiveMeABrake.result : 6]) * D_80109060_106040_GiveMeABrake + D_8010908C_10606C_GiveMeABrake, 0.0f, func_800B7890_B8490(rot1[D_80108FE0_105FC0_GiveMeABrake.result != 3 ? D_80108FE0_105FC0_GiveMeABrake.result : 6]) * D_80109060_106040_GiveMeABrake + D_8010901C_105FFC_GiveMeABrake);
         }
-        if (0) {
+        if (0) { /* retail's dead debug print: only its string survives, after the local tables */
             osSyncPrintf("px=%f py=%f pz=%f\n", px, py, pz);
         }
         if (D_80109004_105FE4_GiveMeABrake == 0) {
@@ -835,10 +835,76 @@ void func_80103BE8_100BC8_GiveMeABrake(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_GiveMeABrake/FF7E0", func_80107598_104578_GiveMeABrake);
+/* Sets a model's motion frame directly. */
+void func_80107598_104578_GiveMeABrake(s16 model, s16 frame) {
+    s32 off = model * sizeof(HmfModel);
+    HmfModel* m = (HmfModel*)(off + (u8*)D_800FC834_FD434);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_GiveMeABrake/FF7E0", func_801075DC_1045BC_GiveMeABrake);
+    m->hmf->unk9C->unk08 = frame;
+}
 
+void func_801075DC_1045BC_GiveMeABrake(s16 sprite) {
+    func_80107608_1045E8_GiveMeABrake(sprite, 0.0f, 0.0f, 1.0f);
+}
+
+#ifdef NON_MATCHING
+/* Draws a 320x240 CI8 esp image by hand in 40x40 tiles, at offset (x, y), scaled about the screen centre. */
+void func_80107608_1045E8_GiveMeABrake(s16 sprite, f32 x, f32 y, f32 scale) {
+    HuSprite* spr;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    s16 tx;
+    s16 ty;
+    f32 x0;
+    f32 x1;
+    f32 y0;
+    f32 y1;
+
+    if (scale < 1.0f) {
+        scale = 1.0f;
+    }
+    spr = func_80082550_83150(D_800F93FC_F9FFC[sprite].unk_04, 0);
+    frame = &spr->unk_84->unk00[spr->unk_90];
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_80108800_1057E0_GiveMeABrake);
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
+    for (ty = 0; ty < 240; ty += 40) {
+        for (tx = 0; tx < 320; tx += 40) {
+            x0 = (f32)(tx - 160) * scale + 160.0f + x;
+            x1 = (f32)(tx - 119) * scale + 160.0f + x;
+            y0 = (f32)(ty - 120) * scale + 120.0f + y;
+            y1 = (f32)(ty - 79) * scale + 120.0f + y;
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, 320, 240, tx, ty, tx + 41,
+                               ty + 41, 0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, GB_FIX(x0), GB_FIX(y0), GB_FIX(x1), GB_FIX(y1),
+                                    G_TX_RENDERTILE, tx << 5, ty << 5, GB_STEP(x0, x1), GB_STEP(y0, y1));
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_GiveMeABrake/FF7E0", func_80107608_1045E8_GiveMeABrake);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_GiveMeABrake/FF7E0", func_801086C8_1056A8_GiveMeABrake);
+/* The fixed camera. */
+void func_801086C8_1056A8_GiveMeABrake(omObjData* obj) {
+    Vec pos;
+    Vec at;
+    Vec up;
+
+    pos.x = 0.0f;
+    pos.y = 10173.787f;
+    pos.z = 10896.917f;
+    at.x = 0.0f;
+    at.y = 8200.832f;
+    at.z = 8764.1875f;
+    up.x = 0.0f;
+    up.y = 1.0f;
+    up.z = 0.0f;
+    D_800FA5BC_FB1BC[0] = pos.x;
+    D_800FA5BC_FB1BC[1] = pos.z;
+    D_800FA5BC_FB1BC[-1] = pos.x;
+    D_800FA5BC_FB1BC[2] = D_800C9B80_CA780->fov[0];
+    D_800FA5BC_FB1BC[3] = D_80101078_101C78;
+    D_800FA5BC_FB1BC[4] = D_800F8410_F9010;
+    Hu3DCamSetPositionOrientation(0, &pos, &at, &up);
+    Hu3DCamUpdateMtx(0);
+}

@@ -113,6 +113,10 @@ void Hu3DCamSetPerspective(s16, f32, f32, f32);
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
 void Hu3DCamUpdateMtx(s16 camIndex);
 
+/* func_80107608's rectangle: a 10.2 screen coordinate, and the step that fits 41 texels. */
+#define GB_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
+#define GB_STEP(a, b) (s32)(41.0 / ((f32)((s32)((b) * 4.0) - ((s32)((a) * 4.0) - ((b) < 0.0f ? 1 : 0)) - ((a) < 0.0f ? 1 : 0)) / 4.0) * 1024.0)
+
 /* ---- .data ---- */
 extern s32 D_801087B0_105790_GiveMeABrake[6]; /* voice directory per character */
 extern s32 D_801087C8_1057A8_GiveMeABrake[14]; /* panel sprite files by item */
