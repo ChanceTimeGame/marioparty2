@@ -107,7 +107,7 @@ typedef struct MCRing {
 /* .data (0x1CF900-0x1CFA10) */
 extern u16 D_8010B550_1CF900_MagnetCarta[6];        /* cart file per character */
 extern f32 D_8010B55C_1CF90C_MagnetCarta[8];
-extern u16 D_8010B57C_1CF92C_MagnetCarta[2];        /* team's cart magnet file */
+extern s16 D_8010B57C_1CF92C_MagnetCarta[2];        /* team's cart magnet file */
 extern MCStart D_8010B580_1CF930_MagnetCarta[2];    /* team 0's two starts */
 extern MCStart D_8010B590_1CF940_MagnetCarta[2];    /* team 1's */
 extern MCStart D_8010B5A0_1CF950_MagnetCarta[3];    /* the big piece's start */
@@ -127,7 +127,7 @@ extern MCObj D_8010BDD0_1D0180_MagnetCarta[50];
 extern s16 D_8010D88C_1D1C3C_MagnetCarta;           /* D_8010BDD0_1D0180_MagnetCarta[45].spr */
 extern u8 D_8010DB80_1D1F30_MagnetCarta;            /* game phase */
 extern s16 D_8010DB82_1D1F32_MagnetCarta[3];        /* signal lamp texture slots */
-extern s8 D_8010DB88_1D1F38_MagnetCarta[16];        /* ring points taken */
+extern s8 D_8010DB88_1D1F38_MagnetCarta[17];        /* ring points taken */
 extern s8 D_8010DB98_1D1F48_MagnetCarta;            /* score, team 0 */
 extern void* D_8010DB9C_1D1F4C_MagnetCarta[3];
 extern s8 D_8010DBA8_1D1F58_MagnetCarta;            /* score, team 1 */
@@ -145,7 +145,11 @@ extern HuSprite_Unk84_Struct* D_8010DBC0_1D1F70_MagnetCarta;
 extern s8 D_8010DBC4_1D1F74_MagnetCarta;
 extern omObjData* D_8010DBC8_1D1F78_MagnetCarta;    /* sparks */
 
+extern s16 D_800FA606_FB206;
+
 /* Main functions. */
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16, f32, f32, f32);
 void func_8003E560_3F160(s16 arg0, u8 arg1);
 extern u16 D_801011FC_101DFC;
 extern f32 D_800F94A8_FA0A8[];  /* CZoomM */

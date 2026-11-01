@@ -564,23 +564,265 @@ void func_80104640_1C89F0_MagnetCarta(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801046C8_1C8A78_MagnetCarta);
+void func_801046C8_1C8A78_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    MCObj* q;
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80104970_1C8D20_MagnetCarta);
+    if (p->state == 0) {
+        if (p->attached == 1) {
+            q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+            o = q->obj;
+            obj->trans.x = HuMathSin(o->rot.y) * 127.5f + o->trans.x;
+            obj->trans.z = func_800B7890_B8490(o->rot.y) * 127.5f + o->trans.z;
+        }
+    } else if (p->state == 1) {
+        if (p->dust == 0) {
+            func_801035F0_1C79A0_MagnetCarta(0, obj->trans.x, 0.0f, obj->trans.z, 2, p);
+            p->dust = 3;
+        }
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+        if (c->bounce <= 0.0f) {
+            c->bounce = 0.0f;
+        } else {
+            c->bounce -= 1.0f;
+        }
+        if (obj->scale.x <= 0.0f) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            p->timer = 0;
+            p->state = 2;
+            if (obj->trans.x < 0.0f) {
+                D_8010DBA8_1D1F58_MagnetCarta += 10;
+            } else {
+                D_8010DB98_1D1F48_MagnetCarta += 10;
+            }
+        } else {
+            obj->scale.x -= p->size;
+            obj->scale.y -= p->size;
+            obj->scale.z -= p->size;
+            func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+        }
+        obj->trans.x = obj->trans.x - HuMathSin(c->dir + 180.0f) * c->bounce;
+        obj->trans.z = obj->trans.z - func_800B7890_B8490(c->dir + 180.0f) * c->bounce + 10.0f;
+    }
+    p->x = obj->trans.x;
+    p->y = obj->trans.y;
+    p->z = obj->trans.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80104B70_1C8F20_MagnetCarta);
+void func_80104970_1C8D20_MagnetCarta(omObjData* obj) {
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80104BB4_1C8F64_MagnetCarta);
+    obj->model[0] = LoadFormFile(0x300013, 0x2B9);
+    func_80029E80_2AA80(obj->model[0], 1, 1);
+    obj->model[1] = func_80018A30_19630(1, 0x89);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 5.0f, 0.0f);
+    i = D_8010DBB7_1D1F67_MagnetCarta;
+    obj->trans.x = D_8010B5A0_1CF950_MagnetCarta[i].x;
+    obj->trans.y = D_8010B5A0_1CF950_MagnetCarta[i].y;
+    obj->trans.z = D_8010B5A0_1CF950_MagnetCarta[i].z;
+    obj->rot.y = D_8010B5A0_1CF950_MagnetCarta[i].rot;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.7f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], 1.5f, obj->scale.y, 1.5f);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    c->mass = 7.0f;
+    obj->func_ptr = func_801046C8_1C8A78_MagnetCarta;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80104E5C_1C920C_MagnetCarta);
+void func_80104B70_1C8F20_MagnetCarta(void) {
+    omObjData* o = omAddObj(500, 2, 1, -1, func_80104970_1C8D20_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80105124_1C94D4_MagnetCarta);
+    o->work[0] = 4;
+    D_8010BDD0_1D0180_MagnetCarta[4].obj = o;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801051C8_1C9578_MagnetCarta);
+void func_80104BB4_1C8F64_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    MCObj* q;
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80105470_1C9820_MagnetCarta);
+    if (p->state == 0) {
+        if (p->attached == 1) {
+            q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+            o = q->obj;
+            obj->trans.x = HuMathSin(o->rot.y) * 127.5f + o->trans.x;
+            obj->trans.z = func_800B7890_B8490(o->rot.y) * 127.5f + o->trans.z;
+        }
+    } else if (p->state == 1) {
+        if (p->dust == 0) {
+            func_801035F0_1C79A0_MagnetCarta(0, obj->trans.x, 0.0f, obj->trans.z, 2, p);
+            p->dust = 3;
+        }
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+        if (c->bounce <= 0.0f) {
+            c->bounce = 0.0f;
+        } else {
+            c->bounce -= 1.0f;
+        }
+        if (obj->scale.x <= 0.0f) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            p->timer = 0;
+            p->state = 2;
+            if (obj->trans.x < 0.0f) {
+                D_8010DBA8_1D1F58_MagnetCarta += 5;
+            } else {
+                D_8010DB98_1D1F48_MagnetCarta += 5;
+            }
+        } else {
+            obj->scale.x -= p->size;
+            obj->scale.y -= p->size;
+            obj->scale.z -= p->size;
+            func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+        }
+        obj->trans.x = obj->trans.x - HuMathSin(c->dir + 180.0f) * c->bounce;
+        obj->trans.z = obj->trans.z - func_800B7890_B8490(c->dir + 180.0f) * c->bounce + 10.0f;
+    }
+    p->x = obj->trans.x;
+    p->y = obj->trans.y;
+    p->z = obj->trans.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80105730_1C9AE0_MagnetCarta);
+void func_80104E5C_1C920C_MagnetCarta(omObjData* obj) {
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    f32 zero;
+    u8 r;
+
+    obj->model[0] = LoadFormFile(0x300003, 0x2B9);
+    obj->model[1] = func_80018A30_19630(1, 0x89);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 5.0f, 0.0f);
+    r = rand8() % 9;
+    while (D_8010DB88_1D1F38_MagnetCarta[r] != 0) {
+        r = rand8() % 9;
+    }
+    D_8010DB88_1D1F38_MagnetCarta[r] = 1;
+    obj->trans.x = HuMathSin(D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].angle) * D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].r;
+    obj->trans.z = func_800B7890_B8490(D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].angle) * D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].r;
+    zero = 0.0f;
+    obj->rot.y = zero;
+    obj->trans.y = zero;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.4f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, zero, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], 1.3f, obj->scale.y, 1.3f);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    c->mass = 5.0f;
+    obj->func_ptr = func_80104BB4_1C8F64_MagnetCarta;
+}
+
+void func_80105124_1C94D4_MagnetCarta(void) {
+    MCObj* p;
+    omObjData* o;
+    s16 i;
+
+    for (i = 5; i < 9; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        o = omAddObj(500, 2, 0, -1, func_80104E5C_1C920C_MagnetCarta);
+        o->work[0] = i;
+        p->obj = o;
+    }
+}
+
+void func_801051C8_1C9578_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    MCObj* q;
+    omObjData* o;
+
+    if (p->state == 0) {
+        if (p->attached == 1) {
+            q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+            o = q->obj;
+            obj->trans.x = HuMathSin(o->rot.y) * 127.5f + o->trans.x;
+            obj->trans.z = func_800B7890_B8490(o->rot.y) * 127.5f + o->trans.z;
+        }
+    } else if (p->state == 1) {
+        if (p->dust == 0) {
+            func_801035F0_1C79A0_MagnetCarta(0, obj->trans.x, 0.0f, obj->trans.z, 2, p);
+            p->dust = 3;
+        }
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+        if (c->bounce <= 0.0f) {
+            c->bounce = 0.0f;
+        } else {
+            c->bounce -= 1.0f;
+        }
+        if (obj->scale.x <= 0.0f) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            p->timer = 0;
+            p->state = 2;
+            if (obj->trans.x < 0.0f) {
+                D_8010DBA8_1D1F58_MagnetCarta += 1;
+            } else {
+                D_8010DB98_1D1F48_MagnetCarta += 1;
+            }
+        } else {
+            obj->scale.x -= p->size;
+            obj->scale.y -= p->size;
+            obj->scale.z -= p->size;
+            func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+        }
+        obj->trans.x = obj->trans.x - HuMathSin(c->dir + 180.0f) * c->bounce;
+        obj->trans.z = obj->trans.z - func_800B7890_B8490(c->dir + 180.0f) * c->bounce + 10.0f;
+    }
+    p->x = obj->trans.x;
+    p->y = obj->trans.y;
+    p->z = obj->trans.z;
+}
+
+void func_80105470_1C9820_MagnetCarta(omObjData* obj) {
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    u8 r;
+
+    obj->model[0] = LoadFormFile(0x300004, 0x2B9);
+    obj->model[1] = func_80018A30_19630(1, 0x89);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 5.0f, 0.0f);
+    r = rand8() % 9;
+    while (D_8010DB88_1D1F38_MagnetCarta[r] != 0) {
+        r = rand8() % 9;
+    }
+    D_8010DB88_1D1F38_MagnetCarta[r] = 1;
+    obj->trans.x = HuMathSin(D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].angle) * D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].r;
+    obj->trans.z = func_800B7890_B8490(D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].angle) * D_8010B5B8_1CF968_MagnetCarta[D_8010DBB7_1D1F67_MagnetCarta][r].r;
+    obj->trans.y = 0.0f;
+    obj->rot.y = 0.0f;
+    obj->scale.x = obj->scale.y = obj->scale.z = 1.2f;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], 1.2f, obj->scale.y, 1.2f);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    c->mass = 1.0f;
+    obj->func_ptr = func_801051C8_1C9578_MagnetCarta;
+}
+
+void func_80105730_1C9AE0_MagnetCarta(void) {
+    MCObj* p;
+    omObjData* o;
+    s16 i;
+
+    for (i = 9; i < 14; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        o = omAddObj(500, 2, 0, -1, func_80105470_1C9820_MagnetCarta);
+        o->work[0] = i;
+        p->obj = o;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801057D4_1C9B84_MagnetCarta);
 
@@ -590,41 +832,493 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80106BE0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80107140_1CB4F0_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108174_1CC524_MagnetCarta);
+void func_80108174_1CC524_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108364_1CC714_MagnetCarta);
+    switch (D_8010DB80_1D1F30_MagnetCarta) {
+    case 2:
+        if (*(s32*)&p->timer == 0) {
+            if (gPlayers[obj->work[0]].flags & 1) {
+                func_80107140_1CB4F0_MagnetCarta(p);
+            }
+            func_80106BE0_1CAF90_MagnetCarta(obj);
+            func_80105E28_1CA1D8_MagnetCarta(obj);
+        }
+        break;
+    case 3:
+        if (c->sndFwd != -1) {
+            func_80079848_7A448(c->sndFwd);
+            c->sndFwd = -1;
+        }
+        if (c->sndBack != -1) {
+            func_80079848_7A448(c->sndBack);
+            c->sndBack = -1;
+        }
+        break;
+    }
+    func_801057D4_1C9B84_MagnetCarta(obj);
+    if (p->timer != 0) {
+        p->timer--;
+    } else {
+        p->timer = 0;
+    }
+    if (p->timer == 1 && (gPlayers[obj->work[0]].flags & 1)) {
+        p->cpuWait = rand8() % 10 + c->cpuWait;
+    }
+    if (p->cpuWait != 0) {
+        p->cpuWait--;
+    } else {
+        p->cpuWait = 0;
+    }
+    p->x = obj->trans.x;
+    p->y = obj->trans.y;
+    p->z = obj->trans.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108888_1CCC38_MagnetCarta);
+void func_80108364_1CC714_MagnetCarta(omObjData* obj) {
+    MCCar* c = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    MCStart* st;
+    u8 r;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108A10_1CCDC0_MagnetCarta);
+    do {
+    } while (0);
+    obj->model[0] = LoadFormFile(D_8010B550_1CF900_MagnetCarta[gPlayers[obj->work[0]].character] | 0x300000, 0x2B9);
+    obj->model[2] = LoadFormFile(0x300002, 0x2B9);
+    obj->model[3] = LoadFormFile(D_8010B57C_1CF92C_MagnetCarta[obj->work[3]] | 0x300000, 0x2B9);
+    obj->model[1] = func_80018A30_19630(1, 0x89);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 10.0f, 0.0f);
+    if (obj->work[3] == 0) {
+        r = rand8() & 1;
+        if (D_8010BDCC_1D017C_MagnetCarta[r] == 0) {
+            D_8010BDCC_1D017C_MagnetCarta[r] = 1;
+            obj->trans.x = D_8010B580_1CF930_MagnetCarta[r].x;
+            obj->trans.y = D_8010B580_1CF930_MagnetCarta[r].y;
+            obj->trans.z = D_8010B580_1CF930_MagnetCarta[r].z;
+            obj->rot.y = D_8010B580_1CF930_MagnetCarta[r].rot;
+        } else {
+            if (r == 0) {
+                D_8010BDCC_1D017C_MagnetCarta[1] = 1;
+                st = &D_8010B580_1CF930_MagnetCarta[1];
+            } else {
+                D_8010BDCC_1D017C_MagnetCarta[0] = 1;
+                st = &D_8010B580_1CF930_MagnetCarta[0];
+            }
+            obj->trans.x = st->x;
+            obj->trans.y = st->y;
+            obj->trans.z = st->z;
+            obj->rot.y = st->rot;
+        }
+    } else {
+        r = rand8() & 1;
+        if (D_8010DBBA_1D1F6A_MagnetCarta[r] == 0) {
+            D_8010DBBA_1D1F6A_MagnetCarta[r] = 1;
+            obj->trans.x = D_8010B590_1CF940_MagnetCarta[r].x;
+            obj->trans.y = D_8010B590_1CF940_MagnetCarta[r].y;
+            obj->trans.z = D_8010B590_1CF940_MagnetCarta[r].z;
+            obj->rot.y = D_8010B590_1CF940_MagnetCarta[r].rot;
+        } else {
+            if (r == 0) {
+                D_8010DBBA_1D1F6A_MagnetCarta[1] = 1;
+                st = &D_8010B590_1CF940_MagnetCarta[1];
+            } else {
+                D_8010DBBA_1D1F6A_MagnetCarta[0] = 1;
+                st = &D_8010B590_1CF940_MagnetCarta[0];
+            }
+            obj->trans.x = st->x;
+            obj->trans.y = st->y;
+            obj->trans.z = st->z;
+            obj->rot.y = st->rot;
+        }
+    }
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 0.0f, obj->trans.z);
+    func_800297E8_2A3E8(obj->model[1], 1.5f, obj->scale.y, 1.5f);
+    func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    func_80029EDC_2AADC(obj->model[2], 1);
+    func_80029EDC_2AADC(obj->model[3], 1);
+    if (gPlayers[obj->work[0]].flags & 1) {
+        switch (gPlayers[obj->work[0]].cpu_difficulty) {
+        case 0:
+            c->arc = 60.0f;
+            c->cpuRand = 2;
+            c->cpuWait = 20;
+            break;
+        case 1:
+            c->arc = 90.0f;
+            c->cpuRand = 4;
+            c->cpuWait = 10;
+            break;
+        case 2:
+            c->arc = 120.0f;
+            c->cpuRand = 6;
+            c->cpuWait = 0;
+            break;
+        default:
+            c->arc = 150.0f;
+            c->cpuRand = 7;
+            c->cpuWait = 0;
+            break;
+        }
+    }
+    c->mass = 4.0f;
+    obj->func_ptr = func_80108174_1CC524_MagnetCarta;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108A34_1CCDE4_MagnetCarta);
+void func_80108888_1CCC38_MagnetCarta(void) {
+    MCObj* p;
+    omObjData* o;
+    s16 n;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108A6C_1CCE1C_MagnetCarta);
+    for (i = 0; i < 4; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        o = omAddObj(100, 4, 0, -1, func_80108364_1CC714_MagnetCarta);
+        switch (i) {
+        case 0:
+            n = 0;
+            break;
+        case 1:
+            n = 1;
+            break;
+        case 2:
+            n = 2;
+            break;
+        case 3:
+            n = 3;
+            break;
+        default:
+            n = 0;
+            break;
+        }
+        o->work[0] = n;
+        if (gPlayers[o->work[0]].group == 0) {
+            if (D_8010DBA9_1D1F59_MagnetCarta < 2) {
+                o->work[3] = 0;
+                D_8010DBA9_1D1F59_MagnetCarta++;
+            } else {
+                o->work[3] = 1;
+                D_8010DBC4_1D1F74_MagnetCarta++;
+            }
+        } else {
+            if (D_8010DBC4_1D1F74_MagnetCarta < 2) {
+                o->work[3] = 1;
+                D_8010DBC4_1D1F74_MagnetCarta++;
+            } else {
+                o->work[3] = 0;
+                D_8010DBA9_1D1F59_MagnetCarta++;
+            }
+        }
+        p->obj = o;
+        D_800FC87A_FD47A++;
+    }
+}
+
+void func_80108A10_1CCDC0_MagnetCarta(void) {
+    osViBlack(0);
+    omOvlReturnEx(1);
+}
+
+void func_80108A34_1CCDE4_MagnetCarta(omObjData* obj) {
+    if (func_8008F618_90218() == 0) {
+        obj->func_ptr = func_80108A10_1CCDC0_MagnetCarta;
+    }
+}
+
+void func_80108A6C_1CCE1C_MagnetCarta(omObjData* obj) {
+    if (D_801011FC_101DFC == 1) {
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_80108A34_1CCDE4_MagnetCarta;
+        func_800794A8_7A0A8(0x28);
+        func_80079614_7A214(0x28);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80108AC4_1CCE74_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80109464_1CD814_MagnetCarta);
+void func_80109464_1CD814_MagnetCarta(void) {
+    MCObj* p;
+    MCCar* c;
+    omObjData* o;
+    f32 x;
+    f32 z;
+    s16 i;
+
+    for (i = 0; i < 4; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        if (p->obj != NULL && p->state == 0) {
+            o = p->obj;
+            c = &D_8010B7B0_1CFB60_MagnetCarta[o->work[0]];
+            c->wall = 0;
+            if (o->trans.x * o->trans.x + o->trans.z * o->trans.z > 211600.0) {
+                c->wall = 1;
+                if (p->attached == 0) {
+                    p->hit = 1;
+                }
+            }
+            if (p->attached == 1) {
+                x = HuMathSin(o->rot.y) * 127.5f + o->trans.x;
+                z = func_800B7890_B8490(o->rot.y) * 127.5f + o->trans.z;
+                if (x * x + z * z > 211600.0) {
+                    c->wall = 2;
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801095E4_1CD994_MagnetCarta);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A1AC_1CE55C_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A8F4_1CECA4_MagnetCarta);
+void func_8010A8F4_1CECA4_MagnetCarta(void) {
+    D_8010DB80_1D1F30_MagnetCarta += D_8010DBB6_1D1F66_MagnetCarta;
+    D_8010DBB6_1D1F66_MagnetCarta = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A91C_1CECCC_MagnetCarta);
+void func_8010A91C_1CECCC_MagnetCarta(omObjData* obj) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A9E0_1CED90_MagnetCarta);
+    func_8010A8F4_1CECA4_MagnetCarta();
+    if (D_8010DB80_1D1F30_MagnetCarta == 5) {
+        func_8010422C_1C85DC_MagnetCarta();
+        InitFadeOut(0, 20);
+        obj->func_ptr = func_80108A34_1CCDE4_MagnetCarta;
+    } else {
+        if (D_8010DB80_1D1F30_MagnetCarta == 2) {
+            D_8010DBAB_1D1F5B_MagnetCarta = 1;
+            i = 0;
+            while (D_8010DBAB_1D1F5B_MagnetCarta != 0) {
+                D_8010DBAB_1D1F5B_MagnetCarta = 0;
+                i++;
+                if (i >= 11) {
+                    break;
+                }
+                func_80109464_1CD814_MagnetCarta();
+                func_80108AC4_1CCE74_MagnetCarta();
+                func_801095E4_1CD994_MagnetCarta();
+            }
+        }
+        func_8010A1AC_1CE55C_MagnetCarta();
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AB44_1CEEF4_MagnetCarta);
+void func_8010A9E0_1CED90_MagnetCarta(void) {
+    s16 i;
+    s16 j;
+
+    D_8010DBA9_1D1F59_MagnetCarta = 0;
+    D_8010DBC4_1D1F74_MagnetCarta = 0;
+    D_8010DBB7_1D1F67_MagnetCarta = 0;
+    D_8010DBBC_1D1F6C_MagnetCarta = 0;
+    D_8010DBA8_1D1F58_MagnetCarta = 0;
+    D_8010BDCE_1D017E_MagnetCarta = 0;
+    D_8010DB98_1D1F48_MagnetCarta = 0;
+    for (i = 0; i < 18; i++) {
+        D_8010B7B0_1CFB60_MagnetCarta[i].dir = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].prevDir = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].steer = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].speed = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].bounce = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].prevSpeed = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].arc = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].mass = 0.0f;
+        D_8010B7B0_1CFB60_MagnetCarta[i].cpuRand = 0;
+        D_8010B7B0_1CFB60_MagnetCarta[i].cpuWait = 0;
+        D_8010B7B0_1CFB60_MagnetCarta[i].tick = 0;
+        D_8010B7B0_1CFB60_MagnetCarta[i].sndFwd = -1;
+        D_8010B7B0_1CFB60_MagnetCarta[i].sndBack = -1;
+        for (j = 0; j < 19; j++) {
+            D_8010B7B0_1CFB60_MagnetCarta[i].hit[j] = 0;
+        }
+    }
+}
+
+void func_8010AB44_1CEEF4_MagnetCarta(omObjData* obj) {
+    s16 i;
+
+    func_8010B430_1CF7E0_MagnetCarta();
+    func_8010B524_1CF8D4_MagnetCarta();
+    func_8010A9E0_1CED90_MagnetCarta();
+    D_8010DBB8_1D1F68_MagnetCarta = 0;
+    D_8010DBB4_1D1F64_MagnetCarta = 10;
+    D_8010DBB6_1D1F66_MagnetCarta = 0;
+    for (i = 0; i < 2; i++) {
+        D_8010BDCC_1D017C_MagnetCarta[i] = 0;
+        D_8010DBBA_1D1F6A_MagnetCarta[i] = 0;
+    }
+    for (i = 0; i < 17; i++) {
+        D_8010DB88_1D1F38_MagnetCarta[i] = 0;
+    }
+    func_80102AB0_1C6E60_MagnetCarta();
+    func_80102EA0_1C7250_MagnetCarta();
+    func_80103284_1C7634_MagnetCarta();
+    func_80108888_1CCC38_MagnetCarta();
+    func_801039B4_1C7D64_MagnetCarta();
+    func_801035B4_1C7964_MagnetCarta();
+    func_80104B70_1C8F20_MagnetCarta();
+    func_80105124_1C94D4_MagnetCarta();
+    func_80105730_1C9AE0_MagnetCarta();
+    InitFadeIn(0, 16);
+    obj->func_ptr = func_8010A91C_1CECCC_MagnetCarta;
+    omAddObj(50, 0, 0, -1, func_8010281C_1C6BCC_MagnetCarta);
+    D_8010DB80_1D1F30_MagnetCarta = 0;
+    func_801041F0_1C85A0_MagnetCarta();
+    omAddObj(600, 0, 0, -1, func_80104640_1C89F0_MagnetCarta);
+}
 
 __asm__(".section .rodata");
 const char D_8010B770_1CFB20_MagnetCarta[] = "\202`\202a\202b";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010ACB4_1CF064_MagnetCarta);
+void func_8010ACB4_1CF064_MagnetCarta(void) {
+    omObjData* o;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AEE0_1CF290_MagnetCarta);
+    func_8002D4D0_2E0D0(50);
+    func_80020D20_21920(70);
+    omInitObjMan(50, 0);
+    func_80079128_79D28();
+    func_80026DAC_279AC(0, 0x40, 0x40, 0x60);
+    func_80026DAC_279AC(1, 0x40, 0x40, 0x40);
+    func_80026E00_27A00(1, 0.0f, 0.0f, 100.0f);
+    o = omAddObj(0x7FDA, 0, 0, -1, func_80079FF4_7ABF4);
+    o->work[0] = 2;
+    omSetStatBit(o, 0xA0);
+    func_80018E30_19A30(2);
+    func_80018F58_19B58(2);
+    ScissorSet(0, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(0, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 21.176f, 80.0f, 8000.0f);
+    ScissorSet(1, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(1, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(1, 21.176f, 80.0f, 8000.0f);
+    D_800FA606_FB206 = 0;
+    D_800FC87A_FD47A = 0;
+    D_800F8FE0_F9BE0 = 0;
+    omAddObj(1000, 0, 0, -1, func_8010AB44_1CEEF4_MagnetCarta);
+    omAddObj(1000, 0, 0, -1, func_80108A6C_1CCE1C_MagnetCarta);
+    func_8007273C_7333C((u8*)D_8010B770_1CFB20_MagnetCarta, 0);
+    func_8007273C_7333C((u8*)D_8010B770_1CFB20_MagnetCarta, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AF58_1CF308_MagnetCarta);
+f32 func_8010AEE0_1CF290_MagnetCarta(f32 y, f32 x) {
+    f32 a = func_800B75A8_B81A8(y, x);
 
+    if (a > 360.0) {
+        a -= 360.0;
+    } else if (a < 0.0) {
+        a += 360.0;
+    }
+
+    return a;
+}
+
+f32 func_8010AF58_1CF308_MagnetCarta(f32 x) {
+    f32 a;
+    f32 b;
+    f32 sum;
+    s32 sign;
+    s32 i;
+
+    sign = 1;
+    if (x > 1.0f) {
+        x = 1.0f / x;
+    } else {
+        sign = -1;
+        if (x < -1.0f) {
+            x = 1.0f / x;
+        } else {
+            sign = 0;
+        }
+    }
+    sum = 0.0f;
+    i = 6;
+    do {
+        a = (f32)(i * i) * x * x;
+        b = (f32)(i * 2 + 1) + sum;
+        i--;
+        sum = a / b;
+    } while (i > 0);
+    if (sum != -1.0f) {
+        if (sign > 0) {
+            return 1.5707963267948966 - (x / (sum + 1.0f));
+        }
+        if (sign < 0) {
+            return -1.5707963267948966 - (x / (sum + 1.0f));
+        }
+        return x / (sum + 1.0f);
+    }
+    return 0.0f;
+}
+
+#ifdef NON_MATCHING
+void func_8010B0A8_1CF458_MagnetCarta(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
+    Vec fromV;
+    Vec toV;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromV.x = from->x;
+    fromV.y = from->y;
+    fromV.z = from->z;
+    toV.x = to->x;
+    toV.y = to->y;
+    toV.z = to->z;
+    delta.x = toV.x - fromV.x;
+    delta.y = toV.y - fromV.y;
+    delta.z = toV.z - fromV.z;
+    horizontal = func_800B1830_B2430(delta.x * delta.x + delta.z * delta.z);
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        pitch = 180.0f;
+        yaw = horizontal;
+        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+            pitch = horizontal;
+        }
+    } else {
+        if (delta.x != 0.0f && delta.z != 0.0f) {
+            yaw = func_8010AF58_1CF308_MagnetCarta(delta.x / delta.z) * 57.29577951308232;
+        } else if (delta.z == 0.0f) {
+            if (delta.x >= 0.0f) {
+                yaw = 90.0f;
+            } else {
+                yaw = 270.0f;
+            }
+        } else {
+            yaw = 0.0f;
+        }
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        if (horizontal != 0.0f && delta.y != 0.0f) {
+            pitch = func_8010AF58_1CF308_MagnetCarta(delta.y / horizontal) * 57.29577951308232;
+        } else {
+            pitch = 0.0f;
+        }
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    out->x = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
+    out->z = yaw;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010B0A8_1CF458_MagnetCarta);
+#endif
