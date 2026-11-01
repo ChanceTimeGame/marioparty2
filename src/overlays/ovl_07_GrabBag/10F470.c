@@ -999,6 +999,8 @@ void func_80108E94_1124A4_GrabBag(omObjData* a, omObjData* b) {
     func_80029714_2A314(b->model[0], b->trans.x, 2.0f, b->trans.z);
 }
 
+/* NON_MATCHING: register allocation (class 4): w0/w1 in s3/s2, as MP1's func_800F9ED0 (masked 0) */
+#ifdef NON_MATCHING
 void func_80108F7C_11258C_GrabBag(omObjData* a, omObjData* b) {
     GBPlayer* w0;
     GBPlayer* w1;
@@ -1008,7 +1010,8 @@ void func_80108F7C_11258C_GrabBag(omObjData* a, omObjData* b) {
     func_800191D4_19DD4(a, 8, (a->trans.x + b->trans.x) / 2.0f, (a->trans.y + b->trans.y) / 2.0f,
                         (a->trans.z + b->trans.z) / 2.0f, 0.0f, 0.0f);
     if (func_80109210_112820_GrabBag(a, b) == 1) {
-        w0->unk_161 = w1->unk_161 = 1;
+        w1->unk_161 = 1;
+        w0->unk_161 = 1;
         w1->w.unk_40 = D_800BF7C8_C03C8;
         func_80019B9C_1A79C(b, 0xC);
         w0->w.unk_40 = -D_800BF7C8_C03C8;
@@ -1039,8 +1042,12 @@ void func_80108F7C_11258C_GrabBag(omObjData* a, omObjData* b) {
         w1->unk_163 = 0;
     }
     w0->unk_163 = 0;
-    w0->unk_160 = w1->unk_160 = 1;
+    w1->unk_160 = 1;
+    w0->unk_160 = 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80108F7C_11258C_GrabBag);
+#endif
 
 s32 func_80109210_112820_GrabBag(omObjData* a, omObjData* b) {
     GBPlayer* w0;
