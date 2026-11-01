@@ -15,11 +15,13 @@
 
 typedef struct TBInfo {
     /* 0x00 */ s8 character;
-    /* 0x01 */ u8 port;
+    /* 0x01 */ s8 port;
     /* 0x02 */ s8 cpu; /* -1: a human */
     /* 0x03 */ char unk_03;
     /* 0x04 */ u8 hits;
-    /* 0x05 */ char unk_05[5];
+    /* 0x05 */ char unk_05;
+    /* 0x06 */ s16 cpuState;
+    /* 0x08 */ s16 cpuTime;
 } TBInfo; /* size = 0xA */
 
 typedef struct TBBox {
@@ -55,12 +57,21 @@ typedef struct TBWork {
 } TBWork;
 #define TB_A8(w) (((TBWork*)(w))->unk_A8)
 
+/* x reduced to 0..360 */
+#define TB_MOD360(x) ((x) + (-(f32)((s32)(x) / 360) * 360.0 + ((x) < 0.0 ? 360.0 : 0.0)))
+
 /* a float screen position to 10.2, rounded towards zero by hand; sign tested on a separate value */
 #define TB_FIX2(f, s) ((s32)((f) * 4.0) + ((s) < 0.0f ? 1 : 0))
 #define TB_FIX(f) TB_FIX2(f, f)
 
 /* ---- main-segment API missing from include/ ---- */
 extern TBCharData D_800CD438_CE038[];
+extern u16 D_800FD410_FE010[];
+extern s8 ContStkX[];
+extern s8 ContStkY[];
+extern s16 D_800FC9BE_FD5BE[4];
+extern s16 D_800FD468_FE068[4];
+void func_80019B28_1A728(omObjData* obj, u8 flags);
 extern TBEspSlot* D_800F93FC_F9FFC;
 void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 void func_80026D28_27928(s16);
@@ -144,6 +155,7 @@ extern f32 D_80102750_103350;
 extern s16 D_800FA606_FB206;
 
 /* ---- .data ---- */
+extern s16 D_8010AB00_1F0CB0_ToadInTheBox[4]; /* sound pan per player */
 extern Gfx D_8010AB08_1F0CB8_ToadInTheBox[];
 extern Gfx D_8010AB50_1F0D00_ToadInTheBox[];
 
@@ -158,6 +170,7 @@ extern u16 D_8010B452_1F1602_ToadInTheBox; /* the game is over */
 extern omObjData* D_8010B458_1F1608_ToadInTheBox[4]; /* the players */
 extern u8 D_8010B468_1F1618_ToadInTheBox[4];
 extern omObjData* D_8010B46C_1F161C_ToadInTheBox;
+extern u8 D_8010B470_1F1620_ToadInTheBox[4];
 extern u8 D_8010B474_1F1624_ToadInTheBox;
 extern omObjData* D_8010B478_1F1628_ToadInTheBox[4];
 extern s16 D_8010B488_1F1638_ToadInTheBox; /* espr */

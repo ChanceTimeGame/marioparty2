@@ -696,7 +696,770 @@ const u32 D_8010AD40_1F0EF0_ToadInTheBox[6] = { 0x40F00000, 0x41480000, 0x418C00
 __asm__(".section .rodata");
 const u32 D_8010AD58_1F0F08_ToadInTheBox[6] = { 0x42340000, 0x43070000, 0x43610000, 0x439D8000, 0x43B40000, 0x00000000 };
 
+#ifdef NON_MATCHING
+/* WIP: masked residue, register and schedule */
+void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
+    s16 pl;
+    s16 prev;
+    MgWork* w = obj->unk_50;
+    s8 pl8 = w->unk_59;
+    f32 spd[6] = { 7.5f, 12.5f, 17.5f, 25.0f, 50.0f, 0.0f };
+    TBInfo* info;
+    TBBox* box;
+    u16 btn;
+    u16 trg;
+    u16 d410;
+    s8 stkx;
+    s8 stky;
+    s16 d9be;
+    s16 d468;
+    s32 mask;
+    f32 t0;
+    f32 t1;
+    f32 t2;
+    f32 c;
+    f32 h;
+    f32 v;
+    f32 r;
+    f32 t3;
+    f32 x;
+    f32 f;
+    f64 d;
+    s32 k;
+    s32 a;
+    s32 i1;
+    s16 j;
+    s16 snd;
+    MgWork* m;
+    omObjData* o;
+    u8 u;
+    u16 cnt;
+    s16 st;
+    s16 st2s;
+    u16 st2;
+    f32* p;
+
+    prev = -1;
+    pl = pl8;
+    info = D_8010B3B8_1F1568_ToadInTheBox[pl8];
+    box = D_8010B428_1F15D8_ToadInTheBox[pl8];
+    if (D_8010B492_1F1642_ToadInTheBox == 0 && D_8010B48C_1F163C_ToadInTheBox < 2) {
+        return;
+    }
+    if (pl == 0) {
+        D_8010B470_1F1620_ToadInTheBox[0] = D_8010B470_1F1620_ToadInTheBox[1] = D_8010B470_1F1620_ToadInTheBox[2] = D_8010B470_1F1620_ToadInTheBox[3] = 0;
+    }
+    btn = ContBtn[info->port];
+    trg = ContBtnTrg[info->port];
+    d410 = D_800FD410_FE010[info->port];
+    stkx = ContStkX[info->port];
+    stky = ContStkY[info->port];
+    d9be = D_800FC9BE_FD5BE[info->port];
+    d468 = D_800FD468_FE068[info->port];
+    mask = (box->state == 2 && info->cpu == -1 && D_8010B492_1F1642_ToadInTheBox == 1) << 15;
+    ContBtn[info->port] &= mask;
+    ContBtnTrg[info->port] &= mask;
+    D_800FD410_FE010[info->port] &= mask;
+    ContStkX[info->port] = 0;
+    ContStkY[info->port] = 0;
+    D_800FC9BE_FD5BE[info->port] = 0;
+    D_800FD468_FE068[info->port] = 0;
+    if (box->state == 2 && D_8010B492_1F1642_ToadInTheBox == 1 && TB_A8(obj->unk_50) == 0) {
+        switch ((s8)(info->cpu + 1)) {
+        case 1:
+            switch (info->cpuState) {
+            case 0:
+                info->cpuState++;
+                info->cpuTime = rand8() % 90 + 30;
+            case 1:
+                if (--info->cpuTime == 0) {
+                    info->cpuState++;
+                    ContBtn[info->port] = 0x8000;
+                    ContBtnTrg[info->port] = 0x8000;
+                }
+                break;
+            case 2:
+                break;
+            }
+            break;
+        case 2:
+            switch (info->cpuState) {
+            case 0:
+                info->cpuState++;
+                info->cpuTime = rand8() % 60 + 20 + info->hits;
+            case 1:
+                if (--info->cpuTime != 0) {
+                    break;
+                }
+                info->cpuState++;
+                info->cpuTime = rand8() % 12 - 4;
+            case 2:
+                p = &spd[info->hits];
+                f = (f32)(s32)((info->cpuTime * *p + box->angle + 45.0 + 360.0 - *p * 0.5) / 90.0) * 90.0 - 360.0;
+                if ((f32)TB_MOD360(f) == 0.0) {
+                    info->cpuState++;
+                    ContBtn[info->port] = 0x8000;
+                    ContBtnTrg[info->port] = 0x8000;
+                }
+                break;
+            case 3:
+                info->cpuState--;
+                break;
+            }
+            break;
+        case 3:
+            switch (info->cpuState) {
+            case 0:
+                info->cpuState++;
+                info->cpuTime = rand8() % 20 + 15 + info->hits * 10;
+            case 1:
+                if (--info->cpuTime != 0) {
+                    break;
+                }
+                info->cpuState++;
+                info->cpuTime = (rand8() & 7) - 4;
+            case 2:
+                p = &spd[info->hits];
+                f = (f32)(s32)((info->cpuTime * *p + box->angle + 45.0 + 360.0 - *p * 0.5) / 90.0) * 90.0 - 360.0;
+                if ((f32)TB_MOD360(f) == 0.0) {
+                    info->cpuState++;
+                    ContBtn[info->port] = 0x8000;
+                    ContBtnTrg[info->port] = 0x8000;
+                }
+                break;
+            case 3:
+                info->cpuState--;
+                break;
+            }
+            break;
+        case 4:
+            switch (info->cpuState) {
+            case 0:
+                info->cpuState++;
+                a = rand8() % 30 + 10;
+                k = rand8() % 10 + 10;
+                if (info->hits != 1) {
+                    k = 3;
+                } else {
+                    k = k + 3;
+                }
+                i1 = k;
+                if (info->hits == 2) {
+                    i1 = k + a;
+                }
+                info->cpuTime = i1;
+            case 1:
+                if (--info->cpuTime != 0) {
+                    break;
+                }
+                if (info->hits >= 3) {
+                    info->cpuState = 4;
+                    info->cpuTime = rand8() % 10 + 1;
+                    break;
+                }
+                info->cpuState++;
+                info->cpuTime = rand8() & 3;
+            case 2:
+                p = &spd[info->hits];
+                f = (f32)(s32)((info->cpuTime * *p + box->angle + 45.0 + 360.0 - *p * 0.5) / 90.0) * 90.0 - 360.0;
+                if ((f32)TB_MOD360(f) == 0.0) {
+                    info->cpuState++;
+                    ContBtn[info->port] = 0x8000;
+                    ContBtnTrg[info->port] = 0x8000;
+                }
+                break;
+            case 4:
+                if (--info->cpuTime != 0) {
+                    break;
+                }
+                info->cpuState++;
+            case 5:
+                info->cpuState++;
+                ContBtn[info->port] = 0x8000;
+                ContBtnTrg[info->port] = 0x8000;
+                break;
+            case 3:
+            case 6:
+                info->cpuState--;
+                break;
+            }
+            break;
+        case 0:
+            info->cpuState = 0;
+            info->cpuTime = 0;
+            break;
+        }
+    }
+    func_80007790_8390(obj);
+    if (D_8010B492_1F1642_ToadInTheBox == 0 && D_8010B48C_1F163C_ToadInTheBox < 60) {
+        func_80079848_7A448(w->unk_C5);
+    }
+    j = obj->model[1];
+    func_8002979C_2A39C(j, D_800FC834_FD434[j].pos.y / 60.0 + 7.0, 0.0f, 0.0f);
+    ContBtn[info->port] = btn;
+    ContBtnTrg[info->port] = trg;
+    D_800FD410_FE010[info->port] = d410;
+    ContStkX[info->port] = stkx;
+    ContStkY[info->port] = stky;
+    D_800FC9BE_FD5BE[info->port] = d9be;
+    D_800FD468_FE068[info->port] = d468;
+    if (D_8010B468_1F1618_ToadInTheBox[pl] == 1) {
+        func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 4);
+    }
+    {
+        u8 c0 = D_8010B468_1F1618_ToadInTheBox[pl];
+
+        if (c0 != 0) {
+            c0--;
+        }
+        D_8010B468_1F1618_ToadInTheBox[pl] = c0;
+    }
+    st2s = box->state;
+    st = st2s;
+    if (prev != st2s) {
+        do {
+            prev = st;
+            switch (st) {
+            case 0:
+                break;
+            case 11:
+                if (box->time == 0) {
+                    func_80109524_1EF6D4_ToadInTheBox(D_8010B440_1F15F0_ToadInTheBox[pl], 0);
+                    omSetTra(D_8010B440_1F15F0_ToadInTheBox[pl], pl * 245.0 + -367.5 - 15.0, box->unk_14, 250.0f);
+                    func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 0);
+                    func_80029C74_2A874(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 0.0f);
+                    D_8010B468_1F1618_ToadInTheBox[pl] = 20;
+                } else if (box->time == 10) {
+                    box->state = 12;
+                    box->time = 0;
+                    func_800298A4_2A4A4(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 4, 4);
+                    func_800298A4_2A4A4(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, 4, 4);
+                    func_800298A4_2A4A4(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 4, 4);
+                    func_800298A4_2A4A4(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], 4, 4);
+                }
+                break;
+            case 1:
+                if (box->time < 31) {
+                    break;
+                }
+                box->state = 2;
+                box->time = 0;
+            case 3:
+                if (box->time < 8) {
+                    {
+                        f64 e2;
+    f64 e = box->angle = box->angle + spd[info->hits] * (box->time / 8.0);
+
+                        if (e > 360.0) {
+                            e2 = e - 360.0;
+                        } else {
+                            e2 = e - 0.0;
+                        }
+                        box->angle = e2;
+                    }
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], box->angle, 0.0f, 0.0f);
+                } else {
+                    box->state = 2;
+                    box->time = 0;
+                }
+                break;
+            case 2:
+                if (box->unk_08 == 1) {
+                    box->state = 4;
+                    box->time = 0;
+                    cnt = box->unk_0A;
+                    if (cnt <= 0xFFFE) {
+                        st2 = cnt + 1;
+                    } else {
+                        st2 = cnt;
+                    }
+                    box->unk_0A = st2;
+                    info->cpuState = 0;
+                } else {
+                    {
+                        f64 e2;
+    f64 e = box->angle = box->angle + spd[info->hits];
+
+                        if (e > 360.0) {
+                            e2 = e - 360.0;
+                        } else {
+                            e2 = e - 0.0;
+                        }
+                        box->angle = e2;
+                    }
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], box->angle, 0.0f, 0.0f);
+                }
+                break;
+            case 4:
+                if (box->time == 0) {
+                    t1 = box->unk_0A / 20.0;
+                    t2 = (f32)D_8010B48C_1F163C_ToadInTheBox / 9000.0f;
+                    h = info->hits / 4.0;
+                    c = 0.0f;
+                    if (info->cpu != -1) {
+                        c = 1.0f;
+                    }
+                    x = (info->hits - (D_8010B3B8_1F1568_ToadInTheBox[(pl + 1) % 4]->hits + D_8010B3B8_1F1568_ToadInTheBox[(pl + 2) % 4]->hits + D_8010B3B8_1F1568_ToadInTheBox[(pl + 3) % 4]->hits) / 3.0) / 8.0;
+                    {
+                    f32 ang[5] = { 45.0f, 135.0f, 225.0f, 315.0f, 360.0f };
+
+                    t2 = t2 >= 0.5 ? 1.0f : 2.0 * t2;
+                    t3 = t1 >= 1.0 ? 1.0f : t1;
+                    v = 1.0 - x * 1.25 + t2 * 0.25 + t3 * 0.625 - c * 0.25;
+                    v = (v - 1.0) * (h * 0.5 + 0.5) + 1.0;
+                    if (v < 0.25 - h * 0.75) {
+                        r = 0.25 - h * 0.75;
+                    } else {
+                        r = h * 0.25 + 1.75 < v ? h * 0.25 + 1.75 : v;
+                    }
+                    x = 1.0 - r;
+                    ang[0] = 45.0 - x * 45.0;
+                    ang[1] = 135.0 - x * 15.0;
+                    ang[2] = x * 15.0 + 225.0;
+                    ang[3] = x * 45.0 + 315.0;
+                    box->unk_04 = box->angle;
+                    for (j = 0; j < 5; j++) {
+                        if (box->angle < ang[j]) {
+                            box->angle = (f32)(s16)(j % 4) * 90.0;
+                            break;
+                        }
+                    }
+                    }
+                    if (D_8010B474_1F1624_ToadInTheBox != 0 && D_8010B474_1F1624_ToadInTheBox < 5 && box->angle == 0.0 && info->hits == 4) {
+                        box->unk_04 = box->angle = (f32)(rand8() % 3) * 90.0 + 90.0;
+                        box->unk_04 += (f32)(rand8() % 20) - 10.0;
+                    }
+                    if (box->angle - box->unk_04 < -180.0) {
+                        box->unk_04 -= 360.0;
+                    }
+                    if (box->angle - box->unk_04 > 180.0) {
+                        box->unk_04 += 360.0;
+                    }
+                    if ((D_8010B474_1F1624_ToadInTheBox == 0 || D_8010B474_1F1624_ToadInTheBox >= 5) && box->angle == 0.0 && info->hits == 4) {
+                        D_8010B474_1F1624_ToadInTheBox = 5;
+                        D_8010B470_1F1620_ToadInTheBox[pl] = 1;
+                    }
+                }
+                t0 = (f32)box->time / 10.0f * 0.75 + 0.25;
+                func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], t0 * box->angle + box->unk_04 * (1.0 - t0), 0.0f, 0.0f);
+                if (box->time >= 10) {
+                    {
+                        f64 e2;
+                        f64 e = box->angle = box->angle - (f32)((s32)box->angle / 360) * 360.0;
+
+                        if (e < 0.0) {
+                            e2 = e + 360.0;
+                        } else {
+                            e2 = e + 0.0;
+                        }
+                        e = box->angle = e2;
+                        if (e == 0.0) {
+                            k = 5;
+                        } else if (e == 90.0) {
+                            k = 7;
+                        } else {
+                            k = 9;
+                            if (e == 180.0) {
+                                k = 8;
+                            }
+                        }
+                        box->state = k;
+                    }
+                    box->time = 0;
+                    func_80029714_2A314(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], pl * 245.0 + -367.5, info->hits * 78.0 + 280.0, 250.0f);
+                } else if (box->time > 0) {
+                    func_80029714_2A314(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], pl * 245.0 + -367.5, info->hits * 78.0 + 280.0 + (-(f = box->time - 5) * f / 25.0f + 1.0) * 100.0, 250.0f);
+                }
+                break;
+            case 6:
+                if (box->time == 0) {
+                    box->unk_0A = 0;
+                    info->hits++;
+                    func_800298A4_2A4A4(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[info->hits], 4, 0);
+                    D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.x = pl * 245.0 + -367.5;
+                    D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.y = info->hits * 78.0 + 280.0;
+                    D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.z = 250.0f;
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y, o->trans.z);
+                    func_8000BF54_CB54(D_8010B4A0_1F1650_ToadInTheBox[pl], 200.0f, 200.0f, -100.0f, -100.0f, 100.0f, 100.0f);
+                    snd = func_80079798_7A398(0x266, pl);
+                    func_800796F0_7A2F0(snd, rand8() % 100 - 50);
+                    func_800798F8_7A4F8(snd, D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                }
+                if (box->time < 31) {
+                    t0 = 1.0 - (f32)box->time / 24.0f;
+                    t1 = 1.0 - (f32)(box->time + 1) / 24.0f;
+                    t0 = 1.0 - t0;
+                    t1 = 1.0 - t1;
+                    if (info->hits == 5 && D_8010B4C0_1F1670_ToadInTheBox != pl) {
+                        t0 = 0.0f;
+                        if (box->time < 10) {
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.x = pl * 245.0 * 1.16 + -426.29999999999995;
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.z = -220.0f;
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.y = ((f32)(info->hits - 2) + 0.0f) * (info->hits == 1 ? 90.0 : 78.0) + 4.0;
+                        }
+                        if (box->time == 10 && info->hits >= 5 && D_8010B4C0_1F1670_ToadInTheBox != pl) {
+                            box->state = 12;
+                            box->time = 0;
+                            func_800298A4_2A4A4(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], 4, 4);
+                        }
+                    } else {
+                        if (box->time >= 25) {
+                            k = 29 - box->time;
+                            t0 = (((box->time - 30) & 1 ? (f32)-k : (f32)k) / 4.0) * 0.041666666666666664 * 0.5 + 1.0;
+                        }
+                        if (box->time + 1 >= 25) {
+                            k = 28 - box->time;
+                            t1 = (((box->time - 29) & 1 ? (f32)-k : (f32)k) / 4.0) * 0.041666666666666664 * 0.333 + 1.0;
+                        }
+                        if (box->time + 1 == 30) {
+                            t1 = 1.0f;
+                        }
+                        if (box->time < 30) {
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.x = pl * 245.0 * 1.16 + -426.29999999999995;
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.z = -220.0f;
+                            D_8010B4B0_1F1660_ToadInTheBox[pl]->trans.y = ((f32)(info->hits - 2) + t1) * (info->hits == 1 ? 90.0 : 78.0) + 4.0;
+                        }
+                    }
+                    if (box->time == 10) {
+                        func_800298A4_2A4A4(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], 4, 4);
+                        func_8002D0A0_2DCA0(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], 0xFF);
+                    } else if (box->time < 10) {
+                        func_8002D0A0_2DCA0(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], (u8)((1.0 - (f32)box->time / 10.0f) * 160.0));
+                        func_80029C74_2A874(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], (box->time * 6) % 60);
+                        func_80029714_2A314(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], pl * 245.0 + -367.5, 230.0 - HuMathSin((box->time + 40) * 7.0) * ((1.0 - (f32)(box->time + 40) / 60.0f) * 25.0 + 25.0) + (info->hits - 1) * 78.0, 250.0f);
+                    }
+                    if (info->hits == 1) {
+                        func_80029714_2A314(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[1], pl * 245.0 * 1.054688 + -387.59784, -15.0f, 110.0f);
+                        D_8010B4B0_1F1660_ToadInTheBox[pl]->scale.x = 1.75f;
+                        D_8010B4B0_1F1660_ToadInTheBox[pl]->scale.y = (f32)box->time / 30.0f * 1.75f;
+                        D_8010B4B0_1F1660_ToadInTheBox[pl]->scale.z = 1.0f;
+                        func_800297E8_2A3E8(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[1], 1.57375f, t0 * 1.57375, 1.0f);
+                    } else {
+                        func_80029714_2A314(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[info->hits], pl * 245.0 * 1.054688 + -387.59784, -15.0f, (f32)(info->hits - 1) * -3.0 + 110.0);
+                        for (j = 1; j < info->hits; j++) {
+                            func_80029714_2A314(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[j], pl * 245.0 * 1.054688 + -387.59784, (info->hits - j - 1) * 81.9642857 + -15.0 + t0 * 81.9642857, (f32)(j - 1) * -3.0 + 110.0);
+                        }
+                        func_800297E8_2A3E8(D_8010B4B0_1F1660_ToadInTheBox[pl]->model[info->hits], 1.57375f, t0 * 1.57375, 1.0f);
+                    }
+                }
+                if (box->time >= 30) {
+                    t0 = 1.0 - (f32)(box->time - 30) / 15.0f;
+                    t0 = t0 * t0;
+                    if (box->time == 30) {
+                        box->angle = ((u8*)&D_8010B4C0_1F1670_ToadInTheBox)[info->hits] * 90;
+                        if (info->hits >= 5 || D_8010B492_1F1642_ToadInTheBox != 1) {
+                            box->state = 12;
+                            box->time = 0;
+                        } else {
+                            func_800298A4_2A4A4(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 4, 0);
+                        }
+                        func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], box->angle, 0.0f, 0.0f);
+                    }
+                    if (box->time >= 45) {
+                        box->state = D_8010B492_1F1642_ToadInTheBox == 1 ? 2 : 12;
+                        box->time = 0;
+                    } else if (info->hits < 5) {
+                        k = (info->hits + 3) * 3;
+                        if (box->time >= 45 - k) {
+                            {
+                                f64 e2;
+    f64 e = box->angle = (p = &spd[info->hits], (f32)(k - 45 + box->time) / (f32)k * *p) + box->angle;
+
+                                if (e > 360.0) {
+                                    e2 = e - 360.0;
+                                } else {
+                                    e2 = e - 0.0;
+                                }
+                                box->angle = e2;
+                            }
+                            func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], box->angle, 0.0f, 0.0f);
+                        }
+                    }
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + (t0 * (f32)(6 - info->hits)) * 80.0, o->trans.z);
+                }
+                break;
+            case 5:
+                if (box->time == 0) {
+                    func_80109524_1EF6D4_ToadInTheBox(D_8010B440_1F15F0_ToadInTheBox[pl], 0);
+                    omSetTra(D_8010B440_1F15F0_ToadInTheBox[pl], pl * 245.0 + -367.5 - 15.0, info->hits * 78.0 + 300.0, 250.0f);
+                    func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 0);
+                    func_80029C74_2A874(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 0.0f);
+                    D_8010B468_1F1618_ToadInTheBox[pl] = 20;
+                    func_800798F8_7A4F8(func_80079798_7A398(0x269, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                } else if (box->time == 10) {
+                    func_800298A4_2A4A4(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 4, 4);
+                    func_800298A4_2A4A4(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 4, 0);
+                    omSetTra(D_8010B478_1F1628_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 230.0, 250.0f);
+                    func_80029B80_2A780(*D_8010B478_1F1628_ToadInTheBox[pl]->model, D_8010B478_1F1628_ToadInTheBox[0]->model[1]);
+                    func_80029C74_2A874(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 1.0f);
+                    if (rand8() % 3 == 0) {
+                        k = 0x265;
+                    } else {
+                        k = rand8() & 1 ? 0x26B : 0x26A;
+                    }
+                    func_800798F8_7A4F8(PlaySound(k), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                } else if (box->time >= 11 && box->time < 25) {
+                    omSetTra(D_8010B478_1F1628_ToadInTheBox[pl], pl * 245.0 + -367.5, 230.0 - HuMathSin((box->time - 25) * 10.0) * ((1.0 - (f32)(box->time - 25) / 60.0f) * 25.0 + 35.0) + info->hits * 78.0, 250.0f);
+                } else if (box->time >= 25 && box->time < 85) {
+                    if (box->time == 25) {
+                        func_80029B80_2A780(*D_8010B478_1F1628_ToadInTheBox[pl]->model, D_8010B478_1F1628_ToadInTheBox[0]->model[2]);
+                        func_80029C74_2A874(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 0.0f);
+                        if (D_8010B496_1F1646_ToadInTheBox < 60 && D_8010B492_1F1642_ToadInTheBox == 1) {
+                            D_8010B496_1F1646_ToadInTheBox = D_8010B496_1F1646_ToadInTheBox % 20 + 60;
+                        }
+                    }
+                    func_80029C74_2A874(*D_8010B478_1F1628_ToadInTheBox[pl]->model, ((box->time - 25) * 6) % 60);
+                    omSetTra(D_8010B478_1F1628_ToadInTheBox[pl], pl * 245.0 + -367.5, 230.0 - HuMathSin((box->time - 25) * 7.0) * ((1.0 - (f32)(box->time - 25) / 60.0f) * 25.0 + 25.0) + info->hits * 78.0, 250.0f);
+                }
+                if (box->time == 65) {
+                    box->state = 6;
+                    box->time = 0;
+                    func_800298A4_2A4A4(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 4, 4);
+                    func_800298A4_2A4A4(D_8010B478_1F1628_ToadInTheBox[pl]->model[3], 4, 0);
+                } else if (box->time == 85) {
+                    func_800298A4_2A4A4(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 4, 4);
+                }
+                break;
+            case 9:
+                if (box->time == 0) {
+                    func_80109524_1EF6D4_ToadInTheBox(D_8010B440_1F15F0_ToadInTheBox[pl], 0);
+                    omSetTra(D_8010B440_1F15F0_ToadInTheBox[pl], pl * 245.0 + -367.5 - 15.0, info->hits * 78.0 + 300.0, 250.0f);
+                    func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 0);
+                    func_80029C74_2A874(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 2.0f);
+                    D_8010B468_1F1618_ToadInTheBox[pl] = 20;
+                    func_800798F8_7A4F8(func_80079798_7A398(0x269, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                } else if (box->time == 10) {
+                    func_800298A4_2A4A4(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 4, 4);
+                    func_800298A4_2A4A4(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, 4, 0);
+                    omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 230.0, 250.0f);
+                    func_80029B80_2A780(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, D_8010B4D0_1F1680_ToadInTheBox[0]->model[2]);
+                    func_80029C74_2A874(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, 0.0f);
+                    func_800798F8_7A4F8(PlaySound(0x268), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                } else if (box->time >= 11 && box->time < 300) {
+                    f = box->time - 14;
+                    d = (f32)((-(f * f) / 17.0f + 1.0) * 120.0);
+                    box->unk_14 = D_800FC834_FD434[*D_8010B4D0_1F1680_ToadInTheBox[pl]->model].pos.y;
+                    if (d > -220.0) {
+                        omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 230.0 + d, 250.0f);
+                        func_80029C74_2A874(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, (f32)(box->time - 10) / 10.0f * 3.0);
+                    } else {
+                        m = obj->unk_50;
+                        box->time = 300;
+                        omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 10.0, 250.0f);
+                        func_80019B28_1A728(obj, 1);
+                        TB_A8(m) = 20;
+                        func_800191D4_19DD4(obj, 7, obj->trans.x, obj->trans.y, obj->trans.z, 0.0f, 0.0f);
+                        func_800798F8_7A4F8(func_80079798_7A398(0x264, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                        omVibrate(m->unk_59, 10, 0, 10);
+                        func_80029C74_2A874(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, 7.0f);
+                    }
+                }
+                if (box->time == 301) {
+                    D_8010B450_1F1600_ToadInTheBox = D_8010B49C_1F164C_ToadInTheBox != 0 ? D_8010B450_1F1600_ToadInTheBox : 1;
+                    D_8010B49C_1F164C_ToadInTheBox = D_8010B49C_1F164C_ToadInTheBox < 2 ? 2 : D_8010B49C_1F164C_ToadInTheBox;
+                } else if (box->time >= 326 && box->time < 330) {
+                    t0 = 1.0 - (f32)(box->time - 325) / 5.0f;
+                    d = t0 * t0;
+                    omSetSca(D_8010B4D0_1F1680_ToadInTheBox[pl], 1.0f, d * 0.1 + 0.9, 1.0f);
+                    omSetRot(D_8010B4D0_1F1680_ToadInTheBox[pl], 5.0 - d * 5.0, 0.0f, 0.0f);
+                } else if (box->time == 330) {
+                    func_80029BF0_2A7F0(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, func_80029E14_2AA14(D_8010B4D0_1F1680_ToadInTheBox[0]->model[1]), 3, 2, 0);
+                    omSetSca(D_8010B4D0_1F1680_ToadInTheBox[pl], 1.0f, 0.9f, 1.0f);
+                    omSetRot(D_8010B4D0_1F1680_ToadInTheBox[pl], 5.0f, 0.0f, 0.0f);
+                } else if (box->time >= 331) {
+                    f = box->time - 340;
+                    t0 = 1.0 - (f32)(box->time - 330) / 15.0f;
+                    t0 = 1.0 - t0 * t0;
+                    t1 = (-(f * f) / 100.0f + 1.0) * 170.0;
+                    omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 10.0 + t1, 250.0f);
+                    omSetSca(D_8010B4D0_1F1680_ToadInTheBox[pl], 1.0f, 1.0f, 1.0f);
+                    omSetRot(D_8010B4D0_1F1680_ToadInTheBox[pl], 0.0f, 0.0f, 0.0f);
+                    func_80029C74_2A874(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, t0 > 0.5 ? 14.5f : 2.0 * t0 * 11.5 + 3.0);
+                    if (box->time == 335) {
+                        func_80109524_1EF6D4_ToadInTheBox(D_8010B440_1F15F0_ToadInTheBox[pl], 4);
+                        func_80029C74_2A874(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4.0f);
+                        func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 0);
+                        D_8010B468_1F1618_ToadInTheBox[pl] = 20;
+                    } else if (box->time >= 340) {
+                        box->state = 10;
+                        box->time = 0;
+                        func_800298A4_2A4A4(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, 4, 4);
+                        func_800298A4_2A4A4(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 4, 0);
+                        break;
+                    }
+                } else if (box->time == 375) { /* never: retail tests it after >= 331 */
+                    func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 4);
+                }
+                m = obj->unk_50;
+                if ((u32)(box->time - 300) < 30) {
+                    cnt = TB_A8(m);
+                    if (cnt < 118) {
+                        if (cnt >= 119) {
+                            TB_A8(m) = 118;
+                        }
+                    }
+                }
+                if (box->time < 330) {
+                    if (TB_A8(m) >= 119) {
+                        TB_A8(m) = 118;
+                    }
+                }
+                break;
+            case 10:
+                m = obj->unk_50;
+                if (TB_A8(m) >= 119 || TB_A8(m) == 0) {
+                    box->state = 2;
+                    box->time = 0;
+                } else {
+                    {
+                        f64 e2;
+    f64 e = box->angle = box->angle + spd[info->hits];
+
+                        if (e > 360.0) {
+                            e2 = e - 360.0;
+                        } else {
+                            e2 = e - 0.0;
+                        }
+                        box->angle = e2;
+                    }
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], box->angle, 0.0f, 0.0f);
+                    if (TB_A8(m) < 118) {
+                        if (info->cpu == -1 && (ContBtnTrg[m->unk_57] & 0x8000)) {
+                            TB_A8(m) += 5;
+                        }
+                        if (TB_A8(m) >= 119) {
+                            TB_A8(m) = 118;
+                        }
+                    }
+                }
+                break;
+            case 7:
+                if (box->time == 0) {
+                    box->time = 5;
+                }
+                k = box->time - 10;
+                if ((u32)k < 5) {
+                    t0 = 1.0 - (f32)k / 5.0f;
+                    t1 = 1.0 - t0 * (t0 * t0);
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + t1 * 30.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, (f32)(box->time - 10) / 5.0f * 15.0);
+                } else if ((u32)(box->time - 15) < 7) {
+                    t0 = (f32)(box->time - 15) / 7.0f;
+                    d = t0 * t0;
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + 30.0 - d * 185.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, 15.0 - d * 45.0);
+                } else if ((u32)(box->time - 22) < 8) {
+                    t0 = 1.0 - (f32)(box->time - 22) / 7.0f;
+                    d = (f32)(1.0 - t0 * t0);
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y - 155.0 + d * 155.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, d * 30.0 + -30.0);
+                    if (box->time == 22) {
+                        m = obj->unk_50;
+                        func_800191D4_19DD4(obj, 6, obj->trans.x, obj->trans.y + 40.0, obj->trans.z, -90.0f, 0.0f);
+                        func_80019B28_1A728(obj, 2);
+                        func_800798F8_7A4F8(func_80079798_7A398(0x262, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                        omVibrate(m->unk_59, 2, 3, 10);
+                        TB_A8(m) += 30;
+                    }
+                } else if (box->time == 30) {
+                    box->state = 3;
+                    box->time = 0;
+                }
+                break;
+            case 8:
+                if (box->time == 0) {
+                    box->time = 7;
+                }
+                if ((u32)(box->time - 8) < 7) {
+                    f = box->time - 7;
+                    d = -(f * f) / 52.0f;
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + d * 150.0, o->trans.z - d * 20.0);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)box->time / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
+                    if (box->time == 14) {
+                        m = obj->unk_50;
+                        func_800191D4_19DD4(obj, 6, obj->trans.x, obj->trans.y + 65.0, obj->trans.z, -90.0f, 0.0f);
+                        func_800798F8_7A4F8(func_80079798_7A398(0x262, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                        omVibrate(m->unk_59, 2, 3, 10);
+                        func_8000BF54_CB54(D_8010B4A0_1F1650_ToadInTheBox[pl], 280.0f, 455.0f, -100.0f, -100.0f, 100.0f, 100.0f);
+                        box->time++;
+                    }
+                } else if ((u32)(box->time - 15) < 15) {
+                    f = box->time - 22;
+                    f = -(f * f) / 52.0f;
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + f * (box->time < 22 ? 150.0 : 205.0), D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.z - f * 20.0);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)(box->time - 15) / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
+                    if (box->time == 29) {
+                        m = obj->unk_50;
+                        func_8000BF54_CB54(D_8010B4A0_1F1650_ToadInTheBox[pl], 280.0f, 300.0f, -100.0f, -100.0f, 100.0f, 100.0f);
+                        func_80019B28_1A728(obj, 1);
+                        func_800191D4_19DD4(obj, 6, obj->trans.x, obj->trans.y - 0.0, obj->trans.z, -90.0f, 0.0f);
+                        func_800798F8_7A4F8(func_80079798_7A398(0x263, pl), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
+                        omVibrate(m->unk_59, 2, 3, 10);
+                        TB_A8(m) += 90;
+                        box->time++;
+                    }
+                } else if ((u32)(box->time - 30) < 8) {
+                    f = box->time - 37;
+                    o = D_8010B4A0_1F1650_ToadInTheBox[pl];
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + -(f * f) / 52.0f * 205.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)(box->time - 30) / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
+                }
+                if (box->time >= 38) {
+                    box->state = 3;
+                    box->time = 0;
+                }
+                break;
+            case 12:
+                break;
+            }
+            {
+                u8 c1 = box->unk_08;
+
+                if (c1 != 0) {
+                    c1--;
+                }
+                box->unk_08 = c1;
+            }
+        } while (prev != (st = box->state));
+    }
+    if (box->state == 9 && box->time >= 10) {
+        k = *D_8010B4D0_1F1680_ToadInTheBox[pl]->model;
+    } else {
+        k = D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1];
+    }
+    box->unk_14 = D_800FC834_FD434[k].pos.y;
+    if (pl == 3 && D_8010B474_1F1624_ToadInTheBox == 5) {
+        u = 0;
+        a = rand8() & 3;
+        for (; u < 4; u++) {
+            k = (u + a) - ((u8)((u + a) / 4) * 4);
+            if (D_8010B470_1F1620_ToadInTheBox[(u8)k] != 0) {
+                if (D_8010B474_1F1624_ToadInTheBox == 5) {
+                    D_8010B474_1F1624_ToadInTheBox = k + 1;
+                    D_8010B470_1F1620_ToadInTheBox[(u8)k] = 2;
+                } else {
+                    TBBox** b = &D_8010B428_1F15D8_ToadInTheBox[(u8)k];
+
+                    t0 = (f32)(*b)->time / 10.0f * 0.75 + 0.25;
+                    (*b)->unk_04 = (*b)->angle = (f32)(rand8() % 3) * 90.0 + 90.0;
+                    (*b)->unk_04 += (f32)(rand8() % 20) - 10.0;
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[(u8)k]->model[1], t0 * (*b)->angle + (*b)->unk_04 * (1.0 - t0), 0.0f, 0.0f);
+                }
+            }
+        }
+    }
+    box->time++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80105950_1EBB00_ToadInTheBox);
+#endif
 
 s32 func_801094FC_1EF6AC_ToadInTheBox(omObjData* obj) {
     D_8010B428_1F15D8_ToadInTheBox[((MgWork*)obj->unk_50)->unk_59]->unk_08 = 1;
