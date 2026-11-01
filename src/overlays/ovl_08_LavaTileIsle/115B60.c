@@ -469,21 +469,207 @@ s32 func_80105F6C_1173EC_LavaTileIsle(s8 prev) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80106120_1175A0_LavaTileIsle);
+s32 func_80106120_1175A0_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80106444_1178C4_LavaTileIsle);
+    if (prev != 0 && ((a == 0 && LT_01(s)) || (a == 1 && s == 2) || (a == 2 && LT_34(s)) || a == 3)) {
+        return 1;
+    }
+    if (prev != 4 && (a == 0 || (a == 1 && LT_01(s)) || (a == 3 && LT_34(s)))) {
+        return 3;
+    }
+    if (prev != 2 && ((a == 0 || (a == 1 && LT_01(s)) || (a == 2 && LT_34(s)) || a == 3) && (b < 6 || (b == 6 && LT_01(t)) || (b == 7 && LT_34(t))))) {
+        return 2;
+    }
+    if ((a == 0 && LT_01(s)) || (a == 1 && s == 2) || (a == 2 && LT_34(s)) || a == 3) {
+        return 1;
+    }
+    if (a == 0 || (a == 1 && LT_01(s)) || (a == 3 && LT_34(s))) {
+        return 3;
+    }
+    if ((a == 0 || (a == 1 && LT_01(s)) || (a == 2 && LT_34(s)) || a == 3) && (b < 6 || (b == 6 && LT_01(t)) || (b == 7 && LT_34(t)))) {
+        return 2;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801066D4_117B54_LavaTileIsle);
+s32 func_80106444_1178C4_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801069D8_117E58_LavaTileIsle);
+    if (prev != 1 && ((a == 0 || (a == 1 && LT_01(s)) || (a == 2 && LT_34(s)) || a == 3) && (b < 6 || (b == 6 && LT_01(t)) || (b == 7 && LT_34(t))))) {
+        return 1;
+    }
+    if (prev != 5 && ((b >= 1 && b <= 4) || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && t == 2))) {
+        return 3;
+    }
+    if ((a == 0 || (a == 1 && LT_01(s)) || (a == 2 && LT_34(s)) || a == 3) && (b < 6 || (b == 6 && LT_01(t)) || (b == 7 && LT_34(t)))) {
+        return 1;
+    }
+    if ((b >= 1 && b <= 4) || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && t == 2)) {
+        return 3;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80106F2C_1183AC_LavaTileIsle);
+s32 func_801066D4_117B54_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107414_118894_LavaTileIsle);
+    if (prev != 6 && (((a == 0 && LT_34(s)) || a == 1 || a == 2 || (a == 3 && LT_01(s))) && (!(b == 2 || b == 3) || (b == 2 && LT_01(t)) || (b == 3 && LT_34(t))))) {
+        return 3;
+    }
+    if (prev != 0 && ((a == 1 && LT_34(s)) || a == 2 || (a == 3 && LT_01(s)))) {
+        return 4;
+    }
+    if (prev != 4 && ((a == 0 && LT_34(s)) || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && s == 2))) {
+        return 2;
+    }
+    if (((a == 0 && LT_34(s)) || a == 1 || a == 2 || (a == 3 && LT_01(s))) && (!(b == 2 || b == 3) || (b == 2 && LT_01(t)) || (b == 3 && LT_34(t)))) {
+        return 3;
+    }
+    if ((a == 1 && LT_34(s)) || a == 2 || (a == 3 && LT_01(s))) {
+        return 4;
+    }
+    if ((a == 0 && LT_34(s)) || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && s == 2)) {
+        return 2;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107694_118B14_LavaTileIsle);
+s32 func_801069D8_117E58_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107B24_118FA4_LavaTileIsle);
+    if (prev != 3 && ((a == 0 && LT_34(s)) || a == 1 || (a == 2 && LT_01(s)))) {
+        return 1;
+    }
+    if (prev != 1 && (a == 0 || (a == 1 && LT_01(s)) || (a == 2 && s == 2) || (a == 3 && LT_34(s)))) {
+        return 4;
+    }
+    if (prev != 5 && ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && ((b >= 1 && b <= 4) || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t))))) {
+        return 2;
+    }
+    if (prev != 7 && ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && LT_34(t))))) {
+        return 3;
+    }
+    if ((a == 0 && LT_34(s)) || a == 1 || (a == 2 && LT_01(s))) {
+        return 1;
+    }
+    if (a == 0 || (a == 1 && LT_01(s)) || (a == 2 && s == 2) || (a == 3 && LT_34(s))) {
+        return 4;
+    }
+    if ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && ((b >= 1 && b <= 4) || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t)))) {
+        return 2;
+    }
+    if ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && LT_34(t)))) {
+        return 3;
+    }
+    return 0;
+}
+
+s32 func_80106F2C_1183AC_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
+
+    if (prev != 2 && (b > 0 || b < 5 /* retail: always true */ || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && t == 2))) {
+        return 4;
+    }
+    if (prev != 4 && ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b > 0 || b < 5 || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t))))) {
+        return 1;
+    }
+    if (prev != 8 && (b == 2 || b == 3 || (b == 1 && LT_34(t)) || (b == 4 && LT_01(t)) || (b == 5 && t == 2) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t)))) {
+        return 3;
+    }
+    if (b > 0 || b < 5 /* retail: always true */ || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && t == 2)) {
+        return 4;
+    }
+    if ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b > 0 || b < 5 || (b == 0 && LT_34(t)) || (b == 5 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t)))) {
+        return 1;
+    }
+    if (b == 2 || b == 3 || (b == 1 && LT_34(t)) || (b == 4 && LT_01(t)) || (b == 5 && t == 2) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t))) {
+        return 3;
+    }
+    return 0;
+}
+
+s32 func_80107414_118894_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
+
+    if (prev != 7 && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && t == 2) || (b == 4 && LT_34(t)))) {
+        return 2;
+    }
+    if (prev != 3 && (((a == 0 && LT_34(s)) || a == 1 || a == 2 || (a == 3 && LT_01(s))) && (!(b == 2 || b == 3) || (b == 2 && LT_01(t)) || (b == 3 && LT_34(t))))) {
+        return 4;
+    }
+    if (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && t == 2) || (b == 4 && LT_34(t))) {
+        return 2;
+    }
+    if (((a == 0 && LT_34(s)) || a == 1 || a == 2 || (a == 3 && LT_01(s))) && (!(b == 2 || b == 3) || (b == 2 && LT_01(t)) || (b == 3 && LT_34(t)))) {
+        return 4;
+    }
+    return 0;
+}
+
+s32 func_80107694_118B14_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
+
+    if (prev != 8 && (b >= 6 || (b == 0 && LT_01(t)) || (b == 1 && t == 2) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 5 && LT_34(t)))) {
+        return 2;
+    }
+    if (prev != 4 && ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && LT_34(t))))) {
+        return 4;
+    }
+    if (prev != 6 && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 3 && t == 2) || (b == 4 && LT_34(t)))) {
+        return 1;
+    }
+    if (b >= 6 || (b == 0 && LT_01(t)) || (b == 1 && t == 2) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 5 && LT_34(t))) {
+        return 2;
+    }
+    if ((a == 0 || a == 1 || (a == 2 && LT_01(s)) || (a == 3 && LT_34(s))) && (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && LT_34(t)))) {
+        return 4;
+    }
+    if (b == 0 || b >= 5 || (b == 1 && LT_01(t)) || (b == 3 && t == 2) || (b == 4 && LT_34(t))) {
+        return 1;
+    }
+    return 0;
+}
+
+s32 func_80107B24_118FA4_LavaTileIsle(s8 prev) {
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[2];
+    s8 t = D_8010A610_11BA90_LavaTileIsle->work[0];
+
+    if (prev != 5 && (b == 2 || b == 3 || (b == 0 && t == 2) || (b == 1 && LT_34(t)) || (b == 4 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t)))) {
+        return 4;
+    }
+    if (prev != 7 && (b >= 6 || (b == 0 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && t == 2) || (b == 5 && LT_34(t)))) {
+        return 1;
+    }
+    if (b == 2 || b == 3 || (b == 0 && t == 2) || (b == 1 && LT_34(t)) || (b == 4 && LT_01(t)) || (b == 6 && LT_34(t)) || (b == 7 && LT_01(t))) {
+        return 4;
+    }
+    if (b >= 6 || (b == 0 && LT_01(t)) || (b == 2 && LT_34(t)) || (b == 3 && LT_01(t)) || (b == 4 && t == 2) || (b == 5 && LT_34(t))) {
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107E3C_1192BC_LavaTileIsle);
 

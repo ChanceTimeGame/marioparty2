@@ -167,6 +167,10 @@ void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture named arg0 */
 
+/* The CPU's route functions: a moving tile's phase (obj->work[0]) in a pair. */
+#define LT_01(s) ((s) == 0 || (s) == 1)
+#define LT_34(s) ((s) == 3 || (s) == 4)
+
 /* ---- .data and .bss, in address order ---- */
 extern s32 D_8010A1B0_11B630_LavaTileIsle; /* seconds */
 extern u32 D_8010A1B4_11B634_LavaTileIsle; /* state 0 frames */
@@ -263,14 +267,14 @@ void func_801057C0_116C40_LavaTileIsle(omObjData* obj, LTCpu* c);
 void func_80105E34_1172B4_LavaTileIsle(s8* flag, LTCpu* c);
 s32 func_80105E80_117300_LavaTileIsle(LTCpu* c);
 s32 func_80105F6C_1173EC_LavaTileIsle(s8 prev);
-s32 func_80106120_1175A0_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_80106444_1178C4_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_801066D4_117B54_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_801069D8_117E58_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_80106F2C_1183AC_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_80107414_118894_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_80107694_118B14_LavaTileIsle(s32 prev, LTCpu* c);
-s32 func_80107B24_118FA4_LavaTileIsle(s32 prev, LTCpu* c);
+s32 func_80106120_1175A0_LavaTileIsle(s8 prev);
+s32 func_80106444_1178C4_LavaTileIsle(s8 prev);
+s32 func_801066D4_117B54_LavaTileIsle(s8 prev);
+s32 func_801069D8_117E58_LavaTileIsle(s8 prev);
+s32 func_80106F2C_1183AC_LavaTileIsle(s8 prev);
+s32 func_80107414_118894_LavaTileIsle(s8 prev);
+s32 func_80107694_118B14_LavaTileIsle(s8 prev);
+s32 func_80107B24_118FA4_LavaTileIsle(s8 prev);
 void func_80107E3C_1192BC_LavaTileIsle(s32 arg0, omObjData* obj, s32 tile);
 void func_801081C4_119644_LavaTileIsle(void);
 void func_80108204_119684_LavaTileIsle(omObjData* obj);
