@@ -425,5 +425,6 @@ D_80109274_28B484_TorpedoTargets = D_8010926C_28B47C_TorpedoTargets + 0x8;
 D_801090B1_20C451_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x1;
 D_801090B2_20C452_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x2;
 D_80109A4E_1D6DAE_FaceLift = D_80109A4C_1D6DAC_FaceLift + 0x2;
-D_80109DB6_24D6C6_ShyGuySays = D_80109DB4_24D6C4_ShyGuySays + 0x2;
-D_80109DBE_24D6CE_ShyGuySays = D_80109DBC_24D6CC_ShyGuySays + 0x2;
+/* S4-31D: retail reads the first background sprite's y and z by their own labels */
+D_8010A004_24D914_ShyGuySays = D_8010A000_24D910_ShyGuySays + 0x4;
+D_8010A008_24D918_ShyGuySays = D_8010A000_24D910_ShyGuySays + 0x8;
