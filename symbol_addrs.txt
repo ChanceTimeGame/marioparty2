@@ -1,3 +1,4 @@
+D_8010A6F4_26F6A4_LooneyLumberjacks = 0x8010A6F4; //rom:0x26F6A4
 rand8 = 0x80018AFC; //rom:0x196FC
 __osEPiRawStartDma = 0x8009D950; //rom:0x9E550
 osEepromProbe = 0x8009CAD0; // rom:0x9D6D0
