@@ -27,6 +27,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80103180_11C290_BumperBalloonCars);
 
+__asm__(".section .rodata");
+const char D_80108570_121680_BumperBalloonCars[] = "signl_3x_DEF";
+
+__asm__(".section .rodata");
+const char D_80108580_121690_BumperBalloonCars[] = "signl_2x_DEF";
+
+__asm__(".section .rodata");
+const char D_80108590_1216A0_BumperBalloonCars[] = "signl_1x_DEF";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80103300_11C410_BumperBalloonCars);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_801036AC_11C7BC_BumperBalloonCars);
@@ -88,6 +97,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80107A74_120B84_BumperBalloonCars);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80107BB8_120CC8_BumperBalloonCars);
+
+__asm__(".section .rodata");
+const char D_801085F0_121700_BumperBalloonCars[] = "\202`\202a\202b";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80107CCC_120DDC_BumperBalloonCars);
 
