@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_27.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/2032A0", func_80106C40_2032A0_AbandonShip);
 
