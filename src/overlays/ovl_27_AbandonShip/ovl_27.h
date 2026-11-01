@@ -169,9 +169,9 @@ extern s8 D_801093C0_205A20_AbandonShip; /* game state */
 extern f32 D_801093C4_205A24_AbandonShip[4]; /* mast x */
 extern f32 D_801093D4_205A34_AbandonShip; /* the waves' height */
 extern f32 D_801093D8_205A38_AbandonShip; /* mast height */
-extern u8 D_801093DC_205A3C_AbandonShip[3][8]; /* rope pattern's side per rung */
-extern u8 D_801093F4_205A54_AbandonShip[3][5]; /* coin rung */
-extern u8 D_80109404_205A64_AbandonShip[3][8]; /* rung spacing */
+extern s8 D_801093DC_205A3C_AbandonShip[3][8]; /* rope pattern's side per rung */
+extern s8 D_801093F4_205A54_AbandonShip[3][5]; /* coin rung */
+extern s8 D_80109404_205A64_AbandonShip[3][8]; /* rung spacing */
 extern u16 D_8010941C_205A7C_AbandonShip; /* flag phase */
 extern f32 D_80109420_205A80_AbandonShip;
 extern f32 D_80109424_205A84_AbandonShip;

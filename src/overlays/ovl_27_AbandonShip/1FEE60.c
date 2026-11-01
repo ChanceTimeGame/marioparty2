@@ -1,5 +1,7 @@
 #include "ovl_27.h"
 
+#define ABSDIFF(x) ((x) > 0.0f ? (x) : (0.0f - (x)))
+
 void func_80102800_1FEE60_AbandonShip(void) {
     omObjData* obj;
 
@@ -879,16 +881,329 @@ void func_801055EC_201C4C_AbandonShip(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105754_201DB4_AbandonShip);
+void func_80105754_201DB4_AbandonShip(omObjData* obj) {
+    GroundWork* w;
+    s32 i;
+    s32 j;
+    s32 dir = 0x370000;
+    s32 attr = 0x2B9;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105A9C_2020FC_AbandonShip);
+    w = func_80027154_27D54(0xB4, 0x7918);
+    obj->unk_50 = w;
+    func_800B0EF0_B1AF0(w, 0, 0xB4);
+    w->unk_03 = 1;
+    w->unk_04 = 0;
+    func_8000BEF8_CAF8(obj, 2, 5.0f);
+    obj->func_ptr = func_80105A9C_2020FC_AbandonShip;
+    obj->model[0] = func_80018A30_19630(0x370007, 0x2BD);
+    obj->scale.z = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.x = 1.0f;
+    obj->trans.x = 0.0f;
+    obj->trans.y = 5.0f;
+    obj->trans.z = 0.0f;
+    j = 1;
+    for (i = 0; i <= 0; i++) {
+        obj->model[j] = func_80018A30_19630(dir | 2, (u16)(attr | 4));
+        func_80029714_2A314(obj->model[j], obj->trans.x - 650.0f, obj->trans.y + 40.0f, obj->trans.z + 30.0f);
+        func_8002979C_2A39C(obj->model[j], 0.0f, 90.0f, 0.0f);
+        j++;
+    }
+    for (i = 0; i < 4; i++) {
+        obj->model[j] = func_80018A30_19630(dir | 1, attr | 4);
+        if (i == 0) {
+            func_80029714_2A314(obj->model[j], obj->trans.x + 580.0f + 180.0f, obj->trans.y, obj->trans.z - 280.0f);
+        } else if (i == 3) {
+            D_801095EC_205C4C_AbandonShip.x = obj->trans.x + 1000.0f;
+            D_801095EC_205C4C_AbandonShip.y = obj->trans.y + 200.0f;
+            D_801095EC_205C4C_AbandonShip.z = obj->trans.z + 500.0f;
+            func_80029714_2A314(obj->model[j], D_801095EC_205C4C_AbandonShip.x, D_801095EC_205C4C_AbandonShip.y, D_801095EC_205C4C_AbandonShip.z);
+            func_8002979C_2A39C(obj->model[j], 90.0f, 0.0f, 0.0f);
+        } else {
+            func_80029714_2A314(obj->model[j], obj->trans.x + 580.0f + i * 120.0f, obj->trans.y, obj->trans.z - 400.0f);
+        }
+        j++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105C88_2022E8_AbandonShip);
+void func_80105A9C_2020FC_AbandonShip(omObjData* obj) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105EC8_202528_AbandonShip);
+    switch (D_801093C0_205A20_AbandonShip) {
+    case 1:
+        break;
+    case 2:
+        for (i = 0; i < 6; i++) {
+            func_800298A4_2A4A4(obj->model[i], 4, 0);
+        }
+        PlaySound(0x27E);
+        break;
+    case 3:
+        if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+            D_801095EC_205C4C_AbandonShip.x -= 30.0f;
+            D_8010942C_205A8C_AbandonShip += 20.0f;
+        }
+        func_80029714_2A314(obj->model[5], D_801095EC_205C4C_AbandonShip.x, D_801095EC_205C4C_AbandonShip.y, D_801095EC_205C4C_AbandonShip.z);
+        func_8002979C_2A39C(obj->model[5], 90.0f, 0.0f, D_8010942C_205A8C_AbandonShip);
+        if (D_801095EC_205C4C_AbandonShip.x < -800.0f) {
+            D_801093C0_205A20_AbandonShip = 4;
+        }
+        break;
+    case 4:
+        func_800298A4_2A4A4(obj->model[5], 4, 4);
+        break;
+    case 5:
+        func_80105C88_2022E8_AbandonShip(obj);
+        if (D_80109430_205A90_AbandonShip == 0 && obj->trans.y < -45.0f) {
+            PlaySound(0x27F);
+            D_80109430_205A90_AbandonShip = 1;
+        }
+        break;
+    case 6:
+    case 7:
+        if (D_80109380_2059E0_AbandonShip == 0) {
+            func_80105C88_2022E8_AbandonShip(obj);
+        }
+        break;
+    }
+}
 
+void func_80105C88_2022E8_AbandonShip(omObjData* obj) {
+    s32 i;
+    s32 j;
+    s32 t;
+
+    t = func_80078EA8_79AA8() + D_80102720_103320;
+    j = 1;
+    if (t == 0) {
+        obj->trans.y -= 7.5f;
+    }
+    for (i = 0; i <= 0; i++) {
+        func_80029714_2A314(obj->model[j], obj->trans.x - 650.0f, obj->trans.y + 40.0f, obj->trans.z + 30.0f);
+        j++;
+    }
+    for (i = 0; i < 4; i++) {
+        if (i == 0) {
+            func_80029714_2A314(obj->model[j], obj->trans.x + 580.0f + 180.0f, obj->trans.y, obj->trans.z - 280.0f);
+        } else if (i == 3) {
+            D_801095EC_205C4C_AbandonShip.x = obj->trans.x + 1000.0f;
+            D_801095EC_205C4C_AbandonShip.y = obj->trans.y + 200.0f;
+            D_801095EC_205C4C_AbandonShip.z = obj->trans.z + 500.0f;
+            func_80029714_2A314(obj->model[j], D_801095EC_205C4C_AbandonShip.x, D_801095EC_205C4C_AbandonShip.y, D_801095EC_205C4C_AbandonShip.z);
+        } else {
+            func_80029714_2A314(obj->model[j], obj->trans.x + 580.0f + i * 120.0f, obj->trans.y, obj->trans.z - 400.0f);
+        }
+        j++;
+    }
+}
+
+void func_80105EC8_202528_AbandonShip(ASMastWork* w) {
+    w->unk_7C = 0;
+    w->unk_78 = 0;
+    w->unk_3C = 0;
+    w->unk_54 = 0;
+    w->unk_44 = 0.1f;
+    w->unk_48 = 30.0f;
+    w->unk_34 = 500.0f;
+    w->unk_40 = D_800BF7C8_C03C8;
+    w->unk_38 = 0.0f;
+    w->unk_4C = 0.5f;
+    w->unk_50 = 0;
+    w->unk_74 = 0.5f;
+}
+
+/* NON_MATCHING: same logic; retail hoists two table bases and reloads 100.0f in the coin loop. */
+#ifdef NON_MATCHING
+void func_80105F38_202598_AbandonShip(omObjData* obj) {
+    ASMastWork* w;
+    s8* rung;
+    s8* tbl;
+    u16* spr;
+    f32 y;
+    s32 i;
+    s32 j;
+    s32 idx;
+    s32 attr = 0x2A9;
+
+    obj->unk_50 = func_80027154_27D54(0xAC, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0xAC);
+    w = obj->unk_50;
+    func_80105EC8_202528_AbandonShip(w);
+    obj->func_ptr = func_8010642C_202A8C_AbandonShip;
+    j = 1;
+    obj->model[0] = func_80027D3C_2893C(D_801095D4_205C34_AbandonShip);
+    obj->scale.z = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.x = 1.0f;
+    obj->trans.x = D_801093C4_205A24_AbandonShip[D_801095D2_205C32_AbandonShip];
+    obj->trans.y = 5.0f;
+    obj->trans.z = 0.0f;
+    obj->work[0] = D_801095D2_205C32_AbandonShip;
+    for (i = 0; i < 8; i++) {
+        obj->model[j] = func_80027D3C_2893C(D_801095D6_205C36_AbandonShip);
+        y = D_801096B8_205D18_AbandonShip[i] = D_80109404_205A64_AbandonShip[D_801096B0_205D10_AbandonShip][i] * 145;
+        func_80029714_2A314(obj->model[j], obj->trans.x, y, obj->trans.z);
+        if (D_801093DC_205A3C_AbandonShip[D_801096B0_205D10_AbandonShip][i] == 1) {
+            func_800297E8_2A3E8(obj->model[j], -1.0f, 1.0f, 1.0f);
+            func_8002C3A0_2CFA0(obj->model[j]);
+            func_80029A8C_2A68C(obj->model[j]);
+        }
+        j++;
+    }
+    j = 9;
+    for (i = 0, tbl = (s8*)D_801093F4_205A54_AbandonShip; i < 5; i++) {
+        obj->model[j] = D_800F86D8_F92D8[(s16)func_80018D64_19964(0xE, (u16)attr, 8)].unk00;
+        func_800297E8_2A3E8(obj->model[j], 2.0f, 2.0f, 2.0f);
+        D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y = D_801096B8_205D18_AbandonShip[*(rung = D_801096B0_205D10_AbandonShip * 5 + tbl + i)] - 100.0f;
+        if (D_801093DC_205A3C_AbandonShip[D_801096B0_205D10_AbandonShip][*rung] == 0) {
+            D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x = obj->trans.x - 80.0f;
+        } else {
+            D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x = obj->trans.x + 80.0f;
+        }
+        func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x, D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y, obj->trans.z);
+        j++;
+    }
+    idx = (s16)func_80018D64_19964(0x14, (u16)attr, 8);
+    obj->model[14] = D_800F86D8_F92D8[idx].unk00;
+    func_800298A4_2A4A4(obj->model[14], 4, 4);
+    HmfModelObjAttrSet(obj->model[14], 0x70000000, 0x70000000);
+    func_800297E8_2A3E8(obj->model[14], 4.0f, 4.0f, 4.0f);
+    func_80029714_2A314(obj->model[14], obj->trans.x, obj->trans.y, obj->trans.z);
+    w->unk_21 = idx;
+    func_80021250_21E50(w->unk_21, 0xFF, 0xFF, 0xBE);
+    func_800211E8_21DE8(w->unk_21, 0xF0);
+    spr = &D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip];
+    *spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x37000C), 0, 1);
+    func_8001A91C_1B51C(*spr, 1.0f, 1.0f);
+    espDispOff(D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip]);
+    D_801095D2_205C32_AbandonShip++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105F38_202598_AbandonShip);
+#endif
 
+/* NON_MATCHING: same code shape; retail keeps the coin's model slot in a saved register (register allocation only). */
+#ifdef NON_MATCHING
+void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
+    omObjData* p;
+    omObjData* q;
+    s32 k;
+    ASMastWork* w;
+    MgWork* m;
+    s32 i;
+    s32 j;
+
+    switch (D_801093C0_205A20_AbandonShip) {
+    case 3:
+        for (i = 0; i < 9; i++) {
+            func_800298A4_2A4A4(obj->model[i], 4, 0);
+        }
+        for (i = 0; i < 4; i++) {
+            q = D_800FFFD8_100BD8[i];
+            if (q->work[0] == obj->work[0]) {
+                m = q->unk_50;
+                obj->work[1] = m->unk_59;
+            }
+        }
+        break;
+    case 5:
+        func_801068F8_202F58_AbandonShip(obj);
+        D_801093D8_205A38_AbandonShip = obj->trans.y;
+        p = D_800FFFD8_100BD8[obj->work[1]];
+        if (p->work[0] == obj->work[0] && p->work[1] < 7) {
+            j = 9;
+            k = 14;
+            for (i = 0; i < 5; i++, j++) {
+                if (ABSDIFF(p->trans.x - D_80109610_205C70_AbandonShip[obj->work[0]][i].x) <= 70.0f &&
+                    ABSDIFF(p->trans.y + 60.0f - D_80109610_205C70_AbandonShip[obj->work[0]][i].y) <= 70.0f) {
+                    func_800298A4_2A4A4(obj->model[j], 4, 4);
+                    if (i >= D_801095CE_205C2E_AbandonShip[obj->work[0]]) {
+                        D_801095CE_205C2E_AbandonShip[obj->work[0]]++;
+                        D_801095CA_205C2A_AbandonShip[obj->work[0]] = 1;
+                    }
+                    func_800298A4_2A4A4(obj->model[k], 4, 0);
+                    func_80029714_2A314(obj->model[k], D_80109610_205C70_AbandonShip[obj->work[0]][i].x, D_80109610_205C70_AbandonShip[obj->work[0]][i].y, obj->trans.z + 100.0f);
+                    break;
+                }
+            }
+            w = obj->unk_50;
+            if (D_801095CA_205C2A_AbandonShip[obj->work[0]] == 1) {
+                if (w->unk_78 == 0) {
+                    m = p->unk_50;
+                    gPlayers[m->unk_59].coins_mg++;
+                    func_80079798_7A398(9, m->unk_59);
+                }
+                func_80021198_21D98(w->unk_21, w->unk_78 % 8);
+                if (++w->unk_78 >= 8) {
+                    w->unk_78 = 0;
+                    D_801095CA_205C2A_AbandonShip[obj->work[0]] = 0;
+                }
+            }
+        }
+        if (obj->trans.y < -4400.0f) {
+            D_801093C0_205A20_AbandonShip = 6;
+        }
+        break;
+    case 6:
+    case 7:
+    case 8:
+        espDispOff(D_801095F8_205C58_AbandonShip[obj->work[0]]);
+        if (D_80109380_2059E0_AbandonShip != 2) {
+            if (D_80109380_2059E0_AbandonShip == 0) {
+                func_801068F8_202F58_AbandonShip(obj);
+            } else if (D_801093C0_205A20_AbandonShip != 6) {
+                p = D_800FFFD8_100BD8[obj->work[1]];
+                if (p->work[0] == obj->work[0] && p->work[1] < 11) {
+                    func_801068F8_202F58_AbandonShip(obj);
+                }
+            }
+        }
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_8010642C_202A8C_AbandonShip);
+#endif
 
+/* NON_MATCHING: masked 0; one addu's operand order (the rope table base). */
+#ifdef NON_MATCHING
+void func_801068F8_202F58_AbandonShip(omObjData* obj) {
+    Vec pos;
+    Vec2f scr;
+    s8* rung;
+    s8* tbl;
+    f32 y;
+    s32 i;
+    s32 j;
+
+    obj->trans.y -= 7.5f;
+    j = 1;
+    for (i = 0; i < 8; i++) {
+        y = D_801096B8_205D18_AbandonShip[i] = D_80109404_205A64_AbandonShip[D_801096B0_205D10_AbandonShip][i] * 145 + obj->trans.y;
+        func_80029714_2A314(obj->model[j], obj->trans.x, y, obj->trans.z);
+        j++;
+    }
+    j = 9;
+    for (i = 0, tbl = (s8*)D_801093F4_205A54_AbandonShip; i < 5; i++) {
+        D_80109610_205C70_AbandonShip[obj->work[0]][i].y = D_801096B8_205D18_AbandonShip[*(rung = D_801096B0_205D10_AbandonShip * 5 + tbl + i)] - 100.0f;
+        if (D_801093DC_205A3C_AbandonShip[D_801096B0_205D10_AbandonShip][*rung] == 0) {
+            D_80109610_205C70_AbandonShip[obj->work[0]][i].x = obj->trans.x - 100.0f;
+            func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[obj->work[0]][i].x, D_80109610_205C70_AbandonShip[obj->work[0]][i].y, obj->trans.z);
+        } else {
+            D_80109610_205C70_AbandonShip[obj->work[0]][i].x = obj->trans.x + 100.0f;
+            func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[obj->work[0]][i].x, D_80109610_205C70_AbandonShip[obj->work[0]][i].y, obj->trans.z);
+        }
+        j++;
+    }
+    if (obj->trans.y > -4475.0f) {
+        pos.x = obj->trans.x;
+        pos.y = D_801093D4_205A34_AbandonShip / 2.0f + 50.0f;
+        pos.z = obj->trans.z;
+        Hu3DCam3DToScreen(0, &pos, &scr);
+        espPosSet(D_801095F8_205C58_AbandonShip[obj->work[0]], scr.unk_00, scr.unk_04);
+        espDispOn(D_801095F8_205C58_AbandonShip[obj->work[0]]);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_801068F8_202F58_AbandonShip);
+#endif
