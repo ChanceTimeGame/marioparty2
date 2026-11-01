@@ -1,5 +1,35 @@
 #include "ovl_20.h"
 
+extern const char D_8010B674_1CFA24_MagnetCarta[];
+extern const char D_8010B684_1CFA34_MagnetCarta[];
+extern const char D_8010B694_1CFA44_MagnetCarta[20];
+
+/* .data (0x1CF900-0x1CFA10, 8010B550-8010B660) */
+u16 D_8010B550_1CF900_MagnetCarta[6] = { 13, 14, 15, 16, 17, 18 };
+MCPost D_8010B55C_1CF90C_MagnetCarta[4] = {
+    { 505.3905029f, 290.3901367f },
+    { -505.3905029f, 290.3901367f },
+    { 505.3905029f, -290.3901367f },
+    { -505.3905029f, -290.3901367f },
+};
+s16 D_8010B57C_1CF92C_MagnetCarta[2] = { 12, 11 };
+MCStart D_8010B580_1CF930_MagnetCarta[2] = { { 400, 0, 200, 270 }, { 400, 0, -200, 270 } };
+MCStart D_8010B590_1CF940_MagnetCarta[2] = { { -400, 0, 200, 90 }, { -400, 0, -200, 90 } };
+MCStart D_8010B5A0_1CF950_MagnetCarta[3] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, -100, 0 } };
+MCRing D_8010B5B8_1CF968_MagnetCarta[1][9] = { {
+    { 188.25f, { 0.0f, 0.0f }, 0.0f },
+    { 188.25f, { 0.0f, 0.0f }, 40.0f },
+    { 188.25f, { 0.0f, 0.0f }, 80.0f },
+    { 188.25f, { 0.0f, 0.0f }, 120.0f },
+    { 188.25f, { 0.0f, 0.0f }, 160.0f },
+    { 188.25f, { 0.0f, 0.0f }, 200.0f },
+    { 188.25f, { 0.0f, 0.0f }, 240.0f },
+    { 188.25f, { 0.0f, 0.0f }, 280.0f },
+    { 188.25f, { 0.0f, 0.0f }, 320.0f },
+} };
+u16 D_8010B648_1CF9F8_MagnetCarta[4] = { 25, 26, 27, 0 };
+char* D_8010B650_1CFA00_MagnetCarta[4] = { (char*)D_8010B694_1CFA44_MagnetCarta, (char*)D_8010B684_1CFA34_MagnetCarta, (char*)D_8010B674_1CFA24_MagnetCarta, NULL };
+
 void func_80102800_1C6BB0_MagnetCarta(void) {
     func_8010ACB4_1CF064_MagnetCarta();
 }
