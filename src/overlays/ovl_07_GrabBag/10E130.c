@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_07.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10E130", func_80104B20_10E130_GrabBag);
 
