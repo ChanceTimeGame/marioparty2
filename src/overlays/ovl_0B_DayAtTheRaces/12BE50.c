@@ -541,3 +541,21 @@ s16 func_8010A018_12D7F8_DayAtTheRaces(s32 file) {
     DataCloseTemp(data);
     return sprite;
 }
+
+/* .data (8010AA60-8010AB00) */
+DRCamDef D_8010AA60_12E240_DayAtTheRaces[2] = {
+    { { -560.0f, 200.0f, -143.75f }, { -20.6f, -90.0f, 0.0f }, { 640, 480, 640, 480 }, { 0, 0, 320, 240 } },
+    { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } },
+};
+DRLight D_8010AAB0_12E290_DayAtTheRaces[2] = {
+    { { 0x80, 0x80, 0x80 }, { 100.0f, 100.0f, 50.0f } },
+    { { 0xFF, 0xFF, 0xFF }, { 100.0f, 100.0f, 50.0f } },
+};
+void (*D_8010AAD0_12E2B0_DayAtTheRaces[3])(DRCam*) = {
+    NULL, NULL, func_80108AF4_12C2D4_DayAtTheRaces,
+};
+void (*D_8010AADC_12E2BC_DayAtTheRaces[9])(omObjData*) = {
+    func_80109134_12C914_DayAtTheRaces, func_80109240_12CA20_DayAtTheRaces,
+    func_80109248_12CA28_DayAtTheRaces, func_801092E4_12CAC4_DayAtTheRaces,
+    func_801092EC_12CACC_DayAtTheRaces, func_801093E8_12CBC8_DayAtTheRaces, NULL, NULL, NULL,
+};
