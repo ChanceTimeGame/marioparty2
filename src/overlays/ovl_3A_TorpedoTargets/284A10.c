@@ -1,5 +1,44 @@
 #include "ovl_3A.h"
 
+/* .data (0x28B470-0x28B5A0, 80109260-80109390) */
+s8 D_80109260_28B470_TorpedoTargets = -1;
+s8 D_80109261_28B471_TorpedoTargets = -1;
+s8 D_80109262_28B472_TorpedoTargets = 0;
+s8 D_80109263_28B473_TorpedoTargets = 0;
+omObjData* D_80109264_28B474_TorpedoTargets[2] = { NULL, NULL };
+Vec D_8010926C_28B47C_TorpedoTargets[2] = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+Vec D_80109284_28B494_TorpedoTargets[4] = {
+    { -617.0f, -1279.0f, 1903.15f }, { 1618.5f, -853.0f, 1174.25f },
+    { 1608.15f, -1232.0f, -1181.0f }, { -621.0f, -915.0f, -1901.5f },
+};
+s8 D_801092B4_28B4C4_TorpedoTargets = -0x1E;
+s8 D_801092B5_28B4C5_TorpedoTargets = 0;
+s8 D_801092B6_28B4C6_TorpedoTargets = 0;
+s8 D_801092B7_28B4C7_TorpedoTargets = 0;
+s8 D_801092B8_28B4C8_TorpedoTargets[4] = { 0, 0, 0, 0 };
+u8 D_801092BC_28B4CC_TorpedoTargets[4] = { 0, 0, 0, 0 };
+u8 D_801092C0_28B4D0_TorpedoTargets[4] = { 0, 0, 0, 0 };
+f32 D_801092C4_28B4D4_TorpedoTargets[2] = { 0.0f, 0.0f };
+u32 D_801092CC_28B4DC_TorpedoTargets = 0xFFFF0000;
+f32 D_801092D0_28B4E0_TorpedoTargets[2] = { 0.0f, 0.0f };
+Vec D_801092D8_28B4E8_TorpedoTargets[2] = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+f32 D_801092F0_28B500_TorpedoTargets = 0.0f;
+u32 D_801092F4_28B504_TorpedoTargets = 0;
+u32 D_801092F8_28B508_TorpedoTargets = 0xE42;
+s32 D_801092FC_28B50C_TorpedoTargets = 0;
+s32 D_80109300_28B510_TorpedoTargets = 0;
+s32 D_80109304_28B514_TorpedoTargets = 0;
+s32 D_80109308_28B518_TorpedoTargets = 0;
+f32 D_8010930C_28B51C_TorpedoTargets = 0.0f;
+f32 D_80109310_28B520_TorpedoTargets = 0.0f;
+s16 D_80109314_28B524_TorpedoTargets = -1;
+s16 D_80109316_28B526_TorpedoTargets = 0;
+s32 D_80109318_28B528_TorpedoTargets[6] = { 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D };
+s32 D_80109330_28B540_TorpedoTargets[6] = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23 };
+s32 D_80109348_28B558_TorpedoTargets[6] = { 0x24, 0x25, 0x26, 0x27, 0x28, 0x29 };
+s32 D_80109360_28B570_TorpedoTargets[6] = { 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F };
+s32 D_80109378_28B588_TorpedoTargets[6] = { 0, 0, 0, 0, (s32)0xC3FA0000, 0x43FA0000 };
+
 __asm__(".section .rodata");
 const char D_801093D0_28B5E0_TorpedoTargets[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
 

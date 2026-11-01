@@ -418,3 +418,6 @@ D_801091CD_20C56D_PlatformPeril = 0x801091CD;
 /* S4-04D: HammerSlammer's .data, elements addressed by their own label */
 D_80109048_FED08_HammerSlammer = D_80109030_FECF0_HammerSlammer + 0x18;
 D_80109064_FED24_HammerSlammer = D_8010904C_FED0C_HammerSlammer + 0x18;
+D_801093B3_28B5C3_TorpedoTargets = D_801093B0_28B5C0_TorpedoTargets + 0x3;
+D_80109270_28B480_TorpedoTargets = D_8010926C_28B47C_TorpedoTargets + 0x4;
+D_80109274_28B484_TorpedoTargets = D_8010926C_28B47C_TorpedoTargets + 0x8;

@@ -1421,7 +1421,9 @@ segments:
       - [0x284A10, c]
       - [0x289BC0, c]
       - [0x28AB10, c]
-      - [0x28B470, data]
+      - [0x28B470, .data, 284A10]
+      - [0x28B5A0, .data, 289BC0]
+      - [0x28B5C0, .data, 28AB10]
       - [0x28B5E0, .rodata, 284A10]
       - [0x28B614, .rodata, 289BC0]
       - {0x28B620, type: bss, vram: 0x80109410, name: ovl_3A_bss}

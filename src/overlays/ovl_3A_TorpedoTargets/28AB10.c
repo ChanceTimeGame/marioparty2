@@ -1,5 +1,13 @@
 #include "ovl_3A.h"
 
+/* .data (0x28B5C0-0x28B5E0, 801093B0-801093D0) */
+s32 D_801093B0_28B5C0_TorpedoTargets = 0;
+f32 D_801093B4_28B5C4_TorpedoTargets = 0.1f;
+Vec D_801093B8_28B5C8_TorpedoTargets = { 0.0f, 0.0f, 0.0f };
+s32 D_801093C4_28B5D4_TorpedoTargets = 0;
+s32 D_801093C8_28B5D8_TorpedoTargets = 0;
+s32 D_801093CC_28B5DC_TorpedoTargets = 0;
+
 s32 func_80108900_28AB10_TorpedoTargets(void) {
     s32 r;
 
