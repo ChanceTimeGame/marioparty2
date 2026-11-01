@@ -854,6 +854,16 @@ $(S43A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# S4-31: ovl_31 246110.c is GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
+S431_BLANKSTRIP_UNITS := build/src/overlays/ovl_31_ShyGuySays/246110.c.o
+$(S431_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(S431_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # S4-28: ovl_28 205BA0.c and 20B4D0.c (from 80108130, 1-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
 S428_BLANKSTRIP_UNITS := build/src/overlays/ovl_28_PlatformPeril/205BA0.c.o \
 	build/src/overlays/ovl_28_PlatformPeril/20B4D0.c.o
