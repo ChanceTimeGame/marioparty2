@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_801093D0_28B5E0_TorpedoTargets[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80102800_284A10_TorpedoTargets);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80102BC4_284DD4_TorpedoTargets);
@@ -77,33 +80,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107580_289790_TorpedoTargets);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107764_289974_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801079B0_289BC0_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801079D4_289BE4_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107BAC_289DBC_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107C38_289E48_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107D54_289F64_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107DF0_28A000_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107EDC_28A0EC_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80108234_28A444_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80108900_28AB10_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80108934_28AB44_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80108F94_28B1A4_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80109060_28B270_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801090F8_28B308_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801091F0_28B400_TorpedoTargets);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80109214_28B424_TorpedoTargets);
