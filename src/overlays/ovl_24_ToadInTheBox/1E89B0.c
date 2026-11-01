@@ -697,7 +697,7 @@ __asm__(".section .rodata");
 const u32 D_8010AD58_1F0F08_ToadInTheBox[6] = { 0x42340000, 0x43070000, 0x43610000, 0x439D8000, 0x43B40000, 0x00000000 };
 
 #ifdef NON_MATCHING
-/* WIP: masked residue, register and schedule */
+/* NON_MATCHING: class 4, register/schedule; masked 30 lines, same calls and branches. Loop test and mtc1/cvt order differ. */
 void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
     s16 pl;
     s16 prev;
@@ -733,6 +733,7 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
     MgWork* m;
     omObjData* o;
     u8 u;
+    u8 z;
     u16 cnt;
     s16 st;
     s16 st2s;
@@ -1007,11 +1008,7 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     t3 = t1 >= 1.0 ? 1.0f : t1;
                     v = 1.0 - x * 1.25 + t2 * 0.25 + t3 * 0.625 - c * 0.25;
                     v = (v - 1.0) * (h * 0.5 + 0.5) + 1.0;
-                    if (v < 0.25 - h * 0.75) {
-                        r = 0.25 - h * 0.75;
-                    } else {
-                        r = h * 0.25 + 1.75 < v ? h * 0.25 + 1.75 : v;
-                    }
+                    r = v < 0.25 - h * 0.75 ? 0.25 - h * 0.75 : (h * 0.25 + 1.75 < v ? h * 0.25 + 1.75 : v);
                     x = 1.0 - r;
                     ang[0] = 45.0 - x * 45.0;
                     ang[1] = 135.0 - x * 15.0;
@@ -1053,14 +1050,15 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                             e2 = e + 0.0;
                         }
                         e = box->angle = e2;
-                        if (e == 0.0) {
-                            k = 5;
-                        } else if (e == 90.0) {
-                            k = 7;
-                        } else {
-                            k = 9;
-                            if (e == 180.0) {
-                                k = 8;
+                        k = 5;
+                        if (e != 0.0) {
+                            if (e != 90.0) {
+                                k = 9;
+                                if (e == 180.0) {
+                                    k = 8;
+                                }
+                            } else {
+                                k = 7;
                             }
                         }
                         box->state = k;
@@ -1194,10 +1192,10 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     omSetTra(D_8010B478_1F1628_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 230.0, 250.0f);
                     func_80029B80_2A780(*D_8010B478_1F1628_ToadInTheBox[pl]->model, D_8010B478_1F1628_ToadInTheBox[0]->model[1]);
                     func_80029C74_2A874(*D_8010B478_1F1628_ToadInTheBox[pl]->model, 1.0f);
-                    if (rand8() % 3 == 0) {
-                        k = 0x265;
-                    } else {
+                    if (rand8() % 3 != 0) {
                         k = rand8() & 1 ? 0x26B : 0x26A;
+                    } else {
+                        k = 0x265;
                     }
                     func_800798F8_7A4F8(PlaySound(k), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
                 } else if (box->time >= 11 && box->time < 25) {
@@ -1239,8 +1237,10 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     func_800798F8_7A4F8(PlaySound(0x268), D_8010AB00_1F0CB0_ToadInTheBox[pl]);
                 } else if (box->time >= 11 && box->time < 300) {
                     f = box->time - 14;
-                    d = (f32)((-(f * f) / 17.0f + 1.0) * 120.0);
-                    box->unk_14 = D_800FC834_FD434[*D_8010B4D0_1F1680_ToadInTheBox[pl]->model].pos.y;
+                    t1 = (-(f * f) / 17.0f + 1.0) * 120.0;
+                    t0 = D_800FC834_FD434[*D_8010B4D0_1F1680_ToadInTheBox[pl]->model].pos.y;
+                    d = t1;
+                    box->unk_14 = t0;
                     if (d > -220.0) {
                         omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 230.0 + d, 250.0f);
                         func_80029C74_2A874(*D_8010B4D0_1F1680_ToadInTheBox[pl]->model, (f32)(box->time - 10) / 10.0f * 3.0);
@@ -1270,9 +1270,9 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     omSetRot(D_8010B4D0_1F1680_ToadInTheBox[pl], 5.0f, 0.0f, 0.0f);
                 } else if (box->time >= 331) {
                     f = box->time - 340;
+                    t1 = (-(f * f) / 100.0f + 1.0) * 170.0;
                     t0 = 1.0 - (f32)(box->time - 330) / 15.0f;
                     t0 = 1.0 - t0 * t0;
-                    t1 = (-(f * f) / 100.0f + 1.0) * 170.0;
                     omSetTra(D_8010B4D0_1F1680_ToadInTheBox[pl], pl * 245.0 + -367.5, info->hits * 78.0 + 10.0 + t1, 250.0f);
                     omSetSca(D_8010B4D0_1F1680_ToadInTheBox[pl], 1.0f, 1.0f, 1.0f);
                     omSetRot(D_8010B4D0_1F1680_ToadInTheBox[pl], 0.0f, 0.0f, 0.0f);
@@ -1292,18 +1292,21 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                 } else if (box->time == 375) { /* never: retail tests it after >= 331 */
                     func_800298A4_2A4A4(*D_8010B440_1F15F0_ToadInTheBox[pl]->model, 4, 4);
                 }
-                m = obj->unk_50;
-                if ((u32)(box->time - 300) < 30) {
-                    cnt = TB_A8(m);
-                    if (cnt < 118) {
-                        if (cnt >= 119) {
-                            TB_A8(m) = 118;
+                {
+                    MgWork* m2 = obj->unk_50;
+
+                    if ((u32)(box->time - 300) < 30) {
+                        cnt = TB_A8(m2);
+                        if (cnt < 118) {
+                            if (cnt >= 119) {
+                                TB_A8(m2) = 118;
+                            }
                         }
                     }
-                }
-                if (box->time < 330) {
-                    if (TB_A8(m) >= 119) {
-                        TB_A8(m) = 118;
+                    if (box->time < 330) {
+                        if (TB_A8(m2) >= 119) {
+                            TB_A8(m2) = 118;
+                        }
                     }
                 }
                 break;
@@ -1347,17 +1350,21 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + t1 * 30.0, o->trans.z);
                     func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, (f32)(box->time - 10) / 5.0f * 15.0);
                 } else if ((u32)(box->time - 15) < 7) {
-                    t0 = (f32)(box->time - 15) / 7.0f;
-                    d = t0 * t0;
+                    f32 q = (f32)(box->time - 15) / 7.0f;
+                    f64 e;
+
+                    q = q * q;
                     o = D_8010B4A0_1F1650_ToadInTheBox[pl];
-                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + 30.0 - d * 185.0, o->trans.z);
-                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, 15.0 - d * 45.0);
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + 30.0 - (e = q) * 185.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, 15.0 - e * 45.0);
                 } else if ((u32)(box->time - 22) < 8) {
-                    t0 = 1.0 - (f32)(box->time - 22) / 7.0f;
-                    d = (f32)(1.0 - t0 * t0);
+                    f32 q = 1.0 - (f32)(box->time - 22) / 7.0f;
+                    f64 e;
+
+                    q = 1.0 - q * q;
                     o = D_8010B4A0_1F1650_ToadInTheBox[pl];
-                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y - 155.0 + d * 155.0, o->trans.z);
-                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, d * 30.0 + -30.0);
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y - 155.0 + (e = q) * 155.0, o->trans.z);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], 90.0f, 0.0f, e * 30.0 + -30.0);
                     if (box->time == 22) {
                         m = obj->unk_50;
                         func_800191D4_19DD4(obj, 6, obj->trans.x, obj->trans.y + 40.0, obj->trans.z, -90.0f, 0.0f);
@@ -1376,10 +1383,12 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     box->time = 7;
                 }
                 if ((u32)(box->time - 8) < 7) {
-                    f = box->time - 7;
-                    d = -(f * f) / 52.0f;
+                    f32 q = box->time - 7;
+                    f64 e;
+
+                    q = -(q * q) / 52.0f;
                     o = D_8010B4A0_1F1650_ToadInTheBox[pl];
-                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + d * 150.0, o->trans.z - d * 20.0);
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + (e = q) * 150.0, o->trans.z - e * 20.0);
                     func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)box->time / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
                     if (box->time == 14) {
                         m = obj->unk_50;
@@ -1389,11 +1398,14 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                         func_8000BF54_CB54(D_8010B4A0_1F1650_ToadInTheBox[pl], 280.0f, 455.0f, -100.0f, -100.0f, 100.0f, 100.0f);
                         box->time++;
                     }
-                } else if ((u32)(box->time - 15) < 15) {
-                    f = box->time - 22;
-                    f = -(f * f) / 52.0f;
+                } else {
+                k = box->time;
+                if ((u32)(k - 15) < 15) {
+                    f32 q = k - 22;
+
+                    q = -(q * q) / 52.0f;
                     o = D_8010B4A0_1F1650_ToadInTheBox[pl];
-                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + f * (box->time < 22 ? 150.0 : 205.0), D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.z - f * 20.0);
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + q * (k < 22 ? 150.0 : 205.0), D_8010B4A0_1F1650_ToadInTheBox[pl]->trans.z - q * 20.0);
                     func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)(box->time - 15) / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
                     if (box->time == 29) {
                         m = obj->unk_50;
@@ -1407,9 +1419,11 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     }
                 } else if ((u32)(box->time - 30) < 8) {
                     f = box->time - 37;
+                    f = -(f * f) / 52.0f;
                     o = D_8010B4A0_1F1650_ToadInTheBox[pl];
-                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + -(f * f) / 52.0f * 205.0, o->trans.z);
+                    func_80029714_2A314(o->model[1], o->trans.x, o->trans.y + f * 205.0, o->trans.z);
                     func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[pl]->model[1], (f32)(box->time - 30) / 15.0f * 30.0 + 164.0, 0.0f, 0.0f);
+                }
                 }
                 if (box->time >= 38) {
                     box->state = 3;
@@ -1439,18 +1453,18 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
         u = 0;
         a = rand8() & 3;
         for (; u < 4; u++) {
-            k = (u + a) - ((u8)((u + a) / 4) * 4);
-            if (D_8010B470_1F1620_ToadInTheBox[(u8)k] != 0) {
+            z = (u + a) - ((u8)((u + a) / 4) * 4);
+            if (D_8010B470_1F1620_ToadInTheBox[z] != 0) {
                 if (D_8010B474_1F1624_ToadInTheBox == 5) {
-                    D_8010B474_1F1624_ToadInTheBox = k + 1;
-                    D_8010B470_1F1620_ToadInTheBox[(u8)k] = 2;
+                    D_8010B474_1F1624_ToadInTheBox = z + 1;
+                    D_8010B470_1F1620_ToadInTheBox[z] = 2;
                 } else {
-                    TBBox** b = &D_8010B428_1F15D8_ToadInTheBox[(u8)k];
+                    TBBox** b = &D_8010B428_1F15D8_ToadInTheBox[z];
 
                     t0 = (f32)(*b)->time / 10.0f * 0.75 + 0.25;
                     (*b)->unk_04 = (*b)->angle = (f32)(rand8() % 3) * 90.0 + 90.0;
                     (*b)->unk_04 += (f32)(rand8() % 20) - 10.0;
-                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[(u8)k]->model[1], t0 * (*b)->angle + (*b)->unk_04 * (1.0 - t0), 0.0f, 0.0f);
+                    func_8002979C_2A39C(D_8010B4A0_1F1650_ToadInTheBox[z]->model[1], t0 * (*b)->angle + (*b)->unk_04 * (1.0 - t0), 0.0f, 0.0f);
                 }
             }
         }
