@@ -12,8 +12,8 @@
 #include "game/board.h"
 
 /* Platform Peril, a 4P race along a course of moving platforms: the first to reach the goal
-   platform wins. Retail files 205BA0.c and 20B4D0.c (from 80108130, 1-nop pad; its .data from 801091D0, .rodata 0x20C740);
-   .data is asm (0x20C3E0), .rodata from 0x20C580. */
+   platform wins. Retail files 205BA0.c and 20B4D0.c (from 80108130, 1-nop pad; .data 0x20C3E0 and 0x20C570 (801091D0), .rodata 0x20C740);
+   .rodata from 0x20C580. */
 
 /* Cloud sprite (D_801093BC_20C75C_PlatformPeril, 5 of them). */
 typedef struct PPCloud {
@@ -36,6 +36,19 @@ typedef struct PPSeq {
     /* 0x01 */ u8 next;
     /* 0x02 */ u8 rows[11]; /* 0 ends the list; row * 100 is -z */
 } PPSeq; /* size = 0xD */
+
+/* The goal platform's list: like PPSeq, but its rows run on to the next table. */
+typedef struct PPGoalSeq {
+    /* 0x00 */ u8 master;
+    /* 0x01 */ u8 next;
+    /* 0x02 */ u8 rows[26];
+} PPGoalSeq; /* size = 0x1C */
+
+/* All the lists: eight platform kinds, then the goal platform's. */
+typedef struct PPSeqTable {
+    /* 0x00 */ PPSeq seq[8];
+    /* 0x68 */ PPGoalSeq goal;
+} PPSeqTable; /* size = 0x84 */
 
 /* Scenery strip (D_801090D8_20C478_PlatformPeril[2]). */
 typedef struct PPStrip {
@@ -168,13 +181,14 @@ f32 func_800B7890_B8490(f32);
 int abs(int);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
-/* ---- .data, in address order (asm) ---- */
+/* ---- .data, in address order (C, in 205BA0.c and 20B4D0.c) ---- */
 extern f32 D_80109040_20C3E0_PlatformPeril;   /* camera target z */
 extern u8 D_80109044_20C3E4_PlatformPeril;    /* clouds */
 extern u8 D_80109045_20C3E5_PlatformPeril;    /* platforms */
-extern PPSeq D_80109048_20C3E8_PlatformPeril[9];
-extern u8 D_801090B1_20C451_PlatformPeril; /* [8].next */
-extern u8 D_801090B2_20C452_PlatformPeril[]; /* [8].rows; the goal platform's list */
+extern PPSeqTable D_80109048_20C3E8_PlatformPeril;
+/* Retail names these apart from the list (so the compiler cannot share one base): linker aliases of D_80109048.goal.next and .rows. */
+extern u8 D_801090B1_20C451_PlatformPeril;
+extern u8 D_801090B2_20C452_PlatformPeril[];
 extern f32 D_801090CC_20C46C_PlatformPeril[3];
 extern PPStrip D_801090D8_20C478_PlatformPeril[2];
 extern s8 D_801090F8_20C498_PlatformPeril[20]; /* actors: x / 100 */

@@ -1,5 +1,9 @@
 #include "ovl_28.h"
 
+/* .data (0x20C570): retail reads D_801091D0[4..5], so D_801091D4 follows it */
+s8 D_801091D0_20C570_PlatformPeril[4] = { 0, 3, -3, 0 };
+s8 D_801091D4_20C574_PlatformPeril[6] = { 0x35, 0x6B, 0x6F, 0x4C, 0, 0 };
+
 void func_80108130_20B4D0_PlatformPeril(u8 port) {
     ContStkX[port] = 0;
     ContStkY[port] = 0;
