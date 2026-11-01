@@ -69,7 +69,8 @@ void func_8010A6C0_1B3D50_SkyPilots(omObjData* obj) {
 
     w->stickX = -8;
     w->stickY = 0;
-    p = &D_8010B20C_1B489C_SkyPilots[team];
+    p = D_8010B20C_1B489C_SkyPilots;
+    p += team;
     w->stickZ = HuMathSin(*p) * 60.0f;
     *p = func_8002D958_2E558(*p + 12.0f);
     func_801058EC_1AEF7C_SkyPilots(obj);

@@ -31,7 +31,7 @@ void func_80102800_1ABE90_SkyPilots(void) {
     func_8010641C_1AFAAC_SkyPilots(0xF6, 0x24);
     func_80106810_1AFEA0_SkyPilots(0, 0x20, 0x18);
     func_80106810_1AFEA0_SkyPilots(1, 0x20, 0x8C);
-    func_8010608C_1AF71C_SkyPilots(1, func_800680D4_68CD4(3));
+    func_8010608C_1AF71C_SkyPilots(1, func_800680D4_68CD4(3) & 0xFFFF);
     func_8010608C_1AF71C_SkyPilots(0, D_8010AF0C_1B459C_SkyPilots);
     func_80106A7C_1B010C_SkyPilots(0, 0);
     func_80106A7C_1B010C_SkyPilots(1, 0);
@@ -104,8 +104,6 @@ void func_80102D68_1AC3F8_SkyPilots(void) {
     }
 }
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
 
     if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
@@ -260,12 +258,9 @@ void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
         obj->func_ptr = func_80102D3C_1AC3CC_SkyPilots;
     }
     func_8010608C_1AF71C_SkyPilots(0, D_8010AF0C_1B459C_SkyPilots);
-    func_801076E8_1B0D78_SkyPilots();
+    func_801076E8_1B0D78_SkyPilots(obj);
     func_80102D68_1AC3F8_SkyPilots();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80102EF0_1AC580_SkyPilots);
-#endif
 
 void func_8010369C_1ACD2C_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
@@ -1492,7 +1487,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801073A8_1
 
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
-void func_801076E8_1B0D78_SkyPilots(void) {
+void func_801076E8_1B0D78_SkyPilots(omObjData* obj) {
     s32 team;
     s32 i;
     s32 a;
@@ -1608,8 +1603,8 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
     s32 m2 = -1;
     s32 m5 = -1;
     s32 m3 = -1;
-    s32 i;
     s32 team;
+    s32 i;
     s32 x;
     s16 spr;
     s16 tmp;
@@ -1724,18 +1719,20 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
     f32 tx = px;
     f32 ty = py;
     f32 tz = pz;
-    f32 frame;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 d;
     f32 ang;
     s32 k;
     s32 near = 0;
+    s32* mdl;
 
     for (k = 0; k < 2; k++) {
         omObjData* p = D_8010ADA4_1B4434_SkyPilots[k];
-        f32 dx = p->trans.x;
-        f32 dy = p->trans.y;
-        f32 dz = p->trans.z;
-        f32 d;
-
+        dx = p->trans.x;
+        dy = p->trans.y;
+        dz = p->trans.z;
         dx -= px;
         dy -= py;
         dz -= pz;
@@ -1749,16 +1746,17 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
             tz = dz;
         }
     }
-    frame = ty / 25.0f;
-    if (frame < 0.0f) {
-        frame = 0.0f;
+    dy = ty / 25.0f;
+    if (dy < 0.0f) {
+        dy = 0.0f;
     }
-    if (frame > 20.0f) {
-        frame = 20.0f;
+    if (dy > 20.0f) {
+        dy = 20.0f;
     }
-    func_80029C74_2A874((s16)D_8010B2E8_1B4978_SkyPilots[i], frame);
+    mdl = &D_8010B2E8_1B4978_SkyPilots[i];
+    func_80029C74_2A874((s16)*mdl, dy);
     ang = func_800B75A8_B81A8(tx, tz);
-    func_8002979C_2A39C((s16)D_8010B2E8_1B4978_SkyPilots[i], 0.0f, ang, 0.0f);
+    func_8002979C_2A39C((s16)*mdl, 0.0f, ang, 0.0f);
     if (D_8010AEA8_1B4538_SkyPilots[i] == 0 && D_8010ADCC_1B445C_SkyPilots[near][i] < 2 && D_800F8FD0_F9BD0 == 1 && best < 4000.0f
         && D_8010B430_1B4AC0_SkyPilots[near] < D_8010AE3C_1B44CC_SkyPilots[i].angle) {
         SPPlane* w = D_8010ADA4_1B4434_SkyPilots[near]->unk_50;

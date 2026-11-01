@@ -90,7 +90,7 @@ void func_8001A788_1B388(u16 spriteId, s32 arg1);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
 s16 func_8001AAAC_1B6AC(s16, s32, s32);
 void* func_80027154_27D54(s32 size, s32 tag);
-s16 func_80027D3C_2893C(s16 linkMdlId);
+s32 func_80027D3C_2893C(s16 linkMdlId); /* main says s16; retail stores the whole word */
 void func_80029714_2A314(s16, f32, f32, f32);
 void func_8002979C_2A39C(s16 idx, f32 x, f32 y, f32 z);
 void func_800297E8_2A3E8(s16, f32, f32, f32);
@@ -289,7 +289,7 @@ void func_80106CD0_1B0360_SkyPilots(omObjData* obj);
 void func_80106E98_1B0528_SkyPilots(omObjData* obj);
 void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player);
 void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player);
-void func_801076E8_1B0D78_SkyPilots(void);
+void func_801076E8_1B0D78_SkyPilots(omObjData* obj);
 void func_80107EAC_1B153C_SkyPilots(omObjData* obj);
 void func_801083CC_1B1A5C_SkyPilots(omObjData* obj);
 void func_801084E4_1B1B74_SkyPilots(s32 i);
