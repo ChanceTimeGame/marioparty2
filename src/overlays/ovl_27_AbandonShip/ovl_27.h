@@ -75,6 +75,10 @@ void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
 void Hu3DCamSetPerspective(s16, f32, f32, f32);
 f32 HuMathSin(f32);
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+f32 func_80029CE4_2A8E4(s16);
+void func_80029FE4_2ABE4(s16, f32);
+omObjData* func_800732B0_73EB0(u32 arg0);
 void InitFadeIn(s32, s32);
 void InitFadeOut(s32, s32);
 s16 PlayMusic(s16);
@@ -182,7 +186,12 @@ extern s8 D_80109440_205AA0_AbandonShip;
 extern s16 D_80109442_205AA2_AbandonShip; /* players made */
 extern s32 D_80109444_205AA4_AbandonShip[4]; /* player by slot; the low half is the port */
 extern Vec D_80109454_205AB4_AbandonShip[4]; /* start positions */
-extern u8 D_80109484_205AE4_AbandonShip[24]; /* slot to mast */
+extern u8 D_80109484_205AE4_AbandonShip[24]; /* slot to mast, 5 rows of 4 */
+extern s32 D_8010949C_205AFC_AbandonShip[4]; /* per player timer */
+extern s8 D_801094AC_205B0C_AbandonShip[4]; /* blink */
+extern s8 D_801094B0_205B10_AbandonShip[4]; /* frames changing side */
+extern f32 D_801094B4_205B14_AbandonShip[4]; /* climb speed */
+extern s8 D_801094C4_205B24_AbandonShip; /* the win was paid */
 
 /* ---- .bss (asm) ---- */
 
@@ -215,6 +224,7 @@ extern ASFlagVtx* D_801095E0_205C40_AbandonShip;
 extern s32 D_801095E4_205C44_AbandonShip[2];
 extern Vec D_801095EC_205C4C_AbandonShip; /* the anchor */
 extern u16 D_801095F8_205C58_AbandonShip[4];
+extern u16 D_80109600_205C60_AbandonShip[4]; /* buttons pressed this frame */
 extern s8 D_80109608_205C68_AbandonShip[4]; /* CPU pressed A */
 extern u32 D_8010960C_205C6C_AbandonShip;
 extern ASRope D_80109610_205C70_AbandonShip[4][5]; /* coin positions */
@@ -257,7 +267,7 @@ void func_80106C40_2032A0_AbandonShip(void);
 void func_80106D04_203364_AbandonShip(omObjData* obj);
 void func_80106F5C_2035BC_AbandonShip(omObjData* obj);
 void func_801089A4_205004_AbandonShip(omObjData* obj, f32 step);
-void func_80108AB0_205110_AbandonShip(void);
+void func_80108AB0_205110_AbandonShip(omObjData* obj);
 void func_80108DF0_205450_AbandonShip(Vec* out, Vec* from, Vec* to);
 void func_80108EA0_205500_AbandonShip(omObjData* obj);
 void func_80109064_2056C4_AbandonShip(omObjData* obj);
