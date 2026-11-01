@@ -412,6 +412,6 @@ D_80109389_2059E9_AbandonShip = 0x80109389;
 D_801091A4_FEE64_HammerSlammer = 0x801091A4;
 D_801091C4_FEE84_HammerSlammer = 0x801091C4;
 D_80109320_FEFE0_HammerSlammer = 0x80109320;
-D_80109141_20C4E1_PlatformPeril = 0x80109141;
-D_80109143_20C4E3_PlatformPeril = 0x80109143;
-D_801091CD_20C56D_PlatformPeril = 0x801091CD;
+/* S4-28D: retail reads the goal platform list's next and rows by their own names (a shared base changes the code) */
+D_801090B1_20C451_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x1;
+D_801090B2_20C452_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x2;

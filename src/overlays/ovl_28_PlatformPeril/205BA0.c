@@ -1,5 +1,58 @@
 #include "ovl_28.h"
 
+/* .data (0x20C3E0..0x20C570), in address order */
+f32 D_80109040_20C3E0_PlatformPeril = 100.0f;
+u8 D_80109044_20C3E4_PlatformPeril = 0;
+u8 D_80109045_20C3E5_PlatformPeril = 0;
+PPSeqTable D_80109048_20C3E8_PlatformPeril = {
+  {
+    { 0, 0, { 0x04, 0x12, 0x18, 0x1E, 0x3A, 0x4C, 0x74, 0, 0, 0, 0 } },
+    { 0, 0, { 0x09, 0x0D, 0x23, 0x2B, 0x35, 0x57, 0x6B, 0x6F, 0, 0, 0 } },
+    { 0, 0, { 0x3F, 0x63, 0x67, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { 0, 0, { 0x47, 0x47, 0x5B, 0x5B, 0x5F, 0x5F, 0, 0, 0, 0, 0 } },
+    { 0, 0, { 0x27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { 0, 0, { 0x43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { 0, 0, { 0x52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { 0, 0, { 0x30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  },
+  { 0, 0, { 0, 0x89 } },
+};
+f32 D_801090CC_20C46C_PlatformPeril[3] = { 100.0f, -100.0f, 100.0f };
+PPStrip D_801090D8_20C478_PlatformPeril[2] = {
+    { 0, 0, 0, { 0, 3, -3, 0, 0 }, { 0x35, 0x6B, 0x6F, 0, 0 } },
+    { 0, 0, 0, { 0, 0, 0, 0, 0 }, { 0x4C, 0, 0, 0, 0 } },
+};
+s8 D_801090F8_20C498_PlatformPeril[20] = { -3, -1, 1, 3, -3, -1, 1, 3, -3, -1, 1, 3, -3, -2, 2, 3, -3, -1, 1, 3 };
+u8 D_8010910C_20C4AC_PlatformPeril[20] = { 0x18, 0x18, 0x18, 0x18, 0x2B, 0x2B, 0x2B, 0x2B, 0x3A, 0x3A, 0x3A, 0x3A, 0x5B, 0x5B, 0x5F, 0x5F, 0x74, 0x74, 0x74, 0x74 };
+u8 D_80109120_20C4C0_PlatformPeril = 0;
+s8 D_80109121_20C4C1_PlatformPeril = -1;
+u8 D_80109122_20C4C2_PlatformPeril = 0;
+u8 D_80109123_20C4C3_PlatformPeril = 0;
+u8 D_80109124_20C4C4_PlatformPeril = 0;
+s16 D_80109126_20C4C6_PlatformPeril = 0;
+s16 D_80109128_20C4C8_PlatformPeril = 0;
+u8 D_8010912A_20C4CA_PlatformPeril = 0;
+f32 D_8010912C_20C4CC_PlatformPeril = 0.0f;
+f32 D_80109130_20C4D0_PlatformPeril[1] = { 0.0f };
+f32 D_80109134_20C4D4_PlatformPeril[1] = { 0.0f };
+f32 D_80109138_20C4D8_PlatformPeril[1] = { 0.0f };
+f32 D_8010913C_20C4DC_PlatformPeril[1] = { 0.0f };
+u8 D_80109140_20C4E0_PlatformPeril = 50;
+u8 D_80109141_20C4E1_PlatformPeril = 0;
+u8 D_80109142_20C4E2_PlatformPeril = 0;
+u8 D_80109143_20C4E3_PlatformPeril = 0;
+u8 D_80109144_20C4E4_PlatformPeril = 0;
+u8 D_80109145_20C4E5_PlatformPeril = 0;
+PPCamKey D_80109148_20C4E8_PlatformPeril[4] = {
+    { 45.0f, 0x8FC, { 0.0f, 100.0f, 300.0f }, { 312.7f, 45.0f, 0.0f } },
+    { 75.0f, 0x177, { -300.0f, 80.0f, 300.0f }, { 336.0f, -154.0f, 0.0f } },
+    { 45.0f, 0x177, { 300.0f, 80.0f, 300.0f }, { 336.0f, -206.0f, 0.0f } },
+    { 0.0f, 0xA8C, { 0.0f, 0.0f, 100.0f }, { 312.7f, -315.0f, 0.0f } },
+};
+f32 D_801091C8_20C568_PlatformPeril = 0.0f;
+u8 D_801091CC_20C56C_PlatformPeril = 0;
+u8 D_801091CD_20C56D_PlatformPeril = 0;
+
 void func_80102800_205BA0_PlatformPeril(void) {
     func_80107EEC_20B28C_PlatformPeril();
 }
@@ -252,7 +305,7 @@ void func_801037F0_206B90_PlatformPeril(omObjData* obj) {
         }
         break;
     case 1:
-        seq = &D_80109048_20C3E8_PlatformPeril[obj->work[0]];
+        seq = &D_80109048_20C3E8_PlatformPeril.seq[obj->work[0]];
         func_801032D8_206678_PlatformPeril(obj);
         p = &D_801093F0_20C790_PlatformPeril[g->unk_04];
         if (obj->trans.z - (PP_CENTERZ - 100.0f) > 1150.0) {
@@ -360,7 +413,7 @@ void func_80103DDC_20717C_PlatformPeril(omObjData* obj) {
 
 void func_80103EF8_207298_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[0];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[0];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 1, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -378,7 +431,7 @@ void func_80103EF8_207298_PlatformPeril(omObjData* obj) {
 
 void func_80104070_207410_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[1];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[1];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 2, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -396,7 +449,7 @@ void func_80104070_207410_PlatformPeril(omObjData* obj) {
 
 void func_801041EC_20758C_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[2];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[2];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 4, D_801090CC_20C46C_PlatformPeril[0], 0.0f, -(s->rows[s->next] * 100), 0);
@@ -420,7 +473,7 @@ void func_801041EC_20758C_PlatformPeril(omObjData* obj) {
 void func_801043DC_20777C_PlatformPeril(omObjData* obj) {
     f32 xs[6] = { -250.0f, 250.0f, -250.0f, 250.0f, -250.0f, 250.0f };
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[3];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[3];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 3, xs[0], 0.0f, -(s->rows[s->next] * 100), 0);
@@ -438,7 +491,7 @@ void func_801043DC_20777C_PlatformPeril(omObjData* obj) {
 
 void func_801045A4_207944_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[5];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[5];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 6, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -458,7 +511,7 @@ void func_801045A4_207944_PlatformPeril(omObjData* obj) {
 
 void func_80104734_207AD4_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[4];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[4];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 5, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -478,7 +531,7 @@ void func_80104734_207AD4_PlatformPeril(omObjData* obj) {
 
 void func_801048C4_207C64_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[7];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[7];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 8, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -498,7 +551,7 @@ void func_801048C4_207C64_PlatformPeril(omObjData* obj) {
 
 void func_80104A54_207DF4_PlatformPeril(omObjData* obj) {
     GroundWork* g;
-    PPSeq* s = &D_80109048_20C3E8_PlatformPeril[6];
+    PPSeq* s = &D_80109048_20C3E8_PlatformPeril.seq[6];
 
     if (s->next == 0) {
         func_80103B7C_206F1C_PlatformPeril(obj, NULL, 7, 0.0f, 0.0f, -(s->rows[s->next] * 100), 0);
@@ -520,40 +573,40 @@ void func_80104BE4_207F84_PlatformPeril(void) {
     u8 i;
 
     D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_80103D00_2070A0_PlatformPeril);
-    D_80109048_20C3E8_PlatformPeril[8].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.goal.master = D_800F8FE0_F9BE0;
     D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_80103DDC_20717C_PlatformPeril);
-    D_80109048_20C3E8_PlatformPeril[0].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[0].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 4; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_80103EF8_207298_PlatformPeril);
     }
-    D_80109048_20C3E8_PlatformPeril[1].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[1].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 4; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_80104070_207410_PlatformPeril);
     }
-    D_80109048_20C3E8_PlatformPeril[2].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[2].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 2; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_801041EC_20758C_PlatformPeril);
     }
-    D_80109048_20C3E8_PlatformPeril[3].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[3].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 6; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(300, 1, 0, -1, func_801043DC_20777C_PlatformPeril);
     }
-    D_80109048_20C3E8_PlatformPeril[5].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[5].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 1; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0] = omAddObj(300, 1, 0, -1, func_801045A4_207944_PlatformPeril);
         omSetStatBit(D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++], 0xA0);
     }
-    D_80109048_20C3E8_PlatformPeril[4].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[4].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 1; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0] = omAddObj(300, 1, 0, -1, func_80104734_207AD4_PlatformPeril);
         omSetStatBit(D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++], 0xA0);
     }
-    D_80109048_20C3E8_PlatformPeril[5].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[5].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 1; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0] = omAddObj(300, 1, 0, -1, func_801048C4_207C64_PlatformPeril);
         omSetStatBit(D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++], 0xA0);
     }
-    D_80109048_20C3E8_PlatformPeril[4].master = D_800F8FE0_F9BE0;
+    D_80109048_20C3E8_PlatformPeril.seq[4].master = D_800F8FE0_F9BE0;
     for (i = 0; i < 1; i++) {
         D_800FC7B0_FD3B0[D_800F8FE0_F9BE0] = omAddObj(300, 1, 0, -1, func_80104A54_207DF4_PlatformPeril);
         omSetStatBit(D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++], 0xA0);
