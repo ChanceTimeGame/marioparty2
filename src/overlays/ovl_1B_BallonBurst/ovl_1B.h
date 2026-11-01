@@ -135,7 +135,7 @@ void func_80081B28_82728(s16 group, s16 member, s16 arg2);
 /* ---- .data ---- */
 extern const char D_80109E30_1AB6D0_BallonBurst[];
 extern f32 D_80109C88_1AB528_BallonBurst[6];
-extern f32 D_80109CA0_1AB540_BallonBurst[6];
+extern f32 D_80109CA0_1AB540_BallonBurst[24];
 extern Vec D_80109D30_1AB5D0_BallonBurst[4]; /* the four seats */
 extern s16 D_80109C80_1AB520_BallonBurst[4]; /* sound pan per seat */
 extern f32 D_80109D00_1AB5A0_BallonBurst[6];
@@ -144,7 +144,7 @@ extern f32 D_80109D60_1AB600_BallonBurst[6];
 extern f32 D_80109D78_1AB618_BallonBurst[5];
 extern s8 D_80109D8C_1AB62C_BallonBurst[8];
 extern s8 D_80109D94_1AB634_BallonBurst[8];
-extern s8 D_80109D9C_1AB63C_BallonBurst[][4];
+extern s8 D_80109D9C_1AB63C_BallonBurst[37][4];
 
 /* ---- .bss ---- */
 extern BBWork* D_8010A5F0_1ABE90_BallonBurst[4];
