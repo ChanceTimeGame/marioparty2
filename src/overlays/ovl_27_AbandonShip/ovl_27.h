@@ -140,7 +140,6 @@ s16 func_80079798_7A398(s16 sfx, s16 player);
 s16 func_800797DC_7A3DC(s32 id, s16 player);
 void func_80079868_7A468(void);
 void func_800799A4_7A5A4(s16, s32);
-void func_80079E60_7AA60(void);
 s32 func_8008F618_90218(void);
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size);
 f32 func_800B1830_B2430(f32);
@@ -153,7 +152,8 @@ u8 rand8(void);
 extern s8 D_80109380_2059E0_AbandonShip; /* result: 0 none, 1 a winner, 2 all out */
 extern s8 D_80109381_2059E1_AbandonShip; /* the winner, a player */
 extern s32 D_80109384_2059E4_AbandonShip; /* seconds, 31 */
-extern s8 D_80109388_2059E8_AbandonShip[4]; /* crates made, sharks made */
+extern s8 D_80109388_2059E8_AbandonShip; /* boats made */
+extern s8 D_80109389_2059E9_AbandonShip; /* sharks made: split label, byte 1 of 80109388 */
 extern s32 D_8010938C_2059EC_AbandonShip; /* game frames */
 extern u32 D_80109390_2059F0_AbandonShip; /* end frames */
 extern s32 D_80109394_2059F4_AbandonShip; /* seconds left; low half read as (s16) */
@@ -188,9 +188,10 @@ extern u8 D_80109484_205AE4_AbandonShip[5][4]; /* slot to mast */
 extern s16 D_80109540_205BA0_AbandonShip; /* the ship's sound */
 extern omObjData* D_80109544_205BA4_AbandonShip[3]; /* passenger per boat */
 extern omObjData* D_80109550_205BB0_AbandonShip[4]; /* players by mast */
-extern u16 D_80109560_205BC0_AbandonShip[2];
+extern s16 D_80109560_205BC0_AbandonShip[2];
 extern Vec D_80109568_205BC8_AbandonShip[2]; /* boat target */
 extern Vec D_80109580_205BE0_AbandonShip;
+extern f32 D_80109584_205BE4_AbandonShip[2]; /* its y, z: retail's own label */
 extern Vec D_8010958C_205BEC_AbandonShip;
 extern u8 D_80109598_205BF8_AbandonShip[2]; /* shark frames */
 extern u8 D_8010959A_205BFA_AbandonShip[2];
