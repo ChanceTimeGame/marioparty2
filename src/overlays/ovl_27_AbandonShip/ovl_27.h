@@ -182,7 +182,7 @@ extern s8 D_80109440_205AA0_AbandonShip;
 extern s16 D_80109442_205AA2_AbandonShip; /* players made */
 extern s32 D_80109444_205AA4_AbandonShip[4]; /* player by slot; the low half is the port */
 extern Vec D_80109454_205AB4_AbandonShip[4]; /* start positions */
-extern u8 D_80109484_205AE4_AbandonShip[5][4]; /* slot to mast */
+extern u8 D_80109484_205AE4_AbandonShip[24]; /* slot to mast */
 
 /* ---- .bss (asm) ---- */
 
