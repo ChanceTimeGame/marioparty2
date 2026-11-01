@@ -146,6 +146,7 @@ f32 func_800B1830_B2430(f32);
 f32 func_800B7890_B8490(f32);
 s32 omOvlReturnEx(s16);
 u8 rand8(void);
+int abs(int);
 
 /* ---- .data (asm, 2059E0.data.s) ---- */
 
@@ -193,10 +194,10 @@ extern Vec D_80109568_205BC8_AbandonShip[2]; /* boat target */
 extern Vec D_80109580_205BE0_AbandonShip;
 extern f32 D_80109584_205BE4_AbandonShip[2]; /* its y, z: retail's own label */
 extern Vec D_8010958C_205BEC_AbandonShip;
-extern u8 D_80109598_205BF8_AbandonShip[2]; /* shark frames */
-extern u8 D_8010959A_205BFA_AbandonShip[2];
-extern s8 D_8010959C_205BFC_AbandonShip[2]; /* shark jumps done */
-extern s8 D_8010959E_205BFE_AbandonShip[2]; /* shark side */
+extern s8 D_80109598_205BF8_AbandonShip[4]; /* shark frames, then the rest between jumps */
+#define AS_REST (D_80109598_205BF8_AbandonShip + 2)
+extern s8 D_8010959C_205BFC_AbandonShip[4]; /* shark jumps done, then the shark's side */
+#define AS_SIDE (D_8010959C_205BFC_AbandonShip + 2)
 extern f32 D_801095A0_205C00_AbandonShip;
 extern Vec D_801095A4_205C04_AbandonShip;
 extern Vec D_801095B0_205C10_AbandonShip;
@@ -239,7 +240,7 @@ void func_80104678_200CD8_AbandonShip(void);
 void func_80104A8C_2010EC_AbandonShip(omObjData* obj);
 void func_80104B54_2011B4_AbandonShip(omObjData* obj);
 void func_80104C5C_2012BC_AbandonShip(s16 mdl);
-void func_801050B8_201718_AbandonShip(s16 mdl, s32 phase);
+void func_801050B8_201718_AbandonShip(s16 mdl, s32 phase, s16* unused);
 void func_8010547C_201ADC_AbandonShip(s16* list, u16 n);
 void func_80105508_201B68_AbandonShip(omObjData* obj);
 void func_80105590_201BF0_AbandonShip(s8* flag);

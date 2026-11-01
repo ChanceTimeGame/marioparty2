@@ -389,29 +389,495 @@ void func_80103A0C_20006C_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80103A0C_20006C_AbandonShip);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80103BDC_20023C_AbandonShip);
+void func_80103BDC_20023C_AbandonShip(omObjData* obj) {
+    Vec2f pos;
+    Vec2f scr;
+    Vec world;
+    omObjData** pp;
+    f32 t;
+    f32 x;
+    f32 y;
+    f32 dy;
+    f32 dx;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80104350_2009B0_AbandonShip);
+    if (D_801093C0_205A20_AbandonShip < 9) {
+        if (D_801093C0_205A20_AbandonShip >= 5) {
+            if (D_8010959C_205BFC_AbandonShip[obj->work[0]] < 4) {
+                if (D_801093D8_205A38_AbandonShip <= D_801093A8_205A08_AbandonShip[D_8010959C_205BFC_AbandonShip[obj->work[0]]]) {
+                    obj->work[1] = 1;
+                    D_8010959C_205BFC_AbandonShip[obj->work[0]]++;
+                }
+            }
+            if (obj->work[1] != 0) {
+                t = D_80109598_205BF8_AbandonShip[obj->work[0]] / 30.0f;
+                if (D_80109598_205BF8_AbandonShip[obj->work[0]] < 15 ||
+                    (D_80109598_205BF8_AbandonShip[obj->work[0]] >= 30 && D_80109598_205BF8_AbandonShip[obj->work[0]] < 45)) {
+                    func_80029E80_2AA80(obj->model[1], 1, 2);
+                    func_800298A4_2A4A4(obj->model[1], 4, 0);
+                } else {
+                    func_80029E80_2AA80(obj->model[1], 1, 1);
+                    func_800298A4_2A4A4(obj->model[1], 4, 4);
+                    func_80029C74_2A874(obj->model[1], 0);
+                }
+                y = D_801093D4_205A34_AbandonShip / 2.0f + 0.0f;
+                if (D_80109598_205BF8_AbandonShip[obj->work[0]] == 0) {
+                    if (AS_SIDE[obj->work[0]] == 0) {
+                        if (obj->work[0] == 0) {
+                            x = -20.0f;
+                        } else {
+                            x = 700.0f;
+                        }
+                    } else {
+                        if (obj->work[0] == 0) {
+                            x = -720.0f;
+                        } else {
+                            x = 0.0f;
+                        }
+                    }
+                    func_80029714_2A314(obj->model[1], x, y, obj->trans.z + 50.0f);
+                } else if (D_80109598_205BF8_AbandonShip[obj->work[0]] == 30) {
+                    if (AS_SIDE[obj->work[0]] == 0) {
+                        if (obj->work[0] == 0) {
+                            x = -820.0f;
+                        } else {
+                            x = -100.0f;
+                        }
+                    } else {
+                        if (obj->work[0] == 0) {
+                            x = 80.0f;
+                        } else {
+                            x = 800.0f;
+                        }
+                    }
+                    func_80029714_2A314(obj->model[1], x, y, obj->trans.z + 50.0f);
+                }
+                if (D_80109598_205BF8_AbandonShip[obj->work[0]] >= 55) {
+                    D_80109598_205BF8_AbandonShip[obj->work[0]] = 0;
+                    if (AS_SIDE[obj->work[0]] == 0) {
+                        obj->rot.x = 90.0f;
+                        obj->rot.y = 90.0f;
+                        obj->rot.z = 180.0f;
+                        if (obj->work[0] == 0) {
+                            obj->trans.x = -720.0f;
+                        } else {
+                            obj->trans.x = 0.0f;
+                        }
+                    } else {
+                        obj->rot.x = 90.0f;
+                        obj->rot.y = 270.0f;
+                        obj->rot.z = 180.0f;
+                        if (obj->work[0] == 0) {
+                            obj->trans.x = -20.0f;
+                        } else {
+                            obj->trans.x = 700.0f;
+                        }
+                    }
+                    obj->trans.y = 0.0f;
+                    func_800298A4_2A4A4(obj->model[0], 4, 4);
+                    obj->work[1] = 0;
+                    AS_SIDE[obj->work[0]] ^= 1;
+                } else {
+                    if (D_80109598_205BF8_AbandonShip[obj->work[0]] < 31) {
+                        if (AS_REST[obj->work[0]] == 0) {
+                            if (AS_SIDE[obj->work[0]] == 0) {
+                                obj->trans.x -= 23.333334f;
+                                obj->rot.z = t * 180.0f + 180.0f;
+                            } else {
+                                obj->trans.x += 23.333334f;
+                                obj->rot.z = 180.0f - t * 180.0f;
+                            }
+                            obj->trans.y = HuMathSin(t * 180.0f) * 750.0f + 0.0f;
+                        }
+                        func_800298A4_2A4A4(obj->model[0], 4, 0);
+                    } else {
+                        if (AS_SIDE[obj->work[0]] == 0) {
+                            obj->trans.x -= 10.0f;
+                        } else {
+                            obj->trans.x += 10.0f;
+                        }
+                        obj->trans.y -= 30.0f;
+                    }
+                    if (D_80109598_205BF8_AbandonShip[obj->work[0]] == 1) {
+                        AS_REST[obj->work[0]]++;
+                        if (AS_REST[obj->work[0]] >= 9) {
+                            AS_REST[obj->work[0]] = 0;
+                            if (obj->work[0] == 0) {
+                                PlaySound(0x282);
+                            }
+                        }
+                    }
+                    if (AS_REST[obj->work[0]] == 0) {
+                        D_80109598_205BF8_AbandonShip[obj->work[0]]++;
+                    }
+                }
+                for (i = 0; i < 4; i++) {
+                    if (D_800FFFD8_100BD8[i]->work[1] < 7) {
+                        if (AS_SIDE[obj->work[0]] == 0) {
+                            pos.unk_00 = obj->trans.x - HuMathSin(obj->rot.z + 45.0f) * 100.0f;
+                            pos.unk_04 = func_800B7890_B8490(obj->rot.z + 45.0f) * 100.0f + obj->trans.y;
+                        } else {
+                            pos.unk_00 = obj->trans.x - HuMathSin(obj->rot.z - 45.0f) * 100.0f;
+                            pos.unk_04 = func_800B7890_B8490(obj->rot.z - 45.0f) * 100.0f + obj->trans.y;
+                        }
+                        pp = &D_800FFFD8_100BD8[i];
+                        dx = (*pp)->trans.x + 50.0f - pos.unk_00;
+                        dy = (*pp)->trans.y + 50.0f - pos.unk_04;
+                        if (func_800B1830_B2430(dx * dx + dy * dy) < 170.0f) {
+                            world.x = obj->trans.x;
+                            world.y = obj->trans.y;
+                            world.z = obj->trans.z;
+                            Hu3DCam3DToScreen(0, &world, &scr);
+                            if (scr.unk_04 < 100.0f) {
+                                if ((*pp)->work[3] != 2) {
+                                    func_800797DC_7A3DC(0x111, i);
+                                }
+                                D_800FFFD8_100BD8[i]->work[3] = 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_801044E0_200B40_AbandonShip);
+void func_80104350_2009B0_AbandonShip(void) {
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80104678_200CD8_AbandonShip);
+    D_801095D4_205C34_AbandonShip = func_80018A30_19630(0x370003, 0x2AD);
+    D_801095D6_205C36_AbandonShip = func_80018A30_19630(0x370006, 0x2AD);
+    func_8000C018_CC18(D_800F8FE0_F9BE0);
+    D_800FC7B0_FD3B0[D_800F8FE0_F9BE0++] = omAddObj(1, 6, 0, -1, func_80105754_201DB4_AbandonShip);
+    omSetStatBit(D_800FC7B0_FD3B0[0], 0xA0);
+    omAddObj(1, 0, 0, -1, func_801044E0_200B40_AbandonShip);
+    omAddObj(1, 1, 0, -1, func_80105508_201B68_AbandonShip);
+    omSetStatBit(omAddObj(1, 2, 0, -1, func_80104A8C_2010EC_AbandonShip), 0xA0);
+    D_801096B0_205D10_AbandonShip = (rand8() * 3) >> 8;
+    for (i = 0; i < 4; i++) {
+        D_801096D8_205D38_AbandonShip[i] = omAddObj(1, 0xF, 0, -1, func_80105F38_202598_AbandonShip);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80104A8C_2010EC_AbandonShip);
+void func_801044E0_200B40_AbandonShip(omObjData* obj) {
+    Vec pos;
+    Vec2f scr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80104B54_2011B4_AbandonShip);
+    obj->func_ptr = func_80104678_200CD8_AbandonShip;
+    SprAttrSet(D_801095D8_205C38_AbandonShip = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x37000B), 0, 1), 0, 0x4000);
+    pos.x = 0.0f;
+    pos.y = 400.0f;
+    pos.z = -7700.0f;
+    Hu3DCam3DToScreen(0, &pos, &scr);
+    espPosSet(D_801095D8_205C38_AbandonShip, scr.unk_00, scr.unk_04);
+    SprAttrSet(D_801095DA_205C3A_AbandonShip = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x370009), 0, 1), 0, 0x4000);
+    espPosSet(D_801095DA_205C3A_AbandonShip, 0x5A, 0x1E);
+    func_8001A91C_1B51C(D_801095DA_205C3A_AbandonShip, 0.5f, 0.5f);
+    SprAttrSet(D_801095DC_205C3C_AbandonShip = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x37000A), 0, 1), 0, 0x4000);
+    espPosSet(D_801095DA_205C3A_AbandonShip, 0x50, 0x28); /* retail: not the new sprite */
+    func_8001A91C_1B51C(D_801095DC_205C3C_AbandonShip, 0.5f, 0.5f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80104C5C_2012BC_AbandonShip);
+void func_80104678_200CD8_AbandonShip(void) {
+    Vec2f scr;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_801050B8_201718_AbandonShip);
+    if (D_801093C0_205A20_AbandonShip < 2) {
+        if (D_801093C0_205A20_AbandonShip >= 0) {
+            D_801095A4_205C04_AbandonShip.x = 0.0f;
+            D_801095A4_205C04_AbandonShip.y = 400.0f;
+            D_801095A4_205C04_AbandonShip.z = -7700.0f;
+            goto cam;
+        }
+    }
+    if (D_80109440_205AA0_AbandonShip == 0) {
+        D_801095A4_205C04_AbandonShip.x = 0.0f;
+        D_801095A4_205C04_AbandonShip.y = -200.0f;
+        D_801095A4_205C04_AbandonShip.z = -7700.0f;
+    } else {
+        if (D_800FFFD8_100BD8[D_80109381_2059E1_AbandonShip]->work[0] == 0) {
+            D_801095B0_205C10_AbandonShip.x = 750.0f;
+        } else if (D_800FFFD8_100BD8[D_80109381_2059E1_AbandonShip]->work[0] == 3) {
+            D_801095B0_205C10_AbandonShip.x = -750.0f;
+        } else {
+            D_801095B0_205C10_AbandonShip.x = 0.0f;
+        }
+        D_801095B0_205C10_AbandonShip.y = -900.0f - D_800FFFD8_100BD8[D_80109381_2059E1_AbandonShip]->trans.y * 2.9f;
+        D_801095B0_205C10_AbandonShip.z = -18000.0f;
+        func_80108DF0_205450_AbandonShip(&D_801095BC_205C1C_AbandonShip, &D_801095A4_205C04_AbandonShip, &D_801095B0_205C10_AbandonShip);
+        D_801095A4_205C04_AbandonShip.x += D_801095BC_205C1C_AbandonShip.x * 200.0f;
+        if (D_800FFFD8_100BD8[D_80109381_2059E1_AbandonShip]->work[0] == 0) {
+            if (D_801095B0_205C10_AbandonShip.x < D_801095A4_205C04_AbandonShip.x) {
+                D_801095A4_205C04_AbandonShip.x = D_801095B0_205C10_AbandonShip.x;
+            }
+        } else if (D_800FFFD8_100BD8[D_80109381_2059E1_AbandonShip]->work[0] == 3) {
+            if (D_801095A4_205C04_AbandonShip.x < D_801095B0_205C10_AbandonShip.x) {
+                D_801095A4_205C04_AbandonShip.x = D_801095B0_205C10_AbandonShip.x;
+            }
+        }
+        D_801095A4_205C04_AbandonShip.y += D_801095BC_205C1C_AbandonShip.y * 200.0f;
+        if (D_801095A4_205C04_AbandonShip.y < D_801095B0_205C10_AbandonShip.y) {
+            D_801095A4_205C04_AbandonShip.y = D_801095B0_205C10_AbandonShip.y;
+        }
+        D_801095A4_205C04_AbandonShip.z += D_801095BC_205C1C_AbandonShip.z * 200.0f;
+        if (D_801095A4_205C04_AbandonShip.z < D_801095B0_205C10_AbandonShip.z) {
+            D_801095A4_205C04_AbandonShip.z = D_801095B0_205C10_AbandonShip.z;
+        }
+    }
+cam:
+    Hu3DCam3DToScreen(0, &D_801095A4_205C04_AbandonShip, &scr);
+    espPosSet(D_801095D8_205C38_AbandonShip, scr.unk_00, scr.unk_04);
+    espPosSet(D_801095DA_205C3A_AbandonShip, HuMathSin(D_801095A0_205C00_AbandonShip) * 15.0f + 90.0f, 0x1E);
+    espPosSet(D_801095DC_205C3C_AbandonShip, 80.0f - HuMathSin(D_801095A0_205C00_AbandonShip) * 15.0f, 0x28);
+    D_801095A0_205C00_AbandonShip += 1.0f;
+    if (D_801095A0_205C00_AbandonShip >= 180.0f) {
+        D_801095A0_205C00_AbandonShip = 0.0f;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_8010547C_201ADC_AbandonShip);
+void func_80104A8C_2010EC_AbandonShip(omObjData* obj) {
+    obj->func_ptr = func_80104B54_2011B4_AbandonShip;
+    obj->model[0] = func_80018A30_19630(0x370004, 0x2A9);
+    obj->scale.x = 1.5f;
+    obj->scale.z = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->trans.x = 100.0f;
+    obj->trans.y = 0.0f;
+    obj->trans.z = 0.0f;
+    obj->model[1] = func_80018A30_19630(0x370005, 0x2B9);
+    func_80029714_2A314(obj->model[1], 600.0f, 0.0f, -200.0f);
+    func_8002A00C_2AC0C(obj->model[0]);
+    func_80104C5C_2012BC_AbandonShip(obj->model[0]);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105508_201B68_AbandonShip);
+void func_80104B54_2011B4_AbandonShip(omObjData* obj) {
+    func_801050B8_201718_AbandonShip(obj->model[0], D_8010941C_205A7C_AbandonShip % 361, obj->model);
+    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+        D_8010941C_205A7C_AbandonShip++;
+        D_80109420_205A80_AbandonShip += 0.3f;
+        D_80109424_205A84_AbandonShip += 0.3f;
+    }
+    if (D_801093C0_205A20_AbandonShip == 2) {
+        obj->trans.y = 0.0f;
+        func_800298A4_2A4A4(obj->model[1], 4, 4);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105590_201BF0_AbandonShip);
+void func_80104C5C_2012BC_AbandonShip(s16 model) {
+    s16 xs[32];
+    s16 zs[32];
+    HmfData* m;
+    HmfVtx* v;
+    s16 nz;
+    s16 nx;
+    s16 i;
+    s16 j;
+    s16 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_801055EC_201C4C_AbandonShip);
+    m = D_800FC834_FD434[model].hmf;
+    v = m->unk40;
+    nz = 0;
+    nx = 0;
+    i = 0;
+    n = m->unk18;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            xs[nx] = v->unk00;
+            nx++;
+        }
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            zs[nz] = v->unk04;
+            nz++;
+        }
+    }
+    func_8010547C_201ADC_AbandonShip(xs, nx);
+    func_8010547C_201ADC_AbandonShip(zs, nz);
+    D_801095E0_205C40_AbandonShip = func_80027154_27D54(n * 6, 0x7918);
+    for (i = 0; i < n; i++) {
+        D_801095E0_205C40_AbandonShip[i].move = 1;
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nx; j++) {
+            if (xs[j] == v->unk00) {
+                break;
+            }
+        }
+        if (j >= nx) {
+            j = nx - 1;
+        }
+        D_801095E0_205C40_AbandonShip[i].col = j;
+        if (j == 0 || j == nx - 1) {
+            D_801095E0_205C40_AbandonShip[i].move = 0;
+        }
+    }
+    v = m->unk40;
+    for (i = 0; i < n; i++, v++) {
+        for (j = 0; j < nz; j++) {
+            if (zs[j] == v->unk04) {
+                break;
+            }
+        }
+        if (j >= nz) {
+            j = nz - 1;
+        }
+        D_801095E0_205C40_AbandonShip[i].row = j;
+        if (j == 0 || j == nz - 1) {
+            D_801095E0_205C40_AbandonShip[i].move = 0;
+        }
+    }
+    D_801095E4_205C44_AbandonShip[0] = abs(xs[0] - xs[1]);
+    D_801095E4_205C44_AbandonShip[1] = abs(zs[0] - zs[1]);
+}
+
+void func_801050B8_201718_AbandonShip(s16 model, s32 angle, s16* unused) {
+    HmfData* m;
+    ASFlagVtx* map;
+    HmfVtx* src;
+    HmfVtx* dst;
+    u16 n;
+    s16 phase;
+    u16 i;
+    f32 a;
+    f32 s1;
+    f32 s2;
+    f32 ax;
+    f32 ay;
+    f32 d;
+    s32 pad[4];
+
+    phase = 0;
+    m = D_800FC834_FD434[model].hmf;
+    map = D_801095E0_205C40_AbandonShip;
+    src = m->unk40;
+    dst = m->unk44[D_800FDBE0_FE7E0];
+    n = m->unk18;
+    a = angle;
+    s1 = HuMathSin(a);
+    s2 = HuMathSin(angle * 2);
+    HuMathSin(a);
+    ax = (f32)((u32)D_801095E4_205C44_AbandonShip[0] / 6) * D_800FC834_FD434[model].scale.x;
+    ay = (f32)((u32)D_801095E4_205C44_AbandonShip[0] / 10) * D_800FC834_FD434[model].scale.y;
+    if (angle == 0) {
+        phase++;
+    }
+    for (i = 0; i < n; src++, dst++, i++, map++) {
+        if (map->move != 0) {
+            d = s1 * ax;
+            if (map->row & 1) {
+                dst->unk00 = src->unk00 + d;
+            } else {
+                dst->unk00 = src->unk00 - d;
+            }
+            if (phase & 1) {
+                if ((map->col & 1) && (map->row & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->col + map->row) & 1) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            } else {
+                if (!(map->col & 1) && !(map->row & 1)) {
+                    dst->unk02 = src->unk02 + s2 * ay;
+                } else if ((map->col & 1) && (map->row & 1)) {
+                    dst->unk02 = src->unk02 - s2 * ay;
+                } else {
+                    dst->unk02 = src->unk02;
+                }
+            }
+            if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
+                D_801093D4_205A34_AbandonShip = dst->unk02;
+            }
+        } else {
+            dst->unk00 = src->unk00;
+            dst->unk02 = src->unk02;
+            dst->unk04 = src->unk04;
+        }
+    }
+}
+
+void func_8010547C_201ADC_AbandonShip(s16* a, u16 n) {
+    s32 i;
+    s32 j;
+    s16 t;
+
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (a[i] > a[j]) {
+                t = a[i];
+                a[i] = a[j];
+                a[j] = t;
+            }
+        }
+    }
+}
+
+void func_80105508_201B68_AbandonShip(omObjData* obj) {
+    obj->func_ptr = func_801055EC_201C4C_AbandonShip;
+    obj->model[0] = func_80018A30_19630(0x370000, 0x2B9);
+    obj->scale.z = 1.0f;
+    obj->scale.y = 1.0f;
+    obj->scale.x = 1.0f;
+    obj->trans.x = -1000.0f;
+    obj->trans.y = -120.0f;
+    obj->trans.z = -500.0f;
+}
+
+void func_80105590_201BF0_AbandonShip(s8* flag) {
+    if (*flag == 0) {
+        D_80102750_103350[0] += 20.0f;
+    } else {
+        D_80102750_103350[0] -= 20.0f;
+    }
+    *flag ^= 1;
+}
+
+void func_801055EC_201C4C_AbandonShip(omObjData* obj) {
+    switch (D_801093C0_205A20_AbandonShip) {
+    case 0:
+        obj->trans.x += 10.0f;
+        if (obj->trans.x > -150.0f) {
+            obj->trans.x = -150.0f;
+            D_801093C0_205A20_AbandonShip = 1;
+        }
+        obj->trans.y = D_801093D4_205A34_AbandonShip + -120.0f;
+        break;
+    case 1:
+        if (D_801095C8_205C28_AbandonShip >= 11) {
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            D_801093C0_205A20_AbandonShip = 2;
+        } else if (D_801095C8_205C28_AbandonShip == 0) {
+            PlaySound(0x27D);
+        }
+        func_80105590_201BF0_AbandonShip(&D_80109428_205A88_AbandonShip);
+        D_801095C8_205C28_AbandonShip++;
+        break;
+    case 2:
+        D_800FD474_FE074.x = -20.0f;
+        D_80102750_103350[0] = 250.0f;
+        D_801093C0_205A20_AbandonShip = 3;
+        D_801095C8_205C28_AbandonShip = 0;
+        PlaySound(0x280);
+        PlayMusic(0x1E);
+        break;
+    case 3:
+        func_80105590_201BF0_AbandonShip(&D_80109428_205A88_AbandonShip);
+        break;
+    case 4:
+    case 5:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105754_201DB4_AbandonShip);
 
