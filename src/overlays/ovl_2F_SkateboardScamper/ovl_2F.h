@@ -138,7 +138,7 @@ f32 func_800B75A8_B81A8(f32 y, f32 x);
 f32 func_800B7890_B8490(f32);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
-/* ---- overlay .data (asm, in address order) ---- */
+/* ---- overlay .data (232150.c, 0x238440-0x238600) ---- */
 extern u32 D_80108AF0_238440_SkateboardScamper;    /* intro frames; 0x80108AF4 s32 -65536, unused */
 extern u8 D_80108AF8_238448_SkateboardScamper[4];  /* finishing place per player, 0 still racing */
 extern u8 D_80108AFC_23844C_SkateboardScamper;     /* players past the goal */
