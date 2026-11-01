@@ -10,7 +10,11 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Lava Tile Isle, an item minigame. Retail files 113C80.c, 114640.c (from 801031C0, 3-nop
+/* Lava Tile Isle: four players on a 3x3 grid of tiles over lava. Two groups of tiles (3 and 4,
+   objects D_8010A614 and D_8010A610; work[0] phase, work[1] gap, work[2] step) rise, slide into
+   the gap and sink, faster with time. A player who falls burns (work[1] = 1). The round ends after
+   31 seconds or with three out; a lone survivor gets 10 coins_mg_bonus, otherwise a draw.
+   _CheckFlag(0xC): it also ends when the human burns. Retail files 113C80.c, 114640.c (from 801031C0, 3-nop
    pad) and 115B60.c (from 801046E0, 1-nop pad); .data is asm, .rodata from 0x11B7A0 (114640.c)
    and 0x11B840 (115B60.c). */
 
@@ -190,22 +194,17 @@ extern s32 D_8010A1C0_11B640_LavaTileIsle;
 extern s32 D_8010A1C4_11B644_LavaTileIsle; /* players still standing */
 extern s16 D_8010A1C8_11B648_LavaTileIsle;
 extern s8 D_8010A1CA_11B64A_LavaTileIsle; /* quit state */
-extern u8 D_8010A1D0_11B650_LavaTileIsle[4]; /* platform 3 model states by step */
-
+extern u8 D_8010A1D0_11B650_LavaTileIsle[4]; /* the 3 tiles' gap, by step */
 extern u16 D_8010A1D4_11B654_LavaTileIsle; /* step timer */
 extern f32 D_8010A1D8_11B658_LavaTileIsle; /* bob angle */
 extern s16 D_8010A1DC_11B65C_LavaTileIsle; /* 1: the loops are stopped */
-extern s8 D_8010A1E0_11B660_LavaTileIsle[8]; /* the tile that moves, by step */
-extern u8 D_8010A1E8_11B668_LavaTileIsle[8];
-
+extern s8 D_8010A1E0_11B660_LavaTileIsle[8]; /* which of the 4 tiles moves, by step */
+extern u8 D_8010A1E8_11B668_LavaTileIsle[8]; /* the 4 tiles' gap, by step */
 extern u16 D_8010A1F0_11B670_LavaTileIsle;
 extern f32 D_8010A1F4_11B674_LavaTileIsle;
 extern s32 D_8010A200_11B680_LavaTileIsle[4]; /* player of slot i */
-
 extern u8 D_8010A210_11B690_LavaTileIsle[24][4]; /* every order of the four corners */
 extern Vec D_8010A270_11B6F0_LavaTileIsle[4]; /* the corners */
-
-
 extern s32 D_8010A2A0_11B720_LavaTileIsle; /* frames after the round */
 extern f32 D_8010A2A4_11B724_LavaTileIsle[4]; /* burn hop angle */
 extern s8 D_8010A2B4_11B734_LavaTileIsle[4];
@@ -213,11 +212,11 @@ extern s8 D_8010A2B8_11B738_LavaTileIsle[4];
 extern s16 D_8010A2BC_11B73C_LavaTileIsle[4]; /* burn sound, -1 none */
 extern s32 D_8010A2C4_11B744_LavaTileIsle[4][4]; /* smoke puffs, by player */
 extern f32 D_8010A304_11B784_LavaTileIsle[4]; /* smoke scale */
-extern u8 D_8010A314_11B794_LavaTileIsle;
-extern u8 D_8010A315_11B795_LavaTileIsle;
+extern u8 D_8010A314_11B794_LavaTileIsle; /* CPU direction */
+extern u8 D_8010A315_11B795_LavaTileIsle; /* 1: the CPU plan is started */
 extern s8 D_8010A318_11B798_LavaTileIsle[4];
 extern s8 D_8010A31C_11B79C_LavaTileIsle; /* 1: the voice has played */
-extern s32 D_8010A490_11B910_LavaTileIsle;   /* unused by code */
+extern s32 D_8010A490_11B910_LavaTileIsle; /* the winner */
 extern s16 D_8010A494_11B914_LavaTileIsle;
 extern s16 D_8010A496_11B916_LavaTileIsle;
 extern f32 D_8010A4A0_11B920_LavaTileIsle; /* moving tile's start x */
@@ -238,16 +237,11 @@ extern s16 D_8010A4D0_11B950_LavaTileIsle; /* lava model */
 extern s16 D_8010A4E0_11B960_LavaTileIsle;
 extern s8 D_8010A4E2_11B962_LavaTileIsle; /* next slot */
 extern u8 D_8010A4E3_11B963_LavaTileIsle; /* the order, 0-23 */
-extern LTCpu D_8010A4E8_11B968_LavaTileIsle[6];
-
-extern Vec D_8010A500_11B980_LavaTileIsle[4];
-
+extern LTCpu D_8010A4E8_11B968_LavaTileIsle[4]; /* by port */
+extern Vec D_8010A500_11B980_LavaTileIsle[4]; /* the 4 tiles */
 extern LTRect D_8010A530_11B9B0_LavaTileIsle[4];
-
-extern Vec D_8010A580_11BA00_LavaTileIsle[3];
-
+extern Vec D_8010A580_11BA00_LavaTileIsle[3]; /* the 3 tiles */
 extern LTRect D_8010A5A8_11BA28_LavaTileIsle[5];
-
 extern s8 D_8010A60C_11BA8C_LavaTileIsle;
 extern omObjData* D_8010A610_11BA90_LavaTileIsle;
 extern omObjData* D_8010A614_11BA94_LavaTileIsle;
@@ -259,7 +253,7 @@ void func_80102800_113C80_LavaTileIsle(void);
 void func_8010291C_113D9C_LavaTileIsle(void);
 void func_801029A8_113E28_LavaTileIsle(void);
 void func_80102AB0_113F30_LavaTileIsle(void);
-void func_80102BD0_114050_LavaTileIsle(void);
+void func_80102BD0_114050_LavaTileIsle(omObjData* obj);
 void func_801031C0_114640_LavaTileIsle(void);
 void func_80103300_114780_LavaTileIsle(omObjData* obj);
 void func_801036B4_114B34_LavaTileIsle(omObjData* obj);

@@ -116,7 +116,7 @@ void func_80102AB0_113F30_LavaTileIsle(void) {
 
 /* Control flow (class 3): retail copies the result to a0 in a branch delay slot, and its frame has 8 more bytes. */
 #ifdef NON_MATCHING
-void func_80102BD0_114050_LavaTileIsle(void) {
+void func_80102BD0_114050_LavaTileIsle(omObjData* obj) {
     s32 i;
     s32 left;
     s32 secs = 0;
