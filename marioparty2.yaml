@@ -949,6 +949,7 @@ segments:
     subsegments:
       - [0x1A40A0, c]
       - [0x1AB520, data]
+      - [0x1AB6D0, .rodata, 1A40A0]
       - {0x1ABE90, type: bss, vram: 0x8010A5F0, name: ovl_1B_bss}
   - type: code
     start: 0x1ABE90
