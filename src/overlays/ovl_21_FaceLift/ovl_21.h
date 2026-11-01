@@ -7,7 +7,7 @@
    come from a table instead of one set of arrays, the face mesh deforms through a list of touched
    vertices built at start-up from a second "touch" model (func_80106248_1D35A8_FaceLift), and the eyes follow a
    small star (func_80107348_1D46A8_FaceLift). One retail file, 1CFB60.c (80102800-80108E60). .rodata is carved
-   from 0x1D6EC0; .data is asm, typed here from the code.
+   from 0x1D6EC0; .data is in 1CFB60.c.
    N64 offsets are in the comments; structs with pointer fields change size on the host. */
 
 #include "common.h"
@@ -209,7 +209,7 @@ f32 func_800B1830_B2430(f32 x); /* sqrtf */
 void func_800B1960_B2560(f32 (*matrix)[4], f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt, f32 xUp, f32 yUp, f32 zUp);
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size);
 
-/* ---- .data ---- */
+/* ---- .data (1CFB60.c, 0x1D61C0-0x1D6EC0) ---- */
 extern FLPart D_80108E60_1D61C0_FaceLift[6];
 extern Vec2f D_80108F68_1D62C8_FaceLift[3 * 6];
 extern FLPart D_80108FF8_1D6358_FaceLift[6];
@@ -232,12 +232,17 @@ extern s32 D_80109A0C_1D6D6C_FaceLift[6]; /* cursor sprite per character */
 extern const char* D_80109A24_1D6D84_FaceLift[6]; /* character name (Shift-JIS) */
 extern f32 D_80109A3C_1D6D9C_FaceLift[4]; /* CPU spread by difficulty */
 extern s16 D_80109A4C_1D6DAC_FaceLift[]; /* score positions, x y pairs */
-extern s16 D_80109A4E_1D6DAE_FaceLift[]; /* label of D_80109A4C_1D6DAC_FaceLift[1] */
 extern s16 D_80109A5C_1D6DBC_FaceLift[6]; /* cursor home: index into the parts, per face */
 extern Gfx D_80109A68_1D6DC8_FaceLift[];
 extern Gfx D_80109AB0_1D6E10_FaceLift[];
 extern FLColor D_80109AF0_1D6E50_FaceLift[10]; /* the rainbow star's colours */
 extern u8 D_80109B54_1D6EB4_FaceLift[]; /* "ABC" (Shift-JIS) */
+extern char D_80109B10_1D6E70_FaceLift[]; /* the characters' names (Shift-JIS), used by D_80109A24_1D6D84_FaceLift */
+extern char D_80109B18_1D6E78_FaceLift[];
+extern char D_80109B24_1D6E84_FaceLift[];
+extern char D_80109B30_1D6E90_FaceLift[];
+extern char D_80109B3C_1D6E9C_FaceLift[];
+extern char D_80109B48_1D6EA8_FaceLift[];
 
 /* ---- .bss ---- */
 extern s16 D_80109B80_1D6EE0_FaceLift; /* the host's sprite */
