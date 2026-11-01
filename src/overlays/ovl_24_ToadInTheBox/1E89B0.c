@@ -1145,7 +1145,7 @@ void func_80105950_1EBB00_ToadInTheBox(omObjData* obj) {
                     t0 = 1.0 - (f32)(box->time - 30) / 15.0f;
                     t0 = t0 * t0;
                     if (box->time == 30) {
-                        box->angle = ((u8*)&D_8010B4C0_1F1670_ToadInTheBox)[info->hits] * 90;
+                        box->angle = (u8)D_8010B4C1_1F1671_ToadInTheBox[info->hits - 1] * 90;
                         if (info->hits >= 5 || D_8010B492_1F1642_ToadInTheBox != 1) {
                             box->state = 12;
                             box->time = 0;
