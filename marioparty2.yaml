@@ -1410,12 +1410,17 @@ segments:
     dir: overlays/ovl_3A_TorpedoTargets
     name: TorpedoTargets
     overlay: True
+    subalign: 4
     exclusive_ram_id: minigame
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0x90
     subsegments:
       - [0x284A10, c]
+      - [0x289BC0, c]
+      - [0x28AB10, c]
       - [0x28B470, data]
+      - [0x28B5E0, .rodata, 284A10]
+      - [0x28B614, .rodata, 289BC0]
       - {0x28B620, type: bss, vram: 0x80109410, name: ovl_3A_bss}
   - type: code
     start: 0x28B620
