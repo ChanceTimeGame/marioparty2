@@ -281,15 +281,7 @@ void func_80103E9C_1621BC_BobOmbBarrage(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_80103E9C_1621BC_BobOmbBarrage);
 #endif
 
-__asm__(".section .rodata");
-const u32 D_801090FC_16741C_BobOmbBarrage[3] = { 0x00000000, 0x43FA0000, 0x43EEA2E8 };
-
-__asm__(".section .rodata");
-const u32 D_80109108_167428_BobOmbBarrage[4] = { 0x00000000, 0x44898000, 0x44834000, 0x00000000 };
-
 void func_80104778_162A98_BobOmbBarrage(void) {
-    Vec eye;
-    Vec at;
     s32 i;
 
     for (i = 0; i < 4; i++) {
@@ -298,14 +290,16 @@ void func_80104778_162A98_BobOmbBarrage(void) {
     switch (D_80109394_1676B4_BobOmbBarrage) {
     case 0:
         break;
-    case 2:
-        eye = *(Vec*)D_801090FC_16741C_BobOmbBarrage;
-        at = *(Vec*)D_80109108_167428_BobOmbBarrage;
+    case 2: {
+        Vec eye = { 0.0f, 500.0f, 477.2727f };
+        Vec at = { 0.0f, 1100.0f, 1050.0f };
+
         if (++D_8010A1C4_1684E4_BobOmbBarrage > 0xA0) {
             D_80109394_1676B4_BobOmbBarrage = 3;
             func_80102C04_160F24_BobOmbBarrage(&eye, &at, 0x3C, 1);
         }
         break;
+    }
     }
 }
 
@@ -1069,7 +1063,7 @@ void func_8010684C_164B6C_BobOmbBarrage(void) {
         rot = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
         if (func_80108414_166734_BobOmbBarrage(mdl, D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].mot[11]) != 0) {
             D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.state = 0;
-            func_80029BF0_2A7F0(mdl, func_80029E14_2AA14(D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].mot[0]), 0, 8, 0);
+            func_80029BF0_2A7F0(mdl, func_80029E14_2AA14(D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].mot[0]), 0, 8, 2);
         }
         break;
     case 16:

@@ -8,13 +8,14 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Bob-omb Barrage, a 1 vs 3 minigame: the lone player is Player 0 in the middle of the ring and
-   walks; the three others stand on the rim and throw bob-ombs at him. Hit him and the three win;
-   if the timer runs out he does. Retail files 160B20.c, 160C10.c (camera), 1610C0.c (flow, timer)
-   and 161980.c (from 80103660, the game); .data is asm, .rodata per file from 0x1673B0 and 0x167410. */
+/* Bob-omb Barrage, a 1 vs 3 minigame: the player of group 0 (D_80109358_167678_BobOmbBarrage[0], D_801093A0_1676C0_BobOmbBarrage[0]) walks
+   the island; the other three stand on the rim and throw bob-ombs. A hit sinks him and the three
+   win 10 coins each; if the 30 s timer runs out he wins 10. Retail files 160B20.c, 160C10.c (camera),
+   1610C0.c (flow, timer) and 161980.c (from 80103660, the game); .data is asm, .rodata per file from
+   0x1673B0 and 0x167410. The D_801093B4_1676D4_BobOmbBarrage-style labels the asm names are fields of D_801093A0_1676C0_BobOmbBarrage[]. */
 
-/* One bob-omb, 0x58 bytes. State: 0 none, 1 waiting, 2 being fetched, 3 ready, 4 carried, 5 held
-   lit, 6 flying, 7 gone, 8 blast, 9 waiting for the next, 10 hit. */
+/* One bob-omb, 0x58 bytes. State: 0 none, 1 waiting, 2 being fetched, 3 ready, 4 picked up, 5 held
+   lit, 6 flying, 7 gone, 8 blast, 9 waiting for the next, 10 hit the lone player. */
 typedef struct BBBomb {
     /* 0x00 */ Vec pos;
     /* 0x0C */ Vec vel;
