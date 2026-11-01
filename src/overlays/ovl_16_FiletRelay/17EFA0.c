@@ -260,6 +260,7 @@ void func_80107C44_17F9F4_FiletRelay(FRCam* w) {
 }
 
 /* Invert a rigid transform: the 3x3 by its cofactors, then the translation. */
+#ifdef NON_MATCHING
 void func_80107C4C_17F9FC_FiletRelay(Matrix4f in, Matrix4f out) {
     f32 a, b, c, d, e, f, g, h, i;
     f32 det;
@@ -284,11 +285,14 @@ void func_80107C4C_17F9FC_FiletRelay(Matrix4f in, Matrix4f out) {
     out[2][1] = -((a * h - b * g) * det);
     out[2][2] = (a * e - b * d) * det;
     out[2][3] = in[2][3];
-    out[3][0] = -(out[0][0] * (x = in[3][0]) + out[1][0] * (y = in[3][1]) + out[2][0] * (z = in[3][2]));
+    out[3][0] = -((x = in[3][0]) * out[0][0] + (y = in[3][1]) * out[1][0] + (z = in[3][2]) * out[2][0]);
     out[3][1] = -(out[0][1] * x + out[1][1] * y + out[2][1] * z);
     out[3][2] = -(out[0][2] * x + out[1][2] * y + out[2][2] * z);
     out[3][3] = in[3][3];
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17EFA0", func_80107C4C_17F9FC_FiletRelay);
+#endif
 
 /* A camera object: mode function, perspective, look from the eye at the ring's head. */
 void func_80107EBC_17FC6C_FiletRelay(omObjData* obj) {
