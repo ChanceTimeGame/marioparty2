@@ -25,6 +25,11 @@ typedef struct GBState {
 } GBState; /* size = 0x18 */
 
 /* ---- main-segment API missing from include/ ---- */
+typedef struct GBEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} GBEspSlot; /* size = 0x24 */
 typedef struct GBCharData {
     /* 0x00 */ char unk_00[4];
     /* 0x04 */ s32 unk_04; /* model/motion directory */
@@ -36,6 +41,8 @@ extern u16 D_800CAFE4[];
 extern u16 D_801011FC_101DFC;
 extern u16 ContBtnTrg[4];
 extern f32 D_800FA5BC_FB1BC[];
+extern GBEspSlot* D_800F93FC_F9FFC;
+extern Gfx* D_800FDBCC_FE7CC;
 extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
 
@@ -78,6 +85,7 @@ void omSetTra(omObjData*, f32, f32, f32);
 void omSetSca(omObjData*, f32, f32, f32);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 s32 omOvlReturnEx(s16);
+HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 s16 SprCreate(s32 num, s32 attr);
 void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
 void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
