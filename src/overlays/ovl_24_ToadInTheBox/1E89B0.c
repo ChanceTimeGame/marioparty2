@@ -2,7 +2,22 @@
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80102800_1E89B0_ToadInTheBox);
 
+__asm__(".section .rodata");
+const u32 D_8010AB90_1F0D40_ToadInTheBox[4] = { 0x3FAB0004, 0x3FA87FFE, 0x3FA87FFE, 0x3FAB0004 };
+
+__asm__(".section .rodata");
+const u32 D_8010ABA0_1F0D50_ToadInTheBox[4] = { 0x41480000, 0x41480000, 0x00000000, 0xC0F00000 };
+
+__asm__(".section .rodata");
+const u32 D_8010ABB0_1F0D60_ToadInTheBox[4] = { 0x40B00000, 0x40200000, 0xBFC00000, 0xC0800000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80102DCC_1E8F7C_ToadInTheBox);
+
+__asm__(".section .rodata");
+const u32 D_8010ABF0_1F0DA0_ToadInTheBox[4] = { 0x41B40000, 0x41480000, 0x00000000, 0xC0F00000 };
+
+__asm__(".section .rodata");
+const u32 D_8010AC00_1F0DB0_ToadInTheBox[6] = { 0x00000002, 0x00000003, 0x00000007, 0x00000004, 0x00000005, 0x00000006 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_8010377C_1E992C_ToadInTheBox);
 
@@ -42,7 +57,22 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_801056D
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80105770_1EB920_ToadInTheBox);
 
+__asm__(".section .rodata");
+const u32 D_8010AD10_1F0EC0_ToadInTheBox[4] = { 0 };
+
+__asm__(".section .rodata");
+const u32 D_8010AD20_1F0ED0_ToadInTheBox[4] = { 0x41200000, 0x41F00000, 0x00000000, 0x41A00000 };
+
+__asm__(".section .rodata");
+const u32 D_8010AD30_1F0EE0_ToadInTheBox[4] = { 0x41200000, 0xC1A00000, 0x41F00000, 0x42200000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80105834_1EB9E4_ToadInTheBox);
+
+__asm__(".section .rodata");
+const u32 D_8010AD40_1F0EF0_ToadInTheBox[6] = { 0x40F00000, 0x41480000, 0x418C0000, 0x41C80000, 0x42480000, 0x00000000 };
+
+__asm__(".section .rodata");
+const u32 D_8010AD58_1F0F08_ToadInTheBox[6] = { 0x42340000, 0x43070000, 0x43610000, 0x439D8000, 0x43B40000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_80105950_1EBB00_ToadInTheBox);
 
