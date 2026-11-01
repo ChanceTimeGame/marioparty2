@@ -787,6 +787,18 @@ $(S409_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+# S4-12: ovl_12 160C10.c and 161980.c have the KMC VR4300 mul fix (nops between mul.s pairs) and are GCC's assembly with blank lines removed
+OVL5F_BLANKSTRIP_UNITS_S412 := build/src/overlays/ovl_12_BobOmbBarrage/160C10.c.o \
+	build/src/overlays/ovl_12_BobOmbBarrage/161980.c.o
+$(OVL5F_BLANKSTRIP_UNITS_S412): export VR4300MUL := ON
+$(OVL5F_BLANKSTRIP_UNITS_S412): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
+
 # S4-06: ovl_06 105FC0.c and 108DF0.c (from 80105630, 1-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300
 # mul fix on (func_80105308: a nop between back-to-back mul.s)
 S406_BLANKSTRIP_UNITS := build/src/overlays/ovl_06_MalletGoRound/105FC0.c.o \
