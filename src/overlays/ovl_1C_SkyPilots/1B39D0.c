@@ -1,6 +1,6 @@
 #include "ovl_1C.h"
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: schedule: retail keeps D_8010ADA4_1B4434_SkyPilots and the hook in registers (masked 6) */
 #ifdef NON_MATCHING
 void func_8010A340_1B39D0_SkyPilots(void) {
     omObjData** p = D_8010ADA4_1B4434_SkyPilots;
@@ -60,27 +60,23 @@ void func_8010A53C_1B3BCC_SkyPilots(omObjData* obj) {
     D_8010B204_1B4894_SkyPilots++;
 }
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_8010A6C0_1B3D50_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
     s32 team = w->team;
+    f32* base;
     f32* p;
 
     w->stickX = -8;
     w->stickY = 0;
-    p = D_8010B20C_1B489C_SkyPilots;
-    p += team;
+    base = D_8010B20C_1B489C_SkyPilots;
+    p = team + base;
     w->stickZ = HuMathSin(*p) * 60.0f;
     *p = func_8002D958_2E558(*p + 12.0f);
     func_801058EC_1AEF7C_SkyPilots(obj);
     func_8010A364_1B39F4_SkyPilots(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A6C0_1B3D50_SkyPilots);
-#endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 4) */
 #ifdef NON_MATCHING
 void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
@@ -88,6 +84,7 @@ void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
     f32 x = HuMathSin(w->yaw) * 100.0f + obj->trans.x;
     f32 z = func_800B7890_B8490(w->yaw) * 100.0f + obj->trans.z;
     f32 d = (SP_RADIUS - func_800B1830_B2430(x * x + z * z)) * 0.1f;
+    f32* base;
     f32* p;
 
     if (d > 64.0f) {
@@ -99,7 +96,8 @@ void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
     if (fabs(d) > 50.0) {
         w->stickX = d;
     }
-    p = &D_8010B214_1B48A4_SkyPilots[team];
+    base = D_8010B214_1B48A4_SkyPilots;
+    p = team + base;
     w->stickZ = HuMathSin(*p) * 60.0f;
     *p = func_8002D958_2E558(*p + 10.0f);
     func_801058EC_1AEF7C_SkyPilots(obj);
@@ -109,12 +107,11 @@ void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A768_1B3DF8_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 9) */
 #ifdef NON_MATCHING
 void func_8010A8F4_1B3F84_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
     s32 p = w->pilot;
-    s32 k = p;
 
     if (gPlayers[p].flags & 1) {
         s32 lvl;
@@ -139,20 +136,25 @@ void func_8010A8F4_1B3F84_SkyPilots(omObjData* obj) {
         case 2:
         case 3: {
             f32 h;
+            f32* base;
             f32* q;
 
             i = 0;
             h = D_8010B430_1B4AC0_SkyPilots[w->team];
-            q = &D_8010B21C_1B48AC_SkyPilots[k];
-            for (; i < 4; i++) {
+            base = D_8010B21C_1B48AC_SkyPilots;
+            q = p + base;
+            do {
                 f32 a = D_8010AE3C_1B44CC_SkyPilots[i].angle;
 
-                if (a - 18.0f < h && h < a) {
-                    w->stickY = HuMathSin(*q) * 70.0f;
-                    *q = func_8002D958_2E558(*q + 1.0f);
-                    break;
+                i++;
+                if (a - 18.0f < h) {
+                    if (h < a) {
+                        w->stickY = HuMathSin(*q) * 70.0f;
+                        *q = func_8002D958_2E558(*q + 1.0f);
+                        break;
+                    }
                 }
-            }
+            } while (i < 4);
             if (w->stickY == 0) {
                 if (obj->trans.y > 100.0f) {
                     w->stickY = 0x3C;
@@ -180,8 +182,6 @@ void func_8010A8F4_1B3F84_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A8F4_1B3F84_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_8010AB84_1B4214_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
     s32 p = w->gunner;
@@ -190,6 +190,7 @@ void func_8010AB84_1B4214_SkyPilots(omObjData* obj) {
         s32 lvl = gPlayers[p].cpu_difficulty;
         f32 amp;
         f32 rate;
+        f32* base;
         f32* q;
 
         if (!(gPlayers[w->pilot].flags & 1)) {
@@ -213,15 +214,13 @@ void func_8010AB84_1B4214_SkyPilots(omObjData* obj) {
             break;
         case 3:
             amp = 60.0f;
-            rate = (u8)(rand8() / 38);
+            rate = (u8)(rand8() / 37);
             break;
         }
         rate += 12.0f;
-        q = &D_8010B224_1B48B4_SkyPilots[p];
+        base = D_8010B224_1B48B4_SkyPilots;
+        q = p + base;
         w->stickZ = HuMathSin(*q) * amp;
         *q = func_8002D958_2E558(rate + *q);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010AB84_1B4214_SkyPilots);
-#endif

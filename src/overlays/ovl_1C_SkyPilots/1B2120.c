@@ -1,6 +1,6 @@
 #include "ovl_1C.h"
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 4) */
 #ifdef NON_MATCHING
 void func_80108A90_1B2120_SkyPilots(s32 i) {
     if (++D_8010AEA8_1B4538_SkyPilots[i] > 0) {
@@ -75,7 +75,7 @@ void func_80108DB4_1B2444_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 10) */
 #ifdef NON_MATCHING
 void func_80108ECC_1B255C_SkyPilots(omObjData* obj) {
     s32 i;

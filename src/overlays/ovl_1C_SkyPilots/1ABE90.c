@@ -3,7 +3,7 @@
 __asm__(".section .rodata");
 const char D_8010B230_1B48C0_SkyPilots[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: schedule: retail keeps D_800F94A8_FA0A8 in a register for the two stores (masked 8) */
 #ifdef NON_MATCHING
 void func_80102800_1ABE90_SkyPilots(void) {
     omObjData* obj;
@@ -410,7 +410,7 @@ void func_80103BC0_1AD250_SkyPilots(f32 m[4][4], Vec* at, Vec* axis, f32 angle) 
     m[1][2] = t * yz + xs;
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: KMC mul fix adds nops retail lacks (masked 7) */
 #ifdef NON_MATCHING
 void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry, f32 rz) {
     SPPlane* w = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
@@ -425,7 +425,7 @@ void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry, f32 rz) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80103CA8_1AD338_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: KMC mul fix adds nops retail lacks (masked 3) */
 #ifdef NON_MATCHING
 void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
     Vec eye;
@@ -471,7 +471,7 @@ void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80103E34_1AD4C4_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: float registers, arm stores merged differently (masked 39) */
 #ifdef NON_MATCHING
 void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch) {
     SPPlane* w = obj->unk_50;
@@ -530,7 +530,7 @@ void func_801044D4_1ADB64_SkyPilots(omObjData* obj) {
     ((SPPlane*)obj->unk_50)->scale = 1.0f;
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: loop hoists 400.0f into a saved register (masked 15) */
 #ifdef NON_MATCHING
 void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
@@ -610,7 +610,7 @@ void func_8010489C_1ADF2C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
     }
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 0) */
 #ifdef NON_MATCHING
 void func_80104940_1ADFD0_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
@@ -639,7 +639,7 @@ void func_80104940_1ADFD0_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104940_1ADFD0_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 0) */
 #ifdef NON_MATCHING
 void func_80104A4C_1AE0DC_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
@@ -937,7 +937,7 @@ void func_80105890_1AEF20_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (obj and work swapped) (masked 11) */
 #ifdef NON_MATCHING
 void func_801058EC_1AEF7C_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
@@ -1111,7 +1111,7 @@ void func_801063C4_1AFA54_SkyPilots(void) {
     func_8001A340_1AF40(D_8010B346_1B49D6_SkyPilots, 0.0f, 1.0f, 0.0f);
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 2) */
 #ifdef NON_MATCHING
 s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y) {
     s16 i;
@@ -1146,7 +1146,7 @@ s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010641C_1AFAAC_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 2) */
 #ifdef NON_MATCHING
 s16 func_801065CC_1AFC5C_SkyPilots(s32 x, s16 y) {
     s16 i;
@@ -1226,7 +1226,7 @@ s16 func_80106810_1AFEA0_SkyPilots(s32 idx, s16 x, s16 y) {
     return win;
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 30) */
 #ifdef NON_MATCHING
 void func_80106A7C_1B010C_SkyPilots(s16 idx, s16 speed) {
     u16 g = D_8010B350_1B49E0_SkyPilots[idx];
@@ -1292,7 +1292,7 @@ void func_80106CD0_1B0360_SkyPilots(omObjData* obj) {
     D_8010105C_101C5C = 1.0f;
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: KMC mul fix adds a nop retail lacks (masked 1) */
 #ifdef NON_MATCHING
 void func_80106E98_1B0528_SkyPilots(omObjData* obj) {
     SPPlane* w = func_80027154_27D54(sizeof(SPPlane), 0x7918);
@@ -1332,7 +1332,7 @@ void func_80106E98_1B0528_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80106E98_1B0528_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: one more saved register (masked 21) */
 #ifdef NON_MATCHING
 void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
@@ -1408,7 +1408,7 @@ void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80107074_1B0704_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: one more saved register (masked 21) */
 #ifdef NON_MATCHING
 void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
@@ -1485,7 +1485,7 @@ void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801073A8_1B0A38_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation and frame size (masked 207) */
 #ifdef NON_MATCHING
 void func_801076E8_1B0D78_SkyPilots(omObjData* obj) {
     s32 team;
@@ -1594,7 +1594,7 @@ void func_801076E8_1B0D78_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801076E8_1B0D78_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 0) */
 #ifdef NON_MATCHING
 void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
     omObjData* self = obj;
@@ -1709,7 +1709,7 @@ void func_801083CC_1B1A5C_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation */
+/* NON_MATCHING: register allocation (masked 28) */
 #ifdef NON_MATCHING
 void func_801084E4_1B1B74_SkyPilots(s32 i) {
     f32 best = 65535.0f;
