@@ -205,6 +205,12 @@ typedef struct GBPlayer {
 
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
 void Hu3DCamUpdateMtx(s16 camIndex);
+s16 SprAnimRead(void* arg0);
+void HuMemMemoryFreeTemp(void* ptr);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void CameraViewportSet(s16 camIndex, Vec* arg1, Vec* arg2);
+void func_8003F710_40310(Gfx** arg0, void* timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
+                         s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
 Vec func_801049F0_10E000_GrabBag(f32 x, f32 y, f32 z, f32 x2, f32 y2, f32 z2);
 void func_80102998_10BFA8_GrabBag(void);
 void func_80102B60_10C170_GrabBag(omObjData* obj, s32 t);
@@ -216,6 +222,13 @@ void func_8010364C_10CC5C_GrabBag(omObjData* obj);
 void func_80103B00_10D110_GrabBag(omObjData* obj);
 void func_80104AA8_10E0B8_GrabBag(GBItem* w);
 void func_80104B20_10E130_GrabBag(void);
+s16 func_80104CB8_10E2C8_GrabBag(s32 file, s32 attr);
+void func_80104BC0_10E1D0_GrabBag(omObjData* obj);
+void func_80104D40_10E350_GrabBag(omObjData* obj);
+void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam);
+void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam);
+void func_80105D44_10F354_GrabBag(s32 cam);
+void func_80105DEC_10F3FC_GrabBag(omObjData* obj);
 void func_80105E60_10F470_GrabBag(void);
 
 /* ---- .data and .bss, in address order ---- */
@@ -248,6 +261,11 @@ extern s8 D_8010A82E_113E3E_GrabBag; /* seconds */
 extern s8 D_8010A82F_113E3F_GrabBag;
 extern s8 D_8010A834_113E44_GrabBag;
 extern s32 D_8010A84C_113E5C_GrabBag;
+extern Gfx D_8010A3D0_1139E0_GrabBag[];
+extern Gfx D_8010A418_113A28_GrabBag[];
+extern s16 D_8010A7B0_113DC0_GrabBag; /* lower backdrop sprite */
+extern s16 D_8010A7B2_113DC2_GrabBag; /* upper backdrop sprite */
+extern f32 D_8010A824_113E34_GrabBag; /* backdrop zoom */
 /*EXTERNS*/
 
 #endif
