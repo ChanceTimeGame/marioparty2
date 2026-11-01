@@ -1180,7 +1180,213 @@ void func_80106BE0_1CAF90_MagnetCarta(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80107140_1CB4F0_MagnetCarta);
+void func_80107140_1CB4F0_MagnetCarta(MCObj* p) {
+    Vec a;
+    Vec b;
+    Vec out;
+    Vec best;
+    MCObj* q;
+    MCCar* car;
+    omObjData* o;
+    omObjData* t;
+    f32 d;
+    u8 k;
+    s16 i;
+    s16 goal;
+
+    o = p->obj;
+    car = &D_8010B7B0_1CFB60_MagnetCarta[o->work[0]];
+    a.x = o->trans.x;
+    a.y = 0.0f;
+    a.z = o->trans.z;
+    ContBtn[gPlayers[o->work[0]].port] = 0;
+    ContBtnTrg[gPlayers[o->work[0]].port] = 0;
+    goal = 14;
+    if (p->unk_7E != 0 && p->timer == 0 && p->cpuWait == 0) {
+        ContStkX[gPlayers[o->work[0]].port] = D_8010BD5C_1D010C_MagnetCarta[o->work[0]];
+        ContStkY[gPlayers[o->work[0]].port] = D_8010BD58_1D0108_MagnetCarta[o->work[0]];
+    } else {
+        ContStkX[gPlayers[o->work[0]].port] = 0;
+        ContStkY[gPlayers[o->work[0]].port] = 0;
+        D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+        D_8010BD58_1D0108_MagnetCarta[o->work[0]] = 0;
+    }
+    if (p->timer != 0) {
+        p->unk_7E = 0;
+    } else if (p->cpuWait == 0) {
+    if (p->attached == 0) {
+        best.x = 5000.0f;
+        for (i = 4; i < 14; i++) {
+            q = &D_8010BDD0_1D0180_MagnetCarta[i];
+            if (q->obj != NULL && q->state == 0 && q->attached == 0) {
+                t = q->obj;
+                b.x = t->trans.x;
+                b.y = 0.0f;
+                b.z = t->trans.z;
+                func_8010B0A8_1CF458_MagnetCarta(&a, &b, &out);
+                if (out.x < best.x) {
+                    best.x = out.x;
+                    best.z = out.z;
+                    best.y = out.y;
+                    goal = i;
+                }
+            }
+        }
+        if (goal >= 14) {
+            for (i = 0; i < 4; i++) {
+                q = &D_8010BDD0_1D0180_MagnetCarta[i];
+                if (q->obj != NULL && q->obj->work[0] != o->work[0] && o->work[3] != q->obj->work[3] && q->attached == 1) {
+                    t = q->obj;
+                    b.x = t->trans.x;
+                    b.y = 0.0f;
+                    b.z = t->trans.z;
+                    func_8010B0A8_1CF458_MagnetCarta(&a, &b, &out);
+                    if (out.x < best.x) {
+                        best.x = out.x;
+                        best.z = out.z;
+                        best.y = out.y;
+                        goal = i;
+                    }
+                }
+            }
+        }
+    } else {
+        goal = 99;
+    }
+    if (p->hit == 1) {
+        if (p->unk_7E == 0) {
+        if (p->attached == 0) {
+            ContStkY[gPlayers[o->work[0]].port] = 0;
+            D_8010BD58_1D0108_MagnetCarta[o->work[0]] = 0;
+            p->unk_7E = 20;
+        }
+        k = rand8() & 1;
+        if (k == 0) {
+            ContStkX[gPlayers[o->work[0]].port] = -70;
+        } else if (k == 1) {
+            ContStkX[gPlayers[o->work[0]].port] = 70;
+        }
+        D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = ContStkX[gPlayers[o->work[0]].port];
+        p->unk_7E = rand8() % 3 * 12;
+        } else {
+            p->hit = 0;
+            p->unk_7E--;
+        }
+    } else if (goal < 14) {
+        if (p->unk_7E == 0) {
+            ContStkY[gPlayers[o->work[0]].port] = 70;
+            D_8010BD58_1D0108_MagnetCarta[o->work[0]] = ContStkY[gPlayers[o->work[0]].port];
+            if (o->rot.y >= 90.0f && o->rot.y <= 270.0f) {
+                if (MC_WRAP(o->rot.y - best.z) > 180.0f) {
+                    ContStkX[gPlayers[o->work[0]].port] = -70;
+                } else {
+                    ContStkX[gPlayers[o->work[0]].port] = 70;
+                }
+            } else if (MC_WRAP(o->rot.y - best.z) > 180.0f) {
+                ContStkX[gPlayers[o->work[0]].port] = 70;
+            } else {
+                ContStkX[gPlayers[o->work[0]].port] = -70;
+            }
+            D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = ContStkX[gPlayers[o->work[0]].port];
+            p->unk_7E = 30;
+        } else {
+            p->unk_7E--;
+        }
+        d = o->rot.y - best.z;
+        if (d < 15.0f) {
+            if (d > -15.0f) {
+                D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+                ContStkX[gPlayers[o->work[0]].port] = 0;
+            }
+        }
+    } else if (goal == 99) {
+        if (p->unk_7E == 0) {
+            if (o->work[3] == 0) {
+                if (o->rot.y > 100.0f && o->rot.y < 270.0f) {
+                    ContStkX[gPlayers[o->work[0]].port] = 70;
+                } else if (!(o->rot.y > 80.0f) && !(o->rot.y >= 270.0f)) {
+                    do {
+                    } while (0);
+                    if (o->rot.y >= 80.0f && o->rot.y < 90.0f) {
+                        ContStkX[gPlayers[o->work[0]].port] = 70;
+                    } else {
+                        ContStkX[gPlayers[o->work[0]].port] = -70;
+                    }
+                } else {
+                    ContStkX[gPlayers[o->work[0]].port] = -70;
+                }
+                D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = ContStkX[gPlayers[o->work[0]].port];
+                rand8();
+                ContStkY[gPlayers[o->work[0]].port] = 70;
+                D_8010BD58_1D0108_MagnetCarta[o->work[0]] = ContStkY[gPlayers[o->work[0]].port];
+                p->unk_7E = 100;
+            } else {
+                if (o->rot.y >= 90.0f && o->rot.y < 260.0f) {
+                    ContStkX[gPlayers[o->work[0]].port] = -70;
+                } else if (!(o->rot.y < 90.0f) && !(o->rot.y > 280.0f)) {
+                    do {
+                    } while (0);
+                    if (o->rot.y > 270.0f && o->rot.y <= 280.0f) {
+                        ContStkX[gPlayers[o->work[0]].port] = -70;
+                    } else {
+                        ContStkX[gPlayers[o->work[0]].port] = 70;
+                    }
+                } else {
+                    ContStkX[gPlayers[o->work[0]].port] = 70;
+                }
+                D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = ContStkX[gPlayers[o->work[0]].port];
+                ContStkY[gPlayers[o->work[0]].port] = 70;
+                D_8010BD58_1D0108_MagnetCarta[o->work[0]] = ContStkY[gPlayers[o->work[0]].port];
+                p->unk_7E = 100;
+            }
+        } else {
+            p->unk_7E--;
+        }
+        if (o->work[3] == 0) {
+            if (o->trans.z > 0.0f) {
+                if (o->rot.y > 100.0f && o->rot.y < 120.0f) {
+                    D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+                    ContStkX[gPlayers[o->work[0]].port] = 0;
+                }
+            } else if (o->rot.y < 80.0f && o->rot.y > 60.0f) {
+                D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+                ContStkX[gPlayers[o->work[0]].port] = 0;
+            }
+        } else if (o->trans.z < 0.0f) {
+            if (o->rot.y > 280.0f && o->rot.y < 300.0f) {
+                D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+                ContStkX[gPlayers[o->work[0]].port] = 0;
+            }
+        } else if (o->rot.y < 260.0f && o->rot.y > 240.0f) {
+            D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = 0;
+            ContStkX[gPlayers[o->work[0]].port] = 0;
+        }
+    } else if (p->attached == 0) {
+        if (p->unk_7E == 0) {
+            k = rand8() % 10;
+            if (k < car->cpuRand) {
+                ContStkY[gPlayers[o->work[0]].port] = -70;
+            } else if (k > car->cpuRand >> 1 && k < car->cpuRand) {
+                ContStkY[gPlayers[o->work[0]].port] = 0;
+            } else {
+                ContStkY[gPlayers[o->work[0]].port] = 70;
+            }
+            D_8010BD58_1D0108_MagnetCarta[o->work[0]] = ContStkY[gPlayers[o->work[0]].port];
+            if ((rand8() & 1) == 0) {
+                ContStkX[gPlayers[o->work[0]].port] = -70;
+            } else {
+                ContStkX[gPlayers[o->work[0]].port] = 70;
+            }
+            D_8010BD5C_1D010C_MagnetCarta[o->work[0]] = ContStkX[gPlayers[o->work[0]].port];
+            p->unk_7E = 30;
+        } else {
+            p->unk_7E--;
+        }
+    }
+    } else {
+        p->unk_7E = 0;
+    }
+}
 
 void func_80108174_1CC524_MagnetCarta(omObjData* obj) {
     MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];

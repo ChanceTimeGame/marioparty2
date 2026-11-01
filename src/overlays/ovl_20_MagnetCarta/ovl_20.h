@@ -123,6 +123,8 @@ extern char* D_8010B650_1CFA00_MagnetCarta[4];      /* their names */
 /* .bss */
 extern MCCar D_8010B7B0_1CFB60_MagnetCarta[18];
 extern s16 D_8010BD50_1D0100_MagnetCarta[4];        /* score digit textures */
+extern s8 D_8010BD58_1D0108_MagnetCarta[4];         /* COM: the stick it holds, y */
+extern s8 D_8010BD5C_1D010C_MagnetCarta[4];         /* x */
 extern s32 D_8010BD60_1D0110_MagnetCarta;
 extern s16 D_8010BD68_1D0118_MagnetCarta[50];
 extern s8 D_8010BDCC_1D017C_MagnetCarta[2];         /* team 0's starts taken */
