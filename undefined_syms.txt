@@ -403,3 +403,8 @@ D_80109128_180ED8_FiletRelay = D_80109120_180ED0_FiletRelay + 0x8;
 D_8010912C_180EDC_FiletRelay = D_80109120_180ED0_FiletRelay + 0xC;
 D_80109268_181018_FiletRelay = D_80109264_181014_FiletRelay + 0x4;
 D_80109270_181020_FiletRelay = D_80109264_181014_FiletRelay + 0xC;
+/* S4-12D: offsets into ovl_12's BBScript and BBSpin tables that the NON_MATCHING asm path names */
+D_80108FAC_1672CC_BobOmbBarrage = D_80108FA0_1672C0_BobOmbBarrage + 0xC;
+D_80108FB0_1672D0_BobOmbBarrage = D_80108FA0_1672C0_BobOmbBarrage + 0x10;
+D_80108FF4_167314_BobOmbBarrage = D_80108FF0_167310_BobOmbBarrage + 0x4;
+D_80108FF8_167318_BobOmbBarrage = D_80108FF0_167310_BobOmbBarrage + 0x8;
