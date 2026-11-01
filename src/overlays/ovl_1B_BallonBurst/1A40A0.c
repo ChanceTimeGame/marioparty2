@@ -582,7 +582,7 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
               (s16)((f32)D_80109D9C_1AB63C_BallonBurst[D_8010AB00_1AC3A0_BallonBurst][3] * 0.5 + (s16)(view->sy * 58.125 + 122.5 - view->oy) + 0.0));
     SprScaleSet(D_8010A6CC_1ABF6C_BallonBurst, 0, view->sx, view->sy);
     SprScaleSet(D_8010A6D2_1ABF72_BallonBurst, 0, view->sx, view->sy);
-    bcopy(view, D_8010AAC8_1AC368_BallonBurst, 0x34);
+    bcopy(view, &D_8010AAC8_1AC368_BallonBurst, sizeof(BBView));
     D_8010A714_1ABFB4_BallonBurst[1] = D_8010A714_1ABFB4_BallonBurst[0] = 0;
     if ((func_80078EA8_79AA8() & 0xFFFF) + D_80102720_103320 == 0) {
         D_8010A770_1AC010_BallonBurst--;
@@ -713,14 +713,14 @@ void func_8010644C_1A7CEC_BallonBurst(void) {
 }
 
 void func_80106454_1A7CF4_BallonBurst(Gfx** gfx, s32 arg1, s32 arg2) {
-    SprExec();
+    SprExec(gfx, arg1, arg2);
     {
         Gfx* g = D_800FDBCC_FE7CC++;
 
         g->words.w0 = 0xEE000000;
         g->words.w1 = 0x7FFF7FFF;
     }
-    func_8007A7FC_7B3FC(D_8010AAC8_1AC368_BallonBurst);
+    func_8007A7FC_7B3FC(&D_8010AAC8_1AC368_BallonBurst);
 }
 
 void func_801064A4_1A7D44_BallonBurst(omObjData* obj) {

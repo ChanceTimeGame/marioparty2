@@ -30,14 +30,19 @@ typedef struct BBWork {
     /* 0x0C */ s8 unk_0C;
 } BBWork; /* size = 0xD */
 
+/* main's CamSprWork (7AA60.c, local there): what func_8007A27C_7AE7C's draw hook receives */
 typedef struct BBView {
-    /* 0x00 */ char unk_00[4];
+    /* 0x00 */ s16 sprId;
     /* 0x04 */ f32 sx;
     /* 0x08 */ f32 sy;
-    /* 0x0C */ char unk_0C[0xC];
+    /* 0x0C */ f32 baseScaleX;
+    /* 0x10 */ f32 baseScaleY;
+    /* 0x14 */ f32 baseZoom;
     /* 0x18 */ f32 ox;
     /* 0x1C */ f32 oy;
-    /* 0x20 */ char unk_20[0x14];
+    /* 0x20 */ Vec planePos;
+    /* 0x2C */ void* draw;
+    /* 0x30 */ void* cam;
 } BBView; /* size = 0x34 */
 
 typedef struct BBEspSlot {
@@ -117,10 +122,10 @@ void func_8002CDF0_2D9F0(s16, u8, u8, u8, u8);
 s16 func_80079798_7A398(s16 sfx, s16 player);
 void func_800798F8_7A4F8(s16 sound, s16 pan);
 void func_8007A27C_7AE7C(s32 prio, s32 sprId, void* draw, f32 fov, Vec* eye, Vec* at);
-void func_8007A7FC_7B3FC(void*);
+void func_8007A7FC_7B3FC(BBView*);
 void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
-void SprExec(void);
+void SprExec(Gfx** gfx, s32 mtx, s32 cam); /* main: Mtx*, SprCamera*; func_8002838C_28F8C hands s32s */
 extern f32 D_800CA02C_CAC2C;
 extern Gfx* D_800FDBCC_FE7CC;
 extern u16 D_801011FC_101DFC;
@@ -182,7 +187,7 @@ extern omObjData* D_8010AA98_1AC338_BallonBurst[4];
 extern s16 D_8010AAA8_1AC348_BallonBurst;
 extern omObjData* D_8010AAB0_1AC350_BallonBurst[4];
 extern s8 D_8010AAC0_1AC360_BallonBurst; /* the winning team; 2 none */
-extern s32 D_8010AAC8_1AC368_BallonBurst[0xD];
+extern BBView D_8010AAC8_1AC368_BallonBurst;
 extern s8 D_8010AAFC_1AC39C_BallonBurst[4]; /* the winners, then the losers */
 extern s16 D_8010AB00_1AC3A0_BallonBurst;
 extern u8 D_8010AB02_1AC3A2_BallonBurst; /* state */
