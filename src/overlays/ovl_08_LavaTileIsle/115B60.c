@@ -77,11 +77,258 @@ void func_8010479C_115C1C_LavaTileIsle(omObjData* obj) {
     D_8010A4E2_11B962_LavaTileIsle++;
 }
 
+/* Register/schedule (class 4, masked 2): retail schedules the sll/sra after the array base. */
+#ifdef NON_MATCHING
+void func_80104C94_116114_LavaTileIsle(omObjData* obj) {
+    MgWork* w;
+    s8 p;
+    s8 k;
+    s8 n = 0;
+    f32 x;
+    f32 z;
+    f32* a;
+
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        return;
+    }
+    w = obj->unk_50;
+    if (D_800F8FD0_F9BD0 == 0) {
+        k = w->unk_57;
+        ContStkY[k] = 0;
+        ContStkX[k] = 0;
+        k = w->unk_57;
+        ContBtnTrg[k] = 0;
+        ContBtn[k] = 0;
+        obj->rot.y = 0.0f;
+        w->unk_3C = func_800B75A8_B81A8(-obj->trans.x, -obj->trans.z);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, w->unk_3C, 0.0f);
+        func_80019B9C_1A79C(obj, 0);
+        return;
+    }
+    if (D_800F8FD0_F9BD0 == 2 || D_800F8FD0_F9BD0 == 3) {
+        if (D_8010A2A0_11B720_LavaTileIsle > 60) {
+            func_80109F44_11B3C4_LavaTileIsle(obj);
+        }
+        D_8010A2A0_11B720_LavaTileIsle++;
+    }
+    if (obj->work[1] == 0 && obj->trans.y == -600.0f) {
+        obj->work[1] = 1;
+        omVibrate(w->unk_59, 0x14, 0, 0x14);
+        D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, w->unk_59);
+        D_8010A4E0_11B960_LavaTileIsle = func_80079574_7A174() + 5;
+        func_8007954C_7A14C(D_8010A4E0_11B960_LavaTileIsle);
+    }
+    p = w->unk_59;
+    if (obj->work[1] == 1) {
+        if (D_8010A2BC_11B73C_LavaTileIsle[p] == -1) {
+            D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, p);
+        }
+        func_80019B9C_1A79C(obj, 0x26);
+        x = obj->trans.x;
+        z = obj->trans.z;
+        if (x > 0.0f) {
+            obj->trans.x += 12.5;
+        } else {
+            obj->trans.x -= 12.5;
+        }
+        if (z > -0.0f) {
+            obj->trans.z += 12.5;
+        } else {
+            obj->trans.z -= 12.5;
+        }
+        w->unk_3C = func_800B75A8_B81A8(obj->trans.x - x, obj->trans.z - z);
+        a = &D_8010A2A4_11B724_LavaTileIsle[p];
+        *a += 5.0f;
+        if (*a >= 180.0f) {
+            *a = 0.0f;
+        }
+        func_801052A8_116728_LavaTileIsle(obj);
+    }
+    if ((gPlayers[w->unk_59].flags & 1) && D_800F8FD0_F9BD0 == 1) {
+        func_80105400_116880_LavaTileIsle(obj);
+    }
+    if (obj->trans.y < 0.0f) {
+        w->unk_40 = 0.0f;
+        k = w->unk_57;
+        ContBtnTrg[k] = 0;
+        ContStkY[k] = 0;
+        ContStkX[k] = 0;
+        func_80029714_2A314(obj->model[1], obj->trans.x, -590.0f, obj->trans.z);
+    } else {
+        func_80029714_2A314(obj->model[1], obj->trans.x, 25.0f, obj->trans.z);
+    }
+    func_80007790_8390(obj);
+    if (obj->work[1] == 1) {
+        obj->trans.y = HuMathSin(D_8010A2A4_11B724_LavaTileIsle[p]) * 250.0f + -600.0f;
+    }
+    if (D_8010A2B4_11B734_LavaTileIsle[w->unk_59] == 0 && obj->work[0] != 0) {
+        D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 1;
+        omVibrate(w->unk_59, 2, 3, 0xA);
+        D_8010A2B8_11B738_LavaTileIsle[w->unk_59]++;
+    } else if (obj->work[0] == 0 || D_8010A2B8_11B738_LavaTileIsle[w->unk_59] >= 10) {
+        D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 0;
+        D_8010A2B8_11B738_LavaTileIsle[w->unk_59] = 0;
+    }
+    if (obj->work[0] == 1) {
+        func_80109E70_11B2F0_LavaTileIsle(obj, 0);
+    } else if (obj->work[0] == 2) {
+        func_80109E70_11B2F0_LavaTileIsle(obj, 1);
+    }
+    if (D_800F8FD0_F9BD0 == 1) {
+        if (D_800FFFD8_100BD8[0]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[1]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[2]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[3]->work[1] == 1) {
+            n++;
+        }
+        if (n >= 3) {
+            func_8000C398_CF98();
+        }
+        if (_CheckFlag(0xC) != 0 && obj->work[1] == 1 && !(gPlayers[w->unk_59].flags & 1)) {
+            func_8000C398_CF98();
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80104C94_116114_LavaTileIsle);
+#endif
 
+/* Register/schedule (class 4, masked 2): retail schedules the sll after the array base. */
+#ifdef NON_MATCHING
+void func_801052A8_116728_LavaTileIsle(omObjData* obj) {
+    s32* t;
+    s32 i;
+    s32 p;
+    f32 s;
+
+    p = ((MgWork*)obj->unk_50)->unk_59;
+    i = 0;
+    t = D_8010A2C4_11B744_LavaTileIsle[p];
+    for (; i < 4; i++) {
+        if (t[i] >= 0) {
+            if (t[i] == 0) {
+                func_80029714_2A314(obj->model[9 + i], obj->trans.x, obj->trans.y + 30.0f, obj->trans.z);
+                func_800298A4_2A4A4(obj->model[9 + i], 4, 0);
+            }
+            if (t[i] < 8) {
+                s = D_8010A304_11B784_LavaTileIsle[t[i] / 2];
+                func_800297E8_2A3E8(obj->model[9], s, s, 1.0f); /* retail: always the first puff */
+            }
+            if (t[i] >= 8) {
+                t[i] = -1;
+            }
+        }
+        t[i]++;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801052A8_116728_LavaTileIsle);
+#endif
 
+/* Control flow (class 3): retail shares the three call blocks by branches; the frame has 8 more bytes. */
+#ifdef NON_MATCHING
+void func_80105400_116880_LavaTileIsle(omObjData* obj) {
+    MgWork* w;
+    LTCpu* c;
+    s32 port;
+    s8 q;
+    s32 b;
+
+    if (obj->trans.y < 0.0f) {
+        return;
+    }
+    w = obj->unk_50;
+    port = w->unk_57;
+    q = port;
+    c = &D_8010A4E8_11B968_LavaTileIsle[port];
+    func_801057C0_116C40_LavaTileIsle(obj, c);
+    func_80105E34_1172B4_LavaTileIsle(&D_8010A315_11B795_LavaTileIsle, c);
+    D_8010A314_11B794_LavaTileIsle = func_80105E80_117300_LavaTileIsle(c);
+    c->time = D_8010A4E8_11B968_LavaTileIsle[port].time + 1;
+    b = func_80019000_19C00(obj);
+    ContStkY[port] = 0;
+    ContStkX[port] = 0;
+    ContBtnTrg[port] = 0;
+    switch (gPlayers[w->unk_59].cpu_difficulty) {
+    case 0:
+        break;
+    case 1:
+        if (D_8010A4E8_11B968_LavaTileIsle[q].tile < 4 && D_8010A4E8_11B968_LavaTileIsle[q].tile != 2) {
+            if (D_8010A614_11BA94_LavaTileIsle->work[0] != 1) {
+                func_80108204_119684_LavaTileIsle(obj);
+            }
+        } else if (D_8010A610_11BA90_LavaTileIsle->work[0] != 1) {
+            func_80108204_119684_LavaTileIsle(obj);
+        }
+        break;
+    case 2:
+        if (D_8010A4E8_11B968_LavaTileIsle[q].tile < 4 && D_8010A4E8_11B968_LavaTileIsle[q].tile != 2) {
+            if (D_8010A614_11BA94_LavaTileIsle->work[0] != 1) {
+                if (!(b & 0x20)) {
+                    if ((s32)((rand8() * 5U) >> 7) < 5) {
+                        func_80108204_119684_LavaTileIsle(obj);
+                    } else {
+                        func_80108388_119808_LavaTileIsle(obj);
+                    }
+                }
+            } else if (!(b & 0x20)) {
+                func_80108388_119808_LavaTileIsle(obj);
+            }
+        } else {
+            if (D_8010A610_11BA90_LavaTileIsle->work[0] != 1) {
+                if (!(b & 0x20)) {
+                    if ((s32)((rand8() * 5U) >> 7) < 5) {
+                        func_80108204_119684_LavaTileIsle(obj);
+                    } else {
+                        func_80108388_119808_LavaTileIsle(obj);
+                    }
+                }
+            } else if (!(b & 0x20)) {
+                func_80108388_119808_LavaTileIsle(obj);
+            }
+        }
+        break;
+    case 3:
+        if (D_8010A4E8_11B968_LavaTileIsle[q].tile < 4 && D_8010A4E8_11B968_LavaTileIsle[q].tile != 2) {
+            if (D_8010A614_11BA94_LavaTileIsle->work[0] == 1) {
+                if (!(b & 0x220)) {
+                    func_80108388_119808_LavaTileIsle(obj);
+                }
+            } else if (w->unk_38 == 1000.0f) {
+                if ((s32)((rand8() * 5U) >> 7) < 8) {
+                    func_80108388_119808_LavaTileIsle(obj);
+                } else {
+                    func_80108494_119914_LavaTileIsle(obj);
+                }
+            } else if (!(w->unk_50 & 8)) {
+                func_80108494_119914_LavaTileIsle(obj);
+            }
+        } else if (D_8010A610_11BA90_LavaTileIsle->work[0] == 1) {
+            if (!(b & 0x220)) {
+                func_80108388_119808_LavaTileIsle(obj);
+            }
+        } else if (w->unk_38 == 1000.0f) {
+            if ((s32)((rand8() * 5U) >> 7) < 8) {
+                func_80108388_119808_LavaTileIsle(obj);
+            } else {
+                func_80108494_119914_LavaTileIsle(obj);
+            }
+        } else if (!(w->unk_50 & 8)) {
+            func_80108494_119914_LavaTileIsle(obj);
+        }
+        break;
+    }
+    func_80107E3C_1192BC_LavaTileIsle(D_8010A314_11B794_LavaTileIsle, obj, D_8010A4E8_11B968_LavaTileIsle[q].tile);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105400_116880_LavaTileIsle);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801057C0_116C40_LavaTileIsle);
 
