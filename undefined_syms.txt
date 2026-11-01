@@ -415,3 +415,6 @@ D_80109320_FEFE0_HammerSlammer = 0x80109320;
 D_80109141_20C4E1_PlatformPeril = 0x80109141;
 D_80109143_20C4E3_PlatformPeril = 0x80109143;
 D_801091CD_20C56D_PlatformPeril = 0x801091CD;
+/* S4-04D: HammerSlammer's .data, elements addressed by their own label */
+D_80109048_FED08_HammerSlammer = D_80109030_FECF0_HammerSlammer + 0x18;
+D_80109064_FED24_HammerSlammer = D_8010904C_FED0C_HammerSlammer + 0x18;
