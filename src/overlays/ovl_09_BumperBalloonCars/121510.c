@@ -52,3 +52,23 @@ void func_801084F4_121604_BumperBalloonCars(void) {
         *p++ = -1;
     }
 }
+
+u16 D_80108520_121630_BumperBalloonCars[6] = { 0, 1, 2, 3, 4, 5 };
+
+u16 D_8010852C_12163C_BumperBalloonCars[6] = { 13, 14, 15, 16, 17, 18 };
+
+BBCStart D_80108538_121648_BumperBalloonCars[4] = {
+    { -300, 0, -300, 45 },
+    { 300, 0, -300, 315 },
+    { -300, 0, 300, 135 },
+    { 300, 0, 300, 225 },
+};
+
+u16 D_80108558_121668_BumperBalloonCars[4] = { 25, 26, 27, 0 };
+
+char* D_80108560_121670_BumperBalloonCars[4] = {
+    (char*)D_80108590_1216A0_BumperBalloonCars,
+    (char*)D_80108580_121690_BumperBalloonCars,
+    (char*)D_80108570_121680_BumperBalloonCars,
+    NULL,
+};

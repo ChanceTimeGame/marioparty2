@@ -115,6 +115,9 @@ extern u16 D_8010852C_12163C_BumperBalloonCars[6];       /* balloon texture file
 extern BBCStart D_80108538_121648_BumperBalloonCars[4];  /* the four corners */
 extern u16 D_80108558_121668_BumperBalloonCars[4];       /* signal lamp textures */
 extern char* D_80108560_121670_BumperBalloonCars[4];     /* their names */
+extern const char D_80108570_121680_BumperBalloonCars[];
+extern const char D_80108580_121690_BumperBalloonCars[];
+extern const char D_80108590_1216A0_BumperBalloonCars[];
 
 /* .bss */
 extern s8 D_80108630_121740_BumperBalloonCars[4];        /* COM: the stick it holds, y */
