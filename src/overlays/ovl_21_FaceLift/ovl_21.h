@@ -32,7 +32,8 @@ typedef struct FLPart {
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ s16* verts; /* their indices, heap-allocated at start-up */
     /* 0x24 */ f32 radius;
-    /* 0x28 */ s32 sound; /* the drag sound */
+    /* 0x28 */ s16 sound; /* the drag sound */
+    /* 0x2A */ s16 unk2A;
 } FLPart;
 
 /* One face. 0x34 on the N64. */
