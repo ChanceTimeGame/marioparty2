@@ -859,7 +859,13 @@ segments:
     bss_size: 0xB0
     subsegments:
       - [0x17A5B0, c]
+      - [0x17A600, c]
+      - [0x17C100, c]
+      - [0x17EFA0, c]
       - [0x180A20, data]
+      - [0x181210, .rodata, 17A600]
+      - [0x181228, .rodata, 17C100]
+      - [0x1813F0, .rodata, 17EFA0]
       - {0x181420, type: bss, vram: 0x80109670, name: ovl_16_bss}
   - type: code
     start: 0x181420
