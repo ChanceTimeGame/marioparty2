@@ -1233,7 +1233,7 @@ segments:
     bss_size: 0x20
     subsegments:
       - [0x232150, c]
-      - [0x238440, data]
+      - [0x238440, .data, 232150]
       - [0x238600, .rodata, 232150]
       - {0x2386E0, type: bss, vram: 0x80108D90, name: ovl_2F_bss}
   - type: code

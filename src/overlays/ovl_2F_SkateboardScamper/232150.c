@@ -1,5 +1,81 @@
 #include "ovl_2F.h"
 
+/* .data (0x238440-0x238600, 80108AF0-80108CB0) */
+extern const char D_80108D30_238680_SkateboardScamper[];
+extern const char D_80108D3C_23868C_SkateboardScamper[];
+extern const char D_80108D48_238698_SkateboardScamper[];
+extern const char D_80108D54_2386A4_SkateboardScamper[];
+extern const char D_80108D60_2386B0_SkateboardScamper[];
+extern const char D_80108D6C_2386BC_SkateboardScamper[];
+
+u32 D_80108AF0_238440_SkateboardScamper = 0;
+s32 D_80108AF4_238444_SkateboardScamper = -65536;
+u8 D_80108AF8_238448_SkateboardScamper[4] = { 0, 0, 0, 0 };
+u8 D_80108AFC_23844C_SkateboardScamper = 0;
+u8 D_80108AFD_23844D_SkateboardScamper = 4;
+u8 D_80108AFE_23844E_SkateboardScamper = 0;
+s8 D_80108AFF_23844F_SkateboardScamper = -1;
+f32 D_80108B00_238450_SkateboardScamper = 9700.0f;
+f32 D_80108B04_238454_SkateboardScamper[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+s32 D_80108B14_238464_SkateboardScamper[4] = { 0, 0, 0, 0 };
+f32 D_80108B24_238474_SkateboardScamper[8] = { 4.0f, 4.6f, 5.0f, 6.0f, -0.04f, -0.03f, -0.025f, -0.02f };
+Vec D_80108B44_238494_SkateboardScamper = { 0.0f, 0.0f, 0.0f };
+f32 D_80108B50_2384A0_SkateboardScamper = 9110.0f;
+f32 D_80108B54_2384A4_SkateboardScamper = 230.0f;
+f32 D_80108B58_2384A8_SkateboardScamper = 0.05f;
+f32 D_80108B5C_2384AC_SkateboardScamper = 0.2f;
+f32 D_80108B60_2384B0_SkateboardScamper = 0.0f;
+s8 D_80108B64_2384B4_SkateboardScamper = 0;
+s32 D_80108B68_2384B8_SkateboardScamper = 0xB8;
+s32 D_80108B6C_2384BC_SkateboardScamper = 0xB8;
+s32 D_80108B70_2384C0_SkateboardScamper = 0xB8;
+s32 D_80108B74_2384C4_SkateboardScamper = -52;
+s32 D_80108B78_2384C8_SkateboardScamper = -10;
+s32 D_80108B7C_2384CC_SkateboardScamper = 0x6B;
+f32 D_80108B80_2384D0_SkateboardScamper = 0.0f;
+f32 D_80108B84_2384D4_SkateboardScamper = -2.0f;
+f32 D_80108B88_2384D8_SkateboardScamper = 1000.0f;
+s32 D_80108B8C_2384DC_SkateboardScamper = 0;
+f32 D_80108B90_2384E0_SkateboardScamper = 0.0f;
+f32 D_80108B94_2384E4_SkateboardScamper = 0.0f;
+f32 D_80108B98_2384E8_SkateboardScamper = 0.0f;
+f32 D_80108B9C_2384EC_SkateboardScamper = 0.0f;
+f32 D_80108BA0_2384F0_SkateboardScamper = 0.0f;
+f32 D_80108BA4_2384F4_SkateboardScamper = 0.0f;
+f32 D_80108BA8_2384F8_SkateboardScamper = 0.0f;
+f32 D_80108BAC_2384FC_SkateboardScamper = 0.0f;
+f32 D_80108BB0_238500_SkateboardScamper = 1.0f;
+f32 D_80108BB4_238504_SkateboardScamper = 0.0f;
+f32 D_80108BB8_238508_SkateboardScamper[4] = { 8800.0f, 5100.0f, 250.0f, -6950.0f };
+f32 D_80108BC8_238518_SkateboardScamper = 0.0f;
+s32 D_80108BCC_23851C_SkateboardScamper = 0;
+s32 D_80108BD0_238520_SkateboardScamper = 0;
+f32 D_80108BD4_238524_SkateboardScamper = 0.0f;
+f32 D_80108BD8_238528_SkateboardScamper = 1.5f;
+f32 D_80108BDC_23852C_SkateboardScamper = 1.0f;
+f32 D_80108BE0_238530_SkateboardScamper = 0.03f;
+s32 D_80108BE4_238534_SkateboardScamper = 0;
+s32 D_80108BE8_238538_SkateboardScamper = 0;
+f32 D_80108BEC_23853C_SkateboardScamper = 0.0f;
+f32 D_80108BF0_238540_SkateboardScamper = 0.0f;
+f32 D_80108BF4_238544_SkateboardScamper = 0.0f;
+u32 D_80108BF8_238548_SkateboardScamper = 3600;
+u32 D_80108BFC_23854C_SkateboardScamper = 0;
+s32 D_80108C00_238550_SkateboardScamper = 0;
+u8 D_80108C04_238554_SkateboardScamper = 0;
+f32 D_80108C08_238558_SkateboardScamper[11] = { 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, -100.0f, 0.0f, -100.0f, 0.0f, 0.0f };
+f32 D_80108C34_238584_SkateboardScamper[11] = { 0.0f, -3.0f, -5.0f, -3.0f, -5.0f, -2.0f, 2.0f, -2.0f, 2.0f, -5.0f, -5.0f };
+s32 D_80108C60_2385B0_SkateboardScamper = -1;
+s32 D_80108C64_2385B4_SkateboardScamper = -1;
+f32 D_80108C68_2385B8_SkateboardScamper[4] = { 0.85f, 0.9f, 0.95f, 1.0f };
+char* D_80108C78_2385C8_SkateboardScamper[6] = {
+    D_80108D6C_2386BC_SkateboardScamper, D_80108D60_2386B0_SkateboardScamper, D_80108D54_2386A4_SkateboardScamper,
+    D_80108D48_238698_SkateboardScamper, D_80108D3C_23868C_SkateboardScamper, D_80108D30_238680_SkateboardScamper,
+};
+f32 D_80108C90_2385E0_SkateboardScamper[5] = { 4500.0f, 1200.0f, 0.0f, -1500.0f, -4600.0f };
+s32 D_80108CA4_2385F4_SkateboardScamper = -1;
+s32 D_80108CA8_2385F8_SkateboardScamper[2] = { 0, 0 };
+
 __asm__(".section .rodata");
 const char D_80108CB0_238600_SkateboardScamper[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
 
