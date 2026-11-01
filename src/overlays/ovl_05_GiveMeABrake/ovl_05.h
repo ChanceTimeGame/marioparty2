@@ -119,7 +119,8 @@ void Hu3DCamUpdateMtx(s16 camIndex);
 
 /* ---- .data ---- */
 extern s32 D_801087B0_105790_GiveMeABrake[6]; /* voice directory per character */
-extern s32 D_801087C8_1057A8_GiveMeABrake[14]; /* panel sprite files by item */
+extern s32 D_801087C8_1057A8_GiveMeABrake[11]; /* panel sprite files by item */
+extern f32 D_801087F4_1057D4_GiveMeABrake[3]; /* unused by code: 135, -22, 4 */
 extern Gfx D_80108800_1057E0_GiveMeABrake[];
 
 /* ---- .bss ---- */
