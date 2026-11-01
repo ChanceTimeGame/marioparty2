@@ -2280,3 +2280,108 @@ s32 func_801099BC_24D2CC_ShyGuySays(HuSprite_Unk84_Struct* spr, HmfData* hmf, f3
     HuMemMemoryFreePerm(buf);
     return count;
 }
+
+/* .data (0x24D6C0-0x24DB10, 80109DB0-8010A200) */
+u32 D_80109DB0_24D6C0_ShyGuySays = 0x19971204;
+u16 D_80109DB4_24D6C4_ShyGuySays = 0;
+s16 D_80109DB6_24D6C6_ShyGuySays = 0;
+s16 D_80109DB8_24D6C8_ShyGuySays = 0;
+s16 D_80109DBA_24D6CA_ShyGuySays = 0;
+s16 D_80109DBC_24D6CC_ShyGuySays = 0;
+s16 D_80109DBE_24D6CE_ShyGuySays = 0;
+s16 D_80109DC0_24D6D0_ShyGuySays = 0;
+s16 D_80109DC2_24D6D2_ShyGuySays = 0;
+s32 D_80109DC4_24D6D4_ShyGuySays = 0;
+char D_80109DC8_24D6D8_ShyGuySays[6][2][0x20] = {
+    { "migi-te2_4", "migi-te3_2_1" },
+    { "c001_000-migi-te2_2", "c001_000-migi-te2_3" },
+    { "C002_000b-bmerge14", "C002_000b-bmerge16" },
+    { "c003_000-bmerge1_13_1", "c003_000-bmerge1_8" },
+    { "Luigi1-migi-te1_2", "Luigi1-migi-te1_1" },
+    { "c005_000-bmerge4", "c005_000-bmerge6" },
+};
+s32 D_80109F48_24D858_ShyGuySays[6][4] = {
+    { 0, 2, 1, 3 },     { 4, 6, 5, 7 },     { 8, 10, 9, 11 },
+    { 12, 14, 13, 15 }, { 16, 18, 17, 19 }, { 20, 22, 21, 23 },
+};
+u16 D_80109FA8_24D8B8_ShyGuySays[6] = { 0x21, 0x22, 0x23, 0x24, 0x25, 0x26 };
+s16 D_80109FB4_24D8C4_ShyGuySays[4] = { 0x20, 0x2C, 0x58, 0x60 };
+s32 D_80109FBC_24D8CC_ShyGuySays = 0;
+s32 D_80109FC0_24D8D0_ShyGuySays = -1;
+Vec D_80109FC4_24D8D4_ShyGuySays[3] = {
+    { 140.0f, 0.0f, 0.0f },
+    { -60.0f, -70.0f, 0.0f },
+    { 40.0f, -140.0f, 0.0f },
+};
+f32 D_80109FE8_24D8F8_ShyGuySays[6] = { 200.0f, 200.0f, 200.0f, 200.0f, 200.0f, 170.0f };
+Vec D_8010A000_24D910_ShyGuySays[3] = {
+    { 600.0f, 70.0f, -1600.0f },
+    { 200.0f, -230.0f, -1500.0f },
+    { -500.0f, -130.0f, -1600.0f },
+};
+f32 D_8010A024_24D934_ShyGuySays[3] = { 3.0f, 4.0f, 3.0f };
+u32 D_8010A030_24D940_ShyGuySays = 180;
+u32 D_8010A034_24D944_ShyGuySays = 0;
+s32 D_8010A038_24D948_ShyGuySays = 0;
+u16 D_8010A03C_24D94C_ShyGuySays = 0;
+u16 D_8010A03E_24D94E_ShyGuySays = 0;
+u16 D_8010A040_24D950_ShyGuySays = 0;
+u16 D_8010A042_24D952_ShyGuySays = 0;
+f32 D_8010A044_24D954_ShyGuySays = 40.0f;
+SGSFlagVtx D_8010A048_24D958_ShyGuySays[4] = {
+    { 11, 0.3f }, { 17, 0.9f }, { 19, 0.6f }, { 0xFF, 0.0f },
+};
+SGSFlagVtx D_8010A068_24D978_ShyGuySays[4] = {
+    { 8, 0.3f }, { 16, 0.6f }, { 18, 0.9f }, { 0xFF, 0.0f },
+};
+f32 D_8010A088_24D998_ShyGuySays[4] = { 200.0f, 190.0f, 170.0f, 160.0f };
+f32 D_8010A098_24D9A8_ShyGuySays = 180.0f;
+f32 D_8010A09C_24D9AC_ShyGuySays = 0.0f;
+Gfx D_8010A0A0_24D9B0_ShyGuySays[] = {
+    gsSPSegment(0x00, 0x00000000),
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPPipelineMode(G_PM_1PRIMITIVE),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureDetail(G_TD_CLAMP),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 0, 0),
+    gsDPSetTileSize(1, 0, 0, 0, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetAlphaCompare(G_AC_NONE),
+    gsDPSetDepthSource(G_ZS_PIXEL),
+    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
+    gsDPNoOp(),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPPipeSync(),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010A158_24DA68_ShyGuySays[] = {
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH | G_CLIPPING | 0x0040F9FA),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010A178_24DA88_ShyGuySays[] = {
+    gsSPDisplayList(D_8010A158_24DA68_ShyGuySays),
+    gsSPDisplayList(D_8010A0A0_24D9B0_ShyGuySays),
+    gsSPEndDisplayList(),
+};
+Gfx D_8010A190_24DAA0_ShyGuySays[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(D_8010A178_24DA88_ShyGuySays),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsSPSetGeometryMode(G_ZBUFFER | G_CULL_BACK | G_LIGHTING | G_SHADING_SMOOTH),
+    gsDPSetBlendColor(0x00, 0x00, 0x00, 0x00),
+    gsDPSetPrimColor(0, 0, 0x00, 0x00, 0x00, 0xFF),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+f32 D_8010A1D0_24DAE0_ShyGuySays[3] = { 0.047f, 0.1f, 0.1f };
+Vec2f D_8010A1DC_24DAEC_ShyGuySays[3] = { { 0.0f, 0.0f }, { -64.0f, 0.0f }, { 64.0f, 0.0f } };

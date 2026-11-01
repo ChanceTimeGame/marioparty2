@@ -430,3 +430,6 @@ D_80109DBE_24D6CE_ShyGuySays = D_80109DBC_24D6CC_ShyGuySays + 0x2;
 D_80109D34_1AB5D4_BallonBurst = D_80109D30_1AB5D0_BallonBurst + 0x4;
 D_80109D38_1AB5D8_BallonBurst = D_80109D30_1AB5D0_BallonBurst + 0x8;
 D_8010A08C_1FEA2C_RollCall = D_8010A088_1FEA28_RollCall + 0x4;
+/* S4-31D: retail reads the first background sprite's y and z by their own labels */
+D_8010A004_24D914_ShyGuySays = D_8010A000_24D910_ShyGuySays + 0x4;
+D_8010A008_24D918_ShyGuySays = D_8010A000_24D910_ShyGuySays + 0x8;
