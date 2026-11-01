@@ -424,3 +424,4 @@ D_80109274_28B484_TorpedoTargets = D_8010926C_28B47C_TorpedoTargets + 0x8;
 /* S4-28D: retail reads the goal platform list's next and rows by their own names (a shared base changes the code) */
 D_801090B1_20C451_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x1;
 D_801090B2_20C452_PlatformPeril = D_80109048_20C3E8_PlatformPeril + 0x68 + 0x2;
+D_80109A4E_1D6DAE_FaceLift = D_80109A4C_1D6DAC_FaceLift + 0x2;
