@@ -104,9 +104,14 @@ typedef struct MCRing {
     /* 0xC */ f32 angle;
 } MCRing;
 
+typedef struct MCPost {
+    f32 x;
+    f32 z;
+} MCPost;
+
 /* .data (0x1CF900-0x1CFA10) */
 extern u16 D_8010B550_1CF900_MagnetCarta[6];        /* cart file per character */
-extern f32 D_8010B55C_1CF90C_MagnetCarta[8];
+extern MCPost D_8010B55C_1CF90C_MagnetCarta[4];      /* the four posts */
 extern s16 D_8010B57C_1CF92C_MagnetCarta[2];        /* team's cart magnet file */
 extern MCStart D_8010B580_1CF930_MagnetCarta[2];    /* team 0's two starts */
 extern MCStart D_8010B590_1CF940_MagnetCarta[2];    /* team 1's */
