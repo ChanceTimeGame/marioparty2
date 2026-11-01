@@ -824,11 +824,245 @@ void func_80105730_1C9AE0_MagnetCarta(void) {
     }
 }
 
+// register allocation (masked 0): p and car sit in each other's saved register
+#ifdef NON_MATCHING
+void func_801057D4_1C9B84_MagnetCarta(omObjData* obj) {
+    MCCar* car;
+    MCObj* p;
+    MCObj* q;
+    omObjData* o;
+    f32 x;
+    f32 w;
+    f32 z;
+    f32 t;
+
+    p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    car = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    if (p->timer == 0) {
+        car->steer = 0.0f;
+        if (D_8010DB80_1D1F30_MagnetCarta == 4) {
+            if (p->attached == 1) {
+                q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+                p->attached = 0;
+                p->target = 0;
+                q->attached = 0;
+                q->target = 0;
+            }
+            if (_CheckFlag(0xC) == 0) {
+                if (obj->work[3] == 0) {
+                    if (D_8010BDCE_1D017E_MagnetCarta != 0) {
+                        obj->rot.y = MC_WRAP(obj->rot.y - 15.0f);
+                        if (p->spin == 0) {
+                            x = HuMathSin(obj->rot.y + 180.0f) * 75.0f + obj->trans.x;
+                            func_801039F0_1C7DA0_MagnetCarta(obj->work[0], x, obj->trans.y, func_800B7890_B8490(obj->rot.y + 180.0f) * 75.0f + obj->trans.z, 2);
+                            p->spin++;
+                        } else if (p->spin == 2) {
+                            p->spin = 0;
+                        } else {
+                            p->spin++;
+                        }
+                        car->tick++;
+                        if (D_8010DB80_1D1F30_MagnetCarta != 5) {
+                            if (D_8010DBB8_1D1F68_MagnetCarta == 0xA7) {
+                                car->sndFwd = func_80079798_7A398(0x24A, obj->work[0]);
+                            }
+                        } else if (car->sndFwd != -1) {
+                            func_80079848_7A448(car->sndFwd);
+                            car->sndFwd = -1;
+                        }
+                    }
+                } else if (D_8010DBBC_1D1F6C_MagnetCarta != 0) {
+                    obj->rot.y = MC_WRAP(obj->rot.y - 15.0f);
+                    if (p->spin == 0) {
+                        x = HuMathSin(obj->rot.y + 180.0f) * 75.0f + obj->trans.x;
+                        func_801039F0_1C7DA0_MagnetCarta(obj->work[0], x, obj->trans.y, func_800B7890_B8490(obj->rot.y + 180.0f) * 75.0f + obj->trans.z, 2);
+                        p->spin++;
+                    } else if (p->spin == 2) {
+                        p->spin = 0;
+                    } else {
+                        p->spin++;
+                    }
+                    car->tick++;
+                    if (D_8010DB80_1D1F30_MagnetCarta != 5) {
+                        if (D_8010DBB8_1D1F68_MagnetCarta == 0xA7) {
+                            car->sndFwd = func_80079798_7A398(0x24A, obj->work[0]);
+                        }
+                    } else if (car->sndFwd != -1) {
+                        func_80079848_7A448(car->sndFwd);
+                        car->sndFwd = -1;
+                    }
+                }
+            }
+        } else if (D_8010DB80_1D1F30_MagnetCarta == 2) {
+            obj->trans.x += HuMathSin(obj->rot.y) * car->speed;
+            obj->trans.z += func_800B7890_B8490(obj->rot.y) * car->speed;
+        } else if (D_8010DB80_1D1F30_MagnetCarta == 5) {
+            if (car->sndFwd != -1) {
+                func_80079848_7A448(car->sndFwd);
+                car->sndFwd = -1;
+            }
+        }
+    } else if (D_8010DB80_1D1F30_MagnetCarta == 2) {
+        if ((f32)p->timer * car->steer + obj->rot.y >= 360.0f) {
+            w = (f32)p->timer * car->steer + obj->rot.y - 360.0f;
+        } else {
+            z = (f32)p->timer * car->steer;
+            w = z + obj->rot.y;
+            if (w < 0.0f) {
+                w += 360.0f;
+            }
+        }
+        obj->rot.y = w;
+        if (p->attached == 1) {
+            o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+            if ((f32)p->timer * car->steer + o->rot.y >= 360.0f) {
+                w = (f32)p->timer * car->steer + o->rot.y - 360.0f;
+            } else {
+                z = (f32)p->timer * car->steer;
+                w = z + o->rot.y;
+                if (w < 0.0f) {
+                    w += 360.0f;
+                }
+            }
+            o->rot.y = w;
+        }
+        if (car->speed != 0.0f) {
+            t = (f32)p->timer * 0.1f;
+            car->speed = t * t * 4.0f + car->bounce - 14.0f;
+            if (car->speed <= 0.0f) {
+                car->speed = 0.0f;
+                p->timer = 0;
+            }
+            obj->trans.x -= HuMathSin(car->dir) * car->speed;
+            obj->trans.z -= func_800B7890_B8490(car->dir) * car->speed;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801057D4_1C9B84_MagnetCarta);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80105E28_1CA1D8_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80106BE0_1CAF90_MagnetCarta);
+void func_80106BE0_1CAF90_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    MCCar* car = &D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]];
+    f32 x;
+    f32 t;
+
+    if (ContStkY[gPlayers[obj->work[0]].port] > 20) {
+        car->speed = 12.0f;
+        if (p->dust == 0) {
+            t = HuMathSin(obj->rot.y + 180.0f) * 75.0f * 0.5f;
+            x = t + obj->trans.x;
+            func_801039F0_1C7DA0_MagnetCarta(obj->work[0], x, obj->trans.y, func_800B7890_B8490(obj->rot.y + 180.0f) * 75.0f * 0.5f + obj->trans.z, 2);
+            p->dust++;
+        } else if (p->dust == 2) {
+            p->dust = 0;
+        } else {
+            p->dust++;
+        }
+        if (car->sndFwd == -1) {
+            if (car->sndBack != -1) {
+                func_80079848_7A448(car->sndBack);
+                car->sndBack = -1;
+            }
+            car->sndFwd = func_80079798_7A398(0x243, obj->work[0]);
+        }
+    } else if (ContStkY[gPlayers[obj->work[0]].port] < -20) {
+        car->speed = -12.0f;
+        if (p->dust == 0) {
+            x = obj->trans.x - HuMathSin(obj->rot.y + 180.0f) * 75.0f * 0.5f;
+            func_801039F0_1C7DA0_MagnetCarta(obj->work[0], x, obj->trans.y, obj->trans.z - func_800B7890_B8490(obj->rot.y + 180.0f) * 75.0f * 0.5f, 2);
+            p->dust++;
+        } else if (p->dust == 2) {
+            p->dust = 0;
+        } else {
+            p->dust++;
+        }
+        if (car->sndBack == -1) {
+            if (car->sndFwd != -1) {
+                func_80079848_7A448(car->sndFwd);
+                car->sndFwd = -1;
+            }
+            car->sndBack = func_80079798_7A398(0x244, obj->work[0]);
+        }
+    } else {
+        car->speed = 0.0f;
+        p->dust = 0;
+        if (car->sndFwd != -1) {
+            func_80079848_7A448(car->sndFwd);
+            car->sndFwd = -1;
+        }
+        if (car->sndBack != -1) {
+            func_80079848_7A448(car->sndBack);
+            car->sndBack = -1;
+        }
+    }
+    obj->trans.y = 0.0f;
+    if (p->attached == 1 && car->speed != obj->trans.y) {
+        switch (p->target) {
+        case 4:
+            if (car->speed > 0.0f) {
+                car->speed -= 7.0f;
+                if (car->sndFwd != -1) {
+                    func_800796F0_7A2F0(car->sndFwd, -600);
+                }
+            } else {
+                car->speed += 7.0f;
+                if (car->sndBack != -1) {
+                    func_800796F0_7A2F0(car->sndBack, 0);
+                }
+            }
+            break;
+        case 5:
+        case 6:
+        case 7:
+            if (car->speed > 0.0f) {
+                car->speed -= 5.0f;
+                if (car->sndFwd != -1) {
+                    func_800796F0_7A2F0(car->sndFwd, -400);
+                }
+            } else {
+                car->speed += 5.0f;
+                if (car->sndFwd != -2) { /* sic: both fields */
+                    func_800796F0_7A2F0(car->sndBack, 200);
+                }
+            }
+            break;
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+            if (car->speed > 0.0f) {
+                car->speed -= 1.0f;
+                if (car->sndFwd != -1) {
+                    func_800796F0_7A2F0(car->sndFwd, -200);
+                }
+            } else {
+                car->speed += 1.0f;
+                if (car->sndBack != -1) {
+                    func_800796F0_7A2F0(car->sndBack, 400);
+                }
+            }
+            break;
+        }
+    } else if (car->speed > 0.0f) {
+        if (car->sndFwd != -1) {
+            func_800796F0_7A2F0(car->sndFwd, 0);
+        }
+    } else if (car->speed < 0.0f) {
+        if (car->sndBack != -1) {
+            func_800796F0_7A2F0(car->sndBack, 600);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80107140_1CB4F0_MagnetCarta);
 
@@ -1077,7 +1311,138 @@ void func_80109464_1CD814_MagnetCarta(void) {
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801095E4_1CD994_MagnetCarta);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A1AC_1CE55C_MagnetCarta);
+void func_8010A1AC_1CE55C_MagnetCarta(void) {
+    MCObj* p;
+    MCObj* q;
+    MCCar* c;
+    MCCar* d;
+    omObjData* o;
+    omObjData* t;
+    s16 i;
+
+    for (i = 0; i < 4; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        if (p->obj != NULL && p->state == 0) {
+            o = p->obj;
+            func_80029714_2A314(o->model[0], o->trans.x, o->trans.y, o->trans.z);
+            func_80029714_2A314(o->model[1], o->trans.x, 0.0f, o->trans.z);
+            func_800297E8_2A3E8(o->model[1], 1.7f, o->scale.y, 1.7f);
+            func_80029714_2A314(o->model[2], o->trans.x, o->trans.y, o->trans.z);
+            func_8002979C_2A39C(o->model[2], o->rot.x, o->rot.y, o->rot.z);
+            func_80029714_2A314(o->model[3], o->trans.x, o->trans.y, o->trans.z);
+            func_8002979C_2A39C(o->model[3], o->rot.x, o->rot.y, o->rot.z);
+        }
+    }
+    p = &D_8010BDD0_1D0180_MagnetCarta[4];
+    if (p->obj != NULL && p->state == 0) {
+        o = p->obj;
+        c = &D_8010B7B0_1CFB60_MagnetCarta[o->work[0]];
+        if (p->attached == 1) {
+            q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+            if (q->obj != NULL && q->state == 0) {
+                t = q->obj;
+                d = &D_8010B7B0_1CFB60_MagnetCarta[t->work[0]];
+                o->trans.x = HuMathSin(t->rot.y) * 127.5f + t->trans.x;
+                o->trans.z = func_800B7890_B8490(t->rot.y) * 127.5f + t->trans.z;
+                if (q->attached == 0) {
+                    c->bounce = 8.0f;
+                    c->dir = t->rot.y;
+                    p->timer = 20;
+                    p->state = 1;
+                    p->attached = 0;
+                    p->target = 0;
+                    p->size = o->scale.x * 0.05f;
+                    if (d->sndFwd != -1) {
+                        func_80079848_7A448(d->sndFwd);
+                        d->sndFwd = -1;
+                    }
+                    if (d->sndBack != -1) {
+                        func_80079848_7A448(d->sndBack);
+                        d->sndBack = -1;
+                    }
+                    func_80079798_7A398(0x24B, t->work[0]);
+                }
+            }
+        }
+        func_80029714_2A314(o->model[0], o->trans.x, o->trans.y, o->trans.z);
+        func_80029714_2A314(o->model[1], o->trans.x, 0.0f, o->trans.z);
+        func_800297E8_2A3E8(o->model[1], 2.0f, o->scale.y, 2.0f);
+    }
+    for (i = 5; i < 9; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        if (p->obj != NULL && p->state == 0) {
+            o = p->obj;
+            c = &D_8010B7B0_1CFB60_MagnetCarta[o->work[0]];
+            if (p->attached == 1) {
+                q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+                if (q->obj != NULL && q->state == 0) {
+                    t = q->obj;
+                    d = &D_8010B7B0_1CFB60_MagnetCarta[t->work[0]];
+                    o->trans.x = HuMathSin(t->rot.y) * 127.5f + t->trans.x;
+                    o->trans.z = func_800B7890_B8490(t->rot.y) * 127.5f + t->trans.z;
+                    if (q->attached == 0) {
+                        c->bounce = 8.0f;
+                        c->dir = t->rot.y;
+                        p->timer = 20;
+                        p->state = 1;
+                        p->attached = 0;
+                        p->target = 0;
+                        p->size = o->scale.x * 0.05f;
+                        if (d->sndFwd != -1) {
+                            func_80079848_7A448(d->sndFwd);
+                            d->sndFwd = -1;
+                        }
+                        if (d->sndBack != -1) {
+                            func_80079848_7A448(d->sndBack);
+                            d->sndBack = -1;
+                        }
+                        func_80079798_7A398(0x24B, t->work[0]);
+                    }
+                }
+            }
+            func_80029714_2A314(o->model[0], o->trans.x, o->trans.y, o->trans.z);
+            func_80029714_2A314(o->model[1], o->trans.x, 0.0f, o->trans.z);
+            func_800297E8_2A3E8(o->model[1], 1.3f, o->scale.y, 1.3f);
+        }
+    }
+    for (i = 9; i < 14; i++) {
+        p = &D_8010BDD0_1D0180_MagnetCarta[i];
+        if (p->obj != NULL && p->state == 0) {
+            o = p->obj;
+            c = &D_8010B7B0_1CFB60_MagnetCarta[o->work[0]];
+            if (p->attached == 1) {
+                q = &D_8010BDD0_1D0180_MagnetCarta[p->target];
+                if (q->obj != NULL && q->state == 0) {
+                    t = q->obj;
+                    d = &D_8010B7B0_1CFB60_MagnetCarta[t->work[0]];
+                    o->trans.x = HuMathSin(t->rot.y) * 127.5f + t->trans.x;
+                    o->trans.z = func_800B7890_B8490(t->rot.y) * 127.5f + t->trans.z;
+                    if (q->attached == 0) {
+                        c->bounce = 8.0f;
+                        c->dir = t->rot.y;
+                        p->timer = 20;
+                        p->state = 1;
+                        p->attached = 0;
+                        p->target = 0;
+                        p->size = o->scale.x * 0.05f;
+                        if (d->sndFwd != -1) {
+                            func_80079848_7A448(d->sndFwd);
+                            d->sndFwd = -1;
+                        }
+                        if (d->sndBack != -1) {
+                            func_80079848_7A448(d->sndBack);
+                            d->sndBack = -1;
+                        }
+                        func_80079798_7A398(0x1FE, t->work[0]);
+                    }
+                }
+            }
+            func_80029714_2A314(o->model[0], o->trans.x, o->trans.y, o->trans.z);
+            func_80029714_2A314(o->model[1], o->trans.x, 0.0f, o->trans.z);
+            func_800297E8_2A3E8(o->model[1], 1.3f, o->scale.y, 1.3f);
+        }
+    }
+}
 
 void func_8010A8F4_1CECA4_MagnetCarta(void) {
     D_8010DB80_1D1F30_MagnetCarta += D_8010DBB6_1D1F66_MagnetCarta;

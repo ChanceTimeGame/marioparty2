@@ -146,6 +146,10 @@ extern s8 D_8010DBC4_1D1F74_MagnetCarta;
 extern omObjData* D_8010DBC8_1D1F78_MagnetCarta;    /* sparks */
 
 extern s16 D_800FA606_FB206;
+extern s8 ContStkX[]; /* index = port */
+extern s8 ContStkY[];
+extern u16 ContBtn[];
+extern u16 ContBtnTrg[];
 
 /* Main functions. */
 void func_80026DAC_279AC(s32, s32, s32, s32);
