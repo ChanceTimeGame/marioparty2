@@ -424,7 +424,7 @@ void func_801057C0_116C40_LavaTileIsle(omObjData* obj, LTCpu* c) {
                 c->tile = 6;
             } else if (obj->trans.x >= 90.0f) {
                 c->tile = 8;
-            } else if (a == 3) {
+            } else if ((s8)a == 3) {
                 c->tile = 7;
             } else {
                 c->tile = (obj->trans.z <= 150.0f) ? 4 : 7;
@@ -450,7 +450,24 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105E3
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105E80_117300_LavaTileIsle);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105F6C_1173EC_LavaTileIsle);
+s32 func_80105F6C_1173EC_LavaTileIsle(s8 prev) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
+    s8 s = D_8010A614_11BA94_LavaTileIsle->work[0];
+
+    if (prev != 3 && ((a == 0 && s == 2) || (a == 1 && (s == 3 || s == 4)) || a == 2 || (a == 3 && (s == 0 || s == 1)))) {
+        return 3;
+    }
+    if (prev != 1 && ((a == 0 && (s == 0 || s == 1)) || (a == 2 && (s == 3 || s == 4)) || a == 3)) {
+        return 2;
+    }
+    if ((a == 0 && s == 2) || (a == 1 && (s == 3 || s == 4)) || a == 2 || (a == 3 && (s == 0 || s == 1))) {
+        return 3;
+    }
+    if ((a == 0 && (s == 0 || s == 1)) || (a == 2 && (s == 3 || s == 4)) || a == 3) {
+        return 2;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80106120_1175A0_LavaTileIsle);
 
