@@ -330,7 +330,121 @@ void func_80105400_116880_LavaTileIsle(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105400_116880_LavaTileIsle);
 #endif
 
+/* Which of the nine squares (0-8, row by row) the player stands on: the moving tiles' states
+   a (3 tiles) and b (4 tiles) decide which side of a gap counts. */
+/* Control flow (class 3): retail tests the same cases in another order and sets the tile in one store (363 instructions here 393). */
+#ifdef NON_MATCHING
+void func_801057C0_116C40_LavaTileIsle(omObjData* obj, LTCpu* c) {
+    s8 a = D_8010A614_11BA94_LavaTileIsle->work[1];
+    s8 b = D_8010A610_11BA90_LavaTileIsle->work[1];
+
+    if (obj->trans.z < -120.0f) {
+        if (obj->trans.x < -120.0f) {
+            if (a != 1) {
+                c->tile = 0;
+            } else if (obj->trans.x >= -150.0f) {
+                c->tile = 1;
+            } else if (obj->trans.z >= -150.0f) {
+                c->tile = 3;
+            } else {
+                c->tile = 0;
+            }
+        } else if (obj->trans.x >= -120.0f && obj->trans.x < 120.0f) {
+            if (a != 2) {
+                c->tile = 1;
+            } else if (obj->trans.x <= -90.0f) {
+                c->tile = 0;
+            } else if (b != 4 && obj->trans.x >= 90.0f) {
+                c->tile = 2;
+            } else {
+                c->tile = (obj->trans.z >= -150.0f) ? 4 : 1;
+            }
+        } else if (obj->trans.x >= 120.0f) {
+            if (b != 4) {
+                c->tile = 2;
+            } else if (a != 2 && obj->trans.x <= 150.0f) {
+                c->tile = 1;
+            } else {
+                c->tile = (obj->trans.z >= -150.0f) ? 5 : 2;
+            }
+        }
+    } else if (obj->trans.z >= -120.0f && obj->trans.z < 120.0f) {
+        if (obj->trans.x < -120.0f) {
+            if (a != 0) {
+                c->tile = 3;
+            } else if (obj->trans.x >= -150.0f) {
+                c->tile = 4;
+            } else if (obj->trans.z <= -90.0f) {
+                c->tile = 0;
+            } else if (b == 3) {
+                c->tile = 3;
+            } else {
+                c->tile = (obj->trans.z >= 90.0f) ? 6 : 3;
+            }
+        } else if (obj->trans.x >= -120.0f && obj->trans.x < 120.0f) {
+            if (a != 3) {
+                c->tile = 4;
+            } else if (obj->trans.x <= -90.0f) {
+                c->tile = 3;
+            } else if (b != 0 && obj->trans.x >= 90.0f) {
+                c->tile = 5;
+            } else if (obj->trans.z <= -90.0f) {
+                c->tile = 1;
+            } else if (b == 2) {
+                c->tile = 4;
+            } else {
+                c->tile = (obj->trans.z >= 90.0f) ? 7 : 4;
+            }
+        } else if (obj->trans.x >= 120.0f) {
+            if (b != 0) {
+                c->tile = 5;
+            } else if (a != 3 && obj->trans.x <= 150.0f) {
+                c->tile = 4;
+            } else if (obj->trans.z <= -90.0f) {
+                c->tile = 2;
+            } else {
+                c->tile = (obj->trans.z >= 90.0f) ? 8 : 5;
+            }
+        }
+    } else if (obj->trans.z >= 120.0f) {
+        if (obj->trans.x < -120.0f) {
+            if (b != 3) {
+                c->tile = 6;
+            } else if (obj->trans.x >= -150.0f) {
+                c->tile = 7;
+            } else if (a == 0) {
+                c->tile = 6;
+            } else {
+                c->tile = (obj->trans.z <= 90.0f) ? 3 : 6;
+            }
+        } else if (obj->trans.x >= -120.0f && obj->trans.x < 120.0f) {
+            if (b != 2) {
+                c->tile = 7;
+            } else if (obj->trans.x <= -90.0f) {
+                c->tile = 6;
+            } else if (obj->trans.x >= 90.0f) {
+                c->tile = 8;
+            } else if (a == 3) {
+                c->tile = 7;
+            } else {
+                c->tile = (obj->trans.z <= 150.0f) ? 4 : 7;
+            }
+        } else if (obj->trans.x >= 120.0f) {
+            if (b != 1) {
+                c->tile = 8;
+            } else if (obj->trans.x <= 150.0f) {
+                c->tile = 7;
+            } else if (obj->trans.z <= 150.0f) {
+                c->tile = 5;
+            } else {
+                c->tile = 8;
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801057C0_116C40_LavaTileIsle);
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105E34_1172B4_LavaTileIsle);
 
