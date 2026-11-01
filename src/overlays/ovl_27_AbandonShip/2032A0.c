@@ -536,7 +536,8 @@ void func_80108DF0_205450_AbandonShip(Vec* out, Vec* from, Vec* to) {
     out->x = to->x - from->x;
     out->y = to->y - from->y;
     out->z = to->z - from->z;
-    len = func_800B1830_B2430(out->x * out->x + out->y * out->y + out->z * out->z);
+    len = out->x * out->x + out->y * out->y + out->z * out->z;
+    len = func_800B1830_B2430(len);
     if (len != 0.0f) {
         out->x /= len;
         out->y /= len;
