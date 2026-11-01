@@ -107,7 +107,6 @@ void func_80102D68_1AC3F8_SkyPilots(void) {
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
 void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
-    s32 end;
 
     if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
         func_8000C3C8_CFC8();
@@ -126,7 +125,7 @@ void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
             }
             if (D_8010AF10_1B45A0_SkyPilots >= 6) {
                 if (func_8008F618_90218() != 0) {
-                    break;
+                    return;
                 }
                 if (D_8010AF28_1B45B8_SkyPilots == 0) {
                     D_8010AF28_1B45B8_SkyPilots = 1;
@@ -177,24 +176,29 @@ void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
                     SprAttrSet(D_8010B350_1B49E0_SkyPilots[1], 1, 0x8000);
                     SprAttrSet(D_8010B350_1B49E0_SkyPilots[1], 2, 0x8000);
                     if (D_8010AF18_1B45A8_SkyPilots == 0x1E) {
-                        if (D_8010AF0C_1B459C_SkyPilots < func_800680D4_68CD4(3)) {
+                        if ((func_800680D4_68CD4(3) & 0xFFFF) > D_8010AF0C_1B459C_SkyPilots) {
                             func_800691FC_69DFC(0xE);
                             GWMgRecordSet(3, D_8010AF0C_1B459C_SkyPilots);
                             D_8010AF20_1B45B0_SkyPilots = 1;
                         }
                         if (D_8010B2DC_1B496C_SkyPilots == 0) {
-                            gPlayers[0].coins_mg_bonus += 10;
+                            gPlayers->coins_mg_bonus += 10;
                         }
                     }
-                    end = 0x3C;
-                    if (D_8010AF20_1B45B0_SkyPilots != 0) {
-                        end = 0x5A;
+                    if (D_8010AF20_1B45B0_SkyPilots == 0) {
+                        if (D_8010AF18_1B45A8_SkyPilots == 0x3C) {
+                            func_8000C3A8_CFA8();
+                        }
+                    } else if (D_8010AF18_1B45A8_SkyPilots == 0x5A) {
+                        func_8000C3A8_CFA8();
                     }
                 } else if (D_8010ADA0_1B4430_SkyPilots == -2) {
-                    end = 0xB4;
                     if (D_8010AF18_1B45A8_SkyPilots == 0x3C) {
                         func_800691FC_69DFC(0x13);
                         PlayMusic(0x57);
+                    }
+                    if (D_8010AF18_1B45A8_SkyPilots == 0xB4) {
+                        func_8000C3A8_CFA8();
                     }
                 } else {
                     espDispOff(D_8010B2D0_1B4960_SkyPilots[0]);
@@ -207,32 +211,35 @@ void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
                     SprAttrSet(D_8010B350_1B49E0_SkyPilots[1], 0, 0x8000);
                     SprAttrSet(D_8010B350_1B49E0_SkyPilots[1], 1, 0x8000);
                     SprAttrSet(D_8010B350_1B49E0_SkyPilots[1], 2, 0x8000);
-                    if (D_8010AF18_1B45A8_SkyPilots == 0x1E && D_8010AF0C_1B459C_SkyPilots < func_800680D4_68CD4(3)) {
-                        func_800691FC_69DFC(0xE);
-                        _CheckFlag(0xC);
-                        GWMgRecordSet(3, D_8010AF0C_1B459C_SkyPilots);
-                        D_8010AF20_1B45B0_SkyPilots = 1;
+                    if (D_8010AF18_1B45A8_SkyPilots == 0x1E) {
+                        if ((func_800680D4_68CD4(3) & 0xFFFF) > D_8010AF0C_1B459C_SkyPilots) {
+                            func_800691FC_69DFC(0xE);
+                            _CheckFlag(0xC);
+                            GWMgRecordSet(3, D_8010AF0C_1B459C_SkyPilots);
+                            D_8010AF20_1B45B0_SkyPilots = 1;
+                        }
                     }
                     if (D_8010AF20_1B45B0_SkyPilots == 0) {
-                        end = 0xE1;
                         if (D_8010AF18_1B45A8_SkyPilots == 0x3C) {
                             func_800691FC_69DFC(0x11, gPlayers[D_8010B2DC_1B496C_SkyPilots].character, gPlayers[D_8010B2E0_1B4970_SkyPilots].character);
                             gPlayers[D_8010B2DC_1B496C_SkyPilots].coins_mg_bonus += 10;
                             gPlayers[D_8010B2E0_1B4970_SkyPilots].coins_mg_bonus += 10;
                             PlayMusic(0x52);
                         }
+                        if (D_8010AF18_1B45A8_SkyPilots == 0xE1) {
+                            func_8000C3A8_CFA8();
+                        }
                     } else {
-                        end = 0xFA;
                         if (D_8010AF18_1B45A8_SkyPilots == 0x5A) {
                             func_800691FC_69DFC(0x11, gPlayers[D_8010B2DC_1B496C_SkyPilots].character, gPlayers[D_8010B2E0_1B4970_SkyPilots].character);
                             gPlayers[D_8010B2DC_1B496C_SkyPilots].coins_mg_bonus += 10;
                             gPlayers[D_8010B2E0_1B4970_SkyPilots].coins_mg_bonus += 10;
                             PlayMusic(0x55);
                         }
+                        if (D_8010AF18_1B45A8_SkyPilots == 0xFA) {
+                            func_8000C3A8_CFA8();
+                        }
                     }
-                }
-                if (D_8010AF18_1B45A8_SkyPilots == end) {
-                    func_8000C3A8_CFA8();
                 }
             }
             D_8010AF18_1B45A8_SkyPilots++;
@@ -260,20 +267,18 @@ void func_80102EF0_1AC580_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80102EF0_1AC580_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_8010369C_1ACD2C_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
-    u8 t;
+    u32 t;
 
     switch (w->spinKind) {
     case 1:
         t = w->timerA;
         if (t >= 11) {
-            if (t < 50) {
-                t = 10;
-            } else {
+            if (t >= 50) {
                 t = 60 - t;
+            } else {
+                t = 10;
             }
         }
         if (++w->smoke >= 31) {
@@ -304,10 +309,10 @@ void func_8010369C_1ACD2C_SkyPilots(omObjData* obj) {
         }
         t = w->timerB;
         if (t >= 11) {
-            if (t < 80) {
-                t = 10;
-            } else {
+            if (t >= 80) {
                 t = 90 - t;
+            } else {
+                t = 10;
             }
         }
         w->spin += D_8010AF2C_1B45BC_SkyPilots[t];
@@ -326,16 +331,13 @@ void func_8010369C_1ACD2C_SkyPilots(omObjData* obj) {
     default:
         func_80029C74_2A874(obj->model[3], w->smoke);
         w->smoke -= 5;
-        if (w->smoke & 0x80) {
+        if (w->smoke < 0) {
             w->smoke = 0;
             func_800298A4_2A4A4(obj->model[3], 4, 4);
         }
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010369C_1ACD2C_SkyPilots);
-#endif
 
 void func_8010394C_1ACFDC_SkyPilots(omObjData* obj) {
     MgWork* p = obj->unk_50;
@@ -415,7 +417,7 @@ void func_80103BC0_1AD250_SkyPilots(f32 m[4][4], Vec* at, Vec* axis, f32 angle) 
 
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
-void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry) {
+void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry, f32 rz) {
     SPPlane* w = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
     f32 x = HuMathSin(ry) * func_800B7890_B8490(rx) * (D_800F94A8_FA0A8[team] - 200.0f) + D_801013B0_101FB0[team].x;
     f32 y = -HuMathSin(rx) * (D_800F94A8_FA0A8[team] - 200.0f) + D_801013B0_101FB0[team].y;
@@ -437,12 +439,14 @@ void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
     f32 m[4][4];
     Vec3f dir;
     u8 i;
+    f32 one = 1.0f;
+    f32 zero = 0.0f;
 
     for (i = 0; i < obj->work[0]; i++) {
         f32 rx = D_80102770_103370[i].x;
         f32 ry = D_80102770_103370[i].y;
 
-        func_80103CA8_1AD338_SkyPilots(i, rx, ry);
+        func_80103CA8_1AD338_SkyPilots(i, rx, ry, D_80102770_103370[i].z);
         eye.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].x;
         eye.y = -HuMathSin(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].y;
         eye.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800F94A8_FA0A8[i] + D_801013B0_101FB0[i].z;
@@ -454,9 +458,9 @@ void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
         dir.z = at.z - eye.z;
         func_8002D9AC_2E5AC(&dir);
         func_80103BC0_1AD250_SkyPilots(m, &at, (Vec*)&dir, D_8010ADAC_1B443C_SkyPilots[i]);
-        up.x = 0.0f * m[0][0] + 1.0f * m[1][0];
-        up.y = 0.0f * m[0][1] + 1.0f * m[1][1];
-        up.z = 0.0f * m[0][2] + 1.0f * m[1][2];
+        up.x = zero * m[0][0] + one * m[1][0];
+        up.y = zero * m[0][1] + one * m[1][1];
+        up.z = zero * m[0][2] + one * m[1][2];
         func_8002D9AC_2E5AC(&up);
         D_800FC8F8_FD4F8[i][1] = eye.x;
         D_800FC8F8_FD4F8[i][2] = eye.z;
@@ -478,15 +482,13 @@ void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitch
     SPPlane* w = obj->unk_50;
     s32 team = w->team;
     f32 lim;
+    f32 v;
 
     if (yawD != 0.0f) {
         D_80102770_103370[team].y = yawD * 0.4f + D_80102770_103370[team].y;
     } else {
-        f32 d = w->yaw + 180.0f;
-
-        d -= D_80102770_103370[team].y;
-        d /= 100.0f;
-        D_80102770_103370[team].y = d + D_80102770_103370[team].y;
+        v = D_80102770_103370[team].y;
+        D_80102770_103370[team].y = (w->yaw + 180.0f - v) / 100.0f + v;
     }
     lim = w->yaw + 180.0f + 25.0f;
     if (lim < D_80102770_103370[team].y) {
@@ -499,7 +501,8 @@ void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitch
     if (pitchD != 0.0f) {
         D_80102770_103370[team].x -= pitchD * 0.3f;
     } else {
-        D_80102770_103370[team].x -= (D_80102770_103370[team].x - -10.0f) / 100.0f;
+        v = D_80102770_103370[team].x;
+        D_80102770_103370[team].x = v - (v - -10.0f) / 100.0f;
     }
     if (D_80102770_103370[team].x > 0.0f) {
         D_80102770_103370[team].x = 0.0f;
@@ -536,33 +539,37 @@ void func_801044D4_1ADB64_SkyPilots(omObjData* obj) {
 #ifdef NON_MATCHING
 void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
-    s32 i;
+    s32 i = 0;
 
-    if (D_800F8FD0_F9BD0 != 1) {
-        return;
-    }
-    for (i = 0; i < 6; i++) {
-        if (angle < D_8010ADF4_1B4484_SkyPilots[i].angle + 5.0f && D_8010ADF4_1B4484_SkyPilots[i].angle - 5.0f < angle) {
-            Vec v;
+    if (D_800F8FD0_F9BD0 == 1) {
+        f64 lim = 50.0;
 
-            v.x = x;
-            v.y = y;
-            v.z = z;
-            func_80104654_1ADCE4_SkyPilots(&v, i);
-            if (fabs(v.z) < 50.0 && func_800B1830_B2430(v.x * v.x + v.y * v.y) < 400.0f) {
-                if (w->spinKind == 0) {
-                    w->timerA = 0;
-                    w->spinKind = 1;
-                    w->lastGate = i;
-                    func_80079798_7A398(0x214, w->pilot);
-                } else if (w->lastGate != i) {
-                    w->timerB = 0;
-                    w->spinKind = 2;
-                    w->lastGate = i;
+        for (; i < 6; i++) {
+            if (angle < D_8010ADF4_1B4484_SkyPilots[i].angle + 5.0f && D_8010ADF4_1B4484_SkyPilots[i].angle - 5.0f < angle) {
+                Vec v;
+                f32 vx;
+                f32 vy;
+
+                v.x = x;
+                v.y = y;
+                v.z = z;
+                func_80104654_1ADCE4_SkyPilots(&v, i);
+                vx = v.x;
+                vy = v.y;
+                if (fabs(v.z) < lim && func_800B1830_B2430(vx * vx + vy * vy) < 400.0f) {
+                    if (w->spinKind == 0) {
+                        w->timerA = 0;
+                        w->lastGate = i;
+                        w->spinKind = 1;
+                    } else if (w->lastGate != i) {
+                        w->timerB = 0;
+                        w->lastGate = i;
+                        w->spinKind = 2;
+                    }
                     func_80079798_7A398(0x214, w->pilot);
                 }
+                return;
             }
-            return;
         }
     }
 }
@@ -570,17 +577,15 @@ void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801044EC_1ADB7C_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80104654_1ADCE4_SkyPilots(Vec* v, s32 i) {
     f32 ang = D_8010ADF4_1B4484_SkyPilots[i].angle;
     f32 px = HuMathSin(ang) * (D_8010ADF4_1B4484_SkyPilots[i].radius + SP_RADIUS);
+    f32 m = 0.0f;
     f32 pz = func_800B7890_B8490(ang) * (D_8010ADF4_1B4484_SkyPilots[i].radius + SP_RADIUS);
     f32 rot = D_8010ADF4_1B4484_SkyPilots[i].angle - 90.0f;
     f32 x = v->x;
     f32 y = v->y;
     f32 z = v->z;
-    f32 m = 0.0f;
 
     if (px != 0.0f || m != 0.0f || pz != 0.0f) {
         func_800B1F50_B2B50((f32*)D_8010B388_1B4A18_SkyPilots, px, m, pz);
@@ -595,9 +600,6 @@ void func_80104654_1ADCE4_SkyPilots(Vec* v, s32 i) {
     v->y = x * D_8010B3C8_1B4A58_SkyPilots[0][1] + y * D_8010B3C8_1B4A58_SkyPilots[1][1] + z * D_8010B3C8_1B4A58_SkyPilots[2][1] + D_8010B3C8_1B4A58_SkyPilots[3][1];
     v->z = x * D_8010B3C8_1B4A58_SkyPilots[0][2] + y * D_8010B3C8_1B4A58_SkyPilots[1][2] + z * D_8010B3C8_1B4A58_SkyPilots[2][2] + D_8010B3C8_1B4A58_SkyPilots[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104654_1ADCE4_SkyPilots);
-#endif
 
 void func_8010489C_1ADF2C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     f32 d = func_800B1830_B2430(x * x + z * z);
@@ -617,11 +619,17 @@ void func_8010489C_1ADF2C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
 #ifdef NON_MATCHING
 void func_80104940_1ADFD0_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
-    omObjData* other = D_8010ADA4_1B4434_SkyPilots[w->team == 0];
-    f32 dx = other->trans.x - x;
-    f32 dy = other->trans.y - y;
-    f32 dz = other->trans.z - z;
-    f32 d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+    s32 k = w->team == 0;
+    omObjData* other = D_8010ADA4_1B4434_SkyPilots[k];
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 d;
+
+    dx = other->trans.x - x;
+    dy = other->trans.y - y;
+    dz = other->trans.z - z;
+    d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
 
     if (d < 200.0f) {
         func_80104454_1ADAE4_SkyPilots(dx, dy, dz, d - 200.0f);
@@ -646,14 +654,17 @@ void func_80104A4C_1AE0DC_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
         f32 a = D_8010ADDC_1B446C_SkyPilots[i].angle;
 
         if (angle < a + 5.0f && a - 5.0f < angle) {
-            f32 dx = HuMathSin(a) * (D_8010ADDC_1B446C_SkyPilots[i].radius + SP_RADIUS) - x;
-            f32 dz = func_800B7890_B8490(a) * (D_8010ADDC_1B446C_SkyPilots[i].radius + SP_RADIUS) - z;
+            f32 px = HuMathSin(a) * (D_8010ADDC_1B446C_SkyPilots[i].radius + SP_RADIUS);
+            f32 zero = 0.0f;
+            f32 pz = func_800B7890_B8490(a) * (D_8010ADDC_1B446C_SkyPilots[i].radius + SP_RADIUS);
+            f32 dx = px - x;
+            f32 dz = pz - z;
             f32 r = D_8010ADDC_1B446C_SkyPilots[i].extra;
             f32 d = func_800B1830_B2430(dx * dx + dz * dz);
 
             r = r * 500.0f + 100.0f;
             if (d < r) {
-                func_80104454_1ADAE4_SkyPilots(dx, 0.0f, dz, d - r);
+                func_80104454_1ADAE4_SkyPilots(dx, zero, dz, d - r);
                 if (w->bump == 0) {
                     omVibrate(w->pilot, 10, 0, 10);
                     omVibrate(w->gunner, 10, 0, 10);
@@ -668,18 +679,19 @@ void func_80104A4C_1AE0DC_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104A4C_1AE0DC_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80104C10_1AE2A0_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
     s32 i;
 
     for (i = 0; i < 4; i++) {
         if (D_8010AEA8_1B4538_SkyPilots[i] > 0) {
-            f32 dx = D_8010AEDC_1B456C_SkyPilots[i].x - x;
-            f32 dy = D_8010AEDC_1B456C_SkyPilots[i].y - y;
-            f32 dz = D_8010AEDC_1B456C_SkyPilots[i].z - z;
+            f32 dx = D_8010AEDC_1B456C_SkyPilots[i].x;
+            f32 dy = D_8010AEDC_1B456C_SkyPilots[i].y;
+            f32 dz = D_8010AEDC_1B456C_SkyPilots[i].z;
 
+            dx -= x;
+            dy -= y;
+            dz -= z;
             if (func_800B1830_B2430(dx * dx + dy * dy + dz * dz) < 150.0f) {
                 func_8010890C_1B1F9C_SkyPilots(i);
                 omVibrate(w->pilot, 2, 2, 20);
@@ -697,12 +709,7 @@ void func_80104C10_1AE2A0_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104C10_1AE2A0_SkyPilots);
-#endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80104DC0_1AE450_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
     s32 i;
@@ -715,10 +722,13 @@ void func_80104DC0_1AE450_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
         }
         a = D_8010AE6C_1B44FC_SkyPilots[i].angle;
         if (angle < a + 2.0f && a - 2.0f < angle) {
-            f32 dx = HuMathSin(a) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS) - x;
-            f32 dy = D_8010AE6C_1B44FC_SkyPilots[i].extra - y;
-            f32 dz = func_800B7890_B8490(a) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS) - z;
+            f32 dx = HuMathSin(a) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS);
+            f32 dy = D_8010AE6C_1B44FC_SkyPilots[i].extra;
+            f32 dz = func_800B7890_B8490(a) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS);
 
+            dx -= x;
+            dy -= y;
+            dz -= z;
             if (func_800B1830_B2430(dx * dx + dy * dy + dz * dz) < 300.0f) {
                 func_80108A00_1B2090_SkyPilots(i);
                 omVibrate(w->pilot, 2, 2, 20);
@@ -736,12 +746,7 @@ void func_80104DC0_1AE450_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104DC0_1AE450_SkyPilots);
-#endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80105018_1AE6A8_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
     f32 angle = func_800B75A8_B81A8(x, z);
@@ -750,9 +755,7 @@ void func_80105018_1AE6A8_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
     if (angle < 0.0f) {
         angle += 360.0f;
     }
-    D_8010B2C8_1B4958_SkyPilots = 0.0f;
-    D_8010B2C4_1B4954_SkyPilots = 0.0f;
-    D_8010B2C0_1B4950_SkyPilots = 0.0f;
+    D_8010B2C0_1B4950_SkyPilots = D_8010B2C4_1B4954_SkyPilots = D_8010B2C8_1B4958_SkyPilots = 0.0f;
     for (i = 0; i < 6; i++) {
         switch (i) {
         case 0:
@@ -779,9 +782,6 @@ void func_80105018_1AE6A8_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
         w->bump--;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80105018_1AE6A8_SkyPilots);
-#endif
 
 f32 func_801051F0_1AE880_SkyPilots(SPPlane* w, f32 v) {
     f32 sum = 0.0f;
@@ -1234,8 +1234,7 @@ s16 func_80106810_1AFEA0_SkyPilots(s32 idx, s16 x, s16 y) {
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
 void func_80106A7C_1B010C_SkyPilots(s16 idx, s16 speed) {
-    s16 g = D_8010B350_1B49E0_SkyPilots[idx];
-    f32 v;
+    u16 g = D_8010B350_1B49E0_SkyPilots[idx];
     s32 n;
 
     if (speed == 100.0f) {
@@ -1246,10 +1245,9 @@ void func_80106A7C_1B010C_SkyPilots(s16 idx, s16 speed) {
         SprAttrSet(g, 2, 0x8000);
         return;
     }
-    v = speed / 1.6093f;
+    n = speed / 1.6093f;
     espDispOff(D_8010B2D4_1B4964_SkyPilots[idx]);
     espDispOn(D_8010B2D0_1B4960_SkyPilots[idx]);
-    n = v;
     SprAttrReset(g, 0, 0x8000);
     func_800822A8_82EA8(g, 0, n / 100, 0);
     func_8008225C_82E5C(g, 0, 1);
@@ -1344,6 +1342,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80106E98_1
 void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
     MgWork* w;
+    omObjData** sub;
     s32 i;
     s32 icon;
 
@@ -1378,12 +1377,13 @@ void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
     w->unk_59 = player;
     s->pilot = player;
     s->pilotObj = obj;
-    obj->trans.x = D_8010ADA4_1B4434_SkyPilots[team]->trans.x;
-    obj->trans.y = D_8010ADA4_1B4434_SkyPilots[team]->trans.y;
-    obj->trans.z = D_8010ADA4_1B4434_SkyPilots[team]->trans.z;
-    obj->rot.x = D_8010ADA4_1B4434_SkyPilots[team]->rot.x;
-    obj->rot.y = D_8010ADA4_1B4434_SkyPilots[team]->rot.y;
-    obj->rot.z = D_8010ADA4_1B4434_SkyPilots[team]->rot.z;
+    sub = &D_8010ADA4_1B4434_SkyPilots[team];
+    obj->trans.x = (*sub)->trans.x;
+    obj->trans.y = (*sub)->trans.y;
+    obj->trans.z = (*sub)->trans.z;
+    obj->rot.x = (*sub)->rot.x;
+    obj->rot.y = (*sub)->rot.y;
+    obj->rot.z = (*sub)->rot.z;
     switch (gPlayers[player].character) {
     case 0:
         icon = 0xD;
@@ -1418,6 +1418,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80107074_1
 void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
     MgWork* w;
+    omObjData** sub;
     s32 i;
     s32 icon;
 
@@ -1453,12 +1454,13 @@ void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
     func_80019B9C_1A79C(obj, 0);
     s->gunnerObj = obj;
     s->gunner = player;
-    obj->trans.x = D_8010ADA4_1B4434_SkyPilots[team]->trans.x;
-    obj->trans.y = D_8010ADA4_1B4434_SkyPilots[team]->trans.y;
-    obj->trans.z = D_8010ADA4_1B4434_SkyPilots[team]->trans.z;
-    obj->rot.x = D_8010ADA4_1B4434_SkyPilots[team]->rot.x;
-    obj->rot.y = D_8010ADA4_1B4434_SkyPilots[team]->rot.y;
-    obj->rot.z = D_8010ADA4_1B4434_SkyPilots[team]->rot.z;
+    sub = &D_8010ADA4_1B4434_SkyPilots[team];
+    obj->trans.x = (*sub)->trans.x;
+    obj->trans.y = (*sub)->trans.y;
+    obj->trans.z = (*sub)->trans.z;
+    obj->rot.x = (*sub)->rot.x;
+    obj->rot.y = (*sub)->rot.y;
+    obj->rot.z = (*sub)->rot.z;
     switch (gPlayers[player].character) {
     case 0:
         icon = 0xD;
@@ -1606,8 +1608,8 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
     s32 m2 = -1;
     s32 m5 = -1;
     s32 m3 = -1;
-    s32 team;
     s32 i;
+    s32 team;
     s32 x;
     s16 spr;
     s16 tmp;
@@ -1621,7 +1623,7 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
         for (i = 0; i < 6; i++) {
             if (m1 == -1) {
                 m1 = func_80018A30_19630(0x2C000D, 0x8D9);
-                D_8010B356_1B49E6_SkyPilots[team][i] = m1;
+                D_8010B356_1B49E6_SkyPilots[team][0] = m1;
             } else {
                 D_8010B356_1B49E6_SkyPilots[team][i] = func_80027D3C_2893C(m1);
             }
@@ -1630,7 +1632,7 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
         for (i = 0; i < 3; i++) {
             if (m2 == -1) {
                 m2 = func_80018A30_19630(0x2C000F, 0x8D9);
-                D_8010B36E_1B49FE_SkyPilots[team][i] = m2;
+                D_8010B36E_1B49FE_SkyPilots[team][0] = m2;
             } else {
                 D_8010B36E_1B49FE_SkyPilots[team][i] = func_80027D3C_2893C(m2);
             }
@@ -1639,7 +1641,7 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
         for (i = 0; i < 2; i++) {
             if (m3 == -1) {
                 m3 = func_80018A30_19630(0x2C0011, 0x8D9);
-                D_8010B37A_1B4A0A_SkyPilots[team][i] = m3;
+                D_8010B37A_1B4A0A_SkyPilots[team][0] = m3;
             } else {
                 D_8010B37A_1B4A0A_SkyPilots[team][i] = func_80027D3C_2893C(m3);
             }
@@ -1652,7 +1654,7 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
         for (i = 0; i < 3; i++) {
             if (m4 == -1) {
                 m4 = func_80018A30_19630(0x2C000E, 0x8D9);
-                D_8010B374_1B4A04_SkyPilots[team][i] = m4;
+                D_8010B374_1B4A04_SkyPilots[team][0] = m4;
             } else {
                 D_8010B374_1B4A04_SkyPilots[team][i] = func_80027D3C_2893C(m4);
             }
@@ -1661,7 +1663,7 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
         for (i = 0; i < 2; i++) {
             if (m5 == -1) {
                 m5 = func_80018A30_19630(0x2C0010, 0x8D9);
-                D_8010B37E_1B4A0E_SkyPilots[team][i] = m5;
+                D_8010B37E_1B4A0E_SkyPilots[team][0] = m5;
             } else {
                 D_8010B37E_1B4A0E_SkyPilots[team][i] = func_80027D3C_2893C(m5);
             }
@@ -1691,8 +1693,6 @@ void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80107EAC_1B153C_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_801083CC_1B1A5C_SkyPilots(omObjData* obj) {
     s32 i;
 
@@ -1703,17 +1703,16 @@ void func_801083CC_1B1A5C_SkyPilots(omObjData* obj) {
 
         for (k = 0; k < 2; k++) {
             f32 h = D_8010B430_1B4AC0_SkyPilots[k];
+            f32 lo = h - 5.0f;
+            f32 hi = h + 25.0f;
 
-            if ((h - 5.0f < a) & (a < h + 25.0f)) {
+            if ((lo < a) & (a < hi)) {
                 mask |= 1 << k;
             }
         }
         func_80029EDC_2AADC(obj->model[i], mask);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801083CC_1B1A5C_SkyPilots);
-#endif
 
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
@@ -1721,8 +1720,9 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
     f32 best = 65535.0f;
     f32 px = HuMathSin(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
     f32 pz = func_800B7890_B8490(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
+    f32 py = 0.0f;
     f32 tx = px;
-    f32 ty = 0.0f;
+    f32 ty = py;
     f32 tz = pz;
     f32 frame;
     f32 ang;
@@ -1731,10 +1731,15 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
 
     for (k = 0; k < 2; k++) {
         omObjData* p = D_8010ADA4_1B4434_SkyPilots[k];
-        f32 dx = p->trans.x - px;
-        f32 dy = p->trans.y - 0.0f;
-        f32 dz = p->trans.z - pz;
-        f32 d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+        f32 dx = p->trans.x;
+        f32 dy = p->trans.y;
+        f32 dz = p->trans.z;
+        f32 d;
+
+        dx -= px;
+        dy -= py;
+        dz -= pz;
+        d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
 
         if (d < best) {
             best = d;
@@ -1768,7 +1773,7 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
         D_8010AEAC_1B453C_SkyPilots[i].y = v.y;
         D_8010AEAC_1B453C_SkyPilots[i].z = v.z;
         D_8010AEDC_1B456C_SkyPilots[i].x = px + HuMathSin(ang) * 150.0f;
-        D_8010AEDC_1B456C_SkyPilots[i].y = 0.0f + 77.5;
+        D_8010AEDC_1B456C_SkyPilots[i].y = py + 77.5;
         D_8010AEDC_1B456C_SkyPilots[i].z = pz + func_800B7890_B8490(ang) * 150.0f;
         PlaySound(0x212);
         func_800298A4_2A4A4((s16)D_8010B2F8_1B4988_SkyPilots[i], 4, 0);

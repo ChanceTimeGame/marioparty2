@@ -20,8 +20,6 @@ void func_80108A90_1B2120_SkyPilots(s32 i) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B2120", func_80108A90_1B2120_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80108C24_1B22B4_SkyPilots(omObjData* obj) {
     s32 i;
 
@@ -32,8 +30,10 @@ void func_80108C24_1B22B4_SkyPilots(omObjData* obj) {
 
         for (k = 0; k < 2; k++) {
             f32 h = D_8010B430_1B4AC0_SkyPilots[k];
+            f32 lo = h - 5.0f;
+            f32 hi = h + 25.0f + 5.0f;
 
-            if ((h - 5.0f < a) & (a < h + 25.0f + 5.0f)) {
+            if ((lo < a) & (a < hi)) {
                 mask |= 1 << k;
             }
         }
@@ -49,12 +49,7 @@ void func_80108C24_1B22B4_SkyPilots(omObjData* obj) {
         func_800298A4_2A4A4((s16)D_8010B308_1B4998_SkyPilots[i], 4, 4);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B2120", func_80108C24_1B22B4_SkyPilots);
-#endif
 
-/* NON_MATCHING: register allocation */
-#ifdef NON_MATCHING
 void func_80108DB4_1B2444_SkyPilots(omObjData* obj) {
     s32 i;
 
@@ -65,17 +60,16 @@ void func_80108DB4_1B2444_SkyPilots(omObjData* obj) {
 
         for (k = 0; k < 2; k++) {
             f32 h = D_8010B430_1B4AC0_SkyPilots[k];
+            f32 lo = h - 5.0f;
+            f32 hi = h + 25.0f;
 
-            if ((h - 5.0f < a) & (a < h + 25.0f)) {
+            if ((lo < a) & (a < hi)) {
                 mask |= 1 << k;
             }
         }
         func_80029EDC_2AADC(obj->model[i], mask);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B2120", func_80108DB4_1B2444_SkyPilots);
-#endif
 
 /* NON_MATCHING: register allocation */
 #ifdef NON_MATCHING
@@ -89,8 +83,10 @@ void func_80108ECC_1B255C_SkyPilots(omObjData* obj) {
 
         for (k = 0; k < 2; k++) {
             f32 h = D_8010B430_1B4AC0_SkyPilots[k];
+            f32 lo = h - 5.0f;
+            f32 hi = h + 25.0f;
 
-            if ((h - 5.0f < a) & (a < h + 25.0f)) {
+            if ((lo < a) & (a < hi)) {
                 mask |= 1 << k;
             }
         }

@@ -4,8 +4,10 @@
 #ifdef NON_MATCHING
 void func_8010A340_1B39D0_SkyPilots(void) {
     omObjData** p = D_8010ADA4_1B4434_SkyPilots;
-    p[0]->func_ptr = func_801058EC_1AEF7C_SkyPilots;
-    p[1]->func_ptr = func_801058EC_1AEF7C_SkyPilots;
+    void* f = func_801058EC_1AEF7C_SkyPilots;
+
+    p[0]->func_ptr = f;
+    p[1]->func_ptr = f;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A340_1B39D0_SkyPilots);

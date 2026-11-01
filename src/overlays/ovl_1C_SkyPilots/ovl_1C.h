@@ -98,7 +98,7 @@ void func_800298A4_2A4A4(s16, s32, s32);
 void func_80029C74_2A874(s16, f32);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029E3C_2AA3C(s16);
-void func_80029EDC_2AADC(s16 arg0, u8 arg1);
+void func_80029EDC_2AADC(s16 arg0, s16 arg1); /* main says u8; retail passes the mask as s16 */
 void func_8002C59C_2D19C(s32, s32, s32, s32, s32);
 void func_8002CD6C_2D96C(s32);
 void func_8002D4D0_2E0D0(s16 n);
@@ -256,7 +256,7 @@ void func_8010369C_1ACD2C_SkyPilots(omObjData* obj);
 void func_8010394C_1ACFDC_SkyPilots(omObjData* obj);
 void func_80103A6C_1AD0FC_SkyPilots(omObjData* obj);
 void func_80103BC0_1AD250_SkyPilots(f32 m[4][4], Vec* at, Vec* axis, f32 angle);
-void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry);
+void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry, f32 rz);
 void func_80103E34_1AD4C4_SkyPilots(omObjData* obj);
 void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch);
 void func_80104454_1ADAE4_SkyPilots(f32 x, f32 y, f32 z, f32 d);
