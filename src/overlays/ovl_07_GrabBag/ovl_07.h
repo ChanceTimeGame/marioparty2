@@ -10,6 +10,15 @@
 #include "game/data.h"
 #include "game/collision.h"
 
+/* Grab Bag (MP1 ovl_1C): four players start in corners with 5 items each, one random player
+   (D_8010A82F) holding a +2 head start. Standing behind another and pressing B grabs them; mashing
+   decides whether a bag flies out and to the grabber (func_80109210), and the head start passes
+   with the first one. 31 seconds. At the end each player walks back to a corner and chains of
+   items fly to the bags (D_8010A688, one link per point); coins_mg_bonus is written with the count
+   of players ahead (3 when all tie). _CheckFlag(0xC) skips the win poses. Retail files 10BE10.c,
+   10E130.c (from 80104B20, 2-nop pad) and 10F470.c (from 80105E60, 1-nop pad); .data is asm,
+   .rodata from 0x113B40, 0x113B70 and 0x113B80. */
+
 /* ---- main-segment API missing from include/ ---- */
 typedef struct GBCharData {
     /* 0x00 */ char unk_00[4];
