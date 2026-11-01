@@ -1,5 +1,17 @@
 #include "ovl_08.h"
 
+/* .data (0x11B630-0x11B650, 8010A1B0-8010A1D0) */
+s32 D_8010A1B0_11B630_LavaTileIsle = 0x1F;
+u32 D_8010A1B4_11B634_LavaTileIsle = 0;
+u32 D_8010A1B8_11B638_LavaTileIsle = 0;
+s32 D_8010A1BC_11B63C_LavaTileIsle = 0;
+s32 D_8010A1C0_11B640_LavaTileIsle = 0;
+s32 D_8010A1C4_11B644_LavaTileIsle = 0;
+s16 D_8010A1C8_11B648_LavaTileIsle = 0;
+s8 D_8010A1CA_11B64A_LavaTileIsle = 0;
+u8 D_8010A1CB_11B64B_LavaTileIsle = 0; /* padding */
+s32 D_8010A1CC_11B64C_LavaTileIsle = 0; /* padding */
+
 void func_80102800_113C80_LavaTileIsle(void) {
     func_8002D4D0_2E0D0(0x20);
     func_8002F290_2FE90(D_800F9D30_FA930, 0x40);
