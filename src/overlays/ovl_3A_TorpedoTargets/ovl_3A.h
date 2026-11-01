@@ -9,6 +9,13 @@
 #include "game/collision.h"
 #include "game/pad.h"
 
+typedef struct MgMotion {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x08 */ s32 unk_08;
+} MgMotion; /* C8E0.c, size 0xC */
+
 /* Torpedo Targets, 2 vs 2: each team crews one submarine, split screen. The pilot (group 0, 2)
    steers with the stick and A/B set the throttle; the gunner (group 1, 3) fires a torpedo with A and
    guides it with the stick. A target (model D_8010949C_28B6AC) surfaces on one of four paths; a hit scores one
@@ -234,7 +241,7 @@ void func_801043AC_2865BC_TorpedoTargets(omObjData* obj);
 void func_80104464_286674_TorpedoTargets(omObjData* obj);
 void func_80104524_286734_TorpedoTargets(omObjData* obj);
 void func_801045E4_2867F4_TorpedoTargets(omObjData* obj);
-void func_801046A4_2868B4_TorpedoTargets(f32 m[4][4], Vec* axis, f32 angle);
+void func_801046A4_2868B4_TorpedoTargets(f32 m[4][4], Vec* at, Vec* axis, f32 angle);
 void func_8010478C_28699C_TorpedoTargets(omObjData* obj);
 void func_80104B9C_286DAC_TorpedoTargets(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch);
 void func_80104EB0_2870C0_TorpedoTargets(omObjData* obj);
