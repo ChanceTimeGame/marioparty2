@@ -15,7 +15,7 @@
 
 typedef struct GBState {
     /* 0x00 */ s8 player;
-    /* 0x01 */ u8 port;
+    /* 0x01 */ s8 port;
     /* 0x02 */ s8 character;
     /* 0x03 */ s8 cpu; /* -1: a human */
     /* 0x04 */ s16 cpuTimer; /* panels the CPU lets pass; also its item once it is set */
@@ -76,7 +76,7 @@ void func_8002D124_2DD24(s16 index);
 void func_8002D1EC_2DDEC(s16 arg0, u8 arg1);
 void func_8002D274_2DE74(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
-s16 func_80073014_73C14(u32 arg0, void* arg1);
+s32 func_80073014_73C14(u32 arg0, void* arg1); /* main: s16; retail does not re-extend */
 omObjData* func_800732B0_73EB0(u32 arg0);
 void espDispOff(u16);
 s16 func_8001A2F8_1AEF8(s32);
@@ -148,13 +148,13 @@ extern s32 D_80109084_106064_GiveMeABrake;
 extern s32 D_80109088_106068_GiveMeABrake; /* the player's visible model, index into model[] */
 extern f32 D_8010908C_10606C_GiveMeABrake; /* landing x */
 extern s16 D_80109090_106070_GiveMeABrake;
-extern s16 D_80109098_106078_GiveMeABrake[5]; /* panel sprites */
-extern s16 D_801090A2_106082_GiveMeABrake[3]; /* item trail sprites */
+extern s16 D_80109098_106078_GiveMeABrake[8]; /* panel sprites, then the item trail */
 extern f32 D_801090A8_106088_GiveMeABrake; /* turn speed; then the start angle */
 extern f32 D_801090AC_10608C_GiveMeABrake; /* angle left to brake */
 extern omObjData* D_801090B0_106090_GiveMeABrake; /* sparks */
 extern s8 D_801090B4_106094_GiveMeABrake; /* shake sign */
 
+void osSyncPrintf(const char* fmt, ...);
 void func_80102800_FF7E0_GiveMeABrake(void);
 void func_80102A70_FFA50_GiveMeABrake(omObjData* obj);
 void func_80102D88_FFD68_GiveMeABrake(omObjData* obj);
