@@ -199,9 +199,11 @@ extern s32 D_80109398_28B5A8_TorpedoTargets;
 extern f32 D_8010939C_28B5AC_TorpedoTargets;
 extern u8 D_801093A0_28B5B0_TorpedoTargets[2]; /* gunner CPU aim: 0 target, 1 other sub */
 extern s32 D_801093B0_28B5C0_TorpedoTargets;  /* target alpha */
+extern u8 D_801093B3_28B5C3_TorpedoTargets;   /* its low byte, by retail's own label */
 extern f32 D_801093B4_28B5C4_TorpedoTargets;  /* target bob speed */
 extern Vec D_801093B8_28B5C8_TorpedoTargets;  /* target position */
 extern s32 D_801093C4_28B5D4_TorpedoTargets;  /* targets so far, doubled */
+extern const Vec D_80109404_28B614_TorpedoTargets; /* rodata, in 289BC0.c */
 
 /* .bss */
 extern s8 D_80109418_28B628_TorpedoTargets;  /* seabed model */
@@ -228,7 +230,7 @@ extern f32 D_80109478_28B688_TorpedoTargets;  /* path angle */
 extern f32 D_8010947C_28B68C_TorpedoTargets;  /* path height */
 extern Vec D_80109480_28B690_TorpedoTargets;  /* path 2 direction */
 extern f32 D_8010948C_28B69C_TorpedoTargets;  /* path 1 speed */
-extern s32 D_80109490_28B6A0_TorpedoTargets;  /* path: 0 orbit, 1 column, 2 line, 3 rock */
+extern s8 D_80109490_28B6A0_TorpedoTargets;  /* path: 0 orbit, 1 column, 2 line, 3 rock */
 extern s8 D_8010949C_28B6AC_TorpedoTargets;  /* target model */
 
 void func_80102800_284A10_TorpedoTargets(void);
@@ -282,7 +284,7 @@ s32 func_80108900_28AB10_TorpedoTargets(void);
 void func_80108934_28AB44_TorpedoTargets(void);
 void func_80108F94_28B1A4_TorpedoTargets(s32 n, Vec* out);
 void func_80109060_28B270_TorpedoTargets(s32 n, Vec* out);
-void func_801090F8_28B308_TorpedoTargets(s32 n, Vec* out);
+void func_801090F8_28B308_TorpedoTargets(s32 n, f32* out);
 void func_801091F0_28B400_TorpedoTargets(s32 n, Vec* out);
 void func_80109214_28B424_TorpedoTargets(void);
 
