@@ -1561,3 +1561,122 @@ void func_80108614_12BDF4_DayAtTheRaces(void) {
     }
     omDelObj(D_8010AC28_12E408_DayAtTheRaces);
 }
+
+/* .data (8010A4C0-8010AA60) */
+s32 D_8010A4C0_12DCA0_DayAtTheRaces[6] = {
+    0x1B000B, 0x1B000C, 0x1B000D, 0x1B000E, 0x1B000F, 0x1B0010,
+};
+u16 D_8010A4D8_12DCB8_DayAtTheRaces[4] = {
+    0xA, 0x8, 0x6, 0x4,
+};
+u8 D_8010A4E0_12DCC0_DayAtTheRaces[4][8] = {
+    { 0, 1, 2, 1, 0, 1, 2, 1 },
+    { 1, 0, 2, 1, 1, 2, 0, 0 },
+    { 0, 1, 1, 1, 1, 1, 0, 2 },
+    { 0, 1, 1, 2, 1, 2, 1, 2 },
+};
+f32 D_8010A500_12DCE0_DayAtTheRaces[9] = {
+    -30.0f, 250.0f, 500.0f, 750.0f, 1000.0f, 1100.0f, 1150.0f, 1242.0f, 1500.0f,
+};
+s16 D_8010A524_12DD04_DayAtTheRaces[10] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+DRChar D_8010A538_12DD18_DayAtTheRaces[4] = {
+    { { -200.0f, 0.0f, 75.0f }, 0.36f, { 0.3f, 1.0f, 0.3f }, 50.0f, 0x1B0011, 0xD, 0xAD9 },
+    { { -200.0f, 50.0f, 12.5f }, 0.24f, { 0.6f, 1.0f, 0.6f }, 50.0f, 0x1B0014, 0xD, 0xAC9 },
+    { { -200.0f, 0.0f, -56.25f }, 0.24f, { 0.6f, 1.0f, 0.6f }, 70.0f, 0x1B0013, 0xA015A, 0xAD9 },
+    { { -200.0f, 10.0f, -143.75f }, 0.22f, { 0.8f, 1.0f, 1.3f }, 100.0f, 0x1B0012, 0x0, 0xAD9 },
+};
+f32 D_8010A5E8_12DDC8_DayAtTheRaces[4][5] = {
+    { 40.0f, 40.0f, 40.0f, 40.0f, 40.0f },
+    { 100.0f, 100.0f, 100.0f, 100.0f, 100.0f },
+    { 75.0f, 75.0f, 75.0f, 75.0f, 75.0f },
+    { 115.0f, 155.0f, 195.0f, 195.0f, 195.0f },
+};
+DRMotion D_8010A638_12DE18_DayAtTheRaces[4][9] = {
+    {
+        { 0x1B001D, NULL, 0, 0, 0, 1.0f },
+        { 0x1B001E, NULL, 0, 0, 0, 1.0f },
+        { 0x1B001F, NULL, 0, 0, 0, 1.0f },
+        { 0x1B0020, NULL, 0, 0, 0, 1.0f },
+        { 0x1B0021, func_801041B8_127998_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B0023, func_8010430C_127AEC_DayAtTheRaces, 0, -1, 0, 1.0f },
+        { 0x1B0024, NULL, 0, 0, 0, 1.0f },
+        { 0x1B0025, NULL, 0, -1, 0, 1.0f },
+        { 0x1B0022, NULL, 0, -1, 0, 1.0f },
+    },
+    {
+        { 0x1B0035, func_801043B4_127B94_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B0036, func_80104364_127B44_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B0035, func_80104424_127C04_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B0035, func_80104494_127C74_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B0035, func_801045B4_127D94_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B0038, func_80104364_127B44_DayAtTheRaces, 0, -1, 0, 1.0f },
+        { 0x1B0039, func_80104364_127B44_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B003A, func_80104364_127B44_DayAtTheRaces, 0, -1, 0, 1.0f },
+        { 0x1B0037, func_80104364_127B44_DayAtTheRaces, 0, -1, 0, 1.0f },
+    },
+    {
+        { 0x1B002F, func_80104750_127F30_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B0030, func_80104744_127F24_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B002F, func_80104A40_128220_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B002F, func_80104D1C_1284FC_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B002F, func_80105040_128820_DayAtTheRaces, 0, 0, 1, 1.0f },
+        { 0x1B0032, NULL, 0, -1, 0, 1.0f },
+        { 0x1B0033, func_80104744_127F24_DayAtTheRaces, 0, 0, 0, 1.0f },
+        { 0x1B0034, func_80104744_127F24_DayAtTheRaces, 0, -1, 0, 1.0f },
+        { 0x1B0031, NULL, 0, -1, 0, 1.0f },
+    },
+    {
+        { 0x1B0026, NULL, 0, 0, 0, 0.5f },
+        { 0x1B0027, NULL, 0, 0, 0, 1.0f },
+        { 0x1B0028, NULL, 0, 0, 0, 1.0f },
+        { 0x1B0029, NULL, 0, 0, 0, 1.0f },
+        { 0x1B002A, NULL, 0, 0, 0, 1.0f },
+        { 0x1B002C, func_8010537C_128B5C_DayAtTheRaces, 0, -1, 0, 1.0f },
+        { 0x1B002D, NULL, 0, 0, 0, 1.0f },
+        { 0x1B002E, NULL, 0, -1, 0, 1.0f },
+        { 0x1B002B, NULL, 0, -1, 0, 1.0f },
+    },
+};
+void (*D_8010A908_12E0E8_DayAtTheRaces[4])(omObjData*, DRPlayer*) = {
+    func_80105F70_129750_DayAtTheRaces, func_80105FE8_1297C8_DayAtTheRaces,
+    func_8010603C_12981C_DayAtTheRaces, func_80106128_129908_DayAtTheRaces,
+};
+void (*D_8010A918_12E0F8_DayAtTheRaces[6])(omObjData*, DRPlayer*) = {
+    func_801062A8_129A88_DayAtTheRaces, func_80106454_129C34_DayAtTheRaces,
+    func_801066CC_129EAC_DayAtTheRaces, func_801066CC_129EAC_DayAtTheRaces,
+    func_80106704_129EE4_DayAtTheRaces, NULL,
+};
+void (*D_8010A930_12E110_DayAtTheRaces[6])(omObjData*, DRBet*) = {
+    NULL, func_80106DE4_12A5C4_DayAtTheRaces, func_80107368_12AB48_DayAtTheRaces,
+    func_80107368_12AB48_DayAtTheRaces, func_80107400_12ABE0_DayAtTheRaces, NULL,
+};
+s32 D_8010A948_12E128_DayAtTheRaces[4] = {
+    4, 5, 2, 3,
+};
+void (*D_8010A958_12E138_DayAtTheRaces[9])(void) = {
+    func_801076AC_12AE8C_DayAtTheRaces, func_80107788_12AF68_DayAtTheRaces,
+    func_80107788_12AF68_DayAtTheRaces, func_80107788_12AF68_DayAtTheRaces,
+    func_80107788_12AF68_DayAtTheRaces, func_80107894_12B074_DayAtTheRaces,
+    func_801078B0_12B090_DayAtTheRaces, NULL, NULL,
+};
+DRCamKey D_8010A97C_12E15C_DayAtTheRaces[4] = {
+    { { -560.0f, 200.0f, -143.75f }, { -20.6f, -90.0f, 0.0f }, 26.0f, 0x0 },
+    { { -560.0f, 200.0f, 75.0f }, { -20.6f, -90.0f, 0.0f }, 26.0f, 0x5A },
+    { { -550.0f, 450.0f, -56.0f }, { -45.0f, -90.0f, 0.0f }, 35.0f, 0x6E },
+    { { -550.0f, 450.0f, -56.0f }, { -45.0f, -90.0f, 0.0f }, 35.0f, 0x8C },
+};
+DRCamPath D_8010A9FC_12E1DC_DayAtTheRaces = { 0, 3, 1, D_8010A97C_12E15C_DayAtTheRaces };
+Vec D_8010AA08_12E1E8_DayAtTheRaces = { 80.0f, 450.0f, 366.0f };
+Vec D_8010AA14_12E1F4_DayAtTheRaces = { -43.0f, 17.0f, 0.0f };
+s32 D_8010AA20_12E200_DayAtTheRaces = 0;
+s16 D_8010AA24_12E204_DayAtTheRaces = -1;
+s16 D_8010AA26_12E206_DayAtTheRaces = 0;
+DRDone D_8010AA28_12E208_DayAtTheRaces = { 0, 0 };
+Vec D_8010AA2C_12E20C_DayAtTheRaces = { 1100.0f, 350.0f, 388.0f };
+Vec D_8010AA38_12E218_DayAtTheRaces = { -38.0f, 0.0f, 0.0f };
+void (*D_8010AA44_12E224_DayAtTheRaces[7])(omObjData*) = {
+    func_8010796C_12B14C_DayAtTheRaces, func_80107A44_12B224_DayAtTheRaces,
+    func_80107FF8_12B7D8_DayAtTheRaces, func_80108034_12B814_DayAtTheRaces, NULL, NULL, NULL,
+};

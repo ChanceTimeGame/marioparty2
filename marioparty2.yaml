@@ -691,7 +691,9 @@ segments:
       - [0x126030, c]
       - [0x1277D0, c]
       - [0x12BE50, c]
-      - [0x12D840, data]
+      - [0x12D840, .data, 126030]
+      - [0x12DCA0, .data, 1277D0]
+      - [0x12E240, .data, 12BE50]
       - [0x12E2E0, .rodata, 1277D0]
       - {0x12E3F0, type: bss, vram: 0x8010AC10, name: ovl_0B_bss}
   - type: code

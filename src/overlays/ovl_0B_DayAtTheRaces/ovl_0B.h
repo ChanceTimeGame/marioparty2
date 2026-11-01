@@ -279,6 +279,7 @@ extern f32 D_800FC8F8_FD4F8[][6]; /* per camera: rot, x, z, fov, far, near */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 
+/* ---- .data (126030.c 8010A060-8010A4C0, 1277D0.c 8010A4C0-8010AA60, 12BE50.c 8010AA60-8010AB00) ---- */
 extern DRObjDef D_8010A060_12D840_DayAtTheRaces[30];
 extern void* D_8010A498_12DC78_DayAtTheRaces[];
 
