@@ -414,8 +414,50 @@ const u32 D_80109404_FF0C4_HammerSlammer[5] = { 0xBF800000, 0x3F800000, 0xBF8000
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_HammerSlammer/F84C0", func_80104000_F9CC0_HammerSlammer);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_HammerSlammer/F84C0", func_8010746C_FD12C_HammerSlammer);
+void func_8010746C_FD12C_HammerSlammer(s16 model, s16 frame) {
+    s32 off = model * sizeof(HmfModel);
+    HmfModel* m = (HmfModel*)(off + (u8*)D_800FC834_FD434);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_HammerSlammer/F84C0", func_801074B0_FD170_HammerSlammer);
+    m->hmf->unk9C->unk08 = frame;
+}
+
+/* Draws the six item panels, 32x32 CI8 esp images, except the one the player has taken. */
+void func_801074B0_FD170_HammerSlammer(Gfx** gfx, s32 arg1, s32 arg2) {
+    HuSprite* spr[6];
+    HuSprite_Unk84_Unk00_Struct* frame[6];
+    f32 x;
+    f32 y;
+    s32 i;
+
+    x = 0.0f;
+    y = D_80109BF4_FF8B4_HammerSlammer;
+    for (i = 0; i < 6; i++) {
+        spr[i] = func_80082550_83150(D_800F93FC_F9FFC[D_80109BD8_FF898_HammerSlammer[D_80109C38_FF8F8_HammerSlammer[i]]].unk_04, 0);
+        frame[i] = &spr[i]->unk_84->unk00[spr[i]->unk_90];
+        if (D_80109B54_FF814_HammerSlammer == 5 || D_80109B54_FF814_HammerSlammer == 8 || D_80109B54_FF814_HammerSlammer == 6 || D_80109B54_FF814_HammerSlammer == 7 || D_80109B54_FF814_HammerSlammer == 9) {
+            if (i == D_80109B20_FF7E0_HammerSlammer.result) {
+                if ((u8)(D_80109B20_FF7E0_HammerSlammer.result + 1) >= 2) {
+                    continue;
+                }
+                if (i == 0) {
+                    if (D_80109B54_FF814_HammerSlammer != 5) {
+                        continue;
+                    }
+                    if (D_80109B94_FF854_HammerSlammer >= 20) {
+                        continue;
+                    }
+                }
+            }
+        }
+        gSPDisplayList(D_800FDBCC_FE7CC++, D_80109140_FEE00_HammerSlammer);
+        gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+        gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr[i]->unk_84->unk0C);
+        gDPLoadTextureBlock(D_800FDBCC_FE7CC++, frame[i]->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, 32, 32, 0, G_TX_CLAMP, G_TX_CLAMP, 0, 0, 0, 0);
+        gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((x + D_80109030_FECF0_HammerSlammer[i]) * 4.0), (s32)((y + D_8010904C_FED0C_HammerSlammer[i]) * 4.0),
+                                (s32)((x + D_80109030_FECF0_HammerSlammer[i] + 32.0) * 4.0), (s32)((y + D_8010904C_FED0C_HammerSlammer[i] + 32.0) * 4.0),
+                                G_TX_RENDERTILE, 0, 0, 0x400, 0x400);
+    }
+    func_80107A2C_FD6EC_HammerSlammer(gfx, arg1, arg2);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_04_HammerSlammer/F84C0", func_80107A2C_FD6EC_HammerSlammer);

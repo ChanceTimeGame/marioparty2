@@ -127,11 +127,14 @@ void func_80050AE0_516E0(void);
 s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**, s32, s32), u8 arg2);
 
 /* ---- .data ---- */
+extern f32 D_80109030_FECF0_HammerSlammer[6];
 extern f32 D_80109048_FED08_HammerSlammer[1];
+extern f32 D_8010904C_FED0C_HammerSlammer[6];
 extern f32 D_80109068_FED28_HammerSlammer[6];
 extern f32 D_80109080_FED40_HammerSlammer[6];
 extern f32 D_80109098_FED58_HammerSlammer[6];
 extern s32 D_801090C8_FED88_HammerSlammer[11];
+extern Gfx D_80109140_FEE00_HammerSlammer[];
 
 /* ---- .bss ---- */
 extern HSState D_80109B20_FF7E0_HammerSlammer;
@@ -173,6 +176,6 @@ void func_80103ECC_F9B8C_HammerSlammer(omObjData* obj);
 void func_80104000_F9CC0_HammerSlammer(omObjData* obj);
 void func_8010746C_FD12C_HammerSlammer(s16 arg0, s16 arg1);
 void func_801074B0_FD170_HammerSlammer(Gfx** gfx, s32 arg1, s32 arg2);
-void func_80107A2C_FD6EC_HammerSlammer(void);
+void func_80107A2C_FD6EC_HammerSlammer(Gfx** gfx, s32 arg1, s32 arg2);
 
 #endif /* _OVL_04_H */
