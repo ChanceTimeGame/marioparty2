@@ -570,6 +570,7 @@ void func_801046A4_2868B4_TorpedoTargets(f32 m[4][4], Vec* at, Vec* axis, f32 an
     f32 xs;
     f32 ys;
     f32 zs;
+    f32 a;
 
     func_800B8070_B8C70(angle, &s, &c);
     t = 1.0f - c;
@@ -585,10 +586,10 @@ void func_801046A4_2868B4_TorpedoTargets(f32 m[4][4], Vec* at, Vec* axis, f32 an
     ys = y * s;
     zs = z * s;
     m[0][0] = t * xx + c;
-    xy = t * xy;
-    m[0][1] = xy + zs;
+    a = t * xy;
+    m[0][1] = a + zs;
     m[0][2] = t * zx - ys;
-    m[1][0] = xy - zs;
+    m[1][0] = a - zs;
     m[1][1] = t * yy + c;
     m[1][2] = t * yz + xs;
 }
@@ -782,44 +783,626 @@ void func_80105124_287334_TorpedoTargets(omObjData* obj) {
     func_80029EDC_2AADC(obj->model[1], mask1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80105398_2875A8_TorpedoTargets);
+void func_80105398_2875A8_TorpedoTargets(f32 x, f32 y, f32 z, f32 d) {
+    Vec3f v;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80105418_287628_TorpedoTargets);
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    func_8002D9AC_2E5AC(&v);
+    D_8010941C_28B62C_TorpedoTargets += d * v.x;
+    D_8010941C_28B62C_TorpedoTargets += d * v.y; /* sic: never pushes y */
+    D_80109424_28B634_TorpedoTargets += d * v.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010552C_28773C_TorpedoTargets);
+f32 func_80105418_287628_TorpedoTargets(f32 r, f32 x, f32 y, f32 z) {
+    f32 probe[3];
+    ColVtx* verts;
+    ColTri* tri;
+    f32 h;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801055F4_287804_TorpedoTargets);
+    probe[0] = x;
+    probe[1] = y - r;
+    probe[2] = z;
+    verts = D_800FC834_FD434[D_80109418_28B628_TorpedoTargets].hmf->unk54;
+    func_8002F2C4_2FEC4(D_80109418_28B628_TorpedoTargets, D_800F9D30_FA930, func_80005110_5D10, probe);
+    goto next;
+loop:
+    h = func_8002DBA4_2E7A4(x, y, z, verts, tri);
+    t = y - r;
+    if (t < h) {
+        D_80109420_28B630_TorpedoTargets += h - t;
+        return h;
+    }
+next:
+    tri = func_8002F848_30448(D_800F9D30_FA930);
+    if (tri != NULL) {
+        goto loop;
+    }
+    return h;
+}
 
+void func_8010552C_28773C_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
+    f32 d = func_800B1830_B2430(x * x + z * z);
+
+    if (d > 3850.0f) {
+        func_80105398_2875A8_TorpedoTargets(x, 0.0f, z, -(d - 3850.0f));
+    }
+    func_80105418_287628_TorpedoTargets(150.0f, x + D_8010941C_28B62C_TorpedoTargets, y + D_80109420_28B630_TorpedoTargets,
+                                        z + D_80109424_28B634_TorpedoTargets);
+}
+
+void func_801055F4_287804_TorpedoTargets(f32 r, f32 x, f32 y, f32 z) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        f32 dx = D_80109284_28B494_TorpedoTargets[i].x - x;
+        f32 dy = D_80109284_28B494_TorpedoTargets[i].y - 100.0f - y;
+        f32 dz = D_80109284_28B494_TorpedoTargets[i].z - z;
+        f32 d;
+
+        if (dy > 0.0f) {
+            d = func_800B1830_B2430(dx * dx + dz * dz);
+            if (d < r + 200.0f) {
+                func_80105398_2875A8_TorpedoTargets(dx, 0.0f, dz, d - (r + 200.0f));
+                return;
+            }
+        } else {
+            d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            if (d < r + 200.0f) {
+                func_80105398_2875A8_TorpedoTargets(dx, dy, dz, d - (r + 200.0f));
+                return;
+            }
+        }
+    }
+}
+
+/* Logic right, masked 0; retail swaps f20 and f24 for dx and dz. */
+#ifdef NON_MATCHING
+void func_8010578C_28799C_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
+    TTSub* w = obj->unk_50;
+    s32 other = w->team == 0;
+    omObjData* sub = D_80109264_28B474_TorpedoTargets[other];
+    f32 d;
+    f32 dz;
+    f32 dy;
+    f32 dx;
+
+    dx = sub->trans.x - x;
+    dy = sub->trans.y - y;
+    dz = sub->trans.z - z;
+    d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+
+    if (d < 300.0f) {
+        func_80105398_2875A8_TorpedoTargets(dx, dy, dz, d - 300.0f);
+        if (w->bump == 0 && D_800F8FD0_F9BD0 == 1) {
+            omVibrate(w->pilot, 0xA, 0, 0xA);
+            omVibrate(w->gunner, 0xA, 0, 0xA);
+            w->bump = 0x14;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010578C_28799C_TorpedoTargets);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801058A8_287AB8_TorpedoTargets);
+void func_801058A8_287AB8_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
+    TTSub* w = obj->unk_50;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80105A54_287C64_TorpedoTargets);
+    D_8010941C_28B62C_TorpedoTargets = D_80109420_28B630_TorpedoTargets = D_80109424_28B634_TorpedoTargets = 0.0f;
+    for (i = 0; i < 3; i++) {
+        switch (i) {
+        case 0:
+            func_8010578C_28799C_TorpedoTargets(obj, x + D_8010941C_28B62C_TorpedoTargets, y + D_80109420_28B630_TorpedoTargets,
+                                                z + D_80109424_28B634_TorpedoTargets);
+            break;
+        case 1:
+            func_801055F4_287804_TorpedoTargets(150.0f, x + D_8010941C_28B62C_TorpedoTargets, y + D_80109420_28B630_TorpedoTargets,
+                                                z + D_80109424_28B634_TorpedoTargets);
+            break;
+        case 2:
+            func_8010552C_28773C_TorpedoTargets(obj, x + D_8010941C_28B62C_TorpedoTargets, y + D_80109420_28B630_TorpedoTargets,
+                                                z + D_80109424_28B634_TorpedoTargets);
+            break;
+        }
+    }
+    if (w->bump != 0) {
+        w->bump--;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80105D0C_287F1C_TorpedoTargets);
+s32 func_80105A54_287C64_TorpedoTargets(omObjData* obj) {
+    TTSub* w = obj->unk_50;
+    omObjData* sub;
+    s32 other;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 d;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80105D70_287F80_TorpedoTargets);
+    D_8010941C_28B62C_TorpedoTargets = D_80109420_28B630_TorpedoTargets = D_80109424_28B634_TorpedoTargets = 0.0f;
+    x = D_8010926C_28B47C_TorpedoTargets[w->team].x;
+    y = D_8010926C_28B47C_TorpedoTargets[w->team].y;
+    z = D_8010926C_28B47C_TorpedoTargets[w->team].z;
+    other = w->team == 0;
+    sub = D_80109264_28B474_TorpedoTargets[other];
+    dx = sub->trans.x - x;
+    dy = sub->trans.y - y;
+    dz = sub->trans.z - z;
+    if (func_800B1830_B2430(dx * dx + dy * dy + dz * dz) < 230.0f) {
+        return 2;
+    }
+    if (func_800B1830_B2430(x * x + z * z) > 3920.0f) {
+        return 1;
+    }
+    func_80105418_287628_TorpedoTargets(80.0f, x, y, z);
+    func_801055F4_287804_TorpedoTargets(80.0f, x, y, z);
+    if (D_8010941C_28B62C_TorpedoTargets != 0.0f || D_80109420_28B630_TorpedoTargets != 0.0f
+        || D_80109424_28B634_TorpedoTargets != 0.0f) {
+        return 1;
+    }
+    dx = D_801093B8_28B5C8_TorpedoTargets.x - x;
+    dy = D_801093B8_28B5C8_TorpedoTargets.y - y;
+    dz = D_801093B8_28B5C8_TorpedoTargets.z - z;
+    d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+    if (D_801092B4_28B4C4_TorpedoTargets != 1) {
+        return 0;
+    }
+    if (d < 280.0f) {
+        if (D_800F8FD0_F9BD0 == D_801092B4_28B4C4_TorpedoTargets) {
+            D_801092BC_28B4CC_TorpedoTargets[w->team]++;
+            w->score++;
+            omVibrate(w->pilot, 2, 2, 0x14);
+            omVibrate(w->gunner, 2, 2, 0x14);
+            func_80107494_2896A4_TorpedoTargets(w->team, 1);
+            D_801092D0_28B4E0_TorpedoTargets[w->team] = 1.0f;
+        }
+        return 3;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010667C_28888C_TorpedoTargets);
+void func_80105D0C_287F1C_TorpedoTargets(TTSub* w) {
+    w->tPitch += w->gStickY * 0.005f;
+    w->tYaw -= w->gStickX * 0.01f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801066E4_2888F4_TorpedoTargets);
+s32 func_80105D70_287F80_TorpedoTargets(omObjData* obj) {
+    TTSub* w = obj->unk_50;
+    s32 hit;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010674C_28895C_TorpedoTargets);
+    switch (D_801092B8_28B4C8_TorpedoTargets[w->team]) {
+    case 0:
+        if ((w->gBtn & 0x8000) && w->hit == 0) {
+            func_800298A4_2A4A4(obj->model[6], 4, 0);
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
+            func_800298A4_2A4A4(obj->model[4], 4, 4);
+            func_80029E80_2AA80(obj->model[3], 4, 4);
+            func_80029C74_2A874(obj->model[3], func_80029D0C_2A90C(obj->model[3]));
+            D_801092B8_28B4C8_TorpedoTargets[w->team] = 1;
+            func_800298A4_2A4A4(obj->model[7], 4, 0);
+            D_801092C0_28B4D0_TorpedoTargets[w->team] = 0;
+            w->tYaw = w->yaw;
+            w->tPitch = obj->rot.x;
+            w->tSpeed = 0.0f;
+            w->tAccel = 1.0f;
+            w->tSpin = 0.0f;
+            w->tTrail = 0.0f;
+            func_80029C74_2A874(obj->model[7], w->tTrail);
+            D_800FC834_FD434[obj->model[7]].hmf->unk9C->unk08 = 0.0f;
+            D_8010926C_28B47C_TorpedoTargets[w->team].x = obj->trans.x;
+            D_8010926C_28B47C_TorpedoTargets[w->team].y = obj->trans.y - 122.5f;
+            D_8010926C_28B47C_TorpedoTargets[w->team].z = obj->trans.z;
+            func_80029714_2A314(obj->model[6], D_8010926C_28B47C_TorpedoTargets[w->team].x, D_8010926C_28B47C_TorpedoTargets[w->team].y,
+                                D_8010926C_28B47C_TorpedoTargets[w->team].z);
+            func_8002979C_2A39C(obj->model[6], w->tPitch, w->tYaw, 0.0f);
+            func_80079798_7A398(0x308, w->gunner);
+        }
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[7]].mtx, 0.0f, 0.0f, -w->roll);
+        func_80029714_2A314(obj->model[7], D_8010926C_28B47C_TorpedoTargets[w->team].x, D_8010926C_28B47C_TorpedoTargets[w->team].y,
+                            D_8010926C_28B47C_TorpedoTargets[w->team].z);
+        func_8002979C_2A39C(obj->model[7], 0.0f, obj->rot.y, 0.0f);
+        func_800298A4_2A4A4(obj->model[8], 4, 4);
+        break;
+    case 1:
+        D_801092C0_28B4D0_TorpedoTargets[w->team]++;
+        func_80105D0C_287F1C_TorpedoTargets(w);
+        D_8010926C_28B47C_TorpedoTargets[w->team].x += HuMathSin(w->tYaw) * w->tSpeed;
+        D_8010926C_28B47C_TorpedoTargets[w->team].y -= HuMathSin(w->tPitch) * w->tSpeed;
+        D_8010926C_28B47C_TorpedoTargets[w->team].z += func_800B7890_B8490(w->tYaw) * w->tSpeed;
+        hit = func_80105A54_287C64_TorpedoTargets(obj);
+        if (hit != 0) {
+            D_801092B8_28B4C8_TorpedoTargets[w->team] = -0x1E;
+            func_80029C74_2A874(obj->model[4], 0.0f);
+            func_80029C74_2A874(obj->model[8], 0.0f);
+            func_800298A4_2A4A4(obj->model[8], 4, 0);
+            func_80029714_2A314(obj->model[8], D_8010926C_28B47C_TorpedoTargets[w->team].x, D_8010926C_28B47C_TorpedoTargets[w->team].y,
+                                D_8010926C_28B47C_TorpedoTargets[w->team].z);
+            PlaySound(0x309);
+            if (hit == 3 && D_800F8FD0_F9BD0 == 1) {
+                func_80079798_7A398(gPlayers[w->pilot].character + 0x103, w->pilot);
+                func_80079798_7A398(gPlayers[w->gunner].character + 0x103, w->gunner);
+                PlaySound(0x30B);
+            }
+            if (hit == 2) {
+                s32 other = w->team == 0;
+                TTSub* o = D_80109264_28B474_TorpedoTargets[other]->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010689C_288AAC_TorpedoTargets);
+                omVibrate(o->pilot, 2, 2, 0x14);
+                omVibrate(o->gunner, 2, 2, 0x14);
+                o->hit = 1;
+                o->knock = 70.0f;
+                o->knockRoll += 720.0f;
+                if (D_801092B8_28B4C8_TorpedoTargets[other] == 0) {
+                    D_801092B8_28B4C8_TorpedoTargets[other] = -0x1E;
+                }
+            } else if (hit == 3) {
+                D_801092B4_28B4C4_TorpedoTargets = -0x1E;
+            }
+        }
+        func_80029C74_2A874(obj->model[7], w->tTrail);
+        func_80029714_2A314(obj->model[6], D_8010926C_28B47C_TorpedoTargets[w->team].x, D_8010926C_28B47C_TorpedoTargets[w->team].y,
+                            D_8010926C_28B47C_TorpedoTargets[w->team].z);
+        func_8002979C_2A39C(obj->model[6], w->tPitch, w->tYaw, 0.0f);
+        func_80029714_2A314(obj->model[7], D_8010926C_28B47C_TorpedoTargets[w->team].x, D_8010926C_28B47C_TorpedoTargets[w->team].y,
+                            D_8010926C_28B47C_TorpedoTargets[w->team].z);
+        func_8002979C_2A39C(obj->model[7], w->tPitch, w->tYaw, 0.0f);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[7]].mtx, 0.0f, 0.0f, -w->tSpin);
+        w->tAccel *= 1.075f;
+        w->tSpeed += w->tAccel;
+        w->tSpin = func_8002D958_2E558(w->tAccel * 10.0f + w->tSpin);
+        w->tTrail += 0.6f;
+        if (w->tAccel > 20.0f) {
+            w->tAccel = 20.0f;
+        }
+        if (w->tSpeed > 70.0f) {
+            w->tSpeed = 70.0f;
+        }
+        if (w->tTrail > 30.0f) {
+            w->tTrail = 30.0f;
+        }
+        break;
+    default:
+        func_800298A4_2A4A4(obj->model[6], 4, 4);
+        func_800298A4_2A4A4(obj->model[3], 4, 4);
+        func_800298A4_2A4A4(obj->model[4], 4, 0);
+        func_800298A4_2A4A4(obj->model[7], 4, 4);
+        func_80029C74_2A874(obj->model[7], 0.0f);
+        D_8010926C_28B47C_TorpedoTargets[w->team].x = obj->trans.x;
+        D_8010926C_28B47C_TorpedoTargets[w->team].y = obj->trans.y - (D_801092B8_28B4C8_TorpedoTargets[w->team] * 3 + 122.5f);
+        D_8010926C_28B47C_TorpedoTargets[w->team].z = obj->trans.z;
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[7]].mtx, 0.0f, 0.0f, -w->roll);
+        D_801092B8_28B4C8_TorpedoTargets[w->team]++;
+        break;
+    }
+    return D_801092B8_28B4C8_TorpedoTargets[w->team];
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_801069E4_288BF4_TorpedoTargets);
+f32 func_8010667C_28888C_TorpedoTargets(TTSub* w, f32 v) {
+    f32 sum = 0.0f;
+    u8 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80106AAC_288CBC_TorpedoTargets);
+    w->yawHist[w->yawPos++] = v;
+    if (w->yawPos >= 20) {
+        w->yawPos = 0;
+    }
+    for (i = 0; i < 20; i++) {
+        sum += w->yawHist[i];
+    }
+    return sum / 20.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80106DEC_288FFC_TorpedoTargets);
+f32 func_801066E4_2888F4_TorpedoTargets(TTSub* w, f32 v) {
+    f32 sum = 0.0f;
+    u8 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107368_289578_TorpedoTargets);
+    w->pitchHist[w->pitchPos++] = v;
+    if (w->pitchPos >= 20) {
+        w->pitchPos = 0;
+    }
+    for (i = 0; i < 20; i++) {
+        sum += w->pitchHist[i];
+    }
+    return sum / 20.0f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107410_289620_TorpedoTargets);
+void func_8010674C_28895C_TorpedoTargets(omObjData* obj, f32 in) {
+    TTSub* w = obj->unk_50;
+    f32 v = in * 10.0f;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107494_2896A4_TorpedoTargets);
+    if (v > 10.0f) {
+        v = 10.0f;
+    }
+    if (v < -10.0f) {
+        v = -10.0f;
+    }
+    if (v != 0.0f) {
+        w->roll += v * 0.05f;
+        if (w->roll > 0.0f) {
+            if (w->roll > v) {
+                w->roll *= 0.9f;
+            }
+        } else if (w->roll < v) {
+            w->roll *= 0.9f;
+        }
+    } else {
+        w->roll *= 0.9f;
+    }
+    if ((u32)D_800F8FD0_F9BD0 < 2) {
+        w->rudder = 10.0f - w->roll;
+    }
+    func_80029C74_2A874(obj->model[1], w->rudder);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107580_289790_TorpedoTargets);
+void func_8010689C_288AAC_TorpedoTargets(omObjData* obj, f32 in) {
+    TTSub* w = obj->unk_50;
+    f32 v = in * 20.0f;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_80107764_289974_TorpedoTargets);
+    if (v > 10.0f) {
+        v = 10.0f;
+    }
+    if (v < -10.0f) {
+        v = -10.0f;
+    }
+    if (v != 0.0f) {
+        w->rudderV += v * 0.075f;
+        if (w->rudderV > 0.0f) {
+            if (w->rudderV > v) {
+                w->rudderV *= 0.9f;
+            }
+        } else if (w->rudderV < v) {
+            w->rudderV *= 0.9f;
+        }
+    } else {
+        w->rudderV *= 0.9f;
+    }
+    func_80029C74_2A874(obj->model[2], 10.0f - w->rudderV);
+}
+
+void func_801069E4_288BF4_TorpedoTargets(omObjData* obj, f32 in) {
+    TTSub* w = obj->unk_50;
+
+    if (obj->trans.y > 1000.0f) {
+        obj->trans.y = 1000.0f;
+        w->pitch *= 0.9f;
+    }
+    if (obj->trans.y < -3000.0f) {
+        obj->trans.y = -3000.0f;
+        w->pitch *= 0.9f;
+    }
+    if (in == 0.0f) {
+        w->pitch *= 0.95f;
+    }
+}
+
+void func_80106AAC_288CBC_TorpedoTargets(omObjData* obj) {
+    TTSub* w = obj->unk_50;
+    f32 v = w->speed;
+    f32 s;
+    f32 f;
+
+    if (w->btn & 0x8000) {
+        w->accel += 0.1f;
+        if (w->accel > 5.0f) {
+            w->accel = 5.0f;
+        }
+        w->prop += 0.02f;
+        if (w->prop > 1.2f) {
+            w->prop = 1.2f;
+        }
+    } else if (w->btn & 0x4000) {
+        w->accel -= 0.1f;
+        if (w->accel < -5.0f) {
+            w->accel = -5.0f;
+        }
+        w->prop -= 0.02f;
+        if (w->prop < -1.2f) {
+            w->prop = -1.2f;
+        }
+    } else {
+        w->accel *= 0.9f;
+        w->prop *= 0.9f;
+    }
+    v = (v + w->accel) * 0.95f;
+    if (v > 20.0f) {
+        v = 20.0f;
+    } else if (v < -20.0f) {
+        v = -20.0f;
+    }
+    w->speed = v;
+    if (w->accel > 0.5f) {
+        func_80029E80_2AA80(obj->model[5], 2, 2);
+    } else {
+        func_80029E80_2AA80(obj->model[5], 2, 0);
+    }
+    if (w->prop > 0.0f) {
+        func_80029E80_2AA80(obj->model[0], 6, 2);
+    } else {
+        func_80029E80_2AA80(obj->model[0], 6, 6);
+    }
+    s = 0.5f;
+    if (w->accel > 1.5f) {
+        f = func_80029CE4_2A8E4(obj->model[5]);
+        if (f > 70.0f) {
+            f += 30.0f;
+            func_80029C74_2A874(obj->model[5], f - 70.0f);
+        }
+        s = w->accel * 0.5f;
+        if (s < 0.5f) {
+            s = 0.5f;
+        }
+    }
+    func_80029FE4_2ABE4(obj->model[0], fabsf(w->prop));
+    func_80029FE4_2ABE4(obj->model[5], s);
+}
+
+void func_80106DEC_288FFC_TorpedoTargets(omObjData* obj) {
+    TTSub* w = obj->unk_50;
+    f32 x;
+    f32 y;
+    f32 sp;
+    f32 dYaw;
+    f32 dPitch;
+
+    if (D_800F8FD0_F9BD0 == 1) {
+        func_80107EDC_28A0EC_TorpedoTargets(obj);
+        func_80108234_28A444_TorpedoTargets(obj);
+    }
+    x = -w->stickX / 64.0f;
+    y = w->stickY / 120.0f;
+    func_80106AAC_288CBC_TorpedoTargets(obj);
+    sp = w->speed;
+    if (w->hit == 1) {
+        y = 0.0f;
+        x = 0.0f;
+        sp -= w->knock;
+        w->knock -= 1.2f;
+        w->knockRoll -= 14.4f;
+        if (w->knockRoll < 0.0f) {
+            w->knock = 0.0f;
+            w->hit = 0;
+            w->knockRoll = 0.0f;
+        }
+    }
+    func_8010674C_28895C_TorpedoTargets(obj, x);
+    dYaw = func_8010667C_28888C_TorpedoTargets(w, x);
+    w->yaw += dYaw;
+    D_801092C4_28B4D4_TorpedoTargets[w->team] = dYaw * 5.0f * w->speed * -0.025f;
+    func_8010689C_288AAC_TorpedoTargets(obj, y);
+    dPitch = func_801066E4_2888F4_TorpedoTargets(w, y);
+    w->pitch += dPitch;
+    if (w->pitch > 20.0f) {
+        w->pitch = 20.0f;
+    }
+    if (w->pitch < -15.0f) {
+        w->pitch = -15.0f;
+    }
+    func_801069E4_288BF4_TorpedoTargets(obj, y);
+    obj->trans.x += HuMathSin(w->yaw) * sp;
+    obj->trans.z += func_800B7890_B8490(w->yaw) * sp;
+    obj->trans.y -= w->pitch * 0.75f;
+    func_801058A8_287AB8_TorpedoTargets(obj, obj->trans.x, obj->trans.y, obj->trans.z);
+    obj->trans.x += D_8010941C_28B62C_TorpedoTargets;
+    obj->trans.y += D_80109420_28B630_TorpedoTargets;
+    obj->trans.z += D_80109424_28B634_TorpedoTargets;
+    obj->rot.y = w->yaw;
+    obj->rot.x = w->pitch + w->knockRoll;
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, w->tilt, -w->roll);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, w->tilt, -w->roll);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[2]].mtx, 0.0f, w->tilt, -w->roll);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[3]].mtx, 0.0f, w->tilt, -w->roll);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[4]].mtx, 0.0f, w->tilt, -w->roll);
+    func_800B2060_B2C60(D_800FC834_FD434[obj->model[5]].mtx, 0.0f, w->tilt, -w->roll);
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[1], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[4], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80029714_2A314(obj->model[5], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8002979C_2A39C(obj->model[5], obj->rot.x, obj->rot.y, obj->rot.z);
+    func_80105D70_287F80_TorpedoTargets(obj);
+    func_80104B9C_286DAC_TorpedoTargets(obj, dYaw, w->yaw, dPitch, w->pitch);
+}
+
+void func_80107368_289578_TorpedoTargets(void) {
+    void* data;
+
+    data = DataRead(0x43);
+    D_8010944E_28B65E_TorpedoTargets[0] = SprAnimRead(data);
+    DataClose(data);
+    data = DataRead(0x43);
+    D_8010944E_28B65E_TorpedoTargets[1] = SprAnimRead(data);
+    DataClose(data);
+    D_8010943C_28B64C_TorpedoTargets = func_8001A2F8_1AEF8(0x4A000D);
+    D_8010943E_28B64E_TorpedoTargets = func_8001A2F8_1AEF8(0x4A000E);
+    D_80109444_28B654_TorpedoTargets = func_8001A2F8_1AEF8(0x4A000F);
+}
+
+void func_80107410_289620_TorpedoTargets(s32 i, s16 x, s16 y) {
+    D_80109446_28B656_TorpedoTargets[i] = func_8001AAAC_1B6AC(D_80109444_28B654_TorpedoTargets, 0, 1);
+    espPosSet(D_80109446_28B656_TorpedoTargets[i], x, y);
+    func_8001A788_1B388(D_80109446_28B656_TorpedoTargets[i], 6);
+}
+
+void func_80107494_2896A4_TorpedoTargets(s16 i, s32 on) {
+    if (on != 0) {
+        D_80109378_28B588_TorpedoTargets[i] = 1;
+        return;
+    }
+    if (D_80109378_28B588_TorpedoTargets[i] != 0) {
+        espDispOn(D_80109446_28B656_TorpedoTargets[i]);
+        func_8001A6BC_1B2BC(D_80109446_28B656_TorpedoTargets[i], (D_80109378_28B588_TorpedoTargets[i] * 25) & 0xFF);
+        if (++D_80109378_28B588_TorpedoTargets[i] >= 0x33) {
+            D_80109378_28B588_TorpedoTargets[i] = 0;
+        }
+    } else {
+        espDispOff(D_80109446_28B656_TorpedoTargets[i]);
+        D_80109378_28B588_TorpedoTargets[i] = 0;
+    }
+}
+
+s16 func_80107580_289790_TorpedoTargets(s32 i, s32 x, s16 y) {
+    s16 g;
+
+    D_80109438_28B648_TorpedoTargets[i] = func_8001AAAC_1B6AC(D_8010943C_28B64C_TorpedoTargets, 0, 1);
+    espPosSet(D_80109438_28B648_TorpedoTargets[i], x, y);
+    func_8001A788_1B388(D_80109438_28B648_TorpedoTargets[i], 6);
+    D_80109440_28B650_TorpedoTargets[i] = func_8001AAAC_1B6AC(D_8010943E_28B64E_TorpedoTargets, 0, 1);
+    espPosSet(D_80109440_28B650_TorpedoTargets[i], x + 0xE, y);
+    func_8001A788_1B388(D_80109440_28B650_TorpedoTargets[i], 6);
+    x += 0x18;
+    D_8010944A_28B65A_TorpedoTargets[i] = g = SprCreate(2, 5);
+    SprAnimSet(g, 0, D_8010944E_28B65E_TorpedoTargets[i], 0);
+    SprAttrReset(g, 0, 0xFFFF);
+    SprAttrSet(g, 0, 0x8000);
+    SprPosSet(g, 0, x, y);
+    SprPrioSet(g, 0, 6);
+    SprPrioSet(g, 1, 6);
+    SprAnimSet(g, 1, D_8010944E_28B65E_TorpedoTargets[i], 0);
+    SprPosSet(g, 1, 0xA, 0);
+    SprAttrReset(g, 1, 0xFFFF);
+    SprAttrSet(g, 1, 0x8000);
+    func_800824F4_830F4(g, 1, 0);
+    SprAttrReset(g, 1, 0x8000);
+    return g;
+}
+
+void func_80107764_289974_TorpedoTargets(s16 i, s32 n) {
+    f32 scale = 1.0f;
+    u16 g = D_8010944A_28B65A_TorpedoTargets[i];
+    s32 q;
+
+    espDispOn(D_80109438_28B648_TorpedoTargets[i]);
+    if (D_801092D0_28B4E0_TorpedoTargets[i] != 0.0f) {
+        scale = HuMathSin(D_801092D0_28B4E0_TorpedoTargets[i]) * 0.8f + 1.0f;
+        D_801092D0_28B4E0_TorpedoTargets[i] += 12.0f;
+        if (D_801092D0_28B4E0_TorpedoTargets[i] > 180.0f) {
+            D_801092D0_28B4E0_TorpedoTargets[i] = 0.0f;
+        }
+    }
+    func_8001A91C_1B51C(D_80109438_28B648_TorpedoTargets[i], scale, scale);
+    q = (s16)n;
+    if (q >= 10) {
+        SprAttrReset(g, 0, 0x8000);
+        q = q / 10;
+        func_800822A8_82EA8(g, 0, q, 0);
+        func_8008225C_82E5C(g, 0, 1);
+        n -= (s16)q * 10;
+        SprAttrReset(g, 1, 0x8000);
+        func_800822A8_82EA8(g, 1, n, 0);
+        func_8008225C_82E5C(g, 1, 1);
+    } else {
+        SprAttrReset(g, 0, 0x8000);
+        func_800822A8_82EA8(g, 0, n, 0);
+        func_8008225C_82E5C(g, 0, 1);
+        SprAttrSet(g, 1, 0x8000);
+    }
+}

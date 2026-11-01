@@ -149,6 +149,7 @@ void func_8002D124_2DD24(s16 index);
 void func_8002D4D0_2E0D0(s16 n);
 f32 func_8002D958_2E558(f32);
 void func_8002F290_2FE90(s32* arg0, s32 n);
+s32 func_80005110_5D10();
 void func_8003EAF0_3F6F0(char* arg0, void* arg1);
 s16 func_800691FC_69DFC(s16 mesNo, ...);
 void func_8006D4D0_6E0D0(s16);
@@ -204,7 +205,9 @@ extern s32 D_801093C4_28B5D4_TorpedoTargets;  /* targets so far, doubled */
 
 /* .bss */
 extern s8 D_80109418_28B628_TorpedoTargets;  /* seabed model */
-extern Vec D_8010941C_28B62C_TorpedoTargets;  /* collision push out */
+extern f32 D_8010941C_28B62C_TorpedoTargets;  /* collision push out, separate labels */
+extern f32 D_80109420_28B630_TorpedoTargets;
+extern f32 D_80109424_28B634_TorpedoTargets;
 extern s32 D_8010942C_28B63C_TorpedoTargets;  /* winners */
 extern s32 D_80109430_28B640_TorpedoTargets;
 extern u16 D_80109434_28B644_TorpedoTargets[2]; /* wave texture size, filled by func_8003EAF0_3F6F0 */
@@ -265,8 +268,8 @@ void func_80106DEC_288FFC_TorpedoTargets(omObjData* obj);
 void func_80107368_289578_TorpedoTargets(void);
 void func_80107410_289620_TorpedoTargets(s32 i, s16 x, s16 y);
 void func_80107494_2896A4_TorpedoTargets(s16 i, s32 on);
-void func_80107580_289790_TorpedoTargets(s32 i, s16 x, s16 y);
-void func_80107764_289974_TorpedoTargets(s16 i, s16 n);
+s16 func_80107580_289790_TorpedoTargets(s32 i, s32 x, s16 y);
+void func_80107764_289974_TorpedoTargets(s16 i, s32 n);
 void func_801079B0_289BC0_TorpedoTargets(void);
 void func_801079D4_289BE4_TorpedoTargets(omObjData* obj);
 void func_80107BAC_289DBC_TorpedoTargets(omObjData* obj);
