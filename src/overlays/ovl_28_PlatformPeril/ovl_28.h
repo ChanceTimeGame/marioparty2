@@ -186,14 +186,9 @@ extern f32 D_80109040_20C3E0_PlatformPeril;   /* camera target z */
 extern u8 D_80109044_20C3E4_PlatformPeril;    /* clouds */
 extern u8 D_80109045_20C3E5_PlatformPeril;    /* platforms */
 extern PPSeqTable D_80109048_20C3E8_PlatformPeril;
-#ifdef TARGET_PC
-#define D_801090B1_20C451_PlatformPeril (D_80109048_20C3E8_PlatformPeril.goal.next)
-#define D_801090B2_20C452_PlatformPeril (D_80109048_20C3E8_PlatformPeril.goal.rows)
-#else
 /* Retail names these apart from the list (so the compiler cannot share one base): linker aliases of D_80109048.goal.next and .rows. */
 extern u8 D_801090B1_20C451_PlatformPeril;
 extern u8 D_801090B2_20C452_PlatformPeril[];
-#endif
 extern f32 D_801090CC_20C46C_PlatformPeril[3];
 extern PPStrip D_801090D8_20C478_PlatformPeril[2];
 extern s8 D_801090F8_20C498_PlatformPeril[20]; /* actors: x / 100 */
