@@ -195,12 +195,33 @@ typedef struct GBItem {
     /* 0xAE */ s8 unk_AE; /* 0 or 1: the kind, for the sound */
 } GBItem;
 
+typedef struct GBVec2 {
+    f32 x;
+    f32 y;
+} GBVec2;
+
+/* The player's work (0x178). */
 typedef struct GBPlayer {
     /* 0x000 */ MgWork w;
     /* 0x15C */ s8 unk_15C; /* start corner */
-    /* 0x15D */ char unk_15D[3];
-    /* 0x160 */ char unk_160[8];
-    /* 0x168 */ s16 unk_168;
+    /* 0x15D */ s8 unk_15D; /* -1: CPU */
+    /* 0x15E */ s8 unk_15E; /* 1 the grabber, 2 the grabbed */
+    /* 0x15F */ s8 unk_15F; /* the other player, -1 none */
+    /* 0x160 */ u8 unk_160;
+    /* 0x161 */ s8 unk_161;
+    /* 0x162 */ s8 unk_162;
+    /* 0x163 */ s8 unk_163; /* button presses */
+    /* 0x164 */ u8 unk_164; /* grab frames */
+    /* 0x165 */ u8 unk_165;
+    /* 0x166 */ u8 unk_166;
+    /* 0x168 */ s16 unk_168; /* score */
+    /* 0x16A */ s16 unk_16A; /* the head start's +2 */
+    /* 0x16C */ s16 unk_16C; /* coins */
+    /* 0x16E */ s16 unk_16E; /* total */
+    /* 0x170 */ s16 unk_170; /* start score */
+    /* 0x172 */ s16 unk_172; /* start coins */
+    /* 0x174 */ s16 unk_174; /* start total */
+    /* 0x176 */ s16 unk_176;
 } GBPlayer;
 
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
@@ -211,6 +232,7 @@ void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
 void CameraViewportSet(s16 camIndex, Vec* arg1, Vec* arg2);
 void func_8003F710_40310(Gfx** arg0, void* timg, s32 fmt, s32 siz, s32 width, s32 height, s32 uls, s32 ult,
                          s32 lrs, s32 lrt, s32 pal, s32 cms, s32 cmt, s32 masks, s32 maskt, s32 shifts, s32 shiftt);
+void func_800209C4_215C4(s32 cam, Vec* pos, GBVec2* screen);
 Vec func_801049F0_10E000_GrabBag(f32 x, f32 y, f32 z, f32 x2, f32 y2, f32 z2);
 void func_80102998_10BFA8_GrabBag(void);
 void func_80102B60_10C170_GrabBag(omObjData* obj, s32 t);
@@ -230,6 +252,51 @@ void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam);
 void func_80105D44_10F354_GrabBag(s32 cam);
 void func_80105DEC_10F3FC_GrabBag(omObjData* obj);
 void func_80105E60_10F470_GrabBag(void);
+extern f32 D_800BF7A0_C03A0;
+extern u16 D_800BF7E4_C03E4[][14]; /* per-player voice ids */
+void func_8003C8E0_3D4E0(s16 arg0);
+void func_8000BE74_CA74(omObjData* obj, f32 arg1);
+void func_80105F4C_10F55C_GrabBag(omObjData* obj);
+void func_80106624_10FC34_GrabBag(omObjData* obj, u32 dir, s32 file, u16 player, u16 flags);
+void func_80106C40_110250_GrabBag(omObjData* obj);
+void func_80106DD0_1103E0_GrabBag(void);
+s8 func_80106E38_110448_GrabBag(s8 p);
+void func_80106F00_110510_GrabBag(omObjData* obj);
+void func_801076A0_110CB0_GrabBag(GBPlayer* w, f32 x, f32 z, f32 step);
+void func_801077E8_110DF8_GrabBag(void);
+void func_80107F10_111520_GrabBag(omObjData* obj);
+void func_8010946C_112A7C_GrabBag(omObjData* obj);
+f32 func_801096E0_112CF0_GrabBag(f32 a, f32 x, f32 z, f32 step);
+void func_80109940_112F50_GrabBag(omObjData* obj);
+void func_8010866C_111C7C_GrabBag(GBPlayer* w, s32 btn);
+f32 func_801086F8_111D08_GrabBag(omObjData* a, omObjData* b);
+f32 func_801087B8_111DC8_GrabBag(omObjData* obj);
+f32 func_801089DC_111FEC_GrabBag(omObjData* obj);
+void func_80108C38_112248_GrabBag(omObjData* a, omObjData* b);
+void func_80108E94_1124A4_GrabBag(omObjData* a, omObjData* b);
+void func_80108F7C_11258C_GrabBag(omObjData* a, omObjData* b);
+s32 func_80109210_112820_GrabBag(omObjData* a, omObjData* b);
+s32 func_80109388_112998_GrabBag(omObjData* a, omObjData* b);
+void func_801095B8_112BC8_GrabBag(omObjData* obj);
+void func_80109CE8_1132F8_GrabBag(omObjData* obj);
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_800795D8_7A1D8(s16 sound, s8 volume);
+s16 func_80079798_7A398(s16 sfx, s16 player);
+f32 func_8000DA2C_E62C(f32 x1, f32 z1, f32 x2, f32 z2);
+void func_8002A15C_2AD5C(s16 arg0, s16 arg1, f32 arg2);
+extern f32 D_800BF7C4_C03C4;
+void func_8001A810_1B410(u16 spriteId, s16 arg1);
+void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
+void espPosSet(u16 spriteId, s16 x, s16 y);
+void espDispOn(u16);
+
+typedef struct GBPos {
+    s16 x;
+    s16 y;
+} GBPos;
+void func_8010A108_113718_GrabBag(void);
+void func_8010A1EC_1137FC_GrabBag(void);
+void func_8010A2CC_1138DC_GrabBag(s32 p, s32 n);
 
 /* ---- .data and .bss, in address order ---- */
 extern s8 D_8010A300_113910_GrabBag;
@@ -266,6 +333,30 @@ extern Gfx D_8010A418_113A28_GrabBag[];
 extern s16 D_8010A7B0_113DC0_GrabBag; /* lower backdrop sprite */
 extern s16 D_8010A7B2_113DC2_GrabBag; /* upper backdrop sprite */
 extern f32 D_8010A824_113E34_GrabBag; /* backdrop zoom */
-/*EXTERNS*/
+extern s16 D_8010A470_113A80_GrabBag; /* next player */
+extern s32 D_8010A474_113A84_GrabBag[4]; /* player order */
+extern u8 D_8010A484_113A94_GrabBag[16]; /* start corner of each player, 4 per layout */
+extern Vec D_8010A494_113AA4_GrabBag[4]; /* the corners */
+extern u8 D_8010A4E4_113AF4_GrabBag[4]; /* end walk state, by player */
+extern s8 D_8010A4E8_113AF8_GrabBag;
+extern s32 D_8010A4EC_113AFC_GrabBag;
+extern Vec D_8010A7C0_113DD0_GrabBag;
+extern s8 D_8010A7CC_113DDC_GrabBag;
+extern s32 D_8010A7E0_113DF0_GrabBag; /* start layout */
+extern s32 D_8010A830_113E40_GrabBag; /* the grabbed bag */
+extern GBPos D_8010A4C4_113AD4_GrabBag[4]; /* score positions */
+extern s32 D_8010A4D4_113AE4_GrabBag[4]; /* displayed scores */
+extern u16 D_8010A4F0_113B00_GrabBag[4]; /* last frame's buttons */
+extern s32 D_8010A4F8_113B08_GrabBag[4]; /* last frame's scores */
+extern f32 D_8010A508_113B18_GrabBag[4]; /* bag icon pulse angle */
+extern f32 D_8010A518_113B28_GrabBag[4]; /* bag icon scale */
+extern u16 D_8010A7CE_113DDE_GrabBag[4]; /* newly pressed buttons */
+extern GBItem* D_8010A7D8_113DE8_GrabBag;
+extern f32 D_8010A7DC_113DEC_GrabBag; /* morph */
+extern omObjData* D_8010A7E4_113DF4_GrabBag; /* the score object */
+extern u16 D_8010A7E8_113DF8_GrabBag[4]; /* bag icons */
+extern u16 D_8010A7F0_113E00_GrabBag[4]; /* "x" signs */
+extern u16 D_8010A7F8_113E08_GrabBag[4][3]; /* score digits */
+extern u16 D_8010A810_113E20_GrabBag[4]; /* faces */
 
 #endif
