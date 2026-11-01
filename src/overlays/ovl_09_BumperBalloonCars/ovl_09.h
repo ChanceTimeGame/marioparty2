@@ -63,8 +63,8 @@ typedef struct BBCCar {
     /* 0x0C */ f32 speed;
     /* 0x10 */ f32 bounce;
     /* 0x14 */ f32 prevSpeed;
-    /* 0x18 */ s16 hit[4];   /* touching this car */
-    /* 0x20 */ s16 wall;     /* touching the rail */
+    /* 0x18 */ u16 hit[4];   /* touching this car */
+    /* 0x20 */ u16 wall;     /* touching the rail */
     /* 0x22 */ u16 tick;
     /* 0x24 */ u16 hits;     /* air lost; 3 and it flies */
     /* 0x26 */ s16 sndFwd;
@@ -74,7 +74,7 @@ typedef struct BBCCar {
     /* 0x30 */ u16 cpuRand;  /* COM: of 10, how often it backs off */
     /* 0x32 */ u16 cpuWait;  /* COM: base delay */
     /* 0x34 */ f32 unk_34;
-    /* 0x38 */ s16 unk_38;
+    /* 0x38 */ s32 unk_38;
 } BBCCar; /* size = 0x3C */
 
 /* A dust puff; 20 slots in D_8010A59C_1236AC_BumperBalloonCars's work, the first four of D_8010A598_1236A8_BumperBalloonCars's are never used
@@ -130,6 +130,7 @@ extern u16 D_801086D2_1217E2_BumperBalloonCars;          /* game phase */
 extern BBCObj D_801086E0_1217F0_BumperBalloonCars[50];
 /* Fields retail addresses by their own labels. */
 extern s16 D_8010865E_12176E_BumperBalloonCars;          /* D_80108658_121768_BumperBalloonCars[3] */
+extern u8 D_8010A58B_12369B_BumperBalloonCars;           /* D_8010A58A_12369A_BumperBalloonCars, low byte (big-endian): host view needed */
 extern s16 D_80108CD4_121DE4_BumperBalloonCars;          /* D_801086E0_1217F0_BumperBalloonCars[10].spr */
 extern BBCCar D_8010A490_1235A0_BumperBalloonCars[4];
 extern s16 D_8010A580_123690_BumperBalloonCars[4];       /* corner taken */
