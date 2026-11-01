@@ -2204,7 +2204,7 @@ void func_8010A9E0_1CED90_MagnetCarta(void) {
         D_8010B7B0_1CFB60_MagnetCarta[i].tick = 0;
         D_8010B7B0_1CFB60_MagnetCarta[i].sndFwd = -1;
         D_8010B7B0_1CFB60_MagnetCarta[i].sndBack = -1;
-        for (j = 0; j < 19; j++) {
+        for (j = 0; j < 19; j++) { /* 19: wall too */
             D_8010B7B0_1CFB60_MagnetCarta[i].hit[j] = 0;
         }
     }

@@ -1,7 +1,18 @@
 #ifndef _OVL_20_H
 #define _OVL_20_H
 
-/* Overlay 20: Magnet Carta. Written up at the end of the fork. */
+/* Overlay 20: Magnet Carta. Two teams of two (gPlayers[].group, work[3]) in carts with a magnet on
+   the nose, on a round floor (carts held inside radius 459), 30 s (901 frames) or until no piece is
+   left. One big piece (worth 10), four middle (5), five small (1). A cart that noses a free piece
+   within 20 degrees holds it (func_80108AC4_1CCE74_MagnetCarta) and pushes it about; past radius 560 it drops, is
+   thrown (func_801046C8_1C8A78_MagnetCarta: state 1) and scores for the team on that side (trans.x < 0: D_8010DBA8_1D1F58_MagnetCarta,
+   else D_8010DB98_1D1F48_MagnetCarta). A bump stuns (timer 20). Phases D_8010DB80_1D1F30_MagnetCarta: 0 the signal comes down
+   (func_80103B70_1C7F20_MagnetCarta), 1 "ready" (func_80104640_1C89F0_MagnetCarta), 2 play (func_80104490_1C8840_MagnetCarta), 3 and 4 the finish
+   (func_80104360_1C8710_MagnetCarta), 5 fade out (func_8010A91C_1CECCC_MagnetCarta), with func_8010422C_1C85DC_MagnetCarta writing each team's score to
+   gPlayers[].coins_mg. _CheckFlag(0xC) skips the results flow. Same engine as Driver's Ed and
+   Bumper Balloon Cars. Retail is two files: 1C6BB0.c and 1CF7E0.c (the two table clears, from
+   8010B430, 3-nop pad); .data is asm, .rodata is carved from 0x1CFA10 (1C6BB0.c only).
+   N64 offsets are in the comments; structs with pointer fields change size on the host. */
 
 #include "common.h"
 #include "game/object.h"
@@ -40,11 +51,11 @@ typedef struct MCObj {
     /* 0x78 */ u16 target;
     /* 0x7A */ u16 spin;
     /* 0x7C */ u16 cpuWait;
-    /* 0x7E */ u16 unk_7E;
+    /* 0x7E */ u16 unk_7E;  /* COM: frames it keeps its stick */
     /* 0x80 */ s16 lift;
     /* 0x82 */ s16 unk_82;
-    /* 0x84 */ s16 hit;
-    /* 0x86 */ s16 unk_86;
+    /* 0x84 */ s16 hit;    /* bumped this frame */
+    /* 0x86 */ s16 unk_86; /* set to 2 by a bump, never read */
     /* 0x88 */ f32 size;     /* signal: shadow scale; piece: shrink step */
     /* 0x8C */ s32 unk_8C;
     /* 0x90 */ s32 unk_90;
@@ -60,7 +71,7 @@ typedef struct MCCar {
     /* 0x10 */ f32 bounce;
     /* 0x14 */ f32 prevSpeed;
     /* 0x18 */ f32 mass;
-    /* 0x1C */ u16 hit[18];
+    /* 0x1C */ u16 hit[18];   /* touching: 0-13 D_8010BDD0_1D0180_MagnetCarta, 14-17 the posts */
     /* 0x40 */ u16 wall;
     /* 0x42 */ u16 tick;
     /* 0x44 */ s16 sndFwd;
@@ -134,12 +145,12 @@ extern MCObj D_8010BDD0_1D0180_MagnetCarta[50];
 extern s16 D_8010D88C_1D1C3C_MagnetCarta;           /* D_8010BDD0_1D0180_MagnetCarta[45].spr */
 extern u8 D_8010DB80_1D1F30_MagnetCarta;            /* game phase */
 extern s16 D_8010DB82_1D1F32_MagnetCarta[3];        /* signal lamp texture slots */
-extern s8 D_8010DB88_1D1F38_MagnetCarta[17];        /* ring points taken */
+extern s8 D_8010DB88_1D1F38_MagnetCarta[16];        /* ring points taken; func_8010AB44_1CEEF4_MagnetCarta clears 17, the last is D_8010DB98_1D1F48_MagnetCarta */
 extern s8 D_8010DB98_1D1F48_MagnetCarta;            /* score, team 0 */
 extern void* D_8010DB9C_1D1F4C_MagnetCarta[3];
 extern s8 D_8010DBA8_1D1F58_MagnetCarta;            /* score, team 1 */
-extern s8 D_8010DBA9_1D1F59_MagnetCarta;
-extern s8 D_8010DBAB_1D1F5B_MagnetCarta;
+extern s8 D_8010DBA9_1D1F59_MagnetCarta;            /* carts on team 0 */
+extern s8 D_8010DBAB_1D1F5B_MagnetCarta;            /* something moved: run the collision pass again */
 extern u16 D_8010DBAC_1D1F5C_MagnetCarta;           /* the signal's state */
 extern omObjData* D_8010DBB0_1D1F60_MagnetCarta;    /* dust */
 extern s16 D_8010DBB4_1D1F64_MagnetCarta;
@@ -149,7 +160,7 @@ extern s16 D_8010DBB8_1D1F68_MagnetCarta;           /* phase countdown */
 extern s8 D_8010DBBA_1D1F6A_MagnetCarta[2];         /* team 1's starts taken */
 extern s8 D_8010DBBC_1D1F6C_MagnetCarta;            /* score shown, team 1 */
 extern HuSprite_Unk84_Struct* D_8010DBC0_1D1F70_MagnetCarta;
-extern s8 D_8010DBC4_1D1F74_MagnetCarta;
+extern s8 D_8010DBC4_1D1F74_MagnetCarta;            /* carts on team 1 */
 extern omObjData* D_8010DBC8_1D1F78_MagnetCarta;    /* sparks */
 
 extern s16 D_800FA606_FB206;
@@ -159,9 +170,9 @@ extern u16 ContBtn[];
 extern u16 ContBtnTrg[];
 
 /* Main functions. */
-void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026DAC_279AC(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
 void func_80026E00_27A00(s16, f32, f32, f32);
-void func_8003E560_3F160(s16 arg0, u8 arg1);
+void func_8003E560_3F160(s16 arg0, s32 arg1);
 extern u16 D_801011FC_101DFC;
 extern f32 D_800F94A8_FA0A8[];  /* CZoomM */
 extern Vec D_80102770_103370[]; /* CRotM */
