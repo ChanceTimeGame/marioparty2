@@ -84,8 +84,8 @@ typedef struct FRFish {
     /* 0x0C */ Vec vel;
     /* 0x18 */ Vec rot;
     /* 0x24 */ Vec rotVel;
-    /* 0x30 */ s16 flying;
-    /* 0x32 */ char unk_32[0x1E];
+    /* 0x30 */ s32 flying;
+    /* 0x34 */ char unk_34[0x1C];
 } FRFish; /* size = 0x50 */
 
 /* A penguin, omObjData::unk_50, 0x100 bytes. */
@@ -97,7 +97,7 @@ typedef struct FRPlayer {
     /* 0x06 */ s8 team;
     /* 0x07 */ s8 order; /* -1 the solo player, else 0-2 along the relay */
     /* 0x08 */ s8 cam;
-    /* 0x09 */ s8 character;
+    /* 0x09 */ u8 character;
     /* 0x0C */ Vec pos;
     /* 0x18 */ Vec next;
     /* 0x24 */ Vec vel;
@@ -109,7 +109,7 @@ typedef struct FRPlayer {
     /* 0x5C */ f32 radius;
     /* 0x60 */ s16 unk_60; /* -1, never read */
     /* 0x62 */ s16 state;  /* index in D_80109364 */
-    /* 0x64 */ s16 motion;
+    /* 0x64 */ s32 motion;
     /* 0x68 */ f32 step;   /* walked distance, for the footsteps */
     /* 0x6C */ FRMotion motions[12];
     /* 0xCC */ s16 unk_CC;
@@ -132,10 +132,10 @@ typedef struct FRPlayer {
 
 /* CPU difficulty. */
 typedef struct FRCpu {
-    /* 0x0 */ u8 hold;   /* frames between A presses */
+    /* 0x0 */ s8 hold;   /* frames between A presses */
     /* 0x1 */ s8 stick;
     /* 0x2 */ u8 unk_02;
-    /* 0x3 */ u8 chance; /* out of 10 no steering, out of 25 press A anyway */
+    /* 0x3 */ s8 chance; /* out of 10 no steering, out of 25 press A anyway */
     /* 0x4 */ f32 speed;
     /* 0x8 */ f32 margin;
 } FRCpu; /* size = 0xC */
@@ -359,9 +359,9 @@ typedef struct FRObjs {
 extern FRObjs D_80109670_181420_FiletRelay; /* the thirty level objects */
 extern s16 D_80109674_181424_FiletRelay[2];      /* the score sprite */
 extern s32 D_80109678_181428_FiletRelay[2];      /* the ray test's face list */
-extern omObjData** D_80109680_181430_FiletRelay; /* the four penguins */
+extern FRObjs D_80109680_181430_FiletRelay;      /* the four penguins */
 extern s16 D_80109684_181434_FiletRelay[4];      /* their map sprites */
-extern omObjData** D_8010968C_18143C_FiletRelay; /* the two fish */
+extern FRObjs D_8010968C_18143C_FiletRelay;      /* the two fish */
 extern s32 D_80109690_181440_FiletRelay;         /* which D_80109250 order */
 extern s32 D_80109694_181444_FiletRelay;         /* relay penguins so far */
 extern FRGame D_801096A0_181450_FiletRelay;
@@ -406,7 +406,7 @@ void func_80104578_17C328_FiletRelay(s32 i);
 void func_801045C8_17C378_FiletRelay(omObjData* obj);
 s32 func_8010474C_17C4FC_FiletRelay(omObjData* obj, s32 motion);
 s32 func_8010483C_17C5EC_FiletRelay(omObjData* obj);
-f32 func_801048F8_17C6A8_FiletRelay(omObjData* obj, f32 speed);
+void func_801048F8_17C6A8_FiletRelay(omObjData* obj, f32 speed);
 FRPlayer* func_80104930_17C6E0_FiletRelay(s16 player);
 FRPlayer* func_801049AC_17C75C_FiletRelay(s8 order);
 FRPlayer* func_801049FC_17C7AC_FiletRelay(FRPlayer* w);
@@ -424,7 +424,7 @@ void func_801060A4_17DE54_FiletRelay(omObjData* obj, FRPlayer* w);
 void func_801060D4_17DE84_FiletRelay(omObjData* obj, FRPlayer* w);
 void func_80106314_17E0C4_FiletRelay(omObjData* obj, FRPlayer* w);
 void func_80106A2C_17E7DC_FiletRelay(omObjData* obj);
-void func_80106AD8_17E888_FiletRelay(omObjData* obj, s16 player);
+void func_80106AD8_17E888_FiletRelay(omObjData* obj, s32 player);
 void func_80106F38_17ECE8_FiletRelay(void);
 void func_80107018_17EDC8_FiletRelay(void);
 void func_8010707C_17EE2C_FiletRelay(void);
