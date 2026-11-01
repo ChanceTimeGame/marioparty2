@@ -2,11 +2,41 @@
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80102800_205BA0_PlatformPeril);
 
+__asm__(".section .rodata");
+const u32 D_801091E0_20C580_PlatformPeril[5] = { 0x43480000, 0x42A00000, 0x42F00000, 0x43340000, 0x43660000 };
+
+__asm__(".section .rodata");
+const u32 D_801091F4_20C594_PlatformPeril[5] = { 0x42C80000, 0x42700000, 0x43340000, 0x435C0000, 0x41F00000 };
+
+__asm__(".section .rodata");
+const u32 D_80109208_20C5A8_PlatformPeril[5] = { 0x3DA3D70A, 0x3DA3D70A, 0x3DA3D70A, 0x3DA3D70A, 0x3DA3D70A };
+
+__asm__(".section .rodata");
+const u32 D_8010921C_20C5BC_PlatformPeril[5] = { 0x40C00000, 0x40C00000, 0x40C00000, 0x40C00000, 0x40C00000 };
+
+__asm__(".section .rodata");
+const u32 D_80109230_20C5D0_PlatformPeril[5] = { 0x40400000, 0x40000000, 0x3F800000, 0x40200000, 0x3FC00000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_8010281C_205BBC_PlatformPeril);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80102970_205D10_PlatformPeril);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80102CC8_206068_PlatformPeril);
+
+__asm__(".section .rodata");
+const u32 D_80109244_20C5E4_PlatformPeril[5] = { 0x0000000D, 0x0000000E, 0x0000000F, 0x0000000D, 0x0000000E };
+
+__asm__(".section .rodata");
+const u32 D_80109258_20C5F8_PlatformPeril[3] = { 0x00E60096, 0x004600C8, 0x00640000 };
+
+__asm__(".section .rodata");
+const u32 D_80109264_20C604_PlatformPeril[3] = { 0x0000000A, 0x00140005, 0x000F0000 };
+
+__asm__(".section .rodata");
+const u32 D_80109270_20C610_PlatformPeril[5] = { 0x43400000, 0x43200000, 0x43000000, 0x43400000, 0x43200000 };
+
+__asm__(".section .rodata");
+const u32 D_80109284_20C624_PlatformPeril[5] = { 0x43000000, 0x42C00000, 0x42800000, 0x43000000, 0x42C00000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80102DC8_206168_PlatformPeril);
 
@@ -29,6 +59,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80103E
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80104070_207410_PlatformPeril);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_801041EC_20758C_PlatformPeril);
+
+__asm__(".section .rodata");
+const u32 D_801092D0_20C670_PlatformPeril[6] = { 0xC37A0000, 0x437A0000, 0xC37A0000, 0x437A0000, 0xC37A0000, 0x437A0000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_801043DC_20777C_PlatformPeril);
 
@@ -74,6 +107,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_801069
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80106B24_209EC4_PlatformPeril);
 
+__asm__(".section .rodata");
+const u32 D_80109318_20C6B8_PlatformPeril[4] = { 0xC3960000, 0xC2C80000, 0x42C80000, 0x43960000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80106CBC_20A05C_PlatformPeril);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80106FEC_20A38C_PlatformPeril);
@@ -95,6 +131,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_801078
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_8010796C_20AD0C_PlatformPeril);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80107DA0_20B140_PlatformPeril);
+
+__asm__(".section .rodata");
+const char D_80109378_20C718_PlatformPeril[] = "\202r\202s\202`\202q\202s";
+
+__asm__(".section .rodata");
+const char D_80109384_20C724_PlatformPeril[] = "\202e\202h\202m\202h\202r\202g";
+
+__asm__(".section .rodata");
+const char D_80109394_20C734_PlatformPeril[] = "\202c\202q\202`\202v";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80107EEC_20B28C_PlatformPeril);
 
