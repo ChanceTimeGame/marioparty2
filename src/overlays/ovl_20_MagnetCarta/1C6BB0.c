@@ -942,7 +942,123 @@ void func_801057D4_1C9B84_MagnetCarta(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801057D4_1C9B84_MagnetCarta);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80105E28_1CA1D8_MagnetCarta);
+void func_80105E28_1CA1D8_MagnetCarta(omObjData* obj) {
+    MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
+    Vec from;
+    Vec to;
+    Vec out;
+    omObjData* o;
+    s16 turn = 0;
+
+    if (D_8010B7B0_1CFB60_MagnetCarta[obj->work[0]].speed == 0.0f) {
+        if (ContStkX[gPlayers[obj->work[0]].port] > 0.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y - 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y - 6.0f);
+            }
+            turn = 2;
+        } else if (ContStkX[gPlayers[obj->work[0]].port] < 0.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y + 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 6.0f);
+            }
+            turn = 1;
+        }
+    } else {
+        from.x = 0.0f;
+        from.y = 0.0f;
+        from.z = 0.0f;
+        to.x = ContStkX[gPlayers[obj->work[0]].port];
+        to.y = 0.0f;
+        to.z = ContStkY[gPlayers[obj->work[0]].port];
+        func_8010B0A8_1CF458_MagnetCarta(&from, &to, &out);
+        if (out.z > 30.0f && out.z < 84.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y - 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y - 6.0f);
+            }
+            turn = 2;
+        } else if (out.z > 276.0f && out.z < 330.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y + 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 6.0f);
+            }
+            turn = 1;
+        } else if (out.z > 96.0f && out.z < 150.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y + 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 6.0f);
+            }
+            turn = 1;
+        } else if (out.z > 210.0f && out.z < 264.0f) {
+            obj->rot.y = MC_WRAP(obj->rot.y - 6.0f);
+            if (p->attached == 1) {
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y - 6.0f);
+            }
+            turn = 2;
+        }
+    }
+    if (turn != 0) {
+        switch (p->target) {
+        case 4:
+            if (turn == 1) {
+                if (p->attached == 1) {
+                    obj->rot.y = MC_WRAP(obj->rot.y - 3.5f);
+                    o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                    o->rot.y = MC_WRAP(o->rot.y - 3.5f);
+                }
+            } else if (p->attached == 1) {
+                obj->rot.y = MC_WRAP(obj->rot.y + 3.5f);
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 3.5f);
+            }
+            break;
+        case 5:
+        case 6:
+        case 7:
+            if (turn == 1) {
+                if (p->attached == 1) {
+                    obj->rot.y = MC_WRAP(obj->rot.y - 2.5f);
+                    o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                    o->rot.y = MC_WRAP(o->rot.y - 2.5f);
+                }
+            } else if (p->attached == 1) {
+                obj->rot.y = MC_WRAP(obj->rot.y + 2.5f);
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 2.5f);
+            }
+            break;
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+            if (turn == 1) {
+                if (p->attached == 1) {
+                    obj->rot.y = MC_WRAP(obj->rot.y - 1.0f);
+                    o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                    o->rot.y = MC_WRAP(o->rot.y - 1.0f);
+                }
+            } else if (p->attached == 1) {
+                obj->rot.y = MC_WRAP(obj->rot.y + 1.0f);
+                o = D_8010BDD0_1D0180_MagnetCarta[p->target].obj;
+                o->rot.y = MC_WRAP(o->rot.y + 1.0f);
+            }
+            break;
+        }
+    }
+}
 
 void func_80106BE0_1CAF90_MagnetCarta(omObjData* obj) {
     MCObj* p = &D_8010BDD0_1D0180_MagnetCarta[obj->work[0]];
