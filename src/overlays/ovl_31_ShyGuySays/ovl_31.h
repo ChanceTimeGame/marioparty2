@@ -75,6 +75,15 @@ typedef struct SGSSound {
     /* 0x04 */ s16 player; /* < 0: a plain sound */
 } SGSSound; /* size = 6 */
 
+/* The Shy Guy (MP1 D_800FDC28, which had no cannon). */
+typedef struct SGSHost {
+    /* 0x00 */ u32 left; /* flags: 1 down, 2 up */
+    /* 0x04 */ u32 right;
+    /* 0x08 */ u32 unk_08;
+    /* 0x0C */ u32 hold; /* frames until a feint's hold ends */
+    /* 0x10 */ u32 cannon; /* 0 none, 1-4 the cannon coming round */
+} SGSHost;
+
 /* The homing shot (0x38). */
 typedef struct SGSShot {
     /* 0x00 */ omObjData* target;
@@ -85,9 +94,8 @@ typedef struct SGSShot {
     /* 0x1C */ Vec vel;
     /* 0x28 */ f32 speed;
     /* 0x2C */ f32 radius;
-    /* 0x30 */ s16 model;
-    /* 0x32 */ s16 mdl;
-    /* 0x34 */ f32 spin;
+    /* 0x30 */ s32 mdl;
+    /* 0x34 */ s32 spin;
 } SGSShot; /* size = 0x38 */
 
 /* The background sprites that breathe (0x14). */
@@ -140,8 +148,8 @@ void func_8007273C_7333C(const u8* arg0, u8 arg1);
 void* HuMemAlloc(s32 size);
 void HuMemFree(void* arg0);
 void* func_80027154_27D54(s32 size, s16 arg1);
-s16 func_80027D3C_2893C(s16 linkMdlId);
-s16 func_80027FA4_28BA4(u32 arg0, void* arg1, u8 arg2);
+s32 func_80027D3C_2893C(s16 linkMdlId); /* main: s16; retail takes a word */
+s32 func_80027FA4_28BA4(u32 arg0, void* arg1, u8 arg2); /* main: s16; retail takes a word */
 u16 func_80018A30_19630(s32 arg0, s32 arg1);
 s16 func_80018ACC_196CC(s32 arg0);
 s16 func_8001F4AC_200AC(u8* arg0);
@@ -199,7 +207,7 @@ extern u32 D_80109DB0_24D6C0_ShyGuySays; /* the random seed; retail also reads i
 extern u16 D_80109DB4_24D6C4_ShyGuySays; /* main process phase */
 extern s16 D_80109DB6_24D6C6_ShyGuySays; /* result phase */
 extern s16 D_80109DB8_24D6C8_ShyGuySays;
-extern u16 D_80109DBA_24D6CA_ShyGuySays; /* camera move on */
+extern s16 D_80109DBA_24D6CA_ShyGuySays; /* camera move on */
 extern s16 D_80109DBC_24D6CC_ShyGuySays; /* camera move frame */
 extern s16 D_80109DBE_24D6CE_ShyGuySays; /* 1P result phase */
 extern s16 D_80109DC0_24D6D0_ShyGuySays;
@@ -236,7 +244,7 @@ extern omObjData* D_8010A578_24DE88_ShyGuySays; /* the main object */
 extern s32 D_8010A57C_24DE8C_ShyGuySays; /* state timer */
 extern s32 D_8010A580_24DE90_ShyGuySays; /* time bar */
 extern s32 D_8010A584_24DE94_ShyGuySays; /* 1 intro, 2 play, 3 end */
-extern s16 D_8010A588_24DE98_ShyGuySays; /* players left */
+extern u16 D_8010A588_24DE98_ShyGuySays; /* players left */
 extern s16 D_8010A58A_24DE9A_ShyGuySays;
 extern s16 D_8010A58C_24DE9C_ShyGuySays; /* round */
 extern SGSVoice D_8010A590_24DEA0_ShyGuySays[4];
@@ -246,9 +254,7 @@ extern s16 D_8010A87A_24E18A_ShyGuySays; /* result shown */
 extern s16 D_8010A87C_24E18C_ShyGuySays; /* 1P rule */
 extern s16 D_8010A87E_24E18E_ShyGuySays; /* the human */
 extern omObjData* D_8010A880_24E190_ShyGuySays; /* the Shy Guy */
-extern u32 D_8010A888_24E198_ShyGuySays[3]; /* left and right flag: 1 down, 2 up; [2] set in the set-up */
-extern u32 D_8010A894_24E1A4_ShyGuySays;
-extern s32 D_8010A898_24E1A8_ShyGuySays; /* cannon state, 0 none */
+extern SGSHost D_8010A888_24E198_ShyGuySays;
 extern SGSMot D_8010A8A0_24E1B0_ShyGuySays[7];
 extern s32 D_8010A8BC_24E1CC_ShyGuySays; /* game state */
 extern s16 D_8010A8C0_24E1D0_ShyGuySays[2];
@@ -261,7 +267,7 @@ extern SGSFx D_8010A8D8_24E1E8_ShyGuySays[16];
 extern SGSSound D_8010AA18_24E328_ShyGuySays[10];
 extern SGSShot D_8010AA58_24E368_ShyGuySays[4];
 extern SGSBack D_8010AB38_24E448_ShyGuySays[3];
-extern s16 D_8010AB74_24E484_ShyGuySays;
+extern s32 D_8010AB74_24E484_ShyGuySays;
 
 /* ---- overlay functions ---- */
 void func_80079E60_7AA60(void);
@@ -290,7 +296,7 @@ s32 func_80103B28_247438_ShyGuySays(s16 model);
 void func_80103BC0_2474D0_ShyGuySays(s16 model, omObjData* obj);
 void func_80103C2C_24753C_ShyGuySays(omObjData* obj, SGSPlayer* p, u16 i, s32 file);
 void func_80103CC4_2475D4_ShyGuySays(s16 dst, s16 src, s32 a, s32 b);
-s16 func_80103EB0_2477C0_ShyGuySays(s16 model, char* name);
+s32 func_80103EB0_2477C0_ShyGuySays(s16 model, char* name);
 void func_80103FC0_2478D0_ShyGuySays(void);
 void func_801040CC_2479DC_ShyGuySays(omObjData* obj);
 void func_80104564_247E74_ShyGuySays(omObjData* obj);
@@ -303,7 +309,7 @@ s16 func_80105348_248C58_ShyGuySays(void);
 s16 func_801053C8_248CD8_ShyGuySays(void);
 void func_801054AC_248DBC_ShyGuySays(void);
 s16 func_801055D0_248EE0_ShyGuySays(void);
-s16 func_8010568C_248F9C_ShyGuySays(u16 i, s16 answer);
+s16 func_8010568C_248F9C_ShyGuySays(s32 i, s16 answer);
 void func_80105740_249050_ShyGuySays(u16 i);
 void func_80105844_249154_ShyGuySays(u16* out);
 void func_80105908_249218_ShyGuySays(s16 rank);
@@ -314,7 +320,7 @@ void func_80105B70_249480_ShyGuySays(omObjData* obj);
 void func_80105E50_249760_ShyGuySays(omObjData* obj);
 void func_80106130_249A40_ShyGuySays(omObjData* obj);
 void func_80106250_249B60_ShyGuySays(void);
-u16 func_80106258_249B68_ShyGuySays(s32 file);
+s32 func_80106258_249B68_ShyGuySays(s32 file);
 void func_8010629C_249BAC_ShyGuySays(void);
 void func_801063B4_249CC4_ShyGuySays(void);
 s16 func_801064B0_249DC0_ShyGuySays(f32 x, f32 y, f32 z, s16 anim, u16 flags, u16 time);
@@ -334,8 +340,8 @@ void func_80108DCC_24C6DC_ShyGuySays(omObjData* target, f32 x, f32 y, f32 z);
 s32 func_80108FD4_24C8E4_ShyGuySays(omObjData* target, SGSShot* s);
 f32 func_80109170_24CA80_ShyGuySays(Vec* in, Vec* out);
 s32 func_8010924C_24CB5C_ShyGuySays(void);
-s32 func_80109280_24CB90_ShyGuySays(u16 i);
+s32 func_80109280_24CB90_ShyGuySays(s32 i);
 s32 func_801092C8_24CBD8_ShyGuySays(HuSprite_Unk84_Struct* spr, s32 kind);
-s32 func_801099BC_24D2CC_ShyGuySays(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, u16 x, u16 y);
+s32 func_801099BC_24D2CC_ShyGuySays(HuSprite_Unk84_Struct* spr, HmfData* hmf, f32 scale, s16 x, s16 y);
 
 #endif
