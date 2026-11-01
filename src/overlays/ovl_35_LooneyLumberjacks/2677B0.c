@@ -204,7 +204,7 @@ void func_80103078_268028_LooneyLumberjacks(omObjData* obj) {
     }
 }
 
-// register allocation (masked 8)
+// register allocation (masked 8), class 4
 #ifdef NON_MATCHING
 void func_80103120_2680D0_LooneyLumberjacks(void) {
     s32 i;
@@ -440,7 +440,7 @@ void func_801040C4_269074_LooneyLumberjacks(f32 cx, f32 cy, f32 cz, f32 rx, f32 
     }
 }
 
-// register allocation (masked 8)
+// register allocation (masked 8), class 4
 #ifdef NON_MATCHING
 void func_801042B4_269264_LooneyLumberjacks(s32 idx) {
     HuCamera* cam;
@@ -632,7 +632,7 @@ void func_80104B5C_269B0C_LooneyLumberjacks(omObjData* obj) {
     D_8010A728_26F6D8_LooneyLumberjacks--;
 }
 
-// register allocation (masked 48)
+// register allocation and a hoisted address (masked 48), class 4
 #ifdef NON_MATCHING
 void func_80104C48_269BF8_LooneyLumberjacks(void) {
     s32 n0;
@@ -773,7 +773,7 @@ void func_80104C48_269BF8_LooneyLumberjacks(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80104C48_269BF8_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 92)
+// register allocation, in[i] index CSE (masked 92), class 4
 #ifdef NON_MATCHING
 void func_801053C8_26A378_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
@@ -971,7 +971,7 @@ void func_801053C8_26A378_LooneyLumberjacks(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801053C8_26A378_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 7)
+// register allocation (masked 7), class 4
 #ifdef NON_MATCHING
 void func_80105EB0_26AE60_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
@@ -1058,7 +1058,7 @@ void func_80105EB0_26AE60_LooneyLumberjacks(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80105EB0_26AE60_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 47)
+// register allocation (masked 23), class 4
 #ifdef NON_MATCHING
 void func_80106288_26B238_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
@@ -1171,8 +1171,7 @@ void func_80106288_26B238_LooneyLumberjacks(omObjData* obj) {
             }
             return;
         case 0:
-            tm->pos.y = 0.0f;
-            obj->trans.y = 0.0f;
+            obj->trans.y = tm->pos.y = 0.0f;
             if (D_8010A688_26F638_LooneyLumberjacks[1] > 0.0) {
                 tm->unk40 = t->pos;
             } else {
@@ -1214,8 +1213,7 @@ void func_80106288_26B238_LooneyLumberjacks(omObjData* obj) {
             }
             return;
         default:
-            tm->pos.y = -80.0f;
-            obj->trans.y = -80.0f;
+            obj->trans.y = tm->pos.y = -80.0f;
             if (D_8010A688_26F638_LooneyLumberjacks[1] > 0.0) {
                 tm->unk40 = t->pos;
             } else {
@@ -1402,7 +1400,7 @@ void func_8010730C_26C2BC_LooneyLumberjacks(void) {
     }
 }
 
-// register allocation (masked 34)
+// register allocation (masked 34), class 4
 #ifdef NON_MATCHING
 void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
     LLTree* tree;
@@ -1623,7 +1621,7 @@ void func_80107F24_26CED4_LooneyLumberjacks(omObjData* obj) {
     }
 }
 
-// register allocation (masked 5)
+// register allocation (masked 5), class 4
 #ifdef NON_MATCHING
 s32 func_80107FE8_26CF98_LooneyLumberjacks(s32 anim, Vec* pos, Vec* vel) {
     LLFx* fx;
@@ -1667,7 +1665,7 @@ s32 func_80107FE8_26CF98_LooneyLumberjacks(s32 anim, Vec* pos, Vec* vel) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80107FE8_26CF98_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 6)
+// register allocation (masked 6), class 4
 #ifdef NON_MATCHING
 void func_8010815C_26D10C_LooneyLumberjacks(Vec* pos, s32 kind) {
     Vec p;
@@ -1697,7 +1695,7 @@ void func_8010815C_26D10C_LooneyLumberjacks(Vec* pos, s32 kind) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_8010815C_26D10C_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 6)
+// register allocation (masked 6), class 4
 #ifdef NON_MATCHING
 void func_801082E8_26D298_LooneyLumberjacks(void) {
     omObjData* obj;
@@ -1721,7 +1719,7 @@ void func_801082E8_26D298_LooneyLumberjacks(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801082E8_26D298_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 10)
+// register allocation (masked 10), class 4
 #ifdef NON_MATCHING
 void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
     HuSprite_Unk84_Struct* spr;
@@ -1748,7 +1746,7 @@ void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80108418_26D3C8_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 2)
+// register allocation (masked 2), class 4
 #ifdef NON_MATCHING
 s16 func_80108550_26D500_LooneyLumberjacks(Vec* pos, Vec* rot, Vec* scale) {
     HuSprite_Unk84_Struct* spr;
@@ -1815,7 +1813,7 @@ void func_801088FC_26D8AC_LooneyLumberjacks(f32* a, f32* b, f32* out, f32 t) {
     }
 }
 
-// register allocation (raw 2, masked 0)
+// register allocation (raw 2, masked 0), class 4
 #ifdef NON_MATCHING
 f32 func_80108944_26D8F4_LooneyLumberjacks(f32 target, f32 cur, f32 step) {
     f64 d;
@@ -2114,7 +2112,7 @@ s32 func_80109D94_26ED44_LooneyLumberjacks(HuSprite_Unk84_Struct* spr, u16 src, 
     return mdl;
 }
 
-// register allocation (masked 6)
+// register allocation (masked 6), class 4
 #ifdef NON_MATCHING
 void func_8010A014_26EFC4_LooneyLumberjacks(u16 mdl, HuSprite_Unk84_Struct* spr, u16 frame, f32 alpha) {
     HmfData* hmf;
