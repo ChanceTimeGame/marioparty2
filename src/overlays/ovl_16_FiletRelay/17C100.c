@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_16.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17C100", func_80104350_17C100_FiletRelay);
 

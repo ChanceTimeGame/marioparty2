@@ -715,6 +715,9 @@ $(S41AA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-3B: ovl_3B 28B620.c has the KMC VR4300 mul fix (func_801063CC: a nop before mul.d at a branch target)
 S43B_MULFIX_UNITS := build/src/overlays/ovl_3B_DestructionDuet/28B620.c.o
 $(S43B_MULFIX_UNITS): export VR4300MUL := ON
+# S4-16: ovl_16 17EFA0.c has the KMC VR4300 mul fix (func_80107C4C: a nop between back-to-back mul.s)
+S416_MULFIX_UNITS := build/src/overlays/ovl_16_FiletRelay/17EFA0.c.o
+$(S416_MULFIX_UNITS): export VR4300MUL := ON
 # S4-1D: ovl_1D 1B49A0.c has the KMC VR4300 mul fix (func_8010308C: a nop between back-to-back mul.s)
 S41D_MULFIX_UNITS := build/src/overlays/ovl_1D_SpeedHockey/1B49A0.c.o
 $(S41D_MULFIX_UNITS): export VR4300MUL := ON
