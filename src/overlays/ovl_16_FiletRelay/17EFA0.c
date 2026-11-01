@@ -1,5 +1,23 @@
 #include "ovl_16.h"
 
+/* .data (0x181170-0x181210, 801093C0-80109460) */
+f32 D_801093C0_181170_FiletRelay = 700.0f;
+FRCamDef D_801093C4_181174_FiletRelay[2] = {
+    { { -30.0f, -60.0f, 1310.0f }, { -30.0f, 0.0f, 0.0f }, { 320, 480, 320, 480 }, { 0, 0, 160, 240 } },
+    { { 30.0f, -60.0f, 1310.0f }, { -30.0f, 0.0f, 0.0f }, { 288, 448, 960, 480 }, { 160, 0, 320, 240 } },
+};
+FRLight D_80109414_1811C4_FiletRelay[2] = {
+    { { 0xFF, 0xFF, 0xFF }, { 100.0f, 100.0f, 50.0f } },
+    { { 0x80, 0xFF, 0x80 }, { 100.0f, 100.0f, 50.0f } },
+};
+void (*D_80109434_1811E4_FiletRelay[5])(omObjData*) = {
+    func_801074D0_17F280_FiletRelay, func_801075BC_17F36C_FiletRelay, func_80107618_17F3C8_FiletRelay,
+    func_801076EC_17F49C_FiletRelay, func_80107A3C_17F7EC_FiletRelay,
+};
+void (*D_80109448_1811F8_FiletRelay[6])(FRCam*) = {
+    NULL, NULL, func_80107C44_17F9F4_FiletRelay, NULL, NULL, NULL,
+};
+
 void func_801071F0_17EFA0_FiletRelay(void) {
     D_801096A0_181450_FiletRelay.state = 0;
     D_801096A0_181450_FiletRelay.next = 0;

@@ -395,3 +395,11 @@ D_80108074_1F6DB4_MechaMarathon = D_80108068_1F6DA8_MechaMarathon + 0xC;
 D_80108B18_238468_SkateboardScamper = D_80108B14_238464_SkateboardScamper + 0x4;
 D_80108B1C_23846C_SkateboardScamper = D_80108B14_238464_SkateboardScamper + 0x8;
 D_80108C24_238574_SkateboardScamper = D_80108C08_238558_SkateboardScamper + 0x1C;
+/* S4-16D: labels inside ovl_16's .data that retail addresses by their own address */
+D_80108C94_180A44_FiletRelay = D_80108C70_180A20_FiletRelay + 0x24;
+D_80109122_180ED2_FiletRelay = D_80109120_180ED0_FiletRelay + 0x2;
+D_80109124_180ED4_FiletRelay = D_80109120_180ED0_FiletRelay + 0x4;
+D_80109128_180ED8_FiletRelay = D_80109120_180ED0_FiletRelay + 0x8;
+D_8010912C_180EDC_FiletRelay = D_80109120_180ED0_FiletRelay + 0xC;
+D_80109268_181018_FiletRelay = D_80109264_181014_FiletRelay + 0x4;
+D_80109270_181020_FiletRelay = D_80109264_181014_FiletRelay + 0xC;
