@@ -128,6 +128,9 @@ extern s32 D_801086CC_1217DC_BumperBalloonCars;
 extern s16 D_801086D0_1217E0_BumperBalloonCars;          /* the first frames everybody jostles */
 extern u16 D_801086D2_1217E2_BumperBalloonCars;          /* game phase */
 extern BBCObj D_801086E0_1217F0_BumperBalloonCars[50];
+/* Fields retail addresses by their own labels. */
+extern s16 D_8010865E_12176E_BumperBalloonCars;          /* D_80108658_121768_BumperBalloonCars[3] */
+extern s16 D_80108CD4_121DE4_BumperBalloonCars;          /* D_801086E0_1217F0_BumperBalloonCars[10].spr */
 extern BBCCar D_8010A490_1235A0_BumperBalloonCars[4];
 extern s16 D_8010A580_123690_BumperBalloonCars[4];       /* corner taken */
 extern u16 D_8010A588_123698_BumperBalloonCars;          /* the signal's state */
@@ -272,7 +275,7 @@ void func_8000BEA4_CAA4(omObjData*, f32);
 void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1);
 void func_8000C018_CC18(u16);
 void func_80018F58_19B58(s32);
-s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**), u8 arg2);
+s32 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**), u8 arg2); /* main returns s16; retail does not extend it */
 void func_80029EDC_2AADC(s16 arg0, u8 arg1);
 void func_80079FF4_7ABF4(omObjData* object);
 void* func_800B0EF0_B1AF0(void* arg0, u8 arg1, u32 size);
