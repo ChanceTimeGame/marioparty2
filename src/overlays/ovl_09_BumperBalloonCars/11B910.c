@@ -337,7 +337,6 @@ void func_80103A10_11CB20_BumperBalloonCars(omObjData* obj) {
     }
 }
 
-/* Coins: the last car standing gets 3; the placings of the rest go by when they popped. */
 void func_80103AC8_11CBD8_BumperBalloonCars(void) {
     BBCObj* p;
     omObjData* o;
@@ -360,7 +359,7 @@ void func_80103AC8_11CBD8_BumperBalloonCars(void) {
     }
 }
 
-/* The race: 30 s (0x385 / 30), or until three are out. */
+/* Play: 30 s (901 frames), or until three are out. */
 void func_80103BDC_11CCEC_BumperBalloonCars(omObjData* obj) {
     BBCObj* p;
     s16 i;
@@ -733,18 +732,18 @@ void func_80105090_11E1A0_BumperBalloonCars(BBCObj* p) {
     omObjData* t;
     Vec from;
     Vec to;
-    Vec res;
+    Vec res; /* the last car looked at: retail steers by it, not by the nearest */
     Vec front;
     Vec side;
     s16 i;
-    s16 s4;
-    s16 s5;
+    s16 iFront;
+    s16 iSide;
     u8 r;
 
-    s5 = 5;
+    iSide = 5;
     ContBtn[gPlayers[o->work[0]].port] = 0;
     ContBtnTrg[gPlayers[o->work[0]].port] = 0;
-    s4 = 5;
+    iFront = 5;
     if (p->cpuHold != 0 && p->stun == 0 && p->cpuWait == 0) {
         ContStkX[gPlayers[o->work[0]].port] = D_80108634_121744_BumperBalloonCars[o->work[0]];
         ContStkY[gPlayers[o->work[0]].port] = D_80108630_121740_BumperBalloonCars[o->work[0]];
@@ -779,13 +778,13 @@ void func_80105090_11E1A0_BumperBalloonCars(BBCObj* p) {
                     front.x = res.x;
                     front.z = res.z;
                     front.y = res.y;
-                    s4 = i;
+                    iFront = i;
                 }
             } else if (res.x < side.x) {
                 side.x = res.x;
                 side.z = res.z;
                 side.y = res.y;
-                s5 = i;
+                iSide = i;
             }
         }
     }
@@ -811,7 +810,7 @@ void func_80105090_11E1A0_BumperBalloonCars(BBCObj* p) {
         p->cpuHit = 0;
         return;
     }
-    if (s4 != 5) {
+    if (iFront != 5) {
         if (p->cpuHold == 0) {
             ContStkY[gPlayers[o->work[0]].port] = 70;
             D_80108630_121740_BumperBalloonCars[o->work[0]] = ContStkY[gPlayers[o->work[0]].port];
@@ -837,7 +836,7 @@ void func_80105090_11E1A0_BumperBalloonCars(BBCObj* p) {
             D_80108634_121744_BumperBalloonCars[o->work[0]] = 0;
             ContStkX[gPlayers[o->work[0]].port] = 0;
         }
-    } else if (s5 != 5) {
+    } else if (iSide != 5) {
         if (p->cpuHold == 0) {
             r = rand8() % 10;
             if (r < car->cpuRand >> 1) {
@@ -1324,7 +1323,6 @@ void func_801070EC_1201FC_BumperBalloonCars(void) {
     }
 }
 
-/* A bumper in a balloon: the car behind loses air; every car hit in a frame is placed at random. */
 void func_8010765C_12076C_BumperBalloonCars(void) {
     Vec from;
     Vec to;

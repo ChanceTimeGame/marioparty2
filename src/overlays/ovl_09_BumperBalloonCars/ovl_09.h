@@ -2,10 +2,14 @@
 #define _OVL_09_H
 
 /* Overlay 09: Bumper Balloon Cars. 4P free-for-all on a round rink (radius 460, cars kept inside
-   459): each car drags a balloon behind it, and a car rammed from the front loses air, three hits
-   and it lifts off. Same engine as Driver's Ed (ovl_33): the signal, dust and cart tables. Retail
-   files 11B910.c and 121510.c (from 80108400, 16-aligned, no pad); .data is asm, .rodata
-   is carved from 0x121680 (11B910.c only).
+   459), split-free. Each car tows a balloon on its tail; a nose into it pops the balloon and the car
+   spins off and flies away (func_8010765C_12076C_BumperBalloonCars). A plain bump only stuns. Same engine as Driver's Ed
+   (ovl_33): the signal, the dust and the D_801086E0_1217F0_BumperBalloonCars table. Phases D_801086D2_1217E2_BumperBalloonCars: 0 the signal comes
+   down (func_80103300_11C410_BumperBalloonCars), 1 "ready" (func_80103DB0_11CEC0_BumperBalloonCars), 2 play (func_80103BDC_11CCEC_BumperBalloonCars: 30 s, or until three are
+   out), 3 and 4 the finish (func_80103A10_11CB20_BumperBalloonCars), 5 fade out and omOvlReturnEx(1). The result goes to
+   gPlayers[].coins_mg_bonus as a placing, 0 first (func_80103AC8_11CBD8_BumperBalloonCars), not as coins. Retail is two
+   files: 11B910.c and 121510.c (the two table clears, from 80108400, 16-aligned so no pad);
+   .data is asm, .rodata is carved from 0x121680 (11B910.c only).
    N64 offsets are in the comments; structs with pointer fields change size on the host. */
 
 #include "common.h"
@@ -22,7 +26,7 @@
 #define BBC_WRAP(a) ((a) >= 360.0f ? (a) - 360.0f : (a) < 0.0f ? (a) + 360.0f : (a))
 
 /* One entry of D_801086E0_1217F0_BumperBalloonCars[50] (cleared by func_80108400_121510_BumperBalloonCars). 0-3 the cars, 5 the signal, 10 the
-   arena, 15 the screen backdrop. Same layout as Driver's Ed's DEObj. */
+   arena, 15 the banner. Same layout as Driver's Ed's DEObj. */
 typedef struct BBCObj {
     /* 0x00 */ omObjData* obj;
     /* 0x04 */ s16 spr;
@@ -37,8 +41,8 @@ typedef struct BBCObj {
     /* 0x24 */ s32 unk_24[2];
     /* 0x2C */ s32 unk_2C;
     /* 0x30 */ s32 unk_30[4][4];
-    /* 0x70 */ u16 stun;     /* frames left of a bump */
-    /* 0x72 */ u16 out;      /* signal: blinks; car: popped */
+    /* 0x70 */ u16 stun;     /* signal: frame count; car: frames left of a bump */
+    /* 0x72 */ u16 out;      /* signal: bob direction; car: popped */
     /* 0x74 */ u16 dust;     /* dust cadence while driving */
     /* 0x76 */ u16 gone;     /* flown away */
     /* 0x78 */ u16 shadow;   /* the shadow's shrink timer */
@@ -66,7 +70,7 @@ typedef struct BBCCar {
     /* 0x18 */ u16 hit[4];   /* touching this car */
     /* 0x20 */ u16 wall;     /* touching the rail */
     /* 0x22 */ u16 tick;
-    /* 0x24 */ u16 hits;     /* air lost; 3 and it flies */
+    /* 0x24 */ u16 hits;     /* popped: the balloon swells for two frames, bursts on the third */
     /* 0x26 */ s16 sndFwd;
     /* 0x28 */ s16 sndBack;
     /* 0x2A */ char unk_2A[2];
@@ -77,8 +81,8 @@ typedef struct BBCCar {
     /* 0x38 */ s32 unk_38;
 } BBCCar; /* size = 0x3C */
 
-/* A dust puff; 20 slots in D_8010A59C_1236AC_BumperBalloonCars's work, the first four of D_8010A598_1236A8_BumperBalloonCars's are never used
-   (func_801040C8_11D1D8_BumperBalloonCars takes D_8010A59C_1236AC_BumperBalloonCars's too). */
+/* An effect sprite. D_8010A59C_1236AC_BumperBalloonCars's work is the dust, 20 slots; D_8010A598_1236A8_BumperBalloonCars's, the burst, sets up
+   four slots but func_801040C8_11D1D8_BumperBalloonCars takes D_8010A59C_1236AC_BumperBalloonCars's, so its own stay idle. */
 typedef struct BBCFx {
     /* 0x00 */ char unk_00[2];
     /* 0x02 */ s16 unk_02;
@@ -115,14 +119,14 @@ extern char* D_80108560_121670_BumperBalloonCars[4];     /* their names */
 /* .bss */
 extern s8 D_80108630_121740_BumperBalloonCars[4];        /* COM: the stick it holds, y */
 extern s8 D_80108634_121744_BumperBalloonCars[4];        /* x */
-extern f32 D_80108638_121748_BumperBalloonCars;          /* the balloon that popped */
+extern f32 D_80108638_121748_BumperBalloonCars;          /* where the balloon burst */
 extern f32 D_8010863C_12174C_BumperBalloonCars;
 extern f32 D_80108640_121750_BumperBalloonCars;
 extern s16 D_80108650_121760_BumperBalloonCars;
 extern s16 D_80108652_121762_BumperBalloonCars;          /* phase countdown */
 extern s16 D_80108654_121764_BumperBalloonCars;          /* added to the phase next frame */
 extern s16 D_80108658_121768_BumperBalloonCars[50];
-extern s16 D_801086BC_1217CC_BumperBalloonCars[4];
+extern s16 D_801086BC_1217CC_BumperBalloonCars[4];       /* signal lamp texture slots */
 extern HuSprite_Unk84_Struct* D_801086C4_1217D4_BumperBalloonCars;
 extern s32 D_801086CC_1217DC_BumperBalloonCars;
 extern s16 D_801086D0_1217E0_BumperBalloonCars;          /* the first frames everybody jostles */
@@ -137,7 +141,7 @@ extern s16 D_8010A580_123690_BumperBalloonCars[4];       /* corner taken */
 extern u16 D_8010A588_123698_BumperBalloonCars;          /* the signal's state */
 extern s16 D_8010A58A_12369A_BumperBalloonCars;          /* cars out */
 extern void* D_8010A58C_12369C_BumperBalloonCars[3];
-extern omObjData* D_8010A598_1236A8_BumperBalloonCars;   /* big dust */
+extern omObjData* D_8010A598_1236A8_BumperBalloonCars;   /* burst */
 extern omObjData* D_8010A59C_1236AC_BumperBalloonCars;   /* dust */
 
 void func_80102800_11B910_BumperBalloonCars(void);
