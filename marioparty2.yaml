@@ -1118,7 +1118,7 @@ segments:
     bss_size: 0x1D10
     subsegments:
       - [0x1F71A0, c]
-      - [0x1FE760, data]
+      - [0x1FE760, .data, 1F71A0]
       - [0x1FED70, .rodata, 1F71A0]
       - {0x1FEE60, type: bss, vram: 0x8010A4C0, name: ovl_26_bss}
 

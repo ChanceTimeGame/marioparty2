@@ -14,7 +14,7 @@
 /* Roll Call, a 4P game: count the Toads (D_800FA656 0), Bob-ombs (1) or Koopas (2; these sometimes
    hatch and leave) wandering round the field before the time runs out, then they file past one by
    one (sorted) while the counter climbs; the players whose count equals the total win 10 coins.
-   One retail file, 1F71A0.c; .data is asm (0x1FE760), .rodata from 0x1FED70. */
+   One retail file, 1F71A0.c; .data (0x1FE760) is at the end of the file, .rodata from 0x1FED70. */
 
 /* One slot of D_8010A5B0_1FEF50_RollCall (100 of them, stride 0x48): every actor's state, indexed by
    obj->work[0]. Slots 0-3 players, 4 the backdrop sprite, 6 the HUD counter, 10+ the crowd,
