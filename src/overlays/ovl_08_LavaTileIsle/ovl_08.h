@@ -145,6 +145,7 @@ void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80029708_2A308(s32);
+void func_80019378_19F78(omObjData* obj);
 f32 func_800B1830_B2430(f32); /* sqrt */
 void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
 s32 func_80019000_19C00(omObjData* obj);
@@ -171,6 +172,14 @@ void func_8003EAF0_3F6F0(char* arg0, void* arg1); /* the size of the texture nam
 /* The CPU's route functions: a moving tile's phase (obj->work[0]) in a pair. */
 #define LT_01(s) ((s) == 0 || (s) == 1)
 #define LT_34(s) ((s) == 3 || (s) == 4)
+
+/* func_80108648's fall tests: inside a square's inner rectangle, and in the lava either side of a
+   sliding tile (lo..hi, the tile's reach) within the row gapLo..gapHi. */
+#define LT_INSIDE(r, X, Z) \
+    ((r)->x0 + 30.0f < (X) && (X) < (r)->x1 - 30.0f && (r)->z0 + 30.0f < (Z) && (Z) < (r)->z1 - 30.0f)
+#define LT_LO(t) ((t) - 120.0f - 30.0f)
+#define LT_HI(t) ((t) + 120.0f + 30.0f)
+#define LT_GAP(v, gapLo, t, gapHi) (((v) > (gapLo) && (v) < LT_LO(t)) || (LT_HI(t) < (v) && (v) < (gapHi)))
 
 /* ---- .data and .bss, in address order ---- */
 extern s32 D_8010A1B0_11B630_LavaTileIsle; /* seconds */
@@ -207,7 +216,7 @@ extern f32 D_8010A304_11B784_LavaTileIsle[4]; /* smoke scale */
 extern u8 D_8010A314_11B794_LavaTileIsle;
 extern u8 D_8010A315_11B795_LavaTileIsle;
 extern s8 D_8010A318_11B798_LavaTileIsle[4];
-extern s32 D_8010A31C_11B79C_LavaTileIsle;   /* unused by code */
+extern s8 D_8010A31C_11B79C_LavaTileIsle; /* 1: the voice has played */
 extern s32 D_8010A490_11B910_LavaTileIsle;   /* unused by code */
 extern s16 D_8010A494_11B914_LavaTileIsle;
 extern s16 D_8010A496_11B916_LavaTileIsle;
@@ -282,7 +291,7 @@ void func_80108204_119684_LavaTileIsle(omObjData* obj);
 void func_80108388_119808_LavaTileIsle(omObjData* obj);
 void func_80108494_119914_LavaTileIsle(omObjData* obj);
 s32 func_80108648_119AC8_LavaTileIsle(omObjData* obj);
-void func_801095BC_11AA3C_LavaTileIsle(void);
+void func_801095BC_11AA3C_LavaTileIsle(omObjData* obj);
 s32 func_80109E5C_11B2DC_LavaTileIsle(omObjData* obj);
 void func_80109E70_11B2F0_LavaTileIsle(omObjData* obj, s32 arg1);
 void func_80109F44_11B3C4_LavaTileIsle(omObjData* obj);

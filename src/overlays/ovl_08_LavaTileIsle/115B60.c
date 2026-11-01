@@ -901,12 +901,358 @@ void func_80108494_119914_LavaTileIsle(omObjData* obj) {
     D_8010A318_11B798_LavaTileIsle[p]++;
 }
 
+/* Control flow (class 3): retail shares the fall and clear blocks between its cases; this C keeps the same tests through LT_GAP (1065 instructions here 1089). */
+#ifdef NON_MATCHING
+/* Touch hook: the moving tiles carry the player, and a player over the lava falls. Returns 0. */
+s32 func_80108648_119AC8_LavaTileIsle(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    LTRect* r;
+    f32 t;
+    f32 x;
+    f32 z;
+    s8 q;
+    s8 hit;
+    s8 test;
+    u8 st;
+
+    obj->work[0] = 0;
+    if (obj->trans.y < 0.0f) {
+        if (obj->work[1] == 0 && w->unk_00[1] == 1) {
+            func_801095BC_11AA3C_LavaTileIsle(obj);
+        }
+        return 0;
+    }
+    if (D_8010A614_11BA94_LavaTileIsle->work[0] == 4 || D_8010A610_11BA90_LavaTileIsle->work[0] == 4) {
+        return 0;
+    }
+    x = obj->trans.x;
+    z = obj->trans.z;
+
+    /* The three tiles. */
+    hit = 0;
+    test = 1;
+    r = &D_8010A530_11B9B0_LavaTileIsle[D_8010A614_11BA94_LavaTileIsle->work[1]];
+    st = D_8010A614_11BA94_LavaTileIsle->work[0];
+    switch (D_8010A614_11BA94_LavaTileIsle->work[1]) {
+    case 0:
+        t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].z;
+        hit = (st == 2) ? (r->x0 < x && x < r->x1 - 30.0f && LT_GAP(z, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    case 1:
+        t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].x;
+        hit = (st == 2) ? (r->z0 < z && z < r->z1 - 30.0f && LT_GAP(x, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    case 2:
+        t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].z;
+        hit = (st == 2) ? (r->x0 + 30.0f < x && x < r->x1 - 30.0f && LT_GAP(z, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    case 3:
+        t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].x;
+        hit = (st == 2) ? (r->z0 + 30.0f < z && z < r->z1 - 30.0f && LT_GAP(x, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    default:
+        test = 0;
+        break;
+    }
+    if (hit) {
+        goto fall;
+    }
+    if (test) {
+        func_8000C024_CC24(obj, 1, 2);
+    }
+
+    /* The four tiles. */
+    hit = 0;
+    test = 1;
+    q = D_8010A618_11BA98_LavaTileIsle;
+    r = &D_8010A5A8_11BA28_LavaTileIsle[D_8010A610_11BA90_LavaTileIsle->work[1]];
+    st = D_8010A610_11BA90_LavaTileIsle->work[0];
+    switch (D_8010A610_11BA90_LavaTileIsle->work[1]) {
+    case 0:
+        if (q == 0) {
+            t = D_8010A500_11B980_LavaTileIsle[0].z;
+            hit = (st == 2) ? (r->x0 + 30.0f < x && x < r->x1 && LT_GAP(z, -90.0f, t, 390.0f)) : LT_INSIDE(r, x, z);
+        } else if (q == 3) {
+            t = D_8010A500_11B980_LavaTileIsle[3].z;
+            hit = (st == 2) ? (r->x0 + 30.0f < x && x < r->x1 && LT_GAP(z, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        } else {
+            test = 0;
+        }
+        break;
+    case 1:
+        if (q == 1) {
+            t = D_8010A500_11B980_LavaTileIsle[1].x;
+            hit = (st == 2) ? (r->z0 + 30.0f < z && z < r->z1 && LT_GAP(x, -90.0f, t, 390.0f)) : LT_INSIDE(r, x, z);
+        } else if (q == 0) {
+            t = D_8010A500_11B980_LavaTileIsle[0].z;
+            hit = (st == 2) ? (r->x0 + 30.0f < x && x < r->x1 && LT_GAP(z, -90.0f, t, 390.0f)) : LT_INSIDE(r, x, z);
+        } else {
+            test = 0;
+        }
+        break;
+    case 2:
+        if (q == 2) {
+            t = D_8010A500_11B980_LavaTileIsle[2].x;
+            hit = (st == 2) ? (r->z0 + 30.0f < z && z < r->z1 && LT_GAP(x, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        } else if (q == 1) {
+            t = D_8010A500_11B980_LavaTileIsle[1].x;
+            hit = (st == 2) ? (r->z0 + 30.0f < z && z < r->z1 && LT_GAP(x, -90.0f, t, 390.0f)) : LT_INSIDE(r, x, z);
+        } else {
+            test = 0;
+        }
+        break;
+    case 3:
+        t = D_8010A500_11B980_LavaTileIsle[q].x;
+        hit = (st == 2) ? (r->z0 + 30.0f < z && z < r->z1 && LT_GAP(x, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    case 4:
+        t = D_8010A500_11B980_LavaTileIsle[q].z;
+        hit = (st == 2) ? (r->x0 + 30.0f < x && x < r->x1 && LT_GAP(z, -390.0f, t, 90.0f)) : LT_INSIDE(r, x, z);
+        break;
+    default:
+        test = 0;
+        break;
+    }
+    if (hit) {
+        goto fall;
+    }
+    if (test) {
+        func_8000C024_CC24(obj, 1, 2);
+    }
+
+    /* Standing on a tile that is rising or sinking. Retail tests the three tiles' state for both. */
+    st = D_8010A614_11BA94_LavaTileIsle->work[0];
+    {
+        Vec* v = &D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle];
+        Vec* v2 = &D_8010A500_11B980_LavaTileIsle[q];
+
+        if (v->x - 120.0f < x && x < v->x + 120.0f && v->z - 120.0f < z && z < v->z + 120.0f && (st == 1 || st == 3)) {
+            obj->work[0] = 1;
+        } else if (v2->x - 120.0f < x && x < v2->x + 120.0f && v2->z - 120.0f < z && z < v2->z + 120.0f &&
+                   (st == 1 || st == 3)) {
+            obj->work[0] = 2;
+        }
+    }
+    return 0;
+
+fall:
+    func_8000C024_CC24(obj, 1, 1);
+    func_801095BC_11AA3C_LavaTileIsle(obj);
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108648_119AC8_LavaTileIsle);
+#endif
 
+/* Register/schedule (class 4, 650 instructions here 552): retail keeps more locals and CSEs the +/-60 tests; the logic is m2c's. */
+#ifdef NON_MATCHING
+/* The player touched the lava's edge: push them out of the tile they are on. */
+void func_801095BC_11AA3C_LavaTileIsle(omObjData* obj) {
+    f32 x = obj->trans.x;
+    f32 z = obj->trans.z;
+    f32 aHiX = 0.0f;
+    f32 aLoX = 0.0f;
+    f32 aHiZ = 0.0f;
+    f32 aLoZ = 0.0f;
+    f32 bHiX = 0.0f;
+    f32 bLoX = 0.0f;
+    f32 bHiZ = 0.0f;
+    f32 bLoZ = 0.0f;
+    f32 t;
+    s32 r;
+
+    if (z < -120.0f) {
+        if (x < -120.0f) {
+            r = 0;
+        } else if (x >= 120.0f) {
+            r = 2;
+        } else {
+            r = 1;
+        }
+    } else if (z >= 120.0f) {
+        if (x < -120.0f) {
+            r = 6;
+        } else if (x >= 120.0f) {
+            r = 8;
+        } else {
+            r = 7;
+        }
+    } else if (x < -120.0f) {
+        r = 3;
+    } else if (x >= 120.0f) {
+        r = 5;
+    } else {
+        r = 4;
+    }
+    if (r < 5 && r != 2) {
+        t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].x;
+        aHiX = t + 120.0f;
+        aLoX = t - 120.0f;
+        aHiZ = bLoZ + 120.0f; /* retail: the tile's z is never read */
+        aLoZ = bLoZ - 120.0f;
+    } else {
+        t = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].x;
+        bHiX = t + 120.0f;
+        bLoX = t - 120.0f;
+        t = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].z;
+        bHiZ = t + 120.0f;
+        bLoZ = t - 120.0f;
+    }
+    switch (r) {
+    case 0:
+        if (aLoX <= x + 60.0f && D_8010A614_11BA94_LavaTileIsle->work[2] == 1) {
+            x = aLoX - 120.0f;
+        }
+        if (x + 60.0f >= -120.0f || z + 60.0f >= -120.0f) {
+            z = -240.0f;
+        }
+        break;
+    case 1:
+        if (aLoZ <= z + 60.0f && D_8010A614_11BA94_LavaTileIsle->work[2] == 2) {
+            z = aLoZ - 120.0f;
+        } else if (z + 60.0f >= -120.0f) {
+            z = -240.0f;
+        }
+        if (x - 60.0f <= -120.0f || x + 60.0f >= 120.0f) {
+            x = 0.0f;
+        }
+        break;
+    case 2:
+        if (aLoZ <= z + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 7) {
+            z = aLoZ - 120.0f;
+        } else if (z + 60.0f >= -120.0f) {
+            z = -240.0f;
+        }
+        if (x - 60.0f <= 120.0f) {
+            x = 240.0f;
+        }
+        break;
+    case 3:
+        if (z - 60.0f <= aHiZ && D_8010A614_11BA94_LavaTileIsle->work[2] == 0) {
+            z = aHiZ + 120.0f;
+        } else if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+            z = 0.0f;
+        }
+        if (x + 60.0f >= -120.0f) {
+            x = -240.0f;
+        }
+        break;
+    case 4:
+        if (x - 60.0f <= aHiX && D_8010A614_11BA94_LavaTileIsle->work[2] == 3) {
+            x = aHiX + 120.0f;
+        } else if (x - 60.0f <= -120.0f || x + 60.0f >= 120.0f) {
+            x = 0.0f;
+        }
+        if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+            z = 0.0f;
+        }
+        break;
+    case 5:
+        if (z - 60.0f <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 6) {
+            z = bHiZ + 120.0f;
+        } else if (bLoZ <= z + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 0) {
+            z = bLoZ - 120.0f;
+        } else if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+            z = 0.0f;
+        }
+        if (x - 60.0f <= 120.0f) {
+            x = 240.0f;
+        }
+        break;
+    case 6:
+        if (bLoX <= x + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 3) {
+            x = bLoX - 120.0f;
+        } else if (x + 60.0f >= -120.0f) {
+            x = -240.0f;
+        }
+        if (z - 60.0f <= 120.0f) {
+            z = 240.0f;
+        }
+        break;
+    case 7:
+        if (x - 60.0f <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 2) {
+            x = bHiX + 120.0f;
+        } else if (bLoX <= x + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 4) {
+            x = bLoX - 120.0f;
+        } else if (x + 60.0f >= 120.0f || x - 60.0f <= -120.0f) {
+            x = 0.0f;
+        }
+        if (z - 60.0f <= 120.0f) {
+            z = 240.0f;
+        }
+        break;
+    case 8:
+        if (x - 60.0f <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 1) {
+            x = bHiX + 120.0f;
+        } else if (x - 60.0f <= 120.0f) {
+            x = 240.0f;
+        }
+        if (z - 60.0f <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 5) {
+            z = bHiZ + 120.0f;
+        } else if (z - 60.0f <= 120.0f) {
+            z = 240.0f;
+        }
+        break;
+    }
+    obj->trans.x = x;
+    obj->trans.z = z;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801095BC_11AA3C_LavaTileIsle);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80109E5C_11B2DC_LavaTileIsle);
+s32 func_80109E5C_11B2DC_LavaTileIsle(omObjData* obj) {
+    return ((MgWork*)obj->unk_50)->unk_00[1] == 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80109E70_11B2F0_LavaTileIsle);
+void func_80109E70_11B2F0_LavaTileIsle(omObjData* obj, s32 arg1) {
+    if (((MgWork*)obj->unk_50)->unk_38 == 1000.0f && D_800F8FD0_F9BD0 == 1 && !(obj->trans.y < 0.0f)) {
+        if (arg1 == 0) {
+            obj->trans.y = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].y + 120.0f + 20.0f;
+        } else if (arg1 == 1) {
+            obj->trans.y = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].y + 120.0f + 20.0f;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80109F44_11B3C4_LavaTileIsle);
+void func_80109F44_11B3C4_LavaTileIsle(omObjData* obj) {
+    MgWork* w;
+    s32 i;
+
+    if (obj->trans.y < 0.0f) {
+        return;
+    }
+    w = obj->unk_50;
+    if (w->unk_38 != 1000.0f) {
+        return;
+    }
+    if (w->unk_3C < 0.0f) {
+        w->unk_3C += 360.0f;
+    } else if (w->unk_3C > 360.0f) {
+        w->unk_3C -= 360.0f;
+    }
+    if (w->unk_3C > 20.0f && w->unk_3C < 180.0f) {
+        w->unk_3C -= 20.0f;
+    } else if (w->unk_3C >= 180.0f && w->unk_3C < 340.0f) {
+        w->unk_3C += 20.0f;
+    } else {
+        w->unk_3C = 0.0f;
+    }
+    for (i = 0; i < 4; i++) {
+        if (D_800FFFD8_100BD8[i]->trans.y < 0.0f) {
+            break;
+        }
+    }
+    if (w->unk_3C == 0.0f && _CheckFlag(0xC) == 0) {
+        if (D_8010A619_11BA99_LavaTileIsle == 0) {
+            if (D_8010A31C_11B79C_LavaTileIsle == 0) {
+                func_800732B0_73EB0(D_800CD438_CE038[gPlayers[w->unk_59].character].unk_04 | 0x4E);
+                D_8010A31C_11B79C_LavaTileIsle = 1;
+            }
+            func_80019B9C_1A79C(obj, 0xD);
+        } else if (D_8010A619_11BA99_LavaTileIsle == 1) {
+            func_80019B9C_1A79C(obj, 0xE);
+        }
+        func_80019378_19F78(obj);
+    }
+}
