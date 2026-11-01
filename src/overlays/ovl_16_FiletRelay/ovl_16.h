@@ -20,6 +20,8 @@
 
 typedef f32 Matrix4f[4][4];
 
+#define FR_ABS(x) ((x) < 0.0f ? -(x) : (x))
+
 /* ---------------------------------------------------------------------------------------
    Structs
    --------------------------------------------------------------------------------------- */
@@ -39,7 +41,7 @@ typedef struct FRMotion {
 
 /* A level object's work, omObjData::unk_50, 0x58 bytes. */
 typedef struct FRObjWork {
-    /* 0x00 */ s16 motion;
+    /* 0x00 */ s32 motion;
     /* 0x04 */ FRMotion motions[3];
     /* 0x1C */ Vec pos;
     /* 0x28 */ Vec vel;
@@ -59,8 +61,8 @@ typedef struct FRObjDef {
     /* 0x18 */ f32 scale;
     /* 0x1C */ s32 file;
     /* 0x20 */ s32 attr;
-    /* 0x24 */ s16 solid; /* bit 0: the model is a wall for the ray test */
-    /* 0x26 */ s16 func;  /* index in D_80109148 */
+    /* 0x24 */ u16 solid; /* bit 0: the model is a wall for the ray test */
+    /* 0x26 */ u16 func;  /* index in D_80109148 */
 } FRObjDef; /* size = 0x28 */
 
 typedef struct FRSprDef {
@@ -68,7 +70,7 @@ typedef struct FRSprDef {
     /* 0x2 */ s16 y;
     /* 0x4 */ s32 file;
     /* 0x8 */ s32 visible;
-    /* 0xC */ s16 prio;
+    /* 0xC */ u16 prio;
 } FRSprDef; /* size = 0x10 */
 
 typedef struct FRMotDef {
@@ -256,7 +258,7 @@ u16 func_80018A64_19664(s32 file, s32 attr);
 s16 func_8001A2F8_1AEF8(s32 arg0);
 void func_8001A788_1B388(u16, s32);
 void func_8001A91C_1B51C(u16 spriteId, f32 x, f32 y);
-s16 func_8001AAAC_1B6AC(s16, s32, s32);
+s32 func_8001AAAC_1B6AC(s16, s32, s32); /* main: s16; only the low half is used */
 void func_8001AC44_1B844(u16);
 void func_80020070_20C70(s32);
 void func_80020718_21318(s16, void*, void*);
@@ -370,13 +372,13 @@ extern FRSprMdl* D_8010971C_1814CC_FiletRelay;     /* its tail */
 void func_80102800_17A5B0_FiletRelay(void);
 void func_80102850_17A600_FiletRelay(Vec* out, Vec* a, Vec* b, Vec* c);
 s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p);
-s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, u16* face);
+s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face);
 s32 func_80102CD8_17AA88_FiletRelay(void* probe, s16* v);
 s32 func_80102CEC_17AA9C_FiletRelay(void* probe, s16* v);
 s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter);
 void func_80102EB4_17AC64_FiletRelay(omObjData* obj, s32 motion, f32 speed);
 s32 func_80102FC0_17AD70_FiletRelay(omObjData* obj);
-s16 func_8010307C_17AE2C_FiletRelay(s32 i);
+s32 func_8010307C_17AE2C_FiletRelay(s32 i);
 void func_8010309C_17AE4C_FiletRelay(s32 i);
 void func_8010317C_17AF2C_FiletRelay(omObjData* obj);
 void func_801033D8_17B188_FiletRelay(omObjData* obj);
