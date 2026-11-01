@@ -1039,7 +1039,9 @@ segments:
     bss_size: 0x2420
     subsegments:
       - [0x1C6BB0, c]
+      - [0x1CF7E0, c]
       - [0x1CF900, data]
+      - [0x1CFA10, .rodata, 1C6BB0]
       - {0x1CFB60, type: bss, vram: 0x8010B7B0, name: ovl_20_bss}
   - type: code
     start: 0x1CFB60

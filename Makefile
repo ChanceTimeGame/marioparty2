@@ -801,6 +801,17 @@ $(OVL5F_BLANKSTRIP_UNITS_S412): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 
+# S4-20: ovl_20 1C6BB0.c and 1CF7E0.c (from 8010B430, 3-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
+S420_BLANKSTRIP_UNITS := build/src/overlays/ovl_20_MagnetCarta/1C6BB0.c.o \
+	build/src/overlays/ovl_20_MagnetCarta/1CF7E0.c.o
+$(S420_BLANKSTRIP_UNITS): export VR4300MUL := ON
+$(S420_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@)
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)export COMPILER_PATH=tools/gcc_2.7.2 && $(CC) $(CFLAGS) $(CPPFLAGS) -I include/ -S -o $(@:.o=.s) $< && sed -i '/^[[:space:]]*$$/d' $(@:.o=.s) && $(CC) $(CFLAGS) -c -o $@ $(@:.o=.s)
+	@$(STRIP) $@ -N dummy-symbol-name
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # S4-08: ovl_08 113C80.c, 114640.c (from 801031C0, 3-nop pad) and 115B60.c (from 801046E0, 1-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
 S408_BLANKSTRIP_UNITS := build/src/overlays/ovl_08_LavaTileIsle/113C80.c.o \
 	build/src/overlays/ovl_08_LavaTileIsle/114640.c.o \

@@ -21,6 +21,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80102EA0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80102EDC_1C728C_MagnetCarta);
 
+__asm__(".section .rodata");
+const u32 D_8010B660_1CFA10_MagnetCarta[2] = { 0x00060007, 0x00080009 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80103064_1C7414_MagnetCarta);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80103284_1C7634_MagnetCarta);
@@ -40,6 +43,15 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80103894
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801039B4_1C7D64_MagnetCarta);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_801039F0_1C7DA0_MagnetCarta);
+
+__asm__(".section .rodata");
+const char D_8010B674_1CFA24_MagnetCarta[] = "signl_3x_DEF";
+
+__asm__(".section .rodata");
+const char D_8010B684_1CFA34_MagnetCarta[] = "signl_2x_DEF";
+
+__asm__(".section .rodata");
+const char D_8010B694_1CFA44_MagnetCarta[20] = "signl_1x_DEF";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_80103B70_1C7F20_MagnetCarta);
 
@@ -113,6 +125,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010A9E0
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AB44_1CEEF4_MagnetCarta);
 
+__asm__(".section .rodata");
+const char D_8010B770_1CFB20_MagnetCarta[] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010ACB4_1CF064_MagnetCarta);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AEE0_1CF290_MagnetCarta);
@@ -120,7 +135,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AEE0
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010AF58_1CF308_MagnetCarta);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010B0A8_1CF458_MagnetCarta);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010B430_1CF7E0_MagnetCarta);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_20_MagnetCarta/1C6BB0", func_8010B524_1CF8D4_MagnetCarta);
