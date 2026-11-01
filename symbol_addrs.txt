@@ -911,3 +911,4 @@ D_8010C1D4_137DC4_HotRopeJump = 0x8010C1D4; // size:0x20 segment:HotRopeJump
 D_8010C454_138044_HotRopeJump = 0x8010C454; // size:0x2 segment:HotRopeJump
 D_8010C456_138046_HotRopeJump = 0x8010C456; // size:0x2 segment:HotRopeJump
 D_80108558_2597D8_DriversEd = 0x80108558; // size:0x28 segment:DriversEd
+D_8010A537_1FEED7_RollCall = 0x8010A537; // size:0x1 segment:RollCall
