@@ -196,6 +196,12 @@ void Hu3DCamUpdateMtx(s16 camIndex);
 /* ---- .data ---- */
 extern f32 D_80108D40_167060_BobOmbBarrage[6]; /* viewport */
 extern f32 D_80108D58_167078_BobOmbBarrage[6]; /* scissor */
+extern s32 D_80108D70_167090_BobOmbBarrage[15];
+extern s32 D_80108DAC_1670CC_BobOmbBarrage[16];
+extern s32 D_80108DEC_16710C_BobOmbBarrage[16];
+extern s32 D_80108E2C_16714C_BobOmbBarrage[16];
+extern s32 D_80108E6C_16718C_BobOmbBarrage[16];
+extern s32 D_80108EAC_1671CC_BobOmbBarrage[16];
 extern s32* D_80108EEC_16720C_BobOmbBarrage[7]; /* per character: model and motion files */
 extern s32 D_80108F08_167228_BobOmbBarrage[6]; /* stage files */
 extern BBStart D_80108F20_167240_BobOmbBarrage[4];

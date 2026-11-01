@@ -802,7 +802,8 @@ segments:
       - [0x160C10, c]
       - [0x1610C0, c]
       - [0x161980, c]
-      - [0x167060, data]
+      - [0x167060, .data, 160C10]
+      - [0x167090, .data, 161980]
       - [0x1673B0, .rodata, 1610C0]
       - [0x167410, .rodata, 161980]
       - {0x1675A0, type: bss, vram: 0x80109280, name: ovl_12_bss}

@@ -391,3 +391,8 @@ D_80108686_10BE46_MalletGoRound = 0x80108686;
 /* S4-25D: offsets into ovl_25's per-character motion table that the NON_MATCHING asm path names */
 D_80108070_1F6DB0_MechaMarathon = D_80108068_1F6DA8_MechaMarathon + 0x8;
 D_80108074_1F6DB4_MechaMarathon = D_80108068_1F6DA8_MechaMarathon + 0xC;
+/* S4-12D: offsets into ovl_12's BBScript and BBSpin tables that the NON_MATCHING asm path names */
+D_80108FAC_1672CC_BobOmbBarrage = D_80108FA0_1672C0_BobOmbBarrage + 0xC;
+D_80108FB0_1672D0_BobOmbBarrage = D_80108FA0_1672C0_BobOmbBarrage + 0x10;
+D_80108FF4_167314_BobOmbBarrage = D_80108FF0_167310_BobOmbBarrage + 0x4;
+D_80108FF8_167318_BobOmbBarrage = D_80108FF0_167310_BobOmbBarrage + 0x8;

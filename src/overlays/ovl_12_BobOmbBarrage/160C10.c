@@ -1,5 +1,9 @@
 #include "ovl_12.h"
 
+/* .data (0x167060-0x16708F; the rest is in 161980.c) */
+f32 D_80108D40_167060_BobOmbBarrage[6] = { 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f };
+f32 D_80108D58_167078_BobOmbBarrage[6] = { 0.0f, 0.0f, 320.0f, 240.0f, 0.0f, 0.0f };
+
 omObjData* func_801028F0_160C10_BobOmbBarrage(void) {
     Vec v;
     f32 s;
