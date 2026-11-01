@@ -135,7 +135,7 @@ void MBDBackKill(void);
 void func_80050AE0_516E0(void);
 s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**, s32, s32), u8 arg2);
 
-/* The sparkle clock's step: faster while the arc lasts. */
+/* The sparkle clock's step, faster while the arc lasts; uses func_80104000's local g. */
 #define HS_STEP ((u32)((s16)(u16)D_80109BD2_FF892_HammerSlammer >= 0 \
     ? (s32)(g = D_80109C30_FF8F0_HammerSlammer + 5) + (s16)((s16)(u16)D_80109BD2_FF892_HammerSlammer / 3) \
     : (s32)D_80109C30_FF8F0_HammerSlammer + 1))
