@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_3A.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/289BC0", func_801079B0_289BC0_TorpedoTargets);
 

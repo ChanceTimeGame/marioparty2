@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_3A.h"
 
 __asm__(".section .rodata");
 const char D_801093D0_28B5E0_TorpedoTargets[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
