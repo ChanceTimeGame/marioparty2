@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010B230_1B48C0_SkyPilots[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80102800_1ABE90_SkyPilots);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80102D3C_1AC3CC_SkyPilots);
@@ -93,43 +96,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801084E4_1
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010890C_1B1F9C_SkyPilots);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80108A00_1B2090_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80108A90_1B2120_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80108C24_1B22B4_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80108DB4_1B2444_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80108ECC_1B255C_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010916C_1B27FC_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801092F8_1B2988_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80109878_1B2F08_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80109BBC_1B324C_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A024_1B36B4_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A0BC_1B374C_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A154_1B37E4_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A1F4_1B3884_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A294_1B3924_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A340_1B39D0_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A364_1B39F4_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A53C_1B3BCC_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A6C0_1B3D50_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A768_1B3DF8_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010A8F4_1B3F84_SkyPilots);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010AB84_1B4214_SkyPilots);
