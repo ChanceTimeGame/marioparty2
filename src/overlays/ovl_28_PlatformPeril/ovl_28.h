@@ -70,11 +70,6 @@ typedef struct PPNear {
 
 enum PPFlowState { PP_NONE = -1, PP_INTRO, PP_START, PP_WAIT, PP_RACE, PP_GOAL, PP_WINCAM };
 
-typedef struct PPPair {
-    /* 0x00 */ u8 a;
-    /* 0x01 */ u8 b;
-} PPPair;
-
 typedef struct PPFlow {
     /* 0x00 */ u16 state;
     /* 0x02 */ u16 timer;
@@ -197,19 +192,23 @@ extern f32 D_80109130_20C4D0_PlatformPeril[];
 extern f32 D_80109134_20C4D4_PlatformPeril[];
 extern f32 D_80109138_20C4D8_PlatformPeril[];
 extern f32 D_8010913C_20C4DC_PlatformPeril[];
-extern PPPair D_80109140_20C4E0_PlatformPeril; /* a: frames left, b: the angle */
-extern PPPair D_80109142_20C4E2_PlatformPeril;
+extern u8 D_80109140_20C4E0_PlatformPeril; /* the winner walks in: frames left */
+extern u8 D_80109141_20C4E1_PlatformPeril; /* its stick angle */
+extern u8 D_80109142_20C4E2_PlatformPeril; /* the walk is over */
+extern u8 D_80109143_20C4E3_PlatformPeril; /* the angle is set */
 extern u8 D_80109144_20C4E4_PlatformPeril;
 extern u8 D_80109145_20C4E5_PlatformPeril;
 extern PPCamKey D_80109148_20C4E8_PlatformPeril[4];
 extern f32 D_801091C8_20C568_PlatformPeril;
-extern PPPair D_801091CC_20C56C_PlatformPeril; /* a: key, b: frame */
+extern u8 D_801091CC_20C56C_PlatformPeril; /* camera key */
+extern u8 D_801091CD_20C56D_PlatformPeril; /* its frame */
 extern s8 D_801091D0_20C570_PlatformPeril[4]; /* retail reads 6: runs into D_801091D4_20C574_PlatformPeril */
 extern s8 D_801091D4_20C574_PlatformPeril[6];
 
 /* ---- .bss ---- */
 extern u8 D_801093B0_20C750_PlatformPeril;
 extern PPFlow D_801093B2_20C752_PlatformPeril;
+extern u16 D_801093B4_20C754_PlatformPeril;   /* = D_801093B2_20C752_PlatformPeril.timer: retail also reads it by its own label */
 extern PPCamKey* D_801093B8_20C758_PlatformPeril;
 extern PPCloud* D_801093BC_20C75C_PlatformPeril;
 extern u8 D_801093C0_20C760_PlatformPeril[4]; /* start lane per player */

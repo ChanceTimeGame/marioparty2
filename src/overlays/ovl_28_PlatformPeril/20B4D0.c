@@ -33,37 +33,31 @@ void func_8010816C_20B50C_PlatformPeril(u16 difficulty, u8 player) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_8010826C_20B60C_PlatformPeril(omObjData* obj, f32* angle) {
     omObjData* pl;
-    s32 d;
     u8 i;
 
     for (i = 0; i < 4; i++) {
-        if (obj->work[0] == i) {
-            continue;
-        }
-        pl = D_800FFFD8_100BD8[i];
-        d = abs((s32)(obj->trans.x - pl->trans.x));
-        if ((f32)d < 40.0f && pl->trans.z < obj->trans.z && pl->trans.z - obj->trans.z < 80.0f) {
-            d = abs((s32)(obj->trans.x));
-            if (d < 301) {
-                if (obj->trans.x < D_800FFFD8_100BD8[i]->trans.x) {
-                    *angle -= (f32)(PP_RAND() % 6) + 15.0f;
-                } else {
-                    *angle = (f32)(PP_RAND() % 6) + 15.0f + *angle;
+        if (obj->work[0] != i) {
+            pl = D_800FFFD8_100BD8[i];
+            if ((f32)abs((s32)(obj->trans.x - pl->trans.x)) < 40.0f) {
+                if (pl->trans.z < obj->trans.z && pl->trans.z - obj->trans.z < 80.0f) {
+                    if (abs((s32)obj->trans.x) >= 301) {
+                        if (obj->trans.x < pl->trans.x) {
+                            goto add;
+                        }
+                        *angle -= (f32)(PP_RAND() % 6) + 15.0f;
+                    } else if (obj->trans.x < D_800FFFD8_100BD8[i]->trans.x) {
+                        *angle -= (f32)(PP_RAND() % 6) + 15.0f;
+                    } else {
+                    add:
+                        *angle = (f32)(PP_RAND() % 6) + 15.0f + *angle;
+                    }
                 }
-            } else if (obj->trans.x < pl->trans.x) {
-                *angle = (f32)(PP_RAND() % 6) + 15.0f + *angle;
-            } else {
-                *angle -= (f32)(PP_RAND() % 6) + 15.0f;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/20B4D0", func_8010826C_20B60C_PlatformPeril);
-#endif
 
 void func_801084FC_20B89C_PlatformPeril(omObjData* obj) {
     omObjData* a;
@@ -87,40 +81,32 @@ void func_801084FC_20B89C_PlatformPeril(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_801086A8_20BA48_PlatformPeril(omObjData* obj, f32* angle) {
     f32 z;
     f32 x;
-    s32 d;
     u8 i;
 
     for (i = 0; i < 6; i++) {
         z = -(D_801091D4_20C574_PlatformPeril[i] * 100);
         if (z < obj->trans.z && obj->trans.z - 600.0f < z) {
             x = D_801091D0_20C570_PlatformPeril[i] * 100;
-            d = abs((s32)(obj->trans.x - x));
-            if (d < 100) {
-                d = abs((s32)(obj->trans.x));
-                if (d < 301) {
-                    if ((f32)(D_801091D0_20C570_PlatformPeril[i] * 100) < obj->trans.x) {
-                        *angle = (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6)) + 55.0f;
-                    } else {
+            if (abs((s32)(obj->trans.x - x)) < 100) {
+                if (abs((s32)obj->trans.x) >= 301) {
+                    if (x < obj->trans.x) {
                         *angle = 35.0f - (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6));
+                    } else {
+                        *angle = (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6)) + 55.0f;
                     }
-                } else if (x < obj->trans.x) {
-                    *angle = 35.0f - (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6));
-                } else {
+                } else if ((f32)(D_801091D0_20C570_PlatformPeril[i] * 100) < obj->trans.x) {
                     *angle = (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6)) + 55.0f;
+                } else {
+                    *angle = 35.0f - (f32)(PP_RAND() % (D_801093D0_20C770_PlatformPeril[obj->work[0]] + 6));
                 }
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/20B4D0", func_801086A8_20BA48_PlatformPeril);
-#endif
 
-#ifdef NON_MATCHING
 void func_801089AC_20BD4C_PlatformPeril(omObjData* obj, f32* angle) {
     f32 c;
 
@@ -133,10 +119,7 @@ void func_801089AC_20BD4C_PlatformPeril(omObjData* obj, f32* angle) {
         }
         break;
     case 3:
-        c = 250.0f;
-        if (obj->trans.x < 0.0f) {
-            c = -250.0f;
-        }
+        c = obj->trans.x < 0.0f ? -250.0f : 250.0f;
         if (c + 100.0f < obj->trans.x) {
             *angle = 25.0f - (f32)(PP_RAND() % 11);
         } else if (obj->trans.x < c - 100.0f) {
@@ -145,11 +128,7 @@ void func_801089AC_20BD4C_PlatformPeril(omObjData* obj, f32* angle) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/20B4D0", func_801089AC_20BD4C_PlatformPeril);
-#endif
 
-#ifdef NON_MATCHING
 void func_80108CB0_20C050_PlatformPeril(omObjData* obj, MgWork* w) {
     f32 d;
 
@@ -166,45 +145,37 @@ void func_80108CB0_20C050_PlatformPeril(omObjData* obj, MgWork* w) {
         break;
     case 3:
         obj->work[2]++;
-        if (obj->work[2] >= 10) {
-            obj->work[2] = 0;
-            obj->work[1] = 2;
-        } else {
-            ContBtn[w->unk_57] |= 0x8000;
-            ContBtnTrg[w->unk_57] |= 0x8000;
+        if (obj->work[2] < 10) {
+            goto press;
         }
-        break;
+        goto rest;
     case 4:
         obj->work[2]++;
-        if (obj->work[2] >= 2) {
-            obj->work[2] = 0;
-            obj->work[1] = 2;
-        } else {
+        if (obj->work[2] < 2) {
+        press:
             ContBtn[w->unk_57] |= 0x8000;
             ContBtnTrg[w->unk_57] |= 0x8000;
+        } else {
+        rest:
+            obj->work[2] = 0;
+            obj->work[1] = 2;
         }
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/20B4D0", func_80108CB0_20C050_PlatformPeril);
-#endif
 
 #ifdef NON_MATCHING
 void func_80108E78_20C218_PlatformPeril(omObjData* obj) {
     MgWork* w = obj->unk_50;
     f32 angle = 45.0f;
-    s32 r;
 
     if (obj->work[1] != 6) {
         func_80108130_20B4D0_PlatformPeril(w->unk_57);
         func_801089AC_20BD4C_PlatformPeril(obj, &angle);
         func_801086A8_20BA48_PlatformPeril(obj, &angle);
         func_8010826C_20B60C_PlatformPeril(obj, &angle);
-        r = PP_RAND();
-        ContStkX[w->unk_57] = (f32)(r % 11 + 50 + D_801093D0_20C770_PlatformPeril[obj->work[0]]) * HuMathSin(angle);
-        r = PP_RAND();
-        ContStkY[w->unk_57] = (f32)(r % 11 + 50 + D_801093D0_20C770_PlatformPeril[obj->work[0]]) * func_800B7890_B8490(angle);
+        ContStkX[w->unk_57] = (f32)(PP_RAND() % 11 + 50 + D_801093D0_20C770_PlatformPeril[obj->work[0]]) * HuMathSin(angle);
+        ContStkY[w->unk_57] = (f32)(PP_RAND() % 11 + 50 + D_801093D0_20C770_PlatformPeril[obj->work[0]]) * func_800B7890_B8490(angle);
         func_80108CB0_20C050_PlatformPeril(obj, w);
     }
 }
