@@ -1,5 +1,19 @@
 #include "ovl_08.h"
 
+/* .data (0x11B650-0x11B680, 8010A1D0-8010A200) */
+u8 D_8010A1D0_11B650_LavaTileIsle[4] = { 0, 1, 2, 3 };
+u16 D_8010A1D4_11B654_LavaTileIsle = 0;
+u16 D_8010A1D6_11B656_LavaTileIsle = 0; /* padding */
+f32 D_8010A1D8_11B658_LavaTileIsle = 0.0f;
+s16 D_8010A1DC_11B65C_LavaTileIsle = 0;
+s16 D_8010A1DE_11B65E_LavaTileIsle = 0; /* padding */
+s8 D_8010A1E0_11B660_LavaTileIsle[8] = { 0, 1, 2, 2, 1, 0, 3, 3 };
+u8 D_8010A1E8_11B668_LavaTileIsle[8] = { 0, 1, 2, 3, 2, 1, 0, 4 };
+u16 D_8010A1F0_11B670_LavaTileIsle = 0;
+u16 D_8010A1F2_11B672_LavaTileIsle = 0; /* padding */
+f32 D_8010A1F4_11B674_LavaTileIsle = 0.0f;
+s32 D_8010A1F8_11B678_LavaTileIsle[2] = { 0, 0 }; /* padding */
+
 void func_801031C0_114640_LavaTileIsle(void) {
     D_8010A4C0_11B940_LavaTileIsle = func_80018A30_19630(0x180000, 0x8BD);
     D_8010A4C2_11B942_LavaTileIsle = func_80018A30_19630(0x180001, 0x8BD);
