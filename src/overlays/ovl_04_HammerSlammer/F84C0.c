@@ -391,13 +391,6 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
     u32 g;
     f32 ang2;
     f32 ang;
-    f32 x0;
-    f32 y0;
-    f32 x1;
-    f32 y1;
-    f32 x;
-    f32 y;
-    f32 t;
     f32 u;
 
     press = 0;
@@ -573,13 +566,17 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
             }
             ang = (f32)(D_80109B94_FF854_HammerSlammer - 1) * -(D_80109B20_FF7E0_HammerSlammer.power[0] / 10.0 + 10.0);
             ang = ang < -35.0 ? -35.0f : ang;
-            x = func_800B7890_B8490(-25.0f);
-            ang2 = ang - 25.0;
-            x = (-x + func_800B7890_B8490(ang2)) * 90.0;
-            y = HuMathSin(-25.0f);
-            y = (-y + HuMathSin(ang2)) * 90.0;
-            func_80029714_2A314(obj->model[14], x, y, 0.0f);
-            func_8002979C_2A39C(obj->model[14], 0.0f, 0.0f, ang);
+            {
+                f32 x = func_800B7890_B8490(-25.0f);
+                f32 y;
+
+                ang2 = ang - 25.0;
+                x = (-x + func_800B7890_B8490(ang2)) * 90.0;
+                y = HuMathSin(-25.0f);
+                y = (-y + HuMathSin(ang2)) * 90.0;
+                func_80029714_2A314(obj->model[14], x, y, 0.0f);
+                func_8002979C_2A39C(obj->model[14], 0.0f, 0.0f, ang);
+            }
             if (D_80109B20_FF7E0_HammerSlammer.result == -1) {
                 if (D_80109B94_FF854_HammerSlammer < 13) {
                     u = (f32)D_80109B94_FF854_HammerSlammer / 13.0 * 90.0;
@@ -588,12 +585,15 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
                 if (D_80109B94_FF854_HammerSlammer == 13) {
                     D_80109B20_FF7E0_HammerSlammer.y = -25.0f;
                     D_80109B20_FF7E0_HammerSlammer.vy = -D_80109B20_FF7E0_HammerSlammer.vy * 0.5;
-                    x = func_800B7890_B8490(-15.0f);
-                    y = func_800B7890_B8490(75.0f);
-                    x = D_80109B94_FF854_HammerSlammer * -4.0 - x * 155.0 + y * 155.0;
-                    y0 = HuMathSin(-15.0f);
-                    y = HuMathSin(105.0f);
-                    func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - y0 * 155.0 + y * 155.0, 0.0f);
+                    {
+                        f32 c = func_800B7890_B8490(-15.0f);
+                        f32 d = func_800B7890_B8490(75.0f);
+                        f32 x = D_80109B94_FF854_HammerSlammer * -4.0 - c * 155.0 + d * 155.0;
+
+                        c = HuMathSin(-15.0f);
+                        d = HuMathSin(105.0f);
+                        func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - c * 155.0 + d * 155.0, 0.0f);
+                    }
                     func_8002979C_2A39C(obj->model[11], 0.0f, 0.0f, 90.0f);
                 } else if (D_80109B94_FF854_HammerSlammer < 22) {
                     if (D_80109B94_FF854_HammerSlammer != 21) {
@@ -604,12 +604,15 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
                 fly:
                     D_80109B20_FF7E0_HammerSlammer.y += D_80109B20_FF7E0_HammerSlammer.vy;
                     D_80109B20_FF7E0_HammerSlammer.vy = D_80109B20_FF7E0_HammerSlammer.vy - 2.0;
-                    x = func_800B7890_B8490(-15.0f);
-                    y = func_800B7890_B8490(u - 15.0);
-                    x = D_80109B94_FF854_HammerSlammer * -4.0 - x * 155.0 + y * 155.0;
-                    y0 = HuMathSin(-15.0f);
-                    y = HuMathSin(u - 15.0);
-                    func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - y0 * 155.0 + y * 155.0, 0.0f);
+                    {
+                        f32 c = func_800B7890_B8490(-15.0f);
+                        f32 d = func_800B7890_B8490(u - 15.0);
+                        f32 x = D_80109B94_FF854_HammerSlammer * -4.0 - c * 155.0 + d * 155.0;
+
+                        c = HuMathSin(-15.0f);
+                        d = HuMathSin(u - 15.0);
+                        func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - c * 155.0 + d * 155.0, 0.0f);
+                    }
                     func_8002979C_2A39C(obj->model[11], 0.0f, 0.0f, u);
                 } else if (D_80109B94_FF854_HammerSlammer < 26) {
                     f32 rot[4] = { 82.5f, 90.0f, 90.0f, 90.0f };
@@ -618,14 +621,18 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
                     {
                         f32 back[4] = { 4.0f, 7.0f, 9.0f, 10.0f };
 
+                        f32 c;
+                        f32 d;
+                        f32 x;
+
                         D_80109B20_FF7E0_HammerSlammer.y = -25.0f;
-                        x = func_800B7890_B8490(-15.0f);
+                        c = func_800B7890_B8490(-15.0f);
                         ang2 = ang - 15.0;
-                        y = func_800B7890_B8490(ang2);
-                        x = -84.0 - back[D_80109B94_FF854_HammerSlammer - 22] - x * 155.0 + y * 155.0;
-                        x0 = HuMathSin(-15.0f);
-                        y = HuMathSin(ang2);
-                        func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - x0 * 155.0 + y * 155.0, 0.0f);
+                        d = func_800B7890_B8490(ang2);
+                        x = -84.0 - back[D_80109B94_FF854_HammerSlammer - 22] - c * 155.0 + d * 155.0;
+                        c = HuMathSin(-15.0f);
+                        d = HuMathSin(ang2);
+                        func_80029714_2A314(obj->model[11], x, D_80109B20_FF7E0_HammerSlammer.y - c * 155.0 + d * 155.0, 0.0f);
                         func_8002979C_2A39C(obj->model[11], 0.0f, 0.0f, ang);
                     }
                 } else if (D_80109B94_FF854_HammerSlammer == 30) {
@@ -819,12 +826,13 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
             func_800298A4_2A4A4(obj->model[28], 4, 0);
         }
         if (D_80109B54_FF814_HammerSlammer == 5 && D_80109B94_FF854_HammerSlammer >= 21 && D_80109B20_FF7E0_HammerSlammer.result == 0) {
-            x = (D_80109B94_FF854_HammerSlammer - 20) / 7.0f;
-            y = (D_80109B94_FF854_HammerSlammer - 21) / 7.0f;
-            x = 80.0 - (f32)(x * x) * 80.0;
-            y = 80.0 - (f32)(y * y) * 80.0;
-            func_80029714_2A314(obj->model[28], -240.0f, x < 0.0 ? 0.0f : x, 25.0f);
-            if (x < 0.0 && y >= 0.0) {
+            f32 h0 = (D_80109B94_FF854_HammerSlammer - 20) / 7.0f;
+            f32 h1 = (D_80109B94_FF854_HammerSlammer - 21) / 7.0f;
+
+            h0 = 80.0 - (f32)(h0 * h0) * 80.0;
+            h1 = 80.0 - (f32)(h1 * h1) * 80.0;
+            func_80029714_2A314(obj->model[28], -240.0f, h0 < 0.0 ? 0.0f : h0, 25.0f);
+            if (h0 < 0.0 && h1 >= 0.0) {
                 D_80109C2C_FF8EC_HammerSlammer = 1;
                 func_80029E80_2AA80(obj->model[28], 1, 0);
             }
@@ -834,6 +842,14 @@ void func_80104000_F9CC0_HammerSlammer(omObjData* obj) {
             func_80029BF0_2A7F0(obj->model[28], func_80029E14_2AA14(obj->model[31]), 0, 12, 2);
         }
         if ((u8)(D_80109B20_FF7E0_HammerSlammer.result + 1) >= 2 && (D_80109B54_FF814_HammerSlammer == 5 || D_80109B54_FF814_HammerSlammer == 8 || D_80109B54_FF814_HammerSlammer == 6 || D_80109B54_FF814_HammerSlammer == 7 || D_80109B54_FF814_HammerSlammer == 9)) {
+            f32 x0;
+            f32 y0;
+            f32 x1;
+            f32 y1;
+            f32 x;
+            f32 y;
+            f32 t;
+
             if ((u8)D_80109B20_FF7E0_HammerSlammer.result % 2 != 0) {
                 x0 = D_80109030_FECF0_HammerSlammer[D_80109B20_FF7E0_HammerSlammer.result] * 0.5 - (D_80109B20_FF7E0_HammerSlammer.result == 3 ? 62.5 : 50.0);
                 y0 = D_8010904C_FED0C_HammerSlammer[D_80109B20_FF7E0_HammerSlammer.result] * 0.5 + (D_80109B20_FF7E0_HammerSlammer.result == 3 ? 142.5 : 155.0);
