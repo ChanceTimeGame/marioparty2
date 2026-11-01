@@ -10,8 +10,9 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Lava Tile Isle, an item minigame. Retail files 113C80.c and 114640.c (from 801031C0, 3-nop
-   pad); .data is asm, .rodata from 0x11B7A0 in 114640.c. */
+/* Lava Tile Isle, an item minigame. Retail files 113C80.c, 114640.c (from 801031C0, 3-nop
+   pad) and 115B60.c (from 801046E0, 1-nop pad); .data is asm, .rodata from 0x11B7A0 (114640.c)
+   and 0x11B840 (115B60.c). */
 
 /* ---- main-segment API missing from include/ ---- */
 typedef struct LTCharData {

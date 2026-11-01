@@ -799,9 +799,10 @@ $(OVL5F_BLANKSTRIP_UNITS_S412): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 
-# S4-08: ovl_08 113C80.c and 114640.c (from 801031C0, 3-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
+# S4-08: ovl_08 113C80.c, 114640.c (from 801031C0, 3-nop pad) and 115B60.c (from 801046E0, 1-nop pad) are GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
 S408_BLANKSTRIP_UNITS := build/src/overlays/ovl_08_LavaTileIsle/113C80.c.o \
-	build/src/overlays/ovl_08_LavaTileIsle/114640.c.o
+	build/src/overlays/ovl_08_LavaTileIsle/114640.c.o \
+	build/src/overlays/ovl_08_LavaTileIsle/115B60.c.o
 $(S408_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S408_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
