@@ -32,8 +32,8 @@ typedef struct SPPlane {
     /* 0x024 */ f32 hitSlow;
     /* 0x028 */ f32 hitSpin;
     /* 0x02C */ f32 progress;   /* 0 start .. 1 finish */
-    /* 0x030 */ s32 aileronFrame; /* an f32 read whole; see func_801058EC_1AEF7C_SkyPilots */
-    /* 0x034 */ s32 gunFrame;
+    /* 0x030 */ f32 aileronFrame;
+    /* 0x034 */ f32 gunFrame;
     /* 0x038 */ u8 unk_38[0x44 - 0x38];
     /* 0x044 */ f32 yawHist[20];
     /* 0x094 */ s32 yawPos;
@@ -179,9 +179,9 @@ extern s16 D_8010ADB4_1B4444_SkyPilots;           /* the team home, -1 */
 extern f32 D_8010ADB8_1B4448_SkyPilots[5];        /* balloon bob angle */
 extern u8 D_8010ADCC_1B445C_SkyPilots[2][4];      /* hits by team on each mine */
 extern u8 D_8010ADD4_1B4464_SkyPilots[5];         /* balloon popped, counts to 45 */
-extern SPPolar D_8010ADDC_1B446C_SkyPilots[2];    /* the gates (hills?) */
-extern SPPolar D_8010ADF4_1B4484_SkyPilots[6];    /* rings */
-extern SPPolar D_8010AE3C_1B44CC_SkyPilots[4];    /* mines' launchers */
+extern SPPolar D_8010ADDC_1B446C_SkyPilots[2];    /* arches; extra = scale */
+extern SPPolar D_8010ADF4_1B4484_SkyPilots[6];    /* spin rings */
+extern SPPolar D_8010AE3C_1B44CC_SkyPilots[4];    /* cannons that fire at a plane in range */
 extern SPPolar D_8010AE6C_1B44FC_SkyPilots[5];    /* balloons */
 extern s8 D_8010AEA8_1B4538_SkyPilots[4];         /* mine state: 0 idle, 1.. flying, <0 waiting */
 extern Vec D_8010AEAC_1B453C_SkyPilots[4];        /* mine direction */
