@@ -119,6 +119,8 @@ void func_8002C524_2D124(s16, s16, s16);
 void func_8002C628_2D228(s16 arg0, s16 arg1, char* arg2);
 void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
 void omSetRot(omObjData*, f32, f32, f32);
+u16 func_80078EA8_79AA8(void);
+extern u8 D_80102720_103320;
 void func_80053FC8_54BC8(void);
 void func_80053FE8_54BE8(s32 arg0);
 void func_80054018_54C18(s16 arg0, s16 arg1);
@@ -127,9 +129,8 @@ void func_80050AE0_516E0(void);
 s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**, s32, s32), u8 arg2);
 
 /* ---- .data ---- */
-extern f32 D_80109030_FECF0_HammerSlammer[6];
-extern f32 D_80109048_FED08_HammerSlammer[1];
-extern f32 D_8010904C_FED0C_HammerSlammer[6];
+extern f32 D_80109030_FECF0_HammerSlammer[7]; /* panel x; [6] the player's */
+extern f32 D_8010904C_FED0C_HammerSlammer[7]; /* panel y; [6] the player's */
 extern f32 D_80109068_FED28_HammerSlammer[6];
 extern f32 D_80109080_FED40_HammerSlammer[6];
 extern f32 D_80109098_FED58_HammerSlammer[6];
@@ -142,12 +143,12 @@ extern omObjData* D_80109B50_FF810_HammerSlammer;
 extern s16 D_80109B54_FF814_HammerSlammer; /* state */
 extern f32 D_80109B58_FF818_HammerSlammer;
 extern s32 D_80109B60_FF820_HammerSlammer[8];
-extern s32 D_80109B80_FF840_HammerSlammer[4];
+extern f32 D_80109B80_FF840_HammerSlammer[4]; /* trail y */
 extern omObjData* D_80109B90_FF850_HammerSlammer;
 extern u32 D_80109B94_FF854_HammerSlammer; /* time in the state */
 extern u8 D_80109B98_FF858_HammerSlammer;
 extern u16 D_80109B9A_FF85A_HammerSlammer; /* done */
-extern s32 D_80109BA0_FF860_HammerSlammer[4];
+extern f32 D_80109BA0_FF860_HammerSlammer[4]; /* trail x */
 extern s32 D_80109BB0_FF870_HammerSlammer[8];
 extern u8 D_80109BD0_FF890_HammerSlammer; /* the quit fade's counter */
 extern s8 D_80109BD1_FF891_HammerSlammer; /* shake */
