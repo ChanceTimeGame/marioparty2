@@ -18,10 +18,15 @@ typedef struct HSState {
     /* 0x01 */ s8 port;
     /* 0x02 */ s8 character;
     /* 0x03 */ s8 cpu; /* -1: a human */
-    /* 0x04 */ s16 cpuTimer;
-    /* 0x06 */ char unk_06[3];
-    /* 0x09 */ s8 result;
-    /* 0x0A */ char unk_0A[0x22];
+    /* 0x04 */ s16 cpuTimer; /* the power the CPU stops at */
+    /* 0x06 */ s16 cpuDelay;
+    /* 0x08 */ s8 swing; /* frames of the swing */
+    /* 0x09 */ s8 result; /* the panel, 0-5; 6 the top, a coin toss; -1 missed; -2 not yet */
+    /* 0x0A */ char unk_0A[2];
+    /* 0x0C */ f32 y; /* the puck */
+    /* 0x10 */ f32 vy;
+    /* 0x14 */ f32 power[3]; /* the last three frames */
+    /* 0x20 */ char unk_20[0xC];
 } HSState; /* size = 0x2C */
 
 /* ---- main-segment API missing from include/ ---- */
@@ -121,6 +126,8 @@ void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4)
 void omSetRot(omObjData*, f32, f32, f32);
 u16 func_80078EA8_79AA8(void);
 extern u8 D_80102720_103320;
+void func_8002C570_2D170(s16 arg0);
+void func_80029AFC_2A6FC(s16 arg0);
 void func_80053FC8_54BC8(void);
 void func_80053FE8_54BE8(s32 arg0);
 void func_80054018_54C18(s16 arg0, s16 arg1);
@@ -128,12 +135,18 @@ void MBDBackKill(void);
 void func_80050AE0_516E0(void);
 s16 func_8002838C_28F8C(s32 arg0, void (*arg1)(Gfx**, s32, s32), u8 arg2);
 
+/* The sparkle clock's step: faster while the arc lasts. */
+#define HS_STEP ((u32)((s16)(u16)D_80109BD2_FF892_HammerSlammer >= 0 \
+    ? (s32)(g = D_80109C30_FF8F0_HammerSlammer + 5) + (s16)((s16)(u16)D_80109BD2_FF892_HammerSlammer / 3) \
+    : (s32)D_80109C30_FF8F0_HammerSlammer + 1))
+
 /* ---- .data ---- */
 extern f32 D_80109030_FECF0_HammerSlammer[7]; /* panel x; [6] the player's */
 extern f32 D_8010904C_FED0C_HammerSlammer[7]; /* panel y; [6] the player's */
 extern f32 D_80109068_FED28_HammerSlammer[6];
 extern f32 D_80109080_FED40_HammerSlammer[6];
 extern f32 D_80109098_FED58_HammerSlammer[6];
+extern s32 D_801090B0_FED70_HammerSlammer[6]; /* voice directory per character */
 extern s32 D_801090C8_FED88_HammerSlammer[11];
 extern Gfx D_80109140_FEE00_HammerSlammer[];
 
@@ -142,14 +155,14 @@ extern HSState D_80109B20_FF7E0_HammerSlammer;
 extern omObjData* D_80109B50_FF810_HammerSlammer;
 extern s16 D_80109B54_FF814_HammerSlammer; /* state */
 extern f32 D_80109B58_FF818_HammerSlammer;
-extern s32 D_80109B60_FF820_HammerSlammer[8];
+extern f32 D_80109B60_FF820_HammerSlammer[8]; /* spark y */
 extern f32 D_80109B80_FF840_HammerSlammer[4]; /* trail y */
 extern omObjData* D_80109B90_FF850_HammerSlammer;
 extern u32 D_80109B94_FF854_HammerSlammer; /* time in the state */
 extern u8 D_80109B98_FF858_HammerSlammer;
 extern u16 D_80109B9A_FF85A_HammerSlammer; /* done */
 extern f32 D_80109BA0_FF860_HammerSlammer[4]; /* trail x */
-extern s32 D_80109BB0_FF870_HammerSlammer[8];
+extern f32 D_80109BB0_FF870_HammerSlammer[8]; /* spark clock */
 extern u8 D_80109BD0_FF890_HammerSlammer; /* the quit fade's counter */
 extern s8 D_80109BD1_FF891_HammerSlammer; /* shake */
 extern s16 D_80109BD2_FF892_HammerSlammer;
@@ -158,13 +171,13 @@ extern s32 D_80109BCC_FF88C_HammerSlammer; /* the visible player model */
 extern f32 D_80109BF0_FF8B0_HammerSlammer;
 extern f32 D_80109BF4_FF8B4_HammerSlammer;
 extern s32 D_80109BF8_FF8B8_HammerSlammer; /* frames */
-extern s32 D_80109C00_FF8C0_HammerSlammer[8];
-extern s32 D_80109C1C_FF8DC_HammerSlammer; /* voice channel: s16 in an s32 */
+extern f32 D_80109C00_FF8C0_HammerSlammer[8]; /* spark speed */
+extern s32 D_80109C1C_FF8DC_HammerSlammer[3]; /* voice channel: s16 in an s32 */
 extern u8 D_80109C28_FF8E8_HammerSlammer;
 extern s8 D_80109C29_FF8E9_HammerSlammer; /* shake sign */
 extern s32 D_80109C2C_FF8EC_HammerSlammer;
-extern s32 D_80109C30_FF8F0_HammerSlammer;
-extern s32 D_80109C34_FF8F4_HammerSlammer;
+extern u32 D_80109C30_FF8F0_HammerSlammer; /* trail clock */
+extern f32 D_80109C34_FF8F4_HammerSlammer; /* the bell's speed */
 extern s32 D_80109C38_FF8F8_HammerSlammer[6]; /* item on panel 1-5; the low half is read by its label */
 
 void func_80102800_F84C0_HammerSlammer(void);
