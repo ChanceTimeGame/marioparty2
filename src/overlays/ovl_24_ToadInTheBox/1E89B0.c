@@ -313,6 +313,7 @@ void func_80105288_1EB438_ToadInTheBox(omObjData* obj, s32 dir, s32 file, u16 pl
     s32 mot;
     TBInfo** p;
     TBInfo** q;
+    s32 k;
     TBInfo* t;
     s32 a;
     s32 b;
@@ -351,8 +352,9 @@ void func_80105288_1EB438_ToadInTheBox(omObjData* obj, s32 dir, s32 file, u16 pl
     func_8000C024_CC24(obj, 6, 2);
     func_8000C024_CC24(obj, 7, 2);
     func_8000C024_CC24(obj, 8, 2);
+    k = player;
     q = D_8010B3B8_1F1568_ToadInTheBox;
-    p = q + player;
+    p = q + k;
     (*p)->character = gPlayers[player].character;
     t = *p;
     if (gPlayers[player].flags & 1) {
@@ -452,4 +454,72 @@ void func_80109798_1EF948_ToadInTheBox(s16 spr) {
     func_801097C4_1EF974_ToadInTheBox(spr, 0.0f, 0.0f, 1.0f);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_24_ToadInTheBox/1E89B0", func_801097C4_1EF974_ToadInTheBox);
+void func_801097C4_1EF974_ToadInTheBox(s16 spr, f32 x, f32 y, f32 scale) {
+    HuSprite* s;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    s16 tx;
+    s16 ty;
+    f32 x0;
+    f32 x1;
+    f32 y0;
+    f32 y1;
+
+    if (scale < 1.0f) {
+        scale = 1.0f;
+    }
+    s = func_80082550_83150(D_800F93FC_F9FFC[spr].unk_04, 0);
+    frame = &s->unk_84->unk00[s->unk_90];
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_8010AB08_1F0CB8_ToadInTheBox);
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, s->unk_84->unk0C);
+    for (ty = 0; ty < 240; ty += 40) {
+        for (tx = 0; tx < 320; tx += 40) {
+            if ((D_8010B496_1F1646_ToadInTheBox - 1) % 20 >= 10 && tx >= 40 && tx < 280 && ty >= 80) {
+                continue;
+            }
+            x0 = (f32)(tx - 160) * scale + 160.0f + x;
+            x1 = (f32)(tx - 119) * scale + 160.0f + x;
+            y0 = (f32)(ty - 120) * scale + 120.0f + y;
+            y1 = (f32)(ty - 79) * scale + 120.0f + y;
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, 320, 240, tx, ty, tx + 41,
+                               ty + 41, 0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, TB_FIX(x0), TB_FIX(y0), TB_FIX(x1), TB_FIX(y1),
+                                    G_TX_RENDERTILE, tx << 5, ty << 5, 0x400, 0x400);
+        }
+    }
+    if ((D_8010B496_1F1646_ToadInTheBox - 1) % 20 >= 10) {
+        s = func_80082550_83150(D_800F93FC_F9FFC[D_8010B494_1F1644_ToadInTheBox].unk_04, 0);
+        frame = &s->unk_84->unk00[s->unk_90];
+        gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, s->unk_84->unk0C);
+        for (ty = 0; ty < 160; ty += 40) {
+            for (tx = 0; tx < 240; tx += 40) {
+                x0 = tx;
+                x1 = tx + 41;
+                x1 = x1 >= 240.0f ? 240.0f : x1;
+                x1 = x1 >= 240.0f ? 240.0f : x1;
+                y0 = ty + y;
+                y1 = y0 + 41.0f;
+                y1 = y1 >= 160.0f ? 160.0f : y1;
+                gDPLoadTextureTile(D_800FDBCC_FE7CC++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, 240, 160, tx, ty, tx + 41,
+                                   ty + 41, 0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 0, 0, 0, 0);
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, TB_FIX2(x0 + 40.0f, x0), TB_FIX2(y0 + 80.0f, y0), TB_FIX2(x1 + 40.0f, x1),
+                                        TB_FIX2(y1 + 80.0f, y1), G_TX_RENDERTILE, tx << 5, ty << 5, 0x400, 0x400);
+            }
+        }
+    }
+    if (D_8010B492_1F1642_ToadInTheBox == 0 && D_8010B48C_1F163C_ToadInTheBox < 75) {
+        gSPDisplayList(D_800FDBCC_FE7CC++, D_8010AB50_1F0D00_ToadInTheBox);
+        gDPSetRenderMode(D_800FDBCC_FE7CC++, 0, 0x5041C8);
+        gDPSetCombineLERP(D_800FDBCC_FE7CC++, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE);
+        gDPSetAlphaDither(D_800FDBCC_FE7CC++, G_AD_PATTERN);
+        gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, 0, 0, 0, D_8010B48C_1F163C_ToadInTheBox < 45 ? 0x60 : 0x60 - (u8)((f32)(D_8010B48C_1F163C_ToadInTheBox - 45) / 30.0f * 96.0));
+        gDPFillRectangle(D_800FDBCC_FE7CC++, 0, 0, 320, 240);
+    }
+    if ((D_8010B492_1F1642_ToadInTheBox == 6 && !_CheckFlag(0xC)) || (D_8010B492_1F1642_ToadInTheBox == 2 && D_8010B48C_1F163C_ToadInTheBox >= 60)) {
+        gSPDisplayList(D_800FDBCC_FE7CC++, D_8010AB50_1F0D00_ToadInTheBox);
+        gDPSetRenderMode(D_800FDBCC_FE7CC++, 0, 0x5041C8);
+        gDPSetCombineLERP(D_800FDBCC_FE7CC++, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE);
+        gDPSetPrimColor(D_800FDBCC_FE7CC++, 0, 0, 0, 0, 0, D_8010B492_1F1642_ToadInTheBox != 6 || _CheckFlag(0xC) ? (D_8010B48C_1F163C_ToadInTheBox < 70 ? (u8)((f32)(D_8010B48C_1F163C_ToadInTheBox - 60) / 10.0f * 96.0) : 0x60) : 0x60);
+        gDPFillRectangle(D_800FDBCC_FE7CC++, D_8010B4C0_1F1670_ToadInTheBox * 70 + 20, 0, D_8010B4C0_1F1670_ToadInTheBox * 70 + 90, 240);
+    }
+}

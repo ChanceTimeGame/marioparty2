@@ -40,8 +40,19 @@ typedef struct TBCharData {
     /* 0x0C */ char unk_0C[0xC];
 } TBCharData; /* size = 0x18 */
 
+typedef struct TBEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} TBEspSlot; /* size = 0x24 */
+
+/* a float screen position to 10.2, rounded towards zero by hand; sign tested on a separate value */
+#define TB_FIX2(f, s) ((s32)((f) * 4.0) + ((s) < 0.0f ? 1 : 0))
+#define TB_FIX(f) TB_FIX2(f, f)
+
 /* ---- main-segment API missing from include/ ---- */
 extern TBCharData D_800CD438_CE038[];
+extern TBEspSlot* D_800F93FC_F9FFC;
 void ViewportSet(u8, f32, f32, f32, f32, f32, f32);
 void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
