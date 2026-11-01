@@ -127,7 +127,7 @@ extern s16 D_8010B57C_1CF92C_MagnetCarta[2];        /* team's cart magnet file *
 extern MCStart D_8010B580_1CF930_MagnetCarta[2];    /* team 0's two starts */
 extern MCStart D_8010B590_1CF940_MagnetCarta[2];    /* team 1's */
 extern MCStart D_8010B5A0_1CF950_MagnetCarta[3];    /* the big piece's start */
-extern MCRing D_8010B5B8_1CF968_MagnetCarta[][9];
+extern MCRing D_8010B5B8_1CF968_MagnetCarta[1][9];
 extern u16 D_8010B648_1CF9F8_MagnetCarta[4];        /* signal lamp textures */
 extern char* D_8010B650_1CFA00_MagnetCarta[4];      /* their names */
 
