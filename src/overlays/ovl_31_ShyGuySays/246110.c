@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_8010A200_24DB10_ShyGuySays[] = "\202r\202s\202`\202q\202s";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102800_246110_ShyGuySays);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102A04_246314_ShyGuySays);
@@ -7,6 +10,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102A04_
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102AFC_24640C_ShyGuySays);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102BE4_2464F4_ShyGuySays);
+
+__asm__(".section .rodata");
+const u32 D_8010A20C_24DB1C_ShyGuySays[3] = { 0x01030104, 0x01050106, 0x01070108 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80102C18_246528_ShyGuySays);
 
@@ -48,6 +54,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103BC0_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103C2C_24753C_ShyGuySays);
 
+__asm__(".section .rodata");
+const char D_8010A2A8_24DBB8_ShyGuySays[] = "NONE OBJ %d \012";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103CC4_2475D4_ShyGuySays);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103EB0_2477C0_ShyGuySays);
@@ -78,6 +87,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_801055D0_
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_8010568C_248F9C_ShyGuySays);
 
+__asm__(".section .rodata");
+const u32 D_8010A378_24DC88_ShyGuySays[4] = { 0x01110112, 0x01130114, 0x01150116, 0x00000000 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80105740_249050_ShyGuySays);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80105844_249154_ShyGuySays);
@@ -106,6 +118,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_8010629C_
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_801063B4_249CC4_ShyGuySays);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_801064B0_249DC0_ShyGuySays);
+
+__asm__(".section .rodata");
+const u32 D_8010A3C8_24DCD8_ShyGuySays[4] = { 0x001A001B, 0x001C001D, 0x001E001F, 0x00200000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80106690_249FA0_ShyGuySays);
 
