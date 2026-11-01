@@ -1,5 +1,14 @@
 #include "ovl_1C.h"
 
+__asm__(".section .data");
+s32 D_8010B200_1B4890_SkyPilots = 0;
+s32 D_8010B204_1B4894_SkyPilots = 0;
+f32 D_8010B208_1B4898_SkyPilots = 0.0f;
+f32 D_8010B20C_1B489C_SkyPilots[2] = { 0.0f, 0.0f };
+f32 D_8010B214_1B48A4_SkyPilots[2] = { 0.0f, 0.0f };
+f32 D_8010B21C_1B48AC_SkyPilots[2] = { 0.0f, 0.0f };
+f32 D_8010B224_1B48B4_SkyPilots[3] = { 0.0f, 0.0f, 0.0f };
+
 /* NON_MATCHING: schedule: retail keeps D_8010ADA4_1B4434_SkyPilots and the hook in registers (masked 6) */
 #ifdef NON_MATCHING
 void func_8010A340_1B39D0_SkyPilots(void) {

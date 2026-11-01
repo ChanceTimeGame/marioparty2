@@ -1,5 +1,12 @@
 #include "ovl_1C.h"
 
+__asm__(".section .data");
+f32 D_8010B1B0_1B4840_SkyPilots = 0.0f;
+s32 D_8010B1B4_1B4844_SkyPilots[6] = { 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D };
+s32 D_8010B1CC_1B485C_SkyPilots[6] = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23 };
+s32 D_8010B1E4_1B4874_SkyPilots[5] = { 0, 0, 0, 0, 0 };
+f32 D_8010B1F8_1B4888_SkyPilots[2] = { -500.0f, 500.0f };
+
 /* NON_MATCHING: register allocation (masked 4) */
 #ifdef NON_MATCHING
 void func_80108A90_1B2120_SkyPilots(s32 i) {

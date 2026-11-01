@@ -191,7 +191,7 @@ extern u32 D_8010AF10_1B45A0_SkyPilots;
 extern s32 D_8010AF14_1B45A4_SkyPilots;
 extern s32 D_8010AF18_1B45A8_SkyPilots;
 extern s32 D_8010AF1C_1B45AC_SkyPilots;
-extern s32 D_8010AF20_1B45B0_SkyPilots;           /* new record */
+extern s32 D_8010AF20_1B45B0_SkyPilots;          /* new record */
 extern s32 D_8010AF24;
 extern s32 D_8010AF28_1B45B8_SkyPilots;
 extern f32 D_8010AF2C_1B45BC_SkyPilots[11];       /* spin speed curve */
@@ -202,6 +202,8 @@ extern f32 D_8010B0C0_1B4750_SkyPilots[60];       /* outer road's */
 extern f32 D_8010B1B0_1B4840_SkyPilots;
 extern s32 D_8010B1B4_1B4844_SkyPilots[6];        /* character's pilot model file */
 extern s32 D_8010B1CC_1B485C_SkyPilots[6];        /* character's gunner model file */
+extern s32 D_8010B1E4_1B4874_SkyPilots[5];
+extern f32 D_8010B1F8_1B4888_SkyPilots[2];
 extern s32 D_8010B200_1B4890_SkyPilots;
 extern s32 D_8010B204_1B4894_SkyPilots;
 extern f32 D_8010B208_1B4898_SkyPilots;
