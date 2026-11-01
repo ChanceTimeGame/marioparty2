@@ -724,6 +724,9 @@ $(S43B_MULFIX_UNITS): export VR4300MUL := ON
 S416_MULFIX_UNITS := build/src/overlays/ovl_16_FiletRelay/17C100.c.o \
 	build/src/overlays/ovl_16_FiletRelay/17EFA0.c.o
 $(S416_MULFIX_UNITS): export VR4300MUL := ON
+# S4-1C: ovl_1C 1ABE90.c has the KMC VR4300 mul fix (func_80103BC0: a nop between back-to-back mul.s)
+S41C_MULFIX_UNITS := build/src/overlays/ovl_1C_SkyPilots/1ABE90.c.o
+$(S41C_MULFIX_UNITS): export VR4300MUL := ON
 # S4-1D: ovl_1D 1B49A0.c has the KMC VR4300 mul fix (func_8010308C: a nop between back-to-back mul.s)
 S41D_MULFIX_UNITS := build/src/overlays/ovl_1D_SpeedHockey/1B49A0.c.o
 $(S41D_MULFIX_UNITS): export VR4300MUL := ON
