@@ -1104,3 +1104,36 @@ void func_80107A2C_FD6EC_HammerSlammer(Gfx** gfx, s32 arg1, s32 arg2) {
                                 G_TX_RENDERTILE, 0, 0, (s32)(32.0 / (burst + 32.0 + burst) * 1024.0), (s32)(32.0 / (burst + 32.0 + burst) * 1024.0));
     }
 }
+
+/* .data (0xFECF0-0xFEE50, 80109030-80109190) */
+f32 D_80109030_FECF0_HammerSlammer[7] = { 47.0f, 122.0f, 47.0f, 122.0f, 47.0f, 122.0f, 186.0f };
+f32 D_8010904C_FED0C_HammerSlammer[7] = { 150.0f, 133.0f, 115.0f, 97.0f, 80.0f, 62.0f, 90.0f };
+f32 D_80109068_FED28_HammerSlammer[6] = { 480.0f, 495.0f, 470.0f, 477.0f, 471.0f, 480.0f };
+f32 D_80109080_FED40_HammerSlammer[6] = { 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, -1.0f };
+f32 D_80109098_FED58_HammerSlammer[6] = { 0.0f, 4.0f, -4.0f, -4.0f, -5.0f, -2.0f };
+s32 D_801090B0_FED70_HammerSlammer[6] = { 2, 3, 7, 4, 5, 6 };
+s32 D_801090C8_FED88_HammerSlammer[11] = { 0x00140009, 0x0014000A, 0x0014000C, 0x0014000D, 0x0014000E, 0x0014000F, 0x00140010, 0x00140011, 0x00140012, 0x00140013, 0x00140008 };
+/* the display list at 801090F8 has no label of its own (8-aligned after the table) */
+Gfx D_801090F8_FEDB8_HammerSlammer[] = {
+    {{ 0xE7000000, 0x00000000 }},
+    {{ 0xE3000A01, 0x00000000 }},
+    {{ 0xFCFFFFFF, 0xFFFCF279 }},
+    {{ 0xE200001C, 0x0F0A4000 }},
+    {{ 0xE2001E01, 0x00000000 }},
+    {{ 0xE3000C00, 0x00000000 }},
+    {{ 0xE3001201, 0x00002000 }},
+    {{ 0xED000000, 0x005003C0 }},
+    {{ 0xDF000000, 0x00000000 }},
+};
+Gfx D_80109140_FEE00_HammerSlammer[] = {
+    {{ 0xE7000000, 0x00000000 }},
+    {{ 0xE3000A01, 0x00000000 }},
+    {{ 0xFCFFFFFF, 0xFFFCF279 }},
+    {{ 0xE200001C, 0x00504240 }},
+    {{ 0xE2001E01, 0x00000001 }},
+    {{ 0xE3000C00, 0x00000000 }},
+    {{ 0xE3001201, 0x00002000 }},
+    {{ 0xED000000, 0x005003C0 }},
+    {{ 0xF9000000, 0x000000C0 }},
+    {{ 0xDF000000, 0x00000000 }},
+};
