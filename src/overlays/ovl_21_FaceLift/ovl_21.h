@@ -319,7 +319,7 @@ void func_80108890_1D5BF0_FaceLift(void);
 s16 func_80108900_1D5C60_FaceLift(s16 x, s16 y);
 void func_80108B1C_1D5E7C_FaceLift(s16 id);
 void func_80108B78_1D5ED8_FaceLift(s16 id);
-void func_80108BD4_1D5F34_FaceLift(s16 id, s16 val);
+void func_80108BD4_1D5F34_FaceLift(s16 id, s32 val);
 void func_80108D94_1D60F4_FaceLift(s16 id, s16 val);
 void func_80108E24_1D6184_FaceLift(s16 id, s16 x, s16 y);
 
