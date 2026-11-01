@@ -102,11 +102,11 @@ s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face) {
 }
 
 /* Face filters: walls, floors. */
-s32 func_80102CD8_17AA88_FiletRelay(void* probe, s16* v) {
+s32 func_80102CD8_17AA88_FiletRelay(s32 model, s16* v) {
     return (v[-1] & 0x3F00) >= 0x201;
 }
 
-s32 func_80102CEC_17AA9C_FiletRelay(void* probe, s16* v) {
+s32 func_80102CEC_17AA9C_FiletRelay(s32 model, s16* v) {
     return (v[-1] & 0x3F00) < 0x201;
 }
 
@@ -318,7 +318,7 @@ void func_801033D8_17B188_FiletRelay(omObjData* obj) {
     }
 }
 
-/* An object hopping on the spot. */
+/* An object started at the end (func_80103FF8): one bounce up off -95. */
 void func_8010354C_17B2FC_FiletRelay(omObjData* obj) {
     FRObjWork* w = obj->unk_50;
 
@@ -349,7 +349,7 @@ void func_8010354C_17B2FC_FiletRelay(omObjData* obj) {
     }
 }
 
-/* A snowflake: sways down, then starts again above a random player. */
+/* A drifting flake: sways down, then starts again ahead of a random camera. */
 void func_801036E8_17B498_FiletRelay(omObjData* obj) {
     FRObjWork* w = obj->unk_50;
     Vec eye;

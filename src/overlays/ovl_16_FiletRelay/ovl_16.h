@@ -1,8 +1,8 @@
 #ifndef _OVL_16_H
 #define _OVL_16_H
 
-/* Overlay 16: Filet Relay (2 vs 2... three penguins against one). No MP1 ancestor; its frame is
-   Speed Hockey's (ovl_1D). Four retail files:
+/* Overlay 16: Filet Relay (one against three, two lanes, two cameras). No MP1 ancestor; its frame
+   is Speed Hockey's (ovl_1D). Four retail files:
    17A5B0.c (the entry point alone), 17A600.c (from 80102850: ray test, level objects),
    17C100.c (from 80104350: the two fish, the four penguins, CPU control),
    17EFA0.c (from 801071F0: game state machine, two cameras, lights, pads, sprite models).
@@ -26,7 +26,7 @@ typedef f32 Matrix4f[4][4];
    Structs
    --------------------------------------------------------------------------------------- */
 
-/* A segment and what it hit: func_80102CFC_17AAAC. */
+/* A segment and what it hit: func_80102CFC_17AAAC. Vertex and face data come from the model file. */
 typedef struct FRRay {
     /* 0x00 */ Vec start;
     /* 0x0C */ Vec end;
@@ -47,9 +47,9 @@ typedef struct FRObjWork {
     /* 0x28 */ Vec vel;
     /* 0x34 */ Vec acc;
     /* 0x40 */ s16 state;
-    /* 0x42 */ s16 timer; /* falling icicles: the side */
-    /* 0x44 */ s16 wait;  /* falling icicles: toggles the throw */
-    /* 0x46 */ s16 index; /* the seal's rock */
+    /* 0x42 */ s16 timer; /* thrown objects: the side */
+    /* 0x44 */ s16 wait;  /* thrown objects: toggles the throw speed */
+    /* 0x46 */ s16 index; /* the thrower's object */
     /* 0x48 */ f32 angle;
     /* 0x4C */ char unk_4C[0xC];
 } FRObjWork; /* size = 0x58 */
@@ -358,7 +358,7 @@ typedef struct FRObjs {
 } FRObjs;
 extern FRObjs D_80109670_181420_FiletRelay; /* the thirty level objects */
 extern s16 D_80109674_181424_FiletRelay[2];      /* the score sprite */
-extern s32 D_80109678_181428_FiletRelay[2];      /* the ray test's face list */
+extern s32 D_80109678_181428_FiletRelay[2];      /* the ray test's HitList (2E0D0.c): a pointer inside */
 extern FRObjs D_80109680_181430_FiletRelay;      /* the four penguins */
 extern s16 D_80109684_181434_FiletRelay[4];      /* their map sprites */
 extern FRObjs D_8010968C_18143C_FiletRelay;      /* the two fish */
@@ -378,8 +378,8 @@ void func_80102800_17A5B0_FiletRelay(void);
 void func_80102850_17A600_FiletRelay(Vec* out, Vec* a, Vec* b, Vec* c);
 s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p);
 s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face);
-s32 func_80102CD8_17AA88_FiletRelay(void* probe, s16* v);
-s32 func_80102CEC_17AA9C_FiletRelay(void* probe, s16* v);
+s32 func_80102CD8_17AA88_FiletRelay(s32 model, s16* v);
+s32 func_80102CEC_17AA9C_FiletRelay(s32 model, s16* v);
 s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter);
 void func_80102EB4_17AC64_FiletRelay(omObjData* obj, s32 motion, f32 speed);
 s32 func_80102FC0_17AD70_FiletRelay(omObjData* obj);
