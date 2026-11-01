@@ -137,6 +137,12 @@ void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80029708_2A308(s32);
+void func_8000C024_CC24(omObjData* obj, u8 idx, u8 val);
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5);
+s32 func_80019B9C_1A79C(omObjData* obj, u16 motion); /* player motion */
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4); /* motion */
+void func_8000E0C0_ECC0(MgWork* w, s32 slot, void* hook);
 extern f32 D_800BF7C8_C03C8;
 void func_80079848_7A448(s16 arg0);
 void func_8000BEF8_CAF8(omObjData*, s32, f32);
@@ -168,12 +174,12 @@ extern u8 D_8010A1E8_11B668_LavaTileIsle[8];
 
 extern u16 D_8010A1F0_11B670_LavaTileIsle;
 extern f32 D_8010A1F4_11B674_LavaTileIsle;
-extern s32 D_8010A200_11B680_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A202_11B682_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A210_11B690_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A270_11B6F0_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A274_11B6F4_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A278_11B6F8_LavaTileIsle;   /* unused by code */
+extern s32 D_8010A200_11B680_LavaTileIsle[4]; /* player of slot i */
+
+extern u8 D_8010A210_11B690_LavaTileIsle[24][4]; /* every order of the four corners */
+extern Vec D_8010A270_11B6F0_LavaTileIsle[4]; /* the corners */
+
+
 extern s32 D_8010A2A0_11B720_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A2A4_11B724_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A2B4_11B734_LavaTileIsle;   /* unused by code */
@@ -204,8 +210,8 @@ extern u16 D_8010A4C8_11B948_LavaTileIsle[2];
 extern f32 D_8010A4CC_11B94C_LavaTileIsle; /* lava scroll */
 extern s16 D_8010A4D0_11B950_LavaTileIsle; /* lava model */
 extern s32 D_8010A4E0_11B960_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4E2_11B962_LavaTileIsle;   /* unused by code */
-extern s32 D_8010A4E3_11B963_LavaTileIsle;   /* unused by code */
+extern s8 D_8010A4E2_11B962_LavaTileIsle; /* next slot */
+extern u8 D_8010A4E3_11B963_LavaTileIsle; /* the order, 0-23 */
 extern s32 D_8010A4E8_11B968_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A4EB_11B96B_LavaTileIsle;   /* unused by code */
 extern Vec D_8010A500_11B980_LavaTileIsle[4];
@@ -237,8 +243,8 @@ void func_801039A4_114E24_LavaTileIsle(omObjData* obj);
 void func_80103B04_114F84_LavaTileIsle(omObjData* obj);
 void func_80104154_1155D4_LavaTileIsle(omObjData* obj);
 void func_801046E0_115B60_LavaTileIsle(void);
-void func_8010479C_115C1C_LavaTileIsle(void);
-void func_80104C94_116114_LavaTileIsle(void);
+void func_8010479C_115C1C_LavaTileIsle(omObjData* obj);
+void func_80104C94_116114_LavaTileIsle(omObjData* obj);
 void func_801052A8_116728_LavaTileIsle(void);
 void func_80105400_116880_LavaTileIsle(void);
 void func_801057C0_116C40_LavaTileIsle(void);
@@ -258,9 +264,9 @@ void func_801081C4_119644_LavaTileIsle(void);
 void func_80108204_119684_LavaTileIsle(void);
 void func_80108388_119808_LavaTileIsle(void);
 void func_80108494_119914_LavaTileIsle(void);
-void func_80108648_119AC8_LavaTileIsle(void);
+s32 func_80108648_119AC8_LavaTileIsle(omObjData* obj);
 void func_801095BC_11AA3C_LavaTileIsle(void);
-void func_80109E5C_11B2DC_LavaTileIsle(void);
+s32 func_80109E5C_11B2DC_LavaTileIsle(omObjData* obj);
 void func_80109E70_11B2F0_LavaTileIsle(void);
 void func_80109F44_11B3C4_LavaTileIsle(void);
 
