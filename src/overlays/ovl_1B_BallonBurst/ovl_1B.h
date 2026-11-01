@@ -24,7 +24,7 @@ typedef struct BBWork {
     /* 0x08 */ s8 unk_08;
     /* 0x09 */ s8 unk_09;
     /* 0x0A */ u8 unk_0A;
-    /* 0x0B */ s8 unk_0B;
+    /* 0x0B */ u8 unk_0B;
     /* 0x0C */ s8 unk_0C;
 } BBWork; /* size = 0xD */
 
@@ -130,14 +130,19 @@ extern const char D_80109E30_1AB6D0_BallonBurst[];
 extern f32 D_80109C88_1AB528_BallonBurst[6];
 extern f32 D_80109CA0_1AB540_BallonBurst[6];
 extern Vec D_80109D30_1AB5D0_BallonBurst[4]; /* the four seats */
+extern s16 D_80109C80_1AB520_BallonBurst[4]; /* sound pan per seat */
+extern f32 D_80109D00_1AB5A0_BallonBurst[6];
+extern f32 D_80109D18_1AB5B8_BallonBurst[6];
+extern f32 D_80109D60_1AB600_BallonBurst[6];
+extern f32 D_80109D78_1AB618_BallonBurst[5];
+extern s8 D_80109D8C_1AB62C_BallonBurst[8];
+extern s8 D_80109D94_1AB634_BallonBurst[8];
 extern s8 D_80109D9C_1AB63C_BallonBurst[][4];
 
 /* ---- .bss ---- */
 extern BBWork* D_8010A5F0_1ABE90_BallonBurst[4];
 extern omObjData* D_8010A600_1ABEA0_BallonBurst;
-extern Vec D_8010A608_1ABEA8_BallonBurst[7];
-extern Vec D_8010A65C_1ABEFC_BallonBurst;
-extern Vec D_8010A668_1ABF08_BallonBurst[8];
+extern Vec D_8010A608_1ABEA8_BallonBurst[2][8]; /* a hose per team; [7] the balloon end */
 extern f32 D_8010A6C8_1ABF68_BallonBurst;
 extern s16 D_8010A6CC_1ABF6C_BallonBurst;
 extern s8 D_8010A6CE_1ABF6E_BallonBurst[4];
@@ -150,21 +155,19 @@ extern s16 D_8010A6FC_1ABF9C_BallonBurst;
 extern omObjData* D_8010A704_1ABFA4_BallonBurst;
 extern f32 D_8010A708_1ABFA8_BallonBurst[2];
 extern f32 D_8010A710_1ABFB0_BallonBurst;
-extern s8 D_8010A714_1ABFB4_BallonBurst[2];
-extern s32 D_8010A718_1ABFB8_BallonBurst;
-extern s32 D_8010A71C_1ABFBC_BallonBurst;
+extern u8 D_8010A714_1ABFB4_BallonBurst[2];
+extern f32 D_8010A718_1ABFB8_BallonBurst[2]; /* balloon height */
 extern u16 D_8010A720_1ABFC0_BallonBurst;
 extern u16 D_8010A722_1ABFC2_BallonBurst;
 extern s8 D_8010A724_1ABFC4_BallonBurst[4];
 extern omObjData* D_8010A728_1ABFC8_BallonBurst;
-extern s16 D_8010A730_1ABFD0_BallonBurst[8];
+extern s16 D_8010A730_1ABFD0_BallonBurst[4][2]; /* the CPU script: phase, count */
 extern s8 D_8010A740_1ABFE0_BallonBurst[2];
 extern omObjData* D_8010A748_1ABFE8_BallonBurst[4];
 extern f32 D_8010A758_1ABFF8_BallonBurst;
 extern omObjData* D_8010A75C_1ABFFC_BallonBurst;
 extern s32 D_8010A760_1AC000_BallonBurst;
-extern s32 D_8010A764_1AC004_BallonBurst;
-extern s32 D_8010A768_1AC008_BallonBurst;
+extern f32 D_8010A764_1AC004_BallonBurst[2]; /* balloon speed */
 extern omObjData* D_8010A76C_1AC00C_BallonBurst;
 extern s32 D_8010A770_1AC010_BallonBurst;
 extern f32 D_8010A778_1AC018_BallonBurst[2][0x31];
