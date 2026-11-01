@@ -6,7 +6,7 @@
    17A5B0.c (the entry point alone), 17A600.c (from 80102850: ray test, level objects),
    17C100.c (from 80104350: the two fish, the four penguins, CPU control),
    17EFA0.c (from 801071F0: game state machine, two cameras, lights, pads, sprite models).
-   .data stays asm (180A20.data.s; 17EFA0.c's from 801093C0); .rodata is carved per file
+   .data is in C, per file (17A600.c from 80108C70, 17C100.c from 80109160, 17EFA0.c from 801093C0); .rodata is carved per file
    ([0x181210, .rodata, 17A600], [0x181228, .rodata, 17C100], [0x1813F0, .rodata, 17EFA0]). */
 
 #include "common.h"
@@ -327,7 +327,8 @@ extern Vec D_80109160_180F10_FiletRelay[4]; /* start positions, by order + 1 */
 extern FRCpu D_80109190_180F40_FiletRelay[4];
 extern FRZone D_801091C0_180F70_FiletRelay[];
 extern u8 D_80109250_181000_FiletRelay[6][3];
-/* The goal z by order: [-1] is 80109264, -1140, inside D_80109250's block. */
+/* The goal z by order: [-1] is D_80109264, -1140. D_80109268 and D_80109270 are aliases into it. */
+extern f32 D_80109264_181014_FiletRelay[4];
 extern f32 D_80109268_181018_FiletRelay[];
 extern f32 D_80109270_181020_FiletRelay; /* = D_80109268[2] */
 extern FRChar D_80109274_181024_FiletRelay[6];

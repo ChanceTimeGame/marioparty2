@@ -1,5 +1,52 @@
 #include "ovl_16.h"
 
+/* .data (0x180F10-0x181170, 80109160-801093C0) */
+Vec D_80109160_180F10_FiletRelay[4] = {
+    { -30.0f, -110.0f, 1250.0f },
+    { 30.0f, -110.0f, 1250.0f },
+    { 30.0f, -110.0f, 435.0f },
+    { 30.0f, -110.0f, -385.0f },
+};
+FRCpu D_80109190_180F40_FiletRelay[4] = {
+    { 3, 45, 4, 2, 2.2f, 2.0f }, { 3, 50, 4, 2, 2.4f, 1.0f }, { 2, 55, 3, 4, 2.6f, 2.0f },
+    { 1, 60, 3, 3, 2.6f, 1.0f },
+};
+FRZone D_801091C0_180F70_FiletRelay[6] = {
+    { 850.0f, 1200.0f, 64.0f, 0.0f, -1.0f, 1 }, { 600.0f, 850.0f, 0.0f, 1.0f, -1.0f, 1 },
+    { 80.0f, 400.0f, 10.0f, 1.0f, -1.0f, 1 }, { -10.0f, 80.0f, 50.0f, 1.0f, 1.8f, 1 },
+    { -120.0f, -10.0f, -5.0f, 1.0f, 1.8f, 1 }, { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0 },
+};
+u8 D_80109250_181000_FiletRelay[6][3] = {
+    { 0, 1, 2 }, { 0, 2, 1 }, { 1, 0, 2 }, { 2, 0, 1 }, { 1, 2, 0 }, { 2, 1, 0 },
+};
+/* The goal z by order, from order -1: D_80109268 and D_80109270 are inside it. */
+f32 D_80109264_181014_FiletRelay[4] = { -1140.0f, 500.0f, -300.0f, -1140.0f };
+FRChar D_80109274_181024_FiletRelay[6] = {
+    { 2490381, 2490381, 2490375, 12.0f }, { 2490382, 2490382, 2490376, 12.0f },
+    { 2490383, 2490383, 2490377, 12.0f }, { 2490384, 2490384, 2490378, 12.0f },
+    { 2490385, 2490385, 2490379, 12.0f }, { 2490386, 2490386, 2490380, 12.0f },
+};
+FRMotDef D_801092D4_181084_FiletRelay[12] = {
+    { 0x260015, 0x0 }, { 0x260016, 0x0 }, { 0x260017, 0x0 }, { 0x260018, 0xFFFF },
+    { 0x260019, 0xFFFF }, { 0x26001A, 0xFFFF }, { 0x26001B, 0xFFFF }, { 0x26001E, 0xFFFF },
+    { 0x26001C, 0xFFFF }, { 0x26001D, 0xFFFF }, { 0x260020, 0x0 }, { 0x26001F, 0xFFFF },
+};
+Vec D_80109334_1810E4_FiletRelay = { 144.0f, -44.0f, 390.0f };
+Vec D_80109340_1810F0_FiletRelay = { -40.0f, -6.3f, -268.0f };
+Vec D_8010934C_1810FC_FiletRelay = { -25.0f, 125.0f, 0.0f };
+Vec D_80109358_181108_FiletRelay = { -52.0f, -24.7f, 0.0f };
+void (*D_80109364_181114_FiletRelay[7])(omObjData*, FRPlayer*) = {
+    func_801052DC_17D08C_FiletRelay, func_80105384_17D134_FiletRelay, func_80105800_17D5B0_FiletRelay,
+    func_80105A4C_17D7FC_FiletRelay, func_80105BA0_17D950_FiletRelay, func_80105CAC_17DA5C_FiletRelay,
+    func_80105EEC_17DC9C_FiletRelay,
+};
+Vec D_80109380_181130_FiletRelay = { 51.0f, -60.0f, -1053.0f };
+Vec D_8010938C_18113C_FiletRelay = { -13.3f, 14.5f, 0.0f };
+void (*D_80109398_181148_FiletRelay[5])(omObjData*, FRPlayer*) = {
+    func_801060A4_17DE54_FiletRelay, NULL, func_801060D4_17DE84_FiletRelay, func_80106314_17E0C4_FiletRelay, NULL,
+};
+s32 D_801093AC_18115C_FiletRelay[2] = { 0x260002, 0x260003 };
+
 /* A fish: flies under gravity, bounces on the ice. */
 void func_80104350_17C100_FiletRelay(omObjData* obj) {
     FRFish* w = obj->unk_50;
