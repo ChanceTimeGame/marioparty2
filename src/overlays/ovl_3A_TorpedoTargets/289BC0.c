@@ -1,5 +1,12 @@
 #include "ovl_3A.h"
 
+/* .data (0x28B5A0-0x28B5C0, 80109390-801093B0) */
+s32 D_80109390_28B5A0_TorpedoTargets = 0;
+f32 D_80109394_28B5A4_TorpedoTargets = 0.0f;
+s32 D_80109398_28B5A8_TorpedoTargets = 0;
+f32 D_8010939C_28B5AC_TorpedoTargets = 0.0f;
+s8 D_801093A0_28B5B0_TorpedoTargets[16] = { 0 };
+
 /* Logic right; retail keeps the array address in a register. */
 #ifdef NON_MATCHING
 void func_801079B0_289BC0_TorpedoTargets(void) {

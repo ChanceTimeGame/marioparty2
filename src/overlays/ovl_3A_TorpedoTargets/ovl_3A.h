@@ -169,15 +169,15 @@ f32 func_800B75A8_B81A8(f32 y, f32 x);
 void func_800B8070_B8C70(f32 angle, f32* sine, f32* cosine);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
-/* .data */
+/* .data (284A10.c 0x28B470, 289BC0.c 0x28B5A0, 28AB10.c 0x28B5C0) */
 extern s8 D_80109260_28B470_TorpedoTargets;  /* -2 on a draw */
 extern omObjData* D_80109264_28B474_TorpedoTargets[2]; /* the subs */
 extern Vec D_8010926C_28B47C_TorpedoTargets[2]; /* torpedo positions */
 extern Vec D_80109284_28B494_TorpedoTargets[4]; /* obstacles; the target sits above one in path 3 */
 extern s8 D_801092B4_28B4C4_TorpedoTargets;   /* target: 0 appearing, 1 on its path, else counting up to 0 */
-extern s8 D_801092B8_28B4C8_TorpedoTargets[2]; /* torpedo: 0 loaded, 1 running, <0 reloading */
-extern u8 D_801092BC_28B4CC_TorpedoTargets[2]; /* scores */
-extern u8 D_801092C0_28B4D0_TorpedoTargets[2];
+extern s8 D_801092B8_28B4C8_TorpedoTargets[4]; /* torpedo: 0 loaded, 1 running, <0 reloading */
+extern u8 D_801092BC_28B4CC_TorpedoTargets[4]; /* scores */
+extern u8 D_801092C0_28B4D0_TorpedoTargets[4];
 extern f32 D_801092C4_28B4D4_TorpedoTargets[2]; /* view roll per team */
 extern f32 D_801092D0_28B4E0_TorpedoTargets[2]; /* score pulse */
 extern Vec D_801092D8_28B4E8_TorpedoTargets[2]; /* camera positions */
@@ -192,12 +192,12 @@ extern s32 D_80109318_28B528_TorpedoTargets[6]; /* pilot file, by character */
 extern s32 D_80109330_28B540_TorpedoTargets[6];
 extern s32 D_80109348_28B558_TorpedoTargets[6]; /* gunner */
 extern s32 D_80109360_28B570_TorpedoTargets[6];
-extern s32 D_80109378_28B588_TorpedoTargets[2]; /* "hit" sprite frames */
+extern s32 D_80109378_28B588_TorpedoTargets[6]; /* "hit" sprite frames */
 extern s32 D_80109390_28B5A0_TorpedoTargets;
 extern f32 D_80109394_28B5A4_TorpedoTargets;
 extern s32 D_80109398_28B5A8_TorpedoTargets;
 extern f32 D_8010939C_28B5AC_TorpedoTargets;
-extern s8 D_801093A0_28B5B0_TorpedoTargets[2]; /* gunner CPU aim: 0 target, 1 other sub */
+extern s8 D_801093A0_28B5B0_TorpedoTargets[16]; /* gunner CPU aim: 0 target, 1 other sub */
 extern s32 D_801093B0_28B5C0_TorpedoTargets;  /* target alpha */
 extern u8 D_801093B3_28B5C3_TorpedoTargets;   /* its low byte, by retail's own label */
 extern f32 D_801093B4_28B5C4_TorpedoTargets;  /* target bob speed */
