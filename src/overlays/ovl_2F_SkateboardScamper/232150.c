@@ -1,5 +1,8 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_80108CB0_238600_SkateboardScamper[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80102800_232150_SkateboardScamper);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80102F64_2328B4_SkateboardScamper);
@@ -75,6 +78,24 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80106A58_2363A8_SkateboardScamper);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80106A94_2363E4_SkateboardScamper);
+
+__asm__(".section .rodata");
+const char D_80108D30_238680_SkateboardScamper[] = "m159_05_DEF";
+
+__asm__(".section .rodata");
+const char D_80108D3C_23868C_SkateboardScamper[] = "m159_04_DEF";
+
+__asm__(".section .rodata");
+const char D_80108D48_238698_SkateboardScamper[] = "m159_03_DEF";
+
+__asm__(".section .rodata");
+const char D_80108D54_2386A4_SkateboardScamper[] = "m159_02_DEF";
+
+__asm__(".section .rodata");
+const char D_80108D60_2386B0_SkateboardScamper[] = "m159_01_DEF";
+
+__asm__(".section .rodata");
+const char D_80108D6C_2386BC_SkateboardScamper[] = "m159_00_DEF";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_80107994_2372E4_SkateboardScamper);
 
