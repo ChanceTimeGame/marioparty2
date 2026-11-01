@@ -42,6 +42,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_801039E4_1F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80103B24_1F84C4_RollCall);
 
+__asm__(".section .rodata");
+const char D_8010A400_1FEDA0_RollCall[24] = "kinop_dammy_tex_DEF";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80103E98_1F8838_RollCall);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_801041E0_1F8B80_RollCall);
@@ -106,6 +109,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80107958_1F
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_801079DC_1FC37C_RollCall);
 
+__asm__(".section .rodata");
+const u32 D_8010A450_1FEDF0_RollCall[2] = { 0x00200030, 0x00500060 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80107A3C_1FC3DC_RollCall);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80107B94_1FC534_RollCall);
@@ -121,6 +127,12 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80107DE4_1F
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80107EFC_1FC89C_RollCall);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_801081B8_1FCB58_RollCall);
+
+__asm__(".section .rodata");
+const char D_8010A480_1FEE20_RollCall[] = "0_DEF";
+
+__asm__(".section .rodata");
+const char D_8010A488_1FEE28_RollCall[] = "1_DEF";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80108478_1FCE18_RollCall);
 
@@ -145,6 +157,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80109338_1F
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_8010945C_1FDDFC_RollCall);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80109538_1FDED8_RollCall);
+
+__asm__(".section .rodata");
+const char D_8010A490_1FEE30_RollCall[] = "\202`\202a\202b";
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80109660_1FE000_RollCall);
 
