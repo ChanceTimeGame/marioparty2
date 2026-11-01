@@ -181,7 +181,7 @@ extern f32 D_80109420_205A80_AbandonShip;
 extern f32 D_80109424_205A84_AbandonShip;
 extern s8 D_80109428_205A88_AbandonShip;
 extern f32 D_8010942C_205A8C_AbandonShip;
-extern s8 D_80109430_205A90_AbandonShip;
+extern s8 D_80109430_205A90_AbandonShip[16];
 extern s8 D_80109440_205AA0_AbandonShip;
 extern s16 D_80109442_205AA2_AbandonShip; /* players made */
 extern s32 D_80109444_205AA4_AbandonShip[4]; /* player by slot; the low half is the port */
@@ -191,7 +191,7 @@ extern s32 D_8010949C_205AFC_AbandonShip[4]; /* per player timer */
 extern s8 D_801094AC_205B0C_AbandonShip[4]; /* blink */
 extern s8 D_801094B0_205B10_AbandonShip[4]; /* frames changing side */
 extern f32 D_801094B4_205B14_AbandonShip[4]; /* climb speed */
-extern s8 D_801094C4_205B24_AbandonShip; /* the win was paid */
+extern s8 D_801094C4_205B24_AbandonShip[12]; /* the win was paid */
 
 /* ---- .bss (asm) ---- */
 
