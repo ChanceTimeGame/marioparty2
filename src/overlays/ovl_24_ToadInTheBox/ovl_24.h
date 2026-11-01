@@ -14,7 +14,7 @@
    .rodata from 0x1F0D40. */
 
 typedef struct TBInfo {
-    /* 0x00 */ u8 character;
+    /* 0x00 */ s8 character;
     /* 0x01 */ u8 port;
     /* 0x02 */ s8 cpu; /* -1: a human */
     /* 0x03 */ char unk_03;
@@ -23,13 +23,14 @@ typedef struct TBInfo {
 } TBInfo; /* size = 0xA */
 
 typedef struct TBBox {
-    /* 0x00 */ char unk_00[8];
+    /* 0x00 */ f32 angle;
+    /* 0x04 */ f32 unk_04;
     /* 0x08 */ u8 unk_08;
-    /* 0x09 */ char unk_09[3];
+    /* 0x09 */ char unk_09;
+    /* 0x0A */ u16 unk_0A;
     /* 0x0C */ s16 state;
     /* 0x0E */ char unk_0E[2];
-    /* 0x10 */ s16 time;
-    /* 0x12 */ char unk_12[2];
+    /* 0x10 */ s32 time;
     /* 0x14 */ f32 unk_14;
 } TBBox; /* size = 0x18 */
 
@@ -45,6 +46,14 @@ typedef struct TBEspSlot {
     /* 0x04 */ s16 unk_04;
     /* 0x06 */ char unk_06[0x1E];
 } TBEspSlot; /* size = 0x24 */
+
+/* MgWork 0xA8 is a u16 frame counter here (collision.h has it as padding): a struct view, not a
+   pointer cast, because GCC's loop pass needs the store to be a struct field */
+typedef struct TBWork {
+    /* 0x00 */ char unk_00[0xA8];
+    /* 0xA8 */ u16 unk_A8;
+} TBWork;
+#define TB_A8(w) (((TBWork*)(w))->unk_A8)
 
 /* a float screen position to 10.2, rounded towards zero by hand; sign tested on a separate value */
 #define TB_FIX2(f, s) ((s32)((f) * 4.0) + ((s) < 0.0f ? 1 : 0))
@@ -123,7 +132,7 @@ void func_8000C578_D178(u8);
 void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5);
 void func_8000E0C0_ECC0(MgWork* work, s32 slot, void* hook);
 void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
-s32 func_80019B9C_1A79C(omObjData* obj, u16 motion);
+s32 func_80019B9C_1A79C(omObjData* obj, s32 motion); /* main: u16; retail passes a word */
 void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
 void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
@@ -145,11 +154,11 @@ extern TBBox D_8010B3C8_1F1578_ToadInTheBox[4];
 extern TBBox* D_8010B428_1F15D8_ToadInTheBox[4];
 extern omObjData* D_8010B440_1F15F0_ToadInTheBox[4];
 extern s8 D_8010B450_1F1600_ToadInTheBox; /* the shake's sign */
-extern s16 D_8010B452_1F1602_ToadInTheBox; /* the game is over */
+extern u16 D_8010B452_1F1602_ToadInTheBox; /* the game is over */
 extern omObjData* D_8010B458_1F1608_ToadInTheBox[4]; /* the players */
 extern u8 D_8010B468_1F1618_ToadInTheBox[4];
 extern omObjData* D_8010B46C_1F161C_ToadInTheBox;
-extern s8 D_8010B474_1F1624_ToadInTheBox;
+extern u8 D_8010B474_1F1624_ToadInTheBox;
 extern omObjData* D_8010B478_1F1628_ToadInTheBox[4];
 extern s16 D_8010B488_1F1638_ToadInTheBox; /* espr */
 extern u32 D_8010B48C_1F163C_ToadInTheBox; /* time in the phase */
