@@ -152,7 +152,7 @@ s32 omOvlReturnEx(s16);
 u8 rand8(void);
 int abs(int);
 
-/* ---- .data (asm, 2059E0.data.s) ---- */
+/* ---- .data (1FEE60.c, 0x2059E0-0x205B30) ---- */
 
 extern s8 D_80109380_2059E0_AbandonShip; /* result: 0 none, 1 a winner, 2 all out */
 extern s8 D_80109381_2059E1_AbandonShip; /* the winner, a player */

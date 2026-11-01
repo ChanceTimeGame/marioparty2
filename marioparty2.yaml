@@ -1124,7 +1124,7 @@ segments:
     subsegments:
       - [0x1FEE60, c]
       - [0x2032A0, c]
-      - [0x2059E0, data]
+      - [0x2059E0, .data, 1FEE60]
       - [0x205B30, .rodata, 1FEE60]
       - [0x205B80, .rodata, 2032A0]
       - {0x205BA0, type: bss, vram: 0x80109540, name: ovl_27_bss}

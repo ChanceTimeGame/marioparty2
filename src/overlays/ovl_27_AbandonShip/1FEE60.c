@@ -1207,3 +1207,71 @@ void func_801068F8_202F58_AbandonShip(omObjData* obj) {
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_801068F8_202F58_AbandonShip);
 #endif
+
+/* .data (0x2059E0-0x205B30, 80109380-801094D0) */
+s8 D_80109380_2059E0_AbandonShip = 0;
+s8 D_80109381_2059E1_AbandonShip = 0;
+s32 D_80109384_2059E4_AbandonShip = 31;
+s8 D_80109388_2059E8_AbandonShip = 0;
+s32 D_8010938C_2059EC_AbandonShip = 0;
+u32 D_80109390_2059F0_AbandonShip = 0;
+s32 D_80109394_2059F4_AbandonShip = 0;
+s32 D_80109398_2059F8_AbandonShip = 0;
+s8 D_8010939C_2059FC_AbandonShip = 0;
+s8 D_8010939D_2059FD_AbandonShip = 0;
+s8 D_8010939E_2059FE_AbandonShip = 0;
+s8 D_8010939F_2059FF_AbandonShip = 0;
+f32 D_801093A0_205A00_AbandonShip[2] = { 1.0f, 1.0f };
+f32 D_801093A8_205A08_AbandonShip[6] = { -1050.0f, -1650.0f, -2200.0f, -3000.0f, 0.0f, 0.0f };
+s8 D_801093C0_205A20_AbandonShip = 0;
+f32 D_801093C4_205A24_AbandonShip[4] = { 540.0f, 180.0f, -180.0f, -540.0f };
+f32 D_801093D4_205A34_AbandonShip = 0.0f;
+f32 D_801093D8_205A38_AbandonShip = 0.0f;
+s8 D_801093DC_205A3C_AbandonShip[3][8] = {
+    { 0, 1, 0, 0, 1, 0, 0, 0 },
+    { 1, 0, 1, 1, 0, 0, 0, 1 },
+    { 0, 0, 1, 0, 1, 0, 1, 1 },
+};
+s8 D_801093F4_205A54_AbandonShip[3][5] = {
+    { 1, 3, 4, 6, 7 },
+    { 2, 4, 5, 6, 7 },
+    { 1, 3, 5, 6, 7 },
+};
+s8 D_80109404_205A64_AbandonShip[3][8] = {
+    { 0x09, 0x0D, 0x10, 0x13, 0x16, 0x19, 0x1B, 0x1D },
+    { 0x09, 0x0C, 0x0F, 0x11, 0x14, 0x16, 0x18, 0x1D },
+    { 0x09, 0x0B, 0x0E, 0x11, 0x15, 0x18, 0x1B, 0x1D },
+};
+u16 D_8010941C_205A7C_AbandonShip = 0;
+f32 D_80109420_205A80_AbandonShip = 0.0f;
+f32 D_80109424_205A84_AbandonShip = 0.0f;
+s8 D_80109428_205A88_AbandonShip = 0;
+f32 D_8010942C_205A8C_AbandonShip = 90.0f;
+s8 D_80109430_205A90_AbandonShip = 0;
+/* unused rest of the 16-byte slot; byte scalars, since GCC word-aligns char arrays */
+s8 D_80109431_205A91_AbandonShip = 0;
+s8 D_80109432_205A92_AbandonShip = 0;
+s8 D_80109433_205A93_AbandonShip = 0;
+s32 D_80109434_205A94_AbandonShip[3] = { 0 };
+s8 D_80109440_205AA0_AbandonShip = 0;
+s16 D_80109442_205AA2_AbandonShip = 0;
+s32 D_80109444_205AA4_AbandonShip[4] = { 0, 1, 2, 3 };
+Vec D_80109454_205AB4_AbandonShip[4] = {
+    { -300.0f, 330.0f, -470.0f },
+    { -400.0f, 330.0f, -470.0f },
+    { -500.0f, 330.0f, -470.0f },
+    { -600.0f, 330.0f, -470.0f },
+};
+u8 D_80109484_205AE4_AbandonShip[24] = {
+    0, 1, 2, 3, 1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+s32 D_8010949C_205AFC_AbandonShip[4] = { 0 };
+s8 D_801094AC_205B0C_AbandonShip[4] = { 0 };
+s8 D_801094B0_205B10_AbandonShip[4] = { 0 };
+f32 D_801094B4_205B14_AbandonShip[4] = { 0 };
+s8 D_801094C4_205B24_AbandonShip = 0;
+/* unused rest of the 12-byte slot */
+s8 D_801094C5_205B25_AbandonShip = 0;
+s8 D_801094C6_205B26_AbandonShip = 0;
+s8 D_801094C7_205B27_AbandonShip = 0;
+s32 D_801094C8_205B28_AbandonShip[2] = { 0 };
