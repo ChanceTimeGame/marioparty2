@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_08.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/114640", func_801031C0_114640_LavaTileIsle);
 
