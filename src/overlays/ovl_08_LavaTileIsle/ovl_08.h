@@ -145,6 +145,7 @@ void func_80026D28_27928(s16);
 void func_80026E00_27A00(s16, f32, f32, f32);
 void func_80026DAC_279AC(s16, u8, u8, u8);
 void func_80029708_2A308(s32);
+f32 func_800B1830_B2430(f32); /* sqrt */
 void func_80007790_8390(omObjData* obj); /* player object update (MP1 func_80005A28) */
 s32 func_80019000_19C00(omObjData* obj);
 void func_800B2060_B2C60(f32 (*m)[4], f32 x, f32 y, f32 z); /* rotate matrix */
@@ -204,8 +205,8 @@ extern s16 D_8010A2BC_11B73C_LavaTileIsle[4]; /* burn sound, -1 none */
 extern s32 D_8010A2C4_11B744_LavaTileIsle[4][4]; /* smoke puffs, by player */
 extern f32 D_8010A304_11B784_LavaTileIsle[4]; /* smoke scale */
 extern u8 D_8010A314_11B794_LavaTileIsle;
-extern s8 D_8010A315_11B795_LavaTileIsle;
-extern s32 D_8010A318_11B798_LavaTileIsle;   /* unused by code */
+extern u8 D_8010A315_11B795_LavaTileIsle;
+extern s8 D_8010A318_11B798_LavaTileIsle[4];
 extern s32 D_8010A31C_11B79C_LavaTileIsle;   /* unused by code */
 extern s32 D_8010A490_11B910_LavaTileIsle;   /* unused by code */
 extern s16 D_8010A494_11B914_LavaTileIsle;
@@ -264,8 +265,8 @@ void func_80104C94_116114_LavaTileIsle(omObjData* obj);
 void func_801052A8_116728_LavaTileIsle(omObjData* obj);
 void func_80105400_116880_LavaTileIsle(omObjData* obj);
 void func_801057C0_116C40_LavaTileIsle(omObjData* obj, LTCpu* c);
-void func_80105E34_1172B4_LavaTileIsle(s8* flag, LTCpu* c);
-s32 func_80105E80_117300_LavaTileIsle(LTCpu* c);
+void func_80105E34_1172B4_LavaTileIsle(u8* flag, LTCpu* c);
+u8 func_80105E80_117300_LavaTileIsle(LTCpu* c);
 s32 func_80105F6C_1173EC_LavaTileIsle(s8 prev);
 s32 func_80106120_1175A0_LavaTileIsle(s8 prev);
 s32 func_80106444_1178C4_LavaTileIsle(s8 prev);
@@ -275,8 +276,8 @@ s32 func_80106F2C_1183AC_LavaTileIsle(s8 prev);
 s32 func_80107414_118894_LavaTileIsle(s8 prev);
 s32 func_80107694_118B14_LavaTileIsle(s8 prev);
 s32 func_80107B24_118FA4_LavaTileIsle(s8 prev);
-void func_80107E3C_1192BC_LavaTileIsle(s32 arg0, omObjData* obj, s32 tile);
-void func_801081C4_119644_LavaTileIsle(void);
+void func_80107E3C_1192BC_LavaTileIsle(u8 dir, omObjData* obj, s8 tile);
+f32 func_801081C4_119644_LavaTileIsle(omObjData* a, omObjData* b);
 void func_80108204_119684_LavaTileIsle(omObjData* obj);
 void func_80108388_119808_LavaTileIsle(omObjData* obj);
 void func_80108494_119914_LavaTileIsle(omObjData* obj);

@@ -446,9 +446,52 @@ void func_801057C0_116C40_LavaTileIsle(omObjData* obj, LTCpu* c) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801057C0_116C40_LavaTileIsle);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105E34_1172B4_LavaTileIsle);
+void func_80105E34_1172B4_LavaTileIsle(u8* flag, LTCpu* c) {
+    if (*flag == 0) {
+        *flag = 1;
+        c->before = c->last = c->tile;
+        c->time = 0;
+    } else if (c->tile != c->last) {
+        c->before = c->last;
+        c->last = c->tile;
+        c->time = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80105E80_117300_LavaTileIsle);
+u8 func_80105E80_117300_LavaTileIsle(LTCpu* c) {
+    s32 r = 0;
+
+    switch (c->tile) {
+    case 0:
+        r = func_80105F6C_1173EC_LavaTileIsle(c->before);
+        break;
+    case 1:
+        r = func_80106120_1175A0_LavaTileIsle(c->before);
+        break;
+    case 2:
+        r = func_80106444_1178C4_LavaTileIsle(c->before);
+        break;
+    case 3:
+        r = func_801066D4_117B54_LavaTileIsle(c->before);
+        break;
+    case 4:
+        r = func_801069D8_117E58_LavaTileIsle(c->before);
+        break;
+    case 5:
+        r = func_80106F2C_1183AC_LavaTileIsle(c->before);
+        break;
+    case 6:
+        r = func_80107414_118894_LavaTileIsle(c->before);
+        break;
+    case 7:
+        r = func_80107694_118B14_LavaTileIsle(c->before);
+        break;
+    case 8:
+        r = func_80107B24_118FA4_LavaTileIsle(c->before);
+        break;
+    }
+    return r;
+}
 
 s32 func_80105F6C_1173EC_LavaTileIsle(s8 prev) {
     s8 a = D_8010A614_11BA94_LavaTileIsle->work[2];
@@ -671,15 +714,192 @@ s32 func_80107B24_118FA4_LavaTileIsle(s8 prev) {
     return 0;
 }
 
+/* Register/schedule (class 4, masked 25): retail keeps the button word in v1 across the switch; the stick stores schedule differently. */
+#ifdef NON_MATCHING
+void func_80107E3C_1192BC_LavaTileIsle(u8 dir, omObjData* obj, s8 tile) {
+    MgWork* w;
+    f32 x = 0.0f;
+    f32 z = 0.0f;
+    f32 dx;
+    f32 dz;
+    f32 d;
+    s32 b;
+
+    w = obj->unk_50;
+    b = func_80019000_19C00(obj);
+    switch (dir) {
+    case 0:
+        ContStkX[w->unk_57] = 0;
+        ContStkY[w->unk_57] = 0;
+        switch (tile) {
+        case 0:
+            z = -120.0f;
+            x = -120.0f;
+            break;
+        case 1:
+            x = 0.0f;
+            z = -120.0f;
+            break;
+        case 2:
+            x = 120.0f;
+            z = -120.0f;
+            break;
+        case 3:
+            x = -120.0f;
+            z = 0.0f;
+            break;
+        case 4:
+            z = 0.0f;
+            x = 0.0f;
+            break;
+        case 5:
+            x = 120.0f;
+            z = 0.0f;
+            break;
+        case 6:
+            x = -120.0f;
+            z = 120.0f;
+            break;
+        case 7:
+            x = 0.0f;
+            z = 120.0f;
+            break;
+        case 8:
+            z = 120.0f;
+            x = 120.0f;
+            break;
+        }
+        dx = x - obj->trans.x;
+        dz = z - obj->trans.z;
+        d = func_800B1830_B2430(dx * dx + dz * dz);
+        dx /= d;
+        dz /= d;
+        if (((d > 0.0f) ? d : 0.0f - d) > 7.0f) {
+            ContStkX[w->unk_57] = (s32)(dx * 20.0f);
+            ContStkY[w->unk_57] = -(s32)(dz * 20.0f);
+        } else {
+            ContStkY[w->unk_57] = 0;
+            ContStkX[w->unk_57] = 0;
+        }
+        break;
+    case 4:
+        ContStkX[w->unk_57] = 0;
+        if (b & 0x220) {
+            ContStkY[w->unk_57] = 10;
+        } else {
+            ContStkY[w->unk_57] = 40;
+        }
+        break;
+    case 3:
+        ContStkX[w->unk_57] = 0;
+        if (b & 0x220) {
+            ContStkY[w->unk_57] = -10;
+        } else {
+            ContStkY[w->unk_57] = -40;
+        }
+        break;
+    case 2:
+        ContStkY[w->unk_57] = 0;
+        ContStkX[w->unk_57] = (b & 0x220) ? 10 : 40;
+        break;
+    case 1:
+        ContStkY[w->unk_57] = 0;
+        ContStkX[w->unk_57] = (b & 0x220) ? -10 : -40;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107E3C_1192BC_LavaTileIsle);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_801081C4_119644_LavaTileIsle);
+f32 func_801081C4_119644_LavaTileIsle(omObjData* a, omObjData* b) {
+    f32 dx = b->trans.x - a->trans.x;
+    f32 dz = b->trans.z - a->trans.z;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108204_119684_LavaTileIsle);
+    return func_800B1830_B2430(dx * dx + dz * dz);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108388_119808_LavaTileIsle);
+void func_80108204_119684_LavaTileIsle(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    MgWork* w2;
+    omObjData* o;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108494_119914_LavaTileIsle);
+    if (w->unk_38 != 1000.0f) {
+        ContBtnTrg[w->unk_57] &= 0x7FFF;
+        return;
+    }
+    for (i = 0; i < 4; i++) {
+        o = D_800FFFD8_100BD8[i];
+        if (obj == o) {
+            continue;
+        }
+        w2 = o->unk_50;
+        if (w2->unk_38 != 1000.0f) {
+            continue;
+        }
+        if (func_801081C4_119644_LavaTileIsle(obj, o) <= 2.0f * w2->unk_48 + w2->unk_64) {
+            w->unk_3C = func_800B75A8_B81A8(o->trans.x - obj->trans.x, o->trans.z - obj->trans.z);
+            ContBtnTrg[w->unk_57] |= 0x8000;
+            return;
+        }
+        ContBtnTrg[w->unk_57] &= 0x7FFF;
+    }
+}
+
+void func_80108388_119808_LavaTileIsle(omObjData* obj) {
+    MgWork* w;
+    MgWork* w2;
+    omObjData* o;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        o = D_800FFFD8_100BD8[i];
+        if (obj != o) {
+            w = obj->unk_50;
+            w2 = o->unk_50;
+            if (func_801081C4_119644_LavaTileIsle(obj, o) <= 2.0f * w2->unk_48 + w2->unk_64) {
+                w->unk_3C = func_800B75A8_B81A8(o->trans.x - obj->trans.x, o->trans.z - obj->trans.z);
+                ContBtnTrg[w->unk_57] |= 0x4000;
+                return;
+            }
+            ContBtnTrg[w->unk_57] &= 0xBFFF;
+        }
+    }
+}
+
+void func_80108494_119914_LavaTileIsle(omObjData* obj) {
+    MgWork* w = obj->unk_50;
+    MgWork* w2;
+    omObjData* o;
+    s32 p = w->unk_59;
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        o = D_800FFFD8_100BD8[i];
+        if (obj == o) {
+            continue;
+        }
+        if (w->unk_38 == 1000.0f) {
+            D_8010A318_11B798_LavaTileIsle[p] = 0;
+            ContBtnTrg[w->unk_57] &= 0x5FFF;
+        }
+        w2 = o->unk_50;
+        if (w2->unk_38 != 1000.0f) {
+            continue;
+        }
+        if (func_801081C4_119644_LavaTileIsle(obj, o) <= 2.0f * w2->unk_48 + w2->unk_64) {
+            w->unk_3C = func_800B75A8_B81A8(o->trans.x - obj->trans.x, o->trans.z - obj->trans.z);
+            if (D_8010A318_11B798_LavaTileIsle[p] < 10) {
+                ContBtnTrg[w->unk_57] |= 0x8000;
+            } else {
+                ContBtnTrg[w->unk_57] |= 0xA000;
+            }
+            break;
+        }
+    }
+    D_8010A318_11B798_LavaTileIsle[p]++;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108648_119AC8_LavaTileIsle);
 
