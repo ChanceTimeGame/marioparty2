@@ -40,7 +40,7 @@ void func_8010873C_12BF1C_DayAtTheRaces(void) {
         D_8010AE70_12E650_DayAtTheRaces.pad[i].dir = func_8010868C_12BE6C_DayAtTheRaces(ContStkX[i], ContStkY[i]);
         D_8010AE70_12E650_DayAtTheRaces.pad[i].dirTrg =
             D_8010AE70_12E650_DayAtTheRaces.pad[i].dir
-            & (D_8010AE70_12E650_DayAtTheRaces.pad[i].dir ^ D_8010AE70_12E650_DayAtTheRaces.pad[i].dirPrev);
+            & (D_8010AE70_12E650_DayAtTheRaces.pad[i].dirPrev ^ D_8010AE70_12E650_DayAtTheRaces.pad[i].dir);
     }
 }
 
@@ -404,7 +404,7 @@ void func_80109BA4_12D384_DayAtTheRaces(s32 port, s8 stkX, s8 stkY, u16 trg, u16
     ContBtnTrg[port] = trg;
 }
 
-u16 func_80109BE0_12D3C0_DayAtTheRaces(s32 port) {
+s32 func_80109BE0_12D3C0_DayAtTheRaces(s32 port) {
     return D_8010AE70_12E650_DayAtTheRaces.pad[port].dirTrg;
 }
 
@@ -465,8 +465,8 @@ u8 func_80109DA0_12D580_DayAtTheRaces(void) {
     return D_8010AE70_12E650_DayAtTheRaces.state;
 }
 
-void func_80109DAC_12D58C_DayAtTheRaces(u8 state) {
-    if (state >= 6) {
+void func_80109DAC_12D58C_DayAtTheRaces(s32 state) {
+    if ((u8)state >= 6) {
         while (1) {
         }
     }

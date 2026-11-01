@@ -104,7 +104,7 @@ typedef struct DRGame {
     /* 0x06 */ s16 time;
     /* 0x08 */ s16 frame;
     /* 0x0A */ s16 count;
-    /* 0x0C */ s16 rank[4]; /* coins won by player */
+    /* 0x0C */ s16 rank[4]; /* by player: the finishing place of the racer bet on */
     /* 0x14 */ DRPad pad[4];
 } DRGame; /* size = 0x44 */
 
@@ -130,11 +130,13 @@ typedef struct DRPlayer {
     /* 0x02 */ s16 index; /* index in D_8010A538 and D_8010A638 */
     /* 0x04 */ s8 port;
     /* 0x05 */ s8 gear;   /* -1 none yet, else 0-2 */
+    /* 0x06 */ s8 unk_06;
+    /* 0x07 */ s8 rank;   /* finishing place, -1 none */
     /* 0x08 */ f32 x;
     /* 0x0C */ f32 speed;
     /* 0x10 */ f32 boost;
     /* 0x14 */ f32 accel;
-    /* 0x18 */ char unk_18[4];
+    /* 0x18 */ f32 height; /* the bet marker sits this high */
     /* 0x1C */ f32 anim;
     /* 0x20 */ s16 alpha;
     /* 0x22 */ s16 motion;
@@ -170,18 +172,53 @@ typedef struct DRChar {
     /* 0x00 */ Vec pos;
     /* 0x0C */ f32 scale;
     /* 0x10 */ Vec shadow;
-    /* 0x1C */ f32 unk_1C;
+    /* 0x1C */ f32 height;
     /* 0x20 */ s32 file;
-    /* 0x24 */ s32 unk_24;
+    /* 0x24 */ s32 shadowFile;
     /* 0x28 */ s32 attr;
 } DRChar; /* size = 0x2C */
 
+/* The replay's start: what the race state keeps. */
 typedef struct DRSave {
     /* 0x0 */ u16 flag;
     /* 0x2 */ u16 frame;
-    /* 0x4 */ char unk_04[0xA];
+    /* 0x4 */ u16 list[4]; /* frames of the close finishes */
+    /* 0xC */ u16 count;
     /* 0xE */ s16 seed;
 } DRSave; /* size = 0x10 */
+
+/* The race state, D_8010AC34. */
+typedef struct DRRace {
+    /* 0x00 */ s8 pick;   /* players who have bet */
+    /* 0x01 */ s8 done;   /* racers past the line */
+    /* 0x02 */ s16 time;
+    /* 0x04 */ s16 photo; /* a close finish: replay */
+    /* 0x06 */ s16 replay; /* slow-motion frame */
+    /* 0x08 */ s8 mark[4];
+    /* 0x0C */ s8 prev[4];
+    /* 0x10 */ s32 sub;
+    /* 0x14 */ s32 timer;
+    /* 0x18 */ f32 camX;
+} DRRace; /* size = 0x1C */
+
+typedef struct DRDone {
+    /* 0x0 */ s16 mes;
+    /* 0x2 */ s16 end;
+} DRDone;
+
+/* A player's bet marker, omObjData::unk_50, 0x30 bytes. */
+typedef struct DRBet {
+    /* 0x00 */ omObjData* target;
+    /* 0x04 */ s16 player;
+    /* 0x06 */ s16 port;
+    /* 0x08 */ char unk_08[2];
+    /* 0x0A */ s16 cursor;
+    /* 0x0C */ s16 delay;
+    /* 0x10 */ s32 state;
+    /* 0x14 */ s32 alpha;
+    /* 0x18 */ s32 timer;
+    /* 0x1C */ char unk_1C[0x14];
+} DRBet; /* size = 0x30 */
 
 typedef struct DRMark {
     /* 0x0 */ char unk_00[0xE];
@@ -252,10 +289,10 @@ typedef struct DRObjs {
 extern DRObjs D_8010AC10_12E3F0_DayAtTheRaces; /* the thirty level objects */
 extern DRObjs D_8010AC20_12E400_DayAtTheRaces; /* the four racers */
 extern DRObjs D_8010AC24_12E404_DayAtTheRaces;
-extern u8 D_8010AC35_12E415_DayAtTheRaces;
-extern s16 D_8010AC3A_12E41A_DayAtTheRaces; /* 1: paused */
-extern u8 D_8010AC3C_12E41C_DayAtTheRaces[4];
-extern u8 D_8010AC40_12E420_DayAtTheRaces[4];
+extern omObjData* D_8010AC28_12E408_DayAtTheRaces; /* the game object */
+extern s8 D_8010AC2C_12E40C_DayAtTheRaces[4]; /* who bets when */
+extern s8 D_8010AC30_12E410_DayAtTheRaces[4]; /* racer -> bet, -1 free */
+extern DRRace D_8010AC34_12E414_DayAtTheRaces;
 extern DRSave D_8010AC50_12E430_DayAtTheRaces;
 extern s16 D_8010AC60_12E440_DayAtTheRaces[4];
 extern u8 D_8010AC68_12E448_DayAtTheRaces[4];
@@ -272,6 +309,8 @@ extern s32 D_8010AEC0_12E6A0_DayAtTheRaces;           /* the game's own random s
 extern DRSprMdl D_8010AEC8_12E6A8_DayAtTheRaces;      /* the list's head */
 extern DRSprMdl* D_8010AF04_12E6E4_DayAtTheRaces;     /* its tail */
 
+extern s32 D_8010A4C0_12DCA0_DayAtTheRaces[6];
+extern u16 D_8010A4D8_12DCB8_DayAtTheRaces[4];
 extern u8 D_8010A4E0_12DCC0_DayAtTheRaces[4][8];
 extern f32 D_8010A500_12DCE0_DayAtTheRaces[9]; /* lap marks */
 extern s16 D_8010A524_12DD04_DayAtTheRaces[10];
@@ -280,6 +319,19 @@ extern f32 D_8010A5E8_12DDC8_DayAtTheRaces[4][5];
 extern DRMotion D_8010A638_12DE18_DayAtTheRaces[4][9];
 extern void (*D_8010A908_12E0E8_DayAtTheRaces[4])(omObjData*, DRPlayer*);
 extern void (*D_8010A918_12E0F8_DayAtTheRaces[6])(omObjData*, DRPlayer*);
+extern void (*D_8010A930_12E110_DayAtTheRaces[6])(omObjData*, DRBet*);
+extern s32 D_8010A948_12E128_DayAtTheRaces[4];
+extern void (*D_8010A958_12E138_DayAtTheRaces[9])(void);
+extern DRCamKey D_8010A97C_12E15C_DayAtTheRaces[4];
+extern DRCamPath D_8010A9FC_12E1DC_DayAtTheRaces;
+extern Vec D_8010AA08_12E1E8_DayAtTheRaces;
+extern Vec D_8010AA14_12E1F4_DayAtTheRaces;
+extern s32 D_8010AA20_12E200_DayAtTheRaces;
+extern s16 D_8010AA24_12E204_DayAtTheRaces;
+extern DRDone D_8010AA28_12E208_DayAtTheRaces;
+extern Vec D_8010AA2C_12E20C_DayAtTheRaces;
+extern Vec D_8010AA38_12E218_DayAtTheRaces;
+extern void (*D_8010AA44_12E224_DayAtTheRaces[7])(omObjData*);
 extern DRCamDef D_8010AA60_12E240_DayAtTheRaces[2];
 extern DRLight D_8010AAB0_12E290_DayAtTheRaces[2];
 extern void (*D_8010AAD0_12E2B0_DayAtTheRaces[3])(DRCam*);
@@ -287,6 +339,14 @@ extern void (*D_8010AADC_12E2BC_DayAtTheRaces[9])(omObjData*);
 
 /* main functions without a header */
 void func_8002864C_2924C(void);
+void func_8002D124_2DD24(s16);
+f32 func_8002CA14_2D614(s16);
+s16 func_800797DC_7A3DC(s32, s16);
+void func_800799A4_7A5A4(s16, s32);
+void func_800794F0_7A0F0(s32);
+void func_8006D4D0_6E0D0(s16);
+void func_8006D518_6E118(void);
+s32 func_80059FD0_5ABD0(s32);
 void func_80029FBC_2ABBC(s16, f32);
 f32 func_80029E3C_2AA3C(s16);
 void func_80026D28_27928(s16);
@@ -315,7 +375,80 @@ void func_800B2400_B3000(Matrix4f, f32, f32, f32, f32, f32, f32, f32);
 void func_800B3040_B3C40(Matrix4f, void*);
 s32 func_8003DF08_3EB08(void*);
 
-/* overlay functions used across files */
+/* all of the overlay's functions */
+void func_80102800_125FE0_DayAtTheRaces(void);
+void func_80102850_126030_DayAtTheRaces(omObjData* obj);
+void func_801028CC_1260AC_DayAtTheRaces(omObjData* obj);
+void func_80102940_126120_DayAtTheRaces(omObjData* obj);
+void func_801029C4_1261A4_DayAtTheRaces(omObjData* obj);
+void func_80102D08_1264E8_DayAtTheRaces(Vec* pos, Vec* rot);
+void func_801031EC_1269CC_DayAtTheRaces(omObjData* obj);
+void func_80103368_126B48_DayAtTheRaces(void);
+void func_801041B8_127998_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_8010430C_127AEC_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_801043B4_127B94_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104424_127C04_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104494_127C74_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_801045B4_127D94_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104744_127F24_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104750_127F30_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104A40_128220_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80104D1C_1284FC_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80105040_128820_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_8010537C_128B5C_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_801058B4_129094_DayAtTheRaces(void);
+void func_80105C84_129464_DayAtTheRaces(void);
+omObjData* func_80105D9C_12957C_DayAtTheRaces(s32 i);
+void func_80105DC4_1295A4_DayAtTheRaces(void);
+omObjData* func_80105E80_129660_DayAtTheRaces(s32 i);
+s32 func_80105EA8_129688_DayAtTheRaces(f32 x);
+f32 func_80105EF0_1296D0_DayAtTheRaces(DRPlayer* w);
+void func_80105F70_129750_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80105FE8_1297C8_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_8010603C_12981C_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80106128_129908_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_801062A8_129A88_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80106454_129C34_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_801066CC_129EAC_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80106704_129EE4_DayAtTheRaces(omObjData* obj, DRPlayer* w);
+void func_80106764_129F44_DayAtTheRaces(omObjData* obj);
+s16 func_80106D5C_12A53C_DayAtTheRaces(DRBet* w, s32 dir);
+void func_80106DE4_12A5C4_DayAtTheRaces(omObjData* obj, DRBet* w);
+void func_80107368_12AB48_DayAtTheRaces(omObjData* obj, DRBet* w);
+void func_80107400_12ABE0_DayAtTheRaces(omObjData* obj, DRBet* w);
+void func_801074A0_12AC80_DayAtTheRaces(omObjData* obj);
+void func_80107520_12AD00_DayAtTheRaces(omObjData* obj, s32 i);
+void func_801076AC_12AE8C_DayAtTheRaces(void);
+void func_80107788_12AF68_DayAtTheRaces(void);
+void func_80107894_12B074_DayAtTheRaces(void);
+void func_801078B0_12B090_DayAtTheRaces(void);
+void func_8010796C_12B14C_DayAtTheRaces(omObjData* obj);
+void func_80107A44_12B224_DayAtTheRaces(omObjData* obj);
+void func_80107B20_12B300_DayAtTheRaces(s32 i);
+void func_80107C5C_12B43C_DayAtTheRaces(void);
+void func_80107D10_12B4F0_DayAtTheRaces(omObjData* obj);
+void func_80107FF8_12B7D8_DayAtTheRaces(omObjData* obj);
+void func_80108034_12B814_DayAtTheRaces(omObjData* obj);
+void func_80108304_12BAE4_DayAtTheRaces(omObjData* obj);
+void func_80108614_12BDF4_DayAtTheRaces(void);
+void func_80108670_12BE50_DayAtTheRaces(void);
+void func_8010873C_12BF1C_DayAtTheRaces(void);
+void func_801087E0_12BFC0_DayAtTheRaces(void);
+void func_80108870_12C050_DayAtTheRaces(void);
+void func_801089BC_12C19C_DayAtTheRaces(DRCamPath* p, DRCamKey* out);
+void func_80108AF4_12C2D4_DayAtTheRaces(DRCam* w);
+void func_80108E20_12C600_DayAtTheRaces(omObjData* obj);
+void func_8010909C_12C87C_DayAtTheRaces(s16 n);
+void func_80109134_12C914_DayAtTheRaces(omObjData* obj);
+void func_80109240_12CA20_DayAtTheRaces(omObjData* obj);
+void func_80109248_12CA28_DayAtTheRaces(omObjData* obj);
+void func_801092E4_12CAC4_DayAtTheRaces(omObjData* obj);
+void func_801092EC_12CACC_DayAtTheRaces(omObjData* obj);
+void func_801093E8_12CBC8_DayAtTheRaces(omObjData* obj);
+void func_801094AC_12CC8C_DayAtTheRaces(omObjData* obj);
+void func_80109570_12CD50_DayAtTheRaces(omObjData* obj);
+void func_801095A4_12CD84_DayAtTheRaces(Vec* v);
+void func_80109BA4_12D384_DayAtTheRaces(s32 port, s8 stkX, s8 stkY, u16 trg, u16 btn);
 void func_801036C4_126EA4_DayAtTheRaces(void);
 void func_80103688_126E68_DayAtTheRaces(void);
 void func_80103EC4_1276A4_DayAtTheRaces(s32 stop);
@@ -326,6 +459,13 @@ s32 func_801053D0_128BB0_DayAtTheRaces(omObjData* obj, s32 mot);
 void func_801055E4_128DC4_DayAtTheRaces(omObjData* obj, s32 mot, f32 t);
 s32 func_801057AC_128F8C_DayAtTheRaces(omObjData* obj);
 void func_80105894_129074_DayAtTheRaces(omObjData* obj, f32 speed);
+void func_80105A94_129274_DayAtTheRaces(void);
+void func_80106990_12A170_DayAtTheRaces(omObjData* obj, s32 idx);
+void func_80103728_126F08_DayAtTheRaces(void);
+void func_80103748_126F28_DayAtTheRaces(void);
+void func_80103768_126F48_DayAtTheRaces(void);
+void func_80103788_126F68_DayAtTheRaces(void);
+void func_80103D5C_12753C_DayAtTheRaces(void);
 void func_80108374_12BB54_DayAtTheRaces(void);
 void func_80108414_12BBF4_DayAtTheRaces(void);
 void func_80108458_12BC38_DayAtTheRaces(void);
@@ -342,14 +482,14 @@ void func_80109A90_12D270_DayAtTheRaces(void);
 void func_80109AFC_12D2DC_DayAtTheRaces(s32 seed);
 s32 func_80109B20_12D300_DayAtTheRaces(void);
 s32 func_80109B2C_12D30C_DayAtTheRaces(s32 n);
-u16 func_80109BE0_12D3C0_DayAtTheRaces(s32 port);
+s32 func_80109BE0_12D3C0_DayAtTheRaces(s32 port);
 void func_80109BFC_12D3DC_DayAtTheRaces(s32 cam, Vec* out);
 void func_80109C5C_12D43C_DayAtTheRaces(s32 cam, Vec* v);
 void func_80109C98_12D478_DayAtTheRaces(s32 cam, Vec* target, Vec* eye, f32 fov, f32 aspect);
 void func_80109D40_12D520_DayAtTheRaces(s32 cam, DRCamPath* path);
 s32 func_80109D7C_12D55C_DayAtTheRaces(s32 cam);
 u8 func_80109DA0_12D580_DayAtTheRaces(void);
-void func_80109DAC_12D58C_DayAtTheRaces(u8 state);
+void func_80109DAC_12D58C_DayAtTheRaces(s32 state);
 u16 func_80109DD8_12D5B8_DayAtTheRaces(void);
 s16 func_80109DE4_12D5C4_DayAtTheRaces(s16 i);
 void func_80109DFC_12D5DC_DayAtTheRaces(s16 i, s16 v);
