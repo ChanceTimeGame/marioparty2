@@ -420,14 +420,14 @@ void func_80106F5C_2035BC_AbandonShip(omObjData* obj) {
                     }
                 }
                 if (D_80109440_205AA0_AbandonShip == 2) {
-                    if (D_801094C4_205B24_AbandonShip[0] == 0) {
+                    if (D_801094C4_205B24_AbandonShip == 0) {
                         if (_CheckFlag(0xC) == 0) {
                             func_80029BF0_2A7F0(obj->model[0], (s16)func_80029E14_2AA14(obj->motion[0xD]), 0, 0x1E, 2);
                             PlayMusic(0x51);
                             func_800732B0_73EB0(D_800CD438_CE038[gPlayers[w->unk_59].character].unk_04 | 0x4E);
                         }
                         gPlayers[D_80109381_2059E1_AbandonShip].coins_mg_bonus += 10;
-                        D_801094C4_205B24_AbandonShip[0] = 1;
+                        D_801094C4_205B24_AbandonShip = 1;
                         D_8010949C_205AFC_AbandonShip[w->unk_59] = 0;
                     } else if (_CheckFlag(0xC) == 0) {
                         if (D_8010949C_205AFC_AbandonShip[w->unk_59] == 0x78) {

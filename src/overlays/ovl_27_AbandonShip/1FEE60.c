@@ -954,9 +954,9 @@ void func_80105A9C_2020FC_AbandonShip(omObjData* obj) {
         break;
     case 5:
         func_80105C88_2022E8_AbandonShip(obj);
-        if (D_80109430_205A90_AbandonShip[0] == 0 && obj->trans.y < -45.0f) {
+        if (D_80109430_205A90_AbandonShip == 0 && obj->trans.y < -45.0f) {
             PlaySound(0x27F);
-            D_80109430_205A90_AbandonShip[0] = 1;
+            D_80109430_205A90_AbandonShip = 1;
         }
         break;
     case 6:
@@ -1247,7 +1247,12 @@ f32 D_80109420_205A80_AbandonShip = 0.0f;
 f32 D_80109424_205A84_AbandonShip = 0.0f;
 s8 D_80109428_205A88_AbandonShip = 0;
 f32 D_8010942C_205A8C_AbandonShip = 90.0f;
-s8 D_80109430_205A90_AbandonShip[16] = { 0 };
+s8 D_80109430_205A90_AbandonShip = 0;
+/* unused rest of the 16-byte slot; byte scalars, since GCC word-aligns char arrays */
+s8 D_80109431_205A91_AbandonShip = 0;
+s8 D_80109432_205A92_AbandonShip = 0;
+s8 D_80109433_205A93_AbandonShip = 0;
+s32 D_80109434_205A94_AbandonShip[3] = { 0 };
 s8 D_80109440_205AA0_AbandonShip = 0;
 s16 D_80109442_205AA2_AbandonShip = 0;
 s32 D_80109444_205AA4_AbandonShip[4] = { 0, 1, 2, 3 };
@@ -1264,4 +1269,9 @@ s32 D_8010949C_205AFC_AbandonShip[4] = { 0 };
 s8 D_801094AC_205B0C_AbandonShip[4] = { 0 };
 s8 D_801094B0_205B10_AbandonShip[4] = { 0 };
 f32 D_801094B4_205B14_AbandonShip[4] = { 0 };
-s8 D_801094C4_205B24_AbandonShip[12] = { 0 };
+s8 D_801094C4_205B24_AbandonShip = 0;
+/* unused rest of the 12-byte slot */
+s8 D_801094C5_205B25_AbandonShip = 0;
+s8 D_801094C6_205B26_AbandonShip = 0;
+s8 D_801094C7_205B27_AbandonShip = 0;
+s32 D_801094C8_205B28_AbandonShip[2] = { 0 };
