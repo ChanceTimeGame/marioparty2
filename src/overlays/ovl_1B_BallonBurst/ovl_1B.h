@@ -10,7 +10,9 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Ballon Burst: one retail file, 1A40A0.c; .data is asm (0x1AB520), .rodata from 0x1AB6D0. */
+/* Ballon Burst: one retail file, 1A40A0.c; .data is asm (0x1AB520), .rodata from 0x1AB6D0. Two teams
+   of two pump a balloon each until one reaches 50 (meter/6); time limit 30 s (900 frames). The first
+   team to 50 wins, a tie replays the delay lines, then a coin toss. Winners +10 coins_mg_bonus. */
 
 typedef struct BBWork {
     /* 0x00 */ s8 player;

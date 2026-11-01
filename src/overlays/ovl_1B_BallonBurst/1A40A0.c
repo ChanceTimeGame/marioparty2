@@ -240,7 +240,6 @@ void func_80103924_1A51C4_BallonBurst(omObjData* obj) {
    also keeps a dead compare of the two meters at the top of the meter loop (class: dead code left by
    flow, see docs/DECOMP_WALLS.md), which moves the register allocation of the whole function. */
 #ifdef NON_MATCHING
-/* BB6BEGIN */
 void func_80103C10_1A54B0_BallonBurst(BBView* view) {
     Vec eye;
     Vec at;
@@ -652,7 +651,6 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
     D_8010274C_10334C.x = D_8010A758_1ABFF8_BallonBurst * 0.88 + 7.0;
     D_8010274C_10334C.y = D_8010AA90_1AC330_BallonBurst * 0.92 + 50.846 - 632.0;
 }
-/* BB6END */
 #else
 __asm__(".section .rodata");
 const u32 D_80109E88_1AB728_BallonBurst[6] = { 0x00000002, 0x00000003, 0x00000007, 0x00000004, 0x00000005, 0x00000006 };
@@ -802,7 +800,6 @@ void func_80106514_1A7DB4_BallonBurst(omObjData* obj, s32 player) {
    the C follows retail's calls, constants and branches; what is left is block layout and register
    allocation around the repeated blends (class: register residue, docs/DECOMP_WALLS.md). */
 #ifdef NON_MATCHING
-/* BB7BEGIN */
 void func_80106AEC_1A838C_BallonBurst(omObjData* obj) {
     BBWork* w;
     s8 seat;
@@ -1259,7 +1256,6 @@ void func_80106AEC_1A838C_BallonBurst(omObjData* obj) {
         w->unk_09 = 1;
     }
 }
-/* BB7END */
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1B_BallonBurst/1A40A0", func_80106AEC_1A838C_BallonBurst);
 #endif
