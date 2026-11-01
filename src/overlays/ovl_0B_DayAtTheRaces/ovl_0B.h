@@ -39,6 +39,89 @@ typedef struct DRObjWork {
     /* 0x1C */ char unk_1C[8];
 } DRObjWork; /* size = 0x24 */
 
+/* Abs of an s8 stick. */
+#define DR_ABS(x) ((x) < 0 ? -(x) : (x))
+
+typedef struct DRCamDef {
+    /* 0x00 */ Vec start;
+    /* 0x0C */ Vec eye;
+    /* 0x18 */ s16 vp[4];
+    /* 0x20 */ s16 scissor[4];
+} DRCamDef; /* size = 0x28 */
+
+typedef struct DRLight {
+    /* 0x0 */ u8 dir[3];
+    /* 0x4 */ f32 color[3];
+} DRLight; /* size = 0x10 */
+
+/* A camera path's key. */
+typedef struct DRCamKey {
+    /* 0x00 */ Vec pos;
+    /* 0x0C */ Vec target;
+    /* 0x18 */ f32 fov;
+    /* 0x1C */ s32 frame;
+} DRCamKey; /* size = 0x20 */
+
+typedef struct DRCamPath {
+    /* 0x0 */ s16 frame;
+    /* 0x2 */ s16 last; /* the final key */
+    /* 0x4 */ s16 seg;
+    /* 0x8 */ DRCamKey* keys;
+} DRCamPath; /* size = 0xC */
+
+/* A camera object's work, 0xB0 bytes. */
+typedef struct DRCam {
+    /* 0x00 */ s16 mode; /* index in D_8010AAD0; 1 resets the eye, 2 follows path */
+    /* 0x02 */ s16 cam;
+    /* 0x04 */ Vec target;
+    /* 0x10 */ Vec eye;
+    /* 0x1C */ f32 fov;
+    /* 0x20 */ f32 nearZ;
+    /* 0x24 */ f32 farZ;
+    /* 0x28 */ f32 aspect;
+    /* 0x2C */ Matrix4f inv;
+    /* 0x6C */ Matrix4f view;
+    /* 0xAC */ DRCamPath* path;
+} DRCam; /* size = 0xB0 */
+
+typedef struct DRPad {
+    /* 0x0 */ u16 trg;
+    /* 0x2 */ u16 btn;
+    /* 0x4 */ s8 stkX;
+    /* 0x5 */ s8 stkY;
+    /* 0x6 */ u16 dirTrg;
+    /* 0x8 */ u16 dir;     /* stick as direction bits 0x100-0x800 */
+    /* 0xA */ u16 dirPrev;
+} DRPad; /* size = 0xC */
+
+/* The game state (D_8010AE70), Filet Relay's FRGame with another layout. */
+typedef struct DRGame {
+    /* 0x00 */ u8 state;
+    /* 0x01 */ u8 next;
+    /* 0x02 */ u8 sub;
+    /* 0x03 */ u8 timer;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 time;
+    /* 0x08 */ s16 frame;
+    /* 0x0A */ s16 count;
+    /* 0x0C */ s16 rank[4]; /* coins won by player */
+    /* 0x14 */ DRPad pad[4];
+} DRGame; /* size = 0x44 */
+
+/* A sprite model of the list at D_8010AEC8. */
+typedef struct DRSprMdl {
+    /* 0x00 */ s16 flags; /* 1: skip */
+    /* 0x02 */ s16 sprite;
+    /* 0x04 */ void (*func)(struct DRSprMdl*);
+    /* 0x08 */ Vec pos;
+    /* 0x14 */ Vec vel;
+    /* 0x20 */ Vec unk_20;
+    /* 0x2C */ f32 scale;
+    /* 0x30 */ u8 alpha;
+    /* 0x34 */ struct DRSprMdl* next;
+    /* 0x38 */ struct DRSprMdl* prev;
+} DRSprMdl; /* size = 0x3C */
+
 void HuVecAdd(Vec*, Vec*, Vec*);
 void HuVecAddScaled(Vec*, Vec*, f32, Vec*);
 void HuVecCopyXYZ(Vec*, f32, f32, f32);
@@ -101,6 +184,80 @@ typedef struct DRObjs {
     omObjData** objs;
 } DRObjs;
 extern DRObjs D_8010AC10_12E3F0_DayAtTheRaces; /* the thirty level objects */
+extern DRGame D_8010AE70_12E650_DayAtTheRaces;
+extern omObjData* D_8010AEB4_12E694_DayAtTheRaces[2]; /* cameras */
+extern omObjData* D_8010AEBC_12E69C_DayAtTheRaces;    /* the sprite model object */
+extern s32 D_8010AEC0_12E6A0_DayAtTheRaces;           /* the game's own random seed */
+extern DRSprMdl D_8010AEC8_12E6A8_DayAtTheRaces;      /* the list's head */
+extern DRSprMdl* D_8010AF04_12E6E4_DayAtTheRaces;     /* its tail */
+
+extern DRCamDef D_8010AA60_12E240_DayAtTheRaces[2];
+extern DRLight D_8010AAB0_12E290_DayAtTheRaces[2];
+extern void (*D_8010AAD0_12E2B0_DayAtTheRaces[3])(DRCam*);
+extern void (*D_8010AADC_12E2BC_DayAtTheRaces[9])(omObjData*);
+
+/* main functions without a header */
+void func_8002864C_2924C(void);
+void func_80026D28_27928(s16);
+void func_80026E00_27A00(s16, f32, f32, f32);
+void func_80026DAC_279AC(s16, u8, u8, u8);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+void func_800211E8_21DE8(s16, u8);
+void func_80021160_21D60(s16, s32, s32);
+void func_80021250_21E50(s16, u8, u8, u8);
+void func_800212A4_21EA4(s16);
+s32 func_80069538_6A138(void);
+void func_80079614_7A214(s16 time);
+void func_800794A8_7A0A8(s32);
+void func_80079128_79D28(void);
+void func_80020070_20C70(s32);
+void func_80020718_21318(s16, void*, void*);
+void func_8002EDA8_2F9A8(void);
+void func_80020D20_21920(s16);
+void func_80023124_23D24(void);
+void func_8002308C_23C8C(s16);
+s32 func_8008F618_90218(void);
+void func_800B3170_B3D70(Vec*, Vec*);
+void func_800B33E0_B3FE0(Vec*);
+void func_800B1C70_B2870(Mtx*, u16*, f32, f32, f32, f32, f32);
+void func_800B2400_B3000(Matrix4f, f32, f32, f32, f32, f32, f32, f32);
+void func_800B3040_B3C40(Matrix4f, void*);
+s32 func_8003DF08_3EB08(void*);
+
+/* overlay functions used across files */
+void func_801036C4_126EA4_DayAtTheRaces(void);
+void func_80103688_126E68_DayAtTheRaces(void);
+void func_80108374_12BB54_DayAtTheRaces(void);
+void func_80108414_12BBF4_DayAtTheRaces(void);
+void func_80108458_12BC38_DayAtTheRaces(void);
+u16 func_8010868C_12BE6C_DayAtTheRaces(s8 x, s8 y);
+void func_80108900_12C0E0_DayAtTheRaces(void);
+void func_80108954_12C134_DayAtTheRaces(DRCam* w);
+void func_80108BB0_12C390_DayAtTheRaces(Matrix4f in, Matrix4f out);
+void func_80108FE4_12C7C4_DayAtTheRaces(omObjData* obj);
+void func_80109104_12C8E4_DayAtTheRaces(void);
+void func_801095F0_12CDD0_DayAtTheRaces(void);
+void func_80109628_12CE08_DayAtTheRaces(void);
+void func_801098DC_12D0BC_DayAtTheRaces(void);
+void func_80109A90_12D270_DayAtTheRaces(void);
+void func_80109AFC_12D2DC_DayAtTheRaces(s32 seed);
+s32 func_80109B20_12D300_DayAtTheRaces(void);
+s32 func_80109B2C_12D30C_DayAtTheRaces(s32 n);
+u16 func_80109BE0_12D3C0_DayAtTheRaces(s32 port);
+void func_80109BFC_12D3DC_DayAtTheRaces(s32 cam, Vec* out);
+void func_80109C5C_12D43C_DayAtTheRaces(s32 cam, Vec* v);
+void func_80109C98_12D478_DayAtTheRaces(s32 cam, Vec* target, Vec* eye, f32 fov, f32 aspect);
+void func_80109D40_12D520_DayAtTheRaces(s32 cam, DRCamPath* path);
+s32 func_80109D7C_12D55C_DayAtTheRaces(s32 cam);
+u8 func_80109DA0_12D580_DayAtTheRaces(void);
+void func_80109DAC_12D58C_DayAtTheRaces(u8 state);
+u16 func_80109DD8_12D5B8_DayAtTheRaces(void);
+s16 func_80109DE4_12D5C4_DayAtTheRaces(s16 i);
+void func_80109DFC_12D5DC_DayAtTheRaces(s16 i, s16 v);
+DRSprMdl* func_80109E14_12D5F4_DayAtTheRaces(s16 flags, s16 unk, void* func);
+void func_80109F64_12D744_DayAtTheRaces(DRSprMdl* m);
+void func_80109FC4_12D7A4_DayAtTheRaces(void);
+s16 func_8010A018_12D7F8_DayAtTheRaces(s32 file);
 
 
 #endif
