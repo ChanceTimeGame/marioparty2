@@ -14,7 +14,7 @@
 
 typedef struct BBWork {
     /* 0x00 */ s8 player;
-    /* 0x01 */ s8 group;
+    /* 0x01 */ u8 group;
     /* 0x02 */ s8 slot;
     /* 0x03 */ s8 character;
     /* 0x04 */ s8 port;
@@ -27,6 +27,16 @@ typedef struct BBWork {
     /* 0x0B */ s8 unk_0B;
     /* 0x0C */ s8 unk_0C;
 } BBWork; /* size = 0xD */
+
+typedef struct BBView {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ f32 sx;
+    /* 0x08 */ f32 sy;
+    /* 0x0C */ char unk_0C[0xC];
+    /* 0x18 */ f32 ox;
+    /* 0x1C */ f32 oy;
+    /* 0x20 */ char unk_20[0x14];
+} BBView; /* size = 0x34 */
 
 typedef struct BBEspSlot {
     /* 0x00 */ char unk_00[4];
@@ -120,6 +130,7 @@ extern const char D_80109E30_1AB6D0_BallonBurst[];
 extern f32 D_80109C88_1AB528_BallonBurst[6];
 extern f32 D_80109CA0_1AB540_BallonBurst[6];
 extern Vec D_80109D30_1AB5D0_BallonBurst[4]; /* the four seats */
+extern s8 D_80109D9C_1AB63C_BallonBurst[][4];
 
 /* ---- .bss ---- */
 extern BBWork* D_8010A5F0_1ABE90_BallonBurst[4];
@@ -127,7 +138,7 @@ extern omObjData* D_8010A600_1ABEA0_BallonBurst;
 extern Vec D_8010A608_1ABEA8_BallonBurst[7];
 extern Vec D_8010A65C_1ABEFC_BallonBurst;
 extern Vec D_8010A668_1ABF08_BallonBurst[8];
-extern s32 D_8010A6C8_1ABF68_BallonBurst;
+extern f32 D_8010A6C8_1ABF68_BallonBurst;
 extern s16 D_8010A6CC_1ABF6C_BallonBurst;
 extern s8 D_8010A6CE_1ABF6E_BallonBurst[4];
 extern s16 D_8010A6D2_1ABF72_BallonBurst;
@@ -138,8 +149,8 @@ extern omObjData* D_8010A6F8_1ABF98_BallonBurst;
 extern s16 D_8010A6FC_1ABF9C_BallonBurst;
 extern omObjData* D_8010A704_1ABFA4_BallonBurst;
 extern f32 D_8010A708_1ABFA8_BallonBurst[2];
-extern s32 D_8010A710_1ABFB0_BallonBurst;
-extern s32 D_8010A714_1ABFB4_BallonBurst;
+extern f32 D_8010A710_1ABFB0_BallonBurst;
+extern s8 D_8010A714_1ABFB4_BallonBurst[2];
 extern s32 D_8010A718_1ABFB8_BallonBurst;
 extern s32 D_8010A71C_1ABFBC_BallonBurst;
 extern u16 D_8010A720_1ABFC0_BallonBurst;
@@ -149,35 +160,33 @@ extern omObjData* D_8010A728_1ABFC8_BallonBurst;
 extern s16 D_8010A730_1ABFD0_BallonBurst[8];
 extern s8 D_8010A740_1ABFE0_BallonBurst[2];
 extern omObjData* D_8010A748_1ABFE8_BallonBurst[4];
-extern s32 D_8010A758_1ABFF8_BallonBurst;
+extern f32 D_8010A758_1ABFF8_BallonBurst;
 extern omObjData* D_8010A75C_1ABFFC_BallonBurst;
 extern s32 D_8010A760_1AC000_BallonBurst;
 extern s32 D_8010A764_1AC004_BallonBurst;
 extern s32 D_8010A768_1AC008_BallonBurst;
 extern omObjData* D_8010A76C_1AC00C_BallonBurst;
 extern s32 D_8010A770_1AC010_BallonBurst;
-extern s32 D_8010A778_1AC018_BallonBurst[2][0x31];
+extern f32 D_8010A778_1AC018_BallonBurst[2][0x31];
 extern u16 D_8010A900_1AC1A0_BallonBurst;
-extern s32 D_8010A904_1AC1A4_BallonBurst;
-extern s32 D_8010A908_1AC1A8_BallonBurst[2][0x31];
-extern s32 D_8010AA90_1AC330_BallonBurst;
+extern f32 D_8010A904_1AC1A4_BallonBurst;
+extern f32 D_8010A908_1AC1A8_BallonBurst[2][0x31];
+extern f32 D_8010AA90_1AC330_BallonBurst;
 extern omObjData* D_8010AA94_1AC334_BallonBurst;
 extern omObjData* D_8010AA98_1AC338_BallonBurst[4];
 extern s16 D_8010AAA8_1AC348_BallonBurst;
 extern omObjData* D_8010AAB0_1AC350_BallonBurst[4];
-extern s8 D_8010AAC0_1AC360_BallonBurst;
+extern s8 D_8010AAC0_1AC360_BallonBurst; /* the winning team; 2 none */
 extern s32 D_8010AAC8_1AC368_BallonBurst[0xD];
-extern s8 D_8010AAFC_1AC39C_BallonBurst;
-extern s8 D_8010AAFD_1AC39D_BallonBurst;
-extern s16 D_8010AAFE_1AC39E_BallonBurst;
+extern s8 D_8010AAFC_1AC39C_BallonBurst[4]; /* the winners, then the losers */
 extern s16 D_8010AB00_1AC3A0_BallonBurst;
-extern s8 D_8010AB02_1AC3A2_BallonBurst;
-extern s32 D_8010AB04_1AC3A4_BallonBurst[3];
+extern u8 D_8010AB02_1AC3A2_BallonBurst; /* state */
+extern f32 D_8010AB04_1AC3A4_BallonBurst;
 
 void func_80102800_1A40A0_BallonBurst(void);
 void func_801037F4_1A5094_BallonBurst(omObjData* obj);
 void func_80103924_1A51C4_BallonBurst(omObjData* obj);
-void func_80103C10_1A54B0_BallonBurst(void);
+void func_80103C10_1A54B0_BallonBurst(BBView* view);
 void func_8010644C_1A7CEC_BallonBurst(void);
 void func_80106454_1A7CF4_BallonBurst(Gfx** gfx, s32 arg1, s32 arg2);
 void func_801064A4_1A7D44_BallonBurst(omObjData* obj);
