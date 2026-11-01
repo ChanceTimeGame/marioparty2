@@ -307,7 +307,7 @@ extern s16 D_8010A794_26F744_LooneyLumberjacks[4][2]; /* button banks */
 extern s16 D_8010A7A4_26F754_LooneyLumberjacks[2];
 extern s16 D_8010A7A8_26F758_LooneyLumberjacks[2]; /* sound pan per team */
 extern s16 D_8010A7AA_26F75A_LooneyLumberjacks[]; /* D_8010A7AC_26F75C_LooneyLumberjacks[-1] */
-extern s16 D_8010A7AC_26F75C_LooneyLumberjacks[5]; /* motion slot per quarter of the cut */
+extern s16 D_8010A7AC_26F75C_LooneyLumberjacks[6]; /* motion slot per quarter of the cut */
 extern char* D_8010A7B8_26F768_LooneyLumberjacks[6]; /* per character: the head part */
 extern f32 D_8010A7D0_26F780_LooneyLumberjacks[6];
 extern s32 D_8010A7E8_26F798_LooneyLumberjacks[2];
@@ -322,6 +322,15 @@ extern Vec D_8010A8C0_26F870_LooneyLumberjacks[2][3]; /* wood chip positions per
 extern Vec D_8010A908_26F8B8_LooneyLumberjacks[2];
 extern Vec D_8010A920_26F8D0_LooneyLumberjacks;
 extern Gfx D_8010AA20_26F9D0_LooneyLumberjacks[]; /* a sprite model's setup list */
+extern Gfx D_8010A930_26F8E0_LooneyLumberjacks[];
+extern Gfx D_8010A9E8_26F998_LooneyLumberjacks[];
+extern Gfx D_8010AA08_26F9B8_LooneyLumberjacks[];
+extern const char D_8010AD90_26FD40_LooneyLumberjacks[]; /* head part names, in .rodata */
+extern const char D_8010ADA4_26FD54_LooneyLumberjacks[];
+extern const char D_8010ADB4_26FD64_LooneyLumberjacks[];
+extern const char D_8010ADC4_26FD74_LooneyLumberjacks[];
+extern const char D_8010ADDC_26FD8C_LooneyLumberjacks[];
+extern const char D_8010ADF0_26FDA0_LooneyLumberjacks[];
 
 /* .bss. */
 extern omObjData* D_8010AF30_26FEE0_LooneyLumberjacks;

@@ -1,5 +1,139 @@
 #include "ovl_35.h"
 
+__asm__(".section .data");
+LLPose D_8010A610_26F5C0_LooneyLumberjacks[4] = {
+    { { -380.0f, 0.0f, -115.0f }, { 0.0f, 68.182f, 0.0f } },
+    { { -130.0f, 0.0f, -15.0f }, { 0.0f, -104.507f, 0.0f } },
+    { { 130.0f, 0.0f, -15.0f }, { 0.0f, 104.492f, 0.0f } },
+    { { 380.0f, 0.0f, -105.0f }, { 0.0f, -68.818f, 0.0f } },
+};
+LLPoint D_8010A670_26F620_LooneyLumberjacks[2][2] = {
+    { { 0x32, 0x5A }, { 0x73, 0x6E } },
+    { { 0xC3, 0x73 }, { 0x104, 0x5F } },
+};
+u16 D_8010A680_26F630_LooneyLumberjacks[2][2] = { { 0x8000, 0x4000 }, { 0x4000, 0x8000 } };
+f32 D_8010A688_26F638_LooneyLumberjacks[2] = { -1.0f, 1.0f };
+f32 D_8010A690_26F640_LooneyLumberjacks[7] = { 0.0f, 0.15f, 0.3f, 0.7f, 0.85f, 1.0f, 255.0f };
+s16 D_8010A6AC_26F65C_LooneyLumberjacks[4][3] = {
+    { 12, 15, 17 },
+    { 10, 12, 15 },
+    { 7, 10, 12 },
+    { 5, 7, 10 },
+};
+s16 D_8010A6C4_26F674_LooneyLumberjacks[4][3] = {
+    { 10, 12, 15 },
+    { 15, 17, 20 },
+    { 20, 22, 25 },
+    { 25, 27, 30 },
+};
+/* followed directly by D_8010A6F4: level 3 with rand & 3 == 3 reads its first word */
+s16 D_8010A6DC_26F68C_LooneyLumberjacks[4][3] = {
+    { 10, 11, 12 },
+    { 7, 8, 9 },
+    { 4, 5, 6 },
+    { 1, 1, 1 },
+};
+LLEndView D_8010A6F4_26F6A4_LooneyLumberjacks[2] = {
+    { { 1110.0f, 260.0f, 511.0f }, 1.77f },
+    { { 100.0f, 260.0f, 511.0f }, 1.77f },
+};
+s32 D_8010A714_26F6C4_LooneyLumberjacks = 0;
+s32 D_8010A718_26F6C8_LooneyLumberjacks = 0;
+s32 D_8010A71C_26F6CC_LooneyLumberjacks = 0;
+s32 D_8010A720_26F6D0_LooneyLumberjacks = 0;
+s32 D_8010A724_26F6D4_LooneyLumberjacks = 0;
+s16 D_8010A728_26F6D8_LooneyLumberjacks = 3;
+s16 D_8010A72A_26F6DA_LooneyLumberjacks = 1;
+s16 D_8010A72C_26F6DC_LooneyLumberjacks[4][4] = {
+    { 0, 1, 2, 3 },
+    { 1, 2, 3, 0 },
+    { 2, 3, 0, 1 },
+    { 3, 0, 1, 2 },
+};
+s16 D_8010A74C_26F6FC_LooneyLumberjacks[2] = { 2, 0 };
+s16 D_8010A750_26F700_LooneyLumberjacks[2] = { 1, 0 };
+f32 D_8010A754_26F704_LooneyLumberjacks[2] = { 0.0f, 20.0f };
+Vec D_8010A75C_26F70C_LooneyLumberjacks[2] = {
+    { -200.0f, 0.0f, -214.0f },
+    { 200.0f, 0.0f, -214.0f },
+};
+Vec D_8010A774_26F724_LooneyLumberjacks[2] = {
+    { 0.0f, -20.97f, 0.0f },
+    { 0.0f, 20.97f, 0.0f },
+};
+s32 D_8010A78C_26F73C_LooneyLumberjacks[2] = { 7, 8 };
+s16 D_8010A794_26F744_LooneyLumberjacks[4][2] = {
+    { 0, 3 },
+    { 2, 1 },
+    { 5, 6 },
+    { 7, 4 },
+};
+s16 D_8010A7A4_26F754_LooneyLumberjacks[2] = { 1, 2 };
+s16 D_8010A7A8_26F758_LooneyLumberjacks[2] = { 0x30, 0x70 };
+s16 D_8010A7AC_26F75C_LooneyLumberjacks[6] = { 0, 1, 2, 3, 4, 0 };
+char* D_8010A7B8_26F768_LooneyLumberjacks[6] = {
+    (char*)D_8010ADF0_26FDA0_LooneyLumberjacks, (char*)D_8010ADDC_26FD8C_LooneyLumberjacks, (char*)D_8010ADC4_26FD74_LooneyLumberjacks,
+    (char*)D_8010ADB4_26FD64_LooneyLumberjacks, (char*)D_8010ADA4_26FD54_LooneyLumberjacks, (char*)D_8010AD90_26FD40_LooneyLumberjacks,
+};
+f32 D_8010A7D0_26F780_LooneyLumberjacks[6] = { -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, -10.0f };
+s32 D_8010A7E8_26F798_LooneyLumberjacks[2] = { 0x4E, 0x4F };
+s32 D_8010A7F0_26F7A0_LooneyLumberjacks[2] = { 0x55, 0x56 };
+s32 D_8010A7F8_26F7A8_LooneyLumberjacks[7] = { 0, 1, 2, 3, 4, 5, 6 };
+LLWear D_8010A814_26F7C4_LooneyLumberjacks[5] = {
+    { 0.0f, 0.0f }, { 0.2f, 1.0f }, { 0.5f, 3.0f }, { 0.8f, 5.0f }, { 1.0f, 10.0f },
+};
+Vec D_8010A83C_26F7EC_LooneyLumberjacks[2][3] = {
+    { { 70.0f, -0.0f, 0.0f }, { -70.0f, -0.0f, 0.0f }, { 0.0f, -0.0f, 0.0f } },
+    { { 40.0f, -50.0f, 0.0f }, { -40.0f, -50.0f, 0.0f }, { 0.0f, -50.0f, 0.0f } },
+};
+Vec D_8010A884_26F834_LooneyLumberjacks[3] = {
+    { 3.0f, 0.0f, 0.0f },
+    { -3.0f, 0.0f, 0.0f },
+    { 0.0f, -0.0f, 3.0f },
+};
+f32 D_8010A8A8_26F858_LooneyLumberjacks[3] = { 0.72f, 1.216f, 0.52f };
+LLRgb D_8010A8B4_26F864_LooneyLumberjacks[3] = {
+    { 0xC8, 0xB4, 0x00 },
+    { 0xBE, 0x8C, 0x00 },
+    { 0xB4, 0x78, 0x00 },
+};
+Vec D_8010A8C0_26F870_LooneyLumberjacks[2][3] = {
+    { { -250.0f, 50.0f, -77.0f }, { -260.0f, 40.0f, -82.0f }, { -240.0f, 60.0f, -72.0f } },
+    { { 250.0f, 50.0f, -77.0f }, { 260.0f, 40.0f, -82.0f }, { 240.0f, 60.0f, -72.0f } },
+};
+Vec D_8010A908_26F8B8_LooneyLumberjacks[2] = {
+    { 0.0f, -20.97f, 0.0f },
+    { 0.0f, 20.97f, 0.0f },
+};
+Vec D_8010A920_26F8D0_LooneyLumberjacks = { 1.0f, 0.8f, 0.6f };
+/* A sprite model's setup lists (raw F3DEX2 words; the pointer words are the sub-lists). */
+Gfx D_8010A930_26F8E0_LooneyLumberjacks[] = {
+    {{ 0xDB060000, 0x00000000 }}, {{ 0xE7000000, 0x00000000 }}, {{ 0xE3000A01, 0x00000000 }},
+    {{ 0xE3000800, 0x00800000 }}, {{ 0xE3000F00, 0x00000000 }}, {{ 0xE3001001, 0x00000000 }},
+    {{ 0xE3000D01, 0x00000000 }}, {{ 0xE3000C00, 0x00000000 }}, {{ 0xF2000000, 0x00000000 }},
+    {{ 0xF2000000, 0x01000000 }}, {{ 0xF5000000, 0x00000000 }}, {{ 0xF5000000, 0x01000000 }},
+    {{ 0xE3001201, 0x00002000 }}, {{ 0xE3001402, 0x00000C00 }}, {{ 0xFCFFFFFF, 0xFFFE793C }},
+    {{ 0xE3001700, 0x00000000 }}, {{ 0xE2001E01, 0x00000000 }}, {{ 0xE2001D00, 0x00000000 }},
+    {{ 0xE200001C, 0x0F0A4000 }}, {{ 0x00000000, 0x00000000 }}, {{ 0xE3001801, 0x000000C0 }},
+    {{ 0xE7000000, 0x00000000 }}, {{ 0xDF000000, 0x00000000 }},
+};
+Gfx D_8010A9E8_26F998_LooneyLumberjacks[] = {
+    {{ 0xD9000000, 0x00000000 }}, {{ 0xD7000000, 0x00000000 }},
+    {{ 0xD9FFFFFF, 0x00200004 }}, {{ 0xDF000000, 0x00000000 }},
+};
+Gfx D_8010AA08_26F9B8_LooneyLumberjacks[] = {
+    gsSPDisplayList(D_8010A9E8_26F998_LooneyLumberjacks),
+    gsSPDisplayList(D_8010A930_26F8E0_LooneyLumberjacks),
+    {{ 0xDF000000, 0x00000000 }},
+};
+Gfx D_8010AA20_26F9D0_LooneyLumberjacks[] = {
+    {{ 0xE7000000, 0x00000000 }},
+    gsSPDisplayList(D_8010AA08_26F9B8_LooneyLumberjacks),
+    {{ 0xE3000A01, 0x00000000 }}, {{ 0xD9FFFFFF, 0x00220401 }},
+    {{ 0xF9000000, 0x00000000 }}, {{ 0xFA000000, 0x000000FF }},
+    {{ 0xD7000002, 0xFFFFFFFF }}, {{ 0xDF000000, 0x00000000 }},
+};
+
 void func_80102800_2677B0_LooneyLumberjacks(void) {
     s32 i;
     u8 cam;
