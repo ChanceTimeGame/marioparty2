@@ -351,7 +351,12 @@ extern void (*D_80109448_1811F8_FiletRelay[6])(FRCam*);
    .bss
    --------------------------------------------------------------------------------------- */
 
-extern omObjData** D_80109670_181420_FiletRelay; /* the thirty level objects */
+/* The group's object array, as Speed Hockey's: a struct, so stores through a work pointer reload
+   it. */
+typedef struct FRObjs {
+    omObjData** objs;
+} FRObjs;
+extern FRObjs D_80109670_181420_FiletRelay; /* the thirty level objects */
 extern s16 D_80109674_181424_FiletRelay[2];      /* the score sprite */
 extern s32 D_80109678_181428_FiletRelay[2];      /* the ray test's face list */
 extern omObjData** D_80109680_181430_FiletRelay; /* the four penguins */

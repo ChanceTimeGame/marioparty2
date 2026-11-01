@@ -14,6 +14,7 @@ void func_80102850_17A600_FiletRelay(Vec* out, Vec* a, Vec* b, Vec* c) {
 }
 
 /* Is p inside the convex polygon of n vertices v with this normal? */
+#ifdef NON_MATCHING
 s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     Vec prev;
     Vec e;
@@ -24,7 +25,8 @@ s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     s32 i;
     Vec* q;
 
-    HuVecSubtract(&first, v, (q = v + 1, p));
+    q = v;
+    HuVecSubtract(&first, q++, p);
     HuVecSubtract(&e, q++, p);
     func_800B3530_B4130(&cross, &first, &e);
     d = func_800B3500_B4100(&cross, normal);
@@ -53,8 +55,14 @@ s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
         }
     }
     func_800B3530_B4130(&cross, &e, &first);
-    return !(func_800B3500_B4100(&cross, normal) * sign < 0.0f);
+    if (func_800B3500_B4100(&cross, normal) * sign < 0.0f) {
+        return 0;
+    }
+    return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_801028F4_17A6A4_FiletRelay);
+#endif
 
 /* Does the ray cross this face? Sets the ray's normal and hit point. */
 s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face) {
@@ -103,6 +111,7 @@ s32 func_80102CEC_17AA9C_FiletRelay(void* probe, s16* v) {
 }
 
 /* The nearest hit of the ray on the solid objects' faces that pass filter. */
+#ifdef NON_MATCHING
 s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter) {
     Vec end;
     Vec hit;
@@ -111,15 +120,18 @@ s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter) {
     f32 d;
     ColTri* face;
     ColVtx* vtx;
+    s32* list;
     s32 i;
 
     end.x = ray->end.x;
     end.y = ray->end.y;
     end.z = ray->end.z;
-    for (i = 0; i < 30; i++) {
+    i = 0;
+    list = D_80109678_181428_FiletRelay;
+    for (; i < 30; i++) {
         if (D_80108C70_180A20_FiletRelay[i].solid & 1) {
-            func_8002F2C4_2FEC4(*D_80109670_181420_FiletRelay[i]->model, D_80109678_181428_FiletRelay, filter, &end);
-            vtx = D_800FC834_FD434[*D_80109670_181420_FiletRelay[i]->model].hmf->unk54;
+            func_8002F2C4_2FEC4(*D_80109670_181420_FiletRelay.objs[i]->model, list, filter, &end);
+            vtx = D_800FC834_FD434[*D_80109670_181420_FiletRelay.objs[i]->model].hmf->unk54;
             goto next;
             do {
                 if (func_80102AD4_17A884_FiletRelay(ray, vtx, face) != 0) {
@@ -142,6 +154,9 @@ s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter) {
     func_800B3170_B3D70(&ray->normal, &normal);
     return 1;
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_80102CFC_17AAAC_FiletRelay);
+#endif
 
 /* Change a level object's motion. */
 void func_80102EB4_17AC64_FiletRelay(omObjData* obj, s32 motion, f32 speed) {
@@ -181,12 +196,12 @@ s32 func_80102FC0_17AD70_FiletRelay(omObjData* obj) {
 }
 
 s32 func_8010307C_17AE2C_FiletRelay(s32 i) {
-    return ((FRObjWork*)D_80109670_181420_FiletRelay[i]->unk_50)->state;
+    return ((FRObjWork*)D_80109670_181420_FiletRelay.objs[i]->unk_50)->state;
 }
 
 /* Throw object i from its start. */
 void func_8010309C_17AE4C_FiletRelay(s32 i) {
-    omObjData* obj = D_80109670_181420_FiletRelay[i];
+    omObjData* obj = D_80109670_181420_FiletRelay.objs[i];
     FRObjWork* w = obj->unk_50;
 
     if (w->state == 0) {
@@ -207,6 +222,7 @@ void func_8010309C_17AE4C_FiletRelay(s32 i) {
 }
 
 /* A thrown object: flies with drag, splashes, sinks. */
+#ifdef NON_MATCHING
 void func_8010317C_17AF2C_FiletRelay(omObjData* obj) {
     FRObjWork* w = obj->unk_50;
     Vec eye;
@@ -254,6 +270,9 @@ void func_8010317C_17AF2C_FiletRelay(omObjData* obj) {
     }
     omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_8010317C_17AF2C_FiletRelay);
+#endif
 
 /* The thrower: waits, winds up, throws at frame 10 of the last motion. */
 void func_801033D8_17B188_FiletRelay(omObjData* obj) {
@@ -370,11 +389,9 @@ void func_80103A30_17B7E0_FiletRelay(void) {
     s32 j;
 
     func_80076BD0_777D0(1, 30);
-    D_80109670_181420_FiletRelay = func_80076D80_77980(1);
+    D_80109670_181420_FiletRelay.objs = func_80076D80_77980(1);
     for (i = 0; i < 30; i++) {
-        if (((u32)(i - 5) < 2) | (i == 7)) {
-            prio = 3;
-        } else if (i == 8) {
+        if (i == 5 || i == 6 || i == 7 || i == 8) {
             prio = 3;
         } else {
             prio = 0;
@@ -393,8 +410,8 @@ void func_80103A30_17B7E0_FiletRelay(void) {
             }
         }
         func_800B0EF0_B1AF0(w, 0, sizeof(FRObjWork));
-        obj->unk_50 = w;
-        D_80109670_181420_FiletRelay[i] = obj;
+        D_80109670_181420_FiletRelay.objs[i]->unk_50 = w;
+        D_80109670_181420_FiletRelay.objs[i] = obj;
         if (i == 1 || i == 3) {
             w->timer = 1;
         } else if (i == 2 || i == 4) {
@@ -417,18 +434,19 @@ void func_80103A30_17B7E0_FiletRelay(void) {
 }
 
 /* The score sprite. */
+#ifdef NON_MATCHING
 void func_80103CF0_17BAA0_FiletRelay(void) {
-    s32 i;
     s32 result;
+    s32 i;
     u16 sprite;
 
     for (i = 0; i < 1; i++) {
         result = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_80109120_180ED0_FiletRelay[i].file), 0, 0);
-        sprite = result;
         if ((s16)result == -1) {
             while (1) {
             }
         }
+        sprite = result;
         espPosSet(sprite, D_80109120_180ED0_FiletRelay[i].x, D_80109120_180ED0_FiletRelay[i].y);
         func_8001A788_1B388(sprite, D_80109120_180ED0_FiletRelay[i].prio);
         if (D_80109120_180ED0_FiletRelay[i].visible == 0) {
@@ -437,6 +455,9 @@ void func_80103CF0_17BAA0_FiletRelay(void) {
         D_80109674_181424_FiletRelay[i] = result;
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_80103CF0_17BAA0_FiletRelay);
+#endif
 
 void func_80103DF0_17BBA0_FiletRelay(void) {
     func_8002D4D0_2E0D0(0x28);
@@ -469,7 +490,7 @@ s32 func_80103EE0_17BC90_FiletRelay(Vec* pos, f32 radius, Vec* out) {
     s32 i;
 
     for (i = 1; i < 5; i++) {
-        obj = D_80109670_181420_FiletRelay[i];
+        obj = D_80109670_181420_FiletRelay.objs[i];
         w = obj->unk_50;
         HuVecCopyXYZ(out, obj->trans.x, obj->trans.y, obj->trans.z);
         if (HuVecDistance(pos, out) < radius + 25.0f) {
@@ -486,14 +507,11 @@ s32 func_80103EE0_17BC90_FiletRelay(Vec* pos, f32 radius, Vec* out) {
 
 /* Start the objects 9 to 14. */
 void func_80103FF8_17BDA8_FiletRelay(void) {
-    s32 i = 9;
-    s16* p;
+    s32 i;
 
-    do {
-        p = &((FRObjWork*)D_80109670_181420_FiletRelay[i]->unk_50)->state;
-        *p = 1;
-        i++;
-    } while (i < 15);
+    for (i = 9; i < 15; i++) {
+        ((FRObjWork*)D_80109670_181420_FiletRelay.objs[i]->unk_50)->state = 1;
+    }
 }
 
 s32 func_80104034_17BDE4_FiletRelay(FRRay* ray) {
