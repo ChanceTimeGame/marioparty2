@@ -67,7 +67,7 @@ typedef struct TTSub {
 } TTSub; /* size = 0x13C */
 
 /* main */
-extern u32 D_800F8FD0_F9BD0; /* scene state: 0 intro, 1 play, 2 result, 3 leave */
+extern s32 D_800F8FD0_F9BD0; /* scene state: 0 intro, 1 play, 2 result, 3 leave */
 extern f32 D_800F94A8_FA0A8[]; /* CZoomM */
 extern u16 D_800FA606_FB206;
 extern f32 D_800FC8F8_FD4F8[][6]; /* per camera: rot, x, z, fov, far, near */
@@ -99,6 +99,7 @@ void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
 void espDispOff(u16);
 void espDispOn(u16);
 void espPosSet(u16 spriteId, s16 x, s16 y);
+u16 func_80078EA8_79AA8(void);
 void func_8000BE74_CA74(omObjData* obj, f32 arg1);
 void func_8000C38C_CF8C(void);
 void func_8000C398_CF98(void);
@@ -129,7 +130,7 @@ void func_80029AFC_2A6FC(s16);
 void func_80029C74_2A874(s16, f32);
 f32 func_80029CE4_2A8E4(s16);
 f32 func_80029D0C_2A90C(s16);
-void func_80029EDC_2AADC(s16 arg0, u8 arg1);
+void func_80029EDC_2AADC(s16 arg0, s16 arg1); /* main: u8; retail sign-extends the mask */
 void func_80029FE4_2ABE4(s16, f32);
 void func_8002A00C_2AC0C(s16 model);
 void func_8002BED4_2CAD4(s16 arg0, f32 arg1, f32 arg2, u16 arg3, u16 arg4, char* arg5, u8 arg6);
@@ -161,7 +162,7 @@ void func_800B8070_B8C70(f32 angle, f32* sine, f32* cosine);
 void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
 
 /* .data */
-extern s16 D_80109260_28B470_TorpedoTargets;  /* -2 on a draw */
+extern s8 D_80109260_28B470_TorpedoTargets;  /* -2 on a draw */
 extern omObjData* D_80109264_28B474_TorpedoTargets[2]; /* the subs */
 extern Vec D_8010926C_28B47C_TorpedoTargets[2]; /* torpedo positions */
 extern Vec D_80109284_28B494_TorpedoTargets[4]; /* rocks; the target rests on them in path 3 */
@@ -195,7 +196,7 @@ extern Vec D_801093B8_28B5C8_TorpedoTargets;  /* target position */
 extern s32 D_801093C4_28B5D4_TorpedoTargets;  /* targets so far, doubled */
 
 /* .bss */
-extern s16 D_80109418_28B628_TorpedoTargets;  /* seabed model */
+extern s8 D_80109418_28B628_TorpedoTargets;  /* seabed model */
 extern Vec D_8010941C_28B62C_TorpedoTargets;  /* collision push out */
 extern s32 D_8010942C_28B63C_TorpedoTargets;  /* winners */
 extern s32 D_80109430_28B640_TorpedoTargets;
@@ -218,7 +219,7 @@ extern f32 D_8010947C_28B68C_TorpedoTargets;  /* path height */
 extern Vec D_80109480_28B690_TorpedoTargets;  /* path 2 direction */
 extern f32 D_8010948C_28B69C_TorpedoTargets;  /* path 1 speed */
 extern s32 D_80109490_28B6A0_TorpedoTargets;  /* path: 0 orbit, 1 column, 2 line, 3 rock */
-extern s16 D_8010949C_28B6AC_TorpedoTargets;  /* target model */
+extern s8 D_8010949C_28B6AC_TorpedoTargets;  /* target model */
 
 void func_80102800_284A10_TorpedoTargets(void);
 void func_80102BC4_284DD4_TorpedoTargets(omObjData* obj);
@@ -235,7 +236,7 @@ void func_80104524_286734_TorpedoTargets(omObjData* obj);
 void func_801045E4_2867F4_TorpedoTargets(omObjData* obj);
 void func_801046A4_2868B4_TorpedoTargets(f32 m[4][4], Vec* axis, f32 angle);
 void func_8010478C_28699C_TorpedoTargets(omObjData* obj);
-void func_80104B9C_286DAC_TorpedoTargets(omObjData* obj, f32 yawIn, f32 pitchIn);
+void func_80104B9C_286DAC_TorpedoTargets(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch);
 void func_80104EB0_2870C0_TorpedoTargets(omObjData* obj);
 void func_80105124_287334_TorpedoTargets(omObjData* obj);
 void func_80105398_2875A8_TorpedoTargets(f32 x, f32 y, f32 z, f32 d);
