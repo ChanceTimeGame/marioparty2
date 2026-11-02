@@ -2251,7 +2251,7 @@ segments:
     subsegments:
       - [0x402700, c]
       - [0x402730, c]
-      - [0x406460, data]
+      - [0x406460, .data, 402730]
       - [0x4065F0, .rodata, 402730]
       - {0x406640, type: bss, vram: 0x80106740, name: ovl_6C_bss}
   - type: code
