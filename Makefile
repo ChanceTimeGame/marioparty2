@@ -231,6 +231,11 @@ build/src/C8E0.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_5B_name/37F4E0.c.o: export VR4300MUL := ON
 # S5-64: 3E4350.c has the KMC mul fix
 build/src/overlays/ovl_64_name/3E4350.c.o: export VR4300MUL := ON
+# S5-T1: the stage scenes 65-68 are built like 64: second file with the KMC mul fix
+build/src/overlays/ovl_65_name/3E7F00.c.o: export VR4300MUL := ON
+build/src/overlays/ovl_66_name/3EBBE0.c.o: export VR4300MUL := ON
+build/src/overlays/ovl_67_name/3EF820.c.o: export VR4300MUL := ON
+build/src/overlays/ovl_68_name/3F3410.c.o: export VR4300MUL := ON
 # 58-B: ovl_58 36DF00.c has a nop between back-to-back mul.s (80106AF8, 80107180): KMC mul fix on
 build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 # 5B-E: 3875F0.c too (8010F734: a nop between mul.s pairs)
