@@ -1853,13 +1853,13 @@ void func_80107F10_32F8D0_name_4E(void) {
             MBModelDispOn(PLAYER_MODEL(j));
         }
     }
-    model = D_8010DC92_335652_name_4E;
+    model = D_8010DC92_335652_name_4E[0];
     if (D_8010DAB8_335478_name_4E != 0) {
         func_80029714_2A314(model, D_8010D4B4_334E74_name_4E.x, D_8010D4B4_334E74_name_4E.y, D_8010D4B4_334E74_name_4E.z);
         func_800298A4_2A4A4(model, 4, 4);
     } else {
         func_80029714_2A314(model, -274.0f, 0.0f, 2476.0f);
-        func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+        func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E[0]);
         func_80029E80_2AA80(model, 2, 2);
         func_800298A4_2A4A4(model, 4, 0);
     }
@@ -1905,7 +1905,7 @@ void func_8010832C_32FCEC_name_4E(void) {
         pipe->scale.y += 0.16666667f;
         HuPrcVSleep();
     }
-    model = D_8010DC92_335652_name_4E;
+    model = D_8010DC92_335652_name_4E[0];
     func_800298A4_2A4A4(model, 4, 0);
     dx = (D_8010D4C0_334E80_name_4E.x - D_800FC834_FD434[model].pos.x) / 6.0f;
     dy = (D_8010D4C0_334E80_name_4E.y - D_800FC834_FD434[model].pos.y) / 6.0f;
@@ -1973,7 +1973,7 @@ void func_8010832C_32FCEC_name_4E(void) {
         HuPrcVSleep();
     }
     speed[0] = 1.0f;
-    model = D_8010DC92_335652_name_4E;
+    model = D_8010DC92_335652_name_4E[0];
     D_800FC834_FD434[model].pos.x = -274.0f;
     D_800FC834_FD434[model].pos.z = 2476.0f;
     while (!((D_800FC834_FD434[model].pos.y -= speed[0]) <= 0.0f)) {
@@ -1981,7 +1981,7 @@ void func_8010832C_32FCEC_name_4E(void) {
         HuPrcVSleep();
     }
     D_800FC834_FD434[model].pos.y = 0.0f;
-    func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E);
+    func_8002C9C0_2D5C0(model, D_8010DCB0_335670_name_4E[0]);
     func_80029E80_2AA80(model, 2, 2);
 }
 #else
