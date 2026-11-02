@@ -1,5 +1,14 @@
 #include "ovl_5D.h"
 
+/* .data (0x3A9000-0x3A9010, 8010B610) */
+f32 D_8010B610_3A9000_name_5D = 58.0f;
+s8 D_8010B614_3A9004_name_5D = 0;
+/* padding to the 16-byte end of the file's .data */
+s8 D_8010B615_3A9005_name_5D = 0;
+s8 D_8010B616_3A9006_name_5D = 0;
+s8 D_8010B617_3A9007_name_5D = 0;
+s32 D_8010B618_3A9008_name_5D[2] = { 0, 0 };
+
 void func_801080C0_3A5AB0_name_5D(s16 view) {
     f32 a;
 

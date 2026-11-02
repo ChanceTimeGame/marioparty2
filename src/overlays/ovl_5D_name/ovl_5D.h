@@ -179,9 +179,10 @@ void omVibrate(s16, s16, s16, s16);
 extern s16 D_8010ADD0_3A87C0_name_5D[6]; /* category of each menu row: 1 2 3 4 0 */
 extern Ovl5DCamView D_8010ADDC_3A87CC_name_5D[31];
 extern Ovl5DModelDef D_8010B140_3A8B30_name_5D[11];
-extern u8 D_8010B2F8_3A8CE8_name_5D[3]; /* model of each category; [3], [4] have split labels */
-extern u8 D_8010B2FB_3A8CEB_name_5D;
-extern u8 D_8010B2FC_3A8CEC_name_5D;
+extern u8 D_8010B2F8_3A8CE8_name_5D[8]; /* model of each category (5, then padding) */
+/* retail labels [3] and [4] separately (asm aliases in undefined_syms.txt) */
+#define D_8010B2FB_3A8CEB_name_5D (D_8010B2F8_3A8CE8_name_5D[3])
+#define D_8010B2FC_3A8CEC_name_5D (D_8010B2F8_3A8CE8_name_5D[4])
 extern Ovl5DCatMess D_8010B300_3A8CF0_name_5D[5];
 extern s16 D_8010B378_3A8D68_name_5D[6];
 extern char** D_8010B484_3A8E74_name_5D[5];

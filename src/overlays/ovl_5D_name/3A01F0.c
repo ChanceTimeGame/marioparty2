@@ -1,5 +1,236 @@
 #include "ovl_5D.h"
 
+/* the category messages, in .rodata below */
+extern const char D_8010B62C_3A901C_name_5D[];
+extern const char D_8010B63C_3A902C_name_5D[];
+extern const char D_8010B64C_3A903C_name_5D[];
+extern const char D_8010B65C_3A904C_name_5D[];
+extern const char D_8010B66C_3A905C_name_5D[];
+extern const char D_8010B67C_3A906C_name_5D[];
+extern const char D_8010B68C_3A907C_name_5D[];
+extern const char D_8010B69C_3A908C_name_5D[];
+extern const char D_8010B6AC_3A909C_name_5D[];
+extern const char D_8010B6BC_3A90AC_name_5D[];
+extern const char D_8010B6CC_3A90BC_name_5D[];
+extern const char D_8010B6DC_3A90CC_name_5D[];
+extern const char D_8010B6EC_3A90DC_name_5D[];
+extern const char D_8010B6FC_3A90EC_name_5D[];
+extern const char D_8010B70C_3A90FC_name_5D[];
+extern const char D_8010B71C_3A910C_name_5D[];
+extern const char D_8010B72C_3A911C_name_5D[];
+extern const char D_8010B73C_3A912C_name_5D[];
+extern const char D_8010B74C_3A913C_name_5D[];
+extern const char D_8010B75C_3A914C_name_5D[];
+extern const char D_8010B76C_3A915C_name_5D[];
+extern const char D_8010B77C_3A916C_name_5D[];
+extern const char D_8010B78C_3A917C_name_5D[];
+extern const char D_8010B79C_3A918C_name_5D[];
+extern const char D_8010B7AC_3A919C_name_5D[];
+extern const char D_8010B7BC_3A91AC_name_5D[];
+extern const char D_8010B7CC_3A91BC_name_5D[];
+extern const char D_8010B7DC_3A91CC_name_5D[];
+extern const char D_8010B7EC_3A91DC_name_5D[];
+extern const char D_8010B7FC_3A91EC_name_5D[];
+extern const char D_8010B80C_3A91FC_name_5D[];
+extern const char D_8010B81C_3A920C_name_5D[];
+extern const char D_8010B82C_3A921C_name_5D[];
+extern const char D_8010B83C_3A922C_name_5D[];
+extern const char D_8010B84C_3A923C_name_5D[];
+extern const char D_8010B85C_3A924C_name_5D[];
+extern const char D_8010B86C_3A925C_name_5D[];
+extern const char D_8010B87C_3A926C_name_5D[];
+extern const char D_8010B88C_3A927C_name_5D[];
+extern const char D_8010B89C_3A928C_name_5D[];
+extern const char D_8010B8AC_3A929C_name_5D[];
+extern const char D_8010B8BC_3A92AC_name_5D[];
+extern const char D_8010B8CC_3A92BC_name_5D[];
+extern const char D_8010B8DC_3A92CC_name_5D[];
+extern const char D_8010B8EC_3A92DC_name_5D[];
+extern const char D_8010B8FC_3A92EC_name_5D[];
+extern const char D_8010B90C_3A92FC_name_5D[];
+extern const char D_8010B91C_3A930C_name_5D[];
+extern const char D_8010B92C_3A931C_name_5D[];
+extern const char D_8010B93C_3A932C_name_5D[];
+extern const char D_8010B94C_3A933C_name_5D[];
+extern const char D_8010B95C_3A934C_name_5D[];
+extern const char D_8010B96C_3A935C_name_5D[];
+extern const char D_8010B97C_3A936C_name_5D[];
+extern const char D_8010B98C_3A937C_name_5D[];
+extern const char D_8010B99C_3A938C_name_5D[];
+extern const char D_8010B9AC_3A939C_name_5D[];
+extern const char D_8010B9BC_3A93AC_name_5D[];
+extern const char D_8010B9CC_3A93BC_name_5D[];
+extern const char D_8010B9DC_3A93CC_name_5D[];
+extern const char D_8010B9EC_3A93DC_name_5D[];
+extern const char D_8010B9FC_3A93EC_name_5D[];
+extern const char D_8010BA0C_3A93FC_name_5D[];
+extern const char D_8010BA1C_3A940C_name_5D[];
+
+/* .data (0x3A87C0-0x3A9000, 8010ADD0-8010B610) */
+/* 8010ADD0 size 0xC */ s16 D_8010ADD0_3A87C0_name_5D[6] = {
+    1, 2, 3, 4, 0, 0,
+};
+Ovl5DCamView D_8010ADDC_3A87CC_name_5D[31] = {
+    { { 330.0f, 0.0f, 0.0f }, { 0.0f, 37.0f, -18.300001f }, 4097.0f },
+    { { 330.0f, 0.0f, 0.0f }, { 0.0f, 37.0f, -18.300001f }, 5027.0f },
+    { { 360.0f, 352.0f, 0.0f }, { 0.0f, 1285.0f, -268.0f }, 5817.0f },
+    { { 373.0f, 0.0f, 0.0f }, { -444.0f, 28.0f, 65.0f }, 70.0f },
+    { { 355.0f, 356.0f, 0.0f }, { -16.0f, 158.0f, 338.0f }, 1260.0f },
+    { { 19.0f, 330.0f, 0.0f }, { 54.0f, 150.0f, 68.0f }, 710.0f },
+    { { 351.0f, 0.0f, 0.0f }, { -3.0f, 121.0f, 74.0f }, 150.0f },
+    { { 348.0f, 90.0f, 0.0f }, { 0.0f, 109.0f, 0.0f }, 375.0f },
+    { { 354.0f, 56.0f, 0.0f }, { -15.0f, 91.0f, 33.0f }, 375.0f },
+    { { 0.0f, 176.0f, 0.0f }, { -15.0f, 91.0f, 33.0f }, 375.0f },
+    { { 2.0f, 286.0f, 0.0f }, { -3.0f, 188.0f, -5.0f }, 295.0f },
+    { { 2.0f, 216.0f, 0.0f }, { -3.0f, 188.0f, -5.0f }, 295.0f },
+    { { 2.0f, 144.0f, 0.0f }, { -3.0f, 188.0f, -5.0f }, 295.0f },
+    { { 2.0f, 72.0f, 0.0f }, { -3.0f, 188.0f, -5.0f }, 295.0f },
+    { { 2.0f, 0.0f, 0.0f }, { -3.0f, 188.0f, -5.0f }, 295.0f },
+    { { 68.0f, 0.0f, 0.0f }, { -13.0f, 283.0f, 72.0f }, 385.0f },
+    { { 2.0f, 262.0f, 0.0f }, { -9.0f, 182.0f, -121.0f }, 85.0f },
+    { { 4.0f, 194.0f, 0.0f }, { 107.0f, 169.0f, 35.0f }, 155.0f },
+    { { 2.0f, 122.0f, 0.0f }, { 117.0f, 174.0f, 66.0f }, 25.0f },
+    { { 2.0f, 48.0f, 0.0f }, { -203.0f, 184.0f, -38.0f }, 265.0f },
+    { { 2.0f, 334.0f, 0.0f }, { -150.0f, 184.0f, -40.0f }, 45.0f },
+    { { 350.0f, 286.0f, 0.0f }, { 5.0f, 235.0f, -7.0f }, 35.0f },
+    { { 350.0f, 286.0f, 0.0f }, { 352.0f, 90.0f, -115.0f }, 5.0f },
+    { { 350.0f, 216.0f, 0.0f }, { 0.0f, 213.0f, -1.0f }, 15.0f },
+    { { 350.0f, 216.0f, 0.0f }, { 268.0f, 65.0f, 367.0f }, 65.0f },
+    { { 350.0f, 144.0f, 0.0f }, { -9.0f, 243.0f, 3.0f }, 35.0f },
+    { { 350.0f, 144.0f, 0.0f }, { -213.6f, 80.0f, 294.0f }, 10.0f },
+    { { 350.0f, 70.0f, 0.0f }, { -9.0f, 243.0f, 3.0f }, 35.0f },
+    { { 350.0f, 70.0f, 0.0f }, { -439.0f, 71.0f, -147.0f }, 95.0f },
+    { { 350.0f, 0.0f, 0.0f }, { 5.0f, 242.0f, -22.0f }, 55.0f },
+    { { 350.0f, 0.0f, 0.0f }, { -1.0f, 75.0f, -443.0f }, 75.0f },
+};
+/* 8010B140 size 0x1B8 */ Ovl5DModelDef D_8010B140_3A8B30_name_5D[11] = {
+    { 590031, 1585, 0, 0, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590026, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590027, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590029, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590028, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590030, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590032, 1585, 0, 2, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590033, 1585, 0, 2, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 590034, 1585, 0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { 13, 1585, 0, 0, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    { -1, 0, 0, 0, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+};
+u8 D_8010B2F8_3A8CE8_name_5D[8] = { 5, 1, 2, 4, 3, 0, 0, 0 };
+Ovl5DCatMess D_8010B300_3A8CF0_name_5D[5] = {
+    { 874, 875, 876, 890, 891, 892 }, { 877, 878, 879, 893, 894, 895 },
+    { 880, 881, 882, 896, 897, 898 }, { 886, 887, 888, 902, 903, 904 },
+    { 883, 884, 885, 899, 900, 901 },
+};
+/* 8010B378 size 0xC */ s16 D_8010B378_3A8D68_name_5D[6] = {
+    1, 2, 4, 3, 5, 0,
+};
+char* D_8010B384_3A8D74_name_5D[23] = {
+    (char*)D_8010B78C_3A917C_name_5D,
+    (char*)D_8010B77C_3A916C_name_5D,
+    (char*)D_8010B76C_3A915C_name_5D,
+    (char*)D_8010B75C_3A914C_name_5D,
+    (char*)D_8010B74C_3A913C_name_5D,
+    (char*)D_8010B73C_3A912C_name_5D,
+    (char*)D_8010B72C_3A911C_name_5D,
+    (char*)D_8010B71C_3A910C_name_5D,
+    (char*)D_8010B70C_3A90FC_name_5D,
+    (char*)D_8010B6FC_3A90EC_name_5D,
+    (char*)D_8010B6EC_3A90DC_name_5D,
+    (char*)D_8010B6DC_3A90CC_name_5D,
+    (char*)D_8010B6CC_3A90BC_name_5D,
+    (char*)D_8010B6BC_3A90AC_name_5D,
+    (char*)D_8010B6AC_3A909C_name_5D,
+    (char*)D_8010B69C_3A908C_name_5D,
+    (char*)D_8010B68C_3A907C_name_5D,
+    (char*)D_8010B67C_3A906C_name_5D,
+    (char*)D_8010B66C_3A905C_name_5D,
+    (char*)D_8010B65C_3A904C_name_5D,
+    (char*)D_8010B64C_3A903C_name_5D,
+    (char*)D_8010B63C_3A902C_name_5D,
+    (char*)D_8010B62C_3A901C_name_5D,
+};
+char* D_8010B3E0_3A8DD0_name_5D[12] = {
+    (char*)D_8010B84C_3A923C_name_5D,
+    (char*)D_8010B83C_3A922C_name_5D,
+    (char*)D_8010B82C_3A921C_name_5D,
+    (char*)D_8010B81C_3A920C_name_5D,
+    (char*)D_8010B80C_3A91FC_name_5D,
+    (char*)D_8010B7FC_3A91EC_name_5D,
+    (char*)D_8010B7EC_3A91DC_name_5D,
+    (char*)D_8010B7DC_3A91CC_name_5D,
+    (char*)D_8010B7CC_3A91BC_name_5D,
+    (char*)D_8010B7BC_3A91AC_name_5D,
+    (char*)D_8010B7AC_3A919C_name_5D,
+    (char*)D_8010B79C_3A918C_name_5D,
+};
+char* D_8010B410_3A8E00_name_5D[14] = {
+    (char*)D_8010B92C_3A931C_name_5D,
+    (char*)D_8010B91C_3A930C_name_5D,
+    (char*)D_8010B90C_3A92FC_name_5D,
+    (char*)D_8010B8FC_3A92EC_name_5D,
+    (char*)D_8010B8EC_3A92DC_name_5D,
+    (char*)D_8010B8DC_3A92CC_name_5D,
+    (char*)D_8010B8CC_3A92BC_name_5D,
+    (char*)D_8010B8BC_3A92AC_name_5D,
+    (char*)D_8010B8AC_3A929C_name_5D,
+    (char*)D_8010B89C_3A928C_name_5D,
+    (char*)D_8010B88C_3A927C_name_5D,
+    (char*)D_8010B87C_3A926C_name_5D,
+    (char*)D_8010B86C_3A925C_name_5D,
+    (char*)D_8010B85C_3A924C_name_5D,
+};
+char* D_8010B448_3A8E38_name_5D[9] = {
+    (char*)D_8010B9BC_3A93AC_name_5D,
+    (char*)D_8010B9AC_3A939C_name_5D,
+    (char*)D_8010B99C_3A938C_name_5D,
+    (char*)D_8010B98C_3A937C_name_5D,
+    (char*)D_8010B97C_3A936C_name_5D,
+    (char*)D_8010B96C_3A935C_name_5D,
+    (char*)D_8010B95C_3A934C_name_5D,
+    (char*)D_8010B94C_3A933C_name_5D,
+    (char*)D_8010B93C_3A932C_name_5D,
+};
+char* D_8010B46C_3A8E5C_name_5D[6] = {
+    (char*)D_8010BA1C_3A940C_name_5D,
+    (char*)D_8010BA0C_3A93FC_name_5D,
+    (char*)D_8010B9FC_3A93EC_name_5D,
+    (char*)D_8010B9EC_3A93DC_name_5D,
+    (char*)D_8010B9DC_3A93CC_name_5D,
+    (char*)D_8010B9CC_3A93BC_name_5D,
+};
+char** D_8010B484_3A8E74_name_5D[5] = { D_8010B384_3A8D74_name_5D, D_8010B3E0_3A8DD0_name_5D, D_8010B410_3A8E00_name_5D, D_8010B448_3A8E38_name_5D, D_8010B46C_3A8E5C_name_5D };
+/* 8010B498 size 0xC */ s16 D_8010B498_3A8E88_name_5D[6] = {
+    0, 1, 2, 4, 3, 0,
+};
+Ovl5DSprDef D_8010B4A4_3A8E94_name_5D[10] = {
+    { 589842, 10.0f, 147.0f, 1.0f, 1.0f }, { 589841, 25.0f, 130.0f, 0.8f, 0.8f },
+    { 589841, 30.0f, 107.0f, 1.0f, 1.0f }, { 589840, 56.0f, 87.0f, 0.8f, 0.8f },
+    { 589840, 38.0f, 88.0f, 1.0f, 1.0f }, { 589840, 30.0f, 68.0f, 1.0f, 1.0f },
+    { 589843, 59.0f, 60.0f, 0.8f, 0.8f }, { 589843, 72.0f, 77.0f, 1.1f, 1.1f },
+    { 589854, 53.0f, 76.0f, 0.45f, 0.45f }, { 0, -1.0f, -1.0f, -1.0f, -1.0f },
+};
+/* 8010B56C size 0xC */ s16 D_8010B56C_3A8F5C_name_5D[6] = {
+    0, -50, 0, 25, 50, -25,
+};
+/* 8010B578 size 0xC */ s16 D_8010B578_3A8F68_name_5D[6] = {
+    -72, -20, 24, 68, 0, 0,
+};
+/* 8010B584 size 0xC */ s16 D_8010B584_3A8F74_name_5D[6] = {
+    0, -50, -25, 25, 50, 0,
+};
+/* 8010B590 size 0xC */ s16 D_8010B590_3A8F80_name_5D[6] = {
+    -70, -26, 26, 70, 0, 0,
+};
+s16 D_8010B59C_3A8F8C_name_5D[4][4] = { { 0, 1, 2, 3 }, { 1, 0, 2, 3 }, { 2, 0, 1, 3 }, { 3, 0, 1, 2 } };
+s16 D_8010B5BC_3A8FAC_name_5D[4][4] = { { 0, 1, 2, 3 }, { 0, 2, 1, 3 }, { 0, 3, 1, 2 }, { 0, 1, 2, 3 } };
+s32 D_8010B5DC_3A8FCC_name_5D[6] = {
+    590052, 590047, 590048, 590049, 590050, 590051,
+};
+/* 8010B5F4 size 0x1C */ s32 D_8010B5F4_3A8FE4_name_5D[7] = {
+    589972, 589973, 589974, 589975, 589976, 589977, 0,
+};
+
 void func_80102800_3A01F0_name_5D(void) {
     func_80020070_20C70(1);
     func_8002D4D0_2E0D0(1);
