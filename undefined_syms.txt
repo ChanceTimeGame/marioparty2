@@ -503,3 +503,9 @@ D_8010CF24_1E1604_ShellShocked = D_8010CF20_1E1600_ShellShocked + 0x4;
 D_801121E4_F3424_RollOutTheBarrels = D_801121E0_F3420_RollOutTheBarrels + 0x4;
 D_801121EC_F342C_RollOutTheBarrels = D_801121E8_F3428_RollOutTheBarrels + 0x4;
 D_80112414_F3654_RollOutTheBarrels = D_80112410_F3650_RollOutTheBarrels + 0x4;
+/* S5-4ED: ovl_4E .data labels that retail addresses by their own address */
+D_8010D4B8_334E78_name_4E = D_8010D4B4_334E74_name_4E + 0x4;
+D_8010D4BC_334E7C_name_4E = D_8010D4B4_334E74_name_4E + 0x8;
+D_8010D500_334EC0_name_4E = D_8010D4FC_334EBC_name_4E + 0x4;
+D_8010D504_334EC4_name_4E = D_8010D4FC_334EBC_name_4E + 0x8;
+D_8010D5FE_334FBE_name_4E = D_8010D5F4_334FB4_name_4E + 0xA;
