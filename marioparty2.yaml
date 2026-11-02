@@ -2019,6 +2019,7 @@ segments:
     bss_size: 0x100
     subsegments:
       - [0x3A9460, c]
+      - [0x3A9490, c]
       - [0x3AB8B0, data]
       - {0x3AB9A0, type: bss, vram: 0x80104D40, name: ovl_5E_bss}
   - type: code

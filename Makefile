@@ -697,6 +697,8 @@ OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_2E_HexagonHeat/22E170.c.o
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_36_DizzyDancing/26FEE0.c.o
 # S4-37: ovl_37 274F30.c too
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_37_TileDriver/274F30.c.o
+# S5-5E: ovl_5E 3A9490.c too (a nop before the mul.s after each HuMathSin call)
+OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_5E_name/3A9490.c.o
 # S4-39: ovl_39 27F4F0.c too (func_80107A80: a nop between mul.s; func_80103214: none after a call)
 OVL5F_BLANKSTRIP_UNITS += build/src/overlays/ovl_39_BowsersBigBlast/27F4F0.c.o
 # S4-33: ovl_33 253A80.c too (nops between mul.s/mul.d pairs)
