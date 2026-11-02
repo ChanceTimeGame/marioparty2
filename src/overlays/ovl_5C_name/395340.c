@@ -396,7 +396,7 @@ void func_80108904_3967C4_name_5C(void) {
     f32 b;
     f32 inv;
 
-    if (ContBtn[1] & 0x20) {
+    if (ContBtn[1] & 4) {
         if (ContBtn[0] & 0x2000) {
             zoom = D_800FA610_FB210 + 30.0f;
         } else {
@@ -404,7 +404,7 @@ void func_80108904_3967C4_name_5C(void) {
         }
         D_800FA610_FB210 = zoom;
     }
-    if ((ContBtn[1] & 0x10) && D_800FA610_FB210 - 10.0f != 0.0f) {
+    if ((ContBtn[1] & 8) && D_800FA610_FB210 - 10.0f != 0.0f) {
         if (ContBtn[1] & 0x2000) {
             zoom = D_800FA610_FB210 - 30.0f;
         } else {
