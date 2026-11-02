@@ -133,9 +133,91 @@ s32 func_80102F9C_17092C_LightsOut(f32 x, f32 y, f32 z, f32 reach) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80102F9C_17092C_LightsOut);
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80103114_170AA4_LightsOut);
+void func_80103114_170AA4_LightsOut(void) {
+    LOSlot* host;
+    LOSlot* p;
+    omObjData* t;
+    omObjData* obj;
+    MgWork* work;
+    Vec pos;
+    Vec rot;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010335C_170CEC_LightsOut);
+    if (D_8010D1B4_17AB44_LightsOut != 0) {
+        for (i = 0; i < 4; i++) {
+            host = &D_8010CD90_17A720_LightsOut[i];
+            if (host->unk_74 == 1) {
+                break;
+            }
+        }
+        if (i < 4) {
+            for (i = 0; i < 4; i++) {
+                p = &D_8010CD90_17A720_LightsOut[i];
+                t = p->obj;
+                if (t != NULL && p->unk_74 == 0) {
+                    obj = t;
+                    work = obj->unk_50;
+                    if (obj->work[2] == 0 && func_80102F9C_17092C_LightsOut(obj->trans.x, obj->trans.y + host->unk_30, obj->trans.z, host->unk_30) != 0) {
+                        if (host->unk_76 == 2 && work->unk_38 == 1000.0f) {
+                            obj->work[2] = 1;
+                            pos.x = obj->trans.x;
+                            pos.y = obj->trans.y + host->unk_30;
+                            pos.z = obj->trans.z;
+                            rot.x = -90.0f;
+                            rot.y = rot.z = 0.0f;
+                            PlaySound(0x1CC);
+                            D_8010CCB4_17A644_LightsOut = 1;
+                        } else if (host->unk_76 == 1 && work->unk_38 == 1000.0f) {
+                            obj->work[2] = 2;
+                            pos.x = obj->trans.x;
+                            pos.y = obj->trans.y + host->unk_30;
+                            pos.z = obj->trans.z;
+                            rot.x = rot.z = 0.0f;
+                            rot.y = obj->rot.y;
+                            PlaySound(0x1CC);
+                            D_8010CCB4_17A644_LightsOut = 1;
+                        } else {
+                            return;
+                        }
+                        func_800191D4_19DD4(obj, 5, pos.x, pos.y, pos.z, rot.x, rot.y);
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* The lightning frame: the current darkness texture over the whole screen, drawn from a hook. */
+void func_8010335C_170CEC_LightsOut(Gfx** gfxp) {
+    Gfx* gfx;
+    s32 y;
+    u16 alpha;
+
+    if (D_8010CD04_17A694_LightsOut != 0) {
+        alpha = 255;
+        if (D_8010CC88_17A618_LightsOut < 256) {
+            alpha = D_8010CC88_17A618_LightsOut;
+        }
+        gfx = *gfxp;
+        gDPPipeSync(gfx++);
+        gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+        gSPClearGeometryMode(gfx++, G_SHADE | G_SHADING_SMOOTH | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR |
+                                        G_CULL_BOTH | G_FOG | G_LOD);
+        gSPSetGeometryMode(gfx++, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
+        gDPSetTexturePersp(gfx++, G_TP_NONE);
+        gDPSetPrimColor(gfx++, 0, 0, 0, 0, 0, alpha);
+        gDPSetRenderMode(gfx++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
+        gDPSetCombineMode(gfx++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+        gDPSetTextureLUT(gfx++, G_TT_NONE);
+        for (y = 0; y < 240; y += 10) {
+            gDPLoadTextureTile_4b(gfx++, D_8010CCC8_17A658_LightsOut[D_8010CC80_17A610_LightsOut], G_IM_FMT_I, 320, 240, 0, y, 319,
+                                  y + 9, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gDPSetTileSize(gfx++, G_TX_RENDERTILE, 0, 0, 320 << 2, 10 << 2);
+            gSPTextureRectangle(gfx++, 0 << 2, y << 2, 320 << 2, (y + 10) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+        }
+        *gfxp = gfx;
+    }
+}
 
 void func_80103620_170FB0_LightsOut(omObjData* obj) {
     ContBtnTrg[((MgWork*)obj->unk_50)->unk_57] |= 0x8000;
@@ -210,7 +292,70 @@ void func_801037C8_171158_LightsOut(omObjData* obj) {
     ContStkY[work->unk_57] = -mag * func_800B7890_B8490(angle);
 }
 
+#ifdef NON_MATCHING
+/* register/schedule (masked 3): retail loads 180.0f between the compare and its branch */
+void func_80103968_1712F8_LightsOut(Vec* from, Vec* to, Vec* out) {
+    Vec delta;
+    Vec fromV;
+    Vec toV;
+    f32 horizontal;
+    f32 pitch;
+    f32 yaw;
+    f32 y;
+    f32 eps;
+    s32 nearPositive;
+    s32 nearNegative;
+
+    fromV.x = from->x;
+    fromV.y = from->y;
+    fromV.z = from->z;
+    toV.x = to->x;
+    toV.y = to->y;
+    toV.z = to->z;
+    delta.x = toV.x - fromV.x;
+    delta.y = toV.y - fromV.y;
+    delta.z = toV.z - fromV.z;
+    horizontal = func_800B1830_B2430(delta.x * delta.x + delta.z * delta.z);
+    nearPositive = horizontal <= 0.002f;
+    nearNegative = horizontal >= -0.002f;
+    if (nearPositive & nearNegative) {
+        horizontal = 0.0f;
+        y = delta.y;
+        eps = 0.0001f;
+        yaw = horizontal;
+        pitch = 180.0f;
+        if (!(y > eps) && y < eps) {
+            pitch = horizontal;
+        }
+    } else {
+        if (delta.x != 0.0f && delta.z != 0.0f) {
+            yaw = func_80103678_171008_LightsOut(delta.x / delta.z) * 57.29577951308232;
+        } else {
+            yaw = 0.0f;
+        }
+        if (delta.z < 0.0f) {
+            yaw -= 180.0f;
+        }
+        if (horizontal != 0.0f && delta.y != 0.0f) {
+            pitch = func_80103678_171008_LightsOut(delta.y / horizontal) * 57.29577951308232;
+        } else {
+            pitch = 0.0f;
+        }
+        yaw = yaw >= 360.0f ? yaw - 360.0f : yaw < 0.0f ? yaw + 360.0f : yaw;
+        pitch = pitch + 90.0f >= 360.0f ? pitch + 90.0f - 360.0f : pitch + 90.0f < 0.0f ? pitch + 90.0f + 360.0f : pitch + 90.0f;
+    }
+    nearPositive = pitch <= 0.002f;
+    nearNegative = pitch >= -0.002f;
+    if (nearPositive & nearNegative) {
+        pitch = 0.0f;
+    }
+    horizontal = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
+    out->z = yaw;
+    out->x = horizontal;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80103968_1712F8_LightsOut);
+#endif
 
 void func_80103CA8_171638_LightsOut(omObjData* obj, s16 motion, char* name) {
     LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
@@ -249,38 +394,695 @@ f32 func_80103DFC_17178C_LightsOut(f32 y, f32 x) {
     return a;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80103E74_171804_LightsOut);
+/* A CPU hammer player: aim at the nearest live player, swing when one is close or the timer runs out. */
+void func_80103E74_171804_LightsOut(LOSlot* slot) {
+    omObjData* obj = slot->obj;
+    MgWork* work = obj->unk_50;
+    f32 best = 1000.0f;
+    Vec pos;
+    Vec tgt;
+    Vec out;
+    LOSlot* p;
+    omObjData* t;
+    omObjData* o;
+    s16 i;
+    s16 aim;
+    s16 human;
+    s16 close;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80104228_171BB8_LightsOut);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    aim = 5;
+    human = 5;
+    close = 5;
+    for (i = 0; i < 4; i++) {
+        p = &D_8010CD90_17A720_LightsOut[i];
+        t = p->obj;
+        if (t != NULL && p->unk_74 == 0) {
+            o = t;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            if (out.x < best && o->work[2] == 0) {
+                best = out.x;
+                if (best < 160.0f) {
+                    close = i;
+                }
+                if (p->unk_80 == 0) {
+                    human = i;
+                }
+                aim = i;
+            }
+        }
+        if (human != 5) {
+            aim = human;
+        }
+        if (close != 5) {
+            aim = close;
+        }
+        if (D_8010CC9A_17A62A_LightsOut >= 150) {
+            D_8010CC9A_17A62A_LightsOut = 0;
+            if ((u8)(rand8() % 5) < 5) {
+                if (!(work->unk_50 & 6)) {
+                    func_80103648_170FD8_LightsOut(obj);
+                }
+            } else if (!(work->unk_50 & 6)) {
+                func_80103620_170FB0_LightsOut(obj);
+            }
+            if (!(work->unk_50 & 6)) {
+                slot->unk_8A = 20;
+            }
+        } else if (aim != 5) {
+            p = &D_8010CD90_17A720_LightsOut[aim];
+            o = p->obj;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            work->unk_3C = LO_WRAP(out.z);
+            if (out.x < 160.0f) {
+                if ((u8)(rand8() % 6) < 5) {
+                    if (!(work->unk_50 & 6)) {
+                        func_80103648_170FD8_LightsOut(obj);
+                    }
+                } else if (!(work->unk_50 & 6)) {
+                    func_80103620_170FB0_LightsOut(obj);
+                }
+                if (!(work->unk_50 & 6)) {
+                    slot->unk_8A = 20;
+                }
+                D_8010CC9A_17A62A_LightsOut = 0;
+            }
+        }
+        D_8010CC9A_17A62A_LightsOut++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_801045DC_171F6C_LightsOut);
+void func_80104228_171BB8_LightsOut(LOSlot* slot) {
+    omObjData* obj = slot->obj;
+    MgWork* work = obj->unk_50;
+    f32 best = 1000.0f;
+    Vec pos;
+    Vec tgt;
+    Vec out;
+    LOSlot* p;
+    omObjData* t;
+    omObjData* o;
+    s16 i;
+    s16 aim;
+    s16 human;
+    s16 close;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80104990_172320_LightsOut);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    aim = 5;
+    human = 5;
+    close = 5;
+    for (i = 0; i < 4; i++) {
+        p = &D_8010CD90_17A720_LightsOut[i];
+        t = p->obj;
+        if (t != NULL && p->unk_74 == 0) {
+            o = t;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            if (out.x < best && o->work[2] == 0) {
+                best = out.x;
+                if (best < 160.0f) {
+                    close = i;
+                }
+                if (p->unk_80 == 0) {
+                    human = i;
+                }
+                aim = i;
+            }
+        }
+        if (human != 5) {
+            aim = human;
+        }
+        if (close != 5) {
+            aim = close;
+        }
+        if (D_8010CC9A_17A62A_LightsOut >= 150) {
+            D_8010CC9A_17A62A_LightsOut = 0;
+            if ((u8)(rand8() % 5) < 5) {
+                if (!(work->unk_50 & 6)) {
+                    func_80103648_170FD8_LightsOut(obj);
+                }
+            } else if (!(work->unk_50 & 6)) {
+                func_80103620_170FB0_LightsOut(obj);
+            }
+            if (!(work->unk_50 & 6)) {
+                slot->unk_8A = 30;
+            }
+        } else if (aim != 5) {
+            p = &D_8010CD90_17A720_LightsOut[aim];
+            o = p->obj;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            work->unk_3C = LO_WRAP(out.z);
+            if (out.x < 160.0f) {
+                if ((u8)(rand8() % 6) < 5) {
+                    if (!(work->unk_50 & 6)) {
+                        func_80103648_170FD8_LightsOut(obj);
+                    }
+                } else if (!(work->unk_50 & 6)) {
+                    func_80103620_170FB0_LightsOut(obj);
+                }
+                if (!(work->unk_50 & 6)) {
+                    slot->unk_8A = 30;
+                }
+                D_8010CC9A_17A62A_LightsOut = 0;
+            }
+        }
+        D_8010CC9A_17A62A_LightsOut++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80104D48_1726D8_LightsOut);
+void func_801045DC_171F6C_LightsOut(LOSlot* slot) {
+    omObjData* obj = slot->obj;
+    MgWork* work = obj->unk_50;
+    f32 best = 1000.0f;
+    Vec pos;
+    Vec tgt;
+    Vec out;
+    LOSlot* p;
+    omObjData* t;
+    omObjData* o;
+    s16 i;
+    s16 aim;
+    s16 human;
+    s16 close;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80104EEC_17287C_LightsOut);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    aim = 5;
+    human = 5;
+    close = 5;
+    for (i = 0; i < 4; i++) {
+        p = &D_8010CD90_17A720_LightsOut[i];
+        t = p->obj;
+        if (t != NULL && p->unk_74 == 0) {
+            o = t;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            if (out.x < best && o->work[2] == 0) {
+                best = out.x;
+                if (best < 140.0f) {
+                    close = i;
+                }
+                if (p->unk_80 == 0) {
+                    human = i;
+                }
+                aim = i;
+            }
+        }
+        if (human != 5) {
+            aim = human;
+        }
+        if (close != 5) {
+            aim = close;
+        }
+        if (D_8010CC9A_17A62A_LightsOut >= 120) {
+            D_8010CC9A_17A62A_LightsOut = 0;
+            if ((u8)(rand8() % 6) < 3) {
+                if (!(work->unk_50 & 6)) {
+                    func_80103648_170FD8_LightsOut(obj);
+                }
+            } else if (!(work->unk_50 & 6)) {
+                func_80103620_170FB0_LightsOut(obj);
+            }
+            if (!(work->unk_50 & 6)) {
+                slot->unk_8A = 45;
+            }
+        } else if (aim != 5) {
+            p = &D_8010CD90_17A720_LightsOut[aim];
+            o = p->obj;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            work->unk_3C = LO_WRAP(out.z);
+            if (out.x < 140.0f) {
+                if ((u8)(rand8() % 5) < 3) {
+                    if (!(work->unk_50 & 6)) {
+                        func_80103648_170FD8_LightsOut(obj);
+                    }
+                } else if (!(work->unk_50 & 6)) {
+                    func_80103620_170FB0_LightsOut(obj);
+                }
+                if (!(work->unk_50 & 6)) {
+                    slot->unk_8A = 45;
+                }
+                D_8010CC9A_17A62A_LightsOut = 0;
+            }
+        }
+        D_8010CC9A_17A62A_LightsOut++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_801050E8_172A78_LightsOut);
+void func_80104990_172320_LightsOut(LOSlot* slot) {
+    omObjData* obj = slot->obj;
+    MgWork* work = obj->unk_50;
+    f32 best = 1000.0f;
+    Vec pos;
+    Vec tgt;
+    Vec out;
+    LOSlot* p;
+    omObjData* t;
+    omObjData* o;
+    s16 i;
+    s16 aim;
+    s16 human;
+    s16 close;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105340_172CD0_LightsOut);
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    aim = 5;
+    human = 5;
+    close = 5;
+    for (i = 0; i < 4; i++) {
+        p = &D_8010CD90_17A720_LightsOut[i];
+        t = p->obj;
+        if (t != NULL && p->unk_74 == 0) {
+            o = t;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            if (out.x < best && o->work[2] == 0) {
+                best = out.x;
+                if (best < 140.0f) {
+                    close = i;
+                }
+                if (p->unk_80 == 0) {
+                    human = i;
+                }
+                aim = i;
+            }
+        }
+        if (human != 5) {
+            aim = human;
+        }
+        if (close != 5) {
+            aim = close;
+        }
+        if (D_8010CC9A_17A62A_LightsOut >= 105) {
+            D_8010CC9A_17A62A_LightsOut = 0;
+            if ((u8)(rand8() % 5) < 2) {
+                if (!(work->unk_50 & 6)) {
+                    func_80103648_170FD8_LightsOut(obj);
+                }
+            } else if (!(work->unk_50 & 6)) {
+                func_80103620_170FB0_LightsOut(obj);
+            }
+            if (!(work->unk_50 & 6)) {
+                slot->unk_8A = 53;
+            }
+        } else if (aim != 5) {
+            p = &D_8010CD90_17A720_LightsOut[aim];
+            o = p->obj;
+            tgt.x = o->trans.x;
+            tgt.y = 0.0f;
+            tgt.z = o->trans.z;
+            func_80103968_1712F8_LightsOut(&pos, &tgt, &out);
+            work->unk_3C = LO_WRAP(out.z);
+            if (out.x < 120.0f) {
+                if ((u8)(rand8() % 5) < 2) {
+                    if (!(work->unk_50 & 6)) {
+                        func_80103648_170FD8_LightsOut(obj);
+                    }
+                } else if (!(work->unk_50 & 6)) {
+                    func_80103620_170FB0_LightsOut(obj);
+                }
+                if (!(work->unk_50 & 6)) {
+                    slot->unk_8A = 53;
+                }
+                D_8010CC9A_17A62A_LightsOut = 0;
+            }
+        }
+        D_8010CC9A_17A62A_LightsOut++;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105438_172DC8_LightsOut);
+void func_80104D48_1726D8_LightsOut(LOSlot* slot) {
+    omObjData* obj = slot->obj;
+    MgWork* work = obj->unk_50;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105AF8_173488_LightsOut);
+    LO_PAD_CLEAR(obj);
+    if (slot->unk_8A <= 0) {
+        switch (gPlayers[work->unk_59].cpu_difficulty) {
+            case 0:
+                func_80104990_172320_LightsOut(slot);
+                break;
+            case 1:
+                func_801045DC_171F6C_LightsOut(slot);
+                break;
+            case 2:
+                func_80104228_171BB8_LightsOut(slot);
+                break;
+            default:
+                func_80103E74_171804_LightsOut(slot);
+                break;
+        }
+        func_801037C8_171158_LightsOut(slot->obj);
+    }
+    slot->unk_8A--;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105B00_173490_LightsOut);
+/* Loser and winner idles of the hammer player. */
+void func_80104EEC_17287C_LightsOut(omObjData* obj) {
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+    MgWork* work = obj->unk_50;
+    f32 x;
+    f32 z;
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105B78_173508_LightsOut);
+    if (D_8010CD84_17A714_LightsOut == 4 && p->unk_8C == 0.0f) {
+        func_80019B9C_1A79C(obj, 0xE);
+        p->unk_8C = 1.0f;
+    }
+    LO_PAD_CLEAR(obj);
+    work->unk_40 = 0.0f;
+    work->unk_3C = 0.0f;
+    func_80007790_8390(obj);
+    x = obj->trans.x;
+    if (x * x + (z = obj->trans.z, z * z) > 211600.0) {
+        a = func_80103DFC_17178C_LightsOut(x, z);
+        obj->trans.x = HuMathSin(a) * 460.0;
+        obj->trans.z = func_800B7890_B8490(a) * 460.0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105BF0_173580_LightsOut);
+void func_801050E8_172A78_LightsOut(omObjData* obj) {
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+    MgWork* work = obj->unk_50;
+    f32 x;
+    f32 z;
+    f32 a;
+
+    if (D_8010CD84_17A714_LightsOut == 4 && p->unk_8C == 0.0f) {
+        func_80019B9C_1A79C(obj, 0xD);
+        func_800732B0_73EB0(D_8010C250_179BE0_LightsOut[gPlayers[obj->work[0]].character] | D_8010C268_179BF8_LightsOut[D_8010CCB9_17A649_LightsOut[obj->work[0]][0]]);
+        p->unk_8C = 1.0f;
+    }
+    LO_PAD_CLEAR(obj);
+    work->unk_40 = 0.0f;
+    work->unk_3C = 0.0f;
+    func_80007790_8390(obj);
+    x = obj->trans.x;
+    if (x * x + (z = obj->trans.z, z * z) > 211600.0) {
+        a = func_80103DFC_17178C_LightsOut(x, z);
+        obj->trans.x = HuMathSin(a) * 460.0;
+        obj->trans.z = func_800B7890_B8490(a) * 460.0;
+    }
+}
+
+/* The intro: two practice swings, the music, then the state moves on. */
+void func_80105340_172CD0_LightsOut(omObjData* obj) {
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+
+    if (p->unk_8A == 0 && obj->work[1] == 0) {
+        func_80103620_170FB0_LightsOut(obj);
+        p->unk_8A = 1;
+    } else if (p->unk_8A == 1 && obj->work[1] == 0) {
+        func_80103620_170FB0_LightsOut(obj);
+        p->unk_8A = 2;
+        PlayMusic(0x1E);
+    } else if (p->unk_8A == 2 && obj->work[1] == 0) {
+        func_80103648_170FD8_LightsOut(obj);
+        p->unk_8A = 3;
+    } else if (p->unk_8A == 3 && obj->work[1] == 0) {
+        D_8010CD84_17A714_LightsOut = 1;
+        p->unk_8A = 0;
+    }
+}
+
+void func_80105438_172DC8_LightsOut(omObjData* obj) {
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+    MgWork* work = obj->unk_50;
+    omObjData* wave = D_8010CD90_17A720_LightsOut[6].obj;
+    LOSlot* q;
+    s16 i;
+    s16 count;
+    f32 x;
+
+    if (D_8010C270_179C00_LightsOut == 0) {
+        func_8000D900_E500(obj, wave);
+        D_8010C270_179C00_LightsOut = 1;
+    }
+    switch (D_8010CD84_17A714_LightsOut) {
+        case 0:
+            LO_PAD_CLEAR(obj);
+            work->unk_40 = 0.0f;
+            func_80105340_172CD0_LightsOut(obj);
+            break;
+        case 1:
+        case 5:
+            LO_PAD_CLEAR(obj);
+            work->unk_40 = 0.0f;
+            break;
+        case 2:
+            if (obj->work[3] == 0) {
+                work->unk_3C = obj->rot.y;
+                obj->rot.y = 0.0f;
+                obj->work[3] = 1;
+            }
+            if (p->unk_80 == 1) {
+                func_80104D48_1726D8_LightsOut(p);
+            }
+            break;
+        case 3:
+            func_8002C570_2D170(obj->model[0]);
+            func_800298A4_2A4A4(wave->model[0], 0x4000, 0);
+            func_80019B9C_1A79C(obj, 0);
+            work->unk_50 &= 0xFEAF;
+            obj->work[1] = 0;
+            p->unk_8C = 0.0f;
+            LO_PAD_CLEAR(obj);
+            work->unk_40 = 0.0f;
+            work->unk_3C = 0.0f;
+            count = 0;
+            for (i = 0; i < 4; i++) {
+                q = &D_8010CD90_17A720_LightsOut[i];
+                if (q->obj->work[2] != 0 && q->unk_74 == 0) {
+                    count++;
+                }
+            }
+            if (_CheckFlag(0xC) == 0) {
+                if (count >= 3) {
+                    obj->func_ptr = func_801050E8_172A78_LightsOut;
+                } else {
+                    obj->func_ptr = func_80104EEC_17287C_LightsOut;
+                }
+            }
+            break;
+    }
+    p->unk_78++;
+    if (!(func_80019000_19C00(obj) & 0xC0000)) {
+        p->unk_76 = 0;
+        p->unk_78 = 0;
+        obj->work[1] = 0;
+    }
+    if (obj->work[1] != 0 && p->unk_76 == 2 && D_8010CC98_17A628_LightsOut == 1) {
+        if (D_8010CCB4_17A644_LightsOut == 0) {
+            PlaySound(0x1CB);
+        }
+        x = HuMathSin(work->unk_3C) * 70.0f + obj->trans.x;
+        func_800191D4_19DD4(obj, 5, x, 0.0f, func_800B7890_B8490(work->unk_3C) * 70.0f + obj->trans.z, 0.0f, 0.0f);
+    }
+    if (ContStkX[gPlayers[obj->work[0]].port] >= 50) {
+        ContStkX[gPlayers[obj->work[0]].port] = 50;
+    }
+    if (ContStkY[gPlayers[obj->work[0]].port] >= 50) {
+        ContStkY[gPlayers[obj->work[0]].port] = 50;
+    }
+    if (ContStkX[gPlayers[obj->work[0]].port] < -49) {
+        ContStkX[gPlayers[obj->work[0]].port] = -50;
+    }
+    if (ContStkY[gPlayers[obj->work[0]].port] < -49) {
+        ContStkY[gPlayers[obj->work[0]].port] = -50;
+    }
+    func_80007790_8390(obj);
+    LO_KEEP_IN(obj);
+}
+
+s32 func_80105AF8_173488_LightsOut(void) {
+    return 1;
+}
+
+s32 func_80105B00_173490_LightsOut(omObjData* obj) {
+    MgWork* work = obj->unk_50;
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+
+    p->unk_76 = 2;
+    p->unk_78 = 0;
+    obj->work[1] = 1;
+    work->unk_40 = D_800BF7D0_C03D0;
+    func_80079798_7A398(0x1CD, obj->work[0]);
+    D_8010CCB4_17A644_LightsOut = 0;
+    return 0;
+}
+
+s32 func_80105B78_173508_LightsOut(omObjData* obj) {
+    MgWork* work = obj->unk_50;
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+
+    p->unk_76 = 1;
+    p->unk_78 = 0;
+    obj->work[1] = 1;
+    work->unk_40 = D_800BF7D0_C03D0;
+    func_80079798_7A398(0x1CD, obj->work[0]);
+    D_8010CCB4_17A644_LightsOut = 0;
+    return 0;
+}
+
+s32 func_80105BF0_173580_LightsOut(omObjData* obj) {
+    func_8002C570_2D170(obj->model[0]);
+    return 1;
+}
 
 __asm__(".section .rodata");
 const char D_8010CAF8_17A488_LightsOut[16] = "item_hook";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105C14_1735A4_LightsOut);
+void func_80105C14_1735A4_LightsOut(omObjData* obj) {
+    LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
+    s32 dir;
+    s32 file;
+    MgWork* work;
+    u16 c = gPlayers[obj->work[0]].character;
+    u8 r;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_801062A8_173C38_LightsOut);
+    if (gPlayers[obj->work[0]].flags & 1) {
+        p->unk_80 = 1;
+    } else {
+        p->unk_80 = 0;
+    }
+    dir = D_800CD438_CE038[c].unk_04;
+    file = D_800CD438_CE038[c].unk_08;
+    func_8000C460_D060();
+    func_8000C6FC_D2FC(obj, dir, file, obj->work[0], 0x699, 0x689);
+    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+    func_80029A8C_2A68C(obj->model[1]);
+    func_80029AFC_2A6FC(obj->model[1]);
+    work = obj->unk_50;
+    work->unk_EC = NULL;
+    func_800298A4_2A4A4(obj->model[1], 0x60, 0x20);
+    func_800298A4_2A4A4(obj->model[1], 0x180, 0);
+    obj->model[3] = LoadFormFile(7, 0x2BD);
+    obj->model[4] = LoadFormFile(8, 0x2BD);
+    obj->model[6] = LoadFormFile(9, 0x2BD);
+    obj->model[5] = LoadFormFile(10, 0x2BD);
+    obj->model[7] = LoadFormFile(12, 0x2BD);
+    obj->model[8] = LoadFormFile(11, 0x2BD);
+    func_80019F0C_1AB0C(obj, 0, dir, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 1, 1, 0);
+    func_80019F0C_1AB0C(obj, 2, dir | 2, 1, 0);
+    func_80019F0C_1AB0C(obj, 0x11, dir | 0xF, 0, 0);
+    func_80019E84_1AA84(obj, 0x15, dir | 0x2E, 0, 0);
+    func_80019E84_1AA84(obj, 3, dir | 0x2C, 0, 0);
+    func_80019E84_1AA84(obj, 4, dir | 0x2D, 1, 0);
+    func_80019E84_1AA84(obj, 0x20, dir | 0x31, 0, 0);
+    if ((rand8() & 3) < 3) {
+        func_80019E84_1AA84(obj, 0xD, dir | 0x4E, 1, 0x8C);
+        D_8010CCB9_17A649_LightsOut[obj->work[0]][0] = 0;
+    } else {
+        func_80019E84_1AA84(obj, 0xD, dir | 0x4F, 1, 0x8C);
+        D_8010CCB9_17A649_LightsOut[obj->work[0]][0] = 1;
+    }
+    if ((rand8() & 3) < 3) {
+        func_80019E84_1AA84(obj, 0xE, dir | 0x55, 1, 0x8C);
+        D_8010CCB9_17A649_LightsOut[obj->work[0]][1] = 2;
+    } else {
+        func_80019E84_1AA84(obj, 0xE, dir | 0x56, 1, 0x8C);
+        D_8010CCB9_17A649_LightsOut[obj->work[0]][1] = 3;
+    }
+    func_80019E84_1AA84(obj, 0x23, dir | 0x1A, 0, 0);
+    func_80019E84_1AA84(obj, 0x24, dir | 0x1B, 0, 0);
+    func_80019E84_1AA84(obj, 0x16, dir | 0x19, 1, 0);
+    r = rand8() & 3;
+    D_8010CD00_17A690_LightsOut[r] = 1;
+    obj->trans.x = D_8010C230_179BC0_LightsOut[r].x;
+    obj->trans.y = D_8010C230_179BC0_LightsOut[r].y;
+    obj->trans.z = D_8010C230_179BC0_LightsOut[r].z;
+    obj->rot.y = D_8010C230_179BC0_LightsOut[r].rotY;
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_8000C024_CC24(obj, 0, 2);
+    func_80103CA8_171638_LightsOut(obj, 0x24, (char*)D_8010CAF8_17A488_LightsOut);
+    func_80103CA8_171638_LightsOut(obj, 0x23, (char*)D_8010CAF8_17A488_LightsOut);
+    func_80019B9C_1A79C(obj, 0);
+    D_800F8FD0_F9BD0 = 1;
+    obj->work[1] = 0;
+    p->unk_74 = 1;
+    p->unk_76 = 0;
+    p->unk_78 = 0;
+    p->unk_30 = 60.0f;
+    D_8010CC9A_17A62A_LightsOut = 0;
+    LO_PAD_CLEAR(obj);
+    work->unk_40 = 0.0f;
+    func_80029EDC_2AADC(obj->model[0], 1);
+    func_80029EDC_2AADC(obj->model[1], 1);
+    func_80029EDC_2AADC(obj->model[3], 1);
+    func_80029EDC_2AADC(obj->model[4], 1);
+    func_80029EDC_2AADC(obj->model[6], 1);
+    func_80029EDC_2AADC(obj->model[5], 2);
+    func_80029EDC_2AADC(obj->model[7], 1);
+    func_80029EDC_2AADC(obj->model[8], 1);
+    obj->func_ptr = func_80105438_172DC8_LightsOut;
+    func_8000E0C0_ECC0(work, 0x13, func_80105AF8_173488_LightsOut);
+    func_8000E0C0_ECC0(work, 0xA, func_80105B00_173490_LightsOut);
+    func_8000E0C0_ECC0(work, 0xB, func_80105B78_173508_LightsOut);
+    func_8000E0C0_ECC0(work, 0xC, func_80105BF0_173580_LightsOut);
+    func_8000E0C0_ECC0(work, 0xD, func_80105BF0_173580_LightsOut);
+}
+
+/* The hammer player is the one of group 0. */
+void func_801062A8_173C38_LightsOut(void) {
+    LOSlot* p;
+    omObjData* obj;
+    s16 i;
+    s16 player;
+
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+        case 0:
+            player = 0;
+            break;
+        case 1:
+            player = 1;
+            break;
+        case 2:
+            player = 2;
+            break;
+        case 3:
+            player = 3;
+            break;
+        default:
+            player = 0;
+            break;
+    }
+    p = &D_8010CD90_17A720_LightsOut[i];
+    obj = omAddObj(100, 9, 60, -1, func_80105C14_1735A4_LightsOut);
+    p->unk_82 = player;
+    D_8010CD86_17A716_LightsOut = obj->work[0] = player;
+    p->obj = obj;
+    D_800FFFD8_100BD8[D_800FC87A_FD47A] = obj;
+    D_800FC87A_FD47A++;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_801063E8_173D78_LightsOut);
 

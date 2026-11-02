@@ -237,6 +237,7 @@ extern omObjData* D_8010D30C_17AC9C_LightsOut;  /* [9].obj */
 extern s16 D_8010D310_17ACA0_LightsOut;         /* [9].sprite */
 extern omObjData* D_8010D9C0_17B350_LightsOut;  /* [20].obj */
 extern s16 D_8010CD26_17A6B6_LightsOut;         /* D_8010CD18[7] */
+extern u16 D_8010D1B4_17AB44_LightsOut;         /* [6].unk_7C */
 extern u8 D_8010EC08_17C598_LightsOut;
 extern s32 D_8010EC0C_17C59C_LightsOut;
 
@@ -253,6 +254,7 @@ void func_80102F00_170890_LightsOut(Matrix4f m, f32 x, f32 y, f32 z, f32* out);
 s32 func_80102F9C_17092C_LightsOut(f32 x, f32 y, f32 z, f32 reach);
 void func_80103114_170AA4_LightsOut(void);
 void func_8010335C_170CEC_LightsOut(Gfx** gfxp);
+void func_80103670_171000_LightsOut(void);
 void func_80103620_170FB0_LightsOut(omObjData* obj);
 void func_80103648_170FD8_LightsOut(omObjData* obj);
 f32 func_80103678_171008_LightsOut(f32 x);
@@ -311,6 +313,27 @@ void func_8010BEA4_179834_LightsOut(omObjData* obj);
 void func_8010C070_179A00_LightsOut(void);
 void func_8010C0B0_179A40_LightsOut(void);
 void func_8010C1C8_179B58_LightsOut(void);
+
+/* Zero one player's pad; the host's stick and button state are the CPU's output. */
+#define LO_PAD_CLEAR(o)                                  \
+    do {                                                 \
+        ContBtn[gPlayers[(o)->work[0]].port] = 0;        \
+        ContBtnTrg[gPlayers[(o)->work[0]].port] = 0;     \
+        ContStkX[gPlayers[(o)->work[0]].port] = 0;       \
+        ContStkY[gPlayers[(o)->work[0]].port] = 0;       \
+    } while (0)
+
+/* Keep a player inside the arena (radius 460). */
+#define LO_KEEP_IN(o)                                                   \
+    do {                                                                \
+        f32 _x = (o)->trans.x;                                          \
+        f32 _z;                                                         \
+        if (_x * _x + (_z = (o)->trans.z, _z * _z) > 211600.0) {        \
+            f32 _a = func_80103DFC_17178C_LightsOut(_x, _z);            \
+            (o)->trans.x = HuMathSin(_a) * 460.0;                       \
+            (o)->trans.z = func_800B7890_B8490(_a) * 460.0;             \
+        }                                                               \
+    } while (0)
 
 /* inline abs of a float truncated to int */
 #define LO_ABS(v) ({ s32 _a = (s32)(v); if (_a < 0) { _a = -_a; } _a; })
