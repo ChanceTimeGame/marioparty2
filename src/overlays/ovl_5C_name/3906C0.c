@@ -316,6 +316,7 @@ void func_80102B78_390A38_name_5C(void) {
             D_80112424_3A02E4_name_5C = 1;
             D_80112330_3A01F0_name_5C = 1;
             HuPrcSleep(5);
+            old = D_801124D6_3A0396_name_5C;
         }
         if (ContBtnTrg[D_80112A00_3A08C0_name_5C] & 0x4000) {
             PlaySound(4);
@@ -1301,7 +1302,7 @@ void func_80106C0C_394ACC_name_5C(void) {
     espDispOn(spr);
     while (1) {
         btn = ContBtn[2];
-        step = ((btn & 0x2000) != 0) ? 6 : 1;
+        step = ((btn & 0x2000) != 0) ? 5 : 1;
         if (btn & 0x200) {
             x -= step;
         }
