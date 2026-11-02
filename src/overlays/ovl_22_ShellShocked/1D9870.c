@@ -680,7 +680,7 @@ void func_80106D84_1DB464_ShellShocked(s32 i) {
     }
 }
 
-// control flow (masked 17, 144 vs 146 instructions)
+// schedule (masked 2): one mul.s placed before the tank index instead of after
 #ifdef NON_MATCHING
 s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     f32 cx;
@@ -696,16 +696,13 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     func_8010913C_1DD81C_ShellShocked(D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.z, &cx, &cz);
     x = cx;
     z = cz;
-    if (com->cellX != x) {
-        com->cellX = x;
-        com->cellY = z;
-    } else if (com->cellY != z) {
-        com->cellX = x;
-        com->cellY = z;
-    } else {
+    if (com->cellX == x && com->cellY == z) {
         com->stuck++;
+    } else {
+        com->cellX = x;
+        com->cellY = z;
     }
-    if (func_8010CAA4_1E1184_ShellShocked() * 120.0f + 180.0f < (f32)com->stuck) {
+    if ((f32)com->stuck > func_8010CAA4_1E1184_ShellShocked() * 120.0f + 180.0f) {
         angle = func_8010CAA4_1E1184_ShellShocked() * 360.0f;
         r = (func_8010CAA4_1E1184_ShellShocked() * 10.0f + 5.0f) * 10.0f;
         limit = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 10.0f;
