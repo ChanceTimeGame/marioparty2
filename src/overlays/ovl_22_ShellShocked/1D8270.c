@@ -14,7 +14,7 @@ SSView D_8010CB20_1E1200_ShellShocked[4] = {
     { 320.0f, 240.0f, 511.0f, 912.0f, 720.0f, 511.0f },
 };
 
-// register allocation and float temporaries (31 instructions apart, same calls and branches)
+// register allocation and float temporaries (masked 78, 1241 vs 1250: one extra saved float, $f30); rect fields read inline as retail does
 #ifdef NON_MATCHING
 /* The views' final rectangles as the winner's view opens: winner * 4 + view. */
 const SSRect D_8010CFA0_1E1680_ShellShocked[16] = {
@@ -46,10 +46,6 @@ void func_80103B90_1D8270_ShellShocked(s32 i) {
     f32 w;
     f32 co;
     f32 t;
-    f32 x1;
-    f32 y1;
-    f32 x2;
-    f32 y2;
     f32 dx1;
     f32 dy1;
     f32 dx2;
@@ -273,16 +269,13 @@ void func_80103B90_1D8270_ShellShocked(s32 i) {
             angle = 1.0f;
         }
         who = who * 4 + i;
-        x1 = D_8010CAE0_1E11C0_ShellShocked[i].x1;
-        y1 = D_8010CAE0_1E11C0_ShellShocked[i].y1;
-        x2 = D_8010CAE0_1E11C0_ShellShocked[i].x2;
-        y2 = D_8010CAE0_1E11C0_ShellShocked[i].y2;
-        dx1 = D_8010CFA0_1E1680_ShellShocked[who].x1 - x1;
-        dy1 = D_8010CFA0_1E1680_ShellShocked[who].y1 - y1;
-        dx2 = D_8010CFA0_1E1680_ShellShocked[who].x2 - x2;
-        dy2 = D_8010CFA0_1E1680_ShellShocked[who].y2 - y2;
+        dx1 = D_8010CFA0_1E1680_ShellShocked[who].x1 - D_8010CAE0_1E11C0_ShellShocked[i].x1;
+        dy1 = D_8010CFA0_1E1680_ShellShocked[who].y1 - D_8010CAE0_1E11C0_ShellShocked[i].y1;
+        dx2 = D_8010CFA0_1E1680_ShellShocked[who].x2 - D_8010CAE0_1E11C0_ShellShocked[i].x2;
+        dy2 = D_8010CFA0_1E1680_ShellShocked[who].y2 - D_8010CAE0_1E11C0_ShellShocked[i].y2;
         who = i & 0xFF;
-        ScissorSet(who, angle * dx1 + x1, angle * dy1 + y1, angle * dx2 + x2, angle * dy2 + y2);
+        ScissorSet(who, angle * dx1 + D_8010CAE0_1E11C0_ShellShocked[i].x1, angle * dy1 + D_8010CAE0_1E11C0_ShellShocked[i].y1,
+                   angle * dx2 + D_8010CAE0_1E11C0_ShellShocked[i].x2, angle * dy2 + D_8010CAE0_1E11C0_ShellShocked[i].y2);
         ViewportSet(who, (D_8010D0A0_1E1780_ShellShocked[0] - D_8010CB20_1E1200_ShellShocked[i].v[0]) * angle + D_8010CB20_1E1200_ShellShocked[i].v[0],
                     (D_8010D0A0_1E1780_ShellShocked[1] - D_8010CB20_1E1200_ShellShocked[i].v[1]) * angle + D_8010CB20_1E1200_ShellShocked[i].v[1], D_8010CB20_1E1200_ShellShocked[i].v[2],
                     (D_8010D0A0_1E1780_ShellShocked[3] - D_8010CB20_1E1200_ShellShocked[i].v[3]) * angle + D_8010CB20_1E1200_ShellShocked[i].v[3],
