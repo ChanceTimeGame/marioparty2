@@ -752,3 +752,11 @@ void func_8010A0D0_397F90_name_5C(void) {
         HuMemFree(D_80112384_3A0244_name_5C[i]);
     }
 }
+
+/* .data (0x39FB00-0x39FB10, 80111C40-80111C50) */
+f32 D_80111C40_39FB00_name_5C = 58.0f;
+s8 D_80111C44_39FB04_name_5C = 0;
+s8 D_80111C45_39FB05_name_5C = 0; /* padding */
+s8 D_80111C46_39FB06_name_5C = 0;
+s8 D_80111C47_39FB07_name_5C = 0;
+s32 D_80111C48_39FB08_name_5C[2] = { 0, 0 };

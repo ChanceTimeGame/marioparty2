@@ -2,8 +2,8 @@
 #define _OVL_5C_H
 
 /* Overlay 5C: Mini-Game Park. Retail's overlay is three files: 3906C0.c (80102800-80107480),
-   395340.c (80107480-8010A190) and 398050.c (8010A190-end). Every function is global. .data and
-   .bss stay asm (declared here); each file's .rodata is carved. Much of it is a copy of the menu
+   395340.c (80107480-8010A190) and 398050.c (8010A190-end). Every function is global. .data is C in each file; .bss
+   stays asm (declared here); each file's .rodata is carved. Much of it is a copy of the menu
    helpers of 5B, 58 and 4E.
    Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78: 2 runs the shop 8010A190 first, and both 2 and 4
    are return entries pushed with omOvlHisChg: 2 by the ride before 5E, 4 by the lobby before 58.
@@ -367,14 +367,14 @@ extern Ovl5CCamNode D_80110D54_39EC14_name_5C[];
 extern Ovl5CCamNode D_80110E5C_39ED1C_name_5C[];
 extern Ovl5CModelDef D_80110F64_39EE24_name_5C[];
 extern Vec D_80111138_39EFF8_name_5C; /* record board model rotation */
-extern Ovl5CAttraction D_80111464_39F324_name_5C[];
+extern Ovl5CAttraction D_80111464_39F324_name_5C[7];
 extern s16 D_801114B6_39F376_name_5C;
 extern s32 D_801114EC_39F3AC_name_5C[7]; /* the record page's mini-game of each line (labels: D_801114EE = [0] low half) */
 extern s32 D_801114D4_39F394_name_5C[6]; /* message of each attraction; [1] depends on progress */
-extern s32 D_80111508_39F3C8_name_5C[]; /* no direct code user yet */
-extern s32 D_80111620_39F4E0_name_5C[]; /* no direct code user yet */
-extern s32 D_80111834_39F6F4_name_5C[]; /* no direct code user yet */
-extern s32 D_801119A0_39F860_name_5C[]; /* no direct code user yet */
+extern Ovl5CPathNode D_80111508_39F3C8_name_5C[]; /* a path of D_80111C24 */
+extern Ovl5CPathNode D_80111620_39F4E0_name_5C[]; /* a path of D_80111C24 */
+extern Ovl5CPathNode D_80111834_39F6F4_name_5C[]; /* a path of D_80111C24 */
+extern Ovl5CPathNode D_801119A0_39F860_name_5C[]; /* a path of D_80111C24 */
 extern Ovl5CPathNode* D_80111C24_39FAE4_name_5C[4];
 extern s16 D_80111C34_39FAF4_name_5C;
 extern f32 D_80111C40_39FB00_name_5C;
