@@ -49,9 +49,18 @@ typedef struct MMFiles11 {
     s32 v[11];
 } MMFiles11;
 
+/* alpha from a 0..1 fade: 0 to 0.25 hidden, 0.625 up opaque (0x100). The second is the group's panels: opaque
+   only once `c` is set, else the ramp carries on past 0x100 */
+#define MM_RAMP(f) ((u16)(f64)(u16)(((f) - 0.25) * 256.0 / 0.375))
+#define MM_ALPHA(f) ((f) <= 0.25 ? 0 : (f) >= 0.625 ? 0x100 : MM_RAMP(f))
+#define MM_ALPHA2(f, c) ((f) <= 0.25 ? 0 : ((f) >= 0.625 && (c) != 0) ? 0x100 : MM_RAMP(f))
+
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
 extern s16 D_800FA188_FAD88;
+extern f32 D_800FA5BC_FB1BC[];
+extern f32 D_80101078_101C78;
+extern f32 D_800F8410_F9010;
 extern s8 ContStkX[];
 extern s8 ContStkY[];
 extern u8 D_800FA656;
