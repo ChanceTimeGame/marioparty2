@@ -875,7 +875,7 @@ segments:
     subsegments:
       - [0x170190, c]
       - [0x179A40, c]
-      - [0x179B90, data]
+      - [0x179B90, .data, 170190]
       - [0x17A410, .rodata, 170190]
       - {0x17A5B0, type: bss, vram: 0x8010CC20, name: ovl_15_bss}
   - type: code
