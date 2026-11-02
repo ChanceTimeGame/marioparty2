@@ -56,6 +56,11 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_FinalMinigameCoaster/406640", func
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_FinalMinigameCoaster/406640", func_80102AEC_40692C_FinalMinigameCoaster);
 
+__asm__(".section .rodata");
+const char D_801064C0_40A300_FinalMinigameCoaster[] = "point1";
+const char D_801064C8_40A308_FinalMinigameCoaster[] = "point2";
+const char D_801064D0_40A310_FinalMinigameCoaster[] = "%d";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_FinalMinigameCoaster/406640", func_80102C00_406A40_FinalMinigameCoaster);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6D_FinalMinigameCoaster/406640", func_801031D0_407010_FinalMinigameCoaster);
