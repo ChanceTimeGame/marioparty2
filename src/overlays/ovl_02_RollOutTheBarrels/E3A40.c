@@ -413,13 +413,271 @@ void func_80103FE0_E5220_RollOutTheBarrels(f32 cx, f32 cy, f32 cz, f32 rx, f32 r
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801041D0_E5410_RollOutTheBarrels);
+void func_801041D0_E5410_RollOutTheBarrels(void) {
+    func_8000C578_D178(1);
+    func_8000C460_D060();
+    D_800BF7A4_C03A4 = 1.5f;
+    D_800BF7A8_C03A8 = 0.17f;
+    D_800BF7D4_C03D4 = 1.7f;
+    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0x10, 0xA, 0x3C, -1, func_80104270_E54B0_RollOutTheBarrels);
+}
 
+// register allocation (masked 3, one extra move at the end), class 4
+#ifdef NON_MATCHING
+void func_80104270_E54B0_RollOutTheBarrels(omObjData* obj) {
+    s32 mot[2];
+    s16 time[2];
+    u16 i;
+    u16 player;
+    s32 dir;
+    MgWork* w;
+    RBPlayer* pl;
+    s32 r;
+    s16 t;
+    s32 file;
+    s32 chr;
+
+    mot[0] = 0x55;
+    mot[1] = 0x56;
+    time[0] = 0x3E7;
+    time[1] = 0x3E7;
+    for (i = 0; i < 4; i++) {
+        if (gPlayers[i].group == 0) {
+            break;
+        }
+    }
+    switch (i) {
+        case 0:
+            player = 0;
+            break;
+        case 1:
+            player = 1;
+            break;
+        case 2:
+            player = 2;
+            break;
+        case 3:
+            player = 3;
+            break;
+        default:
+            player = 0;
+            break;
+    }
+    D_80112DC0_F4000_RollOutTheBarrels = player;
+    D_80112DC8_F4008_RollOutTheBarrels = gPlayers[player].port;
+    if (gPlayers[player].flags & 1) {
+        D_80112DCC_F400C_RollOutTheBarrels = 1;
+    } else {
+        D_80112DCC_F400C_RollOutTheBarrels = 0;
+    }
+    chr = gPlayers[player].character;
+    D_80112DC4_F4004_RollOutTheBarrels = chr;
+    dir = D_800CD438_CE038[chr].dir;
+    file = D_800CD438_CE038[chr].unk_10;
+    func_8000C6FC_D2FC(obj, dir, file, player, 0x689, 0x689);
+    obj->func_ptr = func_80104958_E5B98_RollOutTheBarrels;
+    w = obj->unk_50;
+    w->unk_EC = NULL;
+    w->unk_3C = 180.0f;
+    w->unk_64 = 2.0 * w->unk_64;
+    obj->model[3] = LoadFormFile(7, 0x68D);
+    obj->model[4] = LoadFormFile(8, 0x68D);
+    obj->model[6] = LoadFormFile(9, 0x68D);
+    obj->model[5] = LoadFormFile(0xA, 0x68D);
+    obj->model[7] = LoadFormFile(0xC, 0x68D);
+    obj->model[8] = LoadFormFile(0xB, 0x68D);
+    func_80019F0C_1AB0C(obj, 0, dir, 1, 0);
+    func_80019F0C_1AB0C(obj, 1, dir | 1, 1, 0);
+    func_80019F0C_1AB0C(obj, 2, dir | 2, 1, 0);
+    func_80019F0C_1AB0C(obj, 5, dir | 3, 0, 0);
+    func_80019F0C_1AB0C(obj, 6, dir | 4, 1, 0x13);
+    func_80019F0C_1AB0C(obj, 8, dir | 6, 1, 0x1B);
+    func_80019F0C_1AB0C(obj, 0x11, dir | 0xF, 0, 0);
+    func_80019F0C_1AB0C(obj, 0x12, dir | 0x10, 2, 0);
+    func_80019E84_1AA84(obj, 0x15, dir | 0x2E, 0, 0);
+    func_80019E84_1AA84(obj, 0x14, dir | 0x2B, 0, 0);
+    func_80019E84_1AA84(obj, 4, dir | 0x2D, 1, 0);
+    func_80019E84_1AA84(obj, 0x20, dir | 0x31, 0, 0);
+    func_80019E84_1AA84(obj, 0x21, dir | 0x32, 2, 0);
+    func_80019E84_1AA84(obj, 0x22, dir | 0x33, 2, 0);
+    func_80019E84_1AA84(obj, 0x26, dir | 0x54, 1, 0x3E7);
+    D_80112D50_F3F90_RollOutTheBarrels[0] = dir | 0x54;
+    func_80019E84_1AA84(obj, 0x27, dir | 0x57, 1, 0x3E7);
+    D_80112D50_F3F90_RollOutTheBarrels[1] = dir | 0x57;
+    r = rand8() & 1;
+    func_80019E84_1AA84(obj, 0x28, dir | mot[r], 1, time[r]);
+    D_80112D50_F3F90_RollOutTheBarrels[2] = dir | mot[r];
+    func_801113D4_F2614_RollOutTheBarrels(obj, D_80112D60_F3FA0_RollOutTheBarrels);
+    pl = D_80112D60_F3FA0_RollOutTheBarrels;
+    pl->target = -1;
+    pl->unk_02 = pl->unk_04 = pl->unk_06 = 0;
+    pl->pathIdx = pl->pathLen = 0;
+    pl->unk_14 = 0;
+    pl->path = 0;
+    pl->pushed = pl->motState = 0;
+    pl->state = pl->unk_12 = 0;
+    pl->pushSpeed = pl->pushAngle = 0.0f;
+    for (i = 0; i < 4; i++) {
+        pl->unk_30[i] = -1;
+    }
+    if (D_80112DCC_F400C_RollOutTheBarrels != 0) {
+        pl->unk_06 = rand8() % 5;
+        switch (gPlayers[player].cpu_difficulty) {
+            case 0:
+                if (rand8() % 100 < 30) {
+                    pl->unk_02 = 1;
+                }
+                break;
+            case 1:
+                if (rand8() % 100 < 20) {
+                    pl->unk_02 = 1;
+                }
+                break;
+            case 2:
+                if (rand8() % 100 < 10) {
+                    pl->unk_02 = 1;
+                }
+                break;
+            default:
+                if (rand8() % 100 < 5) {
+                    pl->unk_02 = 1;
+                }
+                break;
+        }
+        t = -1;
+        if (pl->unk_02 == 0) {
+            t = func_80111494_F26D4_RollOutTheBarrels();
+        }
+        pl->target = t;
+    }
+    func_8000C35C_CF5C(obj, 0.0f, 0.0f, 0.0f);
+    func_8000C36C_CF6C(obj, 0.0f, 0.0f, 0.0f);
+    func_8000C024_CC24(obj, 0, 2);
+    D_800F8FD0_F9BD0 = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80104270_E54B0_RollOutTheBarrels);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80104958_E5B98_RollOutTheBarrels);
+void func_80104958_E5B98_RollOutTheBarrels(omObjData* obj) {
+    Vec prev;
+    Vec pos;
+    struct {
+        f32 unk_00;
+        char unk_04[4];
+        f32 unk_08;
+        f32 unk_0C;
+    } out;
+    RBPlayer* pl;
+    MgWork* w;
+    RBShape* shape;
+    s32 n;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80104C80_E5EC0_RollOutTheBarrels);
+    pl = func_801113F4_F2634_RollOutTheBarrels(obj);
+    w = obj->unk_50;
+    if (pl->pushed != 0) {
+        func_801056BC_E68FC_RollOutTheBarrels(obj);
+    }
+    prev.x = obj->trans.x;
+    prev.y = obj->trans.y;
+    prev.z = obj->trans.z;
+    switch (D_80112D78_F3FB8_RollOutTheBarrels) {
+        case 3:
+            if (D_80112DCC_F400C_RollOutTheBarrels != 0) {
+                func_80104D88_E5FC8_RollOutTheBarrels(obj);
+            }
+            func_80007790_8390(obj);
+            shape = func_80106224_E7464_RollOutTheBarrels(obj, &prev);
+            if (shape == NULL || shape->hit == 1) {
+                shape = func_801063B0_E75F0_RollOutTheBarrels(obj, &prev);
+            }
+            if (shape != NULL) {
+                if (shape->hit >= 2) {
+                    D_800F8FD0_F9BD0 = 0;
+                    pl->state = 0;
+                }
+            } else if (D_80112D7C_F3FBC_RollOutTheBarrels == 1 && obj->trans.y <= 0.0) {
+                D_800F8FD0_F9BD0 = 0;
+                pl->state = 0;
+                D_80112D7C_F3FBC_RollOutTheBarrels = 2;
+            }
+            break;
+        case 6:
+            n = func_8010541C_E665C_RollOutTheBarrels(obj);
+            if (n < 3) {
+                if (n >= 0) {
+                    goto run;
+                }
+            }
+            func_80007790_8390(obj);
+            D_80112D78_F3FB8_RollOutTheBarrels = 7;
+            D_800F8FD0_F9BD0 = 0;
+            break;
+        case 7:
+            D_800F8FD0_F9BD0 = 0;
+            goto run;
+        case 4:
+        case 5:
+        case 8:
+            D_800F8FD0_F9BD0 = 0;
+            w->unk_40 = 0.0f;
+        default:
+        run:
+            func_80007790_8390(obj);
+            break;
+    }
+    if (D_80112DD0_F4010_RollOutTheBarrels != -1) {
+        func_80019B9C_1A79C(obj, (u16)D_80112DD0_F4010_RollOutTheBarrels);
+    }
+    func_80104C80_E5EC0_RollOutTheBarrels(obj);
+    func_80019378_19F78(obj);
+    if (obj->trans.z > 100.0) {
+        obj->trans.z = 100.0f;
+    } else if (obj->trans.z < -1200.0) {
+        obj->trans.z = -1200.0f;
+    }
+    pos.x = obj->trans.x;
+    pos.y = obj->trans.y;
+    pos.z = obj->trans.z;
+    func_80111B40_F2D80_RollOutTheBarrels(0, &pos, &out);
+    if (out.unk_00 <= 30.0) {
+        obj->trans.x = obj->trans.x + (30.0 - out.unk_00) * out.unk_08 * 0.01;
+    }
+    if (out.unk_00 >= 290.0) {
+        obj->trans.x = obj->trans.x - (out.unk_00 - 290.0) * out.unk_08 * 0.01;
+    }
+}
+
+void func_80104C80_E5EC0_RollOutTheBarrels(omObjData* obj) {
+    MgWork* w;
+    s32 x;
+    s32 y;
+
+    w = obj->unk_50;
+    if (D_800F8FD0_F9BD0 != 0 || D_80112D78_F3FB8_RollOutTheBarrels != 3) {
+        x = ContStkX[w->unk_57];
+        y = ContStkY[w->unk_57];
+        if (x > 60) {
+            x = 60;
+        } else if (x < -60) {
+            x = -60;
+        } else {
+            x = abs(x) >= 8 ? x : 0;
+        }
+        if (y > 60) {
+            y = 60;
+        } else if (y < -60) {
+            y = -60;
+        } else {
+            y = abs(y) >= 8 ? y : 0;
+        }
+        if ((x == 0) & (y == 0)) {
+            if (func_8000CDC8_D9C8(obj, x, y) == 0) {
+                w->unk_40 = 0.0f;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80104D88_E5FC8_RollOutTheBarrels);
 
