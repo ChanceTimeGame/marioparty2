@@ -758,16 +758,21 @@ void func_80103960_4168F0_Credits(void) {
     }
     PlayMusic(6);
     HuPrcSleep(60);
-    for (alpha -= 8; alpha > 0; alpha -= 8) {
+    alpha -= 8;
+    while (TRUE) {
+        if (alpha <= 0) {
+            for (i = 0; i < len;) {
+                i++;
+                func_80082488_83088(mes->strGId[mes->unk08], i, 0);
+            }
+            break;
+        }
         for (i = 0; i < len;) {
             i++;
             func_80082488_83088(mes->strGId[mes->unk08], i, alpha);
         }
         HuPrcVSleep();
-    }
-    for (i = 0; i < len;) {
-        i++;
-        func_80082488_83088(mes->strGId[mes->unk08], i, 0);
+        alpha -= 8;
     }
     D_80104E90_417E20_Credits = 1;
     for (k = 0; D_80105994_418924_Credits[k].title != -1; k++) {
