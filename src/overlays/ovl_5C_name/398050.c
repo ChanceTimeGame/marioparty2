@@ -20,10 +20,8 @@
 __asm__(".section .rodata");
 const char D_801122CC_3A018C_name_5C[] = "%d";
 
-// register allocation: GCC cross-jumps the close calls retail keeps apart (a0 from s3 there), 15 fewer instructions (masked 104)
-#ifdef NON_MATCHING
 void func_8010A190_398050_name_5C(void) {
-    char str[8];
+    char str[16];
     f32 y;
     f32 t;
     s16 win;
@@ -113,8 +111,8 @@ void func_8010A190_398050_name_5C(void) {
                     while (func_8008BA30_8C630(win) != 0) {
                         HuPrcVSleep();
                     }
-                    if (func_8008BB48_8C748(win, 0, 0) != 0) {
-                        continue;
+                    if (func_8008BB48_8C748(win, 0, 0) == 0) {
+                        break;
                     }
                 } else {
                     HuPrcSleep(10);
@@ -148,12 +146,14 @@ void func_8010A190_398050_name_5C(void) {
                     D_80112420_3A02E0_name_5C = 1;
                     D_80112F28_3A0DE8_name_5C = 0x5C;
                     D_80112426_3A02E6_name_5C = 1;
+                    break;
                 }
-                break;
             }
             HuPrcSleep(10);
             func_8008E4D0_8F0D0(win, 1);
-            goto end;
+            func_8008E6AC_8F2AC(win);
+            func_8010E318_39C1D8_name_5C();
+            return;
         }
         left = D_80112F58_3A0E18_name_5C;
         if (_CheckFlag(0x10) == 0) {
@@ -181,7 +181,9 @@ void func_8010A190_398050_name_5C(void) {
                 }
             }
             func_8008E4D0_8F0D0(win, 1);
-            goto end;
+            func_8008E6AC_8F2AC(win);
+            func_8010E318_39C1D8_name_5C();
+            return;
         }
         if (greeted == 0) {
             greeted = 1;
@@ -233,7 +235,9 @@ void func_8010A190_398050_name_5C(void) {
             if (func_8008BB48_8C748(win, 0, 0) == 0) {
                 HuPrcSleep(10);
                 func_8008E4D0_8F0D0(win, 1);
-                goto end;
+                func_8008E6AC_8F2AC(win);
+            func_8010E318_39C1D8_name_5C();
+            return;
             }
         }
         HuPrcSleep(10);
@@ -289,13 +293,9 @@ void func_8010A190_398050_name_5C(void) {
     }
 close:
     func_8008E4D0_8F0D0(win, 1);
-end:
     func_8008E6AC_8F2AC(win);
     func_8010E318_39C1D8_name_5C();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010A190_398050_name_5C);
-#endif
 
 // register/schedule: the two loads and the subtraction order (masked 2)
 #ifdef NON_MATCHING

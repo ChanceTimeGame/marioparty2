@@ -293,7 +293,8 @@ void func_80103924_1A51C4_BallonBurst(omObjData* obj) {
 
 /* The camera, the team meters and the game's states. NON_MATCHING: the C is the retail logic; retail
    also keeps a dead compare of the two meters at the top of the meter loop (class: dead code left by
-   flow, see docs/DECOMP_WALLS.md), which moves the register allocation of the whole function. */
+   flow, see docs/DECOMP_WALLS.md), which moves the register allocation of the whole function.
+   Calls equal retail (masked 355); GCC also cross-jumps two of the three D_8010AA90 stores. */
 #ifdef NON_MATCHING
 void func_80103C10_1A54B0_BallonBurst(BBView* view) {
     Vec eye;
@@ -429,22 +430,23 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
                 }
                 break;
             }
-            if (D_8010A770_1AC010_BallonBurst > 0) {
+            if (D_8010A770_1AC010_BallonBurst <= 0) {
+                D_8010AB02_1AC3A2_BallonBurst = 7;
+                D_8010A770_1AC010_BallonBurst = 0x3C;
+                func_800794A8_7A0A8(0x28);
+                func_800691FC_69DFC(3);
+                func_8006D4D0_6E0D0(0);
+                func_8006D518_6E118();
+                D_8010AAC0_1AC360_BallonBurst = 2;
+                for (i = 0; i < 4; i++) {
+                    func_8002CD78_2D978(*D_8010A748_1ABFE8_BallonBurst[i]->model, 0, 0, 0, 0);
+                    func_8002CDB4_2D9B4(*D_8010A748_1ABFE8_BallonBurst[i]->model, 0, 0, 0, 0);
+                }
+            } else {
                 if ((D_8010A770_1AC010_BallonBurst + 1) % 30 == 0) {
                     func_8006D4D0_6E0D0(D_8010A770_1AC010_BallonBurst / 30 + 1);
                 }
                 break;
-            }
-            D_8010AB02_1AC3A2_BallonBurst = 7;
-            D_8010A770_1AC010_BallonBurst = 0x3C;
-            func_800794A8_7A0A8(0x28);
-            func_800691FC_69DFC(3);
-            func_8006D4D0_6E0D0(0);
-            func_8006D518_6E118();
-            D_8010AAC0_1AC360_BallonBurst = 2;
-            for (i = 0; i < 4; i++) {
-                func_8002CD78_2D978(*D_8010A748_1ABFE8_BallonBurst[i]->model, 0, 0, 0, 0);
-                func_8002CDB4_2D9B4(*D_8010A748_1ABFE8_BallonBurst[i]->model, 0, 0, 0, 0);
             }
         case 7:
             if (D_8010A770_1AC010_BallonBurst > 0) {
@@ -479,10 +481,7 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
             }
         case 6:
             if (D_8010A770_1AC010_BallonBurst <= 0) {
-            fade:
-                D_8010AB02_1AC3A2_BallonBurst = 8;
-                InitFadeOut(0, 0x14);
-                D_8010A770_1AC010_BallonBurst = 0x14;
+                goto fade;
             }
             break;
         case 4:
@@ -582,7 +581,11 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
                         }
                     case 3:
                         if (D_8010A770_1AC010_BallonBurst <= 0) {
-                            goto fade;
+                        fade:
+                            D_8010AB02_1AC3A2_BallonBurst = 8;
+                            InitFadeOut(0, 0x14);
+                            D_8010A770_1AC010_BallonBurst = 0x14;
+                            break;
                         }
                         if (D_8010A770_1AC010_BallonBurst == 0xA8) {
                             s32 voice[6] = { 2, 3, 7, 4, 5, 6 };
@@ -590,19 +593,11 @@ void func_80103C10_1A54B0_BallonBurst(BBView* view) {
                             w = D_8010A5F0_1ABE90_BallonBurst[D_8010AAFC_1AC39C_BallonBurst[0]];
                             o = &D_8010AAB0_1AC350_BallonBurst[D_8010AAFC_1AC39C_BallonBurst[0]];
                             func_80029BF0_2A7F0(*(*o)->model, func_80029E14_2AA14((*o)->model[3]), 0, 4, 0);
-                            if (w->unk_0A == 0) {
-                                func_800732B0_73EB0((voice[w->character] << 0x10) | 0x4F);
-                            } else {
-                                func_800732B0_73EB0((voice[w->character] << 0x10) | 0x4E);
-                            }
+                            func_800732B0_73EB0((voice[w->character] << 0x10) | ((w->unk_0A == 0) ? 0x4F : 0x4E));
                             w = D_8010A5F0_1ABE90_BallonBurst[D_8010AAFC_1AC39C_BallonBurst[1]];
                             o = &D_8010AAB0_1AC350_BallonBurst[D_8010AAFC_1AC39C_BallonBurst[1]];
                             func_80029BF0_2A7F0(*(*o)->model, func_80029E14_2AA14((*o)->model[3]), 0, 4, 0);
-                            if (w->unk_0A == 0) {
-                                func_800732B0_73EB0((voice[w->character] << 0x10) | 0x4F);
-                            } else {
-                                func_800732B0_73EB0((voice[w->character] << 0x10) | 0x4E);
-                            }
+                            func_800732B0_73EB0((voice[w->character] << 0x10) | ((w->unk_0A == 0) ? 0x4F : 0x4E));
                         }
                     }
             }
