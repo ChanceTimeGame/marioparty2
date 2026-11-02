@@ -922,6 +922,7 @@ segments:
     subsegments:
       - [0x186490, c]
       - [0x1906D0, data]
+      - [0x190C80, .rodata, 186490]
       - {0x1913A0, type: bss, vram: 0x8010D710, name: ovl_18_bss}
   - type: code
     start: 0x1913A0
