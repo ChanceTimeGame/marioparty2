@@ -508,3 +508,9 @@ D_80103E08_40B938_MinigameCoaster = D_80103E00_40B930_MinigameCoaster + 0x8;
 D_80103E0C_40B93C_MinigameCoaster = D_80103E00_40B930_MinigameCoaster + 0xC;
 D_8010635B_3E7E7B_name_64 = D_80106358_3E7E78_name_64 + 0x3;
 D_8010635E_3E7E7E_name_64 = D_80106358_3E7E78_name_64 + 0x6;
+/* S5-4ED: ovl_4E .data labels that retail addresses by their own address */
+D_8010D4B8_334E78_name_4E = D_8010D4B4_334E74_name_4E + 0x4;
+D_8010D4BC_334E7C_name_4E = D_8010D4B4_334E74_name_4E + 0x8;
+D_8010D500_334EC0_name_4E = D_8010D4FC_334EBC_name_4E + 0x4;
+D_8010D504_334EC4_name_4E = D_8010D4FC_334EBC_name_4E + 0x8;
+D_8010D5FE_334FBE_name_4E = D_8010D5F4_334FB4_name_4E + 0xA;

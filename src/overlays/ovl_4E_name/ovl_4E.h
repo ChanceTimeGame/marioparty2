@@ -10,7 +10,7 @@
    (D_800CD414 >= 4) the overlay starts in state 4 (func_80105454_32CE14_name_4E): wins are added and stamped
    on the score board, and once a player reaches the target the winners are announced.
    Retail's overlay is two files, split at the text pad after func_80109778_331138_name_4E: 32A1C0.c
-   (80102800-80109778) and 331200.c (80109840-). .data and .bss stay asm; both files' .rodata
+   (80102800-80109778) and 331200.c (80109840-). .data is C (both files); .bss stays asm; both files' .rodata
    is carved (0x335190, 0x335430). 32A1C0.c builds with the KMC mul fix.
    Prototypes past func_8010760C_32EFCC_name_4E came from m2c's register use only: the fork that owns a function
    fixes its line. */
@@ -188,7 +188,7 @@ extern s16 D_8010D628_334FE8_name_4E[6]; /* ... 2 vs 2 */
 extern s8 D_8010D634_334FF4_name_4E[4][4]; /* third menu (1 vs 3): icon order per choice */
 extern s8 D_8010D644_335004_name_4E[4][4]; /* ... 2 vs 2 */
 extern s8 D_8010D654_335014_name_4E[4][4]; /* (1 vs 3): D_8010DBE8_3355A8_name_4E slot of each D_8010D544_334F04_name_4E position */
-extern s8 D_8010D664_335024_name_4E[4][4]; /* ... 2 vs 2, D_8010D574_334F34_name_4E */
+extern s8 D_8010D664_335024_name_4E[7][4]; /* ... 2 vs 2, D_8010D574_334F34_name_4E */
 extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 
 /* ---- bss (asm) ---- */
@@ -389,7 +389,7 @@ extern s16 D_8010E5E0_335FA0_name_4E;
 extern s16 D_8010E160_335B20_name_4E[8][0x48]; /* per category: the minigames not yet usable (D_8010E608_335FC8_name_4E = count) */
 extern s16 D_8010E608_335FC8_name_4E[8];
 extern s16 D_8010E620_335FE0_name_4E[8];
-extern s32 D_8010D7B8_335178_name_4E[5]; /* minigames never listed */
+extern s32 D_8010D7B8_335178_name_4E[6]; /* minigames never listed */
 extern u8 D_800CAD94[][8]; /* per minigame: [0] category */
 extern u8 D_800F851A_F911A;
 extern HmfModel* D_800FC834_FD434;
