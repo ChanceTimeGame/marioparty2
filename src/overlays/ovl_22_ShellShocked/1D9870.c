@@ -964,7 +964,7 @@ void func_80107B60_1DC240_ShellShocked(s32 i, f32 x, f32 z, s32 limit) {
     func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
 }
 
-// control flow (masked 51, 214 vs 213 instructions)
+// control flow (masked 31, 214 vs 213): retail lays out the r == 7 case first and shares the r == 6 / default tail
 #ifdef NON_MATCHING
 void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     SSCom cmd;
@@ -972,7 +972,6 @@ void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     Vec b;
     Vec c;
     Vec d;
-    Vec e;
     s32 t;
     s32 limit;
     s32 r;
