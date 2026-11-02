@@ -34,7 +34,7 @@ void func_80102800_3A01F0_name_5D(void) {
     D_800CAFEE = -1;
 }
 
-// register allocation (masked 62)
+// control flow: retail lays the B-button block out after the A block, frame 8 bytes smaller (masked 62)
 #ifdef NON_MATCHING
 void func_801029EC_3A03DC_name_5D(void) {
     s16 size[4];
@@ -43,7 +43,6 @@ void func_801029EC_3A03DC_name_5D(void) {
     s16 n;
     s16 i;
     s16 old;
-    s16 left;
 
     sel = 0;
     func_8010A13C_3A7B2C_name_5D(D_8010B140_3A8B30_name_5D);
@@ -66,15 +65,15 @@ void func_801029EC_3A03DC_name_5D(void) {
     omAddPrcObj(func_80106238_3A3C28_name_5D, 0x3F00, 0x800, 0);
     func_801077B8_3A51A8_name_5D();
     D_8010C566_3A9F56_name_5D = D_8010C568_3A9F58_name_5D = D_8010C56A_3A9F5A_name_5D = 0;
-    left = D_8010C044_3A9A34_name_5D;
+    i = D_8010C044_3A9A34_name_5D;
     if (func_80068040_68C40(0x22) != 0) {
-        left--;
+        i--;
     }
     if (func_80068040_68C40(0x22) == 0 && D_8010C044_3A9A34_name_5D >= 0x22) {
         D_8010C566_3A9F56_name_5D = D_8010C568_3A9F58_name_5D = 1;
         func_80067F94_68B94(0x22);
     }
-    if (func_80068040_68C40(0xF) == 0 && left >= 0x31) {
+    if (func_80068040_68C40(0xF) == 0 && i >= 0x31) {
         D_8010C566_3A9F56_name_5D = D_8010C56A_3A9F5A_name_5D = 1;
         func_80067F94_68B94(0xF);
     }
@@ -233,7 +232,7 @@ void func_80103580_3A0F70_name_5D(s16* arg) {
     func_80104224_3A1C14_name_5D();
 }
 
-// register allocation (masked 193)
+// control flow: retail keeps sp locals where this uses registers, frame 16 bytes larger (masked 193)
 #ifdef NON_MATCHING
 void func_8010359C_3A0F8C_name_5D(void) {
     s16 cat;
@@ -424,31 +423,33 @@ void func_80103FF0_3A19E0_name_5D(void) {
     }
 }
 
-// register allocation (masked 42)
+// register allocation (masked 37)
 #ifdef NON_MATCHING
 void func_80104224_3A1C14_name_5D(void) {
     Vec2f scr;
-    s16 hide;
+    s32 hide;
     s16 row;
     s16 cat;
     s16 i;
+    s16* counts;
 
     row = D_8010CE16_3AA806_name_5D + 2;
     if (row >= 5) {
         row = D_8010CE16_3AA806_name_5D - 2;
     }
     hide = D_8010ADD0_3A87C0_name_5D[row];
+    counts = D_8010C018_3A9A08_name_5D;
     for (cat = 0; cat < 5; cat++) {
         if (cat == hide) {
             for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else if (cat == 4 && _CheckFlag(0x10) == 0) {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[4]; i++) {
+            for (i = 0; i < counts[4]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else if (cat == 3 && _CheckFlag(0x11) == 0) {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[3]; i++) {
+            for (i = 0; i < counts[3]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else {
@@ -516,7 +517,7 @@ void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_801045F0_3A1FE0_name_5D);
 #endif
 
-// register allocation (masked 37)
+// frame and register allocation: retail keeps counters on the stack; twin of 5B 80106D2C (masked 37)
 #ifdef NON_MATCHING
 void func_801049A8_3A2398_name_5D(void) {
     s16 grp[16];
@@ -892,7 +893,7 @@ void func_80106208_3A3BF8_name_5D(s16 x0, s16 y0, s16 x1, s16 y1) {
     D_8010CC4C_3AA63C_name_5D = 1;
 }
 
-// register allocation (masked 21)
+// control flow: shared espDispOff tail (19 calls equal, order by layout) (masked 21)
 #ifdef NON_MATCHING
 void func_80106238_3A3C28_name_5D(void) {
     s16 grp0;
@@ -900,6 +901,7 @@ void func_80106238_3A3C28_name_5D(void) {
     u16 spr0;
     u16 spr1;
     s16 a;
+    s16 was;
     s8 shown;
     s8 fading;
     s16 step;
@@ -931,8 +933,7 @@ void func_80106238_3A3C28_name_5D(void) {
             }
         }
         if (fading != 0) {
-            s16 was = a;
-
+            was = a;
             a += step;
             if (a >= 0xFF) {
                 fading = 0;
@@ -964,7 +965,7 @@ void func_80106238_3A3C28_name_5D(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106238_3A3C28_name_5D);
 #endif
 
-// register allocation (masked 102)
+// control flow and float locals: hoisted constants and stage order differ (masked 56)
 #ifdef NON_MATCHING
 void func_80106468_3A3E58_name_5D(void) {
     s16 model;
@@ -987,7 +988,7 @@ void func_80106468_3A3E58_name_5D(void) {
     D_800FC834_FD434[model].rot.y = 90.0f;
     if (D_8010C566_3A9F56_name_5D != 0) {
         D_8010CC94_3AA684_name_5D = 1;
-        do {
+        while (1) {
             dx = HuMathSin(ang) * 300.0f - HuMathSin(224.0f) * 300.0f;
             dz = func_800B7890_B8490(ang) * 300.0f - func_800B7890_B8490(224.0f) * 300.0f;
             d = func_800B1830_B2430(dx * dx + dz * dz);
@@ -1000,14 +1001,23 @@ void func_80106468_3A3E58_name_5D(void) {
                                 func_800B7890_B8490(ang) * 300.0f);
             D_800FC834_FD434[model].rot.y = ang + 90;
             HuPrcVSleep();
+            if (d <= 50) {
+                break;
+            }
             ang += 2;
-        } while (d > 50 && ang < 224);
+            if (ang >= 224) {
+                break;
+            }
+        }
         ang -= 90;
         cx = HuMathSin(224.0f) * 300.0f;
         cz = func_800B7890_B8490(224.0f) * 300.0f;
-        while (D_8010CC94_3AA684_name_5D != 0) {
+        while (1) {
             func_80029714_2A314(model, cx + HuMathSin(ang) * 50.0f, lift + 80, cz + func_800B7890_B8490(ang) * 50.0f);
             D_800FC834_FD434[model].rot.y = ang + 90;
+            if (D_8010CC94_3AA684_name_5D == 0) {
+                break;
+            }
             ang += 5;
             if (ang > 360) {
                 ang -= 360;
@@ -1023,9 +1033,10 @@ void func_80106468_3A3E58_name_5D(void) {
         }
         ang = 224;
         while (D_8010C566_3A9F56_name_5D != 0) {
-            lift -= 2;
-            if (lift < 0) {
+            if (lift <= 0) {
                 lift = 0;
+            } else {
+                lift -= 2;
             }
             func_80029714_2A314(model, HuMathSin(ang) * 300.0f, HuMathSin(ang * 4) * 20.0f + 80.0f + lift,
                                 func_800B7890_B8490(ang) * 300.0f);
@@ -1041,9 +1052,10 @@ void func_80106468_3A3E58_name_5D(void) {
         ang = 135;
     }
     while (1) {
-        lift -= 2;
-        if (lift < 0) {
+        if (lift <= 0) {
             lift = 0;
+        } else {
+            lift -= 2;
         }
         func_80029714_2A314(model, HuMathSin(ang) * 300.0f, HuMathSin(ang * 4) * 20.0f + 80.0f + lift,
                             func_800B7890_B8490(ang) * 300.0f);
@@ -1104,20 +1116,27 @@ void func_80106CC4_3A46B4_name_5D(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106CC4_3A46B4_name_5D);
 #endif
 
-// register allocation (masked 40)
+// register allocation (masked 6)
 #ifdef NON_MATCHING
 void func_80106F5C_3A494C_name_5D(void) {
     s16 size[4];
     s16 m0;
-    s16 m1;
+    u16 m1;
     s16 win;
     s16 i;
     s16 ang;
+    s16 d;
     f32 a;
 
+    d = 0;
     m1 = D_8010CCD0_3AA6C0_name_5D[9];
+    i = 0;
     m0 = D_8010CCD0_3AA6C0_name_5D[7];
-    for (i = 0; i < 134; i += 2) {
+    for (; i < 134; i += 2) {
+        d += 2;
+        if (d > 360) {
+            d -= 360;
+        }
         a = i + 90;
         func_80029714_2A314(m0, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
         func_80029714_2A314(m1, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);

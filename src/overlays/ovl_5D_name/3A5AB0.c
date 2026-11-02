@@ -361,7 +361,104 @@ void func_80109538_3A6F28_name_5D(s16 n) {
     D_8010CCAA_3AA69A_name_5D = n;
 }
 
+// register allocation, four instructions short: shared bump tail (0x800/0x400) merged by retail (masked 20)
+#ifdef NON_MATCHING
+void func_80109544_3A6F34_name_5D(void) {
+    f32 zoom;
+    f32 spd;
+    f32 rx;
+    f32 ry;
+    f32 b;
+    f32 inv;
+
+    if (ContBtn[1] & 4) {
+        if (ContBtn[0] & 0x2000) {
+            zoom = D_800FA610_FB210 + 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 + 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    if ((ContBtn[1] & 8) && D_800FA610_FB210 - 10.0f != 0.0f) {
+        if (ContBtn[1] & 0x2000) {
+            zoom = D_800FA610_FB210 - 30.0f;
+        } else {
+            zoom = D_800FA610_FB210 - 10.0f;
+        }
+        D_800FA610_FB210 = zoom;
+    }
+    rx = D_8010CDE8_3AA7D8_name_5D.x;
+    ry = D_8010CDE8_3AA7D8_name_5D.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 5.0f;
+    } else {
+        spd = 2.0f;
+    }
+    ry += -ContStkX[1] / 30 * spd;
+    if (ry >= 360.0f) {
+        ry -= 360.0f;
+    } else if (ry < 0.0f) {
+        ry += 360.0f;
+    }
+    D_8010CDE8_3AA7D8_name_5D.y = ry;
+    rx += (s8)(ContStkY[1] / 30) * spd;
+    if (rx >= 360.0f) {
+        rx -= 360.0f;
+    } else if (rx < 0.0f) {
+        rx += 360.0f;
+    }
+    D_8010CDE8_3AA7D8_name_5D.x = rx;
+    D_800FD474_FE074.x = (s16)rx;
+    D_800FD474_FE074.y = (s16)D_8010CDE8_3AA7D8_name_5D.y;
+    if (ContBtn[1] & 0x2000) {
+        spd = 10.0f;
+    } else {
+        spd = 2.0f;
+    }
+    if (ContBtn[1] & 0x800) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        spd = -spd;
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x400) {
+        b = HuMathSin(ry) * HuMathSin(rx);
+        b *= spd;
+        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
+        D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
+    } else if (ContBtn[1] & 0x200) {
+        rx = D_800C9B80_CA780->pos.z - D_8010274C_10334C.z;
+        b = -(D_800C9B80_CA780->pos.x - D_8010274C_10334C.x);
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    } else if (ContBtn[1] & 0x100) {
+        rx = -(D_800C9B80_CA780->pos.z - D_8010274C_10334C.z);
+        b = D_800C9B80_CA780->pos.x - D_8010274C_10334C.x;
+        inv = 1.0f / func_800B1830_B2430(rx * rx + b * b);
+        D_8010274C_10334C.x += rx * inv * spd;
+        D_8010274C_10334C.y += 0.0f;
+        D_8010274C_10334C.z += b * inv * spd;
+    }
+    if (ContBtn[1] & 2) {
+        D_8010B610_3A9000_name_5D += 1.0f;
+    }
+    if (ContBtn[1] & 1) {
+        D_8010B610_3A9000_name_5D -= 1.0f;
+    }
+    Hu3DCamSetPerspective(0, D_8010B610_3A9000_name_5D, D_8010CDD4_3AA7C4_name_5D, D_8010CDBC_3AA7AC_name_5D);
+    if (ContBtnTrg[1] & 0x4000) {
+        osSyncPrintf("CRot   (%f,%f,%f)\n", (f64)D_800FD474_FE074.x, (f64)D_800FD474_FE074.y, (f64)D_800FD474_FE074.z);
+        osSyncPrintf("Center (%f,%f,%f)\n", D_8010274C_10334C.x, D_8010274C_10334C.y, D_8010274C_10334C.z);
+        osSyncPrintf("CZoom  %f CFovy %f\n", D_800FA610_FB210, D_8010B610_3A9000_name_5D);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A5AB0", func_80109544_3A6F34_name_5D);
+#endif
 
 void func_80109B68_3A7558_name_5D(void) {
     Vec pos;
