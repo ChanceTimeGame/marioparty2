@@ -198,9 +198,9 @@ void SprPrioSet(s16 group, s16 member, u16 prio);
 void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
 
 /* .data */
-extern u8 D_8010C200_179B90_LightsOut[];      /* lightning script: { frames, lit } pairs, 0xFF ends */
+extern u8 D_8010C200_179B90_LightsOut[24];      /* lightning script: { frames, lit } pairs, 0xFF ends */
 extern u8 D_8010C201_179B91_LightsOut[];      /* its second bytes */
-extern u8 D_8010C218_179BA8_LightsOut[];      /* per character: { hit, swing } delays, hammer ... */
+extern u8 D_8010C218_179BA8_LightsOut[24];      /* per character: { hit, swing } delays, hammer ... */
 extern u8 D_8010C219_179BA9_LightsOut[];
 extern LOStart D_8010C230_179BC0_LightsOut[4]; /* start places */
 extern s32 D_8010C250_179BE0_LightsOut[6];    /* voice base per character */
