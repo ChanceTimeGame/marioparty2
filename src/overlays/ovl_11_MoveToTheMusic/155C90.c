@@ -938,7 +938,43 @@ void func_8010A704_15DB94_MoveToTheMusic(s16 grp) {
     func_8010A730_15DBC0_MoveToTheMusic(grp, 0.0f, 0.0f, 1.0f);
 }
 
+#ifdef NON_MATCHING
+/* control flow (masked 104): ovl_05 func_80107608's twin, the same residue in the rectangle macro */
+/* Draws a 320x240 CI8 esp image by hand in 40x40 tiles, at offset (x, y), scaled about the screen centre. */
+void func_8010A730_15DBC0_MoveToTheMusic(s16 sprite, f32 x, f32 y, f32 scale) {
+    HuSprite* spr;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    s16 tx;
+    s16 ty;
+    f32 x0;
+    f32 x1;
+    f32 y0;
+    f32 y1;
+
+    if (scale < 1.0f) {
+        scale = 1.0f;
+    }
+    spr = func_80082550_83150(D_800F93FC_F9FFC[sprite].unk_04, 0);
+    frame = &spr->unk_84->unk00[spr->unk_90];
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_8010CDC8_160258_MoveToTheMusic);
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
+    for (ty = 0; ty < 240; ty += 40) {
+        for (tx = 0; tx < 320; tx += 40) {
+            x0 = (f32)(tx - 160) * scale + 160.0f + x;
+            x1 = (f32)(tx - 119) * scale + 160.0f + x;
+            y0 = (f32)(ty - 120) * scale + 120.0f + y;
+            y1 = (f32)(ty - 79) * scale + 120.0f + y;
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, frame->unk00, G_IM_FMT_CI, G_IM_SIZ_8b, 320, 240, tx, ty, tx + 41,
+                               ty + 41, 0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 0, 0, 0, 0);
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, MM_FIX(x0), MM_FIX(y0), MM_FIX(x1), MM_FIX(y1),
+                                    G_TX_RENDERTILE, tx << 5, ty << 5, MM_STEP(x0, x1), MM_STEP(y0, y1));
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_8010A730_15DBC0_MoveToTheMusic);
+#endif
 
 void func_8010B7F0_15EC80_MoveToTheMusic(omObjData* obj) {
     Vec eye;

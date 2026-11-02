@@ -23,6 +23,12 @@ typedef struct MMPlayer {
     /* 0x11 */ s8 offs[2][6];
 } MMPlayer; /* size = 0x1D */
 
+typedef struct MMEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} MMEspSlot; /* size = 0x24 */
+
 typedef struct MMCharData {
     /* 0x00 */ char unk_00[4];
     /* 0x04 */ s32 dir;
@@ -55,9 +61,15 @@ typedef struct MMFiles11 {
 #define MM_ALPHA(f) ((f) <= 0.25 ? 0 : (f) >= 0.625 ? 0x100 : MM_RAMP(f))
 #define MM_ALPHA2(f, c) ((f) <= 0.25 ? 0 : ((f) >= 0.625 && (c) != 0) ? 0x100 : MM_RAMP(f))
 
+/* 8010A730's rectangle (as ovl_05's func_80107608): a 10.2 screen coordinate, and the step that fits 41 texels */
+#define MM_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
+#define MM_STEP(a, b) (s32)(41.0 / ((f32)((s32)((b) * 4.0) - ((s32)((a) * 4.0) - ((b) < 0.0f ? 1 : 0)) - ((a) < 0.0f ? 1 : 0)) / 4.0) * 1024.0)
+
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
 extern s16 D_800FA188_FAD88;
+extern MMEspSlot* D_800F93FC_F9FFC;
+extern Gfx* D_800FDBCC_FE7CC;
 extern f32 D_800FA5BC_FB1BC[];
 extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
