@@ -723,7 +723,7 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106E4C_1DB52C_ShellShocked);
 #endif
 
-// control flow (masked 7, 190 vs 191 instructions)
+// float register/schedule (masked 7, 190 vs 191: an extra mov.s of the cosine; dot*dot scheduled early)
 #ifdef NON_MATCHING
 f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
     Vec a;

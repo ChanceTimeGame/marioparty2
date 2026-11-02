@@ -192,7 +192,7 @@ const char D_8010D4BC_1E1B9C_ShellShocked[] = "143tank-bmerge1_3_1";
 __asm__(".section .rodata");
 const char D_8010D4D0_1E1BB0_ShellShocked[] = "143tank-m_head";
 
-// control flow (masked 35, 313 vs 311 instructions)
+// delay-slot schedule (masked 12, 313 vs 312: where "move a0,i" lands around the shake offsets); call set fixed: A1E4/B0DC take (i, tank)
 #ifdef NON_MATCHING
 void func_8010991C_1DDFFC_ShellShocked(s32 i) {
     SSTank* tank;
@@ -213,7 +213,7 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
                 if (gPlayers[i].flags & 1) {
                     func_80106D84_1DB464_ShellShocked(i);
                 } else {
-                    func_8010A1E4_1DE8C4_ShellShocked(i);
+                    func_8010A1E4_1DE8C4_ShellShocked(i, tank);
                 }
             } else {
                 func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
@@ -222,7 +222,7 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
         }
         break;
     case 3:
-        func_8010B0DC_1DF7BC_ShellShocked();
+        func_8010B0DC_1DF7BC_ShellShocked(i, tank);
         func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
         func_8010C66C_1E0D4C_ShellShocked(i);
         break;
@@ -399,7 +399,7 @@ void func_8010A19C_1DE87C_ShellShocked(omObjData* obj) {
     obj->func_ptr = func_80109F4C_1DE62C_ShellShocked;
 }
 
-void func_8010A1E4_1DE8C4_ShellShocked(s32 i) {
+void func_8010A1E4_1DE8C4_ShellShocked(s32 i, SSTank* tank) {
     s32 port;
     f32 x;
     f32 y;
@@ -652,7 +652,7 @@ s32 func_8010B0B4_1DF794_ShellShocked(s32 i, s16 x, s16 y) {
     return func_8010A954_1DF034_ShellShocked(i, x, y);
 }
 
-void func_8010B0DC_1DF7BC_ShellShocked(void) {
+void func_8010B0DC_1DF7BC_ShellShocked(s32 i, SSTank* tank) {
 }
 
 // control flow (masked 11, 202 vs 201 instructions)
