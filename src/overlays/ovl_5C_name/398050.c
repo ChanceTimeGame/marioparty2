@@ -1,4 +1,4 @@
-#include "common.h"
+#include "ovl_5C.h"
 
 __asm__(".section .rodata");
 const char D_801122CC_3A018C_name_5C[] = "%d";
