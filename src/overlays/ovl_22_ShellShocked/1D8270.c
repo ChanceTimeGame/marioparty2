@@ -1,5 +1,19 @@
 #include "ovl_22.h"
 
+/* .data (1E11C0-1E1260, 8010CAE0-8010CB80) */
+SSRect D_8010CAE0_1E11C0_ShellShocked[4] = {
+    { 24.0f, 16.0f, 159.0f, 119.0f },
+    { 161.0f, 16.0f, 296.0f, 119.0f },
+    { 24.0f, 121.0f, 159.0f, 224.0f },
+    { 161.0f, 121.0f, 296.0f, 224.0f },
+};
+SSView D_8010CB20_1E1200_ShellShocked[4] = {
+    { 320.0f, 240.0f, 511.0f, 368.0f, 300.0f, 511.0f },
+    { 320.0f, 240.0f, 511.0f, 912.0f, 300.0f, 511.0f },
+    { 320.0f, 240.0f, 511.0f, 368.0f, 720.0f, 511.0f },
+    { 320.0f, 240.0f, 511.0f, 912.0f, 720.0f, 511.0f },
+};
+
 // register allocation and float temporaries (31 instructions apart, same calls and branches)
 #ifdef NON_MATCHING
 /* The views' final rectangles as the winner's view opens: winner * 4 + view. */
