@@ -39,6 +39,26 @@ typedef struct Ovl4ECamKey {
     /* 0x18 */ f32 unk18;
 } Ovl4ECamKey; /* size = 0x1C */
 
+/* One key of a camera path (func_8010BCB8; the list ends with zoom 0). */
+typedef struct Ovl4ECamPoint {
+    /* 0x00 */ f32 zoom;
+    /* 0x04 */ Vec at;
+    /* 0x10 */ Vec rot;
+    /* 0x1C */ Vec pos;  /* filled in */
+    /* 0x28 */ f32 dist; /* filled in: arrival frame */
+} Ovl4ECamPoint; /* size = 0x2C */
+
+/* One of the scene's models (D_8010D214; func_8010C618 loads them into D_8010DC92). */
+typedef struct Ovl4EModelDef {
+    /* 0x00 */ s32 file; /* -1 ends the list */
+    /* 0x04 */ s32 attr; /* 4: stays hidden (func_8010C7AC) */
+    /* 0x08 */ s16 unk08;
+    /* 0x0A */ s16 unk0A; /* motion mode */
+    /* 0x0C */ s32 unk0C; /* group (func_8010C7AC) */
+    /* 0x10 */ Vec pos;   /* x 5 */
+    /* 0x1C */ Vec rot;
+} Ovl4EModelDef; /* size = 0x28 */
+
 /* A view of main's esprite slot (1AE60.c's local EspriteSlot, D_800F93FC). */
 typedef struct Ovl4EEsprite {
     /* 0x00 */ char pad00[0xA];
@@ -144,7 +164,7 @@ extern u16 D_8010D1F0_334BB0_name_4E; /* leave the setup (FE4E-B: u16, retail te
 extern s16 D_8010D1F2_334BB2_name_4E;
 extern s16 D_8010D1F4_334BB4_name_4E;
 extern Ovl4ECamKey D_8010D1F8_334BB8_name_4E[];
-extern s32 D_8010D214_334BD4_name_4E[];
+extern Ovl4EModelDef D_8010D214_334BD4_name_4E[];
 extern u8 D_8010D448_334E08_name_4E[4];  /* wins needed per first-menu choice: 3, 5, 7 */
 extern u8 D_8010D44C_334E0C_name_4E[4];  /* per team mode: stamp row spacing (FE4E-B: u8, retail reads it with lbu) */
 extern u16 D_8010D4AC_334E6C_name_4E[];  /* per first-menu choice: stamp column origin */
@@ -250,8 +270,8 @@ void MBDBackKill(void);
 void func_80050AE0_516E0(void);
 extern s16 D_8010DC18_3355D8_name_4E;  /* backdrop sprite file */
 extern u16 D_8010DC1A_3355DA_name_4E;  /* backdrop esprite */
-extern s16 D_8010DC92_335652_name_4E;  /* host model */
-extern s16 D_8010DCB0_335670_name_4E;
+extern s16 D_8010DC92_335652_name_4E[]; /* per def: model; [0] host */
+extern s16 D_8010DCB0_335670_name_4E[]; /* per def: motion */
 extern void* D_8010D400_334DC0_name_4E[6]; /* per character: player model motions */
 extern void* D_8010D418_334DD8_name_4E[6]; /* ... when D_800CD414 & 4 */
 extern Vec D_8010D4B4_334E74_name_4E;  /* off-stage position */
@@ -359,6 +379,31 @@ extern s16 D_8010DC7A_33563A_name_4E;    /* its animation */
 extern s16 D_8010DC7C_33563C_name_4E;    /* cursor sprite */
 extern s16 D_8010DC7E_33563E_name_4E;    /* its animation */
 extern Vec D_8010E5E4_335FA4_name_4E;
+extern s16 (*D_8010DC80_335640_name_4E)[2]; /* cursor positions */
+extern s16 D_8010DC84_335644_name_4E; /* cursor x */
+extern s16 D_8010DC86_335646_name_4E; /* cursor y */
+extern s16 D_8010DC88_335648_name_4E; /* cursor speed */
+extern s16 D_8010DC8A_33564A_name_4E; /* cursor target */
+extern s16 D_8010DCBA_33567A_name_4E;
+extern s16 D_8010E5E0_335FA0_name_4E;
+extern s16 D_8010E160_335B20_name_4E[8][0x48]; /* per category: the minigames not yet usable (D_8010E608_335FC8_name_4E = count) */
+extern s16 D_8010E608_335FC8_name_4E[8];
+extern s16 D_8010E620_335FE0_name_4E[8];
+extern s32 D_8010D7B8_335178_name_4E[5]; /* minigames never listed */
+extern u8 D_800CAD94[][8]; /* per minigame: [0] category */
+extern u8 D_800F851A_F911A;
+extern HmfModel* D_800FC834_FD434;
+void HuPrcVSleep(void);
+f32 func_8002662C_2722C(f32* keys, f32* times, f32 t); /* spline through four keys */
+s16 func_80067F4C_68B4C(s16 arg0);
+s16 func_80068040_68C40(s16 arg0);
+void func_800B1F50_B2B50(f32 m[4][4], f32 x, f32 y, f32 z);
+void func_80025884_26484(f32 m[4][4], f32 x, f32 y, f32 z);
+void func_80025830_26430(f32 m[4][4], f32 x, f32 y, f32 z);
+void func_80025BA4_267A4(f32 (*)[4], f32 (*)[4], f32 (*)[4]);
+void func_800B1960_B2560(f32 m[4][4], f32 ex, f32 ey, f32 ez, f32 ax, f32 ay, f32 az, f32 ux, f32 uy, f32 uz);
+s32 func_80029E14_2AA14(s16);
+void func_80029E80_2AA80(s16, s32, s32);
 
 /* ---- 32A1C0.c ---- */
 
@@ -429,21 +474,21 @@ s16 func_8010AB58_332518_name_4E(void);
 void func_8010AB64_332524_name_4E(void);
 void func_8010ADE0_3327A0_name_4E(omObjData* obj);
 void func_8010B480_332E40_name_4E(s16 arg0);
-void func_8010B528_332EE8_name_4E(s16 arg0, s16 arg1, s16 arg2, void* fn);
-void func_8010BCB8_333678_name_4E(f32 *arg0, f32 arg1, void* fn);
+void func_8010B528_332EE8_name_4E(s16 view, s16 frames, s16 mode, void (*cb)(s16*));
+void func_8010BCB8_333678_name_4E(Ovl4ECamPoint* path, f32 speed, void (*cb)(s16, s16, s16));
 void func_8010C218_333BD8_name_4E(void);
 void func_8010C4AC_333E6C_name_4E(void);
 void func_8010C5BC_333F7C_name_4E(s16 arg0);
-void func_8010C5F4_333FB4_name_4E(Ovl4EPos16* arg0);
+void func_8010C5F4_333FB4_name_4E(void* arg0);
 void func_8010C600_333FC0_name_4E(s16 arg0);
 void func_8010C60C_333FCC_name_4E(s16 arg0);
-void func_8010C618_333FD8_name_4E(s32 *arg0);
-void func_8010C708_3340C8_name_4E(s32 arg0, s16 arg1, s16 arg2);
-void func_8010C7AC_33416C_name_4E(s32 *arg0, s16 arg1);
+void func_8010C618_333FD8_name_4E(Ovl4EModelDef* defs);
+void func_8010C708_3340C8_name_4E(Ovl4EModelDef* defs, s16 i, s16 model);
+void func_8010C7AC_33416C_name_4E(Ovl4EModelDef* defs, s16 tag);
 void func_8010C86C_33422C_name_4E(s16 model, Vec* out, f32 mtx[4][4]);
 void func_8010C96C_33432C_name_4E(s16 model, Vec2f* out, f32 mtx[4][4]);
 void func_8010C9AC_33436C_name_4E(s32 cam, Vec* pos, Vec2f* out);
-void func_8010CCB4_334674_name_4E(s16 arg0, f32 arg1, void *arg2, void *arg3);
+void func_8010CCB4_334674_name_4E(s16 view, f32 depth, Vec2f* scr, Vec* out);
 void func_8010CF6C_33492C_name_4E(void);
 
 #endif /* _OVL_4E_H */
