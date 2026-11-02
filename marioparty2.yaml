@@ -807,6 +807,7 @@ segments:
     subsegments:
       - [0x155C90, c]
       - [0x160060, data]
+      - [0x1602A0, .rodata, 155C90]
       - {0x160B20, type: bss, vram: 0x8010D690, name: ovl_11_bss}
   - type: code
     start: 0x160B20
