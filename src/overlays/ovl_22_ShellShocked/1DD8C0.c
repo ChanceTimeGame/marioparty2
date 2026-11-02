@@ -4,8 +4,6 @@ void func_801091E0_1DD8C0_ShellShocked(omObjData* obj) {
     obj->func_ptr = func_8010281C_1D6EFC_ShellShocked;
 }
 
-// control flow (masked 23, 590 vs 592 instructions)
-#ifdef NON_MATCHING
 void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     s32 v;
     s32 i;
@@ -13,6 +11,7 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     s32 chr;
     SSShell* s;
     s16 m;
+    s32 k;
 
     obj->func_ptr = func_8010281C_1D6EFC_ShellShocked;
     v = D_800FA656;
@@ -20,7 +19,8 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
         v = 2;
     }
     if (func_80103938_1D8018_ShellShocked() != 0) {
-        D_8010DFDC_1E26BC_ShellShocked = 2;
+        v = 2;
+        D_8010DFDC_1E26BC_ShellShocked = v;
         D_8010DFE0_1E26C0_ShellShocked = &D_8010CEFC_1E15DC_ShellShocked[2];
         D_8010DFD4_1E26B4_ShellShocked = &D_8010CE3C_1E151C_ShellShocked[2];
     } else {
@@ -38,20 +38,21 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     func_800298A4_2A4A4(obj->model[0], 4, 0);
     func_80029EDC_2AADC(obj->model[0], 0xF);
     for (i = 0; i < 4; i++) {
+        k = i + 1;
         chr = func_80103950_1D8030_ShellShocked(i);
-        obj->model[i + 1] = LoadFormFile(D_8010CC80_1E1360_ShellShocked[chr], 0x299);
-        func_80029714_2A314(obj->model[i + 1], 0.0f, 0.0f, 0.0f);
-        func_8002979C_2A39C(obj->model[i + 1], 0.0f, 0.0f, 0.0f);
-        func_800297E8_2A3E8(obj->model[i + 1], 1.0f, 1.0f, 1.0f);
-        func_80029F2C_2AB2C(obj->model[i + 1], 0x800);
-        func_800298A4_2A4A4(obj->model[i + 1], 4, 0);
-        func_80029EDC_2AADC(obj->model[i + 1], 0xF);
-        func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
-        D_8010DA80_1E2160_ShellShocked[i].motBody = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].body);
-        D_8010DA80_1E2160_ShellShocked[i].motTurret = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].turret);
-        D_8010DA80_1E2160_ShellShocked[i].motGun = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].gun);
-        D_8010DA80_1E2160_ShellShocked[i].motA = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].motB);
-        D_8010DA80_1E2160_ShellShocked[i].motB = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].head);
+        obj->model[k] = LoadFormFile(D_8010CC80_1E1360_ShellShocked[chr], 0x299);
+        func_80029714_2A314(obj->model[k], 0.0f, 0.0f, 0.0f);
+        func_8002979C_2A39C(obj->model[k], 0.0f, 0.0f, 0.0f);
+        func_800297E8_2A3E8(obj->model[k], 1.0f, 1.0f, 1.0f);
+        func_80029F2C_2AB2C(obj->model[k], 0x800);
+        func_800298A4_2A4A4(obj->model[k], 4, 0);
+        func_80029EDC_2AADC(obj->model[k], 0xF);
+        func_80029FE4_2ABE4(obj->model[k], 0.0f);
+        D_8010DA80_1E2160_ShellShocked[i].motBody = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].body);
+        D_8010DA80_1E2160_ShellShocked[i].motTurret = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].turret);
+        D_8010DA80_1E2160_ShellShocked[i].motGun = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].gun);
+        D_8010DA80_1E2160_ShellShocked[i].motA = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].motB);
+        D_8010DA80_1E2160_ShellShocked[i].motB = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].head);
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.x = 0.0f;
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.y = 0.0f;
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.z = 0.0f;
@@ -62,18 +63,16 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
             HuVecCopyXYZ(&s->vel, 0.0f, 0.0f, 0.0f);
             s->state = 0;
             s->active = 0;
-            m = LoadFormFile(D_8010CD9C_1E147C_ShellShocked[chr], 0x299);
-            s->mdl = m;
-            s->mot = func_8002A9F4_2B5F4(m, D_8010CCA0_1E1380_ShellShocked[chr].shell);
+            s->mdl = LoadFormFile(D_8010CD9C_1E147C_ShellShocked[chr], 0x299);
+            s->mot = func_8002A9F4_2B5F4(s->mdl, D_8010CCA0_1E1380_ShellShocked[chr].shell);
             func_80029714_2A314(s->mdl, 0.0f, 0.0f, 0.0f);
             func_8002979C_2A39C(s->mdl, 0.0f, 0.0f, 0.0f);
             func_800297E8_2A3E8(s->mdl, 1.0f, 1.0f, 1.0f);
             func_80029F2C_2AB2C(s->mdl, 0x800);
             func_800298A4_2A4A4(s->mdl, 4, 4);
             func_80029EDC_2AADC(s->mdl, 0xF);
-            m = LoadFormFile(0x32000B, 0x299);
-            s->blast = m;
-            func_80029714_2A314(m, 0.0f, 100.0f, 0.0f);
+            s->blast = LoadFormFile(0x32000B, 0x299);
+            func_80029714_2A314(s->blast, 0.0f, 100.0f, 0.0f);
             func_8002979C_2A39C(s->blast, 0.0f, 0.0f, 0.0f);
             func_800297E8_2A3E8(s->blast, 10.0f, 10.0f, 10.0f);
             func_80029F2C_2AB2C(s->blast, 0x800);
@@ -96,9 +95,6 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     func_800298A4_2A4A4(obj->model[5], 4, 0);
     func_80029EDC_2AADC(obj->model[5], 0xF);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_801091F0_1DD8D0_ShellShocked);
-#endif
 
 __asm__(".section .rodata");
 const char D_8010D2A0_1E1980_ShellShocked[] = "143-grid2_1_1_17";
