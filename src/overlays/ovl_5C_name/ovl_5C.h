@@ -128,6 +128,7 @@ extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
 
 /* main prototypes as 5B, 58 and 4E use them */
+void func_80067F94_68B94(s16 arg0);
 void func_80096188_96D88(u8* code, u16* outbuf, s32 outbufWidth, u8* workbuf);
 void func_80096708_97308(void* header);
 void func_80096C10_97810(u8 alpha);
