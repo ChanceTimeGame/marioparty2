@@ -1092,17 +1092,14 @@ void func_80108100_1DC7E0_ShellShocked(s32 i) {
     func_80108034_1DC714_ShellShocked(i, t, 500.0f, func_8010CAA4_1E1184_ShellShocked() * 80.0f + 80.0f);
 }
 
-// control flow (masked 23, 155 vs 157 instructions)
-#ifdef NON_MATCHING
 void func_80108190_1DC870_ShellShocked(s32 i) {
     Vec v;
     s32 j;
 
-    j = 0;
     if (func_80103938_1D8018_ShellShocked() != 0 && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 95.0f) {
         return;
     }
-    for (; j < 4; j++) {
+    for (j = 0; j < 4; j++) {
         if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
             HuVecSubtract(&v, &D_8010DA80_1E2160_ShellShocked[j].pos, &D_8010DA80_1E2160_ShellShocked[i].pos);
             if (v.x * v.x + v.z * v.z < 122500.0f) {
@@ -1130,9 +1127,6 @@ void func_80108190_1DC870_ShellShocked(s32 i) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108190_1DC870_ShellShocked);
-#endif
 
 s32 func_801083C4_1DCAA4_ShellShocked(s32 i, s32 x, s32 z) {
     Vec a;
