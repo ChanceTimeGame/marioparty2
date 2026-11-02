@@ -77,6 +77,7 @@ void func_80031FD8_32BD8(HmfData*, s16, void*, Matrix4f); /* MP1 func_8002D2CC *
 f32 HuMathSin(f32);
 f32 func_800B7890_B8490(f32); /* cos */
 void guMtxIdentF(float mf[4][4]);
+int abs(int);
 
 /* Draw-culling view passed by the model draw callbacks (MP1 HitViewFan). */
 typedef struct HitViewFan {
@@ -87,6 +88,23 @@ typedef struct HitViewFan {
     /* 0x10 */ f32 len;
     /* 0x14 */ f32 back;
 } HitViewFan;
+
+/* MP1 HitViewCells: a square of cells around a point. */
+typedef struct HitViewCells {
+    /* 0x00 */ f32 angle;
+    /* 0x04 */ f32 x;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ s32 rx;
+    /* 0x10 */ s32 rz;
+} HitViewCells;
+
+/* MP1 HitViewCircle: the cells whose centres lie within r of a point. */
+typedef struct HitViewCircle {
+    /* 0x00 */ f32 angle;
+    /* 0x04 */ f32 x;
+    /* 0x08 */ f32 z;
+    /* 0x0C */ f32 r;
+} HitViewCircle;
 
 #define CLAMP_S16(v) if ((v) > 0x7FFF) { (v) = 0x7FFF; } else if ((v) < -0x8000) { (v) = -0x8000; }
 
@@ -301,7 +319,74 @@ void func_8002DF2C_2EB2C(HmfModel* m, Matrix4f mtx) {
     guMtxF2L(mtx, (Mtx*)((u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40));
 }
 
+/* NON_MATCHING: register allocation (masked 0): the model and the grid index swap s3/s4. */
+#ifdef NON_MATCHING
+/* MP1 func_80029DB8 (src/29C90.c): draw the grid cells within rx/rz of the view point.
+   MP2 first hands the model's lights to its data. */
+void func_8002E1F8_2EDF8(HitViewCells* view, HmfModel* m) {
+    Matrix4f mtx;
+    Matrix4f ident;
+    s32* rp;
+    s32 x0;
+    s32 x1;
+    s32 z0;
+    s32 z1;
+    s32 x;
+    s32 z;
+    s32 idx;
+    s16 id;
+    s16 gi;
+
+    m->hmf->unkD0 = m->unkB4;
+    rp = &view->rx;
+    if (m->unkB4 != NULL) {
+        func_80026F00_27B00(m->unkB4);
+    }
+    gi = m->unk10;
+    func_8002DF2C_2EB2C(m, mtx);
+    guMtxIdentF(ident);
+    x = abs(((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f + view->x + m->pos.x -
+             2.0f * HuMathSin(view->angle) * D_800FD2B8_FDEB8[gi].cw) / D_800FD2B8_FDEB8[gi].cw);
+    z = abs(((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f + view->z + m->pos.z -
+             2.0f * func_800B7890_B8490(view->angle) * D_800FD2B8_FDEB8[gi].ch) / D_800FD2B8_FDEB8[gi].ch);
+    x0 = x - rp[0];
+    x1 = x + rp[0] + 1;
+    z0 = z - rp[1];
+    z1 = z + rp[1] + 1;
+    if (x0 < 0) {
+        x0 = 0;
+    }
+    if (z0 < 0) {
+        z0 = 0;
+    }
+    if (D_800FD2B8_FDEB8[gi].w < x1) {
+        x1 = D_800FD2B8_FDEB8[gi].w;
+    }
+    if (D_800FD2B8_FDEB8[gi].h < z1) {
+        z1 = D_800FD2B8_FDEB8[gi].h;
+    }
+    for (z = z0; z < z1; z++) {
+        for (x = x0; x < x1; x++) {
+            idx = z * D_800FD2B8_FDEB8[gi].w + x;
+            id = D_800FD2B8_FDEB8[gi].map0[idx];
+            if (id != -1) {
+                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+            }
+            id = D_800FD2B8_FDEB8[gi].map1[idx];
+            if (id != -1) {
+                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+            }
+            id = D_800FD2B8_FDEB8[gi].map2[idx];
+            if (id != -1) {
+                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+            }
+        }
+    }
+    D_800F928C_F9E8C++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/2E0D0", func_8002E1F8_2EDF8);
+#endif
 
 /* NON_MATCHING: register allocation (view and model swap saved registers, as in MP1; masked 1). */
 #ifdef NON_MATCHING
@@ -415,7 +500,73 @@ s32 func_8002EC00_2F800(f32 x, f32 z, ColVtx* v) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/2E0D0", func_8002EDA8_2F9A8);
+/* MP1 func_8002A92C (src/29C90.c): draw the grid cells whose centres lie within r of the view point.
+   MP2 first hands the model's lights to its data. */
+void func_8002EDA8_2F9A8(HitViewCircle* view, HmfModel* m) {
+    Matrix4f mtx;
+    Matrix4f ident;
+    f32* rp;
+    s16 gi;
+    s32 x0;
+    s32 x1;
+    s32 z0;
+    s32 z1;
+    s32 x;
+    s32 z;
+    s32 idx;
+    unsigned int id;
+    f32 dx;
+    f32 dz;
+
+    rp = &view->r;
+    m->hmf->unkD0 = m->unkB4;
+    if (m->unkB4 != NULL) {
+        func_80026F00_27B00(m->unkB4);
+    }
+    gi = m->unk10;
+    func_8002DF2C_2EB2C(m, mtx);
+    guMtxIdentF(ident);
+    x0 = ((view->x - *rp) + ((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f)) / D_800FD2B8_FDEB8[gi].cw;
+    x1 = ((view->x + *rp) + ((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f)) / D_800FD2B8_FDEB8[gi].cw;
+    z0 = ((view->z - *rp) + ((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f)) / D_800FD2B8_FDEB8[gi].ch;
+    z1 = ((view->z + *rp) + ((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f)) / D_800FD2B8_FDEB8[gi].ch;
+    if (x0 < 0) {
+        x0 = 0;
+    }
+    if (z0 < 0) {
+        z0 = 0;
+    }
+    if (D_800FD2B8_FDEB8[gi].w < x1) {
+        x1 = D_800FD2B8_FDEB8[gi].w;
+    }
+    if (D_800FD2B8_FDEB8[gi].h < z1) {
+        z1 = D_800FD2B8_FDEB8[gi].h;
+    }
+    for (z = z0; z < z1; z++) {
+        dz = (((z * D_800FD2B8_FDEB8[gi].ch) + m->pos.z) + (D_800FD2B8_FDEB8[gi].ch / 2.0f)) -
+             (((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f) + view->z);
+        for (x = x0; x < x1; x++) {
+            dx = (((x * D_800FD2B8_FDEB8[gi].cw) + m->pos.x) + (D_800FD2B8_FDEB8[gi].cw / 2.0f)) -
+                 (((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f) + view->x);
+            if (func_800B1830_B2430((dx * dx) + (dz * dz)) < *rp) {
+                idx = (z * D_800FD2B8_FDEB8[gi].w) + x;
+                id = D_800FD2B8_FDEB8[gi].map0[idx];
+                if (id != -1) {
+                    func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+                }
+                id = D_800FD2B8_FDEB8[gi].map1[idx];
+                if (id != -1) {
+                    func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+                }
+                id = D_800FD2B8_FDEB8[gi].map2[idx];
+                if (id != -1) {
+                    func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
+                }
+            }
+        }
+    }
+    D_800F928C_F9E8C++;
+}
 
 /* exact c: marioparty func_8002AD04 (src/29C90.c) */
 void func_8002F1A4_2FDA4(void) {
