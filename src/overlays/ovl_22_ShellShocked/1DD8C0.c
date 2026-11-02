@@ -363,7 +363,11 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
         func_8002979C_2A39C(obj->model[i + 1], D_8010DA80_1E2160_ShellShocked[i].rot.x, D_8010DA80_1E2160_ShellShocked[i].rot.y, D_8010DA80_1E2160_ShellShocked[i].rot.z);
         func_80029E80_2AA80(obj->model[i + 1], 2, 2);
         state = func_80103898_1D7F78_ShellShocked();
-        if (state < 8 && state >= 4) {
+        switch (state) {
+        case 4:
+        case 5:
+        case 6:
+        case 7:
             if (D_8010DA80_1E2160_ShellShocked[i].alive != 0) {
                 if (func_8010C100_1E07E0_ShellShocked(i) <= 0) {
                     D_8010DA80_1E2160_ShellShocked[i].alive = 0;
@@ -387,6 +391,7 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
                 func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
                 func_8010C66C_1E0D4C_ShellShocked(i);
             }
+            break;
         }
     }
 }
@@ -744,8 +749,7 @@ void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind) {
             s->vel.y = 0.0f;
             s->vel.z = co * 70.0f;
             z = 0.0f;
-            tank->recoil = z;
-            tank->motGun->unk34.x = z;
+            tank->motGun->unk34.x = tank->recoil = z;
             s->pos.x = a * 100.0f + tank->pos.x;
             s->pos.y = tank->pos.y + 50.0f;
             s->pos.z = co * 100.0f + tank->pos.z;
@@ -754,8 +758,7 @@ void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind) {
             func_8010C848_1E0F28_ShellShocked(i);
         } else if (kind == 1) {
             z = 0.0f;
-            tank->recoil = z;
-            tank->motGun->unk34.x = z;
+            tank->motGun->unk34.x = tank->recoil = z;
             s->state = 2;
             func_8010C86C_1E0F4C_ShellShocked(i);
         }
@@ -1090,18 +1093,13 @@ void func_8010C57C_1E0C5C_ShellShocked(void) {
     }
 }
 
-// register allocation (masked 9, 20 vs 20 instructions)
-#ifdef NON_MATCHING
 void func_8010C5C0_1E0CA0_ShellShocked(s32 i) {
     SSTank* tank;
 
-    func_8010C66C_1E0D4C_ShellShocked(i);
     tank = &D_8010DA80_1E2160_ShellShocked[i];
+    func_8010C66C_1E0D4C_ShellShocked(i);
     tank->sndEnable = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010C5C0_1E0CA0_ShellShocked);
-#endif
 
 void func_8010C604_1E0CE4_ShellShocked(void) {
     SSTank* tank;
