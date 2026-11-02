@@ -194,7 +194,7 @@ void func_801030B8_3E4BD8_name_64(s32 sign) {
     s32 win;
     s32 name;
 
-    if (func_80075390_75F90(sign + 9) == 0) {
+    if (func_80075390_75F90(sign + OVL64_FLAG_BASE) == 0) {
         name = func_800734B0_740B0(sign) + 0x3D8;
         func_8008D9D0_8E5D0(name, 0);
         func_8008DACC_8E6CC(1, size, 0x5C5);
@@ -219,9 +219,9 @@ void func_801030B8_3E4BD8_name_64(s32 sign) {
 
 /* Scene 0: a new game goes back to the course map (63). */
 void func_801031D0_3E4CF0_name_64(void) {
-    D_800FD8A8_FE4A8.stage = 0;
+    D_800FD8A8_FE4A8.stage = OVL64_STAGE;
     omInitObjMan(10, 0);
-    omOvlGotoEx(0x63, 0, 0x192);
+    omOvlGotoEx(OVL64_NEXT_SCENE, OVL64_NEXT_ENTRY, 0x192);
 }
 
 /* Scene 1: back on the start space, stop flags cleared. */
@@ -229,10 +229,10 @@ void func_80103208_3E4D28_name_64(void) {
     omInitObjMan(10, 0);
     SetPlayerOntoChain(0, 0, 0);
     func_80075010_75C10(0);
-    func_80075424_76024(9);
-    func_80075424_76024(10);
-    func_80075424_76024(11);
-    func_80075424_76024(12);
+    func_80075424_76024(OVL64_FLAG_BASE + 0);
+    func_80075424_76024(OVL64_FLAG_BASE + 1);
+    func_80075424_76024(OVL64_FLAG_BASE + 2);
+    func_80075424_76024(OVL64_FLAG_BASE + 3);
     func_80073410_74010(-1);
     omOvlReturnEx(1);
 }
@@ -245,7 +245,7 @@ void func_80103270_3E4D90_name_64(void) {
     func_80026DAC_279AC(0, 0x78, 0x78, 0x78);
     func_80026DAC_279AC(1, 0x40, 0x40, 0x60);
     func_80026E00_27A00(1, -100.0f, 100.0f, 300.0f);
-    func_80074154_74D54(0x2F, 0x47);
+    func_80074154_74D54(OVL64_BOARD_MODEL, OVL64_BOARD_FILE);
     EventTableHydrate(D_80106298_3E7DB8_name_64);
     func_80102830_3E4350_name_64();
 }
@@ -254,7 +254,7 @@ void func_80103270_3E4D90_name_64(void) {
 void func_801032FC_3E4E1C_name_64(void) {
     func_80103270_3E4D90_name_64();
     func_80074DB8_759B8(0);
-    PlayMusic(0x38);
+    PlayMusic(OVL64_MUSIC);
 }
 
 void func_80103328_3E4E48_name_64(void) {
@@ -434,15 +434,15 @@ void func_80103418_3E4F38_name_64(void) {
         }
     }
     spr = SprCreate(7, 5);
-    D_80106468_3E7F88_name_64 = spr;
+    D_80106460_3E7F80_name_64[2] = spr;
     data = DataRead(0xD0005);
-    D_80106430_3E7F50_name_64 = SprAnimRead(data);
+    D_80106428_3E7F48_name_64[2] = SprAnimRead(data);
     DataClose(data);
-    SprAnimSet(spr, 0, (s16)D_80106430_3E7F50_name_64, 0);
+    SprAnimSet(spr, 0, (s16)D_80106428_3E7F48_name_64[2], 0);
     func_800824F4_830F4(spr, 0, -1);
     SprAttrSet(spr, 0, 0x8000);
     SprPosSet(spr, 0, D_801062F0_3E7E10_name_64[0][0], D_801062F0_3E7E10_name_64[0][1]);
-    SprAnimSet(spr, 1, (s16)D_80106430_3E7F50_name_64, 0);
+    SprAnimSet(spr, 1, (s16)D_80106428_3E7F48_name_64[2], 0);
     func_8008225C_82E5C(spr, 1, 1);
     SprPrioSet(spr, 1, 0xF);
     SprAttrSet(spr, 1, 0x9000);
@@ -602,7 +602,7 @@ void func_801049AC_3E64CC_name_64(void) {
     }
 }
 
-/* Zooms a panel in (idx 2 is out of the array's two entries: the extra coin panel). */
+/* Zooms panel idx in. */
 void func_80104A18_3E6538_name_64(s8 idx) {
     f32 scale;
     s32 i;
@@ -1088,13 +1088,13 @@ void func_801060B0_3E7BD0_name_64(void) {
 
 /* Scene 4: back on the space after the last stop passed. */
 void func_801060EC_3E7C0C_name_64(void) {
-    if (func_80075390_75F90(12) != 0) {
+    if (func_80075390_75F90(OVL64_FLAG_BASE + 3) != 0) {
         SetPlayerOntoChain(0, 0, 15);
-    } else if (func_80075390_75F90(11) != 0) {
+    } else if (func_80075390_75F90(OVL64_FLAG_BASE + 2) != 0) {
         SetPlayerOntoChain(0, 0, 11);
-    } else if (func_80075390_75F90(10) != 0) {
+    } else if (func_80075390_75F90(OVL64_FLAG_BASE + 1) != 0) {
         SetPlayerOntoChain(0, 0, 9);
-    } else if (func_80075390_75F90(9) != 0) {
+    } else if (func_80075390_75F90(OVL64_FLAG_BASE + 0) != 0) {
         SetPlayerOntoChain(0, 0, 6);
     } else {
         SetPlayerOntoChain(0, 0, 0);

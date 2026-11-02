@@ -17,7 +17,9 @@
    with the KMC mul fix, .rodata carved). Every function is global. .data and .bss are asm,
    declared here (typed from the code).
 
-   OVL64_STAGE_CONSTANTS */
+   Stage-specific, what the twins change (the rest of the code is the same to the register): the
+   OVL64_ constants below, the spaces in 801060EC, the tables marked STAGE, and whether a twin
+   has more stops (65-6C add functions around 801033B8). Compare with ovl_65 and ovl_68 first. */
 
 #include "common.h"
 #include "process.h"
@@ -29,6 +31,14 @@
 #include "game/gamemes.h"
 #include "game/pad.h"
 #include "game/board.h"
+
+#define OVL64_STAGE 0           /* 65: 1, 68: 4 */
+#define OVL64_NEXT_SCENE 0x63   /* scene 0 goes here; 65: 0x65, 68: 0x68 */
+#define OVL64_NEXT_ENTRY 0      /* 65, 68: 1 */
+#define OVL64_FLAG_BASE 9       /* first stop's flag; 65: 0xD, 68: 0x1B */
+#define OVL64_BOARD_MODEL 0x2F  /* func_80074154 arguments; 65: 0x30/0x48, 68: 0x33/0x4B */
+#define OVL64_BOARD_FILE 0x47
+#define OVL64_MUSIC 0x38        /* 65: 0x49, 68: 0x4C */
 
 /* ---- types ---- */
 
@@ -197,12 +207,10 @@ extern s32 D_80106410_3E7F30_name_64;     /* "clear/fail" banner group */
 extern s32 D_80106414_3E7F34_name_64;
 extern s32 D_8010641C_3E7F3C_name_64;     /* "continue?" banner group */
 extern s32 D_80106420_3E7F40_name_64;
-extern s32 D_80106428_3E7F48_name_64[2];
-extern s32 D_80106430_3E7F50_name_64;
+extern s32 D_80106428_3E7F48_name_64[3];
 extern s32 D_80106434_3E7F54_name_64[2];
 extern s32 D_80106440_3E7F60_name_64[2][4];
-extern s32 D_80106460_3E7F80_name_64[2];  /* the score panels' groups: lives, coins */
-extern s32 D_80106468_3E7F88_name_64;     /* the extra coin panel group */
+extern s32 D_80106460_3E7F80_name_64[3];  /* the score panels' groups: lives, coins, extra life */
 extern Vec D_8010646C_3E7F8C_name_64;     /* camera */
 extern Vec D_80106478_3E7F98_name_64;
 extern Vec D_80106484_3E7FA4_name_64;
