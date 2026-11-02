@@ -253,7 +253,12 @@ void func_8007E128_7ED28(void) {
     func_80075144_75D44();
 }
 
-INCLUDE_ASM("asm/nonmatchings/7E850", func_8007E150_7ED50);
+void func_80075354_75F54(void);
+void func_8007E150_7ED50(void) {
+    func_8007E0F8_7ECF8(D_800FD420_FE020);
+    func_80075354_75F54();
+    func_8007E070_7EC70();
+}
 
 /* Write the common work, the four players and the system work to EEPROM. */
 void func_8007E180_7ED80(void) {

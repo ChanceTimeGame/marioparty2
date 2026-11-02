@@ -117,6 +117,52 @@ void func_8007468C_7528C(void);
 void func_80074808_75408(void);
 void func_80074D28_75928(void);
 void func_8007414C_74D4C(void);
+extern s8 D_800FD8A9_FE4A9;
+/* 274D0's UnkLightData as the light editor reads it: unsigned colours, 1-based lights */
+typedef struct LightEditEntry {
+    /* 0x00 */ u8 r;
+    /* 0x01 */ u8 g;
+    /* 0x02 */ u8 b;
+    /* 0x03 */ u8 stat;
+    /* 0x04 */ s8 x;
+    /* 0x05 */ s8 y;
+    /* 0x06 */ s8 z;
+} LightEditEntry; /* size 7 */
+typedef struct LightEditSet {
+    /* 0x00 */ s16 count;
+    /* 0x02 */ LightEditEntry light[8];
+} LightEditSet;
+extern LightEditSet* D_800FA620_FB220;
+/* the editor object's work[] holds the two window ids as s16s */
+#define LIGHTEDIT_WIN(obj) ((s16*)(obj)->work)
+typedef struct PfWin {
+    /* 0x00 */ u16 activeBool;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 xPosStart;
+    /* 0x08 */ s32 yPosStart;
+    /* 0x0C */ s32 width;
+    /* 0x10 */ s32 height;
+    /* 0x14 */ u32 rgba;
+} PfWin; /* size 0x18 (7D1D0) */
+extern PfWin pfWinData[4];
+extern s32 fontcolor;
+extern char pfStrBuf[];
+extern u16 D_800FD410_FE010[4];
+extern u16 D_800FC9E0_FD5E0[4];
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+s16 DrawDebugText(u16 x, u16 y, char* str);
+int sprintf(char* s, const char* fmt, ...);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32); /* cosine */
+s16 pfWinCreate(s32, s32, s32, s32, s32);
+void pfWinKill(s16);
+void omSetStatBit(omObjData*, u16);
+void omDelObj(omObjData*);
+void func_80026D50_27950(s16, u8, u8);
+void func_80026E00_27A00(s16, f32, f32, f32);
+void bcopy(const void*, void*, int);
+void func_80075688_76288(omObjData*);
 s32 PlaySound(s32);
 void HuPrcSleep(s32);
 /* .data (0xCDEC0-0xCDF60); D_800CD2C8 and 0xCDF10 on are used only by the unit's asm */
@@ -126,12 +172,12 @@ s32 D_800CD2C8_CDEC8[2] = { 1, 0x000A0253 }; /* model description */
 s32 D_800CD2D0_CDED0 = 0;
 s32 D_800CD2D4_CDED4[11] = { 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0, 0 }; /* overlay per chapter */
 u8 D_800CD300_CDF00[16] = { 9, 13, 18, 22, 27, 33, 39, 45, 51, 0, 0, 0, 0, 0, 0, 0 }; /* first story flag of each chapter */
-s32 D_800CD310_CDF10 = 0;
+omObjData* D_800CD310_CDF10 = NULL;
 s16 D_800CD314_CDF14 = 1;
 s16 D_800CD316_CDF16 = 0;
 u8 D_800CD318_CDF18 = 0xF0;
 u8 D_800CD319_CDF19 = 0;
-u8 D_800CD31A_CDF1A = 0xFF;
+s8 D_800CD31A_CDF1A = -1;
 extern const char D_800D34E0_D40E0[]; /* "CAME" */
 extern const char D_800D34E8_D40E8[];
 char* D_800CD31C_CDF1C[2] = { (char*)D_800D34E8_D40E8, (char*)D_800D34E0_D40E0 };
@@ -635,18 +681,18 @@ void func_80075060_75C60(void) {
 }
 
 /* Puts player 1 back where func_80075060_75C60 recorded (two characters, the chapter). */
-// retail addresses every field through its own lui (no shared gPlayers / D_800FD8A8_FE4A8
-// base register); same loads and stores
+/* Retail addresses every gPlayers field through its own lui (no shared base register), as if
+   each were its own symbol; same loads and stores. Class: referent (symbol layout). */
 #ifdef NON_MATCHING
 void func_80075144_75D44(void) {
-    gPlayers[0].cur_chain_index = D_800FD8A8_FE4A8.unk0E;
-    gPlayers[0].cur_space_index = D_800FD8A8_FE4A8.unk0F;
-    gPlayers[0].next_chain_index = D_800FD8A8_FE4A8.unk0E;
-    gPlayers[0].next_space_index = D_800FD8A8_FE4A8.unk0F + 1;
+    gPlayers[0].cur_chain_index = D_800FD8B6_FE4B6;
+    gPlayers[0].cur_space_index = D_800FD8B7_FE4B7;
+    gPlayers[0].next_chain_index = D_800FD8B6_FE4B6;
+    gPlayers[0].next_space_index = D_800FD8B7_FE4B7 + 1;
     gPlayers[0].character = D_800FD8A8_FE4A8.unk00;
-    gPlayers[1].character = D_800FD8A8_FE4A8.unk01;
-    D_800FD2A2_FDEA2 = D_800FD8A8_FE4A8.unk10;
-    D_800FD840_FE440 = D_800FD8A8_FE4A8.unk11;
+    gPlayers[1].character = D_800FD8A9_FE4A9;
+    D_800FD2A2_FDEA2 = D_800FD8B8_FE4B8;
+    D_800FD840_FE440 = D_800FD8B9_FE4B9;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075144_75D44);
@@ -690,7 +736,12 @@ void func_800751E0_75DE0(void) {
     bcopy(&D_800FD8A8_FE4A8, D_800FD420_FE020, sizeof(D_800FD8A8_FE4A8));
 }
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075354_75F54);
+/* Loads the saved story block (D_800FD420_FE020) back into D_800FD8A8_FE4A8 and applies it. */
+void func_80075354_75F54(void) {
+    bcopy(D_800FD420_FE020, &D_800FD8A8_FE4A8, 0x12);
+    func_80075144_75D44();
+    func_80075424_76024(0);
+}
 
 s32 func_80075390_75F90(s32 flag) {
     return (s8)D_800FD8AD_FE4AD[flag / 8] & (1 << (flag % 8));
@@ -716,13 +767,200 @@ void func_8007550C_7610C(s32 flag) {
     D_800FD425_FE025[flag / 8] &= ~(1 << flag % 8);
 }
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075560_76160);
+/* Debug light editor: two windows (the panel and the cursor) and the object that runs it. */
+void func_80075560_76160(void) {
+    omObjData* obj;
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075638_76238);
+    D_800CD310_CDF10 = omAddObj(0x7FD0, 0, 0, -1, func_80075688_76288);
+    omSetStatBit(D_800CD310_CDF10, 0xA0);
+    obj = D_800CD310_CDF10;
+    LIGHTEDIT_WIN(obj)[0] = pfWinCreate(14, 14, 0x132, 0x22, 0xDF70);
+    LIGHTEDIT_WIN(obj)[1] =
+        pfWinCreate(D_800CD324_CDF24[D_800CD316_CDF16], D_800CD330_CDF30[D_800CD316_CDF16],
+                    D_800CD33C_CDF3C[D_800CD316_CDF16], D_800CD348_CDF48[D_800CD316_CDF16], (D_800CD318_CDF18 << 24) | 0x80);
+    D_800CD319_CDF19 = 0;
+}
+
+void func_80075638_76238(void) {
+    omObjData* obj = D_800CD310_CDF10;
+
+    if (obj != NULL) {
+        pfWinKill(LIGHTEDIT_WIN(obj)[0]);
+        pfWinKill(LIGHTEDIT_WIN(obj)[1]);
+        omDelObj(D_800CD310_CDF10);
+        D_800CD310_CDF10 = NULL;
+    }
+}
 
 const char D_800D34F0_D40F0[] = "LIGHT%1d DIR%4d,%4d,%4d  STAT %s";
 const char D_800D3514_D4114[] = "COLOR    RED %3d GREEN %3d BLUE %3d";
-/* func_80075688_76288's switch: its case labels' addresses */
-const u32 jtbl_800D3538_D4138[] = { 0x800759CC, 0x80075FB8, 0x80075A44, 0x80075AA4, 0x80075B98, 0x80075C8C };
+/* The light editor's frame: A on STAT (cursor 1) toggles the stick mode, which turns the light's
+   direction; otherwise the cursor (3 x 2 cells) picks LIGHT / STAT / R / G / B and up/down change them. */
+void func_80075688_76288(omObjData* object) {
+    s16* panel;
+    s16* cursor;
+    char* stat;
+    s16 col;
+    s16 row;
+    u16 btn;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 yaw;
+    f32 pitch;
+    f32 sinPitch;
+    f32 cosPitch;
+    f32 sinYaw;
+    f32 cosYaw;
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075688_76288);
+    panel = &LIGHTEDIT_WIN(D_800CD310_CDF10)[0];
+    cursor = &LIGHTEDIT_WIN(D_800CD310_CDF10)[1];
+    stat = D_800CD31C_CDF1C[(D_800FA620_FB220->light[D_800CD314_CDF14].stat ^ 1) & 1];
+    fontcolor = 14;
+    sprintf(pfStrBuf, D_800D34F0_D40F0, D_800CD314_CDF14, D_800FA620_FB220->light[D_800CD314_CDF14].x, D_800FA620_FB220->light[D_800CD314_CDF14].y, D_800FA620_FB220->light[D_800CD314_CDF14].z, stat);
+    DrawDebugText(16, 16, pfStrBuf);
+    sprintf(pfStrBuf, D_800D3514_D4114, D_800FA620_FB220->light[D_800CD314_CDF14].r, D_800FA620_FB220->light[D_800CD314_CDF14].g, D_800FA620_FB220->light[D_800CD314_CDF14].b);
+    DrawDebugText(16, 24, pfStrBuf);
+    switch (D_800CD319_CDF19) {
+        case 0:
+            if ((ContBtnTrg[0] & 0x8000) && D_800CD316_CDF16 == 1) {
+                pfWinData[*panel].rgba = 0x7070;
+                D_800CD318_CDF18 = 0xF0;
+                D_800CD31A_CDF1A = -4;
+                D_800CD319_CDF19 = 1;
+                break;
+            }
+            D_800CD318_CDF18 += D_800CD31A_CDF1A;
+            if (D_800CD31A_CDF1A < 0) {
+                if (D_800CD318_CDF18 <= 0x80) {
+                    D_800CD31A_CDF1A = 4;
+                }
+            } else if (D_800CD318_CDF18 >= 0xF0) {
+                D_800CD31A_CDF1A = -4;
+            }
+            btn = D_800FC9E0_FD5E0[0];
+            row = D_800CD316_CDF16 / 3;
+            col = D_800CD316_CDF16 % 3;
+            if (btn & 0x200) {
+                if (col == 0) {
+                    D_800CD316_CDF16 = row * 3 + 2;
+                } else {
+                    D_800CD316_CDF16--;
+                }
+            } else if (btn & 0x100) {
+                if (col == 2) {
+                    D_800CD316_CDF16 = row * 3;
+                } else {
+                    D_800CD316_CDF16++;
+                }
+            } else if (btn & 0x800) {
+                if (row == 0) {
+                    D_800CD316_CDF16 = col + 3;
+                } else {
+                    D_800CD316_CDF16 -= 3;
+                }
+            } else if (btn & 0x400) {
+                if (row == 1) {
+                    D_800CD316_CDF16 = col;
+                } else {
+                    D_800CD316_CDF16 += 3;
+                }
+            }
+            switch (D_800CD316_CDF16) {
+                case 0:
+                    if ((D_800FD410_FE010[0] & 4) && D_800CD314_CDF14 >= 2) {
+                        D_800CD314_CDF14--;
+                    }
+                    if ((D_800FD410_FE010[0] & 8) && D_800CD314_CDF14 < D_800FA620_FB220->count) {
+                        D_800CD314_CDF14++;
+                    }
+                    break;
+                case 2:
+                    if (D_800FD410_FE010[0] & 0x800C) {
+                        if (D_800FA620_FB220->light[D_800CD314_CDF14].stat & 1) {
+                            func_80026D50_27950(D_800CD314_CDF14, 1, 0);
+                        } else {
+                            func_80026D50_27950(D_800CD314_CDF14, 1, 1);
+                        }
+                    }
+                    break;
+                case 3:
+                    if (D_800FD410_FE010[0] & 4) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].r--;
+                    }
+                    if (D_800FD410_FE010[0] & 8) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].r++;
+                    }
+                    if (D_800FD410_FE010[0] & 2) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].r -= 5;
+                    }
+                    if (D_800FD410_FE010[0] & 1) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].r += 5;
+                    }
+                    break;
+                case 4:
+                    if (D_800FD410_FE010[0] & 4) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].g--;
+                    }
+                    if (D_800FD410_FE010[0] & 8) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].g++;
+                    }
+                    if (D_800FD410_FE010[0] & 2) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].g -= 5;
+                    }
+                    if (D_800FD410_FE010[0] & 1) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].g += 5;
+                    }
+                    break;
+                case 5:
+                    if (D_800FD410_FE010[0] & 4) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].b--;
+                    }
+                    if (D_800FD410_FE010[0] & 8) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].b++;
+                    }
+                    if (D_800FD410_FE010[0] & 2) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].b -= 5;
+                    }
+                    if (D_800FD410_FE010[0] & 1) {
+                        D_800FA620_FB220->light[D_800CD314_CDF14].b += 5;
+                    }
+                    break;
+            }
+            break;
+        case 1:
+            if (ContBtnTrg[0] & 0xC000) {
+                D_800CD319_CDF19 = 0;
+                pfWinData[*panel].rgba = 0xDF70;
+            }
+            x = D_800FA620_FB220->light[D_800CD314_CDF14].x;
+            y = D_800FA620_FB220->light[D_800CD314_CDF14].y;
+            z = D_800FA620_FB220->light[D_800CD314_CDF14].z;
+            yaw = -ContStkX[0] / 10;
+            if (yaw >= 360.0f) {
+                yaw -= 360.0f;
+            } else if (yaw < 0.0f) {
+                yaw += 360.0f;
+            }
+            pitch = -ContStkY[0] / 10;
+            if (pitch >= 360.0f) {
+                pitch -= 360.0f;
+            } else if (pitch < 0.0f) {
+                pitch += 360.0f;
+            }
+            sinPitch = HuMathSin(pitch);
+            cosPitch = func_800B7890_B8490(pitch);
+            sinYaw = HuMathSin(yaw);
+            cosYaw = func_800B7890_B8490(yaw);
+            x = x * cosYaw - z * sinYaw;
+            y = x * sinPitch * sinYaw + y * cosPitch + z * sinPitch * cosYaw;
+            z = x * cosPitch * sinYaw - y * sinPitch + z * cosPitch * cosYaw;
+            func_80026E00_27A00(D_800CD314_CDF14, x, y, z);
+            break;
+    }
+    pfWinData[*cursor].rgba = (D_800CD318_CDF18 << 24) | 0x80;
+    pfWinData[*cursor].xPosStart = D_800CD324_CDF24[D_800CD316_CDF16];
+    pfWinData[*cursor].yPosStart = D_800CD330_CDF30[D_800CD316_CDF16];
+    pfWinData[*cursor].width = D_800CD33C_CDF3C[D_800CD316_CDF16];
+    pfWinData[*cursor].height = D_800CD348_CDF48[D_800CD316_CDF16];
+}

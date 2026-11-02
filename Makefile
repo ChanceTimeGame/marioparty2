@@ -271,6 +271,8 @@ $(M5BD_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 
 # S5-4E: 331200.c, the KMC mul fix and blank lines stripped, as 5B
 S5_4E_BLANKSTRIP_UNITS := build/src/overlays/ovl_4E_name/331200.c.o
+# S5-M: 74AA0.c too (nops between mul.s pairs, none after the call: func_80075688_76288)
+S5_4E_BLANKSTRIP_UNITS += build/src/74AA0.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
