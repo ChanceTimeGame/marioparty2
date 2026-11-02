@@ -1078,3 +1078,45 @@ void func_80106134_3FE774_name_6A(void) {
     }
     omOvlReturnEx(1);
 }
+
+/* .data (0x3FE850-0x3FEA60,80106210-80106420) */
+board_overlay_entrypoint D_80106210_3FE850_name_6A[6] = { { 0, func_801031D0_3FB810_name_6A }, { 1, func_8010320C_3FB84C_name_6A }, { 2, func_80103310_3FB950_name_6A }, { 3, func_801060F8_3FE738_name_6A }, { 4, func_80106134_3FE774_name_6A }, { -1, NULL } };
+CoasterSpaceFlag D_80106240_3FE880_name_6A[7] = { { 0, 39 }, { 1, 40 }, { 2, 41 }, { 3, 42 }, { 4, 43 }, { 5, 44 }, { -1, -1 } };
+s32 D_8010625C_3FE89C_name_6A[6] = { 0x000A010F, 0x000A0110, 0x000A0111, 0x000A0112, 0x000A0113, 0x000A0114 };
+s32 D_80106274_3FE8B4_name_6A[6] = { 0x000005DA, 0x000005DB, 0x000005DC, 0x000005DD, 0x00000000, 0x000005E1 };
+s32 D_8010628C_3FE8CC_name_6A[3] = { 0x000005DE, 0x000005DF, 0x000005E0 };
+s32 D_80106298_3FE8D8_name_6A[3] = { 0x000005D2, 0x000005D4, 0x000005D6 };
+s16 D_801062A4_3FE8E4_name_6A[4][2] = { { 0x0064, 0x003C }, { 0x0064, 0x004E }, { 0x0064, 0x0060 }, { 0x0064, 0x0072 } };
+s16 D_801062B4_3FE8F4_name_6A = 0x00C8;
+s16 D_801062B6_3FE8F6_name_6A = 0x003C;
+s16 D_801062B8_3FE8F8_name_6A = 0x00C8;
+s16 D_801062BA_3FE8FA_name_6A = 0x004E;
+s16 D_801062BC_3FE8FC_name_6A[2] = { 0x0018, 0x003C };
+BoardEventListEntry D_801062C0_3FE900_name_6A[2] = { { 1, 1, func_8010333C_3FB97C_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_801062D0_3FE910_name_6A[2] = { { 1, 1, func_80103360_3FB9A0_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_801062E0_3FE920_name_6A[2] = { { 1, 1, func_80103384_3FB9C4_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_801062F0_3FE930_name_6A[2] = { { 1, 1, func_801033A8_3FB9E8_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_80106300_3FE940_name_6A[2] = { { 1, 1, func_801033CC_3FBA0C_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_80106310_3FE950_name_6A[2] = { { 1, 1, func_801033F0_3FBA30_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_80106320_3FE960_name_6A[2] = { { 1, 1, func_80103414_3FBA54_name_6A }, { 0, 0, NULL } };
+BoardEventListEntry D_80106330_3FE970_name_6A[2] = { { 1, 1, func_80103438_3FBA78_name_6A }, { 0, 0, NULL } };
+BoardEventTableEntry D_80106340_3FE980_name_6A[9] = { { 0, D_801062C0_3FE900_name_6A }, { 1, D_801062D0_3FE910_name_6A }, { 2, D_801062E0_3FE920_name_6A }, { 3, D_801062F0_3FE930_name_6A }, { 4, D_80106300_3FE940_name_6A }, { 5, D_80106310_3FE950_name_6A }, { 6, D_80106320_3FE960_name_6A }, { 12, D_80106330_3FE970_name_6A }, { -1, NULL } };
+s32 D_80106388_3FE9C8_name_6A[2][2] = { { 0x000D0000, 0x000D0001 }, { 0x000B00E1, 0x000B00E2 } };
+s32 D_80106398_3FE9D8_name_6A[2] = { 0x000D0002, 0x000D0003 };
+s8 D_801063A0_3FE9E0_name_6A = 0;
+s8 D_801063A1_3FE9E1_name_6A = 0;
+s8 D_801063A2_3FE9E2_name_6A = -1;
+s8 D_801063A3_3FE9E3_name_6A = 0;
+s8 D_801063A4_3FE9E4_name_6A = 0;
+s8 D_801063A5_3FE9E5_name_6A = 0; /* padding */
+s16 D_801063A6_3FE9E6_name_6A = 0;
+s16 D_801063A8_3FE9E8_name_6A[2][2] = { { 0x0050, 0x0034 }, { 0x0108, 0x0034 } };
+s16 D_801063B0_3FE9F0_name_6A[4][4] = { { -1000, -1000, -1000, 0 }, { -1000, -1000, -4, 4 }, { -1000, -8, 0, 8 }, { -14, -6, 2, 10 } };
+u8 D_801063D0_3FEA10_name_6A[8] = { 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x00, 0x00 };
+s32 D_801063D8_3FEA18_name_6A[6] = { 0x00020000, 0x00030000, 0x00070000, 0x00040000, 0x00050000, 0x00060000 };
+s16 D_801063F0_3FEA30_name_6A[4][4] = { { -1000, -1000, -1000, 0 }, { -1000, -1000, -4, 4 }, { -1000, -8, 0, 8 }, { -14, -6, 2, 10 } };
+u8 D_80106410_3FEA50_name_6A[3][3] = { { 0x00, 0x0A, 0x0F }, { 0x00, 0x0A, 0x0F }, { 0x00, 0x00, 0x0F } };
+s8 D_80106419_3FEA59_name_6A = 0; /* padding to .rodata */
+s8 D_8010641A_3FEA5A_name_6A = 0;
+s8 D_8010641B_3FEA5B_name_6A = 0;
+s32 D_8010641C_3FEA5C_name_6A[1] = { 0 };

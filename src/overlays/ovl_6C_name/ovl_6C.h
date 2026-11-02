@@ -261,7 +261,7 @@ void func_80103530_403430_name_6C(void);
 void func_801064DC_4063DC_name_6C(void);
 
 /* S5-T2 (6C): the finale's own pieces */
-extern s16 D_801065F8_4064F8_name_6C[3];   /* goal marker's space by difficulty */
+extern s16 D_801065F8_4064F8_name_6C[4];   /* goal marker's space by difficulty */
 extern s16 D_80106610_406510_name_6C[];    /* the walked path, -1 ends it */
 extern BoardEventTableEntry D_80106634_406534_name_6C[];
 extern MBModel* D_80106790_406690_name_6C;
