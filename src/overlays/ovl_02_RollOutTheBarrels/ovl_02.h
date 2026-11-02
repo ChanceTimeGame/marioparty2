@@ -312,7 +312,7 @@ extern RBRoller* D_80112D64_F3FA4_RollOutTheBarrels;
 extern RBBarrel* D_80112D68_F3FA8_RollOutTheBarrels;
 extern RBShape* D_80112D6C_F3FAC_RollOutTheBarrels;
 extern RBSpark* D_80112D70_F3FB0_RollOutTheBarrels;
-extern s32* D_80112D74_F3FB4_RollOutTheBarrels; /* 0x80 bytes; [0] the barrel sprite file, read as its low half */
+extern s32* D_80112D74_F3FB4_RollOutTheBarrels; /* 0x80 bytes; [0] the barrel sprite, [1] the dust sprite, read by their low halves */
 extern s16 D_80112D78_F3FB8_RollOutTheBarrels;
 extern s16 D_80112D7A_F3FBA_RollOutTheBarrels;
 extern s8 D_80112D7C_F3FBC_RollOutTheBarrels;
@@ -344,16 +344,9 @@ extern Vec4f D_80112E70_F40B0_RollOutTheBarrels[4];
 extern RBBarrel* D_80112EB0_F40F0_RollOutTheBarrels[4];
 extern RBBarrel* D_80112EC0_F4100_RollOutTheBarrels[4];
 
-/* S4-02B: past func_8010A2E0_EB520_RollOutTheBarrels, typed by width only: retype yours. */
+/* S4-02B. */
 extern f32 D_801120E8_F3328_RollOutTheBarrels[3];
 extern f32 D_801120F4_F3334_RollOutTheBarrels[3];
-extern s32 D_8011215A_F339A_RollOutTheBarrels[]; /* typed by width only */
-extern s32 D_80112162_F33A2_RollOutTheBarrels[]; /* typed by width only */
-extern s32 D_80112166_F33A6_RollOutTheBarrels[]; /* typed by width only */
-extern f32 D_80112198_F33D8_RollOutTheBarrels;
-extern f32 D_8011219C_F33DC_RollOutTheBarrels;
-extern f32 D_801121E4_F3424_RollOutTheBarrels;
-extern f32 D_801121EC_F342C_RollOutTheBarrels;
 extern Vec D_80112280_F34C0_RollOutTheBarrels[3];
 extern Vec D_801122A4_F34E4_RollOutTheBarrels;
 extern Vec D_801122B0_F34F0_RollOutTheBarrels[3];
@@ -361,36 +354,9 @@ extern f32 D_801122D4_F3514_RollOutTheBarrels[3];
 extern Gfx D_801123D0_F3610_RollOutTheBarrels[]; /* a sprite model's setup list */
 extern f32 D_80112410_F3650_RollOutTheBarrels[4][2];
 extern f32 D_80112430_F3670_RollOutTheBarrels;
-extern f32 D_80112CD4_F3F14_RollOutTheBarrels;
-extern s32 D_80112D14_F3F54_RollOutTheBarrels[]; /* size 0x24 */
 extern omObjData* D_80112D48_F3F88_RollOutTheBarrels;
-extern s16 D_80112D82_F3FC2_RollOutTheBarrels;
-extern s16 D_80112D92_F3FD2_RollOutTheBarrels;
 extern RBMeshVtx* D_80112DA8_F3FE8_RollOutTheBarrels;
 extern s16 D_80112DB4_F3FF4_RollOutTheBarrels[2]; /* the mesh's columns and rows */
-extern s16 D_80112DBA_F3FFA_RollOutTheBarrels;
-extern s16 D_80112DC2_F4002_RollOutTheBarrels;
-extern s16 D_80112DC6_F4006_RollOutTheBarrels;
-extern s16 D_80112DD2_F4012_RollOutTheBarrels;
-extern f32 D_80112DDC_F401C_RollOutTheBarrels;
-extern f32 D_80112DE0_F4020_RollOutTheBarrels;
-extern f32 D_80112DE4_F4024_RollOutTheBarrels;
-extern f32 D_80112DE8_F4028_RollOutTheBarrels;
-extern f32 D_80112DEC_F402C_RollOutTheBarrels;
-extern f32 D_80112DF0_F4030_RollOutTheBarrels;
-extern f32 D_80112DF4_F4034_RollOutTheBarrels;
-extern f32 D_80112DF8_F4038_RollOutTheBarrels;
-extern s32 D_80112DFC_F403C_RollOutTheBarrels[]; /* size 0x24 */
-extern f32 D_80112E38_F4078_RollOutTheBarrels;
-extern s32 D_80112E40_F4080_RollOutTheBarrels[]; /* size 0x10 */
-extern s32 D_80112E50_F4090_RollOutTheBarrels[]; /* size 0x20 */
-extern f32 D_80112E78_F40B8_RollOutTheBarrels;
-extern s32 D_80112E80_F40C0_RollOutTheBarrels[]; /* size 0x10 */
-extern s32 D_80112E90_F40D0_RollOutTheBarrels[]; /* size 0x20 */
-extern s32 D_80112EB4_F40F4_RollOutTheBarrels;
-extern s32 D_80112EB8_F40F8_RollOutTheBarrels;
-extern s32 D_80112EC4_F4104_RollOutTheBarrels;
-extern s32 D_80112EC8_F4108_RollOutTheBarrels;
 
 void func_80102800_E3A40_RollOutTheBarrels(void);
 void func_80102B2C_E3D6C_RollOutTheBarrels(omObjData* obj);

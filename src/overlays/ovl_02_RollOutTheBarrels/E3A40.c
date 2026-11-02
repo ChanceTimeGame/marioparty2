@@ -2949,7 +2949,7 @@ void func_8010CA90_EDCD0_RollOutTheBarrels(omObjData* obj) {
     switch (obj->work[0]) {
         case 0:
             if (D_80112D80_F3FC0_RollOutTheBarrels >= 0) {
-                func_80079848_7A448(D_80112D82_F3FC2_RollOutTheBarrels);
+                func_80079848_7A448((s16)D_80112D80_F3FC0_RollOutTheBarrels);
                 D_80112D80_F3FC0_RollOutTheBarrels = -1;
             }
             goto wait;
@@ -3203,7 +3203,7 @@ void func_8010D740_EE980_RollOutTheBarrels(omObjData* obj) {
 
     switch (b->unk_10) {
         case 0:
-            omVibrate(D_80112DC2_F4002_RollOutTheBarrels, 0xA, 0, 0xA);
+            omVibrate((s16)D_80112DC0_F4000_RollOutTheBarrels, 0xA, 0, 0xA);
             PlaySound(0x12D);
             if (b->obj->model[1] != -1) {
                 func_80108C5C_E9E9C_RollOutTheBarrels(b->roller, obj->model[1]);
