@@ -27,7 +27,7 @@ typedef struct TSPlayer {
 /* the song tables, copied to the stack: a struct copy is retail's local aggregate, whose
    initialiser lives in the asm .data */
 typedef struct TSBeats { u8 v[2][36]; } TSBeats;
-typedef struct TSSteps { s16 v[2][27]; } TSSteps;
+typedef struct TSSteps { u16 v[2][27]; } TSSteps;
 typedef struct TSTimes { s16 v[2][6]; } TSTimes;
 typedef struct TSBytes4 { s8 v[4]; } TSBytes4;
 typedef struct TSFloats4 { f32 v[4]; } TSFloats4;
@@ -64,6 +64,7 @@ extern u8 D_800FA656;
 extern f32 D_800FA5BC_FB1BC[];
 extern f32 D_800F8410_F9010;
 extern f32 D_80101078_101C78;
+void omVibrate(s16, s16, s16, s16);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void Hu3DCamSetPositionOrientation(s16 camIndex, Vec* pos, Vec* at, Vec* up);
 void Hu3DCamUpdateMtx(s16 camIndex);
@@ -113,7 +114,7 @@ HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 f32 func_800B7890_B8490(f32);
 
 /* ---- .data ---- */
-extern u16 D_8010CA40_1906D0_ToadBandstand[8];
+extern s16 D_8010CA40_1906D0_ToadBandstand[4][2]; /* frames since each hit star */
 extern s32 D_8010CA50_1906E0_ToadBandstand[2][36]; /* sprite per beat */
 extern u16 D_8010CB70_190800_ToadBandstand[2];
 extern f32 D_8010CB74_190804_ToadBandstand[2];
@@ -142,15 +143,16 @@ extern TSDirs D_8010CFD4_190C64_ToadBandstand;
 
 /* ---- rodata, shared by name ---- */
 extern const char D_8010D17C_190E0C_ToadBandstand[];
+extern const u32 D_8010D3A8_191038_ToadBandstand[2];
 
 /* ---- bss ---- */
 extern TSPlayer D_8010D710_1913A0_ToadBandstand[4];
 extern TSPlayer* D_8010D848_1914D8_ToadBandstand[4];
 extern s16 D_8010D860_1914F0_ToadBandstand[4];
-extern s32 D_8010D868_1914F8_ToadBandstand[4];
-extern s32 D_8010D878_191508_ToadBandstand[4];
+extern u32 D_8010D868_1914F8_ToadBandstand[4];
+extern u32 D_8010D878_191508_ToadBandstand[4];
 extern f32 D_8010D888_191518_ToadBandstand;
-extern s16 D_8010D890_191520_ToadBandstand[2][27];
+extern u16 D_8010D890_191520_ToadBandstand[2][27];
 extern s16 D_8010D8FC_19158C_ToadBandstand;
 extern f32 D_8010D900_191590_ToadBandstand;
 extern u8 D_8010D904_191594_ToadBandstand;
@@ -164,14 +166,18 @@ extern s32 D_8010D988_191618_ToadBandstand;
 extern u16 D_8010D990_191620_ToadBandstand[15];
 extern s32 D_8010D9B0_191640_ToadBandstand;
 extern s16 D_8010D9B4_191644_ToadBandstand[4];
-extern s32 D_8010D9BC_19164C_ToadBandstand;
+extern u32 D_8010D9BC_19164C_ToadBandstand;
+extern f32 D_8010D960_1915F0_ToadBandstand[4][2];
 extern u8 D_8010D9C0_191650_ToadBandstand[2][36];
+extern f32 D_8010DA08_191698_ToadBandstand[4][2];
+extern u16 D_8010DA78_191708_ToadBandstand[4][2];
+extern f32 D_8010DAB8_191748_ToadBandstand[4][2];
 extern u16 D_8010DA28_1916B8_ToadBandstand[2][6];
 extern u8 D_8010DA40_1916D0_ToadBandstand;
 extern s16 D_8010DA42_1916D2_ToadBandstand[2];
 extern omObjData* D_8010DA68_1916F8_ToadBandstand;
 extern s32 D_8010DA6C_1916FC_ToadBandstand;
-extern s32 D_8010DA70_191700_ToadBandstand;
+extern u32 D_8010DA70_191700_ToadBandstand;
 extern omObjData* D_8010DA88_191718_ToadBandstand[4];
 extern s16 D_8010DA98_191728_ToadBandstand[4];
 extern u16 D_8010DAA0_191730_ToadBandstand;
