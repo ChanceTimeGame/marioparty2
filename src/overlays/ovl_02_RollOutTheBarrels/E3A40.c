@@ -1,5 +1,99 @@
 #include "ovl_02.h"
 
+#ifdef CC_CHECK /* the 64-bit syntax check cannot fold a pointer into a u32 */
+#define RB_ADDR(sym) 0
+#else
+#define RB_ADDR(sym) ((u32)(sym))
+#endif
+
+/* .data (0xF32E0-0xF3680, 801120A0-80112440) */
+Vec D_801120A0_F32E0_RollOutTheBarrels[6] = {
+    { -550.0f, 120.0f, -1000.0f }, { -350.0f, 120.0f, -500.0f }, { -150.0f, 120.0f, -1000.0f },
+    { 50.0f, 120.0f, -500.0f },    { 250.0f, 120.0f, -1000.0f }, { 450.0f, 120.0f, -500.0f },
+};
+f32 D_801120E8_F3328_RollOutTheBarrels[3] = { 20.0f, 40.0f, 60.0f };
+f32 D_801120F4_F3334_RollOutTheBarrels[3] = { 100.0f, 90.0f, 100.0f };
+RBStep D_80112100_F3340_RollOutTheBarrels[4] = {
+    func_80109868_EAAA8_RollOutTheBarrels, func_80109DA4_EAFE4_RollOutTheBarrels,
+    func_8010A2E0_EB520_RollOutTheBarrels, func_8010A7C4_EBA04_RollOutTheBarrels,
+};
+RBStep D_80112110_F3350_RollOutTheBarrels[4] = {
+    func_8010ACA8_EBEE8_RollOutTheBarrels, func_8010B5B0_EC7F0_RollOutTheBarrels,
+    func_8010BEB8_ED0F8_RollOutTheBarrels, func_8010C448_ED688_RollOutTheBarrels,
+};
+s32 D_80112120_F3360_RollOutTheBarrels[6] = { 0x000200E0, 0x000300E0, 0x000700E0, 0x000400E0, 0x000500E0, 0x000600E0 };
+s32 D_80112138_F3378_RollOutTheBarrels[6] = { 0x000200E1, 0x000300E1, 0x000700E1, 0x000400E1, 0x000500E1, 0x000600E1 };
+s32 D_80112150_F3390_RollOutTheBarrels = 0;
+s32 D_80112154_F3394_RollOutTheBarrels = 0;
+s32 D_80112158_F3398_RollOutTheBarrels = 0;
+s32 D_8011215C_F339C_RollOutTheBarrels = 0;
+s32 D_80112160_F33A0_RollOutTheBarrels = 0;
+s32 D_80112164_F33A4_RollOutTheBarrels = 0;
+Vec D_80112168_F33A8_RollOutTheBarrels = { 0.0f, 0.0f, -200.0f };
+Vec D_80112174_F33B4_RollOutTheBarrels = { 720.0f, 0.0f, -1250.0f };
+Vec D_80112180_F33C0_RollOutTheBarrels = { 0.0f, 0.0f, 0.0f };
+f32 D_8011218C_F33CC_RollOutTheBarrels[2] = { 50.0f, 50.0f };
+Vec D_80112194_F33D4_RollOutTheBarrels[3] = {
+    { 480.0f, 1.0f, -1560.0f }, { -100.0f, -1.0f, -1550.0f }, { -600.0f, -1.0f, -1700.0f },
+};
+u16 D_801121B8_F33F8_RollOutTheBarrels = 0;
+s32 D_801121BC_F33FC_RollOutTheBarrels = 0;
+f64 D_801121C0_F3400_RollOutTheBarrels = 0.0;
+f64 D_801121C8_F3408_RollOutTheBarrels = 0.0;
+f64 D_801121D0_F3410_RollOutTheBarrels = 0.0;
+f64 D_801121D8_F3418_RollOutTheBarrels = 0.0;
+f32 D_801121E0_F3420_RollOutTheBarrels[2] = { 0.0f, 0.0f };
+f32 D_801121E8_F3428_RollOutTheBarrels[2] = { 300.0f, 550.0f };
+f32 D_801121F0_F3430_RollOutTheBarrels[2] = { 300.0f, 550.0f };
+f32 D_801121F8_F3438_RollOutTheBarrels[3][4] = {
+    { 0.0f, 0.0f, 0.0f, 0.0f }, { -10.0f, -10.0f, -10.0f, -10.0f }, { -10.0f, -10.0f, -10.0f, -10.0f },
+};
+f32 D_80112228_F3468_RollOutTheBarrels[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+s32 D_80112238_F3478_RollOutTheBarrels = 0;
+Vec D_8011223C_F347C_RollOutTheBarrels = { 0.0f, -120.0f, 0.0f };
+f32 D_80112248_F3488_RollOutTheBarrels[2] = { 96.0f, 216.0f };
+RBStep* D_80112250_F3490_RollOutTheBarrels[5] = {
+    D_80112100_F3340_RollOutTheBarrels, D_80112110_F3350_RollOutTheBarrels,
+    D_80112100_F3340_RollOutTheBarrels, D_80112110_F3350_RollOutTheBarrels, NULL,
+};
+u8 D_80112264_F34A4_RollOutTheBarrels[16] = { 12, 12, 12, 12, 15, 15, 15, 15, 9, 6, 6, 6, 15, 15, 15, 15 };
+s32 D_80112274_F34B4_RollOutTheBarrels = 0;
+s32 D_80112278_F34B8_RollOutTheBarrels = 0;
+s32 D_8011227C_F34BC_RollOutTheBarrels = 1;
+Vec D_80112280_F34C0_RollOutTheBarrels[3] = {
+    { 70.0f, -100.0f, 0.0f }, { -30.0f, -140.0f, 0.0f }, { 20.0f, -170.0f, 0.0f },
+};
+Vec D_801122A4_F34E4_RollOutTheBarrels = { 0.0f, -0.0f, 0.0f };
+Vec D_801122B0_F34F0_RollOutTheBarrels[3] = {
+    { 70.0f, -200.0f, 0.0f }, { -70.0f, -200.0f, 0.0f }, { 0.0f, -200.0f, 0.0f },
+};
+f32 D_801122D4_F3514_RollOutTheBarrels[3] = { 0.9f, 0.75f, 0.65f };
+Gfx D_801122E0_F3520_RollOutTheBarrels[] = {
+    {{0xDB060000, 0x00000000}}, {{0xE7000000, 0x00000000}}, {{0xE3000A01, 0x00000000}}, {{0xE3000800, 0x00800000}},
+    {{0xE3000F00, 0x00000000}}, {{0xE3001001, 0x00000000}}, {{0xE3000D01, 0x00000000}}, {{0xE3000C00, 0x00000000}},
+    {{0xF2000000, 0x00000000}}, {{0xF2000000, 0x01000000}}, {{0xF5000000, 0x00000000}}, {{0xF5000000, 0x01000000}},
+    {{0xE3001201, 0x00002000}}, {{0xE3001402, 0x00000C00}}, {{0xFCFFFFFF, 0xFFFE793C}}, {{0xE3001700, 0x00000000}},
+    {{0xE2001E01, 0x00000000}}, {{0xE2001D00, 0x00000000}}, {{0xE200001C, 0x0F0A4000}}, {{0x00000000, 0x00000000}},
+    {{0xE3001801, 0x000000C0}}, {{0xE7000000, 0x00000000}}, {{0xDF000000, 0x00000000}},
+};
+Gfx D_80112398_F35D8_RollOutTheBarrels[] = {
+    {{0xD9000000, 0x00000000}}, {{0xD7000000, 0x00000000}}, {{0xD9FFFFFF, 0x00200004}}, {{0xDF000000, 0x00000000}},
+};
+Gfx D_801123B8_F35F8_RollOutTheBarrels[] = {
+    {{0xDE000000, RB_ADDR(D_80112398_F35D8_RollOutTheBarrels)}}, {{0xDE000000, RB_ADDR(D_801122E0_F3520_RollOutTheBarrels)}},
+    {{0xDF000000, 0x00000000}},
+};
+Gfx D_801123D0_F3610_RollOutTheBarrels[] = {
+    {{0xE7000000, 0x00000000}}, {{0xDE000000, RB_ADDR(D_801123B8_F35F8_RollOutTheBarrels)}}, {{0xE3000A01, 0x00000000}},
+    {{0xD9FFFFFF, 0x00220401}}, {{0xF9000000, 0x00000000}}, {{0xFA000000, 0x000000FF}}, {{0xD7000002, 0xFFFFFFFF}},
+    {{0xDF000000, 0x00000000}},
+};
+f32 D_80112410_F3650_RollOutTheBarrels[4][2] = {
+    { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f },
+};
+f32 D_80112430_F3670_RollOutTheBarrels = 0.0f;
+f32 D_80112434_F3674_RollOutTheBarrels[3] = { 0.0f, 0.0f, 0.0f };
+
 __asm__(".section .rodata");
 const char D_80112440_F3680_RollOutTheBarrels[] = "\202r\202s\202`\202q\202s";
 

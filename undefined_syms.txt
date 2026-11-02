@@ -474,3 +474,6 @@ D_8010A7AA_26F75A_LooneyLumberjacks = D_8010A7A8_26F758_LooneyLumberjacks + 0x2;
 D_8010A7B4_26F764_LooneyLumberjacks = D_8010A7AC_26F75C_LooneyLumberjacks + 0x8;
 D_8010A840_26F7F0_LooneyLumberjacks = D_8010A83C_26F7EC_LooneyLumberjacks + 0x4;
 D_8010A844_26F7F4_LooneyLumberjacks = D_8010A83C_26F7EC_LooneyLumberjacks + 0x8;
+D_801121E4_F3424_RollOutTheBarrels = D_801121E0_F3420_RollOutTheBarrels + 0x4;
+D_801121EC_F342C_RollOutTheBarrels = D_801121E8_F3428_RollOutTheBarrels + 0x4;
+D_80112414_F3654_RollOutTheBarrels = D_80112410_F3650_RollOutTheBarrels + 0x4;

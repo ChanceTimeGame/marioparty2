@@ -266,7 +266,7 @@ extern f32 D_800CA02C_CAC2C;
 extern u16 D_800CAFE4[];
 
 /* .data */
-extern Vec D_801120A0_F32E0_RollOutTheBarrels[7]; /* the barrel slots */
+extern Vec D_801120A0_F32E0_RollOutTheBarrels[6]; /* the barrel slots */
 extern s32 D_80112120_F3360_RollOutTheBarrels[6]; /* win voice per character */
 extern s32 D_80112138_F3378_RollOutTheBarrels[6]; /* lose voice per character */
 extern s32 D_80112150_F3390_RollOutTheBarrels;
@@ -293,7 +293,7 @@ extern f32 D_80112228_F3468_RollOutTheBarrels[4];
 extern s32 D_80112238_F3478_RollOutTheBarrels;
 extern Vec D_8011223C_F347C_RollOutTheBarrels;
 extern f32 D_80112248_F3488_RollOutTheBarrels[2];
-extern RBStep* D_80112250_F3490_RollOutTheBarrels[4]; /* the shuffle steps of each round */
+extern RBStep* D_80112250_F3490_RollOutTheBarrels[5]; /* the shuffle steps of each round */
 extern u8 D_80112264_F34A4_RollOutTheBarrels[16]; /* step lengths */
 extern s32 D_80112274_F34B4_RollOutTheBarrels;
 extern s32 D_80112278_F34B8_RollOutTheBarrels;
@@ -351,6 +351,9 @@ extern Vec D_80112280_F34C0_RollOutTheBarrels[3];
 extern Vec D_801122A4_F34E4_RollOutTheBarrels;
 extern Vec D_801122B0_F34F0_RollOutTheBarrels[3];
 extern f32 D_801122D4_F3514_RollOutTheBarrels[3];
+extern Gfx D_801122E0_F3520_RollOutTheBarrels[];
+extern Gfx D_80112398_F35D8_RollOutTheBarrels[];
+extern Gfx D_801123B8_F35F8_RollOutTheBarrels[];
 extern Gfx D_801123D0_F3610_RollOutTheBarrels[]; /* a sprite model's setup list */
 extern f32 D_80112410_F3650_RollOutTheBarrels[4][2];
 extern f32 D_80112430_F3670_RollOutTheBarrels;
