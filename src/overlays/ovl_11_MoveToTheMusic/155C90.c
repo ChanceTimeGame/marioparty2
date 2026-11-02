@@ -932,7 +932,181 @@ void func_80106E84_15A314_MoveToTheMusic(s16 mdl, s16 val) {
     m->hmf->unk9C->unk08 = val;
 }
 
+#ifdef NON_MATCHING
+/* call set / control flow (retail 3,599 instructions, this 1,700; first draft, logic read from the asm, never run):
+   retail's rectangle macro takes the scale as an expression, so it re-tests the pulse and re-calls HuMathSin at
+   every use (45 jal; 7 in this C); HuMathSin is pure, so one `sc` per icon draws the same */
+/* Draw hook (func_8002838C): the staff (D_8010D748[0]) in 6 tiles, the step icons on it, the moving marker. */
+void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
+    HuSprite* sprs[12];
+    HuSprite_Unk84_Unk00_Struct* frames[12];
+    HuSprite* spr;
+    HuSprite_Unk84_Unk00_Struct* frame;
+    f64 sc;
+    s32 ix0;
+    s32 iy0;
+    s32 ix1;
+    s32 iy1;
+    s32 tc;
+    s32 step;
+    s32 fr;
+    s32 shift;
+    s32 tile;
+    s32 row;
+    s32 flag;
+    s32 k;
+    s32 cx;
+    s32 cy;
+    s32 beat;
+    s32 a;
+    s32 b;
+    s32 c;
+    s32 y;
+    s32 h;
+    u32 start;
+
+    fr = D_8010D798_160C28_MoveToTheMusic;
+    shift = 0;
+    if (D_8010D7CC_160C5C_MoveToTheMusic == 0 || D_8010D7CC_160C5C_MoveToTheMusic == 2 || D_8010D7CC_160C5C_MoveToTheMusic == 4 || D_8010D7CC_160C5C_MoveToTheMusic == 6) {
+        fr = D_8010D798_160C28_MoveToTheMusic - D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic];
+    }
+    if (D_8010D7CC_160C5C_MoveToTheMusic == 8) {
+        start = D_8010CBF0_160080_MoveToTheMusic[0] / 9;
+        if ((u32)D_8010D798_160C28_MoveToTheMusic >= start && D_8010CBF0_160080_MoveToTheMusic[0] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic) {
+            shift = (1.0 - func_800B7890_B8490((f32)(u32)(D_8010D798_160C28_MoveToTheMusic - start) / (f32)(D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic] * 4 / 9) * 180.0)) / 2.0 * 70.0;
+        }
+    }
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_8010CD78_160208_MoveToTheMusic);
+    spr = func_80082550_83150(D_800F93FC_F9FFC[D_8010D748_160BD8_MoveToTheMusic[0]].unk_04, 0);
+    frame = &spr->unk_84->unk00[spr->unk_90];
+    gDPSetTextureLUT(D_800FDBCC_FE7CC++, G_TT_RGBA16);
+    gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, spr->unk_84->unk0C);
+    MM_GFX(0xE8000000, 0);
+    MM_GFX(0xF5000100, 0x07000000);
+    MM_GFX(0xE6000000, 0);
+    MM_GFX(0xF0000000, 0x0703C000);
+    MM_GFX(0xE7000000, 0);
+    MM_GFX(0xFCFF97FF, 0xFF2CFE7F);
+    MM_GFX(0xFA000000, -0x5A);
+    if (D_8010D7CC_160C5C_MoveToTheMusic < 9 && (D_8010D7CC_160C5C_MoveToTheMusic != 8 || D_8010CBF0_160080_MoveToTheMusic[0] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic)) {
+        for (tile = 0; tile < 6; tile++) {
+            /* a CI8 tile of the 136-wide staff; the last one is shorter */
+            gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_CI, G_IM_SIZ_8b, 136, frame->unk00);
+            MM_GFX(tile == 5 ? 0xF5480400 : 0xF5480800, 0x070C0300);
+            MM_GFX(0xE6000000, 0);
+            MM_GFX(((tile * 100 & 0xFFF) << 12) | 0xF4000000,
+                   tile != 5 ? ((((tile * 50 + 50) * 2 & 0xFFF) << 12) | 0x07000040) : 0x07220040);
+            MM_GFX(0xE7000000, 0);
+            MM_GFX(tile == 5 ? 0xF5400400 : 0xF5400800, 0xC0300);
+            MM_GFX(((tile * 200 & 0xFFF) << 12) | 0xF2000000,
+                   tile != 5 ? ((((tile * 50 + 50) * 4 & 0xFFF) << 12) | 0x40) : 0x440040);
+            /* states 0, 1, 4, 5 show the solo's single line, the others all three */
+            for (row = (MM_SOLO_TURN() ? 1 : 0); row < 3 - (MM_SOLO_TURN() ? 1 : 0); row++) {
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (tile * 50 + 0x18) * 4.0, (row * 16 + shift + 0xB0) * 4.0,
+                                        tile != 5 ? (tile * 50 + 0x4A) * 4.0 : 0x4A0, (row * 16 + shift + 0xC0) * 4.0,
+                                        G_TX_RENDERTILE, tile * 0x640, 0, 0x400, 0x400);
+            }
+        }
+    }
+    MM_GFX(0xE7000000, 0);
+    MM_GFX(0xFCFFFFFF, 0xFFFCF279);
+    MM_GFX(0xE3001001, 0);
+    if (MM_SOLO_TURN()) {
+        for (tile = 0; tile < 6; tile++) {
+            if (D_8010D806_160C96_MoveToTheMusic[tile] != 0) {
+                k = D_8010D806_160C96_MoveToTheMusic[tile];
+                sprs[k] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[k]].unk_04, 0);
+                frames[k] = &sprs[k]->unk_84->unk00[sprs[k]->unk_90];
+                MM_ICON_LOAD(frames[k]);
+                cx = tile * 40 + 0x44 + 8;
+                cy = 200;
+                if (tile == (fr + 7) / 30 && fr + 7 >= 0 && D_8010D806_160C96_MoveToTheMusic[tile] == 1 && fr + 7 - tile * 30 < 15) {
+                    sc = 1.25f;
+                } else if (D_8010D728_160BB8_MoveToTheMusic[0] == tile && D_8010D770_160C00_MoveToTheMusic[0] != 0) {
+                    sc = (f32)(1.0 - (1.0 - (f32)(u32)D_8010D770_160C00_MoveToTheMusic[0] / 7.0f) * (1.0 - (f32)(u32)D_8010D770_160C00_MoveToTheMusic[0] / 7.0f) + 1.0);
+                } else {
+                    sc = 1.0f;
+                }
+                MM_ICON_RECT(cx, cy, sc);
+            }
+        }
+    } else if (MM_GROUP_TURN()) {
+        beat = (fr + 7) / 30;
+        for (tile = 0; tile < 6; tile++) {
+            if (D_8010D806_160C96_MoveToTheMusic[tile] != 0) {
+                for (row = 0; row < 3; row++) {
+                    if ((D_8010D722_160BB2_MoveToTheMusic[tile] >> row) & 1) {
+                        flag = D_8010D806_160C96_MoveToTheMusic[tile];
+                        if ((fr + 90) / 30 - 3 < tile) {
+                            flag = 1;
+                        }
+                        if (D_8010D741_160BD1_MoveToTheMusic[row] != 0) {
+                            flag = 9;
+                        }
+                        k = flag & 0xFF;
+                        sprs[k] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[k]].unk_04, 0);
+                        frames[k] = &sprs[k]->unk_84->unk00[sprs[k]->unk_90];
+                        MM_ICON_LOAD(frames[k]);
+                        sc = 1.0;
+                        if ((tile == beat) & (fr >= 0) && D_8010D806_160C96_MoveToTheMusic[beat] != 0 && fr % 30 < 7) {
+                            sc = HuMathSin((f32)(fr + 7 - beat * 30) / 15.0f * 180.0) * 0.75 + 1.0;
+                        }
+                        MM_ICON_RECT(tile * 40 + 0x4C, row * 16 + 0xB8, sc);
+                    }
+                }
+            }
+        }
+    }
+    if (D_8010D7CC_160C5C_MoveToTheMusic < 8) {
+        if (MM_GROUP_TURN()) {
+            sprs[10] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[10]].unk_04, 0);
+            frames[10] = &sprs[10]->unk_84->unk00[sprs[10]->unk_90];
+            gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, frames[10]->unk00);
+            MM_GFX(0xF5100000, 0x07080200);
+            MM_GFX(0xE6000000, 0);
+            MM_GFX(0xF3000000, 0x0735F200);
+            MM_GFX(0xE7000000, 0);
+            MM_GFX(0xF5100800, 0x80200);
+            MM_GFX(0xF2000000, 0x3C0D4);
+        } else {
+            sprs[0] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[0]].unk_04, 0);
+            frames[0] = &sprs[0]->unk_84->unk00[sprs[0]->unk_90];
+            gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, frames[0]->unk00);
+            MM_GFX(0xF5100000, 0x07080200);
+            MM_GFX(0xE6000000, 0);
+            MM_GFX(0xF3000000, 0x0713F200);
+            MM_GFX(0xE7000000, 0);
+            MM_GFX(0xF5100800, 0x80200);
+            MM_GFX(0xF2000000, 0x3C04C);
+        }
+        a = fr * 40 / 30 + 0x46;
+        if (a < 0x2A) {
+            a = 0x2A;
+        }
+        b = fr * 40 / 30 + 0x51;
+        if (b < 0x127 ? b >= a : a < 0x127) {
+            c = fr * 40 / 30 + 0x44;
+            y = MM_GROUP_TURN() ? 0xAD : 0xBE;
+            h = MM_GROUP_TURN() ? 0x36 : 0x14;
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (c < 0x2A ? 0x2A : c) * 4.0, y * 4.0,
+                                    (c + 16 < 0x127 ? c + 16 : 0x126) * 4.0, (y + h) * 4.0, G_TX_RENDERTILE,
+                                    c < 0x2A ? (0x2A - c) << 5 : 0, 0, 0x400, 0x400);
+        }
+        MM_GFX(0xFCFFFFFF, 0xFFFCF279);
+    }
+    D_8010D770_160C00_MoveToTheMusic[0] -= D_8010D770_160C00_MoveToTheMusic[0] != 0;
+    D_8010D770_160C00_MoveToTheMusic[1] -= D_8010D770_160C00_MoveToTheMusic[1] != 0;
+    D_8010D770_160C00_MoveToTheMusic[2] -= D_8010D770_160C00_MoveToTheMusic[2] != 0;
+    D_8010D770_160C00_MoveToTheMusic[3] -= D_8010D770_160C00_MoveToTheMusic[3] != 0;
+    MM_GFX(0xE7000000, 0);
+    MM_GFX(0xE200001C, 0x504240);
+    MM_GFX(0xE2001E01, 0);
+    MM_GFX(0xF9000000, 0);
+    MM_GFX(0xFA000000, -1);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80106EC8_15A358_MoveToTheMusic);
+#endif
 
 void func_8010A704_15DB94_MoveToTheMusic(s16 grp) {
     func_8010A730_15DBC0_MoveToTheMusic(grp, 0.0f, 0.0f, 1.0f);

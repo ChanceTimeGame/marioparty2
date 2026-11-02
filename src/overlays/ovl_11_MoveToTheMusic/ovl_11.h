@@ -65,6 +65,38 @@ typedef struct MMFiles11 {
 #define MM_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
 #define MM_STEP(a, b) (s32)(41.0 / ((f32)((s32)((b) * 4.0) - ((s32)((a) * 4.0) - ((b) < 0.0f ? 1 : 0)) - ((a) < 0.0f ? 1 : 0)) / 4.0) * 1024.0)
 
+/* 80106EC8's display list: words the SDK macros do not fit, one per command */
+#define MM_GFX(a, b)                                     \
+    {                                                    \
+        Gfx* g_ = D_800FDBCC_FE7CC++;                    \
+        g_->words.w0 = (a);                              \
+        g_->words.w1 = (b);                              \
+    }
+#define MM_SOLO_TURN() ((u16)D_8010D7CC_160C5C_MoveToTheMusic < 2U || (u32)((u16)D_8010D7CC_160C5C_MoveToTheMusic - 4) < 2U)
+#define MM_GROUP_TURN() ((u32)((u16)D_8010D7CC_160C5C_MoveToTheMusic - 2) < 2U || (u32)((u16)D_8010D7CC_160C5C_MoveToTheMusic - 6) < 2U)
+/* one 12x14 step icon */
+#define MM_ICON_LOAD(frame)                                                                        \
+    {                                                                                              \
+        gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, (frame)->unk00);    \
+        MM_GFX(0xF5100000, 0x07080200);                                                            \
+        MM_GFX(0xE6000000, 0);                                                                     \
+        MM_GFX(0xF3000000, 0x070A72AB);                                                            \
+        MM_GFX(0xE7000000, 0);                                                                     \
+        MM_GFX(0xF5100600, 0x80200);                                                               \
+        MM_GFX(0xF2000000, 0x2C034);                                                               \
+    }
+/* centred on (cx, cy), scaled by sc; a negative tex coordinate is why these stay ints, not doubles */
+#define MM_ICON_RECT(cx, cy, sc)                                                                   \
+    {                                                                                              \
+        ix0 = ((cx) - (sc) * 6.0) * 4.0 + 0.0;                                                     \
+        iy0 = ((cy) - (sc) * 7.0) * 4.0 - (sc) * 0.0 + 0.0;                                        \
+        ix1 = ((cx) + (sc) * 6.0) * 4.0 + 0.0;                                                     \
+        iy1 = ((cy) + (sc) * 7.0) * 4.0 + 0.0;                                                     \
+        tc = (1.0 / (sc) - 1.0) * 48.0;                                                            \
+        step = 1.0 / (sc) * 1024.0 + 0.5;                                                          \
+        gSPScisTextureRectangle(D_800FDBCC_FE7CC++, ix0, iy0, ix1, iy1, G_TX_RENDERTILE, tc, tc, step, step); \
+    }
+
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
 extern s16 D_800FA188_FAD88;
