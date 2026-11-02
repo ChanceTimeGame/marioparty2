@@ -15,6 +15,9 @@
 #include "game/collision.h"
 #include "game/malloc.h"
 
+/* MgWork 0x68: a float there, char padding in collision.h. */
+#define RB_W68(w) (*(f32*)(w)->unk_68)
+
 #define RB_WRAP(v)                 \
     if ((v) >= 360.0) {            \
         (v) -= 360.0;              \
@@ -90,6 +93,16 @@ typedef struct RBShape {
     /* 0x2C */ void (*hook)();
 } RBShape; /* size = 0x30 */
 
+/* A barrel (D_80112D68_F3FA8_RollOutTheBarrels, 6). */
+typedef struct RBBarrel {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ RBShape* shape;
+    /* 0x08 */ char unk_08[0x14];
+    /* 0x1C */ Vec pos;
+    /* 0x28 */ char unk_28[0x38];
+} RBBarrel; /* size = 0x60 */
+
 /* What SprAnimGet returns: only the size is read here. */
 typedef struct RBAnim {
     /* 0x00 */ char unk_00[0x14];
@@ -109,6 +122,7 @@ extern omObjData* D_800FFFD8_100BD8[];
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 extern u8 D_800FDBE0_FE7E0;
+extern u8 D_80102720_103320;
 extern s32 fontcolor;
 extern char pfStrBuf[];
 extern f32 D_800BF7A4_C03A4;
@@ -135,6 +149,8 @@ f32 func_800B75A8_B81A8(f32 y, f32 x);
 f64 func_800B0D98_B1998(f64 x, f64 y);
 void func_800B0EF0_B1AF0(void*, s32, s32);
 void* memcpy(void*, const void*, u32);
+f32 fabsf(f32);
+f64 fabs(f64);
 s16 LoadFormFile(s32, s32);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void func_80007790_8390(omObjData* obj);
@@ -215,7 +231,7 @@ extern omObjData* D_80112D3C_F3F7C_RollOutTheBarrels;
 extern s32 D_80112D50_F3F90_RollOutTheBarrels[4]; /* the player's fall/voice motions */
 extern RBPlayer* D_80112D60_F3FA0_RollOutTheBarrels;
 extern void* D_80112D64_F3FA4_RollOutTheBarrels;
-extern void* D_80112D68_F3FA8_RollOutTheBarrels;
+extern RBBarrel* D_80112D68_F3FA8_RollOutTheBarrels;
 extern RBShape* D_80112D6C_F3FAC_RollOutTheBarrels;
 extern void* D_80112D70_F3FB0_RollOutTheBarrels;
 extern void* D_80112D74_F3FB4_RollOutTheBarrels;
@@ -352,6 +368,6 @@ void func_80111AA0_F2CE0_RollOutTheBarrels(s32 arg0, s32 arg1);
 void func_80111B40_F2D80_RollOutTheBarrels(s32 arg0, Vec* pos, void* out);
 f32 func_80111F28_F3168_RollOutTheBarrels(f32 x, f32 z);
 void func_80111FA0_F31E0_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_80112000_F3240_RollOutTheBarrels(f32 arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4);
+void func_80112000_F3240_RollOutTheBarrels(f32 t, f32* a, f32* b, f32* c, f32* out);
 
 #endif
