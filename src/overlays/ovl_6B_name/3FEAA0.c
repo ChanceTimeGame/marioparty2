@@ -1,3 +1,6 @@
 #include "common.h"
+#include "ovl_6B.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6B_name/3FEAA0", func_80102800_3FEAA0_name_6B);
+void func_80102800_3FEAA0_name_6B(void) {
+    ExecBoardScene(D_80106210_4024B0_name_6B, D_800CD414_CE014);
+}
