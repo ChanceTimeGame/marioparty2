@@ -1,10 +1,299 @@
 #include "ovl_5C.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80107480_395340_name_5C);
+/* Sets the camera to a view of D_801129F0_3A08B0_name_5C. */
+void func_80107480_395340_name_5C(s16 view) {
+    f32 a;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80107660_395520_name_5C);
+    a = D_801129F0_3A08B0_name_5C[view].rot.x;
+    if (a >= 360.0f) {
+        a -= 360.0f;
+    } else if (a < 0.0f) {
+        a += 360.0f;
+    }
+    D_800FD474_FE074.x = a;
+    D_801129F4_3A08B4_name_5C.x = a;
+    a = D_801129F0_3A08B0_name_5C[view].rot.y;
+    if (a >= 360.0f) {
+        a -= 360.0f;
+    } else if (a < 0.0f) {
+        a += 360.0f;
+    }
+    D_800FD474_FE074.y = a;
+    D_801129F4_3A08B4_name_5C.y = a;
+    a = D_801129F0_3A08B0_name_5C[view].rot.z;
+    if (a >= 360.0f) {
+        a -= 360.0f;
+    } else if (a < 0.0f) {
+        a += 360.0f;
+    }
+    D_800FD474_FE074.z = a;
+    D_801129F4_3A08B4_name_5C.z = a;
+    D_8010274C_10334C = D_801129F0_3A08B0_name_5C[view].at;
+    D_800FA610_FB210 = D_801129F0_3A08B0_name_5C[view].zoom;
+}
 
+/* Moves the camera to a view over `time` frames; mode 1 eases out, 2 eases both ways, else
+   linear. `cb` (-1 none) gets { frame, time } each frame. */
+void func_80107660_395520_name_5C(s16 view, s16 time, s16 mode, void (*cb)(s16*)) {
+    Vec dr;
+    Vec da;
+    Vec r0;
+    Vec a0;
+    s16 arg[2];
+    Vec pad[3]; /* unused; retail's frame has it */
+    void (*fn)(s16*);
+    f32 d;
+    f32 s;
+    f32 a;
+    f32 dz;
+    f32 z0;
+    s16 i;
+
+    fn = cb;
+    d = D_801129F0_3A08B0_name_5C[view].rot.x - D_800FD474_FE074.x;
+    if (ABS(d) > 180.0f) {
+        if (D_801129F0_3A08B0_name_5C[view].rot.x < D_800FD474_FE074.x) {
+            dr.x = d + 360.0f;
+        } else {
+            dr.x = d - 360.0f;
+        }
+    } else {
+        dr.x = d;
+    }
+    d = D_801129F0_3A08B0_name_5C[view].rot.y - D_800FD474_FE074.y;
+    if (ABS(d) > 180.0f) {
+        if (D_801129F0_3A08B0_name_5C[view].rot.y < D_800FD474_FE074.y) {
+            dr.y = d + 360.0f;
+        } else {
+            dr.y = d - 360.0f;
+        }
+    } else {
+        dr.y = d;
+    }
+    d = D_801129F0_3A08B0_name_5C[view].rot.z - D_800FD474_FE074.z;
+    if (ABS(d) > 180.0f) {
+        if (D_801129F0_3A08B0_name_5C[view].rot.z < D_800FD474_FE074.z) {
+            dr.z = d + 360.0f;
+        } else {
+            dr.z = d - 360.0f;
+        }
+    } else {
+        dr.z = d;
+    }
+    da.x = D_801129F0_3A08B0_name_5C[view].at.x - D_8010274C_10334C.x;
+    da.y = D_801129F0_3A08B0_name_5C[view].at.y - D_8010274C_10334C.y;
+    da.z = D_801129F0_3A08B0_name_5C[view].at.z - D_8010274C_10334C.z;
+    dz = D_801129F0_3A08B0_name_5C[view].zoom - D_800FA610_FB210;
+    a0 = D_8010274C_10334C;
+    r0 = D_800FD474_FE074;
+    z0 = D_800FA610_FB210;
+    arg[1] = time;
+    if (mode == 1 || mode == 2) {
+        for (i = 0; i < time; i++) {
+            if (mode != 2) {
+                s = HuMathSin(i * 90.0f / time);
+            } else if (i <= time / 2) {
+                s = (1.0f - func_800B7890_B8490(i * 180.0f / time)) * 0.5f;
+            } else {
+                s = -func_800B7890_B8490(i * 180.0f / time) * 0.5f + 0.5f;
+            }
+            a = s * dr.x + r0.x;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.x = a;
+            D_801129F4_3A08B4_name_5C.x = a;
+            a = s * dr.y + r0.y;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.y = a;
+            D_801129F4_3A08B4_name_5C.y = a;
+            a = s * dr.z + r0.z;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.z = a;
+            D_801129F4_3A08B4_name_5C.x = a; /* retail: .x, not .z */
+            D_8010274C_10334C.x = s * da.x + a0.x;
+            D_8010274C_10334C.y = s * da.y + a0.y;
+            D_8010274C_10334C.z = s * da.z + a0.z;
+            D_800FA610_FB210 = s * dz + z0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    } else {
+        for (i = 0; i <= time; i++) {
+            s = 1.0f / time * i;
+            a = s * dr.x + r0.x;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.x = a;
+            D_801129F4_3A08B4_name_5C.x = a;
+            a = s * dr.y + r0.y;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.y = a;
+            D_801129F4_3A08B4_name_5C.y = a;
+            a = s * dr.z + r0.z;
+            if (a >= 360.0f) {
+                a -= 360.0f;
+            } else if (a < 0.0f) {
+                a += 360.0f;
+            }
+            D_800FD474_FE074.z = a;
+            D_801129F4_3A08B4_name_5C.x = a; /* retail: .x, not .z */
+            D_8010274C_10334C.x = s * da.x + a0.x;
+            D_8010274C_10334C.y = s * da.y + a0.y;
+            D_8010274C_10334C.z = s * da.z + a0.z;
+            D_800FA610_FB210 = s * dz + z0;
+            if (cb != (void*)-1) {
+                arg[0] = i;
+                fn(arg);
+            }
+            HuPrcVSleep();
+        }
+    }
+    func_80107480_395340_name_5C(view);
+}
+
+/* Flies the camera along a path of views by Catmull-Rom over node times; `cb` (-1 none) gets
+   (frames, node, frame). */
+// register allocation: loop setup order and the tail pointers (masked 16)
+#ifdef NON_MATCHING
+void func_80107F28_395DE8_name_5C(Ovl5CCamNode* path, f32 speed, void (*cb)(s16, s16, s16)) {
+    f32 p[4];
+    f32 tm[4];
+    void (*fn)(s16, s16, s16);
+    Ovl5CCamNode* prev = NULL;
+    Ovl5CCamNode* n;
+    s16 i;
+    s16 k;
+    f32 t;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 d;
+    f32 s;
+    f32 end;
+
+    fn = cb;
+    t = 0.0f;
+    i = 0;
+    n = path;
+    while (n->zoom != 0.0f) {
+        s = HuMathSin(n->rot.y);
+        s *= func_800B7890_B8490(n->rot.x);
+        s *= n->zoom;
+        s += n->at.x;
+        n->eye.x = s;
+        n->eye.y = -HuMathSin(n->rot.x) * n->zoom + n->at.y;
+        s = func_800B7890_B8490(n->rot.y);
+        s *= func_800B7890_B8490(n->rot.x);
+        s *= n->zoom;
+        s += n->at.z;
+        n->eye.z = s;
+        if (i > 0) {
+            dx = prev->eye.x - n->eye.x;
+            dy = prev->eye.y - n->eye.y;
+            dz = prev->eye.z - s;
+            d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+            if (d == 0.0f) {
+                d = speed * 10.0f;
+            }
+            t += d / speed;
+            n->t = t;
+        }
+        prev = n;
+        i++;
+        n = &path[i];
+    }
+    end = t - 10.0f;
+    k = 1;
+    i = 10;
+    if (i < end) {
+        do {
+            if (i > path[k + 1].t) {
+                k++;
+            }
+            n = k + path;
+            tm[0] = n[-1].t;
+            tm[1] = n[0].t;
+            tm[2] = n[1].t;
+            tm[3] = n[2].t;
+            p[0] = n[-1].at.x;
+            p[1] = n[0].at.x;
+            p[2] = n[1].at.x;
+            p[3] = n[2].at.x;
+            D_8010274C_10334C.x = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].at.y;
+            p[1] = n[0].at.y;
+            p[2] = n[1].at.y;
+            p[3] = n[2].at.y;
+            D_8010274C_10334C.y = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].at.z;
+            p[1] = n[0].at.z;
+            p[2] = n[1].at.z;
+            p[3] = n[2].at.z;
+            D_8010274C_10334C.z = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].rot.x;
+            p[1] = n[0].rot.x;
+            p[2] = n[1].rot.x;
+            p[3] = n[2].rot.x;
+            D_801129F4_3A08B4_name_5C.x = D_800FD474_FE074.x = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].rot.y;
+            p[1] = n[0].rot.y;
+            p[2] = n[1].rot.y;
+            p[3] = n[2].rot.y;
+            D_801129F4_3A08B4_name_5C.y = D_800FD474_FE074.y = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].rot.z;
+            p[1] = n[0].rot.z;
+            p[2] = n[1].rot.z;
+            p[3] = n[2].rot.z;
+            D_801129F4_3A08B4_name_5C.z = D_800FD474_FE074.z = func_8002662C_2722C(p, tm, i);
+            p[0] = n[-1].zoom;
+            p[1] = n[0].zoom;
+            p[2] = n[1].zoom;
+            p[3] = n[2].zoom;
+            D_800FA610_FB210 = func_8002662C_2722C(p, tm, i);
+            if (D_800FA610_FB210 >= 700.0f) {
+                Hu3DCamSetPerspective(0, D_80111C40_39FB00_name_5C, D_80112F24_3A0DE4_name_5C, D_80112F54_3A0E14_name_5C);
+            }
+            if (cb != (void*)-1) {
+                fn(end, k, i);
+            }
+            HuPrcVSleep();
+            i++;
+        } while (i < end);
+    }
+    n = &path[(s16)(k + 1)];
+    D_800FD474_FE074.x = D_801129F4_3A08B4_name_5C.x = n->rot.x;
+    D_800FD474_FE074.y = D_801129F4_3A08B4_name_5C.y = n->rot.y;
+    D_800FD474_FE074.z = D_801129F4_3A08B4_name_5C.z = n->rot.z;
+    D_800FA610_FB210 = n->zoom;
+    D_8010274C_10334C.x = n->at.x;
+    D_8010274C_10334C.y = n->at.y;
+    D_8010274C_10334C.z = n->at.z;
+    D_800F851A_F911A = 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80107F28_395DE8_name_5C);
+#endif
 
 void func_801084C4_396384_name_5C(void) {
     s16 last = -1;
@@ -277,9 +566,27 @@ void func_801094FC_3973BC_name_5C(Ovl5CModelDef* defs) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801095F0_3974B0_name_5C);
+void func_801095F0_3974B0_name_5C(Ovl5CModelDef* defs, s16 i, s16 model) {
+    Ovl5CModelDef* def = &defs[i];
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801096BC_39757C_name_5C);
+    func_80029714_2A314(model, def->pos.x * 5.0f * 0.5f, def->pos.y * 5.0f * 0.5f, def->pos.z * 5.0f * 0.5f);
+    func_8002979C_2A39C(model, def->rot.x, def->rot.y, def->rot.z);
+    func_800297E8_2A3E8(model, 0.5f, 0.5f, 0.5f);
+}
+
+/* Shows the models of one place (a list's `place` field) and hides the rest. */
+void func_801096BC_39757C_name_5C(Ovl5CModelDef* defs, s16 place) {
+    Ovl5CModelDef* def = defs;
+    s16 i;
+
+    for (i = 0; def->file != -1; def++, i++) {
+        if (def->place == place && !(def->attr & 4) && D_800FC834_FD434[D_80112F60_3A0E20_name_5C[i]].hmf->unk14 != 0) {
+            func_800298A4_2A4A4(D_80112F60_3A0E20_name_5C[i], 4, 0);
+        } else {
+            func_800298A4_2A4A4(D_80112F60_3A0E20_name_5C[i], 4, 4);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801097A4_397664_name_5C);
 

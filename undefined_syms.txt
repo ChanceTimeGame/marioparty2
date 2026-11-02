@@ -503,3 +503,4 @@ D_8010CF24_1E1604_ShellShocked = D_8010CF20_1E1600_ShellShocked + 0x4;
 D_801121E4_F3424_RollOutTheBarrels = D_801121E0_F3420_RollOutTheBarrels + 0x4;
 D_801121EC_F342C_RollOutTheBarrels = D_801121E8_F3428_RollOutTheBarrels + 0x4;
 D_80112414_F3654_RollOutTheBarrels = D_80112410_F3650_RollOutTheBarrels + 0x4;
+D_801114EC_39F3AC_name_5C = D_801114D8_39F398_name_5C + 0x14; /* S5-5C */
