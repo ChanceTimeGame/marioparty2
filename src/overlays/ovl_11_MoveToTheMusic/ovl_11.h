@@ -87,17 +87,17 @@ typedef struct MMFiles11 {
         MM_GFX(0xF5100600, 0x80200);                                                               \
         MM_GFX(0xF2000000, 0x2C034);                                                               \
     }
-/* centred on (cx, cy), scaled by sc; a negative tex coordinate is why these stay ints, not doubles */
+/* centred on (cx, cy), scaled by sc. Not ints first: an expression `sc` is evaluated at every use in
+   gSPScisTextureRectangle, which is how the group's pulse reaches 38 HuMathSin calls per icon */
+#define MM_ICON_X0(cx, sc) ((s32)(((cx) - (sc) * 6.0) * 4.0 + 0.0))
+#define MM_ICON_Y0(cy, sc) ((s32)(((cy) - (sc) * 7.0) * 4.0 - (sc) * 0.0 + 0.0))
+#define MM_ICON_X1(cx, sc) ((s32)(((cx) + (sc) * 6.0) * 4.0 + 0.0))
+#define MM_ICON_Y1(cy, sc) ((s32)(((cy) + (sc) * 7.0) * 4.0 + 0.0))
+#define MM_ICON_TC(sc) ((s32)((1.0 / (sc) - 1.0) * 48.0))
+#define MM_ICON_STEP(sc) ((s32)(1.0 / (sc) * 1024.0 + 0.5))
 #define MM_ICON_RECT(cx, cy, sc)                                                                   \
-    {                                                                                              \
-        ix0 = ((cx) - (sc) * 6.0) * 4.0 + 0.0;                                                     \
-        iy0 = ((cy) - (sc) * 7.0) * 4.0 - (sc) * 0.0 + 0.0;                                        \
-        ix1 = ((cx) + (sc) * 6.0) * 4.0 + 0.0;                                                     \
-        iy1 = ((cy) + (sc) * 7.0) * 4.0 + 0.0;                                                     \
-        tc = (1.0 / (sc) - 1.0) * 48.0;                                                            \
-        step = 1.0 / (sc) * 1024.0 + 0.5;                                                          \
-        gSPScisTextureRectangle(D_800FDBCC_FE7CC++, ix0, iy0, ix1, iy1, G_TX_RENDERTILE, tc, tc, step, step); \
-    }
+    gSPScisTextureRectangle(D_800FDBCC_FE7CC++, MM_ICON_X0(cx, sc), MM_ICON_Y0(cy, sc), MM_ICON_X1(cx, sc), \
+                            MM_ICON_Y1(cy, sc), G_TX_RENDERTILE, MM_ICON_TC(sc), MM_ICON_TC(sc), MM_ICON_STEP(sc), MM_ICON_STEP(sc))
 
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];

@@ -933,22 +933,15 @@ void func_80106E84_15A314_MoveToTheMusic(s16 mdl, s16 val) {
 }
 
 #ifdef NON_MATCHING
-/* call set / control flow (retail 3,599 instructions, this 1,700; first draft, logic read from the asm, never run):
-   retail's rectangle macro takes the scale as an expression, so it re-tests the pulse and re-calls HuMathSin at
-   every use (45 jal; 7 in this C); HuMathSin is pure, so one `sc` per icon draws the same */
+/* Register and branch-layout residue (GCC shares the ternary arms differently); every expression, call and store
+   checked against the asm. One rectangle per group icon really does evaluate the pulse at each macro use. */
 /* Draw hook (func_8002838C): the staff (D_8010D748[0]) in 6 tiles, the step icons on it, the moving marker. */
 void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
     HuSprite* sprs[12];
     HuSprite_Unk84_Unk00_Struct* frames[12];
     HuSprite* spr;
     HuSprite_Unk84_Unk00_Struct* frame;
-    f64 sc;
-    s32 ix0;
-    s32 iy0;
-    s32 ix1;
-    s32 iy1;
-    s32 tc;
-    s32 step;
+    f32 sc;
     s32 fr;
     s32 shift;
     s32 tile;
@@ -956,8 +949,8 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
     s32 flag;
     s32 k;
     s32 cx;
-    s32 cy;
     s32 beat;
+    s32 bfr;
     s32 a;
     s32 b;
     s32 c;
@@ -1002,8 +995,8 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
                    tile != 5 ? ((((tile * 50 + 50) * 4 & 0xFFF) << 12) | 0x40) : 0x440040);
             /* states 0, 1, 4, 5 show the solo's single line, the others all three */
             for (row = (MM_SOLO_TURN() ? 1 : 0); row < 3 - (MM_SOLO_TURN() ? 1 : 0); row++) {
-                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (tile * 50 + 0x18) * 4.0, (row * 16 + shift + 0xB0) * 4.0,
-                                        tile != 5 ? (tile * 50 + 0x4A) * 4.0 : 0x4A0, (row * 16 + shift + 0xC0) * 4.0,
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((tile * 50 + 0x18) * 4.0), (s32)((row * 16 + shift + 0xB0) * 4.0),
+                                        tile != 5 ? (s32)((tile * 50 + 0x4A) * 4.0) : 0x4A0, (s32)((row * 16 + shift + 0xC0) * 4.0),
                                         G_TX_RENDERTILE, tile * 0x640, 0, 0x400, 0x400);
             }
         }
@@ -1012,26 +1005,28 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
     MM_GFX(0xFCFFFFFF, 0xFFFCF279);
     MM_GFX(0xE3001001, 0);
     if (MM_SOLO_TURN()) {
+        bfr = fr + 7;
+        beat = bfr / 30;
         for (tile = 0; tile < 6; tile++) {
             if (D_8010D806_160C96_MoveToTheMusic[tile] != 0) {
                 k = D_8010D806_160C96_MoveToTheMusic[tile];
                 sprs[k] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[k]].unk_04, 0);
                 frames[k] = &sprs[k]->unk_84->unk00[sprs[k]->unk_90];
                 MM_ICON_LOAD(frames[k]);
-                cx = tile * 40 + 0x44 + 8;
-                cy = 200;
-                if (tile == (fr + 7) / 30 && fr + 7 >= 0 && D_8010D806_160C96_MoveToTheMusic[tile] == 1 && fr + 7 - tile * 30 < 15) {
+                cx = tile * 40 + 0x44;
+                if (tile == beat && bfr >= 0 && D_8010D806_160C96_MoveToTheMusic[tile] == 1 && bfr - tile * 30 < 15) {
                     sc = 1.25f;
                 } else if (D_8010D728_160BB8_MoveToTheMusic[0] == tile && D_8010D770_160C00_MoveToTheMusic[0] != 0) {
                     sc = (f32)(1.0 - (1.0 - (f32)(u32)D_8010D770_160C00_MoveToTheMusic[0] / 7.0f) * (1.0 - (f32)(u32)D_8010D770_160C00_MoveToTheMusic[0] / 7.0f) + 1.0);
                 } else {
                     sc = 1.0f;
                 }
-                MM_ICON_RECT(cx, cy, sc);
+                MM_ICON_RECT(cx + 8, 200, sc);
             }
         }
     } else if (MM_GROUP_TURN()) {
-        beat = (fr + 7) / 30;
+        bfr = fr + 7;
+        beat = bfr / 30;
         for (tile = 0; tile < 6; tile++) {
             if (D_8010D806_160C96_MoveToTheMusic[tile] != 0) {
                 for (row = 0; row < 3; row++) {
@@ -1047,11 +1042,10 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
                         sprs[k] = func_80082550_83150(D_800F93FC_F9FFC[D_8010D7F0_160C80_MoveToTheMusic[k]].unk_04, 0);
                         frames[k] = &sprs[k]->unk_84->unk00[sprs[k]->unk_90];
                         MM_ICON_LOAD(frames[k]);
-                        sc = 1.0;
-                        if ((tile == beat) & (fr >= 0) && D_8010D806_160C96_MoveToTheMusic[beat] != 0 && fr % 30 < 7) {
-                            sc = HuMathSin((f32)(fr + 7 - beat * 30) / 15.0f * 180.0) * 0.75 + 1.0;
-                        }
-                        MM_ICON_RECT(tile * 40 + 0x4C, row * 16 + 0xB8, sc);
+                        /* the beat's icon pulses for its first 7 frames */
+#define MM_PULSE (((tile == beat) & (fr >= 0)) && D_8010D806_160C96_MoveToTheMusic[beat] != 0 && fr % 30 < 7 ? HuMathSin((f32)(bfr - beat * 30) / 15.0f * 180.0) * 0.75 + 1.0 : 1.0)
+                        MM_ICON_RECT(tile * 40 + 0x4C, row * 16 + 0xB8, MM_PULSE);
+#undef MM_PULSE
                     }
                 }
             }
@@ -1088,8 +1082,8 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
             c = fr * 40 / 30 + 0x44;
             y = MM_GROUP_TURN() ? 0xAD : 0xBE;
             h = MM_GROUP_TURN() ? 0x36 : 0x14;
-            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (c < 0x2A ? 0x2A : c) * 4.0, y * 4.0,
-                                    (c + 16 < 0x127 ? c + 16 : 0x126) * 4.0, (y + h) * 4.0, G_TX_RENDERTILE,
+            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, c < 0x2A ? 0xA8 : (s32)(c * 4.0), (s32)(y * 4.0),
+                                    c + 16 < 0x127 ? (s32)((c + 16) * 4.0) : 0x498, (s32)((y + h) * 4.0), G_TX_RENDERTILE,
                                     c < 0x2A ? (0x2A - c) << 5 : 0, 0, 0x400, 0x400);
         }
         MM_GFX(0xFCFFFFFF, 0xFFFCF279);
