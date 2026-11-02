@@ -327,8 +327,10 @@ void func_8010C1C8_179B58_LightsOut(void);
 #define LO_KEEP_IN(o)                                                   \
     do {                                                                \
         f32 _x = (o)->trans.x;                                          \
-        f32 _z;                                                         \
-        if (_x * _x + (_z = (o)->trans.z, _z * _z) > 211600.0) {        \
+        f32 _d = _x * _x;                                               \
+        f32 _z = (o)->trans.z;                                          \
+        _d += _z * _z;                                                  \
+        if (_d > 211600.0) {                                            \
             f32 _a = func_80103DFC_17178C_LightsOut(_x, _z);            \
             (o)->trans.x = HuMathSin(_a) * 460.0;                       \
             (o)->trans.z = func_800B7890_B8490(_a) * 460.0;             \

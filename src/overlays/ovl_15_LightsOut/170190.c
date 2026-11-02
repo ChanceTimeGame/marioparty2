@@ -764,6 +764,7 @@ void func_80104D48_1726D8_LightsOut(LOSlot* slot) {
 void func_80104EEC_17287C_LightsOut(omObjData* obj) {
     LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
     MgWork* work = obj->unk_50;
+    f32 d;
     f32 x;
     f32 z;
     f32 a;
@@ -777,7 +778,10 @@ void func_80104EEC_17287C_LightsOut(omObjData* obj) {
     work->unk_3C = 0.0f;
     func_80007790_8390(obj);
     x = obj->trans.x;
-    if (x * x + (z = obj->trans.z, z * z) > 211600.0) {
+    d = x * x;
+    z = obj->trans.z;
+    d += z * z;
+    if (d > 211600.0) {
         a = func_80103DFC_17178C_LightsOut(x, z);
         obj->trans.x = HuMathSin(a) * 460.0;
         obj->trans.z = func_800B7890_B8490(a) * 460.0;
@@ -787,6 +791,7 @@ void func_80104EEC_17287C_LightsOut(omObjData* obj) {
 void func_801050E8_172A78_LightsOut(omObjData* obj) {
     LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];
     MgWork* work = obj->unk_50;
+    f32 d;
     f32 x;
     f32 z;
     f32 a;
@@ -801,7 +806,10 @@ void func_801050E8_172A78_LightsOut(omObjData* obj) {
     work->unk_3C = 0.0f;
     func_80007790_8390(obj);
     x = obj->trans.x;
-    if (x * x + (z = obj->trans.z, z * z) > 211600.0) {
+    d = x * x;
+    z = obj->trans.z;
+    d += z * z;
+    if (d > 211600.0) {
         a = func_80103DFC_17178C_LightsOut(x, z);
         obj->trans.x = HuMathSin(a) * 460.0;
         obj->trans.z = func_800B7890_B8490(a) * 460.0;
