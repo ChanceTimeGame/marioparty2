@@ -1,7 +1,5 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4C_name/325BC0", func_80102800_325BC0_name_4C);
-
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4C_name/325BC0", func_80102830_325BF0_name_4C);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4C_name/325BC0", func_8010286C_325C2C_name_4C);
