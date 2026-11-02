@@ -17,7 +17,7 @@
 typedef struct TSPlayer {
     /* 0x00 */ s8 id;
     /* 0x01 */ s8 group;     /* place in the band, 0-3 */
-    /* 0x02 */ u8 port;
+    /* 0x02 */ s8 port;
     /* 0x03 */ s8 character;
     /* 0x04 */ s8 cpu;       /* difficulty, -1 a human */
     /* 0x05 */ s8 press[36]; /* the CPU presses on this beat */
@@ -31,9 +31,16 @@ typedef struct TSSteps { s16 v[2][27]; } TSSteps;
 typedef struct TSTimes { s16 v[2][6]; } TSTimes;
 typedef struct TSBytes4 { s8 v[4]; } TSBytes4;
 typedef struct TSFloats4 { f32 v[4]; } TSFloats4;
+typedef struct TSDirs { s32 v[6]; } TSDirs;
+typedef struct TSPans { s16 v[4]; } TSPans;
 
 /* a step's ease: 0..1 */
 #define TS_ARC(t) ((t) * (t) * 0.5 + (t) * 0.5)
+
+/* a float screen position to 10.2, rounded towards zero by hand */
+#define TS_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
+/* texture step for 41 texels drawn from lo to hi */
+#define TS_STEP(hi, lo) ((s32)((41.0 / ((f32)((s32)((hi) * 4.0) + ((hi) < 0.0f ? 1 : 0) - (s32)((lo) * 4.0) - ((lo) < 0.0f ? 1 : 0)) / 4.0)) * 1024.0))
 
 /* ---- main-segment API missing from include/ ---- */
 typedef struct TSCharData {
@@ -42,7 +49,17 @@ typedef struct TSCharData {
     /* 0x08 */ char unk_08[0x10];
 } TSCharData; /* size = 0x18 */
 extern TSCharData D_800CD438_CE038[];
+typedef struct TSEspSlot {
+    /* 0x00 */ char unk_00[4];
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ char unk_06[0x1E];
+} TSEspSlot; /* size = 0x24 */
+extern TSEspSlot* D_800F93FC_F9FFC;
+extern Gfx* D_800FDBCC_FE7CC;
 extern HmfModel* D_800FC834_FD434;
+extern u16 D_801011FC_101DFC;
+extern u8 D_80102708_103308;
+extern u16 ContBtnTrg[];
 extern u8 D_800FA656;
 extern f32 D_800FA5BC_FB1BC[];
 extern f32 D_800F8410_F9010;
@@ -107,6 +124,7 @@ extern f32 D_8010CC7C_19090C_ToadBandstand[6];
 extern f32 D_8010CC94_190924_ToadBandstand[6];
 extern f32 D_8010CCAC_19093C_ToadBandstand[6];
 extern f32 D_8010CCC4_190954_ToadBandstand[7];
+extern Gfx D_8010CD30_1909C0_ToadBandstand[];
 extern u8 D_8010CD80_190A10_ToadBandstand[12];
 extern TSBytes4 D_8010CD8C_190A1C_ToadBandstand;
 extern TSBytes4 D_8010CD90_190A20_ToadBandstand;
@@ -118,9 +136,9 @@ extern TSBeats D_8010CEA8_190B38_ToadBandstand;
 extern TSBeats D_8010CEF0_190B80_ToadBandstand;
 extern TSSteps D_8010CF38_190BC8_ToadBandstand;
 extern TSTimes D_8010CFA4_190C34_ToadBandstand;
-extern s16 D_8010CFBC_190C4C_ToadBandstand[4];
+extern TSPans D_8010CFBC_190C4C_ToadBandstand;
 extern TSFloats4 D_8010CFC4_190C54_ToadBandstand;
-extern s32 D_8010CFD4_190C64_ToadBandstand[7];
+extern TSDirs D_8010CFD4_190C64_ToadBandstand;
 
 /* ---- rodata, shared by name ---- */
 extern const char D_8010D17C_190E0C_ToadBandstand[];
@@ -144,6 +162,7 @@ extern s32 D_8010D980_191610_ToadBandstand;
 extern s8 D_8010D984_191614_ToadBandstand;
 extern s32 D_8010D988_191618_ToadBandstand;
 extern u16 D_8010D990_191620_ToadBandstand[15];
+extern s32 D_8010D9B0_191640_ToadBandstand;
 extern s16 D_8010D9B4_191644_ToadBandstand[4];
 extern s32 D_8010D9BC_19164C_ToadBandstand;
 extern u8 D_8010D9C0_191650_ToadBandstand[2][36];
@@ -152,13 +171,14 @@ extern u8 D_8010DA40_1916D0_ToadBandstand;
 extern s16 D_8010DA42_1916D2_ToadBandstand[2];
 extern omObjData* D_8010DA68_1916F8_ToadBandstand;
 extern s32 D_8010DA6C_1916FC_ToadBandstand;
+extern s32 D_8010DA70_191700_ToadBandstand;
 extern omObjData* D_8010DA88_191718_ToadBandstand[4];
 extern s16 D_8010DA98_191728_ToadBandstand[4];
-extern s16 D_8010DAA0_191730_ToadBandstand;
+extern u16 D_8010DAA0_191730_ToadBandstand;
 extern u8 D_8010DAA2_191732_ToadBandstand[4];
 extern s8 D_8010DAA6_191736_ToadBandstand;
 extern s16 D_8010DAA8_191738_ToadBandstand[2];
-extern s8 D_8010DAAC_19173C_ToadBandstand;
+extern u8 D_8010DAAC_19173C_ToadBandstand;
 extern s8 D_8010DAAD_19173D_ToadBandstand[4];
 
 /* ---- functions ---- */
@@ -179,7 +199,7 @@ void func_801077B8_18B448_ToadBandstand(omObjData*);
 void func_801077D4_18B464_ToadBandstand(omObjData*);
 void func_801077F0_18B480_ToadBandstand(omObjData*);
 void func_8010780C_18B49C_ToadBandstand(omObjData*);
-void func_80107828_18B4B8_ToadBandstand(s8);
+void func_80107828_18B4B8_ToadBandstand(omObjData*, s8);
 void func_80109344_18CFD4_ToadBandstand(s16, s16);
 void func_80109388_18D018_ToadBandstand(Gfx**, s32, s32);
 void func_8010B6E4_18F374_ToadBandstand(s16);
