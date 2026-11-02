@@ -987,7 +987,7 @@ const u32 D_8010D390_191020_ToadBandstand[6] = { 0xC1200000, 0x00000000, 0x40200
 __asm__(".section .rodata");
 const u32 D_8010D3A8_191038_ToadBandstand[2] = { 0x00380028, 0x00480058 };
 
-/* NON_MATCHING: class 3/4: same calls and stores; loop hoisting, stack slots and one dead conversion differ (masked about 270) */
+/* NON_MATCHING: class 3/4: same calls and stores, but GCC cross-jumps the two c[i]++ (retail keeps both, recomputing the address after the call; 1 sh fewer); loop hoisting, stack slots and one dead conversion differ */
 #ifdef NON_MATCHING
 void func_80107828_18B4B8_ToadBandstand(omObjData* obj, s8 idx) {
     s16 hit[4] = { -2, -2, -2, -2 };
@@ -1255,7 +1255,7 @@ void func_80109344_18CFD4_ToadBandstand(s16 model, s16 frame) {
     m->hmf->unk9C->unk08 = frame;
 }
 
-/* NON_MATCHING: class 3: logic checked word by word against m2c; macro argument shapes still differ (masked about 660) */
+/* NON_MATCHING: class 4: same calls, stores and opcodes; register allocation and a few cross-jumped arms differ (n 2241/2263). The macro arguments stay inline: the macro repeats them and retail shows each copy. */
 #ifdef NON_MATCHING
 void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
     HuSprite* spr[16];
@@ -1271,10 +1271,7 @@ void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
     s32 id;
     s32 x;
     s32 y;
-    s32 xl;
-    s32 xh;
     s32 st;
-    s32 ds;
     s32 slot;
     s32 n;
     s32 t0;
@@ -1393,9 +1390,8 @@ void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
                             }
                         }
                         st = (s32)((1.0 / scale - 1.0) * 48.0);
-                        ds = (s32)(1.0 / scale * 1024.0 + 0.5);
                         gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((x + 8 - scale * 6.0) * 4.0 + 0.0), (s32)((y + 8 - scale * 8.0) * 4.0 - scale * 0.0 + 0.0),
-                                                (s32)((x + 8 + scale * 6.0) * 4.0 + 0.0), (s32)((y + 8 + scale * 8.0) * 4.0 + 0.0), G_TX_RENDERTILE, st, st, ds, ds);
+                                                (s32)((x + 8 + scale * 6.0) * 4.0 + 0.0), (s32)((y + 8 + scale * 8.0) * 4.0 + 0.0), G_TX_RENDERTILE, st, st, (s32)(1.0 / scale * 1024.0 + 0.5), (s32)(1.0 / scale * 1024.0 + 0.5));
                     }
                 }
             }
@@ -1423,9 +1419,7 @@ void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
                 p = a * 0x8A + (D_8010D988_191618_ToadBandstand - t0) * 0x90 / (D_8010DA28_1916B8_ToadBandstand[a][n * 2 - 1] - t0) + 0x16;
                 lo = a * 0x8A + 0x2B;
                 hi = a * 0x8A + 0x9C;
-                xh = hi < p + 16 ? hi : p + 16;
-                xl = p < lo ? lo : p;
-                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)(xl * 4.0), 0x2C0, (s32)(xh * 4.0), 0x37C, G_TX_RENDERTILE,
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((p < lo ? lo : p) * 4.0), 0x2C0, (s32)((p + 16 > hi ? hi : p + 16) * 4.0), 0x37C, G_TX_RENDERTILE,
                                         p < lo ? (lo - p) << 5 : 0, 0, 0x400, 0x400);
             }
         }
