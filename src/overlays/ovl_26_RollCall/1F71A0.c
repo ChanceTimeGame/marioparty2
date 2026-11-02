@@ -269,7 +269,6 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
     f32 x;
     f32 z;
     s16 i;
-    u16 n;
     u32 r;
     u8 t;
     omObjData* o;
@@ -287,8 +286,7 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
                 if (t == 0) {
                     p->unk_24 = 1;
                     t = 30 - rand8() % 15;
-                    n = t;
-                    goto store;
+                    p->unk_22 = t;
                 }
             }
         } else {
@@ -310,15 +308,12 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
                 if (t == 0) {
                     p->unk_24 = 1;
                     t = 30 - rand8() % 15;
-                    n = t;
-                    goto store;
+                    p->unk_22 = t;
                 }
             }
         }
     } else {
-        n = p->unk_22 - 1;
-    store:
-        p->unk_22 = n;
+        p->unk_22 = p->unk_22 - 1;
     }
     if (p->unk_24 == 0) {
         x = HuMathSin(obj->work[2] * 45.0f) * 10.0f + obj->trans.x;
@@ -1052,7 +1047,6 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
     f32 x;
     f32 z;
     s16 i;
-    u16 n;
     u32 r;
     u8 t;
     omObjData* o;
@@ -1071,8 +1065,7 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
                 if (t == 0) {
                     p->unk_24 = 1;
                     t = 30 - rand8() % 15;
-                    n = t;
-                    goto store;
+                    p->unk_22 = t;
                 }
             }
         } else {
@@ -1094,15 +1087,12 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
                 if (t == 0) {
                     p->unk_24 = 1;
                     t = 30 - rand8() % 15;
-                    n = t;
-                    goto store;
+                    p->unk_22 = t;
                 }
             }
         }
     } else {
-        n = p->unk_22 - 1;
-    store:
-        p->unk_22 = n;
+        p->unk_22 = p->unk_22 - 1;
     }
     if (p->unk_24 == 0) {
         x = HuMathSin(obj->work[2] * 45.0f) * 8.0f + obj->trans.x;

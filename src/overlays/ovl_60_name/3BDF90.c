@@ -869,6 +869,7 @@ void func_801053F0_3C0B50_name_60(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801053F0_3C0B50_name_60);
 #endif
 
+/* NON_MATCHING: stack frame only (retail 0x58 with locals 0x10 higher; calls and code agree) */
 #ifdef NON_MATCHING
 void func_801054EC_3C0C4C_name_60(void) {
     HmfModel* model;
@@ -878,13 +879,19 @@ void func_801054EC_3C0C4C_name_60(void) {
     s32 angle;
 
     D_8011494C_3D00AC_name_60 = 1;
+    s = 0.0f;
     model = &D_800FC834_FD434[D_801148F8_3D0058_name_60[2]];
     pos.x = model->pos.x;
     pos.y = model->pos.y;
     pos.z = model->pos.z;
     Hu3DCam3DToScreen(0, &pos, &screen);
     espPosSet(D_8011494A_3D00AA_name_60, screen.unk_00, 70);
-    for (s = 0.0f + 0.1f; !(s >= 1.0f); s += 0.1f) {
+    while (1) {
+        s += 0.1f;
+        if (s >= 1.0f) {
+            func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, 1.0f, 1.0f);
+            break;
+        }
         func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, s, s);
         espDispOn(D_8011494A_3D00AA_name_60);
         if (D_8011494C_3D00AC_name_60 == 0) {
@@ -893,7 +900,6 @@ void func_801054EC_3C0C4C_name_60(void) {
         HuPrcVSleep();
     }
     angle = 0;
-    func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, 1.0f, 1.0f);
     while (1) {
         if (angle > 180) {
             angle -= 180;
@@ -910,28 +916,29 @@ void func_801054EC_3C0C4C_name_60(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801054EC_3C0C4C_name_60);
 #endif
 
-#ifdef NON_MATCHING
 void func_801056A8_3C0E08_name_60(void) {
     f32 s;
 
     D_8011494C_3D00AC_name_60 = 0;
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, 0.0f, 0.0f);
+            break;
+        }
         func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, s, s);
         if (D_8011494C_3D00AC_name_60 != 0) {
             omDelPrcObj(NULL);
         }
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_8011494A_3D00AA_name_60, 0.0f, 0.0f);
     espDispOff(D_8011494A_3D00AA_name_60);
     omDelPrcObj(NULL);
     while (1) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801056A8_3C0E08_name_60);
-#endif
 
 #ifdef NON_MATCHING
 void func_8010578C_3C0EEC_name_60(void) {

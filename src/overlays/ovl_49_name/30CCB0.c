@@ -2932,7 +2932,7 @@ const char D_801147D8_31EC88_name_49[] = "%d";
 #ifdef NON_MATCHING
 void func_80107E10_3122C0_name_49(void) {
     GW_SYSTEM* gw;
-    s16 space;
+    s32 space;
     s32 bank;
     s32 choice;
     s32 roll;
@@ -3040,10 +3040,12 @@ void func_80107E10_3122C0_name_49(void) {
                     MBDlgWinExec(5, 0x230);
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
+                    HuPrcSleep(30);
                 } else if (D_800F8D18[0] == 0) {
                     MBDlgWinExec(5, 0x427);
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
+                    HuPrcSleep(30);
                 } else {
                     sprintf(buf, D_801147D8_31EC88_name_49, D_800F8D18[0]);
                     func_80056368_56F68(5, 0x426, buf, 0, 0, 0, 0);
@@ -3053,8 +3055,8 @@ void func_80107E10_3122C0_name_49(void) {
                     func_8004CA34_4D634(gw->current_player_index, D_800F8D18[0]);
                     func_800614B4_620B4(gw->current_player_index, D_800F8D18[0]);
                     D_800F8D18[0] = 0;
+                    HuPrcSleep(30);
                 }
-                HuPrcSleep(30);
             } else {
                 bank = 1;
                 if (D_800F8D12_F9912 != 0) {
@@ -5890,6 +5892,7 @@ void func_80111588_31BA38_name_49(s32 which) {
                         if (which != 0) {
                             D_800F8CE4_F98E4[which + 1] ^= 1;
                             dir.x = HuMathSin(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
+                            dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         } else {
                             MBDlgWinExec(5, 0x208);
                             func_80103F1C_30E3CC_name_49();
@@ -5915,8 +5918,8 @@ void func_80111588_31BA38_name_49(s32 which) {
                             func_80103FEC_30E49C_name_49();
                             D_800F8CE4_F98E4[which + 1] = sel;
                             dir.x = HuMathSin(D_80112E54_31D304_name_49[which][(s16)sel]);
+                            dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         }
-                        dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         MBPlayerVibrate(gw->current_player_index, 2);
                         func_80056B78_57778(&D_80114A74_31EF24_name_49[which]->rot, &dir, &D_80114A74_31EF24_name_49[which]->rot, 20);
                         PlaySound(0x404);

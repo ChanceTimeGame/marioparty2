@@ -513,18 +513,7 @@ void func_8010359C_3A0F8C_name_5D(void) {
         }
         if (ContBtnTrg[D_8010BA70_3A9460_name_5D] & 0x4000) {
             PlaySound(4);
-            D_8010CDF6_3AA7E6_name_5D = 0;
-            for (i = 0xF; i >= 0; i--) {
-                func_801045F0_3A1FE0_name_5D(cat, i);
-                HuPrcVSleep();
-            }
-            D_8010C564_3A9F54_name_5D = 1;
-            func_801082A0_3A5C90_name_5D(D_8010CE16_3AA806_name_5D + 0xA, 0xA, 1, func_80103580_3A0F70_name_5D);
-            D_8010BA78_3A9468_name_5D[0][0] = 160;
-            D_8010BA78_3A9468_name_5D[0][1] = 120;
-            func_801094E8_3A6ED8_name_5D(0);
-            D_8010CDF6_3AA7E6_name_5D = 1;
-            return;
+            break;
         }
         if (ContBtnTrg[D_8010BA70_3A9460_name_5D] & 0x8000) {
             PlaySound(2);
@@ -590,6 +579,17 @@ void func_8010359C_3A0F8C_name_5D(void) {
         }
         HuPrcVSleep();
     }
+    D_8010CDF6_3AA7E6_name_5D = 0;
+    for (i = 0xF; i >= 0; i--) {
+        func_801045F0_3A1FE0_name_5D(cat, i);
+        HuPrcVSleep();
+    }
+    D_8010C564_3A9F54_name_5D = 1;
+    func_801082A0_3A5C90_name_5D(D_8010CE16_3AA806_name_5D + 0xA, 0xA, 1, func_80103580_3A0F70_name_5D);
+    D_8010BA78_3A9468_name_5D[0][0] = 160;
+    D_8010BA78_3A9468_name_5D[0][1] = 120;
+    func_801094E8_3A6ED8_name_5D(0);
+    D_8010CDF6_3AA7E6_name_5D = 1;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_8010359C_3A0F8C_name_5D);
@@ -1124,8 +1124,6 @@ void func_80106208_3A3BF8_name_5D(s16 x0, s16 y0, s16 x1, s16 y1) {
     D_8010CC4C_3AA63C_name_5D = 1;
 }
 
-// control flow: shared espDispOff tail (19 calls equal, order by layout) (masked 21)
-#ifdef NON_MATCHING
 void func_80106238_3A3C28_name_5D(void) {
     s16 grp0;
     s16 grp1;
@@ -1173,16 +1171,16 @@ void func_80106238_3A3C28_name_5D(void) {
                 fading = 0;
                 a = 0;
             }
-            if (a == 0) {
-                espDispOff(spr0);
-                espDispOff(spr1);
-            } else {
+            if (a != 0) {
                 if (was == 0) {
                     espDispOn(spr0);
                     espDispOn(spr1);
                 }
                 func_8001A6BC_1B2BC(spr0, a);
                 func_8001A6BC_1B2BC(spr1, a);
+            } else {
+                espDispOff(spr0);
+                espDispOff(spr1);
             }
         }
         if (D_8010CC4C_3AA63C_name_5D != 0) {
@@ -1192,9 +1190,6 @@ void func_80106238_3A3C28_name_5D(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106238_3A3C28_name_5D);
-#endif
 
 // control flow and float locals: hoisted constants and stage order differ (masked 56)
 #ifdef NON_MATCHING
