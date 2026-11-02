@@ -1247,3 +1247,35 @@ void func_8010DAD8_2439B8_SlotCarDerby(s32 player, f32 speed) {
     SprAttrReset(group, 4, 0x8000);
     SprAttrSet(group, 5, 0x8000);
 }
+
+/* .data (0x2459E0-0x245B30, 8010FB00-8010FC50) */
+s32 D_8010FB00_2459E0_SlotCarDerby = 0;
+s32 D_8010FB04_2459E4_SlotCarDerby = 0;
+s32 D_8010FB08_2459E8_SlotCarDerby = 0;
+s32 D_8010FB0C_2459EC_SlotCarDerby = 0;
+s32 D_8010FB10_2459F0_SlotCarDerby = 0;
+s32 D_8010FB14_2459F4_SlotCarDerby = 0;
+s32 D_8010FB18_2459F8_SlotCarDerby = 0;
+s32 D_8010FB1C_2459FC_SlotCarDerby = 0;
+Vec D_8010FB20_245A00_SlotCarDerby[3] = {
+    { 80.0f, 37.0f, -30.0f }, { -80.0f, 37.0f, 0.0f }, { -40.0f, 167.0f, -40.0f },
+};
+Vec D_8010FB44_245A24_SlotCarDerby[3] = {
+    { 80.0f, 20.0f, -30.0f }, { -80.0f, 20.0f, 0.0f }, { -40.0f, 150.0f, -40.0f },
+};
+s32 D_8010FB68_245A48_SlotCarDerby[7] = { 0, 16, 28, 48, 60, 4, 36 };
+s32 D_8010FB84_245A64_SlotCarDerby[7] = { 5, 0, 0, 0, 0, 10, 11 };
+s32 D_8010FBA0_245A80_SlotCarDerby[3] = { 5, 6, 7 };
+Vec D_8010FBAC_245A8C_SlotCarDerby[5] = {
+    { 320.0f, 60.0f, -400.0f }, { 0.0f, 20.0f, -360.0f }, { -320.0f, 40.0f, -400.0f },
+    { 360.0f, 80.0f, -210.0f }, { -320.0f, 90.0f, -120.0f },
+};
+s32 D_8010FBE8_245AC8_SlotCarDerby[3] = { 5, 6, 7 };
+s32 D_8010FBF4_245AD4_SlotCarDerby = 0;
+s32 D_8010FBF8_245AD8_SlotCarDerby[6] = { 30, 2, 27, 2, 27, 2 };
+s32 D_8010FC10_245AF0_SlotCarDerby[6] = { 0, 0, 0, 0, 0, 0 };
+s16 D_8010FC28_245B08_SlotCarDerby[4] = { 0, 0x3000, 0x2000, 0 };
+s16 D_8010FC30_245B10_SlotCarDerby[4][2] = { { 30, 28 }, { 290, 28 }, { 30, 200 }, { 290, 200 } };
+s16 D_8010FC40_245B20_SlotCarDerby = 0;
+s16 D_8010FC42_245B22_SlotCarDerby = 0; /* padding */
+s32 D_8010FC44_245B24_SlotCarDerby[3] = { 0, 0, 0 }; /* padding */
