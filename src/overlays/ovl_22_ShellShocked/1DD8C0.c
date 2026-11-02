@@ -320,7 +320,7 @@ void func_80109D08_1DE3E8_ShellShocked(void) {
         tank->cooldown = 0;
         func_8010C0A0_1E0780_ShellShocked(i, 2);
         m = LoadFormFile(0x32000B, 0x299);
-        tank->blowMdl = m;
+        tank->blow.mdl = m;
         func_80029714_2A314(m, 0.0f, 200.0f, (f32)i * 100.0f);
         func_8002979C_2A39C(m, 0.0f, 0.0f, 0.0f);
         func_800297E8_2A3E8(m, 1.0f, 1.0f, 1.0f);
@@ -346,12 +346,11 @@ void func_80109D08_1DE3E8_ShellShocked(void) {
     }
 }
 
-// control flow (masked 15, 199 vs 195 instructions)
-#ifdef NON_MATCHING
 void func_80109F4C_1DE62C_ShellShocked(void) {
     omObjData* obj;
     s32 i;
     s32 state;
+    s32 j;
 
     obj = func_80103884_1D7F64_ShellShocked(2);
     func_80105304_1D99E4_ShellShocked();
@@ -359,9 +358,10 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
     for (i = 0; i < 4; i++) {
         D_8010DFD8_1E26B8_ShellShocked = i;
         func_8010991C_1DDFFC_ShellShocked(i);
-        func_80029714_2A314(obj->model[i + 1], D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.y, D_8010DA80_1E2160_ShellShocked[i].pos.z);
-        func_8002979C_2A39C(obj->model[i + 1], D_8010DA80_1E2160_ShellShocked[i].rot.x, D_8010DA80_1E2160_ShellShocked[i].rot.y, D_8010DA80_1E2160_ShellShocked[i].rot.z);
-        func_80029E80_2AA80(obj->model[i + 1], 2, 2);
+        j = i + 1;
+        func_80029714_2A314(obj->model[j], D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.y, D_8010DA80_1E2160_ShellShocked[i].pos.z);
+        func_8002979C_2A39C(obj->model[j], D_8010DA80_1E2160_ShellShocked[i].rot.x, D_8010DA80_1E2160_ShellShocked[i].rot.y, D_8010DA80_1E2160_ShellShocked[i].rot.z);
+        func_80029E80_2AA80(obj->model[j], 2, 2);
         state = func_80103898_1D7F78_ShellShocked();
         switch (state) {
         case 4:
@@ -373,8 +373,8 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
                     D_8010DA80_1E2160_ShellShocked[i].alive = 0;
                     D_8010DA80_1E2160_ShellShocked[i].state = 4;
                     D_8010DA80_1E2160_ShellShocked[i].blowTimer = 0x1E;
-                    func_800298A4_2A4A4(D_8010DA80_1E2160_ShellShocked[i].blowMdl, 4, 0);
-                    func_800B3170_B3D70(&D_8010DA80_1E2160_ShellShocked[i].blowPos, &D_8010DA80_1E2160_ShellShocked[i].pos);
+                    func_800298A4_2A4A4(D_8010DA80_1E2160_ShellShocked[i].blow.mdl, 4, 0);
+                    func_800B3170_B3D70(&D_8010DA80_1E2160_ShellShocked[i].blow.pos, &D_8010DA80_1E2160_ShellShocked[i].pos);
                     func_8010C66C_1E0D4C_ShellShocked(i);
                     func_8010C5C0_1E0CA0_ShellShocked(i);
                     func_8010C7E4_1E0EC4_ShellShocked(i);
@@ -395,9 +395,6 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_80109F4C_1DE62C_ShellShocked);
-#endif
 
 void func_8010A19C_1DE87C_ShellShocked(omObjData* obj) {
     func_80109D08_1DE3E8_ShellShocked();
@@ -674,12 +671,12 @@ void func_8010B0E4_1DF7C4_ShellShocked(s32 i) {
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     mdl = func_80103884_1D7F64_ShellShocked(2)->model[i + 1];
-    blow = tank->blowMdl;
+    blow = tank->blow.mdl;
     if (tank->blowTimer != 0) {
         tank->blowTimer--;
         t = (10.0f - (f32)tank->blowTimer) * 0.1f;
         sqrtf(ABS(t));
-        func_80029714_2A314(blow, tank->blowPos.x, tank->blowPos.y, tank->blowPos.z);
+        func_80029714_2A314(blow, tank->blow.pos.x, tank->blow.pos.y, tank->blow.pos.z);
         func_8002979C_2A39C(blow, 0.0f, 0.0f, 0.0f);
         func_800297E8_2A3E8(blow, 1.0f, 1.0f, 1.0f);
         tank->motA->unk34.x += 40.0f;
@@ -720,7 +717,7 @@ void func_8010B3EC_1DFACC_ShellShocked(s32 i) {
     s16 m;
     f32 t;
 
-    m = D_8010DA80_1E2160_ShellShocked[i].blowMdl;
+    m = D_8010DA80_1E2160_ShellShocked[i].blow.mdl;
     t = func_80029CE4_2A8E4(m);
     if (func_80029D0C_2A90C(m) <= t) {
         func_800298A4_2A4A4(m, 4, 4);

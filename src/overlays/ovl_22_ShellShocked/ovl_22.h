@@ -70,6 +70,12 @@ typedef struct SSShell {
     /* 0x28 */ HmfMotionObj* mot;
 } SSShell; /* size = 0x2C (N64) */
 
+/* A tank's explosion. */
+typedef struct SSBlow {
+    /* 0x00 */ s16 mdl;
+    /* 0x04 */ Vec pos;
+} SSBlow; /* size = 0x10 */
+
 /* A tank, D_8010DA80_1E2160_ShellShocked[4]. */
 typedef struct SSTank {
     /* 0x000 */ s32 chr;
@@ -96,9 +102,7 @@ typedef struct SSTank {
     /* 0x074 */ char unk_74[8];
     /* 0x07C */ SSShell shell[1];
     /* 0x0A8 */ char unk_A8[0x84];
-    /* 0x12C */ s16 blowMdl;
-    /* 0x12E */ char unk_12E[2];
-    /* 0x130 */ Vec blowPos;
+    /* 0x12C */ SSBlow blow; /* retail takes &tank->blow and steps to .pos */
     /* 0x13C */ char unk_13C[4];
     /* 0x140 */ s16 hudSpr;
     /* 0x142 */ s16 hudGrp;
