@@ -282,7 +282,30 @@ s16 func_8007356C_7416C(s32 str) {
     return choice;
 }
 
-INCLUDE_ASM("asm/nonmatchings/73BA0", func_80073688_74288);
+void func_8008D88C_8E48C(s16);
+void func_8008D904_8E504(s16 winId, s32 str, s8 idx);
+
+/* Opens a message window with `str`, else the current entry's name (D_800CD220_CDE20). */
+s16 func_80073688_74288(s32 str) {
+    s16 index = D_800E20B0_E2CB0;
+    s16 win;
+
+    PlaySound(0);
+    win = func_800888A8_894A8(0x48, 0x96, 0xAD, 0x30, 0, 0);
+    func_80089A7C_8A67C(win, 5);
+    func_80089B2C_8A72C(win, 0xDC);
+    func_8008D88C_8E48C(win);
+    if (str == 0) {
+        if (index != -2) {
+            func_8008D904_8E504(win, D_800CD220_CDE20[index].flag + 0x3D9, 0);
+        }
+    } else {
+        func_800890CC_89CCC(win, str, -1, -1);
+    }
+    func_80089A48_8A648(win, 0);
+    PlaySound(0);
+    return win;
+}
 
 void func_80073790_74390(void) {
     Vec pos;

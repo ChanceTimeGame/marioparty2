@@ -344,7 +344,39 @@ void func_80051054_51C54(void) {
     osDestroyThread(NULL);
 }
 
-INCLUDE_ASM("asm/nonmatchings/51630", func_800510CC_51CCC);
+extern u8 D_800E14A0_E20A0[0x400]; /* LZ sliding window */
+
+/* MP3 HuDecodeLZ from memory: LZSS with a 1 KiB window starting at 0x3BE. */
+void func_800510CC_51CCC(u8* src, u8* dest, s32 len) {
+    u16 flag = 0;
+    u16 windowPos = 0x3BE;
+    s32 i;
+    s32 byte1;
+    s32 count;
+
+    bzero(D_800E14A0_E20A0, 0x400);
+    while (len != 0) {
+        flag >>= 1;
+        if (!(flag & 0x100)) {
+            flag = *src++ | 0xFF00;
+        }
+        if (flag & 1) {
+            D_800E14A0_E20A0[windowPos++] = *dest++ = *src++;
+            windowPos &= 0x3FF;
+            len--;
+        } else {
+            byte1 = *src++;
+            count = *src++;
+            byte1 |= (count & ~0x3F) << 2;
+            count = (count & 0x3F) + 3;
+            for (i = 0; i < count; i++) {
+                D_800E14A0_E20A0[windowPos++] = *dest++ = D_800E14A0_E20A0[(byte1 + i) & 0x3FF];
+                windowPos &= 0x3FF;
+            }
+            len -= i;
+        }
+    }
+}
 
 void func_80051204_51E04(u8 *input, u8 *output, s32 compressedSize) {
     u8 *src = input + 4;       // Skip metadata
