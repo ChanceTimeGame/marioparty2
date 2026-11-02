@@ -52,6 +52,8 @@ typedef struct MMFiles11 {
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
 extern s16 D_800FA188_FAD88;
+extern s8 ContStkX[];
+extern s8 ContStkY[];
 extern u8 D_800FA656;
 extern u16 D_801011FC_101DFC;
 extern s8 D_80102708_103308;
@@ -137,7 +139,8 @@ extern u32 D_8010CBF0_160080_MoveToTheMusic[];
 extern u8 D_8010CC00_160090_MoveToTheMusic[2][6];
 extern u8 D_8010CC05_160095_MoveToTheMusic; /* [0][5] */
 extern u8 D_8010CC06_160096_MoveToTheMusic[6]; /* [1] */
-extern s16 D_8010CC0C_16009C_MoveToTheMusic[];
+extern s32 D_8010CC0C_16009C_MoveToTheMusic[][7]; /* sounds; read as s16 */
+extern s32 D_8010CCB4_160144_MoveToTheMusic[][8]; /* sound delays; read as s16 */
 extern Gfx D_8010CD78_160208_MoveToTheMusic[];
 extern Gfx D_8010CDC8_160258_MoveToTheMusic[];
 

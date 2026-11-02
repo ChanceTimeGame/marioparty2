@@ -623,7 +623,309 @@ void func_80105A74_158F04_MoveToTheMusic(omObjData* obj) {
 __asm__(".section .rodata");
 const u32 D_8010CFD0_160460_MoveToTheMusic[2] = { 0x00400020, 0x00400060 };
 
+#ifdef NON_MATCHING
+/* register/schedule and frame (masked ~140; logic checked against the asm): retail's frame is 0x20 smaller and it
+   has branch-likely forms of `if (x > 0) x--` that this form turns into flag arithmetic. `unused` is retail: the
+   same pan table is copied there and never read */
+void func_80105A90_158F20_MoveToTheMusic(omObjData* obj, s8 player) {
+    MMPlayer* pl;
+    s16* p;
+    s16* m;
+    s8* o;
+    s32 mdl;
+    s32 v;
+    s32 d;
+    s32 frame;
+    s32 prev;
+    s32 beat;
+    s32 btn;
+    s32 dirx;
+    s32 diry;
+    s16 flickx;
+    s16 flicky;
+    s32 b;
+    s16 s;
+    s32 t;
+    f32 f;
+
+    pl = D_8010D708_160B98_MoveToTheMusic[player];
+    frame = D_8010D798_160C28_MoveToTheMusic;
+    prev = D_8010D75C_160BEC_MoveToTheMusic;
+    btn = 0;
+    if (D_8010D7CC_160C5C_MoveToTheMusic == 0 || D_8010D7CC_160C5C_MoveToTheMusic == 2 || D_8010D7CC_160C5C_MoveToTheMusic == 4 || D_8010D7CC_160C5C_MoveToTheMusic == 6) {
+        frame = D_8010D798_160C28_MoveToTheMusic - D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic];
+    }
+    beat = (frame + 15) / 30;
+    if (D_8010D7CC_160C5C_MoveToTheMusic != 8 && D_8010D7CC_160C5C_MoveToTheMusic != 9 && D_8010D7CC_160C5C_MoveToTheMusic != 10 && D_8010D7CC_160C5C_MoveToTheMusic != 11) {
+        if ((u16)D_8010D7CC_160C5C_MoveToTheMusic == 0) {
+            if (D_8010D798_160C28_MoveToTheMusic >= 30) {
+                if (D_8010D75C_160BEC_MoveToTheMusic < 30) {
+                    func_80029BF0_2A7F0(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], func_80029E14_2AA14(obj->model[3]), 15, 15, 2);
+                    m = obj->model;
+                    if (D_8010D7D8_160C68_MoveToTheMusic[player] == 0) {
+                        m++;
+                    }
+                    func_80029B80_2A780(*m, obj->model[3]);
+                    func_80029E80_2AA80(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], 2, 2);
+                }
+                if (D_8010D798_160C28_MoveToTheMusic >= 30) {
+                    goto update;
+                }
+            }
+        } else {
+        update:
+            if (D_8010D768_160BF8_MoveToTheMusic[player] > 0 && D_8010D768_160BF8_MoveToTheMusic[player] - (s16)((u16)D_8010D7E8_160C78_MoveToTheMusic - (u16)D_8010D760_160BF0_MoveToTheMusic) * 2 <= 0) {
+                D_8010D768_160BF8_MoveToTheMusic[player] = 0;
+                if (D_8010D708_160B98_MoveToTheMusic[player]->cell > 0 && D_8010D741_160BD1_MoveToTheMusic[D_8010D708_160B98_MoveToTheMusic[player]->cell - 1] != 0) {
+                    func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->motion[0xD]);
+                    func_80029E80_2AA80(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], 3, 0);
+                } else {
+                    func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->model[3]);
+                    func_80029E80_2AA80(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], 2, 2);
+                }
+                if (pl->cell != 0) {
+                    func_800298A4_2A4A4(D_8010D764_160BF4_MoveToTheMusic->model[8 + pl->cell], 4, 4);
+                }
+            }
+            D_8010D768_160BF8_MoveToTheMusic[player] = D_8010D768_160BF8_MoveToTheMusic[player] <= 0 ? D_8010D768_160BF8_MoveToTheMusic[player] : D_8010D768_160BF8_MoveToTheMusic[player] - (D_8010D7E8_160C78_MoveToTheMusic - D_8010D760_160BF0_MoveToTheMusic) * 2;
+            if (D_8010D708_160B98_MoveToTheMusic[player]->cell == 0 || D_8010D741_160BD1_MoveToTheMusic[D_8010D708_160B98_MoveToTheMusic[player]->cell - 1] == 0) {
+                mdl = obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]];
+                if (D_8010D768_160BF8_MoveToTheMusic[player] > 0) {
+                    f = (f32)(D_8010D738_160BC8_MoveToTheMusic[player] - D_8010D768_160BF8_MoveToTheMusic[player]) / 30.0f;
+                } else {
+                    f = (f32)((D_8010D798_160C28_MoveToTheMusic + 7) % 15) / 15.0f;
+                }
+                func_80029C74_2A874(mdl, f * 30.0);
+            }
+        }
+        if (pl->cell == 0 && D_8010D798_160C28_MoveToTheMusic < D_8010D75C_160BEC_MoveToTheMusic && D_8010D7CC_160C5C_MoveToTheMusic == 4) {
+            D_8010D728_160BB8_MoveToTheMusic[0] = -1;
+        }
+        if (pl->cell != 0 && D_8010D798_160C28_MoveToTheMusic < D_8010D75C_160BEC_MoveToTheMusic && (D_8010D7CC_160C5C_MoveToTheMusic == 2 || D_8010D7CC_160C5C_MoveToTheMusic == 6)) {
+            D_8010D728_160BB8_MoveToTheMusic[pl->cell] = -1;
+        }
+        if (pl->cpu != -1) {
+            if (pl->cpu >= -1) {
+                if (pl->cpu < 4) {
+                    if (D_8010D7CC_160C5C_MoveToTheMusic == 1 || D_8010D7CC_160C5C_MoveToTheMusic == 5) {
+                        if (D_8010D728_160BB8_MoveToTheMusic[pl->cell] < beat) {
+                            if (((D_8010D7CC_160C5C_MoveToTheMusic >= 5 ? pl->step[1] : pl->step[0])[beat] != 0 & beat >= 0) && beat < 6 && D_8010D806_160C96_MoveToTheMusic[beat] != 0) {
+                                d = (frame + 110) % 30 - 20;
+                                o = pl->offs[0];
+                                if (D_8010D7CC_160C5C_MoveToTheMusic >= 4) {
+                                    o = pl->offs[1];
+                                }
+                                if (d >= o[beat]) {
+                                    btn = (D_8010D7CC_160C5C_MoveToTheMusic >= 5 ? pl->step[1] : pl->step[0])[beat];
+                                }
+                            }
+                        }
+                    } else if ((D_8010D7CC_160C5C_MoveToTheMusic == 3 || D_8010D7CC_160C5C_MoveToTheMusic == 7) && D_8010D728_160BB8_MoveToTheMusic[pl->cell] < beat) {
+                            if (((D_8010D7CC_160C5C_MoveToTheMusic >= 5 ? pl->step[1] : pl->step[0])[beat] != 0 & beat >= 0) && beat < 6 && D_8010D806_160C96_MoveToTheMusic[beat] != 0) {
+                                d = (frame + 95) % 30 - 5;
+                                o = pl->offs[0];
+                                if (D_8010D7CC_160C5C_MoveToTheMusic >= 4) {
+                                    o = pl->offs[1];
+                                }
+                                if (d >= o[beat]) {
+                                    t = (D_8010D7CC_160C5C_MoveToTheMusic >= 5 ? pl->step[1] : pl->step[0])[beat];
+                                    if (t == 1) {
+                                        if (D_8010D806_160C96_MoveToTheMusic[beat] == t) {
+                                            btn = (u8)(rand8() % 7) + 2;
+                                        } else {
+                                            btn = D_8010D806_160C96_MoveToTheMusic[beat];
+                                        }
+                                    } else {
+                                        btn = (D_8010D806_160C96_MoveToTheMusic[beat] == 2 ? 3 : 0) | 2;
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        } else {
+            v = ContStkX[pl->port];
+            t = v > 0;
+            if (v < 0) {
+                t = -1;
+            }
+            dirx = t;
+            if (fabs(ContStkX[pl->port]) <= fabs(ContStkY[pl->port])) {
+                dirx = 0;
+            }
+            v = ContStkY[pl->port];
+            t = v > 0;
+            if (v < 0) {
+                t = -1;
+            }
+            diry = t;
+            if (fabs(ContStkX[pl->port]) > fabs(ContStkY[pl->port])) {
+                diry = 0;
+            }
+            if ((s16)dirx >= 0 || ContStkX[pl->port] >= D_8010D79C_160C2C_MoveToTheMusic[player]) {
+                flickx = 0;
+                if ((s16)dirx > 0) {
+                    flickx = D_8010D79C_160C2C_MoveToTheMusic[player] < ContStkX[pl->port];
+                }
+            } else {
+                flickx = -1;
+            }
+            if ((s16)diry >= 0 || ContStkY[pl->port] >= D_8010D7A4_160C34_MoveToTheMusic[player]) {
+                flicky = 0;
+                if ((s16)diry > 0) {
+                    flicky = D_8010D7A4_160C34_MoveToTheMusic[player] < ContStkY[pl->port];
+                }
+            } else {
+                flicky = -1;
+            }
+            D_8010D79C_160C2C_MoveToTheMusic[player] = ContStkX[pl->port];
+            D_8010D7A4_160C34_MoveToTheMusic[player] = ContStkY[pl->port];
+            b = ContBtnTrg[pl->port];
+            if (!(b & 0x8000)) {
+                if (!(b & 0x4000)) {
+                    b = (b & 0x2000) ? 3 : 0;
+                } else {
+                    b = 2;
+                }
+            } else {
+                b = 1;
+            }
+            if (flicky != 1) {
+                if (flicky != -1) {
+                    btn = 8;
+                    if (flickx != 1) {
+                        if (flickx != -1) {
+                            v = b;
+                            if (v > 0) {
+                                btn = v + 1;
+                            } else {
+                                btn = 0;
+                            }
+                        } else {
+                            btn = 7;
+                        }
+                    }
+                } else {
+                    btn = 6;
+                }
+            } else {
+                btn = 5;
+            }
+        }
+        switch (D_8010D7CC_160C5C_MoveToTheMusic) {
+        case 0:
+        case 1:
+        case 4:
+        case 5:
+            if (pl->cell == 0) {
+                if (((frame + 7) % 30 < 15 & frame >= -14) && (u32)beat < 6 && (D_8010D806_160C96_MoveToTheMusic[beat] == 1 & btn != 0)) {
+                    D_8010D806_160C96_MoveToTheMusic[beat] = btn;
+                    D_8010D770_160C00_MoveToTheMusic[0] = 7;
+                    D_8010D728_160BB8_MoveToTheMusic[0] = beat;
+                    func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->motion[btn + 3]);
+                    func_80029E80_2AA80(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], 2, 2);
+                    t = func_80029D0C_2A90C(obj->motion[btn + 3]);
+                    D_8010D738_160BC8_MoveToTheMusic[player] = t;
+                    D_8010D768_160BF8_MoveToTheMusic[player] = t;
+                    D_8010D7AC_160C3C_MoveToTheMusic[0] = btn - 2;
+                    D_8010D80E_160C9E_MoveToTheMusic[0] = (u16)D_8010CCB4_160144_MoveToTheMusic[pl->character][btn - 2];
+                }
+            }
+            break;
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+            if (pl->cell != 0 && D_8010D768_160BF8_MoveToTheMusic[player] < 0x15 && D_8010D741_160BD1_MoveToTheMusic[pl->cell - 1] == 0 && ((D_8010D722_160BB2_MoveToTheMusic[beat] >> (pl->cell - 1)) & 1)) {
+                s16 unused[4] = { 0x40, 0x20, 0x40, 0x60 };
+
+                if (((frame + 95) % 30 < 10 & frame >= -14) && (u32)beat < 6 && (v = D_8010D806_160C96_MoveToTheMusic[beat]) != 0 && D_8010D728_160BB8_MoveToTheMusic[pl->cell] != beat && (btn == v || (v == 1 & btn != 0))) {
+                    D_8010D770_160C00_MoveToTheMusic[pl->cell] = 7;
+                    D_8010D728_160BB8_MoveToTheMusic[pl->cell] = beat;
+                    func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->motion[btn + 3]);
+                    func_80029E80_2AA80(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], 2, 2);
+                    D_8010D768_160BF8_MoveToTheMusic[player] = D_8010D738_160BC8_MoveToTheMusic[player] = func_80029D0C_2A90C(obj->motion[btn + 3]) / 30.0 * 30.0;
+                    if ((frame + 2) % 30 < 5) {
+                        D_8010D75A_160BEA_MoveToTheMusic = D_8010D75A_160BEA_MoveToTheMusic < 100 ? D_8010D75A_160BEA_MoveToTheMusic + 1 : D_8010D75A_160BEA_MoveToTheMusic;
+                    }
+                    D_8010D7AC_160C3C_MoveToTheMusic[pl->cell] = btn - 2;
+                    D_8010D80E_160C9E_MoveToTheMusic[pl->cell] = (u16)D_8010CCB4_160144_MoveToTheMusic[pl->character][btn - 2];
+                } else if (frame >= -14) {
+                    if ((D_8010D728_160BB8_MoveToTheMusic[pl->cell] != beat & beat >= 0) && beat < 6) {
+                        v = D_8010D806_160C96_MoveToTheMusic[beat];
+                        if (btn != v && (v != 1 | btn == 0) && btn != 0) {
+                            if ((D_8010D722_160BB2_MoveToTheMusic[beat] >> (pl->cell - 1)) & 1) {
+                                D_8010D741_160BD1_MoveToTheMusic[pl->cell - 1] = 1;
+                            }
+                            D_8010D770_160C00_MoveToTheMusic[pl->cell] = 7;
+                            D_8010D728_160BB8_MoveToTheMusic[pl->cell] = beat;
+                            func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->motion[4]);
+                            if (pl->cell != 0) {
+                                func_800298A4_2A4A4(D_8010D764_160BF4_MoveToTheMusic->model[8 + pl->cell], 4, 0);
+                            }
+                            if (pl->cpu == -1) {
+                                omVibrate(pl->player, 10, 0, 10);
+                            }
+                            D_8010D768_160BF8_MoveToTheMusic[player] = D_8010D738_160BC8_MoveToTheMusic[player] = func_80029D0C_2A90C(obj->motion[4]) / 30.0 * 30.0;
+                            t = D_8010D75A_160BEA_MoveToTheMusic;
+                            if (t > 0) {
+                                t--;
+                            }
+                            D_8010D75A_160BEA_MoveToTheMusic = t;
+                            D_8010D7AC_160C3C_MoveToTheMusic[pl->cell] = 7;
+                            D_8010D80E_160C9E_MoveToTheMusic[pl->cell] = (u16)D_8010CCB4_160144_MoveToTheMusic[pl->character][7];
+                        }
+                    }
+                }
+                if ((frame + 95) % 30 >= 10 && ((prev + 95) % 30 < 10 & frame >= -14) && (u32)beat < 6 && D_8010D806_160C96_MoveToTheMusic[beat] != 0) {
+                    if (D_8010D728_160BB8_MoveToTheMusic[pl->cell] != beat) {
+                        if ((D_8010D722_160BB2_MoveToTheMusic[beat] >> (pl->cell - 1)) & 1) {
+                            D_8010D741_160BD1_MoveToTheMusic[pl->cell - 1] = 1;
+                        }
+                        func_80029B80_2A780(obj->model[D_8010D7D8_160C68_MoveToTheMusic[player]], obj->motion[4]);
+                        if (pl->cell != 0) {
+                            func_800298A4_2A4A4(D_8010D764_160BF4_MoveToTheMusic->model[8 + pl->cell], 4, 0);
+                        }
+                        if (pl->cpu == -1) {
+                            omVibrate(pl->player, 10, 0, 10);
+                        }
+                        D_8010D768_160BF8_MoveToTheMusic[player] = D_8010D738_160BC8_MoveToTheMusic[player] = func_80029D0C_2A90C(obj->motion[4]) / 30.0 * 30.0;
+                        t = D_8010D75A_160BEA_MoveToTheMusic;
+                        if (t > 0) {
+                            t--;
+                        }
+                        D_8010D75A_160BEA_MoveToTheMusic = t;
+                        D_8010D7AC_160C3C_MoveToTheMusic[pl->cell] = 7;
+                        D_8010D80E_160C9E_MoveToTheMusic[pl->cell] = (u16)D_8010CCB4_160144_MoveToTheMusic[pl->character][7];
+                    }
+                }
+            }
+            break;
+        }
+        if (D_8010D80E_160C9E_MoveToTheMusic[pl->cell] == 0) {
+            s16 pan[4] = { 0x40, 0x20, 0x40, 0x60 };
+
+            if (D_8010D7AC_160C3C_MoveToTheMusic[pl->cell] == 7) {
+                s = func_800797DC_7A3DC(0xFC, player);
+            } else {
+                s = func_80079798_7A398(D_8010CC0C_16009C_MoveToTheMusic[pl->character][D_8010D7AC_160C3C_MoveToTheMusic[pl->cell]], pl->cell);
+            }
+            func_800798F8_7A4F8(s, pan[pl->cell]);
+            if (pl->cell != 0) {
+                func_800795D8_7A1D8(s, 0x7A);
+            }
+        }
+        p = &D_8010D80E_160C9E_MoveToTheMusic[pl->cell];
+        t = *p;
+        if (t >= 0) {
+            t--;
+        }
+        *p = t;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A90_158F20_MoveToTheMusic);
+#endif
 
 void func_80106E84_15A314_MoveToTheMusic(s16 mdl, s16 val) {
     HmfModel* m = &D_800FC834_FD434[mdl];
