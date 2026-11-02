@@ -384,7 +384,7 @@ extern s16 D_801120C2_39FF82_name_5C; /* m2c */
 extern s16 D_801120C4_39FF84_name_5C; /* m2c */
 extern s16 D_801120C8_39FF88_name_5C[72]; /* price of each mini-game, 0: not sold */
 extern s16 D_80112158_3A0018_name_5C; /* 1: scroll stopped */
-extern s32 D_8011215C_3A001C_name_5C; /* m2c */
+extern s32 D_8011215C_3A001C_name_5C[6]; /* the six character panel files (8010EE64) */
 extern s16 D_80112174_3A0034_name_5C[][2]; /* 8010FB28: slot offsets */
 
 /* ---- bss ---- */
@@ -456,6 +456,7 @@ extern s8 D_8011245A_3A031A_name_5C; /* m2c */
 extern s8 D_8011245B_3A031B_name_5C; /* m2c */
 extern s8 D_8011245C_3A031C_name_5C; /* m2c */
 extern s16 D_80112476_3A0336_name_5C; /* attraction under the cursor */
+extern u8 D_80112477_3A0337_name_5C;  /* its low byte: read as a character by 8010EE64 */
 extern f32 D_80112478_3A0338_name_5C; /* m2c */
 extern s16 D_80112498_3A0358_name_5C[58]; /* each model's motion (8010A0F0); labels 7E0-838 are elements */
 extern s32 D_801124A6_3A0366_name_5C; /* m2c */
