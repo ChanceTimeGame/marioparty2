@@ -1115,11 +1115,8 @@ void func_8010C66C_1E0D4C_ShellShocked(s32 i) {
     }
 }
 
-// control flow (masked 21, 67 vs 66 instructions)
-#ifdef NON_MATCHING
 void func_8010C6C4_1E0DA4_ShellShocked(s32 i, s32 speed) {
     SSTank* tank;
-    s32 v;
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     if (func_80103898_1D7F78_ShellShocked() != 4) {
@@ -1127,17 +1124,18 @@ void func_8010C6C4_1E0DA4_ShellShocked(s32 i, s32 speed) {
         return;
     }
     if (tank->engineOn != 0 && tank->sndEnable != 0) {
-        v = speed >= 0x1F5 ? 0x1F4 : speed < 0 ? 0 : speed;
+        if (speed > 500) {
+            speed = 500;
+        } else if (speed < 0) {
+            speed = 0;
+        }
+        func_800796F0_7A2F0((s16)tank->engineSe, speed);
     } else {
         tank->engineOn = 1;
         tank->engineSe = func_80079798_7A398(0x257, i);
-        v = 0;
+        func_800796F0_7A2F0((s16)tank->engineSe, 0);
     }
-    func_800796F0_7A2F0((s16)tank->engineSe, v);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010C6C4_1E0DA4_ShellShocked);
-#endif
 
 void func_8010C7AC_1E0E8C_ShellShocked(void) {
     s32 i;
@@ -1169,11 +1167,11 @@ void func_8010C890_1E0F70_ShellShocked(void) {
     PlaySound(0x256);
 }
 
-// control flow (masked 20, 91 vs 89 instructions)
+// register allocation: b->x/b->z float registers (masked 2)
 #ifdef NON_MATCHING
 s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
-    Vec p;
     Vec q;
+    Vec p;
     f32 dot;
     f32 len;
     f32 k;
@@ -1190,8 +1188,7 @@ s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
         }
         m[10] = c;
         m[0] = c;
-        m[8] = 0.0f;
-        m[2] = 0.0f;
+        m[8] = m[2] = 0.0f;
         return 1;
     }
     k = dot / len;
