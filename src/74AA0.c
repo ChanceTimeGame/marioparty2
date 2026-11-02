@@ -1,4 +1,6 @@
 #include "common.h"
+#include "game/board.h"
+#include "game/hmfman.h"
 
 /* Board overlay-call queue, board teardown and the two save-flag byte arrays (MP1 src/5CDB0.c,
    src/59E80.c, ovl_77 2FADB0.c). MP1's names are anonymous or name MP1-only structures, so MP2's
@@ -49,6 +51,54 @@ void func_800744C0_750C0(void);
 void func_80073EA0_74AA0(s32 overlay, s16 event, u16 stat);
 
 extern s16 D_800E20D0_E2CD0;
+
+extern MBModel* D_800FA618_FB218;
+extern s16 D_800FA188_FAD88;
+extern s16 D_800FDCC8_FE8C8;
+extern HmfModel* D_800FC834_FD434;
+extern u8 D_01164160[];
+void func_80050A30_51630(u8*);
+void func_80050E00_51A00(s32);
+void func_80054228_54E28(void);
+void MBMasuCreate(s32, s16);
+void ChangeSpaceTextures(s16);
+void MBModelInit(void);
+void func_8005E2B8_5EEB8(void);
+void func_8005E2F4_5EEF4(void);
+void func_8005E570_5F170(void);
+void func_80088640_89240(void);
+void func_80062268_62E68(void);
+MBModel* func_80043510_44110(s32, void*);
+void func_8005E154_5ED54(s16);
+void func_80043DAC_449AC(MBModel*);
+void func_8005AA48_5B648(MBModel*, const char*, s16);
+SpaceData* GetSpaceData(s16);
+s16 GetAbsSpaceIndexFromChainSpaceIndex(u16, u16);
+void func_80056658_57258(Vec*, Vec*, Vec*);
+f32 func_800B1830_B2430(f32); /* sqrtf */
+f64 func_800B727C_B7E7C(f64 y, f64 x); /* atan2 in degrees */
+void func_800B3870_B4470(f32*, f32);
+void func_800734E8_740E8(void);
+void func_8005E310_5EF10(void);
+void func_8005321C_53E1C(f32, f32);
+void func_8005660C_5720C(s16, s16);
+void func_800B3170_B3D70(Vec*, Vec*);
+void func_800514F0_520F0(void);
+void func_80053608_54208(f32);
+void MBCameraSpeedSet(f32);
+void func_80029708_2A308(s32);
+void InitFadeIn(s32, s32);
+u16 MBDCameraPos3DSet(Vec*);
+s32 func_80011308_11F08(s16);
+void func_800498CC_4A4CC(void);
+void func_800745FC_751FC(s32);
+void func_80074638_75238(void);
+void func_8007468C_7528C(void);
+void func_80074808_75408(void);
+void func_80074D28_75928(void);
+void func_8007414C_74D4C(void);
+s32 PlaySound(s32);
+void HuPrcSleep(s32);
 /* .data (0xCDEC0-0xCDF60); D_800CD2C8 and 0xCDF10 on are used only by the unit's asm */
 s32 D_800CD2C0_CDEC0 = 1;
 s32 D_800CD2C4_CDEC4 = 0;
@@ -140,7 +190,18 @@ void func_800740AC_74CAC(void) {
     D_800E20D0_E2CD0 = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_800740B8_74CB8);
+void func_800740B8_74CB8(void) {
+    s8* savedSlot;
+    s32 slot;
+
+    func_80075424_76024(6);
+    _ClearFlag(0x16);
+    savedSlot = &D_800FD8AA_FE4AA;
+    slot = *savedSlot;
+    func_8007451C_7511C();
+    *savedSlot = slot;
+    func_80073EA0_74AA0(D_800CD2D4_CDED4[slot], 1, 0x192);
+}
 
 void func_8007411C_74D1C(void) {
     func_8007E128_7ED28();
@@ -156,7 +217,73 @@ const char D_800D34C0_D40C0[] = "point2";
 const char D_800D34C8_D40C8[] = "point1";
 const f64 D_800D34D0_D40D0 = -90.0;
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074154_74D54);
+void func_80074154_74D54(s32 boardModel, s32 boardFile) {
+    GW_PLAYER* player;
+    SpaceData* from;
+    SpaceData* to;
+    Vec diff;
+
+    func_80050A30_51630(D_01164160);
+    if (boardModel >= 0) {
+        func_80050E00_51A00(boardModel);
+    }
+    func_80054228_54E28();
+    if ((s16)boardFile >= 0) {
+        MBMasuCreate(10, boardFile);
+        ChangeSpaceTextures(2);
+    }
+    gPlayers[0].character = D_800FD8A8_FE4A8.unk00;
+    gPlayers[1].character = D_800FD8A8_FE4A8.unk01;
+    MBModelInit();
+    func_8005E2B8_5EEB8();
+    func_8005E2F4_5EEF4();
+    func_8005E570_5F170();
+    func_80088640_89240();
+    func_80062268_62E68();
+    D_800FA618_FB218 = func_80043510_44110(0xA9, D_800CD2C8_CDEC8);
+
+    func_8005E154_5ED54(1);
+    player = BoardPlayerGet(1);
+    ((MBModel*)player->unk_24)->attr |= 1;
+    func_80043DAC_449AC(player->unk_24);
+    func_8005AA48_5B648(D_800FA618_FB218, D_800D34C0_D40C0, ((MBModel*)player->unk_24)->obj->model[0]);
+    ((MBModel*)player->unk_24)->attr |= 2;
+
+    func_8005E154_5ED54(0);
+    player = BoardPlayerGet(0);
+    ((MBModel*)player->unk_24)->attr |= 1;
+    func_80043DAC_449AC(player->unk_24);
+    ((MBModel*)player->unk_24)->attr |= 2;
+    func_8005AA48_5B648(D_800FA618_FB218, D_800D34C8_D40C8, ((MBModel*)player->unk_24)->obj->model[0]);
+
+    /* Tilt the board model to the slope of the player's current step. */
+    if (player->cur_space_index != 0 && D_800CD2C0_CDEC0 != 0) {
+        from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index - 1));
+        to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+        if (!(to->unk_02 & 1)) {
+            func_80056658_57258(&from->coords, &to->coords, &diff);
+            func_800B3870_B4470(D_800FC834_FD434[D_800FA618_FB218->obj->model[0]].mtx,
+                                func_800B727C_B7E7C(func_800B1830_B2430(diff.x * diff.x + diff.z * diff.z), diff.y) +
+                                    D_800D34D0_D40D0);
+        }
+    }
+    if (player->cur_space_index != 0) {
+        from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index - 1));
+        to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+    } else {
+        from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+        to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index));
+    }
+    func_80056658_57258(&from->coords, &to->coords, &D_800FA618_FB218->rot);
+
+    omAddObj(1000, 0, 0, -1, func_8007414C_74D4C);
+    D_800E2104_E2D04 = -1;
+    D_800E2106_E2D06 = 0;
+    D_800E2108_E2D08 = 0;
+    func_800734E8_740E8();
+    func_8005E310_5EF10();
+    func_8005321C_53E1C(2000.0f, 4000.0f);
+}
 
 void func_800744C0_750C0(void) {
     func_8006239C_62F9C();
@@ -252,7 +379,37 @@ INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074808_75408);
 
 INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074D28_75928);
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074DB8_759B8);
+void func_80074DB8_759B8(s32 mode) {
+    GW_PLAYER* player;
+
+    player = BoardPlayerGet(0);
+    func_8005660C_5720C(0, GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index));
+    func_800B3170_B3D70(&D_800FA618_FB218->pos, &((MBModel*)player->unk_24)->pos);
+    func_800514F0_520F0();
+    func_80053608_54208(1.0f);
+    MBCameraSpeedSet(-1.0f);
+    func_80029708_2A308(1);
+    InitFadeIn(0xFF, 0x10);
+    MBDCameraPos3DSet(&((MBModel*)gPlayers[GwSystem.current_player_index].unk_24)->pos);
+    switch (mode) {
+        case 0:
+            omAddPrcObj(func_80074808_75408, 0xEFFF, 0, 0);
+            omAddPrcObj(func_8007468C_7528C, 0x1005, 0, 0);
+            omAddPrcObj(func_80074638_75238, 0x1005, 0, 0);
+            omPrcSetStatBit(omAddPrcObj(func_80074D28_75928, 0x1005, 0, 0), 0x80);
+            D_800FDCC8_FE8C8 = 0;
+            func_800745FC_751FC(1);
+            if (func_80011308_11F08(D_800FA188_FAD88) < 0x7F) {
+                func_800498CC_4A4CC();
+            }
+            break;
+        case 1:
+            omAddPrcObj(func_8007468C_7528C, 0x1005, 0, 0);
+            omAddPrcObj(func_80074638_75238, 0x1005, 0, 0);
+            func_800745FC_751FC(1);
+            break;
+    }
+}
 
 void func_80074F7C_75B7C(s32 overlay, s16 event, s16 fade, s16 music) {
     D_800E210C_E2D0C = overlay;
@@ -277,9 +434,17 @@ void func_80074FDC_75BDC(s16 fade, s16 music) {
     func_800740AC_74CAC();
 }
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80075010_75C10);
+void func_80075010_75C10(s32 value) {
+    D_800CD2C0_CDEC0 = value;
+}
 
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_8007501C_75C1C);
+void func_8007501C_75C1C(void) {
+    D_800E2104_E2D04 = 1;
+    D_800E2108_E2D08 = 1;
+    D_800E2106_E2D06 = 9;
+    PlaySound(0x325);
+    HuPrcSleep(-1);
+}
 
 /* Records player 1's board position and the story chapter reached (the highest chapter-clear
    flag, D_800CD300_CDF00[chapter - 1] - 1) in the saved block D_800FD8A8_FE4A8. */
