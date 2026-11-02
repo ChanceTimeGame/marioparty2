@@ -1,5 +1,14 @@
 #include "common.h"
 
+__asm__(".section .rodata");
+const char D_80112440_F3680_RollOutTheBarrels[] = "\202r\202s\202`\202q\202s";
+
+__asm__(".section .rodata");
+const char D_8011244C_F368C_RollOutTheBarrels[] = "\202e\202h\202m\202h\202r\202g";
+
+__asm__(".section .rodata");
+const char D_8011245C_F369C_RollOutTheBarrels[] = "\202h\202s\202d\202l\202f\202d\202s\201I\201H";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80102800_E3A40_RollOutTheBarrels);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80102B2C_E3D6C_RollOutTheBarrels);
@@ -12,7 +21,37 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80103094_E42D4_RollOutTheBarrels);
 
+__asm__(".section .rodata");
+const u32 D_801124A0_F36E0_RollOutTheBarrels[9] = { 0 };
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801031B4_E43F4_RollOutTheBarrels);
+
+__asm__(".section .rodata");
+const char D_801124D8_F3718_RollOutTheBarrels[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f ";
+
+__asm__(".section .rodata");
+const char D_801124FC_F373C_RollOutTheBarrels[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f ";
+
+__asm__(".section .rodata");
+const char D_80112520_F3760_RollOutTheBarrels[] = " ZOOM   %3.3f ";
+
+__asm__(".section .rodata");
+const char D_80112530_F3770_RollOutTheBarrels[] = "CAMERA TEST_MODE ";
+
+__asm__(".section .rodata");
+const char D_80112544_F3784_RollOutTheBarrels[] = "CAMERA TEST_MODE \012";
+
+__asm__(".section .rodata");
+const char D_80112558_F3798_RollOutTheBarrels[] = " CENTER X>%3.3f Y>%3.3f Z>%3.3f \012";
+
+__asm__(".section .rodata");
+const char D_8011257C_F37BC_RollOutTheBarrels[] = " ROT    X>%3.3f Y>%3.3f Z>%3.3f \012";
+
+__asm__(".section .rodata");
+const char D_801125A0_F37E0_RollOutTheBarrels[24] = " ZOOM   %3.3f \012\012";
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_801125B8_F37F8_RollOutTheBarrels[2] = { 0x3FC00000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801039F0_E4C30_RollOutTheBarrels);
 
@@ -67,6 +106,39 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107140_E8380_RollOutTheBarrels);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107564_E87A4_RollOutTheBarrels);
+
+__asm__(".section .rodata");
+const u32 D_801127D8_F3A18_RollOutTheBarrels[1] = { 0x40668000 };
+
+__asm__(".section .rodata");
+const char D_801127DC_F3A1C_RollOutTheBarrels[] = "";
+
+__asm__(".section .rodata");
+const char D_801127E0_F3A20_RollOutTheBarrels[] = "@>";
+
+__asm__(".section .rodata");
+const char D_801127E4_F3A24_RollOutTheBarrels[] = "";
+
+__asm__(".section .rodata");
+const char D_801127E8_F3A28_RollOutTheBarrels[] = "@.";
+
+__asm__(".section .rodata");
+const char D_801127EC_F3A2C_RollOutTheBarrels[] = "";
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_801127F0_F3A30_RollOutTheBarrels[2] = { 0x40568000, 0x00000000 };
+
+__asm__(".section .rodata");
+const char __attribute__((aligned(8))) D_801127F8_F3A38_RollOutTheBarrels[8] = "@Y";
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112800_F3A40_RollOutTheBarrels[2] = { 0x3FC0F5C2, 0x8F5C28F6 };
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112808_F3A48_RollOutTheBarrels[2] = { 0x408F4000, 0x00000000 };
+
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112810_F3A50_RollOutTheBarrels[2] = { 0x4072C000, 0x00000000 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801079D0_E8C10_RollOutTheBarrels);
 
