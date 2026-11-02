@@ -70,6 +70,12 @@ typedef struct SSShell {
     /* 0x28 */ HmfMotionObj* mot;
 } SSShell; /* size = 0x2C (N64) */
 
+/* A tank's explosion. */
+typedef struct SSBlow {
+    /* 0x00 */ s16 mdl;
+    /* 0x04 */ Vec pos;
+} SSBlow; /* size = 0x10 */
+
 /* A tank, D_8010DA80_1E2160_ShellShocked[4]. */
 typedef struct SSTank {
     /* 0x000 */ s32 chr;
@@ -96,9 +102,7 @@ typedef struct SSTank {
     /* 0x074 */ char unk_74[8];
     /* 0x07C */ SSShell shell[1];
     /* 0x0A8 */ char unk_A8[0x84];
-    /* 0x12C */ s16 blowMdl;
-    /* 0x12E */ char unk_12E[2];
-    /* 0x130 */ Vec blowPos;
+    /* 0x12C */ SSBlow blow; /* retail takes &tank->blow and steps to .pos */
     /* 0x13C */ char unk_13C[4];
     /* 0x140 */ s16 hudSpr;
     /* 0x142 */ s16 hudGrp;
@@ -338,12 +342,12 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i);
 void func_80109D08_1DE3E8_ShellShocked(void);
 void func_80109F4C_1DE62C_ShellShocked(void);
 void func_8010A19C_1DE87C_ShellShocked(omObjData* obj);
-void func_8010A1E4_1DE8C4_ShellShocked(s32 i);
+void func_8010A1E4_1DE8C4_ShellShocked(s32 i, SSTank* tank);
 s32 func_8010A368_1DEA48_ShellShocked(s32 i, s16 x, s16 y);
 s32 func_8010A954_1DF034_ShellShocked(s32 i, s16 x, s16 y);
 s32 func_8010B08C_1DF76C_ShellShocked(s32 i, s16 x, s16 y);
 s32 func_8010B0B4_1DF794_ShellShocked(s32 i, s16 x, s16 y);
-void func_8010B0DC_1DF7BC_ShellShocked(void);
+void func_8010B0DC_1DF7BC_ShellShocked(s32 i, SSTank* tank);
 void func_8010B0E4_1DF7C4_ShellShocked(s32 i);
 void func_8010B3EC_1DFACC_ShellShocked(s32 i);
 void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind);

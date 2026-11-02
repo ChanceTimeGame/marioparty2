@@ -4,8 +4,6 @@ void func_801091E0_1DD8C0_ShellShocked(omObjData* obj) {
     obj->func_ptr = func_8010281C_1D6EFC_ShellShocked;
 }
 
-// control flow (masked 23, 590 vs 592 instructions)
-#ifdef NON_MATCHING
 void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     s32 v;
     s32 i;
@@ -13,6 +11,7 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     s32 chr;
     SSShell* s;
     s16 m;
+    s32 k;
 
     obj->func_ptr = func_8010281C_1D6EFC_ShellShocked;
     v = D_800FA656;
@@ -20,7 +19,8 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
         v = 2;
     }
     if (func_80103938_1D8018_ShellShocked() != 0) {
-        D_8010DFDC_1E26BC_ShellShocked = 2;
+        v = 2;
+        D_8010DFDC_1E26BC_ShellShocked = v;
         D_8010DFE0_1E26C0_ShellShocked = &D_8010CEFC_1E15DC_ShellShocked[2];
         D_8010DFD4_1E26B4_ShellShocked = &D_8010CE3C_1E151C_ShellShocked[2];
     } else {
@@ -38,20 +38,21 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     func_800298A4_2A4A4(obj->model[0], 4, 0);
     func_80029EDC_2AADC(obj->model[0], 0xF);
     for (i = 0; i < 4; i++) {
+        k = i + 1;
         chr = func_80103950_1D8030_ShellShocked(i);
-        obj->model[i + 1] = LoadFormFile(D_8010CC80_1E1360_ShellShocked[chr], 0x299);
-        func_80029714_2A314(obj->model[i + 1], 0.0f, 0.0f, 0.0f);
-        func_8002979C_2A39C(obj->model[i + 1], 0.0f, 0.0f, 0.0f);
-        func_800297E8_2A3E8(obj->model[i + 1], 1.0f, 1.0f, 1.0f);
-        func_80029F2C_2AB2C(obj->model[i + 1], 0x800);
-        func_800298A4_2A4A4(obj->model[i + 1], 4, 0);
-        func_80029EDC_2AADC(obj->model[i + 1], 0xF);
-        func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
-        D_8010DA80_1E2160_ShellShocked[i].motBody = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].body);
-        D_8010DA80_1E2160_ShellShocked[i].motTurret = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].turret);
-        D_8010DA80_1E2160_ShellShocked[i].motGun = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].gun);
-        D_8010DA80_1E2160_ShellShocked[i].motA = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].motB);
-        D_8010DA80_1E2160_ShellShocked[i].motB = func_8002A9F4_2B5F4(obj->model[i + 1], D_8010CCA0_1E1380_ShellShocked[chr].head);
+        obj->model[k] = LoadFormFile(D_8010CC80_1E1360_ShellShocked[chr], 0x299);
+        func_80029714_2A314(obj->model[k], 0.0f, 0.0f, 0.0f);
+        func_8002979C_2A39C(obj->model[k], 0.0f, 0.0f, 0.0f);
+        func_800297E8_2A3E8(obj->model[k], 1.0f, 1.0f, 1.0f);
+        func_80029F2C_2AB2C(obj->model[k], 0x800);
+        func_800298A4_2A4A4(obj->model[k], 4, 0);
+        func_80029EDC_2AADC(obj->model[k], 0xF);
+        func_80029FE4_2ABE4(obj->model[k], 0.0f);
+        D_8010DA80_1E2160_ShellShocked[i].motBody = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].body);
+        D_8010DA80_1E2160_ShellShocked[i].motTurret = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].turret);
+        D_8010DA80_1E2160_ShellShocked[i].motGun = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].gun);
+        D_8010DA80_1E2160_ShellShocked[i].motA = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].motB);
+        D_8010DA80_1E2160_ShellShocked[i].motB = func_8002A9F4_2B5F4(obj->model[k], D_8010CCA0_1E1380_ShellShocked[chr].head);
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.x = 0.0f;
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.y = 0.0f;
         D_8010DA80_1E2160_ShellShocked[i].motGun->unk34.z = 0.0f;
@@ -62,18 +63,16 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
             HuVecCopyXYZ(&s->vel, 0.0f, 0.0f, 0.0f);
             s->state = 0;
             s->active = 0;
-            m = LoadFormFile(D_8010CD9C_1E147C_ShellShocked[chr], 0x299);
-            s->mdl = m;
-            s->mot = func_8002A9F4_2B5F4(m, D_8010CCA0_1E1380_ShellShocked[chr].shell);
+            s->mdl = LoadFormFile(D_8010CD9C_1E147C_ShellShocked[chr], 0x299);
+            s->mot = func_8002A9F4_2B5F4(s->mdl, D_8010CCA0_1E1380_ShellShocked[chr].shell);
             func_80029714_2A314(s->mdl, 0.0f, 0.0f, 0.0f);
             func_8002979C_2A39C(s->mdl, 0.0f, 0.0f, 0.0f);
             func_800297E8_2A3E8(s->mdl, 1.0f, 1.0f, 1.0f);
             func_80029F2C_2AB2C(s->mdl, 0x800);
             func_800298A4_2A4A4(s->mdl, 4, 4);
             func_80029EDC_2AADC(s->mdl, 0xF);
-            m = LoadFormFile(0x32000B, 0x299);
-            s->blast = m;
-            func_80029714_2A314(m, 0.0f, 100.0f, 0.0f);
+            s->blast = LoadFormFile(0x32000B, 0x299);
+            func_80029714_2A314(s->blast, 0.0f, 100.0f, 0.0f);
             func_8002979C_2A39C(s->blast, 0.0f, 0.0f, 0.0f);
             func_800297E8_2A3E8(s->blast, 10.0f, 10.0f, 10.0f);
             func_80029F2C_2AB2C(s->blast, 0x800);
@@ -96,9 +95,6 @@ void func_801091F0_1DD8D0_ShellShocked(omObjData* obj) {
     func_800298A4_2A4A4(obj->model[5], 4, 0);
     func_80029EDC_2AADC(obj->model[5], 0xF);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_801091F0_1DD8D0_ShellShocked);
-#endif
 
 __asm__(".section .rodata");
 const char D_8010D2A0_1E1980_ShellShocked[] = "143-grid2_1_1_17";
@@ -196,7 +192,7 @@ const char D_8010D4BC_1E1B9C_ShellShocked[] = "143tank-bmerge1_3_1";
 __asm__(".section .rodata");
 const char D_8010D4D0_1E1BB0_ShellShocked[] = "143tank-m_head";
 
-// control flow (masked 35, 313 vs 311 instructions)
+// delay-slot schedule (masked 12, 313 vs 312: where "move a0,i" lands around the shake offsets); call set fixed: A1E4/B0DC take (i, tank)
 #ifdef NON_MATCHING
 void func_8010991C_1DDFFC_ShellShocked(s32 i) {
     SSTank* tank;
@@ -217,7 +213,7 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
                 if (gPlayers[i].flags & 1) {
                     func_80106D84_1DB464_ShellShocked(i);
                 } else {
-                    func_8010A1E4_1DE8C4_ShellShocked(i);
+                    func_8010A1E4_1DE8C4_ShellShocked(i, tank);
                 }
             } else {
                 func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
@@ -226,7 +222,7 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
         }
         break;
     case 3:
-        func_8010B0DC_1DF7BC_ShellShocked();
+        func_8010B0DC_1DF7BC_ShellShocked(i, tank);
         func_80029FE4_2ABE4(obj->model[i + 1], 0.0f);
         func_8010C66C_1E0D4C_ShellShocked(i);
         break;
@@ -320,7 +316,7 @@ void func_80109D08_1DE3E8_ShellShocked(void) {
         tank->cooldown = 0;
         func_8010C0A0_1E0780_ShellShocked(i, 2);
         m = LoadFormFile(0x32000B, 0x299);
-        tank->blowMdl = m;
+        tank->blow.mdl = m;
         func_80029714_2A314(m, 0.0f, 200.0f, (f32)i * 100.0f);
         func_8002979C_2A39C(m, 0.0f, 0.0f, 0.0f);
         func_800297E8_2A3E8(m, 1.0f, 1.0f, 1.0f);
@@ -346,12 +342,11 @@ void func_80109D08_1DE3E8_ShellShocked(void) {
     }
 }
 
-// control flow (masked 15, 199 vs 195 instructions)
-#ifdef NON_MATCHING
 void func_80109F4C_1DE62C_ShellShocked(void) {
     omObjData* obj;
     s32 i;
     s32 state;
+    s32 j;
 
     obj = func_80103884_1D7F64_ShellShocked(2);
     func_80105304_1D99E4_ShellShocked();
@@ -359,9 +354,10 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
     for (i = 0; i < 4; i++) {
         D_8010DFD8_1E26B8_ShellShocked = i;
         func_8010991C_1DDFFC_ShellShocked(i);
-        func_80029714_2A314(obj->model[i + 1], D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.y, D_8010DA80_1E2160_ShellShocked[i].pos.z);
-        func_8002979C_2A39C(obj->model[i + 1], D_8010DA80_1E2160_ShellShocked[i].rot.x, D_8010DA80_1E2160_ShellShocked[i].rot.y, D_8010DA80_1E2160_ShellShocked[i].rot.z);
-        func_80029E80_2AA80(obj->model[i + 1], 2, 2);
+        j = i + 1;
+        func_80029714_2A314(obj->model[j], D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.y, D_8010DA80_1E2160_ShellShocked[i].pos.z);
+        func_8002979C_2A39C(obj->model[j], D_8010DA80_1E2160_ShellShocked[i].rot.x, D_8010DA80_1E2160_ShellShocked[i].rot.y, D_8010DA80_1E2160_ShellShocked[i].rot.z);
+        func_80029E80_2AA80(obj->model[j], 2, 2);
         state = func_80103898_1D7F78_ShellShocked();
         switch (state) {
         case 4:
@@ -373,8 +369,8 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
                     D_8010DA80_1E2160_ShellShocked[i].alive = 0;
                     D_8010DA80_1E2160_ShellShocked[i].state = 4;
                     D_8010DA80_1E2160_ShellShocked[i].blowTimer = 0x1E;
-                    func_800298A4_2A4A4(D_8010DA80_1E2160_ShellShocked[i].blowMdl, 4, 0);
-                    func_800B3170_B3D70(&D_8010DA80_1E2160_ShellShocked[i].blowPos, &D_8010DA80_1E2160_ShellShocked[i].pos);
+                    func_800298A4_2A4A4(D_8010DA80_1E2160_ShellShocked[i].blow.mdl, 4, 0);
+                    func_800B3170_B3D70(&D_8010DA80_1E2160_ShellShocked[i].blow.pos, &D_8010DA80_1E2160_ShellShocked[i].pos);
                     func_8010C66C_1E0D4C_ShellShocked(i);
                     func_8010C5C0_1E0CA0_ShellShocked(i);
                     func_8010C7E4_1E0EC4_ShellShocked(i);
@@ -395,9 +391,6 @@ void func_80109F4C_1DE62C_ShellShocked(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_80109F4C_1DE62C_ShellShocked);
-#endif
 
 void func_8010A19C_1DE87C_ShellShocked(omObjData* obj) {
     func_80109D08_1DE3E8_ShellShocked();
@@ -406,7 +399,7 @@ void func_8010A19C_1DE87C_ShellShocked(omObjData* obj) {
     obj->func_ptr = func_80109F4C_1DE62C_ShellShocked;
 }
 
-void func_8010A1E4_1DE8C4_ShellShocked(s32 i) {
+void func_8010A1E4_1DE8C4_ShellShocked(s32 i, SSTank* tank) {
     s32 port;
     f32 x;
     f32 y;
@@ -659,7 +652,7 @@ s32 func_8010B0B4_1DF794_ShellShocked(s32 i, s16 x, s16 y) {
     return func_8010A954_1DF034_ShellShocked(i, x, y);
 }
 
-void func_8010B0DC_1DF7BC_ShellShocked(void) {
+void func_8010B0DC_1DF7BC_ShellShocked(s32 i, SSTank* tank) {
 }
 
 // control flow (masked 11, 202 vs 201 instructions)
@@ -674,12 +667,12 @@ void func_8010B0E4_1DF7C4_ShellShocked(s32 i) {
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     mdl = func_80103884_1D7F64_ShellShocked(2)->model[i + 1];
-    blow = tank->blowMdl;
+    blow = tank->blow.mdl;
     if (tank->blowTimer != 0) {
         tank->blowTimer--;
         t = (10.0f - (f32)tank->blowTimer) * 0.1f;
         sqrtf(ABS(t));
-        func_80029714_2A314(blow, tank->blowPos.x, tank->blowPos.y, tank->blowPos.z);
+        func_80029714_2A314(blow, tank->blow.pos.x, tank->blow.pos.y, tank->blow.pos.z);
         func_8002979C_2A39C(blow, 0.0f, 0.0f, 0.0f);
         func_800297E8_2A3E8(blow, 1.0f, 1.0f, 1.0f);
         tank->motA->unk34.x += 40.0f;
@@ -720,7 +713,7 @@ void func_8010B3EC_1DFACC_ShellShocked(s32 i) {
     s16 m;
     f32 t;
 
-    m = D_8010DA80_1E2160_ShellShocked[i].blowMdl;
+    m = D_8010DA80_1E2160_ShellShocked[i].blow.mdl;
     t = func_80029CE4_2A8E4(m);
     if (func_80029D0C_2A90C(m) <= t) {
         func_800298A4_2A4A4(m, 4, 4);
@@ -1122,11 +1115,8 @@ void func_8010C66C_1E0D4C_ShellShocked(s32 i) {
     }
 }
 
-// control flow (masked 21, 67 vs 66 instructions)
-#ifdef NON_MATCHING
 void func_8010C6C4_1E0DA4_ShellShocked(s32 i, s32 speed) {
     SSTank* tank;
-    s32 v;
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     if (func_80103898_1D7F78_ShellShocked() != 4) {
@@ -1134,17 +1124,18 @@ void func_8010C6C4_1E0DA4_ShellShocked(s32 i, s32 speed) {
         return;
     }
     if (tank->engineOn != 0 && tank->sndEnable != 0) {
-        v = speed >= 0x1F5 ? 0x1F4 : speed < 0 ? 0 : speed;
+        if (speed > 500) {
+            speed = 500;
+        } else if (speed < 0) {
+            speed = 0;
+        }
+        func_800796F0_7A2F0((s16)tank->engineSe, speed);
     } else {
         tank->engineOn = 1;
         tank->engineSe = func_80079798_7A398(0x257, i);
-        v = 0;
+        func_800796F0_7A2F0((s16)tank->engineSe, 0);
     }
-    func_800796F0_7A2F0((s16)tank->engineSe, v);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010C6C4_1E0DA4_ShellShocked);
-#endif
 
 void func_8010C7AC_1E0E8C_ShellShocked(void) {
     s32 i;
@@ -1176,11 +1167,11 @@ void func_8010C890_1E0F70_ShellShocked(void) {
     PlaySound(0x256);
 }
 
-// control flow (masked 20, 91 vs 89 instructions)
+// register allocation: b->x/b->z float registers (masked 2)
 #ifdef NON_MATCHING
 s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
-    Vec p;
     Vec q;
+    Vec p;
     f32 dot;
     f32 len;
     f32 k;
@@ -1197,8 +1188,7 @@ s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
         }
         m[10] = c;
         m[0] = c;
-        m[8] = 0.0f;
-        m[2] = 0.0f;
+        m[8] = m[2] = 0.0f;
         return 1;
     }
     k = dot / len;
