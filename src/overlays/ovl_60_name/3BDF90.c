@@ -869,6 +869,7 @@ void func_801053F0_3C0B50_name_60(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801053F0_3C0B50_name_60);
 #endif
 
+/* NON_MATCHING: stack frame only (retail 0x58 with locals 0x10 higher; calls and code agree) */
 #ifdef NON_MATCHING
 void func_801054EC_3C0C4C_name_60(void) {
     HmfModel* model;
