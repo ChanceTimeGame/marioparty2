@@ -146,7 +146,7 @@ typedef struct SSTimer {
     s32 frames;
 } SSTimer;
 
-/* .data (asm) */
+/* .data (1D8270.c, 1D9870.c, 1DD8C0.c: 0x1E11C0-0x1E1630) */
 extern SSRect D_8010CAE0_1E11C0_ShellShocked[4];
 extern SSView D_8010CB20_1E1200_ShellShocked[4];
 extern f32 D_8010CB80_1E1260_ShellShocked[4];

@@ -1252,3 +1252,64 @@ f32 func_8010CAA4_1E1184_ShellShocked(void) {
 }
 
 __asm__(".section .rodata\n\t.balign 16\n\t.text");
+
+/* .data (1E1360-1E1630, 8010CC80-8010CF50) */
+s32 D_8010CC80_1E1360_ShellShocked[8] = { 0x00320005, 0x00320006, 0x00320007, 0x00320008, 0x00320009, 0x0032000A, 0x00320012, 0xFFFFFFFF };
+SSChrParts D_8010CCA0_1E1380_ShellShocked[7] = {
+    { (char*)D_8010D4D0_1E1BB0_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D458_1E1B38_ShellShocked, (char*)D_8010D450_1E1B30_ShellShocked },
+    { (char*)D_8010D440_1E1B20_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D42C_1E1B0C_ShellShocked, (char*)D_8010D418_1E1AF8_ShellShocked },
+    { (char*)D_8010D408_1E1AE8_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D3F4_1E1AD4_ShellShocked, (char*)D_8010D3EC_1E1ACC_ShellShocked },
+    { (char*)D_8010D3DC_1E1ABC_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D3C8_1E1AA8_ShellShocked, (char*)D_8010D3B8_1E1A98_ShellShocked },
+    { (char*)D_8010D3A8_1E1A88_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D394_1E1A74_ShellShocked, (char*)D_8010D384_1E1A64_ShellShocked },
+    { (char*)D_8010D374_1E1A54_ShellShocked, (char*)D_8010D4BC_1E1B9C_ShellShocked, (char*)D_8010D4AC_1E1B8C_ShellShocked, { (char*)D_8010D49C_1E1B7C_ShellShocked, (char*)D_8010D48C_1E1B6C_ShellShocked }, (char*)D_8010D47C_1E1B5C_ShellShocked, (char*)D_8010D46C_1E1B4C_ShellShocked, (char*)D_8010D360_1E1A40_ShellShocked, (char*)D_8010D34C_1E1A2C_ShellShocked },
+    { (char*)D_8010D338_1E1A18_ShellShocked, (char*)D_8010D324_1E1A04_ShellShocked, (char*)D_8010D310_1E19F0_ShellShocked, { (char*)D_8010D2F8_1E19D8_ShellShocked, (char*)D_8010D2E0_1E19C0_ShellShocked }, (char*)D_8010D2CC_1E19AC_ShellShocked, (char*)D_8010D2B4_1E1994_ShellShocked, (char*)D_8010D2A0_1E1980_ShellShocked, (char*)D_8010D338_1E1A18_ShellShocked },
+};
+s32 D_8010CD9C_1E147C_ShellShocked[8] = { 0x0032000C, 0x0032000D, 0x0032000E, 0x0032000F, 0x00320010, 0x00320011, 0x00320013, 0x00000000 };
+f32 D_8010CDBC_1E149C_ShellShocked[4] = { -135.0f, 135.0f, 45.0f, -45.0f };
+Vec D_8010CDCC_1E14AC_ShellShocked[4] = {
+    { 600.0f, 0.0f, 600.0f },
+    { -600.0f, 0.0f, 600.0f },
+    { -600.0f, 0.0f, -600.0f },
+    { 600.0f, 0.0f, -600.0f },
+};
+f32 D_8010CDFC_1E14DC_ShellShocked[4] = { 45.0f, -45.0f, -135.0f, 135.0f };
+Vec D_8010CE0C_1E14EC_ShellShocked[4] = {
+    { 250.0f, 0.0f, 250.0f },
+    { -250.0f, 0.0f, 250.0f },
+    { -250.0f, 0.0f, -250.0f },
+    { 250.0f, 0.0f, -250.0f },
+};
+SSStart D_8010CE3C_1E151C_ShellShocked[3] = {
+    { D_8010CDFC_1E14DC_ShellShocked, D_8010CE0C_1E14EC_ShellShocked },
+    { D_8010CDBC_1E149C_ShellShocked, D_8010CDCC_1E14AC_ShellShocked },
+    { D_8010CDBC_1E149C_ShellShocked, D_8010CDCC_1E14AC_ShellShocked },
+};
+Vec D_8010CE54_1E1534_ShellShocked[9] = {
+    { 0.0f, 0.0f, 600.0f },
+    { 400.0f, 0.0f, 400.0f },
+    { 600.0f, 0.0f, 0.0f },
+    { 400.0f, 0.0f, -400.0f },
+    { 0.0f, 0.0f, -600.0f },
+    { -400.0f, 0.0f, -400.0f },
+    { -600.0f, 0.0f, 0.0f },
+    { -400.0f, 0.0f, 400.0f },
+    { 0.0f, 0.0f, 0.0f },
+};
+Vec D_8010CEC0_1E15A0_ShellShocked = { 0.0f, 0.0f, 0.0f };
+Vec D_8010CECC_1E15AC_ShellShocked[4] = {
+    { 0.0f, 0.0f, -600.0f },
+    { 0.0f, 0.0f, 600.0f },
+    { -600.0f, 0.0f, 0.0f },
+    { 600.0f, 0.0f, 0.0f },
+};
+SSMap D_8010CEFC_1E15DC_ShellShocked[3] = {
+    { 0x320002, 1, &D_8010CEC0_1E15A0_ShellShocked },
+    { 0x320003, 4, D_8010CECC_1E15AC_ShellShocked },
+    { 0x320001, 9, D_8010CE54_1E1534_ShellShocked },
+};
+Vec D_8010CF20_1E1600_ShellShocked[4] = {
+    { 40.0f, 112.0f, 0.0f },
+    { 284.0f, 112.0f, 0.0f },
+    { 40.0f, 216.0f, 0.0f },
+    { 284.0f, 216.0f, 0.0f },
+};
