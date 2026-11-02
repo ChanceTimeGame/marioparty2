@@ -239,7 +239,7 @@ void func_80103424_1568B4_MoveToTheMusic(void) {
             u8 w;
 
             for (i = 0; i < 6; i++) {
-                D_8010D806_160C96_MoveToTheMusic[i] = D_8010CC06_160096_MoveToTheMusic[i];
+                D_8010D806_160C96_MoveToTheMusic[i] = D_8010CC00_160090_MoveToTheMusic[1][i];
             }
             switch ((D_8010D741_160BD1_MoveToTheMusic[0] != 0) + (D_8010D741_160BD1_MoveToTheMusic[1] != 0) + (D_8010D741_160BD1_MoveToTheMusic[2] != 0)) {
             case 0: {
@@ -971,8 +971,8 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
         fr = D_8010D798_160C28_MoveToTheMusic - D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic];
     }
     if (D_8010D7CC_160C5C_MoveToTheMusic == 8) {
-        start = D_8010CBF0_160080_MoveToTheMusic[0] / 9;
-        if ((u32)D_8010D798_160C28_MoveToTheMusic >= start && D_8010CBF0_160080_MoveToTheMusic[0] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic) {
+        start = D_8010CBD0_160060_MoveToTheMusic[8] / 9;
+        if ((u32)D_8010D798_160C28_MoveToTheMusic >= start && D_8010CBD0_160060_MoveToTheMusic[8] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic) {
             shift = (1.0 - func_800B7890_B8490((f32)(u32)(D_8010D798_160C28_MoveToTheMusic - start) / (f32)(D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic] * 4 / 9) * 180.0)) / 2.0 * 70.0;
         }
     }
@@ -988,7 +988,7 @@ void func_80106EC8_15A358_MoveToTheMusic(Gfx** dl, s32 arg1, s32 arg2) {
     MM_GFX(0xE7000000, 0);
     MM_GFX(0xFCFF97FF, 0xFF2CFE7F);
     MM_GFX(0xFA000000, -0x5A);
-    if (D_8010D7CC_160C5C_MoveToTheMusic < 9 && (D_8010D7CC_160C5C_MoveToTheMusic != 8 || D_8010CBF0_160080_MoveToTheMusic[0] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic)) {
+    if (D_8010D7CC_160C5C_MoveToTheMusic < 9 && (D_8010D7CC_160C5C_MoveToTheMusic != 8 || D_8010CBD0_160060_MoveToTheMusic[8] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic)) {
         for (tile = 0; tile < 6; tile++) {
             /* a CI8 tile of the 136-wide staff; the last one is shorter */
             gDPSetTextureImage(D_800FDBCC_FE7CC++, G_IM_FMT_CI, G_IM_SIZ_8b, 136, frame->unk00);
@@ -1257,9 +1257,9 @@ void func_8010B7F0_15EC80_MoveToTheMusic(omObjData* obj) {
         func_80082488_83088(D_8010D748_160BD8_MoveToTheMusic[6], 0, MM_ALPHA2(g2, D_8010D741_160BD1_MoveToTheMusic[1]));
         func_80082488_83088(D_8010D748_160BD8_MoveToTheMusic[7], 0, MM_ALPHA2(g2, D_8010D741_160BD1_MoveToTheMusic[2]));
         if (D_8010D7CC_160C5C_MoveToTheMusic == 8) {
-            s2 = D_8010CBF0_160080_MoveToTheMusic[0] / 9;
+            s2 = D_8010CBD0_160060_MoveToTheMusic[8] / 9;
             if ((u32)D_8010D798_160C28_MoveToTheMusic >= s2) {
-                if (D_8010CBF0_160080_MoveToTheMusic[0] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic) {
+                if (D_8010CBD0_160060_MoveToTheMusic[8] * 5 / 9 >= (u32)D_8010D798_160C28_MoveToTheMusic) {
                     n = (1.0 - func_800B7890_B8490((f32)(u32)(D_8010D798_160C28_MoveToTheMusic - s2) / (f32)(D_8010CBD0_160060_MoveToTheMusic[D_8010D7CC_160C5C_MoveToTheMusic] * 4 / 9) * 180.0)) / 2.0 * 70.0;
                     SprPosSet(D_8010D748_160BD8_MoveToTheMusic[1], 0, 0x21, n + 0xC8);
                     SprPosSet(D_8010D748_160BD8_MoveToTheMusic[2], 0, 0x21, n + 0xB8);

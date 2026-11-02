@@ -10,8 +10,10 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Move to the Music: one retail file, 155C90.c; .data is asm (0x160060: step tables, display lists),
-   .rodata from 0x1602A0. */
+/* Move to the Music: one retail file, 155C90.c; .data is asm (0x160060: state lengths, step tables, sounds,
+   display lists), .rodata from 0x1602A0. 1 vs 3: the solo (cell 0) sets steps during states 0, 1, 4, 5, the group
+   (cells 1..3) repeats them in 2, 3, 6, 7; a wrong group step sets D_8010D741[cell - 1]. State 8/9: all three out
+   by state 3's end, or the solo wins; 10: the group wins; 11: fade. */
 
 typedef struct MMPlayer {
     /* 0x00 */ s8 player;
@@ -187,11 +189,8 @@ extern const MMVec4 D_8010CF78_160408_MoveToTheMusic;
 extern const MMVec4 D_8010CF88_160418_MoveToTheMusic;
 
 /* ---- .data (asm) ---- */
-extern u32 D_8010CBD0_160060_MoveToTheMusic[]; /* frames per state */
-extern u32 D_8010CBF0_160080_MoveToTheMusic[];
+extern u32 D_8010CBD0_160060_MoveToTheMusic[12]; /* frames per state */
 extern u8 D_8010CC00_160090_MoveToTheMusic[2][6];
-extern u8 D_8010CC05_160095_MoveToTheMusic; /* [0][5] */
-extern u8 D_8010CC06_160096_MoveToTheMusic[6]; /* [1] */
 extern s32 D_8010CC0C_16009C_MoveToTheMusic[][7]; /* sounds; read as s16 */
 extern s32 D_8010CCB4_160144_MoveToTheMusic[][8]; /* sound delays; read as s16 */
 extern Gfx D_8010CD78_160208_MoveToTheMusic[];
