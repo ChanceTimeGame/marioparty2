@@ -2120,7 +2120,7 @@ segments:
     subsegments:
       - [0x3E4250, c, ovl_63_entrypoint]
       - [0x3E4280, c, 3E4250]
-      - [0x3E4300, data]
+      - [0x3E4300, .data, 3E4250]
   - type: code
     start: 0x3E4320
     vram: 0x80102800
