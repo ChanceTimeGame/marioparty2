@@ -1742,7 +1742,7 @@ segments:
     subsegments:
       - [0x325BC0, c, ovl_4C_entrypoint]
       - [0x325BF0, c, 325BC0]
-      - [0x328890, data]
+      - [0x328890, .data, 325BC0]
       - [0x328980, .rodata, 325BC0]
       - {0x328A30, type: bss, vram: 0x80105670, name: ovl_4C_bss}
   - type: code
@@ -1756,7 +1756,7 @@ segments:
     bss_size: 0x80
     subsegments:
       - [0x328A30, c]
-      - [0x329F80, data]
+      - [0x329F80, .data, 328A30]
       - [0x32A190, .rodata, 328A30]
       - {0x32A1C0, type: bss, vram: 0x80103F90, name: ovl_4D_bss}
   - type: code

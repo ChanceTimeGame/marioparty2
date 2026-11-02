@@ -1107,3 +1107,42 @@ void func_801052CC_32868C_name_4C(void) {
     omAddPrcObj(func_80103150_326510_name_4C, 0x1005, 0, 0);
     omPrcSetStatBit(omAddPrcObj(func_80105164_328524_name_4C, 0x1005, 0, 0), 0x80);
 }
+
+/* .data (0x328890-0x328980, 801054D0-801055C0) */
+board_overlay_entrypoint D_801054D0_328890_name_4C[] = {
+    { 0, func_80102830_325BF0_name_4C },
+    { 1, func_8010286C_325C2C_name_4C },
+    { 2, func_801052CC_32868C_name_4C },
+    { -1, NULL },
+};
+s16 D_801054F0_3288B0_name_4C[4] = { 4, 0, 1, 2 };
+s32 D_801054F8_3288B8_name_4C[2] = { 0x00080039, 0x0008003A };
+s32 D_80105500_3288C0_name_4C[3] = { 2, 0x0008003F, 0x00080047 };
+BoardEventListEntry D_8010550C_3288CC_name_4C[2] = {
+    { 1, 1, func_80102B88_325F48_name_4C },
+    { 0, 0, NULL },
+};
+BoardEventListEntry D_8010551C_3288DC_name_4C[2] = {
+    { 1, 1, func_80102BAC_325F6C_name_4C },
+    { 0, 0, NULL },
+};
+s16 D_8010552C_3288EC_name_4C[4] = { 14, 3, -1, 0 };
+s16 D_80105534_3288F4_name_4C[4] = { 1, 0, 0, 0 };
+BoardEventListEntry D_8010553C_3288FC_name_4C[2] = {
+    { 1, 2, func_80102C1C_325FDC_name_4C },
+    { 0, 0, NULL },
+};
+BoardEventTableEntry D_8010554C_32890C_name_4C[4] = {
+    { 5, D_8010550C_3288CC_name_4C },
+    { 10, D_8010551C_3288DC_name_4C },
+    { 25, D_8010553C_3288FC_name_4C },
+    { -1, NULL },
+};
+s32 D_8010556C_32892C_name_4C[10] = {
+    0x000A001E, 0x000A001F, 0x000A0020, 0x000A0176, 0x000A0179,
+    0x000A0023, 0x000A0024, 0x000A0025, 0x000A0177, 0x000A0178,
+};
+s32 D_80105594_328954_name_4C[3] = { 0x000A0160, 0x000A017B, 0x000A017A };
+s32 D_801055A0_328960_name_4C[6] = { 5, 0x000800CE, 0x000800CF, 0x000800D1, 0x000800D0, 0x000800D2 };
+s16 D_801055B8_328978_name_4C = -1;
+s32 D_801055BC_32897C_name_4C = 1;

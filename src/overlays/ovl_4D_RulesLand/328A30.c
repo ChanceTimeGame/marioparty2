@@ -465,3 +465,41 @@ void func_80103748_329978_RulesLand(void) {
     func_801036B0_3298E0_RulesLand();
     func_80047B78_48778();
 }
+
+/* .data (0x329F80-0x32A190, 80103D50-80103F60) */
+omObjData* D_80103D50_329F80_RulesLand[16] = { NULL };
+s32 D_80103D90_329FC0_RulesLand[4] = { -1, -1, -1, -1 };
+MBModel* D_80103DA0_329FD0_RulesLand[4] = { NULL };
+omObjData* D_80103DB0_329FE0_RulesLand[4] = { NULL };
+s32 D_80103DC0_329FF0_RulesLand = 0;
+s32 D_80103DC4_329FF4_RulesLand = 0;
+s32 D_80103DC8_329FF8_RulesLand = 0;
+Process* D_80103DCC_329FFC_RulesLand = NULL;
+s32 D_80103DD0_32A000_RulesLand = 0;
+Vec D_80103DD4_32A004_RulesLand = { 0.0f, 0.0f, 2040.0f };
+Vec D_80103DE0_32A010_RulesLand = { -134.0f, 180.0f, 3263.0f };
+Vec D_80103DEC_32A01C_RulesLand[4] = {
+    { -190.0f, 0.0f, 2120.0f }, { -15.0f, 0.0f, 2120.0f }, { 160.0f, 0.0f, 2120.0f }, { 335.0f, 0.0f, 2120.0f },
+};
+u32 D_80103E1C_32A04C_RulesLand[9] = { 8, 0x00020012, 0x00020010, 0x00020000, 0x00020001,
+                                       0x00020002, 0x00020098, 0x00020052, 0x00020050 };
+u32 D_80103E40_32A070_RulesLand[9] = { 8, 0x00030012, 0x00030010, 0x00030000, 0x00030001,
+                                       0x00030002, 0x00030098, 0x00030052, 0x00030050 };
+u32 D_80103E64_32A094_RulesLand[9] = { 8, 0x00070012, 0x00070010, 0x00070000, 0x00070001,
+                                       0x00070002, 0x00070098, 0x00070052, 0x00070050 };
+u32 D_80103E88_32A0B8_RulesLand[9] = { 8, 0x00040012, 0x00040010, 0x00040000, 0x00040001,
+                                       0x00040002, 0x00040098, 0x00040052, 0x00040050 };
+u32 D_80103EAC_32A0DC_RulesLand[9] = { 8, 0x00050012, 0x00050010, 0x00050000, 0x00050001,
+                                       0x00050002, 0x00050098, 0x00050052, 0x00050050 };
+u32 D_80103ED0_32A100_RulesLand[9] = { 8, 0x00060012, 0x00060010, 0x00060000, 0x00060001,
+                                       0x00060002, 0x00060098, 0x00060052, 0x00060050 };
+u32* D_80103EF4_32A124_RulesLand[6] = {
+    D_80103E1C_32A04C_RulesLand, D_80103E40_32A070_RulesLand, D_80103E64_32A094_RulesLand,
+    D_80103E88_32A0B8_RulesLand, D_80103EAC_32A0DC_RulesLand, D_80103ED0_32A100_RulesLand,
+};
+s32 D_80103F0C_32A13C_RulesLand[4] = { 3, 0x000800CE, 0x000800CE, 0x000800CE };
+Vec D_80103F1C_32A14C_RulesLand = { 0.0f, 700.0f, 1600.0f };
+Vec D_80103F28_32A158_RulesLand[4] = {
+    { -60.0f, 700.0f, 2050.0f }, { -10.0f, 700.0f, 2075.0f }, { 40.0f, 700.0f, 2075.0f }, { 90.0f, 700.0f, 2050.0f },
+};
+s32 D_80103F58_32A188_RulesLand[2] = { 0, 0 }; /* padding to the 16-byte end of .data */
