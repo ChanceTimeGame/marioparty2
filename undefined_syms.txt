@@ -506,3 +506,5 @@ D_80112414_F3654_RollOutTheBarrels = D_80112410_F3650_RollOutTheBarrels + 0x4;
 D_80103E04_40B934_MinigameCoaster = D_80103E00_40B930_MinigameCoaster + 0x4;
 D_80103E08_40B938_MinigameCoaster = D_80103E00_40B930_MinigameCoaster + 0x8;
 D_80103E0C_40B93C_MinigameCoaster = D_80103E00_40B930_MinigameCoaster + 0xC;
+D_8010635B_3E7E7B_name_64 = D_80106358_3E7E78_name_64 + 0x3;
+D_8010635E_3E7E7E_name_64 = D_80106358_3E7E78_name_64 + 0x6;
