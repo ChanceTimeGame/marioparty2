@@ -116,10 +116,10 @@ typedef struct RBBarrel {
     /* 0x08 */ s16 idx;
     /* 0x0A */ s16 kind; /* the prize inside, -1 none */
     /* 0x0C */ s16 roller; /* D_80112D64_F3FA4_RollOutTheBarrels index */
-    /* 0x0E */ s16 unk_0E;
+    /* 0x0E */ s16 unk_0E; /* flags: 1, 2 rest pose, 4 and up */
     /* 0x10 */ s32 unk_10;
     /* 0x14 */ s32 unk_14;
-    /* 0x18 */ s32 unk_18;
+    /* 0x18 */ f32 unk_18;
     /* 0x1C */ Vec pos;
     /* 0x28 */ Vec rot;
     /* 0x34 */ Vec scale;
@@ -310,8 +310,8 @@ extern RBBarrel* D_80112EB0_F40F0_RollOutTheBarrels[4];
 extern RBBarrel* D_80112EC0_F4100_RollOutTheBarrels[4];
 
 /* S4-02B: past func_8010A2E0_EB520_RollOutTheBarrels, typed by width only: retype yours. */
-extern f32 D_801120E8_F3328_RollOutTheBarrels;
-extern f32 D_801120F4_F3334_RollOutTheBarrels;
+extern f32 D_801120E8_F3328_RollOutTheBarrels[3];
+extern f32 D_801120F4_F3334_RollOutTheBarrels[3];
 extern s32 D_8011215A_F339A_RollOutTheBarrels[]; /* typed by width only */
 extern s32 D_80112162_F33A2_RollOutTheBarrels[]; /* typed by width only */
 extern s32 D_80112166_F33A6_RollOutTheBarrels[]; /* typed by width only */
@@ -432,13 +432,13 @@ void func_8010D204_EE444_RollOutTheBarrels(omObjData* obj);
 void func_8010D3D0_EE610_RollOutTheBarrels(omObjData* obj);
 void func_8010D604_EE844_RollOutTheBarrels(omObjData* obj);
 void func_8010D740_EE980_RollOutTheBarrels(omObjData* obj);
-s32 func_8010DB74_EEDB4_RollOutTheBarrels(s32 arg0);
+s32 func_8010DB74_EEDB4_RollOutTheBarrels(void* arg0);
 void func_8010DBAC_EEDEC_RollOutTheBarrels(RBStep step);
 s32 func_8010DBE0_EEE20_RollOutTheBarrels(s32 arg0);
-void func_8010DC1C_EEE5C_RollOutTheBarrels(void);
-void func_8010DC48_EEE88_RollOutTheBarrels(void);
-void func_8010DC78_EEEB8_RollOutTheBarrels(void);
-s32 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 file);
+f32 func_8010DC1C_EEE5C_RollOutTheBarrels(void);
+f32 func_8010DC48_EEE88_RollOutTheBarrels(void);
+s32 func_8010DC78_EEEB8_RollOutTheBarrels(void);
+u16 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 file);
 void func_8010DD10_EEF50_RollOutTheBarrels(void);
 void func_8010DE84_EF0C4_RollOutTheBarrels(void);
 s32 func_8010DF18_EF158_RollOutTheBarrels(s32 arg0, f32 x, f32 y, f32 z);

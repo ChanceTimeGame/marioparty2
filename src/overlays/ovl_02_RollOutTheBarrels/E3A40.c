@@ -2472,51 +2472,793 @@ void func_8010A2E0_EB520_RollOutTheBarrels(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010A7C4_EBA04_RollOutTheBarrels);
+void func_8010A7C4_EBA04_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010ACA8_EBEE8_RollOutTheBarrels);
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(1) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010CA90_EDCD0_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            for (i = 0; i < 2; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            PlaySound(0x132);
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 2; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x - step;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x + step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 2; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112E30_F4070_RollOutTheBarrels[i].x - 200.0;
+                }
+                for (i = 0; i < 2; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[i].x + 200.0;
+                }
+                PlaySound(0x132);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 500.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 2; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z + step;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 2; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112E30_F4070_RollOutTheBarrels[i].z + 500.0;
+                }
+                for (i = 0; i < 2; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112E70_F40B0_RollOutTheBarrels[i].z - 500.0;
+                }
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010B5B0_EC7F0_RollOutTheBarrels);
+void func_8010ACA8_EBEE8_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+    f32 tilt;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010BEB8_ED0F8_RollOutTheBarrels);
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(2) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010C9D8_EDC18_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(0)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            D_80112EC0_F4100_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(5)];
+            for (i = 0; i < 3; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112E30_F4070_RollOutTheBarrels[0].x;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[0].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[1]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[1]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z;
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[2]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = D_80112E30_F4070_RollOutTheBarrels[2].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[2].x;
+                D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[2]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[2]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[2]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            if (D_80112EB0_F40F0_RollOutTheBarrels[2]->obj->func_ptr == NULL && D_80112EC0_F4100_RollOutTheBarrels[2]->obj->func_ptr == NULL) {
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 4:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010C448_ED688_RollOutTheBarrels);
+void func_8010B5B0_EC7F0_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+    f32 tilt;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010C9D8_EDC18_RollOutTheBarrels);
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(2) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010C9D8_EDC18_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(0)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            D_80112EC0_F4100_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(5)];
+            for (i = 0; i < 3; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z - tilt;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z - tilt;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112E30_F4070_RollOutTheBarrels[2].x;
+                D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[2].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[1]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[1]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[2]->rot.z - tilt;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[2]->rot.z - tilt;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[2]->pos.x = D_80112E30_F4070_RollOutTheBarrels[0].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[2]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[0].x;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[0]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[0]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            if (D_80112EB0_F40F0_RollOutTheBarrels[0]->obj->func_ptr == NULL && D_80112EC0_F4100_RollOutTheBarrels[0]->obj->func_ptr == NULL) {
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 4:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010CA90_EDCD0_RollOutTheBarrels);
+void func_8010BEB8_ED0F8_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+    f32 tilt;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010CB58_EDD98_RollOutTheBarrels);
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(2) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010C9D8_EDC18_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(0)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            for (i = 0; i < 2; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112E30_F4070_RollOutTheBarrels[0].x;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[0].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[0]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[0]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            if (D_80112EB0_F40F0_RollOutTheBarrels[0]->obj->func_ptr == NULL && D_80112EC0_F4100_RollOutTheBarrels[0]->obj->func_ptr == NULL) {
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010CC18_EDE58_RollOutTheBarrels);
+void func_8010C448_ED688_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+    f32 tilt;
+    f32 t;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010CC94_EDED4_RollOutTheBarrels);
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(2) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010C9D8_EDC18_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(5)];
+            for (i = 0; i < 2; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 4);
+            tilt = -func_8010DC1C_EEE5C_RollOutTheBarrels();
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = step + D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x;
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z = tilt + D_80112EB0_F40F0_RollOutTheBarrels[0]->rot.z;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z = D_80112EB0_F40F0_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = step + D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x;
+            D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z = tilt + D_80112EC0_F4100_RollOutTheBarrels[0]->rot.z;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x - step;
+            D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z = D_80112EC0_F4100_RollOutTheBarrels[1]->rot.z - tilt;
+            t = (f32)obj->work[1] / (f32)((D_80112D9C_F3FDC_RollOutTheBarrels - 2) / 2);
+            if (t < 0.0) {
+                t = 0.0f;
+            } else if (t >= 1.0) {
+                t = 1.0f;
+            }
+            D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = HuMathSin(t * 180.0f) * func_8010DC48_EEE88_RollOutTheBarrels() + 120.0;
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.x = D_80112E30_F4070_RollOutTheBarrels[1].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[1]->pos.x = D_80112E30_F4070_RollOutTheBarrels[0].x;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[1].x;
+                D_80112EC0_F4100_RollOutTheBarrels[1]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[0].x;
+                D_80112EB0_F40F0_RollOutTheBarrels[0]->pos.y = 120.0f;
+                D_80112EC0_F4100_RollOutTheBarrels[0]->pos.y = 120.0f;
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EB0_F40F0_RollOutTheBarrels[0]->pos, 1);
+                func_8010E080_EF2C0_RollOutTheBarrels(&D_80112EC0_F4100_RollOutTheBarrels[0]->pos, 1);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            if (D_80112EB0_F40F0_RollOutTheBarrels[0]->obj->func_ptr == NULL && D_80112EC0_F4100_RollOutTheBarrels[0]->obj->func_ptr == NULL) {
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010CE40_EE080_RollOutTheBarrels);
+void func_8010C9D8_EDC18_RollOutTheBarrels(omObjData* obj) {
+    switch (obj->work[0]) {
+        case 1:
+            func_8010DBAC_EEDEC_RollOutTheBarrels(func_8010D204_EE444_RollOutTheBarrels);
+            goto next;
+        case 0:
+        case 2:
+            if (func_8010DB74_EEDB4_RollOutTheBarrels(0) != 0) {
+            next:
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112D80_F3FC0_RollOutTheBarrels = (s16)PlaySound(0x131);
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010D054_EE294_RollOutTheBarrels);
+void func_8010CA90_EDCD0_RollOutTheBarrels(omObjData* obj) {
+    switch (obj->work[0]) {
+        case 0:
+            if (D_80112D80_F3FC0_RollOutTheBarrels >= 0) {
+                func_80079848_7A448(D_80112D82_F3FC2_RollOutTheBarrels);
+                D_80112D80_F3FC0_RollOutTheBarrels = -1;
+            }
+            goto wait;
+        case 1:
+            func_8010DBAC_EEDEC_RollOutTheBarrels(func_8010D3D0_EE610_RollOutTheBarrels);
+            goto next;
+        case 2:
+        wait:
+            if (func_8010DB74_EEDB4_RollOutTheBarrels(0) != 0) {
+            next:
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010D204_EE444_RollOutTheBarrels);
+void func_8010CB58_EDD98_RollOutTheBarrels(omObjData* obj) {
+    obj->func_ptr = func_8010CC18_EDE58_RollOutTheBarrels;
+    if (((RBBarrel*)func_801113F4_F2634_RollOutTheBarrels(obj))->idx == 0) {
+        obj->model[0] = func_80018A30_19630(0x120001, 0xB9);
+        obj->model[1] = func_80018A30_19630(0xD, 0x99);
+        obj->model[2] = func_80018A30_19630(0x120006, 0xAD);
+    } else {
+        obj->model[0] = func_80027D3C_2893C(D_80112D68_F3FA8_RollOutTheBarrels[0].obj->model[0]);
+        obj->model[1] = func_80027D3C_2893C(D_80112D68_F3FA8_RollOutTheBarrels[0].obj->model[1]);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010D3D0_EE610_RollOutTheBarrels);
+void func_8010CC18_EDE58_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010D604_EE844_RollOutTheBarrels);
+    switch (b->unk_10) {
+        case 0:
+            b->unk_14 = 0x3C;
+            b->unk_10++;
+        case 1:
+            if (--b->unk_14 <= 0) {
+                b->unk_14 = 0;
+                b->unk_10 = 0;
+                obj->func_ptr = func_8010CC94_EDED4_RollOutTheBarrels;
+            }
+            break;
+    }
+}
+
+void func_8010CC94_EDED4_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+
+    switch (b->unk_10) {
+        case 0:
+            b->unk_18 = 0.0f;
+            b->unk_10++;
+        case 1:
+            b->unk_18 = b->unk_18 - 6.0;
+            b->pos.y += b->unk_18;
+            b->rot.x = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.x, 30.0f);
+            b->rot.y = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.y, 30.0f);
+            b->rot.z = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.z, 30.0f);
+            if (b->pos.y <= 120.0) {
+                PlaySound(0x133);
+                b->pos.y = 120.0f;
+                func_80108AEC_E9D2C_RollOutTheBarrels(b->roller, 4, 4);
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            func_8010E080_EF2C0_RollOutTheBarrels(&b->pos, 0);
+            b->unk_40[0] = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) % 15 + 0x3C;
+            b->unk_10 = 0;
+            b->unk_14 = 0;
+            b->unk_18 = 0.0f;
+            obj->func_ptr = func_8010CE40_EE080_RollOutTheBarrels;
+            break;
+    }
+}
+
+void func_8010CE40_EE080_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+    f32 t;
+
+    switch (b->unk_10) {
+        case 0:
+            b->unk_14 = b->unk_40[0];
+            b->unk_50[0] = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) % 360;
+            b->unk_10++;
+        case 1:
+            t = (f32)b->unk_14 / 30.0f;
+            b->unk_50[0] += (f32)(t * 20.0 + 40.0);
+            if (b->unk_50[0] >= 360.0) {
+                b->unk_50[0] -= 360.0;
+            }
+            b->rot.x = HuMathSin(b->unk_50[0]) * t * 10.0;
+            b->rot.z = func_800B7890_B8490(b->unk_50[0]) * t * 10.0;
+            b->pos.y = HuMathSin(t * 30.0) * 20.0 + 120.0;
+            if (--b->unk_14 <= 0) {
+                b->pos.y = 120.0f;
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            b->unk_10 = 0;
+            b->unk_14 = 0;
+            b->unk_18 = 0;
+            obj->func_ptr = NULL;
+            break;
+    }
+}
+
+void func_8010D054_EE294_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+    f32 t;
+
+    switch (b->unk_10) {
+        case 0:
+            b->unk_14 = b->unk_40[0];
+            b->unk_50[0] = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) % 360;
+            b->unk_10++;
+        case 1:
+            t = (f32)b->unk_14 / 30.0f;
+            b->unk_50[0] += (f32)(t * 20.0 + 40.0);
+            if (b->unk_50[0] >= 360.0) {
+                b->unk_50[0] -= 360.0;
+            }
+            b->rot.x = HuMathSin(b->unk_50[0]) * t * 10.0 + 90.0;
+            if (--b->unk_14 <= 0) {
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            b->unk_10 = 0;
+            b->unk_14 = 0;
+            b->unk_18 = 0;
+            obj->func_ptr = NULL;
+            break;
+    }
+}
+
+void func_8010D204_EE444_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+
+    switch (b->unk_10) {
+        case 0:
+            b->unk_18 = 30.0f;
+            b->unk_10++;
+        case 1:
+            b->unk_18 = b->unk_18 - 6.0;
+            b->pos.y += b->unk_18;
+            b->rot.x = func_80111678_F28B8_RollOutTheBarrels(90.0f, b->rot.x, 30.0f);
+            b->rot.y = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.y, 30.0f);
+            b->rot.z = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.z, 30.0f);
+            if (b->pos.y <= 120.0) {
+                b->pos.y = 120.0f;
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            func_8010E080_EF2C0_RollOutTheBarrels(&b->pos, 1);
+            if (b->idx == 0) {
+                PlaySound(0x130);
+            }
+            b->unk_40[0] = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) % 7 + 7;
+            b->unk_0E = (b->unk_0E & 0xFFFC) | 2;
+            b->unk_10 = 0;
+            b->unk_14 = 0;
+            b->unk_18 = 0.0f;
+            obj->func_ptr = func_8010D054_EE294_RollOutTheBarrels;
+            break;
+    }
+}
+
+void func_8010D3D0_EE610_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+    s32 n;
+
+    switch (b->unk_10) {
+        case 0:
+            b->unk_18 = 30.0f;
+            b->unk_10++;
+        case 1:
+            b->unk_18 = b->unk_18 - 6.0;
+            b->pos.y += b->unk_18;
+            b->rot.x = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.x, 30.0f);
+            b->rot.y = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.y, 30.0f);
+            b->rot.z = func_80111678_F28B8_RollOutTheBarrels(0.0f, b->rot.z, 30.0f);
+            if (b->pos.y <= 120.0) {
+                b->pos.y = 120.0f;
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            if (b->idx == 0) {
+                PlaySound(0x130);
+            }
+            func_8010E080_EF2C0_RollOutTheBarrels(&b->pos, 2);
+            if (D_80112DA4_F3FE4_RollOutTheBarrels < 0xF) {
+                n = ((rand8() & 0xFF) << 8) | (rand8() & 0xFF);
+                n %= 7;
+                n += 7;
+            } else {
+                n = ((rand8() & 0xFF) << 8) | (rand8() & 0xFF);
+                n %= 15;
+                n += 0xF;
+            }
+            b->unk_40[0] = n;
+            b->unk_0E = (b->unk_0E & 0xFFFC) | 1;
+            b->unk_10 = 0;
+            b->unk_14 = 0;
+            b->unk_18 = 0.0f;
+            obj->func_ptr = func_8010CE40_EE080_RollOutTheBarrels;
+            break;
+    }
+}
+
+void func_8010D604_EE844_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b = func_801113F4_F2634_RollOutTheBarrels(obj);
+
+    switch (b->unk_10) {
+        case 0:
+            func_80108AEC_E9D2C_RollOutTheBarrels(b->roller, 4, 0);
+            func_8010898C_E9BCC_RollOutTheBarrels(b->roller, b->pos.x, 50.0f, b->pos.z);
+            b->unk_50[0] = 100.0f;
+            b->unk_10++;
+        case 1:
+            b->pos.y += b->unk_50[0];
+            if (b->pos.y >= 800.0) {
+                b->unk_0E = 0;
+                b->unk_10++;
+            }
+            break;
+        case 2:
+            func_800298A4_2A4A4(obj->model[0], 4, 4);
+            if (b->obj->model[1] != -1) {
+                func_80108C5C_E9E9C_RollOutTheBarrels(b->roller, obj->model[1]);
+                b->obj->model[1] = -1;
+            }
+            b->obj->func_ptr = NULL;
+            b->unk_0E = 0;
+            b->unk_10 = 0;
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010D740_EE980_RollOutTheBarrels);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DB74_EEDB4_RollOutTheBarrels);
+s32 func_8010DB74_EEDB4_RollOutTheBarrels(void* arg0) {
+    RBBarrel* b = D_80112D68_F3FA8_RollOutTheBarrels;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DBAC_EEDEC_RollOutTheBarrels);
+    for (i = 0; i < 6; i++, b++) {
+        if (b->obj->func_ptr != arg0) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DBE0_EEE20_RollOutTheBarrels);
+void func_8010DBAC_EEDEC_RollOutTheBarrels(RBStep step) {
+    RBBarrel* b = D_80112D68_F3FA8_RollOutTheBarrels;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DC1C_EEE5C_RollOutTheBarrels);
+    for (i = 0; i < 6; i++, b++) {
+        if (b->unk_0E != 0) {
+            b->obj->func_ptr = step;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DC48_EEE88_RollOutTheBarrels);
+s32 func_8010DBE0_EEE20_RollOutTheBarrels(s32 arg0) {
+    RBBarrel* b = D_80112D68_F3FA8_RollOutTheBarrels;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DC78_EEEB8_RollOutTheBarrels);
+    for (i = 0; i < 6; i++, b++) {
+        if (!(b->unk_0E & arg0)) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DCCC_EEF0C_RollOutTheBarrels);
+f32 func_8010DC1C_EEE5C_RollOutTheBarrels(void) {
+    return D_801120E8_F3328_RollOutTheBarrels[func_8010DC78_EEEB8_RollOutTheBarrels()];
+}
+
+f32 func_8010DC48_EEE88_RollOutTheBarrels(void) {
+    return D_801120F4_F3334_RollOutTheBarrels[func_8010DC78_EEEB8_RollOutTheBarrels()] * 2;
+}
+
+s32 func_8010DC78_EEEB8_RollOutTheBarrels(void) {
+    if (D_80112D9C_F3FDC_RollOutTheBarrels >= 30.0) {
+        return 0;
+    }
+    if (D_80112D9C_F3FDC_RollOutTheBarrels >= 22.5) {
+        return 1;
+    }
+    return 2;
+}
+
+u16 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 file) {
+    void* data;
+    u16 anim;
+
+    data = DataRead(file);
+    anim = SprAnimRead(data);
+    DataClose(data);
+    return anim;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010DD10_EEF50_RollOutTheBarrels);
 
