@@ -2932,7 +2932,7 @@ const char D_80112EF8_2F1628_name_45[] = "%d";
 #ifdef NON_MATCHING
 void func_80107AE0_2E6210_name_45(void) {
     GW_SYSTEM* gw;
-    s16 space;
+    s32 space;
     s32 bank;
     s32 choice;
     s32 roll;
@@ -3040,10 +3040,12 @@ void func_80107AE0_2E6210_name_45(void) {
                     MBDlgWinExec(5, 0x230);
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
+                    HuPrcSleep(30);
                 } else if (D_800F8D18[0] == 0) {
                     MBDlgWinExec(5, 0x427);
                     func_8004CA34_4D634(gw->current_player_index, 20);
                     func_800614B4_620B4(gw->current_player_index, 20);
+                    HuPrcSleep(30);
                 } else {
                     sprintf(buf, D_80112EF8_2F1628_name_45, D_800F8D18[0]);
                     func_80056368_56F68(5, 0x426, buf, 0, 0, 0, 0);
@@ -3053,8 +3055,8 @@ void func_80107AE0_2E6210_name_45(void) {
                     func_8004CA34_4D634(gw->current_player_index, D_800F8D18[0]);
                     func_800614B4_620B4(gw->current_player_index, D_800F8D18[0]);
                     D_800F8D18[0] = 0;
+                    HuPrcSleep(30);
                 }
-                HuPrcSleep(30);
             } else {
                 bank = 1;
                 if (D_800F8D12_F9912 != 0) {
