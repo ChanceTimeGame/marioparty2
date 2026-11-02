@@ -211,7 +211,20 @@ void func_801031D0_3F7B00_name_69(void) {
     omOvlGotoEx(OVL69_NEXT_SCENE, OVL69_NEXT_ENTRY, 0x192);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_name/3F7160", func_8010320C_3F7B3C_name_69);
+/* Scene 1: back on the start space, stop flags (OVL69_FLAG_BASE + 0x18..0x1D) cleared, 0x20 reset. */
+void func_8010320C_3F7B3C_name_69(void) {
+    omInitObjMan(10, 0);
+    SetPlayerOntoChain(0, 0, 0);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x18);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x19);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x1A);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x1B);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x1C);
+    func_80075424_76024(OVL69_FLAG_BASE + 0x1D);
+    func_800753D4_75FD4(0x20);
+    func_80073410_74010(-1);
+    omOvlReturnEx(1);
+}
 
 void func_80103284_3F7BB4_name_69(void) {
     omInitObjMan(0x50, 0x28);
@@ -266,7 +279,16 @@ void func_80103414_3F7D44_name_69(void) {
     func_80102CE4_3F7614_name_69();
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_name/3F7160", func_80103438_3F7D68_name_69);
+/* Event 0x11 on the board: on the middle difficulty a sound and a message first, then the next chain. */
+void func_80103438_3F7D68_name_69(void) {
+    if (D_800FD8A8_FE4A8.difficulty == 1) {
+        PlaySound(0x11E);
+        MBDlgWinExec(0x29, 0x5CC);
+        SetNextChainAndSpace(-1, 2, 0);
+    } else {
+        SetNextChainAndSpace(-1, 1, 0);
+    }
+}
 
 void func_8010348C_3F7DBC_name_69(void) {
     func_80074FAC_75BAC(8, 0, 1, 0);
@@ -1053,4 +1075,22 @@ void func_80106174_3FAAA4_name_69(void) {
     omAddPrcObj(func_80105F74_3FA8A4_name_69, 0x1005, 0x1000, 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_name/3F7160", func_801061B0_3FAAE0_name_69);
+/* Scene 4: back on the space after the last stop passed. */
+void func_801061B0_3FAAE0_name_69(void) {
+    if (func_80075390_75F90(OVL69_FLAG_BASE + 0x1D) != 0) {
+        SetPlayerOntoChain(0, 0, 19);
+    } else if (func_80075390_75F90(OVL69_FLAG_BASE + 0x1C) != 0) {
+        SetPlayerOntoChain(0, 0, 15);
+    } else if (func_80075390_75F90(OVL69_FLAG_BASE + 0x1B) != 0) {
+        SetPlayerOntoChain(0, 0, 13);
+    } else if (func_80075390_75F90(OVL69_FLAG_BASE + 0x1A) != 0) {
+        SetPlayerOntoChain(0, 0, 10);
+    } else if (func_80075390_75F90(OVL69_FLAG_BASE + 0x19) != 0) {
+        SetPlayerOntoChain(0, 0, 6);
+    } else if (func_80075390_75F90(OVL69_FLAG_BASE + 0x18) != 0) {
+        SetPlayerOntoChain(0, 0, 4);
+    } else {
+        SetPlayerOntoChain(0, 0, 0);
+    }
+    omOvlReturnEx(1);
+}
