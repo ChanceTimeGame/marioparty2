@@ -417,7 +417,9 @@ void omDelObj(omObjData* obj) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/objmain", omSetStat);
+void omSetStat(omObjData* obj, u16 stat) {
+    obj->stat = stat;
+}
 
 void omSetStatBit(omObjData* obj, u16 bit) {
     obj->stat |= bit;
@@ -1044,8 +1046,7 @@ void func_80077EF0_78AF0(void) {
     obj->work[2] = 0;
 }
 
-/* func_80077F50_78B50's (still asm) rodata, defined here so objmain's rodata piece stays one
-   carved range (the debug menu labels are reached through pointers in .data) */
+/* func_80077F50_78B50's strings (the menu labels are reached through pointers in .data) */
 const char D_800D359C_D419C[] __attribute__((aligned(4), section(".rodata"))) = " SE STP";
 const char D_800D35A4_D41A4[] __attribute__((aligned(4), section(".rodata"))) = " MUSSTP";
 const char D_800D35AC_D41AC[] __attribute__((aligned(4), section(".rodata"))) = " INFO  ";
@@ -1055,7 +1056,233 @@ const char D_800D35C4_D41C4[] __attribute__((aligned(4), section(".rodata"))) = 
 const char D_800D35CC_D41CC[] __attribute__((aligned(4), section(".rodata"))) = "- PAUSE -";
 const char D_800D35D8_D41D8[] __attribute__((aligned(4), section(".rodata"))) = ">";
 
-INCLUDE_ASM("asm/nonmatchings/objmain", func_80077F50_78B50);
+typedef struct PauseFrameColor {
+    /* 0x00 */ u8 r;
+    /* 0x01 */ u8 g;
+    /* 0x02 */ u8 b;
+} PauseFrameColor; /* the head of 7D1D0.c's SaftyFrameColor */
+
+extern PauseFrameColor saftyFrameColor;
+extern u16 D_800F92D4_F9ED4[4]; /* 79F90.c: buttons held */
+extern s16 D_800E213A_E2D3A;     /* pause windows */
+extern s16 D_800E213C_E2D3C;
+extern u16 D_800CD520_CE120;
+extern u16 D_800CD522_CE122;
+s32 PlaySound(s32);
+void pfWinClose(void);
+void pfWinKill(s16 id);
+void saftyFrameSet(u8 r, u8 g, u8 b); /* 7D1D0.c defines it with s8; retail passes 0x90 unextended */
+void saftyFrameFlashSet(s8 rStep, s8 gStep, s8 bStep, s8 rMax, u8 gMax, u8 bMax, u8 rMin, u8 gMin, u8 bMin);
+void saftyFrameFlashReset(void);
+void saftyFrameReset(void);
+void func_80075560_76160(void);
+void func_80075638_76238(void);
+
+/* MP1 omDBGSystemKeyCheck: the debug pause menu (Start pauses, the C buttons tint the safety frame). */
+void func_80077F50_78B50(omObjData* obj) {
+    s32 i;
+    s32 j;
+    u8 pad;
+    u8 close = 0;
+
+    if (obj->work[0] & 1) {
+        pad = obj->work[1];
+        if (!(obj->work[0] & 4)) {
+            sprintf(pfStrBuf, D_800D35CC_D41CC);
+            fontcolor = 4;
+            DrawDebugText(125, 97, pfStrBuf);
+            fontcolor = 12;
+            DrawDebugText(124, 96, pfStrBuf);
+            for (i = 0; i < 6; i++) {
+                sprintf(pfStrBuf, D_800CD4CC_CE0CC[i].unk_08);
+                if (i == obj->work[2]) {
+                    fontcolor = D_800CD4CC_CE0CC[i].unk_03;
+                    DrawDebugText(D_800CD4CC_CE0CC[i].unk_01 + 1, D_800CD4CC_CE0CC[i].unk_02 + 1, pfStrBuf);
+                    fontcolor = D_800CD4CC_CE0CC[i].unk_04;
+                    DrawDebugText(D_800CD4CC_CE0CC[i].unk_01, D_800CD4CC_CE0CC[i].unk_02, pfStrBuf);
+                } else {
+                    fontcolor = 0;
+                    DrawDebugText(D_800CD4CC_CE0CC[i].unk_01 + 1, D_800CD4CC_CE0CC[i].unk_02 + 1, pfStrBuf);
+                    fontcolor = D_800CD4CC_CE0CC[i].unk_03;
+                    DrawDebugText(D_800CD4CC_CE0CC[i].unk_01, D_800CD4CC_CE0CC[i].unk_02, pfStrBuf);
+                }
+            }
+            sprintf(pfStrBuf, D_800D35D8_D41D8);
+            fontcolor = 8;
+            DrawDebugText(D_800CD4CC_CE0CC[obj->work[2]].unk_01 + 1, D_800CD4CC_CE0CC[obj->work[2]].unk_02 + 1,
+                          pfStrBuf);
+            fontcolor = 15;
+            DrawDebugText(D_800CD4CC_CE0CC[obj->work[2]].unk_01, D_800CD4CC_CE0CC[obj->work[2]].unk_02, pfStrBuf);
+            if (D_800FA19C_FAD9C[pad] & 0x400) {
+                PlaySound(1);
+                do {
+                    if (++obj->work[2] >= 6) {
+                        obj->work[2] = 0;
+                    }
+                } while (D_800CD4CC_CE0CC[obj->work[2]].unk_00 == 1);
+            } else if (D_800FA19C_FAD9C[pad] & 0x800) {
+                PlaySound(1);
+                do {
+                    if ((s8)--obj->work[2] < 0) {
+                        obj->work[2] = 5;
+                    }
+                } while (D_800CD4CC_CE0CC[obj->work[2]].unk_00 == 1);
+            } else if (D_800FA19C_FAD9C[pad] & 8) {
+                obj->work[0] ^= 8;
+                if (obj->work[0] & 8) {
+                    saftyFrameFlashSet(1, 1, -1, 0x60, 0x80, 0xFF, 0, 0, 100);
+                } else {
+                    saftyFrameFlashReset();
+                    saftyFrameColor.r = saftyFrameColor.g = 0;
+                    saftyFrameColor.b = 0x90;
+                }
+            } else if (D_800FA19C_FAD9C[pad] & 4) {
+                obj->work[0] ^= 0x20;
+                if (obj->work[0] & 0x20) {
+                    saftyFrameColor.g = 0xFF;
+                } else {
+                    saftyFrameColor.g = 0;
+                }
+            } else if (D_800FA19C_FAD9C[pad] & 2) {
+                obj->work[0] ^= 0x10;
+                if (obj->work[0] & 0x10) {
+                    saftyFrameColor.r = 0xFF;
+                } else {
+                    saftyFrameColor.r = 0;
+                }
+            } else if (D_800FA19C_FAD9C[pad] & 1) {
+                obj->work[0] ^= 0x40;
+                if (obj->work[0] & 0x40) {
+                    saftyFrameColor.b = 0xFF;
+                } else {
+                    saftyFrameColor.b = 0;
+                }
+            } else if (D_800FA19C_FAD9C[pad] & 0x8000) {
+                D_800FA19C_FAD9C[pad] = 0;
+                PlaySound(2);
+                switch (obj->work[2]) {
+                case 0:
+                    D_800FA19C_FAD9C[pad] |= 0x20;
+                    break;
+                case 1:
+                    D_801011FC_101DFC = 1;
+                    D_800FA19C_FAD9C[pad] |= 0x20;
+                    if (D_800FDD98_FE998->work[0] & 1) {
+                        D_800FDD98_FE998->work[0] &= ~1;
+                        func_8008CE5C_8DA5C();
+                    }
+                    break;
+                case 2:
+                    pfWinClose();
+                    D_800CD410_CE010 = 0;
+                    D_800CD436_CE036 = -1;
+                    saftyFrameReset();
+                    obj->work[0] |= 4;
+                    func_80075560_76160();
+                    break;
+                case 3:
+                    if ((D_800CD410_CE010 ^= 1) == 0) {
+                        pfWinKill(D_800CD436_CE036);
+                        D_800CD436_CE036 = -1;
+                    }
+                    break;
+                case 4:
+                    if ((D_800CD520_CE120 ^= 1) == 0) {
+                        func_80079464_7A064();
+                    }
+                    break;
+                case 5:
+                    if ((D_800CD522_CE122 ^= 1) == 0) {
+                        func_80079868_7A468();
+                    }
+                    break;
+                }
+            }
+        }
+        if (D_800FA19C_FAD9C[pad] & 0x20) {
+            close = 1;
+        }
+        if (D_800CD41C_CE01C == 1) {
+            close = 1;
+        }
+        if (close == 1) {
+            obj->work[0] &= ~1;
+            if (!(D_800FDD98_FE998->work[0] & 1)) {
+                D_800FDC9C_FE89C = D_800CD402_CE002;
+                for (j = 0; j < D_800F92B0_F9EB0; j++) {
+                    if (!(D_800CD420_CE020[j].stat & 0x21)) {
+                        omResetStatBit(&D_800CD420_CE020[j], 0x10);
+                    }
+                }
+                for (j = 0; j < D_800CD424_CE024; j++) {
+                    if (!(D_800CD42C_CE02C[j].unk0 & 0x21)) {
+                        omPrcResetStatBit(D_800CD42C_CE02C[j].processInstance, 0x10);
+                        if (!(D_800CD42C_CE02C[j].unk0 & 0x40)) {
+                            D_800CD42C_CE02C[j].processInstance->stat &= ~1;
+                        }
+                    }
+                }
+                func_800116B4_122B4(D_800FA188_FAD88, 0);
+                if (D_800CD435_CE035 == 1) {
+                    func_800116B4_122B4(1, 0);
+                    D_800CD435_CE035 = 0;
+                }
+                func_80079B88_7A788();
+                if (D_800CD526_CE126 & 8) {
+                    D_800CD526_CE126 &= ~8;
+                }
+                for (j = 0; j < 4; j++) {
+                    if (HuGetPadInserted(j) != 0) {
+                        func_800884AC_890AC(j);
+                    }
+                }
+            }
+            if (!(obj->work[0] & 4)) {
+                pfWinKill(D_800E213A_E2D3A);
+                pfWinKill(D_800E213C_E2D3C);
+            }
+            obj->work[0] &= ~4;
+            saftyFrameReset();
+            func_80075638_76238();
+        }
+    } else if (func_8008F618_90218() != 1 && D_800CD41C_CE01C != 1) {
+        for (i = 0; i < 4; i++) {
+            if (HuGetPadInserted(i) != 0 && (D_800FA19C_FAD9C[i] & 0x20) &&
+                !((D_800F92D4_F9ED4[i] | D_800FA19C_FAD9C[i]) & 0x10)) {
+                D_800CD402_CE002 = D_800FDC9C_FE89C;
+                D_800FDC9C_FE89C = 1;
+                obj->work[0] = 1;
+                obj->work[1] = i;
+                for (j = 0; j < D_800F92B0_F9EB0; j++) {
+                    if (!(D_800CD420_CE020[j].stat & 0x21)) {
+                        omSetStatBit(&D_800CD420_CE020[j], 0x10);
+                    }
+                }
+                for (j = 0; j < D_800CD424_CE024; j++) {
+                    if (!(D_800CD42C_CE02C[j].unk0 & 0x21)) {
+                        omPrcSetStatBit(D_800CD42C_CE02C[j].processInstance, 0x10);
+                        D_800CD42C_CE02C[j].processInstance->stat |= 1;
+                    }
+                }
+                D_800E213A_E2D3A = pfWinCreate(0x78, 0x60, 0xD0, 0xA8, 0x40FF);
+                D_800E213C_E2D3C = pfWinCreate(0x74, 0x5C, 0xCC, 0xA4, 0x90FF);
+                saftyFrameSet(0, 0, 0x90);
+                func_800115B4_121B4(D_800FA188_FAD88);
+                if (func_80011018_11C18(1) == 4) {
+                    func_800115B4_121B4(1);
+                    D_800CD435_CE035 = 1;
+                }
+                func_80079A70_7A670(4);
+                for (j = 0; j < 4; j++) {
+                    if (HuGetPadInserted(j) != 0) {
+                        func_800884AC_890AC(j);
+                    }
+                }
+                return;
+            }
+        }
+    }
+}
 
 /* MP1 omSystemKeyCheck: Start pauses (bit 0x10 on every live object and process) and resumes. */
 void func_80078A08_79608(omObjData* obj) {
