@@ -6,8 +6,8 @@
    .bss stay asm (declared here); each file's .rodata is carved. Much of it is a copy of the menu
    helpers of 5B, 58 and 4E. Prototypes past 801096BC came from m2c's register use only, and the
    externs still marked m2c are by access width: the owner of a function fixes its lines.
-   Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78 (2 comes back from the Coaster side, 8010A190
-   first), 1 runs 8010E8CC. The lobby moves a cursor over six attractions (D_80112476); A flies the
+   Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78 (2 runs 8010A190 first; what 2 and 4 mean
+   is not known yet), 1 runs 8010E8CC. The lobby moves a cursor over six attractions (D_80112476); A flies the
    camera (80107F28) and starts one, B asks to leave for 5B. D_80112420 0/1/2 picks return, goto or
    call of overlay D_80112F28 at entry D_80112426 in 80106DE4. */
 
@@ -449,7 +449,7 @@ extern s16 D_801124C8_3A0388_name_5C; /* m2c */
 extern s16 D_801124CA_3A038A_name_5C; /* m2c */
 extern s16 D_801124CC_3A038C_name_5C; /* m2c */
 extern s16 D_801124D2_3A0392_name_5C; /* m2c */
-extern s16 D_801124D6_3A0396_name_5C; /* mini-games played */
+extern s16 D_801124D6_3A0396_name_5C; /* a count from 8010E2AC; 10, 20, 30, 42 trigger messages in 80102B78 */
 extern s16 D_801124D8_3A0398_name_5C; /* m2c */
 extern s32 D_801124E0_3A03A0_name_5C; /* m2c */
 extern s32 D_80112570_3A0430_name_5C; /* m2c */

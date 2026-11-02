@@ -456,7 +456,7 @@ void func_80103B30_3919F0_name_5C(void) {
     }
 }
 
-/* Says the total coins earned, with 7s and 99999 as special messages. */
+/* Says the coin count (D_800F8C60.coinNum), with 0, repeated 7s and 99999 as their own messages. */
 void func_80103D08_391BC8_name_5C(void) {
     char buf[8];
     s16 i;
@@ -1277,7 +1277,7 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_801068BC_39477C_name_5C);
 #endif
 
-/* Process: a debug crosshair on pad 3 (never started here). */
+/* Process: a debug crosshair on pad 3; prints its position on A. */
 // control flow: retail if-converts the step (sltu/negu/andi/ori) (masked 10)
 #ifdef NON_MATCHING
 void func_80106C0C_394ACC_name_5C(void) {
