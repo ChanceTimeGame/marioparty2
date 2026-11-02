@@ -188,7 +188,7 @@ extern const MMVec4 D_8010CF68_1603F8_MoveToTheMusic;
 extern const MMVec4 D_8010CF78_160408_MoveToTheMusic;
 extern const MMVec4 D_8010CF88_160418_MoveToTheMusic;
 
-/* ---- .data (asm) ---- */
+/* ---- .data (155C90.c) ---- */
 extern u32 D_8010CBD0_160060_MoveToTheMusic[12]; /* frames per state */
 extern u8 D_8010CC00_160090_MoveToTheMusic[2][6];
 extern s32 D_8010CC0C_16009C_MoveToTheMusic[][7]; /* sounds; read as s16 */
