@@ -210,14 +210,14 @@ void func_8010712C_27EC5C_QuicksandCache(omObjData* obj) {
                     SprAttrSet(spr->unk_04, slot + 2, 0x8000);
                 }
                 d = (u16)(v % 100) / 10;
-                if ((u16)d == 0) {
-                    if (shown != 0) {
-                        goto bank;
-                    }
-                    SprAttrSet(spr->unk_04, slot + 1, 0x8000);
-                } else {
+                if ((u16)d != 0) {
+                    goto bank;
+                }
+                if (shown != 0) {
                 bank:
                     SprBankSet(spr->unk_04, slot++, d);
+                } else {
+                    SprAttrSet(spr->unk_04, slot + 1, 0x8000);
                 }
                 SprBankSet(spr->unk_04, slot, v % 10);
                 SprAttrReset(spr->unk_04, slot, 0x8000);

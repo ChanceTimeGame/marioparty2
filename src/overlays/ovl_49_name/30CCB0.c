@@ -5892,6 +5892,7 @@ void func_80111588_31BA38_name_49(s32 which) {
                         if (which != 0) {
                             D_800F8CE4_F98E4[which + 1] ^= 1;
                             dir.x = HuMathSin(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
+                            dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         } else {
                             MBDlgWinExec(5, 0x208);
                             func_80103F1C_30E3CC_name_49();
@@ -5917,8 +5918,8 @@ void func_80111588_31BA38_name_49(s32 which) {
                             func_80103FEC_30E49C_name_49();
                             D_800F8CE4_F98E4[which + 1] = sel;
                             dir.x = HuMathSin(D_80112E54_31D304_name_49[which][(s16)sel]);
+                            dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         }
-                        dir.z = func_800B7890_B8490(D_80112E54_31D304_name_49[which][D_800F8CE4_F98E4[which + 1]]);
                         MBPlayerVibrate(gw->current_player_index, 2);
                         func_80056B78_57778(&D_80114A74_31EF24_name_49[which]->rot, &dir, &D_80114A74_31EF24_name_49[which]->rot, 20);
                         PlaySound(0x404);
