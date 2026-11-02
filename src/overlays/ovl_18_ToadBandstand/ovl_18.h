@@ -11,7 +11,9 @@
 #include "game/collision.h"
 
 /* Toad Bandstand: one retail file found, 186490.c; .data is asm (0x1906D0: songs, display lists),
-   .rodata from 0x190C80. */
+   .rodata from 0x190C80. Two pairs play two songs (D_800FA656); each round the band leads and the
+   team copies on A, states D_8010D8FC 0 intro, 1 title, 2 count-in, 3-8 lead/copy, 9-10 end, 11 result,
+   12/13 team win or draw, 14 fade. */
 
 /* one player: the CPU's plan for the song's 36 beats */
 typedef struct TSPlayer {
@@ -41,6 +43,11 @@ typedef struct TSPans { s16 v[4]; } TSPans;
 #define TS_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
 /* texture step for 41 texels drawn from lo to hi */
 #define TS_STEP(hi, lo) ((s32)((41.0 / ((f32)((s32)((hi) * 4.0) + ((hi) < 0.0f ? 1 : 0) - (s32)((lo) * 4.0) - ((lo) < 0.0f ? 1 : 0)) / 4.0)) * 1024.0))
+
+/* one raw display list command */
+#define TS_GFX(a, b) { Gfx* _g = D_800FDBCC_FE7CC++; _g->words.w0 = (a); _g->words.w1 = (b); }
+/* by a note's pop-in phase */
+#define TS_PICK(a, a0, a1, a2) ((a) == 0 ? (a0) : ((a) == 1 ? (a1) : (a2)))
 
 /* ---- main-segment API missing from include/ ---- */
 typedef struct TSCharData {
@@ -125,6 +132,7 @@ extern f32 D_8010CC7C_19090C_ToadBandstand[6];
 extern f32 D_8010CC94_190924_ToadBandstand[6];
 extern f32 D_8010CCAC_19093C_ToadBandstand[6];
 extern f32 D_8010CCC4_190954_ToadBandstand[7];
+extern Gfx D_8010CCE0_190970_ToadBandstand[];
 extern Gfx D_8010CD30_1909C0_ToadBandstand[];
 extern u8 D_8010CD80_190A10_ToadBandstand[12];
 extern TSBytes4 D_8010CD8C_190A1C_ToadBandstand;

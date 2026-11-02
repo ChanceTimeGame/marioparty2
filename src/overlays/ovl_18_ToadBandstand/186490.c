@@ -919,8 +919,9 @@ void func_801071C8_18AE58_ToadBandstand(omObjData* obj, s32 i) {
     obj->model[5] = LoadFormFile(file, 0x49D);
     obj->model[6] = LoadFormFile(dir | 0x59, 0x49D);
     obj->model[12] = LoadFormFile(0xD, 0x88D);
+    group = D_8010D848_1914D8_ToadBandstand[(s8)j]->group;
     func_80029714_2A314(obj->model[12],
-                        xs.v[group = D_8010D848_1914D8_ToadBandstand[(s8)j]->group] + (group % 2 == 1 ? 7.5 : 0.0),
+                        xs.v[group] + (group % 2 == 1 ? 7.5 : 0.0),
                         D_8010D848_1914D8_ToadBandstand[D_8010DAA2_191732_ToadBandstand[(s8)j]]->character == 2 ? 250.0f : 255.0f,
                         140.0 - (((p = D_8010D848_1914D8_ToadBandstand[(s8)j])->group % 2 == 1 && p->character == 5) * 17.5));
     func_800297E8_2A3E8(obj->model[12], 0.75f, 0.75f, 0.75f);
@@ -1254,7 +1255,193 @@ void func_80109344_18CFD4_ToadBandstand(s16 model, s16 frame) {
     m->hmf->unk9C->unk08 = frame;
 }
 
+/* NON_MATCHING: class 3: logic checked word by word against m2c; macro argument shapes still differ (masked about 660) */
+#ifdef NON_MATCHING
+void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
+    HuSprite* spr[16];
+    HuSprite_Unk84_Unk00_Struct* frame[16];
+    f32 fade;
+    s32 i;
+    s32 k;
+    u8 a;
+    u8 j;
+    u8 b;
+    u8 ph;
+    s32 c;
+    s32 id;
+    s32 x;
+    s32 y;
+    s32 xl;
+    s32 xh;
+    s32 st;
+    s32 ds;
+    s32 slot;
+    s32 n;
+    s32 t0;
+    s32 p;
+    s32 lo;
+    s32 hi;
+    f32 scale;
+    u16* step;
+
+    if (D_8010D8FC_19158C_ToadBandstand == 1 && (u32)D_8010D980_191610_ToadBandstand <= D_8010CC04_190894_ToadBandstand[1] - 35) {
+        fade = 0.0f;
+    } else if (D_8010D8FC_19158C_ToadBandstand != 0 && (D_8010D8FC_19158C_ToadBandstand != 9 || (u32)D_8010D980_191610_ToadBandstand < D_8010CC04_190894_ToadBandstand[9] - 5) && D_8010D8FC_19158C_ToadBandstand < 10) {
+        if (D_8010D8FC_19158C_ToadBandstand == 1 && (u32)D_8010D980_191610_ToadBandstand >= D_8010CC04_190894_ToadBandstand[1] - 35 && (u32)D_8010D980_191610_ToadBandstand < D_8010CC04_190894_ToadBandstand[1] - 5) {
+            fade = (f32)((u32)(D_8010D980_191610_ToadBandstand - D_8010CC04_190894_ToadBandstand[1]) + 35) / 30.0f;
+        } else if (D_8010D8FC_19158C_ToadBandstand == 9 && (u32)D_8010D980_191610_ToadBandstand >= D_8010CC04_190894_ToadBandstand[9] - 35 && (u32)D_8010D980_191610_ToadBandstand < D_8010CC04_190894_ToadBandstand[9] - 5) {
+            fade = 1.0 - (f32)((u32)(D_8010D980_191610_ToadBandstand - D_8010CC04_190894_ToadBandstand[9]) + 35) / 30.0f;
+        } else {
+            fade = 1.0f;
+        }
+    } else {
+        fade = 0.0f;
+    }
+    gSPDisplayList(D_800FDBCC_FE7CC++, D_8010CCE0_190970_ToadBandstand);
+    TS_GFX(0xFCFF97FF, 0xFF2CFE7F);
+    TS_GFX(0xFA000000, ~0xFF | (u32)(fade * 224.0f));
+    if (fade > 0.0) {
+        for (i = 0; i < 4; i++) {
+            func_80082488_83088(D_8010D990_191620_ToadBandstand[9 + D_8010D848_1914D8_ToadBandstand[D_8010DAA2_191732_ToadBandstand[i]]->character], 0, (u32)(fade * 256.0));
+        }
+    }
+    if (fade > 0.0 && fade < 1.0) {
+        TS_GFX(0xE3001801, 0x80);
+    }
+    TS_GFX(0xF9000000, 0);
+    TS_GFX(0xE3001001, 0);
+    for (i = 1; i < 3; i++) {
+        spr[i] = func_80082550_83150(D_800F93FC_F9FFC[(s16)D_8010D990_191620_ToadBandstand[i]].unk_04, 0);
+        frame[i] = &spr[i]->unk_84->unk00[spr[i]->unk_90];
+        for (k = 0; k < 8; k++) {
+            gDPLoadTextureTile(D_800FDBCC_FE7CC++, frame[i]->unk00, G_IM_FMT_RGBA, G_IM_SIZ_16b, 135, 48, 0, k * 6, 135, k * 6 + 6,
+                               0, G_TX_MIRROR | G_TX_CLAMP, G_TX_MIRROR | G_TX_CLAMP, 0, 0, 0, 0);
+            if (fade > 0.0) {
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, i == 2 ? 162 * 4 : 24 * 4, (s32)((k * 6 + 0xB0) * 4.0), i == 2 ? 297 * 4 : 159 * 4, (s32)((k * 6 + 0xB6) * 4.0),
+                                        G_TX_RENDERTILE, 0, k * 6 << 5, 0x400, 0x400);
+            }
+        }
+    }
+    TS_GFX(0xE7000000, 0);
+    TS_GFX(0xF9000000, 0x80);
+    TS_GFX(0xFCFFFFFF, 0xFFFCF279);
+    TS_GFX(0xE3001001, 0);
+    if (fade > 0.0) {
+        TS_GFX(0xE3001801, 0xC0);
+    }
+    if (D_8010D8FC_19158C_ToadBandstand >= 3 && D_8010D8FC_19158C_ToadBandstand <= 8) {
+        if (D_8010D8FC_19158C_ToadBandstand == 3 || D_8010D8FC_19158C_ToadBandstand == 5 || D_8010D8FC_19158C_ToadBandstand == 7) {
+            /* the leader's turn: each note pops out on its beat */
+            for (a = 0; a < 2; a++) {
+                for (j = 0; j < 12; j++) {
+                    k = j;
+                    if (D_8010D8FC_19158C_ToadBandstand == 5) {
+                        k = j + 12;
+                    } else if (D_8010D8FC_19158C_ToadBandstand == 7) {
+                        k = j + 24;
+                    }
+                    if ((u8)(j % 6) == 0) {
+                        id = a == 0 ? (j < 6 ? 6 : 8) : (j >= 6 ? 7 : 5);
+                        spr[id] = func_80082550_83150(D_800F93FC_F9FFC[(s16)D_8010D990_191620_ToadBandstand[id]].unk_04, 0);
+                        frame[id] = &spr[id]->unk_84->unk00[spr[id]->unk_90];
+                        gDPLoadTextureBlock(D_800FDBCC_FE7CC++, frame[id]->unk00, G_IM_FMT_RGBA, G_IM_SIZ_16b, 12, 16, 0, G_TX_CLAMP,
+                                            G_TX_CLAMP, 0, 0, 0, 0);
+                    }
+                    b = D_8010D9C0_191650_ToadBandstand[a][(u8)k];
+                    if (b != 0) {
+                        step = &D_8010CB70_190800_ToadBandstand[D_8010DA40_1916D0_ToadBandstand];
+                        if (D_8010D988_191618_ToadBandstand >= D_8010D890_191520_ToadBandstand[a][b - 1] - *step) {
+                            /* retail reads the three low bytes by their own labels */
+                            ph = (u8)D_8010D988_191618_ToadBandstand - ((u8)D_8010D890_191520_ToadBandstand[a][b - 1] - (u8)*step);
+#define HX TS_PICK(ph, 10.5, 9.0, 6.0)
+#define HY TS_PICK(ph, 14.0, 12.0, 8.0)
+#define NX ((j >= 6 ? j * 16 + 0x5E : j * 16 + 0x34) + 8)
+#define NY (a * 23 + 0xBC)
+                            gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((NX - HX) * 4.0 + 0.0), (s32)((NY - HY) * 4.0 - 0.0 + 0.0), (s32)((NX + HX) * 4.0 + 0.0), (s32)((NY + HY) * 4.0 + 0.0),
+                                                    G_TX_RENDERTILE, ph != 0 ? (ph == 1 ? -0x10 : 0) : -0x14, ph != 0 ? (ph == 1 ? -0x10 : 0) : -0x14, TS_PICK(ph, 0x249, 0x2AB, 0x400), TS_PICK(ph, 0x249, 0x2AB, 0x400));
+                        }
+                    }
+                }
+            }
+        } else {
+            /* the players' turn: the note under the beat just hit swells */
+            for (a = 0; a < 2; a++) {
+                for (j = 0; j < 12; j++) {
+                    k = j;
+                    if (D_8010D8FC_19158C_ToadBandstand == 6) {
+                        k = j + 12;
+                    } else if (D_8010D8FC_19158C_ToadBandstand == 8) {
+                        k = j + 24;
+                    }
+                    if ((u8)(j % 6) == 0) {
+                        id = a == 0 ? (j < 6 ? 6 : 8) : (j >= 6 ? 7 : 5);
+                        spr[id] = func_80082550_83150(D_800F93FC_F9FFC[(s16)D_8010D990_191620_ToadBandstand[id]].unk_04, 0);
+                        frame[id] = &spr[id]->unk_84->unk00[spr[id]->unk_90];
+                        gDPLoadTextureBlock(D_800FDBCC_FE7CC++, frame[id]->unk00, G_IM_FMT_RGBA, G_IM_SIZ_16b, 12, 16, 0, G_TX_CLAMP,
+                                            G_TX_CLAMP, 0, 0, 0, 0);
+                    }
+                    if (D_8010D9C0_191650_ToadBandstand[a][(u8)k] != 0) {
+                        x = j >= 6 ? j * 16 + 0x5E : j * 16 + 0x34;
+                        y = a * 23 + 0xB4;
+                        scale = 1.0f;
+                        slot = j >= 6 ? a + 2 : a;
+                        if (D_8010DA98_191728_ToadBandstand[slot] == (u8)k && D_8010DAAD_19173D_ToadBandstand[slot] == 1) {
+                            if (D_8010D908_191598_ToadBandstand[slot] != 0) {
+                                scale = D_8010D908_191598_ToadBandstand[slot] == 1 ? 1.5f : 1.0f;
+                            } else {
+                                scale = 1.75f;
+                            }
+                        }
+                        st = (s32)((1.0 / scale - 1.0) * 48.0);
+                        ds = (s32)(1.0 / scale * 1024.0 + 0.5);
+                        gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)((x + 8 - scale * 6.0) * 4.0 + 0.0), (s32)((y + 8 - scale * 8.0) * 4.0 - scale * 0.0 + 0.0),
+                                                (s32)((x + 8 + scale * 6.0) * 4.0 + 0.0), (s32)((y + 8 + scale * 8.0) * 4.0 + 0.0), G_TX_RENDERTILE, st, st, ds, ds);
+                    }
+                }
+            }
+        }
+    }
+    if (D_8010D8FC_19158C_ToadBandstand >= 3 && D_8010D8FC_19158C_ToadBandstand <= 9) {
+        /* the song's bars: a marker runs along whichever bar is playing */
+        for (a = 0; a < 2; a++) {
+            if (D_8010D988_191618_ToadBandstand >= D_8010DA28_1916B8_ToadBandstand[a][0] && D_8010DA28_1916B8_ToadBandstand[a][1] >= D_8010D988_191618_ToadBandstand) {
+                n = 1;
+            } else if (D_8010D988_191618_ToadBandstand >= D_8010DA28_1916B8_ToadBandstand[a][2] && D_8010DA28_1916B8_ToadBandstand[a][3] >= D_8010D988_191618_ToadBandstand) {
+                n = 2;
+            } else if (D_8010D988_191618_ToadBandstand >= D_8010DA28_1916B8_ToadBandstand[a][4] && D_8010DA28_1916B8_ToadBandstand[a][5] >= D_8010D988_191618_ToadBandstand) {
+                n = 3;
+            } else {
+                n = 0;
+            }
+            if (n != 0) {
+                id = a + 3;
+                spr[id] = func_80082550_83150(D_800F93FC_F9FFC[(s16)D_8010D990_191620_ToadBandstand[id]].unk_04, 0);
+                frame[id] = &spr[id]->unk_84->unk00[spr[id]->unk_90];
+                gDPLoadTextureBlock(D_800FDBCC_FE7CC++, frame[id]->unk00, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 48, 0, G_TX_CLAMP,
+                                    G_TX_CLAMP, 0, 0, 0, 0);
+                t0 = D_8010DA28_1916B8_ToadBandstand[a][n * 2 - 2];
+                p = a * 0x8A + (D_8010D988_191618_ToadBandstand - t0) * 0x90 / (D_8010DA28_1916B8_ToadBandstand[a][n * 2 - 1] - t0) + 0x16;
+                lo = a * 0x8A + 0x2B;
+                hi = a * 0x8A + 0x9C;
+                xh = hi < p + 16 ? hi : p + 16;
+                xl = p < lo ? lo : p;
+                gSPScisTextureRectangle(D_800FDBCC_FE7CC++, (s32)(xl * 4.0), 0x2C0, (s32)(xh * 4.0), 0x37C, G_TX_RENDERTILE,
+                                        p < lo ? (lo - p) << 5 : 0, 0, 0x400, 0x400);
+            }
+        }
+    }
+    TS_GFX(0xE200001C, 0x504240);
+    TS_GFX(0xE2001E01, 0);
+    TS_GFX(0xF9000000, 0);
+    TS_GFX(0xFA000000, -1);
+    D_8010D908_191598_ToadBandstand[0]++;
+    D_8010D908_191598_ToadBandstand[1]++;
+    D_8010D908_191598_ToadBandstand[2]++;
+    D_8010D908_191598_ToadBandstand[3]++;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_18_ToadBandstand/186490", func_80109388_18D018_ToadBandstand);
+#endif
 
 __asm__(".section .rodata");
 const u32 D_8010D560_1911F0_ToadBandstand[1] = { 0x40180000 };
