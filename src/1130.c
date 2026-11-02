@@ -662,31 +662,28 @@ INCLUDE_ASM("asm/nonmatchings/1130", func_80001DE0_29E0);
 
 /* Launch an item actor from a player: it takes the player's heading and speed (at least
    D_800BF7C0_C03C0) and starts on top of the player. */
-// register allocation (masked 0): s2/s3 swapped
-#ifdef NON_MATCHING
-void func_80001F44_2B44(omObjData* obj, omObjData* actor) {
-    MgWork* w;
-    ColActorWork* aw;
-
-    aw = actor->unk_50;
-    w = obj->unk_50;
-
-    if (aw->unk_84[6] == NULL || aw->unk_84[6](obj, actor) != 1) {
-        aw->unk_38 = -D_800BF7A4_C03A4 * 0.6f;
-        aw->unk_3C = w->unk_3C;
-        aw->unk_40 = w->unk_40;
-        if (aw->unk_40 < D_800BF7C0_C03C0) {
-            aw->unk_40 = D_800BF7C0_C03C0;
-        }
-        aw->unk_80 = 0;
-        actor->trans.x = obj->trans.x;
-        actor->trans.y = w->unk_34 + aw->unk_48 + obj->trans.y;
-        actor->trans.z = obj->trans.z;
+// decomp-permuter
+void func_80001F44_2B44(omObjData *obj, omObjData *actor)
+{
+  MgWork *w;
+  ColActorWork *aw;
+  aw = actor->unk_50;
+ do { w = obj->unk_50; } while (0);
+  if ((aw->unk_84[6] == 0) || (aw->unk_84[6](obj, actor) != 1))
+  {
+    aw->unk_38 = (-D_800BF7A4_C03A4) * 0.6f;
+    aw->unk_3C = w->unk_3C;
+    aw->unk_40 = w->unk_40;
+    if (aw->unk_40 < D_800BF7C0_C03C0)
+    {
+      aw->unk_40 = D_800BF7C0_C03C0;
     }
+    aw->unk_80 = 0;
+    actor->trans.x = obj->trans.x;
+    actor->trans.y = (w->unk_34 + aw->unk_48) + obj->trans.y;
+    actor->trans.z = obj->trans.z;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1130", func_80001F44_2B44);
-#endif
 
 void func_80002024_2C24(ColActorWork* w, s32 slot, s32 (*fn)()) {
     if (slot < 9) {
