@@ -588,16 +588,162 @@ void func_801096BC_39757C_name_5C(Ovl5CModelDef* defs, s16 place) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801097A4_397664_name_5C);
+void func_801097A4_397664_name_5C(s16 model, Vec* out, f32 mtx[4][4]) {
+    f32 local[4][4];
+    f32 world[4][4];
+    HmfModel* m;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801098A4_397764_name_5C);
+    m = &D_800FC834_FD434[model];
+    func_800B1F50_B2B50(local, m->pos.x, m->pos.y, m->pos.z);
+    func_80025884_26484(local, m->rot.x, m->rot.y, m->rot.z);
+    func_80025830_26430(local, m->scale.x, m->scale.y, m->scale.z);
+    func_80025BA4_267A4(mtx, local, world);
+    out->x = world[0][0] + world[1][0] + world[2][0] + world[3][0];
+    out->y = world[0][1] + world[1][1] + world[2][1] + world[3][1];
+    out->z = world[0][2] + world[1][2] + world[2][2] + world[3][2];
+}
 
+void func_801098A4_397764_name_5C(s16 model, Vec2f* out, f32 mtx[4][4]) {
+    Vec pos;
+
+    func_801097A4_397664_name_5C(model, &pos, mtx);
+    func_801098E4_3977A4_name_5C(0, &pos, out);
+}
+
+// register allocation: only the hoist of the camera target address is scheduled differently (masked 8)
+#ifdef NON_MATCHING
+void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out) {
+    f32 mtx[4][4];
+    Vec pos;
+    Vec at;
+    Vec up;
+    f32 rx;
+    f32 ry;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 x;
+    f32 y;
+    f32 z;
+
+    rx = D_800FD474_FE074.x;
+    ry = D_800FD474_FE074.y;
+    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+    pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
+    pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
+    at = D_8010274C_10334C;
+    up.x = HuMathSin(ry) * HuMathSin(rx);
+    up.y = func_800B7890_B8490(rx);
+    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+    func_800B1960_B2560(mtx, pos.x, pos.y, pos.z, at.x, at.y, at.z, up.x, up.y, up.z);
+    dx = in->x;
+    dy = in->y;
+    dz = in->z;
+    dx -= pos.x;
+    dy -= pos.y;
+    dz -= pos.z;
+    x = dx * mtx[0][0] + dy * mtx[1][0] + dz * mtx[2][0];
+    y = dx * mtx[0][1] + dy * mtx[1][1] + dz * mtx[2][1];
+    z = dx * mtx[0][2] + dy * mtx[1][2] + dz * mtx[2][2];
+    dx = HuMathSin(D_80111C40_39FB00_name_5C / 2.0f) / func_800B7890_B8490(D_80111C40_39FB00_name_5C / 2.0f) * z * 1.3333334f;
+    dy = HuMathSin(D_80111C40_39FB00_name_5C / 2.0f) / func_800B7890_B8490(D_80111C40_39FB00_name_5C / 2.0f) * z;
+    if (z < 0.0f) {
+        out->unk_00 = x * (160.0f / -dx) + 160.0f;
+        out->unk_04 = y * (120.0f / dy) + 120.0f;
+    } else {
+        out->unk_00 = out->unk_04 = -200.0f;
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801098E4_3977A4_name_5C);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80109BEC_397AAC_name_5C);
+void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out) {
+    f32 mtx[4][4];
+    Vec pos;
+    Vec at;
+    Vec up;
+    Ovl5CCamView* v;
+    f32 rx;
+    f32 ry;
+    f32 zoom;
+    f32 h;
+    f32 w;
+    f32 x;
+    f32 y;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80109EA4_397D64_name_5C);
+    v = &D_801129F0_3A08B0_name_5C[view];
+    rx = v->rot.x;
+    ry = v->rot.y;
+    zoom = v->zoom;
+    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * zoom + v->at.x;
+    pos.y = -HuMathSin(rx) * zoom + v->at.y;
+    pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * zoom + v->at.z;
+    at = v->at;
+    up.x = HuMathSin(ry) * HuMathSin(rx);
+    up.y = func_800B7890_B8490(rx);
+    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+    depth = -depth;
+    func_800B1960_B2560(mtx, pos.x, pos.y, pos.z, at.x, at.y, at.z, up.x, up.y, up.z);
+    h = HuMathSin(D_80111C40_39FB00_name_5C / 2.0f) / func_800B7890_B8490(D_80111C40_39FB00_name_5C / 2.0f) * depth;
+    w = h * 1.3333334f;
+    x = 320.0f - scr->unk_00;
+    y = 240.0f - scr->unk_04;
+    x = x / 320.0f;
+    y = (240.0f - y) / 240.0f;
+    x = (w + w) * x - w;
+    y = (h + h) * y - h;
+    out->x = x * mtx[0][0] + y * mtx[0][1] + depth * mtx[0][2] + pos.x;
+    out->y = x * mtx[1][0] + y * mtx[1][1] + depth * mtx[1][2] + pos.y;
+    out->z = x * mtx[2][0] + y * mtx[2][1] + depth * mtx[2][2] + pos.z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80109F9C_397E5C_name_5C);
+s16 func_80109EA4_397D64_name_5C(void) {
+    s16 sprGrp;
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_8010A0D0_397F90_name_5C);
+    D_8011237C_3A023C_name_5C = func_8001A2F8_1AEF8(0x900C9);
+    sprGrp = func_8001AAAC_1B6AC(D_8011237C_3A023C_name_5C, 0, 1);
+    D_8011237E_3A023E_name_5C = sprGrp;
+    for (i = 0; i < 3; i++) {
+        D_80112384_3A0244_name_5C[i] = func_80027154_27D54(0x6000, 0x7918);
+    }
+    D_80112390_3A0250_name_5C = func_80082550_83150(((Ovl5CEsprite*)D_800F93FC_F9FFC)[sprGrp].group, 0)->unk_84->unk00->unk00;
+    D_80112380_3A0240_name_5C = 0;
+    espDispOff(sprGrp);
+    return sprGrp;
+}
+
+void func_80109F9C_397E5C_name_5C(s16 file) {
+    void* sprData;
+    void* palData;
+    void* buf;
+
+    sprData = DataRead(file | 0xB0000);
+    palData = DataRead((file + 1) | 0xB0000);
+    func_80096C10_97810(0xFF);
+    func_80096708_97308(palData);
+    buf = HuMemMemoryAllocPerm(0xC00);
+    func_80096188_96D88(sprData, D_80112384_3A0244_name_5C[D_80112380_3A0240_name_5C], 0x80, buf);
+    HuMemMemoryFreePerm(buf);
+    DataClose(sprData);
+    DataClose(palData);
+    func_80082550_83150(((Ovl5CEsprite*)D_800F93FC_F9FFC)[D_8011237E_3A023E_name_5C].group, 0)->unk_84->unk00->unk00 =
+        D_80112384_3A0244_name_5C[D_80112380_3A0240_name_5C];
+    D_80112380_3A0240_name_5C++;
+    if (D_80112380_3A0240_name_5C >= 3) {
+        D_80112380_3A0240_name_5C = 0;
+    }
+    espDispOn(D_8011237E_3A023E_name_5C);
+}
+
+void func_8010A0D0_397F90_name_5C(void) {
+    s16 i;
+
+    func_80082550_83150(((Ovl5CEsprite*)D_800F93FC_F9FFC)[D_8011237E_3A023E_name_5C].group, 0)->unk_84->unk00->unk00 = D_80112390_3A0250_name_5C;
+    func_8001AC44_1B844(D_8011237E_3A023E_name_5C);
+    SprAnimKill(D_8011237C_3A023C_name_5C);
+    for (i = 0; i < 3; i++) {
+        HuMemFree(D_80112384_3A0244_name_5C[i]);
+    }
+}

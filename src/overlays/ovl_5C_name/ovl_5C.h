@@ -56,7 +56,9 @@ typedef struct Ovl5CModelDef {
 
 /* The fields of an esprite this overlay reads (D_800F93FC). */
 typedef struct Ovl5CEsprite {
-    /* 0x00 */ char pad00[0xA];
+    /* 0x00 */ char pad00[4];
+    /* 0x04 */ s16 group; /* sprite group */
+    /* 0x06 */ char pad06[4];
     /* 0x0A */ s16 x;
     /* 0x0C */ s16 y;
     /* 0x0E */ char pad0E[0x16];
@@ -118,6 +120,9 @@ extern f32 D_80101078_101C78;
 extern f32 D_800F8410_F9010;
 
 /* main prototypes as 5B, 58 and 4E use them */
+void func_80096188_96D88(u8* code, u16* outbuf, s32 outbufWidth, u8* workbuf);
+void func_80096708_97308(void* header);
+void func_80096C10_97810(u8 alpha);
 void ExecBoardScene(void*, s16);
 void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos);
@@ -312,7 +317,10 @@ s16 func_8006A67C_6B27C(GAMEMES*, char*, u8, s16, s16);
 void func_800797DC_7A3DC(s32, s16);
 HuSprite* func_80082550_83150(s16 grpIdx, s16 idx);
 void func_80088640_89240(void);
-void func_8008D904_8E504(s16 winId, s32, s8);
+void func_8008D904_8E504(s16 winId, void* str, s8 idx); /* a message id or a string */
+void func_8008DA84_8E684(s16 winId, s16 idx, s8 color);
+void func_8001A810_1B410(u16 spriteId, s16 arg1);
+char* func_800B10E0_B1CE0(char* dst, const char* src); /* strcpy */
 extern u8 D_800CB150;
 void MBDBackKill(void);
 void func_80050AE0_516E0(void);
@@ -363,15 +371,14 @@ extern f32 D_80111C40_39FB00_name_5C; /* m2c */
 extern s8 D_80111C44_39FB04_name_5C; /* m2c */
 extern s32 D_80111C50_39FB10_name_5C; /* m2c */
 extern s32 D_80111C60_39FB20_name_5C; /* m2c */
-extern s32 D_801120B0_39FF70_name_5C; /* m2c */
-extern s32 D_801120BC_39FF7C_name_5C; /* m2c */
+extern s16 D_801120B0_39FF70_name_5C[6]; /* kind of each shop slot */
+extern s16 D_801120BC_39FF7C_name_5C[6]; /* shop slot of each kind; labels C2, C4 are [3], [4] */
 extern s16 D_801120C2_39FF82_name_5C; /* m2c */
 extern s16 D_801120C4_39FF84_name_5C; /* m2c */
-extern s32 D_801120C8_39FF88_name_5C; /* m2c */
+extern s16 D_801120C8_39FF88_name_5C[72]; /* price of each mini-game, 0: not sold */
 extern s16 D_80112158_3A0018_name_5C; /* m2c */
 extern s32 D_8011215C_3A001C_name_5C; /* m2c */
-extern s32 D_80112174_3A0034_name_5C; /* m2c */
-extern s32 D_80112176_3A0036_name_5C; /* m2c */
+extern s16 D_80112174_3A0034_name_5C[][2]; /* 8010FB28: slot offsets */
 
 /* ---- bss ---- */
 extern s16 D_80112330_3A01F0_name_5C; /* m2c */
@@ -390,50 +397,50 @@ extern s16 D_80112374_3A0234_name_5C; /* 58-E: cursor x */
 extern s16 D_80112376_3A0236_name_5C; /* 58-E: cursor y */
 extern s16 D_80112378_3A0238_name_5C; /* 58-E: cursor glide frames */
 extern s16 D_8011237A_3A023A_name_5C; /* cursor slot (-1 none) */
-extern s16 D_8011237C_3A023C_name_5C; /* m2c */
-extern s16 D_8011237E_3A023E_name_5C; /* m2c */
-extern s16 D_80112380_3A0240_name_5C; /* m2c */
-extern s32 D_80112384_3A0244_name_5C; /* m2c */
-extern s32 D_80112390_3A0250_name_5C; /* m2c */
+extern s16 D_8011237C_3A023C_name_5C; /* picture sprite anim */
+extern s16 D_8011237E_3A023E_name_5C; /* picture esprite */
+extern s16 D_80112380_3A0240_name_5C; /* next picture buffer */
+extern void* D_80112384_3A0244_name_5C[3]; /* the three picture buffers (80109EA4) */
+extern void* D_80112390_3A0250_name_5C; /* the sprite's own image, restored by 8010A0D0 */
 extern s16 D_801123A0_3A0260_name_5C; /* m2c */
 extern s16 D_801123A2_3A0262_name_5C; /* m2c */
 extern s16 D_801123A4_3A0264_name_5C; /* m2c */
-extern s32 D_801123A6_3A0266_name_5C; /* m2c */
+extern s16 D_801123A6_3A0266_name_5C[2];
 extern s16 D_801123AA_3A026A_name_5C; /* m2c */
-extern s32 D_801123AC_3A026C_name_5C; /* m2c */
+extern s16 D_801123AC_3A026C_name_5C[5]; /* the five item sprites (labels AE-B4) */
 extern s16 D_801123AE_3A026E_name_5C; /* m2c */
 extern s16 D_801123B0_3A0270_name_5C; /* m2c */
 extern s16 D_801123B2_3A0272_name_5C; /* m2c */
 extern s16 D_801123B4_3A0274_name_5C; /* m2c */
-extern s32 D_801123B6_3A0276_name_5C; /* m2c */
+extern s16 D_801123B6_3A0276_name_5C[5];
 extern s16 D_801123C0_3A0280_name_5C; /* m2c */
-extern u16 D_801123C2_3A0282_name_5C; /* m2c */
+extern u16 D_801123C2_3A0282_name_5C[2]; /* arrows */
 extern u16 D_801123C4_3A0284_name_5C; /* m2c */
-extern s32 D_801123C6_3A0286_name_5C; /* m2c */
+extern s16 D_801123C6_3A0286_name_5C[2];
 extern u16 D_801123C8_3A0288_name_5C; /* m2c */
 extern s16 D_801123CA_3A028A_name_5C; /* m2c */
 extern s16 D_801123CC_3A028C_name_5C; /* m2c */
 extern s16 D_801123CE_3A028E_name_5C; /* m2c */
 extern s16 D_801123D0_3A0290_name_5C; /* m2c */
-extern s32 D_801123D2_3A0292_name_5C; /* m2c */
-extern s32 D_801123E1_3A02A1_name_5C; /* m2c */
+extern char D_801123D2_3A0292_name_5C[3][5];
+extern char D_801123E1_3A02A1_name_5C[3][5];
 extern s16 D_801123F0_3A02B0_name_5C; /* m2c */
 extern s16 D_801123F2_3A02B2_name_5C; /* m2c */
 extern u16 D_801123F4_3A02B4_name_5C; /* m2c */
-extern s32 D_801123F6_3A02B6_name_5C; /* m2c */
+extern u16 D_801123F6_3A02B6_name_5C[5]; /* coin digits */
 extern s16 D_80112400_3A02C0_name_5C; /* m2c */
 extern s32 D_80112408_3A02C8_name_5C; /* m2c */
 extern s16 D_80112420_3A02E0_name_5C; /* m2c */
 extern s16 D_80112422_3A02E2_name_5C; /* m2c */
 extern s16 D_80112424_3A02E4_name_5C; /* 1 while 80103F38 takes the player count */
 extern s16 D_80112426_3A02E6_name_5C; /* m2c */
-extern s16 D_80112428_3A02E8_name_5C[3]; /* compared with D_80112440 */
+extern s16 D_80112428_3A02E8_name_5C[9]; /* per kind: minigames owned; labels 2A-30 are elements */
 extern s16 D_8011242A_3A02EA_name_5C; /* m2c */
 extern s16 D_8011242C_3A02EC_name_5C; /* m2c */
 extern s16 D_8011242E_3A02EE_name_5C; /* m2c */
 extern s16 D_80112430_3A02F0_name_5C; /* m2c */
 extern s16 D_8011243A_3A02FA_name_5C; /* m2c */
-extern s16 D_80112440_3A0300_name_5C[3];
+extern s16 D_80112440_3A0300_name_5C[9]; /* per kind: every minigame; labels 42-48 are elements */
 extern u16 D_80112442_3A0302_name_5C; /* m2c */
 extern u16 D_80112444_3A0304_name_5C; /* m2c */
 extern s16 D_80112448_3A0308_name_5C; /* m2c */
@@ -451,7 +458,7 @@ extern s16 D_801124CC_3A038C_name_5C; /* m2c */
 extern s16 D_801124D2_3A0392_name_5C; /* m2c */
 extern s16 D_801124D6_3A0396_name_5C; /* a count from 8010E2AC; 10, 20, 30, 42 trigger messages in 80102B78 */
 extern s16 D_801124D8_3A0398_name_5C; /* m2c */
-extern s32 D_801124E0_3A03A0_name_5C; /* m2c */
+extern s16 D_801124E0_3A03A0_name_5C[9][72]; /* per kind: the owned ones; 570, 600 are rows 1, 2 */
 extern s32 D_80112570_3A0430_name_5C; /* m2c */
 extern s32 D_80112600_3A04C0_name_5C; /* m2c */
 extern Ovl5CCamView* D_801129F0_3A08B0_name_5C; /* the current list of views */
@@ -459,20 +466,20 @@ extern Vec D_801129F4_3A08B4_name_5C; /* camera position (801086E0) */
 extern s16 D_80112A00_3A08C0_name_5C; /* m2c */
 extern u8 D_80112A01_3A08C1_name_5C; /* m2c */
 extern Vec2f D_80112A04_3A08C4_name_5C; /* last projected screen position */
-extern s32 D_80112A10_3A08D0_name_5C; /* m2c */
+extern s16 D_80112A10_3A08D0_name_5C[9][72]; /* per kind: those on sale */
 extern s16 D_80112F20_3A0DE0_name_5C; /* m2c */
 extern f32 D_80112F24_3A0DE4_name_5C; /* camera near */
 extern s16 D_80112F28_3A0DE8_name_5C; /* m2c */
 extern Vec D_80112F2C_3A0DEC_name_5C; /* fixed camera target (80109B1C) */
 extern u16 D_80112F38_3A0DF8_name_5C; /* esprite freed on leaving */
-extern s32 D_80112F40_3A0E00_name_5C; /* m2c */
+extern s16 D_80112F40_3A0E00_name_5C[9]; /* per kind: on sale; labels F46, F48 are elements */
 extern u16 D_80112F46_3A0E06_name_5C; /* m2c */
 extern u16 D_80112F48_3A0E08_name_5C; /* m2c */
 extern f32 D_80112F54_3A0E14_name_5C; /* camera far */
 extern u16 D_80112F58_3A0E18_name_5C; /* m2c */
 extern s16 D_80112F5A_3A0E1A_name_5C; /* m2c */
 extern u16 D_80112F5C_3A0E1C_name_5C; /* m2c */
-extern s16 D_80112F60_3A0E20_name_5C[60]; /* model per D_80110F64 entry */
+extern s16 D_80112F60_3A0E20_name_5C[32]; /* model per list entry (31 in D_80110F64); labels F68..F9C are elements */
 extern u16 D_80112F90_3A0E50_name_5C; /* m2c */
 extern s16 D_80112F94_3A0E54_name_5C; /* m2c */
 extern s32 D_80112F96_3A0E56_name_5C; /* m2c */
@@ -543,33 +550,33 @@ void func_80108F28_396DE8_name_5C(void);
 void func_801094FC_3973BC_name_5C(Ovl5CModelDef* defs);
 void func_801095F0_3974B0_name_5C(Ovl5CModelDef* defs, s16 i, s16 model);
 void func_801096BC_39757C_name_5C(Ovl5CModelDef* defs, s16 place);
-void func_801097A4_397664_name_5C(void);
+void func_801097A4_397664_name_5C(s16 model, Vec* out, f32 mtx[4][4]);
 void func_801098A4_397764_name_5C(s16 model, Vec2f* out, f32 mtx[4][4]); /* a model point on screen */
-void func_801098E4_3977A4_name_5C(void *arg1, void *arg2);
+void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out); /* the current camera, world to screen */
 void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out); /* screen point to world */
 s16 func_80109EA4_397D64_name_5C(void);
-void func_80109F9C_397E5C_name_5C(s16 arg0);
+void func_80109F9C_397E5C_name_5C(s16 file); /* shows a compressed picture; file + 1 is its table */
 void func_8010A0D0_397F90_name_5C(void);
 void func_8010A190_398050_name_5C(void);
-void func_8010B050_398F10_name_5C(void *arg0);
+void func_8010B050_398F10_name_5C(s16* t);
 void func_8010B08C_398F4C_name_5C(void);
-s16 func_8010B16C_39902C_name_5C(s16 arg0);
-void func_8010B96C_39982C_name_5C(s16 arg0);
-s16 func_8010BA98_399958_name_5C(s16 arg0);
-void func_8010D93C_39B7FC_name_5C(s16 arg0);
-void func_8010DAD4_39B994_name_5C(s16 arg0, s16 arg1, s16 arg2);
-void func_8010DD00_39BBC0_name_5C(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
+s16 func_8010B16C_39902C_name_5C(s16 win);
+void func_8010B96C_39982C_name_5C(s16 win);
+s16 func_8010BA98_399958_name_5C(s16 win);
+void func_8010D93C_39B7FC_name_5C(s16 win);
+void func_8010DAD4_39B994_name_5C(s16 names, s16 prices, s16 scroll);
+void func_8010DD00_39BBC0_name_5C(s16 names, s16 prices, s16 kind, s16 scroll);
 void func_8010DF5C_39BE1C_name_5C(void);
 void func_8010E2AC_39C16C_name_5C(void);
 void func_8010E318_39C1D8_name_5C(void);
 void func_8010E560_39C420_name_5C(u32 arg0);
 void func_8010E6D4_39C594_name_5C(u32 arg0);
 void func_8010E7C4_39C684_name_5C(void);
-void func_8010E848_39C708_name_5C(s16 arg0, s16 arg1, s32 arg3);
+void func_8010E848_39C708_name_5C(s16 view, s16 model, Vec2f* scr, f32 depth);
 void func_8010E8CC_39C78C_name_5C(void);
 s32 func_8010EE64_39CD24_name_5C(void);
-void func_8010FB28_39D9E8_name_5C(s32 arg0, s32 arg1);
-void func_8010FBDC_39DA9C_name_5C(s32 arg0, s16 arg1);
+void func_8010FB28_39D9E8_name_5C(s16 sprite, s16 slot);
+void func_8010FBDC_39DA9C_name_5C(s16 sprite, s16 slot);
 void func_8010FC20_39DAE0_name_5C(void);
 void func_8010FFDC_39DE9C_name_5C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_80110020_39DEE0_name_5C(void);
