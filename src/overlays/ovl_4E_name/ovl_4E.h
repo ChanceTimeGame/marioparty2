@@ -1,18 +1,18 @@
 #ifndef _OVL_4E_H
 #define _OVL_4E_H
 
-/* Overlay 4E: a "first to N wins" minigame match. The main process (func_80102B9C) runs three
-   sliding menus: match length (func_80103034: 3/5/7 wins, D_800FA1A8), team mode
-   (func_80103608: 4P, 1 vs 3, 2 vs 2, ...; D_801013F8), and for team modes the team layout
-   (func_80103CD0: sets D_800FA040[] and gPlayers[].group). func_80104AF0 then picks the minigame
-   (the list in 331200.c, or the only one) and leaves through omOvlHisChg: with D_8010DAB6 to
+/* Overlay 4E: a "first to N wins" minigame match. The main process (func_80102B9C_32A55C_name_4E) runs three
+   sliding menus: match length (func_80103034_32A9F4_name_4E: 3/5/7 wins, D_800FA1A8), team mode
+   (func_80103608_32AFC8_name_4E: 4P, 1 vs 3, 2 vs 2, ...; D_801013F8), and for team modes the team layout
+   (func_80103CD0_32B690_name_4E: sets D_800FA040[] and gPlayers[].group). func_80104AF0_32C4B0_name_4E then picks the minigame
+   (the list in 331200.c, or the only one) and leaves through omOvlHisChg: with D_8010DAB6_335476_name_4E to
    the minigame itself (event 4), otherwise to a duel on a board (event 5). Coming back
-   (D_800CD414 >= 4) the overlay starts in state 4 (func_80105454): wins are added and stamped
+   (D_800CD414 >= 4) the overlay starts in state 4 (func_80105454_32CE14_name_4E): wins are added and stamped
    on the score board, and once a player reaches the target the winners are announced.
-   Retail's overlay is two files, split at the text pad after func_80109778: 32A1C0.c
+   Retail's overlay is two files, split at the text pad after func_80109778_331138_name_4E: 32A1C0.c
    (80102800-80109778) and 331200.c (80109840-). .data and .bss stay asm; both files' .rodata
    is carved (0x335190, 0x335430). 32A1C0.c builds with the KMC mul fix.
-   Prototypes past func_8010760C came from m2c's register use only: the fork that owns a function
+   Prototypes past func_8010760C_32EFCC_name_4E came from m2c's register use only: the fork that owns a function
    fixes its line. */
 
 #include "common.h"
@@ -32,7 +32,7 @@
 
 /* ---- types ---- */
 
-/* A camera key (0x1C): D_8010E144 points at a table of them (D_8010D1F8 has one). */
+/* A camera key (0x1C): D_8010E144_335B04_name_4E points at a table of them (D_8010D1F8_334BB8_name_4E has one). */
 typedef struct Ovl4ECamKey {
     /* 0x00 */ Vec pos;
     /* 0x0C */ Vec unk0C;
@@ -62,7 +62,7 @@ extern BattleTargets D_800F8D1A_F991A;
 void _SetFlag(s32);
 void omOvlHisChg(s16 arg0, s32 overlay, s16 event, s16 stat);
 s32 func_8003F6F0_402F0(s16);
-extern s16 D_800FA1A8;          /* chosen item of the three-row menu (func_80103034) */
+extern s16 D_800FA1A8;          /* chosen item of the three-row menu (func_80103034_32A9F4_name_4E) */
 extern s8 ContStkX[4];
 extern s8 ContStkY[4];
 /* CenterM + 8 (main); only its 0x40 field is used here: the setup's team mode (0 4P, 1 1 vs 3,
@@ -148,7 +148,7 @@ extern s32 D_8010D214_334BD4_name_4E[];
 extern u8 D_8010D448_334E08_name_4E[4];  /* wins needed per first-menu choice: 3, 5, 7 */
 extern u8 D_8010D44C_334E0C_name_4E[4];  /* per team mode: stamp row spacing (FE4E-B: u8, retail reads it with lbu) */
 extern u16 D_8010D4AC_334E6C_name_4E[];  /* per first-menu choice: stamp column origin */
-extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8) */
+extern Vec D_8010D4FC_334EBC_name_4E[4]; /* default positions (D_8010DBE8_3355A8_name_4E) */
 extern Vec D_8010D52C_334EEC_name_4E[2]; /* team mode 7 positions */
 extern Vec D_8010D544_334F04_name_4E[4]; /* 1 vs 3 positions */
 extern Vec D_8010D574_334F34_name_4E[4]; /* 2 vs 2 positions */
@@ -156,32 +156,32 @@ extern Vec D_8010D5A4_334F64_name_4E;
 extern Vec D_8010D5B0_334F70_name_4E;
 extern Vec D_8010D5BC_334F7C_name_4E;
 extern Vec D_8010D5C8_334F88_name_4E;
-extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C) when D_8010DAB6 */
+extern s32 D_8010D5D4_334F94_name_4E[8]; /* message ids (D_8010DC2C_3355EC_name_4E) when D_8010DAB6_335476_name_4E */
 extern s32 D_8010D5F4_334FB4_name_4E[8]; /* ... otherwise */
-extern s16 D_8010D5FE_334FBE_name_4E[]; /* board per minigame index (inside D_8010D5F4's words) */
+extern s16 D_8010D5FE_334FBE_name_4E[]; /* board per minigame index (inside D_8010D5F4_334FB4_name_4E's words) */
 extern s32 D_8010D680_335040_name_4E[2]; /* messages naming two winners */
 extern s32 D_8010D688_335048_name_4E[3]; /* ... three winners */
 extern char* D_8010D694_335054_name_4E[7]; /* per character: name (" MARIO " ... "  ALL  ") */
 extern s16 D_8010D614_334FD4_name_4E[4]; /* second menu row -> D_801013F8 */
-extern s16 D_8010D61C_334FDC_name_4E[6]; /* third menu (1 vs 3): x offsets of the icons [1..4] and D_8010DAF0 [5] */
+extern s16 D_8010D61C_334FDC_name_4E[6]; /* third menu (1 vs 3): x offsets of the icons [1..4] and D_8010DAF0_3354B0_name_4E [5] */
 extern s16 D_8010D628_334FE8_name_4E[6]; /* ... 2 vs 2 */
 extern s8 D_8010D634_334FF4_name_4E[4][4]; /* third menu (1 vs 3): icon order per choice */
 extern s8 D_8010D644_335004_name_4E[4][4]; /* ... 2 vs 2 */
-extern s8 D_8010D654_335014_name_4E[4][4]; /* (1 vs 3): D_8010DBE8 slot of each D_8010D544 position */
-extern s8 D_8010D664_335024_name_4E[4][4]; /* ... 2 vs 2, D_8010D574 */
+extern s8 D_8010D654_335014_name_4E[4][4]; /* (1 vs 3): D_8010DBE8_3355A8_name_4E slot of each D_8010D544_334F04_name_4E position */
+extern s8 D_8010D664_335024_name_4E[4][4]; /* ... 2 vs 2, D_8010D574_334F34_name_4E */
 extern f32 D_8010D7B0_335170_name_4E;   /* camera field of view */
 
 /* ---- bss (asm) ---- */
 
-extern u8 D_8010DA80_335440_name_4E[4]; /* per player: walking (func_80105148) */
-extern s16 D_8010DA90_335450_name_4E;   /* closes the message window (func_80107554) */
+extern u8 D_8010DA80_335440_name_4E[4]; /* per player: walking (func_80105148_32CB08_name_4E) */
+extern s16 D_8010DA90_335450_name_4E;   /* closes the message window (func_80107554_32EF14_name_4E) */
 
 extern s16 D_8010DAB6_335476_name_4E;
 extern s16 D_8010DAB8_335478_name_4E;
 extern u16 D_8010DABC_33547C_name_4E;
 extern u16 D_8010DAC4_335484_name_4E[3]; /* first menu's three row sprites */
 extern u16 D_8010DAD2_335492_name_4E[4]; /* second menu's four row sprites */
-extern u16 D_8010DAE6_3354A6_name_4E[6]; /* third menu: [0] panel, [1..4] = D_8010DAE8, [5] = D_8010DAF0 */
+extern u16 D_8010DAE6_3354A6_name_4E[6]; /* third menu: [0] panel, [1..4] = D_8010DAE8_3354A8_name_4E, [5] = D_8010DAF0_3354B0_name_4E */
 extern u16 D_8010DAE8_3354A8_name_4E[4]; /* third menu: the four character icons */
 extern u16 D_8010DAF0_3354B0_name_4E;
 extern s16 D_8010DAF2_3354B2_name_4E[4]; /* per player: sprite animations */
@@ -193,28 +193,28 @@ extern s16 D_8010DB10_3354D0_name_4E[8];
 extern s16 D_8010DB1A_3354DA_name_4E;
 extern s16 D_8010DB20_3354E0_name_4E[32];
 extern s16 D_8010DB60_335520_name_4E;   /* the message window */
-extern s16 D_8010DB62_335522_name_4E;   /* 1: window sound request (func_80107554) */
+extern s16 D_8010DB62_335522_name_4E;   /* 1: window sound request (func_80107554_32EF14_name_4E) */
 extern u8 D_8010DB68_335528_name_4E[0x20]; /* a 0x20-byte message state (func_8006985C) */
 extern s16 D_8010DB88_335548_name_4E[];
 extern s16 D_8010DBDC_33559C_name_4E;
 extern s16 D_8010DBDE_33559E_name_4E;
 extern s16 D_8010DBE0_3355A0_name_4E;
 extern u8 D_8010DBE2_3355A2_name_4E;
-extern u8 D_8010DBE3_3355A3_name_4E;   /* bit per player: may walk to D_8010DBE8 (func_80105148) */
+extern u8 D_8010DBE3_3355A3_name_4E;   /* bit per player: may walk to D_8010DBE8_3355A8_name_4E (func_80105148_32CB08_name_4E) */
 extern u8 D_8010DBE4_3355A4_name_4E;   /* walk speed */
 extern Vec D_8010DBE8_3355A8_name_4E[4]; /* per-player target positions */
 extern s8 D_8010DC20_3355E0_name_4E;   /* the team menu is waiting for input (arrows shown) */
-extern s8 D_8010DC21_3355E1_name_4E;   /* move the arrows to D_8010DC22.. (func_801047B8) */
+extern s8 D_8010DC21_3355E1_name_4E;   /* move the arrows to D_8010DC22_3355E2_name_4E.. (func_801047B8_32C178_name_4E) */
 extern s16 D_8010DC22_3355E2_name_4E;
 extern s16 D_8010DC24_3355E4_name_4E;
 extern s16 D_8010DC26_3355E6_name_4E;
 extern s16 D_8010DC28_3355E8_name_4E;
 extern s32* D_8010DC2C_3355EC_name_4E; /* current message-id table */
-extern omObjData* D_8010DC1C_3355DC_name_4E; /* the winners' models (func_801070AC) */
+extern omObjData* D_8010DC1C_3355DC_name_4E; /* the winners' models (func_801070AC_32EA6C_name_4E) */
 extern s16 D_8010DC90_335650_name_4E;
-extern s16 D_8010DCA0_335660_name_4E[4];
-extern s16 D_8010DCA6_335666_name_4E;   /* = D_8010DCA0[3] */
-extern s16 D_8010DCC0_335680_name_4E[4][0x48]; /* per team mode: the minigames (D_8010DCA0 = count) */
+extern s16 D_8010DCA0_335660_name_4E[8];
+extern s16 D_8010DCA6_335666_name_4E;   /* = D_8010DCA0_335660_name_4E[3] */
+extern s16 D_8010DCC0_335680_name_4E[8][0x48]; /* per team mode: the minigames (D_8010DCA0_335660_name_4E = count) */
 extern s16 D_8010E140_335B00_name_4E;
 extern Ovl4ECamKey* D_8010E144_335B04_name_4E;
 extern f32 D_8010E150_335B10_name_4E;   /* camera far */
@@ -278,6 +278,88 @@ extern s32* D_8010D48C_334E4C_name_4E[6]; /* per match length (+3 when no team m
 extern s16 D_8010D4A4_334E64_name_4E[4];  /* per team mode: team icons' y */
 extern char D_8010DA84_335444_name_4E[];  /* "<n>=WIN MATCH" */
 
+/* ---- S5-4E: 331200.c ---- */
+
+/* A minigame slot of the roulette (MP1 43760.c's unk43760): its window and rectangle. */
+typedef struct Ovl4EMgSlot {
+    /* 0x0 */ s16 win;
+    /* 0x2 */ s16 x;
+    /* 0x4 */ s16 y;
+    /* 0x6 */ s16 w;
+    /* 0x8 */ s16 h;
+} Ovl4EMgSlot; /* size = 0xA */
+
+typedef struct Ovl4ERect {
+    s16 x;
+    s16 y;
+    s16 w;
+    s16 h;
+} Ovl4ERect;
+
+/* Main's recent-minigame lists, read at an offset: [category][5] from 0x800FD3E8, and the write
+   index per category from 0x800F950A (MP3 D_800CC4A0.recentMinigames, D_800CC3E0). */
+extern struct {
+    /* 0x0 */ char pad0[4];
+    /* 0x4 */ s8 recent[8][5];
+} D_800FD3E4_FDFE4;
+extern s8 D_800F9508_FA108[];
+#define OVL4E_RECENT(cat) D_800FD3E4_FDFE4.recent[cat]
+#define OVL4E_RECENT_IDX(cat) D_800F9508_FA108[2 + (cat)]
+
+extern u32 D_800FDC6C_FE86C;    /* frame counter (MP1 D_800F383C) */
+extern u8 D_800CBD77_CC977[];   /* per minigame: name colour (index is minigame + 1 in MP1) */
+extern Vec D_800FD474_FE074;
+extern Vec D_8010274C_10334C;
+extern f32 D_800FA610_FB210;
+s32 MBRand(f32);
+void* DataRead(s32 dirAndFile);
+void DataClose(void* data);
+void* HuMemMemoryAllocPerm(u32 size);
+void HuMemMemoryFreePerm(void* ptr);
+void omDelObj(omObjData* obj);
+void SprKill(s16 idx);
+s16 SprCreate(s32 num, s32 attr);
+s16 SprAnimRead(void* arg0);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void func_80067E6C_68A6C(s16 mgNo);
+void func_800896DC_8A2DC(s16 winId, s16 arg1, s16 arg2);
+void func_8008D530_8E130(s16 arg0, u8 arg1, u8 arg2, u8 arg3);
+void func_80089B2C_8A72C(s16 winId, s16 arg1);
+void func_80089A7C_8A67C(s16 winId, s16 prio);
+void func_8008AD84_8B984(void);
+void func_8008AD44_8B944(s16 win_id);
+void func_80089C78_8A878(s16 winId, u8 arg1);
+void func_80089DA0_8A9A0(s16 winId, u8 r, u8 g, u8 b);
+void func_80089A48_8A648(s16 winId, s8 arg1);
+void func_8008CCA8_8D8A8(s16 winId);
+s16 func_800888A8_894A8(s16, s16, s16, s16, s32, s16);
+void func_8008D88C_8E48C(s16);
+void func_800898F0_8A4F0(s16 winId, s16 x, s16 y);
+void func_80082450_83050(s16 grpIdx, s32 idx, s32 r, s32 g, u8 b);
+
+extern s32 D_8010D79C_33515C_name_4E; /* the random seed */
+extern u32 D_8010D7A0_335160_name_4E; /* frame of the last tick sound */
+extern u8 D_8010D6B0_335070_name_4E[];  /* per category: slots */
+extern Ovl4ERect D_8010D6C0_335080_name_4E[]; /* slot rectangles for 2, */
+extern Ovl4ERect D_8010D6D0_335090_name_4E[]; /* ... 3 */
+extern Ovl4ERect D_8010D708_3350C8_name_4E[]; /* ... other counts */
+extern Ovl4ERect* D_8010D760_335120_name_4E[]; /* per slot count */
+extern u8 D_8010D77C_33513C_name_4E[];  /* per slot count: panel's y offset */
+extern s16 D_8010D784_335144_name_4E[]; /* per slot count: cursor's y */
+extern s8 D_8010D794_335154_name_4E[][2]; /* cursor animation: frame limit, x */
+extern Ovl4EMgSlot D_8010DC30_3355F0_name_4E[6];
+extern omObjData* D_8010DC6C_33562C_name_4E;
+extern s8 D_8010DC70_335630_name_4E[6];  /* the minigames on offer */
+extern s8 D_8010DC76_335636_name_4E;     /* category */
+extern u8 D_8010DC77_335637_name_4E;     /* slots on offer */
+extern s16 D_8010DC78_335638_name_4E;    /* panel sprite */
+extern s16 D_8010DC7A_33563A_name_4E;    /* its animation */
+extern s16 D_8010DC7C_33563C_name_4E;    /* cursor sprite */
+extern s16 D_8010DC7E_33563E_name_4E;    /* its animation */
+extern Vec D_8010E5E4_335FA4_name_4E;
+
 /* ---- 32A1C0.c ---- */
 
 void func_80102800_32A1C0_name_4E(void);
@@ -331,8 +413,8 @@ void func_80109778_331138_name_4E(void);
 
 /* ---- 331200.c ---- */
 
-s32 func_80109840_331200_name_4E(s32 arg0);
-void func_80109914_3312D4_name_4E(void);
+u32 func_80109840_331200_name_4E(u32 param);
+s32 func_80109914_3312D4_name_4E(void);
 u32 func_8010993C_3312FC_name_4E(u32 arg0);
 void func_80109988_331348_name_4E(void);
 void func_801099D4_331394_name_4E(omObjData* obj);
@@ -341,7 +423,7 @@ void func_8010A2A0_331C60_name_4E(void);
 void func_8010A300_331CC0_name_4E(void);
 void func_8010A438_331DF8_name_4E(s32 arg0);
 void func_8010A588_331F48_name_4E(void);
-void func_8010A660_332020_name_4E(s16 arg0);
+void func_8010A660_332020_name_4E(u32 arg0);
 void func_8010AB48_332508_name_4E(void);
 s16 func_8010AB58_332518_name_4E(void);
 void func_8010AB64_332524_name_4E(void);
