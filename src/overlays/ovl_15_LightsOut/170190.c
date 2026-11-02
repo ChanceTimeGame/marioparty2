@@ -70,6 +70,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105B78_1
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105BF0_173580_LightsOut);
 
+__asm__(".section .rodata");
+const char D_8010CAF8_17A488_LightsOut[16] = "item_hook";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80105C14_1735A4_LightsOut);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_801062A8_173C38_LightsOut);
@@ -130,6 +133,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010B04C_1
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010B0CC_178A5C_LightsOut);
 
+__asm__(".section .rodata");
+const char D_8010CB90_17A520_LightsOut[] = "\202`\202a\202b";
+
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010B1C8_178B58_LightsOut);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010B3B8_178D48_LightsOut);
@@ -141,7 +147,3 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010BDE8_1
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010BEA4_179834_LightsOut);
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010C070_179A00_LightsOut);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010C0B0_179A40_LightsOut);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_8010C1C8_179B58_LightsOut);
