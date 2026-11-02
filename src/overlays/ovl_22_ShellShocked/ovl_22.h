@@ -3,7 +3,7 @@
 
 /* Overlay 22: Shell Shocked. Four tanks in split screen (one viewport each, D_8010D5E0_1E1CC0_ShellShocked), on one
    of three maps (D_800FA656, kept in D_8010DFDC_1E26BC_ShellShocked), 60 s (D_8010DFE4_1E26C4_ShellShocked). Each tank has
-   three hit points; a shell or a mine hit takes one. Last tank standing wins, 10 coins. Flow
+   two hit points; a shell hit takes one, then 40 frames safe. Last tank standing wins, 10 coins. Flow
    func_80102BC8_1D72A8_ShellShocked. _CheckFlag(0xE) (D_8010D5BC_1E1C9C_ShellShocked) is the boss variant: player 0 alone against
    the rest; _CheckFlag(0xC) (D_8010D5C0_1E1CA0_ShellShocked) the 1P variant. Retail is four files: 1D6EE0.c, 1D8270.c
    (from 80103B90, 3-nop pad: the cameras), 1D9870.c (from 80105190, 3-nop pad: the COM) and
