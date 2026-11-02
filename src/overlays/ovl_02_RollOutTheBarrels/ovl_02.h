@@ -1,0 +1,320 @@
+#ifndef _OVL_02_H
+#define _OVL_02_H
+
+/* Overlay 02: Roll Out the Barrels. One retail file, E3A40.c; .data up to 0xF3680, .rodata carved
+   from there. D_80112D78_F3FB8_RollOutTheBarrels is the flow state, D_80112D7A_F3FBA_RollOutTheBarrels the timer in frames. N64 offsets
+   are in the comments. */
+
+#include "common.h"
+#include "game/object.h"
+#include "game/hmfman.h"
+#include "game/camera.h"
+#include "game/pad.h"
+#include "game/sprite.h"
+#include "game/data.h"
+#include "game/collision.h"
+#include "game/malloc.h"
+
+#define RB_WRAP(v)                 \
+    if ((v) >= 360.0) {            \
+        (v) -= 360.0;              \
+    } else if ((v) < 0.0) {        \
+        (v) += 360.0;              \
+    }
+
+/* A pointer retail packs byte by byte: a 4-byte value built in a register. */
+typedef struct RBBytes {
+    u32 a : 8;
+    u32 b : 8;
+    u32 c : 8;
+    u32 d : 8;
+} RBBytes;
+
+typedef union RBPack {
+    void* p;
+    RBBytes b;
+} RBPack;
+
+/* A camera position (D_80112DD8_F4018_RollOutTheBarrels: [0] the target, [1] the start of a blend). */
+typedef struct RBCamera {
+    /* 0x00 */ Vec center;
+    /* 0x0C */ Vec rot;
+    /* 0x18 */ f32 zoom;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ f32 unk_20;
+} RBCamera; /* size = 0x24 */
+
+typedef struct RBCharData {
+    /* 0x00 */ s16 unk_00;
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s32 dir;
+    /* 0x08 */ s32 model;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s32 unk_10;
+    /* 0x14 */ s32 unk_14;
+} RBCharData; /* size = 0x18 */
+
+/* The player's own state (D_80112D60_F3FA0_RollOutTheBarrels, 0x38 bytes, kept packed in the object's work[]). */
+typedef struct RBPlayer {
+    /* 0x00 */ s16 target; /* -1 none */
+    /* 0x02 */ s16 unk_02;
+    /* 0x04 */ s16 unk_04;
+    /* 0x06 */ s16 unk_06;
+    /* 0x08 */ s16 unk_08;
+    /* 0x0A */ s16 unk_0A;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s16 unk_10;
+    /* 0x12 */ s16 unk_12;
+    /* 0x14 */ s32 unk_14;
+    /* 0x18 */ s32 unk_18;
+    /* 0x1C */ f32 unk_1C;
+    /* 0x20 */ f32 unk_20;
+    /* 0x24 */ char unk_24[0xA];
+    /* 0x2E */ s16 unk_2E;
+    /* 0x30 */ s16 unk_30[4];
+} RBPlayer; /* size = 0x38 */
+
+/* Main. */
+extern RBCharData D_800CD438_CE038[];
+extern u8 D_800FDBCA_FE7CA;
+extern u16 D_800FA606_FB206;
+extern s16 D_800FA1AA_FADAA;
+extern s32 D_800F8FD0_F9BD0;
+extern u16 D_801011FC_101DFC;
+extern u16 D_800FC87A_FD47A;
+extern omObjData* D_800FFFD8_100BD8[];
+extern s8 ContStkX[4];
+extern s8 ContStkY[4];
+extern s32 fontcolor;
+extern char pfStrBuf[];
+extern f32 D_800BF7A4_C03A4;
+extern f32 D_800BF7A8_C03A8;
+extern f32 D_800BF7D4_C03D4;
+
+s16 DrawDebugText(u16, u16, char*);
+void HuMemFree(void*);
+s32 PlaySound(s32);
+void* SprAnimGet(s16 animIdx);
+s16 SprAnimRead(void*);
+void SprAnimSet(s16 group, s16 member, s16 arg2, u16 arg3);
+void SprAttrReset(s16 grpIdx, s16 idx, s32 flag);
+void SprAttrSet(s16 grpIdx, s16 idx, s32 flag);
+void SprBankSet(s16 group, s16 member, s16 bank);
+s16 SprCreate(s32 num, s32 attr);
+void SprPos3DSet(s16 grpIdx, s16 idx, s16 camIdx, f32 x, f32 y, f32 z);
+void SprPosSet(s16 grpIdx, s16 idx, s16 x, s16 y);
+void SprPrioSet(s16 grpIdx, s16 idx, u16 pri);
+void SprScaleSet(s16 group, s16 member, f32 x, f32 y);
+f32 HuMathSin(f32);
+f32 func_800B7890_B8490(f32);
+f32 func_800B75A8_B81A8(f32 y, f32 x);
+f64 func_800B0D98_B1998(f64 x, f64 y);
+void func_800B0EF0_B1AF0(void*, s32, s32);
+void* memcpy(void*, const void*, u32);
+s16 LoadFormFile(s32, s32);
+void HmfModelObjAttrSet(s16 idx, s32 arg1, s32 arg2);
+void func_80007790_8390(omObjData* obj);
+void func_8000BF24_CB24(omObjData* obj, f32 arg1, f32 x0, f32 z0, f32 x1, f32 z1);
+void func_8000C018_CC18(u16);
+void func_8000C024_CC24(omObjData* obj, u8 idx, s8 val);
+void func_8000C35C_CF5C(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8000C36C_CF6C(omObjData* obj, f32 x, f32 y, f32 z);
+void func_8000C460_D060(void);
+void func_8000C578_D178(s32);
+void func_8000C6FC_D2FC(omObjData* obj, u32 dir, s32 file, u16 player, s32 arg4, s32 arg5);
+s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y);
+u16 func_80018A30_19630(s32 file, s32 attr);
+void func_800191D4_19DD4(omObjData* obj, u8 idx, f32 x, f32 y, f32 z, f32 a, f32 b);
+void func_80019378_19F78(omObjData* obj);
+s32 func_80019B9C_1A79C(omObjData* obj, u16 motion);
+void func_80019E84_1AA84(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_80019F0C_1AB0C(omObjData* obj, u16 slot, s32 file, s32 arg3, u16 arg4);
+void func_80020D20_21920(s16 arg0);
+s16 func_80025384_25F84(s16 arg0, s16 arg1, s16 arg2, s32 arg3);
+void func_80026D28_27928(s32);
+void func_80026DAC_279AC(s32, s32, s32, s32);
+void func_80026E00_27A00(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
+void* func_80027154_27D54(s32 size, s16 tag);
+s16 func_80027D3C_2893C(s16 linkMdlId);
+s32 func_80027FA4_28BA4(u32 file, void* gfx, u8 arg2);
+void func_80029714_2A314(s16, f32, f32, f32);
+void func_800297E8_2A3E8(s16, f32, f32, f32);
+void func_800298A4_2A4A4(s16, s32, s32);
+void func_80029A8C_2A68C(s16);
+void func_80029BF0_2A7F0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4);
+f32 func_80029CE4_2A8E4(s16);
+f32 func_80029D0C_2A90C(s16);
+s32 func_80029E14_2AA14(s16 arg0);
+void func_8002A00C_2AC0C(s16 model);
+void func_8002AC10_2B810(s16 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_8002CA48_2D648(u8 arg0, u8 arg1, u8 arg2);
+void func_8002D4D0_2E0D0(s16 n);
+s16 func_800691FC_69DFC(s16 mesNo, ...);
+s32 func_80069538_6A138(void);
+void func_8006D4D0_6E0D0(s16);
+void func_8006D518_6E118(void);
+void func_8007273C_7333C(u8* arg0, u8 arg1);
+void func_800732B0_73EB0(s32);
+u16 func_80078EA8_79AA8(void);
+void func_80079614_7A214(s16 time);
+s16 func_80079798_7A398(s16 sfx, s16 player);
+void func_80079848_7A448(s16 arg0);
+void func_8008221C_82E1C(s16 group, s16 member, f32 alpha);
+void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
+
+/* .data */
+extern Vec D_801120A8_F32E8_RollOutTheBarrels[6];
+extern f32 D_801120A0_F32E0_RollOutTheBarrels;
+extern f32 D_801120A4_F32E4_RollOutTheBarrels;
+extern s32 D_80112120_F3360_RollOutTheBarrels[6]; /* win voice per character */
+extern s32 D_80112138_F3378_RollOutTheBarrels[6]; /* lose voice per character */
+extern s32 D_80112150_F3390_RollOutTheBarrels;
+extern s32 D_80112154_F3394_RollOutTheBarrels;
+extern s32 D_80112158_F3398_RollOutTheBarrels;
+extern s32 D_8011215C_F339C_RollOutTheBarrels;
+extern s32 D_80112160_F33A0_RollOutTheBarrels;
+extern s32 D_80112164_F33A4_RollOutTheBarrels;
+
+/* .bss */
+extern s32 D_80112D50_F3F90_RollOutTheBarrels[4]; /* the player's fall/voice motions */
+extern void* D_80112D60_F3FA0_RollOutTheBarrels;
+extern void* D_80112D64_F3FA4_RollOutTheBarrels;
+extern void* D_80112D68_F3FA8_RollOutTheBarrels;
+extern void* D_80112D6C_F3FAC_RollOutTheBarrels;
+extern void* D_80112D70_F3FB0_RollOutTheBarrels;
+extern void* D_80112D74_F3FB4_RollOutTheBarrels;
+extern s16 D_80112D78_F3FB8_RollOutTheBarrels;
+extern s16 D_80112D7A_F3FBA_RollOutTheBarrels;
+extern s8 D_80112D7C_F3FBC_RollOutTheBarrels;
+extern s32 D_80112D80_F3FC0_RollOutTheBarrels;
+extern void* D_80112D84_F3FC4_RollOutTheBarrels;
+extern void* D_80112D88_F3FC8_RollOutTheBarrels;
+extern s32 D_80112D8C_F3FCC_RollOutTheBarrels;
+extern s32 D_80112D90_F3FD0_RollOutTheBarrels;
+extern s32 D_80112D94_F3FD4_RollOutTheBarrels;
+extern s32 D_80112D98_F3FD8_RollOutTheBarrels;
+extern s32 D_80112D9C_F3FDC_RollOutTheBarrels;
+extern s32 D_80112DA0_F3FE0_RollOutTheBarrels;
+extern s32 D_80112DA4_F3FE4_RollOutTheBarrels;
+extern s16 D_80112DBC_F3FFC_RollOutTheBarrels;
+extern s16 D_80112DBE_F3FFE_RollOutTheBarrels;
+extern s32 D_80112DC0_F4000_RollOutTheBarrels; /* the solo player */
+extern s32 D_80112DC4_F4004_RollOutTheBarrels; /* its character */
+extern s32 D_80112DC8_F4008_RollOutTheBarrels; /* its port */
+extern s32 D_80112DCC_F400C_RollOutTheBarrels; /* it is a CPU */
+extern s32 D_80112DD0_F4010_RollOutTheBarrels;
+extern RBCamera D_80112DD8_F4018_RollOutTheBarrels[2];
+extern s32 D_80112E20_F4060_RollOutTheBarrels;
+extern s32 D_80112E24_F4064_RollOutTheBarrels;
+extern s32 D_80112E28_F4068_RollOutTheBarrels;
+extern omObjData* D_80112D38_F3F78_RollOutTheBarrels;
+
+void func_80102800_E3A40_RollOutTheBarrels(void);
+void func_80102B2C_E3D6C_RollOutTheBarrels(omObjData* obj);
+void func_80102BB0_E3DF0_RollOutTheBarrels(omObjData* obj);
+void func_80102FB8_E41F8_RollOutTheBarrels(omObjData* obj);
+void func_80102FEC_E422C_RollOutTheBarrels(omObjData* obj);
+void func_80103094_E42D4_RollOutTheBarrels(void);
+void func_801031B4_E43F4_RollOutTheBarrels(void);
+void func_801039F0_E4C30_RollOutTheBarrels(omObjData* obj);
+void func_80103DF4_E5034_RollOutTheBarrels(s32 idx);
+void func_80103FE0_E5220_RollOutTheBarrels(f32 cx, f32 cy, f32 cz, f32 rx, f32 ry, f32 rz, f32 zoom, s32 frames);
+void func_801041D0_E5410_RollOutTheBarrels(void);
+void func_80104270_E54B0_RollOutTheBarrels(omObjData* obj);
+void func_80104958_E5B98_RollOutTheBarrels(omObjData* obj);
+void func_80104C80_E5EC0_RollOutTheBarrels(omObjData* obj);
+void func_80104D88_E5FC8_RollOutTheBarrels(omObjData* obj);
+s32 func_8010541C_E665C_RollOutTheBarrels(omObjData* obj);
+void func_801056BC_E68FC_RollOutTheBarrels(omObjData* obj);
+void func_80105928_E6B68_RollOutTheBarrels(void* arg0, f32 arg1, f32 arg2);
+void func_80105998_E6BD8_RollOutTheBarrels(s32 arg0, s16 arg1, s32 arg2);
+void func_80105A70_E6CB0_RollOutTheBarrels(void);
+void func_80105AD8_E6D18_RollOutTheBarrels(omObjData* obj);
+void func_80105CE8_E6F28_RollOutTheBarrels(omObjData* obj);
+void func_80105F80_E71C0_RollOutTheBarrels(f32 arg0, f32 arg1);
+void func_801060B8_E72F8_RollOutTheBarrels(void);
+s32 func_80106114_E7354_RollOutTheBarrels(s32 arg0, void* arg1, s32 arg2);
+void func_801061B0_E73F0_RollOutTheBarrels(void* arg0, void* arg1, void* arg2);
+void* func_80106224_E7464_RollOutTheBarrels(omObjData* obj, Vec* prev);
+void* func_801063B0_E75F0_RollOutTheBarrels(omObjData* obj, Vec* prev);
+void func_801066B4_E78F4_RollOutTheBarrels(void* arg0, void* arg1);
+void func_801067BC_E79FC_RollOutTheBarrels(void* arg0, void* arg1, void* arg2);
+void func_80106DE4_E8024_RollOutTheBarrels(void);
+void func_8010704C_E828C_RollOutTheBarrels(void);
+void func_80107140_E8380_RollOutTheBarrels(omObjData* obj);
+void func_80107564_E87A4_RollOutTheBarrels(omObjData* obj);
+void func_801079D0_E8C10_RollOutTheBarrels(omObjData* obj);
+void func_80107AE0_E8D20_RollOutTheBarrels(omObjData* obj);
+void func_80107D2C_E8F6C_RollOutTheBarrels(omObjData* obj);
+s32 func_80108808_E9A48_RollOutTheBarrels(s16 arg0);
+void func_8010898C_E9BCC_RollOutTheBarrels(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80108A08_E9C48_RollOutTheBarrels(s32 arg0);
+void func_80108A78_E9CB8_RollOutTheBarrels(s32 arg0);
+void func_80108AEC_E9D2C_RollOutTheBarrels(s32 arg0, s32 arg1, s32 arg2);
+void func_80108B68_E9DA8_RollOutTheBarrels(s32 arg0, s32 arg1);
+s32 func_80108C00_E9E40_RollOutTheBarrels(s32 arg0);
+void func_80108C5C_E9E9C_RollOutTheBarrels(s32 arg0, s16 arg1);
+void func_80108D00_E9F40_RollOutTheBarrels(void);
+void func_80108F88_EA1C8_RollOutTheBarrels(omObjData* obj);
+void func_80109504_EA744_RollOutTheBarrels(omObjData* obj);
+void func_801096D8_EA918_RollOutTheBarrels(s16 arg0, void* arg1);
+s32 func_80109738_EA978_RollOutTheBarrels(s16 arg0);
+s32 func_80109824_EAA64_RollOutTheBarrels(s16 arg0);
+void func_80109868_EAAA8_RollOutTheBarrels(omObjData* obj);
+void func_80109DA4_EAFE4_RollOutTheBarrels(omObjData* obj);
+void func_8010A2E0_EB520_RollOutTheBarrels(omObjData* obj);
+void func_8010A7C4_EBA04_RollOutTheBarrels(omObjData* obj);
+void func_8010ACA8_EBEE8_RollOutTheBarrels(omObjData* obj);
+void func_8010B5B0_EC7F0_RollOutTheBarrels(omObjData* obj);
+void func_8010BEB8_ED0F8_RollOutTheBarrels(omObjData* obj);
+void func_8010C448_ED688_RollOutTheBarrels(omObjData* obj);
+void func_8010C9D8_EDC18_RollOutTheBarrels(omObjData* obj);
+void func_8010CA90_EDCD0_RollOutTheBarrels(omObjData* obj);
+void func_8010CB58_EDD98_RollOutTheBarrels(omObjData* obj);
+void func_8010CC18_EDE58_RollOutTheBarrels(omObjData* obj);
+void func_8010CC94_EDED4_RollOutTheBarrels(omObjData* obj);
+void func_8010CE40_EE080_RollOutTheBarrels(omObjData* obj);
+void func_8010D054_EE294_RollOutTheBarrels(omObjData* obj);
+void func_8010D204_EE444_RollOutTheBarrels(omObjData* obj);
+void func_8010D3D0_EE610_RollOutTheBarrels(omObjData* obj);
+void func_8010D604_EE844_RollOutTheBarrels(omObjData* obj);
+void func_8010D740_EE980_RollOutTheBarrels(omObjData* obj);
+s32 func_8010DB74_EEDB4_RollOutTheBarrels(s32 arg0);
+void func_8010DBAC_EEDEC_RollOutTheBarrels(s32 arg0);
+s32 func_8010DBE0_EEE20_RollOutTheBarrels(s32 arg0);
+void func_8010DC1C_EEE5C_RollOutTheBarrels(void);
+void func_8010DC48_EEE88_RollOutTheBarrels(void);
+void func_8010DC78_EEEB8_RollOutTheBarrels(void);
+s32 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 arg0);
+void func_8010DD10_EEF50_RollOutTheBarrels(void);
+void func_8010DE84_EF0C4_RollOutTheBarrels(void);
+s32 func_8010DF18_EF158_RollOutTheBarrels(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
+void func_8010E080_EF2C0_RollOutTheBarrels(void* arg0, s32 arg1);
+void func_8010E260_EF4A0_RollOutTheBarrels(void);
+void func_8010E390_EF5D0_RollOutTheBarrels(void* arg0);
+void func_8010E434_EF674_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2);
+void func_8010E4C0_EF700_RollOutTheBarrels(s16 arg0);
+void func_8010E944_EFB84_RollOutTheBarrels(s16 arg0, s32 arg1);
+s32 func_8010EBE8_EFE28_RollOutTheBarrels(void* arg0, f32 arg1);
+s32 func_8010F81C_F0A5C_RollOutTheBarrels(void* arg0, s32 arg1, f32 arg2);
+void func_8010FA9C_F0CDC_RollOutTheBarrels(s32 arg0, s32* arg1, s32 arg2, f32 arg3);
+void func_8010FC44_F0E84_RollOutTheBarrels(void* arg0, void* arg1, f32 arg2, u16 arg3, u16 arg4);
+s32 func_8011005C_F129C_RollOutTheBarrels(s32 arg0);
+void func_80110530_F1770_RollOutTheBarrels(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, void* arg6, void* arg7);
+void func_801113D4_F2614_RollOutTheBarrels(omObjData* obj, void* p);
+void* func_801113F4_F2634_RollOutTheBarrels(omObjData* obj);
+void* func_80111448_F2688_RollOutTheBarrels(s32 size);
+s32 func_80111494_F26D4_RollOutTheBarrels(void);
+void func_8011154C_F278C_RollOutTheBarrels(s16 arg0, s16 arg1);
+void func_801115EC_F282C_RollOutTheBarrels(s16 arg0, void* arg1);
+void func_80111678_F28B8_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2);
+void func_80111838_F2A78_RollOutTheBarrels(f32 arg0, f32 arg1);
+void func_801118C8_F2B08_RollOutTheBarrels(s32 arg0, u32 arg1, u32 arg2);
+s32 func_801119B4_F2BF4_RollOutTheBarrels(u8* arg0, u32 arg1, u32 arg2);
+void func_80111AA0_F2CE0_RollOutTheBarrels(s32 arg0, s32 arg1);
+void func_80111B40_F2D80_RollOutTheBarrels(s32 arg0, Vec* pos, void* out);
+void func_80111F28_F3168_RollOutTheBarrels(void);
+void func_80111FA0_F31E0_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+void func_80112000_F3240_RollOutTheBarrels(f32 arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4);
+
+#endif
