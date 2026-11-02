@@ -4,10 +4,11 @@
 /* Overlay 5C: Mini-Game Park. Retail's overlay is three files: 3906C0.c (80102800-80107480),
    395340.c (80107480-8010A190) and 398050.c (8010A190-end). Every function is global. .data and
    .bss stay asm (declared here); each file's .rodata is carved. Much of it is a copy of the menu
-   helpers of 5B, 58 and 4E. Prototypes past 801096BC came from m2c's register use only, and the
-   externs still marked m2c are by access width: the owner of a function fixes its lines.
-   Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78 (2 runs 8010A190 first; what 2 and 4 mean
-   is not known yet), 1 runs 8010E8CC. The lobby moves a cursor over six attractions (D_80112476); A flies the
+   helpers of 5B, 58 and 4E.
+   Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78: 2 runs the shop 8010A190 first, and both 2 and 4
+   are return entries pushed with omOvlHisChg: 2 by the ride before 5E, 4 by the lobby before 58.
+   Entry 1 runs the ride 8010E8CC (the shop sends the player there once every
+   mini-game is owned; it starts mini-game 0x39 in 5E). The lobby moves a cursor over six attractions (D_80112476); A flies the
    camera (80107F28) and starts one, B asks to leave for 5B. D_80112420 0/1/2 picks return, goto or
    call of overlay D_80112F28 at entry D_80112426 in 80106DE4. */
 
@@ -355,9 +356,9 @@ extern u16 D_800CD526_CE126;
 extern s16 D_800FFE00_100A00[]; /* 21920.c: [6][3][13]; [0xEA] is the word past it, 80102B78 clears it */
 
 /* ---- data ---- */
-extern s16 D_801106D0_39E590_name_5C; /* m2c */
+extern s16 D_801106D0_39E590_name_5C;
 extern u16 D_801106D2_39E592_name_5C;
-extern s16 D_801106D4_39E594_name_5C; /* m2c */
+extern s16 D_801106D4_39E594_name_5C;
 extern Ovl5CCamView D_801106D8_39E598_name_5C[];
 extern Ovl5CCamNode D_80110A3C_39E8FC_name_5C[];
 extern Ovl5CCamNode D_80110B44_39EA04_name_5C[];
@@ -375,31 +376,29 @@ extern s32 D_80111620_39F4E0_name_5C[]; /* no direct code user yet */
 extern s32 D_80111834_39F6F4_name_5C[]; /* no direct code user yet */
 extern s32 D_801119A0_39F860_name_5C[]; /* no direct code user yet */
 extern Ovl5CPathNode* D_80111C24_39FAE4_name_5C[4];
-extern s16 D_80111C34_39FAF4_name_5C; /* m2c */
-extern f32 D_80111C40_39FB00_name_5C; /* m2c */
-extern s8 D_80111C44_39FB04_name_5C; /* m2c */
+extern s16 D_80111C34_39FAF4_name_5C;
+extern f32 D_80111C40_39FB00_name_5C;
+extern s8 D_80111C44_39FB04_name_5C;
 extern Ovl5CModelDef D_80111C50_39FB10_name_5C[]; /* the ride scene models */
 extern s16 D_801120B0_39FF70_name_5C[6]; /* kind of each shop slot */
 extern s16 D_801120BC_39FF7C_name_5C[6]; /* shop slot of each kind; labels C2, C4 are [3], [4] */
-extern s16 D_801120C2_39FF82_name_5C; /* m2c */
-extern s16 D_801120C4_39FF84_name_5C; /* m2c */
 extern s16 D_801120C8_39FF88_name_5C[72]; /* price of each mini-game, 0: not sold */
 extern s16 D_80112158_3A0018_name_5C; /* 1: scroll stopped */
 extern s32 D_8011215C_3A001C_name_5C[6]; /* the six character panel files (8010EE64) */
 extern s16 D_80112174_3A0034_name_5C[][2]; /* 8010FB28: slot offsets */
 
 /* ---- bss ---- */
-extern s16 D_80112330_3A01F0_name_5C; /* m2c */
-extern s16 D_80112332_3A01F2_name_5C; /* m2c */
-extern s16 D_80112334_3A01F4_name_5C; /* m2c */
-extern s16 D_80112336_3A01F6_name_5C; /* m2c */
+extern s16 D_80112330_3A01F0_name_5C;
+extern s16 D_80112332_3A01F2_name_5C;
+extern s16 D_80112334_3A01F4_name_5C;
+extern s16 D_80112336_3A01F6_name_5C;
 extern Process* D_80112338_3A01F8_name_5C[6]; /* 80105DD0 processes */
 extern Ovl5CCursor* D_80112350_3A0210_name_5C[6]; /* 58-B: 5 used */
 extern s16 D_80112364_3A0224_name_5C;
-extern s16 D_80112366_3A0226_name_5C; /* m2c */
-extern s16 D_80112368_3A0228_name_5C; /* m2c */
+extern s16 D_80112366_3A0226_name_5C;
+extern s16 D_80112368_3A0228_name_5C;
 extern s16 D_8011236A_3A022A_name_5C;   /* the message window */
-extern s16 D_8011236C_3A022C_name_5C; /* m2c */
+extern s16 D_8011236C_3A022C_name_5C;
 extern s16 (*D_80112370_3A0230_name_5C)[2]; /* 58-E: cursor slot positions (80111744) */
 extern s16 D_80112374_3A0234_name_5C; /* 58-E: cursor x */
 extern s16 D_80112376_3A0236_name_5C; /* 58-E: cursor y */
@@ -410,94 +409,64 @@ extern s16 D_8011237E_3A023E_name_5C; /* picture esprite */
 extern s16 D_80112380_3A0240_name_5C; /* next picture buffer */
 extern void* D_80112384_3A0244_name_5C[3]; /* the three picture buffers (80109EA4) */
 extern void* D_80112390_3A0250_name_5C; /* the sprite's own image, restored by 8010A0D0 */
-extern s16 D_801123A0_3A0260_name_5C; /* m2c */
-extern s16 D_801123A2_3A0262_name_5C; /* m2c */
-extern s16 D_801123A4_3A0264_name_5C; /* m2c */
+extern s16 D_801123A0_3A0260_name_5C;
+extern s16 D_801123A2_3A0262_name_5C;
+extern s16 D_801123A4_3A0264_name_5C;
 extern s16 D_801123A6_3A0266_name_5C[2];
-extern s16 D_801123AA_3A026A_name_5C; /* m2c */
+extern s16 D_801123AA_3A026A_name_5C;
 extern s16 D_801123AC_3A026C_name_5C[5]; /* the five item sprites (labels AE-B4) */
-extern s16 D_801123AE_3A026E_name_5C; /* m2c */
-extern s16 D_801123B0_3A0270_name_5C; /* m2c */
-extern s16 D_801123B2_3A0272_name_5C; /* m2c */
-extern s16 D_801123B4_3A0274_name_5C; /* m2c */
 extern s16 D_801123B6_3A0276_name_5C[5];
-extern s16 D_801123C0_3A0280_name_5C; /* m2c */
+extern s16 D_801123C0_3A0280_name_5C;
 extern u16 D_801123C2_3A0282_name_5C[2]; /* arrows */
-extern u16 D_801123C4_3A0284_name_5C; /* m2c */
 extern s16 D_801123C6_3A0286_name_5C[2];
-extern u16 D_801123C8_3A0288_name_5C; /* m2c */
-extern s16 D_801123CA_3A028A_name_5C; /* m2c */
-extern s16 D_801123CC_3A028C_name_5C; /* m2c */
-extern s16 D_801123CE_3A028E_name_5C; /* m2c */
-extern s16 D_801123D0_3A0290_name_5C; /* m2c */
+extern s16 D_801123CA_3A028A_name_5C;
+extern s16 D_801123CC_3A028C_name_5C;
+extern s16 D_801123CE_3A028E_name_5C;
+extern s16 D_801123D0_3A0290_name_5C;
 extern char D_801123D2_3A0292_name_5C[3][5];
 extern char D_801123E1_3A02A1_name_5C[3][5];
-extern s16 D_801123F0_3A02B0_name_5C; /* m2c */
-extern s16 D_801123F2_3A02B2_name_5C; /* m2c */
-extern u16 D_801123F4_3A02B4_name_5C; /* m2c */
+extern s16 D_801123F0_3A02B0_name_5C;
+extern s16 D_801123F2_3A02B2_name_5C;
+extern u16 D_801123F4_3A02B4_name_5C;
 extern u16 D_801123F6_3A02B6_name_5C[5]; /* coin digits */
 extern s16 D_80112400_3A02C0_name_5C; /* next mover */
 extern Ovl5CMover* D_80112408_3A02C8_name_5C[6]; /* 8010FC20 movers */
-extern s16 D_80112420_3A02E0_name_5C; /* m2c */
-extern s16 D_80112422_3A02E2_name_5C; /* m2c */
+extern s16 D_80112420_3A02E0_name_5C;
+extern s16 D_80112422_3A02E2_name_5C;
 extern s16 D_80112424_3A02E4_name_5C; /* 1 while 80103F38 takes the player count */
-extern s16 D_80112426_3A02E6_name_5C; /* m2c */
+extern s16 D_80112426_3A02E6_name_5C;
 extern s16 D_80112428_3A02E8_name_5C[9]; /* per kind: minigames owned; labels 2A-30 are elements */
-extern s16 D_8011242A_3A02EA_name_5C; /* m2c */
-extern s16 D_8011242C_3A02EC_name_5C; /* m2c */
-extern s16 D_8011242E_3A02EE_name_5C; /* m2c */
-extern s16 D_80112430_3A02F0_name_5C; /* m2c */
-extern s16 D_8011243A_3A02FA_name_5C; /* m2c */
+extern s16 D_8011243A_3A02FA_name_5C;
 extern s16 D_80112440_3A0300_name_5C[9]; /* per kind: every minigame; labels 42-48 are elements */
-extern u16 D_80112442_3A0302_name_5C; /* m2c */
-extern u16 D_80112444_3A0304_name_5C; /* m2c */
-extern s16 D_80112448_3A0308_name_5C; /* m2c */
 extern s8 D_80112458_3A0318_name_5C[30]; /* 58-B: cursor on each slot, -1 none */
-extern s8 D_8011245A_3A031A_name_5C; /* m2c */
-extern s8 D_8011245B_3A031B_name_5C; /* m2c */
-extern s8 D_8011245C_3A031C_name_5C; /* m2c */
 extern s16 D_80112476_3A0336_name_5C; /* attraction under the cursor */
 extern u8 D_80112477_3A0337_name_5C;  /* its low byte: read as a character by 8010EE64 */
-extern f32 D_80112478_3A0338_name_5C; /* m2c */
+extern f32 D_80112478_3A0338_name_5C;
 extern s16 D_80112498_3A0358_name_5C[58]; /* each model's motion (8010A0F0); labels 7E0-838 are elements */
-extern s32 D_801124A6_3A0366_name_5C; /* m2c */
-extern s16 D_801124C8_3A0388_name_5C; /* m2c */
-extern s16 D_801124CA_3A038A_name_5C; /* m2c */
-extern s16 D_801124CC_3A038C_name_5C; /* m2c */
-extern s16 D_801124D2_3A0392_name_5C; /* m2c */
+extern s16 D_801124D2_3A0392_name_5C;
 extern s16 D_801124D6_3A0396_name_5C; /* a count from 8010E2AC; 10, 20, 30, 42 trigger messages in 80102B78 */
-extern s16 D_801124D8_3A0398_name_5C; /* m2c */
+extern s16 D_801124D8_3A0398_name_5C;
 extern s16 D_801124E0_3A03A0_name_5C[9][72]; /* per kind: the owned ones; 570, 600 are rows 1, 2 */
-extern s32 D_80112570_3A0430_name_5C; /* m2c */
-extern s32 D_80112600_3A04C0_name_5C; /* m2c */
 extern Ovl5CCamView* D_801129F0_3A08B0_name_5C; /* the current list of views */
 extern Vec D_801129F4_3A08B4_name_5C; /* camera position (801086E0) */
-extern s16 D_80112A00_3A08C0_name_5C; /* m2c */
-extern u8 D_80112A01_3A08C1_name_5C; /* m2c */
+extern s16 D_80112A00_3A08C0_name_5C;
+extern u8 D_80112A01_3A08C1_name_5C;
 extern Vec2f D_80112A04_3A08C4_name_5C; /* last projected screen position */
 extern s16 D_80112A10_3A08D0_name_5C[9][72]; /* per kind: those on sale */
-extern s16 D_80112F20_3A0DE0_name_5C; /* m2c */
+extern s16 D_80112F20_3A0DE0_name_5C;
 extern f32 D_80112F24_3A0DE4_name_5C; /* camera near */
-extern s16 D_80112F28_3A0DE8_name_5C; /* m2c */
+extern s16 D_80112F28_3A0DE8_name_5C;
 extern Vec D_80112F2C_3A0DEC_name_5C; /* fixed camera target (80109B1C) */
 extern u16 D_80112F38_3A0DF8_name_5C; /* esprite freed on leaving */
 extern s16 D_80112F40_3A0E00_name_5C[9]; /* per kind: on sale; labels F46, F48 are elements */
-extern u16 D_80112F46_3A0E06_name_5C; /* m2c */
-extern u16 D_80112F48_3A0E08_name_5C; /* m2c */
 extern f32 D_80112F54_3A0E14_name_5C; /* camera far */
-extern u16 D_80112F58_3A0E18_name_5C; /* m2c */
-extern s16 D_80112F5A_3A0E1A_name_5C; /* m2c */
-extern u16 D_80112F5C_3A0E1C_name_5C; /* m2c */
+extern u16 D_80112F58_3A0E18_name_5C;
+extern s16 D_80112F5A_3A0E1A_name_5C;
+extern u16 D_80112F5C_3A0E1C_name_5C;
 extern s16 D_80112F60_3A0E20_name_5C[32]; /* model per list entry (31 in D_80110F64); labels F68..F9C are elements */
-extern u16 D_80112F90_3A0E50_name_5C; /* m2c */
-extern s16 D_80112F94_3A0E54_name_5C; /* m2c */
-extern s32 D_80112F96_3A0E56_name_5C; /* m2c */
-extern u16 D_80112F9A_3A0E5A_name_5C; /* m2c */
-extern s16 D_80112F9C_3A0E5C_name_5C; /* m2c */
 extern Vec D_80112FA0_3A0E60_name_5C; /* fixed camera eye (80109B1C) */
 extern Ovl5CPos16 D_80112FB0_3A0E70_name_5C[];
-extern s32 D_80112FB2_3A0E72_name_5C; /* m2c */
-extern s16 D_80113028_3A0EE8_name_5C; /* m2c */
+extern s16 D_80113028_3A0EE8_name_5C;
 
 /* ---- functions ---- */
 void func_80102800_3906C0_name_5C(void);
