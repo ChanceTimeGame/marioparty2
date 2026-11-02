@@ -187,7 +187,8 @@ void func_80103114_170AA4_LightsOut(void) {
     }
 }
 
-/* The lightning frame: the current darkness texture over the whole screen, drawn from a hook. */
+/* The darkness: the current I4 texture over the whole screen, drawn from a hook; func_8010B648 edits
+   the textures in RAM every frame. */
 void func_8010335C_170CEC_LightsOut(Gfx** gfxp) {
     Gfx* gfx;
     s32 y;
@@ -2188,7 +2189,7 @@ void func_8010A6C4_178054_LightsOut(omObjData* obj) {
     }
 }
 
-/* Coins: ten to each runner left standing if the hammer fell short, ten to the hammer otherwise. */
+/* Coins: ten to every runner if the hammer fell short of all three, else ten to the hammer. */
 void func_8010A980_178310_LightsOut(void) {
     LOSlot* p;
     omObjData* o;

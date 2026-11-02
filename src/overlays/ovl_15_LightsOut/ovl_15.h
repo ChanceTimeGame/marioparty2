@@ -10,9 +10,10 @@
 #include "game/data.h"
 #include "game/collision.h"
 
-/* Lights Out, a 1 vs 3 game: the player of group 0 (D_8010CD86) swings a hammer in the dark while
-   the three others, each with a light bulb above, try to hit him; lightning shows the arena now
-   and then. Two retail files, 170190.c and 179A40.c (from 8010C0B0, 1-nop pad); .data at 0x179B90,
+/* Lights Out, a 1 vs 3 game: the player of group 0 (D_8010CD86) swings a hammer in the dark (A
+   flattens, B flings by the shock wave) at the three others, who run with a bulb that lights a
+   circle round each; lightning shows the arena now and then. 30 s; coins_mg_bonus 10 to the hammer
+   if all three are out, else to the three. Two retail files, 170190.c and 179A40.c (from 8010C0B0, 1-nop pad); .data at 0x179B90,
    .rodata from 0x17A410, all of it 170190.c's. */
 
 typedef f32 Matrix4f[4][4];
@@ -343,7 +344,7 @@ void func_8010C070_179A00_LightsOut(void);
 void func_8010C0B0_179A40_LightsOut(void);
 void func_8010C1C8_179B58_LightsOut(void);
 
-/* Zero one player's pad; the host's stick and button state are the CPU's output. */
+/* Zero one player's pad. */
 #define LO_PAD_CLEAR(o)                                  \
     do {                                                 \
         ContBtn[gPlayers[(o)->work[0]].port] = 0;        \
