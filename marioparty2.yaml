@@ -2012,7 +2012,8 @@ segments:
       - [0x3A01F0, c]
       - [0x3A5610, c]
       - [0x3A5AB0, c]
-      - [0x3A87C0, data]
+      - [0x3A87C0, .data, 3A01F0]
+      - [0x3A9000, .data, 3A5AB0]
       - [0x3A9010, .rodata, 3A01F0]
       - [0x3A941C, .rodata, 3A5AB0]
       - {0x3A9460, type: bss, vram: 0x8010BA70, name: ovl_5D_bss}
