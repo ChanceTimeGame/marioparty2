@@ -212,7 +212,17 @@ void func_80079868_7A468(void) {
     func_80015868_16468(-1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079884_7A484);
+s32 func_800153CC_15FCC(s32 defNo);
+
+/* Looks up defNo's voice slot (func_800153CC_15FCC) and stops it; returns the slot. */
+s16 func_80079884_7A484(s16 defNo) {
+    s16 slot = func_800153CC_15FCC(defNo);
+
+    if (slot != -1) {
+        func_80015868_16468(slot);
+    }
+    return slot;
+}
 
 void func_800798D4_7A4D4(s16 arg0) {
     func_80015710_16310(-1, arg0);

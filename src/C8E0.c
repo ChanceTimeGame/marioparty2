@@ -20,7 +20,7 @@ typedef struct MgWork {
     /* 0x38 */ f32 unk_38;
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
-    /* 0x44 */ char unk_44[4];
+    /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ u16 unk_50; /* flags */
@@ -62,7 +62,7 @@ typedef struct MgWork {
     /* 0xE8 */ struct MgMotion* unk_E8;
     /* 0xEC */ s32 (*unk_EC)(omObjData* obj, omObjData* actor); /* actor touch hook (game/collision.h) */
     /* 0xF0 */ u16 unk_F0;
-    /* 0xF2 */ char unk_F2[0x12];
+    /* 0xF2 */ s8 unk_F2[0x12]; /* motion per slot (func_8000CD28_D928) */
     /* 0x104 */ union {
         s32 (*words[21])(); /* the minigame's override hooks (game/collision.h) */
         struct {
@@ -246,13 +246,17 @@ void func_8000BE38_CA38(omObjData* obj, f32 angle) {
     work->unk_3C = func_8002D958_2E558(angle);
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE68_CA68);
+void func_8000BE68_CA68(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_40 = arg1;
+}
 
 void func_8000BE74_CA74(omObjData* obj, f32 arg1) {
     MG_WORK(obj)->unk_38 = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BE80_CA80);
+void func_8000BE80_CA80(omObjData* obj, f32 arg1) {
+    MG_WORK(obj)->unk_44 = arg1;
+}
 
 void func_8000BE8C_CA8C(omObjData* obj, f32 arg1) {
     MG_WORK(obj)->unk_08 = arg1;
@@ -342,9 +346,13 @@ void func_8000BFA8_CBA8(omObjData* obj, f32 top, f32 depth, f32 radius) {
     work->unk_9C = radius;
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFC8_CBC8);
+void func_8000BFC8_CBC8(omObjData* obj) {
+    MG_WORK(obj)->unk_06 |= 0x80;
+}
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000BFDC_CBDC);
+void func_8000BFDC_CBDC(omObjData* obj) {
+    MG_WORK(obj)->unk_06 |= 0x100;
+}
 
 void func_8000BFF0_CBF0(omObjData* obj) {
     MG_WORK(obj)->unk_06 |= 0x200;
@@ -634,7 +642,17 @@ void func_8000CC74_D874(omObjData* obj, s16 model, s16 motion) {
     func_80025384_25F84(model, motion, chr, dir | func_80025718_26318(chr, motion, 0));
 }
 
-INCLUDE_ASM("asm/nonmatchings/C8E0", func_8000CD28_D928);
+extern s32 D_800C9A70_CA670[6][10]; /* 19BF0.c: motion keys per character */
+s32 func_80025684_26284(s32 id);
+
+/* Loads motion key `idx` of `player`'s character into slot idx. Retail takes the file directory
+   from player 0's character, not `player`'s. */
+void func_8000CD28_D928(omObjData* obj, s32 player, s32 idx) {
+    MgWork* work = MG_WORK(obj);
+
+    work->unk_F2[idx] = func_80025684_26284(D_800C9A70_CA670[gPlayers[player].character][idx] |
+                                            D_800CD438_CE038[gPlayers[0].character].unk_04);
+}
 
 // register allocation: retail builds the packed sample in a0 (masked 2)
 #ifdef NON_MATCHING

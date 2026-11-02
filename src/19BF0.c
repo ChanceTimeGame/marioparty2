@@ -509,7 +509,13 @@ void func_80019DC0_1A9C0(omObjData* obj, s32 src, s32 dst) {
     obj->motion[dst] = obj->motion[src];
 }
 
-INCLUDE_ASM("asm/nonmatchings/19BF0", func_80019DE0_1A9E0);
+void func_80019DE0_1A9E0(omObjData* obj, s32 idx, u16 flags, u16 speed) {
+    ActorWork* w = obj->unk_50;
+    MotionEntry* e = &w->table[idx];
+
+    e->flags = flags;
+    e->speed = speed;
+}
 
 /* MP1 func_800186E4: swaps motion slots a and b with their table entries. */
 void func_80019E04_1AA04(omObjData* obj, s32 a, s32 b) {
@@ -587,7 +593,26 @@ s16 func_80019FA4_1ABA4(omObjData* obj, s32 id) {
     return func_80025684_26284(id);
 }
 
-INCLUDE_ASM("asm/nonmatchings/19BF0", func_8001A014_1AC14);
+/* func_8001A12C_1AD2C's twin for a motion loaded through func_80018ACC_196CC. */
+void func_8001A014_1AC14(omObjData* obj, u16 slot, s32 file, u16 flags, u16 speed, s32 arg5) {
+    s16 mot = func_80018ACC_196CC(file);
+    ActorWork* w;
+    MotionEntry* e;
+    s32 chr;
+    s32 key;
+
+    if (mot >= 0) {
+        w = obj->unk_50;
+        obj->motion[slot] = mot;
+        e = &w->table[slot];
+        e->flags = flags;
+        e->speed = speed;
+        chr = gPlayers[w->player].character;
+        key = D_800C9A70_CA670[chr][(s16)arg5] | D_800CD438_CE038[chr].unk_04;
+        e->unk_04 = func_80019FA4_1ABA4(obj, key);
+        e->unk_08 = key;
+    }
+}
 
 /* MP1 func_800187D0 plus the character's motion key (D_800C9A70_CA670) for slot `slot`. */
 void func_8001A12C_1AD2C(omObjData* obj, u16 slot, s32 file, s32 flags, u16 speed, s32 arg5) {
