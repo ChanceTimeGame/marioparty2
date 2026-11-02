@@ -17,7 +17,7 @@ typedef struct MMPlayer {
     /* 0x00 */ s8 player;
     /* 0x01 */ s8 cell; /* 0 = the solo dancer, 1..3 = the group */
     /* 0x02 */ u8 port;
-    /* 0x03 */ u8 character;
+    /* 0x03 */ s8 character;
     /* 0x04 */ s8 cpu; /* -1: a human */
     /* 0x05 */ s8 step[2][6];
     /* 0x11 */ s8 offs[2][6];
@@ -29,22 +29,10 @@ typedef struct MMCharData {
     /* 0x08 */ char unk_08[0x10];
 } MMCharData; /* size = 0x18 */
 
-typedef struct MMVec4 {
-    f32 v[4];
-} MMVec4;
-
-typedef struct MMOrder {
-    u8 v[6][3];
-} MMOrder;
-
-typedef struct MMPick {
-    u8 v[5][6];
-} MMPick;
-
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
 extern s16 D_800FA188_FAD88;
-extern u16 D_800FA656;
+extern u8 D_800FA656;
 extern u16 D_801011FC_101DFC;
 extern s8 D_80102708_103308;
 
