@@ -16,7 +16,7 @@
 typedef struct MMPlayer {
     /* 0x00 */ s8 player;
     /* 0x01 */ s8 cell; /* 0 = the solo dancer, 1..3 = the group */
-    /* 0x02 */ u8 port;
+    /* 0x02 */ s8 port;
     /* 0x03 */ s8 character;
     /* 0x04 */ s8 cpu; /* -1: a human */
     /* 0x05 */ s8 step[2][6];
@@ -28,6 +28,26 @@ typedef struct MMCharData {
     /* 0x04 */ s32 dir;
     /* 0x08 */ char unk_08[0x10];
 } MMCharData; /* size = 0x18 */
+
+typedef struct MMOrder {
+    u8 v[6][3];
+} MMOrder;
+
+typedef struct MMPick {
+    u8 v[5][6];
+} MMPick;
+
+typedef struct MMVec4 {
+    f32 v[4];
+} MMVec4;
+
+typedef struct MMFiles9 {
+    s32 v[9];
+} MMFiles9;
+
+typedef struct MMFiles11 {
+    s32 v[11];
+} MMFiles11;
 
 /* ---- main-segment API missing from include/ ---- */
 extern MMCharData D_800CD438_CE038[];
@@ -84,7 +104,14 @@ void func_80026D28_27928(s16);
 void func_80021160_21D60(s16, s32, s32);
 u16 func_80020EBC_21ABC(void*, s32, u8);
 void func_80020D20_21920(s16);
-void func_80011738_12338(s32, s32, void*);
+typedef struct SeqChlInfo {
+    /* 0x00 */ char unk00[4];
+    /* 0x04 */ s32 program;
+    /* 0x08 */ s32 vol;
+    /* 0x0C */ s32 pan;
+    /* 0x10 */ s32 fxmix;
+} SeqChlInfo;
+void func_80011738_12338(s32, s32, SeqChlInfo*);
 void SprPrioSet(s16, s16, u16);
 s16 SprCreate(s32, s32);
 void SprAttrSet(s16, s16, s32);
@@ -94,6 +121,15 @@ s32 PlaySound(s32);
 void HuMemMemoryFreePerm(void*);
 void Hu3DCamUpdateMtx(s16);
 void Hu3DCamSetPositionOrientation(s16, Vec*, Vec*, Vec*);
+
+extern const MMOrder D_8010CE44_1602D4_MoveToTheMusic;
+extern const MMPick D_8010CE58_1602E8_MoveToTheMusic;
+
+extern const MMVec4 D_8010CF48_1603D8_MoveToTheMusic;
+extern const MMVec4 D_8010CF58_1603E8_MoveToTheMusic;
+extern const MMVec4 D_8010CF68_1603F8_MoveToTheMusic;
+extern const MMVec4 D_8010CF78_160408_MoveToTheMusic;
+extern const MMVec4 D_8010CF88_160418_MoveToTheMusic;
 
 /* ---- .data (asm) ---- */
 extern u32 D_8010CBD0_160060_MoveToTheMusic[]; /* frames per state */
@@ -138,7 +174,7 @@ extern s32 D_8010D7D8_160C68_MoveToTheMusic[4];
 extern s32 D_8010D7E8_160C78_MoveToTheMusic;
 extern s16 D_8010D7F0_160C80_MoveToTheMusic[11];
 extern u8 D_8010D806_160C96_MoveToTheMusic[6];
-extern s16 D_8010D80C_160C9C_MoveToTheMusic;
+extern u16 D_8010D80C_160C9C_MoveToTheMusic;
 extern s16 D_8010D80E_160C9E_MoveToTheMusic[4];
 
 /* ---- 155C90.c ---- */
