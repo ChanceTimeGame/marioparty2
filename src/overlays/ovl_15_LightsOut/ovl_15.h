@@ -59,6 +59,25 @@ typedef struct LOMtxSet { /* main's unk1EA70StructC */
     /* 0x08 */ Matrix4f* mtx;
 } LOMtxSet;
 
+/* omObjData::unk_50 of the shock wave: a ColActorWork in main's eyes, with the fields main's view
+   leaves as padding typed. */
+typedef struct LOWaveWork {
+    /* 0x00 */ char unk_00[0x34];
+    /* 0x34 */ f32 unk_34;
+    /* 0x38 */ f32 unk_38;
+    /* 0x3C */ f32 unk_3C;
+    /* 0x40 */ f32 unk_40;
+    /* 0x44 */ f32 unk_44;
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ f32 unk_4C;
+    /* 0x50 */ u16 unk_50;
+    /* 0x52 */ u8 unk_52;
+    /* 0x53 */ char unk_53[0x21];
+    /* 0x74 */ f32 unk_74;
+    /* 0x78 */ s32 unk_78;
+    /* 0x7C */ s32 unk_7C;
+} LOWaveWork;
+
 typedef struct LOCharData { /* D_800CD438, one per character */
     /* 0x00 */ s16 unk_00;
     /* 0x02 */ s16 unk_02;
@@ -86,7 +105,7 @@ extern s16 D_800FA606_FB206;
 extern omObjData* D_800FC7B0_FD3B0[];
 extern HmfModel* D_800FC834_FD434;
 extern u16 D_800FC87A_FD47A;
-extern u8 D_800FD8AC[];
+extern s8 D_800FD8AC[];
 extern s16 D_800FFFD6_100BD6;
 extern omObjData* D_800FFFD8_100BD8[];
 extern u16 D_801011FC_101DFC;
@@ -158,8 +177,10 @@ void func_800B1F50_B2B50(Matrix4f, f32, f32, f32);
 void func_800B1FA0_B2BA0(Mtx*, f32, f32, f32);
 f32 func_800B75A8_B81A8(f32, f32);
 f32 func_800B7890_B8490(f32);
-f32 __sinf(f32);
-f32 __cosf(f32);
+s32 omOvlReturnEx(s16);
+void osViBlack(u8);
+f64 fabs(f64);
+f64 func_800B80D0_B8CD0(f64);
 f32 HuMathSin(f32);
 void HmfModelObjAttrSet(s16, s32, s32);
 s16 LoadFormFile(s32, s32);
@@ -237,7 +258,15 @@ extern omObjData* D_8010D30C_17AC9C_LightsOut;  /* [9].obj */
 extern s16 D_8010D310_17ACA0_LightsOut;         /* [9].sprite */
 extern omObjData* D_8010D9C0_17B350_LightsOut;  /* [20].obj */
 extern s16 D_8010CD26_17A6B6_LightsOut;         /* D_8010CD18[7] */
+extern f32 D_8010D1A4_17AB34_LightsOut;         /* [6].unk_34[3][2] */
+extern u16 D_8010D1AC_17AB3C_LightsOut;         /* [6].unk_74 */
+extern u16 D_8010D1AE_17AB3E_LightsOut;         /* [6].unk_76 */
 extern u16 D_8010D1B4_17AB44_LightsOut;         /* [6].unk_7C */
+extern s16 D_8010D1BC_17AB4C_LightsOut;         /* [6].unk_84 */
+extern s16 D_8010D1BE_17AB4E_LightsOut;         /* [6].unk_86 */
+extern LOSlot D_8010DFD8_17B968_LightsOut[4];   /* [30..33], the bulbs */
+extern u16 D_8010CE04_17A794_LightsOut;         /* [0].unk_74 */
+extern u16 D_8010CE0A_17A79A_LightsOut;         /* [0].unk_7A */
 extern u8 D_8010EC08_17C598_LightsOut;
 extern s32 D_8010EC0C_17C59C_LightsOut;
 
@@ -254,7 +283,7 @@ void func_80102F00_170890_LightsOut(Matrix4f m, f32 x, f32 y, f32 z, f32* out);
 s32 func_80102F9C_17092C_LightsOut(f32 x, f32 y, f32 z, f32 reach);
 void func_80103114_170AA4_LightsOut(void);
 void func_8010335C_170CEC_LightsOut(Gfx** gfxp);
-void func_80103670_171000_LightsOut(void);
+void func_80103670_171000_LightsOut(omObjData* obj);
 void func_80103620_170FB0_LightsOut(omObjData* obj);
 void func_80103648_170FD8_LightsOut(omObjData* obj);
 f32 func_80103678_171008_LightsOut(f32 x);
