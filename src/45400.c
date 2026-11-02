@@ -16,9 +16,10 @@ s16 RNGPercentChance(s8 arg0);
 s32 func_80059FD0_5ABD0(s32);
 GW_PLAYER* BoardPlayerGet(s32 playerIndex);
 
-/* NON_MATCHING: layout and register allocation (masked ~113: retail's frame is 0x20 larger, keeps
-   cases 13 and 17 apart and shares case 7's compare with case 10). Retail reads node_data1's bytes
+/* NON_MATCHING: layout and register allocation (masked ~113: retail's frame is 0x20 larger and
+   shares case 7's compare with case 10). Retail reads node_data1's bytes
    with lbu (offsets 4-7); this C extracts them with shifts so it reads the same values on the host.
+   Case 13 tests as one condition so it is not cross-jumped into case 17 (calls agree).
    Its jump tables stay in the data blob (jtbl_800D2390_D2F90, jtbl_800D23D8_D2FD8). */
 #ifdef NON_MATCHING
 /* MP1 src/3F5B0.c's RunDecisionTree, grown to 18 node types. Host: a node's node_data2 is either
@@ -166,16 +167,10 @@ s16 func_80044800_45400(DecisionTreeNonLeafNode* node) {
             lo = (node->node_data1.data >> 8) & 0xFF;
             hi = node->node_data1.data & 0xFF;
             p = BoardPlayerGet(-1);
-            if (p->cur_chain_index != chain) {
-                continue;
+            if (p->cur_chain_index == chain && !(p->cur_space_index < lo) && !(hi < p->cur_space_index)) {
+                break;
             }
-            if (p->cur_space_index < lo) {
-                continue;
-            }
-            if (hi < p->cur_space_index) {
-                continue;
-            }
-            break;
+            continue;
         case 14:
             /* retail: as case 12, never succeeds */
             chain = (node->node_data1.data >> 16) & 0xFF;

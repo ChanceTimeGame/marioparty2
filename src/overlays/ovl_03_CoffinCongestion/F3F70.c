@@ -997,11 +997,7 @@ void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
             cpu->unk_00 = 2;
             cpu->unk_08 = 0;
             cpu->unk_04 = &D_80106A3C_F814C_CoffinCongestion[7];
-            if (obj->trans.z < 0.0f) {
-                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, -70.0f);
-            } else {
-                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, 70.0f);
-            }
+            HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, (obj->trans.z < 0.0f) ? -70.0f : 70.0f);
             goto next;
         case 11:
             func_80104C30_F6340_CoffinCongestion(obj, work, cpu);
