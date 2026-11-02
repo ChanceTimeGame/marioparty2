@@ -2,7 +2,7 @@
 #define _OVL_6D_H
 
 /* Overlay 6D: the Mini-Game Coaster's end scene, by course D_800FD8A8.unk04, and the final
-   minigame's call and return. One retail file, 406640.c. .data stays asm (no .bss: the zero
+   minigame's call and return. One retail file, 406640.c. .data is C (no .bss: the zero
    words at the head of .data serve for it); .rodata is carved. */
 
 #include "common.h"

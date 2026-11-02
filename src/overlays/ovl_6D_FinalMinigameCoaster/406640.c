@@ -1,5 +1,42 @@
 #include "ovl_6D.h"
 
+/* .data (0x40A080-0x40A300, 80106240-801064C0) */
+s32 D_80106240_40A080_FinalMinigameCoaster[8] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+MBModel* D_80106260_40A0A0_FinalMinigameCoaster[8] = { 0 };
+omObjData* D_80106280_40A0C0_FinalMinigameCoaster[8] = { 0 };
+s32 D_801062A0_40A0E0_FinalMinigameCoaster = 0;
+s32 D_801062A4_40A0E4_FinalMinigameCoaster = 0;
+s32 D_801062A8_40A0E8_FinalMinigameCoaster = 1;
+Vec D_801062AC_40A0EC_FinalMinigameCoaster = { -500.0f, 0.0f, 700.0f };
+Vec D_801062B8_40A0F8_FinalMinigameCoaster = { -225.0f, 0.0f, 700.0f };
+Vec D_801062C4_40A104_FinalMinigameCoaster = { 500.0f, 0.0f, 800.0f };
+Vec D_801062D0_40A110_FinalMinigameCoaster = { 100.0f, 0.0f, 800.0f };
+Vec D_801062DC_40A11C_FinalMinigameCoaster = { 140.0f, 0.0f, 800.0f };
+Vec D_801062E8_40A128_FinalMinigameCoaster[3] = { { -50.0f, 0.0f, 600.0f }, { -125.0f, 0.0f, 700.0f }, { -200.0f, 0.0f, 800.0f } };
+Vec D_8010630C_40A14C_FinalMinigameCoaster = { -800.0f, 0.0f, 600.0f };
+Vec D_80106318_40A158_FinalMinigameCoaster = { -875.0f, 0.0f, 700.0f };
+Vec D_80106324_40A164_FinalMinigameCoaster = { -950.0f, 0.0f, 800.0f };
+Vec D_80106330_40A170_FinalMinigameCoaster = { 100.0f, 0.0f, 400.0f };
+Vec D_8010633C_40A17C_FinalMinigameCoaster = { 100.0f, 0.0f, 500.0f };
+Vec D_80106348_40A188_FinalMinigameCoaster = { 100.0f, 0.0f, 600.0f };
+Vec D_80106354_40A194_FinalMinigameCoaster = { 0.0f, 0.0f, 700.0f };
+Vec D_80106360_40A1A0_FinalMinigameCoaster = { 200.0f, 0.0f, 700.0f };
+Vec D_8010636C_40A1AC_FinalMinigameCoaster[2] = { { 100.0f, 0.0f, 700.0f }, { 250.0f, 0.0f, 700.0f } };
+Vec D_80106384_40A1C4_FinalMinigameCoaster = { 750.0f, 35.0f, 500.0f };
+Vec D_80106390_40A1D0_FinalMinigameCoaster = { 250.0f, 35.0f, 500.0f };
+s32 D_8010639C_40A1DC_FinalMinigameCoaster[7] = { 6, 0x20000, 0x20001, 0x20002, 0x20004, 0x2004E, 0x2004E };
+s32 D_801063B8_40A1F8_FinalMinigameCoaster[7] = { 6, 0x30000, 0x30001, 0x30002, 0x30004, 0x3004E, 0x3004E };
+s32 D_801063D4_40A214_FinalMinigameCoaster[7] = { 6, 0x70000, 0x70001, 0x70002, 0x70004, 0x7004E, 0x7004E };
+s32 D_801063F0_40A230_FinalMinigameCoaster[7] = { 6, 0x40000, 0x40001, 0x40002, 0x40004, 0x4004E, 0x4004E };
+s32 D_8010640C_40A24C_FinalMinigameCoaster[7] = { 6, 0x50000, 0x50001, 0x50002, 0x50004, 0x5004E, 0x5004E };
+s32 D_80106428_40A268_FinalMinigameCoaster[7] = { 6, 0x60000, 0x60001, 0x60002, 0x60004, 0x6004E, 0x6004E };
+s32* D_80106444_40A284_FinalMinigameCoaster[6] = { D_8010639C_40A1DC_FinalMinigameCoaster, D_801063B8_40A1F8_FinalMinigameCoaster, D_801063D4_40A214_FinalMinigameCoaster, D_801063F0_40A230_FinalMinigameCoaster, D_8010640C_40A24C_FinalMinigameCoaster, D_80106428_40A268_FinalMinigameCoaster };
+s32 D_8010645C_40A29C_FinalMinigameCoaster[] = { 4, 0x80036, 0x80037, 0x80038, 0x80030 };
+s32 D_80106470_40A2B0_FinalMinigameCoaster[] = { 2, 0x800B2, 0x800B3 };
+s32 D_8010647C_40A2BC_FinalMinigameCoaster[6] = { 0x59A, 0x59B, 0x59C, 0x59E, 0x59D, 0x59F };
+s32 D_80106494_40A2D4_FinalMinigameCoaster[6] = { 0x5BC, 0x5BD, 0x5BE, 0x5C0, 0x5BF, 0x5C1 };
+s32 D_801064AC_40A2EC_FinalMinigameCoaster[5] = { 0x38, 0x39, 0x3A, 0, 0 };
+
 #define HOST D_80106260_40A0A0_FinalMinigameCoaster[0]
 #define CAR D_80106260_40A0A0_FinalMinigameCoaster[3]
 #define HOST2 D_80106260_40A0A0_FinalMinigameCoaster[4]
