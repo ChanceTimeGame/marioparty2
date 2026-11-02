@@ -25,6 +25,11 @@
         (v) += 360.0;              \
     }
 
+/* log2 of a texture side, rounded up: a tile's mask. */
+#define RB_LOG2(x)                                                                                             \
+    ((x) < 3 ? 1 : (x) < 5 ? 2 : (x) < 9 ? 3 : (x) < 0x11 ? 4 : (x) < 0x21 ? 5 : (x) < 0x41 ? 6 : (x) < 0x81 ? 7 \
+                                                                                 : (x) < 0x101 ? 8 : 9)
+
 /* A pointer retail packs byte by byte: a 4-byte value built in a register. */
 typedef struct RBBytes {
     u32 a : 8;
@@ -132,10 +137,32 @@ typedef void (*RBStep)(omObjData*);
 
 /* What SprAnimGet returns: only the size is read here. */
 typedef struct RBAnim {
-    /* 0x00 */ char unk_00[0x14];
+    /* 0x00 */ HuSprite_Unk84_Unk00_Struct* unk00;
+    /* 0x04 */ void* unk04;
+    /* 0x08 */ void* tlut; /* the 16-bit texture of the course scroll */
+    /* 0x0C */ void* unk0C;
+    /* 0x10 */ u16 unk10;
+    /* 0x12 */ u16 unk12;
     /* 0x14 */ u16 w;
     /* 0x16 */ u16 h;
+    /* 0x18 */ u16 unk18;
+    /* 0x1A */ u16 unk1A;
 } RBAnim;
+
+/* D_80112D70, 48: dust and spark sprites. */
+typedef struct RBSpark {
+    /* 0x00 */ s32 spr; /* read as its low half */
+    /* 0x04 */ s32 used;
+    /* 0x08 */ s32 life;
+    /* 0x0C */ Vec pos;
+} RBSpark; /* size = 0x18 */
+
+/* The course mesh's vertices: their column and row (D_80112DA8). */
+typedef struct RBMeshVtx {
+    /* 0x0 */ s16 move; /* 0 on the edge */
+    /* 0x2 */ s16 col;
+    /* 0x4 */ s16 row;
+} RBMeshVtx; /* size = 6 */
 
 /* Main. */
 extern RBCharData D_800CD438_CE038[];
@@ -230,6 +257,14 @@ void func_80079848_7A448(s16 arg0);
 void func_8008221C_82E1C(s16 group, s16 member, f32 alpha);
 void func_8008225C_82E5C(s16 group, s16 member, s32 arg2);
 
+void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3);
+void func_800824B4_830B4(s16 group, s16 member, u8 r, u8 g, u8 b, u8 a);
+extern s16 D_800FFFD6_100BD6; /* current viewport */
+void func_800B1FA0_B2BA0(Mtx* m, f32 x, f32 y, f32 z); /* guTranslate */
+int abs(int);
+extern f32 D_800CA02C_CAC2C;
+extern u16 D_800CAFE4[];
+
 /* .data */
 extern Vec D_801120A0_F32E0_RollOutTheBarrels[7]; /* the barrel slots */
 extern s32 D_80112120_F3360_RollOutTheBarrels[6]; /* win voice per character */
@@ -276,7 +311,7 @@ extern RBPlayer* D_80112D60_F3FA0_RollOutTheBarrels;
 extern RBRoller* D_80112D64_F3FA4_RollOutTheBarrels;
 extern RBBarrel* D_80112D68_F3FA8_RollOutTheBarrels;
 extern RBShape* D_80112D6C_F3FAC_RollOutTheBarrels;
-extern void* D_80112D70_F3FB0_RollOutTheBarrels;
+extern RBSpark* D_80112D70_F3FB0_RollOutTheBarrels;
 extern s32* D_80112D74_F3FB4_RollOutTheBarrels; /* 0x80 bytes; [0] the barrel sprite file, read as its low half */
 extern s16 D_80112D78_F3FB8_RollOutTheBarrels;
 extern s16 D_80112D7A_F3FBA_RollOutTheBarrels;
@@ -319,25 +354,20 @@ extern f32 D_80112198_F33D8_RollOutTheBarrels;
 extern f32 D_8011219C_F33DC_RollOutTheBarrels;
 extern f32 D_801121E4_F3424_RollOutTheBarrels;
 extern f32 D_801121EC_F342C_RollOutTheBarrels;
-extern f32 D_80112280_F34C0_RollOutTheBarrels;
-extern f32 D_80112284_F34C4_RollOutTheBarrels;
-extern f32 D_80112288_F34C8_RollOutTheBarrels;
-extern s32 D_801122A4_F34E4_RollOutTheBarrels[]; /* typed by width only */
-extern f32 D_801122B0_F34F0_RollOutTheBarrels;
-extern f32 D_801122B4_F34F4_RollOutTheBarrels;
-extern f32 D_801122B8_F34F8_RollOutTheBarrels;
-extern s32 D_801122D4_F3514_RollOutTheBarrels[]; /* typed by width only */
-extern s32 D_801123D0_F3610_RollOutTheBarrels[]; /* typed by width only */
-extern f32 D_80112410_F3650_RollOutTheBarrels;
-extern f32 D_80112414_F3654_RollOutTheBarrels;
+extern Vec D_80112280_F34C0_RollOutTheBarrels[3];
+extern Vec D_801122A4_F34E4_RollOutTheBarrels;
+extern Vec D_801122B0_F34F0_RollOutTheBarrels[3];
+extern f32 D_801122D4_F3514_RollOutTheBarrels[3];
+extern Gfx D_801123D0_F3610_RollOutTheBarrels[]; /* a sprite model's setup list */
+extern f32 D_80112410_F3650_RollOutTheBarrels[4][2];
 extern f32 D_80112430_F3670_RollOutTheBarrels;
 extern f32 D_80112CD4_F3F14_RollOutTheBarrels;
 extern s32 D_80112D14_F3F54_RollOutTheBarrels[]; /* size 0x24 */
-extern s32 D_80112D48_F3F88_RollOutTheBarrels;
+extern omObjData* D_80112D48_F3F88_RollOutTheBarrels;
 extern s16 D_80112D82_F3FC2_RollOutTheBarrels;
 extern s16 D_80112D92_F3FD2_RollOutTheBarrels;
-extern s32 D_80112DA8_F3FE8_RollOutTheBarrels;
-extern s32 D_80112DB4_F3FF4_RollOutTheBarrels[]; /* size 0x04 */
+extern RBMeshVtx* D_80112DA8_F3FE8_RollOutTheBarrels;
+extern s16 D_80112DB4_F3FF4_RollOutTheBarrels[2]; /* the mesh's columns and rows */
 extern s16 D_80112DBA_F3FFA_RollOutTheBarrels;
 extern s16 D_80112DC2_F4002_RollOutTheBarrels;
 extern s16 D_80112DC6_F4006_RollOutTheBarrels;
@@ -440,34 +470,34 @@ f32 func_8010DC48_EEE88_RollOutTheBarrels(void);
 s32 func_8010DC78_EEEB8_RollOutTheBarrels(void);
 u16 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 file);
 void func_8010DD10_EEF50_RollOutTheBarrels(void);
-void func_8010DE84_EF0C4_RollOutTheBarrels(void);
-s32 func_8010DF18_EF158_RollOutTheBarrels(s32 arg0, f32 x, f32 y, f32 z);
-void func_8010E080_EF2C0_RollOutTheBarrels(void* arg0, s32 arg1);
+void func_8010DE84_EF0C4_RollOutTheBarrels(omObjData* obj);
+s32 func_8010DF18_EF158_RollOutTheBarrels(s32 kind, f32 x, f32 y, f32 z);
+void func_8010E080_EF2C0_RollOutTheBarrels(Vec* pos, s32 size);
 void func_8010E260_EF4A0_RollOutTheBarrels(void);
-void func_8010E390_EF5D0_RollOutTheBarrels(void* arg0);
+void func_8010E390_EF5D0_RollOutTheBarrels(omObjData* obj);
 void func_8010E434_EF674_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2);
-void func_8010E4C0_EF700_RollOutTheBarrels(s16 arg0);
-void func_8010E944_EFB84_RollOutTheBarrels(s16 arg0, s32 arg1);
+void func_8010E4C0_EF700_RollOutTheBarrels(s16 model);
+void func_8010E944_EFB84_RollOutTheBarrels(s16 model, s32 angle);
 s32 func_8010EBE8_EFE28_RollOutTheBarrels(RBAnim* spr, f32 alpha);
 s32 func_8010F81C_F0A5C_RollOutTheBarrels(RBAnim* spr, u16 src, f32 alpha);
 void func_8010FA9C_F0CDC_RollOutTheBarrels(u16 mdl, RBAnim* spr, u16 frame, f32 alpha);
-void func_8010FC44_F0E84_RollOutTheBarrels(void* arg0, void* arg1, f32 arg2, u16 arg3, u16 arg4);
-s32 func_8011005C_F129C_RollOutTheBarrels(s16 arg0);
-void func_80110530_F1770_RollOutTheBarrels(s16 arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, RBAnim* arg6, RBAnim* arg7);
+s32 func_8010FC44_F0E84_RollOutTheBarrels(RBAnim* spr, HmfData* hmf, f32 scale, u16 x, u16 y);
+s32 func_8011005C_F129C_RollOutTheBarrels(s32 model);
+void func_80110530_F1770_RollOutTheBarrels(s32 a, s32 b, f32 u0, f32 v0, f32 u1, f32 v1, RBAnim* tex0, RBAnim* tex1);
 void func_801113D4_F2614_RollOutTheBarrels(omObjData* obj, void* p);
 void* func_801113F4_F2634_RollOutTheBarrels(omObjData* obj);
 void* func_80111448_F2688_RollOutTheBarrels(s32 size);
-s16 func_80111494_F26D4_RollOutTheBarrels(void);
+s32 func_80111494_F26D4_RollOutTheBarrels(void);
 void func_8011154C_F278C_RollOutTheBarrels(s16 arg0, s16 arg1);
-void func_801115EC_F282C_RollOutTheBarrels(s16 arg0, void* arg1);
+void func_801115EC_F282C_RollOutTheBarrels(s16 model, Vec* offset);
 f32 func_80111678_F28B8_RollOutTheBarrels(f32 from, f32 to, f32 step);
 f32 func_80111838_F2A78_RollOutTheBarrels(f32 a, f32 b);
-void func_801118C8_F2B08_RollOutTheBarrels(u32* list, u32 n, u32 times);
+void func_801118C8_F2B08_RollOutTheBarrels(s32* list, u32 n, u32 times);
 s32 func_801119B4_F2BF4_RollOutTheBarrels(u8* arg0, u32 arg1, u32 arg2);
-void func_80111AA0_F2CE0_RollOutTheBarrels(s32 arg0, s32 arg1);
-void func_80111B40_F2D80_RollOutTheBarrels(s32 arg0, Vec* pos, void* out);
-f32 func_80111F28_F3168_RollOutTheBarrels(f32 x, f32 z);
-void func_80111FA0_F31E0_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_80112000_F3240_RollOutTheBarrels(f32 t, f32* a, f32* b, f32* c, f32* out);
+void func_80111AA0_F2CE0_RollOutTheBarrels(s16* a, u16 n);
+void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen);
+f32 func_80111F28_F3168_RollOutTheBarrels(f32 y, f32 x);
+f32 func_80111FA0_F31E0_RollOutTheBarrels(f32 t, f32 a, f32 b, f32 c);
+void func_80112000_F3240_RollOutTheBarrels(f32 t, Vec* a, Vec* b, Vec* c, Vec* out);
 
 #endif
