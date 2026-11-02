@@ -93,6 +93,22 @@ typedef struct RBShape {
     /* 0x2C */ void (*hook)();
 } RBShape; /* size = 0x30 */
 
+/* D_80112D64_F3FA4_RollOutTheBarrels, 6: the things rolling down the course. */
+typedef struct RBRoller {
+    /* 0x00 */ s16 used;
+    /* 0x02 */ s16 kind; /* -1 none yet */
+    /* 0x04 */ s32 state;
+    /* 0x08 */ s32 timer;
+    /* 0x0C */ s32 unk_0C;
+    /* 0x10 */ s16 mdl[12]; /* model, then its motions */
+    /* 0x28 */ s16 shadow; /* -1 none */
+    /* 0x2A */ s16 unk_2A;
+    /* 0x2C */ s16 pathIdx;
+    /* 0x2E */ s16 pathLen;
+    /* 0x30 */ Vec* path; /* 0xC0 bytes */
+    /* 0x34 */ void (*hook)(struct RBRoller*);
+} RBRoller; /* size = 0x38 */
+
 /* A barrel (D_80112D68_F3FA8_RollOutTheBarrels, 6). */
 typedef struct RBBarrel {
     /* 0x00 */ s16 unk_00;
@@ -228,19 +244,20 @@ extern f64 D_801121D8_F3418_RollOutTheBarrels;
 /* .bss */
 extern omObjData* D_80112D38_F3F78_RollOutTheBarrels;
 extern omObjData* D_80112D3C_F3F7C_RollOutTheBarrels;
+extern omObjData* D_80112D44_F3F84_RollOutTheBarrels;
 extern s32 D_80112D50_F3F90_RollOutTheBarrels[4]; /* the player's fall/voice motions */
 extern RBPlayer* D_80112D60_F3FA0_RollOutTheBarrels;
-extern void* D_80112D64_F3FA4_RollOutTheBarrels;
+extern RBRoller* D_80112D64_F3FA4_RollOutTheBarrels;
 extern RBBarrel* D_80112D68_F3FA8_RollOutTheBarrels;
 extern RBShape* D_80112D6C_F3FAC_RollOutTheBarrels;
 extern void* D_80112D70_F3FB0_RollOutTheBarrels;
-extern void* D_80112D74_F3FB4_RollOutTheBarrels;
+extern s32* D_80112D74_F3FB4_RollOutTheBarrels; /* 0x80 bytes; [0] the barrel sprite file, read as its low half */
 extern s16 D_80112D78_F3FB8_RollOutTheBarrels;
 extern s16 D_80112D7A_F3FBA_RollOutTheBarrels;
 extern s8 D_80112D7C_F3FBC_RollOutTheBarrels;
 extern s32 D_80112D80_F3FC0_RollOutTheBarrels;
-extern void* D_80112D84_F3FC4_RollOutTheBarrels;
-extern void* D_80112D88_F3FC8_RollOutTheBarrels;
+extern Vec* D_80112D84_F3FC4_RollOutTheBarrels; /* 10 */
+extern s32* D_80112D88_F3FC8_RollOutTheBarrels; /* 5 */
 extern s32 D_80112D8C_F3FCC_RollOutTheBarrels;
 extern s32 D_80112D90_F3FD0_RollOutTheBarrels;
 extern s32 D_80112D94_F3FD4_RollOutTheBarrels;
@@ -290,14 +307,14 @@ RBShape* func_80106114_E7354_RollOutTheBarrels(omObjData* parent, Vec* pos, void
 void func_801061B0_E73F0_RollOutTheBarrels(RBShape* shape, Vec* offset, f32* size);
 RBShape* func_80106224_E7464_RollOutTheBarrels(omObjData* obj, Vec* prev);
 RBShape* func_801063B0_E75F0_RollOutTheBarrels(omObjData* obj, Vec* prev);
-void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj);
-void func_801067BC_E79FC_RollOutTheBarrels(void* arg0, void* arg1, void* arg2);
+void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev);
+void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev);
 void func_80106DE4_E8024_RollOutTheBarrels(void);
-void func_8010704C_E828C_RollOutTheBarrels(void);
-void func_80107140_E8380_RollOutTheBarrels(omObjData* obj);
-void func_80107564_E87A4_RollOutTheBarrels(omObjData* obj);
-void func_801079D0_E8C10_RollOutTheBarrels(omObjData* obj);
-void func_80107AE0_E8D20_RollOutTheBarrels(omObjData* obj);
+void func_8010704C_E828C_RollOutTheBarrels(omObjData* obj);
+void func_80107140_E8380_RollOutTheBarrels(RBRoller* r);
+void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r);
+void func_801079D0_E8C10_RollOutTheBarrels(RBRoller* r);
+void func_80107AE0_E8D20_RollOutTheBarrels(RBRoller* r);
 void func_80107D2C_E8F6C_RollOutTheBarrels(omObjData* obj);
 s32 func_80108808_E9A48_RollOutTheBarrels(s16 arg0);
 void func_8010898C_E9BCC_RollOutTheBarrels(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -310,7 +327,7 @@ void func_80108C5C_E9E9C_RollOutTheBarrels(s32 arg0, s16 arg1);
 void func_80108D00_E9F40_RollOutTheBarrels(void);
 void func_80108F88_EA1C8_RollOutTheBarrels(omObjData* obj);
 void func_80109504_EA744_RollOutTheBarrels(omObjData* obj);
-void func_801096D8_EA918_RollOutTheBarrels(s16 arg0, void* arg1);
+void func_801096D8_EA918_RollOutTheBarrels(s16 arg0, Vec* out);
 s32 func_80109738_EA978_RollOutTheBarrels(s16 arg0);
 s32 func_80109824_EAA64_RollOutTheBarrels(s16 arg0);
 void func_80109868_EAAA8_RollOutTheBarrels(omObjData* obj);
@@ -341,16 +358,16 @@ void func_8010DC78_EEEB8_RollOutTheBarrels(void);
 s32 func_8010DCCC_EEF0C_RollOutTheBarrels(s32 file);
 void func_8010DD10_EEF50_RollOutTheBarrels(void);
 void func_8010DE84_EF0C4_RollOutTheBarrels(void);
-s32 func_8010DF18_EF158_RollOutTheBarrels(s32 arg0, s32 arg1, f32 arg2, f32 arg3);
+s32 func_8010DF18_EF158_RollOutTheBarrels(s32 arg0, f32 x, f32 y, f32 z);
 void func_8010E080_EF2C0_RollOutTheBarrels(void* arg0, s32 arg1);
 void func_8010E260_EF4A0_RollOutTheBarrels(void);
 void func_8010E390_EF5D0_RollOutTheBarrels(void* arg0);
 void func_8010E434_EF674_RollOutTheBarrels(f32 arg0, f32 arg1, f32 arg2);
 void func_8010E4C0_EF700_RollOutTheBarrels(s16 arg0);
 void func_8010E944_EFB84_RollOutTheBarrels(s16 arg0, s32 arg1);
-s32 func_8010EBE8_EFE28_RollOutTheBarrels(void* arg0, f32 arg1);
-s32 func_8010F81C_F0A5C_RollOutTheBarrels(void* arg0, s32 arg1, f32 arg2);
-void func_8010FA9C_F0CDC_RollOutTheBarrels(s32 arg0, s32* arg1, s32 arg2, f32 arg3);
+s32 func_8010EBE8_EFE28_RollOutTheBarrels(RBAnim* spr, f32 alpha);
+s32 func_8010F81C_F0A5C_RollOutTheBarrels(RBAnim* spr, u16 src, f32 alpha);
+void func_8010FA9C_F0CDC_RollOutTheBarrels(u16 mdl, RBAnim* spr, u16 frame, f32 alpha);
 void func_8010FC44_F0E84_RollOutTheBarrels(void* arg0, void* arg1, f32 arg2, u16 arg3, u16 arg4);
 s32 func_8011005C_F129C_RollOutTheBarrels(s16 arg0);
 void func_80110530_F1770_RollOutTheBarrels(s16 arg0, s16 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, RBAnim* arg6, RBAnim* arg7);

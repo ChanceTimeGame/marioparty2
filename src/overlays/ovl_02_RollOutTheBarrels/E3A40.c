@@ -1230,7 +1230,7 @@ RBShape* func_801063B0_E75F0_RollOutTheBarrels(omObjData* obj, Vec* prev) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801063B0_E75F0_RollOutTheBarrels);
 #endif
 
-void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj) {
+void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev) {
     MgWork* w;
     f32 x;
     f32 z;
@@ -1257,52 +1257,399 @@ void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj) {
     obj->trans.z = z + dz * k;
 }
 
+// float register allocation (masked 16: dx, dz and the angle rotated; a shared divide tail), class 4
+#ifdef NON_MATCHING
+void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev) {
+    MgWork* w;
+    s32 hit;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 r;
+    f32 a;
+    f32 dx;
+    f32 dz;
+    f32 k;
+    f32 sx;
+    f64 d;
+
+    w = obj->unk_50;
+    hit = shape->hit;
+    shape->hit = 1;
+    x = shape->pos.x + shape->offset.x;
+    y = shape->pos.y + shape->offset.y;
+    z = shape->pos.z + shape->offset.z;
+    r = shape->radius + w->unk_48;
+    dx = obj->trans.x - x;
+    dz = obj->trans.z - z;
+    a = func_80111F28_F3168_RollOutTheBarrels(dx, dz);
+    if (y + shape->height < prev->y) {
+        if (r * r > (x - prev->x) * (x - prev->x) + (z - prev->z) * (z - prev->z)) {
+            if (w->unk_5C == 0x200) {
+                shape->hit = 2;
+            }
+            obj->trans.y = y + shape->height + 20.0;
+            w->unk_38 = -1.3f;
+            if (shape->hit == 2) {
+                func_80105928_E6B68_RollOutTheBarrels(obj, 0.0f, 260.0f);
+                func_800191D4_19DD4(obj, 7, obj->trans.x, obj->trans.y, obj->trans.z, 0.0f, 0.0f);
+            } else {
+                if (a > 30.0 && a < 150.0) {
+                    a = dz < 0.0 ? 150.0f : 30.0f;
+                } else if (a > 210.0 && a < 330.0) {
+                    a = dz < 0.0 ? 210.0f : 330.0f;
+                }
+                func_80105928_E6B68_RollOutTheBarrels(obj, a, 229.99999999999997 - sqrtf(dx * dx + dz * dz));
+                sx = x + (f64)(HuMathSin(a) * r) * 0.5;
+                func_800191D4_19DD4(obj, 6, sx, obj->trans.y, z + (f64)(func_800B7890_B8490(a) * r) * 0.5, 60.0f, a);
+            }
+            func_80105998_E6BD8_RollOutTheBarrels(obj, 6, 0);
+            return;
+        }
+    }
+    if (hit == 5 && w->unk_5C == 0x40) {
+        shape->hit = 3;
+    }
+    if (shape->hit == 3) {
+        d = sqrtf(dx * dx + dz * dz);
+        if (d != 0.0) {
+            k = r * 1.2 / d;
+        } else {
+            dz = r;
+            k = 1.0f;
+        }
+    } else {
+        d = sqrtf(dx * dx + dz * dz);
+        if (d != 0.0) {
+            k = r / d;
+        } else {
+            dz = r;
+            k = 1.0f;
+        }
+    }
+    obj->trans.x = x + dx * k;
+    obj->trans.z = z + dz * k;
+    if (w->unk_38 != 1000.0f) {
+        if (shape->hit == 3) {
+            func_80105928_E6B68_RollOutTheBarrels(obj, a, 50.0f);
+            func_80105998_E6BD8_RollOutTheBarrels(obj, 6, 0);
+            sx = x + (f64)(HuMathSin(a) * r) * 0.5;
+            func_800191D4_19DD4(obj, 6, sx, obj->trans.y, z + (f64)(func_800B7890_B8490(a) * r) * 0.5, 60.0f, a);
+        }
+    } else if (shape->hit == 3) {
+        func_80105928_E6B68_RollOutTheBarrels(obj, a, 50.0f);
+        func_80105998_E6BD8_RollOutTheBarrels(obj, 0x21, 0);
+        sx = x + (f64)(HuMathSin(a) * r) * 0.5;
+        func_800191D4_19DD4(obj, 6, sx, 100.0f, z + (f64)(func_800B7890_B8490(a) * r) * 0.5, 90.0f, a);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801067BC_E79FC_RollOutTheBarrels);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80106DE4_E8024_RollOutTheBarrels);
+void func_80106DE4_E8024_RollOutTheBarrels(void) {
+    RBRoller* r;
+    RBAnim* spr;
+    Vec* v;
+    s32 i;
+    s32 j;
+    f32 s;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010704C_E828C_RollOutTheBarrels);
+    r = D_80112D64_F3FA4_RollOutTheBarrels;
+    D_80112D74_F3FB4_RollOutTheBarrels[0] = func_8010DCCC_EEF0C_RollOutTheBarrels(0x120007) & 0xFFFF;
+    spr = SprAnimGet((s16)D_80112D74_F3FB4_RollOutTheBarrels[0]);
+    for (i = 0; i < 6; i++, r++) {
+        r->used = 0;
+        r->kind = 0;
+        r->state = 0;
+        r->timer = 0;
+        r->unk_0C = 0;
+        r->unk_2A = 0;
+        r->pathLen = 0;
+        r->pathIdx = 0;
+        r->path = NULL;
+        r->hook = NULL;
+        if (i == 0) {
+            r->mdl[0] = func_8010EBE8_EFE28_RollOutTheBarrels(spr, 1.0f);
+        } else {
+            r->mdl[0] = func_8010F81C_F0A5C_RollOutTheBarrels(spr, D_80112D64_F3FA4_RollOutTheBarrels->mdl[0], 1.0f);
+        }
+        for (j = 1; j < 12; j++) {
+            r->mdl[j] = -1;
+        }
+        r->shadow = -1;
+        func_800297E8_2A3E8(r->mdl[0], 1.3f, 1.3f, 1.3f);
+        func_800298A4_2A4A4(r->mdl[0], 4, 4);
+    }
+    for (i = 0; i < 5; i++) {
+        s = 1.3 - (f32)i / 5.0f * 0.3;
+        D_80112D88_F3FC8_RollOutTheBarrels[i] = func_8010F81C_F0A5C_RollOutTheBarrels(spr, D_80112D64_F3FA4_RollOutTheBarrels->mdl[0], 0.0f);
+        func_800297E8_2A3E8(D_80112D88_F3FC8_RollOutTheBarrels[i], s, s, s);
+        func_800298A4_2A4A4(D_80112D88_F3FC8_RollOutTheBarrels[i], 4, 4);
+    }
+    for (i = 0; i < 10; i++) {
+        v = &D_80112D84_F3FC4_RollOutTheBarrels[i];
+        v->x = v->y = v->z = 0.0f;
+    }
+    D_80112D44_F3F84_RollOutTheBarrels = omAddObj(6, 1, 0, -1, func_8010704C_E828C_RollOutTheBarrels);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107140_E8380_RollOutTheBarrels);
+void func_8010704C_E828C_RollOutTheBarrels(omObjData* obj) {
+    RBRoller* r;
+    HmfModel* m;
+    s32 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107564_E87A4_RollOutTheBarrels);
+    r = D_80112D64_F3FA4_RollOutTheBarrels;
+    for (i = 0; i < 6; i++, r++) {
+        if (r->used != 0 && r->mdl[0] != -1) {
+            m = &D_800FC834_FD434[r->mdl[0]];
+            if (r->hook != NULL) {
+                r->hook(r);
+            }
+            if (r->kind == -1 && !(m->unk18 & 4) && m->unk04 == 0xFF && func_80029D0C_2A90C(r->mdl[0]) <= m->unk40) {
+                m->unk40 = m->unk48;
+            }
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const u32 D_801127D8_F3A18_RollOutTheBarrels[1] = { 0x40668000 };
+void func_80107140_E8380_RollOutTheBarrels(RBRoller* r) {
+    Vec goal;
+    Vec mid;
+    Vec from;
+    HmfModel* m;
+    Vec* p;
+    f32 dx;
+    f32 dz;
+    s32 i;
 
-__asm__(".section .rodata");
-const char D_801127DC_F3A1C_RollOutTheBarrels[] = "";
+    if (r->kind != -1) {
+        r->hook = func_80107AE0_E8D20_RollOutTheBarrels;
+        return;
+    }
+    m = &D_800FC834_FD434[r->mdl[0]];
+    switch (r->state) {
+        case 0:
+            m->unk02 = func_80029E14_2AA14(r->mdl[1]);
+            func_801096D8_EA918_RollOutTheBarrels(r->unk_2A, &goal);
+            goal.x -= 80.0;
+            goal.z -= 50.0;
+            from.x = m->pos.x;
+            from.y = m->pos.y;
+            from.z = m->pos.z;
+            mid.x = from.x;
+            mid.y = goal.y;
+            mid.z = goal.z;
+            dx = goal.x - from.x;
+            dz = goal.z - from.z;
+            r->pathLen = sqrtf(dx * dx + dz * dz) / 100.0;
+            if (r->pathLen < 2) {
+                r->pathLen = 2;
+            } else if (r->pathLen >= 0x10) {
+                r->pathLen = 0x10;
+            }
+            if (r->path == NULL) {
+                r->path = func_80111448_F2688_RollOutTheBarrels(0xC0);
+            }
+            for (i = 0; i < r->pathLen; i++) {
+                func_80112000_F3240_RollOutTheBarrels((f32)i / (f32)r->pathLen, (f32*)&from, (f32*)&mid, (f32*)&goal, (f32*)&r->path[i]);
+            }
+            r->pathIdx = 0;
+            r->state++;
+        case 1:
+            for (i = r->pathIdx; i < r->pathLen; i++) {
+                p = &r->path[r->pathIdx];
+                dx = p->x - m->pos.x;
+                dz = p->z - m->pos.z;
+                if (dx * dx + dz * dz < 400.0) {
+                    r->pathIdx++;
+                } else {
+                    m->rot.y = func_80111F28_F3168_RollOutTheBarrels(dx, dz);
+                    m->pos.x = m->pos.x + HuMathSin(m->rot.y) * 100.0 * 0.1325;
+                    m->pos.z = m->pos.z + func_800B7890_B8490(m->rot.y) * 100.0 * 0.1325;
+                    break;
+                }
+            }
+            if (r->pathIdx >= r->pathLen) {
+                func_80029BF0_2A7F0(r->mdl[0], func_80029E14_2AA14(r->mdl[4]), 0, 0x1E, 0);
+                r->pathIdx = 0;
+                r->state++;
+            }
+            break;
+        case 2:
+            if (fabs(m->rot.y) > 1.0) {
+                m->rot.y = func_80111678_F28B8_RollOutTheBarrels(0.0f, m->rot.y, 30.0f);
+            } else {
+                m->rot.y = 0.0f;
+                HuMemFree(r->path);
+                r->path = NULL;
+                r->pathLen = 0;
+                r->pathIdx = 0;
+                r->state++;
+            }
+            break;
+        case 3:
+            r->state = 0;
+            r->hook = NULL;
+            break;
+    }
+    if (r->shadow != -1) {
+        func_80029714_2A314(r->shadow, m->pos.x, 0.0f, m->pos.z);
+    }
+}
 
-__asm__(".section .rodata");
-const char D_801127E0_F3A20_RollOutTheBarrels[] = "@>";
+void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r) {
+    HmfModel* m;
+    f32 base;
+    f32 dir;
+    f32 to;
+    f32 steer;
+    f32 d;
 
-__asm__(".section .rodata");
-const char D_801127E4_F3A24_RollOutTheBarrels[] = "";
+    if (r != NULL && r->used != 0) {
+        if (r->kind != -1) {
+            r->hook = func_80107AE0_E8D20_RollOutTheBarrels;
+            return;
+        }
+        m = &D_800FC834_FD434[r->mdl[0]];
+        switch (r->state) {
+            case 0:
+                m->unk02 = func_80029E14_2AA14(r->mdl[2]);
+                m->unk40 = func_80029D0C_2A90C(r->mdl[0]);
+                m->unk44 = 1.0f;
+                r->state++;
+            case 1:
+                func_80029BF0_2A7F0(r->mdl[0], func_80029E14_2AA14(r->mdl[1]), 0, 0x1E, 0);
+                r->state++;
+                break;
+            case 2:
+                if (m->unk04 != 0xFF) {
+                    r->state++;
+                }
+                break;
+            case 3:
+                if (fabs(m->pos.x) > 650.0) {
+                    base = 0.0f;
+                    dir = m->pos.x >= 0.0 ? 1.0f : -1.0f;
+                } else if (m->pos.x >= 0.0) {
+                    base = 60.0f;
+                    dir = 1.0f;
+                } else {
+                    base = -60.0f;
+                    dir = -1.0f;
+                }
+                to = func_80111F28_F3168_RollOutTheBarrels(D_800FFFD8_100BD8[0]->trans.x - m->pos.x, D_800FFFD8_100BD8[0]->trans.z - m->pos.z);
+                if (to <= 45.0f) {
+                    to = -to;
+                }
+                steer = 0.0f;
+                do {
+                    d = func_800B0D98_B1998(to - (base + steer) + 360.0, 360.0);
+                    if (180.0 < d) {
+                        d -= 360.0;
+                    }
+                    if (30.0 <= fabs(d)) {
+                        break;
+                    }
+                    steer = steer + dir * 15.0;
+                } while (fabs(steer) < 90.0);
+                m->rot.y = func_80111678_F28B8_RollOutTheBarrels(base + steer, m->rot.y, 30.0f);
+                m->pos.x = m->pos.x + HuMathSin(m->rot.y) * 100.0 * 0.1325;
+                m->pos.z = m->pos.z + func_800B7890_B8490(m->rot.y) * 100.0 * 0.1325;
+                if (1000.0 <= fabs(m->pos.x) || 300.0 <= m->pos.z) {
+                    func_800298A4_2A4A4(r->mdl[0], 4, 4);
+                    if (r->shadow != -1) {
+                        func_800298A4_2A4A4(r->shadow, 4, 4);
+                    }
+                    r->state = 0;
+                    r->used = 0;
+                    r->hook = NULL;
+                }
+                break;
+        }
+        if (r->shadow != -1) {
+            func_80029714_2A314(r->shadow, m->pos.x, 0.0f, m->pos.z);
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const char D_801127E8_F3A28_RollOutTheBarrels[] = "@.";
+void func_801079D0_E8C10_RollOutTheBarrels(RBRoller* r) {
+    HmfModel* m;
 
-__asm__(".section .rodata");
-const char D_801127EC_F3A2C_RollOutTheBarrels[] = "";
+    if (r != NULL && r->used != 0) {
+        if (r->kind != -1) {
+            r->hook = func_80107AE0_E8D20_RollOutTheBarrels;
+            return;
+        }
+        m = &D_800FC834_FD434[r->mdl[0]];
+        switch (r->state) {
+            case 0:
+                m->unk02 = func_80029E14_2AA14(r->mdl[2]);
+                m->unk40 = 0.0f;
+                m->unk44 = 1.0f;
+                r->state++;
+            case 1:
+                func_80029BF0_2A7F0(r->mdl[0], func_80029E14_2AA14(r->mdl[3]), 0, 0x1E, 0);
+                r->state++;
+                break;
+            case 2:
+                break;
+        }
+        if (r->shadow != -1) {
+            func_80029714_2A314(r->shadow, m->pos.x, 0.0f, m->pos.z);
+        }
+    }
+}
 
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_801127F0_F3A30_RollOutTheBarrels[2] = { 0x40568000, 0x00000000 };
+void func_80107AE0_E8D20_RollOutTheBarrels(RBRoller* r) {
+    RBAnim* spr;
+    HmfModel* m;
+    f32 s;
 
-__asm__(".section .rodata");
-const char __attribute__((aligned(8))) D_801127F8_F3A38_RollOutTheBarrels[8] = "@Y";
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_80112800_F3A40_RollOutTheBarrels[2] = { 0x3FC0F5C2, 0x8F5C28F6 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_80112808_F3A48_RollOutTheBarrels[2] = { 0x408F4000, 0x00000000 };
-
-__asm__(".section .rodata");
-const u32 __attribute__((aligned(8))) D_80112810_F3A50_RollOutTheBarrels[2] = { 0x4072C000, 0x00000000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801079D0_E8C10_RollOutTheBarrels);
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107AE0_E8D20_RollOutTheBarrels);
+    s = 0.0f;
+    if (r != NULL && r->used != 0) {
+        if (r->kind == -1) {
+            r->hook = func_80107564_E87A4_RollOutTheBarrels;
+            return;
+        }
+        spr = SprAnimGet((s16)D_80112D74_F3FB4_RollOutTheBarrels[0]);
+        m = &D_800FC834_FD434[r->mdl[0]];
+        switch (r->state) {
+            case 0:
+                func_8010DF18_EF158_RollOutTheBarrels(-1, m->pos.x, -100.0f, m->pos.z + 20.0);
+                r->timer = 0;
+                r->state++;
+            case 1:
+                s = 1.0 - (f32)r->timer / 30.0;
+                if (s < 0.0) {
+                    s = 0.0f;
+                }
+                s = HuMathSin(s * 90.0);
+                func_8010FA9C_F0CDC_RollOutTheBarrels(r->mdl[0], spr, r->kind, s * s);
+                if (++r->timer >= 0x1E) {
+                    r->timer = 0;
+                    r->state++;
+                }
+                break;
+            case 2:
+                func_800298A4_2A4A4(r->mdl[0], 4, 4);
+                if (r->shadow != -1) {
+                    func_800298A4_2A4A4(r->shadow, 4, 4);
+                }
+                r->used = 0;
+                r->hook = NULL;
+                r->timer = 0;
+                r->state = 0;
+                break;
+        }
+        if (r->shadow != -1) {
+            func_80029714_2A314(r->shadow, m->pos.x, 0.0f, m->pos.z);
+            if (r->state == 1) {
+                func_800297E8_2A3E8(r->shadow, s * s, s * s, s * s);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107D2C_E8F6C_RollOutTheBarrels);
 
