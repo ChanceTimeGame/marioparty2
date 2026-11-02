@@ -1124,8 +1124,6 @@ void func_80106208_3A3BF8_name_5D(s16 x0, s16 y0, s16 x1, s16 y1) {
     D_8010CC4C_3AA63C_name_5D = 1;
 }
 
-// control flow: shared espDispOff tail (19 calls equal, order by layout) (masked 21)
-#ifdef NON_MATCHING
 void func_80106238_3A3C28_name_5D(void) {
     s16 grp0;
     s16 grp1;
@@ -1173,16 +1171,16 @@ void func_80106238_3A3C28_name_5D(void) {
                 fading = 0;
                 a = 0;
             }
-            if (a == 0) {
-                espDispOff(spr0);
-                espDispOff(spr1);
-            } else {
+            if (a != 0) {
                 if (was == 0) {
                     espDispOn(spr0);
                     espDispOn(spr1);
                 }
                 func_8001A6BC_1B2BC(spr0, a);
                 func_8001A6BC_1B2BC(spr1, a);
+            } else {
+                espDispOff(spr0);
+                espDispOff(spr1);
             }
         }
         if (D_8010CC4C_3AA63C_name_5D != 0) {
@@ -1192,9 +1190,6 @@ void func_80106238_3A3C28_name_5D(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106238_3A3C28_name_5D);
-#endif
 
 // control flow and float locals: hoisted constants and stage order differ (masked 56)
 #ifdef NON_MATCHING

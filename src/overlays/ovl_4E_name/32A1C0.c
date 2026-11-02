@@ -241,9 +241,9 @@ void func_80102B9C_32A55C_name_4E(void) {
                     espPosSet(D_8010DAC4_335484_name_4E[i], -0x50, i * 36 + 0x4F);
                     espDispOff(D_8010DAC4_335484_name_4E[i]);
                 }
+                HuPrcVSleep();
+                HuPrcVSleep();
                 state = 0;
-                HuPrcVSleep();
-                HuPrcVSleep();
                 break;
             }
             if (i != 0) {
