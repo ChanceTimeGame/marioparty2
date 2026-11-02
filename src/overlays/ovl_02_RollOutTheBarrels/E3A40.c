@@ -44,10 +44,10 @@ void func_80102800_E3A40_RollOutTheBarrels(void) {
     D_80112DBE_F3FFE_RollOutTheBarrels = 0;
     D_80112DD0_F4010_RollOutTheBarrels = -1;
     D_80112E28_F4068_RollOutTheBarrels = 0;
-    D_80112D60_F3FA0_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x38);
-    D_80112D64_F3FA4_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x150);
-    D_80112D68_F3FA8_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x240);
-    D_80112D6C_F3FAC_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x300);
+    D_80112D60_F3FA0_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(sizeof(RBPlayer));
+    D_80112D64_F3FA4_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(sizeof(RBRoller) * 6);
+    D_80112D68_F3FA8_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(sizeof(RBBarrel) * 6);
+    D_80112D6C_F3FAC_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(sizeof(RBShape) * 16);
     D_80112D70_F3FB0_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x480);
     D_80112D84_F3FC4_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x78);
     D_80112D74_F3FB4_RollOutTheBarrels = func_80111448_F2688_RollOutTheBarrels(0x80);
@@ -1498,6 +1498,8 @@ void func_80107140_E8380_RollOutTheBarrels(RBRoller* r) {
     }
 }
 
+// float register allocation only (masked 0, raw 15: the three angle locals rotated), class 4
+#ifdef NON_MATCHING
 void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r) {
     HmfModel* m;
     f32 base;
@@ -1572,6 +1574,35 @@ void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80107564_E87A4_RollOutTheBarrels);
+#endif
+
+#ifndef NON_MATCHING
+/* func_80107564_E87A4_RollOutTheBarrels's literals while it stays asm */
+__asm__(".section .rodata");
+const u32 D_801127D8_F3A18_RollOutTheBarrels[1] = { 0x40668000 };
+__asm__(".section .rodata");
+const char D_801127DC_F3A1C_RollOutTheBarrels[] = "";
+__asm__(".section .rodata");
+const char D_801127E0_F3A20_RollOutTheBarrels[] = "@>";
+__asm__(".section .rodata");
+const char D_801127E4_F3A24_RollOutTheBarrels[] = "";
+__asm__(".section .rodata");
+const char D_801127E8_F3A28_RollOutTheBarrels[] = "@.";
+__asm__(".section .rodata");
+const char D_801127EC_F3A2C_RollOutTheBarrels[] = "";
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_801127F0_F3A30_RollOutTheBarrels[2] = { 0x40568000, 0x00000000 };
+__asm__(".section .rodata");
+const char __attribute__((aligned(8))) D_801127F8_F3A38_RollOutTheBarrels[8] = "@Y";
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112800_F3A40_RollOutTheBarrels[2] = { 0x3FC0F5C2, 0x8F5C28F6 };
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112808_F3A48_RollOutTheBarrels[2] = { 0x408F4000, 0x00000000 };
+__asm__(".section .rodata");
+const u32 __attribute__((aligned(8))) D_80112810_F3A50_RollOutTheBarrels[2] = { 0x4072C000, 0x00000000 };
+#endif
 
 void func_801079D0_E8C10_RollOutTheBarrels(RBRoller* r) {
     HmfModel* m;
@@ -1999,21 +2030,447 @@ void func_80108D00_E9F40_RollOutTheBarrels(void) {
     obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80108F88_EA1C8_RollOutTheBarrels);
+void func_80108F88_EA1C8_RollOutTheBarrels(omObjData* obj) {
+    RBBarrel* b;
+    RBStep* p;
+    s32 r;
+    s32 i;
+    s32 j;
+    s32 prev;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80109504_EA744_RollOutTheBarrels);
+    switch (D_80112D78_F3FB8_RollOutTheBarrels) {
+        case 0:
+            if (func_8010DB74_EEDB4_RollOutTheBarrels(0) != 0) {
+                r = 0;
+                for (i = 0; i < 4; i++) {
+                    for (j = i * 4; j < i * 4 + 4; j++) {
+                        r = rand8() & 3;
+                        D_80112CD8_F3F18_RollOutTheBarrels[j] = D_80112250_F3490_RollOutTheBarrels[i][r];
+                    }
+                    if (func_801119B4_F2BF4_RollOutTheBarrels((u8*)&D_80112CD8_F3F18_RollOutTheBarrels[i * 4], 4, 4) != 0) {
+                        prev = r;
+                        do {
+                            r = rand8() & 3;
+                        } while (prev == r);
+                        D_80112CD8_F3F18_RollOutTheBarrels[i * 4 + (rand8() & 3)] = D_80112250_F3490_RollOutTheBarrels[i][r];
+                    }
+                }
+                D_80112CD8_F3F18_RollOutTheBarrels[15] = func_8010CA90_EDCD0_RollOutTheBarrels;
+                D_80112CD8_F3F18_RollOutTheBarrels[16] = NULL;
+                D_80112D78_F3FB8_RollOutTheBarrels = 1;
+            }
+            break;
+        case 1:
+            do {
+                if (D_80112DA0_F3FE0_RollOutTheBarrels != 0) {
+                    D_80112DA0_F3FE0_RollOutTheBarrels = 0;
+                    obj->work[0] = 0;
+                    obj->work[1] = 0;
+                    D_8011227C_F34BC_RollOutTheBarrels = 0;
+                    if (D_80112E28_F4068_RollOutTheBarrels != NULL) {
+                        D_80112E28_F4068_RollOutTheBarrels = NULL;
+                    } else if (D_80112CD8_F3F18_RollOutTheBarrels[D_80112DA4_F3FE4_RollOutTheBarrels] != NULL) {
+                        D_80112DA4_F3FE4_RollOutTheBarrels++;
+                    }
+                }
+                if (D_80112E28_F4068_RollOutTheBarrels != NULL) {
+                    D_80112E28_F4068_RollOutTheBarrels(obj);
+                } else {
+                    p = &D_80112CD8_F3F18_RollOutTheBarrels[D_80112DA4_F3FE4_RollOutTheBarrels];
+                    if (*p != NULL && *p != func_80108F88_EA1C8_RollOutTheBarrels) {
+                        D_80112D9C_F3FDC_RollOutTheBarrels = D_80112264_F34A4_RollOutTheBarrels[D_80112DA4_F3FE4_RollOutTheBarrels];
+                        (*p)(obj);
+                    } else {
+                        func_800691FC_69DFC(0);
+                        D_80112D78_F3FB8_RollOutTheBarrels = 2;
+                    }
+                }
+            } while (D_80112DA0_F3FE0_RollOutTheBarrels != 0 && D_8011227C_F34BC_RollOutTheBarrels != 0);
+            break;
+        case 3:
+            if (D_80112D7C_F3FBC_RollOutTheBarrels >= 2) {
+                func_800691FC_69DFC(3);
+                func_800794A8_7A0A8(0x4B);
+                D_80112D78_F3FB8_RollOutTheBarrels = 8;
+                D_80112274_F34B4_RollOutTheBarrels = 0;
+            } else {
+                b = D_80112D68_F3FA8_RollOutTheBarrels;
+                for (j = 0; j < 6; j++, b++) {
+                    if (b->shape->hit == 2 || b->shape->hit == 3) {
+                        b->unk_40[0] = (((rand8() & 0xFF) << 8) | (rand8() & 0xFF)) % 15 + 0x1E;
+                        b->unk_10 = 0;
+                        D_80112D94_F3FD4_RollOutTheBarrels = b->idx;
+                        D_80112D8C_F3FCC_RollOutTheBarrels = b->roller;
+                        D_80112D90_F3FD0_RollOutTheBarrels = b->kind;
+                        func_800691FC_69DFC(3);
+                        func_8006D518_6E118();
+                        func_800794A8_7A0A8(0x4B);
+                        D_80112D78_F3FB8_RollOutTheBarrels = 4;
+                        D_80112274_F34B4_RollOutTheBarrels = 0;
+                        break;
+                    }
+                }
+            }
+            break;
+        case 4:
+            if (D_80112D94_F3FD4_RollOutTheBarrels != -1) {
+                b = &D_80112D68_F3FA8_RollOutTheBarrels[D_80112D94_F3FD4_RollOutTheBarrels];
+                switch (D_80112274_F34B4_RollOutTheBarrels) {
+                    case 0:
+                        if (b->obj->func_ptr == NULL) {
+                            b->obj->func_ptr = func_8010D740_EE980_RollOutTheBarrels;
+                            D_80112274_F34B4_RollOutTheBarrels++;
+                        }
+                        break;
+                    case 1:
+                        if (b->obj->func_ptr == NULL) {
+                            func_80108A78_E9CB8_RollOutTheBarrels(D_80112D8C_F3FCC_RollOutTheBarrels);
+                            D_80112274_F34B4_RollOutTheBarrels = 0;
+                            D_80112D78_F3FB8_RollOutTheBarrels = 5;
+                        }
+                        break;
+                }
+            } else {
+                D_80112274_F34B4_RollOutTheBarrels = 0;
+                D_80112D78_F3FB8_RollOutTheBarrels = 8;
+            }
+            break;
+        case 5:
+            switch (D_80112274_F34B4_RollOutTheBarrels) {
+                case 0:
+                    if (func_8010DB74_EEDB4_RollOutTheBarrels(0) != 0) {
+                        func_8010DBAC_EEDEC_RollOutTheBarrels(func_8010D604_EE844_RollOutTheBarrels);
+                        D_80112274_F34B4_RollOutTheBarrels++;
+                        D_80112278_F34B8_RollOutTheBarrels = 0;
+                    }
+                    break;
+                case 1:
+                if (++D_80112278_F34B8_RollOutTheBarrels >= 0x1E) {
+                    b = D_80112D68_F3FA8_RollOutTheBarrels;
+                    for (j = 0; j < 6; j++, b++) {
+                        if (D_80112D94_F3FD4_RollOutTheBarrels != j) {
+                            func_80108A08_E9C48_RollOutTheBarrels(b->roller);
+                        }
+                    }
+                    if (D_80112D90_F3FD0_RollOutTheBarrels != -1) {
+                        D_80112D78_F3FB8_RollOutTheBarrels = 6;
+                    } else {
+                        D_80112D78_F3FB8_RollOutTheBarrels = 8;
+                    }
+                    D_80112274_F34B4_RollOutTheBarrels = 0;
+                    D_80112278_F34B8_RollOutTheBarrels = 0;
+                }
+                break;
+            }
+            break;
+        case 11:
+            break;
+    }
+    j = 0;
+    b = D_80112D68_F3FA8_RollOutTheBarrels;
+    for (; j < 6; j++, b++) {
+        func_80109504_EA744_RollOutTheBarrels(b);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_801096D8_EA918_RollOutTheBarrels);
+void func_80109504_EA744_RollOutTheBarrels(RBBarrel* b) {
+    f32 s;
+    s32 f;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80109738_EA978_RollOutTheBarrels);
+    if (b->obj != NULL) {
+        b->obj->trans.x = b->pos.x;
+        b->obj->trans.y = b->pos.y;
+        b->obj->trans.z = b->pos.z;
+        b->obj->rot.x = b->rot.x;
+        b->obj->rot.y = b->rot.y;
+        b->obj->rot.z = b->rot.z;
+        b->obj->scale.x = b->scale.x;
+        b->obj->scale.y = b->scale.y;
+        b->obj->scale.z = b->scale.z;
+        func_80029714_2A314(b->obj->model[0], b->pos.x, b->pos.y, b->pos.z);
+        if (b->obj->model[1] != -1) {
+            s = 2.0 - b->pos.y / 500.0;
+            if (b->kind == -1 && (b->obj->func_ptr == func_8010CC94_EDED4_RollOutTheBarrels || b->obj->func_ptr == func_8010CC18_EDE58_RollOutTheBarrels)) {
+                if (s < 0.001) {
+                    func_800298A4_2A4A4(b->obj->model[1], 4, 4);
+                } else {
+                    func_800298A4_2A4A4(b->obj->model[1], 4, 0);
+                }
+            } else if (s < 1.0) {
+                s = 1.0f;
+            }
+            func_80029714_2A314(b->obj->model[1], b->pos.x, 4.0f, b->pos.z);
+            func_800297E8_2A3E8(b->obj->model[1], s, s, s);
+        }
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80109824_EAA64_RollOutTheBarrels);
+void func_801096D8_EA918_RollOutTheBarrels(s16 slot, Vec* out) {
+    s16 i;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80109868_EAAA8_RollOutTheBarrels);
+    i = slot;
+    if (slot >= 6) {
+        i = 5;
+    }
+    out->x = D_801120A0_F32E0_RollOutTheBarrels[i].x;
+    out->y = D_801120A0_F32E0_RollOutTheBarrels[i].y;
+    out->z = D_801120A0_F32E0_RollOutTheBarrels[i].z;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80109DA4_EAFE4_RollOutTheBarrels);
+s32 func_80109738_EA978_RollOutTheBarrels(s16 slot) {
+    Vec pos;
+    RBBarrel* b;
+    f32 best;
+    f32 dx;
+    f32 dz;
+    s32 i;
+    s32 found;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010A2E0_EB520_RollOutTheBarrels);
+    b = D_80112D68_F3FA8_RollOutTheBarrels;
+    found = -1;
+    best = 10000.0f;
+    func_801096D8_EA918_RollOutTheBarrels(slot, &pos);
+    for (i = 0; i < 6; i++, b++) {
+        dx = b->pos.x - pos.x;
+        dz = b->pos.z - pos.z;
+        if (dx >= 300.0 || dz >= 300.0) {
+            continue;
+        }
+        dx = dx * dx + dz * dz;
+        if (dx < best) {
+            best = dx;
+            found = i;
+        }
+    }
+    return (s16)found;
+}
+
+s32 func_80109824_EAA64_RollOutTheBarrels(s16 kind) {
+    RBBarrel* b;
+    s32 i;
+
+    b = D_80112D68_F3FA8_RollOutTheBarrels;
+    for (i = 0; i < 6; i++, b++) {
+        if (b->kind == kind) {
+            return (s16)i;
+        }
+    }
+    return 0;
+}
+
+void func_80109868_EAAA8_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(1) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010CA90_EDCD0_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(0)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            D_80112EC0_F4100_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(5)];
+            for (i = 0; i < 3; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            PlaySound(0x132);
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 3; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x + step;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 3; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112E30_F4070_RollOutTheBarrels[i].x + 200.0;
+                }
+                for (i = 0; i < 3; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[i].x - 200.0;
+                }
+                PlaySound(0x132);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 500.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 3; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z + step;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 3; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112E30_F4070_RollOutTheBarrels[i].z + 500.0;
+                }
+                for (i = 0; i < 3; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112E70_F40B0_RollOutTheBarrels[i].z - 500.0;
+                }
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
+
+void func_80109DA4_EAFE4_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(1) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010CA90_EDCD0_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(0)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            D_80112EC0_F4100_RollOutTheBarrels[2] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(5)];
+            for (i = 0; i < 3; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            PlaySound(0x132);
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 500.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 3; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z + step;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 3; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112E30_F4070_RollOutTheBarrels[i].z + 500.0;
+                }
+                for (i = 0; i < 3; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112E70_F40B0_RollOutTheBarrels[i].z - 500.0;
+                }
+                PlaySound(0x132);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 3; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x + step;
+            }
+            for (i = 0; i < 3; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 3; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112E30_F4070_RollOutTheBarrels[i].x + 200.0;
+                }
+                for (i = 0; i < 3; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[i].x - 200.0;
+                }
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
+
+void func_8010A2E0_EB520_RollOutTheBarrels(omObjData* obj) {
+    s32 i;
+    f32 step;
+
+    if (func_8010DBE0_EEE20_RollOutTheBarrels(1) == 0) {
+        D_80112E28_F4068_RollOutTheBarrels = func_8010CA90_EDCD0_RollOutTheBarrels;
+        return;
+    }
+    switch (obj->work[0]) {
+        case 0:
+            D_80112EB0_F40F0_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(2)];
+            D_80112EB0_F40F0_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(4)];
+            D_80112EC0_F4100_RollOutTheBarrels[0] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(1)];
+            D_80112EC0_F4100_RollOutTheBarrels[1] = &D_80112D68_F3FA8_RollOutTheBarrels[(s16)func_80109738_EA978_RollOutTheBarrels(3)];
+            for (i = 0; i < 2; i++) {
+                D_80112E30_F4070_RollOutTheBarrels[i].x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x;
+                D_80112E30_F4070_RollOutTheBarrels[i].z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112E70_F40B0_RollOutTheBarrels[i].x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x;
+                D_80112E70_F40B0_RollOutTheBarrels[i].z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z;
+            }
+            PlaySound(0x132);
+            obj->work[1] = 0;
+            obj->work[0]++;
+        case 1:
+            step = 500.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 2; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z + step;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z - step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 2; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.z = D_80112E30_F4070_RollOutTheBarrels[i].z + 500.0;
+                }
+                for (i = 0; i < 2; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.z = D_80112E70_F40B0_RollOutTheBarrels[i].z - 500.0;
+                }
+                PlaySound(0x132);
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 2:
+            step = 200.0f / (f32)(D_80112D9C_F3FDC_RollOutTheBarrels / 2);
+            for (i = 0; i < 2; i++) {
+                D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x - step;
+            }
+            for (i = 0; i < 2; i++) {
+                D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x + step;
+            }
+            if (++obj->work[1] >= D_80112D9C_F3FDC_RollOutTheBarrels / 2) {
+                for (i = 0; i < 2; i++) {
+                    D_80112EB0_F40F0_RollOutTheBarrels[i]->pos.x = D_80112E30_F4070_RollOutTheBarrels[i].x - 200.0;
+                }
+                for (i = 0; i < 2; i++) {
+                    D_80112EC0_F4100_RollOutTheBarrels[i]->pos.x = D_80112E70_F40B0_RollOutTheBarrels[i].x + 200.0;
+                }
+                obj->work[1] = 0;
+                obj->work[0]++;
+            }
+            break;
+        case 3:
+            D_80112DA0_F3FE0_RollOutTheBarrels = 1;
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_8010A7C4_EBA04_RollOutTheBarrels);
 
