@@ -519,7 +519,7 @@ s32 func_80103944_1D8024_ShellShocked(void) {
     return D_8010D5C0_1E1CA0_ShellShocked;
 }
 
-u8 func_80103950_1D8030_ShellShocked(s32 i) {
+s32 func_80103950_1D8030_ShellShocked(s32 i) {
     if (D_8010D5BC_1E1C9C_ShellShocked != 0) {
         if (i != 0) {
             return 6;
@@ -529,7 +529,7 @@ u8 func_80103950_1D8030_ShellShocked(s32 i) {
     return gPlayers[i].character;
 }
 
-u8 func_80103998_1D8078_ShellShocked(s32 i) {
+s32 func_80103998_1D8078_ShellShocked(s32 i) {
     return gPlayers[i].cpu_difficulty;
 }
 

@@ -1,65 +1,1397 @@
 #include "ovl_22.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105190_1D9870_ShellShocked);
+void func_80105190_1D9870_ShellShocked(void) {
+    s32 i;
+    s32 j;
+    s32 level;
+    s32 r;
+    SSCom* com;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105304_1D99E4_ShellShocked);
+    for (i = 0; i < 4; i++) {
+        com = &D_8010D740_1E1E20_ShellShocked[i];
+        com->state = 0;
+        com->timer = 0;
+        com->count = 0;
+        for (j = 0; j < 4; j++) {
+            com->unk_10[j] = 0;
+        }
+        level = func_80103998_1D8078_ShellShocked(i);
+        switch (level) {
+        case 0:
+            level = 0;
+            break;
+        case 1:
+            level = 1;
+            break;
+        case 2:
+            level = 2;
+            break;
+        default:
+            level = 3;
+            break;
+        }
+        r = func_8010CAA4_1E1184_ShellShocked() * 3.0f;
+        r += r == i;
+        func_80107AB8_1DC198_ShellShocked(i, D_8010DA80_1E2160_ShellShocked[r].pos.x, D_8010DA80_1E2160_ShellShocked[r].pos.z, D_8010CBB0_1E1290_ShellShocked[D_8010DFDC_1E26BC_ShellShocked][level]);
+        com->cellY = -1;
+        com->cellX = -1;
+        com->stuck = 0;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105360_1D9A40_ShellShocked);
+void func_80105304_1D99E4_ShellShocked(void) {
+    SSCom* com;
+    s32 i;
+    s32 j;
 
+    for (i = 0; i < 4; i++) {
+        com = &D_8010D740_1E1E20_ShellShocked[i];
+        for (j = 0; j < 4; j++) {
+            com->unk_10[j] = 0;
+        }
+    }
+}
+
+void func_80105360_1D9A40_ShellShocked(s32 i) {
+    SSCom* com;
+    s32 t;
+
+    com = &D_8010D740_1E1E20_ShellShocked[i];
+    if (com->timer == 0) {
+        com->timer = 0x1E;
+    }
+    com->timer--;
+    if (com->timer == 0 && !(rand8() & 1)) {
+        com->state = 1;
+        t = rand8();
+        com->timer = t;
+        if ((f32)t < 0.0f) {
+            com->timer = -t;
+        }
+    } else {
+        func_80108100_1DC7E0_ShellShocked(i);
+    }
+}
+
+// control flow (masked 21, 150 vs 153 instructions)
+#ifdef NON_MATCHING
+void func_80105428_1D9B08_ShellShocked(s32 i) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    SSCom* com;
+    SSTank* tank;
+    s32 t;
+    f32 speed;
+    f32 l;
+
+    com = &D_8010D740_1E1E20_ShellShocked[i];
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    t = com->target;
+    if (t != -1 && func_8010C1F0_1E08D0_ShellShocked(t) == 0) {
+        if (com->timer == 0) {
+            com->timer = 0xA;
+        }
+        func_800B3170_B3D70(&a, &tank->pos);
+        func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[t].pos);
+        speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+        e.x = b.x - a.x;
+        e.z = b.z - a.z;
+        l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+        e.x = l * e.x;
+        e.z = l * e.z;
+        c.x = e.x;
+        c.z = e.z;
+        d.x = HuMathSin(tank->rot.y);
+        d.z = func_800B7890_B8490(tank->rot.y);
+        e.x = speed * (c.x * d.x + c.z * d.z);
+        e.z = -speed * (c.x * d.z - c.z * d.x);
+        func_8010B08C_1DF76C_ShellShocked(i, e.z, -e.x);
+        com->timer--;
+        com->count++;
+        if (com->timer <= 0) {
+            com->timer = 0;
+            func_80108100_1DC7E0_ShellShocked(i);
+        }
+    } else {
+        func_80108100_1DC7E0_ShellShocked(i);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105428_1D9B08_ShellShocked);
+#endif
 
+// control flow (masked 15, 80 vs 79 instructions)
+#ifdef NON_MATCHING
+void func_80105648_1D9D28_ShellShocked(s32 i) {
+    SSCom* com;
+    s32 r;
+    s32 who;
+
+    com = func_80107714_1DBDF4_ShellShocked(i);
+    if (com->a.i != 0) {
+        r = func_801083C4_1DCAA4_ShellShocked(i, com->goal.x, com->goal.z);
+    } else {
+        r = func_8010856C_1DCC4C_ShellShocked(i, com->goal.x, com->goal.z);
+    }
+    if (r != 0) {
+        if (com->timer >= com->limit) {
+            func_80108100_1DC7E0_ShellShocked(i);
+            return;
+        }
+        func_801087F8_1DCED8_ShellShocked(i, &who);
+        if (who != -1 && func_801087F8_1DCED8_ShellShocked(i, &who) < D_8010DFD0_1E26B0_ShellShocked * D_8010DFD0_1E26B0_ShellShocked) {
+            goto done;
+        }
+        com->timer++;
+        return;
+    }
+done:
+    func_80107A90_1DC170_ShellShocked(i);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105648_1D9D28_ShellShocked);
+#endif
 
+// control flow (masked 27, 145 vs 146 instructions)
+#ifdef NON_MATCHING
+void func_80105758_1D9E38_ShellShocked(s32 i) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    SSCom* com;
+    SSTank* tank;
+    s32 t;
+    f32 speed;
+    f32 l;
+
+    com = &D_8010D740_1E1E20_ShellShocked[i];
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    t = com->target;
+    if (t != -1) {
+        func_800B3170_B3D70(&a, &tank->pos);
+        func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[t].pos);
+        speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+        e.x = b.x - a.x;
+        e.z = b.z - a.z;
+        l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+        e.x = l * e.x;
+        e.z = l * e.z;
+        c.x = e.x;
+        c.z = e.z;
+        d.x = HuMathSin(tank->rot.y);
+        d.z = func_800B7890_B8490(tank->rot.y);
+        e.x = speed * (c.x * d.z - c.z * d.x);
+        e.z = speed * (c.x * d.x + c.z * d.z);
+        func_8010B0B4_1DF794_ShellShocked(i, e.z, -e.x);
+        if (com->timer < com->limit && func_8010C1F0_1E08D0_ShellShocked(com->target) == 0) {
+            com->timer++;
+            return;
+        }
+    }
+    func_80107A90_1DC170_ShellShocked(i);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105758_1D9E38_ShellShocked);
+#endif
 
+// register allocation (masked 87, 532 vs 532 instructions)
+#ifdef NON_MATCHING
+void func_80105960_1DA040_ShellShocked(s32 i) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    f32 dist[4];
+    s32 sees[4];
+    Vec f;
+    Vec g;
+    Vec h;
+    Vec k;
+    Vec m;
+    Vec n;
+    SSTank* tank;
+    SSTank* p;
+    SSCom* com;
+    Vec* v;
+    s32 j;
+    s32 tgt;
+    s32 best;
+    s32 r;
+    s32 t;
+    f32 yaw;
+    f32 near;
+    f32 l;
+    f32 speed;
+
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    func_80103884_1D7F64_ShellShocked(2);
+    func_800B3170_B3D70(&b, &tank->pos);
+    yaw = tank->rot.y;
+    c.x = HuMathSin(yaw);
+    c.z = func_800B7890_B8490(yaw);
+    d.x = c.x * 100.0f + b.x;
+    d.z = c.z * 100.0f + b.z;
+    for (j = 0; j < 4; j++) {
+        p = &D_8010DA80_1E2160_ShellShocked[j];
+        e.x = p->pos.x - tank->pos.x;
+        e.z = p->pos.z - tank->pos.z;
+        dist[j] = e.x * e.x + e.z * e.z;
+    }
+    near = 3.4028235e38f;
+    tgt = -1;
+    for (j = 0; j < 4; j++) {
+        sees[j] = -1;
+        if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+            if (dist[j] < near) {
+                near = dist[j];
+                tgt = j;
+            }
+            sees[j] = func_801072FC_1DB9DC_ShellShocked(i, j);
+        }
+    }
+    if (tgt != -1) {
+        best = sees[tgt];
+        if (best != -1) {
+            for (j = 0; j < 4; j++) {
+                if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0 && sees[j] != -1 && best != 1) {
+                    best = 0;
+                    tgt = j;
+                }
+            }
+            if (func_80103938_1D8018_ShellShocked() != 0) {
+                if (tgt > 0) {
+                    tgt = 0;
+                }
+            }
+        }
+        a.x = D_8010DA80_1E2160_ShellShocked[tgt].pos.x;
+        a.z = D_8010DA80_1E2160_ShellShocked[tgt].pos.z;
+        e.x = a.x - tank->pos.x;
+        e.z = a.z - tank->pos.z;
+        l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+        e.x = l * e.x;
+        e.z = l * e.z;
+        k.x = e.x;
+        k.z = e.z;
+        h.x = e.x * 10.0f * 10.0f + tank->pos.x;
+        h.z = e.z * 10.0f * 10.0f + tank->pos.z;
+        for (j = 0; j < D_8010DFE0_1E26C0_ShellShocked->count; j++) {
+            v = &D_8010DFE0_1E26C0_ShellShocked->pillars[j];
+            k.x = v->x - tank->pos.x;
+            k.z = v->z - tank->pos.z;
+            if (k.x * k.x + k.z * k.z < 10000.0f) {
+                m.x = a.z - tank->pos.z;
+                m.z = -a.x - tank->pos.x;
+                n.x = v->x - tank->pos.x;
+                n.z = v->z - tank->pos.z;
+                l = 1.0f / func_800B1830_B2430(n.x * n.x + n.z * n.z);
+                if (m.x * n.x + m.z * n.z < 0.0f) {
+                    e.x = l * n.z;
+                    e.z = -n.x * l;
+                } else {
+                    e.x = -n.z * l;
+                    e.z = n.x * l;
+                }
+                break;
+            }
+        }
+        f.x = e.x;
+        f.z = e.z;
+        g.x = HuMathSin(tank->rot.y);
+        g.z = func_800B7890_B8490(tank->rot.y);
+        speed = D_8010CC10_1E12F0_ShellShocked[tank->level];
+        e.x = speed * (f.x * g.x + f.z * g.z);
+        e.z = -speed * (f.x * g.z - f.z * g.x);
+        if (tank->shell[0].state == 4) {
+            e.x = -e.x;
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 7) + D_8010CBE0_1E12C0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+        }
+        if (func_8010B08C_1DF76C_ShellShocked(i, e.z, e.x) != 4) {
+            yaw = func_80107044_1DB724_ShellShocked(i, tgt);
+        } else {
+            yaw = tank->rot.y;
+        }
+        r = func_801072FC_1DB9DC_ShellShocked(i, tgt);
+        if (r == 0) {
+            func_8010B494_1DFB74_ShellShocked(i, 0);
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 3) + D_8010CBF0_1E12D0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+            com = func_80107714_1DBDF4_ShellShocked(i);
+            com->hits = 0;
+            com->lastTarget = -1;
+            func_80107C04_1DC2E4_ShellShocked(tgt);
+        } else if (r == 1) {
+            func_8010B494_1DFB74_ShellShocked(i, 1);
+            t = (rand8() & 7) + 4;
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, t);
+            com = func_80107714_1DBDF4_ShellShocked(i);
+            if (com->lastTarget != tgt) {
+                com->hits = 0;
+            } else {
+                com->hits++;
+            }
+            com->lastTarget = tgt;
+            if (com->hits >= 4) {
+                func_80107FB4_1DC694_ShellShocked(i, tgt, t);
+            }
+        }
+        if (dist[tgt] < D_8010DFD0_1E26B0_ShellShocked * D_8010DFD0_1E26B0_ShellShocked * 0.82f) {
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 3) + D_8010CC00_1E12E0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+        }
+    }
+    tank->rot.y = yaw;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105960_1DA040_ShellShocked);
+#endif
 
+// control flow (masked 56, 473 vs 476 instructions)
+#ifdef NON_MATCHING
+void func_801060D0_1DA7B0_ShellShocked(s32 i) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    Vec f;
+    Vec g;
+    Vec h;
+    Vec k;
+    SSTank* tank;
+    SSCom* com;
+    s32 t;
+    s32 j;
+    s32 r;
+    f32 speed;
+    f32 yaw;
+    f32 near;
+    f32 l;
+    f32 len;
+
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    com = func_80107714_1DBDF4_ShellShocked(i);
+    speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+    func_80103884_1D7F64_ShellShocked(2);
+    func_800B3170_B3D70(&a, &tank->pos);
+    yaw = tank->rot.y;
+    b.x = HuMathSin(yaw);
+    b.z = func_800B7890_B8490(yaw);
+    c.x = b.x * 100.0f + a.x;
+    c.z = b.z * 100.0f + a.z;
+    t = com->target;
+    if (t == -1 || func_8010C1F0_1E08D0_ShellShocked(t) != 0) {
+        func_80107A90_1DC170_ShellShocked(i);
+        return;
+    }
+    f.x = D_8010DA80_1E2160_ShellShocked[t].pos.x - a.x;
+    f.z = D_8010DA80_1E2160_ShellShocked[t].pos.z - a.z;
+    near = f.x * f.x + f.z * f.z;
+    for (j = 0; j < 4; j++) {
+        if (j != i && j != t && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+            d.x = D_8010DA80_1E2160_ShellShocked[j].pos.x;
+            d.z = D_8010DA80_1E2160_ShellShocked[j].pos.z;
+            e.x = d.x - a.x;
+            e.z = d.z - a.z;
+            if (e.x * f.x + e.z * f.z > 0.7f) {
+                len = e.x * e.x + e.z * e.z;
+                if (len < near) {
+                    t = j;
+                    near = len;
+                }
+            }
+        }
+    }
+    if (func_80103938_1D8018_ShellShocked() != 0 && func_8010CAA4_1E1184_ShellShocked() * 100.0f < 90.0f) {
+        t = 0;
+    }
+    d.x = D_8010DA80_1E2160_ShellShocked[t].pos.x;
+    d.z = D_8010DA80_1E2160_ShellShocked[t].pos.z;
+    e.x = d.x - a.x;
+    e.z = d.z - a.z;
+    g.x = e.x;
+    g.z = e.z;
+    l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+    g.x = l * g.x;
+    g.z = l * g.z;
+    h.x = b.x;
+    h.z = b.z;
+    k.x = speed * (g.x * b.x + g.z * b.z);
+    k.z = -speed * (g.x * b.z - g.z * b.x);
+    if (func_8010B08C_1DF76C_ShellShocked(i, k.z, k.x) != 4) {
+        tank->pos.x = a.x;
+        tank->pos.z = a.z;
+        tank->rot.y = yaw;
+        r = func_8010895C_1DD03C_ShellShocked(t);
+        com->a.i = 9;
+        if (r == 6) {
+            func_8010B0B4_1DF794_ShellShocked(i, -k.x, k.z);
+            com->a.i = r;
+        } else if (r == 7) {
+            func_8010B0B4_1DF794_ShellShocked(i, k.x, -k.z);
+            com->a.i = r;
+        } else {
+            func_8010B08C_1DF76C_ShellShocked(i, k.z, k.x);
+        }
+    }
+    func_800B3170_B3D70(&a, &tank->pos);
+    a.x = tank->pos.x;
+    a.z = tank->pos.z;
+    b.x = HuMathSin(tank->rot.y);
+    b.z = func_800B7890_B8490(tank->rot.y);
+    c.x = b.x * 100.0f + a.x;
+    c.z = b.z * 100.0f + a.z;
+    r = func_801072FC_1DB9DC_ShellShocked(i, t);
+    if (r == 0) {
+        func_8010B494_1DFB74_ShellShocked(i, 0);
+        com->hits = 0;
+        com->lastTarget = -1;
+        func_80107C04_1DC2E4_ShellShocked(t);
+    } else if (r == 1) {
+        func_8010B494_1DFB74_ShellShocked(i, 1);
+        if (com->lastTarget != t) {
+            com->hits = 0;
+        } else {
+            com->hits++;
+        }
+        com->lastTarget = t;
+        if (com->hits >= 4) {
+            r = rand8() & 0x11;
+            j = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 20.0f;
+            if (r != 0) {
+                func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, j);
+                com->hits = 0;
+                return;
+            }
+            func_80107FB4_1DC694_ShellShocked(i, t, j);
+            com->hits = 0;
+            return;
+        }
+    }
+    d.x = D_8010DA80_1E2160_ShellShocked[t].pos.x - a.x;
+    d.z = D_8010DA80_1E2160_ShellShocked[t].pos.z - a.z;
+    if (func_800B1830_B2430(d.x * d.x + d.z * d.z) < com->b.f) {
+        func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, 0x28);
+        return;
+    }
+    if (com->limit < ++com->timer) {
+        func_80108100_1DC7E0_ShellShocked(i);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_801060D0_1DA7B0_ShellShocked);
+#endif
 
+// control flow (masked 32, 428 vs 431 instructions)
+#ifdef NON_MATCHING
+void func_80106770_1DAE50_ShellShocked(s32 i) {
+    SSCom cmd;
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    Vec f;
+    Vec g;
+    Vec h;
+    Vec k;
+    SSTank* tank;
+    SSCom* com;
+    s32 t;
+    s32 j;
+    s32 r;
+    f32 speed;
+    f32 near;
+    f32 l;
+    f32 len;
+
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    com = func_80107714_1DBDF4_ShellShocked(i);
+    speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+    func_80103884_1D7F64_ShellShocked(2);
+    func_800B3170_B3D70(&a, &tank->pos);
+    near = tank->rot.y;
+    b.x = HuMathSin(near);
+    b.z = func_800B7890_B8490(near);
+    c.x = b.x * 100.0f + a.x;
+    c.z = b.z * 100.0f + a.z;
+    t = com->target;
+    if (t != -1 && func_8010C1F0_1E08D0_ShellShocked(t) == 0) {
+        f.x = D_8010DA80_1E2160_ShellShocked[t].pos.x - a.x;
+        f.z = D_8010DA80_1E2160_ShellShocked[t].pos.z - a.z;
+        near = f.x * f.x + f.z * f.z;
+        for (j = 0; j < 4; j++) {
+            if (j != i && j != t && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+                d.x = D_8010DA80_1E2160_ShellShocked[j].pos.x;
+                d.z = D_8010DA80_1E2160_ShellShocked[j].pos.z;
+                e.x = d.x - a.x;
+                e.z = d.z - a.z;
+                if (e.x * f.x + e.z * f.z > 0.7f) {
+                    len = e.x * e.x + e.z * e.z;
+                    if (len < near) {
+                        t = j;
+                        near = len;
+                    }
+                }
+            }
+        }
+        if (func_80103938_1D8018_ShellShocked() != 0) {
+            if (func_8010CAA4_1E1184_ShellShocked() * 100.0f < 90.0f) {
+                t = 0;
+            }
+        }
+        d.x = D_8010DA80_1E2160_ShellShocked[t].pos.x;
+        d.z = D_8010DA80_1E2160_ShellShocked[t].pos.z;
+        e.x = d.x - a.x;
+        e.z = d.z - a.z;
+        g.x = e.x;
+        g.z = e.z;
+        l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+        g.x = l * g.x;
+        g.z = l * g.z;
+        h.x = b.x;
+        h.z = b.z;
+        k.x = speed * (g.x * b.x + g.z * b.z);
+        k.z = -speed * (g.x * b.z - g.z * b.x);
+        len = func_800B1830_B2430(e.x * e.x + e.z * e.z);
+        if (com->b.f < len) {
+            func_80108034_1DC714_ShellShocked(i, t, 500.0f, 0x14);
+            return;
+        }
+        if (len < com->a.f) {
+            func_8010B0B4_1DF794_ShellShocked(i, -k.z, -k.x);
+        } else {
+            tank->rot.y = func_80107044_1DB724_ShellShocked(i, t);
+        }
+        func_800B3170_B3D70(&a, &tank->pos);
+        a.x = tank->pos.x;
+        a.z = tank->pos.z;
+        b.x = HuMathSin(tank->rot.y);
+        b.z = func_800B7890_B8490(tank->rot.y);
+        c.x = b.x * 100.0f + a.x;
+        c.z = b.z * 100.0f + a.z;
+        switch (func_801072FC_1DB9DC_ShellShocked(i, t)) {
+        case 0:
+            func_8010B494_1DFB74_ShellShocked(i, 0);
+            com->hits = 0;
+            com->lastTarget = -1;
+            if (func_8010CAA4_1E1184_ShellShocked() * 16.0f > 1.0f) {
+                func_80107C04_1DC2E4_ShellShocked(t);
+            }
+            break;
+        case 1:
+            if (func_8010CAA4_1E1184_ShellShocked() * 16.0f == 0.0f) {
+                func_80107C04_1DC2E4_ShellShocked(t);
+            }
+            func_8010B494_1DFB74_ShellShocked(i, 1);
+            if (com->lastTarget != t) {
+                com->hits = 0;
+            } else {
+                com->hits++;
+            }
+            com->lastTarget = t;
+            if (com->hits >= 4) {
+                r = rand8() & 0x11;
+                j = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 20.0f;
+                if (r != 0) {
+                    func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, j);
+                    com->hits = 0;
+                    return;
+                }
+                func_80107FB4_1DC694_ShellShocked(i, t, j);
+                com->hits = 0;
+                return;
+            }
+            break;
+        }
+        if (com->limit < ++com->timer) {
+            func_80108100_1DC7E0_ShellShocked(i);
+        }
+    } else {
+        func_80108100_1DC7E0_ShellShocked(i);
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106770_1DAE50_ShellShocked);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106D84_1DB464_ShellShocked);
+void func_80106D84_1DB464_ShellShocked(s32 i) {
+    SSCom* com;
 
+    com = func_80107714_1DBDF4_ShellShocked(i);
+    func_80106E4C_1DB52C_ShellShocked(i);
+    switch (com->state) {
+    case 1:
+        func_80105360_1D9A40_ShellShocked(i);
+        break;
+    case 15:
+        func_80105428_1D9B08_ShellShocked(i);
+        break;
+    case 9:
+        func_80105648_1D9D28_ShellShocked(i);
+        break;
+    case 10:
+        func_80105758_1D9E38_ShellShocked(i);
+        break;
+    case 11:
+        func_801060D0_1DA7B0_ShellShocked(i);
+        break;
+    case 12:
+        func_80106770_1DAE50_ShellShocked(i);
+        break;
+    default:
+        func_80105960_1DA040_ShellShocked(i);
+        break;
+    case 16:
+        break;
+    }
+}
+
+// control flow (masked 17, 144 vs 146 instructions)
+#ifdef NON_MATCHING
+s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
+    f32 cx;
+    f32 cz;
+    SSCom* com;
+    s32 x;
+    s32 z;
+    s32 limit;
+    f32 angle;
+    f32 r;
+
+    com = func_80107714_1DBDF4_ShellShocked(i);
+    func_8010913C_1DD81C_ShellShocked(D_8010DA80_1E2160_ShellShocked[i].pos.x, D_8010DA80_1E2160_ShellShocked[i].pos.z, &cx, &cz);
+    x = cx;
+    z = cz;
+    if (com->cellX != x) {
+        com->cellX = x;
+        com->cellY = z;
+    } else if (com->cellY != z) {
+        com->cellX = x;
+        com->cellY = z;
+    } else {
+        com->stuck++;
+    }
+    if (func_8010CAA4_1E1184_ShellShocked() * 120.0f + 180.0f < (f32)com->stuck) {
+        angle = func_8010CAA4_1E1184_ShellShocked() * 360.0f;
+        r = (func_8010CAA4_1E1184_ShellShocked() * 10.0f + 5.0f) * 10.0f;
+        limit = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 10.0f;
+        cx = r * HuMathSin(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.x;
+        cz = r * func_800B7890_B8490(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.z;
+        func_80107AB8_1DC198_ShellShocked(i, cx, cz, limit);
+        com->stuck = 0;
+    }
+    if (com->state == 0) {
+        com->state = 1;
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106E4C_1DB52C_ShellShocked);
+#endif
 
+// control flow (masked 7, 190 vs 191 instructions)
+#ifdef NON_MATCHING
+f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
+    Vec a;
+    Vec b;
+    Vec c;
+    SSTank* p;
+    SSTank* q;
+    f32 s;
+    f32 co;
+    f32 cross;
+    f32 dot;
+    f32 len;
+    f32 yaw;
+    f32 k;
+
+    if (i == target) {
+        return D_8010DA80_1E2160_ShellShocked[i].rot.y;
+    }
+    p = &D_8010DA80_1E2160_ShellShocked[i];
+    q = &D_8010DA80_1E2160_ShellShocked[target];
+    b.x = q->pos.x - p->pos.x;
+    b.z = q->pos.z - p->pos.z;
+    a.x = b.z;
+    a.z = -b.x;
+    s = HuMathSin(p->rot.y);
+    co = func_800B7890_B8490(p->rot.y);
+    cross = co * a.z + s * a.x;
+    dot = co * b.z + s * b.x;
+    len = a.x * a.x + a.z * a.z;
+    yaw = p->rot.y;
+    if (dot * dot < len * D_8010CC20_1E1300_ShellShocked[0][D_8010DA80_1E2160_ShellShocked[i].level] * D_8010CC20_1E1300_ShellShocked[0][D_8010DA80_1E2160_ShellShocked[i].level]) {
+        k = D_8010CC20_1E1300_ShellShocked[1][D_8010DA80_1E2160_ShellShocked[i].level];
+        if (cross < 0.0f) {
+            yaw += k;
+            if (yaw > 360.0f) {
+                yaw -= 360.0f;
+            }
+        } else {
+            yaw -= k;
+            if (yaw < 0.0f) {
+                yaw += 360.0f;
+            }
+        }
+    } else {
+        k = D_8010CC40_1E1320_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
+        co = 1.0f - func_800B1830_B2430(dot * dot / len);
+        if (cross < 0.0f) {
+            yaw += k * co;
+        } else {
+            yaw += -k * co;
+        }
+    }
+    c.x = HuMathSin(p->rot.y) * 100.0f + p->pos.x;
+    c.z = func_800B7890_B8490(p->rot.y) * 100.0f + p->pos.z;
+    if (func_8010C218_1E08F8_ShellShocked(i, &p->pos, yaw) != 0) {
+        yaw = p->rot.y;
+    }
+    return yaw;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107044_1DB724_ShellShocked);
+#endif
 
+// control flow (masked 51, 274 vs 279 instructions)
+#ifdef NON_MATCHING
+s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    SSTank* p;
+    SSTank* q;
+    SSMap* map;
+    Vec* v;
+    s32 j;
+    s32 shot;
+    s32 ok;
+    f32 s;
+    f32 co;
+    f32 dot;
+    f32 len;
+    f32 k;
+    f32 x;
+    f32 z;
+
+    shot = -1;
+    ok = 0;
+    if (i == target) {
+        return -1;
+    }
+    if (func_80103938_1D8018_ShellShocked() != 0 && target != 0) {
+        return -1;
+    }
+    p = &D_8010DA80_1E2160_ShellShocked[i];
+    q = &D_8010DA80_1E2160_ShellShocked[target];
+    if (p->shell[0].active == 1) {
+        return -1;
+    }
+    if (func_8010CAA4_1E1184_ShellShocked() < D_8010CBA0_1E1280_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]) {
+        return -1;
+    }
+    b.x = q->pos.x - p->pos.x;
+    b.z = q->pos.z - p->pos.z;
+    a.x = b.z;
+    a.z = -b.x;
+    s = HuMathSin(p->rot.y);
+    co = func_800B7890_B8490(p->rot.y);
+    dot = co * b.z + s * b.x;
+    len = a.x * a.x + a.z * a.z;
+    if (dot < 0.3f) {
+        return -1;
+    }
+    k = D_8010CC50_1E1330_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
+    d.x = s;
+    if (len * k * k < dot * dot) {
+        shot = 0;
+        ok = 1;
+    }
+    d.z = co;
+    e.x = co;
+    e.z = -s;
+    map = D_8010DFE0_1E26C0_ShellShocked;
+    for (j = 0; j < D_8010DFE0_1E26C0_ShellShocked->count; j++) {
+        v = &map->pillars[j];
+        c.z = v->z - p->pos.z;
+        c.x = v->x - p->pos.x;
+        k = func_800B1830_B2430(ABS(len)) + 100.0f;
+        if (!(k * k < c.x * c.x + c.z * c.z)) {
+            k = -(d.x * c.z - d.z * c.x);
+            x = k * d.x;
+            z = k * d.z;
+            c.x = x;
+            c.z = z;
+            if (x * x + z * z < 9604.0f) {
+                shot = -1;
+            }
+        }
+    }
+    if ((ok != 0) & (~shot == 0)) {
+        k = D_8010CC60_1E1340_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
+        len = b.x * b.x + b.z * b.z;
+        len = func_800B1830_B2430(ABS(len));
+        x = D_8010DFD0_1E26B0_ShellShocked * 0.95f;
+        if (len - k <= x && x <= len + k) {
+            shot = (rand8() & 3) != 0;
+        }
+    }
+    return shot;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_801072FC_1DB9DC_ShellShocked);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107714_1DBDF4_ShellShocked);
+SSCom* func_80107714_1DBDF4_ShellShocked(s32 i) {
+    return &D_8010D740_1E1E20_ShellShocked[i];
+}
 
+// register allocation (masked 2, 294 vs 294 instructions)
+#ifdef NON_MATCHING
+void func_80107738_1DBE18_ShellShocked(s32 i, s32 force, SSCom* cmd) {
+    if (force == 0) {
+        switch (cmd->state) {
+        case 2:
+        case 8:
+            D_8010D740_1E1E20_ShellShocked[i].state = cmd->state;
+            break;
+        case 15:
+            D_8010D740_1E1E20_ShellShocked[i].state = 0xF;
+            D_8010D740_1E1E20_ShellShocked[i].target = cmd->target;
+            D_8010D740_1E1E20_ShellShocked[i].timer = cmd->timer;
+            D_8010D740_1E1E20_ShellShocked[i].count = 0;
+            break;
+        case 9:
+            if (D_8010D740_1E1E20_ShellShocked[i].state != 9 || D_8010D740_1E1E20_ShellShocked[i].timer >= 5) {
+                D_8010D740_1E1E20_ShellShocked[i].state = 9;
+                D_8010D740_1E1E20_ShellShocked[i].timer = 0;
+                D_8010D740_1E1E20_ShellShocked[i].limit = cmd->limit;
+                D_8010D740_1E1E20_ShellShocked[i].a.i = cmd->a.i;
+                D_8010D740_1E1E20_ShellShocked[i].b.v.x = D_8010DA80_1E2160_ShellShocked[i].pos.x;
+                D_8010D740_1E1E20_ShellShocked[i].b.v.z = D_8010DA80_1E2160_ShellShocked[i].pos.z;
+                D_8010D740_1E1E20_ShellShocked[i].goal.x = cmd->goal.x;
+                D_8010D740_1E1E20_ShellShocked[i].goal.z = cmd->goal.z;
+            }
+            break;
+        case 10:
+            D_8010D740_1E1E20_ShellShocked[i].state = 0xA;
+            D_8010D740_1E1E20_ShellShocked[i].timer = 0;
+            D_8010D740_1E1E20_ShellShocked[i].target = cmd->target;
+            D_8010D740_1E1E20_ShellShocked[i].limit = cmd->limit;
+            func_800B3170_B3D70(&D_8010D740_1E1E20_ShellShocked[i].b.v, &D_8010DA80_1E2160_ShellShocked[i].pos);
+            break;
+        case 11:
+            D_8010D740_1E1E20_ShellShocked[i].state = 0xB;
+            D_8010D740_1E1E20_ShellShocked[i].timer = 0;
+            D_8010D740_1E1E20_ShellShocked[i].target = cmd->target;
+            D_8010D740_1E1E20_ShellShocked[i].limit = cmd->limit;
+            D_8010D740_1E1E20_ShellShocked[i].b.f = cmd->b.f;
+            break;
+        case 12:
+            D_8010D740_1E1E20_ShellShocked[i].state = 0xC;
+            D_8010D740_1E1E20_ShellShocked[i].timer = 0;
+            D_8010D740_1E1E20_ShellShocked[i].target = cmd->target;
+            D_8010D740_1E1E20_ShellShocked[i].a.i = cmd->a.i;
+            D_8010D740_1E1E20_ShellShocked[i].b.f = cmd->b.f;
+            D_8010D740_1E1E20_ShellShocked[i].limit = cmd->limit;
+            break;
+        }
+    }
+    D_8010D740_1E1E20_ShellShocked[i].player = D_8010DFD8_1E26B8_ShellShocked;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107738_1DBE18_ShellShocked);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107A90_1DC170_ShellShocked);
+void func_80107A90_1DC170_ShellShocked(s32 i) {
+    SSCom cmd;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107AB8_1DC198_ShellShocked);
+    cmd.state = 8;
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107B60_1DC240_ShellShocked);
+void func_80107AB8_1DC198_ShellShocked(s32 i, f32 x, f32 z, s32 limit) {
+    SSCom cmd;
 
+    cmd.state = 9;
+    cmd.timer = 0;
+    cmd.a.i = 1;
+    cmd.target = -1;
+    cmd.limit = limit;
+    func_800B3170_B3D70(&cmd.b.v, &D_8010DA80_1E2160_ShellShocked[i].pos);
+    HuVecCopyXYZ(&cmd.goal, x, 0.0f, z);
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
+
+void func_80107B60_1DC240_ShellShocked(s32 i, f32 x, f32 z, s32 limit) {
+    SSCom cmd;
+
+    cmd.state = 9;
+    cmd.timer = 0;
+    cmd.a.i = 0;
+    cmd.target = -1;
+    cmd.limit = limit;
+    func_800B3170_B3D70(&cmd.b.v, &D_8010DA80_1E2160_ShellShocked[i].pos);
+    HuVecCopyXYZ(&cmd.goal, x, 0.0f, z);
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
+
+// control flow (masked 51, 214 vs 213 instructions)
+#ifdef NON_MATCHING
+void func_80107C04_1DC2E4_ShellShocked(s32 i) {
+    SSCom cmd;
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    s32 t;
+    s32 limit;
+    s32 r;
+    f32 k;
+    f32 x;
+    f32 z;
+
+    if (D_8010DFD8_1E26B8_ShellShocked == D_8010D740_1E1E20_ShellShocked[i].player && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 95.0f) {
+        return;
+    }
+    if (func_80103938_1D8018_ShellShocked() != 0 && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 97.0f) {
+        return;
+    }
+    t = D_8010DFD8_1E26B8_ShellShocked;
+    if (func_80108E68_1DD548_ShellShocked(i, t, 5.0f, 1) == 9 && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 95.0f) {
+        func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, func_8010CAA4_1E1184_ShellShocked() * 20.0f + 10.0f);
+        return;
+    }
+    cmd.state = 9;
+    cmd.timer = 0;
+    cmd.target = -1;
+    cmd.limit = 0x28;
+    cmd.a.i = 1;
+    func_800B3170_B3D70(&a, &D_8010DA80_1E2160_ShellShocked[i].pos);
+    func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[D_8010DFD8_1E26B8_ShellShocked].pos);
+    HuVecSubtract(&c, &b, &a);
+    d.x = c.z;
+    d.z = -c.x;
+    k = 1000.0f / func_800B1830_B2430(c.z * c.z + d.z * d.z);
+    limit = func_8010CAA4_1E1184_ShellShocked() * 25.0f + 25.0f;
+    r = func_8010895C_1DD03C_ShellShocked(i);
+    if (r == 6) {
+        x = -d.x * k;
+        z = -d.z * k;
+    } else if (r == 7) {
+        x = k * d.x;
+        z = k * d.z;
+    } else {
+        x = -c.x * k;
+        z = -c.z * k;
+    }
+    func_80107B60_1DC240_ShellShocked(i, x, z, limit);
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107C04_1DC2E4_ShellShocked);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107EF8_1DC5D8_ShellShocked);
+void func_80107EF8_1DC5D8_ShellShocked(s32 i, s32 target, s32 time) {
+    SSCom cmd;
+    s32 level;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107FB4_1DC694_ShellShocked);
+    cmd.state = 0xF;
+    cmd.target = target;
+    level = D_8010DA80_1E2160_ShellShocked[target].level;
+    if (time <= 0) {
+        cmd.timer = func_8010CAA4_1E1184_ShellShocked() * 30.0f * D_8010CB90_1E1270_ShellShocked[level] + 20.0f;
+        cmd.a.i = 0;
+    } else {
+        cmd.timer = time;
+        cmd.a.i = 0;
+    }
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108034_1DC714_ShellShocked);
+void func_80107FB4_1DC694_ShellShocked(s32 i, s32 target, s32 time) {
+    SSCom cmd;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_801080C0_1DC7A0_ShellShocked);
+    cmd.state = 0xA;
+    cmd.target = target;
+    cmd.timer = time;
+    if (time <= 0) {
+        cmd.limit = func_8010CAA4_1E1184_ShellShocked() * 30.0f + 20.0f;
+    } else {
+        cmd.limit = time;
+    }
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108100_1DC7E0_ShellShocked);
+void func_80108034_1DC714_ShellShocked(s32 i, s32 target, f32 dist, s32 time) {
+    SSCom cmd;
 
+    cmd.state = 0xB;
+    cmd.target = target;
+    cmd.a.i = 9;
+    cmd.b.f = dist;
+    cmd.timer = 0;
+    if (time <= 0) {
+        cmd.limit = func_8010CAA4_1E1184_ShellShocked() * 30.0f + 20.0f;
+    } else {
+        cmd.limit = time;
+    }
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
+
+void func_801080C0_1DC7A0_ShellShocked(s32 i, s32 target, f32 a, f32 b, s32 limit) {
+    SSCom cmd;
+
+    cmd.state = 0xC;
+    cmd.timer = 0;
+    cmd.target = target;
+    cmd.a.f = a;
+    cmd.b.f = b;
+    cmd.limit = limit;
+    func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+}
+
+void func_80108100_1DC7E0_ShellShocked(s32 i) {
+    SSCom cmd;
+    s32 t;
+
+    t = func_80108714_1DCDF4_ShellShocked(i);
+    if (t == -1) {
+        cmd.state = 0x10;
+        func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
+        return;
+    }
+    func_80108034_1DC714_ShellShocked(i, t, 500.0f, func_8010CAA4_1E1184_ShellShocked() * 80.0f + 80.0f);
+}
+
+// control flow (masked 23, 155 vs 157 instructions)
+#ifdef NON_MATCHING
+void func_80108190_1DC870_ShellShocked(s32 i) {
+    Vec v;
+    s32 j;
+
+    j = 0;
+    if (func_80103938_1D8018_ShellShocked() != 0 && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 95.0f) {
+        return;
+    }
+    for (; j < 4; j++) {
+        if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+            HuVecSubtract(&v, &D_8010DA80_1E2160_ShellShocked[j].pos, &D_8010DA80_1E2160_ShellShocked[i].pos);
+            if (v.x * v.x + v.z * v.z < 122500.0f) {
+                func_80107A90_1DC170_ShellShocked(j);
+                return;
+            }
+        }
+    }
+    if ((u32)(D_8010DA80_1E2160_ShellShocked[i].shell[0].state - 1) < 2) {
+        for (j = 0; j < 4; j++) {
+            if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0 && func_80108E68_1DD548_ShellShocked(i, j, 5.0f, 1) == 9) {
+                if (func_8010C100_1E07E0_ShellShocked(i) == 1) {
+                    if (func_8010C100_1E07E0_ShellShocked(j) >= 2) {
+                        if (func_8010CAA4_1E1184_ShellShocked() * 100.0f > 10.0f) {
+                            continue;
+                        }
+                    } else {
+                        if (func_8010CAA4_1E1184_ShellShocked() * 100.0f > 20.0f) {
+                            continue;
+                        }
+                    }
+                }
+                func_80107C04_1DC2E4_ShellShocked(j);
+            }
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108190_1DC870_ShellShocked);
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_801083C4_1DCAA4_ShellShocked);
+s32 func_801083C4_1DCAA4_ShellShocked(s32 i, s32 x, s32 z) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    SSTank* tank;
+    f32 speed;
+    f32 l;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_8010856C_1DCC4C_ShellShocked);
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+    func_800B3170_B3D70(&a, &tank->pos);
+    HuVecCopyXYZ(&b, x, 0.0f, z);
+    c.x = b.x - a.x;
+    c.z = b.z - a.z;
+    l = 1.0f / func_800B1830_B2430(c.x * c.x + c.z * c.z);
+    d.x = l * c.x;
+    d.z = l * c.z;
+    e.x = HuMathSin(tank->rot.y);
+    e.z = func_800B7890_B8490(tank->rot.y);
+    c.x = speed * (d.x * e.x + d.z * e.z);
+    c.z = -speed * (d.x * e.z - d.z * e.x);
+    return func_8010B08C_1DF76C_ShellShocked(i, c.z, c.x);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108714_1DCDF4_ShellShocked);
+s32 func_8010856C_1DCC4C_ShellShocked(s32 i, s32 x, s32 z) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    SSTank* tank;
+    f32 speed;
+    f32 l;
 
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+    func_800B3170_B3D70(&a, &tank->pos);
+    HuVecCopyXYZ(&b, x, 0.0f, z);
+    c.x = b.x - a.x;
+    c.z = b.z - a.z;
+    l = 1.0f / func_800B1830_B2430(c.x * c.x + c.z * c.z);
+    d.x = l * c.x;
+    d.z = l * c.z;
+    e.x = HuMathSin(tank->rot.y);
+    e.z = func_800B7890_B8490(tank->rot.y);
+    c.x = speed * (d.x * e.x + d.z * e.z);
+    c.z = -speed * (d.x * e.z - d.z * e.x);
+    return func_8010B0B4_1DF794_ShellShocked(i, c.z, c.x);
+}
+
+s32 func_80108714_1DCDF4_ShellShocked(s32 i) {
+    s32 j;
+    s32 n;
+    s32 r;
+
+    for (j = 0, n = 0; j < 4; j++) {
+        if (i != j) {
+            n += func_8010C1F0_1E08D0_ShellShocked(j) == 0;
+        }
+    }
+    r = (f32)n * func_8010CAA4_1E1184_ShellShocked();
+    for (j = 0, n = 0; j < 4; j++) {
+        if (i != j && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+            if (n == r) {
+                break;
+            }
+            n++;
+        }
+    }
+    if (func_80103938_1D8018_ShellShocked() != 0) {
+        return 0;
+    }
+    return j == 4 ? -1 : j;
+}
+
+/* Retail: the comparison starts from FLT_MAX and looks for a larger distance, so *who stays -1
+   unless the boss rule sets it. */
+// control flow (masked 9, 99 vs 95 instructions)
+#ifdef NON_MATCHING
+f32 func_801087F8_1DCED8_ShellShocked(s32 i, s32* who) {
+    Vec d;
+    SSTank* tank;
+    SSTank* p;
+    s32 j;
+    f32 best;
+    f32 x;
+    f32 z;
+
+    tank = &D_8010DA80_1E2160_ShellShocked[i];
+    *who = -1;
+    best = 3.4028235e38f;
+    for (j = 0; j < 4; j++) {
+        if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+            p = &D_8010DA80_1E2160_ShellShocked[j];
+            d.x = p->pos.x - tank->pos.x;
+            d.z = p->pos.z - tank->pos.z;
+            x = d.x * d.x + d.z * d.z;
+            if (best < x) {
+                best = x;
+                *who = j;
+            }
+        }
+    }
+    if (func_80103938_1D8018_ShellShocked() != 0) {
+        *who = 0;
+        x = D_8010DA80_1E2160_ShellShocked[0].pos.x - tank->pos.x;
+        z = D_8010DA80_1E2160_ShellShocked[0].pos.z - tank->pos.z;
+        best = x * x + z * z;
+    }
+    return best;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_801087F8_1DCED8_ShellShocked);
+#endif
 
+// register allocation: one float temporary (masked 0, raw 2 sites)
+#ifdef NON_MATCHING
+s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec* pos;
+    Vec* v;
+    s32 j;
+    s32 n;
+    f32 left;
+    f32 right;
+    f32 d;
+    f32 l;
+
+    pos = &D_8010DA80_1E2160_ShellShocked[i].pos;
+    a.x = D_8010DA80_1E2160_ShellShocked[D_8010DFD8_1E26B8_ShellShocked].pos.x - pos->x;
+    a.z = -(D_8010DA80_1E2160_ShellShocked[D_8010DFD8_1E26B8_ShellShocked].pos.z - pos->z);
+    n = D_8010DFE0_1E26C0_ShellShocked->count;
+    right = 3.4028235e38f;
+    left = 3.4028235e38f;
+    for (j = 0; j < n; j++) {
+        v = &D_8010DFE0_1E26C0_ShellShocked->pillars[j];
+        b.x = v->x - pos->x;
+        b.z = v->z - pos->z;
+        d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
+        if (b.x * a.z + b.z * a.x < 0.0f) {
+            if (d < left) {
+                left = d;
+            }
+        } else {
+            if (d < right) {
+                right = d;
+            }
+        }
+    }
+    if (func_80103938_1D8018_ShellShocked() == 0) {
+        for (j = 0; j < 4; j++) {
+            if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+                HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[j].pos, pos);
+                d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
+                if (b.x * a.z + b.z * a.x < 0.0f) {
+                    if (d < left) {
+                        left = d;
+                    }
+                } else {
+                    if (d < right) {
+                        right = d;
+                    }
+                }
+            }
+        }
+    } else if (j != 0 && func_8010C1F0_1E08D0_ShellShocked(0) == 0) {
+        HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[0].pos, pos);
+        d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
+        if (b.x * a.z + b.z * a.x < 0.0f) {
+            if (d < left) {
+                left = d;
+            }
+        } else if (d < right) {
+            right = d;
+        }
+    }
+    l = 1.0f / func_800B1830_B2430(a.x * a.x + a.z * a.z);
+    if (left < right) {
+        c.x = left * a.x * l + pos->x;
+        c.z = left * a.z * l + pos->z;
+        if (c.x < -760.0f || c.x > 760.0f || c.z < -760.0f || c.z > 760.0f) {
+            right = left * 0.5f;
+        }
+    } else {
+        d = -left;
+        c.x = d * a.x * l + pos->x;
+        c.z = d * a.z * l + pos->z;
+        if (c.x < -760.0f || c.x > 760.0f || c.z < -760.0f || c.z > 760.0f) {
+            left = right * 0.5f;
+        }
+    }
+    d = left;
+    if (left < right) {
+        d = right;
+    }
+    if (d < 100.0f) {
+        return 0xA;
+    }
+    return right < left ? 6 : 7;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_8010895C_1DD03C_ShellShocked);
+#endif
 
+// control flow (masked 49, 188 vs 191 instructions)
+#ifdef NON_MATCHING
+s32 func_80108E68_1DD548_ShellShocked(s32 i, s32 target, f32 angle, s32 pillars) {
+    Vec a;
+    Vec b;
+    Vec c;
+    Vec d;
+    Vec e;
+    Vec f;
+    Vec g;
+    Vec* v;
+    s32 j;
+    f32 k;
+    f32 dot;
+    f32 t;
+
+    k = func_800B7890_B8490(angle);
+    func_800B3170_B3D70(&a, &D_8010DA80_1E2160_ShellShocked[i].pos);
+    func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[target].pos);
+    HuVecSubtract(&f, &b, &a);
+    e.x = HuMathSin(D_8010DA80_1E2160_ShellShocked[i].rot.y);
+    e.z = func_800B7890_B8490(D_8010DA80_1E2160_ShellShocked[i].rot.y);
+    dot = e.x * f.x + e.z * f.z;
+    if (dot < 0.0f) {
+        return 0xA;
+    }
+    if (dot * dot < (f.x * f.x + f.z * f.z) * k * k) {
+        if (e.z * f.x - e.x * f.z > 0.0f) {
+            return 7;
+        }
+        return 6;
+    }
+    if (pillars != 0) {
+        c.x = e.z;
+        c.z = -e.x;
+        for (j = 0; j < D_8010DFE0_1E26C0_ShellShocked->count; j++) {
+            d.x = D_8010DFE0_1E26C0_ShellShocked->pillars[j].x;
+            d.z = D_8010DFE0_1E26C0_ShellShocked->pillars[j].z;
+            g.x = d.x - a.x;
+            g.z = d.z - a.z;
+            if (g.x * e.x + g.z * e.z > 0.0f && !(f.x * f.x + f.z * f.z < g.x * g.x + g.z * g.z)) {
+                t = g.x * c.x + g.z * c.z;
+                if (t * t < 10000.0f) {
+                    return 0xB;
+                }
+            }
+        }
+    }
+    return 9;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108E68_1DD548_ShellShocked);
+#endif
 
+// control flow (masked 14, 34 vs 43 instructions)
+#ifdef NON_MATCHING
+s32 func_8010913C_1DD81C_ShellShocked(f32 x, f32 z, f32* cx, f32* cz) {
+    f32 t;
+    s32 r;
+
+    *cx = (x + 800.0f) * 0.0125f;
+    t = (z + 800.0f) * 0.0125f;
+    *cz = t;
+    r = 1;
+    if (*cx >= 0.0f && *cx < 20.0f && t >= 0.0f && t < 20.0f) {
+        r = 0;
+    }
+    return r;
+}
+#else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_8010913C_1DD81C_ShellShocked);
+#endif
+
+__asm__(".section .rodata\n\t.balign 16\n\t.text");

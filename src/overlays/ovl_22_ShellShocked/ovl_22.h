@@ -2,7 +2,7 @@
 #define _OVL_22_H
 
 /* Overlay 22: Shell Shocked. Four tanks in split screen (one viewport each, D_8010D5E0_1E1CC0_ShellShocked), on one
-   of three maps (D_800FA656_FB256, kept in D_8010DFDC_1E26BC_ShellShocked), 60 s (D_8010DFE4_1E26C4_ShellShocked). Each tank has
+   of three maps (D_800FA656, kept in D_8010DFDC_1E26BC_ShellShocked), 60 s (D_8010DFE4_1E26C4_ShellShocked). Each tank has
    three hit points; a shell or a mine hit takes one. Last tank standing wins, 10 coins. Flow
    func_80102BC8_1D72A8_ShellShocked. _CheckFlag(0xE) (D_8010D5BC_1E1C9C_ShellShocked) is the boss variant: player 0 alone against
    the rest; _CheckFlag(0xC) (D_8010D5C0_1E1CA0_ShellShocked) the 1P variant. Retail is four files: 1D6EE0.c, 1D8270.c
@@ -62,7 +62,7 @@ typedef struct SSCom {
 typedef struct SSShell {
     /* 0x00 */ Vec pos;
     /* 0x0C */ Vec vel;
-    /* 0x18 */ u32 state; /* 0 end, 1 idle, 2 charging, 3 lobbed, 4 straight, 5 blast, 6 blasting */
+    /* 0x18 */ s32 state; /* 0 end, 1 idle, 2 charging, 3 lobbed, 4 straight, 5 blast, 6 blasting */
     /* 0x1C */ s32 active;
     /* 0x20 */ s32 timer;
     /* 0x24 */ s16 mdl;
@@ -189,7 +189,7 @@ extern SSTimer D_8010DFE4_1E26C4_ShellShocked;
 
 /* main */
 extern u16 D_801011FC_101DFC;
-extern u8 D_800FA656_FB256;
+extern u8 D_800FA656;
 extern s8 D_800FDEAE_FEAAE;
 extern s8 ContStkX[];
 extern s8 ContStkY[];
@@ -283,8 +283,8 @@ s32 func_801038F8_1D7FD8_ShellShocked(void);
 void func_80103904_1D7FE4_ShellShocked(void);
 s32 func_80103938_1D8018_ShellShocked(void);
 s32 func_80103944_1D8024_ShellShocked(void);
-u8 func_80103950_1D8030_ShellShocked(s32 i);
-u8 func_80103998_1D8078_ShellShocked(s32 i);
+s32 func_80103950_1D8030_ShellShocked(s32 i);
+s32 func_80103998_1D8078_ShellShocked(s32 i);
 f32 func_801039BC_1D809C_ShellShocked(void);
 s32* func_801039F8_1D80D8_ShellShocked(void);
 
@@ -323,8 +323,8 @@ void func_80108034_1DC714_ShellShocked(s32 i, s32 target, f32 dist, s32 time);
 void func_801080C0_1DC7A0_ShellShocked(s32 i, s32 target, f32 a, f32 b, s32 limit);
 void func_80108100_1DC7E0_ShellShocked(s32 i);
 void func_80108190_1DC870_ShellShocked(s32 i);
-void func_801083C4_1DCAA4_ShellShocked(s32 i, s32 x, s32 z);
-void func_8010856C_1DCC4C_ShellShocked(s32 i, s32 x, s32 z);
+s32 func_801083C4_1DCAA4_ShellShocked(s32 i, s32 x, s32 z);
+s32 func_8010856C_1DCC4C_ShellShocked(s32 i, s32 x, s32 z);
 s32 func_80108714_1DCDF4_ShellShocked(s32 i);
 f32 func_801087F8_1DCED8_ShellShocked(s32 i, s32* who);
 s32 func_8010895C_1DD03C_ShellShocked(s32 i);
@@ -338,16 +338,16 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i);
 void func_80109D08_1DE3E8_ShellShocked(void);
 void func_80109F4C_1DE62C_ShellShocked(void);
 void func_8010A19C_1DE87C_ShellShocked(omObjData* obj);
-void func_8010A1E4_1DE8C4_ShellShocked(s16 i);
+void func_8010A1E4_1DE8C4_ShellShocked(s32 i);
 s32 func_8010A368_1DEA48_ShellShocked(s32 i, s16 x, s16 y);
 s32 func_8010A954_1DF034_ShellShocked(s32 i, s16 x, s16 y);
-s32 func_8010B08C_1DF76C_ShellShocked(s16 i, s16 x, s16 y);
-s32 func_8010B0B4_1DF794_ShellShocked(s16 i, s16 x, s16 y);
+s32 func_8010B08C_1DF76C_ShellShocked(s32 i, s16 x, s16 y);
+s32 func_8010B0B4_1DF794_ShellShocked(s32 i, s16 x, s16 y);
 void func_8010B0DC_1DF7BC_ShellShocked(void);
 void func_8010B0E4_1DF7C4_ShellShocked(s32 i);
 void func_8010B3EC_1DFACC_ShellShocked(s32 i);
 void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind);
-void func_8010B618_1DFCF8_ShellShocked(s16 i);
+void func_8010B618_1DFCF8_ShellShocked(s32 i);
 s32 func_8010BB0C_1E01EC_ShellShocked(s32 i, SSShell* shell);
 s32 func_8010BEB4_1E0594_ShellShocked(void);
 f32 func_8010C000_1E06E0_ShellShocked(void);
@@ -360,16 +360,18 @@ void func_8010C57C_1E0C5C_ShellShocked(void);
 void func_8010C5C0_1E0CA0_ShellShocked(s32 i);
 void func_8010C604_1E0CE4_ShellShocked(void);
 void func_8010C66C_1E0D4C_ShellShocked(s32 i);
-void func_8010C6C4_1E0DA4_ShellShocked(s16 i, s32 speed);
+void func_8010C6C4_1E0DA4_ShellShocked(s32 i, s32 speed);
 void func_8010C7AC_1E0E8C_ShellShocked(void);
-void func_8010C7E4_1E0EC4_ShellShocked(s16 i);
-void func_8010C808_1E0EE8_ShellShocked(s16 i);
-void func_8010C848_1E0F28_ShellShocked(s16 i);
-void func_8010C86C_1E0F4C_ShellShocked(s16 i);
+void func_8010C7E4_1E0EC4_ShellShocked(s32 i);
+void func_8010C808_1E0EE8_ShellShocked(s32 i);
+void func_8010C848_1E0F28_ShellShocked(s32 i);
+void func_8010C86C_1E0F4C_ShellShocked(s32 i);
 void func_8010C890_1E0F70_ShellShocked(void);
 s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m);
 void func_8010CA20_1E1100_ShellShocked(Vec* a, Vec* b, Vec* out);
 f32 func_8010CA68_1E1148_ShellShocked(Vec* a, Vec* b);
 f32 func_8010CAA4_1E1184_ShellShocked(void);
+
+#define ABS(x) ((x) < 0.0f ? -(x) : (x))
 
 #endif
