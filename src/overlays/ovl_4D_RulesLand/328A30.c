@@ -93,12 +93,12 @@ void func_80102AD4_328D04_RulesLand(void) {
     func_800B3170_B3D70(&D_80103DA0_329FD0_RulesLand[0]->pos, &D_80103DD4_32A004_RulesLand);
     HuVecCopyXYZ(&D_80103DA0_329FD0_RulesLand[0]->scale, 0.65f, 0.65f, 0.65f);
     D_80103DA0_329FD0_RulesLand[0]->obj->rot.x = -10.0f;
-    func_80056658_57258(&D_80103DA0_329FD0_RulesLand[0]->pos, (Vec*)((u8*)D_800FD2A8_FDEA8 + 0xC), &D_80103DA0_329FD0_RulesLand[0]->rot);
+    func_80056658_57258(&D_80103DA0_329FD0_RulesLand[0]->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_80103DA0_329FD0_RulesLand[0]->rot);
     for (i = 0; i < 4; i++) {
         func_8005E130_5ED30(i, D_80103EF4_32A124_RulesLand[gPlayers[i].character]);
         func_800B3170_B3D70(&PM(i)->pos, &D_80103DD4_32A004_RulesLand);
         gPlayers[i].flags |= 2;
-        func_80056658_57258(&PM(i)->pos, (Vec*)((u8*)D_800FD2A8_FDEA8 + 0xC), &PM(i)->rot);
+        func_80056658_57258(&PM(i)->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &PM(i)->rot);
         MBMotionSet(PM(i), 0, 0);
         MBModelDispOff(PM(i));
         func_80029E80_2AA80(*PM(i)->obj->model, 2, 1);
@@ -164,7 +164,7 @@ void func_80102AD4_328D04_RulesLand(void) {
     D_80103DA0_329FD0_RulesLand[0]->pos.y = D_80103DE0_32A010_RulesLand.y;
     D_80103DA0_329FD0_RulesLand[0]->pos.z = D_80103DE0_32A010_RulesLand.z;
     D_80103DA0_329FD0_RulesLand[0]->jumpY = 700.0f;
-    func_80056658_57258(&D_80103DA0_329FD0_RulesLand[0]->pos, (Vec*)((u8*)D_800FD2A8_FDEA8 + 0xC), &D_80103DA0_329FD0_RulesLand[0]->rot);
+    func_80056658_57258(&D_80103DA0_329FD0_RulesLand[0]->pos, &((HuCamera*)D_800FD2A8_FDEA8)->pos, &D_80103DA0_329FD0_RulesLand[0]->rot);
     goto fall;
     do {
         HuPrcVSleep();

@@ -11,7 +11,7 @@
 #include "game/malloc.h"
 #include "game/pad.h"
 
-/* Overlay 4C: the tutorial board (board index 8, MP1's FirstMap, MP3's w10). The host walks four CPU
+/* Overlay 4C: probably the tutorial board (board index 8, MP1's FirstMap, MP3's w10). The host walks four CPU
    players through the rules on a short chain of spaces: dice, coins, items, the bank, minigame choice;
    START (any pad) offers to skip through a yes/no window. Ends with omOvlReturnEx(1). */
 
@@ -25,9 +25,11 @@ typedef struct Ovl4CTip {
     /* 0x06 */ s16 anim2;
 } Ovl4CTip; /* size = 0x8 */
 
-/* a window backdrop from func_8005E688 */
+/* main 5EF10.c's UnkList53: a sprite group from func_8005E688 */
 typedef struct Ovl4CBox {
-    /* 0x00 */ char pad00[0xA];
+    /* 0x00 */ struct Ovl4CBox* next;
+    /* 0x04 */ struct Ovl4CBox* prev;
+    /* 0x08 */ s16 count;
     /* 0x0A */ s16 group;
     /* 0x0C */ s16* anims;
 } Ovl4CBox;

@@ -5,6 +5,7 @@
 #include "game/board.h"
 #include "game/object.h"
 #include "game/hmfman.h"
+#include "game/camera.h"
 #include "process.h"
 #include "game/gamemes.h"
 #include "game/data.h"
@@ -12,7 +13,7 @@
 #include "game/pad.h"
 
 /* Overlay 4D: Rules Land's turn-order scene (main's board index 17). The host and the four players
-   arrive through a rising tile, drop from the sky, hit the dice blocks; the result sorts gPlayers[]
+   arrive through a warp model that scales up and down, drop in, hit the dice blocks; the result sorts gPlayers[]
    by rank in unk_1C and the host reads the order out. Ends with omOvlReturnEx(1). */
 
 #define PM(i) ((MBModel*)gPlayers[i].unk_24)
