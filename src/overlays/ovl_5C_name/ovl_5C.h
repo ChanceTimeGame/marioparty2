@@ -5,7 +5,11 @@
    395340.c (80107480-8010A190) and 398050.c (8010A190-end). Every function is global. .data and
    .bss stay asm (declared here); each file's .rodata is carved. Much of it is a copy of the menu
    helpers of 5B, 58 and 4E. Prototypes past 801096BC came from m2c's register use only, and the
-   externs still marked m2c are by access width: the owner of a function fixes its lines. */
+   externs still marked m2c are by access width: the owner of a function fixes its lines.
+   Flow: entry D_800CD414 0/2/4 runs the lobby 80102B78 (2 comes back from the Coaster side, 8010A190
+   first), 1 runs 8010E8CC. The lobby moves a cursor over six attractions (D_80112476); A flies the
+   camera (80107F28) and starts one, B asks to leave for 5B. D_80112420 0/1/2 picks return, goto or
+   call of overlay D_80112F28 at entry D_80112426 in 80106DE4. */
 
 #include "common.h"
 #include "process.h"
@@ -540,7 +544,7 @@ void func_801094FC_3973BC_name_5C(Ovl5CModelDef* defs);
 void func_801095F0_3974B0_name_5C(Ovl5CModelDef* defs, s16 i, s16 model);
 void func_801096BC_39757C_name_5C(Ovl5CModelDef* defs, s16 place);
 void func_801097A4_397664_name_5C(void);
-void func_801098A4_397764_name_5C(s16 arg0, s32 arg1);
+void func_801098A4_397764_name_5C(s16 model, Vec2f* out, f32 mtx[4][4]); /* a model point on screen */
 void func_801098E4_3977A4_name_5C(void *arg1, void *arg2);
 void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out); /* screen point to world */
 s16 func_80109EA4_397D64_name_5C(void);

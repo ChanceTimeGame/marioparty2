@@ -321,7 +321,13 @@ void func_80102B78_390A38_name_5C(void) {
             PlaySound(4);
             D_80112424_3A02E4_name_5C = 0;
             func_801064D4_394394_name_5C(0x38F);
-            if (func_80106500_3943C0_name_5C() == 0) {
+            if (func_80106500_3943C0_name_5C() != 0) {
+                HuPrcSleep(3);
+                D_80112424_3A02E4_name_5C = 1;
+                HuPrcSleep(5);
+                func_801064D4_394394_name_5C(D_801114D4_39F394_name_5C[D_80112476_3A0336_name_5C]);
+                func_80106500_3943C0_name_5C();
+            } else {
                 func_801064D4_394394_name_5C(0x390);
                 func_80106500_3943C0_name_5C();
                 D_80112330_3A01F0_name_5C = 0;
@@ -340,11 +346,6 @@ void func_80102B78_390A38_name_5C(void) {
                     HuPrcVSleep();
                 }
             }
-            HuPrcSleep(3);
-            D_80112424_3A02E4_name_5C = 1;
-            HuPrcSleep(5);
-            func_801064D4_394394_name_5C(D_801114D4_39F394_name_5C[D_80112476_3A0336_name_5C]);
-            func_80106500_3943C0_name_5C();
         }
         HuPrcVSleep();
     }
