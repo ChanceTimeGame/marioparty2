@@ -235,7 +235,16 @@ void func_80073410_74010(s16 index) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/73BA0", func_800734B0_740B0);
+s8 func_800734B0_740B0(s16 index) {
+    s32 flag;
+
+    if (index < 0) {
+        flag = -1;
+    } else {
+        flag = D_800CD220_CDE20[index].flag;
+    }
+    return flag;
+}
 
 void func_800734E8_740E8(void) {
     s16 index = D_800E20B0_E2CB0;
