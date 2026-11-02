@@ -1,11 +1,52 @@
-#include "common.h"
+#include "ovl_11.h"
 
 __asm__(".section .rodata");
 const char D_8010CE10_1602A0_MoveToTheMusic[] = "\202r\202s\202`\202q\202s";
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80102800_155C90_MoveToTheMusic);
+void func_80102800_155C90_MoveToTheMusic(void) {
+    omObjData* obj;
+    u8 cam;
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80102A68_155EF8_MoveToTheMusic);
+    func_80020D20_21920(0x20);
+    omInitObjMan(0x80, 0);
+    func_80079128_79D28();
+    func_80029708_2A308(0);
+    func_80018E30_19A30(1);
+    cam = func_80018E78_19A78();
+    ScissorSet(cam, 0.0f, 0.0f, 320.0f, 240.0f);
+    ViewportSet(cam, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+    Hu3DCamSetPerspective(0, 50.0f, 200.0f, 5000.0f);
+    func_80026D28_27928(2);
+    func_80026E00_27A00(0, 0.0f, 0.0f, 90.0f);
+    func_80026DAC_279AC(0, 0x20, 0x20, 0x20);
+    func_80026E00_27A00(1, -92.0f, -57.0f, 49.0f);
+    func_80026DAC_279AC(1, 0, 0, 0);
+    omAddObj(0, 0, 0, -1, func_80102B18_155FA8_MoveToTheMusic);
+    D_8010D764_160BF4_MoveToTheMusic = obj = omAddObj(8, 0xC, 0xC, -1, func_80104DBC_15824C_MoveToTheMusic);
+    omSetStatBit(obj, 0xA0);
+    D_8010D780_160C10_MoveToTheMusic[0] = omAddObj(2, 0xE, 0xE, -1, func_80105594_158A24_MoveToTheMusic);
+    D_8010D780_160C10_MoveToTheMusic[1] = omAddObj(2, 0xE, 0xE, -1, func_801055C8_158A58_MoveToTheMusic);
+    D_8010D780_160C10_MoveToTheMusic[2] = omAddObj(2, 0xE, 0xE, -1, func_801055FC_158A8C_MoveToTheMusic);
+    D_8010D780_160C10_MoveToTheMusic[3] = omAddObj(2, 0xE, 0xE, -1, func_80105630_158AC0_MoveToTheMusic);
+    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, func_8010B7F0_15EC80_MoveToTheMusic), 0xA0);
+    func_8007273C_7333C((u8*)D_8010CE10_1602A0_MoveToTheMusic, 1);
+    InitFadeIn(0, 0x10);
+}
+
+s16 func_80102A68_155EF8_MoveToTheMusic(s32 file) {
+    void* data;
+    s16 tex;
+    u16 id;
+
+    data = DataRead(file);
+    tex = func_8003DF08_3EB08(data);
+    HuMemMemoryFreePerm(data);
+    id = func_80020EBC_21ABC((void*)-1, 0x6B9, 8);
+    D_800F86D8_F92D8[id].unk02 = tex;
+    func_80021160_21D60(tex, 4, 4);
+    HmfModelObjAttrSet(D_800F86D8_F92D8[id].unk00, 0x70000000, 0x70000000);
+    return D_800F86D8_F92D8[id].unk00;
+}
 
 __asm__(".section .rodata");
 const u32 D_8010CE1C_1602AC_MoveToTheMusic[8] = { 0x00010101, 0x01020203, 0x04040101, 0x01010102, 0x02020304, 0x01010101, 0x01020202, 0x02040101 };
@@ -58,36 +99,63 @@ const u32 D_8010CF88_160418_MoveToTheMusic[4] = { 0xC3A00000, 0x43820000, 0x4396
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80104DBC_15824C_MoveToTheMusic);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105568_1589F8_MoveToTheMusic);
+void func_80105568_1589F8_MoveToTheMusic(void) {
+    func_8010A730_15DBC0_MoveToTheMusic(D_8010D7D4_160C64_MoveToTheMusic, 0.0f, 0.0f, 1.0f);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105594_158A24_MoveToTheMusic);
+void func_80105594_158A24_MoveToTheMusic(omObjData* obj) {
+    func_80105664_158AF4_MoveToTheMusic(obj, 0);
+    obj->func_ptr = func_80105A20_158EB0_MoveToTheMusic;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_801055C8_158A58_MoveToTheMusic);
+void func_801055C8_158A58_MoveToTheMusic(omObjData* obj) {
+    func_80105664_158AF4_MoveToTheMusic(obj, 1);
+    obj->func_ptr = func_80105A3C_158ECC_MoveToTheMusic;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_801055FC_158A8C_MoveToTheMusic);
+void func_801055FC_158A8C_MoveToTheMusic(omObjData* obj) {
+    func_80105664_158AF4_MoveToTheMusic(obj, 2);
+    obj->func_ptr = func_80105A58_158EE8_MoveToTheMusic;
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105630_158AC0_MoveToTheMusic);
+void func_80105630_158AC0_MoveToTheMusic(omObjData* obj) {
+    func_80105664_158AF4_MoveToTheMusic(obj, 3);
+    obj->func_ptr = func_80105A74_158F04_MoveToTheMusic;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105664_158AF4_MoveToTheMusic);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A20_158EB0_MoveToTheMusic);
+void func_80105A20_158EB0_MoveToTheMusic(omObjData* obj) {
+    func_80105A90_158F20_MoveToTheMusic(obj, 0);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A3C_158ECC_MoveToTheMusic);
+void func_80105A3C_158ECC_MoveToTheMusic(omObjData* obj) {
+    func_80105A90_158F20_MoveToTheMusic(obj, 1);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A58_158EE8_MoveToTheMusic);
+void func_80105A58_158EE8_MoveToTheMusic(omObjData* obj) {
+    func_80105A90_158F20_MoveToTheMusic(obj, 2);
+}
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A74_158F04_MoveToTheMusic);
+void func_80105A74_158F04_MoveToTheMusic(omObjData* obj) {
+    func_80105A90_158F20_MoveToTheMusic(obj, 3);
+}
 
 __asm__(".section .rodata");
 const u32 D_8010CFD0_160460_MoveToTheMusic[2] = { 0x00400020, 0x00400060 };
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80105A90_158F20_MoveToTheMusic);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80106E84_15A314_MoveToTheMusic);
+void func_80106E84_15A314_MoveToTheMusic(s16 mdl, s16 val) {
+    HmfModel* m = &D_800FC834_FD434[mdl];
+    m->hmf->unk9C->unk08 = val;
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_80106EC8_15A358_MoveToTheMusic);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_8010A704_15DB94_MoveToTheMusic);
+void func_8010A704_15DB94_MoveToTheMusic(s16 grp) {
+    func_8010A730_15DBC0_MoveToTheMusic(grp, 0.0f, 0.0f, 1.0f);
+}
 
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_8010A730_15DBC0_MoveToTheMusic);
 
