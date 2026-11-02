@@ -108,6 +108,14 @@ typedef struct Ovl5CMgInfo {
     /* 0x01 */ char pad01[7];
 } Ovl5CMgInfo; /* size = 8 */
 
+/* A model gliding to a target (8010FC20, D_80112408). */
+typedef struct Ovl5CMover {
+    /* 0x00 */ s8 id;
+    /* 0x04 */ f32 speed;
+    /* 0x08 */ Vec target;
+    /* 0x14 */ Vec pos;
+} Ovl5CMover; /* size = 0x20 */
+
 /* ---- main ---- */
 
 extern void* D_800F93FC_F9FFC; /* 1AE60.c: EspriteSlot* */
@@ -369,14 +377,13 @@ extern Ovl5CPathNode* D_80111C24_39FAE4_name_5C[4];
 extern s16 D_80111C34_39FAF4_name_5C; /* m2c */
 extern f32 D_80111C40_39FB00_name_5C; /* m2c */
 extern s8 D_80111C44_39FB04_name_5C; /* m2c */
-extern s32 D_80111C50_39FB10_name_5C; /* m2c */
-extern s32 D_80111C60_39FB20_name_5C; /* m2c */
+extern Ovl5CModelDef D_80111C50_39FB10_name_5C[]; /* the ride scene models */
 extern s16 D_801120B0_39FF70_name_5C[6]; /* kind of each shop slot */
 extern s16 D_801120BC_39FF7C_name_5C[6]; /* shop slot of each kind; labels C2, C4 are [3], [4] */
 extern s16 D_801120C2_39FF82_name_5C; /* m2c */
 extern s16 D_801120C4_39FF84_name_5C; /* m2c */
 extern s16 D_801120C8_39FF88_name_5C[72]; /* price of each mini-game, 0: not sold */
-extern s16 D_80112158_3A0018_name_5C; /* m2c */
+extern s16 D_80112158_3A0018_name_5C; /* 1: scroll stopped */
 extern s32 D_8011215C_3A001C_name_5C; /* m2c */
 extern s16 D_80112174_3A0034_name_5C[][2]; /* 8010FB28: slot offsets */
 
@@ -428,8 +435,8 @@ extern s16 D_801123F0_3A02B0_name_5C; /* m2c */
 extern s16 D_801123F2_3A02B2_name_5C; /* m2c */
 extern u16 D_801123F4_3A02B4_name_5C; /* m2c */
 extern u16 D_801123F6_3A02B6_name_5C[5]; /* coin digits */
-extern s16 D_80112400_3A02C0_name_5C; /* m2c */
-extern s32 D_80112408_3A02C8_name_5C; /* m2c */
+extern s16 D_80112400_3A02C0_name_5C; /* next mover */
+extern Ovl5CMover* D_80112408_3A02C8_name_5C[6]; /* 8010FC20 movers */
 extern s16 D_80112420_3A02E0_name_5C; /* m2c */
 extern s16 D_80112422_3A02E2_name_5C; /* m2c */
 extern s16 D_80112424_3A02E4_name_5C; /* 1 while 80103F38 takes the player count */
@@ -578,7 +585,7 @@ s32 func_8010EE64_39CD24_name_5C(void);
 void func_8010FB28_39D9E8_name_5C(s16 sprite, s16 slot);
 void func_8010FBDC_39DA9C_name_5C(s16 sprite, s16 slot);
 void func_8010FC20_39DAE0_name_5C(void);
-void func_8010FFDC_39DE9C_name_5C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z);
 void func_80110020_39DEE0_name_5C(void);
 
 #endif
