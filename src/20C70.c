@@ -148,9 +148,13 @@ void func_80020718_21318(s16 index, void* arg1, void* arg2) {
     cam->unkAC = arg2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_80020754_21354);
+void func_80020754_21354(s16 index, void* arg1) {
+    D_800C9B80_CA780[index].unkB0 = arg1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/20C70", func_8002078C_2138C);
+void func_8002078C_2138C(s16 index, void* arg1) {
+    D_800C9B80_CA780[index].unkB4 = arg1;
+}
 
 void Hu3DCam3DToScreen(s16 camIndex, Vec* worldPos, Vec2f* outPos) {
     HuMtx4F viewMtx;

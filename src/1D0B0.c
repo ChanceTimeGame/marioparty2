@@ -479,7 +479,9 @@ void func_8001D114_1DD14(void **pool, u16 size, u16 segment) {
     D_800DEF5E_DFB5E = segment;
 }
 
-INCLUDE_ASM("asm/nonmatchings/1D0B0", func_8001D130_1DD30);
+void func_8001D130_1DD30(u16 size) {
+    D_800DEF5C_DFB5C = size;
+}
 
 void func_8001D13C_1DD3C(u64 **threadStacks) {
     D_800FC730_FD330 = *threadStacks++;
