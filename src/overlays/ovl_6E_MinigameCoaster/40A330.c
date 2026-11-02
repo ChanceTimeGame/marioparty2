@@ -1,5 +1,26 @@
 #include "ovl_6E.h"
 
+/* .data (0x40B930-0x40BAE0, 80103E00-80103FB0) */
+MBModel* D_80103E00_40B930_MinigameCoaster[5] = { 0 };
+Vec D_80103E14_40B944_MinigameCoaster = { 1000.0f, 25.0f, 2120.0f };
+Vec D_80103E20_40B950_MinigameCoaster = { 0.0f, 25.0f, 2120.0f };
+Vec D_80103E2C_40B95C_MinigameCoaster = { -262.5f, 0.0f, 2510.0f };
+Vec D_80103E38_40B968_MinigameCoaster = { 0.0f, 0.0f, 2120.0f };
+Vec D_80103E44_40B974_MinigameCoaster = { 0.0f, 0.0f, 2040.0f };
+Vec D_80103E50_40B980_MinigameCoaster = { -272.5f, 0.0f, 2400.0f };
+Vec D_80103E5C_40B98C_MinigameCoaster[2] = { { -62.78950119018555f, 184.7295684814453f, 1970.0f }, { 56.230003356933594f, 184.7295684814453f, 1970.0f } };
+Vec D_80103E74_40B9A4_MinigameCoaster[2] = { { -62.78950119018555f, 184.7295684814453f, 2030.0f }, { 56.230003356933594f, 184.7295684814453f, 2030.0f } };
+s32 D_80103E8C_40B9BC_MinigameCoaster[8] = { 7, 0x20012, 0x20010, 0x20000, 0x20001, 0x20002, 0x20098, 0x2006D };
+s32 D_80103EAC_40B9DC_MinigameCoaster[8] = { 7, 0x30012, 0x30010, 0x30000, 0x30001, 0x30002, 0x30098, 0x3006D };
+s32 D_80103ECC_40B9FC_MinigameCoaster[8] = { 7, 0x70012, 0x70010, 0x70000, 0x70001, 0x70002, 0x70098, 0x7006D };
+s32 D_80103EEC_40BA1C_MinigameCoaster[8] = { 7, 0x40012, 0x40010, 0x40000, 0x40001, 0x40002, 0x40098, 0x4006D };
+s32 D_80103F0C_40BA3C_MinigameCoaster[8] = { 7, 0x50012, 0x50010, 0x50000, 0x50001, 0x50002, 0x50098, 0x5006D };
+s32 D_80103F2C_40BA5C_MinigameCoaster[8] = { 7, 0x60012, 0x60010, 0x60000, 0x60001, 0x60002, 0x60098, 0x6006D };
+s32* D_80103F4C_40BA7C_MinigameCoaster[6] = { D_80103E8C_40B9BC_MinigameCoaster, D_80103EAC_40B9DC_MinigameCoaster, D_80103ECC_40B9FC_MinigameCoaster, D_80103EEC_40BA1C_MinigameCoaster, D_80103F0C_40BA3C_MinigameCoaster, D_80103F2C_40BA5C_MinigameCoaster };
+s32 D_80103F64_40BA94_MinigameCoaster[] = { 3, 0x80036, 0x80037, 0x80038 };
+Vec D_80103F74_40BAA4_MinigameCoaster = { -60.0f, 700.0f, 2050.0f };
+Vec D_80103F80_40BAB0_MinigameCoaster[4] = { { -10.0f, 700.0f, 2075.0f }, { 40.0f, 700.0f, 2075.0f }, { 90.0f, 700.0f, 2050.0f }, { -60.0f, 700.0f, 2050.0f } };
+
 #define HOST D_80103E00_40B930_MinigameCoaster[0]
 #define CAR D_80103E00_40B930_MinigameCoaster[3]
 

@@ -2240,7 +2240,7 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     subsegments:
       - [0x406640, c]
-      - [0x40A080, data]
+      - [0x40A080, .data, 406640]
       - [0x40A300, .rodata, 406640]
   - type: code
     start: 0x40A330
@@ -2252,7 +2252,7 @@ segments:
     symbol_name_format: $VRAM_$ROM_$SEG
     subsegments:
       - [0x40A330, c]
-      - [0x40B930, data]
+      - [0x40B930, .data, 40A330]
       - [0x40BAE0, .rodata, 40A330]
   - type: code
     start: 0x40BB00

@@ -2,7 +2,7 @@
 #define _OVL_6E_H
 
 /* Overlay 6E: the Mini-Game Coaster's start. The cast arrives, the rules are explained, the course
-   is chosen (D_800FD8A8.unk04) and the car leaves. One retail file, 40A330.c. .data stays asm (no
+   is chosen (D_800FD8A8.unk04) and the car leaves. One retail file, 40A330.c. .data is C (no
    .bss: its zero words serve for it); .rodata is carved. */
 
 #include "common.h"
