@@ -825,9 +825,9 @@ __asm__(".section .rodata");
 const char D_80113628_37ED28_MinigameParkSetup[] = "p_panel";
 
 #ifdef NON_MATCHING
-/* masked 146 (1351 vs 1363 lines): D_801138E0's copy goes through a stack temporary in
-   retail (lhu/sh, then lwl/lwr); maxPlayers' spill and the s-register choice of the panel
-   loops differ. Logic checked against the asm. */
+/* masked 35, calls equal: the first copy into delayIn is lhu/sh in retail (lwl/lwr here);
+   maxPlayers' store scheduling and the s-register choice of the panel loops differ.
+   Logic checked against the asm. */
 /* Player count: the four models lift their number panels in, the stick picks a panel
    (1-4 players, 1-2 in mode 3), A takes it (players > count become CPUs), B backs out.
    Returns 1 on A, 0 on B. */
@@ -853,7 +853,8 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
     f32 dir;
     f32 t;
 
-    models = D_801138E0_37EFE0_MinigameParkSetup;
+    delayIn = D_801138E0_37EFE0_MinigameParkSetup;
+    models = delayIn;
     delayIn = D_80113618_37ED18_MinigameParkSetup;
     delayOut = D_80113620_37ED20_MinigameParkSetup;
     n = D_80113958_37F058_MinigameParkSetup.padCount;
@@ -923,7 +924,7 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
                 func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
             } else if ((done[i] == 0) & (t > 20.0f)) {
                 if (func_80029E14_2AA14(models.v[i]) != D_801139A0_37F0A0_MinigameParkSetup) {
-                    if (func_80029D0C_2A90C(models.v[i]) <= func_80029CE4_2A8E4(models.v[i])) {
+                    if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
                         func_8002C9C0_2D5C0(models.v[i], D_801139A0_37F0A0_MinigameParkSetup);
                         PlaySound(0xB1);
                     }
@@ -957,7 +958,11 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
     func_8011170C_37CE0C_MinigameParkSetup(0);
     D_8011392C_37F02C_MinigameParkSetup = 1;
     HuPrcSleep(5);
-    func_80110350_37BA50_MinigameParkSetup(maxPlayers == 4 ? 0x55 : 0x69F);
+    if (maxPlayers == 4) {
+        func_80110350_37BA50_MinigameParkSetup(0x55);
+    } else {
+        func_80110350_37BA50_MinigameParkSetup(0x69F);
+    }
     func_801103A4_37BAA4_MinigameParkSetup();
     for (j = 0; j < 4; j++) {
         func_8001A7C8_1B3C8(icon[j], 2.0f);
@@ -1784,9 +1789,10 @@ __asm__(".section .rodata");
 const char D_801136BC_37EDBC_MinigameParkSetup[] = "time20";
 
 #ifdef NON_MATCHING
-/* masked ~230 of 1596 lines: register allocation and spill slots (frame 0x180 vs 0x178),
-   the model-table address arithmetic, the order of the two motion-time calls, and the
-   choice loop's exit test. Logic checked against the asm. */
+/* masked 211, calls equal: register allocation and spill slots (frame 0x180 vs 0x178),
+   the models copy (retail goes through an lhu/sh stack temporary), and the lift-in delay
+   (retail computes n - (i + 1) and converts in each arm; GCC shares the tail here).
+   Logic checked against the asm. */
 /* CPU level: `n` level models (3, or 4 in modes 1-3) lift their "cl_panel" signs in; the
    host asks whether all CPUs share one level (func_801103A4: 0 all, 1 each, -1 B; mode 2
    does not ask). The controlling pad picks a level with the stick and A (B steps back one
@@ -1881,7 +1887,7 @@ s32 func_80107644_372D44_MinigameParkSetup(s16 n) {
     while (1) {
         for (i = 0; i < n; i++) {
             if (dir > 0.0f) {
-                t = frame - (n - (i + 1)) * 10;
+                t = frame - (n - i - 1) * 10;
             } else {
                 t = frame - i * 10;
             }
@@ -1897,11 +1903,11 @@ s32 func_80107644_372D44_MinigameParkSetup(s16 n) {
                 func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
             } else if ((done[i] == 0) & (t > 25.0f)) {
                 if (func_80029E14_2AA14(models.v[i]) != D_801139B2_37F0B2_MinigameParkSetup[0]) {
-                    if (func_80029D0C_2A90C(models.v[i]) <= func_80029CE4_2A8E4(models.v[i])) {
+                    if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
                         PlaySound(0xB1);
                         func_8002C9C0_2D5C0(models.v[i], D_801139B2_37F0B2_MinigameParkSetup[0]);
                     }
-                } else if (func_80029D0C_2A90C(models.v[i]) <= func_80029CE4_2A8E4(models.v[i])) {
+                } else if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
                     func_80029E80_2AA80(models.v[i], 1, 1);
                     done[i] = 1;
                 }
@@ -2023,7 +2029,10 @@ s32 func_80107644_372D44_MinigameParkSetup(s16 n) {
         func_8001A91C_1B51C(sprIcon[D_8011393C_37F03C_MinigameParkSetup], 1.0f, 1.0f);
         D_8011392C_37F02C_MinigameParkSetup = 0;
         HuPrcSleep(5);
-    } while (!((D_80113816_37EF16_MinigameParkSetup == 2) & (level == -1)) && result != 1);
+        if ((D_80113816_37EF16_MinigameParkSetup == 2) & (level == -1)) {
+            break;
+        }
+    } while (result != 1);
     PlaySound(0xB1);
     for (i = 0; i < n; i++) {
         func_80029E80_2AA80(models.v[i], 5, 4);
