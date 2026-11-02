@@ -1988,12 +1988,18 @@ segments:
     dir: overlays/ovl_5C_name
     name: name_5C
     overlay: True
+    subalign: 4
     exclusive_ram_id: minigame
     symbol_name_format: $VRAM_$ROM_$SEG
     bss_size: 0xD00
     subsegments:
       - [0x3906C0, c]
+      - [0x395340, c]
+      - [0x398050, c]
       - [0x39E590, data]
+      - [0x3A0050, .rodata, 3906C0]
+      - [0x3A0150, .rodata, 395340]
+      - [0x3A018C, .rodata, 398050]
       - {0x3A01F0, type: bss, vram: 0x80112330, name: ovl_5C_bss}
   - type: code
     start: 0x3A01F0
