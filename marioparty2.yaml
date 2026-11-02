@@ -2176,7 +2176,7 @@ segments:
     subsegments:
       - [0x3EF7F0, c]
       - [0x3EF820, c]
-      - [0x3F31B0, data]
+      - [0x3F31B0, .data, 3EF820]
       - [0x3F33A0, .rodata, 3EF820]
       - {0x3F33E0, type: bss, vram: 0x801063F0, name: ovl_67_bss}
   - type: code
