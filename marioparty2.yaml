@@ -1305,7 +1305,8 @@ segments:
     subsegments:
       - [0x2386E0, c]
       - [0x23F020, c]
-      - [0x243CA0, data]
+      - [0x243CA0, .data, 2386E0]
+      - [0x2459E0, .data, 23F020]
       - [0x245B30, .rodata, 2386E0]
       - [0x246010, .rodata, 23F020]
       - {0x246110, type: bss, vram: 0x80110230, name: ovl_30_bss}

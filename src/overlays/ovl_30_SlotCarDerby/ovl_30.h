@@ -356,7 +356,7 @@ extern omObjData* D_800FFFD8_100BD8[]; /* player objects */
 extern u8 D_800FA656; /* minigame variant: the course here */
 
 /* ---------------------------------------------------------------------------------------------
-   .data (243CA0.data.s, stays asm): MP1 name in the comment
+   .data (defined in 2386E0.c and 23F020.c): MP1 name in the comment
    --------------------------------------------------------------------------------------------- */
 extern Vec* D_8010F41C_2452FC_SlotCarDerby[3];    /* MP1 D_80100C70: [course] track points */
 extern u16 D_8010F428_245308_SlotCarDerby[3];    /* MP1 D_80100C78: their counts */
