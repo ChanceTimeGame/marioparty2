@@ -369,66 +369,73 @@ void func_801036F4_122634_RakinEmIn(void) {
 /* The table: turn it and every item on it by 0.75 degrees; an item 450 or more from the centre
    falls off. */
 /* NON_MATCHING: `it` and `o` take each other's saved registers (s1/s2; masked 0, raw 29). */
-#ifdef NON_MATCHING
-void func_8010378C_1226CC_RakinEmIn(omObjData* obj) {
-    Vec c;
-    Vec p;
-    Vec d;
-    RIItem* it;
-    RIObj* o;
-    omObjData* io;
-    u16 frame;
-    s16 i;
+// decomp-permuter
+void func_8010378C_1226CC_RakinEmIn(omObjData *obj)
+{
+  Vec c;
+  Vec p;
+  Vec d;
+  RIItem *it;
+  RIObj *o;
+  omObjData *io;
+  u16 frame;
+  s16 i;
+  it = D_801070B8_125FF8_RakinEmIn;
+ do { for (i = 0; i < 20; i++, it++) { it->flags ^= 2; } } while (0);
+  obj->rot.y = func_80102EB4_121DF4_RakinEmIn(obj->rot.y, 0.75f);
+  c.x = obj->trans.x;
+  c.y = obj->trans.y;
+  c.z = obj->trans.z;
+  for (i = 0; i < 20; i++)
+  {
+    it = &D_801070B8_125FF8_RakinEmIn[i];
+    if (!(it->flags & 4))
+    {
+      o = &D_80107520_126460_RakinEmIn[i];
+      io = o->obj;
+      p.x = io->trans.x;
+      p.y = io->trans.y;
+      p.z = io->trans.z;
+      func_80102B40_121A80_RakinEmIn(&c, &p, &d);
+      it->dist = d.x;
+      d.z = func_80102EB4_121DF4_RakinEmIn(d.z, 0.75f);
+      io->trans.x = it->dist * func_800B80D0_B8CD0(d.z);
+      io->trans.z = it->dist * func_800B75D0_B81D0(d.z);
+      it->angle = (d.z < 90.0f) ? (d.z) : ((d.z < 180.0f) ? (d.z - 90.0f) : ((d.z < 270.0f) ? (d.z - 180.0f) : (d.z - 270.0f)));
+      io->rot.y = func_80102EB4_121DF4_RakinEmIn(io->rot.y, 0.75f);
+      if (io->rot.y >= 240.0f)
+      {
+        frame = io->rot.y - 240.0f;
+      }
+      else
+        if (io->rot.y >= 120.0f)
+      {
+        frame = io->rot.y - 120.0f;
+      }
+      else
+      {
+        frame = io->rot.y;
+      }
+      o->unk_22 = frame / 3.75;
+      func_8003E560_3F160(o->unk_20, o->unk_22);
+      if (d.x >= 450.0f)
+      {
+        o->unk_40 = (io->trans.x > 0.0f) ? (6.5f) : (-6.5f);
+        o->unk_44 = (io->trans.z > 0.0f) ? (6.5f) : (-6.5f);
+        o->unk_38 = -1.0f;
+        o->unk_3C = 0.0f;
+        o->com = 1;
+        it->flags |= 4;
+      }
+      else
+      {
+        o->unk_40 = io->trans.x;
+        o->unk_44 = io->trans.z;
+      }
+    }
+  }
 
-    it = D_801070B8_125FF8_RakinEmIn;
-    for (i = 0; i < 20; i++, it++) {
-        it->flags ^= 2;
-    }
-    obj->rot.y = func_80102EB4_121DF4_RakinEmIn(obj->rot.y, 0.75f);
-    c.x = obj->trans.x;
-    c.y = obj->trans.y;
-    c.z = obj->trans.z;
-    for (i = 0; i < 20; i++) {
-        it = &D_801070B8_125FF8_RakinEmIn[i];
-        if (!(it->flags & 4)) {
-            o = &D_80107520_126460_RakinEmIn[i];
-            io = o->obj;
-            p.x = io->trans.x;
-            p.y = io->trans.y;
-            p.z = io->trans.z;
-            func_80102B40_121A80_RakinEmIn(&c, &p, &d);
-            it->dist = d.x;
-            d.z = func_80102EB4_121DF4_RakinEmIn(d.z, 0.75f);
-            io->trans.x = it->dist * func_800B80D0_B8CD0(d.z);
-            io->trans.z = it->dist * func_800B75D0_B81D0(d.z);
-            it->angle = d.z < 90.0f ? d.z : d.z < 180.0f ? d.z - 90.0f : d.z < 270.0f ? d.z - 180.0f : d.z - 270.0f;
-            io->rot.y = func_80102EB4_121DF4_RakinEmIn(io->rot.y, 0.75f);
-            if (io->rot.y >= 240.0f) {
-                frame = io->rot.y - 240.0f;
-            } else if (io->rot.y >= 120.0f) {
-                frame = io->rot.y - 120.0f;
-            } else {
-                frame = io->rot.y;
-            }
-            o->unk_22 = frame / 3.75;
-            func_8003E560_3F160(o->unk_20, o->unk_22);
-            if (d.x >= 450.0f) {
-                o->unk_40 = (io->trans.x > 0.0f) ? 6.5f : -6.5f;
-                o->unk_44 = (io->trans.z > 0.0f) ? 6.5f : -6.5f;
-                o->unk_38 = -1.0f;
-                o->unk_3C = 0.0f;
-                o->com = 1;
-                it->flags |= 4;
-            } else {
-                o->unk_40 = io->trans.x;
-                o->unk_44 = io->trans.z;
-            }
-        }
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_8010378C_1226CC_RakinEmIn);
-#endif
 
 void func_80103BB0_122AF0_RakinEmIn(omObjData* obj) {
     GroundWork* gw;
