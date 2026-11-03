@@ -325,124 +325,163 @@ void func_8010343C_3267FC_name_4C(s16 roll) {
 
 /* wall: register allocation. Masked 0: `player` wants s2 and the pair of `chain`/`space` s1; retail
    swaps them against GCC's priority order. */
-#ifdef NON_MATCHING
-void func_801034C8_326888_name_4C(void) {
-    GW_SYSTEM* gw = &GwSystem;
-    Vec dir;
-    GW_PLAYER* player;
-    s16 spaceIndex;
-    s16 steps;
-    s32 i;
-    Vec* rot;
-
-    player = BoardPlayerGet(-1);
-    spaceIndex = 0;
-    steps = func_80047DE8_489E8(gw->current_player_index);
-    MBPlayerMotionSet(-1, 0, 2);
-    while (steps != 0) {
-        s16 chain;
-        s16 next;
-        SpaceData* space;
-
-        chain = player->cur_chain_index;
-        next = player->cur_space_index;
-        player->cur_chain_index = player->next_chain_index;
-        player->cur_space_index = player->next_space_index;
-        for (i = 0; i < 4; i++) {
-            func_80063C40_64840(i, 10);
-        }
-        player->cur_chain_index = chain;
-        player->cur_space_index = next;
-        if (((u16)GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))->unk_02 & 0x8000)
-            || func_80063F88_64B88(gw->current_player_index) != 0) {
-            func_800797DC_7A3DC(0x42, gw->current_player_index);
-            MBPlayerMotionSet(-1, 2, 0);
-            ((MBModel*)player->unk_24)->jumpVel = 4.0f;
-            ((MBModel*)player->unk_24)->jumpAccel = -0.5f;
-            func_80056E34_57A34(gw->current_player_index, 15);
-        } else {
-            if (((MBModel*)player->unk_24)->curMot != 0) {
-                MBPlayerMotionSet(-1, 0, 2);
-            }
-            func_80056E34_57A34(gw->current_player_index, 10);
-        }
-        player->cur_chain_index = player->next_chain_index;
-        player->cur_space_index = player->next_space_index;
-        player->next_space_index++;
-        spaceIndex = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
-        space = GetSpaceData(spaceIndex);
-        func_800558E8_564E8(spaceIndex);
-        switch (space->space_type) {
-            case 1:
-            case 2:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 9:
-            case 12:
-                steps--;
-                func_80046E2C_47A2C(gw->current_player_index);
-                func_800553A8_55FA8(spaceIndex);
-                break;
-        }
-        if (steps != 0) {
-            switch (space->space_type) {
-                case 1:
-                case 2:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 9:
-                case 12:
-                    PlaySound(0x315);
-                    break;
-                case 14:
-                    PlaySound(0x315);
-                    break;
-            }
-        } else {
-            switch (space->space_type) {
-                case 4:
-                    PlaySound(0x334);
-                    break;
-                case 1:
-                    PlaySound(0x316);
-                    break;
-                case 2:
-                    PlaySound(0x317);
-                    break;
-                case 12:
-                    PlaySound(0x344);
-                    break;
-                case 5:
-                case 6:
-                    PlaySound(0x371);
-                    break;
-                case 9:
-                    PlaySound(0x372);
-                    break;
-                case 7:
-                    PlaySound(0x373);
-                    break;
-                case 14:
-                    PlaySound(0x341);
-                    break;
-            }
-        }
-        func_800556F4_562F4(spaceIndex, 1);
+// decomp-permuter
+void func_801034C8_326888_name_4C(void)
+{
+  GW_SYSTEM *gw = &GwSystem;
+  Vec dir;
+  GW_PLAYER *player;
+  s16 spaceIndex;
+  s16 steps;
+  s32 i;
+  Vec *rot;
+  player = BoardPlayerGet(-1);
+  spaceIndex = 0;
+  steps = func_80047DE8_489E8(gw->current_player_index);
+  MBPlayerMotionSet(-1, 0, 2);
+  while (steps != 0)
+  {
+    s16 chain;
+    s16 next;
+    SpaceData *space;
+    chain = player->cur_chain_index;
+    next = player->cur_space_index;
+    player->cur_chain_index = player->next_chain_index;
+    player->cur_space_index = player->next_space_index;
+    for (i = 0; i < 4; i++)
+    {
+      func_80063C40_64840(i, 10);
     }
-    MBPlayerMotionSet(-1, -1, 2);
-    func_800556F4_562F4(spaceIndex, 3);
-    func_8005670C_5730C(&dir);
-    rot = &((MBModel*)player->unk_24)->rot;
-    func_80056B78_57778(rot, &dir, rot, 8);
-    func_80061078_61C78(gw->current_player_index);
+
+    player->cur_chain_index = chain;
+    chain = next;
+    player->cur_space_index = chain;
+    if ((((u16) GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))->unk_02) & 0x8000) || (func_80063F88_64B88(gw->current_player_index) != 0))
+    {
+      func_800797DC_7A3DC(0x42, gw->current_player_index);
+      MBPlayerMotionSet(-1, 2, 0);
+      ((MBModel *) player->unk_24)->jumpVel = 4.0f;
+      ((MBModel *) player->unk_24)->jumpAccel = -0.5f;
+      func_80056E34_57A34(gw->current_player_index, 15);
+    }
+    else
+    {
+      if (((MBModel *) player->unk_24)->curMot != 0)
+      {
+        MBPlayerMotionSet(-1, 0, 2);
+      }
+      func_80056E34_57A34(gw->current_player_index, 10);
+    }
+    player->cur_chain_index = player->next_chain_index;
+    player->cur_space_index = player->next_space_index;
+    player->next_space_index++;
+    spaceIndex = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+    space = GetSpaceData(spaceIndex);
+    func_800558E8_564E8(spaceIndex);
+    switch (space->space_type)
+    {
+      case 1:
+
+      case 2:
+
+      case 4:
+
+      case 5:
+
+      case 6:
+
+      case 7:
+
+      case 9:
+
+      case 12:
+        steps--;
+        func_80046E2C_47A2C(gw->current_player_index);
+        func_800553A8_55FA8(spaceIndex);
+        break;
+
+    }
+
+    if (steps != 0)
+    {
+      switch (space->space_type)
+      {
+        case 1:
+
+        case 2:
+
+        case 4:
+
+        case 5:
+
+        case 6:
+
+        case 7:
+
+        case 9:
+
+        case 12:
+          PlaySound(0x315);
+          break;
+
+        case 14:
+          PlaySound(0x315);
+          break;
+
+      }
+
+    }
+    else
+    {
+      switch (space->space_type)
+      {
+        case 4:
+          PlaySound(0x334);
+          break;
+
+        case 1:
+          PlaySound(0x316);
+          break;
+
+        case 2:
+          PlaySound(0x317);
+          break;
+
+        case 12:
+          PlaySound(0x344);
+          break;
+
+        case 5:
+
+        case 6:
+          PlaySound(0x371);
+          break;
+
+        case 9:
+          PlaySound(0x372);
+          break;
+
+        case 7:
+          PlaySound(0x373);
+          break;
+
+        case 14:
+          PlaySound(0x341);
+          break;
+
+      }
+
+    }
+    func_800556F4_562F4(spaceIndex, 1);
+  }
+
+  MBPlayerMotionSet(-1, -1, 2);
+  func_800556F4_562F4(spaceIndex, 3);
+  func_8005670C_5730C(&dir);
+  rot = &((MBModel *) player->unk_24)->rot;
+  func_80056B78_57778(rot, &dir, rot, 8);
+  func_80061078_61C78(gw->current_player_index);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4C_name/325BC0", func_801034C8_326888_name_4C);
-#endif
 
 void func_801037E4_326BA4_name_4C(void) {
     GW_SYSTEM* gw = &GwSystem;
