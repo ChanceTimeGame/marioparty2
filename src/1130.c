@@ -896,8 +896,7 @@ f32 func_800023CC_2FCC(omObjData* obj, f32 x, f32 y, f32 z, Vec3f* n) {
    and the shadow under the new position. Retail never initialises normal (passed to
    func_8000BAF0_C6F0 when nothing was found) and adds the push to x/z twice when
    func_80004168_4D68 returns 2. Host hazard: the uninitialised normal. */
-// block layout (masked 36): retail places the floorY == -65536.0f block inline
-#ifdef NON_MATCHING
+// retail compares floorY with -65536.0f after the model-floor loop and writes it back: a no-op it really executes
 f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused) {
     Vec4f probe;
     Vec3f n;
@@ -1005,6 +1004,11 @@ f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused) {
             if (w->unk_38 < 0.0f) {
                 w->unk_38 = 0.0f;
             }
+            w->unk_53 = -1;
+            if (w->unk_8C != 65536.0f) {
+                y = w->unk_8C - w->unk_34;
+                func_8000BA38_C638(obj, y);
+            }
         } else if (y < floorY) {
             w->unk_53 = D_800BF798_C0398;
             y = func_80003910_4510(obj, floorY);
@@ -1013,14 +1017,13 @@ f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused) {
             if (w->unk_00[(s8)D_800BF798_C0398] & 8) {
                 func_8000C398_CF98();
             }
-            goto done;
+        } else {
+            w->unk_53 = -1;
+            if (w->unk_8C != 65536.0f) {
+                y = w->unk_8C - w->unk_34;
+                func_8000BA38_C638(obj, y);
+            }
         }
-        w->unk_53 = -1;
-        if (w->unk_8C != 65536.0f) {
-            y = w->unk_8C - w->unk_34;
-            func_8000BA38_C638(obj, y);
-        }
-    done:;
     } else {
         probe.x = nx + D_800F94A0_FA0A0;
         probe.y = y;
@@ -1034,9 +1037,6 @@ f32 func_80002A28_3628(omObjData* obj, f32 x, f32 y, f32 z, f32 unused) {
     obj->rot.x = obj->rot.z = w->unk_9C = w->unk_A4 = w->unk_90 = w->unk_94 = w->unk_98 = 0.0f;
     return y;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1130", func_80002A28_3628);
-#endif
 
 /* A player's step with the ground's conveyor push (MP1 func_80002C48): move along rot, push out of
    walls, land on the floor within 35 units or start falling (returns 65536.0f). */
