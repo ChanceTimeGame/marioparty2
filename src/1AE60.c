@@ -83,8 +83,9 @@ s16 func_8001A2F8_1AEF8(s32 arg0) {
 extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
 
 /* Scales each RGBA5551 entry of a sprite's palette by (r, g, b); alpha is kept.
-   NON_MATCHING: register allocation and where the entry is reloaded for alpha (masked 21);
-   permuter candidate. */
+   NON_MATCHING: control flow/loads (masked 21, 93 vs 94): retail reloads *pal for the alpha bit in
+   the first block (no CSE with c) and has no andi after the first lhu; c as u32 and a u32 cast on
+   the red term did not help. Permuter candidate. */
 #ifdef NON_MATCHING
 void func_8001A340_1AF40(s16 sprite, f32 r, f32 g, f32 b) {
     HuSprite_Unk84_Struct* anim = D_800F60B0_F6CB0[sprite];
@@ -118,7 +119,9 @@ void func_8001A4C0_1B0C0() {
     D_800F93FC_F9FFC = NULL;
 }
 
-// MP1 func_80018B2C; logic-equivalent, GCC lays out the two clamp branches differently (masked ~24)
+// MP1 func_80018B2C (MP1 NON_MATCHING too); control flow (masked 24): retail cross-jumps the two clamp
+// tails into one slt/bnezl/sh and has a 0x38 frame (16 bytes unexplained, likely an inlined helper);
+// tried ternary condition, a/b locals, static inline min/max helpers: none reproduce it
 #ifdef NON_MATCHING
 void espMain(void) {
     s32 i;

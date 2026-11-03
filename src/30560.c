@@ -1545,7 +1545,9 @@ void func_80035C18_36818(HmfData*, s16);
 /* MP1 func_8002DC84 (src/2C0C0.c): batch a part's faces and their vertices. MP2 limits a batch's
    vertices by a per-mode table, keeps a vertex slot table (unk60) and records the faces (unkB4)
    only for parts with flag 0x20000 and no 0x06000000. Register allocation and stack slots
-   differ (the record flag and sp1E are allocated differently); otherwise the same code. */
+   differ (the record flag and sp1E are allocated differently); otherwise the same code.
+   Register allocation (masked 60, 552 vs 551): retail spills sp1E as a halfword (lbu; sh 0x1E(sp);
+   lhu at the compare); here loop motion hoists its zero-extension and spills a word (andi; sw). */
 #ifdef NON_MATCHING
 void func_800329E8_335E8(HmfData* arg0, s16 arg1) {
     s16 temp_v0_2;
@@ -2085,7 +2087,10 @@ void func_80035C18_36818(HmfData* arg0, s16 arg1) {
 }
 /* MP1 func_80031054 (src/2C0C0.c, NON_MATCHING there too): combine and render modes for a material.
    Block layout only: GCC turns the 64-bit combine if/else pairs into default-then-override and
-   shares the render-mode tails that retail keeps per arm (masked 119); every branch checked against the asm */
+   shares the render-mode tails that retail keeps per arm: control flow (masked 119, -O1 jump.c
+   if/else-to-default transform on the 64-bit cc arms; s64 cc does not stop it). The D_800F64C6
+   lhu in retail is the low half of D_800F64C4 ((u16) cast here: same address, host-safe).
+   Every branch checked against the asm */
 #ifdef NON_MATCHING
 void func_80035FBC_36BBC(HmfMat* arg0, HmfTexRef* arg1, s32 arg2) {
     u64 cc;
@@ -3400,7 +3405,8 @@ INCLUDE_ASM("asm/nonmatchings/30560", func_8003A2B0_3AEB0);
 #endif
 /* MP1 func_8003589C (src/34D80.c): blend a second motion into the transforms. One load order
    differs (retail loads -180.0f before *dst in the second wrap test, GCC the reverse, plus a nop);
-   everything else is identical */
+   everything else is identical. Register/schedule (masked 73, all from that one shift): with the
+   constant first, reorg lets the val += 360 path skip the reload. -180.0f > *dst does not help */
 #ifdef NON_MATCHING
 void func_8003A4B8_3B0B8(HmfData* arg0, f32 arg1, f32 arg2) {
     HmfMotionSlot* anim;
@@ -3897,7 +3903,10 @@ void func_8003BCBC_3C8BC(HmfModel* arg0, f32 arg1) {
    vertex entry: bits 0-11 the vertex, 14-15 the position delta (3 nibbles, 3 bytes, 3 absolute
    16-bit adds, none), 12-13 the colour delta. Retail advances the colour pointer of the final copy
    only past non-black colours (kept). Not matching yet: block layout and types of the nibble
-   reader, the frame (retail 0x10, here 8) */
+   reader, the frame (retail 0x10, here 8). Control flow (masked 218, retail 18 instructions
+   longer): retail sign-extends (sll/sra) the nibble in both HMF_S4 arms before the join and adds
+   at the join; here GCC folds the extension into the halfword store. rd as u16/s32/u32/u8/s8 and
+   an s32 temporary for each delta were all worse */
 #ifdef NON_MATCHING
 void func_8003BD08_3C908(HmfData* arg0, s16 arg1, f32 arg2) {
     HmfTexAnimSlot* slot;
