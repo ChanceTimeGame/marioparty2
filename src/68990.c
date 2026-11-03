@@ -17,7 +17,9 @@ void _SetFlag(s32 input);
 
 /* MP3 GWInit: clear the common game work (save version 5) and the two other saved blocks */
 // retail stores coinNum/unk74/unk76/unk77 through D_800F8C60's own address, not the bzero
-// pointer's register; and adds gw + i * 8 the other way round (masked 10). Same stores.
+// pointer's register; and adds gw + i * 8 the other way round (control flow: 12 instructions
+// long, masked 10). Same stores. Writing them through gw or bzero(&D_800F8C60) changes nothing;
+// untried: separate globals at 0x800F8CD0..D7 (a label inside D_800F8C60, a host hazard).
 #ifdef NON_MATCHING
 void func_80067D90_68990(void) {
     GW_COMMON* gw = &D_800F8C60;

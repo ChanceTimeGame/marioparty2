@@ -1149,7 +1149,9 @@ void SprAnimKillAll(void) {
 }
 
 /* Loads a sprite animation (MP1 func_800678A4): frames, palette and key banks. */
-// register allocation (pal/idx swap s7/s8, the keys base hoisted) and a reload differ (masked 135)
+// control flow (4 instructions short, masked 26): retail loads anim->unk12 twice for the test and
+// the tbl allocation, and reloads keys[k] for banks->unk04 and key; also pal/idx swap s7/s8 and
+// the keys base is hoisted. The unk18 word test is an offset cast (see below).
 #ifdef NON_MATCHING
 s16 SprAnimRead(void* arg0) {
     u8* data = arg0;
@@ -1829,7 +1831,8 @@ void func_80084148_84D48(void) {
 
 /* Steps a sprite's palette animation; when a frame changes, rebuilds the palette in the next of
    three buffers. */
-// register allocation and the frame-reset branch layout differ (masked 110, 8 bytes short)
+// register allocation (masked 0): i takes a3 where retail uses a1, and the frame pointer shares
+// v0 with dur where retail loads it into v1
 #ifdef NON_MATCHING
 void func_800841B8_84DB8(SprPalAnim* pa) {
     HuSprAnmDesc* desc;
@@ -1849,7 +1852,10 @@ void func_800841B8_84DB8(SprPalAnim* pa) {
             do {
                 if (pa->timer[i] <= 0.0f) {
                     pa->frame[i]++;
-                    if (pa->frame[i] >= grp->nframes || (dur = grp->frames[pa->frame[i]]->dur) <= 0) {
+                    if (pa->frame[i] >= grp->nframes) {
+                        pa->frame[i] = 0;
+                        dur = (*grp->frames)->dur;
+                    } else if ((dur = grp->frames[pa->frame[i]]->dur) <= 0) {
                         pa->frame[i] = 0;
                         dur = (*grp->frames)->dur;
                     }

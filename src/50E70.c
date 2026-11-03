@@ -111,25 +111,15 @@ void func_8005057C_5117C(ProcessHeader* arg0) {
     }
 }
 
-/* MP3 MBGuidePosSet. NON_MATCHING: retail shares the board-7 call with the last arm and keeps
-   arg2 unextended (masked 10); it stores to D_800DF994_E0594, the y of D_800DF990_E0590. */
-#ifdef NON_MATCHING
+/* MP3 MBGuidePosSet. Retail stores to D_800DF994_E0594, the y of D_800DF990_E0590. */
 void func_800505C4_511C4(UnkMBGuideData* guide, s16 y, s16 arg2) {
-    s32 x;
-
     guide->spriteGroup = y;
     D_800DF990_E0590.y = (f32)(y + D_800DF99E_E059E) * 4.0f + 480.0f;
     if (GwSystem.current_board_index == 7) {
-        x = arg2 + 0x50;
-        func_800896DC_8A2DC(guide->amount, 0x4B, guide->spriteGroup + x);
+        func_800896DC_8A2DC(guide->amount, 0x4B, guide->spriteGroup + (s16)(arg2 + 0x50));
     } else if (arg2 != 0 && GwSystem.current_board_index != 8) {
-        x = arg2 + 0x5A;
-        func_800896DC_8A2DC(guide->amount, 0x5B, guide->spriteGroup + x);
+        func_800896DC_8A2DC(guide->amount, 0x5B, guide->spriteGroup + (s16)(arg2 + 0x5A));
     } else {
-        x = arg2 + 0x5A;
-        func_800896DC_8A2DC(guide->amount, 0x4B, guide->spriteGroup + x);
+        func_800896DC_8A2DC(guide->amount, 0x4B, guide->spriteGroup + (s16)(arg2 + 0x5A));
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/50E70", func_800505C4_511C4);
-#endif

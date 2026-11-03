@@ -89,12 +89,14 @@ void func_80025884_26484(Mat4 mtx, f32 angle1, f32 angle2, f32 angle3) {
     }
 }
 
-// retail sets i = 0 once before the test; loop layout otherwise the same (masked 9)
+// retail sets i = 0 once before the test and runs both loops as do-while; register allocation (masked 0): the 3-row loop takes a0/a1/a2 in
+// $f8/$f6/$f4 where retail uses $f4/$f8/$f6
 #ifdef NON_MATCHING
 /* MtxMult (c = a * b) with a fast path when a's last column is (0, 0, 0, 1). */
 void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
     s32 i;
 
+    i = 0;
     if (a[0][3] != 0.0f || a[1][3] != 0.0f || a[2][3] != 0.0f || a[3][3] != 1.0f) {
         f32 a0, a1, a2, a3;
         f32 b00, b10, b20, b30;
@@ -107,12 +109,12 @@ void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
         b02 = b[0][2]; b12 = b[1][2]; b22 = b[2][2]; b32 = b[3][2];
         b03 = b[0][3]; b13 = b[1][3]; b23 = b[2][3]; b33 = b[3][3];
 
-        for (i = 0; i < 4; i++) {
+        do {
             c[i][0] = (a0 = a[i][0]) * b00 + (a1 = a[i][1]) * b10 + (a2 = a[i][2]) * b20 + (a3 = a[i][3]) * b30;
             c[i][1] = a0 * b01 + a1 * b11 + a2 * b21 + a3 * b31;
             c[i][2] = a0 * b02 + a1 * b12 + a2 * b22 + a3 * b32;
             c[i][3] = a0 * b03 + a1 * b13 + a2 * b23 + a3 * b33;
-        }
+        } while (++i < 4);
     } else {
         f32 a0, a1, a2;
         f32 b00, b10, b20;
@@ -125,12 +127,12 @@ void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
         b02 = b[0][2]; b12 = b[1][2]; b22 = b[2][2];
         b03 = b[0][3]; b13 = b[1][3]; b23 = b[2][3];
 
-        for (i = 0; i < 3; i++) {
+        do {
             c[i][0] = (a0 = a[i][0]) * b00 + (a1 = a[i][1]) * b10 + (a2 = a[i][2]) * b20;
             c[i][1] = a0 * b01 + a1 * b11 + a2 * b21;
             c[i][2] = a0 * b02 + a1 * b12 + a2 * b22;
             c[i][3] = a0 * b03 + a1 * b13 + a2 * b23;
-        }
+        } while (++i < 3);
         c[3][0] = (a0 = a[3][0]) * b[0][0] + (a1 = a[3][1]) * b[1][0] + (a2 = a[3][2]) * b[2][0] + b[3][0];
         c[3][1] = a0 * b[0][1] + a1 * b[1][1] + a2 * b[2][1] + b[3][1];
         c[3][2] = a0 * b[0][2] + a1 * b[1][2] + a2 * b[2][2] + b[3][2];
@@ -280,7 +282,8 @@ void func_800264D8_270D8(Mat4 m, f32 x, f32 y, f32 z) {
 }
 
 // MP1 func_80022D9C (src/engine/math.c), also NON_MATCHING there: FPR allocation in the
-// found/else branches
+// found/else branches (masked 9), and the assembler puts a nop after the delay slot of the
+// slope-difference test that retail lacks (one instruction long)
 #ifdef NON_MATCHING
 // Piecewise-quadratic interpolation through four keys (y[], x[]) at time t.
 f32 func_8002662C_2722C(f32* y, f32* x, f32 t) {
