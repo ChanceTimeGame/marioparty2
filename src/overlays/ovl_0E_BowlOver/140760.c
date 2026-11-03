@@ -34,18 +34,15 @@ void func_80106450_1407E0_BowlOver(omObjData* obj) {
 }
 
 /* The shell's shadow: shrinks with height. */
-// load scheduling: retail loads obj->model between the sub.s and the cvt.d (masked 2, as MP1's twin)
-#ifdef NON_MATCHING
-void func_801064C8_140858_BowlOver(omObjData* obj) {
-    f32 s;
-
-    s = (0.4f - obj->trans.y * 0.0015f) * 2.5;
-    func_800297E8_2A3E8(obj->model[1], s, 1.0f, s);
-    func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
+// decomp-permuter
+void func_801064C8_140858_BowlOver(omObjData *obj)
+{
+  f32 s;
+  s = 2.5;
+  s = (0.4f - (obj->trans.y * 0.0015f)) * s;
+  func_800297E8_2A3E8(obj->model[1], (0.4f - (obj->trans.y * 0.0015f)) * 2.5, 1.0f, (0.4f - (obj->trans.y * 0.0015f)) * 2.5);
+  func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/140760", func_801064C8_140858_BowlOver);
-#endif
 
 /* The bowler lets go of the shell at (x, y, z). */
 void func_8010655C_1408EC_BowlOver(omObjData* obj, f32 x, f32 y, f32 z) {
