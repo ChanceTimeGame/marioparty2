@@ -878,32 +878,40 @@ void func_80096708_97308(HVQMPSHeader* header) {
 
 /* Builds the 0x1000 / max reciprocal table and the two clamp tables that turn a colour channel
    (biased by 0x100) into its RGBA5551 field: without and with the alpha bit (alpha's top bit). */
-// register allocation: retail keeps a masked copy of alpha >> 7 (masked 2)
-#ifdef NON_MATCHING
-void func_80096C10_97810(u8 alpha) {
-    s32 i;
-    s32 v;
-    u8 t;
+// decomp-permuter
+void func_80096C10_97810(u8 alpha)
+{
+  unsigned long new_var;
+  s32 i;
+  s32 v;
+  u8 t;
+  D_800F0AE0_F16E0[0] = 0;
+  for (i = 1; i < 0x200; i++)
+  {
+    D_800F0AE0_F16E0[i] = 0x1000 / i;
+  }
 
-    D_800F0AE0_F16E0[0] = 0;
-    for (i = 1; i < 0x200; i++) {
-        D_800F0AE0_F16E0[i] = 0x1000 / i;
+  alpha >>= 7;
+  new_var = alpha;
+  for (i = 0, v = -0x100; i < 0x300; i++, v++)
+  {
+    if (v < 0)
+    {
+      D_800ED910_EE510[i] = 0;
+      D_800EDC10_EE810[i] = new_var;
     }
-    alpha >>= 7;
-    for (i = 0, v = -0x100; i < 0x300; i++, v++) {
-        if (v < 0) {
-            D_800ED910_EE510[i] = 0;
-            D_800EDC10_EE810[i] = alpha;
-        } else if (v >= 0x100) {
-            D_800ED910_EE510[i] = 0x3E;
-            D_800EDC10_EE810[i] = alpha | 0x3E;
-        } else {
-            t = (v >> 2) & 0x3E;
-            D_800ED910_EE510[i] = t;
-            D_800EDC10_EE810[i] = t | alpha;
-        }
+    else
+      if (v >= 0x100)
+    {
+      D_800ED910_EE510[i] = 0x3E;
+      D_800EDC10_EE810[i] = new_var | 0x3E;
     }
+    else
+    {
+      t = (v >> 2) & 0x3E;
+      D_800ED910_EE510[i] = t;
+      D_800EDC10_EE810[i] = t | alpha;
+    }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/93A80", func_80096C10_97810);
-#endif
