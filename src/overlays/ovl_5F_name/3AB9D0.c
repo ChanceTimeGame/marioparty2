@@ -630,14 +630,17 @@ void func_801046A4_3AD844_name_5F(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801046A4_3AD844_name_5F);
 #endif
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801048F0_3ADA90_name_5F(void) {
     f32 s;
-    s16 i;
+    s32 i;
 
     D_80114E48_3BDFE8_name_5F = 0;
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         for (i = 0; i < 5; i++) {
             SprScaleSet(D_80114E46_3BDFE6_name_5F, i, s, s);
         }
@@ -654,9 +657,6 @@ void func_801048F0_3ADA90_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801048F0_3ADA90_name_5F);
-#endif
 
 /* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
 #ifdef NON_MATCHING
@@ -819,14 +819,14 @@ void func_80105110_3AE2B0_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_80105258_3AE3F8_name_5F(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
     f32 s;
 
+    s = 0.0f;
     espDispOn(D_80114E12_3BDFB2_name_5F);
     espDispOn(D_80114E14_3BDFB4_name_5F);
     model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[2]];
@@ -836,34 +836,40 @@ void func_80105258_3AE3F8_name_5F(void) {
     Hu3DCam3DToScreen(0, &pos, &screen);
     espPosSet(D_80114E12_3BDFB2_name_5F, screen.unk_00, 121);
     espPosSet(D_80114E14_3BDFB4_name_5F, screen.unk_00, 121);
-    for (s = 0.0f + 0.1f; !(s >= 1.0f); s += 0.1f) {
+    while (1) {
+        s += 0.1f;
+        if (s >= 1.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
         func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, 1.0f, 1.0f);
-    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, 1.0f, 1.0f);
+    s = 1.0f;
+    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
+    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
     omDelPrcObj(NULL);
     while (1) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105258_3AE3F8_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801053F0_3AE590_name_5F(void) {
     f32 s;
 
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
         func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, 0.0f, 0.0f);
-    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, 0.0f, 0.0f);
+    s = 0.0f;
+    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
+    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
     espDispOff(D_80114E12_3BDFB2_name_5F);
     espDispOff(D_80114E14_3BDFB4_name_5F);
     omDelPrcObj(NULL);
@@ -871,13 +877,9 @@ void func_801053F0_3AE590_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801053F0_3AE590_name_5F);
-#endif
 
-/* NON_MATCHING: stack frame only (retail 0x58 with locals 0x10 higher; calls and code agree) */
-#ifdef NON_MATCHING
 void func_801054EC_3AE68C_name_5F(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
@@ -918,9 +920,6 @@ void func_801054EC_3AE68C_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801054EC_3AE68C_name_5F);
-#endif
 
 void func_801056A8_3AE848_name_5F(void) {
     f32 s;

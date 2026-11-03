@@ -627,13 +627,17 @@ void func_801046A4_3BFE04_name_60(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801046A4_3BFE04_name_60);
 #endif
 
-#ifdef NON_MATCHING
 void func_801048F0_3C0050_name_60(void) {
     f32 s;
-    s16 i;
+    s32 i;
 
     D_80114978_3D00D8_name_60 = 0;
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         for (i = 0; i < 5; i++) {
             SprScaleSet(D_80114976_3D00D6_name_60, i, s, s);
         }
@@ -650,9 +654,6 @@ void func_801048F0_3C0050_name_60(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801048F0_3C0050_name_60);
-#endif
 
 #ifdef NON_MATCHING
 void func_801049F4_3C0154_name_60(void) {
@@ -814,13 +815,14 @@ void func_80105110_3C0870_name_60(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80105258_3C09B8_name_60(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
     f32 s;
 
+    s = 0.0f;
     espDispOn(D_80114942_3D00A2_name_60);
     espDispOn(D_80114944_3D00A4_name_60);
     model = &D_800FC834_FD434[D_801148F8_3D0058_name_60[2]];
@@ -830,33 +832,40 @@ void func_80105258_3C09B8_name_60(void) {
     Hu3DCam3DToScreen(0, &pos, &screen);
     espPosSet(D_80114942_3D00A2_name_60, screen.unk_00, 121);
     espPosSet(D_80114944_3D00A4_name_60, screen.unk_00, 121);
-    for (s = 0.0f + 0.1f; !(s >= 1.0f); s += 0.1f) {
+    while (1) {
+        s += 0.1f;
+        if (s >= 1.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114942_3D00A2_name_60, s, s);
         func_8001A91C_1B51C(D_80114944_3D00A4_name_60, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114942_3D00A2_name_60, 1.0f, 1.0f);
-    func_8001A91C_1B51C(D_80114944_3D00A4_name_60, 1.0f, 1.0f);
+    s = 1.0f;
+    func_8001A91C_1B51C(D_80114942_3D00A2_name_60, s, s);
+    func_8001A91C_1B51C(D_80114944_3D00A4_name_60, s, s);
     omDelPrcObj(NULL);
     while (1) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80105258_3C09B8_name_60);
-#endif
 
-#ifdef NON_MATCHING
 void func_801053F0_3C0B50_name_60(void) {
     f32 s;
 
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114942_3D00A2_name_60, s, s);
         func_8001A91C_1B51C(D_80114944_3D00A4_name_60, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114942_3D00A2_name_60, 0.0f, 0.0f);
-    func_8001A91C_1B51C(D_80114944_3D00A4_name_60, 0.0f, 0.0f);
+    s = 0.0f;
+    func_8001A91C_1B51C(D_80114942_3D00A2_name_60, s, s);
+    func_8001A91C_1B51C(D_80114944_3D00A4_name_60, s, s);
     espDispOff(D_80114942_3D00A2_name_60);
     espDispOff(D_80114944_3D00A4_name_60);
     omDelPrcObj(NULL);
@@ -864,13 +873,9 @@ void func_801053F0_3C0B50_name_60(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801053F0_3C0B50_name_60);
-#endif
 
-/* NON_MATCHING: stack frame only (retail 0x58 with locals 0x10 higher; calls and code agree) */
-#ifdef NON_MATCHING
 void func_801054EC_3C0C4C_name_60(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
@@ -911,9 +916,6 @@ void func_801054EC_3C0C4C_name_60(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_801054EC_3C0C4C_name_60);
-#endif
 
 void func_801056A8_3C0E08_name_60(void) {
     f32 s;
