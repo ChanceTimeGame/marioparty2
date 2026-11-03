@@ -951,26 +951,29 @@ void func_801056A8_3AE848_name_5F(void) {
 }
 
 /* NON_MATCHING: add.s operand order only (retail: step + scale.x in the other register order) */
-#ifdef NON_MATCHING
-void func_8010578C_3AE92C_name_5F(void) {
-    HmfModel* model = &D_800FC834_FD434[D_80114E2A_3BDFCA_name_5F];
-    s32 n = 30;
-    f32 dx = model->pos.x / n;
-    f32 dy = model->pos.y / n;
+// decomp-permuter
+void func_8010578C_3AE92C_name_5F(void)
+{
+  HmfModel *model = &D_800FC834_FD434[D_80114E2A_3BDFCA_name_5F];
+  s32 n = 30;
+  float new_var;
+  f32 dx = model->pos.x / n;
+  f32 dy = model->pos.y / n;
+  new_var = 0.06666667f;
+  do
+  {
+    model->pos.x -= dx;
+    model->pos.y -= dy;
+    model->scale.y = (model->scale.z = (model->scale.x = model->scale.x + new_var));
+    HuPrcVSleep();
+  }
+  while ((--n) != 0);
+  while (1)
+  {
+    HuPrcVSleep();
+  }
 
-    do {
-        model->pos.x -= dx;
-        model->pos.y -= dy;
-        model->scale.y = model->scale.z = model->scale.x = model->scale.x + 0.06666667f;
-        HuPrcVSleep();
-    } while (--n != 0);
-    while (1) {
-        HuPrcVSleep();
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010578C_3AE92C_name_5F);
-#endif
 
 void func_80105860_3AEA00_name_5F(void) {
     s32 n;
@@ -2088,34 +2091,32 @@ void func_80108AEC_3B1C8C_name_5F(void) {
 /* `player`'s newly pressed buttons in `btn`, none for a CPU or once the instructions were
    skipped (D_800F9910 bit 0). Retail reads flag 0x15 and ignores it. */
 /* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
-#ifdef NON_MATCHING
-s32 func_80108B80_3B1D20_name_5F(s32 player, s32 btn) {
-    s32 ret = 0;
-
-    _CheckFlag(0x15);
-    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
-        ret = ContBtnTrg[gPlayers[player].port] & btn;
-    }
-    return ret;
+// decomp-permuter
+s32 func_80108B80_3B1D20_name_5F(s32 player, s32 btn)
+{
+  s32 ret = 0;
+  int new_var;
+  _CheckFlag(0x15);
+  if ((!(gPlayers[player].flags & 1)) && (!(D_800F9910_FA510 & 1)))
+  {
+    new_var = ContBtnTrg[gPlayers[player].port] & btn;
+    ret = new_var;
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108B80_3B1D20_name_5F);
-#endif
 
 /* `player`'s held buttons in `btn` (as func_80108B80). */
 /* NON_MATCHING: register allocation only (masked 0: the button load goes to the result's register) */
-#ifdef NON_MATCHING
-s32 func_80108C24_3B1DC4_name_5F(s32 player, s32 btn) {
-    s32 ret = 0;
-
-    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
-        ret = ContBtn[gPlayers[player].port] & btn;
-    }
-    return ret;
+// decomp-permuter
+s32 func_80108C24_3B1DC4_name_5F(s32 player, s32 btn)
+{
+  s32 ret = 0;
+  if ((!(gPlayers[player].flags & 1)) && (!(D_800F9910_FA510 & 1)))
+  {
+ do { ret = ContBtn[gPlayers[player].port] & btn; } while (0);
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80108C24_3B1DC4_name_5F);
-#endif
 
 /* `player`'s stick on `axis` (0: x, else y), 0 for a CPU, after a skip, or while its minigame
    data disables that axis (flags 0x40 x, 0x80 y). */
