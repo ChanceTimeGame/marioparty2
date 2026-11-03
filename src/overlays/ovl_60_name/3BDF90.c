@@ -940,26 +940,29 @@ void func_801056A8_3C0E08_name_60(void) {
     }
 }
 
-#ifdef NON_MATCHING
-void func_8010578C_3C0EEC_name_60(void) {
-    HmfModel* model = &D_800FC834_FD434[D_8011495A_3D00BA_name_60];
-    s32 n = 30;
-    f32 dx = model->pos.x / n;
-    f32 dy = model->pos.y / n;
+// decomp-permuter
+void func_8010578C_3C0EEC_name_60(void)
+{
+  float new_var;
+  HmfModel *model = &D_800FC834_FD434[D_8011495A_3D00BA_name_60];
+  s32 n = 30;
+  f32 dx = model->pos.x / n;
+  f32 dy = model->pos.y / n;
+  new_var = 0.06666667f;
+  do
+  {
+    model->pos.x -= dx;
+    model->pos.y -= dy;
+    model->scale.y = (model->scale.z = (model->scale.x = model->scale.x + new_var));
+    HuPrcVSleep();
+  }
+  while ((--n) != 0);
+  while (1)
+  {
+    HuPrcVSleep();
+  }
 
-    do {
-        model->pos.x -= dx;
-        model->pos.y -= dy;
-        model->scale.y = model->scale.z = model->scale.x = model->scale.x + 0.06666667f;
-        HuPrcVSleep();
-    } while (--n != 0);
-    while (1) {
-        HuPrcVSleep();
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010578C_3C0EEC_name_60);
-#endif
 
 void func_80105860_3C0FC0_name_60(void) {
     s32 n;
@@ -2062,32 +2065,29 @@ void func_80108AEC_3C424C_name_60(void) {
     func_80102830_3BDF90_name_60();
 }
 
-#ifdef NON_MATCHING
-s32 func_80108B80_3C42E0_name_60(s32 player, s32 btn) {
-    s32 ret = 0;
-
-    _CheckFlag(0x15);
-    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
-        ret = ContBtnTrg[gPlayers[player].port] & btn;
-    }
-    return ret;
+// decomp-permuter
+s32 func_80108B80_3C42E0_name_60(s32 player, s32 btn)
+{
+  int new_var;
+  s32 ret = 0;
+  _CheckFlag(0x15);
+  if ((!(gPlayers[player].flags & 1)) && (!(D_800F9910_FA510 & 1)))
+  {
+    ret = (new_var = ContBtnTrg[gPlayers[player].port] & btn);
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80108B80_3C42E0_name_60);
-#endif
 
-#ifdef NON_MATCHING
-s32 func_80108C24_3C4384_name_60(s32 player, s32 btn) {
-    s32 ret = 0;
-
-    if (!(gPlayers[player].flags & 1) && !(D_800F9910_FA510 & 1)) {
-        ret = ContBtn[gPlayers[player].port] & btn;
-    }
-    return ret;
+// decomp-permuter
+s32 func_80108C24_3C4384_name_60(s32 player, s32 btn)
+{
+  int new_var;
+  s32 ret = 0;
+  if ((!(gPlayers[player].flags & 1)) && (!(D_800F9910_FA510 & 1)))
+  {
+ new_var = ContBtn[gPlayers[player].port]; ret = new_var & btn; }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80108C24_3C4384_name_60);
-#endif
 
 s32 func_80108C8C_3C43EC_name_60(s32 player, s32 axis) {
     s32 ret = 0;
