@@ -461,7 +461,7 @@ void func_801049F4_3C0154_name_60(void);
 void func_80104D08_3C0468_name_60(omObjData*);
 void func_80104DA8_3C0508_name_60(s32, s32, f32, f32, f32);
 void func_80104E98_3C05F8_name_60(s32);
-s32 func_80104F18_3C0678_name_60(s32);
+s32 func_80104F18_3C0678_name_60(u16);
 s32 func_80105008_3C0768_name_60(s32, s32);
 s32 func_801050DC_3C083C_name_60(s32);
 void func_80105110_3C0870_name_60(omObjData*);

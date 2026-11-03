@@ -379,11 +379,9 @@ void func_80103B78_3ACD18_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: control flow and register allocation differ (frame 56 vs 48); the logic follows the asm */
-#ifdef NON_MATCHING
 void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
-    s16 extra;
-    s16 mes;
+    s32 extra;
+    s32 mes;
     s32 last;
     s32 i;
     s32 n;
@@ -397,10 +395,12 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
     if (D_800FA656 != 0 && last == page) {
         switch (D_80114DC0_3BDF60_name_5F + 1) {
         case 42:
-            D_80114DC6_3BDF66_name_5F = D_800FA656 + 0x47;
+            mes = D_800FA656;
+            D_80114DC6_3BDF66_name_5F = mes + 0x47;
             break;
         case 46:
-            D_80114DC6_3BDF66_name_5F = D_800FA656 + 0x49;
+            mes = D_800FA656;
+            D_80114DC6_3BDF66_name_5F = mes + 0x49;
             break;
         default:
             D_80114DC6_3BDF66_name_5F = D_80114DC0_3BDF60_name_5F;
@@ -428,13 +428,20 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
         if (D_80114DC0_3BDF60_name_5F == 0x1E || D_80114DC0_3BDF60_name_5F == 0x42) {
             for (i = 0, n = 0; i < 4; i++) {
                 if (page == 1) {
-                    if (gPlayers[i].group != 0 && gPlayers[i].group != 2) {
-                        continue;
+                    switch (gPlayers[i].group) {
+                    case 0:
+                    case 2:
+                        func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
                     }
-                } else if (gPlayers[i].group != 1 && gPlayers[i].group != 3) {
-                    continue;
+                } else {
+                    switch (gPlayers[i].group) {
+                    case 1:
+                    case 3:
+                        func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
+                    }
                 }
-                func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
             }
         } else if (page == 1) {
             for (i = 0; i < 4; i++) {
@@ -470,9 +477,6 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
     }
     D_80114E3E_3BDFDE_name_5F[1] = func_80089404_8A004(D_80114E3C_3BDFDC_name_5F, (page + 0x14) | 0xB0000, 0x37, -0x28, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103C84_3ACE24_name_5F);
-#endif
 
 void func_801040D0_3AD270_name_5F(omObjData* obj) {
     HmfModel* model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[4]];
@@ -583,8 +587,6 @@ void func_80104650_3AD7F0_name_5F(void) {
     }
 }
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801046A4_3AD844_name_5F(void) {
     f32 s;
     s32 i;
@@ -606,10 +608,10 @@ void func_801046A4_3AD844_name_5F(void) {
         for (i = 0; i < 3; i++) {
             SprAttrReset(D_80114E46_3BDFE6_name_5F, i, 0x8000);
         }
-        if ((s16)((D_80114E3A_3BDFDA_name_5F / 100) % 10) != 0) {
+        if ((s16)((s16)D_80114E3A_3BDFDA_name_5F / 100) % 10 != 0) {
             SprAttrReset(D_80114E46_3BDFE6_name_5F, 4, 0x8000);
             SprAttrReset(D_80114E46_3BDFE6_name_5F, 3, 0x8000);
-        } else if ((s16)((D_80114E3A_3BDFDA_name_5F / 10) % 10) != 0) {
+        } else if ((s16)((s16)D_80114E3A_3BDFDA_name_5F / 10) % 10 != 0) {
             SprAttrReset(D_80114E46_3BDFE6_name_5F, 3, 0x8000);
         }
         if (D_80114E48_3BDFE8_name_5F == 0) {
@@ -622,18 +624,18 @@ void func_801046A4_3AD844_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801046A4_3AD844_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801048F0_3ADA90_name_5F(void) {
     f32 s;
-    s16 i;
+    s32 i;
 
     D_80114E48_3BDFE8_name_5F = 0;
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         for (i = 0; i < 5; i++) {
             SprScaleSet(D_80114E46_3BDFE6_name_5F, i, s, s);
         }
@@ -650,18 +652,13 @@ void func_801048F0_3ADA90_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801048F0_3ADA90_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801049F4_3ADB94_name_5F(void) {
-    s16 coin;
-    s16 digit;
-    s16 frame;
-    s16 grp;
-    s16 i;
+    s32 coin;
+    s32 digit;
+    s32 frame;
+    s32 grp;
+    s32 i;
 
     if (_CheckFlag(0x13) == 0) {
         D_80114E3A_3BDFDA_name_5F = D_800F9208_F9E08;
@@ -672,28 +669,26 @@ void func_801049F4_3ADB94_name_5F(void) {
     coin = func_8001A2F8_1AEF8(0xB001B);
     digit = func_8001A2F8_1AEF8(0xC000D);
     frame = func_8001A2F8_1AEF8(0xB001C);
-    D_80114E46_3BDFE6_name_5F = grp = SprCreate(5, 5);
+    grp = SprCreate(5, 5);
+    D_80114E46_3BDFE6_name_5F = grp;
     SprAnimSet(grp, 0, coin, 0);
     func_800824F4_830F4(grp, 0, -1);
     SprAttrSet(grp, 0, 0x9000);
     SprAnimSet(grp, 1, frame, 0);
     func_800824F4_830F4(grp, 1, 0);
     SprAttrSet(grp, 1, 0x9000);
-    for (i = 2; i < 5; i++) {
-        SprAnimSet(grp, i, digit, 0);
-        func_800824F4_830F4(grp, i, 0);
-        func_8008225C_82E5C(grp, i, 1);
-        func_8008221C_82E1C(grp, i, 0.0f);
-        SprAttrSet(grp, i, 0x9000);
-        SprPosSet(grp, i, -24 - (i - 2) * 10, 0);
+    for (i = 1; i < 4; i++) {
+        SprAnimSet(grp, i + 1, digit, 0);
+        func_800824F4_830F4(grp, i + 1, 0);
+        func_8008225C_82E5C(grp, i + 1, 1);
+        func_8008221C_82E1C(grp, i + 1, 0.0f);
+        SprAttrSet(grp, i + 1, 0x9000);
+        SprPosSet(grp, i + 1, -24 - (i - 1) * 10, 0);
     }
-    func_800822A8_82EA8(grp, 2, D_80114E3A_3BDFDA_name_5F % 10, 0);
-    func_800822A8_82EA8(grp, 3, (D_80114E3A_3BDFDA_name_5F / 10) % 10, 0);
-    func_800822A8_82EA8(grp, 4, (D_80114E3A_3BDFDA_name_5F / 100) % 10, 0);
+    func_800822A8_82EA8(grp, 2, (s16)D_80114E3A_3BDFDA_name_5F % 10, 0);
+    func_800822A8_82EA8(grp, 3, (s16)((s16)D_80114E3A_3BDFDA_name_5F / 10) % 10, 0);
+    func_800822A8_82EA8(grp, 4, (s16)((s16)D_80114E3A_3BDFDA_name_5F / 100) % 10, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801049F4_3ADB94_name_5F);
-#endif
 
 void func_80104D08_3ADEA8_name_5F(omObjData* obj) {
     HmfModel* model = &D_800FC834_FD434[obj->work[0]];
@@ -735,9 +730,7 @@ void func_80104E98_3AE038_name_5F(s32 i) {
     obj->work[3] = 0;
 }
 
-/* NON_MATCHING: register allocation and branch-likely layout differ; logic follows the asm */
-#ifdef NON_MATCHING
-s32 func_80104F18_3AE0B8_name_5F(s32 btn) {
+s32 func_80104F18_3AE0B8_name_5F(u16 btn) {
     s32 ret = 0;
     s32 i;
 
@@ -756,19 +749,16 @@ s32 func_80104F18_3AE0B8_name_5F(s32 btn) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80104F18_3AE0B8_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 s32 func_80105008_3AE1A8_name_5F(s32 btn, s32 arg1) {
     s32 ret = 0;
     s32 cpu = 0;
     s32 i;
 
-    if (D_80114DC2_3BDF62_name_5F < 6 && D_80114DC2_3BDF62_name_5F >= 4) {
-        cpu = gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1;
+    if (D_80114DC2_3BDF62_name_5F < 6) {
+        if (D_80114DC2_3BDF62_name_5F >= 4) {
+            cpu = gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1;
+        }
     }
     for (i = 0; i < 4; i++) {
         if (!(gPlayers[i].flags & 1)) {
@@ -782,9 +772,6 @@ s32 func_80105008_3AE1A8_name_5F(s32 btn, s32 arg1) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105008_3AE1A8_name_5F);
-#endif
 
 s32 func_801050DC_3AE27C_name_5F(s32 minigame) {
     s32 ret = 0;
@@ -823,14 +810,14 @@ void func_80105110_3AE2B0_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_80105258_3AE3F8_name_5F(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
     f32 s;
 
+    s = 0.0f;
     espDispOn(D_80114E12_3BDFB2_name_5F);
     espDispOn(D_80114E14_3BDFB4_name_5F);
     model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[2]];
@@ -840,34 +827,40 @@ void func_80105258_3AE3F8_name_5F(void) {
     Hu3DCam3DToScreen(0, &pos, &screen);
     espPosSet(D_80114E12_3BDFB2_name_5F, screen.unk_00, 121);
     espPosSet(D_80114E14_3BDFB4_name_5F, screen.unk_00, 121);
-    for (s = 0.0f + 0.1f; !(s >= 1.0f); s += 0.1f) {
+    while (1) {
+        s += 0.1f;
+        if (s >= 1.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
         func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, 1.0f, 1.0f);
-    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, 1.0f, 1.0f);
+    s = 1.0f;
+    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
+    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
     omDelPrcObj(NULL);
     while (1) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105258_3AE3F8_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (loop/branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 void func_801053F0_3AE590_name_5F(void) {
     f32 s;
 
-    for (s = 1.0f - 0.1f; !(s <= 0.0f); s -= 0.1f) {
+    s = 1.0f;
+    while (1) {
+        s -= 0.1f;
+        if (s <= 0.0f) {
+            break;
+        }
         func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
         func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
         HuPrcVSleep();
     }
-    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, 0.0f, 0.0f);
-    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, 0.0f, 0.0f);
+    s = 0.0f;
+    func_8001A91C_1B51C(D_80114E12_3BDFB2_name_5F, s, s);
+    func_8001A91C_1B51C(D_80114E14_3BDFB4_name_5F, s, s);
     espDispOff(D_80114E12_3BDFB2_name_5F);
     espDispOff(D_80114E14_3BDFB4_name_5F);
     omDelPrcObj(NULL);
@@ -875,13 +868,9 @@ void func_801053F0_3AE590_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801053F0_3AE590_name_5F);
-#endif
 
-/* NON_MATCHING: stack frame only (retail 0x58 with locals 0x10 higher; calls and code agree) */
-#ifdef NON_MATCHING
 void func_801054EC_3AE68C_name_5F(void) {
+    Vec unused; /* fakematch: retail's frame has 16 bytes below pos */
     HmfModel* model;
     Vec pos;
     Vec2f screen;
@@ -922,9 +911,6 @@ void func_801054EC_3AE68C_name_5F(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_801054EC_3AE68C_name_5F);
-#endif
 
 void func_801056A8_3AE848_name_5F(void) {
     f32 s;

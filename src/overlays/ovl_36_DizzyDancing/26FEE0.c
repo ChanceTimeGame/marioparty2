@@ -115,7 +115,7 @@ f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_801029F0_2700D0_DizzyDancing);
 #endif
 
-/* NON_MATCHING: the 180.0f load is scheduled before the near-zero test (same residue as ovl_0A, ovl_23). */
+/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
 #ifdef NON_MATCHING
 void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -124,6 +124,8 @@ void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
+    f32 y;
+    f32 eps;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -141,9 +143,11 @@ void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         yaw = 0.0f;
-        pitch = 180.0f;
+        y = delta.y;
+        eps = 0.0001f;
         horizontal = yaw;
-        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+        pitch = 180.0f;
+        if (!(y > eps) && y < eps) {
             pitch = yaw;
         }
     } else {

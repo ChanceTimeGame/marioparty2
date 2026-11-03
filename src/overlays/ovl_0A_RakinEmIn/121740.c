@@ -139,8 +139,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801029F0_1
 #endif
 
 /* From `from` to `to`: out = { distance, pitch + 90 (degrees), yaw (degrees) }. */
-/* NON_MATCHING: the 180.0f load is scheduled before the near-zero test, not into its delay
-   slots (masked 25; ovl_23's func_80106EB0 has the same residue). */
+/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
 #ifdef NON_MATCHING
 void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -149,6 +148,8 @@ void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
+    f32 y;
+    f32 eps;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -166,9 +167,11 @@ void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         yaw = 0.0f;
-        pitch = 180.0f;
+        y = delta.y;
+        eps = 0.0001f;
         horizontal = yaw;
-        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+        pitch = 180.0f;
+        if (!(y > eps) && y < eps) {
             pitch = yaw;
         }
     } else {
