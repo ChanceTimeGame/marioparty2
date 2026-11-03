@@ -378,10 +378,9 @@ void func_80103B78_3BF2D8_name_60(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80103C84_3BF3E4_name_60(s16 win, s32 page) {
-    s16 extra;
-    s16 mes;
+    s32 extra;
+    s32 mes;
     s32 last;
     s32 i;
     s32 n;
@@ -395,10 +394,12 @@ void func_80103C84_3BF3E4_name_60(s16 win, s32 page) {
     if (D_800FA656 != 0 && last == page) {
         switch (D_801148F0_3D0050_name_60 + 1) {
         case 42:
-            D_801148F6_3D0056_name_60 = D_800FA656 + 0x47;
+            mes = D_800FA656;
+            D_801148F6_3D0056_name_60 = mes + 0x47;
             break;
         case 46:
-            D_801148F6_3D0056_name_60 = D_800FA656 + 0x49;
+            mes = D_800FA656;
+            D_801148F6_3D0056_name_60 = mes + 0x49;
             break;
         default:
             D_801148F6_3D0056_name_60 = D_801148F0_3D0050_name_60;
@@ -426,13 +427,20 @@ void func_80103C84_3BF3E4_name_60(s16 win, s32 page) {
         if (D_801148F0_3D0050_name_60 == 0x1E || D_801148F0_3D0050_name_60 == 0x42) {
             for (i = 0, n = 0; i < 4; i++) {
                 if (page == 1) {
-                    if (gPlayers[i].group != 0 && gPlayers[i].group != 2) {
-                        continue;
+                    switch (gPlayers[i].group) {
+                    case 0:
+                    case 2:
+                        func_80089308_89F08(D_8011496C_3D00CC_name_60, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
                     }
-                } else if (gPlayers[i].group != 1 && gPlayers[i].group != 3) {
-                    continue;
+                } else {
+                    switch (gPlayers[i].group) {
+                    case 1:
+                    case 3:
+                        func_80089308_89F08(D_8011496C_3D00CC_name_60, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
+                    }
                 }
-                func_80089308_89F08(D_8011496C_3D00CC_name_60, (char*)(gPlayers[i].character + 0x1BA), n++);
             }
         } else if (page == 1) {
             for (i = 0; i < 4; i++) {
@@ -468,9 +476,6 @@ void func_80103C84_3BF3E4_name_60(s16 win, s32 page) {
     }
     D_8011496E_3D00CE_name_60[1] = func_80089404_8A004(D_8011496C_3D00CC_name_60, (page + 0x14) | 0xB0000, 0x37, -0x28, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80103C84_3BF3E4_name_60);
-#endif
 
 void func_801040D0_3BF830_name_60(omObjData* obj) {
     HmfModel* model = &D_800FC834_FD434[D_801148F8_3D0058_name_60[4]];

@@ -379,11 +379,9 @@ void func_80103B78_3ACD18_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: control flow and register allocation differ (frame 56 vs 48); the logic follows the asm */
-#ifdef NON_MATCHING
 void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
-    s16 extra;
-    s16 mes;
+    s32 extra;
+    s32 mes;
     s32 last;
     s32 i;
     s32 n;
@@ -397,10 +395,12 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
     if (D_800FA656 != 0 && last == page) {
         switch (D_80114DC0_3BDF60_name_5F + 1) {
         case 42:
-            D_80114DC6_3BDF66_name_5F = D_800FA656 + 0x47;
+            mes = D_800FA656;
+            D_80114DC6_3BDF66_name_5F = mes + 0x47;
             break;
         case 46:
-            D_80114DC6_3BDF66_name_5F = D_800FA656 + 0x49;
+            mes = D_800FA656;
+            D_80114DC6_3BDF66_name_5F = mes + 0x49;
             break;
         default:
             D_80114DC6_3BDF66_name_5F = D_80114DC0_3BDF60_name_5F;
@@ -428,13 +428,20 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
         if (D_80114DC0_3BDF60_name_5F == 0x1E || D_80114DC0_3BDF60_name_5F == 0x42) {
             for (i = 0, n = 0; i < 4; i++) {
                 if (page == 1) {
-                    if (gPlayers[i].group != 0 && gPlayers[i].group != 2) {
-                        continue;
+                    switch (gPlayers[i].group) {
+                    case 0:
+                    case 2:
+                        func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
                     }
-                } else if (gPlayers[i].group != 1 && gPlayers[i].group != 3) {
-                    continue;
+                } else {
+                    switch (gPlayers[i].group) {
+                    case 1:
+                    case 3:
+                        func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
+                        break;
+                    }
                 }
-                func_80089308_89F08(D_80114E3C_3BDFDC_name_5F, (char*)(gPlayers[i].character + 0x1BA), n++);
             }
         } else if (page == 1) {
             for (i = 0; i < 4; i++) {
@@ -470,9 +477,6 @@ void func_80103C84_3ACE24_name_5F(s16 win, s32 page) {
     }
     D_80114E3E_3BDFDE_name_5F[1] = func_80089404_8A004(D_80114E3C_3BDFDC_name_5F, (page + 0x14) | 0xB0000, 0x37, -0x28, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80103C84_3ACE24_name_5F);
-#endif
 
 void func_801040D0_3AD270_name_5F(omObjData* obj) {
     HmfModel* model = &D_800FC834_FD434[D_80114DC8_3BDF68_name_5F[4]];
