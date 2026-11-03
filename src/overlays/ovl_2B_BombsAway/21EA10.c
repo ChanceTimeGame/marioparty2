@@ -450,33 +450,18 @@ void func_80109264_21F654_BombsAway(omObjData* obj) {
     SprPosSet(D_8010E530_224920_BombsAway, 0, 0xA0, D_8010D040_223430_BombsAway + 8);
 }
 
-// register allocation: file/anim in s0/s1 swapped (masked 0)
-#ifdef NON_MATCHING
-void func_80109810_21FC00_BombsAway(void) {
-    BaSplash* p = D_8010E558_224948_BombsAway;
-    void* file;
-    s16 anim;
-    u16 i;
-
-    file = DataRead(0x3B0012);
-    D_8010E534_224924_BombsAway = anim = SprAnimRead(file);
-    DataClose(file);
-    for (i = 0; i < 5; i++, p++) {
-        p->unk_00 = 0;
-        p->unk_02 = 0;
-        p->unk_08 = 0;
-        p->unk_2C = 0;
-        p->unk_0C = 0;
-        p->unk_06 = 0;
-        p->unk_10.x = p->unk_10.y = p->unk_10.z = 1.0f;
-        p->unk_1C.x = p->unk_1C.y = p->unk_1C.z = 0.0f;
-        p->unk_04 = func_80109A68_21FE58_BombsAway(0, SprAnimGet(anim), 0);
-        func_800298A4_2A4A4(p->unk_04, 4, 4);
-    }
+// decomp-permuter
+void func_80109810_21FC00_BombsAway(void)
+{
+  BaSplash *p = D_8010E558_224948_BombsAway;
+  void *file;
+  s16 anim;
+  u16 i;
+  file = DataRead(0x3B0012);
+  D_8010E534_224924_BombsAway = (anim = SprAnimRead(file));
+  DataClose(file);
+ do { for (i = 0; i < 5; i++, p++) { p->unk_00 = 0; p->unk_02 = 0; p->unk_08 = 0; p->unk_2C = 0; p->unk_0C = 0; p->unk_06 = 0; p->unk_10.x = (p->unk_10.y = (p->unk_10.z = 1.0f)); p->unk_1C.x = (p->unk_1C.y = (p->unk_1C.z = 0.0f)); p->unk_04 = func_80109A68_21FE58_BombsAway(0, SprAnimGet(anim), 0); func_800298A4_2A4A4(p->unk_04, 4, 4); } } while (0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_80109810_21FC00_BombsAway);
-#endif
 
 void func_80109908_21FCF8_BombsAway(void) {
     BaSplash* p = D_8010E558_224948_BombsAway;
@@ -876,38 +861,36 @@ u16 func_8010B1AC_22159C_BombsAway(u32 n) {
 }
 
 // retail stores 0 to the second model's unk40 and reads it back for trans and the cannon's x/z
-// rotation (one f2 kept); GCC here takes the 0.0f from unk44 and reloads (masked 5)
-#ifdef NON_MATCHING
-void func_8010B214_221604_BombsAway(omObjData* obj) {
-    BaBomb* p;
-    u16 i;
+// decomp-permuter
+void func_8010B214_221604_BombsAway(omObjData *obj)
+{
+  BaBomb *p;
+  u16 i;
+  obj->func_ptr = func_8010B3B8_2217A8_BombsAway;
+  obj->model[0] = func_80018A30_19630(0x3B0004, 0x99);
+  D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
+  D_800FC834_FD434[obj->model[0]].unk40 = 0.0f;
+  obj->model[1] = func_80018A30_19630(0x3B000C, 0x499);
+  D_800FC834_FD434[obj->model[1]].unk44 = 0.0f;
+  obj->trans.x = (obj->trans.z = (long long) (D_800FC834_FD434[obj->model[1]].unk40 = 0.0f));
+  obj->trans.y = -30.0f;
+  obj->scale.x = (obj->scale.y = (obj->scale.z = 1.0f));
+  D_8010DFF0_2243E0_BombsAway.unk_00.x = 150.0f;
+  D_8010DFF0_2243E0_BombsAway.unk_00.y = -50.0f;
+  D_8010DFF0_2243E0_BombsAway.unk_00.z = -2250.0f;
+  D_8010DFF0_2243E0_BombsAway.unk_18 = -3.5f;
+  D_8010DFF0_2243E0_BombsAway.unk_0C.x = 0.0f;
+  D_8010DFF0_2243E0_BombsAway.unk_0C.y = 50.0f;
+  D_8010DFF0_2243E0_BombsAway.unk_0C.z = 0.0f;
+  for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++)
+  {
+    p->unk_14 = 0;
+    p->unk_10 = 0;
+    p->unk_08 = 0;
+    p->unk_04 = 0;
+  }
 
-    obj->func_ptr = func_8010B3B8_2217A8_BombsAway;
-    obj->model[0] = func_80018A30_19630(0x3B0004, 0x99);
-    D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
-    D_800FC834_FD434[obj->model[0]].unk40 = 0.0f;
-    obj->model[1] = func_80018A30_19630(0x3B000C, 0x499);
-    D_800FC834_FD434[obj->model[1]].unk44 = 0.0f;
-    obj->trans.x = obj->trans.z = D_800FC834_FD434[obj->model[1]].unk40 = 0.0f;
-    obj->trans.y = -30.0f;
-    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_00.x = 150.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_00.y = -50.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_00.z = -2250.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_18 = -3.5f;
-    D_8010DFF0_2243E0_BombsAway.unk_0C.x = 0.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_0C.y = 50.0f;
-    D_8010DFF0_2243E0_BombsAway.unk_0C.z = 0.0f;
-    for (p = D_8010E010_224400_BombsAway, i = 0; i < 3; i++, p++) {
-        p->unk_14 = 0;
-        p->unk_10 = 0;
-        p->unk_08 = 0;
-        p->unk_04 = 0;
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010B214_221604_BombsAway);
-#endif
 
 void func_8010B3B8_2217A8_BombsAway(omObjData* obj) {
     BaBomb* p;
