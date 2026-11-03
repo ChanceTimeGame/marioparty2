@@ -284,25 +284,22 @@ void func_801033B8_4032B8_name_6C(void) {
 
 /* NON_MATCHING: register scheduling: retail forms the slot address (sll/lui/addiu) before the sra of the index;
    same calls, stores and fields. Stays asm in the matching build. */
-#ifdef NON_MATCHING
-/* Slot idx of the pointer models: made once (model 0xAE, clipped). */
-void func_80103428_403328_name_6C(s16 idx) {
-    MBModel** slot;
-    MBModel* obj;
-
-    slot = D_80106794_406694_name_6C + idx;
-    if (*slot == NULL) {
-        obj = func_80043510_44110(0xAE, NULL);
-        func_800298A4_2A4A4(obj->obj->model[0], 0x80000, 0x80000);
-        func_80029A8C_2A68C(obj->obj->model[0]);
-        func_80043DAC_449AC(obj);
-        *slot = obj;
-        obj->attr |= 2;
-    }
+// decomp-permuter
+void func_80103428_403328_name_6C(s16 idx)
+{
+  MBModel **slot;
+  MBModel *obj;
+  ;
+  if ((*(D_80106794_406694_name_6C + idx)) == 0)
+  {
+    obj = func_80043510_44110(0xAE, 0);
+    func_800298A4_2A4A4(obj->obj->model[0], 0x80000, 0x80000);
+    func_80029A8C_2A68C(obj->obj->model[0]);
+    func_80043DAC_449AC(obj);
+    *(D_80106794_406694_name_6C + idx) = obj;
+    obj->attr |= 2;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6C_name/402730", func_80103428_403328_name_6C);
-#endif
 
 void func_801034B8_4033B8_name_6C(void) {
     s32 i;
