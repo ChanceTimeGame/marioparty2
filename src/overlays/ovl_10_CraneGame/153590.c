@@ -76,35 +76,36 @@ void func_80109C00_153720_CraneGame(Gfx** gfx, Mtx* mtx) {
 /* MP1 func_800FD604 (NON_MATCHING there too, masked 0). Retail stores the group count from the low
    byte of unk10 (a byte read at +1). Residue: retail keeps the vertex count and the group count in
    s0 (register allocation). */
-#ifdef NON_MATCHING
-/* Registers a model for collision: copies its vertices and builds each group's face planes. */
-void func_80109E48_153968_CraneGame(CGCol* e, s16 model) {
-    HmfData* m;
-    HmfPart* part;
-    CGColGroup* g;
-    s32 size;
-    s32 i;
+// decomp-permuter
+void func_80109E48_153968_CraneGame(CGCol *e, s16 model)
+{
+  f32 new_var;
+  HmfData *m;
+  HmfPart *part;
+  CGColGroup *g;
+  s32 size;
+  s32 i;
+  m = D_800FC834_FD434[model].hmf;
+  e->model = model;
+  e->unk2 = 4;
+  size = m->unk14 * (sizeof(ColVtx));
+  e->verts = HuMemMemoryAllocPerm(size);
+  bcopy(m->unk54, e->verts, size);
+  e->count = (u8) m->unk10;
+  i = e->count * (sizeof(CGColGroup));
+  e->groups = HuMemMemoryAllocPerm(i);
+  for (i = 0; i < m->unk10; i++)
+  {
+    part = &m->unk64[i];
+    g = &e->groups[i];
+    new_var = (g->radius = sqrtf(((part->unk48 * part->unk48) + (part->unk4A * part->unk4A)) + (part->unk4C * part->unk4C)));
+    g->n = part->unk04;
+    g->faces = HuMemMemoryAllocPerm(g->n * (sizeof(CGColFace)));
+    size = g->n;
+    func_80109FF8_153B18_CraneGame(e->verts, g->faces, part->unk54, size);
+  }
 
-    m = D_800FC834_FD434[model].hmf;
-    e->model = model;
-    e->unk2 = 4;
-    size = m->unk14 * sizeof(ColVtx);
-    e->verts = HuMemMemoryAllocPerm(size);
-    bcopy(m->unk54, e->verts, size);
-    e->count = (u8)m->unk10;
-    e->groups = HuMemMemoryAllocPerm(e->count * sizeof(CGColGroup));
-    for (i = 0; i < m->unk10; i++) {
-        part = &m->unk64[i];
-        g = &e->groups[i];
-        g->radius = sqrtf(part->unk48 * part->unk48 + part->unk4A * part->unk4A + part->unk4C * part->unk4C);
-        g->n = part->unk04;
-        g->faces = HuMemMemoryAllocPerm(g->n * sizeof(CGColFace));
-        func_80109FF8_153B18_CraneGame(e->verts, g->faces, part->unk54, g->n);
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/153590", func_80109E48_153968_CraneGame);
-#endif
 
 /* The plane (unit normal, distance) and dominant axis of each face. */
 void func_80109FF8_153B18_CraneGame(ColVtx* verts, CGColFace* out, HmfFaceRec* f, s16 n) {
