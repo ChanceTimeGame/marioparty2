@@ -1733,17 +1733,16 @@ void func_80107718_32F0D8_name_4E(s32 arg0, s16 arg1) {
 
 /* Puts esprite spr on model's part at its current motion frame. NON_MATCHING: the two argument
    copies in the prologue are swapped (scheduling only). */
-#ifdef NON_MATCHING
-void func_80107748_32F108_name_4E(s16 model, s32 spr, char* part) {
-    f32 mtx[4][4];
-
-    func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
-    func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, mtx);
-    espPosSet(spr, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
+// decomp-permuter
+void func_80107748_32F108_name_4E(s16 model, s32 spr, char *part)
+{
+  short new_var;
+  f32 mtx[4][4];
+  new_var = spr;
+  func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
+  func_8010C96C_33432C_name_4E(model, &D_8010E148_335B08_name_4E, mtx);
+  espPosSet(new_var, D_8010E148_335B08_name_4E.unk_00, D_8010E148_335B08_name_4E.unk_04);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_80107748_32F108_name_4E);
-#endif
 
 /* Puts esprite spr on model's part (its motion object's or hit transform's matrix). NON_MATCHING:
    register allocation only (retail keeps the raw argument in a3 for the else branch). */
