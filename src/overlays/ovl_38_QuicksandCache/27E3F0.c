@@ -59,38 +59,38 @@ void func_801068C0_27E3F0_QuicksandCache(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
-/* Logic complete; register allocation only (obj/s swapped). */
-void func_80106CC0_27E7F0_QuicksandCache(omObjData* obj) {
-    s8 i;
-    QCSand* s;
+// decomp-permuter
+void func_80106CC0_27E7F0_QuicksandCache(omObjData *obj)
+{
+  QCSand *new_var;
+  s8 i;
+  QCSand *s;
+  obj->unk_50 = (s = func_80027154_27D54(sizeof(QCSand), 0x7918));
+  new_var = s;
+  func_800B0EF0_B1AF0(new_var, 0, sizeof(QCSand));
+  for (i = 0; i < 3; i++)
+  {
+    new_var->unk_00[i] = 0.0f;
+    new_var->unk_0C[i] = 0.0f;
+    new_var->unk_18[i] = 0.0f;
+  }
 
-    obj->unk_50 = s = func_80027154_27D54(sizeof(QCSand), 0x7918);
-    func_800B0EF0_B1AF0(s, 0, sizeof(QCSand));
-    for (i = 0; i < 3; i++) {
-        s->unk_00[i] = 0.0f;
-        s->unk_0C[i] = 0.0f;
-        s->unk_18[i] = 0.0f;
-    }
-    s->unk_24 = 0.0f;
-    obj->model[0] = -1;
-    obj->model[1] = LoadFormFile(0x480001, 0x2B9);
-    obj->model[2] = LoadFormFile(0x480002, 0x202B9);
-    obj->model[3] = LoadFormFile(0x480003, 0x202B9);
-    obj->model[4] = LoadFormFile(0x480004, 0x202B9);
-    obj->model[5] = LoadFormFile(0x480005, 0x2B9);
-    func_8002A00C_2AC0C(obj->model[2]);
-    func_8002A00C_2AC0C(obj->model[3]);
-    func_8002A00C_2AC0C(obj->model[4]);
-    func_80029714_2A314(obj->model[1], 0.0f, 0.0f, 0.0f);
-    func_80029714_2A314(obj->model[2], 0.0f, 0.0f, 0.0f);
-    func_80029714_2A314(obj->model[3], 0.0f, 0.0f, 0.0f);
-    func_80029714_2A314(obj->model[4], 0.0f, 0.0f, 0.0f);
-    obj->func_ptr = func_801068C0_27E3F0_QuicksandCache;
+  new_var->unk_24 = 0.0f;
+  obj->model[0] = -1;
+  obj->model[1] = LoadFormFile(0x480001, 0x2B9);
+  obj->model[2] = LoadFormFile(0x480002, 0x202B9);
+  obj->model[3] = LoadFormFile(0x480003, 0x202B9);
+  obj->model[4] = LoadFormFile(0x480004, 0x202B9);
+  obj->model[5] = LoadFormFile(0x480005, 0x2B9);
+  func_8002A00C_2AC0C(obj->model[2]);
+  func_8002A00C_2AC0C(obj->model[3]);
+  func_8002A00C_2AC0C(obj->model[4]);
+  func_80029714_2A314(obj->model[1], 0.0f, 0.0f, 0.0f);
+  func_80029714_2A314(obj->model[2], 0.0f, 0.0f, 0.0f);
+  func_80029714_2A314(obj->model[3], 0.0f, 0.0f, 0.0f);
+  func_80029714_2A314(obj->model[4], 0.0f, 0.0f, 0.0f);
+  obj->func_ptr = func_801068C0_27E3F0_QuicksandCache;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E3F0", func_80106CC0_27E7F0_QuicksandCache);
-#endif
 
 void func_80106E68_27E998_QuicksandCache(omObjData* obj) {
     GroundWork* g = func_80027154_27D54(0xB4, 0x7918);
