@@ -1115,148 +1115,200 @@ void func_80105C04_22C6D4_HoneycombHavoc(void) {
 /* The bees: swarm out of the honeycomb (1-3), chase the queue off screen (4-5); the player at the
    front is out. With one player left (or, with flag 0xC, the human out) the game ends. */
 /* NON_MATCHING: register residue only (v0/v1 swapped in the first players loop of state 5). */
-#ifdef NON_MATCHING
-void func_80105CB8_22C788_HoneycombHavoc(omObjData* obj) {
-    HCBees* work = obj->unk_50;
-    HCPlayer* pw;
-    s32 i;
-    s32 j;
-
-    func_80106324_22CDF4_HoneycombHavoc();
-    switch (obj->work[0]) {
+// decomp-permuter
+void func_80105CB8_22C788_HoneycombHavoc(omObjData *obj)
+{
+  HCBees *work = obj->unk_50;
+  HCPlayer *pw;
+  s32 i;
+  s32 j;
+  func_80106324_22CDF4_HoneycombHavoc();
+  switch (obj->work[0])
+  {
     case 0:
-        break;
+      break;
+
     case 1:
-        work->scale += 0.1f;
-        omSetSca(obj, work->scale, work->scale, work->scale);
-        if (work->scale >= 1.0f) {
-            obj->work[0] = 2;
-            work->angle = 270.0f;
-            work->radius = 12.0f;
-            obj->trans.z = 40.0f;
-            work->dAngle = -15.0f;
-        }
-        break;
-    case 2:
-        obj->trans.x += func_800B7890_B8490(work->angle) * work->radius;
-        obj->trans.y += HuMathSin(work->angle) * work->radius;
-        work->radius += 1.0f;
-        work->angle += work->dAngle;
-        work->dAngle += 0.2f;
-        if (work->angle < -90.0f) {
-            obj->work[0] = 4;
-            work->timer = 0xF;
-            work->angle = 0.0f;
-        }
-        break;
-    case 3:
-        if (--work->timer == 0) {
-            obj->work[0] = 4;
-            work->angle = 70.0f;
-            work->dAngle = -4.0f;
-            work->radius = 30.0f;
-            break;
-        }
-        obj->trans.y += HuMathSin(work->angle) * 5.0f;
-        work->angle += 30.0f;
-        if (work->angle >= 360.0f) {
-            work->angle -= 360.0f;
-        }
-        break;
-    case 4:
-        if (work->hit == 0) {
-            func_80104280_22AD50_HoneycombHavoc();
-            work->hit = 1;
-        }
-        obj->work[0] = 5;
-        work->angle = 0.0f;
-        work->dAngle = 0.0f;
-        work->radius = 0.0f;
-        break;
-    case 5:
-        obj->trans.x -= 24.0f;
-        obj->trans.y += HuMathSin(work->angle) * work->radius;
-        work->angle += work->dAngle;
-        if (work->angle >= 360.0f) {
-            work->angle -= 360.0f;
-        }
-        if (obj->trans.x < -700.0f) {
-            func_800799A4_7A5A4(D_80107350_22DE20_HoneycombHavoc, 5);
-        }
-        if (obj->trans.x < -850.0f) {
-            func_800298A4_2A4A4(D_801076EC_22E1BC_HoneycombHavoc->model[0], 4, 4);
-            obj->work[0] = 6;
-            for (i = 0; i < 4; i++) {
-                pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
-                if (pw->slot == 0) {
-                    pw->out = 1;
-                }
-            }
-            D_80107354_22DE24_HoneycombHavoc--;
-            func_80104180_22AC50_HoneycombHavoc();
-            D_801074C8_22DF98_HoneycombHavoc = 0;
-            if (!_CheckFlag(0xC)) {
-                if (D_80107354_22DE24_HoneycombHavoc < 2) {
-                    func_800794A8_7A0A8(0x28);
-                    for (i = 0; i < 4; i++) {
-                        pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
-                        if (pw->out == 0) {
-                            D_801076AE_22E17E_HoneycombHavoc = pw->player;
-                            pw->state = 0xE;
-                        } else {
-                            pw->state = 0xF;
-                        }
-                    }
-                }
-            } else if (D_80107354_22DE24_HoneycombHavoc < 2) {
-                func_800794A8_7A0A8(0x28);
-                for (i = 0; i < 4; i++) {
-                    pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
-                    if (pw->out == 0) {
-                        D_801076AE_22E17E_HoneycombHavoc = pw->player;
-                        pw->state = 0xE;
-                    } else {
-                        pw->state = 0xF;
-                    }
-                }
-            } else {
-                for (i = 0; i < 4; i++) {
-                    pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
-                    if (gPlayers[pw->player].flags & 1) {
-                        continue;
-                    }
-                    if (pw->out != 1) {
-                        continue;
-                    }
-                    D_801076AE_22E17E_HoneycombHavoc = 5;
-                    func_800794A8_7A0A8(0x28);
-                    func_8006D518_6E118();
-                    pw->limitOn = 0;
-                    pw->state = 0xF;
-                    for (j = 0; j < 4; j++) {
-                        if (i != j) {
-                            pw = D_801076D8_22E1A8_HoneycombHavoc[j]->unk_50;
-                            pw->state = 0xE;
-                        }
-                    }
-                    break;
-                }
-            }
-            func_80079848_7A448(D_80107350_22DE20_HoneycombHavoc);
-            D_80107350_22DE20_HoneycombHavoc = -1;
-            work->hit = 0;
-        }
-        break;
-    case 6:
-        if (D_801074C8_22DF98_HoneycombHavoc++ >= 0x79) {
-            obj->work[0] = 0;
-        }
-        break;
+      work->scale += 0.1f;
+      omSetSca(obj, work->scale, work->scale, work->scale);
+      if (work->scale >= 1.0f)
+    {
+      obj->work[0] = 2;
+      work->angle = 270.0f;
+      work->radius = 12.0f;
+      obj->trans.z = 40.0f;
+      work->dAngle = -15.0f;
     }
+      break;
+
+    case 2:
+      obj->trans.x += func_800B7890_B8490(work->angle) * work->radius;
+      obj->trans.y += HuMathSin(work->angle) * work->radius;
+      work->radius += 1.0f;
+      work->angle += work->dAngle;
+      work->dAngle += 0.2f;
+      if (work->angle < (-90.0f))
+    {
+      obj->work[0] = 4;
+      work->timer = 0xF;
+      work->angle = 0.0f;
+    }
+      break;
+
+    case 3:
+      if ((--work->timer) == 0)
+    {
+      obj->work[0] = 4;
+      work->angle = 70.0f;
+      work->dAngle = -4.0f;
+      work->radius = 30.0f;
+      break;
+    }
+      obj->trans.y += HuMathSin(work->angle) * 5.0f;
+      work->angle += 30.0f;
+      if (work->angle >= 360.0f)
+    {
+      work->angle -= 360.0f;
+    }
+      break;
+
+    case 4:
+      if (work->hit == 0)
+    {
+      func_80104280_22AD50_HoneycombHavoc();
+      work->hit = 1;
+    }
+      obj->work[0] = 5;
+      work->angle = 0.0f;
+      work->dAngle = 0.0f;
+      work->radius = 0.0f;
+      break;
+
+    case 5:
+      obj->trans.x -= 24.0f;
+      obj->trans.y += HuMathSin(work->angle) * work->radius;
+      work->angle += work->dAngle;
+      if (work->angle >= 360.0f)
+    {
+      work->angle -= 360.0f;
+    }
+      if (obj->trans.x < (-700.0f))
+    {
+      func_800799A4_7A5A4(D_80107350_22DE20_HoneycombHavoc, 5);
+    }
+      if (obj->trans.x < (-850.0f))
+    {
+      func_800298A4_2A4A4(D_801076EC_22E1BC_HoneycombHavoc->model[0], 4, 4);
+      obj->work[0] = 6;
+      for (i = 0; i < 4; i++)
+      {
+        if (work)
+        {
+          pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+        }
+        else
+        {
+          pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+        }
+        if (pw->slot == 0)
+        {
+          pw->out = 1;
+        }
+      }
+
+      D_80107354_22DE24_HoneycombHavoc--;
+      func_80104180_22AC50_HoneycombHavoc();
+      D_801074C8_22DF98_HoneycombHavoc = 0;
+      if (!_CheckFlag(0xC))
+      {
+        if (D_80107354_22DE24_HoneycombHavoc < 2)
+        {
+          func_800794A8_7A0A8(0x28);
+          for (i = 0; i < 4; i++)
+          {
+            pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+            if (pw->out == 0)
+            {
+              D_801076AE_22E17E_HoneycombHavoc = pw->player;
+              pw->state = 0xE;
+            }
+            else
+            {
+              pw->state = 0xF;
+            }
+          }
+
+        }
+      }
+      else
+        if (D_80107354_22DE24_HoneycombHavoc < 2)
+      {
+        func_800794A8_7A0A8(0x28);
+        for (i = 0; i < 4; i++)
+        {
+          pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+          if (pw->out == 0)
+          {
+            D_801076AE_22E17E_HoneycombHavoc = pw->player;
+            pw->state = 0xE;
+          }
+          else
+          {
+            pw->state = 0xF;
+          }
+        }
+
+      }
+      else
+      {
+        for (i = 0; i < 4; i++)
+        {
+          pw = D_801076D8_22E1A8_HoneycombHavoc[i]->unk_50;
+          if (gPlayers[pw->player].flags & 1)
+          {
+            continue;
+          }
+          if (pw->out != 1)
+          {
+            continue;
+          }
+          D_801076AE_22E17E_HoneycombHavoc = 5;
+          func_800794A8_7A0A8(0x28);
+          func_8006D518_6E118();
+          pw->limitOn = 0;
+          pw->state = 0xF;
+          for (j = 0; j < 4; j++)
+          {
+            if (i != j)
+            {
+              pw = D_801076D8_22E1A8_HoneycombHavoc[j]->unk_50;
+              pw->state = 0xE;
+            }
+          }
+
+          break;
+        }
+
+      }
+      func_80079848_7A448(D_80107350_22DE20_HoneycombHavoc);
+      D_80107350_22DE20_HoneycombHavoc = -1;
+      work->hit = 0;
+    }
+      break;
+
+    case 6:
+      if (1)
+    {
+    }
+      if ((D_801074C8_22DF98_HoneycombHavoc++) >= 0x79)
+    {
+      obj->work[0] = 0;
+    }
+      break;
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2D_HoneycombHavoc/2292D0", func_80105CB8_22C788_HoneycombHavoc);
-#endif
 
 /* Lets the bees out at (x, y). */
 void func_801062A8_22CD78_HoneycombHavoc(f32 x, f32 y) {
