@@ -270,57 +270,77 @@ void func_8010309C_17AE4C_FiletRelay(s32 i) {
 }
 
 /* A thrown object: flies with drag, splashes, sinks. */
-#ifdef NON_MATCHING
-void func_8010317C_17AF2C_FiletRelay(omObjData* obj) {
-    FRObjWork* w = obj->unk_50;
-    Vec eye;
-    Vec* vel;
-    Vec* acc;
-    s32 i;
-    s32 vol;
-
-    switch (w->state) {
-        case 1:
-            vel = &w->vel;
-            HuVecMulScalar(vel, 0.992f, vel);
-            acc = &w->acc;
-            HuVecCopyXYZ(acc, 0.0f, -0.45f, 0.0f);
-            HuVecAdd(vel, vel, acc);
-            HuVecAdd(&w->pos, &w->pos, vel);
-            if (w->pos.y < -100.0f) {
-                if (func_80108990_180740_FiletRelay() == 2) {
-                    for (i = 0; i < 2; i++) {
-                        func_80108714_1804C4_FiletRelay(i, &eye);
-                        vol = (s32)FR_ABS(eye.z - w->pos.z) / 3 - 50;
-                        if (vol < 127) {
-                            vol = vol > 0 ? vol : 0;
-                            func_800795D8_7A1D8(PlaySound(0x1D5), 127 - vol);
-                        }
-                    }
-                }
-                HuVecCopyXYZ(&w->vel, 0.0f, 0.0f, 0.0f);
-                w->state = 2;
-            }
-            break;
-        case 2:
-            vel = &w->vel;
-            HuVecMulScalar(vel, 0.992f, vel);
-            acc = &w->acc;
-            HuVecCopyXYZ(acc, 0.0f, -0.044999998f, 0.0f);
-            HuVecAdd(vel, vel, acc);
-            HuVecAdd(&w->pos, &w->pos, vel);
-            if (w->pos.y < -150.0f) {
-                w->state = 0;
-            }
-            break;
-        default:
-            return;
+// decomp-permuter
+void func_8010317C_17AF2C_FiletRelay(omObjData *obj)
+{
+  FRObjWork *w = obj->unk_50;
+  Vec eye;
+  Vec *vel;
+  Vec *acc;
+  s32 i;
+  s32 vol;
+  switch (w->state)
+  {
+    case 1:
+      if (w || obj->unk_50)
+    {
+      vel = &w->vel;
+      HuVecMulScalar(vel, 0.992f, vel);
+      acc = &w->acc;
+      HuVecCopyXYZ(acc, 0.0f, -0.45f, 0.0f);
+      HuVecAdd(vel, vel, acc);
+      HuVecAdd(&w->pos, &w->pos, vel);
     }
-    omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
+    else
+    {
+      vel = &w->vel;
+      HuVecMulScalar(vel, 0.992f, vel);
+      acc = &w->acc;
+      HuVecCopyXYZ(acc, 0.0f, -0.45f, 0.0f);
+      HuVecAdd(vel, vel, acc);
+      HuVecAdd(&w->pos, &w->pos, vel);
+    }
+      if (w->pos.y < (-100.0f))
+    {
+      if (func_80108990_180740_FiletRelay() == 2)
+      {
+        for (i = 0; i < 2; i++)
+        {
+          func_80108714_1804C4_FiletRelay(i, &eye);
+          vol = (((s32) (((eye.z - w->pos.z) < 0.0f) ? (-(eye.z - w->pos.z)) : (eye.z - w->pos.z))) / 3) - 50;
+          if (vol < 127)
+          {
+            vol = (vol > 0) ? (vol) : (0);
+            func_800795D8_7A1D8(PlaySound(0x1D5), 127 - vol);
+          }
+        }
+
+      }
+      HuVecCopyXYZ(&w->vel, 0.0f, 0.0f, 0.0f);
+      w->state = 2;
+    }
+      break;
+
+    case 2:
+      vel = &w->vel;
+      HuVecMulScalar(vel, 0.992f, vel);
+      acc = &w->acc;
+      HuVecCopyXYZ(acc, 0.0f, -0.044999998f, 0.0f);
+      HuVecAdd(vel, vel, acc);
+      HuVecAdd(&w->pos, &w->pos, vel);
+      if (w->pos.y < (-150.0f))
+    {
+      w->state = 0;
+    }
+      break;
+
+    default:
+      return;
+
+  }
+
+  omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_8010317C_17AF2C_FiletRelay);
-#endif
 
 /* The thrower: waits, winds up, throws at frame 10 of the last motion. */
 void func_801033D8_17B188_FiletRelay(omObjData* obj) {
