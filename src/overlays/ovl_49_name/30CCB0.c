@@ -2929,7 +2929,6 @@ void func_80107C10_3120C0_name_49(void) {
 __asm__(".section .rodata");
 const char D_801147D8_31EC88_name_49[] = "%d";
 
-#ifdef NON_MATCHING
 void func_80107E10_3122C0_name_49(void) {
     GW_SYSTEM* gw;
     s32 space;
@@ -3058,8 +3057,8 @@ void func_80107E10_3122C0_name_49(void) {
                     HuPrcSleep(30);
                 }
             } else {
-                bank = 1;
                 if (D_800F8D12_F9912 != 0) {
+                    bank = 1;
                     goto intro;
                 }
                 if (gPlayers[gw->current_player_index].coins == 0) {
@@ -3107,9 +3106,6 @@ void func_80107E10_3122C0_name_49(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80107E10_3122C0_name_49);
-#endif
 
 /* Bowser Land's Koopa Bank, Bowser's version: passing the space lends the player 5 coins (20
    if turn_status is set) and adds them to the debt D_800F8CE4[0x1D]; landing on it repays the
