@@ -825,8 +825,8 @@ void osSyncPrintf(const char *fmt, ...);
 f32 func_800B1830_B2430(f32); /* sqrtf */
 
 /* MP3 Hmfload (src/hmfload.c) without the 0x3B records, MP2's object entries (0x68 bytes).
-   Register allocation differs (recordCount stays in s0 where retail spills it, so flags and the
-   counters land in other registers); otherwise the same code. Its string is the unit's only
+   Register allocation (masked 68): recordCount stays in s0 where retail spills it, so flags and the
+   counters land in other registers; a separate second-loop counter or recordCount declared first are worse); otherwise the same code. Its string is the unit's only
    rodata, D2CCC, which starts on a 4-byte boundary a carved object cannot: it is defined at the
    end of 1C7C0.c's carved rodata as D_800D20CC_D2CCC. */
 #ifdef NON_MATCHING

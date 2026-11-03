@@ -712,7 +712,8 @@ void func_8003DEA4_3EAA4(void) {
     }
 }
 
-// register allocation: retail keeps nframes on the stack and data in s4 (masked 20)
+// register allocation: retail keeps nframes on the stack and data in s4 (masked 20; reordering or
+// block-scoping data does not move it)
 #ifdef NON_MATCHING
 /* MP1 func_80039084 (src/388E0.c, NON_MATCHING there): load a sprite bank file into a free slot;
    MP2 frames carry their own palette */
