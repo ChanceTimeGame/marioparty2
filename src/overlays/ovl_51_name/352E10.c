@@ -483,52 +483,67 @@ void func_801037E0_353DF0_name_51(void) {
 
 /* Scrolls the table with the stick (MP1 func_800F7C28) until a player presses A: up/down move the
    cursor, then the first row shown (0..8). */
-#ifdef NON_MATCHING
-/* Registers: retail keeps i in a0 (here v1) and branches to the increment with beqzl. */
-void func_8010418C_35479C_name_51(void) {
-    s32 i;
-
-    HuPrcSleep(2);
-    while (1) {
-        for (i = 0; i < 4; i++) {
-            if (gPlayers[i].flags & 1) {
-                continue;
-            }
-            if (ContDStkTrg[gPlayers[i].port] & 0x1000) {
-                break;
-            }
-            if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x200) {
-                if (D_80108490_358AA0_name_51 != 0) {
-                    D_80108490_358AA0_name_51--;
-                    func_80102B90_3531A0_name_51();
-                } else if (D_8010848C_358A9C_name_51 != 0) {
-                    D_8010848C_358A9C_name_51--;
-                    func_80102B90_3531A0_name_51();
-                }
-                i = 4;
-                break;
-            }
-            if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x100) {
-                if (D_80108490_358AA0_name_51 < 3) {
-                    D_80108490_358AA0_name_51++;
-                    func_80102B90_3531A0_name_51();
-                } else if (D_8010848C_358A9C_name_51 < 8) {
-                    D_8010848C_358A9C_name_51++;
-                    func_80102B90_3531A0_name_51();
-                }
-                i = 4;
-                break;
-            }
+// decomp-permuter
+void func_8010418C_35479C_name_51(void)
+{
+  s32 i;
+  int new_var;
+  HuPrcSleep(2);
+  while (1)
+  {
+    for (i = 0; i < 4; i++)
+    {
+      if (gPlayers[i].flags & 1)
+      {
+        continue;
+      }
+      new_var = 0x1000;
+      if (ContDStkTrg[gPlayers[i].port] & new_var)
+      {
+        break;
+      }
+      if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x200)
+      {
+        if (D_80108490_358AA0_name_51 != 0)
+        {
+          D_80108490_358AA0_name_51--;
+          func_80102B90_3531A0_name_51();
         }
-        if (i != 4) {
-            break;
+        else
+          if (D_8010848C_358A9C_name_51 != 0)
+        {
+          D_8010848C_358A9C_name_51--;
+          func_80102B90_3531A0_name_51();
         }
-        HuPrcVSleep();
+        i = 4;
+        break;
+      }
+      if (D_800FC9E0_FD5E0[gPlayers[i].port] & 0x100)
+      {
+        if (D_80108490_358AA0_name_51 < 3)
+        {
+          D_80108490_358AA0_name_51++;
+          func_80102B90_3531A0_name_51();
+        }
+        else
+          if (D_8010848C_358A9C_name_51 < 8)
+        {
+          D_8010848C_358A9C_name_51++;
+          func_80102B90_3531A0_name_51();
+        }
+        i = 4;
+        break;
+      }
     }
+
+    if (i != 4)
+    {
+      break;
+    }
+    HuPrcVSleep();
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_8010418C_35479C_name_51);
-#endif
 
 /* Frees the table's sprites, windows, the pulse object and the guide (MP1 func_800F7D94). */
 void func_80104308_354918_name_51(void) {
