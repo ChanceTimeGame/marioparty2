@@ -75,7 +75,10 @@ s32 func_8001B434_1C034(Vec* arg0, Vec* arg1, f32 arg2, Vec* arg3) {
     return var_v0;
 }
 
-// float register allocation; GCC reuses the 1.0f constant across blocks (masked 21)
+// control flow then float registers (masked 21, one mtc1 short): GCC CSEs the 1.0f of s + t > 1.0f into
+// f24 and reuses it for d >= 1.0f after the calls; retail reloads it into f0, as if a label split the
+// blocks. Duplicating the copy tails instead of the gotos is worse (29). pad[4] is a frame gap (removing
+// it: masked 45): probably a real unused local or an inlined helper's, not identified.
 #ifdef NON_MATCHING
 s32 func_8001B548_1C148(Vec* arg0, Vec* arg1, Vec* arg2, Vec* arg3, Vec* arg4, Vec* arg5) {
     Vec sp10;
