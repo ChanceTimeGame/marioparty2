@@ -155,48 +155,60 @@ void func_80104C64_1B6DB4_SpeedHockey(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
-/* masked 0: retail keeps obj in s0 and &D_80106BA4 in s1; GCC here swaps them */
-void func_80104D4C_1B6E9C_SpeedHockey(omObjData* obj) {
-    Vec pos;
-    Vec prev;
-    Vec dir;
-    s8 y;
-    f32 z;
-    SHPlayer* w;
-
-    w = obj->unk_50;
-    if (D_80106BA4_1B8CF4_SpeedHockey[func_80106548_1B8698_SpeedHockey()] != NULL) {
-        D_80106BA4_1B8CF4_SpeedHockey[func_80106548_1B8698_SpeedHockey()](obj);
+// decomp-permuter
+void func_80104D4C_1B6E9C_SpeedHockey(omObjData *obj)
+{
+  Vec pos;
+  Vec prev;
+  Vec dir;
+  s8 y;
+  f32 z;
+  SHPlayer *w;
+  w = obj->unk_50;
+  if (D_80106BA4_1B8CF4_SpeedHockey[func_80106548_1B8698_SpeedHockey()] != 0)
+  {
+    D_80106BA4_1B8CF4_SpeedHockey[func_80106548_1B8698_SpeedHockey()](obj);
+  }
+  y = ContStkY[w->port];
+  if ((y >= 0) ? (y >= 6) : ((-y) >= 6))
+  {
+    if (y < (-60))
+    {
+      y = -60;
     }
-    y = ContStkY[w->port];
-    if ((y >= 0) ? (y >= 6) : (-y >= 6)) {
-        if (y < -60) {
-            y = -60;
-        } else if (y > 60) {
-            y = 60;
-        }
-        z = obj->trans.z - (f32)y * 0.82f * 0.1f;
-        if (z < -33.800003f) {
-            z = -33.800003f;
-        }
-        if (z > 33.800003f) {
-            z = 33.800003f;
-        }
-        func_8010463C_1B678C_SpeedHockey(&dir, &pos, &prev);
-        if ((SH_ABS(pos.x - obj->trans.x) > 12.91f && SH_ABS(prev.x - obj->trans.x) > 12.91f) ||
-            (SH_ABS(pos.z - z) > 20.35f && SH_ABS(prev.z - z) > 20.35f)) {
-            obj->trans.z = z;
-        }
+    else
+      if (y > 60)
+    {
+      y = 60;
     }
-    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
-    if (func_801046A0_1B67F0_SpeedHockey(obj) != 0) {
-        omVibrate(w->player, 10, 0, 10);
+    z = obj->trans.z - ((((f32) y) * 0.82f) * 0.1f);
+    if (z < (-33.800003f))
+    {
+      z = -33.800003f;
     }
+    if (z > 33.800003f)
+    {
+      z = 33.800003f;
+    }
+    func_8010463C_1B678C_SpeedHockey(&dir, &pos, &prev);
+    if ((((((pos.x - obj->trans.x) < 0.0f) ? (-(pos.x - obj->trans.x)) : (pos.x - obj->trans.x)) > 12.91f) && ((((prev.x - obj->trans.x) < 0.0f) ? (-(prev.x - obj->trans.x)) : (prev.x - obj->trans.x)) > 12.91f)) || (((((pos.z - z) < 0.0f) ? (-(pos.z - z)) : (pos.z - z)) > 20.35f) && ((((prev.z - z) < 0.0f) ? (-(prev.z - z)) : (prev.z - z)) > 20.35f)))
+    {
+      if (z)
+      {
+        obj->trans.z = z;
+      }
+      else
+      {
+        obj->trans.z = z;
+      }
+    }
+  }
+  func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+  if (func_801046A0_1B67F0_SpeedHockey(obj) != 0)
+  {
+    omVibrate(w->player, 10, 0, 10);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B68F0", func_80104D4C_1B6E9C_SpeedHockey);
-#endif
 
 /* Set up a player object: model, motions, work, paddle slot. */
 void func_801050F0_1B7240_SpeedHockey(omObjData* obj, s32 player, s32 team, s32 paddle) {
