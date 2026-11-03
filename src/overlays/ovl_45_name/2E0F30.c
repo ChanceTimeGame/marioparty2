@@ -2929,7 +2929,6 @@ void func_801078E0_2E6010_name_45(void) {
 __asm__(".section .rodata");
 const char D_80112EF8_2F1628_name_45[] = "%d";
 
-#ifdef NON_MATCHING
 void func_80107AE0_2E6210_name_45(void) {
     GW_SYSTEM* gw;
     s32 space;
@@ -3058,8 +3057,8 @@ void func_80107AE0_2E6210_name_45(void) {
                     HuPrcSleep(30);
                 }
             } else {
-                bank = 1;
                 if (D_800F8D12_F9912 != 0) {
+                    bank = 1;
                     goto intro;
                 }
                 if (gPlayers[gw->current_player_index].coins == 0) {
@@ -3107,9 +3106,6 @@ void func_80107AE0_2E6210_name_45(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80107AE0_2E6210_name_45);
-#endif
 
 void func_80108320_2E6A50_name_45(void) {
     GW_SYSTEM* gw;

@@ -3181,11 +3181,7 @@ const char D_801135C8_2A8898_name_3E[] = "%d";
 
 /* A star space (func_80102C3C 1: buy a star for 20 coins) or the bank (2: passing pays out the
    bank, D_800F8D18; landing pays in up to 5 coins, or a lucky roll pays 5 out; with the star
-   moved there, D_800F8D12, landing sells the star and moves it on).
-   NON_MATCHING: GCC cross-jumps the two 20-coin payouts from MBDlgWinExec on where retail shares
-   only the func_800614B4 call (6 instructions short), and the star-intro label lands before the
-   D_800F8D12 load instead of after it (masked 61). */
-#ifdef NON_MATCHING
+   moved there, D_800F8D12, landing sells the star and moves it on). */
 void func_80108E0C_29E0DC_name_3E(void) {
     GW_SYSTEM* gw;
     s32 space;
@@ -3314,8 +3310,8 @@ void func_80108E0C_29E0DC_name_3E(void) {
                     HuPrcSleep(30);
                 }
             } else {
-                bank = 1;
                 if (D_800F8D12_F9912 != 0) {
+                    bank = 1;
                     goto intro;
                 }
                 if (gPlayers[gw->current_player_index].coins == 0) {
@@ -3363,9 +3359,6 @@ void func_80108E0C_29E0DC_name_3E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80108E0C_29E0DC_name_3E);
-#endif
 /* The coin-collecting space: landing pays the pot (D_800F8CE4[0x1D]) out, passing pays 5 coins in. */
 void func_8010964C_29E91C_name_3E(void) {
     GW_SYSTEM* gw;
