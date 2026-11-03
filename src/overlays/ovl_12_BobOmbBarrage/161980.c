@@ -622,15 +622,16 @@ void func_8010561C_16393C_BobOmbBarrage(void) {
     ai->t++;
 }
 
-#ifdef NON_MATCHING
-void func_801056D4_1639F4_BobOmbBarrage(void) {
-    u8 port = gPlayers[func_80108D24_167044_BobOmbBarrage(0)].port;
-
-    func_801049E0_162D00_BobOmbBarrage(ContStkX[port], ContStkY[port], ContBtn[port]);
+// decomp-permuter
+void func_801056D4_1639F4_BobOmbBarrage(void)
+{
+  u8 new_var;
+  unsigned short new_var2;
+  u8 port = gPlayers[func_80108D24_167044_BobOmbBarrage(0)].port;
+  new_var2 = ContBtn[port];
+  new_var = port;
+  func_801049E0_162D00_BobOmbBarrage(ContStkX[new_var], ContStkY[new_var], new_var2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_801056D4_1639F4_BobOmbBarrage);
-#endif
 
 void func_80105754_163A74_BobOmbBarrage(void) {
     f32 ang;
