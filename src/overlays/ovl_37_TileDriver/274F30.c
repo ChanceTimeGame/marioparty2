@@ -975,24 +975,27 @@ void func_801066F8_278E28_TileDriver(omObjData* obj) {
 }
 
 /* NON_MATCHING: retail computes the gPlayers index in $v1 with the winner in $v0; GCC swaps them (register allocation only, masked 0). */
-#ifdef NON_MATCHING
-void func_801067B4_278EE4_TileDriver(omObjData* obj) {
-    s16 m;
-
-    if (D_80107C46_27A376_TileDriver == 0) {
-        func_800691FC_69DFC(0x13);
-        m = 0x57;
-    } else {
-        func_800691FC_69DFC(6, gPlayers[D_80107C7C_27A3AC_TileDriver].character);
-        m = 0x51;
+// decomp-permuter
+void func_801067B4_278EE4_TileDriver(omObjData *obj)
+{
+  s16 m;
+  if (D_80107C46_27A376_TileDriver == 0)
+  {
+    func_800691FC_69DFC(0x13);
+    m = 0x57;
+  }
+  else
+  {
+    func_800691FC_69DFC(6, gPlayers[D_80107C7C_27A3AC_TileDriver].character);
+    if (((!D_80107C7C_27A3AC_TileDriver) && (!D_80107C7C_27A3AC_TileDriver)) && (!D_80107C7C_27A3AC_TileDriver))
+    {
     }
-    PlayMusic(m);
-    D_80107C08_27A338_TileDriver = 120;
-    obj->func_ptr = func_801066F8_278E28_TileDriver;
+    m = 0x51;
+  }
+  PlayMusic(m);
+  D_80107C08_27A338_TileDriver = 120;
+  obj->func_ptr = func_801066F8_278E28_TileDriver;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801067B4_278EE4_TileDriver);
-#endif
 
 void func_80106844_278F74_TileDriver(omObjData* obj) {
     s16 i;
