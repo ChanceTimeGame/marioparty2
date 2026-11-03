@@ -100,18 +100,17 @@ void func_8001C160_1CD60(char* str, s16 x, s16 y) {
     func_8001C270_1CE70(str, (s16*)0x803AB000, x, y, 1);
 }
 
-// register allocation: x and y swap s1/s2 (masked 0)
-#ifdef NON_MATCHING
-void func_8001C270_1CE70(char* str, s16* fb, s16 x, s16 y, s16 color) {
-    osWritebackDCacheAll();
-    for (; *str != 0; str++, x += 8) {
-        func_8001C320_1CF20(*str, fb, x, y, color);
-    }
-    osWritebackDCacheAll();
+// decomp-permuter
+void func_8001C270_1CE70(char *str, s16 *fb, s16 x, s16 y, s16 color)
+{
+  x++;
+  x--;
+  osWritebackDCacheAll();
+  for (; (*str) != 0; str++, x += 8)
+  {
+    func_8001C320_1CF20(*str, fb, x, y, color);
+ } osWritebackDCacheAll();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1C7C0", func_8001C270_1CE70);
-#endif
 
 /* One 8x8 glyph of D_800BF880_C0480 (64 halfwords per character) into a 320-wide RGBA16 buffer. */
 void func_8001C320_1CF20(s16 c, s16* fb, s16 x, s16 y, s16 color) {
