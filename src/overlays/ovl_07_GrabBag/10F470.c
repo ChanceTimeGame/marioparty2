@@ -336,32 +336,36 @@ void func_80106DD0_1103E0_GrabBag(void) {
 }
 
 /* NON_MATCHING: register allocation (class 4): a2/a3 swap (masked 0) */
-#ifdef NON_MATCHING
-s8 func_80106E38_110448_GrabBag(s8 p) {
-    s32 t[4];
-    s32 i;
-    s32 n;
-    GBPlayer* w;
+// decomp-permuter
+s8 func_80106E38_110448_GrabBag(s8 p)
+{
+  s32 t[4];
+  s32 i;
+  s32 n;
+  GBPlayer *w;
+  for (i = 0; i < 4; i++)
+  {
+    w = D_800FFFD8_100BD8[i]->unk_50;
+    t[i] = w->unk_16E;
+  }
 
-    for (i = 0; i < 4; i++) {
-        w = D_800FFFD8_100BD8[i]->unk_50;
-        t[i] = w->unk_16E;
+  if (((t[0] == t[1]) && (t[0] == t[2])) && (t[0] == t[3]))
+  {
+    return 3;
+  }
+  w = D_800FFFD8_100BD8[p]->unk_50;
+  i = 0;
+  n = i;
+  for (i = i; i < 4; i++)
+  {
+    if (i != p)
+    {
+      n += w->unk_16E < t[i];
     }
-    if (t[0] == t[1] && t[0] == t[2] && t[0] == t[3]) {
-        return 3;
-    }
-    w = D_800FFFD8_100BD8[p]->unk_50;
-    n = 0;
-    for (i = 0; i < 4; i++) {
-        if (i != p) {
-            n += w->unk_16E < t[i];
-        }
-    }
-    return n;
+  }
+
+  return n;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80106E38_110448_GrabBag);
-#endif
 
 /* NON_MATCHING: control flow (class 3): the ending music's tests branch differently and s3 is cleared at the top in retail (masked 42; calls agree) */
 #ifdef NON_MATCHING
@@ -1030,54 +1034,66 @@ void func_80108E94_1124A4_GrabBag(omObjData* a, omObjData* b) {
 }
 
 /* NON_MATCHING: register allocation (class 4): w0/w1 in s3/s2, as MP1's func_800F9ED0 (masked 0) */
-#ifdef NON_MATCHING
-void func_80108F7C_11258C_GrabBag(omObjData* a, omObjData* b) {
-    GBPlayer* w0;
-    GBPlayer* w1;
-
-    w0 = a->unk_50;
-    w1 = b->unk_50;
-    func_800191D4_19DD4(a, 8, (a->trans.x + b->trans.x) / 2.0f, (a->trans.y + b->trans.y) / 2.0f,
-                        (a->trans.z + b->trans.z) / 2.0f, 0.0f, 0.0f);
-    if (func_80109210_112820_GrabBag(a, b) == 1) {
-        w1->unk_161 = 1;
-        w0->unk_161 = 1;
-        w1->w.unk_40 = D_800BF7C8_C03C8;
-        func_80019B9C_1A79C(b, 0xC);
-        w0->w.unk_40 = -D_800BF7C8_C03C8;
-        func_80029714_2A314(a->model[1], a->trans.x, a->trans.y, a->trans.z);
-        func_80019B9C_1A79C(a, 9);
-        D_8010A830_113E40_GrabBag = func_80109388_112998_GrabBag(a, b);
-        D_8010A7D8_113DE8_GrabBag = D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->unk_50;
-        D_8010A7D8_113DE8_GrabBag->unk_AC = w0->unk_15F;
-        D_8010A7D8_113DE8_GrabBag->unk_AD = w0->w.unk_59;
-        if (D_8010A830_113E40_GrabBag % 2 == 0) {
-            D_8010A7D8_113DE8_GrabBag->unk_AE = 0;
-        } else if (D_8010A830_113E40_GrabBag % 2 == 1) {
-            D_8010A7D8_113DE8_GrabBag->unk_AE = 1;
-            func_800797DC_7A3DC(0x111, w1->w.unk_59);
-        }
-        D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.x = b->trans.x;
-        D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.y = b->trans.y;
-        D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.z = b->trans.z;
-        func_800298A4_2A4A4(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->model[0], 4, 0);
-        func_800298A4_2A4A4(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->model[1], 4, 0);
-        func_801032E0_10C8F0_GrabBag(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]);
-        w1->unk_163 = 0;
-    } else {
-        w0->w.unk_40 = -D_800BF7C8_C03C8;
-        func_80019B9C_1A79C(a, 0x1E);
-        w1->w.unk_40 = D_800BF7C8_C03C8;
-        func_80019B9C_1A79C(b, 0x1F);
-        w1->unk_163 = 0;
+// decomp-permuter
+void func_80108F7C_11258C_GrabBag(omObjData *a, omObjData *b)
+{
+  GBPlayer *w0;
+  GBPlayer *w1;
+  w0 = a->unk_50;
+  w1 = b->unk_50;
+  func_800191D4_19DD4(a, 8, (a->trans.x + b->trans.x) / 2.0f, (a->trans.y + b->trans.y) / 2.0f, (a->trans.z + b->trans.z) / 2.0f, 0.0f, 0.0f);
+  if (func_80109210_112820_GrabBag(a, b) == 1)
+  {
+    w1->unk_161 = 1;
+    w0->unk_161 = 1;
+    w1->w.unk_40 = D_800BF7C8_C03C8;
+    func_80019B9C_1A79C(b, 0xC);
+    w0->w.unk_40 = -D_800BF7C8_C03C8;
+    func_80029714_2A314(a->model[1], a->trans.x, a->trans.y, a->trans.z);
+    func_80019B9C_1A79C(a, 9);
+    D_8010A830_113E40_GrabBag = func_80109388_112998_GrabBag(a, b);
+    D_8010A7D8_113DE8_GrabBag = D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->unk_50;
+    D_8010A7D8_113DE8_GrabBag->unk_AC = w0->unk_15F;
+    D_8010A7D8_113DE8_GrabBag->unk_AD = w0->w.unk_59;
+    if ((D_8010A830_113E40_GrabBag % 2) == 0)
+    {
+      D_8010A7D8_113DE8_GrabBag->unk_AE = 0;
     }
+    else
+      if ((D_8010A830_113E40_GrabBag % 2) == 1)
+    {
+      D_8010A7D8_113DE8_GrabBag->unk_AE = 1;
+      func_800797DC_7A3DC(0x111, w1->w.unk_59);
+    }
+    D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.x = b->trans.x;
+    D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.y = b->trans.y;
+    D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->trans.z = b->trans.z;
+    func_800298A4_2A4A4(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->model[0], 4, 0);
+    func_800298A4_2A4A4(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]->model[1], 4, 0);
+    func_801032E0_10C8F0_GrabBag(D_800F9CE0_FA8E0[D_8010A830_113E40_GrabBag]);
+    w1->unk_163 = 0;
+  }
+  else
+  {
+    w0->w.unk_40 = -D_800BF7C8_C03C8;
+    func_80019B9C_1A79C(a, 0x1E);
+    w1->w.unk_40 = D_800BF7C8_C03C8;
+    func_80019B9C_1A79C(b, 0x1F);
+    w1->unk_163 = 0;
+  }
+  if (&b->trans)
+  {
     w0->unk_163 = 0;
     w1->unk_160 = 1;
     w0->unk_160 = 1;
+  }
+  else
+  {
+    w0->unk_163 = 0;
+    w1->unk_160 = 1;
+    w0->unk_160 = 1;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80108F7C_11258C_GrabBag);
-#endif
 
 s32 func_80109210_112820_GrabBag(omObjData* a, omObjData* b) {
     GBPlayer* w0;
