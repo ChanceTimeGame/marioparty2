@@ -20,7 +20,9 @@ GW_PLAYER* BoardPlayerGet(s32 playerIndex);
    shares case 7's compare with case 10). Retail reads node_data1's bytes
    with lbu (offsets 4-7); this C extracts them with shifts so it reads the same values on the host.
    Case 13 tests as one condition so it is not cross-jumped into case 17 (calls agree).
-   Its jump tables stay in the data blob (jtbl_800D2390_D2F90, jtbl_800D23D8_D2FD8). */
+   Its jump tables stay in the data blob (jtbl_800D2390_D2F90, jtbl_800D23D8_D2FD8).
+   Wall class 1 (field widths, by design): retail's lbu 4-7 / lhu 8 / lw 0 need byte views of
+   node_data1/node_data2 that read differently on a little-endian host; left as shifts. */
 #ifdef NON_MATCHING
 /* MP1 src/3F5B0.c's RunDecisionTree, grown to 18 node types. Host: a node's node_data2 is either
    a packed outcome or (negative as s32 on the N64) a pointer to the next node list. */

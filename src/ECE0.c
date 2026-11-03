@@ -454,13 +454,15 @@ void func_8000E0E0_ECE0(SndBankHdr* hdr, u32 rom) {
     }
 }
 
-// register allocation and two reloads (masked 11)
+// register allocation (masked 1): st/buf/rom take s2/s0/s1 instead of s0/s1/s2, and the fxdId copy
+// loads with lhu where retail has lh (an s32 temporary for it is worse)
 #ifdef NON_MATCHING
 s32 func_8000E1F0_EDF0(void) {
     SndState* st = &D_800D5860_D6460;
     s32* buf = (s32*)D_800D5860_D6460.hdrBuf;
     u32 rom;
     s32 size;
+    s32 idx;
 
     D_800D5860_D6460.fxdId = 0;
     D_800D5860_D6460.fxdCount = 0;
@@ -477,10 +479,10 @@ s32 func_8000E1F0_EDF0(void) {
             return 0;
         }
     } else {
-        rom = (u32)st->cfg.fxd;
-        if (rom == 0) {
+        if (st->cfg.fxd == NULL) {
             goto find;
         }
+        rom = (u32)st->cfg.fxd;
         st->cfg.loaded |= 1;
         goto load;
     }
@@ -488,10 +490,11 @@ find:
     if (D_800D5860_D6460.fxdCount == 0 || st->cfg.fxdIndex == 0) {
         return 0;
     }
-    if (D_800D5860_D6460.fxdCount < st->cfg.fxdIndex) {
+    if (D_800D5860_D6460.fxdCount < (idx = st->cfg.fxdIndex)) {
         return 1;
     }
-    rom = (st->cfg.fxdIndex - 1) * 0x208 + 0x10 + st->cfg.fxdRom;
+    rom = (idx - 1) * 0x208 + 0x10;
+    rom += st->cfg.fxdRom;
     st->cfg.loaded |= 2;
 load:
     func_8000EB3C_F73C(buf, rom, 4, 0);
@@ -1115,7 +1118,8 @@ void func_8000F878_10478(SeqPlayer* p) {
     }
 }
 
-// register allocation: heap spilled instead of kept in fp, frame 8 bytes larger (masked 38)
+// register allocation: heap spilled instead of kept in fp (retail then reuses fp for the -1),
+// frame 8 bytes larger and one reload more (masked 47)
 #ifdef NON_MATCHING
 s32 func_8000F968_10568(SndConfig* cfg, ALHeap* heap, s32 numSeqs, s32 arg3) {
     s32 sizes[5];
