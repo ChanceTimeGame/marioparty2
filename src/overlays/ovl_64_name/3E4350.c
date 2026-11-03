@@ -290,8 +290,9 @@ void func_801033F0_3E4F10_name_64(void) {
 
 /* Creates the result screen: fade window, banners, and the lives and coins panels (a sign and
    four digits each, in thousands..units, placed by the number of digits). */
-/* NON_MATCHING: control flow (class 3). Retail reloads val[i] after the zero test on the sign
-   sprite; every call, store and table read agrees. Stays asm in the matching build. */
+/* NON_MATCHING: control flow (class 3, masked 6). The sign-sprite tail now matches (nested zero
+   test); retail lays out the 0xD0004/0xD0005 file choice with the 0xD0005 case falling through
+   (bltz, ours bgezl), and keeps i in s7 (ours s8). Stays asm in the matching build. */
 #ifdef NON_MATCHING
 void func_80103418_3E4F38_name_64(void) {
     s16 cnt[4];
@@ -421,13 +422,18 @@ void func_80103418_3E4F38_name_64(void) {
                 }
                 SprPosSet(spr, j, D_801062F8_3E7E18_name_64[cnt[i]][3 - cnt[i]] - 4, 2);
             }
-        } else if (D_80106404_3E7F24_name_64 == 0 && val[i] != 0) {
-            if (val[i] > 0) {
-                func_800822A8_82EA8(spr, j, 11, 0);
+        } else if (D_80106404_3E7F24_name_64 == 0) {
+            if (val[i] == 0) {
+                SprPosSet(spr, j, -1000, 2);
+                func_800822A8_82EA8(spr, j, 10, 0);
             } else {
-                func_800822A8_82EA8(spr, j, 12, 0);
+                if (val[i] > 0) {
+                    func_800822A8_82EA8(spr, j, 11, 0);
+                } else {
+                    func_800822A8_82EA8(spr, j, 12, 0);
+                }
+                SprPosSet(spr, j, D_801062F8_3E7E18_name_64[cnt[i]][3 - cnt[i]] - 4, 2);
             }
-            SprPosSet(spr, j, D_801062F8_3E7E18_name_64[cnt[i]][3 - cnt[i]] - 4, 2);
         } else {
             SprPosSet(spr, j, -1000, 2);
             func_800822A8_82EA8(spr, j, 10, 0);
