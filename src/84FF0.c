@@ -3106,36 +3106,36 @@ void func_8008CCA8_8D8A8(s16 winId) {
 }
 
 
-// register allocation (masked 0): the window id's load and shift swap s0/v1
-#ifdef NON_MATCHING
-/* MP1 func_80070ED4: closes every window and frees the window system */
-void func_8008CE5C_8DA5C(void) {
-    s16 id;
-    s16 i;
-
-    if (D_800CD850_CE450 != 0) {
-        id = D_800F920C_F9E0C[0].unk64;
-        while (D_800F920C_F9E0C[id].unk64 != -1) {
-            func_8008CCA8_8D8A8(id);
-            id = D_800F920C_F9E0C[id].unk64;
-        }
-        DataCloseTemp(D_800FD8C4_FE4C4);
-        DataCloseTemp(D_800FFDF4_1009F4);
-        DataCloseTemp(D_800FA6F4_FB2F4);
-        HuMemMemoryFreeTemp(D_800F920C_F9E0C);
-        omDelPrcObj(D_800FC87C_FD47C);
-        D_800CD850_CE450 = 0;
-        for (i = 0; i < 0x16; i++) {
-            if (D_800ED8B8_EE4B8[i] != -1) {
-                SprAnimKill(D_800ED8B8_EE4B8[i]);
-            }
-        }
-        SprAnimKill(D_800ED8E4_EE4E4);
+// decomp-permuter
+void func_8008CE5C_8DA5C(void)
+{
+  s16 id;
+  if (D_800CD850_CE450 != 0)
+  {
+    id = D_800F920C_F9E0C[0].unk64;
+    while (D_800F920C_F9E0C[id].unk64 != (-1))
+    {
+      func_8008CCA8_8D8A8(id);
+      id = D_800F920C_F9E0C[id].unk64;
     }
+
+    DataCloseTemp(D_800FD8C4_FE4C4);
+    DataCloseTemp(D_800FFDF4_1009F4);
+    DataCloseTemp(D_800FA6F4_FB2F4);
+    HuMemMemoryFreeTemp(D_800F920C_F9E0C);
+    omDelPrcObj(D_800FC87C_FD47C);
+    D_800CD850_CE450 = 0;
+    for (id = 0; id < 0x16; id++)
+    {
+      if (D_800ED8B8_EE4B8[id] != (-1))
+      {
+        SprAnimKill(D_800ED8B8_EE4B8[id]);
+      }
+    }
+
+    SprAnimKill(D_800ED8E4_EE4E4);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008CE5C_8DA5C);
-#endif
 
 void func_8008CFD0_8DBD0(s16 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4) {
     func_8008D0BC_8DCBC(-(~arg0 == 0), -(~arg1 == 0), -(~arg2 == 0), -(~arg3 == 0), arg4);
