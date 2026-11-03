@@ -1695,7 +1695,8 @@ void func_8002AC10_2B810(s16 arg0, f32 arg1, f32 arg2, s32 arg3) {
 }
 
 /* MP1 func_80026C6C (src/24740.c) */
-// retail keeps a second copy of arg4 (s2) for the switch, as MP1's does (masked 16)
+// retail keeps a second copy of arg4 (s2) for the switch, as MP1's does (register allocation,
+// masked 16; a separate local for the switch or the 0x80 test is copy-propagated away)
 #ifdef NON_MATCHING
 void func_8002ACF0_2B8F0(s16 arg0, f32 arg1, f32 arg2, char* arg3, s32 arg4) {
     HmfData* model = D_800FC834_FD434[arg0].hmf;

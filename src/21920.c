@@ -1212,7 +1212,8 @@ void func_8002529C_25E9C(s16 index, s32 arg1) {
 }
 
 /* Maps a data number (directory 2-7, file 0xD1-0xD3) to a texture-animation key, -1 if none. */
-// retail re-extends a copy of arg0 for the 0xD1 test (masked 6, same logic)
+// retail re-extends a copy of arg0 for the 0xD1 test (one extra move; masked 6, same logic). The
+// FIELDS line is the jump table's own %lo. A switch on the low half or an early 0xD3 return is worse.
 #ifdef NON_MATCHING
 s16 func_800252C4_25EC4(s32 arg0) {
     s16 ret;

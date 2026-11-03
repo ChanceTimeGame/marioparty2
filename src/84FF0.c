@@ -665,7 +665,8 @@ void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u
                 u16 masks, u16 maskt);
 
 // register allocation (masked 87): tstep and sx swap f30/s8, the zero for the initialisers is
-// f30 instead of f20; the code is otherwise retail's
+// f30 instead of f20; the code is otherwise retail's. The n64nmcmp FIELDS lw@0x18 is sx loaded into
+// a GPR, and the beqz/add.s count difference follows from it; moving tstep's declaration does nothing.
 #ifdef NON_MATCHING
 Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam) {
     f32 s0;
@@ -1766,6 +1767,9 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_800888A8_894A8);
 #endif
 
 // MP1 func_8006D650 (NON_MATCHING upstream: retail recomputes (w - 4) / 2 for every store)
+// Control flow (masked 23, +16 instructions): GCC CSEs (w - 4) / 2 and hoists it out of the loop; retail
+// neither merges nor hoists it, even (w - 4), as if the stores sat in separate basic blocks. Wrapping
+// each store in do/while (0) does not change it. D_800CDA91_CE691 is &D_800CDA90_CE690[0].b.
 #ifdef NON_MATCHING
 void func_80088F44_89B44(u8* mask, s16 w, s16 h) {
     s16 i;
@@ -2729,8 +2733,9 @@ s32 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
     return tw->unk_31;
 }
 
-// register allocation (masked 16; MP1 func_8006FE4C has the same residue): the new entry's index and
-// the close-button test reuse sign extensions differently
+// register allocation (masked 14; MP1 func_8006FE4C has the same residue): the new entry's index reuses
+// the compare's sign extension of sel where retail re-extends it. The (u16) on the unkA6 test lets btn
+// go unextended as in retail (same result: unkA6 is a u16).
 #ifdef NON_MATCHING
 /* MP1 func_8006FE4C: moves the choice cursor between the entries; 0 once one is chosen or cancelled */
 s32 func_8008BCB8_8C8B8(s16 winId) {
@@ -2952,7 +2957,7 @@ s32 func_8008BCB8_8C8B8(s16 winId) {
         tw->unkA8 = btn;
         return 0;
     }
-    if ((btn & cancel) || (btn & tw->unkA6)) {
+    if ((btn & cancel) || ((u16)btn & tw->unkA6)) {
         tw->unk9A = 0;
         tw->unkA4 = 0;
         tw->unk_31 = -1;

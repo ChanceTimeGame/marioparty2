@@ -946,8 +946,6 @@ void MBItemDescExec(s32 arg0) {
     HuPrcChildWatch();
 }
 
-/* NON_MATCHING: register allocation; retail rebuilds the 0x18 text code per store (masked 16). */
-#ifdef NON_MATCHING
 /* Koopa suit: take up to 20 coins from every other player on the current player's space. */
 void func_8004E4FC_4F0FC(void) {
     s8 targets[4];
@@ -998,11 +996,11 @@ void func_8004E4FC_4F0FC(void) {
                     str2[2] = 0;
                     func_80056368_56F68(-1, 0x1E7, str0, str1, str2, 0, 0);
                     MBDlgWinClose();
-                    total += coins;
                     func_80056168_56D68();
                     func_800797DC_7A3DC(0xFC, targets[i]);
                     func_8004CA14_4D614(targets[i], -coins);
                     func_800614B4_620B4(targets[i], -coins);
+                    total += coins;
                     HuPrcSleep(30);
                     i++;
                 } else {
@@ -1030,9 +1028,6 @@ void func_8004E4FC_4F0FC(void) {
         func_8004E89C_4F49C();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/4D660", func_8004E4FC_4F0FC);
-#endif
 
 void func_8004E89C_4F49C(void) {
     s32 i = GwSystem.current_player_index;
