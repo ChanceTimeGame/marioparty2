@@ -52,7 +52,7 @@ void func_8005B424_5C024(UnkMBGuideData* arg0, s16 arg1);
 void func_8008E6CC_8F2CC(s16 arg0, s16 arg1);
 void func_8008E2DC_8EEDC(s32 winId, s32 sound);
 void func_8008DF9C_8EB9C(s32 winId, u16 btn);
-s8 func_8008BB48_8C748(s16, s8, s32); /* 84FF0.c */
+s32 func_8008BB48_8C748(s16, s16, s32); /* 84FF0.c (s8 start there; retail callers here extend it to s16) */
 void func_8008AD44_8B944(s16 win);
 void func_800753D4_75FD4(s32 flag);
 void func_8007E070_7EC70(void);
@@ -73,7 +73,8 @@ void func_800737F0_743F0(s32 mes, s32 player) {
 
 /* The board's quit menu (message 0x5C6 choices): 1 saves and quits (0x5C7 confirm, 0x5C8),
    2 quits without saving (0x5C9 and 0x5CA confirm); D_800E20C0_E2CC0 = 1 when quitting. */
-// register allocation: sprite and choice swap s1/s2 (masked 0)
+// register allocation: sprite and choice swap s1/s2 (masked 0 at the reference count since the
+// func_8008BB48_8C748 prototype was fixed to s32 (s16, s16, s32); declaration order does not help)
 #ifdef NON_MATCHING
 void func_8007388C_7448C(s32 player) {
     s32 choice;
