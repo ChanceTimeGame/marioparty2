@@ -857,8 +857,9 @@ void func_80104D3C_41119C_Results(void) {
     }
 }
 
-// retail has the KMC VR4300 mul fix here (a nop before a mult) but 4D3C has not: probably a
-// second file from 80105AB8 (masked 2 with the fix on)
+/* NON_MATCHING: byte-exact when assembled with KMC's VR4300 mul fix on (retail has its nop before
+   the /10 mult), but this unit builds with the fix off, which 80104D3C needs. 0x411F18 is not a
+   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen. */
 #ifdef NON_MATCHING
 /* Redraws each player's bonus coin counter with the coins still to count. */
 void func_80105AB8_411F18_Results(void) {
@@ -882,7 +883,8 @@ void func_80105AB8_411F18_Results(void) {
             nd[i] = 2;
         }
     }
-    for (i = 0, n = 2; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
+        n = 2;
         for (j = 0; j < 3; j++) {
             func_800822A8_82EA8(D_80107CF0_414150_Results[i], n, digits[i][j], 0);
             if (left[i] == 0) {
@@ -903,15 +905,15 @@ void func_80105AB8_411F18_Results(void) {
             }
             SprPosSet(D_80107CF0_414150_Results[i], n, D_801077D8_413C38_Results[nd[i]][2 - nd[i]] - 4, -2);
         }
-        n = 2;
     }
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105AB8_411F18_Results);
 #endif
 
-// retail has the KMC VR4300 mul fix here (a nop before a mult) but 4D3C has not: probably a
-// second file from 80105AB8 (masked 2 with the fix on)
+/* NON_MATCHING: byte-exact when assembled with KMC's VR4300 mul fix on (retail has its nop before
+   the /10 mult), but this unit builds with the fix off, which 80104D3C needs. 0x411F18 is not a
+   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen. */
 #ifdef NON_MATCHING
 /* Redraws each player's minigame coin counter with the coins still to count. */
 void func_80105F50_4123B0_Results(void) {
@@ -935,7 +937,8 @@ void func_80105F50_4123B0_Results(void) {
             nd[i] = 2;
         }
     }
-    for (i = 0, n = 2; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
+        n = 2;
         for (j = 0; j < 3; j++) {
             func_800822A8_82EA8(D_80107D00_414160_Results[i], n, digits[i][j], 0);
             if (left[i] == 0) {
@@ -956,7 +959,6 @@ void func_80105F50_4123B0_Results(void) {
             }
             SprPosSet(D_80107D00_414160_Results[i], n, D_801077EC_413C4C_Results[nd[i]][2 - nd[i]] - 4, 2);
         }
-        n = 2;
     }
 }
 #else
