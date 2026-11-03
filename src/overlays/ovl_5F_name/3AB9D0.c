@@ -739,9 +739,7 @@ void func_80104E98_3AE038_name_5F(s32 i) {
     obj->work[3] = 0;
 }
 
-/* NON_MATCHING: register allocation and branch-likely layout differ; logic follows the asm */
-#ifdef NON_MATCHING
-s32 func_80104F18_3AE0B8_name_5F(s32 btn) {
+s32 func_80104F18_3AE0B8_name_5F(u16 btn) {
     s32 ret = 0;
     s32 i;
 
@@ -760,19 +758,16 @@ s32 func_80104F18_3AE0B8_name_5F(s32 btn) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80104F18_3AE0B8_name_5F);
-#endif
 
-/* NON_MATCHING: code shape differs (branch layout); logic follows the asm */
-#ifdef NON_MATCHING
 s32 func_80105008_3AE1A8_name_5F(s32 btn, s32 arg1) {
     s32 ret = 0;
     s32 cpu = 0;
     s32 i;
 
-    if (D_80114DC2_3BDF62_name_5F < 6 && D_80114DC2_3BDF62_name_5F >= 4) {
-        cpu = gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1;
+    if (D_80114DC2_3BDF62_name_5F < 6) {
+        if (D_80114DC2_3BDF62_name_5F >= 4) {
+            cpu = gPlayers[D_80114DC4_3BDF64_name_5F].flags & 1;
+        }
     }
     for (i = 0; i < 4; i++) {
         if (!(gPlayers[i].flags & 1)) {
@@ -786,9 +781,6 @@ s32 func_80105008_3AE1A8_name_5F(s32 btn, s32 arg1) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80105008_3AE1A8_name_5F);
-#endif
 
 s32 func_801050DC_3AE27C_name_5F(s32 minigame) {
     s32 ret = 0;

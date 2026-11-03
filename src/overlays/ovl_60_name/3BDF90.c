@@ -734,8 +734,7 @@ void func_80104E98_3C05F8_name_60(s32 i) {
     obj->work[3] = 0;
 }
 
-#ifdef NON_MATCHING
-s32 func_80104F18_3C0678_name_60(s32 btn) {
+s32 func_80104F18_3C0678_name_60(u16 btn) {
     s32 ret = 0;
     s32 i;
 
@@ -754,18 +753,16 @@ s32 func_80104F18_3C0678_name_60(s32 btn) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80104F18_3C0678_name_60);
-#endif
 
-#ifdef NON_MATCHING
 s32 func_80105008_3C0768_name_60(s32 btn, s32 arg1) {
     s32 ret = 0;
     s32 cpu = 0;
     s32 i;
 
-    if (D_801148F2_3D0052_name_60 < 6 && D_801148F2_3D0052_name_60 >= 4) {
-        cpu = gPlayers[D_801148F4_3D0054_name_60].flags & 1;
+    if (D_801148F2_3D0052_name_60 < 6) {
+        if (D_801148F2_3D0052_name_60 >= 4) {
+            cpu = gPlayers[D_801148F4_3D0054_name_60].flags & 1;
+        }
     }
     for (i = 0; i < 4; i++) {
         if (!(gPlayers[i].flags & 1)) {
@@ -779,9 +776,6 @@ s32 func_80105008_3C0768_name_60(s32 btn, s32 arg1) {
     }
     return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80105008_3C0768_name_60);
-#endif
 
 s32 func_801050DC_3C083C_name_60(s32 minigame) {
     s32 ret = 0;
