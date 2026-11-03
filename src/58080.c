@@ -2058,44 +2058,50 @@ void func_8005C0B8_5CCB8(void) {
 
 /* NON_MATCHING: register allocation only; retail keeps the selection's raw value in a0 and its
    s16 copy in v1 for the sign test (MP1 func_80051198's twin). */
-#ifdef NON_MATCHING
-s32 func_8005C0D8_5CCD8(s32 arg0) {
-    Process* proc;
-    s16 v;
-    s32 win;
-    GW_SYSTEM* system = &GwSystem;
+// decomp-permuter
+s32 func_8005C0D8_5CCD8(s32 arg0)
+{
+  int new_var;
+  Process *proc;
+  s16 v;
+  s32 win;
+  s16 new_var2;
+  GW_SYSTEM *system = &GwSystem;
+  func_8005BF2C_5CB2C();
+  win = ((s32 (*)(s32, s16)) MBPauseQuitMesCreate)(MBPauseMesNumGet(0x51E), 0x46);
+  func_80089A7C_8A67C(win, 5);
+  func_80089B2C_8A72C(win, 0);
+  func_800890CC_89CCC(win, MBPauseMesNumGet(0x51E), -1, -1);
+  new_var = 0;
+  func_80089A48_8A648(win, 0);
+  while (func_8008BA30_8C630(win) != 0)
+  {
+    HuPrcVSleep();
+  }
 
-    func_8005BF2C_5CB2C();
-    /* retail treats the s16 window id as an int here (as MP1 func_80051198 does) */
-    win = ((s32 (*)(s32, s16))MBPauseQuitMesCreate)(MBPauseMesNumGet(0x51E), 0x46);
-    func_80089A7C_8A67C(win, 5);
-    func_80089B2C_8A72C(win, 0);
-    func_800890CC_89CCC(win, MBPauseMesNumGet(0x51E), -1, -1);
-    func_80089A48_8A648(win, 0);
-    while (func_8008BA30_8C630(win) != 0) {
-        HuPrcVSleep();
+  if (_CheckFlag(0xD) == new_var)
+  {
+    proc = func_8005B7A8_5C3A8(win, D_800CC710_CD310);
+  }
+  else
+  {
+    proc = func_8005B7A8_5C3A8(win, D_800CC718_CD318);
+  }
+  func_8008D59C_8E19C(win, (s16) (1 << arg0));
+  v = func_8008BB48_8C748(win, system->unk_25, 0);
+  if (v >= 0)
+  {
+    if (((new_var2 = v) && new_var2) && new_var2)
+    {
     }
-    if (_CheckFlag(0xD) == 0) {
-        proc = func_8005B7A8_5C3A8(win, D_800CC710_CD310);
-    } else {
-        proc = func_8005B7A8_5C3A8(win, D_800CC718_CD318);
-    }
-    func_8008D59C_8E19C(win, (s16)(1 << arg0));
-    v = func_8008BB48_8C748(win, system->unk_25, 0);
-    if (v >= 0) {
-        if ((v && v) && v) {
-        }
-        D_800CCC14_CD814 = v;
-        system->unk_25 = v;
-    }
-    omDelPrcObj(proc);
-    func_8008CCA8_8D8A8(win);
-    func_8005C0B8_5CCB8();
-    return 4;
+    D_800CCC14_CD814 = new_var2;
+    system->unk_25 = new_var2;
+  }
+  omDelPrcObj(proc);
+  func_8008CCA8_8D8A8(win);
+  func_8005C0B8_5CCB8();
+  return 4;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/58080", func_8005C0D8_5CCD8);
-#endif
 
 s32 func_8005C24C_5CE4C(s32 arg0) {
     Process* proc;
