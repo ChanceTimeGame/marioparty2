@@ -1302,7 +1302,7 @@ f32 func_801073BC_279AEC_TileDriver(f32 x) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801073BC_279AEC_TileDriver);
 #endif
 
-/* NON_MATCHING: the 180.0f load is scheduled before the near-zero test (masked 29; same residue as ovl_0A and ovl_23). */
+/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
 #ifdef NON_MATCHING
 void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     Vec delta;
@@ -1311,6 +1311,8 @@ void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     f32 horizontal;
     f32 pitch;
     f32 yaw;
+    f32 y;
+    f32 eps;
     s32 nearPositive;
     s32 nearNegative;
 
@@ -1328,9 +1330,11 @@ void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
-        pitch = 180.0f;
+        y = delta.y;
+        eps = 0.0001f;
         yaw = horizontal;
-        if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
+        pitch = 180.0f;
+        if (!(y > eps) && y < eps) {
             pitch = horizontal;
         }
     } else {
@@ -1361,8 +1365,9 @@ void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     if (nearPositive & nearNegative) {
         pitch = 0.0f;
     }
-    out->x = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
+    horizontal = func_800B1830_B2430(delta.y * delta.y + horizontal * horizontal);
     out->z = yaw;
+    out->x = horizontal;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_8010750C_279C3C_TileDriver);
