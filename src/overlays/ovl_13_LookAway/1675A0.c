@@ -492,24 +492,20 @@ check:
 
 
 /* NON_MATCHING: register allocation only (v0/v1 swapped in the table address). */
-#ifdef NON_MATCHING
-void func_80104238_168FD8_LookAway(omObjData* obj, LADir* d) {
-    f32 rot[5][2] = { { 0.0f, 0.0f }, { 0.0f, -45.0f }, { 90.0f, 0.0f }, { 0.0f, 45.0f }, { -90.0f, 0.0f } };
-    f32* r = rot[d->dir];
-    f32 y = r[0];
-    f32 x = r[1];
-
-    if (obj->work[1] == 0) {
-        x += 10.0f;
-    }
-    func_80104060_168E00_LookAway(d, 0, &obj->rot.y, y);
-    func_80104060_168E00_LookAway(d, 1, &obj->rot.x, x);
+// decomp-permuter
+void func_80104238_168FD8_LookAway(omObjData *obj, LADir *d)
+{
+  f32 rot[5][2] = {{0.0f, 0.0f}, {0.0f, -45.0f}, {90.0f, 0.0f}, {0.0f, 45.0f}, {-90.0f, 0.0f}};
+  f32 *r;
+  f32 y = ((0, rot[d->dir]))[0];
+  f32 x = rot[d->dir][1];
+  if (obj->work[1] == 0)
+  {
+    x += 10.0f;
+  }
+  func_80104060_168E00_LookAway(d, 0, &obj->rot.y, y);
+  func_80104060_168E00_LookAway(d, 1, &obj->rot.x, x);
 }
-#else
-__asm__(".section .rodata");
-const f32 D_801068A0_16B640_LookAway[5][2] = { { 0.0f, 0.0f }, { 0.0f, -45.0f }, { 90.0f, 0.0f }, { 0.0f, 45.0f }, { -90.0f, 0.0f } };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_13_LookAway/1675A0", func_80104238_168FD8_LookAway);
-#endif
 
 void func_80104318_1690B8_LookAway(omObjData* obj) {
     LAObj* p = &D_80106CD0_16BA70_LookAway[obj->work[1]];
