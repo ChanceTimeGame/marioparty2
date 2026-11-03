@@ -342,97 +342,130 @@ void func_8010A190_240070_SlotCarDerby(omObjData* obj) {
 /* The time board: the start countdown lights (state 1), the race clock digits (state 2: one
    tick a frame, three ticks a tenth; the last digit flickers at random until 5:00), the final
    digit (states 3, 7, 8). */
-// scheduling: one sll of the bank argument after the ternary's join (masked 1)
-#ifdef NON_MATCHING
-void func_8010A55C_24043C_SlotCarDerby(omObjData* obj) {
-    SCDObj* rec = func_8010B0B8_240F98_SlotCarDerby(obj);
-    s32 i;
-    s32 d;
+// decomp-permuter
+void func_8010A55C_24043C_SlotCarDerby(omObjData *obj)
+{
+  SCDObj *rec = func_8010B0B8_240F98_SlotCarDerby(obj);
+  s32 i;
+  s32 d;
+  switch (D_8010FB00_2459E0_SlotCarDerby)
+  {
+    case 1:
+      if ((++rec->unk_08) >= D_8010FBF8_245AD8_SlotCarDerby[rec->unk_00])
+    {
+      if (rec->unk_00 >= 5)
+      {
+        rec->unk_00 = 5;
+        rec->unk_08 = 0;
+      }
+      else
+      {
+        rec->unk_08 = 0;
+        rec->unk_00++;
+        for (i = 0; i < 4; i++)
+        {
+          func_800298A4_2A4A4(obj->model[i], 4, 4);
+        }
 
-    switch (D_8010FB00_2459E0_SlotCarDerby) {
-        case 1:
-            if (++rec->unk_08 >= D_8010FBF8_245AD8_SlotCarDerby[rec->unk_00]) {
-                if (rec->unk_00 >= 5) {
-                    rec->unk_00 = 5;
-                    rec->unk_08 = 0;
-                } else {
-                    rec->unk_08 = 0;
-                    rec->unk_00++;
-                    for (i = 0; i < 4; i++) {
-                        func_800298A4_2A4A4(obj->model[i], 4, 4);
-                    }
-                    switch (rec->unk_00) {
-                        case 1:
-                            func_800298A4_2A4A4(obj->model[0], 4, 0);
-                            break;
-                        case 2:
-                        case 3:
-                            func_800298A4_2A4A4(obj->model[1], 4, 0);
-                            break;
-                        case 4:
-                            func_800298A4_2A4A4(obj->model[2], 4, 0);
-                            break;
-                        case 5:
-                        default:
-                            func_800298A4_2A4A4(obj->model[3], 4, 0);
-                            break;
-                    }
-                }
-            }
+        switch (rec->unk_00)
+        {
+          case 1:
+            func_800298A4_2A4A4(obj->model[0], 4, 0);
             break;
-        case 2:
-            if (rec->unk_00 == 5) {
-                rec->unk_00 = 0;
-                rec->unk_08 = 0;
-            }
-            if (D_8010FB04_2459E4_SlotCarDerby == 0 && D_8010FC10_245AF0_SlotCarDerby[0] != 5) {
-                D_8010FB10_2459F0_SlotCarDerby++;
-                D_8010FC10_245AF0_SlotCarDerby[4]++;
-            }
-            i = 0;
-            if (D_8010FC10_245AF0_SlotCarDerby[4] >= 3) {
-                D_8010FC10_245AF0_SlotCarDerby[4] = 0;
-                if (++D_8010FC10_245AF0_SlotCarDerby[3] >= 10) {
-                    D_8010FC10_245AF0_SlotCarDerby[3] = 0;
-                    if (++D_8010FC10_245AF0_SlotCarDerby[2] >= 10) {
-                        D_8010FC10_245AF0_SlotCarDerby[2] = 0;
-                        if (++D_8010FC10_245AF0_SlotCarDerby[1] >= 6) {
-                            D_8010FC10_245AF0_SlotCarDerby[1] = 0;
-                            D_8010FC10_245AF0_SlotCarDerby[0]++;
-                        }
-                    }
-                }
-            }
-            do {
-                if (i == 4) {
-                    SprBankSet((s16)D_80110970_246850_SlotCarDerby, i,
-                               d = D_8010FC10_245AF0_SlotCarDerby[0] == 5
-                                       ? 0
-                                       : (u8)(rand8() % 3) + D_8010FC10_245AF0_SlotCarDerby[4] * 3);
-                } else {
-                    SprBankSet((s16)D_80110970_246850_SlotCarDerby, i, (s16)D_8010FC10_245AF0_SlotCarDerby[i]);
-                }
-                i++;
-            } while (i < 5);
+
+          case 2:
+
+          case 3:
+            func_800298A4_2A4A4(obj->model[1], 4, 0);
             break;
-        case 4:
-        case 5:
-        case 6:
+
+          case 4:
+            func_800298A4_2A4A4(obj->model[2], 4, 0);
             break;
-        case 3:
-        case 7:
-        case 8:
-            if (D_8010FB10_2459F0_SlotCarDerby == D_8010FB14_2459F4_SlotCarDerby) {
-                SprBankSet((s16)D_80110970_246850_SlotCarDerby, 4, d = D_8010FC10_245AF0_SlotCarDerby[4] * 3 + 1);
-            } else if (D_8010FB10_2459F0_SlotCarDerby < D_8010FB14_2459F4_SlotCarDerby) {
-                SprBankSet((s16)D_80110970_246850_SlotCarDerby, 4, d = D_8010FC10_245AF0_SlotCarDerby[4] * 3);
-            }
+
+          case 5:
+
+          default:
+            func_800298A4_2A4A4(obj->model[3], 4, 0);
             break;
+
+        }
+
+      }
     }
+      break;
+
+    case 2:
+      if (rec->unk_00 == 5)
+    {
+      rec->unk_00 = 0;
+      rec->unk_08 = 0;
+    }
+      if ((D_8010FB04_2459E4_SlotCarDerby == 0) && (D_8010FC10_245AF0_SlotCarDerby[0] != 5))
+    {
+      D_8010FB10_2459F0_SlotCarDerby++;
+      D_8010FC10_245AF0_SlotCarDerby[4]++;
+    }
+      i = 0;
+      if (D_8010FC10_245AF0_SlotCarDerby[4] >= 3)
+    {
+      D_8010FC10_245AF0_SlotCarDerby[4] = 0;
+      if ((++D_8010FC10_245AF0_SlotCarDerby[3]) >= 10)
+      {
+        D_8010FC10_245AF0_SlotCarDerby[3] = 0;
+        if ((++D_8010FC10_245AF0_SlotCarDerby[2]) >= 10)
+        {
+          D_8010FC10_245AF0_SlotCarDerby[2] = 0;
+          if ((++D_8010FC10_245AF0_SlotCarDerby[1]) >= 6)
+          {
+            D_8010FC10_245AF0_SlotCarDerby[1] = 0;
+            D_8010FC10_245AF0_SlotCarDerby[0]++;
+          }
+        }
+      }
+    }
+      do
+    {
+      if (i == 4)
+      {
+        d = (d = (D_8010FC10_245AF0_SlotCarDerby[0] == 5) ? (0) : (((u8) (rand8() % 3)) + (D_8010FC10_245AF0_SlotCarDerby[4] * 3)));
+        SprBankSet((s16) D_80110970_246850_SlotCarDerby, i, d);
+      }
+      else
+      {
+        SprBankSet((s16) D_80110970_246850_SlotCarDerby, i, (s16) D_8010FC10_245AF0_SlotCarDerby[i]);
+      }
+      i++;
+    }
+    while (i < 5);
+      break;
+
+    case 4:
+
+    case 5:
+
+    case 6:
+      break;
+
+    case 3:
+
+    case 7:
+
+    case 8:
+      if (D_8010FB10_2459F0_SlotCarDerby == D_8010FB14_2459F4_SlotCarDerby)
+    {
+      SprBankSet((s16) D_80110970_246850_SlotCarDerby, 4, d = (D_8010FC10_245AF0_SlotCarDerby[4] * 3) + 1);
+    }
+    else
+      if (D_8010FB10_2459F0_SlotCarDerby < D_8010FB14_2459F4_SlotCarDerby)
+    {
+      SprBankSet((s16) D_80110970_246850_SlotCarDerby, 4, d = D_8010FC10_245AF0_SlotCarDerby[4] * 3);
+    }
+      break;
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010A55C_24043C_SlotCarDerby);
-#endif
 
 void func_8010A8CC_2407AC_SlotCarDerby(omObjData* obj) {
     Vec pos;
@@ -607,58 +640,53 @@ SCDObj* func_8010B0B8_240F98_SlotCarDerby(omObjData* obj) {
 }
 
 /* Projects pos through camera cam's view into screen x, y and a perspective scale (z). */
-// addu operand order of the first viewport address (raw 1, masked 0)
-#ifdef NON_MATCHING
-void func_8010B0E4_240FC4_SlotCarDerby(s32 cam, Vec* pos, Vec* screen) {
-    Mtx look;
-    Mtx mtx;
-    Vec eye;
-    Vec at;
-    Vec up;
-    HuCamera* c = &D_800C9B80_CA780[cam];
-    Mtx* m = &mtx;
-    HuCamera* vp;
-    f32 rx;
-    f32 ry;
-    f32 sx;
-    f32 sy;
-    f32 sz;
-    f32 sn;
-    f32 dist;
-
-    rx = D_800FD474_FE074.x;
-    ry = D_800FD474_FE074.y;
-    eye.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
-    eye.y = D_8010274C_10334C.y + -HuMathSin(rx) * D_800FA610_FB210;
-    eye.z = D_8010274C_10334C.z + func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
-    at.x = D_8010274C_10334C.x;
-    at.y = D_8010274C_10334C.y;
-    at.z = D_8010274C_10334C.z;
-    up.x = HuMathSin(ry) * HuMathSin(rx);
-    up.y = func_800B7890_B8490(rx);
-    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
-    guLookAt(&look, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
-    func_800B1FA0_B2BA0(m, pos->x, pos->y, pos->z);
-    guMtxCatL(m, &look, m);
-    sx = (s32)((((u16*)&mtx)[12] << 16) | ((u16*)&mtx)[28]) >> 16;
-    sy = (s32)((((u16*)&mtx)[13] << 16) | ((u16*)&mtx)[29]) >> 16;
-    sz = (s32)((((u16*)&mtx)[14] << 16) | ((u16*)&mtx)[30]) >> 16;
-    sn = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
-    dist = fabsf(sz * sn / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
-    if (dist != 0.0) {
-        /* c->viewports[D_800FFFD6], written through f32* (not Vec fields): retail reloads
-           D_800FFFD6 after the store */
-        ((f32*)screen)[0] =
-            (s16)(((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vscale[0] / 4.0 * sx / dist / 1.3333334f) +
-            ((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vtrans[0] / 4.0;
-        vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16);
-        ((f32*)screen)[1] = (s16)(vp->viewports[0].vp.vscale[1] / 4.0 * -sy / dist) + vp->viewports[0].vp.vtrans[1] / 4.0;
-        ((f32*)screen)[2] = vp->viewports[0].vp.vscale[1] / 4.0 / dist;
-    }
+// decomp-permuter
+void func_8010B0E4_240FC4_SlotCarDerby(s32 cam, Vec *pos, Vec *screen)
+{
+  Mtx look;
+  Mtx mtx;
+  Vec eye;
+  Vec at;
+  Vec up;
+  HuCamera *c = &D_800C9B80_CA780[cam];
+  Mtx *m = &mtx;
+  HuCamera *vp;
+  f32 rx;
+  f32 ry;
+  f32 sx;
+  f32 sy;
+  f32 sz;
+  f32 sn;
+  int new_var;
+  f32 dist;
+  rx = D_800FD474_FE074.x;
+  ry = D_800FD474_FE074.y;
+  eye.x = D_8010274C_10334C.x + ((HuMathSin(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  eye.y = D_8010274C_10334C.y + ((-HuMathSin(rx)) * D_800FA610_FB210);
+  eye.z = D_8010274C_10334C.z + ((func_800B7890_B8490(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  at.x = D_8010274C_10334C.x;
+  at.y = D_8010274C_10334C.y;
+  at.z = D_8010274C_10334C.z;
+  up.x = HuMathSin(ry) * HuMathSin(rx);
+  up.y = func_800B7890_B8490(rx);
+  up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+  guLookAt(&look, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
+  func_800B1FA0_B2BA0(m, pos->x, pos->y, pos->z);
+  guMtxCatL(m, &look, m);
+  new_var = 16;
+  sx = ((s32) ((((u16 *) (&mtx))[12] << new_var) | ((u16 *) (&mtx))[28])) >> new_var;
+  sy = ((s32) ((((u16 *) (&mtx))[13] << new_var) | ((u16 *) (&mtx))[29])) >> new_var;
+  sz = ((s32) ((((u16 *) (&mtx))[14] << new_var) | ((u16 *) (&mtx))[30])) >> new_var;
+  sn = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
+  dist = fabsf((sz * sn) / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
+  if (dist != 0.0)
+  {
+    ((f32 *) screen)[0] = ((s16) ((((((HuCamera *) (((u8 *) c) + (D_800FFFD6_100BD6 * new_var)))->viewports[0].vp.vscale[0] / 4.0) * sx) / dist) / 1.3333334f)) + (((HuCamera *) (((u8 *) c) + (D_800FFFD6_100BD6 * new_var)))->viewports[0].vp.vtrans[0] / 4.0);
+    vp = (HuCamera *) (((u8 *) c) + (D_800FFFD6_100BD6 * new_var));
+    ((f32 *) screen)[1] = ((s16) (((vp->viewports[0].vp.vscale[1] / 4.0) * (-sy)) / dist)) + (vp->viewports[0].vp.vtrans[1] / 4.0);
+    ((f32 *) screen)[2] = (vp->viewports[0].vp.vscale[1] / 4.0) / dist;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010B0E4_240FC4_SlotCarDerby);
-#endif
 
 void func_8010B4D0_2413B0_SlotCarDerby(u8 count) {
     SCDBillboard* b;
@@ -1014,81 +1042,80 @@ void func_8010CC3C_242B1C_SlotCarDerby(void) {
     }
 }
 
-// scheduling: b->unk_1C is loaded before the frame index in retail (masked 2)
-#ifdef NON_MATCHING
-void func_8010D0B0_242F90_SlotCarDerby(void) {
-    Mtx view;
-    /* host: retail puts this stack matrix's address in the display list, drawn after the
-       function returns (MP1's port makes it static) */
-    Mtx proj;
-    Matrix4f mf;
-    Matrix4f tmp;
-    Matrix4f sc;
-    Vec eye;
-    Vec at;
-    Vec up;
-    SCDBillboard* b;
-    Gfx* gfx;
-    Mtx* mtx;
-    f32 rx;
-    f32 ry;
-    s32 i;
-
-    func_8010CC3C_242B1C_SlotCarDerby();
-    D_800FC834_FD434[D_801109AC_24688C_SlotCarDerby].hmf->unk3C = (HmfDisp*)&D_80110994_246874_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby];
-    gfx = D_80110994_246874_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby];
-    mtx = D_801109A0_246880_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby];
-    proj = D_800C9B80_CA780->mtxs[D_800FFFD6_100BD6].lookAtMtx; /* the viewport's view matrix */
-    rx = D_800FD474_FE074.x;
-    ry = D_800FD474_FE074.y;
-    eye.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
-    eye.y = D_8010274C_10334C.y + -HuMathSin(rx) * D_800FA610_FB210;
-    eye.z = D_8010274C_10334C.z + func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
-    at.x = D_8010274C_10334C.x;
-    at.y = D_8010274C_10334C.y;
-    at.z = D_8010274C_10334C.z;
-    up.x = HuMathSin(ry) * HuMathSin(rx);
-    up.y = func_800B7890_B8490(rx);
-    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
-    guLookAt(&view, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
-    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
-    gSPClearGeometryMode(gfx++, G_LIGHTING | G_FOG | G_CULL_BOTH);
-    gSPSetGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_TEXTURE_GEN_LINEAR | G_SHADING_SMOOTH);
-    gDPSetBlendColor(gfx++, 0, 0, 0, 1);
-    gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
-    gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
-    for (i = 0; i < D_80110990_246870_SlotCarDerby; i++) {
-        b = &D_8011097C_24685C_SlotCarDerby[i];
-        if (b->unk_00 == (Gfx*)-1 || (b->unk_28 & 0x20)) {
-            continue;
-        }
-        guMtxL2F(mf, &view);
-        func_80025770_26370(mf, b->unk_38.x, b->unk_38.y, b->unk_38.z);
-        func_80025884_26484(mf, b->unk_50.x, b->unk_50.y, b->unk_50.z);
-        func_80025830_26430(mf, b->unk_44.x, b->unk_44.y, b->unk_44.z);
-        if (!(b->unk_28 & 0x80)) {
-            sc[0][0] = b->unk_44.x;
-            sc[1][1] = b->unk_44.y;
-            sc[2][2] = b->unk_44.z;
-            sc[3][3] = 1.0f;
-            sc[0][1] = sc[0][2] = sc[0][3] = sc[1][0] = sc[1][2] = sc[1][3] = sc[2][0] = sc[2][1] = sc[2][3] =
-                sc[3][0] = sc[3][1] = sc[3][2] = 0.0f;
-            func_800260A4_26CA4(mf, tmp);
-            func_80025BA4_267A4(sc, tmp, mf);
-        }
-        if (b->unk_20 != 0) {
-            gSPSegment(gfx++, 1, osVirtualToPhysical(((Vtx**)b->unk_1C + 17)[D_800FDBE0_FE7E0]));
-        }
-        func_800B3040_B3C40(mf, mtx);
-        gSPMatrix(gfx++, osVirtualToPhysical(mtx++), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        gSPDisplayList(gfx++, b->unk_04[D_800FDBE0_FE7E0]);
+// decomp-permuter
+void func_8010D0B0_242F90_SlotCarDerby(void)
+{
+  Mtx view;
+  Mtx proj;
+  Matrix4f mf;
+  Matrix4f tmp;
+  Matrix4f sc;
+  Vec eye;
+  Vec at;
+  Vtx **new_var;
+  Vec up;
+  SCDBillboard *b;
+  Gfx *gfx;
+  Mtx *mtx;
+  f32 rx;
+  f32 ry;
+  s32 i;
+  func_8010CC3C_242B1C_SlotCarDerby();
+  D_800FC834_FD434[D_801109AC_24688C_SlotCarDerby].hmf->unk3C = (HmfDisp *) (&D_80110994_246874_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby]);
+  gfx = D_80110994_246874_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby];
+  mtx = D_801109A0_246880_SlotCarDerby[D_8010FB08_2459E8_SlotCarDerby];
+  proj = D_800C9B80_CA780->mtxs[D_800FFFD6_100BD6].lookAtMtx;
+  rx = D_800FD474_FE074.x;
+  ry = D_800FD474_FE074.y;
+  eye.x = D_8010274C_10334C.x + ((HuMathSin(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  eye.y = D_8010274C_10334C.y + ((-HuMathSin(rx)) * D_800FA610_FB210);
+  eye.z = D_8010274C_10334C.z + ((func_800B7890_B8490(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  at.x = D_8010274C_10334C.x;
+  at.y = D_8010274C_10334C.y;
+  at.z = D_8010274C_10334C.z;
+  up.x = HuMathSin(ry) * HuMathSin(rx);
+  up.y = func_800B7890_B8490(rx);
+  up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+  guLookAt(&view, eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
+  gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+  gSPClearGeometryMode(gfx++, (G_LIGHTING | G_FOG) | G_CULL_BOTH);
+  gSPSetGeometryMode(gfx++, ((G_ZBUFFER | G_SHADE) | G_TEXTURE_GEN_LINEAR) | G_SHADING_SMOOTH);
+  gDPSetBlendColor(gfx++, 0, 0, 0, 1);
+  gDPSetAlphaCompare(gfx++, G_AC_THRESHOLD);
+  gSPTexture(gfx++, 0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON);
+  for (i = 0; i < D_80110990_246870_SlotCarDerby; i++)
+  {
+    b = &D_8011097C_24685C_SlotCarDerby[i];
+    if ((b->unk_00 == ((Gfx *) (-1))) || (b->unk_28 & 0x20))
+    {
+      continue;
     }
-    gSPMatrix(gfx++, osVirtualToPhysical(&proj), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPEndDisplayList(gfx++);
+    guMtxL2F(mf, &view);
+    func_80025770_26370(mf, b->unk_38.x, b->unk_38.y, b->unk_38.z);
+    func_80025884_26484(mf, b->unk_50.x, b->unk_50.y, b->unk_50.z);
+    func_80025830_26430(mf, b->unk_44.x, b->unk_44.y, b->unk_44.z);
+    if (!(b->unk_28 & 0x80))
+    {
+      sc[0][0] = b->unk_44.x;
+      sc[1][1] = b->unk_44.y;
+      sc[2][2] = b->unk_44.z;
+      sc[3][3] = 1.0f;
+      sc[0][1] = (sc[0][2] = (sc[0][3] = (sc[1][0] = (sc[1][2] = (sc[1][3] = (sc[2][0] = (sc[2][1] = (sc[2][3] = (sc[3][0] = (sc[3][1] = (sc[3][2] = 0.0f)))))))))));
+      func_800260A4_26CA4(mf, tmp);
+      func_80025BA4_267A4(sc, tmp, mf);
+    }
+    if (b->unk_20 != 0)
+    {
+      gSPSegment(gfx++, 1, osVirtualToPhysical(((new_var = (Vtx **) b->unk_1C) + 17)[D_800FDBE0_FE7E0]));
+    }
+    func_800B3040_B3C40(mf, mtx);
+    gSPMatrix(gfx++, osVirtualToPhysical(mtx++), (G_MTX_NOPUSH | G_MTX_LOAD) | G_MTX_MODELVIEW);
+    gSPDisplayList(gfx++, b->unk_04[D_800FDBE0_FE7E0]);
+  }
+
+  gSPMatrix(gfx++, osVirtualToPhysical(&proj), (G_MTX_NOPUSH | G_MTX_LOAD) | G_MTX_MODELVIEW);
+  gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010D0B0_242F90_SlotCarDerby);
-#endif
 
 void func_8010D590_243470_SlotCarDerby(void) {
     s32 i;

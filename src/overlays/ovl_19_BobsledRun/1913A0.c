@@ -1089,39 +1089,40 @@ void func_80105D30_1948D0_BobsledRun(void) {
 
 /* Time display group 0 (the race time) at (x, y). */
 // register allocation: retail stores the group id before copying it to s5, x in s1 (as in MP1 MinigameHouse func_800F8364)
-#ifdef NON_MATCHING
-s16 func_80105D88_194928_BobsledRun(s32 x, s16 y) {
-    s16 i;
-    s16 px;
-    s16 g;
-
-    g = SprCreate(7, 5);
-    D_8010C9FA_19B59A_BobsledRun[0] = g;
-    SprAnimSet(g, 0, D_8010C9F6_19B596_BobsledRun, 0);
-    SprAttrReset(g, 0, 0xFFFF);
-    SprAttrSet(g, 0, 0x8000);
-    SprPosSet(g, 0, x - 16, y);
-    SprPrioSet(g, 0, 1);
-    px = 4;
-    for (i = 1; i < 7; i++) {
-        SprPrioSet(g, i, 1);
-        SprAnimSet(g, i, D_8010C9F6_19B596_BobsledRun, 0);
-        SprPosSet(g, i, px, 0);
-        SprAttrReset(g, i, 0xFFFF);
-        SprAttrSet(g, i, 0x8000);
-        if (i == 3) {
-            px += 8;
-        } else {
-            px += 12;
-        }
-        func_800824F4_830F4(g, i, 0);
+// decomp-permuter
+s16 func_80105D88_194928_BobsledRun(s32 x, s16 y)
+{
+  s16 i;
+  s16 px;
+  s16 g;
+  g = (D_8010C9FA_19B59A_BobsledRun[0] = SprCreate(7, 5));
+  SprAnimSet(g, 0, D_8010C9F6_19B596_BobsledRun, 0);
+  SprAttrReset(g, 0, 0xFFFF);
+  SprAttrSet(g, 0, 0x8000);
+  SprPosSet(g, 0, x - 16, y);
+  SprPrioSet(g, 0, 1);
+  px = 4;
+  for (i = 1; i < 7; i++)
+  {
+    SprPrioSet(g, i, 1);
+    SprAnimSet(g, i, D_8010C9F6_19B596_BobsledRun, 0);
+    SprPosSet(g, i, px, 0);
+    SprAttrReset(g, i, 0xFFFF);
+    SprAttrSet(g, i, 0x8000);
+    if (i == 3)
+    {
+      px += 8;
     }
-    SprAttrReset(g, 2, 0x8000);
-    return g;
+    else
+    {
+      px += 12;
+    }
+    func_800824F4_830F4(g, i, 0);
+  }
+
+  SprAttrReset(g, 2, 0x8000);
+  return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105D88_194928_BobsledRun);
-#endif
 
 /* Time display group 1 (the record) at (x, y). */
 // register allocation, as func_80105D88
@@ -2835,62 +2836,73 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010B630_
 /* Main's actor motion player (19BF0.c func_80019378, MP1 func_80017DB0) with the character's
    voice taken from the given player instead of the work's. */
 // register allocation: req and spd swap $s3/$s4 (main's func_80019378 is NON_MATCHING too)
-#ifdef NON_MATCHING
-void func_8010BD18_19A8B8_BobsledRun(omObjData* obj, s16 player) {
-    u16 mdl = obj->model[0];
-    BRActorWork* w = obj->unk_50;
-    BRMotionReq* req;
-    u16 spd;
-    s16 mot;
-    s32 flip;
-    f32 t;
-    s32 chr;
-    BRMotionEntry* e;
-
-    if (w->pending != 0) {
-        chr = gPlayers[player].character;
-        flip = 0;
-        if (w->count != 0) {
-            req = &w->req;
-            if (req->flags & 4) {
-                spd = (w->unk_B8 = func_8002CA14_2D614(mot = obj->motion[req->motion] & 0x3FFF)) / 5.0f;
-            } else {
-                mot = func_80029E14_2AA14(obj->motion[req->motion] & 0x3FFF);
-                spd = (w->unk_B8 = func_80029D0C_2A90C(obj->motion[req->motion] & 0x3FFF)) / 5.0f;
-            }
-            if (req->flags & 1) {
-                flip = 2;
-            }
-            if (req->unk_06 >= 0) {
-                func_80025554_26154(w->unk_5A, w->unk_5B, chr, req->unk_06);
-            }
-            func_80029BF0_2A7F0(mdl, mot, 0, spd, flip);
-            func_80029FBC_2ABBC(mdl, req->speed);
-            if (w->flags & 0x100) {
-                func_800192E4_19EE4(obj);
-            }
-        }
-        w->pending = 0;
-    } else {
-        e = &w->table[func_80018FF0_19BF0(obj)];
-        if (!(e->flags & 1)) {
-            t = func_80029E3C_2AA3C(mdl);
-            if (t == -1.0f) {
-                t = func_80029CE4_2A8E4(mdl);
-            }
-            if (w->unk_B8 <= t) {
-                w->cur++;
-                if (w->count <= w->cur) {
-                    w->count = 0;
-                    w->cur = 0xFFFF;
-                }
-            }
-        }
+// decomp-permuter
+void func_8010BD18_19A8B8_BobsledRun(omObjData *obj, s16 player)
+{
+  u16 mdl = obj->model[0];
+  BRActorWork *w = obj->unk_50;
+  BRMotionReq *req;
+  u16 spd;
+  s16 mot;
+  s32 flip;
+  f32 t;
+  short chr;
+  BRMotionEntry *e;
+  if (w->pending != 0)
+  {
+    chr = gPlayers[player].character;
+    flip = 0;
+    if (w->count != 0)
+    {
+      req = &w->req;
+      if (req->flags & 4)
+      {
+        spd = (w->unk_B8 = func_8002CA14_2D614(mot = obj->motion[req->motion] & 0x3FFF)) / 5.0f;
+      }
+      else
+      {
+        mot = func_80029E14_2AA14(obj->motion[req->motion] & 0x3FFF);
+        spd = (w->unk_B8 = func_80029D0C_2A90C(obj->motion[req->motion] & 0x3FFF)) / 5.0f;
+      }
+      if (req->flags & 1)
+      {
+        flip = 2;
+      }
+      if (req->unk_06 >= 0)
+      {
+        func_80025554_26154(w->unk_5A, w->unk_5B, chr, req->unk_06);
+      }
+      func_80029BF0_2A7F0(mdl, mot, 0, spd, flip);
+      func_80029FBC_2ABBC(mdl, req->speed);
+      if (w->flags & 0x100)
+      {
+        func_800192E4_19EE4(obj);
+      }
     }
+    w->pending = 0;
+  }
+  else
+  {
+    e = &w->table[func_80018FF0_19BF0(obj)];
+    if (!(e->flags & 1))
+    {
+      t = func_80029E3C_2AA3C(mdl);
+      if (t == (-1.0f))
+      {
+        t = func_80029CE4_2A8E4(mdl);
+      }
+      if (w->unk_B8 <= t)
+      {
+        w->cur++;
+        if (w->count <= w->cur)
+        {
+          w->count = 0;
+          w->cur = 0xFFFF;
+        }
+      }
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010BD18_19A8B8_BobsledRun);
-#endif
 
 /* .data (0x19AB90-0x19B500, 8010BFF0-8010C960; the last 12 bytes are the object's alignment).
    The asm's labels inside D_8010C048 (BRTeam fields), D_8010C0E2/D_8010C0E6 (the low halves of

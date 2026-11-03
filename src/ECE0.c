@@ -1795,39 +1795,14 @@ s8 func_80011100_11D00(void) {
     return mgr->numActive;
 }
 
-// register allocation: mgr and player swap s2/s3 (masked 0)
-#ifdef NON_MATCHING
-void func_80011128_11D28(s32 player) {
-    SeqMgr* mgr = func_800100FC_10CFC();
-    SeqPlayer* p;
-    s32 i;
-
-    if (mgr != NULL) {
-        if (player < 0) {
-            func_8000FE48_10A48(0, 7, 0);
-            mgr->busy = 1;
-            for (i = 0; i < mgr->numPlayers; i++) {
-                p = &mgr->players[i];
-                if (p->status >= 2) {
-                    p->status = 1;
-                }
-            }
-            mgr->busy = 0;
-        } else {
-            p = &mgr->players[player];
-            if (p->status >= 2) {
-                mgr->busy = 1;
-                func_8000FE48_10A48(player, 6, 0);
-                p->status = 1;
-                mgr->busy = 0;
-            }
-        }
-    }
+// decomp-permuter
+void func_80011128_11D28(s32 player)
+{
+  SeqMgr *mgr = func_800100FC_10CFC();
+  SeqPlayer *p;
+  s32 i;
+ do { if (mgr != 0) { if (player < 0) { func_8000FE48_10A48(0, 7, 0); mgr->busy = 1; for (i = 0; i < mgr->numPlayers; i++) { p = &mgr->players[i]; if (p->status >= 2) { p->status = 1; } } mgr->busy = 0; } else { p = &mgr->players[player]; if (p->status >= 2) { mgr->busy = 1; func_8000FE48_10A48(player, 6, 0); p->status = 1; mgr->busy = 0; } } } } while (0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80011128_11D28);
-
-#endif
 
 void func_8001122C_11E2C(s32 player, s32 vol) {
     SeqMgr* mgr = func_800100FC_10CFC();
@@ -1919,39 +1894,43 @@ s32 func_80011568_12168(s32 player) {
     return mgr->players[player].fadeTimer;
 }
 
-// register allocation: mgr and player swap s2/s3 (masked 0)
-#ifdef NON_MATCHING
-void func_800115B4_121B4(s32 player) {
-    SeqMgr* mgr = func_800100FC_10CFC();
-    SeqPlayer* p;
-    s32 i;
-
-    if (mgr != NULL) {
-        if (player < 0) {
-            func_8000FE48_10A48(0, 11, 0);
-            mgr->busy = 1;
-            for (i = 0; i < mgr->numPlayers; i++) {
-                p = &mgr->players[i];
-                if (p->status >= 3) {
-                    p->status = 2;
-                }
-            }
-            mgr->busy = 0;
-        } else {
-            p = &mgr->players[player];
-            if (p->status >= 3) {
-                mgr->busy = 1;
-                func_8000FE48_10A48(player, 10, 0);
-                p->status = 2;
-                mgr->busy = 0;
-            }
+// decomp-permuter
+void func_800115B4_121B4(s32 player)
+{
+  SeqMgr *mgr = func_800100FC_10CFC();
+  SeqPlayer *p;
+  s32 i;
+  SeqPlayer *new_var;
+  if (mgr != 0)
+  {
+    if (player < 0)
+    {
+      func_8000FE48_10A48(0, 11, 0);
+      mgr->busy = 1;
+      for (i = 0; i < mgr->numPlayers; i++)
+      {
+        p = (new_var = &mgr->players[i]);
+        if (p->status >= 3)
+        {
+          p->status = 2;
         }
-    }
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_800115B4_121B4);
+      }
 
-#endif
+      mgr->busy = 0;
+    }
+    else
+    {
+      p = &mgr->players[player];
+      if (p->status >= 3)
+      {
+        mgr->busy = 1;
+        func_8000FE48_10A48(player, 10, 0);
+        p->status = 2;
+        mgr->busy = 0;
+      }
+    }
+  }
+}
 
 void func_800116B4_122B4(s32 player, s32 frames) {
     SeqMgr* mgr = func_800100FC_10CFC();

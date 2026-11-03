@@ -1199,39 +1199,40 @@ void func_801063C4_1AFA54_SkyPilots(void) {
 }
 
 /* NON_MATCHING: register allocation (masked 2) */
-#ifdef NON_MATCHING
-s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y) {
-    s16 i;
-    s16 px;
-    s16 win;
-
-    win = SprCreate(7, 5);
-    D_8010B34C_1B49DC_SkyPilots[0] = win;
-    SprAnimSet(win, 0, D_8010B344_1B49D4_SkyPilots, 0);
-    SprAttrReset(win, 0, 0xFFFF);
-    SprAttrSet(win, 0, 0x8000);
-    SprPosSet(win, 0, x - 0x10, y);
-    SprPrioSet(win, 0, 1);
-    px = 4;
-    for (i = 1; i < 7; i++) {
-        SprPrioSet(win, i, 1);
-        SprAnimSet(win, i, D_8010B344_1B49D4_SkyPilots, 0);
-        SprPosSet(win, i, px, 0);
-        SprAttrReset(win, i, 0xFFFF);
-        SprAttrSet(win, i, 0x8000);
-        if (i == 3) {
-            px += 8;
-        } else {
-            px += 12;
-        }
-        func_800824F4_830F4(win, i, 0);
+// decomp-permuter
+s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y)
+{
+  s16 i;
+  s16 px;
+  s16 win;
+  win = (D_8010B34C_1B49DC_SkyPilots[0] = SprCreate(7, 5));
+  SprAnimSet(win, 0, D_8010B344_1B49D4_SkyPilots, 0);
+  SprAttrReset(win, 0, 0xFFFF);
+  SprAttrSet(win, 0, 0x8000);
+  SprPosSet(win, 0, x - 0x10, y);
+  SprPrioSet(win, 0, 1);
+  px = 4;
+  for (i = 1; i < 7; i++)
+  {
+    SprPrioSet(win, i, 1);
+    SprAnimSet(win, i, D_8010B344_1B49D4_SkyPilots, 0);
+    SprPosSet(win, i, px, 0);
+    SprAttrReset(win, i, 0xFFFF);
+    SprAttrSet(win, i, 0x8000);
+    if (i == 3)
+    {
+      px += 8;
     }
-    SprAttrReset(win, 2, 0x8000);
-    return win;
+    else
+    {
+      px += 12;
+    }
+    func_800824F4_830F4(win, i, 0);
+  }
+
+  SprAttrReset(win, 2, 0x8000);
+  return win;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_8010641C_1AFAAC_SkyPilots);
-#endif
 
 /* NON_MATCHING: register allocation (masked 2) */
 #ifdef NON_MATCHING
@@ -1712,98 +1713,125 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801076E8_1
 #endif
 
 /* NON_MATCHING: register allocation (masked 0) */
-#ifdef NON_MATCHING
-void func_80107EAC_1B153C_SkyPilots(omObjData* obj) {
-    omObjData* self = obj;
-    s32 m1 = -1;
-    s32 m4 = -1;
-    s32 m2 = -1;
-    s32 m5 = -1;
-    s32 m3 = -1;
-    s32 team;
-    s32 i;
-    s32 x;
-    s16 spr;
-    s16 tmp;
-    u16 id;
+// decomp-permuter
+void func_80107EAC_1B153C_SkyPilots(omObjData *obj)
+{
+  omObjData *self = obj;
+  s32 m1 = -1;
+  s32 m4 = -1;
+  s32 m2 = -1;
+  s32 m5 = -1;
+  s32 m3 = -1;
+  s32 team;
+  s32 i;
+  s16 spr;
+  s16 tmp;
+  u16 id;
+  D_8010B354_1B49E4_SkyPilots[0] = func_80018A30_19630(0x2C0014, 0x20239);
+  D_8010B354_1B49E4_SkyPilots[1] = func_80027D3C_2893C(D_8010B354_1B49E4_SkyPilots[0]);
+  func_80029EDC_2AADC(D_8010B354_1B49E4_SkyPilots[0], 1);
+  func_80029EDC_2AADC(D_8010B354_1B49E4_SkyPilots[1], 2);
+  for (team = 0; team < 2; team++)
+  {
+    for (i = 0; i < 6; i++)
+    {
+      if (m1 == (-1))
+      {
+        m1 = func_80018A30_19630(0x2C000D, 0x8D9);
+        D_8010B356_1B49E6_SkyPilots[team][0] = m1;
+      }
+      else
+      {
+        D_8010B356_1B49E6_SkyPilots[team][i] = func_80027D3C_2893C(m1);
+      }
+      func_80029EDC_2AADC(D_8010B356_1B49E6_SkyPilots[team][i], 1 << team);
+    }
 
-    D_8010B354_1B49E4_SkyPilots[0] = func_80018A30_19630(0x2C0014, 0x20239);
-    D_8010B354_1B49E4_SkyPilots[1] = func_80027D3C_2893C(D_8010B354_1B49E4_SkyPilots[0]);
-    func_80029EDC_2AADC(D_8010B354_1B49E4_SkyPilots[0], 1);
-    func_80029EDC_2AADC(D_8010B354_1B49E4_SkyPilots[1], 2);
-    for (team = 0; team < 2; team++) {
-        for (i = 0; i < 6; i++) {
-            if (m1 == -1) {
-                m1 = func_80018A30_19630(0x2C000D, 0x8D9);
-                D_8010B356_1B49E6_SkyPilots[team][0] = m1;
-            } else {
-                D_8010B356_1B49E6_SkyPilots[team][i] = func_80027D3C_2893C(m1);
-            }
-            func_80029EDC_2AADC(D_8010B356_1B49E6_SkyPilots[team][i], 1 << team);
-        }
-        for (i = 0; i < 3; i++) {
-            if (m2 == -1) {
-                m2 = func_80018A30_19630(0x2C000F, 0x8D9);
-                D_8010B36E_1B49FE_SkyPilots[team][0] = m2;
-            } else {
-                D_8010B36E_1B49FE_SkyPilots[team][i] = func_80027D3C_2893C(m2);
-            }
-            func_80029EDC_2AADC(D_8010B36E_1B49FE_SkyPilots[team][i], 1 << team);
-        }
-        for (i = 0; i < 2; i++) {
-            if (m3 == -1) {
-                m3 = func_80018A30_19630(0x2C0011, 0x8D9);
-                D_8010B37A_1B4A0A_SkyPilots[team][0] = m3;
-            } else {
-                D_8010B37A_1B4A0A_SkyPilots[team][i] = func_80027D3C_2893C(m3);
-            }
-            func_80029EDC_2AADC(D_8010B37A_1B4A0A_SkyPilots[team][i], 1 << team);
-        }
-        for (i = 0; i < 6; i++) {
-            D_8010B362_1B49F2_SkyPilots[team][i] = func_80027D3C_2893C(m1);
-            func_80029EDC_2AADC(D_8010B362_1B49F2_SkyPilots[team][i], 1 << team);
-        }
-        for (i = 0; i < 3; i++) {
-            if (m4 == -1) {
-                m4 = func_80018A30_19630(0x2C000E, 0x8D9);
-                D_8010B374_1B4A04_SkyPilots[team][0] = m4;
-            } else {
-                D_8010B374_1B4A04_SkyPilots[team][i] = func_80027D3C_2893C(m4);
-            }
-            func_80029EDC_2AADC(D_8010B374_1B4A04_SkyPilots[team][i], 1 << team);
-        }
-        for (i = 0; i < 2; i++) {
-            if (m5 == -1) {
-                m5 = func_80018A30_19630(0x2C0010, 0x8D9);
-                D_8010B37E_1B4A0E_SkyPilots[team][0] = m5;
-            } else {
-                D_8010B37E_1B4A0E_SkyPilots[team][i] = func_80027D3C_2893C(m5);
-            }
-            func_80029EDC_2AADC(D_8010B37E_1B4A0E_SkyPilots[team][i], 1 << team);
-        }
+    for (i = 0; i < 3; i++)
+    {
+      if (m2 == (-1))
+      {
+        m2 = func_80018A30_19630(0x2C000F, 0x8D9);
+        D_8010B36E_1B49FE_SkyPilots[team][0] = m2;
+      }
+      else
+      {
+        D_8010B36E_1B49FE_SkyPilots[team][i] = func_80027D3C_2893C(m2);
+      }
+      func_80029EDC_2AADC(D_8010B36E_1B49FE_SkyPilots[team][i], 1 << team);
     }
-    spr = func_8001A2F8_1AEF8(0x2C0024);
-    for (x = 8; x < 0x140; x += 0x20) {
-        id = func_8001AAAC_1B6AC(spr, 0, 1);
-        espPosSet(id, x, 0x78);
-        func_8001A788_1B388(id, 0x10);
+
+    for (i = 0; i < 2; i++)
+    {
+      if (m3 == (-1))
+      {
+        m3 = func_80018A30_19630(0x2C0011, 0x8D9);
+        D_8010B37A_1B4A0A_SkyPilots[team][0] = m3;
+      }
+      else
+      {
+        D_8010B37A_1B4A0A_SkyPilots[team][i] = func_80027D3C_2893C(m3);
+      }
+      func_80029EDC_2AADC(D_8010B37A_1B4A0A_SkyPilots[team][i], 1 << team);
     }
-    id = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0025), 0, 1);
-    espPosSet(id, 0x120, 0x71);
-    func_8001A788_1B388(id, 5);
-    D_8010B2CC_1B495C_SkyPilots[0] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0026), 0, 1);
-    func_8001A91C_1B51C(D_8010B2CC_1B495C_SkyPilots[0], 1.0f, 1.0f);
-    func_8001A788_1B388(D_8010B2CC_1B495C_SkyPilots[0], 8);
-    D_8010B2CC_1B495C_SkyPilots[1] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0027), 0, 1);
-    func_8001A91C_1B51C(D_8010B2CC_1B495C_SkyPilots[1], 1.0f, 1.0f);
-    func_8001A788_1B388(D_8010B2CC_1B495C_SkyPilots[1], 6);
-    espPosSet(D_8010B2CC_1B495C_SkyPilots[0], 0x12, 0x70);
-    espPosSet(D_8010B2CC_1B495C_SkyPilots[1], 0x12, 0x74);
-    self->func_ptr = func_80102EF0_1AC580_SkyPilots;
+
+    for (i = 0; i < 6; i++)
+    {
+      D_8010B362_1B49F2_SkyPilots[team][i] = func_80027D3C_2893C(m1);
+      func_80029EDC_2AADC(D_8010B362_1B49F2_SkyPilots[team][i], 1 << team);
+    }
+
+    for (i = 0; i < 3; i++)
+    {
+      if (m4 == (-1))
+      {
+        m4 = func_80018A30_19630(0x2C000E, 0x8D9);
+        D_8010B374_1B4A04_SkyPilots[team][0] = m4;
+      }
+      else
+      {
+        D_8010B374_1B4A04_SkyPilots[team][i] = func_80027D3C_2893C(m4);
+      }
+      func_80029EDC_2AADC(D_8010B374_1B4A04_SkyPilots[team][i], 1 << team);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+      if (m5 == (-1))
+      {
+        m5 = func_80018A30_19630(0x2C0010, 0x8D9);
+        D_8010B37E_1B4A0E_SkyPilots[team][0] = m5;
+      }
+      else
+      {
+        D_8010B37E_1B4A0E_SkyPilots[team][i] = func_80027D3C_2893C(m5);
+      }
+      func_80029EDC_2AADC(D_8010B37E_1B4A0E_SkyPilots[team][i], 1 << team);
+    }
+
+  }
+
+  spr = func_8001A2F8_1AEF8(0x2C0024);
+  for (i = 8; i < 0x140; i += 0x20)
+  {
+    id = func_8001AAAC_1B6AC(spr, 0, 1);
+    espPosSet(id, i, 0x78);
+    func_8001A788_1B388(id, 0x10);
+  }
+
+  id = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0025), 0, 1);
+  espPosSet(id, 0x120, 0x71);
+  func_8001A788_1B388(id, 5);
+  D_8010B2CC_1B495C_SkyPilots[0] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0026), 0, 1);
+  func_8001A91C_1B51C(D_8010B2CC_1B495C_SkyPilots[0], 1.0f, 1.0f);
+  func_8001A788_1B388(D_8010B2CC_1B495C_SkyPilots[0], 8);
+  D_8010B2CC_1B495C_SkyPilots[1] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x2C0027), 0, 1);
+  func_8001A91C_1B51C(D_8010B2CC_1B495C_SkyPilots[1], 1.0f, 1.0f);
+  func_8001A788_1B388(D_8010B2CC_1B495C_SkyPilots[1], 6);
+  espPosSet(D_8010B2CC_1B495C_SkyPilots[0], 0x12, 0x70);
+  espPosSet(D_8010B2CC_1B495C_SkyPilots[1], 0x12, 0x74);
+  self->func_ptr = func_80102EF0_1AC580_SkyPilots;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80107EAC_1B153C_SkyPilots);
-#endif
 
 void func_801083CC_1B1A5C_SkyPilots(omObjData* obj) {
     s32 i;

@@ -157,37 +157,38 @@ void func_801030D4_238FB4_SlotCarDerby(SCDCar* car, s16 sound) {
 }
 
 /* NON_MATCHING: registers only (retail copies n before the increment) */
-#ifdef NON_MATCHING
-void func_80103154_239034_SlotCarDerby(omObjData* obj) {
-    SCDCar* car;
-    s16 n;
-    s32 lane;
-    s32 i;
-
-    n = D_801107F8_2466D8_SlotCarDerby;
-    if (n < 4) {
-        D_801107F8_2466D8_SlotCarDerby = n + 1;
-        lane = D_801107FA_2466DA_SlotCarDerby[n];
-        D_80110804_2466E4_SlotCarDerby = n + 1;
-        car = &D_801102E8_2461C8_SlotCarDerby[lane];
-        car->unk_00 = 1;
-        car->unk_02 = 4;
-        car->unk_01 = n;
-        car->unk_78 = -1;
-        car->unk_74 = -1;
-        car->unk_60 = 0;
-        car->unk_7C = obj;
-        obj->work[1] = lane;
-        for (i = 0; i < D_8010F430_245310_SlotCarDerby[D_8011023C_24611C_SlotCarDerby][lane]; i++) {
-            car->unk_48 += D_80110248_246128_SlotCarDerby[i];
-        }
-        car->unk_48 += D_8010F448_245328_SlotCarDerby[D_8011023C_24611C_SlotCarDerby];
-        func_80103874_239754_SlotCarDerby(obj->model[0], 0.0f);
+// decomp-permuter
+void func_80103154_239034_SlotCarDerby(omObjData *obj)
+{
+  SCDCar *car;
+  s16 n;
+  s32 lane;
+  s32 i;
+  n = D_801107F8_2466D8_SlotCarDerby;
+  if (n < 4)
+  {
+    D_801107F8_2466D8_SlotCarDerby = n + 1;
+    lane = D_801107FA_2466DA_SlotCarDerby[n];
+    D_80110804_2466E4_SlotCarDerby = n + 1;
+    i = n;
+    car = &D_801102E8_2461C8_SlotCarDerby[lane];
+    car->unk_00 = 1;
+    car->unk_02 = 4;
+    car->unk_01 = i;
+    car->unk_78 = -1;
+    car->unk_74 = -1;
+    car->unk_60 = 0;
+    car->unk_7C = obj;
+    obj->work[1] = lane;
+    for (i = 0; i < D_8010F430_245310_SlotCarDerby[D_8011023C_24611C_SlotCarDerby][lane]; i++)
+    {
+      car->unk_48 += D_80110248_246128_SlotCarDerby[i];
     }
+
+    car->unk_48 += D_8010F448_245328_SlotCarDerby[D_8011023C_24611C_SlotCarDerby];
+    func_80103874_239754_SlotCarDerby(obj->model[0], 0.0f);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80103154_239034_SlotCarDerby);
-#endif
 
 void func_801032A0_239180_SlotCarDerby(omObjData* obj) {
     func_80103154_239034_SlotCarDerby(obj);
@@ -1069,79 +1070,96 @@ s32 func_80105E60_23BD40_SlotCarDerby(f32 dist) {
 }
 
 /* NON_MATCHING: one FP register (the quotient lands in f12, retail f0); masked 0 */
-#ifdef NON_MATCHING
-f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec* pos, Vec* dir) {
-    f32 d;
-    f32 at;
-    f32 sum;
-    f32 prev;
-    f32 t;
-    f32 u;
-    Vec* a;
-    Vec* b;
-    s16 i;
-    s16 next;
-
-    d = dist + step;
-    if (d >= 0.0f) {
-        d = func_800B0D98_B1998(d, D_80110250_246130_SlotCarDerby);
-    } else {
-        d += D_80110250_246130_SlotCarDerby;
+// decomp-permuter
+f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, Vec *dir)
+{
+  f32 d;
+  f32 at;
+  f32 sum;
+  f32 prev;
+  f32 t;
+  f32 u;
+  Vec *a;
+  Vec *b;
+  s16 i;
+  s16 next;
+  d = dist + step;
+  if (d >= 0.0f)
+  {
+    d = func_800B0D98_B1998(d, D_80110250_246130_SlotCarDerby);
+  }
+  else
+  {
+    d += D_80110250_246130_SlotCarDerby;
+  }
+  at = start + d;
+  if (at >= 0.0f)
+  {
+    at = func_800B0D98_B1998(at, D_80110250_246130_SlotCarDerby);
+  }
+  else
+  {
+    at += D_80110250_246130_SlotCarDerby;
+  }
+  sum = 0.0f;
+  prev = sum;
+  for (i = 0; i < D_80110244_246124_SlotCarDerby; i++)
+  {
+    sum += D_80110248_246128_SlotCarDerby[i];
+    if (at <= sum)
+    {
+      break;
     }
-    at = start + d;
-    if (at >= 0.0f) {
-        at = func_800B0D98_B1998(at, D_80110250_246130_SlotCarDerby);
-    } else {
-        at += D_80110250_246130_SlotCarDerby;
-    }
-    sum = 0.0f;
     prev = sum;
-    for (i = 0; i < D_80110244_246124_SlotCarDerby; i++) {
-        sum += D_80110248_246128_SlotCarDerby[i];
-        if (at <= sum) {
-            break;
-        }
-        prev = sum;
-    }
-    if (i >= D_80110244_246124_SlotCarDerby) {
-        i = 0;
-        at -= D_80110250_246130_SlotCarDerby;
-        prev = 0.0f;
-    }
-    at -= prev;
-    step = at / D_80110248_246128_SlotCarDerby[i];
-    t = fabsf(step);
-    if (t >= 0.5) {
-        t = t - 0.5;
-    } else {
-        t = t + 0.5;
-        i = (i != 0) ? i - 1 : D_80110244_246124_SlotCarDerby - 1;
-    }
-    if (i < D_80110244_246124_SlotCarDerby - 1) {
-        next = i + 1;
-    } else {
-        next = 0;
-    }
-    step = t;
-    if (step < 0.5) {
-        u = step * 2.0;
-        a = &D_80110254_246134_SlotCarDerby[i];
-        b = &D_80110240_246120_SlotCarDerby[next];
-    } else {
-        u = t - 0.5;
-        u = u * 2.0;
-        a = &D_80110240_246120_SlotCarDerby[next];
-        b = &D_80110254_246134_SlotCarDerby[next];
-    }
-    pos->x = u * (b->x - a->x) + a->x;
-    pos->y = u * (b->y - a->y) + a->y;
-    pos->z = u * (b->z - a->z) + a->z;
-    func_80106560_23C440_SlotCarDerby(step, &D_80110254_246134_SlotCarDerby[i], &D_80110240_246120_SlotCarDerby[next], &D_80110254_246134_SlotCarDerby[next], dir);
-    return d;
+  }
+
+  if (i >= D_80110244_246124_SlotCarDerby)
+  {
+    i = 0;
+    at -= D_80110250_246130_SlotCarDerby;
+    prev = 0.0f;
+  }
+  at -= prev;
+  step = at / D_80110248_246128_SlotCarDerby[i];
+  t = fabsf(step);
+  if (t >= 0.5)
+  {
+    t = t - 0.5;
+  }
+  else
+  {
+    t = t + 0.5;
+    i = (i != 0) ? (i - 1) : (D_80110244_246124_SlotCarDerby - 1);
+  }
+  if (i < (D_80110244_246124_SlotCarDerby - 1))
+  {
+    next = i + 1;
+  }
+  else
+  {
+    next = 0;
+  }
+  step = t;
+  at = step;
+  if (at < 0.5)
+  {
+    u = at * 2.0;
+    a = &D_80110254_246134_SlotCarDerby[i];
+    b = &D_80110240_246120_SlotCarDerby[next];
+  }
+  else
+  {
+    u = t - 0.5;
+    u = u * 2.0;
+    a = &D_80110240_246120_SlotCarDerby[next];
+    b = &D_80110254_246134_SlotCarDerby[next];
+  }
+  pos->x = (u * (b->x - a->x)) + a->x;
+  pos->y = (u * (b->y - a->y)) + a->y;
+  pos->z = (u * (b->z - a->z)) + a->z;
+  func_80106560_23C440_SlotCarDerby(at, &D_80110254_246134_SlotCarDerby[i], &D_80110240_246120_SlotCarDerby[next], &D_80110254_246134_SlotCarDerby[next], dir);
+  return d;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80105F5C_23BE3C_SlotCarDerby);
-#endif
 
 /* NON_MATCHING: retail advances the pos pointer once (addiu a0, 4) before reading y and z; logic as retail */
 #ifdef NON_MATCHING

@@ -1241,45 +1241,45 @@ void func_80107688_20AA28_PlatformPeril(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
-void func_801076D0_20AA70_PlatformPeril(PPCamKey* k) {
-    omObjData** winner;
-
-    k->time = 45.0f;
-    k->zoom = (s32)D_800F94A8_FA0A8[0];
-    k->center.x = D_801013B0_101FB0[0].x;
-    k->center.y = D_801013B0_101FB0[0].y;
-    k->center.z = D_801013B0_101FB0[0].z;
-    k->rot.x = D_80102770_103370[0].x;
-    k->rot.y = D_80102770_103370[0].y;
-    k->rot.z = D_80102770_103370[0].z;
-    k++;
-    k->time = 0.0f;
-    k->zoom = 550;
-    winner = &D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril];
-    k->center.x = (*winner)->trans.x + 15.0f;
-    k->center.y = (*winner)->trans.y + 100.0f;
-    k->center.z = (*winner)->trans.z - 50.0f;
-    k->rot.x = 340.0f;
-    k->rot.y = 160.0f;
-    k->rot.z = 0.0f;
-    k++;
-    k->time = 0.0f;
-    k->zoom = 0;
-    k->center.x = 0.0f;
-    k->center.y = 0.0f;
-    k->center.z = 0.0f;
-    k->rot.x = 0.0f;
-    if (((MgWork*)(*winner)->unk_50)->unk_3C > k->rot.x) {
-        k->rot.y = ((MgWork*)(*winner)->unk_50)->unk_3C;
-    } else {
-        k->rot.y = -((MgWork*)D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]->unk_50)->unk_3C;
-    }
-    k->rot.z = 0.0f;
+// decomp-permuter
+void func_801076D0_20AA70_PlatformPeril(PPCamKey *k)
+{
+  omObjData **winner;
+  k->time = 45.0f;
+  k->zoom = (s32) D_800F94A8_FA0A8[0];
+  k->center.x = D_801013B0_101FB0[0].x;
+  k->center.y = D_801013B0_101FB0[0].y;
+  k->center.z = D_801013B0_101FB0[0].z;
+  k->rot.x = D_80102770_103370[0].x;
+  k->rot.y = D_80102770_103370[0].y;
+  k->rot.z = D_80102770_103370[0].z;
+  k++;
+  k->time = 0.0f;
+  k->zoom = 550;
+  ;
+  k->center.x = (*(&D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]))->trans.x + 15.0f;
+  k->center.y = (*(&D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]))->trans.y + 100.0f;
+  k->center.z = (*(&D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]))->trans.z - 50.0f;
+  k->rot.x = 340.0f;
+  k->rot.y = 160.0f;
+  k->rot.z = 0.0f;
+  k++;
+  k->time = 0.0f;
+  k->zoom = 0;
+  k->center.x = 0.0f;
+  k->center.y = 0.0f;
+  k->center.z = 0.0f;
+  k->rot.x = 0.0f;
+  if (((MgWork *) (*(&D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]))->unk_50)->unk_3C > k->rot.x)
+  {
+    k->rot.y = ((MgWork *) (*(&D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]))->unk_50)->unk_3C;
+  }
+  else
+  {
+    k->rot.y = -((MgWork *) D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]->unk_50)->unk_3C;
+  }
+  k->rot.z = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_801076D0_20AA70_PlatformPeril);
-#endif
 
 void func_80107844_20ABE4_PlatformPeril(PPCamKey* k, f32 t) {
     D_800F94A8_FA0A8[0] = (f32)k[0].zoom + ((f32)k[1].zoom - (f32)k[0].zoom) * t;

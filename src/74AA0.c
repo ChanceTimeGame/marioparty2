@@ -452,120 +452,128 @@ const char D_800D34E8_D40E8[] = "STAT";
 
 /* The story walk: A at a space (or a walk-on space) steps to the next one. */
 /* register allocation only (masked 0): retail has pos in s1 and target in s2; class: register residue. */
-#ifdef NON_MATCHING
-void func_80074808_75408(void) {
-    GW_SYSTEM* sys;
-    GW_PLAYER* player;
-    SpaceData* space;
-    MBModel* model;
-    MBModel* jumper;
-    Vec* target;
-    Vec* pos;
-    Process* walker;
-    Process* mover;
-    Vec dir;
-    s16 index;
-    u16 nextChain;
-    u16 nextSpace;
+// decomp-permuter
+void func_80074808_75408(void)
+{
+  GW_SYSTEM *sys;
+  GW_PLAYER *player;
+  SpaceData *space;
+  MBModel *model;
+  MBModel *jumper;
+  Vec *target;
+  Vec *pos;
+  Process *walker;
+  Process *mover;
+  Vec dir;
+  s16 index;
+  u16 nextChain;
+  u16 nextSpace;
+  sys = &GwSystem;
+  player = BoardPlayerGet(0);
+  func_80051500_52100();
+  func_80053608_54208(3.0f);
+  while (func_8008F618_90218() != 0)
+  {
+    HuPrcVSleep();
+  }
 
-    sys = &GwSystem;
-    player = BoardPlayerGet(0);
-    func_80051500_52100();
-    func_80053608_54208(3.0f);
-    while (func_8008F618_90218() != 0) {
-        HuPrcVSleep();
+  func_80075424_76024(5);
+  D_800FDCC8_FE8C8 = 1;
+  while (1)
+  {
+    sys->chosenMinigameIndex = -1;
+    index = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+    space = GetSpaceData(index);
+    D_800E2100_E2D00 = func_800556F4_562F4(index, 1);
+    if (D_800E2104_E2D04 >= 0)
+    {
+      HuPrcSleep(-1);
     }
-    func_80075424_76024(5);
-    D_800FDCC8_FE8C8 = 1;
-    while (1) {
-        sys->chosenMinigameIndex = -1;
-        index = GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index);
+    while (1)
+    {
+      if ((ContBtnTrg[player->port] & 0x8000) || (space->space_type == 3))
+      {
+        if (D_800CD2D0_CDED0 != 0)
+        {
+          MBHelpWinKill(D_800CD2D0_CDED0);
+          D_800CD2D0_CDED0 = 0;
+        }
+        nextChain = player->next_chain_index;
+        nextSpace = player->next_space_index;
+        if ((space->space_type == 2) && (GetAbsSpaceIndexFromChainSpaceIndex(nextChain, nextSpace) != D_800E2120_E2D20))
+        {
+          continue;
+        }
+        D_800E2120_E2D20 = index;
+        index = GetAbsSpaceIndexFromChainSpaceIndex(nextChain, nextSpace);
         space = GetSpaceData(index);
-        D_800E2100_E2D00 = func_800556F4_562F4(index, 1);
-        if (D_800E2104_E2D04 >= 0) {
-            HuPrcSleep(-1);
+        if (space->unk_02 & 1)
+        {
+          MBMotionShiftSet(D_800FA618_FB218, -1, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
+          jumper = D_800FA618_FB218;
+          jumper->jumpVel = 4.0f;
+          jumper->jumpAccel = -0.4f;
+          walker = func_80056D80_57980(&jumper->pos, &GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))->coords, &jumper->pos, 20);
+          HuPrcChildLink(HuPrcCurrentGet(), walker);
+          HuPrcChildWatch();
+          MBPlayerVibrate(-1, 2);
         }
-        while (1) {
-            if ((ContBtnTrg[player->port] & 0x8000) || space->space_type == 3) {
-                if (D_800CD2D0_CDED0 != 0) {
-                    MBHelpWinKill(D_800CD2D0_CDED0);
-                    D_800CD2D0_CDED0 = 0;
-                }
-                nextChain = player->next_chain_index;
-                nextSpace = player->next_space_index;
-                if (space->space_type == 2 &&
-                    GetAbsSpaceIndexFromChainSpaceIndex(nextChain, nextSpace) != D_800E2120_E2D20) {
-                    continue;
-                }
-                D_800E2120_E2D20 = index;
-                index = GetAbsSpaceIndexFromChainSpaceIndex(nextChain, nextSpace);
-                space = GetSpaceData(index);
-                if (space->unk_02 & 1) {
-                    MBMotionShiftSet(D_800FA618_FB218, -1, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
-                    jumper = D_800FA618_FB218;
-                    jumper->jumpVel = 4.0f;
-                    jumper->jumpAccel = -0.4f;
-                    walker = func_80056D80_57980(
-                        &jumper->pos,
-                        &GetSpaceData(
-                             GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))
-                             ->coords,
-                        &jumper->pos, 20);
-                    HuPrcChildLink(HuPrcCurrentGet(), walker);
-                    HuPrcChildWatch();
-                    MBPlayerVibrate(-1, 2);
-                } else {
-                    MBMotionShiftSet(D_800FA618_FB218, 0, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
-                    model = D_800FA618_FB218;
-                    pos = &model->pos;
-                    target =
-                        &GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))
-                             ->coords;
-                    mover = func_80056FD4_57BD4(pos, target, pos, 1.9f);
-                    HuPrcChildLink(HuPrcCurrentGet(), mover);
-                    func_80056658_57258(pos, target, &dir);
-                    func_80056B78_57778(&model->rot, &dir, &model->rot, (s32)HuVecDistance(pos, target) / 1.9f);
-                    if (D_800CD2C0_CDEC0 != 0) {
-                        func_800B3870_B4470(D_800FC834_FD434[model->obj->model[0]].mtx,
-                                            func_800B727C_B7E7C(func_800B1830_B2430(dir.x * dir.x + dir.z * dir.z), dir.y) +
-                                                D_800D34D8_D40D8);
-                    }
-                    HuPrcChildWatch();
-                    MBMotionShiftSet(D_800FA618_FB218, -1, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
-                }
-                player->cur_chain_index = player->next_chain_index;
-                player->cur_space_index = player->next_space_index;
-                player->next_space_index++;
-                switch (space->space_type) {
-                    case 1:
-                    case 2:
-                        func_800553A8_55FA8(index);
-                        PlaySound(0x315);
-                        break;
-                    case 0:
-                        func_800553A8_55FA8(index);
-                        PlaySound(0x371);
-                        break;
-                }
-                switch (space->space_type) {
-                    case 0:
-                    case 2:
-                        MBPlayerVibrate(-1, 0);
-                        break;
-                }
-                func_800753D4_75FD4(5);
-                break;
-            }
-            if (D_800CD2D0_CDED0 == 0) {
-                D_800CD2D0_CDED0 = func_8004CC7C_4D87C(0x12, 0xA0, 1);
-            }
-            HuPrcVSleep();
+        else
+        {
+          MBMotionShiftSet(D_800FA618_FB218, 0, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
+ do { model = D_800FA618_FB218; pos = &model->pos; target = &GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->next_chain_index, player->next_space_index))->coords; mover = func_80056FD4_57BD4(pos, target, pos, 1.9f); } while (0);
+          HuPrcChildLink(HuPrcCurrentGet(), mover);
+          func_80056658_57258(pos, target, &dir);
+          func_80056B78_57778(&model->rot, &dir, &model->rot, ((s32) HuVecDistance(pos, target)) / 1.9f);
+          if (D_800CD2C0_CDEC0 != 0)
+          {
+            func_800B3870_B4470(D_800FC834_FD434[model->obj->model[0]].mtx, func_800B727C_B7E7C(func_800B1830_B2430((dir.x * dir.x) + (dir.z * dir.z)), dir.y) + D_800D34D8_D40D8);
+          }
+          HuPrcChildWatch();
+          MBMotionShiftSet(D_800FA618_FB218, -1, func_80029CE4_2A8E4(D_800FA618_FB218->obj->model[0]), 1, 2);
         }
+        player->cur_chain_index = player->next_chain_index;
+        player->cur_space_index = player->next_space_index;
+        player->next_space_index++;
+        switch (space->space_type)
+        {
+          case 1:
+
+          case 2:
+            func_800553A8_55FA8(index);
+            PlaySound(0x315);
+            break;
+
+          case 0:
+            func_800553A8_55FA8(index);
+            PlaySound(0x371);
+            break;
+
+        }
+
+        switch (space->space_type)
+        {
+          case 0:
+
+          case 2:
+            MBPlayerVibrate(-1, 0);
+            break;
+
+        }
+
+        func_800753D4_75FD4(5);
+        break;
+      }
+      if (D_800CD2D0_CDED0 == 0)
+      {
+        D_800CD2D0_CDED0 = func_8004CC7C_4D87C(0x12, 0xA0, 1);
+      }
+      HuPrcVSleep();
     }
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/74AA0", func_80074808_75408);
-#endif
 
 void func_80074D28_75928(void) {
     s32 port;

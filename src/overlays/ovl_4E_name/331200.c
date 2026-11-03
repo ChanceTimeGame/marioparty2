@@ -284,126 +284,156 @@ void func_8010A588_331F48_name_4E(void) {
 /* The roulette of category sel: fresh minigames first (the recent list only if too few), shuffled;
    the first slots go on screen. */
 /* NON_MATCHING: register allocation (masked 0): retail keeps id in s1, i in s2, n in s3; three attempts at splitting variables swapped them */
-#ifdef NON_MATCHING
-void func_8010A660_332020_name_4E(u32 arg0) {
-    s32 sel;
-    s16 n;
-    s16 cnt;
-    s16* list;
-    s16* p;
-    Ovl4ERect* rects;
-    s32 id;
-    s32 i;
-    s32 j;
-    s32 k;
-    Ovl4EMgSlot* slot;
-    omObjData* obj;
+// decomp-permuter
+void func_8010A660_332020_name_4E(u32 arg0)
+{
+  s32 sel;
+  s16 n;
+  s16 cnt;
+  s16 *list;
+  s16 *p;
+  Ovl4ERect *rects;
+  s32 id;
+  s32 i;
+  s32 j;
+  s32 k;
+  Ovl4EMgSlot *slot;
+  omObjData *obj;
+  sel = (arg0 < 9) ? (arg0) : (0);
+  D_8010DC76_335636_name_4E = sel;
+  func_8010CF6C_33492C_name_4E();
+  n = D_8010DCA0_335660_name_4E[sel];
+  D_8010DC77_335637_name_4E = D_8010D6B0_335070_name_4E[sel];
+  if (sel == 0)
+  {
+    if (D_8010DC77_335637_name_4E > n)
+    {
+      D_8010DC77_335637_name_4E = 3;
+    }
+  }
+  else
+    if (sel == 7)
+  {
+    if (D_8010DC77_335637_name_4E > n)
+    {
+      D_8010DC77_335637_name_4E = 2;
+    }
+  }
+  switch (D_8010DC77_335637_name_4E)
+  {
+    case 2:
+      rects = D_8010D6C0_335080_name_4E;
+      break;
 
-    sel = (arg0 < 9) ? arg0 : 0;
-    D_8010DC76_335636_name_4E = sel;
-    func_8010CF6C_33492C_name_4E();
-    n = D_8010DCA0_335660_name_4E[sel];
-    D_8010DC77_335637_name_4E = D_8010D6B0_335070_name_4E[sel];
-    if (sel == 0) {
-        if (D_8010DC77_335637_name_4E > n) {
-            D_8010DC77_335637_name_4E = 3;
+    case 3:
+      rects = D_8010D6D0_335090_name_4E;
+      break;
+
+    case 4:
+
+    default:
+      rects = D_8010D708_3350C8_name_4E;
+      break;
+
+  }
+
+  list = HuMemMemoryAllocPerm(0x100);
+  p = list;
+  for (i = 0; i < 0x80; i++)
+  {
+    *p = -1;
+    p++;
+  }
+
+  cnt = 0;
+  p = list;
+  for (i = 0; i < n; i++)
+  {
+    id = D_8010DCC0_335680_name_4E[sel][i];
+    if (n > D_8010DC77_335637_name_4E)
+    {
+      for (j = 0; j < D_8010DC77_335637_name_4E; j++)
+      {
+        if (id == D_800FD3E4_FDFE4.recent[sel][j])
+        {
+          break;
         }
-    } else if (sel == 7) {
-        if (D_8010DC77_335637_name_4E > n) {
-            D_8010DC77_335637_name_4E = 2;
+      }
+
+      if (j < D_8010DC77_335637_name_4E)
+      {
+        continue;
+      }
+    }
+    *p = id;
+    p++;
+    cnt++;
+  }
+
+  for (j = 0; cnt < D_8010DC77_335637_name_4E; j++)
+  {
+    if (j >= D_8010DC77_335637_name_4E)
+    {
+      break;
+    }
+    id = D_800FD3E4_FDFE4.recent[sel][j];
+    if (id >= 0)
+    {
+      for (i = 0; i < cnt; i++)
+      {
+        if (list[i] == id)
+        {
+          break;
         }
-    }
-    switch (D_8010DC77_335637_name_4E) {
-        case 2:
-            rects = D_8010D6C0_335080_name_4E;
-            break;
-        case 3:
-            rects = D_8010D6D0_335090_name_4E;
-            break;
-        case 4:
-        default:
-            rects = D_8010D708_3350C8_name_4E;
-            break;
-    }
-    list = HuMemMemoryAllocPerm(0x100);
-    p = list;
-    for (i = 0; i < 0x80; i++) {
-        *p = -1;
-        p++;
-    }
-    cnt = 0;
-    p = list;
-    for (i = 0; i < n; i++) {
-        id = D_8010DCC0_335680_name_4E[sel][i];
-        if (n > D_8010DC77_335637_name_4E) {
-            for (j = 0; j < D_8010DC77_335637_name_4E; j++) {
-                if (id == OVL4E_RECENT(sel)[j]) {
-                    break;
-                }
-            }
-            if (j < D_8010DC77_335637_name_4E) {
-                continue;
-            }
-        }
+      }
+
+      if (i >= cnt)
+      {
         *p = id;
         p++;
         cnt++;
+      }
     }
-    for (j = 0; cnt < D_8010DC77_335637_name_4E; j++) {
-        if (j >= D_8010DC77_335637_name_4E) {
-            break;
-        }
-        id = OVL4E_RECENT(sel)[j];
-        if (id >= 0) {
-            for (i = 0; i < cnt; i++) {
-                if (list[i] == id) {
-                    break;
-                }
-            }
-            if (i >= cnt) {
-                *p = id;
-                p++;
-                cnt++;
-            }
-        }
-    }
-    i = 8000;
-    n = cnt;
-    for (; i != 0; i--) {
-        k = func_8010993C_3312FC_name_4E(n);
-        id = list[k];
-        j = func_8010993C_3312FC_name_4E(n);
-        list[k] = list[j];
-        list[j] = id;
-    }
-    for (i = 0; i < D_8010DC77_335637_name_4E; i++) {
-        slot = &D_8010DC30_3355F0_name_4E[i];
-        slot->x = rects[i].x;
-        slot->y = rects[i].y;
-        slot->w = rects[i].w;
-        slot->h = rects[i].h;
-        slot->win = func_800888A8_894A8(slot->x + slot->w / 2, slot->y + slot->h / 2, slot->w, slot->h, 0, 4);
-        func_80089A7C_8A67C(slot->win, 9000);
-        func_8008D88C_8E48C(slot->win);
-        func_800898F0_8A4F0(slot->win, slot->w / 2, slot->h / 2);
-        func_80089B2C_8A72C(slot->win, 0);
-        D_8010DC70_335630_name_4E[i] = list[i];
-        func_8008AD84_8B984();
-        func_800890CC_89CCC(slot->win, D_8010DC70_335630_name_4E[i] + 0x3D8, -2, 4);
-        func_80089C78_8A878(slot->win, D_800CBD77_CC977[D_8010DC70_335630_name_4E[i]]);
-        func_80089A48_8A648(slot->win, 0);
-    }
-    HuMemMemoryFreePerm(list);
-    obj = omAddObj(-0x8000, 0, 0, -1, func_801099D4_331394_name_4E);
-    D_8010DC6C_33562C_name_4E = obj;
-    obj->work[0] = 3;
-    obj->trans.y = 0.0f;
-    obj->rot.z = 0.0f;
-    func_8010A438_331DF8_name_4E(1);
+  }
+
+  i = 8000;
+  n = cnt;
+  for (; i != 0; i--)
+  {
+    k = func_8010993C_3312FC_name_4E(n);
+    id = list[k];
+    j = func_8010993C_3312FC_name_4E(n);
+    list[k] = list[j];
+    list[j] = id;
+  }
+
+  for (i = 0; i < D_8010DC77_335637_name_4E; i++)
+  {
+    slot = &D_8010DC30_3355F0_name_4E[i];
+    slot->x = rects[i].x;
+    slot->y = rects[i].y;
+    slot->w = rects[i].w;
+    slot->h = rects[i].h;
+    slot->win = func_800888A8_894A8(slot->x + (slot->w / 2), slot->y + (slot->h / 2), slot->w, slot->h, 0, 4);
+    func_80089A7C_8A67C(slot->win, 9000);
+    func_8008D88C_8E48C(slot->win);
+    func_800898F0_8A4F0(slot->win, slot->w / 2, slot->h / 2);
+    func_80089B2C_8A72C(slot->win, 0);
+    D_8010DC70_335630_name_4E[i] = list[i];
+    func_8008AD84_8B984();
+    func_800890CC_89CCC(slot->win, D_8010DC70_335630_name_4E[i] + 0x3D8, -2, 4);
+    func_80089C78_8A878(slot->win, D_800CBD77_CC977[D_8010DC70_335630_name_4E[i]]);
+    func_80089A48_8A648(id = slot->win, 0);
+  }
+
+  HuMemMemoryFreePerm(list);
+  obj = omAddObj(-0x8000, 0, 0, -1, func_801099D4_331394_name_4E);
+  D_8010DC6C_33562C_name_4E = obj;
+  obj->work[0] = 3;
+  obj->trans.y = 0.0f;
+  obj->rot.z = 0.0f;
+  func_8010A438_331DF8_name_4E(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/331200", func_8010A660_332020_name_4E);
-#endif
 
 void func_8010AB48_332508_name_4E(void) {
     D_8010DC6C_33562C_name_4E->work[0] = 0;

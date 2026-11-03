@@ -1880,38 +1880,42 @@ void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80108418_26D3C8_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 2), class 4
-#ifdef NON_MATCHING
-s16 func_80108550_26D500_LooneyLumberjacks(Vec* pos, Vec* rot, Vec* scale) {
-    HuSprite_Unk84_Struct* spr;
-    HmfModel* m;
-    s16* pm;
-    LLColor c;
-    s32 i;
-
-    spr = SprAnimGet(D_8010AF34_26FEE4_LooneyLumberjacks->work[1]);
-    for (i = 1; i < 13; i++) {
-        pm = &D_8010AF34_26FEE4_LooneyLumberjacks->model[i];
-        m = &D_800FC834_FD434[*pm];
-        if (m->unk18 & 4) {
-            func_8010A014_26EFC4_LooneyLumberjacks(*pm, spr, 0, 1.0f);
-            m->unk40 = 0.0f;
-            func_80029714_2A314(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], pos->x, pos->y, pos->z);
-            func_8002979C_2A39C(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], rot->x, rot->y, rot->z);
-            func_800297E8_2A3E8(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], scale->x, scale->y, scale->z);
-            func_800298A4_2A4A4(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], 4, 0);
-            c.r = D_8010AFA8_26FF58_LooneyLumberjacks[0];
-            c.g = D_8010AFA8_26FF58_LooneyLumberjacks[1];
-            c.b = D_8010AFA8_26FF58_LooneyLumberjacks[2];
-            D_8010AF48_26FEF8_LooneyLumberjacks[i] = c;
-            return D_8010AF34_26FEE4_LooneyLumberjacks->model[i];
-        }
+// decomp-permuter
+s16 func_80108550_26D500_LooneyLumberjacks(Vec *pos, Vec *rot, Vec *scale)
+{
+  HuSprite_Unk84_Struct *spr;
+  HmfModel *m;
+  s16 *new_var;
+  s16 *pm;
+  LLColor c;
+  s32 i;
+  spr = SprAnimGet(D_8010AF34_26FEE4_LooneyLumberjacks->work[1]);
+  for (i = 1; i < 13; i++)
+  {
+    if (!D_8010AF34_26FEE4_LooneyLumberjacks->model)
+    {
     }
-    return -1;
+    pm = &D_8010AF34_26FEE4_LooneyLumberjacks->model[i];
+    m = &D_800FC834_FD434[*pm];
+    new_var = &(*pm);
+    if (m->unk18 & 4)
+    {
+      func_8010A014_26EFC4_LooneyLumberjacks(*new_var, spr, 0, 1.0f);
+      m->unk40 = 0.0f;
+      func_80029714_2A314(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], pos->x, pos->y, pos->z);
+      func_8002979C_2A39C(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], rot->x, rot->y, rot->z);
+      func_800297E8_2A3E8(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], scale->x, scale->y, scale->z);
+      func_800298A4_2A4A4(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], (long long) 4, 0);
+      c.r = D_8010AFA8_26FF58_LooneyLumberjacks[0];
+      c.g = D_8010AFA8_26FF58_LooneyLumberjacks[1];
+      c.b = D_8010AFA8_26FF58_LooneyLumberjacks[2];
+      D_8010AF48_26FEF8_LooneyLumberjacks[i] = c;
+      return D_8010AF34_26FEE4_LooneyLumberjacks->model[i];
+    }
+  }
+
+  return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80108550_26D500_LooneyLumberjacks);
-#endif
 
 void func_80108728_26D6D8_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
@@ -1947,26 +1951,13 @@ void func_801088FC_26D8AC_LooneyLumberjacks(f32* a, f32* b, f32* out, f32 t) {
     }
 }
 
-// register allocation (raw 2, masked 0), class 4
-#ifdef NON_MATCHING
-f32 func_80108944_26D8F4_LooneyLumberjacks(f32 target, f32 cur, f32 step) {
-    f64 d;
-
-    if (cur < target) {
-        if (fabs(target - cur) > step) {
-            return step;
-        }
-        return fabsf(target - cur);
-    }
-    d = fabs(cur - target);
-    if (d > step) {
-        return -step;
-    }
-    return -d;
+// decomp-permuter
+f32 func_80108944_26D8F4_LooneyLumberjacks(f32 target, f32 cur, f32 step)
+{
+  f64 d;
+  int pad;
+ do { if (cur < target) { if (fabs(target - cur) > step) { return step; } return fabsf(target - cur); } d = fabs(cur - target); if (d > step) { return -step; } return -d; } while (0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80108944_26D8F4_LooneyLumberjacks);
-#endif
 
 f32 func_801089C0_26D970_LooneyLumberjacks(f32 target, f32 cur, f32 step) {
     f32 d;

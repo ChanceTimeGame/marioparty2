@@ -620,73 +620,82 @@ void func_80001B84_2784(omObjData* obj, omObjData* actor) {
     }
 }
 
-// retail keeps 0x299 in s2 and ORs 0x400 at run time (masked 1); same value
-#ifdef NON_MATCHING
-void func_80001DE0_29E0(omObjData* obj, s32 kind) {
-    ColActorWork* w;
-    s16 shadow = 0x299;
-    s32 i;
-
+// decomp-permuter
+void func_80001DE0_29E0(omObjData *obj, s32 kind)
+{
+  ColActorWork *w;
+  s16 shadow = 0x299;
+  s32 i;
+  if (w)
+  {
     obj->unk_50 = func_80027154_27D54(sizeof(ColActorWork), 0x7918);
     func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(ColActorWork));
     w = obj->unk_50;
     w->unk_A8 = func_80027154_27D54(4, 0x7918);
-    if (kind == 3) {
-        func_8000C11C_CD1C(obj, 0xE, 0x689, 8);
-        func_8000C2A0_CEA0(obj, 3, 0x14, shadow | 0x400, 8);
-        func_800211E8_21DE8(w->unk_24, 0xF0);
-        func_80021250_21E50(w->unk_24, 0xFF, 0xFF, 0x86);
-    }
-    if (D_800BF799_C0399 == 0) {
-        obj->model[1] = func_80018A64_19664(1, shadow);
-    } else {
-        obj->model[1] = func_80018A64_19664(0xD, shadow);
-    }
-    w->unk_44 = 0.0f;
-    w->unk_48 = 20.0f;
-    w->unk_34 = 50.0f;
-    w->unk_3C = 0.0f;
-    w->unk_78 = 0;
-    w->unk_52 = kind;
-    w->unk_7C = 300;
-    w->unk_50 = 0;
-    w->unk_40 = 0.0f;
-    func_8000C37C_CF7C(obj, 2.0f, 2.0f, 2.0f);
-    for (i = 0; i < 9; i++) {
-        w->unk_84[i] = NULL;
-    }
+  }
+  else
+  {
+    obj->unk_50 = func_80027154_27D54(sizeof(ColActorWork), 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(ColActorWork));
+    w = obj->unk_50;
+    w->unk_A8 = func_80027154_27D54(4, 0x7918);
+  }
+  if (kind == 3)
+  {
+    func_8000C11C_CD1C(obj, 0xE, 0x689, 8);
+    func_8000C2A0_CEA0(obj, 3, 0x14, shadow | 0x400, 8);
+    func_800211E8_21DE8(w->unk_24, 0xF0);
+    func_80021250_21E50(w->unk_24, 0xFF, 0xFF, 0x86);
+  }
+  if (D_800BF799_C0399 == 0)
+  {
+    obj->model[1] = func_80018A64_19664(1, shadow);
+  }
+  else
+  {
+    obj->model[1] = func_80018A64_19664(0xD, shadow);
+  }
+  w->unk_44 = 0.0f;
+  w->unk_48 = 20.0f;
+  w->unk_34 = 50.0f;
+  w->unk_3C = 0.0f;
+  w->unk_78 = 0;
+  w->unk_52 = kind;
+  w->unk_7C = 300;
+  w->unk_50 = 0;
+  w->unk_40 = 0.0f;
+  func_8000C37C_CF7C(obj, 2.0f, 2.0f, 2.0f);
+  for (i = 0; i < 9; i++)
+  {
+    w->unk_84[i] = 0;
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1130", func_80001DE0_29E0);
-#endif
 
 /* Launch an item actor from a player: it takes the player's heading and speed (at least
    D_800BF7C0_C03C0) and starts on top of the player. */
-// register allocation (masked 0): s2/s3 swapped
-#ifdef NON_MATCHING
-void func_80001F44_2B44(omObjData* obj, omObjData* actor) {
-    MgWork* w;
-    ColActorWork* aw;
-
-    aw = actor->unk_50;
-    w = obj->unk_50;
-
-    if (aw->unk_84[6] == NULL || aw->unk_84[6](obj, actor) != 1) {
-        aw->unk_38 = -D_800BF7A4_C03A4 * 0.6f;
-        aw->unk_3C = w->unk_3C;
-        aw->unk_40 = w->unk_40;
-        if (aw->unk_40 < D_800BF7C0_C03C0) {
-            aw->unk_40 = D_800BF7C0_C03C0;
-        }
-        aw->unk_80 = 0;
-        actor->trans.x = obj->trans.x;
-        actor->trans.y = w->unk_34 + aw->unk_48 + obj->trans.y;
-        actor->trans.z = obj->trans.z;
+// decomp-permuter
+void func_80001F44_2B44(omObjData *obj, omObjData *actor)
+{
+  MgWork *w;
+  ColActorWork *aw;
+  aw = actor->unk_50;
+ do { w = obj->unk_50; } while (0);
+  if ((aw->unk_84[6] == 0) || (aw->unk_84[6](obj, actor) != 1))
+  {
+    aw->unk_38 = (-D_800BF7A4_C03A4) * 0.6f;
+    aw->unk_3C = w->unk_3C;
+    aw->unk_40 = w->unk_40;
+    if (aw->unk_40 < D_800BF7C0_C03C0)
+    {
+      aw->unk_40 = D_800BF7C0_C03C0;
     }
+    aw->unk_80 = 0;
+    actor->trans.x = obj->trans.x;
+    actor->trans.y = (w->unk_34 + aw->unk_48) + obj->trans.y;
+    actor->trans.z = obj->trans.z;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1130", func_80001F44_2B44);
-#endif
 
 void func_80002024_2C24(ColActorWork* w, s32 slot, s32 (*fn)()) {
     if (slot < 9) {

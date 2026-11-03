@@ -1581,36 +1581,34 @@ void func_801077B0_1E6C00_CrazyCutters(s32 sprite) {
 
 /* Starts the cut animation: one ring growing over sprite's mask, one shrinking over sprite2's.
    [FB640] */
-// register allocation only (masked 0; MP1 the same)
-#ifdef NON_MATCHING
-void func_801078A8_1E6CF8_CrazyCutters(omObjData* parent, s32 sprite, s32 sprite2, s32 player) {
-    omObjData* obj;
-    CCRing* ring;
-
-    func_801076B8_1E6B08_CrazyCutters(sprite);
-    obj = omAddObj(13, 0, 0, -1, func_801079E0_1E6E30_CrazyCutters);
-    obj->unk_50 = ring = func_80027154_27D54(sizeof(CCRing), 0x7918);
-    ring->radius = 0;
-    ring->step = 1.0f;
-    ring->end = 80.0f;
-    ring->mask = D_801099B0_1E8E00_CrazyCutters;
-    ring->width = D_801099B8_1E8E08_CrazyCutters;
-    ring->player = player;
-    func_801077B0_1E6C00_CrazyCutters(sprite2);
-    obj = omAddObj(13, 0, 0, -1, func_801079E0_1E6E30_CrazyCutters);
-    obj->unk_50 = ring = func_80027154_27D54(sizeof(CCRing), 0x7918);
-    ring->radius = 80.0f;
-    ring->step = -1.0f;
-    ring->end = 0;
-    ring->mask = D_801099B4_1E8E04_CrazyCutters;
-    ring->width = D_801099C0_1E8E10_CrazyCutters;
-    ring->player = player;
-    ring->frame = 0;
-    D_80109A98_1E8EE8_CrazyCutters = -1;
+// decomp-permuter
+void func_801078A8_1E6CF8_CrazyCutters(omObjData *parent, s32 sprite, s32 sprite2, s32 player)
+{
+  omObjData *obj;
+  CCRing *ring;
+  omObjData *new_var;
+  func_801076B8_1E6B08_CrazyCutters(sprite);
+  new_var = omAddObj(13, 0, 0, -1, func_801079E0_1E6E30_CrazyCutters);
+  obj = new_var;
+  obj->unk_50 = (ring = func_80027154_27D54(sizeof(CCRing), 0x7918));
+  ring->radius = 0;
+  ring->step = 1.0f;
+  ring->end = 80.0f;
+  ring->mask = D_801099B0_1E8E00_CrazyCutters;
+  ring->width = D_801099B8_1E8E08_CrazyCutters;
+  ring->player = player;
+  func_801077B0_1E6C00_CrazyCutters(sprite2);
+  obj = omAddObj(13, 0, 0, -1, func_801079E0_1E6E30_CrazyCutters);
+  obj->unk_50 = (ring = func_80027154_27D54(sizeof(CCRing), 0x7918));
+  ring->radius = 80.0f;
+  ring->step = -1.0f;
+  ring->end = 0;
+  ring->mask = D_801099B4_1E8E04_CrazyCutters;
+  ring->width = D_801099C0_1E8E10_CrazyCutters;
+  ring->player = player;
+  ring->frame = 0;
+  D_80109A98_1E8EE8_CrazyCutters = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_801078A8_1E6CF8_CrazyCutters);
-#endif
 
 /* A cut ring: erases the shape sprite's pixels along a circle of the ring's radius where its mask
    is set (a sound on the first erased pixel), steps the radius, and ends at the end radius.

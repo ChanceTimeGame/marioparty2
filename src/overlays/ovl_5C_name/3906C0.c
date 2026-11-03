@@ -1177,17 +1177,16 @@ void func_801065F8_3944B8_name_5C(void) {
     func_8008AD44_8B944(D_8011236A_3A022A_name_5C);
 }
 
-#ifdef NON_MATCHING
-void func_80106618_3944D8_name_5C(s16 model, s32 spr, char* part) {
-    f32 mtx[4][4];
-
-    func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
-    func_801098A4_397764_name_5C(model, &D_80112A04_3A08C4_name_5C, mtx);
-    espPosSet(spr, D_80112A04_3A08C4_name_5C.unk_00, D_80112A04_3A08C4_name_5C.unk_04);
+// decomp-permuter
+void func_80106618_3944D8_name_5C(s16 model, s32 spr, char *part)
+{
+  s32 new_var;
+  f32 mtx[4][4];
+  new_var = spr;
+  func_80023554_24154(model, func_80029CE4_2A8E4(model), part, mtx);
+ do { func_801098A4_397764_name_5C(model, &D_80112A04_3A08C4_name_5C, mtx); } while (0);
+  espPosSet(new_var, D_80112A04_3A08C4_name_5C.unk_00, D_80112A04_3A08C4_name_5C.unk_04);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_80106618_3944D8_name_5C);
-#endif
 
 #ifdef NON_MATCHING
 void func_801066D4_394594_name_5C(s32 model, s32 spr, char* part) {

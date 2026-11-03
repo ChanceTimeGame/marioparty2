@@ -297,19 +297,16 @@ close:
     func_8010E318_39C1D8_name_5C();
 }
 
-// register/schedule: the two loads and the subtraction order (masked 2)
-#ifdef NON_MATCHING
-void func_8010B050_398F10_name_5C(s16* t) {
-    s16 end = t[1];
-    s16 now = t[0];
-
-    if (now == end - 20) {
-        func_80088604_89204(D_80112A00_3A08C0_name_5C, 2, 2, 20);
-    }
+// decomp-permuter
+void func_8010B050_398F10_name_5C(s16 *t)
+{
+  unsigned int end = t[1];
+  s16 now = t[0];
+  if (now == (end - 20))
+  {
+    func_80088604_89204(D_80112A00_3A08C0_name_5C, 2, 2, 20);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010B050_398F10_name_5C);
-#endif
 
 void func_8010B08C_398F4C_name_5C(void) {
     s16 sum;
@@ -1474,19 +1471,17 @@ void func_8010FC20_39DAE0_name_5C(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010FC20_39DAE0_name_5C);
 #endif
 
-// register/schedule: when the shift of i happens (masked 2)
-#ifdef NON_MATCHING
-void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z) {
-    Ovl5CMover** list = D_80112408_3A02C8_name_5C;
-
-    list[i]->target.x = x;
-    list[i]->target.y = y;
-    list[i]->target.z = z;
-    list[i]->speed = 5.0f;
+// decomp-permuter
+void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z)
+{
+  f32 new_var;
+  Ovl5CMover **list = D_80112408_3A02C8_name_5C;
+  new_var = x;
+  D_80112408_3A02C8_name_5C[i]->target.x = new_var;
+  D_80112408_3A02C8_name_5C[i]->target.y = y;
+  D_80112408_3A02C8_name_5C[i]->target.z = z;
+  D_80112408_3A02C8_name_5C[i]->speed = 5.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010FFDC_39DE9C_name_5C);
-#endif
 
 // register allocation: 5000.0f is not kept in a register, spill slots differ, 2 more instructions (masked 59)
 #ifdef NON_MATCHING

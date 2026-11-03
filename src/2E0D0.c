@@ -599,65 +599,76 @@ void func_8002F290_2FE90(s32* arg0, s32 n) {
 
 /* MP1 func_8002AE24 (NON_MATCHING there too): the HitList copy of arg1 is scheduled after the
    stores of a2/a3 in retail; with l as the parameter the order matches but s7/s8 swap. */
-#ifdef NON_MATCHING
-void func_8002F2C4_2FEC4(s16 mi, HitList* l, s32 (*cb)(s32, u16*, ColVtx*, HitProbe*), HitProbe* probe) {
-    s32 x0;
-    s32 z1;
-    HmfData* mdl;
-    HmfModel* m;
-    HitGrid* g;
-    HitCell* cell;
-    u16** out;
-    u16* p;
-    s32 x1;
-    s32 z0;
-    s32 x;
-    s32 z;
-    s32 i;
-
-    l->pos = 0;
-    l->count = 0;
-    mdl = (D_800FC834_FD434 + mi)->hmf;
-    m = D_800FC834_FD434 + mi;
-    g = &D_800FD2B8_FDEB8[m->unk10];
-    x = ((g->w * g->cw) / 2.0f + probe->x) / g->cw;
-    z = ((g->h * g->ch) / 2.0f + probe->z) / g->ch;
-    x0 = x - 1;
-    x1 = x + 2;
-    z0 = z - 1;
-    z1 = z + 2;
-    if (x0 < 0) {
-        x0 = 0;
-    }
-    if (z0 < 0) {
-        z0 = 0;
-    }
-    if (g->w < x1) {
-        x1 = g->w;
-    }
-    if (g->h < z1) {
-        z1 = g->h;
-    }
-    out = l->list;
-    for (z = z0; z < z1; z++) {
-        for (x = x0; x < x1; x++) {
-            cell = &g->cells[z * g->w + x];
-            if (cell->count != 0) {
-                p = &g->polys[cell->offset];
-                for (i = 0; i < cell->count; i++) {
-                    if (cb((*p >> 14) + 2, p + 1, mdl->unk54, probe) != 0) {
-                        *out++ = p;
-                        l->count++;
-                    }
-                    p += (*p >> 14) + 3;
-                }
-            }
+// decomp-permuter
+void func_8002F2C4_2FEC4(s16 mi, HitList *l, s32 (*cb)(s32, u16 *, ColVtx *, HitProbe *), HitProbe *probe)
+{
+  s32 x0;
+  s32 z1;
+  HmfData *mdl;
+  HmfModel *m;
+  HitGrid *g;
+  HitCell *cell;
+  u16 **out;
+  u16 *p;
+  s32 x1;
+  s32 z0;
+  s32 x;
+  s32 z;
+  char new_var;
+  s32 i;
+  l->pos = 0;
+  l->count = 0;
+  mdl = (D_800FC834_FD434 + mi)->hmf;
+  m = D_800FC834_FD434 + mi;
+  g = &D_800FD2B8_FDEB8[m->unk10];
+  x = (((g->w * g->cw) / 2.0f) + probe->x) / g->cw;
+  z = (((g->h * g->ch) / 2.0f) + probe->z) / g->ch;
+  x0 = x - 1;
+  x1 = x + 2;
+  z0 = z - 1;
+  z1 = z + 2;
+  if (x0 < 0)
+  {
+    x0 = 0;
+  }
+  if (z0 < 0)
+  {
+    z0 = 0;
+  }
+  if (g->w < x1)
+  {
+    x1 = g->w;
+  }
+  if (g->h < z1)
+  {
+    z1 = g->h;
+  }
+  out = l->list;
+  for (z = z0; z < z1; z++)
+  {
+    for (x = x0; x < x1; x++)
+    {
+      cell = &g->cells[(z * g->w) + x];
+      if (cell->count != 0)
+      {
+        p = &g->polys[cell->offset];
+        for (i = 0; i < cell->count; i++)
+        {
+          new_var = ((*p) >> 14) + 2;
+          if (cb(new_var, p + 1, mdl->unk54, probe) != 0)
+          {
+            *(out++) = p;
+            l->count++;
+          }
+          p += ((*p) >> 14) + 3;
         }
+
+      }
     }
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/2E0D0", func_8002F2C4_2FEC4);
-#endif
 
 /* exact c: marioparty func_8002B074 (src/29C90.c) */
 s32 func_8002F514_30114(u16 n, s16* idx, ColVtx* verts, HitProbe* probe) {

@@ -1946,23 +1946,23 @@ void func_80108828_24C138_ShyGuySays(void) {
     SprPrioSet(spr, 0, 0xFF80);
 }
 
-// schedule: one sra after the division (masked 2)
-#ifdef NON_MATCHING
-void func_801088EC_24C1FC_ShyGuySays(s32 total, s32 now) {
-    s32 spr = D_8010AB74_24E484_ShyGuySays;
-
-    if (total < 1 || total < now) {
-        SprAttrSet(spr, 0, 0x8000);
-    } else {
-        s16 id = spr;
-
-        SprPosSet(id, 0, fabsf((f32)now / total) * 320.0f, 0x20);
-        SprAttrReset(id, 0, 0x8000);
-    }
+// decomp-permuter
+void func_801088EC_24C1FC_ShyGuySays(s32 total, s32 now)
+{
+  f32 new_var;
+  s32 spr = D_8010AB74_24E484_ShyGuySays;
+  if ((total < 1) || (total < now))
+  {
+    SprAttrSet(spr, 0, 0x8000);
+  }
+  else
+  {
+    s16 id = spr;
+    new_var = fabsf(((f32) now) / total);
+    SprPosSet(id, 0, new_var * 320.0f, 0x20);
+    SprAttrReset(id, 0, 0x8000);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_801088EC_24C1FC_ShyGuySays);
-#endif
 
 void func_801089A8_24C2B8_ShyGuySays(void) {
     SGSShot* s = D_8010AA58_24E368_ShyGuySays;

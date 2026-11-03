@@ -745,73 +745,81 @@ void func_80104AEC_35F3FC_name_53(void) {
 
 /* Event 1: every player pays the stake; with nobody holding coins Bowser gives everyone 10. */
 /* NON_MATCHING: registers (masked 1): the count/loop counter pair and the i == who temp land in swapped saved registers */
-#ifdef NON_MATCHING
-void func_80104D6C_35F67C_name_53(void) {
-    s32 win;
-    s32 i;
-    s32 n;
-    s32 mes1;
-    s32 mes2;
-    s32 coins;
-    s32 who;
-    s32 d;
+// decomp-permuter
+void func_80104D6C_35F67C_name_53(void)
+{
+  s32 win;
+  s32 i;
+  s32 n;
+  s32 mes1;
+  s32 mes2;
+  s32 coins;
+  s32 who;
+  s32 d;
+  n = 0;
+  mes1 = 0x269;
+  mes2 = 0x26A;
+  coins = func_80104A40_35F350_name_53(1, D_80105DD2_3606E2_name_53);
+  for (i = 0; i < 4; i++)
+  {
+    if (gPlayers[i].coins < coins)
+    {
+      mes2 = 0x26C;
+      mes1 = 0x26B;
+    }
+    n += gPlayers[i].coins == 0;
+  }
 
-    n = 0;
-    mes1 = 0x269;
-    mes2 = 0x26A;
-    coins = func_80104A40_35F350_name_53(1, D_80105DD2_3606E2_name_53);
-    for (i = 0; i < 4; i++) {
-        if (gPlayers[i].coins < coins) {
-            mes2 = 0x26C;
-            mes1 = 0x26B;
-        }
-        n += gPlayers[i].coins == 0;
+  if (n == 4)
+  {
+    coins = -10;
+    mes1 = 0x26D;
+    mes2 = 0x26E;
+  }
+  sprintf(D_80105D60_360670_name_53, D_80105D58_360668_name_53, coins);
+  func_8008D974_8E574(D_80105D60_360670_name_53, 0);
+  func_8008DACC_8E6CC(1, D_80105DCC_3606DC_name_53, mes1);
+  win = func_8005AAC0_5B6C0((320 - D_80105DCC_3606DC_name_53[0]) / 2, 80, D_80105DCC_3606DC_name_53[0], D_80105DCC_3606DC_name_53[1]);
+  func_80089308_89F08(win, D_80105D60_360670_name_53, 0);
+  func_800890CC_89CCC(win, mes1, -1, -1);
+  ShowTextWindow(win);
+  func_80057730_58330(win, D_80105DD2_3606E2_name_53);
+  func_8008CCA8_8D8A8(win);
+  func_80060210_60E10(0);
+  HuPrcSleep(20);
+  n = 0;
+  who = 0;
+  for (i = 0; i < 4; i++)
+  {
+    d = gPlayers[i].coins - coins;
+    if (n < d)
+    {
+      n = d;
+      who = i;
     }
-    if (n == 4) {
-        coins = -10;
-        mes1 = 0x26D;
-        mes2 = 0x26E;
-    }
-    sprintf(D_80105D60_360670_name_53, D_80105D58_360668_name_53, coins);
-    func_8008D974_8E574(D_80105D60_360670_name_53, 0);
-    OVL53_MES_WIN(win, mes1);
-    func_80089308_89F08(win, D_80105D60_360670_name_53, 0);
-    func_800890CC_89CCC(win, mes1, -1, -1);
-    ShowTextWindow(win);
-    func_80057730_58330(win, D_80105DD2_3606E2_name_53);
-    func_8008CCA8_8D8A8(win);
-    func_80060210_60E10(0);
-    HuPrcSleep(20);
-    n = 0;
-    who = 0;
-    for (i = 0; i < 4; i++) {
-        d = gPlayers[i].coins - coins;
-        if (n < d) {
-            n = d;
-            who = i;
-        }
-    }
-    MBMotionSet(D_80105DD4_3606E4_name_53, 1, 0);
-    func_80059520_5A120(D_80105DD4_3606E4_name_53, 0, 2);
-    HuPrcSleep(14);
-    for (i = 0; i < 4; i++) {
-        n = i == who;
-        func_8005A4EC_5B0EC(i, 4);
-        func_8006135C_61F5C(i, -coins, n);
-    }
-    HuPrcSleep(45);
-    OVL53_MES_WIN(win, mes2);
-    func_800890CC_89CCC(win, mes2, -1, -1);
-    ShowTextWindow(win);
-    func_80057730_58330(win, D_80105DD2_3606E2_name_53);
-    func_8005762C_5822C(win);
-    PlaySound(0x332);
-    MBMotionShiftSet(D_80105DD4_3606E4_name_53, 2, 0, 6, 2);
-    HuPrcSleep(30);
+  }
+
+  MBMotionSet(D_80105DD4_3606E4_name_53, 1, 0);
+  func_80059520_5A120(D_80105DD4_3606E4_name_53, 0, 2);
+  HuPrcSleep(14);
+  for (i = 0; i < 4; i++)
+  {
+    n = i == who;
+    func_8005A4EC_5B0EC(i, 4);
+    func_8006135C_61F5C(i, -coins, i == who);
+  }
+
+  HuPrcSleep(45);
+  func_8008DACC_8E6CC(1, D_80105DCC_3606DC_name_53, mes2);
+  win = func_8005AAC0_5B6C0((320 - D_80105DCC_3606DC_name_53[0]) / 2, 80, D_80105DCC_3606DC_name_53[0], D_80105DCC_3606DC_name_53[1]);
+  func_800890CC_89CCC(win, mes2, -1, -1);
+  ShowTextWindow(win);
+  func_80057730_58330(win, D_80105DD2_3606E2_name_53);
+  func_8005762C_5822C(win);
+  PlaySound(0x332);
+  MBMotionShiftSet(D_80105DD4_3606E4_name_53, 2, 0, 6, 2);
+  HuPrcSleep(30);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80104D6C_35F67C_name_53);
-#endif
 
 /* Event 2: Chance Time (func_80102D54 leaves to overlay 0x34). */
 void func_80105088_35F998_name_53(void) {

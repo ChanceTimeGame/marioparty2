@@ -109,50 +109,49 @@ void func_8010609C_27DBCC_QuicksandCache(omObjData* obj) {
     obj->func_ptr = func_80106038_27DB68_QuicksandCache;
 }
 
-#ifdef NON_MATCHING
-/* Logic complete; register allocation only (full/i swapped). */
-void func_801060F8_27DC28_QuicksandCache(void) {
-    s32 full = 1;
-    s8 i;
-    omObjData* obj;
-    QCActor* a;
-    f32 ang;
-
-    for (i = 0; i < 4; i++) {
-        obj = D_800F9CE0_FA8E0[i];
-        a = obj->unk_50;
-        if (a->unk_54 != 1) {
-            full = 0;
-            break;
-        }
+// decomp-permuter
+void func_801060F8_27DC28_QuicksandCache(void)
+{
+  s8 i;
+  char full = 1;
+  omObjData *obj;
+  QCActor *a;
+  f32 ang;
+  for (i = 0; i < 4; i++)
+  {
+    obj = D_800F9CE0_FA8E0[i];
+    a = obj->unk_50;
+    if (a->unk_54 != 1)
+    {
+      full = 0;
+      break;
     }
-    if (full != 1) {
-        func_8000C024_CC24(obj, 0, 2);
-        func_8000C024_CC24(obj, 1, 1);
-        ang = (f32)(guRandom() % 3600) / 10.0f;
-        {
-            f32 x = -HuMathSin(ang) * 750.0f;
-            f32 z = func_800B7890_B8490(ang) * 750.0f;
+  }
 
-            obj->trans.x = x;
-            obj->trans.y = 1200.0f;
-            obj->trans.z = z;
-        }
-        a->unk_54 = 1;
-        a->unk_3C = ang - 180.0f;
-        a->unk_52 = 3;
-        a->unk_40 = 2.5f;
-        a->unk_7C = 0x7D0;
-        func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
-        func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
-        func_800298A4_2A4A4(obj->model[0], 4, 0);
-        func_800298A4_2A4A4(obj->model[1], 4, 0);
-        obj->func_ptr = func_80105F9C_27DACC_QuicksandCache;
+  if (full != 1)
+  {
+    func_8000C024_CC24(obj, 0, 2);
+    func_8000C024_CC24(obj, 1, 1);
+    ang = ((f32) (guRandom() % 3600)) / 10.0f;
+    {
+      f32 x = (-HuMathSin(ang)) * 750.0f;
+      f32 z = func_800B7890_B8490(ang) * 750.0f;
+      obj->trans.x = x;
+      obj->trans.y = 1200.0f;
+      obj->trans.z = z;
     }
+    a->unk_54 = 1;
+    a->unk_3C = ang - 180.0f;
+    a->unk_52 = 3;
+    a->unk_40 = 2.5f;
+    a->unk_7C = 0x7D0;
+    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, obj->trans.y, obj->trans.z);
+    func_800298A4_2A4A4(obj->model[0], 4, 0);
+    func_800298A4_2A4A4(obj->model[1], 4, 0);
+    obj->func_ptr = func_80105F9C_27DACC_QuicksandCache;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27D810", func_801060F8_27DC28_QuicksandCache);
-#endif
 
 void func_801062F0_27DE20_QuicksandCache(void) {
     omObjData* obj = D_800F9CE0_FA8E0[0];

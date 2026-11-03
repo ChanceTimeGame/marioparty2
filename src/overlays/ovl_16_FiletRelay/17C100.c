@@ -367,98 +367,123 @@ void func_801052DC_17D08C_FiletRelay(omObjData* obj, FRPlayer* w) {
 }
 
 /* State 1: running. Past the goal: hand over to the next, or win. */
-#ifdef NON_MATCHING
-void func_80105384_17D134_FiletRelay(omObjData* obj, FRPlayer* w) {
-    Vec stick;
-    FRPlayer* p;
-    f32 a;
-    f32 fall;
-    f32 skid;
-    f32 last;
-    f32 now;
+// decomp-permuter
+void func_80105384_17D134_FiletRelay(omObjData *obj, FRPlayer *w)
+{
+  Vec stick;
+  FRPlayer *p;
+  f32 a;
+  f32 fall;
+  f32 skid;
+  f32 last;
+  f32 now;
+  float new_var;
+  if (w->goal > obj->trans.z)
+  {
+    if (((u8) w->order) < 2)
+    {
+      w->sub = 0;
+      w->state = 2;
+      p = func_801049AC_17C75C_FiletRelay(w->order + 1);
+      if (p == 0)
+      {
+        while (1)
+        {
+        }
 
-    if (w->goal > obj->trans.z) {
-        if ((u8)w->order < 2) {
-            w->sub = 0;
-            w->state = 2;
-            p = func_801049AC_17C75C_FiletRelay(w->order + 1);
-            if (p == NULL) {
-                while (1) {
-                }
-            }
-            p->sub = 0;
-            p->state = 3;
-        } else {
-            func_801089C8_180778_FiletRelay(w->team);
-            func_8010899C_18074C_FiletRelay(3);
-        }
-        return;
+      }
+      p->sub = 0;
+      p->state = 3;
     }
-    if (gPlayers[w->player].flags & 1) {
-        func_80104EC8_17CC78_FiletRelay(obj, w);
+    else
+    {
+      func_801089C8_180778_FiletRelay(w->team);
+      func_8010899C_18074C_FiletRelay(3);
     }
-    HuVecMulScalar(&w->vel, 0.98f, &w->vel);
-    a = 0.0f;
-    if (ContBtnTrg[w->port] & 0x8000) {
-        a = 0.4f;
-    }
-    HuVecCopyXYZ(&stick, ContStkX[w->port] * 0.001f, 0.0f, -(a -= w->normal.z * 0.17f));
-    HuVecAdd(&stick, &w->acc, &stick);
-    HuVecCopyXYZ(&w->acc, 0.0f, 0.0f, 0.0f);
-    HuVecAdd(&w->vel, &w->vel, &stick);
-    w->vel.y = 0.0f;
-    if (w->order != -1) {
-        HuVecMulScalar(&w->vel, 1.016f, &w->vel);
-        fall = 5.15f;
-        skid = 4.45f;
-    } else {
-        fall = 4.2f;
-        skid = 3.6f;
-    }
-    HuVecAdd(&w->next, &w->pos, &w->vel);
-    w->speed = HuVecGetLength3F(&w->vel);
-    p = func_80104930_17C6E0_FiletRelay(w->player);
-    if (p != NULL && p->pos.z < w->pos.z) {
-        fall += 0.5f;
-        skid += 0.5f;
-    }
-    if (fall < w->speed && w->slip >= 31) {
-        w->slip = 0;
-        w->sub = 0;
-        w->state = 6;
-        return;
-    }
-    if (skid < w->speed) {
-        if (func_8010474C_17C4FC_FiletRelay(obj, 6) != 0) {
-            func_800798F8_7A4F8(func_80079798_7A398(0x1D1, w->player), w->pan);
-        }
-        if (a == 0.0f) {
-            HuVecMulScalar(&w->vel, 0.98f, &w->vel);
-        }
-        w->slip++;
-        return;
-    }
-    if (w->speed > 0.001f) {
-        if (func_8010474C_17C4FC_FiletRelay(obj, 1) != 0) {
-            w->step = 0.0f;
-        }
-        func_801048F8_17C6A8_FiletRelay(obj, w->speed);
-        for (last = w->step - 12.5f; last > 25.0f; last -= 25.0f) {
-        }
-        w->step += w->speed;
-        for (now = w->step - 12.5f; now > 25.0f; now -= 25.0f) {
-        }
-        if (now < last) {
-            func_800798F8_7A4F8(func_80079798_7A398(0x1D0, w->player), w->pan);
-        }
-    } else {
-        func_8010474C_17C4FC_FiletRelay(obj, 0);
-    }
+    return;
+  }
+  if (gPlayers[w->player].flags & 1)
+  {
+    func_80104EC8_17CC78_FiletRelay(obj, w);
+  }
+  HuVecMulScalar(&w->vel, 0.98f, &w->vel);
+  a = 0.0f;
+  if (ContBtnTrg[w->port] & 0x8000)
+  {
+    a = 0.4f;
+  }
+  new_var = ContStkX[w->port] * 0.001f;
+  HuVecCopyXYZ(&stick, new_var, 0.0f, -(a -= w->normal.z * 0.17f));
+  HuVecAdd(&stick, &w->acc, &stick);
+  HuVecCopyXYZ(&w->acc, 0.0f, 0.0f, 0.0f);
+  HuVecAdd(&w->vel, &w->vel, &stick);
+  w->vel.y = 0.0f;
+  if (w->order != (-1))
+  {
+    HuVecMulScalar(&w->vel, 1.016f, &w->vel);
+    fall = 5.15f;
+    skid = 4.45f;
+  }
+  else
+  {
+    fall = 4.2f;
+    skid = 3.6f;
+  }
+  HuVecAdd(&w->next, &w->pos, &w->vel);
+  w->speed = HuVecGetLength3F(&w->vel);
+  p = func_80104930_17C6E0_FiletRelay(w->player);
+  if ((p != 0) && (p->pos.z < w->pos.z))
+  {
+    fall += 0.5f;
+    skid += 0.5f;
+  }
+  if ((fall < w->speed) && (w->slip >= 31))
+  {
     w->slip = 0;
+    w->sub = 0;
+    w->state = 6;
+    return;
+  }
+  if (skid < w->speed)
+  {
+    if (func_8010474C_17C4FC_FiletRelay(obj, 6) != 0)
+    {
+      func_800798F8_7A4F8(func_80079798_7A398(0x1D1, w->player), w->pan);
+    }
+    if (a == 0.0f)
+    {
+      HuVecMulScalar(&w->vel, 0.98f, &w->vel);
+    }
+    w->slip++;
+    return;
+  }
+  if (w->speed > 0.001f)
+  {
+    if (func_8010474C_17C4FC_FiletRelay(obj, 1) != 0)
+    {
+      w->step = 0.0f;
+    }
+    func_801048F8_17C6A8_FiletRelay(obj, w->speed);
+    for (last = w->step - 12.5f; last > 25.0f; last -= 25.0f)
+    {
+    }
+
+    w->step += w->speed;
+    for (now = w->step - 12.5f; now > 25.0f; now -= 25.0f)
+    {
+    }
+
+    if (now < last)
+    {
+      func_800798F8_7A4F8(func_80079798_7A398(0x1D0, w->player), w->pan);
+    }
+  }
+  else
+  {
+    func_8010474C_17C4FC_FiletRelay(obj, 0);
+  }
+  w->slip = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17C100", func_80105384_17D134_FiletRelay);
-#endif
 
 /* State 2: throw the fish to the next penguin. */
 void func_80105800_17D5B0_FiletRelay(omObjData* obj, FRPlayer* w) {
@@ -681,52 +706,59 @@ void func_801060A4_17DE54_FiletRelay(omObjData* obj, FRPlayer* w) {
 }
 
 /* Game state 2: a penguin's frame. */
-#ifdef NON_MATCHING
-void func_801060D4_17DE84_FiletRelay(omObjData* obj, FRPlayer* w) {
-    Vec a;
-    Vec b;
-    Vec c;
-    Vec eye;
+// decomp-permuter
+void func_801060D4_17DE84_FiletRelay(omObjData *obj, FRPlayer *w)
+{
+  Vec a;
+  Vec b;
+  Vec c;
+  Vec eye;
+  if (w->order == (-1))
+  {
+    func_80104AE0_17C890_FiletRelay(w);
+  }
+  if ((w->state == 1) || (w->state == 6))
+  {
+    HuVecCopyXYZ(&a, w->pos.x, w->pos.y + w->radius, w->pos.z);
+    switch (func_80103EE0_17BC90_FiletRelay(&a, w->radius, &w->hitPos))
+    {
+      case 1:
+        w->state = 5;
+        w->sub = 0;
+        break;
 
-    if (w->order == -1) {
-        func_80104AE0_17C890_FiletRelay(w);
+      case 2:
+        HuVecSubtract(&b, &w->pos, &w->hitPos);
+ do { func_801080E0_17FE90_FiletRelay(&b); } while (0);
+        HuVecMulScalar(&w->vel, -w->speed, &b);
+        break;
+
     }
-    if (w->state == 1 || w->state == 6) {
-        HuVecCopyXYZ(&a, w->pos.x, w->pos.y + w->radius, w->pos.z);
-        switch (func_80103EE0_17BC90_FiletRelay(&a, w->radius, &w->hitPos)) {
-            case 1:
-                w->state = 5;
-                w->sub = 0;
-                break;
-            case 2:
-                HuVecSubtract(&b, &w->pos, &w->hitPos);
-                func_801080E0_17FE90_FiletRelay(&b);
-                HuVecMulScalar(&w->vel, -w->speed, &b);
-                break;
-        }
+
+  }
+  D_80109364_181114_FiletRelay[w->state](obj, w);
+  w->flags &= ~1;
+  if (w->next.z > 1300.0f)
+  {
+    w->next.z = 1300.0f;
+  }
+  if (!(w->flags & 4))
+  {
+    if (func_80104074_17BE24_FiletRelay(&w->pos, &w->next, &w->vel, &w->normal, &w->speed) != 0)
+    {
+      w->flags |= 1;
     }
-    D_80109364_181114_FiletRelay[w->state](obj, w);
-    w->flags &= ~1;
-    if (w->next.z > 1300.0f) {
-        w->next.z = 1300.0f;
-    }
-    if (!(w->flags & 4)) {
-        if (func_80104074_17BE24_FiletRelay(&w->pos, &w->next, &w->vel, &w->normal, &w->speed) != 0) {
-            w->flags |= 1;
-        }
-    }
-    func_800B3170_B3D70(&w->pos, &w->next);
-    func_801045C8_17C378_FiletRelay(obj);
-    if (w->state == 1 || w->state == 6 || w->state == 5) {
-        func_801086B4_180464_FiletRelay(w->cam, &eye);
-        eye.z = w->vel.x * -1.5f;
-        HuVecCopyXYZ(&c, w->pos.x, w->pos.y + 50.0f, w->pos.z + 60.0f);
-        func_80108770_180520_FiletRelay(w->cam, &c, &eye, 0.0f, 0.0f);
-    }
+  }
+  func_800B3170_B3D70(&w->pos, &w->next);
+  func_801045C8_17C378_FiletRelay(obj);
+  if (((w->state == 1) || (w->state == 6)) || (w->state == 5))
+  {
+    func_801086B4_180464_FiletRelay(w->cam, &eye);
+    eye.z = w->vel.x * (-1.5f);
+    HuVecCopyXYZ(&c, w->pos.x, w->pos.y + 50.0f, w->pos.z + 60.0f);
+    func_80108770_180520_FiletRelay(w->cam, &c, &eye, 0.0f, 0.0f);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17C100", func_801060D4_17DE84_FiletRelay);
-#endif
 
 /* Game state 3: the end of the race. */
 void func_80106314_17E0C4_FiletRelay(omObjData* obj, FRPlayer* w) {

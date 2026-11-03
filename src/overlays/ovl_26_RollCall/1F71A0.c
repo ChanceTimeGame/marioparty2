@@ -109,81 +109,103 @@ void func_80102E14_1F77B4_RollCall(omObjData* obj) {
 }
 
 /* NM: register allocation (masked 0): the count and the loop index swap a2 and a3. */
-#ifdef NON_MATCHING
-void func_80102E54_1F77F4_RollCall(omObjData* obj) {
-    u8 chars[4];
-    s16 i;
-    s16 n;
-    RCSlot* p;
-    omObjData* o;
+// decomp-permuter
+void func_80102E54_1F77F4_RollCall(omObjData *obj)
+{
+  u8 chars[4];
+  s16 i;
+  s16 n;
+  RCSlot *p;
+  omObjData *o;
+  if (_CheckFlag(0xC) != 0)
+  {
+    n = 0;
+    if (D_8010A4C8_1FEE68_RollCall == 60)
+    {
+      for (i = 0; i < 4; i++)
+      {
+        p = &D_8010A5B0_1FEF50_RollCall[i];
+        if (p->obj != 0)
+        {
+          o = p->obj;
+          if (p->unk_20 == 2)
+          {
+            gPlayers[o->work[0]].coins_mg_bonus = 10;
+            chars[n] = gPlayers[o->work[0]].character;
+            n++;
+          }
+          else
+          {
+            gPlayers[o->work[0]].coins_mg_bonus = 0;
+          }
+        }
+      }
 
-    if (_CheckFlag(0xC) != 0) {
-        n = 0;
-        if (D_8010A4C8_1FEE68_RollCall == 60) {
-            for (i = 0; i < 4; i++) {
-                p = &D_8010A5B0_1FEF50_RollCall[i];
-                if (p->obj != NULL) {
-                    o = p->obj;
-                    if (p->unk_20 == 2) {
-                        gPlayers[o->work[0]].coins_mg_bonus = 10;
-                        chars[n] = gPlayers[o->work[0]].character;
-                        n++;
-                    } else {
-                        gPlayers[o->work[0]].coins_mg_bonus = 0;
-                    }
-                }
-            }
-        }
-    } else {
-        n = 0;
-        if (D_8010A4C8_1FEE68_RollCall == 90) {
-            for (i = 0; i < 4; i++) {
-                p = &D_8010A5B0_1FEF50_RollCall[i];
-                if (p->obj != NULL) {
-                    o = p->obj;
-                    if (p->unk_20 == 2) {
-                        gPlayers[o->work[0]].coins_mg_bonus = 10;
-                        chars[n] = gPlayers[o->work[0]].character;
-                        n++;
-                    } else {
-                        gPlayers[o->work[0]].coins_mg_bonus = 0;
-                    }
-                }
-            }
-            switch (n) {
-            case 0:
-                func_800691FC_69DFC(0x13);
-                PlayMusic(0x57);
-                D_8010A4C8_1FEE68_RollCall = 120;
-                break;
-            case 1:
-                func_800691FC_69DFC(6, chars[0]);
-                PlayMusic(0x51);
-                D_8010A4C8_1FEE68_RollCall = 120;
-                break;
-            case 2:
-                func_800691FC_69DFC(0x11, chars[0], chars[1]);
-                PlayMusic(0x52);
-                D_8010A4C8_1FEE68_RollCall = 168;
-                break;
-            case 3:
-                func_800691FC_69DFC(0x15, chars[0], chars[1], chars[2]);
-                PlayMusic(0x52);
-                D_8010A4C8_1FEE68_RollCall = 168;
-                break;
-            default:
-                func_800691FC_69DFC(0x16, chars[0], chars[1], chars[2], chars[3]);
-                PlayMusic(0x52);
-                D_8010A4C8_1FEE68_RollCall = 168;
-                break;
-            }
-        }
     }
-    obj->func_ptr = func_80102E14_1F77B4_RollCall;
+  }
+  else
+  {
+    n = 0;
+    if (D_8010A4C8_1FEE68_RollCall == 90)
+    {
+      for (i = 0; i < 4; i++)
+      {
+        p = &D_8010A5B0_1FEF50_RollCall[i];
+        if (p->obj != 0)
+        {
+          o = p->obj;
+          if (p->unk_20 == 2)
+          {
+            gPlayers[o->work[0]].coins_mg_bonus = 10;
+            chars[n] = gPlayers[o->work[0]].character;
+            n++;
+          }
+          else
+          {
+            gPlayers[o->work[0]].coins_mg_bonus = 0;
+          }
+        }
+      }
+
+      switch (n)
+      {
+        case 0:
+          func_800691FC_69DFC(0x13);
+          PlayMusic(0x57);
+          D_8010A4C8_1FEE68_RollCall = 120;
+          break;
+
+        case 1:
+          func_800691FC_69DFC(6, chars[0]);
+          PlayMusic(0x51);
+          D_8010A4C8_1FEE68_RollCall = 120;
+          break;
+
+        case 2:
+          func_800691FC_69DFC(0x11, chars[0], chars[1]);
+          PlayMusic(0x52);
+          D_8010A4C8_1FEE68_RollCall = 168;
+          break;
+
+        case 3:
+          n = chars[1];
+          func_800691FC_69DFC(0x15, chars[0], n, chars[2]);
+          PlayMusic(0x52);
+          D_8010A4C8_1FEE68_RollCall = 168;
+          break;
+
+        default:
+          func_800691FC_69DFC(0x16, chars[0], chars[1], chars[2], chars[3]);
+          PlayMusic(0x52);
+          D_8010A4C8_1FEE68_RollCall = 168;
+          break;
+
+      }
+
+    }
+  }
+  obj->func_ptr = func_80102E14_1F77B4_RollCall;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80102E54_1F77F4_RollCall);
-#endif
 
 void func_80103168_1F7B08_RollCall(omObjData* obj) {
     if (D_8010A4FE_1FEE9E_RollCall == 1) {
@@ -1653,53 +1675,66 @@ void func_80107EFC_1FC89C_RollCall(omObjData* obj) {
 }
 
 /* NM: register allocation (masked 0): the count load goes to a1, retail a0. */
-#ifdef NON_MATCHING
-void func_801081B8_1FCB58_RollCall(omObjData* obj) {
-    RCSlot* p = &D_8010A5B0_1FEF50_RollCall[obj->work[0]];
-
-    switch (D_8010A4CA_1FEE6A_RollCall) {
+// decomp-permuter
+void func_801081B8_1FCB58_RollCall(omObjData *obj)
+{
+  omObjData *new_var;
+  short new_var2;
+  RCSlot *p = &D_8010A5B0_1FEF50_RollCall[obj->work[0]];
+  switch (D_8010A4CA_1FEE6A_RollCall)
+  {
     case 2:
-        if (gPlayers[obj->work[0]].flags & 1) {
-            func_80107C48_1FC5E8_RollCall(obj);
-        } else {
-            func_80107DE4_1FC784_RollCall(obj);
-        }
-        break;
+      if (gPlayers[obj->work[0]].flags & 1)
+    {
+      func_80107C48_1FC5E8_RollCall(obj);
+    }
+    else
+    {
+      func_80107DE4_1FC784_RollCall(obj);
+    }
+      break;
+
     case 4:
-        if (_CheckFlag(0xC) == 0 && D_8010A4FE_1FEE9E_RollCall == 1) {
-            p->alpha -= 12;
-            if (p->alpha < 0) {
-                p->alpha = 0;
-            }
-        }
-        break;
+      if ((_CheckFlag(0xC) == 0) && (D_8010A4FE_1FEE9E_RollCall == 1))
+    {
+      p->alpha -= 12;
+      if (p->alpha < 0)
+      {
+        p->alpha = 0;
+      }
     }
-    func_80107EFC_1FC89C_RollCall(obj);
-    func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_8002979C_2A39C(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
-    func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
-    func_800297E8_2A3E8(obj->model[1], 1.5f, obj->scale.y, 1.5f);
-    func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_800297E8_2A3E8(obj->model[2], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_8002D0A0_2DCA0(obj->model[2], p->alpha);
-    func_80029714_2A314(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_800297E8_2A3E8(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_8002D0A0_2DCA0(obj->model[4], p->alpha);
-    func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
-    func_800297E8_2A3E8(obj->model[3], 1.0f, 1.0f, 1.0f);
-    func_800297E8_2A3E8(obj->model[3], obj->scale.x, obj->scale.y, obj->scale.z);
-    func_8002D0A0_2DCA0(obj->model[3], p->alpha);
-    if (p->unk_28 < 10) {
-        func_8003F57C_4017C(obj->work[1], 10);
-    } else {
-        func_8003F57C_4017C(obj->work[1], (u8)(p->unk_28 / 10));
-    }
-    func_8003F57C_4017C(obj->work[2], (u8)(p->unk_28 % 10));
+      break;
+
+  }
+
+  func_80107EFC_1FC89C_RollCall(obj);
+  func_80029714_2A314(obj->model[0], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_8002979C_2A39C(obj->model[0], obj->rot.x, obj->rot.y, obj->rot.z);
+  func_800297E8_2A3E8(obj->model[0], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
+  func_800297E8_2A3E8(obj->model[1], 1.5f, obj->scale.y, 1.5f);
+  new_var = obj;
+  func_80029714_2A314(obj->model[2], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_800297E8_2A3E8(obj->model[2], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_8002D0A0_2DCA0(obj->model[2], p->alpha);
+  func_80029714_2A314(obj->model[4], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_800297E8_2A3E8(obj->model[4], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_8002D0A0_2DCA0(obj->model[4], p->alpha);
+  func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
+  func_800297E8_2A3E8(obj->model[3], 1.0f, 1.0f, 1.0f);
+  func_800297E8_2A3E8(obj->model[3], obj->scale.x, obj->scale.y, obj->scale.z);
+  func_8002D0A0_2DCA0(new_var->model[3], p->alpha);
+  if (p->unk_28 < 10)
+  {
+    func_8003F57C_4017C(new_var2 = obj->work[1], 10);
+  }
+  else
+  {
+    func_8003F57C_4017C(obj->work[1], (u8) (p->unk_28 / 10));
+  }
+  new_var2 = p->unk_28 % 10;
+  func_8003F57C_4017C(obj->work[2], (u8) new_var2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_801081B8_1FCB58_RollCall);
-#endif
 
 __asm__(".section .rodata");
 const char D_8010A480_1FEE20_RollCall[] = "0_DEF";
