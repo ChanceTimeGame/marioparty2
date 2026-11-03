@@ -320,17 +320,22 @@ void omVibrate(s16 player, s16 arg1, s16 arg2, s16 arg3) {
 }
 
 /* MP1 func_80060AB4: the requested sound mode/bank differs from the loaded one */
-// bnel where retail has bne before the shared `li v0,1` (masked 1)
-#ifdef NON_MATCHING
-u16 func_80079D7C_7A97C(void) {
-    if (D_800CD528_CE128 != D_800CD52A_CE12A) {
-        return 1;
-    }
+// decomp-permuter
+u16 func_80079D7C_7A97C(void)
+{
+  if (D_800CD528_CE128 != D_800CD52A_CE12A)
+  {
+    return 1;
+  }
+  if (D_800CD528_CE128 || D_800CD52A_CE12A)
+  {
     return D_800CD52C_CE12C != D_800CD52E_CE12E;
+  }
+  else
+  {
+    return D_800CD52C_CE12C != D_800CD52E_CE12E;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/79F90", func_80079D7C_7A97C);
-#endif
 
 /* MP1 func_80060AF0: reload the sound banks for D_800CD52C_CE12C, then the output mode */
 // retail addresses unk28 and the else branch's unk08/unk0C through their own symbols
