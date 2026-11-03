@@ -664,8 +664,6 @@ void func_80063844_64444(void) {
 }
 
 /* 1 when five turns are left once the last player of the round has moved (MP1 func_80056FA8) */
-// GCC folds the final compare into xor/sltiu; retail branches to separate return 0/1 (masked 7)
-#ifdef NON_MATCHING
 s32 func_800638C8_644C8(void) {
     GW_SYSTEM* sys = &GwSystem;
 
@@ -673,19 +671,12 @@ s32 func_800638C8_644C8(void) {
         return 0;
     }
     if ((sys->current_player_index == 3 && func_8004E94C_4F54C() == 0) || (u16)sys->current_player_index >= 4) {
-        if (sys->total_turns >= 0) {
-            if (sys->current_turn != sys->total_turns - 5) {
-                return 0;
-            }
+        if (sys->total_turns >= 0 && sys->current_turn == sys->total_turns - 5) {
             return 1;
         }
-        return 0;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/63670", func_800638C8_644C8);
-#endif
 
 extern s16 D_800E1F82_E2B82;
 extern s16 D_800E1F94_E2B94;
@@ -1970,7 +1961,9 @@ void func_8006692C_6752C(void) {
 /* Board pad watcher: per-player button handling while the board runs
    (MP1 func_8005835C) */
 // GCC re-tests i == cur before the 0x2000 test, where retail only reloads the flag and the pad
-// (MP1 func_8005835C has the same residue; branch layout, masked ~6)
+// (MP1 func_8005835C has the same residue; control flow, masked 19, two instructions long). Nesting
+// the 0x2000 test in the i == cur block lets CSE merge the flag and pad loads (masked 25): retail
+// reloads both and threads flag == 0 past the second test.
 #ifdef NON_MATCHING
 void func_80066994_67594(void) {
     Vec2f sp10;
