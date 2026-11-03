@@ -1413,46 +1413,55 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_8010665
 #endif
 
 /* NON_MATCHING: masked 2: branch-likely in the switch tree. */
-#ifdef NON_MATCHING
-void func_80106BEC_2742CC_DizzyDancing(void) {
-    u64 used;
-    omObjData* o;
-    DDActor* p;
-    s16 i;
-    s32 v;
+// decomp-permuter
+void func_80106BEC_2742CC_DizzyDancing(void)
+{
+  u64 used;
+  omObjData *o;
+  DDActor *p;
+  s16 i;
+  short v;
+  func_800B0EF0_B1AF0(D_801086F0_275DD0_DizzyDancing, 0, sizeof(D_801086F0_275DD0_DizzyDancing));
+  used = 0;
+  for (i = 0; i < 4; i++)
+  {
+    p = &D_80107870_274F50_DizzyDancing[i];
+    o = omAddObj(100, 9, 60, -1, func_80106650_273D30_DizzyDancing);
+    switch (i)
+    {
+      case 0:
+        v = 0;
+        break;
 
-    func_800B0EF0_B1AF0(D_801086F0_275DD0_DizzyDancing, 0, sizeof(D_801086F0_275DD0_DizzyDancing));
-    used = 0;
-    for (i = 0; i < 4; i++) {
-        p = &ACTOR[i];
-        o = omAddObj(100, 9, 60, -1, func_80106650_273D30_DizzyDancing);
-        switch (i) {
-        case 0:
-            v = 0;
-            break;
-        case 1:
-            v = 1;
-            break;
-        case 2:
-            v = 2;
-            break;
-        case 3:
-            v = 3;
-            break;
-        default:
-            v = 0;
-            break;
-        }
-        o->work[0] = v;
-        o->work[1] = func_801028A0_26FF80_DizzyDancing(4, &used);
-        p->obj = o;
-        D_800FFFD8_100BD8[D_800FC87A_FD47A] = o;
-        D_800FC87A_FD47A += 1;
+      case 1:
+        v = 1;
+        break;
+
+      case 2:
+        v = 2;
+        break;
+
+      case 3:
+        if (1)
+      {
+      }
+        v = 3;
+        break;
+
+      default:
+        v = 0;
+        break;
+
     }
+
+    o->work[0] = v;
+    o->work[1] = func_801028A0_26FF80_DizzyDancing(4, &used);
+    p->obj = o;
+    D_800FFFD8_100BD8[D_800FC87A_FD47A] = o;
+    D_800FC87A_FD47A += 1;
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80106BEC_2742CC_DizzyDancing);
-#endif
 
 void func_80106D44_274424_DizzyDancing(omObjData* obj) {
     if (D_8010763C_274D1C_DizzyDancing != 0) {
