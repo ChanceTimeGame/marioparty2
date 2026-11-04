@@ -157,8 +157,6 @@ u32 D_80109928_1D6C88_FaceLift[2] = { 0, 0 };
 /* 80109B54 */ u8 D_80109B54_1D6EB4_FaceLift[] __attribute__((aligned(4))) = "\x82\x60\x82\x61\x82\x62";
 
 
-// register allocation (the first object against two table bases)
-#ifdef NON_MATCHING
 void func_80102800_1CFB60_FaceLift(void) {
     omObjData* obj;
     s32 i;
@@ -191,8 +189,10 @@ void func_80102800_1CFB60_FaceLift(void) {
     func_80026DAC_279AC(4, 0, 0, 0x78);
     func_80026DAC_279AC(4, 0x40, 0, 0);
     D_80109BF4_1D6F54_FaceLift = omAddObj(0x3E8, 0, 0, -1, func_80104598_1D18F8_FaceLift);
-    omSetStatBit(omAddObj(0x7D0, 0xA, 1, -1, func_80104DA0_1D2100_FaceLift), 0xA0);
-    omSetStatBit(omAddObj(0x1388, 0, 0, -1, func_80105924_1D2C84_FaceLift), 0xA0);
+    obj = omAddObj(0x7D0, 0xA, 1, -1, func_80104DA0_1D2100_FaceLift);
+    omSetStatBit(obj, 0xA0);
+    obj = omAddObj(0x1388, 0, 0, -1, func_80105924_1D2C84_FaceLift);
+    omSetStatBit(obj, 0xA0);
     for (i = 0; i < 4; i++) {
         D_80109C60_1D6FC0_FaceLift[i] = 0;
     }
@@ -208,9 +208,6 @@ void func_80102800_1CFB60_FaceLift(void) {
         D_80109C0C_1D6F6C_FaceLift[i] = gPlayers[i].cpu_difficulty;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_FaceLift/1CFB60", func_80102800_1CFB60_FaceLift);
-#endif
 
 void func_80102B90_1CFEF0_FaceLift(omObjData* obj) {
     Vec2f pos;
@@ -335,7 +332,9 @@ void func_80103048_1D03A8_FaceLift(omObjData* obj) {
     }
 }
 
-// register allocation (port in a1, bnez for bnezl)
+// register allocation (masked 0, raw 7: 5 FP plus a split-label reloc): retail puts dx*dx in $f2
+// and dy*dy in $f0 for the snap test. S3-Q07 tried, without effect: += for the eased point, 1.0f >
+// on the left; the sum kept in dx is worse. (s16 port fixed the a0/a1 and bnezl head.)
 #ifdef NON_MATCHING
 void func_801033B8_1D0718_FaceLift(s16 player, FLWork* w) {
     Vec pos;
@@ -348,7 +347,7 @@ void func_801033B8_1D0718_FaceLift(s16 player, FLWork* w) {
     f32 ey;
     u16 sel;
     s16 i;
-    s32 port;
+    s16 port;
     s16 snd;
 
     port = gPlayers[player].port;
@@ -1538,7 +1537,9 @@ void func_8010811C_1D547C_FaceLift(s16 player, f32 x, f32 y, f32 z, u16 type) {
     }
 }
 
-// register allocation
+// scheduling (masked 0, raw 7 with the unit's mul fix): retail sets each loop's k = 0 before the
+// other init (max, c, n) and its delay slot takes k = 0, not n = 0. S3-Q07 tried, without effect:
+// n = 0 inside each branch, k declared first; i reused for k is worse.
 #ifdef NON_MATCHING
 s16 func_801082A4_1D5604_FaceLift(void) {
     s16 order[4];

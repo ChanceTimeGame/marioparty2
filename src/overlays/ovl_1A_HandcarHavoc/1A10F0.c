@@ -28,8 +28,6 @@ void func_80108398_1A1128_HandcarHavoc(s32 arg0) {
 }
 
 /* The two viewports' cameras (fov 40, far 12000, near 4400). */
-/* NON_MATCHING: the KMC mul fix adds a nop after four calls whose delay slot GCC filled with a mov.s (retail's has none); otherwise MP1's code. */
-#ifdef NON_MATCHING
 void func_801083B4_1A1144_HandcarHavoc(omObjData* obj) {
     Vec3f pos;
     Vec3f target;
@@ -60,9 +58,6 @@ void func_801083B4_1A1144_HandcarHavoc(omObjData* obj) {
         Hu3DCamUpdateMtx(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_801083B4_1A1144_HandcarHavoc);
-#endif
 
 /* Height of a face's plane at (x, z); -100000 for a vertical face. Unused. */
 f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* face) {
@@ -88,8 +83,6 @@ f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* fac
 }
 
 /* A rider's seat position: the car's rotations applied to (0, 162.5, seat offset). */
-/* NON_MATCHING: float register allocation (masked 0; the lean products' temporaries), as in MP1. */
-#ifdef NON_MATCHING
 void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     Matrix4f m;
     f32 v[4];
@@ -110,9 +103,9 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     v[3] = 1.0f;
     s = HuMathSin(w->rot.y);
     c = func_800B7890_B8490(w->rot.y);
-    rx = s * w->lean + w->rot.x + s * w->tilt;
+    rx = w->rot.x + s * w->lean + s * w->tilt;
     ry = w->rot.y;
-    rz = c * w->lean + w->rot.z + c * w->tilt;
+    rz = w->rot.z + c * w->lean + c * w->tilt;
     if (rx < 0.0f) {
         rx += 360.0f;
     }
@@ -151,12 +144,11 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     out->y = obj->trans.y + v[1];
     out->z = obj->trans.z + v[2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108730_1A14C0_HandcarHavoc);
-#endif
 
 /* The two wheel spots of one side (D_8010B184), placed on the car (MP1 func_800FD888). */
-// NON_MATCHING: stack addressing of the unused copy array tmp (as MP1 func_800FD888)
+// NON_MATCHING: stack addressing of the unused copy array tmp (as MP1 func_800FD888): masked 8,
+// 3 short; retail addresses tmp[k].x from m's base (s0 + 0x60) and .y/.z from sp + 0x74/0x78.
+// S3-Q07 tried, no change: f32 tmp[2][3], out stored before tmp.
 #ifdef NON_MATCHING
 void func_80108A1C_1A17AC_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
     HHMtx m;
@@ -224,7 +216,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108A1
 #endif
 
 /* Pumps the levers by the car's speed and pump power (MP1 func_800FDBC8). */
-// NON_MATCHING: retail keeps the lever model zero-extended and sign-extends it at each use (as MP1)
+// NON_MATCHING: retail keeps the lever model zero-extended (lhu) and sign-extends it at each use (as
+// MP1); masked 7. S3-Q07: pump holding the first call's step fixed the call order; u16 mdl and
+// mdl = (s16)mdl before the indexes did not move the lhu.
 #ifdef NON_MATCHING
 void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -232,7 +226,8 @@ void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj) {
     s32 mdl;
 
     w = obj->unk_50;
-    func_80108E80_1A1C10_HandcarHavoc(obj->model[0], w->leverDir, fabs(w->speed) / 20.0);
+    pump = fabs(w->speed) / 20.0;
+    func_80108E80_1A1C10_HandcarHavoc(obj->model[0], w->leverDir, pump);
     pump = w->pump;
     mdl = obj->model[1];
     w->lever1Dir = func_80108E80_1A1C10_HandcarHavoc(mdl, w->lever1Dir, pump);
@@ -268,8 +263,6 @@ u16 func_80108E80_1A1C10_HandcarHavoc(s16 mdl, u16 dir, f32 step) {
 
 /* Allocates a team's six spark bursts: two vertex sets and a display list per frame buffer, and
    a model for each (MP1 func_800FE8D4, 12 bursts there). */
-// NON_MATCHING: register allocation (masked 0: the two loop counters swap s4/s5)
-#ifdef NON_MATCHING
 void func_80108FBC_1A1D4C_HandcarHavoc(s32 team) {
     s32 i;
     s32 b;
@@ -337,13 +330,10 @@ void func_80108FBC_1A1D4C_HandcarHavoc(s32 team) {
         D_8010D7C0_1A6550_HandcarHavoc[team][i] = mdl;
         func_80029EDC_2AADC(mdl, layer);
     }
-    for (i = 0; i < 6; i++) {
-        D_8010B8A0_1A4630_HandcarHavoc[team][i].active = 0;
+    for (b = 0; b < 6; b++) {
+        D_8010B8A0_1A4630_HandcarHavoc[team][b].active = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108FBC_1A1D4C_HandcarHavoc);
-#endif
 
 /* Builds a spark burst's display list for one frame buffer (MP1 func_800FEB4C). */
 void func_8010929C_1A202C_HandcarHavoc(s32 team, s32 i, s32 buf, s32 set) {

@@ -463,7 +463,8 @@ void func_80103D00_239BE0_SlotCarDerby(omObjData* obj) {
 }
 
 /* Scheduling: retail computes lvl * 6 before the random term of unk_72 and the step's random
-   term before lvl (masked 13); MP1 func_800F7A7C had the same residue. */
+   term before lvl (masked 13); MP1 func_800F7A7C had the same residue. Now masked 8, raw 134: car,
+   throttle and go take s1/s2/s3 in retail (ours s2/s3/s1); S3-Q07 tried i or k for go (no better). */
 #ifdef NON_MATCHING
 s32 func_80103FE8_239EC8_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
