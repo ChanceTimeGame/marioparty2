@@ -684,9 +684,10 @@ void func_8010489C_1F35DC_MechaMarathon(omObjData* obj) {
     obj->func_ptr = func_80104104_1F2E44_MechaMarathon;
 }
 
-// control flow (masked 2, raw 3): retail threads case 3 into the join (`beq` with `li v0,3` in the slot) and
-// lets case 2 fall into it; here case 3 stays a block (`beql`). Tried: every order of the five case bodies
-// (this one is among the best), no `case 0` (frame grows), `v = 0` before a three-case switch (masked 28).
+// control flow (masked 3, raw 4): retail tests case 3 with `beq` into the join (`li v0,3` in the slot) and
+// falls into default's `j`; here the test is inverted. Tried: all 120 orders of the case bodies (best: 0,1,2,3,
+// default at masked 2, but `beql` then steals a store and loses an `li 3`, so n64nmimm gets worse), no
+// `case 0` (frame grows), `v = 0` before a three-case switch (masked 28).
 #ifdef NON_MATCHING
 void func_80104BE0_1F3920_MechaMarathon(void) {
     omObjData* o;
@@ -703,17 +704,17 @@ void func_80104BE0_1F3920_MechaMarathon(void) {
         case 0:
             v = 0;
             break;
+        default:
+            v = 0;
+            break;
+        case 3:
+            v = 3;
+            break;
         case 1:
             v = 1;
             break;
         case 2:
             v = 2;
-            break;
-        case 3:
-            v = 3;
-            break;
-        default:
-            v = 0;
             break;
         }
         o->work[0] = v;
