@@ -620,8 +620,7 @@ void func_80109A58_135648_HotRopeJump(omObjData* obj) {
 
 /* The rope (MP1 func_800FCAC0): 13 flame models with lights, set out on a circle, that then
    gather into the turning rope (func_8010A4E4).
-   NON_MATCHING: masked 0; retail swaps $f0/$f2 around the two int-to-float conversions */
-#ifdef NON_MATCHING
+   t is reused for the second int-to-float conversion. */
 void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj) {
     Vec unused[2]; /* retail's frame has 0x18 bytes of locals nothing uses */
     HRJSeg* seg;
@@ -657,7 +656,8 @@ void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj) {
         seg->delay = i * 4 + 75;
         mdl->scale.x = mdl->scale.y = mdl->scale.z = 0.0f;
         r = ((rand8() << 8) | rand8()) * 160;
-        mdl->rot.y = (f32)(r / 65536 - 80) + 270.0f;
+        t = r / 65536 - 80;
+        mdl->rot.y = t + 270.0f;
         if (i == 0) {
             seg->pos.x = seg->pos.z = 0.0f;
             mdl->rot.y = 0.0f;
@@ -679,9 +679,6 @@ void func_8010A0F0_135CE0_HotRopeJump(omObjData* obj) {
     }
     PlaySound(0x174);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010A0F0_135CE0_HotRopeJump);
-#endif
 
 /* The rope (MP1 func_800FCE98): each flame circles the centre (state 0) until its delay runs
    out, hops to its place (1, 2), settles into the rope (3), turns with it (4) until the round
