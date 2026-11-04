@@ -1268,8 +1268,9 @@ void func_801066B8_3D3F08_name_61(s32 fb, s16 build) {
 }
 
 #ifdef NON_MATCHING
-/* Float register allocation (invSy f16, u0 f14) and the pixel sum: retail subtracts 0xFF from
-   *p after loading the texel. */
+/* Register allocation (masked 0, raw 16): retail gives invSy f16 and u0 f14, and loads *p into a0
+   and the texel index into v1. Tried: FP declaration order, where u0/v are zeroed, the pixel sum's
+   operand order (this spelling took masked 2 to 0). */
 void func_80106A04_3D4254_name_61(s32 fb, s32 hole) {
     f32 invSx;
     f32 invSy;
@@ -1320,8 +1321,7 @@ void func_80106A04_3D4254_name_61(s32 fb, s32 hole) {
             base = D_8010753A_3D4D8A_name_61 * (s32)v;
             u = u0;
             for (x = x0; x < x1; x++) {
-                c = *p - 0xFF;
-                c = D_80107540_3D4D90_name_61[(s32)(base + u)] + c;
+                c = *p - 0xFF + D_80107540_3D4D90_name_61[(s32)(base + u)];
                 *p = c & (~c >> 31);
                 p++;
                 u += invSx;

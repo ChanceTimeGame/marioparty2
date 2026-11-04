@@ -90,8 +90,6 @@ f32 D_8010B0C0_1B4750_SkyPilots[60] = {
 __asm__(".section .rodata");
 const char D_8010B230_1B48C0_SkyPilots[] = "\202q\202d\202`\202c\202x\202f\202n\202v\202k\201I";
 
-/* NON_MATCHING: schedule: retail keeps D_800F94A8_FA0A8 in a register for the two stores (masked 8) */
-#ifdef NON_MATCHING
 void func_80102800_1ABE90_SkyPilots(void) {
     omObjData* obj;
     f32* p;
@@ -150,12 +148,9 @@ void func_80102800_1ABE90_SkyPilots(void) {
     func_800794F0_7A0F0(0x7F);
     func_80079684_7A284(0x7F);
     p = D_800F94A8_FA0A8;
-    p[0] = 700.0f;
-    p[1] = 700.0f;
+    *p++ = 700.0f;
+    *p = 700.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80102800_1ABE90_SkyPilots);
-#endif
 
 void func_80102D3C_1AC3CC_SkyPilots(void) {
     if (func_8008F618_90218() == 0) {

@@ -267,18 +267,16 @@ void func_800192E4_19EE4(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/19BF0", func_800192E4_19EE4);
 #endif
 
-/* MP1 func_80017DB0 plus MP2's func_80025554_26154 call. Register allocation: req and spd swap
-   s3/s4 (masked match otherwise). */
-#ifdef NON_MATCHING
+/* MP1 func_80017DB0 plus MP2's func_80025554_26154 call. */
 void func_80019378_19F78(omObjData* obj) {
     u16 mdl = obj->model[0];
     ActorWork* w = obj->unk_50;
-    u16 spd;
     MotionReq* req;
     s16 mot;
     s32 flip;
     f32 t;
-    s32 chr;
+    u16 spd;
+    s16 chr;
     MotionEntry* e;
 
     if (w->pending != 0) {
@@ -322,9 +320,6 @@ void func_80019378_19F78(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/19BF0", func_80019378_19F78);
-#endif
 
 /* MP1 func_8001802C (squash/stretch and blink) plus MP2's idle stretch. */
 void func_80019644_1A244(omObjData* obj) {

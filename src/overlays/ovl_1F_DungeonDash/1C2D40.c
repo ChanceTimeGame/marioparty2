@@ -155,7 +155,8 @@ void func_80107350_1C2ED0_DungeonDash(void) {
 }
 
 /* The start banner: x is the split position (320 = full). */
-// register allocation only (the D_8010ABB8 load goes to v1 in retail)
+// register allocation only (masked 0; the D_8010ABB8 load goes to v1 in retail). S3-Q01 tried: `!f()`,
+// a nested else block, `-= 1`, grp inline/block-scoped/reused, an early return, an s16 copy of D_8010ABB8.
 #ifdef NON_MATCHING
 void func_80107358_1C2ED8_DungeonDash(s16 x) {
     s16* grp;
@@ -332,7 +333,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801078BC
 #endif
 
 /* The dungeon scenery: walls, gate, the far glow, six torches, the obstacles and the start banner. */
-// FPR allocation only (torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f arguments
+// FPR allocation only (masked 0; torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f
+// arguments. S3-Q01 tried: operand orders of the z expression (constants must stay 1000.0 and -550.0),
+// r as the (i + 2) >> 1 temporary, z before y.
 #ifdef NON_MATCHING
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj) {
     DDTorch* e;
@@ -603,12 +606,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574
 #endif
 
 /* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
-// register allocation: retail hoists 1 << team into t0 and copies it per branch (MP1 func_800FB4F8's residue)
-#ifdef NON_MATCHING
 void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
     DDObstacle* o;
     u16 i;
-    s32 bit;
+    u16 bit;
 
     o = D_8010B2E4_1C6E64_DungeonDash;
     if (D_8010B2A6_1C6E26_DungeonDash == 0) {
@@ -618,7 +619,7 @@ void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
         if (o->unk0 != 0 && D_8010B2BC_1C6E3C_DungeonDash == 0) {
             if (o->z > z + 200.0) {
                 bit = 1 << team;
-                if (D_800FC834_FD434[o->unk6].unk01 & (u16)bit) {
+                if (D_800FC834_FD434[o->unk6].unk01 & bit) {
                     D_800FC834_FD434[o->unk6].unk01 ^= bit;
                     D_800FC834_FD434[o->unk8].unk01 ^= bit;
                 }
@@ -630,9 +631,6 @@ void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108A14_1C4594_DungeonDash);
-#endif
 
 void func_80108B54_1C46D4_DungeonDash(s16 mdl) {
     f32 end;
