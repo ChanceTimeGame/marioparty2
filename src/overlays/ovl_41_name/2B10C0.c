@@ -3172,7 +3172,8 @@ void func_8010A174_2B8A34_name_41(MBModel* parent) {
     process->user_data = parent;
 }
 
-// scheduling of three loop-invariant constants in the player menu (masked 2 under -DNON_MATCHING)
+// register allocation (masked 0, raw 2 besides split labels): the player menu's hoisted (s16)choice,
+// 8 and 24 take t0/t2/t1 instead of t1/t0/t2. Tried: goto/ternary shapes (break the branches).
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is the board Boo (space 0x7D; 3E has two) or, elsewhere, a temporary one. */
@@ -3273,19 +3274,11 @@ created:
                 if (i == gw->current_player_index) {
                     continue;
                 }
-                if (choice == 0) {
-                    if (gPlayers[i].coins != 0) {
-                        items[k] = 1;
-                        goto available;
-                    }
-                    goto unavailable;
-                } else if (gPlayers[i].stars == 0) {
-                unavailable:
+                if ((choice == 0 && gPlayers[i].coins == 0) || (choice != 0 && gPlayers[i].stars == 0)) {
                     items[k] = 0;
                     msgs[k][0] = 1;
                 } else {
                     items[k] = 1;
-                available:
                     msgs[k][0] = 8;
                 }
                 msgs[k][1] = 0x18;
