@@ -263,8 +263,6 @@ u16 func_80108E80_1A1C10_HandcarHavoc(s16 mdl, u16 dir, f32 step) {
 
 /* Allocates a team's six spark bursts: two vertex sets and a display list per frame buffer, and
    a model for each (MP1 func_800FE8D4, 12 bursts there). */
-// NON_MATCHING: register allocation (masked 0: the two loop counters swap s4/s5)
-#ifdef NON_MATCHING
 void func_80108FBC_1A1D4C_HandcarHavoc(s32 team) {
     s32 i;
     s32 b;
@@ -332,13 +330,10 @@ void func_80108FBC_1A1D4C_HandcarHavoc(s32 team) {
         D_8010D7C0_1A6550_HandcarHavoc[team][i] = mdl;
         func_80029EDC_2AADC(mdl, layer);
     }
-    for (i = 0; i < 6; i++) {
-        D_8010B8A0_1A4630_HandcarHavoc[team][i].active = 0;
+    for (b = 0; b < 6; b++) {
+        D_8010B8A0_1A4630_HandcarHavoc[team][b].active = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108FBC_1A1D4C_HandcarHavoc);
-#endif
 
 /* Builds a spark burst's display list for one frame buffer (MP1 func_800FEB4C). */
 void func_8010929C_1A202C_HandcarHavoc(s32 team, s32 i, s32 buf, s32 set) {
