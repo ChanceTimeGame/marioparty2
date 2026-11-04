@@ -94,7 +94,9 @@ void func_80105360_1D9A40_ShellShocked(s32 i) {
     }
 }
 
-// control flow (masked 21, 150 vs 153 instructions)
+/* NON_MATCHING: register allocation (masked 1, raw 8): the tank array's base lands in a0 (retail a1),
+   so t needs a move into a0 for the call. Tried: com->target read directly, tank before com, t
+   declared first. */
 #ifdef NON_MATCHING
 void func_80105428_1D9B08_ShellShocked(s32 i) {
     Vec a;
@@ -680,8 +682,6 @@ void func_80106D84_1DB464_ShellShocked(s32 i) {
     }
 }
 
-// schedule (masked 2): one mul.s placed before the tank index instead of after
-#ifdef NON_MATCHING
 s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     f32 cx;
     f32 cz;
@@ -706,7 +706,7 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
         angle = func_8010CAA4_1E1184_ShellShocked() * 360.0f;
         r = (func_8010CAA4_1E1184_ShellShocked() * 10.0f + 5.0f) * 10.0f;
         limit = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 10.0f;
-        cx = r * HuMathSin(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.x;
+        cx = D_8010DA80_1E2160_ShellShocked[i].pos.x + r * HuMathSin(angle);
         cz = r * func_800B7890_B8490(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.z;
         func_80107AB8_1DC198_ShellShocked(i, cx, cz, limit);
         com->stuck = 0;
@@ -716,9 +716,6 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106E4C_1DB52C_ShellShocked);
-#endif
 
 // float register/schedule (masked 7, 190 vs 191: an extra mov.s of the cosine; dot*dot scheduled early)
 #ifdef NON_MATCHING
