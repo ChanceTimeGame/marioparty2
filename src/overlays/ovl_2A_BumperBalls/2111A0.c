@@ -313,8 +313,6 @@ void func_80103590_211F30_BumperBalls(omObjData* arg0) {
     func_801035AC_211F4C_BumperBalls(arg0, 3);
 }
 
-/* masked 0: pos and chrBase swap s3/s4 (two attempts at declaration order) */
-#ifdef NON_MATCHING
 void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
     s32 chrBase;
     BumperBallsWork* work;
@@ -334,7 +332,8 @@ void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
         }
     } else {
         do {
-            pos = rand8() & 3;
+            pos = rand8();
+            pos &= 3;
         } while (D_8010A034_2189D4_BumperBalls[pos] != 0);
     }
     D_8010A034_2189D4_BumperBalls[pos] = 1;
@@ -460,9 +459,6 @@ void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
     }
     object->func_ptr = &func_80103D68_212708_BumperBalls;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_801035AC_211F4C_BumperBalls);
-#endif
 
 /* float registers of the turn-step clamp (diff in f2, not f4; retail reloads 360 - diff), as in
    MP1's NON_MATCHING func_800F74E8; everything after it matches */
