@@ -1215,7 +1215,9 @@ void func_80107140_4135A0_Results(s16 steps, s32 which) {
     }
 }
 
-// stack slot of the spilled argument (retail 0x14, here above the pad; masked 2)
+/* frame layout (masked 2, raw 2; pad[4] is a fakematch): retail's 24-byte local area holds one word
+   at 0x10, the spilled `which` at 0x14 and 16 bytes after it. With no pad the frame is 0x40 (spill at
+   0x10); pad[2] gives 0x48 with the spill at 0x1C; a scalar pad is dropped. Not the permuter's class. */
 #ifdef NON_MATCHING
 /* One step of counting the coins into the totals; true once every player is done. */
 s8 func_801072B0_413710_Results(s32 which) {
