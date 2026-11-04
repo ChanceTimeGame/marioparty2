@@ -1167,7 +1167,9 @@ void func_8010C890_1E0F70_ShellShocked(void) {
     PlaySound(0x256);
 }
 
-// register allocation: b->x/b->z float registers (masked 2)
+// register allocation: b->x/b->z float registers (masked 0, raw 14; len and k one register off retail).
+// S3-P07: `m[2] = m[8] = 0.0f` fixed the store order (masked 2 -> 0); k declared first and the division
+// written twice for CSE change nothing.
 #ifdef NON_MATCHING
 s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
     Vec q;
@@ -1188,7 +1190,7 @@ s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
         }
         m[10] = c;
         m[0] = c;
-        m[8] = m[2] = 0.0f;
+        m[2] = m[8] = 0.0f;
         return 1;
     }
     k = dot / len;
@@ -1210,19 +1212,14 @@ s32 func_8010C8AC_1E0F8C_ShellShocked(Vec* a, Vec* b, f32* m) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010C8AC_1E0F8C_ShellShocked);
 #endif
 
-// register allocation (masked 2)
+// register allocation (masked 0, raw 12: k in $f4, retail $f0). S3-P07: reading the fields in place
+// instead of ax/bx/az locals fixed the schedule (masked 2 -> 0); dot/len locals and `k /=` change nothing.
 #ifdef NON_MATCHING
 void func_8010CA20_1E1100_ShellShocked(Vec* a, Vec* b, Vec* out) {
-    f32 ax;
-    f32 bx;
-    f32 az;
     f32 k;
 
-    ax = a->x;
-    bx = b->x;
-    az = a->z;
-    k = (ax * bx + az * b->z) / (ax * ax + az * az);
-    out->x = k * bx;
+    k = (a->x * b->x + a->z * b->z) / (a->x * a->x + a->z * a->z);
+    out->x = k * b->x;
     out->z = k * b->z;
 }
 #else
