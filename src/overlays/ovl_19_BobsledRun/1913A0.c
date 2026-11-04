@@ -2063,7 +2063,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_
 #endif
 
 /* The back rider: follows its sled and plays the requested animation (MP1 func_800FEC80). */
-// register allocation only: rot and dist swap $f24/$f26
+// register allocation only (masked 0): rot and dist swap $f24/$f26 (MP1 func_800FEC80 matches, but
+// sets dist inside an else). Tried: swapped declarations (no change), dist set later or in an else (worse).
 #ifdef NON_MATCHING
 void func_8010982C_1983CC_BobsledRun(omObjData* obj) {
     s32 team;
@@ -2414,7 +2415,8 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
 }
 
 /* omOutViewMulti with each camera rolled by D_8010C144[i] (MP1 func_800FC180). */
-// scheduling: retail computes i * 4 (the zoom index) before i * 12
+// scheduling (masked 2): retail computes i * 4 (the zoom index) before i * 12, and the zoom address only
+// after the two calls. A `zoom = &D_800F94A8[i]` pointer moves i * 4 first but the address with it (masked 10).
 #ifdef NON_MATCHING
 void func_8010A840_1993E0_BobsledRun(omObjData* obj) {
     Vec3f pos;
