@@ -722,12 +722,12 @@ __asm__(".section .rodata");
 const char D_801087B4_358DC4_name_51[] = "X%2d";
 
 /* Slides the tally's columns in from the right, 16 pixels a frame, until all four are home. */
-#ifdef NON_MATCHING
-/* masked 0: the hoisted addresses of D_80108D50, D_80108D40, D_80108C98 take s6/s4/s5 where retail
-   has s5/s6/s4. */
+/* Byte match from the permuter's lead (2026-11-03): only the last call reads [i][1] through `pos`;
+   writing pos[0] too loses it (masked 25). The shape is unexplained. */
 void func_80104F6C_35557C_name_51(void) {
     s32 n;
     s32 i;
+    s16* pos;
 
     while (1) {
         n = 0;
@@ -751,8 +751,8 @@ void func_80104F6C_35557C_name_51(void) {
                 func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108608_358C18_name_51[i][0] + D_801086B0_358CC0_name_51[i],
                                     D_80108608_358C18_name_51[i][1]);
             } else {
-                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + D_801086B0_358CC0_name_51[i],
-                                    D_80108618_358C28_name_51[i][1]);
+                pos = D_80108618_358C28_name_51[i];
+                func_80059868_5A468(D_80108D50_359360_name_51[i], D_80108618_358C28_name_51[i][0] + D_801086B0_358CC0_name_51[i], pos[1]);
             }
             if (_CheckFlag(0xD) == 0) {
                 func_80059868_5A468(D_80108D40_359350_name_51[i], D_80108608_358C18_name_51[i][0] + D_801086B0_358CC0_name_51[i],
@@ -794,9 +794,6 @@ void func_80104F6C_35557C_name_51(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_51_name/352E10", func_80104F6C_35557C_name_51);
-#endif
 
 /* Frees the tally screen's sprites, icons, counters and window. */
 void func_80105468_355A78_name_51(void) {
