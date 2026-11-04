@@ -146,7 +146,9 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
 }
 
 /* The two wheel spots of one side (D_8010B184), placed on the car (MP1 func_800FD888). */
-// NON_MATCHING: stack addressing of the unused copy array tmp (as MP1 func_800FD888)
+// NON_MATCHING: stack addressing of the unused copy array tmp (as MP1 func_800FD888): masked 8,
+// 3 short; retail addresses tmp[k].x from m's base (s0 + 0x60) and .y/.z from sp + 0x74/0x78.
+// S3-Q07 tried, no change: f32 tmp[2][3], out stored before tmp.
 #ifdef NON_MATCHING
 void func_80108A1C_1A17AC_HandcarHavoc(omObjData* obj, u16 side, Vec* out) {
     HHMtx m;
