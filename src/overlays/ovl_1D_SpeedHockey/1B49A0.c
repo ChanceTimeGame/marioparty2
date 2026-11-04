@@ -182,7 +182,8 @@ void func_80102B04_1B4C54_SpeedHockey(SHObjWork* w, SHWall* wall, Vec* hit) {
 }
 
 #ifdef NON_MATCHING
-/* masked 0; raw: retail keeps the box centre x in f10 and xMin in f8 (swapped) */
+/* NON_MATCHING: register allocation (masked 0, raw 33): retail keeps the box centre x in f10 and xMin in f8
+   (swapped). No effect: float declaration order, centre split into sum then *= 0.5f, xMax + xMin. */
 /* The puck crossed no wall: if it is off the table or inside a paddle, push it back out and
    reverse it. Returns 0. */
 s32 func_80102CD4_1B4E24_SpeedHockey(SHObjWork* w, s32 n) {

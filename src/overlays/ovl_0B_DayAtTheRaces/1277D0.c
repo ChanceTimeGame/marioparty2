@@ -945,7 +945,8 @@ s16 func_80106D5C_12A53C_DayAtTheRaces(DRBet* w, s32 dir) {
     return i;
 }
 
-/* NON_MATCHING: register allocation (masked 0 by words, 94 raw): retail keeps w in s1 and the button mask in s0 */
+/* NON_MATCHING: register allocation (masked 0, raw 97): only s0/s1 swapped (retail keeps w in s1, the button mask
+   and &D_8010AC34 in s0). Tried: btn init/declaration order (no change), case 0 without t (fixed the t temp). */
 #ifdef NON_MATCHING
 void func_80106DE4_12A5C4_DayAtTheRaces(omObjData* obj, DRBet* w) {
     s32 btn = 0;
@@ -956,8 +957,9 @@ void func_80106DE4_12A5C4_DayAtTheRaces(omObjData* obj, DRBet* w) {
         case 0:
             if (D_8010AC2C_12E40C_DayAtTheRaces[D_8010AC34_12E414_DayAtTheRaces.pick] == w->player) {
                 w->cursor = func_80106D5C_12A53C_DayAtTheRaces(w, 0);
-                t = D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor];
-                omSetTra(obj, t->trans.x + 60.0f, t->trans.y + ((DRPlayer*)t->unk_50)->height, t->trans.z - 15.0f);
+                omSetTra(obj, D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.x + 60.0f,
+                         D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.y + ((DRPlayer*)D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->unk_50)->height,
+                         D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.z - 15.0f);
                 if (D_8010AC34_12E414_DayAtTheRaces.pick == 3) {
                     D_8010AC30_12E410_DayAtTheRaces[w->cursor] = D_8010AC34_12E414_DayAtTheRaces.pick;
                     w->target = D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor];
