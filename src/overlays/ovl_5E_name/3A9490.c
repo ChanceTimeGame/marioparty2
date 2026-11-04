@@ -319,11 +319,9 @@ void func_80103A1C_3AA67C_name_5E(s16 x0, s16 y0, s16 x1, s16 y1) {
     D_80104D8E_3AB9EE_name_5E = 1;
 }
 
-#ifdef NON_MATCHING
-/* register allocation (masked 10): retail copies the fade flag to v0 before testing it, one extra move */
 void func_80103A4C_3AA6AC_name_5E(void) {
     s8 shown = 0;
-    s32 fading = 0;
+    s8 fading = 0;
     s16 a0;
     s16 a1;
     s16 left;
@@ -385,9 +383,6 @@ void func_80103A4C_3AA6AC_name_5E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5E_name/3A9490", func_80103A4C_3AA6AC_name_5E);
-#endif
 
 void func_80103C7C_3AA8DC_name_5E(void) {
     s16 type = D_800CAD90[D_80104D96_3AB9F6_name_5E].unk_04;
