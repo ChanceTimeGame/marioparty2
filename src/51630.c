@@ -899,10 +899,6 @@ void func_8005321C_53E1C(f32 arg0, f32 arg1) {
     D_800CC214_CCE14 = arg1;
 }
 
-/* Retail builds this function with the KMC VR4300 mul fix (a nop between dependent mul.s), but with
-   the fix on, the assembler also pads INCLUDE_ASM functions that follow some C ones, so it stays asm
-   until the rest of the unit is C. */
-#ifdef NON_MATCHING
 void func_80053230_53E30(void) {
     Vec sp10;
     s16 sp20[2];
@@ -964,9 +960,6 @@ void func_80053230_53E30(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/51630", func_80053230_53E30);
-#endif
 
 void func_80053608_54208(f32 arg0) {
     D_800E18B8_E24B8 = arg0;
@@ -1105,7 +1098,8 @@ void func_80053A8C_5468C(void) {
 }
 
 /* Loads tile bank set arg0 from the ROM table at D_016EC470 and starts the bank cycler. */
-// register allocation only (masked 0): retail keeps the first size's >> 4 in v0
+// register allocation only (masked 0, raw 2): retail keeps the first size's >> 4 in v0. Tried (S3-Q02):
+// one joined expression, hdrSize reused for the first size, the + 15 split from the shifts.
 #ifdef NON_MATCHING
 void func_80053AA0_546A0(s32 arg0) {
     s32* buf;
