@@ -3433,7 +3433,9 @@ s32 func_80014B30_15730(s32 defNo, SndPlayParam* prm) {
     return slots[0];
 }
 
-// register allocation: other t-registers throughout (masked 0)
+// register allocation (masked 0, raw 69): m, def and mask get t4/t5/a1 where retail has t5/t6/t2 (retail
+// allocates the scan loop's locals first). The shift amount through j took raw 120 -> 69. Tried:
+// shiftCount--, the amount in bit, bit merged into j (no better)
 #ifdef NON_MATCHING
 s32 func_80014D34_15934(s32 defNo, s32 partNo, s32 slot, s32 shiftCount) {
     SndSlotList free;
@@ -3467,7 +3469,8 @@ s32 func_80014D34_15934(s32 defNo, s32 partNo, s32 slot, s32 shiftCount) {
         return slot;
     }
     if (shiftCount != 0) {
-        mask <<= (shiftCount - 1) * (def->part[partNo].shift & 0xF);
+        j = (shiftCount - 1) * (def->part[partNo].shift & 0xF);
+        mask <<= j;
     }
     free.n = same.n = other.n = 0;
     i = ((mask & 0x1F) == 0) ? 5 : 0;
