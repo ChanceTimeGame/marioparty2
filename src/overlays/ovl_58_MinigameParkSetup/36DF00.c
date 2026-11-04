@@ -442,7 +442,8 @@ void func_80103140_36E840_MinigameParkSetup(void) {
    characters, CPU levels and handicaps. */
 #ifdef NON_MATCHING
 /* masked 2: case 7's "humans == 4" branch is laid out inverted (retail cross-jumps the
-   "= 2" path, this C the "= 1" path); everything else matches. */
+   "= 2" path, this C the "= 1" path); everything else matches. Tried (S3-Q04): the test inverted
+   (same code), a ?: store (masked 40). */
 void func_801033E0_36EAE0_MinigameParkSetup(void) {
     s16 i;
     s16 ret;
@@ -2127,9 +2128,6 @@ void func_80108BA8_3742A8_MinigameParkSetup(s16 sprite) {
     espPosSet(sprite, D_801137B0_37EEB0_MinigameParkSetup[0], D_801137B0_37EEB0_MinigameParkSetup[1] + 24.0f);
 }
 
-#ifdef NON_MATCHING
-/* raw 5, masked 2: the first init loop stores owner[i] before the D_80113804 address add
-   (retail: after it); scheduling only. */
 /* Process: a marker over each player's character model. D_80113804[i] picks player i's
    marker (sprite D_80113478[n]; -1 none): it pops in (state 0), bobs in a small circle
    above the model's head, and shrinks away (state 1) when cleared. */
@@ -2150,8 +2148,7 @@ void func_80108C0C_37430C_MinigameParkSetup(void) {
     }
     for (i = 0; i < 4; i++) {
         spr[i] = -1;
-        owner[i] = -1;
-        D_80113804_37EF04_MinigameParkSetup[i] = -1;
+        D_80113804_37EF04_MinigameParkSetup[i] = owner[i] = -1;
         angle[i] = i * 45;
         state[i] = -1;
     }
@@ -2211,9 +2208,6 @@ void func_80108C0C_37430C_MinigameParkSetup(void) {
     }
 }
 
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80108C0C_37430C_MinigameParkSetup);
-#endif
 
 /* The character-icon process: for each player, pops in the icon of the character
    D_8011380C[i] (> 0) above the player's model, bobs it, and shrinks it away when
@@ -4569,7 +4563,8 @@ void func_80112360_37DA60_MinigameParkSetup(Ovl58ModelDef* table) {
 /* Places model as entry index of table: kind 1 as given (x5); kinds 3 and 2 rotated by
    -/+119.289 degrees about two pivots. */
 #ifdef NON_MATCHING
-/* masked 0: retail negates sin's register in place (neg.s $f20,$f20). */
+/* masked 0, raw 4: retail negates sin's register in place (neg.s $f20,$f20). Tried (S3-Q04): t = -HuMathSin(..) or
+   t = -t first (scheduling moves, masked 7), -(t * x) (masked 4), x * -t (neg into $f4, raw 4). */
 void func_80112454_37DB54_MinigameParkSetup(Ovl58ModelDef* table, s16 index, s16 model) {
     Ovl58ModelDef* def = &table[index];
     f32 t;
