@@ -1276,13 +1276,11 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
 }
 
 /* Process: a debug crosshair on pad 3; prints its position on A. */
-// control flow: retail if-converts the step (sltu/negu/andi/ori) (masked 10)
-#ifdef NON_MATCHING
 void func_80106C0C_394ACC_name_5C(void) {
     s16 spr;
     s16 x;
     s16 y;
-    s32 step;
+    s16 step;
     u16 btn;
 
     x = 0xA0;
@@ -1319,9 +1317,6 @@ void func_80106C0C_394ACC_name_5C(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_80106C0C_394ACC_name_5C);
-#endif
 
 void func_80106D70_394C30_name_5C(omObjData* obj) {
     if (D_801106D2_39E592_name_5C != 0 || D_801011FC_101DFC != 0) {
