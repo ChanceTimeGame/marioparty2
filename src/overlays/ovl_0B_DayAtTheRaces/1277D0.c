@@ -582,12 +582,9 @@ omObjData* func_80105D9C_12957C_DayAtTheRaces(s32 i) {
     return D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE48_12E628_DayAtTheRaces[i]];
 }
 
-/* NON_MATCHING: register allocation (masked 0): t1/t2 swapped */
-#ifdef NON_MATCHING
 void func_80105DC4_1295A4_DayAtTheRaces(void) {
     s32 i;
     s32 j;
-    s32 b;
     s32 a;
     omObjData* x;
     omObjData* y;
@@ -597,20 +594,16 @@ void func_80105DC4_1295A4_DayAtTheRaces(void) {
     }
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            a = D_8010AE58_12E638_DayAtTheRaces[j];
-            x = D_8010AC20_12E400_DayAtTheRaces.objs[a];
-            b = D_8010AE58_12E638_DayAtTheRaces[j + 1];
-            y = D_8010AC20_12E400_DayAtTheRaces.objs[b];
+            x = D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[j]];
+            y = D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[j + 1]];
             if (x->trans.x < y->trans.x) {
-                D_8010AE58_12E638_DayAtTheRaces[j] = b;
+                a = D_8010AE58_12E638_DayAtTheRaces[j];
+                D_8010AE58_12E638_DayAtTheRaces[j] = D_8010AE58_12E638_DayAtTheRaces[j + 1];
                 D_8010AE58_12E638_DayAtTheRaces[j + 1] = a;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/1277D0", func_80105DC4_1295A4_DayAtTheRaces);
-#endif
 
 omObjData* func_80105E80_129660_DayAtTheRaces(s32 i) {
     return D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[i]];
