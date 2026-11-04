@@ -281,7 +281,9 @@ void func_80020E70_21A70() {
     }
 }
 
-// register allocation only (masked 0): retail keeps the slot offset in s1 and temp in s2
+// register allocation only (masked 0, raw 11): retail keeps the slot offset in s1 and temp in s2.
+// The permuter's 0 needed func_80027FA4_28BA4 declared to return a word (defined s16): refused.
+// Tried: split early returns (same), a second local for the model (masked 13), s32 temp (masked 8).
 #ifdef NON_MATCHING
 u16 func_80020EBC_21ABC(void* arg0, s32 arg1, u8 arg2) {
     s16 temp;
@@ -1012,8 +1014,6 @@ void func_800247FC_253FC(unk1EA70Struct1C* arg0, u8 arg1, u8 arg2, u8 arg3) {
 
 /* Clears the per-character texture-animation slots (6 characters, 3 sets, 13 each) and the 13
    colours (cf. MP1 func_80021B14's slot reset). */
-// register allocation only (masked 0): retail keeps i in t0, j in a2
-#ifdef NON_MATCHING
 void func_8002480C_2540C(void) {
     s16 k;
     s16 j;
@@ -1027,13 +1027,10 @@ void func_8002480C_2540C(void) {
             }
         }
     }
-    for (i = 0; i < 13; i++) {
-        D_800FDCA0_FE8A0[i][0] = D_800FDCA0_FE8A0[i][1] = D_800FDCA0_FE8A0[i][2] = 0xFF;
+    for (k = 0; k < 13; k++) {
+        D_800FDCA0_FE8A0[k][0] = D_800FDCA0_FE8A0[k][1] = D_800FDCA0_FE8A0[k][2] = 0xFF;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/21920", func_8002480C_2540C);
-#endif
 
 /* Loads texture animation arg2 & 0xF of set (arg2 & 0xC0) for character arg1 onto model arg0
    (MP1 func_80021B14/func_80021CDC). */
