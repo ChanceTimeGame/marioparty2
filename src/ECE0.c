@@ -3100,7 +3100,9 @@ void func_80013D44_14944(SndVoice* v) {
     func_80013FD0_14BD0(v, start);
 }
 
-// scheduling: the pan sum loads pan before pan2 (masked 2)
+// scheduling (masked 2, raw 22): the pan sum loads pan before pan2, and pan sits in v1 where retail has
+// a1. Tried: pan2 + (pan - 0x40) in one expression or as mix += (GCC reassociates the -0x40); a separate
+// noteFxMix temporary (vol reused puts pan in a1 but changes the fx-mix branch, masked 11)
 #ifdef NON_MATCHING
 void func_80013FD0_14BD0(SndVoice* v, s32 start) {
     s32 vol;
@@ -3223,7 +3225,8 @@ void func_8001434C_14F4C(void) {
     }
 }
 
-// register allocation: the parameter copies come out in another order (masked 0)
+// scheduling (masked 0, raw 2): the parameter copies come out in another order (retail copies st after
+// heap and numDefs). Tried: info assigned as a statement, declaration order
 #ifdef NON_MATCHING
 /* st->cfg.sbfRom is the sound bank, st->hdrBuf the scratch buffer its table header is read into
    (retail keeps that pointer, the voice array size and the voice index in one register). */
