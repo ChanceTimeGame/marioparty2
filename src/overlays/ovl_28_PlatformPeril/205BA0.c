@@ -1291,9 +1291,7 @@ void func_80107844_20ABE4_PlatformPeril(PPCamKey* k, f32 t) {
     D_80102770_103370[0].z = (k[1].rot.z - k[0].rot.z) * t + k[0].rot.z;
 }
 
-#ifdef NON_MATCHING
 void func_8010796C_20AD0C_PlatformPeril(void) {
-    PPCamKey* k;
     MgWork* w;
     f32 s;
     f32 t;
@@ -1340,9 +1338,8 @@ void func_8010796C_20AD0C_PlatformPeril(void) {
         s = HuMathSin(D_801091C8_20C568_PlatformPeril * 90.0);
         t = HuMathSin(D_801091C8_20C568_PlatformPeril * 90.0);
         w = D_800FFFD8_100BD8[D_80109121_20C4C1_PlatformPeril]->unk_50;
-        k = &D_801093B8_20C758_PlatformPeril[D_801091CC_20C56C_PlatformPeril];
-        w->unk_3C = (k[1].rot.y - k[2].rot.y) * s * t + k[2].rot.y;
-        if ((f32)(D_801091CD_20C56D_PlatformPeril = D_801091CD_20C56D_PlatformPeril + 1) >= k->time) {
+        w->unk_3C = (D_801093B8_20C758_PlatformPeril[D_801091CC_20C56C_PlatformPeril + 1].rot.y - D_801093B8_20C758_PlatformPeril[D_801091CC_20C56C_PlatformPeril + 2].rot.y) * s * t + D_801093B8_20C758_PlatformPeril[D_801091CC_20C56C_PlatformPeril + 2].rot.y;
+        if ((f32)(D_801091CD_20C56D_PlatformPeril = D_801091CD_20C56D_PlatformPeril + 1) >= D_801093B8_20C758_PlatformPeril[D_801091CC_20C56C_PlatformPeril].time) {
             D_801091CD_20C56D_PlatformPeril = 0;
             if ((D_801091CC_20C56C_PlatformPeril = D_801091CC_20C56C_PlatformPeril + 1) != 0) {
                 D_801093B2_20C752_PlatformPeril.state = 6;
@@ -1351,9 +1348,6 @@ void func_8010796C_20AD0C_PlatformPeril(void) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_8010796C_20AD0C_PlatformPeril);
-#endif
 
 void func_80107DA0_20B140_PlatformPeril(void) {
     u8 i;
