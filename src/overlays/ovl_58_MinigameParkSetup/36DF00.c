@@ -442,7 +442,8 @@ void func_80103140_36E840_MinigameParkSetup(void) {
    characters, CPU levels and handicaps. */
 #ifdef NON_MATCHING
 /* masked 2: case 7's "humans == 4" branch is laid out inverted (retail cross-jumps the
-   "= 2" path, this C the "= 1" path); everything else matches. */
+   "= 2" path, this C the "= 1" path); everything else matches. Tried (S3-Q04): the test inverted
+   (same code), a ?: store (masked 40). */
 void func_801033E0_36EAE0_MinigameParkSetup(void) {
     s16 i;
     s16 ret;
@@ -2127,9 +2128,6 @@ void func_80108BA8_3742A8_MinigameParkSetup(s16 sprite) {
     espPosSet(sprite, D_801137B0_37EEB0_MinigameParkSetup[0], D_801137B0_37EEB0_MinigameParkSetup[1] + 24.0f);
 }
 
-#ifdef NON_MATCHING
-/* raw 5, masked 2: the first init loop stores owner[i] before the D_80113804 address add
-   (retail: after it); scheduling only. */
 /* Process: a marker over each player's character model. D_80113804[i] picks player i's
    marker (sprite D_80113478[n]; -1 none): it pops in (state 0), bobs in a small circle
    above the model's head, and shrinks away (state 1) when cleared. */
@@ -2150,8 +2148,7 @@ void func_80108C0C_37430C_MinigameParkSetup(void) {
     }
     for (i = 0; i < 4; i++) {
         spr[i] = -1;
-        owner[i] = -1;
-        D_80113804_37EF04_MinigameParkSetup[i] = -1;
+        D_80113804_37EF04_MinigameParkSetup[i] = owner[i] = -1;
         angle[i] = i * 45;
         state[i] = -1;
     }
@@ -2211,9 +2208,6 @@ void func_80108C0C_37430C_MinigameParkSetup(void) {
     }
 }
 
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80108C0C_37430C_MinigameParkSetup);
-#endif
 
 /* The character-icon process: for each player, pops in the icon of the character
    D_8011380C[i] (> 0) above the player's model, bobs it, and shrinks it away when
@@ -3611,8 +3605,6 @@ void func_8010E460_379B60_MinigameParkSetup(void) {
     }
 }
 
-#ifdef NON_MATCHING
-/* masked 0: retail keeps `near` in v1, this build in a1 (register allocation only). */
 /* Quit: the camera pulls back past model D_801138BC, then leaves for the main menu (mode 0:
    overlay 0x5B) or 0x5C (mode 1); modes 2 and 3 keep D_8011381E/D_80113820 as they are. */
 void func_8010ED54_37A454_MinigameParkSetup(void) {
@@ -3626,10 +3618,7 @@ void func_8010ED54_37A454_MinigameParkSetup(void) {
     Hu3DCamSetPerspective(0, D_801135C0_37ECC0_MinigameParkSetup, D_80113E24_37F524_MinigameParkSetup, 13000.0f);
     func_80110B98_37C298_MinigameParkSetup(1, 20, 1, func_8010EEF8_37A5F8_MinigameParkSetup);
     while (1) {
-        s32 near = 1;
-        if (!(D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -2000.0f)) {
-            near = 0;
-        }
+        s32 near = D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -2000.0f;
         if (near & (played ^ 1)) {
             played = 1;
             PlaySound(0xBC);
@@ -3650,9 +3639,6 @@ void func_8010ED54_37A454_MinigameParkSetup(void) {
     func_800794A8_7A0A8(60);
     func_8010EF58_37A658_MinigameParkSetup();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010ED54_37A454_MinigameParkSetup);
-#endif
 
 /* Camera tween callback (80110B98): sway amplitude = sin(180 * time[0] / time[1]) * start. */
 void func_8010EEF8_37A5F8_MinigameParkSetup(s16* time) {
@@ -3889,8 +3875,6 @@ const char D_80113730_37EE30_MinigameParkSetup[] = "c162_000-atama";
    screen, sometimes (1 in 8) bobs; then opens the message window (80110278) and nods while it
    talks; once D_80113784 is set it spins away and shrinks. Board 5 uses the Koopa Kid head
    ("c162_000-atama") and a slower swing. */
-#ifdef NON_MATCHING
-/* masked 0: only one/speed's registers (f28/f26) are swapped. */
 void func_8010FB00_37B200_MinigameParkSetup(void) {
     s32 unused[38];
     u16 model;
@@ -3986,8 +3970,7 @@ void func_8010FB00_37B200_MinigameParkSetup(void) {
             }
             HuPrcSleep(10);
             if (D_80113784_37EE84_MinigameParkSetup != 0) {
-                speed = one + speed;
-                func_80029FE4_2ABE4(model, speed);
+                func_80029FE4_2ABE4(model, one + speed);
                 x = D_800FC834_FD434[(s16)model].pos.x;
                 for (i = 0; i < 11; i++) {
                     func_8002979C_2A39C(model, 0.0f, i * -18.0f, -func_800B7890_B8490(i * 9.0f) * 10.0f);
@@ -4008,9 +3991,6 @@ void func_8010FB00_37B200_MinigameParkSetup(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010FB00_37B200_MinigameParkSetup);
-#endif
 
 /* The message window of the setup screens: opened at the bottom, wiped in once the intro is
    done (D_80113790), kept until D_80113788 asks it closed. */
@@ -4103,8 +4083,6 @@ void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy) {
 
 /* The free slot (D_801138A0[i] == -1) nearest to slot cur in the stick's direction: only
    slots within 0.5 of the stick's unit vector count. -1 when there is none. */
-#ifdef NON_MATCHING
-/* masked 2: retail stores dist[i] before copying the root to $f2 (an order swap). */
 s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stickY) {
     f32 dir[16][2];
     f32 dist[16];
@@ -4123,7 +4101,7 @@ s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stick
         } else {
             dx = D_80113798_37EE98_MinigameParkSetup[cur][0] - D_80113798_37EE98_MinigameParkSetup[i][0];
             dy = D_80113798_37EE98_MinigameParkSetup[cur][1] - D_80113798_37EE98_MinigameParkSetup[i][1];
-            dist[i] = d = func_800B1830_B2430(dx * dx + dy * dy);
+            d = dist[i] = func_800B1830_B2430(dx * dx + dy * dy);
             dir[i][0] = dx / d;
             dir[i][1] = dy / d;
         }
@@ -4150,9 +4128,6 @@ s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stick
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110678_37BD78_MinigameParkSetup);
-#endif
 
 void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj) {
     if (D_80112B42_37E242_MinigameParkSetup != 0 || D_801011FC_101DFC != 0) {
@@ -4583,7 +4558,8 @@ void func_80112360_37DA60_MinigameParkSetup(Ovl58ModelDef* table) {
 /* Places model as entry index of table: kind 1 as given (x5); kinds 3 and 2 rotated by
    -/+119.289 degrees about two pivots. */
 #ifdef NON_MATCHING
-/* masked 0: retail negates sin's register in place (neg.s $f20,$f20). */
+/* masked 0, raw 4: retail negates sin's register in place (neg.s $f20,$f20). Tried (S3-Q04): t = -HuMathSin(..) or
+   t = -t first (scheduling moves, masked 7), -(t * x) (masked 4), x * -t (neg into $f4, raw 4). */
 void func_80112454_37DB54_MinigameParkSetup(Ovl58ModelDef* table, s16 index, s16 model) {
     Ovl58ModelDef* def = &table[index];
     f32 t;

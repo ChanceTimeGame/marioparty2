@@ -610,8 +610,6 @@ void func_801098A4_397764_name_5C(s16 model, Vec2f* out, f32 mtx[4][4]) {
     func_801098E4_3977A4_name_5C(0, &pos, out);
 }
 
-// register allocation: only the hoist of the camera target address is scheduled differently (masked 8)
-#ifdef NON_MATCHING
 void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out) {
     f32 mtx[4][4];
     Vec pos;
@@ -628,7 +626,7 @@ void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out) {
 
     rx = D_800FD474_FE074.x;
     ry = D_800FD474_FE074.y;
-    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+    pos.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
     pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
     pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
     at = D_8010274C_10334C;
@@ -654,9 +652,6 @@ void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out) {
         out->unk_00 = out->unk_04 = -200.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801098E4_3977A4_name_5C);
-#endif
 
 // register allocation: float registers, same as 5B 8010A53C (masked 0)
 #ifdef NON_MATCHING

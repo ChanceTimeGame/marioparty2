@@ -3761,7 +3761,9 @@ Process* func_8010AB84_315034_name_49(void* arg0) {
     return proc;
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING */
+#ifdef NON_MATCHING
+/* masked 0, raw 4 (plus split-label relocs): in the steal menu loop the hoisted (s16)choice, 8 and
+   0x18 get t0/t2/t1, retail t1/t0/t2 (twin of ovl_45's func_8010A724; see its note). */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
 void func_8010ABC0_315070_name_49(void) {
@@ -3788,12 +3790,12 @@ void func_8010ABC0_315070_name_49(void) {
     if (gw->current_player_index == 4) {
         return;
     }
-    choice = 0;
+    boo = 0;
     flag = func_80046D2C_4792C(gw->current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
+    choice = 0;
     switch ((s16)space) {
     case 0x95:
-        boo = 0;
         cam = 0x75;
         break;
     case 0x85:
@@ -3865,19 +3867,11 @@ created:
                 if (i == gw->current_player_index) {
                     continue;
                 }
-                if (choice == 0) {
-                    if (gPlayers[i].coins != 0) {
-                        items[k] = 1;
-                        goto available;
-                    }
-                    goto unavailable;
-                } else if (gPlayers[i].stars == 0) {
-                unavailable:
+                if ((choice == 0 && gPlayers[i].coins == 0) || (choice != 0 && gPlayers[i].stars == 0)) {
                     items[k] = 0;
                     msgs[k][0] = 1;
                 } else {
                     items[k] = 1;
-                available:
                     msgs[k][0] = 8;
                 }
                 msgs[k][1] = 0x18;
