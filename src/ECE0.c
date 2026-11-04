@@ -454,8 +454,9 @@ void func_8000E0E0_ECE0(SndBankHdr* hdr, u32 rom) {
     }
 }
 
-// register allocation (masked 1): st/buf/rom take s2/s0/s1 instead of s0/s1/s2, and the fxdId copy
-// loads with lhu where retail has lh (an s32 temporary for it is worse)
+// register allocation (masked 0, raw 56 counting splat's D_800D5864/5870/58D4 labels): st/buf/rom take
+// s2/s0/s1 instead of s0/s1/s2. fxdId = idx = ... gives retail's lh. Tried: st-> for the fxd fields
+// (absolute stores, worse), rom in one expression (GCC reassociates the + 0x10, masked 2)
 #ifdef NON_MATCHING
 s32 func_8000E1F0_EDF0(void) {
     SndState* st = &D_800D5860_D6460;
@@ -498,7 +499,7 @@ find:
     st->cfg.loaded |= 2;
 load:
     func_8000EB3C_F73C(buf, rom, 4, 0);
-    D_800D5860_D6460.fxdId = *(s16*)buf;
+    D_800D5860_D6460.fxdId = idx = *(s16*)buf;
     buf[0] = ((u8*)buf)[3];
     size = (buf[0] << 5) | 8;
     if ((st->cfg.fxd = func_8000EC10_F810(size)) == NULL) {
