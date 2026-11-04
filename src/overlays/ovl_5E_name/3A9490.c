@@ -226,7 +226,9 @@ void func_8010331C_3A9F7C_name_5E(u8* str) {
 }
 
 #ifdef NON_MATCHING
-/* register allocation (masked 0): the caption walk reads through s3, retail s0 */
+/* register allocation (masked 9 with a mul-fix nop): the caption walk reads through s3, retail s0, and
+   the opening slide's sub.s/trunc swap f0/f2; tried str/p chained or for (p = str), fx dropped or split
+   (S3-Q03). The D_800CAD96 relocations are split-label names of D_800CAD90[].unk_06, not a difference */
 void func_80103388_3A9FE8_name_5E(void) {
     Ovl5EPageText text;
     f32 fx;
@@ -317,11 +319,9 @@ void func_80103A1C_3AA67C_name_5E(s16 x0, s16 y0, s16 x1, s16 y1) {
     D_80104D8E_3AB9EE_name_5E = 1;
 }
 
-#ifdef NON_MATCHING
-/* register allocation (masked 10): retail copies the fade flag to v0 before testing it, one extra move */
 void func_80103A4C_3AA6AC_name_5E(void) {
     s8 shown = 0;
-    s32 fading = 0;
+    s8 fading = 0;
     s16 a0;
     s16 a1;
     s16 left;
@@ -383,14 +383,9 @@ void func_80103A4C_3AA6AC_name_5E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5E_name/3A9490", func_80103A4C_3AA6AC_name_5E);
-#endif
 
-#ifdef NON_MATCHING
-/* register allocation (masked 10): retail copies type to v1 for the inner test, one extra move */
 void func_80103C7C_3AA8DC_name_5E(void) {
-    s32 type = D_800CAD90[D_80104D96_3AB9F6_name_5E].unk_04;
+    s16 type = D_800CAD90[D_80104D96_3AB9F6_name_5E].unk_04;
     s16 i;
 
     if (type == 1 || type == 2) {
@@ -421,9 +416,6 @@ void func_80103C7C_3AA8DC_name_5E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5E_name/3A9490", func_80103C7C_3AA8DC_name_5E);
-#endif
 
 void func_80103E08_3AAA68_name_5E(omObjData* obj) {
     if (D_80104C70_3AB8D0_name_5E != 0 || D_801011FC_101DFC != 0) {

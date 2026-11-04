@@ -76,7 +76,8 @@ void func_80102800_40BB00_BattleResults(void) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: register allocation only (the sort index and the rank-array base swap t1/t2). */
+/* NON_MATCHING: register allocation only (masked 0, raw 16): in the rank loop the tie count and &order
+   swap t0/a2; tried the swap temp, sort index and rank/count variable choices (S3-Q03) */
 /* Ranks the players by placement (coins_mg_bonus holds it after a battle), finds the matching
    payout pattern and splits the pot; the remainder goes to a random player (D_80105A6C). */
 void func_8010299C_40BC9C_BattleResults(void) {
@@ -105,14 +106,14 @@ void func_8010299C_40BC9C_BattleResults(void) {
         }
     }
     D_801059F8_40ECF8_BattleResults[order[0]] = 0;
-    for (i = 0, j = 1, k = 0, t = 1; i < 3; i++, j++) {
+    for (i = 0, j = 1, t = 0, tmp = 1; i < 3; i++, j++) {
         if (score[order[i]] > score[order[j]]) {
-            k += t;
-            D_801059F8_40ECF8_BattleResults[order[j]] = k;
-            t = 1;
+            t += tmp;
+            D_801059F8_40ECF8_BattleResults[order[j]] = t;
+            tmp = 1;
         } else {
-            D_801059F8_40ECF8_BattleResults[order[j]] = k;
-            t++;
+            D_801059F8_40ECF8_BattleResults[order[j]] = t;
+            tmp++;
         }
     }
     for (i = 0, k = 0; i < 4; i++) {
@@ -604,7 +605,8 @@ void func_801044AC_40D7AC_BattleResults(omObjData* obj) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: the two float parameters are moved to FPRs in the other order */
+/* NON_MATCHING: the two float parameters are moved to FPRs in the other order (raw 2); tried
+   y > floor, a for loop, split init, compound assignment (S3-Q03) */
 /* Frames a coin dropped from height y with this work takes to fall below floor. */
 s32 func_80104770_40DA70_BattleResults(BRFallWork* work, f32 y, f32 floor) {
     f32 vy = work->vy;

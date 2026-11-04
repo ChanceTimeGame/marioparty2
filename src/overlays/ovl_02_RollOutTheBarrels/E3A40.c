@@ -1252,7 +1252,8 @@ RBShape* func_80106224_E7464_RollOutTheBarrels(omObjData* obj, Vec* prev) {
     return NULL;
 }
 
-// float register allocation (masked 8: r and az swapped), class 4
+// float register allocation (masked 13 with the mul-fix nop: r and az swap f20/f22), class 4;
+// tried decl order, block-scoped locals, fabsf(dx -= ...), compare operand order (S3-Q03)
 #ifdef NON_MATCHING
 RBShape* func_801063B0_E75F0_RollOutTheBarrels(omObjData* obj, Vec* prev) {
     RBShape* s;
@@ -1592,7 +1593,8 @@ void func_80107140_E8380_RollOutTheBarrels(RBRoller* r) {
     }
 }
 
-// float register allocation only (masked 0, raw 15: the three angle locals rotated), class 4
+// float register allocation only (masked 12, raw 28: base/to/dir rotate f24/f26/f28; retail base f24, to f26,
+// dir f28), class 4; tried every decl order, steer +=, if/else for the ternary, statement order (S3-Q03)
 #ifdef NON_MATCHING
 void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r) {
     HmfModel* m;
@@ -4013,6 +4015,8 @@ s32 func_8011005C_F129C_RollOutTheBarrels(s32 model) {
 }
 
 // float allocation: the two scroll offsets swap f28/f30, and the vertex loop's temporaries (masked ~10), class 4
+// S3-Q03 tried: v1 loop before u1 (raw 84 -> 66, masked 10 -> 12), u1 wrap+mod interleaved (worse),
+// vtx0[j] without p (raw 47, masked 12); none kept
 #ifdef NON_MATCHING
 void func_80110530_F1770_RollOutTheBarrels(s32 a, s32 b, f32 u0, f32 v0, f32 u1, f32 v1, RBAnim* tex0, RBAnim* tex1) {
     HmfData* hmf0;
@@ -4315,8 +4319,6 @@ void func_80111AA0_F2CE0_RollOutTheBarrels(s16* a, u16 n) {
     }
 }
 
-// float allocation only (masked 0, sz and sn swap f22/f24), class 4
-#ifdef NON_MATCHING
 void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     Mtx look;
     Mtx mtx;
@@ -4326,7 +4328,6 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     HuCamera* c = &D_800C9B80_CA780[cam];
     Mtx* m = &mtx;
     HuCamera* vp;
-    f32 sn;
     f32 rx;
     f32 ry;
     f32 sx;
@@ -4350,14 +4351,14 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     sx = (s32)((((u16*)&mtx)[12] << 16) | ((u16*)&mtx)[28]) >> 16;
     sy = (s32)((((u16*)&mtx)[13] << 16) | ((u16*)&mtx)[29]) >> 16;
     sz = (s32)((((u16*)&mtx)[14] << 16) | ((u16*)&mtx)[30]) >> 16;
-    sn = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
-    sz = fabsf(sz * sn / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
+    ry = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
+    sz = fabsf(sz * ry / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
     if (sz != 0.0) {
         /* c->viewports[D_800FFFD6], written through f32* (not Vec fields): retail reloads
            D_800FFFD6 after the store */
         ((f32*)screen)[0] =
-            (s16)(((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vscale[0] / 4.0 * sx / sz / 1.3333334f) +
-            ((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vtrans[0] / 4.0;
+            (s16)(c->viewports[D_800FFFD6_100BD6].vp.vscale[0] / 4.0 * sx / sz / 1.3333334f) +
+            c->viewports[D_800FFFD6_100BD6].vp.vtrans[0] / 4.0;
         vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16);
         ((f32*)screen)[1] = (s16)(vp->viewports[0].vp.vscale[1] / 4.0 * -sy / sz) + vp->viewports[0].vp.vtrans[1] / 4.0;
         ((f32*)screen)[2] = sz;
@@ -4365,9 +4366,6 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
         screen->x = screen->y = screen->z = 0.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80111B40_F2D80_RollOutTheBarrels);
-#endif
 
 f32 func_80111F28_F3168_RollOutTheBarrels(f32 y, f32 x) {
     f32 a = func_800B75A8_B81A8(y, x);
