@@ -226,7 +226,9 @@ void func_8010331C_3A9F7C_name_5E(u8* str) {
 }
 
 #ifdef NON_MATCHING
-/* register allocation (masked 0): the caption walk reads through s3, retail s0 */
+/* register allocation (masked 9 with a mul-fix nop): the caption walk reads through s3, retail s0, and
+   the opening slide's sub.s/trunc swap f0/f2; tried str/p chained or for (p = str), fx dropped or split
+   (S3-Q03). The D_800CAD96 relocations are split-label names of D_800CAD90[].unk_06, not a difference */
 void func_80103388_3A9FE8_name_5E(void) {
     Ovl5EPageText text;
     f32 fx;
