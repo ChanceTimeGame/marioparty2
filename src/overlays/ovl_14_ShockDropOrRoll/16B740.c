@@ -643,7 +643,9 @@ void func_80104B98_16DAD8_ShockDropOrRoll(omObjData* obj, s32 dir, s32 file, u16
    (30) once the message closes, 5 play (929 frames; time up: the three win; all three fallen:
    the solo player wins; 1P: a human falling ends it, survivors paid), 6 the result camera,
    7-8 the result message, motions and coins, 9-11 fade out and return; 12-13 the 1P result. */
-// float register allocation around the two func_800B75A8_B81A8 (atan2) calls (8 lines)
+// NON_MATCHING: register allocation (masked 0, raw 19; the other raw lines are D_801072B9 split-label
+// relocs): retail subtracts the z difference into $f2 and negates it into $f14 at both atan2 calls.
+// S3-Q05 tried: D.z - trans.z (masked 33), a dz temporary (masked 7), dx and dz temporaries (no change).
 #ifdef NON_MATCHING
 void func_80104E24_16DD64_ShockDropOrRoll(omObjData* obj) {
     SDWorkPair wk;
