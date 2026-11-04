@@ -86,7 +86,6 @@ void func_8010A6C0_1B3D50_SkyPilots(omObjData* obj) {
 }
 
 /* NON_MATCHING: register allocation (masked 4) */
-#ifdef NON_MATCHING
 void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
     s32 team = w->team;
@@ -112,9 +111,6 @@ void func_8010A768_1B3DF8_SkyPilots(omObjData* obj) {
     func_801058EC_1AEF7C_SkyPilots(obj);
     func_8010A53C_1B3BCC_SkyPilots(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A768_1B3DF8_SkyPilots);
-#endif
 
 /* NON_MATCHING: register allocation (masked 5 since the unit builds with the mul fix and blank lines
    stripped): retail loads the pilot into v1 and copies it to a1 in the branch delay slot. Tried (S3-Q02):
