@@ -2355,8 +2355,6 @@ void func_8010A3AC_198F4C_BobsledRun(omObjData* obj) {
 }
 
 /* Rotation by angle about the axis through pos (MP1 func_800FBF88). */
-// operand order of three commutative mul.s (t * xy, t * xz, t * yz), as in MP1
-#ifdef NON_MATCHING
 void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 angle) {
     f32 s;
     f32 c;
@@ -2375,6 +2373,9 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     f32 yz;
     f32 py;
     f32 pz;
+    f32 pxy;
+    f32 pyz;
+    f32 pxz;
 
     func_800B8070_B8C70(angle, &s, &c);
     t = 1.0f - c;
@@ -2383,9 +2384,9 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     x = axis->x;
     y = axis->y;
     z = axis->z;
-    xy = x * y;
-    yz = y * z;
-    xz = z * x;
+    pxy = x * y;
+    pyz = y * z;
+    pxz = z * x;
     xx = x * x;
     yy = y * y;
     zz = z * z;
@@ -2395,13 +2396,13 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     m[3][3] = 1.0f;
     m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[0][0] = t * xx + c;
-    xy = xy * t;
+    xy = t * pxy;
     m[0][1] = xy + zs;
-    xz = xz * t;
+    xz = t * pxz;
     m[0][2] = xz - ys;
     m[1][0] = xy - zs;
     m[1][1] = t * yy + c;
-    yz = t * yz;
+    yz = t * pyz;
     m[1][2] = yz + xs;
     m[2][0] = xz + ys;
     m[2][1] = yz - xs;
@@ -2410,9 +2411,6 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
     m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A648_1991E8_BobsledRun);
-#endif
 
 /* omOutViewMulti with each camera rolled by D_8010C144[i] (MP1 func_800FC180). */
 // scheduling: retail computes i * 4 (the zoom index) before i * 12

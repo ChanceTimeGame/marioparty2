@@ -242,9 +242,6 @@ s16 func_801069D0_140D60_BowlOver(omObjData* obj, f32* dx, f32* dz) {
 }
 
 /* Rotation of angle about axis, translated (retail uses pos->z where pos->x would be expected). */
-// byte-identical code, but with this function in C the KMC assembler's mul fix puts a stray nop at the
-// start of the file's .text (every function moves by 4)
-#ifdef NON_MATCHING
 void func_80106C94_141024_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Matrix4f m) {
     f32 s;
     f32 c;
@@ -301,9 +298,6 @@ void func_80106C94_141024_BowlOver(Vec3f* pos, Vec3f* axis, f32 angle, Matrix4f 
     m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
     m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/140760", func_80106C94_141024_BowlOver);
-#endif
 
 /* Park-Miller step (16807 mod 2^31 - 1); a zero seed is re-seeded from rand8 and guRandom. */
 s32 func_80106E8C_14121C_BowlOver(u32 seed) {
