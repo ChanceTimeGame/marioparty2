@@ -1831,8 +1831,9 @@ void func_80084148_84D48(void) {
 
 /* Steps a sprite's palette animation; when a frame changes, rebuilds the palette in the next of
    three buffers. */
-// register allocation (masked 0): i takes a3 where retail uses a1, and the frame pointer shares
-// v0 with dur where retail loads it into v1
+// register allocation (masked 0, raw 6): the frame pointer shares v0 with dur where retail loads it
+// into v1 (three places). The palette loop counting j outside and i inside fixed the loop registers;
+// a SprPalFrame* temporary and an s16 dur did not help.
 #ifdef NON_MATCHING
 void func_800841B8_84DB8(SprPalAnim* pa) {
     HuSprAnmDesc* desc;
@@ -1875,11 +1876,11 @@ void func_800841B8_84DB8(SprPalAnim* pa) {
         if (pa->bufIdx >= 3) {
             pa->bufIdx = 0;
         }
-        for (i = 0; i < desc->unk02; i++) {
-            grp = (SprPalGroup*)desc->unk04[i];
+        for (j = 0; j < desc->unk02; j++) {
+            grp = (SprPalGroup*)desc->unk04[j];
             if (grp->count != 0) {
-                e = grp->frames[pa->frame[i]]->entries;
-                for (j = 0; j < grp->count; j++, e++) {
+                e = grp->frames[pa->frame[j]]->entries;
+                for (i = 0; i < grp->count; i++, e++) {
                     pa->cur[e->idx] = e->color;
                 }
             }

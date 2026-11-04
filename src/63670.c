@@ -1281,6 +1281,8 @@ s32 func_800638C8_644C8(void);
 /* The board turn loop (MP1 func_8005727C): a resumable state machine, mbGameMode saying where
    to continue after an event or minigame overlay returns */
 // register allocation only (masked 0): GCC gives gs/spaceIdx/space s5/s6/s7 where retail has s7/s5/s6
+// (raw 83). Tried, no help: gs-> spelled as GwSystem. (+79 instrs), gs declared first, spaceIdx as s32,
+// space = GetSpaceData() before the second switch (no change); permuter best 350 only inlined a temp.
 #ifdef NON_MATCHING
 void func_800650F0_65CF0(void) {
     Vec sp18;
