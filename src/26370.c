@@ -89,9 +89,8 @@ void func_80025884_26484(Mat4 mtx, f32 angle1, f32 angle2, f32 angle3) {
     }
 }
 
-// retail sets i = 0 once before the test and runs both loops as do-while; register allocation (masked 0): the 3-row loop takes a0/a1/a2 in
-// $f8/$f6/$f4 where retail uses $f4/$f8/$f6
-#ifdef NON_MATCHING
+// retail sets i = 0 once before the test and runs both loops as do-while; the 3-row path keeps its loop's a0/a1/a2 and the
+// last row's apart (one set, live across both, moves them to other registers)
 /* MtxMult (c = a * b) with a fast path when a's last column is (0, 0, 0, 1). */
 void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
     s32 i;
@@ -116,7 +115,6 @@ void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
             c[i][3] = a0 * b03 + a1 * b13 + a2 * b23 + a3 * b33;
         } while (++i < 4);
     } else {
-        f32 a0, a1, a2;
         f32 b00, b10, b20;
         f32 b01, b11, b21;
         f32 b02, b12, b22;
@@ -128,20 +126,23 @@ void func_80025BA4_267A4(Mat4 a, Mat4 b, Mat4 c) {
         b03 = b[0][3]; b13 = b[1][3]; b23 = b[2][3];
 
         do {
+            f32 a0, a1, a2;
+
             c[i][0] = (a0 = a[i][0]) * b00 + (a1 = a[i][1]) * b10 + (a2 = a[i][2]) * b20;
             c[i][1] = a0 * b01 + a1 * b11 + a2 * b21;
             c[i][2] = a0 * b02 + a1 * b12 + a2 * b22;
             c[i][3] = a0 * b03 + a1 * b13 + a2 * b23;
         } while (++i < 3);
-        c[3][0] = (a0 = a[3][0]) * b[0][0] + (a1 = a[3][1]) * b[1][0] + (a2 = a[3][2]) * b[2][0] + b[3][0];
-        c[3][1] = a0 * b[0][1] + a1 * b[1][1] + a2 * b[2][1] + b[3][1];
-        c[3][2] = a0 * b[0][2] + a1 * b[1][2] + a2 * b[2][2] + b[3][2];
-        c[3][3] = a0 * b[0][3] + a1 * b[1][3] + a2 * b[2][3] + b[3][3];
+        {
+            f32 a0, a1, a2;
+
+            c[3][0] = (a0 = a[3][0]) * b[0][0] + (a1 = a[3][1]) * b[1][0] + (a2 = a[3][2]) * b[2][0] + b[3][0];
+            c[3][1] = a0 * b[0][1] + a1 * b[1][1] + a2 * b[2][1] + b[3][1];
+            c[3][2] = a0 * b[0][2] + a1 * b[1][2] + a2 * b[2][2] + b[3][2];
+            c[3][3] = a0 * b[0][3] + a1 * b[1][3] + a2 * b[2][3] + b[3][3];
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/26370", func_80025BA4_267A4);
-#endif
 
 s16 func_80025F00_26B00(Mat4 a, Mat4 b) {
     u32 success;
