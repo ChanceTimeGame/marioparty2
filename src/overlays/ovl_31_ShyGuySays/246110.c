@@ -391,19 +391,16 @@ void func_80103930_247240_ShyGuySays(s16 model, SGSMot* mot, s16 dir) {
     }
 }
 
-// register allocation/schedule: the pointer load sits before the index multiply (masked 6)
-#ifdef NON_MATCHING
-void func_80103A3C_24734C_ShyGuySays(s16 model) {
-    HmfModel* m = SGS_MODEL(model);
-    u8 mot = m->unk02;
-
-    if (mot != 0xFF && D_800F92B4_F9EB4[mot].unk02 <= m->unk40) {
-        m->unk40 = m->unk48;
-    }
+// decomp-permuter
+void func_80103A3C_24734C_ShyGuySays(s16 model)
+{
+  HmfModel *m;
+  u8 mot = (&D_800FC834_FD434[model])->unk02;
+  if ((mot != 0xFF) && (D_800F92B4_F9EB4[mot].unk02 <= (&D_800FC834_FD434[model])->unk40))
+  {
+    (&D_800FC834_FD434[model])->unk40 = (&D_800FC834_FD434[model])->unk48;
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103A3C_24734C_ShyGuySays);
-#endif
 
 void func_80103AB4_2473C4_ShyGuySays(s16 model) {
     HmfModel* m = SGS_MODEL(model);
