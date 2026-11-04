@@ -962,17 +962,14 @@ s16 func_801055D0_248EE0_ShyGuySays(void) {
     return 1;
 }
 
-// register allocation: (u16)i recomputed in retail (masked 1)
-#ifdef NON_MATCHING
+/* Retail reads .action through the label D_8010A5D4_24DEE4 (= D_8010A5D0[n].action); the call's
+   i & 0xFFFF (not a reused (u16)i) is what makes retail mask i again for the argument. */
 s16 func_8010568C_248F9C_ShyGuySays(s32 i, s16 answer) {
-    if (D_8010A5D0_24DEE0_ShyGuySays[(u16)i].active == 0 || D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == 0x200 || func_80109280_24CB90_ShyGuySays((u16)i) != 0) {
+    if (D_8010A5D0_24DEE0_ShyGuySays[(u16)i].active == 0 || D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == 0x200 || func_80109280_24CB90_ShyGuySays(i & 0xFFFF) != 0) {
         return 1;
     }
     return D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == answer;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_8010568C_248F9C_ShyGuySays);
-#endif
 
 void func_80105740_249050_ShyGuySays(u16 i) {
     s16 voices[6] = { 0x111, 0x112, 0x113, 0x114, 0x115, 0x116 };
