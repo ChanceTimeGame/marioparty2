@@ -1102,9 +1102,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801062FC_
    once, 2 the challenger, 3 the opponent).
    Retail quirk: the first loop tests `player` before setting it (an uninitialised register on
    the first pass; either way each duelist gets a delay from its own difficulty only by luck). */
-/* NON_MATCHING: masked 0, registers only: retail gives the player s0 and the loop counter s1
-   (swapped here); declaration order and which counter is shared do not change it. */
-#ifdef NON_MATCHING
+/* The closing espDispOff loops reuse `i` (not `k`): that is what gives the player s0. */
 void func_801064E8_2C4468_PirateDuel(void) {
     s32 btn[3] = { 0x8000, 0x4000, 0x2000 };
     s32 timer[2];
@@ -1210,22 +1208,15 @@ void func_801064E8_2C4468_PirateDuel(void) {
         HuPrcVSleep();
     }
     D_80109D70_2C7CF0_PirateDuel = 1;
-    for (k = 0; k < 2; k++) {
-        espDispOff(D_8010A088_2C8008_PirateDuel[k]);
-        espDispOff(D_8010A08C_2C800C_PirateDuel[k]);
+    for (i = 0; i < 2; i++) {
+        espDispOff(D_8010A088_2C8008_PirateDuel[i]);
+        espDispOff(D_8010A08C_2C800C_PirateDuel[i]);
     }
-    for (k = 0; k < 10; k++) {
-        espDispOff(D_8010A070_2C7FF0_PirateDuel[k]);
+    for (i = 0; i < 10; i++) {
+        espDispOff(D_8010A070_2C7FF0_PirateDuel[i]);
     }
     omDelPrcObj(NULL);
 }
-#else
-__asm__(".section .rodata");
-const u32 D_80109C4C_2C7BCC_PirateDuel[3] = { 0x00008000, 0x00004000, 0x00002000 };
-__asm__(".section .rodata");
-const u32 D_80109C58_2C7BD8_PirateDuel[4] = { 0x00000004, 0x00000003, 0x00000002, 0x00000001 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_42_PirateDuel/2C0780", func_801064E8_2C4468_PirateDuel);
-#endif
 
 /* The timeline: each frame, the CPU input (func_801078D0); while neither duelist is acting, a
    marked frame starts that duelist's motion 3 until it has played out. */
