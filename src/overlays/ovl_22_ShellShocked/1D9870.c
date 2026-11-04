@@ -1235,8 +1235,7 @@ f32 func_801087F8_1DCED8_ShellShocked(s32 i, s32* who) {
     return best;
 }
 
-// register allocation: one float temporary (masked 0, raw 2 sites)
-#ifdef NON_MATCHING
+/* l first holds each side test's cross product, then the inverse length. */
 s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     Vec a;
     Vec b;
@@ -1261,7 +1260,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
         b.x = v->x - pos->x;
         b.z = v->z - pos->z;
         d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-        if (b.x * a.z + b.z * a.x < 0.0f) {
+        l = b.x * a.z + b.z * a.x;
+        if (l < 0.0f) {
             if (d < left) {
                 left = d;
             }
@@ -1276,7 +1276,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
             if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
                 HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[j].pos, pos);
                 d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-                if (b.x * a.z + b.z * a.x < 0.0f) {
+                l = b.x * a.z + b.z * a.x;
+                if (l < 0.0f) {
                     if (d < left) {
                         left = d;
                     }
@@ -1290,7 +1291,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     } else if (j != 0 && func_8010C1F0_1E08D0_ShellShocked(0) == 0) {
         HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[0].pos, pos);
         d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-        if (b.x * a.z + b.z * a.x < 0.0f) {
+        l = b.x * a.z + b.z * a.x;
+        if (l < 0.0f) {
             if (d < left) {
                 left = d;
             }
@@ -1306,9 +1308,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
             right = left * 0.5f;
         }
     } else {
-        d = -left;
-        c.x = d * a.x * l + pos->x;
-        c.z = d * a.z * l + pos->z;
+        c.x = -left * a.x * l + pos->x;
+        c.z = -left * a.z * l + pos->z;
         if (c.x < -760.0f || c.x > 760.0f || c.z < -760.0f || c.z > 760.0f) {
             left = right * 0.5f;
         }
@@ -1322,9 +1323,6 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     }
     return right < left ? 6 : 7;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_8010895C_1DD03C_ShellShocked);
-#endif
 
 // control flow (masked 49, 188 vs 191 instructions)
 #ifdef NON_MATCHING
