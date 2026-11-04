@@ -62,7 +62,6 @@ void func_80102850_17A600_FiletRelay(Vec* out, Vec* a, Vec* b, Vec* c) {
 }
 
 /* Is p inside the convex polygon of n vertices v with this normal? */
-#ifdef NON_MATCHING
 s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     Vec prev;
     Vec e;
@@ -108,9 +107,6 @@ s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_801028F4_17A6A4_FiletRelay);
-#endif
 
 /* Does the ray cross this face? Sets the ray's normal and hit point. */
 s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face) {
