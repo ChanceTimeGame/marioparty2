@@ -2440,7 +2440,8 @@ struct FontFile {
 void func_8008B62C_8C22C(s16 win_id);
 void func_8008B154_8BD54(s16 winId, s16 x, s16 y, s16 w, s16 h);
 
-// register allocation (masked 0): c & 0xFF in a0 instead of a3, one addu operand order
+// register allocation (masked 0, raw 3): c & 0xFF in a0 instead of a3. Tried: or-operand order,
+// w as if/else (worse). *(dst + i + 1) fixed the addu order
 #ifdef NON_MATCHING
 /* MP1 func_8006EEB8: draws character c (a 10x12 4-bit glyph) into the window image in colour color */
 void func_8008AD94_8B994(s16 winId, u8 c, u8 color, s16 x, s16 y) {
@@ -2480,7 +2481,7 @@ void func_8008AD94_8B994(s16 winId, u8 c, u8 color, s16 x, s16 y) {
                     dst[i] = color | (dst[i] & 0xF0);
                 }
                 if ((*src & 0xF) == 0xF) {
-                    dst[i + 1] = (dst[i + 1] & 0xF) | (color << 4);
+                    *(dst + i + 1) = (*(dst + i + 1) & 0xF) | (color << 4);
                 }
                 src++;
             }

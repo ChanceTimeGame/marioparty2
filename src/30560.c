@@ -3338,7 +3338,8 @@ f32 func_8003A154_3AD54(HmfMotionSlot* arg0, HmfMotionTrack* arg1, f32 arg2) {
 const f64 D_800D22D0_D2ED0 __attribute__((section(".rodata"))) = 1.0;
 const f64 D_800D22D8_D2ED8 __attribute__((section(".rodata"))) = 3.0;
 
-// addu operand order for &keys[i] (raw 1, masked 0; MP1 func_80035630 has the same residue)
+// register allocation: addu operand order for &keys[i] (raw 1, masked 0; MP1 func_80035630 has the same
+// residue). Tried: keys[i] without kc, keys + i / i + keys, kc merged into kp
 #ifdef NON_MATCHING
 /* Hermite interpolation of a track's keys (MP1 func_80035630 is a Bezier one). The tangents
    both come from the earlier key (retail) */
