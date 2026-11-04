@@ -1249,37 +1249,49 @@ void func_80106C48_228178_TipsyTourney(omObjData* obj) {
     func_8010678C_227CBC_TipsyTourney(obj);
 }
 
-// address association in the first loop (the base's lui after p * 0x32; masked 3, as in MP1)
-#ifdef NON_MATCHING
-s32 func_80106D14_228244_TipsyTourney(s32 p) {
-    s32 i;
-    s32 j;
+// decomp-permuter
+s32 func_80106D14_228244_TipsyTourney(s32 p)
+{
+  s32 i;
+  s32 j;
+  for (i = 0; i < 5; i++)
+  {
+    j = 0;
+    if (1)
+    {
+      if (D_80107B88_2290B8_TipsyTourney[p][j][i] == 0)
+      {
+        return 0;
+      }
+    }
+  }
 
-    for (i = 0; i < 5; i++) {
-        if (D_80107B88_2290B8_TipsyTourney[p][0][i] == 0) {
-            return 0;
-        }
+  for (i = 0, j = 0; i < 5; i++)
+  {
+    if (D_80107B88_2290B8_TipsyTourney[p][i][j] == 0)
+    {
+      return 0;
     }
-    for (i = 0, j = 0; i < 5; i++) {
-        if (D_80107B88_2290B8_TipsyTourney[p][i][j] == 0) {
-            return 0;
-        }
+  }
+
+  for (i = 0; i < 5; i++)
+  {
+    if (D_80107B88_2290B8_TipsyTourney[p][4][i] == 0)
+    {
+      return 0;
     }
-    for (i = 0; i < 5; i++) {
-        if (D_80107B88_2290B8_TipsyTourney[p][4][i] == 0) {
-            return 0;
-        }
+  }
+
+  for (i = 0, j = 4; i < 5; i++)
+  {
+    if (D_80107B88_2290B8_TipsyTourney[p][i][j] == 0)
+    {
+      return 0;
     }
-    for (i = 0, j = 4; i < 5; i++) {
-        if (D_80107B88_2290B8_TipsyTourney[p][i][j] == 0) {
-            return 0;
-        }
-    }
-    return 1;
+  }
+
+  return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2C_TipsyTourney/223D30", func_80106D14_228244_TipsyTourney);
-#endif
 
 s32 func_80106E64_228394_TipsyTourney(s32 p) {
     if (D_80107B88_2290B8_TipsyTourney[p][1][1] == 0) {
