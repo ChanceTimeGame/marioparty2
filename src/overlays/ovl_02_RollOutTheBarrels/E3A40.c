@@ -4315,8 +4315,6 @@ void func_80111AA0_F2CE0_RollOutTheBarrels(s16* a, u16 n) {
     }
 }
 
-// float allocation only (masked 0, sz and sn swap f22/f24), class 4
-#ifdef NON_MATCHING
 void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     Mtx look;
     Mtx mtx;
@@ -4326,7 +4324,6 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     HuCamera* c = &D_800C9B80_CA780[cam];
     Mtx* m = &mtx;
     HuCamera* vp;
-    f32 sn;
     f32 rx;
     f32 ry;
     f32 sx;
@@ -4350,14 +4347,14 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
     sx = (s32)((((u16*)&mtx)[12] << 16) | ((u16*)&mtx)[28]) >> 16;
     sy = (s32)((((u16*)&mtx)[13] << 16) | ((u16*)&mtx)[29]) >> 16;
     sz = (s32)((((u16*)&mtx)[14] << 16) | ((u16*)&mtx)[30]) >> 16;
-    sn = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
-    sz = fabsf(sz * sn / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
+    ry = HuMathSin(D_800C9B80_CA780[cam].fov[0] / 2.0);
+    sz = fabsf(sz * ry / func_800B7890_B8490(D_800C9B80_CA780[cam].fov[0] / 2.0));
     if (sz != 0.0) {
         /* c->viewports[D_800FFFD6], written through f32* (not Vec fields): retail reloads
            D_800FFFD6 after the store */
         ((f32*)screen)[0] =
-            (s16)(((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vscale[0] / 4.0 * sx / sz / 1.3333334f) +
-            ((HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16))->viewports[0].vp.vtrans[0] / 4.0;
+            (s16)(c->viewports[D_800FFFD6_100BD6].vp.vscale[0] / 4.0 * sx / sz / 1.3333334f) +
+            c->viewports[D_800FFFD6_100BD6].vp.vtrans[0] / 4.0;
         vp = (HuCamera*)((u8*)c + D_800FFFD6_100BD6 * 16);
         ((f32*)screen)[1] = (s16)(vp->viewports[0].vp.vscale[1] / 4.0 * -sy / sz) + vp->viewports[0].vp.vtrans[1] / 4.0;
         ((f32*)screen)[2] = sz;
@@ -4365,9 +4362,6 @@ void func_80111B40_F2D80_RollOutTheBarrels(s32 cam, Vec* pos, Vec* screen) {
         screen->x = screen->y = screen->z = 0.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_02_RollOutTheBarrels/E3A40", func_80111B40_F2D80_RollOutTheBarrels);
-#endif
 
 f32 func_80111F28_F3168_RollOutTheBarrels(f32 y, f32 x) {
     f32 a = func_800B75A8_B81A8(y, x);
