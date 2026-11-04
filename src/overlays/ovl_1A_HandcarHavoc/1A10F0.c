@@ -28,8 +28,6 @@ void func_80108398_1A1128_HandcarHavoc(s32 arg0) {
 }
 
 /* The two viewports' cameras (fov 40, far 12000, near 4400). */
-/* NON_MATCHING: the KMC mul fix adds a nop after four calls whose delay slot GCC filled with a mov.s (retail's has none); otherwise MP1's code. */
-#ifdef NON_MATCHING
 void func_801083B4_1A1144_HandcarHavoc(omObjData* obj) {
     Vec3f pos;
     Vec3f target;
@@ -60,9 +58,6 @@ void func_801083B4_1A1144_HandcarHavoc(omObjData* obj) {
         Hu3DCamUpdateMtx(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_801083B4_1A1144_HandcarHavoc);
-#endif
 
 /* Height of a face's plane at (x, z); -100000 for a vertical face. Unused. */
 f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* face) {
