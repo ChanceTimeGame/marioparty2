@@ -3227,7 +3227,6 @@ void func_801092D4_2CE7C4_name_43(MBModel* model) {
     MBModelDispOff(model);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: float register allocation in the two sine loops (raw 58) */
 /* A star flies out of the player's status window (player -1: of every other player that has
    one) and the player loses it. */
 s32 func_80109374_2CE864_name_43(s32 player) {
@@ -3282,9 +3281,11 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         for (j = 0; j < 30; j++) {
             for (i = 0; i < 4; i++) {
                 if (sprites[i] != -1) {
-                    y = D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y;
+                    y = D_801141C4_2D96B4_name_43[i].y;
+                    y *= 16.0f;
+                    y += D_801141A4_2D9694_name_43[i].y;
                     SprPosSet(sprites[i], 0, D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x,
-                              y + 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
+                              y += 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
                 }
             }
             HuPrcVSleep();
@@ -3329,9 +3330,11 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         MBPlayerVibrate(player, 5);
         PlaySound(0xE4);
         for (k = 0; k < 30; k++) {
-            y = D_801141C4_2D96B4_name_43[player].y * 16.0f + D_801141A4_2D9694_name_43[player].y;
+            y = D_801141C4_2D96B4_name_43[player].y;
+            y *= 16.0f;
+            y += D_801141A4_2D9694_name_43[player].y;
             SprPosSet(sprite, 0, D_801141C4_2D96B4_name_43[player].x * 16.0f + D_801141A4_2D9694_name_43[player].x,
-                      y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+                      y += 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
             HuPrcVSleep();
         }
         for (k = 16; k >= 0; k--) {
@@ -3345,9 +3348,6 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         return 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80109374_2CE864_name_43);
-#endif
 
 void func_80109C50_2CF140_name_43(void) {
     func_80055E60_56A60();
@@ -3539,8 +3539,6 @@ s32 func_80109C74_2CF164_name_43(s32 player) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80109C74_2CF164_name_43);
 #endif
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked 0, raw 168): the frame counter and the
-                       stack-array base swap s3/s4 */
 /* Every other player with coins gets a star over their status window for 150 frames and presses A
    (CPUs by difficulty) to lower its price; then the stars leave. out[i] gets player i's price (the
    turn table's price less the press table's discount, at most the player's coins; 0 for players
@@ -3561,7 +3559,6 @@ s32 func_8010A9B0_2CFEA0_name_43(u8* out) {
     s16 timer;
     f32 x;
     f32 y;
-    u32 j;
     s32 total;
 
     data = DataRead(0xA000B);
@@ -3646,11 +3643,14 @@ s32 func_8010A9B0_2CFEA0_name_43(u8* out) {
                 SprPosSet(star[i], 0, D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x,
                           y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
             } else if (state[i] == 9) {
-                x = D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x;
-                SprPosSet(star[i], 0, x + 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
+                x = D_801141C4_2D96B4_name_43[i].x;
+                x *= 16.0f;
+                x += D_801141A4_2D9694_name_43[i].x;
+                SprPosSet(star[i], 0, x += 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
                           D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
-                x = D_801141A4_2D9694_name_43[i].x - 8.0f;
-                SprPosSet(portrait[i], 0, x + 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
+                x = D_801141A4_2D9694_name_43[i].x;
+                x -= 8.0f;
+                SprPosSet(portrait[i], 0, x += 2.0f * __sinf(frame[i] * 90 * (M_PI / 180.0)),
                           D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y);
                 frame[i]++;
             }
@@ -3735,18 +3735,18 @@ s32 func_8010A9B0_2CFEA0_name_43(u8* out) {
         if (star[i] == -1) {
             out[i] = 0;
         } else {
-            for (j = 0; j < 6; j++) {
-                if (GwSystem.current_turn >= D_801141FC_2D96EC_name_43[j].min && GwSystem.current_turn <= D_801141FC_2D96EC_name_43[j].max) {
+            for (k = 0; k < sizeof(D_801141FC_2D96EC_name_43) / sizeof(D_801141FC_2D96EC_name_43[0]); k++) {
+                if (GwSystem.current_turn >= D_801141FC_2D96EC_name_43[k].min && GwSystem.current_turn <= D_801141FC_2D96EC_name_43[k].max) {
                     break;
                 }
             }
-            work[i] = D_801141FC_2D96EC_name_43[j].value;
-            for (j = 0; j < 14; j++) {
-                if (presses[i] >= D_80114210_2D9700_name_43[j].min && presses[i] <= D_80114210_2D9700_name_43[j].max) {
+            work[i] = D_801141FC_2D96EC_name_43[k].value;
+            for (k = 0; k < sizeof(D_80114210_2D9700_name_43) / sizeof(D_80114210_2D9700_name_43[0]); k++) {
+                if (presses[i] >= D_80114210_2D9700_name_43[k].min && presses[i] <= D_80114210_2D9700_name_43[k].max) {
                     break;
                 }
             }
-            work[i] -= D_80114210_2D9700_name_43[j].value;
+            work[i] -= D_80114210_2D9700_name_43[k].value;
             if (work[i] >= gPlayers[i].coins) {
                 work[i] = gPlayers[i].coins;
             }
@@ -3756,9 +3756,6 @@ s32 func_8010A9B0_2CFEA0_name_43(u8* out) {
     }
     return total;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010A9B0_2CFEA0_name_43);
-#endif
 
 void func_8010B868_2D0D58_name_43(void) {
     MBModel* model;
@@ -4276,13 +4273,11 @@ void func_8010D0E0_2D25D0_name_43(void) {
     SprAnimKill(anim);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING */
 void func_8010D544_2D2A34_name_43(void) {
     s8 others[8];
     char str0[16];
     char str1[16];
     s32 count;
-    s32 target;
     s32 i;
     MBModel* chest;
     f32 f;
@@ -4333,11 +4328,11 @@ void func_8010D544_2D2A34_name_43(void) {
         gPlayers[gw->current_player_index].item = -1;
         return;
     }
-    target = others[MBRand(count)];
-    gPlayers[gw->current_player_index].item = gPlayers[target].item;
-    gPlayers[target].item = -1;
-    MBPlayerVibrate(target, 3);
-    func_800629F0_635F0(target, 0);
+    count = others[MBRand(count)];
+    gPlayers[gw->current_player_index].item = gPlayers[count].item;
+    gPlayers[count].item = -1;
+    MBPlayerVibrate(count, 3);
+    func_800629F0_635F0(count, 0);
     func_80062588_63188(gw->current_player_index);
     func_800629F0_635F0(gw->current_player_index, 0x100);
     PlaySound(0x19);
@@ -4353,7 +4348,7 @@ void func_8010D544_2D2A34_name_43(void) {
     MBPlayerMotionSet(-1, -1, 2);
     MBModelKill(chest);
     str0[0] = 0x18;
-    str0[1] = gPlayers[target].character;
+    str0[1] = gPlayers[count].character;
     str0[2] = 0;
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
@@ -4363,9 +4358,6 @@ void func_8010D544_2D2A34_name_43(void) {
     func_80056168_56D68();
     func_8010CDB4_2D22A4_name_43();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010D544_2D2A34_name_43);
-#endif
 
 void func_8010DABC_2D2FAC_name_43(void) {
     GW_PLAYER* player = BoardPlayerGet(-1);

@@ -3060,7 +3060,6 @@ void func_80108D00_2FD600_name_47(MBModel* model) {
     MBModelDispOff(model);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: float register allocation in the two sine loops (raw 58) */
 /* A star flies out of the player's status window (player -1: of every other player that has
    one) and the player loses it. */
 s32 func_80108DA0_2FD6A0_name_47(s32 player) {
@@ -3115,9 +3114,11 @@ s32 func_80108DA0_2FD6A0_name_47(s32 player) {
         for (j = 0; j < 30; j++) {
             for (i = 0; i < 4; i++) {
                 if (sprites[i] != -1) {
-                    y = D_80110E68_305768_name_47[i].y * 16.0f + D_80110E48_305748_name_47[i].y;
+                    y = D_80110E68_305768_name_47[i].y;
+                    y *= 16.0f;
+                    y += D_80110E48_305748_name_47[i].y;
                     SprPosSet(sprites[i], 0, D_80110E68_305768_name_47[i].x * 16.0f + D_80110E48_305748_name_47[i].x,
-                              y + 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
+                              y += 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
                 }
             }
             HuPrcVSleep();
@@ -3162,9 +3163,11 @@ s32 func_80108DA0_2FD6A0_name_47(s32 player) {
         MBPlayerVibrate(player, 5);
         PlaySound(0xE4);
         for (k = 0; k < 30; k++) {
-            y = D_80110E68_305768_name_47[player].y * 16.0f + D_80110E48_305748_name_47[player].y;
+            y = D_80110E68_305768_name_47[player].y;
+            y *= 16.0f;
+            y += D_80110E48_305748_name_47[player].y;
             SprPosSet(sprite, 0, D_80110E68_305768_name_47[player].x * 16.0f + D_80110E48_305748_name_47[player].x,
-                      y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+                      y += 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
             HuPrcVSleep();
         }
         for (k = 16; k >= 0; k--) {
@@ -3178,9 +3181,6 @@ s32 func_80108DA0_2FD6A0_name_47(s32 player) {
         return 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80108DA0_2FD6A0_name_47);
-#endif
 
 void func_8010967C_2FDF7C_name_47(void) {
     func_80055E60_56A60();
@@ -3405,6 +3405,8 @@ Process* func_8010A530_2FEE30_name_47(void* arg0) {
     return proc;
 }
 
+// register allocation (masked 0, raw 2 besides split labels): the player menu's hoisted (s16)choice,
+// 8 and 24 take t0/t2/t1 instead of t1/t0/t2. Tried: goto/ternary shapes (break the branches).
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is the board's Boo (space 0x6C) or, elsewhere, a temporary one. */
@@ -3505,19 +3507,11 @@ created:
                 if (i == gw->current_player_index) {
                     continue;
                 }
-                if (choice == 0) {
-                    if (gPlayers[i].coins != 0) {
-                        items[k] = 1;
-                        goto available;
-                    }
-                    goto unavailable;
-                } else if (gPlayers[i].stars == 0) {
-                unavailable:
+                if ((choice == 0 && gPlayers[i].coins == 0) || (choice != 0 && gPlayers[i].stars == 0)) {
                     items[k] = 0;
                     msgs[k][0] = 1;
                 } else {
                     items[k] = 1;
-                available:
                     msgs[k][0] = 8;
                 }
                 msgs[k][1] = 0x18;
@@ -4103,13 +4097,11 @@ void func_8010C4F0_300DF0_name_47(void) {
     SprAnimKill(anim);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING */
 void func_8010C954_301254_name_47(void) {
     s8 others[8];
     char str0[16];
     char str1[16];
     s32 count;
-    s32 target;
     s32 i;
     MBModel* chest;
     f32 f;
@@ -4160,11 +4152,11 @@ void func_8010C954_301254_name_47(void) {
         gPlayers[gw->current_player_index].item = -1;
         return;
     }
-    target = others[MBRand(count)];
-    gPlayers[gw->current_player_index].item = gPlayers[target].item;
-    gPlayers[target].item = -1;
-    MBPlayerVibrate(target, 3);
-    func_800629F0_635F0(target, 0);
+    count = others[MBRand(count)];
+    gPlayers[gw->current_player_index].item = gPlayers[count].item;
+    gPlayers[count].item = -1;
+    MBPlayerVibrate(count, 3);
+    func_800629F0_635F0(count, 0);
     func_80062588_63188(gw->current_player_index);
     func_800629F0_635F0(gw->current_player_index, 0x100);
     PlaySound(0x19);
@@ -4180,7 +4172,7 @@ void func_8010C954_301254_name_47(void) {
     MBPlayerMotionSet(-1, -1, 2);
     MBModelKill(chest);
     str0[0] = 0x18;
-    str0[1] = gPlayers[target].character;
+    str0[1] = gPlayers[count].character;
     str0[2] = 0;
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
@@ -4190,9 +4182,6 @@ void func_8010C954_301254_name_47(void) {
     func_80056168_56D68();
     func_8010C1C4_300AC4_name_47();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010C954_301254_name_47);
-#endif
 
 void func_8010CECC_3017CC_name_47(void) {
     GW_PLAYER* player = BoardPlayerGet(-1);
