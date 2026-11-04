@@ -261,7 +261,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80102CD4
 #endif
 
 #ifdef NON_MATCHING
-/* masked 2: retail tests the second loop's guard as blez cnt and sets cnt before i; GCC here compares against best's zero register */
+/* register allocation/CSE (masked 2, raw 12): retail tests the closest-wall loop's guard as blez cnt;
+   GCC here reuses best's zero (slt + beqz). `for (i = 0, cnt = 0; ...)` fixed the first loop's init
+   order. No effect: s32 declaration order, cnt/i init spellings; worse: best = 0 in both branches. */
 /* Move the puck against the walls 0..n-1: bounce off the nearest one it crossed (a paddle face
    adds the paddle's z motion as english and speed). Returns 1 on a bounce, else
    func_80102CD4's result. */
@@ -279,8 +281,7 @@ s32 func_8010308C_1B51DC_SpeedHockey(SHObjWork* w, s32 n) {
     f32 s;
     SHObjWork* pw;
 
-    cnt = 0;
-    for (i = 0; i < n; i++) {
+    for (i = 0, cnt = 0; i < n; i++) {
         if (func_801028B8_1B4A08_SpeedHockey(&w->pos, D_80106774_1B88C4_SpeedHockey[i].p, &D_80106CF8_1B8E48_SpeedHockey[i]) != 0) {
             D_80106E30_1B8F80_SpeedHockey[cnt++] = i;
         }
