@@ -366,9 +366,8 @@ void func_80102DB4_3359F4_name_4F(void) {
     D_8011042C_34306C_name_4F = omAddPrcObj(func_80103D60_3369A0_name_4F, 0x5010, 0x2000, 0);
 }
 
-#ifdef NON_MATCHING
-/* masked 0: angle and rise get each other's float register (f24/f26) */
 void func_801039BC_3365FC_name_4F(void) {
+    MBModel *model;
     Vec2f screen;
     f32 angle;
     f32 radius;
@@ -384,8 +383,9 @@ void func_801039BC_3365FC_name_4F(void) {
     spin = 0.0f;
     rise = 1.0f;
     speed = 1.0f;
+    model = D_8011056C_3431AC_name_4F;
     done = 0;
-    D_80110430_343070_name_4F = func_80049ED4_4AAD4(D_8011056C_3431AC_name_4F, 1);
+    D_80110430_343070_name_4F = func_80049ED4_4AAD4(model, 1);
     angle = 0.0f;
     step = 5.0f;
     sound = PlaySound(0x36F);
@@ -436,9 +436,6 @@ void func_801039BC_3365FC_name_4F(void) {
     D_8011056C_3431AC_name_4F->pos.y = 500.0f;
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/335440", func_801039BC_3365FC_name_4F);
-#endif
 
 void func_80103D60_3369A0_name_4F(void) {
     f32 angle;
