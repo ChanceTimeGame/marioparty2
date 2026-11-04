@@ -869,36 +869,39 @@ void func_8010544C_3D2C9C_name_61(void) {
     Hu3DCamUpdateMtx(0);
 }
 
-#ifdef NON_MATCHING
-/* Register allocation: i*4 and &D_801074D8[i] swap s1/s2 after omSetSca. */
-void func_801054A0_3D2CF0_name_61(void) {
-    Ovl61ChrWork* work;
-    s32 i;
-
-    for (i = 0; i < 8; i++) {
-        D_801074D8_3D4D28_name_61[i] = omAddObj(0x1F4, 1, 0, -1, NULL);
-        D_801074D8_3D4D28_name_61[i]->unk_50 = func_80027154_27D54(sizeof(Ovl61ChrWork), 0x7918);
-        D_801074D8_3D4D28_name_61[i]->model[0] = LoadFormFile(D_801073B8_3D4C08_name_61[i], 0x20689);
-        omSetTra(D_801074D8_3D4D28_name_61[i], D_801073D8_3D4C28_name_61[i].x, D_801073D8_3D4C28_name_61[i].y, D_801073D8_3D4C28_name_61[i].z);
-        omSetRot(D_801074D8_3D4D28_name_61[i], 0.0f, 0.0f, 0.0f);
-        if (i != 6) {
-            omSetSca(D_801074D8_3D4D28_name_61[i], 1.0f, 1.0f, 1.0f);
-        } else {
-            omSetSca(D_801074D8_3D4D28_name_61[i], 0.7f, 0.7f, 0.7f);
-        }
-        work = D_801074D8_3D4D28_name_61[i]->unk_50;
-        work->dir.x = work->dir.y = 0.0f;
-        work->dir.z = 1.0f;
-        func_801058B0_3D3100_name_61(i);
-        work->snd = func_80025384_25F84(D_801074D8_3D4D28_name_61[i]->model[0], 2, D_801070A4_3D48F4_name_61[i], D_80107174_3D49C4_name_61[i][1]);
-        work->mode = 1;
-        func_80029AFC_2A6FC(D_801074D8_3D4D28_name_61[i]->model[0]);
-        func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 2, 2);
+// decomp-permuter
+void func_801054A0_3D2CF0_name_61(void)
+{
+  Ovl61ChrWork *work;
+  s32 i;
+  s32 *new_var;
+  for (i = 0; i < 8; i++)
+  {
+    D_801074D8_3D4D28_name_61[i] = omAddObj(0x1F4, 1, 0, -1, 0);
+    D_801074D8_3D4D28_name_61[i]->unk_50 = func_80027154_27D54(sizeof(Ovl61ChrWork), 0x7918);
+    D_801074D8_3D4D28_name_61[i]->model[0] = LoadFormFile(D_801073B8_3D4C08_name_61[i], 0x20689);
+    omSetTra(D_801074D8_3D4D28_name_61[i], D_801073D8_3D4C28_name_61[i].x, D_801073D8_3D4C28_name_61[i].y, D_801073D8_3D4C28_name_61[i].z);
+    omSetRot(D_801074D8_3D4D28_name_61[i], 0.0f, 0.0f, 0.0f);
+    if (i != 6)
+    {
+      omSetSca(D_801074D8_3D4D28_name_61[i], 1.0f, 1.0f, 1.0f);
     }
+    else
+    {
+      omSetSca(D_801074D8_3D4D28_name_61[i], 0.7f, 0.7f, 0.7f);
+    }
+    work = D_801074D8_3D4D28_name_61[i]->unk_50;
+    work->dir.x = (work->dir.y = 0.0f);
+    work->dir.z = 1.0f;
+    func_801058B0_3D3100_name_61(i);
+    new_var = D_80107174_3D49C4_name_61[i];
+    work->snd = func_80025384_25F84(D_801074D8_3D4D28_name_61[i]->model[0], 2, D_801070A4_3D48F4_name_61[i], new_var[1]);
+    work->mode = 1;
+    func_80029AFC_2A6FC(D_801074D8_3D4D28_name_61[i]->model[0]);
+    func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 2, 2);
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_61_name/3D0050", func_801054A0_3D2CF0_name_61);
-#endif
 
 void func_8010568C_3D2EDC_name_61(s32 idx, s32* list) {
     omObjData* obj = D_801074D8_3D4D28_name_61[idx];
