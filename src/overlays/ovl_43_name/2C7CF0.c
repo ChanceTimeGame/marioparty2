@@ -4276,13 +4276,11 @@ void func_8010D0E0_2D25D0_name_43(void) {
     SprAnimKill(anim);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING */
 void func_8010D544_2D2A34_name_43(void) {
     s8 others[8];
     char str0[16];
     char str1[16];
     s32 count;
-    s32 target;
     s32 i;
     MBModel* chest;
     f32 f;
@@ -4333,11 +4331,11 @@ void func_8010D544_2D2A34_name_43(void) {
         gPlayers[gw->current_player_index].item = -1;
         return;
     }
-    target = others[MBRand(count)];
-    gPlayers[gw->current_player_index].item = gPlayers[target].item;
-    gPlayers[target].item = -1;
-    MBPlayerVibrate(target, 3);
-    func_800629F0_635F0(target, 0);
+    count = others[MBRand(count)];
+    gPlayers[gw->current_player_index].item = gPlayers[count].item;
+    gPlayers[count].item = -1;
+    MBPlayerVibrate(count, 3);
+    func_800629F0_635F0(count, 0);
     func_80062588_63188(gw->current_player_index);
     func_800629F0_635F0(gw->current_player_index, 0x100);
     PlaySound(0x19);
@@ -4353,7 +4351,7 @@ void func_8010D544_2D2A34_name_43(void) {
     MBPlayerMotionSet(-1, -1, 2);
     MBModelKill(chest);
     str0[0] = 0x18;
-    str0[1] = gPlayers[target].character;
+    str0[1] = gPlayers[count].character;
     str0[2] = 0;
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
@@ -4363,9 +4361,6 @@ void func_8010D544_2D2A34_name_43(void) {
     func_80056168_56D68();
     func_8010CDB4_2D22A4_name_43();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010D544_2D2A34_name_43);
-#endif
 
 void func_8010DABC_2D2FAC_name_43(void) {
     GW_PLAYER* player = BoardPlayerGet(-1);

@@ -3884,14 +3884,12 @@ void func_8010C134_2BA9F4_name_41(void) {
 }
 
 /* Plunder chest (item event 3): take a random other player's item.
-   register allocation only (masked 0): target and its gPlayers offset swap s0/s1. */
-#ifdef NON_MATCHING /* NON_MATCHING */
+   `count` is reused for the chosen player (retail shares its register). */
 void func_8010C598_2BAE58_name_41(void) {
     s8 others[8];
     char str0[16];
     char str1[16];
     s32 count;
-    s32 target;
     s32 i;
     MBModel* chest;
     f32 f;
@@ -3942,11 +3940,11 @@ void func_8010C598_2BAE58_name_41(void) {
         gPlayers[gw->current_player_index].item = -1;
         return;
     }
-    target = others[MBRand(count)];
-    gPlayers[gw->current_player_index].item = gPlayers[target].item;
-    gPlayers[target].item = -1;
-    MBPlayerVibrate(target, 3);
-    func_800629F0_635F0(target, 0);
+    count = others[MBRand(count)];
+    gPlayers[gw->current_player_index].item = gPlayers[count].item;
+    gPlayers[count].item = -1;
+    MBPlayerVibrate(count, 3);
+    func_800629F0_635F0(count, 0);
     func_80062588_63188(gw->current_player_index);
     func_800629F0_635F0(gw->current_player_index, 0x100);
     PlaySound(0x19);
@@ -3962,7 +3960,7 @@ void func_8010C598_2BAE58_name_41(void) {
     MBPlayerMotionSet(-1, -1, 2);
     MBModelKill(chest);
     str0[0] = 0x18;
-    str0[1] = gPlayers[target].character;
+    str0[1] = gPlayers[count].character;
     str0[2] = 0;
     str1[0] = 0x18;
     str1[1] = gPlayers[gw->current_player_index].character;
@@ -3972,9 +3970,6 @@ void func_8010C598_2BAE58_name_41(void) {
     func_80056168_56D68();
     func_8010BE08_2BA6C8_name_41();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_41_name/2B10C0", func_8010C598_2BAE58_name_41);
-#endif
 
 /* 41-C: D_80111E18 (8010AE1C's end-of-table bound, the end of D_80111DB8) is the 0.5 literal
    func_8010CB10 emits: a label only, so the asm user still links. */
