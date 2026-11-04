@@ -282,9 +282,10 @@ void func_800264D8_270D8(Mat4 m, f32 x, f32 y, f32 z) {
     m[3][3] = 1.0f;
 }
 
-// MP1 func_80022D9C (src/engine/math.c), also NON_MATCHING there: FPR allocation in the
-// found/else branches (masked 9), and the assembler puts a nop after the delay slot of the
-// slope-difference test that retail lacks (one instruction long)
+// MP1 func_80022D9C (src/engine/math.c), also NON_MATCHING there. NON_MATCHING: register
+// allocation (masked 0, raw 26 since the unit is assembled with blank lines stripped, which removed
+// the extra mul-fix nop): FPRs from the found branch's midSlope on. S3-Q05 tried: r = u / ... as its
+// own statement (masked 6), midSlope/midVal and x0..s1 declared in other orders (no change).
 #ifdef NON_MATCHING
 // Piecewise-quadratic interpolation through four keys (y[], x[]) at time t.
 f32 func_8002662C_2722C(f32* y, f32* x, f32 t) {
