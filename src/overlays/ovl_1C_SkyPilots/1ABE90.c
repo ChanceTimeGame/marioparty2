@@ -508,7 +508,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80103CA8_1
 #endif
 
 /* NON_MATCHING: KMC mul fix adds nops retail lacks (masked 3) */
-#ifdef NON_MATCHING
 void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
     Vec eye;
     Vec at;
@@ -549,9 +548,6 @@ void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
         Hu3DCamUpdateMtx(i);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80103E34_1AD4C4_SkyPilots);
-#endif
 
 /* NON_MATCHING: float registers, arm stores merged differently (masked 39) */
 #ifdef NON_MATCHING
