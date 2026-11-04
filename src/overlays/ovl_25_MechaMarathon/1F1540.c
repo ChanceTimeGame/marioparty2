@@ -315,7 +315,9 @@ void func_80103714_1F2454_MechaMarathon(omObjData* obj) {
     }
 }
 
-/* The crowd along the track. */
+/* The crowd along the track. register allocation (masked 0): retail gives c s7, t s5, q s6 and
+   derives t from c. Tried (S3-Q02): q before t, frames first, t first (registers right but the
+   base becomes t), t declared first and assigned later. */
 #ifdef NON_MATCHING
 void func_8010384C_1F258C_MechaMarathon(omObjData* obj) {
     MMActor* c = &D_801085F0_1F7330_MechaMarathon[6];

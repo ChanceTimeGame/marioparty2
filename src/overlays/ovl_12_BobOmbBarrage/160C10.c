@@ -68,6 +68,8 @@ void func_80102C64_160F84_BobOmbBarrage(void) {
     D_801092B0_1675D0_BobOmbBarrage.mode = -1;
 }
 
+/* register allocation (masked 0): only the mul.s operand order of k * -k differs (retail $f0*$f2).
+   Tried (S3-Q02): no `one` local, -k * k / one + -k * k / one + k * -k, u reused for -k. */
 #ifdef NON_MATCHING
 void func_80102C74_160F94_BobOmbBarrage(void) {
     Vec v;
@@ -85,7 +87,7 @@ void func_80102C74_160F94_BobOmbBarrage(void) {
     case 1:
         one = 1.0f;
         k = u - one;
-        u = -k * k + one;
+        u = k * -k + one;
         if (u < 0.0f) {
             u = 0.0f;
         }

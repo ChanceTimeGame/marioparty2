@@ -30,7 +30,7 @@ void omPrcSetStatBit(Process*, s32);
 
 /* Board background (HVQ tiles streamed by two threads) and the board camera. C from MP1 src/48D90.c
    and MP3 ovl_80_shared_board FA250.c / ovl_81_name CCD20.c (their copies of the same code); the
-   rest have no reference and stay asm (func_80053230_53E30 is in the permuter list). MP1's unk20 is
+   rest have no reference (func_80053230_53E30 matched by hand, S3-Q02). MP1's unk20 is
    MP3's OverlayBgEntry. The unit builds with the KMC mul fix on (Makefile b3-C). */
 
 #define SlideReadUint(buffer, src)    \
