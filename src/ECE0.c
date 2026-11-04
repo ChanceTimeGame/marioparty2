@@ -454,8 +454,9 @@ void func_8000E0E0_ECE0(SndBankHdr* hdr, u32 rom) {
     }
 }
 
-// register allocation (masked 1): st/buf/rom take s2/s0/s1 instead of s0/s1/s2, and the fxdId copy
-// loads with lhu where retail has lh (an s32 temporary for it is worse)
+// register allocation (masked 0, raw 56 counting splat's D_800D5864/5870/58D4 labels): st/buf/rom take
+// s2/s0/s1 instead of s0/s1/s2. fxdId = idx = ... gives retail's lh. Tried: st-> for the fxd fields
+// (absolute stores, worse), rom in one expression (GCC reassociates the + 0x10, masked 2)
 #ifdef NON_MATCHING
 s32 func_8000E1F0_EDF0(void) {
     SndState* st = &D_800D5860_D6460;
@@ -498,7 +499,7 @@ find:
     st->cfg.loaded |= 2;
 load:
     func_8000EB3C_F73C(buf, rom, 4, 0);
-    D_800D5860_D6460.fxdId = *(s16*)buf;
+    D_800D5860_D6460.fxdId = idx = *(s16*)buf;
     buf[0] = ((u8*)buf)[3];
     size = (buf[0] << 5) | 8;
     if ((st->cfg.fxd = func_8000EC10_F810(size)) == NULL) {
@@ -2416,14 +2417,14 @@ void func_80012548_13148(SndVoice* v) {
     } while (i <= n);
 }
 
-// register allocation: the note-on loop counter and its sign-extended copy swap a0/a1, and the 0x15/0x17 operand byte lands in a1 (masked 0)
+// register allocation (masked 0, raw 17): i (the note-on loop counter, one variable with the 0x15/0x17
+// operand byte as in retail) and its sign-extended copy swap a0/a1. Tried: declaration order, t inline
 #ifdef NON_MATCHING
 void func_80012800_13400(SndVoice* v) {
     u8* p;
     u8* op;
     u8* cnt;
     s32 off;
-    s8 j;
     s8 i;
     u16 t;
 
@@ -2497,11 +2498,11 @@ void func_80012800_13400(SndVoice* v) {
                             v->portState = 0;
                         }
                         if (v->modMask != 0) {
-                            for (j = 0; j < 3; j++) {
-                                t = 1 << j;
+                            for (i = 0; i < 3; i++) {
+                                t = 1 << i;
                                 if (t & v->modMask) {
-                                    if (v->mod[j].type & 8) {
-                                        v->mod[j].type &= ~8;
+                                    if (v->mod[i].type & 8) {
+                                        v->mod[i].type &= ~8;
                                     } else {
                                         v->modMask &= ~t;
                                     }
@@ -3099,7 +3100,9 @@ void func_80013D44_14944(SndVoice* v) {
     func_80013FD0_14BD0(v, start);
 }
 
-// scheduling: the pan sum loads pan before pan2 (masked 2)
+// scheduling (masked 2, raw 22): the pan sum loads pan before pan2, and pan sits in v1 where retail has
+// a1. Tried: pan2 + (pan - 0x40) in one expression or as mix += (GCC reassociates the -0x40); a separate
+// noteFxMix temporary (vol reused puts pan in a1 but changes the fx-mix branch, masked 11)
 #ifdef NON_MATCHING
 void func_80013FD0_14BD0(SndVoice* v, s32 start) {
     s32 vol;
@@ -3222,7 +3225,8 @@ void func_8001434C_14F4C(void) {
     }
 }
 
-// register allocation: the parameter copies come out in another order (masked 0)
+// scheduling (masked 0, raw 2): the parameter copies come out in another order (retail copies st after
+// heap and numDefs). Tried: info assigned as a statement, declaration order
 #ifdef NON_MATCHING
 /* st->cfg.sbfRom is the sound bank, st->hdrBuf the scratch buffer its table header is read into
    (retail keeps that pointer, the voice array size and the voice index in one register). */
@@ -3433,7 +3437,9 @@ s32 func_80014B30_15730(s32 defNo, SndPlayParam* prm) {
     return slots[0];
 }
 
-// register allocation: other t-registers throughout (masked 0)
+// register allocation (masked 0, raw 69): m, def and mask get t4/t5/a1 where retail has t5/t6/t2 (retail
+// allocates the scan loop's locals first). The shift amount through j took raw 120 -> 69. Tried:
+// shiftCount--, the amount in bit, bit merged into j (no better)
 #ifdef NON_MATCHING
 s32 func_80014D34_15934(s32 defNo, s32 partNo, s32 slot, s32 shiftCount) {
     SndSlotList free;
@@ -3467,7 +3473,8 @@ s32 func_80014D34_15934(s32 defNo, s32 partNo, s32 slot, s32 shiftCount) {
         return slot;
     }
     if (shiftCount != 0) {
-        mask <<= (shiftCount - 1) * (def->part[partNo].shift & 0xF);
+        j = (shiftCount - 1) * (def->part[partNo].shift & 0xF);
+        mask <<= j;
     }
     free.n = same.n = other.n = 0;
     i = ((mask & 0x1F) == 0) ? 5 : 0;
