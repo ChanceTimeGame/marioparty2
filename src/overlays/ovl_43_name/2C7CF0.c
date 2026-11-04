@@ -1815,6 +1815,9 @@ void func_80104AC4_2C9FB4_name_43(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80104AC4_2C9FB4_name_43);
 #endif
 
+/* register allocation (masked 0, raw 5): the -1 constant and the coin-slot table base take s3/s2 the
+   other way round. j as the star slot and coinRank as the rand countdown fixed the rest (raw 88 -> 5);
+   dropping `rank` altogether made it worse (7). Twin of MP1 func_800F7278 (also unmatched). */
 #ifdef NON_MATCHING
 void func_801052C8_2CA7B8_name_43(void) {
     s32 starRankCount[4];
@@ -1843,13 +1846,13 @@ void func_801052C8_2CA7B8_name_43(void) {
         D_801153F0_2DA8E0_name_43[i] = -1;
     }
     for (i = 0; i < 4; i++) {
-        rank = func_80059FD0_5ABD0(i);
+        j = func_80059FD0_5ABD0(i);
     starSlot:
-        if (D_801153E0_2DA8D0_name_43[rank] != -1) {
-            rank++;
+        if (D_801153E0_2DA8D0_name_43[j] != -1) {
+            j++;
             goto starSlot;
         }
-        D_801153E0_2DA8D0_name_43[rank] = i;
+        D_801153E0_2DA8D0_name_43[j] = i;
         coinRank = 0;
         for (j = 0; j < 4; j++) {
             if (i != j) {
@@ -1875,7 +1878,7 @@ void func_801052C8_2CA7B8_name_43(void) {
     if (rank == D_80115408_2DA8F8_name_43) {
         starRankCount[rank]--;
     }
-    j = rand8() % starRankCount[D_80115408_2DA8F8_name_43];
+    coinRank = rand8() % starRankCount[D_80115408_2DA8F8_name_43];
     for (i = 0; i < 4; i++) {
         if (i == GwSystem.current_player_index) {
             continue;
@@ -1883,8 +1886,8 @@ void func_801052C8_2CA7B8_name_43(void) {
         if (D_80115408_2DA8F8_name_43 != func_80059FD0_5ABD0(i)) {
             continue;
         }
-        if (j != 0) {
-            j--;
+        if (coinRank != 0) {
+            coinRank--;
             continue;
         }
         D_80115404_2DA8F4_name_43 = i;
@@ -5026,7 +5029,10 @@ void func_8010FDC4_2D52B4_name_43(void) {
     func_8010FD0C_2D51FC_name_43(2);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (t0-t2), as 3E's twin */
+/* register allocation (masked 0, raw 17): in the target menu loop the hoisted choice, 8 and 0x18
+   take t0/t2/t1 where retail has t1/t0/t2. The coins/stars test written as one || condition
+   replaced the goto ladder (masked 2 -> 0); a ?: on coins/stars changed control flow. */
+#ifdef NON_MATCHING
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
 void func_8010FDE0_2D52D0_name_43(void) {
@@ -5138,19 +5144,11 @@ created:
                 if (i == gw->current_player_index) {
                     continue;
                 }
-                if (choice == 0) {
-                    if (gPlayers[i].coins != 0) {
-                        items[k] = 1;
-                        goto available;
-                    }
-                    goto unavailable;
-                } else if (gPlayers[i].stars == 0) {
-                unavailable:
+                if ((choice == 0 && gPlayers[i].coins == 0) || (choice != 0 && gPlayers[i].stars == 0)) {
                     items[k] = 0;
                     msgs[k][0] = 1;
                 } else {
                     items[k] = 1;
-                available:
                     msgs[k][0] = 8;
                 }
                 msgs[k][1] = 0x18;
@@ -5427,7 +5425,6 @@ s32 func_80110CCC_2D61BC_name_43(s32 arg0) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked 0): s1/s2 swap at the Boo's flight */
 /* A Boo's space (arg0: which Boo): for a price by time of day (D_801144D4) the Boo carries every
    player standing on its path to the path's far end, then flies to its other space while the camera
    follows. */
@@ -5503,7 +5500,8 @@ void func_80110F2C_2D641C_name_43(s32 arg0) {
                 for (i = 0; i < 4; i++) {
                     player = BoardPlayerGet(i);
                     if (D_80114524_2D9A14_name_43[arg0] == GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index)) {
-                        func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &GetSpaceData(D_80114524_2D9A14_name_43[arg0])->coords);
+                        sd = GetSpaceData(D_80114524_2D9A14_name_43[arg0]);
+                        func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &sd->coords);
                         ((MBModel*)player->unk_24)->pos.x += D_80114528_2D9A18_name_43[order].x;
                         ((MBModel*)player->unk_24)->pos.z += D_80114528_2D9A18_name_43[order].z;
                         order++;
@@ -5543,9 +5541,6 @@ void func_80110F2C_2D641C_name_43(s32 arg0) {
     HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
     HuPrcChildWatch();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80110F2C_2D641C_name_43);
-#endif
 
 void func_801114F0_2D69E0_name_43(void) {
     func_80110F2C_2D641C_name_43(0);

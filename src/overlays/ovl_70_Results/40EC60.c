@@ -301,7 +301,8 @@ void func_80102944_40EDA4_Results(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80102944_40EDA4_Results);
 #endif
 
-// register allocation: n and j swap s0/s1 (masked 0)
+/* register allocation (masked 0, raw 47): n and j swap s0/s1. Tried: n as s16 (masked 3), n = 0 as
+   its own statement, n declared before j (no change). The permuter's lead retyped D_80107CE0. */
 #ifdef NON_MATCHING
 /* Redraws each player's coin count. */
 void func_801038A4_40FD04_Results(void) {
@@ -640,7 +641,9 @@ void func_801046DC_410B3C_Results(void) {
     }
 }
 
-// register allocation of the rank counter (masked 2, as MP1 func_800F7F38)
+/* register allocation (masked 0, raw 12): the rank r takes a1 where retail has t0. Initialising r and
+   k in the for fixed the schedule (masked 2 -> 0); r/k as s16, s32 or u8 change nothing, and nor
+   does setting them before the sort. MP1 func_800F7F38 is the same C, also unmatched. */
 #ifdef NON_MATCHING
 /* Ranks the players: stars first, then coins. */
 void func_8010492C_410D8C_Results(void) {
@@ -673,9 +676,7 @@ void func_8010492C_410D8C_Results(void) {
     }
     D_80107850_413CB0_Results[0].rank = 0;
     D_80107850_413CB0_Results[0].place = who[0];
-    r = 0;
-    k = 0;
-    for (i = 1; i < 4; i++) {
+    for (i = 1, r = 0, k = 0; i < 4; i++) {
         k++;
         if (score[i - 1] != score[i]) {
             r = k;
@@ -1214,7 +1215,9 @@ void func_80107140_4135A0_Results(s16 steps, s32 which) {
     }
 }
 
-// stack slot of the spilled argument (retail 0x14, here above the pad; masked 2)
+/* frame layout (masked 2, raw 2; pad[4] is a fakematch): retail's 24-byte local area holds one word
+   at 0x10, the spilled `which` at 0x14 and 16 bytes after it. With no pad the frame is 0x40 (spill at
+   0x10); pad[2] gives 0x48 with the spill at 0x1C; a scalar pad is dropped. Not the permuter's class. */
 #ifdef NON_MATCHING
 /* One step of counting the coins into the totals; true once every player is done. */
 s8 func_801072B0_413710_Results(s32 which) {
