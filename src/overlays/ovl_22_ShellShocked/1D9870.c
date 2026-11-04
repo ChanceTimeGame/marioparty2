@@ -94,7 +94,9 @@ void func_80105360_1D9A40_ShellShocked(s32 i) {
     }
 }
 
-// control flow (masked 21, 150 vs 153 instructions)
+/* NON_MATCHING: register allocation (masked 1, raw 8): the tank array's base lands in a0 (retail a1),
+   so t needs a move into a0 for the call. Tried: com->target read directly, tank before com, t
+   declared first. */
 #ifdef NON_MATCHING
 void func_80105428_1D9B08_ShellShocked(s32 i) {
     Vec a;
@@ -680,8 +682,6 @@ void func_80106D84_1DB464_ShellShocked(s32 i) {
     }
 }
 
-// schedule (masked 2): one mul.s placed before the tank index instead of after
-#ifdef NON_MATCHING
 s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     f32 cx;
     f32 cz;
@@ -706,7 +706,7 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
         angle = func_8010CAA4_1E1184_ShellShocked() * 360.0f;
         r = (func_8010CAA4_1E1184_ShellShocked() * 10.0f + 5.0f) * 10.0f;
         limit = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 10.0f;
-        cx = r * HuMathSin(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.x;
+        cx = D_8010DA80_1E2160_ShellShocked[i].pos.x + r * HuMathSin(angle);
         cz = r * func_800B7890_B8490(angle) + D_8010DA80_1E2160_ShellShocked[i].pos.z;
         func_80107AB8_1DC198_ShellShocked(i, cx, cz, limit);
         com->stuck = 0;
@@ -716,9 +716,6 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80106E4C_1DB52C_ShellShocked);
-#endif
 
 // float register/schedule (masked 7, 190 vs 191: an extra mov.s of the cosine; dot*dot scheduled early)
 #ifdef NON_MATCHING
@@ -1238,8 +1235,7 @@ f32 func_801087F8_1DCED8_ShellShocked(s32 i, s32* who) {
     return best;
 }
 
-// register allocation: one float temporary (masked 0, raw 2 sites)
-#ifdef NON_MATCHING
+/* l first holds each side test's cross product, then the inverse length. */
 s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     Vec a;
     Vec b;
@@ -1264,7 +1260,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
         b.x = v->x - pos->x;
         b.z = v->z - pos->z;
         d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-        if (b.x * a.z + b.z * a.x < 0.0f) {
+        l = b.x * a.z + b.z * a.x;
+        if (l < 0.0f) {
             if (d < left) {
                 left = d;
             }
@@ -1279,7 +1276,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
             if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
                 HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[j].pos, pos);
                 d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-                if (b.x * a.z + b.z * a.x < 0.0f) {
+                l = b.x * a.z + b.z * a.x;
+                if (l < 0.0f) {
                     if (d < left) {
                         left = d;
                     }
@@ -1293,7 +1291,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     } else if (j != 0 && func_8010C1F0_1E08D0_ShellShocked(0) == 0) {
         HuVecSubtract(&b, &D_8010DA80_1E2160_ShellShocked[0].pos, pos);
         d = func_800B1830_B2430(b.x * b.x + b.z * b.z);
-        if (b.x * a.z + b.z * a.x < 0.0f) {
+        l = b.x * a.z + b.z * a.x;
+        if (l < 0.0f) {
             if (d < left) {
                 left = d;
             }
@@ -1309,9 +1308,8 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
             right = left * 0.5f;
         }
     } else {
-        d = -left;
-        c.x = d * a.x * l + pos->x;
-        c.z = d * a.z * l + pos->z;
+        c.x = -left * a.x * l + pos->x;
+        c.z = -left * a.z * l + pos->z;
         if (c.x < -760.0f || c.x > 760.0f || c.z < -760.0f || c.z > 760.0f) {
             left = right * 0.5f;
         }
@@ -1325,9 +1323,6 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     }
     return right < left ? 6 : 7;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_8010895C_1DD03C_ShellShocked);
-#endif
 
 // control flow (masked 49, 188 vs 191 instructions)
 #ifdef NON_MATCHING

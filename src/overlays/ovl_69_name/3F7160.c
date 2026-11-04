@@ -906,11 +906,9 @@ void func_80105A04_3FA334_name_69(void) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80105BB4_3FA4E4_name_69(void) {
     s16 i;
-    s32 show;
-    s32 failed;
+    s16 failed;
 
     switch (D_80106564_3FAE94_name_69) {
     case 0:
@@ -961,21 +959,14 @@ void func_80105BB4_3FA4E4_name_69(void) {
         }
     done:
         func_80104DA4_3F96D4_name_69();
-        show = failed;
-        break;
-    default:
-        show = failed;
         break;
     }
-    if (show != 0) {
+    if (failed != 0) {
         func_80105884_3FA1B4_name_69();
     } else {
         D_80106453_3FAD83_name_69 = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_69_name/3F7160", func_80105BB4_3FA4E4_name_69);
-#endif
 
 s32 func_80105D90_3FA6C0_name_69(s16 minigame) {
     s32 total;

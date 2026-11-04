@@ -65,11 +65,12 @@ void func_80102A14_3BE174_name_60(void) {
     }
 }
 
+/* NON_MATCHING: register allocation (masked 0), as ovl_5F's twin func_80102AF0_3ABC90_name_5F. */
 #ifdef NON_MATCHING
 void func_80102AF0_3BE250_name_60(void) {
     void* file;
     s32 j;
-    s32 i;
+    u16 i;
 
     D_80114940_3D00A0_name_60 = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xB0011), 0, 0);
     espPosSet(D_80114940_3D00A0_name_60, 160, 120);
@@ -1697,7 +1698,6 @@ void func_801072C8_3C2A28_name_60(s16 model, void* header, void* code, u8* alpha
     gSPEndDisplayList(gfx++);
 }
 
-#ifdef NON_MATCHING
 void func_80107C84_3C33E4_name_60(s32 minigame) {
     u8* mes;
     u8* start;
@@ -1709,9 +1709,9 @@ void func_80107C84_3C33E4_name_60(s32 minigame) {
     s16 breaks;
 
     mes = func_80068CD4_698D4((s16)minigame + 0x3D9);
-    start = mes + 1;
+    p = start = mes + 1;
     breaks = 0;
-    for (p = start; *p != 0; p++) {
+    for (; *p != 0; p++) {
         if (*p < 0x20) {
             breaks++;
         }
@@ -1725,8 +1725,7 @@ void func_80107C84_3C33E4_name_60(s32 minigame) {
                 *q = 0;
             }
             *p = 0;
-            line = &D_80114988_3D00E8_name_60[n];
-            id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+            id = D_80114988_3D00E8_name_60[n].unk08 = func_8006A67C_6B27C(&D_80114988_3D00E8_name_60[n], (char*)start, 0, -1, -1);
             D_80114988_3D00E8_name_60[n].unk60 = 82.0f;
             D_80114988_3D00E8_name_60[n].unk64 = 40.0f;
             SprPosSet(D_80114988_3D00E8_name_60[n].strGId[id], 0, D_80114988_3D00E8_name_60[n].unk60, 40);
@@ -1742,9 +1741,6 @@ void func_80107C84_3C33E4_name_60(s32 minigame) {
     func_80068D24_69924(mes);
     func_80107F74_3C36D4_name_60();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80107C84_3C33E4_name_60);
-#endif
 
 void func_80107F74_3C36D4_name_60(void) {
     SprPosSet(D_80114988_3D00E8_name_60[0].strGId[D_80114988_3D00E8_name_60[0].unk08], 0, 0, -200);

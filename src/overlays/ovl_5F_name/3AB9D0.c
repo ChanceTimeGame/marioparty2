@@ -64,13 +64,14 @@ void func_80102A14_3ABBB4_name_5F(void) {
     }
 }
 
-/* NON_MATCHING: register allocation only (the first switch's value is in s1, retail s0 with an
-   andi copy to s1). */
+/* NON_MATCHING: register allocation (masked 0, raw 18: 6 for j, the rest split-label relocations): the first
+   switch's value is in s1, retail s0 with an andi copy to s1. A u16 i fixed the tail (permuter);
+   tried without effect: i reused for j, j for both switches, a u16 copy of j. */
 #ifdef NON_MATCHING
 void func_80102AF0_3ABC90_name_5F(void) {
     void* file;
     s32 j;
-    s32 i;
+    u16 i;
 
     D_80114E10_3BDFB0_name_5F = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xB0011), 0, 0);
     espPosSet(D_80114E10_3BDFB0_name_5F, 160, 120);
@@ -1708,8 +1709,6 @@ void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha
 
 /* Sets up the minigame's name (message 0x3D9 + minigame): one GAMEMES per line of the message
    (control characters split it; at most two lines), placed at (82, 40). */
-/* NON_MATCHING: register allocation only (masked 0: p and line swap s1/s2) */
-#ifdef NON_MATCHING
 void func_80107C84_3B0E24_name_5F(s32 minigame) {
     u8* mes;
     u8* start;
@@ -1721,9 +1720,9 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
     s16 breaks;
 
     mes = func_80068CD4_698D4((s16)minigame + 0x3D9);
-    start = mes + 1;
+    p = start = mes + 1;
     breaks = 0;
-    for (p = start; *p != 0; p++) {
+    for (; *p != 0; p++) {
         if (*p < 0x20) {
             breaks++;
         }
@@ -1737,8 +1736,7 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
                 *q = 0;
             }
             *p = 0;
-            line = &D_80114E58_3BDFF8_name_5F[n];
-            id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+            id = D_80114E58_3BDFF8_name_5F[n].unk08 = func_8006A67C_6B27C(&D_80114E58_3BDFF8_name_5F[n], (char*)start, 0, -1, -1);
             D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
             D_80114E58_3BDFF8_name_5F[n].unk64 = 40.0f;
             SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, 40);
@@ -1754,9 +1752,6 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
     func_80068D24_69924(mes);
     func_80107F74_3B1114_name_5F();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107C84_3B0E24_name_5F);
-#endif
 
 /* Hides the name's lines (MP1 func_800F8DD0). */
 void func_80107F74_3B1114_name_5F(void) {
@@ -2766,8 +2761,7 @@ void func_8010AAA0_3B3C40_name_5F(omObjData* obj) {
 
 /* Arm demo setup: each player is an arm model (tinted by character) holding the
    character's model.
-   NON_MATCHING: register allocation only (masked 0; retail gives tex s0, p s1). */
-#ifdef NON_MATCHING
+   The second DataRead result also goes through tex (retail register use). */
 void func_8010AC44_3B3DE4_name_5F(void) {
     s32 i;
     s32 chr;
@@ -2793,7 +2787,7 @@ void func_8010AC44_3B3DE4_name_5F(void) {
         p->scale = 0.35f;
         func_800297E8_2A3E8(p->model, 0.35f, 0.35f, 0.35f);
         p->model2 = LoadFormFile(D_800CD438_CE038[gPlayers[i].character].dir | D_800CD438_CE038[gPlayers[i].character].model, 0x69D);
-        p->mot[1] = func_8002C8B8_2D4B8(DataRead(D_80113F2C_3BD0CC_name_5F[chr][0] | 0x1A0000), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(tex = DataRead(D_80113F2C_3BD0CC_name_5F[chr][0] | 0x1A0000), 0x1D);
         func_8002C9C0_2D5C0(p->model2, p->mot[1]);
         func_80029E80_2AA80(p->model2, 0, 1);
         func_8002979C_2A39C(p->model2, 0.0f, p->rot.y, 0.0f);
@@ -2803,9 +2797,6 @@ void func_8010AC44_3B3DE4_name_5F(void) {
         obj->work[1] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010AC44_3B3DE4_name_5F);
-#endif
 
 void func_8010AEF8_3B4098_name_5F(void) {
     s32 i;
@@ -4188,19 +4179,19 @@ void func_8010F8BC_3B8A5C_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: scheduling only (the character index's shift is placed after the player load) */
-#ifdef NON_MATCHING
 void func_8010FDD8_3B8F78_name_5F(void) {
     s32 i;
     s32 ch;
     Ovl5FPlayer* p;
     omObjData* o;
     Ovl5FAttach* hook;
+    u16 file;
 
     for (i = 0; i < 4; i++) {
         ch = gPlayers[i].character;
+        file = D_80113FE0_3BD180_name_5F[ch];
         p = D_800FA640_FB240[i];
-        p->model = LoadFormFile(D_80113FE0_3BD180_name_5F[ch] | 0x260000, 0x69D);
+        p->model = LoadFormFile(file | 0x260000, 0x69D);
         func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
         p->model2 = func_80018A30_19630(gPlayers[i].group != 0 ? 0x260003 : 0x260002, 0x69D);
         o = omAddObj(100, 0, 0, -1, func_80108D50_3B1EF0_name_5F);
@@ -4225,9 +4216,6 @@ void func_8010FDD8_3B8F78_name_5F(void) {
         o->work[2] = 10;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010FDD8_3B8F78_name_5F);
-#endif
 
 void func_80110050_3B91F0_name_5F(omObjData* obj) {
     s32 player = obj->work[0];
@@ -4804,7 +4792,8 @@ void func_80111A00_3BABA0_name_5F(omObjData* obj) {
 }
 
 /* NON_MATCHING: register operand order only (retail `addu s0,s3,s0` for &p->unk52[i], ours
-   `addu s0,s0,s3`; masked 0). */
+   `addu s0,s0,s3`, at the store and in the else branch; masked 0, raw 2 past the split-label
+   relocation). Tried: i declared before p, the store split from the scale call. */
 #ifdef NON_MATCHING
 void func_80112080_3BB220_name_5F(void) {
     s32 members[2];
