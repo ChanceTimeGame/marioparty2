@@ -546,7 +546,10 @@ s16 func_80104320_271A00_DizzyDancing(omObjData* obj, Vec* hit) {
     return func_8001B434_1C034(tri, &ball, 50.0f, hit);
 }
 
-/* NON_MATCHING: masked 2: f32 d is converted once, scheduled differently; $f4/$f6 swapped. */
+/* NON_MATCHING: register allocation (masked 2, raw 13): f32 d is converted once, scheduled differently;
+   $f4/$f6 swapped and obj->model[1] loaded first. S3-P04 tried: d inlined three times (masked 13),
+   d and s declared the other way round, the omSetSca z scale in a local (both unchanged). The
+   permuter's lead holds the first argument in a float assigned inside the call. */
 #ifdef NON_MATCHING
 void func_8010449C_271B7C_DizzyDancing(omObjData* obj) {
     Vec hit;
@@ -1299,15 +1302,11 @@ void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80105DF0_2734D0_DizzyDancing);
+__asm__(".section .rodata");
 #endif
 
-#ifndef NON_MATCHING
-__asm__(".section .rodata");
-const u32 D_80107814_274EF4_DizzyDancing[7] = { 0x00000005, 0x00000006, 0x00000007, 0x00000008, 0x00000009, 0x0000000A, 0x00000000 };
-__asm__(".section .text");
-#endif
-/* NON_MATCHING: masked 2: the table pointer load is scheduled after the rodata address. */
-#ifdef NON_MATCHING
+/* The asm path switches to .rodata above: GCC does not see INCLUDE_ASM switch to .text, and the
+   table initialiser below would land there. */
 void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
     s32 table[6] = { 5, 6, 7, 8, 9, 10 };
@@ -1322,8 +1321,8 @@ void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     ch = gPlayers[obj->work[0]].character;
     dir = D_800CD438_CE038[ch].unk_04;
     file = D_800CD438_CE038[ch].unk_08;
-    func_8000C460_D060();
     mask = 0x460000;
+    func_8000C460_D060();
     func_8000C6FC_D2FC(obj, dir, file, obj->work[0], 0x6B9, 0x2A9);
     HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
     func_80029A8C_2A68C(obj->model[1]);
@@ -1384,9 +1383,6 @@ void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     obj->func_ptr = func_80105DF0_2734D0_DizzyDancing;
     a->unk_30 = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80106650_273D30_DizzyDancing);
-#endif
 
 /* NON_MATCHING: masked 2: branch-likely in the switch tree. */
 // decomp-permuter
