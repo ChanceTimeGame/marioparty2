@@ -5435,7 +5435,6 @@ s32 func_80110CCC_2D61BC_name_43(s32 arg0) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked 0): s1/s2 swap at the Boo's flight */
 /* A Boo's space (arg0: which Boo): for a price by time of day (D_801144D4) the Boo carries every
    player standing on its path to the path's far end, then flies to its other space while the camera
    follows. */
@@ -5511,7 +5510,8 @@ void func_80110F2C_2D641C_name_43(s32 arg0) {
                 for (i = 0; i < 4; i++) {
                     player = BoardPlayerGet(i);
                     if (D_80114524_2D9A14_name_43[arg0] == GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index)) {
-                        func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &GetSpaceData(D_80114524_2D9A14_name_43[arg0])->coords);
+                        sd = GetSpaceData(D_80114524_2D9A14_name_43[arg0]);
+                        func_800B3170_B3D70(&((MBModel*)player->unk_24)->pos, &sd->coords);
                         ((MBModel*)player->unk_24)->pos.x += D_80114528_2D9A18_name_43[order].x;
                         ((MBModel*)player->unk_24)->pos.z += D_80114528_2D9A18_name_43[order].z;
                         order++;
@@ -5551,9 +5551,6 @@ void func_80110F2C_2D641C_name_43(s32 arg0) {
     HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
     HuPrcChildWatch();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80110F2C_2D641C_name_43);
-#endif
 
 void func_801114F0_2D69E0_name_43(void) {
     func_80110F2C_2D641C_name_43(0);
