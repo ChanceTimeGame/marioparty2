@@ -3227,7 +3227,6 @@ void func_801092D4_2CE7C4_name_43(MBModel* model) {
     MBModelDispOff(model);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: float register allocation in the two sine loops (raw 58) */
 /* A star flies out of the player's status window (player -1: of every other player that has
    one) and the player loses it. */
 s32 func_80109374_2CE864_name_43(s32 player) {
@@ -3282,9 +3281,11 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         for (j = 0; j < 30; j++) {
             for (i = 0; i < 4; i++) {
                 if (sprites[i] != -1) {
-                    y = D_801141C4_2D96B4_name_43[i].y * 16.0f + D_801141A4_2D9694_name_43[i].y;
+                    y = D_801141C4_2D96B4_name_43[i].y;
+                    y *= 16.0f;
+                    y += D_801141A4_2D9694_name_43[i].y;
                     SprPosSet(sprites[i], 0, D_801141C4_2D96B4_name_43[i].x * 16.0f + D_801141A4_2D9694_name_43[i].x,
-                              y + 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
+                              y += 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
                 }
             }
             HuPrcVSleep();
@@ -3329,9 +3330,11 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         MBPlayerVibrate(player, 5);
         PlaySound(0xE4);
         for (k = 0; k < 30; k++) {
-            y = D_801141C4_2D96B4_name_43[player].y * 16.0f + D_801141A4_2D9694_name_43[player].y;
+            y = D_801141C4_2D96B4_name_43[player].y;
+            y *= 16.0f;
+            y += D_801141A4_2D9694_name_43[player].y;
             SprPosSet(sprite, 0, D_801141C4_2D96B4_name_43[player].x * 16.0f + D_801141A4_2D9694_name_43[player].x,
-                      y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+                      y += 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
             HuPrcVSleep();
         }
         for (k = 16; k >= 0; k--) {
@@ -3345,9 +3348,6 @@ s32 func_80109374_2CE864_name_43(s32 player) {
         return 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80109374_2CE864_name_43);
-#endif
 
 void func_80109C50_2CF140_name_43(void) {
     func_80055E60_56A60();

@@ -3615,7 +3615,6 @@ void func_8010A1DC_29F4AC_name_3E(MBModel* model) {
     func_8002D0A0_2DCA0(model->shadow->model[0], 0);
     MBModelDispOff(model);
 }
-#ifdef NON_MATCHING /* NON_MATCHING: float register allocation in the two sine loops (raw 58) */
 /* A star flies out of the player's status window (player -1: of every other player that has
    one) and the player loses it. */
 s32 func_8010A27C_29F54C_name_3E(s32 player) {
@@ -3670,9 +3669,11 @@ s32 func_8010A27C_29F54C_name_3E(s32 player) {
         for (j = 0; j < 30; j++) {
             for (i = 0; i < 4; i++) {
                 if (sprites[i] != -1) {
-                    y = D_8011235C_2A762C_name_3E[i].y * 16.0f + D_8011233C_2A760C_name_3E[i].y;
+                    y = D_8011235C_2A762C_name_3E[i].y;
+                    y *= 16.0f;
+                    y += D_8011233C_2A760C_name_3E[i].y;
                     SprPosSet(sprites[i], 0, D_8011235C_2A762C_name_3E[i].x * 16.0f + D_8011233C_2A760C_name_3E[i].x,
-                              y + 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
+                              y += 2.0f * __sinf(j * 90 * (M_PI / 180.0)));
                 }
             }
             HuPrcVSleep();
@@ -3717,9 +3718,11 @@ s32 func_8010A27C_29F54C_name_3E(s32 player) {
         MBPlayerVibrate(player, 5);
         PlaySound(0xE4);
         for (k = 0; k < 30; k++) {
-            y = D_8011235C_2A762C_name_3E[player].y * 16.0f + D_8011233C_2A760C_name_3E[player].y;
+            y = D_8011235C_2A762C_name_3E[player].y;
+            y *= 16.0f;
+            y += D_8011233C_2A760C_name_3E[player].y;
             SprPosSet(sprite, 0, D_8011235C_2A762C_name_3E[player].x * 16.0f + D_8011233C_2A760C_name_3E[player].x,
-                      y + 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
+                      y += 2.0f * __sinf(k * 90 * (M_PI / 180.0)));
             HuPrcVSleep();
         }
         for (k = 16; k >= 0; k--) {
@@ -3733,9 +3736,6 @@ s32 func_8010A27C_29F54C_name_3E(s32 player) {
         return 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_8010A27C_29F54C_name_3E);
-#endif
 
 void func_8010AB58_29FE28_name_3E(void) {
     func_80055E60_56A60();
