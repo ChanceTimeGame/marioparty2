@@ -4792,7 +4792,8 @@ void func_80111A00_3BABA0_name_5F(omObjData* obj) {
 }
 
 /* NON_MATCHING: register operand order only (retail `addu s0,s3,s0` for &p->unk52[i], ours
-   `addu s0,s0,s3`; masked 0). */
+   `addu s0,s0,s3`, at the store and in the else branch; masked 0, raw 2 past the split-label
+   relocation). Tried: i declared before p, the store split from the scale call. */
 #ifdef NON_MATCHING
 void func_80112080_3BB220_name_5F(void) {
     s32 members[2];
