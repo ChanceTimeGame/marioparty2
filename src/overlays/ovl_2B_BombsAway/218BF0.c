@@ -447,7 +447,9 @@ void func_80103AC8_219EB8_BombsAway(BaPattern** list, s32 lo, s32 hi) {
 
 /* Ages the blasts and knocks down every standing player inside one (sphere, or a column whose
    height falls off with distance: func_80103F10).
-   NON_MATCHING: masked 0; one register (the (radius + blast radius) sum lands in f4, retail f0). */
+   NON_MATCHING: register allocation (masked 0, raw 4 past split-label relocs): p->unk_08 loads into
+   f4, retail f0 (then f4 = f0 + r). S3-Q05 tried r = w->unk_10; rr = p->unk_08 + r (and r + p, and
+   with w->unk_10 twice): loads swap; rr = p; r = w; rr += r: unchanged. */
 #ifdef NON_MATCHING
 void func_80103BD4_219FC4_BombsAway(void) {
     s16 ids[8];
@@ -661,7 +663,10 @@ void func_801043FC_21A7EC_BombsAway(omObjData* obj) {
 
 /* A player's object each frame (MP1 func_800F7C94): moves it (pad/CPU or scripted), keeps it on
    the platform, and detects falls, ring-outs and corner slots at the finish.
-   NON_MATCHING: masked 0; p and the ground work swap s0/s1 (as in MP1). */
+   NON_MATCHING: register allocation (masked 0, raw 48): p and the ground work swap s0/s1 (as in
+   MP1). S3-Q05 tried: w and gw as one variable, MP1's groundY = vel.y; gw->unk_14 = groundY, gw
+   block-scoped: no change. The permuter reached 40 only by wrapping the second half in do {} while (0)
+   (a loop-depth weight: p's refs count double), which points at a lost loop or macro there. */
 #ifdef NON_MATCHING
 void func_80104418_21A808_BombsAway(omObjData* obj) {
     Vec pos;

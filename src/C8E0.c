@@ -654,7 +654,9 @@ void func_8000CD28_D928(omObjData* obj, s32 player, s32 idx) {
                                             D_800CD438_CE038[gPlayers[0].character].unk_04);
 }
 
-// register allocation: retail builds the packed sample in a0 (masked 2)
+// NON_MATCHING: register allocation (masked 2, raw 18): retail builds the packed sample and sx in a0,
+// i in a1 (ours a1 / a0). S3-Q05 tried: no v temporary (masked 8), locals declared i, sx, sy or v
+// first, sx = sy = 0: no change.
 #ifdef NON_MATCHING
 /* Averages the last six stick samples (MP1 func_80009C90). */
 s32 func_8000CDC8_D9C8(omObjData* obj, s16 x, s16 y) {
