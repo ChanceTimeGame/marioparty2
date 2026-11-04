@@ -2137,8 +2137,6 @@ void func_80108C70_217610_BumperBalls(void) {
 }
 
 /* Per frame: moves the waves and scrolls the water texture (MP1 func_800FC618). */
-/* NON_MATCHING: register allocation (column counter and v1 swap s3/s4; masked 0), as in MP1. */
-#ifdef NON_MATCHING
 void func_80109868_218208_BumperBalls(void) {
     Vec normal;
     f32* p;
@@ -2147,8 +2145,6 @@ void func_80109868_218208_BumperBalls(void) {
     Vtx* v2;
     Vtx* v1;
     Vtx* v3;
-    Vtx* src;
-    Vtx* dst;
     f32 angle;
     s32 row;
     s32 column;
@@ -2213,20 +2209,17 @@ void func_80109868_218208_BumperBalls(void) {
     D_8010A088_218A28_BumperBalls = func_800B0D98_B1998(D_8010A088_218A28_BumperBalls, 1024.0);
     D_8010A08C_218A2C_BumperBalls = D_8010A084_218A24_BumperBalls + 1024.0f;
     D_8010A090_218A30_BumperBalls = D_8010A088_218A28_BumperBalls + 1024.0f;
-    src = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
-    dst = D_8010A538_218ED8_BumperBalls[D_800FDBE0_FE7E0];
+    v0 = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
+    v1 = D_8010A538_218ED8_BumperBalls[D_800FDBE0_FE7E0];
     for (k = 0; k < 144; k++) {
-        dst->n.ob[1] = src->n.ob[1];
-        dst->n.n[0] = src->n.n[0];
-        dst->n.n[1] = src->n.n[1];
-        dst->n.n[2] = src->n.n[2];
-        src++;
-        dst++;
+        v1->n.ob[1] = v0->n.ob[1];
+        v1->n.n[0] = v0->n.n[0];
+        v1->n.n[1] = v0->n.n[1];
+        v1->n.n[2] = v0->n.n[2];
+        v0++;
+        v1++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80109868_218208_BumperBalls);
-#endif
 
 /* Lights the ball's models from below (the lava's glow): stronger and lower the farther the ball
    is from the island's centre, none within 47 units of it. */
