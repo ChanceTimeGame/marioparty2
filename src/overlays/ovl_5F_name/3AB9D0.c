@@ -2766,8 +2766,7 @@ void func_8010AAA0_3B3C40_name_5F(omObjData* obj) {
 
 /* Arm demo setup: each player is an arm model (tinted by character) holding the
    character's model.
-   NON_MATCHING: register allocation only (masked 0; retail gives tex s0, p s1). */
-#ifdef NON_MATCHING
+   The second DataRead result also goes through tex (retail register use). */
 void func_8010AC44_3B3DE4_name_5F(void) {
     s32 i;
     s32 chr;
@@ -2793,7 +2792,7 @@ void func_8010AC44_3B3DE4_name_5F(void) {
         p->scale = 0.35f;
         func_800297E8_2A3E8(p->model, 0.35f, 0.35f, 0.35f);
         p->model2 = LoadFormFile(D_800CD438_CE038[gPlayers[i].character].dir | D_800CD438_CE038[gPlayers[i].character].model, 0x69D);
-        p->mot[1] = func_8002C8B8_2D4B8(DataRead(D_80113F2C_3BD0CC_name_5F[chr][0] | 0x1A0000), 0x1D);
+        p->mot[1] = func_8002C8B8_2D4B8(tex = DataRead(D_80113F2C_3BD0CC_name_5F[chr][0] | 0x1A0000), 0x1D);
         func_8002C9C0_2D5C0(p->model2, p->mot[1]);
         func_80029E80_2AA80(p->model2, 0, 1);
         func_8002979C_2A39C(p->model2, 0.0f, p->rot.y, 0.0f);
@@ -2803,9 +2802,6 @@ void func_8010AC44_3B3DE4_name_5F(void) {
         obj->work[1] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010AC44_3B3DE4_name_5F);
-#endif
 
 void func_8010AEF8_3B4098_name_5F(void) {
     s32 i;
@@ -4188,19 +4184,19 @@ void func_8010F8BC_3B8A5C_name_5F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: scheduling only (the character index's shift is placed after the player load) */
-#ifdef NON_MATCHING
 void func_8010FDD8_3B8F78_name_5F(void) {
     s32 i;
     s32 ch;
     Ovl5FPlayer* p;
     omObjData* o;
     Ovl5FAttach* hook;
+    u16 file;
 
     for (i = 0; i < 4; i++) {
         ch = gPlayers[i].character;
+        file = D_80113FE0_3BD180_name_5F[ch];
         p = D_800FA640_FB240[i];
-        p->model = LoadFormFile(D_80113FE0_3BD180_name_5F[ch] | 0x260000, 0x69D);
+        p->model = LoadFormFile(file | 0x260000, 0x69D);
         func_800297E8_2A3E8(p->model, 0.4f, 0.4f, 0.4f);
         p->model2 = func_80018A30_19630(gPlayers[i].group != 0 ? 0x260003 : 0x260002, 0x69D);
         o = omAddObj(100, 0, 0, -1, func_80108D50_3B1EF0_name_5F);
@@ -4225,9 +4221,6 @@ void func_8010FDD8_3B8F78_name_5F(void) {
         o->work[2] = 10;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_8010FDD8_3B8F78_name_5F);
-#endif
 
 void func_80110050_3B91F0_name_5F(omObjData* obj) {
     s32 player = obj->work[0];
