@@ -1709,8 +1709,6 @@ void func_801072C8_3B0468_name_5F(s16 model, void* header, void* code, u8* alpha
 
 /* Sets up the minigame's name (message 0x3D9 + minigame): one GAMEMES per line of the message
    (control characters split it; at most two lines), placed at (82, 40). */
-/* NON_MATCHING: register allocation only (masked 0: p and line swap s1/s2) */
-#ifdef NON_MATCHING
 void func_80107C84_3B0E24_name_5F(s32 minigame) {
     u8* mes;
     u8* start;
@@ -1722,9 +1720,9 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
     s16 breaks;
 
     mes = func_80068CD4_698D4((s16)minigame + 0x3D9);
-    start = mes + 1;
+    p = start = mes + 1;
     breaks = 0;
-    for (p = start; *p != 0; p++) {
+    for (; *p != 0; p++) {
         if (*p < 0x20) {
             breaks++;
         }
@@ -1738,8 +1736,7 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
                 *q = 0;
             }
             *p = 0;
-            line = &D_80114E58_3BDFF8_name_5F[n];
-            id = line->unk08 = func_8006A67C_6B27C(line, (char*)start, 0, -1, -1);
+            id = D_80114E58_3BDFF8_name_5F[n].unk08 = func_8006A67C_6B27C(&D_80114E58_3BDFF8_name_5F[n], (char*)start, 0, -1, -1);
             D_80114E58_3BDFF8_name_5F[n].unk60 = 82.0f;
             D_80114E58_3BDFF8_name_5F[n].unk64 = 40.0f;
             SprPosSet(D_80114E58_3BDFF8_name_5F[n].strGId[id], 0, D_80114E58_3BDFF8_name_5F[n].unk60, 40);
@@ -1755,9 +1752,6 @@ void func_80107C84_3B0E24_name_5F(s32 minigame) {
     func_80068D24_69924(mes);
     func_80107F74_3B1114_name_5F();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3AB9D0", func_80107C84_3B0E24_name_5F);
-#endif
 
 /* Hides the name's lines (MP1 func_800F8DD0). */
 void func_80107F74_3B1114_name_5F(void) {
