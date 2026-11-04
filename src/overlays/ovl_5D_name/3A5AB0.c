@@ -592,8 +592,6 @@ void func_8010A4E4_3A7ED4_name_5D(s16 model, Vec2f* out, f32 mtx[4][4]) {
     func_8010A524_3A7F14_name_5D(0, &pos, out);
 }
 
-// register allocation (masked 8)
-#ifdef NON_MATCHING
 void func_8010A524_3A7F14_name_5D(s16 cam, Vec* in, Vec2f* out) {
     f32 mtx[4][4];
     Vec pos;
@@ -610,7 +608,7 @@ void func_8010A524_3A7F14_name_5D(s16 cam, Vec* in, Vec2f* out) {
 
     rx = D_800FD474_FE074.x;
     ry = D_800FD474_FE074.y;
-    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+    pos.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
     pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
     pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
     at = D_8010274C_10334C;
@@ -637,9 +635,6 @@ void func_8010A524_3A7F14_name_5D(s16 cam, Vec* in, Vec2f* out) {
         out->unk_00 = -200.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A5AB0", func_8010A524_3A7F14_name_5D);
-#endif
 
 // register allocation: $f2/$f6 swapped (masked 0; twin of 5B 8010A53C)
 #ifdef NON_MATCHING

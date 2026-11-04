@@ -971,8 +971,6 @@ void func_8010C96C_33432C_name_4E(s16 model, Vec2f* out, f32 mtx[4][4]) {
 }
 
 /* Hu3DCam3DToScreen with this overlay's field of view; off-screen behind the camera. */
-/* NON_MATCHING: scheduling (masked 8): retail loads D_8010274C's address before the first mul.s, ours after it */
-#ifdef NON_MATCHING
 void func_8010C9AC_33436C_name_4E(s32 cam, Vec* in, Vec2f* out) {
     f32 mtx[4][4];
     Vec pos;
@@ -989,7 +987,7 @@ void func_8010C9AC_33436C_name_4E(s32 cam, Vec* in, Vec2f* out) {
 
     rx = D_800FD474_FE074.x;
     ry = D_800FD474_FE074.y;
-    pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
+    pos.x = D_8010274C_10334C.x + HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210;
     pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
     pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
     at = D_8010274C_10334C;
@@ -1015,9 +1013,6 @@ void func_8010C9AC_33436C_name_4E(s32 cam, Vec* in, Vec2f* out) {
         out->unk_00 = out->unk_04 = -200.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/331200", func_8010C9AC_33436C_name_4E);
-#endif
 
 void func_8010CCB4_334674_name_4E(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     f32 mtx[4][4];
