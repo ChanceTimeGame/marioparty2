@@ -1524,6 +1524,8 @@ void func_801089C4_166CE4_BobOmbBarrage(f32 from, f32 to, s32 time) {
     D_80109378_167698_BobOmbBarrage.to = to;
 }
 
+// register allocation (masked 0, raw 14; the rest are symbol names for the same addresses): retail keeps
+// 1.0f in f4, k in f2, -k in f0. Tried: no `one` local (same), the ratio folded into k (raw 22).
 #ifdef NON_MATCHING
 void func_801089E4_166D04_BobOmbBarrage(void) {
     f32 one;
@@ -1545,8 +1547,7 @@ void func_801089E4_166D04_BobOmbBarrage(void) {
     if (a < 0.0f) {
         a += 360.0f;
     }
-    D_801093A0_1676C0_BobOmbBarrage[0].rotAim = a;
-    D_801093A0_1676C0_BobOmbBarrage[0].rot = a;
+    D_801093A0_1676C0_BobOmbBarrage[0].rot = D_801093A0_1676C0_BobOmbBarrage[0].rotAim = a;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_801089E4_166D04_BobOmbBarrage);
@@ -1560,6 +1561,8 @@ void func_80108AB0_166DD0_BobOmbBarrage(f32 height, s32 time) {
     D_80109378_167698_BobOmbBarrage.height = height;
 }
 
+// register allocation (masked 0): retail keeps u in f2 and 1.0f in f4 (as func_801089E4_166D04). Tried: no
+// `one` local (same), a separate ratio local (raw 26), `one` set before k (masked 5).
 #ifdef NON_MATCHING
 void func_80108AD4_166DF4_BobOmbBarrage(void) {
     f32 k;
