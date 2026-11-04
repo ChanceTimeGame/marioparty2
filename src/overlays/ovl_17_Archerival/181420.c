@@ -1001,8 +1001,6 @@ void func_80105180_183DA0_Archerival(f32 x, f32 y, f32 z, u8 n) {
     }
 }
 
-// NON_MATCHING: masked 0: retail keeps the z bounds' registers the other way round
-#ifdef NON_MATCHING
 void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx) {
     s16 hit[3] = { 0x1DB, 0x1DD, 0x1DA };
     omObjData* arrow;
@@ -1023,8 +1021,8 @@ void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx) {
     az = arrow->trans.z - 84.0f;
     zh = az + 11.75f + 1.0f;
     zl = az;
-    if (D_80107C58_186878_Archerival == 2 && ((s16)z < (s16)zh) & ((s16)zl < (s16)z)
-        && ((s16)ax >= (s16)l) & ((s16)r >= (s16)ax)) {
+    if (D_80107C58_186878_Archerival == 2 && ((s16)zh > (s16)z) & ((s16)zl < (s16)z)
+        && ((s16)l <= (s16)ax) & ((s16)r >= (s16)ax)) {
         D_80107C58_186878_Archerival = 0;
         func_800298A4_2A4A4(arrow->model[0], 4, 4);
         PlaySound(0x1D9);
@@ -1048,12 +1046,6 @@ void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx) {
         func_800298A4_2A4A4(obj->model[1], 4, 0);
     }
 }
-#else
-__asm__(".section .rodata");
-const u32 D_801077E8_186408_Archerival[2] = { 0x01DB01DD, 0x01DA0000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010520C_183E2C_Archerival);
-#endif
 
 /* Moves a target by dx unless the walls, another target or the arrow in flight stop it; returns the
    step taken (0 when blocked). */
