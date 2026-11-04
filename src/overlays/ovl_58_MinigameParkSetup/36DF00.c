@@ -4083,8 +4083,6 @@ void func_8011060C_37BD0C_MinigameParkSetup(s16 i, f32* pos, s16 dx, s16 dy) {
 
 /* The free slot (D_801138A0[i] == -1) nearest to slot cur in the stick's direction: only
    slots within 0.5 of the stick's unit vector count. -1 when there is none. */
-#ifdef NON_MATCHING
-/* masked 2: retail stores dist[i] before copying the root to $f2 (an order swap). */
 s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stickY) {
     f32 dir[16][2];
     f32 dist[16];
@@ -4103,7 +4101,7 @@ s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stick
         } else {
             dx = D_80113798_37EE98_MinigameParkSetup[cur][0] - D_80113798_37EE98_MinigameParkSetup[i][0];
             dy = D_80113798_37EE98_MinigameParkSetup[cur][1] - D_80113798_37EE98_MinigameParkSetup[i][1];
-            dist[i] = d = func_800B1830_B2430(dx * dx + dy * dy);
+            d = dist[i] = func_800B1830_B2430(dx * dx + dy * dy);
             dir[i][0] = dx / d;
             dir[i][1] = dy / d;
         }
@@ -4130,9 +4128,6 @@ s16 func_80110678_37BD78_MinigameParkSetup(s16 cur, s16 n, s16 stickX, s16 stick
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80110678_37BD78_MinigameParkSetup);
-#endif
 
 void func_801109C8_37C0C8_MinigameParkSetup(omObjData* obj) {
     if (D_80112B42_37E242_MinigameParkSetup != 0 || D_801011FC_101DFC != 0) {
