@@ -4073,14 +4073,12 @@ void func_8003BD08_3C908(HmfData* arg0, s16 arg1, f32 arg2) {
 #else
 INCLUDE_ASM("asm/nonmatchings/30560", func_8003BD08_3C908);
 #endif
-// register allocation only (masked 0)
-#ifdef NON_MATCHING
-/* Apply the morph targets of the current frame arg1 to this frame's vertex buffer */
+/* Apply the morph targets of the current frame arg1 to this frame's vertex buffer (retail reuses
+   the copy loop's pointers: src becomes the frame buffer, dst the vertex) */
 void func_8003C6AC_3D2AC(HmfData* arg0, f32 arg1) {
     HmfMorph* m;
     HmfVtx* dst;
     HmfVtx* src;
-    HmfVtx* v;
     s16* idx;
     ColVtx* pos;
     s8* col;
@@ -4093,12 +4091,12 @@ void func_8003C6AC_3D2AC(HmfData* arg0, f32 arg1) {
             src = arg0->unk40;
             dst = arg0->unk44[D_800FDBE0_FE7E0];
             n = arg0->unk18;
-            for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
                 *dst = *src;
                 src++;
                 dst++;
             }
-            dst = arg0->unk44[D_800FDBE0_FE7E0];
+            src = arg0->unk44[D_800FDBE0_FE7E0];
             if (((HmfMorphAnim*) arg0->unkBC)->unk02 - 1 <= arg1) {
                 arg1 = ((HmfMorphAnim*) arg0->unkBC)->unk02 - 1;
             }
@@ -4109,14 +4107,14 @@ void func_8003C6AC_3D2AC(HmfData* arg0, f32 arg1) {
                 col = (s8*) m->unk30;
                 n = m->unk1C;
                 for (j = 0; j < n; j++) {
-                    v = &dst[arg0->unk60[*idx]];
-                    v->unk00 = pos->x;
-                    v->unk02 = pos->y;
-                    v->unk04 = pos->z;
+                    dst = &src[arg0->unk60[*idx]];
+                    dst->unk00 = pos->x;
+                    dst->unk02 = pos->y;
+                    dst->unk04 = pos->z;
                     if (col[0] != 0 || col[1] != 0 || col[2] != 0) {
-                        v->unk0C[0] = col[0];
-                        v->unk0C[1] = col[1];
-                        v->unk0C[2] = col[2];
+                        dst->unk0C[0] = col[0];
+                        dst->unk0C[1] = col[1];
+                        dst->unk0C[2] = col[2];
                     }
                     idx++;
                     pos++;
@@ -4126,6 +4124,3 @@ void func_8003C6AC_3D2AC(HmfData* arg0, f32 arg1) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/30560", func_8003C6AC_3D2AC);
-#endif
