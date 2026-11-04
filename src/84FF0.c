@@ -1082,7 +1082,9 @@ void func_80029E80_2AA80(s16, s32, s32);
 void HmfModelObjAttrSet(s16, s32, s32);
 void func_80087794_88394(omObjData* obj);
 
-// register allocation: obj and the loop counter j swap s5/s6 (masked 0; MP1 func_8006BC38 has the same)
+// register allocation: obj and the loop counter j swap s5/s6 (masked 0, raw 33 counting splat's
+// D_800ED6B2/4/6 labels, same addresses; MP1 func_8006BC38 has the same). Tried: declaration order,
+// loop-init order, s16/s32 counters
 #ifdef NON_MATCHING
 /* MP1 func_8006BC38: loads the models and sprites (cached in D_800ED6B0) */
 void func_800873D8_87FD8(omObjData* obj) {
@@ -2981,8 +2983,6 @@ INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008BCB8_8C8B8);
 
 f32 func_800B1830_B2430(f32); /* sqrtf */
 
-// register allocation (masked 0): sx and py swap f28/f30
-#ifdef NON_MATCHING
 /* MP1 func_8007094C: animates and places the choice cursor (sprite 2) */
 void func_8008C828_8D428(TextWindow* tw, TWEntry* e) {
     f32 sy;
@@ -2995,10 +2995,9 @@ void func_8008C828_8D428(TextWindow* tw, TWEntry* e) {
     f32 mx;
     f32 my;
 
-    sy = 1.0f;
+    sx = sy = 1.0f;
     px = e->unk2 - 12;
     py = e->unk4 + 8;
-    sx = sy;
     switch (tw->unk9A) {
         case 0:
             if (tw->unk6A != -1) {
@@ -3072,12 +3071,6 @@ void func_8008C828_8D428(TextWindow* tw, TWEntry* e) {
         SprAttrReset(tw->unk_6C, 2, 0x8000);
     }
 }
-#else
-const u32 jtbl_800D3728_D4328[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8008C8A8, 0x8008C8C0, 0x8008CA50, 0x8008C914, 0x8008CAC0, 0x8008CB50,
-};
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_8008C828_8D428);
-#endif
 
 void SprKill(s16 grpIdx);
 
