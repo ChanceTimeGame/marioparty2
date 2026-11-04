@@ -471,7 +471,8 @@ void func_80103F24_192AC4_BobsledRun(omObjData* obj) {
 }
 
 /* The track (D_800FC7B0_FD3B0[1]): runs the game controller; cameras and the progress bar. */
-// register allocation: retail keeps the sprite in s0 and x in s1 (as in MP1)
+// register allocation (masked 0, raw 9): retail keeps the sprite in s0 and x in s1 (MP1 is NON_MATCHING
+// too). Tried: s32 spr with (s16) casts as MP1 (masked 5), swapped declarations, a for loop (no change).
 #ifdef NON_MATCHING
 void func_80104084_192C24_BobsledRun(omObjData* obj) {
     s16 x;
@@ -783,11 +784,9 @@ void func_80104BE0_193780_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 play
 
 /* Draw layers of a sled by distance to the other team's camera (1: top screen only, 2: bottom,
    3: both); close up (or while the other team's riders do anim 5) its effect model shows. */
-// register allocation: retail keeps obj in s1 and moves the layer into s0 for the last three calls
-#ifdef NON_MATCHING
 void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
     s8* t; /* &D_8010C048_19ABE8_BobsledRun[other].anim: retail's base register */
-    s32 layer;
+    s8 layer;
     s32 layer2;
     f32 dx;
     f32 dy;
@@ -837,9 +836,6 @@ void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
     func_80029EDC_2AADC(obj->model[1], layer);
     func_80029EDC_2AADC(obj->model[5], layer2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104EAC_193A4C_BobsledRun);
-#endif
 
 /* Draw layer of a rider by distance to the other team's camera. */
 // float register allocation of the distance (as in MP1)
