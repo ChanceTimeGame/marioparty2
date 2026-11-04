@@ -854,7 +854,9 @@ void func_80105730_1C9AE0_MagnetCarta(void) {
     }
 }
 
-// register allocation (masked 0): p and car sit in each other's saved register
+// register allocation (masked 0, raw 61): p and car sit in each other's saved register (retail p s2, car s1),
+// and x's product goes through f0 before f24. Tried: car assigned first (masked 35), p declared first (same),
+// x inlined into the func_801039F0 call (raw 73).
 #ifdef NON_MATCHING
 void func_801057D4_1C9B84_MagnetCarta(omObjData* obj) {
     MCCar* car;
