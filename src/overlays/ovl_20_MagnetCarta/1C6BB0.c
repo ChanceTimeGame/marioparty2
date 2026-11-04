@@ -1630,7 +1630,9 @@ void func_80108A6C_1CCE1C_MagnetCarta(omObjData* obj) {
     }
 }
 
-// register allocation (masked 1): o and car swapped, and one delay slot shifts j another way
+// register allocation (masked 1, raw 84): o and car swapped (retail o s4, car s3), f22/f24 swapped, and one
+// delay slot shifts j another way. Tried: car declared before o (same), car indexed through p->obj before
+// o is set (masked 3), o = p->obj hoisted above the test (masked 68).
 #ifdef NON_MATCHING
 void func_80108AC4_1CCE74_MagnetCarta(void) {
     Vec a;
@@ -1886,7 +1888,9 @@ void func_80109464_1CD814_MagnetCarta(void) {
     }
 }
 
-// register allocation (masked 0)
+// register allocation (masked 0, raw 86): the loop-invariant float constants get other callee-saved
+// registers (retail 180 f22, 127.5 f24, 128.25 f26, 0 f28; here 127.5 f22, 180 f24, 0 f26, 128.25 f28),
+// and the stored 1 sits in s6 not s7. Permuter (420) found nothing human-shaped.
 #ifdef NON_MATCHING
 void func_801095E4_1CD994_MagnetCarta(void) {
     Vec a;
