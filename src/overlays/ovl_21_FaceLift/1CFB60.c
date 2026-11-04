@@ -332,7 +332,9 @@ void func_80103048_1D03A8_FaceLift(omObjData* obj) {
     }
 }
 
-// register allocation (port in a1, bnez for bnezl)
+// register allocation (masked 0, raw 7: 5 FP plus a split-label reloc): retail puts dx*dx in $f2
+// and dy*dy in $f0 for the snap test. S3-Q07 tried, without effect: += for the eased point, 1.0f >
+// on the left; the sum kept in dx is worse. (s16 port fixed the a0/a1 and bnezl head.)
 #ifdef NON_MATCHING
 void func_801033B8_1D0718_FaceLift(s16 player, FLWork* w) {
     Vec pos;
@@ -345,7 +347,7 @@ void func_801033B8_1D0718_FaceLift(s16 player, FLWork* w) {
     f32 ey;
     u16 sel;
     s16 i;
-    s32 port;
+    s16 port;
     s16 snd;
 
     port = gPlayers[player].port;
