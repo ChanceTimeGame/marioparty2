@@ -1815,6 +1815,9 @@ void func_80104AC4_2C9FB4_name_43(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80104AC4_2C9FB4_name_43);
 #endif
 
+/* register allocation (masked 0, raw 5): the -1 constant and the coin-slot table base take s3/s2 the
+   other way round. j as the star slot and coinRank as the rand countdown fixed the rest (raw 88 -> 5);
+   dropping `rank` altogether made it worse (7). Twin of MP1 func_800F7278 (also unmatched). */
 #ifdef NON_MATCHING
 void func_801052C8_2CA7B8_name_43(void) {
     s32 starRankCount[4];
@@ -1843,13 +1846,13 @@ void func_801052C8_2CA7B8_name_43(void) {
         D_801153F0_2DA8E0_name_43[i] = -1;
     }
     for (i = 0; i < 4; i++) {
-        rank = func_80059FD0_5ABD0(i);
+        j = func_80059FD0_5ABD0(i);
     starSlot:
-        if (D_801153E0_2DA8D0_name_43[rank] != -1) {
-            rank++;
+        if (D_801153E0_2DA8D0_name_43[j] != -1) {
+            j++;
             goto starSlot;
         }
-        D_801153E0_2DA8D0_name_43[rank] = i;
+        D_801153E0_2DA8D0_name_43[j] = i;
         coinRank = 0;
         for (j = 0; j < 4; j++) {
             if (i != j) {
@@ -1875,7 +1878,7 @@ void func_801052C8_2CA7B8_name_43(void) {
     if (rank == D_80115408_2DA8F8_name_43) {
         starRankCount[rank]--;
     }
-    j = rand8() % starRankCount[D_80115408_2DA8F8_name_43];
+    coinRank = rand8() % starRankCount[D_80115408_2DA8F8_name_43];
     for (i = 0; i < 4; i++) {
         if (i == GwSystem.current_player_index) {
             continue;
@@ -1883,8 +1886,8 @@ void func_801052C8_2CA7B8_name_43(void) {
         if (D_80115408_2DA8F8_name_43 != func_80059FD0_5ABD0(i)) {
             continue;
         }
-        if (j != 0) {
-            j--;
+        if (coinRank != 0) {
+            coinRank--;
             continue;
         }
         D_80115404_2DA8F4_name_43 = i;
