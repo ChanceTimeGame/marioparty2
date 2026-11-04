@@ -1252,7 +1252,8 @@ RBShape* func_80106224_E7464_RollOutTheBarrels(omObjData* obj, Vec* prev) {
     return NULL;
 }
 
-// float register allocation (masked 8: r and az swapped), class 4
+// float register allocation (masked 13 with the mul-fix nop: r and az swap f20/f22), class 4;
+// tried decl order, block-scoped locals, fabsf(dx -= ...), compare operand order (S3-Q03)
 #ifdef NON_MATCHING
 RBShape* func_801063B0_E75F0_RollOutTheBarrels(omObjData* obj, Vec* prev) {
     RBShape* s;
@@ -1592,7 +1593,8 @@ void func_80107140_E8380_RollOutTheBarrels(RBRoller* r) {
     }
 }
 
-// float register allocation only (masked 0, raw 15: the three angle locals rotated), class 4
+// float register allocation only (masked 12, raw 28: base/to/dir rotate f24/f26/f28; retail base f24, to f26,
+// dir f28), class 4; tried every decl order, steer +=, if/else for the ternary, statement order (S3-Q03)
 #ifdef NON_MATCHING
 void func_80107564_E87A4_RollOutTheBarrels(RBRoller* r) {
     HmfModel* m;

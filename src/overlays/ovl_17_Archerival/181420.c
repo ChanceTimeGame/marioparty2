@@ -364,7 +364,8 @@ u8 func_801037C4_1823E4_Archerival(u8 n, u8* used) {
    players' targets, 4-5 extra ones) that is not yet hit, preferring by difficulty rolls a
    target nobody aims at (D_801073CC) unless D_801073D0 rolls, or one of 1-3 (D_801073C8).
    Also ranks the candidates by distance in D_801078C8. Returns the index, 0 if none. */
-// NON_MATCHING: register allocation only (masked 0)
+// NON_MATCHING: register allocation only (masked 0, raw 5): the truncated distance t sits in $v1, retail $v0
+// (same residue as func_80103C1C); tried d = t split, abs on t, ternary (S3-Q03)
 #ifdef NON_MATCHING
 u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
     u8 diff;
@@ -385,7 +386,6 @@ u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
     u16 ti;
     s32 t;
     ARRank* r;
-    ARObj* tbl;
     ARObj* p;
 
     diff = gPlayers[obj->work[0]].cpu_difficulty;
@@ -402,8 +402,8 @@ u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
         r->dist = best;
         r->idx = bestIdx;
     }
-    for (i = 1, tbl = D_80107920_186540_Archerival; i < 6; i++) {
-        p = i + tbl;
+    for (i = 1; i < 6; i++) {
+        p = &D_80107920_186540_Archerival[i];
         if (p->unk_26 == 0) {
             if (i < 4) {
                 if (p->com == 0) {
@@ -420,8 +420,8 @@ u8 func_801038B4_1824D4_Archerival(omObjData* obj) {
     rollB = nFree ? rollB : 0;
     rollA = nNear ? rollA : 0;
     rollB = !rollC ? rollB : 0;
-    for (i = 1, tbl = D_80107920_186540_Archerival; i < 6; i++) {
-        p = i + tbl;
+    for (i = 1; i < 6; i++) {
+        p = &D_80107920_186540_Archerival[i];
         if (p->unk_26 != 0) {
             continue;
         }
@@ -470,7 +470,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801038B4_
 
 /* A CPU archer's walk towards its target: returns 1 when within 8 of it, else the x distance
    to walk in *dx; with no target yet, picks one (func_801038B4_1824D4_Archerival). */
-// NON_MATCHING: register allocation only (masked 0): retail keeps the distance in $v0
+// NON_MATCHING: register allocation only (masked 0, raw 3): retail keeps the distance in $v0, ours $v1;
+// tried ternary/ABS, block scope, decl order, u16 d + s32 t, inverted test (S3-Q03)
 #ifdef NON_MATCHING
 s32 func_80103C1C_18283C_Archerival(omObjData* obj, ARObj* tbl, s16* dx, u8* target) {
     s32 d;
