@@ -1286,9 +1286,10 @@ void func_801068C4_383574_name_5B(void) {
    makes them and pops them in, 1 grows and fades them out and frees them, 2 keeps them wobbling
    and swaps entry 8's picture when the cursor moves. */
 #ifdef NON_MATCHING
-/* Logic and registers otherwise match; the KMC assembler puts a nop before each mul.s that
-   follows the two HuMathSin calls in the pop-in loop (retail has none there), and `state` takes
-   s5 instead of s4. */
+/* register allocation (masked 0, raw 14): `state` takes s5 and the spilled count copy s4 (retail
+   swaps them), and the -1 constant lands in v1/v0 instead of t0. The night-1 permuter reached 0 only
+   with fakes (an int holding -1, a do-while(0), an if (1), an s16 copy of j). Declaration order of
+   count/prev/state: no gain (prev or state before count: masked 15). */
 void func_80106D2C_3839DC_name_5B(void) {
     s16 grp[16];
     s16 spr[16];
@@ -2135,8 +2136,6 @@ void func_8010A0F0_386DA0_name_5B(Ovl5BModelDef* defs) {
 
 /* Places model `model` from defs[i] (positions in fifths of world units): 1 as given, 2 and 3
    turned by +-119.289 degrees about y into two other parts of the scene. */
-#ifdef NON_MATCHING
-/* masked 0: retail negates sin into $f20 before the multiply (here into $f26). */
 void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
     Ovl5BModelDef* def = &defs[i];
     f32 x;
@@ -2149,7 +2148,7 @@ void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
             break;
         case 3:
             x = func_800B7890_B8490(-119.289f) * def->pos.x + HuMathSin(-119.289f) * def->pos.z;
-            z = -HuMathSin(-119.289f) * def->pos.x + func_800B7890_B8490(-119.289f) * def->pos.z;
+            z = def->pos.x * -HuMathSin(-119.289f) + func_800B7890_B8490(-119.289f) * def->pos.z;
             func_80029714_2A314(model, (-HuMathSin(-119.289f) * 136.8f + 259.0f) * 5.0f + x * 5.0f,
                                 def->pos.y * 5.0f,
                                 (-func_800B7890_B8490(-119.289f) * 136.8f + 147.0f) * 5.0f + z * 5.0f);
@@ -2157,15 +2156,12 @@ void func_8010A1E4_386E94_name_5B(Ovl5BModelDef* defs, s16 i, s16 model) {
             break;
         case 2:
             x = func_800B7890_B8490(119.289f) * def->pos.x + HuMathSin(119.289f) * def->pos.z;
-            z = -HuMathSin(119.289f) * def->pos.x + func_800B7890_B8490(119.289f) * def->pos.z;
+            z = def->pos.x * -HuMathSin(119.289f) + func_800B7890_B8490(119.289f) * def->pos.z;
             func_80029714_2A314(model, x * 5.0f + -1295.0f, def->pos.y * 5.0f, z * 5.0f + 755.0f);
             func_8002979C_2A39C(model, def->rot.x, def->rot.y + 119.289f, def->rot.z);
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A1E4_386E94_name_5B);
-#endif
 
 /* The world point `depth` in front of camera view `view` that shows at screen position `scr`
    (320x240). Retail flips y twice (240 - (240 - y)). No caller in the overlay. */
