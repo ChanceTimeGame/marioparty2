@@ -1165,7 +1165,9 @@ void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_8010642C_202A8C_AbandonShip);
 #endif
 
-/* NON_MATCHING: masked 0; one addu's operand order (the rope table base). */
+/* NON_MATCHING: register allocation (masked 0, raw 10): one addu operand order (row base + tbl, retail v1 first);
+   the rest are split-label relocs. Worse or no change: tbl + row * 5 + i, &tbl[row * 5 + i], plain
+   &D_801093F4[row][i] without tbl (masked 19). */
 #ifdef NON_MATCHING
 void func_801068F8_202F58_AbandonShip(omObjData* obj) {
     Vec pos;
