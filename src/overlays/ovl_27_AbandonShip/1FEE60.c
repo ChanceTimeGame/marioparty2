@@ -188,11 +188,9 @@ void func_80102F5C_1FF5BC_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80102F5C_1FF5BC_AbandonShip);
 #endif
 
-/* NON_MATCHING: one register copy: retail 'move a2,s0' for the mast compare, here andi 0xFF (masked 1). */
-#ifdef NON_MATCHING
 void func_80103070_1FF6D0_AbandonShip(omObjData* obj) {
     omObjData* p;
-    u8 s;
+    s16 s;
     s32 i;
     f32 dx;
     f32 dz;
@@ -346,9 +344,6 @@ void func_80103070_1FF6D0_AbandonShip(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80103070_1FF6D0_AbandonShip);
-#endif
 
 void func_801039B4_200014_AbandonShip(void) {
     s32 i;
