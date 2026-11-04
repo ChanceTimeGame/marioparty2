@@ -73,80 +73,86 @@ void func_800737F0_743F0(s32 mes, s32 player) {
 
 /* The board's quit menu (message 0x5C6 choices): 1 saves and quits (0x5C7 confirm, 0x5C8),
    2 quits without saving (0x5C9 and 0x5CA confirm); D_800E20C0_E2CC0 = 1 when quitting. */
-// register allocation: sprite and choice swap s1/s2 (masked 0 at the reference count since the
 // func_8008BB48_8C748 prototype was fixed to s32 (s16, s16, s32); declaration order does not help)
-#ifdef NON_MATCHING
-void func_8007388C_7448C(s32 player) {
-    s32 choice;
-    unk_Struct02* sprite;
-    void* data;
-    s32 ret;
+// decomp-permuter
+void func_8007388C_7448C(s32 player)
+{
+  s32 choice;
+  unk_Struct02 *sprite;
+  void *data;
+  s32 ret;
+  sprite = func_8005E688_5F288(1, 0);
+  data = DataRead(0xA0183);
+  sprite->unk0C[0] = SprAnimRead(data);
+  SprAnimSet(sprite->unk0A, 0, sprite->unk0C[0], 0);
+  SprPrioSet(sprite->unk0A, 0, 7);
+  SprAttrSet(sprite->unk0A, 0, 0x1000);
+  SprPosSet(sprite->unk0A, 0, 0xA0, 0x50);
+  DataClose(data);
+  D_800E20C4_E2CC4 = func_80050304_50F04(D_800CD2B0_CDEB0, 0);
+  D_800E20C4_E2CC4->obj->pos.x -= 1.0f;
+  HuVecCopyXYZ(&D_800E20C4_E2CC4->obj->scale, 0.8f, 0.8f, 0.8f);
+  func_80043DAC_449AC(D_800E20C4_E2CC4->obj);
+  choice = 0;
+  func_800298A4_2A4A4(*D_800E20C4_E2CC4->obj->obj->model, 0x8000, 0x8000);
+  D_800E20C4_E2CC4->obj->attr |= 0x10;
+  func_800505C4_511C4(D_800E20C4_E2CC4, 0x104, 8);
+  func_8005B424_5C024(D_800E20C4_E2CC4, 0x55);
+  func_8008E6CC_8F2CC(D_800E20C4_E2CC4->amount, 5);
+  func_8008E2DC_8EEDC(D_800E20C4_E2CC4->amount, 1);
+  loop:
+  func_800737F0_743F0(0x5C6, player);
 
-    sprite = func_8005E688_5F288(1, 0);
-    data = DataRead(0xA0183);
-    sprite->unk0C[0] = SprAnimRead(data);
-    SprAnimSet(sprite->unk0A, 0, sprite->unk0C[0], 0);
-    SprPrioSet(sprite->unk0A, 0, 7);
-    SprAttrSet(sprite->unk0A, 0, 0x1000);
-    SprPosSet(sprite->unk0A, 0, 0xA0, 0x50);
-    DataClose(data);
-    D_800E20C4_E2CC4 = func_80050304_50F04(D_800CD2B0_CDEB0, 0);
-    D_800E20C4_E2CC4->obj->pos.x -= 1.0f;
-    HuVecCopyXYZ(&D_800E20C4_E2CC4->obj->scale, 0.8f, 0.8f, 0.8f);
-    func_80043DAC_449AC(D_800E20C4_E2CC4->obj);
-    choice = 0;
-    func_800298A4_2A4A4(*D_800E20C4_E2CC4->obj->obj->model, 0x8000, 0x8000);
-    D_800E20C4_E2CC4->obj->attr |= 0x10;
-    func_800505C4_511C4(D_800E20C4_E2CC4, 0x104, 8);
-    func_8005B424_5C024(D_800E20C4_E2CC4, 0x55);
-    func_8008E6CC_8F2CC(D_800E20C4_E2CC4->amount, 5);
-    func_8008E2DC_8EEDC(D_800E20C4_E2CC4->amount, 1);
-loop:
-    func_800737F0_743F0(0x5C6, player);
-    func_8008DF9C_8EB9C(D_800E20C4_E2CC4->amount, 0x5000);
-    choice = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, choice, 0);
-    switch (choice) {
-        case 1:
-            func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
-            func_800737F0_743F0(0x5C7, player);
-            ret = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 0, 0);
-            func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
-            if (ret != 0) {
-                goto loop;
-            }
-            func_800753D4_75FD4(0);
-            _ClearFlag(0);
-            func_8007E070_7EC70();
-            D_800E20C0_E2CC0 = 1;
-            func_800737F0_743F0(0x5C8, player);
-            break;
-        case 2:
-            func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
-            func_800737F0_743F0(0x5C9, player);
-            ret = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 1, 0);
-            func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
-            if (ret != 0) {
-                goto loop;
-            }
-            func_800737F0_743F0(0x5CA, player);
-            if (func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 1, 0) != 0) {
-                func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
-                goto loop;
-            }
-            D_800E20C0_E2CC0 = 1;
-            break;
-        case 0:
-            break;
+  func_8008DF9C_8EB9C(D_800E20C4_E2CC4->amount, 0x5000);
+  choice = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, choice, 0);
+  switch (choice)
+  {
+    case 1:
+      func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
+      func_800737F0_743F0(0x5C7, player);
+      ret = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 0, 0);
+      func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
+      if (ret != 0)
+    {
+      goto loop;
     }
-    HuMemDirectFree(sprite);
-    func_8008E4D0_8F0D0(D_800E20C4_E2CC4->amount, 1);
-    func_8005B424_5C024(D_800E20C4_E2CC4, 0x104);
-    func_8005057C_5117C(D_800E20C4_E2CC4);
-    D_800E20C4_E2CC4 = NULL;
+      func_800753D4_75FD4(0);
+      _ClearFlag(0);
+      func_8007E070_7EC70();
+      D_800E20C0_E2CC0 = 1;
+      func_800737F0_743F0(0x5C8, player);
+      break;
+
+    case 2:
+      func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
+      func_800737F0_743F0(0x5C9, player);
+      ret = func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 1, 0);
+      func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
+      if (ret != 0)
+    {
+      goto loop;
+    }
+      func_800737F0_743F0(0x5CA, player);
+      if (func_8008BB48_8C748(D_800E20C4_E2CC4->amount, 1, 0) != 0)
+    {
+      func_8008AD44_8B944(D_800E20C4_E2CC4->amount);
+      goto loop;
+    }
+      D_800E20C0_E2CC0 = 1;
+      break;
+
+    case 0:
+      break;
+
+  }
+
+  HuMemDirectFree(sprite);
+  choice = D_800E20C4_E2CC4->amount;
+  func_8008E4D0_8F0D0(choice, 1);
+  func_8005B424_5C024(D_800E20C4_E2CC4, 0x104);
+  func_8005057C_5117C(D_800E20C4_E2CC4);
+  D_800E20C4_E2CC4 = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/743F0", func_8007388C_7448C);
-#endif
 
 /* MP1 func_800527A0: the quit-menu process (darkened background, then the menu) */
 void func_80073BF4_747F4(void) {
