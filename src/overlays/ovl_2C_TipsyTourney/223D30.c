@@ -941,67 +941,79 @@ void func_80105C40_227170_TipsyTourney(void) {
     }
 }
 
-// register reuse: retail copies the loop start with move, this reloads it with lhu (masked 2, as in MP1)
-#ifdef NON_MATCHING
-void func_80105D28_227258_TipsyTourney(s16 model, s32 p) {
-    HmfData* m = D_800FC834_FD434[model].hmf;
-    HmfFace* g;
-    f32 minX;
-    f32 minZ;
-    f32 maxX;
-    f32 maxZ;
-    f32 w;
-    f32 h;
-    f32 lx;
-    f32 lz;
-    s16 start;
-    s16 k;
-    s16 r;
-    s16 c;
+// decomp-permuter
+void func_80105D28_227258_TipsyTourney(s16 model, s32 p)
+{
+  HmfData *m = D_800FC834_FD434[model].hmf;
+  HmfFace *g;
+  f32 minX;
+  f32 minZ;
+  f32 maxX;
+  f32 maxZ;
+  f32 w;
+  f32 h;
+  f32 lx;
+  f32 lz;
+  s16 start;
+  s16 k;
+  s16 r;
+  s16 c;
+  minZ = 10000.0f;
+  minX = 10000.0f;
+  maxZ = -10000.0f;
+  r = m->unk64->unk0E;
+  maxX = -10000.0f;
+  g = &m->unkB4[start = r];
+  for (k = start; k < ((s16) m->unk64->unk10); k++, g++)
+  {
+    if (g->unk0C < minX)
+    {
+      minX = g->unk0C;
+    }
+    if (g->unk14 < minZ)
+    {
+      minZ = g->unk14;
+    }
+    if (maxX < g->unk0C)
+    {
+      maxX = g->unk0C;
+    }
+    if (maxZ < g->unk14)
+    {
+      maxZ = g->unk14;
+    }
+  }
 
-    minZ = 10000.0f;
-    minX = 10000.0f;
-    maxZ = -10000.0f;
-    maxX = -10000.0f;
-    g = &m->unkB4[start = m->unk64->unk0E];
-    for (k = start; k < (s16)m->unk64->unk10; k++, g++) {
-        if (g->unk0C < minX) {
-            minX = g->unk0C;
+  w = (maxX - minX) / 5.0f;
+  h = (maxZ - minZ) / 5.0f;
+  for (r = 0; r < 5; r++)
+  {
+    for (c = 0; c < 5; c++)
+    {
+      g = &m->unkB4[start = m->unk64->unk0E];
+      for (k = start; k < ((s16) m->unk64->unk10); k++, g++)
+      {
+        lx = minX + (w * c);
+        if ((lx <= g->unk0C) && (g->unk0C <= (lx + w)))
+        {
+          lz = minZ + (h * r);
+          if ((lz <= g->unk14) && (g->unk14 <= (lz + h)))
+          {
+            break;
+          }
         }
-        if (g->unk14 < minZ) {
-            minZ = g->unk14;
-        }
-        if (maxX < g->unk0C) {
-            maxX = g->unk0C;
-        }
-        if (maxZ < g->unk14) {
-            maxZ = g->unk14;
-        }
+      }
+
+      if (k != ((s16) m->unk64->unk10))
+      {
+        D_80107E48_229378_TipsyTourney[p][c][r] = k;
+      }
+      D_80107B88_2290B8_TipsyTourney[p][c][r] = 0;
     }
-    w = (maxX - minX) / 5.0f;
-    h = (maxZ - minZ) / 5.0f;
-    for (r = 0; r < 5; r++) {
-        for (c = 0; c < 5; c++) {
-            g = &m->unkB4[start = m->unk64->unk0E];
-            for (k = start; k < (s16)m->unk64->unk10; k++, g++) {
-                lx = minX + w * c;
-                if (lx <= g->unk0C && g->unk0C <= lx + w) {
-                    lz = minZ + h * r;
-                    if (lz <= g->unk14 && g->unk14 <= lz + h) {
-                        break;
-                    }
-                }
-            }
-            if (k != (s16)m->unk64->unk10) {
-                D_80107E48_229378_TipsyTourney[p][c][r] = k;
-            }
-            D_80107B88_2290B8_TipsyTourney[p][c][r] = 0;
-        }
-    }
+
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2C_TipsyTourney/223D30", func_80105D28_227258_TipsyTourney);
-#endif
 
 void func_80105FF0_227520_TipsyTourney(s16 model, s32 p) {
     HmfData* m = D_800FC834_FD434[model].hmf;
