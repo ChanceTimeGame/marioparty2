@@ -1234,15 +1234,12 @@ s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y)
   return win;
 }
 
-/* NON_MATCHING: register allocation (masked 2) */
-#ifdef NON_MATCHING
 s16 func_801065CC_1AFC5C_SkyPilots(s32 x, s16 y) {
     s16 i;
     s16 px;
     s16 win;
 
-    win = SprCreate(7, 5);
-    D_8010B34C_1B49DC_SkyPilots[1] = win;
+    win = D_8010B34C_1B49DC_SkyPilots[1] = SprCreate(7, 5);
     SprAnimSet(win, 0, D_8010B346_1B49D6_SkyPilots, 0);
     SprAttrReset(win, 0, 0xFFFF);
     SprAttrSet(win, 0, 0x8000);
@@ -1265,9 +1262,6 @@ s16 func_801065CC_1AFC5C_SkyPilots(s32 x, s16 y) {
     SprAttrReset(win, 2, 0x8000);
     return win;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801065CC_1AFC5C_SkyPilots);
-#endif
 
 void func_8010677C_1AFE0C_SkyPilots(void) {
     void* data;

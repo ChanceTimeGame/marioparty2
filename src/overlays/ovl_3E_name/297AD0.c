@@ -5038,7 +5038,9 @@ void func_8010F1FC_2A44CC_name_3E(void) {
 /* Board event 11 (Bowser suit passing players): every player on the current player's space is
    stomped and loses all their coins; the richest one's coins go to the current player.
    Differs only in the message index: retail adds count + 1 to the table entry, GCC here adds 1
-   to the entry first (masked 2). */
+   to the entry first. Register/schedule class (masked 2, raw 3). Tried: every order of the sum,
+   a separate `msg = count + 1;` statement (combine folds it back); only an assignment embedded
+   in the argument holds count + 1 apart (permuter), a fakematch, so not kept. Twins: 41/43/45/47/49. */
 #ifdef NON_MATCHING /* NON_MATCHING */
 void func_8010F430_2A4700_name_3E(void) {
     s8 hit[8];

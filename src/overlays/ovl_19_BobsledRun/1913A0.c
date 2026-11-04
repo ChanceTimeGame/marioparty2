@@ -1125,15 +1125,12 @@ s16 func_80105D88_194928_BobsledRun(s32 x, s16 y)
 }
 
 /* Time display group 1 (the record) at (x, y). */
-// register allocation, as func_80105D88
-#ifdef NON_MATCHING
 s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y) {
     s16 i;
     s16 px;
     s16 g;
 
-    g = SprCreate(7, 5);
-    D_8010C9FA_19B59A_BobsledRun[1] = g;
+    g = D_8010C9FA_19B59A_BobsledRun[1] = SprCreate(7, 5);
     SprAnimSet(g, 0, D_8010C9F8_19B598_BobsledRun, 0);
     SprAttrReset(g, 0, 0xFFFF);
     SprAttrSet(g, 0, 0x8000);
@@ -1156,9 +1153,6 @@ s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y) {
     SprAttrReset(g, 2, 0x8000);
     return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105F38_194AD8_BobsledRun);
-#endif
 
 /* Snow spray from the runners (model[3]) and its sliding sound. */
 void func_801060E8_194C88_BobsledRun(omObjData* obj, s16 force, f32 minSpeed, f32 rot, f32 x, f32 y, f32 z) {
