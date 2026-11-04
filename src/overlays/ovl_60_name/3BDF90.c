@@ -65,11 +65,12 @@ void func_80102A14_3BE174_name_60(void) {
     }
 }
 
+/* NON_MATCHING: register allocation (masked 0), as ovl_5F's twin func_80102AF0_3ABC90_name_5F. */
 #ifdef NON_MATCHING
 void func_80102AF0_3BE250_name_60(void) {
     void* file;
     s32 j;
-    s32 i;
+    u16 i;
 
     D_80114940_3D00A0_name_60 = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xB0011), 0, 0);
     espPosSet(D_80114940_3D00A0_name_60, 160, 120);

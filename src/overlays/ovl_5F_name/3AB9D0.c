@@ -64,13 +64,14 @@ void func_80102A14_3ABBB4_name_5F(void) {
     }
 }
 
-/* NON_MATCHING: register allocation only (the first switch's value is in s1, retail s0 with an
-   andi copy to s1). */
+/* NON_MATCHING: register allocation (masked 0, raw 18: 6 for j, the rest split-label relocations): the first
+   switch's value is in s1, retail s0 with an andi copy to s1. A u16 i fixed the tail (permuter);
+   tried without effect: i reused for j, j for both switches, a u16 copy of j. */
 #ifdef NON_MATCHING
 void func_80102AF0_3ABC90_name_5F(void) {
     void* file;
     s32 j;
-    s32 i;
+    u16 i;
 
     D_80114E10_3BDFB0_name_5F = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xB0011), 0, 0);
     espPosSet(D_80114E10_3BDFB0_name_5F, 160, 120);
