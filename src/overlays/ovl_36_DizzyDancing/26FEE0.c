@@ -720,18 +720,6 @@ u8 func_80104C08_2722E8_DizzyDancing(u16* table) {
     return i;
 }
 
-#ifndef NON_MATCHING
-__asm__(".section .rodata");
-const u32 D_80107710_274DF0_DizzyDancing[3] = { 0x00330066, 0x009900CC, 0x01000000 };
-const u32 D_8010771C_274DFC_DizzyDancing[3] = { 0x002A0054, 0x007E00A8, 0x00D20100 };
-const u32 D_80107728_274E08_DizzyDancing[3] = { 0x00190033, 0x00660099, 0x00CC0100 };
-const u32 D_80107734_274E14_DizzyDancing[3] = { 0x00000000, 0x0032007D, 0x01000000 };
-const u32 D_80107740_274E20_DizzyDancing[3] = { 0x00000000, 0x000A0064, 0x009C0100 };
-const u32 D_8010774C_274E2C_DizzyDancing[3] = { 0x00000000, 0x00320089, 0x00E00100 };
-__asm__(".section .text");
-#endif
-/* NON_MATCHING: register allocation only (masked 0): c and t swap $s0/$s1. */
-#ifdef NON_MATCHING
 u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     u16* t;
     DDCpu* c = &D_801086F0_275DD0_DizzyDancing[obj->work[0]];
@@ -744,8 +732,10 @@ u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     u16 t6[6] = { 0, 0, 0x32, 0x89, 0xE0, 0x100 };
     u16 t7[6] = { 0, 0, 0xA, 0x64, 0x9C, 0x100 };
     u8 r;
+    u8 player;
 
-    switch (gPlayers[obj->work[0]].cpu_difficulty) {
+    player = obj->work[0];
+    switch (gPlayers[player].cpu_difficulty) {
     case 1:
         r = 1;
         if (c->flags & 2) {
@@ -815,9 +805,6 @@ u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     }
     return r;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80104C5C_27233C_DizzyDancing);
-#endif
 
 /* NON_MATCHING: masked 29: $s2/$s3 swapped; v0/v1 swapped in the 0x4000 press; a delay-slot li. */
 #ifdef NON_MATCHING
