@@ -3801,22 +3801,21 @@ void func_80015950_16550(s32 arg) {
     }
 }
 
-// register allocation: result and manager pointer in swapped registers (masked 3)
-#ifdef NON_MATCHING
-s32 func_80015988_16588(void) {
-    SndMgr* m;
-    s32 ret;
-
-    m = func_80014AFC_156FC();
-    ret = 0;
-    if (m != NULL) {
-        ret = m->fadeTimer;
-    }
-    return ret;
+// decomp-permuter
+s32 func_80015988_16588(void)
+{
+  SndMgr *m;
+  int new_var;
+  s32 ret;
+  m = func_80014AFC_156FC();
+  new_var = m != 0;
+  ret = 0;
+  if (new_var)
+  {
+    ret = m->fadeTimer;
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_80015988_16588);
-#endif
 
 void func_800159B4_165B4(void) {
     SndMgr* m = func_80014AFC_156FC();
