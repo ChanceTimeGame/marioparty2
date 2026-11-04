@@ -693,7 +693,8 @@ void func_8010484C_19D5DC_HandcarHavoc(omObjData* obj) {
 }
 
 /* 0: straight, 1: too fast into a bend (tipping); sets the lean side flags (MP1 F917C). */
-// NON_MATCHING: float register allocation (lean/ad/d; masked 0)
+// NON_MATCHING: float register allocation (masked 0, raw 15): d and ad swap $f4/$f6. ad += lean * 0.55f
+// took it from raw 24; declaration order changes nothing, (ad + ...) * 10 folded into ad was worse.
 #ifdef NON_MATCHING
 u16 func_80104C00_19D990_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -728,7 +729,8 @@ u16 func_80104C00_19D990_HandcarHavoc(omObjData* obj) {
     } else {
         lean = -w->lean;
     }
-    if ((ad + lean * 0.55f) * 10.0f + fabs(w->speed) < 101.85184478759766) {
+    ad += lean * 0.55f;
+    if (ad * 10.0f + fabs(w->speed) < 101.85184478759766) {
         return 0;
     }
     if (d > 0.0f) {
@@ -1521,7 +1523,9 @@ void func_801078B8_1A0648_HandcarHavoc(omObjData* obj) {
 }
 
 /* m'ss"cc (digits 0, 2, 3, 5, 6; 1 and 4 are the marks). */
-/* NON_MATCHING: register allocation (the minutes' remainder and the seconds' quotient swap s1/s3). */
+/* NON_MATCHING: register allocation (masked 0, raw 2): the last digit's cs % 10 lands in cs's s1, retail
+ * computes it into a1. cs reused for the seconds' units and rest %= 60 took it from raw 14; sec %= 10 and
+ * (u16)(rest % 60) inline were worse. */
 #ifdef NON_MATCHING
 void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
     u16 rest;
@@ -1534,9 +1538,11 @@ void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
     sec = rest / 60;
     func_8001A854_1B454(*digit, sec / 10, 0);
     digit++;
-    func_8001A854_1B454(*digit, sec % 10, 0);
+    cs = sec % 10;
+    func_8001A854_1B454(*digit, cs, 0);
     digit += 2;
-    cs = (u16)(rest % 60) * 1.6666666f;
+    rest %= 60;
+    cs = rest * 1.6666666f;
     func_8001A854_1B454(digit[0], cs / 10, 0);
     func_8001A854_1B454(digit[1], cs % 10, 0);
 }

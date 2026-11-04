@@ -1377,7 +1377,8 @@ void func_801062A8_173C38_LightsOut(void) {
 
 /* A CPU runner: it wanders, turns away from the hammer player, other players and the wall. */
 #ifdef NON_MATCHING
-/* register/schedule (masked 2): one andi placement in the fused test; class 4 */
+/* register/schedule (masked 2): one andi placement in the fused test (retail masks r - 1, this masks r
+ * first). Tried: (u8) casts without r2, a u8 r2, a logical or (worse). Class 4. */
 void func_801063E8_173D78_LightsOut(LOSlot* slot) {
     omObjData* obj = slot->obj;
     MgWork* work = obj->unk_50;
