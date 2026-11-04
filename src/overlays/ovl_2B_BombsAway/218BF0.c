@@ -538,7 +538,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80103BD4_2
 
 /* Height of a blast column of radius r and height h at squared distance d (an ellipse).
    NON_MATCHING: only the KMC mul-fix nop after the sqrtf call (retail has one before the final
-   mul.s; GCC's output has no blank line between the jal and the mul.s, so KMC as adds none). */
+   mul.s; GCC's output has no blank line between the jal and the mul.s, so KMC as adds none).
+   Tried d = sqrtf(d); return d * h; / h * sqrtf(d) / d = sqrtf(d) * h: same. The same nop is open in
+   MP2 RainbowRun func_80103E1C and MP1 CoinBlockBash func_800F9814 / TightropeTreachery func_800F7450. */
 #ifdef NON_MATCHING
 f32 func_80103F10_21A300_BombsAway(f32 r, f32 h, f32 d) {
     if (d < 0.0) {

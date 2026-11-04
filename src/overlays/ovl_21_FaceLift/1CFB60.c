@@ -1314,7 +1314,9 @@ void func_8010731C_1D467C_FaceLift(omObjData* obj) {
     }
 }
 
-// scheduling (a copy of the player argument)
+// scheduling (masked 0, raw 3): the copy of player is made before rainbow's; the permuter's 0 needs
+// rainbow as unsigned int (an interface change). Declaration order and the s16 cast on 1 << player
+// (6 without it) did not help.
 #ifdef NON_MATCHING
 omObjData* func_80107348_1D46A8_FaceLift(s16 player, u8 rainbow) {
     omObjData* o;

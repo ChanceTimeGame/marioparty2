@@ -537,7 +537,10 @@ f32 func_801039BC_1D809C_ShellShocked(void) {
     return rand8() * 0.00390625f;
 }
 
-// register allocation: a0/a1 swapped for the search index (masked 0)
+// register allocation (masked 0, raw 29): a0/a1 swapped between n and the order/array base. Retail
+// keeps one n for the random pick and the fill count (a separate j: raw 24 but n moves to v1);
+// tried n = 0 before the loop (31), declaration order (no change). Retail's D_8010D5CC/D5D0
+// relocations are splat labels inside D_8010D5C8 (same bytes).
 #ifdef NON_MATCHING
 s32* func_801039F8_1D80D8_ShellShocked(void) {
     s32 order[4];

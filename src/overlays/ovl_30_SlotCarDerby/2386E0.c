@@ -356,7 +356,9 @@ void func_801038F0_2397D0_SlotCarDerby(omObjData* obj) {
 __asm__(".section .rodata");
 const char D_8010FD18_245BF8_SlotCarDerby[] = "head";
 
-/* NON_MATCHING: registers only (the file id lands in v0, retail a0); masked 0 */
+/* NON_MATCHING: registers only (masked 0, raw 8): the unk_0C load lands in v0 (so as uses $at), retail
+   loads it straight into a0 and ors into it. Tried file declared first / u32 (same), file |= on a
+   second line (16), operands swapped (9). Retail's D_8010F4C8 is a splat label inside D_8010F4C4. */
 #ifdef NON_MATCHING
 void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
     SCDPlayerWork* work;
