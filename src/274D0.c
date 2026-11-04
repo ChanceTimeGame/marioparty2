@@ -2361,7 +2361,9 @@ void func_8002D274_2DE74(s16 arg0, s8 arg1, s8 arg2, s8 arg3) {
 }
 
 /* the lights' direction: (x, y, z) normalised, scaled to 120 */
-// register allocation: retail loads unkB4 into v0 and copies it to s0 after the NULL test (masked 1)
+// register allocation: retail loads unkB4 into v0 and copies it to s0 after the NULL test (masked 1,
+// raw 2). Tried (S3-P07): test the field then assign (masked 4), assignment in the condition and
+// declaration order (no change).
 #ifdef NON_MATCHING
 void func_8002D2B4_2DEB4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
     HmfData_UnkD0* l = D_800FC834_FD434[arg0].unkB4;

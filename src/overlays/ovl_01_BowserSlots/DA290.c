@@ -1488,7 +1488,9 @@ void func_80106820_DE2B0_BowserSlots(omObjData* obj) {
    on a Bezier curve (x uses 6 where 3 belongs: retail), 4 bobs over the player's head. The five
    trail sprites follow ten frames of positions; sparkles are left behind. */
 #ifdef NON_MATCHING
-/* masked 2: the sparkle loop's hoisted constants come out in another order (20.0 after the two table addresses) */
+/* masked 2: the sparkle loop's hoisted constants come out in another order (20.0 after the two table addresses);
+   also amp/the 30.0 constant swap f24/f26. Tried (S3-P07): amp declared first (no change), the bob branches
+   swapped (masked 29); permuter best only a fake temp for 1.5f. */
 void func_80106B30_DE5C0_BowserSlots(omObjData* obj) {
     HmfModel* m;
     void* anim;
