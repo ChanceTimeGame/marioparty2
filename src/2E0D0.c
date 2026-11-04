@@ -393,7 +393,9 @@ void func_8002E1F8_2EDF8(HitViewCells *view, HmfModel *m)
   D_800F928C_F9E8C++;
 }
 
-/* NON_MATCHING: register allocation (view and model swap saved registers, as in MP1; masked 1). */
+/* NON_MATCHING: register allocation (masked 0, raw 45): view and model swap saved registers, as in
+   MP1 (retail m s1, view s2, fan s3). Setting fan first fixed the fan[2] load; declaration order did
+   not move the rest. */
 #ifdef NON_MATCHING
 /* MP1 func_8002A0E4 (src/29C90.c, NON_MATCHING there): draw the grid cells inside the view fan.
    MP2 first hands the model's lights to its data. */
@@ -413,11 +415,11 @@ void func_8002E544_2F144(HitViewFan* view, HmfModel* m) {
     f32 z0;
     f32 z1;
 
+    fan = &view->fov;
     m->hmf->unkD0 = m->unkB4;
     if (m->unkB4 != NULL) {
         func_80026F00_27B00(m->unkB4);
     }
-    fan = &view->fov;
     gi = m->unk10;
     func_8002DF2C_2EB2C(m, mtx);
     guMtxIdentF(ident);
