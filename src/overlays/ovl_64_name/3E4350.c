@@ -911,14 +911,9 @@ void func_80105940_3E7460_name_64(void) {
 }
 
 /* The result's sequence. */
-/* NON_MATCHING: register allocation (masked 0): retail keeps `failed` in s2 and the 1 in s1. `show`
-   is an extra copy (fakematch form) that gives retail's instruction count. Stays asm in the
-   matching build. */
-#ifdef NON_MATCHING
 void func_80105AF0_3E7610_name_64(void) {
     s16 i;
-    s32 show;
-    s32 failed;
+    s16 failed;
 
     switch (D_80106404_3E7F24_name_64) {
     case 0:
@@ -969,21 +964,14 @@ void func_80105AF0_3E7610_name_64(void) {
         }
     done:
         func_80104CE0_3E6800_name_64();
-        show = failed;
-        break;
-    default:
-        show = failed;
         break;
     }
-    if (show != 0) {
+    if (failed != 0) {
         func_801057C0_3E72E0_name_64();
     } else {
         D_801062EB_3E7E0B_name_64 = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_64_name/3E4350", func_80105AF0_3E7610_name_64);
-#endif
 
 /* Whether the minigame's score clears this stage. */
 s32 func_80105CCC_3E77EC_name_64(s16 minigame) {
