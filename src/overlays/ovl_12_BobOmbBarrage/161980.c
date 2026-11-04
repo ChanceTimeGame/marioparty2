@@ -153,7 +153,6 @@ omObjData* func_80103E40_162160_BobOmbBarrage(void) {
     return obj;
 }
 
-#ifdef NON_MATCHING
 void func_80103E9C_1621BC_BobOmbBarrage(omObjData* obj) {
     s32 i;
     s32 j;
@@ -213,7 +212,7 @@ void func_80103E9C_1621BC_BobOmbBarrage(omObjData* obj) {
             D_80109348_167668_BobOmbBarrage = 0;
             D_8010934C_16766C_BobOmbBarrage = 0;
             for (j = 0; j < 10; j++) {
-                mdl = D_80109370_167690_BobOmbBarrage->act.u.dust[j] = LoadFormFile(0x220007, 0x299);
+                D_80109370_167690_BobOmbBarrage->act.u.dust[j] = mdl = LoadFormFile(0x220007, 0x299);
                 func_80029714_2A314(mdl, 0.0f, -20.0f, 0.0f);
                 func_8002979C_2A39C(mdl, 0.0f, 0.0f, 0.0f);
                 func_800297E8_2A3E8(mdl, 1.0f, 1.0f, 1.0f);
@@ -276,13 +275,13 @@ void func_80103E9C_1621BC_BobOmbBarrage(omObjData* obj) {
                 func_80029F2C_2AB2C(mdl, 0x800);
                 func_800298A4_2A4A4(mdl, 4, 4);
                 HmfModelObjAttrSet(mdl, 0x70000000, 0x70000000);
-                mot = LoadFormFile(0x220004, 0x299);
-                b->splash = mot;
-                func_80029714_2A314(mot, 100.0f, 200.0f, 100.0f);
-                func_8002979C_2A39C(mot, 0.0f, 0.0f, 0.0f);
-                func_800297E8_2A3E8(mot, 1.0f, 1.0f, 1.0f);
-                func_800298A4_2A4A4(mot, 4, 4);
-                func_80029E80_2AA80(mot, 2, 0);
+                mdl = LoadFormFile(0x220004, 0x299);
+                b->splash = mdl;
+                func_80029714_2A314(mdl, 100.0f, 200.0f, 100.0f);
+                func_8002979C_2A39C(mdl, 0.0f, 0.0f, 0.0f);
+                func_800297E8_2A3E8(mdl, 1.0f, 1.0f, 1.0f);
+                func_800298A4_2A4A4(mdl, 4, 4);
+                func_80029E80_2AA80(mdl, 2, 0);
                 data = DataRead(0x22000D);
                 b->fx = func_8003D8F0_3E4F0(D_800FC834_FD434[b->lit].hmf, data, 0, "c104_n0_DEF");
                 DataClose(data);
@@ -300,9 +299,6 @@ void func_80103E9C_1621BC_BobOmbBarrage(omObjData* obj) {
     }
     obj->func_ptr = func_80104778_162A98_BobOmbBarrage;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_80103E9C_1621BC_BobOmbBarrage);
-#endif
 
 void func_80104778_162A98_BobOmbBarrage(void) {
     s32 i;
