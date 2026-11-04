@@ -243,25 +243,17 @@ void func_80103768_126F48_DayAtTheRaces(void) {
     ((DRObjWork*)D_8010AC10_12E3F0_DayAtTheRaces.objs[2]->unk_50)->state++;
 }
 
-/* NON_MATCHING: register allocation (masked 0): f20/f22/f24 in the three opening rand expressions */
-#ifdef NON_MATCHING
 void func_80103788_126F68_DayAtTheRaces(void) {
     omObjData* a = D_8010AC10_12E3F0_DayAtTheRaces.objs[27];
     omObjData* b = D_8010AC10_12E3F0_DayAtTheRaces.objs[28];
     omObjData* c = D_8010AC10_12E3F0_DayAtTheRaces.objs[29];
     s32 i;
-    f32 t;
     f32 x;
     f32 y;
 
-    t = (u8)(rand8() % 250);
-    t = 1330.0f - t;
-    omSetTra(a, t, rand8() % 300 + 300.0f, 100.0f);
-    t = (u8)(rand8() % 250);
-    t = 1330.0f - t;
-    omSetTra(b, t, rand8() % 300 + 300.0f, 100.0f);
-    x = 1330.0f - (u8)(rand8() % 250);
-    omSetTra(c, x, rand8() % 300 + 300.0f, 100.0f);
+    omSetTra(a, 1330.0f - (u8)(rand8() % 250), rand8() % 300 + 300.0f, 100.0f);
+    omSetTra(b, 1330.0f - (u8)(rand8() % 250), rand8() % 300 + 300.0f, 100.0f);
+    omSetTra(c, 1330.0f - (u8)(rand8() % 250), rand8() % 300 + 300.0f, 100.0f);
     for (i = 0; i < 22; i++) {
         func_800298A4_2A4A4(a->model[i], 4, 0);
         func_800298A4_2A4A4(b->model[i], 4, 0);
@@ -286,9 +278,6 @@ void func_80103788_126F68_DayAtTheRaces(void) {
         ((DRObjWork*)c->unk_50)->state = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/126030", func_80103788_126F68_DayAtTheRaces);
-#endif
 
 void func_80103D5C_12753C_DayAtTheRaces(void) {
     omObjData* a = D_8010AC10_12E3F0_DayAtTheRaces.objs[27];
