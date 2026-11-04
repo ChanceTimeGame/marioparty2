@@ -590,8 +590,9 @@ const char D_80105D58_360668_name_53[] = "%d";
 /* Build the roulette (MP1 func_800499CC): panels 0 and 1 are coin events (0), panel 2 one of the
    rare events 6-9, panels 3 and 4 events 1-5 by weight (5 always while func_8004E94C is set);
    then shuffle, label, and start the roulette object for the player. */
-/* NON_MATCHING: registers only (masked 0): the hoisted constants 2-5 and `prev` land in other
-   saved registers */
+/* NON_MATCHING: register allocation (masked 0, raw 18): the hoisted constants 2, 3 and 5 land in
+   other saved registers (retail s6/s5/s4) and one address temp in v0 not t0. Reusing `b` for the
+   previous box (permuter lead) fixed 255/4; tried also `a` for it and a u8 `r` (both worse). */
 #ifdef NON_MATCHING
 void func_80104570_35EE80_name_53(s32 player) {
     Ovl53Box* box;
@@ -602,9 +603,8 @@ void func_80104570_35EE80_name_53(s32 player) {
     s32 b;
     u8 t;
     s32 r;
-    u8 prev;
 
-    prev = 0xFF;
+    b = 0xFF;
     i = 0;
     do {
         box = &D_80105D70_360680_name_53[i];
@@ -635,9 +635,9 @@ void func_80104570_35EE80_name_53(s32 player) {
                 } else {
                     D_80105DA2_3606B2_name_53[i] = 4;
                 }
-            } while (i == 4 && D_80105DA2_3606B2_name_53[4] == prev);
+            } while (i == 4 && D_80105DA2_3606B2_name_53[4] == b);
             if (i == 3) {
-                prev = D_80105DA2_3606B2_name_53[i];
+                b = D_80105DA2_3606B2_name_53[i];
             }
         }
         i++;
@@ -836,8 +836,6 @@ void func_80105088_35F998_name_53(void) {
 }
 
 /* Event 3: Bowser's Revolution, everyone's coins evened out (the rest of the division is lost). */
-/* NON_MATCHING: registers only (masked 0): the loop counter and the window/temp variable swap s0/s1 */
-#ifdef NON_MATCHING
 void func_80105150_35FA60_name_53(void) {
     s32 i;
     s32 win;
@@ -881,11 +879,10 @@ void func_80105150_35FA60_name_53(void) {
         }
         PlaySound(0x33B);
         for (i = 0; i < 60; i++) {
-            win = i % 5;
-            func_80060034_60C34(0, win);
-            func_80060034_60C34(1, win);
-            func_80060034_60C34(2, win);
-            func_80060034_60C34(3, win);
+            func_80060034_60C34(0, i % 5);
+            func_80060034_60C34(1, i % 5);
+            func_80060034_60C34(2, i % 5);
+            func_80060034_60C34(3, i % 5);
             HuPrcVSleep();
         }
         for (i = 0; i < 4; i++) {
@@ -896,11 +893,10 @@ void func_80105150_35FA60_name_53(void) {
             func_8006135C_61F5C(i, total - gPlayers[i].coins, win);
         }
         for (i = 0; i < 30; i++) {
-            win = i % 5;
-            func_80060034_60C34(0, win);
-            func_80060034_60C34(1, win);
-            func_80060034_60C34(2, win);
-            func_80060034_60C34(3, win);
+            func_80060034_60C34(0, i % 5);
+            func_80060034_60C34(1, i % 5);
+            func_80060034_60C34(2, i % 5);
+            func_80060034_60C34(3, i % 5);
             HuPrcVSleep();
         }
         for (i = 0; i < 4; i++) {
@@ -924,9 +920,6 @@ void func_80105150_35FA60_name_53(void) {
     MBMotionShiftSet(D_80105DD4_3606E4_name_53, 2, 0, 6, 2);
     HuPrcSleep(30);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_53_name/35D110", func_80105150_35FA60_name_53);
-#endif
 
 /* Event 4: Bowser leaps away and sets D_800F8D16. */
 void func_8010565C_35FF6C_name_53(void) {

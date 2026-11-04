@@ -62,7 +62,6 @@ void func_80102850_17A600_FiletRelay(Vec* out, Vec* a, Vec* b, Vec* c) {
 }
 
 /* Is p inside the convex polygon of n vertices v with this normal? */
-#ifdef NON_MATCHING
 s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     Vec prev;
     Vec e;
@@ -108,9 +107,6 @@ s32 func_801028F4_17A6A4_FiletRelay(s32 n, Vec* v, Vec* normal, Vec* p) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_801028F4_17A6A4_FiletRelay);
-#endif
 
 /* Does the ray cross this face? Sets the ray's normal and hit point. */
 s32 func_80102AD4_17A884_FiletRelay(FRRay* ray, ColVtx* vtx, ColTri* face) {
@@ -502,11 +498,10 @@ void func_80103A30_17B7E0_FiletRelay(void) {
 }
 
 /* The score sprite. */
-#ifdef NON_MATCHING
 void func_80103CF0_17BAA0_FiletRelay(void) {
     s32 result;
     s32 i;
-    u16 sprite;
+    s32 sprite;
 
     for (i = 0; i < 1; i++) {
         result = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_80109120_180ED0_FiletRelay[i].file), 0, 0);
@@ -523,9 +518,6 @@ void func_80103CF0_17BAA0_FiletRelay(void) {
         D_80109674_181424_FiletRelay[i] = result;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_16_FiletRelay/17A600", func_80103CF0_17BAA0_FiletRelay);
-#endif
 
 void func_80103DF0_17BBA0_FiletRelay(void) {
     func_8002D4D0_2E0D0(0x28);
