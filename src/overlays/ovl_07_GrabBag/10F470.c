@@ -267,54 +267,71 @@ void func_80106624_10FC34_GrabBag(omObjData* obj, u32 dir, s32 file, u16 player,
 }
 
 /* NON_MATCHING: register allocation (class 4): retail loads D_8010A82F into a0 before the compare (masked 8) */
-#ifdef NON_MATCHING
-void func_80106C40_110250_GrabBag(omObjData* obj) {
-    GBPlayer* w = obj->unk_50;
-    s32 p;
-
-    func_8010946C_112A7C_GrabBag(obj);
-    if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
-        if (D_800F8FD0_F9BD0 == 0) {
-            func_8010A1EC_1137FC_GrabBag();
-            func_80019B9C_1A79C(obj, 0);
-            func_80019378_19F78(obj);
-            return;
-        }
-        if ((u32)(D_800F8FD0_F9BD0 - 2) < 2) {
-            if (w->unk_16E - w->unk_16A * 2 < D_8010A82A_113E3A_GrabBag) {
-                p = D_8010A82F_113E3F_GrabBag;
-                if (p == w->w.unk_59) {
-                    func_8010A2CC_1138DC_GrabBag(p, w->unk_168 + 2);
-                } else {
-                    func_8010A2CC_1138DC_GrabBag(w->w.unk_59, w->unk_168);
-                }
-            } else {
-                p = D_8010A82F_113E3F_GrabBag;
-                if (p == w->w.unk_59 && D_8010A82A_113E3A_GrabBag > 0) {
-                    func_8010A2CC_1138DC_GrabBag(p, D_8010A82A_113E3A_GrabBag + 2);
-                } else {
-                    func_8010A2CC_1138DC_GrabBag(w->w.unk_59, D_8010A82A_113E3A_GrabBag);
-                }
-            }
-            func_8010A108_113718_GrabBag();
-            if (func_80069538_6A138() == 0 || (func_80069538_6A138() & 2)) {
-                func_80106F00_110510_GrabBag(obj);
-            }
-            func_80007790_8390(obj);
-        } else if (D_800F8FD0_F9BD0 == 1) {
-            obj->rot.y = 0.0f;
-            func_80107F10_111520_GrabBag(obj);
-        } else {
-            return;
-        }
-        if (w->w.unk_57 == 3) {
-            func_801077E8_110DF8_GrabBag();
-        }
+// decomp-permuter
+void func_80106C40_110250_GrabBag(omObjData *obj)
+{
+  GBPlayer *w = obj->unk_50;
+  s32 p;
+  func_8010946C_112A7C_GrabBag(obj);
+  if ((func_80078EA8_79AA8() + D_80102720_103320) == 0)
+  {
+    if (D_800F8FD0_F9BD0 == 0)
+    {
+      func_8010A1EC_1137FC_GrabBag();
+      func_80019B9C_1A79C(obj, 0);
+      func_80019378_19F78(obj);
+      return;
     }
+    if (((u32) (D_800F8FD0_F9BD0 - 2)) < 2)
+    {
+      p = D_8010A82A_113E3A_GrabBag;
+      if ((w->unk_16E - (w->unk_16A * 2)) < p)
+      {
+        p = D_8010A82F_113E3F_GrabBag;
+        if (p == w->w.unk_59)
+        {
+          func_8010A2CC_1138DC_GrabBag(p, w->unk_168 + 2);
+        }
+        else
+        {
+          func_8010A2CC_1138DC_GrabBag(w->w.unk_59, w->unk_168);
+        }
+      }
+      else
+      {
+        p = D_8010A82F_113E3F_GrabBag;
+        if ((p == w->w.unk_59) && (D_8010A82A_113E3A_GrabBag > 0))
+        {
+          func_8010A2CC_1138DC_GrabBag(p, D_8010A82A_113E3A_GrabBag + 2);
+        }
+        else
+        {
+          func_8010A2CC_1138DC_GrabBag(w->w.unk_59, D_8010A82A_113E3A_GrabBag);
+        }
+      }
+      func_8010A108_113718_GrabBag();
+      if ((func_80069538_6A138() == 0) || (func_80069538_6A138() & 2))
+      {
+        func_80106F00_110510_GrabBag(obj);
+      }
+      func_80007790_8390(obj);
+    }
+    else
+      if (D_800F8FD0_F9BD0 == 1)
+    {
+      obj->rot.y = 0.0f;
+      func_80107F10_111520_GrabBag(obj);
+    }
+    else
+    {
+      return;
+    }
+    if (w->w.unk_57 == 3)
+    {
+      func_801077E8_110DF8_GrabBag();
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80106C40_110250_GrabBag);
-#endif
 
 void func_80106DD0_1103E0_GrabBag(void) {
     s32 n = 0;
@@ -1134,38 +1151,43 @@ s32 func_80109210_112820_GrabBag(omObjData* a, omObjData* b) {
 }
 
 /* NON_MATCHING: register allocation (class 4): the model table load takes a0 where retail keeps the object (masked 7) */
-#ifdef NON_MATCHING
-s32 func_80109388_112998_GrabBag(omObjData* a, omObjData* b) {
-    GBPlayer* w0;
-    GBPlayer* w1;
-    omObjData* o;
-    u8 k;
-
-    w0 = a->unk_50;
-    w1 = b->unk_50;
-    k = 1;
-    if (w1->unk_16A > 0) {
-        w0->unk_16A++;
-        w1->unk_16A--;
-        w0->unk_16E += 3;
-        w1->unk_16E -= 3;
-        D_8010A82F_113E3F_GrabBag = w0->w.unk_59;
-    } else {
-        k = 0;
-        w0->unk_16E++;
-        w1->unk_16E--;
-    }
-    w0->unk_168++;
-    w1->unk_168--;
-    o = D_800F9CE0_FA8E0[k];
-    if (!(D_800FC834_FD434[o->model[0]].unk18 & 4) || ((GBItem*)o->unk_50)->unk_78 != 0) {
-        k += 2;
-    }
-    return k;
+// decomp-permuter
+s32 func_80109388_112998_GrabBag(omObjData *a, omObjData *b)
+{
+  HmfModel *new_var;
+  GBPlayer *w0;
+  void *new_var2;
+  GBPlayer *w1;
+  omObjData *o;
+  u8 k;
+  w0 = a->unk_50;
+  w1 = b->unk_50;
+  k = 1;
+  if (w1->unk_16A > 0)
+  {
+    w0->unk_16A++;
+    w1->unk_16A--;
+    w0->unk_16E += 3;
+    w1->unk_16E -= 3;
+    D_8010A82F_113E3F_GrabBag = w0->w.unk_59;
+  }
+  else
+  {
+    k = 0;
+    w0->unk_16E++;
+    w1->unk_16E--;
+  }
+  w0->unk_168++;
+  w1->unk_168--;
+  o = D_800F9CE0_FA8E0[k];
+  new_var = &D_800FC834_FD434[o->model[0]];
+  new_var2 = o->unk_50;
+  if ((!((*new_var).unk18 & 4)) || (((GBItem *) new_var2)->unk_78 != 0))
+  {
+    k += 2;
+  }
+  return k;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80109388_112998_GrabBag);
-#endif
 
 void func_8010946C_112A7C_GrabBag(omObjData* obj) {
     GBPlayer* w = obj->unk_50;
