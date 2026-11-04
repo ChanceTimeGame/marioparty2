@@ -3961,7 +3961,8 @@ void func_8010BA0C_2A0CDC_name_3E(MBModel* parent) {
     process->user_data = parent;
 }
 
-// scheduling of three loop-invariant constants in the player menu (masked 2 under -DNON_MATCHING)
+// register allocation of three loop-invariant constants and (s16)choice in the player menu (masked 2,
+// raw 21): retail 8/choice/24 in t0/t1/t2, here choice/24/8. A goto-free availability test is worse (4).
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
@@ -5035,7 +5036,9 @@ void func_8010F1FC_2A44CC_name_3E(void) {
 /* Board event 11 (Bowser suit passing players): every player on the current player's space is
    stomped and loses all their coins; the richest one's coins go to the current player.
    Differs only in the message index: retail adds count + 1 to the table entry, GCC here adds 1
-   to the entry first (masked 2). */
+   to the entry first. Register/schedule class (masked 2, raw 3). Tried: every order of the sum,
+   a separate `msg = count + 1;` statement (combine folds it back); only an assignment embedded
+   in the argument holds count + 1 apart (permuter), a fakematch, so not kept. Twins: 41/43/45/47/49. */
 #ifdef NON_MATCHING /* NON_MATCHING */
 void func_8010F430_2A4700_name_3E(void) {
     s8 hit[8];

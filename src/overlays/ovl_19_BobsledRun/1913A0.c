@@ -471,7 +471,8 @@ void func_80103F24_192AC4_BobsledRun(omObjData* obj) {
 }
 
 /* The track (D_800FC7B0_FD3B0[1]): runs the game controller; cameras and the progress bar. */
-// register allocation: retail keeps the sprite in s0 and x in s1 (as in MP1)
+// register allocation (masked 0, raw 9): retail keeps the sprite in s0 and x in s1 (MP1 is NON_MATCHING
+// too). Tried: s32 spr with (s16) casts as MP1 (masked 5), swapped declarations, a for loop (no change).
 #ifdef NON_MATCHING
 void func_80104084_192C24_BobsledRun(omObjData* obj) {
     s16 x;
@@ -783,11 +784,9 @@ void func_80104BE0_193780_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 play
 
 /* Draw layers of a sled by distance to the other team's camera (1: top screen only, 2: bottom,
    3: both); close up (or while the other team's riders do anim 5) its effect model shows. */
-// register allocation: retail keeps obj in s1 and moves the layer into s0 for the last three calls
-#ifdef NON_MATCHING
 void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
     s8* t; /* &D_8010C048_19ABE8_BobsledRun[other].anim: retail's base register */
-    s32 layer;
+    s8 layer;
     s32 layer2;
     f32 dx;
     f32 dy;
@@ -837,12 +836,10 @@ void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
     func_80029EDC_2AADC(obj->model[1], layer);
     func_80029EDC_2AADC(obj->model[5], layer2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80104EAC_193A4C_BobsledRun);
-#endif
 
 /* Draw layer of a rider by distance to the other team's camera. */
-// float register allocation of the distance (as in MP1)
+// float register allocation of the distance (masked 0, raw 13; MP1 is NON_MATCHING too): retail loads
+// obj->trans into f2. Tried: s8 layer, the distance in a local, f32 locals declared first (no change).
 #ifdef NON_MATCHING
 void func_801050F8_193C98_BobsledRun(omObjData* obj) {
     Vec3f* c;
@@ -1125,15 +1122,12 @@ s16 func_80105D88_194928_BobsledRun(s32 x, s16 y)
 }
 
 /* Time display group 1 (the record) at (x, y). */
-// register allocation, as func_80105D88
-#ifdef NON_MATCHING
 s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y) {
     s16 i;
     s16 px;
     s16 g;
 
-    g = SprCreate(7, 5);
-    D_8010C9FA_19B59A_BobsledRun[1] = g;
+    g = D_8010C9FA_19B59A_BobsledRun[1] = SprCreate(7, 5);
     SprAnimSet(g, 0, D_8010C9F8_19B598_BobsledRun, 0);
     SprAttrReset(g, 0, 0xFFFF);
     SprAttrSet(g, 0, 0x8000);
@@ -1156,9 +1150,6 @@ s16 func_80105F38_194AD8_BobsledRun(s32 x, s16 y) {
     SprAttrReset(g, 2, 0x8000);
     return g;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80105F38_194AD8_BobsledRun);
-#endif
 
 /* Snow spray from the runners (model[3]) and its sliding sound. */
 void func_801060E8_194C88_BobsledRun(omObjData* obj, s16 force, f32 minSpeed, f32 rot, f32 x, f32 y, f32 z) {
@@ -1514,7 +1505,9 @@ void func_801075C8_196168_BobsledRun(omObjData* obj) {
 }
 
 /* Mean of the last six stick samples, packed (x << 16) | y. */
-// register allocation (x/i swapped), as in MP1
+// register allocation (masked 0, raw 15; MP1 is NON_MATCHING too): retail keeps i in a1 and x in a0, and
+// adds the sample first (addu a2,v0,a2). Separate division statements took masked 2 to 0; MP1 declaration
+// order and `y = sample + y` change nothing.
 #ifdef NON_MATCHING
 s32 func_80107720_1962C0_BobsledRun(omObjData* obj) {
     s32 x;
@@ -1529,7 +1522,9 @@ s32 func_80107720_1962C0_BobsledRun(omObjData* obj) {
         x += ((s16*)&work->unk_74[i])[0];
         y += ((u16*)&work->unk_74[i])[1];
     }
-    return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
+    x = (s16)x / 6;
+    y = (s16)y / 6;
+    return (x << 16) | (y & 0xFFFF);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107720_1962C0_BobsledRun);
@@ -2068,7 +2063,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107EA4_
 #endif
 
 /* The back rider: follows its sled and plays the requested animation (MP1 func_800FEC80). */
-// register allocation only: rot and dist swap $f24/$f26
+// register allocation only (masked 0): rot and dist swap $f24/$f26 (MP1 func_800FEC80 matches, but
+// sets dist inside an else). Tried: swapped declarations (no change), dist set later or in an else (worse).
 #ifdef NON_MATCHING
 void func_8010982C_1983CC_BobsledRun(omObjData* obj) {
     s32 team;
@@ -2361,8 +2357,6 @@ void func_8010A3AC_198F4C_BobsledRun(omObjData* obj) {
 }
 
 /* Rotation by angle about the axis through pos (MP1 func_800FBF88). */
-// operand order of three commutative mul.s (t * xy, t * xz, t * yz), as in MP1
-#ifdef NON_MATCHING
 void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 angle) {
     f32 s;
     f32 c;
@@ -2381,6 +2375,9 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     f32 yz;
     f32 py;
     f32 pz;
+    f32 pxy;
+    f32 pyz;
+    f32 pxz;
 
     func_800B8070_B8C70(angle, &s, &c);
     t = 1.0f - c;
@@ -2389,9 +2386,9 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     x = axis->x;
     y = axis->y;
     z = axis->z;
-    xy = x * y;
-    yz = y * z;
-    xz = z * x;
+    pxy = x * y;
+    pyz = y * z;
+    pxz = z * x;
     xx = x * x;
     yy = y * y;
     zz = z * z;
@@ -2401,13 +2398,13 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     m[3][3] = 1.0f;
     m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[0][0] = t * xx + c;
-    xy = xy * t;
+    xy = t * pxy;
     m[0][1] = xy + zs;
-    xz = xz * t;
+    xz = t * pxz;
     m[0][2] = xz - ys;
     m[1][0] = xy - zs;
     m[1][1] = t * yy + c;
-    yz = t * yz;
+    yz = t * pyz;
     m[1][2] = yz + xs;
     m[2][0] = xz + ys;
     m[2][1] = yz - xs;
@@ -2416,12 +2413,10 @@ void func_8010A648_1991E8_BobsledRun(Matrix4f m, Vec3f* pos, Vec3f* axis, f32 an
     m[3][1] = -pz * (xy + zs) + py * t * (1.0f - yy) + pz * (xs - yz);
     m[3][2] = pz * (ys - xz) - py * (yz + xs) + pz * t * (1.0f - zz);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_8010A648_1991E8_BobsledRun);
-#endif
 
 /* omOutViewMulti with each camera rolled by D_8010C144[i] (MP1 func_800FC180). */
-// scheduling: retail computes i * 4 (the zoom index) before i * 12
+// scheduling (masked 2): retail computes i * 4 (the zoom index) before i * 12, and the zoom address only
+// after the two calls. A `zoom = &D_800F94A8[i]` pointer moves i * 4 first but the address with it (masked 10).
 #ifdef NON_MATCHING
 void func_8010A840_1993E0_BobsledRun(omObjData* obj) {
     Vec3f pos;

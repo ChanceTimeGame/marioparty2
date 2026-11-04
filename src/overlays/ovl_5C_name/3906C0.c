@@ -385,10 +385,11 @@ void func_8010392C_3917EC_name_5C(s16* t) {
     func_8002C59C_2D19C(990.0f - (f32)t[0] / (f32)t[1] * 990.0f, 0x3E8, 0xFF, 0xFF, 0xFF);
 }
 
-// register allocation: argument extension order (masked 2)
+// scheduling: argument extension order (masked 0): retail extends total, then frame, then subtracts.
+// `total - 5 == frame` subtracts between the two (masked 2); `frame == total - 5` extends frame first.
 #ifdef NON_MATCHING
 void func_801039A8_391868_name_5C(s16 total, s16 idx, s16 frame) {
-    if (total - 5 == frame) {
+    if (frame == total - 5) {
         InitFadeOut(0, 5);
     }
     if (idx == 3) {
@@ -410,7 +411,7 @@ void func_80103A10_3918D0_name_5C(s16 total, s16 idx, s16 frame) {
 void func_80103A54_391914_name_5C(s16 total, s16 idx, s16 frame) {
     f32 fov;
 
-    if (total - 5 == frame) {
+    if (frame == total - 5) {
         InitFadeOut(0, 5);
         func_800794A8_7A0A8(0x1E);
     }
@@ -1223,7 +1224,6 @@ void func_8010687C_39473C_name_5C(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
     Vec2f dir[30];
     f32 dist[30];
@@ -1242,7 +1242,8 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
         } else {
             x = D_80112FB0_3A0E70_name_5C[cur].x - D_80112FB0_3A0E70_name_5C[i].x;
             y = D_80112FB0_3A0E70_name_5C[cur].y - D_80112FB0_3A0E70_name_5C[i].y;
-            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            dist[i] = func_800B1830_B2430(x * x + y * y);
+            len = dist[i];
             dir[i].unk_00 = x / len;
             dir[i].unk_04 = y / len;
         }
@@ -1273,9 +1274,6 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_801068BC_39477C_name_5C);
-#endif
 
 /* Process: a debug crosshair on pad 3; prints its position on A. */
 // control flow: retail if-converts the step (sltu/negu/andi/ori) (masked 10)

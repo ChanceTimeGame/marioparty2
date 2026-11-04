@@ -273,6 +273,8 @@ $(M5BD_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 S5_4E_BLANKSTRIP_UNITS := build/src/overlays/ovl_4E_name/331200.c.o
 # S5-M: 74AA0.c too (nops between mul.s pairs, none after the call: func_80075688_76288)
 S5_4E_BLANKSTRIP_UNITS += build/src/74AA0.c.o
+# S3-P11: ovl_1C 1ABE90.c too (no nop before a mul.s after a call: func_80106E98)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1ABE90.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

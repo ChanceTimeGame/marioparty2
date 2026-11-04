@@ -697,7 +697,8 @@ void func_8010489C_1ADF2C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
     }
 }
 
-/* NON_MATCHING: register allocation (masked 0) */
+/* NON_MATCHING: register allocation (masked 0, raw 6): dx and dz swap $f20/$f24. Declaration order
+   and the distance assigned inside the if change nothing. */
 #ifdef NON_MATCHING
 void func_80104940_1ADFD0_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
@@ -726,7 +727,8 @@ void func_80104940_1ADFD0_SkyPilots(omObjData* obj, f32 x, f32 y, f32 z) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80104940_1ADFD0_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation (masked 0) */
+/* NON_MATCHING: register allocation (masked 0, raw 28): retail gives the x/z parameters $f24/$f26 and
+   the hoisted constants $f28/$f30; GCC here the reverse. Tried: constant-first sums, negated differences. */
 #ifdef NON_MATCHING
 void func_80104A4C_1AE0DC_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
@@ -1234,15 +1236,12 @@ s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y)
   return win;
 }
 
-/* NON_MATCHING: register allocation (masked 2) */
-#ifdef NON_MATCHING
 s16 func_801065CC_1AFC5C_SkyPilots(s32 x, s16 y) {
     s16 i;
     s16 px;
     s16 win;
 
-    win = SprCreate(7, 5);
-    D_8010B34C_1B49DC_SkyPilots[1] = win;
+    win = D_8010B34C_1B49DC_SkyPilots[1] = SprCreate(7, 5);
     SprAnimSet(win, 0, D_8010B346_1B49D6_SkyPilots, 0);
     SprAttrReset(win, 0, 0xFFFF);
     SprAttrSet(win, 0, 0x8000);
@@ -1265,9 +1264,6 @@ s16 func_801065CC_1AFC5C_SkyPilots(s32 x, s16 y) {
     SprAttrReset(win, 2, 0x8000);
     return win;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801065CC_1AFC5C_SkyPilots);
-#endif
 
 void func_8010677C_1AFE0C_SkyPilots(void) {
     void* data;
@@ -1380,8 +1376,6 @@ void func_80106CD0_1B0360_SkyPilots(omObjData* obj) {
     D_8010105C_101C5C = 1.0f;
 }
 
-/* NON_MATCHING: KMC mul fix adds a nop retail lacks (masked 1) */
-#ifdef NON_MATCHING
 void func_80106E98_1B0528_SkyPilots(omObjData* obj) {
     SPPlane* w = func_80027154_27D54(sizeof(SPPlane), 0x7918);
 
@@ -1416,9 +1410,6 @@ void func_80106E98_1B0528_SkyPilots(omObjData* obj) {
     D_80101300_101F00 = 1.0f;
     D_8010105C_101C5C = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80106E98_1B0528_SkyPilots);
-#endif
 
 /* NON_MATCHING: one more saved register (masked 21) */
 #ifdef NON_MATCHING
