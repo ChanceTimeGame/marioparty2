@@ -589,8 +589,6 @@ void func_8002FCAC_308AC(void) {
 /* the per-part display lists (unk3C as a Gfx* array) */
 #define HMF_DL(a) ((Gfx**) (a)->unk3C)
 
-// register allocation only (masked 0): the vertex-buffer size lives in s0, and the end-list pointer in a0
-#ifdef NON_MATCHING
 void func_8002FD38_30938(HmfData* arg0) {
     s16 savedCount;
     s16 maxLen;
@@ -618,7 +616,8 @@ void func_8002FD38_30938(HmfData* arg0) {
 
     arg0->unk3C = func_80027154_27D54(arg0->unk10 * sizeof(Gfx*), D_800FA1AA_FADAA);
     buf2 = HuMemAlloc(25 * sizeof(Gfx));
-    D_80101170_101D70 = HuMemAlloc((arg0->unk1C * 4 + arg0->unk10 * 8) * sizeof(HmfVtx));
+    size = arg0->unk1C * 4 + arg0->unk10 * 8;
+    D_80101170_101D70 = HuMemAlloc(size * sizeof(HmfVtx));
     if (arg0->unkB8 != NULL || (D_800F64C4_F70C4 & 0x400000)) {
         if (arg0->unk60 != NULL) {
             HuMemFree(arg0->unk60);
@@ -775,9 +774,6 @@ void func_8002FD38_30938(HmfData* arg0) {
     D_80101170_101D70 = savedVtx;
     D_800FDBCC_FE7CC = savedDl;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/30560", func_8002FD38_30938);
-#endif
 
 void func_8003057C_3117C(HmfData* arg0) {
     u16 var_a2;
@@ -1385,10 +1381,8 @@ void func_80031FD8_32BD8(HmfData* arg0, s16 arg1, void* arg2, Matrix4f arg3) {
     rec->unk4C = arg0->unk64[arg1].unk50;
     rec->unk54 = arg0->unkD0;
 }
-/* MP1 func_8002D614 (src/2C0C0.c): draw the depth-sorted part lists. Register allocation and
-   loop-invariant choice differ (retail hoists &D_80102758[i] and &D_800FDC48[i], keeps the light
-   colours as bytes; masked 116) */
-#ifdef NON_MATCHING
+/* MP1 func_8002D614 (src/2C0C0.c): draw the depth-sorted part lists. Matches; n64chkf still shows
+   the u64 low-word stores against splat's D_800FA724/D_800FD8A4 labels (same address) */
 Gfx* func_800322BC_32EBC(u16 arg0, Gfx* arg1, Gfx* arg2) {
     s16 sp36;
     u8 sp3F;
@@ -1516,9 +1510,6 @@ Gfx* func_800322BC_32EBC(u16 arg0, Gfx* arg1, Gfx* arg2) {
 
     return var_s7;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/30560", func_800322BC_32EBC);
-#endif
 
 /* A batch of faces drawn with one material and texture (MP1 unk2C0C0StructD0) */
 typedef struct HmfDrawFace {
