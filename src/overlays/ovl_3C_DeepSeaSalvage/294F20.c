@@ -166,7 +166,8 @@ void func_801061CC_29523C_DeepSeaSalvage(f32* x, f32* y, f32 dist, DSSPoint* pts
    units of 5, 180 down), push (x, y) out along the normal; the number of crossings (MP1
    func_800FC644). */
 /* NON_MATCHING: one register copy (retail starts i from total's register, `move s5,s3`;
-   GCC loads zero); masked 0. */
+   GCC loads zero); masked 0. Tried (S3-Q02): i = total = 0 in the for and before it, n = total = 0
+   and total = n = 0 with the initialisers dropped, before and after the *x/*y loads. */
 #ifdef NON_MATCHING
 s16 func_80106518_295588_DeepSeaSalvage(f32* x, f32* y, s16 r, s16 flag, f32* outx, f32* outy) {
     DSSPoint pts[256];
