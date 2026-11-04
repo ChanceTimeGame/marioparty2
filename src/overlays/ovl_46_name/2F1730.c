@@ -1105,7 +1105,8 @@ void func_80105FD0_2F4F00_name_46(void) {
 /* The duel: each side presses A (a CPU at its preset frame); the press nearer the target
    (D_80108298 seconds, 30 frames each) wins; nobody pressing by frame 900 counts as 1000. */
 #ifdef NON_MATCHING
-/* masked 0: only the registers of the final comparison differ. */
+/* register allocation (masked 0, raw 49, most are split-label relocs): retail keeps diff0 in a0 and writes
+   diff1 over target (v1). Worse: no target local (masked 14-17), target set inside the if (masked 10). */
 void func_80106038_2F4F68_name_46(omObjData* obj) {
     s32* work;
     s32 diff1;

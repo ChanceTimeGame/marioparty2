@@ -11,7 +11,8 @@ u8 D_80106F8C_16FECC_ShockDropOrRoll[4] = { 6, 0, 18, 12 };
 /* The roller: its spin follows the solo player's input (damped, at most 8.49 degrees a frame);
    the surface speed D_801072C4 carries the players; the roller sound's pitch and volume follow
    it; the crank arm turns with it. */
-// register allocation only: retail's int temporary is v0 and the float locals swap f4/f6 (30 diff lines)
+// register allocation (masked 0, raw 13): retail keeps the int v in v0 (ours a1) and max/pitch swap f4/f6.
+// No effect or worse: max = 600.0f as its own statement (masked 9), a second int for the volume, ternary abs.
 #ifdef NON_MATCHING
 void func_80105FD0_16EF10_ShockDropOrRoll(omObjData* obj) {
     f32 pitch;

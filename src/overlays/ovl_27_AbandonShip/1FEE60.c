@@ -188,11 +188,9 @@ void func_80102F5C_1FF5BC_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80102F5C_1FF5BC_AbandonShip);
 #endif
 
-/* NON_MATCHING: one register copy: retail 'move a2,s0' for the mast compare, here andi 0xFF (masked 1). */
-#ifdef NON_MATCHING
 void func_80103070_1FF6D0_AbandonShip(omObjData* obj) {
     omObjData* p;
-    u8 s;
+    s16 s;
     s32 i;
     f32 dx;
     f32 dz;
@@ -346,9 +344,6 @@ void func_80103070_1FF6D0_AbandonShip(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80103070_1FF6D0_AbandonShip);
-#endif
 
 void func_801039B4_200014_AbandonShip(void) {
     s32 i;
@@ -1165,7 +1160,9 @@ void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_8010642C_202A8C_AbandonShip);
 #endif
 
-/* NON_MATCHING: masked 0; one addu's operand order (the rope table base). */
+/* NON_MATCHING: register allocation (masked 0, raw 10): one addu operand order (row base + tbl, retail v1 first);
+   the rest are split-label relocs. Worse or no change: tbl + row * 5 + i, &tbl[row * 5 + i], plain
+   &D_801093F4[row][i] without tbl (masked 19). */
 #ifdef NON_MATCHING
 void func_801068F8_202F58_AbandonShip(omObjData* obj) {
     Vec pos;

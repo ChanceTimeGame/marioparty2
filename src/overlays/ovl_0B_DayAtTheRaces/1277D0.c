@@ -582,12 +582,9 @@ omObjData* func_80105D9C_12957C_DayAtTheRaces(s32 i) {
     return D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE48_12E628_DayAtTheRaces[i]];
 }
 
-/* NON_MATCHING: register allocation (masked 0): t1/t2 swapped */
-#ifdef NON_MATCHING
 void func_80105DC4_1295A4_DayAtTheRaces(void) {
     s32 i;
     s32 j;
-    s32 b;
     s32 a;
     omObjData* x;
     omObjData* y;
@@ -597,20 +594,16 @@ void func_80105DC4_1295A4_DayAtTheRaces(void) {
     }
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            a = D_8010AE58_12E638_DayAtTheRaces[j];
-            x = D_8010AC20_12E400_DayAtTheRaces.objs[a];
-            b = D_8010AE58_12E638_DayAtTheRaces[j + 1];
-            y = D_8010AC20_12E400_DayAtTheRaces.objs[b];
+            x = D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[j]];
+            y = D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[j + 1]];
             if (x->trans.x < y->trans.x) {
-                D_8010AE58_12E638_DayAtTheRaces[j] = b;
+                a = D_8010AE58_12E638_DayAtTheRaces[j];
+                D_8010AE58_12E638_DayAtTheRaces[j] = D_8010AE58_12E638_DayAtTheRaces[j + 1];
                 D_8010AE58_12E638_DayAtTheRaces[j + 1] = a;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/1277D0", func_80105DC4_1295A4_DayAtTheRaces);
-#endif
 
 omObjData* func_80105E80_129660_DayAtTheRaces(s32 i) {
     return D_8010AC20_12E400_DayAtTheRaces.objs[D_8010AE58_12E638_DayAtTheRaces[i]];
@@ -952,7 +945,8 @@ s16 func_80106D5C_12A53C_DayAtTheRaces(DRBet* w, s32 dir) {
     return i;
 }
 
-/* NON_MATCHING: register allocation (masked 0 by words, 94 raw): retail keeps w in s1 and the button mask in s0 */
+/* NON_MATCHING: register allocation (masked 0, raw 97): only s0/s1 swapped (retail keeps w in s1, the button mask
+   and &D_8010AC34 in s0). Tried: btn init/declaration order (no change), case 0 without t (fixed the t temp). */
 #ifdef NON_MATCHING
 void func_80106DE4_12A5C4_DayAtTheRaces(omObjData* obj, DRBet* w) {
     s32 btn = 0;
@@ -963,8 +957,9 @@ void func_80106DE4_12A5C4_DayAtTheRaces(omObjData* obj, DRBet* w) {
         case 0:
             if (D_8010AC2C_12E40C_DayAtTheRaces[D_8010AC34_12E414_DayAtTheRaces.pick] == w->player) {
                 w->cursor = func_80106D5C_12A53C_DayAtTheRaces(w, 0);
-                t = D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor];
-                omSetTra(obj, t->trans.x + 60.0f, t->trans.y + ((DRPlayer*)t->unk_50)->height, t->trans.z - 15.0f);
+                omSetTra(obj, D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.x + 60.0f,
+                         D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.y + ((DRPlayer*)D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->unk_50)->height,
+                         D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor]->trans.z - 15.0f);
                 if (D_8010AC34_12E414_DayAtTheRaces.pick == 3) {
                     D_8010AC30_12E410_DayAtTheRaces[w->cursor] = D_8010AC34_12E414_DayAtTheRaces.pick;
                     w->target = D_8010AC20_12E400_DayAtTheRaces.objs[w->cursor];
@@ -1246,8 +1241,6 @@ void func_801078B0_12B090_DayAtTheRaces(void) {
     }
 }
 
-/* NON_MATCHING: schedule (masked 2): case 2's two stores come off D_8010AC48 in the other order */
-#ifdef NON_MATCHING
 void func_8010796C_12B14C_DayAtTheRaces(omObjData* obj) {
     switch (D_8010AC34_12E414_DayAtTheRaces.sub) {
         case 0:
@@ -1262,15 +1255,11 @@ void func_8010796C_12B14C_DayAtTheRaces(omObjData* obj) {
             }
             break;
         case 2:
-            D_8010AC34_12E414_DayAtTheRaces.timer = 0;
-            D_8010AC34_12E414_DayAtTheRaces.sub = 0;
+            D_8010AC34_12E414_DayAtTheRaces.timer = D_8010AC34_12E414_DayAtTheRaces.sub = 0;
             func_80109DAC_12D58C_DayAtTheRaces(1);
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/1277D0", func_8010796C_12B14C_DayAtTheRaces);
-#endif
 
 void func_80107A44_12B224_DayAtTheRaces(omObjData* obj) {
     if (++D_8010AA20_12E200_DayAtTheRaces == 16) {
