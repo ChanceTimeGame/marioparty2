@@ -251,10 +251,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_8010782C_14
 #endif
 
 /* A falling pin knocks down the standing pins its top (130 up the tilted pin) passes within 75 of. */
-// register allocation only (masked 0): the pin table entry and its object swap a0/a1
-#ifdef NON_MATCHING
 void func_801079EC_141D7C_BowlOver(omObjData* obj) {
-    omObjData* other;
     BOPin* pin;
     BOPin* hit;
     Vec3f v;
@@ -287,12 +284,11 @@ void func_801079EC_141D7C_BowlOver(omObjData* obj) {
         if (obj->work[3] == i) {
             continue;
         }
-        other = D_8010A0B8_144448_BowlOver[i];
-        hit = &D_80109E50_1441E0_BowlOver[other->work[3]];
+        hit = &D_80109E50_1441E0_BowlOver[D_8010A0B8_144448_BowlOver[i]->work[3]];
         if (hit->unk_17 == 1) {
             continue;
         }
-        d.x = other->trans.x - top.x;
+        d.x = D_8010A0B8_144448_BowlOver[i]->trans.x - top.x;
         d.y = D_8010A0B8_144448_BowlOver[i]->trans.y - top.y;
         d.z = D_8010A0B8_144448_BowlOver[i]->trans.z - top.z;
         if (sqrtf(d.x * d.x + d.y * d.y + d.z * d.z) < 75.0f) {
@@ -330,9 +326,6 @@ void func_801079EC_141D7C_BowlOver(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801079EC_141D7C_BowlOver);
-#endif
 
 /* A pin: the shell knocks it down when it passes within 88; a falling pin tilts to 90 degrees about
    its fall direction, knocks down the pins its top reaches, then blinks for 31 frames and vanishes. */
