@@ -2049,7 +2049,8 @@ void func_80108DCC_24C6DC_ShyGuySays(omObjData* target, f32 x, f32 y, f32 z) {
     }
 }
 
-// register allocation: f6/f8 (masked 0)
+// register allocation (masked 0, raw 18): proj takes $f8 (retail $f6). Tried (S3-P05): proj = -proj
+// as its own statement, the two early returns joined, d.x += proj + n.x; none moves it.
 #ifdef NON_MATCHING
 s32 func_80108FD4_24C8E4_ShyGuySays(omObjData* target, SGSShot* s) {
     f32 r = s->radius;
