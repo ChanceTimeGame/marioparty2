@@ -596,7 +596,8 @@ void func_801042F0_13E680_BowlOver(omObjData* obj) {
     }
 }
 
-// register allocation: port and the pin table base swap t1/t2 (masked 0)
+// register allocation (masked 0, raw 15): port and the pin table base swap t1/t2. S3-Q07 tried,
+// without effect: declaration order, an omObjData* temporary for the pin, 3 + i, s8 port.
 #ifdef NON_MATCHING
 void func_8010487C_13EC0C_BowlOver(omObjData* obj) {
     BOPlayerWork* w;

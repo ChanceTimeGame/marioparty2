@@ -88,8 +88,6 @@ f32 func_801085F8_1A1388_HandcarHavoc(f32 x, f32 y, f32 z, ColVtx* vtx, s16* fac
 }
 
 /* A rider's seat position: the car's rotations applied to (0, 162.5, seat offset). */
-/* NON_MATCHING: float register allocation (masked 0; the lean products' temporaries), as in MP1. */
-#ifdef NON_MATCHING
 void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     Matrix4f m;
     f32 v[4];
@@ -110,9 +108,9 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     v[3] = 1.0f;
     s = HuMathSin(w->rot.y);
     c = func_800B7890_B8490(w->rot.y);
-    rx = s * w->lean + w->rot.x + s * w->tilt;
+    rx = w->rot.x + s * w->lean + s * w->tilt;
     ry = w->rot.y;
-    rz = c * w->lean + w->rot.z + c * w->tilt;
+    rz = w->rot.z + c * w->lean + c * w->tilt;
     if (rx < 0.0f) {
         rx += 360.0f;
     }
@@ -151,9 +149,6 @@ void func_80108730_1A14C0_HandcarHavoc(omObjData* obj, u16 seat, Vec* out) {
     out->y = obj->trans.y + v[1];
     out->z = obj->trans.z + v[2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108730_1A14C0_HandcarHavoc);
-#endif
 
 /* The two wheel spots of one side (D_8010B184), placed on the car (MP1 func_800FD888). */
 // NON_MATCHING: stack addressing of the unused copy array tmp (as MP1 func_800FD888)
