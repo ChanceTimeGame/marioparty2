@@ -383,7 +383,9 @@ void func_80102F00_170890_LightsOut(Matrix4f m, f32 x, f32 y, f32 z, f32* out) {
 
 /* The hammer's reach: is (x, y, z) inside the blast cylinder of radius `reach`, 30 either way? */
 #ifdef NON_MATCHING
-/* register allocation (masked 0): the abs temporary */
+/* register allocation (masked 0, raw 24): the abs temporary is v0 in retail, v1 here, and out[0] and
+ * reach * reach + 3600 swap $f4/$f6. Tried: a ternary abs (worse, 113 instructions), d assigned before
+ * the test (masked 8). Class 4. */
 s32 func_80102F9C_17092C_LightsOut(f32 x, f32 y, f32 z, f32 reach) {
     f32 out[3];
     f32 d;
@@ -2284,7 +2286,8 @@ void func_8010A090_177A20_LightsOut(void) {
 
 /* A light bulb. work[0] the player; it hangs on his head until he is out, then flies up. */
 #ifdef NON_MATCHING
-/* register allocation (masked 0): the two slot pointers swap s1 and s2; class 4 */
+/* register allocation (masked 0, raw 10): the two slot pointers swap s1 and s2 (retail: q s2, t s1);
+ * declaration order does not move them. Class 4. */
 void func_8010A0CC_177A5C_LightsOut(omObjData* obj) {
     LOSlot* t;
     LOSlot* q = &D_8010DFD8_17B968_LightsOut[obj->work[0]];
@@ -2731,7 +2734,9 @@ void func_8010B3B8_178D48_LightsOut(s16 cam, f32 x, f32 y, f32 z, f32* out) {
 /* Each frame: the screen positions of the lights, and the darkness texture redrawn: last frame's
    circles filled back in, this frame's cut with the mask; then the lightning script. */
 #ifdef NON_MATCHING
-/* register allocation (masked 0): the alpha temporary is v0 in retail, v1 here; class 4 */
+/* branch scheduling (raw 1): the fade-in ternary gives beqzl where retail has beqz with li v0,256 in the
+ * delay slot. The alpha = 256; if (< 230) alpha += form instead keeps alpha in v1 (raw 4); a block-local
+ * or s32 alpha and an if/else were no better. Class 4. */
 void func_8010B648_178FD8_LightsOut(void) {
     s32 offs[4];
     f32 pos[2];
@@ -2886,11 +2891,7 @@ void func_8010B648_178FD8_LightsOut(void) {
                         break;
                 }
             }
-            alpha = 256;
-            if (D_8010CC88_17A618_LightsOut < 230) {
-                alpha = D_8010CC88_17A618_LightsOut + 20;
-            }
-            D_8010CC88_17A618_LightsOut = alpha;
+            D_8010CC88_17A618_LightsOut = (D_8010CC88_17A618_LightsOut < 230) ? D_8010CC88_17A618_LightsOut + 20 : 256;
         }
         D_8010CC8A_17A61A_LightsOut++;
     }
