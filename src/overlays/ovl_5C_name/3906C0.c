@@ -385,10 +385,11 @@ void func_8010392C_3917EC_name_5C(s16* t) {
     func_8002C59C_2D19C(990.0f - (f32)t[0] / (f32)t[1] * 990.0f, 0x3E8, 0xFF, 0xFF, 0xFF);
 }
 
-// register allocation: argument extension order (masked 2)
+// scheduling: argument extension order (masked 0): retail extends total, then frame, then subtracts.
+// `total - 5 == frame` subtracts between the two (masked 2); `frame == total - 5` extends frame first.
 #ifdef NON_MATCHING
 void func_801039A8_391868_name_5C(s16 total, s16 idx, s16 frame) {
-    if (total - 5 == frame) {
+    if (frame == total - 5) {
         InitFadeOut(0, 5);
     }
     if (idx == 3) {
@@ -410,7 +411,7 @@ void func_80103A10_3918D0_name_5C(s16 total, s16 idx, s16 frame) {
 void func_80103A54_391914_name_5C(s16 total, s16 idx, s16 frame) {
     f32 fov;
 
-    if (total - 5 == frame) {
+    if (frame == total - 5) {
         InitFadeOut(0, 5);
         func_800794A8_7A0A8(0x1E);
     }

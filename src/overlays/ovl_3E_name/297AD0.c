@@ -3959,7 +3959,8 @@ void func_8010BA0C_2A0CDC_name_3E(MBModel* parent) {
     process->user_data = parent;
 }
 
-// scheduling of three loop-invariant constants in the player menu (masked 2 under -DNON_MATCHING)
+// register allocation of three loop-invariant constants and (s16)choice in the player menu (masked 2,
+// raw 21): retail 8/choice/24 in t0/t1/t2, here choice/24/8. A goto-free availability test is worse (4).
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
