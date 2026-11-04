@@ -3881,8 +3881,6 @@ const char D_80113730_37EE30_MinigameParkSetup[] = "c162_000-atama";
    screen, sometimes (1 in 8) bobs; then opens the message window (80110278) and nods while it
    talks; once D_80113784 is set it spins away and shrinks. Board 5 uses the Koopa Kid head
    ("c162_000-atama") and a slower swing. */
-#ifdef NON_MATCHING
-/* masked 0: only one/speed's registers (f28/f26) are swapped. */
 void func_8010FB00_37B200_MinigameParkSetup(void) {
     s32 unused[38];
     u16 model;
@@ -3978,8 +3976,7 @@ void func_8010FB00_37B200_MinigameParkSetup(void) {
             }
             HuPrcSleep(10);
             if (D_80113784_37EE84_MinigameParkSetup != 0) {
-                speed = one + speed;
-                func_80029FE4_2ABE4(model, speed);
+                func_80029FE4_2ABE4(model, one + speed);
                 x = D_800FC834_FD434[(s16)model].pos.x;
                 for (i = 0; i < 11; i++) {
                     func_8002979C_2A39C(model, 0.0f, i * -18.0f, -func_800B7890_B8490(i * 9.0f) * 10.0f);
@@ -4000,9 +3997,6 @@ void func_8010FB00_37B200_MinigameParkSetup(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010FB00_37B200_MinigameParkSetup);
-#endif
 
 /* The message window of the setup screens: opened at the bottom, wiped in once the intro is
    done (D_80113790), kept until D_80113788 asks it closed. */
