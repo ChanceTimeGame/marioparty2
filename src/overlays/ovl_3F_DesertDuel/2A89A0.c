@@ -1306,7 +1306,9 @@ void func_80106988_2ACB28_DesertDuel(s32 shooter, s32 target) {
    sound), then bounces back and rolls to a stop, a sound on each bounce; then D_80108C50. */
 #define ABS3F(x) ((x) < 0 ? -(x) : (x))
 /* NON_MATCHING: float registers (masked 0): retail computes the shadow's x in f2 with -10.0f in f2
-   and 215.0f in f0; inline in the call it matches but loads obj->model one step early. */
+   and 215.0f in f0; inline in the call it matches but loads obj->model one step early.
+   Register allocation (masked 0, raw 6). S3-Q07 tried, no better: x +=, obj->trans.x twice in one
+   expression, the offset in dx. */
 #ifdef NON_MATCHING
 void func_80106C94_2ACE34_DesertDuel(omObjData* obj) {
     s16 sfx[5] = { 0x3A1, 0x3A2, 0x3A2, 0x3A3, 0x3A4 };
