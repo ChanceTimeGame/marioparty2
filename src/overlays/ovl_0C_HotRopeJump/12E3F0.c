@@ -1488,7 +1488,9 @@ void func_80107B4C_13373C_HotRopeJump(omObjData* obj) {
 
 /* World position -> screen position (x, y) and depth (z), through camera cam's view matrix (MP1
    func_800FAB34).
-   NON_MATCHING: register allocation only (masked 0; retail swaps $f22/$f24 and $s3/$s4) */
+   NON_MATCHING: register allocation only (masked 0, raw 15; retail swaps $f22/$f24 for sz and the
+   deg-to-rad literal, and the operands of two addu). S3-Q05 tried: &c->mtxs[D].lookAtMtx (masked 7),
+   sz declared first (no change), sz *= sin / cos joined into one statement (masked 7). */
 #ifdef NON_MATCHING
 void func_80107CA4_133894_HotRopeJump(s32 cam, Vec* pos, Vec* out) {
     Mtx mtx;

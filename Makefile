@@ -247,6 +247,8 @@ build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
 # 62-A: the KMC mul fix (a nop before mult at a loop head, 80103BF0 / 80104778)
 build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o: export VR4300MUL := ON
+# S3-Q05: ovl_1F 1BE380.c (a nop between back-to-back mul.d: func_80105618)
+build/src/overlays/ovl_1F_DungeonDash/1BE380.c.o: export VR4300MUL := ON
 # 5B-C: 37F4E0.c is assembled from GCC's assembly with blank lines removed, as 1130.c is (the mul
 # fix puts no nop before a mul.s after a call: func_80109B1C)
 B5C_BLANKSTRIP_UNITS := build/src/overlays/ovl_5B_name/37F4E0.c.o
@@ -275,6 +277,9 @@ S5_4E_BLANKSTRIP_UNITS := build/src/overlays/ovl_4E_name/331200.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/74AA0.c.o
 # S3-P11: ovl_1C 1ABE90.c too (no nop before a mul.s after a call: func_80106E98)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1ABE90.c.o
+# S3-Q05: ovl_1A 1A2950.c too (mul fix on; no nop before a mul.s after a call: func_8010A5B8)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1A_HandcarHavoc/1A2950.c.o
+S5_4E_BLANKSTRIP_UNITS += build/src/26370.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -747,7 +752,8 @@ $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # S4-1AA: ovl_1A 19B590.c and 1A2950.c have the KMC VR4300 mul fix (func_80105940, func_8010AA30: a nop
 # between back-to-back mul.s). S4-1AC: 1A10F0.c (80108360-80109BC0, MP1 216140.c) has none: its
 # func_80109484 has mul.s right after calls with no nop, and no mul nop anywhere.
-S41AA_MULFIX_UNITS := build/src/overlays/ovl_1A_HandcarHavoc/19B590.c.o build/src/overlays/ovl_1A_HandcarHavoc/1A2950.c.o
+S41AA_MULFIX_UNITS := build/src/overlays/ovl_1A_HandcarHavoc/19B590.c.o
+# S3-Q05: 1A2950.c moved to S5_4E_BLANKSTRIP_UNITS (no nop before a mul.s after a call: func_8010A5B8)
 $(S41AA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-3B: ovl_3B 28B620.c has the KMC VR4300 mul fix (func_801063CC: a nop before mul.d at a branch target)
 S43B_MULFIX_UNITS := build/src/overlays/ovl_3B_DestructionDuet/28B620.c.o

@@ -803,7 +803,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1BE380", func_80105464
 __asm__(".section .rodata");
 const Vec D_8010AD38_1C68B8_DungeonDash = { 0.0f, 0.0f, 0.0f };
 
-// register allocation only (obj and team swap s0/s1; masked 0, as MP1's twin)
+// NON_MATCHING: register allocation (masked 0 with the unit on VR4300MUL, raw 68): obj and team swap
+// s0/s1, as in MP1's twin. S3-Q05 tried: team declared last, pos.x = x = ... chained, MP1's work/m order.
 #ifdef NON_MATCHING
 /* A player's per-frame update: pull input (stick pushes and shakes), the knock-back hop after a
    slam (state 11), squash-and-stretch and the end-of-game motions (MP1 func_800F8C34). */

@@ -1401,7 +1401,9 @@ void func_8010FBDC_39DA9C_name_5C(s16 sprite, s16 slot) {
     espPosSet(sprite, esp->x, esp->y);
 }
 
-// register allocation: pos and m swapped (masked 10)
+// NON_MATCHING: register allocation (masked 10, raw 72): pos and m swap s4/s5, and retail keeps the
+// allocation in v0 until after the index load. S3-Q05 tried: the array store with i = ... inside it,
+// the store after the increment (i = D++ too: masked 44), m declared after pos/target: no change.
 #ifdef NON_MATCHING
 void func_8010FC20_39DAE0_name_5C(void) {
     Ovl5CMover* m;

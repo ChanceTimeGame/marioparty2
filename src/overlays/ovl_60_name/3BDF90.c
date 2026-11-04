@@ -4818,7 +4818,9 @@ void func_80111A90_3CD1F0_name_60(Ovl60TeamDemo* p) {
 #ifdef NON_MATCHING
 /* NON_MATCHING: register allocation and the order the two rider tables' addresses are hoisted
    (retail keeps D_80113D94 in s5, D_80113DA0 in s6, 0x4A0000 set before the rider loop, and splits
-   gPlayers' %hi itself); the logic is the same. */
+   gPlayers' %hi itself); the logic is the same. Masked 10, raw 43. S3-Q05 tried: 0x4A0000 | inside each
+   arm of the ternary (no change), if/else around two LoadFormFile calls (masked 24), one table chosen by
+   the ternary and indexed by player[j] (masked 51). */
 void func_80111BCC_3CD32C_name_60(void) {
     s32 i;
     s32 j;

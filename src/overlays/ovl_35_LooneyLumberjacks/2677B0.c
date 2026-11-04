@@ -1853,11 +1853,10 @@ void func_801082E8_26D298_LooneyLumberjacks(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801082E8_26D298_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 10), class 4
-#ifdef NON_MATCHING
 void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
     HuSprite_Unk84_Struct* spr;
     HmfModel* m;
+    LLColor c;
     s32 i;
 
     spr = SprAnimGet(D_8010AF4C_26FEFC_LooneyLumberjacks[4]);
@@ -1865,7 +1864,8 @@ void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
         if (obj->model[i] != -1) {
             m = &D_800FC834_FD434[obj->model[i]];
             if (!(m->unk18 & 4)) {
-                func_8010A1E4_26F194_LooneyLumberjacks(D_8010AF48_26FEF8_LooneyLumberjacks[i].r, D_8010AF48_26FEF8_LooneyLumberjacks[i].g, D_8010AF48_26FEF8_LooneyLumberjacks[i].b);
+                c = D_8010AF48_26FEF8_LooneyLumberjacks[i];
+                func_8010A1E4_26F194_LooneyLumberjacks(c.r, c.g, c.b);
                 func_8010A014_26EFC4_LooneyLumberjacks(obj->model[i], spr, (s32)m->unk40, 1.0f);
                 m->unk40 += 1.0;
                 if ((s32)m->unk40 >= 16) {
@@ -1876,9 +1876,6 @@ void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80108418_26D3C8_LooneyLumberjacks);
-#endif
 
 // decomp-permuter
 s16 func_80108550_26D500_LooneyLumberjacks(Vec *pos, Vec *rot, Vec *scale)

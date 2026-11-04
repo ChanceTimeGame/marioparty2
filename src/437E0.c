@@ -88,7 +88,9 @@ void func_80042F7C_43B7C(Vec* v, Vec* axis, f32 angle) {
            (axis->y * axis->z * (1.0f - func_800B7890_B8490(angle)) + HuMathSin(angle) * axis->x) * orig.y +
            (axis->z * axis->z + (1.0f - axis->z * axis->z) * func_800B7890_B8490(angle)) * orig.z;
 }
-// register allocation: the length product lands in $f20, retail $f12 (masked 0)
+// NON_MATCHING: register allocation (masked 2: the product lands in $f20, tied to the first length,
+// retail $f12, and the KMC mul fix then adds a nop). As in MP1 func_8003D8CC. S3-Q05 tried: a
+// temporary for the first length, the assignment inside the if, dot/len declared swapped, early return.
 #ifdef NON_MATCHING
 f32 func_800431FC_43DFC(Vec* a, Vec* b) {
     f32 dot;
