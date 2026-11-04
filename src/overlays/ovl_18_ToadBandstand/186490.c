@@ -615,7 +615,9 @@ void func_80105480_189110_ToadBandstand(omObjData* obj) {
 __asm__(".section .rodata");
 const char D_8010D17C_190E0C_ToadBandstand[] = "item_hook";
 
-/* NON_MATCHING: class 4: one store-flag; retail andi/sltiu, GCC here folds (b & 1) == 0 to nor/andi; masked 1 */
+/* NON_MATCHING: register allocation (masked 0, raw 60): the u8 counter i and the hoisted
+   D_8010DA88 base swap s1/s2 in the i loops, and one f0/f2 temp in case 0's loop. Fixed: the
+   store-flag (`b % 2 == 0`) and the first-segment float (`u`, not `t`); tried i declared before b. */
 #ifdef NON_MATCHING
 void func_80105CB8_189948_ToadBandstand(omObjData* obj) {
     TSFloats4 xs;
@@ -643,17 +645,17 @@ void func_80105CB8_189948_ToadBandstand(omObjData* obj) {
             }
         }
         if (D_8010D980_191610_ToadBandstand <= 90) {
-            t = D_8010D980_191610_ToadBandstand / 90.0f;
+            u = D_8010D980_191610_ToadBandstand / 90.0f;
         } else if (!(D_8010D980_191610_ToadBandstand >= 91 && D_8010D980_191610_ToadBandstand <= 120)) {
             if (D_8010D980_191610_ToadBandstand >= 121 && D_8010D980_191610_ToadBandstand <= 150) {
-                t = (D_8010D980_191610_ToadBandstand - 0x78) / 30.0f + 1.0;
+                u = (D_8010D980_191610_ToadBandstand - 0x78) / 30.0f + 1.0;
             } else {
-                t = 2.0f;
+                u = 2.0f;
             }
         } else {
-            t = 1.0f;
+            u = 1.0f;
         }
-        D_8010D900_191590_ToadBandstand = t;
+        D_8010D900_191590_ToadBandstand = u;
         if (D_8010D900_191590_ToadBandstand < 1.0) {
             for (i = 0; i < 6; i++) {
                 d = D_8010D900_191590_ToadBandstand;
@@ -754,7 +756,7 @@ void func_80105CB8_189948_ToadBandstand(omObjData* obj) {
                 } else {
                     func_80029E80_2AA80(D_8010DA68_1916F8_ToadBandstand->model[2], 3, 2);
                 }
-                if ((s8)(b & 1) == 0 || b == 12) {
+                if (b % 2 == 0 || b == 12) {
                     func_80029E80_2AA80(D_8010DA68_1916F8_ToadBandstand->model[3], 3, 1);
                 } else {
                     func_80029E80_2AA80(D_8010DA68_1916F8_ToadBandstand->model[3], 3, 2);
