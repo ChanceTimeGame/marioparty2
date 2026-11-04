@@ -1535,7 +1535,9 @@ void func_8010811C_1D547C_FaceLift(s16 player, f32 x, f32 y, f32 z, u16 type) {
     }
 }
 
-// register allocation
+// scheduling (masked 0, raw 7 with the unit's mul fix): retail sets each loop's k = 0 before the
+// other init (max, c, n) and its delay slot takes k = 0, not n = 0. S3-Q07 tried, without effect:
+// n = 0 inside each branch, k declared first; i reused for k is worse.
 #ifdef NON_MATCHING
 s16 func_801082A4_1D5604_FaceLift(void) {
     s16 order[4];

@@ -249,6 +249,8 @@ build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o: export VR4300MUL := ON
 # S3-Q07: ovl_0C 133BA0.c (a nop between back-to-back mul.d: func_8010A0F0)
 build/src/overlays/ovl_0C_HotRopeJump/133BA0.c.o: export VR4300MUL := ON
+# S3-Q07: ovl_21 1CFB60.c (a nop between back-to-back mul.s: func_801082A4)
+build/src/overlays/ovl_21_FaceLift/1CFB60.c.o: export VR4300MUL := ON
 # 5B-C: 37F4E0.c is assembled from GCC's assembly with blank lines removed, as 1130.c is (the mul
 # fix puts no nop before a mul.s after a call: func_80109B1C)
 B5C_BLANKSTRIP_UNITS := build/src/overlays/ovl_5B_name/37F4E0.c.o
