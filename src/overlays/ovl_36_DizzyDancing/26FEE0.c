@@ -62,15 +62,10 @@ u8 func_801028A0_26FF80_DizzyDancing(u8 n, u64* used) {
     return i;
 }
 
-/* NON_MATCHING: register allocation only (masked 0): retail keeps base in $f0 and the quotient in $f2. */
-#ifdef NON_MATCHING
 f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f32 q;
-    f64 frac;
-    f64 base;
     s32 sign;
     s32 i;
 
@@ -95,25 +90,15 @@ f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            q = x / (sum + 1.0f);
-            base = 1.5707963267948966;
-            frac = q;
-            goto done;
+            return 1.5707963267948966 - x / (sum + 1.0f);
         }
         if (sign < 0) {
-            q = x / (sum + 1.0f);
-            frac = q;
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - x / (sum + 1.0f);
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_801029F0_2700D0_DizzyDancing);
-#endif
 
 /* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
 #ifdef NON_MATCHING
