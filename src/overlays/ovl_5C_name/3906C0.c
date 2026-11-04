@@ -1223,7 +1223,6 @@ void func_8010687C_39473C_name_5C(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
     Vec2f dir[30];
     f32 dist[30];
@@ -1242,7 +1241,8 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
         } else {
             x = D_80112FB0_3A0E70_name_5C[cur].x - D_80112FB0_3A0E70_name_5C[i].x;
             y = D_80112FB0_3A0E70_name_5C[cur].y - D_80112FB0_3A0E70_name_5C[i].y;
-            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            dist[i] = func_800B1830_B2430(x * x + y * y);
+            len = dist[i];
             dir[i].unk_00 = x / len;
             dir[i].unk_04 = y / len;
         }
@@ -1273,9 +1273,6 @@ s16 func_801068BC_39477C_name_5C(s16 cur, s16 n, s16 dx, s16 dy) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_801068BC_39477C_name_5C);
-#endif
 
 /* Process: a debug crosshair on pad 3; prints its position on A. */
 // control flow: retail if-converts the step (sltu/negu/andi/ori) (masked 10)

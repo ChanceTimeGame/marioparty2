@@ -1785,8 +1785,7 @@ void func_801079AC_32F36C_name_4E(void) {
 
 /* Of the n screen slots, the nearest one seen from slot cur in direction (dx, dy) (unit
    directions within 0.5 of each other), skipping cur and taken slots (D_8010DA98 != -1);
-   -1 if there is none. NON_MATCHING: one store scheduled after a mov.s instead of before. */
-#ifdef NON_MATCHING
+   -1 if there is none. */
 s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy) {
     Vec2f dir[30];
     f32 dist[30];
@@ -1805,7 +1804,8 @@ s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy) {
         } else {
             x = D_8010E648_336008_name_4E[cur].x - D_8010E648_336008_name_4E[i].x;
             y = D_8010E648_336008_name_4E[cur].y - D_8010E648_336008_name_4E[i].y;
-            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            dist[i] = func_800B1830_B2430(x * x + y * y);
+            len = dist[i];
             dir[i].unk_00 = x / len;
             dir[i].unk_04 = y / len;
         }
@@ -1836,9 +1836,6 @@ s16 func_801079EC_32F3AC_name_4E(s16 cur, s16 n, s16 dx, s16 dy) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/32A1C0", func_801079EC_32F3AC_name_4E);
-#endif
 
 /* Object function: once the setup is left (D_8010D1F0, or main's D_801011FC), fades out (D_8010D1F2:
    0 short, 9/11 long) and hands over to func_80107E34. */
