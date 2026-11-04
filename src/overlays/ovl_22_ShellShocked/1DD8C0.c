@@ -721,14 +721,11 @@ void func_8010B3EC_1DFACC_ShellShocked(s32 i) {
     D_8010DA80_1E2160_ShellShocked[i].state = 3;
 }
 
-// register allocation (masked 4, 105 vs 105 instructions)
-#ifdef NON_MATCHING
 void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind) {
     SSTank* tank;
     SSShell* s;
     f32 a;
     f32 co;
-    f32 z;
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     s = tank->shell;
@@ -741,8 +738,7 @@ void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind) {
             s->vel.x = a * 70.0f;
             s->vel.y = 0.0f;
             s->vel.z = co * 70.0f;
-            z = 0.0f;
-            tank->motGun->unk34.x = tank->recoil = z;
+            tank->motGun->unk34.x = tank->recoil = 0.0f;
             s->pos.x = a * 100.0f + tank->pos.x;
             s->pos.y = tank->pos.y + 50.0f;
             s->pos.z = co * 100.0f + tank->pos.z;
@@ -750,16 +746,12 @@ void func_8010B494_1DFB74_ShellShocked(s32 i, s32 kind) {
             tank->cooldown = 0xA;
             func_8010C848_1E0F28_ShellShocked(i);
         } else if (kind == 1) {
-            z = 0.0f;
-            tank->motGun->unk34.x = tank->recoil = z;
+            tank->motGun->unk34.x = tank->recoil = 0.0f;
             s->state = 2;
             func_8010C86C_1E0F4C_ShellShocked(i);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010B494_1DFB74_ShellShocked);
-#endif
 
 void func_8010B618_1DFCF8_ShellShocked(s32 i) {
     SSTank* tank;

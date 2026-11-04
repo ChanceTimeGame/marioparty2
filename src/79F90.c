@@ -340,6 +340,8 @@ u16 func_80079D7C_7A97C(void)
 /* MP1 func_80060AF0: reload the sound banks for D_800CD52C_CE12C, then the output mode */
 // retail addresses unk28 and the else branch's unk08/unk0C through their own symbols
 // (D_80101128_101D28, D_80101108_101D08: splat labels inside D_80101100_101D00); same stores
+// masked 9: retail stores unk28 by absolute address and bases the else branch on D+8, as if they were
+// separate objects; S3-Q04 tried the branches swapped (masked 13). Needs the split as real declarations.
 #ifdef NON_MATCHING
 void func_80079DB4_7A9B4(void) {
     func_8000E9E8_F5E8(&D_80101100_101D00);
