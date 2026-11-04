@@ -1148,7 +1148,9 @@ void func_80102B54_297E24_name_3E(void) {
         func_800509C4_515C4(D_80111984_2A6C54_name_3E[gw->unk_1C]);
     }
 }
-/* D_80111974 address hoisted out of the loop (masked 10); logic matches */
+/* D_80111974 address hoisted out of the loop (masked 10); logic matches. Retail reads it as %hi + index,
+   %lo(sym)(reg) inside the loop. Tried (S3-Q02, twins 41/43/45/47/49 share it): for and while loops,
+   GwSystem written directly, MP3's MB1Ev_StarCheck shape (for with break, arrays indexed directly). */
 #ifdef NON_MATCHING
 s32 func_80102C3C_297F0C_name_3E(s32 space) {
     s32 i;
