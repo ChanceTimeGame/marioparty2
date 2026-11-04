@@ -82,8 +82,6 @@ void func_80108DB4_1B2444_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation (masked 10) */
-#ifdef NON_MATCHING
 void func_80108ECC_1B255C_SkyPilots(omObjData* obj) {
     s32 i;
 
@@ -116,17 +114,14 @@ void func_80108ECC_1B255C_SkyPilots(omObjData* obj) {
 
             D_8010AE6C_1B44FC_SkyPilots[i].extra = HuMathSin(D_8010ADB8_1B4448_SkyPilots[i]) * 400.0f;
             D_8010ADB8_1B4448_SkyPilots[i] += 2.0f;
-            y = D_8010AE6C_1B44FC_SkyPilots[i].extra;
             x = HuMathSin(D_8010AE6C_1B44FC_SkyPilots[i].angle) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS);
+            y = D_8010AE6C_1B44FC_SkyPilots[i].extra;
             z = func_800B7890_B8490(D_8010AE6C_1B44FC_SkyPilots[i].angle) * (D_8010AE6C_1B44FC_SkyPilots[i].radius + SP_RADIUS);
             func_80029714_2A314((s16)D_8010B318_1B49A8_SkyPilots[i], x, y, z);
             func_80029714_2A314((s16)D_8010B330_1B49C0_SkyPilots[i], x, y, z);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B2120", func_80108ECC_1B255C_SkyPilots);
-#endif
 
 void func_8010916C_1B27FC_SkyPilots(omObjData* obj) {
     f32 x;
