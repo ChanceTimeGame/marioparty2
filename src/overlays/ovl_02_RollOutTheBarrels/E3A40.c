@@ -4015,6 +4015,8 @@ s32 func_8011005C_F129C_RollOutTheBarrels(s32 model) {
 }
 
 // float allocation: the two scroll offsets swap f28/f30, and the vertex loop's temporaries (masked ~10), class 4
+// S3-Q03 tried: v1 loop before u1 (raw 84 -> 66, masked 10 -> 12), u1 wrap+mod interleaved (worse),
+// vtx0[j] without p (raw 47, masked 12); none kept
 #ifdef NON_MATCHING
 void func_80110530_F1770_RollOutTheBarrels(s32 a, s32 b, f32 u0, f32 v0, f32 u1, f32 v1, RBAnim* tex0, RBAnim* tex1) {
     HmfData* hmf0;
