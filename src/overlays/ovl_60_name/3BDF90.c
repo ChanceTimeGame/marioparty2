@@ -524,32 +524,33 @@ void func_80104280_3BF9E0_name_60(omObjData* obj) {
     func_8001A91C_1B51C(D_8011495E_3D00BE_name_60[idx], work[0], work[0]);
 }
 
-#ifdef NON_MATCHING
-void func_8010433C_3BFA9C_name_60(void) {
-    omObjData* obj;
-    f32* work;
-    s32 spr;
-    s32 i;
+// decomp-permuter
+void func_8010433C_3BFA9C_name_60(void)
+{
+  omObjData *obj;
+  f32 *work;
+  s32 spr;
+  s32 i;
+  s16 *new_var;
+  for (i = 0; i < 5; i++)
+  {
+    spr = (s16) func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_8011351C_3CEC7C_name_60[D_800CAFD8[i]]), 0, 0);
+    D_8011495E_3D00BE_name_60[i] = spr;
+    new_var = &D_800F93FC_F9FFC[spr].group;
+    SprAttrReset(*new_var, 0, 0x1000);
+    espDispOff(spr);
+    func_8001A708_1B308(spr, 0x4000);
+    obj = omAddObj(0x64, 0, 0, -1, func_80104280_3BF9E0_name_60);
+    obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
+    func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
+    work = obj->unk_50;
+    work[0] = 1.0f;
+    work[1] = 0.0f;
+    work[2] = 10.0f;
+    obj->work[0] = i;
+  }
 
-    for (i = 0; i < 5; i++) {
-        spr = (s16)func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_8011351C_3CEC7C_name_60[D_800CAFD8[i]]), 0, 0);
-        D_8011495E_3D00BE_name_60[i] = spr;
-        SprAttrReset(D_800F93FC_F9FFC[spr].group, 0, 0x1000);
-        espDispOff(spr);
-        func_8001A708_1B308(spr, 0x4000);
-        obj = omAddObj(0x64, 0, 0, -1, func_80104280_3BF9E0_name_60);
-        obj->unk_50 = func_80027154_27D54(0xC, 0x7918);
-        func_800B0EF0_B1AF0(obj->unk_50, 0, 0xC);
-        work = obj->unk_50;
-        work[0] = 1.0f;
-        work[1] = 0.0f;
-        work[2] = 10.0f;
-        obj->work[0] = i;
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_8010433C_3BFA9C_name_60);
-#endif
 
 void func_80104490_3BFBF0_name_60(omObjData* obj) {
     f32* angle = obj->unk_50;
