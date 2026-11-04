@@ -5037,7 +5037,10 @@ void func_8010FDC4_2D52B4_name_43(void) {
     func_8010FD0C_2D51FC_name_43(2);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (t0-t2), as 3E's twin */
+/* register allocation (masked 0, raw 17): in the target menu loop the hoisted choice, 8 and 0x18
+   take t0/t2/t1 where retail has t1/t0/t2. The coins/stars test written as one || condition
+   replaced the goto ladder (masked 2 -> 0); a ?: on coins/stars changed control flow. */
+#ifdef NON_MATCHING
 /* Boo: for 5 coins steal coins (a minigame decides how many) or, for 50, a star from another
    player. Boo is one of the two board Boos (spaces 0xAF, 0xB4) or, elsewhere, a temporary one. */
 void func_8010FDE0_2D52D0_name_43(void) {
@@ -5149,19 +5152,11 @@ created:
                 if (i == gw->current_player_index) {
                     continue;
                 }
-                if (choice == 0) {
-                    if (gPlayers[i].coins != 0) {
-                        items[k] = 1;
-                        goto available;
-                    }
-                    goto unavailable;
-                } else if (gPlayers[i].stars == 0) {
-                unavailable:
+                if ((choice == 0 && gPlayers[i].coins == 0) || (choice != 0 && gPlayers[i].stars == 0)) {
                     items[k] = 0;
                     msgs[k][0] = 1;
                 } else {
                     items[k] = 1;
-                available:
                     msgs[k][0] = 8;
                 }
                 msgs[k][1] = 0x18;
