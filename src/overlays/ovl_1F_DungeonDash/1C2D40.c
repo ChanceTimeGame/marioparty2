@@ -603,12 +603,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108574
 #endif
 
 /* Hides the obstacles behind team t's camera, shows those ahead (bit t of the model flags). */
-// register allocation: retail hoists 1 << team into t0 and copies it per branch (MP1 func_800FB4F8's residue)
-#ifdef NON_MATCHING
 void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
     DDObstacle* o;
     u16 i;
-    s32 bit;
+    u16 bit;
 
     o = D_8010B2E4_1C6E64_DungeonDash;
     if (D_8010B2A6_1C6E26_DungeonDash == 0) {
@@ -618,7 +616,7 @@ void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
         if (o->unk0 != 0 && D_8010B2BC_1C6E3C_DungeonDash == 0) {
             if (o->z > z + 200.0) {
                 bit = 1 << team;
-                if (D_800FC834_FD434[o->unk6].unk01 & (u16)bit) {
+                if (D_800FC834_FD434[o->unk6].unk01 & bit) {
                     D_800FC834_FD434[o->unk6].unk01 ^= bit;
                     D_800FC834_FD434[o->unk8].unk01 ^= bit;
                 }
@@ -630,9 +628,6 @@ void func_80108A14_1C4594_DungeonDash(s32 team, f32 z) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_80108A14_1C4594_DungeonDash);
-#endif
 
 void func_80108B54_1C46D4_DungeonDash(s16 mdl) {
     f32 end;
