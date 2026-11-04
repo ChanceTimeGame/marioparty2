@@ -2169,8 +2169,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A1E4_386E94
 
 /* The world point `depth` in front of camera view `view` that shows at screen position `scr`
    (320x240). Retail flips y twice (240 - (240 - y)). No caller in the overlay. */
-#ifdef NON_MATCHING
-/* masked 0: float register allocation of the screen-ratio temporaries differs. */
 void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     f32 mtx[4][4];
     Vec pos;
@@ -2184,6 +2182,8 @@ void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     f32 w;
     f32 x;
     f32 y;
+    f32 sx;
+    f32 sy;
 
     v = &D_80114734_3913E4_name_5B[view];
     rx = v->rot.x;
@@ -2202,17 +2202,14 @@ void func_8010A53C_3871EC_name_5B(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     w = h * 1.3333334f;
     x = 320.0f - scr->unk_00;
     y = 240.0f - scr->unk_04;
-    x = x / 320.0f;
-    y = (240.0f - y) / 240.0f;
-    x = (w + w) * x - w;
-    y = (h + h) * y - h;
+    sx = x / 320.0f;
+    sy = (240.0f - y) / 240.0f;
+    x = (w + w) * sx - w;
+    y = (h + h) * sy - h;
     out->x = x * mtx[0][0] + y * mtx[0][1] + depth * mtx[0][2] + pos.x;
     out->y = x * mtx[1][0] + y * mtx[1][1] + depth * mtx[1][2] + pos.y;
     out->z = x * mtx[2][0] + y * mtx[2][1] + depth * mtx[2][2] + pos.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/37F4E0", func_8010A53C_3871EC_name_5B);
-#endif
 
 /* A point of model `model` in world space: its translation, rotation and scale applied under
    `mtx`, then the rows of the product summed (retail sums all four rows). */

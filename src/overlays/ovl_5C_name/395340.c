@@ -658,8 +658,6 @@ void func_801098E4_3977A4_name_5C(s16 unused, Vec* in, Vec2f* out) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_801098E4_3977A4_name_5C);
 #endif
 
-// register allocation: float registers, same as 5B 8010A53C (masked 0)
-#ifdef NON_MATCHING
 void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     f32 mtx[4][4];
     Vec pos;
@@ -673,6 +671,8 @@ void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     f32 w;
     f32 x;
     f32 y;
+    f32 sx;
+    f32 sy;
 
     v = &D_801129F0_3A08B0_name_5C[view];
     rx = v->rot.x;
@@ -691,17 +691,14 @@ void func_80109BEC_397AAC_name_5C(s16 view, f32 depth, Vec2f* scr, Vec* out) {
     w = h * 1.3333334f;
     x = 320.0f - scr->unk_00;
     y = 240.0f - scr->unk_04;
-    x = x / 320.0f;
-    y = (240.0f - y) / 240.0f;
-    x = (w + w) * x - w;
-    y = (h + h) * y - h;
+    sx = x / 320.0f;
+    sy = (240.0f - y) / 240.0f;
+    x = (w + w) * sx - w;
+    y = (h + h) * sy - h;
     out->x = x * mtx[0][0] + y * mtx[0][1] + depth * mtx[0][2] + pos.x;
     out->y = x * mtx[1][0] + y * mtx[1][1] + depth * mtx[1][2] + pos.y;
     out->z = x * mtx[2][0] + y * mtx[2][1] + depth * mtx[2][2] + pos.z;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/395340", func_80109BEC_397AAC_name_5C);
-#endif
 
 s16 func_80109EA4_397D64_name_5C(void) {
     s16 sprGrp;
