@@ -220,6 +220,8 @@ FRPlayer* func_801049FC_17C7AC_FiletRelay(FRPlayer* w) {
 }
 
 /* The solo penguin bumps the relay penguins. */
+// register allocation (masked 0, raw 4): retail sums the radii in f4, not f2. Tried: the comparison
+// reversed (masked 6), the float locals reordered (same), `if (p == NULL) continue;` (same).
 #ifdef NON_MATCHING
 void func_80104AE0_17C890_FiletRelay(FRPlayer* w) {
     Vec d;
