@@ -876,79 +876,78 @@ __asm__(".section .rodata");
 const u32 jtbl_801077D0_1863F0_Archerival[6] = { 0x80104990, 0x80104998, 0x801049A0, 0x801049A8, 0x801049B0, 0x801049B8 };
 #endif
 
-// NON_MATCHING: retail computes the character's table offsets earlier (masked 5, scheduling and registers)
-#ifdef NON_MATCHING
-void func_80104AEC_18370C_Archerival(omObjData* obj) {
-    MgWork* w;
-    s32 dir;
-    s32 file;
-    s16 i;
-    s8 chr;
+// decomp-permuter
+void func_80104AEC_18370C_Archerival(omObjData *obj)
+{
+  MgWork *w;
+  s32 dir;
+  s32 file;
+  s16 i;
+  s8 chr;
+  int new_var;
+  D_8010794C_18656C_Archerival = gPlayers[obj->work[0]].flags & 1;
+  chr = gPlayers[obj->work[0]].character;
+  D_801078F0_186510_Archerival = chr == 5;
+  dir = D_800CD438_CE038[chr].unk_04;
+  file = D_800CD438_CE038[chr].unk_0C;
+  D_801078EC_18650C_Archerival = D_801073B0_185FD0_Archerival[chr];
+  obj->unk_50 = func_80027154_27D54(0x15C, 0x7918);
+  func_800B0EF0_B1AF0(obj->unk_50, 0, 0x15C);
+  new_var = 0x270000;
+  w = obj->unk_50;
+  w->unk_E8 = func_80027154_27D54(obj->mtncnt * 0xC, 0x7918);
+  w->unk_57 = gPlayers[obj->work[0]].port;
+  obj->model[0] = LoadFormFile(dir | file, 0x6A9);
+  for (i = 0; i < 3; i++)
+  {
+    dir = D_801075F8_186218_Archerival[chr] << 16;
+    D_801078F8_186518_Archerival[i] = DataRead(dir | D_80107604_186224_Archerival[i]);
+  }
 
-    D_8010794C_18656C_Archerival = gPlayers[obj->work[0]].flags & 1;
-    chr = gPlayers[obj->work[0]].character;
-    D_801078F0_186510_Archerival = chr == 5;
-    dir = D_800CD438_CE038[chr].unk_04;
-    file = D_800CD438_CE038[chr].unk_0C;
-    D_801078EC_18650C_Archerival = D_801073B0_185FD0_Archerival[chr];
-    obj->unk_50 = func_80027154_27D54(0x15C, 0x7918);
-    func_800B0EF0_B1AF0(obj->unk_50, 0, 0x15C);
-    w = obj->unk_50;
-    w->unk_E8 = func_80027154_27D54(obj->mtncnt * 0xC, 0x7918);
-    w->unk_57 = gPlayers[obj->work[0]].port;
-    obj->model[0] = LoadFormFile(dir | file, 0x6A9);
-    for (i = 0; i < 3; i++) {
-        dir = D_801075F8_186218_Archerival[chr] << 16;
-        D_801078F8_186518_Archerival[i] = DataRead(dir | D_80107604_186224_Archerival[i]);
-    }
-    D_80107904_186524_Archerival = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_801078F8_186518_Archerival[0], 0,
-                                                       D_8010760C_18622C_Archerival[chr]);
-    func_80029A8C_2A68C(obj->model[0]);
-    func_80029AFC_2A6FC(obj->model[0]);
-    obj->model[1] = func_80018A30_19630(1, 0xA9);
-    HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
-    func_80029A8C_2A68C(obj->model[1]);
-    func_80029AFC_2A6FC(obj->model[1]);
-    func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 15.0f, 0.0f);
-    func_800298A4_2A4A4(obj->model[1], 0x60, 0x20);
-    func_800298A4_2A4A4(obj->model[1], 0x180, 0);
-    func_80018CCC_198CC(obj, 0, dir | D_801073EC_18600C_Archerival[chr][0].file);
-    func_80018CCC_198CC(obj, 1, dir | D_801073EC_18600C_Archerival[chr][1].file);
-    func_80018CCC_198CC(obj, 2, dir | D_801073EC_18600C_Archerival[chr][2].file);
-    func_80018CCC_198CC(obj, 3, dir | D_801073EC_18600C_Archerival[chr][3].file);
-    func_80018CCC_198CC(obj, 4, dir | D_801073EC_18600C_Archerival[chr][4].file);
-    func_80018CCC_198CC(obj, 5, dir | D_801073EC_18600C_Archerival[chr][7].file);
-    func_80018CCC_198CC(obj, 6, dir | D_801073EC_18600C_Archerival[chr][8].file);
-    w->unk_52 = 0;
-    w->unk_B4 = 1.0f;
-    w->unk_D0 = 0xFFFF;
-    w->unk_38 = 1000.0f;
-    w->unk_50 = 0;
-    func_80029B80_2A780(obj->model[0], obj->motion[0]);
-    func_80029C74_2A874(obj->model[0], 0.0f);
-    func_80029E80_2AA80(obj->model[0], 2, 2);
-    func_8000C024_CC24(obj, 0, 2);
-    obj->model[9] = LoadFormFile(0x270000 | D_801073EC_18600C_Archerival[chr][5].file, 0xAAD);
-    func_80023DAC_249AC(obj->model[9], D_80107598_1861B8_Archerival[chr].node[0], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[0]);
-    func_80029A8C_2A68C(obj->model[9]);
-    obj->model[10] = LoadFormFile(0x270000 | D_801073EC_18600C_Archerival[chr][6].file, 0xAAD);
-    func_80023DAC_249AC(obj->model[10], D_80107598_1861B8_Archerival[chr].node[1], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[1]);
-    func_80029A8C_2A68C(obj->model[10]);
-    obj->trans.x = 0.0f;
-    obj->trans.y = 0.0f;
-    obj->trans.z = 225.0f;
-    obj->rot.y = 180.0f;
-    D_80107958_186578_Archerival = obj->trans.y;
-    func_8010281C_18143C_Archerival(obj->work[0]);
-    func_80029EDC_2AADC(obj->model[0], 2);
-    func_80029EDC_2AADC(obj->model[1], 2);
-    func_80029EDC_2AADC(obj->model[9], 2);
-    func_80029EDC_2AADC(obj->model[10], 2);
-    obj->func_ptr = func_801040B0_182CD0_Archerival;
+  D_80107904_186524_Archerival = func_8003D8F0_3E4F0(D_800FC834_FD434[obj->model[0]].hmf, D_801078F8_186518_Archerival[0], 0, D_8010760C_18622C_Archerival[chr]);
+  func_80029A8C_2A68C(obj->model[0]);
+  func_80029AFC_2A6FC(obj->model[0]);
+  obj->model[1] = func_80018A30_19630(1, 0xA9);
+  HmfModelObjAttrSet(obj->model[1], 0x80000000, 0);
+  func_80029A8C_2A68C(obj->model[1]);
+  func_80029AFC_2A6FC(obj->model[1]);
+  func_800B1F50_B2B50(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 15.0f, 0.0f);
+  func_800298A4_2A4A4(obj->model[1], 0x60, 0x20);
+  func_800298A4_2A4A4(obj->model[1], 0x180, 0);
+  func_80018CCC_198CC(obj, 0, dir | D_801073EC_18600C_Archerival[chr][0].file);
+  func_80018CCC_198CC(obj, 1, dir | D_801073EC_18600C_Archerival[chr][1].file);
+  func_80018CCC_198CC(obj, 2, dir | D_801073EC_18600C_Archerival[chr][2].file);
+  func_80018CCC_198CC(obj, 3, dir | D_801073EC_18600C_Archerival[chr][3].file);
+  func_80018CCC_198CC(obj, 4, dir | D_801073EC_18600C_Archerival[chr][4].file);
+  func_80018CCC_198CC(obj, 5, dir | D_801073EC_18600C_Archerival[chr][7].file);
+  func_80018CCC_198CC(obj, 6, dir | D_801073EC_18600C_Archerival[chr][8].file);
+  w->unk_52 = 0;
+  w->unk_B4 = 1.0f;
+  w->unk_D0 = 0xFFFF;
+  w->unk_38 = 1000.0f;
+  w->unk_50 = 0;
+  func_80029B80_2A780(obj->model[0], obj->motion[0]);
+  func_80029C74_2A874(obj->model[0], 0.0f);
+  func_80029E80_2AA80(obj->model[0], 2, 2);
+  func_8000C024_CC24(obj, 0, 2);
+  obj->model[9] = LoadFormFile(new_var | D_801073EC_18600C_Archerival[chr][5].file, 0xAAD);
+  func_80023DAC_249AC(obj->model[9], D_80107598_1861B8_Archerival[chr].node[0], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[0]);
+  func_80029A8C_2A68C(obj->model[9]);
+  obj->model[10] = LoadFormFile(new_var | D_801073EC_18600C_Archerival[chr][6].file, 0xAAD);
+  func_80023DAC_249AC(obj->model[10], D_80107598_1861B8_Archerival[chr].node[1], obj->model[0], D_801075C8_1861E8_Archerival[chr].node[1]);
+  func_80029A8C_2A68C(obj->model[10]);
+  obj->trans.x = 0.0f;
+  obj->trans.y = 0.0f;
+  obj->trans.z = 225.0f;
+  obj->rot.y = 180.0f;
+  D_80107958_186578_Archerival = obj->trans.y;
+  func_8010281C_18143C_Archerival(obj->work[0]);
+  func_80029EDC_2AADC(obj->model[0], 2);
+  func_80029EDC_2AADC(obj->model[1], 2);
+  func_80029EDC_2AADC(obj->model[9], 2);
+  func_80029EDC_2AADC(obj->model[10], 2);
+  obj->func_ptr = func_801040B0_182CD0_Archerival;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80104AEC_18370C_Archerival);
-#endif
 
 void func_8010506C_183C8C_Archerival(void) {
     ARObj* tbl = D_80107920_186540_Archerival;
@@ -1310,47 +1309,56 @@ void func_80105E38_184A58_Archerival(omObjData* obj) {
 }
 
 // NON_MATCHING: retail copies the switch value first (Look Away's 80105B4C does the same), registers only
-#ifdef NON_MATCHING
-void func_80106064_184C84_Archerival(void) {
-    ARObj* p;
-    omObjData* o;
-    s32 slot;
-    s16 i;
-    s16 k;
-    s16 player;
+// decomp-permuter
+void func_80106064_184C84_Archerival(void)
+{
+  ARObj *p;
+  unsigned int new_var;
+  omObjData *o;
+  s32 slot;
+  s16 i;
+  s16 k;
+  s16 player;
+  D_801078DC_1864FC_Archerival = 4;
+  slot = 1;
+  for (i = 0; i < 4; i++)
+  {
+    if (D_8010794E_18656E_Archerival != i)
+    {
+      new_var = i;
+      p = &D_80107920_186540_Archerival[slot];
+      o = omAddObj(300, 2, 1, -1, func_80105E38_184A58_Archerival);
+      k = new_var;
+      switch (k)
+      {
+        case 1:
+          player = 1;
+          break;
 
-    D_801078DC_1864FC_Archerival = 4;
-    slot = 1;
-    for (i = 0; i < 4; i++) {
-        if (D_8010794E_18656E_Archerival != i) {
-            p = &D_80107920_186540_Archerival[slot];
-            o = omAddObj(300, 2, 1, -1, func_80105E38_184A58_Archerival);
-            k = i;
-            switch (k) {
-            case 1:
-                player = 1;
-                break;
-            case 2:
-                player = 2;
-                break;
-            case 3:
-                player = 3;
-                break;
-            case 0:
-            default:
-                player = 0;
-                break;
-            }
-            p->player = player;
-            o->work[0] = player;
-            p->obj = o;
-            slot++;
-        }
+        case 2:
+          player = 2;
+          break;
+
+        case 3:
+          player = 3;
+          break;
+
+        case 0:
+
+        default:
+          player = 0;
+          break;
+
+      }
+
+      p->player = player;
+      o->work[0] = player;
+      p->obj = o;
+      slot++;
     }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80106064_184C84_Archerival);
-#endif
 
 void func_8010618C_184DAC_Archerival(omObjData* obj) {
     ARObj* p;
