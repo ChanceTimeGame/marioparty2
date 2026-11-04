@@ -2824,19 +2824,16 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80
 #endif
 
 /* The screen position of esprite spr. */
-#ifdef NON_MATCHING
-/* masked 4: retail loads D_800F93FC after sign-extending spr and before the index
-   arithmetic; every C spelling tried schedules one or the other differently. */
-void func_8010B6B4_376DB4_MinigameParkSetup(s16 spr, s16* out) {
-    Ovl58Esprite* e;
-
-    e = (Ovl58Esprite*)D_800F93FC_F9FFC;
-    out[0] = e[spr].x;
-    out[1] = e[spr].y;
+// decomp-permuter
+void func_8010B6B4_376DB4_MinigameParkSetup(s16 spr, s16 *out)
+{
+  unsigned int new_var;
+  Ovl58Esprite *e;
+  new_var = spr;
+  e = (Ovl58Esprite *) D_800F93FC_F9FFC;
+  out[0] = e[spr].x;
+  out[1] = e[new_var].y;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010B6B4_376DB4_MinigameParkSetup);
-#endif
 
 
 __asm__(".section .rodata");
