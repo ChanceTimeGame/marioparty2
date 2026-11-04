@@ -214,7 +214,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A10F0", func_80108A1
 #endif
 
 /* Pumps the levers by the car's speed and pump power (MP1 func_800FDBC8). */
-// NON_MATCHING: retail keeps the lever model zero-extended and sign-extends it at each use (as MP1)
+// NON_MATCHING: retail keeps the lever model zero-extended (lhu) and sign-extends it at each use (as
+// MP1); masked 7. S3-Q07: pump holding the first call's step fixed the call order; u16 mdl and
+// mdl = (s16)mdl before the indexes did not move the lhu.
 #ifdef NON_MATCHING
 void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj) {
     HHCar* w;
@@ -222,7 +224,8 @@ void func_80108D5C_1A1AEC_HandcarHavoc(omObjData* obj) {
     s32 mdl;
 
     w = obj->unk_50;
-    func_80108E80_1A1C10_HandcarHavoc(obj->model[0], w->leverDir, fabs(w->speed) / 20.0);
+    pump = fabs(w->speed) / 20.0;
+    func_80108E80_1A1C10_HandcarHavoc(obj->model[0], w->leverDir, pump);
     pump = w->pump;
     mdl = obj->model[1];
     w->lever1Dir = func_80108E80_1A1C10_HandcarHavoc(mdl, w->lever1Dir, pump);
