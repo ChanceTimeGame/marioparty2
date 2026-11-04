@@ -591,7 +591,9 @@ void func_801047F0_225D20_TipsyTourney(void) {
     }
 }
 
-// scheduling: one sll before the lui of ContBtnTrg's address (masked 1, as in MP1)
+// scheduling: one sll before the lui of ContBtnTrg's address (masked 2, as in MP1). S3-Q01 tried:
+// &ContBtnTrg[player], player + ContBtnTrg, trg += player, the trg/btn assignment order, assignments in
+// the loads.
 #ifdef NON_MATCHING
 void func_80104AEC_22601C_TipsyTourney(omObjData* obj) {
     TipsyWork* work = obj->unk_50;

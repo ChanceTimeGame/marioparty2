@@ -560,7 +560,8 @@ void func_80103D64_20DCB4_TotemPolePound(TPPPlayer* p) {
     }
 }
 
-/* NON_MATCHING: register allocation only: anim and n swapped (s1/s2). */
+/* NON_MATCHING: register allocation only (masked 0): anim and n swapped (s1/s2). S3-Q01 tried: local
+   widths and order, n before anim in each case, snd initialised once, q assigned late, a block. */
 #ifdef NON_MATCHING
 void func_80103E24_20DD74_TotemPolePound(TPPPlayer* p) {
     TPPPole* q = &D_80108300_212250_TotemPolePound[p->obj->work[1]];
@@ -1371,7 +1372,9 @@ s32 func_801063D0_210320_TotemPolePound(TPPGame* g) {
     return ret;
 }
 
-/* NON_MATCHING: register allocation only: g and ret swapped (s0/s1). */
+/* NON_MATCHING: register allocation only (masked 0): g and ret swapped (s0/s1). S3-Q01 tried: ret
+   declared/initialised elsewhere and as s16/u8/u16, p in the flag branch, ret = 8 before the call,
+   the nwin test inverted. */
 #ifdef NON_MATCHING
 s32 func_801064CC_21041C_TotemPolePound(TPPGame* g) {
     TPPPlayer* p;

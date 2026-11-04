@@ -150,7 +150,8 @@ s16 func_80073014_73C14(u32 arg0, UnkPauseEntry* arg1) {
 
 /* Plays the queued voice entries: a character voice (unk05 < 4: that player's character) or a
    sound cycling through obj->work[0], then its volume (unk02) and pan (unk04). */
-// retail loads unk00 (lh) before unk06 for the second call's sound id (masked 2)
+// retail loads unk00 (lh) before unk06 for the second call's sound id (masked 2). S3-Q01 tried: every
+// operand order and grouping, casts, an s32 or unprototyped func_8007975C, snd as s32.
 #ifdef NON_MATCHING
 void func_80073124_73D24(omObjData* obj) {
     s32 i;

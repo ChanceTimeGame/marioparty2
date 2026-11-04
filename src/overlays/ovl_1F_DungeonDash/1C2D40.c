@@ -155,7 +155,8 @@ void func_80107350_1C2ED0_DungeonDash(void) {
 }
 
 /* The start banner: x is the split position (320 = full). */
-// register allocation only (the D_8010ABB8 load goes to v1 in retail)
+// register allocation only (masked 0; the D_8010ABB8 load goes to v1 in retail). S3-Q01 tried: `!f()`,
+// a nested else block, `-= 1`, grp inline/block-scoped/reused, an early return, an s16 copy of D_8010ABB8.
 #ifdef NON_MATCHING
 void func_80107358_1C2ED8_DungeonDash(s16 x) {
     s16* grp;
@@ -332,7 +333,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801078BC
 #endif
 
 /* The dungeon scenery: walls, gate, the far glow, six torches, the obstacles and the start banner. */
-// FPR allocation only (torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f arguments
+// FPR allocation only (masked 0; torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f
+// arguments. S3-Q01 tried: operand orders of the z expression (constants must stay 1000.0 and -550.0),
+// r as the (i + 2) >> 1 temporary, z before y.
 #ifdef NON_MATCHING
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj) {
     DDTorch* e;

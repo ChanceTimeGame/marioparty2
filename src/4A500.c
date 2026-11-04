@@ -67,7 +67,9 @@ Process* func_80049A38_4A638(Object* model, Vec3f* pos, Vec3f* vel, Vec3f* scale
     return process;
 }
 
-/* NON_MATCHING: register allocation only (masked 2). */
+/* NON_MATCHING: register allocation (masked 2): retail gives process s2, the /200 magic s3 and the
+   constant 3 s4, and the jitter product f2. S3-Q01 tried: `pos.x +=`, process/work assigned late,
+   velp initialised, Vec3f order, the rand spelling (no u8 cast, s32 casts, / 2.0f). */
 #ifdef NON_MATCHING
 /* MP1 func_8004246C (src/42E40.c, NON_MATCHING there): MP2 scales by the work's unk18 and adds
    type 3 (unit scale, no velocity). */
