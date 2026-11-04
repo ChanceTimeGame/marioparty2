@@ -191,10 +191,15 @@ void func_80102C14_2C0B94_PirateDuel(void) {
     Hu3DCamUpdateMtx(0);
 }
 
-/* NON_MATCHING: registers only (masked 0, raw 29): retail keeps i * 2 (the hook arrays' index) in s2
-   and the character's table offset in s3, GCC swaps them; everything else matches, the drop loop
-   included (written with gotos: a while/do loop gets its exit test copied to the top or loses the
-   values CSE carries out of it). */
+/* NON_MATCHING: register allocation (masked 0, raw 35; the rest of raw is split-label relocs and
+   uncarved rodata). Two residues: (1) retail keeps i * 2 (the hook arrays' index) in s2 and the
+   character's table offset in s3, GCC swaps them; `u8 chr` and a block-scoped chr do not move it.
+   (2) the drop loop: retail has the new jumpY in f2 and pos.y in f0, swapped here. A real loop
+   gives the right FP registers (loop-depth weighting; the permuter's best, 165 -> 115, wrapped the
+   tail in do/while(0)) but every loop spelling tried breaks the layout: while (1) with the tail
+   inside the `if` loses the rotated `j test` shape, and while (1)/break or a comma-expression
+   while gets its exit test copied to the top and loses the values CSE carries out. Neither
+   `-=` nor a reversed compare changes it. */
 /* The duel scene's flow: duelists and the referee walk in, the five sword moves are dealt, the opponent
    and the stake are chosen, then the duel (fork B's processes) decides D_80109DC8: 1 a draw, 2 the
    challenger wins, 3 the opponent; the winner takes both stakes. */
