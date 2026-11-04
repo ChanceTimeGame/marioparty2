@@ -489,29 +489,24 @@ const char D_8010A2A8_24DBB8_ShyGuySays[] = "NONE OBJ %d \012";
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103CC4_2475D4_ShyGuySays);
 #endif
 
-// register allocation: base load before the multiply (masked 2)
-#ifdef NON_MATCHING
+const char D_8010A2B8_24DBC8_ShyGuySays[] __attribute__((section(".rodata"))) = "Hmf %d > Can't find ObjName %s\n";
+
 s32 func_80103EB0_2477C0_ShyGuySays(s16 model, char* name) {
     HmfData* hmf = SGS_MODEL(model)->hmf;
-    HmfPart* part;
     s16 hash = func_8001F4AC_200AC(name);
     s16 i;
 
     for (i = 0; i < hmf->unk10; i++) {
-        part = &hmf->unk64[i];
-        if (part->unk08 == hash && func_800B0FD0_B1BD0(part->unk12, (const char*)&name) != 0) {
+        if (hmf->unk64[i].unk08 == hash && func_800B0FD0_B1BD0(hmf->unk64[i].unk12, (const char*)&name) != 0) {
             break;
         }
     }
     if (i == hmf->unk10) {
-        osSyncPrintf("Hmf %d > Can't find ObjName %s\n", model, name);
+        osSyncPrintf(D_8010A2B8_24DBC8_ShyGuySays, model, name);
         return -1;
     }
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103EB0_2477C0_ShyGuySays);
-#endif
 
 void func_80103FC0_2478D0_ShyGuySays(void) {
     u16 i;
