@@ -607,10 +607,7 @@ s16 func_801043D8_14DEF8_CraneGame(f32 arg0, f32 arg1, f32 arg2, s16 arg3) {
     return ret;
 }
 
-#ifdef NON_MATCHING
-/* Register allocation only: retail keeps the angle's double in $f20, this uses $f0. */
 f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b) {
-    f32 t;
     f32 best;
     s16 i;
 
@@ -620,13 +617,13 @@ f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b) {
             b->x = a->x;
             b->z = a->z;
         } else if (i < 17) {
-            t = i - 1;
-            t *= 22.5;
+            f32 t = (f32)(i - 1) * 22.5;
+
             b->x = a->x + func_800B7890_B8490(t) * 10.0 * 10.0;
             b->z = a->z + HuMathSin(t) * 10.0 * 10.0;
         } else {
-            t = i - 17;
-            t *= 22.5;
+            f32 t = (f32)(i - 17) * 22.5;
+
             b->x = a->x + func_800B7890_B8490(t) * 5.0 * 10.0;
             b->z = a->z + HuMathSin(t) * 5.0 * 10.0;
         }
@@ -640,9 +637,6 @@ f32 func_801044E0_14E000_CraneGame(Vec* a, Vec* b) {
     }
     return best;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/14C320", func_801044E0_14E000_CraneGame);
-#endif
 
 s16 func_801046E8_14E208_CraneGame(omObjData* obj) {
     s16 list[2][4]; /* [0] every free prize, [1] those from index 3 */
@@ -1200,7 +1194,9 @@ void func_8010646C_14FF8C_CraneGame(s16 n, Vec* v) {
 }
 
 #ifdef NON_MATCHING
-/* Float register allocation only (masked 0), as MP1's func_800F97D4. */
+/* Register allocation (masked 0, raw 25), as MP1's func_800F97D4: retail gives px $f26 and py $f30
+ * (here swapped) and puts px / l in px's register. Tried: px/py declaration order, dx/dz for the
+ * final direction (worse). */
 s16 func_80106568_150088_CraneGame(omObjData* obj) {
     f32 m1[4][4];
     f32 m2[4][4];

@@ -595,13 +595,14 @@ void func_8010359C_3A0F8C_name_5D(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_8010359C_3A0F8C_name_5D);
 #endif
 
-// register allocation (masked 9)
+// control flow/width (masked 7, 114 of 116): retail keeps an andi 0xff after each rand8() & 3 (in the
+// second call's delay slot); u8 j/k indices took it from masked 9, (u8)(rand8() % 4) did nothing.
 #ifdef NON_MATCHING
 void func_80103E58_3A1848_name_5D(s16 cat) {
     s16 teams[4]; /* never filled: retail's categories stop at 4, so this path never runs */
     s16 i;
-    s16* a;
-    s16* b;
+    u8 j;
+    u8 k;
     s16 tmp;
 
     D_800F9208_F9E08 = 0;
@@ -619,11 +620,11 @@ void func_80103E58_3A1848_name_5D(s16 cat) {
             return;
         }
         for (i = 0; i < 20; i++) {
-            a = &teams[rand8() & 3];
-            b = &teams[rand8() & 3];
-            tmp = *a;
-            *a = *b;
-            *b = tmp;
+            j = rand8() & 3;
+            k = rand8() & 3;
+            tmp = teams[j];
+            teams[j] = teams[k];
+            teams[k] = tmp;
         }
         for (i = 0; i < 4; i++) {
             gPlayers[i].group = teams[i];
