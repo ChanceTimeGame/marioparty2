@@ -3610,20 +3610,25 @@ s16 func_80015334_15F34(void) {
     return m->numDefs;
 }
 
-// register allocation: result and manager pointer in swapped registers (masked 3)
-#ifdef NON_MATCHING
-s32 func_8001535C_15F5C(void) {
-    SndMgr* m = func_80014AFC_156FC();
-    s32 ret = 0;
-
-    if (m != NULL) {
-        ret = m->active;
+// decomp-permuter
+s32 func_8001535C_15F5C(void)
+{
+  SndMgr *m = func_80014AFC_156FC();
+  s32 new_var;
+  s32 ret = 0;
+  if (m != 0)
+  {
+    if (m->active || ret)
+    {
+      ret = (new_var = m->active);
     }
-    return ret;
+    else
+    {
+      ret = (new_var = m->active);
+    }
+  }
+  return ret;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ECE0", func_8001535C_15F5C);
-#endif
 
 s32 func_80015388_15F88(s32 slot) {
     SndMgr* m = func_80014AFC_156FC();
