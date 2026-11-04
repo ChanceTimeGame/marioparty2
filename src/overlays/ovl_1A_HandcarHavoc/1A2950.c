@@ -154,8 +154,6 @@ void func_8010A440_1A31D0_HandcarHavoc(omObjData* obj) {
 }
 
 /* Slides the camera sideways for its timer (MP1 func_800FB994). */
-// NON_MATCHING: masked 2: the KMC mul fix puts a nop before the second mul.s (after a call with a filled delay slot); retail has none there
-#ifdef NON_MATCHING
 void func_8010A5B8_1A3348_HandcarHavoc(omObjData* obj) {
     HHCam* c;
     u16 cam;
@@ -168,9 +166,6 @@ void func_8010A5B8_1A3348_HandcarHavoc(omObjData* obj) {
         obj->func_ptr = NULL;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/1A2950", func_8010A5B8_1A3348_HandcarHavoc);
-#endif
 
 /* Clamps an angle step towards 0 to at most `step` either way (MP1 func_800FBFA0). */
 void func_8010A6A4_1A3434_HandcarHavoc(f32* a, f32 step) {
