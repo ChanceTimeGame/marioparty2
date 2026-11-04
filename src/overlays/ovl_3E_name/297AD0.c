@@ -1148,7 +1148,9 @@ void func_80102B54_297E24_name_3E(void) {
         func_800509C4_515C4(D_80111984_2A6C54_name_3E[gw->unk_1C]);
     }
 }
-/* D_80111974 address hoisted out of the loop (masked 10); logic matches */
+/* D_80111974 address hoisted out of the loop (masked 10); logic matches. Retail reads it as %hi + index,
+   %lo(sym)(reg) inside the loop. Tried (S3-Q02, twins 41/43/45/47/49 share it): for and while loops,
+   GwSystem written directly, MP3's MB1Ev_StarCheck shape (for with break, arrays indexed directly). */
 #ifdef NON_MATCHING
 s32 func_80102C3C_297F0C_name_3E(s32 space) {
     s32 i;
@@ -2637,7 +2639,9 @@ s32 func_80106FE0_29C2B0_name_3E(void) {
     return 0;
 }
 /* The minecart runs back along its chain; returns the players it ran over (bits).
-   NON_MATCHING: one instruction, retail tests next >= 0 as slti/bnez where this gives bltz (masked 8). */
+   NON_MATCHING: one instruction, retail tests next >= 0 as slti/bnez where this gives bltz (masked 8).
+   Tried (S3-Q02): next > -1, !(next < 0), continue on next < 0, one && with the distance test;
+   the unit's mul fix (on, or with blank lines stripped) does not change it. */
 #ifdef NON_MATCHING
 s32 func_801075F8_29C8C8_name_3E(void) {
     Vec dir;

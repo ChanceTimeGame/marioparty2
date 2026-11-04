@@ -540,7 +540,8 @@ void func_80103BF0_3D6110_TitleScreenAndIntro(Gfx** gfx) {
 }
 
 /* fill the current mask with value.
-   NON_MATCHING: retail loads D_801138A0 after the size's operands (scheduling only, masked 0). */
+   NON_MATCHING: retail loads D_801138A0 after the size's operands (scheduling only, masked 0).
+   Tried (S3-Q02): p declared/assigned after n (then too late), the product's operands swapped, / 4.0. */
 #ifdef NON_MATCHING
 void func_8010415C_3D667C_TitleScreenAndIntro(u8 value) {
     u32* p = (u32*)D_801138A0_3E5DC0_TitleScreenAndIntro;

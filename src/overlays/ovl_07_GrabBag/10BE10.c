@@ -333,31 +333,27 @@ void func_801032E0_10C8F0_GrabBag(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10BE10", func_801032E0_10C8F0_GrabBag);
 #endif
 
-/* NON_MATCHING: register allocation (class 4): i and the player work swap s0/s1 (masked 2) */
-#ifdef NON_MATCHING
+/* p is the search counter; the player's object is indexed directly (S3-Q02). */
 void func_8010364C_10CC5C_GrabBag(omObjData* obj) {
     GBItem* w;
     GBPlayer* pw;
-    omObjData** pp;
     Vec* v;
-    s32 i;
     s32 p;
     s32 j;
 
     obj->unk_50 = func_80027154_27D54(sizeof(GBItem), 0x7918);
     func_800B0EF0_B1AF0(obj->unk_50, 0, sizeof(GBItem));
     w = obj->unk_50;
-    for (i = 0; i < 0x100; i++) {
-        if (D_800F9CE0_FA8E0[i] == obj) {
+    for (p = 0; p < 0x100; p++) {
+        if (D_800F9CE0_FA8E0[p] == obj) {
             break;
         }
     }
-    p = i - 4;
-    pp = &D_800FFFD8_100BD8[p];
-    pw = (*pp)->unk_50;
+    p -= 4;
+    pw = D_800FFFD8_100BD8[p]->unk_50;
     D_8010A778_113D88_GrabBag[p] = func_801049F0_10E000_GrabBag(
         D_8010A330_113940_GrabBag[pw->unk_15C].x, D_8010A330_113940_GrabBag[pw->unk_15C].y,
-        D_8010A330_113940_GrabBag[pw->unk_15C].z, (*pp)->trans.x, (*pp)->trans.y, (*pp)->trans.z);
+        D_8010A330_113940_GrabBag[pw->unk_15C].z, D_800FFFD8_100BD8[p]->trans.x, D_800FFFD8_100BD8[p]->trans.y, D_800FFFD8_100BD8[p]->trans.z);
     obj->scale.x = obj->scale.y = obj->scale.z = 2.0f;
     v = D_8010A688_113C98_GrabBag[p];
     obj->trans.x = v->x = D_8010A330_113940_GrabBag[pw->unk_15C].x;
@@ -390,9 +386,6 @@ void func_8010364C_10CC5C_GrabBag(omObjData* obj) {
     func_800297E8_2A3E8(obj->model[10], 16.0f, 16.0f, 16.0f);
     obj->func_ptr = func_80103B00_10D110_GrabBag;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10BE10", func_8010364C_10CC5C_GrabBag);
-#endif
 
 
 /* NON_MATCHING: control flow then registers (class 3): a delay-slot steal gives retail one more jump before the first loop, and the tbl[p] address is computed after the chain position in the bounds tests; retail's local table is D_8010A530 (masked 93, the frame and calls agree) */

@@ -897,24 +897,20 @@ void func_801055F4_287804_TorpedoTargets(f32 r, f32 x, f32 y, f32 z) {
     }
 }
 
-/* Logic right, masked 0; retail swaps f20 and f24 for dx and dz. */
-#ifdef NON_MATCHING
+/* The deltas reuse the parameters (S3-Q02: separate dx/dy/dz locals swapped f20 and f24). */
 void func_8010578C_28799C_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
     TTSub* w = obj->unk_50;
     s32 other = w->team == 0;
     omObjData* sub = D_80109264_28B474_TorpedoTargets[other];
     f32 d;
-    f32 dz;
-    f32 dy;
-    f32 dx;
 
-    dx = sub->trans.x - x;
-    dy = sub->trans.y - y;
-    dz = sub->trans.z - z;
-    d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
+    x = sub->trans.x - x;
+    y = sub->trans.y - y;
+    z = sub->trans.z - z;
+    d = func_800B1830_B2430(x * x + y * y + z * z);
 
     if (d < 300.0f) {
-        func_80105398_2875A8_TorpedoTargets(dx, dy, dz, d - 300.0f);
+        func_80105398_2875A8_TorpedoTargets(x, y, z, d - 300.0f);
         if (w->bump == 0 && D_800F8FD0_F9BD0 == 1) {
             omVibrate(w->pilot, 0xA, 0, 0xA);
             omVibrate(w->gunner, 0xA, 0, 0xA);
@@ -922,9 +918,6 @@ void func_8010578C_28799C_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/284A10", func_8010578C_28799C_TorpedoTargets);
-#endif
 
 void func_801058A8_287AB8_TorpedoTargets(omObjData* obj, f32 x, f32 y, f32 z) {
     TTSub* w = obj->unk_50;
