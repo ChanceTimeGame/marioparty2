@@ -838,7 +838,8 @@ void func_80104EAC_193A4C_BobsledRun(omObjData* obj) {
 }
 
 /* Draw layer of a rider by distance to the other team's camera. */
-// float register allocation of the distance (as in MP1)
+// float register allocation of the distance (masked 0, raw 13; MP1 is NON_MATCHING too): retail loads
+// obj->trans into f2. Tried: s8 layer, the distance in a local, f32 locals declared first (no change).
 #ifdef NON_MATCHING
 void func_801050F8_193C98_BobsledRun(omObjData* obj) {
     Vec3f* c;
@@ -1504,7 +1505,9 @@ void func_801075C8_196168_BobsledRun(omObjData* obj) {
 }
 
 /* Mean of the last six stick samples, packed (x << 16) | y. */
-// register allocation (x/i swapped), as in MP1
+// register allocation (masked 0, raw 15; MP1 is NON_MATCHING too): retail keeps i in a1 and x in a0, and
+// adds the sample first (addu a2,v0,a2). Separate division statements took masked 2 to 0; MP1 declaration
+// order and `y = sample + y` change nothing.
 #ifdef NON_MATCHING
 s32 func_80107720_1962C0_BobsledRun(omObjData* obj) {
     s32 x;
@@ -1519,7 +1522,9 @@ s32 func_80107720_1962C0_BobsledRun(omObjData* obj) {
         x += ((s16*)&work->unk_74[i])[0];
         y += ((u16*)&work->unk_74[i])[1];
     }
-    return (((s16)x / 6) << 16) | (((s16)y / 6) & 0xFFFF);
+    x = (s16)x / 6;
+    y = (s16)y / 6;
+    return (x << 16) | (y & 0xFFFF);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107720_1962C0_BobsledRun);
