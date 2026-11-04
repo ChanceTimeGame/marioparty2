@@ -397,7 +397,8 @@ void func_8010E164_34E9C4_name_50(void) {
    background model D_80112618, circles the winner and leaves; the host walks in. Messages
    0x349-0x34E. */
 #ifdef NON_MATCHING
-/* Register residue only: the 16-frame walk's counter gets s0 (retail s1). */
+/* Register residue only (masked 0): the 16-frame walk's counter gets s0 (retail s1). Tried (S3-Q02):
+   i, r or win2 as its counter, the n/i/r declaration order. */
 void func_8010E478_34ECD8_name_50(void) {
     Vec v;
     Vec v2;
