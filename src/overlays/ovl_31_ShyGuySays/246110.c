@@ -489,29 +489,24 @@ const char D_8010A2A8_24DBB8_ShyGuySays[] = "NONE OBJ %d \012";
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103CC4_2475D4_ShyGuySays);
 #endif
 
-// register allocation: base load before the multiply (masked 2)
-#ifdef NON_MATCHING
+const char D_8010A2B8_24DBC8_ShyGuySays[] __attribute__((section(".rodata"))) = "Hmf %d > Can't find ObjName %s\n";
+
 s32 func_80103EB0_2477C0_ShyGuySays(s16 model, char* name) {
     HmfData* hmf = SGS_MODEL(model)->hmf;
-    HmfPart* part;
     s16 hash = func_8001F4AC_200AC(name);
     s16 i;
 
     for (i = 0; i < hmf->unk10; i++) {
-        part = &hmf->unk64[i];
-        if (part->unk08 == hash && func_800B0FD0_B1BD0(part->unk12, (const char*)&name) != 0) {
+        if (hmf->unk64[i].unk08 == hash && func_800B0FD0_B1BD0(hmf->unk64[i].unk12, (const char*)&name) != 0) {
             break;
         }
     }
     if (i == hmf->unk10) {
-        osSyncPrintf("Hmf %d > Can't find ObjName %s\n", model, name);
+        osSyncPrintf(D_8010A2B8_24DBC8_ShyGuySays, model, name);
         return -1;
     }
     return i;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80103EB0_2477C0_ShyGuySays);
-#endif
 
 void func_80103FC0_2478D0_ShyGuySays(void) {
     u16 i;
@@ -967,17 +962,14 @@ s16 func_801055D0_248EE0_ShyGuySays(void) {
     return 1;
 }
 
-// register allocation: (u16)i recomputed in retail (masked 1)
-#ifdef NON_MATCHING
+/* Retail reads .action through the label D_8010A5D4_24DEE4 (= D_8010A5D0[n].action); the call's
+   i & 0xFFFF (not a reused (u16)i) is what makes retail mask i again for the argument. */
 s16 func_8010568C_248F9C_ShyGuySays(s32 i, s16 answer) {
-    if (D_8010A5D0_24DEE0_ShyGuySays[(u16)i].active == 0 || D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == 0x200 || func_80109280_24CB90_ShyGuySays((u16)i) != 0) {
+    if (D_8010A5D0_24DEE0_ShyGuySays[(u16)i].active == 0 || D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == 0x200 || func_80109280_24CB90_ShyGuySays(i & 0xFFFF) != 0) {
         return 1;
     }
     return D_8010A5D0_24DEE0_ShyGuySays[(u16)i].action == answer;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_8010568C_248F9C_ShyGuySays);
-#endif
 
 void func_80105740_249050_ShyGuySays(u16 i) {
     s16 voices[6] = { 0x111, 0x112, 0x113, 0x114, 0x115, 0x116 };
@@ -2057,7 +2049,8 @@ void func_80108DCC_24C6DC_ShyGuySays(omObjData* target, f32 x, f32 y, f32 z) {
     }
 }
 
-// register allocation: f6/f8 (masked 0)
+// register allocation (masked 0, raw 18): proj takes $f8 (retail $f6). Tried (S3-P05): proj = -proj
+// as its own statement, the two early returns joined, d.x += proj + n.x; none moves it.
 #ifdef NON_MATCHING
 s32 func_80108FD4_24C8E4_ShyGuySays(omObjData* target, SGSShot* s) {
     f32 r = s->radius;

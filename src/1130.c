@@ -435,7 +435,8 @@ f32 func_80000E6C_1A6C(omObjData* obj, Vec4f* p, Vec3f* n) {
     return best;
 }
 
-// register allocation (masked 0): x/z and the 0.0f constant in other float registers
+// register allocation (masked 0, raw 6): the hoisted 0.0f outranks x/z (f30 vs retail f26). Tried
+// (S3-P05): 0.0f > d, local declaration order, nested if, split subtract; none moves it.
 #ifdef NON_MATCHING
 void func_80001468_2068(omObjData* obj, f32 x, f32 y, f32 z) {
     ColActorWork* w = obj->unk_50;
@@ -2323,7 +2324,8 @@ s16 DrawDebugText(u16 x, u16 y, char* str); /* MP1 print8 */
    MgWork.unk_104 ([0] first, [1] last, [20] for flags 0x200000), the spin state 0x100000, the
    states 0xC0000 and 0x1000, and moves several MP1 blocks into B6E0.c helpers. */
 // register allocation (masked 0): the cos * mag product in the 0x320 branch takes $f12 instead of
-// $f4, as in MP1's NON_MATCHING func_80005A28
+// $f4, as in MP1's NON_MATCHING func_80005A28 (raw 3). Tried (S3-P05): mag * f() operand order,
+// explicit x = x * 0.2f; neither moves it; MP3 has no ancestor.
 #ifdef NON_MATCHING
 void func_80007790_8390(omObjData* obj) {
     s16 sx;
@@ -2968,8 +2970,6 @@ void func_800097EC_A3EC(omObjData* obj) {
 
 /* MP1 func_80007B34: a player's attack (motion frames 16-20) against the other players and the
    item actors, then a wall push for the attack point. */
-// register allocation (masked 0): dx and dz swap $f20 / $f22
-#ifdef NON_MATCHING
 void func_800098D0_A4D0(omObjData* obj, f32 x, f32 y, f32 z) {
     Vec4f v;
     MgWork* w = obj->unk_50;
@@ -2981,6 +2981,7 @@ void func_800098D0_A4D0(omObjData* obj, f32 x, f32 y, f32 z) {
     f32 len;
     f32 nx, ny, nz;
     f32 dx, dy, dz;
+    f32 ang;
     u16 i;
 
     frame = func_80029E3C_2AA3C(*obj->model);
@@ -3049,16 +3050,12 @@ void func_800098D0_A4D0(omObjData* obj, f32 x, f32 y, f32 z) {
     v.w = w->unk_64;
     w->unk_55 = func_80006F34_7B34(obj, &v, -D_800BF7C0_C03C0);
     if (D_800BF796_C0396 != 0 && func_8000C098_CC98(D_800FD7F4_FE3F4) == 1) {
-        dx = func_800B75A8_B81A8(D_800F9D40_FA940[0].x - obj->trans.x, D_800F9D40_FA940[0].z - obj->trans.z);
-        func_800191D4_19DD4(obj, 6, nx, ny, nz, 0.0f, dx + 180.0f);
+        ang = func_800B75A8_B81A8(D_800F9D40_FA940[0].x - obj->trans.x, D_800F9D40_FA940[0].z - obj->trans.z);
+        func_800191D4_19DD4(obj, 6, nx, ny, nz, 0.0f, ang + 180.0f);
     }
     D_800BF796_C0396 = 0;
     D_800F94A0_FA0A0 = D_80101308_101F08 = 0.0f;
 }
-
-#else
-INCLUDE_ASM("asm/nonmatchings/1130", func_800098D0_A4D0);
-#endif
 
 /* Records contact normal number D_800BF796_C0396, normalised. */
 void func_80009DB0_A9B0(f32 x, f32 y, f32 z) {

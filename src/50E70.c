@@ -50,7 +50,9 @@ void func_800502D8_50ED8(void) {
 }
 
 /* MP3 F5E80.c's MBGuideCreate, an older shape: no matrix setup, a viewport offset pair and a
-   board-7 window position. NON_MATCHING: register swap in the window-position sums (masked 2). */
+   board-7 window position. NON_MATCHING: register allocation in the window-position sums (masked 2,
+   raw 7; retail computes arg1 + 0x50/0x5A in the branch delay slot into a1). Tried (S3-P05):
+   spriteGroup + y, the sums inlined without y, MP3's y = spriteGroup; y = y + 0x5A + arg1. */
 #ifdef NON_MATCHING
 UnkMBGuideData* func_80050304_50F04(void* arg0, s32 arg1) {
     UnkMBGuideData* guide = HuMemMemoryAllocTemp(sizeof(UnkMBGuideData));
