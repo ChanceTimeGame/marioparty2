@@ -1094,14 +1094,11 @@ void func_8010BF98_137B88_HotRopeJump(f32 a) {
 
 /* out = (x, y, z, 1) * m (MP1 func_800FE3B4; MP1 SlotMachine func_800FCBFC).
    NON_MATCHING: masked 3, as MP1's: retail keeps out + 4 in a register */
-#ifdef NON_MATCHING
-void func_8010C074_137C64_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec* out) {
-    f32* o = (f32*)out;
-
-    *o++ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-    o[0] = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-    o[1] = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+// decomp-permuter
+void func_8010C074_137C64_HotRopeJump(Matrix4f m, f32 x, f32 y, f32 z, Vec *out)
+{
+  f32 *o = (f32 *) out;
+ do { *(o++) = (((x * m[0][0]) + (y * m[1][0])) + (z * m[2][0])) + m[3][0]; } while (0);
+  o[0] = (((x * m[0][1]) + (y * m[1][1])) + (z * m[2][1])) + m[3][1];
+  o[1] = (((x * m[0][2]) + (y * m[1][2])) + (z * m[2][2])) + m[3][2];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_8010C074_137C64_HotRopeJump);
-#endif

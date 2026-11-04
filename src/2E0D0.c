@@ -320,73 +320,78 @@ void func_8002DF2C_2EB2C(HmfModel* m, Matrix4f mtx) {
 }
 
 /* NON_MATCHING: register allocation (masked 0): the model and the grid index swap s3/s4. */
-#ifdef NON_MATCHING
-/* MP1 func_80029DB8 (src/29C90.c): draw the grid cells within rx/rz of the view point.
-   MP2 first hands the model's lights to its data. */
-void func_8002E1F8_2EDF8(HitViewCells* view, HmfModel* m) {
-    Matrix4f mtx;
-    Matrix4f ident;
-    s32* rp;
-    s32 x0;
-    s32 x1;
-    s32 z0;
-    s32 z1;
-    s32 x;
-    s32 z;
-    s32 idx;
-    s16 id;
-    s16 gi;
+// decomp-permuter
+void func_8002E1F8_2EDF8(HitViewCells *view, HmfModel *m)
+{
+  Matrix4f mtx;
+  Matrix4f ident;
+  s32 *rp;
+  s32 x0;
+  s32 x1;
+  s32 z0;
+  s32 z1;
+  s32 x;
+  s32 z;
+  s32 idx;
+  s16 id;
+  s16 gi;
+  m->hmf->unkD0 = m->unkB4;
+  rp = &view->rx;
+  if (m->unkB4 != 0)
+  {
+    func_80026F00_27B00(m->unkB4);
+  }
+  gi = m->unk10;
+  func_8002DF2C_2EB2C(m, mtx);
+  guMtxIdentF(ident);
+  x = abs((((((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f) + view->x) + m->pos.x) - ((2.0f * HuMathSin(view->angle)) * D_800FD2B8_FDEB8[gi].cw)) / D_800FD2B8_FDEB8[gi].cw);
+  z = abs((((((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f) + view->z) + m->pos.z) - ((2.0f * func_800B7890_B8490(view->angle)) * D_800FD2B8_FDEB8[gi].ch)) / D_800FD2B8_FDEB8[gi].ch);
+  x0 = x - rp[0];
+  x1 = (x + rp[0]) + 1;
+  z0 = z - rp[1];
+  z1 = (z + rp[1]) + 1;
+  if (x0 < 0)
+  {
+    x0 = 0;
+  }
+  if (z0 < 0)
+  {
+    z0 = 0;
+  }
+  if (D_800FD2B8_FDEB8[gi].w < x1)
+  {
+    x1 = D_800FD2B8_FDEB8[gi].w;
+  }
+  if (D_800FD2B8_FDEB8[gi].h < z1)
+  {
+    z1 = D_800FD2B8_FDEB8[gi].h;
+  }
+  for (z = z0; z < z1; z++)
+  {
+    for (x = x0; x < x1; x++)
+    {
+      idx = (z * D_800FD2B8_FDEB8[gi].w) + x;
+      id = D_800FD2B8_FDEB8[gi].map0[idx];
+      if (id != (-1))
+      {
+        func_80031FD8_32BD8(m->hmf, id, ((u8 *) D_800FD83C_FE43C) + (D_800F928C_F9E8C * 0x40), mtx);
+      }
+      id = D_800FD2B8_FDEB8[gi].map1[idx];
+      if (id != (-1))
+      {
+        func_80031FD8_32BD8(m->hmf, id, ((u8 *) D_800FD83C_FE43C) + (D_800F928C_F9E8C * 0x40), mtx);
+      }
+      id = D_800FD2B8_FDEB8[gi].map2[idx];
+      if (id != (-1))
+      {
+ do { func_80031FD8_32BD8(m->hmf, id, ((u8 *) D_800FD83C_FE43C) + (D_800F928C_F9E8C * 0x40), mtx); } while (0);
+      }
+    }
 
-    m->hmf->unkD0 = m->unkB4;
-    rp = &view->rx;
-    if (m->unkB4 != NULL) {
-        func_80026F00_27B00(m->unkB4);
-    }
-    gi = m->unk10;
-    func_8002DF2C_2EB2C(m, mtx);
-    guMtxIdentF(ident);
-    x = abs(((D_800FD2B8_FDEB8[gi].w * D_800FD2B8_FDEB8[gi].cw) / 2.0f + view->x + m->pos.x -
-             2.0f * HuMathSin(view->angle) * D_800FD2B8_FDEB8[gi].cw) / D_800FD2B8_FDEB8[gi].cw);
-    z = abs(((D_800FD2B8_FDEB8[gi].h * D_800FD2B8_FDEB8[gi].ch) / 2.0f + view->z + m->pos.z -
-             2.0f * func_800B7890_B8490(view->angle) * D_800FD2B8_FDEB8[gi].ch) / D_800FD2B8_FDEB8[gi].ch);
-    x0 = x - rp[0];
-    x1 = x + rp[0] + 1;
-    z0 = z - rp[1];
-    z1 = z + rp[1] + 1;
-    if (x0 < 0) {
-        x0 = 0;
-    }
-    if (z0 < 0) {
-        z0 = 0;
-    }
-    if (D_800FD2B8_FDEB8[gi].w < x1) {
-        x1 = D_800FD2B8_FDEB8[gi].w;
-    }
-    if (D_800FD2B8_FDEB8[gi].h < z1) {
-        z1 = D_800FD2B8_FDEB8[gi].h;
-    }
-    for (z = z0; z < z1; z++) {
-        for (x = x0; x < x1; x++) {
-            idx = z * D_800FD2B8_FDEB8[gi].w + x;
-            id = D_800FD2B8_FDEB8[gi].map0[idx];
-            if (id != -1) {
-                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
-            }
-            id = D_800FD2B8_FDEB8[gi].map1[idx];
-            if (id != -1) {
-                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
-            }
-            id = D_800FD2B8_FDEB8[gi].map2[idx];
-            if (id != -1) {
-                func_80031FD8_32BD8(m->hmf, id, (u8*)D_800FD83C_FE43C + D_800F928C_F9E8C * 0x40, mtx);
-            }
-        }
-    }
-    D_800F928C_F9E8C++;
+  }
+
+  D_800F928C_F9E8C++;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/2E0D0", func_8002E1F8_2EDF8);
-#endif
 
 /* NON_MATCHING: register allocation (view and model swap saved registers, as in MP1; masked 1). */
 #ifdef NON_MATCHING
