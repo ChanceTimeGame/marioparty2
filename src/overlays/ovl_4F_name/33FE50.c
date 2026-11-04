@@ -72,47 +72,53 @@ omObjData* func_8010D4D8_340118_name_4F(void) {
 
 /* NON_MATCHING: retail hoists the 0xE3000A01 (cycle type) word out of the loop with the other
    constants; everything else matches. */
-#ifdef NON_MATCHING
-void func_8010D528_340168_name_4F(omObjData* obj) {
-    Gfx* gfx;
-    Vtx* vtx;
-    s32 i;
-    s32 rest;
-    s32 n;
-    s32 base;
-    s32 k;
-    u8 slot = obj->work[1];
+// decomp-permuter
+void func_8010D528_340168_name_4F(omObjData *obj)
+{
+  Gfx *gfx;
+  Vtx *vtx;
+  s32 i;
+  s32 rest;
+  s32 n;
+  s32 base;
+  s32 k;
+  unsigned long slot = obj->work[1];
+  Gfx *new_var;
+  for (i = 0; i < D_800FDBCA_FE7CA; i++)
+  {
+    gfx = D_801104E0_343120_name_4F[slot][i];
+    vtx = D_80110460_3430A0_name_4F[slot][i];
+    rest = 48;
+    gDPPipeSync(gfx++);
+    gDPSetCycleType(gfx++, G_CYC_1CYCLE);
+    gDPSetRenderMode(gfx++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+    gSPClearGeometryMode(gfx++, G_LIGHTING);
+    gDPSetCombineMode(gfx++, G_CC_SHADE, G_CC_SHADE);
+    gSPTexture(gfx++, 0, 0x8000, 0, G_TX_RENDERTILE, G_OFF);
+    base = 0;
+    do
+    {
+      n = rest;
+      if (rest >= 30)
+      {
+        n = 30;
+      }
+      rest -= n;
+      gSPVertex(gfx++, &vtx[base], n, 0);
+      for (k = 0; k < n; k += 3)
+      {
+        new_var = gfx++;
+        gSP1Triangle(new_var, k, k + 1, k + 2, 0);
+      }
 
-    for (i = 0; i < D_800FDBCA_FE7CA; i++) {
-        gfx = D_801104E0_343120_name_4F[slot][i];
-        vtx = D_80110460_3430A0_name_4F[slot][i];
-        rest = 48;
-        gDPPipeSync(gfx++);
-        gDPSetCycleType(gfx++, G_CYC_1CYCLE);
-        gDPSetRenderMode(gfx++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-        gSPClearGeometryMode(gfx++, G_LIGHTING);
-        gDPSetCombineMode(gfx++, G_CC_SHADE, G_CC_SHADE);
-        gSPTexture(gfx++, 0, 0x8000, 0, G_TX_RENDERTILE, G_OFF);
-        base = 0;
-        do {
-            n = rest;
-            if (rest >= 30) {
-                n = 30;
-            }
-            rest -= n;
-            gSPVertex(gfx++, &vtx[base], n, 0);
-            for (k = 0; k < n; k += 3) {
-                gSP1Triangle(gfx++, k, k + 1, k + 2, 0);
-            }
-            base += n;
-        } while (rest != 0);
-        gDPPipeSync(gfx++);
-        gSPEndDisplayList(gfx++);
+      base += n;
     }
+    while (rest != 0);
+    gDPPipeSync(gfx++);
+    gSPEndDisplayList(gfx++);
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/33FE50", func_8010D528_340168_name_4F);
-#endif
 
 /* NON_MATCHING: the colour fade clamps (max 0) differ: retail sign-extends the green and blue
    differences as s16 before the clamp and orders the first and differently. Logic checked. */

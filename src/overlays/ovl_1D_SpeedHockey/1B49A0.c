@@ -501,30 +501,34 @@ void func_80103B94_1B5CE4_SpeedHockey(omObjData* obj, SHObjWork* w) {
     omSetTra(obj, w->pos.x, w->pos.y, w->pos.z);
 }
 
-#ifdef NON_MATCHING
-/* masked 6: retail computes the sprite index team * 3 - 1 + score + 3 unfolded before scaling; GCC here folds -1 + 3 into the load offset */
-/* Puck state 2: a goal for team goal - 2; the third ends the game. */
-void func_80103CB0_1B5E00_SpeedHockey(omObjData* obj, SHObjWork* w) {
-    s32 team = w->goal - 2;
-
-    if (++w->score[team] >= 3) {
-        func_80106580_1B86D0_SpeedHockey(team);
-        func_80106554_1B86A4_SpeedHockey(3);
-    } else {
-        w->state = 3;
-    }
-    func_800B3170_B3D70(&w->pos, &w->prev);
-    w->speed = 0.0f;
-    if (team == 0) {
-        func_800798F8_7A4F8(PlaySound(0x21D), 0x20);
-    } else {
-        func_800798F8_7A4F8(PlaySound(0x21D), 0x60);
-    }
-    espDispOn(D_80106CA4_1B8DF4_SpeedHockey[team * 3 - 1 + w->score[team] + 3]);
+// decomp-permuter
+void func_80103CB0_1B5E00_SpeedHockey(omObjData *obj, SHObjWork *w)
+{
+  int new_var2;
+  int new_var;
+  s32 team = w->goal - 2;
+  if (3 <= (++w->score[team]))
+  {
+    func_80106580_1B86D0_SpeedHockey(team);
+    func_80106554_1B86A4_SpeedHockey(3);
+  }
+  else
+  {
+    w->state = 3;
+  }
+  func_800B3170_B3D70(&w->pos, &w->prev);
+  w->speed = 0.0f;
+  new_var2 = 1;
+  if (team == 0)
+  {
+    func_800798F8_7A4F8(PlaySound(0x21D), 0x20);
+  }
+  else
+  {
+    func_800798F8_7A4F8(PlaySound(0x21D), 0x60);
+  }
+  espDispOn(D_80106CA4_1B8DF4_SpeedHockey[(((team * (new_var = 3)) - new_var2) + w->score[team]) + 3]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B49A0", func_80103CB0_1B5E00_SpeedHockey);
-#endif
 
 /* Puck state 3: back to the centre spot after 31 frames. */
 void func_80103D9C_1B5EEC_SpeedHockey(omObjData* obj, SHObjWork* w) {

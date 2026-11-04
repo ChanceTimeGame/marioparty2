@@ -915,32 +915,31 @@ void func_801059EC_1D2D4C_FaceLift(void) {
 }
 
 // scheduling (the D_8010274C_10334C base load)
-#ifdef NON_MATCHING
-void func_80105DB0_1D3110_FaceLift(omObjData* obj) {
-    Vec eye;
-    Vec at;
-    Vec up;
-    f32 rx = D_800FD474_FE074.x;
-    f32 ry = D_800FD474_FE074.y;
-    s16 i;
+// decomp-permuter
+void func_80105DB0_1D3110_FaceLift(omObjData *obj)
+{
+  Vec eye;
+  Vec at;
+  Vec up;
+  f32 rx = D_800FD474_FE074.x;
+  f32 ry = D_800FD474_FE074.y;
+  s16 i;
+  eye.x = D_8010274C_10334C.x + ((HuMathSin(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  eye.y = ((-HuMathSin(rx)) * D_800FA610_FB210) + D_8010274C_10334C.y;
+  eye.z = ((func_800B7890_B8490(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210) + D_8010274C_10334C.z;
+  at.x = D_8010274C_10334C.x;
+  at.y = D_8010274C_10334C.y;
+  at.z = D_8010274C_10334C.z;
+  up.x = HuMathSin(ry) * HuMathSin(rx);
+  up.y = func_800B7890_B8490(rx);
+  up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+  for (i = 0; i < 5; i++)
+  {
+    Hu3DCamSetPositionOrientation(i, &eye, &at, &up);
+    Hu3DCamUpdateMtx(i);
+  }
 
-    eye.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
-    eye.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
-    eye.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
-    at.x = D_8010274C_10334C.x;
-    at.y = D_8010274C_10334C.y;
-    at.z = D_8010274C_10334C.z;
-    up.x = HuMathSin(ry) * HuMathSin(rx);
-    up.y = func_800B7890_B8490(rx);
-    up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
-    for (i = 0; i < 5; i++) {
-        Hu3DCamSetPositionOrientation(i, &eye, &at, &up);
-        Hu3DCamUpdateMtx(i);
-    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_FaceLift/1CFB60", func_80105DB0_1D3110_FaceLift);
-#endif
 
 s32 func_80105F24_1D3284_FaceLift(s16 player, Vec* pos) {
     f32 mtx[4][4];
@@ -1691,38 +1690,42 @@ void func_80108B78_1D5ED8_FaceLift(s16 id) {
 }
 
 // scheduling (the sign extension of the tens digit)
-#ifdef NON_MATCHING
-void func_80108BD4_1D5F34_FaceLift(s16 id, s32 val) {
-    u16 v = val;
-    s32 q;
-    s16 hundreds = 0;
-
-    if ((s16)val >= 100) {
-        SprAttrReset(id, 0, 0x8000);
-        func_800822A8_82EA8(id, 0, 1, 0);
-        func_8008225C_82E5C(id, 0, 1);
-        v = val - 100;
-        hundreds = 1;
-    } else {
-        SprAttrSet(id, 0, 0x8000);
-    }
-    if (hundreds != 0 || (s16)v / 10 != 0) {
-        SprAttrReset(id, 1, 0x8000);
-        q = (s16)v / 10;
-        func_800822A8_82EA8(id, 1, q, 0);
-        func_8008225C_82E5C(id, 1, 1);
-        v -= (s16)q * 10;
-    } else {
-        SprAttrSet(id, 1, 0x8000);
-    }
-    SprAttrReset(id, 2, 0x8000);
-    func_800822A8_82EA8(id, 2, v, 0);
-    func_8008225C_82E5C(id, 2, 1);
-    SprAttrReset(id, 3, 0x8000);
+// decomp-permuter
+void func_80108BD4_1D5F34_FaceLift(s16 id, s32 val)
+{
+  u16 v = val;
+  s32 q;
+  s16 hundreds = 0;
+  if (((s16) val) >= 100)
+  {
+    SprAttrReset(id, 0, 0x8000);
+    func_800822A8_82EA8(id, 0, 1, 0);
+    func_8008225C_82E5C(id, 0, 1);
+    v = val - 100;
+    hundreds = 1;
+  }
+  else
+  {
+    SprAttrSet(id, 0, 0x8000);
+  }
+  if ((hundreds != 0) || ((((s16) v) / 10) != 0))
+  {
+    SprAttrReset(id, 1, 0x8000);
+    q = (s16) v;
+    q = q / 10;
+    func_800822A8_82EA8(id, 1, q, 0);
+    func_8008225C_82E5C(id, 1, 1);
+    v -= ((s16) q) * 10;
+  }
+  else
+  {
+    SprAttrSet(id, 1, 0x8000);
+  }
+  SprAttrReset(id, 2, 0x8000);
+  func_800822A8_82EA8(id, 2, v, 0);
+  func_8008225C_82E5C(id, 2, 1);
+  SprAttrReset(id, 3, 0x8000);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_FaceLift/1CFB60", func_80108BD4_1D5F34_FaceLift);
-#endif
 
 void func_80108D94_1D60F4_FaceLift(s16 id, s16 val) {
     s16 i;

@@ -574,29 +574,25 @@ void func_801040C4_269074_LooneyLumberjacks(f32 cx, f32 cy, f32 cz, f32 rx, f32 
     }
 }
 
-// register allocation (masked 8), class 4
-#ifdef NON_MATCHING
-void func_801042B4_269264_LooneyLumberjacks(s32 idx) {
-    HuCamera* cam;
-    f32 rx;
-    f32 ry;
-
-    cam = &D_800C9B80_CA780[idx];
-    rx = D_800FD474_FE074.x;
-    ry = D_800FD474_FE074.y;
-    cam->pos.x = HuMathSin(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.x;
-    cam->pos.y = -HuMathSin(rx) * D_800FA610_FB210 + D_8010274C_10334C.y;
-    cam->pos.z = func_800B7890_B8490(ry) * func_800B7890_B8490(rx) * D_800FA610_FB210 + D_8010274C_10334C.z;
-    cam->at.x = D_8010274C_10334C.x;
-    cam->at.y = D_8010274C_10334C.y;
-    cam->at.z = D_8010274C_10334C.z;
-    cam->up.x = HuMathSin(ry) * HuMathSin(rx);
-    cam->up.y = func_800B7890_B8490(rx);
-    cam->up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
+// decomp-permuter
+void func_801042B4_269264_LooneyLumberjacks(s32 idx)
+{
+  HuCamera *cam;
+  f32 rx;
+  f32 ry;
+  cam = &D_800C9B80_CA780[idx];
+  rx = D_800FD474_FE074.x;
+  ry = D_800FD474_FE074.y;
+  cam->pos.x = D_8010274C_10334C.x + ((HuMathSin(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210);
+  cam->pos.y = ((-HuMathSin(rx)) * D_800FA610_FB210) + D_8010274C_10334C.y;
+  cam->pos.z = ((func_800B7890_B8490(ry) * func_800B7890_B8490(rx)) * D_800FA610_FB210) + D_8010274C_10334C.z;
+  cam->at.x = D_8010274C_10334C.x;
+  cam->at.y = D_8010274C_10334C.y;
+  cam->at.z = D_8010274C_10334C.z;
+  cam->up.x = HuMathSin(ry) * HuMathSin(rx);
+  cam->up.y = func_800B7890_B8490(rx);
+  cam->up.z = func_800B7890_B8490(ry) * HuMathSin(rx);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801042B4_269264_LooneyLumberjacks);
-#endif
 
 void func_80104410_2693C0_LooneyLumberjacks(void) {
     D_8010B04C_26FFFC_LooneyLumberjacks = 1.0f;
@@ -1799,59 +1795,66 @@ s32 func_80107FE8_26CF98_LooneyLumberjacks(s32 anim, Vec* pos, Vec* vel) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80107FE8_26CF98_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 6), class 4
-#ifdef NON_MATCHING
-void func_8010815C_26D10C_LooneyLumberjacks(Vec* pos, s32 kind) {
-    Vec p;
-    f32* base;
-    f32* size;
-    s32 i;
-    s32 fx;
-
-    for (i = 0; i < 3; i++) {
-        base = D_8010A8A8_26F858_LooneyLumberjacks;
-        size = &base[kind];
-        p.x = D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].x * *size + pos->x;
-        p.y = D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].y * *size + pos->y;
-        p.z = D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].z * *size + pos->z;
-        if (kind == 0) {
-            fx = func_80107FE8_26CF98_LooneyLumberjacks(-1, &p, NULL);
-        } else {
-            fx = func_80107FE8_26CF98_LooneyLumberjacks(-1, &p, &D_8010A884_26F834_LooneyLumberjacks[i]);
-        }
-        if (fx >= 0) {
-            SprScaleSet((s16)D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, *size, *size);
-            func_800824B4_830B4((s16)D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, 0xFF, 0xFF, 0xBE, 0x40);
-        }
+// decomp-permuter
+void func_8010815C_26D10C_LooneyLumberjacks(Vec *pos, s32 kind)
+{
+  Vec p;
+  f32 new_var;
+  f32 *base;
+  f32 *size;
+  s32 i;
+  s32 fx;
+  for (i = 0; i < 3; i++)
+  {
+    new_var = D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].x;
+    base = D_8010A8A8_26F858_LooneyLumberjacks;
+    size = &base[kind];
+    p.x = (new_var * (*size)) + pos->x;
+    p.y = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].y * (*size)) + pos->y;
+    p.z = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].z * (*size)) + pos->z;
+    if (kind == 0)
+    {
+      fx = func_80107FE8_26CF98_LooneyLumberjacks(-1, &p, 0);
     }
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_8010815C_26D10C_LooneyLumberjacks);
-#endif
-
-// register allocation (masked 6), class 4
-#ifdef NON_MATCHING
-void func_801082E8_26D298_LooneyLumberjacks(void) {
-    omObjData* obj;
-    HuSprite_Unk84_Struct* spr;
-    s32 i;
-
-    D_8010AF4C_26FEFC_LooneyLumberjacks[4] = func_80107D50_26CD00_LooneyLumberjacks(0x45000A);
-    spr = SprAnimGet(D_8010AF4C_26FEFC_LooneyLumberjacks[4]);
-    obj = D_8010AF34_26FEE4_LooneyLumberjacks = omAddObj(0x1D, 13, 0, -1, func_80108418_26D3C8_LooneyLumberjacks);
-    for (i = 1; i < 13; i++) {
-        if (i == 1) {
-            obj->model[1] = func_80109164_26E114_LooneyLumberjacks(spr, 1.0f);
-        } else {
-            obj->model[i] = func_80109D94_26ED44_LooneyLumberjacks(spr, obj->model[1], 1.0f);
-        }
-        func_800298A4_2A4A4(obj->model[i], 4, 4);
-        D_800FC834_FD434[obj->model[i]].unk40 = 0.0f;
+    else
+    {
+      fx = func_80107FE8_26CF98_LooneyLumberjacks(-1, &p, &D_8010A884_26F834_LooneyLumberjacks[i]);
     }
+    if (fx >= 0)
+    {
+      SprScaleSet((s16) D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, *size, *size);
+      func_800824B4_830B4((s16) D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, 0xFF, 0xFF, 0xBE, 0x40);
+    }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801082E8_26D298_LooneyLumberjacks);
-#endif
+
+// decomp-permuter
+void func_801082E8_26D298_LooneyLumberjacks(void)
+{
+  HmfModel *new_var;
+  omObjData *obj;
+  HuSprite_Unk84_Struct *spr;
+  int i;
+  D_8010AF4C_26FEFC_LooneyLumberjacks[4] = func_80107D50_26CD00_LooneyLumberjacks(0x45000A);
+  spr = SprAnimGet(D_8010AF4C_26FEFC_LooneyLumberjacks[4]);
+  obj = (D_8010AF34_26FEE4_LooneyLumberjacks = omAddObj(0x1D, 13, 0, -1, func_80108418_26D3C8_LooneyLumberjacks));
+  for (i = 1; i < 13; i++)
+  {
+    if (i == 1)
+    {
+      obj->model[1] = func_80109164_26E114_LooneyLumberjacks(spr, 1.0f);
+    }
+    else
+    {
+      obj->model[i] = func_80109D94_26ED44_LooneyLumberjacks(spr, obj->model[1], 1.0f);
+    }
+    func_800298A4_2A4A4(obj->model[i], (double) 4, 4);
+    new_var = D_800FC834_FD434 + obj->model[i];
+    new_var->unk40 = 0.0f;
+  }
+
+}
 
 void func_80108418_26D3C8_LooneyLumberjacks(omObjData* obj) {
     HuSprite_Unk84_Struct* spr;
@@ -2234,26 +2237,24 @@ s32 func_80109D94_26ED44_LooneyLumberjacks(HuSprite_Unk84_Struct* spr, u16 src, 
     return mdl;
 }
 
-// register allocation (masked 6), class 4
-#ifdef NON_MATCHING
-void func_8010A014_26EFC4_LooneyLumberjacks(u16 mdl, HuSprite_Unk84_Struct* spr, u16 frame, f32 alpha) {
-    HmfData* hmf;
-    Gfx* gfx;
-
-    hmf = D_800FC834_FD434[mdl].hmf;
-    gfx = hmf->unk3C->unk00[0] = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1];
-    gDPPipeSync(gfx++);
-    gSPSegment(gfx++, 0x04, osVirtualToPhysical(spr->unk00[frame].unk00));
-    gSPDisplayList(gfx++, osVirtualToPhysical(hmf->unk3C->unk10));
-    gDPSetPrimColor(gfx++, 0, 0, D_8010AFA8_26FF58_LooneyLumberjacks[0], D_8010AFA8_26FF58_LooneyLumberjacks[1], D_8010AFA8_26FF58_LooneyLumberjacks[2], alpha * 255.0f);
-    gDPPipeSync(gfx++);
-    gSPDisplayList(gfx++, osVirtualToPhysical(hmf->unk3C->unk14));
-    gDPPipeSync(gfx++);
-    gSPEndDisplayList(gfx++);
+// decomp-permuter
+void func_8010A014_26EFC4_LooneyLumberjacks(u16 mdl, HuSprite_Unk84_Struct *spr, u16 frame, f32 alpha)
+{
+  HmfModel *new_var;
+  HmfData *hmf;
+  Gfx *gfx;
+  new_var = &D_800FC834_FD434[mdl];
+  hmf = (*new_var).hmf;
+  gfx = (hmf->unk3C->unk00[0] = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1]);
+  gDPPipeSync(gfx++);
+  gSPSegment(gfx++, 0x04, osVirtualToPhysical(spr->unk00[frame].unk00));
+  gSPDisplayList(gfx++, osVirtualToPhysical(hmf->unk3C->unk10));
+  gDPSetPrimColor(gfx++, 0, 0, D_8010AFA8_26FF58_LooneyLumberjacks[0], D_8010AFA8_26FF58_LooneyLumberjacks[1], D_8010AFA8_26FF58_LooneyLumberjacks[2], alpha * 255.0f);
+  gDPPipeSync(gfx++);
+  gSPDisplayList(gfx++, osVirtualToPhysical(hmf->unk3C->unk14));
+  gDPPipeSync(gfx++);
+  gSPEndDisplayList(gfx++);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_8010A014_26EFC4_LooneyLumberjacks);
-#endif
 
 void func_8010A1E4_26F194_LooneyLumberjacks(u8 r, u8 g, u8 b) {
     D_8010AFA8_26FF58_LooneyLumberjacks[0] = r;

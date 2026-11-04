@@ -1679,14 +1679,13 @@ s32 func_80107BBC_1E700C_CrazyCutters(CCPlayer* st) {
 }
 
 /* [FBAFC] */
-// retail computes the index before loading D_800F93FC (masked 6; MP1 the same)
-#ifdef NON_MATCHING
-s16 func_80107D74_1E71C4_CrazyCutters(s32 idx) {
-    return D_8010957C_1E89CC_CrazyCutters = D_800F93FC_F9FFC[idx].unk_04;
+// decomp-permuter
+s16 func_80107D74_1E71C4_CrazyCutters(s32 idx)
+{
+  s16 *new_var;
+  new_var = &D_800F93FC_F9FFC[idx].unk_04;
+  return D_8010957C_1E89CC_CrazyCutters = *new_var;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107D74_1E71C4_CrazyCutters);
-#endif
 
 /* Starts the score roulette. [FBB2C] */
 void func_80107DA4_1E71F4_CrazyCutters(void) {

@@ -379,18 +379,26 @@ void func_8010363C_20D58C_TotemPolePound(void) {
 }
 
 /* NON_MATCHING: retail reloads nwin after the store and takes the base first (masked 2). */
-#ifdef NON_MATCHING
-void func_801036DC_20D62C_TotemPolePound(TPPPlayer* p) {
-    TPPGame* g = &D_801072C8_211218_TotemPolePound;
-
-    if (D_801072D8_211228_TotemPolePound < 4 && D_801072D4_211224_TotemPolePound == 0) {
-        g->win[D_801072D8_211228_TotemPolePound] = p->obj->work[1];
-        D_801072D8_211228_TotemPolePound++;
+// decomp-permuter
+void func_801036DC_20D62C_TotemPolePound(TPPPlayer *p)
+{
+  TPPGame *g = &D_801072C8_211218_TotemPolePound;
+  u32 new_var;
+  new_var = D_801072D8_211228_TotemPolePound;
+  if ((new_var < 4) && (D_801072D4_211224_TotemPolePound == 0))
+  {
+    if (new_var || D_801072D8_211228_TotemPolePound)
+    {
+      g->win[new_var] = p->obj->work[1];
+      D_801072D8_211228_TotemPolePound++;
     }
+    else
+    {
+      g->win[new_var] = p->obj->work[1];
+      D_801072D8_211228_TotemPolePound++;
+    }
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_801036DC_20D62C_TotemPolePound);
-#endif
 
 void func_80103734_20D684_TotemPolePound(TPPPlayer* p) {
     s32 r = (rand8() * 3) >> 8;

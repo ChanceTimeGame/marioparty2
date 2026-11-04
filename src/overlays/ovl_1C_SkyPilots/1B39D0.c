@@ -10,17 +10,25 @@ f32 D_8010B21C_1B48AC_SkyPilots[2] = { 0.0f, 0.0f };
 f32 D_8010B224_1B48B4_SkyPilots[3] = { 0.0f, 0.0f, 0.0f };
 
 /* NON_MATCHING: schedule: retail keeps D_8010ADA4_1B4434_SkyPilots and the hook in registers (masked 6) */
-#ifdef NON_MATCHING
-void func_8010A340_1B39D0_SkyPilots(void) {
-    omObjData** p = D_8010ADA4_1B4434_SkyPilots;
-    void* f = func_801058EC_1AEF7C_SkyPilots;
-
-    p[0]->func_ptr = f;
-    p[1]->func_ptr = f;
+// decomp-permuter
+void func_8010A340_1B39D0_SkyPilots(void)
+{
+  void *new_var;
+  omObjData *new_var5;
+  int new_var4;
+  omObjData **new_var3;
+  omObjData *new_var2;
+  void *new_var6;
+  omObjData **p = D_8010ADA4_1B4434_SkyPilots;
+  void *f = func_801058EC_1AEF7C_SkyPilots;
+  new_var4 = 1;
+  new_var = f;
+  new_var3 = &p[new_var4];
+ do { new_var2 = D_8010ADA4_1B4434_SkyPilots[0]; new_var6 = new_var; new_var2->func_ptr = new_var6; new_var2 = *new_var3; } while (0);
+  new_var5 = new_var2;
+  new_var2 = new_var5;
+  new_var2->func_ptr = new_var6;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B39D0", func_8010A340_1B39D0_SkyPilots);
-#endif
 
 void func_8010A364_1B39F4_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;

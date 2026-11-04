@@ -77,34 +77,31 @@ void func_80102A9C_32555C_name_4B(void) {
     }
 }
 
-#ifdef NON_MATCHING
-/* NON_MATCHING: scheduling only (rot's addiu placed before the constant loads) */
-/* The same, also hopping at random intervals. */
-void func_80102B0C_3255CC_name_4B(void) {
-    s32 timer = 0;
-    MBModel* obj = HuPrcCurrentGet()->user_data;
-    Vec* rot;
-    Vec dir;
-    s32 i;
-
-    rot = &obj->rot;
-
-    while (TRUE) {
-        if (timer == 0) {
-            i = (u8)(rand8() % 3);
-            timer = (u8)(rand8() % 30) + D_80103050_325B10_name_4B[i];
-            obj->jumpVel = D_80103058_325B18_name_4B[i] / 10.0f;
-            obj->jumpAccel = D_80103064_325B24_name_4B[i] / 10.0f;
-        }
-        timer--;
-        func_80056658_57258(&obj->pos, &PLAYER_MODEL_4B(-1)->pos, &dir);
-        func_80056B78_57778(rot, &dir, rot, 6);
-        HuPrcSleep(7);
+// decomp-permuter
+void func_80102B0C_3255CC_name_4B(void)
+{
+  s32 timer = 0;
+  MBModel *obj = HuPrcCurrentGet()->user_data;
+  Vec *rot;
+  Vec dir;
+  s32 i;
+  ;
+  while (1)
+  {
+    if (timer == 0)
+    {
+      i = (u8) (rand8() % 3);
+      timer = ((u8) (rand8() % 30)) + D_80103050_325B10_name_4B[i];
+      obj->jumpVel = D_80103058_325B18_name_4B[i] / 10.0f;
+      obj->jumpAccel = D_80103064_325B24_name_4B[i] / 10.0f;
     }
+    timer--;
+    func_80056658_57258(&obj->pos, &((MBModel *) BoardPlayerGet(-1)->unk_24)->pos, &dir);
+    func_80056B78_57778(&obj->rot, &dir, &obj->rot, 6);
+    HuPrcSleep(7);
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4B_name/3252C0", func_80102B0C_3255CC_name_4B);
-#endif
 
 void func_80102C6C_32572C_name_4B(s16 index) {
     MBModel* obj;

@@ -421,12 +421,8 @@ s32 func_80105068_1D9748_ShellShocked(s32 i) {
     }
 }
 
-// register allocation: the x conversion comes before the index (masked 6)
-#ifdef NON_MATCHING
-void func_801050D0_1D97B0_ShellShocked(s32 i, s32 x, s32 y) {
-    ViewportSet(i, (f32)x + D_8010CB20_1E1200_ShellShocked[i].v[0], (f32)y + D_8010CB20_1E1200_ShellShocked[i].v[1], (f32)x + D_8010CB20_1E1200_ShellShocked[i].v[2],
-                (f32)y + D_8010CB20_1E1200_ShellShocked[i].v[3], D_8010CB20_1E1200_ShellShocked[i].v[4], D_8010CB20_1E1200_ShellShocked[i].v[5]);
+// decomp-permuter
+void func_801050D0_1D97B0_ShellShocked(s32 i, s32 x, s32 y)
+{
+  ViewportSet(i, D_8010CB20_1E1200_ShellShocked[i].v[0] + ((f32) x), ((f32) y) + D_8010CB20_1E1200_ShellShocked[i].v[1], ((f32) x) + D_8010CB20_1E1200_ShellShocked[i].v[2], ((f32) y) + D_8010CB20_1E1200_ShellShocked[i].v[3], D_8010CB20_1E1200_ShellShocked[i].v[4], D_8010CB20_1E1200_ShellShocked[i].v[5]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D8270", func_801050D0_1D97B0_ShellShocked);
-#endif

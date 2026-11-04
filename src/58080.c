@@ -352,20 +352,18 @@ u8 D_800CC940_CD540[][6] = { /* the same, arg2 2 */
 
 /* NON_MATCHING: retail keeps the window id in two callee-saved registers (s0 and a copy in s1, the
    0x28 frame); this C keeps one. Logic is MP1 CreateTextWindow. */
-#ifdef NON_MATCHING
-s16 func_80057480_58080(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s16 temp_s1;
-
-    temp_s1 = func_800888A8_894A8(arg0, arg1, ((arg2 * 0xB) + 8), ((arg3 * 0xE) + 6), 0, 0);
-    func_80089B2C_8A72C(temp_s1, 0xC8);
-    func_8008D88C_8E48C(temp_s1);
-    func_80089284_89E84(temp_s1, 0x40, 0x40);
-    func_80089A48_8A648(temp_s1, 0);
-    return temp_s1;
+// decomp-permuter
+s16 func_80057480_58080(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+  s16 temp_s1;
+  unsigned int new_var;
+  temp_s1 = func_800888A8_894A8(arg0, arg1, (arg2 * 0xB) + 8, (arg3 * 0xE) + 6, 0, 0);
+  func_80089B2C_8A72C(new_var = temp_s1, 0xC8);
+  func_8008D88C_8E48C(temp_s1);
+  func_80089284_89E84(new_var, 0x40, 0x40);
+  func_80089A48_8A648(new_var, 0);
+  return temp_s1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/58080", func_80057480_58080);
-#endif
 
 void ShowTextWindow(s32 arg0) {
     s32 i;
