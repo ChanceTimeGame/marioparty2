@@ -271,7 +271,9 @@ void func_8010332C_1E277C_CrazyCutters(omObjData* obj) {
     }
 }
 
-// CPU character model file loaded before the directory, and table loads in v1 (masked 2)
+// register allocation (masked 2, raw 43): CPU character model file loaded before the directory, and
+// table loads in v1. S3-P04 tried: the character index in a local (raw 54), the grid index as
+// cur[1] * W + cur[0] and as (row + cur[1] * W)[cur[0]] (masked 4 each).
 #ifdef NON_MATCHING
 /* {9, 10, 11}: a local initialiser here (unused) and in func_801065F4, which names it */
 const s32 D_801094AC_1E88FC_CrazyCutters[3] = { 9, 10, 11 };
