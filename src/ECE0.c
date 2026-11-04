@@ -2416,14 +2416,14 @@ void func_80012548_13148(SndVoice* v) {
     } while (i <= n);
 }
 
-// register allocation: the note-on loop counter and its sign-extended copy swap a0/a1, and the 0x15/0x17 operand byte lands in a1 (masked 0)
+// register allocation (masked 0, raw 17): i (the note-on loop counter, one variable with the 0x15/0x17
+// operand byte as in retail) and its sign-extended copy swap a0/a1. Tried: declaration order, t inline
 #ifdef NON_MATCHING
 void func_80012800_13400(SndVoice* v) {
     u8* p;
     u8* op;
     u8* cnt;
     s32 off;
-    s8 j;
     s8 i;
     u16 t;
 
@@ -2497,11 +2497,11 @@ void func_80012800_13400(SndVoice* v) {
                             v->portState = 0;
                         }
                         if (v->modMask != 0) {
-                            for (j = 0; j < 3; j++) {
-                                t = 1 << j;
+                            for (i = 0; i < 3; i++) {
+                                t = 1 << i;
                                 if (t & v->modMask) {
-                                    if (v->mod[j].type & 8) {
-                                        v->mod[j].type &= ~8;
+                                    if (v->mod[i].type & 8) {
+                                        v->mod[i].type &= ~8;
                                     } else {
                                         v->modMask &= ~t;
                                     }
