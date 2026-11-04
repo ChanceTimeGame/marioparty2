@@ -3611,8 +3611,6 @@ void func_8010E460_379B60_MinigameParkSetup(void) {
     }
 }
 
-#ifdef NON_MATCHING
-/* masked 0: retail keeps `near` in v1, this build in a1 (register allocation only). */
 /* Quit: the camera pulls back past model D_801138BC, then leaves for the main menu (mode 0:
    overlay 0x5B) or 0x5C (mode 1); modes 2 and 3 keep D_8011381E/D_80113820 as they are. */
 void func_8010ED54_37A454_MinigameParkSetup(void) {
@@ -3626,10 +3624,7 @@ void func_8010ED54_37A454_MinigameParkSetup(void) {
     Hu3DCamSetPerspective(0, D_801135C0_37ECC0_MinigameParkSetup, D_80113E24_37F524_MinigameParkSetup, 13000.0f);
     func_80110B98_37C298_MinigameParkSetup(1, 20, 1, func_8010EEF8_37A5F8_MinigameParkSetup);
     while (1) {
-        s32 near = 1;
-        if (!(D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -2000.0f)) {
-            near = 0;
-        }
+        s32 near = D_800FC834_FD434[D_801138B2_37EFB2_MinigameParkSetup[5]].pos.z > -2000.0f;
         if (near & (played ^ 1)) {
             played = 1;
             PlaySound(0xBC);
@@ -3650,9 +3645,6 @@ void func_8010ED54_37A454_MinigameParkSetup(void) {
     func_800794A8_7A0A8(60);
     func_8010EF58_37A658_MinigameParkSetup();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_8010ED54_37A454_MinigameParkSetup);
-#endif
 
 /* Camera tween callback (80110B98): sway amplitude = sin(180 * time[0] / time[1]) * start. */
 void func_8010EEF8_37A5F8_MinigameParkSetup(s16* time) {
