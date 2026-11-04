@@ -543,7 +543,9 @@ void func_80019E04_1AA04(omObjData* obj, s32 a, s32 b) {
     eb->unk_04 = unk04;
 }
 
-// register allocation of the flags/speed parameters (masked 0)
+// register allocation of the flags/speed parameters (masked 0, raw 5). Matches only with a u16 `flags`
+// parameter (an interface change, refused); a u16 local copy of flags gives masked 2 (speed load
+// scheduled first), assigning it after the call masked 7. S3-P07.
 #ifdef NON_MATCHING
 /* MP1 func_8001874C: loads motion file `file` into slot idx. */
 void func_80019E84_1AA84(omObjData* obj, u16 idx, s32 file, s32 flags, u16 speed) {

@@ -176,8 +176,6 @@ void func_80105F4C_10F55C_GrabBag(omObjData* obj) {
     D_8010A470_113A80_GrabBag++;
 }
 
-/* NON_MATCHING: scheduling (class 4): two stores and a load swap places (masked 2) */
-#ifdef NON_MATCHING
 void func_80106624_10FC34_GrabBag(omObjData* obj, u32 dir, s32 file, u16 player, u16 flags) {
     GBPlayer* w;
     s32 i;
@@ -231,7 +229,7 @@ void func_80106624_10FC34_GrabBag(omObjData* obj, u32 dir, s32 file, u16 player,
     }
     w->unk_16E = w->unk_174 = t;
     w->unk_172 = w->unk_16C = gPlayers[D_8010A474_113A84_GrabBag[D_8010A470_113A80_GrabBag]].coins;
-    if (w->unk_168 < D_8010A82A_113E3A_GrabBag) {
+    if (D_8010A82A_113E3A_GrabBag > w->unk_168) {
         func_8010A2CC_1138DC_GrabBag(w->w.unk_59, w->unk_168);
     } else {
         func_8010A2CC_1138DC_GrabBag(w->w.unk_59, D_8010A82A_113E3A_GrabBag);
@@ -267,9 +265,6 @@ void func_80106624_10FC34_GrabBag(omObjData* obj, u32 dir, s32 file, u16 player,
     D_800BF7E4_C03E4[w->w.unk_59][12] = 0xAA;
     D_800BF7E4_C03E4[w->w.unk_59][13] = 0xAC;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_80106624_10FC34_GrabBag);
-#endif
 
 /* NON_MATCHING: register allocation (class 4): retail loads D_8010A82F into a0 before the compare (masked 8) */
 #ifdef NON_MATCHING
@@ -906,7 +901,9 @@ f32 func_801087B8_111DC8_GrabBag(omObjData* obj) {
     return angle;
 }
 
-/* NON_MATCHING: register allocation (class 4): float temporaries (masked 0), as MP1's func_800F9A1C */
+/* NON_MATCHING: register allocation (class 4): float temporaries (masked 0, raw 9: dx*dx/d in $f4 not $f2),
+   as MP1's func_800F9A1C. Tried (S3-P07): the distance call into d or dx instead of best (raw 27/28),
+   dx then best = dx (raw 9). */
 #ifdef NON_MATCHING
 f32 func_801089DC_111FEC_GrabBag(omObjData* obj) {
     GBPlayer* self;

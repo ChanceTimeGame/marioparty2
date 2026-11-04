@@ -654,7 +654,8 @@ void func_8010A4BC_2208AC_BombsAway(void) {
 }
 
 // the KMC mul fix puts a nop before the second sprite's mul.s after func_800B7890 (its delay slot
-// filled); retail has none there (one instruction)
+// filled); retail has none there (one instruction), so retail's GCC left that slot to gas. S3-P07: x/x2
+// as s16 is worse (masked 10); the permuter found nothing.
 #ifdef NON_MATCHING
 void func_8010A4CC_2208BC_BombsAway(void) {
     s32 x;
@@ -790,7 +791,9 @@ void func_8010AD18_221108_BombsAway(void) {
 }
 
 // register allocation at entry: the kind test and the life argument (masked 0; MP1's twin is
-// NON_MATCHING the same way)
+// NON_MATCHING the same way). Retail tests the incoming a0 before copying kind to s3, so life lands in a1
+// (raw: 3 instructions). S3-P07: `> 32` changes nothing; the permuter only reached it with a fake
+// unsigned temp around the cast.
 #ifdef NON_MATCHING
 s16 func_8010ADF8_2211E8_BombsAway(s16 kind, f32 x, f32 y, f32 z, f32 scale, s16 life, f32 alpha) {
     u16 i;
