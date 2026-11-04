@@ -389,10 +389,8 @@ void func_80103A4C_3AA6AC_name_5E(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5E_name/3A9490", func_80103A4C_3AA6AC_name_5E);
 #endif
 
-#ifdef NON_MATCHING
-/* register allocation (masked 10): retail copies type to v1 for the inner test, one extra move */
 void func_80103C7C_3AA8DC_name_5E(void) {
-    s32 type = D_800CAD90[D_80104D96_3AB9F6_name_5E].unk_04;
+    s16 type = D_800CAD90[D_80104D96_3AB9F6_name_5E].unk_04;
     s16 i;
 
     if (type == 1 || type == 2) {
@@ -423,9 +421,6 @@ void func_80103C7C_3AA8DC_name_5E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5E_name/3A9490", func_80103C7C_3AA8DC_name_5E);
-#endif
 
 void func_80103E08_3AAA68_name_5E(omObjData* obj) {
     if (D_80104C70_3AB8D0_name_5E != 0 || D_801011FC_101DFC != 0) {
