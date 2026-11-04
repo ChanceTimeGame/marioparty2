@@ -1241,8 +1241,6 @@ void func_801078B0_12B090_DayAtTheRaces(void) {
     }
 }
 
-/* NON_MATCHING: schedule (masked 2): case 2's two stores come off D_8010AC48 in the other order */
-#ifdef NON_MATCHING
 void func_8010796C_12B14C_DayAtTheRaces(omObjData* obj) {
     switch (D_8010AC34_12E414_DayAtTheRaces.sub) {
         case 0:
@@ -1257,15 +1255,11 @@ void func_8010796C_12B14C_DayAtTheRaces(omObjData* obj) {
             }
             break;
         case 2:
-            D_8010AC34_12E414_DayAtTheRaces.timer = 0;
-            D_8010AC34_12E414_DayAtTheRaces.sub = 0;
+            D_8010AC34_12E414_DayAtTheRaces.timer = D_8010AC34_12E414_DayAtTheRaces.sub = 0;
             func_80109DAC_12D58C_DayAtTheRaces(1);
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/1277D0", func_8010796C_12B14C_DayAtTheRaces);
-#endif
 
 void func_80107A44_12B224_DayAtTheRaces(omObjData* obj) {
     if (++D_8010AA20_12E200_DayAtTheRaces == 16) {
