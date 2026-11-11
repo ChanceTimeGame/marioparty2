@@ -862,7 +862,6 @@ void func_801075DC_1045BC_GiveMeABrake(s16 sprite) {
     func_80107608_1045E8_GiveMeABrake(sprite, 0.0f, 0.0f, 1.0f);
 }
 
-#ifdef NON_MATCHING
 /* Draws a 320x240 CI8 esp image by hand in 40x40 tiles, at offset (x, y), scaled about the screen centre. */
 void func_80107608_1045E8_GiveMeABrake(s16 sprite, f32 x, f32 y, f32 scale) {
     HuSprite* spr;
@@ -895,9 +894,6 @@ void func_80107608_1045E8_GiveMeABrake(s16 sprite, f32 x, f32 y, f32 scale) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_05_GiveMeABrake/FF7E0", func_80107608_1045E8_GiveMeABrake);
-#endif
 
 /* The fixed camera. */
 void func_801086C8_1056A8_GiveMeABrake(omObjData* obj) {
