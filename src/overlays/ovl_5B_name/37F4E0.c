@@ -1949,8 +1949,9 @@ void func_80109408_3860B8_name_5B(omObjData* obj) {
    the stick turns, L/R-ish buttons 0x800/0x400 move along the view, 0x200/0x100 strafe, C-right
    and C-left change the field of view, START (trigger) prints the camera. */
 #ifdef NON_MATCHING
-/* Same instruction count; differs in float register allocation (rx/spd swapped) and where the
-   D_8010274C base is loaded in the 0x800/0x400 arms. */
+/* Register allocation (masked 0): rx/spd swap f22/f24, the C-up zoom sum lands in f0 (retail f2).
+   The move arms are one statement each, the negation inside it, so the calls and the &D_8010274C base
+   come before the products. S3-R tried for the zoom: `+=`, constant first, another variable. */
 void func_801094F8_3861A8_name_5B(void) {
     f32 zoom;
     f32 spd;
@@ -2004,16 +2005,11 @@ void func_801094F8_3861A8_name_5B(void) {
         spd = 2.0f;
     }
     if (ContBtn[1] & 0x800) {
-        b = HuMathSin(ry) * HuMathSin(rx);
-        spd = -spd;
-        b *= spd;
-        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.x += HuMathSin(ry) * HuMathSin(rx) * (spd = -spd);
         D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
         D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
     } else if (ContBtn[1] & 0x400) {
-        b = HuMathSin(ry) * HuMathSin(rx);
-        b *= spd;
-        D_8010274C_10334C.x += b;
+        D_8010274C_10334C.x += HuMathSin(ry) * HuMathSin(rx) * spd;
         D_8010274C_10334C.y += func_800B7890_B8490(rx) * spd;
         D_8010274C_10334C.z += func_800B7890_B8490(ry) * HuMathSin(rx) * spd;
     } else if (ContBtn[1] & 0x200) {
