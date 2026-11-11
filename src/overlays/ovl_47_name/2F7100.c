@@ -981,7 +981,6 @@ void func_80102B54_2F7454_name_47(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s32 func_80102C3C_2F753C_name_47(s32 space) {
     s32 i;
     s32 j;
@@ -991,34 +990,39 @@ s32 func_80102C3C_2F753C_name_47(s32 space) {
     i = 0;
     spaces = D_801109B4_3052B4_name_47;
     space = (s16)space;
-    do {
-        if (space == spaces[i]) {
-            if (i == gw->star_spawn_indices[gw->unk_0A]) {
-                gw->unk_1A = D_801109A4_3052A4_name_47[i];
-                return 1;
-            }
-            if (i == gw->unk_1C) {
-                return 2;
-            }
-            if (_CheckFlag(0x44)) {
-                space = 7;
-            } else {
-                space = gw->unk_0A;
-            }
-            for (j = 0; j < space; j++) {
-                if (i == gw->star_spawn_indices[j]) {
-                    return 3;
-                }
-            }
-            return 0;
+loop:
+    if (space == spaces[i]) {
+        if (i == gw->star_spawn_indices[gw->unk_0A]) {
+            gw->unk_1A = D_801109A4_3052A4_name_47[i];
+            return 1;
         }
-        i++;
-    } while (i < 7);
+        if (i == gw->unk_1C) {
+            return 2;
+        }
+        if (_CheckFlag(0x44)) {
+            space = 7;
+        } else {
+            space = gw->unk_0A;
+        }
+        j = 0;
+        if (j < space) {
+        inner:
+            if (i == gw->star_spawn_indices[j]) {
+                return 3;
+            }
+            j++;
+            if (j < space) {
+                goto inner;
+            }
+        }
+        return 0;
+    }
+    i++;
+    if (i < 7) {
+        goto loop;
+    }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80102C3C_2F753C_name_47);
-#endif
 
 void func_80102D28_2F7628_name_47(void) {
     SpaceData* space;
@@ -5061,9 +5065,6 @@ s32 func_8010F6B0_303FB0_name_47(s32 arg0) {
    (0x89) arrives, the player shrinks into a beam (model 0x8B) and is carried to the other side
    (D_80111710[side ^ 1], placed on chain space D_80111714[side]); one time in six it lands on
    space 0x48 instead and the launcher overshoots. */
-#ifdef NON_MATCHING
-/* Same residue as func_8010F098: retail reloads current_player_index (lh a0,0x1E(s7)) for
-   func_80046D2C after the != 4 test; this C reuses the tested value. Logic otherwise identical. */
 void func_8010F910_304210_name_47(void) {
     GW_SYSTEM* gw;
     GW_PLAYER* player;
@@ -5080,6 +5081,7 @@ void func_8010F910_304210_name_47(void) {
     SpaceData* sd;
     Vec dir;
     Vec end;
+    s16 cur;
 
     side = 0;
     space = func_800558F4_564F4();
@@ -5087,8 +5089,9 @@ void func_8010F910_304210_name_47(void) {
     masu = 0;
     player = BoardPlayerGet(-1);
     miss = 0;
-    if (gw->current_player_index != 4) {
-        func_80046D2C_4792C(gw->current_player_index);
+    cur = gw->current_player_index;
+    if (cur != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
         switch ((s16)space) {
         case 0x67:
@@ -5271,9 +5274,6 @@ void func_8010F910_304210_name_47(void) {
     }
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_8010F910_304210_name_47);
-#endif
 
 void func_80110310_304C10_name_47(void) {
     func_80020070_20C70(2);

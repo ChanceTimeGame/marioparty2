@@ -1234,7 +1234,6 @@ void func_80102B54_2E1284_name_45(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s32 func_80102C3C_2E136C_name_45(s32 space) {
     s32 i;
     s32 j;
@@ -1244,34 +1243,39 @@ s32 func_80102C3C_2E136C_name_45(s32 space) {
     i = 0;
     spaces = D_80110D34_2EF464_name_45;
     space = (s16)space;
-    do {
-        if (space == spaces[i]) {
-            if (i == gw->star_spawn_indices[gw->unk_0A]) {
-                gw->unk_1A = D_80110D24_2EF454_name_45[i];
-                return 1;
-            }
-            if (i == gw->unk_1C) {
-                return 2;
-            }
-            if (_CheckFlag(0x44)) {
-                space = 7;
-            } else {
-                space = gw->unk_0A;
-            }
-            for (j = 0; j < space; j++) {
-                if (i == gw->star_spawn_indices[j]) {
-                    return 3;
-                }
-            }
-            return 0;
+loop:
+    if (space == spaces[i]) {
+        if (i == gw->star_spawn_indices[gw->unk_0A]) {
+            gw->unk_1A = D_80110D24_2EF454_name_45[i];
+            return 1;
         }
-        i++;
-    } while (i < 7);
+        if (i == gw->unk_1C) {
+            return 2;
+        }
+        if (_CheckFlag(0x44)) {
+            space = 7;
+        } else {
+            space = gw->unk_0A;
+        }
+        j = 0;
+        if (j < space) {
+        inner:
+            if (i == gw->star_spawn_indices[j]) {
+                return 3;
+            }
+            j++;
+            if (j < space) {
+                goto inner;
+            }
+        }
+        return 0;
+    }
+    i++;
+    if (i < 7) {
+        goto loop;
+    }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_45_name/2E0F30", func_80102C3C_2E136C_name_45);
-#endif
 
 void func_80102D28_2E1458_name_45(void) {
     SpaceData* space;
@@ -5266,7 +5270,9 @@ s32 func_8010F680_2EDDB0_name_45(s32 arg0) {
 }
 
 #ifdef NON_MATCHING
-/* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3. */
+/* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3.
+   masked 29 raw 39 (S3-R13: the cur test of func_8010F910_name_47 fixed the player-index reload).
+   Tried (S3-R13): idx = 0 after gw (33), s32 space with switch ((s16)space) (no change). */
 void func_8010F8E0_2EE010_name_45(void) {
     GW_SYSTEM* gw;
     s32 idx;
@@ -5276,14 +5282,16 @@ void func_8010F8E0_2EE010_name_45(void) {
     MBModel* obj;
     SpaceData* from;
     SpaceData* to;
+    s16 cur;
     char pad[8]; /* frame size */
 
     idx = 0;
     space = func_800558F4_564F4();
     gw = &GwSystem;
     dest = 0;
-    if (gw->current_player_index != 4) {
-        func_80046D2C_4792C(gw->current_player_index);
+    cur = gw->current_player_index;
+    if (cur != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
         switch (space) {
             case 7:
@@ -5391,7 +5399,8 @@ void func_8010FDCC_2EE4FC_name_45(s32 arg0) {
 }
 
 #ifdef NON_MATCHING
-/* Scheduling only: retail loads rider->step before rider->route, and builds &D_80111AAC[route] index-first. */
+/* Scheduling only (masked 4 raw 13): retail loads rider->step before rider->route, and builds &D_80111AAC[route]
+   index-first. Tried (S3-R13): &D[route][step + 1], D[route] + (step + 1), (step + 1) + D[route] (all masked 8). */
 void func_8010FE08_2EE538_name_45(void) {
     Vec target;
     Ovl45Rider* rider;

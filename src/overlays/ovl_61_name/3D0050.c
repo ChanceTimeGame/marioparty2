@@ -624,7 +624,9 @@ void func_80103EA0_3D16F0_name_61(void) {
 
 #ifdef NON_MATCHING
 /* Control flow: retail keeps the bounce loop unoptimised (33.0f, 5.0f and 0.0f reloaded, the
-   landing store duplicated); same logic. */
+   landing store duplicated); same logic. masked 29 raw 51. S3-R13: vel = 33.0f; y += vel; vel -= 5.0f
+   is retail's (33.0 and vel share f20); a goto bounce loop reloads 5.0f as retail does (masked 22)
+   but GCC then cross-jumps the two landing stores (164 instructions); while (TRUE) + break: 32. */
 void func_801046E0_3D1F30_name_61(void) {
     Vec pos;
     Vec2f scr;
@@ -633,8 +635,9 @@ void func_801046E0_3D1F30_name_61(void) {
 
     func_80105858_3D30A8_name_61(6, 2, 0, 2, 0);
     for (i = 0; i < D_80107194_3D49E4_name_61; i++) {
-        D_801074D8_3D4D28_name_61[6]->trans.y += 33.0f;
-        vel = 28.0f;
+        vel = 33.0f;
+        D_801074D8_3D4D28_name_61[6]->trans.y += vel;
+        vel -= 5.0f;
         if (D_801074D8_3D4D28_name_61[6]->trans.y <= 0.0f) {
             D_801074D8_3D4D28_name_61[6]->trans.y = 0.0f;
         } else {

@@ -773,7 +773,8 @@ u8 func_80104A6C_1239AC_RakinEmIn(f32 center, f32 angle, f32 range) {
 /* A rake (obj->work[0] = player + 5): A (or the CPU) swings it; while it sweeps (state 2) the
    head moves in from the reach and catches every item near it inside the angle window. At the
    end the winners' rakes play the win motion. */
-/* NON_MATCHING: the item loop keeps i and a sign-extended copy in s5/s1 and hoists 10000.0f (registers only) */
+/* NON_MATCHING: masked 32 raw 63 (S3-R13: lim = len * len and the held head x took it from 46); retail keeps i and
+   a sign-extended copy in s5/s1 across the call, one more saved register (frame 128 vs 120) */
 #ifdef NON_MATCHING
 void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
     Vec a;
@@ -786,6 +787,8 @@ void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
     RIItem* it;
     omObjData* io;
     f32 len;
+    f32 lim;
+    f32 hx;
     f32 dx;
     f32 dz;
     s32 n;
@@ -852,13 +855,16 @@ void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
         head->pos.z = obj->trans.z + func_800B75D0_B81D0(obj->rot.y) * r->unk_38;
         r->unk_38 -= 12.5f;
         len = 100.0f;
+        lim = len * len;
         for (i = 0; i < 20; i++) {
             it = &D_801070B8_125FF8_RakinEmIn[i];
             if (it->flags & 4) {
                 continue;
             }
             io = D_80107520_126460_RakinEmIn[i].obj;
-            n = io->trans.x - head->pos.x;
+            dx = io->trans.x;
+            hx = head->pos.x;
+            n = dx - hx;
             if (n < 0) {
                 n = -n;
             }
@@ -868,8 +874,8 @@ void func_80104BCC_123B0C_RakinEmIn(omObjData* obj) {
                 n = -n;
             }
             dz = n;
-            if (dx * dx + dz * dz <= 10000.0f) {
-                a.x = head->pos.x;
+            if (dx * dx + dz * dz <= lim) {
+                a.x = hx;
                 a.y = head->pos.y;
                 a.z = head->pos.z;
                 b.x = io->trans.x;
@@ -961,7 +967,7 @@ void func_80105550_124490_RakinEmIn(void) {
    push others in turn), 1 raked off: it flies, and as it falls past a basket's rim either drops
    in (0x10) or bounces off (0x20), 2 landed: it scores if it fell in or lies within 150 of a
    basket, 3 adds the score, 4 done. */
-/* NON_MATCHING: the assembler's mul-fix nop after the two *7.0 calls (retail has none; unfixable), v0/v1 in the abs, item in s5 */
+/* NON_MATCHING: masked 3 raw 24 (S3-R13: blank-line strip fixed the mul-fix nops, from 42): v0/v1 in the abs, item in s5 */
 #ifdef NON_MATCHING
 void func_801055F4_124534_RakinEmIn(omObjData* obj) {
     Vec a;
@@ -998,9 +1004,8 @@ void func_801055F4_124534_RakinEmIn(omObjData* obj) {
             len = 75.0f;
             lim = len * len;
             other = D_80107520_126460_RakinEmIn[it->by].obj;
-            dx = obj->trans.x;
             ox = other->trans.x;
-            d = dx - ox;
+            d = obj->trans.x - ox;
             if (d < 0) {
                 d = -d;
             }

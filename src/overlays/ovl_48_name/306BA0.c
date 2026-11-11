@@ -1113,7 +1113,7 @@ void func_801061E8_30A588_name_48(void) {
    difficulty); shows the first button prompts, and sets the six arrows' scales and positions. */
 /* NON_MATCHING: masked 23: retail recomputes the row address k * 300 inside the count loop from
    hoisted k * 5 and k * 80 and keeps the % 150 multiplier out of a register; GCC hoists both. Logic
-   checked against the asm. */
+   checked against the asm. Tried (S3-R13): D_80108990 indexed directly (25), idx + tl[k] (23). */
 #ifdef NON_MATCHING
 void func_80106A64_30AE04_name_48(void) {
     f32 scale[3] = { 1.4f, 1.0f, 1.0f };
