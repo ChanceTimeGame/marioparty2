@@ -155,6 +155,8 @@ s32 func_80102CEC_17AA9C_FiletRelay(s32 model, s16* v) {
 }
 
 /* The nearest hit of the ray on the solid objects' faces that pass filter. */
+// register allocation only (masked 0, raw 8: filter and list swap s4/s5); tried dropping list, list in
+// the for init or in the face call, and declaration order
 #ifdef NON_MATCHING
 s32 func_80102CFC_17AAAC_FiletRelay(FRRay* ray, void* filter) {
     Vec end;

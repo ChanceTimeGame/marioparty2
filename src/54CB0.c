@@ -245,9 +245,6 @@ void func_800542E8_54EE8(s32 arg0, s16 arg1) {
 
 /* Draws every space: one quad per space, by space type. Type 16 draws only the current star space and
    type 17 only the space GwSystem.unk_1C names (neither when flag 0xC or 0xD is set). */
-// register allocation and loop-invariant placement (retail hoists size * size and the tile size into
-// stack slots before the type loop); calls, stores and branches match
-#ifdef NON_MATCHING
 void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
     Matrix4f sp10;
     f32 sp50[2];
@@ -258,7 +255,7 @@ void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
     s32 i;
     s32 j;
     s32 arrow;
-    s32 size;
+    s16 size;
     Mtx* m;
     f32 scale;
     GW_SYSTEM* gw;
@@ -274,15 +271,15 @@ void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
         switch (D_800E1928_E2528) {
             case 0:
             case 3:
+                size = 32;
                 sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC428_CD028.quad32);
                 sp6C = D_800CC3E0_CCFE0;
-                size = 32;
                 break;
             case 1:
             case 4:
+                size = 8;
                 sp64 = (Vtx*)OS_K0_TO_PHYSICAL(D_800CC428_CD028.quad8);
                 sp6C = D_800CC3E0_CCFE0;
-                size = 8;
                 break;
             default:
                 size = 32;
@@ -314,13 +311,15 @@ void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
                     space = GetSpaceData(D_800E1B8A_E278A[gw->unk_1C]);
                 }
             }
-            for (j = 0; j < gTotalSpaces; j++) {
+            j = 0;
+            while (j < gTotalSpaces) {
                 if ((j == 0) & (space != NULL)) {
                     /* the one space chosen above: draw it once */
                     j = gTotalSpaces;
                 } else {
                     space = GetSpaceData(j);
                     if (space->space_type != i || !(space->unk_00 & 1)) {
+                        j++;
                         continue;
                     }
                 }
@@ -335,13 +334,11 @@ void MBMasuDraw(Gfx** gfx, Mtx* mtx, u8 arg2) {
                 gSPMatrix((*gfx)++, OS_K0_TO_PHYSICAL(m), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPVertex((*gfx)++, sp64, 4, 0);
                 gSP1Quadrangle((*gfx)++, 0, 1, 2, 3, 0);
+                j++;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/54CB0", MBMasuDraw);
-#endif
 
 u16* func_8005484C_5544C(void* base, s32 offset) {
     return (u16*)((u8*)base + *(u16*)((u8*)base + offset));

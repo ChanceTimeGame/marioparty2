@@ -841,6 +841,7 @@ void func_80105628_226B58_TipsyTourney(omObjData* obj) {
 }
 
 // address association: retail hoists D_80107B88 - 0x32 into a saved register (out of the loop) and adds the tile offset to it (masked 8 with that pointer written out; as in MP1)
+// S3-R01 also tried [u - 1][cz] + cx, (D - 1)[u][cz][cx] and [u - 1][0][0] + cz * 5 + cx: no change (masked 22 here, 2 of it reloc-label noise)
 #ifdef NON_MATCHING
 void func_801057F4_226D24_TipsyTourney(omObjData* obj) {
     TipsyBgWork* work = obj->unk_50;

@@ -710,6 +710,8 @@ void func_80104E14_3F59F4_name_68(void) {
     } while (i < 6);
 }
 
+// masked 11: retail reloads val[i] for the > 0 test after the D_801065A8 == 0 && val[i] != 0 branch (i != 0
+// path); ours reuses it. Tried one merged condition for both sign blocks (431 instructions) and >= 1
 #ifdef NON_MATCHING
 void func_80104F94_3F5B74_name_68(void) {
     s16 val[4];
