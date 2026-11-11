@@ -331,7 +331,7 @@ void func_801078BC_1C343C_DungeonDash(omObjData* obj) {
 /* The dungeon scenery: walls, gate, the far glow, six torches, the obstacles and the start banner. */
 // FPR allocation only (masked 0; torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f
 // arguments. S3-Q01 tried: operand orders of the z expression (constants must stay 1000.0 and -550.0),
-// r as the (i + 2) >> 1 temporary, z before y.
+// r as the (i + 2) >> 1 temporary, z before y. S3-R: an (f64) cast of the shift, int*1000 then (f32).
 #ifdef NON_MATCHING
 void func_80107C6C_1C37EC_DungeonDash(omObjData* obj) {
     DDTorch* e;
@@ -496,6 +496,8 @@ void func_801083B0_1C3F30_DungeonDash(u16 n) {
 
 /* Moves the obstacles up and down; plays the slam sound for the teams that see one land. */
 // MP1 func_800FAFD4's residue: loop-head branch layout (bnez/j where retail has beqzl) and FP constant registers
+// (masked 35: retail keeps 180.0f in an FPR and reloads 5.0f; here 180.0f sits in s8). S3-R tried: the
+// unk0 test inverted with i++ in an else (masked 61), the bit assignment inside the test (35).
 #ifdef NON_MATCHING
 void func_80108574_1C40F4_DungeonDash(void) {
     DDObstacle* o;

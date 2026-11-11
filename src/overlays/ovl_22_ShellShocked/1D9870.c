@@ -717,8 +717,6 @@ s32 func_80106E4C_1DB52C_ShellShocked(s32 i) {
     return 0;
 }
 
-// float register/schedule (masked 7, 190 vs 191: an extra mov.s of the cosine; dot*dot scheduled early)
-#ifdef NON_MATCHING
 f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
     Vec a;
     Vec b;
@@ -732,6 +730,8 @@ f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
     f32 len;
     f32 yaw;
     f32 k;
+    f32 f;
+    f32 r;
 
     if (i == target) {
         return D_8010DA80_1E2160_ShellShocked[i].rot.y;
@@ -748,7 +748,8 @@ f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
     dot = co * b.z + s * b.x;
     len = a.x * a.x + a.z * a.z;
     yaw = p->rot.y;
-    if (dot * dot < len * D_8010CC20_1E1300_ShellShocked[0][D_8010DA80_1E2160_ShellShocked[i].level] * D_8010CC20_1E1300_ShellShocked[0][D_8010DA80_1E2160_ShellShocked[i].level]) {
+    r = D_8010CC20_1E1300_ShellShocked[0][D_8010DA80_1E2160_ShellShocked[i].level];
+    if (dot * dot < len * r * r) {
         k = D_8010CC20_1E1300_ShellShocked[1][D_8010DA80_1E2160_ShellShocked[i].level];
         if (cross < 0.0f) {
             yaw += k;
@@ -763,23 +764,20 @@ f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
         }
     } else {
         k = D_8010CC40_1E1320_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
-        co = 1.0f - func_800B1830_B2430(dot * dot / len);
+        f = 1.0f - func_800B1830_B2430(dot * dot / len);
         if (cross < 0.0f) {
-            yaw += k * co;
+            yaw += k * f;
         } else {
-            yaw += -k * co;
+            yaw += -k * f;
         }
     }
     c.x = HuMathSin(p->rot.y) * 100.0f + p->pos.x;
     c.z = func_800B7890_B8490(p->rot.y) * 100.0f + p->pos.z;
     if (func_8010C218_1E08F8_ShellShocked(i, &p->pos, yaw) != 0) {
-        yaw = p->rot.y;
+        return p->rot.y;
     }
     return yaw;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107044_1DB724_ShellShocked);
-#endif
 
 // control flow (masked 51, 274 vs 279 instructions)
 #ifdef NON_MATCHING
