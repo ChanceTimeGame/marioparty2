@@ -557,10 +557,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_
 #endif
 
 /* darken the current mask with a stamp's image at (x, y): each texel on the mask takes the stamp's
-   value where that is darker (lower).
-   NON_MATCHING: retail keeps the off-mask default (0xFF) in the texel's register from the first
-   test and masks the stamp value instead (masked 7). */
-#ifdef NON_MATCHING
+   value where that is darker (lower). */
 void func_8010421C_3D673C_TitleScreenAndIntro(Ovl62Stamp* stamp, s32 x, s32 y) {
     u8* mask = D_801138A0_3E5DC0_TitleScreenAndIntro;
     u8* data = stamp->data;
@@ -569,7 +566,7 @@ void func_8010421C_3D673C_TitleScreenAndIntro(Ovl62Stamp* stamp, s32 x, s32 y) {
     s32 px;
     s32 py;
     u8 v;
-    u8 cur;
+    u32 cur;
 
     for (j = 0; j < stamp->h; j++) {
         for (i = 0; i < stamp->w; i++) {
@@ -601,9 +598,6 @@ void func_8010421C_3D673C_TitleScreenAndIntro(Ovl62Stamp* stamp, s32 x, s32 y) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_62_TitleScreenAndIntro/3D4F20", func_8010421C_3D673C_TitleScreenAndIntro);
-#endif
 
 s16 func_8010433C_3D685C_TitleScreenAndIntro(void) {
     return func_8002838C_28F8C(0, func_80103BF0_3D6110_TitleScreenAndIntro, 2);
