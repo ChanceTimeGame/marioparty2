@@ -762,7 +762,8 @@ void func_80104B5C_269B0C_LooneyLumberjacks(omObjData* obj) {
     D_8010A728_26F6D8_LooneyLumberjacks--;
 }
 
-// register allocation and a hoisted address (masked 48), class 4
+// frame only (masked 12: split-label relocs plus sp offsets): retail's frame is 8 bytes larger with 0x28-0x2F
+// unused, i.e. an unused 8-byte local (order[6]? a second array?); left rather than add a dummy local.
 #ifdef NON_MATCHING
 void func_80104C48_269BF8_LooneyLumberjacks(void) {
     s32 n0;
@@ -804,9 +805,6 @@ void func_80104C48_269BF8_LooneyLumberjacks(void) {
                 n2++;
                 break;
             case 3:
-                order[3] = i;
-                n3++;
-                break;
             default:
                 order[3] = i;
                 n3++;
@@ -828,9 +826,9 @@ void func_80104C48_269BF8_LooneyLumberjacks(void) {
         func_8002979C_2A39C(obj->model[0], D_8010A774_26F724_LooneyLumberjacks[i].x, D_8010A774_26F724_LooneyLumberjacks[i].y, D_8010A774_26F724_LooneyLumberjacks[i].z);
         D_800FC834_FD434[obj->model[0]].unk44 = 0.0f;
         if (i == 0) {
-            obj->trans.x = D_8010A75C_26F70C_LooneyLumberjacks[0].x + 85.0;
-            obj->trans.y = D_8010A75C_26F70C_LooneyLumberjacks[0].y;
-            obj->trans.z = D_8010A75C_26F70C_LooneyLumberjacks[0].z + 204.99999999999997;
+            obj->trans.x = D_8010A75C_26F70C_LooneyLumberjacks[i].x + 85.0;
+            obj->trans.y = D_8010A75C_26F70C_LooneyLumberjacks[i].y;
+            obj->trans.z = D_8010A75C_26F70C_LooneyLumberjacks[i].z + 204.99999999999997;
         } else {
             obj->trans.x = D_8010A75C_26F70C_LooneyLumberjacks[i].x + 200.0;
             obj->trans.y = D_8010A75C_26F70C_LooneyLumberjacks[i].y;
@@ -903,14 +901,16 @@ void func_80104C48_269BF8_LooneyLumberjacks(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80104C48_269BF8_LooneyLumberjacks);
 #endif
 
-// register allocation, in[i] index CSE (masked 92), class 4
+// register allocation, in[i] index CSE (masked 90, 796 vs 793), class 4: retail recomputes i*2 after the
+// s.in[i] = 0 store and for the -1 store; the rest is branch offsets. Retail hoists ContBtn before D_8010A680.
+// S3-S tried: s.in[i] without the ps pointer (kept), ContBtn first in one or both tests (hoist order then
+// matches but the and operands swap).
 #ifdef NON_MATCHING
 void func_801053C8_26A378_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
     omObjData** po;
     LLPlayer* p;
     LLInput s;
-    LLInput* ps;
     Vec pos;
     f32 inv;
     f32 x;
@@ -961,13 +961,12 @@ void func_801053C8_26A378_LooneyLumberjacks(omObjData* obj) {
             inv = 1.0 / D_8010AFA0_26FF50_LooneyLumberjacks;
             func_80105EB0_26AE60_LooneyLumberjacks(obj);
             which = -1;
-            ps = &s;
             for (i = 0; i < 2; i++) {
-                ps->in[i] = 0;
+                s.in[i] = 0;
                 if (D_8010A680_26F630_LooneyLumberjacks[0][i] & ContBtn[t->port[i]]) {
-                    ps->in[i] = -1;
+                    s.in[i] = -1;
                 } else if (D_8010A680_26F630_LooneyLumberjacks[1][i] & ContBtn[t->port[i]]) {
-                    ps->in[i] = 1;
+                    s.in[i] = 1;
                 }
             }
             if (s.in[0] == -1 && s.in[1] == s.in[0]) {
@@ -1188,7 +1187,9 @@ void func_80105EB0_26AE60_LooneyLumberjacks(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80105EB0_26AE60_LooneyLumberjacks);
 #endif
 
-// register allocation (masked 23), class 4
+// register allocation (masked 23), class 4: in case -2 retail keeps &t->obj[i] in s0 (set in both motion
+// arms, reloaded after func_80029E14) and increments i before func_80029BF0. S3-S tried: the motion choice as a
+// ternary inside the call (no change).
 #ifdef NON_MATCHING
 void func_80106288_26B238_LooneyLumberjacks(omObjData* obj) {
     LLTeam* t;
