@@ -5830,9 +5830,11 @@ s32 func_80111300_31B7B0_name_49(s32 arg0) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: GCC here folds several gw-> reads back to GwSystem (lui+lh) where retail keeps
-   them on $s4 (409 vs 420 instructions); the logic follows the asm. Retail's first test reads
-   GwSystem directly and the call argument reads it again through gw (no CSE): S3-R tried gw-> in
-   the test (all absolute, masked 53) and gw assigned inside the if (masked 49, odd hoist). */
+   them on $s4 (409 vs 414 instructions, masked 31: most of it branch offsets after the
+   current_turn/total_turns test, read absolute here); the logic follows the asm. S3-R tried gw->
+   in the test (all absolute, masked 53) and gw assigned inside the if (masked 49, odd hoist);
+   S3-S: ovl_47 func_8010F910's s16 cur test with the call re-reading GwSystem fixed the entry
+   (masked 52 -> 31). */
 /* Switch event `which` (0-2, spaces D_80113AD4): unless it is the last turn, pay 5 coins (free
    with turn_status set) to throw the switch. Switches 1 and 2 toggle D_800F8CE4[1 + which];
    switch 0 asks for a direction (CPU: a random one weighted by the current setting) and stores
@@ -5847,9 +5849,11 @@ void func_80111588_31BA38_name_49(s32 which) {
     s32 n;
     s32 i;
     s32 sel;
+    s16 cur;
 
-    if (GwSystem.current_player_index != 4) {
-        func_80046D2C_4792C(gw->current_player_index);
+    cur = gw->current_player_index;
+    if (cur != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
         func_80056C30_57830(-1, 8, D_80113AD4_31DF84_name_49[which]);
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
@@ -6058,8 +6062,9 @@ void func_80111EC0_31C370_name_49(void) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: as func_80111588, GCC here reuses the player-index test's load for the first
-   call where retail reloads it through $s5; the rest is register numbering. */
+/* NON_MATCHING: register numbering (masked 5, raw 25; s1/s2/s3 rotated). S3-S: the player-index
+   test written as ovl_47's func_8010F910 (s16 cur, the call re-reading GwSystem) fixed the reload
+   (masked 28 -> 5). */
 /* Bowser's shop (space 0x65): a random item (D_80113BFC odds, never item 3 while anyone holds
    one) is forced on the player for its price D_80113BF0 (all their coins when short, free
    with none); with turn_status set a free item from the second table instead. A player who
@@ -6076,11 +6081,13 @@ void func_80111EDC_31C38C_name_49(void) {
     s32 hasItem3;
     s32 j;
     GW_SYSTEM* gw;
+    s16 cur;
 
     gw = &GwSystem;
     hasItem3 = 0;
-    if (gw->current_player_index != 4) {
-        func_80046D2C_4792C(gw->current_player_index);
+    cur = gw->current_player_index;
+    if (cur != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
         func_80056C30_57830(-1, 8, 0x65);
         HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));

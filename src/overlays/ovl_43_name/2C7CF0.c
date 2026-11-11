@@ -5833,8 +5833,10 @@ s32 func_8011228C_2D777C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked: one lui); retail reads the coins check
-                       through gw (s1), GCC rematerialises &GwSystem */
+#ifdef NON_MATCHING /* NON_MATCHING: masked 1, raw 3: retail tests the player index in a0 (absolute)
+                       and passes it on; here the test is in v1 and the call reloads it through gw.
+                       S3-S: ovl_47 func_8010F910's s16 cur test fixed the &GwSystem rematerialising
+                       (masked 23 -> 1); an absolute cur passed on, or both reads absolute: 23. */
 /* Space 0x7F by day: for 10 coins a lamp (model 0xA2) descends over the player, sparkles and makes
    it night (state [0] = 2, the night message pending in [6]). By night it only says 0x43D. */
 void func_801124C0_2D79B0_name_43(void) {
@@ -5846,12 +5848,14 @@ void func_801124C0_2D79B0_name_43(void) {
     s32 i;
     s32 choice;
     GW_SYSTEM* gw = &GwSystem;
+    s16 cur;
 
     player = BoardPlayerGet(-1);
-    if (gw->current_player_index == 4) {
+    cur = gw->current_player_index;
+    if (cur == 4) {
         return;
     }
-    func_80046D2C_4792C(gw->current_player_index);
+    func_80046D2C_4792C(GwSystem.current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
     func_80056C30_57830(-1, 8, 0x7F);
     HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
