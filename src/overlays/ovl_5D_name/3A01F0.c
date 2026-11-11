@@ -739,7 +739,8 @@ void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
     }
 }
 
-// frame and register allocation: retail keeps counters on the stack; twin of 5B 80106D2C (masked 37)
+// register allocation (masked 30): the same wall as twin 5B 80106D2C (state and the count copy swap
+// s4/s5, -1 lands in v1/v0 instead of t0); its permuter reached 0 only with fakes
 #ifdef NON_MATCHING
 void func_801049A8_3A2398_name_5D(void) {
     s16 grp[16];
@@ -787,7 +788,7 @@ void func_801049A8_3A2398_name_5D(void) {
                     func_8001A91C_1B51C(spr[i], scale[i][0], scale[i][1]);
                     espPosSet(spr[i], pos[i][0], pos[i][1]);
                     func_8001A96C_1B56C(spr[i], 0xFF, 0xFF, 0xFF);
-                    phase[i] = i * 95;
+                    phase[i] = i * 90 + i * 5;
                 }
                 count = i;
                 for (i = 0; i < 3; i++) {
