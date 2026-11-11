@@ -385,7 +385,8 @@ void func_80103C6C_4100CC_Results(void) {
     func_8008CE5C_8DA5C();
 }
 
-// the noCoins test: retail copies it to v0 first (masked 1)
+// scheduling: retail fills the A/Start loop's entry delay slot with i = 0 and copies autoSkip after
+// it (masked 2; using allCpu directly is worse)
 #ifdef NON_MATCHING
 /* The screen's process: show the table, count the minigame bonus coins, then the minigame coins,
    re-rank the players and wait for A/Start (or for nobody, when all four are CPUs). */
@@ -394,7 +395,7 @@ void func_80103DB4_410214_Results(void) {
     s8 cpus;
     s32 allCpu;
     s32 autoSkip;
-    s32 noCoins;
+    s16 noCoins;
 
     noCoins = 0;
     func_80102944_40EDA4_Results();
