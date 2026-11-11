@@ -655,7 +655,8 @@ void func_80103FF0_3A19E0_name_5D(void) {
     }
 }
 
-// register allocation (masked 37)
+// scheduling only (masked 2): retail places cat = 0 before the D_8010ADD0 load; tried cat = 0 before
+// hide, both in the for init, and declaration order
 #ifdef NON_MATCHING
 void func_80104224_3A1C14_name_5D(void) {
     Vec2f scr;
@@ -663,25 +664,23 @@ void func_80104224_3A1C14_name_5D(void) {
     s16 row;
     s16 cat;
     s16 i;
-    s16* counts;
 
     row = D_8010CE16_3AA806_name_5D + 2;
     if (row >= 5) {
         row = D_8010CE16_3AA806_name_5D - 2;
     }
     hide = D_8010ADD0_3A87C0_name_5D[row];
-    counts = D_8010C018_3A9A08_name_5D;
     for (cat = 0; cat < 5; cat++) {
         if (cat == hide) {
             for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else if (cat == 4 && _CheckFlag(0x10) == 0) {
-            for (i = 0; i < counts[4]; i++) {
+            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else if (cat == 3 && _CheckFlag(0x11) == 0) {
-            for (i = 0; i < counts[3]; i++) {
+            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
                 espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
             }
         } else {
