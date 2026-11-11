@@ -69,7 +69,7 @@ extern u32 D_800F2064_F2C64;            // buffer manager control shadow
 extern u32 D_800F2068_F2C68;            // sequencer control shadow
 extern u8 D_800F206C_F2C6C;             // non-zero once the system area has been read
 extern u8 D_800F206D_F2C6D;
-extern u16 D_800F206E_F2C6E;            // transfer mode flags
+extern volatile u16 D_800F206E_F2C6E;            // transfer mode flags
 extern LEOTgtParam D_800F2070_F2C70;    // LEOtgt_param
 extern u8 D_800F207C_F2C7C;             // disk type
 extern u32 D_800F2080_F2C80;            // drive ROM id bytes (compared with the system area's)
@@ -84,7 +84,7 @@ extern u8 D_800F29F8_F35F8[];           // scratch sector (end) for an out-of-ra
 
 // 97D60.c
 u32 func_800972F0_97EF0(void);
-u8 func_800978EC_984EC(void);
+s32 func_800978EC_984EC(void);
 void func_80097954_98554(void);
 u8 func_80097A3C_9863C(void);
 u8 func_80097B50_98750(void);
