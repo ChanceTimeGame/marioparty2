@@ -1547,6 +1547,9 @@ s32 func_801045C0_2F8EC0_name_47(void) {
     return min;
 }
 
+// Logic checked against retail (every threshold and branch); block layout differs (masked 541, 504 of 655
+// instructions): ours cross-jumps first-switch cases 2/3 and second-switch case 0 into first-switch code,
+// and keeps gPlayers[..].stars in a register across the `< 2` and `!= 0` tests where retail reloads it.
 #ifdef NON_MATCHING
 void func_80104778_2F9078_name_47(void) {
     s32 cand[4];
@@ -3194,6 +3197,9 @@ void func_8010967C_2FDF7C_name_47(void) {
     omDelPrcObj(NULL);
 }
 
+// register allocation (masked 23, raw 254): retail keeps the four sprite/anim ids only in stack slots
+// (sh/lhu 46..70(sp)) and folds timer-- into the loop's delay slot. `shown` doubles as the price, which
+// keeps (shown == 1) as xori/sltiu. Tried: s16 ids, s32 timer (worse).
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* A star hangs above the player's status window for 150 frames while the player (or the CPU, by
    difficulty) presses A; then it returns to the window or leaves. Returns the price from the turn
@@ -3211,13 +3217,11 @@ s32 func_801096A0_2FDFA0_name_47(s32 player) {
     s16 timer;
     s32 presses;
     s32 shown;
-    s32 t;
     s32 frame;
     u16 alpha;
     f32 x;
     f32 y;
     f32 angle;
-    s32 price;
     u32 j;
 
     star = SprCreate_s32(1, 5);
@@ -3317,7 +3321,7 @@ s32 func_801096A0_2FDFA0_name_47(s32 player) {
                           D_80110E68_305768_name_47[player].y * 16.0f + D_80110E48_305748_name_47[player].y);
             }
         }
-        if ((state == 0) & (t = (shown == 1))) {
+        if ((state == 0) & (shown == 1)) {
             func_800822A8_82EA8(portrait, 0, 0, 0);
             func_8008225C_82E5C(portrait, 0, 1);
             shown = 0;
@@ -3363,17 +3367,17 @@ s32 func_801096A0_2FDFA0_name_47(s32 player) {
             break;
         }
     }
-    price = D_80110EA0_3057A0_name_47[j].value;
+    shown = D_80110EA0_3057A0_name_47[j].value;
     for (j = 0; j < 14; j++) {
         if (presses >= D_80110EB4_3057B4_name_47[j].min && presses <= D_80110EB4_3057B4_name_47[j].max) {
             break;
         }
     }
-    price -= D_80110EB4_3057B4_name_47[j].value;
-    if (price >= gPlayers[player].coins) {
-        price = -1;
+    shown -= D_80110EB4_3057B4_name_47[j].value;
+    if (shown >= gPlayers[player].coins) {
+        shown = -1;
     }
-    return price;
+    return shown;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_801096A0_2FDFA0_name_47);

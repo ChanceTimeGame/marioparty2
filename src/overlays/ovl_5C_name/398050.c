@@ -344,16 +344,15 @@ const char D_801122F4_3A01B4_name_5C[] = "item_fook4";
 __asm__(".section .rodata");
 const char D_80112300_3A01C0_name_5C[] = "item_fook5";
 
-// register allocation: model lives on the stack in retail, f20 holds 584.0f, some hoists differ (masked 87)
-#ifdef NON_MATCHING
 s16 func_8010B16C_39902C_name_5C(s16 win) {
     Vec2f scr;
     char str[8];
-    u16 model;
+    s16 model;
     s16 i;
     s16 kind;
     s16 result;
     s16 next;
+    f32 depth;
 
     model = D_80112F60_3A0E20_name_5C[26];
     func_800297E8_2A3E8(model, 0.35f, 0.35f, 0.35f);
@@ -369,9 +368,10 @@ s16 func_8010B16C_39902C_name_5C(s16 win) {
     }
     scr.unk_00 = 220.0f;
     scr.unk_04 = -50.0f;
+    depth = 584.0f;
     for (i = 0; i < 11; i++) {
         scr.unk_04 = HuMathSin(i * 9.0f) * 96.0f + -50.0f;
-        func_8010E848_39C708_name_5C(5, model, &scr, 584.0f);
+        func_8010E848_39C708_name_5C(5, model, &scr, depth);
         func_801066D4_394594_name_5C(model, D_801123AC_3A026C_name_5C[0], D_801122D0_3A0190_name_5C);
         func_801067BC_39467C_name_5C(0, D_801123AC_3A026C_name_5C[0], 0, 16);
         func_801066D4_394594_name_5C(model, D_801123AC_3A026C_name_5C[1], D_801122DC_3A019C_name_5C);
@@ -418,26 +418,26 @@ s16 func_8010B16C_39902C_name_5C(s16 win) {
             PlaySound(2);
             func_8010DF5C_39BE1C_name_5C();
             kind = D_801120B0_39FF70_name_5C[D_80112476_3A0336_name_5C];
-            if (D_80112F40_3A0E00_name_5C[kind] != 0) {
+            if (D_80112F40_3A0E00_name_5C[kind] == 0) {
+                if (D_80112428_3A02E8_name_5C[kind] == D_80112440_3A0300_name_5C[kind]) {
+                    func_800890CC_89CCC(win, (void*)0x3CC, -1, -1);
+                } else {
+                    sprintf(str, D_801122CC_3A018C_name_5C, D_80112440_3A0300_name_5C[kind] - D_80112428_3A02E8_name_5C[kind]);
+                    func_80089308_89F08(win, str, 0);
+                    func_800890CC_89CCC(win, (void*)0x3CB, -1, -1);
+                }
+                while (func_8008BA30_8C630(win) != 0) {
+                    HuPrcVSleep();
+                }
+                func_8010B96C_39982C_name_5C(win);
+            } else {
                 result = D_801120B0_39FF70_name_5C[D_80112476_3A0336_name_5C];
                 break;
             }
-            if (D_80112428_3A02E8_name_5C[kind] == D_80112440_3A0300_name_5C[kind]) {
-                func_800890CC_89CCC(win, (void*)0x3CC, -1, -1);
-            } else {
-                sprintf(str, D_801122CC_3A018C_name_5C, D_80112440_3A0300_name_5C[kind] - D_80112428_3A02E8_name_5C[kind]);
-                func_80089308_89F08(win, str, 0);
-                func_800890CC_89CCC(win, (void*)0x3CB, -1, -1);
-            }
-            while (func_8008BA30_8C630(win) != 0) {
-                HuPrcVSleep();
-            }
-            func_8010B96C_39982C_name_5C(win);
         }
         if (ContBtnTrg[D_80112A00_3A08C0_name_5C] & 0x4000) {
             PlaySound(4);
-            result = -1;
-            D_80112476_3A0336_name_5C = -1;
+            D_80112476_3A0336_name_5C = result = -1;
             break;
         }
         HuPrcVSleep();
@@ -445,9 +445,10 @@ s16 func_8010B16C_39902C_name_5C(s16 win) {
     D_80112424_3A02E4_name_5C = 0;
     scr.unk_00 = 220.0f;
     scr.unk_04 = -50.0f;
+    depth = 584.0f;
     for (i = 0; i < 11; i++) {
         scr.unk_04 = func_800B7890_B8490(i * 9.0f) * 96.0f + -50.0f;
-        func_8010E848_39C708_name_5C(5, model, &scr, 584.0f);
+        func_8010E848_39C708_name_5C(5, model, &scr, depth);
         if (D_80112476_3A0336_name_5C != 0) {
             func_801066D4_394594_name_5C(model, D_801123AC_3A026C_name_5C[0], D_801122D0_3A0190_name_5C);
         }
@@ -468,9 +469,6 @@ s16 func_8010B16C_39902C_name_5C(s16 win) {
     func_800298A4_2A4A4(model, 4, 4);
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010B16C_39902C_name_5C);
-#endif
 
 void func_8010B96C_39982C_name_5C(s16 win) {
     char str[8];
@@ -1480,14 +1478,13 @@ void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z)
   D_80112408_3A02C8_name_5C[i]->speed = 5.0f;
 }
 
-// register allocation: 5000.0f is not kept in a register, spill slots differ, 2 more instructions (masked 59)
-#ifdef NON_MATCHING
 void func_80110020_39DEE0_name_5C(void) {
-    f32 z[6];
-    Ovl5CModelDef* def;
+    f32 z[8];
+    Vec* pos;
     s16 i;
-    s16 n;
-    s32 stop;
+    s32 n;
+    s16 model;
+    s16 stop;
 
     stop = 0;
     z[0] = -3000.0f;
@@ -1501,7 +1498,8 @@ void func_80110020_39DEE0_name_5C(void) {
     while (1) {
         for (i = 0; i < 6; i++) {
             n = D_80112F20_3A0DE0_name_5C + i;
-            def = &D_80111C50_39FB10_name_5C[n];
+            model = D_80112F60_3A0E20_name_5C[n];
+            pos = &D_80111C50_39FB10_name_5C[n].pos;
             z[i] -= D_80112478_3A0338_name_5C;
             if (z[i] < -3000.0f && !stop) {
                 z[i] += 8000.0f;
@@ -1509,7 +1507,7 @@ void func_80110020_39DEE0_name_5C(void) {
             if (z[i] > 5000.0f && !stop) {
                 z[i] -= 8000.0f;
             }
-            func_80029714_2A314(D_80112F60_3A0E20_name_5C[n], def->pos.x * 0.5f, def->pos.y * 0.5f, z[i] * 0.5f);
+            func_80029714_2A314(model, pos->x * 0.5f, pos->y * 0.5f, z[i] * 0.5f);
         }
         if (D_801124D8_3A0398_name_5C != 0 && D_80112478_3A0338_name_5C <= 0.0f && !stop) {
             stop = 1;
@@ -1559,9 +1557,6 @@ void func_80110020_39DEE0_name_5C(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_80110020_39DEE0_name_5C);
-#endif
 
 /* .data (0x39FB10-0x3A0050, 80111C50-80112190) */
 /* 80111C50 */
