@@ -35,8 +35,7 @@ typedef struct Ovl58Setup {
     /* 0x13 */ u8 bonus;        /* flag 0x4E */
     /* 0x14 */ u8 padCount;     /* controllers inserted at start */
     /* 0x15 */ u8 unk15;
-    /* 0x16 */ s16 unk16; /* 58-E: also D_8011396E, a separate scalar in 80112950 */
-} Ovl58Setup; /* size = 0x18 */
+} Ovl58Setup; /* size = 0x16; D_8011396E follows it */
 
 /* Four s16 copied whole into a local (80103F38, 8010E2B8): D_801138E0 (the four player
    models of the scene), D_80113618/D_80113620 (rodata tables). */
@@ -356,7 +355,7 @@ extern s16 D_8011386A_37EF6A_MinigameParkSetup[3]; /* 58-E: [0] cursor slot (-1 
 extern f32* D_80113870_37EF70_MinigameParkSetup;
 extern s16 D_80113878_37EF78_MinigameParkSetup[9]; /* 58-E: minigames per category (80112950) */
 extern Vec D_8011388C_37EF8C_MinigameParkSetup; /* 58-E: fixed camera eye */
-extern s16 D_80113898_37EF98_MinigameParkSetup[4]; /* 58-C: [0] a count read as s16 (8010B6E8: >= 20 two mode panels, >= 30 three) */
+extern s16 D_80113898_37EF98_MinigameParkSetup; /* 58-C: count of D_80113C08's minigames (8010B6E8: >= 20 two mode panels, >= 30 three); a scalar: 80112950 does not hold its address */
 extern s8 D_801138A0_37EFA0_MinigameParkSetup[16]; /* 58-B: cursor on each slot, -1 none */
 /* The scene's model ids, one per D_80112BBC entry (80112360 loads them; [8] is the host), and
    D_80113970 their first motions. Retail names some elements with their own labels (splat's
@@ -381,9 +380,9 @@ extern Vec D_80113930_37F030_MinigameParkSetup; /* 58-E: fixed camera target */
 extern s16 D_8011393C_37F03C_MinigameParkSetup; /* 80103F38: the selected panel (player count - 1) */
 extern s16 D_80113940_37F040_MinigameParkSetup[9]; /* 58-E: D_80113C08 count per category (D_8011394E = [7]) */
 #define D_8011394E_37F04E_MinigameParkSetup (&D_80113940_37F040_MinigameParkSetup[7])
-extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396F */
-/* 58-E: count of D_801139D8's minigames */
-#define D_8011396E_37F06E_MinigameParkSetup (D_80113958_37F058_MinigameParkSetup.unk16)
+extern Ovl58Setup D_80113958_37F058_MinigameParkSetup; /* 80113958-8011396D */
+extern s16 D_8011396E_37F06E_MinigameParkSetup; /* 58-E: count of D_801139D8's minigames; a scalar after
+                                                   D_80113958 (80112950 does not hold its address) */
 extern s16 D_80113970_37F070_MinigameParkSetup[52];
 #define D_80113986_37F086_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[11]) /* [11] */
 #define D_8011398A_37F08A_MinigameParkSetup (&D_80113970_37F070_MinigameParkSetup[13]) /* [13] */
