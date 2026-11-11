@@ -368,13 +368,11 @@ void func_8010350C_275C3C_TileDriver(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: retail keeps the board index in $s3 and loads it apart from the slot index (register allocation, masked 44). */
-#ifdef NON_MATCHING
 void func_80103988_2760B8_TileDriver(omObjData* obj) {
     TDObj* o = &D_80107CF0_27A420_TileDriver[obj->work[0]];
     MgWork* w = obj->unk_50;
     f32 half = 67.5f;
-    s16 board = obj->work[0] + 10;
+    u8 board = obj->work[0] + 10;
     s16 i;
     TDObj* r;
 
@@ -433,7 +431,7 @@ void func_80103988_2760B8_TileDriver(omObjData* obj) {
         if (_CheckFlag(0xC) == 0 && o->posed == 0) {
             if (D_80107C46_27A376_TileDriver == 1 && obj->work[0] == D_80107C7C_27A3AC_TileDriver) {
                 func_80019B9C_1A79C(obj, 0xD);
-                func_800732B0_73EB0(D_80107BA0_27A2D0_TileDriver[D_80107C00_27A330_TileDriver[obj->work[0]][0]] | D_80107B88_27A2B8_TileDriver[gPlayers[obj->work[0]].character]);
+                func_800732B0_73EB0(D_80107B88_27A2B8_TileDriver[gPlayers[obj->work[0]].character] | D_80107BA0_27A2D0_TileDriver[D_80107C00_27A330_TileDriver[obj->work[0]][0]]);
             } else {
                 func_80019B9C_1A79C(obj, 0xE);
             }
@@ -444,9 +442,6 @@ void func_80103988_2760B8_TileDriver(omObjData* obj) {
     func_80007790_8390(obj);
     D_800BF7A4_C03A4 = 1.3f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_80103988_2760B8_TileDriver);
-#endif
 
 void func_80103E24_276554_TileDriver(omObjData* obj) {
     TDObj* o = &D_80107CF0_27A420_TileDriver[obj->work[0]];

@@ -1562,7 +1562,8 @@ void func_80108AB0_166DD0_BobOmbBarrage(f32 height, s32 time) {
 }
 
 // register allocation (masked 0): retail keeps u in f2 and 1.0f in f4 (as func_801089E4_166D04). Tried: no
-// `one` local (same), a separate ratio local (raw 26), `one` set before k (masked 5).
+// `one` local (same), a separate ratio local (raw 26), `one` set before k (masked 5). S3-R11: `k * -k` gives
+// retail's registers but mul.s operands swapped; -(u - one) * (u - one) on a reused u, compound forms (same).
 #ifdef NON_MATCHING
 void func_80108AD4_166DF4_BobOmbBarrage(void) {
     f32 k;
