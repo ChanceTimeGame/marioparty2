@@ -2,9 +2,6 @@
 #include "ovl_5F.h"
 
 /* Mini-Game Coaster: set up the players for the chosen minigame from the quest tables. */
-/* NON_MATCHING: retail zero-extends the two rand8() & 3 indices again (an extra andi 0xff
-   each); everything else matches. */
-#ifdef NON_MATCHING
 void func_80113070_3BC210_name_5F(s16 mg) {
     s16 chars[4];
     Ovl5FQuestGame* q;
@@ -13,8 +10,8 @@ void func_80113070_3BC210_name_5F(s16 mg) {
     s16 c1;
     s16 i;
     s16 n;
-    u8 a;
-    u8 b;
+    s16 a;
+    s16 b;
     s16 tmp;
 
     if (_CheckFlag(0xE) != 0) {
@@ -162,9 +159,6 @@ void func_80113070_3BC210_name_5F(s16 mg) {
         gPlayers[i].character = chars[i];
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5F_name/3BC210", func_80113070_3BC210_name_5F);
-#endif
 
 void func_801136C4_3BC864_name_5F(s16 mg) {
     D_80114F60_3BE100_name_5F[0] = D_80114F72_3BE112_name_5F;

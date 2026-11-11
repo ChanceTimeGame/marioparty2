@@ -599,7 +599,8 @@ void func_80105630_158AC0_MoveToTheMusic(omObjData* obj) {
 
 #ifdef NON_MATCHING
 /* register allocation (masked 6): retail has `li $t0, 0x204; ori $a1, $t0, 0x4A9` for the constant 0x6AD, the
-   spill register reload uses for a pseudo with a constant equivalent; no plain C found that leaves it unfolded */
+   spill register reload uses for a pseudo with a constant equivalent; no plain C found that leaves it unfolded
+   (S3-T: 0x6A9 | 4, a file local | 4, and a 0x204 local | 0x4A9 all fold to li 0x6AD) */
 void func_80105664_158AF4_MoveToTheMusic(omObjData* obj, s8 player) {
     s32 dir;
     s32 file;

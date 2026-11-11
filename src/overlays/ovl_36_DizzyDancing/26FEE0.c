@@ -295,7 +295,8 @@ void func_80103760_270E40_DizzyDancing(void) {
     D_80107990_275070_DizzyDancing = omAddObj(10, 0, 0, -1, func_80103504_270BE4_DizzyDancing);
 }
 
-/* NON_MATCHING: masked 20: retail copies hit to $v0 before two tests and its $s4 is reused for the actor base. */
+/* NON_MATCHING: raw 3, masked 0: the |unk_38| integer takes $v0 in retail, $v1 here (tried an
+   assignment in the test, a split unk_40 store, an f32 temporary). */
 #ifdef NON_MATCHING
 void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
     Vec from;
@@ -306,10 +307,11 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
     omObjData* o;
     MgWork* w;
     f32 r;
+    f32 step;
     s16 i;
     s32 a;
     u16 mdl;
-    s32 hit;
+    s16 hit;
 
     t = &D_80107A20_275100_DizzyDancing;
     hit = 0;
@@ -409,7 +411,7 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
                     w->unk_3C -= 360.0f;
                 }
                 if (t->state == 1 && o->work[1] == 0) {
-                    if ((a = hit) != 0) {
+                    if (hit != 0) {
                         if (D_8010785B_274F3B_DizzyDancing != 0) {
                             if (!(D_801075F4_274CD4_DizzyDancing > 0.0f && o->trans.x < 0.0f)) {
                                 hit = 0;
@@ -423,7 +425,7 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
                 }
             }
         }
-        if ((a = hit) != 0) {
+        if (hit != 0) {
             for (i = 0; i < 4; i++) {
                 p = &ACTOR[i];
                 p->state = 1;
@@ -432,14 +434,16 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
             }
             t->state = 2;
         }
-        D_801075FC_274CDC_DizzyDancing = (f32)(((u8)(rand8() % 3) - 1) * 0.5) + D_801075FC_274CDC_DizzyDancing;
+        step = ((u8)(rand8() % 3) - 1) * 0.5;
+        D_801075FC_274CDC_DizzyDancing += step;
         if (D_801075FC_274CDC_DizzyDancing > 75.0f) {
             D_801075FC_274CDC_DizzyDancing = 75.0f;
         }
         if (D_801075FC_274CDC_DizzyDancing < 65.0f) {
             D_801075FC_274CDC_DizzyDancing = 65.0f;
         }
-        D_80107600_274CE0_DizzyDancing = (f32)(((u8)(rand8() % 3) - 1) * 0.5) + D_80107600_274CE0_DizzyDancing;
+        step = ((u8)(rand8() % 3) - 1) * 0.5;
+        D_80107600_274CE0_DizzyDancing += step;
         if (D_80107600_274CE0_DizzyDancing > 75.0f) {
             D_80107600_274CE0_DizzyDancing = 75.0f;
         }
@@ -790,7 +794,9 @@ u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     return r;
 }
 
-/* NON_MATCHING: masked 29: $s2/$s3 swapped; v0/v1 swapped in the 0x4000 press; a delay-slot li. */
+/* NON_MATCHING: masked 29 (raw 29, 690/689): retail keeps one `unk_28 = n; unk_2A = 2` tail in case 4
+   that case 6 jumps to with n in the delay slot; ours cross-jumps it into case 6. A shared `wait:` label
+   with an n local gets that layout but swaps $s2/$s3 (raw 99); n as s16/u16 or reusing i did not help. */
 #ifdef NON_MATCHING
 void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
     Vec polar;
@@ -805,7 +811,6 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
     f32 best;
     f32 speed;
     f32 heading;
-    s32 n;
     s16 i;
     s16 near;
 
@@ -932,9 +937,7 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
         }
         if (c->otherDist[near] < 155.0f && w->unk_38 == 1000.0f) {
             ContBtnTrg[w->unk_57] |= 0x4000;
-            n = 15;
-        wait:
-            a->unk_28 = n;
+            a->unk_28 = 15;
             a->unk_2A = 2;
         }
         heading = c->otherAngle[near];
@@ -960,13 +963,14 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
         if (w->unk_38 != 1000.0f) {
             if (c->otherDist[near] < 60.0f) {
                 ContBtnTrg[w->unk_57] |= 0x2000;
-                n = 20;
-                goto wait;
+                a->unk_28 = 20;
+                a->unk_2A = 2;
+            } else {
+                ContBtn[w->unk_57] |= 0x8000;
             }
-            ContBtn[w->unk_57] |= 0x8000;
         } else {
-            n = 20;
-            goto wait;
+            a->unk_28 = 20;
+            a->unk_2A = 2;
         }
         heading = c->otherAngle[near];
         c->flags |= 1;
@@ -1109,13 +1113,6 @@ void func_80105D70_273450_DizzyDancing(omObjData* obj, u16 a, u16 b) {
     mb->unk_02 = v2;
 }
 
-#ifndef NON_MATCHING
-__asm__(".section .rodata");
-const u32 D_801077C0_274EA0_DizzyDancing[12] = { 0xC3EB0000, 0x00000000, 0xC3910000, 0x43EB0000, 0x00000000, 0xC3910000, 0xC3EB0000, 0x00000000, 0x43910000, 0x43EB0000, 0x00000000, 0x43910000 };
-__asm__(".section .text");
-#endif
-/* NON_MATCHING: masked 26: one register copy before the flag test. */
-#ifdef NON_MATCHING
 void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
     Vec table[4] = { { -470.0f, 0.0f, -290.0f }, { 470.0f, 0.0f, -290.0f }, { -470.0f, 0.0f, 290.0f }, { 470.0f, 0.0f, 290.0f } };
@@ -1128,7 +1125,7 @@ void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     f32 ccw;
     f32 step;
     f32 x;
-    s32 flag;
+    s16 flag;
     s16 i;
     u8 p;
     DDActor* q;
@@ -1296,13 +1293,7 @@ void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     }
     func_80007790_8390(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80105DF0_2734D0_DizzyDancing);
-__asm__(".section .rodata");
-#endif
 
-/* The asm path switches to .rodata above: GCC does not see INCLUDE_ASM switch to .text, and the
-   table initialiser below would land there. */
 void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
     s32 table[6] = { 5, 6, 7, 8, 9, 10 };
