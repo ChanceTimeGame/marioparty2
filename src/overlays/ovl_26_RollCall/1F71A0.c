@@ -903,7 +903,9 @@ void func_80105738_1FA0D8_RollCall(omObjData* obj) {
     func_8002D0A0_2DCA0(obj->model[0], p->alpha);
 }
 
-/* NM: register allocation (masked 6): retail has the data pointer and r in s0, obj in s1; r is a word with u8 uses. */
+/* NM: register allocation (masked 6): retail has the data pointer and r in s0, obj in s1; r is a word with u8 uses.
+   Our free-cell search stores (u8) of the rand8() % 30 result in the loop-entry delay slot; a separate
+   s32/u32/u16/s16 counter and a for loop did not change it. */
 #ifdef NON_MATCHING
 void func_8010583C_1FA1DC_RollCall(omObjData* obj) {
     void* data;
@@ -1059,7 +1061,9 @@ void func_80106138_1FAAD8_RollCall(void) {
     }
 }
 
-/* NM: control flow, as func_80103434_1F7DD4_RollCall */
+/* NM: control flow (masked 43, 423 vs 424): retail places the blocked tail between switch cases 2 and 3,
+   hoists t = r into the rand8() & 3 test's delay slot (writing t = r first made it worse) and keeps
+   the sin/cos products in $f0. */
 #ifdef NON_MATCHING
 void func_801061E8_1FAB88_RollCall(omObjData* obj) {
     RCSlot* p = &D_8010A5B0_1FEF50_RollCall[obj->work[0]];
@@ -1123,7 +1127,7 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
             if (obj->work[0] == i) {
                 continue;
             }
-            o = D_8010A5B0_1FEF50_RollCall[i].obj;
+            o = (D_8010A5B0_1FEF50_RollCall + i)->obj;
             if (o == NULL) {
                 continue;
             }
@@ -1145,7 +1149,7 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
             if (obj->work[0] == i) {
                 continue;
             }
-            o = D_8010A5B0_1FEF50_RollCall[i].obj;
+            o = (D_8010A5B0_1FEF50_RollCall + i)->obj;
             if (o == NULL) {
                 continue;
             }
@@ -1160,14 +1164,24 @@ void func_801061E8_1FAB88_RollCall(omObjData* obj) {
                 goto blocked;
             }
         }
-        if (z > 550.0f || z < -500.0f || x > 620.0f || x < -620.0f) {
-        blocked:
-            p->unk_24 = 1;
-            p->unk_22 = 10;
-        } else {
-            obj->trans.x = x;
-            obj->trans.z = z;
+        if (z > 550.0f) {
+            goto blocked;
         }
+        if (z < -500.0f) {
+            goto blocked;
+        }
+        if (x > 620.0f) {
+            goto blocked;
+        }
+        if (x < -620.0f) {
+            goto blocked;
+        }
+        obj->trans.x = x;
+        obj->trans.z = z;
+        return;
+    blocked:
+        p->unk_24 = 1;
+        p->unk_22 = 10;
         return;
     }
     if (D_8010A4CA_1FEE6A_RollCall == 2 && func_80078EA8_79AA8() + D_80102720_103320 == 0) {
