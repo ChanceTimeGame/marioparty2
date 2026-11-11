@@ -805,8 +805,6 @@ s32 func_80107B24_118FA4_LavaTileIsle(s8 prev) {
     return 0;
 }
 
-/* Register/schedule (class 4, masked 25): retail keeps the button word in v1 across the switch; the stick stores schedule differently. */
-#ifdef NON_MATCHING
 void func_80107E3C_1192BC_LavaTileIsle(u8 dir, omObjData* obj, s8 tile) {
     MgWork* w;
     f32 x = 0.0f;
@@ -869,8 +867,7 @@ void func_80107E3C_1192BC_LavaTileIsle(u8 dir, omObjData* obj, s8 tile) {
             ContStkX[w->unk_57] = (s32)(dx * 20.0f);
             ContStkY[w->unk_57] = -(s32)(dz * 20.0f);
         } else {
-            ContStkY[w->unk_57] = 0;
-            ContStkX[w->unk_57] = 0;
+            ContStkX[w->unk_57] = ContStkY[w->unk_57] = 0;
         }
         break;
     case 4:
@@ -891,17 +888,22 @@ void func_80107E3C_1192BC_LavaTileIsle(u8 dir, omObjData* obj, s8 tile) {
         break;
     case 2:
         ContStkY[w->unk_57] = 0;
-        ContStkX[w->unk_57] = (b & 0x220) ? 10 : 40;
+        if (b & 0x220) {
+            ContStkX[w->unk_57] = 10;
+        } else {
+            ContStkX[w->unk_57] = 40;
+        }
         break;
     case 1:
         ContStkY[w->unk_57] = 0;
-        ContStkX[w->unk_57] = (b & 0x220) ? -10 : -40;
+        if (b & 0x220) {
+            ContStkX[w->unk_57] = -10;
+        } else {
+            ContStkX[w->unk_57] = -40;
+        }
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80107E3C_1192BC_LavaTileIsle);
-#endif
 
 f32 func_801081C4_119644_LavaTileIsle(omObjData* a, omObjData* b) {
     f32 dx = b->trans.x - a->trans.x;
