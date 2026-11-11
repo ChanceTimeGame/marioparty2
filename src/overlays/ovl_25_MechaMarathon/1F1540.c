@@ -474,7 +474,8 @@ const u32 D_801082B0_1F6FF0_MechaMarathon[4] = { 0x0060000C, 0x0040000C, 0x00200
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_80103D34_1F2A74_MechaMarathon);
 #endif
 
-/* A player. */
+/* A player. Register allocation in the tie-break loop (masked 42; tried pick as its own s32/s16 local,
+   pointer forms of the winner store). */
 #ifdef NON_MATCHING
 void func_80104104_1F2E44_MechaMarathon(omObjData* obj) {
     MMActor* a;
@@ -484,7 +485,6 @@ void func_80104104_1F2E44_MechaMarathon(omObjData* obj) {
     s16 max;
     s16 ties;
     s16 i;
-    s32 pick;
     u16* cap;
     s32 v;
 
@@ -550,12 +550,12 @@ void func_80104104_1F2E44_MechaMarathon(omObjData* obj) {
             if (v == 0) {
                 a->state = 5;
                 if (max != 0) {
-                    pick = rand8() % ties;
-                    b = D_801085F0_1F7330_MechaMarathon;
+                    ties = rand8() % ties;
                     for (i = 0; i < 4; i++) {
-                        if (b[i].unk_28 == max) {
-                            if ((s16)pick-- == 0) {
-                                (b + 9)[i].unk_28 = 1;
+                        b = &D_801085F0_1F7330_MechaMarathon[i];
+                        if (b->unk_28 == max) {
+                            if (ties-- == 0) {
+                                (&D_801085F0_1F7330_MechaMarathon[9])[i].unk_28 = 1;
                                 break;
                             }
                         }
@@ -572,9 +572,8 @@ void func_80104104_1F2E44_MechaMarathon(omObjData* obj) {
                     omVibrate(obj->work[0], 20, 0, 20);
                 }
             } else {
-                cap = &D_80108184_1F6EC4_MechaMarathon[gPlayers[obj->work[0]].cpu_difficulty];
-                if (a->unk_28 > *cap) {
-                    a->unk_28 = *cap;
+                if (a->unk_28 > D_80108184_1F6EC4_MechaMarathon[gPlayers[obj->work[0]].cpu_difficulty]) {
+                    a->unk_28 = D_80108184_1F6EC4_MechaMarathon[gPlayers[obj->work[0]].cpu_difficulty];
                 }
             }
         }
@@ -923,7 +922,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_801052
 #endif
 
 /* The host takes the winner's place. */
-void func_80105708_1F4448_MechaMarathon(s16 i) {
+void func_80105708_1F4448_MechaMarathon(u16 i) {
     omObjData* o;
 
     o = omAddObj(100, 2, 4, -1, func_801052C0_1F4000_MechaMarathon);
@@ -942,7 +941,7 @@ void func_80105754_1F4494_MechaMarathon(omObjData* obj, s16 i) {
     }
 }
 
-/* A robot. */
+/* A robot. Register allocation only: j and n swap a1/a2 in case 6 (masked 2 = split labels D_801084B0/D_80108878). */
 #ifdef NON_MATCHING
 void func_801057B0_1F44F0_MechaMarathon(omObjData* obj) {
     MMActor* r = &D_801085F0_1F7330_MechaMarathon[obj->work[0]];
@@ -951,7 +950,7 @@ void func_801057B0_1F44F0_MechaMarathon(omObjData* obj) {
     f32 unit[4] = { 1500.0f, 150.0f, 15.0f, 1.5f };
     omObjData* o;
     s16 i;
-    s32 busy;
+    s16 busy;
     s32 v;
     f32 best;
     f32 t;
@@ -1070,9 +1069,10 @@ void func_801057B0_1F44F0_MechaMarathon(omObjData* obj) {
                     r->unk_40 = 8.0f;
                 }
             }
-            lim = 75.0f;
             if (r->unk_24 != 0) {
                 lim = 100.0f;
+            } else {
+                lim = 75.0f;
             }
             if (f->unk_14 & 0x10) {
                 if (!(f->unk_14 & 1)) {
@@ -1247,7 +1247,7 @@ void func_801057B0_1F44F0_MechaMarathon(omObjData* obj) {
                     D_80108496_1F71D6_MechaMarathon += D_80108480_1F71C0_MechaMarathon[2] * 10;
                     D_80108496_1F71D6_MechaMarathon += D_80108480_1F71C0_MechaMarathon[3];
                     if (_CheckFlag(12) == 0) {
-                        func_80105708_1F4448_MechaMarathon((u16)D_80108476_1F71B6_MechaMarathon);
+                        func_80105708_1F4448_MechaMarathon(D_80108476_1F71B6_MechaMarathon);
                     }
                     r->state = 7;
                 }
