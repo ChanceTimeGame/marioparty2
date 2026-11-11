@@ -282,6 +282,8 @@ void func_80103438_3FF6D8_name_6B(void) {
     func_80074FAC_75BAC(8, 0, 1, 0);
 }
 
+// register allocation (masked 6): s7/s8 swapped for i and the digit pointer, and the 0xD0004/0xD0005
+// choice lays out the 0xD0004 arm first (S3-S: tried a ternary, the inverted test, an else-if chain)
 #ifdef NON_MATCHING
 void func_80103460_3FF700_name_6B(void) {
     s16 cnt[4];
