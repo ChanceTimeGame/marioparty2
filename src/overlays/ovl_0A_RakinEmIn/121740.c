@@ -87,15 +87,10 @@ u8 func_801028A0_1217E0_RakinEmIn(u8 n, u64* used) {
 }
 
 /* atan(x) by a continued fraction. */
-/* NON_MATCHING: retail keeps the quotient in $f2 and converts it in the goto's delay slot (f64
-   register allocation, masked 8; MP1's func_800FDBF4_name_2A and ovl_23's twin are the same). */
-#ifdef NON_MATCHING
 f32 func_801029F0_121930_RakinEmIn(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 frac;
-    f64 base;
     s32 sign;
     s32 i;
 
@@ -120,23 +115,15 @@ f32 func_801029F0_121930_RakinEmIn(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            frac = x / (sum + 1.0f);
-            base = 1.5707963267948966;
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801029F0_121930_RakinEmIn);
-#endif
 
 /* From `from` to `to`: out = { distance, pitch + 90 (degrees), yaw (degrees) }. */
 void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {

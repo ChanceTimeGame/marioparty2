@@ -158,15 +158,10 @@ void func_80102F64_181B84_Archerival(void) {
 }
 
 /* atan(x) in radians (a continued fraction; Crazy Cutters' func_80106D84_1E61D4_CrazyCutters). */
-// NON_MATCHING: register allocation only: retail builds x / (sum + 1) in $f2 and the base in $f0
-// (masked 8)
-#ifdef NON_MATCHING
 f32 func_80102FA0_181BC0_Archerival(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 base;
-    f64 frac;
     s32 sign;
     s32 i;
 
@@ -191,23 +186,15 @@ f32 func_80102FA0_181BC0_Archerival(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            base = 1.5707963267948966;
-            frac = x / (sum + 1.0f);
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102FA0_181BC0_Archerival);
-#endif
 
 /* The direction from one point to another: out->x = distance, out->y = pitch (0 up, 90 level,
    180 down), out->z = yaw, in degrees. */
