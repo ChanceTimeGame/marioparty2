@@ -229,7 +229,7 @@ extern Ovl5BSong D_8011357C_39022C_name_5B[8]; /* a music room page's songs (D_8
 extern Ovl5BSong D_8011359C_39024C_name_5B[4]; /* a music room page's songs (D_80113774) */
 extern Ovl5BSong D_801135AC_39025C_name_5B[9]; /* a music room page's songs (D_80113774) */
 extern Ovl5BSong D_801135D0_390280_name_5B[4]; /* a music room page's songs (D_80113774) */
-extern s16 D_801135E0_390290_name_5B[202]; /* 8010CB88 */
+extern s16 D_801135E0_390290_name_5B[101][2]; /* 8010CB88 */
 extern Ovl5BMusicCat D_80113774_390424_name_5B[6]; /* the music room's pages (8010B654); label 3778 is [0].songs */
 extern Ovl5BMusicCat D_801137BC_39046C_name_5B; /* the page added once D_80113F84 >= 20 */
 extern Ovl5BMusicCat D_801137C8_390478_name_5B; /* the page added with flags 0xF, 0x10, 0x11 */
