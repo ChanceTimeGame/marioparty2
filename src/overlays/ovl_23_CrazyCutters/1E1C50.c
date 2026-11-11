@@ -1392,8 +1392,6 @@ f32 func_80106D84_1E61D4_CrazyCutters(f32 x) {
 
 /* Direction (mode 0: yaw in degrees) or distance (else) from one 2D grid point to another, taken
    as (x, 0, z). [FAC38] */
-// the 180.0f load is scheduled before the near-zero test, not into its delay slots (masked 21)
-#ifdef NON_MATCHING
 f32 func_80106EB0_1E6300_CrazyCutters(s16* from, s16* to, s32 mode) {
     Vec delta;
     Vec fromV;
@@ -1419,9 +1417,10 @@ f32 func_80106EB0_1E6300_CrazyCutters(s16* from, s16* to, s32 mode) {
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = func_80106D84_1E61D4_CrazyCutters(delta.x / delta.z) * 57.29577951308232;
@@ -1445,13 +1444,8 @@ f32 func_80106EB0_1E6300_CrazyCutters(s16* from, s16* to, s32 mode) {
     }
     return D_80109570_1E89C0_CrazyCutters;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106EB0_1E6300_CrazyCutters);
-#endif
 
 /* As func_80106EB0_1E6300_CrazyCutters for two 3D points: yaw (mode 0) or distance. [FAF8C] */
-// as func_80106EB0: the 180.0f load's scheduling (masked 21)
-#ifdef NON_MATCHING
 f32 func_80107204_1E6654_CrazyCutters(Vec* from, Vec* to, s32 mode) {
     Vec delta;
     Vec fromV;
@@ -1477,9 +1471,10 @@ f32 func_80107204_1E6654_CrazyCutters(Vec* from, Vec* to, s32 mode) {
     if (nearPositive & nearNegative) {
         horizontal = 0.0f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         yaw = func_80106D84_1E61D4_CrazyCutters(delta.x / delta.z) * 57.29577951308232;
@@ -1503,9 +1498,6 @@ f32 func_80107204_1E6654_CrazyCutters(Vec* from, Vec* to, s32 mode) {
     }
     return D_80109574_1E89C4_CrazyCutters;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80107204_1E6654_CrazyCutters);
-#endif
 
 /* Cuts the piece out of the player's shape sprite: the whole mask at once for the shapes 9-11,
    else pixel by pixel. [FB2B8] */
