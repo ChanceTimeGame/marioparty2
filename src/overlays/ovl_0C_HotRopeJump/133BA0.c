@@ -255,8 +255,10 @@ void func_801089EC_1345DC_HotRopeJump(s16 id, s32 time) {
    fades, lights each flagged vertex by the lights over it, then draws the floor.
    Retail quirk kept: a fade sets the radius to (fade / fadeTime) * fadeFrom in integer division,
    so the light drops to radius 0 on its first faded frame.
-   NON_MATCHING: masked 49; retail keeps the abs values apart from their differences (bgez/move),
-   holds 0x300 in a register and m in $s7 */
+   NON_MATCHING: register allocation (masked 4): a1/a2 swap between the fade and list loops, m in $s7
+   (abs() and a count local as in MP1, masked 49 -> 4, S3-T) */
+int abs(int);
+
 #ifdef NON_MATCHING
 void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     HRJLight* list[33];
@@ -270,10 +272,10 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     s32 dx;
     s32 dz;
     s32 d2;
-    s32 t;
     f32 sum;
     f32 f;
     f32 inner;
+    s32 count;
 
     if (D_8010C3C0_137FB0_HotRopeJump != D_8010C260_137E50_HotRopeJump) {
         for (i = 0; i < 3; i++) {
@@ -303,7 +305,8 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     list[n] = NULL;
     m = D_800FC834_FD434[D_80111822_13D412_HotRopeJump].hmf;
     v = m->unk44[D_800FDBE0_FE7E0];
-    for (i = 0; i < 0x300; i++, v++) {
+    count = 0x300;
+    for (i = 0; i < count; i++, v++) {
         sum = 0.0f;
         if (*(u16*)v->unk06 != 0) {
             l = list[0];
@@ -315,17 +318,9 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
                         dx = -dx;
                     }
                     r = dx * 0.75 + l->radius;
-                    t = v->unk00 - l->x;
-                    dx = t;
-                    if (t < 0) {
-                        dx = -dx;
-                    }
+                    dx = abs(v->unk00 - l->x);
                     if (dx < r) {
-                        t = (f32)(v->unk04 - l->z) * l->aspect;
-                        dz = t;
-                        if (t < 0) {
-                            dz = -dz;
-                        }
+                        dz = abs((s32)((f32)(v->unk04 - l->z) * l->aspect));
                         if (dz < r) {
                             d2 = dx * dx + dz * dz;
                             if (d2 < r * r) {
