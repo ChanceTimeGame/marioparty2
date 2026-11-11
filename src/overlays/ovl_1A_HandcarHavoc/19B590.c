@@ -949,12 +949,10 @@ void func_80105394_19E124_HandcarHavoc(omObjData* obj) {
 }
 
 /* The winners turn round and jump off the car (their shadows stay on the ground). */
-/* NON_MATCHING: the KMC mul fix adds a nop after four calls whose delay slot GCC filled with a
-   float op (retail's has none), and case 1 loads seat .y before the model (retail after it). */
-#ifdef NON_MATCHING
 void func_80105940_19E6D0_HandcarHavoc(omObjData* obj) {
     HHCar* w;
     f32 a;
+    f32 y;
     s32 i;
 
     w = obj->unk_50;
@@ -993,28 +991,22 @@ void func_80105940_19E6D0_HandcarHavoc(omObjData* obj) {
         case 1:
             D_8010B358_1A40E8_HandcarHavoc += 1.0f;
             for (i = 0; i < 2; i++) {
+                y = HuMathSin(70.0f) * D_8010B350_1A40E0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc -
+                    D_8010B358_1A40E8_HandcarHavoc * 2.5f * D_8010B358_1A40E8_HandcarHavoc;
                 func_80029714_2A314(obj->model[3 + i],
-                                    D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                        D_8010B328_1A40B8_HandcarHavoc[i].x,
-                                    HuMathSin(70.0f) * D_8010B350_1A40E0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc -
-                                        D_8010B358_1A40E8_HandcarHavoc * 2.5f * D_8010B358_1A40E8_HandcarHavoc +
-                                        D_8010B328_1A40B8_HandcarHavoc[i].y,
-                                    D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                        D_8010B328_1A40B8_HandcarHavoc[i].z);
+                                    D_8010B328_1A40B8_HandcarHavoc[i].x + D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc,
+                                    y + D_8010B328_1A40B8_HandcarHavoc[i].y,
+                                    D_8010B328_1A40B8_HandcarHavoc[i].z + D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc);
                 if (D_8010B358_1A40E8_HandcarHavoc > 3.0f) {
                     func_80029714_2A314(obj->model[5 + i],
-                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        D_8010B328_1A40B8_HandcarHavoc[i].x + D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc,
                                         obj->trans.y,
-                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                                        D_8010B328_1A40B8_HandcarHavoc[i].z + D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc);
                 } else {
                     func_80029714_2A314(obj->model[5 + i],
-                                        D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                            D_8010B328_1A40B8_HandcarHavoc[i].x,
+                                        D_8010B328_1A40B8_HandcarHavoc[i].x + D_8010B340_1A40D0_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc,
                                         D_8010B35C_1A40EC_HandcarHavoc,
-                                        D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc +
-                                            D_8010B328_1A40B8_HandcarHavoc[i].z);
+                                        D_8010B328_1A40B8_HandcarHavoc[i].z + D_8010B348_1A40D8_HandcarHavoc[i] * D_8010B358_1A40E8_HandcarHavoc);
                 }
             }
             if (D_8010B358_1A40E8_HandcarHavoc >= 15.0f) {
@@ -1044,9 +1036,6 @@ void func_80105940_19E6D0_HandcarHavoc(omObjData* obj) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80105940_19E6D0_HandcarHavoc);
-#endif
 
 /* The winning team cheers. */
 void func_80105FEC_19ED7C_HandcarHavoc(omObjData* obj) {

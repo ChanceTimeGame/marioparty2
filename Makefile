@@ -283,6 +283,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/74AA0.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1ABE90.c.o
 # S3-Q05: ovl_1A 1A2950.c too (mul fix on; no nop before a mul.s after a call: func_8010A5B8)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1A_HandcarHavoc/1A2950.c.o
+# S3-S12: 19B590.c too (func_80105940: no nop before a mul.s after a call)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1A_HandcarHavoc/19B590.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/26370.c.o
 # S3-Q02: ovl_1C 1B39D0.c too (func_8010A8F4 has a mul fix nop; 5 of 7 functions identical, was 4)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1B39D0.c.o
@@ -765,7 +767,8 @@ $(OVL5F_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 # S4-1AA: ovl_1A 19B590.c and 1A2950.c have the KMC VR4300 mul fix (func_80105940, func_8010AA30: a nop
 # between back-to-back mul.s). S4-1AC: 1A10F0.c (80108360-80109BC0, MP1 216140.c) has none: its
 # func_80109484 has mul.s right after calls with no nop, and no mul nop anywhere.
-S41AA_MULFIX_UNITS := build/src/overlays/ovl_1A_HandcarHavoc/19B590.c.o
+# S3-S12: 19B590.c moved to S5_4E_BLANKSTRIP_UNITS (func_80105940: no nop before a mul.s after a call)
+S41AA_MULFIX_UNITS :=
 # S3-Q05: 1A2950.c moved to S5_4E_BLANKSTRIP_UNITS (no nop before a mul.s after a call: func_8010A5B8)
 $(S41AA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-3B: ovl_3B 28B620.c has the KMC VR4300 mul fix (func_801063CC: a nop before mul.d at a branch target)
