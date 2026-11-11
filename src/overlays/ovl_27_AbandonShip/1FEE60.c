@@ -1077,8 +1077,6 @@ void func_80105F38_202598_AbandonShip(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_80105F38_202598_AbandonShip);
 #endif
 
-/* NON_MATCHING: same code shape; retail keeps the coin's model slot in a saved register (register allocation only). */
-#ifdef NON_MATCHING
 void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
     omObjData* p;
     omObjData* q;
@@ -1090,11 +1088,11 @@ void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
 
     switch (D_801093C0_205A20_AbandonShip) {
     case 3:
-        for (i = 0; i < 9; i++) {
-            func_800298A4_2A4A4(obj->model[i], 4, 0);
+        for (j = 0; j < 9; j++) {
+            func_800298A4_2A4A4(obj->model[j], 4, 0);
         }
-        for (i = 0; i < 4; i++) {
-            q = D_800FFFD8_100BD8[i];
+        for (j = 0; j < 4; j++) {
+            q = D_800FFFD8_100BD8[j];
             if (q->work[0] == obj->work[0]) {
                 m = q->unk_50;
                 obj->work[1] = m->unk_59;
@@ -1156,13 +1154,11 @@ void func_8010642C_202A8C_AbandonShip(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_27_AbandonShip/1FEE60", func_8010642C_202A8C_AbandonShip);
-#endif
 
 /* NON_MATCHING: register allocation (masked 0, raw 10): one addu operand order (row base + tbl, retail v1 first);
    the rest are split-label relocs. Worse or no change: tbl + row * 5 + i, &tbl[row * 5 + i], plain
-   &D_801093F4[row][i] without tbl (masked 19). */
+   &D_801093F4[row][i] without tbl (masked 19); also no change (raw 10): i + (row * 5 + tbl), tbl as
+   s8 (*)[5] with &tbl[row][i] or tbl[row] + i. */
 #ifdef NON_MATCHING
 void func_801068F8_202F58_AbandonShip(omObjData* obj) {
     Vec pos;
