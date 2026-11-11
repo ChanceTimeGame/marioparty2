@@ -960,7 +960,9 @@ void func_801053E0_32CDA0_name_4E(s32 player, s16 motion, u16 attr) {
    Wait up to 150 frames (A/B skips), slide the board away, then announce the winners per team
    mode (their models, reactions, messages 0x2D-0x3B, "<name> WON") and ask whether to play
    again: returns 0 with no match winner, else 1, or 2 when the last question is declined.
-   Logic follows retail; register allocation and some loop shapes differ (two attempts). */
+   Logic follows retail (masked 87). Left: retail increments D_800FC8F0[2] (0x800FC8F4, an s16
+   after a pointer in BSS) by symbol+4 where we take its address (array, `= + 1` and sized forms
+   tried), holds list[0] / (s32)n / the case-7 partner in saved registers, and allocates differently. */
 s32 func_80105454_32CE14_name_4E(void) {
     u8 list[4];
     s32 target;
@@ -973,11 +975,12 @@ s32 func_80105454_32CE14_name_4E(void) {
     s32 end;
     s32 start;
     s32 ret;
+    s32* msg;
 
-    ret = 0;
     func_80106CB0_32E670_name_4E();
     target = D_8010D448_334E08_name_4E[D_800FA1A8];
     n = 0;
+    ret = 0;
     for (i = 0; i < 4; i++) {
         list[i] = 0;
     }
@@ -1020,7 +1023,11 @@ s32 func_80105454_32CE14_name_4E(void) {
         case 1:
             func_8010760C_32EFCC_name_4E(D_8010DC2C_3355EC_name_4E[7]);
             for (i = 0; i < 4; i++) {
-                func_801053E0_32CDA0_name_4E(i, (i == list[0]) ? 2 : 3, 0);
+                if (i == list[0]) {
+                    func_801053E0_32CDA0_name_4E(i, 2, 0);
+                } else {
+                    func_801053E0_32CDA0_name_4E(i, 3, 0);
+                }
             }
             func_8010732C_32ECEC_name_4E(list[0]);
             func_80107638_32EFF8_name_4E();
@@ -1031,8 +1038,9 @@ s32 func_80105454_32CE14_name_4E(void) {
         case 2:
             func_8010760C_32EFCC_name_4E(0x38);
             func_80107638_32EFF8_name_4E();
+            msg = D_8010D680_335040_name_4E;
             for (i = 0; i < n; i++) {
-                func_8010760C_32EFCC_name_4E(D_8010D680_335040_name_4E[i]);
+                func_8010760C_32EFCC_name_4E(*msg++);
                 func_80107638_32EFF8_name_4E();
             }
             func_8010760C_32EFCC_name_4E(0x3B);
@@ -1042,7 +1050,11 @@ s32 func_80105454_32CE14_name_4E(void) {
                         break;
                     }
                 }
-                func_801053E0_32CDA0_name_4E((u8)i, (j < n) ? 2 : 3, 0);
+                if (j < n) {
+                    func_801053E0_32CDA0_name_4E(i, 2, 0);
+                } else {
+                    func_801053E0_32CDA0_name_4E(i, 3, 0);
+                }
             }
             func_800691FC_69DFC(0x11, gPlayers[list[0]].character, gPlayers[list[1]].character);
             func_80107638_32EFF8_name_4E();
@@ -1053,8 +1065,9 @@ s32 func_80105454_32CE14_name_4E(void) {
         case 3:
             func_8010760C_32EFCC_name_4E(0x33);
             func_80107638_32EFF8_name_4E();
+            msg = D_8010D688_335048_name_4E;
             for (i = 0; i < n; i++) {
-                func_8010760C_32EFCC_name_4E(D_8010D688_335048_name_4E[i]);
+                func_8010760C_32EFCC_name_4E(*msg++);
                 func_80107638_32EFF8_name_4E();
             }
             func_8010760C_32EFCC_name_4E(0x37);
@@ -1064,7 +1077,11 @@ s32 func_80105454_32CE14_name_4E(void) {
                         break;
                     }
                 }
-                func_801053E0_32CDA0_name_4E((u8)i, (j < n) ? 2 : 3, 0);
+                if (j < n) {
+                    func_801053E0_32CDA0_name_4E(i, 2, 0);
+                } else {
+                    func_801053E0_32CDA0_name_4E(i, 3, 0);
+                }
             }
             func_800691FC_69DFC(0x15, gPlayers[list[0]].character, gPlayers[list[1]].character, gPlayers[list[2]].character);
             func_80107638_32EFF8_name_4E();
@@ -1107,8 +1124,9 @@ s32 func_80105454_32CE14_name_4E(void) {
             }
         }
         for (i = 1; i < 4; i++) {
-            if (max < D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]]) {
-                max = D_800FC9B8_FD5B8[2 + D_800F9D48_FA948[0x2F8 + i]];
+            p = D_800F9D48_FA948[0x2F8 + i];
+            if (max < D_800FC9B8_FD5B8[2 + p]) {
+                max = D_800FC9B8_FD5B8[2 + p];
             }
         }
         if (max >= target) {
@@ -1144,7 +1162,12 @@ s32 func_80105454_32CE14_name_4E(void) {
                 }
                 func_8010760C_32EFCC_name_4E(0x2F);
                 for (i = 0; i < 4; i++) {
-                    func_801053E0_32CDA0_name_4E(D_800F9D48_FA948[0x2F8 + i], (i >= start && i < end) ? 2 : 3, 0);
+                    p = D_800F9D48_FA948[0x2F8 + i];
+                    if (i >= start && i < end) {
+                        func_801053E0_32CDA0_name_4E(p, 2, 0);
+                    } else {
+                        func_801053E0_32CDA0_name_4E(p, 3, 0);
+                    }
                 }
                 func_800691FC_69DFC(0x11, gPlayers[D_800F9D48_FA948[0x2F8 + start]].character, gPlayers[D_800F9D48_FA948[0x2F9 + start]].character);
                 func_80107638_32EFF8_name_4E();
@@ -1333,8 +1356,9 @@ s32 func_80106228_32DBE8_name_4E(u8* wins) {
    modes 1 and 2) a stamp sprite (D_8010DB20[D_8010DBDE++]) is placed in the player's row at the
    column of their new win count, then shrinks from scale 4 while fading in; when it lands the
    winners react (func_8005A4EC(player, 3)) and sound 0x37A plays.
-   Same logic as retail; retail's frame is 32 bytes larger (wins spilled to the stack) and its
-   registers differ. */
+   Same logic as retail (masked 53): retail's frame is 32 bytes larger, it reloads
+   D_800FC9B8[2 + p] for `max =` where we CSE it, and its registers differ. Tried: a ternary max
+   (reload appears, masked 41, but extra moves), a u8 max (reload, adds andi), swapped compare. */
 void func_801064F0_32DEB0_name_4E(u8* wins) {
     s8 who[4][4];
     s16 sprs[4];
@@ -1370,7 +1394,8 @@ void func_801064F0_32DEB0_name_4E(u8* wins) {
         for (k = 0; k < D_8010DBE0_3355A0_name_4E; k++) {
             p = D_800F9D48_FA948[0x2F8 + k];
             if (wins[p] != 0) {
-                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E];
+                D_8010DBDE_33559E_name_4E++;
                 espPosSet(spr, x0 + ((D_800FC9B8_FD5B8[2 + p] - 1) << 5), y);
                 func_8001A6BC_1B2BC(spr, 0);
                 func_8001A91C_1B51C(spr, 4.0f, 4.0f);
@@ -1387,7 +1412,8 @@ void func_801064F0_32DEB0_name_4E(u8* wins) {
     case 1:
         p = D_800F9D48_FA948[0x2F8];
         if (wins[p] != 0) {
-            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E];
+                D_8010DBDE_33559E_name_4E++;
             espPosSet(spr, x0 + ((D_800FC9B8_FD5B8[2 + p] - 1) << 5), y);
             func_8001A6BC_1B2BC(spr, 0);
             func_8001A91C_1B51C(spr, 4.0f, 4.0f);
@@ -1398,6 +1424,7 @@ void func_801064F0_32DEB0_name_4E(u8* wins) {
             delay += 1.0f;
             n++;
         }
+        y += D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40];
         max = 0;
         cnt = 0;
         for (k = 1; k < 4; k++) {
@@ -1411,8 +1438,9 @@ void func_801064F0_32DEB0_name_4E(u8* wins) {
             }
         }
         if (cnt != 0) {
-            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
-            espPosSet(spr, x0 + ((max - 1) << 5), D_8010D44C_334E0C_name_4E[D_801013B8_101FB8.unk40] + y);
+            spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E];
+                D_8010DBDE_33559E_name_4E++;
+            espPosSet(spr, x0 + ((max - 1) << 5), y);
             func_8001A6BC_1B2BC(spr, 0);
             func_8001A91C_1B51C(spr, 4.0f, 4.0f);
             sprs[n] = spr;
@@ -1433,11 +1461,12 @@ void func_801064F0_32DEB0_name_4E(u8* wins) {
                     cnt++;
                 }
                 if (max < D_800FC9B8_FD5B8[2 + p]) {
-                    max = D_800FC9B8_FD5B8[2 + p];
-                }
+                max = D_800FC9B8_FD5B8[2 + p];
+            }
             }
             if (cnt != 0) {
-                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E++];
+                spr = D_8010DB20_3354E0_name_4E[D_8010DBDE_33559E_name_4E];
+                D_8010DBDE_33559E_name_4E++;
                 espPosSet(spr, x0 + ((max - 1) << 5), y);
                 func_8001A6BC_1B2BC(spr, 0);
                 func_8001A91C_1B51C(spr, 4.0f, 4.0f);
