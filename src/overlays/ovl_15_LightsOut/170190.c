@@ -1671,7 +1671,9 @@ void func_801073B0_174D40_LightsOut(LOSlot* slot) {
 }
 
 #ifdef NON_MATCHING
-/* register allocation (masked 2): retail hoists the % 10 multiplier into s4; class 4 */
+/* register allocation (masked 2): retail hoists the loop's % 10 multiplier 0xCCCCCCCD into s4
+ * (func_801073B0, matched, does not). S3-T tried: no r in the loop, no r in either test,
+ * (u8)(rand8() % 10) == 0 as in func_801073B0; none moves it. Class 4. */
 void func_80107BB4_175544_LightsOut(LOSlot* slot) {
     omObjData* obj = slot->obj;
     MgWork* work = obj->unk_50;
