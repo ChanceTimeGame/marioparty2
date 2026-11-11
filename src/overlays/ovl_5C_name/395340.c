@@ -387,7 +387,9 @@ void func_801088F8_3967B8_name_5C(s16 slot) {
 
 #ifdef NON_MATCHING
 /* Same instruction count; differs in float register allocation (rx/spd swapped) and where the
-   D_8010274C base is loaded in the 0x800/0x400 arms. */
+   D_8010274C base is loaded in the 0x800/0x400 arms (retail cross-jumps the 0x800 arm into the
+   0x400 arm at b *= spd, neg.s in the delay slot). masked 20 raw 62. Tried (S3-R13): += in the zoom
+   arms (20), rx before spd (20), spd = -spd first (whole arm cross-jumped, 46), b *= spd = -spd (20). */
 void func_80108904_3967C4_name_5C(void) {
     f32 zoom;
     f32 spd;

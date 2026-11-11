@@ -365,6 +365,7 @@ s32 func_80103BAC_2334FC_SkateboardScamper(s32 n, s32 player) {
 // if-conversion (masked 7): GCC turns the last rank test into xor/sltu/negu, retail branches; retail's frame is 0x18 (MP1 has the same residue)
 // Tried (S3-Q02): a for loop with break (16 instructions), one rank variable through else-if (unchanged);
 // no matched twin in MP2 or MP1. The empty 0x18 frame looks like a local the source had and the code dropped.
+// S3-R13: if (player != [2]) return 3; (masked 10), a rank local set to 3 then 2 (21).
 #ifdef NON_MATCHING
 s32 func_80103BF4_233544_SkateboardScamper(s32 player) {
     if (player == D_80108B14_238464_SkateboardScamper[0]) {
@@ -1656,6 +1657,7 @@ void func_80107F2C_23787C_SkateboardScamper(omObjData* obj) {
 /* A course item: returns to the next z mark ahead of the camera once the chaser has passed it. */
 // register allocation (masked 9): retail keeps the mark in f2 and copies it to f4, this C loads f4 directly
 // Tried (S3-Q02): z assigned before the compare (plain and inside it), z block-scoped in the if.
+// S3-R13: the compare written arr[i] < D (plain, with z assigned before or inside it): masked 11.
 #ifdef NON_MATCHING
 void func_8010813C_237A8C_SkateboardScamper(omObjData* obj) {
     ColActorWork* w = obj->unk_50;
