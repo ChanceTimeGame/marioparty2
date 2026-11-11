@@ -2971,22 +2971,16 @@ void func_8010CFC4_33FC04_name_4F(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: retail branches once on the FPU flag both compares set (bc1f shared after a j);
-   GCC materialises the result in each arm. Logic checked. */
-#ifdef NON_MATCHING
 s32 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target) {
-    s32 ret;
-
     if (step < 0.0f) {
-        ret = cur <= target;
-    } else {
-        ret = target <= cur;
+        if (cur <= target) {
+            return 1;
+        }
+    } else if (target <= cur) {
+        return 1;
     }
-    return ret;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_8010D114_33FD54_name_4F);
-#endif
 
 void func_8010D15C_33FD9C_name_4F(void) {
     f32 angle = 0.0f;

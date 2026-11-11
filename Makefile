@@ -297,6 +297,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o
 # S4-0A: ovl_0A 121740.c has the KMC VR4300 mul fix (func_801029F0: a nop between back-to-back mul.s);
 # S3-R13: and no nop before a mul.d after a call (func_801055F4)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
+# S3-T09: ovl_30 23F020.c too (func_8010AC5C: nops between mul.d pairs; func_8010B0E4: none after a call)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_30_SlotCarDerby/23F020.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
