@@ -1778,7 +1778,8 @@ void func_80107AE0_E8D20_RollOutTheBarrels(RBRoller* r) {
     }
 }
 
-// float and s-register allocation (masked 63), one reload in case 1, class 4; the else arm of case 3 reads a zero that decays
+// float and s-register allocation (masked 58); retail reloads r->timer after the increment in cases 2 and 4
+// (operand order of the sine sum: no change); the else arm of case 3 reads a zero that decays
 #ifdef NON_MATCHING
 void func_80107D2C_E8F6C_RollOutTheBarrels(RBRoller* r) {
     HmfModel* m;
@@ -1838,7 +1839,7 @@ void func_80107D2C_E8F6C_RollOutTheBarrels(RBRoller* r) {
                     sfx = 0;
                 }
                 s = HuMathSin((f32)r->timer / 30.0f * 90.0);
-                m->pos.y = s * s * (D_80112CD0_F3F10_RollOutTheBarrels[1] - D_80112CD0_F3F10_RollOutTheBarrels[0]) + D_80112CD0_F3F10_RollOutTheBarrels[0];
+                m->pos.y = D_80112CD0_F3F10_RollOutTheBarrels[0] + s * s * (D_80112CD0_F3F10_RollOutTheBarrels[1] - D_80112CD0_F3F10_RollOutTheBarrels[0]);
                 if (++r->timer >= 0x1E) {
                     m->pos.y = D_80112CD0_F3F10_RollOutTheBarrels[1];
                     r->timer = 0;

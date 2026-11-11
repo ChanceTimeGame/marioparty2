@@ -285,6 +285,9 @@ void func_80103458_3EC808_name_66(void) {
     func_80074FAC_75BAC(3, 0, 1, 1);
 }
 
+/* masked 6, raw 86: s7/s8 swap, and retail places the 0xD0005 arm of the file choice inline with
+   0xD0004 as the shared join; the inverted test and a nested if both turn it into a branchless
+   sign mask (masked 28-29), a ternary changes nothing. */
 #ifdef NON_MATCHING
 void func_80103480_3EC830_name_66(void) {
     s16 cnt[4];
