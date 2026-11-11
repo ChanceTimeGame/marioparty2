@@ -78,8 +78,6 @@ void func_80102AB0_390970_name_5C(void) {
 }
 
 /* The Park lobby: the player walks between the six attractions (D_80112476_3A0336_name_5C). */
-// register allocation: retail keeps `old` as an unextended lhu, not hoisted (masked 196, mostly a shifted frame)
-#ifdef NON_MATCHING
 void func_80102B78_390A38_name_5C(void) {
     s16 i;
     s16 n;
@@ -208,8 +206,10 @@ void func_80102B78_390A38_name_5C(void) {
                 } else {
                     D_80113028_3A0EE8_name_5C = 0;
                 }
-                if ((s16)old < D_801124D6_3A0396_name_5C && (s16)old < 0xA && D_801124D6_3A0396_name_5C >= 0xA) {
-                    D_80112366_3A0226_name_5C = 1;
+                if ((s16)old < D_801124D6_3A0396_name_5C) {
+                    if ((s16)old < 0xA && D_801124D6_3A0396_name_5C >= 0xA) {
+                        D_80112366_3A0226_name_5C = 1;
+                    }
                 }
                 func_80103770_391630_name_5C();
                 func_80107F28_395DE8_name_5C(D_80110B44_39EA04_name_5C, 100.0f, func_80103A10_3918D0_name_5C);
@@ -274,15 +274,14 @@ void func_80102B78_390A38_name_5C(void) {
                 func_80103E1C_391CDC_name_5C();
                 break;
             }
-            told = 0;
             func_80103B30_3919F0_name_5C();
+            told = 0;
             func_801088A8_396768_name_5C(sel);
             D_80112476_3A0336_name_5C = sel;
             func_801065F8_3944B8_name_5C();
             func_80106588_394448_name_5C();
             if ((s16)old < D_801124D6_3A0396_name_5C) {
-                cnt = 0;
-                for (i = 0; i < 0x48; i++) {
+                for (i = 0, cnt = 0; i < 0x48; i++) {
                     if (D_800CAD94[i].kind == 7) {
                         if (func_80067F4C_68B4C(i) != 0) {
                             cnt++;
@@ -351,9 +350,6 @@ void func_80102B78_390A38_name_5C(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/3906C0", func_80102B78_390A38_name_5C);
-#endif
 
 void func_80103770_391630_name_5C(void) {
     if (D_80112366_3A0226_name_5C == 0) {
