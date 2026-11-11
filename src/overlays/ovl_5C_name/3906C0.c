@@ -625,7 +625,6 @@ s32 func_80104484_392344_name_5C(void) {
     s16 rest;
     s16 mid;
     s32 w;
-    f32 val;
     s16 win1;
     s16 win2;
     u16 btn;
