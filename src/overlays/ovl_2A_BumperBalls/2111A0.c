@@ -460,16 +460,12 @@ void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = &func_80103D68_212708_BumperBalls;
 }
 
-/* float registers of the turn-step clamp (diff in f2, not f4; retail reloads 360 - diff), as in
-   MP1's NON_MATCHING func_800F74E8; everything after it matches */
-#ifdef NON_MATCHING
 void func_80103D68_212708_BumperBalls(omObjData* object) {
     BumperBallsWork* work;
     s8 stickX;
     s8 stickY;
     s16 port;
     f32 diff;
-    f32 step;
     f32 speed;
     f32 height;
     f32 dx;
@@ -505,11 +501,10 @@ void func_80103D68_212708_BumperBalls(omObjData* object) {
             work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
         } else {
             if (360.0f - diff > 30.0f) {
-                step = 30.0f;
+                work->unk_0C = work->unk_0C - 30.0f;
             } else {
-                step = 360.0f - diff;
+                work->unk_0C = work->unk_0C - (360.0f - diff);
             }
-            work->unk_0C = work->unk_0C - step;
         }
         if (work->unk_0C < 0.0f) {
             work->unk_0C += 360.0f;
@@ -614,9 +609,6 @@ void func_80103D68_212708_BumperBalls(omObjData* object) {
         func_80109D80_218720_BumperBalls(object);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103D68_212708_BumperBalls);
-#endif
 
 void func_801046B8_213058_BumperBalls(omObjData* object) {
     BumperBallsWork* work = object->unk_50;
