@@ -302,6 +302,8 @@ void func_801034F8_3E8BC8_name_65(void) {
     func_80074FAC_75BAC(2, 0, 1, 1);
 }
 
+// masked 6, only the file-select block order: retail lays out 0xD0005 before the shared 0xD0004 tail;
+// tried i != 0 && val >= 0 and an else-if chain (both go branchless)
 #ifdef NON_MATCHING
 void func_80103520_3E8BF0_name_65(void) {
     s16 cnt[4];
@@ -320,7 +322,6 @@ void func_80103520_3E8BF0_name_65(void) {
     D_80106544_3EBC14_name_65 = SprCreate(3, 5);
     SprPosSet((s16)D_80106544_3EBC14_name_65, 0, 0, 0);
     data = DataRead(D_8010640C_3EBADC_name_65[D_80106538_3EBC08_name_65][0]);
-    i = 0;
     D_80106548_3EBC18_name_65 = SprAnimRead(data);
     DataClose(data);
     SprAnimSet((s16)D_80106544_3EBC14_name_65, 1, (s16)D_80106548_3EBC18_name_65, 0);
@@ -342,7 +343,7 @@ void func_80103520_3E8BF0_name_65(void) {
     func_8008221C_82E1C((s16)D_80106544_3EBC14_name_65, 1, 0.0f);
     val[0] = D_800FD8A8_FE4A8.lives - D_8010653C_3EBC0C_name_65;
     val[1] = gPlayers[0].coins_mg_bonus + gPlayers[0].coins_mg;
-    for (; i < 2; i++) {
+    for (i = 0; i < 2; i++) {
         digits[i][0] = OVL65_ABS(val[i]) / 1000;
         digits[i][1] = (OVL65_ABS(val[i]) - digits[i][0] * 1000) / 100;
         digits[i][2] = (OVL65_ABS(val[i]) - digits[i][0] * 1000 - digits[i][1] * 100) / 10;
