@@ -1121,7 +1121,8 @@ void func_8000F878_10478(SeqPlayer* p) {
 }
 
 // register allocation: heap spilled instead of kept in fp (retail then reuses fp for the -1),
-// frame 8 bytes larger and one reload more (masked 47)
+// frame 8 bytes larger and one reload more (masked 47). S3-T: retail sums numSeqs*16 + 0x40 before + mbfRom
+// for the bankFiles load; cfg->mbfRom + (numSeqs * sizeof(SeqEntry) + 0x40) still adds mbfRom first
 #ifdef NON_MATCHING
 s32 func_8000F968_10568(SndConfig* cfg, ALHeap* heap, s32 numSeqs, s32 arg3) {
     s32 sizes[5];

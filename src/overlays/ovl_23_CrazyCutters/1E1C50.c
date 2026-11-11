@@ -1200,7 +1200,7 @@ s32 func_801065F4_1E5A44_CrazyCutters(s32 quarter) {
 
 /* Time is up: the score is the share of the outline cut (hits over hits + misses, at least 500
    counted), CPUs scaled, 0..100; a player who did not finish the shape scores 0. */
-// loop-invariant motion: retail keeps 0.5f in $f30 across the loop (masked 13)
+// loop-invariant motion: retail keeps 0.5f in $f30 across the loop (masked 13); S3-T tried 0.5f first in the sum, no change
 #ifdef NON_MATCHING
 void func_801067D4_1E5C24_CrazyCutters(omObjData* obj) {
     s32 i;

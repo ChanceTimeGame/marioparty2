@@ -4960,7 +4960,9 @@ void func_8010EAB4_318F64_name_49(void) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: register residue only (retail keeps the two SpaceData* and adds 8 later; 2 instrs).
+/* NON_MATCHING: register residue (retail keeps the two SpaceData* and adds 8 later; 2 instrs) plus the frame:
+   retail is 8 bytes smaller (char msg[0] on the saved $s0 slot; kept msg[4], host-safe; masked 17).
+   S3-T tried SpaceData* temps for from/to: masked 15 but raw 57 (worse).
    Warp pipe event: the player jumps into pipe `pipe`, sinks, and comes out of a random one of
    pipes 0-4 other than `exclude` (pipes 5-7 are entrances only), then hops to its landing space. */
 #define PIPE_PLAYER ((MBModel*)player->unk_24)
