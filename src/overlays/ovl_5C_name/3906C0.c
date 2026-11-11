@@ -1193,6 +1193,9 @@ void func_80106618_3944D8_name_5C(s16 model, s32 spr, char *part)
   espPosSet(new_var, D_80112A04_3A08C4_name_5C.unk_00, D_80112A04_3A08C4_name_5C.unk_04);
 }
 
+/* NON_MATCHING: register allocation (masked 4): retail keeps model in a3 and uses a0 as the (s16)
+   temp, delaying move s1,a1 into the beq slot. Tried an s16 model parameter (no change) and a ternary
+   call argument (worse). Twin: ovl_4E func_80107804. */
 #ifdef NON_MATCHING
 void func_801066D4_394594_name_5C(s32 model, s32 spr, char* part) {
     void* obj;
