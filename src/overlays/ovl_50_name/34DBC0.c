@@ -708,8 +708,6 @@ void func_8010F1A8_34FA08_name_50(void) {
 /* Board 5's scene, part 5: the model 0x16 spirals down onto the winner (lighting it and panning
    the 0x40E sound), then the background model D_80112618 hands the winner something (0x350) and
    the winner spins, and it is thrown off. */
-#ifdef NON_MATCHING
-/* One nop short: retail has a nop before the mult (i * i) at the angle wrap's join. */
 void func_8010F79C_34FFFC_name_50(void) {
     Vec v;
     Vec dir;
@@ -866,9 +864,6 @@ void func_8010F79C_34FFFC_name_50(void) {
     MBModelDispOff(winner);
     MBDBackKill();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010F79C_34FFFC_name_50);
-#endif
 
 /* Board 5's scene, part 6: the background model swings round the scene in a wide arc (0x351). */
 void func_801100EC_35094C_name_50(void) {
