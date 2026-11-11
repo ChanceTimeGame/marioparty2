@@ -701,8 +701,6 @@ void func_80104224_3A1C14_name_5D(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80104224_3A1C14_name_5D);
 #endif
 
-// register allocation (masked 22)
-#ifdef NON_MATCHING
 void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
     f32 base[2];
     f32 s;
@@ -710,8 +708,6 @@ void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
     f32 b;
     f32 x;
     f32 y;
-    f32 x0;
-    f32 y0;
     f32 ft;
     s16 i;
 
@@ -728,26 +724,21 @@ void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
     base[0] = 40.0f;
     base[1] = 24.0f;
     for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
-        x0 = D_8010CCF0_3AA6E0_name_5D[i][0];
-        x = (((s16)(i % 5) * 30 + base[0]) - x0) * s + x0;
-        y0 = D_8010CCF0_3AA6E0_name_5D[i][1];
-        y = (((s16)(i / 5) * 30 + base[1]) - y0) * s + y0;
+        x = D_8010CCF0_3AA6E0_name_5D[i][0] + (((s16)(i % 5) * 30 + base[0]) - D_8010CCF0_3AA6E0_name_5D[i][0]) * s;
+        y = (((s16)(i / 5) * 30 + base[1]) - D_8010CCF0_3AA6E0_name_5D[i][1]) * s + D_8010CCF0_3AA6E0_name_5D[i][1];
         if (D_8010C018_3A9A08_name_5D[cat] == D_8010C030_3A9A20_name_5D[cat]) {
-            if (!(i & 1)) {
-                x += b;
-                y += b;
-            } else {
+            if (i & 1) {
                 x += a;
                 y += a;
+            } else {
+                x += b;
+                y += b;
             }
         }
         espPosSet(D_8010C570_3A9F60_name_5D[cat][i], x, y);
         func_80107B8C_3A557C_name_5D(i, D_8010C570_3A9F60_name_5D[cat][i], 0, 0x10);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_801045F0_3A1FE0_name_5D);
-#endif
 
 // frame and register allocation: retail keeps counters on the stack; twin of 5B 80106D2C (masked 37)
 #ifdef NON_MATCHING
