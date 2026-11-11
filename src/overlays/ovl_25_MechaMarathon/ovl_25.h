@@ -247,7 +247,7 @@ void func_80104BE0_1F3920_MechaMarathon(void);
 void func_80104D08_1F3A48_MechaMarathon(omObjData* obj, u8 k);
 void func_80104DC8_1F3B08_MechaMarathon(omObjData* obj);
 void func_801052C0_1F4000_MechaMarathon(omObjData* obj);
-void func_80105708_1F4448_MechaMarathon(s16 i);
+void func_80105708_1F4448_MechaMarathon(u16 i);
 void func_80105754_1F4494_MechaMarathon(omObjData* obj, s16 i);
 void func_801057B0_1F44F0_MechaMarathon(omObjData* obj);
 void func_801068A8_1F55E8_MechaMarathon(omObjData* obj);

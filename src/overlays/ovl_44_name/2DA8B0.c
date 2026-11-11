@@ -225,7 +225,8 @@ void func_80102C74_2DAD24_name_44(void) {
 
 /* NON_MATCHING: masked 4, registers only: as 42's func_80102CA0, retail keeps i * 2 in s2 and the
    character's offset in s3 in the model loop (GCC swaps them); the referee's drop and the draw's
-   lift swap f0/f2 and f20/f22; the shake loop schedules its multiply later. */
+   lift swap f0/f2 and f20/f22; the shake loop schedules its multiply later.
+   Tried: the drop as an assign-in-test (same), the character read inline (worse). */
 #ifdef NON_MATCHING
 /* The duel scene's flow: duelists and the referee walk in, the podiums drop, the opponent and the
    stake are chosen, both step onto the podiums; the referee shows the 16-move sequence

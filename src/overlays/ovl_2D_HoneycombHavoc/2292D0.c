@@ -706,8 +706,10 @@ const s8 D_80107608_22E0D8_HoneycombHavoc[6][11] = {
 /* Picks a random branch layout (three pattern tables: 0 a random fruit, not the same as the one
    below it; 1 a coin; 2 a honeycomb; 3 the end), reverses it, and creates the items. */
 #ifdef NON_MATCHING
-/* masked residue: loop 1 hoists the item list address instead of the pattern table, the reverse
-   loop computes cnt - (i + 1) differently, and mfhi lands in t2 instead of t3. Logic checked. */
+/* masked residue (301): loop 1 hoists the item list address instead of the pattern table (retail keeps
+   D_80107710 in sym(reg) address form), the reverse loop computes cnt - (i + 1) differently, and mfhi
+   lands in t2 instead of t3. D_80107710[cnt++] = type gave masked 157 but a 24-byte smaller frame.
+   Logic checked. */
 void func_80104924_22B3F4_HoneycombHavoc(void) {
     s8 base[2];
     u32 r;
