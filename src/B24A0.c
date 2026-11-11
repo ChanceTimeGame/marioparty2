@@ -33,7 +33,8 @@ f32 func_800B1930_B2530(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ) {
 /* guLookAtF: Hudson's copy (MP1 src/9CE40.c HuGuLookAtF): eye - at in single precision */
 // Retail inlines HuVecNormalize (func_800B18A0_B24A0) for the three normalisations, so the look,
 // right and up vectors live in memory. Remaining: retail copies xUp/yUp/zUp from their incoming
-// argument slots into themselves (lwc1/swc1 116-124) in the prologue (6 instructions, masked 15)
+// argument slots into themselves (lwc1/swc1 116-124) in the prologue (6 instructions, masked 15).
+// S3-T tried: a K&R definition, the function itself `inline`; neither emits the copy.
 #ifdef NON_MATCHING
 void func_800B1960_B2560(Matrix4f matrix, f32 xEye, f32 yEye, f32 zEye, f32 xAt, f32 yAt, f32 zAt, f32 xUp, f32 yUp,
                          f32 zUp) {

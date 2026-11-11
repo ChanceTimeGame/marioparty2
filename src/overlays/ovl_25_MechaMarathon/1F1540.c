@@ -397,6 +397,11 @@ void func_80103CA8_1F29E8_MechaMarathon(omObjData* obj, u16 mot, s16 start, s16 
 
 /* Collects the player's (or the CPU's) buttons for a 20-frame window; at its end, counts the
    2-frame slots that held both A and B. */
+// NON_MATCHING (masked 34): retail keeps a copy of the difficulty (s1, shifted in place) beside it (s6),
+// reads wait[] through a held &wait (sp+16) and fast[].chance relative to that same base (+16), but
+// fast[].rate from sp. A former spelling reproduced it by reading fast[] through (MMFast*)(&wait[0] + 8),
+// which relies on the stack layout of three separate arrays (masked 28); S3-T replaced it with plain
+// indexing. Also tried: one struct aggregate for the three tables (masked 57).
 #ifdef NON_MATCHING
 void func_80103D34_1F2A74_MechaMarathon(omObjData* obj) {
     MMActor* a = &D_801085F0_1F7330_MechaMarathon[obj->work[0]];
@@ -406,11 +411,9 @@ void func_80103D34_1F2A74_MechaMarathon(omObjData* obj) {
     MMFast fast[4] = { { 0x60, 12 }, { 0x40, 12 }, { 0x20, 12 }, { 0x10, 12 } };
     u16 btn;
     s32 d;
-    s32 k2;
-    u16* wp;
     s16 cnt;
     s16 k;
-    s32 j;
+    s16 j;
     s32 hasA;
     s32 hasB;
 
@@ -421,10 +424,9 @@ void func_80103D34_1F2A74_MechaMarathon(omObjData* obj) {
             if (cpu->unk_08 != 0) {
                 cpu->unk_08--;
             } else {
-                k2 = d;
-                cpu->unk_08 = rand8() % 10 + *((wp = wait) + k2);
-                if (rand8() < ((MMFast*)(wp + 8))[k2].chance) {
-                    cpu->unk_04 = fast[k2].rate;
+                cpu->unk_08 = rand8() % 10 + wait[d];
+                if (rand8() < fast[d].chance) {
+                    cpu->unk_04 = fast[d].rate;
                 } else {
                     cpu->unk_04 = 300 / (rand8() % 70 + rate[d]);
                 }
@@ -1454,7 +1456,6 @@ void func_80106DC0_1F5B00_MechaMarathon(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
     MMActor* m = &D_801085F0_1F7330_MechaMarathon[8];
     s16 pos[2][2] = { { 0x20, 0x16 }, { 0x5C, 0x78 } };
@@ -1467,8 +1468,6 @@ void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
     s16 j;
     s16 g;
     s16 a;
-    s32 x;
-    s16(*pp)[2];
 
     num[0] = 6;
     num[1] = 10;
@@ -1478,20 +1477,19 @@ void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
     anim1 = func_8001A2F8_1AEF8(0x350028);
     anim2 = func_8001A2F8_1AEF8(0x350029);
     anim3 = func_8001A2F8_1AEF8(0x35002A);
-    pp = pos;
     for (i = 0; i < 2; i++) {
         grp = &m->unk_32;
         if (i == 0) {
             grp = &m->unk_30;
         }
-        g = SprCreate((*(u16(*)[2])(pp + 2))[i], 5);
+        g = SprCreate(num[i], 5);
         *grp = g;
-        SprPosSet(g, 0, pp[i][0], pp[i][1]);
+        SprPosSet(g, 0, (*(pos + i))[0], (*(pos + i))[1]);
         SprAnimSet(*grp, 0, i != 0 ? m->unk_22 : m->state, 0);
         func_8008225C_82E5C(*grp, 0, 0);
         SprAttrSet(*grp, 0, 0x1000);
         SprAttrSet(*grp, 0, (i != 0) << 15);
-        for (j = 1; j < (*(u16(*)[2])(pp + 2))[i]; j++) {
+        for (j = 1; j < num[i]; j++) {
             func_800824F4_830F4(*grp, j, 0);
             if (i != 0) {
                 if (j < 4) {
@@ -1503,20 +1501,14 @@ void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
                 }
             } else if (j < 4) {
                 a = m->state;
+            } else if (j == 4) {
+                a = anim2;
             } else {
                 a = anim1;
-                if (j == 4) {
-                    a = anim2;
-                }
             }
             SprAnimSet(*grp, j, a, 0);
             func_8008225C_82E5C(*grp, j, 0);
-            if (i != 0) {
-                x = D_8010801C_1F6D5C_MechaMarathon[j];
-            } else {
-                x = D_80108010_1F6D50_MechaMarathon[j];
-            }
-            SprPosSet(*grp, j, x, 0);
+            SprPosSet(*grp, j, i != 0 ? D_8010801C_1F6D5C_MechaMarathon[j] : D_80108010_1F6D50_MechaMarathon[j], 0);
             SprAttrSet(*grp, j, 0x1000);
             SprAttrSet(*grp, j, (i != 0) << 15);
             if (i != 0) {
@@ -1542,11 +1534,6 @@ void func_801070DC_1F5E1C_MechaMarathon(omObjData* obj) {
     }
     obj->func_ptr = func_80106DC0_1F5B00_MechaMarathon;
 }
-#else
-__asm__(".section .rodata");
-const u32 D_80108424_1F7164_MechaMarathon[3] = { 0x00200016, 0x005C0078, 0x00000000 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_25_MechaMarathon/1F1540", func_801070DC_1F5E1C_MechaMarathon);
-#endif
 
 /* Reads the record into its digits, or sets it from the digits if there is none. */
 void func_80107524_1F6264_MechaMarathon(void) {
