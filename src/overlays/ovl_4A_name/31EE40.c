@@ -1393,7 +1393,8 @@ s32 func_8010762C_323C6C_name_4A(void) {
 /* NON_MATCHING: masked 36, the same logic as 42's/44's twin (also NON_MATCHING) with 4A's changes
    (the first rank pass runs over three opponents; the stake row is (rank & 3) << 3 | (opponent's
    rank & 3) << 1 | close in stars). GCC reuses n's register (known 0) for the rank passes' first
-   loop test where retail compares D_80108CB8 - 1 with zero, and keeps the star difference in a1. */
+   loop test where retail compares D_80108CB8 - 1 with zero, and keeps the star difference in a1.
+   S3-T tried (no change): declaring i before n, writing the pass loops' test as `D - 1 > i`. */
 #ifdef NON_MATCHING
 void func_80107918_323F58_name_4A(s32 cur, s32 target, s32 mode) {
     s32 cand[4];
