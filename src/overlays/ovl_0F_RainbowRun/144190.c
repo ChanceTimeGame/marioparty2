@@ -315,7 +315,8 @@ void func_8010393C_1452CC_RainbowRun(omObjData* obj, s32 dir, s32 file, u16 play
 
 /* A CPU runner: steer back to the middle, slow down near the thrown objects (MP1
    func_800F7450_TightropeTreachery). */
-// register allocation as MP1's (switch operands copied), and retail's mul-fix nop after sqrtf (masked 43)
+// register allocation as MP1's: retail copies `side` before each use (masked 43 with the unit's mul fix;
+// declaration order makes no difference), and one more nop after the sqrtf call
 #ifdef NON_MATCHING
 void func_80103E1C_1457AC_RainbowRun(omObjData* obj) {
     RRPlayerWork* w = obj->unk_50;

@@ -1159,8 +1159,7 @@ void func_8010A704_15DB94_MoveToTheMusic(s16 grp) {
     func_8010A730_15DBC0_MoveToTheMusic(grp, 0.0f, 0.0f, 1.0f);
 }
 
-#ifdef NON_MATCHING
-/* control flow (masked 104): ovl_05 func_80107608's twin, the same residue in the rectangle macro */
+/* ovl_05 func_80107608's twin. */
 /* Draws a 320x240 CI8 esp image by hand in 40x40 tiles, at offset (x, y), scaled about the screen centre. */
 void func_8010A730_15DBC0_MoveToTheMusic(s16 sprite, f32 x, f32 y, f32 scale) {
     HuSprite* spr;
@@ -1193,9 +1192,6 @@ void func_8010A730_15DBC0_MoveToTheMusic(s16 sprite, f32 x, f32 y, f32 scale) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_11_MoveToTheMusic/155C90", func_8010A730_15DBC0_MoveToTheMusic);
-#endif
 
 void func_8010B7F0_15EC80_MoveToTheMusic(omObjData* obj) {
     Vec eye;

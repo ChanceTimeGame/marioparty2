@@ -255,8 +255,8 @@ void func_801082F4_151E14_CraneGame(Gfx** gfx, Mtx* mtx) {
 }
 
 /* MP1 func_800FC0A0 (NON_MATCHING there too): MP2 divides the height by 1200, clamps it before the
-   texture scale, scales by D_8010CAF0 and fades by 0.5. Residue: retail hoists 16.0f out of the loops
-   and reads the part's matrix record in another order (register allocation). */
+   texture scale, scales by D_8010CAF0 and fades by 0.5. Residue: FP register allocation in the vertex
+   transform (masked 0, raw 20; tried x/y/z locals, declaration order). */
 #ifdef NON_MATCHING
 Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
     Matrix4f mf;
@@ -307,9 +307,8 @@ Gfx* func_8010887C_15239C_CraneGame(Gfx* gfx, HmfData* m, Matrix4f inv) {
             } else if (h > 1.0) {
                 h = 1.0f;
             }
-            s = (h + 1.0) * D_8010CAF0_156610_CraneGame * 120.0;
-            v->v.tc[0] = ((s16)(s32)(px * 16.0f / s) << 5) + 0x200;
-            v->v.tc[1] = ((s16)(s32)(pz * 16.0f / s) << 5) + 0x200;
+            v->v.tc[0] = (s16)(s32)(px * 16.0f / (s = (h + 1.0) * D_8010CAF0_156610_CraneGame * 120.0)) * 32 + 0x200;
+            v->v.tc[1] = (s16)(s32)(pz * 16.0f / s) * 32 + 0x200;
             if (h > 1.0) {
                 h = 1.0f;
             }
@@ -435,21 +434,18 @@ void func_80109024_152B44_CraneGame(HmfPart* g, ColVtx* verts, s16 nverts) {
 }
 
 /* Sorts the faces far to near by how shared their vertices are (MP1 func_800FC9B0; MP2 masks the
-   quad bit off the vertex index, which MP1 did not). Residue: retail copies the vertex count to a
-   second register and the key before decrementing it (register allocation). */
-#ifdef NON_MATCHING
+   quad bit off the vertex index, which MP1 did not). */
 void func_801091D4_152CF4_CraneGame(void) {
     CGShadowOrder* q;
     CGShadowOrder* best;
     CGShadowOrder* r;
     s16* f;
-    s32 key;
+    s16 key;
     s32 i;
     s32 j;
     s32 n;
     s16 sum;
     s16 t;
-    s32 pad[2];
 
     if (D_8010CAA0_1565C0_CraneGame >= 29) {
         key = D_8010CAA0_1565C0_CraneGame;
@@ -464,7 +460,7 @@ void func_801091D4_152CF4_CraneGame(void) {
             for (j = 0; j < n; j++, f++) {
                 sum += D_8010CA9C_1565BC_CraneGame[*f & 0x7FFF];
             }
-            q->key = key-- + (sum * 100) / n;
+            q->key = (sum * 100) / n + key--;
         }
         q = D_8010CAA4_1565C4_CraneGame;
         for (i = 0; i < D_8010CAA2_1565C2_CraneGame - 1; i++, q++) {
@@ -484,9 +480,6 @@ void func_801091D4_152CF4_CraneGame(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801091D4_152CF4_CraneGame);
-#endif
 
 /* MP1 func_800FCB78 (NON_MATCHING there too). Residue: retail rematerialises the vertex cache's
    address in the loop and has an 8-byte larger frame (register allocation). */

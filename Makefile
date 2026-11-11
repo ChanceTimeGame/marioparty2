@@ -609,6 +609,8 @@ MG0FA_MULFIX_UNITS := build/src/overlays/ovl_0F_RainbowRun/147180.c.o build/src/
 $(MG0FA_MULFIX_UNITS): export VR4300MUL := ON
 # S4-0F: ovl_0F 149120.c too (func_80107790: a nop between back-to-back mul.s)
 build/src/overlays/ovl_0F_RainbowRun/149120.c.o: export VR4300MUL := ON
+# S3-T: ovl_0F 144190.c too (func_80103E1C: a nop between back-to-back mul.s, as MP1's twin)
+build/src/overlays/ovl_0F_RainbowRun/144190.c.o: export VR4300MUL := ON
 # S4-0F: 1479E0.c is assembled from GCC's assembly with blank lines removed (func_80107018: no nop
 # before a mul.s after a call)
 S40F_BLANKSTRIP_UNITS := build/src/overlays/ovl_0F_RainbowRun/1479E0.c.o

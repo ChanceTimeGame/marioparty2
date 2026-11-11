@@ -4846,8 +4846,6 @@ s32 func_8010F32C_2D481C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only; retail keeps &GwSystem in s7 for the direction prompt
-                       where GCC rematerialises it (3 extra lui) */
 /* Junction arg0, barred by one of the three day/night models (func_80106A5C): the player picks a
    way. Taking the barred way: by night the model will not move (message 0x1F) and the player
    takes the other way; by day the player may pay 5 coins to make it walk to the other way, or
@@ -4870,10 +4868,10 @@ void func_8010F548_2D4A38_name_43(s32 arg0) {
     MBPlayerMotionSet(-1, -1, 2);
     HuPrcVSleep();
     func_80103F10_2C9400_name_43();
-    prompt = func_80041A74_42674(gw->current_player_index, D_80114428_2D9918_name_43[arg0]);
-    func_800417EC_423EC(prompt, gw->current_player_index, 0);
+    prompt = func_80041A74_42674(GwSystem.current_player_index, D_80114428_2D9918_name_43[arg0]);
+    func_800417EC_423EC(prompt, GwSystem.current_player_index, 0);
     if (PlayerIsCPU(-1) != 0) {
-        if (gw->current_player_index == 4) {
+        if (GwSystem.current_player_index == 4) {
             switch (arg0) {
                 case 0:
                     tree = D_80113F80_2D9470_name_43;
@@ -4968,9 +4966,6 @@ void func_8010F548_2D4A38_name_43(s32 arg0) {
     SetNextChainAndSpace(-1, chain, index);
     omDelPrcObj(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_8010F548_2D4A38_name_43);
-#endif
 
 void func_8010FAD0_2D4FC0_name_43(void) {
     func_8010F548_2D4A38_name_43(0);
@@ -5836,10 +5831,6 @@ s32 func_8011228C_2D777C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: masked 1, raw 3: retail tests the player index in a0 (absolute)
-                       and passes it on; here the test is in v1 and the call reloads it through gw.
-                       S3-S: ovl_47 func_8010F910's s16 cur test fixed the &GwSystem rematerialising
-                       (masked 23 -> 1); an absolute cur passed on, or both reads absolute: 23. */
 /* Space 0x7F by day: for 10 coins a lamp (model 0xA2) descends over the player, sparkles and makes
    it night (state [0] = 2, the night message pending in [6]). By night it only says 0x43D. */
 void func_801124C0_2D79B0_name_43(void) {
@@ -5851,11 +5842,9 @@ void func_801124C0_2D79B0_name_43(void) {
     s32 i;
     s32 choice;
     GW_SYSTEM* gw = &GwSystem;
-    s16 cur;
 
     player = BoardPlayerGet(-1);
-    cur = gw->current_player_index;
-    if (cur == 4) {
+    if (gw->current_player_index == 4) {
         return;
     }
     func_80046D2C_4792C(GwSystem.current_player_index);
@@ -5939,14 +5928,6 @@ void func_801124C0_2D79B0_name_43(void) {
     HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.3f));
     HuPrcChildWatch();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_801124C0_2D79B0_name_43);
-/* 43-A: the particle-direction table and the 0.5 after it are func_8010BDC8's pooled initialisers
-   (GCC 2.7.2 shares identical constant initialisers); the asm uses them by name. The C above
-   shares the table itself. */
-__asm__(".globl D_801152E0_2DA7D0_name_43\n\t.set D_801152E0_2DA7D0_name_43, D_80115280_2DA770_name_43 + 0x60\n\t"
-        ".globl D_80115340_2DA830_name_43\n\t.set D_80115340_2DA830_name_43, D_80115280_2DA770_name_43 + 0xC0");
-#endif
 
 s32 func_801128E0_2D7DD0_name_43(u8* items) {
     s32 count = 0;

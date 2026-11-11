@@ -66,7 +66,7 @@ typedef struct MMFiles11 {
 
 /* 8010A730's rectangle (as ovl_05's func_80107608): a 10.2 screen coordinate, and the step that fits 41 texels */
 #define MM_FIX(f) ((s32)((f) * 4.0) + ((f) < 0.0f ? 1 : 0))
-#define MM_STEP(a, b) (s32)(41.0 / ((f32)((s32)((b) * 4.0) - ((s32)((a) * 4.0) - ((b) < 0.0f ? 1 : 0)) - ((a) < 0.0f ? 1 : 0)) / 4.0) * 1024.0)
+#define MM_STEP(a, b) (s32)(41.0 / ((f32)(((s32)((b) * 4.0) + ((b) < 0.0f ? 1 : 0)) - (s32)((a) * 4.0) - ((a) < 0.0f ? 1 : 0)) / 4.0) * 1024.0)
 
 /* 80106EC8's display list: words the SDK macros do not fit, one per command */
 #define MM_GFX(a, b)                                     \
