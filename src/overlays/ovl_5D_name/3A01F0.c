@@ -265,7 +265,7 @@ void func_80102800_3A01F0_name_5D(void) {
     D_800CAFEE = -1;
 }
 
-// control flow: retail lays the B-button block out after the A block, frame 8 bytes smaller (masked 62)
+// control flow: retail lays the B-button block out after the A block, frame 8 bytes smaller (masked 62); also retail reloads D_800FFE00[0xEA] by %lo in the else arm where this holds its address in s0; tried a separate s16 for the C044 count
 #ifdef NON_MATCHING
 void func_801029EC_3A03DC_name_5D(void) {
     s16 size[4];
@@ -463,7 +463,7 @@ void func_80103580_3A0F70_name_5D(s16* arg) {
     func_80104224_3A1C14_name_5D();
 }
 
-// control flow: retail keeps sp locals where this uses registers, frame 16 bytes larger (masked 193)
+// register allocation: retail spills cat*3 and rematerialises &D_8010B300[].pick/confirm (+3 instr, frame 16 bytes larger; masked 47); tried a separate vibrate counter
 #ifdef NON_MATCHING
 void func_8010359C_3A0F8C_name_5D(void) {
     s16 cat;
@@ -1331,7 +1331,7 @@ void func_80106CC4_3A46B4_name_5D(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106CC4_3A46B4_name_5D);
 #endif
 
-// register allocation (masked 6)
+// FPR allocation of the 134.0f/180.0f constants (masked 4, raw 10; one is the [7] split-label addend); tried operand orders, inline sin/cos args (kept), ang for 134
 #ifdef NON_MATCHING
 void func_80106F5C_3A494C_name_5D(void) {
     s16 size[4];
@@ -1344,9 +1344,9 @@ void func_80106F5C_3A494C_name_5D(void) {
     f32 a;
 
     d = 0;
+    m0 = D_8010CCD0_3AA6C0_name_5D[7];
     m1 = D_8010CCD0_3AA6C0_name_5D[9];
     i = 0;
-    m0 = D_8010CCD0_3AA6C0_name_5D[7];
     for (; i < 134; i += 2) {
         d += 2;
         if (d > 360) {
@@ -1414,9 +1414,8 @@ void func_80106F5C_3A494C_name_5D(void) {
     }
     if (func_80068040_68C40(0xF) != 0) {
         while (1) {
-            a = ang + 90;
-            func_80029714_2A314(m0, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
-            func_80029714_2A314(m1, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
+            func_80029714_2A314(m0, HuMathSin(ang + 90) * 300.0f, 0.0f, func_800B7890_B8490(ang + 90) * 300.0f);
+            func_80029714_2A314(m1, HuMathSin(ang + 90) * 300.0f, 0.0f, func_800B7890_B8490(ang + 90) * 300.0f);
             D_800FC834_FD434[m0].rot.y = ang + 180;
             ang++;
             if (ang >= 171) {
