@@ -4909,7 +4909,8 @@ void func_8010E618_2ECD48_name_45(void) {
 }
 
 #ifdef NON_MATCHING
-/* GCC turns the last CPU test (2 or 3) into set-on-condition; retail branches (bnel). */
+/* GCC turns the last CPU test (2 or 3) into set-on-condition; retail branches (bnel) (masked 24).
+   Tried (S3-T): n = 2; if (f) n = 3; the 3/2 arms swapped; nested ifs (28). */
 void func_8010E828_2ECF58_name_45(void) {
     struct unk_8003B8D4Struct* prompt;
     s32 dir;

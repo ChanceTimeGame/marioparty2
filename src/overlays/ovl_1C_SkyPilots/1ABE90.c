@@ -1288,11 +1288,13 @@ s16 func_80106810_1AFEA0_SkyPilots(s32 idx, s16 x, s16 y) {
     return win;
 }
 
-/* NON_MATCHING: register allocation (masked 30) */
+/* NON_MATCHING: register allocation: idx and speed take v1/s2 at entry (masked 5; tried if/else for the
+   early return) */
 #ifdef NON_MATCHING
 void func_80106A7C_1B010C_SkyPilots(s16 idx, s16 speed) {
     u16 g = D_8010B350_1B49E0_SkyPilots[idx];
-    s32 n;
+    s16 n;
+    s16 d;
 
     if (speed == 100.0f) {
         espDispOn(D_8010B2D4_1B4964_SkyPilots[idx]);
@@ -1306,13 +1308,17 @@ void func_80106A7C_1B010C_SkyPilots(s16 idx, s16 speed) {
     espDispOff(D_8010B2D4_1B4964_SkyPilots[idx]);
     espDispOn(D_8010B2D0_1B4960_SkyPilots[idx]);
     SprAttrReset(g, 0, 0x8000);
-    func_800822A8_82EA8(g, 0, n / 100, 0);
+    d = n / 100;
+    func_800822A8_82EA8(g, 0, d, 0);
     func_8008225C_82E5C(g, 0, 1);
+    n -= d * 100;
     SprAttrReset(g, 1, 0x8000);
-    func_800822A8_82EA8(g, 1, (n % 100) / 10, 0);
+    d = n / 10;
+    func_800822A8_82EA8(g, 1, d, 0);
     func_8008225C_82E5C(g, 1, 1);
+    n -= d * 10;
     SprAttrReset(g, 2, 0x8000);
-    func_800822A8_82EA8(g, 2, (n % 100) % 10, 0);
+    func_800822A8_82EA8(g, 2, n, 0);
     func_8008225C_82E5C(g, 2, 1);
 }
 #else
