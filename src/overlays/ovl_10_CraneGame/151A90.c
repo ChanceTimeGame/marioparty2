@@ -549,22 +549,21 @@ void func_801093A0_152EC0_CraneGame(Gfx** gfx, HmfData* m) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801093A0_152EC0_CraneGame);
 #endif
 
-/* MP1 func_800FCD7C (NON_MATCHING there too). Residue: register allocation; retail steps the
-   unique-vertex pointer by 2 before reading y and z. */
-#ifdef NON_MATCHING
+/* exact c: marioparty func_800FCD7C_CraneGame */
 Gfx* func_801095A4_1530C4_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
     Vtx* v;
     s16* s;
-    ColVtx* p;
+    s16* q;
+    u8 (*t)[4];
     s32 i;
 
     v = D_8010CA94_1565B4_CraneGame + D_8010CAEC_15660C_CraneGame;
     s = D_8010CAA8_1565C8_CraneGame;
-    for (i = 0; i < D_8010CAEA_15660A_CraneGame; i++, v++, s++) {
-        p = &D_8010CA90_1565B0_CraneGame[*s];
-        v->v.ob[0] = p->x;
-        v->v.ob[1] = p->y;
-        v->v.ob[2] = p->z;
+    for (i = 0; i < D_8010CAEA_15660A_CraneGame; v++, i++, s++) {
+        q = &D_8010CA90_1565B0_CraneGame[*s].x;
+        v->v.ob[0] = *q++;
+        v->v.ob[1] = *q++;
+        v->v.ob[2] = *q++;
         v->v.tc[0] = v->v.tc[1] = 0;
         v->v.cn[0] = v->v.cn[1] = v->v.cn[2] = 0xFF;
         v->v.cn[3] = 0xA0;
@@ -572,18 +571,16 @@ Gfx* func_801095A4_1530C4_CraneGame(Gfx* gfx, u8 (*tri)[4], s16 n) {
     gSPVertex(gfx++, (Vtx*)(0x01000000 | (D_8010CAEC_15660C_CraneGame * sizeof(Vtx))), D_8010CAEA_15660A_CraneGame, 0);
     D_8010CAEC_15660C_CraneGame += D_8010CAEA_15660A_CraneGame;
     D_8010CAEA_15660A_CraneGame = 0;
-    for (i = 0; i < n; i++, tri++) {
-        if ((*tri)[0] & 0x80) {
-            gSP1Quadrangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], (*tri)[3], 0);
+    t = tri;
+    for (i = 0; i < n; i++, t++) {
+        if ((*t)[0] & 0x80) {
+            gSP1Quadrangle(gfx++, (*t)[0] & 0x7F, (*t)[1], (*t)[2], (*t)[3], 0);
         } else {
-            gSP1Triangle(gfx++, (*tri)[0] & 0x7F, (*tri)[1], (*tri)[2], 0);
+            gSP1Triangle(gfx++, (*t)[0] & 0x7F, (*t)[1], (*t)[2], 0);
         }
     }
     return gfx;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_10_CraneGame/151A90", func_801095A4_1530C4_CraneGame);
-#endif
 
 /* MP1 func_800FCF78 with MP2's height / 1200, clamp to 1, scale D_8010CAF0, fade 0.5 and an
    unscaled y. Residue: the delay slots after the clamp (scheduling). */
