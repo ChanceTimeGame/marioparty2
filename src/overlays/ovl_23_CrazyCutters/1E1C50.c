@@ -1353,8 +1353,6 @@ void func_80106D44_1E6194_CrazyCutters(s32 player, s32 flag, s32 on) {
 }
 
 /* Arctangent in radians (continued fraction, |x| > 1 folded through 1/x). [FAB0C] */
-// f32/f64 register allocation and the shared tail (masked 8; MP1 masked 4)
-#ifdef NON_MATCHING
 f32 func_80106D84_1E61D4_CrazyCutters(f32 x) {
     f32 a;
     f32 b;
@@ -1384,21 +1382,13 @@ f32 func_80106D84_1E61D4_CrazyCutters(f32 x) {
         sum = a / b;
     } while (i > 0);
     if (sign > 0) {
-        base = 1.5707963267948966;
-        frac = x / (sum + 1.0f);
-        goto done;
+        return 1.5707963267948966 - (x / (sum + 1.0f));
     }
-    if (sign >= 0) {
-        return x / (sum + 1.0f);
+    if (sign < 0) {
+        return -1.5707963267948966 - (x / (sum + 1.0f));
     }
-    frac = x / (sum + 1.0f);
-    base = -1.5707963267948966;
-done:
-    return base - frac;
+    return x / (sum + 1.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_23_CrazyCutters/1E1C50", func_80106D84_1E61D4_CrazyCutters);
-#endif
 
 /* Direction (mode 0: yaw in degrees) or distance (else) from one 2D grid point to another, taken
    as (x, 0, z). [FAC38] */

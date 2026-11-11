@@ -1549,7 +1549,7 @@ void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801073A8_1B0A38_SkyPilots);
 #endif
 
-/* NON_MATCHING: register allocation and frame size (masked 192) */
+/* NON_MATCHING: register allocation (masked 192): retail keeps three of the six row counters in $s6-$s8 and base at 20(sp); GCC here spills one more counter, which shifts the frame. */
 #ifdef NON_MATCHING
 void func_801076E8_1B0D78_SkyPilots(omObjData* obj) {
     s32 team;
