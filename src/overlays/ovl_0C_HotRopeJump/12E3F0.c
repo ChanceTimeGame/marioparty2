@@ -44,8 +44,9 @@ u16 D_8010C254_137E44_HotRopeJump = 0;
 s16 D_8010C258_137E48_HotRopeJump[4] = { 0, 0x3000, 0x2000, 0 };
 
 /* The game's setup: objects, camera, each player's place drawn at random, the motion constants.
-   NON_MATCHING: retail hoists only the source table and -1 out of the place-drawing loop and keeps
-   D_8010C11C by %lo (GCC hoists its address too; masked 17) */
+   NON_MATCHING: the place-drawing loop: retail stores tbl[r]'s -1 from the hoisted s1 where GCC
+   rematerialises it and shares it with D_80111928 (masked 3 with the goto outer loop; nested
+   do/while hoists D_8010C11C's address, masked 17; do/if and while/continue, masked 18-20) */
 #ifdef NON_MATCHING
 void func_80102800_12E3F0_HotRopeJump(void) {
     s32* tbl;
@@ -86,14 +87,16 @@ void func_80102800_12E3F0_HotRopeJump(void) {
     D_8011114C_13CD3C_HotRopeJump = D_800BF7D4_C03D4;
     i = 0;
     tbl = D_8010C12C_137D1C_HotRopeJump;
+next:
     do {
-        do {
-            r = rand8() & 3;
-        } while (tbl[r] == -1);
-        D_8010C11C_137D0C_HotRopeJump[i] = tbl[r];
-        i++;
-        tbl[r] = -1;
-    } while (i < 4);
+        r = rand8() & 3;
+    } while (tbl[r] == -1);
+    D_8010C11C_137D0C_HotRopeJump[i] = tbl[r];
+    i++;
+    tbl[r] = -1;
+    if (i < 4) {
+        goto next;
+    }
     D_80111928_13D518_HotRopeJump = -1;
     D_80111338_13CF28_HotRopeJump = 4;
     D_80111334_13CF24_HotRopeJump = 0;
@@ -997,8 +1000,8 @@ void func_801057B4_1313A4_HotRopeJump(HmfData* hmf, s16 node, s16 part) {
 /* The rope's hit test against the player (MP1 func_800F8A14): 1 when the rope is within reach of
    the player's body (50 above the feet; reach 50, or 40 while D_80111398 swings), 2 when the
    closest segment is in the arc where a jump clears it, else 0.
-   NON_MATCHING: retail keeps t in $f4 and does not thread the reach ternary into two compares
-   (masked 23; MP1's is NON_MATCHING too) */
+   NON_MATCHING: register allocation, retail keeps t in $f4 (masked 0, raw 20 with the reach
+   and distance temporaries and the early return; MP1's is NON_MATCHING too) */
 #ifdef NON_MATCHING
 s32 func_80105AB8_1316A8_HotRopeJump(omObjData* obj) {
     HRJSeg* seg;
@@ -1006,6 +1009,8 @@ s32 func_80105AB8_1316A8_HotRopeJump(omObjData* obj) {
     f32 dx;
     f32 dy;
     f32 dz;
+    f64 dist;
+    f64 reach;
     s32 i;
     s32 ret;
 
@@ -1018,19 +1023,22 @@ s32 func_80105AB8_1316A8_HotRopeJump(omObjData* obj) {
             break;
         }
     }
-    ret = 0;
-    if (i != 12) {
-        dx = t * seg->dir.x + seg->pos.x;
-        dy = t * seg->dir.y + seg->pos.y;
-        dz = t * seg->dir.z + seg->pos.z;
-        dx -= obj->trans.x;
-        dy -= obj->trans.y + 50.0;
-        dz -= obj->trans.z;
-        if (dx * dx + dy * dy + dz * dz <= (D_80111398_13CF88_HotRopeJump == 0.0 ? 2500.0 : 1600.0)) {
-            return 1;
-        }
+    if (i == 12) {
+        return 0;
+    }
+    dx = t * seg->dir.x + seg->pos.x;
+    dy = t * seg->dir.y + seg->pos.y;
+    dz = t * seg->dir.z + seg->pos.z;
+    dx -= obj->trans.x;
+    dy -= obj->trans.y + 50.0;
+    dz -= obj->trans.z;
+    dist = dx * dx + dy * dy + dz * dz;
+    reach = D_80111398_13CF88_HotRopeJump == 0.0 ? 2500.0 : 1600.0;
+    if (dist <= reach) {
+        ret = 1;
+    } else {
         ret = 0;
-        if (225.0 - D_80111324_13CF14_HotRopeJump * 7.5 <= seg->angle && seg->angle <= 270.0f) {
+        if (seg->angle >= 225.0 - D_80111324_13CF14_HotRopeJump * 7.5 && seg->angle <= 270.0f) {
             ret = 2;
         }
     }
