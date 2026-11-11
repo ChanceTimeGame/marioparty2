@@ -449,7 +449,8 @@ void func_80103CC4_2475D4_ShyGuySays(s16 dst, s16 src, s32 a, s32 b) {
     s16 i;
     s16 j;
 
-    if ((s16)a >= from->unk10) {
+    i = a;
+    if (i >= from->unk10) {
         osSyncPrintf("NONE OBJ %d \n", (u16)a);
         return;
     }
@@ -1160,7 +1161,8 @@ void func_80105E50_249760_ShyGuySays(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80105E50_249760_ShyGuySays);
 #endif
 
-// register allocation: the model id moves through a0 (masked 5)
+// scheduling: retail sign-extends id for the call after the scale products (masked 2; s32 id and
+// loading id after HuMathSin are worse)
 #ifdef NON_MATCHING
 void func_80106130_249A40_ShyGuySays(omObjData* obj) {
     SGSBack* b = D_8010AB38_24E448_ShyGuySays;
@@ -1172,8 +1174,9 @@ void func_80106130_249A40_ShyGuySays(omObjData* obj) {
     s16 i;
 
     for (i = 0; i < 3; i++, b++) {
-        if ((id = b->model) != -1) {
+        if (b->model != -1) {
             angle = b->angle;
+            id = b->model;
             t = angle + 4;
             angle = t;
             if (t > 360) {
