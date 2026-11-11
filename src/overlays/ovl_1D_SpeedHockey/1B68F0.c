@@ -91,13 +91,10 @@ void func_8010491C_1B6A6C_SpeedHockey(omObjData* obj, SHPlayer* w) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B68F0", func_8010491C_1B6A6C_SpeedHockey);
 #endif
 
-#ifdef NON_MATCHING
-/* masked 12: retail keeps the table value and the signed speed in separate registers (two more mov.s); GCC here negates in place */
 /* CPU state 2: push the stick toward the target z (slower when near), then wait. */
 void func_80104A90_1B6BE0_SpeedHockey(omObjData* obj, SHPlayer* w) {
     f32 d = obj->trans.z - w->cpuTarget;
     f32 ad = (d < 0.0f) ? -d : d;
-    f32 v;
 
     if (ad < w->cpuRange) {
         w->cpuState = 0;
@@ -106,15 +103,12 @@ void func_80104A90_1B6BE0_SpeedHockey(omObjData* obj, SHPlayer* w) {
         return;
     }
     if (ad < 2.0f * w->cpuRange) {
-        v = D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].slow * ((d < 0.0f) ? -1.0f : ((d > 0.0f) ? 1.0f : 0.0f));
+        d = D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].slow * ((d < 0.0f) ? -1.0f : ((d > 0.0f) ? 1.0f : 0.0f));
     } else {
-        v = D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].fast * ((d < 0.0f) ? -1.0f : ((d > 0.0f) ? 1.0f : 0.0f));
+        d = D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].fast * ((d < 0.0f) ? -1.0f : ((d > 0.0f) ? 1.0f : 0.0f));
     }
-    func_8010650C_1B865C_SpeedHockey(w->port, 0, (s8)v, 0, 0);
+    func_8010650C_1B865C_SpeedHockey(w->port, 0, (s8)d, 0, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1D_SpeedHockey/1B68F0", func_80104A90_1B6BE0_SpeedHockey);
-#endif
 
 /* A player in play: CPU input for CPU players, then the stick moves the paddle along z unless
    the puck is in the way. */
