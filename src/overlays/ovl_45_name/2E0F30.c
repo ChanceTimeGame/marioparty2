@@ -5270,7 +5270,9 @@ s32 func_8010F680_2EDDB0_name_45(s32 arg0) {
 }
 
 #ifdef NON_MATCHING
-/* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3. */
+/* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3.
+   Retail also tests GwSystem.current_player_index by absolute address and reloads it through gw.
+   masked 30 raw 42. Tried (S3-R13): the test written on GwSystem (34), idx = 0 after gw (33). */
 void func_8010F8E0_2EE010_name_45(void) {
     GW_SYSTEM* gw;
     s32 idx;
@@ -5395,7 +5397,8 @@ void func_8010FDCC_2EE4FC_name_45(s32 arg0) {
 }
 
 #ifdef NON_MATCHING
-/* Scheduling only: retail loads rider->step before rider->route, and builds &D_80111AAC[route] index-first. */
+/* Scheduling only (masked 4 raw 13): retail loads rider->step before rider->route, and builds &D_80111AAC[route]
+   index-first. Tried (S3-R13): &D[route][step + 1], D[route] + (step + 1), (step + 1) + D[route] (all masked 8). */
 void func_8010FE08_2EE538_name_45(void) {
     Vec target;
     Ovl45Rider* rider;
