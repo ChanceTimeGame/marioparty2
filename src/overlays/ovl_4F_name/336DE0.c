@@ -2250,7 +2250,8 @@ void func_8010ADA0_33D9E0_name_4F(void) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: GCC hoists 3.0f * dir out of the swing loops and spills the base angle to an integer
-   register; retail hoists other constants (7.0f, 1, 0, 360.0f) and keeps base in f30. Same logic. */
+   register; retail hoists other constants (7.0f, 1, 0, 360.0f) and keeps base in f30 (467 vs 461,
+   masked 54). Same logic. Tried (S3-T09): dir * 3.0f, 3.0f * dir + ofs. */
 /* The winner circles D_80110580 twice (out to D_801102EC[k] degrees and back), a model 7 effect
    under its feet for the first 12 frames of each swing, then walks back to face it. */
 void func_8010AED4_33DB14_name_4F(void) {
@@ -2971,7 +2972,7 @@ void func_8010CFC4_33FC04_name_4F(omObjData* obj) {
     }
 }
 
-s32 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target) {
+u16 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target) {
     if (step < 0.0f) {
         if (cur <= target) {
             return 1;

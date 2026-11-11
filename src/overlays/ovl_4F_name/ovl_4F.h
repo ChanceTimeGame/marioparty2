@@ -421,7 +421,7 @@ void func_8010CC2C_33F86C_name_4F(omObjData* obj);
 s16 func_8010CDD4_33FA14_name_4F(s32 id);
 omObjData* func_8010CE1C_33FA5C_name_4F(Vec* pos, s32 arg1, f32 grow, f32 fade);
 void func_8010CFC4_33FC04_name_4F(omObjData* obj);
-s32 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target);
+u16 func_8010D114_33FD54_name_4F(f32 cur, f32 step, f32 target);
 void func_8010D15C_33FD9C_name_4F(void);
 void func_8010D210_33FE50_name_4F(void);
 omObjData* func_8010D248_33FE88_name_4F(void (*init)(omObjData*), void (*func)(omObjData*), s32 nvtx, s32 ngfx);
