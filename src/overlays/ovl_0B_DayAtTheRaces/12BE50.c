@@ -7,7 +7,8 @@ void func_80108670_12BE50_DayAtTheRaces(void) {
     D_8010AE70_12E650_DayAtTheRaces.timer = 0;
 }
 
-/* NON_MATCHING: control flow (masked 16): each pair's arms keep an andi before the ori that no source form here reproduced */
+/* NON_MATCHING: control flow (masked 16): each pair's arms keep an andi before the ori that no source form here reproduced
+   (u16 b with |= or b = b | k gives the same 16): retail's combine did not know b's high bits were clear */
 #ifdef NON_MATCHING
 u16 func_8010868C_12BE6C_DayAtTheRaces(s8 x, s8 y) {
     s32 b = 0;

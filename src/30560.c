@@ -3898,7 +3898,9 @@ void func_8003BCBC_3C8BC(HmfModel* arg0, f32 arg1) {
    reader, the frame (retail 0x10, here 8). Control flow (masked 218, retail 18 instructions
    longer): retail sign-extends (sll/sra) the nibble in both HMF_S4 arms before the join and adds
    at the join; here GCC folds the extension into the halfword store. rd as u16/s32/u32/u8/s8 and
-   an s32 temporary for each delta were all worse */
+   an s32 temporary for each delta were all worse; so was a separate s32/u16/u32/s8 variable for the
+   nibble reads only (S3-T: masked 232-238). Retail's sll/sra on a value known to be <= 0xFF means
+   combine had no nonzero-bits record for rd (as if live at entry). */
 #ifdef NON_MATCHING
 void func_8003BD08_3C908(HmfData* arg0, s16 arg1, f32 arg2) {
     HmfTexAnimSlot* slot;

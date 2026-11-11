@@ -587,17 +587,14 @@ void func_801037D0_139500_HotBobOmb(omObjData* obj) {
 }
 
 /* The stick's direction as a 3x3 grid index (4 = centre); from MP1 func_800F99F4 (dead zone 8).
-   NON_MATCHING: retail reuses x/y's registers for dx/dy and fills the branch delay slots
-   differently (beql dy = 0; bgtz with dy = 1 in the slot); masked 16-24 in three shapes. MP1's
-   copy is NON_MATCHING too. */
+   NON_MATCHING: register allocation (masked 0, raw 7): retail negates ax/ay in place (a3, a2);
+   tried abs as ternary, declaration order and chained init. */
 #ifdef NON_MATCHING
 s32 func_801045B0_13A2E0_HotBobOmb(s8 arg0, s8 arg1) {
     s32 x;
     s32 y;
     s32 ax;
     s32 ay;
-    s32 dx;
-    s32 dy;
 
     x = arg0;
     y = arg1;
@@ -611,34 +608,36 @@ s32 func_801045B0_13A2E0_HotBobOmb(s8 arg0, s8 arg1) {
     }
     if (ay < ax) {
         if (ax / 2 < ay) {
-            dy = 1;
-            if (y <= 0) {
-                dy = -1;
+            if (y > 0) {
+                y = 1;
+            } else {
+                y = -1;
             }
         } else {
-            dy = 0;
+            y = 0;
         }
         if (x > 8) {
-            dx = 1;
+            x = 1;
         } else {
-            dx = -(x < -8);
+            x = -(x < -8);
         }
     } else {
         if (ay / 2 < ax) {
-            dx = 1;
-            if (x <= 0) {
-                dx = -1;
+            if (x > 0) {
+                x = 1;
+            } else {
+                x = -1;
             }
         } else {
-            dx = 0;
+            x = 0;
         }
         if (y > 8) {
-            dy = 1;
+            y = 1;
         } else {
-            dy = -(y < -8);
+            y = -(y < -8);
         }
     }
-    return (dy + 1) * 3 + 1 + dx;
+    return (y + 1) * 3 + (x + 1);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0D_HotBobOmb/138530", func_801045B0_13A2E0_HotBobOmb);
