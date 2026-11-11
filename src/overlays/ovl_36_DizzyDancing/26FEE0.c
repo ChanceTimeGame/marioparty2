@@ -794,7 +794,9 @@ u8 func_80104C5C_27233C_DizzyDancing(omObjData* obj, s16 near) {
     return r;
 }
 
-/* NON_MATCHING: masked 29: $s2/$s3 swapped; v0/v1 swapped in the 0x4000 press; a delay-slot li. */
+/* NON_MATCHING: masked 29 (raw 29, 690/689): retail keeps one `unk_28 = n; unk_2A = 2` tail in case 4
+   that case 6 jumps to with n in the delay slot; ours cross-jumps it into case 6. A shared `wait:` label
+   with an n local gets that layout but swaps $s2/$s3 (raw 99); n as s16/u16 or reusing i did not help. */
 #ifdef NON_MATCHING
 void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
     Vec polar;
@@ -809,7 +811,6 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
     f32 best;
     f32 speed;
     f32 heading;
-    s32 n;
     s16 i;
     s16 near;
 
@@ -936,9 +937,7 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
         }
         if (c->otherDist[near] < 155.0f && w->unk_38 == 1000.0f) {
             ContBtnTrg[w->unk_57] |= 0x4000;
-            n = 15;
-        wait:
-            a->unk_28 = n;
+            a->unk_28 = 15;
             a->unk_2A = 2;
         }
         heading = c->otherAngle[near];
@@ -964,13 +963,14 @@ void func_8010504C_27272C_DizzyDancing(omObjData* obj) {
         if (w->unk_38 != 1000.0f) {
             if (c->otherDist[near] < 60.0f) {
                 ContBtnTrg[w->unk_57] |= 0x2000;
-                n = 20;
-                goto wait;
+                a->unk_28 = 20;
+                a->unk_2A = 2;
+            } else {
+                ContBtn[w->unk_57] |= 0x8000;
             }
-            ContBtn[w->unk_57] |= 0x8000;
         } else {
-            n = 20;
-            goto wait;
+            a->unk_28 = 20;
+            a->unk_2A = 2;
         }
         heading = c->otherAngle[near];
         c->flags |= 1;
