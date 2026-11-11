@@ -34,7 +34,8 @@ const f32 D_801085DC_10BD9C_MalletGoRound[2][6] = {
 };
 
 #ifdef NON_MATCHING
-/* FP register allocation only, in the stop-angle test: retail keeps wrap in $f0, full in $f6. */
+/* FP register allocation only (masked 25, raw 62), in the stop-angle tests: retail keeps wrap/wrap2 in $f0, full in $f6
+   and copies the 0.0f compare constant; ours allocates wrap to that constant's $f2. Tried: one wrap variable, declaration orders. */
 /* The wheel's main: spins the six posts, stops them on a hit. */
 void func_80105630_108DF0_MalletGoRound(omObjData* obj) {
     f32 target = 0.0f;
