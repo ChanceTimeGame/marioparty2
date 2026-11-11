@@ -41,11 +41,14 @@ omObjData* func_801036A0_1619C0_BobOmbBarrage(void) {
     return obj;
 }
 
+/* NON_MATCHING: register allocation (masked 0, raw 18): i, ch and m sit in s3/s4/s2 where retail has
+   s2/s3/s4. The s16 m keeps retail's separate LoadFormFile calls; k reused for i + 8. Declaration
+   order and an s32 ch have no effect. */
 #ifdef NON_MATCHING
 void func_801036F0_161A10_BobOmbBarrage(omObjData* obj) {
     s32 i;
     s32 k;
-    s32 m;
+    s16 m;
     u8 ch;
 
     obj->model[0] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[0], 0x289);
@@ -111,11 +114,12 @@ void func_801036F0_161A10_BobOmbBarrage(omObjData* obj) {
             D_80109370_167690_BobOmbBarrage->mot[4] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][6], 0x299);
             D_80109370_167690_BobOmbBarrage->mot[7] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][9], 0x299);
             D_80109370_167690_BobOmbBarrage->mot[8] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][10], 0x299);
-            obj->model[(s16)(i + 8)] = LoadFormFile(0xD, 0x299);
-            func_80029714_2A314(obj->model[(s16)(i + 8)], 0.0f, 0.0f, 0.0f);
-            func_8002979C_2A39C(obj->model[(s16)(i + 8)], 0.0f, 0.0f, 0.0f);
-            func_800297E8_2A3E8(obj->model[(s16)(i + 8)], 1.0f, 1.0f, 1.0f);
-            func_800298A4_2A4A4(obj->model[(s16)(i + 8)], 4, 0);
+            k = i + 8;
+            obj->model[(s16)k] = LoadFormFile(0xD, 0x299);
+            func_80029714_2A314(obj->model[(s16)k], 0.0f, 0.0f, 0.0f);
+            func_8002979C_2A39C(obj->model[(s16)k], 0.0f, 0.0f, 0.0f);
+            func_800297E8_2A3E8(obj->model[(s16)k], 1.0f, 1.0f, 1.0f);
+            func_800298A4_2A4A4(obj->model[(s16)k], 4, 0);
         }
     }
     obj->func_ptr = func_80103D58_162078_BobOmbBarrage;
