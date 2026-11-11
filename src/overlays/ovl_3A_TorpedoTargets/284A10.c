@@ -694,12 +694,13 @@ void func_8010478C_28699C_TorpedoTargets(omObjData* obj) {
     }
 }
 
-/* Logic right; float register choice in the yaw arms. */
+/* register allocation (masked 0, raw 42): yawD and the yaw-arm sum take $f2/$f0 where retail has $f4.
+   S3-R: the limit tests read D_80102770 first (masked 20 -> 0); tried the yaw arm as one
+   expression, as +=, and with y in a local. */
 #ifdef NON_MATCHING
 void func_80104B9C_286DAC_TorpedoTargets(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch) {
     TTSub* w = obj->unk_50;
     s32 team = w->team;
-    f32 lim;
 
     if (yawD != 0.0f) {
         D_80102770_103370[team].y = yawD * 0.4f + D_80102770_103370[team].y;
@@ -710,13 +711,11 @@ void func_80104B9C_286DAC_TorpedoTargets(omObjData* obj, f32 yawD, f32 yaw, f32 
         d /= 100.0f;
         D_80102770_103370[team].y = d + D_80102770_103370[team].y;
     }
-    lim = w->yaw + 180.0f + 20.0f;
-    if (lim < D_80102770_103370[team].y) {
-        D_80102770_103370[team].y = lim;
+    if (D_80102770_103370[team].y > w->yaw + 180.0f + 20.0f) {
+        D_80102770_103370[team].y = w->yaw + 180.0f + 20.0f;
     }
-    lim = w->yaw + 180.0f - 20.0f;
-    if (D_80102770_103370[team].y < lim) {
-        D_80102770_103370[team].y = lim;
+    if (D_80102770_103370[team].y < w->yaw + 180.0f - 20.0f) {
+        D_80102770_103370[team].y = w->yaw + 180.0f - 20.0f;
     }
     if (pitchD != 0.0f) {
         D_80102770_103370[team].x -= pitchD * 0.3f;
