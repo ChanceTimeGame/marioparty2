@@ -307,8 +307,8 @@ INCLUDE_ASM("asm/nonmatchings/97D60", func_80097954_98554);
 // IDO-compiled libleo
 #ifdef NON_MATCHING
 u8 func_80097A3C_9863C(void) {
-    u32 stat;
     u32 bmStat;
+    u32 stat;
 
     osEPiReadIo(D_800F28E0_F34E0, 0x05000514, &bmStat);
     osEPiWriteIo(D_800F28E0_F34E0, 0x05000510, D_800F2064_F2C64 | 0x10000000);
@@ -325,11 +325,12 @@ u8 func_80097A3C_9863C(void) {
         }
         return 0x17;
     }
-    if (!(bmStat & 0x80000000)) {
-        osEPiReadIo(D_800F28E0_F34E0, 0x0500050C, &stat);
-        if ((stat & 0x60000000) == 0x60000000) {
-            return 0x19;
-        }
+    if (bmStat & 0x80000000) {
+        return 0x18;
+    }
+    osEPiReadIo(D_800F28E0_F34E0, 0x0500050C, &stat);
+    if ((stat & 0x60000000) == 0x60000000) {
+        return 0x19;
     }
     return 0x18;
 }
@@ -382,36 +383,34 @@ u8 func_80097C5C_9885C(u32 asic_cmd) {
 
     sense = func_80097B50_98750();
     switch (sense) {
-        case 0x15:
-            return 0;
         case 0x2F:
             if (asic_cmd == 0x80000) {
                 return 0;
             }
             // fallthrough
         case 0x2B:
-            if (D_800F1420_F2020 & 0x800000) {
-                return sense;
+            if (!(D_800F1420_F2020 & 0x800000)) {
+                if (asic_cmd == 0x90000) {
+                    return 0;
+                }
+                if (func_8009822C_98E2C(0) != 0) {
+                    return 0x25;
+                }
+                osEPiWriteIo(D_800F28E0_F34E0, 0x05000508, 0x90000);
+                if (func_8009822C_98E2C(1) != 0) {
+                    return 0x25;
+                }
             }
-            if (asic_cmd == 0x90000) {
-                return 0;
-            }
-            if (func_8009822C_98E2C(0) != 0) {
-                return 0x25;
-            }
-            osEPiWriteIo(D_800F28E0_F34E0, 0x05000508, 0x90000);
-            if (func_8009822C_98E2C(1) != 0) {
-                return 0x25;
-            }
-            return sense;
+            break;
         case 0x31:
             if (asic_cmd & 1) {
-                return sense;
+                break;
             }
+            // fallthrough
+        case 0x15:
             return 0;
-        default:
-            return sense;
     }
+    return sense;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/97D60", func_80097C5C_9885C);
@@ -420,30 +419,28 @@ INCLUDE_ASM("asm/nonmatchings/97D60", func_80097C5C_9885C);
 // IDO-compiled libleo (leoChk_done_status)
 #ifdef NON_MATCHING
 u8 func_80097D44_98944(u32 asic_cmd) {
-    u32 sense;
     u32 data;
-    u8 sense2;
+    u32 sense;
 
     sense = func_80097B50_98750();
     switch (sense) {
         case 0x2B:
         case 0x2F:
-            if (D_800F1420_F2020 & 0x800000) {
-                return sense;
+            if (!(D_800F1420_F2020 & 0x800000)) {
+                if (func_8009822C_98E2C(0) != 0) {
+                    return 0x25;
+                }
+                osEPiWriteIo(D_800F28E0_F34E0, 0x05000508, 0x90000);
+                if (func_8009822C_98E2C(1) != 0) {
+                    return 0x25;
+                }
             }
-            if (func_8009822C_98E2C(0) != 0) {
-                return 0x25;
-            }
-            osEPiWriteIo(D_800F28E0_F34E0, 0x05000508, 0x90000);
-            if (func_8009822C_98E2C(1) != 0) {
-                return 0x25;
-            }
-            return sense;
+            break;
         case 0x31:
             if (!(asic_cmd & 1)) {
                 return 0;
             }
-            return sense;
+            break;
         case 0x15:
             osEPiWriteIo(D_800F28E0_F34E0, 0x05000500, 0);
             if (func_8009822C_98E2C(0) != 0) {
@@ -454,9 +451,9 @@ u8 func_80097D44_98944(u32 asic_cmd) {
                 return 0x25;
             }
             osEPiReadIo(D_800F28E0_F34E0, 0x05000500, &data);
-            sense2 = func_80097C5C_9885C(0xC0000);
-            if (sense2 != 0) {
-                return sense2;
+            sense = func_80097C5C_9885C(0xC0000);
+            if (sense != 0) {
+                return sense;
             }
             if (data & 0x10000) {
                 return 2;
@@ -474,9 +471,8 @@ u8 func_80097D44_98944(u32 asic_cmd) {
                 return 0xB;
             }
             return 0x29;
-        default:
-            return sense;
     }
+    return sense;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/97D60", func_80097D44_98944);
