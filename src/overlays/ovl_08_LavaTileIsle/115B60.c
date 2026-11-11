@@ -1166,12 +1166,14 @@ fall:
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_08_LavaTileIsle/115B60", func_80108648_119AC8_LavaTileIsle);
 #endif
 
-/* Register/schedule (class 4, 650 instructions here 552): retail keeps more locals and CSEs the +/-60 tests; the logic is m2c's. */
+/* Masked 71 (was 574 before the 60.0f margin went into a local, as retail holds it in one register):
+   left are the zero-init copy order, a copy of r before its tests, FPU register numbering and the
+   case 0/7 branch-likely shapes. */
 #ifdef NON_MATCHING
 /* The player touched the lava's edge: push them out of the tile they are on. */
 void func_801095BC_11AA3C_LavaTileIsle(omObjData* obj) {
-    f32 x = obj->trans.x;
-    f32 z = obj->trans.z;
+    f32 x;
+    f32 z;
     f32 aHiX = 0.0f;
     f32 aLoX = 0.0f;
     f32 aHiZ = 0.0f;
@@ -1180,8 +1182,14 @@ void func_801095BC_11AA3C_LavaTileIsle(omObjData* obj) {
     f32 bLoX = 0.0f;
     f32 bHiZ = 0.0f;
     f32 bLoZ = 0.0f;
+    f32 tz;
     f32 t;
+    f32 t2;
     s32 r;
+
+    x = obj->trans.x;
+    z = obj->trans.z;
+    tz = 0.0f;
 
     if (z < -120.0f) {
         if (x < -120.0f) {
@@ -1210,108 +1218,109 @@ void func_801095BC_11AA3C_LavaTileIsle(omObjData* obj) {
         t = D_8010A580_11BA00_LavaTileIsle[D_8010A60C_11BA8C_LavaTileIsle].x;
         aHiX = t + 120.0f;
         aLoX = t - 120.0f;
-        aHiZ = bLoZ + 120.0f; /* retail: the tile's z is never read */
-        aLoZ = bLoZ - 120.0f;
+        aHiZ = tz + 120.0f; /* retail: the tile's z is never read */
+        aLoZ = tz - 120.0f;
     } else {
         t = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].x;
+        t2 = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].z;
         bHiX = t + 120.0f;
         bLoX = t - 120.0f;
-        t = D_8010A500_11B980_LavaTileIsle[D_8010A618_11BA98_LavaTileIsle].z;
-        bHiZ = t + 120.0f;
-        bLoZ = t - 120.0f;
+        bHiZ = t2 + 120.0f;
+        bLoZ = t2 - 120.0f;
     }
+    tz = 60.0f;
     switch (r) {
     case 0:
-        if (aLoX <= x + 60.0f && D_8010A614_11BA94_LavaTileIsle->work[2] == 1) {
+        if (aLoX <= x + tz && D_8010A614_11BA94_LavaTileIsle->work[2] == 1) {
             x = aLoX - 120.0f;
         }
-        if (x + 60.0f >= -120.0f || z + 60.0f >= -120.0f) {
+        if (x + tz >= -120.0f || z + tz >= -120.0f) {
             z = -240.0f;
         }
         break;
     case 1:
-        if (aLoZ <= z + 60.0f && D_8010A614_11BA94_LavaTileIsle->work[2] == 2) {
+        if (aLoZ <= z + tz && D_8010A614_11BA94_LavaTileIsle->work[2] == 2) {
             z = aLoZ - 120.0f;
-        } else if (z + 60.0f >= -120.0f) {
+        } else if (z + tz >= -120.0f) {
             z = -240.0f;
         }
-        if (x - 60.0f <= -120.0f || x + 60.0f >= 120.0f) {
+        if (x - tz <= -120.0f || x + tz >= 120.0f) {
             x = 0.0f;
         }
         break;
     case 2:
-        if (aLoZ <= z + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 7) {
+        if (aLoZ <= z + tz && D_8010A610_11BA90_LavaTileIsle->work[2] == 7) {
             z = aLoZ - 120.0f;
-        } else if (z + 60.0f >= -120.0f) {
+        } else if (z + tz >= -120.0f) {
             z = -240.0f;
         }
-        if (x - 60.0f <= 120.0f) {
+        if (x - tz <= 120.0f) {
             x = 240.0f;
         }
         break;
     case 3:
-        if (z - 60.0f <= aHiZ && D_8010A614_11BA94_LavaTileIsle->work[2] == 0) {
+        if (z - tz <= aHiZ && D_8010A614_11BA94_LavaTileIsle->work[2] == 0) {
             z = aHiZ + 120.0f;
-        } else if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+        } else if (z - tz <= -120.0f || z + tz >= 120.0f) {
             z = 0.0f;
         }
-        if (x + 60.0f >= -120.0f) {
+        if (x + tz >= -120.0f) {
             x = -240.0f;
         }
         break;
     case 4:
-        if (x - 60.0f <= aHiX && D_8010A614_11BA94_LavaTileIsle->work[2] == 3) {
+        if (x - tz <= aHiX && D_8010A614_11BA94_LavaTileIsle->work[2] == 3) {
             x = aHiX + 120.0f;
-        } else if (x - 60.0f <= -120.0f || x + 60.0f >= 120.0f) {
+        } else if (x - tz <= -120.0f || x + tz >= 120.0f) {
             x = 0.0f;
         }
-        if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+        if (z - tz <= -120.0f || z + tz >= 120.0f) {
             z = 0.0f;
         }
         break;
     case 5:
-        if (z - 60.0f <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 6) {
+        if (z - tz <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 6) {
             z = bHiZ + 120.0f;
-        } else if (bLoZ <= z + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 0) {
+        } else if (bLoZ <= z + tz && D_8010A610_11BA90_LavaTileIsle->work[2] == 0) {
             z = bLoZ - 120.0f;
-        } else if (z - 60.0f <= -120.0f || z + 60.0f >= 120.0f) {
+        } else if (z - tz <= -120.0f || z + tz >= 120.0f) {
             z = 0.0f;
         }
-        if (x - 60.0f <= 120.0f) {
+        if (x - tz <= 120.0f) {
             x = 240.0f;
         }
         break;
     case 6:
-        if (bLoX <= x + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 3) {
+        if (bLoX <= x + tz && D_8010A610_11BA90_LavaTileIsle->work[2] == 3) {
             x = bLoX - 120.0f;
-        } else if (x + 60.0f >= -120.0f) {
+        } else if (x + tz >= -120.0f) {
             x = -240.0f;
         }
-        if (z - 60.0f <= 120.0f) {
+        if (z - tz <= 120.0f) {
             z = 240.0f;
         }
         break;
     case 7:
-        if (x - 60.0f <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 2) {
+        if (x - tz <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 2) {
             x = bHiX + 120.0f;
-        } else if (bLoX <= x + 60.0f && D_8010A610_11BA90_LavaTileIsle->work[2] == 4) {
+        } else if (bLoX <= x + tz && D_8010A610_11BA90_LavaTileIsle->work[2] == 4) {
             x = bLoX - 120.0f;
-        } else if (x + 60.0f >= 120.0f || x - 60.0f <= -120.0f) {
+        } else if (x + tz >= 120.0f || x - tz <= -120.0f) {
             x = 0.0f;
         }
-        if (z - 60.0f <= 120.0f) {
+        if (z - tz <= 120.0f) {
             z = 240.0f;
         }
         break;
     case 8:
-        if (x - 60.0f <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 1) {
+        if (x - tz <= bHiX && D_8010A610_11BA90_LavaTileIsle->work[2] == 1) {
             x = bHiX + 120.0f;
-        } else if (x - 60.0f <= 120.0f) {
+        } else if (x - tz <= 120.0f) {
             x = 240.0f;
         }
-        if (z - 60.0f <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 5) {
+        if (z - tz <= bHiZ && D_8010A610_11BA90_LavaTileIsle->work[2] == 5) {
             z = bHiZ + 120.0f;
-        } else if (z - 60.0f <= 120.0f) {
+        } else if (z - tz <= 120.0f) {
             z = 240.0f;
         }
         break;
