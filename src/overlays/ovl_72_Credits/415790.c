@@ -712,7 +712,9 @@ s32 func_8010393C_4168CC_Credits(char* str) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: retail has a 48-byte larger frame no code uses, and different loop rotation/allocation */
+/* NON_MATCHING: retail has a 48-byte larger frame no code uses, and different loop rotation/allocation
+   (masked 149). Retail's fade loops keep i (s32) and i + 1 in separate registers (addiu s0,s1,1 ... move s1,s0);
+   S3-T tried an s16 i, `f(i + 1)` with i++ in the for, and the fade-out as `while (alpha > 0)`: all worse. */
 /* The logo, then each section title sliding in and out, then the closing message. */
 void func_80103960_4168F0_Credits(void) {
     GAMEMES* mes;
