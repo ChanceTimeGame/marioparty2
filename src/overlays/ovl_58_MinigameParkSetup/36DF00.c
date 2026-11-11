@@ -2294,10 +2294,6 @@ void func_8010903C_37473C_MinigameParkSetup(void) {
 /* Game length: the clock model lifts in, the stick picks one of its three parts (lite,
    standard, full), A spins the clock hands to the choice and stores it in
    D_80113958.gameLength, B sinks the clock away. Returns 1 on A, 0 on B. */
-#ifdef NON_MATCHING
-/* masked 27: retail keeps result in s7 and tests it through a copy to v0 ("move v0,s7;
-   beqz v0") before the A path; this C tests it in place (one instruction short) and the
-   allocator then picks s5 for it. Everything else matches. */
 s32 func_80109478_374B78_MinigameParkSetup(void) {
     Vec base;
     Vec pos;
@@ -2312,7 +2308,7 @@ s32 func_80109478_374B78_MinigameParkSetup(void) {
     s16 i;
     s16 j;
     s16 sel;
-    s32 result;
+    s16 result;
     s16 names;
     f32 angle;
     f32 target;
@@ -2491,9 +2487,6 @@ s32 func_80109478_374B78_MinigameParkSetup(void) {
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80109478_374B78_MinigameParkSetup);
-#endif
 
 /* Slides the mode's panel model out (dir 0: to z = 1200, else to z = -1200) over 16 frames
    after its motion has run, then parks its motion. */
@@ -3743,7 +3736,7 @@ void func_8010F0A4_37A7A4_MinigameParkSetup(void) {
 }
 
 #ifdef NON_MATCHING
-/* masked 9: in the fade loop retail loads D_801138C0[i] twice (lhu for the call, lh for the
+/* masked 3: in the fade loop retail loads D_801138C0[i] twice (lhu for the call, lh for the
    index); this build loads it once. Logic checked against the asm. */
 /* The tunnel process: seven segment models scroll along z by D_8011378C a frame, wrapping
    between -3000 and 5000; once quit (D_80113784, when the scroll has stopped) or done
