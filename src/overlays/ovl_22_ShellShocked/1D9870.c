@@ -148,8 +148,6 @@ void func_80105428_1D9B08_ShellShocked(s32 i) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105428_1D9B08_ShellShocked);
 #endif
 
-// control flow (masked 15, 80 vs 79 instructions)
-#ifdef NON_MATCHING
 void func_80105648_1D9D28_ShellShocked(s32 i) {
     SSCom* com;
     s32 r;
@@ -161,27 +159,22 @@ void func_80105648_1D9D28_ShellShocked(s32 i) {
     } else {
         r = func_8010856C_1DCC4C_ShellShocked(i, com->goal.x, com->goal.z);
     }
-    if (r != 0) {
-        if (com->timer >= com->limit) {
-            func_80108100_1DC7E0_ShellShocked(i);
-            return;
-        }
-        func_801087F8_1DCED8_ShellShocked(i, &who);
-        if (who != -1 && func_801087F8_1DCED8_ShellShocked(i, &who) < D_8010DFD0_1E26B0_ShellShocked * D_8010DFD0_1E26B0_ShellShocked) {
-            goto done;
-        }
-        com->timer++;
+    if (r == 0) {
+        goto done;
+    }
+    if (com->timer >= com->limit) {
+        func_80108100_1DC7E0_ShellShocked(i);
         return;
     }
+    func_801087F8_1DCED8_ShellShocked(i, &who);
+    if (who != -1 && func_801087F8_1DCED8_ShellShocked(i, &who) < D_8010DFD0_1E26B0_ShellShocked * D_8010DFD0_1E26B0_ShellShocked) {
 done:
-    func_80107A90_1DC170_ShellShocked(i);
+        func_80107A90_1DC170_ShellShocked(i);
+    } else {
+        com->timer++;
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105648_1D9D28_ShellShocked);
-#endif
 
-// control flow (masked 27, 145 vs 146 instructions)
-#ifdef NON_MATCHING
 void func_80105758_1D9E38_ShellShocked(s32 i) {
     Vec a;
     Vec b;
@@ -190,39 +183,38 @@ void func_80105758_1D9E38_ShellShocked(s32 i) {
     Vec e;
     SSCom* com;
     SSTank* tank;
-    s32 t;
+    SSTank* other;
     f32 speed;
     f32 l;
 
     com = &D_8010D740_1E1E20_ShellShocked[i];
     tank = &D_8010DA80_1E2160_ShellShocked[i];
-    t = com->target;
-    if (t != -1) {
-        func_800B3170_B3D70(&a, &tank->pos);
-        func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[t].pos);
-        speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
-        e.x = b.x - a.x;
-        e.z = b.z - a.z;
-        l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
-        e.x = l * e.x;
-        e.z = l * e.z;
-        c.x = e.x;
-        c.z = e.z;
-        d.x = HuMathSin(tank->rot.y);
-        d.z = func_800B7890_B8490(tank->rot.y);
-        e.x = speed * (c.x * d.z - c.z * d.x);
-        e.z = speed * (c.x * d.x + c.z * d.z);
-        func_8010B0B4_1DF794_ShellShocked(i, e.z, -e.x);
-        if (com->timer < com->limit && func_8010C1F0_1E08D0_ShellShocked(com->target) == 0) {
-            com->timer++;
-            return;
-        }
+    other = &D_8010DA80_1E2160_ShellShocked[com->target];
+    if (com->target == -1) {
+        goto done;
     }
-    func_80107A90_1DC170_ShellShocked(i);
+    func_800B3170_B3D70(&a, &tank->pos);
+    func_800B3170_B3D70(&b, &other->pos);
+    speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
+    e.x = b.x - a.x;
+    e.z = b.z - a.z;
+    l = 1.0f / func_800B1830_B2430(e.x * e.x + e.z * e.z);
+    e.x = l * e.x;
+    e.z = l * e.z;
+    c.x = e.x;
+    c.z = e.z;
+    d.x = HuMathSin(tank->rot.y);
+    d.z = func_800B7890_B8490(tank->rot.y);
+    e.x = speed * (c.x * d.z - c.z * d.x);
+    e.z = speed * (c.x * d.x + c.z * d.z);
+    func_8010B0B4_1DF794_ShellShocked(i, e.z, -e.x);
+    if (com->timer >= com->limit || func_8010C1F0_1E08D0_ShellShocked(com->target) != 0) {
+done:
+        func_80107A90_1DC170_ShellShocked(i);
+    } else {
+        com->timer++;
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105758_1D9E38_ShellShocked);
-#endif
 
 void func_80105960_1DA040_ShellShocked(s32 i) {
     Vec a;

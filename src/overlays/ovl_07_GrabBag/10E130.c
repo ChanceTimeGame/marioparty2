@@ -74,8 +74,6 @@ void func_80104D40_10E350_GrabBag(omObjData* obj) {
     func_80105D44_10F354_GrabBag(0);
 }
 
-/* NON_MATCHING: register allocation (class 4): retail keeps 240.0f in an FP register and the row offset's product out of the x loop (masked ~25; calls and branches agree) */
-#ifdef NON_MATCHING
 void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam) {
     HuSprite* spr;
     HuSprite_Unk84_Unk00_Struct* frame;
@@ -84,7 +82,7 @@ void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam) {
     s16 y;
     s16 x;
     s32 x0, y0, x1, y1;
-    f32 ofs, fx, h, cx, cy, base;
+    f32 ofs, fx, fy, h, cx, cy, base;
 
     if (scale < 1.0f) {
         scale = 1.0f;
@@ -98,12 +96,12 @@ void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam) {
     gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
     ofs = (scale - 1.0f) / 2.0f;
     fx = ofs * 320.0f;
+    fy = ofs * 240.0f;
     h = scale * 240.0f / 48.0f;
     c = &D_800C9B80_CA780[cam];
     cx = c->screenPos.x - 640.0f;
     cy = c->screenPos.y - 480.0f;
-    y1 = 0;
-    for (i = 0; i < 48; i++) {
+    for (i = 0, y1 = 0; i < 48; i++) {
         if (y1 + cy >= 960.0f) {
             break;
         }
@@ -112,7 +110,7 @@ void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam) {
         for (y = i * 5; y < 240; y += 240) {
             for (x = 0; x < 320; x += 320) {
                 x0 = -fx * 4.0f;
-                base = -(ofs * 240.0f);
+                base = -fy;
                 y0 = (base + i * h) * 4.0f;
                 x1 = (fx + 320.0f) * 4.0f;
                 y1 = (base + (i + 1) * h) * 4.0f;
@@ -122,12 +120,7 @@ void func_80104D8C_10E39C_GrabBag(s16 idx, f32 scale, s32 cam) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10E130", func_80104D8C_10E39C_GrabBag);
-#endif
 
-/* NON_MATCHING: register allocation (class 4), as func_80104D8C (masked ~25; calls and branches agree) */
-#ifdef NON_MATCHING
 void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam) {
     HuSprite* spr;
     HuSprite_Unk84_Unk00_Struct* frame;
@@ -136,7 +129,7 @@ void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam) {
     s16 y;
     s16 x;
     s32 x0, y0, x1, y1;
-    f32 ofs, fx, h, top, cx, cy, base;
+    f32 ofs, fx, fy, h, top, cx, cy, base;
 
     if (scale < 1.0f) {
         scale = 1.0f;
@@ -153,13 +146,13 @@ void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam) {
     gDPLoadTLUT_pal256(D_800FDBCC_FE7CC++, spr->unk_84->unk0C);
     ofs = (scale - 1.0f) / 2.0f;
     fx = ofs * 320.0f;
+    fy = ofs * 240.0f;
     h = scale * 240.0f / 48.0f;
     top = scale * 240.0f * 3.0f / 4.0f * 4.0f;
     c = &D_800C9B80_CA780[cam];
     cx = c->screenPos.x - 640.0f;
     cy = c->screenPos.y - 480.0f;
-    y1 = 0;
-    for (i = 0; i < 12; i++) {
+    for (i = 0, y1 = 0; i < 12; i++) {
         if (y1 + cy >= 960.0f) {
             break;
         }
@@ -168,7 +161,7 @@ void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam) {
         for (y = i * 5 + 180; y < 240; y += 240) {
             for (x = 0; x < 320; x += 320) {
                 x0 = -fx * 4.0f;
-                base = -(ofs * 240.0f);
+                base = -fy;
                 y0 = (base + i * h) * 4.0f + top;
                 x1 = (fx + 320.0f) * 4.0f;
                 y1 = (base + (i + 1) * h) * 4.0f + top;
@@ -178,9 +171,6 @@ void func_801054D4_10EAE4_GrabBag(s16 idx, f32 scale, s32 cam) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10E130", func_801054D4_10EAE4_GrabBag);
-#endif
 
 void func_80105D44_10F354_GrabBag(s32 cam) {
     Vec scale;
