@@ -1234,8 +1234,6 @@ void func_801095B8_112BC8_GrabBag(omObjData* obj) {
     ContBtnTrg[w->w.unk_57] &= 0xBFFF;
 }
 
-/* NON_MATCHING: register allocation (class 4): float register at the shared return, as MP1's func_800FA780 (masked 3) */
-#ifdef NON_MATCHING
 f32 func_801096E0_112CF0_GrabBag(f32 a, f32 x, f32 z, f32 step) {
     f32 t;
     f32 d;
@@ -1258,22 +1256,16 @@ f32 func_801096E0_112CF0_GrabBag(f32 a, f32 x, f32 z, f32 step) {
         return t;
     }
     if (d <= -180.0f) {
-        return a + step;
-    }
-    if ((d <= 180.0f) & (d >= 0.0f)) {
-        return a + step;
-    }
-    if (d > 180.0f) {
-        return a - step;
-    }
-    if ((d > -180.0f) & (d < 0.0f)) {
-        return a - step;
+        t = a + step;
+    } else if ((d <= 180.0f) & (d >= 0.0f)) {
+        t = a + step;
+    } else if (d > 180.0f) {
+        t = a - step;
+    } else if ((d > -180.0f) & (d < 0.0f)) {
+        t = a - step;
     }
     return t;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_801096E0_112CF0_GrabBag);
-#endif
 
 
 
