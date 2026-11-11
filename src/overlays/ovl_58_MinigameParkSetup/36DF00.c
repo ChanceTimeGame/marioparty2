@@ -103,9 +103,7 @@
     D_801136BC_37EDBC_MinigameParkSetup, D_8011369C_37ED9C_MinigameParkSetup,
 };
 /* 801134B8 size 0x78 */ Ovl58ModeTable D_801134B8_37EBB8_MinigameParkSetup = { { 0x9009C, 0x9009D, 0x9009E }, { { { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, 0.0f } }, { { -300.0f, 400.0f, 200.0f }, { -300.0f, 400.0f, -200.0f }, { -300.0f, 487.5f, -350.0f } }, { { -300.0f, 400.0f, 300.0f }, { -300.0f, 400.0f, 0.0f }, { -300.0f, 400.0f, -300.0f } } } };
-/* 80113530 size 0x4 */ s16 D_80113530_37EC30_MinigameParkSetup[2] = {
-    -1, 0,
-};
+/* 80113530 size 0x4 */ s16 D_80113530_37EC30_MinigameParkSetup = -1;
 /* 80113534 size 0x18 */ s32 D_80113534_37EC34_MinigameParkSetup[6] = {
     0x9009F, 0x900A0, 0x900A1, 0x900A2, 0x900A3, 0x900A4,
 };
@@ -826,14 +824,14 @@ __asm__(".section .rodata");
 const char D_80113628_37ED28_MinigameParkSetup[] = "p_panel";
 
 #ifdef NON_MATCHING
-/* masked 35, calls equal: the first copy into delayIn is lhu/sh in retail (lwl/lwr here);
-   maxPlayers' store scheduling and the s-register choice of the panel loops differ.
-   Logic checked against the asm. */
+/* masked 27, calls equal: maxPlayers' store scheduling (retail sets 4 in a branch delay
+   slot and stores at the join; an if/else gives that but shifts the allocator further) and
+   the s-register choice of the panel loops differ. Logic checked against the asm. */
 /* Player count: the four models lift their number panels in, the stick picks a panel
    (1-4 players, 1-2 in mode 3), A takes it (players > count become CPUs), B backs out.
    Returns 1 on A, 0 on B. */
 s32 func_80103F38_36F638_MinigameParkSetup(void) {
-    Ovl58Quad models;
+    s16 models[4] = { D_801138B0_37EFB0_MinigameParkSetup[24], D_801138B0_37EFB0_MinigameParkSetup[25], D_801138B0_37EFB0_MinigameParkSetup[26], D_801138B0_37EFB0_MinigameParkSetup[27] }; /* D_801138E0 */
     Ovl58Quad delayIn;
     Ovl58Quad delayOut;
     s16 done[4];
@@ -854,8 +852,6 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
     f32 dir;
     f32 t;
 
-    delayIn = D_801138E0_37EFE0_MinigameParkSetup;
-    models = delayIn;
     delayIn = D_80113618_37ED18_MinigameParkSetup;
     delayOut = D_80113620_37ED20_MinigameParkSetup;
     n = D_80113958_37F058_MinigameParkSetup.padCount;
@@ -867,18 +863,18 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
         maxPlayers = 2;
     }
     for (i = 0; i < n; i++) {
-        func_800298A4_2A4A4(models.v[i], 4, 0);
+        func_800298A4_2A4A4(models[i], 4, 0);
         if (D_80113782_37EE82_MinigameParkSetup == 0) {
-            func_8002C9C0_2D5C0(models.v[i], D_801139A8_37F0A8_MinigameParkSetup);
+            func_8002C9C0_2D5C0(models[i], D_801139A8_37F0A8_MinigameParkSetup);
         } else {
-            func_8002C9C0_2D5C0(models.v[i], D_801139AA_37F0AA_MinigameParkSetup);
+            func_8002C9C0_2D5C0(models[i], D_801139AA_37F0AA_MinigameParkSetup);
         }
-        func_80029C74_2A874(models.v[i], 30.0f);
-        func_80029E80_2AA80(models.v[i], 1, 1);
-        func_80029760_2A360(models.v[i], &base[i]);
+        func_80029C74_2A874(models[i], 30.0f);
+        func_80029E80_2AA80(models[i], 1, 1);
+        func_80029760_2A360(models[i], &base[i]);
         pos[i] = base[i];
         pos[i].z += 1200.0f;
-        func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+        func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
         done[i] = 0;
     }
     sprA = func_8001A2F8_1AEF8(0x90082);
@@ -919,24 +915,24 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
             if ((t > 0.0f) & (t <= 20.0f)) {
                 pos[i].z = (1.0f - HuMathSin(t * 4.5f)) * 1200.0f * dir + base[i].z;
                 if (t == 15.0f) {
-                    func_80029E80_2AA80(models.v[i], 1, 0);
-                    func_80029FE4_2ABE4(models.v[i], 1.5f);
+                    func_80029E80_2AA80(models[i], 1, 0);
+                    func_80029FE4_2ABE4(models[i], 1.5f);
                 }
-                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
             } else if ((done[i] == 0) & (t > 20.0f)) {
-                if (func_80029E14_2AA14(models.v[i]) != D_801139A0_37F0A0_MinigameParkSetup) {
-                    if (func_80029CE4_2A8E4(models.v[i]) >= func_80029D0C_2A90C(models.v[i])) {
-                        func_8002C9C0_2D5C0(models.v[i], D_801139A0_37F0A0_MinigameParkSetup);
+                if (func_80029E14_2AA14(models[i]) != D_801139A0_37F0A0_MinigameParkSetup) {
+                    if (func_80029CE4_2A8E4(models[i]) >= func_80029D0C_2A90C(models[i])) {
+                        func_8002C9C0_2D5C0(models[i], D_801139A0_37F0A0_MinigameParkSetup);
                         PlaySound(0xB1);
                     }
-                } else if (func_80029CE4_2A8E4(models.v[i]) > 30.0f) {
-                    func_80029E80_2AA80(models.v[i], 1, 1);
+                } else if (func_80029CE4_2A8E4(models[i]) > 30.0f) {
+                    func_80029E80_2AA80(models[i], 1, 1);
                     done[i] = 1;
                 }
             }
         }
         for (i = 0; i < n; i++) {
-            func_801104FC_37BBFC_MinigameParkSetup(models.v[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
+            func_801104FC_37BBFC_MinigameParkSetup(models[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
             for (j = 0; j < 4; j++) {
                 func_801051BC_3708BC_MinigameParkSetup(icon[i * 4 + j], i * 4 + j, maxPlayers);
             }
@@ -1012,9 +1008,9 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
     PlaySound(0xB1);
     for (i = 0; i < n; i++) {
         if (sel != i) {
-            func_80029E80_2AA80(models.v[i], 1, 0);
+            func_80029E80_2AA80(models[i], 1, 0);
         }
-        func_80029FE4_2ABE4(models.v[i], 2.0f);
+        func_80029FE4_2ABE4(models[i], 2.0f);
         done[i] = 0;
     }
     if (result != 0) {
@@ -1022,10 +1018,10 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
         for (frame = 0; frame < 30; frame++) {
             if (frame == 15) {
                 PlaySound(0xB1);
-                func_80029E80_2AA80(models.v[sel], 1, 0);
+                func_80029E80_2AA80(models[sel], 1, 0);
             }
             for (i = 0; i < n; i++) {
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
                 for (j = 0; j < 4; j++) {
                     func_801051BC_3708BC_MinigameParkSetup(icon[i * 4 + j], i * 4 + j, maxPlayers);
                 }
@@ -1033,13 +1029,13 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
             HuPrcVSleep();
         }
         for (i = 0; i < n; i++) {
-            func_8002C9C0_2D5C0(models.v[i], D_801139A8_37F0A8_MinigameParkSetup);
-            func_80029FE4_2ABE4(models.v[i], 1.5f);
+            func_8002C9C0_2D5C0(models[i], D_801139A8_37F0A8_MinigameParkSetup);
+            func_80029FE4_2ABE4(models[i], 1.5f);
         }
         for (frame = 1; frame < 10; frame++) {
             for (i = 0; i < n; i++) {
-                D_800FC834_FD434[models.v[i]].pos.z = base[i].z - frame * 100;
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
+                D_800FC834_FD434[models[i]].pos.z = base[i].z - frame * 100;
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
                 for (j = 0; j < 4; j++) {
                     func_801051BC_3708BC_MinigameParkSetup(icon[i * 4 + j], i * 4 + j, maxPlayers);
                 }
@@ -1059,7 +1055,7 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
         PlaySound(0xB1);
         for (frame = 0; frame < 15; frame++) {
             for (i = 0; i < n; i++) {
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
                 for (j = 0; j < 4; j++) {
                     func_801051BC_3708BC_MinigameParkSetup(icon[i * 4 + j], i * 4 + j, maxPlayers);
                 }
@@ -1067,13 +1063,13 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
             HuPrcVSleep();
         }
         for (i = 0; i < n; i++) {
-            func_8002C9C0_2D5C0(models.v[i], D_801139AA_37F0AA_MinigameParkSetup);
-            func_80029FE4_2ABE4(models.v[i], 1.5f);
+            func_8002C9C0_2D5C0(models[i], D_801139AA_37F0AA_MinigameParkSetup);
+            func_80029FE4_2ABE4(models[i], 1.5f);
         }
         for (frame = 1; frame < 11; frame++) {
             for (i = 0; i < n; i++) {
-                D_800FC834_FD434[models.v[i]].pos.z = (1.0f - func_800B7890_B8490(frame * 9.0f)) * 1200.0f + base[i].z;
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
+                D_800FC834_FD434[models[i]].pos.z = (1.0f - func_800B7890_B8490(frame * 9.0f)) * 1200.0f + base[i].z;
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], panel[i], D_80113628_37ED28_MinigameParkSetup);
                 for (j = 0; j < 4; j++) {
                     func_801051BC_3708BC_MinigameParkSetup(icon[i * 4 + j], i * 4 + j, maxPlayers);
                 }
@@ -1082,7 +1078,7 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
         }
     }
     for (i = 0; i < n; i++) {
-        func_800298A4_2A4A4(models.v[i], 4, 4);
+        func_800298A4_2A4A4(models[i], 4, 4);
         func_8001AC44_1B844(panel[i]);
         for (j = 0; j < 4; j++) {
             func_8001AC44_1B844(icon[i * 4 + j]);
@@ -1092,7 +1088,7 @@ s32 func_80103F38_36F638_MinigameParkSetup(void) {
     SprAnimKill(sprA);
     SprAnimKill(sprB);
     for (i = 0; i < 4; i++) {
-        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 24, models.v[i]);
+        func_80112454_37DB54_MinigameParkSetup(D_80112BBC_37E2BC_MinigameParkSetup, i + 24, models[i]);
     }
     return result;
 }
@@ -2836,11 +2832,12 @@ const char D_801136F4_37EDF4_MinigameParkSetup[] = "mode_panel";
    D_80113926/D_8011394E) lift in, the stick picks one, A lifts it to the front and sends
    the others away (choice in D_80113816), B sinks them all. Returns 1 on A, 0 on B. */
 #ifdef NON_MATCHING
-/* masked 112: D_80113908's copy goes through a stack temporary in retail (as 80103F38's
-   and 8010A1E8's), the frame layout and spills follow from it. Calls and stores agree
-   (n64nmcmp); logic checked against the asm. */
+/* masked 78: the local array initialiser gives retail's stack-temporary copy of D_80113908;
+   the spill of n sits 8 bytes higher here (126(sp) in retail) and the s-register and float
+   temporaries of the lift-in and slide loops differ. Calls and stores agree (n64nmcmp);
+   logic checked against the asm. */
 s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
-    Ovl58Triple models;
+    s16 models[3] = { D_80113908_37F008_MinigameParkSetup[0], D_80113908_37F008_MinigameParkSetup[1], D_80113908_37F008_MinigameParkSetup[2] };
     s16 done[3];
     Vec base[3];
     Vec pos[3];
@@ -2855,7 +2852,6 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
     f32 f;
     f32 angle;
 
-    models = *(Ovl58Triple*)D_80113908_37F008_MinigameParkSetup;
     n = 1;
     if (D_80113898_37EF98_MinigameParkSetup >= 20) {
         n = 2;
@@ -2864,21 +2860,21 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
         n++;
     }
     for (i = 0; i < n; i++) {
-        func_800298A4_2A4A4(models.v[i], 4, 0);
-        func_80029E80_2AA80(models.v[i], 2, 2);
-        func_80029FE4_2ABE4(models.v[i], 2.0f);
+        func_800298A4_2A4A4(models[i], 4, 0);
+        func_80029E80_2AA80(models[i], 2, 2);
+        func_80029FE4_2ABE4(models[i], 2.0f);
         base[i] = D_801134B8_37EBB8_MinigameParkSetup.pos[n - 1][i];
         pos[i] = base[i];
         pos[i].z += 1200.0f;
         if (D_80113782_37EE82_MinigameParkSetup == 0 || i != D_80113816_37EF16_MinigameParkSetup) {
-            func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+            func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
         }
         done[i] = 0;
     }
-    if (D_80113530_37EC30_MinigameParkSetup[0] == -1) {
-        D_80113530_37EC30_MinigameParkSetup[0] = func_8001A2F8_1AEF8(0x90088);
+    if (D_80113530_37EC30_MinigameParkSetup == -1) {
+        D_80113530_37EC30_MinigameParkSetup = func_8001A2F8_1AEF8(0x90088);
         for (i = 0; i < n; i++) {
-            D_8011383E_37EF3E_MinigameParkSetup[i] = func_8001AAAC_1B6AC(D_80113530_37EC30_MinigameParkSetup[0], 0, 1);
+            D_8011383E_37EF3E_MinigameParkSetup[i] = func_8001AAAC_1B6AC(D_80113530_37EC30_MinigameParkSetup, 0, 1);
             func_8001A788_1B388(D_8011383E_37EF3E_MinigameParkSetup[i], 5);
             func_8001A6BC_1B2BC(D_8011383E_37EF3E_MinigameParkSetup[i], 0x100);
             D_80113844_37EF44_MinigameParkSetup[i] = func_8001A2F8_1AEF8(D_801134B8_37EBB8_MinigameParkSetup.sprite[i]);
@@ -2889,13 +2885,13 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
     }
     if (D_80113782_37EE82_MinigameParkSetup != 0) {
         /* Back from a later step: the chosen panel comes back down from the front. */
-        func_80029760_2A360(models.v[D_80113816_37EF16_MinigameParkSetup], &base[D_80113816_37EF16_MinigameParkSetup]);
+        func_80029760_2A360(models[D_80113816_37EF16_MinigameParkSetup], &base[D_80113816_37EF16_MinigameParkSetup]);
         for (frame = 0; frame < 16; frame++) {
-            func_80029714_2A314(models.v[D_80113816_37EF16_MinigameParkSetup],
+            func_80029714_2A314(models[D_80113816_37EF16_MinigameParkSetup],
                                 base[D_80113816_37EF16_MinigameParkSetup].x,
                                 base[D_80113816_37EF16_MinigameParkSetup].y,
                                 (1.0f - func_800B7890_B8490(frame * 6.0f)) * (-1200.0f - base[D_80113816_37EF16_MinigameParkSetup].z) + base[D_80113816_37EF16_MinigameParkSetup].z);
-            func_801104FC_37BBFC_MinigameParkSetup(models.v[D_80113816_37EF16_MinigameParkSetup], D_8011383E_37EF3E_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup], D_801136F4_37EDF4_MinigameParkSetup);
+            func_801104FC_37BBFC_MinigameParkSetup(models[D_80113816_37EF16_MinigameParkSetup], D_8011383E_37EF3E_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup], D_801136F4_37EDF4_MinigameParkSetup);
             func_80108BA8_3742A8_MinigameParkSetup(D_8011384A_37EF4A_MinigameParkSetup[D_80113816_37EF16_MinigameParkSetup]);
             HuPrcVSleep();
         }
@@ -2916,13 +2912,13 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
             }
             if ((t > 0.0f) & (t <= 20.0f)) {
                 pos[i].z = (1.0f - HuMathSin(t * 4.5f)) * 1200.0f * dir + base[i].z;
-                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
+                func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
             } else if ((done[i] == 0) & (t > 25.0f)) {
                 done[i] = 1;
             }
         }
         for (i = 0, cnt = 0; i < n; i++) {
-            func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
+            func_801104FC_37BBFC_MinigameParkSetup(models[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
             func_80108BA8_3742A8_MinigameParkSetup(D_8011384A_37EF4A_MinigameParkSetup[i]);
             func_801105B8_37BCB8_MinigameParkSetup(i, D_8011383E_37EF3E_MinigameParkSetup[i], 10, 20);
             if (done[i] != 0) {
@@ -2993,8 +2989,8 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
                     f = 1.0f - func_800B7890_B8490((frame - 5) * 6.0f);
                     pos[i].z = f * (-1200.0f - base[i].z) + base[i].z;
                 }
-                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
+                func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
                 func_80108BA8_3742A8_MinigameParkSetup(D_8011384A_37EF4A_MinigameParkSetup[i]);
             }
             HuPrcVSleep();
@@ -3004,8 +3000,8 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
         for (frame = 0; frame < 11; frame++) {
             for (i = 0; i < n; i++) {
                 pos[i].z = (1.0f - func_800B7890_B8490(frame * 9.0f)) * 1200.0f + base[i].z;
-                func_80029714_2A314(models.v[i], pos[i].x, pos[i].y, pos[i].z);
-                func_801104FC_37BBFC_MinigameParkSetup(models.v[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
+                func_80029714_2A314(models[i], pos[i].x, pos[i].y, pos[i].z);
+                func_801104FC_37BBFC_MinigameParkSetup(models[i], D_8011383E_37EF3E_MinigameParkSetup[i], D_801136F4_37EDF4_MinigameParkSetup);
                 func_80108BA8_3742A8_MinigameParkSetup(D_8011384A_37EF4A_MinigameParkSetup[i]);
             }
             HuPrcVSleep();
@@ -3013,7 +3009,7 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
     }
     for (i = 0; i < 3; i++) {
         if (sel != i) {
-            func_800298A4_2A4A4(models.v[i], 4, 4);
+            func_800298A4_2A4A4(models[i], 4, 4);
         }
     }
     return result;
