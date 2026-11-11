@@ -1149,9 +1149,9 @@ void SprAnimKillAll(void) {
 }
 
 /* Loads a sprite animation (MP1 func_800678A4): frames, palette and key banks. */
-// control flow (4 instructions short, masked 26): retail loads anim->unk12 twice for the test and
-// the tbl allocation, and reloads keys[k] for banks->unk04 and key; also pal/idx swap s7/s8 and
-// the keys base is hoisted. The unk18 word test is an offset cast (see below).
+// masked 14 (S3-R08: the unk12 test as an early return gives retail's reload; was 26): retail
+// reloads keys[k] for banks->unk04 and key with the keys base hoisted into s7, and swaps pal/idx
+// (s7/s8). The unk18 word test is an offset cast (see below).
 #ifdef NON_MATCHING
 s16 SprAnimRead(void* arg0) {
     u8* data = arg0;
@@ -1241,7 +1241,10 @@ s16 SprAnimRead(void* arg0) {
             *palDst++ = pal[i * 2 + 1];
         }
     }
-    if (anim->unk12 != 0) {
+    if (anim->unk12 == 0) {
+        return idx;
+    }
+    {
         tbl = HuMemAlloc(anim->unk12 * sizeof(*tbl));
         if (tbl == NULL) {
             goto fail;
