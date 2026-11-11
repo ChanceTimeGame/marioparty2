@@ -2172,8 +2172,6 @@ f32 func_80109844_1FE1E4_RollCall(f32 x) {
     return 0.0f;
 }
 
-/* NM: schedule: the 180.0f load sits after the compare in retail (twin of ovl_09). */
-#ifdef NON_MATCHING
 void func_80109994_1FE334_RollCall(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -2203,9 +2201,10 @@ void func_80109994_1FE334_RollCall(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -2239,9 +2238,6 @@ void func_80109994_1FE334_RollCall(Vec* from, Vec* to, Vec* out) {
     out->z = yaw;
     out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_26_RollCall/1F71A0", func_80109994_1FE334_RollCall);
-#endif
 
 void func_80109D10_1FE6B0_RollCall(void) {
     RCSlot* p = D_8010A5B0_1FEF50_RollCall;

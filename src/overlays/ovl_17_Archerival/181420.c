@@ -211,9 +211,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80102FA0_
 
 /* The direction from one point to another: out->x = distance, out->y = pitch (0 up, 90 level,
    180 down), out->z = yaw, in degrees. */
-// NON_MATCHING: retail schedules the 180.0f load after the delta.y compare (as Crazy Cutters'
-// func_80107204_1E6654_CrazyCutters; masked 25, all from that one shift)
-#ifdef NON_MATCHING
 void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -238,10 +235,11 @@ void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out) {
     nearNegative = horizontal >= -0.002f;
     if (nearPositive & nearNegative) {
         yaw = 0.0f;
-        pitch = 180.0f;
         horizontal = 0.0f;
         if (!(delta.y > 0.0001f) && delta.y < 0.0001f) {
             pitch = 0.0f;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -265,13 +263,11 @@ void func_801030F0_181D10_Archerival(Vec* from, Vec* to, Vec* out) {
     if (nearPositive & nearNegative) {
         pitch = 0.0f;
     }
-    out->x = func_800B1820_B2420(delta.y * delta.y + horizontal * horizontal);
+    horizontal = func_800B1820_B2420(delta.y * delta.y + horizontal * horizontal);
+    out->x = horizontal;
     out->y = pitch;
     out->z = yaw;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801030F0_181D10_Archerival);
-#endif
 
 /* The arrow on the title banner: flies up out of the bow and falls away (state D_80107C58). */
 void func_80103458_182078_Archerival(omObjData* obj) {

@@ -139,8 +139,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801029F0_1
 #endif
 
 /* From `from` to `to`: out = { distance, pitch + 90 (degrees), yaw (degrees) }. */
-/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
-#ifdef NON_MATCHING
 void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -170,9 +168,10 @@ void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         horizontal = yaw;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = yaw;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f || delta.z != 0.0f) {
@@ -201,9 +200,6 @@ void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
     out->y = pitch;
     out->z = yaw;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_80102B40_121A80_RakinEmIn);
-#endif
 
 /* angle + add, wrapped to [0, 360). */
 f32 func_80102EB4_121DF4_RakinEmIn(f32 angle, f32 add) {

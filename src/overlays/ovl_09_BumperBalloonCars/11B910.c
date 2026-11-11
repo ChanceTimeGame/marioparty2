@@ -1550,8 +1550,6 @@ f32 func_80107F34_121044_BumperBalloonCars(f32 x) {
     return 0.0f;
 }
 
-/* Three instructions out of order (the 180.0f load sits after the compare in retail): scheduling. */
-#ifdef NON_MATCHING
 void func_80108084_121194_BumperBalloonCars(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -1581,9 +1579,10 @@ void func_80108084_121194_BumperBalloonCars(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -1617,6 +1616,3 @@ void func_80108084_121194_BumperBalloonCars(Vec* from, Vec* to, Vec* out) {
     out->z = yaw;
     out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_09_BumperBalloonCars/11B910", func_80108084_121194_BumperBalloonCars);
-#endif
