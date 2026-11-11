@@ -1007,17 +1007,18 @@ void func_80105EC8_202528_AbandonShip(ASMastWork* w) {
     w->unk_74 = 0.5f;
 }
 
-/* NON_MATCHING: same logic; retail hoists two table bases and reloads 100.0f in the coin loop. */
+/* NON_MATCHING: register allocation (masked 19, 399 vs 397, most of it split-label relocs): retail reloads
+   100.0f inside the coin loop where we hoist it into $f24 (a 0x58 frame instead of 0x50). The call in
+   both arms, the unextended u16 idx and the direct D_801095F8 store came from retail. */
 #ifdef NON_MATCHING
 void func_80105F38_202598_AbandonShip(omObjData* obj) {
     ASMastWork* w;
     s8* rung;
     s8* tbl;
-    u16* spr;
     f32 y;
     s32 i;
     s32 j;
-    s32 idx;
+    u16 idx;
     s32 attr = 0x2A9;
 
     obj->unk_50 = func_80027154_27D54(0xAC, 0x7918);
@@ -1052,14 +1053,15 @@ void func_80105F38_202598_AbandonShip(omObjData* obj) {
         D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y = D_801096B8_205D18_AbandonShip[*(rung = D_801096B0_205D10_AbandonShip * 5 + tbl + i)] - 100.0f;
         if (D_801093DC_205A3C_AbandonShip[D_801096B0_205D10_AbandonShip][*rung] == 0) {
             D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x = obj->trans.x - 80.0f;
+            func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x, D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y, obj->trans.z);
         } else {
             D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x = obj->trans.x + 80.0f;
+            func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x, D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y, obj->trans.z);
         }
-        func_80029714_2A314(obj->model[j], D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].x, D_80109610_205C70_AbandonShip[D_801095D2_205C32_AbandonShip][i].y, obj->trans.z);
         j++;
     }
-    idx = (s16)func_80018D64_19964(0x14, (u16)attr, 8);
-    obj->model[14] = D_800F86D8_F92D8[idx].unk00;
+    idx = func_80018D64_19964(0x14, (u16)attr, 8);
+    obj->model[14] = D_800F86D8_F92D8[(s16)idx].unk00;
     func_800298A4_2A4A4(obj->model[14], 4, 4);
     HmfModelObjAttrSet(obj->model[14], 0x70000000, 0x70000000);
     func_800297E8_2A3E8(obj->model[14], 4.0f, 4.0f, 4.0f);
@@ -1067,9 +1069,8 @@ void func_80105F38_202598_AbandonShip(omObjData* obj) {
     w->unk_21 = idx;
     func_80021250_21E50(w->unk_21, 0xFF, 0xFF, 0xBE);
     func_800211E8_21DE8(w->unk_21, 0xF0);
-    spr = &D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip];
-    *spr = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x37000C), 0, 1);
-    func_8001A91C_1B51C(*spr, 1.0f, 1.0f);
+    D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0x37000C), 0, 1);
+    func_8001A91C_1B51C(D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip], 1.0f, 1.0f);
     espDispOff(D_801095F8_205C58_AbandonShip[D_801095D2_205C32_AbandonShip]);
     D_801095D2_205C32_AbandonShip++;
 }
