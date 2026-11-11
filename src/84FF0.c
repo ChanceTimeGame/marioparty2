@@ -1633,9 +1633,6 @@ void SprScaleSet(s16 grpIdx, s16 idx, f32 x, f32 y);
 void func_80088F44_89B44(u8* buf, s16 w, s16 h);
 s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags);
 
-// register allocation (masked 29): retail keeps the flags in fp and (s16)w, (s16)h in s5/s4 across the
-// HuMemAlloc and memset calls; this C keeps one register fewer
-#ifdef NON_MATCHING
 /* MP3 func_8005A968_5B568, MP1 func_8006D010: opens a window, returns its id or -1 */
 s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
     TextWindow* tw;
@@ -1643,7 +1640,6 @@ s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
     s16 id;
     s16 i;
     s16 grp;
-    s32 size;
 
     for (id = 2; id < 14; id++) {
         if (D_800F920C_F9E0C[id].unk5E == -1) {
@@ -1736,19 +1732,19 @@ s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
         spr->unk_84->unk00->unk04 = w;
         spr->unk_84->unk00->unk06 = h;
         HuMemFree(spr->unk_84->unk00->unk00);
-        size = (w * h) / 2;
-        spr->unk_84->unk00->unk00 = tw->unkDC = HuMemAlloc(size);
-        func_800B0EF0_B1AF0(tw->unkDC, 0xFF, size);
+        spr->unk_84->unk00->unk00 = tw->unkDC = HuMemAlloc((w * h) / 2);
+        func_800B0EF0_B1AF0(tw->unkDC, 0xFF, (w * h) / 2);
         if (!(flags & 1)) {
             func_80088F44_89B44(tw->unkDC, w, h);
         }
         func_80082488_83088(grp, 0, 100);
         SprAttrReset(grp, 0, 0x8000);
+        func_8008225C_82E5C(grp, 0, 0);
     } else {
         func_80082488_83088(grp, 0, 0);
         SprAttrSet(grp, 0, 0x8000);
+        func_8008225C_82E5C(grp, 0, 0);
     }
-    func_8008225C_82E5C(grp, 0, 0);
     func_80082488_83088(grp, 1, 0x100);
     SprAttrReset(grp, 1, 0xFFFF);
     SprAttrSet(grp, 1, 0x01009000);
@@ -1766,9 +1762,6 @@ s32 func_800888A8_894A8(s16 x, s16 y, s16 w, s16 h, s32 arg4, s16 flags) {
     tw->unkAA = 0x32D;
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/84FF0", func_800888A8_894A8);
-#endif
 
 // MP1 func_8006D650 (NON_MATCHING upstream: retail recomputes (w - 4) / 2 for every store)
 // Control flow (masked 23, +16 instructions): GCC CSEs (w - 4) / 2 and hoists it out of the loop; retail
@@ -2740,7 +2733,8 @@ s32 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
 
 // register allocation (masked 14; MP1 func_8006FE4C has the same residue): the new entry's index reuses
 // the compare's sign extension of sel where retail re-extends it. The (u16) on the unkA6 test lets btn
-// go unextended as in retail (same result: unkA6 is a u16).
+// go unextended as in retail (same result: unkA6 is a u16). S3-T05: sel != tw->unk_31 (masked 16) and
+// indexing tw->unk_F4[sel] directly for unkA0/unkA2 (masked 17) are worse.
 #ifdef NON_MATCHING
 /* MP1 func_8006FE4C: moves the choice cursor between the entries; 0 once one is chosen or cancelled */
 s32 func_8008BCB8_8C8B8(s16 winId) {

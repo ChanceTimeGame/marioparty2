@@ -1531,8 +1531,6 @@ void func_8010730C_26C2BC_LooneyLumberjacks(void) {
     }
 }
 
-// register allocation (masked 34), class 4
-#ifdef NON_MATCHING
 void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
     LLTree* tree;
     HmfModel* m;
@@ -1540,7 +1538,6 @@ void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
     s32 i;
     s32 mdl;
     f32 v;
-    f64 d;
 
     tree = func_80108BA0_26DB50_LooneyLumberjacks(obj);
     if (tree == NULL || tree->used == 0) {
@@ -1548,7 +1545,8 @@ void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
     }
     for (i = 1; i < 6; i++) {
         mdl = obj->model[i];
-        if (tree->stage >= i && !(D_800FC834_FD434[mdl].unk18 & 4)) {
+        m = &D_800FC834_FD434[mdl];
+        if (tree->stage >= i && !(m->unk18 & 4)) {
             func_800298A4_2A4A4(mdl, 4, 4);
         }
     }
@@ -1573,9 +1571,8 @@ void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
                 tree->speed += 1.0;
                 tree->angle += tree->speed;
                 v = tree->speed * 0.01;
-                d = v;
-                m->pos.x += HuMathSin(obj->rot.y) * 80.0 * 0.5 * d;
-                m->pos.z += func_800B7890_B8490(obj->rot.y) * 80.0 * 0.5 * d;
+                m->pos.x += HuMathSin(obj->rot.y) * 80.0 * 0.5 * v;
+                m->pos.z += func_800B7890_B8490(obj->rot.y) * 80.0 * 0.5 * v;
                 if (tree->angle >= 90.0) {
                     tree->angle = 90.0f;
                     pos.x = m->pos.x;
@@ -1590,9 +1587,6 @@ void func_801073C4_26C374_LooneyLumberjacks(omObjData* obj) {
         func_80025884_26484(m->mtx, tree->angle, 0.0f, 0.0f);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_801073C4_26C374_LooneyLumberjacks);
-#endif
 
 LLTree* func_801077F0_26C7A0_LooneyLumberjacks(Vec* pos, Vec* rot, f32 hp) {
     LLTree* tree;

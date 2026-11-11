@@ -828,7 +828,9 @@ f32 func_800B1830_B2430(f32); /* sqrtf */
    Register allocation (masked 68): recordCount stays in s0 where retail spills it, so flags and the
    counters land in other registers; a separate second-loop counter or recordCount declared first are worse); otherwise the same code. Its string is the unit's only
    rodata, D2CCC, which starts on a 4-byte boundary a carved object cannot: it is defined at the
-   end of 1C7C0.c's carved rodata as D_800D20CC_D2CCC. */
+   end of 1C7C0.c's carved rodata as D_800D20CC_D2CCC.
+   S3-T05: retail homes i, recordCount and mapCount on the stack (22/30/38(sp)), so it has one more
+   pseudo competing for s-registers than this C; MP3's declaration order changes nothing. */
 #ifdef NON_MATCHING
 void func_8001D190_1DD90(HmfLoadData *hmf, void *fileData, s32 flags) {
     s16 i;
