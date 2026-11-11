@@ -921,6 +921,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_801061
 __asm__(".section .rodata");
 const char D_801091A4_1674C4_BobOmbBarrage[] = "item_hook";
 
+// masked 65: scheduling of the (s16)mdl/mot extensions, the random-spread k kept in f2 not f0, float regalloc
 #ifdef NON_MATCHING
 void func_8010684C_164B6C_BobOmbBarrage(void) {
     f32 rot;
@@ -1000,7 +1001,7 @@ void func_8010684C_164B6C_BobOmbBarrage(void) {
         break;
     case 12:
         rot = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
-        if (D_80109370_167690_BobOmbBarrage->ai.time < D_80109370_167690_BobOmbBarrage->ai.t) {
+        if (D_80109370_167690_BobOmbBarrage->ai.t > D_80109370_167690_BobOmbBarrage->ai.time) {
             D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.state = 0xD;
             D_80109370_167690_BobOmbBarrage->ai.t = 0;
             D_80109370_167690_BobOmbBarrage->ai.time = func_801084A4_1667C4_BobOmbBarrage() * 40.0f + 180.0f;
