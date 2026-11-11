@@ -492,7 +492,7 @@ void func_80103BC0_1AD250_SkyPilots(f32 m[4][4], Vec* at, Vec* axis, f32 angle) 
     m[1][2] = t * yz + xs;
 }
 
-/* NON_MATCHING: KMC mul fix adds nops retail lacks (masked 7) */
+/* NON_MATCHING: scheduling only (masked 6): retail computes the team*12 index for D_801013B0 before the first mul.s. */
 #ifdef NON_MATCHING
 void func_80103CA8_1AD338_SkyPilots(s32 team, f32 rx, f32 ry, f32 rz) {
     SPPlane* w = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
@@ -1015,8 +1015,6 @@ void func_80105890_1AEF20_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation (obj and work swapped) (masked 11) */
-#ifdef NON_MATCHING
 void func_801058EC_1AEF7C_SkyPilots(omObjData* obj) {
     SPPlane* w = obj->unk_50;
     f32 yawIn;
@@ -1096,7 +1094,7 @@ void func_801058EC_1AEF7C_SkyPilots(omObjData* obj) {
     obj->trans.z += D_8010B2C8_1B4958_SkyPilots;
     func_801044D4_1ADB64_SkyPilots(obj);
     obj->rot.y = w->yaw;
-    obj->rot.x = w->pitch + obj->rot.y;
+    obj->rot.x = w->pitch + w->hitSpin;
     func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0f, 0.0f, -w->aileron - w->prop);
     func_800B2060_B2C60(D_800FC834_FD434[obj->model[1]].mtx, 0.0f, 0.0f, -w->aileron - w->prop);
     func_800B2060_B2C60(D_800FC834_FD434[obj->model[2]].mtx, 0.0f, 0.0f, -w->aileron - w->prop);
@@ -1107,7 +1105,8 @@ void func_801058EC_1AEF7C_SkyPilots(omObjData* obj) {
     func_8002979C_2A39C(obj->model[2], obj->rot.x, obj->rot.y, obj->rot.z);
     func_80029714_2A314(obj->model[3], obj->trans.x, obj->trans.y, obj->trans.z);
     func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
-    obj->scale.y = obj->scale.z = w->scale;
+    obj->scale.y = w->scale;
+    obj->scale.z = w->scale;
     func_800297E8_2A3E8(obj->model[1], obj->scale.x, obj->scale.y, obj->scale.z);
     func_800297E8_2A3E8(obj->model[2], obj->scale.x, obj->scale.y, obj->scale.z);
     D_8010B430_1B4AC0_SkyPilots[w->team] = func_800B75A8_B81A8(obj->trans.x, obj->trans.z);
@@ -1128,9 +1127,6 @@ void func_801058EC_1AEF7C_SkyPilots(omObjData* obj) {
         func_8000C398_CF98();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801058EC_1AEF7C_SkyPilots);
-#endif
 
 void func_8010608C_1AF71C_SkyPilots(idx, time)
 s16 idx;
