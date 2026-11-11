@@ -150,13 +150,11 @@ s16 func_80073014_73C14(u32 arg0, UnkPauseEntry* arg1) {
 
 /* Plays the queued voice entries: a character voice (unk05 < 4: that player's character) or a
    sound cycling through obj->work[0], then its volume (unk02) and pan (unk04). */
-// retail loads unk00 (lh) before unk06 for the second call's sound id (masked 2). S3-Q01 tried: every
-// operand order and grouping, casts, an s32 or unprototyped func_8007975C, snd as s32.
-#ifdef NON_MATCHING
 void func_80073124_73D24(omObjData* obj) {
     s32 i;
     s16 snd;
     u8 pl;
+    s32 id;
 
     for (i = 0; i < 6; i++) {
         if (D_800E2070_E2C70[i].unk00 < 0) {
@@ -170,7 +168,8 @@ void func_80073124_73D24(omObjData* obj) {
         if (pl < 4) {
             snd = func_800797DC_7A3DC((s16)(D_800E2070_E2C70[i].unk00 + 1), (s8)pl);
         } else {
-            snd = func_8007975C_7A35C(D_800E2070_E2C70[i].unk06 + D_800E2070_E2C70[i].unk00 + 1, obj->work[0]);
+            id = D_800E2070_E2C70[i].unk00 + D_800E2070_E2C70[i].unk06 + 1;
+            snd = func_8007975C_7A35C(id, obj->work[0]);
             obj->work[0]++;
             if (obj->work[0] >= 4) {
                 obj->work[0] = 0;
@@ -187,9 +186,6 @@ void func_80073124_73D24(omObjData* obj) {
         D_800E2070_E2C70[i].unk00 = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/73BA0", func_80073124_73D24);
-#endif
 
 omObjData* func_800732B0_73EB0(u32 arg0) {
     return func_80073328_73F28(arg0, -1, -1, -1);
