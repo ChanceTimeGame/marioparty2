@@ -221,6 +221,8 @@ void func_80102D1C_2A8EBC_DesertDuel(void) {
         HuPrcVSleep();                                                        \
     }
 
+/* masked 109: retail enters the referee-drop loop by a jump to its test (GCC here copies the test
+   to the top; a for-loop with the test as its condition compiles the same). */
 #ifdef NON_MATCHING /* NON_MATCHING; also a rodata user (motions, "item_hook", the jump table) */
 void func_80102D48_2A8EE8_DesertDuel(void) {
     ModelPathWork* work[4];
