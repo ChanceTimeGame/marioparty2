@@ -1164,13 +1164,10 @@ f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, V
   return d;
 }
 
-/* NON_MATCHING: retail advances the pos pointer once (addiu a0, 4) before reading y and z; logic as retail */
-#ifdef NON_MATCHING
 s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     f32 best;
     Vec* mid;
     f32* len;
-    f32* p;
     f32 x, y, z;
     f32 r;
     s32 i;
@@ -1179,10 +1176,10 @@ s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     best = 30000.0f;
     mid = D_80110254_246134_SlotCarDerby;
     len = D_80110248_246128_SlotCarDerby;
-    p = (f32*)pos;
-    x = *p++;
-    y = p[0];
-    z = p[1];
+    x = pos->x;
+    pos = (Vec*)&pos->y;
+    y = pos->x;
+    z = pos->y;
     hit = 0;
     for (i = 0; i < D_80110244_246124_SlotCarDerby; i++, mid++) {
         r = *len++ * 0.75;
@@ -1202,9 +1199,6 @@ s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     *groundY = best;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801062B8_23C198_SlotCarDerby);
-#endif
 
 f32 func_8010640C_23C2EC_SlotCarDerby(f32 t, f32 a, f32 b, f32 c) {
     f32 u = 1.0 - t;
