@@ -1122,15 +1122,13 @@ void func_80104CB0_14E7D0_CraneGame(omObjData* obj) {
 }
 
 #ifdef NON_MATCHING
-/* Scheduling: retail loads w->unk34 in both arms and passes 0.0f as an integer zero; the
-   MP1 pointer form (p = table[i]) is further off. */
+/* Register allocation only (masked 0, raw 6: cnt and &m2 swap s2/s3; declaration order tried).
+   Retail calls guTranslateF in each arm (cross-jumped). */
 s32 func_80106268_14FD88_CraneGame(omObjData* obj, Vec* out) {
     f32 m[4][4];
     f32 m2[4][4];
     Vec r;
     s32 cnt = 0;
-    f32 px;
-    f32 pz;
     CGWork* w;
     s32 i;
     s32 n;
@@ -1148,13 +1146,12 @@ s32 func_80106268_14FD88_CraneGame(omObjData* obj, Vec* out) {
     }
     for (i = 0; i < n; i++) {
         if (w->unk53 == 0) {
-            px = D_8010B998_1554B8_CraneGame[i][0];
-            pz = D_8010B998_1554B8_CraneGame[i][1];
+            guTranslateF(m2, 0.0f, D_8010B998_1554B8_CraneGame[i][0] * w->unk34,
+                         D_8010B998_1554B8_CraneGame[i][1] * w->unk38);
         } else {
-            px = D_8010B9B0_1554D0_CraneGame[i][0];
-            pz = D_8010B9B0_1554D0_CraneGame[i][1];
+            guTranslateF(m2, 0.0f, D_8010B9B0_1554D0_CraneGame[i][0] * w->unk34,
+                         D_8010B9B0_1554D0_CraneGame[i][1] * w->unk38);
         }
-        guTranslateF(m2, 0.0f, px * w->unk34, pz * w->unk38);
         guMtxCatF(m2, m, m2);
         if (m2[3][1] < 0.0f) {
             out[cnt].x = m2[3][0];

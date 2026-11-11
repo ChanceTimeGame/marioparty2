@@ -16,7 +16,8 @@ s16 RNGPercentChance(s8 arg0);
 s32 func_80059FD0_5ABD0(s32);
 GW_PLAYER* BoardPlayerGet(s32 playerIndex);
 
-/* NON_MATCHING: layout and register allocation (masked ~113: retail's frame is 0x20 larger and
+/* NON_MATCHING: layout and register allocation (masked 104; S3-R added case 0 (18-entry table) and
+   the unsigned >> 8: retail's frame is 0x20 larger and
    shares case 7's compare with case 10). Retail reads node_data1's bytes
    with lbu (offsets 4-7); this C extracts them with shifts so it reads the same values on the host.
    Case 13 tests as one condition so it is not cross-jumped into case 17 (calls agree).
@@ -213,6 +214,8 @@ s16 func_80044800_45400(DecisionTreeNonLeafNode* node) {
                 continue;
             }
             break;
+        case 0:
+            break;
         }
         if (node->node_data2.data < 0) {
             node = (DecisionTreeNonLeafNode*)node->node_data2.data - 1;
@@ -223,7 +226,7 @@ s16 func_80044800_45400(DecisionTreeNonLeafNode* node) {
                 break;
             case 1:
             case 2:
-                chance = node->node_data2.data >> 8;
+                chance = (u32)node->node_data2.data >> 8;
                 break;
             default:
                 chance = 0;

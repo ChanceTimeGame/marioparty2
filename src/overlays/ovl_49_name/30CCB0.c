@@ -5826,7 +5826,9 @@ s32 func_80111300_31B7B0_name_49(s32 arg0) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: GCC here folds several gw-> reads back to GwSystem (lui+lh) where retail keeps
-   them on $s4 (409 vs 420 instructions); the logic follows the asm. */
+   them on $s4 (409 vs 420 instructions); the logic follows the asm. Retail's first test reads
+   GwSystem directly and the call argument reads it again through gw (no CSE): S3-R tried gw-> in
+   the test (all absolute, masked 53) and gw assigned inside the if (masked 49, odd hoist). */
 /* Switch event `which` (0-2, spaces D_80113AD4): unless it is the last turn, pay 5 coins (free
    with turn_status set) to throw the switch. Switches 1 and 2 toggle D_800F8CE4[1 + which];
    switch 0 asks for a direction (CPU: a random one weighted by the current setting) and stores
