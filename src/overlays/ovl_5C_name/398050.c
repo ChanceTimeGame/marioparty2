@@ -1188,8 +1188,6 @@ void func_8010E8CC_39C78C_name_5C(void) {
 __asm__(".section .rodata");
 const char D_8011231C_3A01DC_name_5C[20] = "c_panel";
 
-// register allocation (masked 16)
-#ifdef NON_MATCHING
 s32 func_8010EE64_39CD24_name_5C(void) {
     s16 anim[6];
     s16 icon[6];
@@ -1202,7 +1200,7 @@ s32 func_8010EE64_39CD24_name_5C(void) {
     s16 i;
     s16 frame;
     s16 next;
-    s32 result;
+    s16 result;
     f32 dir;
 
     model = D_80112F60_3A0E20_name_5C[24];
@@ -1386,9 +1384,6 @@ s32 func_8010EE64_39CD24_name_5C(void) {
     func_801095F0_3974B0_name_5C(D_80111C50_39FB10_name_5C, 24, model);
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010EE64_39CD24_name_5C);
-#endif
 
 void func_8010FB28_39D9E8_name_5C(s16 sprite, s16 slot) {
     espPosSet(sprite, D_80112174_3A0034_name_5C[slot][0] + D_80112A04_3A08C4_name_5C.unk_00 - 68.0f,
