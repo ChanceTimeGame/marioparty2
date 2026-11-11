@@ -245,31 +245,30 @@ void func_801032A0_4031A0_name_6C(void) {
     func_801034B8_4033B8_name_6C();
 }
 
-/* NON_MATCHING: control flow (class 3). Retail merges the three PlayMusic calls into one tail and skips it for
-   other difficulties; every call and constant agrees. Stays asm in the matching build. */
-#ifdef NON_MATCHING
 void func_8010333C_40323C_name_6C(void) {
+    s32 music;
+
     func_801032A0_4031A0_name_6C();
     func_80074DB8_759B8(0);
     switch (D_800FD8A8_FE4A8.difficulty) {
     case 0:
-        PlayMusic(0x4A);
-        break;
-    case 1:
-        PlayMusic(0x4D);
+        music = 0x4A;
         break;
     case 2:
         if (func_80075390_75F90(8) != 0) {
-            PlayMusic(0x3D);
+            music = 0x3D;
         } else {
-            PlayMusic(0x4F);
+            music = 0x4F;
         }
         break;
+    case 1:
+        music = 0x4D;
+        break;
+    default:
+        return;
     }
+    PlayMusic(music);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_6C_name/402730", func_8010333C_40323C_name_6C);
-#endif
 
 /* The goal marker (model 0xA7), put on the space of this difficulty. */
 void func_801033B8_4032B8_name_6C(void) {
@@ -762,6 +761,8 @@ void func_801050D0_404FD0_name_6C(void) {
     } while (i < 6);
 }
 
+// masked 11 (twin of ovl_6B/6C): in the "D_8010679C == 0 && val[i] != 0" arm retail reloads val[i] for
+// the > 0 sign test (no CSE with the != 0 test); ours reuses it. Shared 12/tail blocks agree.
 #ifdef NON_MATCHING
 void func_80105250_405150_name_6C(void) {
     s16 val[4];

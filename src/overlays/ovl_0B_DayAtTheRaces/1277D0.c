@@ -869,8 +869,6 @@ void func_80106764_129F44_DayAtTheRaces(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: control flow (masked 15): retail branches on idx < 2 for the file; GCC here folds it to store-flag arithmetic */
-#ifdef NON_MATCHING
 void func_80106990_12A170_DayAtTheRaces(omObjData* obj, s32 idx) {
     DRPlayer* w;
     s32 i;
@@ -885,7 +883,11 @@ void func_80106990_12A170_DayAtTheRaces(omObjData* obj, s32 idx) {
     } else {
         obj->model[1] = -1;
     }
-    obj->model[2] = LoadFormFile(idx >= 2 ? 0x1B0019 : 0x1B0018, 0xA8D);
+    if (idx < 2) {
+        obj->model[2] = LoadFormFile(0x1B0018, 0xA8D);
+    } else {
+        obj->model[2] = LoadFormFile(0x1B0019, 0xA8D);
+    }
     obj->model[3] = LoadFormFile(0x1B001A, 0xA8D);
     if (D_8010A538_12DD18_DayAtTheRaces[idx].attr == 0xAC9) {
         func_8002D124_2DD24(obj->model[0]);
@@ -925,9 +927,6 @@ void func_80106990_12A170_DayAtTheRaces(omObjData* obj, s32 idx) {
     w->motion = -1;
     w->gear = w->rank = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0B_DayAtTheRaces/1277D0", func_80106990_12A170_DayAtTheRaces);
-#endif
 
 s16 func_80106D5C_12A53C_DayAtTheRaces(DRBet* w, s32 dir) {
     s16 i = w->cursor + dir;

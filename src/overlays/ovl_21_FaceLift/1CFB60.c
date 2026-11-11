@@ -809,8 +809,6 @@ void func_8010522C_1D258C_FaceLift(omObjData* obj) {
     }
 }
 
-// scheduling (the 1.0f load)
-#ifdef NON_MATCHING
 void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     f32 t;
     f32 s;
@@ -819,9 +817,8 @@ void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     if (obj->work[0] < 50) {
         for (i = 0; i < D_80109C18_1D6F78_FaceLift->numParts; i++) {
             t = obj->work[0] / 50.0f;
-            s = 1.0f - t;
-            D_80109B88_1D6EE8_FaceLift[i].x = t * D_80109C1C_1D6F7C_FaceLift[i].unk_00 + s * D_80109C14_1D6F74_FaceLift[i].x;
-            D_80109B88_1D6EE8_FaceLift[i].y = t * D_80109C1C_1D6F7C_FaceLift[i].unk_04 + s * D_80109C14_1D6F74_FaceLift[i].y;
+            D_80109B88_1D6EE8_FaceLift[i].x = t * D_80109C1C_1D6F7C_FaceLift[i].unk_00 + D_80109C14_1D6F74_FaceLift[i].x * (1.0f - t);
+            D_80109B88_1D6EE8_FaceLift[i].y = t * D_80109C1C_1D6F7C_FaceLift[i].unk_04 + D_80109C14_1D6F74_FaceLift[i].y * (1.0f - t);
         }
     } else {
         t = (30.0f - (obj->work[0] - 50.0f)) / 30.0f * 0.7f + 0.3f;
@@ -860,9 +857,6 @@ void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     }
     func_80106E24_1D4184_FaceLift(obj, &D_80109B88_1D6EE8_FaceLift[0], &D_80109B88_1D6EE8_FaceLift[1], &D_80109B88_1D6EE8_FaceLift[2], &D_80109B88_1D6EE8_FaceLift[3], &D_80109B88_1D6EE8_FaceLift[4], &D_80109B88_1D6EE8_FaceLift[5]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_FaceLift/1CFB60", func_801052A8_1D2608_FaceLift);
-#endif
 
 void func_80105884_1D2BE4_FaceLift(omObjData* obj) {
     func_80106E24_1D4184_FaceLift(obj, &D_80109B88_1D6EE8_FaceLift[0], &D_80109B88_1D6EE8_FaceLift[1], &D_80109B88_1D6EE8_FaceLift[2], &D_80109B88_1D6EE8_FaceLift[3], &D_80109B88_1D6EE8_FaceLift[4], &D_80109B88_1D6EE8_FaceLift[5]);
@@ -988,7 +982,8 @@ s32 func_80105F24_1D3284_FaceLift(s16 player, Vec* pos) {
     return 0;
 }
 
-// register allocation; two locals spilled in retail
+// register allocation (masked 47); two locals spilled in retail: (s16)idx at 0x94 and &D_80109CD8[idx] at
+// 0x8C are hoisted out of the vertex loop, one more spill than ours (frame 240 vs 232).
 #ifdef NON_MATCHING
 void func_80106248_1D35A8_FaceLift(omObjData* obj) {
     s16 models[4];
@@ -1209,7 +1204,8 @@ s16 func_80106C1C_1D3F7C_FaceLift(Vec* a, Vec* b, Vec* c, f32 x, f32 y) {
     return 1;
 }
 
-// register allocation; the model index is spilled in retail
+// masked 23: retail loads the vertex's part mask once before the j loop but does not CSE it with the
+// != 0 test; inline (this form) spills m like retail, a u8/s16/s32 mask local CSEs the load (masked 31).
 #ifdef NON_MATCHING
 void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Vec* p3, Vec* p4, Vec* p5) {
     Vec pts[6];
@@ -1222,7 +1218,6 @@ void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Ve
     s16 n;
     f32 sx;
     f32 sy;
-    u8 mask;
     FLPart* part;
     s16 model;
     f32 dx;
@@ -1262,9 +1257,8 @@ void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Ve
                 n = 0;
                 sy = 0.0f;
                 sx = 0.0f;
-                mask = D_80109CD8_1D7038_FaceLift[m][i];
                 for (j = 0; j < 6; j++) {
-                    if ((mask >> j) & 1) {
+                    if ((D_80109CD8_1D7038_FaceLift[m][i] >> j) & 1) {
                         part = &D_80109C14_1D6F74_FaceLift[j];
                         ex = part->x - D_800FC834_FD434[model].pos.x;
                         ey = part->y - D_800FC834_FD434[model].pos.y;
