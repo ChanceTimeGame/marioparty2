@@ -809,8 +809,6 @@ void func_8010522C_1D258C_FaceLift(omObjData* obj) {
     }
 }
 
-// scheduling (the 1.0f load)
-#ifdef NON_MATCHING
 void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     f32 t;
     f32 s;
@@ -819,9 +817,8 @@ void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     if (obj->work[0] < 50) {
         for (i = 0; i < D_80109C18_1D6F78_FaceLift->numParts; i++) {
             t = obj->work[0] / 50.0f;
-            s = 1.0f - t;
-            D_80109B88_1D6EE8_FaceLift[i].x = t * D_80109C1C_1D6F7C_FaceLift[i].unk_00 + s * D_80109C14_1D6F74_FaceLift[i].x;
-            D_80109B88_1D6EE8_FaceLift[i].y = t * D_80109C1C_1D6F7C_FaceLift[i].unk_04 + s * D_80109C14_1D6F74_FaceLift[i].y;
+            D_80109B88_1D6EE8_FaceLift[i].x = t * D_80109C1C_1D6F7C_FaceLift[i].unk_00 + D_80109C14_1D6F74_FaceLift[i].x * (1.0f - t);
+            D_80109B88_1D6EE8_FaceLift[i].y = t * D_80109C1C_1D6F7C_FaceLift[i].unk_04 + D_80109C14_1D6F74_FaceLift[i].y * (1.0f - t);
         }
     } else {
         t = (30.0f - (obj->work[0] - 50.0f)) / 30.0f * 0.7f + 0.3f;
@@ -860,9 +857,6 @@ void func_801052A8_1D2608_FaceLift(omObjData* obj) {
     }
     func_80106E24_1D4184_FaceLift(obj, &D_80109B88_1D6EE8_FaceLift[0], &D_80109B88_1D6EE8_FaceLift[1], &D_80109B88_1D6EE8_FaceLift[2], &D_80109B88_1D6EE8_FaceLift[3], &D_80109B88_1D6EE8_FaceLift[4], &D_80109B88_1D6EE8_FaceLift[5]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_21_FaceLift/1CFB60", func_801052A8_1D2608_FaceLift);
-#endif
 
 void func_80105884_1D2BE4_FaceLift(omObjData* obj) {
     func_80106E24_1D4184_FaceLift(obj, &D_80109B88_1D6EE8_FaceLift[0], &D_80109B88_1D6EE8_FaceLift[1], &D_80109B88_1D6EE8_FaceLift[2], &D_80109B88_1D6EE8_FaceLift[3], &D_80109B88_1D6EE8_FaceLift[4], &D_80109B88_1D6EE8_FaceLift[5]);
