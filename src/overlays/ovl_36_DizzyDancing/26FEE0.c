@@ -1113,13 +1113,6 @@ void func_80105D70_273450_DizzyDancing(omObjData* obj, u16 a, u16 b) {
     mb->unk_02 = v2;
 }
 
-#ifndef NON_MATCHING
-__asm__(".section .rodata");
-const u32 D_801077C0_274EA0_DizzyDancing[12] = { 0xC3EB0000, 0x00000000, 0xC3910000, 0x43EB0000, 0x00000000, 0xC3910000, 0xC3EB0000, 0x00000000, 0x43910000, 0x43EB0000, 0x00000000, 0x43910000 };
-__asm__(".section .text");
-#endif
-/* NON_MATCHING: masked 26: one register copy before the flag test. */
-#ifdef NON_MATCHING
 void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
     Vec table[4] = { { -470.0f, 0.0f, -290.0f }, { 470.0f, 0.0f, -290.0f }, { -470.0f, 0.0f, 290.0f }, { 470.0f, 0.0f, 290.0f } };
@@ -1132,7 +1125,7 @@ void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     f32 ccw;
     f32 step;
     f32 x;
-    s32 flag;
+    s16 flag;
     s16 i;
     u8 p;
     DDActor* q;
@@ -1300,13 +1293,7 @@ void func_80105DF0_2734D0_DizzyDancing(omObjData* obj) {
     }
     func_80007790_8390(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80105DF0_2734D0_DizzyDancing);
-__asm__(".section .rodata");
-#endif
 
-/* The asm path switches to .rodata above: GCC does not see INCLUDE_ASM switch to .text, and the
-   table initialiser below would land there. */
 void func_80106650_273D30_DizzyDancing(omObjData* obj) {
     DDActor* a = &D_80107870_274F50_DizzyDancing[obj->work[0]];
     s32 table[6] = { 5, 6, 7, 8, 9, 10 };
