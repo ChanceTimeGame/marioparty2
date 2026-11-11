@@ -7,7 +7,8 @@ typedef s32 (*CCPixelFunc)(s32, s32, s32, u8*, s32);
 
 /* Converts a sprite frame's image into a one-byte-per-pixel mask (0xFF where opaque). The caller
    frees it. [FC4F0] */
-// register allocation and the 8-bit loop's scheduling (masked 6; MP1 masked 9)
+// register allocation; the 8-bit loop's store address is computed after the palette test in
+// retail with separate j/sb arms (masked 15, count 137/138; tried buf[off+x], dst = buf + off)
 #ifdef NON_MATCHING
 u8* func_80108870_1E7CC0_CrazyCutters(s16 grpIdx, s16 idx, s32* width, s32* height) {
     HuSprite* spr;
@@ -56,10 +57,11 @@ u8* func_80108870_1E7CC0_CrazyCutters(s16 grpIdx, s16 idx, s32* width, s32* heig
                 for (x = 0; x < img->unk04; x++) {
                     off = img->unk04 * y;
                     c = (src + off)[x];
+                    dst = buf + off + x;
                     if (pal[c] & 1) {
-                        *(buf + off + x) = 0xFF;
+                        *dst = 0xFF;
                     } else {
-                        *(buf + off + x) = 0;
+                        *dst = 0;
                     }
                 }
             }

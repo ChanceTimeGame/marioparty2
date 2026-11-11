@@ -240,8 +240,8 @@ s32 func_8010A798_1542B8_CraneGame(Vec* p, Vec* d, f32 r) {
     return ret;
 }
 
-/* MP1 func_800FE0A4 (NON_MATCHING there too). Residue: register allocation (the face count and
-   the previous/current vertex pointers). */
+/* MP1 func_800FE0A4 (NON_MATCHING there too). Residue (masked 6, 299/297): retail sign-extends the
+   face count once into a saved register, ours re-extends it at each loop test (tried a (s32) cast). */
 #ifdef NON_MATCHING
 /* Intersects the segment p + t * d with the faces and keeps the nearest t in D_8010CE10. */
 void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
@@ -285,16 +285,17 @@ void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
         iy = py + dn * dy;
         iz = pz + dn * dz;
         if (f->v[3] >= 0) {
-            prev = &D_8010CE0C_15692C_CraneGame[f->v[3]];
+            cur = &D_8010CE0C_15692C_CraneGame[f->v[3]];
             nv = 4;
         } else {
-            prev = &D_8010CE0C_15692C_CraneGame[f->v[2]];
+            cur = &D_8010CE0C_15692C_CraneGame[f->v[2]];
             nv = 3;
         }
         switch (f->axis) {
             case 0:
                 sgn = (0.0f <= f->nx) ? 1 : -1;
-                for (j = 0; j < nv; j++, prev = cur) {
+                for (j = 0; j < nv; j++) {
+                    prev = cur;
                     cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
                     c = (iy - prev->y) * (cur->z - prev->z) - (iz - prev->z) * (cur->y - prev->y);
                     if (c != 0 && (sgn ^ c) < 0) {
@@ -304,7 +305,8 @@ void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
                 break;
             case 1:
                 sgn = (0.0f <= f->ny) ? 1 : -1;
-                for (j = 0; j < nv; j++, prev = cur) {
+                for (j = 0; j < nv; j++) {
+                    prev = cur;
                     cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
                     c = (iz - prev->z) * (cur->x - prev->x) - (ix - prev->x) * (cur->z - prev->z);
                     if (c != 0 && (sgn ^ c) < 0) {
@@ -314,7 +316,8 @@ void func_8010A8E8_154408_CraneGame(CGColFace* f, s16 n, Vec* p, Vec* d) {
                 break;
             case 2:
                 sgn = (0.0f <= f->nz) ? 1 : -1;
-                for (j = 0; j < nv; j++, prev = cur) {
+                for (j = 0; j < nv; j++) {
+                    prev = cur;
                     cur = &D_8010CE0C_15692C_CraneGame[f->v[j]];
                     c = (ix - prev->x) * (cur->y - prev->y) - (iy - prev->y) * (cur->x - prev->x);
                     if (c != 0 && (sgn ^ c) < 0) {
