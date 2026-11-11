@@ -1049,7 +1049,8 @@ void func_8010520C_183E2C_Archerival(omObjData* obj, ARObj* p, s16 dx) {
 
 /* Moves a target by dx unless the walls, another target or the arrow in flight stop it; returns the
    step taken (0 when blocked). */
-// NON_MATCHING: correct logic; retail schedules the comparison temporaries and the shared hit tail differently (delay slots, registers)
+// NON_MATCHING: the arrow test: retail branches once on the ternary's compare (cross-jumped, bc1tl) where GCC
+// threads it into each arm; the rest registers (masked 19; split arms 30, ternary in the && chain no change)
 #ifdef NON_MATCHING
 s16 func_8010549C_1840BC_Archerival(omObjData* obj, ARObj* p, s16 dx) {
     ARObj* q;
@@ -1081,60 +1082,50 @@ s16 func_8010549C_1840BC_Archerival(omObjData* obj, ARObj* p, s16 dx) {
         face = dx;
         dx = 0;
         ret = 0;
-    } else {
-        if (dx != 0) {
-            for (i = 1; i < 6; i++) {
-                q = &D_80107920_186540_Archerival[i];
-                if (q->player != obj->work[0] && q->unk_26 == 0) {
-                    ox = q->obj->trans.x;
-                    ol = ox - 27.0f;
-                    or = ox + 27.0f;
-                    if (dx > 0) {
+    } else if (dx != 0) {
+        for (i = 1; i < 6; i++) {
+            q = &D_80107920_186540_Archerival[i];
+            if (q->player != obj->work[0] && q->unk_26 == 0) {
+                ox = q->obj->trans.x;
+                ol = ox - 27.0f;
+                or = ox + 27.0f;
+                if (dx > 0) {
+                    if (((s16)r >= (s16)ol) & ((s16)l < (s16)or)) {
                         pos = (s16)ol - 27;
-                        if (((s16)r >= (s16)ol) & ((s16)l < (s16)or)) {
-                        hit:
-                            obj->trans.x = pos;
-                            face = dx;
-                            dx = 0;
-                            break;
-                        }
-                    } else {
+                    hit:
+                        obj->trans.x = pos;
+                        face = dx;
+                        dx = 0;
+                        break;
+                    }
+                } else {
+                    if (((s16)or >= (s16)l) & ((s16)ol < (s16)r)) {
                         pos = (s16)or + 27;
-                        if (((s16)or >= (s16)l) & ((s16)ol < (s16)r)) {
-                            goto hit;
-                        }
+                        goto hit;
                     }
                 }
             }
-            arrow = D_80107C38_186858_Archerival;
-            az = arrow->trans.z - 84.0f;
-            zh = az + 11.75f + 1.0f;
-            zl = az;
-            if (dx != 0) {
-                if (D_80107C58_186878_Archerival == 2 && !(obj->trans.z < (s16)zh && (s16)zl < obj->trans.z)
-                    && (s16)zl <= obj->trans.z && obj->trans.z < arrow->trans.z + 10.0f
-                    && (s16)l <= arrow->trans.x && arrow->trans.x <= (s16)r) {
-                    if (dx > 0 ? obj->trans.x < arrow->trans.x : arrow->trans.x < obj->trans.x) {
-                        dx = 0;
-                    }
-                }
-                if (dx != 0) {
-                    obj->trans.x += dx;
-                    if (dx > 0) {
-                        obj->rot.y = 0.0f;
-                    } else {
-                        obj->rot.y = 180.0f;
-                    }
+        }
+        arrow = D_80107C38_186858_Archerival;
+        az = arrow->trans.z - 84.0f;
+        zh = az + 11.75f + 1.0f;
+        zl = az;
+        if (dx != 0) {
+            if (D_80107C58_186878_Archerival == 2 && !(obj->trans.z < (s16)zh && (s16)zl < obj->trans.z)
+                && (s16)zl <= obj->trans.z && obj->trans.z < arrow->trans.z + 10.0f
+                && (s16)l <= arrow->trans.x && arrow->trans.x <= (s16)r) {
+                if (dx > 0 ? obj->trans.x < arrow->trans.x : arrow->trans.x < obj->trans.x) {
+                    dx = 0;
                 }
             }
         }
     }
+    if (dx != 0) {
+        obj->trans.x += dx;
+        obj->rot.y = (dx <= 0) ? 180.0f : 0.0f;
+    }
     if (face != 0) {
-        if (face > 0) {
-            obj->rot.y = 0.0f;
-        } else {
-            obj->rot.y = 180.0f;
-        }
+        obj->rot.y = (face <= 0) ? 180.0f : 0.0f;
     }
     return ret;
 }
@@ -1143,17 +1134,16 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_8010549C_
 #endif
 
 /* A target's walk: p->unk_24 1 dodges the arrow, 2 ignores it. */
-// NON_MATCHING: correct logic; retail keeps more values in saved registers and joins the stick and CPU paths at the final call
-#ifdef NON_MATCHING
 void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
     s16 steps[3] = { 1, 2, 3 };
     ARObj* a = &D_80107920_186540_Archerival[11];
     omObjData* arrow;
     s32 reach;
-    s32 d;
-    s16 step;
-    s8 dx;
-    u16 dodging;
+    s16 d;
+    s32 l;
+    s32 r;
+    s16 dx;
+    s16 dodging;
     u8 diff;
 
     arrow = a->obj;
@@ -1166,11 +1156,7 @@ void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
     if (a->state == 0) {
         p->unk_24 = 0;
     } else if (p->unk_24 == 0) {
-        if ((u8)(rand8() % 100) < D_801073D4_185FF4_Archerival[diff]) {
-            p->unk_24 = 1;
-        } else {
-            p->unk_24 = 2;
-        }
+        p->unk_24 = ((u8)(rand8() % 100) < D_801073D4_185FF4_Archerival[diff]) ? 1 : 2;
     }
     dx = 0;
     dodging = 0;
@@ -1178,25 +1164,26 @@ void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
         if (p->com == 0) {
             dx = ContStkX[gPlayers[obj->work[0]].port];
             if (dx != 0) {
-                step = (dx > 0) ? 2 : -2;
-                func_8010549C_1840BC_Archerival(obj, p, step);
-                func_8010520C_183E2C_Archerival(obj, p, step);
-                return;
+                dx = (dx > 0) ? 2 : -2;
+                func_8010549C_1840BC_Archerival(obj, p, dx);
             }
         } else {
-            if ((p->unk_24 & 1) && obj->trans.z <= (s16)reach && (s16)(s32)(obj->trans.x - 27.0f) <= arrow->trans.x
-                && arrow->trans.x <= (s16)(s32)(obj->trans.x + 27.0f)) {
-                if (arrow->trans.x - 27.0f <= -196.0f) {
-                    d = 1;
-                } else if (arrow->trans.x + 27.0f >= 196.0f) {
-                    d = -1;
-                } else {
-                    d = obj->trans.x - arrow->trans.x;
-                }
-                dx = steps[p->timer];
-                dodging = 1;
-                if (d & 0x8000) {
-                    dx = -dx;
+            if ((p->unk_24 & 1) && obj->trans.z <= (s16)reach) {
+                l = obj->trans.x - 27.0f;
+                r = obj->trans.x + 27.0f;
+                if ((s16)l <= arrow->trans.x && arrow->trans.x <= (s16)r) {
+                    if (arrow->trans.x - 27.0f <= -196.0f) {
+                        d = 1;
+                    } else if (arrow->trans.x + 27.0f >= 196.0f) {
+                        d = -1;
+                    } else {
+                        d = obj->trans.x - arrow->trans.x;
+                    }
+                    dx = steps[p->timer];
+                    dodging = 1;
+                    if (d < 0) {
+                        dx = ~dx + 1;
+                    }
                 }
             }
             if (dodging == 0) {
@@ -1205,13 +1192,13 @@ void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
                 } else {
                     dx = steps[p->timer];
                     if (rand8() & 1) {
-                        dx = -dx;
+                        dx = ~dx + 1;
                     }
                     p->unk_2A = ((u8)(rand8() % 5) + 1) * 15;
                 }
             }
             if (func_8010549C_1840BC_Archerival(obj, p, dx) == 0) {
-                dx = -dx;
+                dx = ~dx + 1;
             }
             if (dx != 0) {
                 p->unk_30 = dx;
@@ -1220,12 +1207,6 @@ void func_80105878_184498_Archerival(omObjData* obj, ARObj* p) {
     }
     func_8010520C_183E2C_Archerival(obj, p, dx);
 }
-#else
-__asm__(".section .rodata");
-const u32 D_801077F0_186410_Archerival[2] = { 0x00010002, 0x00030000 };
-
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_80105878_184498_Archerival);
-#endif
 
 void func_80105C84_1848A4_Archerival(omObjData* obj, ARObj* p) {
     switch (p->unk_26) {
