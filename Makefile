@@ -974,6 +974,8 @@ $(S55DA_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # S5-5D: ovl_5D 3A5AB0.c is GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
 S55DC_BLANKSTRIP_UNITS := build/src/overlays/ovl_5D_name/3A5AB0.c.o
+# S3-R07: 3A5610.c too (func_80107C20: a nop between mul.s)
+S55DC_BLANKSTRIP_UNITS += build/src/overlays/ovl_5D_name/3A5610.c.o
 $(S55DC_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S55DC_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

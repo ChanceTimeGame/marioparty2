@@ -1,7 +1,5 @@
 #include "ovl_5D.h"
 
-// register allocation (masked 14)
-#ifdef NON_MATCHING
 s16 func_80107C20_3A5610_name_5D(s16 cur, s16 n, s16 dx, s16 dy) {
     Vec2f dir[30];
     f32 dist[30];
@@ -20,7 +18,7 @@ s16 func_80107C20_3A5610_name_5D(s16 cur, s16 n, s16 dx, s16 dy) {
         } else {
             x = D_8010BA78_3A9468_name_5D[cur][0] - D_8010BA78_3A9468_name_5D[i][0];
             y = D_8010BA78_3A9468_name_5D[cur][1] - D_8010BA78_3A9468_name_5D[i][1];
-            dist[i] = len = func_800B1830_B2430(x * x + y * y);
+            len = dist[i] = func_800B1830_B2430(x * x + y * y);
             dir[i].unk_00 = x / len;
             dir[i].unk_04 = y / len;
         }
@@ -51,9 +49,6 @@ s16 func_80107C20_3A5610_name_5D(s16 cur, s16 n, s16 dx, s16 dy) {
     }
     return found;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A5610", func_80107C20_3A5610_name_5D);
-#endif
 
 void func_80107F70_3A5960_name_5D(omObjData* obj) {
     if (D_8010CDE4_3AA7D4_name_5D != 0 || D_801011FC_101DFC != 0) {
