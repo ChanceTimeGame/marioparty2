@@ -842,12 +842,9 @@ void func_8010C218_333BD8_name_4E(void) {
 }
 
 /* Fades the cursor sprite in or out when D_8010E154_335B14_name_4E changes. */
-/* NON_MATCHING: control flow/copy (masked 8): retail tests a copy of active made in the delay slot (one more move) */
-#ifdef NON_MATCHING
 void func_8010C4AC_333E6C_name_4E(void) {
     s8 last;
-    s32 active;
-    s32 temp;
+    s16 active;
     s16 alpha;
     s16 old;
     s16 step;
@@ -867,7 +864,7 @@ void func_8010C4AC_333E6C_name_4E(void) {
                 step = -0x3F;
             }
         }
-        if ((temp = active) != 0) {
+        if (active != 0) {
             old = alpha;
             alpha += step;
             if (alpha >= 0xFF) {
@@ -888,9 +885,6 @@ void func_8010C4AC_333E6C_name_4E(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4E_name/331200", func_8010C4AC_333E6C_name_4E);
-#endif
 
 void func_8010C5BC_333F7C_name_4E(s16 n) {
     D_8010DC84_335644_name_4E = D_8010DC80_335640_name_4E[n][0];
