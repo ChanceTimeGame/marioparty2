@@ -714,7 +714,9 @@ void func_801077E8_110DF8_GrabBag(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_07_GrabBag/10F470", func_801077E8_110DF8_GrabBag);
 #endif
 
-/* NON_MATCHING: control flow (class 3): retail tests unk_164 == 1 through a set-compare (masked 29, one branch and its effects; calls agree) */
+/* NON_MATCHING: one branch target (masked 1): when w0->unk_164 == 0 our C jumps past the next "w0->unk_164 != 0 &&"
+   test (GCC threads it), retail lands on it. MP1 func_800F903C gave the first = (== 1) set-compare (was masked 29).
+   S3-T also tried: nesting the < 30 test, "> 0" for "!= 0" (no change). */
 #ifdef NON_MATCHING
 void func_80107F10_111520_GrabBag(omObjData* obj) {
     GBPlayer* w0;
@@ -726,6 +728,7 @@ void func_80107F10_111520_GrabBag(omObjData* obj) {
     f32 dist, lim, dot;
     f32 a, b, c;
     f32 angle;
+    s32 first;
 
     w0 = obj->unk_50;
     for (i = 0; i < 4; i++) {
@@ -799,7 +802,8 @@ void func_80107F10_111520_GrabBag(omObjData* obj) {
                     omVibrate(w1->w.unk_59, 2, 3, 10);
                 }
             }
-            if (w0->unk_164 == 1) {
+            first = w0->unk_164 == 1;
+            if (first) {
                 if (grabber == w0) {
                     w0->w.unk_40 = 0.0f;
                     func_80029714_2A314(obj->model[0], obj->trans.x, 2.0f, obj->trans.z);
