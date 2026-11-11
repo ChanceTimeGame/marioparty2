@@ -1322,21 +1322,18 @@ s32 func_8010895C_1DD03C_ShellShocked(s32 i) {
     return right < left ? 6 : 7;
 }
 
-// control flow (masked 49, 188 vs 191 instructions)
-#ifdef NON_MATCHING
 s32 func_80108E68_1DD548_ShellShocked(s32 i, s32 target, f32 angle, s32 pillars) {
     Vec a;
     Vec b;
-    Vec c;
     Vec d;
     Vec e;
     Vec f;
     Vec g;
-    Vec* v;
+    Vec c;
     s32 j;
     f32 k;
     f32 dot;
-    f32 t;
+    f32 len;
 
     k = func_800B7890_B8490(angle);
     func_800B3170_B3D70(&a, &D_8010DA80_1E2160_ShellShocked[i].pos);
@@ -1349,12 +1346,14 @@ s32 func_80108E68_1DD548_ShellShocked(s32 i, s32 target, f32 angle, s32 pillars)
         return 0xA;
     }
     if (dot * dot < (f.x * f.x + f.z * f.z) * k * k) {
-        if (e.z * f.x - e.x * f.z > 0.0f) {
+        dot = e.z * f.x - e.x * f.z;
+        if (dot > 0.0f) {
             return 7;
         }
         return 6;
     }
     if (pillars != 0) {
+        len = f.x * f.x + f.z * f.z;
         c.x = e.z;
         c.z = -e.x;
         for (j = 0; j < D_8010DFE0_1E26C0_ShellShocked->count; j++) {
@@ -1362,19 +1361,21 @@ s32 func_80108E68_1DD548_ShellShocked(s32 i, s32 target, f32 angle, s32 pillars)
             d.z = D_8010DFE0_1E26C0_ShellShocked->pillars[j].z;
             g.x = d.x - a.x;
             g.z = d.z - a.z;
-            if (g.x * e.x + g.z * e.z > 0.0f && !(f.x * f.x + f.z * f.z < g.x * g.x + g.z * g.z)) {
-                t = g.x * c.x + g.z * c.z;
-                if (t * t < 10000.0f) {
-                    return 0xB;
-                }
+            if (g.x * e.x + g.z * e.z <= 0.0f) {
+                continue;
+            }
+            dot = g.x * g.x + g.z * g.z;
+            if (len < dot) {
+                continue;
+            }
+            dot = g.x * c.x + g.z * c.z;
+            if (dot * dot < 10000.0f) {
+                return 0xB;
             }
         }
     }
     return 9;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80108E68_1DD548_ShellShocked);
-#endif
 
 s32 func_8010913C_1DD81C_ShellShocked(f32 x, f32 z, f32* cx, f32* cz) {
     f32 t;
