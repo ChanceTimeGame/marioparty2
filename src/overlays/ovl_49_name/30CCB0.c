@@ -1157,7 +1157,6 @@ void func_80102B54_30D004_name_49(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s32 func_80102C3C_30D0EC_name_49(s32 space) {
     s32 i;
     s32 j;
@@ -1167,34 +1166,39 @@ s32 func_80102C3C_30D0EC_name_49(s32 space) {
     i = 0;
     spaces = D_80112C58_31D108_name_49;
     space = (s16)space;
-    do {
-        if (space == spaces[i]) {
-            if (i == gw->star_spawn_indices[gw->unk_0A]) {
-                gw->unk_1A = D_80112C48_31D0F8_name_49[i];
-                return 1;
-            }
-            if (i == gw->unk_1C) {
-                return 2;
-            }
-            if (_CheckFlag(0x44)) {
-                space = 7;
-            } else {
-                space = gw->unk_0A;
-            }
-            for (j = 0; j < space; j++) {
-                if (i == gw->star_spawn_indices[j]) {
-                    return 3;
-                }
-            }
-            return 0;
+loop:
+    if (space == spaces[i]) {
+        if (i == gw->star_spawn_indices[gw->unk_0A]) {
+            gw->unk_1A = D_80112C48_31D0F8_name_49[i];
+            return 1;
         }
-        i++;
-    } while (i < 7);
+        if (i == gw->unk_1C) {
+            return 2;
+        }
+        if (_CheckFlag(0x44)) {
+            space = 7;
+        } else {
+            space = gw->unk_0A;
+        }
+        j = 0;
+        if (j < space) {
+        inner:
+            if (i == gw->star_spawn_indices[j]) {
+                return 3;
+            }
+            j++;
+            if (j < space) {
+                goto inner;
+            }
+        }
+        return 0;
+    }
+    i++;
+    if (i < 7) {
+        goto loop;
+    }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_49_name/30CCB0", func_80102C3C_30D0EC_name_49);
-#endif
 
 void func_80102D28_30D1D8_name_49(void) {
     SpaceData* space;
