@@ -308,6 +308,9 @@ void func_80103524_3F4104_name_68(void) {
     func_80074FAC_75BAC(5, 0, 1, 1);
 }
 
+/* masked 6: retail lays the file choice out as 0xD0005 then 0xD0004 (ours the reverse), and i / the
+   digit-row pointer swap s7/s8. The inverted test is if-converted (nor/sra), a DataRead per arm hoists
+   0xD0004, a goto layout is if-converted too. Logic checked. */
 #ifdef NON_MATCHING
 void func_8010354C_3F412C_name_68(void) {
     s16 cnt[4];
