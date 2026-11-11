@@ -84,8 +84,9 @@ extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
 
 /* Scales each RGBA5551 entry of a sprite's palette by (r, g, b); alpha is kept.
    NON_MATCHING: control flow/loads (masked 21, 93 vs 94): retail reloads *pal for the alpha bit in
-   the first block (no CSE with c) and has no andi after the first lhu; c as u32 and a u32 cast on
-   the red term did not help. Permuter candidate. */
+   the first block (no CSE with c) and has no andi after the first lhu; c as u32, a u32 cast on
+   the red term, alpha via anim->unk0C[i], an RGBA5551 bitfield struct (lbu for alpha) and a static
+   inline helper did not help. Permuter candidate. */
 #ifdef NON_MATCHING
 void func_8001A340_1AF40(s16 sprite, f32 r, f32 g, f32 b) {
     HuSprite_Unk84_Struct* anim = D_800F60B0_F6CB0[sprite];
@@ -119,10 +120,7 @@ void func_8001A4C0_1B0C0() {
     D_800F93FC_F9FFC = NULL;
 }
 
-// MP1 func_80018B2C (MP1 NON_MATCHING too); control flow (masked 24): retail cross-jumps the two clamp
-// tails into one slt/bnezl/sh and has a 0x38 frame (16 bytes unexplained, likely an inlined helper);
-// tried ternary condition, a/b locals, static inline min/max helpers: none reproduce it
-#ifdef NON_MATCHING
+// MP1 func_80018B2C
 void espMain(void) {
     s32 i;
     s16 id;
@@ -138,7 +136,7 @@ void espMain(void) {
                     func_80082488_83088(id, 0, sprite->unk1E);
                     sprite->unk1E += sprite->unk20;
                     if (sprite->unk20 > 0) {
-                        if (sprite->unk1C < sprite->unk1E) {
+                        if (sprite->unk1E > sprite->unk1C) {
                             sprite->unk1E = sprite->unk1C;
                         }
                     } else {
@@ -154,9 +152,6 @@ void espMain(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/1AE60", espMain);
-#endif
 
 void espDispOn(u16 arg0) {
     SprAttrReset(D_800F93FC_F9FFC[arg0].unk04, 0, 0x8000);
