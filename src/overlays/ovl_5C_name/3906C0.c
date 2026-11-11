@@ -497,7 +497,9 @@ void func_80103D08_391BC8_name_5C(void) {
 }
 
 /* The record board: the player model swings to the camera, then shows the two result pages. */
-// register allocation: float registers, frame 8 bytes smaller (masked 23)
+// register allocation (masked 0): retail converts i straight into t's f20 in the two fade loops (here f2,
+// then the product into f20). Retail has one f32 temporary for the bounce and the fade (s merged into t)
+// and computes t inside the fade calls' argument (after `other`). S3-R tried: 0.1f * i.
 #ifdef NON_MATCHING
 void func_80103E1C_391CDC_name_5C(void) {
     Vec2f scr;
@@ -508,7 +510,6 @@ void func_80103E1C_391CDC_name_5C(void) {
     Vec rot1;
     s16 i;
     f32 t;
-    f32 s;
     u16 model;
     u16 other;
 
@@ -522,8 +523,8 @@ void func_80103E1C_391CDC_name_5C(void) {
     from.y = D_800FC834_FD434[(s16)model].pos.y;
     from.z = D_800FC834_FD434[(s16)model].pos.z;
     for (i = 0; i < 11; i++) {
-        s = HuMathSin(i * 9.0f) * 70.0f;
-        cur.y = s + from.y;
+        t = HuMathSin(i * 9.0f) * 70.0f;
+        cur.y = t + from.y;
         D_800FC834_FD434[(s16)model].pos.y = cur.y;
         HuPrcVSleep();
     }
@@ -547,8 +548,7 @@ void func_80103E1C_391CDC_name_5C(void) {
     }
     PlaySound(0x9F);
     for (i = 0; i < 11; i++) {
-        t = i * 0.1f;
-        func_8002A15C_2AD5C(model, other, 1.0f - t);
+        func_8002A15C_2AD5C(model, other, 1.0f - (t = i * 0.1f));
         cur.x = (to.x - from.x) * t + from.x;
         cur.y = (to.y - from.y) * t + from.y;
         cur.z = (to.z - from.z) * t + from.z;
@@ -576,8 +576,7 @@ void func_80103E1C_391CDC_name_5C(void) {
     HuPrcSleep(5);
     PlaySound(0x12B);
     for (i = 0; i < 11; i++) {
-        t = i * 0.1f;
-        func_8002A15C_2AD5C(model, other, t);
+        func_8002A15C_2AD5C(model, other, t = i * 0.1f);
         t = 1.0f - t;
         cur.x = (to.x - from.x) * t + from.x;
         cur.y = (to.y - from.y) * t + from.y;
@@ -594,7 +593,8 @@ void func_80103E1C_391CDC_name_5C(void) {
         HuPrcVSleep();
     }
     for (i = 0; i < 11; i++) {
-        cur.y = from.y - HuMathSin(i * 9.0f) * 70.0f;
+        t = HuMathSin(i * 9.0f) * 70.0f;
+        cur.y = from.y - t;
         D_800FC834_FD434[(s16)model].pos.y = cur.y;
         HuPrcVSleep();
     }
