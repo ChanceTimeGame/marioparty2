@@ -2150,7 +2150,8 @@ void func_8010A6A0_33D2E0_name_4F(void) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: registers (retail keeps LoadFormFile's result unextended in s2 and copies the
-   character into s1 for the scale test; GCC needs s6); same logic. */
+   character into s1 for the scale test; GCC needs s6); same logic. S3-R tried: s32 form (masked
+   12), u8 or s16 character (14, 12). */
 /* The winner's character puppet and D_80110580 take a bow together. */
 void func_8010A8AC_33D4EC_name_4F(void) {
     MBModel* winner;

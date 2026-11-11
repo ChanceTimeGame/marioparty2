@@ -667,6 +667,7 @@ void SprTexLoad(Gfx** gfx, HuSprite* obj, u16 rows, u16 uls, u16 ult, u16 lrs, u
 // register allocation (masked 87): tstep and sx swap f30/s8, the zero for the initialisers is
 // f30 instead of f20; the code is otherwise retail's. The n64nmcmp FIELDS lw@0x18 is sx loaded into
 // a GPR, and the beqz/add.s count difference follows from it; moving tstep's declaration does nothing.
+// S3-R: swapping the chained zero store (s0 = tstep = 0.0f) does nothing either.
 #ifdef NON_MATCHING
 Gfx* PutSprite(Gfx* gfx, HuSprite* obj, Vtx* vtx, Mtx* mtx, void* cam) {
     f32 s0;
@@ -1084,7 +1085,7 @@ void func_80087794_88394(omObjData* obj);
 
 // register allocation: obj and the loop counter j swap s5/s6 (masked 0, raw 33 counting splat's
 // D_800ED6B2/4/6 labels, same addresses; MP1 func_8006BC38 has the same). Tried: declaration order,
-// loop-init order, s16/s32 counters
+// loop-init order, s16/s32 counters, w assigned after the declarations (S3-R)
 #ifdef NON_MATCHING
 /* MP1 func_8006BC38: loads the models and sprites (cached in D_800ED6B0) */
 void func_800873D8_87FD8(omObjData* obj) {
@@ -1167,7 +1168,8 @@ void func_80087794_88394(omObjData* obj) {
     }
 }
 
-// MP1 func_8006C058 (itself NON_MATCHING upstream: f2/f6 for the scale step, obj->model load order)
+// MP1 func_8006C058 (itself NON_MATCHING upstream: f2/f6 for the scale step, obj->model load order;
+// masked 6, raw 12 counting the split D_800FD478 label). Tried (S3-R): 10.0f * c operand order
 #ifdef NON_MATCHING
 s32 func_800877FC_883FC(omObjData* obj) {
     Unk6C470Work* w = obj->unk_50;
@@ -3496,49 +3498,57 @@ void func_8008DBE0_8E7E0(s16* arg0, s16 arg1, s16 arg2) {
     arg0[1] = D_800ED8EA_EE4EA + 6;
 }
 
-// register allocation (masked 36): the text pointer and the character width swap a0/a1, which
-// moves the tab-stop arithmetic around; the code is otherwise retail's
+// masked 28: retail compares *str with 26 in case 0x10 (GCC here hoists the constant out of the
+// loop) and orders some addu operands differently; tried an if/else chain for that case
 #ifdef NON_MATCHING
 /* measures one text (an id, or a pointer above 0x80000000) into the width D_800ED8E8 and
    height D_800ED8EA. Host: the id/pointer test assumes N64 addresses. */
 void func_8008DCDC_8E8DC(u8* str) {
-    s32 cw;
-    u8* p = str;
     u8* loaded = NULL;
     u8 freeIt;
-    s16 w;
-    s16 h;
+    s32 w;
+    s32 h;
     s32 dh;
+    s32 cw;
 
     if ((u32)str > 0x80000000) {
         freeIt = 0;
     } else {
         freeIt = 1;
-        loaded = func_80068CD4_698D4((s32)str);
-        p = loaded;
+        str = loaded = func_80068CD4_698D4((s32)str);
     }
     h = 14;
     w = 0;
-    for (; *p != 0; p++, h = dh + h) {
+    for (; *str != 0; str++, h += dh) {
         dh = 0;
         if (D_800CD851_CE451 == 1) {
-            cw = ((u8)(*p + 0x80) >= 2) ? 10 : 0;
+            cw = ((u8)(*str + 0x80) >= 2) ? 10 : 0;
         } else {
-            cw = D_800CD888_CE488[*p];
+            cw = D_800CD888_CE488[*str];
         }
-        if (*p != 0 && *p < 9) {
+        if (*str != 0 && *str < 9) {
             cw = 0;
         }
-        switch (*p) {
+        switch (*str) {
             case 0x10:
             case 0x1A:
             case 0x20:
-                cw = (D_800CD851_CE451 == 1 || *p == 0x1A) ? 10 : 4;
+                cw = (D_800CD851_CE451 == 1 || *str == 0x1A) ? 10 : 4;
                 break;
             case 10:
-                if (D_800F9512_FA112 == 0) {
-                    goto newline;
+                if (D_800F9512_FA112 != 0) {
+                    cw = 0;
+                    break;
                 }
+                cw = 0;
+                if ((s16)D_800ED8E8_EE4E8 < (s16)w) {
+                    D_800ED8E8_EE4E8 = w;
+                }
+                w = 0;
+                if (str[1] != 0) {
+                    dh = 14;
+                }
+                break;
             case 12:
             case 13:
             case 15:
@@ -3546,26 +3556,16 @@ void func_8008DCDC_8E8DC(u8* str) {
             case 0x19:
                 cw = 0;
                 break;
-            newline:
-                cw = 0;
-                if ((s16)D_800ED8E8_EE4E8 < w) {
-                    D_800ED8E8_EE4E8 = w;
-                }
-                w = 0;
-                if (p[1] != 0) {
-                    dh = 14;
-                }
-                break;
             case 0x17:
                 dh = 5;
                 cw = 0;
                 break;
             case 11:
                 if (D_800ED8E6_EE4E6 == 0) {
-                    if ((s16)D_800ED8E8_EE4E8 < w) {
+                    if ((s16)D_800ED8E8_EE4E8 < (s16)w) {
                         D_800ED8E8_EE4E8 = w;
                     }
-                    if ((s16)D_800ED8EA_EE4EA < h) {
+                    if ((s16)D_800ED8EA_EE4EA < (s16)h) {
                         D_800ED8EA_EE4EA = h;
                     }
                     h = 14;
@@ -3575,26 +3575,26 @@ void func_8008DCDC_8E8DC(u8* str) {
                 }
                 break;
             case 14:
-                cw = (w + D_801013FA_101FFA) / D_801013FA_101FFA * D_801013FA_101FFA - w;
+                cw = ((s16)w + D_801013FA_101FFA) / D_801013FA_101FFA * D_801013FA_101FFA - w;
                 break;
             case 0x18:
-                p++;
-                cw = D_800CD988_CE588[*p].width;
+                str++;
+                cw = D_800CD988_CE588[*str].width;
                 break;
             case 0x11:
             case 0x12:
             case 0x13:
             case 0x14:
             case 0x15:
-                cw = D_8010106E_101C6E[*p - 0x11];
+                cw = D_8010106E_101C6E[*str - 0x11];
                 break;
         }
-        w += cw;
+        w = cw + w;
     }
-    if ((s16)D_800ED8E8_EE4E8 < w) {
+    if ((s16)D_800ED8E8_EE4E8 < (s16)w) {
         D_800ED8E8_EE4E8 = w;
     }
-    if ((s16)D_800ED8EA_EE4EA < h) {
+    if ((s16)D_800ED8EA_EE4EA < (s16)h) {
         D_800ED8EA_EE4EA = h;
     }
     if (freeIt) {

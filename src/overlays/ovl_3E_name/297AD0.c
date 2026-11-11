@@ -2641,7 +2641,8 @@ s32 func_80106FE0_29C2B0_name_3E(void) {
 /* The minecart runs back along its chain; returns the players it ran over (bits).
    NON_MATCHING: one instruction, retail tests next >= 0 as slti/bnez where this gives bltz (masked 8).
    Tried (S3-Q02): next > -1, !(next < 0), continue on next < 0, one && with the distance test;
-   the unit's mul fix (on, or with blank lines stripped) does not change it. */
+   the unit's mul fix (on, or with blank lines stripped) does not change it. S3-R: (next < 0) == 0,
+   0 <= next (no change); a next < 8 bound (sltiu, masked 2, not retail logic). */
 #ifdef NON_MATCHING
 s32 func_801075F8_29C8C8_name_3E(void) {
     Vec dir;

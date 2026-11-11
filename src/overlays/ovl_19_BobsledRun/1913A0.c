@@ -1559,14 +1559,10 @@ void func_801077A4_196344_BobsledRun(omObjData* obj) {
 }
 
 /* Speed limit, radius and field of view: boosted, or catching up when behind. */
-// scheduling: retail computes both team offsets before the first progress load
-#ifdef NON_MATCHING
 void func_80107920_1964C0_BobsledRun(omObjData* obj) {
     BRWork* work;
     f32 add;
     f32 f;
-    f32 mine;
-    f32 other;
     s32 team;
     s32 o;
 
@@ -1574,8 +1570,8 @@ void func_80107920_1964C0_BobsledRun(omObjData* obj) {
     add = 0.0f;
     func_801077A4_196344_BobsledRun(obj);
     o = work->unk_59 == 0;
-    if ((mine = D_8010C048_19ABE8_BobsledRun[work->unk_59].progress) < (other = D_8010C048_19ABE8_BobsledRun[o].progress)
-        && other - mine > 0.001f) {
+    if (D_8010C048_19ABE8_BobsledRun[work->unk_59].progress < D_8010C048_19ABE8_BobsledRun[o].progress
+        && D_8010C048_19ABE8_BobsledRun[o].progress - D_8010C048_19ABE8_BobsledRun[work->unk_59].progress > 0.001f) {
         add = 5.0f;
     }
     team = work->unk_59;
@@ -1614,9 +1610,6 @@ void func_80107920_1964C0_BobsledRun(omObjData* obj) {
     }
     Hu3DCamSetPerspective(team, D_8010C040_19ABE0_BobsledRun[team], 20.0f, 12000.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80107920_1964C0_BobsledRun);
-#endif
 
 /* The sled's spray effect runs while boosted or in the air. */
 void func_80107C6C_19680C_BobsledRun(omObjData* obj) {
