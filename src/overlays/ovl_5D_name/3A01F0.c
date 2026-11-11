@@ -1182,8 +1182,6 @@ void func_80106238_3A3C28_name_5D(void) {
     }
 }
 
-// control flow and float locals: hoisted constants and stage order differ (masked 56)
-#ifdef NON_MATCHING
 void func_80106468_3A3E58_name_5D(void) {
     s16 model;
     s16 ang;
@@ -1196,12 +1194,13 @@ void func_80106468_3A3E58_name_5D(void) {
     s16 sx;
     s16 sz;
     s16 i;
-    f32 t;
+    f32 a;
 
     ang = 0;
     model = D_8010CCD0_3AA6C0_name_5D[6];
     func_800297E8_2A3E8(model, 0.4f, 0.4f, 0.4f);
-    func_80029714_2A314(model, HuMathSin(0.0f) * 300.0f, HuMathSin(0.0f) * 20.0f + 80.0f, func_800B7890_B8490(0.0f) * 300.0f);
+    a = 0.0f;
+    func_80029714_2A314(model, HuMathSin(a) * 300.0f, HuMathSin(a) * 20.0f + 80.0f, func_800B7890_B8490(a) * 300.0f);
     D_800FC834_FD434[model].rot.y = 90.0f;
     if (D_8010C566_3A9F56_name_5D != 0) {
         D_8010CC94_3AA684_name_5D = 1;
@@ -1244,8 +1243,8 @@ void func_80106468_3A3E58_name_5D(void) {
         sx = cx + HuMathSin(ang) * 50.0f;
         sz = cz + func_800B7890_B8490(ang) * 50.0f;
         for (i = 0; i <= 10; i++) {
-            t = i / 10.0f;
-            func_80029714_2A314(model, sx + (cx - sx) * t, HuMathSin(ang * 4) * 5.0f + 80.0f + lift, sz + (cz - sz) * t);
+            func_80029714_2A314(model, sx + (cx - sx) * (i / 10.0f), HuMathSin(ang * 4) * 5.0f + 80.0f + lift,
+                                sz + (cz - sz) * (i / 10.0f));
             HuPrcVSleep();
         }
         ang = 224;
@@ -1284,9 +1283,6 @@ void func_80106468_3A3E58_name_5D(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106468_3A3E58_name_5D);
-#endif
 
 // register allocation (masked 10)
 #ifdef NON_MATCHING
