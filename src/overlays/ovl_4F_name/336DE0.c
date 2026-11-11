@@ -1620,7 +1620,7 @@ void func_801089AC_33B5EC_name_4F(void) {
 #ifdef NON_MATCHING
 /* NON_MATCHING: GCC keeps 360.0f of the crew loop in f26 (retail reloads it each time, so its frame
    is 8 bytes smaller), and retail masks the constant arguments 1, 0 of func_8010CA90 with andi
-   from registers it reloads every iteration; same logic. */
+   from registers it reloads every iteration; same logic (masked 76; S3-S: not retried). */
 __asm__(".section .rodata");
 /* Board 3's scene: five crew members run in, D_80110568 walks to its marks and talks, the
    D_80110580 model drops in from above, two form models rise with D_80110454's bob, then the doors
@@ -2425,7 +2425,9 @@ void func_8010B4E8_33E128_name_4F(void) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: as func_8010AED4, GCC hoists 5.0f * dir out of the swing loops (retail keeps 5.0f
-   in s8 and multiplies each frame), which shifts the register allocation; same logic. */
+   in s8 and multiplies each frame), which shifts the register allocation; same logic (masked 95).
+   Tried (S3-S): dir = -dir inside the break arm (no change); a step = 5.0f local stops the
+   hoisting but CSE then rematerialises 5.0f with lui at and the other loop constants move. */
 /* The finale: the winner swings around D_80110580 twice, then runs five laps while D_80110580 spins
    up; it slows down and wobbles, the winner jumps and the puppet bows, then D_80110580 flies off
    with a func_8010CE1C trail and a sprite marks where it vanished. */

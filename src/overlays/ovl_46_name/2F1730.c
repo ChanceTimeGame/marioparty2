@@ -201,7 +201,8 @@ void func_80102C80_2F1BB0_name_46(void) {
 #ifdef NON_MATCHING
 /* masked 3 (raw 58): the referee's drop loop allocates f0/f2 the other way round, one delay slot
    (the referee's motion before the win message) is filled with a2 instead of a1, and the
-   winner's column test is a bne where retail has bnel. */
+   winner's column test is a bne where retail has bnel. Tried (S3-S, no change): `jumpY -=` in the
+   drop test and as its own statement; the winner's column as a call in each arm. */
 void func_80102D0C_2F1C3C_name_46(void) {
     s32 chr;
     ModelPathWork* work[4];

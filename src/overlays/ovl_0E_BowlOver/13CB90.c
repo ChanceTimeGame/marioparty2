@@ -143,6 +143,8 @@ void func_80102800_13CB90_BowlOver(void) {
    jingle, 10/13 fade out and return; 12 a pause in demo play. */
 // block layout and register allocation (masked ~80 of 1191): retail places the pin scan's found++ block
 // before case 3, fills a different delay slot there, and does not hoist gPlayers in the coin loop
+// (S3-S, masked 84: retail's loop optimiser moved the found++/break exit block out of the loop, all
+// three scan tests branch to it; ours keeps it as the last test's fall-through)
 #ifdef NON_MATCHING
 void func_80102E04_13D194_BowlOver(omObjData* obj) {
     s16 i;
