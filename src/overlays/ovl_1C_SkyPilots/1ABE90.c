@@ -1395,12 +1395,9 @@ void func_80106E98_1B0528_SkyPilots(omObjData* obj) {
     D_8010105C_101C5C = 1.0f;
 }
 
-/* NON_MATCHING: one more saved register (masked 21) */
-#ifdef NON_MATCHING
 void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
     MgWork* w;
-    omObjData** sub;
     s32 i;
     s32 icon;
 
@@ -1435,13 +1432,12 @@ void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
     w->unk_59 = player;
     s->pilot = player;
     s->pilotObj = obj;
-    sub = &D_8010ADA4_1B4434_SkyPilots[team];
-    obj->trans.x = (*sub)->trans.x;
-    obj->trans.y = (*sub)->trans.y;
-    obj->trans.z = (*sub)->trans.z;
-    obj->rot.x = (*sub)->rot.x;
-    obj->rot.y = (*sub)->rot.y;
-    obj->rot.z = (*sub)->rot.z;
+    obj->trans.x = D_8010ADA4_1B4434_SkyPilots[team]->trans.x;
+    obj->trans.y = D_8010ADA4_1B4434_SkyPilots[team]->trans.y;
+    obj->trans.z = D_8010ADA4_1B4434_SkyPilots[team]->trans.z;
+    obj->rot.x = D_8010ADA4_1B4434_SkyPilots[team]->rot.x;
+    obj->rot.y = D_8010ADA4_1B4434_SkyPilots[team]->rot.y;
+    obj->rot.z = D_8010ADA4_1B4434_SkyPilots[team]->rot.z;
     switch (gPlayers[player].character) {
     case 0:
         icon = 0xD;
@@ -1459,24 +1455,19 @@ void func_80107074_1B0704_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
         icon = 0x11;
         break;
     case 5:
+    default:
         icon = 0x12;
         break;
     }
     s->icon[0] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(icon | 0x290000), 0, 1);
-    func_8001A788_1B388(s->icon[0], 9 - team * 2);
+    func_8001A788_1B388(s->icon[0], (u16)(9 - team * 2));
     D_80101300_101F00 = 1.0f;
     D_8010105C_101C5C = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_80107074_1B0704_SkyPilots);
-#endif
 
-/* NON_MATCHING: one more saved register (masked 21) */
-#ifdef NON_MATCHING
 void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team, s32 player) {
     SPPlane* s = D_8010ADA4_1B4434_SkyPilots[team]->unk_50;
     MgWork* w;
-    omObjData** sub;
     s32 i;
     s32 icon;
 
@@ -1512,13 +1503,12 @@ void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
     func_80019B9C_1A79C(obj, 0);
     s->gunnerObj = obj;
     s->gunner = player;
-    sub = &D_8010ADA4_1B4434_SkyPilots[team];
-    obj->trans.x = (*sub)->trans.x;
-    obj->trans.y = (*sub)->trans.y;
-    obj->trans.z = (*sub)->trans.z;
-    obj->rot.x = (*sub)->rot.x;
-    obj->rot.y = (*sub)->rot.y;
-    obj->rot.z = (*sub)->rot.z;
+    obj->trans.x = D_8010ADA4_1B4434_SkyPilots[team]->trans.x;
+    obj->trans.y = D_8010ADA4_1B4434_SkyPilots[team]->trans.y;
+    obj->trans.z = D_8010ADA4_1B4434_SkyPilots[team]->trans.z;
+    obj->rot.x = D_8010ADA4_1B4434_SkyPilots[team]->rot.x;
+    obj->rot.y = D_8010ADA4_1B4434_SkyPilots[team]->rot.y;
+    obj->rot.z = D_8010ADA4_1B4434_SkyPilots[team]->rot.z;
     switch (gPlayers[player].character) {
     case 0:
         icon = 0xD;
@@ -1536,17 +1526,15 @@ void func_801073A8_1B0A38_SkyPilots(omObjData* obj, s32 dir, s32 file, s32 team,
         icon = 0x11;
         break;
     case 5:
+    default:
         icon = 0x12;
         break;
     }
     s->icon[1] = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(icon | 0x290000), 0, 1);
-    func_8001A788_1B388(s->icon[1], 9 - team * 2);
+    func_8001A788_1B388(s->icon[1], (u16)(9 - team * 2));
     D_80101300_101F00 = 1.0f;
     D_8010105C_101C5C = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801073A8_1B0A38_SkyPilots);
-#endif
 
 /* NON_MATCHING: register allocation (masked 192): retail keeps three of the six row counters in $s6-$s8 and base at 20(sp); GCC here spills one more counter, which shifts the frame. */
 #ifdef NON_MATCHING
