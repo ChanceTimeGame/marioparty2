@@ -540,8 +540,6 @@ void func_80104C48_337888_name_4F(void) {
 void func_80104E84_337AC4_name_4F(void) {
 }
 
-#ifdef NON_MATCHING
-/* same code but register allocation: retail keeps winner in s8 and spills orig, fly1, fly2 and the second loop's steps */
 void func_80104E8C_337ACC_name_4F(void) {
     MBModel* winner;
     MBModel* models[2];
@@ -560,8 +558,6 @@ void func_80104E8C_337ACC_name_4F(void) {
     s16 volMax;
     u16 orig;
     u16 cur;
-    s32 stepV;
-    s32 stepM;
 
     func_80050E00_51A00(5);
     func_8005321C_53E1C(80.0f, 8000.0f);
@@ -674,11 +670,9 @@ void func_80104E8C_337ACC_name_4F(void) {
                                         2.0f);
     fly2->work[0] = 1;
     n = 0;
-    stepV = (volMax - 45) / 10;
-    stepM = ((s16)orig - 96) / 10;
     while (1) {
         if (MBMotionCheck(D_80110580_3431C0_name_4F) & 1) {
-            if (n++ == 40) {
+            if (n == 40) {
                 func_801065C8_339208_name_4F(puff1, 0.05f, 4.25f);
                 func_801065C8_339208_name_4F(puff2, 0.05f, 4.25f);
                 n = 41;
@@ -688,6 +682,8 @@ void func_80104E8C_337ACC_name_4F(void) {
                 MBDBackKill();
                 func_80050E00_51A00(5);
                 func_8005321C_53E1C(80.0f, 8000.0f);
+            } else {
+                n++;
             }
         }
         if (puff1->stat & 8) {
@@ -696,11 +692,11 @@ void func_80104E8C_337ACC_name_4F(void) {
             break;
         }
         if (n >= 40) {
-            vol += stepV;
+            vol += (volMax - 45) / 10;
             if (vol > volMax) {
                 vol = volMax;
             }
-            cur += stepM;
+            cur += ((s16)orig - 96) / 10;
             if ((s16)orig < (s16)cur) {
                 cur = orig;
             }
@@ -752,9 +748,6 @@ void func_80104E8C_337ACC_name_4F(void) {
     func_8010636C_338FAC_name_4F(fly1);
     func_8010636C_338FAC_name_4F(fly2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_4F_name/336DE0", func_80104E8C_337ACC_name_4F);
-#endif
 
 void func_80105B4C_33878C_name_4F(void) {
     Vec v;
@@ -1627,7 +1620,7 @@ void func_801089AC_33B5EC_name_4F(void) {
 #ifdef NON_MATCHING
 /* NON_MATCHING: GCC keeps 360.0f of the crew loop in f26 (retail reloads it each time, so its frame
    is 8 bytes smaller), and retail masks the constant arguments 1, 0 of func_8010CA90 with andi
-   from registers it reloads every iteration; same logic. */
+   from registers it reloads every iteration; same logic (masked 76; S3-S: not retried). */
 __asm__(".section .rodata");
 /* Board 3's scene: five crew members run in, D_80110568 walks to its marks and talks, the
    D_80110580 model drops in from above, two form models rise with D_80110454's bob, then the doors
@@ -2432,7 +2425,9 @@ void func_8010B4E8_33E128_name_4F(void) {
 
 #ifdef NON_MATCHING
 /* NON_MATCHING: as func_8010AED4, GCC hoists 5.0f * dir out of the swing loops (retail keeps 5.0f
-   in s8 and multiplies each frame), which shifts the register allocation; same logic. */
+   in s8 and multiplies each frame), which shifts the register allocation; same logic (masked 95).
+   Tried (S3-S): dir = -dir inside the break arm (no change); a step = 5.0f local stops the
+   hoisting but CSE then rematerialises 5.0f with lui at and the other loop constants move. */
 /* The finale: the winner swings around D_80110580 twice, then runs five laps while D_80110580 spins
    up; it slows down and wobbles, the winner jumps and the puppet bows, then D_80110580 flies off
    with a func_8010CE1C trail and a sprite marks where it vanished. */

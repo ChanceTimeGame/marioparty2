@@ -292,7 +292,9 @@ void func_801033F0_3E4F10_name_64(void) {
    four digits each, in thousands..units, placed by the number of digits). */
 /* NON_MATCHING: control flow (class 3, masked 6). The sign-sprite tail now matches (nested zero
    test); retail lays out the 0xD0004/0xD0005 file choice with the 0xD0005 case falling through
-   (bltz, ours bgezl), and keeps i in s7 (ours s8). Stays asm in the matching build. */
+   (bltz, ours bgezl), and keeps i in s7 (ours s8). Stays asm in the matching build. Tried (S3-S):
+   the 0xD0005 arm first as `i != 0 && val[i] >= 0` (if-converted, masked 28) and a DataRead in
+   each arm (0xD0004 preloaded, masked 9). */
 #ifdef NON_MATCHING
 void func_80103418_3E4F38_name_64(void) {
     s16 cnt[4];

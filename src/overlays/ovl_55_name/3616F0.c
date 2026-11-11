@@ -561,7 +561,9 @@ void func_80103D08_362BF8_name_55(void) {
    greeting, the players line up (D_8010BB40), the board's explanation (D_8010BA04, D_8010BA58,
    D_8010BA20), then they walk to their starting places (D_8010BB70) and face away. */
 /* NON_MATCHING: the host's fall loop (jumpY -= speed until <= 0) only: GCC hoists its 1.2f and
-   0.0f into $f22/$f20, retail rematerialises them each pass (the loop's shape matches). */
+   0.0f into $f22/$f20, retail rematerialises them each pass (the loop's shape matches; masked 44).
+   Tried (S3-S): while ((jumpY -= speed) ...) and while (1) { ... break; } (worse); a goto loop stops
+   the hoisting but cross-jumping then merges the first test into the loop's. */
 #ifdef NON_MATCHING
 void func_80103D94_362C84_name_55(void) {
     s32 done[4];
