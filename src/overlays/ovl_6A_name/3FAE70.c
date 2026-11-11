@@ -684,6 +684,8 @@ void func_80104D28_3FD368_name_6A(void) {
     } while (i < 6);
 }
 
+/* masked 11 (S3-R): in the i != 0 sign arm retail reloads val[i] for the > 0 test after the != 0 test;
+   GCC here reuses the load. Tried: the arm inverted as D_801064B4 != 0 || val[i] == 0 (masked 52). */
 #ifdef NON_MATCHING
 void func_80104EA8_3FD4E8_name_6A(void) {
     s16 val[4];
