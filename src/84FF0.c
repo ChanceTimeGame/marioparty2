@@ -2733,7 +2733,8 @@ s32 func_8008BB48_8C748(s16 winId, s8 start, s32 arg2) {
 
 // register allocation (masked 14; MP1 func_8006FE4C has the same residue): the new entry's index reuses
 // the compare's sign extension of sel where retail re-extends it. The (u16) on the unkA6 test lets btn
-// go unextended as in retail (same result: unkA6 is a u16).
+// go unextended as in retail (same result: unkA6 is a u16). S3-T05: sel != tw->unk_31 (masked 16) and
+// indexing tw->unk_F4[sel] directly for unkA0/unkA2 (masked 17) are worse.
 #ifdef NON_MATCHING
 /* MP1 func_8006FE4C: moves the choice cursor between the entries; 0 once one is chosen or cancelled */
 s32 func_8008BCB8_8C8B8(s16 winId) {
