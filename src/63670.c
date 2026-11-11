@@ -1966,6 +1966,8 @@ void func_8006692C_6752C(void) {
 // (MP1 func_8005835C has the same residue; control flow, masked 19, two instructions long). Nesting
 // the 0x2000 test in the i == cur block lets CSE merge the flag and pad loads (masked 25): retail
 // reloads both and threads flag == 0 past the second test.
+// S3-T05: an else-if 0x2000 test merges the loads too (masked 25); four separate i == cur tests keep
+// the reloads but retest i == cur each time (masked 24). Retail's flag == 0 jump is threaded to the loop end.
 #ifdef NON_MATCHING
 void func_80066994_67594(void) {
     Vec2f sp10;
