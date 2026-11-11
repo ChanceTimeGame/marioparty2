@@ -925,7 +925,8 @@ void func_80107194_18AE24_ToadBandstand(omObjData* obj) {
     obj->func_ptr = func_8010780C_18B49C_ToadBandstand;
 }
 
-/* NON_MATCHING: class 4: second pseudo of the s32 argument (retail reextends one copy at every index); masked 28, logic equal */
+/* NON_MATCHING: class 4: retail keeps i (dies into pp) and its copy j in separate registers; GCC coalesces
+   them (masked 26 with every later index through (s8)j; s8 j no change) */
 #ifdef NON_MATCHING
 void func_801071C8_18AE58_ToadBandstand(omObjData* obj, s32 i) {
     s32 j = i;
@@ -975,7 +976,7 @@ void func_801071C8_18AE58_ToadBandstand(omObjData* obj, s32 i) {
                         D_8010D848_1914D8_ToadBandstand[D_8010DAA2_191732_ToadBandstand[(s8)j]]->character == 2 ? 250.0f : 255.0f,
                         140.0 - (((p = D_8010D848_1914D8_ToadBandstand[(s8)j])->group % 2 == 1 && p->character == 5) * 17.5));
     func_800297E8_2A3E8(obj->model[12], 0.75f, 0.75f, 0.75f);
-    p = D_8010D848_1914D8_ToadBandstand[i];
+    p = D_8010D848_1914D8_ToadBandstand[(s8)j];
     if (p->group & 1) {
         file = p->group < 2 ? 0x28000C : 0x28000D;
     } else {
