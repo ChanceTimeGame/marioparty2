@@ -609,7 +609,9 @@ const char D_80112220_3A00E0_name_5C[8] = "\x05" "%d\x05";
 __asm__(".section .rodata");
 const char D_80112228_3A00E8_name_5C[8] = "\x05" "%02d\x05";
 
-// register allocation and duplicated divisions: 5B-style s16 temporaries, 1% fewer instructions (masked 62)
+// fade loops (masked 51): retail keeps the 51.0f/-50.0f constants in the loop and recomputes (s16)fade
+// for win1 and win2, where ours hoists and CSEs them as the matching 5B twin func_8010F734 does (S3-S:
+// tried passing fade unconverted and testing the 0x38 flag per call)
 #ifdef NON_MATCHING
 s32 func_80104484_392344_name_5C(void) {
     s16 win[7];
@@ -625,8 +627,8 @@ s32 func_80104484_392344_name_5C(void) {
     s32 w;
     s16 win1;
     s16 win2;
-    s32 btn;
-    s32 mask;
+    u16 btn;
+    s16 mask;
     f32 fade;
 
     grp = func_8001A2F8_1AEF8(0x90052);
@@ -688,7 +690,8 @@ s32 func_80104484_392344_name_5C(void) {
                 if (t == 0) {
                     t = 0x1400;
                 }
-                sprintf(buf[i * 3], D_80112220_3A00E0_name_5C, t >> 8);
+                hi = t >> 8;
+                sprintf(buf[i * 3], D_80112220_3A00E0_name_5C, hi);
                 func_80089308_89F08(w, buf[i * 3], 0);
                 sprintf(buf[i * 3 + 1], D_80112228_3A00E8_name_5C, t & 0xFF);
                 func_80089308_89F08(w, buf[i * 3 + 1], 1);
@@ -738,8 +741,8 @@ s32 func_80104484_392344_name_5C(void) {
     HuPrcVSleep();
     if (func_80068040_68C40(0x38) != 0) {
         func_8008D6F0_8E2F0(win1);
-        func_8008D6F0_8E2F0(win2);
     }
+    func_8008D6F0_8E2F0(win2);
     for (i = 0; i < 6; i++) {
         fade = i * 51.0f;
         func_8001A6BC_1B2BC(spr, fade);
@@ -912,7 +915,8 @@ s16 func_801055BC_39347C_name_5C(s16 x, s16 y) {
 }
 
 /* Process: scrolls the water, bobs the attractions and pulses the one under the cursor. */
-// register allocation: float registers (masked 28)
+// register allocation (masked 0): the pulse scale's product goes to f20 instead of f0 (S3-S: tried operand
+// order and declaration order)
 #ifdef NON_MATCHING
 void func_80105688_393548_name_5C(void) {
     s16 n;
@@ -934,12 +938,11 @@ void func_80105688_393548_name_5C(void) {
     }
     scroll = 0.0f;
     while (1) {
-        s = -scroll;
-        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, s, 0x20, 0x20, "sea_un_a", 0);
-        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, s, 0x20, 0x20, "sea_un_b", 0);
-        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, s, 0x20, 0x20, "sea_ov_a", 0);
-        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, s, 0x20, 0x20, "sea_ov_b", 0);
-        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0x19], 0.0f, s, 0x20, 0x20, "taki", 0);
+        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, -scroll, 0x20, 0x20, "sea_un_a", 0);
+        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, -scroll, 0x20, 0x20, "sea_un_b", 0);
+        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, -scroll, 0x20, 0x20, "sea_ov_a", 0);
+        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0], 0.0f, -scroll, 0x20, 0x20, "sea_ov_b", 0);
+        func_8002BED4_2CAD4(D_80112F60_3A0E20_name_5C[0x19], 0.0f, -scroll, 0x20, 0x20, "taki", 0);
         scroll += 0.3f;
         if (scroll > 32.0f) {
             scroll = 0.0f;
@@ -948,7 +951,8 @@ void func_80105688_393548_name_5C(void) {
             base = D_80112F60_3A0E20_name_5C[D_80111464_39F324_name_5C[i].base];
             if (D_80111464_39F324_name_5C[i].mark != -1) {
                 mark = D_80112F60_3A0E20_name_5C[D_80111464_39F324_name_5C[i].mark];
-                a = (s32)((D_80111464_39F324_name_5C[i].t + 90.0f) / 4.0f) % 90;
+                a = (D_80111464_39F324_name_5C[i].t + 90.0f) / 4.0f;
+                a %= 90;
                 if (a >= 80.0f) {
                     if (i != D_80112476_3A0336_name_5C || D_80112330_3A01F0_name_5C == 0) {
                         func_800298A4_2A4A4(mark, 4, 4);
@@ -957,7 +961,7 @@ void func_80105688_393548_name_5C(void) {
                 if (i == D_80112476_3A0336_name_5C && D_80112330_3A01F0_name_5C != 0) {
                     func_800298A4_2A4A4(mark, 4, 0);
                 }
-                s = HuMathSin(a) * 0.3f + D_80111464_39F324_name_5C[i].scale;
+                s = D_80111464_39F324_name_5C[i].scale + HuMathSin(a) * 0.3f;
                 func_80029714_2A314(mark, D_800FC834_FD434[(s16)base].pos.x, 50.0f, D_800FC834_FD434[(s16)base].pos.z);
                 func_800297E8_2A3E8(mark, s, 1.0f, s);
                 func_8002D0A0_2DCA0(mark, (u8)((90 - a) * 2.8333333f));

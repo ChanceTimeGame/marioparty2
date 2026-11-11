@@ -1306,7 +1306,7 @@ void func_80109344_18CFD4_ToadBandstand(s16 model, s16 frame) {
     m->hmf->unk9C->unk08 = frame;
 }
 
-/* NON_MATCHING: class 4: same calls, stores and opcodes; register allocation and a few cross-jumped arms differ (n 2241/2263). The macro arguments stay inline: the macro repeats them and retail shows each copy. */
+/* NON_MATCHING: class 4: same calls and stores; register allocation and a few cross-jumped arms differ (masked 292, n 2641/2626). The macro arguments stay inline: the macro repeats them and retail shows each copy. S3-S: retail repeats the `j >= 6 ? a + 2 : a` band slot at each DA98/DAAD/D908 access (masked 426 -> 292); DAAD as a pointer select (`*(j >= 6 ? &D[a + 2] : &D[a])`) was worse. */
 #ifdef NON_MATCHING
 void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
     HuSprite* spr[16];
@@ -1323,7 +1323,6 @@ void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
     s32 x;
     s32 y;
     s32 st;
-    s32 slot;
     s32 n;
     s32 t0;
     s32 p;
@@ -1432,10 +1431,9 @@ void func_80109388_18D018_ToadBandstand(Gfx** gfx, s32 arg1, s32 arg2) {
                         x = j >= 6 ? j * 16 + 0x5E : j * 16 + 0x34;
                         y = a * 23 + 0xB4;
                         scale = 1.0f;
-                        slot = j >= 6 ? a + 2 : a;
-                        if (D_8010DA98_191728_ToadBandstand[slot] == (u8)k && D_8010DAAD_19173D_ToadBandstand[slot] == 1) {
-                            if (D_8010D908_191598_ToadBandstand[slot] != 0) {
-                                scale = D_8010D908_191598_ToadBandstand[slot] == 1 ? 1.5f : 1.0f;
+                        if (D_8010DA98_191728_ToadBandstand[j >= 6 ? a + 2 : a] == (u8)k && D_8010DAAD_19173D_ToadBandstand[j >= 6 ? a + 2 : a] == 1) {
+                            if (D_8010D908_191598_ToadBandstand[j >= 6 ? a + 2 : a] != 0) {
+                                scale = D_8010D908_191598_ToadBandstand[j >= 6 ? a + 2 : a] == 1 ? 1.5f : 1.0f;
                             } else {
                                 scale = 1.75f;
                             }
