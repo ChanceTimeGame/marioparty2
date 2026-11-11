@@ -255,8 +255,10 @@ void func_801089EC_1345DC_HotRopeJump(s16 id, s32 time) {
    fades, lights each flagged vertex by the lights over it, then draws the floor.
    Retail quirk kept: a fade sets the radius to (fade / fadeTime) * fadeFrom in integer division,
    so the light drops to radius 0 on its first faded frame.
-   NON_MATCHING: masked 49; retail keeps the abs values apart from their differences (bgez/move),
-   holds 0x300 in a register and m in $s7 */
+   NON_MATCHING: register allocation (masked 4): a1/a2 swap between the fade and list loops, m in $s7
+   (abs() and a count local as in MP1, masked 49 -> 4, S3-T) */
+int abs(int);
+
 #ifdef NON_MATCHING
 void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     HRJLight* list[33];
@@ -270,10 +272,10 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     s32 dx;
     s32 dz;
     s32 d2;
-    s32 t;
     f32 sum;
     f32 f;
     f32 inner;
+    s32 count;
 
     if (D_8010C3C0_137FB0_HotRopeJump != D_8010C260_137E50_HotRopeJump) {
         for (i = 0; i < 3; i++) {
@@ -303,7 +305,8 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
     list[n] = NULL;
     m = D_800FC834_FD434[D_80111822_13D412_HotRopeJump].hmf;
     v = m->unk44[D_800FDBE0_FE7E0];
-    for (i = 0; i < 0x300; i++, v++) {
+    count = 0x300;
+    for (i = 0; i < count; i++, v++) {
         sum = 0.0f;
         if (*(u16*)v->unk06 != 0) {
             l = list[0];
@@ -315,17 +318,9 @@ void func_80108A44_134634_HotRopeJump(Gfx** gfxp) {
                         dx = -dx;
                     }
                     r = dx * 0.75 + l->radius;
-                    t = v->unk00 - l->x;
-                    dx = t;
-                    if (t < 0) {
-                        dx = -dx;
-                    }
+                    dx = abs(v->unk00 - l->x);
                     if (dx < r) {
-                        t = (f32)(v->unk04 - l->z) * l->aspect;
-                        dz = t;
-                        if (t < 0) {
-                            dz = -dz;
-                        }
+                        dz = abs((s32)((f32)(v->unk04 - l->z) * l->aspect));
                         if (dz < r) {
                             d2 = dx * dx + dz * dz;
                             if (d2 < r * r) {
@@ -362,8 +357,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/133BA0", func_80108A44
 /* Builds the floor (MP1 func_800FBABC): a 2 x 32 x 12 vertex grid (per-frame copies, lit by
    func_80108A44; the vertices off the stage's edge are flagged unlit) and its display list.
    Returns the model.
-   NON_MATCHING: masked 27, all in the vertex grid: retail hoists the whole (s32)(step * -16.0)
-   out of the loops (into $s5) and allocates the loop counters differently */
+   NON_MATCHING: register allocation only (masked 0, raw 125): the loop counters and gfx take other
+   registers (S3-T: s16 z, buf = gfx and MP1's cur/prev * 16 form, masked 27 -> 0) */
 #ifdef NON_MATCHING
 s16 func_80109078_134C68_HotRopeJump(void) {
     HuSprite_Unk84_Struct* tex;
@@ -378,7 +373,7 @@ s16 func_80109078_134C68_HotRopeJump(void) {
     s32 x0;
     s32 s0;
     s32 x;
-    s32 z;
+    s16 z;
     s32 s;
     s32 t;
     s32 half;
@@ -392,7 +387,7 @@ s16 func_80109078_134C68_HotRopeJump(void) {
 
     step = 60;
     tex = SprAnimGet(D_80111824_13D414_HotRopeJump);
-    gfx = buf = HuMemAlloc(0x2000 * sizeof(Gfx));
+    buf = gfx = HuMemAlloc(0x2000 * sizeof(Gfx));
     model = D_80111822_13D412_HotRopeJump = func_8002838C_28F8C(0x80, func_80108A44_134634_HotRopeJump, 0);
     m = D_800FC834_FD434[model].hmf;
     v = m->unk44[0] = m->unk40 = func_80027154_27D54(0x364 * sizeof(Vtx), m->unk0E);
@@ -461,13 +456,13 @@ s16 func_80109078_134C68_HotRopeJump(void) {
         gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, 0);
         vtx += 12;
         for (row = 1; row < 32; row++) {
-            cur = (row & 1) * 16;
-            prev = ((row - 1) & 1) * 16;
-            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur);
+            prev = (row - 1) & 1;
+            cur = row & 1;
+            gSPVertex(gfx++, 0x01000000 | (s16)vtx << 4, 12, cur * 16);
             vtx += 12;
             for (col = 1; col < 12; col++) {
-                gSP2Triangles(gfx++, cur + col, prev + col - 1, cur + col - 1, 0, prev + col, prev + col - 1,
-                              cur + col, 0);
+                gSP2Triangles(gfx++, cur * 16 + col, prev * 16 + col - 1, cur * 16 + col - 1, 0, prev * 16 + col,
+                              prev * 16 + col - 1, cur * 16 + col, 0);
             }
         }
     }

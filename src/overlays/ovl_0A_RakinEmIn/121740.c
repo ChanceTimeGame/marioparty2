@@ -87,15 +87,10 @@ u8 func_801028A0_1217E0_RakinEmIn(u8 n, u64* used) {
 }
 
 /* atan(x) by a continued fraction. */
-/* NON_MATCHING: retail keeps the quotient in $f2 and converts it in the goto's delay slot (f64
-   register allocation, masked 8; MP1's func_800FDBF4_name_2A and ovl_23's twin are the same). */
-#ifdef NON_MATCHING
 f32 func_801029F0_121930_RakinEmIn(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 frac;
-    f64 base;
     s32 sign;
     s32 i;
 
@@ -120,23 +115,15 @@ f32 func_801029F0_121930_RakinEmIn(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            frac = x / (sum + 1.0f);
-            base = 1.5707963267948966;
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_801029F0_121930_RakinEmIn);
-#endif
 
 /* From `from` to `to`: out = { distance, pitch + 90 (degrees), yaw (degrees) }. */
 void func_80102B40_121A80_RakinEmIn(Vec* from, Vec* to, Vec* out) {
@@ -624,14 +611,13 @@ void func_80104474_1233B4_RakinEmIn(RIObj* o) {
 }
 
 /* CPU: whether to swing now (an item in its quarter has turned into reach). */
-/* NON_MATCHING: retail copies hit into v0 at the switch's join and keeps it->angle in a register (delay slots) */
-#ifdef NON_MATCHING
 s16 func_8010468C_1235CC_RakinEmIn(RIObj* o, s16 player) {
     RIItem* it;
     RIObj* o2;
     omObjData* io;
     f32 reach;
-    s32 hit;
+    f32 top;
+    s16 hit;
     s16 i;
 
     hit = 0;
@@ -678,25 +664,25 @@ s16 func_8010468C_1235CC_RakinEmIn(RIObj* o, s16 player) {
         if (reach < 0.0f) {
             reach = 0.0f;
         }
-        if (reach <= it->angle && it->angle <= reach + 0.75f) {
+        top = reach + 0.75f;
+        if (reach <= it->angle && it->angle <= top) {
             break;
         }
         hit = 0;
     }
-    if (D_801071AA_1260EA_RakinEmIn >= 5 && hit) {
-        if (o->unk_26 != 0) {
-            func_801043B0_1232F0_RakinEmIn(player, i);
-            o->unk_26--;
-            hit = 0;
-        } else {
-            func_80104418_123358_RakinEmIn(player);
+    if (D_801071AA_1260EA_RakinEmIn >= 5) {
+        if (hit) {
+            if (o->unk_26 != 0) {
+                func_801043B0_1232F0_RakinEmIn(player, i);
+                o->unk_26--;
+                hit = 0;
+            } else {
+                func_80104418_123358_RakinEmIn(player);
+            }
         }
     }
     return hit;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0A_RakinEmIn/121740", func_8010468C_1235CC_RakinEmIn);
-#endif
 
 /* Items within 75 of `obj` (item `item`) are pushed by it. */
 /* NON_MATCHING: 5625.0f hoisted to the top, v0/v1 swap in the abs */

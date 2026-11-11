@@ -1,7 +1,6 @@
 #include "common.h"
 #include "ovl_60.h"
 
-#ifdef NON_MATCHING
 void func_80112C10_3CE370_name_60(s16 mg) {
     s16 chars[4];
     Ovl60QuestGame* q;
@@ -10,8 +9,8 @@ void func_80112C10_3CE370_name_60(s16 mg) {
     s16 c1;
     s16 i;
     s16 n;
-    u8 a;
-    u8 b;
+    s16 a;
+    s16 b;
     s16 tmp;
 
     if (_CheckFlag(0xE) != 0) {
@@ -159,9 +158,6 @@ void func_80112C10_3CE370_name_60(s16 mg) {
         gPlayers[i].character = chars[i];
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3CE370", func_80112C10_3CE370_name_60);
-#endif
 
 void func_80113264_3CE9C4_name_60(s16 mg) {
     D_80114AB0_3D0210_name_60[0] = D_80114AC0_3D0220_name_60;

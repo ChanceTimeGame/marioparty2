@@ -1247,14 +1247,10 @@ void func_80107168_279898_TileDriver(void) {
     func_8007273C_7333C(D_80107BD0_27A300_TileDriver, 1);
 }
 
-/* NON_MATCHING: retail keeps the quotient in $f2 and converts it in the delay slot (f64 register allocation, masked 8; twins in ovl_0A, ovl_23, MP1 are the same). */
-#ifdef NON_MATCHING
 f32 func_801073BC_279AEC_TileDriver(f32 x) {
     f32 a;
     f32 b;
     f32 sum;
-    f64 frac;
-    f64 base;
     s32 sign;
     s32 i;
 
@@ -1279,23 +1275,15 @@ f32 func_801073BC_279AEC_TileDriver(f32 x) {
     } while (i > 0);
     if (sum != -1.0f) {
         if (sign > 0) {
-            base = 1.5707963267948966;
-            frac = x / (sum + 1.0f);
-            goto done;
+            return 1.5707963267948966 - (x / (sum + 1.0f));
         }
         if (sign < 0) {
-            frac = x / (sum + 1.0f);
-            base = -1.5707963267948966;
-        done:
-            return base - frac;
+            return -1.5707963267948966 - (x / (sum + 1.0f));
         }
         return x / (sum + 1.0f);
     }
     return 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801073BC_279AEC_TileDriver);
-#endif
 
 void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     Vec delta;

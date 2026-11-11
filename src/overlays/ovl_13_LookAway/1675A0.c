@@ -997,7 +997,8 @@ void func_8010580C_16A5AC_LookAway(omObjData* obj) {
 }
 
 /* NON_MATCHING: the second loop hoists the constant 3 where retail hoists D_80106CD0_16BA70_LookAway
-   (register choice and a copy of the switch value; masked 33). */
+   (register choice and a copy of the switch value; masked 33). S3-T tried `player = i; switch (player)`,
+   computing p before the continue, and an s16 player: none closer. */
 #ifdef NON_MATCHING
 void func_80105B4C_16A8EC_LookAway(void) {
     LAObj* base = D_80106CD0_16BA70_LookAway;

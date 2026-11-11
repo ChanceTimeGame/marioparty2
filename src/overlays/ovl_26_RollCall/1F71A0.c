@@ -281,7 +281,8 @@ void func_801033B8_1F7D58_RollCall(omObjData* obj) {
     }
 }
 
-/* NM: control flow: this source merges the two "stand still" arms, retail keeps both (masked ~150, a knock-on of that). */
+/* NM: register allocation (masked 2, raw 43): retail keeps obj in s2 and p in s1, builds the u8 casts in a fresh
+   register and loads trans.x/z after the mul. S3-T tried hoisting `t = r` above the `r >= 2` test (worse). */
 #ifdef NON_MATCHING
 void func_80103434_1F7DD4_RollCall(omObjData* obj) {
     RCSlot* p = &D_8010A5B0_1FEF50_RollCall[obj->work[0]];
@@ -344,7 +345,7 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
             if (obj->work[0] == i) {
                 continue;
             }
-            o = D_8010A5B0_1FEF50_RollCall[i].obj;
+            o = (D_8010A5B0_1FEF50_RollCall + i)->obj;
             if (o == NULL) {
                 continue;
             }
@@ -363,7 +364,7 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
             if (obj->work[0] == i) {
                 continue;
             }
-            o = D_8010A5B0_1FEF50_RollCall[i].obj;
+            o = (D_8010A5B0_1FEF50_RollCall + i)->obj;
             if (o == NULL) {
                 continue;
             }
@@ -378,7 +379,16 @@ void func_80103434_1F7DD4_RollCall(omObjData* obj) {
                 goto blocked;
             }
         }
-        if (z > 550.0f || z < -500.0f || x > 620.0f || x < -620.0f) {
+        if (z > 550.0f) {
+            goto blocked;
+        }
+        if (z < -500.0f) {
+            goto blocked;
+        }
+        if (x > 620.0f) {
+            goto blocked;
+        }
+        if (x < -620.0f) {
         blocked:
             p->unk_24 = 1;
             p->unk_22 = 10;
