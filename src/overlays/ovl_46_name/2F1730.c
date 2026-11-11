@@ -1509,8 +1509,8 @@ void func_80107644_2F6574_name_46(s16 group, f32 scale) {
 
 /* The winner's time pulses (1.0 -> 0.8 -> 1.2) for at least 30 frames; nothing on a draw. */
 #ifdef NON_MATCHING
-/* Only the winner test differs: retail branches (and reloads D_80108230) where this compiles
-   to a set-on-equal. */
+/* Only the winner test differs (masked 17): retail branches (and reloads D_80108230) where this
+   compiles to a set-on-equal. Tried: if/else, side++ (both still set-on-equal). */
 void func_801076B4_2F65E4_name_46(void) {
     f32 scale;
     f32 step;

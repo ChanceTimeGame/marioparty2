@@ -913,7 +913,8 @@ void func_80105804_294874_DeepSeaSalvage(DSSHud* hud, s16 member, u16 anim, u16 
 
 /* The HUD: four faces, four coin icons, four "x" signs and three digits per player. */
 /* NON_MATCHING: retail stores the group by its address (%hi/%lo of D_80108EC0+4) although
-   hud holds &D_80108EC0; GCC stores through hud (masked 11, addressing and registers only). */
+   hud holds &D_80108EC0; GCC stores through hud (masked 11, addressing and registers only).
+   Tried: no hud local (masked 23), hud assigned after the store (masked 11, still via a register). */
 #ifdef NON_MATCHING
 void func_801058A0_294910_DeepSeaSalvage(omObjData* obj) {
     s16 i;
