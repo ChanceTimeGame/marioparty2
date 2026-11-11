@@ -549,7 +549,7 @@ void func_80103E34_1AD4C4_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: float registers, arm stores merged differently (masked 39) */
+/* NON_MATCHING: float registers only (masked 0): retail keeps yawD in $f4 and the yaw+180 sum in $f4. */
 #ifdef NON_MATCHING
 void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitchD, f32 pitch) {
     SPPlane* w = obj->unk_50;
@@ -560,16 +560,14 @@ void func_8010413C_1AD7CC_SkyPilots(omObjData* obj, f32 yawD, f32 yaw, f32 pitch
     if (yawD != 0.0f) {
         D_80102770_103370[team].y = yawD * 0.4f + D_80102770_103370[team].y;
     } else {
-        v = D_80102770_103370[team].y;
-        D_80102770_103370[team].y = (w->yaw + 180.0f - v) / 100.0f + v;
+        lim = w->yaw + 180.0f;
+        D_80102770_103370[team].y = (lim - D_80102770_103370[team].y) / 100.0f + D_80102770_103370[team].y;
     }
-    lim = w->yaw + 180.0f + 25.0f;
-    if (lim < D_80102770_103370[team].y) {
-        D_80102770_103370[team].y = lim;
+    if (D_80102770_103370[team].y > w->yaw + 180.0f + 25.0f) {
+        D_80102770_103370[team].y = w->yaw + 180.0f + 25.0f;
     }
-    lim = w->yaw + 180.0f - 25.0f;
-    if (D_80102770_103370[team].y < lim) {
-        D_80102770_103370[team].y = lim;
+    if (D_80102770_103370[team].y < w->yaw + 180.0f - 25.0f) {
+        D_80102770_103370[team].y = w->yaw + 180.0f - 25.0f;
     }
     if (pitchD != 0.0f) {
         D_80102770_103370[team].x -= pitchD * 0.3f;
@@ -1836,25 +1834,33 @@ void func_801083CC_1B1A5C_SkyPilots(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: register allocation (masked 28) */
+/* NON_MATCHING: register allocation (masked 20): retail keeps tx in $s3, ty/tz in $f30/$f28 and dx/dy in
+   $f20/$f22; GCC here the reverse. Tried: initialisation order, a separate post-loop variable. */
 #ifdef NON_MATCHING
 void func_801084E4_1B1B74_SkyPilots(s32 i) {
     f32 best = 65535.0f;
-    f32 px = HuMathSin(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
-    f32 pz = func_800B7890_B8490(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
-    f32 py = 0.0f;
-    f32 tx = px;
-    f32 ty = py;
-    f32 tz = pz;
+    f32 px;
+    f32 py;
+    f32 pz;
+    f32 tx;
+    f32 ty;
+    f32 tz;
     f32 dx;
     f32 dy;
     f32 dz;
     f32 d;
     f32 ang;
     s32 k;
-    s32 near = 0;
+    s32 near;
     s32* mdl;
 
+    px = HuMathSin(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
+    py = 0.0f;
+    ty = py;
+    tx = px;
+    pz = func_800B7890_B8490(D_8010AE3C_1B44CC_SkyPilots[i].angle) * (D_8010AE3C_1B44CC_SkyPilots[i].radius + SP_RADIUS);
+    tz = pz;
+    near = 0;
     for (k = 0; k < 2; k++) {
         omObjData* p = D_8010ADA4_1B4434_SkyPilots[k];
         dx = p->trans.x;
@@ -1884,8 +1890,8 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
     func_80029C74_2A874((s16)*mdl, dy);
     ang = func_800B75A8_B81A8(tx, tz);
     func_8002979C_2A39C((s16)*mdl, 0.0f, ang, 0.0f);
-    if (D_8010AEA8_1B4538_SkyPilots[i] == 0 && D_8010ADCC_1B445C_SkyPilots[near][i] < 2 && D_800F8FD0_F9BD0 == 1 && best < 4000.0f
-        && D_8010B430_1B4AC0_SkyPilots[near] < D_8010AE3C_1B44CC_SkyPilots[i].angle) {
+    if (D_8010AEA8_1B4538_SkyPilots[i] == 0 && D_8010ADCC_1B445C_SkyPilots[near][i] < 2 && D_800F8FD0_F9BD0 == 1) {
+        if (best < 4000.0f && D_8010AE3C_1B44CC_SkyPilots[i].angle > D_8010B430_1B4AC0_SkyPilots[near]) {
         SPPlane* w = D_8010ADA4_1B4434_SkyPilots[near]->unk_50;
         Vec v;
 
@@ -1902,6 +1908,7 @@ void func_801084E4_1B1B74_SkyPilots(s32 i) {
         D_8010AEDC_1B456C_SkyPilots[i].z = pz + func_800B7890_B8490(ang) * 150.0f;
         PlaySound(0x212);
         func_800298A4_2A4A4((s16)D_8010B2F8_1B4988_SkyPilots[i], 4, 0);
+        }
     }
 }
 #else
