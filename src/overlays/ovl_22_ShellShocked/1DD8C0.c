@@ -192,14 +192,10 @@ const char D_8010D4BC_1E1B9C_ShellShocked[] = "143tank-bmerge1_3_1";
 __asm__(".section .rodata");
 const char D_8010D4D0_1E1BB0_ShellShocked[] = "143tank-m_head";
 
-// delay-slot schedule (masked 12, 313 vs 312: where "move a0,i" lands around the shake offsets); call set fixed: A1E4/B0DC take (i, tank)
-#ifdef NON_MATCHING
 void func_8010991C_1DDFFC_ShellShocked(s32 i) {
     SSTank* tank;
     omObjData* obj;
     s32 mask;
-    s32 x;
-    s32 y;
     s32 chr;
     s32 hp;
     f32 t;
@@ -258,17 +254,13 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
         }
         if (tank->flash >= 0x1F) {
             if (tank->flash & 1) {
-                x = -4;
-                y = 8;
+                func_801050D0_1D97B0_ShellShocked(i, -4, 8);
             } else {
-                x = 4;
-                y = -8;
+                func_801050D0_1D97B0_ShellShocked(i, 4, -8);
             }
         } else {
-            x = 0;
-            y = 0;
+            func_801050D0_1D97B0_ShellShocked(i, 0, 0);
         }
-        func_801050D0_1D97B0_ShellShocked(i, x, y);
     }
     if (tank->flash >= 0x1E) {
         t = (tank->flash - 0x1E) * 0.1 - 0.5;
@@ -289,9 +281,6 @@ void func_8010991C_1DDFFC_ShellShocked(s32 i) {
         func_8008225C_82E5C(D_8010DA80_1E2160_ShellShocked[i].hudSpr, 0, 1);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010991C_1DDFFC_ShellShocked);
-#endif
 
 void func_80109D08_1DE3E8_ShellShocked(void) {
     s32 i;
