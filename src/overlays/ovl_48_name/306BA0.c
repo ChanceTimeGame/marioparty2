@@ -206,9 +206,9 @@ void func_80102C28_306FC8_name_48(void) {
    func_80107FC8) decides D_80108968: 1 a draw, 2 the challenger wins, 3 the opponent. On a win
    both signs slide out and back, the loser's sign flies off, the winner's spins (func_80108220)
    and the winner takes both stakes; on a draw the signs fly up and the stakes go back. */
-/* NON_MATCHING: masked 13, scheduling and registers only: the referee's drop loop keeps the new
-   height in f2 (GCC f0), the winner's sound table entry is loaded before the 0x2C/0x54 choice (GCC
-   fills the call's delay slot with it), two delay-slot placements. Logic checked against the asm. */
+/* NON_MATCHING: masked 3, scheduling and registers only: the referee's drop loop keeps the new
+   height in f2 (GCC f0), and the model loop's (s16)i lands in the beqz delay slot. Logic checked
+   against the asm. */
 #ifdef NON_MATCHING
 void func_80102CB4_307054_name_48(void) {
     s32 side = 0;
@@ -222,6 +222,7 @@ void func_80102CB4_307054_name_48(void) {
     s32 layout;
     s16 mes;
     s32 winner;
+    s32 snd;
     f32 scale;
     f32 vel;
     f32 z;
@@ -646,8 +647,8 @@ void func_80102CB4_307054_name_48(void) {
         }
         PlayMusic(0x51);
         winner = D_800FC880_FD480;
-        func_800732FC_73EFC(D_801086B0_30CA50_name_48[gPlayers[winner].character][5],
-                            (winner == D_80108930_30CCD0_name_48) ? 0x2C : 0x54, winner);
+        snd = D_801086B0_30CA50_name_48[gPlayers[winner].character][5];
+        func_800732FC_73EFC(snd, (winner == D_80108930_30CCD0_name_48) ? 0x2C : 0x54, winner);
         MBMotionSet(PLAYER_MODEL(D_800FC880_FD480), 4, 0);
         func_8005ACD0_5B8D0(&gPlayers[D_800FC880_FD480], 1);
         mes = func_800797DC_7A3DC(0xFC, D_800F8C5C_F985C);
