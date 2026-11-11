@@ -1480,14 +1480,13 @@ void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z)
   D_80112408_3A02C8_name_5C[i]->speed = 5.0f;
 }
 
-// register allocation: 5000.0f is not kept in a register, spill slots differ, 2 more instructions (masked 59)
-#ifdef NON_MATCHING
 void func_80110020_39DEE0_name_5C(void) {
-    f32 z[6];
-    Ovl5CModelDef* def;
+    f32 z[8];
+    Vec* pos;
     s16 i;
-    s16 n;
-    s32 stop;
+    s32 n;
+    s16 model;
+    s16 stop;
 
     stop = 0;
     z[0] = -3000.0f;
@@ -1501,7 +1500,8 @@ void func_80110020_39DEE0_name_5C(void) {
     while (1) {
         for (i = 0; i < 6; i++) {
             n = D_80112F20_3A0DE0_name_5C + i;
-            def = &D_80111C50_39FB10_name_5C[n];
+            model = D_80112F60_3A0E20_name_5C[n];
+            pos = &D_80111C50_39FB10_name_5C[n].pos;
             z[i] -= D_80112478_3A0338_name_5C;
             if (z[i] < -3000.0f && !stop) {
                 z[i] += 8000.0f;
@@ -1509,7 +1509,7 @@ void func_80110020_39DEE0_name_5C(void) {
             if (z[i] > 5000.0f && !stop) {
                 z[i] -= 8000.0f;
             }
-            func_80029714_2A314(D_80112F60_3A0E20_name_5C[n], def->pos.x * 0.5f, def->pos.y * 0.5f, z[i] * 0.5f);
+            func_80029714_2A314(model, pos->x * 0.5f, pos->y * 0.5f, z[i] * 0.5f);
         }
         if (D_801124D8_3A0398_name_5C != 0 && D_80112478_3A0338_name_5C <= 0.0f && !stop) {
             stop = 1;
@@ -1559,9 +1559,6 @@ void func_80110020_39DEE0_name_5C(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_80110020_39DEE0_name_5C);
-#endif
 
 /* .data (0x39FB10-0x3A0050, 80111C50-80112190) */
 /* 80111C50 */
