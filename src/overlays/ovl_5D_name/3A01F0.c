@@ -910,7 +910,8 @@ void func_8010543C_3A2E2C_name_5D(void) {
     espDispOff(D_8010CC8A_3AA67A_name_5D);
 }
 
-// register allocation (masked 102)
+// stack slots and register allocation (masked 102, mostly spill offsets): retail's frame is 16 bytes larger;
+// it hoists the u8 dir test before the i loop into a spilled s32 (lbu 39 / sw 68 / lw 68). Not attempted (S3-R01)
 #ifdef NON_MATCHING
 u16 func_80105648_3A3038_name_5D(void) {
     s16 sel;
