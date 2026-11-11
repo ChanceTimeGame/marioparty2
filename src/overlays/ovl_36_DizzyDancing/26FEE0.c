@@ -295,7 +295,8 @@ void func_80103760_270E40_DizzyDancing(void) {
     D_80107990_275070_DizzyDancing = omAddObj(10, 0, 0, -1, func_80103504_270BE4_DizzyDancing);
 }
 
-/* NON_MATCHING: masked 20: retail copies hit to $v0 before two tests and its $s4 is reused for the actor base. */
+/* NON_MATCHING: raw 3, masked 0: the |unk_38| integer takes $v0 in retail, $v1 here (tried an
+   assignment in the test, a split unk_40 store, an f32 temporary). */
 #ifdef NON_MATCHING
 void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
     Vec from;
@@ -306,10 +307,11 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
     omObjData* o;
     MgWork* w;
     f32 r;
+    f32 step;
     s16 i;
     s32 a;
     u16 mdl;
-    s32 hit;
+    s16 hit;
 
     t = &D_80107A20_275100_DizzyDancing;
     hit = 0;
@@ -409,7 +411,7 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
                     w->unk_3C -= 360.0f;
                 }
                 if (t->state == 1 && o->work[1] == 0) {
-                    if ((a = hit) != 0) {
+                    if (hit != 0) {
                         if (D_8010785B_274F3B_DizzyDancing != 0) {
                             if (!(D_801075F4_274CD4_DizzyDancing > 0.0f && o->trans.x < 0.0f)) {
                                 hit = 0;
@@ -423,7 +425,7 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
                 }
             }
         }
-        if ((a = hit) != 0) {
+        if (hit != 0) {
             for (i = 0; i < 4; i++) {
                 p = &ACTOR[i];
                 p->state = 1;
@@ -432,14 +434,16 @@ void func_801037A8_270E88_DizzyDancing(omObjData* obj) {
             }
             t->state = 2;
         }
-        D_801075FC_274CDC_DizzyDancing = (f32)(((u8)(rand8() % 3) - 1) * 0.5) + D_801075FC_274CDC_DizzyDancing;
+        step = ((u8)(rand8() % 3) - 1) * 0.5;
+        D_801075FC_274CDC_DizzyDancing += step;
         if (D_801075FC_274CDC_DizzyDancing > 75.0f) {
             D_801075FC_274CDC_DizzyDancing = 75.0f;
         }
         if (D_801075FC_274CDC_DizzyDancing < 65.0f) {
             D_801075FC_274CDC_DizzyDancing = 65.0f;
         }
-        D_80107600_274CE0_DizzyDancing = (f32)(((u8)(rand8() % 3) - 1) * 0.5) + D_80107600_274CE0_DizzyDancing;
+        step = ((u8)(rand8() % 3) - 1) * 0.5;
+        D_80107600_274CE0_DizzyDancing += step;
         if (D_80107600_274CE0_DizzyDancing > 75.0f) {
             D_80107600_274CE0_DizzyDancing = 75.0f;
         }
