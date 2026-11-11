@@ -261,19 +261,23 @@ __asm__(".section .rodata");
 const s8 D_801079B8_27F4E8_QuicksandCache[8] = { 0, 1, 2, 3, 0, 0, 0, 0 };
 
 #ifdef NON_MATCHING
-/* Logic complete; register allocation only (i/slot, next/last). */
+/* Logic complete; register allocation only (masked 8, raw 51). Retail keeps next = slot + 1 live
+   in its own register and derives last/slot from it; GCC here folds them to slot + 2 / slot + 3.
+   s32 slot/next/last and slot = 0 after the setup calls helped (was masked 10); slot++ forms and
+   declaration order did not. */
 void func_80107410_27EF40_QuicksandCache(omObjData* obj) {
     s16 i;
     QCSpr* spr = D_801079E0_27F510_QuicksandCache;
     u16 anim;
-    s16 slot = 0;
+    s32 slot;
     u16 x;
     u16 y;
-    s16 next;
-    s16 last;
+    s32 next;
+    s32 last;
 
     func_80106FC4_27EAF4_QuicksandCache();
     func_80107048_27EB78_QuicksandCache();
+    slot = 0;
     func_800B0EF0_B1AF0(D_80107FE8_27FB18_QuicksandCache, 0, 0x30);
     spr->unk_04 = SprCreate(0x18, 0);
     for (i = 0; i < 4; i++) {

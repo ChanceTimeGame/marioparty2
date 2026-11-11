@@ -2864,10 +2864,10 @@ s32 func_8010B6E8_376DE8_MinigameParkSetup(void) {
 
     models = *(Ovl58Triple*)D_80113908_37F008_MinigameParkSetup;
     n = 1;
-    if (D_80113898_37EF98_MinigameParkSetup[0] >= 20) {
+    if (D_80113898_37EF98_MinigameParkSetup >= 20) {
         n = 2;
     }
-    if (D_80113898_37EF98_MinigameParkSetup[0] >= 30 && (D_80113926_37F026_MinigameParkSetup[0] != 0 || D_8011394E_37F04E_MinigameParkSetup[0] != 0)) {
+    if (D_80113898_37EF98_MinigameParkSetup >= 30 && (D_80113926_37F026_MinigameParkSetup[0] != 0 || D_8011394E_37F04E_MinigameParkSetup[0] != 0)) {
         n++;
     }
     for (i = 0; i < n; i++) {
@@ -4618,16 +4618,14 @@ void func_80112910_37E010_MinigameParkSetup(s16 model, f32* out, Matrix4f mtx) {
 /* Sorts the 72 minigames by category (D_800CAD90[i].unk_04): those func_80067F4C passes go to
    D_80113C08 when func_80068040 accepts them, otherwise to D_801139D8; D_80113878 counts every
    minigame of the category. */
-#ifdef NON_MATCHING
-/* masked 1: retail copies cat (move) where this masks it (andi 0xFF). */
 void func_80112950_37E050_MinigameParkSetup(void) {
     s16 i;
-    u8 cat;
+    s16 cat;
 
     for (i = 0; i < 9; i++) {
         D_80113918_37F018_MinigameParkSetup[i] = D_80113878_37EF78_MinigameParkSetup[i] = D_80113940_37F040_MinigameParkSetup[i] = 0;
     }
-    D_80113898_37EF98_MinigameParkSetup[0] = 0;
+    D_80113898_37EF98_MinigameParkSetup = 0;
     D_8011396E_37F06E_MinigameParkSetup = 0;
     for (i = 0; i < 72; i++) {
         cat = D_800CAD90[i].unk_04;
@@ -4635,7 +4633,7 @@ void func_80112950_37E050_MinigameParkSetup(void) {
             if (func_80068040_68C40(i) != 0) {
                 D_80113C08_37F308_MinigameParkSetup[cat][D_80113940_37F040_MinigameParkSetup[cat]] = i;
                 D_80113940_37F040_MinigameParkSetup[cat]++;
-                D_80113898_37EF98_MinigameParkSetup[0]++;
+                D_80113898_37EF98_MinigameParkSetup++;
             } else {
                 D_801139D8_37F0D8_MinigameParkSetup[cat][D_80113918_37F018_MinigameParkSetup[cat]] = i;
                 D_80113918_37F018_MinigameParkSetup[cat]++;
@@ -4645,6 +4643,3 @@ void func_80112950_37E050_MinigameParkSetup(void) {
         D_80113878_37EF78_MinigameParkSetup[cat]++;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_58_MinigameParkSetup/36DF00", func_80112950_37E050_MinigameParkSetup);
-#endif
