@@ -1114,9 +1114,10 @@ __asm__(".section .rodata");
 const char D_80113630_37ED30_MinigameParkSetup[] = "c_panel";
 
 #ifdef NON_MATCHING
-/* masked ~190 of 1777 lines: register allocation and spill slots (retail keeps `cur` and
-   one more value on the stack; frame 0x100 vs 0xF8), `ok &= -(...)` becomes a branch, and
-   the loop's exit test is laid out the other way round. Logic checked against the asm. */
+/* masked 192: register allocation and spill slots (retail keeps `cur` and one more value
+   on the stack; frame 0x100 vs 0xF8), and `ok &= -(...)` becomes a branch here (retail:
+   xor/sltiu/negu/and; `ok *=` and the commuted form branch too). Logic checked against
+   the asm. */
 /* Character select: the host model lifts the character panel in (six character icons,
    D_8011344C), each human moves a cursor (D_801137D0[i], slots D_80113798) and takes a
    character with A (B gives it back; B with nobody chosen leaves); then the controlling
@@ -1289,7 +1290,7 @@ s32 func_801052B4_3709B4_MinigameParkSetup(void) {
                             break;
                         }
                     }
-                    ok *= (i == D_80113958_37F058_MinigameParkSetup.humans);
+                    ok &= -(i == D_80113958_37F058_MinigameParkSetup.humans);
                 } else {
                     /* B gives a choice back (its slot owner becomes cursor 0, as retail). */
                     for (i = 0; i < D_80113958_37F058_MinigameParkSetup.humans; i++) {
@@ -1385,11 +1386,10 @@ s32 func_801052B4_3709B4_MinigameParkSetup(void) {
                 break;
             }
         }
-        if (!(i == maxPlayers || ok == 0)) {
-            HuPrcVSleep();
-            continue;
+        if ((i == maxPlayers) | (ok == 0)) {
+            break;
         }
-        break;
+        HuPrcVSleep();
     }
     for (i = 0; i < 5; i++) {
         func_80107014_372714_MinigameParkSetup(i, 0);
