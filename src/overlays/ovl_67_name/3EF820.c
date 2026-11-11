@@ -277,6 +277,9 @@ void func_8010340C_3F03FC_name_67(void) {
     func_80074FAC_75BAC(4, 0, 1, 1);
 }
 
+/* NON_MATCHING: masked 6: the counter i takes s8 for s7, and retail lays out the D0004/D0005 file
+   choice with D0004 at the branch targets (bltz) where GCC gives bgezl. Tried: DataRead in each arm, the
+   inverted test, if/else-if (all worse). */
 #ifdef NON_MATCHING
 void func_80103434_3F0424_name_67(void) {
     s16 cnt[4];

@@ -9,6 +9,7 @@
 #include "game/sprite.h"
 #include "game/data.h"
 #include "game/collision.h"
+f64 fabs(f64); /* GCC builtin (abs.d) */
 
 /* Move to the Music: one retail file, 155C90.c; .data is asm (0x160060: state lengths, step tables, sounds,
    display lists), .rodata from 0x1602A0. 1 vs 3: the solo (cell 0) sets steps during states 0, 1, 4, 5, the group

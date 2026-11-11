@@ -676,7 +676,8 @@ const u32 D_8010CFD0_160460_MoveToTheMusic[2] = { 0x00400020, 0x00400060 };
 
 #ifdef NON_MATCHING
 /* register/schedule and frame (masked ~140; logic checked against the asm): retail's frame is 0x20 smaller and it
-   has branch-likely forms of `if (x > 0) x--` that this form turns into flag arithmetic. `unused` is retail: the
+   has branch-likely forms of `if (x > 0) x--` that this form turns into flag arithmetic (S3-S12: a ternary and a
+   direct `if (D_8010D75A > 0) D_8010D75A--` are worse, masked 154). `unused` is retail: the
    same pan table is copied there and never read */
 void func_80105A90_158F20_MoveToTheMusic(omObjData* obj, s8 player) {
     MMPlayer* pl;
