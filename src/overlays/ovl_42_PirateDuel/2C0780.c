@@ -1596,7 +1596,9 @@ void func_80107E20_2C5DA0_PirateDuel(void) {
    object and fade; the effect object is D_8010A100 (one slot, unlike 4F's four).
    Retail quirk: the third vertex takes the second colour (4F's takes the third). */
 /* NON_MATCHING: as 4F's twin, the green and blue fade clamps: retail sign-extends the
-   differences as s16 before the clamp (two sll/sra pairs). Logic checked. */
+   differences as s16 before the clamp (two sll/sra pairs; masked 6, raw 8). Logic checked. An s16 r
+   fixed red's operand order; g/b as s32 with an (s16) test, `g -= 13`, an assignment in the test
+   and a ternary store did not give the sll/sra (S3-T11). */
 #ifdef NON_MATCHING
 void func_80108000_2C5F80_PirateDuel(omObjData* obj) {
     Vec dir;
@@ -1604,7 +1606,7 @@ void func_80108000_2C5F80_PirateDuel(omObjData* obj) {
     PdStreak* p;
     s32 i;
     s32 k;
-    s32 r;
+    s16 r;
     s16 g;
     s16 b;
 
