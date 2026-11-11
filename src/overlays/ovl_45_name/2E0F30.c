@@ -5271,8 +5271,8 @@ s32 func_8010F680_2EDDB0_name_45(s32 arg0) {
 
 #ifdef NON_MATCHING
 /* GCC drops case 7's idx = 0 (known 0 from the top); retail keeps it, and idx lands in s4 not s3.
-   Retail also tests GwSystem.current_player_index by absolute address and reloads it through gw.
-   masked 30 raw 42. Tried (S3-R13): the test written on GwSystem (34), idx = 0 after gw (33). */
+   masked 29 raw 39 (S3-R13: the cur test of func_8010F910_name_47 fixed the player-index reload).
+   Tried (S3-R13): idx = 0 after gw (33), s32 space with switch ((s16)space) (no change). */
 void func_8010F8E0_2EE010_name_45(void) {
     GW_SYSTEM* gw;
     s32 idx;
@@ -5282,14 +5282,16 @@ void func_8010F8E0_2EE010_name_45(void) {
     MBModel* obj;
     SpaceData* from;
     SpaceData* to;
+    s16 cur;
     char pad[8]; /* frame size */
 
     idx = 0;
     space = func_800558F4_564F4();
     gw = &GwSystem;
     dest = 0;
-    if (gw->current_player_index != 4) {
-        func_80046D2C_4792C(gw->current_player_index);
+    cur = gw->current_player_index;
+    if (cur != 4) {
+        func_80046D2C_4792C(GwSystem.current_player_index);
         MBPlayerMotionSet(-1, -1, 2);
         switch (space) {
             case 7:
