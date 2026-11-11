@@ -295,7 +295,8 @@ s32 func_8010342C_40C72C_BattleResults(s32 delay, f32 floor, s32 vibrate, s32 pl
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: register allocation in the sprite loop only (s0/s1/s4/s5 swaps). */
+/* NON_MATCHING: register allocation (masked 0): anim0/anim1 take s5/s4 for s4/s5 and j v1 for a1 in the
+   sprite loop. Tried: anim declaration order. */
 /* Scene object: ranks the players, builds the pedestals, the characters, the carrier with its
    two hooks, the coin models and the coin-count sprites, then deletes itself. */
 void func_80103518_40C818_BattleResults(omObjData* obj) {
@@ -309,6 +310,7 @@ void func_80103518_40C818_BattleResults(omObjData* obj) {
     s32 anim0;
     s16 anim1;
     s32 grp;
+    EspriteSlot6F* slot;
 
     for (i = 0; i < 4; i++) {
         D_801059C8_40ECC8_BattleResults[i].x = 0.0f;
@@ -320,10 +322,12 @@ void func_80103518_40C818_BattleResults(omObjData* obj) {
     esp = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xC0009), 0, 0);
     espPosSet(esp, 160, 120);
     func_8001A708_1B308(esp, 0x4000);
-    SprAttrReset(D_800F93FC_F9FFC[esp].unk04, 0, 0x1000);
+    slot = &D_800F93FC_F9FFC[esp];
+    SprAttrReset(slot->unk04, 0, 0x1000);
     esp = func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(0xC000A), 0, 0);
     espPosSet(esp, 160, 225);
-    SprAttrReset(D_800F93FC_F9FFC[esp].unk04, 0, 0x1000);
+    slot = &D_800F93FC_F9FFC[esp];
+    SprAttrReset(slot->unk04, 0, 0x1000);
     for (i = 0; i < 4; i++) {
         D_80105960_40EC60_BattleResults[i] = func_80018A30_19630(
             (D_801059F8_40ECF8_BattleResults[D_80105A08_40ED08_BattleResults[i]] + 2) | 0xC0000, 0x299);
@@ -395,8 +399,7 @@ void func_80103518_40C818_BattleResults(omObjData* obj) {
     anim0 = func_8001A2F8_1AEF8(0xC0000);
     anim1 = func_8001A2F8_1AEF8(0xC000D);
     for (i = 0; i < 4; i++) {
-        grp = SprCreate(5, 5);
-        D_80105A48_40ED48_BattleResults[i] = grp;
+        D_80105A48_40ED48_BattleResults[i] = grp = SprCreate(5, 5);
         SprAnimSet(grp, 0, anim0, 0);
         func_800824F4_830F4(grp, 0, -1);
         SprAttrSet(grp, 0, 0x9000);
