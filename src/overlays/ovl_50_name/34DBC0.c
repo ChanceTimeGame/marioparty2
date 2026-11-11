@@ -143,7 +143,8 @@ void func_8010D3F4_34DC54_name_50(void) {
    back, the doors (0xA018E/0xA018F) slide shut. Messages 0x341-0x347. */
 #ifdef NON_MATCHING
 /* One instruction short: retail sets t = 0 early and increments it later (s1, never folded to
-   t = 1); everything else matches. */
+   t = 1); everything else matches. S3-T: no branch or label separates the two in retail's code
+   (the increment sits in MBModelDispOff's delay slot), so CSE's loss of t == 0 is unexplained. */
 void func_8010D614_34DE74_name_50(void) {
     s32 flags[2];
     s32 win;
@@ -708,8 +709,6 @@ void func_8010F1A8_34FA08_name_50(void) {
 /* Board 5's scene, part 5: the model 0x16 spirals down onto the winner (lighting it and panning
    the 0x40E sound), then the background model D_80112618 hands the winner something (0x350) and
    the winner spins, and it is thrown off. */
-#ifdef NON_MATCHING
-/* One nop short: retail has a nop before the mult (i * i) at the angle wrap's join. */
 void func_8010F79C_34FFFC_name_50(void) {
     Vec v;
     Vec dir;
@@ -866,9 +865,6 @@ void func_8010F79C_34FFFC_name_50(void) {
     MBModelDispOff(winner);
     MBDBackKill();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_50_name/34DBC0", func_8010F79C_34FFFC_name_50);
-#endif
 
 /* Board 5's scene, part 6: the background model swings round the scene in a wide arc (0x351). */
 void func_801100EC_35094C_name_50(void) {

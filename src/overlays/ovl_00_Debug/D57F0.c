@@ -319,6 +319,9 @@ void func_80103594_D6584_Debug(omObjData* arg0) {
     arg0->func_ptr = &func_80103838_D6828_Debug;
 }
 
+// NON_MATCHING (masked 23, 374 of 375): only the menu-row loop differs. Retail loads 0x40 into a0
+// before the unk0 test (bnez, delay slot) and masks it with andi 0xFFFF in the shared call tail.
+// S3-T tried: swapping the unk0 arms, one call with ternary arguments, a column local set before the loop.
 #ifdef NON_MATCHING
 void func_80103838_D6828_Debug(omObjData* arg0) {
     UnkDebug4* var_v1;
