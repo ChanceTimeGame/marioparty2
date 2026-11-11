@@ -1037,7 +1037,8 @@ void func_801052C8_20F218_TotemPolePound(void) {
     }
 }
 
-/* NON_MATCHING: x and y swapped (f20/f22), with the scheduling that follows (masked 7). */
+/* NON_MATCHING: x and y swapped (f20/f22), with the scheduling that follows (masked 5). S3-R tried: x
+   declared before y, a separate base = 0.0f local for the zero (masked 8). */
 #ifdef NON_MATCHING
 void func_80105368_20F2B8_TotemPolePound(omObjData* obj) {
     TPPObj* t = &D_801072F0_211240_TotemPolePound[4];
@@ -1169,7 +1170,8 @@ void func_80105A64_20F9B4_TotemPolePound(TPPGame* g) {
     }
 }
 
-/* NON_MATCHING: retail loads the camera-centre base before the winner object (masked 4). */
+/* NON_MATCHING: retail loads the camera-centre base before the winner object (masked 5). S3-R tried:
+   o assigned inside the dx expression, o read twice inline (masked 22), a Vec* c local (masked 9). */
 #ifdef NON_MATCHING
 void func_80105C64_20FBB4_TotemPolePound(TPPGame* g) {
     omObjData* o;
