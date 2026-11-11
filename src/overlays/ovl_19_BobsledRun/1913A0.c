@@ -1225,7 +1225,9 @@ void func_80106438_194FD8_BobsledRun(s32 team, u8 mdl) {
 
 /* The bobsled after the crash zone or the goal: the winner slides to a stop (then, without
    _CheckFlag(0xC), the riders climb out and the sled drops away), the loser spins out. */
-// register allocation (spin s5/s6, the ground height f2/f20, camera distance f20/f22) and the team*0x44 index schedule; logic follows retail
+// register allocation (masked 53, 1259 vs 1254): retail keeps x2/z2 in s5/s4 and saves s6. S3-S fixed: cases 6, 7
+// and 8 end in break (retail jumps past the switch; the C fell through into 7/default), and the
+// func_800298A4 calls pass obj->model[] as s16 (lh), not (s8).
 #ifdef NON_MATCHING
 void func_801064F0_195090_BobsledRun(omObjData* obj) {
     BRWork* work;
@@ -1287,12 +1289,14 @@ void func_801064F0_195090_BobsledRun(omObjData* obj) {
                     z2 += func_800B7890_B8490(D_80102770_103370[team].y) * 6.0f;
                 }
                 func_8000C35C_CF5C(obj, x2, y2, z2);
+                break;
             case 7:
                 if (_CheckFlag(0xC) == 0) {
                     func_80019B9C_1A79C(obj, 0xD);
                     func_800732B0_73EB0(D_8010CB30_19B6D0_BobsledRun[D_8010C048_19ABE8_BobsledRun[team].player[0]]);
                     D_8010CB30_19B6D0_BobsledRun[D_8010C048_19ABE8_BobsledRun[team].player[0]] = -1;
                 }
+                break;
             default:
                 spin = -D_8010C048_19ABE8_BobsledRun[team].roll * 3.0f;
                 if (speed != D_800BF7D0_C03D0) {
@@ -1376,6 +1380,7 @@ void func_801064F0_195090_BobsledRun(omObjData* obj) {
                 if (y < -9500.0f) {
                     y = -9500.0f;
                 }
+                break;
             default:
                 spin = -D_8010C048_19ABE8_BobsledRun[team].roll;
                 if (speed != D_800BF7D0_C03D0) {
@@ -1404,10 +1409,10 @@ void func_801064F0_195090_BobsledRun(omObjData* obj) {
                 if (h != 65536.0f) {
                     y = h;
                 } else if (work->unk_38 != 1000.0f && D_8010BFF4_19AB94_BobsledRun != work->unk_59) {
-                    func_800298A4_2A4A4((s8)obj->model[0], 4, 4);
-                    func_800298A4_2A4A4((s8)obj->model[1], 4, 4);
+                    func_800298A4_2A4A4(obj->model[0], 4, 4);
+                    func_800298A4_2A4A4(obj->model[1], 4, 4);
                     obj->model[0] = D_8010C048_19ABE8_BobsledRun[team].mdl[0];
-                    func_800298A4_2A4A4((s8)obj->model[0], 4, 0);
+                    func_800298A4_2A4A4(obj->model[0], 4, 0);
                     work->unk_38 = -D_800BF7A4_C03A4 * 0.4f;
                     D_8010C048_19ABE8_BobsledRun[team].anim = 8;
                     func_80019E04_1AA04(obj, 0x27, 6);
