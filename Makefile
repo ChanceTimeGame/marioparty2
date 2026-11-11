@@ -286,6 +286,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1A_HandcarHavoc/1A2950.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/26370.c.o
 # S3-Q02: ovl_1C 1B39D0.c too (func_8010A8F4 has a mul fix nop; 5 of 7 functions identical, was 4)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1B39D0.c.o
+# S3-R04: ovl_2B 218BF0.c too (func_80103508: no nop before a mul.s after a call)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_2B_BombsAway/218BF0.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -538,8 +540,6 @@ $(MG01A_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # MG2B-A: ovl_2B 218BF0.c has the KMC VR4300 mul fix (func_80103F10: a nop before a mul.s after a
 # call and after a branch target)
-MG2B_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/218BF0.c.o
-$(MG2B_MULFIX_UNITS): export VR4300MUL := ON
 # MG2B-C: ovl_2B 21EA10.c has the KMC VR4300 mul fix (func_80109264: a nop between back-to-back mul.d)
 MG2BC_MULFIX_UNITS := build/src/overlays/ovl_2B_BombsAway/21EA10.c.o
 $(MG2BC_MULFIX_UNITS): export VR4300MUL := ON

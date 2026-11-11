@@ -308,11 +308,7 @@ void func_801034E4_2198D4_BombsAway(void) {
 
 /* The cannon's schedule (MP1 func_800F723C, now driven by the D_8010CF5C firing patterns): ages
    the landing marks, steps the pattern, and on a shot fires a bomb of the pattern's kind at a
-   random point around the platform and adds its landing mark.
-   NON_MATCHING: register allocation (masked 10); newest/newestIdx swap s2/s3, the mark loop hoists
-   newest's extension, and one mul-fix nop before the sin product (retail none). S3-Q05 tried:
-   newestIdx declared first, newest = newestIdx = -1, a break inside the newest test: no change. */
-#ifdef NON_MATCHING
+   random point around the platform and adds its landing mark. */
 void func_80103508_2198F8_BombsAway(void) {
     BaPattern* pat;
     s32 kind;
@@ -325,8 +321,8 @@ void func_80103508_2198F8_BombsAway(void) {
     f32 dist;
 
     kind = 0;
-    newestIdx = -1;
     newest = -1;
+    newestIdx = -1;
     for (i = 0; i < 8; i++) {
         if (D_8010DEB8_2242A8_BombsAway[i].unk_00 != 0) {
             D_8010DEB8_2242A8_BombsAway[i].unk_00++;
@@ -382,6 +378,7 @@ void func_80103508_2198F8_BombsAway(void) {
             D_8010DEB8_2242A8_BombsAway[i].unk_04 = x;
             D_8010DEB8_2242A8_BombsAway[i].unk_08 = z;
             if (newest < D_8010DEB8_2242A8_BombsAway[i].unk_00) {
+                newest = D_8010DEB8_2242A8_BombsAway[i].unk_00;
                 newestIdx = i;
             }
             break;
@@ -390,9 +387,6 @@ void func_80103508_2198F8_BombsAway(void) {
 end:
     D_8010DF18_224308_BombsAway = newestIdx;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80103508_2198F8_BombsAway);
-#endif
 
 void func_8010392C_219D1C_BombsAway(void) {
     BaPattern* pat;
