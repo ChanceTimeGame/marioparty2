@@ -429,7 +429,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80107DB4_14
 /* CPU pin player: picks a stick direction after landing. Usually keeps the last one while the shell is
    far (a square range by difficulty); otherwise a mode (re-rolled when it has not moved 30) steers
    away from the shell, by the alley's centre, at random or straight away; 1 in 4 jumps next. */
-void func_801082B8_142648_BowlOver(omObjData* obj, BOJump* jump, u8* sx, u8* sy) {
+void func_801082B8_142648_BowlOver(omObjData* obj, BOJump* jump, s8* sx, s8* sy) {
     BOPlayerWork* w;
     f32 dx;
     f32 dz;
@@ -532,17 +532,14 @@ void func_801082B8_142648_BowlOver(omObjData* obj, BOJump* jump, u8* sx, u8* sy)
 
 /* A pin player: A (or the CPU) jumps and spins; on the ground the stick (averaged over 8 frames)
    turns and walks it; then its pin. */
-// one instruction short (masked 23): GCC compares jump->unk_18 with a constant 1 where retail keeps
-// the loaded value in a0 for the two later tests (as MP1's twin)
-#ifdef NON_MATCHING
 void func_801087A0_142B30_BowlOver(omObjData* obj) {
     BOPlayerWork* w;
     BOPin* pin;
     BOJump* jump;
     HmfModel* m;
-    u8 sx;
-    u8 sy;
-    s32 keep;
+    s8 sx;
+    s8 sy;
+    s16 keep;
     s16 slot;
     s16 i;
     f32 ax;
@@ -623,16 +620,16 @@ void func_801087A0_142B30_BowlOver(omObjData* obj) {
             sx = jump->unk_33;
             sy = jump->unk_34;
         }
-        if ((s8)sx > 60) {
+        if (sx > 60) {
             sx = 60;
         }
-        if ((s8)sy > 60) {
+        if (sy > 60) {
             sy = 60;
         }
-        if ((s8)sx < -60) {
+        if (sx < -60) {
             sx = -60;
         }
-        if ((s8)sy < -60) {
+        if (sy < -60) {
             sy = -60;
         }
         jump->unk_21[slot] = sx;
@@ -668,9 +665,6 @@ void func_801087A0_142B30_BowlOver(omObjData* obj) {
     func_8002979C_2A39C(obj->model[3], obj->rot.x, obj->rot.y, obj->rot.z);
     func_80107DB4_142144_BowlOver(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_801087A0_142B30_BowlOver);
-#endif
 
 /* A pin player back on its slot. */
 void func_80108DCC_14315C_BowlOver(omObjData* obj) {
