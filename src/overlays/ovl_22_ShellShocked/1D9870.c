@@ -224,8 +224,6 @@ void func_80105758_1D9E38_ShellShocked(s32 i) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105758_1D9E38_ShellShocked);
 #endif
 
-// control flow and float schedule (masked 45, 532 vs 531 instructions); referent fixed (&D[tgt].pos)
-#ifdef NON_MATCHING
 void func_80105960_1DA040_ShellShocked(s32 i) {
     Vec a;
     Vec b;
@@ -245,14 +243,16 @@ void func_80105960_1DA040_ShellShocked(s32 i) {
     SSCom* com;
     Vec* v;
     s32 j;
+    s32 idx;
     s32 tgt;
     s32 best;
-    s32 r;
     s32 t;
     f32 yaw;
     f32 near;
     f32 l;
     f32 speed;
+    f32 dot;
+    f32 len;
 
     tank = &D_8010DA80_1E2160_ShellShocked[i];
     func_80103884_1D7F64_ShellShocked(2);
@@ -269,17 +269,17 @@ void func_80105960_1DA040_ShellShocked(s32 i) {
         dist[j] = e.x * e.x + e.z * e.z;
     }
     near = 3.4028235e38f;
-    tgt = -1;
-    for (j = 0; j < 4; j++) {
+    for (j = 0, idx = -1; j < 4; j++) {
         sees[j] = -1;
         if (j != i && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
             if (dist[j] < near) {
                 near = dist[j];
-                tgt = j;
+                idx = j;
             }
             sees[j] = func_801072FC_1DB9DC_ShellShocked(i, j);
         }
     }
+    tgt = idx;
     if (tgt != -1) {
         best = sees[tgt];
         if (best != -1) {
@@ -315,19 +315,20 @@ void func_80105960_1DA040_ShellShocked(s32 i) {
             v = &D_8010DFE0_1E26C0_ShellShocked->pillars[j];
             k.x = v->x - tank->pos.x;
             k.z = v->z - tank->pos.z;
-            if (k.x * k.x + k.z * k.z < 10000.0f) {
+            len = k.x * k.x + k.z * k.z;
+            if (len < 10000.0f) {
                 m.x = a.z - tank->pos.z;
                 m.z = -a.x - tank->pos.x;
                 n.x = v->x - tank->pos.x;
                 n.z = v->z - tank->pos.z;
-                speed = m.x * n.x + m.z * n.z;
-                l = 1.0f / func_800B1830_B2430(n.x * n.x + n.z * n.z);
-                if (speed < 0.0f) {
-                    e.x = l * n.z;
-                    e.z = -n.x * l;
+                dot = m.x * n.x + m.z * n.z;
+                len = 1.0f / func_800B1830_B2430(n.x * n.x + n.z * n.z);
+                if (dot < 0.0f) {
+                    e.x = len * n.z;
+                    e.z = -n.x * len;
                 } else {
-                    e.x = -n.z * l;
-                    e.z = n.x * l;
+                    e.x = -n.z * len;
+                    e.z = n.x * len;
                 }
                 break;
             }
@@ -341,47 +342,50 @@ void func_80105960_1DA040_ShellShocked(s32 i) {
         e.z = -speed * (f.x * g.z - f.z * g.x);
         if (tank->shell[0].state == 4) {
             e.x = -e.x;
-            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 7) + D_8010CBE0_1E12C0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, D_8010CBE0_1E12C0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level] + (rand8() & 7));
         }
         if (func_8010B08C_1DF76C_ShellShocked(i, e.z, e.x) != 4) {
             yaw = func_80107044_1DB724_ShellShocked(i, tgt);
         } else {
             yaw = tank->rot.y;
         }
-        r = func_801072FC_1DB9DC_ShellShocked(i, tgt);
-        if (r == 0) {
+        best = func_801072FC_1DB9DC_ShellShocked(i, tgt);
+        switch (best) {
+        case -1:
+            break;
+        case 0:
             func_8010B494_1DFB74_ShellShocked(i, 0);
-            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 3) + D_8010CBF0_1E12D0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, D_8010CBF0_1E12D0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level] + (rand8() & 3));
             com = func_80107714_1DBDF4_ShellShocked(i);
             com->hits = 0;
             com->lastTarget = -1;
             func_80107C04_1DC2E4_ShellShocked(tgt);
-        } else if (r == 1) {
+            break;
+        case 1:
             func_8010B494_1DFB74_ShellShocked(i, 1);
             t = (rand8() & 7) + 4;
             func_80107EF8_1DC5D8_ShellShocked(i, tgt, t);
             com = func_80107714_1DBDF4_ShellShocked(i);
-            if (com->lastTarget != tgt) {
-                com->hits = 0;
-            } else {
+            if (com->lastTarget == tgt) {
                 com->hits++;
+            } else {
+                com->hits = 0;
             }
             com->lastTarget = tgt;
             if (com->hits >= 4) {
                 func_80107FB4_1DC694_ShellShocked(i, tgt, t);
             }
+            break;
         }
         if (dist[tgt] < D_8010DFD0_1E26B0_ShellShocked * D_8010DFD0_1E26B0_ShellShocked * 0.82f) {
-            func_80107EF8_1DC5D8_ShellShocked(i, tgt, (rand8() & 3) + D_8010CC00_1E12E0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]);
+            func_80107EF8_1DC5D8_ShellShocked(i, tgt, D_8010CC00_1E12E0_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level] + (rand8() & 3));
         }
     }
     tank->rot.y = yaw;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80105960_1DA040_ShellShocked);
-#endif
 
-// control flow (masked 56, 473 vs 476 instructions)
+// register allocation (masked 31, 473 vs 472): retail loads rot.y into yaw (f26) and copies it to f20 before
+// sin/cos; i and com swap s2/s3. S3-S tried: near = yaw before the calls (coalesced), near declared first.
 #ifdef NON_MATCHING
 void func_801060D0_1DA7B0_ShellShocked(s32 i) {
     Vec a;
@@ -409,9 +413,10 @@ void func_801060D0_1DA7B0_ShellShocked(s32 i) {
     speed = D_8010CB80_1E1260_ShellShocked[tank->level] * 70.0f;
     func_80103884_1D7F64_ShellShocked(2);
     func_800B3170_B3D70(&a, &tank->pos);
-    yaw = tank->rot.y;
-    b.x = HuMathSin(yaw);
-    b.z = func_800B7890_B8490(yaw);
+    near = tank->rot.y;
+    b.x = HuMathSin(near);
+    b.z = func_800B7890_B8490(near);
+    yaw = near;
     c.x = b.x * 100.0f + a.x;
     c.z = b.z * 100.0f + a.z;
     t = com->target;
@@ -423,7 +428,9 @@ void func_801060D0_1DA7B0_ShellShocked(s32 i) {
     f.z = D_8010DA80_1E2160_ShellShocked[t].pos.z - a.z;
     near = f.x * f.x + f.z * f.z;
     for (j = 0; j < 4; j++) {
-        if (j != i && j != t && func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
+        if (j != i) {
+        if (j != t) {
+        if (func_8010C1F0_1E08D0_ShellShocked(j) == 0) {
             d.x = D_8010DA80_1E2160_ShellShocked[j].pos.x;
             d.z = D_8010DA80_1E2160_ShellShocked[j].pos.z;
             e.x = d.x - a.x;
@@ -436,10 +443,13 @@ void func_801060D0_1DA7B0_ShellShocked(s32 i) {
                 }
             }
         }
+        }
+        }
     }
     if (func_80103938_1D8018_ShellShocked() != 0 && func_8010CAA4_1E1184_ShellShocked() * 100.0f < 90.0f) {
         t = 0;
     }
+    j = 4;
     d.x = D_8010DA80_1E2160_ShellShocked[t].pos.x;
     d.z = D_8010DA80_1E2160_ShellShocked[t].pos.z;
     e.x = d.x - a.x;
@@ -453,18 +463,18 @@ void func_801060D0_1DA7B0_ShellShocked(s32 i) {
     h.z = b.z;
     k.x = speed * (g.x * b.x + g.z * b.z);
     k.z = -speed * (g.x * b.z - g.z * b.x);
-    if (func_8010B08C_1DF76C_ShellShocked(i, k.z, k.x) != 4) {
+    if (func_8010B08C_1DF76C_ShellShocked(i, k.z, k.x) != j) {
         tank->pos.x = a.x;
         tank->pos.z = a.z;
         tank->rot.y = yaw;
-        r = func_8010895C_1DD03C_ShellShocked(t);
+        j = func_8010895C_1DD03C_ShellShocked(t);
         com->a.i = 9;
-        if (r == 6) {
+        if (j == 6) {
             func_8010B0B4_1DF794_ShellShocked(i, -k.x, k.z);
-            com->a.i = r;
-        } else if (r == 7) {
+            com->a.i = j;
+        } else if (j == 7) {
             func_8010B0B4_1DF794_ShellShocked(i, k.x, -k.z);
-            com->a.i = r;
+            com->a.i = j;
         } else {
             func_8010B08C_1DF76C_ShellShocked(i, k.z, k.x);
         }
@@ -476,32 +486,36 @@ void func_801060D0_1DA7B0_ShellShocked(s32 i) {
     b.z = func_800B7890_B8490(tank->rot.y);
     c.x = b.x * 100.0f + a.x;
     c.z = b.z * 100.0f + a.z;
-    r = func_801072FC_1DB9DC_ShellShocked(i, t);
-    if (r == 0) {
+    switch (func_801072FC_1DB9DC_ShellShocked(i, t)) {
+    case -1:
+        break;
+    case 0:
         func_8010B494_1DFB74_ShellShocked(i, 0);
         com->hits = 0;
         com->lastTarget = -1;
         func_80107C04_1DC2E4_ShellShocked(t);
-    } else if (r == 1) {
+        break;
+    case 1:
         func_8010B494_1DFB74_ShellShocked(i, 1);
-        if (com->lastTarget != t) {
-            com->hits = 0;
-        } else {
+        if (com->lastTarget == t) {
             com->hits++;
+        } else {
+            com->hits = 0;
         }
         com->lastTarget = t;
         if (com->hits >= 4) {
-            r = rand8() & 0x11;
-            j = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 20.0f;
-            if (r != 0) {
-                func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, j);
+            j = rand8() & 0x11;
+            r = func_8010CAA4_1E1184_ShellShocked() * 20.0f + 20.0f;
+            if (j != 0) {
+                func_801080C0_1DC7A0_ShellShocked(i, t, 500.0f, 1000.0f, r);
                 com->hits = 0;
                 return;
             }
-            func_80107FB4_1DC694_ShellShocked(i, t, j);
+            func_80107FB4_1DC694_ShellShocked(i, t, r);
             com->hits = 0;
             return;
         }
+        break;
     }
     d.x = D_8010DA80_1E2160_ShellShocked[t].pos.x - a.x;
     d.z = D_8010DA80_1E2160_ShellShocked[t].pos.z - a.z;
