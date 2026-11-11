@@ -2,9 +2,11 @@
 #include "sdk_leo.h"
 
 // 64DD driver (libleo) read/write thread and mechanism control (MP1 80BE0.c). IDO-compiled: its
-// register allocation (t6, t7, ... temporaries, ra at 0x14(sp)) cannot be reproduced, so every
-// function except the trivial leoChk_mecha_int is NON_MATCHING C with the asm in the matching
-// build. The unit's rodata (D4630-D4728) is defined here so it is one carved piece; it comes before
+// register allocation (t6, t7, ... temporaries, ra at 0x14(sp)) cannot be reproduced by KMC GCC, so
+// every function except the trivial leoChk_mecha_int is NON_MATCHING C with the asm in the matching
+// build. Compiled with IDO 5.3 (-O2 -G0 -mips2 -Xcpluscomm, defining __attribute__ and __asm__ away)
+// the C is instruction-identical to retail except func_80097160_97D60 (masked 31),
+// func_800972F0_97EF0 (344) and func_800984A0_990A0 (86) (S3-T07, 2026-11-11). The unit's rodata (D4630-D4728) is defined here so it is one carved piece; it comes before
 // every INCLUDE_ASM because GCC does not see an INCLUDE_ASM switch to .text.
 
 #ifndef NON_MATCHING
@@ -537,6 +539,7 @@ INCLUDE_ASM("asm/nonmatchings/97D60", func_80097FF0_98BF0);
 #ifdef NON_MATCHING
 u8 func_80098028_98C28(u32 asic_cmd, u32 asic_data) {
     u8 sense;
+    u32 sense2;
 
     sense = func_80097C5C_9885C(asic_cmd);
     if (sense != 0x2F && sense != 0) {
@@ -552,9 +555,9 @@ u8 func_80098028_98C28(u32 asic_cmd, u32 asic_data) {
     if (func_8009822C_98E2C(1) != 0) {
         return 0x25;
     }
-    sense = func_80097D44_98944(asic_cmd);
-    if (sense != 0x2F && sense != 0) {
-        return sense;
+    sense2 = func_80097D44_98944(asic_cmd);
+    if (sense2 != 0x2F && sense2 != 0) {
+        return sense2;
     }
     return 0;
 }
