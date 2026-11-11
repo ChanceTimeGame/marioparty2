@@ -982,7 +982,8 @@ s32 func_80105F24_1D3284_FaceLift(s16 player, Vec* pos) {
     return 0;
 }
 
-// register allocation; two locals spilled in retail
+// register allocation (masked 47); two locals spilled in retail: (s16)idx at 0x94 and &D_80109CD8[idx] at
+// 0x8C are hoisted out of the vertex loop, one more spill than ours (frame 240 vs 232).
 #ifdef NON_MATCHING
 void func_80106248_1D35A8_FaceLift(omObjData* obj) {
     s16 models[4];

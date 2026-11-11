@@ -761,6 +761,8 @@ void func_801050D0_404FD0_name_6C(void) {
     } while (i < 6);
 }
 
+// masked 11 (twin of ovl_6B/6C): in the "D_8010679C == 0 && val[i] != 0" arm retail reloads val[i] for
+// the > 0 sign test (no CSE with the != 0 test); ours reuses it. Shared 12/tail blocks agree.
 #ifdef NON_MATCHING
 void func_80105250_405150_name_6C(void) {
     s16 val[4];
