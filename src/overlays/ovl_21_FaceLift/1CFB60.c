@@ -548,7 +548,8 @@ void func_80103E98_1D11F8_FaceLift(s16 player, FLWork* w, Vec2f* stick, u16* trg
     stick->unk_00 = stick->unk_04 = 0.0f;
 }
 
-// retail computes 0 - y twice; GCC folds the second, so y dies early
+// register allocation (masked 6: x/y and the f22-f26 temporaries swap); the second `zero = 0.0f` makes
+// GCC recompute 0 - y as retail does (S3-T07)
 #ifdef NON_MATCHING
 void func_801041F0_1D1550_FaceLift(omObjData* obj, f32 x, f32 y, s16 look) {
     f32 zero;
@@ -563,6 +564,7 @@ void func_801041F0_1D1550_FaceLift(omObjData* obj, f32 x, f32 y, s16 look) {
         d = zero - y;
         a = -func_800B7890_B8490(func_800B75A8_B81A8(80.0f, -9.0f - x)) * 4.0f;
         func_80029714_2A314(obj->model[5], a, -func_800B7890_B8490(func_800B75A8_B81A8(80.0f, d)) * 4.0f, zero);
+        zero = 0.0f;
         d = zero - y;
         a = -func_800B7890_B8490(func_800B75A8_B81A8(80.0f, 9.0f - x)) * 4.0f;
         func_80029714_2A314(obj->model[6], a, -func_800B7890_B8490(func_800B75A8_B81A8(80.0f, d)) * 4.0f, zero);
