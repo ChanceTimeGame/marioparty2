@@ -2784,8 +2784,8 @@ void func_8010AEF4_3C6654_name_60(Ovl60RiderDemo* p, f32 stick, s32 rider) {
 
 /* Team demo setup (two teams of two): per team, the vehicle (model, scale 0.3, yaw 240), its
    two parts and the two riders' forms (by character), every motion at half speed.
-   NON_MATCHING: retail loads 0x2C0000 into s4 before the riders' loop (here it stays in the
-   loop: masked residue) and keeps the tables in s6/s5. */
+   NON_MATCHING (masked 0, raw 1): &p->form[j] is p + j*2 in retail (operand order of one addu).
+   The directory in a variable set with j (S3-R08) gives retail's s4 hoist and `or s4,v0`. */
 #ifdef NON_MATCHING
 void func_8010B048_3C67A8_name_60(void) {
     s32 i;
@@ -2793,6 +2793,7 @@ void func_8010B048_3C67A8_name_60(void) {
     Ovl60RiderDemo* p;
     omObjData* obj;
     s32 file;
+    s32 dir;
 
     for (i = 0; i < 2; i++) {
         p = D_800FA640_FB240[i];
@@ -2828,13 +2829,13 @@ void func_8010B048_3C67A8_name_60(void) {
         }
         p->player[1] = j;
         p->vel = p->vel2 = 0.0f;
-        for (j = 0; j < 2; j++) {
+        for (j = 0, dir = 0x2C0000; j < 2; j++) {
             if (j == 0) {
                 file = D_80113BB8_3CF318_name_60[gPlayers[p->player[0]].character];
             } else {
                 file = D_80113BC4_3CF324_name_60[gPlayers[p->player[1]].character];
             }
-            p->form[j] = LoadFormFile(file | 0x2C0000, 0xA9D);
+            p->form[j] = LoadFormFile(dir | file, 0xA9D);
             func_8002979C_2A39C(p->form[j], p->rot.x, p->rot.y, p->rot.z);
             func_800297E8_2A3E8(p->form[j], p->scale, p->scale, p->scale);
             func_80029E80_2AA80(p->form[j], 0, 1);
@@ -4816,17 +4817,13 @@ void func_80111A90_3CD1F0_name_60(Ovl60TeamDemo* p) {
 
 /* Two teams (groups 0-1 and 2-3), one machine each: the base, five parts and the two riders'
    forms (D_80113D94 / D_80113DA0 by character). */
-#ifdef NON_MATCHING
-/* NON_MATCHING: register allocation and the order the two rider tables' addresses are hoisted
-   (retail keeps D_80113D94 in s5, D_80113DA0 in s6, 0x4A0000 set before the rider loop, and splits
-   gPlayers' %hi itself); the logic is the same. Masked 10, raw 43. S3-Q05 tried: 0x4A0000 | inside each
-   arm of the ternary (no change), if/else around two LoadFormFile calls (masked 24), one table chosen by
-   the ternary and indexed by player[j] (masked 51). */
 void func_80111BCC_3CD32C_name_60(void) {
     s32 i;
     s32 j;
     Ovl60TeamDemo* p;
     omObjData* obj;
+    s32 file;
+    s32 dir;
 
     for (i = 0; i < 2; i++) {
         p = D_800FA640_FB240[i];
@@ -4873,9 +4870,13 @@ void func_80111BCC_3CD32C_name_60(void) {
         p->state = 0;
         p->timer = 0;
         p->arm = p->boom = p->speed = 0.0f;
-        for (j = 0; j < 2; j++) {
-            p->form[5 + j] = LoadFormFile(0x4A0000 | (j == 0 ? D_80113D94_3CF4F4_name_60[gPlayers[p->player[0]].character]
-                                                             : D_80113DA0_3CF500_name_60[gPlayers[p->player[1]].character]), 0xA9D);
+        for (j = 0, dir = 0x4A0000; j < 2; j++) {
+            if (j == 0) {
+                file = D_80113D94_3CF4F4_name_60[gPlayers[p->player[0]].character];
+            } else {
+                file = D_80113DA0_3CF500_name_60[gPlayers[p->player[1]].character];
+            }
+            p->form[5 + j] = LoadFormFile(dir | file, 0xA9D);
             func_8002979C_2A39C(p->form[5 + j], p->rot.x, p->rot.y, p->rot.z);
             func_800297E8_2A3E8(p->form[5 + j], p->scale, p->scale, p->scale);
             func_80029E80_2AA80(p->form[5 + j], 0, 1);
@@ -4887,9 +4888,6 @@ void func_80111BCC_3CD32C_name_60(void) {
         obj->work[1] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_60_name/3BDF90", func_80111BCC_3CD32C_name_60);
-#endif
 
 void func_80112100_3CD860_name_60(void) {
     func_80104DA8_3C0508_name_60(0, 3, -70.0f, 0.0f, -80.0f);

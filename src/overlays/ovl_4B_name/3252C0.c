@@ -145,7 +145,9 @@ __asm__(".section .rodata");
 const char D_801030F0_325BB0_name_4B[16] = "%d";
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: retail reads GwSystem by absolute address before HuPrcSleep and through a base register after; GCC folds all into the base */
+/* NON_MATCHING: retail reads GwSystem by absolute address before HuPrcSleep and through a base register after; GCC folds all into the base
+   (masked 25). S3-R08: gw assigned after HuPrcSleep is worse (26); GCC's related-value CSE folds every
+   GwSystem.x in the first block into gw, which retail did not. */
 /* Space event: the turn count (or "last turn"), then 10 coins. */
 void func_80102DE8_3258A8_name_4B(void) {
     char turns[8];
