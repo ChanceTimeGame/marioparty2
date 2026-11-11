@@ -700,6 +700,9 @@ void func_80104DA4_3F96D4_name_69(void) {
     } while (i < 6);
 }
 
+/* NON_MATCHING: CSE (masked 11): in the second loop's i != 0 arm retail reloads val[i] (and recomputes i*2)
+   for the val[i] > 0 test after val[i] != 0; GCC here reuses the loaded value. Tried (S3-R04): a shared
+   sign block reached by goto, val[i] >= 1. */
 #ifdef NON_MATCHING
 void func_80104F24_3F9854_name_69(void) {
     s16 val[4];
