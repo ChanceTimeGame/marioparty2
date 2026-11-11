@@ -53,7 +53,7 @@
 /* 801135D0 size 0x10 */ Ovl5BSong D_801135D0_390280_name_5B[4] = {
     { 13, 0, 0 }, { 62, 0, 0 }, { 6, 0, 0 }, { -1, 255, 0 },
 };
-/* 801135E0 size 0x194 */ s16 D_801135E0_390290_name_5B[202] = {
+/* 801135E0 size 0x194 */ s16 D_801135E0_390290_name_5B[101][2] = {
     938, 0, 941, 0, 945, 0, 946, 0, 947, 0, 948, 0, 919, 0, 920, 0, 921, 0, 928, 0, 927, 0, 936, 0,
     954, 0, 953, 0, 970, 0, 959, 0, 960, 0, 961, 0, 962, 0, 964, 0, 963, 0, 1006, 0, 1012, 0, 1010,
     0, 1015, 0, 1016, 0, 1011, 0, 1018, 0, 1020, 0, 992, 0, 975, 0, 977, 0, 978, 0, 979, 0, 993, 0,
@@ -159,14 +159,15 @@ void func_8010A940_3875F0_name_5B(void) {
    3 8010D8B0, 5 8010DA34, 6 80110AF8); 4 leaves the submenu. First visit (D_80114854) shows the
    introduction and sets flag 0x14. */
 #ifdef NON_MATCHING
-/* Retail tests a copy of `redraw` (v0) at the loop's two merge points and swaps s1/s2 for
-   win/redraw; the rest follows. */
+/* masked 8: retail does not hold &D_80114730 in s0 across the HuPrcVSleep after a move, and
+   case 6 passes win as sra(s3) (tried: redraw s16 and D_8011473C = redraw, both kept; reordering
+   the stores around redraw = 1, worse). */
 void func_8010ACBC_38796C_name_5B(void) {
     s16 size[2];
     s16 win;
     s16 dir;
     s16 choice;
-    s32 redraw;
+    s16 redraw;
     s8 stick;
 
     D_801134D0_390180_name_5B[0] = 0;
@@ -351,7 +352,7 @@ void func_8010ACBC_38796C_name_5B(void) {
                     redraw = 1;
                     break;
             }
-            D_8011473C_3913EC_name_5B = 1;
+            D_8011473C_3913EC_name_5B = redraw;
             HuPrcSleep(5);
         }
         if (redraw != 0) {
@@ -388,22 +389,23 @@ s16 func_8010B5A8_388258_name_5B(s16 win, s32 mes, s16 def) {
    left/right one category, C-left/C-right two, turning the player); A plays the chosen song
    (switching the sound bank when needed), B leaves and restores the menu music. */
 #ifdef NON_MATCHING
-/* Same flow and calls; differs in which locals get s-registers and stack slots (retail spills
-   win1/win2/ncat/prev in that order) and in the bank store. */
+/* masked 59: retail sets delta = 2 before the C-right bounds test (that form, and CB88's
+   C-left form, were worse here), extends the window results through v0, and hoists the window
+   offsets differently; win1/win2 declared first for retail's spill slots. */
 void func_8010B654_388304_name_5B(void) {
     u16 mdl;
     u16 arm;
     s16 i;
     s16 n;
     s16 cat;
+    s16 win1;
+    s16 win2;
     s16 ncat;
     s16 sel;
     s16 delta;
     s16 bank;
     s16 cur;
     s16 prev;
-    s16 win1;
-    s16 win2;
     Ovl5BSong* song;
     f32 sx;
     f32 sz;
@@ -513,7 +515,7 @@ void func_8010B654_388304_name_5B(void) {
                 func_8010C5D4_389284_name_5B();
                 HuPrcSleep(10);
                 if (bank != D_80114588_391238_name_5B[cur].bank) {
-                    D_800CD52C_CE12C = bank = D_80114588_391238_name_5B[cur].bank;
+                    bank = D_800CD52C_CE12C = D_80114588_391238_name_5B[cur].bank;
                     func_80079464_7A064();
                     func_80079868_7A468();
                     HuPrcSleep(10);
@@ -558,7 +560,7 @@ void func_8010B654_388304_name_5B(void) {
             func_8008D5D8_8E1D8(win2);
             for (i = 0; i < ((delta < 0) ? -delta : delta); i++) {
                 func_8002C9C0_2D5C0(mdl, D_801147D0_391480_name_5B[0x13]);
-                func_80029FE4_2ABE4(mdl, (delta >= 0) ? delta : -delta);
+                func_80029FE4_2ABE4(mdl, (delta < 0) ? -delta : delta);
                 PlaySound((bank == 1) ? 0xA4 : 0x354);
                 if (delta > 0) {
                     while (func_80029CE4_2A8E4(mdl) < func_80029D0C_2A90C(mdl)) {
@@ -578,8 +580,7 @@ void func_8010B654_388304_name_5B(void) {
         }
         sel = D_800F920C_F9E0C[win1].unk32;
         if (sel >= D_801144D0_391180_name_5B[D_801137EC_39049C_name_5B].count) {
-            D_800F920C_F9E0C[win1].unk32 = D_801144D0_391180_name_5B[D_801137EC_39049C_name_5B].count - 1;
-            sel = D_800F920C_F9E0C[win1].unk32;
+            sel = D_800F920C_F9E0C[win1].unk32 = D_801144D0_391180_name_5B[D_801137EC_39049C_name_5B].count - 1;
         }
     }
     D_800CD528_CE128 = 5;
@@ -738,9 +739,9 @@ void func_8010C828_3894D8_name_5B(s16 mode) {
    only with flag 0xB). A plays the chosen sound, the pad's left/right (0x200/0x100) turn one page,
    C-left/C-right (2/1) two; each turned page plays the page motion. B closes the book. */
 #ifdef NON_MATCHING
-/* NON_MATCHING: logic complete; GCC's loop-invariant hoisting differs (retail hoists the table
-   addresses in the page loops and only two window offsets) and the branch layout of the C-right
-   case. */
+/* NON_MATCHING (masked 163): GCC's loop-invariant hoisting differs (retail hoists the table
+   addresses in the page loops and only two window offsets, win*5) and the branch layout of the
+   C-right case. D_801135E0 is read with a 4-byte stride ([idx][0]). */
 void func_8010CB88_389838_name_5B(void) {
     u16 model = D_80114758_391408_name_5B[15];
     u16 shadow = D_80114758_391408_name_5B[17];
@@ -833,7 +834,7 @@ void func_8010CB88_389838_name_5B(void) {
             }
             idx = sum + D_800F920C_F9E0C[win].unk32;
             func_80079868_7A468();
-            sound = PlaySound(D_801135E0_390290_name_5B[idx]);
+            sound = PlaySound(D_801135E0_390290_name_5B[idx][0]);
         }
         if ((D_800F920C_F9E0C[win].unkA8 & 0x200) && D_80113834_3904E4_name_5B > 0) {
             D_80113834_3904E4_name_5B--;
@@ -865,7 +866,7 @@ void func_8010CB88_389838_name_5B(void) {
             for (i = 0; i < (step < 0 ? -step : step); i++) {
                 PlaySound(0x354);
                 func_8002C9C0_2D5C0(model, D_801147D0_391480_name_5B[16]);
-                func_80029FE4_2ABE4(model, (step >= 0) ? step : -step);
+                func_80029FE4_2ABE4(model, (step < 0) ? -step : step);
                 if (step > 0) {
                     while (func_80029CE4_2A8E4(model) < func_80029D0C_2A90C(model)) {
                         HuPrcVSleep();
@@ -885,8 +886,7 @@ void func_8010CB88_389838_name_5B(void) {
         w = &D_800F920C_F9E0C[win];
         choice = w->unk32;
         if (choice >= D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][1]) {
-            w->unk32 = D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][1] - 1;
-            choice = w->unk32;
+            choice = w->unk32 = D_801137F0_3904A0_name_5B[D_80113834_3904E4_name_5B][1] - 1;
         }
     }
     func_800794A8_7A0A8(20);
@@ -1370,8 +1370,10 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5B_name/3875F0", func_8010E618_38B2C8
    with each row's total. Fades in, waits for B or C-left/C-right (or the stick past 30), fades
    out and returns the button (0x4000, 2, 1), as 8010E618. */
 #ifdef NON_MATCHING
-/* NON_MATCHING: register allocation (retail's func_8001A2F8/func_8001AAAC results are not
-   re-extended: s32 returns here) and the wins table address form; masked 44. The asm path
+/* NON_MATCHING: masked 10: retail extends the func_8001A2F8 result straight into a0, folds the
+   wins +2 into the D_800F8C60 address (sym+48, lbu 0), and copies btn in the button loop's first
+   delay slot with branch-likelies after (tried: u8[8] row cast, pointer forms, a CSE'd button
+   test, an if/else-free loop: all worse). The asm path
    carries D_801139C4 ("  ") in its own .s. */
 __asm__(".section .rodata");
 const char D_801139C4_390674_name_5B[] = "  ";
@@ -1386,7 +1388,7 @@ s32 func_8010ED80_38BA30_name_5B(void) {
     char buf[8];
     s16 titleAnim;
     s16 title;
-    s32 sp;
+    s16 sp;
     s32 w;
     s16 i;
     s16 j;
@@ -1437,7 +1439,7 @@ s32 func_8010ED80_38BA30_name_5B(void) {
                 } else {
                     text[i][k++] = (j & 1) ? 4 : 2;
                     /* the wins: boardRecord[b] bytes 2-7 (Ovl5BBoardRecord.wins) */
-                    n = ((u8*)&D_800F8C60.boardRecord[D_8011383C_3904EC_name_5B[j]][1])[i];
+                    n = ((Ovl5BBoardRecord*)D_800F8C60.boardRecord)[D_8011383C_3904EC_name_5B[j]].wins[i];
                     if (n >= 100) {
                         n = 99;
                     }
@@ -1499,7 +1501,11 @@ s32 func_8010ED80_38BA30_name_5B(void) {
         }
         HuPrcVSleep();
     }
-    PlaySound((btn & 0x4000) ? 4 : 1);
+    if (btn & 0x4000) {
+        PlaySound(4);
+    } else {
+        PlaySound(1);
+    }
     for (i = 1; i < 6; i++) {
         alpha = i * -50.0f;
         func_8001A6BC_1B2BC(title, alpha);
