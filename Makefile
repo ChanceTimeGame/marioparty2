@@ -286,6 +286,9 @@ S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1A_HandcarHavoc/1A2950.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/26370.c.o
 # S3-Q02: ovl_1C 1B39D0.c too (func_8010A8F4 has a mul fix nop; 5 of 7 functions identical, was 4)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1B39D0.c.o
+# S4-0A: ovl_0A 121740.c has the KMC VR4300 mul fix (func_801029F0: a nop between back-to-back mul.s);
+# S3-R13: and no nop before a mul.d after a call (func_801055F4)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -808,9 +811,6 @@ $(S40D_MULFIX_UNITS): export VR4300MUL := ON
 # back-to-back mul.s)
 build/src/overlays/ovl_17_Archerival/181420.c.o: export VR4300MUL := ON
 
-# S4-0A: ovl_0A 121740.c has the KMC VR4300 mul fix (func_801029F0: a nop between back-to-back mul.s)
-S40A_MULFIX_UNITS := build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
-$(S40A_MULFIX_UNITS): export VR4300MUL := ON
 
 # S4-38: ovl_38 27A330.c is assembled from GCC's assembly with blank lines removed and the KMC
 # VR4300 mul fix on (func_80103328: a nop between back-to-back mul.s; func_80102800: none before a
