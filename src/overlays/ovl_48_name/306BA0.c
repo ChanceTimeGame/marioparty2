@@ -1415,7 +1415,7 @@ void func_801077F4_30BB94_name_48(s32 cur, s32 target, s32 mode) {
     }
     if (mode == 3) {
         row = func_80059FD0_5ABD0(D_80108930_30CCD0_name_48) * 8;
-        row += func_80059FD0_5ABD0(D_80108930_30CCD0_name_48) * 2;
+        row += func_80059FD0_5ABD0(D_80108934_30CCD4_name_48) * 2;
         diff = PD_ABS(gPlayers[D_80108930_30CCD0_name_48].stars - gPlayers[D_80108934_30CCD4_name_48].stars);
         row += diff < 2;
         work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_8010896C_30CD0C_name_48 / 100;
