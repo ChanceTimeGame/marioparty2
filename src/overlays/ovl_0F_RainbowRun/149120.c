@@ -130,13 +130,11 @@ void func_80107A68_1493F8_RainbowRun(omObjData* obj) {
 
 /* A thrown bomb's flight: falls off the course, or explodes on the rainbow or a follower (MP1
    func_800FC180_TightropeTreachery). */
-// the rope-hit flag: retail copies it to v0/v1 before each compare (2 instructions; MP1's twin is NON_MATCHING the same way)
-#ifdef NON_MATCHING
 void func_80107C5C_1495EC_RainbowRun(omObjData* obj) {
     RRPlayerWork* w = D_800FFFD8_100BD8[0]->unk_50;
     RRBomb* b = ((RRItemWork*)obj->unk_50)->bomb;
     s16 i;
-    s32 rope;
+    s16 rope;
     f32 rx;
 
     if (b != NULL) {
@@ -170,12 +168,8 @@ void func_80107C5C_1495EC_RainbowRun(omObjData* obj) {
     }
     rx = D_8010ABFC_14C58C_RainbowRun[0] * 70.0f * func_800B7890_B8490((obj->trans.z - -1100.0f + 2500.0f) * 90.0 / 5000.0) +
          D_8010AC0C_14C59C_RainbowRun;
-    if (obj->trans.x < rx + 75.0f && rx + -75.0f < obj->trans.x) {
-        if (obj->trans.y < -30.0f) {
-            if (obj->trans.y > -125.0) {
-                rope = 1;
-            }
-        }
+    if (obj->trans.x < rx + 75.0f && rx + -75.0f < obj->trans.x && obj->trans.y < -30.0f && obj->trans.y > -125.0) {
+        rope = 1;
     }
     if (rope == 1 || func_80107790_149120_RainbowRun(obj) == 1) {
         func_80079798_7A398(0x18B, b->sound);
@@ -199,9 +193,6 @@ void func_80107C5C_1495EC_RainbowRun(omObjData* obj) {
         obj->trans.x = obj->trans.y = obj->trans.z = 1000.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0F_RainbowRun/149120", func_80107C5C_1495EC_RainbowRun);
-#endif
 
 /* A bomb object's update: waits 15 frames after a throw, then flies when its follower throws
    (MP1 func_800FC598_TightropeTreachery). */
