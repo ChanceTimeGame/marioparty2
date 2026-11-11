@@ -206,7 +206,8 @@ void func_80102F64_3D5484_TitleScreenAndIntro(omObjData* obj) {
 
 /* START on controller 1 (once main allows input).
    NON_MATCHING: retail clears the result after the pad call (v0 in a delay slot); this keeps it in
-   s0 across the call (masked 6). */
+   s0 across the call (masked 6). A pad local, a ret local over if/else, early returns for each
+   test, a ternary and a nested if did not give retail's copy to v1 (S3-T11). */
 #ifdef NON_MATCHING
 s32 func_80102FD8_3D54F8_TitleScreenAndIntro(void) {
     if (func_80068448_69048() == 0) {
