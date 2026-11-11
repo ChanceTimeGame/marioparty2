@@ -700,7 +700,9 @@ void func_80104CE0_3E6800_name_64(void) {
 
 /* Redraws the two panels from the save and the coins still to count. */
 /* NON_MATCHING: control flow (class 3). Retail reloads val[i] after the zero test on the sign
-   sprite; every call, store and table read agrees. Stays asm in the matching build. */
+   sprite; every call, store and table read agrees. Stays asm in the matching build. Masked 11.
+   S3-R08 tried for the i != 0 sign block: !(D404 != 0 || val[i] == 0) (no change), the sign test
+   inverted (masked 15). */
 #ifdef NON_MATCHING
 void func_80104E60_3E6980_name_64(void) {
     s16 val[4];
