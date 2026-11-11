@@ -825,6 +825,8 @@ build/src/overlays/ovl_17_Archerival/181420.c.o: export VR4300MUL := ON
 # mult after a call)
 S438_BLANKSTRIP_UNITS := build/src/overlays/ovl_38_QuicksandCache/27A330.c.o \
 	build/src/overlays/ovl_38_QuicksandCache/27D810.c.o
+# S3-T11: 27E3F0.c too (func_8010712C: a nop before a multu after a call)
+S438_BLANKSTRIP_UNITS += build/src/overlays/ovl_38_QuicksandCache/27E3F0.c.o
 $(S438_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S438_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
