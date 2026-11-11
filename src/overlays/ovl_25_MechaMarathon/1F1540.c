@@ -151,6 +151,9 @@ void func_801029E8_1F1728_MechaMarathon(void) {
 /* obj->model[], by byte offset. */
 #define MDL(o, k) (*(s16*)((u8*)(o)->model + (k)))
 
+/* NON_MATCHING: masked 43 (S3-R: z = -500 set before the loop puts it in f26 as retail; was 63).
+   Left: retail passes the i == 0 calls' 0.0f literals as integer zero where GCC here reuses y's
+   f22 (y outside the loop is worse), and model-index address operand order. */
 #ifdef NON_MATCHING
 void func_80102D60_1F1AA0_MechaMarathon(omObjData* obj) {
     MMActor* a = &D_801085F0_1F7330_MechaMarathon[5];
@@ -182,6 +185,7 @@ void func_80102D60_1F1AA0_MechaMarathon(omObjData* obj) {
         c = &D_801085F0_1F7330_MechaMarathon[6];
         p = &c->unk_38;
         q = &c->unk_22;
+        z = -500.0f;
         for (i = 0; i < 3; i++) {
             x = base + ofs[i];
             if (i != 0) {
@@ -190,7 +194,6 @@ void func_80102D60_1F1AA0_MechaMarathon(omObjData* obj) {
                 }
                 k = i * 2;
                 y = 0.0f;
-                z = -500.0f;
                 func_80029714_2A314(MDL(obj, k), x, y, y);
                 func_80029714_2A314(MDL(obj, k + 12), x, y, y);
                 func_80029714_2A314(MDL(obj, k + 18), x, y, y);
