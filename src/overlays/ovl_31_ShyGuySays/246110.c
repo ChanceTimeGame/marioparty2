@@ -855,7 +855,8 @@ void func_80104FF4_248904_ShyGuySays(s32 answer) {
     }
 }
 
-// register pressure: retail keeps 0x200 out of the saved registers (masked 14)
+// register pressure: retail keeps 0x200 out of the saved registers and reloads p->port for the
+// button read (masked 14; split continue tests and an indexed &D[i] pointer tried, no better)
 #ifdef NON_MATCHING
 void func_80105154_248A64_ShyGuySays(void) {
     u16 i;
@@ -1107,7 +1108,8 @@ void func_80105B70_249480_ShyGuySays(omObjData* obj) {
     }
 }
 
-// register allocation: the returned model passes through a second register (masked 4)
+// register allocation: the returned model passes through a second register (masked 4; the
+// address diff in the check is layout noise). Tried: ret = a = f(), u8 ret, ret = f(); a = ret
 #ifdef NON_MATCHING
 void func_80105E50_249760_ShyGuySays(omObjData* obj) {
     SGSBack* b = D_8010AB38_24E448_ShyGuySays;

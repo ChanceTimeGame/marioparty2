@@ -189,22 +189,19 @@ void func_80102F3C_291FAC_DeepSeaSalvage(omObjData* obj) {
     }
 }
 
-/* The backdrop: two models from D_80108424 placed by D_8010842C (the first through the object).
-   NON_MATCHING: GCC keeps &D_8010842C in a register for the first model's six reads, retail
-   addresses each by %hi/%lo (masked 35, addressing and registers only). */
-#ifdef NON_MATCHING
+/* The backdrop: two models from D_80108424 placed by D_8010842C (the first through the object). */
 void func_80102FBC_29202C_DeepSeaSalvage(omObjData* obj) {
     s16 i;
 
     for (i = 0; (u16)i < 2; i++) {
         obj->model[i] = func_80018A30_19630(D_80108424_297494_DeepSeaSalvage[i], 0x2D9);
         if (i == 0) {
-            obj->trans.x = D_8010842C_29749C_DeepSeaSalvage[0][0];
-            obj->trans.y = D_8010842C_29749C_DeepSeaSalvage[0][1];
-            obj->trans.z = D_8010842C_29749C_DeepSeaSalvage[0][2];
-            obj->scale.x = D_8010842C_29749C_DeepSeaSalvage[0][3];
-            obj->scale.y = D_8010842C_29749C_DeepSeaSalvage[0][4];
-            obj->scale.z = D_8010842C_29749C_DeepSeaSalvage[0][5];
+            obj->trans.x = D_8010842C_29749C_DeepSeaSalvage[i][0];
+            obj->trans.y = D_8010842C_29749C_DeepSeaSalvage[i][1];
+            obj->trans.z = D_8010842C_29749C_DeepSeaSalvage[i][2];
+            obj->scale.x = D_8010842C_29749C_DeepSeaSalvage[i][3];
+            obj->scale.y = D_8010842C_29749C_DeepSeaSalvage[i][4];
+            obj->scale.z = D_8010842C_29749C_DeepSeaSalvage[i][5];
         } else {
             func_80029714_2A314(obj->model[i], D_8010842C_29749C_DeepSeaSalvage[i][0],
                                 D_8010842C_29749C_DeepSeaSalvage[i][1], D_8010842C_29749C_DeepSeaSalvage[i][2]);
@@ -217,9 +214,6 @@ void func_80102FBC_29202C_DeepSeaSalvage(omObjData* obj) {
     D_801088C8_297938_DeepSeaSalvage.x = D_801088C8_297938_DeepSeaSalvage.y = D_801088C8_297938_DeepSeaSalvage.z = 0.0f;
     D_801088D4_297944_DeepSeaSalvage.x = D_801088D4_297944_DeepSeaSalvage.y = D_801088D4_297944_DeepSeaSalvage.z = 1.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80102FBC_29202C_DeepSeaSalvage);
-#endif
 
 void func_80103164_2921D4_DeepSeaSalvage(omObjData* obj) {
     func_801081EC_29725C_DeepSeaSalvage(obj);
