@@ -845,18 +845,16 @@ void func_80103960_4168F0_Credits(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_80103960_4168F0_Credits);
 #endif
 
-#ifdef NON_MATCHING
-/* NON_MATCHING: float register allocation and loop rotation */
 /* A name scrolling up and fading in and out; lets the next one start once it has risen 15 pixels. */
 void func_80103FA4_416F34_Credits(void) {
-    CreditsLine* line;
     s32 alpha;
+    CreditsLine* line;
     s32 i;
     f32 x;
     f32 y;
 
-    alpha = 0;
     line = HuPrcCurrentGet()->user_data;
+    alpha = 0;
     x = 295 - line->len * 10;
     y = line->y + 220.0f;
     SprPosSet(line->spr, 0, x, y);
@@ -864,7 +862,11 @@ void func_80103FA4_416F34_Credits(void) {
         i++;
         func_80082488_83088(line->spr, i, alpha);
     }
-    while (y -= 0.4f, !(y <= 170.0f)) {
+    while (TRUE) {
+        y -= 0.4f;
+        if (y <= 170.0f) {
+            break;
+        }
         if (y > 210.0f) {
             alpha += 10.0f;
             if (alpha >= 255) {
@@ -873,7 +875,7 @@ void func_80103FA4_416F34_Credits(void) {
         }
         if (y < 180.0f) {
             alpha -= 10.0f;
-            if (alpha < 0) {
+            if (alpha <= 0) {
                 alpha = 0;
             }
         }
@@ -895,31 +897,26 @@ void func_80103FA4_416F34_Credits(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_80103FA4_416F34_Credits);
-#endif
 
-#ifdef NON_MATCHING
-/* NON_MATCHING: float register allocation (retail hoists 6.428571f and 155.0f differently) */
 /* A role title sliding in, waiting for its names, sliding out. */
 void func_80104248_4171D8_Credits(void) {
     CreditsLine* line;
+    f32 y;
     f32 x0;
     f32 dist;
     f32 x;
-    f32 y;
     f32 angle;
 
     line = HuPrcCurrentGet()->user_data;
-    y = 155.0f;
     x0 = -(line->len * 10 + 8);
     dist = 33.0f - x0;
+    y = 155.0f;
     for (angle = 0.0f;; angle += 6.428571f) {
         if (angle >= 90.0f) {
             angle = 90.0f;
         }
         x = x0 + HuMathSin(angle) * dist;
-        SprPosSet(line->spr, 0, x, 155);
+        SprPosSet(line->spr, 0, x, y);
         if (angle >= 90.0f) {
             break;
         }
@@ -929,11 +926,14 @@ void func_80104248_4171D8_Credits(void) {
     while (D_80104E98_417E28_Credits == 0) {
         HuPrcVSleep();
     }
+    x0 = x;
+    dist = 328.0f - x;
     for (angle = 0.0f;; angle += 6.428571f) {
         if (angle >= 90.0f) {
             angle = 90.0f;
         }
-        SprPosSet(line->spr, 0, x + (1.0f - func_800B7890_B8490(angle)) * (328.0f - x), y);
+        x = x0 + (1.0f - func_800B7890_B8490(angle)) * dist;
+        SprPosSet(line->spr, 0, x, y);
         if (angle >= 90.0f) {
             break;
         }
@@ -946,9 +946,6 @@ void func_80104248_4171D8_Credits(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_80104248_4171D8_Credits);
-#endif
 
 #ifdef NON_MATCHING
 /* NON_MATCHING (masked 27): retail copies x and arg3 to saved registers at entry (arg3 is dead), adds the
@@ -1027,17 +1024,15 @@ s16 func_80104480_417410_Credits(u8* str, s16 color, s16 x, s16 arg3) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_80104480_417410_Credits);
 #endif
 
-#ifdef NON_MATCHING
-/* NON_MATCHING: where the two negations are scheduled */
 /* A blank (two-sprite) line. */
 s16 func_801047E8_417778_Credits(s32 x, s32 y) {
     s16 spr;
     s16 px;
     s16 py;
 
+    spr = SprCreate(3, 5);
     x *= -1;
     y *= -1;
-    spr = SprCreate(3, 5);
     SprAnimSet(spr, 1, D_80105C28_418BB8_Credits, 0);
     px = x;
     py = y;
@@ -1059,9 +1054,6 @@ s16 func_801047E8_417778_Credits(s32 x, s32 y) {
     func_800824F4_830F4(spr, 0, -1);
     return spr;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_801047E8_417778_Credits);
-#endif
 
 void func_80104980_417910_Credits(s16 spr) {
     SprKill(spr);
