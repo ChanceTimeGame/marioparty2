@@ -84,8 +84,9 @@ extern HuSprite_Unk84_Struct* D_800F60B0_F6CB0[256]; /* sprite animations */
 
 /* Scales each RGBA5551 entry of a sprite's palette by (r, g, b); alpha is kept.
    NON_MATCHING: control flow/loads (masked 21, 93 vs 94): retail reloads *pal for the alpha bit in
-   the first block (no CSE with c) and has no andi after the first lhu; c as u32 and a u32 cast on
-   the red term did not help. Permuter candidate. */
+   the first block (no CSE with c) and has no andi after the first lhu; c as u32, a u32 cast on
+   the red term, alpha via anim->unk0C[i], an RGBA5551 bitfield struct (lbu for alpha) and a static
+   inline helper did not help. Permuter candidate. */
 #ifdef NON_MATCHING
 void func_8001A340_1AF40(s16 sprite, f32 r, f32 g, f32 b) {
     HuSprite_Unk84_Struct* anim = D_800F60B0_F6CB0[sprite];
