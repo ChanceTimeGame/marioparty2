@@ -1283,6 +1283,9 @@ s32 func_80106F1C_2DEFCC_name_44(void) {
 }
 
 #define PD_ABS(x) ((x) < 0 ? -(x) : (x))
+/* NON_MATCHING: 481 vs 480, masked 34: n and i swap registers and the delay slots that zero them; the
+   second "n == 0" candidate loop keeps an i < count - 1 test retail folds to blez. Tried (S3-T09): i
+   declared first, n = 0 after the flag clear (worse). */
 #ifdef NON_MATCHING
 void func_80107208_2DF2B8_name_44(s32 cur, s32 target, s32 mode) {
     s32 cand[4];

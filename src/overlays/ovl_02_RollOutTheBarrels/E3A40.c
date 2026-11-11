@@ -516,7 +516,8 @@ void func_801041D0_E5410_RollOutTheBarrels(void) {
     D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0x10, 0xA, 0x3C, -1, func_80104270_E54B0_RollOutTheBarrels);
 }
 
-// register allocation (masked 3, one extra move at the end), class 4
+// register allocation (masked 3, one extra move at the end: retail keeps t in v0), class 4. Tried (S3-T09):
+// s32 t, an else arm, storing pl->target directly (all 523)
 #ifdef NON_MATCHING
 void func_80104270_E54B0_RollOutTheBarrels(omObjData* obj) {
     s32 mot[2];
