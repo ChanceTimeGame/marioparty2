@@ -191,7 +191,8 @@ void func_80102FF0_138D20_HotBobOmb(omObjData* obj) {
 
 /* The fuse sprite: slides in, then bobs (faster as the round ends).
    NON_MATCHING: retail keeps min in s0 and max in s1, and reloads the period for the divide
-   (address CSE'd, value not); masked 4. */
+   (address CSE'd, value not; 3 instructions short); masked 4. A pointer local for the period
+   and swapping the min/max declarations change nothing. */
 #ifdef NON_MATCHING
 void func_80103034_138D64_HotBobOmb(omObjData* obj) {
     s32 max;

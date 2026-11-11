@@ -287,11 +287,12 @@ void func_8010A804_3696F4_name_55(void)
 
 /* Board 5's sign: two halves drop in from the top, a glow (spr[24], spr[25]) grows behind them,
    twenty sparkles (func_8010B444) rise, the halves roll apart and the glow drops down. */
-/* NON_MATCHING: retail keeps two constant additions where they are written (file[i % 3 + 5]
-   adds 5 before scaling; the sparkle x adds 118 to the random part before adding i * 4); GCC
-   here folds the 5 into the load offset and reassociates the 118. */
+/* NON_MATCHING (masked 4, raw 4): the sparkle x adds 118 to the random part before adding i * 4
+   in retail; GCC here reassociates the 118 (reordering the sum or a temporary does not help).
+   The file index temporary k keeps retail's add-5-before-scaling. */
 #ifdef NON_MATCHING
 void func_8010AE68_369D58_name_55(void) {
+    s32 k;
     Ovl55Sign5* sign;
     f32 rotL;
     f32 rotR;
@@ -316,7 +317,8 @@ void func_8010AE68_369D58_name_55(void) {
     sign->spr[24] = func_8001AAAC_1B6AC(sign->file[4], 0, 1);
     sign->spr[25] = func_8001AAAC_1B6AC(sign->file[3], 0, 1);
     for (i = 0; i < 20; i++) {
-        sign->spr[i + 4] = func_8001AAAC_1B6AC(sign->file[i % 3 + 5], 0, 2);
+        k = i % 3 + 5;
+        sign->spr[i + 4] = func_8001AAAC_1B6AC(sign->file[k], 0, 2);
         espDispOff(sign->spr[i + 4]);
     }
     for (i = 0; i < 26; i++) {
