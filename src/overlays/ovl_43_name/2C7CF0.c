@@ -1017,6 +1017,8 @@ void func_80102B54_2C8044_name_43(void) {
     }
 }
 
+/* D_80113AF8 address hoisted out of the loop (masked 10, twin of ovl_3E's). S3-R06: an outer
+   goto loop stops the hoist (masked 7) but moves the inner loop's return 3 below it. */
 #ifdef NON_MATCHING
 s32 func_80102C3C_2C812C_name_43(s32 space) {
     s32 i;

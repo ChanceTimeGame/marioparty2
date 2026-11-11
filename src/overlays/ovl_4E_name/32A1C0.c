@@ -1975,7 +1975,8 @@ void func_80107F10_32F8D0_name_4E(void) {
 /* The players arrive (D_8010DAB8): a pipe (model 14) grows, the host slides in, each player hops
    from the pipe to D_8010D4CC, the pipe shrinks, the players drop from above onto their places
    (the music starts once one is below 350) and the host drops in last. NON_MATCHING: retail
-   reads D_8010D4B4's fields without a base register, and enters the host's drop loop at its test. */
+   reads D_8010D4B4's fields without a base register, and enters the host's drop loop at its test
+   (masked 48; a while (1) { if (...) break; } host loop is worse, masked 55). */
 #ifdef NON_MATCHING
 void func_8010832C_32FCEC_name_4E(void) {
     f32 speed[4];

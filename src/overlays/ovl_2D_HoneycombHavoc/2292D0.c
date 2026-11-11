@@ -992,7 +992,8 @@ u16 func_801057AC_22C27C_HoneycombHavoc(void) {
 }
 
 /* Unused: whether item i's neighbour (or item i itself, arg2 1) has this type. */
-/* NON_MATCHING: register residue only (the constant 1 of arg2 == 1 lives in v1 in retail). */
+/* NON_MATCHING: register residue only, masked 4 (the constant 1 of arg2 == 1 lives in v1 in retail;
+   arg2 != 1 early return, a && return and a switch on arg2 tried). */
 #ifdef NON_MATCHING
 s32 func_801057D4_22C2A4_HoneycombHavoc(s32 i, s32 type, s32 arg2) {
     if (i > 0 && D_80107710_22E1E0_HoneycombHavoc[i - 1] == type) {

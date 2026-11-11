@@ -210,8 +210,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_80107738_14
 #endif
 
 /* Moves a pin player by (dx, dz), pushed out of the other standing pin players (radius 90). */
-// GCC keeps 0.0f in a saved register across the loop; retail rematerialises it (as MP1)
-#ifdef NON_MATCHING
 void func_8010782C_141BBC_BowlOver(omObjData* obj, f32 dx, f32 dz) {
     omObjData* other;
     f32 ex;
@@ -231,13 +229,13 @@ void func_8010782C_141BBC_BowlOver(omObjData* obj, f32 dx, f32 dz) {
             ez = (obj->trans.z + dz) - other->trans.z;
             d = sqrtf(ex * ex + ez * ez);
             if (d < 90.0f) {
-                if (d == 0.0f) {
-                    dx = 0.0f;
-                    dz = 0.0f;
-                } else {
+                if (d != 0.0f) {
                     push = 90.0f - d;
                     obj->trans.x = (dx - (dx - (ex / d) * push)) + obj->trans.x;
                     obj->trans.z = (dz - (dz - (ez / d) * push)) + obj->trans.z;
+                } else {
+                    dx = 0.0f;
+                    dz = 0.0f;
                 }
                 continue;
             }
@@ -246,9 +244,6 @@ void func_8010782C_141BBC_BowlOver(omObjData* obj, f32 dx, f32 dz) {
         obj->trans.z += dz;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0E_BowlOver/141320", func_8010782C_141BBC_BowlOver);
-#endif
 
 /* A falling pin knocks down the standing pins its top (130 up the tilted pin) passes within 75 of. */
 void func_801079EC_141D7C_BowlOver(omObjData* obj) {
@@ -329,8 +324,8 @@ void func_801079EC_141D7C_BowlOver(omObjData* obj) {
 
 /* A pin: the shell knocks it down when it passes within 88; a falling pin tilts to 90 degrees about
    its fall direction, knocks down the pins its top reaches, then blinks for 31 frames and vanishes. */
-// float register allocation and load order (masked 20): the sqrt and angle temporaries and the
-// shrink factor's registers differ (MP1's twin is NON_MATCHING too)
+// float register allocation only (masked 4): retail puts the sqrt result in f4 and keeps the
+// double angle in f20 (MP1's twin has the same residue); a local for the sum did not help
 #ifdef NON_MATCHING
 void func_80107DB4_142144_BowlOver(omObjData* obj) {
     BOPin* pin;
@@ -342,8 +337,8 @@ void func_80107DB4_142144_BowlOver(omObjData* obj) {
     f32 a;
     f32 b;
     f32 s;
-    f32 dist;
     s16 snd;
+    s32 turns;
 
     pin = &D_80109E50_1441E0_BowlOver[obj->work[3]];
     if (D_800F8FD0_F9BD0 != 1) {
@@ -354,8 +349,7 @@ void func_80107DB4_142144_BowlOver(omObjData* obj) {
         if (obj->trans.y <= 43.0f) {
             dx = D_8010A0A8_144438_BowlOver->trans.x - obj->trans.x;
             dz = D_8010A0A8_144438_BowlOver->trans.z - obj->trans.z;
-            dist = sqrtf(dx * dx + dz * dz);
-            if (dist < 88.0f) {
+            if (sqrtf(dx * dx + dz * dz) < 88.0f) {
                 pin->unk_04 = func_800B75A8_B81A8(dx, dz);
                 pin->unk_00 = 30.0f;
                 obj->trans.y += 30.0;
@@ -387,7 +381,9 @@ void func_80107DB4_142144_BowlOver(omObjData* obj) {
     } else {
         b = pin->unk_04;
         a = b + obj->rot.y;
-        a = 360.0f - (f32)(a - (s32)(a / 360.0f) * 360.0);
+        turns = a / 360.0f;
+        a -= turns * 360.0;
+        a = 360.0f - a;
         pos.x = 0.0f;
         pos.y = 30.0f;
         pos.z = 0.0f;
