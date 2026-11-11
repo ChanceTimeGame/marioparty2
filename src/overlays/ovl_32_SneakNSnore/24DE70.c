@@ -916,7 +916,7 @@ f32 func_80105D78_2513E8_SneakNSnore(f32 a) {
     return a;
 }
 
-#ifdef NON_MATCHING /* retail keeps a in f4 and step in f12; last return shape differs: masked 11 */
+#ifdef NON_MATCHING /* retail copies a to f4 and keeps step in f12 (one extra mov.s); last return shape differs: masked 11. Tried (S3-T): step direct, MP1 GrabBag else-if chain into target, else-return chain: all 63, worse */
 f32 func_80105E18_251488_SneakNSnore(f32 a, f32 target, f32 step) {
     f32 d = target - a;
     f32 s = step;

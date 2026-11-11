@@ -596,7 +596,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_8010359C_3A0F8C
 #endif
 
 // control flow/width (masked 7, 114 of 116): retail keeps an andi 0xff after each rand8() & 3 (in the
-// second call's delay slot); u8 j/k indices took it from masked 9, (u8)(rand8() % 4) did nothing.
+// second call's delay slot); u8 j/k indices took it from masked 9, (u8)(rand8() % 4) did nothing; S3-T:
+// j = rand8(); j &= 3, and s32 j/k indexed as teams[(u8)j], both unchanged.
 #ifdef NON_MATCHING
 void func_80103E58_3A1848_name_5D(s16 cat) {
     s16 teams[4]; /* never filled: retail's categories stop at 4, so this path never runs */
