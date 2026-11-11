@@ -1147,15 +1147,15 @@ void func_80106008_16ADA8_LookAway(omObjData* obj) {
     }
 }
 
-/* NON_MATCHING: retail reuses the zeroed counter register as func_800691FC's third argument and
-   tests the case 4 counter as s16 (masked 12). */
+/* NON_MATCHING: 247 vs 248, masked 1: retail copies k (move a0,a2) before sign-extending it as the
+   chars[] index, as Archerival's 80106CD8. */
 #ifdef NON_MATCHING
 void func_80106060_16AE00_LookAway(omObjData* obj) {
     LAObj* tbl;
+    omObjData* o;
     u8 chars[4];
     s16 i;
     s16 k;
-    s32 t;
 
     switch (D_801069A0_16B740_LookAway) {
     case 0:
@@ -1187,14 +1187,15 @@ void func_80106060_16AE00_LookAway(omObjData* obj) {
                 k = 0;
                 if (D_801069AE_16B74E_LookAway & 0x40) {
                     chars[0] = gPlayers[D_80106CD0_16BA70_LookAway[0].obj->work[0]].character;
-                    func_800691FC_69DFC(6, chars[0], 0);
+                    func_800691FC_69DFC(6, chars[0]);
                     PlayMusic(0x51);
                     D_801069A2_16B742_LookAway = 120;
                 } else {
                     i = 1;
                     tbl = D_80106CD0_16BA70_LookAway;
                     for (; i < 4; i++, k++) {
-                        chars[k] = gPlayers[tbl[i].obj->work[0]].character;
+                        o = tbl[i].obj;
+                        chars[k] = gPlayers[o->work[0]].character;
                     }
                     func_800691FC_69DFC(0x15, chars[0], chars[1], chars[2]);
                     PlayMusic(0x52);
@@ -1206,11 +1207,10 @@ void func_80106060_16AE00_LookAway(omObjData* obj) {
         break;
     case 4:
         if (_CheckFlag(0xC) != 0) {
-            t = D_801069A4_16B744_LookAway;
-        } else {
-            t = --D_801069A2_16B742_LookAway;
-        }
-        if (t == 0) {
+            if (D_801069A4_16B744_LookAway == 0) {
+                D_801069A0_16B740_LookAway = 5;
+            }
+        } else if (--D_801069A2_16B742_LookAway == 0) {
             D_801069A0_16B740_LookAway = 5;
         }
         break;

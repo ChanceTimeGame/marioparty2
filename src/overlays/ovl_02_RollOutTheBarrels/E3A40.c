@@ -3645,7 +3645,9 @@ void func_8010E4C0_EF700_RollOutTheBarrels(s16 model) {
     D_80112DAC_F3FEC_RollOutTheBarrels[1] = abs(zs[0] - zs[1]);
 }
 
-// s-register allocation: retail keeps the angle test as a branch where GCC uses sltiu, flag in s4 and a1 (masked 30), class 4
+// control flow: retail keeps the angle test as a branch (flag in s4, copied to a1) where GCC folds
+// `flag = 0; if (angle == 0) flag = 1` into sltiu (185 vs 190, masked 30). Tried (S3-T09): s16 and u8
+// flag/on, flag++ (ovl_27's phase++), an else arm, the init next to the test, on copied before the loop.
 #ifdef NON_MATCHING
 void func_8010E944_EFB84_RollOutTheBarrels(s16 model, s32 angle) {
     HmfData* d;

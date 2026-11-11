@@ -113,7 +113,7 @@ extern const char D_80106894_16B634_LookAway[];
 
 /* ---- .bss ---- */
 extern u16 D_801069A0_16B740_LookAway; /* game state */
-extern u16 D_801069A2_16B742_LookAway; /* game state timer */
+extern s16 D_801069A2_16B742_LookAway; /* game state timer */
 extern s16 D_801069A4_16B744_LookAway; /* 1P-flag result wait */
 extern u16 D_801069A6_16B746_LookAway; /* rounds left (5) */
 extern u16 D_801069A8_16B748_LookAway; /* rounds played */
