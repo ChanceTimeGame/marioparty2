@@ -213,8 +213,6 @@ void func_80107EDC_28A0EC_TorpedoTargets(omObjData* obj) {
     }
 }
 
-/* Logic right; float register allocation differs. */
-#ifdef NON_MATCHING
 void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
     TTSub* w = obj->unk_50;
     omObjData* sub;
@@ -235,7 +233,6 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
     f32 c2;
     f32 a;
     f32 sn;
-    f32 k;
 
     if (gPlayers[w->gunner].flags & 1) {
         w->gStickX = 0;
@@ -268,25 +265,22 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
         aim.z = D_801093B8_28B5C8_TorpedoTargets.z;
         func_80107DF0_28A000_TorpedoTargets(&aim, gPlayers[w->gunner].cpu_difficulty);
         dir.x = dx = aim.x - obj->trans.x;
-        k = 122.5f;
-        dir.y = dy = aim.y - (obj->trans.y - k);
+        dir.y = dy = aim.y - (obj->trans.y - 122.5f);
         dir.z = dz = aim.z - obj->trans.z;
         pd = &dir;
         func_8002D9AC_2E5AC(pd);
         d = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
         a = w->yaw - 90.0f;
-        sn = HuMathSin(a);
-        c = func_8000DA2C_E62C(dx, dz, sn, func_800B7890_B8490(a));
+        c = func_8000DA2C_E62C(dx, dz, HuMathSin(a), func_800B7890_B8490(a));
         other = w->team == 0;
         sub = D_80109264_28B474_TorpedoTargets[other];
         dir.x = dx = sub->trans.x - obj->trans.x;
-        dir.y = dy = sub->trans.y - (obj->trans.y - k);
+        dir.y = dy = sub->trans.y - (obj->trans.y - 122.5f);
         dir.z = dz = sub->trans.z - obj->trans.z;
         func_8002D9AC_2E5AC(pd);
         d2 = func_800B1830_B2430(dx * dx + dy * dy + dz * dz);
         a = w->yaw - 90.0f;
-        sn = HuMathSin(a);
-        c2 = func_8000DA2C_E62C(dx, dz, sn, func_800B7890_B8490(a));
+        c2 = func_8000DA2C_E62C(dx, dz, HuMathSin(a), func_800B7890_B8490(a));
         f.x = HuMathSin(w->yaw);
         f.y = HuMathSin(obj->rot.x);
         f.z = func_800B7890_B8490(w->yaw);
@@ -301,10 +295,15 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
             if (w->gBtn == 0) {
                 s32 level = gPlayers[w->gunner].cpu_difficulty;
 
-                if (level < 4 && level >= 2 && d2 < reach && fabs(c2) < cone) {
-                    w->gBtn |= 0x8000;
-                    D_80109468_28B678_TorpedoTargets[w->team] = d2;
-                    D_801093A0_28B5B0_TorpedoTargets[w->team] = 1;
+                switch (level) {
+                case 2:
+                case 3:
+                    if (d2 < reach && fabs(c2) < cone) {
+                        w->gBtn |= 0x8000;
+                        D_80109468_28B678_TorpedoTargets[w->team] = d2;
+                        D_801093A0_28B5B0_TorpedoTargets[w->team] = 1;
+                    }
+                    break;
                 }
             }
             break;
@@ -334,6 +333,3 @@ void func_80108234_28A444_TorpedoTargets(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/289BC0", func_80108234_28A444_TorpedoTargets);
-#endif
