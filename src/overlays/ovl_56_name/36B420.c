@@ -788,20 +788,22 @@ void func_80102A8C_36B6AC_name_56(omObjData* obj) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: retail spills variant * 3 to the stack and keeps 0x2AC in a saved register; the form-table index is computed in another order */
+/* NON_MATCHING (masked 19, raw 87): retail keeps 0x2AC in a saved register (hoisted out of the loop)
+   and so spills variant * 3 to the stack. A local `attr = 0x2AC` reproduces it (masked 2) but is not
+   kept, as a likely fakematch. The form table is indexed flat, (i * 12 + variant * 3 + j) * 4. */
 /* Loads the three models of every character in form variant `variant`, and each one's motion 0. */
 void func_801034E4_36C104_name_56(s16 variant) {
     s16 i;
     void* data;
 
     for (i = 0; i < 6; i++) {
-        D_80104E90_36DAB0_name_56[i][0] = LoadFormFile(D_80104220_36CE40_name_56[i][variant][0], 0x2AC);
+        D_80104E90_36DAB0_name_56[i][0] = LoadFormFile(((s32*)D_80104220_36CE40_name_56)[i * 12 + variant * 3 + 0], 0x2AC);
         func_80025384_25F84(D_80104E90_36DAB0_name_56[i][0], 0, i, (D_80103EC4_36CAE4_name_56[i] << 16) | 0xDE);
         func_80029AFC_2A6FC(D_80104E90_36DAB0_name_56[i][0]);
-        D_80104E90_36DAB0_name_56[i][1] = LoadFormFile(D_80104220_36CE40_name_56[i][variant][1], 0x2AC);
+        D_80104E90_36DAB0_name_56[i][1] = LoadFormFile(((s32*)D_80104220_36CE40_name_56)[i * 12 + variant * 3 + 1], 0x2AC);
         func_80025384_25F84(D_80104E90_36DAB0_name_56[i][1], 1, i, (D_80103EC4_36CAE4_name_56[i] << 16) | 0xDF);
         func_80029AFC_2A6FC(D_80104E90_36DAB0_name_56[i][1]);
-        D_80104E90_36DAB0_name_56[i][2] = LoadFormFile(D_80104220_36CE40_name_56[i][variant][2], 0x2AC);
+        D_80104E90_36DAB0_name_56[i][2] = LoadFormFile(((s32*)D_80104220_36CE40_name_56)[i * 12 + variant * 3 + 2], 0x2AC);
         func_80025384_25F84(D_80104E90_36DAB0_name_56[i][2], 2, i, (D_80103EC4_36CAE4_name_56[i] << 16) | 0xDF);
         func_80029AFC_2A6FC(D_80104E90_36DAB0_name_56[i][2]);
         if (D_80104ED8_36DAF8_name_56[i][0] != -1) {
@@ -840,7 +842,9 @@ void func_80103778_36C398_name_56(s16 motion) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: float register allocation (zoom temp, speed/rotX swap f22/f24) */
+/* NON_MATCHING (masked 25, raw 72): float register allocation (zoom temp, speed/rotX swap f22/f24),
+   one instruction short in the C-up/C-down cross-jumped tail. Tried: zoom via `+=` on the global or
+   on a copy, swapping the speed/rotX declarations (no gain). */
 /* Camera: B resets, R/Z zoom, the stick turns, C-up/C-down move the centre along the view,
    C-left/C-right sideways. A (0x2000) speeds everything up. */
 void func_801038D4_36C4F4_name_56(omObjData* obj) {
