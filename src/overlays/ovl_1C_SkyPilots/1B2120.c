@@ -7,8 +7,6 @@ s32 D_8010B1CC_1B485C_SkyPilots[6] = { 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23 };
 s32 D_8010B1E4_1B4874_SkyPilots[5] = { 0, 0, 0, 0, 0 };
 f32 D_8010B1F8_1B4888_SkyPilots[2] = { -500.0f, 500.0f };
 
-/* NON_MATCHING: register allocation (masked 4) */
-#ifdef NON_MATCHING
 void func_80108A90_1B2120_SkyPilots(s32 i) {
     if (++D_8010AEA8_1B4538_SkyPilots[i] > 0) {
         f32 x;
@@ -27,9 +25,6 @@ void func_80108A90_1B2120_SkyPilots(s32 i) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1B2120", func_80108A90_1B2120_SkyPilots);
-#endif
 
 void func_80108C24_1B22B4_SkyPilots(omObjData* obj) {
     s32 i;

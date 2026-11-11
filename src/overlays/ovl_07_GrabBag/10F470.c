@@ -570,7 +570,7 @@ done:
     D_8010A4E4_113AF4_GrabBag[w->w.unk_59]++;
 }
 
-/* NON_MATCHING: control flow (class 3): retail gives the arms their own first clamp test, and hoists 60.0f (masked 86; calls agree) */
+/* NON_MATCHING: control flow (masked 58): retail hoists 64.0f out of the screen-bounds loop and reloads scr.x/scr.y after the 45.0f test (block reached by a jump); tried flat breaks and nested positive tests. Calls agree */
 #ifdef NON_MATCHING
 void func_801077E8_110DF8_GrabBag(void) {
     HuCamera* c = D_800C9B80_CA780;
@@ -612,6 +612,11 @@ void func_801077E8_110DF8_GrabBag(void) {
         a = 480.0f - l;
         b = l + 480.0f;
         c->screenPos.y = dir.y * 8.0f * k + c->screenPos.y;
+        if (c->screenPos.y < a) {
+            c->screenPos.y = a;
+        } else if (b < c->screenPos.y) {
+            c->screenPos.y = b;
+        }
     } else {
         for (i = 0; i < 4; i++) {
             pos.x = D_800FFFD8_100BD8[i]->trans.x;
@@ -624,21 +629,16 @@ void func_801077E8_110DF8_GrabBag(void) {
                 break;
             }
             l = D_8010A824_113E34_GrabBag * 45.0f;
-            if (scr.y < l || 240.0f - l < scr.y) {
-                break;
-            }
-            state = 2;
-            l = D_8010A824_113E34_GrabBag * 64.0f;
-            if (l < scr.x) {
-                if (scr.x < 320.0f - l) {
+            if (!(scr.y < l) && !(240.0f - l < scr.y)) {
+                l = D_8010A824_113E34_GrabBag * 64.0f;
+                if (l < scr.x && scr.x < 320.0f - l) {
                     l = D_8010A824_113E34_GrabBag * 48.0f;
-                    if (l < scr.y) {
-                        if (scr.y < 240.0f - l) {
-                            state = 1;
-                            continue;
-                        }
+                    if (l < scr.y && scr.y < 240.0f - l) {
+                        state = 1;
+                        continue;
                     }
                 }
+                state = 2;
             }
             break;
         }
@@ -667,10 +667,10 @@ void func_801077E8_110DF8_GrabBag(void) {
             if (scr.y < lo.y) {
                 lo.y = scr.y;
             }
-            if (hi.x < scr.x) {
+            if (scr.x > hi.x) {
                 hi.x = scr.x;
             }
-            if (hi.y < scr.y) {
+            if (scr.y > hi.y) {
                 hi.y = scr.y;
             }
         }
@@ -699,11 +699,11 @@ void func_801077E8_110DF8_GrabBag(void) {
         } else if (mid.y > 150.0f) {
             c->screenPos.y = c->screenPos.y - (D_8010A824_113E34_GrabBag - 1.0f) * 8.0f;
         }
-    }
-    if (c->screenPos.y < a) {
-        c->screenPos.y = a;
-    } else if (b < c->screenPos.y) {
-        c->screenPos.y = b;
+        if (c->screenPos.y < a) {
+            c->screenPos.y = a;
+        } else if (b < c->screenPos.y) {
+            c->screenPos.y = b;
+        }
     }
 }
 #else

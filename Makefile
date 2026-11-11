@@ -288,6 +288,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/26370.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1B39D0.c.o
 # S3-R04: ovl_2B 218BF0.c too (func_80103508: no nop before a mul.s after a call)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_2B_BombsAway/218BF0.c.o
+# S3-R07: ovl_1C 1B2120.c too (func_80108A90: a nop between mul.s; func_8010A024: none after a call)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1C_SkyPilots/1B2120.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -972,6 +974,8 @@ $(S55DA_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # S5-5D: ovl_5D 3A5AB0.c is GCC's assembly with blank lines removed, assembled with the KMC VR4300 mul fix on
 S55DC_BLANKSTRIP_UNITS := build/src/overlays/ovl_5D_name/3A5AB0.c.o
+# S3-R07: 3A5610.c too (func_80107C20: a nop between mul.s)
+S55DC_BLANKSTRIP_UNITS += build/src/overlays/ovl_5D_name/3A5610.c.o
 $(S55DC_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S55DC_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

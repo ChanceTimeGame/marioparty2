@@ -794,7 +794,6 @@ void func_80105A70_208E10_PlatformPeril(omObjData* obj) {
     }
 }
 
-#ifdef NON_MATCHING
 void func_80105D74_209114_PlatformPeril(omObjData* obj) {
     ColActorWork* w = obj->unk_50;
     omObjData* other;
@@ -811,11 +810,9 @@ void func_80105D74_209114_PlatformPeril(omObjData* obj) {
             for (i = 1; i < D_800F8FE0_F9BE0; i++) {
                 other = D_800FC7B0_FD3B0[i];
                 if (abs((s32)(obj->trans.z - other->trans.z)) < 100) {
-                    if (n != 0) {
-                        if (abs((s32)(obj->trans.x - (other = D_800FC7B0_FD3B0[i])->trans.x)) < 200) {
-                            obj->work[1] = ((GroundWork*)other->unk_50)->unk_04;
-                        }
-                    } else {
+                    if (n == 0) {
+                        obj->work[1] = ((GroundWork*)other->unk_50)->unk_04;
+                    } else if (abs((s32)(obj->trans.x - (other = D_800FC7B0_FD3B0[i])->trans.x)) < 200) {
                         obj->work[1] = ((GroundWork*)other->unk_50)->unk_04;
                     }
                     n++;
@@ -839,9 +836,6 @@ void func_80105D74_209114_PlatformPeril(omObjData* obj) {
         break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_28_PlatformPeril/205BA0", func_80105D74_209114_PlatformPeril);
-#endif
 
 void func_80106040_2093E0_PlatformPeril(omObjData* obj) {
     ColActorWork* w;

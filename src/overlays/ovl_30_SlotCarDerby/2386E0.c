@@ -356,15 +356,10 @@ void func_801038F0_2397D0_SlotCarDerby(omObjData* obj) {
 __asm__(".section .rodata");
 const char D_8010FD18_245BF8_SlotCarDerby[] = "head";
 
-/* NON_MATCHING: registers only (masked 0, raw 8): the unk_0C load lands in v0 (so as uses $at), retail
-   loads it straight into a0 and ors into it. Tried file declared first / u32 (same), file |= on a
-   second line (16), operands swapped (9). Retail's D_8010F4C8 is a splat label inside D_8010F4C4. */
-#ifdef NON_MATCHING
 void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
     SCDPlayerWork* work;
     HmfMotionObj* head;
     u32 chr;
-    s32 file;
 
     obj->func_ptr = func_80103D00_239BE0_SlotCarDerby;
     obj->work[0] = player;
@@ -378,12 +373,11 @@ void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
         chr = 6;
     }
     if (chr < 6) {
-        file = D_800CD438_CE038[chr].unk_04 | D_800CD438_CE038[chr].unk_0C;
+        obj->model[1] = LoadFormFile(D_800CD438_CE038[chr].unk_04 | D_800CD438_CE038[chr].unk_0C, 0x6BD);
     } else {
         chr = 6;
-        file = 0x80000;
+        obj->model[1] = LoadFormFile(0x80000, 0x6BD);
     }
-    obj->model[1] = LoadFormFile(file, 0x6BD);
     obj->model[0] = LoadFormFile(D_8010F498_245378_SlotCarDerby[chr] | 0x400000, 0x6B9);
     obj->model[2] = LoadFormFile(0xC, 0x68D);
     func_800297E8_2A3E8(obj->model[2], 0.5f, 0.5f, 0.5f);
@@ -411,9 +405,6 @@ void func_8010390C_2397EC_SlotCarDerby(omObjData* obj, s16 player) {
     D_801102A8_246188_SlotCarDerby[obj->work[1]] = ((3 - obj->work[1]) * 10 + 100) * 40.0 + 6.0;
     func_8010D6DC_2435BC_SlotCarDerby(chr, obj->work[0]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_8010390C_2397EC_SlotCarDerby);
-#endif
 
 void func_80103D00_239BE0_SlotCarDerby(omObjData* obj) {
     SCDCar* car;
@@ -1164,13 +1155,10 @@ f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, V
   return d;
 }
 
-/* NON_MATCHING: retail advances the pos pointer once (addiu a0, 4) before reading y and z; logic as retail */
-#ifdef NON_MATCHING
 s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     f32 best;
     Vec* mid;
     f32* len;
-    f32* p;
     f32 x, y, z;
     f32 r;
     s32 i;
@@ -1179,10 +1167,10 @@ s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     best = 30000.0f;
     mid = D_80110254_246134_SlotCarDerby;
     len = D_80110248_246128_SlotCarDerby;
-    p = (f32*)pos;
-    x = *p++;
-    y = p[0];
-    z = p[1];
+    x = pos->x;
+    pos = (Vec*)&pos->y;
+    y = pos->x;
+    z = pos->y;
     hit = 0;
     for (i = 0; i < D_80110244_246124_SlotCarDerby; i++, mid++) {
         r = *len++ * 0.75;
@@ -1202,9 +1190,6 @@ s32 func_801062B8_23C198_SlotCarDerby(Vec* pos, f32* groundY) {
     *groundY = best;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_801062B8_23C198_SlotCarDerby);
-#endif
 
 f32 func_8010640C_23C2EC_SlotCarDerby(f32 t, f32 a, f32 b, f32 c) {
     f32 u = 1.0 - t;
