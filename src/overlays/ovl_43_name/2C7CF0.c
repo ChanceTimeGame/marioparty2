@@ -1645,6 +1645,9 @@ s32 func_8010490C_2C9DFC_name_43(void) {
     return min;
 }
 
+/* 504 of 513 instructions: same tests, constants and stores, but GCC cross-jumps identical arms
+   (case 2 and 3 of each inner switch, and the two inner switches' case 0) that retail keeps apart,
+   while retail still shares the result stores. return instead of break in case 1: no change. */
 #ifdef NON_MATCHING
 void func_80104AC4_2C9FB4_name_43(void) {
     s32 cand[4];
