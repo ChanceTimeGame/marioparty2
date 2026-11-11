@@ -901,11 +901,9 @@ void func_80105034_DCAC4_BowserSlots(void) {
 
 /* The machine object: the slot machine, its lever and lamps, the item sprite and the three
    reels (a texture of the eight faces' items on each, func_80107D68). */
-#ifdef NON_MATCHING
-/* masked 4: the lever model id is kept in s6 sign-extended at once and copied to s0 for two calls; GCC extends it at the copy */
 void func_80105088_DCB18_BowserSlots(omObjData* obj) {
     BSReel* reel = D_8010C0D0_E3B60_BowserSlots;
-    s16 model;
+    s32 model;
     s32 anim;
     s32 i;
     s32 j;
@@ -917,8 +915,7 @@ void func_80105088_DCB18_BowserSlots(omObjData* obj) {
     for (i = 0; i < 5; i++) {
         D_8010C0CC_E3B5C_BowserSlots[i] = D_800CAFD8[i];
     }
-    model = func_80018A30_19630(0x110001, 0x8D);
-    obj->model[1] = model;
+    model = obj->model[1] = func_80018A30_19630(0x110001, 0x8D);
     HmfModelObjAttrSet(model, 0x20000, 0x20000);
     func_80029A8C_2A68C(model);
     D_8010C0F8_E3B88_BowserSlots[0] = func_8010A074_E1B04_BowserSlots(0x11000A) & 0xFFFF;
@@ -965,9 +962,6 @@ void func_80105088_DCB18_BowserSlots(omObjData* obj) {
     obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
     obj->work[0] = obj->work[1] = obj->work[2] = obj->work[3] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_01_BowserSlots/DA290", func_80105088_DCB18_BowserSlots);
-#endif
 
 void func_801054E8_DCF78_BowserSlots(omObjData* obj) {
     if (func_80078EA8_79AA8() + D_80102720_103320 == 0) {
