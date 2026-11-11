@@ -575,8 +575,6 @@ void func_801037C8_171158_LightsOut(omObjData* obj) {
     ContStkY[work->unk_57] = -mag * func_800B7890_B8490(angle);
 }
 
-#ifdef NON_MATCHING
-/* register/schedule (masked 3): retail loads 180.0f between the compare and its branch */
 void func_80103968_1712F8_LightsOut(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -606,9 +604,10 @@ void func_80103968_1712F8_LightsOut(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -636,9 +635,6 @@ void func_80103968_1712F8_LightsOut(Vec* from, Vec* to, Vec* out) {
     out->z = yaw;
     out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_15_LightsOut/170190", func_80103968_1712F8_LightsOut);
-#endif
 
 void func_80103CA8_171638_LightsOut(omObjData* obj, s16 motion, char* name) {
     LOSlot* p = &D_8010CD90_17A720_LightsOut[obj->work[0]];

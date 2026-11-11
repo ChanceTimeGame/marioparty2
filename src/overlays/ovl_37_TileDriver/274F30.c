@@ -1297,8 +1297,6 @@ f32 func_801073BC_279AEC_TileDriver(f32 x) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_801073BC_279AEC_TileDriver);
 #endif
 
-/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
-#ifdef NON_MATCHING
 void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -1328,9 +1326,10 @@ void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         yaw = horizontal;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = horizontal;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f && delta.z != 0.0f) {
@@ -1364,6 +1363,3 @@ void func_8010750C_279C3C_TileDriver(Vec* from, Vec* to, Vec* out) {
     out->z = yaw;
     out->x = horizontal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_37_TileDriver/274F30", func_8010750C_279C3C_TileDriver);
-#endif

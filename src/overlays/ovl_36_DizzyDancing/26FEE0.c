@@ -100,8 +100,6 @@ f32 func_801029F0_2700D0_DizzyDancing(f32 x) {
     return 0.0f;
 }
 
-/* NON_MATCHING: scheduling (masked 3): retail loads 180.0f after the first near-zero compare; same in ovl_09/0A/20/26/36/37. */
-#ifdef NON_MATCHING
 void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     Vec delta;
     Vec fromV;
@@ -131,9 +129,10 @@ void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
         y = delta.y;
         eps = 0.0001f;
         horizontal = yaw;
-        pitch = 180.0f;
         if (!(y > eps) && y < eps) {
             pitch = yaw;
+        } else {
+            pitch = 180.0f;
         }
     } else {
         if (delta.x != 0.0f || delta.z != 0.0f) {
@@ -162,9 +161,6 @@ void func_80102B40_270220_DizzyDancing(Vec* from, Vec* to, Vec* out) {
     out->y = pitch;
     out->z = yaw;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_36_DizzyDancing/26FEE0", func_80102B40_270220_DizzyDancing);
-#endif
 
 f32 func_80102EB4_270594_DizzyDancing(f32 angle, f32 add) {
     angle += add;

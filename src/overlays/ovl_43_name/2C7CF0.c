@@ -1017,9 +1017,6 @@ void func_80102B54_2C8044_name_43(void) {
     }
 }
 
-/* D_80113AF8 address hoisted out of the loop (masked 10, twin of ovl_3E's). S3-R06: an outer
-   goto loop stops the hoist (masked 7) but moves the inner loop's return 3 below it. */
-#ifdef NON_MATCHING
 s32 func_80102C3C_2C812C_name_43(s32 space) {
     s32 i;
     s32 j;
@@ -1029,34 +1026,39 @@ s32 func_80102C3C_2C812C_name_43(s32 space) {
     i = 0;
     spaces = D_80113B08_2D8FF8_name_43;
     space = (s16)space;
-    do {
-        if (space == spaces[i]) {
-            if (i == gw->star_spawn_indices[gw->unk_0A]) {
-                gw->unk_1A = D_80113AF8_2D8FE8_name_43[i];
-                return 1;
-            }
-            if (i == gw->unk_1C) {
-                return 2;
-            }
-            if (_CheckFlag(0x44)) {
-                space = 7;
-            } else {
-                space = gw->unk_0A;
-            }
-            for (j = 0; j < space; j++) {
-                if (i == gw->star_spawn_indices[j]) {
-                    return 3;
-                }
-            }
-            return 0;
+loop:
+    if (space == spaces[i]) {
+        if (i == gw->star_spawn_indices[gw->unk_0A]) {
+            gw->unk_1A = D_80113AF8_2D8FE8_name_43[i];
+            return 1;
         }
-        i++;
-    } while (i < 7);
+        if (i == gw->unk_1C) {
+            return 2;
+        }
+        if (_CheckFlag(0x44)) {
+            space = 7;
+        } else {
+            space = gw->unk_0A;
+        }
+        j = 0;
+        if (j < space) {
+        inner:
+            if (i == gw->star_spawn_indices[j]) {
+                return 3;
+            }
+            j++;
+            if (j < space) {
+                goto inner;
+            }
+        }
+        return 0;
+    }
+    i++;
+    if (i < 7) {
+        goto loop;
+    }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_43_name/2C7CF0", func_80102C3C_2C812C_name_43);
-#endif
 
 void func_80102D28_2C8218_name_43(void) {
     SpaceData* space;
@@ -5834,8 +5836,10 @@ s32 func_8011228C_2D777C_name_43(void) {
     return func_8008BB48_8C748(mbDlgWinId, 0, 1);
 }
 
-#ifdef NON_MATCHING /* NON_MATCHING: registers only (masked: one lui); retail reads the coins check
-                       through gw (s1), GCC rematerialises &GwSystem */
+#ifdef NON_MATCHING /* NON_MATCHING: masked 1, raw 3: retail tests the player index in a0 (absolute)
+                       and passes it on; here the test is in v1 and the call reloads it through gw.
+                       S3-S: ovl_47 func_8010F910's s16 cur test fixed the &GwSystem rematerialising
+                       (masked 23 -> 1); an absolute cur passed on, or both reads absolute: 23. */
 /* Space 0x7F by day: for 10 coins a lamp (model 0xA2) descends over the player, sparkles and makes
    it night (state [0] = 2, the night message pending in [6]). By night it only says 0x43D. */
 void func_801124C0_2D79B0_name_43(void) {
@@ -5847,12 +5851,14 @@ void func_801124C0_2D79B0_name_43(void) {
     s32 i;
     s32 choice;
     GW_SYSTEM* gw = &GwSystem;
+    s16 cur;
 
     player = BoardPlayerGet(-1);
-    if (gw->current_player_index == 4) {
+    cur = gw->current_player_index;
+    if (cur == 4) {
         return;
     }
-    func_80046D2C_4792C(gw->current_player_index);
+    func_80046D2C_4792C(GwSystem.current_player_index);
     MBPlayerMotionSet(-1, -1, 2);
     func_80056C30_57830(-1, 8, 0x7F);
     HuPrcChildLink(HuPrcCurrentGet(), MBDCameraZoomMotStart(1.6f));
