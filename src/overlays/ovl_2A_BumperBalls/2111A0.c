@@ -916,9 +916,6 @@ void func_80105700_2140A0_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = &func_80105948_2142E8_BumperBalls;
 }
 
-/* case 4's arrival test: retail joins both compares at one bc1f (j to the branch); GCC here
-   branches in each arm (+5 instructions). Everything else matches (MP1 func_800F87F4 is NON_MATCHING too) */
-#ifdef NON_MATCHING
 void func_80105948_2142E8_BumperBalls(omObjData* object) {
     BumperBallsBoatWork* work = object->unk_50;
     omObjData* ball = D_8010A29C_218C3C_BumperBalls[work->player];
@@ -1007,7 +1004,12 @@ void func_80105948_2142E8_BumperBalls(omObjData* object) {
         } else {
             omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
         }
-        if ((work->side == 1) ? (object->trans.x < work->endX) : (object->trans.x > work->endX)) {
+        if (work->side == 1) {
+            if (object->trans.x < work->endX) {
+                func_800298A4_2A4A4(object->model[work->model], 4, 4);
+                work->state = 5;
+            }
+        } else if (object->trans.x > work->endX) {
             func_800298A4_2A4A4(object->model[work->model], 4, 4);
             work->state = 5;
         }
@@ -1022,9 +1024,6 @@ void func_80105948_2142E8_BumperBalls(omObjData* object) {
         work->angle -= 360.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105948_2142E8_BumperBalls);
-#endif
 
 void func_80105EBC_21485C_BumperBalls(omObjData* arg0) {
     switch (D_8010A564_218F04_BumperBalls) {
