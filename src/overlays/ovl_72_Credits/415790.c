@@ -526,7 +526,9 @@ void func_80102D6C_415CFC_Credits(void) {
 }
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: register allocation (retail keeps y and 11000.0f in GPRs) and the motion-frame branch order */
+/* NON_MATCHING (masked 150): register allocation (retail keeps y and 11000.0f in GPRs) and the motion-frame
+   branch order (retail tests -2, then -1; one shared call). S3-R11: a call per branch (raw 270 -> 185); a
+   switch, nested != -2 forms, else-if orders without it (worse). */
 /* The models walking across the stage, then the finale character. */
 void func_80102F10_415EA0_Credits(void) {
     CreditsActor* actor;
@@ -537,7 +539,6 @@ void func_80102F10_415EA0_Credits(void) {
     f32 step;
     f32 y;
     f32 ystep;
-    f32 frame;
     f32 z;
     f32 angle;
     f32 rx;
@@ -574,15 +575,13 @@ void func_80102F10_415EA0_Credits(void) {
         if (entry->motion != -1) {
             func_8002C9C0_2D5C0(actor->model, actor->motion);
         }
-        if (entry->frame != -2) {
-            frame = 0.0f;
-            if (entry->frame != -1) {
-                frame = entry->frame;
-            }
+        if (entry->frame == -2) {
+            func_80029C74_2A874(actor->model, func_80029D0C_2A90C(actor->model));
+        } else if (entry->frame == -1) {
+            func_80029C74_2A874(actor->model, 0.0f);
         } else {
-            frame = func_80029D0C_2A90C(actor->model);
+            func_80029C74_2A874(actor->model, entry->frame);
         }
-        func_80029C74_2A874(actor->model, frame);
         func_80029E80_2AA80(actor->model, 0, 1);
         HuPrcVSleep();
         end = MBDBackMdlScaleGet() * -650.0f - entry->xEnd;
@@ -952,7 +951,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_72_Credits/415790", func_80104248_417
 #endif
 
 #ifdef NON_MATCHING
-/* NON_MATCHING: retail keeps arg3 and len * 10 (a mult) differently; frame 8 bytes larger */
+/* NON_MATCHING (masked 27): retail copies x and arg3 to saved registers at entry (arg3 is dead), adds the
+   held 10 with addu, and its frame is 8 bytes larger. S3-R11: the 10 as a local (gives the mult), s16 px. */
 /* A sprite-text line in the credits font, each character with a shadow: digits, capitals, space,
    '=' (frame 13) and anything else (frame 46). Colour 1 is the role colour. */
 s16 func_80104480_417410_Credits(u8* str, s16 color, s16 x, s16 arg3) {
@@ -960,15 +960,17 @@ s16 func_80104480_417410_Credits(u8* str, s16 color, s16 x, s16 arg3) {
     s16 member;
     s16 len;
     s32 frame;
-    s32 px;
+    s16 px;
     u8* p;
+    s16 w;
 
+    w = 10;
     p = str + 1;
     len = func_80089234_89E34(p);
     spr = SprCreate((u16)(len * 2 + 1), 5);
     px = -x;
     if (x == -1) {
-        px = -((len * 10) >> 1) + 5;
+        px = -((len * w) >> 1) + 5;
     }
     member = 1;
     if (*p != 0) {
@@ -1011,7 +1013,7 @@ s16 func_80104480_417410_Credits(u8* str, s16 color, s16 x, s16 arg3) {
             SprAttrReset(spr, member, 0xFFFF);
             SprAttrSet(spr, member, 0x1008);
             func_800824F4_830F4(spr, member, 0);
-            px += 10;
+            px += w;
             p++;
             member++;
         } while (*p != 0);
