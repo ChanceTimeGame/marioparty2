@@ -143,7 +143,8 @@ void func_8010D3F4_34DC54_name_50(void) {
    back, the doors (0xA018E/0xA018F) slide shut. Messages 0x341-0x347. */
 #ifdef NON_MATCHING
 /* One instruction short: retail sets t = 0 early and increments it later (s1, never folded to
-   t = 1); everything else matches. */
+   t = 1); everything else matches. S3-T: no branch or label separates the two in retail's code
+   (the increment sits in MBModelDispOff's delay slot), so CSE's loss of t == 0 is unexplained. */
 void func_8010D614_34DE74_name_50(void) {
     s32 flags[2];
     s32 win;
