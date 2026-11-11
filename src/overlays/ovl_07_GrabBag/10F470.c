@@ -379,7 +379,7 @@ s8 func_80106E38_110448_GrabBag(s8 p)
   return n;
 }
 
-/* NON_MATCHING: control flow (class 3): the ending music's tests branch differently and s3 is cleared at the top in retail (masked 42; calls agree) */
+/* NON_MATCHING: register allocation (masked 36, 1 instr short): retail copies hit to v1 before the == 1 test and computes x/z through a temporary; the ending music is a switch (fixed), hit is reset per probe; tried both */
 #ifdef NON_MATCHING
 void func_80106F00_110510_GrabBag(omObjData* obj) {
     GBPlayer* w;
@@ -448,6 +448,7 @@ void func_80106F00_110510_GrabBag(omObjData* obj) {
                         hit = 1;
                         break;
                     }
+                    hit = 0;
                 }
             }
             if (hit == 1) {
@@ -520,10 +521,13 @@ void func_80106F00_110510_GrabBag(omObjData* obj) {
             func_80106DD0_1103E0_GrabBag();
             i = D_8010A4E8_113AF8_GrabBag;
             if (i == 1 && _CheckFlag(0xC) == 0) {
-                if (D_8010A84C_113E5C_GrabBag == 0) {
+                switch (D_8010A84C_113E5C_GrabBag) {
+                case 0:
                     PlayMusic(0x51);
-                } else if (D_8010A84C_113E5C_GrabBag == i) {
+                    break;
+                case 1:
                     PlayMusic(0x52);
+                    break;
                 }
                 D_8010A4E8_113AF8_GrabBag = 2;
             }

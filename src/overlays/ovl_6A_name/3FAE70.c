@@ -282,6 +282,7 @@ void func_80103438_3FBA78_name_6A(void) {
     func_80074FAC_75BAC(7, 0, 1, 1);
 }
 
+// s7/s8 swapped (i vs a pointer) and the 0xD0004/0xD0005 choice laid out the other way: retail falls through to 0xD0005 (masked 6); tried the negated test (28), a ternary (6), an else-if (33), DataRead per arm (9)
 #ifdef NON_MATCHING
 void func_80103460_3FBAA0_name_6A(void) {
     s16 cnt[4];
