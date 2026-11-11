@@ -967,9 +967,6 @@ void func_80104E20_F6530_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
 }
 
 /* The player in the pick mode (CPU plan in the 10-13 states). */
-#ifdef NON_MATCHING
-/* Retail shares one jal between case 10's two HuVecCopyXYZ calls (cross-jumped); this
-   compiles them as two calls. Logic equal. */
 void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
     switch (cpu->unk_0C) {
         case 0:
@@ -997,8 +994,13 @@ void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
             cpu->unk_00 = 2;
             cpu->unk_08 = 0;
             cpu->unk_04 = &D_80106A3C_F814C_CoffinCongestion[7];
-            HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, (obj->trans.z < 0.0f) ? -70.0f : 70.0f);
-            goto next;
+            if (obj->trans.z < 0.0f) {
+                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, -70.0f);
+            } else {
+                HuVecCopyXYZ(&cpu->unk_04->pos, obj->trans.x, 0.0f, 70.0f);
+            }
+            cpu->unk_0C++;
+            break;
         case 11:
             func_80104C30_F6340_CoffinCongestion(obj, work, cpu);
             if (cpu->unk_00 != 0) {
@@ -1020,9 +1022,6 @@ void func_80104E80_F6590_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* c
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_03_CoffinCongestion/F3F70", func_80104E80_F6590_CoffinCongestion);
-#endif
 
 /* The player in the result mode: waits, then cheers or slumps. */
 void func_80105074_F6784_CoffinCongestion(omObjData* obj, MgWork* work, CCCpu* cpu) {
