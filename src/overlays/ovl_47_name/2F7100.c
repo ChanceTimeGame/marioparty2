@@ -981,7 +981,6 @@ void func_80102B54_2F7454_name_47(void) {
     }
 }
 
-#ifdef NON_MATCHING
 s32 func_80102C3C_2F753C_name_47(s32 space) {
     s32 i;
     s32 j;
@@ -991,34 +990,39 @@ s32 func_80102C3C_2F753C_name_47(s32 space) {
     i = 0;
     spaces = D_801109B4_3052B4_name_47;
     space = (s16)space;
-    do {
-        if (space == spaces[i]) {
-            if (i == gw->star_spawn_indices[gw->unk_0A]) {
-                gw->unk_1A = D_801109A4_3052A4_name_47[i];
-                return 1;
-            }
-            if (i == gw->unk_1C) {
-                return 2;
-            }
-            if (_CheckFlag(0x44)) {
-                space = 7;
-            } else {
-                space = gw->unk_0A;
-            }
-            for (j = 0; j < space; j++) {
-                if (i == gw->star_spawn_indices[j]) {
-                    return 3;
-                }
-            }
-            return 0;
+loop:
+    if (space == spaces[i]) {
+        if (i == gw->star_spawn_indices[gw->unk_0A]) {
+            gw->unk_1A = D_801109A4_3052A4_name_47[i];
+            return 1;
         }
-        i++;
-    } while (i < 7);
+        if (i == gw->unk_1C) {
+            return 2;
+        }
+        if (_CheckFlag(0x44)) {
+            space = 7;
+        } else {
+            space = gw->unk_0A;
+        }
+        j = 0;
+        if (j < space) {
+        inner:
+            if (i == gw->star_spawn_indices[j]) {
+                return 3;
+            }
+            j++;
+            if (j < space) {
+                goto inner;
+            }
+        }
+        return 0;
+    }
+    i++;
+    if (i < 7) {
+        goto loop;
+    }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80102C3C_2F753C_name_47);
-#endif
 
 void func_80102D28_2F7628_name_47(void) {
     SpaceData* space;
