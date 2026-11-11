@@ -1352,7 +1352,8 @@ void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
     obj->trans.z = z + dz * k;
 }
 
-// float register allocation (masked 16: dx, dz and the angle rotated; a shared divide tail), class 4
+// float register allocation (masked 0, raw 59: retail dx/dz/a in f20/f22/f24, ours f24/f20/f22), class 4;
+// declaration order does not move it
 #ifdef NON_MATCHING
 void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev) {
     MgWork* w;
@@ -1366,7 +1367,6 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
     f32 dz;
     f32 k;
     f32 sx;
-    f64 d;
 
     w = obj->unk_50;
     hit = shape->hit;
@@ -1406,7 +1406,8 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
         shape->hit = 3;
     }
     if (shape->hit == 3) {
-        d = sqrtf(dx * dx + dz * dz);
+        f64 d = sqrtf(dx * dx + dz * dz);
+
         if (d != 0.0) {
             k = r * 1.2 / d;
         } else {
@@ -1414,7 +1415,8 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
             k = 1.0f;
         }
     } else {
-        d = sqrtf(dx * dx + dz * dz);
+        f64 d = sqrtf(dx * dx + dz * dz);
+
         if (d != 0.0) {
             k = r / d;
         } else {

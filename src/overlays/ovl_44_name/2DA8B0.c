@@ -1146,7 +1146,8 @@ void func_80106050_2DE100_name_44(void) {
 /* The CPU duelists' answers: a copy of the sequence with 16 - skill wrong moves in it (easy 3-7 right,
    normal 6-10, hard 10-14, hardest 12-15), answered by func_80106C24 on the beat. */
 /* NON_MATCHING: masked 38, registers only: retail keeps the constant 1 in fp (the wrong flag, case 1)
-   and not 0xCCCCCCCD (rand8() % 5); GCC hoists the other one, and the work/count registers swap. */
+   and not 0xCCCCCCCD (rand8() % 5); GCC hoists the other one, and the work/count registers swap.
+   S3-T09 tried: errors declared first, the (u8) casts dropped (no change). */
 #ifdef NON_MATCHING
 void func_801068CC_2DE97C_name_44(void) {
     omObjData* obj;
