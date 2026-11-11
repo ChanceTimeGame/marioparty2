@@ -126,7 +126,10 @@ void func_80102AB0_113F30_LavaTileIsle(void) {
     Hu3DCamSetPerspective(cam, 30.0f, 80.0f, 8000.0f);
 }
 
-/* Control flow (class 3): retail copies the result to a0 in a branch delay slot, and its frame has 8 more bytes. */
+/* NON_MATCHING (masked 13, raw 13; was 21): retail's frame has 8 more bytes (no stack local is
+   used: only a pad would give it), it copies the result to a0 in a branch delay slot and tests it
+   with sltiu (this switch gives slti/bltz; `(u32)i < 2`, an assignment in the test and a direct
+   (u32) test did not give the copy), and leaves the delay slot of the 0x3C test empty (S3-T11). */
 #ifdef NON_MATCHING
 void func_80102BD0_114050_LavaTileIsle(omObjData* obj) {
     s32 i;
@@ -237,11 +240,15 @@ void func_80102BD0_114050_LavaTileIsle(omObjData* obj) {
             InitFadeOut(0, 0x14);
             func_8000C3A8_CFA8();
         }
-        i = D_8010A619_11BA99_LavaTileIsle;
-        if (i != -1) {
-            if ((u32)i < 2 && D_8010A1C8_11B648_LavaTileIsle == 0x78) {
-                InitFadeOut(0, 0x14);
-                func_8000C3A8_CFA8();
+        if (D_8010A619_11BA99_LavaTileIsle != -1) {
+            switch (D_8010A619_11BA99_LavaTileIsle) {
+            case 0:
+            case 1:
+                if (D_8010A1C8_11B648_LavaTileIsle == 0x78) {
+                    InitFadeOut(0, 0x14);
+                    func_8000C3A8_CFA8();
+                }
+                break;
             }
             D_8010A1C8_11B648_LavaTileIsle++;
         }

@@ -1371,8 +1371,9 @@ void func_80006BF8_77F8(omObjData* obj, ColSphere* s, f32 arg2);
 /* The player's step against the minigame actors (D_800F9CE0_FA8E0: hazards, bouncing actors, coins)
    and the other players (D_800FFFD8_100BD8). Returns 2 when the player stomped or bumped another
    player, else 0 (MP1 func_80000F3C). */
-// register allocation (masked 19): the first loop's dy/dz and 0.0f swap $f22/$f26/$f30, and the
-// last push's delay slot is filled differently (one instruction short); same logic
+// register allocation (masked 0, raw 49): the first loop's dy/dz and 0.0f swap $f22/$f26/$f30;
+// same logic. The last push's early `continue` gave its bc1tl (was masked 19); one dz for both
+// loops (raw 71) and declaration order did not move the registers (S3-T11)
 #ifdef NON_MATCHING
 s32 func_80004168_4D68(omObjData* obj, f32 x, f32 y, f32 z) {
     MgWork* w = obj->unk_50;
@@ -1600,7 +1601,10 @@ s32 func_80004168_4D68(omObjData* obj, f32 x, f32 y, f32 z) {
             }
         } else {
             flat = func_800B1830_B2430(dx * dx + dy * dy + dz2 * dz2) - (ow2->unk_48 + w->unk_48);
-            if (flat < 0.0f && (ow2->unk_38 == 1000.0f || w->unk_38 != 1000.0f)) {
+            if (flat < 0.0f) {
+                if (ow2->unk_38 != 1000.0f && w->unk_38 == 1000.0f) {
+                    continue;
+                }
                 func_80009684_A284(dx, dz2, flat);
                 w->unk_54 = i;
             }

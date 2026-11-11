@@ -245,8 +245,7 @@ build/src/overlays/ovl_6C_name/402730.c.o: export VR4300MUL := ON
 build/src/overlays/ovl_58_MinigameParkSetup/36DF00.c.o: export VR4300MUL := ON
 # 5B-E: 3875F0.c too (8010F734: a nop between mul.s pairs)
 build/src/overlays/ovl_5B_name/3875F0.c.o: export VR4300MUL := ON
-# 62-A: the KMC mul fix (a nop before mult at a loop head, 80103BF0 / 80104778)
-build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o: export VR4300MUL := ON
+# 62-A: the KMC mul fix (a nop before mult at a loop head, 80103BF0 / 80104778): see S5_4E_BLANKSTRIP_UNITS
 # S3-Q05: ovl_1F 1BE380.c (a nop between back-to-back mul.d: func_80105618)
 build/src/overlays/ovl_1F_DungeonDash/1BE380.c.o: export VR4300MUL := ON
 # S3-Q07: ovl_0C 133BA0.c (a nop between back-to-back mul.d: func_8010A0F0)
@@ -299,6 +298,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_1F_DungeonDash/1C2D40.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
 # S3-T04: ovl_50 34DBC0.c too (func_8010F79C: a nop before mult at a loop join)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_50_name/34DBC0.c.o
+# S3-T11: ovl_62 3D4F20.c too (mul fix on; func_8010421C: no nop before a mult after a branch-likely)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
@@ -826,6 +827,8 @@ build/src/overlays/ovl_17_Archerival/181420.c.o: export VR4300MUL := ON
 # mult after a call)
 S438_BLANKSTRIP_UNITS := build/src/overlays/ovl_38_QuicksandCache/27A330.c.o \
 	build/src/overlays/ovl_38_QuicksandCache/27D810.c.o
+# S3-T11: 27E3F0.c too (func_8010712C: a nop before a multu after a call)
+S438_BLANKSTRIP_UNITS += build/src/overlays/ovl_38_QuicksandCache/27E3F0.c.o
 $(S438_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S438_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

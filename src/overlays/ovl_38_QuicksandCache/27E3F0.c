@@ -177,18 +177,17 @@ void func_80107074_27EBA4_QuicksandCache(QCSpr* spr, s16 idx, u16 anim, u16 x, u
     SprPrioSet(spr->unk_04, idx, 0xFFF4);
 }
 
-#ifdef NON_MATCHING
-/* Logic complete; digit slot arithmetic is scheduled differently. */
 void func_8010712C_27EC5C_QuicksandCache(omObjData* obj) {
-    s16 i;
+    QCSpr* spr;
     QCScore* s;
-    QCSpr* spr = D_801079E0_27F510_QuicksandCache;
-    u16 v;
-    s16 slot;
-    s32 d;
-    s32 shown;
     f32 sc;
+    s16 i;
+    s16 slot;
+    s16 shown;
+    u16 v;
+    u16 d;
 
+    spr = D_801079E0_27F510_QuicksandCache;
     for (i = 0; i < 4; i++) {
         s = &D_80107FE8_27FB18_QuicksandCache[i];
         s->unk_00 = gPlayers[i].coins_mg;
@@ -201,16 +200,15 @@ void func_8010712C_27EC5C_QuicksandCache(omObjData* obj) {
                     v = s->unk_02 - 1;
                 }
                 shown = 0;
-                slot = i * 3 + 0xC;
+                slot = i * 3 + 12;
                 d = v / 100;
-                if ((u16)d != 0) {
+                if (d != 0) {
                     SprBankSet(spr->unk_04, slot++, d);
                     shown = 1;
                 } else {
                     SprAttrSet(spr->unk_04, slot + 2, 0x8000);
                 }
-                d = (u16)(v % 100) / 10;
-                if ((u16)d != 0) {
+                if ((d = (u16)(v % 100) / 10) != 0) {
                     goto bank;
                 }
                 if (shown != 0) {
@@ -219,7 +217,8 @@ void func_8010712C_27EC5C_QuicksandCache(omObjData* obj) {
                 } else {
                     SprAttrSet(spr->unk_04, slot + 1, 0x8000);
                 }
-                SprBankSet(spr->unk_04, slot, v % 10);
+                d = v % 10;
+                SprBankSet(spr->unk_04, slot, d);
                 SprAttrReset(spr->unk_04, slot, 0x8000);
                 s->unk_02 = v;
                 s->unk_04 = 1;
@@ -238,9 +237,6 @@ void func_8010712C_27EC5C_QuicksandCache(omObjData* obj) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_38_QuicksandCache/27E3F0", func_8010712C_27EC5C_QuicksandCache);
-#endif
 
 __asm__(".section .rodata");
 const s32 D_80107960_27F490_QuicksandCache[6] = { 0x00000028, 0x00000029, 0x0000002A, 0x0000002B, 0x0000002C, 0x0000002D };
