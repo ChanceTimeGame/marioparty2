@@ -385,7 +385,8 @@ void func_80103C6C_4100CC_Results(void) {
     func_8008CE5C_8DA5C();
 }
 
-// the noCoins test: retail copies it to v0 first (masked 1)
+// scheduling: retail fills the A/Start loop's entry delay slot with i = 0 and copies autoSkip after
+// it (masked 2; using allCpu directly is worse)
 #ifdef NON_MATCHING
 /* The screen's process: show the table, count the minigame bonus coins, then the minigame coins,
    re-rank the players and wait for A/Start (or for nobody, when all four are CPUs). */
@@ -394,7 +395,7 @@ void func_80103DB4_410214_Results(void) {
     s8 cpus;
     s32 allCpu;
     s32 autoSkip;
-    s32 noCoins;
+    s16 noCoins;
 
     noCoins = 0;
     func_80102944_40EDA4_Results();
@@ -860,7 +861,9 @@ void func_80104D3C_41119C_Results(void) {
 
 /* NON_MATCHING: byte-exact when assembled with KMC's VR4300 mul fix on (retail has its nop before
    the /10 mult), but this unit builds with the fix off, which 80104D3C needs. 0x411F18 is not a
-   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen. */
+   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen.
+   S3-T: with the fix on, KMC as puts a nop before a mult at a label (retail has it here) and
+   before a mult right after a GCC-filled (noreorder) delay slot (retail 80104D3C has none). */
 #ifdef NON_MATCHING
 /* Redraws each player's bonus coin counter with the coins still to count. */
 void func_80105AB8_411F18_Results(void) {
@@ -914,7 +917,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_70_Results/40EC60", func_80105AB8_411
 
 /* NON_MATCHING: byte-exact when assembled with KMC's VR4300 mul fix on (retail has its nop before
    the /10 mult), but this unit builds with the fix off, which 80104D3C needs. 0x411F18 is not a
-   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen. */
+   16-byte file boundary, so no split explains it yet: assembler/file split, not codegen.
+   S3-T: with the fix on, KMC as puts a nop before a mult at a label (retail has it here) and
+   before a mult right after a GCC-filled (noreorder) delay slot (retail 80104D3C has none). */
 #ifdef NON_MATCHING
 /* Redraws each player's minigame coin counter with the coins still to count. */
 void func_80105F50_4123B0_Results(void) {

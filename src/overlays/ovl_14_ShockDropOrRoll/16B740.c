@@ -878,8 +878,9 @@ const SDCamera D_801070EC_17002C_ShockDropOrRoll[2] = {
 };
 #endif
 
-// float register allocation of the spline time, the loop-invariant t - 60.0f and the result camera
-// switch (GCC folds it to xori/sltu); logic checked against the asm
+// retail reloads 60.0f for the loop-invariant t - 60.0f (we reuse the register: 3 instructions short)
+// and copies c before indexing (masked 17; case 0 first stops the xori/sltu fold; a split
+// (sum + 225) / 450 temporary and a double 60.0 do not help); logic checked against the asm
 #ifdef NON_MATCHING
 void func_80105920_16E860_ShockDropOrRoll(omObjData* obj) {
     SDWorkPair wk;
@@ -946,11 +947,11 @@ void func_80105920_16E860_ShockDropOrRoll(omObjData* obj) {
         D_8010274C_10334C.z = D_80107278_1701B8_ShockDropOrRoll[6];
     } else if (++D_80106F5A_16FE9A_ShockDropOrRoll < 60) {
         switch (D_80106ED5_16FE15_ShockDropOrRoll) {
-        case 1:
-            c = 0;
-            break;
         case 0:
             c = 1;
+            break;
+        case 1:
+            c = 0;
             break;
         }
         D_800FA610_FB210 += (D_801070EC_17002C_ShockDropOrRoll[c].zoom - D_80107278_1701B8_ShockDropOrRoll[0]) / 60.0f;

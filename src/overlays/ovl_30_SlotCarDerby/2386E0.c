@@ -747,9 +747,6 @@ void func_80104E54_23AD34_SlotCarDerby(SCDCar* car, f32 ahead) {
     car->unk_44 = d * 0.3;
 }
 
-/* One instruction: retail converts f to double again in the pitch's else arm (bc1fl delay slot)
-   where GCC reuses the comparison's conversion. */
-#ifdef NON_MATCHING
 void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
     Vec pos;
     Vec dir;
@@ -760,7 +757,6 @@ void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
     f32 cur;
     f32 prev;
     f32 f;
-    f64 d;
     s32 lim;
 
     car = func_801032E0_2391C0_SlotCarDerby(obj);
@@ -784,9 +780,9 @@ void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
         }
     } else if (target < cur) {
         if (car->unk_60 != 0) {
-            speed = cur - (f32)(20 - car->unk_60) / 10.0 * 0.546;
+            speed = cur - (f32)(20 - car->unk_60) / 10.0 * (9.1 * 0.06);
         } else {
-            speed = car->unk_50 - 0.546;
+            speed = car->unk_50 - 9.1 * 0.06;
         }
         if (speed < target) {
             speed = target;
@@ -808,11 +804,10 @@ void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
             }
             f = speed / 9.1 - 0.2;
             if (f >= 0.0) {
-                d = f / 0.8 * 1000.0;
+                f = f / 0.8 * 1000.0 - 400.0;
             } else {
-                d = f / 0.2 * 1400.0;
+                f = f / 0.2 * 1400.0 - 400.0;
             }
-            f = d - 400.0;
             func_800796F0_7A2F0(car->unk_74, f);
         }
     }
@@ -912,13 +907,7 @@ void func_80104F3C_23AE1C_SlotCarDerby(omObjData* obj, f32 throttle) {
         func_80103650_239530_SlotCarDerby(0, car);
     }
 }
-#else
-__asm__(".section .rodata");
-const u32 D_8010FE18_245CF8_SlotCarDerby[4] = { 0x3D787D9C, 0x3D9B4E82, 0x3DCF1358, 0x3E1B4E82 };
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/2386E0", func_80104F3C_23AE1C_SlotCarDerby);
-#endif
 
-__asm__(".section .rodata"); /* GCC thinks it is still in .rodata after the INCLUDE_ASM above */
 void func_801056FC_23B5DC_SlotCarDerby(omObjData* obj) {
     Vec pos;
     Vec dir;
