@@ -1203,7 +1203,8 @@ s16 func_80106C1C_1D3F7C_FaceLift(Vec* a, Vec* b, Vec* c, f32 x, f32 y) {
     return 1;
 }
 
-// register allocation; the model index is spilled in retail
+// masked 23: retail loads the vertex's part mask once before the j loop but does not CSE it with the
+// != 0 test; inline (this form) spills m like retail, a u8/s16/s32 mask local CSEs the load (masked 31).
 #ifdef NON_MATCHING
 void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Vec* p3, Vec* p4, Vec* p5) {
     Vec pts[6];
@@ -1216,7 +1217,6 @@ void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Ve
     s16 n;
     f32 sx;
     f32 sy;
-    u8 mask;
     FLPart* part;
     s16 model;
     f32 dx;
@@ -1256,9 +1256,8 @@ void func_80106E24_1D4184_FaceLift(omObjData* obj, Vec* p0, Vec* p1, Vec* p2, Ve
                 n = 0;
                 sy = 0.0f;
                 sx = 0.0f;
-                mask = D_80109CD8_1D7038_FaceLift[m][i];
                 for (j = 0; j < 6; j++) {
-                    if ((mask >> j) & 1) {
+                    if ((D_80109CD8_1D7038_FaceLift[m][i] >> j) & 1) {
                         part = &D_80109C14_1D6F74_FaceLift[j];
                         ex = part->x - D_800FC834_FD434[model].pos.x;
                         ey = part->y - D_800FC834_FD434[model].pos.y;
