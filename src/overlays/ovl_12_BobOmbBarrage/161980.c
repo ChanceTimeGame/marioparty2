@@ -383,6 +383,7 @@ void func_80104850_162B70_BobOmbBarrage(s32 slot) {
     }
 }
 
+// masked 49: regalloc (loop counter s2 not s1, float temps); case 2 splash address CSEd into s0 where retail reloads it; the bounce divisor recomputes d.x*d.x in retail
 #ifdef NON_MATCHING
 void func_801049E0_162D00_BobOmbBarrage(f32 x, f32 y, u16 btn) {
     Vec pos;
@@ -395,7 +396,6 @@ void func_801049E0_162D00_BobOmbBarrage(f32 x, f32 y, u16 btn) {
     f32 k;
     f32 s;
     f32 t;
-    f32 z2;
     f32 len;
     f32 f;
     f32 yOfs;
@@ -476,12 +476,12 @@ void func_801049E0_162D00_BobOmbBarrage(f32 x, f32 y, u16 btn) {
         vel.z += y * 0.02f;
         d.x = (pos.x + vel.x) * 0.68 - 0.0;
         d.z = (pos.z - vel.z) - -120.0f;
-        if (d.x * d.x + (z2 = d.z * d.z) > 280900.0f) {
+        if (d.x * d.x + d.z * d.z > 280900.0f) {
             n.x = d.x;
             n.z = d.z;
             v.x = vel.x;
             v.z = -vel.z;
-            s = (d.x * v.x + d.z * v.z) / (n.x * n.x + z2);
+            s = (d.x * v.x + d.z * v.z) / (n.x * n.x + n.z * n.z);
             r.x = s * d.x;
             r.z = s * d.z;
             v.x -= 2.0f * r.x;
@@ -555,7 +555,7 @@ void func_801049E0_162D00_BobOmbBarrage(f32 x, f32 y, u16 btn) {
             rot.y = 0.0f;
         } else {
             D_80109378_167698_BobOmbBarrage.state = 2;
-            D_80109378_167698_BobOmbBarrage.y = yOfs = -80.0f;
+            yOfs = D_80109378_167698_BobOmbBarrage.y = -80.0f;
             D_80109378_167698_BobOmbBarrage.t = 0;
             D_80109378_167698_BobOmbBarrage.time = 0xA;
             mdl = D_8010A1C8_1684E8_BobOmbBarrage[2]->model[4];
@@ -563,7 +563,7 @@ void func_801049E0_162D00_BobOmbBarrage(f32 x, f32 y, u16 btn) {
             func_80029E80_2AA80(mdl, 2, 2);
             func_80079798_7A398(0x1B0, 0);
             func_800298A4_2A4A4(D_801093A0_1676C0_BobOmbBarrage[1].act.u.bomb[0].splash, 4, 0);
-            func_80029714_2A314(D_801093A0_1676C0_BobOmbBarrage[1].act.u.bomb[0].splash, D_80109370_167690_BobOmbBarrage->pos.x, D_80109370_167690_BobOmbBarrage->pos.y + -80.0f, D_80109370_167690_BobOmbBarrage->pos.z);
+            func_80029714_2A314(D_801093A0_1676C0_BobOmbBarrage[1].act.u.bomb[0].splash, D_80109370_167690_BobOmbBarrage->pos.x, D_80109370_167690_BobOmbBarrage->pos.y + yOfs, D_80109370_167690_BobOmbBarrage->pos.z);
             func_80029C74_2A874(D_801093A0_1676C0_BobOmbBarrage[1].act.u.bomb[0].splash, 0.0f);
         }
         break;
@@ -682,17 +682,17 @@ void func_80105964_163C84_BobOmbBarrage(Vec* dir, f32 speed, s32 time) {
     D_801093A0_1676C0_BobOmbBarrage->ai.y = k * dir->y;
 }
 
+// register allocation only (masked 0, raw 56): len/eight swap f22/f26, rotAim load in f0 not f2
 #ifdef NON_MATCHING
 void func_801059E4_163D04_BobOmbBarrage(void) {
     Vec d;
-    f32 eight;
+    f32 len;
     s32 c1;
     s32 c2;
     f32 rot;
-    f32 x;
     s32 state;
     f32 f;
-    f32 len;
+    f32 eight;
     f32 ang;
     f32 a;
     f32 frame;
@@ -700,10 +700,9 @@ void func_801059E4_163D04_BobOmbBarrage(void) {
     s32 i;
     BBBomb* b;
 
-    x = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
+    rot = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
     mdl = D_8010A1C8_1684E8_BobOmbBarrage[2]->model[D_8010A1C0_1684E0_BobOmbBarrage + 4];
     state = D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.state;
-    rot = x;
     switch (state) {
     case 2:
         if (D_80109320_167640_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].done == 0) {
@@ -727,7 +726,7 @@ void func_801059E4_163D04_BobOmbBarrage(void) {
         eight = 8.0f;
         f = D_80109370_167690_BobOmbBarrage->ai.power;
         if (D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.state != 0xD) {
-            if (D_80109370_167690_BobOmbBarrage->ai.time < D_80109370_167690_BobOmbBarrage->ai.t) {
+            if (D_80109370_167690_BobOmbBarrage->ai.t > D_80109370_167690_BobOmbBarrage->ai.time) {
                 f = 0.09f;
                 func_80105964_163C84_BobOmbBarrage(&D_80108FA0_1672C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].dir, D_80108FA0_1672C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].speed, D_80108FA0_1672C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].time);
                 func_801089C4_166CE4_BobOmbBarrage(D_80108FF0_167310_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].from, D_80108FF0_167310_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].to, D_80108FF0_167310_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].time);
@@ -768,15 +767,16 @@ void func_801059E4_163D04_BobOmbBarrage(void) {
             }
             c1 = a >= 180.0f;
             c2 = a < 360.0f;
-            rot = a;
             if (c1 & c2) {
                 D_80109370_167690_BobOmbBarrage->rotShow = a;
                 D_80109370_167690_BobOmbBarrage->rotAim = a;
                 D_80109370_167690_BobOmbBarrage->rotShow = a;
+                rot = a;
             } else {
                 rot = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
             }
-            func_80029C74_2A874(mdl, (len - eight) * f + eight);
+            eight = (len - eight) * f + eight;
+            func_80029C74_2A874(mdl, eight);
         }
         break;
     default:
@@ -800,6 +800,7 @@ void func_801059E4_163D04_BobOmbBarrage(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_801059E4_163D04_BobOmbBarrage);
 #endif
 
+// register allocation only (masked 0, raw 48): rot/mag swap f24/f26
 #ifdef NON_MATCHING
 void func_80106150_164470_BobOmbBarrage(void) {
     s32 c1;
@@ -807,13 +808,14 @@ void func_80106150_164470_BobOmbBarrage(void) {
     f32 x;
     f32 eight;
     f32 y;
-    f32 rot;
     f32 mag;
+    f32 rot;
     f32 ang;
     f32 a;
     f32 len;
     s16 mdl;
     s32 i;
+    s32 held;
     u8 port;
     BBBomb* b;
 
@@ -837,8 +839,7 @@ void func_80106150_164470_BobOmbBarrage(void) {
                 rot = ang;
             }
         } else {
-            ang = 270.0f;
-            D_80109370_167690_BobOmbBarrage->rotShow = ang;
+            D_80109370_167690_BobOmbBarrage->rotShow = ang = 270.0f;
             D_80109370_167690_BobOmbBarrage->rotAim = ang;
             rot = ang;
         }
@@ -854,7 +855,8 @@ void func_80106150_164470_BobOmbBarrage(void) {
             func_80079798_7A398(0x1B1, (s16)D_8010A1C0_1684E0_BobOmbBarrage);
             D_80109370_167690_BobOmbBarrage->power -= ((mag - 0.1f) * 1.1111112f * 0.9f + 0.1f) * 5.0f;
             a = D_80109370_167690_BobOmbBarrage->rotAim;
-            b = &D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.u.bomb[D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.held];
+            held = D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.held;
+            b = &D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.u.bomb[held];
             D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].act.held = -1;
             func_800298A4_2A4A4(b->lit, 0x4000, 0);
             func_80029BF0_2A7F0(mdl, func_80029E14_2AA14(D_801093A0_1676C0_BobOmbBarrage[D_8010A1C0_1684E0_BobOmbBarrage].mot[11]), 0, 8, 0);
@@ -872,15 +874,16 @@ void func_80106150_164470_BobOmbBarrage(void) {
             D_80109370_167690_BobOmbBarrage->power = ((mag - 0.1f) * 1.1111112f * 0.9f + 0.1f) * 5.5f;
             c1 = ang >= 180.0f;
             c2 = ang < 360.0f;
-            rot = ang;
             if (c1 & c2) {
                 D_80109370_167690_BobOmbBarrage->rotShow = ang;
                 D_80109370_167690_BobOmbBarrage->rotAim = ang;
                 D_80109370_167690_BobOmbBarrage->rotShow = ang;
+                rot = ang;
             } else {
                 rot = D_80109370_167690_BobOmbBarrage->rotShow = D_80109370_167690_BobOmbBarrage->rotAim;
             }
-            func_80029C74_2A874(mdl, (len - eight) * mag + eight);
+            mag = (len - eight) * mag + eight;
+            func_80029C74_2A874(mdl, mag);
         } else {
             D_80109370_167690_BobOmbBarrage->act.state = 0xD;
             func_80029C74_2A874(mdl, 0.0f);
@@ -1137,6 +1140,7 @@ void func_8010684C_164B6C_BobOmbBarrage(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_12_BobOmbBarrage/161980", func_8010684C_164B6C_BobOmbBarrage);
 #endif
 
+// register allocation only (masked 0, raw 57): state/fuse in s3/s2 swapped, shadow scale in f4 not f0
 #ifdef NON_MATCHING
 void func_80107700_165A20_BobOmbBarrage(s32 slot) {
     Vec from;
@@ -1147,8 +1151,8 @@ void func_80107700_165A20_BobOmbBarrage(s32 slot) {
     f32 k;
     f32 y;
     f32 py;
-    s32 fuse;
     s32 state;
+    s32 fuse;
     s32 hit;
     s32 pl;
     s32 ready;
@@ -1351,9 +1355,10 @@ void func_80107700_165A20_BobOmbBarrage(s32 slot) {
     func_80029714_2A314(b->lit, b->pos.x, b->pos.y, b->pos.z);
     d.x = (b->pos.x - 0.0f) * 0.68;
     d.z = b->pos.z - -120.0f;
-    y = 200.0f;
     if (d.x * d.x + d.z * d.z < 476100.0f) {
         y = 0.0f;
+    } else {
+        y = 200.0f;
     }
     f = 1.0f - (b->pos.y - y) * 0.001f;
     if (f > 1.0f) {
