@@ -449,7 +449,9 @@ void func_8006985C_6A45C(GAMEMES* gMes) {
 }
 
 /* "START" (MP1 func_800763CC) */
-// register allocation in the two loops that pass i + 1 twice (masked 22); logic checked
+// register allocation in the two loops that pass i + 1 twice (masked 22); logic checked. Retail keeps i
+// and i + 1 in two registers (move s0,s1 per iteration), as the matching func_8006DAA8_6E6A8 does with a
+// called length; S3-T tried case 1 as i + 1, an s16 id temp, u8/u16/s16 n: no change or worse.
 #ifdef NON_MATCHING
 s32 func_800698F0_6A4F0(GAMEMES* gMes, Gfx** arg1) {
     s32 n = 5;

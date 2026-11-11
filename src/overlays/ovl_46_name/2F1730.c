@@ -1225,6 +1225,9 @@ const u32 D_80108178_2F70A8_name_46[4] = { 0x0000000A, 0x00000014, 0x00000014, 0
 __asm__(".section .rodata");
 const u32 D_80108188_2F70B8_name_46[4] = { 0x0000005A, 0x0000003C, 0x00000014, 0x00000001 };
 
+// the n == 0 fallback loops (masked 34, 481 of 480): GCC knows n == 0 there and tests the loop guard as
+// n < count - 1, retail as blez count - 1 with i = 0 in the delay slot. S3-T fixed the second
+// func_80059FD0 call (D_801081F4, not D_801081F0); nesting the n == 0 blocks changed nothing.
 #ifdef NON_MATCHING
 void func_8010675C_2F568C_name_46(s32 cur, s32 target, s32 mode) {
     s32 cand[4];
@@ -1312,7 +1315,7 @@ void func_8010675C_2F568C_name_46(s32 cur, s32 target, s32 mode) {
     }
     if (mode == 3) {
         row = func_80059FD0_5ABD0(D_801081F0_2F7120_name_46) * 8;
-        row += func_80059FD0_5ABD0(D_801081F0_2F7120_name_46) * 2;
+        row += func_80059FD0_5ABD0(D_801081F4_2F7124_name_46) * 2;
         diff = PD_ABS(gPlayers[D_801081F0_2F7120_name_46].stars - gPlayers[D_801081F4_2F7124_name_46].stars);
         row += diff < 2;
         work->target = (rand8() % range[rows[row]] + base[rows[row]]) * D_80108234_2F7164_name_46 / 100;
