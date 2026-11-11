@@ -516,7 +516,8 @@ void func_801041D0_E5410_RollOutTheBarrels(void) {
     D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(0x10, 0xA, 0x3C, -1, func_80104270_E54B0_RollOutTheBarrels);
 }
 
-// register allocation (masked 3, one extra move at the end), class 4
+// register allocation (masked 3, one extra move at the end: retail keeps t in v0), class 4. Tried (S3-T09):
+// s32 t, an else arm, storing pl->target directly (all 523)
 #ifdef NON_MATCHING
 void func_80104270_E54B0_RollOutTheBarrels(omObjData* obj) {
     s32 mot[2];
@@ -1352,7 +1353,8 @@ void func_801066B4_E78F4_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
     obj->trans.z = z + dz * k;
 }
 
-// float register allocation (masked 16: dx, dz and the angle rotated; a shared divide tail), class 4
+// float register allocation (masked 0, raw 59: retail dx/dz/a in f20/f22/f24, ours f24/f20/f22), class 4;
+// declaration order does not move it
 #ifdef NON_MATCHING
 void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* prev) {
     MgWork* w;
@@ -1366,7 +1368,6 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
     f32 dz;
     f32 k;
     f32 sx;
-    f64 d;
 
     w = obj->unk_50;
     hit = shape->hit;
@@ -1406,7 +1407,8 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
         shape->hit = 3;
     }
     if (shape->hit == 3) {
-        d = sqrtf(dx * dx + dz * dz);
+        f64 d = sqrtf(dx * dx + dz * dz);
+
         if (d != 0.0) {
             k = r * 1.2 / d;
         } else {
@@ -1414,7 +1416,8 @@ void func_801067BC_E79FC_RollOutTheBarrels(RBShape* shape, omObjData* obj, Vec* 
             k = 1.0f;
         }
     } else {
-        d = sqrtf(dx * dx + dz * dz);
+        f64 d = sqrtf(dx * dx + dz * dz);
+
         if (d != 0.0) {
             k = r / d;
         } else {
@@ -3645,7 +3648,9 @@ void func_8010E4C0_EF700_RollOutTheBarrels(s16 model) {
     D_80112DAC_F3FEC_RollOutTheBarrels[1] = abs(zs[0] - zs[1]);
 }
 
-// s-register allocation: retail keeps the angle test as a branch where GCC uses sltiu, flag in s4 and a1 (masked 30), class 4
+// control flow: retail keeps the angle test as a branch (flag in s4, copied to a1) where GCC folds
+// `flag = 0; if (angle == 0) flag = 1` into sltiu (185 vs 190, masked 30). Tried (S3-T09): s16 and u8
+// flag/on, flag++ (ovl_27's phase++), an else arm, the init next to the test, on copied before the loop.
 #ifdef NON_MATCHING
 void func_8010E944_EFB84_RollOutTheBarrels(s16 model, s32 angle) {
     HmfData* d;

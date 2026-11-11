@@ -120,8 +120,9 @@ void func_8010D528_340168_name_4F(omObjData *obj)
 
 }
 
-/* NON_MATCHING: the colour fade clamps (max 0) differ: retail sign-extends the green and blue
-   differences as s16 before the clamp and orders the first and differently. Logic checked. */
+/* NON_MATCHING: 237 vs 241, masked 6: retail sign-extends the green and blue differences (sll/sra)
+   before the clamp to 0; GCC drops the extension. Tried (S3-T09): one s16 for green and blue, one for
+   all three. Logic checked. */
 #ifdef NON_MATCHING
 void func_8010D6FC_34033C_name_4F(omObjData* obj) {
     Vec dir;
@@ -129,7 +130,7 @@ void func_8010D6FC_34033C_name_4F(omObjData* obj) {
     Ovl4FStreak* p;
     s32 i;
     s32 k;
-    s32 r;
+    s16 r;
     s16 g;
     s16 b;
     u8 slot = obj->work[1];

@@ -302,6 +302,8 @@ S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_0A_RakinEmIn/121740.c.o
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_50_name/34DBC0.c.o
 # S3-T11: ovl_62 3D4F20.c too (mul fix on; func_8010421C: no nop before a mult after a branch-likely)
 S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_62_TitleScreenAndIntro/3D4F20.c.o
+# S3-T09: ovl_30 23F020.c too (func_8010AC5C: nops between mul.d pairs; func_8010B0E4: none after a call)
+S5_4E_BLANKSTRIP_UNITS += build/src/overlays/ovl_30_SlotCarDerby/23F020.c.o
 $(S5_4E_BLANKSTRIP_UNITS): export VR4300MUL := ON
 $(S5_4E_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(PRINT)$(GREEN)Compiling C file: $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)

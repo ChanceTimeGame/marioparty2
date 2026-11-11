@@ -528,38 +528,34 @@ void func_8010A8CC_2407AC_SlotCarDerby(omObjData* obj) {
 }
 
 /* Bobs the five floating billboards: their scale swings with a sine of the bob angle. */
-// 8 bytes more frame in retail, the angle wrap is not folded into one addiu, and retail has the KMC
-// mul fix nop between its mul.d pair (the unit builds without the fix: 8010B0E4 lacks its after-call nops)
-#ifdef NON_MATCHING
 void func_8010AC5C_240B3C_SlotCarDerby(omObjData* obj) {
     SCDFloater* f = D_80110978_246858_SlotCarDerby;
     s16 id;
     s16 angle;
     f32 s;
     f32 c;
+    f32 sx;
+    f32 sy;
     s16 i;
 
     for (i = 0; i < 5; i++, f++) {
-        if ((id = f->unk_00) == -1) {
+        if (f->unk_00 == -1 || f->unk_02 == -1) {
             continue;
         }
-        if (f->unk_02 == -1) {
-            continue;
-        }
-        angle = f->unk_04 + 8;
+        id = f->unk_00;
+        angle = f->unk_04;
+        angle += 8;
         if (angle > 360) {
             angle -= 360;
         }
         s = HuMathSin(angle);
         c = -s;
-        func_8010C9A4_242884_SlotCarDerby(id, (s * 10.0 * 0.15 + 10.0) * f->unk_08,
-                                          (c * 10.0 * 0.15 + 10.0) * f->unk_08, 1.0f);
+        sx = (s * 10.0 * 0.15 + 10.0) * f->unk_08;
+        sy = (c * 10.0 * 0.15 + 10.0) * f->unk_08;
+        func_8010C9A4_242884_SlotCarDerby(id, sx, sy, 1.0f);
         f->unk_04 = angle;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_30_SlotCarDerby/23F020", func_8010AC5C_240B3C_SlotCarDerby);
-#endif
 
 void func_8010AD94_240C74_SlotCarDerby(s32 type, Vec* pos, Vec* rot) {
     func_8010ADB0_240C90_SlotCarDerby(type, pos, rot);

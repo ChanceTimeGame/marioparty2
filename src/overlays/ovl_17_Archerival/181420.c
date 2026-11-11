@@ -1438,16 +1438,20 @@ void func_801064BC_1850DC_Archerival(omObjData* obj) {
     }
 }
 
-// NON_MATCHING: retail keeps the entry's byte offset in s0 across the calls, register and scheduling residue
+// NON_MATCHING: register allocation (masked 2, raw 18): retail computes the guRandom quotient in v0/v1, ours
+// in a0, which then needs a move after arg 0 loads into v0 (130 vs 131). Tried: the whole argument inline
+// (precomputed, masked 18), only guRandom in the local, only the % in it.
 #ifdef NON_MATCHING
 void func_801066C0_1852E0_Archerival(omObjData* obj) {
     u16 idx;
+    u32 r;
 
     obj->model[0] = LoadFormFile(7, 0x68D);
     idx = func_80018D64_19964(0xE, 0xA89, 8);
     obj->model[0] = D_800F86D8_F92D8[idx].unk00;
     HmfModelObjAttrSet(obj->model[0], 0x70000000, 0x70000000);
-    func_8003E808_3F408(D_800F86D8_F92D8[idx].unk02, (u32)(((u32)guRandom() >> 4) % 300) / 100);
+    r = ((u32)guRandom() >> 4) % 300 / 100;
+    func_8003E808_3F408(D_800F86D8_F92D8[idx].unk02, r);
     obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
     func_800298A4_2A4A4(obj->model[0], 4, 4);
     obj->model[1] = LoadFormFile(8, 0x68D);
@@ -1568,14 +1572,15 @@ void func_80106C80_1858A0_Archerival(omObjData* obj) {
     }
 }
 
-// NON_MATCHING: retail keeps k in a2 for func_800691FC's third argument (one instruction fewer), as Look Away's 80106060
+// NON_MATCHING: 267 vs 268, masked 1: retail copies k (move a0,a2) before sign-extending it as the chars[]
+// index. Tried: k = 0 in the else arm, chars[k] in the one-winner arm too, chars[i - 1].
 #ifdef NON_MATCHING
 void func_80106CD8_1858F8_Archerival(omObjData* obj) {
     ARObj* tbl;
+    omObjData* o;
     u8 chars[4];
     s16 i;
     s16 k;
-    s32 t;
 
     switch (D_801078DE_1864FE_Archerival) {
     case 0:
@@ -1607,29 +1612,30 @@ void func_80106CD8_1858F8_Archerival(omObjData* obj) {
                 k = 0;
                 if (D_801078E0_186500_Archerival == 1) {
                     chars[0] = gPlayers[D_80107920_186540_Archerival[0].obj->work[0]].character;
-                    func_800691FC_69DFC(6, chars[0], k);
+                    func_800691FC_69DFC(6, chars[0]);
                     D_801078E2_186502_Archerival = 120;
                 } else {
                     i = 1;
                     tbl = D_80107920_186540_Archerival;
                     for (; i < 4; i++, k++) {
-                        chars[k] = gPlayers[tbl[i].obj->work[0]].character;
+                        o = tbl[i].obj;
+                        chars[k] = gPlayers[o->work[0]].character;
                     }
                     func_800691FC_69DFC(0x15, chars[0], chars[1], chars[2]);
                     D_801078E2_186502_Archerival = 168;
                 }
             }
             func_80106AE4_185704_Archerival();
-            gPlayers[D_80107920_186540_Archerival[0].obj->work[0]].coins_mg = D_801078EA_18650A_Archerival;
+            o = D_80107920_186540_Archerival[0].obj;
+            gPlayers[o->work[0]].coins_mg = D_801078EA_18650A_Archerival;
         }
         break;
     case 4:
         if (_CheckFlag(0xC) != 0) {
-            t = D_801078E4_186504_Archerival;
-        } else {
-            t = --D_801078E2_186502_Archerival;
-        }
-        if (t == 0) {
+            if (D_801078E4_186504_Archerival == 0) {
+                D_801078DE_1864FE_Archerival = 5;
+            }
+        } else if (--D_801078E2_186502_Archerival == 0) {
             D_801078DE_1864FE_Archerival = 5;
         }
         break;
