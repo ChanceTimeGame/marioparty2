@@ -779,7 +779,9 @@ f32 func_80107044_1DB724_ShellShocked(s32 i, s32 target) {
     return yaw;
 }
 
-// control flow (masked 51, 274 vs 279 instructions)
+// FPR allocation (masked 16, 274 = 274): retail keeps dot in f6 / cos in f8 and loads a.x, a.z before
+// the dot product; the pillar loop's t sits in f12 there. S3-R tried: ABS(len) through t, t for x*x + z*z,
+// storing c directly (273).
 #ifdef NON_MATCHING
 s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     Vec a;
@@ -789,7 +791,6 @@ s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     Vec e;
     SSTank* p;
     SSTank* q;
-    SSMap* map;
     Vec* v;
     s32 j;
     s32 shot;
@@ -799,6 +800,7 @@ s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     f32 dot;
     f32 len;
     f32 k;
+    f32 t;
     f32 x;
     f32 z;
 
@@ -815,7 +817,8 @@ s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     if (p->shell[0].active == 1) {
         return -1;
     }
-    if (func_8010CAA4_1E1184_ShellShocked() < D_8010CBA0_1E1280_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level]) {
+    k = D_8010CBA0_1E1280_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
+    if (func_8010CAA4_1E1184_ShellShocked() < k) {
         return -1;
     }
     b.x = q->pos.x - p->pos.x;
@@ -829,25 +832,23 @@ s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     if (dot < 0.3f) {
         return -1;
     }
-    k = D_8010CC50_1E1330_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
     d.x = s;
-    if (len * k * k < dot * dot) {
+    if (len * D_8010CC50_1E1330_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level] * D_8010CC50_1E1330_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level] < dot * dot) {
         shot = 0;
         ok = 1;
     }
     d.z = co;
     e.x = co;
     e.z = -s;
-    map = D_8010DFE0_1E26C0_ShellShocked;
     for (j = 0; j < D_8010DFE0_1E26C0_ShellShocked->count; j++) {
-        v = &map->pillars[j];
+        v = &D_8010DFE0_1E26C0_ShellShocked->pillars[j];
         c.z = v->z - p->pos.z;
         c.x = v->x - p->pos.x;
-        k = func_800B1830_B2430(ABS(len)) + 100.0f;
-        if (!(k * k < c.x * c.x + c.z * c.z)) {
-            k = -(d.x * c.z - d.z * c.x);
-            x = k * d.x;
-            z = k * d.z;
+        t = func_800B1830_B2430(ABS(len)) + 100.0f;
+        if (!(t * t < c.x * c.x + c.z * c.z)) {
+            t = -(d.x * c.z - d.z * c.x);
+            x = t * d.x;
+            z = t * d.z;
             c.x = x;
             c.z = z;
             if (x * x + z * z < 9604.0f) {
@@ -857,10 +858,10 @@ s32 func_801072FC_1DB9DC_ShellShocked(s32 i, s32 target) {
     }
     if ((ok != 0) & (~shot == 0)) {
         k = D_8010CC60_1E1340_ShellShocked[D_8010DA80_1E2160_ShellShocked[i].level];
-        len = b.x * b.x + b.z * b.z;
-        len = func_800B1830_B2430(ABS(len));
+        t = b.x * b.x + b.z * b.z;
+        t = func_800B1830_B2430(ABS(t));
         x = D_8010DFD0_1E26B0_ShellShocked * 0.95f;
-        if (len - k <= x && x <= len + k) {
+        if (t - k <= x && x <= t + k) {
             shot = (rand8() & 3) != 0;
         }
     }
