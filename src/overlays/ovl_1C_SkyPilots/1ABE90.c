@@ -606,15 +606,11 @@ void func_801044D4_1ADB64_SkyPilots(omObjData* obj) {
     ((SPPlane*)obj->unk_50)->scale = 1.0f;
 }
 
-/* NON_MATCHING: loop hoists 400.0f into a saved register (masked 15) */
-#ifdef NON_MATCHING
 void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32 z) {
     SPPlane* w = obj->unk_50;
     s32 i = 0;
 
     if (D_800F8FD0_F9BD0 == 1) {
-        f64 lim = 50.0;
-
         for (; i < 6; i++) {
             if (angle < D_8010ADF4_1B4484_SkyPilots[i].angle + 5.0f && D_8010ADF4_1B4484_SkyPilots[i].angle - 5.0f < angle) {
                 Vec v;
@@ -627,7 +623,7 @@ void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
                 func_80104654_1ADCE4_SkyPilots(&v, i);
                 vx = v.x;
                 vy = v.y;
-                if (fabs(v.z) < lim && func_800B1830_B2430(vx * vx + vy * vy) < 400.0f) {
+                if (fabs(v.z) < 50.0 && func_800B1830_B2430(vx * vx + vy * vy) < 400.0f) {
                     if (w->spinKind == 0) {
                         w->timerA = 0;
                         w->lastGate = i;
@@ -644,9 +640,6 @@ void func_801044EC_1ADB7C_SkyPilots(omObjData* obj, f32 angle, f32 x, f32 y, f32
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1C_SkyPilots/1ABE90", func_801044EC_1ADB7C_SkyPilots);
-#endif
 
 void func_80104654_1ADCE4_SkyPilots(Vec* v, s32 i) {
     f32 ang = D_8010ADF4_1B4484_SkyPilots[i].angle;
