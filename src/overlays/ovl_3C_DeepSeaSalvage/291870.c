@@ -960,8 +960,9 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3C_DeepSeaSalvage/291870", func_80105
 
 /* The scores: count the shown number one step towards the score (left-aligned digits), then
    pop it. */
-/* NON_MATCHING: retail tests d and lead with two branches; GCC folds the || into flag
-   arithmetic (masked 23, that test's shape only). */
+/* NON_MATCHING: masked 15. The tens test is retail's two branches through a goto; left: retail
+   sign-extends m (after the tens m++) only at the ones digit, GCC right after the increment. Tried
+   else-if with a second call (worse) and an s32 m (worse). */
 #ifdef NON_MATCHING
 void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj) {
     DSSHud* hud;
@@ -994,7 +995,11 @@ void func_80105BB8_294C28_DeepSeaSalvage(omObjData* obj) {
                     SprAttrSet(hud->group, m + 2, 0x8000);
                 }
                 d = (u16)(n % 100) / 10;
-                if (d != 0 || lead != 0) {
+                if (d != 0) {
+                    goto tens;
+                }
+                if (lead != 0) {
+                tens:
                     SprBankSet(hud->group, m++, d);
                 } else {
                     SprAttrSet(hud->group, m + 1, 0x8000);

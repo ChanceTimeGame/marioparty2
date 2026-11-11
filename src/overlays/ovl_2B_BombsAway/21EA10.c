@@ -653,10 +653,6 @@ void func_8010A4BC_2208AC_BombsAway(void) {
     D_8010DFE2_2243D2_BombsAway = 1;
 }
 
-// the KMC mul fix puts a nop before the second sprite's mul.s after func_800B7890 (its delay slot
-// filled); retail has none there (one instruction), so retail's GCC left that slot to gas. S3-P07: x/x2
-// as s16 is worse (masked 10); the permuter found nothing.
-#ifdef NON_MATCHING
 void func_8010A4CC_2208BC_BombsAway(void) {
     s32 x;
     s32 x2;
@@ -727,9 +723,6 @@ void func_8010A4CC_2208BC_BombsAway(void) {
     SprScaleSet(D_8010DFE8_2243D8_BombsAway, 0, HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625,
                 HuMathSin(D_8010DFDA_2243CA_BombsAway) / 8.0f + 0.625);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/21EA10", func_8010A4CC_2208BC_BombsAway);
-#endif
 
 void func_8010AA9C_220E8C_BombsAway(omObjData* obj) {
     obj->func_ptr = func_8010AB08_220EF8_BombsAway;

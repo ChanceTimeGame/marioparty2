@@ -963,9 +963,7 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_80104CD0_2
 
 /* A player's scripted states (MP1 func_800F8D48): 3 stunned, 5 falling into the sea and swept
    back to the edge, 6 out, 7 placed for the results, 9 thrown by a blast. New in MP2: the splash
-   voice plays once (unk_42), and the results no longer add 10 coins.
-   NON_MATCHING: only KMC's mul-fix nop after the cos and sin calls in case 9 (retail has none). */
-#ifdef NON_MATCHING
+   voice plays once (unk_42), and the results no longer add 10 coins. */
 void func_801055FC_21B9EC_BombsAway(omObjData* obj) {
     Vec d;
     Vec pos;
@@ -1160,7 +1158,7 @@ void func_801055FC_21B9EC_BombsAway(omObjData* obj) {
             func_800B37C0_B43C0(m1);
             func_800B1CC0_B28C0(m1, p->unk_3A * 60.0f, 0.0f, 1.0f, 0.0f);
             m1[3][3] = 1.0f;
-            func_80108ACC_21EEBC_BombsAway(&vel, &d);
+            func_80108ACC_21EEBC_BombsAway(&vel, &d.x);
             func_800B37C0_B43C0(m2);
             func_800B2060_B2C60(m2, d.x + 90.0f, d.y, d.z);
             m2[3][3] = 1.0f;
@@ -1189,9 +1187,6 @@ void func_801055FC_21B9EC_BombsAway(omObjData* obj) {
     func_80019378_19F78(obj);
     func_80019644_1A244(obj);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2B_BombsAway/218BF0", func_801055FC_21B9EC_BombsAway);
-#endif
 
 /* The platform object's setup (MP1 func_800F9824). */
 void func_801060C8_21C4B8_BombsAway(omObjData* obj) {
