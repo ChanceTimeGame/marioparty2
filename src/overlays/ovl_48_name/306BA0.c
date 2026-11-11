@@ -1323,7 +1323,10 @@ s32 func_80107508_30B8A8_name_48(void) {
 
 /* NON_MATCHING: masked 34, as 42's and 3F's twins: the rank loops' guards and the n != 0 exits
    (retail threads them with bnezl/blez); logic checked against the asm. Unlike 42, the flag-clearing
-   loop runs over all D_80108948 entries, not D_80108948 - 1. */
+   loop runs over all D_80108948 entries, not D_80108948 - 1.
+   S3-T05: after each `if (n == 0)` GCC uses n's register for i = 0 in the loop guard (slt n, D - 1)
+   where retail folds it to blez; nesting the n == 0 tests and swapping the i/n declarations change
+   nothing. */
 #define PD_ABS(x) ((x) < 0 ? -(x) : (x))
 #ifdef NON_MATCHING
 void func_801077F4_30BB94_name_48(s32 cur, s32 target, s32 mode) {
