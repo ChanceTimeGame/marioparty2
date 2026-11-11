@@ -460,16 +460,12 @@ void func_801035AC_211F4C_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = &func_80103D68_212708_BumperBalls;
 }
 
-/* float registers of the turn-step clamp (diff in f2, not f4; retail reloads 360 - diff), as in
-   MP1's NON_MATCHING func_800F74E8; everything after it matches */
-#ifdef NON_MATCHING
 void func_80103D68_212708_BumperBalls(omObjData* object) {
     BumperBallsWork* work;
     s8 stickX;
     s8 stickY;
     s16 port;
     f32 diff;
-    f32 step;
     f32 speed;
     f32 height;
     f32 dx;
@@ -505,11 +501,10 @@ void func_80103D68_212708_BumperBalls(omObjData* object) {
             work->unk_0C = (diff > 30.0f) ? work->unk_0C + 30.0f : diff + work->unk_0C;
         } else {
             if (360.0f - diff > 30.0f) {
-                step = 30.0f;
+                work->unk_0C = work->unk_0C - 30.0f;
             } else {
-                step = 360.0f - diff;
+                work->unk_0C = work->unk_0C - (360.0f - diff);
             }
-            work->unk_0C = work->unk_0C - step;
         }
         if (work->unk_0C < 0.0f) {
             work->unk_0C += 360.0f;
@@ -614,9 +609,6 @@ void func_80103D68_212708_BumperBalls(omObjData* object) {
         func_80109D80_218720_BumperBalls(object);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80103D68_212708_BumperBalls);
-#endif
 
 void func_801046B8_213058_BumperBalls(omObjData* object) {
     BumperBallsWork* work = object->unk_50;
@@ -916,9 +908,6 @@ void func_80105700_2140A0_BumperBalls(omObjData* object, s32 player) {
     object->func_ptr = &func_80105948_2142E8_BumperBalls;
 }
 
-/* case 4's arrival test: retail joins both compares at one bc1f (j to the branch); GCC here
-   branches in each arm (+5 instructions). Everything else matches (MP1 func_800F87F4 is NON_MATCHING too) */
-#ifdef NON_MATCHING
 void func_80105948_2142E8_BumperBalls(omObjData* object) {
     BumperBallsBoatWork* work = object->unk_50;
     omObjData* ball = D_8010A29C_218C3C_BumperBalls[work->player];
@@ -1007,7 +996,12 @@ void func_80105948_2142E8_BumperBalls(omObjData* object) {
         } else {
             omSetTra(ball, object->trans.x - 80.0f, object->trans.y, object->trans.z);
         }
-        if ((work->side == 1) ? (object->trans.x < work->endX) : (object->trans.x > work->endX)) {
+        if (work->side == 1) {
+            if (object->trans.x < work->endX) {
+                func_800298A4_2A4A4(object->model[work->model], 4, 4);
+                work->state = 5;
+            }
+        } else if (object->trans.x > work->endX) {
             func_800298A4_2A4A4(object->model[work->model], 4, 4);
             work->state = 5;
         }
@@ -1022,9 +1016,6 @@ void func_80105948_2142E8_BumperBalls(omObjData* object) {
         work->angle -= 360.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2A_BumperBalls/2111A0", func_80105948_2142E8_BumperBalls);
-#endif
 
 void func_80105EBC_21485C_BumperBalls(omObjData* arg0) {
     switch (D_8010A564_218F04_BumperBalls) {
@@ -1884,14 +1875,13 @@ const char D_8010A22C_218BCC_BumperBalls[] = "47mt002_IA44";
 
 /* The water mesh (variant 2; MP1 func_800FB2EC): 6 x 6 quads with phased wave heights, two copies
    per screen (textured and the reflection), and the display list func_80108C70 builds. */
-/* Retail ignores its arguments and names the textures itself. NON_MATCHING: register allocation
-   (row in s6 not s8, column s7 not s6, x0 spilled through the stack; masked 93); the addressing
-   (row2/r2 kept unfolded, a separate row pointer in the vertex loop) matches. MP1 is NON_MATCHING too. */
+/* Retail ignores its arguments and names the textures itself. NON_MATCHING (masked 47, was 93):
+   register allocation (row in s6 not s8, column s7 not s6) and retail hoists the per-row table bases
+   (row * 96 + base) out of both column loops. S3-T: MP1 func_800FB2EC's shape (angle = rowAngle at
+   the row's top, (table[row] + column)-> indexing) took 93 -> 47; row-pointer locals in the first
+   loop (raw 186, masked 53) or in both loops (masked 87) are worse. MP1 is NON_MATCHING too. */
 #ifdef NON_MATCHING
 void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
-    BumperBallsAnglePair* near;
-    BumperBallsAnglePair* far;
-    BumperBallsAnglePair* wave;
     HmfTex* texture;
     Vtx* source;
     Vtx* dst;
@@ -1907,8 +1897,6 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
     s32 z0;
     s32 z1;
     s32 row;
-    s32 row2;
-    s32 r2;
     s32 column;
     u16 textureId;
     u16 screen;
@@ -1920,11 +1908,8 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
         D_8010A4F8_218E98_BumperBalls[screen] = func_80027154_27D54(0x800 * sizeof(Gfx), 0x7918);
     }
     rowAngle = 0.0f;
-    angle = 0.0f;
     for (row = 0; row < 6; row++) {
-        r2 = row * 2;
-        near = D_8010A2B0_218C50_BumperBalls[row];
-        far = D_8010A2E0_218C80_BumperBalls[r2];
+        angle = rowAngle;
         for (column = 0; column < 6; column++) {
             second = angle + 90.0f;
             if (second >= 360.0f) {
@@ -1938,11 +1923,11 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
             if (farSecond >= 360.0f) {
                 farSecond -= 360.0f;
             }
-            near[column].first = angle;
-            near[column].second = second;
-            far[column].first = farFirst;
+            (D_8010A2B0_218C50_BumperBalls[row] + column)->first = angle;
+            (D_8010A2B0_218C50_BumperBalls[row] + column)->second = second;
+            (D_8010A2E0_218C80_BumperBalls[row << 1] + column)->first = farFirst;
             angle += 90.0f;
-            far[column].second = farSecond;
+            (D_8010A2E0_218C80_BumperBalls[row << 1] + column)->second = farSecond;
             if (angle >= 360.0f) {
                 angle -= 360.0f;
             }
@@ -1951,17 +1936,14 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
         if (rowAngle >= 360.0f) {
             rowAngle -= 360.0f;
         }
-        angle = rowAngle;
     }
     source = D_8010A518_218EB8_BumperBalls[D_800FDBE0_FE7E0];
     for (row = 0; row < 6; row++) {
-        row2 = row * 2;
-        wave = D_8010A2B0_218C50_BumperBalls[row];
         for (column = 0; column < 6; column++) {
             v = &source[column * 2 + row * 24];
             x0 = column * 400.0f - 1200.0f;
             v->n.ob[0] = x0;
-            v->n.ob[1] = HuMathSin(wave[column].first) * 40.0f;
+            v->n.ob[1] = HuMathSin((D_8010A2B0_218C50_BumperBalls[row] + column)->first) * 40.0f;
             z0 = row * 400.0f - 1200.0f + -350.0f;
             v->n.ob[2] = z0;
             v->n.n[0] = 0;
@@ -1973,7 +1955,7 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
             v = &source[column * 2 + (row * 24 + 1)];
             x1 = (column + 1) * 400.0f - 1200.0f;
             v->n.ob[0] = x1;
-            v->n.ob[1] = HuMathSin(wave[column].second) * 40.0f;
+            v->n.ob[1] = HuMathSin((D_8010A2B0_218C50_BumperBalls[row] + column)->second) * 40.0f;
             v->n.ob[2] = z0;
             v->n.n[0] = 0;
             v->n.n[1] = -0x80;
@@ -1981,9 +1963,9 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
             v->n.tc[0] = 0;
             v->n.tc[1] = 0;
             v->n.a = 0x90;
-            v = &source[column * 2 + (row2 + 1) * 12];
+            v = &source[column * 2 + ((row << 1) + 1) * 12];
             v->n.ob[0] = x0;
-            v->n.ob[1] = HuMathSin(D_8010A2E0_218C80_BumperBalls[row2][column].first) * 40.0f;
+            v->n.ob[1] = HuMathSin((D_8010A2E0_218C80_BumperBalls[row << 1] + column)->first) * 40.0f;
             z1 = (row + 1) * 400.0f - 1200.0f + -350.0f;
             v->n.ob[2] = z1;
             v->n.n[0] = 0;
@@ -1992,9 +1974,9 @@ void func_8010851C_216EBC_BumperBalls(char* tex, char* tex2, s32 arg2) {
             v->n.tc[0] = 0x400;
             v->n.tc[1] = 0x400;
             v->n.a = 0x90;
-            v = &source[column * 2 + ((row2 + 1) * 12 + 1)];
+            v = &source[column * 2 + (((row << 1) + 1) * 12 + 1)];
             v->n.ob[0] = x1;
-            v->n.ob[1] = HuMathSin(D_8010A2E0_218C80_BumperBalls[row2][column].second) * 40.0f;
+            v->n.ob[1] = HuMathSin((D_8010A2E0_218C80_BumperBalls[row << 1] + column)->second) * 40.0f;
             v->n.ob[2] = z1;
             v->n.n[0] = 0;
             v->n.n[1] = -0x80;

@@ -156,18 +156,18 @@ void func_80102EF8_1FF558_AbandonShip(void) {
     }
 }
 
-/* NON_MATCHING: retail keeps 0x80000 in s1 for the 0x800C8 arm. */
+/* NON_MATCHING (masked 6): retail keeps only the high half 0x80000 in s1 and ORs 0xC8 in a bnel
+   delay slot; tried a ternary, if/else, and base+offset (folded). */
 #ifdef NON_MATCHING
 void func_80102F5C_1FF5BC_AbandonShip(omObjData* obj) {
     s32 file;
 
+    file = 0x800C8;
     obj->func_ptr = func_80103070_1FF6D0_AbandonShip;
     obj->work[0] = D_80109388_2059E8_AbandonShip;
     obj->work[1] = 0;
     obj->model[0] = func_80018A30_19630(0x800C4, 0x2BD);
-    if (D_80109388_2059E8_AbandonShip != 0) {
-        file = 0x800C8;
-    } else {
+    if (D_80109388_2059E8_AbandonShip == 0) {
         file = 0x800C6;
     }
     obj->model[1] = func_80018A30_19630(file, 0x2BD);
