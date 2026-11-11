@@ -14,7 +14,8 @@ f32 D_801077DC_27F30C_QuicksandCache = 0.0f;
 
 
 #ifdef NON_MATCHING
-/* Logic complete; retail keeps the 0/1 index as a branch where GCC here folds it to a store-flag. */
+/* Logic complete; retail keeps the 0/1 index as a branch where GCC here folds it to a store-flag
+   (masked 12). S3-R02 tried: if/else, i = 1 then if, a one-case switch: all fold. */
 void func_80105CE0_27D810_QuicksandCache(omObjData* obj, s32 file, f32 a2) {
     void* p;
     QCActor* a;

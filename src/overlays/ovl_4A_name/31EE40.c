@@ -1195,7 +1195,8 @@ void func_8010665C_322C9C_name_4A(void) {
    count), a CPU duelist picks its hand at random, and the hand sprite is shown. */
 /* NON_MATCHING: masked 17, registers and one hoist: retail keeps the side's table base in its own
    register (one more saved register, so the work pointer lives on the stack); GCC folds it into
-   the address each time. */
+   the address each time. S3-R02 tried: D[side] + (...) pointer form (no change), an index local
+   instead of frame (masked 28). */
 #ifdef NON_MATCHING
 void func_80106ED8_323518_name_4A(void) {
     omObjData* obj;
