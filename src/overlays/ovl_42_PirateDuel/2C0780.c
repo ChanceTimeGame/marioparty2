@@ -1300,7 +1300,10 @@ s32 func_80106E08_2C4D88_PirateDuel(void) {
    are within one, at least the minimum.
    Retail quirks: equal ranks index row -1 of the ranges; unlike 3F (whose rank-1 pass runs
    twice), the row uses the challenger's rank twice (never the opponent's). */
-/* NON_MATCHING: 3F's twin, which does not match either (loop-guard and delay-slot shape). */
+/* NON_MATCHING: 3F's twin, which does not match either (loop-guard and delay-slot shape; masked
+   34, raw 46): in the n == 0 passes GCC compares i against the bound through n's register (known
+   0) where retail folds i = 0 into a blez guard. s16 n (worse) and nested n == 0 tests (same) did
+   not help (S3-T11). */
 #define PD_ABS(x) ((x) < 0 ? -(x) : (x))
 #ifdef NON_MATCHING
 void func_801070F4_2C5074_PirateDuel(s32 cur, s32 target, s32 mode) {

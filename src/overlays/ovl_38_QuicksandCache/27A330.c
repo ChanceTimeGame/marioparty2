@@ -285,7 +285,8 @@ void func_80103328_27AE58_QuicksandCache(omObjData* obj) {
 }
 
 #ifdef NON_MATCHING
-/* Logic complete; retail keeps w in s1 and goal in s2, and loads unk_30 before the -30.0f. */
+/* Logic complete; register allocation only (masked 0, raw 16): retail keeps w in s1 and goal in
+   s2. Declaring goal first or as s32 did not swap them (S3-T11). */
 void func_801038D0_27B400_QuicksandCache(omObjData* obj) {
     MgWork* w = obj->unk_50;
     QCWork* q = w->unk_158;
@@ -316,7 +317,6 @@ void func_801038D0_27B400_QuicksandCache(omObjData* obj) {
     f32 d2;
     f32 len;
     f32 stop;
-    s8 side;
     s32 has3;
     s32 has6;
     f32 ang;
@@ -433,10 +433,10 @@ void func_801038D0_27B400_QuicksandCache(omObjData* obj) {
         }
         switch (goal) {
         case 3:
-            side = q->unk_30;
-            ang = -30.0f;
-            if (side == 0) {
+            if (q->unk_30 == 0) {
                 ang = 30.0f;
+            } else {
+                ang = -30.0f;
             }
             ang -= sand->unk_18[ring];
             c = func_800B7890_B8490(ang);
