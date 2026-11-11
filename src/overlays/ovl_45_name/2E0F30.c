@@ -1800,6 +1800,10 @@ s32 func_801045C0_2E2CF0_name_45(void) {
     return min;
 }
 
+/* NON_MATCHING (control flow, S3-S09): retail keeps the two rank switches' case bodies apart (switch 1
+   case 2/3 and switch 2 case 0..3 each have their own copy, 513 instructions); our GCC cross-jumps the
+   identical tails (398). Logic checked against retail: same thresholds, fields (stars 0xE, coins 0x8)
+   and stores; count stays 0 as in retail. */
 #ifdef NON_MATCHING
 void func_80104778_2E2EA8_name_45(void) {
     s32 cand[4];
@@ -3497,6 +3501,8 @@ void func_80109834_2E7F64_name_45(void) {
     omDelPrcObj(NULL);
 }
 
+/* NON_MATCHING (register allocation, masked 24): retail leaves star and portrait (and their second
+   pair) in stack slots and reloads them with lhu/sll/sra at each call; ours keeps them in s0/s1. */
 #ifdef NON_MATCHING /* NON_MATCHING */
 /* A star hangs above the player's status window for 150 frames while the player (or the CPU, by
    difficulty) presses A; then it returns to the window or leaves. Returns the price from the turn
@@ -4966,7 +4972,8 @@ void func_8010E9D0_2ED100_name_45(void) {
 
 #ifdef NON_MATCHING
 /* Only residue: GCC keeps &GwSystem.current_player_index in s1 across the first three reads
-   (CSE); retail reloads it with lui each time, which shifts the saved-register allocation. */
+   (CSE); retail reloads it with lui each time, which shifts the saved-register allocation.
+   Tried (S3-S09): the && test as nested if + goto to the end (no change). */
 void func_8010EA40_2ED170_name_45(void) {
     Vec dir;
     void* fx[4];

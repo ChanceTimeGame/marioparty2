@@ -298,6 +298,8 @@ void func_801034B4_3F7DE4_name_69(void) {
     func_80074FAC_75BAC(6, 0, 1, 1);
 }
 
+/* NON_MATCHING (register allocation, masked 6): s7/s8 swap for the digit counter, and the
+   0xD0004/0xD0005 choice gets bgezl (retail bltz + j). Tried (S3-S09): arms swapped (masked 28), a ?: (same). */
 #ifdef NON_MATCHING
 void func_801034DC_3F7E0C_name_69(void) {
     s16 cnt[4];
