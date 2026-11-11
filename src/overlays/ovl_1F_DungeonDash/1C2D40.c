@@ -157,6 +157,7 @@ void func_80107350_1C2ED0_DungeonDash(void) {
 /* The start banner: x is the split position (320 = full). */
 // register allocation only (masked 0; the D_8010ABB8 load goes to v1 in retail). S3-Q01 tried: `!f()`,
 // a nested else block, `-= 1`, grp inline/block-scoped/reused, an early return, an s16 copy of D_8010ABB8.
+// S3-R: one s16 local for both counters (worse), `>= 1`, `x = x - 1`.
 #ifdef NON_MATCHING
 void func_80107358_1C2ED8_DungeonDash(s16 x) {
     s16* grp;
@@ -281,8 +282,6 @@ void func_801077C8_1C3348_DungeonDash(omObjData* obj) {
 }
 
 /* Fades a team's curtain: closing as its team nears the goal, open for the start, gone at the end. */
-// KMC mul fix: retail has no nop between the HuMathSin call's delay slot and the first mul.s
-#ifdef NON_MATCHING
 void func_801078BC_1C343C_DungeonDash(omObjData* obj) {
     f32* a;
     f32* step;
@@ -328,9 +327,6 @@ void func_801078BC_1C343C_DungeonDash(omObjData* obj) {
         SprAttrSet(D_8010B2B2_1C6E32_DungeonDash[2], 0, 0x8000);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1F_DungeonDash/1C2D40", func_801078BC_1C343C_DungeonDash);
-#endif
 
 /* The dungeon scenery: walls, gate, the far glow, six torches, the obstacles and the start banner. */
 // FPR allocation only (masked 0; torch z: f0/f2 swapped); the goto loop keeps GCC from hoisting the 0.0f

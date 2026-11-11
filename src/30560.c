@@ -2081,7 +2081,7 @@ void func_80035C18_36818(HmfData* arg0, s16 arg1) {
    shares the render-mode tails that retail keeps per arm: control flow (masked 119, -O1 jump.c
    if/else-to-default transform on the 64-bit cc arms; s64 cc does not stop it). The D_800F64C6
    lhu in retail is the low half of D_800F64C4 ((u16) cast here: same address, host-safe).
-   Every branch checked against the asm */
+   Every branch checked against the asm. S3-R: u32 hi/lo combine halves are worse (masked 198). */
 #ifdef NON_MATCHING
 void func_80035FBC_36BBC(HmfMat* arg0, HmfTexRef* arg1, s32 arg2) {
     u64 cc;
