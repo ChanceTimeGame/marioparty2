@@ -959,8 +959,6 @@ void func_80107B60_1DC240_ShellShocked(s32 i, f32 x, f32 z, s32 limit) {
     func_80107738_1DBE18_ShellShocked(i, 0, &cmd);
 }
 
-// control flow (masked 31, 214 vs 213): retail lays out the r == 7 case first and shares the r == 6 / default tail
-#ifdef NON_MATCHING
 void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     SSCom cmd;
     Vec a;
@@ -971,8 +969,6 @@ void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     s32 limit;
     s32 r;
     f32 k;
-    f32 x;
-    f32 z;
 
     if (D_8010DFD8_1E26B8_ShellShocked == D_8010D740_1E1E20_ShellShocked[i].player && func_8010CAA4_1E1184_ShellShocked() * 100.0f > 95.0f) {
         return;
@@ -987,9 +983,9 @@ void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     }
     cmd.state = 9;
     cmd.timer = 0;
+    cmd.a.i = 1;
     cmd.target = -1;
     cmd.limit = 0x28;
-    cmd.a.i = 1;
     func_800B3170_B3D70(&a, &D_8010DA80_1E2160_ShellShocked[i].pos);
     func_800B3170_B3D70(&b, &D_8010DA80_1E2160_ShellShocked[D_8010DFD8_1E26B8_ShellShocked].pos);
     HuVecSubtract(&c, &b, &a);
@@ -998,21 +994,18 @@ void func_80107C04_1DC2E4_ShellShocked(s32 i) {
     k = 1000.0f / func_800B1830_B2430(c.z * c.z + d.z * d.z);
     limit = func_8010CAA4_1E1184_ShellShocked() * 25.0f + 25.0f;
     r = func_8010895C_1DD03C_ShellShocked(i);
-    if (r == 6) {
-        x = -d.x * k;
-        z = -d.z * k;
-    } else if (r == 7) {
-        x = k * d.x;
-        z = k * d.z;
-    } else {
-        x = -c.x * k;
-        z = -c.z * k;
+    switch (r) {
+        case 7:
+            func_80107B60_1DC240_ShellShocked(i, k * d.x, k * d.z, limit);
+            break;
+        case 6:
+            func_80107B60_1DC240_ShellShocked(i, -d.x * k, -d.z * k, limit);
+            break;
+        default:
+            func_80107B60_1DC240_ShellShocked(i, -c.x * k, -c.z * k, limit);
+            break;
     }
-    func_80107B60_1DC240_ShellShocked(i, x, z, limit);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1D9870", func_80107C04_1DC2E4_ShellShocked);
-#endif
 
 void func_80107EF8_1DC5D8_ShellShocked(s32 i, s32 target, s32 time) {
     SSCom cmd;
