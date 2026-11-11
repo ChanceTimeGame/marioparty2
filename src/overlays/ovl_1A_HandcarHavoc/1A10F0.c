@@ -419,12 +419,13 @@ s16 func_80109484_1A2214_HandcarHavoc(s32 team, u16 side, u16 wheel, s32 set) {
 
 /* Updates a car's spark bursts (vertices, display lists, timers) and their sound (MP1
    func_800FF0AC). */
-// NON_MATCHING: loop-invariant hoisting and register allocation (team bases)
+// NON_MATCHING: loop-invariant hoisting (masked 49): GCC hoists team * 0xF90 (the spark base) out of the
+// loop, retail recomputes it per iteration. S3-T: indexing D_8010D7C0[team][i] directly (no mdl) took
+// it from 59 to 49; u16 team and taking p inside the active test were worse.
 #ifdef NON_MATCHING
 void func_8010986C_1A25FC_HandcarHavoc(HHCar* w) {
     HHSparks* p;
     HHChip* c;
-    s16* mdl;
     Vtx* v;
     s32 team;
     u16 any;
@@ -433,9 +434,8 @@ void func_8010986C_1A25FC_HandcarHavoc(HHCar* w) {
 
     any = 0;
     team = w->team;
-    mdl = D_8010D7C0_1A6550_HandcarHavoc[team];
     for (i = 0; i < 6; i++) {
-        D_800FC834_FD434[mdl[i]].hmf->unk3C->unk00[0] = D_8010B720_1A44B0_HandcarHavoc[team][i][D_800FDBE0_FE7E0];
+        D_800FC834_FD434[D_8010D7C0_1A6550_HandcarHavoc[team][i]].hmf->unk3C->unk00[0] = D_8010B720_1A44B0_HandcarHavoc[team][i][D_800FDBE0_FE7E0];
         p = &D_8010B8A0_1A4630_HandcarHavoc[team][i];
         if (p->active != 0) {
             any = 1;

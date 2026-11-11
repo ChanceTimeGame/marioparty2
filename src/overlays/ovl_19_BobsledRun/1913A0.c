@@ -327,8 +327,6 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_80102EE0_
 #endif
 
 /* Bumping into the other sled: always returns 0. */
-// the bump test's delay slots: retail fills both branch-likelies with mov.s (as in MP1)
-#ifdef NON_MATCHING
 s32 func_801038C4_192464_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
     BRWork* work;
     BRWork* ow;
@@ -366,20 +364,19 @@ s32 func_801038C4_192464_BobsledRun(omObjData* obj, f32 x, f32 y, f32 z) {
             d2 = dx2 + dy * dy + dz2;
             func_800B1830_B2430(d2);
             d = func_800B1830_B2430(d2) - (ow->unk_48 + work->unk_48);
-            if (d < 0.0f) {
-                if (ow->unk_38 == 1000.0f || work->unk_38 != 1000.0f) {
-                    func_80009684_A284(dx, dz, d);
-                    func_80102D78_191918_BobsledRun(work, x, z, o->trans.x, o->trans.z);
-                    work->unk_54 = i;
-                }
+            if (!(d < 0.0f)) {
+                continue;
             }
+            if (ow->unk_38 != 1000.0f && work->unk_38 == 1000.0f) {
+                continue;
+            }
+            func_80009684_A284(dx, dz, d);
+            func_80102D78_191918_BobsledRun(work, x, z, o->trans.x, o->trans.z);
+            work->unk_54 = i;
         }
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_19_BobsledRun/1913A0", func_801038C4_192464_BobsledRun);
-#endif
 
 /* Creates a sled or rider's work (MP1 func_800FA244). */
 void func_80103B4C_1926EC_BobsledRun(omObjData* obj, s32 dir, s32 file, u16 team, u16 flags, u16 motFile) {

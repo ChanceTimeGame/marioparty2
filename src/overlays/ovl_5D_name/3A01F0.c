@@ -596,7 +596,8 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_8010359C_3A0F8C
 #endif
 
 // control flow/width (masked 7, 114 of 116): retail keeps an andi 0xff after each rand8() & 3 (in the
-// second call's delay slot); u8 j/k indices took it from masked 9, (u8)(rand8() % 4) did nothing.
+// second call's delay slot); u8 j/k indices took it from masked 9, (u8)(rand8() % 4) did nothing; S3-T:
+// j = rand8(); j &= 3, and s32 j/k indexed as teams[(u8)j], both unchanged.
 #ifdef NON_MATCHING
 void func_80103E58_3A1848_name_5D(s16 cat) {
     s16 teams[4]; /* never filled: retail's categories stop at 4, so this path never runs */
@@ -1286,14 +1287,12 @@ void func_80106468_3A3E58_name_5D(void) {
     }
 }
 
-// register allocation (masked 10)
-#ifdef NON_MATCHING
 void func_80106CC4_3A46B4_name_5D(void) {
     s16 m0;
     u16 m1;
     s16 ang;
     f32 a;
-    f32 r;
+    f32 b;
 
     ang = 0;
     m0 = D_8010CCD0_3AA6C0_name_5D[7];
@@ -1301,9 +1300,8 @@ void func_80106CC4_3A46B4_name_5D(void) {
     func_800297E8_2A3E8(m0, 0.4f, 0.4f, 0.4f);
     func_800297E8_2A3E8(m1, 0.7f, 0.7f, 0.7f);
     a = 90.0f;
-    r = 300.0f;
-    func_80029714_2A314(m0, HuMathSin(a) * r, 0.0f, func_800B7890_B8490(a) * r);
-    func_80029714_2A314(m1, HuMathSin(a) * r, 0.0f, func_800B7890_B8490(a) * r);
+    func_80029714_2A314(m0, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
+    func_80029714_2A314(m1, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
     D_800FC834_FD434[m0].rot.y = 180.0f;
     if (D_8010C566_3A9F56_name_5D != 0) {
         do {
@@ -1316,9 +1314,9 @@ void func_80106CC4_3A46B4_name_5D(void) {
         func_800298A4_2A4A4(m1, 4, 4);
     }
     while (1) {
-        a = ang + 90;
-        func_80029714_2A314(m0, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
-        func_80029714_2A314(m1, HuMathSin(a) * 300.0f, 0.0f, func_800B7890_B8490(a) * 300.0f);
+        b = ang + 90;
+        func_80029714_2A314(m0, HuMathSin(b) * 300.0f, 0.0f, func_800B7890_B8490(b) * 300.0f);
+        func_80029714_2A314(m1, HuMathSin(b) * 300.0f, 0.0f, func_800B7890_B8490(b) * 300.0f);
         D_800FC834_FD434[m0].rot.y = ang + 180;
         ang++;
         if (ang > 360) {
@@ -1327,9 +1325,6 @@ void func_80106CC4_3A46B4_name_5D(void) {
         HuPrcVSleep();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80106CC4_3A46B4_name_5D);
-#endif
 
 // FPR allocation of the 134.0f/180.0f constants (masked 4, raw 10; one is the [7] split-label addend); tried operand orders, inline sin/cos args (kept), ang for 134
 #ifdef NON_MATCHING
