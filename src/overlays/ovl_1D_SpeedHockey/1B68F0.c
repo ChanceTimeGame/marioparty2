@@ -60,47 +60,31 @@ void func_801048D4_1B6A24_SpeedHockey(omObjData* obj, SHPlayer* w) {
     func_8010650C_1B865C_SpeedHockey(w->port, 0, 0, 0, 0);
 }
 
-// decomp-permuter
-void func_8010491C_1B6A6C_SpeedHockey(omObjData *obj, SHPlayer *w)
-{
-  Vec dir;
-  Vec pos;
-  Vec prev;
-  f32 target;
-  float new_var;
-  if (((u8) (rand8() % 10)) < D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].chance)
-  {
-    new_var = ((f32) (rand8() % 80)) - 40.0f;
-    target = new_var + 0.0f;
-  }
-  else
-  {
-    func_8010463C_1B678C_SpeedHockey(&dir, &pos, &prev);
-    if (!((dir.x * obj->trans.x) > 0.0f))
-    {
-      if (&pos)
-      {
-        return;
-      }
-      else
-      {
-        return;
-      }
+void func_8010491C_1B6A6C_SpeedHockey(omObjData *obj, SHPlayer *w) {
+    Vec dir;
+    Vec pos;
+    Vec prev;
+    f32 target;
+    f32 r;
+
+    if (((u8) (rand8() % 10)) < D_80106AE0_1B8C30_SpeedHockey[w->cpuLevel].chance) {
+        r = ((f32) (rand8() % 80)) - 40.0f;
+        target = r + 0.0f;
+    } else {
+        func_8010463C_1B678C_SpeedHockey(&dir, &pos, &prev);
+        if (!((dir.x * obj->trans.x) > 0.0f)) {
+            return;
+        }
+        target = pos.z;
     }
-    target = pos.z;
-  }
-  w->cpuTarget = target;
-  if (target < (-33.800003f))
-  {
-    w->cpuTarget = -33.800003f;
-  }
-  else
-    if (w->cpuTarget > 33.800003f)
-  {
-    w->cpuTarget = 33.800003f;
-  }
-  w->cpuRange = 8.0f;
-  w->cpuState = 2;
+    w->cpuTarget = target;
+    if (target < (-33.800003f)) {
+        w->cpuTarget = -33.800003f;
+    } else if (w->cpuTarget > 33.800003f) {
+        w->cpuTarget = 33.800003f;
+    }
+    w->cpuRange = 8.0f;
+    w->cpuState = 2;
 }
 
 /* CPU state 2: push the stick toward the target z (slower when near), then wait. */
