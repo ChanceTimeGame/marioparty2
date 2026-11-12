@@ -1,60 +1,16 @@
 #include "common.h"
 #include "sdk_leo.h"
 
-// libleo command execution (MP1 83960.c, the leocmdex.c family): the C2 (Reed-Solomon) error
-// correction and the 64DD command thread. IDO-compiled: every function is NON_MATCHING C with the
-// asm in the matching build (see sdk_leo.h). The unit's rodata is defined here so it is one carved
-// piece (D4900-D4DD0); the jump tables are the asm functions' and unused by the C.
-
-typedef struct LEOCmdTestUnitReady {
-    /* 0x00 */ LEOCmdHeader header;
-    /* 0x0C */ u8 test;
-} LEOCmdTestUnitReady;
-
-/* .data (0xCE930-0xCE98C) */
-void func_80098650_99250(void);
-void func_800986F8_992F8(void);
-void func_8009AD90_9B990(void);
-void func_8009AE40_9BA40(void);
-void func_8009AEF0_9BAF0(void);
-void func_8009AFE0_9BBE0(void);
-void func_8009B080_9BC80(void);
-void func_8009B210_9BE10(void);
-void func_8009B3D0_9BFD0(void);
-void func_8009B470_9C070(void);
-void func_8009B530_9C130(void);
-void func_8009B570_9C170(void);
-void func_8009B810_9C410(void);
-void func_8009B940_9C540(void);
-void func_8009B9FC_9C5FC(void);
-void (*D_800CDD30_CE930[16])(void) = { /* command handlers, by command code */
-    NULL,
-    func_80098650_99250,
-    func_8009AD90_9B990,
-    func_8009B530_9C130,
-    func_8009B3D0_9BFD0,
-    func_8009B210_9BE10,
-    func_8009B810_9C410,
-    func_8009B470_9C070,
-    func_8009AEF0_9BAF0,
-    func_8009AFE0_9BBE0,
-    func_8009B570_9C170,
-    func_8009AE40_9BA40,
-    func_8009B080_9BC80,
-    func_8009B940_9C540,
-    func_8009B9FC_9C5FC,
-    func_800986F8_992F8,
-};
-LEOCmdRead D_800CDD70_CE970 = { { 5, 0, 0, 0, 0, 0, 0, 0, NULL }, 12, 1, NULL, 0 }; /* system-area read command template */
+// libleo C2 (Reed-Solomon) error correction (MP1 83960.c, leoc2ecc.c), built with IDO 5.3. The
+// GF(256) tables and func_80099610_9A210's jump table are its rodata (D4900-D4D20).
 
 void func_8009969C_9A29C(void);
 void func_80099770_9A370(void);
 void func_800999F0_9A5F0(void);
 void func_80099DD8_9A9D8(void);
-void func_8009A700_9B300(void* arg);
 
 // GF(256) exponent table, doubled; the divide indexes it from +0xFF
-const u8 D_800D3D00_D4900[0x200] __attribute__((section(".rodata"))) = {
+const u8 D_800D3D00_D4900[0x200] = {
     0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1D, 0x3A, 0x74, 0xE8, 0xCD, 0x87, 0x13, 0x26,
     0x4C, 0x98, 0x2D, 0x5A, 0xB4, 0x75, 0xEA, 0xC9, 0x8F, 0x03, 0x06, 0x0C, 0x18, 0x30, 0x60, 0xC0,
     0x9D, 0x27, 0x4E, 0x9C, 0x25, 0x4A, 0x94, 0x35, 0x6A, 0xD4, 0xB5, 0x77, 0xEE, 0xC1, 0x9F, 0x23,
@@ -90,7 +46,7 @@ const u8 D_800D3D00_D4900[0x200] __attribute__((section(".rodata"))) = {
 };
 
 // GF(256) logarithm table (the second half is the same table shifted by one, unused here)
-const u8 D_800D3F00_D4B00[0x200] __attribute__((section(".rodata"))) = {
+const u8 D_800D3F00_D4B00[0x200] = {
     0x00, 0x00, 0x01, 0x19, 0x02, 0x32, 0x1A, 0xC6, 0x03, 0xDF, 0x33, 0xEE, 0x1B, 0x68, 0xC7, 0x4B,
     0x04, 0x64, 0xE0, 0x0E, 0x34, 0x8D, 0xEF, 0x81, 0x1C, 0xC1, 0x69, 0xF8, 0xC8, 0x08, 0x4C, 0x71,
     0x05, 0x8A, 0x65, 0x2F, 0xE1, 0x24, 0x0F, 0x21, 0x35, 0x93, 0x8E, 0xDA, 0xF0, 0x12, 0x82, 0x45,
@@ -125,89 +81,44 @@ const u8 D_800D3F00_D4B00[0x200] __attribute__((section(".rodata"))) = {
     0xAE, 0xD5, 0xE9, 0xE6, 0xE7, 0xAD, 0xE8, 0x74, 0xD6, 0xF4, 0xEA, 0xA8, 0x50, 0x58, 0xAF, 0xFF,
 };
 
-// All of the unit's rodata comes first: GCC does not see an INCLUDE_ASM switch to .text, so a
-// definition after one would land in .text.
-#ifndef NON_MATCHING
-// func_80099610_9A210's jump table; the three zero words are the 16-byte padding IDO left after
-// its object (KMC GCC caps the alignment of D_800D4120_D4D20 at 8)
-const u32 jtbl_800D4100_D4D00[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x80099688, 0x80099640, 0x80099650, 0x80099660, 0x80099670, 0, 0, 0,
-};
-#endif
-
-// system-area lbas tried in turn
-const u8 D_800D4120_D4D20[4] __attribute__((aligned(8), section(".rodata"))) = {
-    0x00, 0x01, 0x08, 0x09,
-};
-
-#ifndef NON_MATCHING
-// func_8009A700_9B300's jump tables
-const u32 jtbl_800D4128_D4D28[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8009A980, 0x8009A9C4, 0x8009A9C4, 0x8009A9C4, 0x8009A9C4, 0x8009A9C4,
-    0x8009A980, 0x8009A9C4, 0x8009A9C4, 0x8009A980, 0x8009A980, 0x8009A980,
-    0x8009A980, 0x8009A980,
-};
-const u32 jtbl_800D4160_D4D60[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8009A980, 0x8009A940, 0x8009A940, 0x8009A940, 0x8009A940, 0x8009A940,
-    0x8009A940, 0x8009A940, 0x8009A940, 0x8009A980, 0x8009A940, 0x8009A980,
-    0x8009A980, 0x8009A980,
-};
-const u32 jtbl_800D4198_D4D98[] __attribute__((aligned(8), section(".rodata"))) = {
-    0x8009AADC, 0x8009AADC, 0x8009A9F4, 0x8009A9F4, 0x8009A9F4, 0x8009A9F4,
-    0x8009AADC, 0x8009A9F4, 0x8009A9F4, 0x8009AADC, 0x8009A9F4, 0x8009AADC,
-    0x8009AADC, 0x8009AADC,
-};
-#endif
-
-#ifdef NON_MATCHING
 // leoC2_Correction: by the number of C1 error sectors
 u16 func_80099610_9A210(void) {
     switch (D_800F28D0_F34D0.errNum) {
         case 0:
-            return 0;
+            break;
         case 1:
             func_8009969C_9A29C();
-            return 0;
+            break;
         case 2:
             func_80099770_9A370();
-            return 0;
+            break;
         case 3:
             func_800999F0_9A5F0();
-            return 0;
+            break;
         case 4:
             func_80099DD8_9A9D8();
-            return 0;
+            break;
         default:
-            return 0xFFFF;
+            return -1;
     }
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_80099610_9A210);
-#endif
 
-#ifdef NON_MATCHING
 // one erroneous sector: XOR the C2 parity back in
 void func_8009969C_9A29C(void) {
-    u32 s = D_800F28D0_F34D0.errSector[0];
-    u32 n;
     u8* p;
     u8* c2;
+    u32 n;
 
-    if (s >= 0x55) {
-        return;
-    }
-    n = D_800F28D0_F34D0.secBytes;
-    p = D_800F28D0_F34D0.dram + (s + 1) * n;
-    c2 = D_800F28D0_F34D0.c2end;
-    for (; n != 0; n--) {
-        c2 -= 4;
-        p--;
-        *p ^= *c2;
+    if (D_800F28D0_F34D0.errSector[0] < 0x55) {
+        n = D_800F28D0_F34D0.secBytes;
+        p = D_800F28D0_F34D0.dram + (D_800F28D0_F34D0.errSector[0] + 1) * n;
+        c2 = D_800F28D0_F34D0.c2end;
+        do {
+            *--p ^= *(c2 -= 4);
+        } while (--n != 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_8009969C_9A29C);
-#endif
 
 #ifdef NON_MATCHING
 // two erroneous sectors: solve for both from the two C2 syndromes
@@ -484,246 +395,18 @@ void func_80099DD8_9A9D8(void) {
 INCLUDE_ASM("asm/nonmatchings/9A210", func_80099DD8_9A9D8);
 #endif
 
-#ifdef NON_MATCHING
 // GF(256) multiply
-u8 func_8009A674_9B274(u8 a, u8 b) {
+u8 func_8009A674_9B274(s32 a, s32 b) {
     if ((a == 0) || (b == 0)) {
         return 0;
     }
-    return D_800D3D00_D4900[D_800D3F00_D4B00[b] + D_800D3F00_D4B00[a]];
+    return D_800D3D00_D4900[D_800D3F00_D4B00[a] + D_800D3F00_D4B00[b]];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_8009A674_9B274);
-#endif
 
-#ifdef NON_MATCHING
 // GF(256) divide
-u8 func_8009A6B8_9B2B8(u8 a, u8 b) {
+u8 func_8009A6B8_9B2B8(s32 a, s32 b) {
     if ((a == 0) || (b == 0)) {
         return 0;
     }
     return D_800D3D00_D4900[0xFF + D_800D3F00_D4B00[a] - D_800D3F00_D4B00[b]];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_8009A6B8_9B2B8);
-#endif
-
-#ifdef NON_MATCHING
-// leomain: the 64DD command thread
-void func_8009A700_9B300(void* arg) {
-    u32 stat;
-    u32 sense;
-    u8 command;
-
-    ((u8*)&D_800F2080_F2C80)[0] = *(vu8*)0xA0000010;
-    ((u8*)&D_800F2080_F2C80)[1] = *(vu8*)0xA0000090;
-    ((u8*)&D_800F2080_F2C80)[2] = *(vu8*)0xA0000110;
-    ((u8*)&D_800F2080_F2C80)[3] = *(vu8*)0xA0000190;
-    D_800F2068_F2C68 = 0;
-    D_800F2064_F2C64 = 0;
-    D_800F206C_F2C6C = 0;
-    D_800F206D_F2C6D = 0;
-    func_80098490_99090();
-    D_800F28E0_F34E0 = osLeoDiskInit();
-    D_800F28E8_F34E8.hdr.pri = OS_MESG_PRI_HIGH;
-    D_800F28E8_F34E8.hdr.retQueue = &D_800F2018_F2C18;
-    osEPiReadIo(D_800F28E0_F34E0, 0x05000508, &stat); // LEO_STATUS
-    if (!(stat & 0x400000) && (stat & 0x6800000)) {
-        func_800983D0_98FD0();
-    }
-
-    while (TRUE) {
-        osRecvMesg(&D_800F1FD0_F2BD0, (OSMesg*)&D_800F2060_F2C60, OS_MESG_BLOCK);
-        D_800F2900_F3500 = LEO_CUR(LEOCmdHeader)->command;
-        if (LEO_CUR(LEOCmdHeader)->command == 0) { // clear queue
-            func_800983D0_98FD0();
-            osRecvMesg(&D_800F1FE8_F2BE8, NULL, OS_MESG_NOBLOCK);
-            continue;
-        }
-
-        sense = func_80097C5C_9885C(0x10001);
-        stat = func_80098400_99000();
-        if (stat == 0) {
-            if (sense == 0) {
-                goto dispatch;
-            }
-        } else if ((sense != 3) && (sense != 0x25) && (sense != 0x29) && (sense != 0x2B)) {
-            if (sense == 0x31) {
-                if (func_8009840C_9900C() == 0x2B) {
-                    sense = 0x2B;
-                }
-            } else {
-                sense = func_8009840C_9900C();
-            }
-        }
-
-        command = LEO_CUR(LEOCmdHeader)->command;
-        if (sense == 0x2B) { // medium may have changed
-            if ((command == 2) || (command == 0xD) || (command == 0xE)) {
-                goto dispatch;
-            }
-            if (command == 0xF) {
-                func_80098440_99040();
-                goto dispatch;
-            }
-        } else if (sense == 0x2F) {
-            switch (command) {
-                case 2:
-                case 8:
-                case 11:
-                case 12:
-                case 13:
-                case 14:
-                case 15:
-                    goto dispatch;
-            }
-        } else if (sense == 0x31) {
-            switch (command) {
-                case 2:
-                case 11:
-                case 13:
-                case 14:
-                case 15:
-                    goto dispatch;
-                default:
-                    sense = 0x2A;
-                    break;
-            }
-        }
-        if (command == 3) { // test unit ready
-            LEO_CUR(LEOCmdTestUnitReady)->test = func_80098390_98F90();
-        }
-        LEO_CUR(LEOCmdHeader)->sense_code = sense;
-        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-        goto done;
-
-    dispatch:
-        if (D_800F206C_F2C6C == 0) {
-            switch (LEO_CUR(LEOCmdHeader)->command) {
-                case 2:
-                case 3:
-                case 8:
-                case 11:
-                case 13:
-                case 14:
-                case 15:
-                    break;
-                default:
-                    // commands that need the system area: read it first
-                    if (D_800F2080_F2C80 == 0) {
-                        osEPiReadIo(D_800F28E0_F34E0, 0x05000540, &stat); // ASIC_ID_REG
-                        if ((stat & 0x70000) != 0x40000) {
-                            while (TRUE) {
-                            }
-                        }
-                    }
-                    if (func_8009AB7C_9B77C() != 0) {
-                        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-                        goto done;
-                    }
-                    sense = func_80097FF0_98BF0(0xB0001, D_800F2090_F2C90[5] << 16);
-                    LEO_CUR(LEOCmdHeader)->sense_code = sense;
-                    if (sense != 0) {
-                        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-                        goto done;
-                    }
-                    if ((D_800F2090_F2C90[5] & 0xF0) != 0x10) {
-                        goto bad_disk;
-                    }
-                    D_800F207C_F2C7C = D_800F2090_F2C90[5] & 0xF;
-                    if (D_800F207C_F2C7C >= 7) {
-                    bad_disk:
-                        LEO_CUR(LEOCmdHeader)->sense_code = 0xB;
-                        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-                        goto done;
-                    }
-                    D_800F206C_F2C6C = 0xFF;
-                    break;
-            }
-        }
-        D_800CDD30_CE930[LEO_CUR(LEOCmdHeader)->command]();
-
-    done:
-        if (LEO_CUR(LEOCmdHeader)->control & 0x80) {
-            osSendMesg(LEO_CUR(LEOCmdHeader)->post, (OSMesg)(u32)LEO_CUR(LEOCmdHeader)->sense_code,
-                       OS_MESG_BLOCK);
-        }
-        if (D_800F206D_F2C6D != 0) {
-            func_80098650_99250();
-        }
-    }
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_8009A700_9B300);
-#endif
-
-#ifdef NON_MATCHING
-// leoRead_system_area: read the disk's system area into D_800F2090_F2C90, retrying
-u8 func_8009AB7C_9B77C(void) {
-    LEOCmdRead* saved = D_800F2060_F2C60;
-    LEOCmdRead tmp;
-    u32 retry = 0;
-    s32 phase = 0;
-    u8 sense;
-
-    D_800F2060_F2C60 = &tmp;
-    while (TRUE) {
-        tmp = D_800CDD70_CE970;
-        D_800F207C_F2C7C = 0;
-        D_800F2090_F2C90[8] = 0;
-        D_800F206E_F2C6E = 0x3000;
-        if (phase == 0) {
-            func_8009B23C_9BE3C(0);
-            if (tmp.header.sense_code == 0) {
-                retry = 0;
-                // as retail: spins forever while the drive ROM id word is non-zero
-                while (D_800F2080_F2C80 != 0) {
-                }
-                phase--;
-                continue;
-            }
-            if (tmp.header.sense_code == 0x17) {
-                retry = 0;
-                while (D_800F2080_F2C80 == 0) {
-                }
-                phase--;
-                continue;
-            }
-        } else {
-            tmp.lba = D_800D4120_D4D20[retry & 3];
-            if (D_800F2080_F2C80 == 0) {
-                tmp.lba += 2;
-            }
-            func_8009B23C_9BE3C(0);
-            if (tmp.header.status == LEO_STATUS_GOOD) {
-                while (D_800F2080_F2C80 != *(u32*)D_800F2090_F2C90) {
-                }
-                break;
-            }
-        }
-        while (TRUE) {
-            if (func_80098280_98E80(tmp.header.sense_code) != 0) {
-                goto end;
-            }
-            if (retry >= 0x40) {
-                goto end;
-            }
-            retry++;
-            if ((retry & 7) != 0) {
-                break;
-            }
-            sense = func_80097FF0_98BF0(0x30001, 0);
-            tmp.header.sense_code = sense;
-            if (sense == 0) {
-                break;
-            }
-        }
-    }
-end:
-    D_800F2060_F2C60 = saved;
-    saved->header.sense_code = tmp.header.sense_code;
-    return tmp.header.sense_code;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/9A210", func_8009AB7C_9B77C);
-#endif
