@@ -396,9 +396,8 @@ void func_8010A660_332020_name_4E(u32 arg0)
     }
   }
 
-  i = 8000;
   n = cnt;
-  for (; i != 0; i--)
+  for (i = 8000; i != 0; i--)
   {
     k = func_8010993C_3312FC_name_4E(n);
     id = list[k];
