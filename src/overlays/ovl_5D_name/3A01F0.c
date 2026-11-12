@@ -657,7 +657,6 @@ void func_80103FF0_3A19E0_name_5D(void) {
 }
 
 // hide, both in the for init, and declaration order
-// decomp-permuter
 void func_80104224_3A1C14_name_5D(void)
 {
   Vec2f scr;
