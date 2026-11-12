@@ -68,7 +68,7 @@ extern LEOCmdRead* D_800F2060_F2C60;    // LEOcur_command
 extern u32 D_800F2064_F2C64;            // buffer manager control shadow
 extern u32 D_800F2068_F2C68;            // sequencer control shadow
 extern u8 D_800F206C_F2C6C;             // non-zero once the system area has been read
-extern u8 D_800F206D_F2C6D;
+extern volatile u8 D_800F206D_F2C6D;
 extern volatile u16 D_800F206E_F2C6E;            // transfer mode flags
 extern LEOTgtParam D_800F2070_F2C70;    // LEOtgt_param
 extern u8 D_800F207C_F2C7C;             // disk type

@@ -486,7 +486,7 @@ $(W3C_NOPAD): ASFLAGS += --no-pad-sections
 # ido: the libleo units, built by Nintendo with IDO 5.3 (`make -C tools` fetches it and asm-processor).
 # asm-processor puts each INCLUDE_ASM function into the IDO object; the .s copies it reads drop the
 # `.set` lines (its prelude sets noat/noreorder).
-IDO_UNITS := build/src/97D60.c.o build/src/990A0.c.o build/src/9A210.c.o build/src/9CA50.c.o
+IDO_UNITS := build/src/978F0.c.o build/src/97D60.c.o build/src/99370.c.o build/src/990A0.c.o build/src/9A210.c.o build/src/9B990.c.o build/src/9BAF0.c.o build/src/9BBE0.c.o build/src/9BE10.c.o build/src/9BFD0.c.o build/src/9C070.c.o build/src/9C540.c.o build/src/9CA50.c.o
 IDO_CFLAGS := -O2 -G0 -mips2 -non_shared -Xcpluscomm
 build/src/990A0.c.o: IDO_RODATA_SIZE = 0x88
 $(IDO_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
