@@ -1,9 +1,8 @@
 #include "common.h"
 #include "sdk_leo.h"
 
-// libleo leoLba_to_phys and leoLba_to_vzone (MP1 src/821F0.c). IDO-compiled: KMC GCC cannot
-// reproduce it, so the C is NON_MATCHING (logic only) and the matching build keeps the asm. The
-// tables are this unit's rodata (D4728 on), left in the data blob.
+// libleo leoLba_to_phys and leoLba_to_vzone (MP1 src/821F0.c), built with IDO 5.3. The tables are
+// this unit's rodata (D4728 on), left in the data blob.
 
 extern u8 D_800D3B28_D4728[];      // sector bytes per zone
 extern u16 D_800D3B34_D4734[];     // block bytes per zone
@@ -15,52 +14,62 @@ extern u16 D_800D3CB6_D48B6[];     // outer cylinder of each zone for head 1 (in
 
 u16 func_80098964_99564(u32 lba);
 
-// IDO-compiled (t-register temporaries, ra at 0x14(sp)): KMC GCC cannot reproduce it.
+// Register allocation and the cylinder stores (direct, not through the LEOtgt_param base) differ.
 // Layout-dependent: D_800D3B46_D4746 and D_800D3CB6_D48B6 are labels one u16 before a table.
 #ifdef NON_MATCHING
 u16 func_80098770_99370(u32 lba) {
     u16 vzone;
-    u16 pzone;
-    u16 zone;
-    u16 start;
-    u16 cyl;
-    u16 n;
-    u16 d;
+    u16 zone_slba;
+    u16 zone_scyl;
+    u16 bad_tk_num;
+    u16 def_offset;
+    u8 def_zone_no;
 
     D_800F2070_F2C70.rdwr_blocks = 2 - (lba & 1);
-    if (((lba & 3) == 0) || ((lba & 3) == 3)) {
-        D_800F2070_F2C70.start_block = 0;
-    } else {
-        D_800F2070_F2C70.start_block = 1;
+    switch (lba & 3) {
+        case 0:
+        case 3:
+            D_800F2070_F2C70.start_block = 0;
+            break;
+        default:
+            D_800F2070_F2C70.start_block = 1;
+            break;
     }
     vzone = func_80098964_99564(lba);
-    pzone = D_800D3C48_D4848[D_800F207C_F2C7C][vzone];
+    D_800F2070_F2C70.zone = def_zone_no = D_800D3C48_D4848[D_800F207C_F2C7C][vzone];
     D_800F2070_F2C70.head = 0;
-    D_800F2070_F2C70.zone = pzone;
-    zone = pzone;
-    if (zone >= 8) {
-        D_800F2070_F2C70.zone = zone - 7;
+    if (D_800F2070_F2C70.zone > 7) {
+        D_800F2070_F2C70.zone -= 7;
         D_800F2070_F2C70.head = 1;
-        zone = (u8)(zone - 7);
     }
-    cyl = D_800D3C28_D4828[pzone];
-    start = (vzone != 0) ? D_800D3B46_D4746[D_800F207C_F2C7C * 16 + vzone] : 0;
-    if (D_800F2070_F2C70.head != 0) {
-        D_800F2070_F2C70.cylinder = cyl - ((lba - start) >> 1);
-        cyl = D_800D3CB6_D48B6[zone];
+    zone_scyl = D_800D3C28_D4828[def_zone_no];
+    if (vzone != 0) {
+        zone_slba = D_800D3B46_D4746[D_800F207C_F2C7C * 16 + vzone];
     } else {
-        D_800F2070_F2C70.cylinder = cyl + ((lba - start) >> 1);
+        zone_slba = 0;
     }
-    d = (pzone != 0) ? D_800F2090_F2C90[7 + pzone] : 0;
-    for (n = D_800F2090_F2C90[8 + pzone] - d; n != 0; n--) {
-        if (D_800F2070_F2C70.cylinder < (u16)(D_800F2090_F2C90[0x20 + d] + cyl)) {
+    if (D_800F2070_F2C70.head != 0) {
+        D_800F2070_F2C70.cylinder = zone_scyl - ((lba - zone_slba) >> 1);
+        zone_scyl = D_800D3CB6_D48B6[D_800F2070_F2C70.zone];
+    } else {
+        D_800F2070_F2C70.cylinder = zone_scyl + ((lba - zone_slba) >> 1);
+    }
+    if (def_zone_no != 0) {
+        def_offset = D_800F2090_F2C90[7 + def_zone_no];
+    } else {
+        def_offset = 0;
+    }
+    bad_tk_num = D_800F2090_F2C90[8 + def_zone_no] - def_offset;
+    while (bad_tk_num != 0) {
+        if (D_800F2070_F2C70.cylinder < (u16)(zone_scyl + D_800F2090_F2C90[0x20 + def_offset])) {
             break;
         }
         D_800F2070_F2C70.cylinder++;
-        d++;
+        def_offset++;
+        bad_tk_num--;
     }
-    D_800F2070_F2C70.sec_bytes = D_800D3B28_D4728[zone];
-    D_800F2070_F2C70.blk_bytes = D_800D3B34_D4734[zone];
+    D_800F2070_F2C70.sec_bytes = D_800D3B28_D4728[D_800F2070_F2C70.zone];
+    D_800F2070_F2C70.blk_bytes = D_800D3B34_D4734[D_800F2070_F2C70.zone];
     if (D_800F2080_F2C80 == 0 && lba < 12) {
         D_800F2070_F2C70.sec_bytes = 0xC0;
         D_800F2070_F2C70.blk_bytes = 0x3FC0;
@@ -71,18 +80,16 @@ u16 func_80098770_99370(u32 lba) {
 INCLUDE_ASM("asm/nonmatchings/99370", func_80098770_99370);
 #endif
 
-// leoLba_to_vzone. IDO-compiled: KMC GCC cannot reproduce it.
-#ifdef NON_MATCHING
+// leoLba_to_vzone
 u16 func_80098964_99564(u32 lba) {
-    u16 vzone;
+    u16 i;
+    u16* ptr;
 
-    for (vzone = 0; vzone < 16; vzone++) {
-        if (lba < D_800D3B48_D4748[D_800F207C_F2C7C][vzone]) {
-            return vzone;
+    ptr = D_800D3B48_D4748[D_800F207C_F2C7C];
+    for (i = 0; i < 16; i++, ptr++) {
+        if (lba < *ptr) {
+            return i;
         }
     }
     return 0xFF;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/99370", func_80098964_99564);
-#endif
