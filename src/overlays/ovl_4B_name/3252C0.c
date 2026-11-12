@@ -77,15 +77,12 @@ void func_80102A9C_32555C_name_4B(void) {
     }
 }
 
-// decomp-permuter
 void func_80102B0C_3255CC_name_4B(void)
 {
   s32 timer = 0;
   MBModel *obj = HuPrcCurrentGet()->user_data;
-  Vec *rot;
   Vec dir;
   s32 i;
-  ;
   while (1)
   {
     if (timer == 0)
