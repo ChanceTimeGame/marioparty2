@@ -574,7 +574,6 @@ void func_801040C4_269074_LooneyLumberjacks(f32 cx, f32 cy, f32 cz, f32 rx, f32 
     }
 }
 
-// decomp-permuter
 void func_801042B4_269264_LooneyLumberjacks(s32 idx)
 {
   HuCamera *cam;
@@ -1790,23 +1789,16 @@ s32 func_80107FE8_26CF98_LooneyLumberjacks(s32 anim, Vec* pos, Vec* vel) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_35_LooneyLumberjacks/2677B0", func_80107FE8_26CF98_LooneyLumberjacks);
 #endif
 
-// decomp-permuter
 void func_8010815C_26D10C_LooneyLumberjacks(Vec *pos, s32 kind)
 {
   Vec p;
-  f32 new_var;
-  f32 *base;
-  f32 *size;
   s32 i;
   s32 fx;
   for (i = 0; i < 3; i++)
   {
-    new_var = D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].x;
-    base = D_8010A8A8_26F858_LooneyLumberjacks;
-    size = &base[kind];
-    p.x = (new_var * (*size)) + pos->x;
-    p.y = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].y * (*size)) + pos->y;
-    p.z = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].z * (*size)) + pos->z;
+    p.x = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].x * D_8010A8A8_26F858_LooneyLumberjacks[kind]) + pos->x;
+    p.y = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].y * D_8010A8A8_26F858_LooneyLumberjacks[kind]) + pos->y;
+    p.z = (D_8010A83C_26F7EC_LooneyLumberjacks[kind][i].z * D_8010A8A8_26F858_LooneyLumberjacks[kind]) + pos->z;
     if (kind == 0)
     {
       fx = func_80107FE8_26CF98_LooneyLumberjacks(-1, &p, 0);
@@ -1817,7 +1809,7 @@ void func_8010815C_26D10C_LooneyLumberjacks(Vec *pos, s32 kind)
     }
     if (fx >= 0)
     {
-      SprScaleSet((s16) D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, *size, *size);
+      SprScaleSet((s16) D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, D_8010A8A8_26F858_LooneyLumberjacks[kind], D_8010A8A8_26F858_LooneyLumberjacks[kind]);
       func_800824B4_830B4((s16) D_8010AF44_26FEF4_LooneyLumberjacks[fx].spr, 0, 0xFF, 0xFF, 0xBE, 0x40);
     }
   }
@@ -1880,7 +1872,6 @@ s16 func_80108550_26D500_LooneyLumberjacks(Vec *pos, Vec *rot, Vec *scale)
 {
   HuSprite_Unk84_Struct *spr;
   HmfModel *m;
-  s16 *new_var;
   s16 *pm;
   LLColor c;
   s32 i;
@@ -1892,15 +1883,14 @@ s16 func_80108550_26D500_LooneyLumberjacks(Vec *pos, Vec *rot, Vec *scale)
     }
     pm = &D_8010AF34_26FEE4_LooneyLumberjacks->model[i];
     m = &D_800FC834_FD434[*pm];
-    new_var = &(*pm);
     if (m->unk18 & 4)
     {
-      func_8010A014_26EFC4_LooneyLumberjacks(*new_var, spr, 0, 1.0f);
+      func_8010A014_26EFC4_LooneyLumberjacks(*pm, spr, 0, 1.0f);
       m->unk40 = 0.0f;
       func_80029714_2A314(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], pos->x, pos->y, pos->z);
       func_8002979C_2A39C(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], rot->x, rot->y, rot->z);
       func_800297E8_2A3E8(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], scale->x, scale->y, scale->z);
-      func_800298A4_2A4A4(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], (long long) 4, 0);
+      func_800298A4_2A4A4(D_8010AF34_26FEE4_LooneyLumberjacks->model[i], 4, 0);
       c.r = D_8010AFA8_26FF58_LooneyLumberjacks[0];
       c.g = D_8010AFA8_26FF58_LooneyLumberjacks[1];
       c.b = D_8010AFA8_26FF58_LooneyLumberjacks[2];
@@ -2232,14 +2222,13 @@ s32 func_80109D94_26ED44_LooneyLumberjacks(HuSprite_Unk84_Struct* spr, u16 src, 
     return mdl;
 }
 
-// decomp-permuter
 void func_8010A014_26EFC4_LooneyLumberjacks(u16 mdl, HuSprite_Unk84_Struct *spr, u16 frame, f32 alpha)
 {
-  HmfModel *new_var;
+  HmfModel *m;
   HmfData *hmf;
   Gfx *gfx;
-  new_var = &D_800FC834_FD434[mdl];
-  hmf = (*new_var).hmf;
+  m = &D_800FC834_FD434[mdl];
+  hmf = m->hmf;
   gfx = (hmf->unk3C->unk00[0] = hmf->unk3C->unk00[D_800FDBE0_FE7E0 + 1]);
   gDPPipeSync(gfx++);
   gSPSegment(gfx++, 0x04, osVirtualToPhysical(spr->unk00[frame].unk00));
