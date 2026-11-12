@@ -1655,38 +1655,44 @@ void func_80107F2C_23787C_SkateboardScamper(omObjData* obj) {
 }
 
 /* A course item: returns to the next z mark ahead of the camera once the chaser has passed it. */
-// register allocation (masked 9): retail keeps the mark in f2 and copies it to f4, this C loads f4 directly
 // Tried (S3-Q02): z assigned before the compare (plain and inside it), z block-scoped in the if.
-// S3-R13: the compare written arr[i] < D (plain, with z assigned before or inside it): masked 11.
-#ifdef NON_MATCHING
-void func_8010813C_237A8C_SkateboardScamper(omObjData* obj) {
-    ColActorWork* w = obj->unk_50;
-    s32 i;
-    f32 z;
+// decomp-permuter
+void func_8010813C_237A8C_SkateboardScamper(omObjData *obj)
+{
+  ColActorWork *w = obj->unk_50;
+  s32 i;
+  f32 z;
+  for (i = 0; i < 5; i++)
+  {
+    if (D_80102750_103350[1] > D_80108C90_2385E0_SkateboardScamper[i])
+    {
+      z = D_80108C90_2385E0_SkateboardScamper[i];
+      if ((D_80108B50_2384A0_SkateboardScamper + 100.0f) < obj->trans.z)
+      {
+        obj->trans.z = z;
+        func_800298A4_2A4A4(obj->model[0], 4, 0);
+        func_800298A4_2A4A4(obj->model[1], 4, 0);
+        w->unk_54 = 1;
+      }
+      break;
+    }
+  }
 
-    for (i = 0; i < 5; i++) {
-        if (D_80102750_103350[1] > D_80108C90_2385E0_SkateboardScamper[i]) {
-            z = D_80108C90_2385E0_SkateboardScamper[i];
-            if (D_80108B50_2384A0_SkateboardScamper + 100.0f < obj->trans.z) {
-                obj->trans.z = z;
-                func_800298A4_2A4A4(obj->model[0], 4, 0);
-                func_800298A4_2A4A4(obj->model[1], 4, 0);
-                w->unk_54 = 1;
-            }
-            break;
-        }
-    }
-    if (obj->trans.z == -4600.0f) {
-        func_80029714_2A314(obj->model[1], obj->trans.x, D_80108C08_238558_SkateboardScamper[7] + 105.0f, obj->trans.z);
-    } else if (obj->trans.z == 1200.0f) {
-        func_80029714_2A314(obj->model[1], obj->trans.x, 200.0f, obj->trans.z);
-    } else {
-        func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, obj->trans.z);
-    }
+  if (obj->trans.z == (-4600.0f))
+  {
+    func_80029714_2A314(obj->model[1], obj->trans.x, D_80108C08_238558_SkateboardScamper[7] + 105.0f, obj->trans.z);
+  }
+  else
+    if (obj->trans.z == 1200.0f)
+  {
+    func_80029714_2A314(obj->model[1], obj->trans.x, 200.0f, obj->trans.z);
+  }
+  else
+  {
+    z = obj->trans.z;
+    func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, z);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_2F_SkateboardScamper/232150", func_8010813C_237A8C_SkateboardScamper);
-#endif
 
 ColActorWork* func_801082C0_237C10_SkateboardScamper(omObjData* obj, s32 dir, f32 x, f32 y, f32 z, s32 arg5, s32 arg6) {
     ColActorWork* w;

@@ -1515,29 +1515,27 @@ void func_801078B8_1A0648_HandcarHavoc(omObjData* obj) {
 /* NON_MATCHING: register allocation (masked 0, raw 2): the last digit's cs % 10 lands in cs's s1, retail
  * computes it into a1. cs reused for the seconds' units and rest %= 60 took it from raw 14; sec %= 10 and
  * (u16)(rest % 60) inline were worse. */
-#ifdef NON_MATCHING
-void func_80107900_1A0690_HandcarHavoc(u16 time, u16* digit) {
-    u16 rest;
-    u16 sec;
-    u16 cs;
-
-    func_8001A854_1B454(*digit, time / 3600, 0);
-    digit += 2;
-    rest = time % 3600;
-    sec = rest / 60;
-    func_8001A854_1B454(*digit, sec / 10, 0);
-    digit++;
-    cs = sec % 10;
-    func_8001A854_1B454(*digit, cs, 0);
-    digit += 2;
-    rest %= 60;
-    cs = rest * 1.6666666f;
-    func_8001A854_1B454(digit[0], cs / 10, 0);
-    func_8001A854_1B454(digit[1], cs % 10, 0);
+// decomp-permuter
+void func_80107900_1A0690_HandcarHavoc(u16 time, u16 *digit)
+{
+  u16 rest;
+  u16 sec;
+  u16 cs;
+  func_8001A854_1B454(*digit, time / 3600, 0);
+  digit += 2;
+  rest = time % 3600;
+  sec = rest / 60;
+  func_8001A854_1B454(*digit, sec / 10, 0);
+  digit++;
+  cs = sec % 10;
+  func_8001A854_1B454(*digit, cs, 0);
+  digit += 2;
+  rest %= 60;
+  cs = rest * 1.6666666f;
+  func_8001A854_1B454(digit[0], cs / 10, 0);
+  sec = cs % 10;
+  func_8001A854_1B454(digit[1], sec, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_1A_HandcarHavoc/19B590", func_80107900_1A0690_HandcarHavoc);
-#endif
 
 /* The race's winner: the car nearer the goal (a car short of it counts negative); saves a new
    record. */
