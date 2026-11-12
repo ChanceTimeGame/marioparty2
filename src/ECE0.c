@@ -3619,24 +3619,14 @@ s16 func_80015334_15F34(void) {
     return m->numDefs;
 }
 
-// decomp-permuter
 s32 func_8001535C_15F5C(void)
 {
   SndMgr *m = func_80014AFC_156FC();
-  s32 new_var;
-  s32 ret = 0;
-  if (m != 0)
+  if (m == 0)
   {
-    if (m->active || ret)
-    {
-      ret = (new_var = m->active);
-    }
-    else
-    {
-      ret = (new_var = m->active);
-    }
+    return 0;
   }
-  return ret;
+  return m->active;
 }
 
 s32 func_80015388_15F88(s32 slot) {
@@ -3803,20 +3793,14 @@ void func_80015950_16550(s32 arg) {
     }
 }
 
-// decomp-permuter
 s32 func_80015988_16588(void)
 {
-  SndMgr *m;
-  int new_var;
-  s32 ret;
-  m = func_80014AFC_156FC();
-  new_var = m != 0;
-  ret = 0;
-  if (new_var)
+  SndMgr *m = func_80014AFC_156FC();
+  if (m == 0)
   {
-    ret = m->fadeTimer;
+    return 0;
   }
-  return ret;
+  return m->fadeTimer;
 }
 
 void func_800159B4_165B4(void) {
