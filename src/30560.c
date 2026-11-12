@@ -3016,11 +3016,8 @@ s32 func_800395F8_3A1F8(HmfMotionSlot *arg0, s16 arg1, u8 *arg2)
     for (i = 0; i < p->unk_0E; i++)
     {
       arg0->unk10[D_800DEFC0_DFBC0++] = (arg2[0] << 8) + arg2[1];
-      if (1)
-      {
-        u.i = (((arg2[2] << 24) + (arg2[3] << 16)) + (arg2[4] << 8)) + arg2[5];
-        arg0->unk14[D_800DEFC2_DFBC2++] = scale * u.f;
-      }
+      u.i = (((arg2[2] << 24) + (arg2[3] << 16)) + (arg2[4] << 8)) + arg2[5];
+      arg0->unk14[D_800DEFC2_DFBC2++] = scale * u.f;
       arg2 += 6;
     }
 
