@@ -47,70 +47,74 @@ s16 D_8010C258_137E48_HotRopeJump[4] = { 0, 0x3000, 0x2000, 0 };
    NON_MATCHING: the place-drawing loop: retail stores tbl[r]'s -1 from the hoisted s1 where GCC
    rematerialises it and shares it with D_80111928 (masked 3 with the goto outer loop; nested
    do/while hoists D_8010C11C's address, masked 17; do/if and while/continue, masked 18-20) */
-#ifdef NON_MATCHING
-void func_80102800_12E3F0_HotRopeJump(void) {
-    s32* tbl;
-    u8 cam;
-    s16 i;
-    s32 r;
+// decomp-permuter
+void func_80102800_12E3F0_HotRopeJump(void)
+{
+  int new_var;
+  s32 *tbl;
+  u8 cam;
+  s16 i;
+  s32 r;
+  func_8002D4D0_2E0D0(50);
+  func_8002F290_2FE90(D_800F9D30_FA930, 64);
+  omInitObjMan(50, 0);
+  func_80079128_79D28();
+  omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, func_80079E60_7AA60), 0xA0);
+  func_80018E30_19A30(1);
+  cam = func_80018E78_19A78();
+  ScissorSet(cam, 0.0f, 0.0f, 320.0f, 240.0f);
+  ViewportSet(cam, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
+  Hu3DCamSetPerspective(0, 30.0f, 80.0f, 8000.0f);
+  func_8010781C_13340C_HotRopeJump(1600.0f, 0.0f, 100.0f, 100.0f, -30.0f, -50.0f, 0.0f);
+  D_80111318_13CF08_HotRopeJump = 0;
+  D_800F8FD0_F9BD0 = 1;
+  if ((D_8010C140_137D30_HotRopeJump = _CheckFlag(0xC)) != 0)
+  {
+    D_8010C110_137D00_HotRopeJump = 50;
+  }
+  D_800FA606_FB206 = 0;
+  D_800FC87A_FD47A = 0;
+  D_800F8FE0_F9BE0 = 0;
+  func_8000C018_CC18(0);
+  D_80111150_13CD40_HotRopeJump = omAddObj(1, 0, 0, -1, func_80102C10_12E800_HotRopeJump);
+  omSetStatBit(D_80111150_13CD40_HotRopeJump, 0xA0);
+  D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80102DD0_12E9C0_HotRopeJump);
+  D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80102F18_12EB08_HotRopeJump);
+  D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80103060_12EC50_HotRopeJump);
+  D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_801031A8_12ED98_HotRopeJump);
+  func_80107FB0_133BA0_HotRopeJump();
+  D_80111140_13CD30_HotRopeJump = D_800BF7C0_C03C0;
+  D_80111144_13CD34_HotRopeJump = D_800BF7A4_C03A4;
+  D_80111148_13CD38_HotRopeJump = D_800BF7A8_C03A8;
+  D_8011114C_13CD3C_HotRopeJump = D_800BF7D4_C03D4;
+  i = 0;
+  tbl = D_8010C12C_137D1C_HotRopeJump;
+  new_var = -1;
+  next:
+  do
+  {
+    r = rand8() & 3;
+  }
+  while (tbl[r] == new_var);
 
-    func_8002D4D0_2E0D0(50);
-    func_8002F290_2FE90(D_800F9D30_FA930, 64);
-    omInitObjMan(50, 0);
-    func_80079128_79D28();
-    omSetStatBit(omAddObj(0x7FDA, 0, 0, -1, func_80079E60_7AA60), 0xA0);
-    func_80018E30_19A30(1);
-    cam = func_80018E78_19A78();
-    ScissorSet(cam, 0.0f, 0.0f, 320.0f, 240.0f);
-    ViewportSet(cam, 640.0f, 480.0f, 511.0f, 640.0f, 480.0f, 511.0f);
-    Hu3DCamSetPerspective(0, 30.0f, 80.0f, 8000.0f);
-    func_8010781C_13340C_HotRopeJump(1600.0f, 0.0f, 100.0f, 100.0f, -30.0f, -50.0f, 0.0f);
-    D_80111318_13CF08_HotRopeJump = 0;
-    D_800F8FD0_F9BD0 = 1;
-    if ((D_8010C140_137D30_HotRopeJump = _CheckFlag(0xC)) != 0) {
-        D_8010C110_137D00_HotRopeJump = 50;
-    }
-    D_800FA606_FB206 = 0;
-    D_800FC87A_FD47A = 0;
-    D_800F8FE0_F9BE0 = 0;
-    func_8000C018_CC18(0);
-    D_80111150_13CD40_HotRopeJump = omAddObj(1, 0, 0, -1, func_80102C10_12E800_HotRopeJump);
-    omSetStatBit(D_80111150_13CD40_HotRopeJump, 0xA0);
-    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80102DD0_12E9C0_HotRopeJump);
-    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80102F18_12EB08_HotRopeJump);
-    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_80103060_12EC50_HotRopeJump);
-    D_800FFFD8_100BD8[D_800FC87A_FD47A++] = omAddObj(3, 10, 60, -1, func_801031A8_12ED98_HotRopeJump);
-    func_80107FB0_133BA0_HotRopeJump();
-    D_80111140_13CD30_HotRopeJump = D_800BF7C0_C03C0;
-    D_80111144_13CD34_HotRopeJump = D_800BF7A4_C03A4;
-    D_80111148_13CD38_HotRopeJump = D_800BF7A8_C03A8;
-    D_8011114C_13CD3C_HotRopeJump = D_800BF7D4_C03D4;
-    i = 0;
-    tbl = D_8010C12C_137D1C_HotRopeJump;
-next:
-    do {
-        r = rand8() & 3;
-    } while (tbl[r] == -1);
-    D_8010C11C_137D0C_HotRopeJump[i] = tbl[r];
-    i++;
-    tbl[r] = -1;
-    if (i < 4) {
-        goto next;
-    }
-    D_80111928_13D518_HotRopeJump = -1;
-    D_80111338_13CF28_HotRopeJump = 4;
-    D_80111334_13CF24_HotRopeJump = 0;
-    D_8011133C_13CF2C_HotRopeJump = 0;
-    D_80111340_13CF30_HotRopeJump = 0;
-    D_80111348_13CF38_HotRopeJump = 0;
-    D_80111344_13CF34_HotRopeJump = 0;
-    D_800BF7A4_C03A4 = 1.6f;
-    D_800BF7A8_C03A8 = 0.175f;
-    InitFadeIn(0, 16);
+  D_8010C11C_137D0C_HotRopeJump[i] = tbl[r];
+  i++;
+  tbl[r] = new_var;
+  if (i < 4)
+  {
+    goto next;
+  }
+  D_80111928_13D518_HotRopeJump = -1;
+  D_80111338_13CF28_HotRopeJump = 4;
+  D_80111334_13CF24_HotRopeJump = 0;
+  D_8011133C_13CF2C_HotRopeJump = 0;
+  D_80111340_13CF30_HotRopeJump = 0;
+  D_80111348_13CF38_HotRopeJump = 0;
+  D_80111344_13CF34_HotRopeJump = 0;
+  D_800BF7A4_C03A4 = 1.6f;
+  D_800BF7A8_C03A8 = 0.175f;
+  InitFadeIn(0, 16);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_0C_HotRopeJump/12E3F0", func_80102800_12E3F0_HotRopeJump);
-#endif
 
 void func_80102C10_12E800_HotRopeJump(omObjData* obj) {
     void* file;
