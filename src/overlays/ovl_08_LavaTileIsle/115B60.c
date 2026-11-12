@@ -133,156 +133,111 @@ void func_8010479C_115C1C_LavaTileIsle(omObjData* obj) {
 }
 
 /* Register/schedule (class 4, masked 2): retail schedules the sll/sra after the array base. */
-// decomp-permuter
-void func_80104C94_116114_LavaTileIsle(omObjData *obj)
-{
-  MgWork *w;
-  s8 p;
-  s8 k;
-  s8 n = 0;
-  f32 x;
-  f32 z;
-  f32 *a;
-  if ((func_80078EA8_79AA8() + D_80102720_103320) != 0)
-  {
-    return;
-  }
-  w = obj->unk_50;
-  if (D_800F8FD0_F9BD0 == 0)
-  {
-    k = w->unk_57;
-    ContStkY[k] = 0;
-    ContStkX[k] = 0;
-    k = w->unk_57;
-    ContBtnTrg[k] = 0;
-    ContBtn[k] = 0;
-    obj->rot.y = 0.0f;
-    w->unk_3C = func_800B75A8_B81A8(-obj->trans.x, -obj->trans.z);
-    func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, (double) 0.0f, w->unk_3C, 0.0f);
-    func_80019B9C_1A79C(obj, 0);
-    return;
-  }
-  if ((D_800F8FD0_F9BD0 == 2) || (D_800F8FD0_F9BD0 == 3))
-  {
-    if (D_8010A2A0_11B720_LavaTileIsle > 60)
-    {
-      func_80109F44_11B3C4_LavaTileIsle(obj);
+void func_80104C94_116114_LavaTileIsle(omObjData* obj) {
+    MgWork* w;
+    s8 p;
+    s8 n = 0;
+    f32 x;
+    f32 z;
+
+    if (func_80078EA8_79AA8() + D_80102720_103320 != 0) {
+        return;
     }
-    D_8010A2A0_11B720_LavaTileIsle++;
-  }
-  if ((obj->work[1] == 0) && (obj->trans.y == (-600.0f)))
-  {
-    obj->work[1] = 1;
-    omVibrate(w->unk_59, 0x14, 0, 0x14);
-    D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, w->unk_59);
-    D_8010A4E0_11B960_LavaTileIsle = func_80079574_7A174() + 5;
-    func_8007954C_7A14C(D_8010A4E0_11B960_LavaTileIsle);
-  }
-  p = w->unk_59;
-  if (obj->work[1] == 1)
-  {
-    if (D_8010A2BC_11B73C_LavaTileIsle[p] == (-1))
-    {
-      D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, p);
+    w = obj->unk_50;
+    if (D_800F8FD0_F9BD0 == 0) {
+        ContStkX[w->unk_57] = ContStkY[w->unk_57] = 0;
+        ContBtn[w->unk_57] = ContBtnTrg[w->unk_57] = 0;
+        obj->rot.y = 0.0f;
+        w->unk_3C = func_800B75A8_B81A8(-obj->trans.x, -obj->trans.z);
+        func_800B2060_B2C60(D_800FC834_FD434[obj->model[0]].mtx, 0.0, w->unk_3C, 0.0f);
+        func_80019B9C_1A79C(obj, 0);
+        return;
     }
-    func_80019B9C_1A79C(obj, 0x26);
-    x = obj->trans.x;
-    z = obj->trans.z;
-    if (x > 0.0f)
-    {
-      obj->trans.x += 12.5;
+    if (D_800F8FD0_F9BD0 == 2 || D_800F8FD0_F9BD0 == 3) {
+        if (D_8010A2A0_11B720_LavaTileIsle > 60) {
+            func_80109F44_11B3C4_LavaTileIsle(obj);
+        }
+        D_8010A2A0_11B720_LavaTileIsle++;
     }
-    else
-    {
-      obj->trans.x -= 12.5;
+    if (obj->work[1] == 0 && obj->trans.y == -600.0f) {
+        obj->work[1] = 1;
+        omVibrate(w->unk_59, 0x14, 0, 0x14);
+        D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, w->unk_59);
+        D_8010A4E0_11B960_LavaTileIsle = func_80079574_7A174() + 5;
+        func_8007954C_7A14C(D_8010A4E0_11B960_LavaTileIsle);
     }
-    if (z > (-0.0f))
-    {
-      obj->trans.z += 12.5;
+    p = w->unk_59;
+    if (obj->work[1] == 1) {
+        if (D_8010A2BC_11B73C_LavaTileIsle[p] == -1) {
+            D_8010A2BC_11B73C_LavaTileIsle[w->unk_59] = func_800797DC_7A3DC(0x111, p);
+        }
+        func_80019B9C_1A79C(obj, 0x26);
+        x = obj->trans.x;
+        z = obj->trans.z;
+        if (x > 0.0f) {
+            obj->trans.x += 12.5;
+        } else {
+            obj->trans.x -= 12.5;
+        }
+        if (z > -0.0f) {
+            obj->trans.z += 12.5;
+        } else {
+            obj->trans.z -= 12.5;
+        }
+        w->unk_3C = func_800B75A8_B81A8(obj->trans.x - x, obj->trans.z - z);
+        D_8010A2A4_11B724_LavaTileIsle[p] += 5.0f;
+        if (D_8010A2A4_11B724_LavaTileIsle[p] >= 180.0f) {
+            D_8010A2A4_11B724_LavaTileIsle[p] = 0.0f;
+        }
+        func_801052A8_116728_LavaTileIsle(obj);
     }
-    else
-    {
-      obj->trans.z -= 12.5;
+    if ((gPlayers[w->unk_59].flags & 1) && D_800F8FD0_F9BD0 == 1) {
+        func_80105400_116880_LavaTileIsle(obj);
     }
-    w->unk_3C = func_800B75A8_B81A8(obj->trans.x - x, obj->trans.z - z);
-    ;
-    *(&D_8010A2A4_11B724_LavaTileIsle[p]) += 5.0f;
-    if ((*(&D_8010A2A4_11B724_LavaTileIsle[p])) >= 180.0f)
-    {
-      *(&D_8010A2A4_11B724_LavaTileIsle[p]) = 0.0f;
+    if (obj->trans.y < 0.0f) {
+        w->unk_40 = 0.0f;
+        ContStkX[w->unk_57] = ContStkY[w->unk_57] = ContBtnTrg[w->unk_57] = 0;
+        func_80029714_2A314(obj->model[1], obj->trans.x, -590.0f, obj->trans.z);
+    } else {
+        func_80029714_2A314(obj->model[1], obj->trans.x, 25.0f, obj->trans.z);
     }
-    func_801052A8_116728_LavaTileIsle(obj);
-  }
-  if ((gPlayers[w->unk_59].flags & 1) && (D_800F8FD0_F9BD0 == 1))
-  {
-    func_80105400_116880_LavaTileIsle(obj);
-  }
-  if (obj->trans.y < 0.0f)
-  {
-    w->unk_40 = 0.0f;
-    k = w->unk_57;
-    ContBtnTrg[k] = 0;
-    ContStkY[k] = 0;
-    ContStkX[k] = 0;
-    func_80029714_2A314(obj->model[1], obj->trans.x, -590.0f, obj->trans.z);
-  }
-  else
-  {
-    func_80029714_2A314(obj->model[1], obj->trans.x, 25.0f, obj->trans.z);
-  }
-  func_80007790_8390(obj);
-  if (obj->work[1] == 1)
-  {
-    obj->trans.y = (HuMathSin(D_8010A2A4_11B724_LavaTileIsle[p]) * 250.0f) + (-600.0f);
-  }
-  if ((D_8010A2B4_11B734_LavaTileIsle[w->unk_59] == 0) && (obj->work[0] != 0))
-  {
-    D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 1;
-    omVibrate(w->unk_59, 2, 3, 0xA);
-    D_8010A2B8_11B738_LavaTileIsle[w->unk_59]++;
-  }
-  else
-    if ((obj->work[0] == 0) || (D_8010A2B8_11B738_LavaTileIsle[w->unk_59] >= 10))
-  {
-    D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 0;
-    D_8010A2B8_11B738_LavaTileIsle[w->unk_59] = 0;
-  }
-  if (obj->work[0] == 1)
-  {
-    func_80109E70_11B2F0_LavaTileIsle(obj, 0);
-  }
-  else
-    if (obj->work[0] == 2)
-  {
-    func_80109E70_11B2F0_LavaTileIsle(obj, 1);
-  }
-  if (D_800F8FD0_F9BD0 == 1)
-  {
-    if (D_800FFFD8_100BD8[0]->work[1] == 1)
-    {
-      n++;
+    func_80007790_8390(obj);
+    if (obj->work[1] == 1) {
+        obj->trans.y = HuMathSin(D_8010A2A4_11B724_LavaTileIsle[p]) * 250.0f + -600.0f;
     }
-    if (D_800FFFD8_100BD8[1]->work[1] == 1)
-    {
-      n++;
+    if (D_8010A2B4_11B734_LavaTileIsle[w->unk_59] == 0 && obj->work[0] != 0) {
+        D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 1;
+        omVibrate(w->unk_59, 2, 3, 0xA);
+        D_8010A2B8_11B738_LavaTileIsle[w->unk_59]++;
+    } else if (obj->work[0] == 0 || D_8010A2B8_11B738_LavaTileIsle[w->unk_59] >= 10) {
+        D_8010A2B4_11B734_LavaTileIsle[w->unk_59] = 0;
+        D_8010A2B8_11B738_LavaTileIsle[w->unk_59] = 0;
     }
-    if (D_800FFFD8_100BD8[2]->work[1] == 1)
-    {
-      n++;
+    if (obj->work[0] == 1) {
+        func_80109E70_11B2F0_LavaTileIsle(obj, 0);
+    } else if (obj->work[0] == 2) {
+        func_80109E70_11B2F0_LavaTileIsle(obj, 1);
     }
-    if (D_800FFFD8_100BD8[3]->work[1] == 1)
-    {
-      n++;
+    if (D_800F8FD0_F9BD0 == 1) {
+        if (D_800FFFD8_100BD8[0]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[1]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[2]->work[1] == 1) {
+            n++;
+        }
+        if (D_800FFFD8_100BD8[3]->work[1] == 1) {
+            n++;
+        }
+        if (n >= 3) {
+            func_8000C398_CF98();
+        }
+        if (_CheckFlag(0xC) != 0 && obj->work[1] == 1 && !(gPlayers[w->unk_59].flags & 1)) {
+            func_8000C398_CF98();
+        }
     }
-    if (n >= 3)
-    {
-      func_8000C398_CF98();
-    }
-    if (((_CheckFlag(0xC) != 0) && (obj->work[1] == 1)) && (!(gPlayers[w->unk_59].flags & 1)))
-    {
-      func_8000C398_CF98();
-    }
-  }
 }
 
 /* Register/schedule (class 4, masked 2): retail schedules the sll after the array base. */

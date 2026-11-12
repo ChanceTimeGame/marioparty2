@@ -684,66 +684,52 @@ void func_80104460_DBEF0_BowserSlots(omObjData* obj) {
 }
 
 /* CPU input: press A when the wanted symbol is one face before the line (or at random). */
-// decomp-permuter
-void func_80104520_DBFB0_BowserSlots(omObjData *obj)
-{
-  BSPlayerWork *work = obj->unk_50;
-  int new_var;
-  BSReel *reel = D_8010C0D0_E3B60_BowserSlots;
-  s32 face = -1;
-  s32 press;
-  s32 i;
-  ContBtn[work->unk_57] = (ContBtnTrg[work->unk_57] = 0);
-  press = 0;
-  if (D_800F8FD0_F9BD0 != 1)
-  {
-    return;
-  }
-  if (D_8010B7D8_E3268_BowserSlots > 0)
-  {
-    ContBtn[work->unk_57] |= 0x8000;
- do { D_8010B7D8_E3268_BowserSlots--; goto wait; } while (0);
-  }
-  if (D_8010B7DC_E326C_BowserSlots != 0)
-  {
-    D_8010B7DC_E326C_BowserSlots--;
-    wait:
-    D_8010B7E0_E3270_BowserSlots = D_8010C06C_E3AFC_BowserSlots;
+void func_80104520_DBFB0_BowserSlots(omObjData *obj) {
+    BSPlayerWork *work = obj->unk_50;
+    BSReel *reel = D_8010C0D0_E3B60_BowserSlots;
+    s32 face = -1;
+    s32 press;
+    s32 i;
 
-    return;
-  }
-  for (i = 0; i < 3; i++, reel++)
-  {
-    if (reel->state == 2)
-    {
-      face = func_8010648C_DDF1C_BowserSlots(reel->angle);
-      if (D_8010C074_E3B04_BowserSlots == (new_var = 0))
-      {
-        if ((D_8010C06C_E3AFC_BowserSlots == func_801065D8_DE068_BowserSlots(i, face + 1)) && (D_8010B7E0_E3270_BowserSlots != face))
-        {
-          press = 1;
-        }
-      }
-      else
-        if (!(D_8010C040_E3AD0_BowserSlots & 0x3F))
-      {
-        press = 1;
-      }
-      if (press)
-      {
-        ContBtn[work->unk_57] |= 0x8000;
-        ContBtnTrg[work->unk_57] |= 0x8000;
-        D_8010B7D8_E3268_BowserSlots = 10;
-        D_8010B7DC_E326C_BowserSlots = (rand8() % 30) + 45.0;
-      }
-      break;
+    ContBtn[work->unk_57] = ContBtnTrg[work->unk_57] = 0;
+    press = 0;
+    if (D_800F8FD0_F9BD0 != 1) {
+        return;
     }
-  }
-
-  if (i < 3)
-  {
-    D_8010B7E0_E3270_BowserSlots = face;
-  }
+    if (D_8010B7D8_E3268_BowserSlots > 0) {
+        ContBtn[work->unk_57] |= 0x8000;
+        D_8010B7D8_E3268_BowserSlots--;
+        D_8010B7E0_E3270_BowserSlots = D_8010C06C_E3AFC_BowserSlots;
+        return;
+    }
+    if (D_8010B7DC_E326C_BowserSlots != 0) {
+        D_8010B7DC_E326C_BowserSlots--;
+        D_8010B7E0_E3270_BowserSlots = D_8010C06C_E3AFC_BowserSlots;
+        return;
+    }
+    for (i = 0; i < 3; i++, reel++) {
+        if (reel->state == 2) {
+            face = func_8010648C_DDF1C_BowserSlots(reel->angle);
+            if (D_8010C074_E3B04_BowserSlots == 0) {
+                if (D_8010C06C_E3AFC_BowserSlots == func_801065D8_DE068_BowserSlots(i, face + 1) &&
+                    D_8010B7E0_E3270_BowserSlots != face) {
+                    press = 1;
+                }
+            } else if (!(D_8010C040_E3AD0_BowserSlots & 0x3F)) {
+                press = 1;
+            }
+            if (press) {
+                ContBtn[work->unk_57] |= 0x8000;
+                ContBtnTrg[work->unk_57] |= 0x8000;
+                D_8010B7D8_E3268_BowserSlots = 10;
+                D_8010B7DC_E326C_BowserSlots = (rand8() % 30) + 45.0;
+            }
+            break;
+        }
+    }
+    if (i < 3) {
+        D_8010B7E0_E3270_BowserSlots = face;
+    }
 }
 
 void func_8010475C_DC1EC_BowserSlots(void) {

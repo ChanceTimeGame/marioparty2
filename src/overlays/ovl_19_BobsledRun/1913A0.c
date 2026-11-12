@@ -1082,14 +1082,12 @@ void func_80105D30_1948D0_BobsledRun(void) {
 }
 
 /* Time display group 0 (the race time) at (x, y). */
-// register allocation: retail stores the group id before copying it to s5, x in s1 (as in MP1 MinigameHouse func_800F8364)
-// decomp-permuter
 s16 func_80105D88_194928_BobsledRun(s32 x, s16 y)
 {
   s16 i;
   s16 px;
   s16 g;
-  g = (D_8010C9FA_19B59A_BobsledRun[0] = SprCreate(7, 5));
+  g = D_8010C9FA_19B59A_BobsledRun[0] = SprCreate(7, 5);
   SprAnimSet(g, 0, D_8010C9F6_19B596_BobsledRun, 0);
   SprAttrReset(g, 0, 0xFFFF);
   SprAttrSet(g, 0, 0x8000);

@@ -12,8 +12,8 @@ typedef struct UnkDebug0 {
     s32 unk8;
     s32 unkC;
     f32 unk10;
-    char pad[4];
-} UnkDebug0; //this should have been 0x14 in size, but it needs 0x18?
+    s32 unk14;
+} UnkDebug0;
 
 typedef struct UnkDebug2 {
     u8 groups[4];

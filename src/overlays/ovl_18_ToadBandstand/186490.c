@@ -80,17 +80,10 @@ void func_80102800_186490_ToadBandstand(void) {
     InitFadeIn(0, 0x10);
 }
 
-/* NON_MATCHING: class 4: operand order of one addu (retail addu a0,v0,v1); masked 0 */
-// decomp-permuter
-void func_80102A68_1866F8_ToadBandstand(s16 model, f32 arg1)
-{
-  s32 i = model;
-  HmfModel *base = D_800FC834_FD434;
-  HmfModel *m;
-  if ((i + base)->unk04 != 0xFF)
-  {
-    (i + base)->unk4C = arg1;
-  }
+void func_80102A68_1866F8_ToadBandstand(s16 model, f32 arg1) {
+    if (D_800FC834_FD434[model].unk04 != 0xFF) {
+        D_800FC834_FD434[model].unk4C = arg1;
+    }
 }
 
 /* NON_MATCHING: class 4: register allocation and frame size (retail 0x60, one 8-byte slot unexplained); masked differs by the frame only */
