@@ -1466,13 +1466,9 @@ void func_8010FC20_39DAE0_name_5C(void) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5C_name/398050", func_8010FC20_39DAE0_name_5C);
 #endif
 
-// decomp-permuter
 void func_8010FFDC_39DE9C_name_5C(s16 i, f32 x, f32 y, f32 z)
 {
-  f32 new_var;
-  Ovl5CMover **list = D_80112408_3A02C8_name_5C;
-  new_var = x;
-  D_80112408_3A02C8_name_5C[i]->target.x = new_var;
+  D_80112408_3A02C8_name_5C[i]->target.x = x;
   D_80112408_3A02C8_name_5C[i]->target.y = y;
   D_80112408_3A02C8_name_5C[i]->target.z = z;
   D_80112408_3A02C8_name_5C[i]->speed = 5.0f;
