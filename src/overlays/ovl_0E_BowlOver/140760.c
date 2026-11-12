@@ -34,14 +34,12 @@ void func_80106450_1407E0_BowlOver(omObjData* obj) {
 }
 
 /* The shell's shadow: shrinks with height. */
-// decomp-permuter
-void func_801064C8_140858_BowlOver(omObjData *obj)
-{
-  f32 s;
-  s = 2.5;
-  s = (0.4f - (obj->trans.y * 0.0015f)) * s;
-  func_800297E8_2A3E8(obj->model[1], (0.4f - (obj->trans.y * 0.0015f)) * 2.5, 1.0f, (0.4f - (obj->trans.y * 0.0015f)) * 2.5);
-  func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
+void func_801064C8_140858_BowlOver(omObjData* obj) {
+    f32 s;
+
+    s = 0.4f - obj->trans.y * 0.0015f;
+    func_800297E8_2A3E8(obj->model[1], s * 2.5, 1.0f, s * 2.5);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 2.0f, obj->trans.z);
 }
 
 /* The bowler lets go of the shell at (x, y, z). */
