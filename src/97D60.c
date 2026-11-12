@@ -2,14 +2,12 @@
 #include "sdk_leo.h"
 
 // 64DD driver (libleo) read/write thread and mechanism control (MP1 80BE0.c), built with IDO 5.3
-// (-O2 -G0 -mips2). func_80097160_97D60 and func_800972F0_97EF0 do not match yet (masked residue
-// 31 and 344) and stay asm. Its rodata (D4630-D46A0) is func_80098280_98E80's two jump tables.
+// (-O2 -G0 -mips2). func_800972F0_97EF0 does not match yet (masked residue 344) and
+// stays asm. Its rodata (D4630-D46A0) is func_80098280_98E80's two jump tables.
 
 // IDO-compiled libleo (read/write command thread)
-#ifdef NON_MATCHING
 void func_80097160_97D60(void* arg) {
     u32 blocks;
-    u32 n;
     u32 sense;
 
     osCreateMesgQueue(&D_800F1408_F2008, &D_800F1400_F2000, 1);
@@ -28,17 +26,12 @@ void func_80097160_97D60(void* arg) {
                 break;
             }
             if (D_800F206E_F2C6E & 0x2000) {
-                n = 1;
                 D_800F2070_F2C70.rdwr_blocks = 1;
-            } else {
-                n = D_800F2070_F2C70.rdwr_blocks;
-                if (blocks < n) {
-                    n = blocks & 0xFF;
-                    D_800F2070_F2C70.rdwr_blocks = blocks;
-                }
+            } else if (blocks < D_800F2070_F2C70.rdwr_blocks) {
+                D_800F2070_F2C70.rdwr_blocks = blocks;
             }
-            blocks -= n;
-            D_800F2070_F2C70.lba += n;
+            blocks -= D_800F2070_F2C70.rdwr_blocks;
+            D_800F2070_F2C70.lba += D_800F2070_F2C70.rdwr_blocks;
             sense = func_800972F0_97EF0();
             if (sense != 0) {
                 break;
@@ -52,9 +45,6 @@ void func_80097160_97D60(void* arg) {
         osSendMesg(&D_800F2000_F2C00, (OSMesg)sense, OS_MESG_BLOCK);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/97D60", func_80097160_97D60);
-#endif
 
 // IDO-compiled libleo (one sector transfer with C1/C2 error handling and retries)
 #ifdef NON_MATCHING
