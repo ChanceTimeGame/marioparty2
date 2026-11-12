@@ -72,7 +72,6 @@ omObjData* func_8010D4D8_340118_name_4F(void) {
 
 /* NON_MATCHING: retail hoists the 0xE3000A01 (cycle type) word out of the loop with the other
    constants; everything else matches. */
-// decomp-permuter
 void func_8010D528_340168_name_4F(omObjData *obj)
 {
   Gfx *gfx;
@@ -83,7 +82,6 @@ void func_8010D528_340168_name_4F(omObjData *obj)
   s32 base;
   s32 k;
   unsigned long slot = obj->work[1];
-  Gfx *new_var;
   for (i = 0; i < D_800FDBCA_FE7CA; i++)
   {
     gfx = D_801104E0_343120_name_4F[slot][i];
@@ -107,8 +105,7 @@ void func_8010D528_340168_name_4F(omObjData *obj)
       gSPVertex(gfx++, &vtx[base], n, 0);
       for (k = 0; k < n; k += 3)
       {
-        new_var = gfx++;
-        gSP1Triangle(new_var, k, k + 1, k + 2, 0);
+        gSP1Triangle(gfx++, k, k + 1, k + 2, 0);
       }
 
       base += n;
