@@ -15,12 +15,13 @@ typedef struct LEOCmdReadTimer {
     /* 0x13 */ u8 second;
 } LEOCmdReadTimer;
 
-extern u8 D_800CC2B0[];          // RTC field maxima
-extern u8 D_800CC2B8[];          // days per month
+extern u8 D_800D41E0_D4DE0[];          // RTC field maxima
+extern u8 D_800D41E8_D4DE8[];          // days per month
 
-#ifdef NON_MATCHING
 // leoReadTimer
 void func_8009B940_9C540(void) {
+    u8* rdparam;
+    u8 data[4];
     u8 rtc[6];
     u8 sense = func_8009BC34_9C834(rtc);
 
@@ -42,76 +43,79 @@ void func_8009B940_9C540(void) {
     }
     LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9C540", func_8009B940_9C540);
-#endif
 
-#ifdef NON_MATCHING
 // leoSetTimer: validate the BCD date (year, month, day, hour, minute, second), write it, read it back
 void func_8009B9FC_9C5FC(void) {
-    LEOCmdReadTimer* cmd = (LEOCmdReadTimer*)D_800F2060_F2C60;
-    u8* p = &cmd->yearlo;
-    u8 rtc[6];
-    u32 prev = 0;  // the field before this one
-    u32 prev2 = 0; // the one before that
+    LEOCmdReadTimer rd_timer;
+    u8* p = &LEO_CUR(LEOCmdReadTimer)->yearlo;
+    u32 year;
+    u32 month;
     u32 v;
     u32 i;
     u8 sense;
+    u8 rtc[6];
 
     for (i = 0; i < 6; i++) {
-        v = p[i];
-        if ((v & 0xF) >= 10) {
-            goto invalid;
+        v = *p;
+        if ((v & 0xF) > 9) {
+            LEO_CUR(LEOCmdHeader)->sense_code = 0x24;
+            LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+            return;
         }
-        v -= (v >> 4) * 6;
-        if (i == 2) {
-            // day: 29 February only in a leap year
-            if ((D_800CC2B8[prev] < v) && ((v != 29) || ((prev2 & 3) != 0))) {
-                goto invalid;
-            }
+        v = v - ((v >> 4) * 6);
+        switch (i) {
+            case 2:
+                // day: 29 February only in a leap year
+                if (D_800D41E8_D4DE8[month] < v && (v != 29 || (year & 3))) {
+                LEO_CUR(LEOCmdHeader)->sense_code = 0x24;
+                LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+                return;
+                }
+                // fallthrough
+            case 1:
+                if (v == 0) {
+                LEO_CUR(LEOCmdHeader)->sense_code = 0x24;
+                LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+                return;
+                }
+                // fallthrough
+            default:
+                if (D_800D41E0_D4DE0[i] < v) {
+                LEO_CUR(LEOCmdHeader)->sense_code = 0x24;
+                LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+                return;
+                }
         }
-        if (((i == 1) || (i == 2)) && (v == 0)) {
-            goto invalid;
-        }
-        if (D_800CC2B0[i] < v) {
-            goto invalid;
-        }
-        prev2 = prev;
-        prev = v;
+        year = month;
+        month = v;
+        p++;
     }
-    rtc[0] = cmd->yearlo;
-    rtc[1] = cmd->month;
-    rtc[2] = cmd->day;
-    rtc[3] = cmd->hour;
-    rtc[4] = cmd->minute;
-    rtc[5] = cmd->second;
-    if ((sense = func_8009BDA4_9C9A4(rtc)) != 0) {
-        LEO_CUR(LEOCmdHeader)->sense_code = sense;
-        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-        return;
+    rtc[0] = LEO_CUR(LEOCmdReadTimer)->yearlo;
+    rtc[1] = LEO_CUR(LEOCmdReadTimer)->month;
+    rtc[2] = LEO_CUR(LEOCmdReadTimer)->day;
+    rtc[3] = LEO_CUR(LEOCmdReadTimer)->hour;
+    rtc[4] = LEO_CUR(LEOCmdReadTimer)->minute;
+    rtc[5] = LEO_CUR(LEOCmdReadTimer)->second;
+    sense = func_8009BDA4_9C9A4(rtc);
+    if (sense != 0) {
+            LEO_CUR(LEOCmdHeader)->sense_code = sense;
+            LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+            return;
     }
-    if ((sense = func_8009BC34_9C834(rtc)) != 0) {
-        LEO_CUR(LEOCmdHeader)->sense_code = sense;
-        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-        return;
+    sense = func_8009BC34_9C834(rtc);
+    if (sense != 0) {
+            LEO_CUR(LEOCmdHeader)->sense_code = sense;
+            LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+            return;
     }
-    cmd = (LEOCmdReadTimer*)D_800F2060_F2C60;
-    if ((cmd->yearlo != rtc[0]) || (cmd->month != rtc[1]) || (cmd->day != rtc[2]) ||
-        (cmd->hour != rtc[3]) || (cmd->minute != rtc[4]) || (cmd->second != rtc[5])) {
-        cmd->header.sense_code = 0x24;
-        LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
-        return;
+    if (rtc[0] != LEO_CUR(LEOCmdReadTimer)->yearlo || rtc[1] != LEO_CUR(LEOCmdReadTimer)->month || rtc[2] != LEO_CUR(LEOCmdReadTimer)->day || rtc[3] != LEO_CUR(LEOCmdReadTimer)->hour ||
+        rtc[4] != LEO_CUR(LEOCmdReadTimer)->minute || rtc[5] != LEO_CUR(LEOCmdReadTimer)->second) {
+            LEO_CUR(LEOCmdHeader)->sense_code = 0x24;
+            LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+            return;
     }
-    cmd->header.status = LEO_STATUS_GOOD;
-    return;
-
-invalid:
-    cmd->header.sense_code = 0x24; // invalid field
-    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_CHECK_CONDITION;
+    LEO_CUR(LEOCmdHeader)->status = LEO_STATUS_GOOD;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/9C540", func_8009B9FC_9C5FC);
-#endif
 
 // read the RTC: year, month, day, hour, minute, second
 u8 func_8009BC34_9C834(u8* rtc) {
