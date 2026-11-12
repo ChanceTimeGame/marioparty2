@@ -4,7 +4,7 @@
 // 64DD driver (libleo) microsequence loader (leoSet_mseq and its two tables) and the command
 // queue flush (MP1 80BE0.c). Built with IDO 5.3; the tables come first in its rodata, after the
 // previous unit's jump tables, so this is a separate file (IDO emits a file's const data before its
-// jump tables). func_800984A0_990A0 does not match yet (masked residue 86) and stays asm.
+// jump tables).
 
 // read microsequence (loaded by func_800984A0_990A0)
 const u32 D_800D3AA0_D46A0[16] = {
@@ -24,12 +24,11 @@ const u32 D_800D3AE0_D46E0[16] = {
 const char D_800D3B20_D4720[] = "B014A26";
 
 // IDO-compiled libleo (leoSet_mseq: load the read or write microsequence)
-#ifdef NON_MATCHING
 void func_800984A0_990A0(u16 rwmode) {
     const u32* src;
-    u8 i;
-    u32 secm1;
     u32 sec;
+    u32 secm1;
+    u8 i;
 
     D_800F2068_F2C68 &= ~0x40000000;
     osEPiWriteIo(D_800F28E0_F34E0, 0x05000518, D_800F2068_F2C68);
@@ -38,11 +37,13 @@ void func_800984A0_990A0(u16 rwmode) {
     } else {
         src = D_800D3AA0_D46A0;
     }
-    for (i = 0; i < 16; i++) {
-        D_800F1430_F2030[i] = *src++;
+    for (i = 0; i < 16; i++, src++) {
+        D_800F1430_F2030[i] = *src;
     }
-    secm1 = D_800F2070_F2C70.sec_bytes - 1;
-    D_800F1430_F2030[4] |= secm1 << 8;
+    sec = secm1 = D_800F2070_F2C70.sec_bytes - 1;
+    secm1 += 7;
+    sec <<= 8;
+    D_800F1430_F2030[4] |= sec;
     osWritebackDCache(D_800F1430_F2030, sizeof(D_800F1430_F2030));
     D_800F28E8_F34E8.dramAddr = D_800F1430_F2030;
     D_800F28E8_F34E8.devAddr = 0x05000580;
@@ -50,8 +51,7 @@ void func_800984A0_990A0(u16 rwmode) {
     D_800F28E0_F34E0->transferInfo.cmdType = OS_OTHERS;
     osEPiStartDma(D_800F28E0_F34E0, &D_800F28E8_F34E8, OS_WRITE);
     osRecvMesg(&D_800F2018_F2C18, NULL, OS_MESG_BLOCK);
-    osEPiWriteIo(D_800F28E0_F34E0, 0x05000530, ((secm1 + 7) | 0x5900) << 16);
-    sec = secm1 << 8;
+    osEPiWriteIo(D_800F28E0_F34E0, 0x05000530, (secm1 | 0x5900) << 16);
     if (D_800F206E_F2C6E & 0x800) {
         sec += 0x100;
     }
@@ -59,9 +59,6 @@ void func_800984A0_990A0(u16 rwmode) {
     D_800F2068_F2C68 |= 0x40000000;
     osEPiWriteIo(D_800F28E0_F34E0, 0x05000518, D_800F2068_F2C68);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/990A0", func_800984A0_990A0);
-#endif
 
 // IDO-compiled libleo (flush the command queue: every pending command is terminated)
 void func_80098650_99250(void) {
