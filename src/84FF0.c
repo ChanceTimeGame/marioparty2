@@ -3101,7 +3101,6 @@ void func_8008CCA8_8D8A8(s16 winId) {
 }
 
 
-// decomp-permuter
 void func_8008CE5C_8DA5C(void)
 {
   s16 id;
