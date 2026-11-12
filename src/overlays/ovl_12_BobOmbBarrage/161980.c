@@ -41,95 +41,82 @@ omObjData* func_801036A0_1619C0_BobOmbBarrage(void) {
     return obj;
 }
 
-/* NON_MATCHING: register allocation (masked 0, raw 18): i, ch and m sit in s3/s4/s2 where retail has
-   s2/s3/s4. The s16 m keeps retail's separate LoadFormFile calls; k reused for i + 8. Declaration
-   order and an s32 ch have no effect. */
-// decomp-permuter
-void func_801036F0_161A10_BobOmbBarrage(omObjData *obj)
-{
-  s32 i;
-  s32 k;
-  s16 m;
-  u8 ch;
-  obj->model[0] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[0], 0x289);
-  omSetTra(obj, 0.0f, 0.0f, 0.0f);
-  omSetSca(obj, 1.0f, 1.0f, 1.0f);
-  omSetRot(obj, 0.0f, 0.0f, 0.0f);
-  func_80029714_2A314(obj->model[0], 0.0f, 0.0f, 0.0f);
-  func_8002979C_2A39C(obj->model[0], 0.0f, 0.0f, 0.0f);
-  func_800297E8_2A3E8(obj->model[0], 1.0f, 1.0f, 1.0f);
-  func_800298A4_2A4A4(obj->model[0], 4, 0);
-  func_80029EDC_2AADC(obj->model[0], 0xF);
-  obj->model[1] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[1], 0x289);
-  func_80029714_2A314(obj->model[1], 0.0f, 0.0f, 0.0f);
-  func_8002979C_2A39C(obj->model[1], 0.0f, 0.0f, 0.0f);
-  func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, 1.0f);
-  func_800298A4_2A4A4(obj->model[1], 4, 0);
-  func_80029EDC_2AADC(obj->model[1], 0xF);
-  obj->model[2] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[2], 0x299);
-  func_80029714_2A314(obj->model[2], 0.0f, 0.0f, 0.0f);
-  func_8002979C_2A39C(obj->model[2], 0.0f, 0.0f, 0.0f);
-  func_800297E8_2A3E8(obj->model[2], 1.0f, 1.0f, 1.0f);
-  func_80029F2C_2AB2C(obj->model[2], 0x400);
-  func_800298A4_2A4A4(obj->model[2], 4, 0);
-  func_80029EDC_2AADC(obj->model[2], 0xF);
-  func_8002A00C_2AC0C(obj->model[2]);
-  D_80109340_167660_BobOmbBarrage = (D_80109344_167664_BobOmbBarrage = 0.0f);
-  obj->model[3] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[3], 0x289);
-  func_80029714_2A314(obj->model[3], 0.0f, 0.0f, 0.0f);
-  func_8002979C_2A39C(obj->model[3], 0.0f, 0.0f, 0.0f);
-  func_800297E8_2A3E8(obj->model[3], 1.0f, 1.0f, 1.0f);
-  func_800298A4_2A4A4(obj->model[3], 4, 0);
-  func_80029EDC_2AADC(obj->model[3], 0xF);
-  HmfModelObjAttrSet(obj->model[3], 0x20000, 0x20000);
-  func_80029A8C_2A68C(obj->model[3]);
-  func_8002A00C_2AC0C(obj->model[3]);
-  for (i = 0; i < 4; i++)
-  {
-    ch = gPlayers[func_80108D24_167044_BobOmbBarrage(i)].character;
-    m = (k = i + 4);
-    D_80109370_167690_BobOmbBarrage = &D_801093A0_1676C0_BobOmbBarrage[i];
-    if (i == 0)
-    {
-      obj->model[(s16) k] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][0], 0x299);
-    }
-    else
-    {
-      obj->model[(s16) m] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][1], 0x299);
-    }
-    func_80029714_2A314(obj->model[(s16) m], 0.0f, 0.0f, 0.0f);
-    func_8002979C_2A39C(obj->model[(s16) m], 0.0f, 0.0f, 0.0f);
-    func_800297E8_2A3E8(obj->model[(s16) m], 1.0f, 1.0f, 1.0f);
-    func_800298A4_2A4A4(obj->model[(s16) m], 4, 0);
-    func_80029F2C_2AB2C(obj->model[(s16) m], 0x800);
-    if (i == 0)
-    {
-      D_80109370_167690_BobOmbBarrage->mot[0] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][2], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[1] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][3], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[5] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][7], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[6] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][8], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[7] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][9], 0x299);
-    }
-    else
-    {
-      D_80109370_167690_BobOmbBarrage->mot[0] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][2], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[1] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][3], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[9] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][11], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[10] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][12], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[11] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][13], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[4] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][6], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[7] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][9], 0x299);
-      D_80109370_167690_BobOmbBarrage->mot[8] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][10], 0x299);
-      k = i + 8;
-      obj->model[(s16) k] = LoadFormFile(0xD, 0x299);
-      func_80029714_2A314(obj->model[(s16) k], 0.0f, 0.0f, 0.0f);
-      func_8002979C_2A39C(obj->model[(s16) k], 0.0f, 0.0f, 0.0f);
-      func_800297E8_2A3E8(obj->model[(s16) k], 1.0f, 1.0f, 1.0f);
-      func_800298A4_2A4A4(obj->model[(s16) k], 4, 0);
-    }
-  }
+void func_801036F0_161A10_BobOmbBarrage(omObjData* obj) {
+    s32 i;
+    s16 m;
+    u8 ch;
 
-  obj->func_ptr = func_80103D58_162078_BobOmbBarrage;
+    obj->model[0] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[0], 0x289);
+    omSetTra(obj, 0.0f, 0.0f, 0.0f);
+    omSetSca(obj, 1.0f, 1.0f, 1.0f);
+    omSetRot(obj, 0.0f, 0.0f, 0.0f);
+    func_80029714_2A314(obj->model[0], 0.0f, 0.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[0], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[0], 1.0f, 1.0f, 1.0f);
+    func_800298A4_2A4A4(obj->model[0], 4, 0);
+    func_80029EDC_2AADC(obj->model[0], 0xF);
+    obj->model[1] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[1], 0x289);
+    func_80029714_2A314(obj->model[1], 0.0f, 0.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[1], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[1], 1.0f, 1.0f, 1.0f);
+    func_800298A4_2A4A4(obj->model[1], 4, 0);
+    func_80029EDC_2AADC(obj->model[1], 0xF);
+    obj->model[2] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[2], 0x299);
+    func_80029714_2A314(obj->model[2], 0.0f, 0.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[2], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[2], 1.0f, 1.0f, 1.0f);
+    func_80029F2C_2AB2C(obj->model[2], 0x400);
+    func_800298A4_2A4A4(obj->model[2], 4, 0);
+    func_80029EDC_2AADC(obj->model[2], 0xF);
+    func_8002A00C_2AC0C(obj->model[2]);
+    D_80109340_167660_BobOmbBarrage = D_80109344_167664_BobOmbBarrage = 0.0f;
+    obj->model[3] = LoadFormFile(D_80108F08_167228_BobOmbBarrage[3], 0x289);
+    func_80029714_2A314(obj->model[3], 0.0f, 0.0f, 0.0f);
+    func_8002979C_2A39C(obj->model[3], 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(obj->model[3], 1.0f, 1.0f, 1.0f);
+    func_800298A4_2A4A4(obj->model[3], 4, 0);
+    func_80029EDC_2AADC(obj->model[3], 0xF);
+    HmfModelObjAttrSet(obj->model[3], 0x20000, 0x20000);
+    func_80029A8C_2A68C(obj->model[3]);
+    func_8002A00C_2AC0C(obj->model[3]);
+    for (i = 0; i < 4; i++) {
+        ch = gPlayers[func_80108D24_167044_BobOmbBarrage(i)].character;
+        m = i + 4;
+        D_80109370_167690_BobOmbBarrage = &D_801093A0_1676C0_BobOmbBarrage[i];
+        if (i == 0) {
+            obj->model[m] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][0], 0x299);
+        } else {
+            obj->model[m] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][1], 0x299);
+        }
+        func_80029714_2A314(obj->model[m], 0.0f, 0.0f, 0.0f);
+        func_8002979C_2A39C(obj->model[m], 0.0f, 0.0f, 0.0f);
+        func_800297E8_2A3E8(obj->model[m], 1.0f, 1.0f, 1.0f);
+        func_800298A4_2A4A4(obj->model[m], 4, 0);
+        func_80029F2C_2AB2C(obj->model[m], 0x800);
+        if (i == 0) {
+            D_80109370_167690_BobOmbBarrage->mot[0] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][2], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[1] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][3], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[5] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][7], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[6] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][8], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[7] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][9], 0x299);
+        } else {
+            D_80109370_167690_BobOmbBarrage->mot[0] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][2], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[1] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][3], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[9] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][11], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[10] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][12], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[11] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][13], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[4] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][6], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[7] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][9], 0x299);
+            D_80109370_167690_BobOmbBarrage->mot[8] = LoadFormFile(D_80108EEC_16720C_BobOmbBarrage[ch][10], 0x299);
+            m = i + 8;
+            obj->model[m] = LoadFormFile(0xD, 0x299);
+            func_80029714_2A314(obj->model[m], 0.0f, 0.0f, 0.0f);
+            func_8002979C_2A39C(obj->model[m], 0.0f, 0.0f, 0.0f);
+            func_800297E8_2A3E8(obj->model[m], 1.0f, 1.0f, 1.0f);
+            func_800298A4_2A4A4(obj->model[m], 4, 0);
+        }
+    }
+    obj->func_ptr = func_80103D58_162078_BobOmbBarrage;
 }
 
 void func_80103D58_162078_BobOmbBarrage(omObjData* obj) {
@@ -626,15 +613,11 @@ void func_8010561C_16393C_BobOmbBarrage(void) {
     ai->t++;
 }
 
-// decomp-permuter
-void func_801056D4_1639F4_BobOmbBarrage(void)
-{
-  u8 new_var;
-  unsigned short new_var2;
-  u8 port = gPlayers[func_80108D24_167044_BobOmbBarrage(0)].port;
-  new_var2 = ContBtn[port];
-  new_var = port;
-  func_801049E0_162D00_BobOmbBarrage(ContStkX[new_var], ContStkY[new_var], new_var2);
+void func_801056D4_1639F4_BobOmbBarrage(void) {
+    u8 port = gPlayers[func_80108D24_167044_BobOmbBarrage(0)].port;
+    u16 btn = ContBtn[port];
+
+    func_801049E0_162D00_BobOmbBarrage(ContStkX[port], ContStkY[port], btn);
 }
 
 void func_80105754_163A74_BobOmbBarrage(void) {
