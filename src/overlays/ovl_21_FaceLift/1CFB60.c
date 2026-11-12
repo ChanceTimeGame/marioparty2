@@ -910,8 +910,6 @@ void func_801059EC_1D2D4C_FaceLift(void) {
     }
 }
 
-// scheduling (the D_8010274C_10334C base load)
-// decomp-permuter
 void func_80105DB0_1D3110_FaceLift(omObjData *obj)
 {
   Vec eye;

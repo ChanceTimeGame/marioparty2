@@ -1178,14 +1178,12 @@ void func_801063C4_1AFA54_SkyPilots(void) {
     func_8001A340_1AF40(D_8010B346_1B49D6_SkyPilots, 0.0f, 1.0f, 0.0f);
 }
 
-/* NON_MATCHING: register allocation (masked 2) */
-// decomp-permuter
 s16 func_8010641C_1AFAAC_SkyPilots(s32 x, s16 y)
 {
   s16 i;
   s16 px;
   s16 win;
-  win = (D_8010B34C_1B49DC_SkyPilots[0] = SprCreate(7, 5));
+  win = D_8010B34C_1B49DC_SkyPilots[0] = SprCreate(7, 5);
   SprAnimSet(win, 0, D_8010B344_1B49D4_SkyPilots, 0);
   SprAttrReset(win, 0, 0xFFFF);
   SprAttrSet(win, 0, 0x8000);
