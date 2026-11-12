@@ -127,6 +127,7 @@ segments:
       - [0x93A80, c]
       - [0x978F0, c]
       - [0x97D60, c]
+      - [0x990A0, c]
       - [0x99370, c]
       - [0x995C0, c]
       - [0x99690, c]
@@ -135,6 +136,7 @@ segments:
       - [0x99D50, c]
       - [0x99FE0, c]
       - [0x9A210, c]
+      - [0x9B300, c]
       - [0x9B990, c]
       - [0x9BAF0, c]
       - [0x9BBE0, c]
@@ -434,7 +436,7 @@ segments:
       - {start: 0xCE1B0, type: .data, name: 84FF0, linker_section: .cdata}
       - [0xCE850, .data, 8FBB0]
       - [0xCE910, data]
-      - {start: 0xCE930, type: .data, name: 9A210, linker_section: .cdata}
+      - {start: 0xCE930, type: .data, name: 9B300, linker_section: .cdata}
       - [0xCE990, data]
       - [0xCEA20, .data, 9E8A0]
       - [0xCEA30, data]
@@ -483,8 +485,10 @@ segments:
       - [0xD4618, pad]
       - [0xD4620, data]
       - [0xD4630, .data, 97D60]
+      - [0xD46A0, .data, 990A0]
       - [0xD4728, data]
       - [0xD4900, .data, 9A210]
+      - [0xD4D20, .data, 9B300]
       - [0xD4DD0, data]
       - [0xD4ED0, .data, 9EA20]
       - [0xD4EF0, .data, 9EED0]

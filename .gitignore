@@ -10,3 +10,5 @@ ctx.c
 ctx.c.m2c
 __pycache__
 venv/
+tools/ido_recomp/
+tools/asm-processor/

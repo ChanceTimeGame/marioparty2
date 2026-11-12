@@ -118,8 +118,10 @@ u16 func_80098770_99370(u32 lba); // leoLba_to_phys
 
 // 9A210.c
 u16 func_80099610_9A210(void);
-u8 func_8009A674_9B274(u8 a, u8 b);
-u8 func_8009A6B8_9B2B8(u8 a, u8 b);
+u8 func_8009A674_9B274(s32 a, s32 b);
+u8 func_8009A6B8_9B2B8(s32 a, s32 b);
+
+// 9B300.c
 u8 func_8009AB7C_9B77C(void);
 
 // 9BE10.c

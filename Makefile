@@ -50,6 +50,8 @@ OBJCOPY  := $(CROSS)objcopy
 STRIP    := $(CROSS)strip
 
 CC       := tools/gcc_2.7.2/gcc
+IDO_CC   := tools/ido_recomp/linux/5.3/cc
+ASM_PROC := $(PYTHON) tools/asm-processor/build.py
 CC_HOST  := gcc
 CPP      := cpp -P
 
@@ -473,14 +475,30 @@ $(W2B_BLANKSTRIP_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
 	@$(STRIP) $@ -N dummy-symbol-name
 	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 
-# w3-C: 97D60's (D4630-D4728) and 9A210's (D4900-D4DD0) whole rodata carved out of the data blob (libleo
-# tables and the asm functions' jump tables, defined in C); the asm piece between them starts 8- but not 16-aligned
-W3C_CARVED_RODATA_UNITS := build/src/97D60.c.o build/src/9A210.c.o
+# w3-C: 97D60's (D4630-D46A0), 990A0's (D46A0-D4728), 9A210's (D4900-D4D20) and 9B300's (D4D20-D4DD0) whole rodata carved out of the
+# data blob (libleo tables and jump tables); the asm piece between them starts 8- but not 16-aligned
+W3C_CARVED_RODATA_UNITS := build/src/97D60.c.o build/src/990A0.c.o build/src/9A210.c.o build/src/9B300.c.o
 CARVED_RODATA_UNITS += $(W3C_CARVED_RODATA_UNITS)
 $(W3C_CARVED_RODATA_UNITS): RODATA_AS_DATA = 1
 W3C_NOPAD := build/asm/data/D4728.data.s.o
 NOPAD_DATA_PIECES += $(W3C_NOPAD)
 $(W3C_NOPAD): ASFLAGS += --no-pad-sections
+# ido: the libleo units, built by Nintendo with IDO 5.3 (`make -C tools` fetches it and asm-processor).
+# asm-processor puts each INCLUDE_ASM function into the IDO object; the .s copies it reads drop the
+# `.set` lines (its prelude sets noat/noreorder).
+IDO_UNITS := build/src/97D60.c.o build/src/990A0.c.o build/src/9A210.c.o build/src/9CA50.c.o
+IDO_CFLAGS := -O2 -G0 -mips2 -non_shared -Xcpluscomm
+build/src/990A0.c.o: IDO_RODATA_SIZE = 0x88
+$(IDO_UNITS): $(BUILD_DIR)/src/%.c.o: src/%.c
+	@$(PRINT)$(GREEN)Compiling C file (IDO): $(ENDGREEN)$(BLUE)$<$(ENDBLUE)$(ENDLINE)
+	@mkdir -p $(shell dirname $@) $(BUILD_DIR)/asmproc/asm/nonmatchings/$*
+	@$(CC_HOST) $(CFLAGS_CHECK) $(CPPFLAGS) -MMD -MP -MT $@ -MF $@.d -I include/ $<
+	$(V)if [ -d asm/nonmatchings/$* ]; then for f in asm/nonmatchings/$*/*.s; do sed '/^[[:space:]]*\.set /d' $$f > $(BUILD_DIR)/asmproc/$$f; done; fi
+	@rm -f $@
+	$(V)$(ASM_PROC) --asm-prelude include/asmproc_prelude.inc --base-dir $(BUILD_DIR)/asmproc $(IDO_CC) -- $(AS) $(ASFLAGS) -- -c $(IDO_CFLAGS) $(IDO_DEFS) $(CPPFLAGS) -o $@ $< 2>&1 | grep -v -e 'Warning' -e '^ *;$$' -e '^ *-*^$$' -e 'Info: macro invoked' -e 'Assembler messages' || true
+	@test -f $@
+	$(if $(IDO_RODATA_SIZE),$(V)$(PYTHON) tools/trim_section.py $@ .rodata $(IDO_RODATA_SIZE))
+	$(if $(RODATA_AS_DATA),$(V)$(OBJCOPY) --rename-section .rodata=.data $@)
 # w3-B: 7AA60 (camera-anchored sprite objects, sound fades) and B6E0 (minigame player actions;
 # func_8000B298_BE98: a nop between dependent mul.s) are built as 1D0B0 is: GCC's assembly with
 # blank lines removed, assembled with the KMC VR4300 mul fix on (func_8007B818_7C418: a nop between
@@ -698,7 +716,7 @@ $(D1A_GFX_UNITS): CFLAGS_CHECK += -m32
 # into the data half's `(.data)` entry; their C .data is renamed to .cdata in the same objcopy and
 # the data half's yaml entry links it (`{start: .., type: .data, name: <unit>, linker_section: .cdata}`).
 # The rodata half's entry stays `[start, .data, <unit>]`.
-D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o build/src/69950.c.o build/src/objmain.c.o build/src/80230.c.o build/src/84FF0.c.o build/src/9A210.c.o build/src/B14D0.c.o
+D1C_DATA_AND_RODATA := build/src/5F3B0.c.o build/src/63670.c.o build/src/69950.c.o build/src/objmain.c.o build/src/80230.c.o build/src/84FF0.c.o build/src/9B300.c.o build/src/B14D0.c.o
 $(D1C_DATA_AND_RODATA): OBJCOPY := $(OBJCOPY) --rename-section .data=.cdata
 
 # h1-R: rodata of 4D660 (D3430-D38A0), 4F650 (D38A0-D3938: it also holds 4D660's last two strings,
