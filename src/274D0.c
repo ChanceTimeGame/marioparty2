@@ -1632,11 +1632,10 @@ void func_8002A9E8_2B5E8(s16 arg0) {
 }
 
 
-/* MP1 func_80026A0C (src/24740.c; its decomp-permuter shape): the motion group holding a part;
+/* MP1 func_80026A0C (src/24740.c): the motion group holding a part;
    MP2 falls back to the hit transforms (unk6C) when the model has no groups */
 void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
     HmfData* model = D_800FC834_FD434[arg0].hmf;
-    s16 new_var;
     s16 idx = func_80038398_38F98(model, arg1);
     s16 n;
     s16 j;
@@ -1650,8 +1649,7 @@ void* func_8002A9F4_2B5F4(s16 arg0, char* arg1) {
                     break;
                 }
             }
-            new_var = j;
-            if (new_var != n) {
+            if (j != n) {
                 break;
             }
         }
