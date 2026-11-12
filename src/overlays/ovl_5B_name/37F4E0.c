@@ -1376,8 +1376,7 @@ void func_80106D2C_3839DC_name_5B(void)
           {
             def = &D_80113354_390004_name_5B[i];
             espDispOn(spr[i]);
-            a = j;
-            a *= 18.0f;
+            a = j * 18.0f;
             scale[i][0] = HuMathSin(a) * def->sx;
             scale[i][1] = HuMathSin(a) * def->sy;
             func_8001A91C_1B51C(spr[i], scale[i][0], scale[i][1]);
