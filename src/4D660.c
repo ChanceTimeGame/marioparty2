@@ -716,12 +716,10 @@ void func_8004DBA8_4E7A8(void) {
 }
 
 /* NON_MATCHING: the order of the pad pointer's address sum (masked 2). */
-// decomp-permuter
 void func_8004DC0C_4E80C(void)
 {
   s32 player = (s32) HuPrcCurrentGet()->user_data;
   s32 port = gPlayers[player].port;
-  u16 *pad;
   func_80060210_60E10(0x19);
   while (func_800609D8_615D8() != 0)
   {
@@ -736,10 +734,9 @@ void func_8004DC0C_4E80C(void)
   }
 
   func_8004DB1C_4E71C();
-  ;
   while (1)
   {
-    if (((*(&ContDStkTrg[port])) & 0x8000) || PlayerIsCPU(player))
+    if ((ContDStkTrg[port] & 0x8000) || PlayerIsCPU(player))
     {
       func_8004DBA8_4E7A8();
       if (D_800CC010_CCC10[gPlayers[player].item]() != 0)
@@ -748,17 +745,17 @@ void func_8004DC0C_4E80C(void)
       }
       func_8004DB1C_4E71C();
     }
-    if ((*(&ContDStkTrg[port])) & 0x4000)
+    if (ContDStkTrg[port] & 0x4000)
     {
       break;
     }
-    if ((*(&ContDStkTrg[port])) & 8)
+    if (ContDStkTrg[port] & 8)
     {
       func_8004DBA8_4E7A8();
       MBItemDescExec(player);
       func_8004DB1C_4E71C();
     }
-    if ((*(&ContDStkTrg[port])) & 0x10)
+    if (ContDStkTrg[port] & 0x10)
     {
       func_8004DBA8_4E7A8();
       func_80067C6C_6886C(port);
@@ -766,7 +763,7 @@ void func_8004DC0C_4E80C(void)
       D_800F851A_F911A = 1;
       func_80078EC8_79AC8();
     }
-    if ((*(&ContDStkTrg[port])) & 0x2000)
+    if (ContDStkTrg[port] & 0x2000)
     {
       func_8004DBA8_4E7A8();
       func_80042B38_43738(port);
