@@ -2059,7 +2059,6 @@ void func_8005C0B8_5CCB8(void) {
 // decomp-permuter
 s32 func_8005C0D8_5CCD8(s32 arg0)
 {
-  int new_var;
   Process *proc;
   s16 v;
   s32 win;
@@ -2070,14 +2069,13 @@ s32 func_8005C0D8_5CCD8(s32 arg0)
   func_80089A7C_8A67C(win, 5);
   func_80089B2C_8A72C(win, 0);
   func_800890CC_89CCC(win, MBPauseMesNumGet(0x51E), -1, -1);
-  new_var = 0;
   func_80089A48_8A648(win, 0);
   while (func_8008BA30_8C630(win) != 0)
   {
     HuPrcVSleep();
   }
 
-  if (_CheckFlag(0xD) == new_var)
+  if (_CheckFlag(0xD) == 0)
   {
     proc = func_8005B7A8_5C3A8(win, D_800CC710_CD310);
   }
