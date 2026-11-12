@@ -1656,7 +1656,6 @@ void func_80107F2C_23787C_SkateboardScamper(omObjData* obj) {
 
 /* A course item: returns to the next z mark ahead of the camera once the chaser has passed it. */
 // Tried (S3-Q02): z assigned before the compare (plain and inside it), z block-scoped in the if.
-// decomp-permuter
 void func_8010813C_237A8C_SkateboardScamper(omObjData *obj)
 {
   ColActorWork *w = obj->unk_50;
@@ -1678,19 +1677,18 @@ void func_8010813C_237A8C_SkateboardScamper(omObjData *obj)
     }
   }
 
-  if (obj->trans.z == (-4600.0f))
+  z = obj->trans.z;
+  if (z == (-4600.0f))
   {
-    func_80029714_2A314(obj->model[1], obj->trans.x, D_80108C08_238558_SkateboardScamper[7] + 105.0f, obj->trans.z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, D_80108C08_238558_SkateboardScamper[7] + 105.0f, z);
   }
-  else
-    if (obj->trans.z == 1200.0f)
+  else if (obj->trans.z == 1200.0f)
   {
     func_80029714_2A314(obj->model[1], obj->trans.x, 200.0f, obj->trans.z);
   }
   else
   {
-    z = obj->trans.z;
-    func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, z);
+    func_80029714_2A314(obj->model[1], obj->trans.x, 5.0f, obj->trans.z);
   }
 }
 

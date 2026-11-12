@@ -872,12 +872,11 @@ void func_8010544C_3D2C9C_name_61(void) {
     Hu3DCamUpdateMtx(0);
 }
 
-// decomp-permuter
 void func_801054A0_3D2CF0_name_61(void)
 {
   Ovl61ChrWork *work;
   s32 i;
-  s32 *new_var;
+  s32 *list;
   for (i = 0; i < 8; i++)
   {
     D_801074D8_3D4D28_name_61[i] = omAddObj(0x1F4, 1, 0, -1, 0);
@@ -897,8 +896,8 @@ void func_801054A0_3D2CF0_name_61(void)
     work->dir.x = (work->dir.y = 0.0f);
     work->dir.z = 1.0f;
     func_801058B0_3D3100_name_61(i);
-    new_var = D_80107174_3D49C4_name_61[i];
-    work->snd = func_80025384_25F84(D_801074D8_3D4D28_name_61[i]->model[0], 2, D_801070A4_3D48F4_name_61[i], new_var[1]);
+    list = D_80107174_3D49C4_name_61[i];
+    work->snd = func_80025384_25F84(D_801074D8_3D4D28_name_61[i]->model[0], 2, D_801070A4_3D48F4_name_61[i], list[1]);
     work->mode = 1;
     func_80029AFC_2A6FC(D_801074D8_3D4D28_name_61[i]->model[0]);
     func_80029E80_2AA80(D_801074D8_3D4D28_name_61[i]->model[0], 2, 2);

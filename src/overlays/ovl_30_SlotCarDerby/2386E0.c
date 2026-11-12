@@ -1053,7 +1053,6 @@ s32 func_80105E60_23BD40_SlotCarDerby(f32 dist) {
 }
 
 /* NON_MATCHING: one FP register (the quotient lands in f12, retail f0); masked 0 */
-// decomp-permuter
 f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, Vec *dir)
 {
   f32 d;
@@ -1084,8 +1083,7 @@ f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, V
   {
     at += D_80110250_246130_SlotCarDerby;
   }
-  sum = 0.0f;
-  prev = sum;
+  prev = sum = 0.0f;
   for (i = 0; i < D_80110244_246124_SlotCarDerby; i++)
   {
     sum += D_80110248_246128_SlotCarDerby[i];
@@ -1122,8 +1120,7 @@ f32 func_80105F5C_23BE3C_SlotCarDerby(f32 start, f32 dist, f32 step, Vec *pos, V
   {
     next = 0;
   }
-  step = t;
-  at = step;
+  at = t;
   if (at < 0.5)
   {
     u = at * 2.0;

@@ -428,7 +428,7 @@ void func_8010A55C_24043C_SlotCarDerby(omObjData *obj)
     {
       if (i == 4)
       {
-        d = (d = (D_8010FC10_245AF0_SlotCarDerby[0] == 5) ? (0) : (((u8) (rand8() % 3)) + (D_8010FC10_245AF0_SlotCarDerby[4] * 3)));
+        d = (D_8010FC10_245AF0_SlotCarDerby[0] == 5) ? (0) : (((u8) (rand8() % 3)) + (D_8010FC10_245AF0_SlotCarDerby[4] * 3));
         SprBankSet((s16) D_80110970_246850_SlotCarDerby, i, d);
       }
       else

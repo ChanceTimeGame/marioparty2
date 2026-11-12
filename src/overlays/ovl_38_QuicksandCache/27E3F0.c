@@ -59,23 +59,20 @@ void func_801068C0_27E3F0_QuicksandCache(omObjData* obj) {
     }
 }
 
-// decomp-permuter
 void func_80106CC0_27E7F0_QuicksandCache(omObjData *obj)
 {
-  QCSand *new_var;
   s8 i;
   QCSand *s;
-  obj->unk_50 = (s = func_80027154_27D54(sizeof(QCSand), 0x7918));
-  new_var = s;
-  func_800B0EF0_B1AF0(new_var, 0, sizeof(QCSand));
+  s = obj->unk_50 = func_80027154_27D54(sizeof(QCSand), 0x7918);
+  func_800B0EF0_B1AF0(s, 0, sizeof(QCSand));
   for (i = 0; i < 3; i++)
   {
-    new_var->unk_00[i] = 0.0f;
-    new_var->unk_0C[i] = 0.0f;
-    new_var->unk_18[i] = 0.0f;
+    s->unk_00[i] = 0.0f;
+    s->unk_0C[i] = 0.0f;
+    s->unk_18[i] = 0.0f;
   }
 
-  new_var->unk_24 = 0.0f;
+  s->unk_24 = 0.0f;
   obj->model[0] = -1;
   obj->model[1] = LoadFormFile(0x480001, 0x2B9);
   obj->model[2] = LoadFormFile(0x480002, 0x202B9);

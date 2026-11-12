@@ -969,10 +969,10 @@ void func_80105488_2F43B8_name_46(void) {
     sprintf(num, "%d", stake);                                              \
     len = func_800A5610_A6210(num);                                         \
     for (j = 0; j < 3 - len; j++) {                                         \
-        pad[j] = 0x1A;                                                      \
+        fill[j] = 0x1A;                                                     \
     }                                                                       \
-    pad[j] = 0;                                                             \
-    sprintf(buf, "%c%c%s%d", 0xF, 6, pad, stake);                           \
+    fill[j] = 0;                                                            \
+    sprintf(buf, "%c%c%s%d", 0xF, 6, fill, stake);                          \
     func_800890CC_89CCC(win, buf, x, y)
 
 void func_80105754_2F4684_name_46(void) {
@@ -982,7 +982,7 @@ void func_80105754_2F4684_name_46(void) {
     char mess[0x20];
     s16 size[2];
     char num[8];
-    char pad[16];
+    char fill[16];
     s32 win;
     s32 coins1;
     s32 coins2;

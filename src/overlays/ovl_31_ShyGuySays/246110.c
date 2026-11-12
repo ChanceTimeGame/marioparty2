@@ -391,14 +391,12 @@ void func_80103930_247240_ShyGuySays(s16 model, SGSMot* mot, s16 dir) {
     }
 }
 
-// decomp-permuter
 void func_80103A3C_24734C_ShyGuySays(s16 model)
 {
-  HmfModel *m;
-  u8 mot = (&D_800FC834_FD434[model])->unk02;
-  if ((mot != 0xFF) && (D_800F92B4_F9EB4[mot].unk02 <= (&D_800FC834_FD434[model])->unk40))
+  u8 mot = D_800FC834_FD434[model].unk02;
+  if ((mot != 0xFF) && (D_800F92B4_F9EB4[mot].unk02 <= D_800FC834_FD434[model].unk40))
   {
-    (&D_800FC834_FD434[model])->unk40 = (&D_800FC834_FD434[model])->unk48;
+    D_800FC834_FD434[model].unk40 = D_800FC834_FD434[model].unk48;
   }
 }
 
