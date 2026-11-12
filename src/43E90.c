@@ -468,22 +468,20 @@ void func_80043A60_44660(omObjData* obj) {
         }
     }
     if (!(D_80101330_101F30 & 1)) {
-        goto off;
-    }
-    /* retail reloads attr for each test; only a volatile read reproduces it */
-    if (!(((volatile MBModel*)m)->attr & 8)) {
-        goto off;
-    }
-    if (!(((volatile MBModel*)m)->attr & 2)) {
-        goto on;
-    }
-    MBDCamera3Dto2D(&m->pos, &pos2d);
-    if (pos2d.x > 370.0f || pos2d.x < -50.0f || pos2d.y > 290.0f || pos2d.y < -20.0f) {
-    off:
         MBModelAttrSetDispOff(m);
         return;
     }
-on:
+    if (!(m->attr & 8)) {
+        MBModelAttrSetDispOff(m);
+        return;
+    }
+    if (m->attr & 2) {
+        MBDCamera3Dto2D(&m->pos, &pos2d);
+        if (pos2d.x > 370.0f || pos2d.x < -50.0f || pos2d.y > 290.0f || pos2d.y < -20.0f) {
+            MBModelAttrSetDispOff(m);
+            return;
+        }
+    }
     MBModelAttrSetDispOn(m);
     if (!(m->attr & 4)) {
         obj->rot.y = func_80042BE0_437E0(&m->rot);
