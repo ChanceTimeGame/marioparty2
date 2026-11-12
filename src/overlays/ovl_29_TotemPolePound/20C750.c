@@ -570,48 +570,51 @@ void func_80103D64_20DCB4_TotemPolePound(TPPPlayer* p) {
 
 /* NON_MATCHING: register allocation only (masked 0): anim and n swapped (s1/s2). S3-Q01 tried: local
    widths and order, n before anim in each case, snd initialised once, q assigned late, a block. */
-#ifdef NON_MATCHING
-void func_80103E24_20DD74_TotemPolePound(TPPPlayer* p) {
-    TPPPole* q = &D_80108300_212250_TotemPolePound[p->obj->work[1]];
-    s32 snd;
-    s16 n;
-    u8 anim;
-
-    q->depth = p->power + 1;
-    q->floor = q->obj->trans.y - D_80106EB8_210E08_TotemPolePound[p->power];
-    switch (p->power) {
+// decomp-permuter
+void func_80103E24_20DD74_TotemPolePound(TPPPlayer *p)
+{
+  TPPPole *q = &D_80108300_212250_TotemPolePound[p->obj->work[1]];
+  s32 snd;
+  s16 n;
+  u8 anim;
+  q->depth = p->power + 1;
+  q->floor = q->obj->trans.y - D_80106EB8_210E08_TotemPolePound[p->power];
+  switch (p->power)
+  {
     case 0:
-        q->vel = D_80106EC4_210E14_TotemPolePound[p->chr][0];
-        q->acc = D_80106EC4_210E14_TotemPolePound[p->chr][1];
-        snd = 0x284;
-        anim = 0x10;
-        n = 1;
-        break;
+      q->vel = D_80106EC4_210E14_TotemPolePound[p->chr][0];
+      q->acc = D_80106EC4_210E14_TotemPolePound[p->chr][1];
+      snd = 0x284;
+      anim = 0x10;
+      n = 1;
+      break;
+
     case 1:
-        snd = 0x284;
-        q->vel = D_80106EF4_210E44_TotemPolePound[p->chr][0];
-        q->acc = D_80106EF4_210E44_TotemPolePound[p->chr][1];
-        anim = 0x20;
-        n = 2;
-        break;
+      snd = 0x284;
+      q->vel = D_80106EF4_210E44_TotemPolePound[p->chr][0];
+      q->acc = D_80106EF4_210E44_TotemPolePound[p->chr][1];
+      anim = 0x20;
+      n = 2;
+      break;
+
     default:
-        snd = 0x284;
-        anim = 0x30;
-        q->vel = D_80106F24_210E74_TotemPolePound[p->chr][0];
-        q->acc = D_80106F24_210E74_TotemPolePound[p->chr][1];
-        n = 3;
-        break;
-    }
-    q->power = p->power;
-    q->timer = 0;
-    q->state = 3;
-    PlaySound(snd);
-    func_8003E560_3F160(q->anim, anim);
-    func_80102E4C_20CD9C_TotemPolePound(q->obj, n, 2);
+      snd = 0x284;
+      anim = 0x30;
+      q->vel = D_80106F24_210E74_TotemPolePound[p->chr][0];
+      q->acc = D_80106F24_210E74_TotemPolePound[p->chr][1];
+      n = 3;
+      break;
+
+  }
+
+  q->power = p->power;
+  q->timer = 0;
+  q->state = 3;
+  PlaySound(snd);
+  func_8003E560_3F160(q->anim, anim);
+  anim = n;
+  func_80102E4C_20CD9C_TotemPolePound(q->obj, anim, 2);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_29_TotemPolePound/20C750", func_80103E24_20DD74_TotemPolePound);
-#endif
 
 void func_80103FAC_20DEFC_TotemPolePound(TPPPlayer* p) {
     p->mtnTime = 0.0f;

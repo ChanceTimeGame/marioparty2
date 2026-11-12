@@ -656,50 +656,68 @@ void func_80103FF0_3A19E0_name_5D(void) {
     }
 }
 
-// scheduling only (masked 2): retail places cat = 0 before the D_8010ADD0 load; tried cat = 0 before
 // hide, both in the for init, and declaration order
-#ifdef NON_MATCHING
-void func_80104224_3A1C14_name_5D(void) {
-    Vec2f scr;
-    s32 hide;
-    s16 row;
-    s16 cat;
-    s16 i;
+// decomp-permuter
+void func_80104224_3A1C14_name_5D(void)
+{
+  Vec2f scr;
+  s16 row;
+  s16 cat;
+  s16 i;
+  row = D_8010CE16_3AA806_name_5D + 2;
+  if (row >= 5)
+  {
+    row = D_8010CE16_3AA806_name_5D - 2;
+  }
+  row = D_8010ADD0_3A87C0_name_5D[row];
+  for (cat = 0; cat < 5; cat++)
+  {
+    if (cat == row)
+    {
+      for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++)
+      {
+        espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
+      }
 
-    row = D_8010CE16_3AA806_name_5D + 2;
-    if (row >= 5) {
-        row = D_8010CE16_3AA806_name_5D - 2;
     }
-    hide = D_8010ADD0_3A87C0_name_5D[row];
-    for (cat = 0; cat < 5; cat++) {
-        if (cat == hide) {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
-                espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
-            }
-        } else if (cat == 4 && _CheckFlag(0x10) == 0) {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
-                espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
-            }
-        } else if (cat == 3 && _CheckFlag(0x11) == 0) {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
-                espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
-            }
-        } else {
-            for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++) {
-                if (i < D_8010C030_3A9A20_name_5D[cat]) {
-                    espDispOn(D_8010C570_3A9F60_name_5D[cat][i]);
-                    func_8010A524_3A7F14_name_5D(0, &D_8010C670_3AA060_name_5D[cat][i], &scr);
-                    espPosSet(D_8010C570_3A9F60_name_5D[cat][i], scr.unk_00, scr.unk_04);
-                } else {
-                    espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
-                }
-            }
+    else
+      if ((cat == 4) && (_CheckFlag(0x10) == 0))
+    {
+      for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++)
+      {
+        espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
+      }
+
+    }
+    else
+      if ((cat == 3) && (_CheckFlag(0x11) == 0))
+    {
+      for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++)
+      {
+        espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
+      }
+
+    }
+    else
+    {
+      for (i = 0; i < D_8010C018_3A9A08_name_5D[cat]; i++)
+      {
+        if (i < D_8010C030_3A9A20_name_5D[cat])
+        {
+          espDispOn(D_8010C570_3A9F60_name_5D[cat][i]);
+          func_8010A524_3A7F14_name_5D(0, &D_8010C670_3AA060_name_5D[cat][i], &scr);
+          espPosSet(D_8010C570_3A9F60_name_5D[cat][i], scr.unk_00, scr.unk_04);
         }
+        else
+        {
+          espDispOff(D_8010C570_3A9F60_name_5D[cat][i]);
+        }
+      }
+
     }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_5D_name/3A01F0", func_80104224_3A1C14_name_5D);
-#endif
 
 void func_801045F0_3A1FE0_name_5D(s16 cat, s16 t) {
     f32 base[2];

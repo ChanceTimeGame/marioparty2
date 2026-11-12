@@ -8,14 +8,17 @@ f32 D_8010939C_28B5AC_TorpedoTargets = 0.0f;
 s8 D_801093A0_28B5B0_TorpedoTargets[16] = { 0 };
 
 /* Logic right; retail keeps the array address in a register. */
-#ifdef NON_MATCHING
-void func_801079B0_289BC0_TorpedoTargets(void) {
-    D_80109264_28B474_TorpedoTargets[0]->func_ptr = func_80106DEC_288FFC_TorpedoTargets;
-    D_80109264_28B474_TorpedoTargets[1]->func_ptr = func_80106DEC_288FFC_TorpedoTargets;
+// decomp-permuter
+void func_801079B0_289BC0_TorpedoTargets(void)
+{
+  omObjData *new_var2;
+  void (*new_var)(omObjData *obj);
+  new_var2 = D_80109264_28B474_TorpedoTargets[0];
+  new_var2->func_ptr = func_80106DEC_288FFC_TorpedoTargets;
+  new_var2 = D_80109264_28B474_TorpedoTargets[1];
+  new_var = func_80106DEC_288FFC_TorpedoTargets;
+  new_var2->func_ptr = new_var;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3A_TorpedoTargets/289BC0", func_801079B0_289BC0_TorpedoTargets);
-#endif
 
 void func_801079D4_289BE4_TorpedoTargets(omObjData* obj) {
     s32 team = ((TTSub*)obj->unk_50)->team;

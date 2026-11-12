@@ -1725,93 +1725,123 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80104778_2F9078
 /* register allocation (masked 0, raw 5): the -1 constant and the coin-slot table base take s3/s2 the
    other way round. j as the star slot and coinRank as the rand countdown fixed the rest (raw 88 -> 5);
    dropping `rank` altogether made it worse (7). Twin of MP1 func_800F7278 (also unmatched). */
-#ifdef NON_MATCHING
-void func_80104F7C_2F987C_name_47(void) {
-    s32 starRankCount[4];
-    s32 coinRankCount[4];
-    s32 i;
-    s32 j;
-    s32 rank;
-    s32 coinRank;
+// decomp-permuter
+void func_80104F7C_2F987C_name_47(void)
+{
+  s32 starRankCount[4];
+  s32 coinRankCount[4];
+  int new_var;
+  s32 i;
+  s32 j;
+  s32 rank;
+  s32 coinRank;
+  for (i = 0; i < 4; i++)
+  {
+    starRankCount[i] = 0;
+    coinRankCount[i] = 0;
+  }
 
-    for (i = 0; i < 4; i++) {
-        starRankCount[i] = 0;
-        coinRankCount[i] = 0;
+  for (i = 0; i < 4; i++)
+  {
+    starRankCount[func_80059FD0_5ABD0(i)]++;
+    coinRank = 0;
+    for (j = 0; j < 4; j++)
+    {
+      if (i != j)
+      {
+        coinRank += gPlayers[i].coins < gPlayers[j].coins;
+      }
     }
-    for (i = 0; i < 4; i++) {
-        starRankCount[func_80059FD0_5ABD0(i)]++;
-        coinRank = 0;
-        for (j = 0; j < 4; j++) {
-            if (i != j) {
-                coinRank += gPlayers[i].coins < gPlayers[j].coins;
-            }
-        }
-        coinRankCount[coinRank]++;
-    }
-    for (i = 0; i < 4; i++) {
-        D_801122C0_306BC0_name_47[i] = -1;
-        D_801122D0_306BD0_name_47[i] = -1;
-    }
-    for (i = 0; i < 4; i++) {
-        j = func_80059FD0_5ABD0(i);
+
+    coinRankCount[coinRank]++;
+  }
+
+  for (i = 0; i < 4; i++)
+  {
+    D_801122C0_306BC0_name_47[i] = -1;
+    D_801122D0_306BD0_name_47[i] = -1;
+  }
+
+  for (i = 0; i < 4; i++)
+  {
+    new_var = 1;
+    j = func_80059FD0_5ABD0(i);
     starSlot:
-        if (D_801122C0_306BC0_name_47[j] != -1) {
-            j++;
-            goto starSlot;
-        }
-        D_801122C0_306BC0_name_47[j] = i;
-        coinRank = 0;
-        for (j = 0; j < 4; j++) {
-            if (i != j) {
-                coinRank += gPlayers[i].coins < gPlayers[j].coins;
-            }
-        }
+    if (D_801122C0_306BC0_name_47[j] != (-new_var))
+    {
+      j++;
+      goto starSlot;
+    }
+
+    D_801122C0_306BC0_name_47[j] = i;
+    coinRank = 0;
+    for (j = 0; j < 4; j++)
+    {
+      if (i != j)
+      {
+        coinRank += gPlayers[i].coins < gPlayers[j].coins;
+      }
+    }
+
     coinSlot:
-        if (D_801122D0_306BD0_name_47[coinRank] != -1) {
-            coinRank++;
-            goto coinSlot;
-        }
-        D_801122D0_306BD0_name_47[coinRank] = i;
+    if (D_801122D0_306BD0_name_47[coinRank] != (-new_var))
+    {
+      coinRank++;
+      goto coinSlot;
     }
-    D_801122E0_306BE0_name_47 = D_801122E4_306BE4_name_47 = D_801122E8_306BE8_name_47 = -1;
-    func_80104380_2F8C80_name_47();
-    if (D_801122E8_306BE8_name_47 == -1) {
-        func_80104778_2F9078_name_47();
+
+    D_801122D0_306BD0_name_47[coinRank] = i;
+  }
+
+  D_801122E0_306BE0_name_47 = (D_801122E4_306BE4_name_47 = (D_801122E8_306BE8_name_47 = -1));
+  func_80104380_2F8C80_name_47();
+  if (D_801122E8_306BE8_name_47 == (-1))
+  {
+    func_80104778_2F9078_name_47();
+  }
+  while (starRankCount[D_801122E8_306BE8_name_47] == 0)
+  {
+    D_801122E8_306BE8_name_47--;
+  }
+
+  rank = func_80059FD0_5ABD0(GwSystem.current_player_index);
+  if (rank == D_801122E8_306BE8_name_47)
+  {
+    starRankCount[rank]--;
+  }
+  coinRank = rand8() % starRankCount[D_801122E8_306BE8_name_47];
+  for (i = 0; i < 4; i++)
+  {
+    if (i == GwSystem.current_player_index)
+    {
+      continue;
     }
-    while (starRankCount[D_801122E8_306BE8_name_47] == 0) {
-        D_801122E8_306BE8_name_47--;
+    if (D_801122E8_306BE8_name_47 != func_80059FD0_5ABD0(i))
+    {
+      continue;
     }
-    rank = func_80059FD0_5ABD0(GwSystem.current_player_index);
-    if (rank == D_801122E8_306BE8_name_47) {
-        starRankCount[rank]--;
+    if (coinRank != 0)
+    {
+      coinRank--;
+      continue;
     }
-    coinRank = rand8() % starRankCount[D_801122E8_306BE8_name_47];
-    for (i = 0; i < 4; i++) {
-        if (i == GwSystem.current_player_index) {
-            continue;
-        }
-        if (D_801122E8_306BE8_name_47 != func_80059FD0_5ABD0(i)) {
-            continue;
-        }
-        if (coinRank != 0) {
-            coinRank--;
-            continue;
-        }
+    D_801122E4_306BE4_name_47 = i;
+    break;
+  }
+
+  if ((D_801122E0_306BE0_name_47 == 0) && (gPlayers[D_801122E4_306BE4_name_47].coins == 0))
+  {
+    for (i = 0; i < 4; i++)
+    {
+      if ((i != GwSystem.current_player_index) && (gPlayers[i].coins != 0))
+      {
         D_801122E4_306BE4_name_47 = i;
         break;
+      }
     }
-    if (D_801122E0_306BE0_name_47 == 0 && gPlayers[D_801122E4_306BE4_name_47].coins == 0) {
-        for (i = 0; i < 4; i++) {
-            if (i != GwSystem.current_player_index && gPlayers[i].coins != 0) {
-                D_801122E4_306BE4_name_47 = i;
-                break;
-            }
-        }
-    }
+
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_47_name/2F7100", func_80104F7C_2F987C_name_47);
-#endif
 
 s32 func_8010537C_2F9C7C_name_47(u8* items) {
     s32 count = 0;
