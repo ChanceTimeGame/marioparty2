@@ -1161,37 +1161,43 @@ void func_80105E50_249760_ShyGuySays(omObjData* obj) {
 INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80105E50_249760_ShyGuySays);
 #endif
 
-// scheduling: retail sign-extends id for the call after the scale products (masked 2; s32 id and
 // loading id after HuMathSin are worse)
-#ifdef NON_MATCHING
-void func_80106130_249A40_ShyGuySays(omObjData* obj) {
-    SGSBack* b = D_8010AB38_24E448_ShyGuySays;
-    s16 angle;
-    s16 id;
-    s16 t;
-    f32 s;
-    f32 c;
-    s16 i;
-
-    for (i = 0; i < 3; i++, b++) {
-        if (b->model != -1) {
-            angle = b->angle;
-            id = b->model;
-            t = angle + 4;
-            angle = t;
-            if (t > 360) {
-                angle = t - 360;
-            }
-            s = HuMathSin(angle);
-            c = -s;
-            func_800297E8_2A3E8(id, (s * 0.0375 + 1.0) * b->scale, (c * 0.0375 + 1.0) * b->scale, 1.0f);
-            b->angle = angle;
-        }
+// decomp-permuter
+void func_80106130_249A40_ShyGuySays(omObjData *obj)
+{
+  SGSBack *b = D_8010AB38_24E448_ShyGuySays;
+  double new_var;
+  s16 angle;
+  s16 id;
+  s16 t;
+  double new_var3;
+  f32 s;
+  f32 c;
+  s16 i;
+  double new_var2;
+  for (i = 0; i < 3; i++, b++)
+  {
+    if (b->model != (-1))
+    {
+      angle = b->angle;
+      id = b->model;
+      t = angle + 4;
+      angle = t;
+      if (360 < t)
+      {
+        angle = t - 360;
+      }
+      s = HuMathSin(angle);
+      new_var2 = 0.0375;
+      c = -s;
+      new_var = ((s * new_var2) + 1.0) * b->scale;
+      new_var3 = ((c * new_var2) + 1.0) * b->scale;
+      func_800297E8_2A3E8(id, new_var, new_var3, 1.0f);
+      b->angle = angle;
     }
+  }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_31_ShyGuySays/246110", func_80106130_249A40_ShyGuySays);
-#endif
 
 void func_80106250_249B60_ShyGuySays(void) {
 }

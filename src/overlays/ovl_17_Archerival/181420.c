@@ -1438,32 +1438,23 @@ void func_801064BC_1850DC_Archerival(omObjData* obj) {
     }
 }
 
-// NON_MATCHING: register allocation (masked 2, raw 18): retail computes the guRandom quotient in v0/v1, ours
 // in a0, which then needs a move after arg 0 loads into v0 (130 vs 131). Tried: the whole argument inline
-// (precomputed, masked 18), only guRandom in the local, only the % in it.
-#ifdef NON_MATCHING
-void func_801066C0_1852E0_Archerival(omObjData* obj) {
-    u16 idx;
-    u32 r;
-
-    obj->model[0] = LoadFormFile(7, 0x68D);
-    idx = func_80018D64_19964(0xE, 0xA89, 8);
-    obj->model[0] = D_800F86D8_F92D8[idx].unk00;
-    HmfModelObjAttrSet(obj->model[0], 0x70000000, 0x70000000);
-    r = ((u32)guRandom() >> 4) % 300 / 100;
-    func_8003E808_3F408(D_800F86D8_F92D8[idx].unk02, r);
-    obj->scale.x = obj->scale.y = obj->scale.z = 1.0f;
-    func_800298A4_2A4A4(obj->model[0], 4, 4);
-    obj->model[1] = LoadFormFile(8, 0x68D);
-    func_800297E8_2A3E8(obj->model[1], 0.6f, 0.6f, 0.6f);
-    func_8002CDF0_2D9F0(obj->model[1], 0x3F, 0x1F, 0, 0x3F);
-    func_80029EDC_2AADC(obj->model[0], 1);
-    func_80029EDC_2AADC(obj->model[1], 1);
-    obj->func_ptr = func_801064BC_1850DC_Archerival;
+// decomp-permuter
+void func_801066C0_1852E0_Archerival(omObjData *obj)
+{
+  u16 idx;
+  u32 r;
+  obj->model[0] = LoadFormFile(7, 0x68D);
+  idx = func_80018D64_19964(0xE, 0xA89, 8);
+ do { obj->model[0] = D_800F86D8_F92D8[idx].unk00; HmfModelObjAttrSet(obj->model[0], 0x70000000, 0x70000000); r = ((((u32) guRandom()) >> 4) % 300) / 100; func_8003E808_3F408(D_800F86D8_F92D8[idx].unk02, r); obj->scale.x = (obj->scale.y = (obj->scale.z = 1.0f)); } while (0);
+  func_800298A4_2A4A4(obj->model[0], 4, 4);
+  obj->model[1] = LoadFormFile(8, 0x68D);
+  func_800297E8_2A3E8(obj->model[1], 0.6f, 0.6f, 0.6f);
+  func_8002CDF0_2D9F0(obj->model[1], 0x3F, 0x1F, 0, 0x3F);
+  func_80029EDC_2AADC(obj->model[0], 1);
+  func_80029EDC_2AADC(obj->model[1], 1);
+  obj->func_ptr = func_801064BC_1850DC_Archerival;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_17_Archerival/181420", func_801066C0_1852E0_Archerival);
-#endif
 
 void func_8010687C_18549C_Archerival(void) {
     ARObj* p;

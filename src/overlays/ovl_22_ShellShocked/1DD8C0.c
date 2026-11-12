@@ -644,61 +644,66 @@ s32 func_8010B0B4_1DF794_ShellShocked(s32 i, s16 x, s16 y) {
 void func_8010B0DC_1DF7BC_ShellShocked(s32 i, SSTank* tank) {
 }
 
-// register allocation (masked 2: f0/f2 swap and one lw scheduled earlier in the last arm)
-#ifdef NON_MATCHING
-void func_8010B0E4_1DF7C4_ShellShocked(s32 i) {
-    SSTank* tank;
-    HmfMotionObj* m;
-    s16 mdl;
-    s16 blow;
-    f32 t;
-    f32 a;
-    f32 frame;
-
-    tank = &D_8010DA80_1E2160_ShellShocked[i];
-    mdl = func_80103884_1D7F64_ShellShocked(2)->model[i + 1];
-    blow = tank->blow.mdl;
-    if (tank->blowTimer != 0) {
-        tank->blowTimer--;
-        t = (10.0f - (f32)tank->blowTimer) * 0.1f;
-        t = ABS(t);
-        sqrtf(t);
-        func_80029714_2A314(blow, tank->blow.pos.x, tank->blow.pos.y, tank->blow.pos.z);
-        func_8002979C_2A39C(blow, 0.0f, 0.0f, 0.0f);
-        func_800297E8_2A3E8(blow, 1.0f, 1.0f, 1.0f);
-        tank->motA->unk34.x += 40.0f;
-        m = tank->motA;
-        if (m->unk34.x > 360.0f) {
-            m->unk34.x -= 360.0f;
-        }
-        tank->motA->unk34.y += 70.0f;
-        m = tank->motA;
-        if (m->unk34.y > 360.0f) {
-            m->unk34.y -= 360.0f;
-        }
-        tank->motA->unk34.z += 11.0f;
-        m = tank->motA;
-        if (m->unk34.z > 360.0f) {
-            m->unk34.z -= 360.0f;
-        }
-        t = (f32)tank->blowTimer * 0.030000001f + 0.1f;
-        HuVecCopyXYZ(&tank->motB->unk40, t, t, t);
-        a = tank->blowTimer;
-        tank->motA->unk28.y = (900.0f - a * a) * 0.9f;
-    } else {
-        tank->blowTimer = 0;
-        tank->state = 5;
-        func_800297E8_2A3E8(mdl, 1.0f, 1.0f, 1.0f);
-        func_800298A4_2A4A4(mdl, 4, 4);
+// decomp-permuter
+void func_8010B0E4_1DF7C4_ShellShocked(s32 i)
+{
+  SSTank *tank;
+  HmfMotionObj *m;
+  s16 mdl;
+  float new_var;
+  s16 blow;
+  f32 t;
+  f32 a;
+  f32 frame;
+  tank = &D_8010DA80_1E2160_ShellShocked[i];
+  mdl = func_80103884_1D7F64_ShellShocked(2)->model[i + 1];
+  blow = tank->blow.mdl;
+  if (tank->blowTimer != 0)
+  {
+    tank->blowTimer--;
+    t = (10.0f - ((f32) tank->blowTimer)) * 0.1f;
+    t = (t < 0.0f) ? (-t) : (t);
+    sqrtf(t);
+    func_80029714_2A314(blow, tank->blow.pos.x, tank->blow.pos.y, tank->blow.pos.z);
+    func_8002979C_2A39C(blow, 0.0f, 0.0f, 0.0f);
+    func_800297E8_2A3E8(blow, 1.0f, 1.0f, 1.0f);
+    tank->motA->unk34.x += 40.0f;
+    m = tank->motA;
+    if (m->unk34.x > 360.0f)
+    {
+      m->unk34.x -= 360.0f;
     }
-    frame = func_80029CE4_2A8E4(blow);
-    if (func_80029D0C_2A90C(blow) <= frame) {
-        func_800298A4_2A4A4(blow, 4, 4);
+    tank->motA->unk34.y += 70.0f;
+    m = tank->motA;
+    if (m->unk34.y > 360.0f)
+    {
+      m->unk34.y -= 360.0f;
     }
+    tank->motA->unk34.z += 11.0f;
+    m = tank->motA;
+    if (m->unk34.z > 360.0f)
+    {
+      m->unk34.z -= 360.0f;
+    }
+    t = (((f32) tank->blowTimer) * 0.030000001f) + 0.1f;
+    HuVecCopyXYZ(&tank->motB->unk40, t, t, t);
+    a = tank->blowTimer;
+    new_var = (900.0f - (a * a)) * 0.9f;
+    tank->motA->unk28.y = new_var;
+  }
+  else
+  {
+    tank->blowTimer = 0;
+    tank->state = 5;
+    func_800297E8_2A3E8(mdl, 1.0f, 1.0f, 1.0f);
+    func_800298A4_2A4A4(mdl, 4, 4);
+  }
+  frame = func_80029CE4_2A8E4(blow);
+  if (func_80029D0C_2A90C(blow) <= frame)
+  {
+    func_800298A4_2A4A4(blow, 4, 4);
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_22_ShellShocked/1DD8C0", func_8010B0E4_1DF7C4_ShellShocked);
-#endif
 
 void func_8010B3EC_1DFACC_ShellShocked(s32 i) {
     s16 m;

@@ -1886,93 +1886,123 @@ INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80104778_299A48
 /* register allocation (masked 0, raw 5): the -1 constant and the coin-slot table base take s3/s2 the
    other way round. j as the star slot and coinRank as the rand countdown fixed the rest (raw 88 -> 5);
    dropping `rank` altogether made it worse (7). Twin of MP1 func_800F7278 (also unmatched). */
-#ifdef NON_MATCHING
-void func_80104F7C_29A24C_name_3E(void) {
-    s32 starRankCount[4];
-    s32 coinRankCount[4];
-    s32 i;
-    s32 j;
-    s32 rank;
-    s32 coinRank;
+// decomp-permuter
+void func_80104F7C_29A24C_name_3E(void)
+{
+  s32 starRankCount[4];
+  s32 coinRankCount[4];
+  s32 i;
+  s32 j;
+  s32 rank;
+  int new_var;
+  s32 coinRank;
+  for (i = 0; i < 4; i++)
+  {
+    starRankCount[i] = 0;
+    coinRankCount[i] = 0;
+  }
 
-    for (i = 0; i < 4; i++) {
-        starRankCount[i] = 0;
-        coinRankCount[i] = 0;
+  for (i = 0; i < 4; i++)
+  {
+    starRankCount[func_80059FD0_5ABD0(i)]++;
+    coinRank = 0;
+    for (j = 0; j < 4; j++)
+    {
+      if (i != j)
+      {
+        coinRank += gPlayers[i].coins < gPlayers[j].coins;
+      }
     }
-    for (i = 0; i < 4; i++) {
-        starRankCount[func_80059FD0_5ABD0(i)]++;
-        coinRank = 0;
-        for (j = 0; j < 4; j++) {
-            if (i != j) {
-                coinRank += gPlayers[i].coins < gPlayers[j].coins;
-            }
-        }
-        coinRankCount[coinRank]++;
-    }
-    for (i = 0; i < 4; i++) {
-        D_801136F0_2A89C0_name_3E[i] = -1;
-        D_80113700_2A89D0_name_3E[i] = -1;
-    }
-    for (i = 0; i < 4; i++) {
-        j = func_80059FD0_5ABD0(i);
+
+    coinRankCount[coinRank]++;
+  }
+
+  for (i = 0; i < 4; i++)
+  {
+    D_801136F0_2A89C0_name_3E[i] = -1;
+    D_80113700_2A89D0_name_3E[i] = -1;
+  }
+
+  for (i = 0; i < 4; i++)
+  {
+    j = func_80059FD0_5ABD0(i);
+    new_var = 1;
     starSlot:
-        if (D_801136F0_2A89C0_name_3E[j] != -1) {
-            j++;
-            goto starSlot;
-        }
-        D_801136F0_2A89C0_name_3E[j] = i;
-        coinRank = 0;
-        for (j = 0; j < 4; j++) {
-            if (i != j) {
-                coinRank += gPlayers[i].coins < gPlayers[j].coins;
-            }
-        }
+    if (D_801136F0_2A89C0_name_3E[j] != (-new_var))
+    {
+      j++;
+      goto starSlot;
+    }
+
+    D_801136F0_2A89C0_name_3E[j] = i;
+    coinRank = 0;
+    for (j = 0; j < 4; j++)
+    {
+      if (i != j)
+      {
+        coinRank += gPlayers[i].coins < gPlayers[j].coins;
+      }
+    }
+
     coinSlot:
-        if (D_80113700_2A89D0_name_3E[coinRank] != -1) {
-            coinRank++;
-            goto coinSlot;
-        }
-        D_80113700_2A89D0_name_3E[coinRank] = i;
+    if (D_80113700_2A89D0_name_3E[coinRank] != (-new_var))
+    {
+      coinRank++;
+      goto coinSlot;
     }
-    D_80113710_2A89E0_name_3E = D_80113714_2A89E4_name_3E = D_80113718_2A89E8_name_3E = -1;
-    func_80104380_299650_name_3E();
-    if (D_80113718_2A89E8_name_3E == -1) {
-        func_80104778_299A48_name_3E();
+
+    D_80113700_2A89D0_name_3E[coinRank] = i;
+  }
+
+  D_80113710_2A89E0_name_3E = (D_80113714_2A89E4_name_3E = (D_80113718_2A89E8_name_3E = -1));
+  func_80104380_299650_name_3E();
+  if (D_80113718_2A89E8_name_3E == (-1))
+  {
+    func_80104778_299A48_name_3E();
+  }
+  while (starRankCount[D_80113718_2A89E8_name_3E] == 0)
+  {
+    D_80113718_2A89E8_name_3E--;
+  }
+
+  rank = func_80059FD0_5ABD0(GwSystem.current_player_index);
+  if (rank == D_80113718_2A89E8_name_3E)
+  {
+    starRankCount[rank]--;
+  }
+  coinRank = rand8() % starRankCount[D_80113718_2A89E8_name_3E];
+  for (i = 0; i < 4; i++)
+  {
+    if (i == GwSystem.current_player_index)
+    {
+      continue;
     }
-    while (starRankCount[D_80113718_2A89E8_name_3E] == 0) {
-        D_80113718_2A89E8_name_3E--;
+    if (D_80113718_2A89E8_name_3E != func_80059FD0_5ABD0(i))
+    {
+      continue;
     }
-    rank = func_80059FD0_5ABD0(GwSystem.current_player_index);
-    if (rank == D_80113718_2A89E8_name_3E) {
-        starRankCount[rank]--;
+    if (coinRank != 0)
+    {
+      coinRank--;
+      continue;
     }
-    coinRank = rand8() % starRankCount[D_80113718_2A89E8_name_3E];
-    for (i = 0; i < 4; i++) {
-        if (i == GwSystem.current_player_index) {
-            continue;
-        }
-        if (D_80113718_2A89E8_name_3E != func_80059FD0_5ABD0(i)) {
-            continue;
-        }
-        if (coinRank != 0) {
-            coinRank--;
-            continue;
-        }
+    D_80113714_2A89E4_name_3E = i;
+    break;
+  }
+
+  if ((D_80113710_2A89E0_name_3E == 0) && (gPlayers[D_80113714_2A89E4_name_3E].coins == 0))
+  {
+    for (i = 0; i < 4; i++)
+    {
+      if ((i != GwSystem.current_player_index) && (gPlayers[i].coins != 0))
+      {
         D_80113714_2A89E4_name_3E = i;
         break;
+      }
     }
-    if (D_80113710_2A89E0_name_3E == 0 && gPlayers[D_80113714_2A89E4_name_3E].coins == 0) {
-        for (i = 0; i < 4; i++) {
-            if (i != GwSystem.current_player_index && gPlayers[i].coins != 0) {
-                D_80113714_2A89E4_name_3E = i;
-                break;
-            }
-        }
-    }
+
+  }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_80104F7C_29A24C_name_3E);
-#endif
 
 s32 func_8010537C_29A64C_name_3E(u8* items) {
     s32 count = 0;
@@ -2644,118 +2674,135 @@ s32 func_80106FE0_29C2B0_name_3E(void) {
    Tried (S3-Q02): next > -1, !(next < 0), continue on next < 0, one && with the distance test;
    the unit's mul fix (on, or with blank lines stripped) does not change it. S3-R: (next < 0) == 0,
    0 <= next (no change); a next < 8 bound (sltiu, masked 2, not retail logic). */
-#ifdef NON_MATCHING
-s32 func_801075F8_29C8C8_name_3E(void) {
-    Vec dir;
-    Vec delta;
-    Vec pos;
-    Vec dest;
-    Unk3Halves counts;
-    Vec fxPos;
-    Vec fxVel;
-    s16* spaces;
-    GW_PLAYER* player;
-    Process* process;
-    Process* child;
-    SpaceData* from;
-    SpaceData* to;
-    f32 dist;
-    f32 angle;
-    f32 target;
-    f32 step;
-    s32 steps;
-    s32 prev;
-    s32 mask;
-    s32 next;
-    s32 i;
-    s32 j;
-
-    counts = D_801135A4_2A8874_name_3E;
-    if (D_801119E0_2A6CB0_name_3E == 0) {
-        D_801119E0_2A6CB0_name_3E = 1;
-        if (--D_800F8CE4_F98E4[0] < 0) {
-            D_800F8CE4_F98E4[0] = 2;
-        }
-        spaces = D_80111BF4_2A6EC4_name_3E[D_800F8CE4_F98E4[0]];
-        mask = 0;
-        next = counts.v[D_800F8CE4_F98E4[0]] - 1;
-        PlaySound(0x398);
-        for (i = BoardGetChainLength(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]]) - 1; i > 0; i--) {
-            from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i));
-            to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i - 1));
-            process = HuPrcCurrentGet();
-            func_800B3170_B3D70(&pos, &D_80113788_2A8A58_name_3E->pos);
-            func_800B3170_B3D70(&dest, &to->coords);
-            if (i == 1) {
-                dest.x += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].x;
-                dest.y += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].y;
-                dest.z += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].z;
-                child = func_80056FD4_57BD4(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
-            } else {
-                child = func_80057150_57D50(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
-            }
-            HuPrcChildLink(process, child);
-            dist = func_800B1870_B2470(from->coords.x - to->coords.x, from->coords.y - to->coords.y,
-                                       from->coords.z - to->coords.z);
-            HuVecSubtract(&dir, &from->coords, &to->coords);
-            MBVecNormalize(&dir);
-            HuVecMulScalar(&dir, 2.0f, &dir);
-            steps = dist / func_800B1870_B2470(dir.x, dir.y, dir.z);
-            HuVecSubtract(&delta, &to->coords, &from->coords);
-            angle = func_80042BE0_437E0(&D_80113788_2A8A58_name_3E->rot);
-            target = func_80042BE0_437E0(&delta) + 180.0f;
-            while (target < angle && ABS_F(angle - target) > 180.0f) {
-                target += 360.0f;
-            }
-            while (angle < target && ABS_F(angle - target) > 180.0f) {
-                angle += 360.0f;
-            }
-            step = target - angle;
-            step /= steps;
-            PlaySound(0x399);
-            fxVel = D_801135AC_2A887C_name_3E;
-            func_800B3170_B3D70(&fxPos, &D_80113784_2A8A54_name_3E->pos);
-            fxPos.x += HuMathSin(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
-            fxPos.z += func_800B7890_B8490(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
-            fxPos.y += 35.0f;
-            func_8010C484_2A1754_name_3E(&fxPos, 0.3f, 8.0f, 1, &fxVel);
-            while (process->oldest_child != NULL) {
-                angle += step;
-                D_80113788_2A8A58_name_3E->rot.x = HuMathSin(angle);
-                D_80113788_2A8A58_name_3E->rot.y = 0.0f;
-                D_80113788_2A8A58_name_3E->rot.z = func_800B7890_B8490(angle);
-                func_80106B08_29BDD8_name_3E();
-                HuPrcVSleep();
-                if (next >= 0) {
-                    if (HuVecDistance(&GetSpaceData(spaces[next])->coords, &D_80113788_2A8A58_name_3E->pos) <= 15.0f) {
-                        prev = mask;
-                        for (j = 0; j < 4; j++) {
-                            if (j != GwSystem.current_player_index) {
-                                player = BoardPlayerGet(j);
-                                if (GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index) ==
-                                    spaces[next]) {
-                                    func_80106DCC_29C09C_name_3E(j, 1);
-                                    mask |= 1 << j;
-                                }
-                            }
-                        }
-                        if (prev != mask) {
-                            PlaySound(0x3A8);
-                        }
-                        next--;
-                    }
-                }
-            }
-        }
-        PlaySound(0x39A);
-        D_801119E0_2A6CB0_name_3E = 0;
-        return mask;
+// decomp-permuter
+s32 func_801075F8_29C8C8_name_3E(void)
+{
+  Vec dir;
+  Vec delta;
+  Vec pos;
+  Vec dest;
+  Unk3Halves counts;
+  Vec fxPos;
+  Vec fxVel;
+  s16 *spaces;
+  GW_PLAYER *player;
+  Process *process;
+  Process *child;
+  SpaceData *from;
+  SpaceData *to;
+  f32 dist;
+  f32 angle;
+  f32 target;
+  f32 step;
+  s32 steps;
+  s32 prev;
+  s32 mask;
+  int new_var;
+  s32 next;
+  s32 i;
+  s32 j;
+  counts = D_801135A4_2A8874_name_3E;
+  if (D_801119E0_2A6CB0_name_3E == 0)
+  {
+    D_801119E0_2A6CB0_name_3E = 1;
+    if ((--D_800F8CE4_F98E4[0]) < 0)
+    {
+      D_800F8CE4_F98E4[0] = 2;
     }
-    return 0;
+    spaces = D_80111BF4_2A6EC4_name_3E[D_800F8CE4_F98E4[0]];
+    mask = 0;
+    next = counts.v[D_800F8CE4_F98E4[0]] - 1;
+    PlaySound(0x398);
+    for (i = BoardGetChainLength(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]]) - 1; i > 0; i--)
+    {
+      from = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i));
+      to = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(D_80111B90_2A6E60_name_3E[D_800F8CE4_F98E4[0]], i - 1));
+      process = HuPrcCurrentGet();
+      func_800B3170_B3D70(&pos, &D_80113788_2A8A58_name_3E->pos);
+      func_800B3170_B3D70(&dest, &to->coords);
+      if (i == 1)
+      {
+        dest.x += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].x;
+        dest.y += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].y;
+        dest.z += D_80111C00_2A6ED0_name_3E[D_800F8CE4_F98E4[0]].z;
+        child = func_80056FD4_57BD4(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
+      }
+      else
+      {
+        child = func_80057150_57D50(&pos, &dest, &D_80113788_2A8A58_name_3E->pos, 2.0f);
+      }
+      HuPrcChildLink(process, child);
+      dist = func_800B1870_B2470(from->coords.x - to->coords.x, from->coords.y - to->coords.y, from->coords.z - to->coords.z);
+      HuVecSubtract(&dir, &from->coords, &to->coords);
+      MBVecNormalize(&dir);
+      HuVecMulScalar(&dir, 2.0f, &dir);
+      new_var = 0;
+      steps = dist / func_800B1870_B2470(dir.x, dir.y, dir.z);
+      HuVecSubtract(&delta, &to->coords, &from->coords);
+      angle = func_80042BE0_437E0(&D_80113788_2A8A58_name_3E->rot);
+      target = func_80042BE0_437E0(&delta) + 180.0f;
+      while ((target < angle) && ((((angle - target) > 0.0f) ? (angle - target) : (0.0f - (angle - target))) > 180.0f))
+      {
+        target += 360.0f;
+      }
+
+      while ((angle < target) && ((((angle - target) > 0.0f) ? (angle - target) : (0.0f - (angle - target))) > 180.0f))
+      {
+        angle += 360.0f;
+      }
+
+      step = target - angle;
+      step /= steps;
+      PlaySound(0x399);
+      fxVel = D_801135AC_2A887C_name_3E;
+      func_800B3170_B3D70(&fxPos, &D_80113784_2A8A54_name_3E->pos);
+      fxPos.x += HuMathSin(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+      fxPos.z += func_800B7890_B8490(func_80042BE0_437E0(&D_80113784_2A8A54_name_3E->rot)) * 10.0f;
+      fxPos.y += 35.0f;
+      func_8010C484_2A1754_name_3E(&fxPos, 0.3f, 8.0f, 1, &fxVel);
+      while (process->oldest_child != 0)
+      {
+        angle += step;
+        D_80113788_2A8A58_name_3E->rot.x = HuMathSin(angle);
+        D_80113788_2A8A58_name_3E->rot.y = 0.0f;
+        D_80113788_2A8A58_name_3E->rot.z = func_800B7890_B8490(angle);
+        func_80106B08_29BDD8_name_3E();
+        HuPrcVSleep();
+        if (next >= new_var)
+        {
+          if (HuVecDistance(&GetSpaceData(spaces[next])->coords, &D_80113788_2A8A58_name_3E->pos) <= 15.0f)
+          {
+            prev = mask;
+            for (j = 0; j < 4; j++)
+            {
+              if (j != GwSystem.current_player_index)
+              {
+                player = BoardPlayerGet(j);
+                if (GetAbsSpaceIndexFromChainSpaceIndex(player->cur_chain_index, player->cur_space_index) == spaces[next])
+                {
+                  func_80106DCC_29C09C_name_3E(j, 1);
+                  mask |= 1 << j;
+                }
+              }
+            }
+
+            if (prev != mask)
+            {
+              PlaySound(0x3A8);
+            }
+            next--;
+          }
+        }
+      }
+
+    }
+
+    PlaySound(0x39A);
+    D_801119E0_2A6CB0_name_3E = 0;
+    return mask;
+  }
+  return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/overlays/ovl_3E_name/297AD0", func_801075F8_29C8C8_name_3E);
-#endif
 /* MP1 func_800F71B4_MariosRainbowCastle: a junction's direction prompt */
 void func_80107C54_29CF24_name_3E(void) {
     struct unk_8003B8D4Struct* prompt;
