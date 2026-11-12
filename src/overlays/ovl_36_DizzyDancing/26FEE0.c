@@ -1372,7 +1372,6 @@ void func_80106650_273D30_DizzyDancing(omObjData* obj) {
 }
 
 /* NON_MATCHING: masked 2: branch-likely in the switch tree. */
-// decomp-permuter
 void func_80106BEC_2742CC_DizzyDancing(void)
 {
   u64 used;
@@ -1401,9 +1400,6 @@ void func_80106BEC_2742CC_DizzyDancing(void)
         break;
 
       case 3:
-        if (1)
-      {
-      }
         v = 3;
         break;
 

@@ -110,7 +110,6 @@ void func_8010609C_27DBCC_QuicksandCache(omObjData* obj) {
     obj->func_ptr = func_80106038_27DB68_QuicksandCache;
 }
 
-// decomp-permuter
 void func_801060F8_27DC28_QuicksandCache(void)
 {
   s8 i;
@@ -118,6 +117,8 @@ void func_801060F8_27DC28_QuicksandCache(void)
   omObjData *obj;
   QCActor *a;
   f32 ang;
+  f32 x;
+  f32 z;
   for (i = 0; i < 4; i++)
   {
     obj = D_800F9CE0_FA8E0[i];
@@ -134,13 +135,11 @@ void func_801060F8_27DC28_QuicksandCache(void)
     func_8000C024_CC24(obj, 0, 2);
     func_8000C024_CC24(obj, 1, 1);
     ang = ((f32) (guRandom() % 3600)) / 10.0f;
-    {
-      f32 x = (-HuMathSin(ang)) * 750.0f;
-      f32 z = func_800B7890_B8490(ang) * 750.0f;
-      obj->trans.x = x;
-      obj->trans.y = 1200.0f;
-      obj->trans.z = z;
-    }
+    x = (-HuMathSin(ang)) * 750.0f;
+    z = func_800B7890_B8490(ang) * 750.0f;
+    obj->trans.x = x;
+    obj->trans.y = 1200.0f;
+    obj->trans.z = z;
     a->unk_54 = 1;
     a->unk_3C = ang - 180.0f;
     a->unk_52 = 3;
