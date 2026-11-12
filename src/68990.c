@@ -62,8 +62,6 @@ void GWMgBitGet(s16 bitPos, s16* byteIdx, s16* bitIdx) {
     } else {
         if (bitPos < 0) {
             bitPos = 0;
-        } else {
-            bitPos = bitPos;
         }
     }
 
