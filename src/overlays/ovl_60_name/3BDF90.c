@@ -524,20 +524,19 @@ void func_80104280_3BF9E0_name_60(omObjData* obj) {
     func_8001A91C_1B51C(D_8011495E_3D00BE_name_60[idx], work[0], work[0]);
 }
 
-// decomp-permuter
 void func_8010433C_3BFA9C_name_60(void)
 {
+  Ovl60Esprite *e;
   omObjData *obj;
   f32 *work;
   s32 spr;
   s32 i;
-  s16 *new_var;
   for (i = 0; i < 5; i++)
   {
     spr = (s16) func_8001AAAC_1B6AC(func_8001A2F8_1AEF8(D_8011351C_3CEC7C_name_60[D_800CAFD8[i]]), 0, 0);
     D_8011495E_3D00BE_name_60[i] = spr;
-    new_var = &D_800F93FC_F9FFC[spr].group;
-    SprAttrReset(*new_var, 0, 0x1000);
+    e = &D_800F93FC_F9FFC[spr];
+    SprAttrReset(e->group, 0, 0x1000);
     espDispOff(spr);
     func_8001A708_1B308(spr, 0x4000);
     obj = omAddObj(0x64, 0, 0, -1, func_80104280_3BF9E0_name_60);
